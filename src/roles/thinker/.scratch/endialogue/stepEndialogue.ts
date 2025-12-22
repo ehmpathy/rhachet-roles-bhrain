@@ -11,7 +11,7 @@ import type { GitFile } from 'rhachet-artifact-git';
 import type { ContextOpenAI } from '@src/access/sdk/sdkOpenAi';
 import { genLoopFeedback } from '@src/domain.operations/artifact/genLoopFeedback';
 import { genStepArtSet } from '@src/domain.operations/artifact/genStepArtSet';
-import { stepSummarize } from '@src/roles/bhrain/.scratch/summarize/stepSummarize';
+import { stepSummarize } from '@src/roles/thinker/.scratch/summarize/stepSummarize';
 
 import { stepEnanswer } from './enanswer/stepEnanswer';
 import { stepEnquestion } from './enquestion/stepEnquestion';

@@ -19,7 +19,7 @@ import type { Focus } from '@src/_topublish/rhachet-roles-bhrain/src/domain/obje
 import { type ContextOpenAI, sdkOpenAi } from '@src/access/sdk/sdkOpenAi';
 import { genLoopFeedback } from '@src/domain.operations/artifact/genLoopFeedback';
 import { genStepArtSet } from '@src/domain.operations/artifact/genStepArtSet';
-import { getThinkerBriefs } from '@src/roles/bhrain/getThinkerBrief';
+import { getThinkerBriefs } from '@src/roles/thinker/getThinkerBrief';
 
 export const BRIEFS_FOR_INSTANTIATE = getThinkerBriefs([
   'knowledge/kno101.primitives.1.ontology.[article].frame.docs_as_materializations.md',

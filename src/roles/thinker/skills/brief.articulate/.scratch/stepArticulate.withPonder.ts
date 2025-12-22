@@ -11,7 +11,7 @@ import type { GitFile } from 'rhachet-artifact-git';
 import type { Focus } from '@src/_topublish/rhachet-roles-bhrain/src/domain/objects/Focus';
 import type { ContextOpenAI } from '@src/access/sdk/sdkOpenAi';
 import { useGenStepSwapArtifactFor } from '@src/domain.operations/artifact/genStepSwapArtifact';
-import { loopArticulate } from '@src/roles/bhrain/brief.articulate/stepArticulate';
+import { loopArticulate } from '@src/roles/thinker/brief.articulate/stepArticulate';
 
 type StitcherDesired = GStitcher<
   Threads<{

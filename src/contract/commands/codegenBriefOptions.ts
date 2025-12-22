@@ -11,13 +11,11 @@ const command = asCommand(
     dir: __dirname + '/.temp',
     log: console,
   },
-  async (input: {
-    role: 'Thinker' | 'Librarian';
-  }) => {
+  async (input: { role: 'Thinker' | 'Librarian' }) => {
     // lookup the briefs available in the expected dir
     const briefsDir = path.join(
       (await getGitRepoRoot({ from: __dirname })) +
-      `/src/roles/${input.role.toLowerCase()}/briefs`,
+        `/src/roles/${input.role.toLowerCase()}/briefs`,
     );
     const patterns = [
       path.join(briefsDir, '**/*'), // include all
