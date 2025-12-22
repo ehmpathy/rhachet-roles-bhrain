@@ -1,0 +1,18 @@
+// todo: how to keep in sync with @repo/readme.md ?
+export const BHRAIN_REGISTRY_README = `
+# 🧠 bhrain role registry
+
+This registry defines the roles used to navigate though concept space.
+
+---
+
+## 🪐 Thinker
+
+Used to navigate through concept space. See src/roles/thinker/briefs/cognition for details.
+
+---
+
+## 📚 Librarian
+
+Used to curate knowledge and context. see src/roles/thinker/briefs/librarian.context and src/roles/thinker/briefs/librarian.tactics for details.
+  `.trim();
