@@ -12,8 +12,8 @@ import type { GitFile } from 'rhachet-artifact-git';
 import type { Focus } from '@src/_topublish/rhachet-roles-bhrain/src/domain/objects/Focus';
 import type { ContextOpenAI } from '@src/access/sdk/sdkOpenAi';
 import { genLoopFeedback } from '@src/domain.operations/artifact/genLoopFeedback';
-import { getThinkerBriefs } from '@src/roles/bhrain/getThinkerBrief';
-import { stepInstantiate } from '@src/roles/bhrain/skills/khue.instantiate/stepInstantiate';
+import { getThinkerBriefs } from '@src/roles/thinker/getThinkerBrief';
+import { stepInstantiate } from '@src/roles/thinker/skills/khue.instantiate/stepInstantiate';
 
 const BRIEFS_FOR_CATALOGIZE = getThinkerBriefs([
   'cognition/cog021.structs.catalog.md',

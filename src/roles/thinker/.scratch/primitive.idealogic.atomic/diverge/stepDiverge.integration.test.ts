@@ -6,7 +6,7 @@ import { given, then, usePrep, when } from 'test-fns';
 import { genContextLogTrail } from '@src/domain.operations/.test/genContextLogTrail';
 import { genContextStitchTrail } from '@src/domain.operations/.test/genContextStitchTrail';
 import { getContextOpenAI } from '@src/domain.operations/.test/getContextOpenAI';
-import { getThinkerBriefs } from '@src/roles/bhrain/.scratch/getThinkerBrief';
+import { getThinkerBriefs } from '@src/roles/thinker/.scratch/getThinkerBrief';
 
 import { stepDiverge } from './stepDiverge';
 

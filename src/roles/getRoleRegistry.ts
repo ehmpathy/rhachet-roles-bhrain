@@ -1,7 +1,7 @@
 import { RoleRegistry } from 'rhachet';
 
-import { ROLE_THINKER } from './thinker/getThinkerRole';
 import { BHRAIN_REGISTRY_README } from './getRoleRegistry.readme';
+import { ROLE_THINKER } from './thinker/getThinkerRole';
 
 /**
  * .what = returns the core registry of predefined roles and skills
@@ -13,7 +13,5 @@ export const getRoleRegistry = (): RoleRegistry =>
   new RoleRegistry({
     slug: 'bhrain',
     readme: BHRAIN_REGISTRY_README,
-    roles: [
-      ROLE_THINKER,
-    ],
+    roles: [ROLE_THINKER],
   });

@@ -16,7 +16,7 @@ import type { GitFile } from 'rhachet-artifact-git';
 import { type ContextOpenAI, sdkOpenAi } from '@src/access/sdk/sdkOpenAi';
 import { genLoopFeedback } from '@src/domain.operations/artifact/genLoopFeedback';
 import { genStepArtSet } from '@src/domain.operations/artifact/genStepArtSet';
-import { getThinkerBriefs } from '@src/roles/bhrain/getThinkerBrief';
+import { getThinkerBriefs } from '@src/roles/thinker/getThinkerBrief';
 
 type StitcherDesired = GStitcher<
   Threads<{

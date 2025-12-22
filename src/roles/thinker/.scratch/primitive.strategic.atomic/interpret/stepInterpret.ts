@@ -18,9 +18,9 @@ import {
 } from '@src/domain.operations/access/sdk/sdkOpenAi';
 import { genLoopFeedback } from '@src/roles/artifact/genLoopFeedback';
 import { genStepArtSet } from '@src/roles/artifact/genStepArtSet';
-import { getThinkerBriefs } from '@src/roles/bhrain/.scratch/getThinkerBrief';
-import { getEcologistBriefs } from '@src/roles/bhrain/ecologist/getEcologistBrief';
-import { getMechanicBriefs } from '@src/roles/bhrain/mechanic/getMechanicBrief';
+import { getThinkerBriefs } from '@src/roles/thinker/.scratch/getThinkerBrief';
+import { getEcologistBriefs } from '@src/roles/thinker/ecologist/getEcologistBrief';
+import { getMechanicBriefs } from '@src/roles/thinker/mechanic/getMechanicBrief';
 
 type StitcherDesired = GStitcher<
   Threads<{

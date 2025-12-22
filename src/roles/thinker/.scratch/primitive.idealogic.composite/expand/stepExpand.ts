@@ -11,8 +11,8 @@ import type { GitFile } from 'rhachet-artifact-git';
 import type { ContextOpenAI } from '@src/domain.operations/access/sdk/sdkOpenAi';
 import { stepResetFeedback } from '@src/roles/artifact/genStepResetFeedback';
 import { useGenStepSwapArtifactFor } from '@src/roles/artifact/genStepSwapArtifact';
-import { stepCollect } from '@src/roles/bhrain/.scratch/primitive.idealogic.atomic/collect/stepCollect';
-import { stepDiverge } from '@src/roles/bhrain/.scratch/primitive.idealogic.atomic/diverge/stepDiverge';
+import { stepCollect } from '@src/roles/thinker/.scratch/primitive.idealogic.atomic/collect/stepCollect';
+import { stepDiverge } from '@src/roles/thinker/.scratch/primitive.idealogic.atomic/diverge/stepDiverge';
 
 type StitcherDesired = GStitcher<
   Threads<{

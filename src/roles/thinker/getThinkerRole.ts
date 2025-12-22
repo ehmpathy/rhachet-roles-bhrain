@@ -1,6 +1,5 @@
 import { Role, RoleTrait } from 'rhachet';
 
-
 import { getThinkerBrief } from './getThinkerBrief';
 import { SKILL_ARTICULATE } from './skills/brief.articulate/stepArticulate.skill';
 import { SKILL_CATALOGIZE } from './skills/brief.catalogize/stepCatalogize.skill';
