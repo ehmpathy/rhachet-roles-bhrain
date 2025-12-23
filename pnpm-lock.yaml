@@ -32,9 +32,6 @@ importers:
       openai:
         specifier: 5.8.2
         version: 5.8.2
-      rhachet:
-        specifier: 1.13.11
-        version: 1.13.11(@types/node@22.15.21)
       rhachet-artifact:
         specifier: 1.0.0
         version: 1.0.0
@@ -111,9 +108,12 @@ importers:
       jest:
         specifier: 30.2.0
         version: 30.2.0(@types/node@22.15.21)(esbuild-register@3.6.0(esbuild@0.25.12))(ts-node@10.9.2(@swc/core@1.15.3)(@types/node@22.15.21)(typescript@5.4.5))
+      rhachet:
+        specifier: 1.15.0
+        version: 1.15.0(@types/node@22.15.21)
       rhachet-roles-ehmpathy:
-        specifier: 1.15.12
-        version: 1.15.12(@types/node@22.15.21)
+        specifier: 1.15.14
+        version: 1.15.14(@types/node@22.15.21)
       test-fns:
         specifier: 1.6.0
         version: 1.6.0
@@ -3335,12 +3335,17 @@ packages:
     resolution: {integrity: sha512-BCD7rwyArOn9k3AwDocv0UrgkNDmJ/goPAROCLyMx06n72Xhq8nO9RAVVqhdggIjyX8lI0Qriul8tgUJ+3zoIA==}
     engines: {node: '>=8.0.0'}
 
-  rhachet-roles-ehmpathy@1.15.12:
-    resolution: {integrity: sha512-qaT/KM5+vu8LAHBtQM17y4/jXHEIU70ifbH0hda4Q2JOIKDRwCxOJBalD7MZOMhL6unQFlLU3qDaYaDAxqmSog==}
+  rhachet-roles-ehmpathy@1.15.14:
+    resolution: {integrity: sha512-VpFaBEQy5c8Xv6KC0bPT+H509CsDUizHvjaSEE4Iv6s+XC4kaGXwqcGm0HZtBZpt1LUTUE6QsLNg2xaCEMIymA==}
     engines: {node: '>=8.0.0'}
 
-  rhachet@1.13.11:
-    resolution: {integrity: sha512-VI6tnesljWBzvate7RQXJEK+FgKH8R2ez/66mDVNJoAJPq+BdHP7Cs91/0mWWme6W7HYiAK7iIUonW+oTZYtpw==}
+  rhachet@1.14.1:
+    resolution: {integrity: sha512-1S2/zm5G/MCMYxIz4dm//rqlk7ZTo0KEfqR4N1SonPzvWSvStu6zPZUYnZlu046ATCHxTbL2KBawYhn7CsEmWQ==}
+    engines: {node: '>=22.0.0'}
+    hasBin: true
+
+  rhachet@1.15.0:
+    resolution: {integrity: sha512-VwzjlbUBkOg4FzAV2FX4Gr7y8EaU7rmZzb6oJk018LmEe4ebG0hZYQH+T+gLAqBHRcqrjprcK7gfXEx5bG5Y9g==}
     engines: {node: '>=22.0.0'}
     hasBin: true
 
@@ -6565,8 +6570,8 @@ snapshots:
       domain-objects: 0.31.3
       helpful-errors: 1.5.3
       joi: 17.4.0
-      rhachet: 1.13.11(@types/node@22.15.21)
-      rhachet-roles-ehmpathy: 1.15.12(@types/node@22.15.21)
+      rhachet: 1.15.0(@types/node@22.15.21)
+      rhachet-roles-ehmpathy: 1.15.14(@types/node@22.15.21)
       type-fns: 1.21.0
       uuid-fns: 1.1.3
     transitivePeerDependencies:
@@ -7885,7 +7890,7 @@ snapshots:
       domain-objects: 0.31.3
       helpful-errors: 1.5.3
 
-  rhachet-roles-ehmpathy@1.15.12(@types/node@22.15.21):
+  rhachet-roles-ehmpathy@1.15.14(@types/node@22.15.21):
     dependencies:
       '@ehmpathy/as-command': 1.0.3
       '@ehmpathy/uni-time': 1.8.1
@@ -7895,7 +7900,7 @@ snapshots:
       helpful-errors: 1.5.3
       inquirer: 12.7.0(@types/node@22.15.21)
       openai: 5.8.2
-      rhachet: 1.13.11(@types/node@22.15.21)
+      rhachet: 1.14.1
       rhachet-artifact: 1.0.0
       rhachet-artifact-git: 1.1.0
       serde-fns: 1.2.0
@@ -7909,7 +7914,28 @@ snapshots:
       - ws
       - zod
 
-  rhachet@1.13.11(@types/node@22.15.21):
+  rhachet@1.14.1:
+    dependencies:
+      '@ehmpathy/uni-time': 1.9.0
+      as-procedure: 1.1.6
+      bottleneck: 2.19.5
+      chalk: 4.1.2
+      commander: 14.0.0
+      domain-objects: 0.31.7(@types/node@22.15.21)
+      fast-glob: 3.3.3
+      flattie: 1.1.1
+      helpful-errors: 1.5.3
+      openai: 5.8.2
+      rhachet-artifact: 1.0.1
+      rhachet-artifact-git: 1.1.3
+      serde-fns: 1.3.1
+      type-fns: 1.21.0
+      uuid-fns: 1.0.1
+    transitivePeerDependencies:
+      - ws
+      - zod
+
+  rhachet@1.15.0(@types/node@22.15.21):
     dependencies:
       '@ehmpathy/uni-time': 1.9.0
       as-procedure: 1.1.6
