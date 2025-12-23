@@ -38,6 +38,9 @@ importers:
       rhachet-artifact-git:
         specifier: 1.1.0
         version: 1.1.0
+      rhachet-roles-bhuild:
+        specifier: 0.1.3
+        version: 0.1.3
       serde-fns:
         specifier: 1.2.0
         version: 1.2.0
@@ -3335,6 +3338,10 @@ packages:
     resolution: {integrity: sha512-BCD7rwyArOn9k3AwDocv0UrgkNDmJ/goPAROCLyMx06n72Xhq8nO9RAVVqhdggIjyX8lI0Qriul8tgUJ+3zoIA==}
     engines: {node: '>=8.0.0'}
 
+  rhachet-roles-bhuild@0.1.3:
+    resolution: {integrity: sha512-wVJrFafD/JEmufaMl/tRbmKyQ7RFhXyixV+HopXiMn1MUq83egfnaMVPd98vrbx9Q9xRhJVwKUOfcjJlul8j0g==}
+    engines: {node: '>=8.0.0'}
+
   rhachet-roles-ehmpathy@1.15.14:
     resolution: {integrity: sha512-VpFaBEQy5c8Xv6KC0bPT+H509CsDUizHvjaSEE4Iv6s+XC4kaGXwqcGm0HZtBZpt1LUTUE6QsLNg2xaCEMIymA==}
     engines: {node: '>=8.0.0'}
@@ -3346,6 +3353,11 @@ packages:
 
   rhachet@1.15.0:
     resolution: {integrity: sha512-VwzjlbUBkOg4FzAV2FX4Gr7y8EaU7rmZzb6oJk018LmEe4ebG0hZYQH+T+gLAqBHRcqrjprcK7gfXEx5bG5Y9g==}
+    engines: {node: '>=22.0.0'}
+    hasBin: true
+
+  rhachet@1.15.2:
+    resolution: {integrity: sha512-XuW46wL8FDT70TPJOnKLWR+TVsAGP0pWPcCf7ee+K9nKUehoCNDObEH+jDruVvj9f1Id65VTEmhc4csmXQlygA==}
     engines: {node: '>=22.0.0'}
     hasBin: true
 
@@ -7890,6 +7902,15 @@ snapshots:
       domain-objects: 0.31.3
       helpful-errors: 1.5.3
 
+  rhachet-roles-bhuild@0.1.3:
+    dependencies:
+      domain-objects: 0.31.7(@types/node@22.15.21)
+      helpful-errors: 1.5.3
+      rhachet: 1.15.2
+    transitivePeerDependencies:
+      - ws
+      - zod
+
   rhachet-roles-ehmpathy@1.15.14(@types/node@22.15.21):
     dependencies:
       '@ehmpathy/as-command': 1.0.3
@@ -7955,6 +7976,27 @@ snapshots:
     transitivePeerDependencies:
       - '@types/node'
       - aws-crt
+      - ws
+      - zod
+
+  rhachet@1.15.2:
+    dependencies:
+      '@ehmpathy/uni-time': 1.9.0
+      as-procedure: 1.1.6
+      bottleneck: 2.19.5
+      chalk: 4.1.2
+      commander: 14.0.0
+      domain-objects: 0.31.7(@types/node@22.15.21)
+      fast-glob: 3.3.3
+      flattie: 1.1.1
+      helpful-errors: 1.5.3
+      openai: 5.8.2
+      rhachet-artifact: 1.0.1
+      rhachet-artifact-git: 1.1.3
+      serde-fns: 1.3.1
+      type-fns: 1.21.0
+      uuid-fns: 1.0.1
+    transitivePeerDependencies:
       - ws
       - zod
 

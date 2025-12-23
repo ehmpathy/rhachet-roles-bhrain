@@ -49,7 +49,7 @@
     "prepare:husky": "husky install && chmod ug+x .husky/*",
     "prepare": "if [ -e .git ] && [ -z $CI ]; then npm run prepare:husky && npm run prepare:rhachet; fi",
     "test:format:biome": "biome format",
-    "prepare:rhachet": "rhachet init && rhachet roles link --role mechanic && rhachet roles init --role mechanic"
+    "prepare:rhachet": "rhachet init && rhachet roles link --role mechanic && rhachet roles link --role behaver && rhachet roles init --role mechanic"
   },
   "dependencies": {
     "@ehmpathy/as-command": "1.0.3",
@@ -62,6 +62,7 @@
     "openai": "5.8.2",
     "rhachet-artifact": "1.0.0",
     "rhachet-artifact-git": "1.1.0",
+    "rhachet-roles-bhuild": "0.1.3",
     "serde-fns": "1.2.0",
     "simple-in-memory-cache": "0.4.0",
     "type-fns": "1.21.0",
