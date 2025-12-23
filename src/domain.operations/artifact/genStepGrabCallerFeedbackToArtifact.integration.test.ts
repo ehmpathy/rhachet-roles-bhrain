@@ -63,7 +63,7 @@ describe('genStepGrabCallerFeedbackToArtifact', () => {
       then('writes the feedback artifact if input is provided', async () => {
         usePromptMockResponse({
           hasNotes: 'yes notes',
-          feedback: 'this is mock feedback',
+          fromInline: 'this is mock feedback',
         });
 
         const threads = await threadsPrep();

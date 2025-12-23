@@ -90,6 +90,9 @@ describe('stepCluster', () => {
 
     beforeEach(async () => {
       await artifacts.caller.feedback.set({ content: '' });
+      await artifacts.caller['foci.goal.concept'].set({
+        content: 'learn how to make better jokes',
+      });
       await artifacts.thinker['focus.context'].set({
         content: ['psychology', 'evolution', 'ecology'].join('\n'),
       });

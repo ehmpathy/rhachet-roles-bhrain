@@ -12,6 +12,7 @@ process.env.FORCE_COLOR = 'true';
 // https://jestjs.io/docs/configuration
 const config: Config = {
   verbose: true,
+  reporters: [['default', { summaryThreshold: 0 }]],
   testEnvironment: 'node',
   moduleFileExtensions: ['js', 'ts'],
   moduleNameMapper: {
@@ -30,6 +31,7 @@ const config: Config = {
     '!**/*.acceptance.test.ts',
     '!**/*.integration.test.ts',
     '!**/.yalc/**',
+    '!**/.scratch/**',
   ],
   setupFilesAfterEnv: ['./jest.unit.env.ts'],
 

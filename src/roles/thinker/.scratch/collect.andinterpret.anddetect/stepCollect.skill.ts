@@ -73,7 +73,7 @@ export const SKILL_COLLECT = genRoleSkill({
     lookup: {
       apiKeyOpenai: {
         source: 'process.env',
-        envar: 'PREP_OPENAI_KEY',
+        envar: 'OPENAI_API_KEY',
         desc: 'the openai key to use',
         type: 'string',
       },
