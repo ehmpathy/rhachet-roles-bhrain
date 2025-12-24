@@ -10,7 +10,7 @@ import { SKILL_INSTANTIATE } from './skills/khue.instantiate/stepInstantiate.ski
 import { SKILL_TRIAGE } from './skills/khue.triage/stepTriage.skill';
 
 export const ROLE_THINKER: Role = Role.build({
-  slug: 'bhrain',
+  slug: 'thinker',
   name: 'Thinker',
   purpose: 'think',
   readme: `

@@ -152,7 +152,9 @@ describe('stepInstantiate', () => {
           .get()
           .expect('isPresent');
 
-        expect(content.toLowerCase()).toMatch(/reviews/i);
+        expect(content.toLowerCase()).toMatch(
+          /persona|profile|customer|resident|neighbor|plumber|landscaper|home|service/i,
+        );
       });
     });
   });

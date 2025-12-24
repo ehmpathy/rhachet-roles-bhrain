@@ -1,6 +1,7 @@
 import { RoleRegistry } from 'rhachet';
 
 import { BHRAIN_REGISTRY_README } from './getRoleRegistry.readme';
+import { ROLE_REVIEWER } from './reviewer/getReviewerRole';
 import { ROLE_THINKER } from './thinker/getThinkerRole';
 
 /**
@@ -13,5 +14,5 @@ export const getRoleRegistry = (): RoleRegistry =>
   new RoleRegistry({
     slug: 'bhrain',
     readme: BHRAIN_REGISTRY_README,
-    roles: [ROLE_THINKER],
+    roles: [ROLE_THINKER, ROLE_REVIEWER],
   });

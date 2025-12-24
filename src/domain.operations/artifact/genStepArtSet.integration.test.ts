@@ -105,7 +105,7 @@ describe('genStepArtSet (integration)', () => {
           },
         }),
       };
-      threads.coder.stitches.push({
+      inflight.coder.stitches.push({
         output: { content: stitchedContent },
       } as Stitch<any>);
       return inflight;
@@ -148,7 +148,7 @@ describe('genStepArtSet (integration)', () => {
           },
         }),
       };
-      threads.coder.stitches.push({
+      inflight.coder.stitches.push({
         output: { content: stitchedContent },
       } as Stitch<any>);
       return inflight;

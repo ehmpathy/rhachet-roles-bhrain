@@ -82,3 +82,16 @@ if (requiresTestDb) {
     );
   }
 }
+
+/**
+ * .what = verify that api keys are present for integration tests
+ * .why = prevent time wasted waiting on tests to fail due to missing api keys
+ */
+if (!process.env.OPENAI_API_KEY)
+  throw new Error(
+    'OPENAI_API_KEY not set. please set it to run integration tests',
+  );
+if (!process.env.ANTHROPIC_API_KEY)
+  throw new Error(
+    'ANTHROPIC_API_KEY not set. please set it to run integration tests',
+  );

@@ -18,3 +18,4 @@ ignores:
   - "@src/*"
   - "@src/.*"
   - yalc
+  - "@anthropic-ai/claude-code"
