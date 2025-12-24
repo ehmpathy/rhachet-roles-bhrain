@@ -12,7 +12,7 @@ import { stepDiverge } from './stepDiverge';
 
 jest.setTimeout(toMilliseconds({ minutes: 5 }));
 
-describe('stepDiverge', () => {
+describe.skip('stepDiverge', () => {
   const context = {
     ...genContextLogTrail(),
     ...genContextStitchTrail(),

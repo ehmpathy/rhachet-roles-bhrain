@@ -1,13 +1,13 @@
 # chapter 2: the reef garden
 
-shelly loved to explore the coral garden more than anything else.
-the anemones danced in the current, and she never tired of the sight.
+shelly loved to explore the coral garden more than all else.
+the anemones danced in the current, and she never tired of the view.
 
-"these corals glow like nothing else," marco whispered. sunlight shimmered
-through the water and made everything look magical.
+"these corals glow unlike all else," marco whispered. sunlight shimmered
+through the water and made all look magical.
 
 shelly swam through the arches with joy. she discovered hidden caves
-and met new fish friends along the way.
+and met new fish friends on the way.
 
 a sea star waved from below. creatures greeted each other with pure warmth.
 shelly belonged here — she connected with the reef in a way words could not capture.
