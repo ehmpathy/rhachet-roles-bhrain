@@ -32,3 +32,17 @@ if (
   throw new Error(
     'no aws credentials present. please authenticate with aws to run acceptance tests',
   );
+
+
+/**
+ * .what = verify that api keys are present for integration tests
+ * .why = prevent time wasted waiting on tests to fail due to missing api keys
+ */
+if (!process.env.OPENAI_API_KEY)
+  throw new Error(
+    'OPENAI_API_KEY not set. set via `source .agent/repo=.this/role=any/skills/use.apikeys.sh && npm run test:integration --`',
+  );
+if (!process.env.ANTHROPIC_API_KEY)
+  throw new Error(
+    'ANTHROPIC_API_KEY not set. set via `source .agent/repo=.this/role=any/skills/use.apikeys.sh && npm run test:integration --',
+  );
