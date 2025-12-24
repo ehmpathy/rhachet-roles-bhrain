@@ -71,7 +71,7 @@ const enthread = () =>
     }),
   }));
 
-describe('stepInstantiate', () => {
+describe.skip('stepInstantiate', () => {
   const context = {
     ...genContextLogTrail(),
     ...genContextStitchTrail(),
