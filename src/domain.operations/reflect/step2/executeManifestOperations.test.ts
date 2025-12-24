@@ -2,8 +2,8 @@ import * as fs from 'fs/promises';
 import * as os from 'os';
 import * as path from 'path';
 
-import { ReviewerReflectManifestOperation } from '@src/domain.objects/ManifestOperation';
-import { ReviewerReflectManifest } from '@src/domain.objects/ReflectManifest';
+import { ReviewerReflectManifest } from '@src/domain.objects/Reviewer/ReviewerReflectManifest';
+import { ReviewerReflectManifestOperation } from '@src/domain.objects/Reviewer/ReviewerReflectManifestOperation';
 
 import { executeManifestOperations } from './executeManifestOperations';
 

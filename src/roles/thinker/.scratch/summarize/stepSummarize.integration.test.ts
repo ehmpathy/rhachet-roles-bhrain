@@ -11,11 +11,10 @@ import { given, then, usePrep, when } from 'test-fns';
 import type { Literalize } from 'type-fns';
 import { getUuid } from 'uuid-fns';
 
-import { genContextLogTrail } from '@src/domain.operations/.test/genContextLogTrail';
-import { genContextStitchTrail } from '@src/domain.operations/.test/genContextStitchTrail';
-import { getContextOpenAI } from '@src/domain.operations/.test/getContextOpenAI';
-
-import { stepSummarize } from './stepSummarize';
+import { genContextLogTrail } from '@src/.test/genContextLogTrail';
+import { genContextStitchTrail } from '@src/.test/genContextStitchTrail';
+import { getContextOpenAI } from '@src/.test/getContextOpenAI';
+import { stepSummarize } from '@src/roles/thinker/.scratch/summarize/stepSummarize';
 
 jest.setTimeout(toMilliseconds({ minutes: 5 }));
 

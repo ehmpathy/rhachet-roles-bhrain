@@ -1,7 +1,7 @@
 import * as fs from 'fs/promises';
 import * as path from 'path';
 
-import { enumFilesFromGlob } from '../../review/enumFilesFromGlob';
+import { enumFilesFromGlob } from '@src/domain.operations/review/enumFilesFromGlob';
 
 /**
  * .what = compiles step 2 brain prompt for rule blend

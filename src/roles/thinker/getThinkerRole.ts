@@ -1,13 +1,13 @@
 import { Role, RoleTrait } from 'rhachet';
 
-import { getThinkerBrief } from './getThinkerBrief';
-import { SKILL_ARTICULATE } from './skills/brief.articulate/stepArticulate.skill';
-import { SKILL_CATALOGIZE } from './skills/brief.catalogize/stepCatalogize.skill';
-import { SKILL_DEMONSTRATE } from './skills/brief.demonstrate/stepDemonstrate.skill';
-import { SKILL_CLUSTER } from './skills/khue.cluster/stepCluster.skill';
-import { SKILL_DIVERGE } from './skills/khue.diverge/stepDiverge.skill';
-import { SKILL_INSTANTIATE } from './skills/khue.instantiate/stepInstantiate.skill';
-import { SKILL_TRIAGE } from './skills/khue.triage/stepTriage.skill';
+import { getThinkerBrief } from '@src/roles/thinker/getThinkerBrief';
+import { SKILL_ARTICULATE } from '@src/roles/thinker/skills/brief.articulate/stepArticulate.skill';
+import { SKILL_CATALOGIZE } from '@src/roles/thinker/skills/brief.catalogize/stepCatalogize.skill';
+import { SKILL_DEMONSTRATE } from '@src/roles/thinker/skills/brief.demonstrate/stepDemonstrate.skill';
+import { SKILL_CLUSTER } from '@src/roles/thinker/skills/khue.cluster/stepCluster.skill';
+import { SKILL_DIVERGE } from '@src/roles/thinker/skills/khue.diverge/stepDiverge.skill';
+import { SKILL_INSTANTIATE } from '@src/roles/thinker/skills/khue.instantiate/stepInstantiate.skill';
+import { SKILL_TRIAGE } from '@src/roles/thinker/skills/khue.triage/stepTriage.skill';
 
 export const ROLE_THINKER: Role = Role.build({
   slug: 'thinker',

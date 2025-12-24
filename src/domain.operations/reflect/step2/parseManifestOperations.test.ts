@@ -1,4 +1,4 @@
-import { ReviewerReflectManifestOperation } from '@src/domain.objects/ManifestOperation';
+import { ReviewerReflectManifestOperation } from '@src/domain.objects/Reviewer/ReviewerReflectManifestOperation';
 
 import { parseManifestOperations } from './parseManifestOperations';
 

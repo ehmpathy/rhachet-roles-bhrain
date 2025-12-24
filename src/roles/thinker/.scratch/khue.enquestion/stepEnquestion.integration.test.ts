@@ -6,10 +6,9 @@ import { given, then, usePrep, when } from 'test-fns';
 import { genContextLogTrail } from '@src/.test/genContextLogTrail';
 import { genContextStitchTrail } from '@src/.test/genContextStitchTrail';
 import { getContextOpenAI } from '@src/.test/getContextOpenAI';
+import { enquestionPonderCatalog } from '@src/roles/thinker/.scratch/khue.enquestion/ponder.catalog';
+import { stepEnquestion } from '@src/roles/thinker/.scratch/khue.enquestion/stepEnquestion';
 import { getThinkerBriefs } from '@src/roles/thinker/getThinkerBrief';
-
-import { enquestionPonderCatalog } from './ponder.catalog';
-import { stepEnquestion } from './stepEnquestion';
 
 jest.setTimeout(toMilliseconds({ minutes: 5 }));
 

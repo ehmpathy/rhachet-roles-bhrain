@@ -1,7 +1,7 @@
 import * as fs from 'fs/promises';
 import * as path from 'path';
 
-import type { ReviewerReflectMetrics } from '@src/domain.objects/ReflectMetrics';
+import type { ReviewerReflectMetrics } from '@src/domain.objects/Reviewer/ReviewerReflectMetrics';
 
 /**
  * .what = writes execution log artifact to draft directory

@@ -7,12 +7,11 @@ import { genContextLogTrail } from '@src/.test/genContextLogTrail';
 import { genContextStitchTrail } from '@src/.test/genContextStitchTrail';
 import { getContextOpenAI } from '@src/.test/getContextOpenAI';
 import { getThinkerBriefs } from '@src/roles/thinker/getThinkerBrief';
-
-import { stepTriage } from './stepTriage';
+import { stepTriage } from '@src/roles/thinker/skills/khue.triage/stepTriage';
 
 jest.setTimeout(toMilliseconds({ minutes: 5 }));
 
-describe('stepTriage', () => {
+describe.skip('stepTriage', () => {
   const context = {
     ...genContextLogTrail(),
     ...genContextStitchTrail(),

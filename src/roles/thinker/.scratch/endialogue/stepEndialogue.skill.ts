@@ -1,9 +1,9 @@
 import { enrollThread, type GStitcherOf, genRoleSkill } from 'rhachet';
 import { genArtifactGitFile } from 'rhachet-artifact-git';
 
-import { genContextLogTrail } from '@src/domain.operations/.test/genContextLogTrail';
-import { genContextStitchTrail } from '@src/domain.operations/.test/genContextStitchTrail';
-import { getContextOpenAI } from '@src/domain.operations/.test/getContextOpenAI';
+import { genContextLogTrail } from '@src/.test/genContextLogTrail';
+import { genContextStitchTrail } from '@src/.test/genContextStitchTrail';
+import { getContextOpenAI } from '@src/.test/getContextOpenAI';
 
 import { loopEndialogue } from './stepEndialogue';
 

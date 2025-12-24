@@ -50,6 +50,15 @@ if (
   );
 
 /**
+ * .what = verify that TAVILY_API_KEY is available for web search integration tests
+ * .why = prevent time wasted on cryptic failures when api key is missing
+ */
+if (!process.env.TAVILY_API_KEY)
+  throw new Error(
+    'TAVILY_API_KEY not set. get one at https://tavily.com (free tier: 1000 searches/month)',
+  );
+
+/**
  * .what = verify that the testdb has been provisioned if a databaseUserName is declared
  * .why =
  *   - prevent time wasted waiting on tests to fail due to missing testdb
@@ -94,4 +103,8 @@ if (!process.env.OPENAI_API_KEY)
 if (!process.env.ANTHROPIC_API_KEY)
   throw new Error(
     'ANTHROPIC_API_KEY not set. set via `source .agent/repo=.this/role=any/skills/use.apikeys.sh && npm run test:integration --',
+  );
+if (!process.env.TAVILY_API_KEY)
+  throw new Error(
+    'TAVILY_API_KEY not set. set via `source .agent/repo=.this/role=any/skills/use.apikeys.sh && npm run test:integration --',
   );

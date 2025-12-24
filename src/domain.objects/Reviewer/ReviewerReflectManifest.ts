@@ -1,6 +1,6 @@
 import { DomainLiteral } from 'domain-objects';
 
-import type { ReviewerReflectManifestOperation } from './ManifestOperation';
+import type { ReviewerReflectManifestOperation } from '@src/domain.objects/Reviewer/ReviewerReflectManifestOperation';
 
 /**
  * .what = manifest entry for a single pure rule proposal

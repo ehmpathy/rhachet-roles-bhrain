@@ -1,7 +1,7 @@
 import * as fs from 'fs/promises';
 import { BadRequestError } from 'helpful-errors';
 
-import { enumFeedbackFiles } from './enumFeedbackFiles';
+import { enumFeedbackFiles } from '@src/domain.operations/reflect/enumFeedbackFiles';
 
 /**
  * .what = validates source directory exists and contains feedback files

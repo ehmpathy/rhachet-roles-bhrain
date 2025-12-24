@@ -4,11 +4,10 @@ import { genArtifactGitFile } from 'rhachet-artifact-git';
 import { given, then, usePrep, when } from 'test-fns';
 import { getUuid } from 'uuid-fns';
 
-import { genContextLogTrail } from '@src/domain.operations/.test/genContextLogTrail';
-import { genContextStitchTrail } from '@src/domain.operations/.test/genContextStitchTrail';
-import { getContextOpenAI } from '@src/domain.operations/.test/getContextOpenAI';
-
-import { stepEnanswer } from './stepEnanswer';
+import { genContextLogTrail } from '@src/.test/genContextLogTrail';
+import { genContextStitchTrail } from '@src/.test/genContextStitchTrail';
+import { getContextOpenAI } from '@src/.test/getContextOpenAI';
+import { stepEnanswer } from '@src/roles/thinker/.scratch/endialogue/enanswer/stepEnanswer';
 
 jest.setTimeout(toMilliseconds({ minutes: 5 }));
 

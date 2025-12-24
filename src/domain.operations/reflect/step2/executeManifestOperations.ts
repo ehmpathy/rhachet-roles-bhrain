@@ -2,11 +2,11 @@ import * as fs from 'fs/promises';
 import { UnexpectedCodePathError } from 'helpful-errors';
 import * as path from 'path';
 
-import { ReviewerReflectManifestOperation } from '@src/domain.objects/ManifestOperation';
 import type {
   ReviewerReflectManifest,
   ReviewerReflectManifestEntry,
-} from '@src/domain.objects/ReflectManifest';
+} from '@src/domain.objects/Reviewer/ReviewerReflectManifest';
+import { ReviewerReflectManifestOperation } from '@src/domain.objects/Reviewer/ReviewerReflectManifestOperation';
 
 import { enumFilesFromGlob } from '../../review/enumFilesFromGlob';
 

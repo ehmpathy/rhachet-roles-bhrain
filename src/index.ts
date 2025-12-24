@@ -1,1 +1,1 @@
-export * from './contract/sdk';
+export * from '@src/contract/sdk';

@@ -1,7 +1,7 @@
 import type {
   ReviewerReflectCostMetrics,
   ReviewerReflectTokenMetrics,
-} from '@src/domain.objects/ReflectMetrics';
+} from '@src/domain.objects/Reviewer/ReviewerReflectMetrics';
 
 /**
  * .what = computes actual metrics from brain responses

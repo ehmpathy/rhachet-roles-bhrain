@@ -6,9 +6,8 @@ import { given, then, usePrep, when } from 'test-fns';
 import { genContextLogTrail } from '@src/.test/genContextLogTrail';
 import { genContextStitchTrail } from '@src/.test/genContextStitchTrail';
 import { getContextOpenAI } from '@src/.test/getContextOpenAI';
+import { stepPonder } from '@src/roles/thinker/.scratch/khue.ponder/stepPonder';
 import { getThinkerBriefs } from '@src/roles/thinker/getThinkerBrief';
-
-import { stepPonder } from './stepPonder';
 
 jest.setTimeout(toMilliseconds({ minutes: 5 }));
 

@@ -1,4 +1,4 @@
-import { genGitHubFileUrl } from '../../git/genGitHubFileUrl';
+import { genGitHubFileUrl } from '@src/domain.operations/git/genGitHubFileUrl';
 
 /**
  * .what = generates citations.md content from feedback files

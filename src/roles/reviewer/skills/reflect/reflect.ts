@@ -2,7 +2,7 @@ import * as fs from 'fs/promises';
 import { BadRequestError } from 'helpful-errors';
 import * as path from 'path';
 
-import type { ReviewerReflectMetrics } from '@src/domain.objects/ReflectMetrics';
+import type { ReviewerReflectMetrics } from '@src/domain.objects/Reviewer/ReviewerReflectMetrics';
 import { getGitRemoteUrl } from '@src/domain.operations/git/getGitRemoteUrl';
 import { createDraftDirectory } from '@src/domain.operations/reflect/createDraftDirectory';
 import {
