@@ -89,9 +89,9 @@ if (requiresTestDb) {
  */
 if (!process.env.OPENAI_API_KEY)
   throw new Error(
-    'OPENAI_API_KEY not set. please set it to run integration tests',
+    'OPENAI_API_KEY not set. set via `source .agent/repo=.this/role=any/skills/use.apikeys.sh && npm run test:integration --`',
   );
 if (!process.env.ANTHROPIC_API_KEY)
   throw new Error(
-    'ANTHROPIC_API_KEY not set. please set it to run integration tests',
+    'ANTHROPIC_API_KEY not set. set via `source .agent/repo=.this/role=any/skills/use.apikeys.sh && npm run test:integration --',
   );
