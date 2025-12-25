@@ -1,0 +1,144 @@
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
+
+exports[`compileReflectStep1Prompt snapshot should match snapshot for hard mode prompt 1`] = `
+"# objective
+
+propose rules from feedback citations.
+
+extract generalized insights from the feedback and propose them as rule files.
+do NOT consult any existing rules - propose with fresh perspective.
+
+IMPORTANT: you MUST write rule files using the Write tool. do NOT ask clarifying questions.
+if feedback is unclear, skip it - only create rules for clear patterns.
+
+# citations
+
+# citations
+- [feedback](https://github.com/example)
+
+# feedback content
+
+## .behavior/v2025_01_01.feature/[feedback].v1.[given].by_human.md
+
+\`\`\`
+# feedback on pull request #42
+
+## context
+
+reviewing implementation of user authentication feature
+
+## observations
+
+### arrow functions
+
+the code uses \`function\` keyword instead of arrow functions in several places:
+
+\`\`\`ts
+function validateUser(user: User) {
+  return user.isActive;
+}
+\`\`\`
+
+this should be:
+
+\`\`\`ts
+const validateUser = (input: { user: User }) => {
+  return input.user.isActive;
+};
+\`\`\`
+
+arrow functions are cleaner and align with our codebase style. also, using destructured input objects makes the function signature self-documenting.
+
+### error handling
+
+saw several try/catch blocks that silently swallow errors:
+
+\`\`\`ts
+try {
+  await saveUser(user);
+} catch (error) {
+  console.log('error');
+}
+\`\`\`
+
+this is dangerous - we lose the actual error information. prefer fail-fast patterns with helpful errors.
+
+## summary
+
+overall good progress, but need to align with codebase conventions.
+
+\`\`\`
+
+# instructions
+
+1. analyze the feedback citations and content
+2. identify patterns and generalizable insights
+3. propose rules as \`rule.$directive.$topic.md\` files
+4. each rule must include:
+   - # tldr section with ## severity, .what summary, .why rationale
+   - ---\\n---\\n--- separator
+   - # deets section with ## .citations which contain a github url and relevant excerpt
+5. directives: forbid (blocker), require (blocker), avoid (nitpick), prefer (nitpick)
+6. consolidate multiple feedback citations into single rule where applicable
+7. be thorough - include code examples and detailed explanations where helpful
+
+# output
+
+use the Write tool to write each rule file to: /tmp/draft/pure/
+
+after writing all rules, respond with a JSON summary:
+\`\`\`json
+{
+  "rules": [
+    { "name": "rule.forbid.example.md" },
+    { "name": "rule.require.other.md" }
+  ]
+}
+\`\`\`
+"
+`;
+
+exports[`compileReflectStep1Prompt snapshot should match snapshot for soft mode prompt 1`] = `
+"# objective
+
+propose rules from feedback citations.
+
+extract generalized insights from the feedback and propose them as rule files.
+do NOT consult any existing rules - propose with fresh perspective.
+
+IMPORTANT: you MUST write rule files using the Write tool. do NOT ask clarifying questions.
+if feedback is unclear, skip it - only create rules for clear patterns.
+
+# citations
+
+# citations
+- [feedback](https://github.com/example)
+
+# instructions
+
+1. analyze the feedback citations
+2. identify patterns and generalizable insights
+3. propose rules as \`rule.$directive.$topic.md\` files
+4. each rule must include:
+   - # tldr section with ## severity, .what summary, .why rationale
+   - ---\\n---\\n--- separator
+   - # deets section with ## .citations which contain a github url and relevant excerpt
+5. directives: forbid (blocker), require (blocker), avoid (nitpick), prefer (nitpick)
+6. consolidate multiple feedback citations into single rule where applicable
+7. be thorough - include code examples and detailed explanations where helpful
+
+# output
+
+use the Write tool to write each rule file to: /tmp/draft/pure/
+
+after writing all rules, respond with a JSON summary:
+\`\`\`json
+{
+  "rules": [
+    { "name": "rule.forbid.example.md" },
+    { "name": "rule.require.other.md" }
+  ]
+}
+\`\`\`
+"
+`;

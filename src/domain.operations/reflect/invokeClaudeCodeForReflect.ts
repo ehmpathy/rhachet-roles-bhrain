@@ -45,12 +45,33 @@ export interface ReflectStep2Response {
 export const invokeClaudeCodeForReflect = async <T>(input: {
   prompt: string;
   cwd?: string;
+  rapid?: boolean;
 }): Promise<{ response: T; usage: ReflectClaudeUsage }> => {
+  // determine model and settings based on rapid flag
+  // note: haiku needs more turns than sonnet since it reasons in smaller steps
+  const model = input.rapid ? 'haiku' : 'sonnet';
+  const maxTurns = input.rapid ? '50' : '10';
+
   // invoke claude-code cli via stdin to avoid E2BIG on large prompts
   const output = await new Promise<string>((resolve, reject) => {
-    const child = spawn('claude', ['-p', '-', '--output-format', 'json'], {
-      cwd: input.cwd,
-    });
+    const child = spawn(
+      'claude',
+      [
+        '-p',
+        '-',
+        '--output-format',
+        'json',
+        '--allowedTools',
+        'Write',
+        '--model',
+        model,
+        '--max-turns',
+        maxTurns,
+      ],
+      {
+        cwd: input.cwd,
+      },
+    );
 
     let stdout = '';
     let stderr = '';

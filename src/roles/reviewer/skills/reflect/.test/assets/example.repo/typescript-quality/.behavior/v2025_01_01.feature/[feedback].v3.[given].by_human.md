@@ -49,6 +49,24 @@ given('[case1] user exists', () => {
 });
 ```
 
+### arrow functions (again)
+
+also noticed test files using `function` keyword:
+
+```ts
+// bad
+function setupTestUser() {
+  return { id: '123', name: 'test' };
+}
+
+// good
+const setupTestUser = () => {
+  return { id: '123', name: 'test' };
+};
+```
+
+this came up in PR #42 as well - we should always use arrow functions.
+
 ## summary
 
 proper test structure makes tests more readable and maintainable.

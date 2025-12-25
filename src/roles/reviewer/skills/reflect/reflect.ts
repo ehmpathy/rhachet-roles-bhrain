@@ -98,9 +98,11 @@ export const stepReflect = async (input: {
   target: string;
   mode?: 'soft' | 'hard';
   force?: boolean;
+  rapid?: boolean;
 }): Promise<StepReflectResult> => {
   const mode = input.mode ?? 'soft';
   const force = input.force ?? false;
+  const rapid = input.rapid ?? false;
 
   // validate source directory and get feedback files
   const { feedbackFiles } = await validateSourceDirectory({
@@ -178,24 +180,23 @@ export const stepReflect = async (input: {
     message: '⛏️  step 1: propose pure rules from feedback...',
     operation: async () => {
       // invoke claude-code with step 1 prompt
+      // model writes rules directly to pureDir via Write tool
       const { response, usage } =
         await invokeClaudeCodeForReflect<ReflectStep1Response>({
           prompt: step1Prompt.prompt,
           cwd: input.source,
+          rapid,
         });
 
-      // write each proposed rule to pureDir
-      for (const rule of response.rules) {
-        await fs.writeFile(
-          path.join(pureDir, rule.name),
-          rule.content,
-          'utf-8',
-        );
-      }
+      // count rules written by enumerating pureDir
+      const pureFiles = await fs.readdir(pureDir).catch(() => []);
+      const rulesProposed = pureFiles.filter((f) =>
+        f.startsWith('rule.'),
+      ).length;
 
       return {
         tokens: usage,
-        rulesProposed: response.rules.length,
+        rulesProposed: rulesProposed || response.rules?.length || 0,
       };
     },
   });
@@ -217,6 +218,7 @@ export const stepReflect = async (input: {
         await invokeClaudeCodeForReflect<ReflectStep2Response>({
           prompt: step2PromptFinal.prompt,
           cwd: input.target,
+          rapid,
         });
 
       // write manifest.json to draftDir for reference
@@ -283,9 +285,9 @@ export const stepReflect = async (input: {
       └─ total: $${realized.total.cost.total.toFixed(4)}
 
 🌊 output
-   ├─ draft: ${path.relative(process.cwd(), draftDir)}
-   ├─ pure: ${path.relative(process.cwd(), pureDir)}
-   └─ sync: ${path.relative(process.cwd(), syncDir)}
+   ├─ draft: ${draftDir.startsWith(process.cwd()) ? path.relative(process.cwd(), draftDir) : draftDir}
+   ├─ pure: ${pureDir.startsWith(process.cwd()) ? path.relative(process.cwd(), pureDir) : pureDir}
+   └─ sync: ${syncDir.startsWith(process.cwd()) ? path.relative(process.cwd(), syncDir) : syncDir}
 
 🪨 results
    ├─ created: ${blendResults.created}
@@ -333,6 +335,7 @@ if (require.main === module) {
   // parse optional arguments
   const mode = (parsed.mode as 'soft' | 'hard') ?? 'soft';
   const force = parsed.force === 'true';
+  const rapid = parsed.rapid === 'true';
 
   // execute reflect
   void (async () => {
@@ -342,6 +345,7 @@ if (require.main === module) {
         target: parsed.target!,
         mode,
         force,
+        rapid,
       });
     } catch (error) {
       if (error instanceof BadRequestError) {

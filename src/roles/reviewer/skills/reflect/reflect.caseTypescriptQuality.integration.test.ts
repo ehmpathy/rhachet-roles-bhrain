@@ -1,0 +1,84 @@
+import * as fs from 'fs/promises';
+import * as path from 'path';
+import { given, then, useBeforeAll, when } from 'test-fns';
+
+import { setupSourceRepo, setupTargetDir } from './.test/setup';
+import { stepReflect } from './reflect';
+
+describe('stepReflect.caseTypescriptQuality', () => {
+  // increase timeout for claude-code invocations (3 minutes)
+  jest.setTimeout(180000);
+
+  given('[case1] typescript-quality feedback with valid target', () => {
+    const scene = useBeforeAll(async () => {
+      const { repoDir: sourceDir } =
+        await setupSourceRepo('typescript-quality');
+      const { targetDir } = await setupTargetDir();
+
+      // run stepReflect once, share result across all then blocks
+      const result = await stepReflect({
+        source: sourceDir,
+        target: targetDir,
+        mode: 'soft',
+        rapid: true,
+      });
+
+      return { sourceDir, targetDir, result };
+    });
+    afterAll(async () => {
+      await fs.rm(scene.sourceDir, { recursive: true, force: true });
+      await fs.rm(scene.targetDir, { recursive: true, force: true });
+    });
+
+    when('[t0] stepReflect completes', () => {
+      then('creates draft directory structure', async () => {
+        expect(scene.result.draft.dir).toContain('.draft/v');
+        expect(scene.result.draft.pureDir).toContain('/pure');
+        expect(scene.result.draft.syncDir).toContain('/sync');
+      });
+
+      then('proposes rules from feedback', async () => {
+        const pureFiles = await fs.readdir(scene.result.draft.pureDir);
+        expect(pureFiles.length).toBeGreaterThan(0);
+        expect(pureFiles.some((f) => f.startsWith('rule.'))).toBe(true);
+      });
+
+      then('creates manifest.json in draft directory', async () => {
+        const manifestPath = path.join(scene.result.draft.dir, 'manifest.json');
+        const manifestContent = await fs.readFile(manifestPath, 'utf-8');
+        const manifest = JSON.parse(manifestContent);
+
+        expect(manifest.timestamp).toBeDefined();
+        expect(manifest.pureRules).toBeDefined();
+        expect(Array.isArray(manifest.pureRules)).toBe(true);
+      });
+
+      then('returns metrics with expected and realized values', async () => {
+        expect(scene.result.metrics.expected.tokens).toBeGreaterThan(0);
+        expect(scene.result.metrics.expected.cost).toBeGreaterThan(0);
+        expect(
+          scene.result.metrics.realized.total.tokens.input,
+        ).toBeGreaterThan(0);
+        expect(
+          scene.result.metrics.realized.total.tokens.output,
+        ).toBeGreaterThan(0);
+        expect(scene.result.metrics.realized.total.cost.total).toBeGreaterThan(
+          0,
+        );
+      });
+
+      then('returns results with operation counts', async () => {
+        const totalOps =
+          scene.result.results.created +
+          scene.result.results.updated +
+          scene.result.results.appended +
+          scene.result.results.omitted;
+        expect(totalOps).toBeGreaterThan(0);
+      });
+
+      then('files count matches feedback files', async () => {
+        expect(scene.result.metrics.files.feedbackCount).toBe(3);
+      });
+    });
+  });
+});

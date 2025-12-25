@@ -200,8 +200,12 @@ for JOB_ID in $FAILED_JOB_IDS; do
     # show full logs for failed job
     gh api --method GET "repos/$REPO/actions/jobs/$JOB_ID/logs"
   else
-    # filter to show only failures
-    gh api --method GET "repos/$REPO/actions/jobs/$JOB_ID/logs" | grep -E "(FAIL |✕|Error:|Cannot find|##\[error\])" | head -100
+    # capture error sections: from FAIL until next PASS or test summary
+    gh api --method GET "repos/$REPO/actions/jobs/$JOB_ID/logs" | awk '
+      /FAIL / { printing=1 }
+      /PASS |Ran all test suites/ { printing=0 }
+      printing { print }
+    '
   fi
   echo ""
 done

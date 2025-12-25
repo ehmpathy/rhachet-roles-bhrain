@@ -48,7 +48,7 @@ ${existingRuleFiles.length === 0 ? 'no existing rules in target directory' : exi
   // pure proposals section
   sections.push(`# pure proposals
 
-${pureProposalFiles.map((f) => `- ${f}`).join('\n')}
+${pureProposalFiles.length === 0 ? 'no pure proposals found (step 1 may not have produced rules)' : pureProposalFiles.map((f) => `- ${f}`).join('\n')}
 `);
 
   // include content in hard mode
