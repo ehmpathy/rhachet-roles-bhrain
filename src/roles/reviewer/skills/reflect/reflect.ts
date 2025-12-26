@@ -210,9 +210,9 @@ export const stepReflect = async (input: {
     rapid,
   });
 
-  // step 2: blend proposals with existing rules
+  // step 2: blend proposals with prior rules
   const step2Result = await withSpinner({
-    message: '🪨 step 2: blend proposals with existing rules...',
+    message: '🪨 step 2: blend proposals with prior rules...',
     operation: async () => {
       // invoke claude-code with step 2 prompt
       // note: model writes manifest.json directly via Write tool

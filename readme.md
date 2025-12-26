@@ -144,3 +144,55 @@ produces
    ├─ logs: .log/bhrain/review/2025-12-23T00-39-00-673Z
    └─ review: .review/bhrain/v2025-12-23T00-39-00-645Z/[feedback].[given].by_robot.md
 ```
+
+## `run --repo bhrain --skill reflect`
+
+extracts rules from feedback files and proposes them to a target directory. uses a two-step process: first proposes pure rules from feedback, then blends proposals with prior rules in the target.
+
+```sh
+npx rhachet run --repo bhrain --skill reflect --source /path/to/feedback --target ./briefs/practices
+```
+
+produces
+
+```
+🌊 skill "reflect" from repo=bhrain role=reviewer
+
+🔭 metrics.expected
+   ├─ files
+   │  └─ feedback: 2
+   ├─ tokens
+   │  ├─ estimate: 1,102
+   │  └─ context: 0.55%
+   └─ cost
+      └─ estimate: $0.0060
+
+⛏️  step 1: propose pure rules from feedback...
+   └─ elapsed: 38s ✓
+
+🪨 step 2: blend proposals with prior rules...
+   └─ elapsed: 30s ✓
+   └─ CREATE: practices/writing.prose/rule.avoid.gerund-dominated-sentences.md
+   └─ CREATE: practices/writing.prose/rule.avoid.passive-voice-overuse.md
+   └─ CREATE: practices/writing.prose/rule.avoid.unclear-wordplay.md
+   └─ CREATE: practices/writing.clarity/rule.require.explain-technical-terms.md
+   └─ CREATE: practices/writing.structure/rule.require.one-idea-per-paragraph.md
+
+✨ metrics.realized
+   ├─ tokens
+   │  ├─ input: 33
+   │  └─ output: 5,001
+   └─ cost
+      └─ total: $0.2036
+
+🌊 output
+   ├─ draft: .draft/v2025-12-26T22-11-28-309Z
+   ├─ pure: .draft/v2025-12-26T22-11-28-309Z/pure
+   └─ sync: .draft/v2025-12-26T22-11-28-309Z/sync
+
+🪨 results
+   ├─ created: 5
+   ├─ updated: 0
+   ├─ appended: 0
+   └─ omitted: 0
+```
