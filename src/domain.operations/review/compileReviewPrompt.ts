@@ -62,14 +62,25 @@ ${targetSection}
 
 ## output format
 
-emit your review as a JSON object with the following structure:
+IMPORTANT: output your review as text directly. do not use any tools to write files. your final response must be the JSON object below, printed as plain text.
 
 \`\`\`json
 {
-  "issues": [
+  "done": true,
+  "blockers": [
     {
-      "type": "blocker" | "nitpick",
-      "message": "description of the issue",
+      "rule": "path/to/rule.md",
+      "title": "short title for the issue",
+      "description": "detailed multiline explanation of the issue.\\ninclude context about why this violates the rule.\\nbe specific about what needs to change.",
+      "file": "path/to/file.ts",
+      "line": 42
+    }
+  ],
+  "nitpicks": [
+    {
+      "rule": "path/to/rule.md",
+      "title": "short title for the issue",
+      "description": "detailed multiline explanation of the issue.\\ninclude context about why this violates the rule.\\nbe specific about what needs to change.",
       "file": "path/to/file.ts",
       "line": 42
     }
@@ -77,7 +88,7 @@ emit your review as a JSON object with the following structure:
 }
 \`\`\`
 
-emit blockers first, then nitpicks. if no issues found, emit an empty issues array.
+if no issues found, output: \`{"done": true, "blockers": [], "nitpicks": []}\`
 `;
 
   // estimate tokens

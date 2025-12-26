@@ -8,39 +8,50 @@ describe('formatReviewOutput', () => {
       then('formats according to template', () => {
         const output = formatReviewOutput({
           response: {
-            issues: [
+            done: true,
+            blockers: [
               {
-                type: 'blocker',
-                message: 'console.log found',
+                rule: 'rules/no-console.md',
+                title: 'console.log found in production code',
+                description:
+                  'console.log statements should not be in production code.\nThey can leak sensitive information and clutter logs.',
                 file: 'src/invalid.ts',
                 line: 5,
               },
+            ],
+            nitpicks: [
               {
-                type: 'nitpick',
-                message: 'prefer const',
+                rule: 'rules/prefer-const.md',
+                title: 'prefer const over let',
+                description:
+                  'Use const for variables that are never reassigned.\nThis makes intent clearer.',
                 file: 'src/invalid.ts',
                 line: 10,
               },
             ],
           },
         });
-        expect(output).toContain('# blocker.1');
-        expect(output).toContain('console.log found');
-        expect(output).toContain('# nitpick.1');
-        expect(output).toContain('prefer const');
+        expect(output).toContain('# blocker.1: console.log found');
+        expect(output).toContain('**rule**: rules/no-console.md');
+        expect(output).toContain('console.log statements should not be');
+        expect(output).toContain('# nitpick.1: prefer const');
+        expect(output).toContain('**rule**: rules/prefer-const.md');
       });
 
       then('includes file location', () => {
         const output = formatReviewOutput({
           response: {
-            issues: [
+            done: true,
+            blockers: [
               {
-                type: 'blocker',
-                message: 'issue found',
+                rule: 'rules/example.md',
+                title: 'issue found',
+                description: 'detailed description of the issue',
                 file: 'src/file.ts',
                 line: 42,
               },
             ],
+            nitpicks: [],
           },
         });
         expect(output).toContain('src/file.ts:42');
@@ -48,12 +59,23 @@ describe('formatReviewOutput', () => {
     });
 
     when('[t1] blockers appear before nitpicks', () => {
-      then('blockers are output first regardless of input order', () => {
+      then('blockers are output first', () => {
         const output = formatReviewOutput({
           response: {
-            issues: [
-              { type: 'nitpick', message: 'nitpick first in input' },
-              { type: 'blocker', message: 'blocker second in input' },
+            done: true,
+            blockers: [
+              {
+                rule: 'rules/blocker.md',
+                title: 'blocker title',
+                description: 'blocker description',
+              },
+            ],
+            nitpicks: [
+              {
+                rule: 'rules/nitpick.md',
+                title: 'nitpick title',
+                description: 'nitpick description',
+              },
             ],
           },
         });
@@ -67,16 +89,30 @@ describe('formatReviewOutput', () => {
       then('numbers them sequentially', () => {
         const output = formatReviewOutput({
           response: {
-            issues: [
-              { type: 'blocker', message: 'first blocker' },
-              { type: 'blocker', message: 'second blocker' },
-              { type: 'blocker', message: 'third blocker' },
+            done: true,
+            blockers: [
+              {
+                rule: 'rules/a.md',
+                title: 'first blocker',
+                description: 'first description',
+              },
+              {
+                rule: 'rules/b.md',
+                title: 'second blocker',
+                description: 'second description',
+              },
+              {
+                rule: 'rules/c.md',
+                title: 'third blocker',
+                description: 'third description',
+              },
             ],
+            nitpicks: [],
           },
         });
-        expect(output).toContain('# blocker.1');
-        expect(output).toContain('# blocker.2');
-        expect(output).toContain('# blocker.3');
+        expect(output).toContain('# blocker.1:');
+        expect(output).toContain('# blocker.2:');
+        expect(output).toContain('# blocker.3:');
       });
     });
   });
@@ -85,7 +121,7 @@ describe('formatReviewOutput', () => {
     when('[t0] response is clean', () => {
       then('outputs success message', () => {
         const output = formatReviewOutput({
-          response: { issues: [] },
+          response: { done: true, blockers: [], nitpicks: [] },
         });
         expect(output).toContain('no issues found');
       });
@@ -97,11 +133,19 @@ describe('formatReviewOutput', () => {
       then('omits location line', () => {
         const output = formatReviewOutput({
           response: {
-            issues: [{ type: 'blocker', message: 'general issue' }],
+            done: true,
+            blockers: [
+              {
+                rule: 'rules/general.md',
+                title: 'general issue',
+                description: 'this is a general issue without a specific file',
+              },
+            ],
+            nitpicks: [],
           },
         });
-        expect(output).toContain('# blocker.1');
-        expect(output).toContain('general issue');
+        expect(output).toContain('# blocker.1: general issue');
+        expect(output).toContain('**rule**: rules/general.md');
         expect(output).not.toContain('**location**');
       });
     });

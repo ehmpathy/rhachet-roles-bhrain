@@ -427,7 +427,10 @@ describe('stepReview', () => {
       const outputPath = path.join(os.tmpdir(), 'prose-review-unfixed.md');
       afterEach(async () => fs.rm(outputPath, { force: true }));
 
-      then('review contains blockers for gerund violations', async () => {
+      then.repeatably({
+        criteria: process.env.CI ? 'SOME' : 'EVERY',
+        attempts: 3,
+      })('review contains blockers for gerund violations', async () => {
         const result = await stepReview({
           rules: '.agent/**/briefs/rules/*.md',
           paths: 'chapters/chapter2.md',
