@@ -1,6 +1,6 @@
 import type { InvokeHooks } from 'rhachet';
 
-import { execTranslateDocOutputPath } from './execTranslateDocOutputPath';
+import { execTranslateDocOutputPath } from '@src/domain.operations/hooks/execTranslateDocOutputPath';
 
 export const getInvokeHooks = (): InvokeHooks => ({
   onInvokeAskInput: [

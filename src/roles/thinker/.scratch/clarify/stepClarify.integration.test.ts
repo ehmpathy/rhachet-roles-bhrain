@@ -6,8 +6,7 @@ import { given, then, usePrep, when } from 'test-fns';
 import { genContextLogTrail } from '@src/.test/genContextLogTrail';
 import { genContextStitchTrail } from '@src/.test/genContextStitchTrail';
 import { getContextOpenAI } from '@src/.test/getContextOpenAI';
-
-import { stepClarify } from './stepClarify';
+import { stepClarify } from '@src/roles/thinker/.scratch/clarify/stepClarify';
 
 jest.setTimeout(toMilliseconds({ minutes: 5 }));
 

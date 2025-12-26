@@ -33,7 +33,6 @@
     "test:types": "tsc -p ./tsconfig.json --noEmit",
     "test:format": "npm run test:format:biome",
     "test:lint:deps": "npx depcheck -c ./.depcheckrc.yml",
-    "test:integration:hold": "jest -c ./jest.integration.config.ts --forceExit --verbose --passWithNoTests $([ -z $THOROUGH ] && echo '--changedSince=main')",
     "test:lint:biome": "biome check --diagnostic-level=error",
     "test:lint:biome:all": "biome check",
     "test:lint": "npm run test:lint:biome && npm run test:lint:deps",
@@ -52,6 +51,7 @@
     "prepare:rhachet": "rhachet init && rhachet roles link --role mechanic && rhachet roles link --role behaver && rhachet roles init --role mechanic"
   },
   "dependencies": {
+    "@anthropic-ai/sdk": "0.51.0",
     "@ehmpathy/as-command": "1.0.3",
     "@ehmpathy/uni-time": "1.8.1",
     "as-procedure": "1.1.7",
@@ -67,7 +67,9 @@
     "simple-in-memory-cache": "0.4.0",
     "type-fns": "1.21.0",
     "with-simple-caching": "0.14.2",
-    "wrapper-fns": "1.1.0"
+    "wrapper-fns": "1.1.0",
+    "zod": "3.25.76",
+    "zod-to-json-schema": "3.25.0"
   },
   "devDependencies": {
     "@anthropic-ai/claude-code": "2.0.76",

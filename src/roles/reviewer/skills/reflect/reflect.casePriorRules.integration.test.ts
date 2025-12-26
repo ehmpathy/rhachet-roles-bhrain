@@ -2,7 +2,7 @@ import * as fs from 'fs/promises';
 import * as path from 'path';
 import { given, then, useBeforeAll, when } from 'test-fns';
 
-import type { ReviewerReflectManifest } from '@src/domain.objects/ReflectManifest';
+import type { ReviewerReflectManifest } from '@src/domain.objects/Reviewer/ReviewerReflectManifest';
 
 import { setupSourceRepo, setupTargetDir } from './.test/setup';
 import { stepReflect } from './reflect';

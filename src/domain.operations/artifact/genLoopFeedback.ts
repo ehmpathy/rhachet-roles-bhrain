@@ -15,7 +15,7 @@ import {
 import type { Artifact } from 'rhachet-artifact';
 import type { GitFile } from 'rhachet-artifact-git';
 
-import { genStepGrabCallerFeedbackToArtifact } from './genStepGrabCallerFeedbackToArtifact';
+import { genStepGrabCallerFeedbackToArtifact } from '@src/domain.operations/artifact/genStepGrabCallerFeedbackToArtifact';
 
 export const genLoopFeedback = <
   TStitchee extends string,

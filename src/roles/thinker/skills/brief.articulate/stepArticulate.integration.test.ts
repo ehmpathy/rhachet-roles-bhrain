@@ -7,8 +7,7 @@ import { genContextLogTrail } from '@src/.test/genContextLogTrail';
 import { genContextStitchTrail } from '@src/.test/genContextStitchTrail';
 import { getContextOpenAI } from '@src/.test/getContextOpenAI';
 import { getThinkerBriefs } from '@src/roles/thinker/getThinkerBrief';
-
-import { stepArticulate } from './stepArticulate';
+import { stepArticulate } from '@src/roles/thinker/skills/brief.articulate/stepArticulate';
 
 jest.setTimeout(toMilliseconds({ minutes: 5 }));
 

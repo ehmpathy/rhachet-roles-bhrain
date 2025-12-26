@@ -1,10 +1,10 @@
 import { BadRequestError } from 'helpful-errors';
 
-import { ReviewerReflectManifestOperation } from '@src/domain.objects/ManifestOperation';
 import {
   ReviewerReflectManifest,
   type ReviewerReflectManifestEntry,
-} from '@src/domain.objects/ReflectManifest';
+} from '@src/domain.objects/Reviewer/ReviewerReflectManifest';
+import { ReviewerReflectManifestOperation } from '@src/domain.objects/Reviewer/ReviewerReflectManifestOperation';
 
 /**
  * .what = parses manifest.json content to ReflectManifest

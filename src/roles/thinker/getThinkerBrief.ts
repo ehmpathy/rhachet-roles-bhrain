@@ -1,7 +1,7 @@
 import type { Artifact } from 'rhachet-artifact';
 import { type GitFile, genArtifactGitFile } from 'rhachet-artifact-git';
 
-import type { BriefOptionThinker } from './getThinkerBrief.Options.codegen';
+import type { BriefOptionThinker } from '@src/roles/thinker/getThinkerBrief.Options.codegen';
 
 /**
  * .what = loads an artifact:brief distilled for the mechanic to reference, from the `briefs` directory

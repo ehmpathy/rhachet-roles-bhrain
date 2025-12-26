@@ -13,11 +13,14 @@ on:
         type: string
         default: "us-east-1"
     secrets:
-      ANTHROPIC_API_KEY:
-        description: "api key for anthropic claude, required for integration tests that invoke claude-code"
-        required: false
       OPENAI_API_KEY:
-        description: "api key for openai, required for integration tests that invoke openai"
+        description: "openai api key for llm integration tests"
+        required: false
+      ANTHROPIC_API_KEY:
+        description: "anthropic api key for llm integration tests"
+        required: false
+      TAVILY_API_KEY:
+        description: "tavily api key for web search integration tests"
         required: false
 
 permissions:
@@ -174,8 +177,9 @@ jobs:
       - name: test:integration
         run: THOROUGH=true npm run test:integration
         env:
-          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
           OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+          TAVILY_API_KEY: ${{ secrets.TAVILY_API_KEY }}
 
   test-acceptance-locally:
     runs-on: ubuntu-24.04
