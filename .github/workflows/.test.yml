@@ -93,16 +93,16 @@ jobs:
   # placeholder job to align test-* jobs with test-shards-integration column
   # note: github actions visualization has no column positioning controls;
   #       this job exists solely to push test-* jobs one column to the right
-  shards-omit:
+  test-shards-omit:
     runs-on: ubuntu-24.04
     needs: [install]
     steps:
       - run: echo "👌 placeholder for column alignment"
 
-  # run tests in parallel (depend on shards-omit for visual alignment)
+  # run tests in parallel (depend on test-shards-omit for visual alignment)
   test-commits:
     runs-on: ubuntu-24.04
-    needs: [install, shards-omit]
+    needs: [install, test-shards-omit]
     steps:
       - name: checkout
         uses: actions/checkout@v4
@@ -125,7 +125,7 @@ jobs:
 
   test-types:
     runs-on: ubuntu-24.04
-    needs: [install, shards-omit]
+    needs: [install, test-shards-omit]
     steps:
       - name: checkout
         uses: actions/checkout@v4
@@ -146,7 +146,7 @@ jobs:
 
   test-format:
     runs-on: ubuntu-24.04
-    needs: [install, shards-omit]
+    needs: [install, test-shards-omit]
     steps:
       - name: checkout
         uses: actions/checkout@v4
@@ -170,7 +170,7 @@ jobs:
 
   test-lint:
     runs-on: ubuntu-24.04
-    needs: [install, shards-omit]
+    needs: [install, test-shards-omit]
     steps:
       - name: checkout
         uses: actions/checkout@v4
@@ -191,7 +191,7 @@ jobs:
 
   test-unit:
     runs-on: ubuntu-24.04
-    needs: [install, shards-omit]
+    needs: [install, test-shards-omit]
     steps:
       - name: checkout
         uses: actions/checkout@v4
@@ -330,7 +330,7 @@ jobs:
 
   test-acceptance-locally:
     runs-on: ubuntu-24.04
-    needs: [install, shards-omit]
+    needs: [install, test-shards-omit]
     steps:
       - name: checkout
         uses: actions/checkout@v4
