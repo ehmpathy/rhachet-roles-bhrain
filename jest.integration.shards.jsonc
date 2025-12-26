@@ -1,0 +1,24 @@
+{
+  // run these slowpokes individually, cause they're the longest poles in the wall time
+  "explicit": [
+    {
+      "patterns": [
+        "src/roles/reviewer/skills/reflect/reflect.casePriorRules.sonnet.integration.test.ts"
+      ]
+    },
+    {
+      "patterns": [
+        "src/roles/reviewer/skills/reflect/reflect.casePriorRules.haiku.integration.test.ts"
+      ]
+    },
+    {
+      "patterns": [
+        "src/roles/reviewer/skills/reflect/reflect.caseTypescriptQuality.integration.test.ts"
+      ]
+    }
+  ],
+  // run the rest on one shard
+  "dynamic": {
+    "shards": 1
+  }
+}

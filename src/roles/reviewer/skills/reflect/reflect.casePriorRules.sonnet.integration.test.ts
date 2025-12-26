@@ -7,7 +7,7 @@ import type { ReviewerReflectManifest } from '@src/domain.objects/Reviewer/Revie
 import { setupSourceRepo, setupTargetDir } from './.test/setup';
 import { stepReflect } from './reflect';
 
-describe('stepReflect.casePriorRules.default', () => {
+describe('stepReflect.casePriorRules.sonnet', () => {
   // increase timeout for claude-code invocations (5 minutes for sonnet)
   jest.setTimeout(300000);
 
