@@ -60,10 +60,9 @@ describe('compileReflectStep1Prompt', () => {
       });
 
       expect(result.prompt).toContain('# instructions');
-      expect(result.prompt).toContain('# output format');
+      expect(result.prompt).toContain('# output');
       expect(result.prompt).toContain('"rules"');
       expect(result.prompt).toContain('"name"');
-      expect(result.prompt).toContain('"content"');
     });
   });
 
@@ -97,6 +96,38 @@ describe('compileReflectStep1Prompt', () => {
       expect(result.tokenEstimate).toBeGreaterThan(0);
       // rough estimate: ~4 chars per token
       expect(result.tokenEstimate).toBeLessThan(result.prompt.length);
+    });
+  });
+
+  describe('snapshot', () => {
+    it('should match snapshot for soft mode prompt', async () => {
+      const result = await compileReflectStep1Prompt({
+        feedbackFiles: [
+          '.behavior/v2025_01_01.feature/[feedback].v1.[given].by_human.md',
+        ],
+        citationsMarkdown:
+          '# citations\n- [feedback](https://github.com/example)',
+        draftDir: '/tmp/draft',
+        cwd: path.join(ASSETS_DIR, 'typescript-quality'),
+        mode: 'soft',
+      });
+
+      expect(result.prompt).toMatchSnapshot();
+    });
+
+    it('should match snapshot for hard mode prompt', async () => {
+      const result = await compileReflectStep1Prompt({
+        feedbackFiles: [
+          '.behavior/v2025_01_01.feature/[feedback].v1.[given].by_human.md',
+        ],
+        citationsMarkdown:
+          '# citations\n- [feedback](https://github.com/example)',
+        draftDir: '/tmp/draft',
+        cwd: path.join(ASSETS_DIR, 'typescript-quality'),
+        mode: 'hard',
+      });
+
+      expect(result.prompt).toMatchSnapshot();
     });
   });
 });

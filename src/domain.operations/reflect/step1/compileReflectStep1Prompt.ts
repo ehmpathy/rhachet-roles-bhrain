@@ -24,6 +24,9 @@ propose rules from feedback citations.
 
 extract generalized insights from the feedback and propose them as rule files.
 do NOT consult any existing rules - propose with fresh perspective.
+
+IMPORTANT: you MUST write rule files using the Write tool. do NOT ask clarifying questions.
+if feedback is unclear, skip it - only create rules for clear patterns.
 `);
 
   // citations section
@@ -50,22 +53,21 @@ ${input.citationsMarkdown}
 4. each rule must include:
    - # tldr section with ## severity, .what summary, .why rationale
    - ---\\n---\\n--- separator
-   - # deets section with ## .citations containing the github url and BRIEF excerpt
+   - # deets section with ## .citations which contain a github url and relevant excerpt
 5. directives: forbid (blocker), require (blocker), avoid (nitpick), prefer (nitpick)
 6. consolidate multiple feedback citations into single rule where applicable
-7. IMPORTANT: keep each rule content CONCISE - max 500 characters per rule
+7. be thorough - include code examples and detailed explanations where helpful
 
-# output format
+# output
 
-respond with ONLY a JSON object (no markdown, no explanation):
+use the Write tool to write each rule file to: ${input.draftDir}/pure/
 
+after writing all rules, respond with a JSON summary:
 \`\`\`json
 {
   "rules": [
-    {
-      "name": "rule.forbid.example.md",
-      "content": "# tldr\\n\\n## severity\\nblocker\\n\\n## .what\\n...\\n\\n## .why\\n...\\n\\n---\\n---\\n---\\n\\n# deets\\n\\n## .citations\\n..."
-    }
+    { "name": "rule.forbid.example.md" },
+    { "name": "rule.require.other.md" }
   ]
 }
 \`\`\`

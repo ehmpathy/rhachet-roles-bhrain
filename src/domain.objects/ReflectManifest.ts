@@ -23,9 +23,9 @@ export interface ReviewerReflectManifestEntry {
   syncPath?: string;
 
   /**
-   * path to existing rule in target (if UPDATE/APPEND)
+   * path to rule in target to merge from (if UPDATE/APPEND)
    */
-  existingPath?: string;
+  targetPath?: string;
 
   /**
    * justification for OMIT operations

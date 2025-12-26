@@ -123,7 +123,7 @@ describe('executeManifestOperations', () => {
   });
 
   describe('SET_UPDATE operation', () => {
-    it('should merge pure content with existing rule', async () => {
+    it('should merge pure content with target rule', async () => {
       // create pure rule file
       await fs.writeFile(
         path.join(pureDir, 'rule.require.tests.md'),
@@ -131,7 +131,7 @@ describe('executeManifestOperations', () => {
         'utf-8',
       );
 
-      // create existing rule file
+      // create target rule file
       await fs.mkdir(path.join(targetDir, 'practices'), { recursive: true });
       await fs.writeFile(
         path.join(targetDir, 'practices/rule.require.tests.md'),
@@ -146,7 +146,7 @@ describe('executeManifestOperations', () => {
             path: 'rule.require.tests.md',
             operation: ReviewerReflectManifestOperation.SET_UPDATE,
             syncPath: 'practices/rule.require.tests.md',
-            existingPath: 'practices/rule.require.tests.md',
+            targetPath: 'practices/rule.require.tests.md',
           },
         ],
       });
