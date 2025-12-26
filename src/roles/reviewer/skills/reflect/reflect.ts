@@ -8,7 +8,6 @@ import { createDraftDirectory } from '@src/domain.operations/reflect/createDraft
 import {
   invokeClaudeCodeForReflect,
   type ReflectStep1Response,
-  type ReflectStep2Response,
 } from '@src/domain.operations/reflect/invokeClaudeCodeForReflect';
 import { computeMetricsExpected } from '@src/domain.operations/reflect/metrics/computeMetricsExpected';
 import { computeMetricsRealized } from '@src/domain.operations/reflect/metrics/computeMetricsRealized';
@@ -154,6 +153,7 @@ export const stepReflect = async (input: {
     draftDir,
     pureDir,
     mode,
+    rapid,
   });
   const expected = computeMetricsExpected({
     step1PromptTokens: step1Prompt.tokenEstimate,
@@ -207,6 +207,7 @@ export const stepReflect = async (input: {
     draftDir,
     pureDir,
     mode,
+    rapid,
   });
 
   // step 2: blend proposals with existing rules
@@ -214,20 +215,16 @@ export const stepReflect = async (input: {
     message: '🪨 step 2: blend proposals with existing rules...',
     operation: async () => {
       // invoke claude-code with step 2 prompt
-      const { response, usage } =
-        await invokeClaudeCodeForReflect<ReflectStep2Response>({
-          prompt: step2PromptFinal.prompt,
-          cwd: input.target,
-          rapid,
-        });
+      // note: model writes manifest.json directly via Write tool
+      const { usage } = await invokeClaudeCodeForReflect<{ written: boolean }>({
+        prompt: step2PromptFinal.prompt,
+        cwd: input.target,
+        rapid,
+      });
 
-      // write manifest.json to draftDir for reference
-      const manifestContent = JSON.stringify(response, null, 2);
-      await fs.writeFile(
-        path.join(draftDir, 'manifest.json'),
-        manifestContent,
-        'utf-8',
-      );
+      // read the manifest written by the model
+      const manifestPath = path.join(draftDir, 'manifest.json');
+      const manifestContent = await fs.readFile(manifestPath, 'utf-8');
 
       return {
         tokens: usage,

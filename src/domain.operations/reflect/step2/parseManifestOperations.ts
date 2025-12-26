@@ -72,7 +72,7 @@ export const parseManifestOperations = (input: {
         path: e.path,
         operation: e.operation as ReviewerReflectManifestOperation,
         syncPath: e.syncPath as string | undefined,
-        existingPath: e.existingPath as string | undefined,
+        targetPath: e.targetPath as string | undefined,
         reason: e.reason as string | undefined,
       };
     },

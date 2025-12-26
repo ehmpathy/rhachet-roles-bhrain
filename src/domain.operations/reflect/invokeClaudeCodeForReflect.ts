@@ -1,6 +1,8 @@
 import { spawn } from 'child_process';
 import { BadRequestError, UnexpectedCodePathError } from 'helpful-errors';
 
+import { extractJsonFromResultText } from './extractJsonFromResultText';
+
 /**
  * .what = usage metrics from claude invocation
  * .why = enables cost tracking and optimization
@@ -48,9 +50,9 @@ export const invokeClaudeCodeForReflect = async <T>(input: {
   rapid?: boolean;
 }): Promise<{ response: T; usage: ReflectClaudeUsage }> => {
   // determine model and settings based on rapid flag
-  // note: haiku needs more turns than sonnet since it reasons in smaller steps
+  // note: both models need enough turns to write multiple rules
   const model = input.rapid ? 'haiku' : 'sonnet';
-  const maxTurns = input.rapid ? '50' : '10';
+  const maxTurns = input.rapid ? '50' : '30';
 
   // invoke claude-code cli via stdin to avoid E2BIG on large prompts
   const output = await new Promise<string>((resolve, reject) => {
@@ -153,17 +155,8 @@ export const invokeClaudeCodeForReflect = async <T>(input: {
     );
   })();
 
-  // extract JSON from result text (may be wrapped in markdown code block)
-  const jsonContent = (() => {
-    // try to extract from markdown code block first
-    const codeBlockMatch = resultText.match(/```(?:json)?\s*([\s\S]*?)```/);
-    if (codeBlockMatch) {
-      return codeBlockMatch[1]!.trim();
-    }
-
-    // otherwise treat the whole result as JSON
-    return resultText.trim();
-  })();
+  // extract JSON from result text (may be wrapped in markdown code block or inline backticks)
+  const jsonContent = extractJsonFromResultText({ resultText });
 
   // parse the extracted JSON
   const response = (() => {

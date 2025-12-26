@@ -226,7 +226,7 @@ describe('reflect', () => {
           mode: 'soft',
         });
 
-        expect(prompt).toContain('# existing rules');
+        expect(prompt).toContain('# target rules');
         expect(prompt).toContain('rule.require.tests.md');
         expect(prompt).toContain('# pure proposals');
         expect(prompt).toContain('rule.forbid.new.md');

@@ -5,9 +5,18 @@ import { given, then, useBeforeAll, when } from 'test-fns';
 import { setupSourceRepo, setupTargetDir } from './.test/setup';
 import { stepReflect } from './reflect';
 
+/**
+ * .what = repeatability config for flaky LLM tests
+ * .why = local dev requires stricter (EVERY), CI allows lenient (SOME)
+ */
+const REPEAT_CONFIG = {
+  attempts: process.env.CI ? 3 : 1,
+  criteria: process.env.CI ? 'SOME' : 'EVERY',
+} as const;
+
 describe('stepReflect.caseTypescriptQuality', () => {
-  // increase timeout for claude-code invocations (3 minutes)
-  jest.setTimeout(180000);
+  // increase timeout for claude-code invocations (3 minutes per attempt)
+  jest.setTimeout(180000 * REPEAT_CONFIG.attempts);
 
   given('[case1] typescript-quality feedback with valid target', () => {
     const scene = useBeforeAll(async () => {

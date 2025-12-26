@@ -51,7 +51,7 @@ describe('compileReflectStep2Prompt', () => {
         mode: 'soft',
       });
 
-      expect(result.prompt).toContain('# existing rules');
+      expect(result.prompt).toContain('# target rules');
       expect(result.prompt).toContain('rule.require.tests.md');
     });
 
@@ -107,7 +107,7 @@ describe('compileReflectStep2Prompt', () => {
         mode: 'soft',
       });
 
-      expect(result.prompt).toContain('# output format');
+      expect(result.prompt).toContain('## output');
       expect(result.prompt).toContain('"timestamp"');
       expect(result.prompt).toContain('"pureRules"');
       expect(result.prompt).toContain('SET_CREATE');
@@ -151,7 +151,7 @@ describe('compileReflectStep2Prompt', () => {
         mode: 'hard',
       });
 
-      expect(result.prompt).toContain('# existing rule content');
+      expect(result.prompt).toContain('# target rule content');
     });
   });
 
@@ -182,7 +182,57 @@ describe('compileReflectStep2Prompt', () => {
         mode: 'soft',
       });
 
-      expect(result.prompt).toContain('no existing rules');
+      expect(result.prompt).toContain('no rules in target directory');
+    });
+  });
+
+  describe('rapid mode', () => {
+    it('should NOT include SET_UPDATE operation in rapid mode', async () => {
+      await fs.writeFile(path.join(pureDir, 'rule.test.md'), 'test', 'utf-8');
+
+      const result = await compileReflectStep2Prompt({
+        targetDir,
+        draftDir,
+        pureDir,
+        mode: 'soft',
+        rapid: true,
+      });
+
+      expect(result.prompt).toContain('SET_CREATE');
+      expect(result.prompt).not.toContain('SET_UPDATE');
+      expect(result.prompt).toContain('OMIT');
+      expect(result.prompt).toContain('SET_APPEND');
+    });
+
+    it('should include SET_UPDATE operation when not rapid', async () => {
+      await fs.writeFile(path.join(pureDir, 'rule.test.md'), 'test', 'utf-8');
+
+      const result = await compileReflectStep2Prompt({
+        targetDir,
+        draftDir,
+        pureDir,
+        mode: 'soft',
+        rapid: false,
+      });
+
+      expect(result.prompt).toContain('SET_CREATE');
+      expect(result.prompt).toContain('SET_UPDATE');
+      expect(result.prompt).toContain('OMIT');
+      expect(result.prompt).toContain('SET_APPEND');
+    });
+
+    it('should default to non-rapid mode (with SET_UPDATE)', async () => {
+      await fs.writeFile(path.join(pureDir, 'rule.test.md'), 'test', 'utf-8');
+
+      const result = await compileReflectStep2Prompt({
+        targetDir,
+        draftDir,
+        pureDir,
+        mode: 'soft',
+      });
+
+      // default should include SET_UPDATE
+      expect(result.prompt).toContain('SET_UPDATE');
     });
   });
 });

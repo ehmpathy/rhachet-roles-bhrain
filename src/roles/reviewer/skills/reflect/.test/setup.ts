@@ -27,7 +27,7 @@ export const ASSETS_TARGET = path.join(__dirname, 'assets/example.target');
  * .why = stepReflect requires source to be a git repo with remote origin
  */
 export const setupSourceRepo = async (
-  repoType: 'typescript-quality' | 'prose-author',
+  repoType: 'typescript-quality' | 'prose-author' | 'unclear-feedback',
 ): Promise<{ repoDir: string }> => {
   const repoDir = path.join(
     os.tmpdir(),

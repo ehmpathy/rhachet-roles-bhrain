@@ -6,23 +6,27 @@ import { enumFilesFromGlob } from '../../review/enumFilesFromGlob';
 /**
  * .what = compiles step 2 brain prompt for rule blend
  * .why = instructs brain to create manifest.json for blend operations
+ *
+ * .note = when rapid=true (haiku), SET_UPDATE is disabled because haiku cannot
+ *         reliably provide required fields. this means duplicates may be produced
+ *         when prior rules exist. use rapid=false (sonnet) for proper deduplication.
  */
 export const compileReflectStep2Prompt = async (input: {
   targetDir: string;
   draftDir: string;
   pureDir: string;
   mode: 'soft' | 'hard';
-}): Promise<{
-  prompt: string;
-  tokenEstimate: number;
-}> => {
+  rapid?: boolean;
+}): Promise<{ prompt: string; tokenEstimate: number }> => {
+  const rapid = input.rapid ?? false;
   const sections: string[] = [];
 
-  // enumerate existing rules in target
-  const existingRuleFiles = await enumFilesFromGlob({
+  // enumerate prior rules in target (excluding .draft directory which contains pure proposals)
+  const allRuleFiles = await enumFilesFromGlob({
     glob: ['**/rule.*.md'],
     cwd: input.targetDir,
   });
+  const priorRuleFiles = allRuleFiles.filter((f) => !f.startsWith('.draft/'));
 
   // enumerate pure proposals
   const pureProposalFiles = await enumFilesFromGlob({
@@ -33,16 +37,16 @@ export const compileReflectStep2Prompt = async (input: {
   // objective section
   sections.push(`# objective
 
-blend pure rule proposals with existing rules.
+blend pure rule proposals with target rules.
 
-analyze each pure proposal against existing rules and create a manifest.json
+analyze each pure proposal against target rules and create a manifest.json
 specifying the planned operation for each proposal.
 `);
 
-  // existing rules section
-  sections.push(`# existing rules
+  // target rules section (numbered for reference)
+  sections.push(`# target rules
 
-${existingRuleFiles.length === 0 ? 'no existing rules in target directory' : existingRuleFiles.map((f) => `- ${f}`).join('\n')}
+${priorRuleFiles.length === 0 ? 'no rules in target directory' : priorRuleFiles.map((f, i) => `[${i + 1}] ${f}`).join('\n')}
 `);
 
   // pure proposals section
@@ -53,10 +57,10 @@ ${pureProposalFiles.length === 0 ? 'no pure proposals found (step 1 may not have
 
   // include content in hard mode
   if (input.mode === 'hard') {
-    // existing rule content
-    if (existingRuleFiles.length > 0) {
-      sections.push('# existing rule content\n');
-      for (const file of existingRuleFiles) {
+    // target rule content
+    if (priorRuleFiles.length > 0) {
+      sections.push('# target rule content\n');
+      for (const file of priorRuleFiles) {
         const content = await fs.readFile(
           path.join(input.targetDir, file),
           'utf-8',
@@ -76,23 +80,41 @@ ${pureProposalFiles.length === 0 ? 'no pure proposals found (step 1 may not have
     }
   }
 
-  // instructions section
-  sections.push(`# instructions
+  // instructions section - different for rapid vs normal mode
+  if (rapid) {
+    // rapid mode (haiku): simplified operations, no SET_UPDATE
+    // haiku cannot reliably provide required fields for SET_UPDATE
+    sections.push(`# instructions
 
-1. analyze each pure proposal against existing rules
-2. determine the operation for each proposal:
-   - OMIT: duplicate or not relevant (include reason)
-   - SET_CREATE: new rule, adapt path to match target structure
-   - SET_UPDATE: merge with existing rule
-   - SET_APPEND: add as collocated document with [demo|ref|lesson] suffix
+## operations
 
-# output format
+1. **SET_CREATE** - create new rule in target
+   - use for: all new rules
+   - requires: path, operation, syncPath
 
-respond with ONLY the manifest JSON object (no markdown, no explanation):
+2. **OMIT** - skip this proposal
+   - use for: exact duplicates (identical content to a target rule)
+   - requires: path, operation, reason
 
+3. **SET_APPEND** - add supplementary material
+   - use for: demos, references, examples (not rules)
+   - requires: path, operation, syncPath
+
+## decision process
+
+for each pure proposal:
+1. is it an exact duplicate (identical content)? → OMIT
+2. is it supplementary material? → SET_APPEND
+3. otherwise → SET_CREATE
+
+## output
+
+use the Write tool to write manifest to: ${input.draftDir}/manifest.json
+
+example:
 \`\`\`json
 {
-  "timestamp": "ISO timestamp",
+  "timestamp": "2025-01-01T00:00:00.000Z",
   "pureRules": [
     {
       "path": "rule.forbid.example.md",
@@ -100,16 +122,78 @@ respond with ONLY the manifest JSON object (no markdown, no explanation):
       "syncPath": "practices/code.prod/rule.forbid.example.md"
     },
     {
-      "path": "rule.prefer.another.md",
-      "operation": "OMIT",
-      "reason": "duplicate of existing rule.prefer.similar.md"
+      "path": "rule.require.tests.md",
+      "operation": "SET_CREATE",
+      "syncPath": "practices/code.test/rule.require.tests.md"
     }
   ]
 }
 \`\`\`
 
-the harness will execute the manifest operations after receiving this JSON.
+after writing, respond with: \`{ "written": true }\`
 `);
+  } else {
+    // normal mode (sonnet): full operations including SET_UPDATE
+    sections.push(`# instructions
+
+## operations
+
+1. **SET_CREATE** - create new rule in target
+   - use for: new rules, rules on different topics than existing target rules
+   - requires: path, operation, syncPath
+
+2. **SET_UPDATE** - merge proposal with existing target rule
+   - use when: proposal covers the SAME topic as an existing target rule (e.g., both about arrow functions)
+   - requires: path, operation, targetPath, syncPath (ALL FOUR FIELDS ARE MANDATORY)
+   - **targetPath is REQUIRED** - must be the EXACT path from the numbered target rules list above
+   - example: if updating rule [1] from target list, set targetPath = "practices/rule.require.arrow-functions.md"
+   - WARNING: omitting targetPath will cause the operation to FAIL
+
+3. **OMIT** - skip this proposal
+   - use for: exact duplicates (identical content)
+   - requires: path, operation, reason
+
+4. **SET_APPEND** - add supplementary material
+   - use for: demos, references, examples (not rules)
+   - requires: path, operation, syncPath
+
+## decision process
+
+for each pure proposal:
+1. does proposal cover the SAME topic as a target rule? → SET_UPDATE
+   - MUST include targetPath copied from the "# target rules" list above
+   - e.g., "rule.require.arrow_functions.md" matches "[1] practices/rule.require.arrow-functions.md" → targetPath = "practices/rule.require.arrow-functions.md"
+2. is it an exact duplicate (identical content)? → OMIT
+3. is it supplementary material? → SET_APPEND
+4. otherwise → SET_CREATE
+
+## output
+
+use the Write tool to write manifest to: ${input.draftDir}/manifest.json
+
+example:
+\`\`\`json
+{
+  "timestamp": "2025-01-01T00:00:00.000Z",
+  "pureRules": [
+    {
+      "path": "rule.forbid.example.md",
+      "operation": "SET_CREATE",
+      "syncPath": "practices/code.prod/rule.forbid.example.md"
+    },
+    {
+      "path": "rule.require.arrow-functions.md",
+      "operation": "SET_UPDATE",
+      "targetPath": "practices/rule.require.arrow-functions.md",
+      "syncPath": "practices/rule.require.arrow-functions.md"
+    }
+  ]
+}
+\`\`\`
+
+after writing, respond with: \`{ "written": true }\`
+`);
+  }
 
   const prompt = sections.join('\n');
 
