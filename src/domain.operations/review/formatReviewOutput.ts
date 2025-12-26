@@ -1,50 +1,62 @@
 /**
+ * .what = issue shape from brain response
+ * .why = enables typed parsing of review issues
+ */
+interface ReviewIssue {
+  rule: string;
+  title: string;
+  description: string;
+  file?: string;
+  line?: number;
+}
+
+/**
  * .what = formats brain response into review markdown
  * .why = ensures consistent, machine-parseable review output
  */
 export const formatReviewOutput = (input: {
   response: {
-    issues: Array<{
-      type: 'blocker' | 'nitpick';
-      message: string;
-      file?: string;
-      line?: number;
-    }>;
+    done: boolean;
+    blockers: ReviewIssue[];
+    nitpicks: ReviewIssue[];
   };
 }): string => {
-  // handle empty or missing issues
-  const issues = input.response?.issues ?? [];
-  if (!issues.length) {
+  // extract blockers and nitpicks from response
+  const blockers = input.response?.blockers ?? [];
+  const nitpicks = input.response?.nitpicks ?? [];
+
+  // handle no issues found
+  if (!blockers.length && !nitpicks.length) {
     return '# review complete\n\nno issues found.\n';
   }
-
-  // separate blockers and nitpicks
-  const blockers = issues.filter((f) => f.type === 'blocker');
-  const nitpicks = issues.filter((f) => f.type === 'nitpick');
 
   // build output with blockers first (per template)
   const sections: string[] = [];
 
-  // emit blockers
-  blockers.forEach((issue, index) => {
-    const header = `# blocker.${index + 1}`;
+  // format a single issue into markdown
+  const formatIssue = (
+    issue: ReviewIssue,
+    type: 'blocker' | 'nitpick',
+    index: number,
+  ): string => {
+    const header = `# ${type}.${index + 1}: ${issue.title}`;
+    const rule = `\n\n**rule**: ${issue.rule}`;
     const location = issue.file
       ? issue.line
         ? `\n\n**location**: ${issue.file}:${issue.line}`
         : `\n\n**location**: ${issue.file}`
       : '';
-    sections.push(`${header}${location}\n\n${issue.message}`);
+    return `${header}${rule}${location}\n\n${issue.description}`;
+  };
+
+  // emit blockers
+  blockers.forEach((issue, index) => {
+    sections.push(formatIssue(issue, 'blocker', index));
   });
 
   // emit nitpicks
   nitpicks.forEach((issue, index) => {
-    const header = `# nitpick.${index + 1}`;
-    const location = issue.file
-      ? issue.line
-        ? `\n\n**location**: ${issue.file}:${issue.line}`
-        : `\n\n**location**: ${issue.file}`
-      : '';
-    sections.push(`${header}${location}\n\n${issue.message}`);
+    sections.push(formatIssue(issue, 'nitpick', index));
   });
 
   return sections.join('\n\n---\n\n') + '\n';

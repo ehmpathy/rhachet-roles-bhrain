@@ -400,9 +400,18 @@ export const stepReview = async (input: {
 
     try {
       return JSON.parse(jsonText) as {
-        issues: Array<{
-          type: 'blocker' | 'nitpick';
-          message: string;
+        done: boolean;
+        blockers: Array<{
+          rule: string;
+          title: string;
+          description: string;
+          file?: string;
+          line?: number;
+        }>;
+        nitpicks: Array<{
+          rule: string;
+          title: string;
+          description: string;
           file?: string;
           line?: number;
         }>;
