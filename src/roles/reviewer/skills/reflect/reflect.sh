@@ -5,7 +5,7 @@
 # .why  = enables direct invocation from command line
 #         - extracts rules from feedback files
 #         - proposes rules into target directory
-#         - blends proposals with existing rules
+#         - blends proposals with prior rules
 #
 # usage:
 #   reflect.sh --source /path/to/feedback/repo --target /path/to/rules/dir
