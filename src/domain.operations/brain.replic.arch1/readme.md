@@ -1,11 +1,11 @@
 # brain.replic.arch1
 
-agentic loop implementation following claude-code's architecture pattern
+brain.repl implementation following claude-code's architecture pattern
 
 ## overview
 
-this module implements a provider-agnostic agentic brain that:
-- generates llm responses via pluggable providers (anthropic, openai, qwen)
+this module implements a provider-agnostic brain.repl that:
+- generates responses via pluggable brain.atoms (anthropic, openai, qwen)
 - executes tool calls with permission checking
 - iterates until natural completion or max iterations
 
