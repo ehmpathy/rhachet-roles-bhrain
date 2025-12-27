@@ -4,7 +4,7 @@ import { compileReflectStep1Prompt } from './compileReflectStep1Prompt';
 
 const ASSETS_DIR = path.join(
   __dirname,
-  '../../../roles/reviewer/skills/reflect/.test/assets/example.repo',
+  '../../../domain.roles/reviewer/skills/reflect/.test/assets/example.repo',
 );
 
 describe('compileReflectStep1Prompt', () => {
