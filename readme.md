@@ -98,7 +98,7 @@ npx rhachet ask -r thinker -s articulate \
 
 ## `run --repo bhrain --skill review`
 
-reviews artifacts against rules using claude-code as the brain. designed to be composed into review skills for other roles.
+review artifacts against rules via claude-code as the brain. designed to compose into review skills for other roles.
 
 ```sh
 npx rhachet run --repo bhrain --skill review --mode hard --diffs uptil-main --paths '!pnpm-lock.yaml'
@@ -196,3 +196,37 @@ produces
    ├─ appended: 0
    └─ omitted: 0
 ```
+
+## `run --repo bhrain --role brain --skill act`
+
+brain.repl which autonomously completes tasks via tools. supports multiple brain.atoms (anthropic, openai, qwen) with toolboxes for file operations and web access.
+
+```sh
+npx rhachet run --repo bhrain --role brain --skill act \
+  --target ./output.md \
+  --provider anthropic \
+  --model claude-sonnet-4-20250514 \
+  "research sea turtles and write a brief report"
+```
+
+produces
+
+```
+🌊 skill "act" from repo=bhrain role=brain
+
+🧠 brain act execution log
+
+## summary
+- termination: NATURAL_COMPLETION
+- iterations: 5
+- tokens: 4821
+
+## final response
+[the brain's response to your task]
+```
+
+options:
+- `--target` / `-t`: output file path for the result
+- `--provider` / `-p`: brain.atom.provider (anthropic, openai, qwen)
+- `--model` / `-m`: brain.atom.model (e.g., claude-sonnet-4-20250514, gpt-4o)
+- `--system` / `-s`: path to custom system prompt file

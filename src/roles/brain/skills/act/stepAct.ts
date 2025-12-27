@@ -47,7 +47,7 @@ export type StitcherAct = GStitcher<
  */
 const stepInvokeBrain = new StitchStepCompute<StitcherAct>({
   form: 'COMPUTE',
-  readme: 'invokes brain agentic loop and persists results',
+  readme: 'invokes brain.repl and persists results',
   slug: '@[brain]<act>',
   stitchee: 'brain',
   invoke: async ({ threads }, context) => {

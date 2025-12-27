@@ -29,13 +29,13 @@ export const SKILL_ACT = genRoleSkill({
       provider: {
         source: 'process.argv',
         char: 'p',
-        desc: 'the llm provider to use (anthropic, openai, qwen)',
+        desc: 'brain.atom.provider (anthropic, openai, qwen)',
         type: '?string',
       },
       model: {
         source: 'process.argv',
         char: 'm',
-        desc: 'the model to use',
+        desc: 'brain.atom.model',
         type: '?string',
       },
       system: {
@@ -175,7 +175,7 @@ export const SKILL_ACT = genRoleSkill({
   readme: `
 # act
 
-invokes the agentic brain loop to complete a task
+invokes brain.repl to complete a task
 
 ## usage
 
