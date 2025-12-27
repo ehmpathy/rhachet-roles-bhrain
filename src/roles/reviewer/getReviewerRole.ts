@@ -45,7 +45,7 @@ produces
    ├─ metrics: .log/bhrain/review/2025-12-23T00-39-00-673Z/metrics.expected.json
    └─ tokens: .log/bhrain/review/2025-12-23T00-39-00-673Z/tokens.expected.md
 
-🐢 let's review!
+🦉 let's review!
    └─ elapsed: 85s ✓
 
 ✨ metrics.realized

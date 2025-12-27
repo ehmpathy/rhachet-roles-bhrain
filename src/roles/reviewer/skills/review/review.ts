@@ -350,7 +350,7 @@ export const stepReview = async (input: {
   // invoke claude-code with spinner
   console.log('');
   const brainResult = await withSpinner({
-    message: "🐢 let's review!",
+    message: "🦉 let's review!",
     operation: () => invokeClaudeCode({ prompt: promptResult.prompt, cwd }),
   });
 
