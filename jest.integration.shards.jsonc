@@ -3,17 +3,17 @@
   "explicit": [
     {
       "patterns": [
-        "src/roles/reviewer/skills/reflect/reflect.casePriorRules.sonnet.integration.test.ts"
+        "src/domain.roles/reviewer/skills/reflect/reflect.casePriorRules.sonnet.integration.test.ts"
       ]
     },
     {
       "patterns": [
-        "src/roles/reviewer/skills/reflect/reflect.casePriorRules.haiku.integration.test.ts"
+        "src/domain.roles/reviewer/skills/reflect/reflect.casePriorRules.haiku.integration.test.ts"
       ]
     },
     {
       "patterns": [
-        "src/roles/reviewer/skills/reflect/reflect.caseTypescriptQuality.integration.test.ts"
+        "src/domain.roles/reviewer/skills/reflect/reflect.caseTypescriptQuality.integration.test.ts"
       ]
     }
   ],
