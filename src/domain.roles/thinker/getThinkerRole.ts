@@ -13,11 +13,7 @@ export const ROLE_THINKER: Role = Role.build({
   slug: 'thinker',
   name: 'Thinker',
   purpose: 'think',
-  readme: `
-## 🧠 Thinker
-
-thought tactics; intent = be composed into other roles
-  `.trim(),
+  readme: { uri: __dirname + '/readme.md' },
   traits: [
     RoleTrait.build({
       slug: 'ocd',

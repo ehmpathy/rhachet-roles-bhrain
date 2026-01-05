@@ -23,27 +23,39 @@ npx rhachet readme --registry bhrain
 produces
 
 ```md
-# 🧠 bhrain role registry
+# 🦉 bhrain role registry
 
-This registry defines the roles used to navigate though concept space.
-
----
-
-## 🪐 Thinker
-
-Used to navigate through concept space. See src/roles/thinker/briefs/cognition for details.
+this registry defines the roles used to navigate though concept space.
 
 ---
 
-## 📚 Librarian
+## 🪐 thinker
 
-Used to curate knowledge and context. see src/roles/thinker/briefs/librarian.context and src/roles/thinker/briefs/librarian.tactics for details.
+used to navigate through concept space. see src/roles/thinker/briefs/cognition for details.
 
 ---
 
-## 🔍 Reviewer
+## 📚 librarian
 
-Used to review artifacts against declared rules. Designed to be composed into review skills for other roles.
+used to curate knowledge and context. see src/roles/thinker/briefs/librarian.context and src/roles/thinker/briefs/librarian.tactics for details.
+
+---
+
+## 🔍 reviewer
+
+used to review artifacts against declared rules. designed to be composed into review skills for other roles.
+
+---
+
+## 🔬 architect
+
+used to document and compare architectures of replic brains (LLMs behind REPLs).
+
+---
+
+## 🧠 brain
+
+a brain.repl available for agentic tooluse
 ```
 
 ## `ask -r thinker -s instantiate`
@@ -230,3 +242,15 @@ options:
 - `--provider` / `-p`: brain.atom.provider (anthropic, openai, qwen)
 - `--model` / `-m`: brain.atom.model (e.g., claude-sonnet-4-20250514, gpt-4o)
 - `--system` / `-s`: path to custom system prompt file
+
+# mascots
+
+this repo houses roles for owls 🦉 — wise navigators of concept space, who carefully traverse the landscapes of thought and knowledge.
+
+they wield:
+
+- 🪐 planet — for thinkers — to navigate through concept space, thoroughly
+- 📚 books — for librarians — to curate knowledge and context, efficiently
+- 🔍 magnifier — for reviewers — to examine artifacts against declared rules, precisely
+- 🔬 microscope — for architects — to document and compare brain architectures, deeply
+- 🧠 brain — for brains — to complete agentic tasks via tooluse, autonomously

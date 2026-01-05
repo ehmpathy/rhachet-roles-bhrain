@@ -10,11 +10,7 @@ export const ROLE_BRAIN: Role = Role.build({
   slug: 'brain',
   name: 'Brain',
   purpose: 'agentic entooled brain',
-  readme: `
-## 🧠 Brain
-
-a brain.repl available for agentic tooluse
-  `.trim(),
+  readme: { uri: __dirname + '/readme.md' },
   traits: [],
   skills: {
     dirs: [],
