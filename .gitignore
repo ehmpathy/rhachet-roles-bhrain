@@ -1,8 +1,10 @@
+*.bak.*
 *.local.json
 *.log
 *.tsbuildinfo
 .artifact
 .env
+.review
 .rhachet
 .serverless
 .temp
@@ -13,5 +15,3 @@
 coverage
 dist
 node_modules
-.review
-*.bak.*
