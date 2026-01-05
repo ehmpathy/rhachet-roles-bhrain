@@ -1,7 +1,6 @@
 import { RoleRegistry } from 'rhachet';
 
 import { ROLE_BRAIN } from '@src/domain.roles/brain/getBrainRole';
-import { BHRAIN_REGISTRY_README } from '@src/domain.roles/getRoleRegistry.readme';
 import { ROLE_REVIEWER } from '@src/domain.roles/reviewer/getReviewerRole';
 import { ROLE_THINKER } from '@src/domain.roles/thinker/getThinkerRole';
 
@@ -14,6 +13,6 @@ import { ROLE_THINKER } from '@src/domain.roles/thinker/getThinkerRole';
 export const getRoleRegistry = (): RoleRegistry =>
   new RoleRegistry({
     slug: 'bhrain',
-    readme: BHRAIN_REGISTRY_README,
+    readme: { uri: __dirname + '/readme.md' },
     roles: [ROLE_THINKER, ROLE_REVIEWER, ROLE_BRAIN],
   });
