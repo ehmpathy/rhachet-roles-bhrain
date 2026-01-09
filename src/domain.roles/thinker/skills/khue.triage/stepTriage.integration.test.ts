@@ -129,7 +129,7 @@ describe.skip('stepTriage', () => {
         }),
       }));
 
-    when.only('multiple elements', () => {
+    when('multiple elements', () => {
       beforeEach(async () => {
         await artifacts.caller['foci.input.concept'].set({
           content: inputConceptFewJokes,
