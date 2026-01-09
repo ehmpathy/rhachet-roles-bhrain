@@ -2,6 +2,7 @@ ignores:
   - depcheck
   - declapract
   - declapract-typescript-ehmpathy
+  - rhachet-roles-bhrain # self-reference for portable skill dispatch
   - "@commitlint/config-conventional"
   - serverless-prune-plugin
   - husky

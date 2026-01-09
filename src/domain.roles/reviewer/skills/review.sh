@@ -3,6 +3,7 @@
 # .what = shell entrypoint for code review skill
 #
 # .why = enables direct invocation from CLI, CI/CD, git hooks
+#        via location-independent package import
 #
 # usage:
 #   ./review.sh --rules "rules/*.md" --paths "src/*.ts" --output "review.md" --mode hard
@@ -16,6 +17,4 @@
 ######################################################################
 set -euo pipefail
 
-SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-
-exec npx tsx "$SCRIPT_DIR/review.ts" "$@"
+exec npx tsx -e "import('rhachet-roles-bhrain').then(m => m.cli.review())" -- "$@"

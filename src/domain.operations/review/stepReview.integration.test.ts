@@ -5,7 +5,7 @@ import * as os from 'os';
 import * as path from 'path';
 import { given, then, useBeforeEach, when } from 'test-fns';
 
-import { stepReview } from './review';
+import { stepReview } from './stepReview';
 
 /**
  * .what = git identity env for commits
