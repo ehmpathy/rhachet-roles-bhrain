@@ -2,7 +2,7 @@ import * as fs from 'fs/promises';
 import { given, then, useBeforeAll, when } from 'test-fns';
 
 import { setupSourceRepo, setupTargetDir } from './.test/setup';
-import { stepReflect } from './reflect';
+import { stepReflect } from './stepReflect';
 
 describe('stepReflect.caseUnclearFeedback', () => {
   // increase timeout for claude-code invocations (3 minutes)

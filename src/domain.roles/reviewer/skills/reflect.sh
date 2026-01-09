@@ -3,9 +3,7 @@
 # .what = shell wrapper for reviewer.reflect skill
 #
 # .why  = enables direct invocation from command line
-#         - extracts rules from feedback files
-#         - proposes rules into target directory
-#         - blends proposals with prior rules
+#         via location-independent package import
 #
 # usage:
 #   reflect.sh --source /path/to/feedback/repo --target /path/to/rules/dir
@@ -21,18 +19,4 @@
 
 set -euo pipefail
 
-# resolve script directory
-SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-
-# find repo root (go up until we find package.json)
-REPO_ROOT="$SCRIPT_DIR"
-while [[ ! -f "$REPO_ROOT/package.json" ]]; do
-  REPO_ROOT="$(dirname "$REPO_ROOT")"
-  if [[ "$REPO_ROOT" == "/" ]]; then
-    echo "⛈️ error: could not find package.json in parent directories"
-    exit 1
-  fi
-done
-
-# execute typescript skill via npx tsx
-exec npx tsx "$SCRIPT_DIR/reflect.ts" "$@"
+exec npx tsx -e "import('rhachet-roles-bhrain').then(m => m.cli.reflect())" -- "$@"

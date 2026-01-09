@@ -98,7 +98,8 @@
     "tsx": "4.20.6",
     "typescript": "5.4.5",
     "uuid-fns": "1.0.2",
-    "yalc": "1.0.0-pre.53"
+    "yalc": "1.0.0-pre.53",
+    "rhachet-roles-bhrain": "file:."
   },
   "config": {
     "commitizen": {

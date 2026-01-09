@@ -3,7 +3,7 @@ import * as path from 'path';
 import { given, then, useBeforeAll, when } from 'test-fns';
 
 import { setupSourceRepo, setupTargetDir } from './.test/setup';
-import { stepReflect } from './reflect';
+import { stepReflect } from './stepReflect';
 
 /**
  * .what = repeatability config for flaky LLM tests

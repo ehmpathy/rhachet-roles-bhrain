@@ -5,14 +5,14 @@ import { given, then, useBeforeAll, when } from 'test-fns';
 import type { ReviewerReflectManifest } from '@src/domain.objects/Reviewer/ReviewerReflectManifest';
 
 import { setupSourceRepo, setupTargetDir } from './.test/setup';
-import { stepReflect } from './reflect';
+import { stepReflect } from './stepReflect';
 
-describe('stepReflect.casePriorRules.haiku', () => {
-  // increase timeout for claude-code invocations (3 minutes for haiku)
-  jest.setTimeout(180000);
+describe('stepReflect.casePriorRules.sonnet', () => {
+  // increase timeout for claude-code invocations (5 minutes for sonnet)
+  jest.setTimeout(300000);
 
   given(
-    '[case1] target with prior rule matching a feedback topic (haiku/rapid)',
+    '[case1] target with prior rule matching a feedback topic (sonnet)',
     () => {
       const scene = useBeforeAll(async () => {
         const { repoDir: sourceDir } =
@@ -27,13 +27,12 @@ describe('stepReflect.casePriorRules.haiku', () => {
           'utf-8',
         );
 
-        // use rapid mode (haiku) - SET_UPDATE is disabled, only SET_CREATE allowed
-        // note: this may produce duplicates since haiku cannot merge with existing rules
+        // use sonnet (not rapid) for reliable SET_UPDATE handling
         const result = await stepReflect({
           source: sourceDir,
           target: targetDir,
           mode: 'soft',
-          rapid: true,
+          rapid: false,
         });
 
         return { sourceDir, targetDir, result };
@@ -43,7 +42,7 @@ describe('stepReflect.casePriorRules.haiku', () => {
         await fs.rm(scene.targetDir, { recursive: true, force: true });
       });
 
-      when('[t0] stepReflect completes in rapid mode', () => {
+      when('[t0] stepReflect completes', () => {
         then('manifest includes operations for all pure rules', async () => {
           const manifestPath = path.join(
             scene.result.draft.dir,
@@ -55,16 +54,11 @@ describe('stepReflect.casePriorRules.haiku', () => {
           expect(manifest.pureRules.length).toBeGreaterThan(0);
         });
 
-        then(
-          'has zero SET_UPDATE operations (haiku cannot update)',
-          async () => {
-            // haiku/rapid mode does not support SET_UPDATE
-            expect(scene.result.results.updated).toEqual(0);
-          },
-        );
+        then('has at least one SET_UPDATE operation', async () => {
+          expect(scene.result.results.updated).toBeGreaterThanOrEqual(1);
+        });
 
-        then('has only SET_CREATE operations for rules', async () => {
-          // all rules should be created, not updated
+        then('has at least one SET_CREATE operation', async () => {
           expect(scene.result.results.created).toBeGreaterThanOrEqual(1);
         });
 

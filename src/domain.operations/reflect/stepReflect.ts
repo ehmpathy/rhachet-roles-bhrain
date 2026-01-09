@@ -40,16 +40,8 @@ export type StepReflectResult = {
 };
 
 /**
- * .what = generates ISO timestamp for log directory naming
- * .why = enables unique, sortable log directories
- */
-const genLogTimestamp = (): string => {
-  return new Date().toISOString().replace(/[:.]/g, '-');
-};
-
-/**
  * .what = simple spinner for CLI feedback
- * .why = shows progress during long-running operations
+ * .why = shows progress while operations run
  */
 const withSpinner = async <T>(input: {
   message: string;
@@ -188,7 +180,7 @@ export const stepReflect = async (input: {
           rapid,
         });
 
-      // count rules written by enumerating pureDir
+      // count rules written via readdir on pureDir
       const pureFiles = await fs.readdir(pureDir).catch(() => []);
       const rulesProposed = pureFiles.filter((f) =>
         f.startsWith('rule.'),
@@ -304,53 +296,3 @@ export const stepReflect = async (input: {
     metrics,
   };
 };
-
-/**
- * .what = CLI entrypoint when run directly
- * .why = enables ./reflect.sh to invoke this module
- */
-if (require.main === module) {
-  // parse command line arguments
-  const args = process.argv.slice(2);
-  const parsed: Record<string, string> = {};
-  for (let i = 0; i < args.length; i += 2) {
-    const key = args[i]?.replace(/^--/, '');
-    const value = args[i + 1];
-    if (key && value) parsed[key] = value;
-  }
-
-  // validate required arguments
-  if (!parsed.source) {
-    console.error('⛈️ error: --source is required');
-    process.exit(1);
-  }
-  if (!parsed.target) {
-    console.error('⛈️ error: --target is required');
-    process.exit(1);
-  }
-
-  // parse optional arguments
-  const mode = (parsed.mode as 'soft' | 'hard') ?? 'soft';
-  const force = parsed.force === 'true';
-  const rapid = parsed.rapid === 'true';
-
-  // execute reflect
-  void (async () => {
-    try {
-      await stepReflect({
-        source: parsed.source!,
-        target: parsed.target!,
-        mode,
-        force,
-        rapid,
-      });
-    } catch (error) {
-      if (error instanceof BadRequestError) {
-        console.error(`\n⛈️ error: ${error.message}`);
-        process.exit(1);
-      }
-      console.error('⛈️ unexpected error:', error);
-      process.exit(1);
-    }
-  })();
-}

@@ -59,7 +59,7 @@ export type StepReviewResult = {
 };
 
 /**
- * .what = generates ISO timestamp for log directory naming
+ * .what = generates ISO timestamp for log directory
  * .why = enables unique, sortable log directories
  */
 const genLogTimestamp = (): string => {
@@ -68,7 +68,7 @@ const genLogTimestamp = (): string => {
 
 /**
  * .what = simple spinner for CLI feedback
- * .why = shows progress during long-running operations
+ * .why = shows progress during long operations
  */
 const withSpinner = async <T>(input: {
   message: string;
@@ -209,11 +209,11 @@ export const stepReview = async (input: {
       pathsMatched: targetFilesFromPaths.length,
     });
 
-  // create log directory early for debugging
+  // create log directory early for debug
   const logDir = path.join(cwd, '.log', 'bhrain', 'review', genLogTimestamp());
   await fs.mkdir(logDir, { recursive: true });
 
-  // write scope immediately for debugging
+  // write scope immediately for debug
   await fs.writeFile(
     path.join(logDir, 'input.scope.json'),
     JSON.stringify({ ruleFiles, targetFiles }, null, 2),
@@ -510,75 +510,3 @@ export const stepReview = async (input: {
     },
   };
 };
-
-/**
- * .what = CLI entrypoint when run directly
- * .why = enables ./review.sh to invoke this module
- */
-if (require.main === module) {
-  // parse command line arguments
-  const args = process.argv.slice(2);
-  const parsed: Record<string, string> = {};
-  for (let i = 0; i < args.length; i += 2) {
-    const key = args[i]?.replace(/^--/, '');
-    const value = args[i + 1];
-    if (key && value) parsed[key] = value;
-  }
-
-  // default output path if not provided
-  const output =
-    parsed.output ??
-    path.join(
-      process.cwd(),
-      '.review',
-      'bhrain',
-      `v${genLogTimestamp()}`,
-      '[feedback].[given].by_robot.md',
-    );
-
-  // validate mode is provided
-  if (!parsed.mode || (parsed.mode !== 'soft' && parsed.mode !== 'hard')) {
-    console.error('⛈️ error: --mode must be "soft" or "hard"');
-    process.exit(1);
-  }
-  const mode = parsed.mode as 'soft' | 'hard';
-
-  // default rules to .agent/**/briefs/**/rule.*.md
-  const rules = parsed.rules
-    ? parsed.rules.split(',').map((r) => r.trim())
-    : ['.agent/**/briefs/**/rule.*.md'];
-
-  // default diffs to uptil-main
-  const diffs =
-    (parsed.diffs as 'uptil-main' | 'uptil-commit' | 'uptil-staged') ??
-    'uptil-main';
-
-  // parse paths if provided
-  const paths = parsed.paths
-    ? parsed.paths.split(',').map((p) => p.trim())
-    : undefined;
-
-  // execute review
-  void (async () => {
-    try {
-      // ensure output directory exists
-      await fs.mkdir(path.dirname(output), { recursive: true });
-
-      // run the review
-      await stepReview({
-        rules,
-        diffs,
-        paths,
-        output,
-        mode,
-      });
-    } catch (error) {
-      if (error instanceof BadRequestError) {
-        console.error(`\n⛈️ error: ${error.message}`);
-        process.exit(1);
-      }
-      console.error('⛈️ unexpected error:', error);
-      process.exit(1);
-    }
-  })();
-}

@@ -2,10 +2,7 @@ import * as path from 'path';
 
 import { compileReflectStep1Prompt } from './compileReflectStep1Prompt';
 
-const ASSETS_DIR = path.join(
-  __dirname,
-  '../../../domain.roles/reviewer/skills/reflect/.test/assets/example.repo',
-);
+const ASSETS_DIR = path.join(__dirname, '../.test/assets/example.repo');
 
 describe('compileReflectStep1Prompt', () => {
   describe('soft mode', () => {

@@ -5,7 +5,7 @@ import * as path from 'path';
 import { given, then, useBeforeAll, when } from 'test-fns';
 
 import { ASSETS_TARGET, setupSourceRepo } from './.test/setup';
-import { stepReflect } from './reflect';
+import { stepReflect } from './stepReflect';
 
 describe('stepReflect', () => {
   given('[case1] source directory does not exist', () => {
