@@ -50,6 +50,9 @@ importers:
       simple-in-memory-cache:
         specifier: 0.4.0
         version: 0.4.0
+      simple-log-methods:
+        specifier: 0.6.9
+        version: 0.6.9
       type-fns:
         specifier: 1.21.0
         version: 1.21.0
@@ -57,8 +60,8 @@ importers:
         specifier: 0.14.2
         version: 0.14.2
       wrapper-fns:
-        specifier: 1.1.0
-        version: 1.1.0
+        specifier: 1.1.5
+        version: 1.1.5
       zod:
         specifier: 3.25.76
         version: 3.25.76
@@ -2077,6 +2080,10 @@ packages:
     resolution: {integrity: sha512-DS5kqZTZw7blxhJyKAIy7hU8nWOtftIB+vRtzivkdxKSyQABQeRqtlfLw5HkYbpXZpUOV+znI9xUpFgxoxNctQ==}
     engines: {node: '>=8.0.0'}
 
+  as-procedure@1.1.11:
+    resolution: {integrity: sha512-dnWCi51YDVMEHeDrEsMhMMOOBEJLS59altq48N7WSoJKepiJfXRA7x6NETFCGP9jk2Ti6eeYO3+CA27j+XlPUQ==}
+    engines: {node: '>=8.0.0'}
+
   as-procedure@1.1.6:
     resolution: {integrity: sha512-z1pWF1MGzP2t8tb+5A3FOBCWfPiQh+Ipas6knpfwQiLZJMSMJaDEEwxYrsVY0PBHTo4ZpF2Z/FstN5/76eZBpA==}
     engines: {node: '>=8.0.0'}
@@ -2584,6 +2591,10 @@ packages:
 
   domain-objects@0.31.7:
     resolution: {integrity: sha512-7sINbsnU15hUue6APpZ4cXg55G8s6dvorr0lNecXbnGU5p/mCQ5QVKsuCzw8VQXml7EW3ilmGXj9OuA8Os40PQ==}
+    engines: {node: '>=8.0.0'}
+
+  domain-objects@0.31.9:
+    resolution: {integrity: sha512-yf0jlgzv9xLfVkbJWhwRMZJYUPMPaVXEcgItwysKdiuenXyB2h34MNRqCI7H6D3kXdxAlgIRUdI0Nl5FjRitbA==}
     engines: {node: '>=8.0.0'}
 
   dot-case@3.0.4:
@@ -3154,6 +3165,10 @@ packages:
 
   isexe@2.0.0:
     resolution: {integrity: sha512-RHxMLp9lnKHGHRng9QFhRCMbYAcVpn69smSGcq3f36xjgVVWThj4qqLbTLlq7Ssj8B+fIQ1EuCEGI2lKsyQeIw==}
+
+  iso-time@1.10.1:
+    resolution: {integrity: sha512-3BQe0H4ZPM7O1w3TIxwoRSCf9gQ/h+dzcbOEn8Dos3OByQ0mLRV1tqnk0hwzjnXYNgXjWHxF2dHZVq2rdfpnWg==}
+    engines: {node: '>=8.0.0'}
 
   isomorphic-git@1.36.1:
     resolution: {integrity: sha512-fC8SRT8MwoaXDK8G4z5biPEbqf2WyEJUb2MJ2ftSd39/UIlsnoZxLGux+lae0poLZO4AEcx6aUVOh5bV+P8zFA==}
@@ -4135,6 +4150,10 @@ packages:
     resolution: {integrity: sha512-0SevGkW2AXWkxsNa12VAlFxeIbnSDz08JGjpVZ/YS5Exir35HE90vGepn7PlGYv3aJH2pM3s2m4KL9qVT5lC2A==}
     engines: {node: '>=8.0.0'}
 
+  simple-log-methods@0.6.9:
+    resolution: {integrity: sha512-VeI9erbjgKtZ8bwdpHqkqgZomVqchZHFWidN3/5Jmb6UcKHKdduiADPAVqIwvFmobFOEtIyybyVw5bEaZpKODw==}
+    engines: {node: '>=8.0.0'}
+
   simple-on-disk-cache@1.7.3:
     resolution: {integrity: sha512-N5ILAhtiYSLVL2UyzVFfzcd/nWzgxPS/ksSYwUChDGS4HwKh6QR+18QwUtQ78oV/QXGDiXrtuNQxdTbwYrkfcw==}
     engines: {node: '>=8.0.0'}
@@ -4498,6 +4517,10 @@ packages:
 
   wrapper-fns@1.1.1:
     resolution: {integrity: sha512-WeFCTXXxcW/lSfSbl6tvPDOfJvnw9hC/bZvcbHJIK9+0nEwaVLvG9KSVt7MRGdGRZ+qn56dmykAJ+sxk1QXCNw==}
+    engines: {node: '>=8.0.0'}
+
+  wrapper-fns@1.1.5:
+    resolution: {integrity: sha512-Px/OD+4zmUIMsdOC1II3L//vGtO7pwjYuNy8716z9XEHi49SXjtFM89yVB678rJE1w0/gf7Va2QiXyLMnhZAkg==}
     engines: {node: '>=8.0.0'}
 
   wrappy@1.0.2:
@@ -7068,6 +7091,14 @@ snapshots:
       - ws
       - zod
 
+  as-procedure@1.1.11:
+    dependencies:
+      domain-glossary-procedure: 1.0.0
+      helpful-errors: 1.5.3
+      serde-fns: 1.0.0
+      simple-log-methods: 0.6.9
+      type-fns: 1.21.0
+
   as-procedure@1.1.6:
     dependencies:
       '@ehmpathy/error-fns': 1.3.2
@@ -7762,6 +7793,13 @@ snapshots:
       - ws
       - zod
 
+  domain-objects@0.31.9:
+    dependencies:
+      change-case: 4.1.2
+      helpful-errors: 1.5.3
+      type-fns: 1.21.0
+      uuid-fns: 1.1.3
+
   dot-case@3.0.4:
     dependencies:
       no-case: 3.0.4
@@ -8385,6 +8423,13 @@ snapshots:
   isarray@2.0.5: {}
 
   isexe@2.0.0: {}
+
+  iso-time@1.10.1:
+    dependencies:
+      date-fns: 3.6.0
+      domain-glossaries: 1.0.0
+      helpful-errors: 1.5.3
+      type-fns: 1.21.0
 
   isomorphic-git@1.36.1:
     dependencies:
@@ -9367,9 +9412,10 @@ snapshots:
       rhachet-roles-bhuild: 0.1.3(@anthropic-ai/sdk@0.51.0)(@types/node@22.15.21)(hono@4.11.3)(zod@3.25.76)
       serde-fns: 1.2.0
       simple-in-memory-cache: 0.4.0
+      simple-log-methods: 0.6.9
       type-fns: 1.21.0
       with-simple-caching: 0.14.2
-      wrapper-fns: 1.1.0
+      wrapper-fns: 1.1.5
       zod: 3.25.76
       zod-to-json-schema: 3.25.0(zod@3.25.76)
     transitivePeerDependencies:
@@ -9786,6 +9832,15 @@ snapshots:
       domain-glossary-procedure: 1.0.0
       domain-objects: 0.31.3
       helpful-errors: 1.5.3
+      type-fns: 1.21.0
+
+  simple-log-methods@0.6.9:
+    dependencies:
+      '@ehmpathy/error-fns': 1.3.7
+      domain-glossary-procedure: 1.0.0
+      domain-objects: 0.31.9
+      helpful-errors: 1.5.3
+      iso-time: 1.10.1
       type-fns: 1.21.0
 
   simple-on-disk-cache@1.7.3:
@@ -10218,6 +10273,16 @@ snapshots:
       - supports-color
       - ws
       - zod
+
+  wrapper-fns@1.1.5:
+    dependencies:
+      as-procedure: 1.1.11
+      bottleneck: 2.19.5
+      domain-glossary-procedure: 1.0.0
+      domain-objects: 0.31.9
+      helpful-errors: 1.5.3
+      iso-time: 1.10.1
+      simple-log-methods: 0.6.9
 
   wrappy@1.0.2: {}
 

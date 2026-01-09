@@ -130,7 +130,10 @@ example:
 }
 \`\`\`
 
-after writing, respond with: \`{ "written": true }\`
+CRITICAL: after writing the manifest file, respond with ONLY this JSON and nothing else:
+\`{ "written": true }\`
+
+do NOT include any explanation, analysis, or markdown. your response must be exactly: { "written": true }
 `);
   } else {
     // normal mode (sonnet): full operations including SET_UPDATE
@@ -191,7 +194,10 @@ example:
 }
 \`\`\`
 
-after writing, respond with: \`{ "written": true }\`
+CRITICAL: after writing the manifest file, respond with ONLY this JSON and nothing else:
+\`{ "written": true }\`
+
+do NOT include any explanation, analysis, or markdown. your response must be exactly: { "written": true }
 `);
   }
 

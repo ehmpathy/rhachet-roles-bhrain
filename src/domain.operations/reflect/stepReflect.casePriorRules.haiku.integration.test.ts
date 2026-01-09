@@ -2,6 +2,7 @@ import * as fs from 'fs/promises';
 import * as path from 'path';
 import { given, then, useBeforeAll, when } from 'test-fns';
 
+import { REPEATABLY_BRAIN_CONFIG } from '@src/.test/infra/REPEATABLY_BRAIN_CONFIG';
 import type { ReviewerReflectManifest } from '@src/domain.objects/Reviewer/ReviewerReflectManifest';
 
 import { setupSourceRepo, setupTargetDir } from './.test/setup';
@@ -44,16 +45,20 @@ describe('stepReflect.casePriorRules.haiku', () => {
       });
 
       when('[t0] stepReflect completes in rapid mode', () => {
-        then('manifest includes operations for all pure rules', async () => {
-          const manifestPath = path.join(
-            scene.result.draft.dir,
-            'manifest.json',
-          );
-          const manifestContent = await fs.readFile(manifestPath, 'utf-8');
-          const manifest: ReviewerReflectManifest = JSON.parse(manifestContent);
+        then.repeatably(REPEATABLY_BRAIN_CONFIG)(
+          'manifest includes operations for all pure rules',
+          async () => {
+            const manifestPath = path.join(
+              scene.result.draft.dir,
+              'manifest.json',
+            );
+            const manifestContent = await fs.readFile(manifestPath, 'utf-8');
+            const manifest: ReviewerReflectManifest =
+              JSON.parse(manifestContent);
 
-          expect(manifest.pureRules.length).toBeGreaterThan(0);
-        });
+            expect(manifest.pureRules.length).toBeGreaterThan(0);
+          },
+        );
 
         then(
           'has zero SET_UPDATE operations (haiku cannot update)',
@@ -63,10 +68,13 @@ describe('stepReflect.casePriorRules.haiku', () => {
           },
         );
 
-        then('has only SET_CREATE operations for rules', async () => {
-          // all rules should be created, not updated
-          expect(scene.result.results.created).toBeGreaterThanOrEqual(1);
-        });
+        then.repeatably(REPEATABLY_BRAIN_CONFIG)(
+          'has only SET_CREATE operations for rules',
+          async () => {
+            // all rules should be created, not updated
+            expect(scene.result.results.created).toBeGreaterThanOrEqual(1);
+          },
+        );
 
         then('total operations equals pure rules count', async () => {
           const manifestPath = path.join(
