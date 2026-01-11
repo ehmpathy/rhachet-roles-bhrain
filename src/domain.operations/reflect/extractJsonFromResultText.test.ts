@@ -75,6 +75,53 @@ const TEST_CASES = [
       output: '{ "done": true }',
     },
   },
+  {
+    description: 'handles uppercase JSON tag in code block',
+    given: {
+      resultText: '```JSON\n{ "uppercase": true }\n```',
+    },
+    expect: {
+      output: '{ "uppercase": true }',
+    },
+  },
+  {
+    description: 'handles mixed case Json tag in code block',
+    given: {
+      resultText: '```Json\n{ "mixedCase": true }\n```',
+    },
+    expect: {
+      output: '{ "mixedCase": true }',
+    },
+  },
+  {
+    description: 'extracts JSON object from prose text',
+    given: {
+      resultText:
+        'Here is the analysis result:\n\nThe manifest has been created with the following content:\n\n{ "written": true }',
+    },
+    expect: {
+      output: '{ "written": true }',
+    },
+  },
+  {
+    description: 'extracts JSON array from prose text',
+    given: {
+      resultText: 'The rules are: ["rule1", "rule2", "rule3"]',
+    },
+    expect: {
+      output: '["rule1", "rule2", "rule3"]',
+    },
+  },
+  {
+    description: 'extracts nested JSON from prose with balanced braces',
+    given: {
+      resultText:
+        'After analysis, the result is: { "rules": [{ "name": "test" }], "count": 1 } and that is the end.',
+    },
+    expect: {
+      output: '{ "rules": [{ "name": "test" }], "count": 1 }',
+    },
+  },
 ];
 
 describe('extractJsonFromResultText', () => {

@@ -1,6 +1,7 @@
 import { given, then, when } from 'test-fns';
 import { z } from 'zod';
 
+import { REPEATABLY_BRAIN_CONFIG } from '@src/.test/infra/REPEATABLY_BRAIN_CONFIG';
 import { BrainArch1SessionMessage } from '@src/domain.objects/BrainArch1/BrainArch1SessionMessage';
 import {
   BrainArch1ToolDefinition,
@@ -34,71 +35,77 @@ describe('sdkAnthropic', () => {
 
   given('[case1] simple prompt with no tools', () => {
     when('[t0] generate is called with a greeting', () => {
-      then('returns a text response', async () => {
-        const context = getContext();
-        if (!context.anthropic.auth.key) {
-          console.log('skipping: ANTHROPIC_API_KEY not set');
-          return;
-        }
+      then.repeatably(REPEATABLY_BRAIN_CONFIG)(
+        'returns a text response',
+        async () => {
+          const context = getContext();
+          if (!context.anthropic.auth.key) {
+            console.log('skipping: ANTHROPIC_API_KEY not set');
+            return;
+          }
 
-        const result = await sdkAnthropic.generate(
-          {
-            messages: [
-              new BrainArch1SessionMessage({
-                role: 'user',
-                content: 'say hello in exactly 3 words',
-                toolCalls: null,
-                toolCallId: null,
-              }),
-            ],
-            tools: [],
-          },
-          context,
-        );
+          const result = await sdkAnthropic.generate(
+            {
+              messages: [
+                new BrainArch1SessionMessage({
+                  role: 'user',
+                  content: 'say hello in exactly 3 words',
+                  toolCalls: null,
+                  toolCallId: null,
+                }),
+              ],
+              tools: [],
+            },
+            context,
+          );
 
-        expect(result.message.role).toEqual('assistant');
-        expect(result.message.content).toBeTruthy();
-        expect(result.tokenUsage.totalTokens).toBeGreaterThan(0);
-      });
+          expect(result.message.role).toEqual('assistant');
+          expect(result.message.content).toBeTruthy();
+          expect(result.tokenUsage.totalTokens).toBeGreaterThan(0);
+        },
+      );
     });
   });
 
   given('[case2] prompt with tools available', () => {
-    when('[t0] generate is called with a task requiring tool use', () => {
-      then('returns tool calls', async () => {
-        const context = getContext();
-        if (!context.anthropic.auth.key) {
-          console.log('skipping: ANTHROPIC_API_KEY not set');
-          return;
-        }
+    when('[t0] generate is called with a task that requires tool use', () => {
+      then.repeatably(REPEATABLY_BRAIN_CONFIG)(
+        'returns tool calls',
+        async () => {
+          const context = getContext();
+          if (!context.anthropic.auth.key) {
+            console.log('skipping: ANTHROPIC_API_KEY not set');
+            return;
+          }
 
-        const result = await sdkAnthropic.generate(
-          {
-            messages: [
-              new BrainArch1SessionMessage({
-                role: 'user',
-                content: 'read the file at /tmp/test.txt',
-                toolCalls: null,
-                toolCallId: null,
-              }),
-            ],
-            tools: [
-              new BrainArch1ToolDefinition({
-                name: 'read',
-                description: 'read file contents from disk',
-                schema: { input: toJsonSchema(schemaReadInput) },
-                strict: false,
-              }),
-            ],
-          },
-          context,
-        );
+          const result = await sdkAnthropic.generate(
+            {
+              messages: [
+                new BrainArch1SessionMessage({
+                  role: 'user',
+                  content: 'read the file at /tmp/test.txt',
+                  toolCalls: null,
+                  toolCallId: null,
+                }),
+              ],
+              tools: [
+                new BrainArch1ToolDefinition({
+                  name: 'read',
+                  description: 'read file contents from disk',
+                  schema: { input: toJsonSchema(schemaReadInput) },
+                  strict: false,
+                }),
+              ],
+            },
+            context,
+          );
 
-        expect(result.message.role).toEqual('assistant');
-        expect(result.message.toolCalls).toBeTruthy();
-        expect(result.message.toolCalls?.length).toBeGreaterThan(0);
-        expect(result.message.toolCalls?.[0]?.name).toEqual('read');
-      });
+          expect(result.message.role).toEqual('assistant');
+          expect(result.message.toolCalls).toBeTruthy();
+          expect(result.message.toolCalls?.length).toBeGreaterThan(0);
+          expect(result.message.toolCalls?.[0]?.name).toEqual('read');
+        },
+      );
     });
   });
 });

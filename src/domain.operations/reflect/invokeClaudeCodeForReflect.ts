@@ -1,5 +1,7 @@
 import { spawn } from 'child_process';
 import { BadRequestError, UnexpectedCodePathError } from 'helpful-errors';
+import type { LogMethods } from 'simple-log-methods';
+import { withRetry } from 'wrapper-fns';
 
 import { extractJsonFromResultText } from './extractJsonFromResultText';
 
@@ -44,11 +46,14 @@ export interface ReflectStep2Response {
  * .what = invokes claude-code cli for reflect step
  * .why = executes brain invocation via claude-code print mode
  */
-export const invokeClaudeCodeForReflect = async <T>(input: {
-  prompt: string;
-  cwd?: string;
-  rapid?: boolean;
-}): Promise<{ response: T; usage: ReflectClaudeUsage }> => {
+const _invokeClaudeCodeForReflect = async <T>(
+  input: {
+    prompt: string;
+    cwd?: string;
+    rapid?: boolean;
+  },
+  context: { log: LogMethods },
+): Promise<{ response: T; usage: ReflectClaudeUsage }> => {
   // determine model and settings based on rapid flag
   // note: both models need enough turns to write multiple rules
   const model = input.rapid ? 'haiku' : 'sonnet';
@@ -186,3 +191,11 @@ export const invokeClaudeCodeForReflect = async <T>(input: {
 
   return { response, usage };
 };
+
+/**
+ * .what = retry-wrapped version of _invokeClaudeCodeForReflect
+ * .why = handles transient failures (truncated responses, JSON parse errors)
+ */
+export const invokeClaudeCodeForReflect = withRetry(
+  _invokeClaudeCodeForReflect,
+);

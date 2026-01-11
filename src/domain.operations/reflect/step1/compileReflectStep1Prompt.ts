@@ -62,15 +62,17 @@ ${input.citationsMarkdown}
 
 use the Write tool to write each rule file to: ${input.draftDir}/pure/
 
-after writing all rules, respond with a JSON summary:
+CRITICAL: after writing all rules, respond with ONLY this JSON and nothing else:
 \`\`\`json
 {
   "rules": [
-    { "name": "rule.forbid.example.md" },
-    { "name": "rule.require.other.md" }
+    { "name": "rule.forbid.example.md", "content": "..." },
+    { "name": "rule.require.other.md", "content": "..." }
   ]
 }
 \`\`\`
+
+do NOT include any explanation, analysis, or markdown outside the JSON. your entire response must be valid JSON.
 `);
 
   const prompt = sections.join('\n');

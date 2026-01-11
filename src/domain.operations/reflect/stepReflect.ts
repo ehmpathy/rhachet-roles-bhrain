@@ -174,11 +174,14 @@ export const stepReflect = async (input: {
       // invoke claude-code with step 1 prompt
       // model writes rules directly to pureDir via Write tool
       const { response, usage } =
-        await invokeClaudeCodeForReflect<ReflectStep1Response>({
-          prompt: step1Prompt.prompt,
-          cwd: input.source,
-          rapid,
-        });
+        await invokeClaudeCodeForReflect<ReflectStep1Response>(
+          {
+            prompt: step1Prompt.prompt,
+            cwd: input.source,
+            rapid,
+          },
+          { log: console },
+        );
 
       // count rules written via readdir on pureDir
       const pureFiles = await fs.readdir(pureDir).catch(() => []);
@@ -208,11 +211,14 @@ export const stepReflect = async (input: {
     operation: async () => {
       // invoke claude-code with step 2 prompt
       // note: model writes manifest.json directly via Write tool
-      const { usage } = await invokeClaudeCodeForReflect<{ written: boolean }>({
-        prompt: step2PromptFinal.prompt,
-        cwd: input.target,
-        rapid,
-      });
+      const { usage } = await invokeClaudeCodeForReflect<{ written: boolean }>(
+        {
+          prompt: step2PromptFinal.prompt,
+          cwd: input.target,
+          rapid,
+        },
+        { log: console },
+      );
 
       // read the manifest written by the model
       const manifestPath = path.join(draftDir, 'manifest.json');
