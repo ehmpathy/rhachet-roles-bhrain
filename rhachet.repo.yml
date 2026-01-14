@@ -1,0 +1,21 @@
+slug: bhrain
+readme: dist/domain.roles/readme.md
+roles:
+  - slug: thinker
+    readme: dist/domain.roles/thinker/readme.md
+    briefs:
+      dirs: dist/domain.roles/thinker/briefs
+    skills:
+      dirs: []
+  - slug: reviewer
+    readme: dist/domain.roles/reviewer/readme.md
+    briefs:
+      dirs: dist/domain.roles/reviewer/briefs
+    skills:
+      dirs: dist/domain.roles/reviewer/skills
+  - slug: brain
+    readme: dist/domain.roles/brain/readme.md
+    briefs:
+      dirs: []
+    skills:
+      dirs: []
