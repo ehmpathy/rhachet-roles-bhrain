@@ -3,17 +3,52 @@
   "explicit": [
     {
       "patterns": [
-        "src/domain.roles/reviewer/skills/reflect/reflect.casePriorRules.sonnet.integration.test.ts"
+        "src/domain.operations/reflect/stepReflect.casePriorRules.default.integration.test.ts"
       ]
     },
     {
       "patterns": [
-        "src/domain.roles/reviewer/skills/reflect/reflect.casePriorRules.haiku.integration.test.ts"
+        "src/domain.operations/reflect/stepReflect.casePriorRules.grok-4-fast.integration.test.ts"
       ]
     },
     {
       "patterns": [
-        "src/domain.roles/reviewer/skills/reflect/reflect.caseTypescriptQuality.integration.test.ts"
+        "src/domain.operations/reflect/stepReflect.caseTypescriptQuality.integration.test.ts"
+      ]
+    },
+    {
+      "patterns": [
+        "src/domain.operations/reflect/stepReflect.caseProseAuthor.integration.test.ts"
+      ]
+    },
+    {
+      "patterns": [
+        "src/domain.operations/reflect/stepReflect.caseUnclearFeedback.integration.test.ts"
+      ]
+    },
+    {
+      "patterns": [
+        "src/domain.operations/review/stepReview.caseBrain.grok-4-fast.integration.test.ts"
+      ]
+    },
+    {
+      "patterns": [
+        "src/domain.operations/review/stepReview.caseBrain.grok-code-fast-1.case1.integration.test.ts"
+      ]
+    },
+    {
+      "patterns": [
+        "src/domain.operations/review/stepReview.caseBrain.grok-code-fast-1.case2.integration.test.ts"
+      ]
+    },
+    {
+      "patterns": [
+        "src/domain.operations/review/stepReview.caseBrain.grok-code-fast-1.case3.integration.test.ts"
+      ]
+    },
+    {
+      "patterns": [
+        "src/domain.operations/review/stepReview.integration.test.ts"
       ]
     }
   ],

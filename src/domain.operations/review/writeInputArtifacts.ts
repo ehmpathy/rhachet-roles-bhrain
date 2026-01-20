@@ -12,7 +12,7 @@ export const writeInputArtifacts = async (input: {
     diffs?: string;
     paths?: string | string[];
     output: string;
-    mode: 'soft' | 'hard';
+    mode: 'pull' | 'push';
   };
   scope: {
     ruleFiles: string[];

@@ -8,6 +8,7 @@ import * as os from 'os';
 import * as path from 'path';
 import { z } from 'zod';
 
+import { printBrainHelp } from '@src/_topublish/rhachet/genContextBrainChoice';
 import { stepReview } from '@src/domain.operations/review/stepReview';
 import { getCliArgs } from '@src/infra/cli/getCliArgs';
 
@@ -18,7 +19,8 @@ const schemaOfArgs = z.object({
     diffs: z.string().optional(),
     paths: z.string().optional(),
     output: z.string().optional(),
-    mode: z.enum(['soft', 'hard']).optional(),
+    mode: z.enum(['pull', 'push']).optional(),
+    brain: z.string().optional(),
     rapid: z.string().optional(),
     // rhachet passthrough args (optional, ignored)
     repo: z.string().optional(),
@@ -36,6 +38,12 @@ const schemaOfArgs = z.object({
  */
 export const review = async (): Promise<void> => {
   const { named } = getCliArgs({ schema: schemaOfArgs });
+
+  // handle --brain help
+  if (named.brain === 'help') {
+    printBrainHelp();
+    process.exit(0);
+  }
 
   // determine output path
   const outputPath = (() => {
@@ -60,6 +68,7 @@ export const review = async (): Promise<void> => {
       | undefined,
     paths: named.paths,
     output: outputPath,
-    mode: named.mode ?? 'soft',
+    mode: named.mode ?? 'pull',
+    brain: named.brain,
   });
 };

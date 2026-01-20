@@ -5,14 +5,14 @@ import { compileReflectStep1Prompt } from './compileReflectStep1Prompt';
 const ASSETS_DIR = path.join(__dirname, '../.test/assets/example.repo');
 
 describe('compileReflectStep1Prompt', () => {
-  describe('soft mode', () => {
+  describe('pull mode', () => {
     it('should include objective section', async () => {
       const result = await compileReflectStep1Prompt({
         feedbackFiles: ['file.md'],
         citationsMarkdown: '# citations\n- file.md',
         draftDir: '/tmp/draft',
         cwd: path.join(ASSETS_DIR, 'typescript-quality'),
-        mode: 'soft',
+        mode: 'pull',
       });
 
       expect(result.prompt).toContain('# objective');
@@ -26,13 +26,13 @@ describe('compileReflectStep1Prompt', () => {
         citationsMarkdown,
         draftDir: '/tmp/draft',
         cwd: path.join(ASSETS_DIR, 'typescript-quality'),
-        mode: 'soft',
+        mode: 'pull',
       });
 
       expect(result.prompt).toContain(citationsMarkdown);
     });
 
-    it('should NOT include feedback content in soft mode', async () => {
+    it('should NOT include feedback content in pull mode', async () => {
       const result = await compileReflectStep1Prompt({
         feedbackFiles: [
           '.behavior/v2025_01_01.feature/[feedback].v1.[given].by_human.md',
@@ -40,7 +40,7 @@ describe('compileReflectStep1Prompt', () => {
         citationsMarkdown: '# citations',
         draftDir: '/tmp/draft',
         cwd: path.join(ASSETS_DIR, 'typescript-quality'),
-        mode: 'soft',
+        mode: 'pull',
       });
 
       expect(result.prompt).not.toContain('# feedback content');
@@ -53,7 +53,7 @@ describe('compileReflectStep1Prompt', () => {
         citationsMarkdown: '# citations',
         draftDir: '/tmp/my-draft',
         cwd: path.join(ASSETS_DIR, 'typescript-quality'),
-        mode: 'soft',
+        mode: 'pull',
       });
 
       expect(result.prompt).toContain('# instructions');
@@ -63,8 +63,8 @@ describe('compileReflectStep1Prompt', () => {
     });
   });
 
-  describe('hard mode', () => {
-    it('should include feedback content in hard mode', async () => {
+  describe('push mode', () => {
+    it('should include feedback content in push mode', async () => {
       const result = await compileReflectStep1Prompt({
         feedbackFiles: [
           '.behavior/v2025_01_01.feature/[feedback].v1.[given].by_human.md',
@@ -72,7 +72,7 @@ describe('compileReflectStep1Prompt', () => {
         citationsMarkdown: '# citations',
         draftDir: '/tmp/draft',
         cwd: path.join(ASSETS_DIR, 'typescript-quality'),
-        mode: 'hard',
+        mode: 'push',
       });
 
       expect(result.prompt).toContain('# feedback content');
@@ -87,7 +87,7 @@ describe('compileReflectStep1Prompt', () => {
         citationsMarkdown: '# citations',
         draftDir: '/tmp/draft',
         cwd: path.join(ASSETS_DIR, 'typescript-quality'),
-        mode: 'soft',
+        mode: 'pull',
       });
 
       expect(result.tokenEstimate).toBeGreaterThan(0);
@@ -97,7 +97,7 @@ describe('compileReflectStep1Prompt', () => {
   });
 
   describe('snapshot', () => {
-    it('should match snapshot for soft mode prompt', async () => {
+    it('should match snapshot for pull mode prompt', async () => {
       const result = await compileReflectStep1Prompt({
         feedbackFiles: [
           '.behavior/v2025_01_01.feature/[feedback].v1.[given].by_human.md',
@@ -106,13 +106,13 @@ describe('compileReflectStep1Prompt', () => {
           '# citations\n- [feedback](https://github.com/example)',
         draftDir: '/tmp/draft',
         cwd: path.join(ASSETS_DIR, 'typescript-quality'),
-        mode: 'soft',
+        mode: 'pull',
       });
 
       expect(result.prompt).toMatchSnapshot();
     });
 
-    it('should match snapshot for hard mode prompt', async () => {
+    it('should match snapshot for push mode prompt', async () => {
       const result = await compileReflectStep1Prompt({
         feedbackFiles: [
           '.behavior/v2025_01_01.feature/[feedback].v1.[given].by_human.md',
@@ -121,7 +121,7 @@ describe('compileReflectStep1Prompt', () => {
           '# citations\n- [feedback](https://github.com/example)',
         draftDir: '/tmp/draft',
         cwd: path.join(ASSETS_DIR, 'typescript-quality'),
-        mode: 'hard',
+        mode: 'push',
       });
 
       expect(result.prompt).toMatchSnapshot();

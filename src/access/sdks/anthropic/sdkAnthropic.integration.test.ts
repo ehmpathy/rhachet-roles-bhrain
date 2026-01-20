@@ -36,10 +36,6 @@ describe('sdkAnthropic', () => {
     when('[t0] generate is called with a greeting', () => {
       then('returns a text response', async () => {
         const context = getContext();
-        if (!context.anthropic.auth.key) {
-          console.log('skipping: ANTHROPIC_API_KEY not set');
-          return;
-        }
 
         const result = await sdkAnthropic.generate(
           {
@@ -64,13 +60,9 @@ describe('sdkAnthropic', () => {
   });
 
   given('[case2] prompt with tools available', () => {
-    when('[t0] generate is called with a task requiring tool use', () => {
+    when('[t0] generate is called with a task that requires tool use', () => {
       then('returns tool calls', async () => {
         const context = getContext();
-        if (!context.anthropic.auth.key) {
-          console.log('skipping: ANTHROPIC_API_KEY not set');
-          return;
-        }
 
         const result = await sdkAnthropic.generate(
           {

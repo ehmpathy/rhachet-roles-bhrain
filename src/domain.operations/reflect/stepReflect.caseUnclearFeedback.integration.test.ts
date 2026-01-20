@@ -16,8 +16,7 @@ describe('stepReflect.caseUnclearFeedback', () => {
       const result = await stepReflect({
         source: sourceDir,
         target: targetDir,
-        mode: 'soft',
-        rapid: true,
+        mode: 'push',
       });
 
       return { sourceDir, targetDir, result };

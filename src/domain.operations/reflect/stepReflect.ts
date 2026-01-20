@@ -1,14 +1,16 @@
 import * as fs from 'fs/promises';
 import { BadRequestError } from 'helpful-errors';
 import * as path from 'path';
+import { BrainRepl } from 'rhachet';
+import { z } from 'zod';
 
+import {
+  DEFAULT_BRAIN,
+  genContextBrainChoice,
+} from '@src/_topublish/rhachet/genContextBrainChoice';
 import type { ReviewerReflectMetrics } from '@src/domain.objects/Reviewer/ReviewerReflectMetrics';
 import { getGitRemoteUrl } from '@src/domain.operations/git/getGitRemoteUrl';
 import { createDraftDirectory } from '@src/domain.operations/reflect/createDraftDirectory';
-import {
-  invokeClaudeCodeForReflect,
-  type ReflectStep1Response,
-} from '@src/domain.operations/reflect/invokeClaudeCodeForReflect';
 import { computeMetricsExpected } from '@src/domain.operations/reflect/metrics/computeMetricsExpected';
 import { computeMetricsRealized } from '@src/domain.operations/reflect/metrics/computeMetricsRealized';
 import { writeLogArtifact } from '@src/domain.operations/reflect/metrics/writeLogArtifact';
@@ -19,6 +21,59 @@ import { executeManifestOperations } from '@src/domain.operations/reflect/step2/
 import { parseManifestOperations } from '@src/domain.operations/reflect/step2/parseManifestOperations';
 import { validateSourceDirectory } from '@src/domain.operations/reflect/validateSourceDirectory';
 import { validateTargetDirectory } from '@src/domain.operations/reflect/validateTargetDirectory';
+
+/**
+ * .what = zod schema for step 1 response
+ * .why = enables structured output from brain.choice.ask
+ */
+const schemaStep1Response = z.object({
+  rules: z.array(
+    z.object({
+      name: z.string(),
+      content: z.string(),
+    }),
+  ),
+});
+type Step1Response = z.infer<typeof schemaStep1Response>;
+
+/**
+ * .what = zod schema for step 2 response (manifest)
+ * .why = enables structured output from brain.choice.ask via discriminated union
+ * .note = each operation type has required fields enforced by schema
+ */
+const schemaManifestEntryOmit = z.object({
+  path: z.string(),
+  operation: z.literal('OMIT'),
+  reason: z.string(),
+});
+const schemaManifestEntryCreate = z.object({
+  path: z.string(),
+  operation: z.literal('SET_CREATE'),
+  syncPath: z.string(),
+});
+const schemaManifestEntryUpdate = z.object({
+  path: z.string(),
+  operation: z.literal('SET_UPDATE'),
+  targetPath: z.string(),
+  syncPath: z.string(),
+});
+const schemaManifestEntryAppend = z.object({
+  path: z.string(),
+  operation: z.literal('SET_APPEND'),
+  syncPath: z.string(),
+});
+const schemaStep2Response = z.object({
+  timestamp: z.string(),
+  pureRules: z.array(
+    z.discriminatedUnion('operation', [
+      schemaManifestEntryOmit,
+      schemaManifestEntryCreate,
+      schemaManifestEntryUpdate,
+      schemaManifestEntryAppend,
+    ]),
+  ),
+});
+type Step2Response = z.infer<typeof schemaStep2Response>;
 
 /**
  * .what = result of stepReflect execution
@@ -87,13 +142,26 @@ const withSpinner = async <T>(input: {
 export const stepReflect = async (input: {
   source: string;
   target: string;
-  mode?: 'soft' | 'hard';
+  mode?: 'pull' | 'push';
   force?: boolean;
-  rapid?: boolean;
+  brain?: string;
 }): Promise<StepReflectResult> => {
-  const mode = input.mode ?? 'soft';
+  const mode = input.mode ?? 'pull';
   const force = input.force ?? false;
-  const rapid = input.rapid ?? false;
+  const brainSlug = input.brain ?? DEFAULT_BRAIN;
+
+  // resolve brain choice for inference
+  const contextBrain = await genContextBrainChoice({ brain: brainSlug });
+
+  // validate that pull mode is only used with brains that have tool use
+  const choiceIsRepl = contextBrain.brain.choice instanceof BrainRepl;
+  if (mode === 'pull' && !choiceIsRepl)
+    throw new BadRequestError(
+      `mode 'pull' requires a brain with tool use (BrainRepl). ` +
+        `brain '${brainSlug}' is a BrainAtom without tool use. ` +
+        `use mode 'push' instead, or choose a BrainRepl.`,
+      { brain: brainSlug, mode },
+    );
 
   // validate source directory and get feedback files
   const { feedbackFiles } = await validateSourceDirectory({
@@ -145,7 +213,6 @@ export const stepReflect = async (input: {
     draftDir,
     pureDir,
     mode,
-    rapid,
   });
   const expected = computeMetricsExpected({
     step1PromptTokens: step1Prompt.tokenEstimate,
@@ -171,24 +238,26 @@ export const stepReflect = async (input: {
   const step1Result = await withSpinner({
     message: '⛏️  step 1: propose pure rules from feedback...',
     operation: async () => {
-      // invoke claude-code with step 1 prompt
-      // model writes rules directly to pureDir via Write tool
-      const { response, usage } =
-        await invokeClaudeCodeForReflect<ReflectStep1Response>({
-          prompt: step1Prompt.prompt,
-          cwd: input.source,
-          rapid,
-        });
+      // invoke brain with step 1 prompt to get rules as structured JSON
+      const response: Step1Response = await contextBrain.brain.choice.ask({
+        role: {},
+        prompt: step1Prompt.prompt,
+        schema: { output: schemaStep1Response },
+      });
 
-      // count rules written via readdir on pureDir
-      const pureFiles = await fs.readdir(pureDir).catch(() => []);
-      const rulesProposed = pureFiles.filter((f) =>
-        f.startsWith('rule.'),
-      ).length;
+      // write each rule file to pureDir
+      for (const rule of response.rules) {
+        await fs.writeFile(
+          path.join(pureDir, rule.name),
+          rule.content,
+          'utf-8',
+        );
+      }
 
       return {
-        tokens: usage,
-        rulesProposed: rulesProposed || response.rules?.length || 0,
+        // note: usage metrics not available from brain.choice.ask
+        tokens: { input: 0, cacheWrite: 0, cacheRead: 0, output: 0 },
+        rulesProposed: response.rules.length,
       };
     },
   });
@@ -199,27 +268,27 @@ export const stepReflect = async (input: {
     draftDir,
     pureDir,
     mode,
-    rapid,
   });
 
   // step 2: blend proposals with prior rules
   const step2Result = await withSpinner({
     message: '🪨 step 2: blend proposals with prior rules...',
     operation: async () => {
-      // invoke claude-code with step 2 prompt
-      // note: model writes manifest.json directly via Write tool
-      const { usage } = await invokeClaudeCodeForReflect<{ written: boolean }>({
+      // invoke brain with step 2 prompt to get manifest as structured JSON
+      const response: Step2Response = await contextBrain.brain.choice.ask({
+        role: {},
         prompt: step2PromptFinal.prompt,
-        cwd: input.target,
-        rapid,
+        schema: { output: schemaStep2Response },
       });
 
-      // read the manifest written by the model
+      // write manifest.json to draftDir
+      const manifestContent = JSON.stringify(response, null, 2);
       const manifestPath = path.join(draftDir, 'manifest.json');
-      const manifestContent = await fs.readFile(manifestPath, 'utf-8');
+      await fs.writeFile(manifestPath, manifestContent, 'utf-8');
 
       return {
-        tokens: usage,
+        // note: usage metrics not available from brain.choice.ask
+        tokens: { input: 0, cacheWrite: 0, cacheRead: 0, output: 0 },
         manifestContent,
       };
     },

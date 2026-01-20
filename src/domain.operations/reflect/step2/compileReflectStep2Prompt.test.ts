@@ -19,7 +19,7 @@ describe('compileReflectStep2Prompt', () => {
     await fs.rm(testDir, { recursive: true, force: true });
   });
 
-  describe('soft mode', () => {
+  describe('pull mode', () => {
     it('should include objective section', async () => {
       await fs.writeFile(path.join(pureDir, 'rule.test.md'), 'test', 'utf-8');
 
@@ -27,7 +27,7 @@ describe('compileReflectStep2Prompt', () => {
         targetDir,
         draftDir,
         pureDir,
-        mode: 'soft',
+        mode: 'pull',
       });
 
       expect(result.prompt).toContain('# objective');
@@ -48,7 +48,7 @@ describe('compileReflectStep2Prompt', () => {
         targetDir,
         draftDir,
         pureDir,
-        mode: 'soft',
+        mode: 'pull',
       });
 
       expect(result.prompt).toContain('# target rules');
@@ -71,7 +71,7 @@ describe('compileReflectStep2Prompt', () => {
         targetDir,
         draftDir,
         pureDir,
-        mode: 'soft',
+        mode: 'pull',
       });
 
       expect(result.prompt).toContain('# pure proposals');
@@ -79,7 +79,7 @@ describe('compileReflectStep2Prompt', () => {
       expect(result.prompt).toContain('rule.prefer.example.md');
     });
 
-    it('should NOT include content in soft mode', async () => {
+    it('should NOT include content in pull mode', async () => {
       await fs.writeFile(
         path.join(pureDir, 'rule.test.md'),
         'secret content',
@@ -90,7 +90,7 @@ describe('compileReflectStep2Prompt', () => {
         targetDir,
         draftDir,
         pureDir,
-        mode: 'soft',
+        mode: 'pull',
       });
 
       expect(result.prompt).not.toContain('# pure proposal content');
@@ -104,7 +104,7 @@ describe('compileReflectStep2Prompt', () => {
         targetDir,
         draftDir,
         pureDir,
-        mode: 'soft',
+        mode: 'pull',
       });
 
       expect(result.prompt).toContain('## output');
@@ -116,7 +116,7 @@ describe('compileReflectStep2Prompt', () => {
     });
   });
 
-  describe('hard mode', () => {
+  describe('push mode', () => {
     it('should include pure proposal content', async () => {
       await fs.writeFile(
         path.join(pureDir, 'rule.test.md'),
@@ -128,7 +128,7 @@ describe('compileReflectStep2Prompt', () => {
         targetDir,
         draftDir,
         pureDir,
-        mode: 'hard',
+        mode: 'push',
       });
 
       expect(result.prompt).toContain('# pure proposal content');
@@ -148,7 +148,7 @@ describe('compileReflectStep2Prompt', () => {
         targetDir,
         draftDir,
         pureDir,
-        mode: 'hard',
+        mode: 'push',
       });
 
       expect(result.prompt).toContain('# target rule content');
@@ -163,7 +163,7 @@ describe('compileReflectStep2Prompt', () => {
         targetDir,
         draftDir,
         pureDir,
-        mode: 'soft',
+        mode: 'pull',
       });
 
       expect(result.tokenEstimate).toBeGreaterThan(0);
@@ -179,60 +179,28 @@ describe('compileReflectStep2Prompt', () => {
         targetDir,
         draftDir,
         pureDir,
-        mode: 'soft',
+        mode: 'pull',
       });
 
       expect(result.prompt).toContain('no rules in target directory');
     });
   });
 
-  describe('rapid mode', () => {
-    it('should NOT include SET_UPDATE operation in rapid mode', async () => {
+  describe('operations', () => {
+    it('should include all operations in prompt', async () => {
       await fs.writeFile(path.join(pureDir, 'rule.test.md'), 'test', 'utf-8');
 
       const result = await compileReflectStep2Prompt({
         targetDir,
         draftDir,
         pureDir,
-        mode: 'soft',
-        rapid: true,
-      });
-
-      expect(result.prompt).toContain('SET_CREATE');
-      expect(result.prompt).not.toContain('SET_UPDATE');
-      expect(result.prompt).toContain('OMIT');
-      expect(result.prompt).toContain('SET_APPEND');
-    });
-
-    it('should include SET_UPDATE operation when not rapid', async () => {
-      await fs.writeFile(path.join(pureDir, 'rule.test.md'), 'test', 'utf-8');
-
-      const result = await compileReflectStep2Prompt({
-        targetDir,
-        draftDir,
-        pureDir,
-        mode: 'soft',
-        rapid: false,
+        mode: 'pull',
       });
 
       expect(result.prompt).toContain('SET_CREATE');
       expect(result.prompt).toContain('SET_UPDATE');
       expect(result.prompt).toContain('OMIT');
       expect(result.prompt).toContain('SET_APPEND');
-    });
-
-    it('should default to non-rapid mode (with SET_UPDATE)', async () => {
-      await fs.writeFile(path.join(pureDir, 'rule.test.md'), 'test', 'utf-8');
-
-      const result = await compileReflectStep2Prompt({
-        targetDir,
-        draftDir,
-        pureDir,
-        mode: 'soft',
-      });
-
-      // default should include SET_UPDATE
-      expect(result.prompt).toContain('SET_UPDATE');
     });
   });
 });

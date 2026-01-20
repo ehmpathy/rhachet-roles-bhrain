@@ -1,6 +1,9 @@
 /**
  * .what = estimates tokens and cost before reflect execution
  * .why = enables context window check and cost preview
+ *
+ * .note = cost estimates use hardcoded sonnet prices
+ *         todo: expose prices via rhachet BrainAtom/BrainRepl for accurate estimates
  */
 export const computeMetricsExpected = (input: {
   step1PromptTokens: number;

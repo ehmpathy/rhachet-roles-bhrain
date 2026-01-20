@@ -20,3 +20,7 @@ ignores:
   - "@src/.*"
   - yalc
   - "@anthropic-ai/claude-code"
+  - rhachet-roles-bhrain
+  - rhachet-roles-bhuild
+  - rhachet-roles-ehmpathy
+  - rhachet-brains-anthropic

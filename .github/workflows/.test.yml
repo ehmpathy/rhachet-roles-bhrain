@@ -22,6 +22,9 @@ on:
       TAVILY_API_KEY:
         description: "tavily api key for web search integration tests"
         required: false
+      XAI_API_KEY:
+        description: "xai api key for grok llm integration tests"
+        required: false
 
 permissions:
   id-token: write # required for oidc
@@ -255,6 +258,7 @@ jobs:
           OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
           ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
           TAVILY_API_KEY: ${{ secrets.TAVILY_API_KEY }}
+          XAI_API_KEY: ${{ secrets.XAI_API_KEY }}
 
       - name: test:integration (dynamic ${{ matrix.shard.shard }}/${{ matrix.shard.total }})
         if: matrix.shard.type == 'dynamic'
@@ -269,6 +273,7 @@ jobs:
           OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
           ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
           TAVILY_API_KEY: ${{ secrets.TAVILY_API_KEY }}
+          XAI_API_KEY: ${{ secrets.XAI_API_KEY }}
 
   # dual-purpose job: runs tests directly (no sharding) or reports shard results (with sharding)
   test-integration:
@@ -327,6 +332,7 @@ jobs:
           OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
           ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
           TAVILY_API_KEY: ${{ secrets.TAVILY_API_KEY }}
+          XAI_API_KEY: ${{ secrets.XAI_API_KEY }}
 
   test-acceptance-locally:
     runs-on: ubuntu-24.04

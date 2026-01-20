@@ -15,7 +15,7 @@ describe('stepReflect', () => {
           stepReflect({
             source: '/nonexistent/source/directory',
             target: '/tmp/target',
-            mode: 'soft',
+            mode: 'push',
           }),
         );
 
@@ -32,7 +32,7 @@ describe('stepReflect', () => {
           stepReflect({
             source: ASSETS_TARGET, // this dir has no feedback files
             target: '/tmp/target',
-            mode: 'soft',
+            mode: 'push',
           }),
         );
 
@@ -80,7 +80,7 @@ describe('stepReflect', () => {
           stepReflect({
             source: scene.sourceDir,
             target: scene.targetDir,
-            mode: 'soft',
+            mode: 'push',
           }),
         );
 
@@ -105,7 +105,7 @@ describe('stepReflect', () => {
           stepReflect({
             source: scene.sourceDir,
             target: `/tmp/nonexistent-target-${Date.now()}`,
-            mode: 'soft',
+            mode: 'push',
             force: false,
           }),
         );

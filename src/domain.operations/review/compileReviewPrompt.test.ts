@@ -4,7 +4,7 @@ import { getError, given, then, when } from 'test-fns';
 import { compileReviewPrompt } from './compileReviewPrompt';
 
 describe('compileReviewPrompt', () => {
-  given('[case1] --hard mode', () => {
+  given('[case1] --push mode', () => {
     when('[t0] content is within 60% of context window', () => {
       then('injects content into prompt with no warnings', () => {
         const result = compileReviewPrompt({
@@ -17,7 +17,7 @@ describe('compileReviewPrompt', () => {
           targets: [
             { path: 'src/valid.ts', content: 'export const valid = 1;' },
           ],
-          mode: 'hard',
+          mode: 'push',
           contextWindowSize: 200000,
         });
         expect(result.prompt).toContain('# rule: no-console');
@@ -36,7 +36,7 @@ describe('compileReviewPrompt', () => {
         const result = compileReviewPrompt({
           rules: [{ path: 'rule.md', content: '# rule' }],
           targets: [{ path: 'file.ts', content }],
-          mode: 'hard',
+          mode: 'push',
           contextWindowSize: 2000,
         });
         expect(result.contextWindowPercent).toBeGreaterThanOrEqual(60);
@@ -54,18 +54,18 @@ describe('compileReviewPrompt', () => {
           compileReviewPrompt({
             rules: [{ path: 'rule.md', content: '# rule' }],
             targets: [{ path: 'large.ts', content }],
-            mode: 'hard',
+            mode: 'push',
             contextWindowSize: 2000,
           }),
         );
         expect(error).toBeInstanceOf(BadRequestError);
         expect(error?.message).toContain('exceeds 75%');
-        expect(error?.message).toMatch(/reduce scope|--soft/);
+        expect(error?.message).toMatch(/reduce scope|--pull/);
       });
     });
   });
 
-  given('[case2] --soft mode', () => {
+  given('[case2] --pull mode', () => {
     when('[t0] prompt is compiled', () => {
       then('includes only file paths, not contents', () => {
         const result = compileReviewPrompt({
@@ -76,7 +76,7 @@ describe('compileReviewPrompt', () => {
             { path: 'src/valid.ts', content: 'export const valid = 1;' },
             { path: 'src/invalid.ts', content: 'console.log("bad");' },
           ],
-          mode: 'soft',
+          mode: 'pull',
         });
         expect(result.prompt).toContain('src/valid.ts');
         expect(result.prompt).toContain('src/invalid.ts');
@@ -88,7 +88,7 @@ describe('compileReviewPrompt', () => {
         const result = compileReviewPrompt({
           rules: [{ path: 'rule.md', content: '# rule' }],
           targets: [{ path: 'src/valid.ts', content: '...' }],
-          mode: 'soft',
+          mode: 'pull',
         });
         expect(result.prompt).toMatch(/open|read/i);
       });
@@ -96,12 +96,12 @@ describe('compileReviewPrompt', () => {
 
     when('[t1] content is large', () => {
       then('does not failfast even at high percentages', () => {
-        // soft mode should not fail even with large file lists
+        // pull mode should not fail even with large file lists
         const content = 'x '.repeat(1600);
         const result = compileReviewPrompt({
           rules: [{ path: 'rule.md', content: '# rule' }],
-          targets: [{ path: 'large.ts', content }], // content ignored in soft mode
-          mode: 'soft',
+          targets: [{ path: 'large.ts', content }], // content ignored in pull mode
+          mode: 'pull',
           contextWindowSize: 1000,
         });
         // should succeed without throwing
@@ -120,7 +120,7 @@ describe('compileReviewPrompt', () => {
             { path: 'rule.no-any.md', content: '# no-any' },
           ],
           targets: [{ path: 'src/valid.ts', content: '...' }],
-          mode: 'hard',
+          mode: 'push',
         });
         expect(result.prompt).toContain('no-console');
         expect(result.prompt).toContain('no-any');
@@ -134,7 +134,7 @@ describe('compileReviewPrompt', () => {
         const result = compileReviewPrompt({
           rules: [{ path: 'rule.md', content: '# rule' }],
           targets: [{ path: 'file.ts', content: 'code' }],
-          mode: 'hard',
+          mode: 'push',
           contextWindowSize: 200000,
         });
         expect(result.contextWindowPercent).toBeDefined();
@@ -145,7 +145,7 @@ describe('compileReviewPrompt', () => {
         const result = compileReviewPrompt({
           rules: [{ path: 'rule.md', content: '# rule' }],
           targets: [{ path: 'file.ts', content: 'code' }],
-          mode: 'hard',
+          mode: 'push',
         });
         expect(result.costEstimate).toBeDefined();
         expect(typeof result.costEstimate).toBe('number');

@@ -6,6 +6,10 @@ import type {
 /**
  * .what = computes actual metrics from brain responses
  * .why = enables accurate cost track after execution
+ *
+ * .note = cost calculations use hardcoded sonnet prices; currently unused
+ *         since brain.choice.ask() returns no usage metrics
+ *         todo: expose usage and prices via rhachet BrainAtom/BrainRepl on responses
  */
 export const computeMetricsRealized = (input: {
   step1: {

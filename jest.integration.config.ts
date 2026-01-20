@@ -14,16 +14,16 @@ const config: Config = {
   verbose: true,
   reporters: [['default', { summaryThreshold: 0 }]],
   testEnvironment: 'node',
-  moduleFileExtensions: ['js', 'ts'],
+  moduleFileExtensions: ['js', 'mjs', 'ts'],
   moduleNameMapper: {
     '^@src/(.*)$': '<rootDir>/src/$1',
   },
   transform: {
     '^.+\\.(t|j)sx?$': '@swc/jest',
+    '^.+\\.mjs$': '@swc/jest',
   },
   transformIgnorePatterns: [
-    // here's an example of how to ignore esm module transformation, when needed
-    // 'node_modules/(?!(@octokit|universal-user-agent|before-after-hook)/)',
+    // empty = transform all node_modules (needed for esm packages in pnpm)
   ],
   testMatch: ['**/*.integration.test.ts', '!**/.yalc/**', '!**/.scratch/**'],
   setupFilesAfterEnv: ['./jest.integration.env.ts'],
