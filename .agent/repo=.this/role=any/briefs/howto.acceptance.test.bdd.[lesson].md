@@ -195,7 +195,7 @@ describe('stepReview', () => {
           rules: '.agent/**/rules/*.md',
           paths: 'chapters/chapter2.fixed.md',
           output: outputPath,
-          mode: 'hard',
+          mode: 'push',
           cwd: ASSETS_PROSE,
         });
         expect(result.review.formatted.toLowerCase()).not.toContain('blocker');
@@ -211,7 +211,7 @@ describe('stepReview', () => {
           rules: '.agent/**/rules/*.md',
           paths: 'chapters/chapter2.md',
           output: outputPath,
-          mode: 'hard',
+          mode: 'push',
           cwd: ASSETS_PROSE,
         });
         expect(result.review.formatted.toLowerCase()).toContain('blocker');

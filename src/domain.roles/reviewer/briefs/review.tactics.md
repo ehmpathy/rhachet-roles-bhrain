@@ -6,14 +6,14 @@ the reviewer role performs automated code review against declared rules, using c
 
 ## modes
 
-### soft mode
+### pull mode
 
 - includes only file paths in the prompt
 - instructs brain to read files directly
 - lower token usage
 - best for: large codebases, exploratory reviews
 
-### hard mode
+### push mode
 
 - includes full file contents in the prompt
 - no additional file reads required
@@ -22,12 +22,12 @@ the reviewer role performs automated code review against declared rules, using c
 
 ## mode selection criteria
 
-use `--soft` when:
+use `--pull` when:
 - scope is large (>50 files)
 - context window would exceed 60%
 - reviewing for general patterns
 
-use `--hard` when:
+use `--push` when:
 - scope is small (<20 files)
 - precision is critical
 - reviewing specific changes
@@ -35,7 +35,7 @@ use `--hard` when:
 ## context window thresholds
 
 - **60% warning**: emits warning but continues
-- **75% failfast**: throws error with recommendation to reduce scope or use soft mode
+- **75% failfast**: throws error with recommendation to reduce scope or use pull mode
 
 ## scope combination
 

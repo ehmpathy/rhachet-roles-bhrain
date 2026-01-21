@@ -1,16 +1,43 @@
 import * as fs from 'fs/promises';
 import { BadRequestError } from 'helpful-errors';
 import * as path from 'path';
+import { BrainRepl } from 'rhachet';
+import { z } from 'zod';
 
+import {
+  DEFAULT_BRAIN,
+  genContextBrainChoice,
+} from '@src/_topublish/rhachet/genContextBrainChoice';
 import { compileReviewPrompt } from '@src/domain.operations/review/compileReviewPrompt';
 import { enumFilesFromDiffs } from '@src/domain.operations/review/enumFilesFromDiffs';
 import { enumFilesFromGlob } from '@src/domain.operations/review/enumFilesFromGlob';
 import { formatReviewOutput } from '@src/domain.operations/review/formatReviewOutput';
 import { genTokenBreakdownMarkdown } from '@src/domain.operations/review/genTokenBreakdownMarkdown';
 import { genTokenBreakdownReport } from '@src/domain.operations/review/genTokenBreakdownReport';
-import { invokeClaudeCode } from '@src/domain.operations/review/invokeClaudeCode';
 import { writeInputArtifacts } from '@src/domain.operations/review/writeInputArtifacts';
 import { writeOutputArtifacts } from '@src/domain.operations/review/writeOutputArtifacts';
+
+/**
+ * .what = schema for review issue
+ * .why = enables structured output from brain.choice.ask
+ */
+const schemaOfReviewIssue = z.object({
+  rule: z.string(),
+  title: z.string(),
+  description: z.string(),
+  file: z.string().optional(),
+  line: z.number().optional(),
+});
+
+/**
+ * .what = schema for review output
+ * .why = enables structured output from brain.choice.ask
+ */
+const schemaOfReviewOutput = z.object({
+  done: z.boolean(),
+  blockers: z.array(schemaOfReviewIssue),
+  nitpicks: z.array(schemaOfReviewIssue),
+});
 
 /**
  * .what = result of stepReview execution
@@ -116,10 +143,25 @@ export const stepReview = async (input: {
   diffs?: string;
   paths?: string | string[];
   output: string;
-  mode: 'soft' | 'hard';
+  mode: 'pull' | 'push';
+  brain?: string;
   cwd?: string;
 }): Promise<StepReviewResult> => {
   const cwd = input.cwd ?? process.cwd();
+
+  // resolve brain choice from brain registry
+  const brainSlug = input.brain ?? DEFAULT_BRAIN;
+  const contextBrain = await genContextBrainChoice({ brain: brainSlug });
+
+  // validate that pull mode is only used with brains that have tool use
+  const choiceIsRepl = contextBrain.brain.choice instanceof BrainRepl;
+  if (input.mode === 'pull' && !choiceIsRepl)
+    throw new BadRequestError(
+      `mode 'pull' requires a brain with tool use (BrainRepl). ` +
+        `brain '${brainSlug}' is a BrainAtom without tool use. ` +
+        `use mode 'push' instead, or choose a BrainRepl.`,
+      { brain: brainSlug, mode: input.mode },
+    );
 
   // validate that at least one of rules, diffs, or paths is specified
   const hasRules =
@@ -347,86 +389,48 @@ export const stepReview = async (input: {
 `.trim(),
   );
 
-  // invoke claude-code with spinner
+  // invoke brain with spinner
   console.log('');
-  const brainResult = await withSpinner({
+  const reviewIssues = await withSpinner({
     message: "🦉 let's review!",
-    operation: () => invokeClaudeCode({ prompt: promptResult.prompt, cwd }),
+    operation: () =>
+      contextBrain.brain.choice.ask({
+        role: { briefs: [] },
+        prompt: promptResult.prompt,
+        schema: { output: schemaOfReviewOutput },
+      }),
   });
 
-  // calculate realized costs per token type
-  const realizedCosts = (() => {
-    const input = (brainResult.usage.inputTokens / 1_000_000) * 3;
-    const cacheWrite =
-      (brainResult.usage.inputTokensCacheCreation / 1_000_000) * 3.75;
-    const cacheRead =
-      (brainResult.usage.inputTokensCacheRead / 1_000_000) * 0.3;
-    const output = (brainResult.usage.outputTokens / 1_000_000) * 15;
-    const total =
-      Math.round((input + cacheWrite + cacheRead + output) * 10000) / 10000;
-    return { input, cacheWrite, cacheRead, output, total };
-  })();
+  // todo: expose usage via rhachet BrainAtom and BrainRepl on responses
+  // for now, use placeholder values since brain.choice.ask doesn't return usage
+  const realizedUsage = {
+    inputTokens: 0,
+    inputTokensCacheCreation: 0,
+    inputTokensCacheRead: 0,
+    outputTokens: 0,
+  };
+  const realizedCosts = {
+    input: 0,
+    cacheWrite: 0,
+    cacheRead: 0,
+    output: 0,
+    total: 0,
+  };
 
   // write metrics.realized after invocation
   await fs.writeFile(
     path.join(logDir, 'metrics.realized.json'),
     JSON.stringify(
       {
-        tokens: {
-          input: brainResult.usage.inputTokens,
-          inputCacheCreation: brainResult.usage.inputTokensCacheCreation,
-          inputCacheRead: brainResult.usage.inputTokensCacheRead,
-          output: brainResult.usage.outputTokens,
-        },
-        cost: {
-          input: realizedCosts.input,
-          cacheWrite: realizedCosts.cacheWrite,
-          cacheRead: realizedCosts.cacheRead,
-          output: realizedCosts.output,
-          total: realizedCosts.total,
-        },
+        tokens: realizedUsage,
+        cost: realizedCosts,
+        note: 'usage metrics unavailable from brain.choice.ask(); see todo in rhachet',
       },
       null,
       2,
     ),
     'utf-8',
   );
-
-  // parse issues from review text
-  const reviewIssues = (() => {
-    // extract JSON from the review text (may be wrapped in markdown code blocks)
-    const jsonMatch = brainResult.review.match(/```(?:json)?\s*([\s\S]*?)```/);
-    const jsonText = jsonMatch?.[1]?.trim() ?? brainResult.review.trim();
-
-    try {
-      return JSON.parse(jsonText) as {
-        done: boolean;
-        blockers: Array<{
-          rule: string;
-          title: string;
-          description: string;
-          file?: string;
-          line?: number;
-        }>;
-        nitpicks: Array<{
-          rule: string;
-          title: string;
-          description: string;
-          file?: string;
-          line?: number;
-        }>;
-      };
-    } catch (error) {
-      throw new BadRequestError(
-        'failed to parse review issues from claude response',
-        {
-          review: brainResult.review,
-          jsonText,
-          error: error instanceof Error ? error.message : String(error),
-        },
-      );
-    }
-  })();
 
   // format review output
   const formattedReview = formatReviewOutput({
@@ -436,7 +440,7 @@ export const stepReview = async (input: {
   // write output artifacts
   await writeOutputArtifacts({
     logDir,
-    response: brainResult.response,
+    response: reviewIssues,
     review: formattedReview,
   });
 
@@ -447,20 +451,11 @@ export const stepReview = async (input: {
   await fs.writeFile(outputAbsolute, formattedReview, 'utf-8');
 
   // emit metrics.realized after invocation
+  // todo: expose usage via rhachet BrainAtom and BrainRepl on responses
   console.log(
     `
 ✨ metrics.realized
-   ├─ tokens
-   │  ├─ input: ${brainResult.usage.inputTokens}
-   │  ├─ cache.write: ${brainResult.usage.inputTokensCacheCreation}
-   │  ├─ cache.read: ${brainResult.usage.inputTokensCacheRead}
-   │  └─ output: ${brainResult.usage.outputTokens}
-   └─ cost
-      ├─ input: $${realizedCosts.input.toFixed(4)}
-      ├─ cache.write: $${realizedCosts.cacheWrite.toFixed(4)}
-      ├─ cache.read: $${realizedCosts.cacheRead.toFixed(4)}
-      ├─ output: $${realizedCosts.output.toFixed(4)}
-      └─ total: $${realizedCosts.total.toFixed(4)}
+   └─ note: usage metrics unavailable from brain.choice.ask()
 
 🌊 output
    ├─ logs: ${path.relative(cwd, logDir)}
@@ -494,10 +489,10 @@ export const stepReview = async (input: {
       },
       realized: {
         tokens: {
-          input: brainResult.usage.inputTokens,
-          inputCacheCreation: brainResult.usage.inputTokensCacheCreation,
-          inputCacheRead: brainResult.usage.inputTokensCacheRead,
-          output: brainResult.usage.outputTokens,
+          input: realizedUsage.inputTokens,
+          inputCacheCreation: realizedUsage.inputTokensCacheCreation,
+          inputCacheRead: realizedUsage.inputTokensCacheRead,
+          output: realizedUsage.outputTokens,
         },
         cost: {
           input: realizedCosts.input,

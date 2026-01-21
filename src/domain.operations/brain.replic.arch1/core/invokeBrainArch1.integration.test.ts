@@ -3,6 +3,7 @@ import * as os from 'os';
 import * as path from 'path';
 import { given, then, when } from 'test-fns';
 
+import { logOutputHead } from '@src/.test/logOutputHead';
 import { BrainArch1Actor } from '@src/domain.objects/BrainArch1/BrainArch1Actor';
 import { invokeBrainArch1 } from '@src/domain.operations/brain.replic.arch1/core/invokeBrainArch1';
 import { genAtomAnthropic } from '@src/domain.operations/brain.replic.arch1/plugins/atoms/anthropic';
@@ -56,10 +57,6 @@ describe('invokeBrainArch1', () => {
     when('[t0] invoked with greeting', () => {
       then('returns natural language response', async () => {
         const context = getContext();
-        if (!context.creds.anthropic.apiKey) {
-          console.log('skipping: ANTHROPIC_API_KEY not set');
-          return;
-        }
 
         const actor = new BrainArch1Actor({
           atom: genAtomAnthropic({ model: 'claude-sonnet-4-20250514' }),
@@ -83,6 +80,12 @@ describe('invokeBrainArch1', () => {
           context,
         );
 
+        // log output for observability
+        logOutputHead({
+          label: 'brainArch1.anthropic.simple',
+          output: result.finalResponse ?? '',
+        });
+
         expect(result.terminationReason).toBe('NATURAL_COMPLETION');
         expect(result.finalResponse).toBeTruthy();
         expect(result.iterationCount).toBe(1);
@@ -95,10 +98,6 @@ describe('invokeBrainArch1', () => {
     when('[t0] asked to read a file that exists', () => {
       then('uses tool and returns file contents', async () => {
         const context = getContext();
-        if (!context.creds.anthropic.apiKey) {
-          console.log('skipping: ANTHROPIC_API_KEY not set');
-          return;
-        }
 
         // create test file
         const testFile = path.join(testDir, 'test-read.txt');
@@ -127,6 +126,12 @@ describe('invokeBrainArch1', () => {
           context,
         );
 
+        // log output for observability
+        logOutputHead({
+          label: 'brainArch1.anthropic.fileread',
+          output: result.finalResponse ?? '',
+        });
+
         expect(result.terminationReason).toBe('NATURAL_COMPLETION');
         expect(result.finalResponse).toBeTruthy();
         expect(result.finalResponse).toContain('Hello from test file');
@@ -139,10 +144,6 @@ describe('invokeBrainArch1', () => {
     when('[t0] invoked with greeting', () => {
       then('returns natural language response', async () => {
         const context = getContext();
-        if (!context.creds.openai.apiKey) {
-          console.log('skipping: OPENAI_API_KEY not set');
-          return;
-        }
 
         const actor = new BrainArch1Actor({
           atom: genAtomOpenai({ model: 'gpt-4o' }),
@@ -166,6 +167,12 @@ describe('invokeBrainArch1', () => {
           context,
         );
 
+        // log output for observability
+        logOutputHead({
+          label: 'brainArch1.openai.simple',
+          output: result.finalResponse ?? '',
+        });
+
         expect(result.terminationReason).toBe('NATURAL_COMPLETION');
         expect(result.finalResponse).toBeTruthy();
         expect(result.iterationCount).toBe(1);
@@ -178,10 +185,6 @@ describe('invokeBrainArch1', () => {
     when('[t0] asked to read a file that exists', () => {
       then('uses tool and returns file contents', async () => {
         const context = getContext();
-        if (!context.creds.openai.apiKey) {
-          console.log('skipping: OPENAI_API_KEY not set');
-          return;
-        }
 
         // create test file
         const testFile = path.join(testDir, 'test-read-openai.txt');
@@ -210,6 +213,12 @@ describe('invokeBrainArch1', () => {
           context,
         );
 
+        // log output for observability
+        logOutputHead({
+          label: 'brainArch1.openai.fileread',
+          output: result.finalResponse ?? '',
+        });
+
         expect(result.terminationReason).toBe('NATURAL_COMPLETION');
         expect(result.finalResponse).toBeTruthy();
         expect(result.finalResponse).toContain('Greetings from OpenAI test');
@@ -222,10 +231,6 @@ describe('invokeBrainArch1', () => {
     when('[t0] writes and then reads file', () => {
       then('handles multi-step workflow', async () => {
         const context = getContext();
-        if (!context.creds.anthropic.apiKey) {
-          console.log('skipping: ANTHROPIC_API_KEY not set');
-          return;
-        }
 
         const testFile = path.join(testDir, 'test-write-read.txt');
 
@@ -252,6 +257,12 @@ describe('invokeBrainArch1', () => {
           context,
         );
 
+        // log output for observability
+        logOutputHead({
+          label: 'brainArch1.anthropic.multiturn',
+          output: result.finalResponse ?? '',
+        });
+
         expect(result.terminationReason).toBe('NATURAL_COMPLETION');
         expect(result.finalResponse).toBeTruthy();
         expect(result.iterationCount).toBeGreaterThanOrEqual(3); // write + read + response
@@ -270,10 +281,6 @@ describe('invokeBrainArch1', () => {
     when('[t0] asked to research sea turtles', () => {
       then('produces report with cited source', async () => {
         const context = getContext();
-        if (!context.creds.anthropic.apiKey) {
-          console.log('skipping: ANTHROPIC_API_KEY not set');
-          return;
-        }
 
         // create timestamped output directory
         const timestamp = new Date().toISOString().replace(/[:.]/g, '-');
@@ -322,6 +329,12 @@ Write the final report to: ${reportPath}`,
           },
           context,
         );
+
+        // log output for observability
+        logOutputHead({
+          label: 'brainArch1.anthropic.webresearch',
+          output: result.finalResponse ?? '',
+        });
 
         expect(result.terminationReason).toBe('NATURAL_COMPLETION');
         expect(result.finalResponse).toBeTruthy();

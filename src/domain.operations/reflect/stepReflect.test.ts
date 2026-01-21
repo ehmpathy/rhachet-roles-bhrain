@@ -90,7 +90,7 @@ describe('reflect', () => {
           citationsMarkdown,
           draftDir,
           cwd: sourceDir,
-          mode: 'soft',
+          mode: 'pull',
         });
 
         expect(prompt).toContain('# objective');
@@ -223,7 +223,7 @@ describe('reflect', () => {
           targetDir: testTargetDir,
           draftDir: testDraftDir,
           pureDir: testPureDir,
-          mode: 'soft',
+          mode: 'pull',
         });
 
         expect(prompt).toContain('# target rules');

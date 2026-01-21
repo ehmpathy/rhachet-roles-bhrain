@@ -10,7 +10,7 @@ export const compileReflectStep1Prompt = async (input: {
   citationsMarkdown: string;
   draftDir: string;
   cwd: string;
-  mode: 'soft' | 'hard';
+  mode: 'pull' | 'push';
 }): Promise<{
   prompt: string;
   tokenEstimate: number;
@@ -25,8 +25,7 @@ propose rules from feedback citations.
 extract generalized insights from the feedback and propose them as rule files.
 do NOT consult any existing rules - propose with fresh perspective.
 
-IMPORTANT: you MUST write rule files using the Write tool. do NOT ask clarifying questions.
-if feedback is unclear, skip it - only create rules for clear patterns.
+do NOT ask clarify questions. if feedback is unclear, skip it - only create rules for clear patterns.
 `);
 
   // citations section
@@ -35,8 +34,8 @@ if feedback is unclear, skip it - only create rules for clear patterns.
 ${input.citationsMarkdown}
 `);
 
-  // feedback content (hard mode only)
-  if (input.mode === 'hard') {
+  // feedback content (push mode only)
+  if (input.mode === 'push') {
     sections.push('# feedback content\n');
     for (const file of input.feedbackFiles) {
       const content = await fs.readFile(path.join(input.cwd, file), 'utf-8');
@@ -47,7 +46,7 @@ ${input.citationsMarkdown}
   // instructions section
   sections.push(`# instructions
 
-1. analyze the feedback citations${input.mode === 'hard' ? ' and content' : ''}
+1. analyze the feedback citations${input.mode === 'push' ? ' and content' : ''}
 2. identify patterns and generalizable insights
 3. propose rules as \`rule.$directive.$topic.md\` files
 4. each rule must include:
@@ -60,17 +59,17 @@ ${input.citationsMarkdown}
 
 # output
 
-use the Write tool to write each rule file to: ${input.draftDir}/pure/
-
-after writing all rules, respond with a JSON summary:
+respond with a JSON object that includes all proposed rules with their full content:
 \`\`\`json
 {
   "rules": [
-    { "name": "rule.forbid.example.md" },
-    { "name": "rule.require.other.md" }
+    { "name": "rule.forbid.example.md", "content": "# tldr\\n\\n## severity\\n..." },
+    { "name": "rule.require.other.md", "content": "# tldr\\n\\n## severity\\n..." }
   ]
 }
 \`\`\`
+
+include the FULL markdown content for each rule in the "content" field.
 `);
 
   const prompt = sections.join('\n');

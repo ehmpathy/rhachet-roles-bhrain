@@ -5,6 +5,7 @@
  */
 import { z } from 'zod';
 
+import { printBrainHelp } from '@src/_topublish/rhachet/genContextBrainChoice';
 import { stepReflect } from '@src/domain.operations/reflect/stepReflect';
 import { getCliArgs } from '@src/infra/cli/getCliArgs';
 
@@ -13,9 +14,9 @@ const schemaOfArgs = z.object({
     // skill-specific args
     source: z.string().optional(),
     target: z.string().optional(),
-    mode: z.enum(['soft', 'hard']).optional(),
+    mode: z.enum(['pull', 'push']).optional(),
     force: z.string().optional(),
-    rapid: z.string().optional(),
+    brain: z.string().optional(),
     // rhachet passthrough args (optional, ignored)
     repo: z.string().optional(),
     role: z.string().optional(),
@@ -33,6 +34,12 @@ const schemaOfArgs = z.object({
 export const reflect = async (): Promise<void> => {
   const { named } = getCliArgs({ schema: schemaOfArgs });
 
+  // handle --brain help
+  if (named.brain === 'help') {
+    printBrainHelp();
+    process.exit(0);
+  }
+
   // validate required args
   if (!named.source) {
     console.error('error: --source is required');
@@ -49,6 +56,6 @@ export const reflect = async (): Promise<void> => {
     target: named.target,
     mode: named.mode,
     force: named.force === 'true',
-    rapid: named.rapid === 'true',
+    brain: named.brain,
   });
 };

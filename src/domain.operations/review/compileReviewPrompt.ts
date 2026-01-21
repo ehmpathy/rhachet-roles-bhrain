@@ -9,7 +9,7 @@ import { estimateTokenCount } from './estimateTokenCount';
 export const compileReviewPrompt = (input: {
   rules: Array<{ path: string; content: string }>;
   targets: Array<{ path: string; content: string }>;
-  mode: 'soft' | 'hard';
+  mode: 'pull' | 'push';
   contextWindowSize?: number;
 }): {
   prompt: string;
@@ -29,13 +29,13 @@ export const compileReviewPrompt = (input: {
 
   // build target section based on mode
   const targetSection = (() => {
-    if (input.mode === 'soft') {
-      // soft mode: paths only, instruct brain to open files
+    if (input.mode === 'pull') {
+      // pull mode: paths only, instruct brain to open files
       const pathList = input.targets.map((t) => `- ${t.path}`).join('\n');
       return `the following files are in scope for review. please open and read them as needed:\n\n${pathList}`;
     }
 
-    // hard mode: inject contents
+    // push mode: inject contents
     return input.targets
       .map(
         (target) => `### ${target.path}\n\n\`\`\`\n${target.content}\n\`\`\``,
@@ -95,13 +95,13 @@ if no issues found, output: \`{"done": true, "blockers": [], "nitpicks": []}\`
   const tokenEstimate = estimateTokenCount({ content: prompt });
   const contextWindowPercent = (tokenEstimate / contextWindow) * 100;
 
-  // check thresholds (only in hard mode - soft mode is inherently lighter)
-  if (input.mode === 'hard') {
+  // check thresholds (only in push mode - pull mode is inherently lighter)
+  if (input.mode === 'push') {
     // failfast if >75%
     if (contextWindowPercent > 75) {
       throw new BadRequestError(
         `prompt exceeds 75% of context window (${contextWindowPercent.toFixed(1)}% of ${contextWindow} tokens). ` +
-          `reduce scope or use --soft mode to avoid quality degradation.`,
+          `reduce scope or use --pull mode to avoid quality degradation.`,
         { tokenEstimate, contextWindowPercent, contextWindow },
       );
     }

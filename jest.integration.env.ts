@@ -108,3 +108,7 @@ if (!process.env.TAVILY_API_KEY)
   throw new Error(
     'TAVILY_API_KEY not set. set via `source .agent/repo=.this/role=any/skills/use.apikeys.sh && npm run test:integration --',
   );
+if (!process.env.XAI_API_KEY)
+  throw new Error(
+    'XAI_API_KEY not set. set via `source .agent/repo=.this/role=any/skills/use.apikeys.sh && npm run test:integration --',
+  );

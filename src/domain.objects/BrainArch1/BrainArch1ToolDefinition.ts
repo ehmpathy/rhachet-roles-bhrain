@@ -1,15 +1,11 @@
 import { DomainLiteral } from 'domain-objects';
-import type { z } from 'zod';
-import {
-  type JsonSchema7ObjectType,
-  zodToJsonSchema,
-} from 'zod-to-json-schema';
+import { z } from 'zod';
 
 /**
  * .what = json schema definition for tool parameters
  * .why = enables llm to understand tool interface and generate valid calls
  */
-export type BrainArch1ToolJsonSchema = JsonSchema7ObjectType;
+export type BrainArch1ToolJsonSchema = Record<string, unknown>;
 
 /**
  * .what = schema container for tool input and output definitions
@@ -61,7 +57,6 @@ export class BrainArch1ToolDefinition
  *
  * .note = only object schemas are supported. tool parameters must be objects.
  */
-export const toJsonSchema = <T extends z.ZodObject<z.ZodRawShape>>(
+export const toJsonSchema = <T extends z.ZodSchema>(
   zodSchema: T,
-): BrainArch1ToolJsonSchema =>
-  zodToJsonSchema(zodSchema) as JsonSchema7ObjectType;
+): BrainArch1ToolJsonSchema => z.toJSONSchema(zodSchema);

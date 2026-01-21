@@ -1,6 +1,6 @@
 // Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
 
-exports[`compileReflectStep1Prompt snapshot should match snapshot for hard mode prompt 1`] = `
+exports[`compileReflectStep1Prompt snapshot should match snapshot for push mode prompt 1`] = `
 "# objective
 
 propose rules from feedback citations.
@@ -8,8 +8,7 @@ propose rules from feedback citations.
 extract generalized insights from the feedback and propose them as rule files.
 do NOT consult any existing rules - propose with fresh perspective.
 
-IMPORTANT: you MUST write rule files using the Write tool. do NOT ask clarifying questions.
-if feedback is unclear, skip it - only create rules for clear patterns.
+do NOT ask clarify questions. if feedback is unclear, skip it - only create rules for clear patterns.
 
 # citations
 
@@ -84,21 +83,21 @@ overall good progress, but need to align with codebase conventions.
 
 # output
 
-use the Write tool to write each rule file to: /tmp/draft/pure/
-
-after writing all rules, respond with a JSON summary:
+respond with a JSON object that includes all proposed rules with their full content:
 \`\`\`json
 {
   "rules": [
-    { "name": "rule.forbid.example.md" },
-    { "name": "rule.require.other.md" }
+    { "name": "rule.forbid.example.md", "content": "# tldr\\n\\n## severity\\n..." },
+    { "name": "rule.require.other.md", "content": "# tldr\\n\\n## severity\\n..." }
   ]
 }
 \`\`\`
+
+include the FULL markdown content for each rule in the "content" field.
 "
 `;
 
-exports[`compileReflectStep1Prompt snapshot should match snapshot for soft mode prompt 1`] = `
+exports[`compileReflectStep1Prompt snapshot should match snapshot for pull mode prompt 1`] = `
 "# objective
 
 propose rules from feedback citations.
@@ -106,8 +105,7 @@ propose rules from feedback citations.
 extract generalized insights from the feedback and propose them as rule files.
 do NOT consult any existing rules - propose with fresh perspective.
 
-IMPORTANT: you MUST write rule files using the Write tool. do NOT ask clarifying questions.
-if feedback is unclear, skip it - only create rules for clear patterns.
+do NOT ask clarify questions. if feedback is unclear, skip it - only create rules for clear patterns.
 
 # citations
 
@@ -129,16 +127,16 @@ if feedback is unclear, skip it - only create rules for clear patterns.
 
 # output
 
-use the Write tool to write each rule file to: /tmp/draft/pure/
-
-after writing all rules, respond with a JSON summary:
+respond with a JSON object that includes all proposed rules with their full content:
 \`\`\`json
 {
   "rules": [
-    { "name": "rule.forbid.example.md" },
-    { "name": "rule.require.other.md" }
+    { "name": "rule.forbid.example.md", "content": "# tldr\\n\\n## severity\\n..." },
+    { "name": "rule.require.other.md", "content": "# tldr\\n\\n## severity\\n..." }
   ]
 }
 \`\`\`
+
+include the FULL markdown content for each rule in the "content" field.
 "
 `;

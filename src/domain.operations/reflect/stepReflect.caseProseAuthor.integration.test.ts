@@ -5,7 +5,7 @@ import { setupSourceRepo, setupTargetDir } from './.test/setup';
 import { stepReflect } from './stepReflect';
 
 describe('stepReflect.caseProseAuthor', () => {
-  // increase timeout for claude-code invocations (3 minutes)
+  // increase timeout for brain invocations (3 minutes)
   jest.setTimeout(180000);
 
   given('[case1] prose-author feedback with valid target', () => {
@@ -16,8 +16,7 @@ describe('stepReflect.caseProseAuthor', () => {
       const result = await stepReflect({
         source: sourceDir,
         target: targetDir,
-        mode: 'soft',
-        rapid: true,
+        mode: 'push',
       });
 
       return { sourceDir, targetDir, result };
