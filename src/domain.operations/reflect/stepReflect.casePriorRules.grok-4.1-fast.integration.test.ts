@@ -1,45 +1,51 @@
 import * as fs from 'fs/promises';
 import * as path from 'path';
-import { given, then, useBeforeAll, when } from 'test-fns';
+import { given, then, useThen, when } from 'test-fns';
 
 import type { ReviewerReflectManifest } from '@src/domain.objects/Reviewer/ReviewerReflectManifest';
 
 import { setupSourceRepo, setupTargetDir } from './.test/setup';
 import { stepReflect } from './stepReflect';
 
-describe('stepReflect.casePriorRules.default', () => {
-  // increase timeout for brain invocations (3 minutes)
-  jest.setTimeout(180000);
+describe('stepReflect.casePriorRules.grok-4.1-fast', () => {
+  // increase timeout for brain invocations (5 minutes)
+  jest.setTimeout(300000);
 
-  given('[case1] target with prior rule (default brain = xai/grok)', () => {
-    const scene = useBeforeAll(async () => {
-      const { repoDir: sourceDir } =
-        await setupSourceRepo('typescript-quality');
-      const { targetDir } = await setupTargetDir();
+  given('[case1] target with prior rule (explicit brain arg)', () => {
+    when('[t0] stepReflect completes', () => {
+      // single API call, result shared across assertions
+      const scene = useThen('stepReflect succeeds', async () => {
+        // setup source and target
+        const { repoDir: sourceDir } =
+          await setupSourceRepo('typescript-quality');
+        const { targetDir } = await setupTargetDir();
 
-      // add prior rule that matches feedback topic (arrow functions mentioned in v1 and v3)
-      await fs.mkdir(path.join(targetDir, 'practices'), { recursive: true });
-      await fs.writeFile(
-        path.join(targetDir, 'practices/rule.require.arrow-functions.md'),
-        '# require arrow functions\n\nuse arrow functions instead of function keyword',
-        'utf-8',
-      );
+        // add prior rule that matches feedback topic
+        await fs.mkdir(path.join(targetDir, 'practices'), {
+          recursive: true,
+        });
+        await fs.writeFile(
+          path.join(targetDir, 'practices/rule.require.arrow-functions.md'),
+          '# require arrow functions\n\nuse arrow functions instead of function keyword',
+          'utf-8',
+        );
 
-      // use default brain (xai/grok/code-fast-1)
-      const result = await stepReflect({
-        source: sourceDir,
-        target: targetDir,
-        mode: 'push',
+        // run stepReflect with xai brain
+        const result = await stepReflect({
+          source: sourceDir,
+          target: targetDir,
+          mode: 'push',
+          brain: 'xai/grok/4.1-fast-wout-reason',
+        });
+
+        return { sourceDir, targetDir, result };
       });
 
-      return { sourceDir, targetDir, result };
-    });
-    afterAll(async () => {
-      await fs.rm(scene.sourceDir, { recursive: true, force: true });
-      await fs.rm(scene.targetDir, { recursive: true, force: true });
-    });
+      afterAll(async () => {
+        await fs.rm(scene.sourceDir, { recursive: true, force: true });
+        await fs.rm(scene.targetDir, { recursive: true, force: true });
+      });
 
-    when('[t0] stepReflect completes with default brain', () => {
       then('manifest includes operations for all pure rules', async () => {
         const manifestPath = path.join(scene.result.draft.dir, 'manifest.json');
         const manifestContent = await fs.readFile(manifestPath, 'utf-8');

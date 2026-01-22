@@ -1,5 +1,7 @@
 import * as fs from 'fs/promises';
 import { BadRequestError } from 'helpful-errors';
+import { asIsoPriceHuman, type IsoPriceHuman } from 'iso-price';
+import type { IsoDuration } from 'iso-time';
 import * as path from 'path';
 import { BrainRepl } from 'rhachet';
 import { z } from 'zod';
@@ -25,8 +27,7 @@ const schemaOfReviewIssue = z.object({
   rule: z.string(),
   title: z.string(),
   description: z.string(),
-  file: z.string().optional(),
-  line: z.number().optional(),
+  locations: z.array(z.string()),
 });
 
 /**
@@ -75,12 +76,13 @@ export type StepReviewResult = {
         output: number;
       };
       cost: {
-        input: number;
-        cacheWrite: number;
-        cacheRead: number;
-        output: number;
-        total: number;
+        input: IsoPriceHuman;
+        cacheWrite: IsoPriceHuman;
+        cacheRead: IsoPriceHuman;
+        output: IsoPriceHuman;
+        total: IsoPriceHuman;
       };
+      time: IsoDuration;
     };
   };
 };
@@ -144,6 +146,7 @@ export const stepReview = async (input: {
   paths?: string | string[];
   output: string;
   mode: 'pull' | 'push';
+  goal: 'exhaustive' | 'representative';
   brain?: string;
   cwd?: string;
 }): Promise<StepReviewResult> => {
@@ -316,11 +319,15 @@ export const stepReview = async (input: {
     'utf-8',
   );
 
-  // compile review prompt
+  // compile review prompt with brain's context window
+  const contextWindowSize =
+    contextBrain.brain.choice.spec.gain.size.context.tokens;
   const promptResult = compileReviewPrompt({
     rules: ruleContents,
     targets: targetContents,
     mode: input.mode,
+    goal: input.goal,
+    contextWindowSize,
   });
 
   // write metrics.expected immediately after files are read
@@ -355,6 +362,7 @@ export const stepReview = async (input: {
       paths: input.paths,
       output: input.output,
       mode: input.mode,
+      goal: input.goal,
     },
     scope: {
       ruleFiles,
@@ -401,20 +409,20 @@ export const stepReview = async (input: {
       }),
   });
 
-  // todo: expose usage via rhachet BrainAtom and BrainRepl on responses
-  // for now, use placeholder values since brain.choice.ask doesn't return usage
-  const realizedUsage = {
-    inputTokens: 0,
-    inputTokensCacheCreation: 0,
-    inputTokensCacheRead: 0,
-    outputTokens: 0,
+  // extract metrics from brain response
+  const { metrics } = reviewIssues;
+  const realizedTokens = {
+    input: metrics.size.tokens.input,
+    inputCacheCreation: metrics.size.tokens.cache.set,
+    inputCacheRead: metrics.size.tokens.cache.get,
+    output: metrics.size.tokens.output,
   };
   const realizedCosts = {
-    input: 0,
-    cacheWrite: 0,
-    cacheRead: 0,
-    output: 0,
-    total: 0,
+    input: metrics.cost.cash.deets.input,
+    cacheWrite: metrics.cost.cash.deets.cache.set,
+    cacheRead: metrics.cost.cash.deets.cache.get,
+    output: metrics.cost.cash.deets.output,
+    total: metrics.cost.cash.total,
   };
 
   // write metrics.realized after invocation
@@ -422,9 +430,15 @@ export const stepReview = async (input: {
     path.join(logDir, 'metrics.realized.json'),
     JSON.stringify(
       {
-        tokens: realizedUsage,
-        cost: realizedCosts,
-        note: 'usage metrics unavailable from brain.choice.ask(); see todo in rhachet',
+        tokens: realizedTokens,
+        cost: {
+          input: asIsoPriceHuman(realizedCosts.input),
+          cacheWrite: asIsoPriceHuman(realizedCosts.cacheWrite),
+          cacheRead: asIsoPriceHuman(realizedCosts.cacheRead),
+          output: asIsoPriceHuman(realizedCosts.output),
+          total: asIsoPriceHuman(realizedCosts.total),
+        },
+        time: metrics.cost.time,
       },
       null,
       2,
@@ -434,13 +448,13 @@ export const stepReview = async (input: {
 
   // format review output
   const formattedReview = formatReviewOutput({
-    response: reviewIssues,
+    response: reviewIssues.output,
   });
 
   // write output artifacts
   await writeOutputArtifacts({
     logDir,
-    response: reviewIssues,
+    response: reviewIssues.output,
     review: formattedReview,
   });
 
@@ -451,11 +465,24 @@ export const stepReview = async (input: {
   await fs.writeFile(outputAbsolute, formattedReview, 'utf-8');
 
   // emit metrics.realized after invocation
-  // todo: expose usage via rhachet BrainAtom and BrainRepl on responses
+  const totalTokens =
+    realizedTokens.input +
+    realizedTokens.inputCacheCreation +
+    realizedTokens.inputCacheRead +
+    realizedTokens.output;
   console.log(
     `
 ✨ metrics.realized
-   └─ note: usage metrics unavailable from brain.choice.ask()
+   ├─ tokens
+   │  ├─ input: ${realizedTokens.input.toLocaleString()}
+   │  ├─ cache.set: ${realizedTokens.inputCacheCreation.toLocaleString()}
+   │  ├─ cache.get: ${realizedTokens.inputCacheRead.toLocaleString()}
+   │  ├─ output: ${realizedTokens.output.toLocaleString()}
+   │  └─ total: ${totalTokens.toLocaleString()}
+   ├─ cost
+   │  └─ total: ${asIsoPriceHuman(realizedCosts.total)}
+   └─ time
+      └─ total: ${metrics.cost.time}
 
 🌊 output
    ├─ logs: ${path.relative(cwd, logDir)}
@@ -489,18 +516,19 @@ export const stepReview = async (input: {
       },
       realized: {
         tokens: {
-          input: realizedUsage.inputTokens,
-          inputCacheCreation: realizedUsage.inputTokensCacheCreation,
-          inputCacheRead: realizedUsage.inputTokensCacheRead,
-          output: realizedUsage.outputTokens,
+          input: realizedTokens.input,
+          inputCacheCreation: realizedTokens.inputCacheCreation,
+          inputCacheRead: realizedTokens.inputCacheRead,
+          output: realizedTokens.output,
         },
         cost: {
-          input: realizedCosts.input,
-          cacheWrite: realizedCosts.cacheWrite,
-          cacheRead: realizedCosts.cacheRead,
-          output: realizedCosts.output,
-          total: realizedCosts.total,
+          input: asIsoPriceHuman(realizedCosts.input),
+          cacheWrite: asIsoPriceHuman(realizedCosts.cacheWrite),
+          cacheRead: asIsoPriceHuman(realizedCosts.cacheRead),
+          output: asIsoPriceHuman(realizedCosts.output),
+          total: asIsoPriceHuman(realizedCosts.total),
         },
+        time: metrics.cost.time,
       },
     },
   };

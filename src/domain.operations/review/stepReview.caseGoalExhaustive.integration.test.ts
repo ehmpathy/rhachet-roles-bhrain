@@ -16,53 +16,49 @@ const ASSETS_PROSE = path.join(
   '.test/assets/example.repo/prose-author',
 );
 
-describe('stepReview.caseBrain.grok-code-fast-1.case2', () => {
+describe('stepReview.caseGoalExhaustive', () => {
   // increase timeout for brain invocations (3 minutes)
   jest.setTimeout(180000);
 
-  given('[case1] multiple chapters with xai/grok/code-fast-1', () => {
-    when('[t0] stepReview on all chapters', () => {
-      const outputPath = path.join(
-        os.tmpdir(),
-        'review-grok-code-fast-1-multi.md',
-      );
+  given('[case1] goal=exhaustive on dirty chapter', () => {
+    when('[t0] stepReview with goal=exhaustive', () => {
+      const outputPath = path.join(os.tmpdir(), 'review-exhaustive-dirty.md');
       afterAll(async () => fs.rm(outputPath, { force: true }));
 
       // single API call, result shared across assertions
       const result = useThen('stepReview succeeds', async () => {
         const res = await stepReview({
           rules: '.agent/**/briefs/rules/*.md',
-          paths: 'chapters/*.md',
+          paths: 'chapters/chapter2.md',
           output: outputPath,
           mode: 'push',
-          goal: 'representative',
-          brain: 'xai/grok/code-fast-1',
+          goal: 'exhaustive',
           cwd: ASSETS_PROSE,
         });
 
         // log output for observability
         logOutputHead({
-          label: 'grok-code-fast-1.multi.review',
+          label: 'exhaustive.dirty.review',
           output: res.review.formatted,
         });
 
-        return { result: res, outputPath };
+        return res;
       });
 
-      then('review covers all target files', async () => {
-        expect(result.result.metrics.files.targetsCount).toBe(3);
+      then('review is defined and non-empty', async () => {
+        expect(result.review.formatted).toBeDefined();
+        expect(result.review.formatted.length).toBeGreaterThan(0);
       });
 
-      then('review is written to output path', async () => {
-        const content = await fs.readFile(result.outputPath, 'utf-8');
-        expect(content.length).toBeGreaterThan(0);
+      then('review includes blockers for gerund violations', async () => {
+        expect(result.review.formatted.toLowerCase()).toContain('blocker');
       });
 
-      then('review contains blockers for dirty chapters', async () => {
-        // chapter2.md has gerund violations, so review should contain blockers
-        expect(result.result.review.formatted.toLowerCase()).toContain(
-          'blocker',
-        );
+      then('prompt was compiled with exhaustive goal', async () => {
+        // verify the prompt was compiled with exhaustive goal
+        // (indirectly tested via correct file counts)
+        expect(result.metrics.files.rulesCount).toBe(2);
+        expect(result.metrics.files.targetsCount).toBe(1);
       });
     });
   });

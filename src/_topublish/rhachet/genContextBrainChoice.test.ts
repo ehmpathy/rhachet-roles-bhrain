@@ -20,7 +20,7 @@ describe('genContextBrainChoice', () => {
         expect(error).toBeInstanceOf(BadRequestError);
         expect(error.message).toContain('brain not found: nonexistent/brain');
         expect(error.message).toContain('available brains:');
-        expect(error.message).toContain('xai/grok-code-fast-1');
+        expect(error.message).toContain('xai/grok/code-fast-1');
       });
     });
   });
@@ -37,7 +37,7 @@ describe('genContextBrainChoice', () => {
 
       then('throws BadRequestError with env var name', async () => {
         const error = await getError(
-          genContextBrainChoice({ brain: 'xai/grok-code-fast-1' }),
+          genContextBrainChoice({ brain: 'xai/grok/code-fast-1' }),
         );
         expect(error).toBeInstanceOf(BadRequestError);
         expect(error.message).toContain('api key not found for provider: xai');
@@ -77,7 +77,7 @@ describe('genContextBrainChoice', () => {
 
       then('throws BadRequestError with env var name', async () => {
         const error = await getError(
-          genContextBrainChoice({ brain: 'openai/gpt-4o' }),
+          genContextBrainChoice({ brain: 'openai/gpt/4o' }),
         );
         expect(error).toBeInstanceOf(BadRequestError);
         expect(error.message).toContain(
@@ -100,7 +100,7 @@ describe('getAvailableBrainSlugs', () => {
 
       then('includes xai brains', () => {
         const slugs = getAvailableBrainSlugs();
-        expect(slugs).toContain('xai/grok-code-fast-1');
+        expect(slugs).toContain('xai/grok/code-fast-1');
       });
 
       then('includes anthropic brains', () => {
@@ -111,7 +111,7 @@ describe('getAvailableBrainSlugs', () => {
 
       then('includes openai brains', () => {
         const slugs = getAvailableBrainSlugs();
-        expect(slugs).toContain('openai/gpt-4o');
+        expect(slugs).toContain('openai/gpt/4o');
       });
     });
   });
@@ -120,8 +120,8 @@ describe('getAvailableBrainSlugs', () => {
 describe('DEFAULT_BRAIN', () => {
   given('[case1] default brain constant', () => {
     when('[t0] DEFAULT_BRAIN accessed', () => {
-      then('is xai/grok-code-fast-1', () => {
-        expect(DEFAULT_BRAIN).toEqual('xai/grok-code-fast-1');
+      then('is xai/grok/code-fast-1', () => {
+        expect(DEFAULT_BRAIN).toEqual('xai/grok/code-fast-1');
       });
     });
   });

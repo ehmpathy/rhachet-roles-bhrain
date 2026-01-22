@@ -16,13 +16,16 @@ const ASSETS_PROSE = path.join(
   '.test/assets/example.repo/prose-author',
 );
 
-describe('stepReview.caseBrain.grok-4-fast', () => {
+describe('stepReview.caseBrain.claude-sonnet', () => {
   // increase timeout for brain invocations (3 minutes)
   jest.setTimeout(180000);
 
-  given('[case1] prose-author example with xai/grok-4-fast', () => {
+  given('[case1] prose-author example with claude/sonnet', () => {
     when('[t0] stepReview on clean chapter', () => {
-      const outputPath = path.join(os.tmpdir(), 'review-grok-v4-fast-clean.md');
+      const outputPath = path.join(
+        os.tmpdir(),
+        'review-claude-sonnet-clean.md',
+      );
       afterAll(async () => fs.rm(outputPath, { force: true }));
 
       // single API call, result shared across assertions
@@ -32,13 +35,14 @@ describe('stepReview.caseBrain.grok-4-fast', () => {
           paths: 'chapters/chapter2.fixed.md',
           output: outputPath,
           mode: 'push',
-          brain: 'xai/grok-4-fast',
+          goal: 'representative',
+          brain: 'claude/sonnet',
           cwd: ASSETS_PROSE,
         });
 
         // log output for observability
         logOutputHead({
-          label: 'grok-4-fast.clean.review',
+          label: 'claude-sonnet.clean.review',
           output: res.review.formatted,
         });
 
@@ -65,7 +69,10 @@ describe('stepReview.caseBrain.grok-4-fast', () => {
     });
 
     when('[t1] stepReview on dirty chapter', () => {
-      const outputPath = path.join(os.tmpdir(), 'review-grok-v4-fast-dirty.md');
+      const outputPath = path.join(
+        os.tmpdir(),
+        'review-claude-sonnet-dirty.md',
+      );
       afterAll(async () => fs.rm(outputPath, { force: true }));
 
       // single API call, result shared across assertions
@@ -75,13 +82,14 @@ describe('stepReview.caseBrain.grok-4-fast', () => {
           paths: 'chapters/chapter2.md',
           output: outputPath,
           mode: 'push',
-          brain: 'xai/grok-4-fast',
+          goal: 'representative',
+          brain: 'claude/sonnet',
           cwd: ASSETS_PROSE,
         });
 
         // log output for observability
         logOutputHead({
-          label: 'grok-4-fast.dirty.review',
+          label: 'claude-sonnet.dirty.review',
           output: res.review.formatted,
         });
 
@@ -99,9 +107,12 @@ describe('stepReview.caseBrain.grok-4-fast', () => {
     });
   });
 
-  given('[case2] multiple chapters with xai/grok-4-fast', () => {
+  given('[case2] multiple chapters with claude/sonnet', () => {
     when('[t0] stepReview on all chapters', () => {
-      const outputPath = path.join(os.tmpdir(), 'review-grok-v4-fast-multi.md');
+      const outputPath = path.join(
+        os.tmpdir(),
+        'review-claude-sonnet-multi.md',
+      );
       afterAll(async () => fs.rm(outputPath, { force: true }));
 
       // single API call, result shared across assertions
@@ -111,13 +122,14 @@ describe('stepReview.caseBrain.grok-4-fast', () => {
           paths: 'chapters/*.md',
           output: outputPath,
           mode: 'push',
-          brain: 'xai/grok-4-fast',
+          goal: 'representative',
+          brain: 'claude/sonnet',
           cwd: ASSETS_PROSE,
         });
 
         // log output for observability
         logOutputHead({
-          label: 'grok-4-fast.multi.review',
+          label: 'claude-sonnet.multi.review',
           output: res.review.formatted,
         });
 
@@ -146,7 +158,7 @@ describe('stepReview.caseBrain.grok-4-fast', () => {
     when('[t0] single rule applied to single chapter', () => {
       const outputPath = path.join(
         os.tmpdir(),
-        'review-grok-v4-fast-subset.md',
+        'review-claude-sonnet-subset.md',
       );
       afterAll(async () => fs.rm(outputPath, { force: true }));
 
@@ -157,13 +169,14 @@ describe('stepReview.caseBrain.grok-4-fast', () => {
           paths: 'chapters/chapter1.md',
           output: outputPath,
           mode: 'push',
-          brain: 'xai/grok-4-fast',
+          goal: 'representative',
+          brain: 'claude/sonnet',
           cwd: ASSETS_PROSE,
         });
 
         // log output for observability
         logOutputHead({
-          label: 'grok-4-fast.subset.review',
+          label: 'claude-sonnet.subset.review',
           output: res.review.formatted,
         });
 
@@ -186,7 +199,7 @@ describe('stepReview.caseBrain.grok-4-fast', () => {
     when('[t1] single rule applied to multiple chapters', () => {
       const outputPath = path.join(
         os.tmpdir(),
-        'review-grok-v4-fast-subset-multi.md',
+        'review-claude-sonnet-subset-multi.md',
       );
       afterAll(async () => fs.rm(outputPath, { force: true }));
 
@@ -197,13 +210,14 @@ describe('stepReview.caseBrain.grok-4-fast', () => {
           paths: 'chapters/chapter*.md',
           output: outputPath,
           mode: 'push',
-          brain: 'xai/grok-4-fast',
+          goal: 'representative',
+          brain: 'claude/sonnet',
           cwd: ASSETS_PROSE,
         });
 
         // log output for observability
         logOutputHead({
-          label: 'grok-4-fast.subset-multi.review',
+          label: 'claude-sonnet.subset-multi.review',
           output: res.review.formatted,
         });
 

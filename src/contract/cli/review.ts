@@ -20,6 +20,7 @@ const schemaOfArgs = z.object({
     paths: z.string().optional(),
     output: z.string().optional(),
     mode: z.enum(['pull', 'push']).optional(),
+    goal: z.enum(['exhaustive', 'representative']),
     brain: z.string().optional(),
     rapid: z.string().optional(),
     // rhachet passthrough args (optional, ignored)
@@ -69,6 +70,15 @@ export const review = async (): Promise<void> => {
     paths: named.paths,
     output: outputPath,
     mode: named.mode ?? 'pull',
+    goal: named.goal,
     brain: named.brain,
   });
 };
+
+// invoke when run as cli (not when imported)
+if (require.main === module) {
+  review().catch((error) => {
+    console.error('review.cli.error:', error);
+    process.exit(1);
+  });
+}

@@ -1,8 +1,10 @@
 import { DomainLiteral } from 'domain-objects';
+import type { IsoPriceHuman } from 'iso-price';
+import type { IsoDuration } from 'iso-time';
 
 /**
- * .what = token usage and cost metrics for a reviewer reflect step
- * .why = enables cost track and context window management
+ * .what = token usage metrics for a reviewer reflect step
+ * .why = enables context window management
  */
 export interface ReviewerReflectTokenMetrics {
   /**
@@ -34,27 +36,27 @@ export interface ReviewerReflectCostMetrics {
   /**
    * cost for input tokens
    */
-  input: number;
+  input: IsoPriceHuman;
 
   /**
    * cost for cache write
    */
-  cacheWrite: number;
+  cacheWrite: IsoPriceHuman;
 
   /**
    * cost for cache read
    */
-  cacheRead: number;
+  cacheRead: IsoPriceHuman;
 
   /**
    * cost for output tokens
    */
-  output: number;
+  output: IsoPriceHuman;
 
   /**
    * total cost
    */
-  total: number;
+  total: IsoPriceHuman;
 }
 
 /**
@@ -86,14 +88,17 @@ export interface ReviewerReflectMetrics {
     step1: {
       tokens: ReviewerReflectTokenMetrics;
       cost: ReviewerReflectCostMetrics;
+      time: IsoDuration;
     };
     step2: {
       tokens: ReviewerReflectTokenMetrics;
       cost: ReviewerReflectCostMetrics;
+      time: IsoDuration;
     };
     total: {
       tokens: ReviewerReflectTokenMetrics;
       cost: ReviewerReflectCostMetrics;
+      time: string;
     };
   };
 }

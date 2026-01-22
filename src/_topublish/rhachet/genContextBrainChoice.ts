@@ -61,7 +61,7 @@ const loadAllRepls = (): BrainRepl[] => {
  * .why = enables api key validation by provider
  *
  * .example
- *   getProviderFromSlug({ slug: 'xai/grok-code-fast-1' }) => 'xai'
+ *   getProviderFromSlug({ slug: 'xai/grok/code-fast-1' }) => 'xai'
  *   getProviderFromSlug({ slug: 'claude/sonnet' }) => 'claude'
  */
 const getProviderFromSlug = (input: { slug: string }): string => {
@@ -128,7 +128,7 @@ const formatAvailableBrains = (input: {
  * .note = this is staged for upstream contribution to rhachet core
  *
  * .example
- *   const ctx = await genContextBrainChoice({ brain: 'xai/grok-code-fast-1' });
+ *   const ctx = await genContextBrainChoice({ brain: 'xai/grok/code-fast-1' });
  *   const result = await ctx.brain.choice.ask({ prompt: '...', schema: { output: z.string() } });
  */
 export const genContextBrainChoice = async (input: {
@@ -180,9 +180,9 @@ export const getAvailableBrainSlugs = (): string[] => {
 
 /**
  * .what = default brain for skills when none specified
- * .why = xai/grok-code-fast-1 is fast, cheap, and effective for agentic code tasks
+ * .why = xai/grok/code-fast-1 is fast, cheap, and effective for agentic code tasks
  */
-export const DEFAULT_BRAIN = 'xai/grok-code-fast-1';
+export const DEFAULT_BRAIN = 'xai/grok/code-fast-1';
 
 /**
  * .what = prints available brains to console and returns formatted string

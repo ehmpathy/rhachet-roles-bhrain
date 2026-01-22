@@ -6,8 +6,7 @@ interface ReviewIssue {
   rule: string;
   title: string;
   description: string;
-  file?: string;
-  line?: number;
+  locations: string[];
 }
 
 /**
@@ -41,12 +40,11 @@ export const formatReviewOutput = (input: {
   ): string => {
     const header = `# ${type}.${index + 1}: ${issue.title}`;
     const rule = `\n\n**rule**: ${issue.rule}`;
-    const location = issue.file
-      ? issue.line
-        ? `\n\n**location**: ${issue.file}:${issue.line}`
-        : `\n\n**location**: ${issue.file}`
-      : '';
-    return `${header}${rule}${location}\n\n${issue.description}`;
+    const locations =
+      issue.locations.length > 0
+        ? `\n\n**locations**:\n${issue.locations.map((loc) => `- ${loc}`).join('\n')}`
+        : '';
+    return `${header}${rule}${locations}\n\n${issue.description}`;
   };
 
   // emit blockers

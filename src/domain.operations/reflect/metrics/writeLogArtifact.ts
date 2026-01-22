@@ -75,20 +75,18 @@ const buildLogContent = (input: {
   sections.push(
     `- output tokens: ${input.metrics.realized.step1.tokens.output.toLocaleString()}`,
   );
-  sections.push(
-    `- cost: $${input.metrics.realized.step1.cost.total.toFixed(4)}`,
-  );
+  sections.push(`- cost: ${input.metrics.realized.step1.cost.total}`);
+  sections.push(`- time: ${input.metrics.realized.step1.time}`);
   sections.push('');
-  sections.push(`### step 2: blend with existing`);
+  sections.push(`### step 2: blend with prior rules`);
   sections.push(
     `- input tokens: ${input.metrics.realized.step2.tokens.input.toLocaleString()}`,
   );
   sections.push(
     `- output tokens: ${input.metrics.realized.step2.tokens.output.toLocaleString()}`,
   );
-  sections.push(
-    `- cost: $${input.metrics.realized.step2.cost.total.toFixed(4)}`,
-  );
+  sections.push(`- cost: ${input.metrics.realized.step2.cost.total}`);
+  sections.push(`- time: ${input.metrics.realized.step2.time}`);
   sections.push('');
   sections.push(`### total`);
   sections.push(
@@ -97,9 +95,8 @@ const buildLogContent = (input: {
   sections.push(
     `- output tokens: ${input.metrics.realized.total.tokens.output.toLocaleString()}`,
   );
-  sections.push(
-    `- total cost: $${input.metrics.realized.total.cost.total.toFixed(4)}`,
-  );
+  sections.push(`- total cost: ${input.metrics.realized.total.cost.total}`);
+  sections.push(`- total time: ${input.metrics.realized.total.time}`);
   sections.push('');
 
   // results

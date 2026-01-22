@@ -24,6 +24,7 @@ describe('writeInputArtifacts', () => {
             paths: 'src/*.ts',
             output: '/tmp/review.md',
             mode: 'push',
+            goal: 'representative',
           },
           scope: {
             ruleFiles: ['rules/rule.no-console.md', 'rules/rule.no-any.md'],
@@ -55,6 +56,7 @@ describe('writeInputArtifacts', () => {
             paths: ['src/*.ts', 'lib/*.ts'],
             output: '/tmp/review.md',
             mode: 'pull',
+            goal: 'representative',
           },
           scope: {
             ruleFiles: ['rules/rule.no-console.md'],
@@ -78,6 +80,7 @@ describe('writeInputArtifacts', () => {
           paths: ['src/*.ts', 'lib/*.ts'],
           output: '/tmp/review.md',
           mode: 'pull',
+          goal: 'representative',
         });
         expect(argsJson.scope).toEqual({
           ruleFiles: ['rules/rule.no-console.md'],
@@ -107,6 +110,7 @@ describe('writeInputArtifacts', () => {
             rules: 'rules/*.md',
             output: '/tmp/review.md',
             mode: 'push',
+            goal: 'representative',
           },
           scope: {
             ruleFiles: ['rules/rule.no-console.md'],
