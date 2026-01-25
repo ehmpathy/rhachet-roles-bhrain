@@ -32,6 +32,12 @@ importers:
       inquirer:
         specifier: 12.7.0
         version: 12.7.0(@types/node@22.15.21)
+      iso-price:
+        specifier: 1.1.1
+        version: 1.1.1(domain-objects@0.31.9)
+      iso-time:
+        specifier: 1.11.1
+        version: 1.11.1
       npm:
         specifier: 11.7.0
         version: 11.7.0
@@ -45,11 +51,11 @@ importers:
         specifier: 1.1.0
         version: 1.1.0
       rhachet-brains-openai:
-        specifier: 0.1.9
-        version: 0.1.9(@openai/codex-sdk@0.87.0)(rhachet@1.25.5(zod@4.3.4))
+        specifier: 0.2.0
+        version: 0.2.0(@openai/codex-sdk@0.87.0)(rhachet@1.26.2(zod@4.3.4))
       rhachet-brains-xai:
-        specifier: 0.1.3
-        version: 0.1.3(rhachet@1.25.5(zod@4.3.4))
+        specifier: 0.2.0
+        version: 0.2.0(rhachet@1.26.2(zod@4.3.4))
       serde-fns:
         specifier: 1.2.0
         version: 1.2.0
@@ -127,23 +133,23 @@ importers:
         specifier: 30.2.0
         version: 30.2.0(@types/node@22.15.21)(esbuild-register@3.6.0(esbuild@0.25.12))(ts-node@10.9.2(@swc/core@1.15.3)(@types/node@22.15.21)(typescript@5.4.5))
       rhachet:
-        specifier: 1.25.5
-        version: 1.25.5(zod@4.3.4)
+        specifier: 1.26.2
+        version: 1.26.2(zod@4.3.4)
       rhachet-brains-anthropic:
-        specifier: 0.1.3
-        version: 0.1.3(rhachet@1.25.5(zod@4.3.4))
+        specifier: 0.3.0
+        version: 0.3.0(rhachet@1.26.2(zod@4.3.4))
       rhachet-roles-bhrain:
-        specifier: file:.
-        version: file:(@openai/codex-sdk@0.87.0)(@types/node@22.15.21)(rhachet@1.25.5(zod@4.3.4))
+        specifier: link:.
+        version: 'link:'
       rhachet-roles-bhuild:
-        specifier: 0.6.10
-        version: 0.6.10(@types/node@22.15.21)
+        specifier: 0.6.11
+        version: 0.6.11
       rhachet-roles-ehmpathy:
-        specifier: 1.17.27
-        version: 1.17.27(@types/node@22.15.21)(zod@4.3.4)
+        specifier: 1.17.29
+        version: 1.17.29(@types/node@22.15.21)(zod@4.3.4)
       test-fns:
-        specifier: 1.10.0
-        version: 1.10.0(@types/node@22.15.21)(zod@4.3.4)
+        specifier: 1.11.0
+        version: 1.11.0(@types/node@22.15.21)(zod@4.3.4)
       tsc-alias:
         specifier: 1.8.10
         version: 1.8.10
@@ -695,10 +701,6 @@ packages:
 
   '@ehmpathy/uni-time@1.8.1':
     resolution: {integrity: sha512-aypjHU1zkwzwJyg/C3ktdUhhgciaBSu8nEXpkgh5p0lKaWTBvhWbEr6t62P5wBzOVwumlxelv1OwyFFtL1zupQ==}
-    engines: {node: '>=8.0.0'}
-
-  '@ehmpathy/uni-time@1.9.0':
-    resolution: {integrity: sha512-4btv6Iib/TniQnr941N6oPXod7trrZVvAOH0oNEJa60/Ey+/ESXNeu/X7fdh6vQSJhlSvjzVoMi6IPfbbyrxPw==}
     engines: {node: '>=8.0.0'}
 
   '@emnapi/core@1.7.1':
@@ -1977,10 +1979,6 @@ packages:
     resolution: {integrity: sha512-dnWCi51YDVMEHeDrEsMhMMOOBEJLS59altq48N7WSoJKepiJfXRA7x6NETFCGP9jk2Ti6eeYO3+CA27j+XlPUQ==}
     engines: {node: '>=8.0.0'}
 
-  as-procedure@1.1.6:
-    resolution: {integrity: sha512-z1pWF1MGzP2t8tb+5A3FOBCWfPiQh+Ipas6knpfwQiLZJMSMJaDEEwxYrsVY0PBHTo4ZpF2Z/FstN5/76eZBpA==}
-    engines: {node: '>=8.0.0'}
-
   as-procedure@1.1.7:
     resolution: {integrity: sha512-NovxtaDLUcwI8rANiXnpfLE4oo9xKf65qka0jBkStckRMgJcGZL4+Vm9+peAJ6+VE6X3n8/fIXhionfCTGas7g==}
     engines: {node: '>=8.0.0'}
@@ -2824,6 +2822,12 @@ packages:
   isexe@2.0.0:
     resolution: {integrity: sha512-RHxMLp9lnKHGHRng9QFhRCMbYAcVpn69smSGcq3f36xjgVVWThj4qqLbTLlq7Ssj8B+fIQ1EuCEGI2lKsyQeIw==}
 
+  iso-price@1.1.1:
+    resolution: {integrity: sha512-PixJ5kwVU4mrYnDvOEJHJpytPAT5G8R6ImRB+yJd/OQRP0hb8Y13tFqATu2MCN7rGMB6+hu/3HN7ORezjnoUBw==}
+    engines: {node: '>=8.0.0'}
+    peerDependencies:
+      domain-objects: '>=0.24.2'
+
   iso-time@1.10.1:
     resolution: {integrity: sha512-3BQe0H4ZPM7O1w3TIxwoRSCf9gQ/h+dzcbOEn8Dos3OByQ0mLRV1tqnk0hwzjnXYNgXjWHxF2dHZVq2rdfpnWg==}
     engines: {node: '>=8.0.0'}
@@ -3017,6 +3021,9 @@ packages:
 
   joi@17.4.0:
     resolution: {integrity: sha512-F4WiW2xaV6wc1jxete70Rw4V/VuMd6IN+a5ilZsxG4uYtUXWu2kq9W5P2dz30e7Gmw8RCbY/u/uk+dMPma9tAg==}
+
+  js-tiktoken@1.0.18:
+    resolution: {integrity: sha512-hFYx4xYf6URgcttcGvGuOBJhTxPYZ2R5eIesqCaNRJmYH8sNmsfTeWg4yu//7u1VD/qIUkgKJTpGom9oHXmB4g==}
 
   js-tokens@4.0.0:
     resolution: {integrity: sha512-RdJUflcE3cUzKiMqQgsCu06FPu9UdIJO0beYbPhHN4k6apgJtifcoCtT9bcxOpYBtpD2kCM6Sbzg4CausW/PKQ==}
@@ -3581,52 +3588,35 @@ packages:
     resolution: {integrity: sha512-yzDL+Dv1az5WGpVvrRZT6gLBwDAzxLO/7newlyrfMM+ku91PFR9OvlADoqyulBCCUWnazv3eXl0vzrIyak4hAQ==}
     engines: {node: '>=8.0.0'}
 
-  rhachet-brains-anthropic@0.1.3:
-    resolution: {integrity: sha512-SbBzmHYuD9Kckzywn3zQvjjSaryVd0ggs3AuD6sMQSAuNboC/n46AiEzU9Q1Y+tzENZTkyZtM1oIcECl0qNp3Q==}
+  rhachet-brains-anthropic@0.3.0:
+    resolution: {integrity: sha512-+aFrTzSj/+5YVw46AADTnt2I4ThwEYI4um5hX41QtEn/Z2xBhXuemVk3o0BbsF1+ef8SoHF1j9E21M05eSYiOg==}
     engines: {node: '>=8.0.0'}
     peerDependencies:
       rhachet: '>=1.21.4'
 
-  rhachet-brains-openai@0.1.9:
-    resolution: {integrity: sha512-Iu+VQiXc9p0hSy43ZVxFY9qjHQZbdqfSSBAI/7p0hCLTZegkG8izNV+TQcG5YkWXgW5psiT4La6v3kXAce5l0A==}
+  rhachet-brains-openai@0.2.0:
+    resolution: {integrity: sha512-eQBBiy4j3McqbqhZKxrHKaZqaxtHcWPgfPc+hLAZXS1sWYY2SkfP0flLHdNTh30rE3ba5isXGfmMN74c/8hyig==}
     engines: {node: '>=8.0.0'}
     peerDependencies:
       '@openai/codex-sdk': '>=0.77.0'
       rhachet: '>=1.21.4'
 
-  rhachet-brains-xai@0.1.3:
-    resolution: {integrity: sha512-666AEEir/LhZxH+qlix0idtilQ1DVQHkR1k71fi2cdA9fDy1hCSsV3HqlPMxEFJ0nnPg0Z33fpEyq9OdSWNnaA==}
+  rhachet-brains-xai@0.2.0:
+    resolution: {integrity: sha512-CRaslwL7KzZ6PkEEEDFr3vREbpNVTU0iPuTuvmlyLGROO+nlVYppJYLQ34E8HpjJ/em5b6QEgOsY44c+LSUPKg==}
     engines: {node: '>=8.0.0'}
     peerDependencies:
       rhachet: '>=1.21.4'
 
-  rhachet-roles-bhrain@0.5.9:
-    resolution: {integrity: sha512-tBx17IkE+gromCOOuKo01hSGSnDaHaMRTJPQa8ew1i9ulKGhD3HCHAndL/MKQ5L+4p+CgsJfsi5ydflbRXrMRQ==}
-    engines: {node: '>=8.0.0'}
-
-  'rhachet-roles-bhrain@file:':
-    resolution: {directory: '', type: directory}
-    engines: {node: '>=8.0.0'}
-
-  rhachet-roles-bhuild@0.1.3:
-    resolution: {integrity: sha512-wVJrFafD/JEmufaMl/tRbmKyQ7RFhXyixV+HopXiMn1MUq83egfnaMVPd98vrbx9Q9xRhJVwKUOfcjJlul8j0g==}
-    engines: {node: '>=8.0.0'}
-
-  rhachet-roles-bhuild@0.6.10:
-    resolution: {integrity: sha512-lZTgCTiAQumHAeVNEwa9dcwYbk/vcs2cgl4VGnwALX1IBND9ssjP5jQvmKmghUZR1ElO4QfNXrWlpNOE/XYStQ==}
+  rhachet-roles-bhuild@0.6.11:
+    resolution: {integrity: sha512-wmFRV67ClDIexKnBJJEcurs61i3v2ncLlUQ91OvMrZ0gkZJxgGwE2foVheDKwkjYJs4tMm5XDL3T1ghf5G8HiA==}
     engines: {node: '>=18.0.0'}
 
-  rhachet-roles-ehmpathy@1.17.27:
-    resolution: {integrity: sha512-vJwjHAKZCmTrvCFhDyDRuJs6G+EpqVoRc3ure55qwwPXwsxo4dhyBQXArY4YnibCjfZxaEoHhCnivWBhw5gqpA==}
+  rhachet-roles-ehmpathy@1.17.29:
+    resolution: {integrity: sha512-/px0YQpdLO7nAJND7xoUTDmuw2LI5idhj8v9OgpI/KKc/75XHuSPsfxEQRWN8s7XvGGGwfvaSTWQa0l7EykVFg==}
     engines: {node: '>=8.0.0'}
 
-  rhachet@1.15.2:
-    resolution: {integrity: sha512-XuW46wL8FDT70TPJOnKLWR+TVsAGP0pWPcCf7ee+K9nKUehoCNDObEH+jDruVvj9f1Id65VTEmhc4csmXQlygA==}
-    engines: {node: '>=22.0.0'}
-    hasBin: true
-
-  rhachet@1.25.5:
-    resolution: {integrity: sha512-6CORhgH9oZWAMSrzIxxXiTPbyHux0nGnSAdHyQnSj9OVyi2CylUl8JFoJy5JAGdj8dlSfyAOA1W9lutOiuEFjg==}
+  rhachet@1.26.2:
+    resolution: {integrity: sha512-KvBLh+Spx1RdEuot3fLWteYH7cRUDi6DNh5vzuSJaA2J+sKvOoiY9h6L/j8CC+MQ99bWOtm9Du7abuHsowp6SA==}
     engines: {node: '>=22.0.0'}
     hasBin: true
     peerDependencies:
@@ -3823,8 +3813,8 @@ packages:
     resolution: {integrity: sha512-cAGWPIyOHU6zlmg88jwm7VRyXnMN7iV68OGAbYDk/Mh/xC/pzVPlQtY6ngoIH/5/tciuhGfvESU8GrHrcxD56w==}
     engines: {node: '>=8'}
 
-  test-fns@1.10.0:
-    resolution: {integrity: sha512-QiPeBVPziqxmKbu8FeqrT9PNQN2e/e3dpk5kTEpjFyZFJHVVA1q4XejzLsyf/WA+TI2TIEM9ugz/tNOIqtJogw==}
+  test-fns@1.11.0:
+    resolution: {integrity: sha512-PrAEiLTxu/36OmV1bA2V/f54V1o/vpTyF0M+9eT75xevsoEeeB14TdNaFCprzMSuWnlgss8Mzkz38bK6OWmVww==}
     engines: {node: '>=8.0.0'}
 
   test-fns@1.4.2:
@@ -4118,14 +4108,6 @@ packages:
   yoctocolors-cjs@2.1.3:
     resolution: {integrity: sha512-U/PBtDf35ff0D8X8D0jfdzHYEPFxAI7jJlxZXwCSez5M3190m+QobIfh+sWDWSHMCWWJN2AWamkegn6vr6YBTw==}
     engines: {node: '>=18'}
-
-  zod-to-json-schema@3.25.0:
-    resolution: {integrity: sha512-HvWtU2UG41LALjajJrML6uQejQhNJx+JBO9IflpSja4R03iNWfKXrj6W2h7ljuLyc1nKS+9yDyL/9tD1U/yBnQ==}
-    peerDependencies:
-      zod: ^3.25 || ^4
-
-  zod@3.25.76:
-    resolution: {integrity: sha512-gzUt/qt81nXsFGKIFcC3YnfEAx5NkunCfnDlvuBSSFS02bcXu4Lmea0AFIUwbLWxWPx3d9p8S5QoaujKcNQxcQ==}
 
   zod@4.3.4:
     resolution: {integrity: sha512-Zw/uYiiyF6pUT1qmKbZziChgNPRu+ZRneAsMUDU6IwmXdWt5JwcUfy2bvLOCUtz5UniaN/Zx5aFttZYbYc7O/A==}
@@ -5067,14 +5049,6 @@ snapshots:
       type-fns: 1.19.0
 
   '@ehmpathy/uni-time@1.8.1':
-    dependencies:
-      '@ehmpathy/error-fns': 1.0.2
-      date-fns: 3.6.0
-      domain-glossaries: 1.0.0
-      test-fns: 1.5.0
-      type-fns: 1.19.0
-
-  '@ehmpathy/uni-time@1.9.0':
     dependencies:
       '@ehmpathy/error-fns': 1.0.2
       date-fns: 3.6.0
@@ -6443,15 +6417,6 @@ snapshots:
       simple-log-methods: 0.6.9
       type-fns: 1.21.0
 
-  as-procedure@1.1.6:
-    dependencies:
-      '@ehmpathy/error-fns': 1.3.2
-      domain-glossary-procedure: 1.0.0
-      serde-fns: 1.0.0
-      simple-log-methods: 0.6.1
-      test-fns: 1.4.2
-      type-fns: 1.17.0
-
   as-procedure@1.1.7:
     dependencies:
       '@ehmpathy/error-fns': 1.3.2
@@ -6968,30 +6933,14 @@ snapshots:
       type-fns: 1.21.0
       uuid-fns: 1.1.3
 
-  domain-objects@0.31.7(@types/node@22.15.21)(zod@3.25.76):
-    dependencies:
-      change-case: 4.1.2
-      domain-objects: 0.31.3
-      helpful-errors: 1.5.3
-      joi: 17.4.0
-      rhachet: 1.25.5(zod@3.25.76)
-      rhachet-roles-ehmpathy: 1.17.27(@types/node@22.15.21)(zod@3.25.76)
-      type-fns: 1.21.0
-      uuid-fns: 1.1.3
-    transitivePeerDependencies:
-      - '@types/node'
-      - aws-crt
-      - ws
-      - zod
-
   domain-objects@0.31.7(@types/node@22.15.21)(zod@4.3.4):
     dependencies:
       change-case: 4.1.2
       domain-objects: 0.31.3
       helpful-errors: 1.5.3
       joi: 17.4.0
-      rhachet: 1.25.5(zod@4.3.4)
-      rhachet-roles-ehmpathy: 1.17.27(@types/node@22.15.21)(zod@4.3.4)
+      rhachet: 1.26.2(zod@4.3.4)
+      rhachet-roles-ehmpathy: 1.17.29(@types/node@22.15.21)(zod@4.3.4)
       type-fns: 1.21.0
       uuid-fns: 1.1.3
     transitivePeerDependencies:
@@ -7480,6 +7429,12 @@ snapshots:
 
   isexe@2.0.0: {}
 
+  iso-price@1.1.1(domain-objects@0.31.9):
+    dependencies:
+      domain-glossaries: 1.0.0
+      domain-objects: 0.31.9
+      helpful-errors: 1.5.3
+
   iso-time@1.10.1:
     dependencies:
       date-fns: 3.6.0
@@ -7906,6 +7861,10 @@ snapshots:
       '@sideway/formula': 3.0.1
       '@sideway/pinpoint': 2.0.0
 
+  js-tiktoken@1.0.18:
+    dependencies:
+      base64-js: 1.5.1
+
   js-tokens@4.0.0: {}
 
   js-yaml@3.14.2:
@@ -8117,10 +8076,6 @@ snapshots:
   onetime@5.1.2:
     dependencies:
       mimic-fn: 2.1.0
-
-  openai@5.8.2(zod@3.25.76):
-    optionalDependencies:
-      zod: 3.25.76
 
   openai@5.8.2(zod@4.3.4):
     optionalDependencies:
@@ -8380,25 +8335,28 @@ snapshots:
       domain-objects: 0.31.9
       helpful-errors: 1.5.3
 
-  rhachet-brains-anthropic@0.1.3(rhachet@1.25.5(zod@4.3.4)):
+  rhachet-brains-anthropic@0.3.0(rhachet@1.26.2(zod@4.3.4)):
     dependencies:
       '@anthropic-ai/claude-agent-sdk': 0.1.76(zod@4.3.4)
       '@anthropic-ai/sdk': 0.71.2(zod@4.3.4)
       domain-objects: 0.31.9
       helpful-errors: 1.5.3
-      rhachet: 1.25.5(zod@4.3.4)
+      iso-price: 1.1.1(domain-objects@0.31.9)
+      iso-time: 1.11.1
+      rhachet: 1.26.2(zod@4.3.4)
       rhachet-artifact: 1.0.1
       rhachet-artifact-git: 1.1.5
       type-fns: 1.21.0
       zod: 4.3.4
 
-  rhachet-brains-openai@0.1.9(@openai/codex-sdk@0.87.0)(rhachet@1.25.5(zod@4.3.4)):
+  rhachet-brains-openai@0.2.0(@openai/codex-sdk@0.87.0)(rhachet@1.26.2(zod@4.3.4)):
     dependencies:
       '@openai/codex-sdk': 0.87.0
       domain-objects: 0.31.9
       helpful-errors: 1.5.3
+      iso-price: 1.1.1(domain-objects@0.31.9)
       openai: 5.8.2(zod@4.3.4)
-      rhachet: 1.25.5(zod@4.3.4)
+      rhachet: 1.26.2(zod@4.3.4)
       rhachet-artifact: 1.0.1
       rhachet-artifact-git: 1.1.5
       type-fns: 1.21.0
@@ -8407,12 +8365,13 @@ snapshots:
     transitivePeerDependencies:
       - ws
 
-  rhachet-brains-xai@0.1.3(rhachet@1.25.5(zod@4.3.4)):
+  rhachet-brains-xai@0.2.0(rhachet@1.26.2(zod@4.3.4)):
     dependencies:
       domain-objects: 0.31.9
       helpful-errors: 1.5.3
+      iso-price: 1.1.1(domain-objects@0.31.9)
       openai: 5.8.2(zod@4.3.4)
-      rhachet: 1.25.5(zod@4.3.4)
+      rhachet: 1.26.2(zod@4.3.4)
       rhachet-artifact: 1.0.1
       rhachet-artifact-git: 1.1.5
       type-fns: 1.21.0
@@ -8420,109 +8379,15 @@ snapshots:
     transitivePeerDependencies:
       - ws
 
-  rhachet-roles-bhrain@0.5.9(@types/node@22.15.21):
-    dependencies:
-      '@anthropic-ai/sdk': 0.51.0
-      '@ehmpathy/as-command': 1.0.3
-      '@ehmpathy/uni-time': 1.8.1
-      as-procedure: 1.1.7
-      domain-objects: 0.31.7(@types/node@22.15.21)(zod@3.25.76)
-      fast-glob: 3.3.3
-      helpful-errors: 1.5.3
-      inquirer: 12.7.0(@types/node@22.15.21)
-      openai: 5.8.2(zod@3.25.76)
-      rhachet-artifact: 1.0.0
-      rhachet-artifact-git: 1.1.0
-      rhachet-roles-bhuild: 0.1.3(@types/node@22.15.21)(zod@3.25.76)
-      serde-fns: 1.2.0
-      simple-in-memory-cache: 0.4.0
-      type-fns: 1.21.0
-      with-simple-caching: 0.14.2
-      wrapper-fns: 1.1.0
-      zod: 3.25.76
-      zod-to-json-schema: 3.25.0(zod@3.25.76)
-    transitivePeerDependencies:
-      - '@types/node'
-      - aws-crt
-      - ws
-
-  rhachet-roles-bhrain@file:(@openai/codex-sdk@0.87.0)(@types/node@22.15.21)(rhachet@1.25.5(zod@4.3.4)):
-    dependencies:
-      '@anthropic-ai/sdk': 0.51.0
-      '@ehmpathy/as-command': 1.0.3
-      '@ehmpathy/uni-time': 1.8.1
-      as-procedure: 1.1.7
-      domain-objects: 0.31.9
-      fast-glob: 3.3.3
-      helpful-errors: 1.5.3
-      inquirer: 12.7.0(@types/node@22.15.21)
-      npm: 11.7.0
-      openai: 5.8.2(zod@4.3.4)
-      rhachet-artifact: 1.0.0
-      rhachet-artifact-git: 1.1.0
-      rhachet-brains-openai: 0.1.9(@openai/codex-sdk@0.87.0)(rhachet@1.25.5(zod@4.3.4))
-      rhachet-brains-xai: 0.1.3(rhachet@1.25.5(zod@4.3.4))
-      serde-fns: 1.2.0
-      simple-in-memory-cache: 0.4.0
-      type-fns: 1.21.0
-      with-simple-caching: 0.14.2
-      wrapper-fns: 1.1.0
-      zod: 4.3.4
-    transitivePeerDependencies:
-      - '@openai/codex-sdk'
-      - '@types/node'
-      - aws-crt
-      - rhachet
-      - ws
-
-  rhachet-roles-bhuild@0.1.3(@types/node@22.15.21)(zod@3.25.76):
-    dependencies:
-      domain-objects: 0.31.7(@types/node@22.15.21)(zod@3.25.76)
-      helpful-errors: 1.5.3
-      rhachet: 1.15.2(@types/node@22.15.21)(zod@3.25.76)
-    transitivePeerDependencies:
-      - '@types/node'
-      - aws-crt
-      - ws
-      - zod
-
-  rhachet-roles-bhuild@0.6.10(@types/node@22.15.21):
+  rhachet-roles-bhuild@0.6.11:
     dependencies:
       domain-objects: 0.31.9
       emoji-space-shim: 0.0.0
       helpful-errors: 1.5.3
-      rhachet-roles-bhrain: 0.5.9(@types/node@22.15.21)
       test-fns: 1.7.2
       zod: 4.3.4
-    transitivePeerDependencies:
-      - '@types/node'
-      - aws-crt
-      - ws
 
-  rhachet-roles-ehmpathy@1.17.27(@types/node@22.15.21)(zod@3.25.76):
-    dependencies:
-      '@ehmpathy/as-command': 1.0.3
-      '@ehmpathy/uni-time': 1.8.1
-      as-procedure: 1.1.7
-      domain-objects: 0.31.9
-      fast-glob: 3.3.3
-      helpful-errors: 1.5.3
-      inquirer: 12.7.0(@types/node@22.15.21)
-      openai: 5.8.2(zod@3.25.76)
-      rhachet-artifact: 1.0.0
-      rhachet-artifact-git: 1.1.0
-      serde-fns: 1.2.0
-      simple-in-memory-cache: 0.4.0
-      type-fns: 1.21.0
-      with-simple-caching: 0.14.2
-      wrapper-fns: 1.1.0
-    transitivePeerDependencies:
-      - '@types/node'
-      - aws-crt
-      - ws
-      - zod
-
-  rhachet-roles-ehmpathy@1.17.27(@types/node@22.15.21)(zod@4.3.4):
+  rhachet-roles-ehmpathy@1.17.29(@types/node@22.15.21)(zod@4.3.4):
     dependencies:
       '@ehmpathy/as-command': 1.0.3
       '@ehmpathy/uni-time': 1.8.1
@@ -8545,30 +8410,7 @@ snapshots:
       - ws
       - zod
 
-  rhachet@1.15.2(@types/node@22.15.21)(zod@3.25.76):
-    dependencies:
-      '@ehmpathy/uni-time': 1.9.0
-      as-procedure: 1.1.6
-      bottleneck: 2.19.5
-      chalk: 4.1.2
-      commander: 14.0.0
-      domain-objects: 0.31.7(@types/node@22.15.21)(zod@3.25.76)
-      fast-glob: 3.3.3
-      flattie: 1.1.1
-      helpful-errors: 1.5.3
-      openai: 5.8.2(zod@3.25.76)
-      rhachet-artifact: 1.0.1
-      rhachet-artifact-git: 1.1.3
-      serde-fns: 1.3.1
-      type-fns: 1.21.0
-      uuid-fns: 1.0.1
-    transitivePeerDependencies:
-      - '@types/node'
-      - aws-crt
-      - ws
-      - zod
-
-  rhachet@1.25.5(zod@3.25.76):
+  rhachet@1.26.2(zod@4.3.4):
     dependencies:
       as-procedure: 1.1.11
       bottleneck: 2.19.5
@@ -8579,31 +8421,9 @@ snapshots:
       fast-glob: 3.3.3
       flattie: 1.1.1
       helpful-errors: 1.5.3
+      iso-price: 1.1.1(domain-objects@0.31.9)
       iso-time: 1.11.1
-      openai: 5.8.2(zod@3.25.76)
-      rhachet-artifact: 1.0.3
-      rhachet-artifact-git: 1.1.5
-      serde-fns: 1.3.1
-      simple-log-methods: 0.6.9
-      type-fns: 1.21.0
-      uuid-fns: 1.0.1
-      yaml: 2.8.2
-      zod: 3.25.76
-    transitivePeerDependencies:
-      - ws
-
-  rhachet@1.25.5(zod@4.3.4):
-    dependencies:
-      as-procedure: 1.1.11
-      bottleneck: 2.19.5
-      chalk: 4.1.2
-      commander: 14.0.0
-      domain-objects: 0.31.9
-      emoji-space-shim: 0.1.3
-      fast-glob: 3.3.3
-      flattie: 1.1.1
-      helpful-errors: 1.5.3
-      iso-time: 1.11.1
+      js-tiktoken: 1.0.18
       openai: 5.8.2(zod@4.3.4)
       rhachet-artifact: 1.0.3
       rhachet-artifact-git: 1.1.5
@@ -8713,7 +8533,7 @@ snapshots:
       domain-glossary-procedure: 1.0.0
       domain-objects: 0.31.9
       helpful-errors: 1.5.3
-      iso-time: 1.10.1
+      iso-time: 1.11.1
       type-fns: 1.21.0
 
   simple-on-disk-cache@1.7.3:
@@ -8815,7 +8635,7 @@ snapshots:
       glob: 7.2.3
       minimatch: 3.1.2
 
-  test-fns@1.10.0(@types/node@22.15.21)(zod@4.3.4):
+  test-fns@1.11.0(@types/node@22.15.21)(zod@4.3.4):
     dependencies:
       domain-objects: 0.31.7(@types/node@22.15.21)(zod@4.3.4)
       helpful-errors: 1.5.3
@@ -9165,11 +8985,5 @@ snapshots:
   yocto-queue@1.2.2: {}
 
   yoctocolors-cjs@2.1.3: {}
-
-  zod-to-json-schema@3.25.0(zod@3.25.76):
-    dependencies:
-      zod: 3.25.76
-
-  zod@3.25.76: {}
 
   zod@4.3.4: {}

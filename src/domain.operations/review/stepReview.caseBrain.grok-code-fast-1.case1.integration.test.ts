@@ -20,7 +20,7 @@ describe('stepReview.caseBrain.grok-code-fast-1.case1', () => {
   // increase timeout for brain invocations (3 minutes)
   jest.setTimeout(180000);
 
-  given('[case1] prose-author example with xai/grok-code-fast-1', () => {
+  given('[case1] prose-author example with xai/grok/code-fast-1', () => {
     when('[t0] stepReview on clean chapter', () => {
       const outputPath = path.join(
         os.tmpdir(),
@@ -35,7 +35,8 @@ describe('stepReview.caseBrain.grok-code-fast-1.case1', () => {
           paths: 'chapters/chapter2.fixed.md',
           output: outputPath,
           mode: 'push',
-          brain: 'xai/grok-code-fast-1',
+          goal: 'representative',
+          brain: 'xai/grok/code-fast-1',
           cwd: ASSETS_PROSE,
         });
 
@@ -81,7 +82,8 @@ describe('stepReview.caseBrain.grok-code-fast-1.case1', () => {
           paths: 'chapters/chapter2.md',
           output: outputPath,
           mode: 'push',
-          brain: 'xai/grok-code-fast-1',
+          goal: 'representative',
+          brain: 'xai/grok/code-fast-1',
           cwd: ASSETS_PROSE,
         });
 

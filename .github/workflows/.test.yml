@@ -367,3 +367,8 @@ jobs:
 
       - name: test:acceptance:locally
         run: THOROUGH=true npm run test:acceptance --if-present
+        env:
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+          TAVILY_API_KEY: ${{ secrets.TAVILY_API_KEY }}
+          XAI_API_KEY: ${{ secrets.XAI_API_KEY }}

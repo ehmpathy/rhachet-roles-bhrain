@@ -70,6 +70,7 @@ describe('stepReview', () => {
             paths: [],
             output: '/tmp/review.md',
             mode: 'push',
+            goal: 'representative',
             cwd: ASSETS_TYPESCRIPT,
           }),
         );
@@ -91,6 +92,7 @@ describe('stepReview', () => {
             paths: 'src/*.ts',
             output: '/tmp/review.md',
             mode: 'push',
+            goal: 'representative',
             cwd: ASSETS_TYPESCRIPT,
           }),
         );
@@ -110,6 +112,7 @@ describe('stepReview', () => {
             paths: 'nonexistent/**/*.ts',
             output: '/tmp/review.md',
             mode: 'push',
+            goal: 'representative',
             cwd: ASSETS_TYPESCRIPT,
           }),
         );
@@ -131,6 +134,7 @@ describe('stepReview', () => {
             paths: 'src/*.ts',
             output: '/nonexistent/parent/review.md',
             mode: 'push',
+            goal: 'representative',
             cwd: ASSETS_TYPESCRIPT,
           }),
         );
@@ -386,6 +390,7 @@ describe('stepReview', () => {
           paths: 'chapters/chapter2.fixed.md',
           output: outputPath,
           mode: 'push',
+          goal: 'representative',
           cwd: ASSETS_PROSE,
         });
 
@@ -416,12 +421,10 @@ describe('stepReview', () => {
         expect(result.metrics.expected.cost.estimate).toBeGreaterThan(0);
       });
 
-      then('metrics.realized contains placeholder values', async () => {
-        // todo: expose usage via rhachet BrainAtom and BrainRepl on responses
-        // for now, metrics.realized contains placeholder values
-        expect(result.metrics.realized.tokens.input).toBe(0);
-        expect(result.metrics.realized.tokens.output).toBe(0);
-        expect(result.metrics.realized.cost.total).toBe(0);
+      then('metrics.realized contains real values', async () => {
+        expect(result.metrics.realized.tokens.input).toBeDefined();
+        expect(result.metrics.realized.tokens.output).toBeDefined();
+        expect(result.metrics.realized.cost.total).toBeDefined();
       });
     });
 
@@ -436,6 +439,7 @@ describe('stepReview', () => {
           paths: 'chapters/chapter2.md',
           output: outputPath,
           mode: 'push',
+          goal: 'representative',
           cwd: ASSETS_PROSE,
         });
 

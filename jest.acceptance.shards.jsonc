@@ -1,0 +1,8 @@
+{
+  // run these slowpokes individually, cause they're the longest poles in the wall time
+  "explicit": [],
+  // run the rest on one shard
+  "dynamic": {
+    "shards": 1
+  }
+}

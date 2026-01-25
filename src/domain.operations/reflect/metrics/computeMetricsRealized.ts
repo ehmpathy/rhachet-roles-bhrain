@@ -1,101 +1,164 @@
-import type {
-  ReviewerReflectCostMetrics,
-  ReviewerReflectTokenMetrics,
-} from '@src/domain.objects/Reviewer/ReviewerReflectMetrics';
+import { asIsoPriceHuman, type IsoPriceHuman, sumPrices } from 'iso-price';
+import { type IsoDuration, toMilliseconds } from 'iso-time';
+import type { BrainOutputMetrics } from 'rhachet';
+
+/**
+ * .what = token metrics for a reflect step
+ * .why = enables token usage track
+ */
+export interface ReflectStepTokenMetrics {
+  input: number;
+  cacheWrite: number;
+  cacheRead: number;
+  output: number;
+}
+
+/**
+ * .what = cost metrics for a reflect step
+ * .why = enables cost track with human-readable prices
+ */
+export interface ReflectStepCostMetrics {
+  input: IsoPriceHuman;
+  cacheWrite: IsoPriceHuman;
+  cacheRead: IsoPriceHuman;
+  output: IsoPriceHuman;
+  total: IsoPriceHuman;
+}
+
+/**
+ * .what = formats milliseconds as human words (e.g., "2m 15s")
+ * .why = enables display of total time from summed ms
+ */
+const formatMillisecondsAsWords = (ms: number): string => {
+  const seconds = Math.floor(ms / 1000);
+  const minutes = Math.floor(seconds / 60);
+  const hours = Math.floor(minutes / 60);
+  const remainderMinutes = minutes % 60;
+  const remainderSeconds = seconds % 60;
+
+  // format based on magnitude
+  if (hours > 0) return `${hours}h ${remainderMinutes}m`;
+  if (minutes > 0) return `${minutes}m ${remainderSeconds}s`;
+  return `${seconds}s`;
+};
 
 /**
  * .what = computes actual metrics from brain responses
  * .why = enables accurate cost track after execution
- *
- * .note = cost calculations use hardcoded sonnet prices; currently unused
- *         since brain.choice.ask() returns no usage metrics
- *         todo: expose usage and prices via rhachet BrainAtom/BrainRepl on responses
  */
 export const computeMetricsRealized = (input: {
-  step1: {
-    tokens: ReviewerReflectTokenMetrics;
-  };
-  step2: {
-    tokens: ReviewerReflectTokenMetrics;
-  };
+  step1: { metrics: BrainOutputMetrics };
+  step2: { metrics: BrainOutputMetrics };
 }): {
   step1: {
-    tokens: ReviewerReflectTokenMetrics;
-    cost: ReviewerReflectCostMetrics;
+    tokens: ReflectStepTokenMetrics;
+    cost: ReflectStepCostMetrics;
+    time: IsoDuration;
   };
   step2: {
-    tokens: ReviewerReflectTokenMetrics;
-    cost: ReviewerReflectCostMetrics;
+    tokens: ReflectStepTokenMetrics;
+    cost: ReflectStepCostMetrics;
+    time: IsoDuration;
   };
   total: {
-    tokens: ReviewerReflectTokenMetrics;
-    cost: ReviewerReflectCostMetrics;
+    tokens: ReflectStepTokenMetrics;
+    cost: ReflectStepCostMetrics;
+    time: string;
   };
 } => {
-  // compute costs for step 1
-  const step1Cost = computeStepCost(input.step1.tokens);
+  // extract step 1 metrics
+  const step1Tokens: ReflectStepTokenMetrics = {
+    input: input.step1.metrics.size.tokens.input,
+    cacheWrite: input.step1.metrics.size.tokens.cache.set,
+    cacheRead: input.step1.metrics.size.tokens.cache.get,
+    output: input.step1.metrics.size.tokens.output,
+  };
+  const step1Cost: ReflectStepCostMetrics = {
+    input: asIsoPriceHuman(input.step1.metrics.cost.cash.deets.input),
+    cacheWrite: asIsoPriceHuman(input.step1.metrics.cost.cash.deets.cache.set),
+    cacheRead: asIsoPriceHuman(input.step1.metrics.cost.cash.deets.cache.get),
+    output: asIsoPriceHuman(input.step1.metrics.cost.cash.deets.output),
+    total: asIsoPriceHuman(input.step1.metrics.cost.cash.total),
+  };
 
-  // compute costs for step 2
-  const step2Cost = computeStepCost(input.step2.tokens);
+  // extract step 2 metrics
+  const step2Tokens: ReflectStepTokenMetrics = {
+    input: input.step2.metrics.size.tokens.input,
+    cacheWrite: input.step2.metrics.size.tokens.cache.set,
+    cacheRead: input.step2.metrics.size.tokens.cache.get,
+    output: input.step2.metrics.size.tokens.output,
+  };
+  const step2Cost: ReflectStepCostMetrics = {
+    input: asIsoPriceHuman(input.step2.metrics.cost.cash.deets.input),
+    cacheWrite: asIsoPriceHuman(input.step2.metrics.cost.cash.deets.cache.set),
+    cacheRead: asIsoPriceHuman(input.step2.metrics.cost.cash.deets.cache.get),
+    output: asIsoPriceHuman(input.step2.metrics.cost.cash.deets.output),
+    total: asIsoPriceHuman(input.step2.metrics.cost.cash.total),
+  };
 
   // compute total tokens
-  const totalTokens: ReviewerReflectTokenMetrics = {
-    input: input.step1.tokens.input + input.step2.tokens.input,
-    cacheWrite: input.step1.tokens.cacheWrite + input.step2.tokens.cacheWrite,
-    cacheRead: input.step1.tokens.cacheRead + input.step2.tokens.cacheRead,
-    output: input.step1.tokens.output + input.step2.tokens.output,
+  const totalTokens: ReflectStepTokenMetrics = {
+    input: step1Tokens.input + step2Tokens.input,
+    cacheWrite: step1Tokens.cacheWrite + step2Tokens.cacheWrite,
+    cacheRead: step1Tokens.cacheRead + step2Tokens.cacheRead,
+    output: step1Tokens.output + step2Tokens.output,
   };
 
-  // compute total cost
-  const totalCost: ReviewerReflectCostMetrics = {
-    input: step1Cost.input + step2Cost.input,
-    cacheWrite: step1Cost.cacheWrite + step2Cost.cacheWrite,
-    cacheRead: step1Cost.cacheRead + step2Cost.cacheRead,
-    output: step1Cost.output + step2Cost.output,
-    total: step1Cost.total + step2Cost.total,
+  // compute total cost via iso price sum
+  const totalCost: ReflectStepCostMetrics = {
+    input: asIsoPriceHuman(
+      sumPrices([
+        input.step1.metrics.cost.cash.deets.input,
+        input.step2.metrics.cost.cash.deets.input,
+      ]),
+    ),
+    cacheWrite: asIsoPriceHuman(
+      sumPrices([
+        input.step1.metrics.cost.cash.deets.cache.set,
+        input.step2.metrics.cost.cash.deets.cache.set,
+      ]),
+    ),
+    cacheRead: asIsoPriceHuman(
+      sumPrices([
+        input.step1.metrics.cost.cash.deets.cache.get,
+        input.step2.metrics.cost.cash.deets.cache.get,
+      ]),
+    ),
+    output: asIsoPriceHuman(
+      sumPrices([
+        input.step1.metrics.cost.cash.deets.output,
+        input.step2.metrics.cost.cash.deets.output,
+      ]),
+    ),
+    total: asIsoPriceHuman(
+      sumPrices([
+        input.step1.metrics.cost.cash.total,
+        input.step2.metrics.cost.cash.total,
+      ]),
+    ),
   };
+
+  // compute total time via ms sum and format
+  const totalMs =
+    toMilliseconds(input.step1.metrics.cost.time) +
+    toMilliseconds(input.step2.metrics.cost.time);
+  const totalTime = formatMillisecondsAsWords(totalMs);
 
   return {
     step1: {
-      tokens: input.step1.tokens,
+      tokens: step1Tokens,
       cost: step1Cost,
+      time: input.step1.metrics.cost.time,
     },
     step2: {
-      tokens: input.step2.tokens,
+      tokens: step2Tokens,
       cost: step2Cost,
+      time: input.step2.metrics.cost.time,
     },
     total: {
       tokens: totalTokens,
       cost: totalCost,
+      time: totalTime,
     },
-  };
-};
-
-/**
- * .what = computes cost for a single step
- * .why = applies claude sonnet pricing to token counts
- */
-const computeStepCost = (
-  tokens: ReviewerReflectTokenMetrics,
-): ReviewerReflectCostMetrics => {
-  // claude sonnet pricing per 1M tokens:
-  // - input: $3
-  // - cache write: $3.75
-  // - cache read: $0.30
-  // - output: $15
-  const inputCost = (tokens.input / 1_000_000) * 3;
-  const cacheWriteCost = (tokens.cacheWrite / 1_000_000) * 3.75;
-  const cacheReadCost = (tokens.cacheRead / 1_000_000) * 0.3;
-  const outputCost = (tokens.output / 1_000_000) * 15;
-
-  return {
-    input: Math.round(inputCost * 10000) / 10000,
-    cacheWrite: Math.round(cacheWriteCost * 10000) / 10000,
-    cacheRead: Math.round(cacheReadCost * 10000) / 10000,
-    output: Math.round(outputCost * 10000) / 10000,
-    total:
-      Math.round(
-        (inputCost + cacheWriteCost + cacheReadCost + outputCost) * 10000,
-      ) / 10000,
   };
 };

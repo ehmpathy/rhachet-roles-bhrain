@@ -18,6 +18,7 @@ describe('compileReviewPrompt', () => {
             { path: 'src/valid.ts', content: 'export const valid = 1;' },
           ],
           mode: 'push',
+          goal: 'representative',
           contextWindowSize: 200000,
         });
         expect(result.prompt).toContain('# rule: no-console');
@@ -31,13 +32,14 @@ describe('compileReviewPrompt', () => {
     when('[t1] content exceeds 60% but under 75% of context window', () => {
       then('emits warning but continues', () => {
         // use a larger context window so base prompt overhead is small percentage
-        // target ~65% of 2000 token window = 1300 tokens = ~5200 chars
-        const content = 'x '.repeat(2200);
+        // target ~65% of 3000 token window = 1950 tokens = ~7800 chars
+        const content = 'x '.repeat(3000);
         const result = compileReviewPrompt({
           rules: [{ path: 'rule.md', content: '# rule' }],
           targets: [{ path: 'file.ts', content }],
           mode: 'push',
-          contextWindowSize: 2000,
+          goal: 'representative',
+          contextWindowSize: 3000,
         });
         expect(result.contextWindowPercent).toBeGreaterThanOrEqual(60);
         expect(result.contextWindowPercent).toBeLessThan(75);
@@ -55,6 +57,7 @@ describe('compileReviewPrompt', () => {
             rules: [{ path: 'rule.md', content: '# rule' }],
             targets: [{ path: 'large.ts', content }],
             mode: 'push',
+            goal: 'representative',
             contextWindowSize: 2000,
           }),
         );
@@ -77,6 +80,8 @@ describe('compileReviewPrompt', () => {
             { path: 'src/invalid.ts', content: 'console.log("bad");' },
           ],
           mode: 'pull',
+          goal: 'representative',
+          contextWindowSize: 200000,
         });
         expect(result.prompt).toContain('src/valid.ts');
         expect(result.prompt).toContain('src/invalid.ts');
@@ -89,6 +94,8 @@ describe('compileReviewPrompt', () => {
           rules: [{ path: 'rule.md', content: '# rule' }],
           targets: [{ path: 'src/valid.ts', content: '...' }],
           mode: 'pull',
+          goal: 'representative',
+          contextWindowSize: 200000,
         });
         expect(result.prompt).toMatch(/open|read/i);
       });
@@ -102,6 +109,7 @@ describe('compileReviewPrompt', () => {
           rules: [{ path: 'rule.md', content: '# rule' }],
           targets: [{ path: 'large.ts', content }], // content ignored in pull mode
           mode: 'pull',
+          goal: 'representative',
           contextWindowSize: 1000,
         });
         // should succeed without throwing
@@ -121,6 +129,8 @@ describe('compileReviewPrompt', () => {
           ],
           targets: [{ path: 'src/valid.ts', content: '...' }],
           mode: 'push',
+          goal: 'representative',
+          contextWindowSize: 200000,
         });
         expect(result.prompt).toContain('no-console');
         expect(result.prompt).toContain('no-any');
@@ -135,6 +145,7 @@ describe('compileReviewPrompt', () => {
           rules: [{ path: 'rule.md', content: '# rule' }],
           targets: [{ path: 'file.ts', content: 'code' }],
           mode: 'push',
+          goal: 'representative',
           contextWindowSize: 200000,
         });
         expect(result.contextWindowPercent).toBeDefined();
@@ -146,6 +157,8 @@ describe('compileReviewPrompt', () => {
           rules: [{ path: 'rule.md', content: '# rule' }],
           targets: [{ path: 'file.ts', content: 'code' }],
           mode: 'push',
+          goal: 'representative',
+          contextWindowSize: 200000,
         });
         expect(result.costEstimate).toBeDefined();
         expect(typeof result.costEstimate).toBe('number');

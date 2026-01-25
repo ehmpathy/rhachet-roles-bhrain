@@ -7,10 +7,10 @@ describe('genContextBrainChoice', () => {
     when('[t0] genContextBrainChoice called with xai brain', () => {
       then('returns valid ContextBrainChoice', async () => {
         const ctx = await genContextBrainChoice({
-          brain: 'xai/grok-code-fast-1',
+          brain: 'xai/grok/code-fast-1',
         });
         expect(ctx.brain.choice).toBeDefined();
-        expect(ctx.brain.choice.slug).toEqual('xai/grok-code-fast-1');
+        expect(ctx.brain.choice.slug).toEqual('xai/grok/code-fast-1');
         expect(ctx.brain.choice.ask).toBeDefined();
       });
     });
@@ -41,9 +41,9 @@ describe('genContextBrainChoice', () => {
   given('[case3] openai brain', () => {
     when('[t0] genContextBrainChoice called with openai brain', () => {
       then('returns valid ContextBrainChoice', async () => {
-        const ctx = await genContextBrainChoice({ brain: 'openai/gpt-4o' });
+        const ctx = await genContextBrainChoice({ brain: 'openai/gpt/4o' });
         expect(ctx.brain.choice).toBeDefined();
-        expect(ctx.brain.choice.slug).toEqual('openai/gpt-4o');
+        expect(ctx.brain.choice.slug).toEqual('openai/gpt/4o');
         expect(ctx.brain.choice.ask).toBeDefined();
       });
     });
@@ -51,8 +51,8 @@ describe('genContextBrainChoice', () => {
 
   given('[case4] default brain', () => {
     when('[t0] genContextBrainChoice called with DEFAULT_BRAIN', () => {
-      then('DEFAULT_BRAIN is xai/grok-code-fast-1', () => {
-        expect(DEFAULT_BRAIN).toEqual('xai/grok-code-fast-1');
+      then('DEFAULT_BRAIN is xai/grok/code-fast-1', () => {
+        expect(DEFAULT_BRAIN).toEqual('xai/grok/code-fast-1');
       });
 
       then('returns valid ContextBrainChoice', async () => {

@@ -30,6 +30,7 @@ describe('stepReview.caseBrainChoice', () => {
           paths: 'chapters/chapter2.fixed.md',
           output: outputPath,
           mode: 'push',
+          goal: 'representative',
           cwd: ASSETS_PROSE,
         });
 
@@ -49,7 +50,7 @@ describe('stepReview.caseBrainChoice', () => {
     });
   });
 
-  given('[case2] explicit brain xai/grok-code-fast-1', () => {
+  given('[case2] explicit brain xai/grok/code-fast-1', () => {
     when('[t0] stepReview called with brain arg', () => {
       const outputPath = path.join(os.tmpdir(), 'review-xai-brain.md');
       afterAll(async () => fs.rm(outputPath, { force: true }));
@@ -61,7 +62,8 @@ describe('stepReview.caseBrainChoice', () => {
           paths: 'chapters/chapter2.fixed.md',
           output: outputPath,
           mode: 'push',
-          brain: 'xai/grok-code-fast-1',
+          goal: 'representative',
+          brain: 'xai/grok/code-fast-1',
           cwd: ASSETS_PROSE,
         });
 
@@ -93,6 +95,7 @@ describe('stepReview.caseBrainChoice', () => {
           paths: 'chapters/chapter2.fixed.md',
           output: outputPath,
           mode: 'push',
+          goal: 'representative',
           brain: 'claude/sonnet',
           cwd: ASSETS_PROSE,
         });
@@ -122,6 +125,7 @@ describe('stepReview.caseBrainChoice', () => {
             paths: 'chapters/chapter2.fixed.md',
             output: '/tmp/review.md',
             mode: 'push',
+            goal: 'representative',
             brain: 'invalid/brain/ref',
             cwd: ASSETS_PROSE,
           }),
@@ -146,6 +150,7 @@ describe('stepReview.caseBrainChoice', () => {
           paths: 'chapters/chapter2.fixed.md',
           output: outputPath,
           mode: 'push',
+          goal: 'representative',
           cwd: ASSETS_PROSE,
         });
 
@@ -167,12 +172,11 @@ describe('stepReview.caseBrainChoice', () => {
         expect(result.metrics.expected.tokens.estimate).toBeGreaterThan(0);
       });
 
-      then('metrics.realized contains placeholder values', async () => {
-        // todo: expose usage via rhachet BrainAtom and BrainRepl on responses
-        // for now, metrics.realized contains placeholder values
-        expect(result.metrics.realized.tokens.input).toBe(0);
-        expect(result.metrics.realized.tokens.output).toBe(0);
-        expect(result.metrics.realized.cost.total).toBe(0);
+      then('metrics.realized contains real values', async () => {
+        expect(result.metrics.realized.tokens.input).toBeGreaterThan(0);
+        expect(result.metrics.realized.tokens.output).toBeGreaterThan(0);
+        expect(result.metrics.realized.cost.total).toBeDefined();
+        expect(result.metrics.realized.time).toBeDefined();
       });
     });
   });

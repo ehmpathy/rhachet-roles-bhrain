@@ -35,7 +35,8 @@ describe('stepReview.caseBrain.grok-code-fast-1.case3', () => {
           paths: 'chapters/chapter1.md',
           output: outputPath,
           mode: 'push',
-          brain: 'xai/grok-code-fast-1',
+          goal: 'representative',
+          brain: 'xai/grok/code-fast-1',
           cwd: ASSETS_PROSE,
         });
 
@@ -75,7 +76,8 @@ describe('stepReview.caseBrain.grok-code-fast-1.case3', () => {
           paths: 'chapters/chapter*.md',
           output: outputPath,
           mode: 'push',
-          brain: 'xai/grok-code-fast-1',
+          goal: 'representative',
+          brain: 'xai/grok/code-fast-1',
           cwd: ASSETS_PROSE,
         });
 

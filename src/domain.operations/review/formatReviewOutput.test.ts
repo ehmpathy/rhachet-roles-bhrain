@@ -4,8 +4,8 @@ import { formatReviewOutput } from './formatReviewOutput';
 
 describe('formatReviewOutput', () => {
   given('[case1] brain response with issues', () => {
-    when('[t0] response contains blockers and nitpicks', () => {
-      then('formats according to template', () => {
+    when('[t0] response has blockers and nitpicks', () => {
+      then('formats per template', () => {
         const output = formatReviewOutput({
           response: {
             done: true,
@@ -15,8 +15,7 @@ describe('formatReviewOutput', () => {
                 title: 'console.log found in production code',
                 description:
                   'console.log statements should not be in production code.\nThey can leak sensitive information and clutter logs.',
-                file: 'src/invalid.ts',
-                line: 5,
+                locations: ['src/invalid.ts:5'],
               },
             ],
             nitpicks: [
@@ -25,8 +24,7 @@ describe('formatReviewOutput', () => {
                 title: 'prefer const over let',
                 description:
                   'Use const for variables that are never reassigned.\nThis makes intent clearer.',
-                file: 'src/invalid.ts',
-                line: 10,
+                locations: ['src/invalid.ts:10'],
               },
             ],
           },
@@ -38,7 +36,7 @@ describe('formatReviewOutput', () => {
         expect(output).toContain('**rule**: rules/prefer-const.md');
       });
 
-      then('includes file location', () => {
+      then('includes locations', () => {
         const output = formatReviewOutput({
           response: {
             done: true,
@@ -47,8 +45,7 @@ describe('formatReviewOutput', () => {
                 rule: 'rules/example.md',
                 title: 'issue found',
                 description: 'detailed description of the issue',
-                file: 'src/file.ts',
-                line: 42,
+                locations: ['src/file.ts:42'],
               },
             ],
             nitpicks: [],
@@ -68,6 +65,7 @@ describe('formatReviewOutput', () => {
                 rule: 'rules/blocker.md',
                 title: 'blocker title',
                 description: 'blocker description',
+                locations: ['src/a.ts:1'],
               },
             ],
             nitpicks: [
@@ -75,6 +73,7 @@ describe('formatReviewOutput', () => {
                 rule: 'rules/nitpick.md',
                 title: 'nitpick title',
                 description: 'nitpick description',
+                locations: ['src/b.ts:2'],
               },
             ],
           },
@@ -95,16 +94,19 @@ describe('formatReviewOutput', () => {
                 rule: 'rules/a.md',
                 title: 'first blocker',
                 description: 'first description',
+                locations: ['src/a.ts:1'],
               },
               {
                 rule: 'rules/b.md',
                 title: 'second blocker',
                 description: 'second description',
+                locations: ['src/b.ts:2'],
               },
               {
                 rule: 'rules/c.md',
                 title: 'third blocker',
                 description: 'third description',
+                locations: ['src/c.ts:3'],
               },
             ],
             nitpicks: [],
@@ -113,6 +115,32 @@ describe('formatReviewOutput', () => {
         expect(output).toContain('# blocker.1:');
         expect(output).toContain('# blocker.2:');
         expect(output).toContain('# blocker.3:');
+      });
+    });
+
+    when('[t3] issue has multiple locations', () => {
+      then('lists all locations', () => {
+        const output = formatReviewOutput({
+          response: {
+            done: true,
+            blockers: [
+              {
+                rule: 'rules/no-console.md',
+                title: 'console.log found',
+                description: 'remove console.log statements',
+                locations: [
+                  'src/file1.ts:10',
+                  'src/file2.ts:25',
+                  'src/file3.ts:42',
+                ],
+              },
+            ],
+            nitpicks: [],
+          },
+        });
+        expect(output).toContain('- src/file1.ts:10');
+        expect(output).toContain('- src/file2.ts:25');
+        expect(output).toContain('- src/file3.ts:42');
       });
     });
   });
@@ -128,9 +156,9 @@ describe('formatReviewOutput', () => {
     });
   });
 
-  given('[case3] issues without file location', () => {
-    when('[t0] issue has no file', () => {
-      then('omits location line', () => {
+  given('[case3] issue with empty locations', () => {
+    when('[t0] locations array is empty', () => {
+      then('omits locations section', () => {
         const output = formatReviewOutput({
           response: {
             done: true,
@@ -138,7 +166,9 @@ describe('formatReviewOutput', () => {
               {
                 rule: 'rules/general.md',
                 title: 'general issue',
-                description: 'this is a general issue without a specific file',
+                description:
+                  'this is a general issue without specific locations',
+                locations: [],
               },
             ],
             nitpicks: [],
@@ -146,7 +176,7 @@ describe('formatReviewOutput', () => {
         });
         expect(output).toContain('# blocker.1: general issue');
         expect(output).toContain('**rule**: rules/general.md');
-        expect(output).not.toContain('**location**');
+        expect(output).not.toContain('**locations**');
       });
     });
   });

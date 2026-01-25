@@ -239,11 +239,12 @@ export const stepReflect = async (input: {
     message: '⛏️  step 1: propose pure rules from feedback...',
     operation: async () => {
       // invoke brain with step 1 prompt to get rules as structured JSON
-      const response: Step1Response = await contextBrain.brain.choice.ask({
+      const brainOutput = await contextBrain.brain.choice.ask({
         role: {},
         prompt: step1Prompt.prompt,
         schema: { output: schemaStep1Response },
       });
+      const response: Step1Response = brainOutput.output;
 
       // write each rule file to pureDir
       for (const rule of response.rules) {
@@ -255,8 +256,7 @@ export const stepReflect = async (input: {
       }
 
       return {
-        // note: usage metrics not available from brain.choice.ask
-        tokens: { input: 0, cacheWrite: 0, cacheRead: 0, output: 0 },
+        metrics: brainOutput.metrics,
         rulesProposed: response.rules.length,
       };
     },
@@ -275,11 +275,12 @@ export const stepReflect = async (input: {
     message: '🪨 step 2: blend proposals with prior rules...',
     operation: async () => {
       // invoke brain with step 2 prompt to get manifest as structured JSON
-      const response: Step2Response = await contextBrain.brain.choice.ask({
+      const brainOutput = await contextBrain.brain.choice.ask({
         role: {},
         prompt: step2PromptFinal.prompt,
         schema: { output: schemaStep2Response },
       });
+      const response: Step2Response = brainOutput.output;
 
       // write manifest.json to draftDir
       const manifestContent = JSON.stringify(response, null, 2);
@@ -287,8 +288,7 @@ export const stepReflect = async (input: {
       await fs.writeFile(manifestPath, manifestContent, 'utf-8');
 
       return {
-        // note: usage metrics not available from brain.choice.ask
-        tokens: { input: 0, cacheWrite: 0, cacheRead: 0, output: 0 },
+        metrics: brainOutput.metrics,
         manifestContent,
       };
     },
@@ -310,8 +310,8 @@ export const stepReflect = async (input: {
 
   // compute realized metrics
   const realized = computeMetricsRealized({
-    step1: { tokens: step1Result.tokens },
-    step2: { tokens: step2Result.tokens },
+    step1: { metrics: step1Result.metrics },
+    step2: { metrics: step2Result.metrics },
   });
 
   // build full metrics object
@@ -333,14 +333,22 @@ export const stepReflect = async (input: {
   });
 
   // emit metrics.realized
+  const totalTokens =
+    realized.total.tokens.input +
+    realized.total.tokens.cacheWrite +
+    realized.total.tokens.cacheRead +
+    realized.total.tokens.output;
   console.log(
     `
 ✨ metrics.realized
    ├─ tokens
    │  ├─ input: ${realized.total.tokens.input.toLocaleString()}
-   │  └─ output: ${realized.total.tokens.output.toLocaleString()}
-   └─ cost
-      └─ total: $${realized.total.cost.total.toFixed(4)}
+   │  ├─ output: ${realized.total.tokens.output.toLocaleString()}
+   │  └─ total: ${totalTokens.toLocaleString()}
+   ├─ cost
+   │  └─ total: ${realized.total.cost.total}
+   └─ time
+      └─ total: ${realized.total.time}
 
 🌊 output
    ├─ draft: ${draftDir.startsWith(process.cwd()) ? path.relative(process.cwd(), draftDir) : draftDir}
