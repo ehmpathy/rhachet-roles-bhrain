@@ -99,7 +99,7 @@
     "jest": "30.2.0",
     "rhachet": "1.26.2",
     "rhachet-brains-anthropic": "0.3.0",
-    "rhachet-roles-bhrain": "file:.",
+    "rhachet-roles-bhrain": "link:.",
     "rhachet-roles-bhuild": "0.6.11",
     "rhachet-roles-ehmpathy": "1.17.29",
     "test-fns": "1.11.0",

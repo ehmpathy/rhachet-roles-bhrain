@@ -139,8 +139,8 @@ importers:
         specifier: 0.3.0
         version: 0.3.0(rhachet@1.26.2(zod@4.3.4))
       rhachet-roles-bhrain:
-        specifier: file:.
-        version: file:(@openai/codex-sdk@0.87.0)(@types/node@22.15.21)(rhachet@1.26.2(zod@4.3.4))
+        specifier: link:.
+        version: 'link:'
       rhachet-roles-bhuild:
         specifier: 0.6.11
         version: 0.6.11
@@ -3606,10 +3606,6 @@ packages:
     engines: {node: '>=8.0.0'}
     peerDependencies:
       rhachet: '>=1.21.4'
-
-  'rhachet-roles-bhrain@file:':
-    resolution: {directory: '', type: directory}
-    engines: {node: '>=8.0.0'}
 
   rhachet-roles-bhuild@0.6.11:
     resolution: {integrity: sha512-wmFRV67ClDIexKnBJJEcurs61i3v2ncLlUQ91OvMrZ0gkZJxgGwE2foVheDKwkjYJs4tMm5XDL3T1ghf5G8HiA==}
@@ -8381,37 +8377,6 @@ snapshots:
       type-fns: 1.21.0
       zod: 4.3.4
     transitivePeerDependencies:
-      - ws
-
-  rhachet-roles-bhrain@file:(@openai/codex-sdk@0.87.0)(@types/node@22.15.21)(rhachet@1.26.2(zod@4.3.4)):
-    dependencies:
-      '@anthropic-ai/sdk': 0.51.0
-      '@ehmpathy/as-command': 1.0.3
-      '@ehmpathy/uni-time': 1.8.1
-      as-procedure: 1.1.7
-      domain-objects: 0.31.9
-      fast-glob: 3.3.3
-      helpful-errors: 1.5.3
-      inquirer: 12.7.0(@types/node@22.15.21)
-      iso-price: 1.1.1(domain-objects@0.31.9)
-      iso-time: 1.11.1
-      npm: 11.7.0
-      openai: 5.8.2(zod@4.3.4)
-      rhachet-artifact: 1.0.0
-      rhachet-artifact-git: 1.1.0
-      rhachet-brains-openai: 0.2.0(@openai/codex-sdk@0.87.0)(rhachet@1.26.2(zod@4.3.4))
-      rhachet-brains-xai: 0.2.0(rhachet@1.26.2(zod@4.3.4))
-      serde-fns: 1.2.0
-      simple-in-memory-cache: 0.4.0
-      type-fns: 1.21.0
-      with-simple-caching: 0.14.2
-      wrapper-fns: 1.1.0
-      zod: 4.3.4
-    transitivePeerDependencies:
-      - '@openai/codex-sdk'
-      - '@types/node'
-      - aws-crt
-      - rhachet
       - ws
 
   rhachet-roles-bhuild@0.6.11:
