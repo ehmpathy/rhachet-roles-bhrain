@@ -4,10 +4,9 @@ import * as path from 'path';
 import { genTempDir, given, then, useThen, when } from 'test-fns';
 
 import { logOutputHead } from '@src/.test/logOutputHead';
-import { invokeReviewSkill } from './.test/invokeReviewSkill';
+import { execAsync, invokeReviewSkill } from './.test/invokeReviewSkill';
 
 const ASSETS_DIR = path.join(__dirname, '.test/assets/codebase-mechanic');
-const REPO_ROOT = path.resolve(__dirname, '..');
 
 describe('review.acceptance', () => {
   given('[case2] mechanic codebase with dirty code', () => {
@@ -17,19 +16,8 @@ describe('review.acceptance', () => {
         const tempDir = genTempDir({ slug: 'review-rep-dirty', clone: ASSETS_DIR });
         const outputPath = path.join(tempDir, 'review-representative-dirty.md');
 
-        // create .agent/ symlinks directly to repo's dist/
-        // note: we can't use `rhachet roles link` because on CI the `file:.`
-        // self-reference in package.json copies files at install time before
-        // `dist/` exists, so the node_modules copy is empty
-        const agentRolePath = path.join(
-          tempDir,
-          '.agent/repo=bhrain/role=reviewer',
-        );
-        await fs.mkdir(agentRolePath, { recursive: true });
-        await fs.symlink(
-          path.join(REPO_ROOT, 'dist/domain.roles/reviewer/skills'),
-          path.join(agentRolePath, 'skills'),
-        );
+        // link the reviewer role via rhachet
+        await execAsync('npx rhachet roles link --role reviewer', { cwd: tempDir });
 
         // invoke skill
         const cli = await invokeReviewSkill({
