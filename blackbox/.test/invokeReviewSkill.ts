@@ -2,7 +2,7 @@ import { exec } from 'child_process';
 import * as path from 'path';
 import { promisify } from 'util';
 
-const execAsync = promisify(exec);
+export const execAsync = promisify(exec);
 
 /**
  * .what = invokes the review skill via its shell entrypoint
