@@ -16,6 +16,7 @@ export const execAsync = promisify(exec);
 export const invokeReviewSkill = async (input: {
   rules: string;
   paths: string;
+  refs?: string | string[];
   output: string;
   mode: 'push' | 'pull';
   goal: 'exhaustive' | 'representative';
@@ -27,10 +28,18 @@ export const invokeReviewSkill = async (input: {
     input.cwd,
     '.agent/repo=bhrain/role=reviewer/skills/review.sh',
   );
+  // build refs flags (support single string or array)
+  const refsFlags = (() => {
+    if (!input.refs) return '';
+    const refsArray = Array.isArray(input.refs) ? input.refs : [input.refs];
+    return refsArray.map((ref) => `--refs "${ref}"`).join(' ');
+  })();
+
   const cmd = [
     `bash "${skillPath}"`,
     `--rules "${input.rules}"`,
     `--paths "${input.paths}"`,
+    refsFlags,
     `--output "${input.output}"`,
     `--mode ${input.mode}`,
     `--goal ${input.goal}`,

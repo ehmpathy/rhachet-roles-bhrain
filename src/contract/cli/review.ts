@@ -14,10 +14,11 @@ import { getCliArgs } from '@src/infra/cli/getCliArgs';
 
 const schemaOfArgs = z.object({
   named: z.object({
-    // skill-specific args
-    rules: z.string().optional(),
+    // skill-specific args (support repeated flags via string | string[])
+    rules: z.union([z.string(), z.array(z.string())]).optional(),
     diffs: z.string().optional(),
-    paths: z.string().optional(),
+    paths: z.union([z.string(), z.array(z.string())]).optional(),
+    refs: z.union([z.string(), z.array(z.string())]).optional(),
     output: z.string().optional(),
     mode: z.enum(['pull', 'push']).optional(),
     goal: z.enum(['exhaustive', 'representative']),
@@ -68,6 +69,7 @@ export const review = async (): Promise<void> => {
       | 'uptil-staged'
       | undefined,
     paths: named.paths,
+    refs: named.refs,
     output: outputPath,
     mode: named.mode ?? 'pull',
     goal: named.goal,

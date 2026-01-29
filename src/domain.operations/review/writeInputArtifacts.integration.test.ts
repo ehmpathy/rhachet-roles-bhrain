@@ -28,6 +28,7 @@ describe('writeInputArtifacts', () => {
           },
           scope: {
             ruleFiles: ['rules/rule.no-console.md', 'rules/rule.no-any.md'],
+            refFiles: [],
             targetFiles: ['src/valid.ts', 'src/invalid.ts'],
           },
           metrics: {
@@ -60,6 +61,7 @@ describe('writeInputArtifacts', () => {
           },
           scope: {
             ruleFiles: ['rules/rule.no-console.md'],
+            refFiles: [],
             targetFiles: ['src/index.ts'],
           },
           metrics: {
@@ -84,6 +86,7 @@ describe('writeInputArtifacts', () => {
         });
         expect(argsJson.scope).toEqual({
           ruleFiles: ['rules/rule.no-console.md'],
+          refFiles: [],
           targetFiles: ['src/index.ts'],
         });
         expect(argsJson.metrics).toEqual({
@@ -114,6 +117,7 @@ describe('writeInputArtifacts', () => {
           },
           scope: {
             ruleFiles: ['rules/rule.no-console.md'],
+            refFiles: [],
             targetFiles: ['src/index.ts', 'src/utils.ts'],
           },
           metrics: {

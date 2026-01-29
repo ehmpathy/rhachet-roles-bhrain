@@ -11,12 +11,14 @@ export const writeInputArtifacts = async (input: {
     rules: string | string[];
     diffs?: string;
     paths?: string | string[];
+    refs?: string | string[];
     output: string;
     mode: 'pull' | 'push';
     goal: 'exhaustive' | 'representative';
   };
   scope: {
     ruleFiles: string[];
+    refFiles: string[];
     targetFiles: string[];
   };
   metrics: {

@@ -1,0 +1,149 @@
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
+
+exports[`genReviewOutputStdout given: [case1] all good - no issues when: [t0] generated then: matches snapshot 1`] = `
+"✨ metrics.realized
+   ├─ tokens
+   │  ├─ input: 2,260
+   │  ├─ cache.set: 0
+   │  ├─ cache.get: 192
+   │  ├─ output: 17
+   │  └─ total: 2,469
+   ├─ cost
+   │  └─ total: $0.000481
+   └─ time
+      └─ total: 21s
+
+🌊 output
+   ├─ logs: .log/bhrain/review/2026-01-28T12-00-00-000Z
+   ├─ review: review-output.md
+   └─ summary
+      ├─ 0 blockers
+      ├─ 0 nitpicks
+      └─ all good 👍"
+`;
+
+exports[`genReviewOutputStdout given: [case2] blockers only when: [t0] single blocker then: matches snapshot 1`] = `
+"✨ metrics.realized
+   ├─ tokens
+   │  ├─ input: 3,000
+   │  ├─ cache.set: 100
+   │  ├─ cache.get: 0
+   │  ├─ output: 250
+   │  └─ total: 3,350
+   ├─ cost
+   │  └─ total: $0.001234
+   └─ time
+      └─ total: 15s
+
+🌊 output
+   ├─ logs: .log/bhrain/review/2026-01-28T12-00-00-000Z
+   ├─ review: review-output.md
+   └─ summary
+      ├─ 1 blocker 🔴
+      └─ 0 nitpicks"
+`;
+
+exports[`genReviewOutputStdout given: [case2] blockers only when: [t1] multiple blockers then: matches snapshot 1`] = `
+"✨ metrics.realized
+   ├─ tokens
+   │  ├─ input: 3,000
+   │  ├─ cache.set: 100
+   │  ├─ cache.get: 0
+   │  ├─ output: 500
+   │  └─ total: 3,600
+   ├─ cost
+   │  └─ total: $0.002500
+   └─ time
+      └─ total: 18s
+
+🌊 output
+   ├─ logs: .log/bhrain/review/2026-01-28T12-00-00-000Z
+   ├─ review: review-output.md
+   └─ summary
+      ├─ 3 blockers 🔴
+      └─ 0 nitpicks"
+`;
+
+exports[`genReviewOutputStdout given: [case3] nitpicks only when: [t0] single nitpick then: matches snapshot 1`] = `
+"✨ metrics.realized
+   ├─ tokens
+   │  ├─ input: 2,000
+   │  ├─ cache.set: 0
+   │  ├─ cache.get: 500
+   │  ├─ output: 100
+   │  └─ total: 2,600
+   ├─ cost
+   │  └─ total: $0.000800
+   └─ time
+      └─ total: 10s
+
+🌊 output
+   ├─ logs: .log/bhrain/review/2026-01-28T12-00-00-000Z
+   ├─ review: output.md
+   └─ summary
+      ├─ 0 blockers
+      └─ 1 nitpick 🟠"
+`;
+
+exports[`genReviewOutputStdout given: [case3] nitpicks only when: [t1] multiple nitpicks then: matches snapshot 1`] = `
+"✨ metrics.realized
+   ├─ tokens
+   │  ├─ input: 2,000
+   │  ├─ cache.set: 0
+   │  ├─ cache.get: 500
+   │  ├─ output: 200
+   │  └─ total: 2,700
+   ├─ cost
+   │  └─ total: $0.001000
+   └─ time
+      └─ total: 12s
+
+🌊 output
+   ├─ logs: .log/bhrain/review/2026-01-28T12-00-00-000Z
+   ├─ review: output.md
+   └─ summary
+      ├─ 0 blockers
+      └─ 4 nitpicks 🟠"
+`;
+
+exports[`genReviewOutputStdout given: [case4] both blockers and nitpicks when: [t0] mixed issues then: matches snapshot 1`] = `
+"✨ metrics.realized
+   ├─ tokens
+   │  ├─ input: 4,000
+   │  ├─ cache.set: 200
+   │  ├─ cache.get: 100
+   │  ├─ output: 800
+   │  └─ total: 5,100
+   ├─ cost
+   │  └─ total: $0.005000
+   └─ time
+      └─ total: 25s
+
+🌊 output
+   ├─ logs: .log/bhrain/review/2026-01-28T12-00-00-000Z
+   ├─ review: full-review.md
+   └─ summary
+      ├─ 2 blockers 🔴
+      └─ 3 nitpicks 🟠"
+`;
+
+exports[`genReviewOutputStdout given: [case5] large token counts when: [t0] numbers formatted with commas then: matches snapshot 1`] = `
+"✨ metrics.realized
+   ├─ tokens
+   │  ├─ input: 125,000
+   │  ├─ cache.set: 50,000
+   │  ├─ cache.get: 25,000
+   │  ├─ output: 5,000
+   │  └─ total: 205,000
+   ├─ cost
+   │  └─ total: $0.150000
+   └─ time
+      └─ total: 2m 30s
+
+🌊 output
+   ├─ logs: .log/bhrain/review/2026-01-28T12-00-00-000Z
+   ├─ review: large-review.md
+   └─ summary
+      ├─ 10 blockers 🔴
+      └─ 25 nitpicks 🟠"
+`;

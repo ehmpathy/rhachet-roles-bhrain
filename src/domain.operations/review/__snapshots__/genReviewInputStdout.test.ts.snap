@@ -1,0 +1,54 @@
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
+
+exports[`genReviewInputStdout given: [case1] no refs provided when: [t0] generated then: matches snapshot 1`] = `
+"🔭 metrics.expected
+   ├─ files
+   │  ├─ rules: 3
+   │  └─ targets: 12
+   ├─ tokens
+   │  ├─ estimate: 2500
+   │  └─ context: 1.2%
+   └─ cost
+      └─ estimate: $0.0125
+
+🪵 logs
+   ├─ scope: .log/bhrain/review/2026-01-28T12-00-00-000Z/input.scope.json
+   ├─ metrics: .log/bhrain/review/2026-01-28T12-00-00-000Z/metrics.expected.json
+   └─ tokens: .log/bhrain/review/2026-01-28T12-00-00-000Z/tokens.expected.md"
+`;
+
+exports[`genReviewInputStdout given: [case2] refs provided when: [t0] single ref then: matches snapshot 1`] = `
+"🔭 metrics.expected
+   ├─ files
+   │  ├─ rules: 1
+   │  ├─ refs: 1
+   │  └─ targets: 5
+   ├─ tokens
+   │  ├─ estimate: 1500
+   │  └─ context: 0.6%
+   └─ cost
+      └─ estimate: $0.0075
+
+🪵 logs
+   ├─ scope: .log/bhrain/review/2026-01-28T12-00-00-000Z/input.scope.json
+   ├─ metrics: .log/bhrain/review/2026-01-28T12-00-00-000Z/metrics.expected.json
+   └─ tokens: .log/bhrain/review/2026-01-28T12-00-00-000Z/tokens.expected.md"
+`;
+
+exports[`genReviewInputStdout given: [case2] refs provided when: [t1] multiple refs then: matches snapshot 1`] = `
+"🔭 metrics.expected
+   ├─ files
+   │  ├─ rules: 2
+   │  ├─ refs: 5
+   │  └─ targets: 20
+   ├─ tokens
+   │  ├─ estimate: 5000
+   │  └─ context: 2.5%
+   └─ cost
+      └─ estimate: $0.0250
+
+🪵 logs
+   ├─ scope: .log/bhrain/review/2026-01-28T12-00-00-000Z/input.scope.json
+   ├─ metrics: .log/bhrain/review/2026-01-28T12-00-00-000Z/metrics.expected.json
+   └─ tokens: .log/bhrain/review/2026-01-28T12-00-00-000Z/tokens.expected.md"
+`;
