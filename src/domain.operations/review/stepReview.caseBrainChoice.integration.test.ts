@@ -83,7 +83,7 @@ describe('stepReview.caseBrainChoice', () => {
     });
   });
 
-  given('[case3] explicit brain claude/sonnet', () => {
+  given('[case3] explicit brain anthropic/claude/sonnet', () => {
     when('[t0] stepReview called with anthropic brain', () => {
       const outputPath = path.join(os.tmpdir(), 'review-claude-brain.md');
       afterAll(async () => fs.rm(outputPath, { force: true }));
@@ -96,7 +96,7 @@ describe('stepReview.caseBrainChoice', () => {
           output: outputPath,
           mode: 'push',
           goal: 'representative',
-          brain: 'claude/sonnet',
+          brain: 'anthropic/claude/sonnet',
           cwd: ASSETS_PROSE,
         });
 

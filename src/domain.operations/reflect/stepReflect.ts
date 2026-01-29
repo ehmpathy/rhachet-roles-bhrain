@@ -1,7 +1,7 @@
 import * as fs from 'fs/promises';
 import { BadRequestError } from 'helpful-errors';
 import * as path from 'path';
-import { BrainRepl } from 'rhachet';
+import { isBrainRepl } from 'rhachet';
 import { z } from 'zod';
 
 import {
@@ -151,10 +151,10 @@ export const stepReflect = async (input: {
   const brainSlug = input.brain ?? DEFAULT_BRAIN;
 
   // resolve brain choice for inference
-  const contextBrain = await genContextBrainChoice({ brain: brainSlug });
+  const contextBrain = genContextBrainChoice({ brain: brainSlug });
 
   // validate that pull mode is only used with brains that have tool use
-  const choiceIsRepl = contextBrain.brain.choice instanceof BrainRepl;
+  const choiceIsRepl = isBrainRepl(contextBrain.brain.choice);
   if (mode === 'pull' && !choiceIsRepl)
     throw new BadRequestError(
       `mode 'pull' requires a brain with tool use (BrainRepl). ` +
