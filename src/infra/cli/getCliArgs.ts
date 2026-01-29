@@ -13,14 +13,36 @@ type CliArgsSchema = z.ZodObject<{
 }>;
 
 /**
+ * .what = accumulate a value into named args, to convert to array on repeat
+ *
+ * .why  = enables repeated flags like --refs x --refs y → refs: ['x', 'y']
+ */
+const accumulateNamedArg = (
+  named: Record<string, string | string[]>,
+  key: string,
+  value: string,
+): void => {
+  const prev = named[key];
+  if (prev === undefined) {
+    named[key] = value;
+  } else if (Array.isArray(prev)) {
+    prev.push(value);
+  } else {
+    named[key] = [prev, value];
+  }
+};
+
+/**
  * .what = parse raw argv into named and ordered args
  *
  * .why  = converts argv array into structured object for zod validation
+ *
+ * .note = repeated flags accumulate into arrays (e.g., --refs x --refs y → ['x', 'y'])
  */
 const getCliArgsRaw = (
   argv: string[],
-): { named: Record<string, string>; ordered: string[] } => {
-  const named: Record<string, string> = {};
+): { named: Record<string, string | string[]>; ordered: string[] } => {
+  const named: Record<string, string | string[]> = {};
   const ordered: string[] = [];
 
   for (let i = 0; i < argv.length; i++) {
@@ -36,15 +58,15 @@ const getCliArgsRaw = (
       if (eqIndex !== -1) {
         const key = arg.slice(2, eqIndex);
         const value = arg.slice(eqIndex + 1);
-        named[key] = value;
+        accumulateNamedArg(named, key, value);
       } else {
         const key = arg.slice(2);
         const nextArg = argv[i + 1];
         if (nextArg && !nextArg.startsWith('-')) {
-          named[key] = nextArg;
+          accumulateNamedArg(named, key, nextArg);
           i++;
         } else {
-          named[key] = 'true';
+          accumulateNamedArg(named, key, 'true');
         }
       }
       continue;
@@ -55,10 +77,10 @@ const getCliArgsRaw = (
       const key = arg.slice(1);
       const nextArg = argv[i + 1];
       if (nextArg && !nextArg.startsWith('-')) {
-        named[key] = nextArg;
+        accumulateNamedArg(named, key, nextArg);
         i++;
       } else {
-        named[key] = 'true';
+        accumulateNamedArg(named, key, 'true');
       }
       continue;
     }

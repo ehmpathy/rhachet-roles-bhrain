@@ -8,6 +8,7 @@ describe('compileReviewPrompt', () => {
     when('[t0] content is within 60% of context window', () => {
       then('injects content into prompt with no warnings', () => {
         const result = compileReviewPrompt({
+          refs: [],
           rules: [
             {
               path: 'rules/rule.no-console.md',
@@ -35,6 +36,7 @@ describe('compileReviewPrompt', () => {
         // target ~65% of 3000 token window = 1950 tokens = ~7800 chars
         const content = 'x '.repeat(3000);
         const result = compileReviewPrompt({
+          refs: [],
           rules: [{ path: 'rule.md', content: '# rule' }],
           targets: [{ path: 'file.ts', content }],
           mode: 'push',
@@ -54,6 +56,7 @@ describe('compileReviewPrompt', () => {
         const content = 'x '.repeat(2800);
         const error = await getError(async () =>
           compileReviewPrompt({
+            refs: [],
             rules: [{ path: 'rule.md', content: '# rule' }],
             targets: [{ path: 'large.ts', content }],
             mode: 'push',
@@ -72,6 +75,7 @@ describe('compileReviewPrompt', () => {
     when('[t0] prompt is compiled', () => {
       then('includes only file paths, not contents', () => {
         const result = compileReviewPrompt({
+          refs: [],
           rules: [
             { path: 'rules/rule.no-console.md', content: '# rule: no-console' },
           ],
@@ -91,6 +95,7 @@ describe('compileReviewPrompt', () => {
 
       then('instructs brain to open files', () => {
         const result = compileReviewPrompt({
+          refs: [],
           rules: [{ path: 'rule.md', content: '# rule' }],
           targets: [{ path: 'src/valid.ts', content: '...' }],
           mode: 'pull',
@@ -106,6 +111,7 @@ describe('compileReviewPrompt', () => {
         // pull mode should not fail even with large file lists
         const content = 'x '.repeat(1600);
         const result = compileReviewPrompt({
+          refs: [],
           rules: [{ path: 'rule.md', content: '# rule' }],
           targets: [{ path: 'large.ts', content }], // content ignored in pull mode
           mode: 'pull',
@@ -123,6 +129,7 @@ describe('compileReviewPrompt', () => {
     when('[t0] rules are provided', () => {
       then('all rules are included in prompt', () => {
         const result = compileReviewPrompt({
+          refs: [],
           rules: [
             { path: 'rule.no-console.md', content: '# no-console' },
             { path: 'rule.no-any.md', content: '# no-any' },
@@ -142,6 +149,7 @@ describe('compileReviewPrompt', () => {
     when('[t0] prompt is compiled', () => {
       then('includes context window percentage', () => {
         const result = compileReviewPrompt({
+          refs: [],
           rules: [{ path: 'rule.md', content: '# rule' }],
           targets: [{ path: 'file.ts', content: 'code' }],
           mode: 'push',
@@ -154,6 +162,7 @@ describe('compileReviewPrompt', () => {
 
       then('includes cost estimate', () => {
         const result = compileReviewPrompt({
+          refs: [],
           rules: [{ path: 'rule.md', content: '# rule' }],
           targets: [{ path: 'file.ts', content: 'code' }],
           mode: 'push',

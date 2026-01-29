@@ -14,6 +14,8 @@ import { compileReviewPrompt } from '@src/domain.operations/review/compileReview
 import { enumFilesFromDiffs } from '@src/domain.operations/review/enumFilesFromDiffs';
 import { enumFilesFromGlob } from '@src/domain.operations/review/enumFilesFromGlob';
 import { formatReviewOutput } from '@src/domain.operations/review/formatReviewOutput';
+import { genReviewInputStdout } from '@src/domain.operations/review/genReviewInputStdout';
+import { genReviewOutputStdout } from '@src/domain.operations/review/genReviewOutputStdout';
 import { genTokenBreakdownMarkdown } from '@src/domain.operations/review/genTokenBreakdownMarkdown';
 import { genTokenBreakdownReport } from '@src/domain.operations/review/genTokenBreakdownReport';
 import { writeInputArtifacts } from '@src/domain.operations/review/writeInputArtifacts';
@@ -57,6 +59,7 @@ export type StepReviewResult = {
   metrics: {
     files: {
       rulesCount: number;
+      refsCount: number;
       targetsCount: number;
     };
     expected: {
@@ -144,6 +147,7 @@ export const stepReview = async (input: {
   rules: string | string[];
   diffs?: string;
   paths?: string | string[];
+  refs?: string | string[];
   output: string;
   mode: 'pull' | 'push';
   goal: 'exhaustive' | 'representative';
@@ -254,6 +258,29 @@ export const stepReview = async (input: {
       pathsMatched: targetFilesFromPaths.length,
     });
 
+  // enumerate ref files (if specified)
+  const refGlobs = input.refs
+    ? Array.isArray(input.refs)
+      ? input.refs
+      : [input.refs]
+    : [];
+  const refFiles =
+    refGlobs.length > 0 ? await enumFilesFromGlob({ glob: refGlobs, cwd }) : [];
+
+  // validate refs exist (fail-fast on zero matches when refs was specified)
+  if (refGlobs.length > 0 && refFiles.length === 0) {
+    const explicitPaths = refGlobs.filter((g) => !g.includes('*'));
+    if (explicitPaths.length > 0) {
+      throw new BadRequestError(`ref not found: ${explicitPaths[0]}`, {
+        refs: input.refs,
+      });
+    }
+    throw new BadRequestError(
+      `no refs matched glob: ${refGlobs.join(', ')}\n\nhint: verify the path exists and contains matched files`,
+      { globs: refGlobs },
+    );
+  }
+
   // create log directory early for debug
   const logDir = path.join(cwd, '.log', 'bhrain', 'review', genLogTimestamp());
   await fs.mkdir(logDir, { recursive: true });
@@ -261,7 +288,7 @@ export const stepReview = async (input: {
   // write scope immediately for debug
   await fs.writeFile(
     path.join(logDir, 'input.scope.json'),
-    JSON.stringify({ ruleFiles, targetFiles }, null, 2),
+    JSON.stringify({ ruleFiles, refFiles, targetFiles }, null, 2),
     'utf-8',
   );
 
@@ -286,6 +313,12 @@ export const stepReview = async (input: {
   );
   const targetContents = await Promise.all(
     targetFiles.map(async (file) => ({
+      path: file,
+      content: await readFileContent(file),
+    })),
+  );
+  const refContents = await Promise.all(
+    refFiles.map(async (file) => ({
       path: file,
       content: await readFileContent(file),
     })),
@@ -324,6 +357,7 @@ export const stepReview = async (input: {
     contextBrain.brain.choice.spec.gain.size.context.tokens;
   const promptResult = compileReviewPrompt({
     rules: ruleContents,
+    refs: refContents,
     targets: targetContents,
     mode: input.mode,
     goal: input.goal,
@@ -337,6 +371,7 @@ export const stepReview = async (input: {
       {
         files: {
           rulesCount: ruleFiles.length,
+          refsCount: refFiles.length,
           targetsCount: targetFiles.length,
         },
         tokens: {
@@ -360,12 +395,14 @@ export const stepReview = async (input: {
       rules: input.rules,
       diffs: input.diffs,
       paths: input.paths,
+      refs: input.refs,
       output: input.output,
       mode: input.mode,
       goal: input.goal,
     },
     scope: {
       ruleFiles,
+      refFiles,
       targetFiles,
     },
     metrics: {
@@ -379,22 +416,21 @@ export const stepReview = async (input: {
   // emit metrics.expected before invocation
   const logDirRelative = path.relative(cwd, logDir);
   console.log(
-    `
-🔭 metrics.expected
-   ├─ files
-   │  ├─ rules: ${ruleFiles.length}
-   │  └─ targets: ${targetFiles.length}
-   ├─ tokens
-   │  ├─ estimate: ${promptResult.tokenEstimate}
-   │  └─ context: ${promptResult.contextWindowPercent.toFixed(1)}%
-   └─ cost
-      └─ estimate: $${promptResult.costEstimate.toFixed(4)}
-
-🪵 logs
-   ├─ scope: ${logDirRelative}/input.scope.json
-   ├─ metrics: ${logDirRelative}/metrics.expected.json
-   └─ tokens: ${logDirRelative}/tokens.expected.md
-`.trim(),
+    genReviewInputStdout({
+      files: {
+        rulesCount: ruleFiles.length,
+        refsCount: refFiles.length,
+        targetsCount: targetFiles.length,
+      },
+      tokens: {
+        estimate: promptResult.tokenEstimate,
+        contextWindowPercent: promptResult.contextWindowPercent,
+      },
+      cost: {
+        estimate: promptResult.costEstimate,
+      },
+      logDirRelative,
+    }),
   );
 
   // invoke brain with spinner
@@ -470,24 +506,33 @@ export const stepReview = async (input: {
     realizedTokens.inputCacheCreation +
     realizedTokens.inputCacheRead +
     realizedTokens.output;
+  const reviewRelative = path.relative(cwd, outputAbsolute);
   console.log(
-    `
-✨ metrics.realized
-   ├─ tokens
-   │  ├─ input: ${realizedTokens.input.toLocaleString()}
-   │  ├─ cache.set: ${realizedTokens.inputCacheCreation.toLocaleString()}
-   │  ├─ cache.get: ${realizedTokens.inputCacheRead.toLocaleString()}
-   │  ├─ output: ${realizedTokens.output.toLocaleString()}
-   │  └─ total: ${totalTokens.toLocaleString()}
-   ├─ cost
-   │  └─ total: ${asIsoPriceHuman(realizedCosts.total)}
-   └─ time
-      └─ total: ${metrics.cost.time}
-
-🌊 output
-   ├─ logs: ${path.relative(cwd, logDir)}
-   └─ review: ${path.relative(cwd, outputAbsolute).startsWith('..') ? outputAbsolute : path.relative(cwd, outputAbsolute)}
-`.trim(),
+    genReviewOutputStdout({
+      tokens: {
+        input: realizedTokens.input,
+        cacheSet: realizedTokens.inputCacheCreation,
+        cacheGet: realizedTokens.inputCacheRead,
+        output: realizedTokens.output,
+        total: totalTokens,
+      },
+      cost: {
+        total: asIsoPriceHuman(realizedCosts.total),
+      },
+      time: {
+        total: String(metrics.cost.time),
+      },
+      paths: {
+        logsRelative: logDirRelative,
+        reviewRelative: reviewRelative.startsWith('..')
+          ? outputAbsolute
+          : reviewRelative,
+      },
+      summary: {
+        blockersCount: reviewIssues.output.blockers.length,
+        nitpicksCount: reviewIssues.output.nitpicks.length,
+      },
+    }),
   );
 
   return {
@@ -503,6 +548,7 @@ export const stepReview = async (input: {
     metrics: {
       files: {
         rulesCount: ruleFiles.length,
+        refsCount: refFiles.length,
         targetsCount: targetFiles.length,
       },
       expected: {

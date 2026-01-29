@@ -8,6 +8,7 @@ import { estimateTokenCount } from './estimateTokenCount';
  */
 export const compileReviewPrompt = (input: {
   rules: Array<{ path: string; content: string }>;
+  refs: Array<{ path: string; content: string }>;
   targets: Array<{ path: string; content: string }>;
   mode: 'pull' | 'push';
   goal: 'exhaustive' | 'representative';
@@ -26,6 +27,14 @@ export const compileReviewPrompt = (input: {
   const rulesSection = input.rules
     .map((rule) => `### ${rule.path}\n\n${rule.content}`)
     .join('\n\n---\n\n');
+
+  // build refs section (reference documents for context)
+  const refsSection =
+    input.refs.length > 0
+      ? input.refs
+          .map((ref) => `### ${ref.path}\n\n${ref.content}`)
+          .join('\n\n---\n\n')
+      : null;
 
   // build target section based on mode
   const targetSection = (() => {
@@ -66,7 +75,7 @@ you are a reviewer. apply the rules below to the target files.
 2. NEVER flag anything from the <rules> section — rules contain examples of bad patterns for illustration only
 3. if you see "bad: X" or "good: Y" in a rule, those are examples to learn from, NOT content to flag
 4. the "locations" array must ONLY contain paths from <target>, never from <rules>
-5. if you cannot find the violation in <target>, do not report it
+5. if you cannot find the violation in <target>, do not report it${refsSection ? '\n6. <refs> section contains reference documents for context — use them to inform your review but do not flag content from refs' : ''}
 
 ${goalInstructions}
 
@@ -75,7 +84,17 @@ ${goalInstructions}
 <rules>
 ${rulesSection}
 </rules>
+${
+  refsSection
+    ? `
+## refs (REFERENCE DOCUMENTS — USE FOR CONTEXT, DO NOT FLAG)
 
+<refs>
+${refsSection}
+</refs>
+`
+    : ''
+}
 ## target (REVIEW THIS SECTION ONLY)
 
 <target>
