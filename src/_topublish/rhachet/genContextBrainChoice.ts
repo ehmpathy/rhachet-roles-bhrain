@@ -1,9 +1,11 @@
 import { BadRequestError } from 'helpful-errors';
 import {
   type BrainAtom,
+  type BrainChoice,
   type BrainRepl,
   type ContextBrain,
   genContextBrain,
+  getAvailableBrainsInWords,
 } from 'rhachet';
 import {
   getBrainAtomsByAnthropic,
@@ -14,16 +16,6 @@ import {
   getBrainReplsByOpenAI,
 } from 'rhachet-brains-openai';
 import { getBrainAtomsByXAI } from 'rhachet-brains-xai';
-
-/**
- * .what = context with a chosen brain accessible via brain.choice
- * .why = enables skills to access a chosen brain via context.brain.choice.ask() and .act()
- */
-export interface ContextBrainChoice extends ContextBrain {
-  brain: ContextBrain['brain'] & {
-    choice: BrainAtom | BrainRepl;
-  };
-}
 
 /**
  * .what = env var names by provider
@@ -62,7 +54,7 @@ const loadAllRepls = (): BrainRepl[] => {
  *
  * .example
  *   getProviderFromSlug({ slug: 'xai/grok/code-fast-1' }) => 'xai'
- *   getProviderFromSlug({ slug: 'claude/sonnet' }) => 'claude'
+ *   getProviderFromSlug({ slug: 'anthropic/claude/sonnet' }) => 'anthropic'
  */
 const getProviderFromSlug = (input: { slug: string }): string => {
   const [provider] = input.slug.split('/');
@@ -91,91 +83,26 @@ const validateApiKeyPresent = (input: { provider: string }): void => {
 };
 
 /**
- * .what = formats list of available brains for error message
- * .why = helps users discover valid brain refs
- */
-const formatAvailableBrains = (input: {
-  atoms: BrainAtom[];
-  repls: BrainRepl[];
-}): string => {
-  const lines: string[] = ['available brains:'];
-
-  // atoms
-  lines.push('  atoms:');
-  for (const atom of input.atoms) {
-    const provider = getProviderFromSlug({ slug: atom.slug });
-    const envVar = ENV_VAR_BY_PROVIDER[provider];
-    const envNote = envVar ? ` (requires ${envVar})` : '';
-    lines.push(`    ${atom.slug}${envNote}`);
-  }
-
-  // repls
-  lines.push('  repls:');
-  for (const repl of input.repls) {
-    const provider = getProviderFromSlug({ slug: repl.slug });
-    const envVar = ENV_VAR_BY_PROVIDER[provider];
-    const envNote = envVar ? ` (requires ${envVar})` : '';
-    lines.push(`    ${repl.slug}${envNote}`);
-  }
-
-  return lines.join('\n');
-};
-
-/**
  * .what = resolves a brain ref to context.brain.choice
  * .why = enables skills to access a chosen brain via context.brain.choice.ask() and .act()
  *
- * .note = this is staged for upstream contribution to rhachet core
- *
  * .example
- *   const ctx = await genContextBrainChoice({ brain: 'xai/grok/code-fast-1' });
+ *   const ctx = genContextBrainChoice({ brain: 'xai/grok/code-fast-1' });
  *   const result = await ctx.brain.choice.ask({ prompt: '...', schema: { output: z.string() } });
  */
-export const genContextBrainChoice = async (input: {
+export const genContextBrainChoice = (input: {
   brain: string;
-}): Promise<ContextBrainChoice> => {
+}): ContextBrain<BrainChoice> => {
   // load all brains
   const atoms = loadAllAtoms();
   const repls = loadAllRepls();
 
-  // find brain by slug (check atoms first, then repls)
-  const atomFound = atoms.find((a) => a.slug === input.brain);
-  const replFound = repls.find((r) => r.slug === input.brain);
-  const brainFound = atomFound ?? replFound;
-
-  // throw if not found
-  if (!brainFound) {
-    throw new BadRequestError(
-      `brain not found: ${input.brain}\n\n${formatAvailableBrains({ atoms, repls })}`,
-      { brain: input.brain },
-    );
-  }
-
-  // validate api key is present
-  const provider = getProviderFromSlug({ slug: brainFound.slug });
+  // validate api key is present before lookup (fail fast)
+  const provider = getProviderFromSlug({ slug: input.brain });
   validateApiKeyPresent({ provider });
 
-  // generate base context
-  const contextBrain = genContextBrain({ atoms, repls });
-
-  // extend with choice
-  return {
-    ...contextBrain,
-    brain: {
-      ...contextBrain.brain,
-      choice: brainFound,
-    },
-  };
-};
-
-/**
- * .what = returns list of all available brain slugs
- * .why = enables cli help output and autocomplete
- */
-export const getAvailableBrainSlugs = (): string[] => {
-  const atoms = loadAllAtoms();
-  const repls = loadAllRepls();
-  return [...atoms.map((a) => a.slug), ...repls.map((r) => r.slug)];
+  // generate context with choice via rhachet's genContextBrain
+  return genContextBrain({ atoms, repls, choice: input.brain });
 };
 
 /**
@@ -191,7 +118,7 @@ export const DEFAULT_BRAIN = 'xai/grok/code-fast-1';
 export const printBrainHelp = (): string => {
   const atoms = loadAllAtoms();
   const repls = loadAllRepls();
-  const help = formatAvailableBrains({ atoms, repls });
+  const help = getAvailableBrainsInWords({ atoms, repls, choice: '' });
   console.log(help);
   console.log(`\ndefault: ${DEFAULT_BRAIN}`);
   return help;

@@ -20,7 +20,7 @@ describe('stepReview.caseBrain.claude-sonnet', () => {
   // increase timeout for brain invocations (3 minutes)
   jest.setTimeout(180000);
 
-  given('[case1] prose-author example with claude/sonnet', () => {
+  given('[case1] prose-author example with anthropic/claude/sonnet', () => {
     when('[t0] stepReview on clean chapter', () => {
       const outputPath = path.join(
         os.tmpdir(),
@@ -36,7 +36,7 @@ describe('stepReview.caseBrain.claude-sonnet', () => {
           output: outputPath,
           mode: 'push',
           goal: 'representative',
-          brain: 'claude/sonnet',
+          brain: 'anthropic/claude/sonnet',
           cwd: ASSETS_PROSE,
         });
 
@@ -83,7 +83,7 @@ describe('stepReview.caseBrain.claude-sonnet', () => {
           output: outputPath,
           mode: 'push',
           goal: 'representative',
-          brain: 'claude/sonnet',
+          brain: 'anthropic/claude/sonnet',
           cwd: ASSETS_PROSE,
         });
 
@@ -107,7 +107,7 @@ describe('stepReview.caseBrain.claude-sonnet', () => {
     });
   });
 
-  given('[case2] multiple chapters with claude/sonnet', () => {
+  given('[case2] multiple chapters with anthropic/claude/sonnet', () => {
     when('[t0] stepReview on all chapters', () => {
       const outputPath = path.join(
         os.tmpdir(),
@@ -123,7 +123,7 @@ describe('stepReview.caseBrain.claude-sonnet', () => {
           output: outputPath,
           mode: 'push',
           goal: 'representative',
-          brain: 'claude/sonnet',
+          brain: 'anthropic/claude/sonnet',
           cwd: ASSETS_PROSE,
         });
 
@@ -170,7 +170,7 @@ describe('stepReview.caseBrain.claude-sonnet', () => {
           output: outputPath,
           mode: 'push',
           goal: 'representative',
-          brain: 'claude/sonnet',
+          brain: 'anthropic/claude/sonnet',
           cwd: ASSETS_PROSE,
         });
 
@@ -211,7 +211,7 @@ describe('stepReview.caseBrain.claude-sonnet', () => {
           output: outputPath,
           mode: 'push',
           goal: 'representative',
-          brain: 'claude/sonnet',
+          brain: 'anthropic/claude/sonnet',
           cwd: ASSETS_PROSE,
         });
 

@@ -3,7 +3,7 @@ import { BadRequestError } from 'helpful-errors';
 import { asIsoPriceHuman, type IsoPriceHuman } from 'iso-price';
 import type { IsoDuration } from 'iso-time';
 import * as path from 'path';
-import { BrainRepl } from 'rhachet';
+import { isBrainRepl } from 'rhachet';
 import { z } from 'zod';
 
 import {
@@ -158,10 +158,10 @@ export const stepReview = async (input: {
 
   // resolve brain choice from brain registry
   const brainSlug = input.brain ?? DEFAULT_BRAIN;
-  const contextBrain = await genContextBrainChoice({ brain: brainSlug });
+  const contextBrain = genContextBrainChoice({ brain: brainSlug });
 
   // validate that pull mode is only used with brains that have tool use
-  const choiceIsRepl = contextBrain.brain.choice instanceof BrainRepl;
+  const choiceIsRepl = isBrainRepl(contextBrain.brain.choice);
   if (input.mode === 'pull' && !choiceIsRepl)
     throw new BadRequestError(
       `mode 'pull' requires a brain with tool use (BrainRepl). ` +
