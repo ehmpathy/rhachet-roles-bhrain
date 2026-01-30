@@ -16,6 +16,7 @@ import {
   DEFAULT_TEST_BRAIN,
   genTestBrainContext,
 } from '@src/.test/genTestBrainContext';
+import { REPEATABLY_CONFIG } from '@src/.test/infra/repeatably';
 import { logOutputHead } from '@src/.test/logOutputHead';
 
 import { stepReview } from './stepReview';
@@ -407,59 +408,64 @@ describe('stepReview', () => {
       });
     });
 
-    when('[t1] stepReview on chapter2.fixed.md', () => {
-      const outputPath = path.join(os.tmpdir(), 'prose-review-fixed.md');
-      afterAll(async () => fs.rm(outputPath, { force: true }));
+    when.repeatably(REPEATABLY_CONFIG)(
+      '[t1] stepReview on chapter2.fixed.md',
+      () => {
+        const outputPath = path.join(os.tmpdir(), 'prose-review-fixed.md');
+        afterAll(async () => fs.rm(outputPath, { force: true }));
 
-      // single API call, result shared across assertions
-      const result = useThen('stepReview succeeds', async () => {
-        const res = await stepReview(
-          {
-            rules: '.agent/**/briefs/rules/*.md',
-            paths: 'chapters/chapter2.fixed.md',
-            output: outputPath,
-            mode: 'push',
-            goal: 'representative',
-            cwd: ASSETS_PROSE,
-          },
-          { brain: scene.brain },
-        );
+        // single API call, result shared across assertions
+        const result = useThen('stepReview succeeds', async () => {
+          const res = await stepReview(
+            {
+              rules: '.agent/**/briefs/rules/*.md',
+              paths: 'chapters/chapter2.fixed.md',
+              output: outputPath,
+              mode: 'push',
+              goal: 'representative',
+              cwd: ASSETS_PROSE,
+            },
+            { brain: scene.brain },
+          );
 
-        // log output for observability
-        logOutputHead({
-          label: 'prose.fixed.review',
-          output: res.review.formatted,
+          // log output for observability
+          logOutputHead({
+            label: 'prose.fixed.review',
+            output: res.review.formatted,
+          });
+
+          return res;
         });
 
-        return res;
-      });
+        then('review contains no blockers', async () => {
+          expect(result.review.formatted).toBeDefined();
+          expect(result.review.formatted.toLowerCase()).not.toContain(
+            'blocker',
+          );
+        });
 
-      then('review contains no blockers', async () => {
-        expect(result.review.formatted).toBeDefined();
-        expect(result.review.formatted.toLowerCase()).not.toContain('blocker');
-      });
+        then('metrics.files shows correct counts', async () => {
+          expect(result.metrics.files.rulesCount).toBe(2);
+          expect(result.metrics.files.targetsCount).toBe(1);
+        });
 
-      then('metrics.files shows correct counts', async () => {
-        expect(result.metrics.files.rulesCount).toBe(2);
-        expect(result.metrics.files.targetsCount).toBe(1);
-      });
+        then('metrics.expected contains token estimates', async () => {
+          expect(result.metrics.expected.tokens.estimate).toBeGreaterThan(0);
+          expect(
+            result.metrics.expected.tokens.contextWindowPercent,
+          ).toBeGreaterThan(0);
+          expect(result.metrics.expected.cost.estimate).toBeGreaterThan(0);
+        });
 
-      then('metrics.expected contains token estimates', async () => {
-        expect(result.metrics.expected.tokens.estimate).toBeGreaterThan(0);
-        expect(
-          result.metrics.expected.tokens.contextWindowPercent,
-        ).toBeGreaterThan(0);
-        expect(result.metrics.expected.cost.estimate).toBeGreaterThan(0);
-      });
+        then('metrics.realized contains real values', async () => {
+          expect(result.metrics.realized.tokens.input).toBeDefined();
+          expect(result.metrics.realized.tokens.output).toBeDefined();
+          expect(result.metrics.realized.cost.total).toBeDefined();
+        });
+      },
+    );
 
-      then('metrics.realized contains real values', async () => {
-        expect(result.metrics.realized.tokens.input).toBeDefined();
-        expect(result.metrics.realized.tokens.output).toBeDefined();
-        expect(result.metrics.realized.cost.total).toBeDefined();
-      });
-    });
-
-    when('[t2] stepReview on chapter2.md', () => {
+    when.repeatably(REPEATABLY_CONFIG)('[t2] stepReview on chapter2.md', () => {
       const outputPath = path.join(os.tmpdir(), 'prose-review-unfixed.md');
       afterAll(async () => fs.rm(outputPath, { force: true }));
 

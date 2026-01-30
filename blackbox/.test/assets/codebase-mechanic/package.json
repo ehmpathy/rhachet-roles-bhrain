@@ -5,6 +5,7 @@
   "dependencies": {
     "rhachet-brains-anthropic": "0.3.3",
     "rhachet-brains-openai": "0.2.1",
-    "rhachet-brains-xai": "0.2.1"
+    "rhachet-brains-xai": "0.2.1",
+    "rhachet-roles-bhrain": "link:."
   }
 }

@@ -6,6 +6,7 @@ import { given, then, usePrep, when } from 'test-fns';
 import { genContextLogTrail } from '@src/.test/genContextLogTrail';
 import { genContextStitchTrail } from '@src/.test/genContextStitchTrail';
 import { getContextOpenAI } from '@src/.test/getContextOpenAI';
+import { REPEATABLY_CONFIG } from '@src/.test/infra/repeatably';
 import { getThinkerBriefs } from '@src/domain.roles/thinker/getThinkerBrief';
 import { stepDemonstrate } from '@src/domain.roles/thinker/skills/brief.demonstrate/stepDemonstrate';
 
@@ -114,7 +115,8 @@ the structure of a joke
 
       const goalThreads = enthread();
 
-      then('outputs answers', async () => {
+      // note: use repeatably since LLM output is non-deterministic
+      then.repeatably(REPEATABLY_CONFIG)('outputs answers', async () => {
         const result = await enweaveOneStitcher(
           { stitcher: route, threads: goalThreads },
           context,

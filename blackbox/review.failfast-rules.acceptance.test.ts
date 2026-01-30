@@ -1,8 +1,12 @@
 import * as path from 'path';
 
-import { genTempDir, given, then, useThen, when } from 'test-fns';
+import { given, then, useThen, when } from 'test-fns';
 
-import { execAsync, invokeReviewSkill } from './.test/invokeReviewSkill';
+import {
+  execAsync,
+  genTempDirForRhachet,
+  invokeReviewSkill,
+} from './.test/invokeReviewSkill';
 
 const ASSETS_DIR = path.join(__dirname, '.test/assets/codebase-mechanic');
 
@@ -16,7 +20,7 @@ describe('review.failfast-rules.acceptance', () => {
         'invoke review skill with empty rules glob',
         async () => {
           // clone fixture to temp dir
-          const tempDir = genTempDir({
+          const tempDir = genTempDirForRhachet({
             slug: 'review-failfast-rules-glob',
             clone: ASSETS_DIR,
           });
@@ -70,7 +74,7 @@ describe('review.failfast-rules.acceptance', () => {
         'invoke review skill with invalid rules path',
         async () => {
           // clone fixture to temp dir
-          const tempDir = genTempDir({
+          const tempDir = genTempDirForRhachet({
             slug: 'review-failfast-rules-path',
             clone: ASSETS_DIR,
           });
