@@ -3,13 +3,9 @@ import { BadRequestError } from 'helpful-errors';
 import { asIsoPriceHuman, type IsoPriceHuman } from 'iso-price';
 import type { IsoDuration } from 'iso-time';
 import * as path from 'path';
-import { isBrainRepl } from 'rhachet';
+import { type BrainChoice, type ContextBrain, isBrainRepl } from 'rhachet';
 import { z } from 'zod';
 
-import {
-  DEFAULT_BRAIN,
-  genContextBrainChoice,
-} from '@src/_topublish/rhachet/genContextBrainChoice';
 import { compileReviewPrompt } from '@src/domain.operations/review/compileReviewPrompt';
 import { enumFilesFromDiffs } from '@src/domain.operations/review/enumFilesFromDiffs';
 import { enumFilesFromGlob } from '@src/domain.operations/review/enumFilesFromGlob';
@@ -143,31 +139,31 @@ const withSpinner = async <T>(input: {
  * .what = executes a code review against specified rules and targets
  * .why = core orchestration flow for reviewer role
  */
-export const stepReview = async (input: {
-  rules: string | string[];
-  diffs?: string;
-  paths?: string | string[];
-  refs?: string | string[];
-  output: string;
-  mode: 'pull' | 'push';
-  goal: 'exhaustive' | 'representative';
-  brain?: string;
-  cwd?: string;
-}): Promise<StepReviewResult> => {
+export const stepReview = async (
+  input: {
+    rules: string | string[];
+    diffs?: string;
+    paths?: string | string[];
+    refs?: string | string[];
+    output: string;
+    mode: 'pull' | 'push';
+    goal: 'exhaustive' | 'representative';
+    cwd?: string;
+  },
+  context: {
+    brain: ContextBrain<BrainChoice>;
+  },
+): Promise<StepReviewResult> => {
   const cwd = input.cwd ?? process.cwd();
 
-  // resolve brain choice from brain registry
-  const brainSlug = input.brain ?? DEFAULT_BRAIN;
-  const contextBrain = genContextBrainChoice({ brain: brainSlug });
-
   // validate that pull mode is only used with brains that have tool use
-  const choiceIsRepl = isBrainRepl(contextBrain.brain.choice);
+  const choiceIsRepl = isBrainRepl(context.brain.brain.choice);
   if (input.mode === 'pull' && !choiceIsRepl)
     throw new BadRequestError(
       `mode 'pull' requires a brain with tool use (BrainRepl). ` +
-        `brain '${brainSlug}' is a BrainAtom without tool use. ` +
+        `brain '${context.brain.brain.choice.slug}' is a BrainAtom without tool use. ` +
         `use mode 'push' instead, or choose a BrainRepl.`,
-      { brain: brainSlug, mode: input.mode },
+      { brain: context.brain.brain.choice.slug, mode: input.mode },
     );
 
   // validate that at least one of rules, diffs, or paths is specified
@@ -354,7 +350,7 @@ export const stepReview = async (input: {
 
   // compile review prompt with brain's context window
   const contextWindowSize =
-    contextBrain.brain.choice.spec.gain.size.context.tokens;
+    context.brain.brain.choice.spec.gain.size.context.tokens;
   const promptResult = compileReviewPrompt({
     rules: ruleContents,
     refs: refContents,
@@ -438,7 +434,7 @@ export const stepReview = async (input: {
   const reviewIssues = await withSpinner({
     message: "🦉 let's review!",
     operation: () =>
-      contextBrain.brain.choice.ask({
+      context.brain.brain.choice.ask({
         role: { briefs: [] },
         prompt: promptResult.prompt,
         schema: { output: schemaOfReviewOutput },

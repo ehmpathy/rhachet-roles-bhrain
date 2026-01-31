@@ -1,8 +1,9 @@
 import * as fs from 'fs/promises';
 import * as os from 'os';
 import * as path from 'path';
-import { given, then, useThen, when } from 'test-fns';
+import { given, then, useBeforeAll, useThen, when } from 'test-fns';
 
+import { genTestBrainContext } from '@src/.test/genTestBrainContext';
 import { logOutputHead } from '@src/.test/logOutputHead';
 
 import { stepReview } from './stepReview';
@@ -20,6 +21,11 @@ describe('stepReview.caseBrain.grok-code-fast-1.case1', () => {
   // increase timeout for brain invocations (3 minutes)
   jest.setTimeout(180000);
 
+  // brain context for this test suite
+  const scene = useBeforeAll(async () => ({
+    brain: genTestBrainContext({ brain: 'xai/grok/code-fast-1' }),
+  }));
+
   given('[case1] prose-author example with xai/grok/code-fast-1', () => {
     when('[t0] stepReview on clean chapter', () => {
       const outputPath = path.join(
@@ -30,15 +36,17 @@ describe('stepReview.caseBrain.grok-code-fast-1.case1', () => {
 
       // single API call, result shared across assertions
       const result = useThen('stepReview succeeds', async () => {
-        const res = await stepReview({
-          rules: '.agent/**/briefs/rules/*.md',
-          paths: 'chapters/chapter2.fixed.md',
-          output: outputPath,
-          mode: 'push',
-          goal: 'representative',
-          brain: 'xai/grok/code-fast-1',
-          cwd: ASSETS_PROSE,
-        });
+        const res = await stepReview(
+          {
+            rules: '.agent/**/briefs/rules/*.md',
+            paths: 'chapters/chapter2.fixed.md',
+            output: outputPath,
+            mode: 'push',
+            goal: 'representative',
+            cwd: ASSETS_PROSE,
+          },
+          { brain: scene.brain },
+        );
 
         // log output for observability
         logOutputHead({
@@ -77,15 +85,17 @@ describe('stepReview.caseBrain.grok-code-fast-1.case1', () => {
 
       // single API call, result shared across assertions
       const result = useThen('stepReview succeeds', async () => {
-        const res = await stepReview({
-          rules: '.agent/**/briefs/rules/*.md',
-          paths: 'chapters/chapter2.md',
-          output: outputPath,
-          mode: 'push',
-          goal: 'representative',
-          brain: 'xai/grok/code-fast-1',
-          cwd: ASSETS_PROSE,
-        });
+        const res = await stepReview(
+          {
+            rules: '.agent/**/briefs/rules/*.md',
+            paths: 'chapters/chapter2.md',
+            output: outputPath,
+            mode: 'push',
+            goal: 'representative',
+            cwd: ASSETS_PROSE,
+          },
+          { brain: scene.brain },
+        );
 
         // log output for observability
         logOutputHead({

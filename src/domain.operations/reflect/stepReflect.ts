@@ -1,13 +1,9 @@
 import * as fs from 'fs/promises';
 import { BadRequestError } from 'helpful-errors';
 import * as path from 'path';
-import { isBrainRepl } from 'rhachet';
+import { type BrainChoice, type ContextBrain, isBrainRepl } from 'rhachet';
 import { z } from 'zod';
 
-import {
-  DEFAULT_BRAIN,
-  genContextBrainChoice,
-} from '@src/_topublish/rhachet/genContextBrainChoice';
 import type { ReviewerReflectMetrics } from '@src/domain.objects/Reviewer/ReviewerReflectMetrics';
 import { getGitRemoteUrl } from '@src/domain.operations/git/getGitRemoteUrl';
 import { createDraftDirectory } from '@src/domain.operations/reflect/createDraftDirectory';
@@ -139,28 +135,28 @@ const withSpinner = async <T>(input: {
  * .what = extracts rules from feedback and proposes them to target
  * .why = core orchestration flow for reviewer.reflect skill
  */
-export const stepReflect = async (input: {
-  source: string;
-  target: string;
-  mode?: 'pull' | 'push';
-  force?: boolean;
-  brain?: string;
-}): Promise<StepReflectResult> => {
+export const stepReflect = async (
+  input: {
+    source: string;
+    target: string;
+    mode?: 'pull' | 'push';
+    force?: boolean;
+  },
+  context: {
+    brain: ContextBrain<BrainChoice>;
+  },
+): Promise<StepReflectResult> => {
   const mode = input.mode ?? 'pull';
   const force = input.force ?? false;
-  const brainSlug = input.brain ?? DEFAULT_BRAIN;
-
-  // resolve brain choice for inference
-  const contextBrain = genContextBrainChoice({ brain: brainSlug });
 
   // validate that pull mode is only used with brains that have tool use
-  const choiceIsRepl = isBrainRepl(contextBrain.brain.choice);
+  const choiceIsRepl = isBrainRepl(context.brain.brain.choice);
   if (mode === 'pull' && !choiceIsRepl)
     throw new BadRequestError(
       `mode 'pull' requires a brain with tool use (BrainRepl). ` +
-        `brain '${brainSlug}' is a BrainAtom without tool use. ` +
+        `brain '${context.brain.brain.choice.slug}' is a BrainAtom without tool use. ` +
         `use mode 'push' instead, or choose a BrainRepl.`,
-      { brain: brainSlug, mode },
+      { brain: context.brain.brain.choice.slug, mode },
     );
 
   // validate source directory and get feedback files
@@ -239,7 +235,7 @@ export const stepReflect = async (input: {
     message: '⛏️  step 1: propose pure rules from feedback...',
     operation: async () => {
       // invoke brain with step 1 prompt to get rules as structured JSON
-      const brainOutput = await contextBrain.brain.choice.ask({
+      const brainOutput = await context.brain.brain.choice.ask({
         role: {},
         prompt: step1Prompt.prompt,
         schema: { output: schemaStep1Response },
@@ -275,7 +271,7 @@ export const stepReflect = async (input: {
     message: '🪨 step 2: blend proposals with prior rules...',
     operation: async () => {
       // invoke brain with step 2 prompt to get manifest as structured JSON
-      const brainOutput = await contextBrain.brain.choice.ask({
+      const brainOutput = await context.brain.brain.choice.ask({
         role: {},
         prompt: step2PromptFinal.prompt,
         schema: { output: schemaStep2Response },

@@ -22,7 +22,7 @@ export const invokeReviewSkill = async (input: {
   goal: 'exhaustive' | 'representative';
   brain?: string;
   cwd: string;
-}): Promise<{ stdout: string; stderr: string }> => {
+}): Promise<{ stdout: string; stderr: string; code: number }> => {
   // invoke the skill shell entrypoint from the cwd's .agent/ directory
   const skillPath = path.join(
     input.cwd,
@@ -53,13 +53,14 @@ export const invokeReviewSkill = async (input: {
       cwd: input.cwd,
       env: { ...process.env }, // inherit env vars (api keys required)
     });
-    return result;
+    return { ...result, code: 0 };
   } catch (error) {
-    // exec throws on non-zero exit; extract stdout/stderr from error
-    const execError = error as { stdout?: string; stderr?: string };
+    // exec throws on non-zero exit; extract stdout/stderr/code from error
+    const execError = error as { stdout?: string; stderr?: string; code?: number };
     return {
       stdout: execError.stdout ?? '',
       stderr: execError.stderr ?? '',
+      code: execError.code ?? 1,
     };
   }
 };
