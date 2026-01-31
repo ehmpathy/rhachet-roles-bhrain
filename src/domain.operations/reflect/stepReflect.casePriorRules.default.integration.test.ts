@@ -2,6 +2,10 @@ import * as fs from 'fs/promises';
 import * as path from 'path';
 import { given, then, useBeforeAll, when } from 'test-fns';
 
+import {
+  DEFAULT_TEST_BRAIN,
+  genTestBrainContext,
+} from '@src/.test/genTestBrainContext';
 import type { ReviewerReflectManifest } from '@src/domain.objects/Reviewer/ReviewerReflectManifest';
 
 import { setupSourceRepo, setupTargetDir } from './.test/setup';
@@ -10,6 +14,10 @@ import { stepReflect } from './stepReflect';
 describe('stepReflect.casePriorRules.default', () => {
   // increase timeout for brain invocations (3 minutes)
   jest.setTimeout(180000);
+
+  const brainScene = useBeforeAll(async () => ({
+    brain: genTestBrainContext({ brain: DEFAULT_TEST_BRAIN }),
+  }));
 
   given('[case1] target with prior rule (default brain = xai/grok)', () => {
     const scene = useBeforeAll(async () => {
@@ -26,11 +34,14 @@ describe('stepReflect.casePriorRules.default', () => {
       );
 
       // use default brain (xai/grok/code-fast-1)
-      const result = await stepReflect({
-        source: sourceDir,
-        target: targetDir,
-        mode: 'push',
-      });
+      const result = await stepReflect(
+        {
+          source: sourceDir,
+          target: targetDir,
+          mode: 'push',
+        },
+        { brain: brainScene.brain },
+      );
 
       return { sourceDir, targetDir, result };
     });

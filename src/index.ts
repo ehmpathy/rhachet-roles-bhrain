@@ -1,10 +1,6 @@
 export * from '@src/contract/sdk';
-
-// cli entry points for portable skill dispatch
-import { reflect } from './contract/cli/reflect';
-import { review } from './contract/cli/review';
-
-export const cli = {
-  reflect,
-  review,
-};
+export type { StepReflectResult } from '@src/domain.operations/reflect/stepReflect';
+// domain operations for consumers who provide their own brain context
+export { stepReflect } from '@src/domain.operations/reflect/stepReflect';
+export type { StepReviewResult } from '@src/domain.operations/review/stepReview';
+export { stepReview } from '@src/domain.operations/review/stepReview';

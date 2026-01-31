@@ -3,8 +3,19 @@ import * as fs from 'fs/promises';
 import { getError } from 'helpful-errors';
 import * as os from 'os';
 import * as path from 'path';
-import { given, then, useBeforeEach, useThen, when } from 'test-fns';
+import {
+  given,
+  then,
+  useBeforeAll,
+  useBeforeEach,
+  useThen,
+  when,
+} from 'test-fns';
 
+import {
+  DEFAULT_TEST_BRAIN,
+  genTestBrainContext,
+} from '@src/.test/genTestBrainContext';
 import { logOutputHead } from '@src/.test/logOutputHead';
 
 import { stepReview } from './stepReview';
@@ -61,18 +72,26 @@ const setupGitRepo = async (): Promise<{ repoDir: string }> => {
 };
 
 describe('stepReview', () => {
+  // brain context for integration tests - created once for efficiency
+  const scene = useBeforeAll(async () => ({
+    brain: genTestBrainContext({ brain: DEFAULT_TEST_BRAIN }),
+  }));
+
   given('[case1] no inputs specified', () => {
     when('[t0] stepReview is called', () => {
       then('throws BadRequestError about missing inputs', async () => {
         const error = await getError(
-          stepReview({
-            rules: [],
-            paths: [],
-            output: '/tmp/review.md',
-            mode: 'push',
-            goal: 'representative',
-            cwd: ASSETS_TYPESCRIPT,
-          }),
+          stepReview(
+            {
+              rules: [],
+              paths: [],
+              output: '/tmp/review.md',
+              mode: 'push',
+              goal: 'representative',
+              cwd: ASSETS_TYPESCRIPT,
+            },
+            { brain: scene.brain },
+          ),
         );
 
         expect(error).toBeDefined();
@@ -87,14 +106,17 @@ describe('stepReview', () => {
     when('[t0] stepReview is called', () => {
       then('throws BadRequestError about ineffective glob', async () => {
         const error = await getError(
-          stepReview({
-            rules: 'nonexistent/**/*.md',
-            paths: 'src/*.ts',
-            output: '/tmp/review.md',
-            mode: 'push',
-            goal: 'representative',
-            cwd: ASSETS_TYPESCRIPT,
-          }),
+          stepReview(
+            {
+              rules: 'nonexistent/**/*.md',
+              paths: 'src/*.ts',
+              output: '/tmp/review.md',
+              mode: 'push',
+              goal: 'representative',
+              cwd: ASSETS_TYPESCRIPT,
+            },
+            { brain: scene.brain },
+          ),
         );
 
         expect(error).toBeDefined();
@@ -107,14 +129,17 @@ describe('stepReview', () => {
     when('[t0] stepReview is called with empty paths', () => {
       then('throws BadRequestError about empty scope', async () => {
         const error = await getError(
-          stepReview({
-            rules: '.agent/**/briefs/rules/*.md',
-            paths: 'nonexistent/**/*.ts',
-            output: '/tmp/review.md',
-            mode: 'push',
-            goal: 'representative',
-            cwd: ASSETS_TYPESCRIPT,
-          }),
+          stepReview(
+            {
+              rules: '.agent/**/briefs/rules/*.md',
+              paths: 'nonexistent/**/*.ts',
+              output: '/tmp/review.md',
+              mode: 'push',
+              goal: 'representative',
+              cwd: ASSETS_TYPESCRIPT,
+            },
+            { brain: scene.brain },
+          ),
         );
 
         expect(error).toBeDefined();
@@ -129,14 +154,17 @@ describe('stepReview', () => {
     when('[t0] stepReview is called', () => {
       then('throws BadRequestError about missing parent', async () => {
         const error = await getError(
-          stepReview({
-            rules: '.agent/**/briefs/rules/*.md',
-            paths: 'src/*.ts',
-            output: '/nonexistent/parent/review.md',
-            mode: 'push',
-            goal: 'representative',
-            cwd: ASSETS_TYPESCRIPT,
-          }),
+          stepReview(
+            {
+              rules: '.agent/**/briefs/rules/*.md',
+              paths: 'src/*.ts',
+              output: '/nonexistent/parent/review.md',
+              mode: 'push',
+              goal: 'representative',
+              cwd: ASSETS_TYPESCRIPT,
+            },
+            { brain: scene.brain },
+          ),
         );
 
         expect(error).toBeDefined();
@@ -385,14 +413,17 @@ describe('stepReview', () => {
 
       // single API call, result shared across assertions
       const result = useThen('stepReview succeeds', async () => {
-        const res = await stepReview({
-          rules: '.agent/**/briefs/rules/*.md',
-          paths: 'chapters/chapter2.fixed.md',
-          output: outputPath,
-          mode: 'push',
-          goal: 'representative',
-          cwd: ASSETS_PROSE,
-        });
+        const res = await stepReview(
+          {
+            rules: '.agent/**/briefs/rules/*.md',
+            paths: 'chapters/chapter2.fixed.md',
+            output: outputPath,
+            mode: 'push',
+            goal: 'representative',
+            cwd: ASSETS_PROSE,
+          },
+          { brain: scene.brain },
+        );
 
         // log output for observability
         logOutputHead({
@@ -434,14 +465,17 @@ describe('stepReview', () => {
 
       // single API call, result shared across assertions
       const result = useThen('stepReview succeeds', async () => {
-        const res = await stepReview({
-          rules: '.agent/**/briefs/rules/*.md',
-          paths: 'chapters/chapter2.md',
-          output: outputPath,
-          mode: 'push',
-          goal: 'representative',
-          cwd: ASSETS_PROSE,
-        });
+        const res = await stepReview(
+          {
+            rules: '.agent/**/briefs/rules/*.md',
+            paths: 'chapters/chapter2.md',
+            output: outputPath,
+            mode: 'push',
+            goal: 'representative',
+            cwd: ASSETS_PROSE,
+          },
+          { brain: scene.brain },
+        );
 
         // log output for observability
         logOutputHead({

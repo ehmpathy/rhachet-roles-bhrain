@@ -2,6 +2,11 @@ import * as fs from 'fs/promises';
 import * as path from 'path';
 import { given, then, useBeforeAll, when } from 'test-fns';
 
+import {
+  DEFAULT_TEST_BRAIN,
+  genTestBrainContext,
+} from '@src/.test/genTestBrainContext';
+
 import { setupSourceRepo, setupTargetDir } from './.test/setup';
 import { stepReflect } from './stepReflect';
 
@@ -18,6 +23,10 @@ describe('stepReflect.caseTypescriptQuality', () => {
   // increase timeout for claude-code invocations (3 minutes per attempt)
   jest.setTimeout(180000 * REPEAT_CONFIG.attempts);
 
+  const brainScene = useBeforeAll(async () => ({
+    brain: genTestBrainContext({ brain: DEFAULT_TEST_BRAIN }),
+  }));
+
   given('[case1] typescript-quality feedback with valid target', () => {
     const scene = useBeforeAll(async () => {
       const { repoDir: sourceDir } =
@@ -25,11 +34,14 @@ describe('stepReflect.caseTypescriptQuality', () => {
       const { targetDir } = await setupTargetDir();
 
       // run stepReflect once, share result across all then blocks
-      const result = await stepReflect({
-        source: sourceDir,
-        target: targetDir,
-        mode: 'push',
-      });
+      const result = await stepReflect(
+        {
+          source: sourceDir,
+          target: targetDir,
+          mode: 'push',
+        },
+        { brain: brainScene.brain },
+      );
 
       return { sourceDir, targetDir, result };
     });

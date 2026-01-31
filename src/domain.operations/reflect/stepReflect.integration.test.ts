@@ -4,19 +4,31 @@ import * as os from 'os';
 import * as path from 'path';
 import { given, then, useBeforeAll, when } from 'test-fns';
 
+import {
+  DEFAULT_TEST_BRAIN,
+  genTestBrainContext,
+} from '@src/.test/genTestBrainContext';
+
 import { ASSETS_TARGET, setupSourceRepo } from './.test/setup';
 import { stepReflect } from './stepReflect';
 
 describe('stepReflect', () => {
+  const brainScene = useBeforeAll(async () => ({
+    brain: genTestBrainContext({ brain: DEFAULT_TEST_BRAIN }),
+  }));
+
   given('[case1] source directory does not exist', () => {
     when('[t0] stepReflect is called', () => {
       then('throws BadRequestError about missing source', async () => {
         const error = await getError(
-          stepReflect({
-            source: '/nonexistent/source/directory',
-            target: '/tmp/target',
-            mode: 'push',
-          }),
+          stepReflect(
+            {
+              source: '/nonexistent/source/directory',
+              target: '/tmp/target',
+              mode: 'push',
+            },
+            { brain: brainScene.brain },
+          ),
         );
 
         expect(error).toBeDefined();
@@ -29,11 +41,14 @@ describe('stepReflect', () => {
     when('[t0] stepReflect is called', () => {
       then('throws BadRequestError about no feedback files', async () => {
         const error = await getError(
-          stepReflect({
-            source: ASSETS_TARGET, // this dir has no feedback files
-            target: '/tmp/target',
-            mode: 'push',
-          }),
+          stepReflect(
+            {
+              source: ASSETS_TARGET, // this dir has no feedback files
+              target: '/tmp/target',
+              mode: 'push',
+            },
+            { brain: brainScene.brain },
+          ),
         );
 
         expect(error).toBeDefined();
@@ -77,11 +92,14 @@ describe('stepReflect', () => {
     when('[t0] stepReflect is called', () => {
       then('throws BadRequestError about missing git remote', async () => {
         const error = await getError(
-          stepReflect({
-            source: scene.sourceDir,
-            target: scene.targetDir,
-            mode: 'push',
-          }),
+          stepReflect(
+            {
+              source: scene.sourceDir,
+              target: scene.targetDir,
+              mode: 'push',
+            },
+            { brain: brainScene.brain },
+          ),
         );
 
         expect(error).toBeDefined();
@@ -102,12 +120,15 @@ describe('stepReflect', () => {
     when('[t0] stepReflect is called', () => {
       then('throws BadRequestError about missing target', async () => {
         const error = await getError(
-          stepReflect({
-            source: scene.sourceDir,
-            target: `/tmp/nonexistent-target-${Date.now()}`,
-            mode: 'push',
-            force: false,
-          }),
+          stepReflect(
+            {
+              source: scene.sourceDir,
+              target: `/tmp/nonexistent-target-${Date.now()}`,
+              mode: 'push',
+              force: false,
+            },
+            { brain: brainScene.brain },
+          ),
         );
 
         expect(error).toBeDefined();

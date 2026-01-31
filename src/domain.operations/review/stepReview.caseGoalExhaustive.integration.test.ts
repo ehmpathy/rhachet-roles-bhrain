@@ -1,8 +1,12 @@
 import * as fs from 'fs/promises';
 import * as os from 'os';
 import * as path from 'path';
-import { given, then, useThen, when } from 'test-fns';
+import { given, then, useBeforeAll, useThen, when } from 'test-fns';
 
+import {
+  DEFAULT_TEST_BRAIN,
+  genTestBrainContext,
+} from '@src/.test/genTestBrainContext';
 import { logOutputHead } from '@src/.test/logOutputHead';
 
 import { stepReview } from './stepReview';
@@ -20,6 +24,10 @@ describe('stepReview.caseGoalExhaustive', () => {
   // increase timeout for brain invocations (3 minutes)
   jest.setTimeout(180000);
 
+  const scene = useBeforeAll(async () => ({
+    brain: genTestBrainContext({ brain: DEFAULT_TEST_BRAIN }),
+  }));
+
   given('[case1] goal=exhaustive on dirty chapter', () => {
     when('[t0] stepReview with goal=exhaustive', () => {
       const outputPath = path.join(os.tmpdir(), 'review-exhaustive-dirty.md');
@@ -27,14 +35,17 @@ describe('stepReview.caseGoalExhaustive', () => {
 
       // single API call, result shared across assertions
       const result = useThen('stepReview succeeds', async () => {
-        const res = await stepReview({
-          rules: '.agent/**/briefs/rules/*.md',
-          paths: 'chapters/chapter2.md',
-          output: outputPath,
-          mode: 'push',
-          goal: 'exhaustive',
-          cwd: ASSETS_PROSE,
-        });
+        const res = await stepReview(
+          {
+            rules: '.agent/**/briefs/rules/*.md',
+            paths: 'chapters/chapter2.md',
+            output: outputPath,
+            mode: 'push',
+            goal: 'exhaustive',
+            cwd: ASSETS_PROSE,
+          },
+          { brain: scene.brain },
+        );
 
         // log output for observability
         logOutputHead({
