@@ -2,7 +2,29 @@ import { exec } from 'child_process';
 import * as path from 'path';
 import { promisify } from 'util';
 
+import { genTempDir } from 'test-fns';
+
 export const execAsync = promisify(exec);
+
+/**
+ * .what = creates a temp directory ready for rhachet roles link
+ * .why = enables acceptance tests with git repo and node_modules symlink
+ */
+export const genTempDirForRhachet = (input: {
+  slug: string;
+  clone: string;
+}): string => {
+  return genTempDir({
+    slug: input.slug,
+    clone: input.clone,
+    git: true,
+    symlink: [
+      // symlink only the required parts, not the whole repo
+      { at: 'node_modules/rhachet-roles-bhrain/package.json', to: 'package.json' },
+      { at: 'node_modules/rhachet-roles-bhrain/dist', to: 'dist' },
+    ],
+  });
+};
 
 /**
  * .what = invokes the review skill via its shell entrypoint

@@ -1,10 +1,14 @@
 import * as fs from 'fs/promises';
 import * as path from 'path';
 
-import { genTempDir, given, then, useThen, when } from 'test-fns';
+import { given, then, useThen, when } from 'test-fns';
 
 import { logOutputHead } from '@src/.test/logOutputHead';
-import { execAsync, invokeReviewSkill } from './.test/invokeReviewSkill';
+import {
+  execAsync,
+  genTempDirForRhachet,
+  invokeReviewSkill,
+} from './.test/invokeReviewSkill';
 
 const ASSETS_DIR = path.join(__dirname, '.test/assets/codebase-mechanic');
 
@@ -16,7 +20,7 @@ describe('review.refs-glob.acceptance', () => {
     when('[t0] review skill invoked with --refs set to glob pattern', () => {
       const res = useThen('invoke review skill with glob refs', async () => {
         // clone fixture to temp dir
-        const tempDir = genTempDir({
+        const tempDir = genTempDirForRhachet({
           slug: 'review-refs-glob',
           clone: ASSETS_DIR,
         });
@@ -80,7 +84,7 @@ describe('review.refs-glob.acceptance', () => {
         'invoke review skill with repeated refs flags',
         async () => {
           // clone fixture to temp dir
-          const tempDir = genTempDir({
+          const tempDir = genTempDirForRhachet({
             slug: 'review-refs-repeated',
             clone: ASSETS_DIR,
           });
