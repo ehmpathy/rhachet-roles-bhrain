@@ -85,6 +85,22 @@ const hasHelpFlag = (argv: string[]): boolean => {
 };
 
 /**
+ * .what = detects if node was invoked via `node -e "code"` (eval mode)
+ * .why = in eval mode, argv has no script path: [node, firstArg, ...]
+ *        in normal mode, argv has script path: [node, script.js, firstArg, ...]
+ *        we need to skip different counts when slicing argv
+ */
+const isNodeEvalMode = (argv: string[]): boolean => {
+  // in eval mode, argv[1] is the first user arg (e.g., --rules), not a script path
+  // script paths end with .js, .ts, .mjs, etc. and don't start with --
+  const secondArg = argv[1];
+  if (!secondArg) return false;
+  const looksLikeScriptPath =
+    /\.(js|ts|mjs|cjs)$/.test(secondArg) || !secondArg.startsWith('--');
+  return !looksLikeScriptPath;
+};
+
+/**
  * .what = parses cli args into options object
  * .why = simple arg parse without external dependencies
  */
@@ -100,8 +116,9 @@ const parseArgs = (
   goal: 'exhaustive' | 'representative';
   brain: string;
 } => {
-  // skip node executable and entrypoint path
-  const args = argv.slice(2);
+  // skip node binary (always argv[0]) and script path (only in normal mode)
+  const skipCount = isNodeEvalMode(argv) ? 1 : 2;
+  const args = argv.slice(skipCount).filter((arg) => arg !== '--');
   const options: Record<string, string | string[]> = {};
 
   for (let i = 0; i < args.length; i++) {

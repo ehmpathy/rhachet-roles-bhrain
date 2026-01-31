@@ -6,21 +6,26 @@ export function calculateTotal(items: Array<{ price: number }>) {
   return total;
 }
 
-export const formatPrice = (amount: number, currency: string) => {
+export function formatPrice(amount: number, currency: string) {
   return new Intl.NumberFormat('en-US', {
     style: 'currency',
     currency,
   }).format(amount);
-};
+}
 
 function validateEmail(email: string) {
   const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
   return emailPattern.test(email);
 }
 
-export const processOrder = (input: { orderId: string; items: Array<{ price: number }> }) => {
-  const total = calculateTotal(input.items);
+export function processOrder(orderId: string, items: Array<{ price: number }>) {
+  const total = calculateTotal(items);
   const formatted = formatPrice(total, 'USD');
   const isValid = validateEmail('test@example.com');
-  return { orderId: input.orderId, total, formatted, isValid };
-};
+  return { orderId, total, formatted, isValid };
+}
+
+export function sendNotification(userId: string, message: string) {
+  console.log(`send to ${userId}: ${message}`);
+  return { sent: true, userId, message };
+}
