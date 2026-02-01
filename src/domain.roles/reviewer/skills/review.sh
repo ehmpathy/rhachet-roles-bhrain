@@ -17,5 +17,4 @@
 ######################################################################
 set -euo pipefail
 
-SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-exec node -e "import('$SCRIPT_DIR/review.cli.js').then(m => m.review())" -- "$@"
+exec node -e "import('rhachet-roles-bhrain').then(m => m.cli.review())" -- "$@"
