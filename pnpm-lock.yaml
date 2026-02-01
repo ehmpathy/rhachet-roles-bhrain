@@ -106,14 +106,14 @@ importers:
         specifier: 0.13.14
         version: 0.13.14
       declapract-typescript-ehmpathy:
-        specifier: 0.47.2
-        version: 0.47.2(@types/node@22.15.21)(declapract@0.13.14)(esbuild@0.25.12)(zod@4.3.4)
+        specifier: 0.47.39
+        version: 0.47.39(declapract@0.13.14)
       declastruct:
         specifier: 1.7.3
         version: 1.7.3(domain-objects@0.31.9)
       declastruct-github:
-        specifier: 1.3.0
-        version: 1.3.0(@types/node@22.15.21)(zod@4.3.4)
+        specifier: 1.3.1
+        version: 1.3.1
       depcheck:
         specifier: 1.4.3
         version: 1.4.3
@@ -127,17 +127,17 @@ importers:
         specifier: 30.2.0
         version: 30.2.0(@types/node@22.15.21)(esbuild-register@3.6.0(esbuild@0.25.12))(ts-node@10.9.2(@swc/core@1.15.3)(@types/node@22.15.21)(typescript@5.4.5))
       rhachet:
-        specifier: 1.28.2
-        version: 1.28.2(zod@4.3.4)
+        specifier: 1.29.4
+        version: 1.29.4(zod@4.3.4)
       rhachet-brains-anthropic:
-        specifier: 0.3.0
-        version: 0.3.0(rhachet@1.28.2(zod@4.3.4))
+        specifier: 0.3.3
+        version: 0.3.3(rhachet@1.29.4(zod@4.3.4))
       rhachet-brains-openai:
-        specifier: 0.2.0
-        version: 0.2.0(@openai/codex-sdk@0.87.0)(rhachet@1.28.2(zod@4.3.4))
+        specifier: 0.2.1
+        version: 0.2.1(@openai/codex-sdk@0.87.0)(rhachet@1.29.4(zod@4.3.4))
       rhachet-brains-xai:
-        specifier: 0.2.0
-        version: 0.2.0(rhachet@1.28.2(zod@4.3.4))
+        specifier: 0.2.1
+        version: 0.2.1(@types/node@22.15.21)(rhachet@1.29.4(zod@4.3.4))
       rhachet-roles-bhrain:
         specifier: link:.
         version: 'link:'
@@ -2286,8 +2286,8 @@ packages:
       supports-color:
         optional: true
 
-  declapract-typescript-ehmpathy@0.47.2:
-    resolution: {integrity: sha512-Ul7wAK8h6qlF/K4otlVc4Y2m8sJN6aYJPq+wC9ftS754pwboBUWbwUoDV6d5YYHlNgq6xNaJeMCIbVIoYXiZSg==}
+  declapract-typescript-ehmpathy@0.47.39:
+    resolution: {integrity: sha512-wGMRi7tgVTsp8wvKrs6m/wZwhUMwSr6Yg6AeO46DMjQ7Rp9gT0vob8RG+QEmYr4y8dMxwUAafdqtR/mF8y+Tlg==}
     peerDependencies:
       declapract: '>=0.13.3'
 
@@ -2296,8 +2296,8 @@ packages:
     engines: {node: '>=18.19.0'}
     hasBin: true
 
-  declastruct-github@1.3.0:
-    resolution: {integrity: sha512-3eXKnQFyDvYtfAaDLLFSN8KWgqA1JoZ0Nu4OcT4ZebCSPq8G+SZTOl234yMv0xAAXk8jMyvfEy4O9AUq4uLZ9w==}
+  declastruct-github@1.3.1:
+    resolution: {integrity: sha512-XUGSKElr1WPS5uHQbmBw2tq1cfLMEFZ4ZaAh1VlmjcPmgk0j3ei8syGeWLzyGzq1gu204F2AdkqoheXSL2gMDg==}
     engines: {node: '>=8.0.0'}
 
   declastruct@1.7.3:
@@ -3592,24 +3592,28 @@ packages:
     resolution: {integrity: sha512-yzDL+Dv1az5WGpVvrRZT6gLBwDAzxLO/7newlyrfMM+ku91PFR9OvlADoqyulBCCUWnazv3eXl0vzrIyak4hAQ==}
     engines: {node: '>=8.0.0'}
 
-  rhachet-brains-anthropic@0.3.0:
-    resolution: {integrity: sha512-+aFrTzSj/+5YVw46AADTnt2I4ThwEYI4um5hX41QtEn/Z2xBhXuemVk3o0BbsF1+ef8SoHF1j9E21M05eSYiOg==}
+  rhachet-brains-anthropic@0.3.3:
+    resolution: {integrity: sha512-TRWAxs18GAFXO7GNxs27OOUCMqg/WdZNCXLGSDHY3vaRWrlaoh9e7GrUGNm3ju55A3X950bQUSNawyO6tKvLWw==}
     engines: {node: '>=8.0.0'}
     peerDependencies:
       rhachet: '>=1.21.4'
 
-  rhachet-brains-openai@0.2.0:
-    resolution: {integrity: sha512-eQBBiy4j3McqbqhZKxrHKaZqaxtHcWPgfPc+hLAZXS1sWYY2SkfP0flLHdNTh30rE3ba5isXGfmMN74c/8hyig==}
+  rhachet-brains-openai@0.2.1:
+    resolution: {integrity: sha512-cOGwr2mbaLpN2Z2JdeDVvEj7rRMxhRWO1b1GuEHyOPwMPZC0WLf/g+RNyfaT2/0hVenPUyS+QJCJ3ad8LOl92w==}
     engines: {node: '>=8.0.0'}
     peerDependencies:
       '@openai/codex-sdk': '>=0.77.0'
       rhachet: '>=1.21.4'
 
-  rhachet-brains-xai@0.2.0:
-    resolution: {integrity: sha512-CRaslwL7KzZ6PkEEEDFr3vREbpNVTU0iPuTuvmlyLGROO+nlVYppJYLQ34E8HpjJ/em5b6QEgOsY44c+LSUPKg==}
+  rhachet-brains-xai@0.2.1:
+    resolution: {integrity: sha512-NDEGTKBRjDCJ/pslKyNqf+Pm1lF5tu9eq4fkECFiYecbNubv5bpYaEXQRXc6tWKsTyaA53PJm1UGXHIfodzd+w==}
     engines: {node: '>=8.0.0'}
     peerDependencies:
       rhachet: '>=1.21.4'
+
+  rhachet-roles-bhrain@0.7.5:
+    resolution: {integrity: sha512-O2zRlITFHmpTHbS3E5PUODlqAWWVt+xV44uu3P3RSLygcgFrG8q9NekLMJTMBsnL2ug4S8mNU7Ji7wCwjkX7qg==}
+    engines: {node: '>=8.0.0'}
 
   rhachet-roles-bhuild@0.6.14:
     resolution: {integrity: sha512-Ix3zptM6slQer9Jyn0kewQCjxewkPbbxohJeXXH2zoQ1rGVBrp01NYWLNVhfZopOyk+6U8iwJqZl19Q8ivERXA==}
@@ -3619,8 +3623,8 @@ packages:
     resolution: {integrity: sha512-aSUYODJBLTy9FvUGXnblLzrO5C4Gq5NM4RIWXWfJ2twDLORKOHFKeHQHwpUV7CHBrMMmFTwxNWHjhbz+7tsXSg==}
     engines: {node: '>=8.0.0'}
 
-  rhachet@1.28.2:
-    resolution: {integrity: sha512-xavKgJkePQFUVXcnTE9+lRqUXREPucd+9Q8+7UVzE1CY7DOFjoMTS+76VlSYaMt2fTz0xjyRbsCehf/sqcaegg==}
+  rhachet@1.29.4:
+    resolution: {integrity: sha512-0YuLr5RAesxIRc+PbVB8LArrjMdSbV5q/MepTBd1LoC/2oOGYgbhY8W7k6+U8mL0LP+rGEkVYUJECfKAfpvODA==}
     engines: {node: '>=22.0.0'}
     hasBin: true
     peerDependencies:
@@ -6776,22 +6780,14 @@ snapshots:
     dependencies:
       ms: 2.1.3
 
-  declapract-typescript-ehmpathy@0.47.2(@types/node@22.15.21)(declapract@0.13.14)(esbuild@0.25.12)(zod@4.3.4):
+  declapract-typescript-ehmpathy@0.47.39(declapract@0.13.14):
     dependencies:
       declapract: 0.13.14
-      domain-objects: 0.31.7(@types/node@22.15.21)(zod@4.3.4)
-      esbuild-register: 3.6.0(esbuild@0.25.12)
+      domain-objects: 0.31.9
       expect: 29.4.2
       flat: 5.0.2
       helpful-errors: 1.5.3
       yaml: 2.8.2
-    transitivePeerDependencies:
-      - '@types/node'
-      - aws-crt
-      - esbuild
-      - supports-color
-      - ws
-      - zod
 
   declapract@0.13.14:
     dependencies:
@@ -6816,12 +6812,12 @@ snapshots:
       uuid: 9.0.0
       yaml: 1.6.0
 
-  declastruct-github@1.3.0(@types/node@22.15.21)(zod@4.3.4):
+  declastruct-github@1.3.1:
     dependencies:
       '@ehmpathy/uni-time': 1.7.4
       '@octokit/rest': 21.1.1
       as-procedure: 1.1.1
-      domain-objects: 0.31.7(@types/node@22.15.21)(zod@4.3.4)
+      domain-objects: 0.31.9
       helpful-errors: 1.5.3
       libsodium-wrappers: 0.7.15
       simple-in-memory-cache: 0.4.0
@@ -6829,10 +6825,7 @@ snapshots:
       visualogic: 1.3.2
       with-simple-cache: 0.15.1
     transitivePeerDependencies:
-      - '@types/node'
       - aws-crt
-      - ws
-      - zod
 
   declastruct@1.7.3(domain-objects@0.31.9):
     dependencies:
@@ -6943,7 +6936,7 @@ snapshots:
       domain-objects: 0.31.3
       helpful-errors: 1.5.3
       joi: 17.4.0
-      rhachet: 1.28.2(zod@4.3.4)
+      rhachet: 1.29.4(zod@4.3.4)
       rhachet-roles-ehmpathy: 1.17.33(@types/node@22.15.21)(zod@4.3.4)
       type-fns: 1.21.0
       uuid-fns: 1.1.3
@@ -8341,7 +8334,7 @@ snapshots:
       domain-objects: 0.31.9
       helpful-errors: 1.5.3
 
-  rhachet-brains-anthropic@0.3.0(rhachet@1.28.2(zod@4.3.4)):
+  rhachet-brains-anthropic@0.3.3(rhachet@1.29.4(zod@4.3.4)):
     dependencies:
       '@anthropic-ai/claude-agent-sdk': 0.1.76(zod@4.3.4)
       '@anthropic-ai/sdk': 0.71.2(zod@4.3.4)
@@ -8349,20 +8342,20 @@ snapshots:
       helpful-errors: 1.5.3
       iso-price: 1.1.1(domain-objects@0.31.9)
       iso-time: 1.11.1
-      rhachet: 1.28.2(zod@4.3.4)
+      rhachet: 1.29.4(zod@4.3.4)
       rhachet-artifact: 1.0.1
       rhachet-artifact-git: 1.1.5
       type-fns: 1.21.0
       zod: 4.3.4
 
-  rhachet-brains-openai@0.2.0(@openai/codex-sdk@0.87.0)(rhachet@1.28.2(zod@4.3.4)):
+  rhachet-brains-openai@0.2.1(@openai/codex-sdk@0.87.0)(rhachet@1.29.4(zod@4.3.4)):
     dependencies:
       '@openai/codex-sdk': 0.87.0
       domain-objects: 0.31.9
       helpful-errors: 1.5.3
       iso-price: 1.1.1(domain-objects@0.31.9)
       openai: 5.8.2(zod@4.3.4)
-      rhachet: 1.28.2(zod@4.3.4)
+      rhachet: 1.29.4(zod@4.3.4)
       rhachet-artifact: 1.0.1
       rhachet-artifact-git: 1.1.5
       type-fns: 1.21.0
@@ -8371,18 +8364,48 @@ snapshots:
     transitivePeerDependencies:
       - ws
 
-  rhachet-brains-xai@0.2.0(rhachet@1.28.2(zod@4.3.4)):
+  rhachet-brains-xai@0.2.1(@types/node@22.15.21)(rhachet@1.29.4(zod@4.3.4)):
     dependencies:
       domain-objects: 0.31.9
       helpful-errors: 1.5.3
       iso-price: 1.1.1(domain-objects@0.31.9)
       openai: 5.8.2(zod@4.3.4)
-      rhachet: 1.28.2(zod@4.3.4)
+      rhachet: 1.29.4(zod@4.3.4)
       rhachet-artifact: 1.0.1
       rhachet-artifact-git: 1.1.5
+      rhachet-roles-bhrain: 0.7.5(@types/node@22.15.21)
       type-fns: 1.21.0
       zod: 4.3.4
     transitivePeerDependencies:
+      - '@types/node'
+      - aws-crt
+      - ws
+
+  rhachet-roles-bhrain@0.7.5(@types/node@22.15.21):
+    dependencies:
+      '@anthropic-ai/sdk': 0.51.0
+      '@ehmpathy/as-command': 1.0.3
+      '@ehmpathy/uni-time': 1.8.1
+      as-procedure: 1.1.7
+      domain-objects: 0.31.9
+      fast-glob: 3.3.3
+      helpful-errors: 1.5.3
+      inquirer: 12.7.0(@types/node@22.15.21)
+      iso-price: 1.1.1(domain-objects@0.31.9)
+      iso-time: 1.11.1
+      npm: 11.7.0
+      openai: 5.8.2(zod@4.3.4)
+      rhachet-artifact: 1.0.0
+      rhachet-artifact-git: 1.1.0
+      serde-fns: 1.2.0
+      simple-in-memory-cache: 0.4.0
+      type-fns: 1.21.0
+      with-simple-caching: 0.14.2
+      wrapper-fns: 1.1.0
+      zod: 4.3.4
+    transitivePeerDependencies:
+      - '@types/node'
+      - aws-crt
       - ws
 
   rhachet-roles-bhuild@0.6.14:
@@ -8416,7 +8439,7 @@ snapshots:
       - ws
       - zod
 
-  rhachet@1.28.2(zod@4.3.4):
+  rhachet@1.29.4(zod@4.3.4):
     dependencies:
       as-procedure: 1.1.11
       bottleneck: 2.19.5
@@ -8427,11 +8450,11 @@ snapshots:
       fast-glob: 3.3.3
       fastest-levenshtein: 1.0.16
       flattie: 1.1.1
+      hash-fns: 1.1.0
       helpful-errors: 1.5.3
       iso-price: 1.1.1(domain-objects@0.31.9)
       iso-time: 1.11.1
       js-tiktoken: 1.0.18
-      openai: 5.8.2(zod@4.3.4)
       rhachet-artifact: 1.0.3
       rhachet-artifact-git: 1.1.5
       serde-fns: 1.3.1
@@ -8440,8 +8463,6 @@ snapshots:
       uuid-fns: 1.0.1
       yaml: 2.8.2
       zod: 4.3.4
-    transitivePeerDependencies:
-      - ws
 
   run-async@2.4.1: {}
 

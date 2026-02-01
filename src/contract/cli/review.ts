@@ -1,18 +1,8 @@
 import {
-  type BrainAtom,
-  type BrainRepl,
   genContextBrain,
+  getAvailableBrains,
   getAvailableBrainsInWords,
-} from 'rhachet';
-import {
-  getBrainAtomsByAnthropic,
-  getBrainReplsByAnthropic,
-} from 'rhachet-brains-anthropic';
-import {
-  getBrainAtomsByOpenAI,
-  getBrainReplsByOpenAI,
-} from 'rhachet-brains-openai';
-import { getBrainAtomsByXAI } from 'rhachet-brains-xai';
+} from 'rhachet/brains';
 
 import { stepReview } from '@src/domain.operations/review/stepReview';
 
@@ -23,33 +13,14 @@ import { stepReview } from '@src/domain.operations/review/stepReview';
 const DEFAULT_BRAIN = 'xai/grok/code-fast-1';
 
 /**
- * .what = loads all available brain atoms from installed packages
- * .why = enables enumeration of available brains for lookup
- */
-const loadAllAtoms = (): BrainAtom[] => {
-  return [
-    ...getBrainAtomsByXAI(),
-    ...getBrainAtomsByAnthropic(),
-    ...getBrainAtomsByOpenAI(),
-  ];
-};
-
-/**
- * .what = loads all available brain repls from installed packages
- * .why = enables enumeration of available brains for lookup
- */
-const loadAllRepls = (): BrainRepl[] => {
-  return [...getBrainReplsByAnthropic(), ...getBrainReplsByOpenAI()];
-};
-
-/**
  * .what = prints help message with available brains
  * .why = enables users to discover available brain options
  */
-const printHelp = (input: { atoms: BrainAtom[]; repls: BrainRepl[] }): void => {
+const printHelp = async (): Promise<void> => {
+  const { atoms, repls } = await getAvailableBrains();
   const brainsInWords = getAvailableBrainsInWords({
-    atoms: input.atoms,
-    repls: input.repls,
+    atoms,
+    repls,
     choice: '',
   });
 
@@ -86,18 +57,18 @@ const hasHelpFlag = (argv: string[]): boolean => {
 
 /**
  * .what = detects if node was invoked via `node -e "code"` (eval mode)
- * .why = in eval mode, argv has no script path: [node, firstArg, ...]
- *        in normal mode, argv has script path: [node, script.js, firstArg, ...]
+ * .why = in eval mode, argv has no entrypoint path: [node, firstArg, ...]
+ *        in normal mode, argv has entrypoint path: [node, file.js, firstArg, ...]
  *        we need to skip different counts when slicing argv
  */
 const isNodeEvalMode = (argv: string[]): boolean => {
-  // in eval mode, argv[1] is the first user arg (e.g., --rules), not a script path
-  // script paths end with .js, .ts, .mjs, etc. and don't start with --
+  // in eval mode, argv[1] is the first user arg (e.g., --rules), not an entrypoint path
+  // entrypoint paths end with .js, .ts, .mjs, etc. and don't start with --
   const secondArg = argv[1];
   if (!secondArg) return false;
-  const looksLikeScriptPath =
+  const looksLikeEntrypointPath =
     /\.(js|ts|mjs|cjs)$/.test(secondArg) || !secondArg.startsWith('--');
-  return !looksLikeScriptPath;
+  return !looksLikeEntrypointPath;
 };
 
 /**
@@ -116,7 +87,7 @@ const parseArgs = (
   goal: 'exhaustive' | 'representative';
   brain: string;
 } => {
-  // skip node binary (always argv[0]) and script path (only in normal mode)
+  // skip node binary (always argv[0]) and entrypoint path (only in normal mode)
   const skipCount = isNodeEvalMode(argv) ? 1 : 2;
   const args = argv.slice(skipCount).filter((arg) => arg !== '--');
   const options: Record<string, string | string[]> = {};
@@ -158,28 +129,40 @@ const parseArgs = (
 /**
  * .what = cli entrypoint for review skill
  * .why = enables shell invocation via package-level import
- *
- * .note = this is a SKILL entrypoint, not a public api
- *         brain packages are imported here because skill users have them installed
  */
 export const review = async (): Promise<void> => {
-  // load brains early for help display
-  const atoms = loadAllAtoms();
-  const repls = loadAllRepls();
+  // parse args first for fast validation
+  const options = parseArgs(process.argv);
 
   // handle --help flag
   if (hasHelpFlag(process.argv)) {
-    printHelp({ atoms, repls });
+    await printHelp();
     return;
   }
 
-  // parse args and create brain context
-  const options = parseArgs(process.argv);
-  const brain = genContextBrain({
-    atoms,
-    repls,
-    choice: options.brain,
-  });
+  // validate required args before expensive brain discovery
+  const hasRules =
+    options.rules &&
+    (Array.isArray(options.rules) ? options.rules.length > 0 : true);
+  const hasDiffs = !!options.diffs;
+  const hasPaths =
+    options.paths &&
+    (Array.isArray(options.paths) ? options.paths.length > 0 : true);
+  if (!hasRules && !hasDiffs && !hasPaths) {
+    console.error(
+      'error: must specify at least one of --rules, --diffs, or --paths',
+    );
+    console.error('run with --help for usage');
+    process.exit(1);
+  }
+  if (!options.output) {
+    console.error('error: --output is required');
+    console.error('run with --help for usage');
+    process.exit(1);
+  }
+
+  // create brain context via discovery (expensive)
+  const brain = await genContextBrain({ choice: options.brain });
 
   // invoke stepReview
   await stepReview(

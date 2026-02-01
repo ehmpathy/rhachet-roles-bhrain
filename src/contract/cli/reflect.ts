@@ -1,18 +1,8 @@
 import {
-  type BrainAtom,
-  type BrainRepl,
   genContextBrain,
+  getAvailableBrains,
   getAvailableBrainsInWords,
-} from 'rhachet';
-import {
-  getBrainAtomsByAnthropic,
-  getBrainReplsByAnthropic,
-} from 'rhachet-brains-anthropic';
-import {
-  getBrainAtomsByOpenAI,
-  getBrainReplsByOpenAI,
-} from 'rhachet-brains-openai';
-import { getBrainAtomsByXAI } from 'rhachet-brains-xai';
+} from 'rhachet/brains';
 
 import { stepReflect } from '@src/domain.operations/reflect/stepReflect';
 
@@ -23,33 +13,14 @@ import { stepReflect } from '@src/domain.operations/reflect/stepReflect';
 const DEFAULT_BRAIN = 'anthropic/claude/sonnet-4';
 
 /**
- * .what = loads all available brain atoms from installed packages
- * .why = enables enumeration of available brains for lookup
- */
-const loadAllAtoms = (): BrainAtom[] => {
-  return [
-    ...getBrainAtomsByXAI(),
-    ...getBrainAtomsByAnthropic(),
-    ...getBrainAtomsByOpenAI(),
-  ];
-};
-
-/**
- * .what = loads all available brain repls from installed packages
- * .why = enables enumeration of available brains for lookup
- */
-const loadAllRepls = (): BrainRepl[] => {
-  return [...getBrainReplsByAnthropic(), ...getBrainReplsByOpenAI()];
-};
-
-/**
  * .what = prints help message with available brains
  * .why = enables users to discover available brain options
  */
-const printHelp = (input: { atoms: BrainAtom[]; repls: BrainRepl[] }): void => {
+const printHelp = async (): Promise<void> => {
+  const { atoms, repls } = await getAvailableBrains();
   const brainsInWords = getAvailableBrainsInWords({
-    atoms: input.atoms,
-    repls: input.repls,
+    atoms,
+    repls,
     choice: '',
   });
 
@@ -148,28 +119,17 @@ const parseArgs = (
 /**
  * .what = cli entrypoint for reflect skill
  * .why = enables shell invocation via package-level import
- *
- * .note = this is a SKILL entrypoint, not a public api
- *         brain packages are imported here because skill users have them installed
  */
 export const reflect = async (): Promise<void> => {
-  // load brains early for help display
-  const atoms = loadAllAtoms();
-  const repls = loadAllRepls();
-
   // handle --help flag
   if (hasHelpFlag(process.argv)) {
-    printHelp({ atoms, repls });
+    await printHelp();
     return;
   }
 
-  // parse args and create brain context
+  // parse args and create brain context via discovery
   const options = parseArgs(process.argv);
-  const brain = genContextBrain({
-    atoms,
-    repls,
-    choice: options.brain,
-  });
+  const brain = await genContextBrain({ choice: options.brain });
 
   // invoke stepReflect
   await stepReflect(
