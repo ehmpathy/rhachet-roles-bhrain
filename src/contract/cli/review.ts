@@ -102,7 +102,7 @@ const isNodeEvalMode = (argv: string[]): boolean => {
 
 /**
  * .what = parses cli args into options object
- * .why = simple arg parse without external dependencies
+ * .why = simple arg parser without external dependencies
  */
 const parseArgs = (
   argv: string[],
@@ -157,7 +157,7 @@ const parseArgs = (
 
 /**
  * .what = cli entrypoint for review skill
- * .why = enables shell invocation via review.sh
+ * .why = enables shell invocation via package-level import
  *
  * .note = this is a SKILL entrypoint, not a public api
  *         brain packages are imported here because skill users have them installed

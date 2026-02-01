@@ -19,4 +19,4 @@
 
 set -euo pipefail
 
-exec npx tsx -e "import('rhachet-roles-bhrain').then(m => m.cli.reflect())" -- "$@"
+exec node -e "import('rhachet-roles-bhrain').then(m => m.cli.reflect())" -- "$@"
