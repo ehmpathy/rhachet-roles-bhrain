@@ -7,8 +7,7 @@ import type {
   ReviewerReflectManifestEntry,
 } from '@src/domain.objects/Reviewer/ReviewerReflectManifest';
 import { ReviewerReflectManifestOperation } from '@src/domain.objects/Reviewer/ReviewerReflectManifestOperation';
-
-import { enumFilesFromGlob } from '../../review/enumFilesFromGlob';
+import { enumFilesFromGlob } from '@src/domain.operations/review/enumFilesFromGlob';
 
 /**
  * .what = extracts rule name from a file path

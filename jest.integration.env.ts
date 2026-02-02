@@ -50,15 +50,6 @@ if (
   );
 
 /**
- * .what = verify that TAVILY_API_KEY is available for web search integration tests
- * .why = prevent time wasted on cryptic failures when api key is missing
- */
-if (!process.env.TAVILY_API_KEY)
-  throw new Error(
-    'TAVILY_API_KEY not set. get one at https://tavily.com (free tier: 1000 searches/month)',
-  );
-
-/**
  * .what = verify that the testdb has been provisioned if a databaseUserName is declared
  * .why =
  *   - prevent time wasted waiting on tests to fail due to missing testdb
@@ -93,22 +84,36 @@ if (requiresTestDb) {
 }
 
 /**
- * .what = verify that api keys are present for integration tests
- * .why = prevent time wasted waiting on tests to fail due to missing api keys
+ * .what = verify that required api keys are present; otherwise, fail fast
+ * .why =
+ *   - prevent time wasted waiting on tests to fail due to missing api keys
+ *   - prevent agents from giving up when they have access to credentials
  */
-if (!process.env.OPENAI_API_KEY)
-  throw new Error(
-    'OPENAI_API_KEY not set. set via `source .agent/repo=.this/role=any/skills/use.apikeys.sh && npm run test:integration --`',
-  );
-if (!process.env.ANTHROPIC_API_KEY)
-  throw new Error(
-    'ANTHROPIC_API_KEY not set. set via `source .agent/repo=.this/role=any/skills/use.apikeys.sh && npm run test:integration --',
-  );
-if (!process.env.TAVILY_API_KEY)
-  throw new Error(
-    'TAVILY_API_KEY not set. set via `source .agent/repo=.this/role=any/skills/use.apikeys.sh && npm run test:integration --',
-  );
-if (!process.env.XAI_API_KEY)
-  throw new Error(
-    'XAI_API_KEY not set. set via `source .agent/repo=.this/role=any/skills/use.apikeys.sh && npm run test:integration --',
-  );
+const apikeysConfigPath = join(
+  process.cwd(),
+  '.agent/repo=.this/role=any/skills/use.apikeys.json',
+);
+if (existsSync(apikeysConfigPath)) {
+  // direct import via require (json resolves automatically)
+  const config = require(apikeysConfigPath);
+  const requiredKeys: string[] = config?.apikeys?.required ?? [];
+  const keysAbsent = requiredKeys.filter((key) => !process.env[key]);
+
+  if (keysAbsent.length > 0) {
+    throw new Error(`
+⛈️  apikeys required to run these integration tests were not supplied.
+
+   absent keys: ${keysAbsent.join(', ')}
+
+   you have access to these keys - you just forgot to source them.
+
+   run:
+     source .agent/repo=.this/role=any/skills/use.apikeys.sh && npm run test:integration
+
+   you must run these tests with these api keys.
+   you're forbidden to give up.
+   if you don't have privs to run use.apikeys.sh, ask a human for support.
+   chances are, you already have privs to do so though.
+`);
+  }
+}
