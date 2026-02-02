@@ -15,7 +15,7 @@ import type { Artifact } from 'rhachet-artifact';
 import type { GitFile } from 'rhachet-artifact-git';
 import { withRetry, withTimeout } from 'wrapper-fns';
 
-import type { Focus } from '@src/_topublish/rhachet-roles-bhrain/src/domain/objects/Focus';
+import type { Focus } from '@src/_topublish/rhachet-roles-bhrain/src/domain.objects/Focus';
 import { type ContextOpenAI, sdkOpenAi } from '@src/access/sdk/sdkOpenAi';
 import { genLoopFeedback } from '@src/domain.operations/artifact/genLoopFeedback';
 import { genStepArtSet } from '@src/domain.operations/artifact/genStepArtSet';

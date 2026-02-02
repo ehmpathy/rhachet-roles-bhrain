@@ -22,7 +22,7 @@ comments are a hard requirement — they must follow precise structure and lengt
 👎 forbidden
 - absent .what or .why above a procedure
 - multiline // paragraph comments
-- vague, redundant, or "code-shaped" comments
+- vague or redundant comments that add no clarity
 
 ##### .procedure headers
 every named function must begin with:
@@ -54,7 +54,7 @@ if (invoice.status === 'PASTDUE') UnexpectedCodePathError.throw(...)
 ```
 
 rules:
-- must summarize intent (why this block exists), not echo code
+- must summarize either intent (why the block exists) or mechanism (what's its effect) or both
 - strictly one line — if it needs more, extract into its own procedure
 - comment must precede the code it describes and have a newline predecessor (think of it like a paragraph title)
 

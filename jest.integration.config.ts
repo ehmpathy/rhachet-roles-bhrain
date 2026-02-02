@@ -12,10 +12,11 @@ process.env.FORCE_COLOR = 'true';
 // https://jestjs.io/docs/configuration
 const config: Config = {
   verbose: true,
-  reporters: [['default', { summaryThreshold: 0 }]],
+  reporters: [['default', { summaryThreshold: 0 }]], // ensure we always get a failure summary at the bottom, to avoid the hunt
   testEnvironment: 'node',
   moduleFileExtensions: ['js', 'mjs', 'ts'],
   moduleNameMapper: {
+    '^@/(.*)$': '<rootDir>/$1',
     '^@src/(.*)$': '<rootDir>/src/$1',
   },
   transform: {
