@@ -1,0 +1,8 @@
+# 5.execute
+
+implement the weather api as specified in the blueprint.
+
+produce:
+- the api endpoint code
+- unit tests
+- integration tests

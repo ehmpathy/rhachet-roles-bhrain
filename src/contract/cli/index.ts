@@ -5,8 +5,22 @@
  */
 import { reflect } from './reflect';
 import { review } from './review';
+import {
+  routeStoneDel,
+  routeStoneGet,
+  routeStoneJudge,
+  routeStoneSet,
+} from './route';
 
 export const cli = {
   review,
   reflect,
+  route: {
+    stone: {
+      get: routeStoneGet,
+      set: routeStoneSet,
+      del: routeStoneDel,
+      judge: routeStoneJudge,
+    },
+  },
 };

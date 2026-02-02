@@ -1,0 +1,8 @@
+# 3.blueprint
+
+create a technical blueprint for the weather api.
+
+define:
+- the api endpoint structure
+- the data sources
+- the implementation approach
