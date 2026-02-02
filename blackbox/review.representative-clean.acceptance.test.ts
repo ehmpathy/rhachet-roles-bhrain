@@ -1,10 +1,14 @@
 import * as fs from 'fs/promises';
 import * as path from 'path';
 
-import { genTempDir, given, then, useThen, when } from 'test-fns';
+import { given, then, useThen, when } from 'test-fns';
 
 import { logOutputHead } from '@src/.test/logOutputHead';
-import { execAsync, invokeReviewSkill } from './.test/invokeReviewSkill';
+import {
+  execAsync,
+  genTempDirForRhachet,
+  invokeReviewSkill,
+} from './.test/invokeReviewSkill';
 
 const ASSETS_DIR = path.join(__dirname, '.test/assets/codebase-mechanic');
 
@@ -12,8 +16,8 @@ describe('review.acceptance', () => {
   given('[case1] mechanic codebase with clean code', () => {
     when('[t0] review skill on clean.ts with goal=representative', () => {
       const res = useThen('invoke review skill on clean code', async () => {
-        // clone fixture to temp dir
-        const tempDir = genTempDir({ slug: 'review-rep-clean', clone: ASSETS_DIR });
+        // clone fixture to temp dir with git initialized
+        const tempDir = genTempDirForRhachet({ slug: 'review-rep-clean', clone: ASSETS_DIR });
         const outputPath = path.join(tempDir, 'review-representative-clean.md');
 
         // link the reviewer role via rhachet

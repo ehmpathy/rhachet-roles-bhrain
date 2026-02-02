@@ -1,6 +1,7 @@
 import { given, then, when } from 'test-fns';
 
 import { genContextLogTrail } from '@src/.test/genContextLogTrail';
+import { REPEATABLY_CONFIG } from '@src/.test/infra/repeatably';
 import type { BrainArch1Context } from '@src/domain.objects/BrainArch1/BrainArch1Context';
 
 import { executeToolSearch } from './search';
@@ -26,7 +27,8 @@ const getMockContext = (): BrainArch1Context => ({
 describe('executeToolSearch', () => {
   given('[case1] a simple search query', () => {
     when('[t0] searching for "sea turtles conservation"', () => {
-      then(
+      // note: use repeatably to handle flaky external API cold starts
+      then.repeatably(REPEATABLY_CONFIG)(
         'returns search results with titles, urls, and snippets',
         async () => {
           const result = await executeToolSearch(
@@ -36,6 +38,14 @@ describe('executeToolSearch', () => {
             },
             getMockContext(),
           );
+
+          // log error for observability on failure
+          if (!result.success) {
+            console.log('⛈️ search failed:', {
+              error: result.error,
+              output: result.output,
+            });
+          }
 
           expect(result.success).toBe(true);
           expect(result.error).toBeNull();
