@@ -433,8 +433,8 @@ export const stepReview = async (
   console.log('');
   const reviewIssues = await withSpinner({
     message: "🦉 let's review!",
-    operation: () =>
-      context.brain.brain.choice.ask({
+    operation: async () =>
+      await context.brain.brain.choice.ask({
         role: { briefs: [] },
         prompt: promptResult.prompt,
         schema: { output: schemaOfReviewOutput },
