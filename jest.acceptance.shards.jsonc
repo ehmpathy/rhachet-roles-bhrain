@@ -1,27 +1,6 @@
 {
   // run these slowpokes individually, cause they're the longest poles in the wall time
   "explicit": [
-    // driver route tests (llm calls)
-    {
-      "patterns": [
-        "blackbox/driver.route.journey.acceptance.test.ts"
-      ]
-    },
-    {
-      "patterns": [
-        "blackbox/driver.route.set.acceptance.test.ts"
-      ]
-    },
-    {
-      "patterns": [
-        "blackbox/driver.route.del.acceptance.test.ts"
-      ]
-    },
-    {
-      "patterns": [
-        "blackbox/driver.route.get.acceptance.test.ts"
-      ]
-    },
     // review skill tests with llm calls
     {
       "patterns": [
