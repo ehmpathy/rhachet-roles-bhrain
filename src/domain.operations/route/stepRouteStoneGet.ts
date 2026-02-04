@@ -3,6 +3,7 @@ import { BadRequestError } from 'helpful-errors';
 
 import type { RouteStone } from '@src/domain.objects/Driver/RouteStone';
 
+import { formatRouteStoneEmit } from './formatRouteStoneEmit';
 import { computeNextStones } from './stones/computeNextStones';
 import { getAllStoneDriveArtifacts } from './stones/getAllStoneDriveArtifacts';
 import { getAllStones } from './stones/getAllStones';
@@ -48,7 +49,14 @@ export const stepRouteStoneGet = async (input: {
   let emit: { stdout: string } | null = null;
 
   if (stonesResult.length === 0) {
-    emit = { stdout: 'all stones passed' };
+    emit = {
+      stdout: formatRouteStoneEmit({
+        operation: 'route.stone.get',
+        query: input.stone,
+        stones: [],
+        complete: true,
+      }),
+    };
   } else if (input.say) {
     // read stone file content(s) and emit
     const contents: string[] = [];
@@ -57,6 +65,14 @@ export const stepRouteStoneGet = async (input: {
       contents.push(`# ${stone.name}\n\n${content}`);
     }
     emit = { stdout: contents.join('\n\n---\n\n') };
+  } else {
+    emit = {
+      stdout: formatRouteStoneEmit({
+        operation: 'route.stone.get',
+        query: input.stone,
+        stones: stonesResult.map((s) => ({ name: s.name, path: s.path })),
+      }),
+    };
   }
 
   return { stones: stonesResult, emit };

@@ -1,0 +1,123 @@
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
+
+exports[`driver.route.journey.acceptance given: [journey] weather api route when: [t0] route is initialized then: stdout has good vibes 1`] = `
+"🦉 and then?
+
+🗿 route.stone.get
+   ├─ query = @next-one
+   └─ stone = 1.vision (1.vision.stone)
+"
+`;
+
+exports[`driver.route.journey.acceptance given: [journey] weather api route when: [t1] 1.vision artifact is created and pass attempted then: stdout has good vibes 1`] = `
+"🦉 so you're saying there's a chance?
+
+🗿 route.stone.set
+   ├─ stone = 1.vision
+   ├─ passage = blocked
+   └─ reason = wait for human approval
+"
+`;
+
+exports[`driver.route.journey.acceptance given: [journey] weather api route when: [t2] 1.vision is approved by human then: stdout has good vibes 1`] = `
+"🦉 so you're saying there's a chance?
+
+🗿 route.stone.set
+   ├─ stone = 1.vision
+   └─ approval = granted
+"
+`;
+
+exports[`driver.route.journey.acceptance given: [journey] weather api route when: [t3] 1.vision pass is reattempted after approval then: stdout has good vibes 1`] = `
+"🦉 so you're saying there's a chance?
+
+🗿 route.stone.set
+   ├─ stone = 1.vision
+   └─ passage = allowed
+"
+`;
+
+exports[`driver.route.journey.acceptance given: [journey] weather api route when: [t4] next stone is requested after 1.vision then: stdout has good vibes 1`] = `
+"🦉 and then?
+
+🗿 route.stone.get
+   ├─ query = @next-one
+   └─ stone = 2.research (2.research.stone)
+"
+`;
+
+exports[`driver.route.journey.acceptance given: [journey] weather api route when: [t5] 2.research pass attempted without artifact then: stdout has good vibes 1`] = `""`;
+
+exports[`driver.route.journey.acceptance given: [journey] weather api route when: [t6] 2.research artifact created and pass attempted then: stdout has good vibes 1`] = `
+"🦉 so you're saying there's a chance?
+
+🗿 route.stone.set
+   ├─ stone = 2.research
+   └─ passage = allowed (unguarded)
+"
+`;
+
+exports[`driver.route.journey.acceptance given: [journey] weather api route when: [t7] next stone is requested after 2.research then: stdout has good vibes 1`] = `
+"🦉 and then?
+
+🗿 route.stone.get
+   ├─ query = @next-one
+   └─ stone = 3.blueprint (3.blueprint.stone)
+"
+`;
+
+exports[`driver.route.journey.acceptance given: [journey] weather api route when: [t8] 3.blueprint artifact created and pass attempted then: stdout has good vibes 1`] = `
+"🦉 so you're saying there's a chance?
+
+🗿 route.stone.set
+   ├─ stone = 3.blueprint
+   ├─ passage = blocked
+   └─ reason = wait for human approval
+"
+`;
+
+exports[`driver.route.journey.acceptance given: [journey] weather api route when: [t9] 3.blueprint issues fixed and pass reattempted then: stdout has good vibes 1`] = `
+"🦉 so you're saying there's a chance?
+
+🗿 route.stone.set
+   ├─ stone = 3.blueprint
+   ├─ passage = blocked
+   └─ reason = wait for human approval
+"
+`;
+
+exports[`driver.route.journey.acceptance given: [journey] weather api route when: [t10] 3.blueprint approved and pass reattempted then: stdout has good vibes 1`] = `
+"🦉 so you're saying there's a chance?
+
+🗿 route.stone.set
+   ├─ stone = 3.blueprint
+   └─ passage = allowed
+"
+`;
+
+exports[`driver.route.journey.acceptance given: [journey] weather api route when: [t11] next stone is requested after 3.blueprint then: stdout has good vibes 1`] = `
+"🦉 and then?
+
+🗿 route.stone.get
+   ├─ query = @next-one
+   └─ stone = 5.execute (5.execute.stone)
+"
+`;
+
+exports[`driver.route.journey.acceptance given: [journey] weather api route when: [t12] 5.execute artifact created and pass attempted then: stdout has good vibes 1`] = `
+"🦉 so you're saying there's a chance?
+
+🗿 route.stone.set
+   ├─ stone = 5.execute
+   └─ passage = allowed
+"
+`;
+
+exports[`driver.route.journey.acceptance given: [journey] weather api route when: [t13] next stone is requested after all stones passed then: stdout has good vibes 1`] = `
+"🦉 and then?
+
+🗿 route.stone.get
+   ├─ query = @next-one
+   └─ status = all stones passed
+"
+`;

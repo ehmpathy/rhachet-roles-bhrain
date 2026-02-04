@@ -34,7 +34,7 @@ describe('stepRouteStoneSet', () => {
           as: 'passed',
         });
         expect(result.passed).toBe(true);
-        expect(result.emit?.stdout).toContain('passed');
+        expect(result.emit?.stdout).toContain('passage = allowed');
       });
 
       then('returns refs object', async () => {
@@ -74,7 +74,7 @@ describe('stepRouteStoneSet', () => {
           as: 'approved',
         });
         expect(result.approved).toBe(true);
-        expect(result.emit?.stdout).toContain('approved');
+        expect(result.emit?.stdout).toContain('approval = granted');
       });
 
       then('does not return refs', async () => {

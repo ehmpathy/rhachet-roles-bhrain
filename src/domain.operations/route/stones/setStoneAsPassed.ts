@@ -2,6 +2,7 @@ import { BadRequestError } from 'helpful-errors';
 
 import type { RouteStone } from '@src/domain.objects/Driver/RouteStone';
 
+import { formatRouteStoneEmit } from '../formatRouteStoneEmit';
 import { computeStoneReviewInputHash } from '../guard/computeStoneReviewInputHash';
 import { getAllStoneGuardArtifactsByHash } from '../guard/getAllStoneGuardArtifactsByHash';
 import { runStoneGuardReviews } from '../guard/runStoneGuardReviews';
@@ -47,7 +48,15 @@ export const setStoneAsPassed = async (input: {
     return {
       passed: true,
       refs: { reviews: [], judges: [] },
-      emit: { stdout: `stone ${stoneMatched.name} passed (no guard)` },
+      emit: {
+        stdout: formatRouteStoneEmit({
+          operation: 'route.stone.set',
+          stone: stoneMatched.name,
+          action: 'passed',
+          passage: 'allowed',
+          note: 'unguarded',
+        }),
+      },
     };
   }
 
@@ -61,7 +70,13 @@ export const setStoneAsPassed = async (input: {
       passed: true,
       refs: { reviews: [], judges: [] },
       emit: {
-        stdout: `stone ${stoneMatched.name} passed (guard with artifacts only)`,
+        stdout: formatRouteStoneEmit({
+          operation: 'route.stone.set',
+          stone: stoneMatched.name,
+          action: 'passed',
+          passage: 'allowed',
+          note: 'artifacts only',
+        }),
       },
     };
   }
@@ -142,7 +157,14 @@ export const setStoneAsPassed = async (input: {
         reviews: reviewArtifacts.map((r) => r.path),
         judges: judgeArtifacts.map((j) => j.path),
       },
-      emit: { stdout: `stone ${stoneMatched.name} passed` },
+      emit: {
+        stdout: formatRouteStoneEmit({
+          operation: 'route.stone.set',
+          stone: stoneMatched.name,
+          action: 'passed',
+          passage: 'allowed',
+        }),
+      },
     };
   }
 
@@ -158,7 +180,15 @@ export const setStoneAsPassed = async (input: {
       reviews: reviewArtifacts.map((r) => r.path),
       judges: judgeArtifacts.map((j) => j.path),
     },
-    emit: { stdout: `stone ${stoneMatched.name} blocked: ${reasons}` },
+    emit: {
+      stdout: formatRouteStoneEmit({
+        operation: 'route.stone.set',
+        stone: stoneMatched.name,
+        action: 'passed',
+        passage: 'blocked',
+        reason: reasons,
+      }),
+    },
   };
 };
 

@@ -37,7 +37,7 @@ describe('setStoneAsPassed', () => {
           route: tempDir,
         });
         expect(result.passed).toBe(true);
-        expect(result.emit?.stdout).toContain('passed (no guard)');
+        expect(result.emit?.stdout).toContain('passage = allowed (unguarded)');
       });
 
       then('creates passage marker', async () => {
@@ -129,7 +129,7 @@ describe('setStoneAsPassed', () => {
           route: tempDir,
         });
         expect(result.passed).toBe(true);
-        expect(result.emit?.stdout).toContain('guard with artifacts only');
+        expect(result.emit?.stdout).toContain('artifacts only');
       });
     });
   });

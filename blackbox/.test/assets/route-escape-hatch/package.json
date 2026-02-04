@@ -1,0 +1,8 @@
+{
+  "name": "route-escape-hatch",
+  "version": "0.0.0",
+  "private": true,
+  "dependencies": {
+    "rhachet-roles-bhrain": "link:../../../.."
+  }
+}

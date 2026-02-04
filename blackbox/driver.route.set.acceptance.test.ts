@@ -52,7 +52,7 @@ describe('driver.route.set.acceptance', () => {
       });
 
       then('outputs passed message', () => {
-        expect(res.cli.stdout).toContain('passed');
+        expect(res.cli.stdout).toContain('passage = allowed');
       });
 
       then('creates passage marker', () => {
@@ -118,7 +118,7 @@ describe('driver.route.set.acceptance', () => {
       });
 
       then('outputs approved message', () => {
-        expect(res.cli.stdout).toContain('approved');
+        expect(res.cli.stdout).toContain('approval = granted');
       });
 
       then('creates approval marker', () => {
