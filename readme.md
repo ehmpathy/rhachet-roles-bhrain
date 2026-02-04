@@ -59,7 +59,7 @@ a brain.repl available for agentic tooluse
 
 ---
 
-## 🐾 driver
+## 🗿 driver
 
 used to navigate thought routes via stone milestones. enables robots to autonomously progress through structured journeys with optional guard validation.
 ```
@@ -324,4 +324,4 @@ they wield:
 - 🔍 magnifier — for reviewers — to examine artifacts against declared rules, precisely
 - 🔬 microscope — for architects — to document and compare brain architectures, deeply
 - 🧠 brain — for brains — to complete agentic tasks via tooluse, autonomously
-- 🐾 paw prints — for drivers — to navigate thought routes via stone milestones, methodically
+- 🗿 stone — for drivers — to navigate thought routes via stone milestones, methodically
