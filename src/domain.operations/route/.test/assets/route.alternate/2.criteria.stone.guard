@@ -1,0 +1,5 @@
+artifacts:
+  - 2.criteria*.md
+
+judges:
+  - rhx route.stone.judge --mechanism approved? --stone $stone --route $route

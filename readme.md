@@ -56,6 +56,12 @@ used to document and compare architectures of replic brains (LLMs behind REPLs).
 ## 🧠 brain
 
 a brain.repl available for agentic tooluse
+
+---
+
+## 🐾 driver
+
+used to navigate thought routes via stone milestones. enables robots to autonomously progress through structured journeys with optional guard validation.
 ```
 
 ## `ask -r thinker -s instantiate`
@@ -243,6 +249,70 @@ options:
 - `--model` / `-m`: brain.atom.model (e.g., claude-sonnet-4-20250514, gpt-4o)
 - `--system` / `-s`: path to custom system prompt file
 
+## `run --repo bhrain --skill route.stone.get`
+
+get the next stone(s) from a thought route. enables robots to know what milestone to work on next.
+
+```sh
+# get the next stone
+npx rhachet run --repo bhrain --skill route.stone.get --stone @next-one --route .behavior/my-feature
+
+# get the next stone and echo its content
+npx rhachet run --repo bhrain --skill route.stone.get --stone @next-one --route .behavior/my-feature --say
+
+# get all parallel stones (same numeric prefix)
+npx rhachet run --repo bhrain --skill route.stone.get --stone @next-all --route .behavior/my-feature
+```
+
+produces
+
+```
+1.vision
+```
+
+## `run --repo bhrain --skill route.stone.set`
+
+mark a stone as passed or approved. triggers guard validation if the stone has a guard.
+
+```sh
+# mark stone as passed (triggers guard validation)
+npx rhachet run --repo bhrain --skill route.stone.set --stone 1.vision --route .behavior/my-feature --as passed
+
+# mark stone as approved (human approval gate)
+npx rhachet run --repo bhrain --skill route.stone.set --stone 1.vision --route .behavior/my-feature --as approved
+```
+
+produces
+
+```
+stone 1.vision passed
+```
+
+or if guard validation fails:
+
+```
+stone 1.vision blocked: blockers exceed threshold (2 > 0)
+```
+
+## `run --repo bhrain --skill route.stone.del`
+
+delete unused stones from a route. refuses to delete stones that have artifacts (preserves history).
+
+```sh
+# delete a specific stone
+npx rhachet run --repo bhrain --skill route.stone.del --stone 3.research.templates --route .behavior/my-feature
+
+# delete multiple stones via glob
+npx rhachet run --repo bhrain --skill route.stone.del --stone "*.research.*" --route .behavior/my-feature
+```
+
+produces
+
+```
+deleted: 3.1.research.templates, 3.1.research.prior
+skipped: 3.1.research.domain (artifact found)
+```
+
 # mascots
 
 this repo houses roles for owls 🦉 — wise navigators of concept space, who carefully traverse the landscapes of thought and knowledge.
@@ -254,3 +324,4 @@ they wield:
 - 🔍 magnifier — for reviewers — to examine artifacts against declared rules, precisely
 - 🔬 microscope — for architects — to document and compare brain architectures, deeply
 - 🧠 brain — for brains — to complete agentic tasks via tooluse, autonomously
+- 🐾 paw prints — for drivers — to navigate thought routes via stone milestones, methodically

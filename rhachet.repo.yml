@@ -19,3 +19,9 @@ roles:
       dirs: []
     skills:
       dirs: []
+  - slug: driver
+    readme: dist/domain.roles/driver/readme.md
+    briefs:
+      dirs: dist/domain.roles/driver/briefs
+    skills:
+      dirs: dist/domain.roles/driver/skills

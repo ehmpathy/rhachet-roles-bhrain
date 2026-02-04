@@ -1,0 +1,7 @@
+artifacts:
+  - 1.vision*.md
+
+reviews: []
+
+judges:
+  - npx rhx route.stone.judge --mechanism approved? --stone $stone --route $route

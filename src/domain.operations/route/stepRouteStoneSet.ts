@@ -1,0 +1,45 @@
+import { UnexpectedCodePathError } from 'helpful-errors';
+
+import { setStoneAsApproved } from './setStoneAsApproved';
+import { setStoneAsPassed } from './setStoneAsPassed';
+
+/**
+ * .what = orchestrates set of stone status (passed or approved)
+ * .why = enables robots and humans to mark milestones complete
+ */
+export const stepRouteStoneSet = async (input: {
+  stone: string;
+  route: string;
+  as: 'passed' | 'approved';
+}): Promise<{
+  passed?: boolean;
+  approved?: boolean;
+  refs?: { reviews: string[]; judges: string[] };
+  emit: { stdout: string } | null;
+}> => {
+  // dispatch to appropriate operation
+  if (input.as === 'approved') {
+    const result = await setStoneAsApproved({
+      stone: input.stone,
+      route: input.route,
+    });
+    return {
+      approved: result.approved,
+      emit: result.emit,
+    };
+  }
+
+  if (input.as === 'passed') {
+    const result = await setStoneAsPassed({
+      stone: input.stone,
+      route: input.route,
+    });
+    return {
+      passed: result.passed,
+      refs: result.refs,
+      emit: result.emit,
+    };
+  }
+
+  throw new UnexpectedCodePathError('unsupported --as value', { as: input.as });
+};

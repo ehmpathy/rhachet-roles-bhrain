@@ -1,0 +1,6 @@
+define the blackbox criteria for the feature
+
+use given/when/then/sothat format to specify:
+- the usecases
+- the expected behaviors
+- the acceptance criteria

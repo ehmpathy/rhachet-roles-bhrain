@@ -1,0 +1,8 @@
+{
+  "name": "route-journey-fixture",
+  "private": true,
+  "description": "fixture for journey acceptance test - full workflow exercise",
+  "dependencies": {
+    "rhachet-roles-bhrain": "link:."
+  }
+}

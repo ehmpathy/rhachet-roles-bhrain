@@ -1,0 +1,9 @@
+artifacts:
+  - src/**/*.ts
+
+reviews:
+  - rhx review --rules .agent/**/rules/*.md --paths src/**/*.ts
+
+judges:
+  - rhx route.stone.judge --mechanism reviewed? --stone $stone --route $route --allow-blockers 0 --allow-nitpicks 2
+  - rhx route.stone.judge --mechanism approved? --stone $stone --route $route
