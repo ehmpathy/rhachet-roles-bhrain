@@ -35,9 +35,19 @@ export const genReviewOutputStdout = (input: {
     input.summary.nitpicksCount === 1 ? 'nitpick' : 'nitpicks';
   const nitpickEmoji = input.summary.nitpicksCount > 0 ? ' 🟠' : '';
 
-  // determine if all good (no issues)
+  // determine outcome category
+  const hasBlockers = input.summary.blockersCount > 0;
+  const hasOnlyNitpicks =
+    input.summary.blockersCount === 0 && input.summary.nitpicksCount > 0;
   const isAllGood =
     input.summary.blockersCount === 0 && input.summary.nitpicksCount === 0;
+
+  // owl pun header based on outcome
+  const owlHeader = hasBlockers
+    ? '🦉 needs your talons'
+    : hasOnlyNitpicks
+      ? '🦉 just a few hoots'
+      : '🦉 not even a vole';
 
   // build summary section based on whether there are issues
   const summarySection = isAllGood
@@ -62,7 +72,7 @@ export const genReviewOutputStdout = (input: {
    └─ time
       └─ total: ${input.time.total}
 
-🌊 output
+${owlHeader}
    ├─ logs: ${input.paths.logsRelative}
    ├─ review: ${input.paths.reviewRelative}
 ${summarySection}`.trim();

@@ -43,7 +43,7 @@ describe('stepReview.caseGoalExhaustive', () => {
               rules: '.agent/**/briefs/rules/*.md',
               paths: 'chapters/chapter2.md',
               output: outputPath,
-              mode: 'push',
+              focus: 'push',
               goal: 'exhaustive',
               cwd: ASSETS_PROSE,
             },

@@ -28,7 +28,7 @@ describe('review.acceptance', () => {
           rules: 'rules/*.md',
           paths: 'src/dirty.ts',
           output: outputPath,
-          mode: 'push',
+          focus: 'push',
           goal: 'representative',
           brain: 'xai/grok/code-fast-1',
           cwd: tempDir,

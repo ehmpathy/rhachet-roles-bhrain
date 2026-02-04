@@ -1,4 +1,19 @@
 /**
+ * .what = generates the header stdout (brain info and config)
+ * .why = displays review configuration at the top before metrics
+ */
+export const genReviewHeaderStdout = (input: {
+  brain: string;
+  focus: 'push' | 'pull';
+  output: string;
+}): string => {
+  return `🦉 let's review
+   ├─ brain: ${input.brain}
+   ├─ focus: ${input.focus}
+   └─ output: ${input.output}`;
+};
+
+/**
  * .what = generates the input metrics stdout (before brain invocation)
  * .why = displays expected metrics to user before review begins
  */
@@ -13,7 +28,7 @@ export const genReviewInputStdout = (input: {
     contextWindowPercent: number;
   };
   cost: {
-    estimate: number;
+    estimate: string;
   };
   logDirRelative: string;
 }): string => {
@@ -31,10 +46,10 @@ export const genReviewInputStdout = (input: {
    ├─ files
 ${filesTree}
    ├─ tokens
-   │  ├─ estimate: ${input.tokens.estimate}
+   │  ├─ estimate: ${input.tokens.estimate.toLocaleString()}
    │  └─ context: ${input.tokens.contextWindowPercent.toFixed(1)}%
    └─ cost
-      └─ estimate: $${input.cost.estimate.toFixed(4)}
+      └─ estimate: ${input.cost.estimate}
 
 🪵 logs
    ├─ scope: ${input.logDirRelative}/input.scope.json

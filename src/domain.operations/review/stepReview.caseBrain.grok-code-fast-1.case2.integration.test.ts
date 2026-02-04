@@ -43,7 +43,7 @@ describe('stepReview.caseBrain.grok-code-fast-1.case2', () => {
               rules: '.agent/**/briefs/rules/*.md',
               paths: 'chapters/*.md',
               output: outputPath,
-              mode: 'push',
+              focus: 'push',
               goal: 'representative',
               cwd: ASSETS_PROSE,
             },

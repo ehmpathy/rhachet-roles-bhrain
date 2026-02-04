@@ -1,7 +1,70 @@
 {
   // run these slowpokes individually, cause they're the longest poles in the wall time
-  "explicit": [],
-  // run the rest on one shard
+  "explicit": [
+    // driver route tests (llm calls)
+    {
+      "patterns": [
+        "blackbox/driver.route.journey.acceptance.test.ts"
+      ]
+    },
+    {
+      "patterns": [
+        "blackbox/driver.route.set.acceptance.test.ts"
+      ]
+    },
+    {
+      "patterns": [
+        "blackbox/driver.route.del.acceptance.test.ts"
+      ]
+    },
+    {
+      "patterns": [
+        "blackbox/driver.route.get.acceptance.test.ts"
+      ]
+    },
+    // review skill tests with llm calls
+    {
+      "patterns": [
+        "blackbox/review.representative-clean.acceptance.test.ts"
+      ]
+    },
+    {
+      "patterns": [
+        "blackbox/review.representative-dirty.acceptance.test.ts"
+      ]
+    },
+    {
+      "patterns": [
+        "blackbox/review.exhaustive-dirty.acceptance.test.ts"
+      ]
+    },
+    {
+      "patterns": [
+        "blackbox/review.refs-glob.acceptance.test.ts"
+      ]
+    },
+    {
+      "patterns": [
+        "blackbox/review.refs-single.acceptance.test.ts"
+      ]
+    },
+    {
+      "patterns": [
+        "blackbox/review.output-mkdir.acceptance.test.ts"
+      ]
+    },
+    {
+      "patterns": [
+        "blackbox/review.output-default.acceptance.test.ts"
+      ]
+    },
+    {
+      "patterns": [
+        "blackbox/review.rules-only-default.acceptance.test.ts"
+      ]
+    }
+  ],
+  // fast validation tests run together (no llm calls)
   "dynamic": {
     "shards": 1
   }

@@ -1,7 +1,7 @@
 import * as fs from 'fs/promises';
 import { BadRequestError } from 'helpful-errors';
 import { asIsoPriceHuman, type IsoPriceHuman } from 'iso-price';
-import type { IsoDuration } from 'iso-time';
+import { asDurationInWords, type IsoDuration } from 'iso-time';
 import * as path from 'path';
 import { type BrainChoice, type ContextBrain, isBrainRepl } from 'rhachet';
 import { z } from 'zod';
@@ -10,7 +10,10 @@ import { compileReviewPrompt } from '@src/domain.operations/review/compileReview
 import { enumFilesFromDiffs } from '@src/domain.operations/review/enumFilesFromDiffs';
 import { enumFilesFromGlob } from '@src/domain.operations/review/enumFilesFromGlob';
 import { formatReviewOutput } from '@src/domain.operations/review/formatReviewOutput';
-import { genReviewInputStdout } from '@src/domain.operations/review/genReviewInputStdout';
+import {
+  genReviewHeaderStdout,
+  genReviewInputStdout,
+} from '@src/domain.operations/review/genReviewInputStdout';
 import { genReviewOutputStdout } from '@src/domain.operations/review/genReviewOutputStdout';
 import { genTokenBreakdownMarkdown } from '@src/domain.operations/review/genTokenBreakdownMarkdown';
 import { genTokenBreakdownReport } from '@src/domain.operations/review/genTokenBreakdownReport';
@@ -64,7 +67,7 @@ export type StepReviewResult = {
         contextWindowPercent: number;
       };
       cost: {
-        estimate: number;
+        estimate: IsoPriceHuman;
       };
     };
     realized: {
@@ -144,9 +147,10 @@ export const stepReview = async (
     rules: string | string[];
     diffs?: string;
     paths?: string | string[];
+    join?: 'union' | 'intersect';
     refs?: string | string[];
     output: string;
-    mode: 'pull' | 'push';
+    focus: 'pull' | 'push';
     goal: 'exhaustive' | 'representative';
     cwd?: string;
   },
@@ -156,14 +160,14 @@ export const stepReview = async (
 ): Promise<StepReviewResult> => {
   const cwd = input.cwd ?? process.cwd();
 
-  // validate that pull mode is only used with brains that have tool use
+  // validate that pull focus is only used with brains that have tool use
   const choiceIsRepl = isBrainRepl(context.brain.brain.choice);
-  if (input.mode === 'pull' && !choiceIsRepl)
+  if (input.focus === 'pull' && !choiceIsRepl)
     throw new BadRequestError(
-      `mode 'pull' requires a brain with tool use (BrainRepl). ` +
+      `focus 'pull' requires a brain with tool use (BrainRepl). ` +
         `brain '${context.brain.brain.choice.slug}' is a BrainAtom without tool use. ` +
-        `use mode 'push' instead, or choose a BrainRepl.`,
-      { brain: context.brain.brain.choice.slug, mode: input.mode },
+        `use focus 'push' instead, or choose a BrainRepl.`,
+      { brain: context.brain.brain.choice.slug, focus: input.focus },
     );
 
   // validate that at least one of rules, diffs, or paths is specified
@@ -177,18 +181,12 @@ export const stepReview = async (
       'must specify at least one of --rules, --diffs, or --paths',
     );
 
-  // validate output parent directory exists
+  // ensure output parent directory exists (create if absent)
   const outputParent = path.dirname(input.output);
   const outputParentAbsolute = path.isAbsolute(outputParent)
     ? outputParent
     : path.join(cwd, outputParent);
-  try {
-    await fs.access(outputParentAbsolute);
-  } catch {
-    throw new BadRequestError('output path parent directory does not exist', {
-      outputParent: outputParentAbsolute,
-    });
-  }
+  await fs.mkdir(outputParentAbsolute, { recursive: true });
 
   // enumerate rule files
   const ruleGlobs = Array.isArray(input.rules)
@@ -226,11 +224,21 @@ export const stepReview = async (
     cwd,
   });
 
-  // union target files from diffs and paths, then apply global exclusions
-  const targetFilesUnion = [
-    ...new Set([...targetFilesFromDiffs, ...targetFilesFromPaths]),
-  ];
-  const targetFiles = targetFilesUnion
+  // join target files from diffs and paths (union or intersect), then apply exclusions
+  const joinMode = input.join ?? 'union';
+  const targetFilesJoined = (() => {
+    // if only one source has files, use that source
+    if (targetFilesFromDiffs.length === 0) return targetFilesFromPaths;
+    if (targetFilesFromPaths.length === 0) return targetFilesFromDiffs;
+
+    // both sources have files; apply join mode
+    if (joinMode === 'intersect') {
+      const pathsSet = new Set(targetFilesFromPaths);
+      return targetFilesFromDiffs.filter((file) => pathsSet.has(file));
+    }
+    return [...new Set([...targetFilesFromDiffs, ...targetFilesFromPaths])];
+  })();
+  const targetFiles = targetFilesJoined
     .filter((file) => {
       for (const pattern of negativePathGlobs) {
         if (file === pattern || file.endsWith(`/${pattern}`)) return false;
@@ -348,16 +356,16 @@ export const stepReview = async (
     'utf-8',
   );
 
-  // compile review prompt with brain's context window
-  const contextWindowSize =
-    context.brain.brain.choice.spec.gain.size.context.tokens;
+  // compile review prompt with brain's context window and cost spec
+  const brainSpec = context.brain.brain.choice.spec;
   const promptResult = compileReviewPrompt({
     rules: ruleContents,
     refs: refContents,
     targets: targetContents,
-    mode: input.mode,
+    focus: input.focus,
     goal: input.goal,
-    contextWindowSize,
+    contextWindowSize: brainSpec.gain.size.context.tokens,
+    costSpec: brainSpec.cost.cash,
   });
 
   // write metrics.expected immediately after files are read
@@ -391,9 +399,10 @@ export const stepReview = async (
       rules: input.rules,
       diffs: input.diffs,
       paths: input.paths,
+      join: joinMode,
       refs: input.refs,
       output: input.output,
-      mode: input.mode,
+      focus: input.focus,
       goal: input.goal,
     },
     scope: {
@@ -409,7 +418,18 @@ export const stepReview = async (
     prompt: promptResult.prompt,
   });
 
+  // emit header with brain info
+  const outputRelative = path.relative(cwd, input.output);
+  console.log(
+    genReviewHeaderStdout({
+      brain: context.brain.brain.choice.slug,
+      focus: input.focus,
+      output: outputRelative.startsWith('..') ? input.output : outputRelative,
+    }),
+  );
+
   // emit metrics.expected before invocation
+  console.log('');
   const logDirRelative = path.relative(cwd, logDir);
   console.log(
     genReviewInputStdout({
@@ -432,7 +452,7 @@ export const stepReview = async (
   // invoke brain with spinner
   console.log('');
   const reviewIssues = await withSpinner({
-    message: "🦉 let's review!",
+    message: '🔍 what do we have here then?',
     operation: async () =>
       await context.brain.brain.choice.ask({
         role: { briefs: [] },
@@ -516,7 +536,7 @@ export const stepReview = async (
         total: asIsoPriceHuman(realizedCosts.total),
       },
       time: {
-        total: String(metrics.cost.time),
+        total: asDurationInWords(metrics.cost.time),
       },
       paths: {
         logsRelative: logDirRelative,

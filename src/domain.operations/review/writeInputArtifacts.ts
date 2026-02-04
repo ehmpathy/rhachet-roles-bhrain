@@ -11,9 +11,10 @@ export const writeInputArtifacts = async (input: {
     rules: string | string[];
     diffs?: string;
     paths?: string | string[];
+    join?: 'union' | 'intersect';
     refs?: string | string[];
     output: string;
-    mode: 'pull' | 'push';
+    focus: 'pull' | 'push';
     goal: 'exhaustive' | 'representative';
   };
   scope: {
@@ -24,7 +25,7 @@ export const writeInputArtifacts = async (input: {
   metrics: {
     tokenEstimate: number;
     contextWindowPercent: number;
-    costEstimate: number;
+    costEstimate: string;
   };
   prompt: string;
 }): Promise<{ argsPath: string; promptPath: string }> => {

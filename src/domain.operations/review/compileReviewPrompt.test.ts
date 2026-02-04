@@ -1,7 +1,23 @@
 import { BadRequestError } from 'helpful-errors';
+import { asIsoPrice } from 'iso-price';
+import type { BrainSpec } from 'rhachet/brains';
 import { getError, given, then, when } from 'test-fns';
 
 import { compileReviewPrompt } from './compileReviewPrompt';
+
+/**
+ * .what = fixture cost spec for xai/grok brain
+ * .why = enables cost calculation in compile prompt tests
+ */
+const costSpecFixture: BrainSpec['cost']['cash'] = {
+  per: 'token',
+  input: asIsoPrice('$0.0000001'),
+  output: asIsoPrice('$0.0000003'),
+  cache: {
+    set: asIsoPrice('$0.00000025'),
+    get: asIsoPrice('$0.000000025'),
+  },
+};
 
 describe('compileReviewPrompt', () => {
   given('[case1] --push mode', () => {
@@ -18,9 +34,10 @@ describe('compileReviewPrompt', () => {
           targets: [
             { path: 'src/valid.ts', content: 'export const valid = 1;' },
           ],
-          mode: 'push',
+          focus: 'push',
           goal: 'representative',
           contextWindowSize: 200000,
+          costSpec: costSpecFixture,
         });
         expect(result.prompt).toContain('# rule: no-console');
         expect(result.prompt).toContain('export const valid');
@@ -39,9 +56,10 @@ describe('compileReviewPrompt', () => {
           refs: [],
           rules: [{ path: 'rule.md', content: '# rule' }],
           targets: [{ path: 'file.ts', content }],
-          mode: 'push',
+          focus: 'push',
           goal: 'representative',
           contextWindowSize: 3000,
+          costSpec: costSpecFixture,
         });
         expect(result.contextWindowPercent).toBeGreaterThanOrEqual(60);
         expect(result.contextWindowPercent).toBeLessThan(75);
@@ -59,9 +77,10 @@ describe('compileReviewPrompt', () => {
             refs: [],
             rules: [{ path: 'rule.md', content: '# rule' }],
             targets: [{ path: 'large.ts', content }],
-            mode: 'push',
+            focus: 'push',
             goal: 'representative',
             contextWindowSize: 2000,
+            costSpec: costSpecFixture,
           }),
         );
         expect(error).toBeInstanceOf(BadRequestError);
@@ -83,9 +102,10 @@ describe('compileReviewPrompt', () => {
             { path: 'src/valid.ts', content: 'export const valid = 1;' },
             { path: 'src/invalid.ts', content: 'console.log("bad");' },
           ],
-          mode: 'pull',
+          focus: 'pull',
           goal: 'representative',
           contextWindowSize: 200000,
+          costSpec: costSpecFixture,
         });
         expect(result.prompt).toContain('src/valid.ts');
         expect(result.prompt).toContain('src/invalid.ts');
@@ -98,9 +118,10 @@ describe('compileReviewPrompt', () => {
           refs: [],
           rules: [{ path: 'rule.md', content: '# rule' }],
           targets: [{ path: 'src/valid.ts', content: '...' }],
-          mode: 'pull',
+          focus: 'pull',
           goal: 'representative',
           contextWindowSize: 200000,
+          costSpec: costSpecFixture,
         });
         expect(result.prompt).toMatch(/open|read/i);
       });
@@ -114,9 +135,10 @@ describe('compileReviewPrompt', () => {
           refs: [],
           rules: [{ path: 'rule.md', content: '# rule' }],
           targets: [{ path: 'large.ts', content }], // content ignored in pull mode
-          mode: 'pull',
+          focus: 'pull',
           goal: 'representative',
           contextWindowSize: 1000,
+          costSpec: costSpecFixture,
         });
         // should succeed without throwing
         expect(result.prompt).toContain('large.ts');
@@ -135,9 +157,10 @@ describe('compileReviewPrompt', () => {
             { path: 'rule.no-any.md', content: '# no-any' },
           ],
           targets: [{ path: 'src/valid.ts', content: '...' }],
-          mode: 'push',
+          focus: 'push',
           goal: 'representative',
           contextWindowSize: 200000,
+          costSpec: costSpecFixture,
         });
         expect(result.prompt).toContain('no-console');
         expect(result.prompt).toContain('no-any');
@@ -152,9 +175,10 @@ describe('compileReviewPrompt', () => {
           refs: [],
           rules: [{ path: 'rule.md', content: '# rule' }],
           targets: [{ path: 'file.ts', content: 'code' }],
-          mode: 'push',
+          focus: 'push',
           goal: 'representative',
           contextWindowSize: 200000,
+          costSpec: costSpecFixture,
         });
         expect(result.contextWindowPercent).toBeDefined();
         expect(typeof result.contextWindowPercent).toBe('number');
@@ -165,12 +189,14 @@ describe('compileReviewPrompt', () => {
           refs: [],
           rules: [{ path: 'rule.md', content: '# rule' }],
           targets: [{ path: 'file.ts', content: 'code' }],
-          mode: 'push',
+          focus: 'push',
           goal: 'representative',
           contextWindowSize: 200000,
+          costSpec: costSpecFixture,
         });
         expect(result.costEstimate).toBeDefined();
-        expect(typeof result.costEstimate).toBe('number');
+        expect(typeof result.costEstimate).toBe('string');
+        expect(result.costEstimate).toMatch(/^\$/); // human-readable price starts with $
       });
     });
   });

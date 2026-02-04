@@ -23,7 +23,7 @@ describe('writeInputArtifacts', () => {
             rules: 'rules/*.md',
             paths: 'src/*.ts',
             output: '/tmp/review.md',
-            mode: 'push',
+            focus: 'push',
             goal: 'representative',
           },
           scope: {
@@ -34,7 +34,7 @@ describe('writeInputArtifacts', () => {
           metrics: {
             tokenEstimate: 1500,
             contextWindowPercent: 15,
-            costEstimate: 0.0045,
+            costEstimate: '$0.0045',
           },
           prompt: '# review prompt\n\nreview these files...',
         });
@@ -56,7 +56,7 @@ describe('writeInputArtifacts', () => {
             diffs: 'uptil-main',
             paths: ['src/*.ts', 'lib/*.ts'],
             output: '/tmp/review.md',
-            mode: 'pull',
+            focus: 'pull',
             goal: 'representative',
           },
           scope: {
@@ -67,7 +67,7 @@ describe('writeInputArtifacts', () => {
           metrics: {
             tokenEstimate: 500,
             contextWindowPercent: 5,
-            costEstimate: 0.0015,
+            costEstimate: '$0.0015',
           },
           prompt: 'test prompt',
         });
@@ -81,7 +81,7 @@ describe('writeInputArtifacts', () => {
           diffs: 'uptil-main',
           paths: ['src/*.ts', 'lib/*.ts'],
           output: '/tmp/review.md',
-          mode: 'pull',
+          focus: 'pull',
           goal: 'representative',
         });
         expect(argsJson.scope).toEqual({
@@ -92,7 +92,7 @@ describe('writeInputArtifacts', () => {
         expect(argsJson.metrics).toEqual({
           tokenEstimate: 500,
           contextWindowPercent: 5,
-          costEstimate: 0.0015,
+          costEstimate: '$0.0015',
         });
       });
 
@@ -112,7 +112,7 @@ describe('writeInputArtifacts', () => {
           args: {
             rules: 'rules/*.md',
             output: '/tmp/review.md',
-            mode: 'push',
+            focus: 'push',
             goal: 'representative',
           },
           scope: {
@@ -123,7 +123,7 @@ describe('writeInputArtifacts', () => {
           metrics: {
             tokenEstimate: 800,
             contextWindowPercent: 8,
-            costEstimate: 0.0024,
+            costEstimate: '$0.0024',
           },
           prompt: promptContent,
         });

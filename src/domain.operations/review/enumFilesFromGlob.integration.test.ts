@@ -69,4 +69,61 @@ describe('enumFilesFromGlob', () => {
       });
     });
   });
+
+  given('[case4] a directory path instead of glob', () => {
+    when('[t0] pattern is a directory without glob chars', () => {
+      then('infers **/* and returns all files recursively', async () => {
+        const files = await enumFilesFromGlob({
+          glob: ASSETS_PATH,
+        });
+        expect(files).toEqual([
+          `${ASSETS_PATH}/bar.ts`,
+          `${ASSETS_PATH}/baz.js`,
+          `${ASSETS_PATH}/foo.ts`,
+          `${ASSETS_PATH}/nested/quux.js`,
+          `${ASSETS_PATH}/nested/qux.ts`,
+        ]);
+      });
+    });
+
+    when('[t1] pattern is a directory with slash suffix', () => {
+      then('infers **/* and returns all files recursively', async () => {
+        const files = await enumFilesFromGlob({
+          glob: `${ASSETS_PATH}/`,
+        });
+        expect(files).toEqual([
+          `${ASSETS_PATH}/bar.ts`,
+          `${ASSETS_PATH}/baz.js`,
+          `${ASSETS_PATH}/foo.ts`,
+          `${ASSETS_PATH}/nested/quux.js`,
+          `${ASSETS_PATH}/nested/qux.ts`,
+        ]);
+      });
+    });
+
+    when('[t2] pattern is a nested directory', () => {
+      then('infers **/* for nested dir only', async () => {
+        const files = await enumFilesFromGlob({
+          glob: `${ASSETS_PATH}/nested`,
+        });
+        expect(files).toEqual([
+          `${ASSETS_PATH}/nested/quux.js`,
+          `${ASSETS_PATH}/nested/qux.ts`,
+        ]);
+      });
+    });
+
+    when('[t3] pattern has glob chars (not a plain dir)', () => {
+      then('does not modify the pattern', async () => {
+        const files = await enumFilesFromGlob({
+          glob: `${ASSETS_PATH}/*.ts`,
+        });
+        // only root level ts files, not recursive
+        expect(files).toEqual([
+          `${ASSETS_PATH}/bar.ts`,
+          `${ASSETS_PATH}/foo.ts`,
+        ]);
+      });
+    });
+  });
 });

@@ -1,4 +1,6 @@
 import { BadRequestError } from 'helpful-errors';
+import { asIsoPriceHuman, type IsoPriceHuman } from 'iso-price';
+import { type BrainSpec, calcBrainOutputCost } from 'rhachet/brains';
 
 import { estimateTokenCount } from './estimateTokenCount';
 
@@ -10,14 +12,15 @@ export const compileReviewPrompt = (input: {
   rules: Array<{ path: string; content: string }>;
   refs: Array<{ path: string; content: string }>;
   targets: Array<{ path: string; content: string }>;
-  mode: 'pull' | 'push';
+  focus: 'pull' | 'push';
   goal: 'exhaustive' | 'representative';
   contextWindowSize: number;
+  costSpec: BrainSpec['cost']['cash'];
 }): {
   prompt: string;
   tokenEstimate: number;
   contextWindowPercent: number;
-  costEstimate: number;
+  costEstimate: IsoPriceHuman;
   warnings: string[];
 } => {
   const contextWindow = input.contextWindowSize;
@@ -38,13 +41,13 @@ export const compileReviewPrompt = (input: {
 
   // build target section based on mode
   const targetSection = (() => {
-    if (input.mode === 'pull') {
-      // pull mode: paths only, instruct brain to open files
+    if (input.focus === 'pull') {
+      // pull focus: paths only, instruct brain to open files
       const pathList = input.targets.map((t) => `- ${t.path}`).join('\n');
       return `the following files are in scope for review. please open and read them as needed:\n\n${pathList}`;
     }
 
-    // push mode: inject contents
+    // push focus: inject contents
     return input.targets
       .map(
         (target) => `### ${target.path}\n\n\`\`\`\n${target.content}\n\`\`\``,
@@ -137,12 +140,12 @@ if no issues found, output: \`{"done": true, "blockers": [], "nitpicks": []}\`
   const contextWindowPercent = (tokenEstimate / contextWindow) * 100;
 
   // check thresholds (only in push mode - pull mode is inherently lighter)
-  if (input.mode === 'push') {
+  if (input.focus === 'push') {
     // failfast if >75%
     if (contextWindowPercent > 75) {
       throw new BadRequestError(
         `prompt exceeds 75% of context window (${contextWindowPercent.toFixed(1)}% of ${contextWindow} tokens). ` +
-          `reduce scope or use --pull mode to avoid quality degradation.`,
+          `reduce scope or use --focus pull to avoid quality degradation.`,
         { tokenEstimate, contextWindowPercent, contextWindow },
       );
     }
@@ -155,11 +158,19 @@ if no issues found, output: \`{"done": true, "blockers": [], "nitpicks": []}\`
     }
   }
 
-  // estimate cost (claude: ~$3/1M input tokens, ~$15/1M output tokens)
-  // assume output is ~10% of input for reviews
-  const inputCost = (tokenEstimate / 1_000_000) * 3;
-  const outputCost = ((tokenEstimate * 0.1) / 1_000_000) * 15;
-  const costEstimate = Math.round((inputCost + outputCost) * 1000) / 1000;
+  // estimate cost via brain spec rates (assume output is ~10% of input for reviews)
+  const estimatedOutputTokens = Math.round(tokenEstimate * 0.1);
+  const costResult = calcBrainOutputCost({
+    for: {
+      tokens: {
+        input: tokenEstimate,
+        output: estimatedOutputTokens,
+        cache: { get: 0, set: 0 },
+      },
+    },
+    with: { cost: { cash: input.costSpec } },
+  });
+  const costEstimate = asIsoPriceHuman(costResult.cash.total);
 
   return {
     prompt,
