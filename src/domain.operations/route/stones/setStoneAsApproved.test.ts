@@ -31,7 +31,7 @@ describe('setStoneAsApproved', () => {
           route: tempDir,
         });
         expect(result.approved).toBe(true);
-        expect(result.emit?.stdout).toContain('approved');
+        expect(result.emit?.stdout).toContain('approval = granted');
       });
 
       then('creates approval marker', async () => {

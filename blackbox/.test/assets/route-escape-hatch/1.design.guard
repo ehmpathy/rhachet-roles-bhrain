@@ -1,0 +1,8 @@
+artifacts:
+  - 1.design*.md
+
+reviews:
+  - bash $route/.test/perma-fail-review.sh
+
+judges:
+  - npx rhx route.stone.judge --mechanism reviewed? --stone $stone --route $route --allow-blockers 0 --allow-nitpicks 0

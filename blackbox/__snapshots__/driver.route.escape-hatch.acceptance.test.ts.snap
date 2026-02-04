@@ -1,0 +1,20 @@
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
+
+exports[`driver.route.escape-hatch.acceptance given: [escape-hatch] stone with perma-fail review when: [t0] artifact created and pass attempted then: stdout has good vibes 1`] = `
+"🦉 so you're saying there's a chance?
+
+🗿 route.stone.set
+   ├─ stone = 1.design
+   ├─ passage = blocked
+   └─ reason = nitpicks exceed threshold (1 > 0)
+"
+`;
+
+exports[`driver.route.escape-hatch.acceptance given: [escape-hatch] stone with perma-fail review when: [t2] pass is reattempted after guard edit then: stdout has good vibes 1`] = `
+"🦉 so you're saying there's a chance?
+
+🗿 route.stone.set
+   ├─ stone = 1.design
+   └─ passage = allowed (artifacts only)
+"
+`;

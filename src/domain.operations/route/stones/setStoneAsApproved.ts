@@ -2,6 +2,7 @@ import { BadRequestError } from 'helpful-errors';
 
 import type { RouteStone } from '@src/domain.objects/Driver/RouteStone';
 
+import { formatRouteStoneEmit } from '../formatRouteStoneEmit';
 import { setStoneGuardApproval } from '../judges/setStoneGuardApproval';
 import { getAllStones } from './getAllStones';
 
@@ -28,7 +29,13 @@ export const setStoneAsApproved = async (input: {
 
   return {
     approved: true,
-    emit: { stdout: `stone ${stoneMatched.name} approved` },
+    emit: {
+      stdout: formatRouteStoneEmit({
+        operation: 'route.stone.set',
+        stone: stoneMatched.name,
+        action: 'approved',
+      }),
+    },
   };
 };
 
