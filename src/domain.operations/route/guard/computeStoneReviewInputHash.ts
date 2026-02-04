@@ -2,7 +2,7 @@ import * as crypto from 'crypto';
 import * as fs from 'fs/promises';
 
 import type { RouteStone } from '@src/domain.objects/Driver/RouteStone';
-import { getAllStoneArtifacts } from '@src/domain.operations/route/getAllStoneArtifacts';
+import { getAllStoneArtifacts } from '@src/domain.operations/route/stones/getAllStoneArtifacts';
 
 /**
  * .what = computes hash of review inputs (artifacts)

@@ -1,8 +1,8 @@
 import * as fs from 'fs/promises';
 import { BadRequestError } from 'helpful-errors';
 
-import { delStone } from './delStone';
-import { getAllStones } from './getAllStones';
+import { delStone } from './stones/delStone';
+import { getAllStones } from './stones/getAllStones';
 
 /**
  * .what = orchestrates deletion of unused stones from a route

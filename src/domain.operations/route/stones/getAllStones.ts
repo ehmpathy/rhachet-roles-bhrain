@@ -4,7 +4,7 @@ import * as path from 'path';
 
 import { RouteStone } from '@src/domain.objects/Driver/RouteStone';
 
-import { parseStoneGuard } from './guard/parseStoneGuard';
+import { parseStoneGuard } from '../guard/parseStoneGuard';
 
 /**
  * .what = enumerates all stones in a route directory

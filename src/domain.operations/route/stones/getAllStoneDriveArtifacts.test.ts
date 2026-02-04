@@ -3,7 +3,7 @@ import { given, then, when } from 'test-fns';
 
 import { getAllStoneDriveArtifacts } from './getAllStoneDriveArtifacts';
 
-const ASSETS_DIR = path.join(__dirname, '.test/assets');
+const ASSETS_DIR = path.join(__dirname, '../.test/assets');
 
 describe('getAllStoneDriveArtifacts', () => {
   given('[case1] route.simple fixture with no artifacts', () => {

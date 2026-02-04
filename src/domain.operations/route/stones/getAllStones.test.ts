@@ -3,7 +3,7 @@ import { given, then, when } from 'test-fns';
 
 import { getAllStones } from './getAllStones';
 
-const ASSETS_DIR = path.join(__dirname, '.test/assets');
+const ASSETS_DIR = path.join(__dirname, '../.test/assets');
 
 describe('getAllStones', () => {
   given('[case1] route.simple fixture', () => {

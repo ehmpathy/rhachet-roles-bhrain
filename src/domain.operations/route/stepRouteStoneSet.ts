@@ -1,7 +1,7 @@
 import { UnexpectedCodePathError } from 'helpful-errors';
 
-import { setStoneAsApproved } from './setStoneAsApproved';
-import { setStoneAsPassed } from './setStoneAsPassed';
+import { setStoneAsApproved } from './stones/setStoneAsApproved';
+import { setStoneAsPassed } from './stones/setStoneAsPassed';
 
 /**
  * .what = orchestrates set of stone status (passed or approved)

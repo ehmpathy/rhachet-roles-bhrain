@@ -3,9 +3,9 @@ import { BadRequestError } from 'helpful-errors';
 
 import type { RouteStone } from '@src/domain.objects/Driver/RouteStone';
 
-import { computeNextStones } from './computeNextStones';
-import { getAllStoneDriveArtifacts } from './getAllStoneDriveArtifacts';
-import { getAllStones } from './getAllStones';
+import { computeNextStones } from './stones/computeNextStones';
+import { getAllStoneDriveArtifacts } from './stones/getAllStoneDriveArtifacts';
+import { getAllStones } from './stones/getAllStones';
 
 /**
  * .what = orchestrates get of next stone(s) from a route
