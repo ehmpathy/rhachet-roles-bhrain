@@ -2,8 +2,8 @@ import { BadRequestError } from 'helpful-errors';
 
 import type { RouteStone } from '@src/domain.objects/Driver/RouteStone';
 
+import { setStoneGuardApproval } from '../judges/setStoneGuardApproval';
 import { getAllStones } from './getAllStones';
-import { setStoneGuardApproval } from './guard/setStoneGuardApproval';
 
 /**
  * .what = marks a stone as approved by human

@@ -5,7 +5,7 @@ import { getError, given, then, when } from 'test-fns';
 
 import { setStoneAsApproved } from './setStoneAsApproved';
 
-const ASSETS_DIR = path.join(__dirname, '.test/assets');
+const ASSETS_DIR = path.join(__dirname, '../.test/assets');
 
 describe('setStoneAsApproved', () => {
   given('[case1] route.simple fixture', () => {

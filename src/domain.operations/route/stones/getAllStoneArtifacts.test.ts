@@ -5,7 +5,7 @@ import { RouteStone } from '@src/domain.objects/Driver/RouteStone';
 
 import { getAllStoneArtifacts } from './getAllStoneArtifacts';
 
-const ASSETS_DIR = path.join(__dirname, '.test/assets');
+const ASSETS_DIR = path.join(__dirname, '../.test/assets');
 
 describe('getAllStoneArtifacts', () => {
   given('[case1] stone without guard in route.simple', () => {

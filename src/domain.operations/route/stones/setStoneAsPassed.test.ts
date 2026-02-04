@@ -5,7 +5,7 @@ import { getError, given, then, when } from 'test-fns';
 
 import { setStoneAsPassed } from './setStoneAsPassed';
 
-const ASSETS_DIR = path.join(__dirname, '.test/assets');
+const ASSETS_DIR = path.join(__dirname, '../.test/assets');
 
 describe('setStoneAsPassed', () => {
   given('[case1] route.simple fixture (no guards)', () => {

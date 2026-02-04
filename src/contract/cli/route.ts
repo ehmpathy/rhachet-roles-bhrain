@@ -1,12 +1,12 @@
 import * as fs from 'fs/promises';
 import * as path from 'path';
 
-import { getAllStones } from '@src/domain.operations/route/getAllStones';
 import { computeStoneReviewInputHash } from '@src/domain.operations/route/guard/computeStoneReviewInputHash';
-import { getOneStoneGuardApproval } from '@src/domain.operations/route/guard/getOneStoneGuardApproval';
+import { getOneStoneGuardApproval } from '@src/domain.operations/route/judges/getOneStoneGuardApproval';
 import { stepRouteStoneDel } from '@src/domain.operations/route/stepRouteStoneDel';
 import { stepRouteStoneGet } from '@src/domain.operations/route/stepRouteStoneGet';
 import { stepRouteStoneSet } from '@src/domain.operations/route/stepRouteStoneSet';
+import { getAllStones } from '@src/domain.operations/route/stones/getAllStones';
 import { enumFilesFromGlob } from '@src/utils/enumFilesFromGlob';
 
 /**
@@ -401,8 +401,9 @@ const judgeReviewed = async (input: {
 
   for (const filePath of reviewFiles) {
     const content = await fs.readFile(filePath, 'utf-8');
-    const blockerMatch = content.match(/blockers?:\s*(\d+)/i);
-    const nitpickMatch = content.match(/nitpicks?:\s*(\d+)/i);
+    // match format: "N blocker(s)" from review skill output (e.g., "├─ 3 blockers 🔴")
+    const blockerMatch = content.match(/(\d+)\s+blockers?/i);
+    const nitpickMatch = content.match(/(\d+)\s+nitpicks?/i);
 
     if (blockerMatch?.[1]) {
       totalBlockers += parseInt(blockerMatch[1], 10);
