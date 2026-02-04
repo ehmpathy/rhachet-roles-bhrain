@@ -6,7 +6,7 @@ exports[`genReviewInputStdout given: [case1] no refs provided when: [t0] generat
    │  ├─ rules: 3
    │  └─ targets: 12
    ├─ tokens
-   │  ├─ estimate: 2500
+   │  ├─ estimate: 2,500
    │  └─ context: 1.2%
    └─ cost
       └─ estimate: $0.0125
@@ -24,7 +24,7 @@ exports[`genReviewInputStdout given: [case2] refs provided when: [t0] single ref
    │  ├─ refs: 1
    │  └─ targets: 5
    ├─ tokens
-   │  ├─ estimate: 1500
+   │  ├─ estimate: 1,500
    │  └─ context: 0.6%
    └─ cost
       └─ estimate: $0.0075
@@ -42,10 +42,10 @@ exports[`genReviewInputStdout given: [case2] refs provided when: [t1] multiple r
    │  ├─ refs: 5
    │  └─ targets: 20
    ├─ tokens
-   │  ├─ estimate: 5000
+   │  ├─ estimate: 5,000
    │  └─ context: 2.5%
    └─ cost
-      └─ estimate: $0.0250
+      └─ estimate: $0.025
 
 🪵 logs
    ├─ scope: .log/bhrain/review/2026-01-28T12-00-00-000Z/input.scope.json

@@ -87,7 +87,7 @@ describe('stepReview', () => {
               rules: [],
               paths: [],
               output: '/tmp/review.md',
-              mode: 'push',
+              focus: 'push',
               goal: 'representative',
               cwd: ASSETS_TYPESCRIPT,
             },
@@ -112,7 +112,7 @@ describe('stepReview', () => {
               rules: 'nonexistent/**/*.md',
               paths: 'src/*.ts',
               output: '/tmp/review.md',
-              mode: 'push',
+              focus: 'push',
               goal: 'representative',
               cwd: ASSETS_TYPESCRIPT,
             },
@@ -135,7 +135,7 @@ describe('stepReview', () => {
               rules: '.agent/**/briefs/rules/*.md',
               paths: 'nonexistent/**/*.ts',
               output: '/tmp/review.md',
-              mode: 'push',
+              focus: 'push',
               goal: 'representative',
               cwd: ASSETS_TYPESCRIPT,
             },
@@ -151,16 +151,16 @@ describe('stepReview', () => {
     });
   });
 
-  given('[case4] output parent directory does not exist', () => {
-    when('[t0] stepReview is called', () => {
-      then('throws BadRequestError about missing parent', async () => {
+  given('[case4] output parent directory is inaccessible', () => {
+    when('[t0] stepReview is called with unwritable path', () => {
+      then('throws error about permission denied', async () => {
         const error = await getError(
           stepReview(
             {
               rules: '.agent/**/briefs/rules/*.md',
               paths: 'src/*.ts',
               output: '/nonexistent/parent/review.md',
-              mode: 'push',
+              focus: 'push',
               goal: 'representative',
               cwd: ASSETS_TYPESCRIPT,
             },
@@ -169,9 +169,7 @@ describe('stepReview', () => {
         );
 
         expect(error).toBeDefined();
-        expect(error.message).toContain(
-          'output path parent directory does not exist',
-        );
+        expect(error.message).toContain('EACCES');
       });
     });
   });
@@ -421,7 +419,7 @@ describe('stepReview', () => {
               rules: '.agent/**/briefs/rules/*.md',
               paths: 'chapters/chapter2.fixed.md',
               output: outputPath,
-              mode: 'push',
+              focus: 'push',
               goal: 'representative',
               cwd: ASSETS_PROSE,
             },
@@ -454,7 +452,7 @@ describe('stepReview', () => {
           expect(
             result.metrics.expected.tokens.contextWindowPercent,
           ).toBeGreaterThan(0);
-          expect(result.metrics.expected.cost.estimate).toBeGreaterThan(0);
+          expect(result.metrics.expected.cost.estimate).toMatch(/^\$/);
         });
 
         then('metrics.realized contains real values', async () => {
@@ -476,7 +474,7 @@ describe('stepReview', () => {
             rules: '.agent/**/briefs/rules/*.md',
             paths: 'chapters/chapter2.md',
             output: outputPath,
-            mode: 'push',
+            focus: 'push',
             goal: 'representative',
             cwd: ASSETS_PROSE,
           },

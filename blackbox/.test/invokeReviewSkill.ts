@@ -37,11 +37,13 @@ export const genTempDirForRhachet = (input: {
  */
 export const invokeReviewSkill = async (input: {
   rules: string;
-  paths: string;
+  paths?: string;
+  diffs?: string;
+  join?: 'union' | 'intersect';
   refs?: string | string[];
-  output: string;
-  mode: 'push' | 'pull';
-  goal: 'exhaustive' | 'representative';
+  output?: string;
+  focus?: 'push' | 'pull';
+  goal?: 'exhaustive' | 'representative';
   brain?: string;
   cwd: string;
 }): Promise<{ stdout: string; stderr: string; code: number }> => {
@@ -60,11 +62,13 @@ export const invokeReviewSkill = async (input: {
   const cmd = [
     `bash "${skillPath}"`,
     `--rules "${input.rules}"`,
-    `--paths "${input.paths}"`,
+    input.paths ? `--paths "${input.paths}"` : '',
+    input.diffs ? `--diffs "${input.diffs}"` : '',
+    input.join ? `--join ${input.join}` : '',
     refsFlags,
-    `--output "${input.output}"`,
-    `--mode ${input.mode}`,
-    `--goal ${input.goal}`,
+    input.output ? `--output "${input.output}"` : '',
+    input.focus ? `--focus ${input.focus}` : '',
+    input.goal ? `--goal ${input.goal}` : '',
     input.brain ? `--brain "${input.brain}"` : '',
   ]
     .filter(Boolean)

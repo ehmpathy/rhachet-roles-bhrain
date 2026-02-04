@@ -38,7 +38,7 @@ describe('review.refs-single.acceptance', () => {
           paths: 'src/clean.ts',
           refs: 'behavior/getWeather/criteria.blackbox.md',
           output: outputPath,
-          mode: 'push',
+          focus: 'push',
           goal: 'representative',
           brain: 'xai/grok/code-fast-1',
           cwd: tempDir,

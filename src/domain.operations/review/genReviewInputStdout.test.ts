@@ -16,7 +16,7 @@ describe('genReviewInputStdout', () => {
           contextWindowPercent: 1.2,
         },
         cost: {
-          estimate: 0.0125,
+          estimate: '$0.0125',
         },
         logDirRelative: '.log/bhrain/review/2026-01-28T12-00-00-000Z',
       });
@@ -44,7 +44,7 @@ describe('genReviewInputStdout', () => {
           contextWindowPercent: 0.6,
         },
         cost: {
-          estimate: 0.0075,
+          estimate: '$0.0075',
         },
         logDirRelative: '.log/bhrain/review/2026-01-28T12-00-00-000Z',
       });
@@ -70,7 +70,7 @@ describe('genReviewInputStdout', () => {
           contextWindowPercent: 2.5,
         },
         cost: {
-          estimate: 0.025,
+          estimate: '$0.025',
         },
         logDirRelative: '.log/bhrain/review/2026-01-28T12-00-00-000Z',
       });

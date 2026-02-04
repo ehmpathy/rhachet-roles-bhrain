@@ -4,6 +4,7 @@ import {
   getAvailableBrainsInWords,
 } from 'rhachet/brains';
 
+import { genDefaultReviewOutputPath } from '@src/domain.operations/review/genDefaultReviewOutputPath';
 import { stepReview } from '@src/domain.operations/review/stepReview';
 
 /**
@@ -34,10 +35,11 @@ usage:
 options:
   --rules <globs>     glob pattern(s) for rule files (required)
   --paths <globs>     glob pattern(s) for target files
-  --diffs <range>     diff range: uptil-main, uptil-commit, uptil-staged
+  --diffs <range>     diff range: uptil-main, uptil-commit, uptil-staged (default: uptil-main)
+  --join <mode>       how to join --paths and --diffs: union or intersect (default: union)
   --refs <globs>      glob pattern(s) for reference files (can repeat)
-  --output <path>     output file path for the review (required)
-  --mode <mode>       review mode: push or pull (default: push)
+  --output <path>     output file path (default: .review/$branch/$isotime.output.md)
+  --focus <mode>      review focus: push or pull (default: push)
   --goal <goal>       review goal: exhaustive or representative (default: representative)
   --brain <slug>      brain to use for review (default: ${DEFAULT_BRAIN})
   --help              show this help message
@@ -81,9 +83,10 @@ const parseArgs = (
   rules: string;
   diffs: string | undefined;
   paths: string | undefined;
+  join: 'union' | 'intersect';
   refs: string[] | undefined;
-  output: string;
-  mode: 'push' | 'pull';
+  output: string | undefined;
+  focus: 'push' | 'pull';
   goal: 'exhaustive' | 'representative';
   brain: string;
 } => {
@@ -118,9 +121,10 @@ const parseArgs = (
     rules: options.rules as string,
     diffs: options.diffs as string | undefined,
     paths: options.paths as string | undefined,
+    join: (options.join as 'union' | 'intersect') ?? 'union',
     refs: options.refs as string[] | undefined,
-    output: options.output as string,
-    mode: (options.mode as 'push' | 'pull') ?? 'push',
+    output: options.output as string | undefined,
+    focus: (options.focus as 'push' | 'pull') ?? 'push',
     goal: (options.goal as 'exhaustive' | 'representative') ?? 'representative',
     brain: (options.brain as string) ?? DEFAULT_BRAIN,
   };
@@ -155,11 +159,10 @@ export const review = async (): Promise<void> => {
     console.error('run with --help for usage');
     process.exit(1);
   }
-  if (!options.output) {
-    console.error('error: --output is required');
-    console.error('run with --help for usage');
-    process.exit(1);
-  }
+
+  // resolve output path (generate default if not specified)
+  const cwd = process.cwd();
+  const outputResolved = options.output ?? genDefaultReviewOutputPath({ cwd });
 
   // create brain context via discovery (expensive)
   const brain = await genContextBrain({ choice: options.brain });
@@ -168,11 +171,12 @@ export const review = async (): Promise<void> => {
   await stepReview(
     {
       rules: options.rules,
-      diffs: options.diffs,
+      diffs: options.diffs ?? (!hasPaths ? 'uptil-main' : undefined),
       paths: options.paths,
+      join: options.join,
       refs: options.refs,
-      output: options.output,
-      mode: options.mode,
+      output: outputResolved,
+      focus: options.focus,
       goal: options.goal,
     },
     { brain },
