@@ -1,6 +1,6 @@
-## 🐾 driver
+## 🗿 driver
 
-the driver role enables autonomous navigation of thought routes — like paw prints along a trail, each stone marks progress through the journey.
+the driver role enables autonomous navigation of thought routes — like stone markers along a trail, each stone marks progress through the journey.
 
 ### purpose
 
