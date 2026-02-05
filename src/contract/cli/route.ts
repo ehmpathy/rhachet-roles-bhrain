@@ -103,6 +103,7 @@ usage:
 
 options:
   --stone <pattern>  pattern for stones to delete (required)
+                     @all = match all stones
                      auto-wraps with *...* if no glob chars present
   --route <path>     path to route directory (required)
   --mode <plan|apply> plan = preview (default), apply = execute deletion

@@ -24,7 +24,16 @@ describe('asStoneGlob', () => {
     });
   });
 
-  given('[case2] pattern with glob chars', () => {
+  given('[case2] @all alias', () => {
+    when('[t0] pattern is @all', () => {
+      then('resolves to wildcard *', () => {
+        const result = asStoneGlob({ pattern: '@all' });
+        expect(result).toEqual({ glob: '*', raw: '@all' });
+      });
+    });
+  });
+
+  given('[case3] pattern with glob chars', () => {
     when('[t0] pattern has * chars', () => {
       then('passes through as-is', () => {
         const result = asStoneGlob({ pattern: '*.research.*' });

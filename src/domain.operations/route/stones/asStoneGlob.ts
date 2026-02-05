@@ -2,12 +2,16 @@
  * .what = converts raw user input into a proper stone glob pattern
  * .why = enables natural word input without glob syntax knowledge
  *
- * .note = if pattern has no glob chars (* or ?), wraps with *...*
+ * .note = @all is an alias for * (avoids shell expansion issues)
+ *         if pattern has no glob chars (* or ?), wraps with *...*
  *         if pattern already has glob chars, passes through as-is
  */
 export const asStoneGlob = (input: {
   pattern: string;
 }): { glob: string; raw: string } => {
+  // handle @all alias for * (avoids shell glob expansion)
+  if (input.pattern === '@all') return { glob: '*', raw: '@all' };
+
   const hasGlobChars =
     input.pattern.includes('*') || input.pattern.includes('?');
   if (hasGlobChars) return { glob: input.pattern, raw: input.pattern };
