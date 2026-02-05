@@ -198,7 +198,90 @@ describe('computeNextStones', () => {
     });
   });
 
-  given('[case4] all stones passed', () => {
+  given('[case4] unguarded stones with output artifacts', () => {
+    const stones = [
+      new RouteStone({
+        name: '1.vision',
+        path: '/r/1.vision.src',
+        guard: null,
+      }),
+      new RouteStone({
+        name: '2.criteria',
+        path: '/r/2.criteria.src',
+        guard: null,
+      }),
+      new RouteStone({
+        name: '3.plan',
+        path: '/r/3.plan.src',
+        guard: null,
+      }),
+    ];
+
+    when('[t0] first stone has outputs and auto:unguarded passage', () => {
+      const artifacts = [
+        new RouteStoneDriveArtifacts({
+          stone: { path: '/r/1.vision.src' },
+          outputs: ['1.vision.md'],
+          passage: 'auto:unguarded',
+        }),
+        new RouteStoneDriveArtifacts({
+          stone: { path: '/r/2.criteria.src' },
+          outputs: [],
+          passage: null,
+        }),
+        new RouteStoneDriveArtifacts({
+          stone: { path: '/r/3.plan.src' },
+          outputs: [],
+          passage: null,
+        }),
+      ];
+
+      then('@next-one skips the completed stone', () => {
+        const result = computeNextStones({
+          stones,
+          artifacts,
+          query: '@next-one',
+        });
+        expect(result).toHaveLength(1);
+        expect(result[0]?.name).toEqual('2.criteria');
+      });
+    });
+
+    when(
+      '[t1] first two stones have outputs and auto:unguarded passage',
+      () => {
+        const artifacts = [
+          new RouteStoneDriveArtifacts({
+            stone: { path: '/r/1.vision.src' },
+            outputs: ['1.vision.md'],
+            passage: 'auto:unguarded',
+          }),
+          new RouteStoneDriveArtifacts({
+            stone: { path: '/r/2.criteria.src' },
+            outputs: ['2.criteria.md'],
+            passage: 'auto:unguarded',
+          }),
+          new RouteStoneDriveArtifacts({
+            stone: { path: '/r/3.plan.src' },
+            outputs: [],
+            passage: null,
+          }),
+        ];
+
+        then('@next-one returns third stone', () => {
+          const result = computeNextStones({
+            stones,
+            artifacts,
+            query: '@next-one',
+          });
+          expect(result).toHaveLength(1);
+          expect(result[0]?.name).toEqual('3.plan');
+        });
+      },
+    );
+  });
+
+  given('[case5] all stones passed', () => {
     const stones = [
       new RouteStone({
         name: '1.vision',
