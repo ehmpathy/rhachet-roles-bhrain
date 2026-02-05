@@ -1,0 +1,69 @@
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
+
+exports[`driver.route.del.acceptance given: [case1] default plan mode, stone with no artifact when: [t0] invoke without --mode flag then: stdout matches snapshot 1`] = `
+"🦉 hoo needs 'em
+
+🗿 route.stone.del --mode plan
+   ├─ pattern = *3.plan* (from "3.plan")
+   ├─ route   = .
+   ├─ stones
+   │  └─ ✓ 3.plan (delete)
+   └─ delete = 1
+
+rerun with --mode apply to execute
+"
+`;
+
+exports[`driver.route.del.acceptance given: [case2] apply mode, stone with no artifact when: [t0] invoke with --mode apply then: stdout matches snapshot 1`] = `
+"🦉 hoo needs 'em
+
+🗿 route.stone.del --mode apply
+   ├─ pattern = *3.plan* (from "3.plan")
+   ├─ route   = .
+   ├─ stones
+   │  └─ ✓ 3.plan (deleted)
+   └─ deleted = 1
+"
+`;
+
+exports[`driver.route.del.acceptance given: [case3] apply mode with artifact present when: [t0] delete is attempted on stone with artifact then: stdout matches snapshot 1`] = `
+"🦉 hoo needs 'em
+
+🗿 route.stone.del --mode apply
+   ├─ pattern = *1.vision* (from "1.vision")
+   ├─ route   = .
+   ├─ stones
+   │  └─ ⊘ 1.vision (retained, artifact found)
+   ├─ deleted = 0
+   └─ retained = 1 (artifact found)
+"
+`;
+
+exports[`driver.route.del.acceptance given: [case4] fuzzy pattern match via natural word when: [t0] invoke with plain word "plan" (no glob chars) then: stdout matches snapshot 1`] = `
+"🦉 hoo needs 'em
+
+🗿 route.stone.del --mode plan
+   ├─ pattern = *plan* (from "plan")
+   ├─ route   = .
+   ├─ stones
+   │  └─ ✓ 3.plan (delete)
+   └─ delete = 1
+
+rerun with --mode apply to execute
+"
+`;
+
+exports[`driver.route.del.acceptance given: [case5] glob pattern matches multiple stones with mixed outcomes when: [t0] delete with glob * in apply mode then: stdout matches snapshot 1`] = `
+"🦉 hoo needs 'em
+
+🗿 route.stone.del --mode apply
+   ├─ pattern = *
+   ├─ route   = .
+   ├─ stones
+   │  ├─ ⊘ 1.vision (retained, artifact found)
+   │  ├─ ✓ 2.criteria (deleted)
+   │  └─ ✓ 3.plan (deleted)
+   ├─ deleted = 2
+   └─ retained = 1 (artifact found)
+"
+`;
