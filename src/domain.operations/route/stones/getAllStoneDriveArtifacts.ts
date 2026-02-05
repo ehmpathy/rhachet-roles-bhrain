@@ -26,7 +26,7 @@ export const getAllStoneDriveArtifacts = async (input: {
       cwd: input.route,
     });
 
-    // check for passage marker
+    // check for explicit passage marker
     const passagePath = path.join(
       input.route,
       '.route',
@@ -37,7 +37,12 @@ export const getAllStoneDriveArtifacts = async (input: {
       await fs.access(passagePath);
       passage = passagePath;
     } catch {
-      // no passage marker
+      // no explicit passage marker
+    }
+
+    // auto-pass unguarded stones that have output artifacts
+    if (!passage && !stone.guard && outputs.length > 0) {
+      passage = 'auto:unguarded';
     }
 
     artifacts.push(
