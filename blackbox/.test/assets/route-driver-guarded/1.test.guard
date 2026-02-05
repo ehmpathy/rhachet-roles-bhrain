@@ -1,0 +1,6 @@
+artifacts:
+  - 1.test*.md
+reviews:
+  - echo "blockers: 0\nnitpicks: 1\ntest review content"
+judges:
+  - echo "passed: true\nreason: all checks passed"

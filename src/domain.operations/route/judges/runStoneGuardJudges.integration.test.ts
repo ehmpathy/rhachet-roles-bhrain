@@ -8,6 +8,8 @@ import { RouteStoneGuard } from '@src/domain.objects/Driver/RouteStoneGuard';
 
 import { runStoneGuardJudges } from './runStoneGuardJudges';
 
+const noopContext = { cliEmit: { onGuardProgress: () => {} } };
+
 describe('runStoneGuardJudges', () => {
   given('[case1] guard with echo judge command that passes', () => {
     const tempDir = path.join(os.tmpdir(), `test-judges-pass-${Date.now()}`);
@@ -33,13 +35,16 @@ describe('runStoneGuardJudges', () => {
 
     when('[t0] judges are executed', () => {
       then('creates judge artifact file', async () => {
-        const judges = await runStoneGuardJudges({
-          stone,
-          guard,
-          hash: 'testhash',
-          iteration: 1,
-          route: tempDir,
-        });
+        const judges = await runStoneGuardJudges(
+          {
+            stone,
+            guard,
+            hash: 'testhash',
+            iteration: 1,
+            route: tempDir,
+          },
+          noopContext,
+        );
         expect(judges).toHaveLength(1);
 
         // filename format: $stone.guard.judge.i$rp$j.$reviewHash.$judgeHash.j$index.md
@@ -50,24 +55,30 @@ describe('runStoneGuardJudges', () => {
       });
 
       then('parses passed status', async () => {
-        const judges = await runStoneGuardJudges({
-          stone,
-          guard,
-          hash: 'testhash',
-          iteration: 1,
-          route: tempDir,
-        });
+        const judges = await runStoneGuardJudges(
+          {
+            stone,
+            guard,
+            hash: 'testhash',
+            iteration: 1,
+            route: tempDir,
+          },
+          noopContext,
+        );
         expect(judges[0]?.passed).toEqual(true);
       });
 
       then('parses reason', async () => {
-        const judges = await runStoneGuardJudges({
-          stone,
-          guard,
-          hash: 'testhash',
-          iteration: 1,
-          route: tempDir,
-        });
+        const judges = await runStoneGuardJudges(
+          {
+            stone,
+            guard,
+            hash: 'testhash',
+            iteration: 1,
+            route: tempDir,
+          },
+          noopContext,
+        );
         expect(judges[0]?.reason).toEqual('all checks passed');
       });
     });
@@ -97,13 +108,16 @@ describe('runStoneGuardJudges', () => {
 
     when('[t0] judges are executed', () => {
       then('parses failed status', async () => {
-        const judges = await runStoneGuardJudges({
-          stone,
-          guard,
-          hash: 'failhash',
-          iteration: 1,
-          route: tempDir,
-        });
+        const judges = await runStoneGuardJudges(
+          {
+            stone,
+            guard,
+            hash: 'failhash',
+            iteration: 1,
+            route: tempDir,
+          },
+          noopContext,
+        );
         expect(judges[0]?.passed).toEqual(false);
         expect(judges[0]?.reason).toEqual('blockers found');
       });
@@ -137,13 +151,16 @@ describe('runStoneGuardJudges', () => {
 
     when('[t0] judges are executed', () => {
       then('creates artifact for each judge', async () => {
-        const judges = await runStoneGuardJudges({
-          stone,
-          guard,
-          hash: 'multihash',
-          iteration: 1,
-          route: tempDir,
-        });
+        const judges = await runStoneGuardJudges(
+          {
+            stone,
+            guard,
+            hash: 'multihash',
+            iteration: 1,
+            route: tempDir,
+          },
+          noopContext,
+        );
         expect(judges).toHaveLength(2);
         expect(judges[0]?.index).toEqual(1);
         expect(judges[0]?.passed).toEqual(true);

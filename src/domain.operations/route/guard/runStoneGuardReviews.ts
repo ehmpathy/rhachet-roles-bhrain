@@ -3,6 +3,7 @@ import * as fs from 'fs/promises';
 import * as path from 'path';
 import { promisify } from 'util';
 
+import type { ContextCliEmit } from '@src/domain.objects/Driver/ContextCliEmit';
 import type { RouteStone } from '@src/domain.objects/Driver/RouteStone';
 import type { RouteStoneGuard } from '@src/domain.objects/Driver/RouteStoneGuard';
 import { RouteStoneGuardReviewArtifact } from '@src/domain.objects/Driver/RouteStoneGuardReviewArtifact';
@@ -90,13 +91,16 @@ export const runOneStoneGuardReview = async (input: {
  * .what = executes guard review commands and produces review artifacts
  * .why = enables guard to validate stone artifacts via review tools
  */
-export const runStoneGuardReviews = async (input: {
-  stone: RouteStone;
-  guard: RouteStoneGuard;
-  hash: string;
-  iteration: number;
-  route: string;
-}): Promise<RouteStoneGuardReviewArtifact[]> => {
+export const runStoneGuardReviews = async (
+  input: {
+    stone: RouteStone;
+    guard: RouteStoneGuard;
+    hash: string;
+    iteration: number;
+    route: string;
+  },
+  context: ContextCliEmit,
+): Promise<RouteStoneGuardReviewArtifact[]> => {
   // get prior artifacts for this hash to determine which reviews already done
   // reviews are cached by hash: same artifact content = reuse prior review
   // this avoids redundant compute when artifact hasn't changed
@@ -118,6 +122,15 @@ export const runStoneGuardReviews = async (input: {
     // skip if already done
     if (doneIndices.has(index)) continue;
 
+    // emit inflight event before review
+    const beganAt = new Date().toISOString();
+    context.cliEmit.onGuardProgress({
+      stone: input.stone,
+      step: { phase: 'review', index: i },
+      inflight: { beganAt, endedAt: null },
+      outcome: null,
+    });
+
     const review = await runOneStoneGuardReview({
       stone: input.stone,
       reviewCmd,
@@ -126,6 +139,19 @@ export const runStoneGuardReviews = async (input: {
       iteration: input.iteration,
       route: input.route,
     });
+
+    // emit finished event after review
+    context.cliEmit.onGuardProgress({
+      stone: input.stone,
+      step: { phase: 'review', index: i },
+      inflight: { beganAt, endedAt: new Date().toISOString() },
+      outcome: {
+        path: review.path,
+        review: { blockers: review.blockers, nitpicks: review.nitpicks },
+        judge: null,
+      },
+    });
+
     reviews.push(review);
   }
 

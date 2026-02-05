@@ -8,6 +8,8 @@ import { RouteStoneGuard } from '@src/domain.objects/Driver/RouteStoneGuard';
 
 import { runStoneGuardReviews } from './runStoneGuardReviews';
 
+const noopContext = { cliEmit: { onGuardProgress: () => {} } };
+
 describe('runStoneGuardReviews', () => {
   given('[case1] guard with echo review command', () => {
     const tempDir = path.join(os.tmpdir(), `test-reviews-${Date.now()}`);
@@ -33,13 +35,16 @@ describe('runStoneGuardReviews', () => {
 
     when('[t0] reviews are executed', () => {
       then('creates review artifact file', async () => {
-        const reviews = await runStoneGuardReviews({
-          stone,
-          guard,
-          hash: 'testhash',
-          iteration: 1,
-          route: tempDir,
-        });
+        const reviews = await runStoneGuardReviews(
+          {
+            stone,
+            guard,
+            hash: 'testhash',
+            iteration: 1,
+            route: tempDir,
+          },
+          noopContext,
+        );
         expect(reviews).toHaveLength(1);
         expect(reviews[0]?.path).toContain('.guard.review.i1.testhash.r1.md');
         const stat = await fs.stat(reviews[0]?.path ?? '');
@@ -47,24 +52,30 @@ describe('runStoneGuardReviews', () => {
       });
 
       then('parses blockers from output', async () => {
-        const reviews = await runStoneGuardReviews({
-          stone,
-          guard,
-          hash: 'testhash',
-          iteration: 1,
-          route: tempDir,
-        });
+        const reviews = await runStoneGuardReviews(
+          {
+            stone,
+            guard,
+            hash: 'testhash',
+            iteration: 1,
+            route: tempDir,
+          },
+          noopContext,
+        );
         expect(reviews[0]?.blockers).toEqual(0);
       });
 
       then('parses nitpicks from output', async () => {
-        const reviews = await runStoneGuardReviews({
-          stone,
-          guard,
-          hash: 'testhash',
-          iteration: 1,
-          route: tempDir,
-        });
+        const reviews = await runStoneGuardReviews(
+          {
+            stone,
+            guard,
+            hash: 'testhash',
+            iteration: 1,
+            route: tempDir,
+          },
+          noopContext,
+        );
         expect(reviews[0]?.nitpicks).toEqual(1);
       });
     });
@@ -97,13 +108,16 @@ describe('runStoneGuardReviews', () => {
 
     when('[t0] reviews are executed', () => {
       then('creates artifact for each review', async () => {
-        const reviews = await runStoneGuardReviews({
-          stone,
-          guard,
-          hash: 'multihash',
-          iteration: 1,
-          route: tempDir,
-        });
+        const reviews = await runStoneGuardReviews(
+          {
+            stone,
+            guard,
+            hash: 'multihash',
+            iteration: 1,
+            route: tempDir,
+          },
+          noopContext,
+        );
         expect(reviews).toHaveLength(2);
         expect(reviews[0]?.index).toEqual(1);
         expect(reviews[1]?.index).toEqual(2);

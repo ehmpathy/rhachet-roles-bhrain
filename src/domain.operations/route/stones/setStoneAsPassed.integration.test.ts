@@ -5,6 +5,8 @@ import { given, then, when } from 'test-fns';
 
 import { setStoneAsPassed } from './setStoneAsPassed';
 
+const noopContext = { cliEmit: { onGuardProgress: () => {} } };
+
 describe('setStoneAsPassed.integration', () => {
   given('[case1] guard with echo review and judge commands', () => {
     const tempDir = path.join(
@@ -36,10 +38,13 @@ describe('setStoneAsPassed.integration', () => {
 
     when('[t0] stone is set as passed', () => {
       then('runs review command', async () => {
-        const result = await setStoneAsPassed({
-          stone: '1.test',
-          route: tempDir,
-        });
+        const result = await setStoneAsPassed(
+          {
+            stone: '1.test',
+            route: tempDir,
+          },
+          noopContext,
+        );
         expect(result.refs.reviews.length).toBeGreaterThan(0);
         // verify review file created
         const reviewPath = result.refs.reviews[0];
@@ -49,10 +54,13 @@ describe('setStoneAsPassed.integration', () => {
       });
 
       then('runs judge command', async () => {
-        const result = await setStoneAsPassed({
-          stone: '1.test',
-          route: tempDir,
-        });
+        const result = await setStoneAsPassed(
+          {
+            stone: '1.test',
+            route: tempDir,
+          },
+          noopContext,
+        );
         expect(result.refs.judges.length).toBeGreaterThan(0);
         // verify judge file created
         const judgePath = result.refs.judges[0];
@@ -62,10 +70,13 @@ describe('setStoneAsPassed.integration', () => {
       });
 
       then('marks stone as passed when judge passes', async () => {
-        const result = await setStoneAsPassed({
-          stone: '1.test',
-          route: tempDir,
-        });
+        const result = await setStoneAsPassed(
+          {
+            stone: '1.test',
+            route: tempDir,
+          },
+          noopContext,
+        );
         expect(result.passed).toBe(true);
       });
     });
@@ -99,18 +110,24 @@ describe('setStoneAsPassed.integration', () => {
 
     when('[t0] judge fails', () => {
       then('returns passed false', async () => {
-        const result = await setStoneAsPassed({
-          stone: '1.test',
-          route: tempDir,
-        });
+        const result = await setStoneAsPassed(
+          {
+            stone: '1.test',
+            route: tempDir,
+          },
+          noopContext,
+        );
         expect(result.passed).toBe(false);
       });
 
       then('includes rejection reason in emit', async () => {
-        const result = await setStoneAsPassed({
-          stone: '1.test',
-          route: tempDir,
-        });
+        const result = await setStoneAsPassed(
+          {
+            stone: '1.test',
+            route: tempDir,
+          },
+          noopContext,
+        );
         expect(result.emit?.stdout).toContain('blocked');
         expect(result.emit?.stdout).toContain('blockers found');
       });
@@ -147,20 +164,26 @@ describe('setStoneAsPassed.integration', () => {
     when('[t0] set passed is called twice with same artifact', () => {
       then('reuses prior review and judge files', async () => {
         // first call
-        const result1 = await setStoneAsPassed({
-          stone: '1.test',
-          route: tempDir,
-        });
+        const result1 = await setStoneAsPassed(
+          {
+            stone: '1.test',
+            route: tempDir,
+          },
+          noopContext,
+        );
         expect(result1.passed).toBe(true);
 
         // reset passage marker to test again
         await fs.rm(path.join(tempDir, '.route', '1.test.passed'));
 
         // second call - should reuse artifacts
-        const result2 = await setStoneAsPassed({
-          stone: '1.test',
-          route: tempDir,
-        });
+        const result2 = await setStoneAsPassed(
+          {
+            stone: '1.test',
+            route: tempDir,
+          },
+          noopContext,
+        );
         expect(result2.passed).toBe(true);
         // same paths means reused
         expect(result2.refs.reviews).toEqual(result1.refs.reviews);

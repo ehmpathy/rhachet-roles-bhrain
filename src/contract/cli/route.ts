@@ -2,6 +2,7 @@ import * as fs from 'fs/promises';
 import * as path from 'path';
 
 import { computeStoneReviewInputHash } from '@src/domain.operations/route/guard/computeStoneReviewInputHash';
+import { genContextCliEmit } from '@src/domain.operations/route/guard/genContextCliEmit';
 import { getOneStoneGuardApproval } from '@src/domain.operations/route/judges/getOneStoneGuardApproval';
 import { stepRouteStoneDel } from '@src/domain.operations/route/stepRouteStoneDel';
 import { stepRouteStoneGet } from '@src/domain.operations/route/stepRouteStoneGet';
@@ -209,12 +210,20 @@ export const routeStoneSet = async (): Promise<void> => {
     process.exit(1);
   }
 
+  // construct stderr progress context for live feedback
+  const progress = genContextCliEmit({ stderr: process.stderr });
+
   try {
-    const result = await stepRouteStoneSet({
-      stone: options.stone,
-      route: options.route,
-      as: options.as as 'passed' | 'approved',
-    });
+    const result = await stepRouteStoneSet(
+      {
+        stone: options.stone,
+        route: options.route,
+        as: options.as as 'passed' | 'approved',
+      },
+      progress.context,
+    );
+
+    progress.done();
 
     if (result.emit) {
       console.log(result.emit.stdout);
@@ -225,6 +234,7 @@ export const routeStoneSet = async (): Promise<void> => {
       process.exit(1);
     }
   } catch (error) {
+    progress.done();
     if (error instanceof Error) {
       console.error(`error: ${error.message}`);
     }

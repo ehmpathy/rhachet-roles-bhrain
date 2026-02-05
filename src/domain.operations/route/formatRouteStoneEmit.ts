@@ -1,3 +1,5 @@
+import { formatGuardTree } from './guard/formatGuardTree';
+
 /**
  * .what = formats route stone operation output with good vibes
  * .why = provides consistent, readable cli output for the driver role
@@ -26,6 +28,27 @@ type FormatInput =
       passage: 'allowed' | 'blocked';
       note?: string;
       reason?: string;
+      guard?: {
+        artifactFiles: string[];
+        reviews: Array<{
+          index: number;
+          cmd: string;
+          cached: boolean;
+          durationSec: number | null;
+          blockers: number;
+          nitpicks: number;
+          path: string;
+        }>;
+        judges: Array<{
+          index: number;
+          cmd: string;
+          cached: boolean;
+          durationSec: number | null;
+          passed: boolean;
+          reason: string | null;
+          path: string;
+        }>;
+      };
     }
   | {
       operation: 'route.stone.del';
@@ -73,6 +96,18 @@ export const formatRouteStoneEmit = (input: FormatInput): string => {
   }
 
   if (input.operation === 'route.stone.set') {
+    // delegate to formatGuardTree for full guard tree output
+    if (input.action === 'passed' && input.guard) {
+      const tree = formatGuardTree({
+        stone: input.stone,
+        passage: input.passage,
+        note: input.note ?? null,
+        reason: input.reason ?? null,
+        guard: input.guard,
+      });
+      return [header, '', tree].join('\n');
+    }
+
     lines.push(`🗿 ${input.operation}`);
     lines.push(`   ├─ stone = ${input.stone}`);
 
