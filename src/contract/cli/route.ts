@@ -102,8 +102,10 @@ usage:
   route.stone.del [options]
 
 options:
-  --stone <glob>     glob pattern for stones to delete (required)
+  --stone <pattern>  pattern for stones to delete (required)
+                     auto-wraps with *...* if no glob chars present
   --route <path>     path to route directory (required)
+  --mode <plan|apply> plan = preview (default), apply = execute deletion
   --help             show this help message
 `.trim(),
   );
@@ -252,10 +254,14 @@ export const routeStoneDel = async (): Promise<void> => {
     process.exit(1);
   }
 
+  // parse mode with default to plan
+  const mode = options.mode === 'apply' ? 'apply' : ('plan' as const);
+
   try {
     const result = await stepRouteStoneDel({
       stone: options.stone,
       route: options.route,
+      mode,
     });
 
     if (result.emit) {

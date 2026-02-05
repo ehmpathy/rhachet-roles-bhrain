@@ -8,7 +8,7 @@ import { stepRouteStoneDel } from './stepRouteStoneDel';
 const ASSETS_DIR = path.join(__dirname, '.test/assets');
 
 describe('stepRouteStoneDel.integration', () => {
-  given('[case1] route with guard files', () => {
+  given('[case1] route with guard files, apply mode', () => {
     const tempDir = path.join(os.tmpdir(), `test-step-del-guard-${Date.now()}`);
 
     beforeEach(async () => {
@@ -26,6 +26,7 @@ describe('stepRouteStoneDel.integration', () => {
         const result = await stepRouteStoneDel({
           stone: '1.vision',
           route: tempDir,
+          mode: 'apply',
         });
         expect(result.deleted).toContain('1.vision');
 
@@ -43,7 +44,7 @@ describe('stepRouteStoneDel.integration', () => {
     });
   });
 
-  given('[case2] route.parallel with partial completion', () => {
+  given('[case2] route.parallel with partial completion, apply mode', () => {
     const tempDir = path.join(
       os.tmpdir(),
       `test-step-del-partial-${Date.now()}`,
@@ -64,37 +65,43 @@ describe('stepRouteStoneDel.integration', () => {
       await fs.rm(tempDir, { recursive: true, force: true });
     });
 
-    when('[t0] delete 3.1.* stones', () => {
+    when('[t0] delete 3.1.* stones in apply mode', () => {
       then('deletes stones without artifacts', async () => {
         const result = await stepRouteStoneDel({
           stone: '3.1.*',
           route: tempDir,
+          mode: 'apply',
         });
         expect(result.deleted).toContain('3.1.research.prior');
         expect(result.deleted).toContain('3.1.research.template');
         expect(result.deleted).not.toContain('3.1.research.domain');
       });
 
-      then('skips stone with artifact', async () => {
+      then('retains stone with artifact', async () => {
         const result = await stepRouteStoneDel({
           stone: '3.1.*',
           route: tempDir,
+          mode: 'apply',
         });
-        expect(result.skipped).toContain('3.1.research.domain');
+        expect(result.retained).toContain('3.1.research.domain');
       });
 
-      then('emits summary with deleted and skipped', async () => {
+      then('emits treestruct with header', async () => {
         const result = await stepRouteStoneDel({
           stone: '3.1.*',
           route: tempDir,
+          mode: 'apply',
         });
-        expect(result.emit?.stdout).toContain('deleted:');
-        expect(result.emit?.stdout).toContain('skipped');
+        const stdout = result.emit?.stdout ?? '';
+        expect(stdout).toContain(`🦉 hoo needs 'em`);
+        expect(stdout).toContain('🗿 route.stone.del --mode apply');
+        expect(stdout).toContain('(deleted)');
+        expect(stdout).toContain('(retained, artifact found)');
       });
     });
   });
 
-  given('[case3] route.alternate with different extensions', () => {
+  given('[case3] route.alternate with different extensions, apply mode', () => {
     const tempDir = path.join(os.tmpdir(), `test-step-del-alt-${Date.now()}`);
 
     beforeEach(async () => {
@@ -114,6 +121,7 @@ describe('stepRouteStoneDel.integration', () => {
         const result = await stepRouteStoneDel({
           stone: '1.vision',
           route: tempDir,
+          mode: 'apply',
         });
         expect(result.deleted).toContain('1.vision');
 
@@ -135,6 +143,7 @@ describe('stepRouteStoneDel.integration', () => {
         const result = await stepRouteStoneDel({
           stone: '2.criteria',
           route: tempDir,
+          mode: 'apply',
         });
         expect(result.deleted).toContain('2.criteria');
 
@@ -148,6 +157,84 @@ describe('stepRouteStoneDel.integration', () => {
           .catch(() => false);
         expect(stoneExists).toBe(false);
         expect(guardExists).toBe(false);
+      });
+    });
+  });
+
+  given('[case4] plan mode on route.parallel with partial completion', () => {
+    const tempDir = path.join(
+      os.tmpdir(),
+      `test-step-del-plan-int-${Date.now()}`,
+    );
+
+    beforeEach(async () => {
+      await fs.cp(path.join(ASSETS_DIR, 'route.parallel'), tempDir, {
+        recursive: true,
+      });
+      // create artifact for one research stone
+      await fs.writeFile(
+        path.join(tempDir, '3.1.research.domain.md'),
+        '# Domain',
+      );
+    });
+
+    afterEach(async () => {
+      await fs.rm(tempDir, { recursive: true, force: true });
+    });
+
+    when('[t0] plan mode for 3.1.* stones', () => {
+      then('no disk changes', async () => {
+        await stepRouteStoneDel({
+          stone: '3.1.*',
+          route: tempDir,
+          mode: 'plan',
+        });
+
+        // all stone files should still exist
+        const domainExists = await fs
+          .access(path.join(tempDir, '3.1.research.domain.stone'))
+          .then(() => true)
+          .catch(() => false);
+        const priorExists = await fs
+          .access(path.join(tempDir, '3.1.research.prior.stone'))
+          .then(() => true)
+          .catch(() => false);
+        const templateExists = await fs
+          .access(path.join(tempDir, '3.1.research.template.stone'))
+          .then(() => true)
+          .catch(() => false);
+        expect(domainExists).toBe(true);
+        expect(priorExists).toBe(true);
+        expect(templateExists).toBe(true);
+      });
+
+      then('stones classified correctly', async () => {
+        const result = await stepRouteStoneDel({
+          stone: '3.1.*',
+          route: tempDir,
+          mode: 'plan',
+        });
+        const stoneByName = Object.fromEntries(
+          result.stones.map((s) => [s.name, s]),
+        );
+        expect(stoneByName['3.1.research.domain']?.status).toBe('retain');
+        expect(stoneByName['3.1.research.domain']?.reason).toBe(
+          'artifact found',
+        );
+        expect(stoneByName['3.1.research.prior']?.status).toBe('delete');
+        expect(stoneByName['3.1.research.template']?.status).toBe('delete');
+      });
+
+      then('emits treestruct with plan header', async () => {
+        const result = await stepRouteStoneDel({
+          stone: '3.1.*',
+          route: tempDir,
+          mode: 'plan',
+        });
+        const stdout = result.emit?.stdout ?? '';
+        expect(stdout).toContain(`🦉 hoo needs 'em`);
+        expect(stdout).toContain('🗿 route.stone.del --mode plan');
+        expect(stdout).toContain('rerun with --mode apply to execute');
       });
     });
   });
