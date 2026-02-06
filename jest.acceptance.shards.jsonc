@@ -41,6 +41,22 @@
       "patterns": [
         "blackbox/review.rules-only-default.acceptance.test.ts"
       ]
+    },
+    // driver route tests with subprocess overhead (no llm calls, but slow via npx rhachet invocations)
+    {
+      "patterns": [
+        "blackbox/driver.route.journey.acceptance.test.ts"
+      ]
+    },
+    {
+      "patterns": [
+        "blackbox/driver.route.set.acceptance.test.ts"
+      ]
+    },
+    {
+      "patterns": [
+        "blackbox/driver.route.del.acceptance.test.ts"
+      ]
     }
   ],
   // fast validation tests run together (no llm calls)
