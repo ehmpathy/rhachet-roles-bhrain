@@ -6,7 +6,20 @@ exports[`driver.route.escape-hatch.acceptance given: [escape-hatch] stone with p
 🗿 route.stone.set
    ├─ stone = 1.design
    ├─ passage = blocked
-   └─ reason = nitpicks exceed threshold (1 > 0)
+   ├─ reason = nitpicks exceed threshold (1 > 0)
+   └─ guard
+      ├─ artifacts
+      │   └─ 1.design.md
+      ├─ reviews
+      │   └─ r1: bash $route/.test/perma-fail-review.sh
+      │       ├─ finished 0.0s ✓
+      │       ├─ review: .route/1.design.guard.review.i1.65559ae9434108f50dfdaa2578ea1ae26911c2eb4305310d935c033f3effd39d.r1.md
+      │       └─ 1 blocker 🔴
+      └─ judges
+          └─ j1: npx rhx route.stone.judge --mechanism reviewed? --stone $stone --route $route --allow-blockers 0 --allow-nitpicks 0
+              ├─ finished 1.0s ✗
+              ├─ judge: .route/1.design.guard.judge.i1p1.65559ae9434108f50dfdaa2578ea1ae26911c2eb4305310d935c033f3effd39d.255cdd39ae4817ef0db6d47be1d22b1144ab1fb37301d30798ad0ceeca71bbb6.j1.md
+              └─ reason: nitpicks exceed threshold (1 > 0)
 "
 `;
 

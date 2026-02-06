@@ -15,7 +15,23 @@ exports[`driver.route.review-blocks-approval.acceptance given: [review-blocks] s
 🗿 route.stone.set
    ├─ stone = 1.plan
    ├─ passage = blocked
-   └─ reason = nitpicks exceed threshold (1 > 0)
+   ├─ reason = nitpicks exceed threshold (1 > 0)
+   └─ guard
+      ├─ artifacts
+      │   └─ 1.plan.md
+      ├─ reviews
+      │   └─ r1: bash $route/.test/mock-review.sh
+      │       ├─ finished 0.0s ✓
+      │       ├─ review: .route/1.plan.guard.review.i1.c3d6ee1f479468087087d8f656024f81baf4fffba6a35e5db2aa5965a7709737.r1.md
+      │       └─ 1 blocker 🔴
+      └─ judges
+          ├─ j1: npx rhx route.stone.judge --mechanism reviewed? --stone $stone --route $route --allow-blockers 0 --allow-nitpicks 0
+          │   ├─ finished 1.2s ✗
+          │   ├─ judge: .route/1.plan.guard.judge.i1p1.c3d6ee1f479468087087d8f656024f81baf4fffba6a35e5db2aa5965a7709737.508219af05e6d3fa961cbdfd0a566bb38beb87f21d5bcebe2f9e060b291affb6.j1.md
+          │   └─ reason: nitpicks exceed threshold (1 > 0)
+          └─ j2: npx rhx route.stone.judge --mechanism approved? --stone $stone --route $route
+              ├─ finished 1.3s ✓
+              └─ judge: .route/1.plan.guard.judge.i1p1.c3d6ee1f479468087087d8f656024f81baf4fffba6a35e5db2aa5965a7709737.508219af05e6d3fa961cbdfd0a566bb38beb87f21d5bcebe2f9e060b291affb6.j2.md
 "
 `;
 
@@ -24,6 +40,20 @@ exports[`driver.route.review-blocks-approval.acceptance given: [review-blocks] s
 
 🗿 route.stone.set
    ├─ stone = 1.plan
-   └─ passage = allowed
+   ├─ passage = allowed
+   └─ guard
+      ├─ artifacts
+      │   └─ 1.plan.md
+      ├─ reviews
+      │   └─ r1: bash $route/.test/mock-review.sh
+      │       ├─ finished 0.1s ✓
+      │       └─ review: .route/1.plan.guard.review.i1.382ca06127ae6240a87ae7686567369ac593a40586ef2f87f8e3f66a4e7607ec.r1.md
+      └─ judges
+          ├─ j1: npx rhx route.stone.judge --mechanism reviewed? --stone $stone --route $route --allow-blockers 0 --allow-nitpicks 0
+          │   ├─ finished 3.1s ✓
+          │   └─ judge: .route/1.plan.guard.judge.i1p1.382ca06127ae6240a87ae7686567369ac593a40586ef2f87f8e3f66a4e7607ec.8c2901d2ac2176623e035b5c93a2be0b69fb1c305a49488f1cd1745350c2fd2b.j1.md
+          └─ j2: npx rhx route.stone.judge --mechanism approved? --stone $stone --route $route
+              ├─ finished 1.1s ✓
+              └─ judge: .route/1.plan.guard.judge.i1p1.382ca06127ae6240a87ae7686567369ac593a40586ef2f87f8e3f66a4e7607ec.8c2901d2ac2176623e035b5c93a2be0b69fb1c305a49488f1cd1745350c2fd2b.j2.md
 "
 `;
