@@ -6,6 +6,7 @@
 import { reflect } from './reflect';
 import { review } from './review';
 import {
+  routeBind,
   routeStoneDel,
   routeStoneGet,
   routeStoneJudge,
@@ -16,6 +17,7 @@ export const cli = {
   review,
   reflect,
   route: {
+    bind: routeBind,
     stone: {
       get: routeStoneGet,
       set: routeStoneSet,

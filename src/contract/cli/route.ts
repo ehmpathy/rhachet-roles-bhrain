@@ -1,6 +1,10 @@
 import * as fs from 'fs/promises';
 import * as path from 'path';
 
+import { delRouteBind } from '@src/domain.operations/route/bind/delRouteBind';
+import { getRouteBind } from '@src/domain.operations/route/bind/getRouteBind';
+import { getRouteBindByBranch } from '@src/domain.operations/route/bind/getRouteBindByBranch';
+import { setRouteBind } from '@src/domain.operations/route/bind/setRouteBind';
 import { computeStoneReviewInputHash } from '@src/domain.operations/route/guard/computeStoneReviewInputHash';
 import { genContextCliEmit } from '@src/domain.operations/route/guard/genContextCliEmit';
 import { getOneStoneGuardApproval } from '@src/domain.operations/route/judges/getOneStoneGuardApproval';
@@ -140,6 +144,90 @@ options:
 };
 
 /**
+ * .what = prints help for route.bind
+ */
+const printBindHelp = (): void => {
+  console.log(
+    `
+route.bind - bind/query/remove a route for the current branch
+
+usage:
+  route.bind [options]
+
+options:
+  --route <path>     path to route directory to bind (sets the bind)
+  --get              query the current bind
+  --del              remove the current bind
+  --help             show this help message
+`.trim(),
+  );
+};
+
+/**
+ * .what = cli entrypoint for route.bind skill
+ * .why = enables bind/query/remove of a route to the current branch
+ */
+export const routeBind = async (): Promise<void> => {
+  const options = parseArgs(process.argv);
+
+  if (options.help) {
+    printBindHelp();
+    return;
+  }
+
+  try {
+    // dispatch: --get
+    if (options.get === 'true') {
+      const result = await getRouteBind();
+      if (result) {
+        console.log(`bound to: ${result.route}`);
+      } else {
+        console.log('not bound');
+      }
+      return;
+    }
+
+    // dispatch: --del
+    if (options.del === 'true') {
+      const result = await delRouteBind();
+      if (result.deleted) {
+        console.log('unbound route');
+      } else {
+        console.log('not bound (no bind to remove)');
+      }
+      return;
+    }
+
+    // dispatch: --route (set bind)
+    if (options.route) {
+      const result = await setRouteBind({ route: options.route });
+      console.log(`bound route: ${result.route}`);
+      return;
+    }
+
+    // no valid option
+    console.error('error: provide --route, --get, or --del');
+    console.error('run with --help for usage');
+    process.exit(1);
+  } catch (error) {
+    if (error instanceof Error) {
+      console.error(`error: ${error.message}`);
+    }
+    process.exit(1);
+  }
+};
+
+/**
+ * .what = resolves --route from bind when absent
+ * .why = enables auto-resolve fallback for all route.stone.* commands
+ */
+const resolveRouteFromBind = async (): Promise<string | null> => {
+  const bind = await getRouteBindByBranch({ branch: null });
+  if (bind) return bind.route;
+  return null;
+};
+
+/**
  * .what = cli entrypoint for route.stone.get skill
  * .why = enables shell invocation via package-level import
  */
@@ -157,9 +245,15 @@ export const routeStoneGet = async (): Promise<void> => {
     process.exit(1);
   }
   if (!options.route) {
-    console.error('error: --route is required');
-    console.error('run with --help for usage');
-    process.exit(1);
+    const routeFromBind = await resolveRouteFromBind();
+    if (routeFromBind) {
+      options.route = routeFromBind;
+    } else {
+      console.error(
+        'error: no route bound to this branch. use --route or route.bind',
+      );
+      process.exit(1);
+    }
   }
 
   try {
@@ -200,9 +294,15 @@ export const routeStoneSet = async (): Promise<void> => {
     process.exit(1);
   }
   if (!options.route) {
-    console.error('error: --route is required');
-    console.error('run with --help for usage');
-    process.exit(1);
+    const routeFromBind = await resolveRouteFromBind();
+    if (routeFromBind) {
+      options.route = routeFromBind;
+    } else {
+      console.error(
+        'error: no route bound to this branch. use --route or route.bind',
+      );
+      process.exit(1);
+    }
   }
   if (!options.as || (options.as !== 'passed' && options.as !== 'approved')) {
     console.error('error: --as must be "passed" or "approved"');
@@ -260,9 +360,15 @@ export const routeStoneDel = async (): Promise<void> => {
     process.exit(1);
   }
   if (!options.route) {
-    console.error('error: --route is required');
-    console.error('run with --help for usage');
-    process.exit(1);
+    const routeFromBind = await resolveRouteFromBind();
+    if (routeFromBind) {
+      options.route = routeFromBind;
+    } else {
+      console.error(
+        'error: no route bound to this branch. use --route or route.bind',
+      );
+      process.exit(1);
+    }
   }
 
   // parse mode with default to plan
@@ -309,9 +415,15 @@ export const routeStoneJudge = async (): Promise<void> => {
     process.exit(1);
   }
   if (!options.route) {
-    console.error('error: --route is required');
-    console.error('run with --help for usage');
-    process.exit(1);
+    const routeFromBind = await resolveRouteFromBind();
+    if (routeFromBind) {
+      options.route = routeFromBind;
+    } else {
+      console.error(
+        'error: no route bound to this branch. use --route or route.bind',
+      );
+      process.exit(1);
+    }
   }
 
   try {

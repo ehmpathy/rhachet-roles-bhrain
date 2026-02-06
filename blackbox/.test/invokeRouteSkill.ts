@@ -36,7 +36,12 @@ export const genTempDirForRhachet = (input: {
  * .why = enables blackbox acceptance tests against the skill as invoked by rhachet
  */
 export const invokeRouteSkill = async (input: {
-  skill: 'route.stone.get' | 'route.stone.set' | 'route.stone.del' | 'route.stone.judge';
+  skill:
+    | 'route.bind'
+    | 'route.stone.get'
+    | 'route.stone.set'
+    | 'route.stone.del'
+    | 'route.stone.judge';
   args: Record<string, string | boolean | undefined>;
   cwd: string;
 }): Promise<{ stdout: string; stderr: string; code: number }> => {
