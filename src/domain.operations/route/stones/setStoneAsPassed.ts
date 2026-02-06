@@ -1,6 +1,11 @@
 import { BadRequestError } from 'helpful-errors';
+import * as path from 'path';
 
+import type { ContextCliEmit } from '@src/domain.objects/Driver/ContextCliEmit';
+import type { GuardProgressEvent } from '@src/domain.objects/Driver/GuardProgressEvent';
 import type { RouteStone } from '@src/domain.objects/Driver/RouteStone';
+import type { RouteStoneGuardJudgeArtifact } from '@src/domain.objects/Driver/RouteStoneGuardJudgeArtifact';
+import type { RouteStoneGuardReviewArtifact } from '@src/domain.objects/Driver/RouteStoneGuardReviewArtifact';
 
 import { formatRouteStoneEmit } from '../formatRouteStoneEmit';
 import { computeStoneReviewInputHash } from '../guard/computeStoneReviewInputHash';
@@ -15,10 +20,13 @@ import { setStonePassage } from './setStonePassage';
  * .what = attempts to mark a stone as passed after guard validation
  * .why = enables robots to complete milestones with guard verification
  */
-export const setStoneAsPassed = async (input: {
-  stone: string;
-  route: string;
-}): Promise<{
+export const setStoneAsPassed = async (
+  input: {
+    stone: string;
+    route: string;
+  },
+  context: ContextCliEmit,
+): Promise<{
   passed: boolean;
   refs: { reviews: string[]; judges: string[] };
   emit: { stdout: string } | null;
@@ -122,29 +130,56 @@ export const setStoneAsPassed = async (input: {
   );
   const iteration = maxPriorIteration + 1;
 
+  // collect progress events for guard tree output
+  const events: GuardProgressEvent[] = [];
+  const collectContext: ContextCliEmit = {
+    cliEmit: {
+      onGuardProgress: (event) => {
+        events.push(event);
+        context.cliEmit.onGuardProgress(event);
+      },
+    },
+  };
+
   // run reviews (reuses prior artifacts internally, only runs incomplete ones)
   const reviewArtifacts =
     stoneMatched.guard.reviews.length > 0
-      ? await runStoneGuardReviews({
-          stone: stoneMatched,
-          guard: stoneMatched.guard,
-          hash,
-          iteration,
-          route: input.route,
-        })
+      ? await runStoneGuardReviews(
+          {
+            stone: stoneMatched,
+            guard: stoneMatched.guard,
+            hash,
+            iteration,
+            route: input.route,
+          },
+          collectContext,
+        )
       : [];
 
   // run judges (reuses prior artifacts internally, only runs incomplete ones)
   const judgeArtifacts =
     stoneMatched.guard.judges.length > 0
-      ? await runStoneGuardJudges({
-          stone: stoneMatched,
-          guard: stoneMatched.guard,
-          hash,
-          iteration,
-          route: input.route,
-        })
+      ? await runStoneGuardJudges(
+          {
+            stone: stoneMatched,
+            guard: stoneMatched.guard,
+            hash,
+            iteration,
+            route: input.route,
+          },
+          collectContext,
+        )
       : [];
+
+  // build guard data from artifacts and events for tree output
+  const guardData = computeGuardData({
+    stone: stoneMatched,
+    artifactFiles,
+    reviewArtifacts,
+    judgeArtifacts,
+    events,
+    route: input.route,
+  });
 
   // check if all judges pass
   const allJudgesPassed = judgeArtifacts.every((j) => j.passed);
@@ -163,6 +198,7 @@ export const setStoneAsPassed = async (input: {
           stone: stoneMatched.name,
           action: 'passed',
           passage: 'allowed',
+          guard: guardData,
         }),
       },
     };
@@ -187,9 +223,79 @@ export const setStoneAsPassed = async (input: {
         action: 'passed',
         passage: 'blocked',
         reason: reasons,
+        guard: guardData,
       }),
     },
   };
+};
+
+/**
+ * .what = builds guard data for tree output from artifacts and events
+ * .why = bridges review/judge artifacts with progress events for display
+ */
+const computeGuardData = (input: {
+  stone: RouteStone;
+  artifactFiles: string[];
+  reviewArtifacts: RouteStoneGuardReviewArtifact[];
+  judgeArtifacts: RouteStoneGuardJudgeArtifact[];
+  events: GuardProgressEvent[];
+  route: string;
+}) => {
+  // find events that completed (have endedAt)
+  const reviewEventsCompleted = input.events.filter(
+    (e) => e.step.phase === 'review' && e.inflight?.endedAt,
+  );
+  const judgeEventsCompleted = input.events.filter(
+    (e) => e.step.phase === 'judge' && e.inflight?.endedAt,
+  );
+
+  return {
+    artifactFiles: input.artifactFiles.map((f) => path.basename(f)),
+    reviews: input.reviewArtifacts.map((r) => {
+      // match event by step.index (0-based) to artifact.index (1-based)
+      const event = reviewEventsCompleted.find(
+        (e) => e.step.index === r.index - 1,
+      );
+      const durationSec = computeDuration(event);
+      return {
+        index: r.index,
+        cmd: input.stone.guard?.reviews[r.index - 1] ?? '',
+        cached: !event,
+        durationSec,
+        blockers: r.blockers,
+        nitpicks: r.nitpicks,
+        path: path.relative(input.route, r.path),
+      };
+    }),
+    judges: input.judgeArtifacts.map((j) => {
+      const event = judgeEventsCompleted.find(
+        (e) => e.step.index === j.index - 1,
+      );
+      const durationSec = computeDuration(event);
+      return {
+        index: j.index,
+        cmd: input.stone.guard?.judges[j.index - 1] ?? '',
+        cached: !event,
+        durationSec,
+        passed: j.passed,
+        reason: j.reason,
+        path: path.relative(input.route, j.path),
+      };
+    }),
+  };
+};
+
+/**
+ * .what = computes duration in seconds from a completed progress event
+ * .why = derives display duration from event timestamps
+ */
+const computeDuration = (
+  event: GuardProgressEvent | undefined,
+): number | null => {
+  if (!event?.inflight?.endedAt) return null;
+  const beganMs = new Date(event.inflight.beganAt).getTime();
+  const endedMs = new Date(event.inflight.endedAt).getTime();
+  return (endedMs - beganMs) / 1000;
 };
 
 /**

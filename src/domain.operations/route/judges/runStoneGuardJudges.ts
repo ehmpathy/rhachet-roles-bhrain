@@ -3,6 +3,7 @@ import * as fs from 'fs/promises';
 import * as path from 'path';
 import { promisify } from 'util';
 
+import type { ContextCliEmit } from '@src/domain.objects/Driver/ContextCliEmit';
 import type { RouteStone } from '@src/domain.objects/Driver/RouteStone';
 import type { RouteStoneGuard } from '@src/domain.objects/Driver/RouteStoneGuard';
 import { RouteStoneGuardJudgeArtifact } from '@src/domain.objects/Driver/RouteStoneGuardJudgeArtifact';
@@ -104,13 +105,16 @@ export const runOneStoneGuardJudge = async (input: {
  * - approval granted → review input hash unchanged → cached reviews → judge input hash changes → fresh judge
  * - review re-run after fix → review content changes → judge input hash changes → fresh judge
  */
-export const runStoneGuardJudges = async (input: {
-  stone: RouteStone;
-  guard: RouteStoneGuard;
-  hash: string;
-  iteration: number;
-  route: string;
-}): Promise<RouteStoneGuardJudgeArtifact[]> => {
+export const runStoneGuardJudges = async (
+  input: {
+    stone: RouteStone;
+    guard: RouteStoneGuard;
+    hash: string;
+    iteration: number;
+    route: string;
+  },
+  context: ContextCliEmit,
+): Promise<RouteStoneGuardJudgeArtifact[]> => {
   // compute judge input hash from reviews + approvals
   // this enables proper cache invalidation when:
   // - approval is granted (review input hash unchanged, but judge input hash changes)
@@ -199,7 +203,16 @@ export const runStoneGuardJudges = async (input: {
       continue;
     }
 
-    // otherwise run fresh with both hashes and iterations for full traceability
+    // emit inflight event before judge
+    const beganAt = new Date().toISOString();
+    context.cliEmit.onGuardProgress({
+      stone: input.stone,
+      step: { phase: 'judge', index: i },
+      inflight: { beganAt, endedAt: null },
+      outcome: null,
+    });
+
+    // run fresh with both hashes and iterations for full traceability
     const judge = await runOneStoneGuardJudge({
       stone: input.stone,
       judgeCmd,
@@ -210,6 +223,22 @@ export const runStoneGuardJudges = async (input: {
       judgeIteration,
       route: input.route,
     });
+
+    // emit finished event after judge
+    context.cliEmit.onGuardProgress({
+      stone: input.stone,
+      step: { phase: 'judge', index: i },
+      inflight: { beganAt, endedAt: new Date().toISOString() },
+      outcome: {
+        path: judge.path,
+        review: null,
+        judge: {
+          decision: judge.passed ? 'passed' : 'failed',
+          reason: judge.reason,
+        },
+      },
+    });
+
     judges.push(judge);
   }
 

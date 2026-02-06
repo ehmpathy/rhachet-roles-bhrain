@@ -7,6 +7,8 @@ import { setStoneAsPassed } from './setStoneAsPassed';
 
 const ASSETS_DIR = path.join(__dirname, '../.test/assets');
 
+const noopContext = { cliEmit: { onGuardProgress: () => {} } };
+
 describe('setStoneAsPassed', () => {
   given('[case1] route.simple fixture (no guards)', () => {
     const tempDir = path.join(
@@ -32,16 +34,22 @@ describe('setStoneAsPassed', () => {
 
     when('[t0] stone has artifact and no guard', () => {
       then('marks stone as passed', async () => {
-        const result = await setStoneAsPassed({
-          stone: '1.vision',
-          route: tempDir,
-        });
+        const result = await setStoneAsPassed(
+          {
+            stone: '1.vision',
+            route: tempDir,
+          },
+          noopContext,
+        );
         expect(result.passed).toBe(true);
         expect(result.emit?.stdout).toContain('passage = allowed (unguarded)');
       });
 
       then('creates passage marker', async () => {
-        await setStoneAsPassed({ stone: '1.vision', route: tempDir });
+        await setStoneAsPassed(
+          { stone: '1.vision', route: tempDir },
+          noopContext,
+        );
         const passageExists = await fs
           .access(path.join(tempDir, '.route', '1.vision.passed'))
           .then(() => true)
@@ -53,7 +61,10 @@ describe('setStoneAsPassed', () => {
     when('[t1] stone has no artifact', () => {
       then('throws artifact not found error', async () => {
         const error = await getError(
-          setStoneAsPassed({ stone: '2.criteria', route: tempDir }),
+          setStoneAsPassed(
+            { stone: '2.criteria', route: tempDir },
+            noopContext,
+          ),
         );
         expect(error).toBeInstanceOf(Error);
         expect(error.message).toContain('artifact not found');
@@ -63,7 +74,10 @@ describe('setStoneAsPassed', () => {
     when('[t2] stone does not exist', () => {
       then('throws stone not found error', async () => {
         const error = await getError(
-          setStoneAsPassed({ stone: 'nonexistent', route: tempDir }),
+          setStoneAsPassed(
+            { stone: 'nonexistent', route: tempDir },
+            noopContext,
+          ),
         );
         expect(error).toBeInstanceOf(Error);
         expect(error.message).toContain('stone not found');
@@ -91,7 +105,7 @@ describe('setStoneAsPassed', () => {
 
         try {
           const error = await getError(
-            setStoneAsPassed({ stone: '1.test', route: tempDir }),
+            setStoneAsPassed({ stone: '1.test', route: tempDir }, noopContext),
           );
           expect(error).toBeInstanceOf(Error);
           expect(error.message).toContain('guard has reviews but no judges');
@@ -124,10 +138,13 @@ describe('setStoneAsPassed', () => {
 
     when('[t0] stone is set as passed', () => {
       then('auto-passes with artifacts only message', async () => {
-        const result = await setStoneAsPassed({
-          stone: '1.test',
-          route: tempDir,
-        });
+        const result = await setStoneAsPassed(
+          {
+            stone: '1.test',
+            route: tempDir,
+          },
+          noopContext,
+        );
         expect(result.passed).toBe(true);
         expect(result.emit?.stdout).toContain('artifacts only');
       });

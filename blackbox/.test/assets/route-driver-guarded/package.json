@@ -1,0 +1,8 @@
+{
+  "name": "route-driver-guarded-fixture",
+  "private": true,
+  "description": "fixture for acceptance tests - guarded stones with reviews and judges",
+  "dependencies": {
+    "rhachet-roles-bhrain": "link:."
+  }
+}

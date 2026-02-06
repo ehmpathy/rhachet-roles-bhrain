@@ -7,6 +7,8 @@ import { stepRouteStoneSet } from './stepRouteStoneSet';
 
 const ASSETS_DIR = path.join(__dirname, '.test/assets');
 
+const noopContext = { cliEmit: { onGuardProgress: () => {} } };
+
 describe('stepRouteStoneSet.integration', () => {
   given('[case1] set stone as passed with guard execution', () => {
     const tempDir = path.join(os.tmpdir(), `test-step-set-guard-${Date.now()}`);
@@ -34,22 +36,28 @@ describe('stepRouteStoneSet.integration', () => {
 
     when('[t0] --as passed triggers guard', () => {
       then('executes reviews and judges', async () => {
-        const result = await stepRouteStoneSet({
-          stone: '1.test',
-          route: tempDir,
-          as: 'passed',
-        });
+        const result = await stepRouteStoneSet(
+          {
+            stone: '1.test',
+            route: tempDir,
+            as: 'passed',
+          },
+          noopContext,
+        );
         expect(result.passed).toBe(true);
         expect(result.refs?.reviews.length).toBeGreaterThan(0);
         expect(result.refs?.judges.length).toBeGreaterThan(0);
       });
 
       then('creates passage marker on success', async () => {
-        await stepRouteStoneSet({
-          stone: '1.test',
-          route: tempDir,
-          as: 'passed',
-        });
+        await stepRouteStoneSet(
+          {
+            stone: '1.test',
+            route: tempDir,
+            as: 'passed',
+          },
+          noopContext,
+        );
         const passageExists = await fs
           .access(path.join(tempDir, '.route', '1.test.passed'))
           .then(() => true)
@@ -79,11 +87,14 @@ describe('stepRouteStoneSet.integration', () => {
 
     when('[t0] approved then passed workflow', () => {
       then('approve creates marker', async () => {
-        const approveResult = await stepRouteStoneSet({
-          stone: '1.vision',
-          route: tempDir,
-          as: 'approved',
-        });
+        const approveResult = await stepRouteStoneSet(
+          {
+            stone: '1.vision',
+            route: tempDir,
+            as: 'approved',
+          },
+          noopContext,
+        );
         expect(approveResult.approved).toBe(true);
         const approvalExists = await fs
           .access(path.join(tempDir, '.route', '1.vision.approved'))
@@ -113,11 +124,14 @@ describe('stepRouteStoneSet.integration', () => {
 
     when('[t0] --as passed with no guard', () => {
       then('auto-passes immediately', async () => {
-        const result = await stepRouteStoneSet({
-          stone: '1.vision',
-          route: tempDir,
-          as: 'passed',
-        });
+        const result = await stepRouteStoneSet(
+          {
+            stone: '1.vision',
+            route: tempDir,
+            as: 'passed',
+          },
+          noopContext,
+        );
         expect(result.passed).toBe(true);
         expect(result.refs?.reviews).toEqual([]);
         expect(result.refs?.judges).toEqual([]);
