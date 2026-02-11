@@ -139,8 +139,8 @@ importers:
         specifier: 0.2.1
         version: 0.2.1(@types/node@22.15.21)(rhachet@1.31.1(zod@4.3.4))
       rhachet-roles-bhrain:
-        specifier: 0.10.0
-        version: 0.10.0(@types/node@22.15.21)
+        specifier: link:.
+        version: 'link:'
       rhachet-roles-bhuild:
         specifier: 0.7.0
         version: 0.7.0
@@ -3681,10 +3681,6 @@ packages:
     engines: {node: '>=8.0.0'}
     peerDependencies:
       rhachet: '>=1.21.4'
-
-  rhachet-roles-bhrain@0.10.0:
-    resolution: {integrity: sha512-XnKcwUcNB51mfdQUMjwY/S8FlU03bCb2X0vTouUuOJIp+GIQFggUNpLyIZaFO122wpWIY3/MAu/GqgvL59qhHg==}
-    engines: {node: '>=8.0.0'}
 
   rhachet-roles-bhrain@0.7.5:
     resolution: {integrity: sha512-O2zRlITFHmpTHbS3E5PUODlqAWWVt+xV44uu3P3RSLygcgFrG8q9NekLMJTMBsnL2ug4S8mNU7Ji7wCwjkX7qg==}
@@ -8556,33 +8552,6 @@ snapshots:
       rhachet-artifact-git: 1.1.5
       rhachet-roles-bhrain: 0.7.5(@types/node@22.15.21)
       type-fns: 1.21.0
-      zod: 4.3.4
-    transitivePeerDependencies:
-      - '@types/node'
-      - aws-crt
-      - ws
-
-  rhachet-roles-bhrain@0.10.0(@types/node@22.15.21):
-    dependencies:
-      '@anthropic-ai/sdk': 0.51.0
-      '@ehmpathy/as-command': 1.0.3
-      '@ehmpathy/uni-time': 1.8.1
-      as-procedure: 1.1.7
-      domain-objects: 0.31.9
-      fast-glob: 3.3.3
-      helpful-errors: 1.5.3
-      inquirer: 12.7.0(@types/node@22.15.21)
-      iso-price: 1.1.1(domain-objects@0.31.9)
-      iso-time: 1.11.1
-      npm: 11.7.0
-      openai: 5.8.2(zod@4.3.4)
-      rhachet-artifact: 1.0.0
-      rhachet-artifact-git: 1.1.0
-      serde-fns: 1.2.0
-      simple-in-memory-cache: 0.4.0
-      type-fns: 1.21.0
-      with-simple-caching: 0.14.2
-      wrapper-fns: 1.1.0
       zod: 4.3.4
     transitivePeerDependencies:
       - '@types/node'

@@ -6,6 +6,7 @@ import {
   execAsync,
   genTempDirForRhachet,
   invokeRouteSkill,
+  sanitizeTimeForSnapshot,
 } from './.test/invokeRouteSkill';
 
 const ASSETS_DIR = path.join(__dirname, '.test/assets/route-journey');
@@ -65,7 +66,7 @@ describe('driver.route.journey.acceptance', () => {
       });
 
       then('stdout has good vibes', () => {
-        expect(result.stdout).toMatchSnapshot();
+        expect(sanitizeTimeForSnapshot(result.stdout)).toMatchSnapshot();
       });
     });
 
@@ -92,7 +93,7 @@ describe('driver.route.journey.acceptance', () => {
       });
 
       then('stdout has good vibes', () => {
-        expect(result.stdout).toMatchSnapshot();
+        expect(sanitizeTimeForSnapshot(result.stdout)).toMatchSnapshot();
       });
     });
 
@@ -110,7 +111,7 @@ describe('driver.route.journey.acceptance', () => {
       });
 
       then('stdout has good vibes', () => {
-        expect(result.stdout).toMatchSnapshot();
+        expect(sanitizeTimeForSnapshot(result.stdout)).toMatchSnapshot();
       });
     });
 
@@ -140,7 +141,7 @@ describe('driver.route.journey.acceptance', () => {
       });
 
       then('stdout has good vibes', () => {
-        expect(result.stdout).toMatchSnapshot();
+        expect(sanitizeTimeForSnapshot(result.stdout)).toMatchSnapshot();
       });
     });
 
@@ -166,7 +167,7 @@ describe('driver.route.journey.acceptance', () => {
       });
 
       then('stdout has good vibes', () => {
-        expect(result.stdout).toMatchSnapshot();
+        expect(sanitizeTimeForSnapshot(result.stdout)).toMatchSnapshot();
       });
     });
 
@@ -189,7 +190,7 @@ describe('driver.route.journey.acceptance', () => {
       });
 
       then('stdout has good vibes', () => {
-        expect(result.stdout).toMatchSnapshot();
+        expect(sanitizeTimeForSnapshot(result.stdout)).toMatchSnapshot();
       });
     });
 
@@ -215,7 +216,7 @@ describe('driver.route.journey.acceptance', () => {
       });
 
       then('stdout has good vibes', () => {
-        expect(result.stdout).toMatchSnapshot();
+        expect(sanitizeTimeForSnapshot(result.stdout)).toMatchSnapshot();
       });
     });
 
@@ -241,7 +242,7 @@ describe('driver.route.journey.acceptance', () => {
       });
 
       then('stdout has good vibes', () => {
-        expect(result.stdout).toMatchSnapshot();
+        expect(sanitizeTimeForSnapshot(result.stdout)).toMatchSnapshot();
       });
     });
 
@@ -268,7 +269,7 @@ describe('driver.route.journey.acceptance', () => {
       });
 
       then('stdout has good vibes', () => {
-        expect(result.stdout).toMatchSnapshot();
+        expect(sanitizeTimeForSnapshot(result.stdout)).toMatchSnapshot();
       });
     });
 
@@ -297,7 +298,7 @@ describe('driver.route.journey.acceptance', () => {
       });
 
       then('stdout has good vibes', () => {
-        expect(result.stdout).toMatchSnapshot();
+        expect(sanitizeTimeForSnapshot(result.stdout)).toMatchSnapshot();
       });
     });
 
@@ -324,7 +325,7 @@ describe('driver.route.journey.acceptance', () => {
       });
 
       then('stdout has good vibes', () => {
-        expect(result.stdout).toMatchSnapshot();
+        expect(sanitizeTimeForSnapshot(result.stdout)).toMatchSnapshot();
       });
     });
 
@@ -350,7 +351,7 @@ describe('driver.route.journey.acceptance', () => {
       });
 
       then('stdout has good vibes', () => {
-        expect(result.stdout).toMatchSnapshot();
+        expect(sanitizeTimeForSnapshot(result.stdout)).toMatchSnapshot();
       });
     });
 
@@ -373,7 +374,7 @@ describe('driver.route.journey.acceptance', () => {
       });
 
       then('stdout has good vibes', () => {
-        expect(result.stdout).toMatchSnapshot();
+        expect(sanitizeTimeForSnapshot(result.stdout)).toMatchSnapshot();
       });
     });
 
@@ -399,7 +400,7 @@ describe('driver.route.journey.acceptance', () => {
       });
 
       then('stdout has good vibes', () => {
-        expect(result.stdout).toMatchSnapshot();
+        expect(sanitizeTimeForSnapshot(result.stdout)).toMatchSnapshot();
       });
     });
   });

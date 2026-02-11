@@ -6,6 +6,7 @@ import {
   execAsync,
   genTempDirForRhachet,
   invokeRouteSkill,
+  sanitizeTimeForSnapshot,
 } from './.test/invokeRouteSkill';
 
 const ASSETS_DIR = path.join(__dirname, '.test/assets/route-review-blocks');
@@ -71,7 +72,7 @@ describe('driver.route.review-blocks-approval.acceptance', () => {
       });
 
       then('stdout has good vibes', () => {
-        expect(result.stdout).toMatchSnapshot();
+        expect(sanitizeTimeForSnapshot(result.stdout)).toMatchSnapshot();
       });
     });
 
@@ -94,7 +95,7 @@ describe('driver.route.review-blocks-approval.acceptance', () => {
       });
 
       then('stdout has good vibes', () => {
-        expect(result.stdout).toMatchSnapshot();
+        expect(sanitizeTimeForSnapshot(result.stdout)).toMatchSnapshot();
       });
     });
 
@@ -136,7 +137,7 @@ describe('driver.route.review-blocks-approval.acceptance', () => {
       });
 
       then('stdout has good vibes', () => {
-        expect(result.stdout).toMatchSnapshot();
+        expect(sanitizeTimeForSnapshot(result.stdout)).toMatchSnapshot();
       });
     });
   });

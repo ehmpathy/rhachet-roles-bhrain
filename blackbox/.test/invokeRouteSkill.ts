@@ -27,6 +27,8 @@ export const genTempDirForRhachet = (input: {
       { at: 'node_modules/rhachet-roles-bhrain/dist', to: 'dist' },
       // symlink .bin for npx to find rhx/rhachet commands
       { at: 'node_modules/.bin', to: 'node_modules/.bin' },
+      // symlink rhachet so rhx entrypoint can find ../rhachet/bin/rhx
+      { at: 'node_modules/rhachet', to: 'node_modules/rhachet' },
     ],
   });
 };
@@ -35,6 +37,14 @@ export const genTempDirForRhachet = (input: {
  * .what = invokes a route skill via its shell entrypoint
  * .why = enables blackbox acceptance tests against the skill as invoked by rhachet
  */
+/**
+ * .what = sanitizes time values in cli output for stable snapshots
+ * .why = time values are machine-dependent and cause flaky snapshots
+ */
+export const sanitizeTimeForSnapshot = (output: string): string => {
+  return output.replace(/finished \d+\.\d+s/g, 'finished [TIME]');
+};
+
 export const invokeRouteSkill = async (input: {
   skill:
     | 'route.bind'

@@ -100,11 +100,11 @@ export const genContextCliEmit = (input: {
       if (event.step.phase === 'judge') {
         const mark = event.outcome.judge?.decision === 'passed' ? '✓' : '✗';
         seal(`  ${mark} ${label}: finished ${dur}s`);
-        if (
-          event.outcome.judge?.decision === 'failed' &&
-          event.outcome.judge?.reason
-        ) {
-          detail(`    reason: ${event.outcome.judge.reason}`);
+        // always show reason when judge fails; failfast = make failures observable
+        if (event.outcome.judge?.decision === 'failed') {
+          const reason =
+            event.outcome.judge.reason ?? 'no reason captured (command failed)';
+          detail(`    reason: ${reason}`);
         }
       }
     }

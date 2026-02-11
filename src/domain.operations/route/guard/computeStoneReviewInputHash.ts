@@ -1,5 +1,6 @@
 import * as crypto from 'crypto';
 import * as fs from 'fs/promises';
+import * as path from 'path';
 
 import type { RouteStone } from '@src/domain.objects/Driver/RouteStone';
 import { getAllStoneArtifacts } from '@src/domain.operations/route/stones/getAllStoneArtifacts';
@@ -18,14 +19,18 @@ export const computeStoneReviewInputHash = async (input: {
   // get all artifact files via the reusable operation
   const allFiles = await getAllStoneArtifacts(input);
 
-  // sort deterministically
+  // resolve route to absolute for consistent relative path computation
+  const routeAbs = path.resolve(input.route);
+
+  // sort deterministically by relative path
   const sortedFiles = [...allFiles].sort();
 
-  // read and concatenate content
+  // read and concatenate content with relative paths (for deterministic hashes)
   const contents: string[] = [];
   for (const filePath of sortedFiles) {
+    const relPath = path.relative(routeAbs, filePath);
     const content = await fs.readFile(filePath, 'utf-8');
-    contents.push(`--- ${filePath} ---\n${content}`);
+    contents.push(`--- ${relPath} ---\n${content}`);
   }
 
   // compute hash

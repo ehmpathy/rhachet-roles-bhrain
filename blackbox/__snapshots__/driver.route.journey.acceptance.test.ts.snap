@@ -21,8 +21,8 @@ exports[`driver.route.journey.acceptance given: [journey] weather api route when
       │   └─ 1.vision.md
       └─ judges
           └─ j1: npx rhx route.stone.judge --mechanism approved? --stone $stone --route $route
-              ├─ finished 4.0s ✗
-              ├─ judge: .route/1.vision.guard.judge.i1p1.7525735d15fd716269c6b3d20865b2bf9b78d50bb00f77f8a2dc45ea81439c34.11e7d74f17319fe506092e9da8d4e630021328b0b3b8ad4b0ecfb930d3fb548f.j1.md
+              ├─ finished [TIME] ✗
+              ├─ judge: .route/1.vision.guard.judge.i1p1.89a3b47031ddeb8c23151d71f85717bdb3adfed2e3c6224d3fe7c6d059cbf474.79af67282f021ee213087dfc0cd59b76b6fc4f2fa230045b79504ff592f988f9.j1.md
               └─ reason: wait for human approval
 "
 `;
@@ -47,8 +47,8 @@ exports[`driver.route.journey.acceptance given: [journey] weather api route when
       │   └─ 1.vision.md
       └─ judges
           └─ j1: npx rhx route.stone.judge --mechanism approved? --stone $stone --route $route
-              ├─ finished 4.6s ✓
-              └─ judge: .route/1.vision.guard.judge.i1p1.7525735d15fd716269c6b3d20865b2bf9b78d50bb00f77f8a2dc45ea81439c34.80e4472813095ac96ff4c4f3708ccfa7e02c6f633e9c7a7bd9413411098c0df3.j1.md
+              ├─ finished [TIME] ✓
+              └─ judge: .route/1.vision.guard.judge.i1p1.89a3b47031ddeb8c23151d71f85717bdb3adfed2e3c6224d3fe7c6d059cbf474.9344949395a1fec3b64b9504524cb70f309a6460bf804270ccc38491a2863eba.j1.md
 "
 `;
 
@@ -93,16 +93,16 @@ exports[`driver.route.journey.acceptance given: [journey] weather api route when
       │   └─ 3.blueprint.md
       ├─ reviews
       │   └─ r1: bash $route/.test/mock-review.sh
-      │       ├─ finished 0.1s ✓
-      │       ├─ review: .route/3.blueprint.guard.review.i1.8ecd0d72072cc797d86550b0d9b21e18a7b1564f5e7c839f49ffc7e521c93b8a.r1.md
+      │       ├─ finished [TIME] ✓
+      │       ├─ review: .route/3.blueprint.guard.review.i1.fd29f621e589e44175adf2201fa80bf72797235b994355101b4f50e08e4ebe44.r1.md
       │       └─ 1 blocker 🔴
       └─ judges
           ├─ j1: npx rhx route.stone.judge --mechanism reviewed? --stone $stone --route $route --allow-blockers 0 --allow-nitpicks 2
-          │   ├─ finished 6.5s ✓
-          │   └─ judge: .route/3.blueprint.guard.judge.i1p1.8ecd0d72072cc797d86550b0d9b21e18a7b1564f5e7c839f49ffc7e521c93b8a.2df3e90184709b7748a9c221c208bf1e25ee826056e1be564b0c255516bab30c.j1.md
+          │   ├─ finished [TIME] ✓
+          │   └─ judge: .route/3.blueprint.guard.judge.i1p1.fd29f621e589e44175adf2201fa80bf72797235b994355101b4f50e08e4ebe44.70d50298a823e186ed1641bc32518956a7362338a59b85ded9b26acfe38f816c.j1.md
           └─ j2: npx rhx route.stone.judge --mechanism approved? --stone $stone --route $route
-              ├─ finished 5.5s ✗
-              ├─ judge: .route/3.blueprint.guard.judge.i1p1.8ecd0d72072cc797d86550b0d9b21e18a7b1564f5e7c839f49ffc7e521c93b8a.2df3e90184709b7748a9c221c208bf1e25ee826056e1be564b0c255516bab30c.j2.md
+              ├─ finished [TIME] ✗
+              ├─ judge: .route/3.blueprint.guard.judge.i1p1.fd29f621e589e44175adf2201fa80bf72797235b994355101b4f50e08e4ebe44.70d50298a823e186ed1641bc32518956a7362338a59b85ded9b26acfe38f816c.j2.md
               └─ reason: wait for human approval
 "
 `;
@@ -119,15 +119,15 @@ exports[`driver.route.journey.acceptance given: [journey] weather api route when
       │   └─ 3.blueprint.md
       ├─ reviews
       │   └─ r1: bash $route/.test/mock-review.sh
-      │       ├─ finished 0.1s ✓
-      │       └─ review: .route/3.blueprint.guard.review.i1.3df6d050813c533ac2148cb04a8ed25eea2f43b208d2e436e5ecccc6b61f023b.r1.md
+      │       ├─ finished [TIME] ✓
+      │       └─ review: .route/3.blueprint.guard.review.i1.441f1d045e47e9db66175258c8aa6282047330f60fb8bc971f6bbb261b50396d.r1.md
       └─ judges
           ├─ j1: npx rhx route.stone.judge --mechanism reviewed? --stone $stone --route $route --allow-blockers 0 --allow-nitpicks 2
-          │   ├─ finished 4.2s ✓
-          │   └─ judge: .route/3.blueprint.guard.judge.i1p1.3df6d050813c533ac2148cb04a8ed25eea2f43b208d2e436e5ecccc6b61f023b.e42840b4205ed0d910900abce8187d61df28a40c542e5141aa4b8c93b470f845.j1.md
+          │   ├─ finished [TIME] ✓
+          │   └─ judge: .route/3.blueprint.guard.judge.i1p1.441f1d045e47e9db66175258c8aa6282047330f60fb8bc971f6bbb261b50396d.8c2383c1e6a872736e7a5b38c827720e4ffb1db6030f7a41353e24f45116b3ce.j1.md
           └─ j2: npx rhx route.stone.judge --mechanism approved? --stone $stone --route $route
-              ├─ finished 3.8s ✗
-              ├─ judge: .route/3.blueprint.guard.judge.i1p1.3df6d050813c533ac2148cb04a8ed25eea2f43b208d2e436e5ecccc6b61f023b.e42840b4205ed0d910900abce8187d61df28a40c542e5141aa4b8c93b470f845.j2.md
+              ├─ finished [TIME] ✗
+              ├─ judge: .route/3.blueprint.guard.judge.i1p1.441f1d045e47e9db66175258c8aa6282047330f60fb8bc971f6bbb261b50396d.8c2383c1e6a872736e7a5b38c827720e4ffb1db6030f7a41353e24f45116b3ce.j2.md
               └─ reason: wait for human approval
 "
 `;
@@ -146,11 +146,11 @@ exports[`driver.route.journey.acceptance given: [journey] weather api route when
       │       └─ · cached
       └─ judges
           ├─ j1: npx rhx route.stone.judge --mechanism reviewed? --stone $stone --route $route --allow-blockers 0 --allow-nitpicks 2
-          │   ├─ finished 5.3s ✓
-          │   └─ judge: .route/3.blueprint.guard.judge.i2p1.3df6d050813c533ac2148cb04a8ed25eea2f43b208d2e436e5ecccc6b61f023b.51cfdc26031a379c6fb64ece2d42361d72716de9bb766d39ddeacaf0e3b3667d.j1.md
+          │   ├─ finished [TIME] ✓
+          │   └─ judge: .route/3.blueprint.guard.judge.i2p1.441f1d045e47e9db66175258c8aa6282047330f60fb8bc971f6bbb261b50396d.6be4e9b4b71709128251d0798e6894ceb1b65ce4a6ee3aa0e749a87d42332591.j1.md
           └─ j2: npx rhx route.stone.judge --mechanism approved? --stone $stone --route $route
-              ├─ finished 4.6s ✓
-              └─ judge: .route/3.blueprint.guard.judge.i2p1.3df6d050813c533ac2148cb04a8ed25eea2f43b208d2e436e5ecccc6b61f023b.51cfdc26031a379c6fb64ece2d42361d72716de9bb766d39ddeacaf0e3b3667d.j2.md
+              ├─ finished [TIME] ✓
+              └─ judge: .route/3.blueprint.guard.judge.i2p1.441f1d045e47e9db66175258c8aa6282047330f60fb8bc971f6bbb261b50396d.6be4e9b4b71709128251d0798e6894ceb1b65ce4a6ee3aa0e749a87d42332591.j2.md
 "
 `;
 
@@ -174,12 +174,12 @@ exports[`driver.route.journey.acceptance given: [journey] weather api route when
       │   └─ weather.ts
       ├─ reviews
       │   └─ r1: bash $route/.test/mock-review.sh
-      │       ├─ finished 0.1s ✓
-      │       └─ review: .route/5.execute.guard.review.i1.e69c52d99a528437646594be8fe593ffc0603ffa31d30f8fc5675952f32062ce.r1.md
+      │       ├─ finished [TIME] ✓
+      │       └─ review: .route/5.execute.guard.review.i1.e5c031c5923de2dd7ebc77d84ac1c222cfdb9d3143fa8c0bc27ed9d821ce74e3.r1.md
       └─ judges
           └─ j1: npx rhx route.stone.judge --mechanism reviewed? --stone $stone --route $route --allow-blockers 0 --allow-nitpicks 1
-              ├─ finished 3.6s ✓
-              └─ judge: .route/5.execute.guard.judge.i1p1.e69c52d99a528437646594be8fe593ffc0603ffa31d30f8fc5675952f32062ce.d4596d30c742273e8a7055641e3f15cf459225eac062a8c096556e205920459a.j1.md
+              ├─ finished [TIME] ✓
+              └─ judge: .route/5.execute.guard.judge.i1p1.e5c031c5923de2dd7ebc77d84ac1c222cfdb9d3143fa8c0bc27ed9d821ce74e3.a98dc386edcd8c99a3d132b7fc4a6366285cfa5e55717c43387c45b76d6c0800.j1.md
 "
 `;
 
