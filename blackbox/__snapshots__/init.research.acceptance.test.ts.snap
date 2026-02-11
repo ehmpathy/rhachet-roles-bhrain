@@ -1,0 +1,38 @@
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
+
+exports[`init.research given: [case1] empty directory when: [t0] init.research --name consensus-algorithms then: cli output matches expected format 1`] = `
+"🦉 hooda thunk?
+   ├─ + 0.wish.md
+   ├─ + 1.1.probes.aim.internal.stone
+   ├─ + 1.2.probes.aim.external.stone
+   ├─ + 1.3.probes.aim.blend.stone
+   ├─ + 2.probes.emit.stone
+   ├─ + 3.1.probes.absorb.kernels.stone
+   ├─ + 3.2.probes.absorb.clusters.stone
+   ├─ + 3.3.probes.absorb.gaps.stone
+   ├─ + 4.probes.remit.stone
+   ├─ + 5.1.briefs.curate.blueprint.stone
+   └─ + 5.2.briefs.curate.execute.stone
+
+🔭 reach for the stars,
+   ├─ .research/v<DATE>.consensus-algorithms/0.wish.md
+   └─ tip: use --open to open the wish automatically
+
+✨ we'll lay the stage,
+   ├─ branch <BRANCH> <-> research v<DATE>.consensus-algorithms
+   └─ branch bound to research, to boot via hooks
+"
+`;
+
+exports[`init.research given: [case2] research already bound when: [t0] init.research with same name (idempotent) then: returns successfully without error 1`] = `
+"🦉 hooda thunk?
+
+🔭 reach for the stars,
+   ├─ .research/v<DATE>.consensus-algorithms/0.wish.md
+   └─ tip: use --open to open the wish automatically
+
+✨ we'll lay the stage,
+   ├─ branch <BRANCH> <-> research v<DATE>.consensus-algorithms
+   └─ branch bound to research, to boot via hooks
+"
+`;

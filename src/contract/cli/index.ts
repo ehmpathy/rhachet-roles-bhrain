@@ -4,6 +4,7 @@
  *        shell skills import from 'rhachet-roles-bhrain/cli' for fast startup
  */
 import { reflect } from './reflect';
+import { researchInit } from './research';
 import { review } from './review';
 import {
   routeBind,
@@ -24,5 +25,8 @@ export const cli = {
       del: routeStoneDel,
       judge: routeStoneJudge,
     },
+  },
+  research: {
+    init: researchInit,
   },
 };
