@@ -1,0 +1,1 @@
+../../../../src/domain.roles/librarian/briefs/define.brief-name-pattern.[article].md

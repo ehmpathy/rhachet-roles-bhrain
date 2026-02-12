@@ -65,10 +65,14 @@ export const runOneStoneGuardJudge = async (input: {
     }
   }
 
-  // write output if command produced stdout and no file was written
+  // write output if command produced output and no file was written
+  // failfast: include both stdout and stderr for observability
   const fileWritten = await isFilePresent(outputPath);
-  if (!fileWritten && stdout) {
-    await fs.writeFile(outputPath, stdout);
+  if (!fileWritten) {
+    const output = [stdout, stderr].filter(Boolean).join('\n\n---stderr---\n');
+    if (output) {
+      await fs.writeFile(outputPath, output);
+    }
   }
 
   // read the output file to parse metadata
@@ -76,8 +80,8 @@ export const runOneStoneGuardJudge = async (input: {
   try {
     content = await fs.readFile(outputPath, 'utf-8');
   } catch {
-    // file may not exist if command failed
-    content = stderr || 'judge command failed';
+    // file may not exist if command failed with no output
+    content = `judge command failed with exit code ${exitCode}\n\nstderr: ${stderr || '(none)'}\nstdout: ${stdout || '(none)'}`;
     await fs.writeFile(outputPath, content);
   }
 
@@ -278,10 +282,33 @@ const parsePassed = (content: string, exitCode: number): boolean => {
 /**
  * .what = parses reason from content
  * .why = extracts explanation for judge verdict
+ *
+ * failfast: returns first line of stderr if no explicit reason found
+ * this ensures errors like "command not found" are visible
  */
 const parseReason = (content: string): string | null => {
+  // check for explicit reason: line first
   const reasonMatch = content.match(/reason:\s*(.+)/i);
-  return reasonMatch?.[1] ? reasonMatch[1].trim() : null;
+  if (reasonMatch?.[1]) {
+    return reasonMatch[1].trim();
+  }
+
+  // check for stderr section and extract first meaningful line
+  const stderrMatch = content.match(/---stderr---\n(.+)/);
+  if (stderrMatch?.[1]) {
+    const firstLine = stderrMatch[1].split('\n')[0]?.trim();
+    if (firstLine) {
+      return `stderr: ${firstLine}`;
+    }
+  }
+
+  // check for "stderr:" prefix in error message
+  const stderrLineMatch = content.match(/stderr:\s*(.+)/i);
+  if (stderrLineMatch?.[1] && stderrLineMatch[1] !== '(none)') {
+    return stderrLineMatch[1].trim();
+  }
+
+  return null;
 };
 
 /**

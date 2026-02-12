@@ -8,12 +8,14 @@ export const enumFilesFromGlob = async (input: {
   glob: string;
   cwd: string;
   dot?: boolean;
+  ignore?: string[];
 }): Promise<string[]> => {
   const matches = await fg(input.glob, {
     cwd: input.cwd,
     absolute: true,
     onlyFiles: true,
     dot: input.dot,
+    ignore: input.ignore,
   });
   return matches;
 };

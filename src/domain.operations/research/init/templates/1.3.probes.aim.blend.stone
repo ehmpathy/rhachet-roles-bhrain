@@ -1,0 +1,11 @@
+read the internal probes in $RESEARCH_DIR_REL/1.1.probes.aim.internal.v1.i1.md
+read the external probes in $RESEARCH_DIR_REL/1.2.probes.aim.external.v1.i1.md
+
+blend the probes into one unified set:
+- dedupe overlaps
+- group by theme
+- order by priority (most critical gaps first)
+
+---
+
+emit to $RESEARCH_DIR_REL/1.3.probes.aim.blend.v1.i1.md

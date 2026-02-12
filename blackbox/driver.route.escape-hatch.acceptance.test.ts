@@ -6,6 +6,7 @@ import {
   execAsync,
   genTempDirForRhachet,
   invokeRouteSkill,
+  sanitizeTimeForSnapshot,
 } from './.test/invokeRouteSkill';
 
 const ASSETS_DIR = path.join(__dirname, '.test/assets/route-escape-hatch');
@@ -60,7 +61,7 @@ describe('driver.route.escape-hatch.acceptance', () => {
       });
 
       then('stdout has good vibes', () => {
-        expect(result.stdout).toMatchSnapshot();
+        expect(sanitizeTimeForSnapshot(result.stdout)).toMatchSnapshot();
       });
     });
 
@@ -104,7 +105,7 @@ describe('driver.route.escape-hatch.acceptance', () => {
       });
 
       then('stdout has good vibes', () => {
-        expect(result.stdout).toMatchSnapshot();
+        expect(sanitizeTimeForSnapshot(result.stdout)).toMatchSnapshot();
       });
     });
   });

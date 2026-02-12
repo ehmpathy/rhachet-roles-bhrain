@@ -25,3 +25,9 @@ roles:
       dirs: dist/domain.roles/driver/briefs
     skills:
       dirs: dist/domain.roles/driver/skills
+  - slug: librarian
+    readme: dist/domain.roles/librarian/.readme.[seed].md
+    briefs:
+      dirs: dist/domain.roles/librarian/briefs
+    skills:
+      dirs: dist/domain.roles/librarian/skills
