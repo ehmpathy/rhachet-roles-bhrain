@@ -40,8 +40,8 @@ describe('review.acceptance', () => {
           cwd: tempDir,
         });
 
-        // create an uncommitted change for uptil-main to pick up
-        // (when --paths is omitted, diffs defaults to uptil-main)
+        // create an uncommitted change for since-main to pick up
+        // (when --paths is omitted, diffs defaults to since-main)
         await fs.writeFile(
           path.join(tempDir, 'src/newchange.ts'),
           'export const x: any = 1; // should be reviewed',
@@ -132,7 +132,7 @@ describe('review.acceptance', () => {
   });
 
   given('[case2] user excludes .behavior via negation pattern', () => {
-    when('[t0] review with --diffs uptil-main --paths !.behavior/**', () => {
+    when('[t0] review with --diffs since-main --paths !.behavior/**', () => {
       const res = useThen('invoke review with exclusion pattern', async () => {
         // clone fixture to temp dir with git initialized
         const tempDir = genTempDirForRhachet({
@@ -164,7 +164,7 @@ describe('review.acceptance', () => {
         // invoke skill with diffs and exclusion pattern
         const cli = await invokeReviewSkill({
           rules: 'rules/*.md',
-          diffs: 'uptil-staged',
+          diffs: 'since-staged',
           paths: '!.behavior/**',
           cwd: tempDir,
         });

@@ -119,7 +119,7 @@ npx rhachet ask -r thinker -s articulate \
 review artifacts against rules via claude-code as the brain. designed to compose into review skills for other roles.
 
 ```sh
-npx rhachet run --repo bhrain --skill review --mode hard --diffs uptil-main --paths '!pnpm-lock.yaml'
+npx rhachet run --repo bhrain --skill review --mode hard --diffs since-main --paths '!pnpm-lock.yaml'
 ```
 
 produces

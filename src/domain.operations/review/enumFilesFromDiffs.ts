@@ -4,12 +4,12 @@ import { BadRequestError, UnexpectedCodePathError } from 'helpful-errors';
 import * as path from 'path';
 
 /**
- * .what = detects whether a git branch exists
- * .why = enables fallback from main to master for uptil-main range
+ * .what = detects whether a git ref exists
+ * .why = enables fallback from origin/main to main for since-main range
  */
-const branchExists = (input: { branch: string; cwd: string }): boolean => {
+const refExists = (input: { ref: string; cwd: string }): boolean => {
   try {
-    execSync(`git rev-parse --verify ${input.branch}`, {
+    execSync(`git rev-parse --verify ${input.ref}`, {
       cwd: input.cwd,
       encoding: 'utf-8',
       stdio: 'pipe',
@@ -21,19 +21,22 @@ const branchExists = (input: { branch: string; cwd: string }): boolean => {
 };
 
 /**
- * .what = resolves the main branch name (main or master)
- * .why = different git configs use different default branch names
+ * .what = resolves the main branch ref (origin/main, origin/master, main, or master)
+ * .why = prefer origin/ refs to compare against remote state, not local divergence
  */
 const resolveMainBranch = (input: { cwd: string }): string => {
-  // try main first (newer convention)
-  if (branchExists({ branch: 'main', cwd: input.cwd })) return 'main';
+  // prefer origin refs (remote branches) to avoid local divergence
+  if (refExists({ ref: 'origin/main', cwd: input.cwd })) return 'origin/main';
+  if (refExists({ ref: 'origin/master', cwd: input.cwd }))
+    return 'origin/master';
 
-  // fall back to master (older convention)
-  if (branchExists({ branch: 'master', cwd: input.cwd })) return 'master';
+  // fall back to local branches (for repos without remotes, e.g., test fixtures)
+  if (refExists({ ref: 'main', cwd: input.cwd })) return 'main';
+  if (refExists({ ref: 'master', cwd: input.cwd })) return 'master';
 
   // neither exists - user needs to create a main branch
   throw new BadRequestError(
-    'uptil-main requires a main or master branch to exist. create an initial commit on main first.',
+    'since-main requires a main or master branch to exist. create an initial commit on main first.',
     { cwd: input.cwd },
   );
 };
@@ -43,21 +46,22 @@ const resolveMainBranch = (input: { cwd: string }): string => {
  * .why = supports --diffs input for reviewing changed files
  */
 export const enumFilesFromDiffs = async (input: {
-  range: 'uptil-main' | 'uptil-commit' | 'uptil-staged';
+  range: 'since-main' | 'since-commit' | 'since-staged';
   cwd?: string;
 }): Promise<string[]> => {
   const cwd = input.cwd ?? process.cwd();
 
   // build git command based on range
   const gitCommand = (() => {
-    if (input.range === 'uptil-main') {
+    if (input.range === 'since-main') {
       const mainBranch = resolveMainBranch({ cwd });
-      return `git diff ${mainBranch} --name-only`;
+      // use merge-base to only show changes since branch point, not changes on main
+      return `git diff $(git merge-base ${mainBranch} HEAD) --name-only`;
     }
-    if (input.range === 'uptil-commit') {
+    if (input.range === 'since-commit') {
       return 'git diff HEAD --name-only';
     }
-    if (input.range === 'uptil-staged') {
+    if (input.range === 'since-staged') {
       return 'git diff --staged --name-only';
     }
     throw new UnexpectedCodePathError('invalid range', { range: input.range });

@@ -53,7 +53,7 @@ describe('writeInputArtifacts', () => {
           logDir: scene.logDir,
           args: {
             rules: 'rules/*.md',
-            diffs: 'uptil-main',
+            diffs: 'since-main',
             paths: ['src/*.ts', 'lib/*.ts'],
             output: '/tmp/review.md',
             focus: 'pull',
@@ -78,7 +78,7 @@ describe('writeInputArtifacts', () => {
 
         expect(argsJson.args).toEqual({
           rules: 'rules/*.md',
-          diffs: 'uptil-main',
+          diffs: 'since-main',
           paths: ['src/*.ts', 'lib/*.ts'],
           output: '/tmp/review.md',
           focus: 'pull',

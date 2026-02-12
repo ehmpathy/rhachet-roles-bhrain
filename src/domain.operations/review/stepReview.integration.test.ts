@@ -277,7 +277,7 @@ describe('stepReview', () => {
           cwd: scene.repoDir,
         });
         const diffFiles = await enumFilesFromDiffs({
-          range: 'uptil-staged',
+          range: 'since-staged',
           cwd: scene.repoDir,
         });
 
@@ -320,7 +320,7 @@ describe('stepReview', () => {
 
         // get all diff files first
         const allDiffFiles = await enumFilesFromDiffs({
-          range: 'uptil-staged',
+          range: 'since-staged',
           cwd: scene.repoDir,
         });
         expect(allDiffFiles).toContain('package-lock.json');
@@ -346,7 +346,7 @@ describe('stepReview', () => {
         );
 
         const allDiffFiles = await enumFilesFromDiffs({
-          range: 'uptil-staged',
+          range: 'since-staged',
           cwd: scene.repoDir,
         });
 
