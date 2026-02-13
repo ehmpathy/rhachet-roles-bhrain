@@ -147,6 +147,8 @@ export const stepReview = async (
     rules: string | string[];
     diffs?: string;
     paths?: string | string[];
+    pathsWith?: string | string[];
+    pathsWout?: string | string[];
     join?: 'union' | 'intersect';
     refs?: string | string[];
     output: string;
@@ -188,54 +190,109 @@ export const stepReview = async (
     : path.join(cwd, outputParent);
   await fs.mkdir(outputParentAbsolute, { recursive: true });
 
+  // create log directory early for debug (even if validation fails)
+  const logDir = path.join(cwd, '.log', 'bhrain', 'review', genLogTimestamp());
+  await fs.mkdir(logDir, { recursive: true });
+
   // enumerate rule files
   const ruleGlobs = Array.isArray(input.rules)
     ? input.rules
     : [input.rules].filter(Boolean);
   const ruleFiles = await enumFilesFromGlob({ glob: ruleGlobs, cwd });
-  if (ruleGlobs.length > 0 && ruleFiles.length === 0)
-    throw new BadRequestError(
-      '--rules glob was ineffective; matched zero files',
-      {
-        rules: input.rules,
-      },
+  if (ruleGlobs.length > 0 && ruleFiles.length === 0) {
+    console.error('');
+    console.error('🦉 woah there');
+    console.error('');
+    console.error('✋ --rules glob found nada');
+    console.error(
+      `   ├─ rules: ${Array.isArray(input.rules) ? input.rules.join(', ') : input.rules}`,
     );
+    console.error(
+      `   └─ hint: verify the glob pattern matches files in your repo`,
+    );
+    console.error('');
+    throw new BadRequestError('--rules glob was ineffective');
+  }
 
   // enumerate target files from diffs
-  const targetFilesFromDiffs = input.diffs
-    ? await enumFilesFromDiffs({
-        range: input.diffs as 'uptil-main' | 'uptil-commit' | 'uptil-staged',
-        cwd,
-      })
-    : [];
+  const targetFilesFromDiffs = await (async () => {
+    if (!input.diffs) return [];
+
+    // validate range is a known value
+    const validRanges = ['since-main', 'since-commit', 'since-staged'] as const;
+    if (!validRanges.includes(input.diffs as (typeof validRanges)[number])) {
+      console.error('');
+      console.error('🦉 woah there');
+      console.error('');
+      console.error('✋ --diffs range not recognized');
+      console.error(`   ├─ received: ${input.diffs}`);
+      console.error(`   ├─ expected: since-main | since-commit | since-staged`);
+      console.error(`   └─ hint: use one of the supported range values`);
+      console.error('');
+      throw new BadRequestError('validation failed');
+    }
+
+    return enumFilesFromDiffs({
+      range: input.diffs as 'since-main' | 'since-commit' | 'since-staged',
+      cwd,
+    });
+  })();
 
   // enumerate target files from paths
+  // build positive globs from --paths (legacy) and --paths-with
   const pathGlobs = input.paths
     ? Array.isArray(input.paths)
       ? input.paths
       : [input.paths]
     : [];
-  const positivePathGlobs = pathGlobs.filter((p) => !p.startsWith('!'));
-  const negativePathGlobs = pathGlobs
-    .filter((p) => p.startsWith('!'))
-    .map((p) => p.slice(1));
+  const pathsWithGlobs = input.pathsWith
+    ? Array.isArray(input.pathsWith)
+      ? input.pathsWith
+      : [input.pathsWith]
+    : [];
+  const positivePathGlobs = [
+    ...pathGlobs.filter((p) => !p.startsWith('!')),
+    ...pathsWithGlobs,
+  ];
+
+  // build negative globs from --paths (legacy ! prefix) and --paths-wout
+  const pathsWoutGlobs = input.pathsWout
+    ? Array.isArray(input.pathsWout)
+      ? input.pathsWout
+      : [input.pathsWout]
+    : [];
+  const negativePathGlobs = [
+    ...pathGlobs.filter((p) => p.startsWith('!')).map((p) => p.slice(1)),
+    ...pathsWoutGlobs,
+  ];
+
   const targetFilesFromPaths = await enumFilesFromGlob({
     glob: positivePathGlobs,
     cwd,
   });
 
   // join target files from diffs and paths (union or intersect), then apply exclusions
-  const joinMode = input.join ?? 'union';
+  const joinMode = input.join ?? 'intersect';
   const targetFilesJoined = (() => {
-    // if only one source has files, use that source
-    if (targetFilesFromDiffs.length === 0) return targetFilesFromPaths;
-    if (targetFilesFromPaths.length === 0) return targetFilesFromDiffs;
+    // check which sources were requested vs which have results
+    const diffsRequested = !!input.diffs;
+    const pathsRequested = positivePathGlobs.length > 0;
+    const hasDiffs = targetFilesFromDiffs.length > 0;
+    const hasPaths = targetFilesFromPaths.length > 0;
 
-    // both sources have files; apply join mode
+    // single source: join mode doesn't apply
+    if (!diffsRequested) return targetFilesFromPaths;
+    if (!pathsRequested) return targetFilesFromDiffs;
+
+    // both sources requested: apply join mode
     if (joinMode === 'intersect') {
       const pathsSet = new Set(targetFilesFromPaths);
       return targetFilesFromDiffs.filter((file) => pathsSet.has(file));
     }
+
+    // union: combine both sources
+    if (!hasDiffs) return targetFilesFromPaths;
+    if (!hasPaths) return targetFilesFromDiffs;
     return [...new Set([...targetFilesFromDiffs, ...targetFilesFromPaths])];
   })();
   const targetFiles = targetFilesJoined
@@ -253,14 +310,59 @@ export const stepReview = async (
     })
     .sort();
 
+  // write scope debug file before validation (enables debug even on failure)
+  const logDirRelative = path.relative(cwd, logDir);
+  await fs.writeFile(
+    path.join(logDir, 'input.scope.debug.json'),
+    JSON.stringify(
+      {
+        args: {
+          rules: input.rules,
+          diffs: input.diffs,
+          paths: input.paths,
+          pathsWith: input.pathsWith,
+          pathsWout: input.pathsWout,
+          join: input.join ?? 'intersect',
+          refs: input.refs,
+        },
+        resolution: {
+          ruleFiles,
+          targetFilesFromDiffs,
+          targetFilesFromPaths,
+          joinMode,
+          targetFilesJoined,
+          targetFiles,
+        },
+      },
+      null,
+      2,
+    ),
+    'utf-8',
+  );
+
   // validate combined scope is non-empty
-  if (targetFiles.length === 0)
-    throw new BadRequestError('combined scope resolves to zero files', {
-      diffs: input.diffs,
-      paths: input.paths,
-      diffsMatched: targetFilesFromDiffs.length,
-      pathsMatched: targetFilesFromPaths.length,
-    });
+  if (targetFiles.length === 0) {
+    console.error('');
+    console.error('🦉 woah there');
+    console.error('');
+    console.error('✋ combined scope resolves to zero files');
+    console.error(`   ├─ targets`);
+    console.error(`   │  ├─ diffs: ${input.diffs ?? '(none)'}`);
+    console.error(
+      `   │  │  └─ files: ${input.diffs ? targetFilesFromDiffs.length : 'null'}`,
+    );
+    console.error(`   │  ├─ paths: ${input.paths ?? '(none)'}`);
+    console.error(
+      `   │  │  └─ files: ${input.paths ? targetFilesFromPaths.length : 'null'}`,
+    );
+    console.error(`   │  └─ joined via ${input.join ?? 'intersect'}`);
+    console.error(`   │     └─ files: 0`);
+    console.error(
+      `   └─ hint: inspect ${logDirRelative}/input.scope.debug.json to see what was matched`,
+    );
+    console.error('');
+    throw new BadRequestError('combined scope resolves to zero files');
+  }
 
   // enumerate ref files (if specified)
   const refGlobs = input.refs
@@ -274,22 +376,22 @@ export const stepReview = async (
   // validate refs exist (fail-fast on zero matches when refs was specified)
   if (refGlobs.length > 0 && refFiles.length === 0) {
     const explicitPaths = refGlobs.filter((g) => !g.includes('*'));
+    console.error('');
+    console.error('🦉 woah there');
+    console.error('');
     if (explicitPaths.length > 0) {
-      throw new BadRequestError(`ref not found: ${explicitPaths[0]}`, {
-        refs: input.refs,
-      });
+      console.error(`✋ ref not found: ${explicitPaths[0]}`);
+    } else {
+      console.error(`✋ no refs matched glob: ${refGlobs.join(', ')}`);
     }
-    throw new BadRequestError(
-      `no refs matched glob: ${refGlobs.join(', ')}\n\nhint: verify the path exists and contains matched files`,
-      { globs: refGlobs },
+    console.error(
+      `   └─ hint: verify the path exists and contains matched files`,
     );
+    console.error('');
+    throw new BadRequestError('validation failed');
   }
 
-  // create log directory early for debug
-  const logDir = path.join(cwd, '.log', 'bhrain', 'review', genLogTimestamp());
-  await fs.mkdir(logDir, { recursive: true });
-
-  // write scope immediately for debug
+  // write final scope file (includes refFiles which were just resolved)
   await fs.writeFile(
     path.join(logDir, 'input.scope.json'),
     JSON.stringify({ ruleFiles, refFiles, targetFiles }, null, 2),
@@ -358,15 +460,81 @@ export const stepReview = async (
 
   // compile review prompt with brain's context window and cost spec
   const brainSpec = context.brain.brain.choice.spec;
-  const promptResult = compileReviewPrompt({
-    rules: ruleContents,
-    refs: refContents,
-    targets: targetContents,
-    focus: input.focus,
-    goal: input.goal,
-    contextWindowSize: brainSpec.gain.size.context.tokens,
-    costSpec: brainSpec.cost.cash,
-  });
+  const promptResult = (() => {
+    try {
+      return compileReviewPrompt({
+        rules: ruleContents,
+        refs: refContents,
+        targets: targetContents,
+        focus: input.focus,
+        goal: input.goal,
+        contextWindowSize: brainSpec.gain.size.context.tokens,
+        costSpec: brainSpec.cost.cash,
+      });
+    } catch (error) {
+      if (!(error instanceof BadRequestError)) throw error;
+      if (!error.message.includes('context window')) throw error;
+
+      // extract percentage and token count from error message
+      // format: "prompt exceeds 75% of context window (244.3% of 256000 tokens). reduce scope..."
+      const percentMatch = error.message.match(
+        /\((\d+\.?\d*)% of (\d+) tokens\)/,
+      );
+      const percent = percentMatch?.[1] ?? '?';
+      const tokens = percentMatch?.[2] ?? '?';
+
+      // format input for display
+      const rulesDisplay = Array.isArray(input.rules)
+        ? input.rules.join(', ')
+        : input.rules;
+      const diffsDisplay = input.diffs ?? '(none)';
+      const pathsDisplay = input.paths
+        ? Array.isArray(input.paths)
+          ? input.paths.join(', ')
+          : input.paths
+        : '(none)';
+
+      // format token counts
+      const formatTokens = (n: number) =>
+        n >= 1000 ? `${(n / 1000).toFixed(1)}k` : `${n}`;
+
+      // context exceeded: emit formatted stderr and exit
+      console.error('');
+      console.error('🦉 woah there');
+      console.error('');
+      console.error('✋ prompt exceeds 75% of context window');
+      console.error(`   ├─ ${percent}% of ${tokens} tokens`);
+      console.error(`   └─ reduce scope or use --focus pull`);
+      console.error('');
+      console.error('🔍 lets see why...');
+      console.error(`   ├─ rules: ${rulesDisplay}`);
+      console.error(`   │  ├─ files: ${ruleFiles.length}`);
+      console.error(`   │  └─ tokens: ${formatTokens(rulesBreakdown.total)}`);
+      console.error(`   ├─ targets`);
+      console.error(`   │  ├─ diffs: ${diffsDisplay}`);
+      console.error(
+        `   │  │  └─ files: ${input.diffs ? targetFilesFromDiffs.length : 'null'}`,
+      );
+      console.error(`   │  ├─ paths: ${pathsDisplay}`);
+      console.error(
+        `   │  │  └─ files: ${input.paths ? targetFilesFromPaths.length : 'null'}`,
+      );
+      console.error(`   │  └─ joined via ${joinMode}`);
+      console.error(`   │     ├─ files: ${targetFiles.length}`);
+      console.error(
+        `   │     └─ tokens: ${formatTokens(targetsBreakdown.total)}`,
+      );
+      console.error(`   └─ hint`);
+      console.error(
+        `      ├─ inspect ${logDirRelative}/input.scope.debug.json to see what was matched`,
+      );
+      console.error(
+        `      └─ inspect ${logDirRelative}/tokens.expected.md for token breakdown by file`,
+      );
+      console.error('');
+      throw new BadRequestError('validation failed');
+    }
+  })();
 
   // write metrics.expected immediately after files are read
   await fs.writeFile(
@@ -418,19 +586,49 @@ export const stepReview = async (
     prompt: promptResult.prompt,
   });
 
-  // emit header with brain info
-  const outputRelative = path.relative(cwd, input.output);
+  // emit header with brain info and scope filters
   console.log(
     genReviewHeaderStdout({
       brain: context.brain.brain.choice.slug,
       focus: input.focus,
-      output: outputRelative.startsWith('..') ? input.output : outputRelative,
+      scope: {
+        diffs: input.diffs ?? null,
+        pathsWith: positivePathGlobs.length > 0 ? positivePathGlobs : null,
+        pathsWout: negativePathGlobs.length > 0 ? negativePathGlobs : null,
+        join: joinMode,
+      },
     }),
   );
 
+  // compute top 3 dirs by token consumption for preview
+  const getTopDirsByTokens = (
+    breakdown: {
+      entries: Array<{
+        path: string;
+        type: string;
+        tokens: number;
+        tokensHuman: string;
+        tokensScale: string;
+      }>;
+    },
+    limit: number,
+  ): Array<{ path: string; tokensHuman: string; tokensScale: string }> => {
+    // filter to top-level directories only (no slashes in path)
+    const topLevelDirs = breakdown.entries.filter(
+      (e) => e.type === 'DIRECTORY' && !e.path.includes('/'),
+    );
+    return topLevelDirs
+      .sort((a, b) => b.tokens - a.tokens)
+      .slice(0, limit)
+      .map((e) => ({
+        path: e.path,
+        tokensHuman: e.tokensHuman,
+        tokensScale: e.tokensScale,
+      }));
+  };
+
   // emit metrics.expected before invocation
   console.log('');
-  const logDirRelative = path.relative(cwd, logDir);
   console.log(
     genReviewInputStdout({
       files: {
@@ -446,6 +644,10 @@ export const stepReview = async (
         estimate: promptResult.costEstimate,
       },
       logDirRelative,
+      preview: {
+        ruleDirs: getTopDirsByTokens(rulesBreakdown, 3),
+        targetDirs: getTopDirsByTokens(targetsBreakdown, 3),
+      },
     }),
   );
 

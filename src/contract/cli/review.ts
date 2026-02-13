@@ -1,3 +1,4 @@
+import { BadRequestError } from 'helpful-errors';
 import {
   genContextBrain,
   getAvailableBrains,
@@ -34,9 +35,11 @@ usage:
 
 options:
   --rules <globs>     glob pattern(s) for rule files (required)
-  --paths <globs>     glob pattern(s) for target files
-  --diffs <range>     diff range: uptil-main, uptil-commit, uptil-staged (default: uptil-main)
-  --join <mode>       how to join --paths and --diffs: union or intersect (default: union)
+  --paths <globs>     glob pattern(s) for target files (deprecated: use --paths-with)
+  --paths-with <globs>  include files that match these globs
+  --paths-wout <globs>  exclude files that match these globs
+  --diffs <range>     diff range: since-main, since-commit, since-staged (default: since-main)
+  --join <mode>       how to join --paths-with and --diffs: intersect or union (default: intersect)
   --refs <globs>      glob pattern(s) for reference files (can repeat)
   --output <path>     output file path (default: .review/$branch/$isotime.output.md)
   --focus <mode>      review focus: push or pull (default: push)
@@ -83,6 +86,8 @@ const parseArgs = (
   rules: string;
   diffs: string | undefined;
   paths: string | undefined;
+  pathsWith: string | undefined;
+  pathsWout: string | undefined;
   join: 'union' | 'intersect';
   refs: string[] | undefined;
   output: string | undefined;
@@ -121,7 +126,9 @@ const parseArgs = (
     rules: options.rules as string,
     diffs: options.diffs as string | undefined,
     paths: options.paths as string | undefined,
-    join: (options.join as 'union' | 'intersect') ?? 'union',
+    pathsWith: options['paths-with'] as string | undefined,
+    pathsWout: options['paths-wout'] as string | undefined,
+    join: (options.join as 'union' | 'intersect') ?? 'intersect',
     refs: options.refs as string[] | undefined,
     output: options.output as string | undefined,
     focus: (options.focus as 'push' | 'pull') ?? 'push',
@@ -152,9 +159,12 @@ export const review = async (): Promise<void> => {
   const hasPaths =
     options.paths &&
     (Array.isArray(options.paths) ? options.paths.length > 0 : true);
-  if (!hasRules && !hasDiffs && !hasPaths) {
+  const hasPathsWith =
+    options.pathsWith &&
+    (Array.isArray(options.pathsWith) ? options.pathsWith.length > 0 : true);
+  if (!hasRules && !hasDiffs && !hasPaths && !hasPathsWith) {
     console.error(
-      'error: must specify at least one of --rules, --diffs, or --paths',
+      'error: must specify at least one of --rules, --diffs, --paths, or --paths-with',
     );
     console.error('run with --help for usage');
     process.exit(1);
@@ -167,18 +177,29 @@ export const review = async (): Promise<void> => {
   // create brain context via discovery (expensive)
   const brain = await genContextBrain({ choice: options.brain });
 
-  // invoke stepReview
-  await stepReview(
-    {
-      rules: options.rules,
-      diffs: options.diffs ?? (!hasPaths ? 'uptil-main' : undefined),
-      paths: options.paths,
-      join: options.join,
-      refs: options.refs,
-      output: outputResolved,
-      focus: options.focus,
-      goal: options.goal,
-    },
-    { brain },
-  );
+  // invoke stepReview with validation error handler
+  try {
+    await stepReview(
+      {
+        rules: options.rules,
+        diffs:
+          options.diffs ??
+          (!hasPaths && !hasPathsWith ? 'since-main' : undefined),
+        paths: options.paths,
+        pathsWith: options.pathsWith,
+        pathsWout: options.pathsWout,
+        join: options.join,
+        refs: options.refs,
+        output: outputResolved,
+        focus: options.focus,
+        goal: options.goal,
+      },
+      { brain },
+    );
+  } catch (error) {
+    if (error instanceof BadRequestError) {
+      process.exit(2);
+    }
+    throw error;
+  }
 };

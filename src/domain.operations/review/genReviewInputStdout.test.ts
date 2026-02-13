@@ -19,6 +19,14 @@ describe('genReviewInputStdout', () => {
           estimate: '$0.0125',
         },
         logDirRelative: '.log/bhrain/review/2026-01-28T12-00-00-000Z',
+        preview: {
+          ruleDirs: [
+            { path: 'rules', tokensHuman: '1.2k', tokensScale: '48%' },
+          ],
+          targetDirs: [
+            { path: 'src', tokensHuman: '1.3k', tokensScale: '52%' },
+          ],
+        },
       });
 
       then('matches snapshot', () => {
@@ -47,6 +55,10 @@ describe('genReviewInputStdout', () => {
           estimate: '$0.0075',
         },
         logDirRelative: '.log/bhrain/review/2026-01-28T12-00-00-000Z',
+        preview: {
+          ruleDirs: [{ path: 'rules', tokensHuman: '800', tokensScale: '53%' }],
+          targetDirs: [{ path: 'src', tokensHuman: '700', tokensScale: '47%' }],
+        },
       });
 
       then('matches snapshot', () => {
@@ -73,6 +85,15 @@ describe('genReviewInputStdout', () => {
           estimate: '$0.025',
         },
         logDirRelative: '.log/bhrain/review/2026-01-28T12-00-00-000Z',
+        preview: {
+          ruleDirs: [
+            { path: 'rules', tokensHuman: '2.5k', tokensScale: '50%' },
+          ],
+          targetDirs: [
+            { path: 'src', tokensHuman: '1.5k', tokensScale: '30%' },
+            { path: 'lib', tokensHuman: '1.0k', tokensScale: '20%' },
+          ],
+        },
       });
 
       then('matches snapshot', () => {

@@ -14,7 +14,9 @@ exports[`genReviewInputStdout given: [case1] no refs provided when: [t0] generat
 🪵 logs
    ├─ scope: .log/bhrain/review/2026-01-28T12-00-00-000Z/input.scope.json
    ├─ metrics: .log/bhrain/review/2026-01-28T12-00-00-000Z/metrics.expected.json
-   └─ tokens: .log/bhrain/review/2026-01-28T12-00-00-000Z/tokens.expected.md"
+   └─ tokens: .log/bhrain/review/2026-01-28T12-00-00-000Z/tokens.expected.md
+      ├─ rules: rules (1.2k, 48%)
+      └─ targets: src (1.3k, 52%)"
 `;
 
 exports[`genReviewInputStdout given: [case2] refs provided when: [t0] single ref then: matches snapshot 1`] = `
@@ -32,7 +34,9 @@ exports[`genReviewInputStdout given: [case2] refs provided when: [t0] single ref
 🪵 logs
    ├─ scope: .log/bhrain/review/2026-01-28T12-00-00-000Z/input.scope.json
    ├─ metrics: .log/bhrain/review/2026-01-28T12-00-00-000Z/metrics.expected.json
-   └─ tokens: .log/bhrain/review/2026-01-28T12-00-00-000Z/tokens.expected.md"
+   └─ tokens: .log/bhrain/review/2026-01-28T12-00-00-000Z/tokens.expected.md
+      ├─ rules: rules (800, 53%)
+      └─ targets: src (700, 47%)"
 `;
 
 exports[`genReviewInputStdout given: [case2] refs provided when: [t1] multiple refs then: matches snapshot 1`] = `
@@ -50,5 +54,7 @@ exports[`genReviewInputStdout given: [case2] refs provided when: [t1] multiple r
 🪵 logs
    ├─ scope: .log/bhrain/review/2026-01-28T12-00-00-000Z/input.scope.json
    ├─ metrics: .log/bhrain/review/2026-01-28T12-00-00-000Z/metrics.expected.json
-   └─ tokens: .log/bhrain/review/2026-01-28T12-00-00-000Z/tokens.expected.md"
+   └─ tokens: .log/bhrain/review/2026-01-28T12-00-00-000Z/tokens.expected.md
+      ├─ rules: rules (2.5k, 50%)
+      └─ targets: src (1.5k, 30%), lib (1.0k, 20%)"
 `;

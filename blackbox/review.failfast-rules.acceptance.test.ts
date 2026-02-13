@@ -60,7 +60,7 @@ describe('review.failfast-rules.acceptance', () => {
       then('error message indicates rules glob was ineffective', async () => {
         const output = res.cli.stdout + res.cli.stderr;
         expect(output.toLowerCase()).toContain('rules');
-        expect(output.toLowerCase()).toContain('zero');
+        expect(output.toLowerCase()).toContain('nada');
       });
     });
   });
@@ -114,7 +114,7 @@ describe('review.failfast-rules.acceptance', () => {
       then('error message indicates rules matched zero files', async () => {
         const output = res.cli.stdout + res.cli.stderr;
         expect(output.toLowerCase()).toContain('rules');
-        expect(output.toLowerCase()).toContain('zero');
+        expect(output.toLowerCase()).toContain('nada');
       });
     });
   });

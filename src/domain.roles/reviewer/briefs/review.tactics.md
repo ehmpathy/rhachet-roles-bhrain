@@ -40,8 +40,8 @@ use `--push` when:
 ## scope combination
 
 targets are the union of `--diffs` and `--paths`:
-- `--diffs uptil-main`: files changed since main branch
-- `--diffs uptil-staged`: only staged files
+- `--diffs since-main`: files changed since main branch
+- `--diffs since-staged`: only staged files
 - `--paths`: explicit glob patterns
 
 ## artifacts

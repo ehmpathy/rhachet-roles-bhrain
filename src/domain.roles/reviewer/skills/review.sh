@@ -10,7 +10,7 @@
 #
 # options:
 #   --rules   glob pattern(s) for rule files (comma-separated)
-#   --diffs   diff range: uptil-main, uptil-commit, uptil-staged
+#   --diffs   diff range: since-main, since-commit, since-staged
 #   --paths   glob pattern(s) for target files (comma-separated)
 #   --output  output file path for the review
 #   --mode    review mode: soft (paths only) or hard (full content)
