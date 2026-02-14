@@ -1,12 +1,16 @@
 /**
  * .what = issue shape from brain response
- * .why = enables typed parsing of review issues
+ * .why = enables typed parse of review issues
  */
 interface ReviewIssue {
   rule: string;
   title: string;
   description: string;
   locations: string[];
+  snippet: {
+    lang: string;
+    code: string;
+  };
 }
 
 /**
@@ -44,7 +48,8 @@ export const formatReviewOutput = (input: {
       issue.locations.length > 0
         ? `\n\n**locations**:\n${issue.locations.map((loc) => `- ${loc}`).join('\n')}`
         : '';
-    return `${header}${rule}${locations}\n\n${issue.description}`;
+    const snippet = `\n\n**snippet**:\n\`\`\`${issue.snippet.lang}\n${issue.snippet.code}\n\`\`\``;
+    return `${header}${rule}${locations}\n\n${issue.description}${snippet}`;
   };
 
   // emit blockers

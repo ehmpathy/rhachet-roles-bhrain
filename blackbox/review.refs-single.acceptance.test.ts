@@ -72,7 +72,9 @@ describe('review.refs-single.acceptance', () => {
       then('review contains no blockers (refs section was accessible)', async () => {
         // the rule.verify-refs-included.md passes when refs are accessible
         // it only raises blocker if refs section is absent when expected
-        expect(res.review.toLowerCase()).not.toContain('blocker');
+        // check for actual blocker issues (# blocker.N:) not just the word in summary
+        expect(res.review.toLowerCase()).not.toMatch(/# blocker\.\d+:/);
+        expect(res.review).toContain('0 blockers');
       });
     });
   });

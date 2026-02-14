@@ -118,7 +118,11 @@ note: the "locations" array must contain ONLY paths from the <target> section. n
       "rule": "path/to/rule.md (which rule was violated)",
       "title": "short title for the issue",
       "description": "detailed multiline explanation of the issue.\\ninclude context about why this violates the rule.\\nbe specific about what needs to change.",
-      "locations": ["path/to/target-file.ts:42 (only target files, never rule files)"]
+      "locations": ["path/to/target-file.ts:42 (only target files, never rule files)"],
+      "snippet": {
+        "lang": "ts",
+        "code": "// the exact code from the target file that violates the rule\\nconst x = badPattern();"
+      }
     }
   ],
   "nitpicks": [
@@ -126,11 +130,17 @@ note: the "locations" array must contain ONLY paths from the <target> section. n
       "rule": "path/to/rule.md (which rule was violated)",
       "title": "short title for the issue",
       "description": "detailed multiline explanation of the issue.\\ninclude context about why this violates the rule.\\nbe specific about what needs to change.",
-      "locations": ["path/to/target-file.ts:42 (only target files, never rule files)"]
+      "locations": ["path/to/target-file.ts:42 (only target files, never rule files)"],
+      "snippet": {
+        "lang": "ts",
+        "code": "// the exact code from the target file that violates the rule\\nconst x = badPattern();"
+      }
     }
   ]
 }
 \`\`\`
+
+IMPORTANT: every violation MUST include a "snippet" with the actual code from the target file that violates the rule. copy the exact code so the reader can identify the violation.
 
 if no issues found, output: \`{"done": true, "blockers": [], "nitpicks": []}\`
 `;
