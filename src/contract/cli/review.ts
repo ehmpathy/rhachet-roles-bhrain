@@ -1,4 +1,6 @@
+import { execSync } from 'child_process';
 import { BadRequestError } from 'helpful-errors';
+import * as path from 'path';
 import {
   genContextBrain,
   getAvailableBrains,
@@ -45,6 +47,7 @@ options:
   --focus <mode>      review focus: push or pull (default: push)
   --goal <goal>       review goal: exhaustive or representative (default: representative)
   --brain <slug>      brain to use for review (default: ${DEFAULT_BRAIN})
+  --open <opener>     open output file with specified program (e.g., nvim, codium, code)
   --help              show this help message
 
 ${brainsInWords}
@@ -94,6 +97,7 @@ const parseArgs = (
   focus: 'push' | 'pull';
   goal: 'exhaustive' | 'representative';
   brain: string;
+  open: string | undefined;
 } => {
   // skip node binary (always argv[0]) and entrypoint path (only in normal mode)
   const skipCount = isNodeEvalMode(argv) ? 1 : 2;
@@ -134,6 +138,7 @@ const parseArgs = (
     focus: (options.focus as 'push' | 'pull') ?? 'push',
     goal: (options.goal as 'exhaustive' | 'representative') ?? 'representative',
     brain: (options.brain as string) ?? DEFAULT_BRAIN,
+    open: options.open as string | undefined,
   };
 };
 
@@ -196,6 +201,23 @@ export const review = async (): Promise<void> => {
       },
       { brain },
     );
+
+    // open output file if --open specified
+    if (options.open) {
+      const outputAbsolute = path.isAbsolute(outputResolved)
+        ? outputResolved
+        : path.join(cwd, outputResolved);
+      const command = `${options.open} "${outputAbsolute}"`;
+      try {
+        execSync(command, { stdio: 'inherit' });
+      } catch (error) {
+        if (error instanceof Error) {
+          console.error(
+            `opener '${options.open}' unavailable or failed: ${error.message}`,
+          );
+        }
+      }
+    }
   } catch (error) {
     if (error instanceof BadRequestError) {
       process.exit(2);

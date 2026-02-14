@@ -56,7 +56,9 @@ describe('review.acceptance', () => {
 
       then('review contains no blockers', async () => {
         // nitpicks are acceptable; only blockers are not
-        expect(res.review.toLowerCase()).not.toContain('blocker');
+        // check for actual blocker issues (# blocker.N:) not just the word in summary
+        expect(res.review.toLowerCase()).not.toMatch(/# blocker\.\d+:/);
+        expect(res.review).toContain('0 blockers');
       });
     });
   });

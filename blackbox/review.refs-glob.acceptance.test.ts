@@ -70,7 +70,9 @@ describe('review.refs-glob.acceptance', () => {
       });
 
       then('review contains no blockers (all refs accessible)', async () => {
-        expect(res.review.toLowerCase()).not.toContain('blocker');
+        // check for actual blocker issues (# blocker.N:) not just the word in summary
+        expect(res.review.toLowerCase()).not.toMatch(/# blocker\.\d+:/);
+        expect(res.review).toContain('0 blockers');
       });
     });
   });
@@ -137,7 +139,9 @@ describe('review.refs-glob.acceptance', () => {
       });
 
       then('review contains no blockers (all refs accessible)', async () => {
-        expect(res.review.toLowerCase()).not.toContain('blocker');
+        // check for actual blocker issues (# blocker.N:) not just the word in summary
+        expect(res.review.toLowerCase()).not.toMatch(/# blocker\.\d+:/);
+        expect(res.review).toContain('0 blockers');
       });
     });
   });

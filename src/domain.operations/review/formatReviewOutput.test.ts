@@ -2,6 +2,15 @@ import { given, then, when } from 'test-fns';
 
 import { formatReviewOutput } from './formatReviewOutput';
 
+/**
+ * .what = default snippet for test issues
+ * .why = snippets are required for all issues
+ */
+const exampleSnippet = {
+  lang: 'ts',
+  code: 'const x = bad();',
+};
+
 describe('formatReviewOutput', () => {
   given('[case1] brain response with issues', () => {
     when('[t0] response has blockers and nitpicks', () => {
@@ -16,6 +25,7 @@ describe('formatReviewOutput', () => {
                 description:
                   'console.log statements should not be in production code.\nThey can leak sensitive information and clutter logs.',
                 locations: ['src/invalid.ts:5'],
+                snippet: exampleSnippet,
               },
             ],
             nitpicks: [
@@ -25,6 +35,7 @@ describe('formatReviewOutput', () => {
                 description:
                   'Use const for variables that are never reassigned.\nThis makes intent clearer.',
                 locations: ['src/invalid.ts:10'],
+                snippet: exampleSnippet,
               },
             ],
           },
@@ -46,6 +57,7 @@ describe('formatReviewOutput', () => {
                 title: 'issue found',
                 description: 'detailed description of the issue',
                 locations: ['src/file.ts:42'],
+                snippet: exampleSnippet,
               },
             ],
             nitpicks: [],
@@ -66,6 +78,7 @@ describe('formatReviewOutput', () => {
                 title: 'blocker title',
                 description: 'blocker description',
                 locations: ['src/a.ts:1'],
+                snippet: exampleSnippet,
               },
             ],
             nitpicks: [
@@ -74,6 +87,7 @@ describe('formatReviewOutput', () => {
                 title: 'nitpick title',
                 description: 'nitpick description',
                 locations: ['src/b.ts:2'],
+                snippet: exampleSnippet,
               },
             ],
           },
@@ -95,18 +109,21 @@ describe('formatReviewOutput', () => {
                 title: 'first blocker',
                 description: 'first description',
                 locations: ['src/a.ts:1'],
+                snippet: exampleSnippet,
               },
               {
                 rule: 'rules/b.md',
                 title: 'second blocker',
                 description: 'second description',
                 locations: ['src/b.ts:2'],
+                snippet: exampleSnippet,
               },
               {
                 rule: 'rules/c.md',
                 title: 'third blocker',
                 description: 'third description',
                 locations: ['src/c.ts:3'],
+                snippet: exampleSnippet,
               },
             ],
             nitpicks: [],
@@ -133,6 +150,7 @@ describe('formatReviewOutput', () => {
                   'src/file2.ts:25',
                   'src/file3.ts:42',
                 ],
+                snippet: exampleSnippet,
               },
             ],
             nitpicks: [],
@@ -156,7 +174,34 @@ describe('formatReviewOutput', () => {
     });
   });
 
-  given('[case3] issue with empty locations', () => {
+  given('[case3] issue with snippet', () => {
+    when('[t0] issue includes code snippet', () => {
+      then('formats snippet as code block', () => {
+        const output = formatReviewOutput({
+          response: {
+            done: true,
+            blockers: [
+              {
+                rule: 'rules/no-positional-args.md',
+                title: 'positional arguments detected',
+                description: 'use named arguments for clarity',
+                locations: ['src/utils.ts:10'],
+                snippet: {
+                  lang: 'ts',
+                  code: 'const x = process(a, b, c);',
+                },
+              },
+            ],
+            nitpicks: [],
+          },
+        });
+        expect(output).toContain('**snippet**:');
+        expect(output).toContain('```ts\nconst x = process(a, b, c);');
+      });
+    });
+  });
+
+  given('[case4] issue with empty locations', () => {
     when('[t0] locations array is empty', () => {
       then('omits locations section', () => {
         const output = formatReviewOutput({
@@ -169,6 +214,7 @@ describe('formatReviewOutput', () => {
                 description:
                   'this is a general issue without specific locations',
                 locations: [],
+                snippet: exampleSnippet,
               },
             ],
             nitpicks: [],

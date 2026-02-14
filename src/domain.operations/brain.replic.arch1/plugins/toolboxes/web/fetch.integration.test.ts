@@ -8,21 +8,20 @@ import { executeToolFetch } from './fetch';
  */
 describe('executeToolFetch', () => {
   given('[case1] a valid URL', () => {
-    when('[t0] fetching example.com', () => {
+    when('[t0] fetch ahbode.com', () => {
       then('returns page content', async () => {
         const result = await executeToolFetch({
           callId: 'test-call-1',
-          args: { url: 'https://example.com' },
+          args: { url: 'https://ahbode.com' },
         });
 
         expect(result.success).toBe(true);
         expect(result.error).toBeNull();
-        expect(result.output).toContain('example.com');
-        expect(result.output).toContain('Example Domain');
+        expect(result.output).toContain('ahbode.com');
       });
     });
 
-    when('[t1] fetching httpbin JSON endpoint', () => {
+    when('[t1] fetch httpbin JSON endpoint', () => {
       then('returns JSON content', async () => {
         const result = await executeToolFetch({
           callId: 'test-call-2',
@@ -39,11 +38,11 @@ describe('executeToolFetch', () => {
   });
 
   given('[case2] content length limits', () => {
-    when('[t0] fetching with max_length', () => {
+    when('[t0] fetch with max_length', () => {
       then('truncates content appropriately', async () => {
         const result = await executeToolFetch({
           callId: 'test-call-3',
-          args: { url: 'https://example.com', max_length: 100 },
+          args: { url: 'https://ahbode.com', max_length: 100 },
         });
 
         expect(result.success).toBe(true);
@@ -55,7 +54,7 @@ describe('executeToolFetch', () => {
   });
 
   given('[case3] an invalid URL', () => {
-    when('[t0] fetching a non-existent domain', () => {
+    when('[t0] fetch a non-existent domain', () => {
       then('returns error gracefully', async () => {
         const result = await executeToolFetch({
           callId: 'test-call-4',
@@ -67,11 +66,11 @@ describe('executeToolFetch', () => {
       });
     });
 
-    when('[t1] fetching a 404 page', () => {
+    when('[t1] fetch a 404 page', () => {
       then('returns error with status code', async () => {
         const result = await executeToolFetch({
           callId: 'test-call-5',
-          args: { url: 'https://example.com/this-page-does-not-exist-404' },
+          args: { url: 'https://httpbin.org/status/404' },
         });
 
         expect(result.success).toBe(false);
@@ -81,7 +80,7 @@ describe('executeToolFetch', () => {
   });
 
   given('[case4] HTML content extraction', () => {
-    when('[t0] fetching wikipedia sea turtle page', () => {
+    when('[t0] fetch wikipedia sea turtle page', () => {
       then('strips scripts and extracts text about sea turtles', async () => {
         const result = await executeToolFetch({
           callId: 'test-call-6',
@@ -97,7 +96,7 @@ describe('executeToolFetch', () => {
       });
     });
 
-    when('[t1] fetching NOAA ocean page', () => {
+    when('[t1] fetch NOAA ocean page', () => {
       then('extracts ocean conservation content', async () => {
         const result = await executeToolFetch({
           callId: 'test-call-7',

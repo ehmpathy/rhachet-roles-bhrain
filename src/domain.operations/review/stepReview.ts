@@ -21,6 +21,15 @@ import { writeInputArtifacts } from '@src/domain.operations/review/writeInputArt
 import { writeOutputArtifacts } from '@src/domain.operations/review/writeOutputArtifacts';
 
 /**
+ * .what = schema for review issue snippet
+ * .why = enables code examples in review output
+ */
+const schemaOfReviewSnippet = z.object({
+  lang: z.string(),
+  code: z.string(),
+});
+
+/**
  * .what = schema for review issue
  * .why = enables structured output from brain.choice.ask
  */
@@ -29,6 +38,7 @@ const schemaOfReviewIssue = z.object({
   title: z.string(),
   description: z.string(),
   locations: z.array(z.string()),
+  snippet: schemaOfReviewSnippet,
 });
 
 /**
@@ -716,7 +726,29 @@ export const stepReview = async (
   const outputAbsolute = path.isAbsolute(input.output)
     ? input.output
     : path.join(cwd, input.output);
-  await fs.writeFile(outputAbsolute, formattedReview, 'utf-8');
+  const reviewRelativePath = path.relative(cwd, outputAbsolute);
+  const blockersCount = reviewIssues.output.blockers.length;
+  const nitpicksCount = reviewIssues.output.nitpicks.length;
+
+  // generate output header with summary info
+  const outputHeader = (() => {
+    const summaryIcon =
+      blockersCount > 0 ? '🦉 needs your talons' : '✨ all clear';
+    const lines = [
+      summaryIcon,
+      `   ├─ logs: ${logDirRelative}`,
+      `   ├─ review: ${reviewRelativePath}`,
+      `   └─ summary`,
+      `      ├─ ${blockersCount} blockers${blockersCount > 0 ? ' 🔴' : ''}`,
+      `      └─ ${nitpicksCount} nitpicks${nitpicksCount > 0 ? ' 🟠' : ''}`,
+      '',
+      '---',
+      '',
+    ];
+    return lines.join('\n');
+  })();
+
+  await fs.writeFile(outputAbsolute, outputHeader + formattedReview, 'utf-8');
 
   // emit metrics.realized after invocation
   const totalTokens =
@@ -724,7 +756,6 @@ export const stepReview = async (
     realizedTokens.inputCacheCreation +
     realizedTokens.inputCacheRead +
     realizedTokens.output;
-  const reviewRelative = path.relative(cwd, outputAbsolute);
   console.log(
     genReviewOutputStdout({
       tokens: {
@@ -742,13 +773,13 @@ export const stepReview = async (
       },
       paths: {
         logsRelative: logDirRelative,
-        reviewRelative: reviewRelative.startsWith('..')
+        reviewRelative: reviewRelativePath.startsWith('..')
           ? outputAbsolute
-          : reviewRelative,
+          : reviewRelativePath,
       },
       summary: {
-        blockersCount: reviewIssues.output.blockers.length,
-        nitpicksCount: reviewIssues.output.nitpicks.length,
+        blockersCount,
+        nitpicksCount,
       },
     }),
   );
