@@ -1,0 +1,8 @@
+artifacts:
+  - 2.research*.md
+
+reviews:
+  - rhx review --rules .agent/**/rules/*.md --paths 2.research*.md
+
+judges:
+  - rhx route.stone.judge --mechanism reviewed? --stone $stone --route $route

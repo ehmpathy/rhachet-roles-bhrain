@@ -150,4 +150,87 @@ describe('setStoneAsPassed', () => {
       });
     });
   });
+
+  given('[case4] guard with self-reviews', () => {
+    const tempDir = path.join(
+      os.tmpdir(),
+      `test-set-passed-self-review-${Date.now()}`,
+    );
+
+    beforeEach(async () => {
+      await fs.mkdir(tempDir, { recursive: true });
+      await fs.writeFile(path.join(tempDir, '1.test.stone'), '# Test');
+      await fs.writeFile(
+        path.join(tempDir, '1.test.guard'),
+        `artifacts:
+  - 1.test*.md
+reviews:
+  self:
+    - slug: all-done
+      say: did you complete all items?
+    - slug: tests-pass
+      say: do all tests pass?
+  peer:
+    - echo "blockers: 0"
+judges:
+  - echo "passed: true"`,
+      );
+      await fs.writeFile(path.join(tempDir, '1.test.md'), '# Artifact');
+    });
+
+    afterEach(async () => {
+      await fs.rm(tempDir, { recursive: true, force: true });
+    });
+
+    when('[t0] set passed with no promises', () => {
+      then('blocks with self-review required', async () => {
+        const result = await setStoneAsPassed(
+          {
+            stone: '1.test',
+            route: tempDir,
+          },
+          noopContext,
+        );
+        expect(result.passed).toBe(false);
+        expect(result.emit?.stdout).toContain('self-review required');
+        expect(result.emit?.stdout).toContain("check yo'self");
+        expect(result.emit?.stdout).toContain('review.self 1/2');
+        expect(result.emit?.stdout).toContain('slug = all-done');
+      });
+    });
+
+    when('[t1] set passed with partial promises', () => {
+      then('blocks with next unpromised review', async () => {
+        // create promise for first review
+        const routeDir = path.join(tempDir, '.route');
+        await fs.mkdir(routeDir, { recursive: true });
+
+        // compute the hash using the same method as computeStoneReviewInputHash
+        const crypto = await import('crypto');
+        const artifactContent = `--- 1.test.md ---\n# Artifact`;
+        const hash = crypto
+          .createHash('sha256')
+          .update(artifactContent)
+          .digest('hex');
+
+        // create promise artifact for all-done
+        await fs.writeFile(
+          path.join(routeDir, `1.test.guard.promise.all-done.${hash}.md`),
+          '# promise: all-done',
+        );
+
+        const result = await setStoneAsPassed(
+          {
+            stone: '1.test',
+            route: tempDir,
+          },
+          noopContext,
+        );
+        expect(result.passed).toBe(false);
+        expect(result.emit?.stdout).toContain('self-review required');
+        expect(result.emit?.stdout).toContain('review.self 2/2');
+        expect(result.emit?.stdout).toContain('slug = tests-pass');
+      });
+    });
+  });
 });

@@ -4,6 +4,10 @@ import * as path from 'path';
 import type { ContextCliEmit } from '@src/domain.objects/Driver/ContextCliEmit';
 import type { GuardProgressEvent } from '@src/domain.objects/Driver/GuardProgressEvent';
 import type { RouteStone } from '@src/domain.objects/Driver/RouteStone';
+import {
+  getGuardPeerReviews,
+  getGuardSelfReviews,
+} from '@src/domain.objects/Driver/RouteStoneGuard';
 import type { RouteStoneGuardJudgeArtifact } from '@src/domain.objects/Driver/RouteStoneGuardJudgeArtifact';
 import type { RouteStoneGuardReviewArtifact } from '@src/domain.objects/Driver/RouteStoneGuardReviewArtifact';
 
@@ -12,6 +16,10 @@ import { computeStoneReviewInputHash } from '../guard/computeStoneReviewInputHas
 import { getAllStoneGuardArtifactsByHash } from '../guard/getAllStoneGuardArtifactsByHash';
 import { runStoneGuardReviews } from '../guard/runStoneGuardReviews';
 import { runStoneGuardJudges } from '../judges/runStoneGuardJudges';
+import {
+  getStonePromises,
+  hasInvalidatedPromise,
+} from '../promise/getStonePromises';
 import { getAllStoneArtifacts } from './getAllStoneArtifacts';
 import { getAllStones } from './getAllStones';
 import { setStonePassage } from './setStonePassage';
@@ -68,11 +76,64 @@ export const setStoneAsPassed = async (
     };
   }
 
+  // check for self-reviews (must be promised before peer reviews)
+  const selfReviews = getGuardSelfReviews(stoneMatched.guard);
+  if (selfReviews.length > 0) {
+    // compute hash for promise lookup
+    const promiseHash = await computeStoneReviewInputHash({
+      stone: stoneMatched,
+      route: input.route,
+    });
+
+    // get valid promises for current hash
+    const promises = await getStonePromises({
+      stone: stoneMatched,
+      hash: promiseHash,
+      route: input.route,
+    });
+    const promisedSlugs = new Set(promises.map((p) => p.slug));
+
+    // find first unpromised self-review
+    const unpromised = selfReviews.filter((r) => !promisedSlugs.has(r.slug));
+    if (unpromised.length > 0) {
+      const nextReview = unpromised[0]!;
+      const nextIndex = selfReviews.findIndex(
+        (r) => r.slug === nextReview.slug,
+      );
+
+      // check if this review was previously promised but invalidated by hash change
+      const isInvalidated = await hasInvalidatedPromise({
+        stone: stoneMatched,
+        slug: nextReview.slug,
+        currentHash: promiseHash,
+        route: input.route,
+      });
+
+      return {
+        passed: false,
+        refs: { reviews: [], judges: [] },
+        emit: {
+          stdout: formatRouteStoneEmit({
+            operation: 'route.stone.set',
+            stone: stoneMatched.name,
+            action: 'passed',
+            passage: 'blocked',
+            note: 'self-review required',
+            selfReview: {
+              reviewSelf: nextReview,
+              index: nextIndex + 1,
+              total: selfReviews.length,
+              invalidated: isInvalidated,
+            },
+          }),
+        },
+      };
+    }
+  }
+
   // if guard has no reviews and no judges, auto-pass (guard only customizes artifact detection)
-  if (
-    stoneMatched.guard.reviews.length === 0 &&
-    stoneMatched.guard.judges.length === 0
-  ) {
+  const peerReviews = getGuardPeerReviews(stoneMatched.guard);
+  if (peerReviews.length === 0 && stoneMatched.guard.judges.length === 0) {
     await setStonePassage({ stone: stoneMatched, route: input.route });
     return {
       passed: true,
@@ -90,10 +151,7 @@ export const setStoneAsPassed = async (
   }
 
   // if guard has reviews but no judges, that's an error
-  if (
-    stoneMatched.guard.reviews.length > 0 &&
-    stoneMatched.guard.judges.length === 0
-  ) {
+  if (peerReviews.length > 0 && stoneMatched.guard.judges.length === 0) {
     throw new BadRequestError('guard has reviews but no judges', {
       stone: stoneMatched.name,
       guard: stoneMatched.guard.path,
@@ -143,7 +201,7 @@ export const setStoneAsPassed = async (
 
   // run reviews (reuses prior artifacts internally, only runs incomplete ones)
   const reviewArtifacts =
-    stoneMatched.guard.reviews.length > 0
+    peerReviews.length > 0
       ? await runStoneGuardReviews(
           {
             stone: stoneMatched,
@@ -249,6 +307,11 @@ const computeGuardData = (input: {
     (e) => e.step.phase === 'judge' && e.inflight?.endedAt,
   );
 
+  // extract peer reviews for command lookup
+  const stonePeerReviews = input.stone.guard
+    ? getGuardPeerReviews(input.stone.guard)
+    : [];
+
   return {
     artifactFiles: input.artifactFiles.map((f) => path.basename(f)),
     reviews: input.reviewArtifacts.map((r) => {
@@ -259,7 +322,7 @@ const computeGuardData = (input: {
       const durationSec = computeDuration(event);
       return {
         index: r.index,
-        cmd: input.stone.guard?.reviews[r.index - 1] ?? '',
+        cmd: stonePeerReviews[r.index - 1] ?? '',
         cached: !event,
         durationSec,
         blockers: r.blockers,

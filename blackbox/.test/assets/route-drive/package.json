@@ -1,0 +1,8 @@
+{
+  "name": "route-drive-fixture",
+  "private": true,
+  "description": "fixture for route.drive acceptance tests - enables rhachet role discovery",
+  "dependencies": {
+    "rhachet-roles-bhrain": "link:."
+  }
+}

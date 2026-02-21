@@ -12,6 +12,7 @@ import { reflect } from '@src/contract/cli/reflect';
 import { review } from '@src/contract/cli/review';
 import {
   routeBind,
+  routeDrive,
   routeStoneDel,
   routeStoneGet,
   routeStoneJudge,
@@ -23,6 +24,7 @@ export const cli = {
   reflect,
   route: {
     bind: routeBind,
+    drive: routeDrive,
     stone: {
       get: routeStoneGet,
       set: routeStoneSet,

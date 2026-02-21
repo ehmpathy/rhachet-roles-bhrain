@@ -81,7 +81,68 @@ exports[`driver.route.journey.acceptance given: [journey] weather api route when
 "
 `;
 
+exports[`driver.route.journey.acceptance given: [journey] weather api route when: [t8.5] 3.blueprint self-review is promised then: stdout has good vibes 1`] = `
+"🦉 so you're saying there's a chance?
+
+🗿 route.stone.set
+   ├─ stone = 3.blueprint
+   └─ passage = progressed (self-review 1/1 promised)
+"
+`;
+
 exports[`driver.route.journey.acceptance given: [journey] weather api route when: [t8] 3.blueprint artifact created and pass attempted then: stdout has good vibes 1`] = `
+"🦉 so you're saying there's a chance?
+
+🗿 route.stone.set
+   ├─ stone = 3.blueprint
+   └─ passage = blocked (self-review required)
+
+🔍 check yo'self
+   ├─ review.self 1/1
+   │  ├─ slug = design-complete
+   │  ├─ question all, especially yourself
+   │  └─ see the guide below
+   │
+   ├─ promise its done? if so, run
+   │  └─ rhx route.stone.set --stone 3.blueprint --as promised --that design-complete
+   │
+   ├─ here's the guide
+   │  ├─
+   │  │
+   │  │  have you completed the full api design?
+   │  │    are all endpoints, request/response shapes, and error cases documented?
+   │  │
+   │  └─
+   │
+   └─ promise its done? if so, run
+      └─ rhx route.stone.set --stone 3.blueprint --as promised --that design-complete
+"
+`;
+
+exports[`driver.route.journey.acceptance given: [journey] weather api route when: [t9.5] 3.blueprint review set to pass and pass reattempted then: stdout has good vibes 1`] = `
+"🦉 so you're saying there's a chance?
+
+🗿 route.stone.set
+   ├─ stone = 3.blueprint
+   ├─ passage = blocked
+   ├─ reason = wait for human approval
+   └─ guard
+      ├─ artifacts
+      │   └─ 3.blueprint.md
+      ├─ reviews
+      │   └─ r1: bash $route/.test/mock-review.sh
+      │       └─ · cached
+      └─ judges
+          ├─ j1: npx rhx route.stone.judge --mechanism reviewed? --stone $stone --route $route --allow-blockers 0 --allow-nitpicks 2
+          │   └─ · cached
+          └─ j2: npx rhx route.stone.judge --mechanism approved? --stone $stone --route $route
+              ├─ finished [TIME] ✗
+              ├─ judge: .route/3.blueprint.guard.judge.i2p2.fd29f621e589e44175adf2201fa80bf72797235b994355101b4f50e08e4ebe44.70d50298a823e186ed1641bc32518956a7362338a59b85ded9b26acfe38f816c.j2.md
+              └─ reason: wait for human approval
+"
+`;
+
+exports[`driver.route.journey.acceptance given: [journey] weather api route when: [t9] 3.blueprint pass reattempted after promise then: stdout has good vibes 1`] = `
 "🦉 so you're saying there's a chance?
 
 🗿 route.stone.set
@@ -107,31 +168,6 @@ exports[`driver.route.journey.acceptance given: [journey] weather api route when
 "
 `;
 
-exports[`driver.route.journey.acceptance given: [journey] weather api route when: [t9] 3.blueprint issues fixed and pass reattempted then: stdout has good vibes 1`] = `
-"🦉 so you're saying there's a chance?
-
-🗿 route.stone.set
-   ├─ stone = 3.blueprint
-   ├─ passage = blocked
-   ├─ reason = wait for human approval
-   └─ guard
-      ├─ artifacts
-      │   └─ 3.blueprint.md
-      ├─ reviews
-      │   └─ r1: bash $route/.test/mock-review.sh
-      │       ├─ finished [TIME] ✓
-      │       └─ review: .route/3.blueprint.guard.review.i1.441f1d045e47e9db66175258c8aa6282047330f60fb8bc971f6bbb261b50396d.r1.md
-      └─ judges
-          ├─ j1: npx rhx route.stone.judge --mechanism reviewed? --stone $stone --route $route --allow-blockers 0 --allow-nitpicks 2
-          │   ├─ finished [TIME] ✓
-          │   └─ judge: .route/3.blueprint.guard.judge.i1p1.441f1d045e47e9db66175258c8aa6282047330f60fb8bc971f6bbb261b50396d.8c2383c1e6a872736e7a5b38c827720e4ffb1db6030f7a41353e24f45116b3ce.j1.md
-          └─ j2: npx rhx route.stone.judge --mechanism approved? --stone $stone --route $route
-              ├─ finished [TIME] ✗
-              ├─ judge: .route/3.blueprint.guard.judge.i1p1.441f1d045e47e9db66175258c8aa6282047330f60fb8bc971f6bbb261b50396d.8c2383c1e6a872736e7a5b38c827720e4ffb1db6030f7a41353e24f45116b3ce.j2.md
-              └─ reason: wait for human approval
-"
-`;
-
 exports[`driver.route.journey.acceptance given: [journey] weather api route when: [t10] 3.blueprint approved and pass reattempted then: stdout has good vibes 1`] = `
 "🦉 so you're saying there's a chance?
 
@@ -147,10 +183,10 @@ exports[`driver.route.journey.acceptance given: [journey] weather api route when
       └─ judges
           ├─ j1: npx rhx route.stone.judge --mechanism reviewed? --stone $stone --route $route --allow-blockers 0 --allow-nitpicks 2
           │   ├─ finished [TIME] ✓
-          │   └─ judge: .route/3.blueprint.guard.judge.i2p1.441f1d045e47e9db66175258c8aa6282047330f60fb8bc971f6bbb261b50396d.6be4e9b4b71709128251d0798e6894ceb1b65ce4a6ee3aa0e749a87d42332591.j1.md
+          │   └─ judge: .route/3.blueprint.guard.judge.i2p1.fd29f621e589e44175adf2201fa80bf72797235b994355101b4f50e08e4ebe44.100ff96e8539bfa8572353fd104e8abb3dfc186c10f0e02d6acd5189f1b53b5b.j1.md
           └─ j2: npx rhx route.stone.judge --mechanism approved? --stone $stone --route $route
               ├─ finished [TIME] ✓
-              └─ judge: .route/3.blueprint.guard.judge.i2p1.441f1d045e47e9db66175258c8aa6282047330f60fb8bc971f6bbb261b50396d.6be4e9b4b71709128251d0798e6894ceb1b65ce4a6ee3aa0e749a87d42332591.j2.md
+              └─ judge: .route/3.blueprint.guard.judge.i2p1.fd29f621e589e44175adf2201fa80bf72797235b994355101b4f50e08e4ebe44.100ff96e8539bfa8572353fd104e8abb3dfc186c10f0e02d6acd5189f1b53b5b.j2.md
 "
 `;
 

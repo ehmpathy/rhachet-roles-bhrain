@@ -1,0 +1,38 @@
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
+
+exports[`driver.route.drive.acceptance given: [case1] route bound with unpassed stones when: [t0] route.drive is invoked then: stdout has good vibes 1`] = `
+"🦉 where were we?
+
+🗿 route.drive
+   ├─ where do we go?
+   │  ├─ route = .
+   │  └─ stone = 1
+   │
+   ├─ are we there yet? if so, run
+   │  └─ rhx route.stone.set --stone 1 --as passed
+   │
+   ├─ here's the stone
+   │  ├─
+   │  │
+   │  │  # stone: implement the feature
+   │  │  
+   │  │  implement the feature described in the wish.
+   │  │  
+   │  │  done when:
+   │  │  - feature is implemented
+   │  │  - tests pass
+   │  │  
+   │  └─
+   │
+   └─ are we there yet? if so, run
+      └─ rhx route.stone.set --stone 1 --as passed
+"
+`;
+
+exports[`driver.route.drive.acceptance given: [case3] route bound with all stones passed (direct mode) when: [t0] route.drive is invoked without mode then: stdout has good vibes 1`] = `
+"🦉 where were we?
+
+🗿 route.drive
+   └─ route complete! 🎉
+"
+`;

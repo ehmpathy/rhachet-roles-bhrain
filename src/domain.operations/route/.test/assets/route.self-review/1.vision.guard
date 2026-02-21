@@ -1,0 +1,19 @@
+artifacts:
+  - 1.vision*.md
+
+reviews:
+  self:
+    - slug: all-done
+      say: |
+        did you complete all that was requested in this stone?
+        have you re-read the stone goal and verified each requirement?
+
+    - slug: tests-pass
+      say: "@briefs/self-review.tests-pass.md"
+
+  peer:
+    - rhx review --rules .agent/**/rules/*.md --paths 1.vision*.md
+
+judges:
+  - rhx route.stone.judge --mechanism reviewed? --stone $stone --route $route
+  - rhx route.stone.judge --mechanism approved? --stone $stone --route $route

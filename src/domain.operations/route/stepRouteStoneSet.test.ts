@@ -135,4 +135,77 @@ describe('stepRouteStoneSet', () => {
       });
     });
   });
+
+  given('[case4] set stone as promised', () => {
+    const tempDir = path.join(
+      os.tmpdir(),
+      `test-step-set-promised-${Date.now()}`,
+    );
+
+    beforeEach(async () => {
+      await fs.cp(path.join(ASSETS_DIR, 'route.self-review'), tempDir, {
+        recursive: true,
+      });
+      // create artifact for 1.vision
+      await fs.writeFile(path.join(tempDir, '1.vision.md'), '# Vision');
+    });
+
+    afterEach(async () => {
+      await fs.rm(tempDir, { recursive: true, force: true });
+    });
+
+    when('[t0] --as promised with valid --that', () => {
+      then('records promise and returns promised true', async () => {
+        const result = await stepRouteStoneSet(
+          {
+            stone: '1.vision',
+            route: tempDir,
+            as: 'promised',
+            that: 'all-done',
+          },
+          noopContext,
+        );
+        expect(result.promised).toBe(true);
+        // per blueprint: shows "passage = progressed" not "promise = recorded"
+        expect(result.emit?.stdout).toContain('passage = progressed');
+        expect(result.emit?.stdout).toContain('self-review 1/2 promised');
+        // per blueprint: shows next unpromised review (tests-pass)
+        expect(result.emit?.stdout).toContain('tests-pass');
+      });
+
+      then('creates promise artifact file', async () => {
+        await stepRouteStoneSet(
+          {
+            stone: '1.vision',
+            route: tempDir,
+            as: 'promised',
+            that: 'all-done',
+          },
+          noopContext,
+        );
+        const routeDir = path.join(tempDir, '.route');
+        const files = await fs.readdir(routeDir);
+        const promiseFiles = files.filter((f) => f.includes('.promise.'));
+        expect(promiseFiles.length).toBeGreaterThan(0);
+        expect(promiseFiles[0]).toContain('all-done');
+      });
+    });
+
+    when('[t1] --as promised without --that', () => {
+      then('throws bad request error', async () => {
+        const error = await getError(
+          stepRouteStoneSet(
+            {
+              stone: '1.vision',
+              route: tempDir,
+              as: 'promised',
+            },
+            noopContext,
+          ),
+        );
+        expect(error).toBeInstanceOf(Error);
+        expect(error.message).toContain('--that is required');
+      });
+    });
+  });
 });

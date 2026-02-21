@@ -8,6 +8,7 @@ import { setRouteBind } from '@src/domain.operations/route/bind/setRouteBind';
 import { computeStoneReviewInputHash } from '@src/domain.operations/route/guard/computeStoneReviewInputHash';
 import { genContextCliEmit } from '@src/domain.operations/route/guard/genContextCliEmit';
 import { getOneStoneGuardApproval } from '@src/domain.operations/route/judges/getOneStoneGuardApproval';
+import { stepRouteDrive } from '@src/domain.operations/route/stepRouteDrive';
 import { stepRouteStoneDel } from '@src/domain.operations/route/stepRouteStoneDel';
 import { stepRouteStoneGet } from '@src/domain.operations/route/stepRouteStoneGet';
 import { stepRouteStoneSet } from '@src/domain.operations/route/stepRouteStoneSet';
@@ -81,7 +82,7 @@ options:
 const printSetHelp = (): void => {
   console.log(
     `
-route.stone.set - mark stone as passed or approved
+route.stone.set - mark stone as passed, approved, or promised
 
 usage:
   route.stone.set [options]
@@ -89,8 +90,14 @@ usage:
 options:
   --stone <name>     stone name or glob pattern (required)
   --route <path>     path to route directory (required)
-  --as <status>      status to set: passed or approved (required)
+  --as <status>      status to set: passed, approved, or promised (required)
+  --that <slug>      self-review slug to promise (required for --as promised)
   --help             show this help message
+
+examples:
+  route.stone.set --stone 1.vision --as passed
+  route.stone.set --stone 1.vision --as approved
+  route.stone.set --stone 1.vision --as promised --that all-done
 `.trim(),
   );
 };
@@ -161,6 +168,59 @@ options:
   --help             show this help message
 `.trim(),
   );
+};
+
+/**
+ * .what = prints help for route.drive
+ */
+const printDriveHelp = (): void => {
+  console.log(
+    `
+route.drive - echo current stone and pass command for bound route
+
+usage:
+  route.drive [options]
+
+options:
+  --route <path>     path to route directory (uses bound route if absent)
+  --mode <hook>      mode: hook = silent on route complete (for hooks)
+  --help             show this help message
+
+examples:
+  route.drive                    # echo current stone
+  route.drive --mode hook        # silent if route complete (for hooks)
+`.trim(),
+  );
+};
+
+/**
+ * .what = cli entrypoint for route.drive skill
+ * .why = echoes current stone and pass command as GPS-like guidance
+ */
+export const routeDrive = async (): Promise<void> => {
+  const options = parseArgs(process.argv);
+
+  if (options.help) {
+    printDriveHelp();
+    return;
+  }
+
+  try {
+    const mode = options.mode === 'hook' ? 'hook' : undefined;
+    const result = await stepRouteDrive({
+      route: options.route,
+      mode,
+    });
+
+    if (result.emit) {
+      console.log(result.emit.stdout);
+    }
+  } catch (error) {
+    if (error instanceof Error) {
+      console.error(`error: ${error.message}`);
+    }
+    process.exit(1);
+  }
 };
 
 /**
@@ -304,8 +364,20 @@ export const routeStoneSet = async (): Promise<void> => {
       process.exit(1);
     }
   }
-  if (!options.as || (options.as !== 'passed' && options.as !== 'approved')) {
-    console.error('error: --as must be "passed" or "approved"');
+  if (
+    !options.as ||
+    (options.as !== 'passed' &&
+      options.as !== 'approved' &&
+      options.as !== 'promised')
+  ) {
+    console.error('error: --as must be "passed", "approved", or "promised"');
+    console.error('run with --help for usage');
+    process.exit(1);
+  }
+
+  // validate --that required for promised
+  if (options.as === 'promised' && !options.that) {
+    console.error('error: --that is required when --as is "promised"');
     console.error('run with --help for usage');
     process.exit(1);
   }
@@ -318,7 +390,8 @@ export const routeStoneSet = async (): Promise<void> => {
       {
         stone: options.stone,
         route: options.route,
-        as: options.as as 'passed' | 'approved',
+        as: options.as as 'passed' | 'approved' | 'promised',
+        that: options.that,
       },
       progress.context,
     );
