@@ -1,0 +1,20 @@
+artifacts:
+  - 1.stone*.md
+
+reviews:
+  self:
+    - slug: all-done
+      say: |
+        did you complete all that was requested in this stone?
+        have you re-read the stone goal and verified each requirement?
+
+    - slug: tests-pass
+      say: |
+        do all tests pass? have you run the full test suite
+        and verified no regressions were introduced?
+
+  peer:
+    - .test/mock-review.sh --paths 1.stone*.md
+
+judges:
+  - rhx route.stone.judge --mechanism reviewed? --stone $stone --route $route --allow-blockers 0

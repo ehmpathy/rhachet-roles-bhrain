@@ -1,0 +1,23 @@
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
+
+exports[`formatCheckYoself given: [case4] a self-review output snapshot when: [t0] formatted then: matches expected structure 1`] = `
+"🔍 check yo'self
+   ├─ review.self 1/2
+   │  ├─ slug = all-done
+   │  ├─ question all, especially yourself
+   │  └─ see the guide below
+   │
+   ├─ promise its done? if so, run
+   │  └─ rhx route.stone.set --stone 1.vision --as promised --that all-done
+   │
+   ├─ here's the guide
+   │  ├─
+   │  │
+   │  │  did you complete all that was requested?
+   │  │  have you verified each requirement?
+   │  │
+   │  └─
+   │
+   └─ promise its done? if so, run
+      └─ rhx route.stone.set --stone 1.vision --as promised --that all-done"
+`;

@@ -1,3 +1,6 @@
+import type { RouteStoneGuardReviewSelf } from '@src/domain.objects/Driver/RouteStoneGuard';
+
+import { formatCheckYoself } from './guard/formatCheckYoself';
 import { formatGuardTree } from './guard/formatGuardTree';
 
 /**
@@ -24,10 +27,28 @@ type FormatInput =
   | {
       operation: 'route.stone.set';
       stone: string;
+      action: 'promised';
+      slug: string;
+      progress: { index: number; total: number };
+      nextReview?: {
+        reviewSelf: RouteStoneGuardReviewSelf;
+        index: number;
+        total: number;
+      };
+    }
+  | {
+      operation: 'route.stone.set';
+      stone: string;
       action: 'passed';
       passage: 'allowed' | 'blocked';
       note?: string;
       reason?: string;
+      selfReview?: {
+        reviewSelf: RouteStoneGuardReviewSelf;
+        index: number;
+        total: number;
+        invalidated: boolean;
+      };
       guard?: {
         artifactFiles: string[];
         reviews: Array<{
@@ -108,11 +129,52 @@ export const formatRouteStoneEmit = (input: FormatInput): string => {
       return [header, '', tree].join('\n');
     }
 
+    // handle self-review blocked case
+    if (input.action === 'passed' && input.selfReview) {
+      lines.push(`🗿 ${input.operation}`);
+      lines.push(`   ├─ stone = ${input.stone}`);
+      lines.push(
+        `   └─ passage = blocked (${input.note ?? 'self-review required'})`,
+      );
+      lines.push('');
+      lines.push(
+        formatCheckYoself({
+          stone: input.stone,
+          reviewSelf: input.selfReview.reviewSelf,
+          index: input.selfReview.index,
+          total: input.selfReview.total,
+          invalidated: input.selfReview.invalidated,
+        }),
+      );
+      return lines.join('\n');
+    }
+
     lines.push(`🗿 ${input.operation}`);
     lines.push(`   ├─ stone = ${input.stone}`);
 
     if (input.action === 'approved') {
       lines.push(`   └─ approval = granted`);
+    } else if (input.action === 'promised') {
+      // show progress per vision: "passage = progressed (self-review N/M promised)"
+      lines.push(
+        `   └─ passage = progressed (self-review ${input.progress.index}/${input.progress.total} promised)`,
+      );
+
+      // if there's a next review, show check yo'self section
+      if (input.nextReview) {
+        lines.push('');
+        lines.push(
+          formatCheckYoself({
+            stone: input.stone,
+            reviewSelf: input.nextReview.reviewSelf,
+            index: input.nextReview.index,
+            total: input.nextReview.total,
+            invalidated: false,
+          }),
+        );
+      }
+
+      return lines.join('\n');
     } else {
       // format passage with optional note inline
       const passageValue = input.note

@@ -247,7 +247,7 @@ describe('driver.route.journey.acceptance', () => {
     });
 
     when('[t8] 3.blueprint artifact created and pass attempted', () => {
-      const result = useThen('pass fails due to review', async () => {
+      const result = useThen('pass blocked by self-review', async () => {
         await fs.writeFile(
           path.join(scene.tempDir, '3.blueprint.md'),
           '# Blueprint\n\n## API\n\nGET /weather',
@@ -263,9 +263,12 @@ describe('driver.route.journey.acceptance', () => {
         expect(result.code).not.toEqual(0);
       });
 
-      then('error mentions blockers or failure', () => {
-        const output = result.stdout.toLowerCase() + result.stderr.toLowerCase();
-        expect(output).toMatch(/block|fail|not passed/);
+      then('shows self-review required', () => {
+        expect(result.stdout.toLowerCase()).toContain('self-review');
+      });
+
+      then('shows design-complete slug', () => {
+        expect(result.stdout).toContain('design-complete');
       });
 
       then('stdout has good vibes', () => {
@@ -273,14 +276,55 @@ describe('driver.route.journey.acceptance', () => {
       });
     });
 
-    when('[t9] 3.blueprint issues fixed and pass reattempted', () => {
+    when('[t8.5] 3.blueprint self-review is promised', () => {
+      const result = useThen('promise succeeds', async () =>
+        invokeRouteSkill({
+          skill: 'route.stone.set',
+          args: { stone: '3.blueprint', route: '.', as: 'promised', that: 'design-complete' },
+          cwd: scene.tempDir,
+        }),
+      );
+
+      then('exit code is 0', () => {
+        expect(result.code).toEqual(0);
+      });
+
+      then('shows progress 1/1', () => {
+        expect(result.stdout).toContain('1/1');
+      });
+
+      then('stdout has good vibes', () => {
+        expect(sanitizeTimeForSnapshot(result.stdout)).toMatchSnapshot();
+      });
+    });
+
+    when('[t9] 3.blueprint pass reattempted after promise', () => {
+      const result = useThen('blocked by peer review (self-review satisfied)', async () =>
+        invokeRouteSkill({
+          skill: 'route.stone.set',
+          args: { stone: '3.blueprint', route: '.', as: 'passed' },
+          cwd: scene.tempDir,
+        }),
+      );
+
+      then('exit code is non-zero', () => {
+        expect(result.code).not.toEqual(0);
+      });
+
+      then('error mentions blockers', () => {
+        const output = result.stdout.toLowerCase() + result.stderr.toLowerCase();
+        expect(output).toMatch(/block|fail/);
+      });
+
+      then('stdout has good vibes', () => {
+        expect(sanitizeTimeForSnapshot(result.stdout)).toMatchSnapshot();
+      });
+    });
+
+    when('[t9.5] 3.blueprint review set to pass and pass reattempted', () => {
       const result = useThen('review passes but approval still needed', async () => {
-        // make review pass + update artifact (changes hash)
+        // make review pass (don't modify artifact - that would change hash and invalidate promise)
         await fs.writeFile(path.join(scene.tempDir, '.test', 'review-should-pass'), '');
-        await fs.writeFile(
-          path.join(scene.tempDir, '3.blueprint.md'),
-          '# Blueprint\n\n## API\n\nGET /weather\n\n## Fixed\n\nIssues addressed.',
-        );
         return invokeRouteSkill({
           skill: 'route.stone.set',
           args: { stone: '3.blueprint', route: '.', as: 'passed' },

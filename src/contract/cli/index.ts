@@ -8,6 +8,7 @@ import { researchInit } from './research';
 import { review } from './review';
 import {
   routeBind,
+  routeDrive,
   routeStoneDel,
   routeStoneGet,
   routeStoneJudge,
@@ -19,6 +20,7 @@ export const cli = {
   reflect,
   route: {
     bind: routeBind,
+    drive: routeDrive,
     stone: {
       get: routeStoneGet,
       set: routeStoneSet,

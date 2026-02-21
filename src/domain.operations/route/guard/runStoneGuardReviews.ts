@@ -5,7 +5,10 @@ import { promisify } from 'util';
 
 import type { ContextCliEmit } from '@src/domain.objects/Driver/ContextCliEmit';
 import type { RouteStone } from '@src/domain.objects/Driver/RouteStone';
-import type { RouteStoneGuard } from '@src/domain.objects/Driver/RouteStoneGuard';
+import {
+  getGuardPeerReviews,
+  type RouteStoneGuard,
+} from '@src/domain.objects/Driver/RouteStoneGuard';
 import { RouteStoneGuardReviewArtifact } from '@src/domain.objects/Driver/RouteStoneGuardReviewArtifact';
 
 import { getAllStoneGuardArtifactsByHash } from './getAllStoneGuardArtifactsByHash';
@@ -113,9 +116,10 @@ export const runStoneGuardReviews = async (
 
   const reviews: RouteStoneGuardReviewArtifact[] = [...priorArtifacts.reviews];
 
-  // execute each review command that hasn't been done
-  for (let i = 0; i < input.guard.reviews.length; i++) {
-    const reviewCmd = input.guard.reviews[i];
+  // execute each peer review command that hasn't been done
+  const peerReviews = getGuardPeerReviews(input.guard);
+  for (let i = 0; i < peerReviews.length; i++) {
+    const reviewCmd = peerReviews[i];
     if (!reviewCmd) continue;
     const index = i + 1;
 

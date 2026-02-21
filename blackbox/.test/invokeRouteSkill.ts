@@ -48,6 +48,7 @@ export const sanitizeTimeForSnapshot = (output: string): string => {
 export const invokeRouteSkill = async (input: {
   skill:
     | 'route.bind'
+    | 'route.drive'
     | 'route.stone.get'
     | 'route.stone.set'
     | 'route.stone.del'

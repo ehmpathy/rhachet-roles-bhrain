@@ -1,0 +1,138 @@
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
+
+exports[`driver.route.self-review.acceptance given: [case1] stone with reviews.self defined when: [t0] pass attempted without promises then: stdout has good vibes 1`] = `
+"🦉 so you're saying there's a chance?
+
+🗿 route.stone.set
+   ├─ stone = 1
+   └─ passage = blocked (self-review required)
+
+🔍 check yo'self
+   ├─ review.self 1/2
+   │  ├─ slug = all-done
+   │  ├─ question all, especially yourself
+   │  └─ see the guide below
+   │
+   ├─ promise its done? if so, run
+   │  └─ rhx route.stone.set --stone 1 --as promised --that all-done
+   │
+   ├─ here's the guide
+   │  ├─
+   │  │
+   │  │  did you complete all that was requested in this stone?
+   │  │    have you re-read the stone goal and verified each requirement?
+   │  │
+   │  └─
+   │
+   └─ promise its done? if so, run
+      └─ rhx route.stone.set --stone 1 --as promised --that all-done
+"
+`;
+
+exports[`driver.route.self-review.acceptance given: [case1] stone with reviews.self defined when: [t1] first review is promised then: stdout has good vibes 1`] = `
+"🦉 so you're saying there's a chance?
+
+🗿 route.stone.set
+   ├─ stone = 1
+   └─ passage = progressed (self-review 1/2 promised)
+
+🔍 check yo'self
+   ├─ review.self 1/2
+   │  ├─ slug = tests-pass
+   │  ├─ question all, especially yourself
+   │  └─ see the guide below
+   │
+   ├─ promise its done? if so, run
+   │  └─ rhx route.stone.set --stone 1 --as promised --that tests-pass
+   │
+   ├─ here's the guide
+   │  ├─
+   │  │
+   │  │  do all tests pass? have you run the full test suite
+   │  │    and verified no regressions were introduced?
+   │  │
+   │  └─
+   │
+   └─ promise its done? if so, run
+      └─ rhx route.stone.set --stone 1 --as promised --that tests-pass
+"
+`;
+
+exports[`driver.route.self-review.acceptance given: [case1] stone with reviews.self defined when: [t2] second review is promised then: stdout has good vibes 1`] = `
+"🦉 so you're saying there's a chance?
+
+🗿 route.stone.set
+   ├─ stone = 1
+   └─ passage = progressed (self-review 2/2 promised)
+"
+`;
+
+exports[`driver.route.self-review.acceptance given: [case1] stone with reviews.self defined when: [t3] pass attempted with all promises then: stdout has good vibes 1`] = `
+"🦉 so you're saying there's a chance?
+
+🗿 route.stone.set
+   ├─ stone = 1
+   ├─ passage = allowed
+   └─ guard
+      ├─ artifacts
+      │   └─ 1.stone.i1.md
+      ├─ reviews
+      │   └─ r1: .test/mock-review.sh --paths 1.stone*.md
+      │       ├─ finished [TIME] ✓
+      │       └─ review: .route/1.guard.review.i1.3323f7a0e391b72d09ba5b4f51f33a2bfc06024571e276ee021a5f7e84874cc1.r1.md
+      └─ judges
+          └─ j1: rhx route.stone.judge --mechanism reviewed? --stone $stone --route $route --allow-blockers 0
+              ├─ finished [TIME] ✓
+              └─ judge: .route/1.guard.judge.i1p1.3323f7a0e391b72d09ba5b4f51f33a2bfc06024571e276ee021a5f7e84874cc1.1b7bd3ef33beff113e32773aeb48bd45d33abc88a5dd396732bdd88b3a36e43a.j1.md
+"
+`;
+
+exports[`driver.route.self-review.acceptance given: [case3] hash invalidation resets promises when: [t2] pass attempted after edit then: stdout has good vibes 1`] = `
+"🦉 so you're saying there's a chance?
+
+🗿 route.stone.set
+   ├─ stone = 1
+   └─ passage = blocked (self-review required)
+
+🔍 check yo'self
+   ├─ review.self 1/2
+   │  ├─ slug = all-done
+   │  ├─ status = invalidated (source hash changed)
+   │  ├─ question all, especially yourself
+   │  └─ see the guide below
+   │
+   ├─ promise its done? if so, run
+   │  └─ rhx route.stone.set --stone 1 --as promised --that all-done
+   │
+   ├─ here's the guide
+   │  ├─
+   │  │
+   │  │  did you complete all that was requested in this stone?
+   │  │    have you re-read the stone goal and verified each requirement?
+   │  │
+   │  └─
+   │
+   └─ promise its done? if so, run
+      └─ rhx route.stone.set --stone 1 --as promised --that all-done
+"
+`;
+
+exports[`driver.route.self-review.acceptance given: [case4] flat reviews array (backwards compatible) when: [t0] pass attempted with flat reviews then: stdout has good vibes 1`] = `
+"🦉 so you're saying there's a chance?
+
+🗿 route.stone.set
+   ├─ stone = 1
+   ├─ passage = allowed
+   └─ guard
+      ├─ artifacts
+      │   └─ 1.stone.i1.md
+      ├─ reviews
+      │   └─ r1: .test/mock-review.sh --paths 1.stone*.md
+      │       ├─ finished [TIME] ✓
+      │       └─ review: .route/1.guard.review.i1.3323f7a0e391b72d09ba5b4f51f33a2bfc06024571e276ee021a5f7e84874cc1.r1.md
+      └─ judges
+          └─ j1: rhx route.stone.judge --mechanism reviewed? --stone $stone --route $route --allow-blockers 0
+              ├─ finished [TIME] ✓
+              └─ judge: .route/1.guard.judge.i1p1.3323f7a0e391b72d09ba5b4f51f33a2bfc06024571e276ee021a5f7e84874cc1.1b7bd3ef33beff113e32773aeb48bd45d33abc88a5dd396732bdd88b3a36e43a.j1.md
+"
+`;

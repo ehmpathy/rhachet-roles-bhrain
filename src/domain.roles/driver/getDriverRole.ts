@@ -17,4 +17,20 @@ export const ROLE_DRIVER: Role = Role.build({
   briefs: {
     dirs: [{ uri: __dirname + '/briefs' }],
   },
+  hooks: {
+    onBrain: {
+      onBoot: [
+        {
+          command: './node_modules/.bin/rhx route.drive --mode hook',
+          timeout: 'PT5S',
+        },
+      ],
+      onStop: [
+        {
+          command: './node_modules/.bin/rhx route.drive --mode hook',
+          timeout: 'PT5S',
+        },
+      ],
+    },
+  },
 });

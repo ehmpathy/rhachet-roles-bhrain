@@ -2,7 +2,14 @@ artifacts:
   - 3.blueprint*.md
 
 reviews:
-  - bash $route/.test/mock-review.sh
+  self:
+    - slug: design-complete
+      say: |
+        have you completed the full api design?
+        are all endpoints, request/response shapes, and error cases documented?
+
+  peer:
+    - bash $route/.test/mock-review.sh
 
 judges:
   - npx rhx route.stone.judge --mechanism reviewed? --stone $stone --route $route --allow-blockers 0 --allow-nitpicks 2
