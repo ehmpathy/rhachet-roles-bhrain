@@ -169,4 +169,71 @@ describe('runStoneGuardJudges', () => {
       });
     });
   });
+
+  given('[case4] guard with $route variable in judge command', () => {
+    const tempDir = path.join(os.tmpdir(), `test-judges-route-${Date.now()}`);
+    const stone = new RouteStone({
+      name: '1.test',
+      path: path.join(tempDir, '1.test.stone'),
+      guard: null,
+    });
+
+    // command uses $route to find a marker file — proves $route is substituted correctly
+    // and that the command runs from repo root (not from route dir)
+    const guard = new RouteStoneGuard({
+      path: path.join(tempDir, '1.test.guard'),
+      artifacts: ['1.test*.md'],
+      reviews: [],
+      judges: [
+        `bash -c 'if [ -f "$route/.marker" ]; then echo "passed: true"; echo "reason: marker found at $route"; else echo "passed: false"; echo "reason: marker not found at $route"; fi'`.replace(
+          /\$route/g,
+          '$route',
+        ),
+      ],
+    });
+
+    beforeEach(async () => {
+      await fs.mkdir(tempDir, { recursive: true });
+      // create marker file that command will look for via $route
+      await fs.writeFile(path.join(tempDir, '.marker'), 'present');
+    });
+
+    afterEach(async () => {
+      await fs.rm(tempDir, { recursive: true, force: true });
+    });
+
+    when('[t0] judges are executed with $route substitution', () => {
+      then('$route is substituted with route path', async () => {
+        const judges = await runStoneGuardJudges(
+          {
+            stone,
+            guard,
+            hash: 'routehash',
+            iteration: 1,
+            route: tempDir,
+          },
+          noopContext,
+        );
+        expect(judges).toHaveLength(1);
+        // command should find the marker file via $route path
+        expect(judges[0]?.passed).toEqual(true);
+        expect(judges[0]?.reason).toContain('marker found');
+      });
+
+      then('judge command receives correct path', async () => {
+        const judges = await runStoneGuardJudges(
+          {
+            stone,
+            guard,
+            hash: 'routehash',
+            iteration: 1,
+            route: tempDir,
+          },
+          noopContext,
+        );
+        // reason should include the actual route path
+        expect(judges[0]?.reason).toContain(tempDir);
+      });
+    });
+  });
 });

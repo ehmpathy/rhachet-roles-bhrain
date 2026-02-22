@@ -124,4 +124,69 @@ describe('runStoneGuardReviews', () => {
       });
     });
   });
+
+  given('[case3] guard with $route variable in review command', () => {
+    const tempDir = path.join(os.tmpdir(), `test-reviews-route-${Date.now()}`);
+    const stone = new RouteStone({
+      name: '1.test',
+      path: path.join(tempDir, '1.test.stone'),
+      guard: null,
+    });
+    // command uses $route to find a marker file at the route path
+    const guard = new RouteStoneGuard({
+      path: path.join(tempDir, '1.test.guard'),
+      artifacts: ['1.test*.md'],
+      reviews: [
+        `bash -c 'if [ -f "$route/.marker" ]; then echo "blockers: 0"; echo "nitpicks: 0"; echo "marker found at $route"; else echo "blockers: 1"; echo "nitpicks: 0"; echo "marker not found at $route"; fi'`,
+      ],
+      judges: [],
+    });
+
+    beforeEach(async () => {
+      await fs.mkdir(tempDir, { recursive: true });
+      // create marker file at route path
+      await fs.writeFile(path.join(tempDir, '.marker'), 'test marker');
+    });
+
+    afterEach(async () => {
+      await fs.rm(tempDir, { recursive: true, force: true });
+    });
+
+    when('[t0] reviews are executed with $route substitution', () => {
+      then('$route is substituted with route path', async () => {
+        const reviews = await runStoneGuardReviews(
+          {
+            stone,
+            guard,
+            hash: 'routehash',
+            iteration: 1,
+            route: tempDir,
+          },
+          noopContext,
+        );
+        expect(reviews).toHaveLength(1);
+        const content = await fs.readFile(reviews[0]?.path ?? '', 'utf-8');
+        // should contain the route path in output
+        expect(content).toContain(tempDir);
+      });
+
+      then('review command receives correct path', async () => {
+        const reviews = await runStoneGuardReviews(
+          {
+            stone,
+            guard,
+            hash: 'routehash2',
+            iteration: 1,
+            route: tempDir,
+          },
+          noopContext,
+        );
+        // if $route was doubled, the marker wouldn't be found
+        // and blockers would be 1 instead of 0
+        expect(reviews[0]?.blockers).toEqual(0);
+        const content = await fs.readFile(reviews[0]?.path ?? '', 'utf-8');
+        expect(content).toContain('marker found');
+      });
+    });
+  });
 });
