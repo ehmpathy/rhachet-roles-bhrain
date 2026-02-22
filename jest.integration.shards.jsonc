@@ -95,8 +95,8 @@
       ]
     }
   ],
-  // run the rest on one shard
+  // run the rest on three shards
   "dynamic": {
-    "shards": 1
+    "shards": 3
   }
 }
