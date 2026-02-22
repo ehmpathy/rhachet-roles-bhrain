@@ -1,0 +1,8 @@
+artifacts:
+  - 1.vision*.md
+
+reviews:
+  - bash -c 'if [ -f "$route/1.vision.md" ]; then echo "blockers: 0"; echo "artifact present at $route"; else echo "blockers: 1"; echo "artifact absent at $route"; fi'
+
+judges:
+  - npx rhx route.stone.judge --mechanism approved? --stone $stone --route $route

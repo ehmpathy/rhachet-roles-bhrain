@@ -52,7 +52,7 @@ export const runOneStoneGuardJudge = async (input: {
   let stderr = '';
   let exitCode = 0;
   try {
-    const result = await execAsync(cmd, { cwd: input.route });
+    const result = await execAsync(cmd);
     stdout = result.stdout;
     stderr = result.stderr;
   } catch (error: unknown) {

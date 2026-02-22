@@ -43,11 +43,11 @@ export const runOneStoneGuardReview = async (input: {
     output: outputPath,
   });
 
-  // execute command
+  // execute command from repo root so $route paths work correctly
   let stdout = '';
   let stderr = '';
   try {
-    const result = await execAsync(cmd, { cwd: input.route });
+    const result = await execAsync(cmd);
     stdout = result.stdout;
     stderr = result.stderr;
   } catch (error: unknown) {
