@@ -11,7 +11,7 @@ const ASSETS_DIR = path.join(__dirname, '.test/assets/route-driver');
 
 describe('driver.route.bind.acceptance', () => {
   given('[case1] route with stones', () => {
-    when('[t0] route.bind --route <path>', () => {
+    when('[t0] route.bind.set --route <path>', () => {
       const res = useThen('invoke bind skill', async () => {
         const tempDir = genTempDirForRhachet({
           slug: 'driver-bind-set',
@@ -28,7 +28,7 @@ describe('driver.route.bind.acceptance', () => {
 
         // invoke bind
         const cli = await invokeRouteSkill({
-          skill: 'route.bind',
+          skill: 'route.bind.set',
           args: { route: '.' },
           cwd: tempDir,
         });
@@ -45,7 +45,7 @@ describe('driver.route.bind.acceptance', () => {
       });
     });
 
-    when('[t1] route.bind --route <path> (second time, same path)', () => {
+    when('[t1] route.bind.set --route <path> (second time, same path)', () => {
       const res = useThen('invoke bind skill twice', async () => {
         const tempDir = genTempDirForRhachet({
           slug: 'driver-bind-idempotent',
@@ -59,14 +59,14 @@ describe('driver.route.bind.acceptance', () => {
 
         // bind first time
         await invokeRouteSkill({
-          skill: 'route.bind',
+          skill: 'route.bind.set',
           args: { route: '.' },
           cwd: tempDir,
         });
 
         // bind second time (idempotent)
         const cli = await invokeRouteSkill({
-          skill: 'route.bind',
+          skill: 'route.bind.set',
           args: { route: '.' },
           cwd: tempDir,
         });
@@ -79,8 +79,8 @@ describe('driver.route.bind.acceptance', () => {
       });
     });
 
-    when('[t2] route.bind --get (after bind)', () => {
-      const res = useThen('invoke bind --get after bind', async () => {
+    when('[t2] route.bind.get (after bind)', () => {
+      const res = useThen('invoke route.bind.get after bind', async () => {
         const tempDir = genTempDirForRhachet({
           slug: 'driver-bind-get',
           clone: ASSETS_DIR,
@@ -93,15 +93,15 @@ describe('driver.route.bind.acceptance', () => {
 
         // bind first
         await invokeRouteSkill({
-          skill: 'route.bind',
+          skill: 'route.bind.set',
           args: { route: '.' },
           cwd: tempDir,
         });
 
         // query
         const cli = await invokeRouteSkill({
-          skill: 'route.bind',
-          args: { get: true },
+          skill: 'route.bind.get',
+          args: {},
           cwd: tempDir,
         });
 
@@ -117,8 +117,8 @@ describe('driver.route.bind.acceptance', () => {
       });
     });
 
-    when('[t3] route.bind --del (after bind)', () => {
-      const res = useThen('invoke bind --del after bind', async () => {
+    when('[t3] route.bind.del (after bind)', () => {
+      const res = useThen('invoke route.bind.del after bind', async () => {
         const tempDir = genTempDirForRhachet({
           slug: 'driver-bind-del',
           clone: ASSETS_DIR,
@@ -131,15 +131,15 @@ describe('driver.route.bind.acceptance', () => {
 
         // bind
         await invokeRouteSkill({
-          skill: 'route.bind',
+          skill: 'route.bind.set',
           args: { route: '.' },
           cwd: tempDir,
         });
 
         // unbind
         const cli = await invokeRouteSkill({
-          skill: 'route.bind',
-          args: { del: true },
+          skill: 'route.bind.del',
+          args: {},
           cwd: tempDir,
         });
 
@@ -155,8 +155,8 @@ describe('driver.route.bind.acceptance', () => {
       });
     });
 
-    when('[t4] route.bind --del (second time, idempotent)', () => {
-      const res = useThen('invoke bind --del twice', async () => {
+    when('[t4] route.bind.del (second time, idempotent)', () => {
+      const res = useThen('invoke route.bind.del twice', async () => {
         const tempDir = genTempDirForRhachet({
           slug: 'driver-bind-del-idem',
           clone: ASSETS_DIR,
@@ -171,18 +171,18 @@ describe('driver.route.bind.acceptance', () => {
 
         // bind then unbind twice
         await invokeRouteSkill({
-          skill: 'route.bind',
+          skill: 'route.bind.set',
           args: { route: '.' },
           cwd: tempDir,
         });
         await invokeRouteSkill({
-          skill: 'route.bind',
-          args: { del: true },
+          skill: 'route.bind.del',
+          args: {},
           cwd: tempDir,
         });
         const cli = await invokeRouteSkill({
-          skill: 'route.bind',
-          args: { del: true },
+          skill: 'route.bind.del',
+          args: {},
           cwd: tempDir,
         });
 
@@ -194,8 +194,8 @@ describe('driver.route.bind.acceptance', () => {
       });
     });
 
-    when('[t5] route.bind --get (after del)', () => {
-      const res = useThen('invoke bind --get after del', async () => {
+    when('[t5] route.bind.get (after del)', () => {
+      const res = useThen('invoke route.bind.get after del', async () => {
         const tempDir = genTempDirForRhachet({
           slug: 'driver-bind-get-after-del',
           clone: ASSETS_DIR,
@@ -210,20 +210,20 @@ describe('driver.route.bind.acceptance', () => {
 
         // bind then unbind
         await invokeRouteSkill({
-          skill: 'route.bind',
+          skill: 'route.bind.set',
           args: { route: '.' },
           cwd: tempDir,
         });
         await invokeRouteSkill({
-          skill: 'route.bind',
-          args: { del: true },
+          skill: 'route.bind.del',
+          args: {},
           cwd: tempDir,
         });
 
         // query
         const cli = await invokeRouteSkill({
-          skill: 'route.bind',
-          args: { get: true },
+          skill: 'route.bind.get',
+          args: {},
           cwd: tempDir,
         });
 
@@ -237,7 +237,7 @@ describe('driver.route.bind.acceptance', () => {
   });
 
   given('[case2] route path not found', () => {
-    when('[t0] route.bind --route <bad-path>', () => {
+    when('[t0] route.bind.set --route <bad-path>', () => {
       const res = useThen('invoke bind with bad path', async () => {
         const tempDir = genTempDirForRhachet({
           slug: 'driver-bind-badpath',
@@ -252,7 +252,7 @@ describe('driver.route.bind.acceptance', () => {
         });
 
         const cli = await invokeRouteSkill({
-          skill: 'route.bind',
+          skill: 'route.bind.set',
           args: { route: 'nonexistent-route' },
           cwd: tempDir,
         });
@@ -271,7 +271,7 @@ describe('driver.route.bind.acceptance', () => {
   });
 
   given('[case3] protected branch (main)', () => {
-    when('[t0] route.bind --route <path> on main', () => {
+    when('[t0] route.bind.set --route <path> on main', () => {
       const res = useThen('invoke bind on main branch', async () => {
         const tempDir = genTempDirForRhachet({
           slug: 'driver-bind-protected',
@@ -284,7 +284,7 @@ describe('driver.route.bind.acceptance', () => {
 
         // stay on main (genTempDirForRhachet inits with main)
         const cli = await invokeRouteSkill({
-          skill: 'route.bind',
+          skill: 'route.bind.set',
           args: { route: '.' },
           cwd: tempDir,
         });
@@ -303,7 +303,7 @@ describe('driver.route.bind.acceptance', () => {
   });
 
   given('[case4] bind to different route when already bound', () => {
-    when('[t0] route.bind --route <path-B> after bound to <path-A>', () => {
+    when('[t0] route.bind.set --route <path-B> after bound to <path-A>', () => {
       const res = useThen('invoke bind to different route', async () => {
         const tempDir = genTempDirForRhachet({
           slug: 'driver-bind-conflict',
@@ -322,14 +322,14 @@ describe('driver.route.bind.acceptance', () => {
 
         // bind to root route first
         await invokeRouteSkill({
-          skill: 'route.bind',
+          skill: 'route.bind.set',
           args: { route: '.' },
           cwd: tempDir,
         });
 
         // attempt to bind to different route
         const cli = await invokeRouteSkill({
-          skill: 'route.bind',
+          skill: 'route.bind.set',
           args: { route: 'other-route' },
           cwd: tempDir,
         });

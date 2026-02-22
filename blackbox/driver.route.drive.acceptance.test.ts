@@ -31,7 +31,7 @@ describe('driver.route.drive.acceptance', () => {
 
       // bind the route
       await invokeRouteSkill({
-        skill: 'route.bind',
+        skill: 'route.bind.set',
         args: { route: '.' },
         cwd: tempDir,
       });
@@ -86,7 +86,7 @@ describe('driver.route.drive.acceptance', () => {
 
       // bind the route
       await invokeRouteSkill({
-        skill: 'route.bind',
+        skill: 'route.bind.set',
         args: { route: '.' },
         cwd: tempDir,
       });
@@ -144,7 +144,7 @@ describe('driver.route.drive.acceptance', () => {
 
       // bind the route
       await invokeRouteSkill({
-        skill: 'route.bind',
+        skill: 'route.bind.set',
         args: { route: '.' },
         cwd: tempDir,
       });

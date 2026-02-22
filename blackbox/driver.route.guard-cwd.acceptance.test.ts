@@ -37,7 +37,7 @@ describe('driver.route.guard-cwd.acceptance', () => {
 
       // bind the route
       await invokeRouteSkill({
-        skill: 'route.bind',
+        skill: 'route.bind.set',
         args: { route: '.' },
         cwd: tempDir,
       });
@@ -141,7 +141,7 @@ describe('driver.route.guard-cwd.acceptance', () => {
 
       // bind the nested route
       await invokeRouteSkill({
-        skill: 'route.bind',
+        skill: 'route.bind.set',
         args: { route: nestedRoute },
         cwd: tempDir,
       });
