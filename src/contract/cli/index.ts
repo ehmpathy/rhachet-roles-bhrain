@@ -7,7 +7,9 @@ import { reflect } from './reflect';
 import { researchInit } from './research';
 import { review } from './review';
 import {
-  routeBind,
+  routeBindDel,
+  routeBindGet,
+  routeBindSet,
   routeDrive,
   routeStoneDel,
   routeStoneGet,
@@ -19,7 +21,11 @@ export const cli = {
   review,
   reflect,
   route: {
-    bind: routeBind,
+    bind: {
+      set: routeBindSet,
+      get: routeBindGet,
+      del: routeBindDel,
+    },
     drive: routeDrive,
     stone: {
       get: routeStoneGet,

@@ -11,7 +11,9 @@ export { getRoleRegistry } from '@src/domain.roles/getRoleRegistry';
 import { reflect } from '@src/contract/cli/reflect';
 import { review } from '@src/contract/cli/review';
 import {
-  routeBind,
+  routeBindDel,
+  routeBindGet,
+  routeBindSet,
   routeDrive,
   routeStoneDel,
   routeStoneGet,
@@ -23,7 +25,11 @@ export const cli = {
   review,
   reflect,
   route: {
-    bind: routeBind,
+    bind: {
+      set: routeBindSet,
+      get: routeBindGet,
+      del: routeBindDel,
+    },
     drive: routeDrive,
     stone: {
       get: routeStoneGet,

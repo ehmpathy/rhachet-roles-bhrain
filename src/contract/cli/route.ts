@@ -151,20 +151,52 @@ options:
 };
 
 /**
- * .what = prints help for route.bind
+ * .what = prints help for route.bind.set
  */
-const printBindHelp = (): void => {
+const printBindSetHelp = (): void => {
   console.log(
     `
-route.bind - bind/query/remove a route for the current branch
+route.bind.set - bind a route to the current branch
 
 usage:
-  route.bind [options]
+  route.bind.set [options]
 
 options:
-  --route <path>     path to route directory to bind (sets the bind)
-  --get              query the current bind
-  --del              remove the current bind
+  --route <path>     path to route directory to bind (required)
+  --help             show this help message
+`.trim(),
+  );
+};
+
+/**
+ * .what = prints help for route.bind.get
+ */
+const printBindGetHelp = (): void => {
+  console.log(
+    `
+route.bind.get - query the route bound to the current branch
+
+usage:
+  route.bind.get [options]
+
+options:
+  --help             show this help message
+`.trim(),
+  );
+};
+
+/**
+ * .what = prints help for route.bind.del
+ */
+const printBindDelHelp = (): void => {
+  console.log(
+    `
+route.bind.del - remove the route bind for the current branch
+
+usage:
+  route.bind.del [options]
+
+options:
   --help             show this help message
 `.trim(),
   );
@@ -224,51 +256,80 @@ export const routeDrive = async (): Promise<void> => {
 };
 
 /**
- * .what = cli entrypoint for route.bind skill
- * .why = enables bind/query/remove of a route to the current branch
+ * .what = cli entrypoint for route.bind.set skill
+ * .why = binds a route to the current branch for auto-lookup
  */
-export const routeBind = async (): Promise<void> => {
+export const routeBindSet = async (): Promise<void> => {
   const options = parseArgs(process.argv);
 
   if (options.help) {
-    printBindHelp();
+    printBindSetHelp();
+    return;
+  }
+
+  if (!options.route) {
+    console.error('error: --route is required');
+    console.error('run with --help for usage');
+    process.exit(1);
+  }
+
+  try {
+    const result = await setRouteBind({ route: options.route });
+    console.log(`bound route: ${result.route}`);
+  } catch (error) {
+    if (error instanceof Error) {
+      console.error(`error: ${error.message}`);
+    }
+    process.exit(1);
+  }
+};
+
+/**
+ * .what = cli entrypoint for route.bind.get skill
+ * .why = queries the route bound to the current branch
+ */
+export const routeBindGet = async (): Promise<void> => {
+  const options = parseArgs(process.argv);
+
+  if (options.help) {
+    printBindGetHelp();
     return;
   }
 
   try {
-    // dispatch: --get
-    if (options.get === 'true') {
-      const result = await getRouteBind();
-      if (result) {
-        console.log(`bound to: ${result.route}`);
-      } else {
-        console.log('not bound');
-      }
-      return;
+    const result = await getRouteBind();
+    if (result) {
+      console.log(`bound to: ${result.route}`);
+    } else {
+      console.log('not bound');
     }
-
-    // dispatch: --del
-    if (options.del === 'true') {
-      const result = await delRouteBind();
-      if (result.deleted) {
-        console.log('unbound route');
-      } else {
-        console.log('not bound (no bind to remove)');
-      }
-      return;
+  } catch (error) {
+    if (error instanceof Error) {
+      console.error(`error: ${error.message}`);
     }
-
-    // dispatch: --route (set bind)
-    if (options.route) {
-      const result = await setRouteBind({ route: options.route });
-      console.log(`bound route: ${result.route}`);
-      return;
-    }
-
-    // no valid option
-    console.error('error: provide --route, --get, or --del');
-    console.error('run with --help for usage');
     process.exit(1);
+  }
+};
+
+/**
+ * .what = cli entrypoint for route.bind.del skill
+ * .why = removes the route bind for the current branch
+ */
+export const routeBindDel = async (): Promise<void> => {
+  const options = parseArgs(process.argv);
+
+  if (options.help) {
+    printBindDelHelp();
+    return;
+  }
+
+  try {
+    const result = await delRouteBind();
+    if (result.deleted) {
+      console.log('unbound route');
+    } else {
+      console.log('not bound (no bind to remove)');
+    }
   } catch (error) {
     if (error instanceof Error) {
       console.error(`error: ${error.message}`);

@@ -28,7 +28,7 @@ describe('driver.route.bind.autoresolve.acceptance', () => {
 
         // bind
         await invokeRouteSkill({
-          skill: 'route.bind',
+          skill: 'route.bind.set',
           args: { route: '.' },
           cwd: tempDir,
         });
@@ -68,7 +68,7 @@ describe('driver.route.bind.autoresolve.acceptance', () => {
 
         // bind
         await invokeRouteSkill({
-          skill: 'route.bind',
+          skill: 'route.bind.set',
           args: { route: '.' },
           cwd: tempDir,
         });
@@ -112,7 +112,7 @@ describe('driver.route.bind.autoresolve.acceptance', () => {
 
           // bind
           await invokeRouteSkill({
-            skill: 'route.bind',
+            skill: 'route.bind.set',
             args: { route: '.' },
             cwd: tempDir,
           });
@@ -163,7 +163,7 @@ describe('driver.route.bind.autoresolve.acceptance', () => {
 
         // bind to root
         await invokeRouteSkill({
-          skill: 'route.bind',
+          skill: 'route.bind.set',
           args: { route: '.' },
           cwd: tempDir,
         });
@@ -200,13 +200,13 @@ describe('driver.route.bind.autoresolve.acceptance', () => {
 
         // bind then unbind
         await invokeRouteSkill({
-          skill: 'route.bind',
+          skill: 'route.bind.set',
           args: { route: '.' },
           cwd: tempDir,
         });
         await invokeRouteSkill({
-          skill: 'route.bind',
-          args: { del: true },
+          skill: 'route.bind.del',
+          args: {},
           cwd: tempDir,
         });
 
