@@ -43,8 +43,8 @@
       ]
     }
   ],
-  // fast validation tests run together (no llm calls)
+  // fast validation tests run on three shards
   "dynamic": {
-    "shards": 1
+    "shards": 3
   }
 }
