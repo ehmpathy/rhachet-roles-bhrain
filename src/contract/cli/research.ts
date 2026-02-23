@@ -56,7 +56,7 @@ examples:
   // validate required args before expensive imports
   if (!name) {
     console.error('⛈️  error: --name is required');
-    process.exit(1);
+    process.exit(2);
   }
 
   // validate --open has a value if provided
@@ -68,7 +68,7 @@ examples:
     console.error('  --open vim');
     console.error('  --open zed');
     console.error('  --open code');
-    process.exit(1);
+    process.exit(2);
   }
 
   // run the init
