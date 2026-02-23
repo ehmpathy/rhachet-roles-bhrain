@@ -15,6 +15,7 @@
   "exports": {
     ".": "./dist/index.js",
     "./registry": "./dist/contract/registry/index.js",
+    "./sdk/route": "./dist/contract/sdk/route.js",
     "./cli": "./dist/contract/cli/index.js",
     "./cli/route": "./dist/contract/cli/route.js",
     "./cli/review": "./dist/contract/cli/review.js",
