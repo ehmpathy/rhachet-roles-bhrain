@@ -4,4 +4,4 @@ artifacts:
 reviews: []
 
 judges:
-  - npx rhx route.stone.judge --mechanism approved? --stone $stone --route $route
+  - rhx route.stone.judge --mechanism approved? --stone $stone --route $route
