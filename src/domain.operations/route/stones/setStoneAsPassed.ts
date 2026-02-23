@@ -269,23 +269,33 @@ export const setStoneAsPassed = async (
     .map((j) => j.reason || `judge ${j.index} failed`)
     .join('; ');
 
-  // build detailed stderr for failed judges with full artifact content
+  // build detailed stderr for failed judges as tree bucket
   const stderrLines: string[] = [];
   for (const judge of failedJudges) {
-    stderrLines.push(`judge ${judge.index}:`);
-    // read full artifact content
+    // blank line between judges (not before first)
+    if (stderrLines.length > 0) {
+      stderrLines.push('');
+    }
+
+    stderrLines.push(`🔎 judge ${judge.index}`);
+
+    // read and parse artifact content
     try {
       const artifactContent = await fs.readFile(judge.path, 'utf-8');
-      // indent each line for readability
-      const indented = artifactContent
-        .split('\n')
-        .map((line) => `  ${line}`)
-        .join('\n');
-      stderrLines.push(indented);
+      const parsed = parseJudgeArtifactForStderr(artifactContent);
+
+      // format as tree bucket (like route.drive's stone content)
+      stderrLines.push(`   ├─`);
+      stderrLines.push(`   │`);
+      for (const line of parsed.lines) {
+        stderrLines.push(`   │  ${line}`);
+      }
+      stderrLines.push(`   │`);
+      stderrLines.push(`   └─`);
     } catch {
       // fallback to reason if file read fails
       if (judge.reason) {
-        stderrLines.push(`  ${judge.reason}`);
+        stderrLines.push(`   └─ ${judge.reason}`);
       }
     }
   }
@@ -401,4 +411,35 @@ const findStoneByGlob = (
 
   const matched = stones.filter((s) => regex.test(s.name));
   return matched[0] ?? null;
+};
+
+/**
+ * .what = parses judge artifact content for stderr output
+ * .why = strips internal markers and extracts meaningful error info
+ */
+const parseJudgeArtifactForStderr = (content: string): { lines: string[] } => {
+  const lines: string[] = [];
+
+  // strip internal markers and split into sections
+  const cleaned = content
+    .replace(/---stderr---/g, '')
+    .replace(/---metadata---/g, '')
+    .trim();
+
+  // extract meaningful lines
+  for (const line of cleaned.split('\n')) {
+    const trimmed = line.trim();
+    if (!trimmed) continue;
+
+    // parse exit code line
+    if (trimmed.match(/^exit code:?\s*\d+/i)) {
+      lines.push(trimmed);
+      continue;
+    }
+
+    // keep error lines and other meaningful content
+    lines.push(trimmed);
+  }
+
+  return { lines };
 };

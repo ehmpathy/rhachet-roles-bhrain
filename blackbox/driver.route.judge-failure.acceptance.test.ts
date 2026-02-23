@@ -68,8 +68,8 @@ describe('driver.route.judge-failure.acceptance', () => {
 
       then('stderr shows detailed failure reason', () => {
         // stderr should contain the detailed judge failure reason
-        expect(result.stderr).toContain('judge 1:');
-        expect(result.stderr).toContain('command exited 1');
+        expect(result.stderr).toContain('judge 1');
+        expect(result.stderr).toContain('exit code: 1');
       });
 
       then('stdout matches snapshot', () => {
