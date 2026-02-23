@@ -102,7 +102,7 @@ export const runOneStoneGuardJudge = async (input: {
 
   // parse passed and reason from content
   const passed = parsePassed(content, exitCode);
-  const reason = parseReason(content);
+  const reason = parseReason(content, exitCode);
 
   return new RouteStoneGuardJudgeArtifact({
     stone: { path: input.stone.path },
@@ -164,8 +164,8 @@ export const runStoneGuardJudges = async (
   let maxPriorJudgeIteration = 0;
   for (const filePath of priorJudgeFiles) {
     const content = await fs.readFile(filePath, 'utf-8');
-    const passed = parsePassed(content, 0);
-    const reason = parseReason(content);
+    const passed = parsePassed(content, null);
+    const reason = parseReason(content, null);
 
     // parse index from filename: $stone.guard.judge.i$rp$j.$reviewHash.$judgeHash.j$index.md
     const indexMatch = filePath.match(/\.j(\d+)\.md$/);
@@ -282,16 +282,32 @@ const substituteVars = (
 /**
  * .what = parses passed status from content and exit code
  * .why = determines judge verdict from output
+ *
+ * critical: when exitCode is null (read from file), we only trust
+ * explicit passed: true. any ambiguity defaults to failed to prevent
+ * false cache of failures as passes.
  */
-const parsePassed = (content: string, exitCode: number): boolean => {
+const parsePassed = (content: string, exitCode: number | null): boolean => {
   // first check explicit passed: true/false in content
   const passedMatch = content.match(/passed:\s*(true|false)/i);
   if (passedMatch?.[1]) {
     return passedMatch[1].toLowerCase() === 'true';
   }
 
-  // fallback to exit code
-  return exitCode === 0;
+  // check for failure indicators in content
+  // if file shows error output, treat as failed
+  if (content.includes('command failed') || content.includes('exit code')) {
+    return false;
+  }
+
+  // if we have exitCode from live execution, use it
+  if (exitCode !== null) {
+    return exitCode === 0;
+  }
+
+  // when read from file without exitCode context, default to failed
+  // this prevents false cache of failures as passes
+  return false;
 };
 
 /**
@@ -301,7 +317,10 @@ const parsePassed = (content: string, exitCode: number): boolean => {
  * failfast: returns first line of stderr if no explicit reason found
  * this ensures errors like "command not found" are visible
  */
-const parseReason = (content: string): string | null => {
+const parseReason = (
+  content: string,
+  exitCode: number | null,
+): string | null => {
   // check for explicit reason: line first
   const reasonMatch = content.match(/reason:\s*(.+)/i);
   if (reasonMatch?.[1]) {
@@ -321,6 +340,11 @@ const parseReason = (content: string): string | null => {
   const stderrLineMatch = content.match(/stderr:\s*(.+)/i);
   if (stderrLineMatch?.[1] && stderrLineMatch[1] !== '(none)') {
     return stderrLineMatch[1].trim();
+  }
+
+  // fallback: if command failed but no reason extracted, include exit code + hint
+  if (exitCode !== null && exitCode !== 0) {
+    return `command exited ${exitCode}; see judge artifact for details`;
   }
 
   return null;
