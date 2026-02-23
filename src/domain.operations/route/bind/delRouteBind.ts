@@ -19,6 +19,7 @@ export const delRouteBind = async (): Promise<{ deleted: boolean }> => {
     glob: flagGlob,
     cwd: process.cwd(),
     dot: true,
+    ignore: ['**/node_modules/**'],
   });
 
   // not found → idempotent success

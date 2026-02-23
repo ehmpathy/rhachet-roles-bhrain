@@ -26,6 +26,7 @@ export const getRouteBindByBranch = async (input: {
     glob: flagGlob,
     cwd: process.cwd(),
     dot: true,
+    ignore: ['**/node_modules/**'],
   });
 
   // no flags found → not bound
