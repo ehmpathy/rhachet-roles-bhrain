@@ -1,7 +1,10 @@
 import * as fs from 'fs/promises';
 
+import type { RouteStone } from '@src/domain.objects/Driver/RouteStone';
+
 import { getRouteBindByBranch } from './bind/getRouteBindByBranch';
 import { setDriveBlockerState } from './drive/setDriveBlockerState';
+import { getOneStoneGuardApproval } from './judges/getOneStoneGuardApproval';
 import { computeNextStones } from './stones/computeNextStones';
 import { getAllStoneDriveArtifacts } from './stones/getAllStoneDriveArtifacts';
 import { getAllStones } from './stones/getAllStones';
@@ -67,6 +70,21 @@ export const stepRouteDrive = async (input: {
 
   // in hook mode, track and potentially block stop
   if (input.mode === 'hook') {
+    // check if stone needs human approval and that's the only blocker
+    // if so, allow stop (agent can't proceed without human)
+    const needsApproval = await checkNeedsHumanApproval({ stone, route });
+    if (needsApproval) {
+      // allow stop with informative output
+      return {
+        emit: {
+          stdout: formatRouteDriveNeedsApproval({
+            route,
+            stone: stone.name,
+          }),
+        },
+      };
+    }
+
     // track this block attempt
     const { state } = await setDriveBlockerState({ route, stone: stone.name });
 
@@ -188,6 +206,60 @@ const formatRouteDriveEscalate = (input: {
   count: number;
 }): string => {
   return `stuck on stone ${input.stone} after ${input.count} attempts. please tell a human what you saw, where you got stuck, and what you tried.`;
+};
+
+/**
+ * .what = checks if stone is blocked specifically on human approval
+ * .why = enables agent to stop when blocked on approval (can't proceed without human)
+ *
+ * returns true when:
+ * - stone has a guard with an approved? judge mechanism
+ * - approval marker hasn't been granted yet
+ */
+const checkNeedsHumanApproval = async (input: {
+  stone: RouteStone;
+  route: string;
+}): Promise<boolean> => {
+  // no guard = no approval requirement
+  if (!input.stone.guard) return false;
+
+  // check if guard has approved? judge mechanism
+  const hasApprovalJudge = input.stone.guard.judges.some((judge) =>
+    judge.includes('--mechanism approved?'),
+  );
+  if (!hasApprovalJudge) return false;
+
+  // check if approval has been granted
+  const approval = await getOneStoneGuardApproval({
+    stone: input.stone,
+    route: input.route,
+  });
+
+  // needs approval if: has approval judge AND approval not yet granted
+  return approval === null;
+};
+
+/**
+ * .what = formats route.drive output when stone needs human approval
+ * .why = allows agent to stop gracefully when blocked on human approval
+ */
+const formatRouteDriveNeedsApproval = (input: {
+  route: string;
+  stone: string;
+}): string => {
+  const approveCmd = `rhx route.stone.set --stone ${input.stone} --as approved`;
+  const lines: string[] = [];
+  lines.push(`🦉 where were we?`);
+  lines.push('');
+  lines.push(`🗿 route.drive`);
+  lines.push(`   ├─ where do we go?`);
+  lines.push(`   │  ├─ route = ${input.route}`);
+  lines.push(`   │  └─ stone = ${input.stone}`);
+  lines.push(`   │`);
+  lines.push(`   └─ halted, human approval required`);
+  lines.push(`      ├─ please ask your human to`);
+  lines.push(`      └─ ${approveCmd}`);
+  return lines.join('\n');
 };
 
 /**

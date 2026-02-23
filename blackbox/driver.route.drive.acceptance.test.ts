@@ -401,7 +401,97 @@ describe('driver.route.drive.acceptance', () => {
     });
   });
 
-  given('[case6] no route bound', () => {
+given('[case6] hook mode allows stop when human approval needed', () => {
+    const JOURNEY_ASSETS_DIR = path.join(__dirname, '.test/assets/route-journey');
+
+    const scene = useBeforeAll(async () => {
+      const tempDir = genTempDirForRhachet({
+        slug: 'drive-case6',
+        clone: JOURNEY_ASSETS_DIR,
+      });
+
+      // link the driver role
+      await execAsync('npx rhachet roles link --role driver', { cwd: tempDir });
+
+      // create feature branch
+      await execAsync('git checkout -b vlad/test-drive-case6', { cwd: tempDir });
+
+      // bind the route
+      await invokeRouteSkill({
+        skill: 'route.bind.set',
+        args: { route: '.' },
+        cwd: tempDir,
+      });
+
+      // create artifact for 1.vision (which has approved? judge)
+      await fs.writeFile(
+        path.join(tempDir, '1.vision.md'),
+        '# Vision\n\nBuild a weather API.',
+      );
+
+      return { tempDir };
+    });
+
+    when('[t0] route.drive is invoked in hook mode', () => {
+      const result = useThen('route.drive allows stop', async () =>
+        invokeRouteSkill({
+          skill: 'route.drive',
+          args: { mode: 'hook' },
+          cwd: scene.tempDir,
+        }),
+      );
+
+      then('exit code is 0 (allow stop)', () => {
+        // should allow stop since stone needs human approval
+        expect(result.code).toEqual(0);
+      });
+
+      then('stdout shows approval needed', () => {
+        expect(result.stdout).toContain('halted, human approval required');
+      });
+
+      then('stdout shows approve command', () => {
+        expect(result.stdout).toContain('route.stone.set');
+        expect(result.stdout).toContain('--as approved');
+      });
+    });
+
+    when('[t1] human grants approval', () => {
+      const result = useThen('approval succeeds', async () =>
+        invokeRouteSkill({
+          skill: 'route.stone.set',
+          args: { stone: '1.vision', as: 'approved' },
+          cwd: scene.tempDir,
+        }),
+      );
+
+      then('exit code is 0', () => {
+        expect(result.code).toEqual(0);
+      });
+    });
+
+    when('[t2] route.drive invoked after approval', () => {
+      const result = useThen('route.drive blocks (work remains)', async () =>
+        invokeRouteSkill({
+          skill: 'route.drive',
+          args: { mode: 'hook' },
+          cwd: scene.tempDir,
+        }),
+      );
+
+      then('exit code is 2 (block)', () => {
+        // approval granted means agent CAN proceed (run pass)
+        // so we should block stop, not allow it
+        expect(result.code).toEqual(2);
+      });
+
+      then('stderr shows block reason', () => {
+        expect(result.stderr).toContain('route not complete');
+      });
+    });
+  });
+
+  given('[case7] no route bound', () => {
     const scene = useBeforeAll(async () => {
       const tempDir = genTempDirForRhachet({
         slug: 'drive-case4',
