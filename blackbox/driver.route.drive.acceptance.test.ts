@@ -191,7 +191,217 @@ describe('driver.route.drive.acceptance', () => {
     });
   });
 
-  given('[case4] no route bound', () => {
+  given('[case4] hook mode blocks stop when stones remain', () => {
+    const scene = useBeforeAll(async () => {
+      const tempDir = genTempDirForRhachet({
+        slug: 'drive-case4',
+        clone: ASSETS_DIR,
+      });
+
+      // link the driver role
+      await execAsync('npx rhachet roles link --role driver', { cwd: tempDir });
+
+      // create feature branch
+      await execAsync('git checkout -b vlad/test-drive-case4', { cwd: tempDir });
+
+      // bind the route
+      await invokeRouteSkill({
+        skill: 'route.bind.set',
+        args: { route: '.' },
+        cwd: tempDir,
+      });
+
+      return { tempDir };
+    });
+
+    when('[t0] route.drive is invoked with --mode hook', () => {
+      const result = useThen('route.drive blocks', async () =>
+        invokeRouteSkill({
+          skill: 'route.drive',
+          args: { mode: 'hook' },
+          cwd: scene.tempDir,
+        }),
+      );
+
+      then('exit code is 2 (block)', () => {
+        expect(result.code).toEqual(2);
+      });
+
+      then('stdout shows stone content', () => {
+        expect(result.stdout).toContain('where were we?');
+        expect(result.stdout).toContain('stone = 1');
+      });
+
+      then('stderr has block reason with count', () => {
+        expect(result.stderr).toContain('route not complete');
+        expect(result.stderr).toContain('block 1/21');
+      });
+    });
+
+    when('[t1] route.drive invoked twice in hook mode', () => {
+      const result = useThen('second call has higher count', async () => {
+        // first call
+        await invokeRouteSkill({
+          skill: 'route.drive',
+          args: { mode: 'hook' },
+          cwd: scene.tempDir,
+        });
+        // second call
+        return invokeRouteSkill({
+          skill: 'route.drive',
+          args: { mode: 'hook' },
+          cwd: scene.tempDir,
+        });
+      });
+
+      then('stderr shows incremented count', () => {
+        // count should be 3 (1 from t0 + 2 from this when block)
+        expect(result.stderr).toMatch(/block [23]\/21/);
+      });
+    });
+
+    when('[t2] blocker state file exists', () => {
+      then('.route/.drive.blockers.latest.json exists', async () => {
+        const statePath = path.join(
+          scene.tempDir,
+          '.route',
+          '.drive.blockers.latest.json',
+        );
+        const exists = await fs
+          .access(statePath)
+          .then(() => true)
+          .catch(() => false);
+        expect(exists).toBe(true);
+      });
+
+      then('.route/.drive.blocker.events.jsonl has entries', async () => {
+        const historyPath = path.join(
+          scene.tempDir,
+          '.route',
+          '.drive.blocker.events.jsonl',
+        );
+        const content = await fs.readFile(historyPath, 'utf-8');
+        const lines = content.trim().split('\n');
+        expect(lines.length).toBeGreaterThan(0);
+      });
+    });
+  });
+
+  given('[case5] passed stone clears blocker state', () => {
+    const scene = useBeforeAll(async () => {
+      const tempDir = genTempDirForRhachet({
+        slug: 'drive-case5',
+        clone: ASSETS_DIR,
+      });
+
+      // link the driver role
+      await execAsync('npx rhachet roles link --role driver', { cwd: tempDir });
+
+      // create feature branch
+      await execAsync('git checkout -b vlad/test-drive-case5', { cwd: tempDir });
+
+      // bind the route
+      await invokeRouteSkill({
+        skill: 'route.bind.set',
+        args: { route: '.' },
+        cwd: tempDir,
+      });
+
+      // trigger a few blocks
+      await invokeRouteSkill({
+        skill: 'route.drive',
+        args: { mode: 'hook' },
+        cwd: tempDir,
+      });
+      await invokeRouteSkill({
+        skill: 'route.drive',
+        args: { mode: 'hook' },
+        cwd: tempDir,
+      });
+
+      // create artifact for stone 1 so it can pass
+      await fs.writeFile(
+        path.join(tempDir, '1.stone.i1.md'),
+        '# Implementation\n\nFeature done.',
+      );
+
+      // promise the self-reviews required by the guard
+      await invokeRouteSkill({
+        skill: 'route.stone.set',
+        args: { stone: '1', as: 'promised', that: 'all-done' },
+        cwd: tempDir,
+      });
+      await invokeRouteSkill({
+        skill: 'route.stone.set',
+        args: { stone: '1', as: 'promised', that: 'tests-pass' },
+        cwd: tempDir,
+      });
+
+      // create marker so mock review passes
+      await fs.writeFile(
+        path.join(tempDir, '.test', 'review-should-pass'),
+        '',
+      );
+
+      return { tempDir };
+    });
+
+    when('[t0] before stone passes', () => {
+      then('blocker state has count > 0', async () => {
+        const statePath = path.join(
+          scene.tempDir,
+          '.route',
+          '.drive.blockers.latest.json',
+        );
+        const content = await fs.readFile(statePath, 'utf-8');
+        const state = JSON.parse(content);
+        expect(state.count).toBeGreaterThan(0);
+      });
+    });
+
+    when('[t1] route.stone.set --as passed succeeds', () => {
+      const result = useThen('stone passes', async () =>
+        invokeRouteSkill({
+          skill: 'route.stone.set',
+          args: { stone: '1', as: 'passed' },
+          cwd: scene.tempDir,
+        }),
+      );
+
+      then('exit code is 0', () => {
+        expect(result.code).toEqual(0);
+      });
+
+      then('blocker state file is cleared', async () => {
+        const statePath = path.join(
+          scene.tempDir,
+          '.route',
+          '.drive.blockers.latest.json',
+        );
+        const exists = await fs
+          .access(statePath)
+          .then(() => true)
+          .catch(() => false);
+        expect(exists).toBe(false);
+      });
+    });
+
+    when('[t2] route.drive invoked after pass', () => {
+      const result = useThen('block count resets to 1', async () =>
+        invokeRouteSkill({
+          skill: 'route.drive',
+          args: { mode: 'hook' },
+          cwd: scene.tempDir,
+        }),
+      );
+
+      then('stderr shows block 1/21 (reset)', () => {
+        expect(result.stderr).toContain('block 1/21');
+      });
+    });
+  });
+
+  given('[case6] no route bound', () => {
     const scene = useBeforeAll(async () => {
       const tempDir = genTempDirForRhachet({
         slug: 'drive-case4',

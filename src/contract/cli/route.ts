@@ -244,8 +244,13 @@ export const routeDrive = async (): Promise<void> => {
       mode,
     });
 
-    if (result.emit) {
+    if (result.emit?.stdout) {
       console.log(result.emit.stdout);
+    }
+
+    if (result.emit?.stderr) {
+      console.error(result.emit.stderr.reason);
+      process.exit(result.emit.stderr.code);
     }
   } catch (error) {
     if (error instanceof Error) {

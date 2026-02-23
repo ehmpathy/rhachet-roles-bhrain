@@ -1,6 +1,7 @@
 import * as fs from 'fs/promises';
 
 import { getRouteBindByBranch } from './bind/getRouteBindByBranch';
+import { setDriveBlockerState } from './drive/setDriveBlockerState';
 import { computeNextStones } from './stones/computeNextStones';
 import { getAllStoneDriveArtifacts } from './stones/getAllStoneDriveArtifacts';
 import { getAllStones } from './stones/getAllStones';
@@ -12,21 +13,20 @@ import { getAllStones } from './stones/getAllStones';
 export const stepRouteDrive = async (input: {
   route?: string;
   mode?: 'hook';
-}): Promise<{ emit: { stdout: string } | null }> => {
+}): Promise<{
+  emit: {
+    stdout?: string;
+    stderr?: { reason: string; code: number };
+  } | null;
+}> => {
   // derive route from input or bound branch
   let route = input.route;
   if (!route) {
     const bind = await getRouteBindByBranch({ branch: null });
     if (!bind) {
-      // in hook mode, be silent
-      if (input.mode === 'hook') {
-        return { emit: null };
-      }
-      // in direct mode, say not bound
+      // no route bound = not our concern, don't block
       return {
-        emit: {
-          stdout: formatRouteDriveUnbound(),
-        },
+        emit: { stdout: formatRouteDriveUnbound() },
       };
     }
     route = bind.route;
@@ -43,17 +43,14 @@ export const stepRouteDrive = async (input: {
     query: '@next-one',
   });
 
-  // no next stones → route complete
+  // no next stones → route complete, ok to stop
   if (nextStones.length === 0) {
-    // in hook mode, be silent
+    // in hook mode, silent exit when route complete
     if (input.mode === 'hook') {
       return { emit: null };
     }
-    // in direct mode, say route complete
     return {
-      emit: {
-        stdout: formatRouteDriveComplete(),
-      },
+      emit: { stdout: formatRouteDriveComplete() },
     };
   }
 
@@ -62,14 +59,60 @@ export const stepRouteDrive = async (input: {
   const stoneContent = await fs.readFile(stone.path, 'utf-8');
 
   // format output
+  const stdout = formatRouteDrive({
+    route,
+    stone: stone.name,
+    content: stoneContent,
+  });
+
+  // in hook mode, track and potentially block stop
+  if (input.mode === 'hook') {
+    // track this block attempt
+    const { state } = await setDriveBlockerState({ route, stone: stone.name });
+
+    // check if we've exceeded max consecutive blocks (cutoff: 21)
+    const maxBlocks = 21;
+    if (state.count > maxBlocks) {
+      // stop block exhausted, exit 3 = tell human about stuck state
+      return {
+        emit: {
+          stdout: formatRouteDriveExhausted({
+            route,
+            stone: stone.name,
+            count: state.count,
+            max: maxBlocks,
+          }),
+          stderr: {
+            reason: formatRouteDriveEscalate({
+              route,
+              stone: stone.name,
+              count: state.count,
+            }),
+            code: 3,
+          },
+        },
+      };
+    }
+
+    // block stop
+    return {
+      emit: {
+        stdout,
+        stderr: {
+          reason: formatRouteDriveBlockReason({
+            route,
+            stone: stone.name,
+            count: state.count,
+          }),
+          code: 2,
+        },
+      },
+    };
+  }
+
+  // direct mode, just show output
   return {
-    emit: {
-      stdout: formatRouteDrive({
-        route,
-        stone: stone.name,
-        content: stoneContent,
-      }),
-    },
+    emit: { stdout },
   };
 };
 
@@ -97,6 +140,54 @@ const formatRouteDriveComplete = (): string => {
   lines.push(`🗿 route.drive`);
   lines.push(`   └─ route complete! 🎉`);
   return lines.join('\n');
+};
+
+/**
+ * .what = formats reason for block in hook mode
+ * .why = provides clear instruction to Claude on what to do next
+ */
+const formatRouteDriveBlockReason = (input: {
+  route: string;
+  stone: string;
+  count: number;
+}): string => {
+  const passCmd = `rhx route.stone.set --stone ${input.stone} --as passed`;
+  return `route not complete (block ${input.count}/21). next stone: ${input.stone}. when done, run: ${passCmd}`;
+};
+
+/**
+ * .what = formats output when block limit exhausted
+ * .why = signals need for human intervention
+ */
+const formatRouteDriveExhausted = (input: {
+  route: string;
+  stone: string;
+  count: number;
+  max: number;
+}): string => {
+  const lines: string[] = [];
+  lines.push(`🦉 where were we?`);
+  lines.push('');
+  lines.push(`🗿 route.drive`);
+  lines.push(`   ├─ where do we go?`);
+  lines.push(`   │  ├─ route = ${input.route}`);
+  lines.push(`   │  └─ stone = ${input.stone}`);
+  lines.push(`   │`);
+  lines.push(`   └─ ⚠️ stuck! blocked ${input.count}x (max: ${input.max})`);
+  lines.push(`      └─ please tell a human what you saw and where`);
+  return lines.join('\n');
+};
+
+/**
+ * .what = formats escalation message for stderr when stuck
+ * .why = provides context for human intervention
+ */
+const formatRouteDriveEscalate = (input: {
+  route: string;
+  stone: string;
+  count: number;
+}): string => {
+  return `stuck on stone ${input.stone} after ${input.count} attempts. please tell a human what you saw, where you got stuck, and what you tried.`;
 };
 
 /**
