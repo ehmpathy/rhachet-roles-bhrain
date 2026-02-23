@@ -45,6 +45,7 @@ export const setRouteBind = async (input: {
     glob: flagGlob,
     cwd: process.cwd(),
     dot: true,
+    ignore: ['**/node_modules/**'],
   });
 
   // if found, check if same route or different
