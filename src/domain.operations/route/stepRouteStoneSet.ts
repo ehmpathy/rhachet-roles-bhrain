@@ -3,6 +3,7 @@ import { BadRequestError, UnexpectedCodePathError } from 'helpful-errors';
 import type { ContextCliEmit } from '@src/domain.objects/Driver/ContextCliEmit';
 import { getGuardSelfReviews } from '@src/domain.objects/Driver/RouteStoneGuard';
 
+import { delDriveBlockerState } from './drive/delDriveBlockerState';
 import { formatRouteStoneEmit } from './formatRouteStoneEmit';
 import { computeStoneReviewInputHash } from './guard/computeStoneReviewInputHash';
 import { getStonePromises } from './promise/getStonePromises';
@@ -50,6 +51,12 @@ export const stepRouteStoneSet = async (
       },
       context,
     );
+
+    // if passed successfully, clear drive blocker state (progress made)
+    if (result.passed) {
+      await delDriveBlockerState({ route: input.route });
+    }
+
     return {
       passed: result.passed,
       refs: result.refs,

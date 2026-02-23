@@ -24,7 +24,7 @@ describe('stepRouteDrive', () => {
       await fs.rm(tempDir, { recursive: true, force: true });
     });
 
-    when('[t0] stepRouteDrive called with route', () => {
+    when('[t0] stepRouteDrive called in direct mode', () => {
       then('returns stone content and pass command', async () => {
         const result = await stepRouteDrive({ route: tempDir });
         expect(result.emit?.stdout).toContain('where were we?');
@@ -40,6 +40,31 @@ describe('stepRouteDrive', () => {
         expect(result.emit?.stdout).toContain("here's the stone");
         // the stone content should be included (from 1.vision.stone fixture)
         expect(result.emit?.stdout).toContain('illustrate the vision');
+      });
+    });
+
+    when('[t1] stepRouteDrive called in hook mode', () => {
+      then('returns stdout with stone content', async () => {
+        const result = await stepRouteDrive({ route: tempDir, mode: 'hook' });
+        expect(result.emit?.stdout).toContain('where were we?');
+        expect(result.emit?.stdout).toContain('stone = 1.vision');
+      });
+
+      then('returns stderr with code 2 to block stop', async () => {
+        const result = await stepRouteDrive({ route: tempDir, mode: 'hook' });
+        expect(result.emit?.stderr).toBeDefined();
+        expect(result.emit?.stderr?.code).toBe(2);
+        expect(result.emit?.stderr?.reason).toContain('route not complete');
+        expect(result.emit?.stderr?.reason).toContain('1.vision');
+        expect(result.emit?.stderr?.reason).toContain('block 1/21');
+      });
+
+      then('increments block count on each call', async () => {
+        // first call already happened in beforeEach setup, so this is 2nd+
+        const result1 = await stepRouteDrive({ route: tempDir, mode: 'hook' });
+        const result2 = await stepRouteDrive({ route: tempDir, mode: 'hook' });
+        expect(result1.emit?.stderr?.reason).toMatch(/block \d+\/21/);
+        expect(result2.emit?.stderr?.reason).toMatch(/block \d+\/21/);
       });
     });
   });
@@ -71,7 +96,7 @@ describe('stepRouteDrive', () => {
     });
 
     when('[t1] stepRouteDrive called in hook mode', () => {
-      then('returns null emit (silent)', async () => {
+      then('returns null emit (silent, route done)', async () => {
         const result = await stepRouteDrive({ route: tempDir, mode: 'hook' });
         expect(result.emit).toBeNull();
       });
