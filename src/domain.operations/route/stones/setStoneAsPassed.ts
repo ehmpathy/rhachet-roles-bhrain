@@ -10,16 +10,16 @@ import {
 } from '@src/domain.objects/Driver/RouteStoneGuard';
 import type { RouteStoneGuardJudgeArtifact } from '@src/domain.objects/Driver/RouteStoneGuardJudgeArtifact';
 import type { RouteStoneGuardReviewArtifact } from '@src/domain.objects/Driver/RouteStoneGuardReviewArtifact';
-
-import { formatRouteStoneEmit } from '../formatRouteStoneEmit';
-import { computeStoneReviewInputHash } from '../guard/computeStoneReviewInputHash';
-import { getAllStoneGuardArtifactsByHash } from '../guard/getAllStoneGuardArtifactsByHash';
-import { runStoneGuardReviews } from '../guard/runStoneGuardReviews';
-import { runStoneGuardJudges } from '../judges/runStoneGuardJudges';
+import { formatRouteStoneEmit } from '@src/domain.operations/route/formatRouteStoneEmit';
+import { computeStoneReviewInputHash } from '@src/domain.operations/route/guard/computeStoneReviewInputHash';
+import { getAllStoneGuardArtifactsByHash } from '@src/domain.operations/route/guard/getAllStoneGuardArtifactsByHash';
+import { runStoneGuardReviews } from '@src/domain.operations/route/guard/runStoneGuardReviews';
+import { runStoneGuardJudges } from '@src/domain.operations/route/judges/runStoneGuardJudges';
 import {
   getStonePromises,
   hasInvalidatedPromise,
-} from '../promise/getStonePromises';
+} from '@src/domain.operations/route/promise/getStonePromises';
+
 import { getAllStoneArtifacts } from './getAllStoneArtifacts';
 import { getAllStones } from './getAllStones';
 import { setStonePassage } from './setStonePassage';
