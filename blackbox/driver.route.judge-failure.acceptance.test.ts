@@ -66,8 +66,18 @@ describe('driver.route.judge-failure.acceptance', () => {
         expect(result.stdout).toMatch(/reason:|command exited|stderr:/);
       });
 
+      then('stderr shows detailed failure reason', () => {
+        // stderr should contain the detailed judge failure reason
+        expect(result.stderr).toContain('judge 1:');
+        expect(result.stderr).toContain('command exited 1');
+      });
+
       then('stdout matches snapshot', () => {
         expect(sanitizeTimeForSnapshot(result.stdout)).toMatchSnapshot();
+      });
+
+      then('stderr matches snapshot', () => {
+        expect(result.stderr).toMatchSnapshot();
       });
     });
 
@@ -93,6 +103,10 @@ describe('driver.route.judge-failure.acceptance', () => {
 
       then('stdout matches snapshot', () => {
         expect(sanitizeTimeForSnapshot(result.stdout)).toMatchSnapshot();
+      });
+
+      then('stderr matches snapshot', () => {
+        expect(result.stderr).toMatchSnapshot();
       });
     });
   });

@@ -82,9 +82,14 @@ export const runOneStoneGuardJudge = async (input: {
 
   // write output if command produced output and no file was written
   // failfast: include both stdout and stderr for observability
+  // also include exit code so cached reads can extract failure reason
   const fileWritten = await isFilePresent(outputPath);
   if (!fileWritten) {
-    const output = [stdout, stderr].filter(Boolean).join('\n\n---stderr---\n');
+    const outputParts = [stdout, stderr].filter(Boolean);
+    if (exitCode !== 0) {
+      outputParts.push(`\n---metadata---\nexit code: ${exitCode}`);
+    }
+    const output = outputParts.join('\n\n---stderr---\n');
     if (output) {
       await fs.writeFile(outputPath, output);
     }
@@ -158,10 +163,10 @@ export const runStoneGuardJudges = async (
     // .route/ may not exist yet
   }
 
-  // parse prior judges to build cache and determine judge iteration
+  // parse prior judges to build cache
   // note: enumFilesFromGlob returns absolute paths, so use directly
-  const priorPassedByIndex = new Map<number, RouteStoneGuardJudgeArtifact>();
-  let maxPriorJudgeIteration = 0;
+  // cache all judges (passed or failed) - if judgeInputHash matches, reuse result
+  const priorByIndex = new Map<number, RouteStoneGuardJudgeArtifact>();
   for (const filePath of priorJudgeFiles) {
     const content = await fs.readFile(filePath, 'utf-8');
     const passed = parsePassed(content, null);
@@ -177,19 +182,9 @@ export const runStoneGuardJudges = async (
       ? parseInt(reviewIterMatch[1], 10)
       : 0;
 
-    // parse judge iteration from filename (the second number in i$rp$j)
-    const judgeIterMatch = filePath.match(/\.i\d+p(\d+)\./);
-    const priorJudgeIteration = judgeIterMatch?.[1]
-      ? parseInt(judgeIterMatch[1], 10)
-      : 0;
-
-    // track max judge iteration to compute next iteration
-    if (priorJudgeIteration > maxPriorJudgeIteration) {
-      maxPriorJudgeIteration = priorJudgeIteration;
-    }
-
-    if (passed && index > 0 && !priorPassedByIndex.has(index)) {
-      priorPassedByIndex.set(
+    // cache first result found for each index (same hash = same result)
+    if (index > 0 && !priorByIndex.has(index)) {
+      priorByIndex.set(
         index,
         new RouteStoneGuardJudgeArtifact({
           stone: { path: input.stone.path },
@@ -204,21 +199,22 @@ export const runStoneGuardJudges = async (
     }
   }
 
-  // judge iteration: next after max prior, or 1 if no priors
-  const judgeIteration = maxPriorJudgeIteration + 1;
+  // judge iteration: count of prior files + 1 (only increments when new judge runs)
+  const judgeIteration = priorJudgeFiles.length + 1;
 
   const judges: RouteStoneGuardJudgeArtifact[] = [];
 
-  // execute each judge command, reuse passed priors with same judge input hash
+  // execute each judge command, reuse prior results with same judge input hash
   for (let i = 0; i < input.guard.judges.length; i++) {
     const judgeCmd = input.guard.judges[i];
     if (!judgeCmd) continue;
     const index = i + 1;
 
-    // if prior judge passed for this judge input hash, reuse it
-    const priorPassed = priorPassedByIndex.get(index);
-    if (priorPassed) {
-      judges.push(priorPassed);
+    // if prior judge exists for this judge input hash, reuse it (passed or failed)
+    // same inputs = same result, no need to re-run
+    const prior = priorByIndex.get(index);
+    if (prior) {
+      judges.push(prior);
       continue;
     }
 
@@ -345,6 +341,12 @@ const parseReason = (
   // fallback: if command failed but no reason extracted, include exit code + hint
   if (exitCode !== null && exitCode !== 0) {
     return `command exited ${exitCode}; see judge artifact for details`;
+  }
+
+  // from file: extract exit code from "exit code N" or "exit code: N" format
+  const exitCodeMatch = content.match(/exit code:?\s*(\d+)/i);
+  if (exitCodeMatch?.[1] && exitCodeMatch[1] !== '0') {
+    return `command exited ${exitCodeMatch[1]}; see judge artifact for details`;
   }
 
   return null;

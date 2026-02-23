@@ -1,3 +1,4 @@
+import * as fs from 'fs/promises';
 import { BadRequestError } from 'helpful-errors';
 import * as path from 'path';
 
@@ -37,7 +38,7 @@ export const setStoneAsPassed = async (
 ): Promise<{
   passed: boolean;
   refs: { reviews: string[]; judges: string[] };
-  emit: { stdout: string } | null;
+  emit: { stdout: string; stderr?: string } | null;
 }> => {
   // find the stone
   const stones = await getAllStones({ route: input.route });
@@ -268,6 +269,27 @@ export const setStoneAsPassed = async (
     .map((j) => j.reason || `judge ${j.index} failed`)
     .join('; ');
 
+  // build detailed stderr for failed judges with full artifact content
+  const stderrLines: string[] = [];
+  for (const judge of failedJudges) {
+    stderrLines.push(`judge ${judge.index}:`);
+    // read full artifact content
+    try {
+      const artifactContent = await fs.readFile(judge.path, 'utf-8');
+      // indent each line for readability
+      const indented = artifactContent
+        .split('\n')
+        .map((line) => `  ${line}`)
+        .join('\n');
+      stderrLines.push(indented);
+    } catch {
+      // fallback to reason if file read fails
+      if (judge.reason) {
+        stderrLines.push(`  ${judge.reason}`);
+      }
+    }
+  }
+
   return {
     passed: false,
     refs: {
@@ -283,6 +305,7 @@ export const setStoneAsPassed = async (
         reason: reasons,
         guard: guardData,
       }),
+      stderr: stderrLines.length > 0 ? stderrLines.join('\n') : undefined,
     },
   };
 };
