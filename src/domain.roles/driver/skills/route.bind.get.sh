@@ -13,4 +13,4 @@
 ######################################################################
 set -euo pipefail
 
-exec node -e "import('rhachet-roles-bhrain/cli').then(m => m.cli.route.bind.get())" -- "$@"
+exec node -e "import('rhachet-roles-bhrain/cli/route').then(m => m.routeBindGet())" -- "$@"
