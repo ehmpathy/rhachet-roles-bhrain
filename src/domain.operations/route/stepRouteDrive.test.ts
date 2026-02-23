@@ -96,4 +96,50 @@ describe('stepRouteDrive', () => {
       });
     });
   });
+
+  given('[case4] vibecheck snapshots', () => {
+    const tempDir = path.join(os.tmpdir(), `test-drive-snap-${Date.now()}`);
+
+    beforeEach(async () => {
+      await fs.cp(path.join(ASSETS_DIR, 'route.simple'), tempDir, {
+        recursive: true,
+      });
+    });
+
+    afterEach(async () => {
+      await fs.rm(tempDir, { recursive: true, force: true });
+    });
+
+    when('[t0] route has next stone', () => {
+      then('output matches snapshot', async () => {
+        const result = await stepRouteDrive({ route: tempDir });
+        // replace temp path for snapshot stability
+        const outputStable = result.emit?.stdout?.replace(tempDir, '<ROUTE>');
+        expect(outputStable).toMatchSnapshot();
+      });
+    });
+
+    when('[t1] route is complete', () => {
+      then('output matches snapshot', async () => {
+        // mark all stones passed
+        const routeDir = path.join(tempDir, '.route');
+        await fs.mkdir(routeDir, { recursive: true });
+        await fs.writeFile(path.join(routeDir, '1.vision.passed'), '');
+        await fs.writeFile(path.join(routeDir, '2.criteria.passed'), '');
+        await fs.writeFile(path.join(routeDir, '3.plan.passed'), '');
+
+        const result = await stepRouteDrive({ route: tempDir });
+        expect(result.emit?.stdout).toMatchSnapshot();
+      });
+    });
+
+    when('[t2] no route bound (direct mode)', () => {
+      then('output matches snapshot', async () => {
+        // stepRouteDrive without route arg checks for bind
+        // in unit test context there's no git branch, so it will be unbound
+        const result = await stepRouteDrive({});
+        expect(result.emit?.stdout).toMatchSnapshot();
+      });
+    });
+  });
 });
