@@ -16,7 +16,7 @@ exports[`driver.route.escape-hatch.acceptance given: [escape-hatch] stone with p
       │       ├─ review: .route/1.design.guard.review.i1.9a1abf10a35fb1f3aebd56a1685a92c738b5f171df478c06b2985c2ed0f0be31.r1.md
       │       └─ 1 blocker 🔴
       └─ judges
-          └─ j1: npx rhx route.stone.judge --mechanism reviewed? --stone $stone --route $route --allow-blockers 0 --allow-nitpicks 0
+          └─ j1: rhx route.stone.judge --mechanism reviewed? --stone $stone --route $route --allow-blockers 0 --allow-nitpicks 0
               ├─ finished [TIME] ✗
               ├─ judge: .route/1.design.guard.judge.i1p1.9a1abf10a35fb1f3aebd56a1685a92c738b5f171df478c06b2985c2ed0f0be31.8639492cd5da2b98ce0d9613cc721cb00dcbdfaa1529db66634571459ef17e37.j1.md
               └─ reason: nitpicks exceed threshold (1 > 0)

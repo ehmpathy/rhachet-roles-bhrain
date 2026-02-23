@@ -5,5 +5,5 @@ reviews:
   - bash $route/.test/mock-review.sh
 
 judges:
-  - npx rhx route.stone.judge --mechanism reviewed? --stone $stone --route $route --allow-blockers 0 --allow-nitpicks 0
-  - npx rhx route.stone.judge --mechanism approved? --stone $stone --route $route
+  - rhx route.stone.judge --mechanism reviewed? --stone $stone --route $route --allow-blockers 0 --allow-nitpicks 0
+  - rhx route.stone.judge --mechanism approved? --stone $stone --route $route

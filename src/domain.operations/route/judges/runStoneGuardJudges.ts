@@ -1,6 +1,7 @@
 import { exec } from 'child_process';
 import * as fs from 'fs/promises';
 import * as path from 'path';
+import { getGitRepoRoot } from 'rhachet-artifact-git';
 import { promisify } from 'util';
 
 import type { ContextCliEmit } from '@src/domain.objects/Driver/ContextCliEmit';
@@ -47,12 +48,26 @@ export const runOneStoneGuardJudge = async (input: {
     output: outputPath,
   });
 
-  // execute command
+  // execute command with node_modules/.bin in PATH
+  // .why = enables guards to use `rhx` or `rhachet` directly without npx
+  // .note = falls back to cwd when not in a git repo (e.g., integration tests)
+  let repoRoot: string;
+  try {
+    repoRoot = await getGitRepoRoot({ from: input.route });
+  } catch {
+    repoRoot = process.cwd();
+  }
+  const nodeModulesBin = path.join(repoRoot, 'node_modules', '.bin');
+  const execEnv = {
+    ...process.env,
+    PATH: `${nodeModulesBin}${path.delimiter}${process.env.PATH ?? ''}`,
+  };
+
   let stdout = '';
   let stderr = '';
   let exitCode = 0;
   try {
-    const result = await execAsync(cmd);
+    const result = await execAsync(cmd, { env: execEnv });
     stdout = result.stdout;
     stderr = result.stderr;
   } catch (error: unknown) {

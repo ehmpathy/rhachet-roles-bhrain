@@ -15,7 +15,7 @@ exports[`driver.route.guard-cwd.acceptance given: [case1] guard with $route in j
       │       ├─ finished [TIME] ✓
       │       └─ review: .route/1.vision.guard.review.i1.b8e920970d841849e881399c4e5aa3f3a65139d95e252dfe2d9da99b9d1a487c.r1.md
       └─ judges
-          └─ j1: npx rhx route.stone.judge --mechanism approved? --stone $stone --route $route
+          └─ j1: rhx route.stone.judge --mechanism approved? --stone $stone --route $route
               ├─ finished [TIME] ✗
               ├─ judge: .route/1.vision.guard.judge.i1p1.b8e920970d841849e881399c4e5aa3f3a65139d95e252dfe2d9da99b9d1a487c.d9cf933e977d13a739b011b4636454c33679c0c20b27c7cab0fdd0b953a7f118.j1.md
               └─ reason: wait for human approval
@@ -35,7 +35,7 @@ exports[`driver.route.guard-cwd.acceptance given: [case1] guard with $route in j
       │   └─ r1: bash -c 'if [ -f "$route/1.vision.md" ]; then echo "blockers: 0"; echo "artifact present at $route"; else echo "blockers: 1"; echo "artifact absent at $route"; fi'
       │       └─ · cached
       └─ judges
-          └─ j1: npx rhx route.stone.judge --mechanism approved? --stone $stone --route $route
+          └─ j1: rhx route.stone.judge --mechanism approved? --stone $stone --route $route
               ├─ finished [TIME] ✓
               └─ judge: .route/1.vision.guard.judge.i2p1.b8e920970d841849e881399c4e5aa3f3a65139d95e252dfe2d9da99b9d1a487c.25217f380d8a30101c1f247abab9bcefc427ba1253ddc4bf79d3fee6d730250c.j1.md
 "
@@ -56,7 +56,7 @@ exports[`driver.route.guard-cwd.acceptance given: [case2] guard with $route work
       │       ├─ finished [TIME] ✓
       │       └─ review: .route/1.vision.guard.review.i1.3db2db995e943d5489545acc1deb4e5e7fa92632ebf3a76ccb5a04c7493bbd63.r1.md
       └─ judges
-          └─ j1: npx rhx route.stone.judge --mechanism approved? --stone $stone --route $route
+          └─ j1: rhx route.stone.judge --mechanism approved? --stone $stone --route $route
               ├─ finished [TIME] ✗
               ├─ judge: .route/1.vision.guard.judge.i1p1.3db2db995e943d5489545acc1deb4e5e7fa92632ebf3a76ccb5a04c7493bbd63.c8593a0926e33e6c69809f063f164e743f781aa8438fd37d4d60a3205f1892da.j1.md
               └─ reason: wait for human approval
@@ -76,7 +76,7 @@ exports[`driver.route.guard-cwd.acceptance given: [case2] guard with $route work
       │   └─ r1: bash -c 'if [ -f "$route/1.vision.md" ]; then echo "blockers: 0"; echo "artifact present at $route"; else echo "blockers: 1"; echo "artifact absent at $route"; fi'
       │       └─ · cached
       └─ judges
-          └─ j1: npx rhx route.stone.judge --mechanism approved? --stone $stone --route $route
+          └─ j1: rhx route.stone.judge --mechanism approved? --stone $stone --route $route
               ├─ finished [TIME] ✓
               └─ judge: .route/1.vision.guard.judge.i2p1.3db2db995e943d5489545acc1deb4e5e7fa92632ebf3a76ccb5a04c7493bbd63.a5499447b8e1f50ddfb0d2fe719ea85b0a022f5fa411b1b0762b93f20c7f8d1c.j1.md
 "
