@@ -172,7 +172,7 @@ export const review = async (): Promise<void> => {
       'error: must specify at least one of --rules, --diffs, --paths, or --paths-with',
     );
     console.error('run with --help for usage');
-    process.exit(1);
+    process.exit(2);
   }
 
   // resolve output path (generate default if not specified)

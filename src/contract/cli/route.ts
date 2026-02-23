@@ -270,7 +270,7 @@ export const routeBindSet = async (): Promise<void> => {
   if (!options.route) {
     console.error('error: --route is required');
     console.error('run with --help for usage');
-    process.exit(1);
+    process.exit(2);
   }
 
   try {
@@ -363,7 +363,7 @@ export const routeStoneGet = async (): Promise<void> => {
   if (!options.stone) {
     console.error('error: --stone is required');
     console.error('run with --help for usage');
-    process.exit(1);
+    process.exit(2);
   }
   if (!options.route) {
     const routeFromBind = await resolveRouteFromBind();
@@ -373,7 +373,7 @@ export const routeStoneGet = async (): Promise<void> => {
       console.error(
         'error: no route bound to this branch. use --route or route.bind',
       );
-      process.exit(1);
+      process.exit(2);
     }
   }
 
@@ -412,7 +412,7 @@ export const routeStoneSet = async (): Promise<void> => {
   if (!options.stone) {
     console.error('error: --stone is required');
     console.error('run with --help for usage');
-    process.exit(1);
+    process.exit(2);
   }
   if (!options.route) {
     const routeFromBind = await resolveRouteFromBind();
@@ -422,7 +422,7 @@ export const routeStoneSet = async (): Promise<void> => {
       console.error(
         'error: no route bound to this branch. use --route or route.bind',
       );
-      process.exit(1);
+      process.exit(2);
     }
   }
   if (
@@ -433,14 +433,14 @@ export const routeStoneSet = async (): Promise<void> => {
   ) {
     console.error('error: --as must be "passed", "approved", or "promised"');
     console.error('run with --help for usage');
-    process.exit(1);
+    process.exit(2);
   }
 
   // validate --that required for promised
   if (options.as === 'promised' && !options.that) {
     console.error('error: --that is required when --as is "promised"');
     console.error('run with --help for usage');
-    process.exit(1);
+    process.exit(2);
   }
 
   // construct stderr progress context for live feedback
@@ -463,9 +463,9 @@ export const routeStoneSet = async (): Promise<void> => {
       console.log(result.emit.stdout);
     }
 
-    // exit with non-zero if not passed
+    // exit with code 2 for intentional guard block (not passed)
     if (result.passed === false) {
-      process.exit(1);
+      process.exit(2);
     }
   } catch (error) {
     progress.done();
@@ -491,7 +491,7 @@ export const routeStoneDel = async (): Promise<void> => {
   if (!options.stone) {
     console.error('error: --stone is required');
     console.error('run with --help for usage');
-    process.exit(1);
+    process.exit(2);
   }
   if (!options.route) {
     const routeFromBind = await resolveRouteFromBind();
@@ -501,7 +501,7 @@ export const routeStoneDel = async (): Promise<void> => {
       console.error(
         'error: no route bound to this branch. use --route or route.bind',
       );
-      process.exit(1);
+      process.exit(2);
     }
   }
 
@@ -541,12 +541,12 @@ export const routeStoneJudge = async (): Promise<void> => {
   if (!options.mechanism) {
     console.error('error: --mechanism is required');
     console.error('run with --help for usage');
-    process.exit(1);
+    process.exit(2);
   }
   if (!options.stone) {
     console.error('error: --stone is required');
     console.error('run with --help for usage');
-    process.exit(1);
+    process.exit(2);
   }
   if (!options.route) {
     const routeFromBind = await resolveRouteFromBind();
@@ -556,7 +556,7 @@ export const routeStoneJudge = async (): Promise<void> => {
       console.error(
         'error: no route bound to this branch. use --route or route.bind',
       );
-      process.exit(1);
+      process.exit(2);
     }
   }
 
@@ -575,7 +575,7 @@ export const routeStoneJudge = async (): Promise<void> => {
     } else {
       console.error(`error: unknown mechanism "${options.mechanism}"`);
       console.error('run with --help for usage');
-      process.exit(1);
+      process.exit(2);
     }
   } catch (error) {
     if (error instanceof Error) {
@@ -599,7 +599,7 @@ const judgeApproved = async (input: {
   if (!stoneMatched) {
     console.log('passed: false');
     console.log('reason: stone not found');
-    process.exit(1);
+    process.exit(2);
   }
 
   // check for approval marker
@@ -614,7 +614,7 @@ const judgeApproved = async (input: {
   } else {
     console.log('passed: false');
     console.log('reason: wait for human approval');
-    process.exit(1);
+    process.exit(2);
   }
 };
 
@@ -634,7 +634,7 @@ const judgeReviewed = async (input: {
   if (!stoneMatched) {
     console.log('passed: false');
     console.log('reason: stone not found');
-    process.exit(1);
+    process.exit(2);
   }
 
   // compute artifact hash to find reviews for current content
@@ -655,7 +655,7 @@ const judgeReviewed = async (input: {
   if (reviewFiles.length === 0) {
     console.log('passed: false');
     console.log(`reason: no review files found for hash ${hash.slice(0, 8)}`);
-    process.exit(1);
+    process.exit(2);
   }
 
   // parse blockers and nitpicks from review files
@@ -682,7 +682,7 @@ const judgeReviewed = async (input: {
     console.log(
       `reason: blockers exceed threshold (${totalBlockers} > ${input.allowBlockers})`,
     );
-    process.exit(1);
+    process.exit(2);
   }
 
   if (totalNitpicks > input.allowNitpicks) {
@@ -690,7 +690,7 @@ const judgeReviewed = async (input: {
     console.log(
       `reason: nitpicks exceed threshold (${totalNitpicks} > ${input.allowNitpicks})`,
     );
-    process.exit(1);
+    process.exit(2);
   }
 
   console.log('passed: true');
