@@ -205,7 +205,7 @@ describe('driver.route.drive.acceptance', () => {
     });
 
     when('[t0] route.drive is invoked', () => {
-      const result = useThen('route.drive exits silently', async () =>
+      const result = useThen('route.drive returns unbound message', async () =>
         invokeRouteSkill({
           skill: 'route.drive',
           args: {},
@@ -217,8 +217,9 @@ describe('driver.route.drive.acceptance', () => {
         expect(result.code).toEqual(0);
       });
 
-      then('stdout is empty (silent)', () => {
-        expect(result.stdout.trim()).toEqual('');
+      then('stdout shows unbound message', () => {
+        expect(result.stdout).toContain('where were we?');
+        expect(result.stdout).toContain('dunno, route not bound');
       });
     });
   });

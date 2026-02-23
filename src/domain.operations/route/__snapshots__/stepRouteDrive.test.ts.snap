@@ -1,0 +1,43 @@
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
+
+exports[`stepRouteDrive given: [case4] vibecheck snapshots when: [t0] route has next stone then: output matches snapshot 1`] = `
+"🦉 where were we?
+
+🗿 route.drive
+   ├─ where do we go?
+   │  ├─ route = <ROUTE>
+   │  └─ stone = 1.vision
+   │
+   ├─ are we there yet? if so, run
+   │  └─ rhx route.stone.set --stone 1.vision --as passed
+   │
+   ├─ here's the stone
+   │  ├─
+   │  │
+   │  │  illustrate the vision implied in the wish
+   │  │  
+   │  │  describe:
+   │  │  - the outcome world (before vs after)
+   │  │  - the user experience
+   │  │  - the mental model
+   │  │  - how well it solves the goals
+   │  │  
+   │  └─
+   │
+   └─ are we there yet? if so, run
+      └─ rhx route.stone.set --stone 1.vision --as passed"
+`;
+
+exports[`stepRouteDrive given: [case4] vibecheck snapshots when: [t1] route is complete then: output matches snapshot 1`] = `
+"🦉 where were we?
+
+🗿 route.drive
+   └─ route complete! 🎉"
+`;
+
+exports[`stepRouteDrive given: [case4] vibecheck snapshots when: [t2] no route bound (direct mode) then: output matches snapshot 1`] = `
+"🦉 where were we?
+
+🗿 route.drive
+   └─ dunno, route not bound"
+`;

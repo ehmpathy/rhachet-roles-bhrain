@@ -18,8 +18,16 @@ export const stepRouteDrive = async (input: {
   if (!route) {
     const bind = await getRouteBindByBranch({ branch: null });
     if (!bind) {
-      // no route bound → silent no-op
-      return { emit: null };
+      // in hook mode, be silent
+      if (input.mode === 'hook') {
+        return { emit: null };
+      }
+      // in direct mode, say not bound
+      return {
+        emit: {
+          stdout: formatRouteDriveUnbound(),
+        },
+      };
     }
     route = bind.route;
   }
@@ -63,6 +71,19 @@ export const stepRouteDrive = async (input: {
       }),
     },
   };
+};
+
+/**
+ * .what = formats route.drive output when no route is bound
+ * .why = friendly feedback instead of silence
+ */
+const formatRouteDriveUnbound = (): string => {
+  const lines: string[] = [];
+  lines.push(`🦉 where were we?`);
+  lines.push('');
+  lines.push(`🗿 route.drive`);
+  lines.push(`   └─ dunno, route not bound`);
+  return lines.join('\n');
 };
 
 /**
