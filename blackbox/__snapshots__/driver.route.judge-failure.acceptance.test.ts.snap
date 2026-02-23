@@ -1,0 +1,37 @@
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
+
+exports[`driver.route.judge-failure.acceptance given: [case1] judge command fails without proper passed: metadata when: [t0] route.stone.set --as passed is invoked then: stdout matches snapshot 1`] = `
+"🦉 so you're saying there's a chance?
+
+🗿 route.stone.set
+   ├─ stone = 1
+   ├─ passage = blocked
+   ├─ reason = command exited 1; see judge artifact for details
+   └─ guard
+      ├─ artifacts
+      │   └─ 1.stone.i1.md
+      └─ judges
+          └─ j1: .test/mock-judge-fail.sh --stone $stone --route $route
+              ├─ finished [TIME] ✗
+              ├─ judge: .route/1.guard.judge.i1p1.156a9f0f09dfcfcc9e057eb0e87a9d7640f81e1ced57d02adb60acdfc35b30ff.b45efdffcf2572bd861f4ffb64b735ddf7f468ebc39a089deb373ba2f5092af8.j1.md
+              └─ reason: command exited 1; see judge artifact for details
+"
+`;
+
+exports[`driver.route.judge-failure.acceptance given: [case1] judge command fails without proper passed: metadata when: [t1] route.stone.set --as passed is invoked again then: stdout matches snapshot 1`] = `
+"🦉 so you're saying there's a chance?
+
+🗿 route.stone.set
+   ├─ stone = 1
+   ├─ passage = blocked
+   ├─ reason = command exited 1; see judge artifact for details
+   └─ guard
+      ├─ artifacts
+      │   └─ 1.stone.i1.md
+      └─ judges
+          └─ j1: .test/mock-judge-fail.sh --stone $stone --route $route
+              ├─ finished [TIME] ✗
+              ├─ judge: .route/1.guard.judge.i1p2.156a9f0f09dfcfcc9e057eb0e87a9d7640f81e1ced57d02adb60acdfc35b30ff.b45efdffcf2572bd861f4ffb64b735ddf7f468ebc39a089deb373ba2f5092af8.j1.md
+              └─ reason: command exited 1; see judge artifact for details
+"
+`;
