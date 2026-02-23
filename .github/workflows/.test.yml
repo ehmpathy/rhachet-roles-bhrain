@@ -14,17 +14,18 @@ on:
         default: "us-east-1"
     secrets:
       OPENAI_API_KEY:
-        description: "openai api key for llm integration tests"
+        description: "api key for openai api key"
         required: false
       ANTHROPIC_API_KEY:
-        description: "anthropic api key for llm integration tests"
+        description: "api key for anthropic api key"
         required: false
       TAVILY_API_KEY:
-        description: "tavily api key for web search integration tests"
+        description: "api key for tavily api key"
         required: false
       XAI_API_KEY:
-        description: "xai api key for grok llm integration tests"
+        description: "api key for xai api key"
         required: false
+
 
 permissions:
   id-token: write # required for oidc

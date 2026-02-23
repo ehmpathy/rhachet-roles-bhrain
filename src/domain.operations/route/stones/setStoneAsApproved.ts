@@ -1,9 +1,9 @@
 import { BadRequestError } from 'helpful-errors';
 
 import type { RouteStone } from '@src/domain.objects/Driver/RouteStone';
+import { formatRouteStoneEmit } from '@src/domain.operations/route/formatRouteStoneEmit';
+import { setStoneGuardApproval } from '@src/domain.operations/route/judges/setStoneGuardApproval';
 
-import { formatRouteStoneEmit } from '../formatRouteStoneEmit';
-import { setStoneGuardApproval } from '../judges/setStoneGuardApproval';
 import { getAllStones } from './getAllStones';
 
 /**

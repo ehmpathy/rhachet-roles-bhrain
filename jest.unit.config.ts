@@ -23,7 +23,7 @@ const config: Config = {
     '^.+\\.mjs$': '@swc/jest',
   },
   transformIgnorePatterns: [
-    // empty = transform all node_modules (needed for esm packages in pnpm)
+    // empty = transform all node_modules (needed for esm packages like @anthropic-ai/claude-agent-sdk)
   ],
   testMatch: [
     // note: order matters
