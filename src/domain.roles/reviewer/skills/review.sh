@@ -17,4 +17,4 @@
 ######################################################################
 set -euo pipefail
 
-exec node -e "import('rhachet-roles-bhrain/cli').then(m => m.cli.review())" -- "$@"
+exec node -e "import('rhachet-roles-bhrain/cli/review').then(m => m.review())" -- "$@"

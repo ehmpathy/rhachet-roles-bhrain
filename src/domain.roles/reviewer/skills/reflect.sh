@@ -19,4 +19,4 @@
 
 set -euo pipefail
 
-exec node -e "import('rhachet-roles-bhrain/cli').then(m => m.cli.reflect())" -- "$@"
+exec node -e "import('rhachet-roles-bhrain/cli/reflect').then(m => m.reflect())" -- "$@"
