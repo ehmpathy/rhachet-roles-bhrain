@@ -466,6 +466,10 @@ export const routeStoneSet = async (): Promise<void> => {
 
     if (result.emit) {
       console.log(result.emit.stdout);
+      if (result.emit.stderr) {
+        console.error('');
+        console.error(result.emit.stderr);
+      }
     }
 
     // exit with code 2 for intentional guard block (not passed)

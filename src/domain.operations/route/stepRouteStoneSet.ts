@@ -29,7 +29,7 @@ export const stepRouteStoneSet = async (
   approved?: boolean;
   promised?: boolean;
   refs?: { reviews: string[]; judges: string[] };
-  emit: { stdout: string } | null;
+  emit: { stdout: string; stderr?: string } | null;
 }> => {
   // dispatch to appropriate operation
   if (input.as === 'approved') {

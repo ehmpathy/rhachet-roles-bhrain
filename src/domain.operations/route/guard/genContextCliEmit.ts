@@ -105,7 +105,6 @@ export const genContextCliEmit = (input: {
           const reason =
             event.outcome.judge.reason ?? 'no reason captured (command failed)';
           detail(`    reason: ${reason}`);
-          detail(''); // blank line after failure for visual separation
         }
       }
     }
