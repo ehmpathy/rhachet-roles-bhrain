@@ -50,7 +50,13 @@ export const runOneStoneGuardJudge = async (input: {
 
   // execute command with node_modules/.bin in PATH
   // .why = enables guards to use `rhx` or `rhachet` directly without npx
-  const repoRoot = await getGitRepoRoot({ from: input.route });
+  // .note = falls back to route dir when not in a git repo (e.g., integration tests)
+  let repoRoot: string;
+  try {
+    repoRoot = await getGitRepoRoot({ from: input.route });
+  } catch {
+    repoRoot = input.route;
+  }
   const nodeModulesBin = path.join(repoRoot, 'node_modules', '.bin');
   const execEnv = {
     ...process.env,
