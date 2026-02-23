@@ -89,7 +89,7 @@ describe('stepRouteDrive.integration', () => {
       });
 
       then('stdout shows route complete', () => {
-        expect(result.emit?.stdout.toLowerCase()).toContain('complete');
+        expect(result.emit?.stdout?.toLowerCase()).toContain('complete');
       });
     });
 
@@ -123,7 +123,7 @@ describe('stepRouteDrive.integration', () => {
       );
 
       then('shows route complete (no stones to pass)', () => {
-        expect(result.emit?.stdout.toLowerCase()).toContain('complete');
+        expect(result.emit?.stdout?.toLowerCase()).toContain('complete');
       });
     });
   });
