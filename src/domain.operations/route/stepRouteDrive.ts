@@ -1,8 +1,7 @@
 import * as fs from 'fs/promises';
 
-import type { RouteStone } from '@src/domain.objects/Driver/RouteStone';
-
 import { getRouteBindByBranch } from './bind/getRouteBindByBranch';
+import { getStoneGuardBlockerReport } from './drive/getStoneGuardBlockerReport';
 import { setDriveBlockerState } from './drive/setDriveBlockerState';
 import { getOneStoneGuardApproval } from './judges/getOneStoneGuardApproval';
 import { computeNextStones } from './stones/computeNextStones';
@@ -70,19 +69,34 @@ export const stepRouteDrive = async (input: {
 
   // in hook mode, track and potentially block stop
   if (input.mode === 'hook') {
-    // check if stone needs human approval and that's the only blocker
-    // if so, allow stop (agent can't proceed without human)
-    const needsApproval = await checkNeedsHumanApproval({ stone, route });
-    if (needsApproval) {
-      // allow stop with informative output
-      return {
-        emit: {
-          stdout: formatRouteDriveNeedsApproval({
-            route,
-            stone: stone.name,
-          }),
-        },
-      };
+    // check blocker report to see if agent is blocked on human approval
+    // this is set by route.stone.set --as passed when it fails
+    const blockerReport = await getStoneGuardBlockerReport({
+      stone: stone.name,
+      route,
+    });
+
+    // if blocked on approval, check if approval was already granted
+    if (blockerReport?.blockedOn === 'approval') {
+      const approvalArtifact = await getOneStoneGuardApproval({
+        stone,
+        route,
+      });
+
+      // approval granted means agent CAN proceed (run pass again)
+      // so we should NOT allow stop - fall through to block logic below
+      if (!approvalArtifact) {
+        // approval NOT granted yet - allow stop (agent must wait for human)
+        return {
+          emit: {
+            stdout: formatRouteDriveNeedsApproval({
+              route,
+              stone: stone.name,
+            }),
+          },
+        };
+      }
+      // fall through to block logic when approval was granted
     }
 
     // track this block attempt
@@ -112,18 +126,11 @@ export const stepRouteDrive = async (input: {
       };
     }
 
-    // block stop
+    // block stop - same content in stdout AND stderr (for visibility), exit code 2 to signal
     return {
       emit: {
         stdout,
-        stderr: {
-          reason: formatRouteDriveBlockReason({
-            route,
-            stone: stone.name,
-            count: state.count,
-          }),
-          code: 2,
-        },
+        stderr: { reason: stdout, code: 2 },
       },
     };
   }
@@ -206,37 +213,6 @@ const formatRouteDriveEscalate = (input: {
   count: number;
 }): string => {
   return `stuck on stone ${input.stone} after ${input.count} attempts. please tell a human what you saw, where you got stuck, and what you tried.`;
-};
-
-/**
- * .what = checks if stone is blocked specifically on human approval
- * .why = enables agent to stop when blocked on approval (can't proceed without human)
- *
- * returns true when:
- * - stone has a guard with an approved? judge mechanism
- * - approval marker hasn't been granted yet
- */
-const checkNeedsHumanApproval = async (input: {
-  stone: RouteStone;
-  route: string;
-}): Promise<boolean> => {
-  // no guard = no approval requirement
-  if (!input.stone.guard) return false;
-
-  // check if guard has approved? judge mechanism
-  const hasApprovalJudge = input.stone.guard.judges.some((judge) =>
-    judge.includes('--mechanism approved?'),
-  );
-  if (!hasApprovalJudge) return false;
-
-  // check if approval has been granted
-  const approval = await getOneStoneGuardApproval({
-    stone: input.stone,
-    route: input.route,
-  });
-
-  // needs approval if: has approval judge AND approval not yet granted
-  return approval === null;
 };
 
 /**
