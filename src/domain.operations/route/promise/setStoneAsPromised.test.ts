@@ -97,7 +97,6 @@ describe('setStoneAsPromised', () => {
         expect(content).toContain('# promise: all-done');
         expect(content).toContain('stone: 1.vision');
         expect(content).toContain('hash: abc123');
-        expect(content).toContain('timestamp:');
         expect(content).toContain('i promise i have completed');
 
         // cleanup

@@ -23,6 +23,7 @@ import {
   getStonePromises,
   hasInvalidatedPromise,
 } from '../promise/getStonePromises';
+import { setSelfReviewTriggeredReport } from '../promise/setSelfReviewTriggeredReport';
 import { findOneStoneByPattern } from './asStoneGlob';
 import { getAllStoneArtifacts } from './getAllStoneArtifacts';
 import { getAllStones } from './getAllStones';
@@ -113,6 +114,14 @@ export const setStoneAsPassed = async (
         stone: stoneMatched,
         slug: nextReview.slug,
         currentHash: promiseHash,
+        route: input.route,
+      });
+
+      // record that self-review was triggered (for time enforcement)
+      await setSelfReviewTriggeredReport({
+        stone: stoneMatched.name,
+        slug: nextReview.slug,
+        hash: promiseHash,
         route: input.route,
       });
 

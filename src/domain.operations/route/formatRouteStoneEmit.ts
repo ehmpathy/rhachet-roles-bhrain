@@ -1,7 +1,8 @@
 import type { RouteStoneGuardReviewSelf } from '@src/domain.objects/Driver/RouteStoneGuard';
 
-import { formatCheckYoself } from './guard/formatCheckYoself';
 import { formatGuardTree } from './guard/formatGuardTree';
+import { formatLetsReflect } from './guard/formatLetsReflect';
+import { formatPatienceFriend } from './guard/formatPatienceFriend';
 
 /**
  * .what = formats route stone operation output with good vibes
@@ -31,6 +32,17 @@ type FormatInput =
       slug: string;
       progress: { index: number; total: number };
       nextReview?: {
+        reviewSelf: RouteStoneGuardReviewSelf;
+        index: number;
+        total: number;
+      };
+    }
+  | {
+      operation: 'route.stone.set';
+      stone: string;
+      action: 'challenged';
+      slug: string;
+      selfReview?: {
         reviewSelf: RouteStoneGuardReviewSelf;
         index: number;
         total: number;
@@ -138,7 +150,7 @@ export const formatRouteStoneEmit = (input: FormatInput): string => {
       );
       lines.push('');
       lines.push(
-        formatCheckYoself({
+        formatLetsReflect({
           stone: input.stone,
           reviewSelf: input.selfReview.reviewSelf,
           index: input.selfReview.index,
@@ -146,6 +158,26 @@ export const formatRouteStoneEmit = (input: FormatInput): string => {
           invalidated: input.selfReview.invalidated,
         }),
       );
+      return lines.join('\n');
+    }
+
+    // handle challenged case (time enforcement)
+    if (input.action === 'challenged') {
+      // show patience message first
+      lines.push(formatPatienceFriend());
+      lines.push('');
+
+      // then show lets reflect reminder with the guide
+      if (input.selfReview) {
+        lines.push(
+          formatLetsReflect({
+            stone: input.stone,
+            reviewSelf: input.selfReview.reviewSelf,
+            index: input.selfReview.index,
+            total: input.selfReview.total,
+          }),
+        );
+      }
       return lines.join('\n');
     }
 
@@ -160,16 +192,15 @@ export const formatRouteStoneEmit = (input: FormatInput): string => {
         `   └─ passage = progressed (self-review ${input.progress.index}/${input.progress.total} promised)`,
       );
 
-      // if there's a next review, show check yo'self section
+      // if there's a next review, show lets reflect section
       if (input.nextReview) {
         lines.push('');
         lines.push(
-          formatCheckYoself({
+          formatLetsReflect({
             stone: input.stone,
             reviewSelf: input.nextReview.reviewSelf,
             index: input.nextReview.index,
             total: input.nextReview.total,
-            invalidated: false,
           }),
         );
       }

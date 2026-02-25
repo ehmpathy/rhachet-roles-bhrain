@@ -142,6 +142,28 @@ describe('stepRouteStoneSet', () => {
       `test-step-set-promised-${Date.now()}`,
     );
 
+    /**
+     * .what = backdate triggered report mtime to bypass time enforcement
+     * .why = tests need to verify promise flow without 90 second wait
+     */
+    const backdateTriggeredReport = async (input: {
+      stone: string;
+      slug: string;
+    }): Promise<void> => {
+      const routeDir = path.join(tempDir, '.route');
+      const files = await fs.readdir(routeDir).catch(() => []);
+      const triggeredFile = files.find(
+        (f) =>
+          f.includes(`${input.stone}.guard.selfreview.${input.slug}`) &&
+          f.endsWith('.triggered'),
+      );
+      if (triggeredFile) {
+        const filepath = path.join(routeDir, triggeredFile);
+        const mtimePast = new Date(Date.now() - 91 * 1000);
+        await fs.utimes(filepath, mtimePast, mtimePast);
+      }
+    };
+
     beforeEach(async () => {
       await fs.cp(path.join(ASSETS_DIR, 'route.self-review'), tempDir, {
         recursive: true,
@@ -154,8 +176,39 @@ describe('stepRouteStoneSet', () => {
       await fs.rm(tempDir, { recursive: true, force: true });
     });
 
-    when('[t0] --as promised with valid --that', () => {
+    when('[t0] --as promised without prior trigger', () => {
+      then('blocks with challenged status', async () => {
+        // promise without first call to --as passed (no trigger)
+        const result = await stepRouteStoneSet(
+          {
+            stone: '1.vision',
+            route: tempDir,
+            as: 'promised',
+            that: 'all-done',
+          },
+          noopContext,
+        );
+        // time enforcement: challenged because no prior trigger
+        expect(result.challenged).toBe(true);
+        expect(result.promised).toBeUndefined();
+        expect(result.emit?.stdout).toContain('patience');
+      });
+    });
+
+    when('[t1] --as promised after trigger and backdate', () => {
       then('records promise and returns promised true', async () => {
+        // first trigger via --as passed
+        await stepRouteStoneSet(
+          {
+            stone: '1.vision',
+            route: tempDir,
+            as: 'passed',
+          },
+          noopContext,
+        );
+        // backdate the triggered report to bypass 90s wait
+        await backdateTriggeredReport({ stone: '1.vision', slug: 'all-done' });
+
         const result = await stepRouteStoneSet(
           {
             stone: '1.vision',
@@ -174,6 +227,18 @@ describe('stepRouteStoneSet', () => {
       });
 
       then('creates promise artifact file', async () => {
+        // first trigger via --as passed
+        await stepRouteStoneSet(
+          {
+            stone: '1.vision',
+            route: tempDir,
+            as: 'passed',
+          },
+          noopContext,
+        );
+        // backdate the triggered report
+        await backdateTriggeredReport({ stone: '1.vision', slug: 'all-done' });
+
         await stepRouteStoneSet(
           {
             stone: '1.vision',
@@ -191,7 +256,7 @@ describe('stepRouteStoneSet', () => {
       });
     });
 
-    when('[t1] --as promised without --that', () => {
+    when('[t2] --as promised without --that', () => {
       then('throws bad request error', async () => {
         const error = await getError(
           stepRouteStoneSet(

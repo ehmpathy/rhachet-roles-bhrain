@@ -193,7 +193,7 @@ judges:
         );
         expect(result.passed).toBe(false);
         expect(result.emit?.stdout).toContain('self-review required');
-        expect(result.emit?.stdout).toContain("check yo'self");
+        expect(result.emit?.stdout).toContain('lets reflect');
         expect(result.emit?.stdout).toContain('review.self 1/2');
         expect(result.emit?.stdout).toContain('slug = all-done');
       });
