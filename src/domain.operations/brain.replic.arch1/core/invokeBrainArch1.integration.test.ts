@@ -3,6 +3,7 @@ import * as os from 'os';
 import * as path from 'path';
 import { given, then, when } from 'test-fns';
 
+import { REPEATABLY_CONFIG } from '@src/.test/infra/repeatably';
 import { logOutputHead } from '@src/.test/logOutputHead';
 import { BrainArch1Actor } from '@src/domain.objects/BrainArch1/BrainArch1Actor';
 import { invokeBrainArch1 } from '@src/domain.operations/brain.replic.arch1/core/invokeBrainArch1';
@@ -55,222 +56,237 @@ describe('invokeBrainArch1', () => {
 
   given('[case1] anthropic provider with simple prompt', () => {
     when('[t0] invoked with greeting', () => {
-      then('returns natural language response', async () => {
-        const context = getContext();
+      then.repeatably(REPEATABLY_CONFIG)(
+        'returns natural language response',
+        async () => {
+          const context = getContext();
 
-        const actor = new BrainArch1Actor({
-          atom: genAtomAnthropic({ model: 'claude-sonnet-4-20250514' }),
-          toolboxes: [],
-          memory: null,
-          permission: null,
-          constraints: {
-            maxIterations: 10,
-            maxTokens: 4096,
-          },
-          role: {
-            systemPrompt: 'You are a helpful assistant. Be concise.',
-          },
-        });
+          const actor = new BrainArch1Actor({
+            atom: genAtomAnthropic({ model: 'claude-sonnet-4-20250514' }),
+            toolboxes: [],
+            memory: null,
+            permission: null,
+            constraints: {
+              maxIterations: 10,
+              maxTokens: 4096,
+            },
+            role: {
+              systemPrompt: 'You are a helpful assistant. Be concise.',
+            },
+          });
 
-        const result = await invokeBrainArch1(
-          {
-            actor,
-            userInput: 'Say hello in exactly 3 words.',
-          },
-          context,
-        );
+          const result = await invokeBrainArch1(
+            {
+              actor,
+              userInput: 'Say hello in exactly 3 words.',
+            },
+            context,
+          );
 
-        // log output for observability
-        logOutputHead({
-          label: 'brainArch1.anthropic.simple',
-          output: result.finalResponse ?? '',
-        });
+          // log output for observability
+          logOutputHead({
+            label: 'brainArch1.anthropic.simple',
+            output: result.finalResponse ?? '',
+          });
 
-        expect(result.terminationReason).toBe('NATURAL_COMPLETION');
-        expect(result.finalResponse).toBeTruthy();
-        expect(result.iterationCount).toBe(1);
-        expect(result.totalTokenUsage.totalTokens).toBeGreaterThan(0);
-      });
+          expect(result.terminationReason).toBe('NATURAL_COMPLETION');
+          expect(result.finalResponse).toBeTruthy();
+          expect(result.iterationCount).toBe(1);
+          expect(result.totalTokenUsage.totalTokens).toBeGreaterThan(0);
+        },
+      );
     });
   });
 
   given('[case2] anthropic provider with file read tool', () => {
     when('[t0] asked to read a file that exists', () => {
-      then('uses tool and returns file contents', async () => {
-        const context = getContext();
+      then.repeatably(REPEATABLY_CONFIG)(
+        'uses tool and returns file contents',
+        async () => {
+          const context = getContext();
 
-        // create test file
-        const testFile = path.join(testDir, 'test-read.txt');
-        await fs.writeFile(testFile, 'Hello from test file!');
+          // create test file
+          const testFile = path.join(testDir, 'test-read.txt');
+          await fs.writeFile(testFile, 'Hello from test file!');
 
-        const actor = new BrainArch1Actor({
-          atom: genAtomAnthropic({ model: 'claude-sonnet-4-20250514' }),
-          toolboxes: [toolboxFiles],
-          memory: null,
-          permission: null,
-          constraints: {
-            maxIterations: 10,
-            maxTokens: 4096,
-          },
-          role: {
-            systemPrompt:
-              'You are a helpful assistant. When asked to read files, use the read tool.',
-          },
-        });
+          const actor = new BrainArch1Actor({
+            atom: genAtomAnthropic({ model: 'claude-sonnet-4-20250514' }),
+            toolboxes: [toolboxFiles],
+            memory: null,
+            permission: null,
+            constraints: {
+              maxIterations: 10,
+              maxTokens: 4096,
+            },
+            role: {
+              systemPrompt:
+                'You are a helpful assistant. When asked to read files, use the read tool.',
+            },
+          });
 
-        const result = await invokeBrainArch1(
-          {
-            actor,
-            userInput: `Read the file at ${testFile} and tell me what it says.`,
-          },
-          context,
-        );
+          const result = await invokeBrainArch1(
+            {
+              actor,
+              userInput: `Read the file at ${testFile} and tell me what it says.`,
+            },
+            context,
+          );
 
-        // log output for observability
-        logOutputHead({
-          label: 'brainArch1.anthropic.fileread',
-          output: result.finalResponse ?? '',
-        });
+          // log output for observability
+          logOutputHead({
+            label: 'brainArch1.anthropic.fileread',
+            output: result.finalResponse ?? '',
+          });
 
-        expect(result.terminationReason).toBe('NATURAL_COMPLETION');
-        expect(result.finalResponse).toBeTruthy();
-        expect(result.finalResponse).toContain('Hello from test file');
-        expect(result.iterationCount).toBeGreaterThanOrEqual(2); // tool call + response
-      });
+          expect(result.terminationReason).toBe('NATURAL_COMPLETION');
+          expect(result.finalResponse).toBeTruthy();
+          expect(result.finalResponse).toContain('Hello from test file');
+          expect(result.iterationCount).toBeGreaterThanOrEqual(2); // tool call + response
+        },
+      );
     });
   });
 
   given('[case3] openai provider with simple prompt', () => {
     when('[t0] invoked with greeting', () => {
-      then('returns natural language response', async () => {
-        const context = getContext();
+      then.repeatably(REPEATABLY_CONFIG)(
+        'returns natural language response',
+        async () => {
+          const context = getContext();
 
-        const actor = new BrainArch1Actor({
-          atom: genAtomOpenai({ model: 'gpt-4o' }),
-          toolboxes: [],
-          memory: null,
-          permission: null,
-          constraints: {
-            maxIterations: 10,
-            maxTokens: 4096,
-          },
-          role: {
-            systemPrompt: 'You are a helpful assistant. Be concise.',
-          },
-        });
+          const actor = new BrainArch1Actor({
+            atom: genAtomOpenai({ model: 'gpt-4o' }),
+            toolboxes: [],
+            memory: null,
+            permission: null,
+            constraints: {
+              maxIterations: 10,
+              maxTokens: 4096,
+            },
+            role: {
+              systemPrompt: 'You are a helpful assistant. Be concise.',
+            },
+          });
 
-        const result = await invokeBrainArch1(
-          {
-            actor,
-            userInput: 'Say hello in exactly 3 words.',
-          },
-          context,
-        );
+          const result = await invokeBrainArch1(
+            {
+              actor,
+              userInput: 'Say hello in exactly 3 words.',
+            },
+            context,
+          );
 
-        // log output for observability
-        logOutputHead({
-          label: 'brainArch1.openai.simple',
-          output: result.finalResponse ?? '',
-        });
+          // log output for observability
+          logOutputHead({
+            label: 'brainArch1.openai.simple',
+            output: result.finalResponse ?? '',
+          });
 
-        expect(result.terminationReason).toBe('NATURAL_COMPLETION');
-        expect(result.finalResponse).toBeTruthy();
-        expect(result.iterationCount).toBe(1);
-        expect(result.totalTokenUsage.totalTokens).toBeGreaterThan(0);
-      });
+          expect(result.terminationReason).toBe('NATURAL_COMPLETION');
+          expect(result.finalResponse).toBeTruthy();
+          expect(result.iterationCount).toBe(1);
+          expect(result.totalTokenUsage.totalTokens).toBeGreaterThan(0);
+        },
+      );
     });
   });
 
   given('[case4] openai provider with file read tool', () => {
     when('[t0] asked to read a file that exists', () => {
-      then('uses tool and returns file contents', async () => {
-        const context = getContext();
+      then.repeatably(REPEATABLY_CONFIG)(
+        'uses tool and returns file contents',
+        async () => {
+          const context = getContext();
 
-        // create test file
-        const testFile = path.join(testDir, 'test-read-openai.txt');
-        await fs.writeFile(testFile, 'Greetings from OpenAI test!');
+          // create test file
+          const testFile = path.join(testDir, 'test-read-openai.txt');
+          await fs.writeFile(testFile, 'Greetings from OpenAI test!');
 
-        const actor = new BrainArch1Actor({
-          atom: genAtomOpenai({ model: 'gpt-4o' }),
-          toolboxes: [toolboxFiles],
-          memory: null,
-          permission: null,
-          constraints: {
-            maxIterations: 10,
-            maxTokens: 4096,
-          },
-          role: {
-            systemPrompt:
-              'You are a helpful assistant with file system access. Use the read tool to read files when asked.',
-          },
-        });
+          const actor = new BrainArch1Actor({
+            atom: genAtomOpenai({ model: 'gpt-4o' }),
+            toolboxes: [toolboxFiles],
+            memory: null,
+            permission: null,
+            constraints: {
+              maxIterations: 10,
+              maxTokens: 4096,
+            },
+            role: {
+              systemPrompt:
+                'You are a helpful assistant with file system access. Use the read tool to read files when asked.',
+            },
+          });
 
-        const result = await invokeBrainArch1(
-          {
-            actor,
-            userInput: `Read the file at ${testFile} and tell me what it says.`,
-          },
-          context,
-        );
+          const result = await invokeBrainArch1(
+            {
+              actor,
+              userInput: `Read the file at ${testFile} and tell me what it says.`,
+            },
+            context,
+          );
 
-        // log output for observability
-        logOutputHead({
-          label: 'brainArch1.openai.fileread',
-          output: result.finalResponse ?? '',
-        });
+          // log output for observability
+          logOutputHead({
+            label: 'brainArch1.openai.fileread',
+            output: result.finalResponse ?? '',
+          });
 
-        expect(result.terminationReason).toBe('NATURAL_COMPLETION');
-        expect(result.finalResponse).toBeTruthy();
-        expect(result.finalResponse).toContain('Greetings from OpenAI test');
-        expect(result.iterationCount).toBeGreaterThanOrEqual(2);
-      });
+          expect(result.terminationReason).toBe('NATURAL_COMPLETION');
+          expect(result.finalResponse).toBeTruthy();
+          expect(result.finalResponse).toContain('Greetings from OpenAI test');
+          expect(result.iterationCount).toBeGreaterThanOrEqual(2);
+        },
+      );
     });
   });
 
   given('[case5] multi-turn with tool usage', () => {
     when('[t0] writes and then reads file', () => {
-      then('handles multi-step workflow', async () => {
-        const context = getContext();
+      then.repeatably(REPEATABLY_CONFIG)(
+        'handles multi-step workflow',
+        async () => {
+          const context = getContext();
 
-        const testFile = path.join(testDir, 'test-write-read.txt');
+          const testFile = path.join(testDir, 'test-write-read.txt');
 
-        const actor = new BrainArch1Actor({
-          atom: genAtomAnthropic({ model: 'claude-sonnet-4-20250514' }),
-          toolboxes: [toolboxFiles],
-          memory: null,
-          permission: null,
-          constraints: {
-            maxIterations: 10,
-            maxTokens: 4096,
-          },
-          role: {
-            systemPrompt:
-              'You are a helpful assistant. Use tools when needed. Be concise.',
-          },
-        });
+          const actor = new BrainArch1Actor({
+            atom: genAtomAnthropic({ model: 'claude-sonnet-4-20250514' }),
+            toolboxes: [toolboxFiles],
+            memory: null,
+            permission: null,
+            constraints: {
+              maxIterations: 10,
+              maxTokens: 4096,
+            },
+            role: {
+              systemPrompt:
+                'You are a helpful assistant. Use tools when needed. Be concise.',
+            },
+          });
 
-        const result = await invokeBrainArch1(
-          {
-            actor,
-            userInput: `Write the text "Integration test successful!" to ${testFile}, then read it back to confirm.`,
-          },
-          context,
-        );
+          const result = await invokeBrainArch1(
+            {
+              actor,
+              userInput: `Write the text "Integration test successful!" to ${testFile}, then read it back to confirm.`,
+            },
+            context,
+          );
 
-        // log output for observability
-        logOutputHead({
-          label: 'brainArch1.anthropic.multiturn',
-          output: result.finalResponse ?? '',
-        });
+          // log output for observability
+          logOutputHead({
+            label: 'brainArch1.anthropic.multiturn',
+            output: result.finalResponse ?? '',
+          });
 
-        expect(result.terminationReason).toBe('NATURAL_COMPLETION');
-        expect(result.finalResponse).toBeTruthy();
-        expect(result.iterationCount).toBeGreaterThanOrEqual(3); // write + read + response
+          expect(result.terminationReason).toBe('NATURAL_COMPLETION');
+          expect(result.finalResponse).toBeTruthy();
+          expect(result.iterationCount).toBeGreaterThanOrEqual(3); // write + read + response
 
-        // verify file was actually written
-        const content = await fs.readFile(testFile, 'utf-8');
-        expect(content).toContain('Integration test successful');
-      });
+          // verify file was actually written
+          const content = await fs.readFile(testFile, 'utf-8');
+          expect(content).toContain('Integration test successful');
+        },
+      );
     });
   });
 
@@ -279,30 +295,32 @@ describe('invokeBrainArch1', () => {
     jest.setTimeout(300000);
 
     when('[t0] asked to research sea turtles', () => {
-      then('produces report with cited source', async () => {
-        const context = getContext();
+      then.repeatably(REPEATABLY_CONFIG)(
+        'produces report with cited source',
+        async () => {
+          const context = getContext();
 
-        // create timestamped output directory
-        const timestamp = new Date().toISOString().replace(/[:.]/g, '-');
-        const outputDir = path.join(
-          process.cwd(),
-          '.test',
-          '.temp',
-          `research.v${timestamp}`,
-        );
-        await fs.mkdir(outputDir, { recursive: true });
+          // create timestamped output directory
+          const timestamp = new Date().toISOString().replace(/[:.]/g, '-');
+          const outputDir = path.join(
+            process.cwd(),
+            '.test',
+            '.temp',
+            `research.v${timestamp}`,
+          );
+          await fs.mkdir(outputDir, { recursive: true });
 
-        const actor = new BrainArch1Actor({
-          atom: genAtomAnthropic({ model: 'claude-sonnet-4-20250514' }),
-          toolboxes: [toolboxWeb, toolboxFiles],
-          memory: null,
-          permission: null,
-          constraints: {
-            maxIterations: 100,
-            maxTokens: 4096,
-          },
-          role: {
-            systemPrompt: `You are a research assistant. Your task is to research topics thoroughly using web search and produce well-cited reports.
+          const actor = new BrainArch1Actor({
+            atom: genAtomAnthropic({ model: 'claude-sonnet-4-20250514' }),
+            toolboxes: [toolboxWeb, toolboxFiles],
+            memory: null,
+            permission: null,
+            constraints: {
+              maxIterations: 100,
+              maxTokens: 4096,
+            },
+            role: {
+              systemPrompt: `You are a research assistant. Your task is to research topics thoroughly using web search and produce well-cited reports.
 
 When researching:
 1. Use websearch to find relevant sources
@@ -312,57 +330,58 @@ When researching:
 5. Include a sources section at the end with all URLs used
 
 Always cite your sources using [Source N] format in the text, and list all sources at the end.`,
-          },
-        });
+            },
+          });
 
-        const reportPath = path.join(outputDir, 'sea-turtles-report.md');
+          const reportPath = path.join(outputDir, 'sea-turtles-report.md');
 
-        const result = await invokeBrainArch1(
-          {
-            actor,
-            userInput: `Research sea turtles and write a brief report. Your report must:
+          const result = await invokeBrainArch1(
+            {
+              actor,
+              userInput: `Research sea turtles and write a brief report. Your report must:
 1. Cover key facts about sea turtles (species, habitat, conservation status)
 2. Cite at least 1 source using [Source 1] format
 3. End with a "Sources" section listing the URL
 
 Write the final report to: ${reportPath}`,
-          },
-          context,
-        );
+            },
+            context,
+          );
 
-        // log output for observability
-        logOutputHead({
-          label: 'brainArch1.anthropic.webresearch',
-          output: result.finalResponse ?? '',
-        });
+          // log output for observability
+          logOutputHead({
+            label: 'brainArch1.anthropic.webresearch',
+            output: result.finalResponse ?? '',
+          });
 
-        expect(result.terminationReason).toBe('NATURAL_COMPLETION');
-        expect(result.finalResponse).toBeTruthy();
-        expect(result.iterationCount).toBeGreaterThanOrEqual(3);
+          expect(result.terminationReason).toBe('NATURAL_COMPLETION');
+          expect(result.finalResponse).toBeTruthy();
+          expect(result.iterationCount).toBeGreaterThanOrEqual(3);
 
-        // verify report was written
-        const reportExists = await fs
-          .access(reportPath)
-          .then(() => true)
-          .catch(() => false);
-        expect(reportExists).toBe(true);
+          // verify report was written
+          const reportExists = await fs
+            .access(reportPath)
+            .then(() => true)
+            .catch(() => false);
+          expect(reportExists).toBe(true);
 
-        // verify report has citations
-        const reportContent = await fs.readFile(reportPath, 'utf-8');
-        console.log('Report written to:', reportPath);
-        console.log('Report length:', reportContent.length, 'characters');
+          // verify report has citations
+          const reportContent = await fs.readFile(reportPath, 'utf-8');
+          console.log('Report written to:', reportPath);
+          console.log('Report length:', reportContent.length, 'characters');
 
-        // check for source citations
-        const sourceMatches = reportContent.match(/\[Source \d+\]/g) ?? [];
-        const uniqueSources = new Set(sourceMatches);
-        console.log('Unique sources cited:', uniqueSources.size);
+          // check for source citations
+          const sourceMatches = reportContent.match(/\[Source \d+\]/g) ?? [];
+          const uniqueSources = new Set(sourceMatches);
+          console.log('Unique sources cited:', uniqueSources.size);
 
-        expect(uniqueSources.size).toBeGreaterThanOrEqual(1);
+          expect(uniqueSources.size).toBeGreaterThanOrEqual(1);
 
-        // check for sources section
-        expect(reportContent.toLowerCase()).toContain('source');
-        expect(reportContent).toMatch(/https?:\/\//);
-      });
+          // check for sources section
+          expect(reportContent.toLowerCase()).toContain('source');
+          expect(reportContent).toMatch(/https?:\/\//);
+        },
+      );
     });
   });
 });

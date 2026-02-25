@@ -1,3 +1,7 @@
+import { BadRequestError } from 'helpful-errors';
+
+import type { RouteStone } from '@src/domain.objects/Driver/RouteStone';
+
 /**
  * .what = converts raw user input into a proper stone glob pattern
  * .why = enables natural word input without glob syntax knowledge
@@ -33,4 +37,34 @@ export const isStoneInGlob = (input: {
     .replace(/\?/g, '.');
   const regex = new RegExp(`^${regexStr}$`);
   return regex.test(input.name);
+};
+
+/**
+ * .what = finds exactly one stone by pattern
+ * .why = enables flexible stone lookup with failfast for ambiguous patterns
+ *
+ * .note = uses asStoneGlob for pattern expansion (auto-wrap if no glob chars)
+ *         throws BadRequestError if multiple stones match
+ */
+export const findOneStoneByPattern = (input: {
+  stones: RouteStone[];
+  pattern: string;
+}): RouteStone | null => {
+  // expand pattern via asStoneGlob (auto-wrap if no glob chars)
+  const { glob } = asStoneGlob({ pattern: input.pattern });
+
+  // find all stones that match
+  const matched = input.stones.filter((s) =>
+    isStoneInGlob({ name: s.name, glob }),
+  );
+
+  // failfast if more than one match
+  if (matched.length > 1) {
+    throw new BadRequestError(
+      `pattern "${input.pattern}" matched ${matched.length} stones; be more specific`,
+      { pattern: input.pattern, matched: matched.map((s) => s.name) },
+    );
+  }
+
+  return matched[0] ?? null;
 };

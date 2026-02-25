@@ -1,9 +1,8 @@
 import { BadRequestError } from 'helpful-errors';
 
-import type { RouteStone } from '@src/domain.objects/Driver/RouteStone';
-
 import { formatRouteStoneEmit } from '../formatRouteStoneEmit';
 import { setStoneGuardApproval } from '../judges/setStoneGuardApproval';
+import { findOneStoneByPattern } from './asStoneGlob';
 import { getAllStones } from './getAllStones';
 
 /**
@@ -19,7 +18,10 @@ export const setStoneAsApproved = async (input: {
 }> => {
   // find the stone
   const stones = await getAllStones({ route: input.route });
-  const stoneMatched = findStoneByGlob(stones, input.stone);
+  const stoneMatched = findOneStoneByPattern({
+    stones,
+    pattern: input.stone,
+  });
   if (!stoneMatched) {
     throw new BadRequestError('stone not found', { stone: input.stone });
   }
@@ -37,23 +39,4 @@ export const setStoneAsApproved = async (input: {
       }),
     },
   };
-};
-
-/**
- * .what = finds a stone by glob pattern
- * .why = enables flexible stone lookup
- */
-const findStoneByGlob = (
-  stones: RouteStone[],
-  pattern: string,
-): RouteStone | null => {
-  // convert glob pattern to regex
-  const regexStr = pattern
-    .replace(/\./g, '\\.')
-    .replace(/\*/g, '.*')
-    .replace(/\?/g, '.');
-  const regex = new RegExp(`^${regexStr}$`);
-
-  const matched = stones.filter((s) => regex.test(s.name));
-  return matched[0] ?? null;
 };
