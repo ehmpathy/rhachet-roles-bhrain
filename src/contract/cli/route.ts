@@ -249,7 +249,9 @@ export const routeDrive = async (): Promise<void> => {
     }
 
     if (result.emit?.stderr) {
-      console.error(result.emit.stderr.reason);
+      if (result.emit.stderr.reason) {
+        console.error(result.emit.stderr.reason);
+      }
       process.exit(result.emit.stderr.code);
     }
   } catch (error) {
@@ -673,9 +675,16 @@ const judgeReviewed = async (input: {
 
   for (const filePath of reviewFiles) {
     const content = await fs.readFile(filePath, 'utf-8');
-    // match format: "N blocker(s)" from review skill output (e.g., "├─ 3 blockers 🔴")
-    const blockerMatch = content.match(/(\d+)\s+blockers?/i);
-    const nitpickMatch = content.match(/(\d+)\s+nitpicks?/i);
+
+    // match both formats:
+    // 1. "blockers: N" (yaml/key-value format from review tools)
+    // 2. "N blockers" (tree/prose format from skill output)
+    const blockerMatch =
+      content.match(/blockers?:\s*(\d+)/i) ||
+      content.match(/(\d+)\s+blockers?/i);
+    const nitpickMatch =
+      content.match(/nitpicks?:\s*(\d+)/i) ||
+      content.match(/(\d+)\s+nitpicks?/i);
 
     if (blockerMatch?.[1]) {
       totalBlockers += parseInt(blockerMatch[1], 10);

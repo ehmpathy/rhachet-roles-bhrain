@@ -36,3 +36,32 @@ exports[`driver.route.drive.acceptance given: [case3] route bound with all stone
    └─ route complete! 🎉
 "
 `;
+
+exports[`driver.route.drive.acceptance given: [case4] hook mode blocks stop when stones remain when: [t0] route.drive is invoked with --mode hook then: stdout matches non-hook mode (same content) 1`] = `
+"🦉 where were we?
+
+🗿 route.drive
+   ├─ where do we go?
+   │  ├─ route = .
+   │  └─ stone = 1
+   │
+   ├─ are we there yet? if so, run
+   │  └─ rhx route.stone.set --stone 1 --as passed
+   │
+   ├─ here's the stone
+   │  ├─
+   │  │
+   │  │  # stone: implement the feature
+   │  │  
+   │  │  implement the feature described in the wish.
+   │  │  
+   │  │  done when:
+   │  │  - feature is implemented
+   │  │  - tests pass
+   │  │  
+   │  └─
+   │
+   └─ are we there yet? if so, run
+      └─ rhx route.stone.set --stone 1 --as passed
+"
+`;

@@ -323,8 +323,22 @@ describe('driver.route.journey.acceptance', () => {
 
     when('[t9.5] 3.blueprint review set to pass and pass reattempted', () => {
       const result = useThen('review passes but approval still needed', async () => {
-        // make review pass (don't modify artifact - that would change hash and invalidate promise)
+        // make review pass via marker
         await fs.writeFile(path.join(scene.tempDir, '.test', 'review-should-pass'), '');
+
+        // update artifact to change hash (triggers re-review with new marker)
+        await fs.writeFile(
+          path.join(scene.tempDir, '3.blueprint.md'),
+          '# Blueprint\n\nFixed API design.',
+        );
+
+        // re-promise self-review for new hash (artifact changed)
+        await invokeRouteSkill({
+          skill: 'route.stone.set',
+          args: { stone: '3.blueprint', route: '.', as: 'promised', that: 'design-complete' },
+          cwd: scene.tempDir,
+        });
+
         return invokeRouteSkill({
           skill: 'route.stone.set',
           args: { stone: '3.blueprint', route: '.', as: 'passed' },

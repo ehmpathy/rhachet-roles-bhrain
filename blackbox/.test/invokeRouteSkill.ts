@@ -29,6 +29,8 @@ export const genTempDirForRhachet = (input: {
       { at: 'node_modules/.bin', to: 'node_modules/.bin' },
       // symlink rhachet so rhx entrypoint can find ../rhachet/bin/rhx
       { at: 'node_modules/rhachet', to: 'node_modules/rhachet' },
+      // symlink .pnpm for bin entrypoints that reference pnpm paths
+      { at: 'node_modules/.pnpm', to: 'node_modules/.pnpm' },
     ],
   });
 };

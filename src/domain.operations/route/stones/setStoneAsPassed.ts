@@ -12,6 +12,8 @@ import {
 import type { RouteStoneGuardJudgeArtifact } from '@src/domain.objects/Driver/RouteStoneGuardJudgeArtifact';
 import type { RouteStoneGuardReviewArtifact } from '@src/domain.objects/Driver/RouteStoneGuardReviewArtifact';
 
+import { delStoneGuardBlockerReport } from '../drive/delStoneGuardBlockerReport';
+import { setStoneGuardBlockerReport } from '../drive/setStoneGuardBlockerReport';
 import { formatRouteStoneEmit } from '../formatRouteStoneEmit';
 import { computeStoneReviewInputHash } from '../guard/computeStoneReviewInputHash';
 import { getAllStoneGuardArtifactsByHash } from '../guard/getAllStoneGuardArtifactsByHash';
@@ -108,6 +110,14 @@ export const setStoneAsPassed = async (
         slug: nextReview.slug,
         currentHash: promiseHash,
         route: input.route,
+      });
+
+      // record blocker report: blocked on self-review
+      await setStoneGuardBlockerReport({
+        stone: stoneMatched.name,
+        route: input.route,
+        blockedOn: 'self-review',
+        reason: `self-review required: ${nextReview.slug}`,
       });
 
       return {
@@ -245,6 +255,13 @@ export const setStoneAsPassed = async (
 
   if (allJudgesPassed) {
     await setStonePassage({ stone: stoneMatched, route: input.route });
+
+    // clear any prior blocker report
+    await delStoneGuardBlockerReport({
+      stone: stoneMatched.name,
+      route: input.route,
+    });
+
     return {
       passed: true,
       refs: {
@@ -268,6 +285,20 @@ export const setStoneAsPassed = async (
   const reasons = failedJudges
     .map((j) => j.reason || `judge ${j.index} failed`)
     .join('; ');
+
+  // determine blockedOn type from failed judges
+  const blockedOn = computeBlockedOn({
+    failedJudges,
+    guard: stoneMatched.guard,
+  });
+
+  // record blocker report
+  await setStoneGuardBlockerReport({
+    stone: stoneMatched.name,
+    route: input.route,
+    blockedOn,
+    reason: reasons,
+  });
 
   // build detailed stderr for failed judges as tree bucket
   const stderrLines: string[] = [];
@@ -411,6 +442,44 @@ const findStoneByGlob = (
 
   const matched = stones.filter((s) => regex.test(s.name));
   return matched[0] ?? null;
+};
+
+/**
+ * .what = determines blockedOn type from failed judges
+ * .why = enables hook mode to determine if agent can stop
+ *
+ * priority:
+ * 1. review failures (agent can fix code)
+ * 2. approval failures (agent must wait for human)
+ * 3. other judge failures (agent may be able to fix)
+ */
+const computeBlockedOn = (input: {
+  failedJudges: RouteStoneGuardJudgeArtifact[];
+  guard: RouteStone['guard'];
+}): 'review' | 'approval' | 'judge' => {
+  if (!input.guard) return 'judge';
+
+  // classify each failed judge
+  let hasReviewFailure = false;
+  let hasApprovalFailure = false;
+  let hasOtherFailure = false;
+
+  for (const judge of input.failedJudges) {
+    const judgeCmd = input.guard.judges[judge.index - 1] ?? '';
+
+    if (judgeCmd.includes('--mechanism reviewed?')) {
+      hasReviewFailure = true;
+    } else if (judgeCmd.includes('--mechanism approved?')) {
+      hasApprovalFailure = true;
+    } else {
+      hasOtherFailure = true;
+    }
+  }
+
+  // priority: review > approval > other
+  if (hasReviewFailure) return 'review';
+  if (hasApprovalFailure && !hasOtherFailure) return 'approval';
+  return 'judge';
 };
 
 /**

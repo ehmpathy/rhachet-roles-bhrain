@@ -232,9 +232,14 @@ describe('driver.route.drive.acceptance', () => {
         expect(result.stdout).toContain('stone = 1');
       });
 
-      then('stderr has block reason with count', () => {
-        expect(result.stderr).toContain('route not complete');
-        expect(result.stderr).toContain('block 1/21');
+      then('stderr has same content as stdout (for visibility)', () => {
+        expect(result.stderr).toContain('where were we?');
+        expect(result.stderr).toContain('stone = 1');
+      });
+
+      then('stdout matches non-hook mode (same content)', () => {
+        // hook mode should show same stone content as direct mode
+        expect(sanitizeTimeForSnapshot(result.stdout)).toMatchSnapshot();
       });
     });
 
@@ -254,9 +259,8 @@ describe('driver.route.drive.acceptance', () => {
         });
       });
 
-      then('stderr shows incremented count', () => {
-        // count should be 3 (1 from t0 + 2 from this when block)
-        expect(result.stderr).toMatch(/block [23]\/21/);
+      then('stderr has same content as stdout', () => {
+        expect(result.stderr).toContain('where were we?');
       });
     });
 
@@ -395,13 +399,13 @@ describe('driver.route.drive.acceptance', () => {
         }),
       );
 
-      then('stderr shows block 1/21 (reset)', () => {
-        expect(result.stderr).toContain('block 1/21');
+      then('stderr has stone content (same as stdout)', () => {
+        expect(result.stderr).toContain('where were we?');
       });
     });
   });
 
-given('[case6] hook mode allows stop when human approval needed', () => {
+given('[case6] hook mode allows stop when blocked on approval', () => {
     const JOURNEY_ASSETS_DIR = path.join(__dirname, '.test/assets/route-journey');
 
     const scene = useBeforeAll(async () => {
@@ -432,7 +436,40 @@ given('[case6] hook mode allows stop when human approval needed', () => {
       return { tempDir };
     });
 
-    when('[t0] route.drive is invoked in hook mode', () => {
+    when('[t0] route.drive hook mode before pass attempt', () => {
+      const result = useThen('route.drive blocks (no blockedOn file)', async () =>
+        invokeRouteSkill({
+          skill: 'route.drive',
+          args: { mode: 'hook' },
+          cwd: scene.tempDir,
+        }),
+      );
+
+      then('exit code is 2 (block - agent hasnt tried to pass)', () => {
+        // no blockedOn file yet = agent should keep work
+        expect(result.code).toEqual(2);
+      });
+
+      then('stderr has stone content (same as stdout)', () => {
+        expect(result.stderr).toContain('where were we?');
+      });
+    });
+
+    when('[t1] agent attempts to pass stone', () => {
+      const result = useThen('route.stone.set fails on approval', async () =>
+        invokeRouteSkill({
+          skill: 'route.stone.set',
+          args: { stone: '1.vision', as: 'passed' },
+          cwd: scene.tempDir,
+        }),
+      );
+
+      then('exit code is non-zero (blocked)', () => {
+        expect(result.code).not.toEqual(0);
+      });
+    });
+
+    when('[t2] route.drive hook mode after blocked on approval', () => {
       const result = useThen('route.drive allows stop', async () =>
         invokeRouteSkill({
           skill: 'route.drive',
@@ -442,7 +479,6 @@ given('[case6] hook mode allows stop when human approval needed', () => {
       );
 
       then('exit code is 0 (allow stop)', () => {
-        // should allow stop since stone needs human approval
         expect(result.code).toEqual(0);
       });
 
@@ -456,7 +492,7 @@ given('[case6] hook mode allows stop when human approval needed', () => {
       });
     });
 
-    when('[t1] human grants approval', () => {
+    when('[t3] human grants approval', () => {
       const result = useThen('approval succeeds', async () =>
         invokeRouteSkill({
           skill: 'route.stone.set',
@@ -470,7 +506,7 @@ given('[case6] hook mode allows stop when human approval needed', () => {
       });
     });
 
-    when('[t2] route.drive invoked after approval', () => {
+    when('[t4] route.drive invoked after approval', () => {
       const result = useThen('route.drive blocks (work remains)', async () =>
         invokeRouteSkill({
           skill: 'route.drive',
@@ -485,8 +521,8 @@ given('[case6] hook mode allows stop when human approval needed', () => {
         expect(result.code).toEqual(2);
       });
 
-      then('stderr shows block reason', () => {
-        expect(result.stderr).toContain('route not complete');
+      then('stderr has stone content (same as stdout)', () => {
+        expect(result.stderr).toContain('where were we?');
       });
     });
   });

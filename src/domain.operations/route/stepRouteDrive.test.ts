@@ -50,21 +50,29 @@ describe('stepRouteDrive', () => {
         expect(result.emit?.stdout).toContain('stone = 1.vision');
       });
 
-      then('returns stderr with code 2 to block stop', async () => {
-        const result = await stepRouteDrive({ route: tempDir, mode: 'hook' });
-        expect(result.emit?.stderr).toBeDefined();
-        expect(result.emit?.stderr?.code).toBe(2);
-        expect(result.emit?.stderr?.reason).toContain('route not complete');
-        expect(result.emit?.stderr?.reason).toContain('1.vision');
-        expect(result.emit?.stderr?.reason).toContain('block 1/21');
-      });
+      then(
+        'returns stderr with code 2 and same content as stdout',
+        async () => {
+          const result = await stepRouteDrive({ route: tempDir, mode: 'hook' });
+          expect(result.emit?.stderr).toBeDefined();
+          expect(result.emit?.stderr?.code).toBe(2);
+          // stderr contains same content as stdout (full stone output)
+          expect(result.emit?.stderr?.reason).toContain('where were we?');
+          expect(result.emit?.stderr?.reason).toContain('1.vision');
+          expect(result.emit?.stderr?.reason).toEqual(result.emit?.stdout);
+        },
+      );
 
-      then('increments block count on each call', async () => {
-        // first call already happened in beforeEach setup, so this is 2nd+
+      then('tracks block count internally (for escalation)', async () => {
+        // block count is tracked but not shown in output
+        // after 21 blocks, escalation occurs (exit code 3)
         const result1 = await stepRouteDrive({ route: tempDir, mode: 'hook' });
         const result2 = await stepRouteDrive({ route: tempDir, mode: 'hook' });
-        expect(result1.emit?.stderr?.reason).toMatch(/block \d+\/21/);
-        expect(result2.emit?.stderr?.reason).toMatch(/block \d+\/21/);
+        // both should block with code 2 and contain stone content
+        expect(result1.emit?.stderr?.code).toBe(2);
+        expect(result2.emit?.stderr?.code).toBe(2);
+        expect(result1.emit?.stderr?.reason).toContain('where were we?');
+        expect(result2.emit?.stderr?.reason).toContain('where were we?');
       });
     });
   });
