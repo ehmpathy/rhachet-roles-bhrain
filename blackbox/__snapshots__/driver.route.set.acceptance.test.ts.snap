@@ -1,0 +1,33 @@
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
+
+exports[`driver.route.set.acceptance given: [case5] route.stone.set with flexible pattern lookup when: [t0] partial pattern matches single stone then: stdout matches snapshot 1`] = `
+"🦉 so you're saying there's a chance?
+
+🗿 route.stone.set
+   ├─ stone = 1.vision
+   └─ passage = allowed (unguarded)
+"
+`;
+
+exports[`driver.route.set.acceptance given: [case5] route.stone.set with flexible pattern lookup when: [t1] numeric prefix pattern matches single stone then: stdout matches snapshot 1`] = `
+"🦉 so you're saying there's a chance?
+
+🗿 route.stone.set
+   ├─ stone = 2.criteria
+   └─ approval = granted
+"
+`;
+
+exports[`driver.route.set.acceptance given: [case6] route.stone.set with ambiguous pattern (failfast) when: [t0] pattern matches multiple stones then: stderr matches snapshot 1`] = `
+"error: BadRequestError: pattern "." matched 3 stones; be more specific
+
+{
+  "pattern": ".",
+  "matched": [
+    "1.vision",
+    "2.criteria",
+    "3.plan"
+  ]
+}
+"
+`;

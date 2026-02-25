@@ -8,6 +8,7 @@ import { formatRouteStoneEmit } from './formatRouteStoneEmit';
 import { computeStoneReviewInputHash } from './guard/computeStoneReviewInputHash';
 import { getStonePromises } from './promise/getStonePromises';
 import { setStoneAsPromised } from './promise/setStoneAsPromised';
+import { findOneStoneByPattern } from './stones/asStoneGlob';
 import { getAllStones } from './stones/getAllStones';
 import { setStoneAsApproved } from './stones/setStoneAsApproved';
 import { setStoneAsPassed } from './stones/setStoneAsPassed';
@@ -74,9 +75,10 @@ export const stepRouteStoneSet = async (
 
     // find the stone
     const stones = await getAllStones({ route: input.route });
-    const stoneMatched = stones.find((s) =>
-      s.name.toLowerCase().includes(input.stone.toLowerCase()),
-    );
+    const stoneMatched = findOneStoneByPattern({
+      stones,
+      pattern: input.stone,
+    });
     if (!stoneMatched) {
       throw new BadRequestError('stone not found', { stone: input.stone });
     }

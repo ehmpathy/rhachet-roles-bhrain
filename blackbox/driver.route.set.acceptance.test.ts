@@ -301,7 +301,120 @@ describe('driver.route.set.acceptance', () => {
     });
   });
 
-  given('[case5] route.stone.set --as passed with guard (cached)', () => {
+  given('[case5] route.stone.set with flexible pattern lookup', () => {
+    when('[t0] partial pattern matches single stone', () => {
+      const res = useThen('invoke set skill with partial pattern', async () => {
+        const tempDir = genTempDirForRhachet({
+          slug: 'driver-set-flex-match',
+          clone: ASSETS_DIR,
+        });
+
+        await execAsync('npx rhachet roles link --role driver', { cwd: tempDir });
+
+        // create artifact for 1.vision
+        await fs.writeFile(path.join(tempDir, '1.vision.md'), '# Vision\n\nTest');
+
+        // invoke with partial pattern 'vision' (should match 1.vision)
+        const cli = await invokeRouteSkill({
+          skill: 'route.stone.set',
+          args: { stone: 'vision', route: '.', as: 'passed' },
+          cwd: tempDir,
+        });
+
+        return { cli, tempDir };
+      });
+
+      then('cli completes successfully', () => {
+        expect(res.cli.code).toEqual(0);
+      });
+
+      then('outputs passed message for matched stone', () => {
+        expect(res.cli.stdout).toContain('1.vision');
+        expect(res.cli.stdout).toContain('passage = allowed');
+      });
+
+      then('stdout matches snapshot', () => {
+        expect(res.cli.stdout).toMatchSnapshot();
+      });
+    });
+
+    when('[t1] numeric prefix pattern matches single stone', () => {
+      const res = useThen('invoke set skill with numeric prefix', async () => {
+        const tempDir = genTempDirForRhachet({
+          slug: 'driver-set-flex-numeric',
+          clone: ASSETS_DIR,
+        });
+
+        await execAsync('npx rhachet roles link --role driver', { cwd: tempDir });
+
+        // invoke with numeric prefix '2.' (should match 2.criteria)
+        const cli = await invokeRouteSkill({
+          skill: 'route.stone.set',
+          args: { stone: '2.', route: '.', as: 'approved' },
+          cwd: tempDir,
+        });
+
+        return { cli, tempDir };
+      });
+
+      then('cli completes successfully', () => {
+        expect(res.cli.code).toEqual(0);
+      });
+
+      then('outputs approved message for matched stone', () => {
+        expect(res.cli.stdout).toContain('2.criteria');
+        expect(res.cli.stdout).toContain('approval = granted');
+      });
+
+      then('stdout matches snapshot', () => {
+        expect(res.cli.stdout).toMatchSnapshot();
+      });
+    });
+  });
+
+  given('[case6] route.stone.set with ambiguous pattern (failfast)', () => {
+    when('[t0] pattern matches multiple stones', () => {
+      const res = useThen('invoke set skill with ambiguous pattern', async () => {
+        const tempDir = genTempDirForRhachet({
+          slug: 'driver-set-flex-ambig',
+          clone: ASSETS_DIR,
+        });
+
+        await execAsync('npx rhachet roles link --role driver', { cwd: tempDir });
+
+        // invoke with ambiguous pattern that matches all stones
+        const cli = await invokeRouteSkill({
+          skill: 'route.stone.set',
+          args: { stone: '.', route: '.', as: 'approved' },
+          cwd: tempDir,
+        });
+
+        return { cli, tempDir };
+      });
+
+      then('cli fails with non-zero code', () => {
+        expect(res.cli.code).not.toEqual(0);
+      });
+
+      then('error mentions multiple stones matched', () => {
+        expect(res.cli.stderr).toContain('matched');
+        expect(res.cli.stderr).toContain('stones');
+        expect(res.cli.stderr).toContain('be more specific');
+      });
+
+      then('error lists matched stone names', () => {
+        expect(res.cli.stderr).toContain('1.vision');
+        expect(res.cli.stderr).toContain('2.criteria');
+        expect(res.cli.stderr).toContain('3.plan');
+      });
+
+      then('stderr matches snapshot', () => {
+        expect(res.cli.stderr).toMatchSnapshot();
+      });
+    });
+  });
+
+  given('[case7] route.stone.set --as passed with guard (cached)', () => {
     when('[t0] second run with same artifact reuses cached results', () => {
       const res = useThen(
         'invoke set skill twice on guarded stone',

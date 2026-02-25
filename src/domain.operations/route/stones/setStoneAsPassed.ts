@@ -23,6 +23,7 @@ import {
   getStonePromises,
   hasInvalidatedPromise,
 } from '../promise/getStonePromises';
+import { findOneStoneByPattern } from './asStoneGlob';
 import { getAllStoneArtifacts } from './getAllStoneArtifacts';
 import { getAllStones } from './getAllStones';
 import { setStonePassage } from './setStonePassage';
@@ -44,7 +45,10 @@ export const setStoneAsPassed = async (
 }> => {
   // find the stone
   const stones = await getAllStones({ route: input.route });
-  const stoneMatched = findStoneByGlob(stones, input.stone);
+  const stoneMatched = findOneStoneByPattern({
+    stones,
+    pattern: input.stone,
+  });
   if (!stoneMatched) {
     throw new BadRequestError('stone not found', { stone: input.stone });
   }
@@ -423,25 +427,6 @@ const computeDuration = (
   const beganMs = new Date(event.inflight.beganAt).getTime();
   const endedMs = new Date(event.inflight.endedAt).getTime();
   return (endedMs - beganMs) / 1000;
-};
-
-/**
- * .what = finds a stone by glob pattern
- * .why = enables flexible stone lookup
- */
-const findStoneByGlob = (
-  stones: RouteStone[],
-  pattern: string,
-): RouteStone | null => {
-  // convert glob pattern to regex
-  const regexStr = pattern
-    .replace(/\./g, '\\.')
-    .replace(/\*/g, '.*')
-    .replace(/\?/g, '.');
-  const regex = new RegExp(`^${regexStr}$`);
-
-  const matched = stones.filter((s) => regex.test(s.name));
-  return matched[0] ?? null;
 };
 
 /**
