@@ -1,7 +1,6 @@
 import * as fs from 'fs/promises';
-import * as os from 'os';
 import * as path from 'path';
-import { given, then, when } from 'test-fns';
+import { genTempDir, given, then, when } from 'test-fns';
 
 import { RouteStone } from '@src/domain.objects/Driver/RouteStone';
 import { RouteStoneGuard } from '@src/domain.objects/Driver/RouteStoneGuard';
@@ -12,7 +11,7 @@ const noopContext = { cliEmit: { onGuardProgress: () => {} } };
 
 describe('runStoneGuardJudges', () => {
   given('[case1] guard with echo judge command that passes', () => {
-    const tempDir = path.join(os.tmpdir(), `test-judges-pass-${Date.now()}`);
+    const tempDir = genTempDir({ slug: 'judges-pass' });
     const stone = new RouteStone({
       name: '1.test',
       path: path.join(tempDir, '1.test.stone'),
@@ -23,14 +22,6 @@ describe('runStoneGuardJudges', () => {
       artifacts: ['1.test*.md'],
       reviews: [],
       judges: ['echo "passed: true\\nreason: all checks passed"'],
-    });
-
-    beforeEach(async () => {
-      await fs.mkdir(tempDir, { recursive: true });
-    });
-
-    afterEach(async () => {
-      await fs.rm(tempDir, { recursive: true, force: true });
     });
 
     when('[t0] judges are executed', () => {
@@ -85,7 +76,7 @@ describe('runStoneGuardJudges', () => {
   });
 
   given('[case2] guard with judge command that fails', () => {
-    const tempDir = path.join(os.tmpdir(), `test-judges-fail-${Date.now()}`);
+    const tempDir = genTempDir({ slug: 'judges-fail' });
     const stone = new RouteStone({
       name: '1.test',
       path: path.join(tempDir, '1.test.stone'),
@@ -96,14 +87,6 @@ describe('runStoneGuardJudges', () => {
       artifacts: ['1.test*.md'],
       reviews: [],
       judges: ['echo "passed: false\\nreason: blockers found"'],
-    });
-
-    beforeEach(async () => {
-      await fs.mkdir(tempDir, { recursive: true });
-    });
-
-    afterEach(async () => {
-      await fs.rm(tempDir, { recursive: true, force: true });
     });
 
     when('[t0] judges are executed', () => {
@@ -125,7 +108,7 @@ describe('runStoneGuardJudges', () => {
   });
 
   given('[case3] guard with multiple judge commands', () => {
-    const tempDir = path.join(os.tmpdir(), `test-judges-multi-${Date.now()}`);
+    const tempDir = genTempDir({ slug: 'judges-multi' });
     const stone = new RouteStone({
       name: '1.test',
       path: path.join(tempDir, '1.test.stone'),
@@ -139,14 +122,6 @@ describe('runStoneGuardJudges', () => {
         'echo "passed: true\\nreason: review passed"',
         'echo "passed: false\\nreason: approval required"',
       ],
-    });
-
-    beforeEach(async () => {
-      await fs.mkdir(tempDir, { recursive: true });
-    });
-
-    afterEach(async () => {
-      await fs.rm(tempDir, { recursive: true, force: true });
     });
 
     when('[t0] judges are executed', () => {
@@ -171,7 +146,7 @@ describe('runStoneGuardJudges', () => {
   });
 
   given('[case4] guard with $route variable in judge command', () => {
-    const tempDir = path.join(os.tmpdir(), `test-judges-route-${Date.now()}`);
+    const tempDir = genTempDir({ slug: 'judges-route-var' });
     const stone = new RouteStone({
       name: '1.test',
       path: path.join(tempDir, '1.test.stone'),
@@ -193,13 +168,8 @@ describe('runStoneGuardJudges', () => {
     });
 
     beforeEach(async () => {
-      await fs.mkdir(tempDir, { recursive: true });
       // create marker file that command will look for via $route
       await fs.writeFile(path.join(tempDir, '.marker'), 'present');
-    });
-
-    afterEach(async () => {
-      await fs.rm(tempDir, { recursive: true, force: true });
     });
 
     when('[t0] judges are executed with $route substitution', () => {
@@ -233,6 +203,135 @@ describe('runStoneGuardJudges', () => {
         );
         // reason should include the actual route path
         expect(judges[0]?.reason).toContain(tempDir);
+      });
+    });
+  });
+
+  given('[case5] passed judge is cached on retry', () => {
+    const tempDir = genTempDir({ slug: 'judges-cache-pass' });
+    const stone = new RouteStone({
+      name: '1.test',
+      path: path.join(tempDir, '1.test.stone'),
+      guard: null,
+    });
+    const guard = new RouteStoneGuard({
+      path: path.join(tempDir, '1.test.guard'),
+      artifacts: ['1.test*.md'],
+      reviews: [],
+      judges: ['echo "passed: true\\nreason: all checks passed"'],
+    });
+
+    when('[t0] judge passes on first attempt', () => {
+      then('judge is cached and reused on second call', async () => {
+        // first call: execute judge
+        const judgesFirst = await runStoneGuardJudges(
+          { stone, guard, hash: 'cachehash', iteration: 1, route: tempDir },
+          noopContext,
+        );
+        expect(judgesFirst).toHaveLength(1);
+        expect(judgesFirst[0]?.passed).toEqual(true);
+        const firstPath = judgesFirst[0]?.path;
+
+        // second call with same hash: should reuse cached result
+        const judgesSecond = await runStoneGuardJudges(
+          { stone, guard, hash: 'cachehash', iteration: 1, route: tempDir },
+          noopContext,
+        );
+        expect(judgesSecond).toHaveLength(1);
+        expect(judgesSecond[0]?.passed).toEqual(true);
+        // same artifact path = cached result reused
+        expect(judgesSecond[0]?.path).toEqual(firstPath);
+      });
+    });
+  });
+
+  given('[case6] failed judge is NOT cached (retries fresh)', () => {
+    const tempDir = genTempDir({ slug: 'judges-nocache-fail' });
+    const stone = new RouteStone({
+      name: '1.test',
+      path: path.join(tempDir, '1.test.stone'),
+      guard: null,
+    });
+    const guard = new RouteStoneGuard({
+      path: path.join(tempDir, '1.test.guard'),
+      artifacts: ['1.test*.md'],
+      reviews: [],
+      judges: ['echo "passed: false\\nreason: blockers found"'],
+    });
+
+    when('[t0] judge fails on first attempt', () => {
+      then('judge is NOT cached and re-executes on second call', async () => {
+        // first call: execute judge (fails)
+        const judgesFirst = await runStoneGuardJudges(
+          { stone, guard, hash: 'failcachehash', iteration: 1, route: tempDir },
+          noopContext,
+        );
+        expect(judgesFirst).toHaveLength(1);
+        expect(judgesFirst[0]?.passed).toEqual(false);
+        const firstPath = judgesFirst[0]?.path;
+
+        // second call with same hash: should execute fresh (not cached)
+        const judgesSecond = await runStoneGuardJudges(
+          { stone, guard, hash: 'failcachehash', iteration: 1, route: tempDir },
+          noopContext,
+        );
+        expect(judgesSecond).toHaveLength(1);
+        expect(judgesSecond[0]?.passed).toEqual(false);
+        // different artifact path = fresh execution (not cached)
+        expect(judgesSecond[0]?.path).not.toEqual(firstPath);
+      });
+    });
+  });
+
+  given('[case7] blocked judge (exit 2) is NOT cached', () => {
+    const tempDir = genTempDir({ slug: 'judges-nocache-block' });
+    const stone = new RouteStone({
+      name: '1.test',
+      path: path.join(tempDir, '1.test.stone'),
+      guard: null,
+    });
+    // command exits with code 2 to simulate "blocked by constraints"
+    const guard = new RouteStoneGuard({
+      path: path.join(tempDir, '1.test.guard'),
+      artifacts: ['1.test*.md'],
+      reviews: [],
+      judges: [
+        'bash -c \'echo "passed: false"; echo "reason: approval required"; exit 2\'',
+      ],
+    });
+
+    when('[t0] judge blocks on first attempt', () => {
+      then('judge is NOT cached and re-executes on second call', async () => {
+        // first call: execute judge (blocks with exit 2)
+        const judgesFirst = await runStoneGuardJudges(
+          {
+            stone,
+            guard,
+            hash: 'blockcachehash',
+            iteration: 1,
+            route: tempDir,
+          },
+          noopContext,
+        );
+        expect(judgesFirst).toHaveLength(1);
+        expect(judgesFirst[0]?.passed).toEqual(false);
+        const firstPath = judgesFirst[0]?.path;
+
+        // second call with same hash: should execute fresh (not cached)
+        const judgesSecond = await runStoneGuardJudges(
+          {
+            stone,
+            guard,
+            hash: 'blockcachehash',
+            iteration: 1,
+            route: tempDir,
+          },
+          noopContext,
+        );
+        expect(judgesSecond).toHaveLength(1);
+        expect(judgesSecond[0]?.passed).toEqual(false);
+        // different artifact path = fresh execution (not cached)
+        expect(judgesSecond[0]?.path).not.toEqual(firstPath);
       });
     });
   });
