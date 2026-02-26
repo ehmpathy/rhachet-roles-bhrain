@@ -1,5 +1,7 @@
 import { given, then, when } from 'test-fns';
 
+import { REPEATABLY_CONFIG } from '@src/.test/infra/repeatably';
+
 import { executeToolFetch } from './fetch';
 
 /**
@@ -22,7 +24,7 @@ describe('executeToolFetch', () => {
     });
 
     when('[t1] fetch httpbin JSON endpoint', () => {
-      then('returns JSON content', async () => {
+      then.repeatably(REPEATABLY_CONFIG)('returns JSON content', async () => {
         const result = await executeToolFetch({
           callId: 'test-call-2',
           args: {
@@ -67,15 +69,18 @@ describe('executeToolFetch', () => {
     });
 
     when('[t1] fetch a 404 page', () => {
-      then('returns error with status code', async () => {
-        const result = await executeToolFetch({
-          callId: 'test-call-5',
-          args: { url: 'https://httpbin.org/status/404' },
-        });
+      then.repeatably(REPEATABLY_CONFIG)(
+        'returns error with status code',
+        async () => {
+          const result = await executeToolFetch({
+            callId: 'test-call-5',
+            args: { url: 'https://httpbin.org/status/404' },
+          });
 
-        expect(result.success).toBe(false);
-        expect(result.error).toContain('404');
-      });
+          expect(result.success).toBe(false);
+          expect(result.error).toContain('404');
+        },
+      );
     });
   });
 
