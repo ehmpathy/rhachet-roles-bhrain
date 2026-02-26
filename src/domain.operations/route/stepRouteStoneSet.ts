@@ -6,6 +6,7 @@ import { getGuardSelfReviews } from '@src/domain.objects/Driver/RouteStoneGuard'
 import { delDriveBlockerState } from './drive/delDriveBlockerState';
 import { formatRouteStoneEmit } from './formatRouteStoneEmit';
 import { computeStoneReviewInputHash } from './guard/computeStoneReviewInputHash';
+import { getSelfReviewChallengeDecision } from './promise/getSelfReviewChallengeDecision';
 import { getStonePromises } from './promise/getStonePromises';
 import { setStoneAsPromised } from './promise/setStoneAsPromised';
 import { findOneStoneByPattern } from './stones/asStoneGlob';
@@ -29,6 +30,7 @@ export const stepRouteStoneSet = async (
   passed?: boolean;
   approved?: boolean;
   promised?: boolean;
+  challenged?: boolean;
   refs?: { reviews: string[]; judges: string[] };
   emit: { stdout: string; stderr?: string } | null;
 }> => {
@@ -100,6 +102,38 @@ export const stepRouteStoneSet = async (
       stone: stoneMatched,
       route: input.route,
     });
+
+    // check time enforcement for self-review
+    const reviewSelf = selfReviews.find((r) => r.slug === input.that);
+    const challengeDecision = await getSelfReviewChallengeDecision({
+      stone: stoneMatched.name,
+      slug: input.that,
+      hash,
+      route: input.route,
+    });
+
+    // if challenged, return early with patience message
+    if (challengeDecision.decision === 'challenged') {
+      const reviewIndex = selfReviews.findIndex((r) => r.slug === input.that);
+      return {
+        challenged: true,
+        emit: {
+          stdout: formatRouteStoneEmit({
+            operation: 'route.stone.set',
+            stone: stoneMatched.name,
+            action: 'challenged',
+            slug: input.that,
+            selfReview: reviewSelf
+              ? {
+                  reviewSelf,
+                  index: reviewIndex + 1,
+                  total: selfReviews.length,
+                }
+              : undefined,
+          }),
+        },
+      };
+    }
 
     // record promise
     await setStoneAsPromised({

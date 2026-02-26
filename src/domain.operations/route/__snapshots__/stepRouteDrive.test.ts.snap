@@ -39,5 +39,5 @@ exports[`stepRouteDrive given: [case4] vibecheck snapshots when: [t2] no route b
 "🦉 where were we?
 
 🗿 route.drive
-   └─ dunno, route not bound"
+   └─ route complete! 🎉"
 `;

@@ -12,6 +12,29 @@ import {
 const ASSETS_DIR = path.join(__dirname, '.test/assets/route-drive');
 
 /**
+ * .what = backdates triggered report mtime to bypass time enforcement
+ * .why = tests need to verify promise flow without 90 second wait
+ */
+const backdateTriggeredReport = async (input: {
+  tempDir: string;
+  stone: string;
+  slug: string;
+}): Promise<void> => {
+  const routeDir = path.join(input.tempDir, '.route');
+  const files = await fs.readdir(routeDir).catch(() => []);
+  const triggeredFile = files.find(
+    (f) =>
+      f.includes(`${input.stone}.guard.selfreview.${input.slug}`) &&
+      f.endsWith('.triggered'),
+  );
+  if (triggeredFile) {
+    const filepath = path.join(routeDir, triggeredFile);
+    const mtimePast = new Date(Date.now() - 91 * 1000);
+    await fs.utimes(filepath, mtimePast, mtimePast);
+  }
+};
+
+/**
  * .what = acceptance tests for route.drive skill
  * .why = verifies GPS-like guidance shows current stone and pass command
  */
@@ -278,16 +301,7 @@ describe('driver.route.drive.acceptance', () => {
         expect(exists).toBe(true);
       });
 
-      then('.route/.drive.blocker.events.jsonl has entries', async () => {
-        const historyPath = path.join(
-          scene.tempDir,
-          '.route',
-          '.drive.blocker.events.jsonl',
-        );
-        const content = await fs.readFile(historyPath, 'utf-8');
-        const lines = content.trim().split('\n');
-        expect(lines.length).toBeGreaterThan(0);
-      });
+      // note: .drive.blocker.events.jsonl was removed in bonus cleanup (dead code)
     });
   });
 
@@ -329,12 +343,35 @@ describe('driver.route.drive.acceptance', () => {
         '# Implementation\n\nFeature done.',
       );
 
-      // promise the self-reviews required by the guard
+      // make mock-review.sh executable
+      await execAsync('chmod +x .test/mock-review.sh', { cwd: tempDir });
+
+      // trigger self-review via --as passed (creates triggered marker files)
+      await invokeRouteSkill({
+        skill: 'route.stone.set',
+        args: { stone: '1', as: 'passed' },
+        cwd: tempDir,
+      });
+
+      // backdate triggered reports to bypass time enforcement
+      await backdateTriggeredReport({ tempDir, stone: '1', slug: 'all-done' });
+
+      // promise first self-review
       await invokeRouteSkill({
         skill: 'route.stone.set',
         args: { stone: '1', as: 'promised', that: 'all-done' },
         cwd: tempDir,
       });
+
+      // trigger second self-review and backdate
+      await invokeRouteSkill({
+        skill: 'route.stone.set',
+        args: { stone: '1', as: 'passed' },
+        cwd: tempDir,
+      });
+      await backdateTriggeredReport({ tempDir, stone: '1', slug: 'tests-pass' });
+
+      // promise second self-review
       await invokeRouteSkill({
         skill: 'route.stone.set',
         args: { stone: '1', as: 'promised', that: 'tests-pass' },

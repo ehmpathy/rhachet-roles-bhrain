@@ -474,8 +474,8 @@ export const routeStoneSet = async (): Promise<void> => {
       }
     }
 
-    // exit with code 2 for intentional guard block (not passed)
-    if (result.passed === false) {
+    // exit with code 2 for intentional guard block (not passed or challenged)
+    if (result.passed === false || result.challenged === true) {
       process.exit(2);
     }
   } catch (error) {

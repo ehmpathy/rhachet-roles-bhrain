@@ -10,12 +10,12 @@ CMD_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 # check if review should pass
 if [[ -f "$CMD_DIR/review-should-pass" ]]; then
   echo "review: passed"
-  echo "blockers: 0"
-  echo "nitpicks: 0"
+  echo "├─ 0 blockers"
+  echo "├─ 0 nitpicks"
   exit 0
 else
   echo "review: failed"
-  echo "blockers: 1"
-  echo "nitpicks: 0"
+  echo "├─ 1 blockers"
+  echo "├─ 0 nitpicks"
   exit 0
 fi

@@ -1,0 +1,56 @@
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
+
+exports[`formatLetsReflect given: [case1] standard self-review when: [t0] formatLetsReflect called then: output matches snapshot (vibecheck) 1`] = `
+"🌕 lets reflect
+   │
+   ├─ review.self 1/2
+   │  ├─ slug = all-done
+   │  ├─ question all, especially yourself
+   │  └─ see the guide below
+   │
+   ├─ stillness 🪷
+   │  ├─
+   │  │
+   │  │  so it is. a chance to slow down, breathe, and see clearly.
+   │  │
+   │  │  self review time is a sanctuary. a gift. a luxury not always available.
+   │  │
+   │  │  it is not every day one has a quiet moment to take a slow,
+   │  │  methodical, patient, and thorough review.
+   │  │
+   │  │  tea first. then, we proceed 🍵
+   │  │
+   │  └─
+   │
+   ├─ before you begin 🪷
+   │  ├─
+   │  │
+   │  │  - clear your mind. this is dedicated review time.
+   │  │  - open each artifact mentioned in the guide
+   │  │  - read through them slowly, line by line
+   │  │  - question every assumption made
+   │  │  - look with fresh eyes, as if for the first time
+   │  │
+   │  └─
+   │
+   ├─ here's the guide
+   │  ├─
+   │  │
+   │  │  did you complete all that was requested in this stone?
+   │  │  have you re-read the stone goal and verified each requirement?
+   │  │
+   │  └─
+   │
+   ├─ after you finish 🪷
+   │  ├─
+   │  │
+   │  │  - did you check slowly, step by step?
+   │  │  - did you take your time, or rush through?
+   │  │  - have you been honest with yourself?
+   │  │  - if you found issues, fix them before you promise
+   │  │
+   │  └─
+   │
+   └─ promise its done? if so, run
+      └─ rhx route.stone.set --stone 1.vision --as promised --that all-done"
+`;

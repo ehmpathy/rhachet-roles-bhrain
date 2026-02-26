@@ -1,0 +1,20 @@
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
+
+exports[`formatPatienceFriend given: [case1] challenged self-review when: [t0] formatPatienceFriend called then: output matches snapshot (vibecheck) 1`] = `
+"🦉 patience, friend
+   │
+   ├─ the pond barely rippled
+   │
+   ├─ truly?
+   │  ├─
+   │  │
+   │  │  was each pebble turned?
+   │  │  each line read with care?
+   │  │
+   │  │  did stillness guide you?
+   │  │  did clarity follow?
+   │  │
+   │  └─
+   │
+   └─ the pond awaits. in time, all is clear 🌙"
+`;

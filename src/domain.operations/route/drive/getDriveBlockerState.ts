@@ -22,14 +22,12 @@ export const getDriveBlockerState = async (input: {
     return new DriveBlockerState({
       count: parsed.count ?? 0,
       stone: parsed.stone ?? null,
-      since: parsed.since ?? null,
     });
   } catch {
     // file doesn't exist or invalid, return fresh state
     return new DriveBlockerState({
       count: 0,
       stone: null,
-      since: null,
     });
   }
 };

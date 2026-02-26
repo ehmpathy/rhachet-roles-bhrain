@@ -11,6 +11,31 @@ import {
 const JOURNEY_ASSETS_DIR = path.join(__dirname, '.test/assets/route-journey');
 
 /**
+ * .what = backdate triggered report mtime to bypass time enforcement
+ * .why = tests need to verify promise flow without 90 second wait
+ *
+ * .note = backdates ALL matched files (there may be multiple with different hashes)
+ */
+const backdateTriggeredReport = async (input: {
+  tempDir: string;
+  stone: string;
+  slug: string;
+}): Promise<void> => {
+  const routeDir = path.join(input.tempDir, '.route');
+  const files = await fs.readdir(routeDir).catch(() => []);
+  const triggeredFiles = files.filter(
+    (f) =>
+      f.includes(`${input.stone}.guard.selfreview.${input.slug}`) &&
+      f.endsWith('.triggered'),
+  );
+  const mtimePast = new Date(Date.now() - 91 * 1000);
+  for (const triggeredFile of triggeredFiles) {
+    const filepath = path.join(routeDir, triggeredFile);
+    await fs.utimes(filepath, mtimePast, mtimePast);
+  }
+};
+
+/**
  * .what = acceptance tests for route.drive blockedOn state
  * .why = verifies hook mode uses persisted blockedOn state to allow/block stop
  *
@@ -280,6 +305,13 @@ describe('driver.route.drive.blockedOn.acceptance', () => {
 
     when('[t2] agent promises self-review and attempts pass', () => {
       const result = useThen('blocked on review', async () => {
+        // backdate triggered report to bypass 90-second time enforcement
+        await backdateTriggeredReport({
+          tempDir: scene.tempDir,
+          stone: '3.blueprint',
+          slug: 'design-complete',
+        });
+
         // promise the self-review
         await invokeRouteSkill({
           skill: 'route.stone.set',
@@ -346,7 +378,21 @@ describe('driver.route.drive.blockedOn.acceptance', () => {
           '# Blueprint\n\nFixed API design.',
         );
 
-        // re-promise self-review for new hash (artifact changed)
+        // trigger self-review for new hash (artifact changed)
+        await invokeRouteSkill({
+          skill: 'route.stone.set',
+          args: { stone: '3.blueprint', as: 'passed' },
+          cwd: scene.tempDir,
+        });
+
+        // backdate triggered report to bypass 90-second time enforcement
+        await backdateTriggeredReport({
+          tempDir: scene.tempDir,
+          stone: '3.blueprint',
+          slug: 'design-complete',
+        });
+
+        // re-promise self-review for new hash
         await invokeRouteSkill({
           skill: 'route.stone.set',
           args: { stone: '3.blueprint', as: 'promised', that: 'design-complete' },

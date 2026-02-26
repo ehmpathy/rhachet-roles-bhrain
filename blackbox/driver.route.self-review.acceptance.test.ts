@@ -12,6 +12,30 @@ import {
 const ASSETS_DIR = path.join(__dirname, '.test/assets/route-drive');
 
 /**
+ * .what = backdates triggered report mtime to bypass time enforcement
+ * .why = tests need to verify promise flow without 90 second wait
+ */
+const backdateTriggeredReport = async (input: {
+  tempDir: string;
+  stone: string;
+  slug: string;
+}): Promise<void> => {
+  // find triggered report file
+  const routeDir = path.join(input.tempDir, '.route');
+  const files = await fs.readdir(routeDir).catch(() => []);
+  const triggeredFile = files.find(
+    (f) =>
+      f.includes(`${input.stone}.guard.selfreview.${input.slug}`) &&
+      f.endsWith('.triggered'),
+  );
+  if (triggeredFile) {
+    const filepath = path.join(routeDir, triggeredFile);
+    const mtimePast = new Date(Date.now() - 91 * 1000);
+    await fs.utimes(filepath, mtimePast, mtimePast);
+  }
+};
+
+/**
  * .what = acceptance tests for self-review flow
  * .why = verifies clone must promise self-reviews before guards run
  */
@@ -73,13 +97,19 @@ describe('driver.route.self-review.acceptance', () => {
     });
 
     when('[t1] first review is promised', () => {
-      const result = useThen('promise succeeds', async () =>
-        invokeRouteSkill({
+      const result = useThen('promise succeeds', async () => {
+        // backdate triggered report to bypass time enforcement
+        await backdateTriggeredReport({
+          tempDir: scene.tempDir,
+          stone: '1',
+          slug: 'all-done',
+        });
+        return invokeRouteSkill({
           skill: 'route.stone.set',
           args: { stone: '1', route: '.', as: 'promised', that: 'all-done' },
           cwd: scene.tempDir,
-        }),
-      );
+        });
+      });
 
       then('exit code is 0', () => {
         expect(result.code).toEqual(0);
@@ -102,6 +132,18 @@ describe('driver.route.self-review.acceptance', () => {
       const result = useThen('promise succeeds and guards run', async () => {
         // make review pass
         await fs.writeFile(path.join(scene.tempDir, '.test', 'review-should-pass'), '');
+        // trigger tests-pass review (creates triggered report)
+        await invokeRouteSkill({
+          skill: 'route.stone.set',
+          args: { stone: '1', route: '.', as: 'passed' },
+          cwd: scene.tempDir,
+        });
+        // backdate triggered report to bypass time enforcement
+        await backdateTriggeredReport({
+          tempDir: scene.tempDir,
+          stone: '1',
+          slug: 'tests-pass',
+        });
         return invokeRouteSkill({
           skill: 'route.stone.set',
           args: { stone: '1', route: '.', as: 'promised', that: 'tests-pass' },
@@ -212,13 +254,25 @@ describe('driver.route.self-review.acceptance', () => {
     });
 
     when('[t0] first review is promised', () => {
-      const result = useThen('promise succeeds', async () =>
-        invokeRouteSkill({
+      const result = useThen('promise succeeds', async () => {
+        // first call --as passed to trigger the report
+        await invokeRouteSkill({
+          skill: 'route.stone.set',
+          args: { stone: '1', route: '.', as: 'passed' },
+          cwd: scene.tempDir,
+        });
+        // backdate triggered report to bypass time enforcement
+        await backdateTriggeredReport({
+          tempDir: scene.tempDir,
+          stone: '1',
+          slug: 'all-done',
+        });
+        return invokeRouteSkill({
           skill: 'route.stone.set',
           args: { stone: '1', route: '.', as: 'promised', that: 'all-done' },
           cwd: scene.tempDir,
-        }),
-      );
+        });
+      });
 
       then('exit code is 0', () => {
         expect(result.code).toEqual(0);
@@ -336,11 +390,109 @@ judges:
       });
 
       then('no self-review block', () => {
-        expect(result.stdout.toLowerCase()).not.toContain('check yo');
+        expect(result.stdout.toLowerCase()).not.toContain('lets reflect');
       });
 
       then('stdout has good vibes', () => {
         expect(sanitizeTimeForSnapshot(result.stdout)).toMatchSnapshot();
+      });
+    });
+  });
+
+  given('[case5] clone promises too quickly (time enforcement)', () => {
+    const scene = useBeforeAll(async () => {
+      const tempDir = genTempDirForRhachet({
+        slug: 'self-review-case5',
+        clone: ASSETS_DIR,
+      });
+
+      // link the driver role
+      await execAsync('npx rhachet roles link --role driver', { cwd: tempDir });
+
+      // create feature branch (bind rejects protected branches like main)
+      await execAsync('git checkout -b vlad/test-self-review-case5', {
+        cwd: tempDir,
+      });
+
+      // create artifact for the stone
+      await fs.writeFile(
+        path.join(tempDir, '1.stone.i1.md'),
+        '# Implementation\n\nFeature implemented.',
+      );
+
+      return { tempDir };
+    });
+
+    when('[t0] self-review is triggered', () => {
+      const result = useThen('shows lets reflect prompt', async () =>
+        invokeRouteSkill({
+          skill: 'route.stone.set',
+          args: { stone: '1', route: '.', as: 'passed' },
+          cwd: scene.tempDir,
+        }),
+      );
+
+      then('shows self-review prompt', () => {
+        expect(result.stdout).toContain('lets reflect');
+      });
+    });
+
+    when('[t1] promise attempted immediately (before 90 seconds)', () => {
+      const result = useThen('challenged by time enforcement', async () =>
+        // no backdate — promise immediately after trigger
+        invokeRouteSkill({
+          skill: 'route.stone.set',
+          args: { stone: '1', route: '.', as: 'promised', that: 'all-done' },
+          cwd: scene.tempDir,
+        }),
+      );
+
+      then('exit code is non-zero', () => {
+        expect(result.code).not.toEqual(0);
+      });
+
+      then('shows patience challenge', () => {
+        expect(result.stdout).toContain('patience, friend');
+      });
+
+      then('shows pond barely rippled', () => {
+        expect(result.stdout).toContain('pond barely rippled');
+      });
+
+      then('shows truly reflection', () => {
+        expect(result.stdout).toContain('truly?');
+      });
+
+      then('shows pond awaits message', () => {
+        expect(result.stdout).toContain('pond awaits');
+      });
+
+      then('stdout has good vibes', () => {
+        expect(sanitizeTimeForSnapshot(result.stdout)).toMatchSnapshot();
+      });
+    });
+
+    when('[t2] promise attempted after time passes (90+ seconds)', () => {
+      const result = useThen('promise accepted', async () => {
+        // backdate to simulate elapsed time
+        await backdateTriggeredReport({
+          tempDir: scene.tempDir,
+          stone: '1',
+          slug: 'all-done',
+        });
+        return invokeRouteSkill({
+          skill: 'route.stone.set',
+          args: { stone: '1', route: '.', as: 'promised', that: 'all-done' },
+          cwd: scene.tempDir,
+        });
+      });
+
+      then('exit code is 0', () => {
+        expect(result.code).toEqual(0);
+      });
+
+      then('shows progress', () => {
+        expect(result.stdout).toContain('progressed');
       });
     });
   });

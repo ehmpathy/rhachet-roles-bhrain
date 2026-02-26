@@ -25,12 +25,10 @@ export const setStoneAsPromised = async (input: {
   );
 
   // write promise content
-  const timestamp = new Date().toISOString();
   const content = `# promise: ${input.slug}
 
 - stone: ${input.stone.name}
 - hash: ${input.hash}
-- timestamp: ${timestamp}
 
 ---
 
