@@ -1,7 +1,6 @@
 import * as fs from 'fs/promises';
-import * as os from 'os';
 import * as path from 'path';
-import { given, then, when } from 'test-fns';
+import { genTempDir, given, then, when } from 'test-fns';
 
 import { RouteStone } from '@src/domain.objects/Driver/RouteStone';
 
@@ -9,15 +8,11 @@ import { setStoneGuardApproval } from './setStoneGuardApproval';
 
 describe('setStoneGuardApproval', () => {
   given('[case1] a stone to approve', () => {
-    const tempDir = path.join(os.tmpdir(), `test-approval-${Date.now()}`);
+    const tempDir = genTempDir({ slug: 'approval' });
     const stone = new RouteStone({
       name: '1.vision',
       path: path.join(tempDir, '1.vision.stone'),
       guard: null,
-    });
-
-    afterEach(async () => {
-      await fs.rm(tempDir, { recursive: true, force: true });
     });
 
     when('[t0] approval is set', () => {

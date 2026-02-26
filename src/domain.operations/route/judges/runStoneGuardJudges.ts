@@ -165,7 +165,7 @@ export const runStoneGuardJudges = async (
 
   // parse prior judges to build cache
   // note: enumFilesFromGlob returns absolute paths, so use directly
-  // cache all judges (passed or failed) - if judgeInputHash matches, reuse result
+  // cache only passed judges - failures retry fresh each attempt
   const priorByIndex = new Map<number, RouteStoneGuardJudgeArtifact>();
   for (const filePath of priorJudgeFiles) {
     const content = await fs.readFile(filePath, 'utf-8');
@@ -182,8 +182,8 @@ export const runStoneGuardJudges = async (
       ? parseInt(reviewIterMatch[1], 10)
       : 0;
 
-    // cache first result found for each index (same hash = same result)
-    if (index > 0 && !priorByIndex.has(index)) {
+    // cache first passed result found for each index (same hash = same result)
+    if (index > 0 && !priorByIndex.has(index) && passed) {
       priorByIndex.set(
         index,
         new RouteStoneGuardJudgeArtifact({
@@ -210,8 +210,8 @@ export const runStoneGuardJudges = async (
     if (!judgeCmd) continue;
     const index = i + 1;
 
-    // if prior judge exists for this judge input hash, reuse it (passed or failed)
-    // same inputs = same result, no need to re-run
+    // if prior passed judge exists for this judge input hash, reuse it
+    // same inputs + passed = same result, no need to re-run
     const prior = priorByIndex.get(index);
     if (prior) {
       judges.push(prior);
