@@ -65,19 +65,23 @@ describe('driver.route.approval-tty', () => {
     when('[t0] agent runs --as approved', () => {
       then('command fails', async () => {
         // non-tty because execAsync runs in subprocess
+        // NODE_ENV=production + CI='' simulates real agent (non-test, non-CI) environment
         const result = await invokeRouteStoneSet({
           tempDir,
           stone: '1.vision',
           as: 'approved',
+          env: { NODE_ENV: 'production', CI: '' },
         });
         expect(result.code).not.toBe(0);
       });
 
       then('output shows guidance', async () => {
+        // NODE_ENV=production + CI='' simulates real agent (non-test, non-CI) environment
         const result = await invokeRouteStoneSet({
           tempDir,
           stone: '1.vision',
           as: 'approved',
+          env: { NODE_ENV: 'production', CI: '' },
         });
         expect(result.stdout).toContain('only humans can approve');
         expect(result.stdout).toContain('please ask a human');

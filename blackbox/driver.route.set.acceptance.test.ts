@@ -104,12 +104,12 @@ describe('driver.route.set.acceptance', () => {
 
         await execAsync('npx rhachet roles link --role driver', { cwd: tempDir });
 
-        // NODE_ENV=production simulates real agent (non-test) environment
+        // NODE_ENV=production + CI='' simulates real agent (non-test, non-CI) environment
         const cli = await invokeRouteSkill({
           skill: 'route.stone.set',
           args: { stone: '1.vision', route: '.', as: 'approved' },
           cwd: tempDir,
-          env: { NODE_ENV: 'production' },
+          env: { NODE_ENV: 'production', CI: '' },
         });
 
         // check for approval marker (should NOT exist)
@@ -354,12 +354,12 @@ describe('driver.route.set.acceptance', () => {
         await execAsync('npx rhachet roles link --role driver', { cwd: tempDir });
 
         // invoke with numeric prefix '2.' (should match 2.criteria)
-        // NODE_ENV=production simulates real agent (non-test) environment
+        // NODE_ENV=production + CI='' simulates real agent (non-test, non-CI) environment
         const cli = await invokeRouteSkill({
           skill: 'route.stone.set',
           args: { stone: '2.', route: '.', as: 'approved' },
           cwd: tempDir,
-          env: { NODE_ENV: 'production' },
+          env: { NODE_ENV: 'production', CI: '' },
         });
 
         return { cli, tempDir };
