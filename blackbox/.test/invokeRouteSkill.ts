@@ -60,6 +60,7 @@ export const invokeRouteSkill = async (input: {
     | 'route.stone.judge';
   args: Record<string, string | boolean | undefined>;
   cwd: string;
+  env?: Record<string, string>;
 }): Promise<{ stdout: string; stderr: string; code: number }> => {
   // map skill name to shell command filename
   const skillFile = `${input.skill}.sh`;
@@ -83,7 +84,7 @@ export const invokeRouteSkill = async (input: {
   try {
     const result = await execAsync(cmd, {
       cwd: input.cwd,
-      env: { ...process.env },
+      env: { ...process.env, ...input.env },
     });
     return { ...result, code: 0 };
   } catch (error) {

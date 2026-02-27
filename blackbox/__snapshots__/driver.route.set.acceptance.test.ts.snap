@@ -4,17 +4,18 @@ exports[`driver.route.set.acceptance given: [case5] route.stone.set with flexibl
 "🦉 so you're saying there's a chance?
 
 🗿 route.stone.set
-   ├─ stone = 1.vision
+   └─ stone = 1.vision
    └─ passage = allowed (unguarded)
 "
 `;
 
-exports[`driver.route.set.acceptance given: [case5] route.stone.set with flexible pattern lookup when: [t1] numeric prefix pattern matches single stone then: stdout matches snapshot 1`] = `
+exports[`driver.route.set.acceptance given: [case5] route.stone.set with flexible pattern lookup when: [t1] numeric prefix pattern agent approval locked then: stdout matches snapshot 1`] = `
 "🦉 so you're saying there's a chance?
 
 🗿 route.stone.set
-   ├─ stone = 2.criteria
-   └─ approval = granted
+   └─ stone = 2.criteria
+      ├─ ✗ only humans can approve
+      └─ please ask a human to run this command
 "
 `;
 

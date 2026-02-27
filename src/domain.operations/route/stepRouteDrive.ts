@@ -224,6 +224,7 @@ const formatRouteDriveNeedsApproval = (input: {
   stone: string;
 }): string => {
   const approveCmd = `rhx route.stone.set --stone ${input.stone} --as approved`;
+  const passCmd = `rhx route.stone.set --stone ${input.stone} --as passed`;
   const lines: string[] = [];
   lines.push(`🦉 where were we?`);
   lines.push('');
@@ -233,8 +234,11 @@ const formatRouteDriveNeedsApproval = (input: {
   lines.push(`   │  └─ stone = ${input.stone}`);
   lines.push(`   │`);
   lines.push(`   └─ halted, human approval required`);
-  lines.push(`      ├─ please ask your human to`);
-  lines.push(`      └─ ${approveCmd}`);
+  lines.push(`      ├─ please ask a human to`);
+  lines.push(`      │  └─ ${approveCmd}`);
+  lines.push(`      │`);
+  lines.push(`      └─ once they do, run`);
+  lines.push(`         └─ ${passCmd}`);
   return lines.join('\n');
 };
 

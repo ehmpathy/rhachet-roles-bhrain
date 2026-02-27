@@ -25,7 +25,7 @@ export const stepRouteStoneSet = async (
     as: 'passed' | 'approved' | 'promised';
     that?: string;
   },
-  context: ContextCliEmit,
+  context: ContextCliEmit & { isTTY: boolean },
 ): Promise<{
   passed?: boolean;
   approved?: boolean;
@@ -36,10 +36,13 @@ export const stepRouteStoneSet = async (
 }> => {
   // dispatch to appropriate operation
   if (input.as === 'approved') {
-    const result = await setStoneAsApproved({
-      stone: input.stone,
-      route: input.route,
-    });
+    const result = await setStoneAsApproved(
+      {
+        stone: input.stone,
+        route: input.route,
+      },
+      { isTTY: context.isTTY },
+    );
     return {
       approved: result.approved,
       emit: result.emit,

@@ -7,7 +7,7 @@ import { stepRouteStoneSet } from './stepRouteStoneSet';
 
 const ASSETS_DIR = path.join(__dirname, '.test/assets');
 
-const noopContext = { cliEmit: { onGuardProgress: () => {} } };
+const noopContext = { cliEmit: { onGuardProgress: () => {} }, isTTY: true };
 
 /**
  * .what = backdate triggered report mtime to bypass time enforcement
