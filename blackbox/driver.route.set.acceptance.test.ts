@@ -93,7 +93,9 @@ describe('driver.route.set.acceptance', () => {
   });
 
   given('[case2] route.stone.set --as approved', () => {
-    when('[t0] stone is approved', () => {
+    // note: NODE_ENV=production overrides Jest's NODE_ENV=test to test real agent lock
+    // human approval path is verified in unit tests (setStoneAsApproved.test.ts [case1])
+    when('[t0] agent tries to approve', () => {
       const res = useThen('invoke set skill with approved', async () => {
         const tempDir = genTempDirForRhachet({
           slug: 'driver-set-approved',
@@ -102,13 +104,15 @@ describe('driver.route.set.acceptance', () => {
 
         await execAsync('npx rhachet roles link --role driver', { cwd: tempDir });
 
+        // NODE_ENV=production + CI='' simulates real agent (non-test, non-CI) environment
         const cli = await invokeRouteSkill({
           skill: 'route.stone.set',
           args: { stone: '1.vision', route: '.', as: 'approved' },
           cwd: tempDir,
+          env: { NODE_ENV: 'production', CI: '' },
         });
 
-        // check for approval marker
+        // check for approval marker (should NOT exist)
         const approvalExists = await fs
           .access(path.join(tempDir, '.route', '1.vision.approved'))
           .then(() => true)
@@ -117,16 +121,16 @@ describe('driver.route.set.acceptance', () => {
         return { cli, tempDir, approvalExists };
       });
 
-      then('cli completes successfully', () => {
-        expect(res.cli.code).toEqual(0);
+      then('cli fails (agents cannot approve)', () => {
+        expect(res.cli.code).not.toEqual(0);
       });
 
-      then('outputs approved message', () => {
-        expect(res.cli.stdout).toContain('approval = granted');
+      then('outputs "only humans can approve"', () => {
+        expect(res.cli.stdout).toContain('only humans can approve');
       });
 
-      then('creates approval marker', () => {
-        expect(res.approvalExists).toBe(true);
+      then('does NOT create approval marker', () => {
+        expect(res.approvalExists).toBe(false);
       });
     });
   });
@@ -338,7 +342,9 @@ describe('driver.route.set.acceptance', () => {
       });
     });
 
-    when('[t1] numeric prefix pattern matches single stone', () => {
+    // note: NODE_ENV=production overrides Jest's NODE_ENV=test to test real agent lock
+    // human approval via numeric prefix pattern is verified via unit tests
+    when('[t1] numeric prefix pattern agent approval locked', () => {
       const res = useThen('invoke set skill with numeric prefix', async () => {
         const tempDir = genTempDirForRhachet({
           slug: 'driver-set-flex-numeric',
@@ -348,22 +354,24 @@ describe('driver.route.set.acceptance', () => {
         await execAsync('npx rhachet roles link --role driver', { cwd: tempDir });
 
         // invoke with numeric prefix '2.' (should match 2.criteria)
+        // NODE_ENV=production + CI='' simulates real agent (non-test, non-CI) environment
         const cli = await invokeRouteSkill({
           skill: 'route.stone.set',
           args: { stone: '2.', route: '.', as: 'approved' },
           cwd: tempDir,
+          env: { NODE_ENV: 'production', CI: '' },
         });
 
         return { cli, tempDir };
       });
 
-      then('cli completes successfully', () => {
-        expect(res.cli.code).toEqual(0);
+      then('cli fails (agents cannot approve)', () => {
+        expect(res.cli.code).not.toEqual(0);
       });
 
-      then('outputs approved message for matched stone', () => {
+      then('outputs blocked message for matched stone', () => {
         expect(res.cli.stdout).toContain('2.criteria');
-        expect(res.cli.stdout).toContain('approval = granted');
+        expect(res.cli.stdout).toContain('only humans can approve');
       });
 
       then('stdout matches snapshot', () => {

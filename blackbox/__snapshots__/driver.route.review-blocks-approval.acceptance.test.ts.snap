@@ -4,8 +4,8 @@ exports[`driver.route.review-blocks-approval.acceptance given: [review-blocks] s
 "🦉 so you're saying there's a chance?
 
 🗿 route.stone.set
-   ├─ stone = 1.plan
-   └─ approval = granted
+   └─ stone = 1.plan
+      └─ ✓ approved
 "
 `;
 

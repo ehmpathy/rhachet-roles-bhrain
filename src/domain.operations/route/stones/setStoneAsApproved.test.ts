@@ -24,18 +24,24 @@ describe('setStoneAsApproved', () => {
       await fs.rm(tempDir, { recursive: true, force: true });
     });
 
-    when('[t0] stone is approved', () => {
+    when('[t0] stone is approved by human', () => {
       then('returns approved true', async () => {
-        const result = await setStoneAsApproved({
-          stone: '1.vision',
-          route: tempDir,
-        });
+        const result = await setStoneAsApproved(
+          {
+            stone: '1.vision',
+            route: tempDir,
+          },
+          { isTTY: true },
+        );
         expect(result.approved).toBe(true);
-        expect(result.emit?.stdout).toContain('approval = granted');
+        expect(result.emit?.stdout).toContain('✓ approved');
       });
 
       then('creates approval marker', async () => {
-        await setStoneAsApproved({ stone: '1.vision', route: tempDir });
+        await setStoneAsApproved(
+          { stone: '1.vision', route: tempDir },
+          { isTTY: true },
+        );
         const approvalExists = await fs
           .access(path.join(tempDir, '.route', '1.vision.approved'))
           .then(() => true)
@@ -47,7 +53,10 @@ describe('setStoneAsApproved', () => {
     when('[t1] stone does not exist', () => {
       then('throws stone not found error', async () => {
         const error = await getError(
-          setStoneAsApproved({ stone: 'nonexistent', route: tempDir }),
+          setStoneAsApproved(
+            { stone: 'nonexistent', route: tempDir },
+            { isTTY: true },
+          ),
         );
         expect(error).toBeInstanceOf(Error);
         expect(error.message).toContain('stone not found');
@@ -73,10 +82,13 @@ describe('setStoneAsApproved', () => {
 
     when('[t0] glob pattern matches stone', () => {
       then('approves matched stone', async () => {
-        const result = await setStoneAsApproved({
-          stone: '1.*',
-          route: tempDir,
-        });
+        const result = await setStoneAsApproved(
+          {
+            stone: '1.*',
+            route: tempDir,
+          },
+          { isTTY: true },
+        );
         expect(result.approved).toBe(true);
       });
     });
@@ -84,10 +96,65 @@ describe('setStoneAsApproved', () => {
     when('[t1] glob pattern matches no stone', () => {
       then('throws stone not found error', async () => {
         const error = await getError(
-          setStoneAsApproved({ stone: '99.*', route: tempDir }),
+          setStoneAsApproved(
+            { stone: '99.*', route: tempDir },
+            { isTTY: true },
+          ),
         );
         expect(error).toBeInstanceOf(Error);
         expect(error.message).toContain('stone not found');
+      });
+    });
+  });
+
+  given('[case3] caller is not human', () => {
+    const tempDir = path.join(
+      os.tmpdir(),
+      `test-set-approved-nonhuman-${Date.now()}`,
+    );
+
+    beforeEach(async () => {
+      await fs.cp(path.join(ASSETS_DIR, 'route.simple'), tempDir, {
+        recursive: true,
+      });
+    });
+
+    afterEach(async () => {
+      await fs.rm(tempDir, { recursive: true, force: true });
+    });
+
+    when('[t0] isTTY is false', () => {
+      then('approval fails with clear message', async () => {
+        const result = await setStoneAsApproved(
+          {
+            stone: '1.vision',
+            route: tempDir,
+          },
+          { isTTY: false },
+        );
+        expect(result.approved).toBe(false);
+      });
+
+      then('output contains "only humans can approve"', async () => {
+        const result = await setStoneAsApproved(
+          {
+            stone: '1.vision',
+            route: tempDir,
+          },
+          { isTTY: false },
+        );
+        expect(result.emit?.stdout).toContain('only humans can approve');
+      });
+
+      then('output contains "please ask a human"', async () => {
+        const result = await setStoneAsApproved(
+          {
+            stone: '1.vision',
+            route: tempDir,
+          },
+          { isTTY: false },
+        );
+        expect(result.emit?.stdout).toContain('please ask a human');
       });
     });
   });

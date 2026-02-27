@@ -68,7 +68,7 @@ describe('driver.route.review-blocks-approval.acceptance', () => {
       });
 
       then('stdout confirms approval', () => {
-        expect(result.stdout).toContain('approval = granted');
+        expect(result.stdout).toContain('✓ approved');
       });
 
       then('stdout has good vibes', () => {

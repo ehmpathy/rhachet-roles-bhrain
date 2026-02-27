@@ -28,6 +28,13 @@ type FormatInput =
   | {
       operation: 'route.stone.set';
       stone: string;
+      action: 'blocked';
+      reason: string;
+      guidance: string;
+    }
+  | {
+      operation: 'route.stone.set';
+      stone: string;
       action: 'promised';
       slug: string;
       progress: { index: number; total: number };
@@ -181,11 +188,20 @@ export const formatRouteStoneEmit = (input: FormatInput): string => {
       return lines.join('\n');
     }
 
+    // handle blocked case (agent tried to approve)
+    if (input.action === 'blocked') {
+      lines.push(`🗿 ${input.operation}`);
+      lines.push(`   └─ stone = ${input.stone}`);
+      lines.push(`      ├─ ✗ ${input.reason}`);
+      lines.push(`      └─ ${input.guidance}`);
+      return lines.join('\n');
+    }
+
     lines.push(`🗿 ${input.operation}`);
-    lines.push(`   ├─ stone = ${input.stone}`);
+    lines.push(`   └─ stone = ${input.stone}`);
 
     if (input.action === 'approved') {
-      lines.push(`   └─ approval = granted`);
+      lines.push(`      └─ ✓ approved`);
     } else if (input.action === 'promised') {
       // show progress per vision: "passage = progressed (self-review N/M promised)"
       lines.push(

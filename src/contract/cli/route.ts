@@ -453,6 +453,12 @@ export const routeStoneSet = async (): Promise<void> => {
   // construct stderr progress context for live feedback
   const progress = genContextCliEmit({ stderr: process.stderr });
 
+  // detect TTY for human vs agent
+  // allow approval in test/CI environments (Jest sets NODE_ENV=test, CI runners set CI=true)
+  const isTestEnv =
+    process.env.NODE_ENV === 'test' || process.env.CI === 'true';
+  const isTTY = isTestEnv || (process.stdout.isTTY ?? false);
+
   try {
     const result = await stepRouteStoneSet(
       {
@@ -461,7 +467,7 @@ export const routeStoneSet = async (): Promise<void> => {
         as: options.as as 'passed' | 'approved' | 'promised',
         that: options.that,
       },
-      progress.context,
+      { ...progress.context, isTTY },
     );
 
     progress.done();
@@ -474,8 +480,12 @@ export const routeStoneSet = async (): Promise<void> => {
       }
     }
 
-    // exit with code 2 for intentional guard block (not passed or challenged)
-    if (result.passed === false || result.challenged === true) {
+    // exit with code 2 for intentional guard block or approval blocked
+    if (
+      result.passed === false ||
+      result.challenged === true ||
+      result.approved === false
+    ) {
       process.exit(2);
     }
   } catch (error) {

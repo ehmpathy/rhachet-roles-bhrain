@@ -7,7 +7,7 @@ import { stepRouteStoneSet } from './stepRouteStoneSet';
 
 const ASSETS_DIR = path.join(__dirname, '.test/assets');
 
-const noopContext = { cliEmit: { onGuardProgress: () => {} } };
+const noopContext = { cliEmit: { onGuardProgress: () => {} }, isTTY: true };
 
 describe('stepRouteStoneSet', () => {
   given('[case1] set stone as passed', () => {
@@ -85,7 +85,7 @@ describe('stepRouteStoneSet', () => {
           noopContext,
         );
         expect(result.approved).toBe(true);
-        expect(result.emit?.stdout).toContain('approval = granted');
+        expect(result.emit?.stdout).toContain('✓ approved');
       });
 
       then('does not return refs', async () => {

@@ -27,7 +27,7 @@ exports[`driver.route.escape-hatch.acceptance given: [escape-hatch] stone with p
 "🦉 so you're saying there's a chance?
 
 🗿 route.stone.set
-   ├─ stone = 1.design
+   └─ stone = 1.design
    └─ passage = allowed (artifacts only)
 "
 `;
