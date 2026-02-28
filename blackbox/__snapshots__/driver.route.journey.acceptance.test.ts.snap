@@ -32,8 +32,7 @@ exports[`driver.route.journey.acceptance given: [journey] weather api route when
 
 🗿 route.stone.set
    └─ stone = 1.vision
-      ├─ ✗ only humans can approve
-      └─ please ask a human to run this command
+      └─ ✓ approved
 "
 `;
 
@@ -42,16 +41,14 @@ exports[`driver.route.journey.acceptance given: [journey] weather api route when
 
 🗿 route.stone.set
    ├─ stone = 1.vision
-   ├─ passage = blocked
-   ├─ reason = wait for human approval
+   ├─ passage = allowed
    └─ guard
       ├─ artifacts
       │   └─ 1.vision.md
       └─ judges
           └─ j1: rhx route.stone.judge --mechanism approved? --stone $stone --route $route
-              ├─ finished [TIME] ✗
-              ├─ judge: .route/1.vision.guard.judge.i1p2.89a3b47031ddeb8c23151d71f85717bdb3adfed2e3c6224d3fe7c6d059cbf474.79af67282f021ee213087dfc0cd59b76b6fc4f2fa230045b79504ff592f988f9.j1.md
-              └─ reason: wait for human approval
+              ├─ finished [TIME] ✓
+              └─ judge: .route/1.vision.guard.judge.i1p1.89a3b47031ddeb8c23151d71f85717bdb3adfed2e3c6224d3fe7c6d059cbf474.9344949395a1fec3b64b9504524cb70f309a6460bf804270ccc38491a2863eba.j1.md
 "
 `;
 
@@ -60,7 +57,7 @@ exports[`driver.route.journey.acceptance given: [journey] weather api route when
 
 🗿 route.stone.get
    ├─ query = @next-one
-   └─ stone = 1.vision (1.vision.stone)
+   └─ stone = 2.research (2.research.stone)
 "
 `;
 
@@ -80,7 +77,7 @@ exports[`driver.route.journey.acceptance given: [journey] weather api route when
 
 🗿 route.stone.get
    ├─ query = @next-one
-   └─ stone = 1.vision (1.vision.stone)
+   └─ stone = 3.blueprint (3.blueprint.stone)
 "
 `;
 
@@ -212,8 +209,7 @@ exports[`driver.route.journey.acceptance given: [journey] weather api route when
 
 🗿 route.stone.set
    ├─ stone = 3.blueprint
-   ├─ passage = blocked
-   ├─ reason = wait for human approval
+   ├─ passage = allowed
    └─ guard
       ├─ artifacts
       │   └─ 3.blueprint.md
@@ -222,11 +218,11 @@ exports[`driver.route.journey.acceptance given: [journey] weather api route when
       │       └─ · cached
       └─ judges
           ├─ j1: rhx route.stone.judge --mechanism reviewed? --stone $stone --route $route --allow-blockers 0 --allow-nitpicks 2
-          │   └─ · cached
+          │   ├─ finished [TIME] ✓
+          │   └─ judge: .route/3.blueprint.guard.judge.i2p1.6fc57147f85d1e873c2688e69bdd6e690c8c3721ed38ddaf0fe09b7ee46a0393.00ce24c4600aa9f0e767ef9e0420d4cced7faa3bab73c5d61c88952c7e49243a.j1.md
           └─ j2: rhx route.stone.judge --mechanism approved? --stone $stone --route $route
-              ├─ finished [TIME] ✗
-              ├─ judge: .route/3.blueprint.guard.judge.i2p3.6fc57147f85d1e873c2688e69bdd6e690c8c3721ed38ddaf0fe09b7ee46a0393.b0a9156077bee6c54c4eff606772019e8b5c99800ef4c7ad43123e6c10ce070c.j2.md
-              └─ reason: wait for human approval
+              ├─ finished [TIME] ✓
+              └─ judge: .route/3.blueprint.guard.judge.i2p1.6fc57147f85d1e873c2688e69bdd6e690c8c3721ed38ddaf0fe09b7ee46a0393.00ce24c4600aa9f0e767ef9e0420d4cced7faa3bab73c5d61c88952c7e49243a.j2.md
 "
 `;
 
@@ -235,7 +231,7 @@ exports[`driver.route.journey.acceptance given: [journey] weather api route when
 
 🗿 route.stone.get
    ├─ query = @next-one
-   └─ stone = 1.vision (1.vision.stone)
+   └─ stone = 5.execute (5.execute.stone)
 "
 `;
 
@@ -264,6 +260,6 @@ exports[`driver.route.journey.acceptance given: [journey] weather api route when
 
 🗿 route.stone.get
    ├─ query = @next-one
-   └─ stone = 1.vision (1.vision.stone)
+   └─ status = all stones passed
 "
 `;

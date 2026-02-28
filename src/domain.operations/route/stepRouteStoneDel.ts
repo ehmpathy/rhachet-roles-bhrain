@@ -12,12 +12,11 @@ import { getAllStones } from './stones/getAllStones';
  * .why = enables route to be pruned without loss of history
  */
 export const stepRouteStoneDel = async (input: {
-  stone: string;
+  stones: string[];
   route: string;
   mode: 'plan' | 'apply';
 }): Promise<{
-  pattern: string;
-  patternRaw: string;
+  patterns: { glob: string; raw: string }[];
   deleted: string[];
   retained: string[];
   stones: {
@@ -27,6 +26,11 @@ export const stepRouteStoneDel = async (input: {
   }[];
   emit: { stdout: string } | null;
 }> => {
+  // validate at least one stone pattern provided
+  if (input.stones.length === 0) {
+    throw new BadRequestError('at least one --stone required', {});
+  }
+
   // validate route dir found
   try {
     await fs.access(input.route);
@@ -34,28 +38,33 @@ export const stepRouteStoneDel = async (input: {
     throw new BadRequestError('route not found', { route: input.route });
   }
 
-  // normalize pattern via asStoneGlob
-  const { glob: pattern, raw: patternRaw } = asStoneGlob({
-    pattern: input.stone,
-  });
+  // collect patterns from all stone inputs
+  const patterns = input.stones.map((s) => asStoneGlob({ pattern: s }));
 
   // gather all stones
-  const stones = await getAllStones({ route: input.route });
+  const allStones = await getAllStones({ route: input.route });
 
-  // filter by glob pattern
-  const stonesMatched = stones.filter((s) =>
-    isStoneInGlob({ name: s.name, glob: pattern }),
-  );
+  // collect matched stone names via Set for deduplication
+  const matchedNames = new Set<string>();
+  for (const { glob } of patterns) {
+    for (const stone of allStones) {
+      if (isStoneInGlob({ name: stone.name, glob })) {
+        matchedNames.add(stone.name);
+      }
+    }
+  }
+
+  // get Stone objects for matched names
+  const stonesMatched = allStones.filter((s) => matchedNames.has(s.name));
 
   // handle no matches
   if (stonesMatched.length === 0) {
     return {
-      pattern,
-      patternRaw,
+      patterns,
       deleted: [],
       retained: [],
       stones: [],
-      emit: { stdout: 'no stones matched pattern' },
+      emit: { stdout: 'no stones matched patterns' },
     };
   }
 
@@ -94,8 +103,7 @@ export const stepRouteStoneDel = async (input: {
     const stdout = formatRouteStoneEmit({
       operation: 'route.stone.del',
       mode: 'plan',
-      pattern,
-      patternRaw,
+      patterns,
       route: input.route,
       stones: stoneResults,
       countDelete,
@@ -103,8 +111,7 @@ export const stepRouteStoneDel = async (input: {
     });
 
     return {
-      pattern,
-      patternRaw,
+      patterns,
       deleted: [],
       retained: stoneResults
         .filter((s) => s.status === 'retain')
@@ -150,8 +157,7 @@ export const stepRouteStoneDel = async (input: {
   const stdout = formatRouteStoneEmit({
     operation: 'route.stone.del',
     mode: 'apply',
-    pattern,
-    patternRaw,
+    patterns,
     route: input.route,
     stones: stoneResults,
     countDelete,
@@ -159,8 +165,7 @@ export const stepRouteStoneDel = async (input: {
   });
 
   return {
-    pattern,
-    patternRaw,
+    patterns,
     deleted,
     retained,
     stones: stoneResults,

@@ -58,7 +58,7 @@ export const invokeRouteSkill = async (input: {
     | 'route.stone.set'
     | 'route.stone.del'
     | 'route.stone.judge';
-  args: Record<string, string | boolean | undefined>;
+  args: Record<string, string | boolean | string[] | undefined>;
   cwd: string;
   env?: Record<string, string>;
 }): Promise<{ stdout: string; stderr: string; code: number }> => {
@@ -70,12 +70,13 @@ export const invokeRouteSkill = async (input: {
     skillFile,
   );
 
-  // build args string
+  // build args string; arrays expand to repeated flags
   const argsStr = Object.entries(input.args)
     .filter(([_, v]) => v !== undefined)
-    .map(([k, v]) => {
-      if (v === true) return `--${k}`;
-      return `--${k} "${v}"`;
+    .flatMap(([k, v]) => {
+      if (v === true) return [`--${k}`];
+      if (Array.isArray(v)) return v.map((val) => `--${k} "${val}"`);
+      return [`--${k} "${v}"`];
     })
     .join(' ');
 

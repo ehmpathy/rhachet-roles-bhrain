@@ -93,8 +93,7 @@ type FormatInput =
   | {
       operation: 'route.stone.del';
       mode: 'plan' | 'apply';
-      pattern: string;
-      patternRaw: string;
+      patterns: { glob: string; raw: string }[];
       route: string;
       stones: {
         name: string;
@@ -246,8 +245,7 @@ export const formatRouteStoneEmit = (input: FormatInput): string => {
  */
 const formatDel = (input: {
   mode: 'plan' | 'apply';
-  pattern: string;
-  patternRaw: string;
+  patterns: { glob: string; raw: string }[];
   route: string;
   stones: {
     name: string;
@@ -262,10 +260,20 @@ const formatDel = (input: {
   // operation line
   lines.push(`🗿 route.stone.del --mode ${input.mode}`);
 
-  // pattern line: only show (from "...") when glob differs from raw
-  const patternSuffix =
-    input.pattern !== input.patternRaw ? ` (from "${input.patternRaw}")` : '';
-  lines.push(`   ├─ pattern = ${input.pattern}${patternSuffix}`);
+  // pattern(s) section: single line for 1 pattern, branch for multiple
+  if (input.patterns.length === 1) {
+    const p = input.patterns[0]!;
+    const patternSuffix = p.glob !== p.raw ? ` (from "${p.raw}")` : '';
+    lines.push(`   ├─ pattern = ${p.glob}${patternSuffix}`);
+  } else {
+    lines.push(`   ├─ patterns`);
+    input.patterns.forEach((p, i) => {
+      const isLast = i === input.patterns.length - 1;
+      const connector = isLast ? '└─' : '├─';
+      const patternSuffix = p.glob !== p.raw ? ` (from "${p.raw}")` : '';
+      lines.push(`   │  ${connector} ${p.glob}${patternSuffix}`);
+    });
+  }
 
   // route line
   lines.push(`   ├─ route   = ${input.route}`);

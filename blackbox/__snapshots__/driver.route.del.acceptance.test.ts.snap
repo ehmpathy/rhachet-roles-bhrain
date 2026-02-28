@@ -67,3 +67,32 @@ exports[`driver.route.del.acceptance given: [case5] glob pattern matches multipl
    └─ retained = 1 (artifact found)
 "
 `;
+
+exports[`driver.route.del.acceptance given: [case6] multiple --stone flags when: [t0] invoke with multiple --stone args in apply mode then: stdout matches snapshot 1`] = `
+"🦉 hoo needs 'em
+
+🗿 route.stone.del --mode apply
+   ├─ patterns
+   │  ├─ *2.criteria* (from "2.criteria")
+   │  └─ *3.plan* (from "3.plan")
+   ├─ route   = .
+   ├─ stones
+   │  ├─ ✓ 2.criteria (deleted)
+   │  └─ ✓ 3.plan (deleted)
+   └─ deleted = 2
+"
+`;
+
+exports[`driver.route.del.acceptance given: [case7] multiple --stone flags with overlap when: [t0] patterns overlap on same stone then: stdout matches snapshot 1`] = `
+"🦉 hoo needs 'em
+
+🗿 route.stone.del --mode apply
+   ├─ patterns
+   │  ├─ *3.plan* (from "3.plan")
+   │  └─ 3.*
+   ├─ route   = .
+   ├─ stones
+   │  └─ ✓ 3.plan (deleted)
+   └─ deleted = 1
+"
+`;
