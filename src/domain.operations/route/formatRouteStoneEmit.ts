@@ -147,12 +147,12 @@ export const formatRouteStoneEmit = (input: FormatInput): string => {
       return [header, '', tree].join('\n');
     }
 
-    // handle self-review blocked case
+    // handle review.self blocked case
     if (input.action === 'passed' && input.selfReview) {
       lines.push(`🗿 ${input.operation}`);
       lines.push(`   ├─ stone = ${input.stone}`);
       lines.push(
-        `   └─ passage = blocked (${input.note ?? 'self-review required'})`,
+        `   └─ passage = blocked (${input.note ?? 'review.self required'})`,
       );
       lines.push('');
       lines.push(
@@ -202,9 +202,9 @@ export const formatRouteStoneEmit = (input: FormatInput): string => {
     if (input.action === 'approved') {
       lines.push(`      └─ ✓ approved`);
     } else if (input.action === 'promised') {
-      // show progress per vision: "passage = progressed (self-review N/M promised)"
+      // show progress per vision: "passage = progressed (review.self N/M promised)"
       lines.push(
-        `   └─ passage = progressed (self-review ${input.progress.index}/${input.progress.total} promised)`,
+        `   └─ passage = progressed (review.self ${input.progress.index}/${input.progress.total} promised)`,
       );
 
       // if there's a next review, show lets reflect section

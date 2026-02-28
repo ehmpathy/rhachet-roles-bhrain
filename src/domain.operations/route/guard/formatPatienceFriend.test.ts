@@ -3,7 +3,7 @@ import { given, then, when } from 'test-fns';
 import { formatPatienceFriend } from './formatPatienceFriend';
 
 describe('formatPatienceFriend', () => {
-  given('[case1] challenged self-review', () => {
+  given('[case1] challenged review.self', () => {
     when('[t0] formatPatienceFriend called', () => {
       then('output matches snapshot (vibecheck)', () => {
         const output = formatPatienceFriend();

@@ -2,7 +2,7 @@ import * as fs from 'fs/promises';
 import * as path from 'path';
 
 /**
- * .what = write marker file when self-review is first shown
+ * .what = write marker file when review.self is first shown
  * .why = file mtime enables time enforcement; content has slug + hash for clarity
  */
 export const setSelfReviewTriggeredReport = async (input: {

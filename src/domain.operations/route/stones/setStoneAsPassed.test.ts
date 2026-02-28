@@ -45,16 +45,15 @@ describe('setStoneAsPassed', () => {
         expect(result.emit?.stdout).toContain('passage = allowed (unguarded)');
       });
 
-      then('creates passage marker', async () => {
+      then('appends passage to passage.jsonl', async () => {
         await setStoneAsPassed(
           { stone: '1.vision', route: tempDir },
           noopContext,
         );
-        const passageExists = await fs
-          .access(path.join(tempDir, '.route', '1.vision.passed'))
-          .then(() => true)
-          .catch(() => false);
-        expect(passageExists).toBe(true);
+        const passagePath = path.join(tempDir, '.route', 'passage.jsonl');
+        const content = await fs.readFile(passagePath, 'utf-8');
+        expect(content).toContain('"stone":"1.vision"');
+        expect(content).toContain('"status":"passed"');
       });
     });
 
@@ -151,10 +150,10 @@ describe('setStoneAsPassed', () => {
     });
   });
 
-  given('[case4] guard with self-reviews', () => {
+  given('[case4] guard with review.selfs', () => {
     const tempDir = path.join(
       os.tmpdir(),
-      `test-set-passed-self-review-${Date.now()}`,
+      `test-set-passed-review.self-${Date.now()}`,
     );
 
     beforeEach(async () => {
@@ -183,7 +182,7 @@ judges:
     });
 
     when('[t0] set passed with no promises', () => {
-      then('blocks with self-review required', async () => {
+      then('blocks with review.self required', async () => {
         const result = await setStoneAsPassed(
           {
             stone: '1.test',
@@ -192,7 +191,7 @@ judges:
           noopContext,
         );
         expect(result.passed).toBe(false);
-        expect(result.emit?.stdout).toContain('self-review required');
+        expect(result.emit?.stdout).toContain('review.self required');
         expect(result.emit?.stdout).toContain('lets reflect');
         expect(result.emit?.stdout).toContain('review.self 1/2');
         expect(result.emit?.stdout).toContain('slug = all-done');
@@ -227,7 +226,7 @@ judges:
           noopContext,
         );
         expect(result.passed).toBe(false);
-        expect(result.emit?.stdout).toContain('self-review required');
+        expect(result.emit?.stdout).toContain('review.self required');
         expect(result.emit?.stdout).toContain('review.self 2/2');
         expect(result.emit?.stdout).toContain('slug = tests-pass');
       });

@@ -84,12 +84,16 @@ describe('stepRouteDrive', () => {
       await fs.cp(path.join(ASSETS_DIR, 'route.simple'), tempDir, {
         recursive: true,
       });
-      // create passage markers for all stones (matches route.simple fixture)
+      // create passage reports for all stones (matches route.simple fixture)
       const routeDir = path.join(tempDir, '.route');
       await fs.mkdir(routeDir, { recursive: true });
-      await fs.writeFile(path.join(routeDir, '1.vision.passed'), '');
-      await fs.writeFile(path.join(routeDir, '2.criteria.passed'), '');
-      await fs.writeFile(path.join(routeDir, '3.plan.passed'), '');
+      const passageContent =
+        [
+          '{"stone":"1.vision","status":"passed"}',
+          '{"stone":"2.criteria","status":"passed"}',
+          '{"stone":"3.plan","status":"passed"}',
+        ].join('\n') + '\n';
+      await fs.writeFile(path.join(routeDir, 'passage.jsonl'), passageContent);
     });
 
     afterEach(async () => {
@@ -154,12 +158,19 @@ describe('stepRouteDrive', () => {
 
     when('[t1] route is complete', () => {
       then('output matches snapshot', async () => {
-        // mark all stones passed
+        // mark all stones passed via passage.jsonl
         const routeDir = path.join(tempDir, '.route');
         await fs.mkdir(routeDir, { recursive: true });
-        await fs.writeFile(path.join(routeDir, '1.vision.passed'), '');
-        await fs.writeFile(path.join(routeDir, '2.criteria.passed'), '');
-        await fs.writeFile(path.join(routeDir, '3.plan.passed'), '');
+        const passageContent =
+          [
+            '{"stone":"1.vision","status":"passed"}',
+            '{"stone":"2.criteria","status":"passed"}',
+            '{"stone":"3.plan","status":"passed"}',
+          ].join('\n') + '\n';
+        await fs.writeFile(
+          path.join(routeDir, 'passage.jsonl'),
+          passageContent,
+        );
 
         const result = await stepRouteDrive({ route: tempDir });
         expect(result.emit?.stdout).toMatchSnapshot();

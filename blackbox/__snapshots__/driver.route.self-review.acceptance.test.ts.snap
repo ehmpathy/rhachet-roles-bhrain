@@ -1,11 +1,11 @@
 // Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
 
-exports[`driver.route.self-review.acceptance given: [case1] stone with reviews.self defined when: [t0] pass attempted without promises then: stdout has good vibes 1`] = `
+exports[`driver.route.review.self.acceptance given: [case1] stone with reviews.self defined when: [t0] pass attempted without promises then: stdout has good vibes 1`] = `
 "🦉 so you're saying there's a chance?
 
 🗿 route.stone.set
    ├─ stone = 1
-   └─ passage = blocked (self-review required)
+   └─ passage = blocked (review.self required)
 
 🌕 lets reflect
    │
@@ -62,12 +62,12 @@ exports[`driver.route.self-review.acceptance given: [case1] stone with reviews.s
 "
 `;
 
-exports[`driver.route.self-review.acceptance given: [case1] stone with reviews.self defined when: [t1] first review is promised then: stdout has good vibes 1`] = `
+exports[`driver.route.review.self.acceptance given: [case1] stone with reviews.self defined when: [t1] first review is promised then: stdout has good vibes 1`] = `
 "🦉 so you're saying there's a chance?
 
 🗿 route.stone.set
    └─ stone = 1
-   └─ passage = progressed (self-review 1/2 promised)
+   └─ passage = progressed (review.self 1/2 promised)
 
 🌕 lets reflect
    │
@@ -124,16 +124,16 @@ exports[`driver.route.self-review.acceptance given: [case1] stone with reviews.s
 "
 `;
 
-exports[`driver.route.self-review.acceptance given: [case1] stone with reviews.self defined when: [t2] second review is promised then: stdout has good vibes 1`] = `
+exports[`driver.route.review.self.acceptance given: [case1] stone with reviews.self defined when: [t2] second review is promised then: stdout has good vibes 1`] = `
 "🦉 so you're saying there's a chance?
 
 🗿 route.stone.set
    └─ stone = 1
-   └─ passage = progressed (self-review 2/2 promised)
+   └─ passage = progressed (review.self 2/2 promised)
 "
 `;
 
-exports[`driver.route.self-review.acceptance given: [case1] stone with reviews.self defined when: [t3] pass attempted with all promises then: stdout has good vibes 1`] = `
+exports[`driver.route.review.self.acceptance given: [case1] stone with reviews.self defined when: [t3] pass attempted with all promises then: stdout has good vibes 1`] = `
 "🦉 so you're saying there's a chance?
 
 🗿 route.stone.set
@@ -153,12 +153,12 @@ exports[`driver.route.self-review.acceptance given: [case1] stone with reviews.s
 "
 `;
 
-exports[`driver.route.self-review.acceptance given: [case3] hash invalidation resets promises when: [t2] pass attempted after edit then: stdout has good vibes 1`] = `
+exports[`driver.route.review.self.acceptance given: [case3] hash invalidation resets promises when: [t2] pass attempted after edit then: stdout has good vibes 1`] = `
 "🦉 so you're saying there's a chance?
 
 🗿 route.stone.set
    ├─ stone = 1
-   └─ passage = blocked (self-review required)
+   └─ passage = blocked (review.self required)
 
 🌕 lets reflect
    │
@@ -216,7 +216,7 @@ exports[`driver.route.self-review.acceptance given: [case3] hash invalidation re
 "
 `;
 
-exports[`driver.route.self-review.acceptance given: [case4] flat reviews array (backwards compatible) when: [t0] pass attempted with flat reviews then: stdout has good vibes 1`] = `
+exports[`driver.route.review.self.acceptance given: [case4] flat reviews array (backwards compatible) when: [t0] pass attempted with flat reviews then: stdout has good vibes 1`] = `
 "🦉 so you're saying there's a chance?
 
 🗿 route.stone.set
@@ -236,7 +236,7 @@ exports[`driver.route.self-review.acceptance given: [case4] flat reviews array (
 "
 `;
 
-exports[`driver.route.self-review.acceptance given: [case5] clone promises too quickly (time enforcement) when: [t1] promise attempted immediately (before 90 seconds) then: stdout has good vibes 1`] = `
+exports[`driver.route.review.self.acceptance given: [case5] clone promises too quickly (time enforcement) when: [t1] promise attempted immediately (before 90 seconds) then: stdout has good vibes 1`] = `
 "🦉 so you're saying there's a chance?
 
 🦉 patience, friend

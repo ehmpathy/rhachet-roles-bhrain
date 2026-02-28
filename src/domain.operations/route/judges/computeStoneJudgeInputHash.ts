@@ -5,6 +5,8 @@ import * as path from 'path';
 import type { RouteStone } from '@src/domain.objects/Driver/RouteStone';
 import { enumFilesFromGlob } from '@src/utils/enumFilesFromGlob';
 
+import { getOnePassageReport } from '../passage/getOnePassageReport';
+
 /**
  * .what = computes hash of judge inputs (reviews + approvals)
  * .why = judges hash on their inputs for cache lookup
@@ -43,15 +45,13 @@ export const computeStoneJudgeInputHash = async (input: {
     reviewContents.push(`review:${path.basename(filePath)}:${content}`);
   }
 
-  // check approval marker
-  const approvalPath = path.join(routeDir, `${input.stone.name}.approved`);
-  let approvalExists = false;
-  try {
-    await fs.access(approvalPath);
-    approvalExists = true;
-  } catch {
-    // no approval marker
-  }
+  // check for approval in passage.jsonl
+  const approvalReport = await getOnePassageReport({
+    stone: input.stone.name,
+    status: 'approved',
+    route: input.route,
+  });
+  const approvalExists = approvalReport !== null;
 
   // combine into hash input
   const hashInput = [

@@ -151,8 +151,8 @@ describe('setStoneAsPassed.integration', () => {
         );
         expect(result1.passed).toBe(true);
 
-        // reset passage marker to test again
-        await fs.rm(path.join(tempDir, '.route', '1.test.passed'));
+        // reset passage state to test again
+        await fs.rm(path.join(tempDir, '.route', 'passage.jsonl'));
 
         // second call - should reuse artifacts
         const result2 = await setStoneAsPassed(
@@ -170,13 +170,13 @@ describe('setStoneAsPassed.integration', () => {
     });
   });
 
-  given('[case4] self-review guard creates trigger marker file', () => {
+  given('[case4] review.self guard creates trigger marker file', () => {
     const scene = useBeforeAll(async () => {
       const tempDir = path.join(
         os.tmpdir(),
         `test-set-passed-trigger-${Date.now()}`,
       );
-      await fs.cp(path.join(ASSETS_DIR, 'route.self-review'), tempDir, {
+      await fs.cp(path.join(ASSETS_DIR, 'route.review.self'), tempDir, {
         recursive: true,
       });
       await fs.writeFile(path.join(tempDir, '1.vision.md'), '# Vision');
@@ -187,7 +187,7 @@ describe('setStoneAsPassed.integration', () => {
       await fs.rm(scene.tempDir, { recursive: true, force: true });
     });
 
-    when('[t0] stone with self-review is set as passed', () => {
+    when('[t0] stone with review.self is set as passed', () => {
       const result = useThen('operation completes', async () =>
         setStoneAsPassed(
           { stone: '1.vision', route: scene.tempDir },
@@ -195,7 +195,7 @@ describe('setStoneAsPassed.integration', () => {
         ),
       );
 
-      then('is blocked by self-review requirement', () => {
+      then('is blocked by review.self requirement', () => {
         expect(result.passed).toBe(false);
       });
 

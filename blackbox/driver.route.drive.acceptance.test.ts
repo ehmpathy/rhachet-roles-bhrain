@@ -124,11 +124,11 @@ describe('driver.route.drive.acceptance', () => {
         '# Docs\n\nDocumentation written.',
       );
 
-      // mark both stones as passed (manually via .route/)
-      // note: passage files use stone name without extension (e.g., "1.passed" not "1.stone.passed")
+      // mark both stones as passed (via passage.jsonl)
       await fs.mkdir(path.join(tempDir, '.route'), { recursive: true });
-      await fs.writeFile(path.join(tempDir, '.route', '1.passed'), '');
-      await fs.writeFile(path.join(tempDir, '.route', '2.passed'), '');
+      const passageContent =
+        ['{"stone":"1","status":"passed"}', '{"stone":"2","status":"passed"}'].join('\n') + '\n';
+      await fs.writeFile(path.join(tempDir, '.route', 'passage.jsonl'), passageContent);
 
       return { tempDir };
     });
@@ -182,11 +182,11 @@ describe('driver.route.drive.acceptance', () => {
         '# Docs\n\nDocumentation written.',
       );
 
-      // mark both stones as passed
-      // note: passage files use stone name without extension (e.g., "1.passed" not "1.stone.passed")
+      // mark both stones as passed (via passage.jsonl)
       await fs.mkdir(path.join(tempDir, '.route'), { recursive: true });
-      await fs.writeFile(path.join(tempDir, '.route', '1.passed'), '');
-      await fs.writeFile(path.join(tempDir, '.route', '2.passed'), '');
+      const passageContent =
+        ['{"stone":"1","status":"passed"}', '{"stone":"2","status":"passed"}'].join('\n') + '\n';
+      await fs.writeFile(path.join(tempDir, '.route', 'passage.jsonl'), passageContent);
 
       return { tempDir };
     });
@@ -346,7 +346,7 @@ describe('driver.route.drive.acceptance', () => {
       // make mock-review.sh executable
       await execAsync('chmod +x .test/mock-review.sh', { cwd: tempDir });
 
-      // trigger self-review via --as passed (creates triggered marker files)
+      // trigger review.self via --as passed (creates triggered marker files)
       await invokeRouteSkill({
         skill: 'route.stone.set',
         args: { stone: '1', as: 'passed' },
@@ -356,14 +356,14 @@ describe('driver.route.drive.acceptance', () => {
       // backdate triggered reports to bypass time enforcement
       await backdateTriggeredReport({ tempDir, stone: '1', slug: 'all-done' });
 
-      // promise first self-review
+      // promise first review.self
       await invokeRouteSkill({
         skill: 'route.stone.set',
         args: { stone: '1', as: 'promised', that: 'all-done' },
         cwd: tempDir,
       });
 
-      // trigger second self-review and backdate
+      // trigger second review.self and backdate
       await invokeRouteSkill({
         skill: 'route.stone.set',
         args: { stone: '1', as: 'passed' },
@@ -371,7 +371,7 @@ describe('driver.route.drive.acceptance', () => {
       });
       await backdateTriggeredReport({ tempDir, stone: '1', slug: 'tests-pass' });
 
-      // promise second self-review
+      // promise second review.self
       await invokeRouteSkill({
         skill: 'route.stone.set',
         args: { stone: '1', as: 'promised', that: 'tests-pass' },
@@ -474,7 +474,7 @@ given('[case6] hook mode allows stop when blocked on approval', () => {
     });
 
     when('[t0] route.drive hook mode before pass attempt', () => {
-      const result = useThen('route.drive blocks (no blockedOn file)', async () =>
+      const result = useThen('route.drive blocks (no blocker file)', async () =>
         invokeRouteSkill({
           skill: 'route.drive',
           args: { mode: 'hook' },
@@ -483,7 +483,7 @@ given('[case6] hook mode allows stop when blocked on approval', () => {
       );
 
       then('exit code is 2 (block - agent hasnt tried to pass)', () => {
-        // no blockedOn file yet = agent should keep work
+        // no blocker file yet = agent should keep work
         expect(result.code).toEqual(2);
       });
 

@@ -49,7 +49,7 @@ describe('getAllStoneDriveArtifacts', () => {
       then('artifact has passage populated', async () => {
         const artifacts = await getAllStoneDriveArtifacts({ route: routePath });
         expect(artifacts[0]?.passage).not.toBeNull();
-        expect(artifacts[0]?.passage).toContain('.passed');
+        expect(artifacts[0]?.passage).toContain('passage.jsonl');
       });
     });
   });

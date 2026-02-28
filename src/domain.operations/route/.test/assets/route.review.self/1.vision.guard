@@ -9,7 +9,7 @@ reviews:
         have you re-read the stone goal and verified each requirement?
 
     - slug: tests-pass
-      say: "@briefs/self-review.tests-pass.md"
+      say: "@briefs/review.self.tests-pass.md"
 
   peer:
     - rhx review --rules .agent/**/rules/*.md --paths 1.vision*.md

@@ -1,12 +1,12 @@
 import { DomainLiteral } from 'domain-objects';
 
 /**
- * .what = represents a self-review prompt for the clone
+ * .what = represents a review.self prompt for the clone
  * .why = enables explicit self-check before peer review
  */
 export interface RouteStoneGuardReviewSelf {
   /**
-   * identifier for the self-review (used in --as promised --that $slug)
+   * identifier for the review.self (used in --as promised --that $slug)
    */
   slug: string;
 

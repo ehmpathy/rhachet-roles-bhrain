@@ -76,12 +76,11 @@ describe('stepRouteStoneSet.integration', () => {
         expect(result.refs?.judges.length).toBeGreaterThan(0);
       });
 
-      then('creates passage marker on success', async () => {
-        const passageExists = await fs
-          .access(path.join(scene.tempDir, '.route', '1.test.passed'))
-          .then(() => true)
-          .catch(() => false);
-        expect(passageExists).toBe(true);
+      then('appends passage to passage.jsonl on success', async () => {
+        const passagePath = path.join(scene.tempDir, '.route', 'passage.jsonl');
+        const content = await fs.readFile(passagePath, 'utf-8');
+        expect(content).toContain('"stone":"1.test"');
+        expect(content).toContain('"status":"passed"');
       });
     });
   });
@@ -105,7 +104,7 @@ describe('stepRouteStoneSet.integration', () => {
     });
 
     when('[t0] approved then passed workflow', () => {
-      then('approve creates marker', async () => {
+      then('approve appends to passage.jsonl', async () => {
         const approveResult = await stepRouteStoneSet(
           {
             stone: '1.vision',
@@ -115,11 +114,10 @@ describe('stepRouteStoneSet.integration', () => {
           noopContext,
         );
         expect(approveResult.approved).toBe(true);
-        const approvalExists = await fs
-          .access(path.join(tempDir, '.route', '1.vision.approved'))
-          .then(() => true)
-          .catch(() => false);
-        expect(approvalExists).toBe(true);
+        const passagePath = path.join(tempDir, '.route', 'passage.jsonl');
+        const content = await fs.readFile(passagePath, 'utf-8');
+        expect(content).toContain('"stone":"1.vision"');
+        expect(content).toContain('"status":"approved"');
       });
     });
   });
@@ -158,14 +156,14 @@ describe('stepRouteStoneSet.integration', () => {
     });
   });
 
-  given('[case4] time enforcement for self-review promises', () => {
+  given('[case4] time enforcement for review.self promises', () => {
     const tempDir = path.join(
       os.tmpdir(),
       `test-step-set-time-enforce-${Date.now()}`,
     );
 
     beforeEach(async () => {
-      await fs.cp(path.join(ASSETS_DIR, 'route.self-review'), tempDir, {
+      await fs.cp(path.join(ASSETS_DIR, 'route.review.self'), tempDir, {
         recursive: true,
       });
       // create artifact for 1.vision

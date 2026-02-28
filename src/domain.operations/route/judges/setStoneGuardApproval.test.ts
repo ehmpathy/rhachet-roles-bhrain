@@ -22,11 +22,12 @@ describe('setStoneGuardApproval', () => {
         expect(stat.isDirectory()).toBe(true);
       });
 
-      then('creates approval marker file', async () => {
+      then('appends approved report to passage.jsonl', async () => {
         const result = await setStoneGuardApproval({ stone, route: tempDir });
-        expect(result.path).toContain('1.vision.approved');
-        const stat = await fs.stat(result.path);
-        expect(stat.isFile()).toBe(true);
+        expect(result.path).toContain('passage.jsonl');
+        const content = await fs.readFile(result.path, 'utf-8');
+        expect(content).toContain('"stone":"1.vision"');
+        expect(content).toContain('"status":"approved"');
       });
 
       then('returns approval artifact', async () => {

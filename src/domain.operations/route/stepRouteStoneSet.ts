@@ -88,14 +88,14 @@ export const stepRouteStoneSet = async (
       throw new BadRequestError('stone not found', { stone: input.stone });
     }
 
-    // validate slug exists in stone's self-reviews
+    // validate slug exists in stone's review.selfs
     const selfReviews = stoneMatched.guard
       ? getGuardSelfReviews(stoneMatched.guard)
       : [];
     const validSlugs = selfReviews.map((r) => r.slug);
     if (validSlugs.length > 0 && !validSlugs.includes(input.that)) {
       throw new BadRequestError(
-        `invalid self-review slug: "${input.that}". valid options: ${validSlugs.join(', ')}`,
+        `invalid review.self slug: "${input.that}". valid options: ${validSlugs.join(', ')}`,
         { stone: input.stone, slug: input.that, validSlugs },
       );
     }
@@ -106,7 +106,7 @@ export const stepRouteStoneSet = async (
       route: input.route,
     });
 
-    // check time enforcement for self-review
+    // check time enforcement for review.self
     const reviewSelf = selfReviews.find((r) => r.slug === input.that);
     const challengeDecision = await getSelfReviewChallengeDecision({
       stone: stoneMatched.name,

@@ -23,7 +23,7 @@ describe('getOneStoneGuardApproval', () => {
           route: routePath,
         });
         expect(approval).not.toBeNull();
-        expect(approval?.path).toContain('1.vision.approved');
+        expect(approval?.path).toContain('passage.jsonl');
       });
     });
   });

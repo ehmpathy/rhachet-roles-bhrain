@@ -165,7 +165,7 @@ describe('stepRouteStoneSet', () => {
     };
 
     beforeEach(async () => {
-      await fs.cp(path.join(ASSETS_DIR, 'route.self-review'), tempDir, {
+      await fs.cp(path.join(ASSETS_DIR, 'route.review.self'), tempDir, {
         recursive: true,
       });
       // create artifact for 1.vision
@@ -221,7 +221,7 @@ describe('stepRouteStoneSet', () => {
         expect(result.promised).toBe(true);
         // per blueprint: shows "passage = progressed" not "promise = recorded"
         expect(result.emit?.stdout).toContain('passage = progressed');
-        expect(result.emit?.stdout).toContain('self-review 1/2 promised');
+        expect(result.emit?.stdout).toContain('review.self 1/2 promised');
         // per blueprint: shows next unpromised review (tests-pass)
         expect(result.emit?.stdout).toContain('tests-pass');
       });

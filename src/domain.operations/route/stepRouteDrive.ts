@@ -77,7 +77,7 @@ export const stepRouteDrive = async (input: {
     });
 
     // if blocked on approval, check if approval was already granted
-    if (blockerReport?.blockedOn === 'approval') {
+    if (blockerReport?.blocker === 'approval') {
       const approvalArtifact = await getOneStoneGuardApproval({
         stone,
         route,

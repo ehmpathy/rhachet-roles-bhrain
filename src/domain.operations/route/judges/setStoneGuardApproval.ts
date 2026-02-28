@@ -1,8 +1,8 @@
-import * as fs from 'fs/promises';
-import * as path from 'path';
-
+import { PassageReport } from '@src/domain.objects/Driver/PassageReport';
 import type { RouteStone } from '@src/domain.objects/Driver/RouteStone';
 import { RouteStoneGuardApproveArtifact } from '@src/domain.objects/Driver/RouteStoneGuardApproveArtifact';
+
+import { setPassageReport } from '../passage/setPassageReport';
 
 /**
  * .what = creates approval marker for a stone
@@ -12,16 +12,20 @@ export const setStoneGuardApproval = async (input: {
   stone: RouteStone;
   route: string;
 }): Promise<RouteStoneGuardApproveArtifact> => {
-  // ensure .route directory found or created
-  const routeDir = path.join(input.route, '.route');
-  await fs.mkdir(routeDir, { recursive: true });
+  // create passage report with status approved
+  const report = new PassageReport({
+    stone: input.stone.name,
+    status: 'approved',
+  });
 
-  // write approval marker
-  const approvalPath = path.join(routeDir, `${input.stone.name}.approved`);
-  await fs.writeFile(approvalPath, '');
+  // delegate to setPassageReport
+  const { path: passagePath } = await setPassageReport({
+    report,
+    route: input.route,
+  });
 
   return new RouteStoneGuardApproveArtifact({
     stone: { path: input.stone.path },
-    path: approvalPath,
+    path: passagePath,
   });
 };
