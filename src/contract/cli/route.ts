@@ -57,6 +57,31 @@ const parseArgs = (argv: string[]): Record<string, string | undefined> => {
 };
 
 /**
+ * .what = collects all values for a repeated key from argv
+ * .why = enables multi-value support for --stone in route.stone.del
+ */
+const collectArgsMulti = (argv: string[], key: string): string[] => {
+  const skipCount = isNodeEvalMode(argv) ? 1 : 2;
+  const args = argv.slice(skipCount).filter((arg) => arg !== '--');
+  const values: string[] = [];
+
+  for (let i = 0; i < args.length; i++) {
+    const arg = args[i];
+    if (!arg) continue;
+
+    if (arg === `--${key}`) {
+      const value = args[i + 1];
+      if (value && !value.startsWith('--')) {
+        values.push(value);
+        i++;
+      }
+    }
+  }
+
+  return values;
+};
+
+/**
  * .what = prints help for route.stone.get
  */
 const printGetHelp = (): void => {
@@ -509,11 +534,14 @@ export const routeStoneDel = async (): Promise<void> => {
     return;
   }
 
-  if (!options.stone) {
+  // collect all --stone values for multi-pattern support
+  const stones = collectArgsMulti(process.argv, 'stone');
+  if (stones.length === 0) {
     console.error('error: --stone is required');
     console.error('run with --help for usage');
     process.exit(2);
   }
+
   if (!options.route) {
     const routeFromBind = await resolveRouteFromBind();
     if (routeFromBind) {
@@ -531,7 +559,7 @@ export const routeStoneDel = async (): Promise<void> => {
 
   try {
     const result = await stepRouteStoneDel({
-      stone: options.stone,
+      stones,
       route: options.route,
       mode,
     });

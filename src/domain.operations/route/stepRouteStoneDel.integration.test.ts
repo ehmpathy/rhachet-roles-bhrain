@@ -24,7 +24,7 @@ describe('stepRouteStoneDel.integration', () => {
     when('[t0] stone with guard is deleted', () => {
       then('removes both stone and guard files', async () => {
         const result = await stepRouteStoneDel({
-          stone: '1.vision',
+          stones: ['1.vision'],
           route: tempDir,
           mode: 'apply',
         });
@@ -68,7 +68,7 @@ describe('stepRouteStoneDel.integration', () => {
     when('[t0] delete 3.1.* stones in apply mode', () => {
       then('deletes stones without artifacts', async () => {
         const result = await stepRouteStoneDel({
-          stone: '3.1.*',
+          stones: ['3.1.*'],
           route: tempDir,
           mode: 'apply',
         });
@@ -79,7 +79,7 @@ describe('stepRouteStoneDel.integration', () => {
 
       then('retains stone with artifact', async () => {
         const result = await stepRouteStoneDel({
-          stone: '3.1.*',
+          stones: ['3.1.*'],
           route: tempDir,
           mode: 'apply',
         });
@@ -88,7 +88,7 @@ describe('stepRouteStoneDel.integration', () => {
 
       then('emits treestruct with header', async () => {
         const result = await stepRouteStoneDel({
-          stone: '3.1.*',
+          stones: ['3.1.*'],
           route: tempDir,
           mode: 'apply',
         });
@@ -119,7 +119,7 @@ describe('stepRouteStoneDel.integration', () => {
     when('[t0] delete stone with .src.stone extension', () => {
       then('removes .src.stone and .src.guard files', async () => {
         const result = await stepRouteStoneDel({
-          stone: '1.vision',
+          stones: ['1.vision'],
           route: tempDir,
           mode: 'apply',
         });
@@ -141,7 +141,7 @@ describe('stepRouteStoneDel.integration', () => {
     when('[t1] delete stone with .src extension', () => {
       then('removes .src and .stone.guard files', async () => {
         const result = await stepRouteStoneDel({
-          stone: '2.criteria',
+          stones: ['2.criteria'],
           route: tempDir,
           mode: 'apply',
         });
@@ -185,7 +185,7 @@ describe('stepRouteStoneDel.integration', () => {
     when('[t0] plan mode for 3.1.* stones', () => {
       then('no disk changes', async () => {
         await stepRouteStoneDel({
-          stone: '3.1.*',
+          stones: ['3.1.*'],
           route: tempDir,
           mode: 'plan',
         });
@@ -210,7 +210,7 @@ describe('stepRouteStoneDel.integration', () => {
 
       then('stones classified correctly', async () => {
         const result = await stepRouteStoneDel({
-          stone: '3.1.*',
+          stones: ['3.1.*'],
           route: tempDir,
           mode: 'plan',
         });
@@ -227,7 +227,7 @@ describe('stepRouteStoneDel.integration', () => {
 
       then('emits treestruct with plan header', async () => {
         const result = await stepRouteStoneDel({
-          stone: '3.1.*',
+          stones: ['3.1.*'],
           route: tempDir,
           mode: 'plan',
         });
@@ -235,6 +235,82 @@ describe('stepRouteStoneDel.integration', () => {
         expect(stdout).toContain(`🦉 hoo needs 'em`);
         expect(stdout).toContain('🗿 route.stone.del --mode plan');
         expect(stdout).toContain('rerun with --mode apply to execute');
+      });
+    });
+  });
+
+  given('[case5] multi-pattern delete, apply mode', () => {
+    const tempDir = path.join(
+      os.tmpdir(),
+      `test-step-del-multi-int-${Date.now()}`,
+    );
+
+    beforeEach(async () => {
+      await fs.cp(path.join(ASSETS_DIR, 'route.parallel'), tempDir, {
+        recursive: true,
+      });
+    });
+
+    afterEach(async () => {
+      await fs.rm(tempDir, { recursive: true, force: true });
+    });
+
+    when('[t0] multiple patterns provided', () => {
+      then('all matched stones removed from disk', async () => {
+        const result = await stepRouteStoneDel({
+          stones: ['2.criteria', '3.2.plan'],
+          route: tempDir,
+          mode: 'apply',
+        });
+        expect(result.deleted.sort()).toEqual(['2.criteria', '3.2.plan']);
+
+        const criteriaExists = await fs
+          .access(path.join(tempDir, '2.criteria.stone'))
+          .then(() => true)
+          .catch(() => false);
+        const planExists = await fs
+          .access(path.join(tempDir, '3.2.plan.stone'))
+          .then(() => true)
+          .catch(() => false);
+        expect(criteriaExists).toBe(false);
+        expect(planExists).toBe(false);
+      });
+    });
+  });
+
+  given('[case6] multi-pattern with overlap', () => {
+    const tempDir = path.join(
+      os.tmpdir(),
+      `test-step-del-overlap-int-${Date.now()}`,
+    );
+
+    beforeEach(async () => {
+      await fs.cp(path.join(ASSETS_DIR, 'route.parallel'), tempDir, {
+        recursive: true,
+      });
+    });
+
+    afterEach(async () => {
+      await fs.rm(tempDir, { recursive: true, force: true });
+    });
+
+    when('[t0] patterns overlap on same stone', () => {
+      then('stone deleted once, file removed', async () => {
+        const result = await stepRouteStoneDel({
+          stones: ['2.criteria', '2.*'],
+          route: tempDir,
+          mode: 'apply',
+        });
+        // 2.criteria matched by both but appears once
+        expect(result.deleted.filter((s) => s === '2.criteria')).toHaveLength(
+          1,
+        );
+
+        const criteriaExists = await fs
+          .access(path.join(tempDir, '2.criteria.stone'))
+          .then(() => true)
+          .catch(() => false);
+        expect(criteriaExists).toBe(false);
       });
     });
   });

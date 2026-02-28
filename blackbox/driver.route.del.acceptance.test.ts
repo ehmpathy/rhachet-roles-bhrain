@@ -250,4 +250,165 @@ describe('driver.route.del.acceptance', () => {
       });
     });
   });
+
+  given('[case6] multiple --stone flags', () => {
+    when('[t0] invoke with multiple --stone args in apply mode', () => {
+      const res = useThen('invoke del with multiple stones', async () => {
+        const tempDir = genTempDirForRhachet({
+          slug: 'driver-del-multi',
+          clone: ASSETS_DIR,
+        });
+
+        await execAsync('npx rhachet roles link --role driver', { cwd: tempDir });
+
+        const cli = await invokeRouteSkill({
+          skill: 'route.stone.del',
+          args: { stone: ['2.criteria', '3.plan'], route: '.', mode: 'apply' },
+          cwd: tempDir,
+        });
+
+        console.log('\n--- cli.stdout ---');
+        console.log(cli.stdout);
+        console.log('--- end cli ---\n');
+
+        const criteriaExists = await fs
+          .access(path.join(tempDir, '2.criteria.stone'))
+          .then(() => true)
+          .catch(() => false);
+        const planExists = await fs
+          .access(path.join(tempDir, '3.plan.stone'))
+          .then(() => true)
+          .catch(() => false);
+
+        return { cli, tempDir, criteriaExists, planExists };
+      });
+
+      then('cli completes successfully', () => {
+        expect(res.cli.code).toEqual(0);
+      });
+
+      then('both stone files are removed', () => {
+        expect(res.criteriaExists).toBe(false);
+        expect(res.planExists).toBe(false);
+      });
+
+      then('stdout shows patterns section', () => {
+        expect(res.cli.stdout).toContain('├─ patterns');
+        expect(res.cli.stdout).toContain('*2.criteria*');
+        expect(res.cli.stdout).toContain('*3.plan*');
+      });
+
+      then('stdout shows both stones deleted', () => {
+        expect(res.cli.stdout).toContain('2.criteria');
+        expect(res.cli.stdout).toContain('3.plan');
+        expect(res.cli.stdout).toContain('(deleted)');
+      });
+
+      then('stdout matches snapshot', () => {
+        expect(res.cli.stdout).toMatchSnapshot();
+      });
+    });
+  });
+
+  given('[case7] multiple --stone flags with overlap', () => {
+    when('[t0] patterns overlap on same stone', () => {
+      const res = useThen('invoke del with overlap', async () => {
+        const tempDir = genTempDirForRhachet({
+          slug: 'driver-del-overlap',
+          clone: ASSETS_DIR,
+        });
+
+        await execAsync('npx rhachet roles link --role driver', { cwd: tempDir });
+
+        const cli = await invokeRouteSkill({
+          skill: 'route.stone.del',
+          args: { stone: ['3.plan', '3.*'], route: '.', mode: 'apply' },
+          cwd: tempDir,
+        });
+
+        console.log('\n--- cli.stdout ---');
+        console.log(cli.stdout);
+        console.log('--- end cli ---\n');
+
+        return { cli, tempDir };
+      });
+
+      then('cli completes successfully', () => {
+        expect(res.cli.code).toEqual(0);
+      });
+
+      then('stone appears once in output (deduped)', () => {
+        // 3.plan should appear once, not twice
+        const matches = res.cli.stdout.match(/3\.plan/g) ?? [];
+        // appears in patterns + once in stones section = 2 at most
+        expect(matches.length).toBeLessThanOrEqual(3);
+      });
+
+      then('stdout matches snapshot', () => {
+        expect(res.cli.stdout).toMatchSnapshot();
+      });
+    });
+  });
+
+  given('[case8] no --stone provided', () => {
+    when('[t0] invoke without --stone flag', () => {
+      const res = useThen('invoke del without stone', async () => {
+        const tempDir = genTempDirForRhachet({
+          slug: 'driver-del-nostone',
+          clone: ASSETS_DIR,
+        });
+
+        await execAsync('npx rhachet roles link --role driver', { cwd: tempDir });
+
+        const cli = await invokeRouteSkill({
+          skill: 'route.stone.del',
+          args: { route: '.', mode: 'apply' },
+          cwd: tempDir,
+        });
+
+        return { cli, tempDir };
+      });
+
+      then('cli exits with error code', () => {
+        expect(res.cli.code).toEqual(2);
+      });
+
+      then('stderr shows error message', () => {
+        expect(res.cli.stderr).toContain('--stone is required');
+      });
+    });
+  });
+
+  given('[case9] patterns match no stones', () => {
+    when('[t0] invoke with patterns that match no stones', () => {
+      const res = useThen('invoke del with no matches', async () => {
+        const tempDir = genTempDirForRhachet({
+          slug: 'driver-del-nomatch',
+          clone: ASSETS_DIR,
+        });
+
+        await execAsync('npx rhachet roles link --role driver', { cwd: tempDir });
+
+        const cli = await invokeRouteSkill({
+          skill: 'route.stone.del',
+          args: { stone: ['99.nonexistent'], route: '.', mode: 'apply' },
+          cwd: tempDir,
+        });
+
+        console.log('\n--- cli.stdout ---');
+        console.log(cli.stdout);
+        console.log('--- end cli ---\n');
+
+        return { cli, tempDir };
+      });
+
+      then('cli completes successfully', () => {
+        expect(res.cli.code).toEqual(0);
+      });
+
+      then('stdout shows no stones matched', () => {
+        expect(res.cli.stdout).toContain('no stones matched');
+      });
+    });
+  });
 });

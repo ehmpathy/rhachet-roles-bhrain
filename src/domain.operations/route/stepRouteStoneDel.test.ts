@@ -24,7 +24,7 @@ describe('stepRouteStoneDel', () => {
     when('[t0] stone is deleted in apply mode', () => {
       then('removes stone file', async () => {
         const result = await stepRouteStoneDel({
-          stone: '1.vision',
+          stones: ['1.vision'],
           route: tempDir,
           mode: 'apply',
         });
@@ -38,14 +38,15 @@ describe('stepRouteStoneDel', () => {
 
       then('returns deleted in result with new contract shape', async () => {
         const result = await stepRouteStoneDel({
-          stone: '1.vision',
+          stones: ['1.vision'],
           route: tempDir,
           mode: 'apply',
         });
         expect(result.deleted).toEqual(['1.vision']);
         expect(result.retained).toEqual([]);
-        expect(result.pattern).toBe('*1.vision*');
-        expect(result.patternRaw).toBe('1.vision');
+        expect(result.patterns).toEqual([
+          { glob: '*1.vision*', raw: '1.vision' },
+        ]);
         expect(result.stones).toEqual([
           { name: '1.vision', status: 'deleted', reason: null },
         ]);
@@ -71,7 +72,7 @@ describe('stepRouteStoneDel', () => {
     when('[t0] delete is attempted in apply mode', () => {
       then('retains stone and keeps file', async () => {
         const result = await stepRouteStoneDel({
-          stone: '1.vision',
+          stones: ['1.vision'],
           route: tempDir,
           mode: 'apply',
         });
@@ -84,7 +85,7 @@ describe('stepRouteStoneDel', () => {
 
       then('stone file still exists', async () => {
         await stepRouteStoneDel({
-          stone: '1.vision',
+          stones: ['1.vision'],
           route: tempDir,
           mode: 'apply',
         });
@@ -113,7 +114,7 @@ describe('stepRouteStoneDel', () => {
     when('[t0] glob pattern matches multiple stones', () => {
       then('deletes all matched stones without artifacts', async () => {
         const result = await stepRouteStoneDel({
-          stone: '3.1.*',
+          stones: ['3.1.*'],
           route: tempDir,
           mode: 'apply',
         });
@@ -146,7 +147,7 @@ describe('stepRouteStoneDel', () => {
     when('[t0] no stones match pattern', () => {
       then('returns empty arrays and message', async () => {
         const result = await stepRouteStoneDel({
-          stone: '99.*',
+          stones: ['99.*'],
           route: tempDir,
           mode: 'apply',
         });
@@ -163,7 +164,7 @@ describe('stepRouteStoneDel', () => {
       then('throws route not found error', async () => {
         const error = await getError(
           stepRouteStoneDel({
-            stone: '*',
+            stones: ['*'],
             route: '/nonexistent/path',
             mode: 'apply',
           }),
@@ -190,7 +191,7 @@ describe('stepRouteStoneDel', () => {
     when('[t0] plan mode with no artifacts', () => {
       then('no files removed from disk', async () => {
         await stepRouteStoneDel({
-          stone: '1.vision',
+          stones: ['1.vision'],
           route: tempDir,
           mode: 'plan',
         });
@@ -203,7 +204,7 @@ describe('stepRouteStoneDel', () => {
 
       then('stones array has delete status', async () => {
         const result = await stepRouteStoneDel({
-          stone: '1.vision',
+          stones: ['1.vision'],
           route: tempDir,
           mode: 'plan',
         });
@@ -235,7 +236,7 @@ describe('stepRouteStoneDel', () => {
     when('[t0] plan mode with artifact', () => {
       then('stones array has retain status with reason', async () => {
         const result = await stepRouteStoneDel({
-          stone: '1.vision',
+          stones: ['1.vision'],
           route: tempDir,
           mode: 'plan',
         });
@@ -265,12 +266,13 @@ describe('stepRouteStoneDel', () => {
         'auto-expands to *research* and matches research stones',
         async () => {
           const result = await stepRouteStoneDel({
-            stone: 'research',
+            stones: ['research'],
             route: tempDir,
             mode: 'plan',
           });
-          expect(result.pattern).toBe('*research*');
-          expect(result.patternRaw).toBe('research');
+          expect(result.patterns).toEqual([
+            { glob: '*research*', raw: 'research' },
+          ]);
           expect(result.stones.length).toBe(3);
           expect(result.stones.map((s) => s.name).sort()).toEqual([
             '3.1.research.domain',
@@ -303,7 +305,7 @@ describe('stepRouteStoneDel', () => {
     when('[t0] plan mode output', () => {
       then('has treestruct format with header', async () => {
         const result = await stepRouteStoneDel({
-          stone: '3.1.*',
+          stones: ['3.1.*'],
           route: tempDir,
           mode: 'plan',
         });
@@ -322,7 +324,7 @@ describe('stepRouteStoneDel', () => {
     when('[t1] apply mode output', () => {
       then('has treestruct format with header', async () => {
         const result = await stepRouteStoneDel({
-          stone: '3.1.*',
+          stones: ['3.1.*'],
           route: tempDir,
           mode: 'apply',
         });
@@ -332,6 +334,180 @@ describe('stepRouteStoneDel', () => {
         expect(stdout).toContain('(deleted)');
         expect(stdout).toContain('(retained, artifact found)');
         expect(stdout).not.toContain('rerun with --mode apply');
+      });
+    });
+  });
+
+  given('[case10] multiple patterns, all match distinct stones', () => {
+    const tempDir = path.join(os.tmpdir(), `test-step-del-multi-${Date.now()}`);
+
+    beforeEach(async () => {
+      await fs.cp(path.join(ASSETS_DIR, 'route.parallel'), tempDir, {
+        recursive: true,
+      });
+    });
+
+    afterEach(async () => {
+      await fs.rm(tempDir, { recursive: true, force: true });
+    });
+
+    when('[t0] multiple patterns each match different stones', () => {
+      then('all matched stones deleted', async () => {
+        const result = await stepRouteStoneDel({
+          stones: ['2.criteria', '3.2.plan'],
+          route: tempDir,
+          mode: 'apply',
+        });
+        expect(result.deleted.sort()).toEqual(['2.criteria', '3.2.plan']);
+        expect(result.patterns).toHaveLength(2);
+      });
+    });
+  });
+
+  given('[case11] multiple patterns, some overlap', () => {
+    const tempDir = path.join(
+      os.tmpdir(),
+      `test-step-del-overlap-${Date.now()}`,
+    );
+
+    beforeEach(async () => {
+      await fs.cp(path.join(ASSETS_DIR, 'route.parallel'), tempDir, {
+        recursive: true,
+      });
+    });
+
+    afterEach(async () => {
+      await fs.rm(tempDir, { recursive: true, force: true });
+    });
+
+    when('[t0] patterns overlap on same stone', () => {
+      then('stone deleted once, deduped', async () => {
+        const result = await stepRouteStoneDel({
+          stones: ['2.criteria', '2.*'],
+          route: tempDir,
+          mode: 'apply',
+        });
+        // 2.criteria matched by both patterns but deleted once
+        expect(result.deleted.filter((s) => s === '2.criteria')).toHaveLength(
+          1,
+        );
+        expect(result.patterns).toHaveLength(2);
+      });
+    });
+  });
+
+  given('[case12] multiple patterns, some miss', () => {
+    const tempDir = path.join(os.tmpdir(), `test-step-del-miss-${Date.now()}`);
+
+    beforeEach(async () => {
+      await fs.cp(path.join(ASSETS_DIR, 'route.parallel'), tempDir, {
+        recursive: true,
+      });
+    });
+
+    afterEach(async () => {
+      await fs.rm(tempDir, { recursive: true, force: true });
+    });
+
+    when('[t0] some patterns match, some miss', () => {
+      then('matched stones deleted, miss patterns skipped', async () => {
+        const result = await stepRouteStoneDel({
+          stones: ['2.criteria', '99.nonexistent'],
+          route: tempDir,
+          mode: 'apply',
+        });
+        expect(result.deleted).toContain('2.criteria');
+        expect(result.deleted).not.toContain('99.nonexistent');
+        expect(result.patterns).toHaveLength(2);
+      });
+    });
+  });
+
+  given('[case13] multiple patterns, all miss', () => {
+    const tempDir = path.join(
+      os.tmpdir(),
+      `test-step-del-allmiss-${Date.now()}`,
+    );
+
+    beforeEach(async () => {
+      await fs.cp(path.join(ASSETS_DIR, 'route.simple'), tempDir, {
+        recursive: true,
+      });
+    });
+
+    afterEach(async () => {
+      await fs.rm(tempDir, { recursive: true, force: true });
+    });
+
+    when('[t0] no patterns match any stones', () => {
+      then('deleted = 0, patterns still in output', async () => {
+        const result = await stepRouteStoneDel({
+          stones: ['99.a', '99.b'],
+          route: tempDir,
+          mode: 'apply',
+        });
+        expect(result.deleted).toEqual([]);
+        expect(result.patterns).toHaveLength(2);
+        expect(result.emit?.stdout).toContain('no stones matched');
+      });
+    });
+  });
+
+  given('[case14] empty stones array', () => {
+    const tempDir = path.join(os.tmpdir(), `test-step-del-empty-${Date.now()}`);
+
+    beforeEach(async () => {
+      await fs.cp(path.join(ASSETS_DIR, 'route.simple'), tempDir, {
+        recursive: true,
+      });
+    });
+
+    afterEach(async () => {
+      await fs.rm(tempDir, { recursive: true, force: true });
+    });
+
+    when('[t0] stones array is empty', () => {
+      then('throws error', async () => {
+        const error = await getError(
+          stepRouteStoneDel({
+            stones: [],
+            route: tempDir,
+            mode: 'apply',
+          }),
+        );
+        expect(error).toBeInstanceOf(Error);
+        expect(error.message).toContain('at least one --stone required');
+      });
+    });
+  });
+
+  given('[case15] multi-pattern output format', () => {
+    const tempDir = path.join(
+      os.tmpdir(),
+      `test-step-del-multiout-${Date.now()}`,
+    );
+
+    beforeEach(async () => {
+      await fs.cp(path.join(ASSETS_DIR, 'route.parallel'), tempDir, {
+        recursive: true,
+      });
+    });
+
+    afterEach(async () => {
+      await fs.rm(tempDir, { recursive: true, force: true });
+    });
+
+    when('[t0] multiple patterns in output', () => {
+      then('shows patterns section with multiple entries', async () => {
+        const result = await stepRouteStoneDel({
+          stones: ['2.criteria', '3.2.plan'],
+          route: tempDir,
+          mode: 'plan',
+        });
+        const stdout = result.emit?.stdout ?? '';
+        expect(stdout).toContain('├─ patterns');
+        expect(stdout).toContain('*2.criteria*');
+        expect(stdout).toContain('*3.2.plan*');
       });
     });
   });
