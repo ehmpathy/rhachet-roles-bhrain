@@ -16,7 +16,7 @@ exports[`driver.route.judge-failure.acceptance given: [case1] judge command fail
 `;
 
 exports[`driver.route.judge-failure.acceptance given: [case1] judge command fails without proper passed: metadata when: [t0] route.stone.set --as passed is invoked then: stdout matches snapshot 1`] = `
-"🦉 so you're saying there's a chance?
+"🦉 the way speaks for itself
 
 🗿 route.stone.set
    ├─ stone = 1
@@ -49,7 +49,7 @@ exports[`driver.route.judge-failure.acceptance given: [case1] judge command fail
 `;
 
 exports[`driver.route.judge-failure.acceptance given: [case1] judge command fails without proper passed: metadata when: [t1] route.stone.set --as passed is invoked again then: stdout matches snapshot 1`] = `
-"🦉 so you're saying there's a chance?
+"🦉 the way speaks for itself
 
 🗿 route.stone.set
    ├─ stone = 1

@@ -1,7 +1,7 @@
 // Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
 
 exports[`driver.route.review-blocks-approval.acceptance given: [review-blocks] stone with review + approval guard when: [t1] human approves the stone then: stdout has good vibes 1`] = `
-"🦉 so you're saying there's a chance?
+"🦉 the way speaks for itself
 
 🗿 route.stone.set
    └─ stone = 1.plan
@@ -10,7 +10,7 @@ exports[`driver.route.review-blocks-approval.acceptance given: [review-blocks] s
 `;
 
 exports[`driver.route.review-blocks-approval.acceptance given: [review-blocks] stone with review + approval guard when: [t2] pass attempted with approval but reviews still fail then: stdout has good vibes 1`] = `
-"🦉 so you're saying there's a chance?
+"🦉 the way speaks for itself
 
 🗿 route.stone.set
    ├─ stone = 1.plan
@@ -36,7 +36,7 @@ exports[`driver.route.review-blocks-approval.acceptance given: [review-blocks] s
 `;
 
 exports[`driver.route.review-blocks-approval.acceptance given: [review-blocks] stone with review + approval guard when: [t4] pass reattempted after fix then: stdout has good vibes 1`] = `
-"🦉 so you're saying there's a chance?
+"🦉 the way speaks for itself
 
 🗿 route.stone.set
    ├─ stone = 1.plan

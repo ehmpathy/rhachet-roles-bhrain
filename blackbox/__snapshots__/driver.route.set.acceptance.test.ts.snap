@@ -1,7 +1,7 @@
 // Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
 
 exports[`driver.route.set.acceptance given: [case5] route.stone.set with flexible pattern lookup when: [t0] partial pattern matches single stone then: stdout matches snapshot 1`] = `
-"🦉 so you're saying there's a chance?
+"🦉 the way speaks for itself
 
 🗿 route.stone.set
    └─ stone = 1.vision
@@ -10,7 +10,7 @@ exports[`driver.route.set.acceptance given: [case5] route.stone.set with flexibl
 `;
 
 exports[`driver.route.set.acceptance given: [case5] route.stone.set with flexible pattern lookup when: [t1] numeric prefix pattern agent approval locked then: stdout matches snapshot 1`] = `
-"🦉 so you're saying there's a chance?
+"🦉 the way speaks for itself
 
 🗿 route.stone.set
    └─ stone = 2.criteria

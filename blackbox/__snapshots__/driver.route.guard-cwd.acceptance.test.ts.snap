@@ -1,7 +1,7 @@
 // Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
 
 exports[`driver.route.guard-cwd.acceptance given: [case1] guard with $route in judge command when: [t0] artifact created but no approval then: stdout has good vibes 1`] = `
-"🦉 so you're saying there's a chance?
+"🦉 the way speaks for itself
 
 🗿 route.stone.set
    ├─ stone = 1.vision
@@ -23,7 +23,7 @@ exports[`driver.route.guard-cwd.acceptance given: [case1] guard with $route in j
 `;
 
 exports[`driver.route.guard-cwd.acceptance given: [case1] guard with $route in judge command when: [t1] approval granted and pass reattempted then: stdout has good vibes 1`] = `
-"🦉 so you're saying there's a chance?
+"🦉 the way speaks for itself
 
 🗿 route.stone.set
    ├─ stone = 1.vision
@@ -42,7 +42,7 @@ exports[`driver.route.guard-cwd.acceptance given: [case1] guard with $route in j
 `;
 
 exports[`driver.route.guard-cwd.acceptance given: [case2] guard with $route works from nested route directory when: [t0] judge runs on nested route then: stdout has good vibes 1`] = `
-"🦉 so you're saying there's a chance?
+"🦉 the way speaks for itself
 
 🗿 route.stone.set
    ├─ stone = 1.vision
@@ -64,7 +64,7 @@ exports[`driver.route.guard-cwd.acceptance given: [case2] guard with $route work
 `;
 
 exports[`driver.route.guard-cwd.acceptance given: [case2] guard with $route works from nested route directory when: [t1] approval granted on nested route then: stdout has good vibes 1`] = `
-"🦉 so you're saying there's a chance?
+"🦉 the way speaks for itself
 
 🗿 route.stone.set
    ├─ stone = 1.vision

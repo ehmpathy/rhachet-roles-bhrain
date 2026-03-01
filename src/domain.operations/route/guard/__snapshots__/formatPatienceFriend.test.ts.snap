@@ -1,7 +1,7 @@
 // Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
 
 exports[`formatPatienceFriend given: [case1] challenged review.self when: [t0] formatPatienceFriend called then: output matches snapshot (vibecheck) 1`] = `
-"🦉 patience, friend
+"🗿 patience, friend
    │
    ├─ the pond barely rippled
    │

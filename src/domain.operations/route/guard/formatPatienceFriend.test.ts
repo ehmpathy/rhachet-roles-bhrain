@@ -11,10 +11,10 @@ describe('formatPatienceFriend', () => {
         expect(output).toMatchSnapshot();
       });
 
-      then('contains owl header', () => {
+      then('contains stone header', () => {
         const output = formatPatienceFriend();
 
-        expect(output).toContain('🦉 patience, friend');
+        expect(output).toContain('🗿 patience, friend');
       });
 
       then('contains zen challenge sections', () => {

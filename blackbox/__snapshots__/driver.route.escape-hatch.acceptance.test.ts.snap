@@ -1,7 +1,7 @@
 // Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
 
 exports[`driver.route.escape-hatch.acceptance given: [escape-hatch] stone with perma-fail review when: [t0] artifact created and pass attempted then: stdout has good vibes 1`] = `
-"🦉 so you're saying there's a chance?
+"🦉 the way speaks for itself
 
 🗿 route.stone.set
    ├─ stone = 1.design
@@ -24,7 +24,7 @@ exports[`driver.route.escape-hatch.acceptance given: [escape-hatch] stone with p
 `;
 
 exports[`driver.route.escape-hatch.acceptance given: [escape-hatch] stone with perma-fail review when: [t2] pass is reattempted after guard edit then: stdout has good vibes 1`] = `
-"🦉 so you're saying there's a chance?
+"🦉 the way speaks for itself
 
 🗿 route.stone.set
    └─ stone = 1.design
