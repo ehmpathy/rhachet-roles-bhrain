@@ -214,6 +214,13 @@ export const runStoneGuardJudges = async (
     // same inputs + passed = same result, no need to re-run
     const prior = priorByIndex.get(index);
     if (prior) {
+      // emit cached event for progress output
+      context.cliEmit.onGuardProgress({
+        stone: input.stone,
+        step: { phase: 'judge', index: i },
+        inflight: null,
+        outcome: null,
+      });
       judges.push(prior);
       continue;
     }

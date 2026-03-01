@@ -229,9 +229,10 @@ describe('driver.route.set.acceptance', () => {
         expect(res.cli.stdout).toMatch(/finished \d+\.\ds ✓/);
       });
 
-      then('stderr contains progress output', () => {
-        // stderr should have inflight or finished lines from genContextCliEmit
-        expect(res.cli.stderr.length).toBeGreaterThan(0);
+      then('stdout contains progress output with branch format', () => {
+        // progress lines appear in stdout as part of owl header
+        expect(res.cli.stdout).toContain('review.1');
+        expect(res.cli.stdout).toContain('judge.1');
       });
 
       then('creates passage marker', () => {

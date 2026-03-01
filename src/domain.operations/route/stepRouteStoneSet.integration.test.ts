@@ -11,7 +11,7 @@ const noopContext = { cliEmit: { onGuardProgress: () => {} }, isTTY: true };
 
 /**
  * .what = backdate triggered report mtime to bypass time enforcement
- * .why = tests need to verify promise flow without 90 second wait
+ * .why = tests need to verify promise flow without 30 second wait
  *
  * .note = backdates ALL matched files (there may be multiple with different hashes)
  */
@@ -174,7 +174,7 @@ describe('stepRouteStoneSet.integration', () => {
       await fs.rm(tempDir, { recursive: true, force: true });
     });
 
-    when('[t0] promise attempted before 90 seconds', () => {
+    when('[t0] promise attempted before 30 seconds', () => {
       then('blocks with challenged status', async () => {
         // first trigger via --as passed
         await stepRouteStoneSet(
@@ -182,7 +182,7 @@ describe('stepRouteStoneSet.integration', () => {
           noopContext,
         );
 
-        // immediately promise (no backdate = < 90 seconds)
+        // immediately promise (no backdate = < 30 seconds)
         const result = await stepRouteStoneSet(
           {
             stone: '1.vision',
@@ -199,7 +199,7 @@ describe('stepRouteStoneSet.integration', () => {
       });
     });
 
-    when('[t1] promise attempted after 90 seconds', () => {
+    when('[t1] promise attempted after 30 seconds', () => {
       then('accepts promise', async () => {
         // first trigger via --as passed
         await stepRouteStoneSet(
@@ -207,7 +207,7 @@ describe('stepRouteStoneSet.integration', () => {
           noopContext,
         );
 
-        // backdate to simulate 90+ seconds elapsed
+        // backdate to simulate 30+ seconds elapsed
         await backdateTriggeredReport({
           tempDir,
           stone: '1.vision',

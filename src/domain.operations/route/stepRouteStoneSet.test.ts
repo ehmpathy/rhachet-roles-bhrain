@@ -144,7 +144,7 @@ describe('stepRouteStoneSet', () => {
 
     /**
      * .what = backdate triggered report mtime to bypass time enforcement
-     * .why = tests need to verify promise flow without 90 second wait
+     * .why = tests need to verify promise flow without 30 second wait
      */
     const backdateTriggeredReport = async (input: {
       stone: string;

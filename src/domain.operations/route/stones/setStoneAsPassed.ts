@@ -201,11 +201,26 @@ export const setStoneAsPassed = async (
 
   // collect progress events for guard tree output
   const events: GuardProgressEvent[] = [];
+  const totalReviews = peerReviews.length;
+  const totalJudges = stoneMatched.guard.judges.length;
+  const totalItems = totalReviews + totalJudges;
+
+  // create context that enriches events with position for branch format
   const collectContext: ContextCliEmit = {
     cliEmit: {
       onGuardProgress: (event) => {
         events.push(event);
-        context.cliEmit.onGuardProgress(event);
+
+        // compute global position across reviews + judges
+        const globalIndex =
+          event.step.phase === 'review'
+            ? event.step.index
+            : totalReviews + event.step.index;
+
+        context.cliEmit.onGuardProgress(event, {
+          index: globalIndex,
+          total: totalItems,
+        });
       },
     },
   };
@@ -466,29 +481,25 @@ const computeBlockedOn = (input: {
 /**
  * .what = parses judge artifact content for stderr output
  * .why = strips internal markers and extracts meaningful error info
+ *
+ * .note = keeps indent whitespace for tree-structured output
+ *         collapses consecutive blank lines into one
  */
 const parseJudgeArtifactForStderr = (content: string): { lines: string[] } => {
-  const lines: string[] = [];
-
-  // strip internal markers and split into sections
+  // strip internal markers and trim start/end blank lines
   const cleaned = content
     .replace(/---stderr---/g, '')
     .replace(/---metadata---/g, '')
     .trim();
 
-  // extract meaningful lines
+  // collapse consecutive blank lines into one
+  const lines: string[] = [];
+  let prevWasBlank = false;
   for (const line of cleaned.split('\n')) {
-    const trimmed = line.trim();
-    if (!trimmed) continue;
-
-    // parse exit code line
-    if (trimmed.match(/^exit code:?\s*\d+/i)) {
-      lines.push(trimmed);
-      continue;
-    }
-
-    // keep error lines and other meaningful content
-    lines.push(trimmed);
+    const isBlank = line.trim() === '';
+    if (isBlank && prevWasBlank) continue; // skip consecutive blanks
+    lines.push(line);
+    prevWasBlank = isBlank;
   }
 
   return { lines };

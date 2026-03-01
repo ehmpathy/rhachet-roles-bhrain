@@ -152,7 +152,6 @@ export const formatGuardTree = (input: {
               : '0.0s';
           const mark = judge.passed ? '✓' : '✗';
           detailLines.push(`finished ${dur} ${mark}`);
-          detailLines.push(`judge: ${judge.path}`);
           if (!judge.passed && judge.reason) {
             detailLines.push(`reason: ${judge.reason}`);
           }

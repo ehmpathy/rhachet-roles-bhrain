@@ -475,14 +475,18 @@ export const routeStoneSet = async (): Promise<void> => {
     process.exit(2);
   }
 
-  // construct stderr progress context for live feedback
-  const progress = genContextCliEmit({ stderr: process.stderr });
-
   // detect TTY for human vs agent
   // allow approval in test/CI environments (Jest sets NODE_ENV=test, CI runners set CI=true)
   const isTestEnv =
     process.env.NODE_ENV === 'test' || process.env.CI === 'true';
   const isTTY = isTestEnv || (process.stdout.isTTY ?? false);
+
+  // construct progress context (stdout so it appears with tree)
+  const progress = genContextCliEmit({ stderr: process.stdout });
+
+  // print owl header early so progress appears below it
+  const owlHeader = `🦉 so you're saying there's a chance?`;
+  console.log(owlHeader);
 
   try {
     const result = await stepRouteStoneSet(
@@ -498,7 +502,12 @@ export const routeStoneSet = async (): Promise<void> => {
     progress.done();
 
     if (result.emit) {
-      console.log(result.emit.stdout);
+      // strip owl header (printed early) to avoid duplication
+      const stdoutWithoutOwl = result.emit.stdout
+        .replace(owlHeader, '')
+        .replace(/^\n+/, ''); // trim lead newlines left behind
+      console.log(''); // blank line after progress, before tree
+      console.log(stdoutWithoutOwl);
       if (result.emit.stderr) {
         console.error('');
         console.error(result.emit.stderr);
@@ -661,8 +670,17 @@ const judgeApproved = async (input: {
     console.log('passed: true');
     console.log('reason: human approval found');
   } else {
+    const approveCmd = `rhx route.stone.set --stone ${input.stone} --as approved`;
+    const passCmd = `rhx route.stone.set --stone ${input.stone} --as passed`;
     console.log('passed: false');
     console.log('reason: wait for human approval');
+    console.log('');
+    console.log('✋ halted, human approval required');
+    console.log('   ├─ please ask your human to');
+    console.log(`   │  └─ ${approveCmd}`);
+    console.log('   │');
+    console.log('   └─ after human approves, run');
+    console.log(`      └─ ${passCmd}`);
     process.exit(2);
   }
 };

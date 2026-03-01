@@ -235,7 +235,7 @@ exports[`driver.route.review.self.acceptance given: [case4] flat reviews array (
 "
 `;
 
-exports[`driver.route.review.self.acceptance given: [case5] clone promises too quickly (time enforcement) when: [t1] promise attempted immediately (before 90 seconds) then: stdout has good vibes 1`] = `
+exports[`driver.route.review.self.acceptance given: [case5] clone promises too quickly (time enforcement) when: [t1] promise attempted immediately (before 30 seconds) then: stdout has good vibes 1`] = `
 "🦉 the way speaks for itself
 
 🗿 patience, friend

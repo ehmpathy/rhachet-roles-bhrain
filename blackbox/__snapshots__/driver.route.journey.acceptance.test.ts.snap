@@ -22,7 +22,6 @@ exports[`driver.route.journey.acceptance given: [journey] weather api route when
       └─ judges
           └─ j1: rhx route.stone.judge --mechanism approved? --stone $stone --route $route
               ├─ finished [TIME] ✗
-              ├─ judge: .route/1.vision.guard.judge.i1p1.89a3b47031ddeb8c23151d71f85717bdb3adfed2e3c6224d3fe7c6d059cbf474.79af67282f021ee213087dfc0cd59b76b6fc4f2fa230045b79504ff592f988f9.j1.md
               └─ reason: wait for human approval
 "
 `;
@@ -61,7 +60,10 @@ exports[`driver.route.journey.acceptance given: [journey] weather api route when
 "
 `;
 
-exports[`driver.route.journey.acceptance given: [journey] weather api route when: [t5] 2.research pass attempted without artifact then: stdout has good vibes 1`] = `""`;
+exports[`driver.route.journey.acceptance given: [journey] weather api route when: [t5] 2.research pass attempted without artifact then: stdout has good vibes 1`] = `
+"🦉 so you're saying there's a chance?
+"
+`;
 
 exports[`driver.route.journey.acceptance given: [journey] weather api route when: [t6] 2.research artifact created and pass attempted then: stdout has good vibes 1`] = `
 "🦉 the way speaks for itself
@@ -170,7 +172,6 @@ exports[`driver.route.journey.acceptance given: [journey] weather api route when
           │   └─ · cached
           └─ j2: rhx route.stone.judge --mechanism approved? --stone $stone --route $route
               ├─ finished [TIME] ✗
-              ├─ judge: .route/3.blueprint.guard.judge.i2p3.6fc57147f85d1e873c2688e69bdd6e690c8c3721ed38ddaf0fe09b7ee46a0393.b0a9156077bee6c54c4eff606772019e8b5c99800ef4c7ad43123e6c10ce070c.j2.md
               └─ reason: wait for human approval
 "
 `;
@@ -193,11 +194,9 @@ exports[`driver.route.journey.acceptance given: [journey] weather api route when
       └─ judges
           ├─ j1: rhx route.stone.judge --mechanism reviewed? --stone $stone --route $route --allow-blockers 0 --allow-nitpicks 2
           │   ├─ finished [TIME] ✗
-          │   ├─ judge: .route/3.blueprint.guard.judge.i1p1.fd29f621e589e44175adf2201fa80bf72797235b994355101b4f50e08e4ebe44.70d50298a823e186ed1641bc32518956a7362338a59b85ded9b26acfe38f816c.j1.md
           │   └─ reason: blockers exceed threshold (1 > 0)
           └─ j2: rhx route.stone.judge --mechanism approved? --stone $stone --route $route
               ├─ finished [TIME] ✗
-              ├─ judge: .route/3.blueprint.guard.judge.i1p1.fd29f621e589e44175adf2201fa80bf72797235b994355101b4f50e08e4ebe44.70d50298a823e186ed1641bc32518956a7362338a59b85ded9b26acfe38f816c.j2.md
               └─ reason: wait for human approval
 "
 `;
@@ -248,8 +247,7 @@ exports[`driver.route.journey.acceptance given: [journey] weather api route when
       │       └─ review: .route/5.execute.guard.review.i1.e5c031c5923de2dd7ebc77d84ac1c222cfdb9d3143fa8c0bc27ed9d821ce74e3.r1.md
       └─ judges
           └─ j1: rhx route.stone.judge --mechanism reviewed? --stone $stone --route $route --allow-blockers 0 --allow-nitpicks 1
-              ├─ finished [TIME] ✓
-              └─ judge: .route/5.execute.guard.judge.i1p1.e5c031c5923de2dd7ebc77d84ac1c222cfdb9d3143fa8c0bc27ed9d821ce74e3.a98dc386edcd8c99a3d132b7fc4a6366285cfa5e55717c43387c45b76d6c0800.j1.md
+              └─ finished [TIME] ✓
 "
 `;
 

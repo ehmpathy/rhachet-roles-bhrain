@@ -1,6 +1,6 @@
 /**
- * .what = formats "patience, friend" challenge for rushed review.self
- * .why = blocks clones who promise too quickly (< 90 seconds) with zen challenge
+ * .what = formats "patience, friend" challenge for rushed self-review
+ * .why = blocks clones who promise too quickly (< 30 seconds) with zen challenge
  */
 export const formatPatienceFriend = (): string => {
   const lines: string[] = [];

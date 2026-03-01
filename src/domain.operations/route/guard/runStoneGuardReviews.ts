@@ -123,8 +123,16 @@ export const runStoneGuardReviews = async (
     if (!reviewCmd) continue;
     const index = i + 1;
 
-    // skip if already done
-    if (doneIndices.has(index)) continue;
+    // skip if already done (emit cached event for progress output)
+    if (doneIndices.has(index)) {
+      context.cliEmit.onGuardProgress({
+        stone: input.stone,
+        step: { phase: 'review', index: i },
+        inflight: null,
+        outcome: null,
+      });
+      continue;
+    }
 
     // emit inflight event before review
     const beganAt = new Date().toISOString();
