@@ -3,8 +3,8 @@ import { DomainLiteral, type RefByUnique } from 'domain-objects';
 import type { RouteStone } from './RouteStone';
 
 /**
- * .what = represents a promise artifact for a self-review
- * .why = tracks which self-reviews the clone has promised for a stone
+ * .what = represents a promise artifact for a review.self
+ * .why = tracks which review.selfs the clone has promised for a stone
  */
 export interface RouteStoneGuardReviewSelfArtifact {
   /**
@@ -18,7 +18,7 @@ export interface RouteStoneGuardReviewSelfArtifact {
   hash: string;
 
   /**
-   * self-review slug that was promised
+   * review.self slug that was promised
    */
   slug: string;
 

@@ -1,6 +1,6 @@
 // Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
 
-exports[`formatLetsReflect given: [case1] standard self-review when: [t0] formatLetsReflect called then: output matches snapshot (vibecheck) 1`] = `
+exports[`formatLetsReflect given: [case1] standard review.self when: [t0] formatLetsReflect called then: output matches snapshot (vibecheck) 1`] = `
 "🌕 lets reflect
    │
    ├─ review.self 1/2

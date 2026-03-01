@@ -3,7 +3,7 @@ import { given, then, when } from 'test-fns';
 import { formatLetsReflect } from './formatLetsReflect';
 
 describe('formatLetsReflect', () => {
-  given('[case1] standard self-review', () => {
+  given('[case1] standard review.self', () => {
     when('[t0] formatLetsReflect called', () => {
       then('output matches snapshot (vibecheck)', () => {
         const output = formatLetsReflect({
@@ -71,7 +71,7 @@ describe('formatLetsReflect', () => {
     });
   });
 
-  given('[case2] invalidated self-review', () => {
+  given('[case2] invalidated review.self', () => {
     when('[t0] formatLetsReflect called with invalidated=true', () => {
       then('shows invalidated status', () => {
         const output = formatLetsReflect({

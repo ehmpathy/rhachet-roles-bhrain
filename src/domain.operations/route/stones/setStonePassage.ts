@@ -1,23 +1,22 @@
-import * as fs from 'fs/promises';
-import * as path from 'path';
-
+import { PassageReport } from '@src/domain.objects/Driver/PassageReport';
 import type { RouteStone } from '@src/domain.objects/Driver/RouteStone';
 
+import { setPassageReport } from '../passage/setPassageReport';
+
 /**
- * .what = marks a stone as passed via passage marker file
- * .why = enables route progress to be persisted
+ * .what = marks a stone as passed via passage report
+ * .why = enables route progress to be persisted in passage.jsonl
  */
 export const setStonePassage = async (input: {
   stone: RouteStone;
   route: string;
 }): Promise<{ path: string }> => {
-  // ensure .route directory found or created
-  const routeDir = path.join(input.route, '.route');
-  await fs.mkdir(routeDir, { recursive: true });
+  // create passage report with status passed
+  const report = new PassageReport({
+    stone: input.stone.name,
+    status: 'passed',
+  });
 
-  // write passage marker
-  const passagePath = path.join(routeDir, `${input.stone.name}.passed`);
-  await fs.writeFile(passagePath, '');
-
-  return { path: passagePath };
+  // delegate to setPassageReport
+  return setPassageReport({ report, route: input.route });
 };

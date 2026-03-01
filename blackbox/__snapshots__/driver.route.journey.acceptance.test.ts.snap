@@ -81,12 +81,12 @@ exports[`driver.route.journey.acceptance given: [journey] weather api route when
 "
 `;
 
-exports[`driver.route.journey.acceptance given: [journey] weather api route when: [t8.5] 3.blueprint self-review is promised then: stdout has good vibes 1`] = `
+exports[`driver.route.journey.acceptance given: [journey] weather api route when: [t8.5] 3.blueprint review.self is promised then: stdout has good vibes 1`] = `
 "🦉 so you're saying there's a chance?
 
 🗿 route.stone.set
    └─ stone = 3.blueprint
-   └─ passage = progressed (self-review 1/1 promised)
+   └─ passage = progressed (review.self 1/1 promised)
 "
 `;
 
@@ -95,7 +95,7 @@ exports[`driver.route.journey.acceptance given: [journey] weather api route when
 
 🗿 route.stone.set
    ├─ stone = 3.blueprint
-   └─ passage = blocked (self-review required)
+   └─ passage = blocked (review.self required)
 
 🌕 lets reflect
    │

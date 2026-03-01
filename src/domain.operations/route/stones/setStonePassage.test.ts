@@ -27,11 +27,12 @@ describe('setStonePassage', () => {
         expect(stat.isDirectory()).toBe(true);
       });
 
-      then('creates passage marker file', async () => {
+      then('appends passage report to passage.jsonl', async () => {
         const result = await setStonePassage({ stone, route: tempDir });
-        expect(result.path).toContain('1.vision.passed');
-        const stat = await fs.stat(result.path);
-        expect(stat.isFile()).toBe(true);
+        expect(result.path).toContain('passage.jsonl');
+        const content = await fs.readFile(result.path, 'utf-8');
+        expect(content).toContain('"stone":"1.vision"');
+        expect(content).toContain('"status":"passed"');
       });
     });
   });
@@ -56,9 +57,11 @@ describe('setStonePassage', () => {
     });
 
     when('[t0] passage is set', () => {
-      then('succeeds without error', async () => {
+      then('appends to passage.jsonl', async () => {
         const result = await setStonePassage({ stone, route: tempDir });
-        expect(result.path).toContain('2.criteria.passed');
+        expect(result.path).toContain('passage.jsonl');
+        const content = await fs.readFile(result.path, 'utf-8');
+        expect(content).toContain('"stone":"2.criteria"');
       });
     });
   });

@@ -49,7 +49,7 @@ describe('parseStoneGuard', () => {
   given('[case3] a guard file with structured reviews (self + peer)', () => {
     const guardPath = path.join(
       ASSETS_DIR,
-      'route.self-review',
+      'route.review.self',
       '1.vision.guard',
     );
 
@@ -95,7 +95,7 @@ describe('parseStoneGuard', () => {
   given('[case4] a guard file with flat reviews (backwards compat)', () => {
     const guardPath = path.join(
       ASSETS_DIR,
-      'route.self-review',
+      'route.review.self',
       '2.research.guard',
     );
 

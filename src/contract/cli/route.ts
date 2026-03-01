@@ -116,7 +116,7 @@ options:
   --stone <name>     stone name or glob pattern (required)
   --route <path>     path to route directory (required)
   --as <status>      status to set: passed, approved, or promised (required)
-  --that <slug>      self-review slug to promise (required for --as promised)
+  --that <slug>      review.self slug to promise (required for --as promised)
   --help             show this help message
 
 examples:

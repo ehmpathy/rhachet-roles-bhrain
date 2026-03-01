@@ -1,8 +1,8 @@
 import type { RouteStoneGuardReviewSelf } from '@src/domain.objects/Driver/RouteStoneGuard';
 
 /**
- * .what = formats warm "lets reflect" section for self-review prompts
- * .why = guides clones through explicit self-review with zen frame and mindful instructions
+ * .what = formats warm "lets reflect" section for review.self prompts
+ * .why = guides clones through explicit review.self with zen frame and mindful instructions
  */
 export const formatLetsReflect = (input: {
   stone: string;

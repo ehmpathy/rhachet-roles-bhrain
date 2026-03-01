@@ -36,14 +36,14 @@ const backdateTriggeredReport = async (input: {
 };
 
 /**
- * .what = acceptance tests for self-review flow
- * .why = verifies clone must promise self-reviews before guards run
+ * .what = acceptance tests for review.self flow
+ * .why = verifies clone must promise review.selfs before guards run
  */
-describe('driver.route.self-review.acceptance', () => {
+describe('driver.route.review.self.acceptance', () => {
   given('[case1] stone with reviews.self defined', () => {
     const scene = useBeforeAll(async () => {
       const tempDir = genTempDirForRhachet({
-        slug: 'self-review-case1',
+        slug: 'review.self-case1',
         clone: ASSETS_DIR,
       });
 
@@ -51,7 +51,7 @@ describe('driver.route.self-review.acceptance', () => {
       await execAsync('npx rhachet roles link --role driver', { cwd: tempDir });
 
       // create feature branch (bind rejects protected branches like main)
-      await execAsync('git checkout -b vlad/test-self-review-case1', { cwd: tempDir });
+      await execAsync('git checkout -b vlad/test-review.self-case1', { cwd: tempDir });
 
       // make mock-review executable
       await execAsync('chmod +x .test/mock-review.sh', { cwd: tempDir });
@@ -66,7 +66,7 @@ describe('driver.route.self-review.acceptance', () => {
     });
 
     when('[t0] pass attempted without promises', () => {
-      const result = useThen('blocked by self-review', async () =>
+      const result = useThen('blocked by review.self', async () =>
         invokeRouteSkill({
           skill: 'route.stone.set',
           args: { stone: '1', route: '.', as: 'passed' },
@@ -78,8 +78,8 @@ describe('driver.route.self-review.acceptance', () => {
         expect(result.code).not.toEqual(0);
       });
 
-      then('shows self-review required', () => {
-        expect(result.stdout.toLowerCase()).toContain('self-review');
+      then('shows review.self required', () => {
+        expect(result.stdout.toLowerCase()).toContain('review.self');
       });
 
       then('shows first review slug', () => {
@@ -186,7 +186,7 @@ describe('driver.route.self-review.acceptance', () => {
   given('[case2] invalid promise slug', () => {
     const scene = useBeforeAll(async () => {
       const tempDir = genTempDirForRhachet({
-        slug: 'self-review-case2',
+        slug: 'review.self-case2',
         clone: ASSETS_DIR,
       });
 
@@ -194,7 +194,7 @@ describe('driver.route.self-review.acceptance', () => {
       await execAsync('npx rhachet roles link --role driver', { cwd: tempDir });
 
       // create feature branch (bind rejects protected branches like main)
-      await execAsync('git checkout -b vlad/test-self-review-case2', { cwd: tempDir });
+      await execAsync('git checkout -b vlad/test-review.self-case2', { cwd: tempDir });
 
       // create artifact for the stone
       await fs.writeFile(
@@ -229,7 +229,7 @@ describe('driver.route.self-review.acceptance', () => {
   given('[case3] hash invalidation resets promises', () => {
     const scene = useBeforeAll(async () => {
       const tempDir = genTempDirForRhachet({
-        slug: 'self-review-case3',
+        slug: 'review.self-case3',
         clone: ASSETS_DIR,
       });
 
@@ -237,7 +237,7 @@ describe('driver.route.self-review.acceptance', () => {
       await execAsync('npx rhachet roles link --role driver', { cwd: tempDir });
 
       // create feature branch (bind rejects protected branches like main)
-      await execAsync('git checkout -b vlad/test-self-review-case3', {
+      await execAsync('git checkout -b vlad/test-review.self-case3', {
         cwd: tempDir,
       });
 
@@ -311,8 +311,8 @@ describe('driver.route.self-review.acceptance', () => {
         expect(result.code).not.toEqual(0);
       });
 
-      then('shows self-review required', () => {
-        expect(result.stdout.toLowerCase()).toContain('self-review');
+      then('shows review.self required', () => {
+        expect(result.stdout.toLowerCase()).toContain('review.self');
       });
 
       then('shows invalidated status', () => {
@@ -333,7 +333,7 @@ describe('driver.route.self-review.acceptance', () => {
   given('[case4] flat reviews array (backwards compatible)', () => {
     const scene = useBeforeAll(async () => {
       const tempDir = genTempDirForRhachet({
-        slug: 'self-review-case4',
+        slug: 'review.self-case4',
         clone: ASSETS_DIR,
       });
 
@@ -341,7 +341,7 @@ describe('driver.route.self-review.acceptance', () => {
       await execAsync('npx rhachet roles link --role driver', { cwd: tempDir });
 
       // create feature branch (bind rejects protected branches like main)
-      await execAsync('git checkout -b vlad/test-self-review-case4', { cwd: tempDir });
+      await execAsync('git checkout -b vlad/test-review.self-case4', { cwd: tempDir });
 
       // make mock-review executable
       await execAsync('chmod +x .test/mock-review.sh', { cwd: tempDir });
@@ -373,7 +373,7 @@ judges:
     });
 
     when('[t0] pass attempted with flat reviews', () => {
-      const result = useThen('guards execute directly (no self-review)', async () =>
+      const result = useThen('guards execute directly (no review.self)', async () =>
         invokeRouteSkill({
           skill: 'route.stone.set',
           args: { stone: '1', route: '.', as: 'passed' },
@@ -389,7 +389,7 @@ judges:
         expect(result.stdout.toLowerCase()).toContain('guard');
       });
 
-      then('no self-review block', () => {
+      then('no review.self block', () => {
         expect(result.stdout.toLowerCase()).not.toContain('lets reflect');
       });
 
@@ -402,7 +402,7 @@ judges:
   given('[case5] clone promises too quickly (time enforcement)', () => {
     const scene = useBeforeAll(async () => {
       const tempDir = genTempDirForRhachet({
-        slug: 'self-review-case5',
+        slug: 'review.self-case5',
         clone: ASSETS_DIR,
       });
 
@@ -410,7 +410,7 @@ judges:
       await execAsync('npx rhachet roles link --role driver', { cwd: tempDir });
 
       // create feature branch (bind rejects protected branches like main)
-      await execAsync('git checkout -b vlad/test-self-review-case5', {
+      await execAsync('git checkout -b vlad/test-review.self-case5', {
         cwd: tempDir,
       });
 
@@ -423,7 +423,7 @@ judges:
       return { tempDir };
     });
 
-    when('[t0] self-review is triggered', () => {
+    when('[t0] review.self is triggered', () => {
       const result = useThen('shows lets reflect prompt', async () =>
         invokeRouteSkill({
           skill: 'route.stone.set',
@@ -432,7 +432,7 @@ judges:
         }),
       );
 
-      then('shows self-review prompt', () => {
+      then('shows review.self prompt', () => {
         expect(result.stdout).toContain('lets reflect');
       });
     });

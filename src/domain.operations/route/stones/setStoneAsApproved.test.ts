@@ -37,16 +37,15 @@ describe('setStoneAsApproved', () => {
         expect(result.emit?.stdout).toContain('✓ approved');
       });
 
-      then('creates approval marker', async () => {
+      then('appends approval to passage.jsonl', async () => {
         await setStoneAsApproved(
           { stone: '1.vision', route: tempDir },
           { isTTY: true },
         );
-        const approvalExists = await fs
-          .access(path.join(tempDir, '.route', '1.vision.approved'))
-          .then(() => true)
-          .catch(() => false);
-        expect(approvalExists).toBe(true);
+        const passagePath = path.join(tempDir, '.route', 'passage.jsonl');
+        const content = await fs.readFile(passagePath, 'utf-8');
+        expect(content).toContain('"stone":"1.vision"');
+        expect(content).toContain('"status":"approved"');
       });
     });
 

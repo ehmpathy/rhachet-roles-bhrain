@@ -5,8 +5,8 @@ import type { RouteStone } from '@src/domain.objects/Driver/RouteStone';
 import { RouteStoneGuardReviewSelfArtifact } from '@src/domain.objects/Driver/RouteStoneGuardReviewSelfArtifact';
 
 /**
- * .what = records a promise artifact for a self-review
- * .why = enables track of which self-reviews have been promised for current artifact state
+ * .what = records a promise artifact for a review.self
+ * .why = enables track of which review.selfs have been promised for current artifact state
  */
 export const setStoneAsPromised = async (input: {
   stone: RouteStone;
@@ -32,7 +32,7 @@ export const setStoneAsPromised = async (input: {
 
 ---
 
-i promise i have completed the self-review for "${input.slug}".
+i promise i have completed the review.self for "${input.slug}".
 `;
 
   await fs.writeFile(promisePath, content);

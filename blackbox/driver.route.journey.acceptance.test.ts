@@ -157,11 +157,16 @@ describe('driver.route.journey.acceptance', () => {
         expect(result.stdout).toContain('passage = allowed');
       });
 
-      then('passage marker is created', async () => {
-        const exists = await fs
-          .access(path.join(scene.tempDir, '.route', '1.vision.passed'))
-          .then(() => true)
-          .catch(() => false);
+      then('passage marker is created in passage.jsonl', async () => {
+        const passagePath = path.join(scene.tempDir, '.route', 'passage.jsonl');
+        const passageContent = await fs.readFile(passagePath, 'utf-8');
+        const exists = passageContent
+          .split('\n')
+          .filter(Boolean)
+          .some((line) => {
+            const entry = JSON.parse(line);
+            return entry.stone === '1.vision' && entry.status === 'passed';
+          });
         expect(exists).toBe(true);
       });
 
@@ -272,7 +277,7 @@ describe('driver.route.journey.acceptance', () => {
     });
 
     when('[t8] 3.blueprint artifact created and pass attempted', () => {
-      const result = useThen('pass blocked by self-review', async () => {
+      const result = useThen('pass blocked by review.self', async () => {
         await fs.writeFile(
           path.join(scene.tempDir, '3.blueprint.md'),
           '# Blueprint\n\n## API\n\nGET /weather',
@@ -288,8 +293,8 @@ describe('driver.route.journey.acceptance', () => {
         expect(result.code).not.toEqual(0);
       });
 
-      then('shows self-review required', () => {
-        expect(result.stdout.toLowerCase()).toContain('self-review');
+      then('shows review.self required', () => {
+        expect(result.stdout.toLowerCase()).toContain('review.self');
       });
 
       then('shows design-complete slug', () => {
@@ -301,7 +306,7 @@ describe('driver.route.journey.acceptance', () => {
       });
     });
 
-    when('[t8.5] 3.blueprint self-review is promised', () => {
+    when('[t8.5] 3.blueprint review.self is promised', () => {
       const result = useThen('promise succeeds', async () => {
         // backdate triggered report to bypass time enforcement
         await backdateTriggeredReport({
@@ -330,7 +335,7 @@ describe('driver.route.journey.acceptance', () => {
     });
 
     when('[t9] 3.blueprint pass reattempted after promise', () => {
-      const result = useThen('blocked by peer review (self-review satisfied)', async () =>
+      const result = useThen('blocked by peer review (review.self satisfied)', async () =>
         invokeRouteSkill({
           skill: 'route.stone.set',
           args: { stone: '3.blueprint', route: '.', as: 'passed' },
@@ -363,7 +368,7 @@ describe('driver.route.journey.acceptance', () => {
           '# Blueprint\n\nFixed API design.',
         );
 
-        // trigger self-review for new hash (artifact changed)
+        // trigger review.self for new hash (artifact changed)
         await invokeRouteSkill({
           skill: 'route.stone.set',
           args: { stone: '3.blueprint', route: '.', as: 'passed' },
@@ -377,7 +382,7 @@ describe('driver.route.journey.acceptance', () => {
           slug: 'design-complete',
         });
 
-        // re-promise self-review for new hash
+        // re-promise review.self for new hash
         await invokeRouteSkill({
           skill: 'route.stone.set',
           args: { stone: '3.blueprint', route: '.', as: 'promised', that: 'design-complete' },

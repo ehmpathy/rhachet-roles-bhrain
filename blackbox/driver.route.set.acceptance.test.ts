@@ -42,11 +42,16 @@ describe('driver.route.set.acceptance', () => {
         console.log(cli.stderr);
         console.log('--- end cli ---\n');
 
-        // check for passage marker
-        const passageExists = await fs
-          .access(path.join(tempDir, '.route', '1.vision.passed'))
-          .then(() => true)
-          .catch(() => false);
+        // check for passage marker in passage.jsonl
+        const passagePath = path.join(tempDir, '.route', 'passage.jsonl');
+        const passageContent = await fs.readFile(passagePath, 'utf-8').catch(() => '');
+        const passageExists = passageContent
+          .split('\n')
+          .filter(Boolean)
+          .some((line) => {
+            const entry = JSON.parse(line);
+            return entry.stone === '1.vision' && entry.status === 'passed';
+          });
 
         return { cli, tempDir, passageExists };
       });
@@ -112,11 +117,16 @@ describe('driver.route.set.acceptance', () => {
           env: { NODE_ENV: 'production', CI: '' },
         });
 
-        // check for approval marker (should NOT exist)
-        const approvalExists = await fs
-          .access(path.join(tempDir, '.route', '1.vision.approved'))
-          .then(() => true)
-          .catch(() => false);
+        // check for approval marker in passage.jsonl (should NOT exist)
+        const passagePath = path.join(tempDir, '.route', 'passage.jsonl');
+        const passageContent = await fs.readFile(passagePath, 'utf-8').catch(() => '');
+        const approvalExists = passageContent
+          .split('\n')
+          .filter(Boolean)
+          .some((line) => {
+            const entry = JSON.parse(line);
+            return entry.stone === '1.vision' && entry.status === 'approved';
+          });
 
         return { cli, tempDir, approvalExists };
       });
@@ -169,11 +179,16 @@ describe('driver.route.set.acceptance', () => {
           console.log(cli.stderr);
           console.log('--- end [case3] cli ---\n');
 
-          // check for passage marker
-          const passageExists = await fs
-            .access(path.join(tempDir, '.route', '1.test.passed'))
-            .then(() => true)
-            .catch(() => false);
+          // check for passage marker in passage.jsonl
+          const passagePath = path.join(tempDir, '.route', 'passage.jsonl');
+          const passageContent = await fs.readFile(passagePath, 'utf-8').catch(() => '');
+          const passageExists = passageContent
+            .split('\n')
+            .filter(Boolean)
+            .some((line) => {
+              const entry = JSON.parse(line);
+              return entry.stone === '1.test' && entry.status === 'passed';
+            });
 
           return { cli, tempDir, passageExists };
         },
@@ -259,11 +274,16 @@ describe('driver.route.set.acceptance', () => {
           console.log(cli.stderr);
           console.log('--- end [case4] cli ---\n');
 
-          // check passage marker should NOT exist
-          const passageExists = await fs
-            .access(path.join(tempDir, '.route', '2.blocked.passed'))
-            .then(() => true)
-            .catch(() => false);
+          // check passage marker should NOT exist in passage.jsonl
+          const passagePath = path.join(tempDir, '.route', 'passage.jsonl');
+          const passageContent = await fs.readFile(passagePath, 'utf-8').catch(() => '');
+          const passageExists = passageContent
+            .split('\n')
+            .filter(Boolean)
+            .some((line) => {
+              const entry = JSON.parse(line);
+              return entry.stone === '2.blocked' && entry.status === 'passed';
+            });
 
           return { cli, tempDir, passageExists };
         },
@@ -450,10 +470,8 @@ describe('driver.route.set.acceptance', () => {
             cwd: tempDir,
           });
 
-          // remove passage marker so second run re-evaluates
-          await fs.rm(path.join(tempDir, '.route', '1.test.passed'), {
-            force: true,
-          });
+          // note: with passage.jsonl, we don't "remove" entries (append-only)
+          // the second run will still re-evaluate guards and use cached reviews
 
           // second invocation — should use cached reviews
           const cli = await invokeRouteSkill({

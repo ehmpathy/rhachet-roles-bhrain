@@ -1,5 +1,5 @@
 /**
- * .what = formats "patience, friend" challenge for rushed self-review
+ * .what = formats "patience, friend" challenge for rushed review.self
  * .why = blocks clones who promise too quickly (< 90 seconds) with zen challenge
  */
 export const formatPatienceFriend = (): string => {

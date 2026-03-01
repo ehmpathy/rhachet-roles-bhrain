@@ -1,9 +1,9 @@
-import * as fs from 'fs/promises';
 import * as path from 'path';
 
 import { RouteStoneDriveArtifacts } from '@src/domain.objects/Driver/RouteStoneDriveArtifacts';
 import { enumFilesFromGlob } from '@src/utils/enumFilesFromGlob';
 
+import { getOnePassageReport } from '../passage/getOnePassageReport';
 import { getAllStones } from './getAllStones';
 
 /**
@@ -26,18 +26,15 @@ export const getAllStoneDriveArtifacts = async (input: {
       cwd: input.route,
     });
 
-    // check for explicit passage marker
-    const passagePath = path.join(
-      input.route,
-      '.route',
-      `${stone.name}.passed`,
-    );
+    // check for passage report in passage.jsonl
+    const passageReport = await getOnePassageReport({
+      stone: stone.name,
+      status: 'passed',
+      route: input.route,
+    });
     let passage: string | null = null;
-    try {
-      await fs.access(passagePath);
-      passage = passagePath;
-    } catch {
-      // no explicit passage marker
+    if (passageReport) {
+      passage = path.join(input.route, '.route', 'passage.jsonl');
     }
 
     // auto-pass unguarded stones that have output artifacts

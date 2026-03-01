@@ -7,7 +7,7 @@ import { enumFilesFromGlob } from '@src/utils/enumFilesFromGlob';
 
 /**
  * .what = retrieves valid promise artifacts for a specific hash
- * .why = enables check of which self-reviews have been promised for current artifact state
+ * .why = enables check of which review.selfs have been promised for current artifact state
  */
 export const getStonePromises = async (input: {
   stone: RouteStone;
@@ -62,7 +62,7 @@ const parsePromiseSlug = (filePath: string): string | null => {
 
 /**
  * .what = checks if a slug has invalidated promises (different hash)
- * .why = enables detection of hash changes that invalidate prior self-review promises
+ * .why = enables detection of hash changes that invalidate prior review.self promises
  */
 export const hasInvalidatedPromise = async (input: {
   stone: RouteStone;

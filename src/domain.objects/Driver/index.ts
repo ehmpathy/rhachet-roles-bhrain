@@ -1,3 +1,4 @@
+export { PassageReport } from './PassageReport';
 export { RouteStone } from './RouteStone';
 export { RouteStoneDriveArtifacts } from './RouteStoneDriveArtifacts';
 export {

@@ -84,7 +84,7 @@ export const setStoneAsPassed = async (
     };
   }
 
-  // check for self-reviews (must be promised before peer reviews)
+  // check for review.selfs (must be promised before peer reviews)
   const selfReviews = getGuardSelfReviews(stoneMatched.guard);
   if (selfReviews.length > 0) {
     // compute hash for promise lookup
@@ -101,7 +101,7 @@ export const setStoneAsPassed = async (
     });
     const promisedSlugs = new Set(promises.map((p) => p.slug));
 
-    // find first unpromised self-review
+    // find first unpromised review.self
     const unpromised = selfReviews.filter((r) => !promisedSlugs.has(r.slug));
     if (unpromised.length > 0) {
       const nextReview = unpromised[0]!;
@@ -117,7 +117,7 @@ export const setStoneAsPassed = async (
         route: input.route,
       });
 
-      // record that self-review was triggered (for time enforcement)
+      // record that review.self was triggered (for time enforcement)
       await setSelfReviewTriggeredReport({
         stone: stoneMatched.name,
         slug: nextReview.slug,
@@ -125,12 +125,12 @@ export const setStoneAsPassed = async (
         route: input.route,
       });
 
-      // record blocker report: blocked on self-review
+      // record blocker report: blocked on review.self
       await setStoneGuardBlockerReport({
         stone: stoneMatched.name,
         route: input.route,
-        blockedOn: 'self-review',
-        reason: `self-review required: ${nextReview.slug}`,
+        blocker: 'review.self',
+        reason: `review.self required: ${nextReview.slug}`,
       });
 
       return {
@@ -142,7 +142,7 @@ export const setStoneAsPassed = async (
             stone: stoneMatched.name,
             action: 'passed',
             passage: 'blocked',
-            note: 'self-review required',
+            note: 'review.self required',
             selfReview: {
               reviewSelf: nextReview,
               index: nextIndex + 1,
@@ -299,8 +299,8 @@ export const setStoneAsPassed = async (
     .map((j) => j.reason || `judge ${j.index} failed`)
     .join('; ');
 
-  // determine blockedOn type from failed judges
-  const blockedOn = computeBlockedOn({
+  // determine blocker type from failed judges
+  const blocker = computeBlockedOn({
     failedJudges,
     guard: stoneMatched.guard,
   });
@@ -309,7 +309,7 @@ export const setStoneAsPassed = async (
   await setStoneGuardBlockerReport({
     stone: stoneMatched.name,
     route: input.route,
-    blockedOn,
+    blocker,
     reason: reasons,
   });
 
@@ -439,7 +439,7 @@ const computeDuration = (
 };
 
 /**
- * .what = determines blockedOn type from failed judges
+ * .what = determines blocker type from failed judges
  * .why = enables hook mode to determine if agent can stop
  *
  * priority:
@@ -450,7 +450,7 @@ const computeDuration = (
 const computeBlockedOn = (input: {
   failedJudges: RouteStoneGuardJudgeArtifact[];
   guard: RouteStone['guard'];
-}): 'review' | 'approval' | 'judge' => {
+}): 'review.self' | 'review.peer' | 'approval' | 'judge' => {
   if (!input.guard) return 'judge';
 
   // classify each failed judge
@@ -471,7 +471,7 @@ const computeBlockedOn = (input: {
   }
 
   // priority: review > approval > other
-  if (hasReviewFailure) return 'review';
+  if (hasReviewFailure) return 'review.peer';
   if (hasApprovalFailure && !hasOtherFailure) return 'approval';
   return 'judge';
 };

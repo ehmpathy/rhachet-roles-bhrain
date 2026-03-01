@@ -1,8 +1,9 @@
-import * as fs from 'fs/promises';
 import * as path from 'path';
 
 import type { RouteStone } from '@src/domain.objects/Driver/RouteStone';
 import { RouteStoneGuardApproveArtifact } from '@src/domain.objects/Driver/RouteStoneGuardApproveArtifact';
+
+import { getOnePassageReport } from '../passage/getOnePassageReport';
 
 /**
  * .what = retrieves approval artifact for a stone if present
@@ -12,20 +13,19 @@ export const getOneStoneGuardApproval = async (input: {
   stone: RouteStone;
   route: string;
 }): Promise<RouteStoneGuardApproveArtifact | null> => {
-  // check for approval marker under .route/
-  const approvalPath = path.join(
-    input.route,
-    '.route',
-    `${input.stone.name}.approved`,
-  );
+  // check for approved entry in passage.jsonl
+  const approvalReport = await getOnePassageReport({
+    stone: input.stone.name,
+    status: 'approved',
+    route: input.route,
+  });
 
-  try {
-    await fs.access(approvalPath);
-    return new RouteStoneGuardApproveArtifact({
-      stone: { path: input.stone.path },
-      path: approvalPath,
-    });
-  } catch {
+  if (!approvalReport) {
     return null;
   }
+
+  return new RouteStoneGuardApproveArtifact({
+    stone: { path: input.stone.path },
+    path: path.join(input.route, '.route', 'passage.jsonl'),
+  });
 };

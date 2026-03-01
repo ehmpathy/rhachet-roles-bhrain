@@ -36,19 +36,19 @@ const backdateTriggeredReport = async (input: {
 };
 
 /**
- * .what = acceptance tests for route.drive blockedOn state
- * .why = verifies hook mode uses persisted blockedOn state to allow/block stop
+ * .what = acceptance tests for route.drive blocker state
+ * .why = verifies hook mode uses persisted blocker state to allow/block stop
  *
  * key behavior:
- * - hook mode blocks when agent hasn't tried to pass (no blockedOn file)
- * - hook mode blocks when blockedOn !== 'approval' (agent can fix)
- * - hook mode allows stop when blockedOn === 'approval' (agent must wait)
+ * - hook mode blocks when agent hasn't tried to pass (no blocker file)
+ * - hook mode blocks when blocker !== 'approval' (agent can fix)
+ * - hook mode allows stop when blocker === 'approval' (agent must wait)
  */
-describe('driver.route.drive.blockedOn.acceptance', () => {
+describe('driver.route.drive.blocker.acceptance', () => {
   given('[case1] stone with only approval judge (1.vision)', () => {
     const scene = useBeforeAll(async () => {
       const tempDir = genTempDirForRhachet({
-        slug: 'blockedOn-case1',
+        slug: 'blocker-case1',
         clone: JOURNEY_ASSETS_DIR,
       });
 
@@ -56,7 +56,7 @@ describe('driver.route.drive.blockedOn.acceptance', () => {
       await execAsync('npx rhachet roles link --role driver', { cwd: tempDir });
 
       // create feature branch
-      await execAsync('git checkout -b vlad/test-blockedOn-case1', {
+      await execAsync('git checkout -b vlad/test-blocker-case1', {
         cwd: tempDir,
       });
 
@@ -77,7 +77,7 @@ describe('driver.route.drive.blockedOn.acceptance', () => {
     });
 
     when('[t0] route.drive hook mode before pass attempt', () => {
-      const result = useThen('route.drive blocks (no blockedOn file)', async () =>
+      const result = useThen('route.drive blocks (no blocker file)', async () =>
         invokeRouteSkill({
           skill: 'route.drive',
           args: { mode: 'hook' },
@@ -86,7 +86,7 @@ describe('driver.route.drive.blockedOn.acceptance', () => {
       );
 
       then('exit code is 2 (block)', () => {
-        // no blockedOn file yet = agent should keep work
+        // no blocker file yet = agent should keep work
         expect(result.code).toEqual(2);
       });
 
@@ -108,15 +108,15 @@ describe('driver.route.drive.blockedOn.acceptance', () => {
         expect(result.code).not.toEqual(0);
       });
 
-      then('blockedOn file exists with approval', async () => {
-        const blockedOnPath = path.join(
-          scene.tempDir,
-          '.route',
-          '1.vision.blockedOn.json',
-        );
-        const content = await fs.readFile(blockedOnPath, 'utf-8');
-        const state = JSON.parse(content);
-        expect(state.blockedOn).toEqual('approval');
+      then('blocker entry exists in passage.jsonl with approval', async () => {
+        const passagePath = path.join(scene.tempDir, '.route', 'passage.jsonl');
+        const content = await fs.readFile(passagePath, 'utf-8');
+        const reports = content.trim().split('\n').map((line) => JSON.parse(line));
+        const blockerReport = reports.filter(
+          (r) => r.stone === '1.vision' && r.status === 'blocked',
+        ).pop();
+        expect(blockerReport).toBeDefined();
+        expect(blockerReport.blocker).toEqual('approval');
       });
     });
 
@@ -169,17 +169,12 @@ describe('driver.route.drive.blockedOn.acceptance', () => {
         expect(result.code).toEqual(0);
       });
 
-      then('blockedOn file is deleted', async () => {
-        const blockedOnPath = path.join(
-          scene.tempDir,
-          '.route',
-          '1.vision.blockedOn.json',
-        );
-        const exists = await fs
-          .access(blockedOnPath)
-          .then(() => true)
-          .catch(() => false);
-        expect(exists).toBe(false);
+      then('passage shows stone passed (supersedes blocked)', async () => {
+        const passagePath = path.join(scene.tempDir, '.route', 'passage.jsonl');
+        const content = await fs.readFile(passagePath, 'utf-8');
+        const reports = content.trim().split('\n').map((line) => JSON.parse(line));
+        const latestReport = reports.filter((r) => r.stone === '1.vision').pop();
+        expect(latestReport.status).toEqual('passed');
       });
     });
   });
@@ -187,7 +182,7 @@ describe('driver.route.drive.blockedOn.acceptance', () => {
   given('[case2] stone with review + approval (3.blueprint)', () => {
     const scene = useBeforeAll(async () => {
       const tempDir = genTempDirForRhachet({
-        slug: 'blockedOn-case2',
+        slug: 'blocker-case2',
         clone: JOURNEY_ASSETS_DIR,
       });
 
@@ -198,7 +193,7 @@ describe('driver.route.drive.blockedOn.acceptance', () => {
       await execAsync('chmod +x .test/mock-review.sh', { cwd: tempDir });
 
       // create feature branch
-      await execAsync('git checkout -b vlad/test-blockedOn-case2', {
+      await execAsync('git checkout -b vlad/test-blocker-case2', {
         cwd: tempDir,
       });
 
@@ -258,8 +253,8 @@ describe('driver.route.drive.blockedOn.acceptance', () => {
       return { tempDir };
     });
 
-    when('[t0] agent attempts pass without self-review promise', () => {
-      const result = useThen('blocked on self-review', async () =>
+    when('[t0] agent attempts pass without review.self promise', () => {
+      const result = useThen('blocked on review.self', async () =>
         invokeRouteSkill({
           skill: 'route.stone.set',
           args: { stone: '3.blueprint', as: 'passed' },
@@ -271,19 +266,19 @@ describe('driver.route.drive.blockedOn.acceptance', () => {
         expect(result.code).not.toEqual(0);
       });
 
-      then('blockedOn file shows self-review', async () => {
-        const blockedOnPath = path.join(
-          scene.tempDir,
-          '.route',
-          '3.blueprint.blockedOn.json',
-        );
-        const content = await fs.readFile(blockedOnPath, 'utf-8');
-        const state = JSON.parse(content);
-        expect(state.blockedOn).toEqual('self-review');
+      then('passage.jsonl shows blocked on review.self', async () => {
+        const passagePath = path.join(scene.tempDir, '.route', 'passage.jsonl');
+        const content = await fs.readFile(passagePath, 'utf-8');
+        const reports = content.trim().split('\n').map((line) => JSON.parse(line));
+        const blockerReport = reports.filter(
+          (r) => r.stone === '3.blueprint' && r.status === 'blocked',
+        ).pop();
+        expect(blockerReport).toBeDefined();
+        expect(blockerReport.blocker).toEqual('review.self');
       });
     });
 
-    when('[t1] route.drive hook mode when blocked on self-review', () => {
+    when('[t1] route.drive hook mode when blocked on review.self', () => {
       const result = useThen('route.drive blocks', async () =>
         invokeRouteSkill({
           skill: 'route.drive',
@@ -293,7 +288,7 @@ describe('driver.route.drive.blockedOn.acceptance', () => {
       );
 
       then('exit code is 2 (block - agent can promise)', () => {
-        // blockedOn = 'self-review' means agent can do task
+        // blocker = 'review.self' means agent can do task
         expect(result.code).toEqual(2);
       });
 
@@ -303,7 +298,7 @@ describe('driver.route.drive.blockedOn.acceptance', () => {
       });
     });
 
-    when('[t2] agent promises self-review and attempts pass', () => {
+    when('[t2] agent promises review.self and attempts pass', () => {
       const result = useThen('blocked on review', async () => {
         // backdate triggered report to bypass 90-second time enforcement
         await backdateTriggeredReport({
@@ -312,7 +307,7 @@ describe('driver.route.drive.blockedOn.acceptance', () => {
           slug: 'design-complete',
         });
 
-        // promise the self-review
+        // promise the review.self
         await invokeRouteSkill({
           skill: 'route.stone.set',
           args: { stone: '3.blueprint', as: 'promised', that: 'design-complete' },
@@ -331,19 +326,19 @@ describe('driver.route.drive.blockedOn.acceptance', () => {
         expect(result.code).not.toEqual(0);
       });
 
-      then('blockedOn file shows review', async () => {
-        const blockedOnPath = path.join(
-          scene.tempDir,
-          '.route',
-          '3.blueprint.blockedOn.json',
-        );
-        const content = await fs.readFile(blockedOnPath, 'utf-8');
-        const state = JSON.parse(content);
-        expect(state.blockedOn).toEqual('review');
+      then('passage.jsonl shows blocked on review.peer', async () => {
+        const passagePath = path.join(scene.tempDir, '.route', 'passage.jsonl');
+        const content = await fs.readFile(passagePath, 'utf-8');
+        const reports = content.trim().split('\n').map((line) => JSON.parse(line));
+        const blockerReport = reports.filter(
+          (r) => r.stone === '3.blueprint' && r.status === 'blocked',
+        ).pop();
+        expect(blockerReport).toBeDefined();
+        expect(blockerReport.blocker).toEqual('review.peer');
       });
     });
 
-    when('[t3] route.drive hook mode when blocked on review', () => {
+    when('[t3] route.drive hook mode when blocked on review.peer', () => {
       const result = useThen('route.drive blocks', async () =>
         invokeRouteSkill({
           skill: 'route.drive',
@@ -353,7 +348,7 @@ describe('driver.route.drive.blockedOn.acceptance', () => {
       );
 
       then('exit code is 2 (block - agent can fix code)', () => {
-        // blockedOn = 'review' means agent can fix the code
+        // blocker = 'review.peer' means agent can fix the code
         expect(result.code).toEqual(2);
       });
 
@@ -378,7 +373,7 @@ describe('driver.route.drive.blockedOn.acceptance', () => {
           '# Blueprint\n\nFixed API design.',
         );
 
-        // trigger self-review for new hash (artifact changed)
+        // trigger review.self for new hash (artifact changed)
         await invokeRouteSkill({
           skill: 'route.stone.set',
           args: { stone: '3.blueprint', as: 'passed' },
@@ -392,7 +387,7 @@ describe('driver.route.drive.blockedOn.acceptance', () => {
           slug: 'design-complete',
         });
 
-        // re-promise self-review for new hash
+        // re-promise review.self for new hash
         await invokeRouteSkill({
           skill: 'route.stone.set',
           args: { stone: '3.blueprint', as: 'promised', that: 'design-complete' },
@@ -411,15 +406,15 @@ describe('driver.route.drive.blockedOn.acceptance', () => {
         expect(result.code).not.toEqual(0);
       });
 
-      then('blockedOn file shows approval', async () => {
-        const blockedOnPath = path.join(
-          scene.tempDir,
-          '.route',
-          '3.blueprint.blockedOn.json',
-        );
-        const content = await fs.readFile(blockedOnPath, 'utf-8');
-        const state = JSON.parse(content);
-        expect(state.blockedOn).toEqual('approval');
+      then('passage.jsonl shows blocked on approval', async () => {
+        const passagePath = path.join(scene.tempDir, '.route', 'passage.jsonl');
+        const content = await fs.readFile(passagePath, 'utf-8');
+        const reports = content.trim().split('\n').map((line) => JSON.parse(line));
+        const blockerReport = reports.filter(
+          (r) => r.stone === '3.blueprint' && r.status === 'blocked',
+        ).pop();
+        expect(blockerReport).toBeDefined();
+        expect(blockerReport.blocker).toEqual('approval');
       });
     });
 

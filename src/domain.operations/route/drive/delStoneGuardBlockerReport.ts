@@ -1,16 +1,12 @@
-import * as fs from 'fs/promises';
-import * as path from 'path';
-
 /**
- * .what = deletes the blockedOn report for a stone
- * .why = clears block state when stone passes
+ * .what = noop for append-only passage.jsonl
+ * .why = block state is superseded by subsequent passed/approved entries
+ * .note = retained for compatibility, no-op in new model
  */
-export const delStoneGuardBlockerReport = async (input: {
+export const delStoneGuardBlockerReport = async (_input: {
   stone: string;
   route: string;
 }): Promise<void> => {
-  const routeDir = path.join(input.route, '.route');
-  const reportPath = path.join(routeDir, `${input.stone}.blockedOn.json`);
-
-  await fs.rm(reportPath, { force: true });
+  // noop: passage.jsonl is append-only
+  // a "passed" entry supersedes any prior "blocked" entry
 };
