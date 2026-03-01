@@ -64,6 +64,30 @@ describe('genContextCliEmit', () => {
         expect(mock.chunks).toHaveLength(0);
       });
     });
+
+    when('[t1] judge inflight event emitted', () => {
+      then('non-tty mode does not output inflight lines for judge', () => {
+        const mock = genMockStderr({ isTTY: false });
+        const { context, done } = genContextCliEmit({ stderr: mock.stream });
+
+        context.cliEmit.onGuardProgress(
+          genEvent({
+            phase: 'judge',
+            index: 0,
+            inflight: {
+              beganAt: '2024-01-01T00:00:00.000Z',
+              endedAt: null,
+            },
+            outcome: null,
+          }),
+        );
+
+        done();
+
+        // non-tty mode only shows completed results, not inflight
+        expect(mock.chunks).toHaveLength(0);
+      });
+    });
   });
 
   given('[case2] non-tty mode — completed review event', () => {
