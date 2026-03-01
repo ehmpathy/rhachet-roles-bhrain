@@ -10,7 +10,7 @@ import { formatPatienceFriend } from './guard/formatPatienceFriend';
  */
 
 const HEADER_GET = '🦉 and then?';
-const HEADER_SET = `🦉 so you're saying there's a chance?`;
+const HEADER_SET = `🦉 the way speaks for itself`;
 const HEADER_DEL = `🦉 hoo needs 'em`;
 
 type FormatInput =

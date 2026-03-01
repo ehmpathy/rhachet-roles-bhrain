@@ -10,7 +10,7 @@ exports[`driver.route.journey.acceptance given: [journey] weather api route when
 `;
 
 exports[`driver.route.journey.acceptance given: [journey] weather api route when: [t1] 1.vision artifact is created and pass attempted then: stdout has good vibes 1`] = `
-"🦉 so you're saying there's a chance?
+"🦉 the way speaks for itself
 
 🗿 route.stone.set
    ├─ stone = 1.vision
@@ -28,7 +28,7 @@ exports[`driver.route.journey.acceptance given: [journey] weather api route when
 `;
 
 exports[`driver.route.journey.acceptance given: [journey] weather api route when: [t2] 1.vision is approved by human then: stdout has good vibes 1`] = `
-"🦉 so you're saying there's a chance?
+"🦉 the way speaks for itself
 
 🗿 route.stone.set
    └─ stone = 1.vision
@@ -37,7 +37,7 @@ exports[`driver.route.journey.acceptance given: [journey] weather api route when
 `;
 
 exports[`driver.route.journey.acceptance given: [journey] weather api route when: [t3] 1.vision pass is reattempted after approval then: stdout has good vibes 1`] = `
-"🦉 so you're saying there's a chance?
+"🦉 the way speaks for itself
 
 🗿 route.stone.set
    ├─ stone = 1.vision
@@ -64,7 +64,7 @@ exports[`driver.route.journey.acceptance given: [journey] weather api route when
 exports[`driver.route.journey.acceptance given: [journey] weather api route when: [t5] 2.research pass attempted without artifact then: stdout has good vibes 1`] = `""`;
 
 exports[`driver.route.journey.acceptance given: [journey] weather api route when: [t6] 2.research artifact created and pass attempted then: stdout has good vibes 1`] = `
-"🦉 so you're saying there's a chance?
+"🦉 the way speaks for itself
 
 🗿 route.stone.set
    └─ stone = 2.research
@@ -82,7 +82,7 @@ exports[`driver.route.journey.acceptance given: [journey] weather api route when
 `;
 
 exports[`driver.route.journey.acceptance given: [journey] weather api route when: [t8.5] 3.blueprint review.self is promised then: stdout has good vibes 1`] = `
-"🦉 so you're saying there's a chance?
+"🦉 the way speaks for itself
 
 🗿 route.stone.set
    └─ stone = 3.blueprint
@@ -91,7 +91,7 @@ exports[`driver.route.journey.acceptance given: [journey] weather api route when
 `;
 
 exports[`driver.route.journey.acceptance given: [journey] weather api route when: [t8] 3.blueprint artifact created and pass attempted then: stdout has good vibes 1`] = `
-"🦉 so you're saying there's a chance?
+"🦉 the way speaks for itself
 
 🗿 route.stone.set
    ├─ stone = 3.blueprint
@@ -153,7 +153,7 @@ exports[`driver.route.journey.acceptance given: [journey] weather api route when
 `;
 
 exports[`driver.route.journey.acceptance given: [journey] weather api route when: [t9.5] 3.blueprint review set to pass and pass reattempted then: stdout has good vibes 1`] = `
-"🦉 so you're saying there's a chance?
+"🦉 the way speaks for itself
 
 🗿 route.stone.set
    ├─ stone = 3.blueprint
@@ -176,7 +176,7 @@ exports[`driver.route.journey.acceptance given: [journey] weather api route when
 `;
 
 exports[`driver.route.journey.acceptance given: [journey] weather api route when: [t9] 3.blueprint pass reattempted after promise then: stdout has good vibes 1`] = `
-"🦉 so you're saying there's a chance?
+"🦉 the way speaks for itself
 
 🗿 route.stone.set
    ├─ stone = 3.blueprint
@@ -203,7 +203,7 @@ exports[`driver.route.journey.acceptance given: [journey] weather api route when
 `;
 
 exports[`driver.route.journey.acceptance given: [journey] weather api route when: [t10] 3.blueprint approved and pass reattempted then: stdout has good vibes 1`] = `
-"🦉 so you're saying there's a chance?
+"🦉 the way speaks for itself
 
 🗿 route.stone.set
    ├─ stone = 3.blueprint
@@ -234,7 +234,7 @@ exports[`driver.route.journey.acceptance given: [journey] weather api route when
 `;
 
 exports[`driver.route.journey.acceptance given: [journey] weather api route when: [t12] 5.execute artifact created and pass attempted then: stdout has good vibes 1`] = `
-"🦉 so you're saying there's a chance?
+"🦉 the way speaks for itself
 
 🗿 route.stone.set
    ├─ stone = 5.execute

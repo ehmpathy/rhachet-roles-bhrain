@@ -6,7 +6,7 @@ export const formatPatienceFriend = (): string => {
   const lines: string[] = [];
 
   // header
-  lines.push(`🦉 patience, friend`);
+  lines.push(`🗿 patience, friend`);
   lines.push(`   │`);
 
   // pond rippled line
