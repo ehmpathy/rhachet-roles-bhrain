@@ -9,7 +9,6 @@ export const formatLetsReflect = (input: {
   reviewSelf: RouteStoneGuardReviewSelf;
   index: number;
   total: number;
-  invalidated?: boolean;
 }): string => {
   const lines: string[] = [];
 
@@ -20,12 +19,6 @@ export const formatLetsReflect = (input: {
   // review.self N/M line
   lines.push(`   ├─ review.self ${input.index}/${input.total}`);
   lines.push(`   │  ├─ slug = ${input.reviewSelf.slug}`);
-
-  // show invalidated status if applicable
-  if (input.invalidated) {
-    lines.push(`   │  ├─ status = invalidated (source hash changed)`);
-  }
-
   lines.push(`   │  ├─ question all, especially yourself`);
   lines.push(`   │  └─ see the guide below`);
   lines.push(`   │`);

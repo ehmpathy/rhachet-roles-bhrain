@@ -70,23 +70,4 @@ describe('formatLetsReflect', () => {
       });
     });
   });
-
-  given('[case2] invalidated review.self', () => {
-    when('[t0] formatLetsReflect called with invalidated=true', () => {
-      then('shows invalidated status', () => {
-        const output = formatLetsReflect({
-          stone: '1.vision',
-          reviewSelf: {
-            slug: 'all-done',
-            say: 'review guide content',
-          },
-          index: 1,
-          total: 1,
-          invalidated: true,
-        });
-
-        expect(output).toContain('status = invalidated (source hash changed)');
-      });
-    });
-  });
 });
