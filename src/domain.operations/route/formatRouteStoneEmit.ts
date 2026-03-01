@@ -66,7 +66,6 @@ type FormatInput =
         reviewSelf: RouteStoneGuardReviewSelf;
         index: number;
         total: number;
-        invalidated: boolean;
       };
       guard?: {
         artifactFiles: string[];
@@ -161,7 +160,6 @@ export const formatRouteStoneEmit = (input: FormatInput): string => {
           reviewSelf: input.selfReview.reviewSelf,
           index: input.selfReview.index,
           total: input.selfReview.total,
-          invalidated: input.selfReview.invalidated,
         }),
       );
       return lines.join('\n');

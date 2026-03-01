@@ -20,17 +20,18 @@ const backdateTriggeredReport = async (input: {
   stone: string;
   slug: string;
 }): Promise<void> => {
-  // find triggered report file
+  // find ALL triggered report files for this slug (for hashbar check)
   const routeDir = path.join(input.tempDir, '.route');
   const files = await fs.readdir(routeDir).catch(() => []);
-  const triggeredFile = files.find(
+  const triggeredFiles = files.filter(
     (f) =>
       f.includes(`${input.stone}.guard.selfreview.${input.slug}`) &&
       f.endsWith('.triggered'),
   );
-  if (triggeredFile) {
+  // backdate all triggered files (needed for hashbar threshold check)
+  const mtimePast = new Date(Date.now() - 91 * 1000);
+  for (const triggeredFile of triggeredFiles) {
     const filepath = path.join(routeDir, triggeredFile);
-    const mtimePast = new Date(Date.now() - 91 * 1000);
     await fs.utimes(filepath, mtimePast, mtimePast);
   }
 };
@@ -226,7 +227,7 @@ describe('driver.route.review.self.acceptance', () => {
     });
   });
 
-  given('[case3] hash invalidation resets promises', () => {
+  given('[case3] hashless promises survive hash changes (firm checkpoint)', () => {
     const scene = useBeforeAll(async () => {
       const tempDir = genTempDirForRhachet({
         slug: 'review.self-case3',
@@ -299,7 +300,7 @@ describe('driver.route.review.self.acceptance', () => {
     });
 
     when('[t2] pass attempted after edit', () => {
-      const result = useThen('blocked with invalidated status', async () =>
+      const result = useThen('all-done still valid, tests-pass blocks', async () =>
         invokeRouteSkill({
           skill: 'route.stone.set',
           args: { stone: '1', route: '.', as: 'passed' },
@@ -307,7 +308,7 @@ describe('driver.route.review.self.acceptance', () => {
         }),
       );
 
-      then('exit code is non-zero', () => {
+      then('exit code is non-zero (tests-pass not promised yet)', () => {
         expect(result.code).not.toEqual(0);
       });
 
@@ -315,13 +316,15 @@ describe('driver.route.review.self.acceptance', () => {
         expect(result.stdout.toLowerCase()).toContain('review.self');
       });
 
-      then('shows invalidated status', () => {
-        expect(result.stdout.toLowerCase()).toContain('invalidated');
+      then('shows tests-pass (not all-done)', () => {
+        // all-done promise is firm (hashless), so we proceed to tests-pass
+        expect(result.stdout).toContain('tests-pass');
+        expect(result.stdout).toContain('2/2');
       });
 
-      then('must re-promise from 1/2', () => {
-        expect(result.stdout).toContain('1/2');
-        expect(result.stdout).toContain('all-done');
+      then('all-done promise remains valid', () => {
+        // no invalidation status shown
+        expect(result.stdout.toLowerCase()).not.toContain('invalidated');
       });
 
       then('stdout has good vibes', () => {
@@ -493,6 +496,129 @@ judges:
 
       then('shows progress', () => {
         expect(result.stdout).toContain('progressed');
+      });
+    });
+  });
+
+  given('[case6] hashbar controls timer behavior (not promise type)', () => {
+    const scene = useBeforeAll(async () => {
+      const tempDir = genTempDirForRhachet({
+        slug: 'self-review-case6',
+        clone: ASSETS_DIR,
+      });
+
+      // link the driver role
+      await execAsync('npx rhachet roles link --role driver', { cwd: tempDir });
+
+      // create feature branch
+      await execAsync('git checkout -b vlad/test-self-review-case6', {
+        cwd: tempDir,
+      });
+
+      // make mock-review executable
+      await execAsync('chmod +x .test/mock-review.sh', { cwd: tempDir });
+
+      // create artifact for the stone
+      await fs.writeFile(
+        path.join(tempDir, '1.stone.i1.md'),
+        '# Implementation v1\n\nFeature implemented.',
+      );
+
+      return { tempDir };
+    });
+
+    when('[t0] all promises are hashless (no hash in filename)', () => {
+      then('first promise creates hashless file', async () => {
+        // trigger self-review
+        await invokeRouteSkill({
+          skill: 'route.stone.set',
+          args: { stone: '1', route: '.', as: 'passed' },
+          cwd: scene.tempDir,
+        });
+        // backdate to bypass time enforcement
+        await backdateTriggeredReport({
+          tempDir: scene.tempDir,
+          stone: '1',
+          slug: 'all-done',
+        });
+        // promise
+        const result = await invokeRouteSkill({
+          skill: 'route.stone.set',
+          args: { stone: '1', route: '.', as: 'promised', that: 'all-done' },
+          cwd: scene.tempDir,
+        });
+        expect(result.code).toEqual(0);
+
+        // verify hashless promise was created (no hash in filename)
+        const routeDir = path.join(scene.tempDir, '.route');
+        const files = await fs.readdir(routeDir);
+        const hashlessPromise = files.find(
+          (f) =>
+            f === '1.guard.promise.all-done.md', // exact match, no hash suffix
+        );
+        expect(hashlessPromise).toBeDefined();
+
+        // verify NO hash-bound promise exists
+        const hashBoundPromise = files.find(
+          (f) =>
+            f.startsWith('1.guard.promise.all-done.') &&
+            f.match(/\.[a-f0-9]+\.md$/),
+        );
+        expect(hashBoundPromise).toBeUndefined();
+      });
+    });
+
+    when('[t1] hashless promise survives hash changes', () => {
+      then('promise remains valid after artifact edit', async () => {
+        // change artifact (new hash)
+        await fs.writeFile(
+          path.join(scene.tempDir, '1.stone.i1.md'),
+          '# Implementation v2\n\nFeature improved.',
+        );
+
+        // make review pass for tests-pass
+        await fs.writeFile(
+          path.join(scene.tempDir, '.test', 'review-should-pass'),
+          '',
+        );
+
+        // attempt pass — should progress to tests-pass (all-done still valid)
+        const result = await invokeRouteSkill({
+          skill: 'route.stone.set',
+          args: { stone: '1', route: '.', as: 'passed' },
+          cwd: scene.tempDir,
+        });
+
+        // should block on tests-pass, NOT all-done
+        expect(result.stdout).toContain('tests-pass');
+        expect(result.stdout).toContain('2/2');
+      });
+    });
+
+    when('[t2] promise tests-pass and complete stone', () => {
+      then('all self-reviews satisfied', async () => {
+        // backdate tests-pass triggered report
+        await backdateTriggeredReport({
+          tempDir: scene.tempDir,
+          stone: '1',
+          slug: 'tests-pass',
+        });
+
+        // promise tests-pass
+        const promiseResult = await invokeRouteSkill({
+          skill: 'route.stone.set',
+          args: { stone: '1', route: '.', as: 'promised', that: 'tests-pass' },
+          cwd: scene.tempDir,
+        });
+        expect(promiseResult.code).toEqual(0);
+
+        // pass should now succeed (both reviews promised)
+        const passResult = await invokeRouteSkill({
+          skill: 'route.stone.set',
+          args: { stone: '1', route: '.', as: 'passed' },
+          cwd: scene.tempDir,
+        });
+        expect(passResult.code).toEqual(0);
       });
     });
   });

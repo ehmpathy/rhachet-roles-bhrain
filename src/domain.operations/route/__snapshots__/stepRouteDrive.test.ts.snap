@@ -34,10 +34,3 @@ exports[`stepRouteDrive given: [case4] vibecheck snapshots when: [t1] route is c
 🗿 route.drive
    └─ route complete! 🎉"
 `;
-
-exports[`stepRouteDrive given: [case4] vibecheck snapshots when: [t2] no route bound (direct mode) then: output matches snapshot 1`] = `
-"🦉 where were we?
-
-🗿 route.drive
-   └─ route complete! 🎉"
-`;

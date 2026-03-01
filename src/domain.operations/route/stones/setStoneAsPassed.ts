@@ -19,10 +19,7 @@ import { computeStoneReviewInputHash } from '../guard/computeStoneReviewInputHas
 import { getAllStoneGuardArtifactsByHash } from '../guard/getAllStoneGuardArtifactsByHash';
 import { runStoneGuardReviews } from '../guard/runStoneGuardReviews';
 import { runStoneGuardJudges } from '../judges/runStoneGuardJudges';
-import {
-  getStonePromises,
-  hasInvalidatedPromise,
-} from '../promise/getStonePromises';
+import { getStonePromises } from '../promise/getStonePromises';
 import { setSelfReviewTriggeredReport } from '../promise/setSelfReviewTriggeredReport';
 import { findOneStoneByPattern } from './asStoneGlob';
 import { getAllStoneArtifacts } from './getAllStoneArtifacts';
@@ -87,16 +84,15 @@ export const setStoneAsPassed = async (
   // check for review.selfs (must be promised before peer reviews)
   const selfReviews = getGuardSelfReviews(stoneMatched.guard);
   if (selfReviews.length > 0) {
-    // compute hash for promise lookup
+    // compute hash for triggered report
     const promiseHash = await computeStoneReviewInputHash({
       stone: stoneMatched,
       route: input.route,
     });
 
-    // get valid promises for current hash
+    // get all promises (hashless — firm checkpoints)
     const promises = await getStonePromises({
       stone: stoneMatched,
-      hash: promiseHash,
       route: input.route,
     });
     const promisedSlugs = new Set(promises.map((p) => p.slug));
@@ -109,15 +105,7 @@ export const setStoneAsPassed = async (
         (r) => r.slug === nextReview.slug,
       );
 
-      // check if this review was previously promised but invalidated by hash change
-      const isInvalidated = await hasInvalidatedPromise({
-        stone: stoneMatched,
-        slug: nextReview.slug,
-        currentHash: promiseHash,
-        route: input.route,
-      });
-
-      // record that review.self was triggered (for time enforcement)
+      // record that self-review was triggered (for time enforcement)
       await setSelfReviewTriggeredReport({
         stone: stoneMatched.name,
         slug: nextReview.slug,
@@ -147,7 +135,6 @@ export const setStoneAsPassed = async (
               reviewSelf: nextReview,
               index: nextIndex + 1,
               total: selfReviews.length,
-              invalidated: isInvalidated,
             },
           }),
         },

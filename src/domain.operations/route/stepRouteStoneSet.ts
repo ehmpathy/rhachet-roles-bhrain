@@ -106,13 +106,14 @@ export const stepRouteStoneSet = async (
       route: input.route,
     });
 
-    // check time enforcement for review.self
+    // check time enforcement and hashbar threshold for self-review
     const reviewSelf = selfReviews.find((r) => r.slug === input.that);
     const challengeDecision = await getSelfReviewChallengeDecision({
       stone: stoneMatched.name,
       slug: input.that,
       hash,
       route: input.route,
+      hashbar: reviewSelf?.hashbar,
     });
 
     // if challenged, return early with patience message
@@ -138,18 +139,16 @@ export const stepRouteStoneSet = async (
       };
     }
 
-    // record promise
+    // record promise (all promises are hashless — firm checkpoints)
     await setStoneAsPromised({
       stone: stoneMatched,
       slug: input.that,
-      hash,
       route: input.route,
     });
 
     // get all promises after record (includes the one just made)
     const promisesAfter = await getStonePromises({
       stone: stoneMatched,
-      hash,
       route: input.route,
     });
     const promisedSlugs = new Set(promisesAfter.map((p) => p.slug));

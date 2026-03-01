@@ -20,7 +20,6 @@ describe('getStonePromises', () => {
         });
         const result = await getStonePromises({
           stone,
-          hash: 'abc123',
           route: tempDir,
         });
         expect(result).toEqual([]);
@@ -45,7 +44,6 @@ describe('getStonePromises', () => {
         });
         const result = await getStonePromises({
           stone,
-          hash: 'abc123',
           route: scene.tempDir,
         });
         expect(result).toEqual([]);
@@ -53,19 +51,19 @@ describe('getStonePromises', () => {
     });
   });
 
-  given('[case3] promise files found for the hash', () => {
+  given('[case3] hashless promise files found', () => {
     const scene = useBeforeAll(async () => {
       const tempDir = path.join(os.tmpdir(), `test-promises-${Date.now()}-3`);
       const routeDir = path.join(tempDir, '.route');
       await fs.mkdir(routeDir, { recursive: true });
 
-      // create promise files
+      // create hashless promise files
       await fs.writeFile(
-        path.join(routeDir, '1.vision.guard.promise.all-done.abc123.md'),
+        path.join(routeDir, '1.vision.guard.promise.all-done.md'),
         '# promise: all-done',
       );
       await fs.writeFile(
-        path.join(routeDir, '1.vision.guard.promise.tests-pass.abc123.md'),
+        path.join(routeDir, '1.vision.guard.promise.tests-pass.md'),
         '# promise: tests-pass',
       );
 
@@ -73,7 +71,7 @@ describe('getStonePromises', () => {
     });
 
     when('[t0] getStonePromises called', () => {
-      then('returns promise artifacts for that hash', async () => {
+      then('returns promise artifacts', async () => {
         const stone = new RouteStone({
           name: '1.vision',
           path: '1.vision.stone',
@@ -81,7 +79,6 @@ describe('getStonePromises', () => {
         });
         const result = await getStonePromises({
           stone,
-          hash: 'abc123',
           route: scene.tempDir,
         });
         expect(result).toHaveLength(2);
@@ -91,23 +88,23 @@ describe('getStonePromises', () => {
     });
   });
 
-  given('[case4] promise files found for different hash', () => {
+  given('[case4] promise files for different stone', () => {
     const scene = useBeforeAll(async () => {
       const tempDir = path.join(os.tmpdir(), `test-promises-${Date.now()}-4`);
       const routeDir = path.join(tempDir, '.route');
       await fs.mkdir(routeDir, { recursive: true });
 
-      // create promise files for different hash
+      // create promise for different stone
       await fs.writeFile(
-        path.join(routeDir, '1.vision.guard.promise.all-done.oldhash.md'),
+        path.join(routeDir, '2.criteria.guard.promise.all-done.md'),
         '# promise: all-done',
       );
 
       return { tempDir };
     });
 
-    when('[t0] getStonePromises called with new hash', () => {
-      then('returns empty array (hash invalidation)', async () => {
+    when('[t0] getStonePromises called for different stone', () => {
+      then('returns empty array', async () => {
         const stone = new RouteStone({
           name: '1.vision',
           path: '1.vision.stone',
@@ -115,7 +112,6 @@ describe('getStonePromises', () => {
         });
         const result = await getStonePromises({
           stone,
-          hash: 'newhash',
           route: scene.tempDir,
         });
         expect(result).toEqual([]);

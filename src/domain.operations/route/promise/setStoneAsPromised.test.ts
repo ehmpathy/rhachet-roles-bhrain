@@ -24,7 +24,6 @@ describe('setStoneAsPromised', () => {
         const result = await setStoneAsPromised({
           stone,
           slug: 'all-done',
-          hash: 'abc123',
           route: tempDir,
         });
 
@@ -56,15 +55,14 @@ describe('setStoneAsPromised', () => {
         const result = await setStoneAsPromised({
           stone,
           slug: 'all-done',
-          hash: 'abc123',
           route: tempDir,
         });
 
         expect(result.promise.slug).toEqual('all-done');
-        expect(result.promise.hash).toEqual('abc123');
+        expect(result.promise.hash).toEqual('hashless');
         expect(result.promise.stone.path).toEqual('1.vision.stone');
         expect(result.promise.path).toContain(
-          '1.vision.guard.promise.all-done.abc123.md',
+          '1.vision.guard.promise.all-done.md',
         );
 
         // cleanup
@@ -89,15 +87,53 @@ describe('setStoneAsPromised', () => {
         const result = await setStoneAsPromised({
           stone,
           slug: 'all-done',
-          hash: 'abc123',
           route: tempDir,
         });
 
         const content = await fs.readFile(result.promise.path, 'utf-8');
         expect(content).toContain('# promise: all-done');
         expect(content).toContain('stone: 1.vision');
-        expect(content).toContain('hash: abc123');
         expect(content).toContain('i promise i have completed');
+
+        // cleanup
+        await fs.rm(tempDir, { recursive: true, force: true });
+      });
+    });
+  });
+
+  given('[case3] hashless filename format', () => {
+    when('[t0] setStoneAsPromised called', () => {
+      const tempDir = path.join(
+        os.tmpdir(),
+        `test-set-promise-${Date.now()}-3`,
+      );
+
+      then('creates promise file without hash in filename', async () => {
+        const stone = new RouteStone({
+          name: '1.vision',
+          path: '1.vision.stone',
+          guard: null,
+        });
+        const result = await setStoneAsPromised({
+          stone,
+          slug: 'all-done',
+          route: tempDir,
+        });
+
+        // verify filename has no hash (just slug.md)
+        expect(result.promise.path).toContain(
+          '1.vision.guard.promise.all-done.md',
+        );
+        expect(path.basename(result.promise.path)).toEqual(
+          '1.vision.guard.promise.all-done.md',
+        );
+
+        // verify file is created
+        const promiseFileFound = await fs
+          .access(result.promise.path)
+          .then(() => true)
+          .catch(() => false);
+        expect(promiseFileFound).toBe(true);
 
         // cleanup
         await fs.rm(tempDir, { recursive: true, force: true });

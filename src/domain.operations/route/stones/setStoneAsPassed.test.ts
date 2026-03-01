@@ -200,21 +200,13 @@ judges:
 
     when('[t1] set passed with partial promises', () => {
       then('blocks with next unpromised review', async () => {
-        // create promise for first review
+        // create promise for first review (hashless — firm checkpoint)
         const routeDir = path.join(tempDir, '.route');
         await fs.mkdir(routeDir, { recursive: true });
 
-        // compute the hash using the same method as computeStoneReviewInputHash
-        const crypto = await import('crypto');
-        const artifactContent = `--- 1.test.md ---\n# Artifact`;
-        const hash = crypto
-          .createHash('sha256')
-          .update(artifactContent)
-          .digest('hex');
-
-        // create promise artifact for all-done
+        // create hashless promise artifact for all-done
         await fs.writeFile(
-          path.join(routeDir, `1.test.guard.promise.all-done.${hash}.md`),
+          path.join(routeDir, '1.test.guard.promise.all-done.md'),
           '# promise: all-done',
         );
 

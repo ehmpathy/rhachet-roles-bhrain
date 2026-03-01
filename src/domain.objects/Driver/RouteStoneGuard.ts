@@ -14,6 +14,14 @@ export interface RouteStoneGuardReviewSelf {
    * guide content: inline text or @path/to/brief.md reference
    */
   say: string;
+
+  /**
+   * number of hash changes before promise becomes hashless (default: 3)
+   *
+   * after count > hashbar, the promise becomes a firm checkpoint
+   * that won't invalidate on future hash changes
+   */
+  hashbar?: number;
 }
 
 /**
