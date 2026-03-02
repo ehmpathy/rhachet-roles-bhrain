@@ -485,7 +485,7 @@ export const routeStoneSet = async (): Promise<void> => {
   const progress = genContextCliEmit({ stderr: process.stdout });
 
   // print owl header early so progress appears below it
-  const owlHeader = `🦉 so you're saying there's a chance?`;
+  const owlHeader = `🦉 the way speaks for itself`;
   console.log(owlHeader);
 
   try {

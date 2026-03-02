@@ -11,6 +11,9 @@ exports[`driver.route.review-blocks-approval.acceptance given: [review-blocks] s
 
 exports[`driver.route.review-blocks-approval.acceptance given: [review-blocks] stone with review + approval guard when: [t2] pass attempted with approval but reviews still fail then: stdout has good vibes 1`] = `
 "🦉 the way speaks for itself
+   ├─ ✓ review.1 - done [TIME]
+   ├─ ✗ judge.1 - failed [TIME]
+   └─ ✓ judge.2 - passed [TIME]
 
 🗿 route.stone.set
    ├─ stone = 1.plan
@@ -27,16 +30,17 @@ exports[`driver.route.review-blocks-approval.acceptance given: [review-blocks] s
       └─ judges
           ├─ j1: rhx route.stone.judge --mechanism reviewed? --stone $stone --route $route --allow-blockers 0 --allow-nitpicks 0
           │   ├─ finished [TIME] ✗
-          │   ├─ judge: .route/1.plan.guard.judge.i1p1.0492a9fb2b499c70f4acde2cab892c6f7a39b07b00e33bbd020d47b3ede47ef0.291f1ecb1ec16b18f789d67885fe0b855e1614ec87a50e30cb4790e28d725d4e.j1.md
           │   └─ reason: blockers exceed threshold (1 > 0)
           └─ j2: rhx route.stone.judge --mechanism approved? --stone $stone --route $route
-              ├─ finished [TIME] ✓
-              └─ judge: .route/1.plan.guard.judge.i1p1.0492a9fb2b499c70f4acde2cab892c6f7a39b07b00e33bbd020d47b3ede47ef0.291f1ecb1ec16b18f789d67885fe0b855e1614ec87a50e30cb4790e28d725d4e.j2.md
+              └─ finished [TIME] ✓
 "
 `;
 
 exports[`driver.route.review-blocks-approval.acceptance given: [review-blocks] stone with review + approval guard when: [t4] pass reattempted after fix then: stdout has good vibes 1`] = `
 "🦉 the way speaks for itself
+   ├─ ✓ review.1 - done [TIME]
+   ├─ ✓ judge.1 - passed [TIME]
+   └─ ✓ judge.2 - passed [TIME]
 
 🗿 route.stone.set
    ├─ stone = 1.plan
@@ -50,10 +54,8 @@ exports[`driver.route.review-blocks-approval.acceptance given: [review-blocks] s
       │       └─ review: .route/1.plan.guard.review.i1.d8ed0868a677f608e0a3c48cc7a8c7061dcdb60a0b154c7644d723ab94c25089.r1.md
       └─ judges
           ├─ j1: rhx route.stone.judge --mechanism reviewed? --stone $stone --route $route --allow-blockers 0 --allow-nitpicks 0
-          │   ├─ finished [TIME] ✓
-          │   └─ judge: .route/1.plan.guard.judge.i1p1.d8ed0868a677f608e0a3c48cc7a8c7061dcdb60a0b154c7644d723ab94c25089.41dcbd1c450f782b0523c18cbfaeb54d3624ad287123a4a0321e84fd800ac759.j1.md
+          │   └─ finished [TIME] ✓
           └─ j2: rhx route.stone.judge --mechanism approved? --stone $stone --route $route
-              ├─ finished [TIME] ✓
-              └─ judge: .route/1.plan.guard.judge.i1p1.d8ed0868a677f608e0a3c48cc7a8c7061dcdb60a0b154c7644d723ab94c25089.41dcbd1c450f782b0523c18cbfaeb54d3624ad287123a4a0321e84fd800ac759.j2.md
+              └─ finished [TIME] ✓
 "
 `;

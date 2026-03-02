@@ -11,6 +11,7 @@ exports[`driver.route.journey.acceptance given: [journey] weather api route when
 
 exports[`driver.route.journey.acceptance given: [journey] weather api route when: [t1] 1.vision artifact is created and pass attempted then: stdout has good vibes 1`] = `
 "🦉 the way speaks for itself
+   └─ ✗ judge.1 - failed [TIME]
 
 🗿 route.stone.set
    ├─ stone = 1.vision
@@ -37,6 +38,7 @@ exports[`driver.route.journey.acceptance given: [journey] weather api route when
 
 exports[`driver.route.journey.acceptance given: [journey] weather api route when: [t3] 1.vision pass is reattempted after approval then: stdout has good vibes 1`] = `
 "🦉 the way speaks for itself
+   └─ ✓ judge.1 - passed [TIME]
 
 🗿 route.stone.set
    ├─ stone = 1.vision
@@ -46,8 +48,7 @@ exports[`driver.route.journey.acceptance given: [journey] weather api route when
       │   └─ 1.vision.md
       └─ judges
           └─ j1: rhx route.stone.judge --mechanism approved? --stone $stone --route $route
-              ├─ finished [TIME] ✓
-              └─ judge: .route/1.vision.guard.judge.i1p1.89a3b47031ddeb8c23151d71f85717bdb3adfed2e3c6224d3fe7c6d059cbf474.9344949395a1fec3b64b9504524cb70f309a6460bf804270ccc38491a2863eba.j1.md
+              └─ finished [TIME] ✓
 "
 `;
 
@@ -61,7 +62,7 @@ exports[`driver.route.journey.acceptance given: [journey] weather api route when
 `;
 
 exports[`driver.route.journey.acceptance given: [journey] weather api route when: [t5] 2.research pass attempted without artifact then: stdout has good vibes 1`] = `
-"🦉 so you're saying there's a chance?
+"🦉 the way speaks for itself
 "
 `;
 
@@ -156,6 +157,9 @@ exports[`driver.route.journey.acceptance given: [journey] weather api route when
 
 exports[`driver.route.journey.acceptance given: [journey] weather api route when: [t9.5] 3.blueprint review set to pass and pass reattempted then: stdout has good vibes 1`] = `
 "🦉 the way speaks for itself
+   ├─ ✓ review.1 - done (cached)
+   ├─ ✓ judge.1 - passed (cached)
+   └─ ✗ judge.2 - failed [TIME]
 
 🗿 route.stone.set
    ├─ stone = 3.blueprint
@@ -178,6 +182,9 @@ exports[`driver.route.journey.acceptance given: [journey] weather api route when
 
 exports[`driver.route.journey.acceptance given: [journey] weather api route when: [t9] 3.blueprint pass reattempted after promise then: stdout has good vibes 1`] = `
 "🦉 the way speaks for itself
+   ├─ ✓ review.1 - done [TIME]
+   ├─ ✗ judge.1 - failed [TIME]
+   └─ ✗ judge.2 - failed [TIME]
 
 🗿 route.stone.set
    ├─ stone = 3.blueprint
@@ -203,6 +210,9 @@ exports[`driver.route.journey.acceptance given: [journey] weather api route when
 
 exports[`driver.route.journey.acceptance given: [journey] weather api route when: [t10] 3.blueprint approved and pass reattempted then: stdout has good vibes 1`] = `
 "🦉 the way speaks for itself
+   ├─ ✓ review.1 - done (cached)
+   ├─ ✓ judge.1 - passed [TIME]
+   └─ ✓ judge.2 - passed [TIME]
 
 🗿 route.stone.set
    ├─ stone = 3.blueprint
@@ -215,11 +225,9 @@ exports[`driver.route.journey.acceptance given: [journey] weather api route when
       │       └─ · cached
       └─ judges
           ├─ j1: rhx route.stone.judge --mechanism reviewed? --stone $stone --route $route --allow-blockers 0 --allow-nitpicks 2
-          │   ├─ finished [TIME] ✓
-          │   └─ judge: .route/3.blueprint.guard.judge.i2p1.6fc57147f85d1e873c2688e69bdd6e690c8c3721ed38ddaf0fe09b7ee46a0393.00ce24c4600aa9f0e767ef9e0420d4cced7faa3bab73c5d61c88952c7e49243a.j1.md
+          │   └─ finished [TIME] ✓
           └─ j2: rhx route.stone.judge --mechanism approved? --stone $stone --route $route
-              ├─ finished [TIME] ✓
-              └─ judge: .route/3.blueprint.guard.judge.i2p1.6fc57147f85d1e873c2688e69bdd6e690c8c3721ed38ddaf0fe09b7ee46a0393.00ce24c4600aa9f0e767ef9e0420d4cced7faa3bab73c5d61c88952c7e49243a.j2.md
+              └─ finished [TIME] ✓
 "
 `;
 
@@ -234,6 +242,8 @@ exports[`driver.route.journey.acceptance given: [journey] weather api route when
 
 exports[`driver.route.journey.acceptance given: [journey] weather api route when: [t12] 5.execute artifact created and pass attempted then: stdout has good vibes 1`] = `
 "🦉 the way speaks for itself
+   ├─ ✓ review.1 - done [TIME]
+   └─ ✓ judge.1 - passed [TIME]
 
 🗿 route.stone.set
    ├─ stone = 5.execute
