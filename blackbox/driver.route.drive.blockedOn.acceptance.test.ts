@@ -12,7 +12,7 @@ const JOURNEY_ASSETS_DIR = path.join(__dirname, '.test/assets/route-journey');
 
 /**
  * .what = backdate triggered report mtime to bypass time enforcement
- * .why = tests need to verify promise flow without 90 second wait
+ * .why = tests need to verify promise flow without 30 second wait
  *
  * .note = backdates ALL matched files (there may be multiple with different hashes)
  */
@@ -300,7 +300,7 @@ describe('driver.route.drive.blocker.acceptance', () => {
 
     when('[t2] agent promises review.self and attempts pass', () => {
       const result = useThen('blocked on review', async () => {
-        // backdate triggered report to bypass 90-second time enforcement
+        // backdate triggered report to bypass 30-second time enforcement
         await backdateTriggeredReport({
           tempDir: scene.tempDir,
           stone: '3.blueprint',
@@ -380,7 +380,7 @@ describe('driver.route.drive.blocker.acceptance', () => {
           cwd: scene.tempDir,
         });
 
-        // backdate triggered report to bypass 90-second time enforcement
+        // backdate triggered report to bypass 30-second time enforcement
         await backdateTriggeredReport({
           tempDir: scene.tempDir,
           stone: '3.blueprint',

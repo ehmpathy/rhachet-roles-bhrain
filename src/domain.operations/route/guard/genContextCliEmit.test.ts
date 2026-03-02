@@ -1,5 +1,6 @@
 import { given, then, when } from 'test-fns';
 
+import type { ContextGuardProgress } from '@src/domain.objects/Driver/ContextCliEmit';
 import type { GuardProgressEvent } from '@src/domain.objects/Driver/GuardProgressEvent';
 
 import { genContextCliEmit } from './genContextCliEmit';
@@ -41,7 +42,7 @@ const genEvent = (input: {
 describe('genContextCliEmit', () => {
   given('[case1] non-tty mode — inflight event', () => {
     when('[t0] review inflight event emitted', () => {
-      then('stderr prints static inflight line', () => {
+      then('non-tty mode does not output inflight lines', () => {
         const mock = genMockStderr({ isTTY: false });
         const { context, done } = genContextCliEmit({ stderr: mock.stream });
 
@@ -59,21 +60,20 @@ describe('genContextCliEmit', () => {
 
         done();
 
-        expect(mock.chunks).toHaveLength(1);
-        expect(mock.chunks[0]).toContain('r1: inflight');
-        expect(mock.chunks[0]).toContain('\n');
+        // non-tty mode only shows completed results, not inflight
+        expect(mock.chunks).toHaveLength(0);
       });
     });
 
     when('[t1] judge inflight event emitted', () => {
-      then('stderr prints static inflight line with j label', () => {
+      then('non-tty mode does not output inflight lines for judge', () => {
         const mock = genMockStderr({ isTTY: false });
         const { context, done } = genContextCliEmit({ stderr: mock.stream });
 
         context.cliEmit.onGuardProgress(
           genEvent({
             phase: 'judge',
-            index: 1,
+            index: 0,
             inflight: {
               beganAt: '2024-01-01T00:00:00.000Z',
               endedAt: null,
@@ -84,15 +84,15 @@ describe('genContextCliEmit', () => {
 
         done();
 
-        expect(mock.chunks).toHaveLength(1);
-        expect(mock.chunks[0]).toContain('j2: inflight');
+        // non-tty mode only shows completed results, not inflight
+        expect(mock.chunks).toHaveLength(0);
       });
     });
   });
 
   given('[case2] non-tty mode — completed review event', () => {
-    when('[t0] review completed with blockers', () => {
-      then('stderr prints result and blocker detail', () => {
+    when('[t0] review completed', () => {
+      then('stderr prints result line with done status', () => {
         const mock = genMockStderr({ isTTY: false });
         const { context, done } = genContextCliEmit({ stderr: mock.stream });
 
@@ -114,52 +114,16 @@ describe('genContextCliEmit', () => {
 
         done();
 
-        // result line + blocker line + nitpick line = 3 writes
-        expect(mock.chunks.length).toBeGreaterThanOrEqual(3);
-
-        const combined = mock.chunks.join('');
-        expect(combined).toContain('✓ r1: finished 12.4s');
-        expect(combined).toContain('3 blockers 🔴');
-        expect(combined).toContain('1 nitpick 🟠');
-      });
-    });
-
-    when('[t1] review completed with no issues', () => {
-      then('stderr prints result line only', () => {
-        const mock = genMockStderr({ isTTY: false });
-        const { context, done } = genContextCliEmit({ stderr: mock.stream });
-
-        context.cliEmit.onGuardProgress(
-          genEvent({
-            phase: 'review',
-            index: 0,
-            inflight: {
-              beganAt: '2024-01-01T00:00:00.000Z',
-              endedAt: '2024-01-01T00:00:05.000Z',
-            },
-            outcome: {
-              path: '/tmp/.route/1.test.guard.review.i1.abc.r1.md',
-              review: { blockers: 0, nitpicks: 0 },
-              judge: null,
-            },
-          }),
-        );
-
-        done();
-
-        // only result line, no blocker/nitpick detail
         expect(mock.chunks).toHaveLength(1);
         const combined = mock.chunks.join('');
-        expect(combined).toContain('✓ r1: finished 5.0s');
-        expect(combined).not.toContain('blocker');
-        expect(combined).not.toContain('nitpick');
+        expect(combined).toContain('✓ review.1 - done 12.4s');
       });
     });
   });
 
   given('[case3] non-tty mode — completed judge events', () => {
     when('[t0] judge completed with pass', () => {
-      then('stderr prints result with checkmark', () => {
+      then('stderr prints result with passed status', () => {
         const mock = genMockStderr({ isTTY: false });
         const { context, done } = genContextCliEmit({ stderr: mock.stream });
 
@@ -183,13 +147,12 @@ describe('genContextCliEmit', () => {
 
         expect(mock.chunks).toHaveLength(1);
         const combined = mock.chunks.join('');
-        expect(combined).toContain('✓ j1: finished 0.8s');
-        expect(combined).not.toContain('reason:');
+        expect(combined).toContain('✓ judge.1 - passed 0.8s');
       });
     });
 
     when('[t1] judge completed with failure', () => {
-      then('stderr prints result with cross and reason', () => {
+      then('stderr prints result with failed status', () => {
         const mock = genMockStderr({ isTTY: false });
         const { context, done } = genContextCliEmit({ stderr: mock.stream });
 
@@ -214,10 +177,9 @@ describe('genContextCliEmit', () => {
 
         done();
 
-        expect(mock.chunks.length).toBeGreaterThanOrEqual(2);
+        expect(mock.chunks).toHaveLength(1);
         const combined = mock.chunks.join('');
-        expect(combined).toContain('✗ j1: finished 2.1s');
-        expect(combined).toContain('reason: blockers exceed threshold (3 > 0)');
+        expect(combined).toContain('✗ judge.1 - failed 2.1s');
       });
     });
   });
@@ -255,7 +217,7 @@ describe('genContextCliEmit', () => {
 
         // should contain inflight label
         const combined = mock.chunks.join('');
-        expect(combined).toContain('r1: inflight');
+        expect(combined).toContain('review.1 - inflight');
 
         done();
         jest.useRealTimers();
@@ -309,7 +271,7 @@ describe('genContextCliEmit', () => {
         // the seal line should contain \r and \n
         const chunksAfterFinish = mock.chunks.slice(chunkCountBeforeFinish);
         const combined = chunksAfterFinish.join('');
-        expect(combined).toContain('✓ r1: finished 8.2s');
+        expect(combined).toContain('✓ review.1 - done 8.2s');
         expect(combined).toContain('\n');
 
         done();
@@ -353,12 +315,13 @@ describe('genContextCliEmit', () => {
     });
   });
 
-  given('[case7] singular vs plural labels', () => {
-    when('[t0] review with exactly 1 blocker', () => {
-      then('uses singular "blocker"', () => {
+  given('[case7] branch format with position context', () => {
+    when('[t0] intermediate item with position', () => {
+      then('uses ├─ branch character', () => {
         const mock = genMockStderr({ isTTY: false });
         const { context, done } = genContextCliEmit({ stderr: mock.stream });
 
+        const position: ContextGuardProgress = { index: 0, total: 3 };
         context.cliEmit.onGuardProgress(
           genEvent({
             phase: 'review',
@@ -369,22 +332,54 @@ describe('genContextCliEmit', () => {
             },
             outcome: {
               path: '/tmp/.route/review.md',
-              review: { blockers: 1, nitpicks: 0 },
+              review: { blockers: 0, nitpicks: 0 },
               judge: null,
             },
           }),
+          position,
         );
 
         done();
 
         const combined = mock.chunks.join('');
-        expect(combined).toContain('1 blocker 🔴');
-        expect(combined).not.toContain('blockers');
+        expect(combined).toContain('├─');
+        expect(combined).not.toContain('└─');
       });
     });
 
-    when('[t1] review with exactly 1 nitpick', () => {
-      then('uses singular "nitpick"', () => {
+    when('[t1] last item with position', () => {
+      then('uses └─ branch character', () => {
+        const mock = genMockStderr({ isTTY: false });
+        const { context, done } = genContextCliEmit({ stderr: mock.stream });
+
+        const position: ContextGuardProgress = { index: 2, total: 3 };
+        context.cliEmit.onGuardProgress(
+          genEvent({
+            phase: 'judge',
+            index: 0,
+            inflight: {
+              beganAt: '2024-01-01T00:00:00.000Z',
+              endedAt: '2024-01-01T00:00:05.000Z',
+            },
+            outcome: {
+              path: '/tmp/.route/judge.md',
+              review: null,
+              judge: { decision: 'passed', reason: null },
+            },
+          }),
+          position,
+        );
+
+        done();
+
+        const combined = mock.chunks.join('');
+        expect(combined).toContain('└─');
+        expect(combined).not.toContain('├─');
+      });
+    });
+
+    when('[t2] no position provided', () => {
+      then('defaults to └─ branch character', () => {
         const mock = genMockStderr({ isTTY: false });
         const { context, done } = genContextCliEmit({ stderr: mock.stream });
 
@@ -398,7 +393,7 @@ describe('genContextCliEmit', () => {
             },
             outcome: {
               path: '/tmp/.route/review.md',
-              review: { blockers: 0, nitpicks: 1 },
+              review: { blockers: 0, nitpicks: 0 },
               judge: null,
             },
           }),
@@ -407,8 +402,53 @@ describe('genContextCliEmit', () => {
         done();
 
         const combined = mock.chunks.join('');
-        expect(combined).toContain('1 nitpick 🟠');
-        expect(combined).not.toContain('nitpicks');
+        expect(combined).toContain('└─');
+      });
+    });
+  });
+
+  given('[case8] cached events', () => {
+    when('[t0] cached review event (inflight and outcome both null)', () => {
+      then('outputs cached line with done status', () => {
+        const mock = genMockStderr({ isTTY: false });
+        const { context, done } = genContextCliEmit({ stderr: mock.stream });
+
+        context.cliEmit.onGuardProgress(
+          genEvent({
+            phase: 'review',
+            index: 0,
+            inflight: null,
+            outcome: null,
+          }),
+        );
+
+        done();
+
+        expect(mock.chunks).toHaveLength(1);
+        const combined = mock.chunks.join('');
+        expect(combined).toContain('✓ review.1 - done (cached)');
+      });
+    });
+
+    when('[t1] cached judge event', () => {
+      then('outputs cached line with passed status', () => {
+        const mock = genMockStderr({ isTTY: false });
+        const { context, done } = genContextCliEmit({ stderr: mock.stream });
+
+        context.cliEmit.onGuardProgress(
+          genEvent({
+            phase: 'judge',
+            index: 0,
+            inflight: null,
+            outcome: null,
+          }),
+        );
+
+        done();
+
+        expect(mock.chunks).toHaveLength(1);
+        const combined = mock.chunks.join('');
+        expect(combined).toContain('✓ judge.1 - passed (cached)');
       });
     });
   });

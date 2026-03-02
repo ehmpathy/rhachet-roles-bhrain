@@ -13,7 +13,7 @@ const ASSETS_DIR = path.join(__dirname, '.test/assets/route-drive');
 
 /**
  * .what = backdates triggered report mtime to bypass time enforcement
- * .why = tests need to verify promise flow without 90 second wait
+ * .why = tests need to verify promise flow without 30 second wait
  */
 const backdateTriggeredReport = async (input: {
   tempDir: string;

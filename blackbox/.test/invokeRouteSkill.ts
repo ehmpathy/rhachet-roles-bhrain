@@ -45,7 +45,12 @@ export const genTempDirForRhachet = (input: {
  * .why = time values are machine-dependent and cause flaky snapshots
  */
 export const sanitizeTimeForSnapshot = (output: string): string => {
-  return output.replace(/finished \d+\.\d+s/g, 'finished [TIME]');
+  return output
+    .replace(/finished \d+\.\d+s/g, 'finished [TIME]')
+    .replace(/done \d+\.\d+s/g, 'done [TIME]')
+    .replace(/passed \d+\.\d+s/g, 'passed [TIME]')
+    .replace(/failed \d+\.\d+s/g, 'failed [TIME]')
+    .replace(/inflight \d+\.\d+s/g, 'inflight [TIME]');
 };
 
 export const invokeRouteSkill = async (input: {

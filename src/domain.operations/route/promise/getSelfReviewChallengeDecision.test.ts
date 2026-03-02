@@ -40,7 +40,7 @@ describe('getSelfReviewChallengeDecision', () => {
     });
   });
 
-  given('[case2] trigger report found but elapsed < 90 seconds', () => {
+  given('[case2] trigger report found but elapsed < 30 seconds', () => {
     when('[t0] getSelfReviewChallengeDecision called immediately', () => {
       const tempDir = path.join(os.tmpdir(), `test-challenge-${Date.now()}-2`);
 
@@ -53,7 +53,7 @@ describe('getSelfReviewChallengeDecision', () => {
           route: tempDir,
         });
 
-        // call immediately (< 90 seconds)
+        // call immediately (< 30 seconds)
         const result = await getSelfReviewChallengeDecision({
           stone: '1.vision',
           slug: 'all-done',
@@ -69,8 +69,8 @@ describe('getSelfReviewChallengeDecision', () => {
     });
   });
 
-  given('[case3] trigger report found and elapsed >= 90 seconds', () => {
-    when('[t0] getSelfReviewChallengeDecision called after 90 seconds', () => {
+  given('[case3] trigger report found and elapsed >= 30 seconds', () => {
+    when('[t0] getSelfReviewChallengeDecision called after 30 seconds', () => {
       const tempDir = path.join(os.tmpdir(), `test-challenge-${Date.now()}-3`);
 
       then('returns allowed', async () => {

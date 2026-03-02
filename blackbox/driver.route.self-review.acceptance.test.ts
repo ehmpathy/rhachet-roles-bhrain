@@ -13,7 +13,7 @@ const ASSETS_DIR = path.join(__dirname, '.test/assets/route-drive');
 
 /**
  * .what = backdates triggered report mtime to bypass time enforcement
- * .why = tests need to verify promise flow without 90 second wait
+ * .why = tests need to verify promise flow without 30 second wait
  */
 const backdateTriggeredReport = async (input: {
   tempDir: string;
@@ -440,7 +440,7 @@ judges:
       });
     });
 
-    when('[t1] promise attempted immediately (before 90 seconds)', () => {
+    when('[t1] promise attempted immediately (before 30 seconds)', () => {
       const result = useThen('challenged by time enforcement', async () =>
         // no backdate — promise immediately after trigger
         invokeRouteSkill({
@@ -475,7 +475,7 @@ judges:
       });
     });
 
-    when('[t2] promise attempted after time passes (90+ seconds)', () => {
+    when('[t2] promise attempted after time passes (30+ seconds)', () => {
       const result = useThen('promise accepted', async () => {
         // backdate to simulate elapsed time
         await backdateTriggeredReport({

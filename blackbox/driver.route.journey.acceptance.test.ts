@@ -13,7 +13,7 @@ const ASSETS_DIR = path.join(__dirname, '.test/assets/route-journey');
 
 /**
  * .what = backdate triggered report mtime to bypass time enforcement
- * .why = tests need to verify promise flow without 90 second wait
+ * .why = tests need to verify promise flow without 30 second wait
  *
  * .note = backdates ALL matched files (there may be multiple with different hashes)
  */
@@ -115,6 +115,16 @@ describe('driver.route.journey.acceptance', () => {
       then('output mentions approval needed', () => {
         const output = result.stdout.toLowerCase() + result.stderr.toLowerCase();
         expect(output).toMatch(/approv|wait|blocked|failed/);
+      });
+
+      then('guidance includes --as approved command', () => {
+        const output = result.stdout + result.stderr;
+        expect(output).toContain('--as approved');
+      });
+
+      then('guidance includes --as passed command', () => {
+        const output = result.stdout + result.stderr;
+        expect(output).toContain('--as passed');
       });
 
       then('stdout has good vibes', () => {
@@ -375,7 +385,7 @@ describe('driver.route.journey.acceptance', () => {
           cwd: scene.tempDir,
         });
 
-        // backdate triggered report to bypass 90-second time enforcement
+        // backdate triggered report to bypass 30-second time enforcement
         await backdateTriggeredReport({
           tempDir: scene.tempDir,
           stone: '3.blueprint',

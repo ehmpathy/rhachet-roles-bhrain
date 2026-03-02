@@ -18,8 +18,7 @@ exports[`formatGuardTree given: [case1] reviews+judges, allowed, all fresh — 2
       │       └─ 1 nitpick 🟠
       └─ judges
           └─ j1: reviewed?
-              ├─ finished 0.8s ✓
-              └─ judge: .route/1.vision.guard.judge.i1p1.abc123.def456.j1.md"
+              └─ finished 0.8s ✓"
 `;
 
 exports[`formatGuardTree given: [case2] reviews+judges, blocked, all fresh — 1 review (1 blocker) and 1 judge (failed) when: [t0] called with blocked results then: output matches snapshot 1`] = `
@@ -38,7 +37,6 @@ exports[`formatGuardTree given: [case2] reviews+judges, blocked, all fresh — 1
       └─ judges
           └─ j1: reviewed?
               ├─ finished 0.8s ✗
-              ├─ judge: .route/3.1.research.domain.guard.judge.i1p1.abc123.def456.j1.md
               └─ reason: blockers exceed threshold (1 > 0)"
 `;
 
@@ -58,8 +56,7 @@ exports[`formatGuardTree given: [case3] some cached reviews — 1 cached + 1 fre
       │       └─ 2 nitpicks 🟠
       └─ judges
           └─ j1: reviewed?
-              ├─ finished 0.5s ✓
-              └─ judge: .route/1.vision.guard.judge.i1p1.abc123.def456.j1.md"
+              └─ finished 0.5s ✓"
 `;
 
 exports[`formatGuardTree given: [case4] all cached — all reviews + judges cached when: [t0] called with all cached then: output matches snapshot 1`] = `
@@ -107,8 +104,7 @@ exports[`formatGuardTree given: [case7] multiple artifacts — 3 artifact files 
       │       └─ review: .route/3.1.research.domain.guard.review.i1.abc123.r1.md
       └─ judges
           └─ j1: reviewed?
-              ├─ finished 0.3s ✓
-              └─ judge: .route/3.1.research.domain.guard.judge.i1p1.abc123.def456.j1.md"
+              └─ finished 0.3s ✓"
 `;
 
 exports[`formatGuardTree given: [case8] review with nitpicks only — 0 blockers, 2 nitpicks when: [t0] called with nitpicks only then: output matches snapshot 1`] = `
@@ -125,8 +121,7 @@ exports[`formatGuardTree given: [case8] review with nitpicks only — 0 blockers
       │       └─ 2 nitpicks 🟠
       └─ judges
           └─ j1: reviewed?
-              ├─ finished 0.3s ✓
-              └─ judge: .route/1.vision.guard.judge.i1p1.abc123.def456.j1.md"
+              └─ finished 0.3s ✓"
 `;
 
 exports[`formatGuardTree given: [case9] review with both blockers and nitpicks — 3 blockers, 1 nitpick when: [t0] called with both then: output matches snapshot 1`] = `
@@ -146,7 +141,6 @@ exports[`formatGuardTree given: [case9] review with both blockers and nitpicks �
       └─ judges
           └─ j1: reviewed?
               ├─ finished 0.4s ✗
-              ├─ judge: .route/1.vision.guard.judge.i1p1.abc123.def456.j1.md
               └─ reason: blockers exceed threshold (3 > 0)"
 `;
 
@@ -181,10 +175,8 @@ exports[`formatGuardTree given: [case11] passage with reason — blocked + combi
       └─ judges
           ├─ j1: reviewed?
           │   ├─ finished 0.3s ✗
-          │   ├─ judge: .route/1.vision.guard.judge.i1p1.abc123.def456.j1.md
           │   └─ reason: judge 1 failed
           └─ j2: approved?
               ├─ finished 0.2s ✗
-              ├─ judge: .route/1.vision.guard.judge.i1p1.abc123.def456.j2.md
               └─ reason: judge 2 failed"
 `;

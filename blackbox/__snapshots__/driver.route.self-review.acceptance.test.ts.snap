@@ -135,6 +135,8 @@ exports[`driver.route.review.self.acceptance given: [case1] stone with reviews.s
 
 exports[`driver.route.review.self.acceptance given: [case1] stone with reviews.self defined when: [t3] pass attempted with all promises then: stdout has good vibes 1`] = `
 "🦉 the way speaks for itself
+   ├─ ✓ review.1 - done [TIME]
+   └─ ✓ judge.1 - passed [TIME]
 
 🗿 route.stone.set
    ├─ stone = 1
@@ -148,8 +150,7 @@ exports[`driver.route.review.self.acceptance given: [case1] stone with reviews.s
       │       └─ review: .route/1.guard.review.i1.3323f7a0e391b72d09ba5b4f51f33a2bfc06024571e276ee021a5f7e84874cc1.r1.md
       └─ judges
           └─ j1: rhx route.stone.judge --mechanism reviewed? --stone $stone --route $route --allow-blockers 0
-              ├─ finished [TIME] ✓
-              └─ judge: .route/1.guard.judge.i1p1.3323f7a0e391b72d09ba5b4f51f33a2bfc06024571e276ee021a5f7e84874cc1.dc14437b03e76199ec3e5deeaffb267942dd1af3a9f5837281f32a50d99693da.j1.md
+              └─ finished [TIME] ✓
 "
 `;
 
@@ -217,6 +218,8 @@ exports[`driver.route.review.self.acceptance given: [case3] hashless promises su
 
 exports[`driver.route.review.self.acceptance given: [case4] flat reviews array (backwards compatible) when: [t0] pass attempted with flat reviews then: stdout has good vibes 1`] = `
 "🦉 the way speaks for itself
+   ├─ ✓ review.1 - done [TIME]
+   └─ ✓ judge.1 - passed [TIME]
 
 🗿 route.stone.set
    ├─ stone = 1
@@ -230,12 +233,11 @@ exports[`driver.route.review.self.acceptance given: [case4] flat reviews array (
       │       └─ review: .route/1.guard.review.i1.3323f7a0e391b72d09ba5b4f51f33a2bfc06024571e276ee021a5f7e84874cc1.r1.md
       └─ judges
           └─ j1: rhx route.stone.judge --mechanism reviewed? --stone $stone --route $route --allow-blockers 0
-              ├─ finished [TIME] ✓
-              └─ judge: .route/1.guard.judge.i1p1.3323f7a0e391b72d09ba5b4f51f33a2bfc06024571e276ee021a5f7e84874cc1.dc14437b03e76199ec3e5deeaffb267942dd1af3a9f5837281f32a50d99693da.j1.md
+              └─ finished [TIME] ✓
 "
 `;
 
-exports[`driver.route.review.self.acceptance given: [case5] clone promises too quickly (time enforcement) when: [t1] promise attempted immediately (before 90 seconds) then: stdout has good vibes 1`] = `
+exports[`driver.route.review.self.acceptance given: [case5] clone promises too quickly (time enforcement) when: [t1] promise attempted immediately (before 30 seconds) then: stdout has good vibes 1`] = `
 "🦉 the way speaks for itself
 
 🗿 patience, friend
