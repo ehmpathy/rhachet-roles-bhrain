@@ -1,25 +1,104 @@
-read all kernel files in $RESEARCH_DIR_REL/kernel/
+## context
+
+read the kernel inventory file (3.1.absorb.kernels.*.inventory.md) to discover:
+- total kernel files and counts
+- source themes per kernel file
 
 ---
 
-## instructions
+## phase 1: discover clusters (incremental)
 
-catalogize the kernels:
-- cluster by domain
-- relate kernels to each other (dependencies, contradictions, reinforcements)
-- blend converged kernels into representative kernels that point to each citation
+for each kernel file, one at a time:
+1. read the kernel file
+2. for each kernel, decide:
+   - does it fit an extant cluster? → add to that cluster
+   - does it signal a NEW cluster? → create new cluster (do not pigeonhole)
+3. UPDATE cluster map: `clusters/1.cluster.map.md`
+4. /compact before next file
 
-index based on treestruct hierarchy for lookup:
+cluster map format:
+```
+## cluster: {natural domain name}
+
+### kernels
+- q1-k3: {summary}
+- q5-k12: {summary}
+
+### relationships
+- dependencies: {what this cluster depends on}
+- reinforces: {clusters this strengthens}
+- contradicts: {clusters this conflicts with}
+
+### gaps noted
+- {symmetry or inherent questions this cluster raises}
+```
+
+new clusters are valuable signals - they inform gaps in exploration.
+
+continue until all kernel files processed.
+
+---
+
+## phase 2: verify all kernels accounted
+
+compare cluster map against inventory:
+- every kernel from every file must appear in exactly one cluster
+- list any unassigned kernels
+- assign unassigned kernels before proceeding
+
+---
+
+## phase 3: deep cluster extraction (incremental)
+
+for each cluster in the map, one at a time:
+1. read ONLY the kernel files that contain that cluster's kernels
+2. extract full content for those specific kernels
+3. blend converged kernels into representative kernel
+4. add citations: [$ref(qN-kM)] for each source kernel
+5. note relationships: dependencies, contradictions, reinforcements
+6. WRITE to: `clusters/2.{cluster-name}.md`
+7. /compact before next cluster
+
+cluster file format:
+```
+## {cluster name}
+
+### representative kernel
+{blended summary of converged kernels}
+
+### citations
+- [$ref(q1-k3)] {brief}
+- [$ref(q5-k12)] {brief}
+
+### relationships
+- depends on: [$ref(other-cluster)]
+- reinforces: [$ref(other-cluster)]
+- contradicts: [$ref(other-cluster)]
+
+### gaps
+- {questions raised by symmetry or missing coverage}
+```
+
+continue until all clusters extracted.
+
+---
+
+## phase 4: merge into treestruct
+
+read all cluster files from `clusters/2.*.md`
+
+organize as treestruct hierarchy:
 - most abstract concepts at root
 - progressively concrete toward leaves
-- cross-references via [$ref(kernel-NNN)] for related kernels
+- cross-references via [$ref(cluster-name)] or [$ref(qN-kM)]
 
-note: this may be a massive inventory of knowledge kernels; do this process incrementally and evolve the treestruct if needed; every single kernel must be accounted for
-
-note: do not pigeonhole kernels into extant clusters if they fundamentally signal a new cluster; these are valuable signals that inform us of gaps in our exploration, via symmetry or inherent questions
+emit to: `3.2.absorb.clusters.v1.i1.md`
 
 ---
 
-## output
+## execution
 
-emit to $RESEARCH_DIR_REL/3.2.absorb.clusters.v1.i1.md
+phase 1: `process kernel file qN` → update cluster map → /compact → repeat
+phase 2: `verify all kernels accounted`
+phase 3: `extract {cluster-name}` → write cluster file → /compact → repeat
+phase 4: `merge all clusters into treestruct`
