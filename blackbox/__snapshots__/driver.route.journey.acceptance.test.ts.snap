@@ -87,128 +87,9 @@ exports[`driver.route.journey.acceptance given: [journey] weather api route when
 exports[`driver.route.journey.acceptance given: [journey] weather api route when: [t8.5] 3.blueprint review.self is promised then: stdout has good vibes 1`] = `
 "🦉 the way speaks for itself
 
-🍂 what is the rush?
-   ├─ ...
-   │
-   ├─ what does haste cost?
-   ├─ ...
-   │
-   ├─ does the self weigh more than the whole?
-   │  ├─ what you miss, they must find
-   │  ├─ minutes saved, hours spent
-   │  └─ your haste, their burden
-   │
-   ├─ each review is an opportunity
-   │  ├─ a chance to find a deeper truth
-   │  ├─ not one to squander
-   │  └─ no matter how repetitive
-   │
-   └─ trust the way
-      ├─ what calls for pause, calls for cause
-      └─ be true to the review 🍵
-
-🗿 patience, friend
-   │
-   ├─ the pond barely rippled
-   │
-   ├─ be here now 🪷
-   │  ├─
-   │  │
-   │  │  the review is the work.
-   │  │  not a gate to pass.
-   │  │  not a step to complete.
-   │  │  the work itself.
-   │  │
-   │  │  you are not the author.
-   │  │  you are the reviewer.
-   │  │
-   │  └─
-   │
-   ├─ trust the way 🪷
-   │  ├─
-   │  │
-   │  │  when you see this prompt
-   │  │    pause and articulate what you found
-   │  │
-   │  │  when you found issues
-   │  │    fix them before you continue
-   │  │
-   │  │  when you found no issues
-   │  │    articulate why it holds
-   │  │
-   │  │  when you cannot articulate either
-   │  │    you have not reviewed
-   │  │
-   │  └─
-   │
-   ├─ articulate into
-   │  └─ ./review/self/3.blueprint.design-complete.md
-   │
-   └─ when you've truly reflected, run
-      └─ rhx route.stone.set --stone 3.blueprint --as promised --that design-complete
-
-🌕 lets reflect
-   │
-   ├─ review.self 1/1
-   │  ├─ slug = design-complete
-   │  ├─ question all, especially yourself
-   │  └─ see the guide below
-   │
-   ├─ stillness 🪷
-   │  ├─
-   │  │
-   │  │  so it is. a chance to slow down, breathe, and see clearly.
-   │  │
-   │  │  self review time is a sanctuary. a gift. a luxury not always available.
-   │  │
-   │  │  it is not every day one has a quiet moment to take a slow,
-   │  │  methodical, patient, and thorough review.
-   │  │
-   │  │  tea first. then, we proceed 🍵
-   │  │
-   │  └─
-   │
-   ├─ before you begin 🪷
-   │  ├─
-   │  │
-   │  │  - clear your mind. this is dedicated review time.
-   │  │  - open each artifact mentioned in the guide
-   │  │  - read through them slowly, line by line
-   │  │  - question every assumption made
-   │  │  - look with fresh eyes, as if for the first time
-   │  │
-   │  └─
-   │
-   ├─ here's the guide
-   │  ├─
-   │  │
-   │  │  have you completed the full api design?
-   │  │    are all endpoints, request/response shapes, and error cases documented?
-   │  │
-   │  └─
-   │
-   ├─ be here now 🪷
-   │  ├─
-   │  │
-   │  │  refocus.
-   │  │
-   │  │  the review is the work.
-   │  │  not a step to complete.
-   │  │  not a gate to pass.
-   │  │  not a checkbox to check.
-   │  │
-   │  │  it is the work itself.
-   │  │
-   │  │  you do not care about the stone.
-   │  │  you only care about the review.
-   │  │
-   │  └─
-   │
-   ├─ articulate into
-   │  └─ ./review/self/3.blueprint.design-complete.md
-   │
-   └─ when you've truly reflected, run
-      └─ rhx route.stone.set --stone 3.blueprint --as promised --that design-complete
+🗿 route.stone.set
+   └─ stone = 3.blueprint
+   └─ passage = progressed (review.self 1/1 promised)
 "
 `;
 
@@ -286,217 +167,77 @@ exports[`driver.route.journey.acceptance given: [journey] weather api route when
 
 exports[`driver.route.journey.acceptance given: [journey] weather api route when: [t9.5] 3.blueprint review set to pass and pass reattempted then: stdout has good vibes 1`] = `
 "🦉 the way speaks for itself
+   ├─ ✓ review.1 - done (cached)
+   ├─ ✓ judge.1 - passed (cached)
+   └─ ✗ judge.2 - failed [TIME]
 
 🗿 route.stone.set
    ├─ stone = 3.blueprint
-   └─ passage = blocked (review.self required)
-
-🌕 lets reflect
-   │
-   ├─ review.self 1/1
-   │  ├─ slug = design-complete
-   │  ├─ question all, especially yourself
-   │  └─ see the guide below
-   │
-   ├─ stillness 🪷
-   │  ├─
-   │  │
-   │  │  so it is. a chance to slow down, breathe, and see clearly.
-   │  │
-   │  │  self review time is a sanctuary. a gift. a luxury not always available.
-   │  │
-   │  │  it is not every day one has a quiet moment to take a slow,
-   │  │  methodical, patient, and thorough review.
-   │  │
-   │  │  tea first. then, we proceed 🍵
-   │  │
-   │  └─
-   │
-   ├─ before you begin 🪷
-   │  ├─
-   │  │
-   │  │  - clear your mind. this is dedicated review time.
-   │  │  - open each artifact mentioned in the guide
-   │  │  - read through them slowly, line by line
-   │  │  - question every assumption made
-   │  │  - look with fresh eyes, as if for the first time
-   │  │
-   │  └─
-   │
-   ├─ here's the guide
-   │  ├─
-   │  │
-   │  │  have you completed the full api design?
-   │  │    are all endpoints, request/response shapes, and error cases documented?
-   │  │
-   │  └─
-   │
-   ├─ be here now 🪷
-   │  ├─
-   │  │
-   │  │  refocus.
-   │  │
-   │  │  the review is the work.
-   │  │  not a step to complete.
-   │  │  not a gate to pass.
-   │  │  not a checkbox to check.
-   │  │
-   │  │  it is the work itself.
-   │  │
-   │  │  you do not care about the stone.
-   │  │  you only care about the review.
-   │  │
-   │  └─
-   │
-   ├─ articulate into
-   │  └─ /review/self/3.blueprint.design-complete.md
-   │
-   └─ when you've truly reflected, run
-      └─ rhx route.stone.set --stone 3.blueprint --as promised --that design-complete
+   ├─ passage = blocked
+   ├─ reason = wait for human approval
+   └─ guard
+      ├─ artifacts
+      │   └─ 3.blueprint.md
+      ├─ reviews
+      │   └─ r1: bash $route/.test/mock-review.sh
+      │       └─ · cached
+      └─ judges
+          ├─ j1: rhx route.stone.judge --mechanism reviewed? --stone $stone --route $route --allow-blockers 0 --allow-nitpicks 2
+          │   └─ · cached
+          └─ j2: rhx route.stone.judge --mechanism approved? --stone $stone --route $route
+              ├─ finished [TIME] ✗
+              └─ reason: wait for human approval
 "
 `;
 
 exports[`driver.route.journey.acceptance given: [journey] weather api route when: [t9] 3.blueprint pass reattempted after promise then: stdout has good vibes 1`] = `
 "🦉 the way speaks for itself
+   ├─ ✓ review.1 - done [TIME]
+   ├─ ✗ judge.1 - failed [TIME]
+   └─ ✗ judge.2 - failed [TIME]
 
 🗿 route.stone.set
    ├─ stone = 3.blueprint
-   └─ passage = blocked (review.self required)
-
-🌕 lets reflect
-   │
-   ├─ review.self 1/1
-   │  ├─ slug = design-complete
-   │  ├─ question all, especially yourself
-   │  └─ see the guide below
-   │
-   ├─ stillness 🪷
-   │  ├─
-   │  │
-   │  │  so it is. a chance to slow down, breathe, and see clearly.
-   │  │
-   │  │  self review time is a sanctuary. a gift. a luxury not always available.
-   │  │
-   │  │  it is not every day one has a quiet moment to take a slow,
-   │  │  methodical, patient, and thorough review.
-   │  │
-   │  │  tea first. then, we proceed 🍵
-   │  │
-   │  └─
-   │
-   ├─ before you begin 🪷
-   │  ├─
-   │  │
-   │  │  - clear your mind. this is dedicated review time.
-   │  │  - open each artifact mentioned in the guide
-   │  │  - read through them slowly, line by line
-   │  │  - question every assumption made
-   │  │  - look with fresh eyes, as if for the first time
-   │  │
-   │  └─
-   │
-   ├─ here's the guide
-   │  ├─
-   │  │
-   │  │  have you completed the full api design?
-   │  │    are all endpoints, request/response shapes, and error cases documented?
-   │  │
-   │  └─
-   │
-   ├─ be here now 🪷
-   │  ├─
-   │  │
-   │  │  refocus.
-   │  │
-   │  │  the review is the work.
-   │  │  not a step to complete.
-   │  │  not a gate to pass.
-   │  │  not a checkbox to check.
-   │  │
-   │  │  it is the work itself.
-   │  │
-   │  │  you do not care about the stone.
-   │  │  you only care about the review.
-   │  │
-   │  └─
-   │
-   ├─ articulate into
-   │  └─ /review/self/3.blueprint.design-complete.md
-   │
-   └─ when you've truly reflected, run
-      └─ rhx route.stone.set --stone 3.blueprint --as promised --that design-complete
+   ├─ passage = blocked
+   ├─ reason = blockers exceed threshold (1 > 0); wait for human approval
+   └─ guard
+      ├─ artifacts
+      │   └─ 3.blueprint.md
+      ├─ reviews
+      │   └─ r1: bash $route/.test/mock-review.sh
+      │       ├─ finished [TIME] ✓
+      │       ├─ review: .route/3.blueprint.guard.review.i1.fd29f621e589e44175adf2201fa80bf72797235b994355101b4f50e08e4ebe44.r1.md
+      │       └─ 1 blocker 🔴
+      └─ judges
+          ├─ j1: rhx route.stone.judge --mechanism reviewed? --stone $stone --route $route --allow-blockers 0 --allow-nitpicks 2
+          │   ├─ finished [TIME] ✗
+          │   └─ reason: blockers exceed threshold (1 > 0)
+          └─ j2: rhx route.stone.judge --mechanism approved? --stone $stone --route $route
+              ├─ finished [TIME] ✗
+              └─ reason: wait for human approval
 "
 `;
 
-exports[`driver.route.journey.acceptance given: [journey] weather api route when: [t10] 3.blueprint approved and pass reattempted then: stdout has good vibes 1`] = `
+exports[`driver.route.journey.acceptance given: [journey] weather api route when: [t10] 3.blueprint approved and self-review completed then: stdout has good vibes 1`] = `
 "🦉 the way speaks for itself
+   ├─ ✓ review.1 - done (cached)
+   ├─ ✓ judge.1 - passed [TIME]
+   └─ ✓ judge.2 - passed [TIME]
 
 🗿 route.stone.set
    ├─ stone = 3.blueprint
-   └─ passage = blocked (review.self required)
-
-🌕 lets reflect
-   │
-   ├─ review.self 1/1
-   │  ├─ slug = design-complete
-   │  ├─ question all, especially yourself
-   │  └─ see the guide below
-   │
-   ├─ stillness 🪷
-   │  ├─
-   │  │
-   │  │  so it is. a chance to slow down, breathe, and see clearly.
-   │  │
-   │  │  self review time is a sanctuary. a gift. a luxury not always available.
-   │  │
-   │  │  it is not every day one has a quiet moment to take a slow,
-   │  │  methodical, patient, and thorough review.
-   │  │
-   │  │  tea first. then, we proceed 🍵
-   │  │
-   │  └─
-   │
-   ├─ before you begin 🪷
-   │  ├─
-   │  │
-   │  │  - clear your mind. this is dedicated review time.
-   │  │  - open each artifact mentioned in the guide
-   │  │  - read through them slowly, line by line
-   │  │  - question every assumption made
-   │  │  - look with fresh eyes, as if for the first time
-   │  │
-   │  └─
-   │
-   ├─ here's the guide
-   │  ├─
-   │  │
-   │  │  have you completed the full api design?
-   │  │    are all endpoints, request/response shapes, and error cases documented?
-   │  │
-   │  └─
-   │
-   ├─ be here now 🪷
-   │  ├─
-   │  │
-   │  │  refocus.
-   │  │
-   │  │  the review is the work.
-   │  │  not a step to complete.
-   │  │  not a gate to pass.
-   │  │  not a checkbox to check.
-   │  │
-   │  │  it is the work itself.
-   │  │
-   │  │  you do not care about the stone.
-   │  │  you only care about the review.
-   │  │
-   │  └─
-   │
-   ├─ articulate into
-   │  └─ /review/self/3.blueprint.design-complete.md
-   │
-   └─ when you've truly reflected, run
-      └─ rhx route.stone.set --stone 3.blueprint --as promised --that design-complete
+   ├─ passage = allowed
+   └─ guard
+      ├─ artifacts
+      │   └─ 3.blueprint.md
+      ├─ reviews
+      │   └─ r1: bash $route/.test/mock-review.sh
+      │       └─ · cached
+      └─ judges
+          ├─ j1: rhx route.stone.judge --mechanism reviewed? --stone $stone --route $route --allow-blockers 0 --allow-nitpicks 2
+          │   └─ finished [TIME] ✓
+          └─ j2: rhx route.stone.judge --mechanism approved? --stone $stone --route $route
+              └─ finished [TIME] ✓
 "
 `;
 
@@ -505,7 +246,7 @@ exports[`driver.route.journey.acceptance given: [journey] weather api route when
 
 🗿 route.stone.get
    ├─ query = @next-one
-   └─ stone = 3.blueprint (3.blueprint.stone)
+   └─ stone = 5.execute (5.execute.stone)
 "
 `;
 
@@ -535,6 +276,6 @@ exports[`driver.route.journey.acceptance given: [journey] weather api route when
 
 🗿 route.stone.get
    ├─ query = @next-one
-   └─ stone = 3.blueprint (3.blueprint.stone)
+   └─ status = all stones passed
 "
 `;
