@@ -625,4 +625,61 @@ judges:
       });
     });
   });
+
+  given('[case7] plowthrough via 3 attempts on same hash', () => {
+    const scene = useBeforeAll(async () => {
+      const tempDir = genTempDirForRhachet({
+        slug: 'review.self-case7',
+        clone: ASSETS_DIR,
+      });
+
+      // link the driver role
+      await execAsync('npx rhachet roles link --role driver', { cwd: tempDir });
+
+      // create feature branch (bind rejects protected branches like main)
+      await execAsync('git checkout -b vlad/test-review.self-case7', {
+        cwd: tempDir,
+      });
+
+      // create artifact for the stone
+      await fs.writeFile(
+        path.join(tempDir, '1.stone.i1.md'),
+        '# Implementation\n\nFeature implemented.',
+      );
+
+      return { tempDir };
+    });
+
+    when('[t0] promise attempted 3 times on same hash (without wait)', () => {
+      then('1st attempt is challenged', async () => {
+        const result = await invokeRouteSkill({
+          skill: 'route.stone.set',
+          args: { stone: '1', route: '.', as: 'promised', that: 'all-done' },
+          cwd: scene.tempDir,
+        });
+        expect(result.code).not.toEqual(0);
+        expect(result.stdout).toContain('patience');
+      });
+
+      then('2nd attempt is challenged', async () => {
+        const result = await invokeRouteSkill({
+          skill: 'route.stone.set',
+          args: { stone: '1', route: '.', as: 'promised', that: 'all-done' },
+          cwd: scene.tempDir,
+        });
+        expect(result.code).not.toEqual(0);
+        expect(result.stdout).toContain('patience');
+      });
+
+      then('3rd attempt succeeds (plowthrough)', async () => {
+        const result = await invokeRouteSkill({
+          skill: 'route.stone.set',
+          args: { stone: '1', route: '.', as: 'promised', that: 'all-done' },
+          cwd: scene.tempDir,
+        });
+        expect(result.code).toEqual(0);
+        expect(result.stdout).toContain('progressed');
+      });
+    });
+  });
 });

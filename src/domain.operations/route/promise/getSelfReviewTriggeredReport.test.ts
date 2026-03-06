@@ -34,31 +34,35 @@ describe('getSelfReviewTriggeredReport', () => {
         `test-get-triggered-${Date.now()}-2`,
       );
 
-      then('returns sinceMtime and uptilMtime from files', async () => {
-        // create marker files
-        await setSelfReviewTriggeredReport({
-          stone: '1.vision',
-          slug: 'all-done',
-          hash: 'abc123',
-          route: tempDir,
-        });
+      then(
+        'returns sinceMtime, uptilMtime, and attempts from files',
+        async () => {
+          // create marker files
+          await setSelfReviewTriggeredReport({
+            stone: '1.vision',
+            slug: 'all-done',
+            hash: 'abc123',
+            route: tempDir,
+          });
 
-        // get report
-        const result = await getSelfReviewTriggeredReport({
-          stone: '1.vision',
-          slug: 'all-done',
-          hash: 'abc123',
-          route: tempDir,
-        });
+          // get report
+          const result = await getSelfReviewTriggeredReport({
+            stone: '1.vision',
+            slug: 'all-done',
+            hash: 'abc123',
+            route: tempDir,
+          });
 
-        // verify result
-        expect(result).not.toBeNull();
-        expect(result?.sinceMtime.getTime()).toBeGreaterThan(0);
-        expect(result?.uptilMtime.getTime()).toBeGreaterThan(0);
+          // verify result
+          expect(result).not.toBeNull();
+          expect(result?.sinceMtime.getTime()).toBeGreaterThan(0);
+          expect(result?.uptilMtime.getTime()).toBeGreaterThan(0);
+          expect(result?.attempts).toEqual(1);
 
-        // cleanup
-        await fs.rm(tempDir, { recursive: true, force: true });
-      });
+          // cleanup
+          await fs.rm(tempDir, { recursive: true, force: true });
+        },
+      );
     });
   });
 
@@ -126,6 +130,52 @@ describe('getSelfReviewTriggeredReport', () => {
         expect(result?.uptilMtime.getTime()).toEqual(
           result?.sinceMtime.getTime(),
         );
+
+        // cleanup
+        await fs.rm(tempDir, { recursive: true, force: true });
+      });
+    });
+  });
+
+  given('[case5] marker file found with attempts', () => {
+    when('[t0] marker file has attempts: 3', () => {
+      const tempDir = path.join(
+        os.tmpdir(),
+        `test-get-triggered-${Date.now()}-5`,
+      );
+
+      then('returns parsed attempts', async () => {
+        // create marker file with attempts via multiple calls
+        await setSelfReviewTriggeredReport({
+          stone: '1.vision',
+          slug: 'all-done',
+          hash: 'abc123',
+          route: tempDir,
+        });
+        await setSelfReviewTriggeredReport({
+          stone: '1.vision',
+          slug: 'all-done',
+          hash: 'abc123',
+          route: tempDir,
+        });
+        await setSelfReviewTriggeredReport({
+          stone: '1.vision',
+          slug: 'all-done',
+          hash: 'abc123',
+          route: tempDir,
+        });
+
+        // get report
+        const result = await getSelfReviewTriggeredReport({
+          stone: '1.vision',
+          slug: 'all-done',
+          hash: 'abc123',
+          route: tempDir,
+        });
+
+        // verify result
+        expect(result).not.toBeNull();
+        expect(result?.attempts).toEqual(3);
 
         // cleanup
         await fs.rm(tempDir, { recursive: true, force: true });
