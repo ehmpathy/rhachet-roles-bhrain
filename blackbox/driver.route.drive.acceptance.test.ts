@@ -29,7 +29,7 @@ const backdateTriggeredReport = async (input: {
   );
   if (triggeredFile) {
     const filepath = path.join(routeDir, triggeredFile);
-    const mtimePast = new Date(Date.now() - 91 * 1000);
+    const mtimePast = new Date(Date.now() - 31 * 1000);
     await fs.utimes(filepath, mtimePast, mtimePast);
   }
 };

@@ -28,7 +28,7 @@ const backdateTriggeredReport = async (input: {
       f.includes(`${input.stone}.guard.selfreview.${input.slug}`) &&
       f.endsWith('.triggered'),
   );
-  const mtimePast = new Date(Date.now() - 91 * 1000);
+  const mtimePast = new Date(Date.now() - 31 * 1000);
   for (const triggeredFile of triggeredFiles) {
     const filepath = path.join(routeDir, triggeredFile);
     await fs.utimes(filepath, mtimePast, mtimePast);
