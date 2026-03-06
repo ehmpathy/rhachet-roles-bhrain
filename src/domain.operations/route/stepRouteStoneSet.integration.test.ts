@@ -230,4 +230,64 @@ describe('stepRouteStoneSet.integration', () => {
       });
     });
   });
+
+  given('[case5] plowthrough via 3 attempts on same hash', () => {
+    const tempDir = path.join(
+      os.tmpdir(),
+      `test-step-set-plowthrough-${Date.now()}`,
+    );
+
+    beforeEach(async () => {
+      await fs.cp(path.join(ASSETS_DIR, 'route.review.self'), tempDir, {
+        recursive: true,
+      });
+      // create artifact for 1.vision
+      await fs.writeFile(path.join(tempDir, '1.vision.md'), '# Vision');
+    });
+
+    afterEach(async () => {
+      await fs.rm(tempDir, { recursive: true, force: true });
+    });
+
+    when('[t0] promise attempted 3 times on same hash', () => {
+      then('accepts promise on 3rd attempt (plowthrough)', async () => {
+        // 1st attempt → challenged
+        const result1 = await stepRouteStoneSet(
+          {
+            stone: '1.vision',
+            route: tempDir,
+            as: 'promised',
+            that: 'all-done',
+          },
+          noopContext,
+        );
+        expect(result1.challenged).toBe(true);
+
+        // 2nd attempt → challenged
+        const result2 = await stepRouteStoneSet(
+          {
+            stone: '1.vision',
+            route: tempDir,
+            as: 'promised',
+            that: 'all-done',
+          },
+          noopContext,
+        );
+        expect(result2.challenged).toBe(true);
+
+        // 3rd attempt → allowed (plowthrough)
+        const result3 = await stepRouteStoneSet(
+          {
+            stone: '1.vision',
+            route: tempDir,
+            as: 'promised',
+            that: 'all-done',
+          },
+          noopContext,
+        );
+        expect(result3.promised).toBe(true);
+        expect(result3.challenged).toBeUndefined();
+      });
+    });
+  });
 });

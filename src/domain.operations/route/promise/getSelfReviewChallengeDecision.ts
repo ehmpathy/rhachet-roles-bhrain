@@ -7,8 +7,9 @@ import { setSelfReviewTriggeredReport } from './setSelfReviewTriggeredReport';
 
 /**
  * .what = decide if promise should be allowed, challenged first, or challenged rushed
- * .why = encapsulates trigger lookup, time enforcement, hashbar threshold, rush detection, and report creation
+ * .why = encapsulates trigger lookup, time enforcement, hashbar threshold, rush detection, plowthrough, and report creation
  *
+ * .note = plowthrough: if attempts >= 3 on same hash, allow without timer
  * .note = hashbar controls timer behavior on hash change:
  *   - before hashbar: each hash change resets 30s timer
  *   - after hashbar: timer persists (any triggered file > 30s allows promise)
@@ -29,6 +30,7 @@ export const getSelfReviewChallengeDecision = async (input: {
   // default hashbar to 1
   const hashbar = input.hashbar ?? 1;
   const threshold = 30 * 1000;
+  const plowthroughThreshold = 3;
 
   // lookup trigger report for this hash
   const report = await getSelfReviewTriggeredReport(input);
@@ -49,8 +51,13 @@ export const getSelfReviewChallengeDecision = async (input: {
     .catch(() => false);
   const isRush = uptilExisted;
 
-  // update .uptil mtime (creates if absent, updates if present)
-  await setSelfReviewTriggeredReport(input);
+  // update .uptil mtime and increment attempts (creates if absent, updates if present)
+  const { attempts } = await setSelfReviewTriggeredReport(input);
+
+  // check plowthrough (attempts >= 3 on same hash)
+  if (attempts >= plowthroughThreshold) {
+    return { decision: 'allowed' };
+  }
 
   // check hashbar threshold (count across all hashes for this slug)
   const { count, newest } = await getSelfReviewTriggeredCount({

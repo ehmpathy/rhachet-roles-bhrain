@@ -50,7 +50,7 @@ describe('getSelfReviewChallengeDecision', () => {
     });
   });
 
-  given('[case2] trigger report found but elapsed < 90 seconds', () => {
+  given('[case2] trigger report found but elapsed < 30 seconds', () => {
     when('[t0] getSelfReviewChallengeDecision called second time', () => {
       const tempDir = path.join(os.tmpdir(), `test-challenge-${Date.now()}-2`);
 
@@ -66,7 +66,7 @@ describe('getSelfReviewChallengeDecision', () => {
         // wait a bit to create mtime gap
         await new Promise((done) => setTimeout(done, 50));
 
-        // second call (< 90 seconds) should detect rush
+        // second call (< 30 seconds) should detect rush
         const result = await getSelfReviewChallengeDecision({
           stone: '1.vision',
           slug: 'all-done',
@@ -82,8 +82,8 @@ describe('getSelfReviewChallengeDecision', () => {
     });
   });
 
-  given('[case3] trigger report found and elapsed >= 90 seconds', () => {
-    when('[t0] getSelfReviewChallengeDecision called after 90 seconds', () => {
+  given('[case3] trigger report found and elapsed >= 30 seconds', () => {
+    when('[t0] getSelfReviewChallengeDecision called after 30 seconds', () => {
       const tempDir = path.join(os.tmpdir(), `test-challenge-${Date.now()}-3`);
 
       then('returns allowed', async () => {
@@ -168,53 +168,41 @@ describe('getSelfReviewChallengeDecision', () => {
     });
   });
 
-  given('[case6] third+ rapid attempt', () => {
-    when(
-      '[t0] getSelfReviewChallengeDecision called three times rapidly',
-      () => {
-        const tempDir = path.join(
-          os.tmpdir(),
-          `test-challenge-${Date.now()}-6`,
-        );
+  given('[case6] plowthrough via 3 attempts on same hash', () => {
+    when('[t0] getSelfReviewChallengeDecision called 3 times', () => {
+      const tempDir = path.join(os.tmpdir(), `test-challenge-${Date.now()}-6`);
 
-        then('returns challenge:rushed consistently', async () => {
-          // first call
-          const result1 = await getSelfReviewChallengeDecision({
-            stone: '1.vision',
-            slug: 'all-done',
-            hash: 'abc123',
-            route: tempDir,
-          });
-          expect(result1.decision).toEqual('challenge:first');
-
-          // wait
-          await new Promise((done) => setTimeout(done, 50));
-
-          // second call
-          const result2 = await getSelfReviewChallengeDecision({
-            stone: '1.vision',
-            slug: 'all-done',
-            hash: 'abc123',
-            route: tempDir,
-          });
-          expect(result2.decision).toEqual('challenge:rushed');
-
-          // wait
-          await new Promise((done) => setTimeout(done, 50));
-
-          // third call
-          const result3 = await getSelfReviewChallengeDecision({
-            stone: '1.vision',
-            slug: 'all-done',
-            hash: 'abc123',
-            route: tempDir,
-          });
-          expect(result3.decision).toEqual('challenge:rushed');
-
-          // cleanup
-          await fs.rm(tempDir, { recursive: true, force: true });
+      then('returns allowed on 3rd attempt', async () => {
+        // 1st attempt → challenge:first
+        const result1 = await getSelfReviewChallengeDecision({
+          stone: '1.vision',
+          slug: 'all-done',
+          hash: 'abc123',
+          route: tempDir,
         });
-      },
-    );
+        expect(result1.decision).toEqual('challenge:first');
+
+        // 2nd attempt → challenge:rushed
+        const result2 = await getSelfReviewChallengeDecision({
+          stone: '1.vision',
+          slug: 'all-done',
+          hash: 'abc123',
+          route: tempDir,
+        });
+        expect(result2.decision).toEqual('challenge:rushed');
+
+        // 3rd attempt → allowed (plowthrough)
+        const result3 = await getSelfReviewChallengeDecision({
+          stone: '1.vision',
+          slug: 'all-done',
+          hash: 'abc123',
+          route: tempDir,
+        });
+        expect(result3.decision).toEqual('allowed');
+
+        // cleanup
+        await fs.rm(tempDir, { recursive: true, force: true });
+      });
+    });
   });
 });
