@@ -7,8 +7,8 @@ import { setSelfReviewTriggeredReport } from './setSelfReviewTriggeredReport';
  * .why = encapsulates trigger lookup, time enforcement, hashbar threshold, and report creation
  *
  * .note = hashbar controls timer behavior on hash change:
- *   - before hashbar: each hash change resets 90s timer
- *   - after hashbar: timer persists (any triggered file > 90s allows promise)
+ *   - before hashbar: each hash change resets 30s timer
+ *   - after hashbar: timer persists (any triggered file > 30s allows promise)
  */
 export const getSelfReviewChallengeDecision = async (input: {
   stone: string;
@@ -17,9 +17,9 @@ export const getSelfReviewChallengeDecision = async (input: {
   route: string;
   hashbar?: number;
 }): Promise<{ decision: 'allowed' } | { decision: 'challenged' }> => {
-  // default hashbar to 3
-  const hashbar = input.hashbar ?? 3;
-  const threshold = 90 * 1000;
+  // default hashbar to 1
+  const hashbar = input.hashbar ?? 1;
+  const threshold = 30 * 1000;
 
   // lookup trigger report for this hash
   const report = await getSelfReviewTriggeredReport(input);

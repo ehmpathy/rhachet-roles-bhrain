@@ -82,8 +82,8 @@ describe('getSelfReviewChallengeDecision', () => {
           route: tempDir,
         });
 
-        // backdate the file mtime to 91 seconds ago
-        const mtimePast = new Date(Date.now() - 91 * 1000);
+        // backdate the file mtime to 31 seconds ago
+        const mtimePast = new Date(Date.now() - 31 * 1000);
         await fs.utimes(result1.path, mtimePast, mtimePast);
 
         // call after sufficient time
