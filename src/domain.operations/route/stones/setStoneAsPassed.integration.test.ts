@@ -199,23 +199,23 @@ describe('setStoneAsPassed.integration', () => {
         expect(result.passed).toBe(false);
       });
 
-      then('creates trigger marker file', async () => {
+      then('creates trigger marker files', async () => {
         const routeDir = path.join(scene.tempDir, '.route');
         const files = await fs.readdir(routeDir);
-        const triggerFiles = files.filter((f) => f.endsWith('.triggered'));
+        const sinceFiles = files.filter((f) => f.endsWith('.triggered.since'));
 
-        expect(triggerFiles.length).toBeGreaterThan(0);
-        expect(triggerFiles[0]).toContain('1.vision.guard.selfreview');
-        expect(triggerFiles[0]).toContain('all-done');
+        expect(sinceFiles.length).toBeGreaterThan(0);
+        expect(sinceFiles[0]).toContain('1.vision.guard.selfreview');
+        expect(sinceFiles[0]).toContain('all-done');
       });
 
       then('trigger marker file has correct content', async () => {
         const routeDir = path.join(scene.tempDir, '.route');
         const files = await fs.readdir(routeDir);
-        const triggerFile = files.find((f) => f.endsWith('.triggered'));
+        const sinceFile = files.find((f) => f.endsWith('.triggered.since'));
 
         const content = await fs.readFile(
-          path.join(routeDir, triggerFile!),
+          path.join(routeDir, sinceFile!),
           'utf-8',
         );
         expect(content).toContain('slug: all-done');

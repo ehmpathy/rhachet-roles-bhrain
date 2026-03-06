@@ -41,16 +41,26 @@ exports[`formatLetsReflect given: [case1] standard review.self when: [t0] format
    │  │
    │  └─
    │
-   ├─ after you finish 🪷
+   ├─ be here now 🪷
    │  ├─
    │  │
-   │  │  - did you check slowly, step by step?
-   │  │  - did you take your time, or rush through?
-   │  │  - have you been honest with yourself?
-   │  │  - if you found issues, fix them before you promise
+   │  │  refocus.
+   │  │
+   │  │  the review is the work.
+   │  │  not a step to complete.
+   │  │  not a gate to pass.
+   │  │  not a checkbox to check.
+   │  │
+   │  │  it is the work itself.
+   │  │
+   │  │  you do not care about the stone.
+   │  │  you only care about the review.
    │  │
    │  └─
    │
-   └─ promise its done? if so, run
+   ├─ articulate into
+   │  └─ .behavior/v2026_03_05.behavior-example/review/self/1.vision.all-done.md
+   │
+   └─ when you've truly reflected, run
       └─ rhx route.stone.set --stone 1.vision --as promised --that all-done"
 `;

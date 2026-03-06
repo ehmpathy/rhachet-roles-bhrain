@@ -10,10 +10,11 @@ const ASSETS_DIR = path.join(__dirname, '.test/assets');
 const noopContext = { cliEmit: { onGuardProgress: () => {} }, isTTY: true };
 
 /**
- * .what = backdate triggered report mtime to bypass time enforcement
- * .why = tests need to verify promise flow without 30 second wait
+ * .what = backdate triggered.since mtime to bypass time enforcement
+ * .why = tests need to verify promise flow without 90 second wait
  *
- * .note = backdates ALL matched files (there may be multiple with different hashes)
+ * .note = only .since files are backdated; .uptil stays current (simulates proper wait)
+ * .note = backdates ALL matched .since files (there may be multiple with different hashes)
  */
 const backdateTriggeredReport = async (input: {
   tempDir: string;
@@ -22,14 +23,14 @@ const backdateTriggeredReport = async (input: {
 }): Promise<void> => {
   const routeDir = path.join(input.tempDir, '.route');
   const files = await fs.readdir(routeDir).catch(() => []);
-  const triggeredFiles = files.filter(
+  const sinceFiles = files.filter(
     (f) =>
       f.includes(`${input.stone}.guard.selfreview.${input.slug}`) &&
-      f.endsWith('.triggered'),
+      f.endsWith('.triggered.since'),
   );
   const mtimePast = new Date(Date.now() - 91 * 1000);
-  for (const triggeredFile of triggeredFiles) {
-    const filepath = path.join(routeDir, triggeredFile);
+  for (const sinceFile of sinceFiles) {
+    const filepath = path.join(routeDir, sinceFile);
     await fs.utimes(filepath, mtimePast, mtimePast);
   }
 };

@@ -1,8 +1,12 @@
 /**
- * .what = formats "patience, friend" challenge for rushed self-review
- * .why = blocks clones who promise too quickly (< 30 seconds) with zen challenge
+ * .what = formats "patience, friend" challenge for self-review
+ * .why = prompts clones to slow down, adopt reviewer role, and articulate findings
  */
-export const formatPatienceFriend = (): string => {
+export const formatPatienceFriend = (input: {
+  stone: string;
+  slug: string;
+  route: string;
+}): string => {
   const lines: string[] = [];
 
   // header
@@ -13,21 +17,51 @@ export const formatPatienceFriend = (): string => {
   lines.push(`   ├─ the pond barely rippled`);
   lines.push(`   │`);
 
-  // truly? section
-  lines.push(`   ├─ truly?`);
+  // be here now section (identity reframe)
+  lines.push(`   ├─ be here now 🪷`);
   lines.push(`   │  ├─`);
   lines.push(`   │  │`);
-  lines.push(`   │  │  was each pebble turned?`);
-  lines.push(`   │  │  each line read with care?`);
+  lines.push(`   │  │  the review is the work.`);
+  lines.push(`   │  │  not a gate to pass.`);
+  lines.push(`   │  │  not a step to complete.`);
+  lines.push(`   │  │  the work itself.`);
   lines.push(`   │  │`);
-  lines.push(`   │  │  did stillness guide you?`);
-  lines.push(`   │  │  did clarity follow?`);
+  lines.push(`   │  │  you are not the author.`);
+  lines.push(`   │  │  you are the reviewer.`);
   lines.push(`   │  │`);
   lines.push(`   │  └─`);
   lines.push(`   │`);
 
-  // final line
-  lines.push(`   └─ the pond awaits. in time, all is clear 🌙`);
+  // trust the way section (implementation intentions)
+  lines.push(`   ├─ trust the way 🪷`);
+  lines.push(`   │  ├─`);
+  lines.push(`   │  │`);
+  lines.push(`   │  │  when you see this prompt`);
+  lines.push(`   │  │    pause and articulate what you found`);
+  lines.push(`   │  │`);
+  lines.push(`   │  │  when you found issues`);
+  lines.push(`   │  │    fix them before you continue`);
+  lines.push(`   │  │`);
+  lines.push(`   │  │  when you found no issues`);
+  lines.push(`   │  │    articulate why it holds`);
+  lines.push(`   │  │`);
+  lines.push(`   │  │  when you cannot articulate either`);
+  lines.push(`   │  │    you have not reviewed`);
+  lines.push(`   │  │`);
+  lines.push(`   │  └─`);
+  lines.push(`   │`);
+
+  // articulate into section
+  const articulationPath = `${input.route}/review/self/${input.stone}.${input.slug}.md`;
+  lines.push(`   ├─ articulate into`);
+  lines.push(`   │  └─ ${articulationPath}`);
+  lines.push(`   │`);
+
+  // final instruction
+  lines.push(`   └─ when you've truly reflected, run`);
+  lines.push(
+    `      └─ rhx route.stone.set --stone ${input.stone} --as promised --that ${input.slug}`,
+  );
 
   return lines.join('\n');
 };

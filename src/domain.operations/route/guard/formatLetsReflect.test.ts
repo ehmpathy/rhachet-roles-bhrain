@@ -8,6 +8,8 @@ describe('formatLetsReflect', () => {
       then('output matches snapshot (vibecheck)', () => {
         const output = formatLetsReflect({
           stone: '1.vision',
+          slug: 'all-done',
+          route: '.behavior/v2026_03_05.behavior-example',
           reviewSelf: {
             slug: 'all-done',
             say: 'did you complete all that was requested in this stone?\nhave you re-read the stone goal and verified each requirement?',
@@ -22,6 +24,8 @@ describe('formatLetsReflect', () => {
       then('contains warm frame sections', () => {
         const output = formatLetsReflect({
           stone: '1.vision',
+          slug: 'all-done',
+          route: '.behavior/v2026_03_05.behavior-example',
           reviewSelf: {
             slug: 'all-done',
             say: 'review guide content',
@@ -33,13 +37,15 @@ describe('formatLetsReflect', () => {
         expect(output).toContain('🌕 lets reflect');
         expect(output).toContain('stillness 🪷');
         expect(output).toContain('before you begin 🪷');
-        expect(output).toContain('after you finish 🪷');
+        expect(output).toContain('be here now 🪷');
         expect(output).toContain('tea first. then, we proceed 🍵');
       });
 
       then('contains guide content', () => {
         const output = formatLetsReflect({
           stone: '1.vision',
+          slug: 'all-done',
+          route: '.behavior/v2026_03_05.behavior-example',
           reviewSelf: {
             slug: 'all-done',
             say: 'review guide content',
@@ -52,9 +58,11 @@ describe('formatLetsReflect', () => {
         expect(output).toContain('review guide content');
       });
 
-      then('contains promise command', () => {
+      then('contains articulation section', () => {
         const output = formatLetsReflect({
           stone: '1.vision',
+          slug: 'all-done',
+          route: '.behavior/v2026_03_05.behavior-example',
           reviewSelf: {
             slug: 'all-done',
             say: 'review guide content',
@@ -63,7 +71,26 @@ describe('formatLetsReflect', () => {
           total: 1,
         });
 
-        expect(output).toContain('promise its done? if so, run');
+        expect(output).toContain('articulate into');
+        expect(output).toContain(
+          '.behavior/v2026_03_05.behavior-example/review/self/1.vision.all-done.md',
+        );
+      });
+
+      then('contains final instruction', () => {
+        const output = formatLetsReflect({
+          stone: '1.vision',
+          slug: 'all-done',
+          route: '.behavior/v2026_03_05.behavior-example',
+          reviewSelf: {
+            slug: 'all-done',
+            say: 'review guide content',
+          },
+          index: 1,
+          total: 1,
+        });
+
+        expect(output).toContain("when you've truly reflected, run");
         expect(output).toContain(
           'rhx route.stone.set --stone 1.vision --as promised --that all-done',
         );

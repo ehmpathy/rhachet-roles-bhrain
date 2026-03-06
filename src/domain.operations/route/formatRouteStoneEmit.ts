@@ -3,6 +3,7 @@ import type { RouteStoneGuardReviewSelf } from '@src/domain.objects/Driver/Route
 import { formatGuardTree } from './guard/formatGuardTree';
 import { formatLetsReflect } from './guard/formatLetsReflect';
 import { formatPatienceFriend } from './guard/formatPatienceFriend';
+import { formatWhatsTheRush } from './guard/formatWhatsTheRush';
 
 /**
  * .what = formats route stone operation output with good vibes
@@ -37,6 +38,7 @@ type FormatInput =
       stone: string;
       action: 'promised';
       slug: string;
+      route: string;
       progress: { index: number; total: number };
       nextReview?: {
         reviewSelf: RouteStoneGuardReviewSelf;
@@ -47,8 +49,9 @@ type FormatInput =
   | {
       operation: 'route.stone.set';
       stone: string;
-      action: 'challenged';
+      action: 'challenge:first' | 'challenge:rushed';
       slug: string;
+      route: string;
       selfReview?: {
         reviewSelf: RouteStoneGuardReviewSelf;
         index: number;
@@ -62,6 +65,8 @@ type FormatInput =
       passage: 'allowed' | 'blocked';
       note?: string;
       reason?: string;
+      slug?: string;
+      route?: string;
       selfReview?: {
         reviewSelf: RouteStoneGuardReviewSelf;
         index: number;
@@ -157,6 +162,8 @@ export const formatRouteStoneEmit = (input: FormatInput): string => {
       lines.push(
         formatLetsReflect({
           stone: input.stone,
+          slug: input.slug ?? input.selfReview.reviewSelf.slug,
+          route: input.route ?? '',
           reviewSelf: input.selfReview.reviewSelf,
           index: input.selfReview.index,
           total: input.selfReview.total,
@@ -165,10 +172,25 @@ export const formatRouteStoneEmit = (input: FormatInput): string => {
       return lines.join('\n');
     }
 
-    // handle challenged case (time enforcement)
-    if (input.action === 'challenged') {
-      // show patience message first
-      lines.push(formatPatienceFriend());
+    // handle challenge cases (time enforcement and rush detection)
+    if (
+      input.action === 'challenge:first' ||
+      input.action === 'challenge:rushed'
+    ) {
+      // prepend rush confrontation if rushed
+      if (input.action === 'challenge:rushed') {
+        lines.push(formatWhatsTheRush());
+        lines.push('');
+      }
+
+      // show patience message
+      lines.push(
+        formatPatienceFriend({
+          stone: input.stone,
+          slug: input.slug,
+          route: input.route,
+        }),
+      );
       lines.push('');
 
       // then show lets reflect reminder with the guide
@@ -176,6 +198,8 @@ export const formatRouteStoneEmit = (input: FormatInput): string => {
         lines.push(
           formatLetsReflect({
             stone: input.stone,
+            slug: input.slug,
+            route: input.route,
             reviewSelf: input.selfReview.reviewSelf,
             index: input.selfReview.index,
             total: input.selfReview.total,
@@ -211,6 +235,8 @@ export const formatRouteStoneEmit = (input: FormatInput): string => {
         lines.push(
           formatLetsReflect({
             stone: input.stone,
+            slug: input.nextReview.reviewSelf.slug,
+            route: input.route,
             reviewSelf: input.nextReview.reviewSelf,
             index: input.nextReview.index,
             total: input.nextReview.total,
@@ -219,8 +245,8 @@ export const formatRouteStoneEmit = (input: FormatInput): string => {
       }
 
       return lines.join('\n');
-    } else {
-      // format passage with optional note inline
+    } else if (input.action === 'passed') {
+      // format passage with optional note inline (passed without guard or selfReview)
       const passageValue = input.note
         ? `${input.passage} (${input.note})`
         : input.passage;

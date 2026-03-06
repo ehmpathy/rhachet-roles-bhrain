@@ -14,24 +14,27 @@ const ASSETS_DIR = path.join(__dirname, '.test/assets/route-drive');
 /**
  * .what = backdates triggered report mtime to bypass time enforcement
  * .why = tests need to verify promise flow without 30 second wait
+ *
+ * .note = only .since files are backdated; .uptil stays current (simulates proper wait)
+ * .note = backdates ALL matched .since files (there may be multiple with different hashes)
  */
 const backdateTriggeredReport = async (input: {
   tempDir: string;
   stone: string;
   slug: string;
 }): Promise<void> => {
-  // find ALL triggered report files for this slug (for hashbar check)
+  // find ALL triggered .since files for this slug (for hashbar check)
   const routeDir = path.join(input.tempDir, '.route');
   const files = await fs.readdir(routeDir).catch(() => []);
-  const triggeredFiles = files.filter(
+  const sinceFiles = files.filter(
     (f) =>
       f.includes(`${input.stone}.guard.selfreview.${input.slug}`) &&
-      f.endsWith('.triggered'),
+      f.endsWith('.triggered.since'),
   );
-  // backdate all triggered files (needed for hashbar threshold check)
+  // backdate all .since files (needed for hashbar threshold check)
   const mtimePast = new Date(Date.now() - 31 * 1000);
-  for (const triggeredFile of triggeredFiles) {
-    const filepath = path.join(routeDir, triggeredFile);
+  for (const sinceFile of sinceFiles) {
+    const filepath = path.join(routeDir, sinceFile);
     await fs.utimes(filepath, mtimePast, mtimePast);
   }
 };
@@ -462,12 +465,12 @@ judges:
         expect(result.stdout).toContain('pond barely rippled');
       });
 
-      then('shows truly reflection', () => {
-        expect(result.stdout).toContain('truly?');
+      then('shows truly reflection prompt', () => {
+        expect(result.stdout).toContain("when you've truly reflected, run");
       });
 
-      then('shows pond awaits message', () => {
-        expect(result.stdout).toContain('pond awaits');
+      then('shows be here now guidance', () => {
+        expect(result.stdout).toContain('be here now');
       });
 
       then('stdout has good vibes', () => {

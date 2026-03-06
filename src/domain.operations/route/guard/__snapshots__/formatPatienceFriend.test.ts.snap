@@ -5,16 +5,39 @@ exports[`formatPatienceFriend given: [case1] challenged review.self when: [t0] f
    │
    ├─ the pond barely rippled
    │
-   ├─ truly?
+   ├─ be here now 🪷
    │  ├─
    │  │
-   │  │  was each pebble turned?
-   │  │  each line read with care?
+   │  │  the review is the work.
+   │  │  not a gate to pass.
+   │  │  not a step to complete.
+   │  │  the work itself.
    │  │
-   │  │  did stillness guide you?
-   │  │  did clarity follow?
+   │  │  you are not the author.
+   │  │  you are the reviewer.
    │  │
    │  └─
    │
-   └─ the pond awaits. in time, all is clear 🌙"
+   ├─ trust the way 🪷
+   │  ├─
+   │  │
+   │  │  when you see this prompt
+   │  │    pause and articulate what you found
+   │  │
+   │  │  when you found issues
+   │  │    fix them before you continue
+   │  │
+   │  │  when you found no issues
+   │  │    articulate why it holds
+   │  │
+   │  │  when you cannot articulate either
+   │  │    you have not reviewed
+   │  │
+   │  └─
+   │
+   ├─ articulate into
+   │  └─ .behavior/v2026_03_05.behavior-example/review/self/1.vision.all-done.md
+   │
+   └─ when you've truly reflected, run
+      └─ rhx route.stone.set --stone 1.vision --as promised --that all-done"
 `;
