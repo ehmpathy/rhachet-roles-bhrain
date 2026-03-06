@@ -105,13 +105,17 @@ export const setStoneAsPassed = async (
         (r) => r.slug === nextReview.slug,
       );
 
-      // record that self-review was triggered (for time enforcement)
-      await setSelfReviewTriggeredReport({
-        stone: stoneMatched.name,
-        slug: nextReview.slug,
-        hash: promiseHash,
-        route: input.route,
-      });
+      // record that self-review was triggered (for time enforcement only)
+      // note: sinceOnly prevents .uptil creation, which would trigger rush on first promise
+      await setSelfReviewTriggeredReport(
+        {
+          stone: stoneMatched.name,
+          slug: nextReview.slug,
+          hash: promiseHash,
+          route: input.route,
+        },
+        { sinceOnly: true },
+      );
 
       // record blocker report: blocked on review.self
       await setStoneGuardBlockerReport({

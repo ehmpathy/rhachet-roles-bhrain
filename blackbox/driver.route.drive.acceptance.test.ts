@@ -13,7 +13,9 @@ const ASSETS_DIR = path.join(__dirname, '.test/assets/route-drive');
 
 /**
  * .what = backdates triggered report mtime to bypass time enforcement
- * .why = tests need to verify promise flow without 30 second wait
+ * .why = tests need to verify promise flow without 90 second wait
+ *
+ * .note = backdates ALL matched .since files (there may be multiple with different hashes)
  */
 const backdateTriggeredReport = async (input: {
   tempDir: string;
@@ -22,14 +24,14 @@ const backdateTriggeredReport = async (input: {
 }): Promise<void> => {
   const routeDir = path.join(input.tempDir, '.route');
   const files = await fs.readdir(routeDir).catch(() => []);
-  const triggeredFile = files.find(
+  const triggeredFiles = files.filter(
     (f) =>
       f.includes(`${input.stone}.guard.selfreview.${input.slug}`) &&
-      f.endsWith('.triggered'),
+      f.endsWith('.triggered.since'),
   );
-  if (triggeredFile) {
+  const mtimePast = new Date(Date.now() - 31 * 1000);
+  for (const triggeredFile of triggeredFiles) {
     const filepath = path.join(routeDir, triggeredFile);
-    const mtimePast = new Date(Date.now() - 31 * 1000);
     await fs.utimes(filepath, mtimePast, mtimePast);
   }
 };

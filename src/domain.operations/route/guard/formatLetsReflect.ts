@@ -6,6 +6,8 @@ import type { RouteStoneGuardReviewSelf } from '@src/domain.objects/Driver/Route
  */
 export const formatLetsReflect = (input: {
   stone: string;
+  slug: string;
+  route: string;
   reviewSelf: RouteStoneGuardReviewSelf;
   index: number;
   total: number;
@@ -73,22 +75,36 @@ export const formatLetsReflect = (input: {
   lines.push(`   │  └─`);
   lines.push(`   │`);
 
-  // after you finish section
-  lines.push(`   ├─ after you finish 🪷`);
+  // be here now section (identity reframe)
+  lines.push(`   ├─ be here now 🪷`);
   lines.push(`   │  ├─`);
   lines.push(`   │  │`);
-  lines.push(`   │  │  - did you check slowly, step by step?`);
-  lines.push(`   │  │  - did you take your time, or rush through?`);
-  lines.push(`   │  │  - have you been honest with yourself?`);
-  lines.push(`   │  │  - if you found issues, fix them before you promise`);
+  lines.push(`   │  │  refocus.`);
+  lines.push(`   │  │`);
+  lines.push(`   │  │  the review is the work.`);
+  lines.push(`   │  │  not a step to complete.`);
+  lines.push(`   │  │  not a gate to pass.`);
+  lines.push(`   │  │  not a checkbox to check.`);
+  lines.push(`   │  │`);
+  lines.push(`   │  │  it is the work itself.`);
+  lines.push(`   │  │`);
+  lines.push(`   │  │  you do not care about the stone.`);
+  lines.push(`   │  │  you only care about the review.`);
   lines.push(`   │  │`);
   lines.push(`   │  └─`);
   lines.push(`   │`);
 
-  // promise command block
-  const promiseCmd = `rhx route.stone.set --stone ${input.stone} --as promised --that ${input.reviewSelf.slug}`;
-  lines.push(`   └─ promise its done? if so, run`);
-  lines.push(`      └─ ${promiseCmd}`);
+  // articulate into section
+  const articulationPath = `${input.route}/review/self/${input.stone}.${input.slug}.md`;
+  lines.push(`   ├─ articulate into`);
+  lines.push(`   │  └─ ${articulationPath}`);
+  lines.push(`   │`);
+
+  // final instruction
+  lines.push(`   └─ when you've truly reflected, run`);
+  lines.push(
+    `      └─ rhx route.stone.set --stone ${input.stone} --as promised --that ${input.slug}`,
+  );
 
   return lines.join('\n');
 };

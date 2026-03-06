@@ -13,9 +13,9 @@ const ASSETS_DIR = path.join(__dirname, '.test/assets/route-journey');
 
 /**
  * .what = backdate triggered report mtime to bypass time enforcement
- * .why = tests need to verify promise flow without 30 second wait
+ * .why = tests need to verify promise flow without 90 second wait
  *
- * .note = backdates ALL matched files (there may be multiple with different hashes)
+ * .note = backdates ALL matched .since files (there may be multiple with different hashes)
  */
 const backdateTriggeredReport = async (input: {
   tempDir: string;
@@ -27,7 +27,7 @@ const backdateTriggeredReport = async (input: {
   const triggeredFiles = files.filter(
     (f) =>
       f.includes(`${input.stone}.guard.selfreview.${input.slug}`) &&
-      f.endsWith('.triggered'),
+      f.endsWith('.triggered.since'),
   );
   const mtimePast = new Date(Date.now() - 31 * 1000);
   for (const triggeredFile of triggeredFiles) {
@@ -421,13 +421,44 @@ describe('driver.route.journey.acceptance', () => {
       });
     });
 
-    when('[t10] 3.blueprint approved and pass reattempted', () => {
-      const result = useThen('pass succeeds after approval', async () => {
+    when('[t10] 3.blueprint approved and self-review completed', () => {
+      const result = useThen('pass succeeds after approval and self-review', async () => {
+        // grant approval
         await invokeRouteSkill({
           skill: 'route.stone.set',
           args: { stone: '3.blueprint', route: '.', as: 'approved' },
           cwd: scene.tempDir,
         });
+
+        // start self-review promise (triggers challenge:first)
+        await invokeRouteSkill({
+          skill: 'route.stone.set',
+          args: { stone: '3.blueprint', route: '.', as: 'promised', that: 'design-complete' },
+          cwd: scene.tempDir,
+        });
+
+        // backdate triggered files to bypass 90s time enforcement
+        await backdateTriggeredReport({
+          tempDir: scene.tempDir,
+          stone: '3.blueprint',
+          slug: 'design-complete',
+        });
+
+        // create articulation file
+        await fs.mkdir(path.join(scene.tempDir, 'review', 'self'), { recursive: true });
+        await fs.writeFile(
+          path.join(scene.tempDir, 'review', 'self', '3.blueprint.design-complete.md'),
+          '# design review\n\napi design is complete with all endpoints documented.',
+        );
+
+        // fulfill promise (articulation file now exists)
+        await invokeRouteSkill({
+          skill: 'route.stone.set',
+          args: { stone: '3.blueprint', route: '.', as: 'promised', that: 'design-complete' },
+          cwd: scene.tempDir,
+        });
+
+        // now pass the stone (all guards satisfied)
         return invokeRouteSkill({
           skill: 'route.stone.set',
           args: { stone: '3.blueprint', route: '.', as: 'passed' },

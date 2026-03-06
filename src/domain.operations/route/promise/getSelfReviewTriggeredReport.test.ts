@@ -27,15 +27,15 @@ describe('getSelfReviewTriggeredReport', () => {
     });
   });
 
-  given('[case2] marker file found', () => {
-    when('[t0] marker file was created', () => {
+  given('[case2] marker files found', () => {
+    when('[t0] marker files were created', () => {
       const tempDir = path.join(
         os.tmpdir(),
         `test-get-triggered-${Date.now()}-2`,
       );
 
-      then('returns mtime from file', async () => {
-        // create marker file
+      then('returns sinceMtime and uptilMtime from files', async () => {
+        // create marker files
         await setSelfReviewTriggeredReport({
           stone: '1.vision',
           slug: 'all-done',
@@ -53,7 +53,8 @@ describe('getSelfReviewTriggeredReport', () => {
 
         // verify result
         expect(result).not.toBeNull();
-        expect(result?.mtime.getTime()).toBeGreaterThan(0);
+        expect(result?.sinceMtime.getTime()).toBeGreaterThan(0);
+        expect(result?.uptilMtime.getTime()).toBeGreaterThan(0);
 
         // cleanup
         await fs.rm(tempDir, { recursive: true, force: true });
@@ -86,6 +87,45 @@ describe('getSelfReviewTriggeredReport', () => {
         });
 
         expect(result).toBeNull();
+
+        // cleanup
+        await fs.rm(tempDir, { recursive: true, force: true });
+      });
+    });
+  });
+
+  given('[case4] .uptil absent (graceful fallback)', () => {
+    when('[t0] only .since file found', () => {
+      const tempDir = path.join(
+        os.tmpdir(),
+        `test-get-triggered-${Date.now()}-4`,
+      );
+
+      then('uptilMtime equals sinceMtime', async () => {
+        // create marker files
+        const result1 = await setSelfReviewTriggeredReport({
+          stone: '1.vision',
+          slug: 'all-done',
+          hash: 'abc123',
+          route: tempDir,
+        });
+
+        // delete .uptil file to simulate partial state
+        await fs.rm(result1.uptilPath, { force: true });
+
+        // get report
+        const result = await getSelfReviewTriggeredReport({
+          stone: '1.vision',
+          slug: 'all-done',
+          hash: 'abc123',
+          route: tempDir,
+        });
+
+        // verify graceful fallback
+        expect(result).not.toBeNull();
+        expect(result?.uptilMtime.getTime()).toEqual(
+          result?.sinceMtime.getTime(),
+        );
 
         // cleanup
         await fs.rm(tempDir, { recursive: true, force: true });

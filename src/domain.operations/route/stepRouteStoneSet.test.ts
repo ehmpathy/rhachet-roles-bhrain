@@ -143,8 +143,9 @@ describe('stepRouteStoneSet', () => {
     );
 
     /**
-     * .what = backdate triggered report mtime to bypass time enforcement
-     * .why = tests need to verify promise flow without 30 second wait
+     * .what = backdate triggered.since mtime to bypass time enforcement
+     * .why = tests need to verify promise flow without 90 second wait
+     * .note = only .since is backdated; .uptil stays current (simulates proper wait)
      */
     const backdateTriggeredReport = async (input: {
       stone: string;
@@ -152,13 +153,13 @@ describe('stepRouteStoneSet', () => {
     }): Promise<void> => {
       const routeDir = path.join(tempDir, '.route');
       const files = await fs.readdir(routeDir).catch(() => []);
-      const triggeredFile = files.find(
+      const sinceFile = files.find(
         (f) =>
           f.includes(`${input.stone}.guard.selfreview.${input.slug}`) &&
-          f.endsWith('.triggered'),
+          f.endsWith('.triggered.since'),
       );
-      if (triggeredFile) {
-        const filepath = path.join(routeDir, triggeredFile);
+      if (sinceFile) {
+        const filepath = path.join(routeDir, sinceFile);
         const mtimePast = new Date(Date.now() - 91 * 1000);
         await fs.utimes(filepath, mtimePast, mtimePast);
       }

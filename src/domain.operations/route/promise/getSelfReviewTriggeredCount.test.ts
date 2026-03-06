@@ -18,19 +18,19 @@ describe('getSelfReviewTriggeredCount', () => {
     });
 
     when('[t0] count is requested', () => {
-      then('returns count 0 and null mtime', async () => {
+      then('returns count 0 and null newest', async () => {
         const result = await getSelfReviewTriggeredCount({
           stone: '1.vision',
           slug: 'all-done',
           route: scene.tempDir,
         });
         expect(result.count).toEqual(0);
-        expect(result.newestMtime).toBeNull();
+        expect(result.newest).toBeNull();
       });
     });
   });
 
-  given('[case2] one triggered file', () => {
+  given('[case2] one triggered file pair', () => {
     const scene = useBeforeAll(async () => {
       const tempDir = path.join(
         os.tmpdir(),
@@ -39,31 +39,38 @@ describe('getSelfReviewTriggeredCount', () => {
       const routeDir = path.join(tempDir, '.route');
       await fs.mkdir(routeDir, { recursive: true });
 
-      // create one triggered file
-      const filePath = path.join(
+      // create triggered file pair
+      const sincePath = path.join(
         routeDir,
-        '1.vision.guard.selfreview.all-done.abc123.triggered',
+        '1.vision.guard.selfreview.all-done.abc123.triggered.since',
       );
-      await fs.writeFile(filePath, 'triggered');
+      const uptilPath = path.join(
+        routeDir,
+        '1.vision.guard.selfreview.all-done.abc123.triggered.uptil',
+      );
+      await fs.writeFile(sincePath, 'triggered');
+      await fs.writeFile(uptilPath, 'triggered');
 
-      return { tempDir, routeDir };
+      return { tempDir, routeDir, sincePath, uptilPath };
     });
 
     when('[t0] count is requested', () => {
-      then('returns count 1 with valid mtime', async () => {
+      then('returns count 1 with valid newest', async () => {
         const result = await getSelfReviewTriggeredCount({
           stone: '1.vision',
           slug: 'all-done',
           route: scene.tempDir,
         });
         expect(result.count).toEqual(1);
-        expect(result.newestMtime).not.toBeNull();
-        expect(typeof result.newestMtime?.getTime()).toEqual('number');
+        expect(result.newest).not.toBeNull();
+        expect(result.newest?.hash).toEqual('abc123');
+        expect(typeof result.newest?.sinceMtime.getTime()).toEqual('number');
+        expect(typeof result.newest?.uptilMtime.getTime()).toEqual('number');
       });
     });
   });
 
-  given('[case3] multiple triggered files with different hashes', () => {
+  given('[case3] multiple triggered file pairs with different hashes', () => {
     const scene = useBeforeAll(async () => {
       const tempDir = path.join(
         os.tmpdir(),
@@ -72,23 +79,35 @@ describe('getSelfReviewTriggeredCount', () => {
       const routeDir = path.join(tempDir, '.route');
       await fs.mkdir(routeDir, { recursive: true });
 
-      // create multiple triggered files with different hashes
-      const files = [
-        '1.vision.guard.selfreview.all-done.hash1.triggered',
-        '1.vision.guard.selfreview.all-done.hash2.triggered',
-        '1.vision.guard.selfreview.all-done.hash3.triggered',
-      ];
+      // create multiple triggered file pairs with different hashes
+      const hashes = ['hash1', 'hash2', 'hash3'];
 
-      for (const file of files) {
-        await fs.writeFile(path.join(routeDir, file), 'triggered');
+      for (const hash of hashes) {
+        await fs.writeFile(
+          path.join(
+            routeDir,
+            `1.vision.guard.selfreview.all-done.${hash}.triggered.since`,
+          ),
+          'triggered',
+        );
+        await fs.writeFile(
+          path.join(
+            routeDir,
+            `1.vision.guard.selfreview.all-done.${hash}.triggered.uptil`,
+          ),
+          'triggered',
+        );
       }
 
-      // set newest file to future mtime
-      const newestPath = path.join(routeDir, files[2]!);
+      // set newest .since file to future mtime
+      const newestSincePath = path.join(
+        routeDir,
+        '1.vision.guard.selfreview.all-done.hash3.triggered.since',
+      );
       const futureTime = new Date(Date.now() + 1000);
-      await fs.utimes(newestPath, futureTime, futureTime);
+      await fs.utimes(newestSincePath, futureTime, futureTime);
 
-      return { tempDir, routeDir, newestPath };
+      return { tempDir, routeDir, newestSincePath };
     });
 
     when('[t0] count is requested', () => {
@@ -101,14 +120,17 @@ describe('getSelfReviewTriggeredCount', () => {
         expect(result.count).toEqual(3);
       });
 
-      then('newestMtime is the newest file mtime', async () => {
+      then('newest is the file with newest .since mtime', async () => {
         const result = await getSelfReviewTriggeredCount({
           stone: '1.vision',
           slug: 'all-done',
           route: scene.tempDir,
         });
-        const stat = await fs.stat(scene.newestPath);
-        expect(result.newestMtime?.getTime()).toEqual(stat.mtime.getTime());
+        const stat = await fs.stat(scene.newestSincePath);
+        expect(result.newest?.hash).toEqual('hash3');
+        expect(result.newest?.sinceMtime.getTime()).toEqual(
+          stat.mtime.getTime(),
+        );
       });
     });
   });
@@ -125,14 +147,14 @@ describe('getSelfReviewTriggeredCount', () => {
     });
 
     when('[t0] count is requested', () => {
-      then('returns count 0 and null mtime', async () => {
+      then('returns count 0 and null newest', async () => {
         const result = await getSelfReviewTriggeredCount({
           stone: '1.vision',
           slug: 'all-done',
           route: scene.tempDir,
         });
         expect(result.count).toEqual(0);
-        expect(result.newestMtime).toBeNull();
+        expect(result.newest).toBeNull();
       });
     });
   });
@@ -150,21 +172,42 @@ describe('getSelfReviewTriggeredCount', () => {
       await fs.writeFile(
         path.join(
           routeDir,
-          '1.vision.guard.selfreview.all-done.hash1.triggered',
+          '1.vision.guard.selfreview.all-done.hash1.triggered.since',
         ),
         'triggered',
       );
       await fs.writeFile(
         path.join(
           routeDir,
-          '1.vision.guard.selfreview.all-done.hash2.triggered',
+          '1.vision.guard.selfreview.all-done.hash1.triggered.uptil',
         ),
         'triggered',
       );
       await fs.writeFile(
         path.join(
           routeDir,
-          '1.vision.guard.selfreview.tests-pass.hash1.triggered',
+          '1.vision.guard.selfreview.all-done.hash2.triggered.since',
+        ),
+        'triggered',
+      );
+      await fs.writeFile(
+        path.join(
+          routeDir,
+          '1.vision.guard.selfreview.all-done.hash2.triggered.uptil',
+        ),
+        'triggered',
+      );
+      await fs.writeFile(
+        path.join(
+          routeDir,
+          '1.vision.guard.selfreview.tests-pass.hash1.triggered.since',
+        ),
+        'triggered',
+      );
+      await fs.writeFile(
+        path.join(
+          routeDir,
+          '1.vision.guard.selfreview.tests-pass.hash1.triggered.uptil',
         ),
         'triggered',
       );
@@ -191,6 +234,85 @@ describe('getSelfReviewTriggeredCount', () => {
           route: scene.tempDir,
         });
         expect(result.count).toEqual(1);
+      });
+    });
+  });
+
+  given('[case6] .uptil absent (graceful fallback)', () => {
+    const scene = useBeforeAll(async () => {
+      const tempDir = path.join(
+        os.tmpdir(),
+        `test-triggered-count-${Date.now()}`,
+      );
+      const routeDir = path.join(tempDir, '.route');
+      await fs.mkdir(routeDir, { recursive: true });
+
+      // create only .since file (simulate .uptil deleted)
+      const sincePath = path.join(
+        routeDir,
+        '1.vision.guard.selfreview.all-done.abc123.triggered.since',
+      );
+      await fs.writeFile(sincePath, 'triggered');
+
+      return { tempDir, sincePath };
+    });
+
+    when('[t0] count is requested', () => {
+      then('returns newest with uptilMtime equal to sinceMtime', async () => {
+        const result = await getSelfReviewTriggeredCount({
+          stone: '1.vision',
+          slug: 'all-done',
+          route: scene.tempDir,
+        });
+        expect(result.count).toEqual(1);
+        expect(result.newest).not.toBeNull();
+        // graceful fallback: uptilMtime equals sinceMtime when .uptil absent
+        expect(result.newest?.uptilMtime.getTime()).toEqual(
+          result.newest?.sinceMtime.getTime(),
+        );
+      });
+    });
+  });
+
+  given('[case7] sinceMtime < uptilMtime (rush detection)', () => {
+    const scene = useBeforeAll(async () => {
+      const tempDir = path.join(
+        os.tmpdir(),
+        `test-triggered-count-${Date.now()}`,
+      );
+      const routeDir = path.join(tempDir, '.route');
+      await fs.mkdir(routeDir, { recursive: true });
+
+      const sincePath = path.join(
+        routeDir,
+        '1.vision.guard.selfreview.all-done.abc123.triggered.since',
+      );
+      const uptilPath = path.join(
+        routeDir,
+        '1.vision.guard.selfreview.all-done.abc123.triggered.uptil',
+      );
+
+      // create .since first
+      await fs.writeFile(sincePath, 'triggered');
+
+      // wait then create .uptil (newer mtime)
+      await new Promise((done) => setTimeout(done, 50));
+      await fs.writeFile(uptilPath, 'triggered');
+
+      return { tempDir, sincePath, uptilPath };
+    });
+
+    when('[t0] count is requested', () => {
+      then('sinceMtime is less than uptilMtime', async () => {
+        const result = await getSelfReviewTriggeredCount({
+          stone: '1.vision',
+          slug: 'all-done',
+          route: scene.tempDir,
+        });
+        expect(result.newest).not.toBeNull();
+        expect(result.newest!.sinceMtime.getTime()).toBeLessThan(
+          result.newest!.uptilMtime.getTime(),
+        );
       });
     });
   });

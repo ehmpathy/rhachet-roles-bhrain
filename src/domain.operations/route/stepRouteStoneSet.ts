@@ -116,8 +116,11 @@ export const stepRouteStoneSet = async (
       hashbar: reviewSelf?.hashbar,
     });
 
-    // if challenged, return early with patience message
-    if (challengeDecision.decision === 'challenged') {
+    // if challenged, return early with patience message (optionally with rush confrontation)
+    if (
+      challengeDecision.decision === 'challenge:first' ||
+      challengeDecision.decision === 'challenge:rushed'
+    ) {
       const reviewIndex = selfReviews.findIndex((r) => r.slug === input.that);
       return {
         challenged: true,
@@ -125,8 +128,9 @@ export const stepRouteStoneSet = async (
           stdout: formatRouteStoneEmit({
             operation: 'route.stone.set',
             stone: stoneMatched.name,
-            action: 'challenged',
+            action: challengeDecision.decision,
             slug: input.that,
+            route: input.route,
             selfReview: reviewSelf
               ? {
                   reviewSelf,
@@ -177,6 +181,7 @@ export const stepRouteStoneSet = async (
           stone: stoneMatched.name,
           action: 'promised',
           slug: input.that,
+          route: input.route,
           progress: { index: promisedCount, total },
           nextReview,
         }),

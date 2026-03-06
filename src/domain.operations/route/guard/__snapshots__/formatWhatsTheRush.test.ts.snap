@@ -1,0 +1,23 @@
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
+
+exports[`formatWhatsTheRush given: [case1] output structure matches vision when: [t0] formatWhatsTheRush called then: snapshot matches vision 1`] = `
+"🍂 what is the rush?
+   ├─ ...
+   │
+   ├─ what does haste cost?
+   ├─ ...
+   │
+   ├─ does the self weigh more than the whole?
+   │  ├─ what you miss, they must find
+   │  ├─ minutes saved, hours spent
+   │  └─ your haste, their burden
+   │
+   ├─ each review is an opportunity
+   │  ├─ a chance to find a deeper truth
+   │  ├─ not one to squander
+   │  └─ no matter how repetitive
+   │
+   └─ trust the way
+      ├─ what calls for pause, calls for cause
+      └─ be true to the review 🍵"
+`;
