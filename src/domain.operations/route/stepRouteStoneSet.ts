@@ -13,16 +13,17 @@ import { findOneStoneByPattern } from './stones/asStoneGlob';
 import { getAllStones } from './stones/getAllStones';
 import { setStoneAsApproved } from './stones/setStoneAsApproved';
 import { setStoneAsPassed } from './stones/setStoneAsPassed';
+import { setStoneAsRewound } from './stones/setStoneAsRewound';
 
 /**
- * .what = orchestrates set of stone status (passed, approved, or promised)
- * .why = enables robots and humans to mark milestones complete
+ * .what = orchestrates set of stone status (passed, approved, promised, or rewound)
+ * .why = enables robots and humans to mark milestones complete or rewind for fresh evaluation
  */
 export const stepRouteStoneSet = async (
   input: {
     stone: string;
     route: string;
-    as: 'passed' | 'approved' | 'promised';
+    as: 'passed' | 'approved' | 'promised' | 'rewound';
     that?: string;
   },
   context: ContextCliEmit & { isTTY: boolean },
@@ -30,6 +31,7 @@ export const stepRouteStoneSet = async (
   passed?: boolean;
   approved?: boolean;
   promised?: boolean;
+  rewound?: boolean;
   challenged?: boolean;
   refs?: { reviews: string[]; judges: string[] };
   emit: { stdout: string; stderr?: string } | null;
@@ -45,6 +47,20 @@ export const stepRouteStoneSet = async (
     );
     return {
       approved: result.approved,
+      emit: result.emit,
+    };
+  }
+
+  if (input.as === 'rewound') {
+    const result = await setStoneAsRewound(
+      {
+        stone: input.stone,
+        route: input.route,
+      },
+      context,
+    );
+    return {
+      rewound: result.rewound,
       emit: result.emit,
     };
   }

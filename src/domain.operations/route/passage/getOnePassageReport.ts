@@ -8,7 +8,7 @@ import { getAllPassageReports } from './getAllPassageReports';
  */
 export const getOnePassageReport = async (input: {
   stone: string;
-  status?: 'passed' | 'approved' | 'blocked';
+  status?: 'passed' | 'approved' | 'blocked' | 'rewound';
   route: string;
 }): Promise<PassageReport | null> => {
   const reports = await getAllPassageReports({ route: input.route });

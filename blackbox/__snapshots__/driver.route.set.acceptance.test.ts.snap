@@ -5,7 +5,7 @@ exports[`driver.route.set.acceptance given: [case5] route.stone.set with flexibl
 
 🗿 route.stone.set
    └─ stone = 1.vision
-   └─ passage = allowed (unguarded)
+      └─ passage = allowed (unguarded)
 "
 `;
 
@@ -30,5 +30,21 @@ exports[`driver.route.set.acceptance given: [case6] route.stone.set with ambiguo
     "3.plan"
   ]
 }
+"
+`;
+
+exports[`driver.route.set.acceptance given: [case8] route.stone.set --as rewound when: [t1] cascade rewind affects subsequent stones then: stdout matches snapshot 1`] = `
+"🦉 the way speaks for itself
+
+🗿 route.stone.set
+   ├─ stone = 2.criteria
+   ├─ cascade
+   │  ├─ 2.criteria
+   │  │  ├─ deleted: 1 reviews, 0 judges, 0 promises, 0 triggers
+   │  │  └─ passage: rewound
+   │  └─ 3.plan
+   │     ├─ deleted: 1 reviews, 0 judges, 0 promises, 0 triggers
+   │     └─ passage: rewound
+   └─ done
 "
 `;

@@ -107,7 +107,7 @@ options:
 const printSetHelp = (): void => {
   console.log(
     `
-route.stone.set - mark stone as passed, approved, or promised
+route.stone.set - mark stone as passed, approved, promised, or rewound
 
 usage:
   route.stone.set [options]
@@ -115,7 +115,7 @@ usage:
 options:
   --stone <name>     stone name or glob pattern (required)
   --route <path>     path to route directory (required)
-  --as <status>      status to set: passed, approved, or promised (required)
+  --as <status>      status to set: passed, approved, promised, or rewound (required)
   --that <slug>      review.self slug to promise (required for --as promised)
   --help             show this help message
 
@@ -123,6 +123,7 @@ examples:
   route.stone.set --stone 1.vision --as passed
   route.stone.set --stone 1.vision --as approved
   route.stone.set --stone 1.vision --as promised --that all-done
+  route.stone.set --stone 3.blueprint --as rewound
 `.trim(),
   );
 };
@@ -461,9 +462,12 @@ export const routeStoneSet = async (): Promise<void> => {
     !options.as ||
     (options.as !== 'passed' &&
       options.as !== 'approved' &&
-      options.as !== 'promised')
+      options.as !== 'promised' &&
+      options.as !== 'rewound')
   ) {
-    console.error('error: --as must be "passed", "approved", or "promised"');
+    console.error(
+      'error: --as must be "passed", "approved", "promised", or "rewound"',
+    );
     console.error('run with --help for usage');
     process.exit(2);
   }
@@ -493,7 +497,7 @@ export const routeStoneSet = async (): Promise<void> => {
       {
         stone: options.stone,
         route: options.route,
-        as: options.as as 'passed' | 'approved' | 'promised',
+        as: options.as as 'passed' | 'approved' | 'promised' | 'rewound',
         that: options.that,
       },
       { ...progress.context, isTTY },
