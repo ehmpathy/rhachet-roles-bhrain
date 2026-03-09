@@ -12,8 +12,8 @@ export const getContextOpenAI = (): ContextOpenAI => ({
   openai: {
     auth: {
       key:
-        process.env.PREP_OPENAI_KEY ??
-        UnexpectedCodePathError.throw('prep openai key not declared in env'),
+        process.env.OPENAI_API_KEY ??
+        UnexpectedCodePathError.throw('OPENAI_API_KEY not declared in env'),
     },
     llm: {
       // model: 'gpt-4-turbo-2024-04-09',
