@@ -2,11 +2,17 @@ import { UnexpectedCodePathError } from 'helpful-errors';
 
 import { ContextOpenAI } from '@src/access/sdk/sdkOpenAi';
 
+/**
+ * .what = creates ContextOpenAI from environment
+ * .why = enables thinker skills to use openai
+ *
+ * todo: cutover to BrainAtom from rhachet-brains-openai
+ */
 export const getContextOpenAI = (): ContextOpenAI => ({
   openai: {
     auth: {
       key:
-        process.env.OPENAI_API_KEY ??
+        process.env.PREP_OPENAI_KEY ??
         UnexpectedCodePathError.throw('prep openai key not declared in env'),
     },
     llm: {
