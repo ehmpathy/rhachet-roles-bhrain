@@ -2,12 +2,13 @@ import { DomainLiteral } from 'domain-objects';
 
 /**
  * .what = a report of a stone's passage status in passage.jsonl
- * .why = consolidates all passage markers (passed, approved, blocked) into one file
+ * .why = consolidates all passage markers (passed, approved, blocked, rewound) into one file
  *
  * status values:
  * - 'passed': stone has passed all guards
  * - 'approved': stone has been approved
  * - 'blocked': stone is blocked from passage
+ * - 'rewound': stone validation state has been cleared for fresh evaluation
  */
 export interface PassageReport {
   /**
@@ -18,7 +19,7 @@ export interface PassageReport {
   /**
    * the passage status
    */
-  status: 'passed' | 'approved' | 'blocked';
+  status: 'passed' | 'approved' | 'blocked' | 'rewound';
 
   /**
    * what blocks passage (only for status='blocked')

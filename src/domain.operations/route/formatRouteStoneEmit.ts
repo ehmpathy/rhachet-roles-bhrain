@@ -29,6 +29,16 @@ type FormatInput =
   | {
       operation: 'route.stone.set';
       stone: string;
+      action: 'rewound';
+      cascade: Array<{
+        stone: string;
+        deleted: string;
+        passage: string;
+      }>;
+    }
+  | {
+      operation: 'route.stone.set';
+      stone: string;
       action: 'blocked';
       reason: string;
       guidance: string;
@@ -219,11 +229,25 @@ export const formatRouteStoneEmit = (input: FormatInput): string => {
     }
 
     lines.push(`🗿 ${input.operation}`);
-    lines.push(`   └─ stone = ${input.stone}`);
 
     if (input.action === 'approved') {
+      lines.push(`   └─ stone = ${input.stone}`);
       lines.push(`      └─ ✓ approved`);
+    } else if (input.action === 'rewound') {
+      // format cascade with deletion counts
+      lines.push(`   ├─ stone = ${input.stone}`);
+      lines.push(`   ├─ cascade`);
+      input.cascade.forEach((c, i) => {
+        const isLast = i === input.cascade.length - 1;
+        const connector = isLast ? '└─' : '├─';
+        lines.push(`   │  ${connector} ${c.stone}`);
+        lines.push(`   │  ${isLast ? ' ' : '│'}  ├─ deleted: ${c.deleted}`);
+        lines.push(`   │  ${isLast ? ' ' : '│'}  └─ passage: ${c.passage}`);
+      });
+      lines.push(`   └─ done`);
+      return lines.join('\n');
     } else if (input.action === 'promised') {
+      lines.push(`   ├─ stone = ${input.stone}`);
       // show progress per vision: "passage = progressed (review.self N/M promised)"
       lines.push(
         `   └─ passage = progressed (review.self ${input.progress.index}/${input.progress.total} promised)`,
@@ -252,10 +276,12 @@ export const formatRouteStoneEmit = (input: FormatInput): string => {
         : input.passage;
 
       if (input.passage === 'blocked' && input.reason) {
+        lines.push(`   ├─ stone = ${input.stone}`);
         lines.push(`   ├─ passage = ${passageValue}`);
         lines.push(`   └─ reason = ${input.reason}`);
       } else {
-        lines.push(`   └─ passage = ${passageValue}`);
+        lines.push(`   └─ stone = ${input.stone}`);
+        lines.push(`      └─ passage = ${passageValue}`);
       }
     }
   }

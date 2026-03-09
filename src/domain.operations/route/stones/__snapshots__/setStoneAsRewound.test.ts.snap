@@ -1,0 +1,16 @@
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
+
+exports[`setStoneAsRewound given: [case7] stdout snapshot for cascade rewind when: [t0] setStoneAsRewound is called for stone 2 then: stdout matches snapshot 1`] = `
+"🦉 the way speaks for itself
+
+🗿 route.stone.set
+   ├─ stone = 2.criteria
+   ├─ cascade
+   │  ├─ 2.criteria
+   │  │  ├─ deleted: 1 reviews, 1 judges, 0 promises, 0 triggers
+   │  │  └─ passage: rewound
+   │  └─ 3.blueprint
+   │     ├─ deleted: 0 reviews, 0 judges, 1 promises, 0 triggers
+   │     └─ passage: rewound
+   └─ done"
+`;
