@@ -48,36 +48,63 @@ compare cluster map against inventory:
 
 ---
 
-## phase 3: deep cluster extraction (incremental)
+## phase 3: deep cluster extraction (parallel subagents)
 
-for each cluster in the map, one at a time:
-1. read ONLY the kernel files that contain that cluster's kernels
-2. extract full content for those specific kernels
+use parallel subagents to extract clusters efficiently:
+- spawn up to 10 subagents at a time (rate limit protection)
+- each subagent uses sonnet model (min brain for cost efficiency)
+- wait for batch to complete before spawning next batch
+
+each subagent receives:
+- the cluster name and its kernel refs from the cluster map
+- instruction to read the source kernel files BEFORE writing
+
+subagent workflow:
+1. READ the kernel files that contain this cluster's kernels (MUST read before write)
+2. extract full content for those specific kernels from the source files
 3. blend converged kernels into representative kernel
 4. add citations: [$ref(qN-kM)] for each source kernel
 5. note relationships: dependencies, contradictions, reinforcements
-6. WRITE to: `clusters/2.{cluster-name}.md`
-7. /compact before next cluster
+6. WRITE to: `clusters/2.{NNN}.{cluster-name}.md` (NNN = zero-padded sequence number, e.g., 001, 002)
+
+critical: subagent MUST read source kernel files first — do not write from memory or summary
 
 cluster file format:
 ```
-## {cluster name}
+# {cluster name}
 
-### representative kernel
-{blended summary of converged kernels}
+## representative kernel
 
-### citations
-- [$ref(q1-k3)] {brief}
-- [$ref(q5-k12)] {brief}
+{descriptive treestruct article using .what, .why, .how, .when, .where, .examples, .exceptions, etc. as appropriate. use bullets and sub-structure. avoid run-on paragraphs. be thorough and descriptive, not terse.}
 
-### relationships
+## source evidence
+
+### [$ref(qN-kM)] {kernel summary}
+
+**label:** {FACT | SUMP | KHUE | HYPO | OPIN}
+**source:** {original source name and date}
+**link:** {url if available, else "n/a"}
+**quote:** "{exact quote from source}"
+
+### [$ref(qN-kM)] {kernel summary}
+
+**label:** {FACT | SUMP | KHUE | HYPO | OPIN}
+**source:** {original source name and date}
+**link:** {url if available, else "n/a"}
+**quote:** "{exact quote from source}"
+
+## relationships
+
 - depends on: [$ref(other-cluster)]
 - reinforces: [$ref(other-cluster)]
 - contradicts: [$ref(other-cluster)]
 
-### gaps
-- {questions raised by symmetry or missing coverage}
+## gaps
+
+- {questions raised by symmetry or absent coverage}
 ```
+
+rationale: clusters must trace to original sources for verification, citation in final deliverables, and audit trail from claim to evidence. kernel references alone are insufficient.
 
 continue until all clusters extracted.
 
@@ -100,5 +127,8 @@ emit to: `3.2.absorb.clusters.v1.i1.md`
 
 phase 1: `process kernel file qN` → update cluster map → /compact → repeat
 phase 2: `verify all kernels accounted`
-phase 3: `extract {cluster-name}` → write cluster file → /compact → repeat
+phase 3: spawn 10 subagents (sonnet) in parallel → each extracts one cluster → wait for batch → repeat until all 403 clusters done
 phase 4: `merge all clusters into treestruct`
+
+track your progress and emit it as you go to '3.2.probes.absorb.clusters.v1.i1.progress.md'
+
