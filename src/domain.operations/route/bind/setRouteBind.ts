@@ -1,14 +1,12 @@
-import { execSync } from 'child_process';
 import * as fs from 'fs/promises';
 import { BadRequestError } from 'helpful-errors';
 import * as path from 'path';
 
-import { sanitizeBranchName } from '@src/domain.operations/review/sanitizeBranchName';
-import { enumFilesFromGlob } from '@src/utils/enumFilesFromGlob';
+import { getAllBindFlagsByBranch } from './getAllBindFlagsByBranch';
 
 /**
  * .what = binds a route to the current branch via flag file
- * .why = enables subsequent route commands to auto-resolve --route
+ * .why = enables subsequent route commands to auto-lookup --route
  */
 export const setRouteBind = async (input: {
   route: string;
@@ -26,8 +24,12 @@ export const setRouteBind = async (input: {
     );
   }
 
-  // get current branch
-  const branch = execSync('git rev-parse --abbrev-ref HEAD').toString().trim();
+  // scan for pre-bound flags for this branch
+  const {
+    branch,
+    branchFlat,
+    flagFiles: flagFilesFound,
+  } = await getAllBindFlagsByBranch({ branch: null });
 
   // reject protected branches
   const protectedBranches = ['main', 'master'];
@@ -35,18 +37,6 @@ export const setRouteBind = async (input: {
     throw new BadRequestError('cannot bind route on protected branch', {
       branch,
     });
-
-  // flatten branch name
-  const branchFlat = sanitizeBranchName({ branch });
-
-  // scan for pre-bound flags for this branch
-  const flagGlob = `**/.route/.bind.${branchFlat}.flag`;
-  const flagFilesFound = await enumFilesFromGlob({
-    glob: flagGlob,
-    cwd: process.cwd(),
-    dot: true,
-    ignore: ['**/node_modules/**'],
-  });
 
   // if found, check if same route or different
   if (flagFilesFound.length > 0) {
