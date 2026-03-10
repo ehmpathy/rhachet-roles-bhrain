@@ -171,6 +171,12 @@ describe('stepRouteStoneSet', () => {
       });
       // create artifact for 1.vision
       await fs.writeFile(path.join(tempDir, '1.vision.md'), '# Vision');
+      // create articulation file for 1.vision.all-done (required by file presence check)
+      await fs.mkdir(path.join(tempDir, 'review', 'self'), { recursive: true });
+      await fs.writeFile(
+        path.join(tempDir, 'review', 'self', '1.vision.all-done.md'),
+        '# self-review\n',
+      );
     });
 
     afterEach(async () => {

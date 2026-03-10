@@ -1,0 +1,18 @@
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
+
+exports[`formatWhatHaveYouSeen given: [case1] output structure matches vision when: [t0] formatWhatHaveYouSeen called then: snapshot matches vision 1`] = `
+"🍂 what have you seen?
+   ├─ ...
+   │
+   ├─ the articulation is absent
+   │  └─ .behavior/v2026_03_08.feature/review/self/3.1.blueprint.design.md
+   │
+   ├─ a promise without words
+   │  ├─ is not a promise
+   │  └─ it is a daydream
+   │
+   └─ the way asks
+      ├─ write what you found
+      ├─ write what you didn't
+      └─ then return 🍵"
+`;

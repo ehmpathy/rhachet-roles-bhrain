@@ -8,6 +8,7 @@ export const formatPatienceFriend = (input: {
   stone: string;
   slug: string;
   route: string;
+  index: number;
 }): string => {
   const lines: string[] = [];
 

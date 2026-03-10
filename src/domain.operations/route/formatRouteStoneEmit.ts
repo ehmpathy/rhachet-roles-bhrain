@@ -3,7 +3,9 @@ import type { RouteStoneGuardReviewSelf } from '@src/domain.objects/Driver/Route
 import { formatGuardTree } from './guard/formatGuardTree';
 import { formatLetsReflect } from './guard/formatLetsReflect';
 import { formatPatienceFriend } from './guard/formatPatienceFriend';
+import { formatWhatHaveYouSeen } from './guard/formatWhatHaveYouSeen';
 import { formatWhatsTheRush } from './guard/formatWhatsTheRush';
+import { getSelfReviewArticulationPath } from './guard/getSelfReviewArticulationPath';
 
 /**
  * .what = formats route stone operation output with good vibes
@@ -59,9 +61,10 @@ type FormatInput =
   | {
       operation: 'route.stone.set';
       stone: string;
-      action: 'challenge:first' | 'challenge:rushed';
+      action: 'challenge:first' | 'challenge:rushed' | 'challenge:absent';
       slug: string;
       route: string;
+      articulationPath?: string;
       selfReview?: {
         reviewSelf: RouteStoneGuardReviewSelf;
         index: number;
@@ -182,6 +185,51 @@ export const formatRouteStoneEmit = (input: FormatInput): string => {
       return lines.join('\n');
     }
 
+    // handle challenge:absent case (file presence check)
+    if (input.action === 'challenge:absent') {
+      // prepend what have you seen confrontation (articulationPath always present for absent)
+      const index = input.selfReview?.index ?? 1;
+      lines.push(
+        formatWhatHaveYouSeen({
+          articulationPath:
+            input.articulationPath ??
+            getSelfReviewArticulationPath({
+              route: input.route,
+              stone: input.stone,
+              index,
+              slug: input.slug,
+            }),
+        }),
+      );
+      lines.push('');
+
+      // show patience message
+      lines.push(
+        formatPatienceFriend({
+          stone: input.stone,
+          slug: input.slug,
+          route: input.route,
+          index,
+        }),
+      );
+      lines.push('');
+
+      // then show lets reflect reminder with the guide
+      if (input.selfReview) {
+        lines.push(
+          formatLetsReflect({
+            stone: input.stone,
+            slug: input.slug,
+            route: input.route,
+            reviewSelf: input.selfReview.reviewSelf,
+            index: input.selfReview.index,
+            total: input.selfReview.total,
+          }),
+        );
+      }
+      return lines.join('\n');
+    }
+
     // handle challenge cases (time enforcement and rush detection)
     if (
       input.action === 'challenge:first' ||
@@ -194,11 +242,13 @@ export const formatRouteStoneEmit = (input: FormatInput): string => {
       }
 
       // show patience message
+      const index = input.selfReview?.index ?? 1;
       lines.push(
         formatPatienceFriend({
           stone: input.stone,
           slug: input.slug,
           route: input.route,
+          index,
         }),
       );
       lines.push('');

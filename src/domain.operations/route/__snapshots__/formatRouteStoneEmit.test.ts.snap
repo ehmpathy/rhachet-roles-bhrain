@@ -1,0 +1,61 @@
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
+
+exports[`formatRouteStoneEmit given: [case1] challenge:absent action when: [t0] formatRouteStoneEmit called with challenge:absent then: snapshot matches vision 1`] = `
+"🦉 the way speaks for itself
+
+🍂 what have you seen?
+   ├─ ...
+   │
+   ├─ the articulation is absent
+   │  └─ .behavior/v2026_03_08.feature/review/self/3.1.blueprint.design.md
+   │
+   ├─ a promise without words
+   │  ├─ is not a promise
+   │  └─ it is a daydream
+   │
+   └─ the way asks
+      ├─ write what you found
+      ├─ write what you didn't
+      └─ then return 🍵
+
+🗿 patience, friend
+   │
+   ├─ the pond barely rippled
+   │
+   ├─ be here now 🪷
+   │  ├─
+   │  │
+   │  │  the review is the work.
+   │  │  not a gate to pass.
+   │  │  not a step to complete.
+   │  │  the work itself.
+   │  │
+   │  │  you are not the author.
+   │  │  you are the reviewer.
+   │  │
+   │  └─
+   │
+   ├─ trust the way 🪷
+   │  ├─
+   │  │
+   │  │  when you see this prompt
+   │  │    pause and articulate what you found
+   │  │
+   │  │  when you found issues
+   │  │    fix them before you continue
+   │  │
+   │  │  when you found no issues
+   │  │    articulate why it holds
+   │  │
+   │  │  when you cannot articulate either
+   │  │    you have not reviewed
+   │  │
+   │  └─
+   │
+   ├─ articulate into
+   │  └─ .behavior/v2026_03_08.feature/review/self/3.1.blueprint.design.md
+   │
+   └─ when you've truly reflected, run
+      └─ rhx route.stone.set --stone 3.1.blueprint --as promised --that design
+"
+`;
