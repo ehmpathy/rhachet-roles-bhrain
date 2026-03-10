@@ -70,7 +70,6 @@
     "upgrade:rhachet": "rhachet upgrade"
   },
   "dependencies": {
-    "@anthropic-ai/sdk": "0.51.0",
     "@ehmpathy/as-command": "1.0.3",
     "@ehmpathy/uni-time": "1.8.1",
     "as-procedure": "1.1.7",
