@@ -9,6 +9,17 @@ import {
 import { setupSourceRepo, setupTargetDir } from './.test/setup';
 import { stepReflect } from './stepReflect';
 
+/**
+ * .what = config for probabilistic tests that invoke LLM brains
+ * .why = LLM responses can timeout or vary; retry ensures CI stability
+ *
+ * @see .agent/repo=.this/role=any/briefs/rule.require.repeatable-for-llm-tests.md
+ */
+const REPEATABLE_CONFIG = {
+  attempts: 3,
+  criteria: process.env.CI ? 'SOME' : 'EVERY',
+} as const;
+
 describe('stepReflect.caseProseAuthor', () => {
   // increase timeout for brain invocations (3 minutes)
   jest.setTimeout(180000);
@@ -17,36 +28,44 @@ describe('stepReflect.caseProseAuthor', () => {
     brain: genTestBrainContext({ brain: DEFAULT_TEST_BRAIN }),
   }));
 
-  given('[case1] prose-author feedback with valid target', () => {
-    const scene = useBeforeAll(async () => {
-      const { repoDir: sourceDir } = await setupSourceRepo('prose-author');
-      const { targetDir } = await setupTargetDir();
+  given.repeatably(REPEATABLE_CONFIG)(
+    '[case1] prose-author feedback with valid target',
+    () => {
+      const scene = useBeforeAll(async () => {
+        const { repoDir: sourceDir } = await setupSourceRepo('prose-author');
+        const { targetDir } = await setupTargetDir();
 
-      const result = await stepReflect(
-        {
-          source: sourceDir,
-          target: targetDir,
-          mode: 'push',
-        },
-        { brain: brainScene.brain },
-      );
+        const result = await stepReflect(
+          {
+            source: sourceDir,
+            target: targetDir,
+            mode: 'push',
+          },
+          { brain: brainScene.brain },
+        );
 
-      return { sourceDir, targetDir, result };
-    });
-    afterAll(async () => {
-      await fs.rm(scene.sourceDir, { recursive: true, force: true });
-      await fs.rm(scene.targetDir, { recursive: true, force: true });
-    });
-
-    when('[t0] stepReflect completes', () => {
-      then('proposes rules from prose feedback', async () => {
-        const pureFiles = await fs.readdir(scene.result.draft.pureDir);
-        expect(pureFiles.length).toBeGreaterThan(0);
+        return { sourceDir, targetDir, result };
+      });
+      afterAll(async () => {
+        // cleanup is safe even if setup failed (scene not set)
+        try {
+          await fs.rm(scene.sourceDir, { recursive: true, force: true });
+          await fs.rm(scene.targetDir, { recursive: true, force: true });
+        } catch {
+          // ignore cleanup errors when setup didn't complete
+        }
       });
 
-      then('files count matches feedback files', async () => {
-        expect(scene.result.metrics.files.feedbackCount).toBe(2);
+      when('[t0] stepReflect completes', () => {
+        then('proposes rules from prose feedback', async () => {
+          const pureFiles = await fs.readdir(scene.result.draft.pureDir);
+          expect(pureFiles.length).toBeGreaterThan(0);
+        });
+
+        then('files count matches feedback files', async () => {
+          expect(scene.result.metrics.files.feedbackCount).toBe(2);
+        });
       });
-    });
-  });
+    },
+  );
 });
