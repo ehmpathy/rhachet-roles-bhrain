@@ -47,8 +47,13 @@ describe('stepReflect.caseProseAuthor', () => {
         return { sourceDir, targetDir, result };
       });
       afterAll(async () => {
-        await fs.rm(scene.sourceDir, { recursive: true, force: true });
-        await fs.rm(scene.targetDir, { recursive: true, force: true });
+        // cleanup is safe even if setup failed (scene not set)
+        try {
+          await fs.rm(scene.sourceDir, { recursive: true, force: true });
+          await fs.rm(scene.targetDir, { recursive: true, force: true });
+        } catch {
+          // ignore cleanup errors when setup didn't complete
+        }
       });
 
       when('[t0] stepReflect completes', () => {
