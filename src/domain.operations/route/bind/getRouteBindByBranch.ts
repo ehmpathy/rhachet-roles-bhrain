@@ -1,32 +1,18 @@
-import { execSync } from 'child_process';
 import { BadRequestError } from 'helpful-errors';
 import * as path from 'path';
 
-import { sanitizeBranchName } from '@src/domain.operations/review/sanitizeBranchName';
-import { enumFilesFromGlob } from '@src/utils/enumFilesFromGlob';
+import { getAllBindFlagsByBranch } from './getAllBindFlagsByBranch';
 
 /**
- * .what = resolves the bound route for the current (or given) branch
- * .why = enables auto-resolve of --route from bind flag files
+ * .what = looks up the bound route for the current (or given) branch
+ * .why = enables auto-lookup of --route from bind flag files
  */
 export const getRouteBindByBranch = async (input: {
   branch: string | null;
 }): Promise<{ route: string } | null> => {
-  // get branch name (from input or git)
-  const branch =
-    input.branch ??
-    execSync('git rev-parse --abbrev-ref HEAD').toString().trim();
-
-  // flatten branch name for flag file lookup
-  const branchFlat = sanitizeBranchName({ branch });
-
-  // scan for bind flag files (dot: true to traverse .behavior/ etc)
-  const flagGlob = `**/.route/.bind.${branchFlat}.flag`;
-  const flagFiles = await enumFilesFromGlob({
-    glob: flagGlob,
-    cwd: process.cwd(),
-    dot: true,
-    ignore: ['**/node_modules/**'],
+  // scan for bind flag files
+  const { branch, flagFiles } = await getAllBindFlagsByBranch({
+    branch: input.branch,
   });
 
   // no flags found → not bound
