@@ -76,7 +76,7 @@ exports[`driver.route.review.self.acceptance given: [case1] stone with reviews.s
 "🦉 the way speaks for itself
 
 🗿 route.stone.set
-   └─ stone = 1
+   ├─ stone = 1
    └─ passage = progressed (review.self 1/2 promised)
 
 🌕 lets reflect
@@ -148,7 +148,7 @@ exports[`driver.route.review.self.acceptance given: [case1] stone with reviews.s
 "🦉 the way speaks for itself
 
 🗿 route.stone.set
-   └─ stone = 1
+   ├─ stone = 1
    └─ passage = progressed (review.self 2/2 promised)
 "
 `;

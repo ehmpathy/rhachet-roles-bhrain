@@ -72,9 +72,10 @@ describe('stepRouteStoneGet', () => {
         // create artifact and passage for 2.criteria
         await fs.writeFile(path.join(tempDir, '2.criteria.md'), '# Criteria');
         await fs.mkdir(path.join(tempDir, '.route'), { recursive: true });
+        // write passage.jsonl entry (not .passed file)
         await fs.writeFile(
-          path.join(tempDir, '.route', '2.criteria.passed'),
-          '',
+          path.join(tempDir, '.route', 'passage.jsonl'),
+          JSON.stringify({ stone: '2.criteria', status: 'passed' }) + '\n',
         );
       });
 
@@ -109,9 +110,17 @@ describe('stepRouteStoneGet', () => {
       await fs.writeFile(path.join(tempDir, '2.criteria.md'), '# Criteria');
       await fs.writeFile(path.join(tempDir, '3.plan.md'), '# Plan');
       await fs.mkdir(path.join(tempDir, '.route'), { recursive: true });
-      await fs.writeFile(path.join(tempDir, '.route', '1.vision.passed'), '');
-      await fs.writeFile(path.join(tempDir, '.route', '2.criteria.passed'), '');
-      await fs.writeFile(path.join(tempDir, '.route', '3.plan.passed'), '');
+      // write passage.jsonl entries (not .passed files)
+      const passageContent =
+        [
+          JSON.stringify({ stone: '1.vision', status: 'passed' }),
+          JSON.stringify({ stone: '2.criteria', status: 'passed' }),
+          JSON.stringify({ stone: '3.plan', status: 'passed' }),
+        ].join('\n') + '\n';
+      await fs.writeFile(
+        path.join(tempDir, '.route', 'passage.jsonl'),
+        passageContent,
+      );
     });
 
     afterEach(async () => {

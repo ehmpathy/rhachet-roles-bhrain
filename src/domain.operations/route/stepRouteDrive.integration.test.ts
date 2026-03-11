@@ -72,9 +72,12 @@ describe('stepRouteDrive.integration', () => {
         '# implementation\n\nfeature implemented.',
       );
 
-      // mark as passed
+      // mark as passed via passage.jsonl (not .passed file)
       await fs.mkdir(path.join(tempDir, '.route'), { recursive: true });
-      await fs.writeFile(path.join(tempDir, '.route', '1.passed'), '');
+      await fs.writeFile(
+        path.join(tempDir, '.route', 'passage.jsonl'),
+        JSON.stringify({ stone: '1', status: 'passed' }) + '\n',
+      );
 
       return { tempDir };
     });

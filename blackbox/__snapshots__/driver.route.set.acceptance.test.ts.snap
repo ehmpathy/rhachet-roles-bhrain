@@ -4,8 +4,8 @@ exports[`driver.route.set.acceptance given: [case5] route.stone.set with flexibl
 "🦉 the way speaks for itself
 
 🗿 route.stone.set
-   └─ stone = 1.vision
-      └─ passage = allowed (unguarded)
+   ├─ stone = 1.vision
+   └─ passage = allowed (unguarded)
 "
 `;
 

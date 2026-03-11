@@ -26,27 +26,32 @@ export const delStoneGuardArtifacts = async (input: {
   }
 
   // glob for review files: $stone.guard.review.*.md
+  // note: dot=true to find files even if directory has gitignore
   const reviewFiles = await enumFilesFromGlob({
     glob: `${input.stone}.guard.review.*.md`,
     cwd: routeDir,
+    dot: true,
   });
 
   // glob for judge files: $stone.guard.judge.*.md
   const judgeFiles = await enumFilesFromGlob({
     glob: `${input.stone}.guard.judge.*.md`,
     cwd: routeDir,
+    dot: true,
   });
 
   // glob for promise files: $stone.guard.promise.*.md
   const promiseFiles = await enumFilesFromGlob({
     glob: `${input.stone}.guard.promise.*.md`,
     cwd: routeDir,
+    dot: true,
   });
 
   // glob for triggered files: $stone.guard.selfreview.*.triggered.*.md
   const triggerFiles = await enumFilesFromGlob({
     glob: `${input.stone}.guard.selfreview.*.triggered.*.md`,
     cwd: routeDir,
+    dot: true,
   });
 
   // delete all found files
