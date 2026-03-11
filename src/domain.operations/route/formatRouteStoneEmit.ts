@@ -280,8 +280,8 @@ export const formatRouteStoneEmit = (input: FormatInput): string => {
         lines.push(`   ├─ passage = ${passageValue}`);
         lines.push(`   └─ reason = ${input.reason}`);
       } else {
-        lines.push(`   └─ stone = ${input.stone}`);
-        lines.push(`      └─ passage = ${passageValue}`);
+        lines.push(`   ├─ stone = ${input.stone}`);
+        lines.push(`   └─ passage = ${passageValue}`);
       }
     }
   }

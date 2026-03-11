@@ -10,8 +10,16 @@ import {
 
 const ASSETS_DIR = path.join(__dirname, '.test/assets/route-driver');
 
+/**
+ * .what = test that unguarded stones require explicit passage
+ * .why = artifacts alone should not auto-pass; must use --as passed
+ *
+ * .note = this behavior changed in route-rewind:
+ *   - OLD: artifact exists → auto:unguarded → treated as passed
+ *   - NEW: artifact exists → still needs explicit --as passed
+ */
 describe('driver.route.get.unguarded-passage.acceptance', () => {
-  given('[case1] unguarded stones where first stone has output artifact', () => {
+  given('[case1] unguarded stones where artifacts exist but not passed', () => {
     when('[t0] route.stone.get --stone @next-one after artifact exists', () => {
       const res = useThen('invoke get skill', async () => {
         const tempDir = genTempDirForRhachet({
@@ -24,7 +32,7 @@ describe('driver.route.get.unguarded-passage.acceptance', () => {
           cwd: tempDir,
         });
 
-        // write an output artifact for 1.vision (simulates a completed stone)
+        // write an output artifact for 1.vision (artifact exists, but NOT passed)
         await fs.writeFile(
           path.join(tempDir, '1.vision.md'),
           '# 1.vision\n\nthe vision is clear.\n',
@@ -50,9 +58,9 @@ describe('driver.route.get.unguarded-passage.acceptance', () => {
         expect(res.cli.code).toEqual(0);
       });
 
-      then('skips 1.vision and returns 2.criteria', () => {
-        expect(res.cli.stdout).not.toContain('1.vision');
-        expect(res.cli.stdout).toContain('2.criteria');
+      then('returns 1.vision (artifact exists but not passed)', () => {
+        // artifact existence alone does NOT pass the stone
+        expect(res.cli.stdout).toContain('1.vision');
       });
     });
 
@@ -68,7 +76,7 @@ describe('driver.route.get.unguarded-passage.acceptance', () => {
           cwd: tempDir,
         });
 
-        // write output artifacts for first two stones
+        // write output artifacts for first two stones (NOT passed, just artifacts)
         await fs.writeFile(
           path.join(tempDir, '1.vision.md'),
           '# 1.vision\n\nthe vision is clear.\n',
@@ -92,10 +100,9 @@ describe('driver.route.get.unguarded-passage.acceptance', () => {
         expect(res.cli.code).toEqual(0);
       });
 
-      then('skips 1.vision and 2.criteria, returns 3.plan', () => {
-        expect(res.cli.stdout).not.toContain('1.vision');
-        expect(res.cli.stdout).not.toContain('2.criteria');
-        expect(res.cli.stdout).toContain('3.plan');
+      then('returns 1.vision (artifacts exist but stones not passed)', () => {
+        // artifacts alone do NOT pass stones — first stone is still next
+        expect(res.cli.stdout).toContain('1.vision');
       });
     });
 

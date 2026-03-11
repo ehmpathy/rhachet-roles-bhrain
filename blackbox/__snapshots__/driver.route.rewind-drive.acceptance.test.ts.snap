@@ -1,0 +1,215 @@
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
+
+exports[`driver.route.rewind-drive.acceptance given: [case1] route.drive after rewind shows rewound stone as next when: [t0] stone was passed then rewound then: drive after rewind stdout matches snapshot 1`] = `
+"🦉 where were we?
+
+🗿 route.drive
+   ├─ where do we go?
+   │  ├─ route = .
+   │  └─ stone = 1.vision
+   │
+   ├─ are we there yet? if so, run
+   │  └─ rhx route.stone.set --stone 1.vision --as passed
+   │
+   ├─ here's the stone
+   │  ├─
+   │  │
+   │  │  # 1.vision
+   │  │  
+   │  │  describe the vision for this feature
+   │  │  
+   │  │  define:
+   │  │  - the goal
+   │  │  - the outcome
+   │  │  - the success criteria
+   │  │  
+   │  └─
+   │
+   └─ are we there yet? if so, run
+      └─ rhx route.stone.set --stone 1.vision --as passed
+"
+`;
+
+exports[`driver.route.rewind-drive.acceptance given: [case1] route.drive after rewind shows rewound stone as next when: [t0] stone was passed then rewound then: drive before rewind stdout matches snapshot 1`] = `
+"🦉 where were we?
+
+🗿 route.drive
+   ├─ where do we go?
+   │  ├─ route = .
+   │  └─ stone = 2.criteria
+   │
+   ├─ are we there yet? if so, run
+   │  └─ rhx route.stone.set --stone 2.criteria --as passed
+   │
+   ├─ here's the stone
+   │  ├─
+   │  │
+   │  │  # 2.criteria
+   │  │  
+   │  │  define the acceptance criteria
+   │  │  
+   │  │  specify:
+   │  │  - the inputs
+   │  │  - the outputs
+   │  │  - the edge cases
+   │  │  
+   │  └─
+   │
+   └─ are we there yet? if so, run
+      └─ rhx route.stone.set --stone 2.criteria --as passed
+"
+`;
+
+exports[`driver.route.rewind-drive.acceptance given: [case2] unguarded stone with artifact respects rewind when: [t0] artifact exists but stone was rewound then: drive after rewind stdout matches snapshot 1`] = `
+"🦉 where were we?
+
+🗿 route.drive
+   ├─ where do we go?
+   │  ├─ route = .
+   │  └─ stone = 2.criteria
+   │
+   ├─ are we there yet? if so, run
+   │  └─ rhx route.stone.set --stone 2.criteria --as passed
+   │
+   ├─ here's the stone
+   │  ├─
+   │  │
+   │  │  # 2.criteria
+   │  │  
+   │  │  define the acceptance criteria
+   │  │  
+   │  │  specify:
+   │  │  - the inputs
+   │  │  - the outputs
+   │  │  - the edge cases
+   │  │  
+   │  └─
+   │
+   └─ are we there yet? if so, run
+      └─ rhx route.stone.set --stone 2.criteria --as passed
+"
+`;
+
+exports[`driver.route.rewind-drive.acceptance given: [case2] unguarded stone with artifact respects rewind when: [t0] artifact exists but stone was rewound then: drive complete stdout matches snapshot 1`] = `
+"🦉 where were we?
+
+🗿 route.drive
+   └─ route complete! 🎉
+"
+`;
+
+exports[`driver.route.rewind-drive.acceptance given: [case3] gitignored guard artifacts are deleted on rewind when: [t0] .route has gitignore that ignores all files then: rewind output matches snapshot 1`] = `
+"🦉 the way speaks for itself
+
+🗿 route.stone.set
+   ├─ stone = 1.vision
+   ├─ cascade
+   │  ├─ 1.vision
+   │  │  ├─ deleted: 1 reviews, 1 judges, 0 promises, 0 triggers
+   │  │  └─ passage: rewound
+   │  ├─ 2.criteria
+   │  │  ├─ deleted: 0 reviews, 0 judges, 0 promises, 0 triggers
+   │  │  └─ passage: rewound
+   │  └─ 3.plan
+   │     ├─ deleted: 0 reviews, 0 judges, 0 promises, 0 triggers
+   │     └─ passage: rewound
+   └─ done
+"
+`;
+
+exports[`driver.route.rewind-drive.acceptance given: [case4] re-pass after rewind works when: [t0] stone is passed then: stdout matches snapshot 1`] = `
+"🦉 the way speaks for itself
+
+🗿 route.stone.set
+   ├─ stone = 1.vision
+   └─ passage = allowed (unguarded)
+"
+`;
+
+exports[`driver.route.rewind-drive.acceptance given: [case4] re-pass after rewind works when: [t1] stone is rewound then: stdout matches snapshot 1`] = `
+"🦉 the way speaks for itself
+
+🗿 route.stone.set
+   ├─ stone = 1.vision
+   ├─ cascade
+   │  ├─ 1.vision
+   │  │  ├─ deleted: 0 reviews, 0 judges, 0 promises, 0 triggers
+   │  │  └─ passage: rewound
+   │  ├─ 2.criteria
+   │  │  ├─ deleted: 0 reviews, 0 judges, 0 promises, 0 triggers
+   │  │  └─ passage: rewound
+   │  └─ 3.plan
+   │     ├─ deleted: 0 reviews, 0 judges, 0 promises, 0 triggers
+   │     └─ passage: rewound
+   └─ done
+"
+`;
+
+exports[`driver.route.rewind-drive.acceptance given: [case4] re-pass after rewind works when: [t2] drive after rewind then: stdout matches snapshot 1`] = `
+"🦉 where were we?
+
+🗿 route.drive
+   ├─ where do we go?
+   │  ├─ route = .
+   │  └─ stone = 1.vision
+   │
+   ├─ are we there yet? if so, run
+   │  └─ rhx route.stone.set --stone 1.vision --as passed
+   │
+   ├─ here's the stone
+   │  ├─
+   │  │
+   │  │  # 1.vision
+   │  │  
+   │  │  describe the vision for this feature
+   │  │  
+   │  │  define:
+   │  │  - the goal
+   │  │  - the outcome
+   │  │  - the success criteria
+   │  │  
+   │  └─
+   │
+   └─ are we there yet? if so, run
+      └─ rhx route.stone.set --stone 1.vision --as passed
+"
+`;
+
+exports[`driver.route.rewind-drive.acceptance given: [case4] re-pass after rewind works when: [t3] stone is passed again then: stdout matches snapshot 1`] = `
+"🦉 the way speaks for itself
+
+🗿 route.stone.set
+   ├─ stone = 1.vision
+   └─ passage = allowed (unguarded)
+"
+`;
+
+exports[`driver.route.rewind-drive.acceptance given: [case4] re-pass after rewind works when: [t4] drive after re-pass then: stdout matches snapshot 1`] = `
+"🦉 where were we?
+
+🗿 route.drive
+   ├─ where do we go?
+   │  ├─ route = .
+   │  └─ stone = 2.criteria
+   │
+   ├─ are we there yet? if so, run
+   │  └─ rhx route.stone.set --stone 2.criteria --as passed
+   │
+   ├─ here's the stone
+   │  ├─
+   │  │
+   │  │  # 2.criteria
+   │  │  
+   │  │  define the acceptance criteria
+   │  │  
+   │  │  specify:
+   │  │  - the inputs
+   │  │  - the outputs
+   │  │  - the edge cases
+   │  │  
+   │  └─
+   │
+   └─ are we there yet? if so, run
+      └─ rhx route.stone.set --stone 2.criteria --as passed
+"
+`;

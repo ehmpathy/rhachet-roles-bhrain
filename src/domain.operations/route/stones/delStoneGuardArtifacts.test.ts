@@ -311,4 +311,51 @@ describe('delStoneGuardArtifacts', () => {
       });
     });
   });
+
+  given('[case9] artifacts in directory with gitignore (regression)', () => {
+    const tempDir = path.join(
+      os.tmpdir(),
+      `test-del-guard-artifacts-gitignore-${Date.now()}`,
+    );
+    const routeDir = path.join(tempDir, '.route');
+
+    beforeEach(async () => {
+      await fs.mkdir(routeDir, { recursive: true });
+      // create .gitignore that ignores all files
+      await fs.writeFile(path.join(routeDir, '.gitignore'), '*\n');
+      // create guard artifacts (would be gitignored in production)
+      await fs.writeFile(
+        path.join(routeDir, '1.vision.guard.review.i1.abc123.r1.md'),
+        'review',
+      );
+      await fs.writeFile(
+        path.join(routeDir, '1.vision.guard.judge.i1.abc123.j1.md'),
+        'judge',
+      );
+    });
+
+    afterEach(async () => {
+      await fs.rm(tempDir, { recursive: true, force: true });
+    });
+
+    when('[t0] delStoneGuardArtifacts is called', () => {
+      then('finds and deletes gitignored artifacts', async () => {
+        const result = await delStoneGuardArtifacts({
+          stone: '1.vision',
+          route: tempDir,
+        });
+        // the fix ensures these are found even with .gitignore present
+        expect(result.reviews).toBe(1);
+        expect(result.judges).toBe(1);
+      });
+
+      then('files are actually deleted', async () => {
+        await delStoneGuardArtifacts({ stone: '1.vision', route: tempDir });
+
+        const files = await fs.readdir(routeDir);
+        const guardFiles = files.filter((f) => f.includes('.guard.'));
+        expect(guardFiles).toHaveLength(0);
+      });
+    });
+  });
 });

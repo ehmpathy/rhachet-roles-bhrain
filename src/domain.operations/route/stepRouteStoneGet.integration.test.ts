@@ -33,7 +33,11 @@ describe('stepRouteStoneGet.integration', () => {
       // complete first stone
       await fs.writeFile(path.join(tempDir, '2.criteria.md'), '# Criteria');
       await fs.mkdir(path.join(tempDir, '.route'), { recursive: true });
-      await fs.writeFile(path.join(tempDir, '.route', '2.criteria.passed'), '');
+      // write passage.jsonl entry (not .passed file)
+      await fs.writeFile(
+        path.join(tempDir, '.route', 'passage.jsonl'),
+        JSON.stringify({ stone: '2.criteria', status: 'passed' }) + '\n',
+      );
     });
 
     afterEach(async () => {
