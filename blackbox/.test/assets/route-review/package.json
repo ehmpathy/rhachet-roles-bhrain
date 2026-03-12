@@ -1,0 +1,8 @@
+{
+  "name": "route-review-fixture",
+  "private": true,
+  "description": "fixture for route.review acceptance tests - enables rhachet role discovery",
+  "dependencies": {
+    "rhachet-roles-bhrain": "link:."
+  }
+}

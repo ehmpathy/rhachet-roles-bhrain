@@ -12,6 +12,7 @@ import {
   routeBindSet,
   routeBounce,
   routeDrive,
+  routeReview,
   routeStoneDel,
   routeStoneGet,
   routeStoneJudge,
@@ -29,6 +30,7 @@ export const cli = {
     },
     bounce: routeBounce,
     drive: routeDrive,
+    review: routeReview,
     stone: {
       get: routeStoneGet,
       set: routeStoneSet,

@@ -57,6 +57,7 @@ export const sanitizeTimeForSnapshot = (output: string): string => {
     .replace(/inflight \d+\.\d+s/g, 'inflight [TIME]');
 };
 
+
 export const invokeRouteSkill = async (input: {
   skill:
     | 'route.bind.set'
@@ -64,6 +65,7 @@ export const invokeRouteSkill = async (input: {
     | 'route.bind.del'
     | 'route.bounce'
     | 'route.drive'
+    | 'route.review'
     | 'route.stone.get'
     | 'route.stone.set'
     | 'route.stone.del'
