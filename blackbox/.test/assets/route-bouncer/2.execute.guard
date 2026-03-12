@@ -1,0 +1,6 @@
+artifacts:
+  - 2.execute*.md
+reviews:
+  - echo "blockers: 0\nnitpicks: 0\ntest review content"
+judges:
+  - echo "passed: true\nreason: all checks passed"

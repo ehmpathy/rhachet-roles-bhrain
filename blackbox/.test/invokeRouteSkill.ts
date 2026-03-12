@@ -25,6 +25,10 @@ export const genTempDirForRhachet = (input: {
         to: 'package.json',
       },
       { at: 'node_modules/rhachet-roles-bhrain/dist', to: 'dist' },
+      {
+        at: 'node_modules/rhachet-roles-bhrain/rhachet.repo.yml',
+        to: 'rhachet.repo.yml',
+      },
       // symlink .bin for npx to find rhx/rhachet commands
       { at: 'node_modules/.bin', to: 'node_modules/.bin' },
       // symlink rhachet so rhx entrypoint can find ../rhachet/bin/rhx
@@ -58,6 +62,7 @@ export const invokeRouteSkill = async (input: {
     | 'route.bind.set'
     | 'route.bind.get'
     | 'route.bind.del'
+    | 'route.bounce'
     | 'route.drive'
     | 'route.stone.get'
     | 'route.stone.set'

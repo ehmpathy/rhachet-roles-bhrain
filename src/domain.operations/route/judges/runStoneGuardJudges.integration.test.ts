@@ -22,6 +22,7 @@ describe('runStoneGuardJudges', () => {
       artifacts: ['1.test*.md'],
       reviews: [],
       judges: ['echo "passed: true\\nreason: all checks passed"'],
+      protect: [],
     });
 
     when('[t0] judges are executed', () => {
@@ -87,6 +88,7 @@ describe('runStoneGuardJudges', () => {
       artifacts: ['1.test*.md'],
       reviews: [],
       judges: ['echo "passed: false\\nreason: blockers found"'],
+      protect: [],
     });
 
     when('[t0] judges are executed', () => {
@@ -122,6 +124,7 @@ describe('runStoneGuardJudges', () => {
         'echo "passed: true\\nreason: review passed"',
         'echo "passed: false\\nreason: approval required"',
       ],
+      protect: [],
     });
 
     when('[t0] judges are executed', () => {
@@ -165,6 +168,7 @@ describe('runStoneGuardJudges', () => {
           '$route',
         ),
       ],
+      protect: [],
     });
 
     beforeEach(async () => {
@@ -219,6 +223,7 @@ describe('runStoneGuardJudges', () => {
       artifacts: ['1.test*.md'],
       reviews: [],
       judges: ['echo "passed: true\\nreason: all checks passed"'],
+      protect: [],
     });
 
     when('[t0] judge passes on first attempt', () => {
@@ -257,6 +262,7 @@ describe('runStoneGuardJudges', () => {
       artifacts: ['1.test*.md'],
       reviews: [],
       judges: ['echo "passed: false\\nreason: blockers found"'],
+      protect: [],
     });
 
     when('[t0] judge fails on first attempt', () => {
@@ -298,6 +304,7 @@ describe('runStoneGuardJudges', () => {
       judges: [
         'bash -c \'echo "passed: false"; echo "reason: approval required"; exit 2\'',
       ],
+      protect: [],
     });
 
     when('[t0] judge blocks on first attempt', () => {

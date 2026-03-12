@@ -114,7 +114,7 @@
     "rhachet-brains-anthropic": "0.3.3",
     "rhachet-brains-openai": "0.2.1",
     "rhachet-brains-xai": "0.2.1",
-    "rhachet-roles-bhrain": "0.17.0",
+    "rhachet-roles-bhrain": "link:.",
     "rhachet-roles-bhuild": "0.13.7",
     "rhachet-roles-ehmpathy": "1.27.11",
     "test-fns": "1.15.0",

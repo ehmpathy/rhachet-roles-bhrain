@@ -5,6 +5,8 @@ import { delRouteBind } from '@src/domain.operations/route/bind/delRouteBind';
 import { getRouteBind } from '@src/domain.operations/route/bind/getRouteBind';
 import { getRouteBindByBranch } from '@src/domain.operations/route/bind/getRouteBindByBranch';
 import { setRouteBind } from '@src/domain.operations/route/bind/setRouteBind';
+import { getDecisionIsArtifactProtected } from '@src/domain.operations/route/bouncer/getDecisionIsArtifactProtected';
+import { getRouteBouncerCache } from '@src/domain.operations/route/bouncer/getRouteBouncerCache';
 import { computeStoneReviewInputHash } from '@src/domain.operations/route/guard/computeStoneReviewInputHash';
 import { genContextCliEmit } from '@src/domain.operations/route/guard/genContextCliEmit';
 import { getOneStoneGuardApproval } from '@src/domain.operations/route/judges/getOneStoneGuardApproval';
@@ -775,4 +777,176 @@ const judgeReviewed = async (input: {
   console.log(
     `reason: reviews pass (blockers: ${totalBlockers}/${input.allowBlockers}, nitpicks: ${totalNitpicks}/${input.allowNitpicks})`,
   );
+};
+
+/**
+ * .what = prints help for route.bounce
+ */
+const printBounceHelp = (): void => {
+  console.log(
+    `
+route.bounce - artifact gate enforcement for protected files
+
+usage:
+  route.bounce [options]
+
+options:
+  --mode <type>      mode: hook = pretool check, list = show protected files (default)
+  --path <path>      file path to check (for --mode hook; reads from stdin if absent)
+  --help             show this help message
+
+examples:
+  route.bounce                              # list protected artifacts
+  route.bounce --mode hook --path src/f.ts  # pretool check (exit 2 if blocked)
+`.trim(),
+  );
+};
+
+/**
+ * .what = reads tool input from stdin synchronously
+ * .why = claude code PreToolUse hooks receive tool input as JSON on stdin
+ */
+const readToolInputFromStdin = (): { file_path?: string } | null => {
+  // check if stdin has data available (non-TTY means piped input)
+  if (process.stdin.isTTY) return null;
+
+  try {
+    // read stdin synchronously via fd 0
+    const chunks: Buffer[] = [];
+    const BUFSIZE = 256;
+    const buf = Buffer.allocUnsafe(BUFSIZE);
+    let bytesRead: number;
+
+    // eslint-disable-next-line @typescript-eslint/no-require-imports, @typescript-eslint/no-var-requires
+    const fsSync = require('fs');
+
+    while (true) {
+      try {
+        bytesRead = fsSync.readSync(0, buf, 0, BUFSIZE, null);
+        if (bytesRead === 0) break;
+        chunks.push(buf.slice(0, bytesRead));
+      } catch {
+        break;
+      }
+    }
+
+    if (chunks.length === 0) return null;
+
+    const input = Buffer.concat(chunks).toString('utf-8').trim();
+    if (!input) return null;
+
+    return JSON.parse(input);
+  } catch {
+    return null;
+  }
+};
+
+/**
+ * .what = cli entrypoint for route.bounce skill
+ * .why = enforces artifact gate protection before file writes/edits
+ */
+export const routeBounce = async (): Promise<void> => {
+  const options = parseArgs(process.argv);
+
+  if (options.help) {
+    printBounceHelp();
+    return;
+  }
+
+  const mode = options.mode ?? 'list';
+
+  try {
+    // load bouncer cache
+    const cache = await getRouteBouncerCache();
+
+    // handle hook mode (pretool check)
+    if (mode === 'hook') {
+      // get file path from --path arg or stdin (claude code PreToolUse provides tool input via stdin)
+      let filePath = options.path;
+      if (!filePath) {
+        const toolInput = readToolInputFromStdin();
+        filePath = toolInput?.file_path;
+      }
+
+      if (!filePath) {
+        // no path to check, allow through (e.g., tool that doesn't have file_path)
+        return;
+      }
+
+      const decision = getDecisionIsArtifactProtected({
+        path: filePath,
+        cache,
+      });
+
+      if (decision.blocked && decision.protection) {
+        // output blocked feedback in zen format per blueprint
+        const lines = [
+          '🦉 patience, friend',
+          '',
+          '🗿 route.bounce',
+          '   ├─ blocked',
+          `   │  ├─ artifact = ${filePath}`,
+          `   │  └─ guard = ${path.basename(decision.protection.guard)}`,
+          '   │',
+          '   ├─ a journey of a thousand miles begins with a single step 🪷',
+          '   │  ├─',
+          '   │  │',
+          `   │  │  this artifact is locked until stone ${decision.protection.stone} is passed.`,
+          '   │  │',
+          '   │  │  the way cannot be rushed. each stone builds on the last.',
+          '   │  │',
+          '   │  └─',
+          '   │',
+          '   └─ to pass this stone and unlock this gate, run',
+          '      └─ rhx route.drive',
+        ];
+        console.log(lines.join('\n'));
+        process.exit(2);
+      }
+
+      // not blocked, exit 0 silently for hook
+      return;
+    }
+
+    // handle list mode (default)
+    if (cache.protections.length === 0) {
+      console.log('no protected artifacts');
+      return;
+    }
+
+    // group protections by stone
+    const byStone = new Map<string, typeof cache.protections>();
+    for (const p of cache.protections) {
+      const list = byStone.get(p.stone) ?? [];
+      list.push(p);
+      byStone.set(p.stone, list);
+    }
+
+    console.log('🗿 route.bounce');
+    console.log('   └─ protected artifacts');
+
+    const stones = Array.from(byStone.keys());
+    for (let i = 0; i < stones.length; i++) {
+      const stone = stones[i]!;
+      const protections = byStone.get(stone)!;
+      const isLast = i === stones.length - 1;
+      const prefix = isLast ? '      └─' : '      ├─';
+
+      const stoneStatus = protections[0]?.passed ? '✓' : '○';
+      console.log(`${prefix} ${stone} ${stoneStatus}`);
+
+      const childPrefix = isLast ? '         ' : '      │  ';
+      for (let j = 0; j < protections.length; j++) {
+        const p = protections[j]!;
+        const isLastGlob = j === protections.length - 1;
+        const globPrefix = isLastGlob ? '└─' : '├─';
+        console.log(`${childPrefix}${globPrefix} ${p.glob}`);
+      }
+    }
+  } catch (error) {
+    if (error instanceof Error) {
+      console.error(`error: ${error.message}`);
+    }
+    process.exit(1);
+  }
 };

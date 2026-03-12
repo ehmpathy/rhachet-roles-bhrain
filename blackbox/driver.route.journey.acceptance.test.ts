@@ -286,6 +286,65 @@ describe('driver.route.journey.acceptance', () => {
       });
     });
 
+    when('[t7.5] bouncer cache is computed via route.drive', () => {
+      const result = useThen('route.drive succeeds', async () =>
+        invokeRouteSkill({
+          skill: 'route.drive',
+          args: { route: '.' },
+          cwd: scene.tempDir,
+        }),
+      );
+
+      then('exit code is 0', () => {
+        expect(result.code).toEqual(0);
+      });
+
+      then('bouncer cache is created', async () => {
+        const cachePath = path.join(scene.tempDir, '.route', '.bouncer.cache.json');
+        const cacheContent = await fs.readFile(cachePath, 'utf-8');
+        const cache = JSON.parse(cacheContent);
+        expect(cache.protections).toBeDefined();
+        expect(cache.protections.length).toBeGreaterThan(0);
+      });
+
+      then('cache contains src/**/*.ts protection', async () => {
+        const cachePath = path.join(scene.tempDir, '.route', '.bouncer.cache.json');
+        const cacheContent = await fs.readFile(cachePath, 'utf-8');
+        const cache = JSON.parse(cacheContent);
+        const srcProtection = cache.protections.find(
+          (p: { glob: string }) => p.glob === 'src/**/*.ts',
+        );
+        expect(srcProtection).toBeDefined();
+        expect(srcProtection.passed).toBe(false);
+      });
+    });
+
+    when('[t7.6] bouncer blocks write to protected artifact', () => {
+      const result = useThen('route.bounce returns blocked', async () =>
+        invokeRouteSkill({
+          skill: 'route.bounce',
+          args: { mode: 'hook', path: 'src/weather.ts' },
+          cwd: scene.tempDir,
+        }),
+      );
+
+      then('exit code is 2 (blocked)', () => {
+        expect(result.code).toEqual(2);
+      });
+
+      then('output contains blocked message', () => {
+        expect(result.stdout).toContain('blocked');
+      });
+
+      then('output contains guard name', () => {
+        expect(result.stdout).toContain('3.blueprint.guard');
+      });
+
+      then('stdout has good vibes', () => {
+        expect(sanitizeTimeForSnapshot(result.stdout)).toMatchSnapshot();
+      });
+    });
+
     when('[t8] 3.blueprint artifact created and pass attempted', () => {
       const result = useThen('pass blocked by review.self', async () => {
         await fs.writeFile(
@@ -476,6 +535,31 @@ describe('driver.route.journey.acceptance', () => {
 
       then('stdout has good vibes', () => {
         expect(sanitizeTimeForSnapshot(result.stdout)).toMatchSnapshot();
+      });
+    });
+
+    when('[t10.5] bouncer allows write after stone passes', () => {
+      const result = useThen('route.bounce returns allowed', async () =>
+        invokeRouteSkill({
+          skill: 'route.bounce',
+          args: { mode: 'hook', path: 'src/weather.ts' },
+          cwd: scene.tempDir,
+        }),
+      );
+
+      then('exit code is 0 (allowed)', () => {
+        expect(result.code).toEqual(0);
+      });
+
+      then('cache shows protection passed', async () => {
+        const cachePath = path.join(scene.tempDir, '.route', '.bouncer.cache.json');
+        const cacheContent = await fs.readFile(cachePath, 'utf-8');
+        const cache = JSON.parse(cacheContent);
+        const srcProtection = cache.protections.find(
+          (p: { glob: string }) => p.glob === 'src/**/*.ts',
+        );
+        expect(srcProtection).toBeDefined();
+        expect(srcProtection.passed).toBe(true);
       });
     });
 

@@ -222,17 +222,17 @@ export const formatRouteStoneEmit = (input: FormatInput): string => {
     // handle blocked case (agent tried to approve)
     if (input.action === 'blocked') {
       lines.push(`🗿 ${input.operation}`);
-      lines.push(`   └─ stone = ${input.stone}`);
-      lines.push(`      ├─ ✗ ${input.reason}`);
-      lines.push(`      └─ ${input.guidance}`);
+      lines.push(`   ├─ stone = ${input.stone}`);
+      lines.push(`   ├─ ✗ ${input.reason}`);
+      lines.push(`   └─ ${input.guidance}`);
       return lines.join('\n');
     }
 
     lines.push(`🗿 ${input.operation}`);
 
     if (input.action === 'approved') {
-      lines.push(`   └─ stone = ${input.stone}`);
-      lines.push(`      └─ ✓ approved`);
+      lines.push(`   ├─ stone = ${input.stone}`);
+      lines.push(`   └─ ✓ approved`);
     } else if (input.action === 'rewound') {
       // format cascade with deletion counts
       lines.push(`   ├─ stone = ${input.stone}`);

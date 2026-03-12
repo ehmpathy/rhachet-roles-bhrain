@@ -69,6 +69,13 @@ export interface RouteStoneGuard {
    * each command produces a judge artifact under .route/
    */
   judges: string[];
+
+  /**
+   * glob patterns for protected artifacts
+   *
+   * writes to matched paths are blocked until this stone passes
+   */
+  protect: string[];
 }
 
 export class RouteStoneGuard

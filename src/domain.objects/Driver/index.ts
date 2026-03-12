@@ -1,4 +1,6 @@
 export { PassageReport } from './PassageReport';
+export { RouteBouncerCache } from './RouteBouncerCache';
+export { RouteBouncerProtection } from './RouteBouncerProtection';
 export { RouteStone } from './RouteStone';
 export { RouteStoneDriveArtifacts } from './RouteStoneDriveArtifacts';
 export {

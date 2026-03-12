@@ -25,6 +25,16 @@ export const ROLE_DRIVER: Role = Role.build({
           timeout: 'PT5S',
         },
       ],
+      onTool: [
+        {
+          command: './node_modules/.bin/rhx route.bounce --mode hook',
+          timeout: 'PT5S',
+          filter: {
+            what: 'Write|Edit',
+            when: 'before',
+          },
+        },
+      ],
       onStop: [
         {
           command: './node_modules/.bin/rhx route.drive --mode hook',

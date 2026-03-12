@@ -12,6 +12,8 @@ import {
 import type { RouteStoneGuardJudgeArtifact } from '@src/domain.objects/Driver/RouteStoneGuardJudgeArtifact';
 import type { RouteStoneGuardReviewArtifact } from '@src/domain.objects/Driver/RouteStoneGuardReviewArtifact';
 
+import { computeRouteBouncerCache } from '../bouncer/computeRouteBouncerCache';
+import { setRouteBouncerCache } from '../bouncer/setRouteBouncerCache';
 import { delStoneGuardBlockerReport } from '../drive/delStoneGuardBlockerReport';
 import { setStoneGuardBlockerReport } from '../drive/setStoneGuardBlockerReport';
 import { formatRouteStoneEmit } from '../formatRouteStoneEmit';
@@ -66,6 +68,14 @@ export const setStoneAsPassed = async (
   // if no guard, auto-pass
   if (!stoneMatched.guard) {
     await setStonePassage({ stone: stoneMatched, route: input.route });
+
+    // update bouncer cache (stone passage may release protected artifacts)
+    const bouncerCache = await computeRouteBouncerCache({
+      cwd: process.cwd(),
+      route: input.route,
+    });
+    await setRouteBouncerCache({ cache: bouncerCache, route: input.route });
+
     return {
       passed: true,
       refs: { reviews: [], judges: [] },
@@ -150,6 +160,14 @@ export const setStoneAsPassed = async (
   const peerReviews = getGuardPeerReviews(stoneMatched.guard);
   if (peerReviews.length === 0 && stoneMatched.guard.judges.length === 0) {
     await setStonePassage({ stone: stoneMatched, route: input.route });
+
+    // update bouncer cache (stone passage may release protected artifacts)
+    const bouncerCache = await computeRouteBouncerCache({
+      cwd: process.cwd(),
+      route: input.route,
+    });
+    await setRouteBouncerCache({ cache: bouncerCache, route: input.route });
+
     return {
       passed: true,
       refs: { reviews: [], judges: [] },
@@ -274,6 +292,13 @@ export const setStoneAsPassed = async (
 
   if (allJudgesPassed) {
     await setStonePassage({ stone: stoneMatched, route: input.route });
+
+    // update bouncer cache (stone passage may release protected artifacts)
+    const bouncerCache = await computeRouteBouncerCache({
+      cwd: process.cwd(),
+      route: input.route,
+    });
+    await setRouteBouncerCache({ cache: bouncerCache, route: input.route });
 
     // clear any prior blocker report
     await delStoneGuardBlockerReport({

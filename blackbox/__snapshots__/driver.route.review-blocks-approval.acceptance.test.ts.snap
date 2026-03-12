@@ -4,8 +4,8 @@ exports[`driver.route.review-blocks-approval.acceptance given: [review-blocks] s
 "🦉 the way speaks for itself
 
 🗿 route.stone.set
-   └─ stone = 1.plan
-      └─ ✓ approved
+   ├─ stone = 1.plan
+   └─ ✓ approved
 "
 `;
 
