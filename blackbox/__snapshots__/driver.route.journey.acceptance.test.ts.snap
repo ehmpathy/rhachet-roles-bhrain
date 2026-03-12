@@ -179,8 +179,26 @@ exports[`driver.route.journey.acceptance given: [journey] weather api route when
    │  │
    │  └─
    │
-   ├─ articulate into
-   │  └─ /review/self/3.blueprint.design-complete.md
+   ├─ walk the way 🪷
+   │  │
+   │  ├─ articulate into
+   │  │  └─ /review/self/3.blueprint.design-complete.md
+   │  │
+   │  ├─ for each found issue 🪘
+   │  │  ├─
+   │  │  │
+   │  │  │  articulate how it was fixed
+   │  │  │  so you remember for next time
+   │  │  │
+   │  │  └─
+   │  │
+   │  └─ for each non issue 🪘
+   │     ├─
+   │     │
+   │     │  articulate why it holds
+   │     │  so others can learn from it
+   │     │
+   │     └─
    │
    └─ when you've truly reflected, run
       └─ rhx route.stone.set --stone 3.blueprint --as promised --that design-complete

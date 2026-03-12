@@ -1,3 +1,5 @@
+import { formatWalkTheWay } from './formatWalkTheWay';
+
 /**
  * .what = formats "patience, friend" challenge for self-review
  * .why = prompts clones to slow down, adopt reviewer role, and articulate findings
@@ -51,10 +53,8 @@ export const formatPatienceFriend = (input: {
   lines.push(`   │  └─`);
   lines.push(`   │`);
 
-  // articulate into section
-  const articulationPath = `${input.route}/review/self/${input.stone}.${input.slug}.md`;
-  lines.push(`   ├─ articulate into`);
-  lines.push(`   │  └─ ${articulationPath}`);
+  // walk the way section (articulation + drum blocks)
+  lines.push(...formatWalkTheWay(input));
   lines.push(`   │`);
 
   // final instruction
