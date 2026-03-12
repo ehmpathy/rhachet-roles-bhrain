@@ -13,9 +13,9 @@ exports[`driver.route.set.acceptance given: [case5] route.stone.set with flexibl
 "🦉 the way speaks for itself
 
 🗿 route.stone.set
-   └─ stone = 2.criteria
-      ├─ ✗ only humans can approve
-      └─ please ask a human to run this command
+   ├─ stone = 2.criteria
+   ├─ ✗ only humans can approve
+   └─ please ask a human to run this command
 "
 `;
 

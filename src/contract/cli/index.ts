@@ -10,6 +10,7 @@ import {
   routeBindDel,
   routeBindGet,
   routeBindSet,
+  routeBounce,
   routeDrive,
   routeStoneDel,
   routeStoneGet,
@@ -26,6 +27,7 @@ export const cli = {
       get: routeBindGet,
       del: routeBindDel,
     },
+    bounce: routeBounce,
     drive: routeDrive,
     stone: {
       get: routeStoneGet,

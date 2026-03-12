@@ -31,8 +31,8 @@ exports[`driver.route.journey.acceptance given: [journey] weather api route when
 "🦉 the way speaks for itself
 
 🗿 route.stone.set
-   └─ stone = 1.vision
-      └─ ✓ approved
+   ├─ stone = 1.vision
+   └─ ✓ approved
 "
 `;
 
@@ -72,6 +72,28 @@ exports[`driver.route.journey.acceptance given: [journey] weather api route when
 🗿 route.stone.set
    ├─ stone = 2.research
    └─ passage = allowed (unguarded)
+"
+`;
+
+exports[`driver.route.journey.acceptance given: [journey] weather api route when: [t7.6] bouncer blocks write to protected artifact then: stdout has good vibes 1`] = `
+"🦉 patience, friend
+
+🗿 route.bounce
+   ├─ blocked
+   │  ├─ artifact = src/weather.ts
+   │  └─ guard = 3.blueprint.guard
+   │
+   ├─ a journey of a thousand miles begins with a single step 🪷
+   │  ├─
+   │  │
+   │  │  this artifact is locked until stone 3.blueprint is passed.
+   │  │
+   │  │  the way cannot be rushed. each stone builds on the last.
+   │  │
+   │  └─
+   │
+   └─ to pass this stone and unlock this gate, run
+      └─ rhx route.drive
 "
 `;
 

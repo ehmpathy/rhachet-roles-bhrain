@@ -108,4 +108,33 @@ describe('parseStoneGuard', () => {
       });
     });
   });
+
+  given('[case5] a guard file with protect directive', () => {
+    const guardPath = path.join(
+      ASSETS_DIR,
+      'route.protected',
+      '3.blueprint.guard',
+    );
+
+    when('[t0] guard is parsed', () => {
+      then('returns RouteStoneGuard with protect globs', async () => {
+        const result = await parseStoneGuard({ path: guardPath });
+        expect(result.path).toEqual(guardPath);
+        expect(result.protect).toHaveLength(2);
+        expect(result.protect).toContain('src/**/*.ts');
+        expect(result.protect).toContain('src/**/*.tsx');
+      });
+    });
+  });
+
+  given('[case6] a guard file without protect directive', () => {
+    const guardPath = path.join(ASSETS_DIR, 'route.guarded', '1.vision.guard');
+
+    when('[t0] guard is parsed', () => {
+      then('returns RouteStoneGuard with empty protect array', async () => {
+        const result = await parseStoneGuard({ path: guardPath });
+        expect(result.protect).toEqual([]);
+      });
+    });
+  });
 });

@@ -1,0 +1,11 @@
+artifacts:
+  - 3.blueprint*.md
+
+reviews: []
+
+judges:
+  - rhx route.stone.judge --mechanism approved? --stone $stone --route $route
+
+protect:
+  - src/**/*.ts
+  - src/**/*.tsx

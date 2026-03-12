@@ -1,6 +1,9 @@
 artifacts:
   - 3.blueprint*.md
 
+protect:
+  - src/**/*.ts
+
 reviews:
   self:
     - slug: design-complete

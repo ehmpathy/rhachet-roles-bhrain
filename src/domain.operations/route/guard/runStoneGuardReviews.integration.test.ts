@@ -23,6 +23,7 @@ describe('runStoneGuardReviews', () => {
       artifacts: ['1.test*.md'],
       reviews: ['echo "blockers: 0\\nnitpicks: 1\\nreview output"'],
       judges: [],
+      protect: [],
     });
 
     beforeEach(async () => {
@@ -96,6 +97,7 @@ describe('runStoneGuardReviews', () => {
         'echo "blockers: 0\\nnitpicks: 2"',
       ],
       judges: [],
+      protect: [],
     });
 
     beforeEach(async () => {
@@ -140,6 +142,7 @@ describe('runStoneGuardReviews', () => {
         `bash -c 'if [ -f "$route/.marker" ]; then echo "blockers: 0"; echo "nitpicks: 0"; echo "marker found at $route"; else echo "blockers: 1"; echo "nitpicks: 0"; echo "marker not found at $route"; fi'`,
       ],
       judges: [],
+      protect: [],
     });
 
     beforeEach(async () => {

@@ -1,6 +1,8 @@
 import * as fs from 'fs/promises';
 
 import { getRouteBindByBranch } from './bind/getRouteBindByBranch';
+import { computeRouteBouncerCache } from './bouncer/computeRouteBouncerCache';
+import { setRouteBouncerCache } from './bouncer/setRouteBouncerCache';
 import { getStoneGuardBlockerReport } from './drive/getStoneGuardBlockerReport';
 import { setDriveBlockerState } from './drive/setDriveBlockerState';
 import { getOneStoneGuardApproval } from './judges/getOneStoneGuardApproval';
@@ -33,6 +35,13 @@ export const stepRouteDrive = async (input: {
     }
     route = bind.route;
   }
+
+  // precompute bouncer cache for artifact gate enforcement
+  const bouncerCache = await computeRouteBouncerCache({
+    cwd: process.cwd(),
+    route,
+  });
+  await setRouteBouncerCache({ cache: bouncerCache, route });
 
   // get all stones and artifacts
   const stones = await getAllStones({ route });
