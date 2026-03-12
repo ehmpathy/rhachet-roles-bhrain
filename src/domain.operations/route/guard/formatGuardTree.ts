@@ -4,7 +4,7 @@
  */
 export const formatGuardTree = (input: {
   stone: string;
-  passage: 'allowed' | 'blocked';
+  passage: 'allowed' | 'blocked' | 'malfunction';
   note: string | null;
   reason: string | null;
   guard: {
@@ -41,7 +41,10 @@ export const formatGuardTree = (input: {
 
   // if no guard, emit passage as the last line
   if (!input.guard) {
-    if (input.passage === 'blocked' && input.reason) {
+    if (
+      (input.passage === 'blocked' || input.passage === 'malfunction') &&
+      input.reason
+    ) {
       lines.push(`   ├─ passage = ${passageLabel}`);
       lines.push(`   └─ reason = ${input.reason}`);
     } else {
@@ -53,8 +56,11 @@ export const formatGuardTree = (input: {
   // emit passage line (not last — guard section follows)
   lines.push(`   ├─ passage = ${passageLabel}`);
 
-  // emit reason if blocked
-  if (input.passage === 'blocked' && input.reason) {
+  // emit reason if blocked or malfunction
+  if (
+    (input.passage === 'blocked' || input.passage === 'malfunction') &&
+    input.reason
+  ) {
     lines.push(`   ├─ reason = ${input.reason}`);
   }
 

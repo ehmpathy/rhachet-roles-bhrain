@@ -6,6 +6,7 @@ import { setRouteBouncerCache } from './bouncer/setRouteBouncerCache';
 import { getStoneGuardBlockerReport } from './drive/getStoneGuardBlockerReport';
 import { setDriveBlockerState } from './drive/setDriveBlockerState';
 import { getOneStoneGuardApproval } from './judges/getOneStoneGuardApproval';
+import { getAllPassageReports } from './passage/getAllPassageReports';
 import { computeNextStones } from './stones/computeNextStones';
 import { getAllStoneDriveArtifacts } from './stones/getAllStoneDriveArtifacts';
 import { getAllStones } from './stones/getAllStones';
@@ -42,6 +43,30 @@ export const stepRouteDrive = async (input: {
     route,
   });
   await setRouteBouncerCache({ cache: bouncerCache, route });
+
+  // in hook mode, check for malfunction status immediately
+  if (input.mode === 'hook') {
+    const passageReports = await getAllPassageReports({ route });
+    const malfunctionReport = passageReports.find(
+      (r) => r.status === 'malfunction',
+    );
+    if (malfunctionReport) {
+      return {
+        emit: {
+          stdout: formatRouteDriveMalfunction({
+            route,
+            stone: malfunctionReport.stone,
+          }),
+          stderr: {
+            reason: formatRouteDriveMalfunctionEscalate({
+              stone: malfunctionReport.stone,
+            }),
+            code: 3,
+          },
+        },
+      };
+    }
+  }
 
   // get all stones and artifacts
   const stones = await getAllStones({ route });
@@ -249,6 +274,39 @@ const formatRouteDriveNeedsApproval = (input: {
   lines.push(`      └─ once they do, run`);
   lines.push(`         └─ ${passCmd}`);
   return lines.join('\n');
+};
+
+/**
+ * .what = formats route.drive output when reviewer/judge malfunctioned
+ * .why = immediate halt with escalation to human
+ */
+const formatRouteDriveMalfunction = (input: {
+  route: string;
+  stone: string;
+}): string => {
+  const lines: string[] = [];
+  lines.push(`🦉 where were we?`);
+  lines.push('');
+  lines.push(`🗿 route.drive`);
+  lines.push(`   ├─ where do we go?`);
+  lines.push(`   │  ├─ route = ${input.route}`);
+  lines.push(`   │  └─ stone = ${input.stone}`);
+  lines.push(`   │`);
+  lines.push(`   └─ 💥 halted, guard malfunction`);
+  lines.push(
+    `      └─ please tell a human this needs to be fixed before you can continue`,
+  );
+  return lines.join('\n');
+};
+
+/**
+ * .what = formats escalation message for stderr when malfunction detected
+ * .why = provides context for human intervention
+ */
+const formatRouteDriveMalfunctionEscalate = (input: {
+  stone: string;
+}): string => {
+  return `reviewer or judge malfunctioned on stone ${input.stone}. a human must fix the malfunction before the route can proceed.`;
 };
 
 /**

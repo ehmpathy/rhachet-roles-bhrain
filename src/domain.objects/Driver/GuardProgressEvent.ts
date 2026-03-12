@@ -43,7 +43,13 @@ export interface GuardProgressEvent {
    */
   outcome: {
     path: string;
-    review: { blockers: number; nitpicks: number } | null;
-    judge: { decision: 'passed' | 'failed'; reason: string | null } | null;
+    review:
+      | { blockers: number; nitpicks: number }
+      | { malfunction: Error }
+      | null;
+    judge:
+      | { decision: 'allowed' | 'blocked'; reason: string | null }
+      | { malfunction: Error }
+      | null;
   } | null;
 }

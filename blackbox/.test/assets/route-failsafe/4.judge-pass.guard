@@ -1,0 +1,5 @@
+artifacts:
+  - 4.judge-pass*.md
+
+judges:
+  - bash $route/.test/mock-judge-exit-0.sh

@@ -11,7 +11,9 @@ import {
 } from '@src/domain.objects/Driver/RouteStoneGuard';
 import { RouteStoneGuardReviewArtifact } from '@src/domain.objects/Driver/RouteStoneGuardReviewArtifact';
 
+import { formatTreeBucket } from './formatTreeBucket';
 import { getAllStoneGuardArtifactsByHash } from './getAllStoneGuardArtifactsByHash';
+import { getExitCodeClass } from './getExitCodeClass';
 
 const execAsync = promisify(exec);
 
@@ -46,38 +48,50 @@ export const runOneStoneGuardReview = async (input: {
   // execute command from repo root so $route paths work correctly
   let stdout = '';
   let stderr = '';
+  let exitCode = 0;
   try {
     const result = await execAsync(cmd);
     stdout = result.stdout;
     stderr = result.stderr;
+    exitCode = 0;
   } catch (error: unknown) {
-    // capture output even on failure
+    // capture output and exit code even on failure
     if (error && typeof error === 'object') {
       const errObj = error as Record<string, unknown>;
       stdout = typeof errObj.stdout === 'string' ? errObj.stdout : '';
       stderr = typeof errObj.stderr === 'string' ? errObj.stderr : '';
+      exitCode = typeof errObj.code === 'number' ? errObj.code : 1;
     }
   }
 
-  // write output if command produced stdout and no file was written
-  const fileWritten = await isFilePresent(outputPath);
-  if (!fileWritten && stdout) {
-    await fs.writeFile(outputPath, stdout);
+  // classify exit code
+  const exitClass = getExitCodeClass({ code: exitCode });
+
+  // format artifact content with tree buckets
+  const artifactLines: string[] = [];
+  artifactLines.push(formatTreeBucket({ label: 'stdout', content: stdout }));
+  artifactLines.push(formatTreeBucket({ label: 'stderr', content: stderr }));
+
+  // add passage footer for non-zero exit
+  if (exitCode !== 0) {
+    const blockReason =
+      exitClass === 'constraint'
+        ? 'blocked by constraints'
+        : 'blocked by malfunction';
+    const exitEmoji = exitClass === 'constraint' ? '✋' : '💥';
+    artifactLines.push('└─ passage blocked');
+    artifactLines.push(`   ├─ ${blockReason}`);
+    artifactLines.push(`   └─ exit code: ${exitCode} ${exitEmoji}`);
   }
 
-  // read the output file to parse metadata
-  let content = '';
-  try {
-    content = await fs.readFile(outputPath, 'utf-8');
-  } catch {
-    // file may not exist if command failed
-    content = stderr || 'review command failed';
-    await fs.writeFile(outputPath, content);
-  }
+  const artifactContent = artifactLines.join('\n');
 
-  // parse blockers and nitpicks from content
-  const blockers = parseCount(content, /blockers?:\s*(\d+)/i);
-  const nitpicks = parseCount(content, /nitpicks?:\s*(\d+)/i);
+  // write artifact file
+  await fs.writeFile(outputPath, artifactContent);
+
+  // parse blockers and nitpicks from stdout (where review tools output)
+  const blockers = parseCount(stdout, /blockers?:\s*(\d+)/i);
+  const nitpicks = parseCount(stdout, /nitpicks?:\s*(\d+)/i);
 
   return new RouteStoneGuardReviewArtifact({
     stone: { path: input.stone.path },
@@ -87,6 +101,10 @@ export const runOneStoneGuardReview = async (input: {
     path: outputPath,
     blockers,
     nitpicks,
+    exitCode,
+    exitClass,
+    stdout,
+    stderr,
   });
 };
 
@@ -159,7 +177,10 @@ export const runStoneGuardReviews = async (
       inflight: { beganAt, endedAt: new Date().toISOString() },
       outcome: {
         path: review.path,
-        review: { blockers: review.blockers, nitpicks: review.nitpicks },
+        review:
+          review.exitClass === 'malfunction'
+            ? { malfunction: new Error(`exit code ${review.exitCode}`) }
+            : { blockers: review.blockers, nitpicks: review.nitpicks },
         judge: null,
       },
     });

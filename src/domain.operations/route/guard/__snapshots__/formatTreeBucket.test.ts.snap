@@ -1,0 +1,12 @@
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
+
+exports[`formatTreeBucket given: [case4] snapshot verification when: [t0] formatted with typical content then: matches snapshot for visual verification 1`] = `
+"├─ stdout
+│  ├─
+│  │
+│  │  API keys loaded
+│  │  Review complete
+│  │  No blockers found
+│  │
+│  └─"
+`;

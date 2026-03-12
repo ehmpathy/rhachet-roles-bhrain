@@ -9,6 +9,7 @@ import { DomainLiteral } from 'domain-objects';
  * - 'approved': stone has been approved
  * - 'blocked': stone is blocked from passage
  * - 'rewound': stone validation state has been cleared for fresh evaluation
+ * - 'malfunction': reviewer or judge malfunctioned (exit code != 0 and != 2)
  */
 export interface PassageReport {
   /**
@@ -19,7 +20,7 @@ export interface PassageReport {
   /**
    * the passage status
    */
-  status: 'passed' | 'approved' | 'blocked' | 'rewound';
+  status: 'passed' | 'approved' | 'blocked' | 'rewound' | 'malfunction';
 
   /**
    * what blocks passage (only for status='blocked')

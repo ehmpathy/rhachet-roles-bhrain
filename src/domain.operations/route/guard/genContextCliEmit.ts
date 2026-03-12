@@ -71,7 +71,7 @@ export const genContextCliEmit = (input: {
       clearActive();
       completedCount++;
       const mark = '✓';
-      const status = event.step.phase === 'review' ? 'done' : 'passed';
+      const status = event.step.phase === 'review' ? 'completed' : 'allowed';
       seal(`   ${branch} ${mark} ${label} - ${status} (cached)`);
       return;
     }
@@ -101,14 +101,21 @@ export const genContextCliEmit = (input: {
       completedCount++;
 
       if (event.step.phase === 'review') {
-        const status = 'done';
-        seal(`   ${branch} ✓ ${label} - ${status} ${dur}s`);
+        // reviews: completed | malfunctioned
+        const review = event.outcome.review;
+        const malfunctioned = review && 'malfunction' in review;
+        const mark = '✓';
+        const status = malfunctioned ? 'malfunctioned' : 'completed';
+        seal(`   ${branch} ${mark} ${label} - ${status} ${dur}s`);
       }
 
       if (event.step.phase === 'judge') {
-        const passed = event.outcome.judge?.decision === 'passed';
-        const mark = passed ? '✓' : '✗';
-        const status = passed ? 'passed' : 'failed';
+        // judges: allowed | blocked (blocked can be due to constraint or malfunction)
+        const judge = event.outcome.judge;
+        const allowed =
+          judge && 'decision' in judge && judge.decision === 'allowed';
+        const mark = allowed ? '✓' : '✗';
+        const status = allowed ? 'allowed' : 'blocked';
         seal(`   ${branch} ${mark} ${label} - ${status} ${dur}s`);
       }
     }
