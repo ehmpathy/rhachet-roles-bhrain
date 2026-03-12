@@ -58,7 +58,7 @@ describe('formatLetsReflect', () => {
         expect(output).toContain('review guide content');
       });
 
-      then('contains articulation section', () => {
+      then('contains walk the way section', () => {
         const output = formatLetsReflect({
           stone: '1.vision',
           slug: 'all-done',
@@ -71,10 +71,13 @@ describe('formatLetsReflect', () => {
           total: 1,
         });
 
+        expect(output).toContain('walk the way 🪷');
         expect(output).toContain('articulate into');
         expect(output).toContain(
           '.behavior/v2026_03_05.behavior-example/review/self/1.vision.all-done.md',
         );
+        expect(output).toContain('for each found issue 🪘');
+        expect(output).toContain('for each non issue 🪘');
       });
 
       then('contains final instruction', () => {

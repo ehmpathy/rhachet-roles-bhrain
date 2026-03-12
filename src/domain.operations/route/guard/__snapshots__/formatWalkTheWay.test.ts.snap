@@ -1,0 +1,24 @@
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
+
+exports[`formatWalkTheWay given: [case1] articulation with drum blocks when: [t0] formatWalkTheWay called then: output matches snapshot (vibecheck) 1`] = `
+"   ├─ walk the way 🪷
+   │  │
+   │  ├─ articulate into
+   │  │  └─ .behavior/v2026_03_05.behavior-example/review/self/1.vision.all-done.md
+   │  │
+   │  ├─ for each found issue 🪘
+   │  │  ├─
+   │  │  │
+   │  │  │  articulate how it was fixed
+   │  │  │  so you remember for next time
+   │  │  │
+   │  │  └─
+   │  │
+   │  └─ for each non issue 🪘
+   │     ├─
+   │     │
+   │     │  articulate why it holds
+   │     │  so others can learn from it
+   │     │
+   │     └─"
+`;

@@ -1,5 +1,7 @@
 import type { RouteStoneGuardReviewSelf } from '@src/domain.objects/Driver/RouteStoneGuard';
 
+import { formatWalkTheWay } from './formatWalkTheWay';
+
 /**
  * .what = formats warm "lets reflect" section for review.self prompts
  * .why = guides clones through explicit review.self with zen frame and mindful instructions
@@ -94,10 +96,8 @@ export const formatLetsReflect = (input: {
   lines.push(`   │  └─`);
   lines.push(`   │`);
 
-  // articulate into section
-  const articulationPath = `${input.route}/review/self/${input.stone}.${input.slug}.md`;
-  lines.push(`   ├─ articulate into`);
-  lines.push(`   │  └─ ${articulationPath}`);
+  // walk the way section (articulation + drum blocks)
+  lines.push(...formatWalkTheWay(input));
   lines.push(`   │`);
 
   // final instruction

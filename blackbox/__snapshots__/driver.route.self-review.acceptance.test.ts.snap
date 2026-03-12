@@ -64,8 +64,26 @@ exports[`driver.route.review.self.acceptance given: [case1] stone with reviews.s
    │  │
    │  └─
    │
-   ├─ articulate into
-   │  └─ /review/self/1.all-done.md
+   ├─ walk the way 🪷
+   │  │
+   │  ├─ articulate into
+   │  │  └─ /review/self/1.all-done.md
+   │  │
+   │  ├─ for each found issue 🪘
+   │  │  ├─
+   │  │  │
+   │  │  │  articulate how it was fixed
+   │  │  │  so you remember for next time
+   │  │  │
+   │  │  └─
+   │  │
+   │  └─ for each non issue 🪘
+   │     ├─
+   │     │
+   │     │  articulate why it holds
+   │     │  so others can learn from it
+   │     │
+   │     └─
    │
    └─ when you've truly reflected, run
       └─ rhx route.stone.set --stone 1 --as promised --that all-done
@@ -136,8 +154,26 @@ exports[`driver.route.review.self.acceptance given: [case1] stone with reviews.s
    │  │
    │  └─
    │
-   ├─ articulate into
-   │  └─ ./review/self/1.tests-pass.md
+   ├─ walk the way 🪷
+   │  │
+   │  ├─ articulate into
+   │  │  └─ ./review/self/1.tests-pass.md
+   │  │
+   │  ├─ for each found issue 🪘
+   │  │  ├─
+   │  │  │
+   │  │  │  articulate how it was fixed
+   │  │  │  so you remember for next time
+   │  │  │
+   │  │  └─
+   │  │
+   │  └─ for each non issue 🪘
+   │     ├─
+   │     │
+   │     │  articulate why it holds
+   │     │  so others can learn from it
+   │     │
+   │     └─
    │
    └─ when you've truly reflected, run
       └─ rhx route.stone.set --stone 1 --as promised --that tests-pass
@@ -238,8 +274,26 @@ exports[`driver.route.review.self.acceptance given: [case3] hashless promises su
    │  │
    │  └─
    │
-   ├─ articulate into
-   │  └─ /review/self/1.tests-pass.md
+   ├─ walk the way 🪷
+   │  │
+   │  ├─ articulate into
+   │  │  └─ /review/self/1.tests-pass.md
+   │  │
+   │  ├─ for each found issue 🪘
+   │  │  ├─
+   │  │  │
+   │  │  │  articulate how it was fixed
+   │  │  │  so you remember for next time
+   │  │  │
+   │  │  └─
+   │  │
+   │  └─ for each non issue 🪘
+   │     ├─
+   │     │
+   │     │  articulate why it holds
+   │     │  so others can learn from it
+   │     │
+   │     └─
    │
    └─ when you've truly reflected, run
       └─ rhx route.stone.set --stone 1 --as promised --that tests-pass
@@ -304,8 +358,26 @@ exports[`driver.route.review.self.acceptance given: [case5] clone promises too q
    │  │
    │  └─
    │
-   ├─ articulate into
-   │  └─ ./review/self/1.all-done.md
+   ├─ walk the way 🪷
+   │  │
+   │  ├─ articulate into
+   │  │  └─ ./review/self/1.all-done.md
+   │  │
+   │  ├─ for each found issue 🪘
+   │  │  ├─
+   │  │  │
+   │  │  │  articulate how it was fixed
+   │  │  │  so you remember for next time
+   │  │  │
+   │  │  └─
+   │  │
+   │  └─ for each non issue 🪘
+   │     ├─
+   │     │
+   │     │  articulate why it holds
+   │     │  so others can learn from it
+   │     │
+   │     └─
    │
    └─ when you've truly reflected, run
       └─ rhx route.stone.set --stone 1 --as promised --that all-done
@@ -367,8 +439,26 @@ exports[`driver.route.review.self.acceptance given: [case5] clone promises too q
    │  │
    │  └─
    │
-   ├─ articulate into
-   │  └─ ./review/self/1.all-done.md
+   ├─ walk the way 🪷
+   │  │
+   │  ├─ articulate into
+   │  │  └─ ./review/self/1.all-done.md
+   │  │
+   │  ├─ for each found issue 🪘
+   │  │  ├─
+   │  │  │
+   │  │  │  articulate how it was fixed
+   │  │  │  so you remember for next time
+   │  │  │
+   │  │  └─
+   │  │
+   │  └─ for each non issue 🪘
+   │     ├─
+   │     │
+   │     │  articulate why it holds
+   │     │  so others can learn from it
+   │     │
+   │     └─
    │
    └─ when you've truly reflected, run
       └─ rhx route.stone.set --stone 1 --as promised --that all-done
