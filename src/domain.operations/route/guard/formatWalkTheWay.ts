@@ -1,3 +1,5 @@
+import { getSelfReviewArticulationPath } from './getSelfReviewArticulationPath';
+
 /**
  * .what = formats "walk the way" section with articulation path and drum blocks
  * .why = carries two peer flows (fix and articulate) with equal weight for self-review
@@ -6,8 +8,9 @@ export const formatWalkTheWay = (input: {
   route: string;
   stone: string;
   slug: string;
+  index: number;
 }): string[] => {
-  const articulationPath = `${input.route}/review/self/${input.stone}.${input.slug}.md`;
+  const articulationPath = getSelfReviewArticulationPath(input);
   const lines: string[] = [];
 
   // walk the way header
