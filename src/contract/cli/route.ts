@@ -1,3 +1,4 @@
+import { execSync } from 'child_process';
 import * as fs from 'fs/promises';
 import * as path from 'path';
 
@@ -11,6 +12,7 @@ import { computeStoneReviewInputHash } from '@src/domain.operations/route/guard/
 import { genContextCliEmit } from '@src/domain.operations/route/guard/genContextCliEmit';
 import { getOneStoneGuardApproval } from '@src/domain.operations/route/judges/getOneStoneGuardApproval';
 import { stepRouteDrive } from '@src/domain.operations/route/stepRouteDrive';
+import { stepRouteReview } from '@src/domain.operations/route/stepRouteReview';
 import { stepRouteStoneDel } from '@src/domain.operations/route/stepRouteStoneDel';
 import { stepRouteStoneGet } from '@src/domain.operations/route/stepRouteStoneGet';
 import { stepRouteStoneSet } from '@src/domain.operations/route/stepRouteStoneSet';
@@ -254,6 +256,31 @@ examples:
 };
 
 /**
+ * .what = prints help for route.review
+ */
+const printReviewHelp = (): void => {
+  console.log(
+    `
+route.review - review stone artifacts with change stats
+
+usage:
+  route.review [options]
+
+options:
+  --stone <name>     stone name to review (defaults to next blocked on approval)
+  --route <path>     path to route directory (uses bound route if absent)
+  --open <opener>    editor to open artifact in (vim, code, nvim, etc.)
+  --help             show this help message
+
+examples:
+  route.review                    # review next stone blocked on approval
+  route.review --open vim         # open artifact in vim (if single file)
+  route.review --stone 3.blueprint --open code
+`.trim(),
+  );
+};
+
+/**
  * .what = cli entrypoint for route.drive skill
  * .why = echoes current stone and pass command as GPS-like guidance
  */
@@ -280,6 +307,57 @@ export const routeDrive = async (): Promise<void> => {
       if (result.emit.stderr.reason) {
         console.error(result.emit.stderr.reason);
       }
+      process.exit(result.emit.stderr.code);
+    }
+  } catch (error) {
+    if (error instanceof Error) {
+      console.error(`error: ${error.message}`);
+    }
+    process.exit(1);
+  }
+};
+
+/**
+ * .what = cli entrypoint for route.review skill
+ * .why = enables foremen to scan artifacts and review in editor
+ */
+export const routeReview = async (): Promise<void> => {
+  const options = parseArgs(process.argv);
+
+  if (options.help) {
+    printReviewHelp();
+    return;
+  }
+
+  // validate opener command exists in PATH
+  if (options.open) {
+    try {
+      execSync(`command -v ${options.open}`, { stdio: 'pipe' });
+    } catch {
+      const errorLines = [
+        '🦉 look for the light',
+        '',
+        '🗿 route.review',
+        `   └─ ✗ opener '${options.open}' not found in PATH`,
+      ];
+      console.error(errorLines.join('\n'));
+      process.exit(2);
+    }
+  }
+
+  try {
+    const result = await stepRouteReview({
+      route: options.route,
+      stone: options.stone,
+      open: options.open,
+    });
+
+    if (result.emit.stdout) {
+      console.log(result.emit.stdout);
+    }
+
+    if (result.emit.stderr) {
+      console.error(result.emit.stderr.reason);
       process.exit(result.emit.stderr.code);
     }
   } catch (error) {
