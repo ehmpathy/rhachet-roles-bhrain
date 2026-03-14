@@ -116,7 +116,7 @@ describe('genContextCliEmit', () => {
 
         expect(mock.chunks).toHaveLength(1);
         const combined = mock.chunks.join('');
-        expect(combined).toContain('✓ review.1 - done 12.4s');
+        expect(combined).toContain('✓ review.1 - completed 12.4s');
       });
     });
   });
@@ -138,7 +138,7 @@ describe('genContextCliEmit', () => {
             outcome: {
               path: '/tmp/.route/1.test.guard.judge.i1p1.abc.def.j1.md',
               review: null,
-              judge: { decision: 'passed', reason: 'all checks pass' },
+              judge: { decision: 'allowed', reason: 'all checks pass' },
             },
           }),
         );
@@ -147,7 +147,7 @@ describe('genContextCliEmit', () => {
 
         expect(mock.chunks).toHaveLength(1);
         const combined = mock.chunks.join('');
-        expect(combined).toContain('✓ judge.1 - passed 0.8s');
+        expect(combined).toContain('✓ judge.1 - allowed 0.8s');
       });
     });
 
@@ -168,7 +168,7 @@ describe('genContextCliEmit', () => {
               path: '/tmp/.route/1.test.guard.judge.i1p1.abc.def.j1.md',
               review: null,
               judge: {
-                decision: 'failed',
+                decision: 'blocked',
                 reason: 'blockers exceed threshold (3 > 0)',
               },
             },
@@ -179,7 +179,7 @@ describe('genContextCliEmit', () => {
 
         expect(mock.chunks).toHaveLength(1);
         const combined = mock.chunks.join('');
-        expect(combined).toContain('✗ judge.1 - failed 2.1s');
+        expect(combined).toContain('✗ judge.1 - blocked 2.1s');
       });
     });
   });
@@ -271,7 +271,7 @@ describe('genContextCliEmit', () => {
         // the seal line should contain \r and \n
         const chunksAfterFinish = mock.chunks.slice(chunkCountBeforeFinish);
         const combined = chunksAfterFinish.join('');
-        expect(combined).toContain('✓ review.1 - done 8.2s');
+        expect(combined).toContain('✓ review.1 - completed 8.2s');
         expect(combined).toContain('\n');
 
         done();
@@ -364,7 +364,7 @@ describe('genContextCliEmit', () => {
             outcome: {
               path: '/tmp/.route/judge.md',
               review: null,
-              judge: { decision: 'passed', reason: null },
+              judge: { decision: 'allowed', reason: null },
             },
           }),
           position,
@@ -409,7 +409,7 @@ describe('genContextCliEmit', () => {
 
   given('[case8] cached events', () => {
     when('[t0] cached review event (inflight and outcome both null)', () => {
-      then('outputs cached line with done status', () => {
+      then('outputs cached line with completed status', () => {
         const mock = genMockStderr({ isTTY: false });
         const { context, done } = genContextCliEmit({ stderr: mock.stream });
 
@@ -426,12 +426,12 @@ describe('genContextCliEmit', () => {
 
         expect(mock.chunks).toHaveLength(1);
         const combined = mock.chunks.join('');
-        expect(combined).toContain('✓ review.1 - done (cached)');
+        expect(combined).toContain('✓ review.1 - completed (cached)');
       });
     });
 
     when('[t1] cached judge event', () => {
-      then('outputs cached line with passed status', () => {
+      then('outputs cached line with allowed status', () => {
         const mock = genMockStderr({ isTTY: false });
         const { context, done } = genContextCliEmit({ stderr: mock.stream });
 
@@ -448,7 +448,7 @@ describe('genContextCliEmit', () => {
 
         expect(mock.chunks).toHaveLength(1);
         const combined = mock.chunks.join('');
-        expect(combined).toContain('✓ judge.1 - passed (cached)');
+        expect(combined).toContain('✓ judge.1 - allowed (cached)');
       });
     });
   });

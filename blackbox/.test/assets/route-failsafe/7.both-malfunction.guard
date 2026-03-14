@@ -1,0 +1,7 @@
+# guard for 7.both-malfunction
+
+reviews:
+  - bash $route/.test/mock-exit-1.sh
+
+judges:
+  - bash $route/.test/mock-judge-exit-1.sh

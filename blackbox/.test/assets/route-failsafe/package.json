@@ -1,0 +1,8 @@
+{
+  "name": "route-failsafe-fixture",
+  "private": true,
+  "description": "fixture for failsafe acceptance test - malfunction and constraint behavior",
+  "dependencies": {
+    "rhachet-roles-bhrain": "link:."
+  }
+}

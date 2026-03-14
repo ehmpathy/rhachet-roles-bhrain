@@ -335,12 +335,16 @@
       "Bash(npx rhachet run --skill git.commit.uses set:*)",
       "Bash(sed:*)",
       "Bash(tee:*)",
+      "Edit(**/.route/**)",
       "Edit(.branch/.bind/*)",
       "Edit(.meter/*)",
+      "Edit(.route/**)",
       "EnterPlanMode",
       "Read(.quarantine/*)",
+      "Write(**/.route/**)",
       "Write(.branch/.bind/*)",
-      "Write(.meter/*)"
+      "Write(.meter/*)",
+      "Write(.route/**)"
     ],
     "ask": [
       "Bash(bash:*)",

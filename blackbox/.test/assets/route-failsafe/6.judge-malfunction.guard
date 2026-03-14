@@ -1,0 +1,5 @@
+artifacts:
+  - 6.judge-malfunction*.md
+
+judges:
+  - bash $route/.test/mock-judge-exit-1.sh

@@ -6,6 +6,8 @@ import { RouteStoneGuardJudgeArtifact } from '@src/domain.objects/Driver/RouteSt
 import { RouteStoneGuardReviewArtifact } from '@src/domain.objects/Driver/RouteStoneGuardReviewArtifact';
 import { enumFilesFromGlob } from '@src/utils/enumFilesFromGlob';
 
+import { getExitCodeClass } from './getExitCodeClass';
+
 /**
  * .what = retrieves prior guard artifacts for a specific hash
  * .why = enables reuse of reviews and judges when artifact content has not changed
@@ -45,19 +47,20 @@ export const getAllStoneGuardArtifactsByHash = async (input: {
   const reviews: RouteStoneGuardReviewArtifact[] = [];
   for (const filePath of reviewFiles) {
     const content = await fs.readFile(filePath, 'utf-8');
-    const { iteration, index, blockers, nitpicks } = parseReviewMetadata(
-      filePath,
-      content,
-    );
+    const parsed = parseReviewMetadata(filePath, content);
     reviews.push(
       new RouteStoneGuardReviewArtifact({
         stone: { path: input.stone.path },
         hash: input.hash,
-        iteration,
-        index,
+        iteration: parsed.iteration,
+        index: parsed.index,
         path: filePath,
-        blockers,
-        nitpicks,
+        blockers: parsed.blockers,
+        nitpicks: parsed.nitpicks,
+        exitCode: parsed.exitCode,
+        exitClass: parsed.exitClass,
+        stdout: parsed.stdout,
+        stderr: parsed.stderr,
       }),
     );
   }
@@ -66,19 +69,20 @@ export const getAllStoneGuardArtifactsByHash = async (input: {
   const judges: RouteStoneGuardJudgeArtifact[] = [];
   for (const filePath of judgeFiles) {
     const content = await fs.readFile(filePath, 'utf-8');
-    const { iteration, index, passed, reason } = parseJudgeMetadata(
-      filePath,
-      content,
-    );
+    const parsed = parseJudgeMetadata(filePath, content);
     judges.push(
       new RouteStoneGuardJudgeArtifact({
         stone: { path: input.stone.path },
         hash: input.hash,
-        iteration,
-        index,
+        iteration: parsed.iteration,
+        index: parsed.index,
         path: filePath,
-        passed,
-        reason,
+        passed: parsed.passed,
+        reason: parsed.reason,
+        exitCode: parsed.exitCode,
+        exitClass: parsed.exitClass,
+        stdout: parsed.stdout,
+        stderr: parsed.stderr,
       }),
     );
   }
@@ -88,12 +92,21 @@ export const getAllStoneGuardArtifactsByHash = async (input: {
 
 /**
  * .what = parses review file metadata from filename and content
- * .why = extracts iteration, index, blockers, nitpicks from review artifact
+ * .why = extracts iteration, index, blockers, nitpicks, exit info from review artifact
  */
 const parseReviewMetadata = (
   filePath: string,
   content: string,
-): { iteration: number; index: number; blockers: number; nitpicks: number } => {
+): {
+  iteration: number;
+  index: number;
+  blockers: number;
+  nitpicks: number;
+  exitCode: number;
+  exitClass: 'passed' | 'constraint' | 'malfunction';
+  stdout: string;
+  stderr: string;
+} => {
   // filename pattern: $stone.guard.review.i$iter.$hash.r$n.md
   const filename = path.basename(filePath);
   const iterMatch = filename.match(/\.i(\d+)\./);
@@ -102,19 +115,36 @@ const parseReviewMetadata = (
   const iteration = iterMatch?.[1] ? parseInt(iterMatch[1], 10) : 0;
   const index = indexMatch?.[1] ? parseInt(indexMatch[1], 10) : 0;
 
-  // parse blockers and nitpicks from content frontmatter
-  const blockerMatch = content.match(/blockers:\s*(\d+)/i);
-  const nitpickMatch = content.match(/nitpicks:\s*(\d+)/i);
+  // parse blockers and nitpicks from content
+  const blockerMatch = content.match(/blockers?:\s*(\d+)/i);
+  const nitpickMatch = content.match(/nitpicks?:\s*(\d+)/i);
 
   const blockers = blockerMatch?.[1] ? parseInt(blockerMatch[1], 10) : 0;
   const nitpicks = nitpickMatch?.[1] ? parseInt(nitpickMatch[1], 10) : 0;
 
-  return { iteration, index, blockers, nitpicks };
+  // parse exit code from tree bucket format
+  const exitCodeMatch = content.match(/exit code:\s*(\d+)/);
+  const exitCode = exitCodeMatch?.[1] ? parseInt(exitCodeMatch[1], 10) : 0;
+  const exitClass = getExitCodeClass({ code: exitCode });
+
+  // extract stdout/stderr from tree buckets
+  const { stdout, stderr } = parseTreeBuckets(content);
+
+  return {
+    iteration,
+    index,
+    blockers,
+    nitpicks,
+    exitCode,
+    exitClass,
+    stdout,
+    stderr,
+  };
 };
 
 /**
  * .what = parses judge file metadata from filename and content
- * .why = extracts iteration, index, passed, reason from judge artifact
+ * .why = extracts iteration, index, passed, reason, exit info from judge artifact
  */
 const parseJudgeMetadata = (
   filePath: string,
@@ -124,6 +154,10 @@ const parseJudgeMetadata = (
   index: number;
   passed: boolean;
   reason: string | null;
+  exitCode: number;
+  exitClass: 'passed' | 'constraint' | 'malfunction';
+  stdout: string;
+  stderr: string;
 } => {
   // filename pattern: $stone.guard.judge.i$iter.$hash.j$n.md
   const filename = path.basename(filePath);
@@ -133,7 +167,7 @@ const parseJudgeMetadata = (
   const iteration = iterMatch?.[1] ? parseInt(iterMatch[1], 10) : 0;
   const index = indexMatch?.[1] ? parseInt(indexMatch[1], 10) : 0;
 
-  // parse passed and reason from content frontmatter
+  // parse passed and reason from content
   const passedMatch = content.match(/passed:\s*(true|false)/i);
   const reasonMatch = content.match(/reason:\s*(.+)/i);
 
@@ -142,5 +176,52 @@ const parseJudgeMetadata = (
     : false;
   const reason = reasonMatch?.[1] ? reasonMatch[1].trim() : null;
 
-  return { iteration, index, passed, reason };
+  // parse exit code from tree bucket format
+  const exitCodeMatch = content.match(/exit code:\s*(\d+)/);
+  const exitCode = exitCodeMatch?.[1] ? parseInt(exitCodeMatch[1], 10) : 0;
+  const exitClass = getExitCodeClass({ code: exitCode });
+
+  // extract stdout/stderr from tree buckets
+  const { stdout, stderr } = parseTreeBuckets(content);
+
+  return {
+    iteration,
+    index,
+    passed,
+    reason,
+    exitCode,
+    exitClass,
+    stdout,
+    stderr,
+  };
+};
+
+/**
+ * .what = extracts stdout and stderr from tree bucket format
+ * .why = enables reconstruction of artifact fields from file content
+ */
+const parseTreeBuckets = (
+  content: string,
+): { stdout: string; stderr: string } => {
+  // extract stdout from tree bucket (between "├─ stdout" and next "├─" or "└─")
+  const stdoutMatch = content.match(
+    /├─ stdout[\s\S]*?│ {2}│\n([\s\S]*?)│ {2}│\n│ {2}└─/,
+  );
+  const stdoutLines =
+    stdoutMatch?.[1]
+      ?.split('\n')
+      .map((line) => line.replace(/^│ {2}│ {2}/, ''))
+      .join('\n') ?? '';
+
+  // extract stderr from tree bucket
+  const stderrMatch = content.match(
+    /├─ stderr[\s\S]*?│ {2}│\n([\s\S]*?)│ {2}│\n│ {2}└─/,
+  );
+  const stderrLines =
+    stderrMatch?.[1]
+      ?.split('\n')
+      .map((line) => line.replace(/^│ {2}│ {2}/, ''))
+      .join('\n') ?? '';
+
+  return { stdout: stdoutLines.trim(), stderr: stderrLines.trim() };
 };

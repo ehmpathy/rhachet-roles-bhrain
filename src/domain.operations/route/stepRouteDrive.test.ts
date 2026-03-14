@@ -193,4 +193,79 @@ describe('stepRouteDrive', () => {
       });
     });
   });
+
+  given('[case5] route with malfunction status', () => {
+    const scene = useBeforeAll(async () => {
+      const tempDir = genTempDir({
+        slug: 'drive-malfunction',
+        clone: path.join(ASSETS_DIR, 'route.simple'),
+      });
+
+      // create passage report with malfunction status
+      const routeDir = path.join(tempDir, '.route');
+      await fs.mkdir(routeDir, { recursive: true });
+      const passageContent =
+        ['{"stone":"1.vision","status":"malfunction"}'].join('\n') + '\n';
+      await fs.writeFile(path.join(routeDir, 'passage.jsonl'), passageContent);
+
+      return { tempDir };
+    });
+
+    when('[t0] stepRouteDrive called in direct mode', () => {
+      then(
+        'returns normal output (direct mode does not check malfunction)',
+        async () => {
+          const result = await stepRouteDrive({ route: scene.tempDir });
+          // direct mode still shows next stone (malfunction check is hook-only)
+          expect(result.emit?.stdout).toContain('where were we?');
+          expect(result.emit?.stdout).toContain('stone = 1.vision');
+        },
+      );
+    });
+
+    when('[t1] stepRouteDrive called in hook mode', () => {
+      then('returns halted message with exit code 3', async () => {
+        const result = await stepRouteDrive({
+          route: scene.tempDir,
+          mode: 'hook',
+        });
+        expect(result.emit?.stdout).toContain('halted, guard malfunction');
+        expect(result.emit?.stdout).toContain('please tell a human');
+        expect(result.emit?.stderr?.code).toBe(3);
+      });
+
+      then('stderr contains escalation message', async () => {
+        const result = await stepRouteDrive({
+          route: scene.tempDir,
+          mode: 'hook',
+        });
+        expect(result.emit?.stderr?.reason).toContain('malfunctioned');
+        expect(result.emit?.stderr?.reason).toContain('1.vision');
+        expect(result.emit?.stderr?.reason).toContain('human must fix');
+      });
+
+      then('output mentions affected stone', async () => {
+        const result = await stepRouteDrive({
+          route: scene.tempDir,
+          mode: 'hook',
+        });
+        expect(result.emit?.stdout).toContain('stone = 1.vision');
+      });
+    });
+
+    when('[t2] malfunction output snapshot', () => {
+      then('output matches snapshot', async () => {
+        const result = await stepRouteDrive({
+          route: scene.tempDir,
+          mode: 'hook',
+        });
+        // replace temp path for snapshot stability
+        const outputStable = result.emit?.stdout?.replace(
+          scene.tempDir,
+          '<ROUTE>',
+        );
+        expect(outputStable).toMatchSnapshot();
+      });
+    });
+  });
 });

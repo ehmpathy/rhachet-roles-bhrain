@@ -1,5 +1,7 @@
 import { DomainEntity, type RefByUnique } from 'domain-objects';
 
+import type { ExitCodeClass } from '@src/domain.operations/route/guard/getExitCodeClass';
+
 import type { RouteStone } from './RouteStone';
 
 /**
@@ -41,6 +43,26 @@ export interface RouteStoneGuardReviewPeerArtifact {
    * count of nitpick issues found
    */
   nitpicks: number;
+
+  /**
+   * command exit code
+   */
+  exitCode: number;
+
+  /**
+   * exit code classification: passed, constraint, or malfunction
+   */
+  exitClass: ExitCodeClass;
+
+  /**
+   * command stdout
+   */
+  stdout: string;
+
+  /**
+   * command stderr
+   */
+  stderr: string;
 }
 
 export class RouteStoneGuardReviewPeerArtifact

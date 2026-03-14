@@ -72,7 +72,7 @@ type FormatInput =
       operation: 'route.stone.set';
       stone: string;
       action: 'passed';
-      passage: 'allowed' | 'blocked';
+      passage: 'allowed' | 'blocked' | 'malfunction';
       note?: string;
       reason?: string;
       slug?: string;
@@ -275,7 +275,10 @@ export const formatRouteStoneEmit = (input: FormatInput): string => {
         ? `${input.passage} (${input.note})`
         : input.passage;
 
-      if (input.passage === 'blocked' && input.reason) {
+      if (
+        (input.passage === 'blocked' || input.passage === 'malfunction') &&
+        input.reason
+      ) {
         lines.push(`   ├─ stone = ${input.stone}`);
         lines.push(`   ├─ passage = ${passageValue}`);
         lines.push(`   └─ reason = ${input.reason}`);

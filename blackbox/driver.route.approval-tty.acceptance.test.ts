@@ -12,6 +12,8 @@ const ASSETS_DIR = path.join(
   '../src/domain.operations/route/.test/assets',
 );
 
+const BLACKBOX_ASSETS_DIR = path.join(__dirname, '.test/assets');
+
 /**
  * .what = helper to invoke route.stone.set via cli
  * .why = enables acceptance test of the full cli flow
@@ -108,9 +110,12 @@ describe('driver.route.approval-tty', () => {
     );
 
     beforeEach(async () => {
-      await fs.cp(path.join(ASSETS_DIR, 'route.guarded'), tempDir, {
-        recursive: true,
-      });
+      // use approval-test fixture with mock judge that properly exits 2
+      await fs.cp(
+        path.join(BLACKBOX_ASSETS_DIR, 'route.approval-test'),
+        tempDir,
+        { recursive: true },
+      );
       // create artifact and fail pass to create blocker report
       await fs.writeFile(path.join(tempDir, '1.vision.md'), '# Vision');
       await invokeRouteStoneSet({

@@ -127,7 +127,178 @@ describe('runStoneGuardReviews', () => {
     });
   });
 
-  given('[case3] guard with $route variable in review command', () => {
+  given('[case3] review exits with code 0 (passed)', () => {
+    const tempDir = path.join(os.tmpdir(), `test-reviews-exit0-${Date.now()}`);
+    const stone = new RouteStone({
+      name: '1.test',
+      path: path.join(tempDir, '1.test.stone'),
+      guard: null,
+    });
+    const guard = new RouteStoneGuard({
+      path: path.join(tempDir, '1.test.guard'),
+      artifacts: ['1.test*.md'],
+      reviews: ['echo "blockers: 0\\nreview passed"'],
+      judges: [],
+      protect: [],
+    });
+
+    beforeEach(async () => {
+      await fs.mkdir(tempDir, { recursive: true });
+    });
+
+    afterEach(async () => {
+      await fs.rm(tempDir, { recursive: true, force: true });
+    });
+
+    when('[t0] review exits 0', () => {
+      then('exitCode is 0 and exitClass is passed', async () => {
+        const reviews = await runStoneGuardReviews(
+          { stone, guard, hash: 'exit0hash', iteration: 1, route: tempDir },
+          noopContext,
+        );
+        expect(reviews[0]?.exitCode).toEqual(0);
+        expect(reviews[0]?.exitClass).toEqual('passed');
+      });
+
+      then('artifact contains stdout in tree bucket', async () => {
+        const reviews = await runStoneGuardReviews(
+          { stone, guard, hash: 'exit0hash2', iteration: 1, route: tempDir },
+          noopContext,
+        );
+        const content = await fs.readFile(reviews[0]?.path ?? '', 'utf-8');
+        expect(content).toContain('├─ stdout');
+        expect(content).toContain('review passed');
+      });
+
+      then('artifact snapshot matches', async () => {
+        const reviews = await runStoneGuardReviews(
+          { stone, guard, hash: 'exit0snap', iteration: 1, route: tempDir },
+          noopContext,
+        );
+        const content = await fs.readFile(reviews[0]?.path ?? '', 'utf-8');
+        expect(content).toMatchSnapshot();
+      });
+    });
+  });
+
+  given('[case4] review exits with code 2 (constraint)', () => {
+    const tempDir = path.join(os.tmpdir(), `test-reviews-exit2-${Date.now()}`);
+    const stone = new RouteStone({
+      name: '1.test',
+      path: path.join(tempDir, '1.test.stone'),
+      guard: null,
+    });
+    const guard = new RouteStoneGuard({
+      path: path.join(tempDir, '1.test.guard'),
+      artifacts: ['1.test*.md'],
+      reviews: ['bash -c "echo blockers: 1; echo constraint failure; exit 2"'],
+      judges: [],
+      protect: [],
+    });
+
+    beforeEach(async () => {
+      await fs.mkdir(tempDir, { recursive: true });
+    });
+
+    afterEach(async () => {
+      await fs.rm(tempDir, { recursive: true, force: true });
+    });
+
+    when('[t0] review exits 2', () => {
+      then('exitCode is 2 and exitClass is constraint', async () => {
+        const reviews = await runStoneGuardReviews(
+          { stone, guard, hash: 'exit2hash', iteration: 1, route: tempDir },
+          noopContext,
+        );
+        expect(reviews[0]?.exitCode).toEqual(2);
+        expect(reviews[0]?.exitClass).toEqual('constraint');
+      });
+
+      then('artifact contains blocked by constraints', async () => {
+        const reviews = await runStoneGuardReviews(
+          { stone, guard, hash: 'exit2hash2', iteration: 1, route: tempDir },
+          noopContext,
+        );
+        const content = await fs.readFile(reviews[0]?.path ?? '', 'utf-8');
+        expect(content).toContain('blocked by constraints');
+        expect(content).toContain('exit code: 2');
+      });
+
+      then('artifact snapshot matches', async () => {
+        const reviews = await runStoneGuardReviews(
+          { stone, guard, hash: 'exit2snap', iteration: 1, route: tempDir },
+          noopContext,
+        );
+        const content = await fs.readFile(reviews[0]?.path ?? '', 'utf-8');
+        expect(content).toMatchSnapshot();
+      });
+    });
+  });
+
+  given('[case5] review exits with code 1 (malfunction)', () => {
+    const tempDir = path.join(os.tmpdir(), `test-reviews-exit1-${Date.now()}`);
+    const stone = new RouteStone({
+      name: '1.test',
+      path: path.join(tempDir, '1.test.stone'),
+      guard: null,
+    });
+    const guard = new RouteStoneGuard({
+      path: path.join(tempDir, '1.test.guard'),
+      artifacts: ['1.test*.md'],
+      reviews: ['bash -c "echo stdout output; echo stderr error >&2; exit 1"'],
+      judges: [],
+      protect: [],
+    });
+
+    beforeEach(async () => {
+      await fs.mkdir(tempDir, { recursive: true });
+    });
+
+    afterEach(async () => {
+      await fs.rm(tempDir, { recursive: true, force: true });
+    });
+
+    when('[t0] review exits 1', () => {
+      then('exitCode is 1 and exitClass is malfunction', async () => {
+        const reviews = await runStoneGuardReviews(
+          { stone, guard, hash: 'exit1hash', iteration: 1, route: tempDir },
+          noopContext,
+        );
+        expect(reviews[0]?.exitCode).toEqual(1);
+        expect(reviews[0]?.exitClass).toEqual('malfunction');
+      });
+
+      then('artifact contains blocked by malfunction', async () => {
+        const reviews = await runStoneGuardReviews(
+          { stone, guard, hash: 'exit1hash2', iteration: 1, route: tempDir },
+          noopContext,
+        );
+        const content = await fs.readFile(reviews[0]?.path ?? '', 'utf-8');
+        expect(content).toContain('blocked by malfunction');
+        expect(content).toContain('exit code: 1');
+      });
+
+      then('artifact captures both stdout and stderr', async () => {
+        const reviews = await runStoneGuardReviews(
+          { stone, guard, hash: 'exit1hash3', iteration: 1, route: tempDir },
+          noopContext,
+        );
+        expect(reviews[0]?.stdout).toContain('stdout output');
+        expect(reviews[0]?.stderr).toContain('stderr error');
+      });
+
+      then('artifact snapshot matches', async () => {
+        const reviews = await runStoneGuardReviews(
+          { stone, guard, hash: 'exit1snap', iteration: 1, route: tempDir },
+          noopContext,
+        );
+        const content = await fs.readFile(reviews[0]?.path ?? '', 'utf-8');
+        expect(content).toMatchSnapshot();
+      });
+    });
+  });
+
+  given('[case6] guard with $route variable in review command', () => {
     const tempDir = path.join(os.tmpdir(), `test-reviews-route-${Date.now()}`);
     const stone = new RouteStone({
       name: '1.test',

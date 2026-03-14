@@ -1,0 +1,8 @@
+artifacts:
+  - 1.review-pass*.md
+
+reviews:
+  - bash $route/.test/mock-exit-0.sh
+
+judges:
+  - bash $route/.test/mock-judge-exit-0.sh

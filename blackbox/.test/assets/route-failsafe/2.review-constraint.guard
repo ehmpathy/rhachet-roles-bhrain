@@ -1,0 +1,8 @@
+artifacts:
+  - 2.review-constraint*.md
+
+reviews:
+  - bash $route/.test/mock-exit-2.sh
+
+judges:
+  - bash $route/.test/mock-judge-exit-2.sh
