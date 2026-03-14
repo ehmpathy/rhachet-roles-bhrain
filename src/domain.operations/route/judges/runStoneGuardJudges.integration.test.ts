@@ -301,6 +301,7 @@ describe('runStoneGuardJudges', () => {
       artifacts: ['1.test*.md'],
       reviews: [],
       judges: ['echo "passed: true\\nreason: judge passed"'],
+      protect: [],
     });
 
     when('[t0] judge exits 0', () => {
@@ -348,6 +349,7 @@ describe('runStoneGuardJudges', () => {
       judges: [
         'bash -c "echo passed: false; echo reason: approval required; exit 2"',
       ],
+      protect: [],
     });
 
     when('[t0] judge exits 2', () => {
@@ -393,6 +395,7 @@ describe('runStoneGuardJudges', () => {
       artifacts: ['1.test*.md'],
       reviews: [],
       judges: ['bash -c "echo stdout output; echo stderr error >&2; exit 1"'],
+      protect: [],
     });
 
     when('[t0] judge exits 1', () => {

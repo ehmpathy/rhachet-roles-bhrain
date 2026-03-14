@@ -139,6 +139,7 @@ describe('runStoneGuardReviews', () => {
       artifacts: ['1.test*.md'],
       reviews: ['echo "blockers: 0\\nreview passed"'],
       judges: [],
+      protect: [],
     });
 
     beforeEach(async () => {
@@ -192,6 +193,7 @@ describe('runStoneGuardReviews', () => {
       artifacts: ['1.test*.md'],
       reviews: ['bash -c "echo blockers: 1; echo constraint failure; exit 2"'],
       judges: [],
+      protect: [],
     });
 
     beforeEach(async () => {
@@ -245,6 +247,7 @@ describe('runStoneGuardReviews', () => {
       artifacts: ['1.test*.md'],
       reviews: ['bash -c "echo stdout output; echo stderr error >&2; exit 1"'],
       judges: [],
+      protect: [],
     });
 
     beforeEach(async () => {
