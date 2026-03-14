@@ -307,6 +307,20 @@ describe('driver.route.drive.blocker.acceptance', () => {
           slug: 'design-complete',
         });
 
+        // create articulation file (required by file presence check)
+        await fs.mkdir(path.join(scene.tempDir, 'review', 'self'), {
+          recursive: true,
+        });
+        await fs.writeFile(
+          path.join(
+            scene.tempDir,
+            'review',
+            'self',
+            '3.blueprint.1.design-complete.md',
+          ),
+          '# design review\n\napi design is complete.',
+        );
+
         // promise the review.self
         await invokeRouteSkill({
           skill: 'route.stone.set',
