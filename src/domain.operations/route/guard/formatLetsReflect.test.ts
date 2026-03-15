@@ -74,7 +74,7 @@ describe('formatLetsReflect', () => {
         expect(output).toContain('walk the way 🪷');
         expect(output).toContain('articulate into');
         expect(output).toContain(
-          '.behavior/v2026_03_05.behavior-example/review/self/1.vision.all-done.md',
+          '.behavior/v2026_03_05.behavior-example/review/self/1.vision.1.all-done.md',
         );
         expect(output).toContain('for each found issue 🪘');
         expect(output).toContain('for each non issue 🪘');

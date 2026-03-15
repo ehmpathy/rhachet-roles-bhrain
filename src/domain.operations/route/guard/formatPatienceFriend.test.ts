@@ -10,6 +10,7 @@ describe('formatPatienceFriend', () => {
           stone: '1.vision',
           slug: 'all-done',
           route: '.behavior/v2026_03_05.behavior-example',
+          index: 1,
         });
 
         expect(output).toMatchSnapshot();
@@ -20,6 +21,7 @@ describe('formatPatienceFriend', () => {
           stone: '1.vision',
           slug: 'all-done',
           route: '.behavior/v2026_03_05.behavior-example',
+          index: 1,
         });
 
         expect(output).toContain('🗿 patience, friend');
@@ -30,6 +32,7 @@ describe('formatPatienceFriend', () => {
           stone: '1.vision',
           slug: 'all-done',
           route: '.behavior/v2026_03_05.behavior-example',
+          index: 1,
         });
 
         expect(output).toContain('the pond barely rippled');
@@ -45,12 +48,13 @@ describe('formatPatienceFriend', () => {
           stone: '1.vision',
           slug: 'all-done',
           route: '.behavior/v2026_03_05.behavior-example',
+          index: 1,
         });
 
         expect(output).toContain('walk the way 🪷');
         expect(output).toContain('articulate into');
         expect(output).toContain(
-          '.behavior/v2026_03_05.behavior-example/review/self/1.vision.all-done.md',
+          '.behavior/v2026_03_05.behavior-example/review/self/1.vision.1.all-done.md',
         );
         expect(output).toContain('for each found issue 🪘');
         expect(output).toContain('for each non issue 🪘');
@@ -61,6 +65,7 @@ describe('formatPatienceFriend', () => {
           stone: '1.vision',
           slug: 'all-done',
           route: '.behavior/v2026_03_05.behavior-example',
+          index: 1,
         });
 
         expect(output).toContain("when you've truly reflected, run");

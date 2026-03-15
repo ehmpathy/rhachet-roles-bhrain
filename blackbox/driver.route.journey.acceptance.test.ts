@@ -377,6 +377,14 @@ describe('driver.route.journey.acceptance', () => {
 
     when('[t8.5] 3.blueprint review.self is promised', () => {
       const result = useThen('promise succeeds', async () => {
+        // create articulation file (required by file presence check)
+        // format: {route}/review/self/{stone}.{index}.{slug}.md
+        await fs.mkdir(path.join(scene.tempDir, 'review', 'self'), { recursive: true });
+        await fs.writeFile(
+          path.join(scene.tempDir, 'review', 'self', '3.blueprint.1.design-complete.md'),
+          '# design review\n\napi design looks complete.',
+        );
+
         // backdate triggered report to bypass time enforcement
         await backdateTriggeredReport({
           tempDir: scene.tempDir,
@@ -503,10 +511,10 @@ describe('driver.route.journey.acceptance', () => {
           slug: 'design-complete',
         });
 
-        // create articulation file
+        // create articulation file (format: {route}/review/self/{stone}.{index}.{slug}.md)
         await fs.mkdir(path.join(scene.tempDir, 'review', 'self'), { recursive: true });
         await fs.writeFile(
-          path.join(scene.tempDir, 'review', 'self', '3.blueprint.design-complete.md'),
+          path.join(scene.tempDir, 'review', 'self', '3.blueprint.1.design-complete.md'),
           '# design review\n\napi design is complete with all endpoints documented.',
         );
 

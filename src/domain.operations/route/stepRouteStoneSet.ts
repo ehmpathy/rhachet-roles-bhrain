@@ -124,20 +124,18 @@ export const stepRouteStoneSet = async (
 
     // check time enforcement and hashbar threshold for self-review
     const reviewSelf = selfReviews.find((r) => r.slug === input.that);
+    const reviewIndex = selfReviews.findIndex((r) => r.slug === input.that);
     const challengeDecision = await getSelfReviewChallengeDecision({
       stone: stoneMatched.name,
       slug: input.that,
       hash,
       route: input.route,
+      index: reviewIndex + 1, // 1-based for file naming
       hashbar: reviewSelf?.hashbar,
     });
 
-    // if challenged, return early with patience message (optionally with rush confrontation)
-    if (
-      challengeDecision.decision === 'challenge:first' ||
-      challengeDecision.decision === 'challenge:rushed'
-    ) {
-      const reviewIndex = selfReviews.findIndex((r) => r.slug === input.that);
+    // if challenged, return early with patience message (and optionally absent or rush confrontation)
+    if (challengeDecision.decision !== 'allowed') {
       return {
         challenged: true,
         emit: {
@@ -147,6 +145,7 @@ export const stepRouteStoneSet = async (
             action: challengeDecision.decision,
             slug: input.that,
             route: input.route,
+            articulationPath: challengeDecision.articulationPath,
             selfReview: reviewSelf
               ? {
                   reviewSelf,

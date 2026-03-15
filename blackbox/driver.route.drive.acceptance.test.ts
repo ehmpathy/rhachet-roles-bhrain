@@ -358,6 +358,13 @@ describe('driver.route.drive.acceptance', () => {
       // backdate triggered reports to bypass time enforcement
       await backdateTriggeredReport({ tempDir, stone: '1', slug: 'all-done' });
 
+      // create articulation file for first review.self (required by file presence check)
+      await fs.mkdir(path.join(tempDir, 'review', 'self'), { recursive: true });
+      await fs.writeFile(
+        path.join(tempDir, 'review', 'self', '1.1.all-done.md'),
+        '# self-review\n\nall done.',
+      );
+
       // promise first review.self
       await invokeRouteSkill({
         skill: 'route.stone.set',
@@ -372,6 +379,12 @@ describe('driver.route.drive.acceptance', () => {
         cwd: tempDir,
       });
       await backdateTriggeredReport({ tempDir, stone: '1', slug: 'tests-pass' });
+
+      // create articulation file for second review.self (required by file presence check)
+      await fs.writeFile(
+        path.join(tempDir, 'review', 'self', '1.2.tests-pass.md'),
+        '# self-review\n\ntests pass.',
+      );
 
       // promise second review.self
       await invokeRouteSkill({

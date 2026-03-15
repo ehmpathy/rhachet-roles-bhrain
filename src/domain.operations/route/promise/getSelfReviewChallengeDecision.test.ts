@@ -6,17 +6,80 @@ import { given, then, when } from 'test-fns';
 import { getSelfReviewChallengeDecision } from './getSelfReviewChallengeDecision';
 import { setSelfReviewTriggeredReport } from './setSelfReviewTriggeredReport';
 
+/**
+ * .what = helper to create articulation file for tests
+ * .why = tests need articulation file to pass file presence check
+ */
+const createArticulationFile = async (input: {
+  route: string;
+  stone: string;
+  index: number;
+  slug: string;
+}): Promise<void> => {
+  const articulationDir = path.join(input.route, 'review', 'self');
+  await fs.mkdir(articulationDir, { recursive: true });
+  await fs.writeFile(
+    path.join(
+      articulationDir,
+      `${input.stone}.${input.index}.${input.slug}.md`,
+    ),
+    '# self-review\n',
+  );
+};
+
 describe('getSelfReviewChallengeDecision', () => {
+  given('[case0] articulation file absent after first challenge', () => {
+    when(
+      '[t0] getSelfReviewChallengeDecision called with trigger report but no articulation file',
+      () => {
+        const tempDir = path.join(
+          os.tmpdir(),
+          `test-challenge-${Date.now()}-0`,
+        );
+
+        then('returns challenge:absent with articulation path', async () => {
+          // create trigger report first (so we pass the challenge:first check)
+          await setSelfReviewTriggeredReport({
+            stone: '1.vision',
+            slug: 'all-done',
+            hash: 'abc123',
+            route: tempDir,
+          });
+
+          // do NOT create articulation file
+
+          const result = await getSelfReviewChallengeDecision({
+            stone: '1.vision',
+            slug: 'all-done',
+            hash: 'abc123',
+            route: tempDir,
+            index: 1,
+          });
+
+          expect(result.decision).toEqual('challenge:absent');
+          expect(result.articulationPath).toEqual(
+            `${tempDir}/review/self/1.vision.1.all-done.md`,
+          );
+
+          // cleanup
+          await fs.rm(tempDir, { recursive: true, force: true });
+        });
+      },
+    );
+  });
+
   given('[case1] no trigger report found', () => {
     when('[t0] getSelfReviewChallengeDecision called', () => {
       const tempDir = path.join(os.tmpdir(), `test-challenge-${Date.now()}-1`);
 
       then('returns challenge:first and creates trigger report', async () => {
+        // note: no articulation file needed - challenge:first happens before file check
         const result = await getSelfReviewChallengeDecision({
           stone: '1.vision',
           slug: 'all-done',
           hash: 'abc123',
           route: tempDir,
+          index: 1,
         });
 
         // verify decision
@@ -55,6 +118,14 @@ describe('getSelfReviewChallengeDecision', () => {
       const tempDir = path.join(os.tmpdir(), `test-challenge-${Date.now()}-2`);
 
       then('returns challenge:rushed', async () => {
+        // create articulation file so file presence check passes
+        await createArticulationFile({
+          route: tempDir,
+          stone: '1.vision',
+          index: 1,
+          slug: 'all-done',
+        });
+
         // first call creates trigger report
         await setSelfReviewTriggeredReport({
           stone: '1.vision',
@@ -72,6 +143,7 @@ describe('getSelfReviewChallengeDecision', () => {
           slug: 'all-done',
           hash: 'abc123',
           route: tempDir,
+          index: 1,
         });
 
         expect(result.decision).toEqual('challenge:rushed');
@@ -87,6 +159,14 @@ describe('getSelfReviewChallengeDecision', () => {
       const tempDir = path.join(os.tmpdir(), `test-challenge-${Date.now()}-3`);
 
       then('returns allowed', async () => {
+        // create articulation file so file presence check passes
+        await createArticulationFile({
+          route: tempDir,
+          stone: '1.vision',
+          index: 1,
+          slug: 'all-done',
+        });
+
         // create trigger report
         const result1 = await setSelfReviewTriggeredReport({
           stone: '1.vision',
@@ -106,6 +186,7 @@ describe('getSelfReviewChallengeDecision', () => {
           slug: 'all-done',
           hash: 'abc123',
           route: tempDir,
+          index: 1,
         });
 
         expect(result.decision).toEqual('allowed');
@@ -120,15 +201,20 @@ describe('getSelfReviewChallengeDecision', () => {
     when('[t0] getSelfReviewChallengeDecision called on fresh route', () => {
       const tempDir = path.join(os.tmpdir(), `test-challenge-${Date.now()}-4`);
 
-      then('returns challenge:first', async () => {
+      then('returns challenge:first with articulation path', async () => {
+        // note: no articulation file needed - challenge:first happens before file check
         const result = await getSelfReviewChallengeDecision({
           stone: '1.vision',
           slug: 'all-done',
           hash: 'abc123',
           route: tempDir,
+          index: 1,
         });
 
         expect(result.decision).toEqual('challenge:first');
+        expect(result.articulationPath).toEqual(
+          `${tempDir}/review/self/1.vision.1.all-done.md`,
+        );
 
         // cleanup
         await fs.rm(tempDir, { recursive: true, force: true });
@@ -141,12 +227,21 @@ describe('getSelfReviewChallengeDecision', () => {
       const tempDir = path.join(os.tmpdir(), `test-challenge-${Date.now()}-5`);
 
       then('returns challenge:rushed', async () => {
+        // create articulation file so file presence check passes
+        await createArticulationFile({
+          route: tempDir,
+          stone: '1.vision',
+          index: 1,
+          slug: 'all-done',
+        });
+
         // first call creates trigger
         await getSelfReviewChallengeDecision({
           stone: '1.vision',
           slug: 'all-done',
           hash: 'abc123',
           route: tempDir,
+          index: 1,
         });
 
         // wait to create mtime gap
@@ -158,6 +253,7 @@ describe('getSelfReviewChallengeDecision', () => {
           slug: 'all-done',
           hash: 'abc123',
           route: tempDir,
+          index: 1,
         });
 
         expect(result.decision).toEqual('challenge:rushed');
@@ -173,12 +269,21 @@ describe('getSelfReviewChallengeDecision', () => {
       const tempDir = path.join(os.tmpdir(), `test-challenge-${Date.now()}-6`);
 
       then('returns allowed on 3rd attempt', async () => {
+        // create articulation file so file presence check passes
+        await createArticulationFile({
+          route: tempDir,
+          stone: '1.vision',
+          index: 1,
+          slug: 'all-done',
+        });
+
         // 1st attempt → challenge:first
         const result1 = await getSelfReviewChallengeDecision({
           stone: '1.vision',
           slug: 'all-done',
           hash: 'abc123',
           route: tempDir,
+          index: 1,
         });
         expect(result1.decision).toEqual('challenge:first');
 
@@ -188,6 +293,7 @@ describe('getSelfReviewChallengeDecision', () => {
           slug: 'all-done',
           hash: 'abc123',
           route: tempDir,
+          index: 1,
         });
         expect(result2.decision).toEqual('challenge:rushed');
 
@@ -197,6 +303,7 @@ describe('getSelfReviewChallengeDecision', () => {
           slug: 'all-done',
           hash: 'abc123',
           route: tempDir,
+          index: 1,
         });
         expect(result3.decision).toEqual('allowed');
 
