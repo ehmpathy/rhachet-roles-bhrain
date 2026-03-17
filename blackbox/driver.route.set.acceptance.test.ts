@@ -64,6 +64,15 @@ describe('driver.route.set.acceptance', () => {
         expect(res.cli.stdout).toContain('passage = allowed');
       });
 
+      then('outputs reminder to continue route', () => {
+        expect(res.cli.stdout).toContain('the way continues, run');
+        expect(res.cli.stdout).toContain('rhx route.drive');
+      });
+
+      then('stdout matches snapshot', () => {
+        expect(res.cli.stdout).toMatchSnapshot();
+      });
+
       then('creates passage marker', () => {
         expect(res.passageExists).toBe(true);
       });
@@ -235,6 +244,15 @@ describe('driver.route.set.acceptance', () => {
         expect(res.cli.stdout).toContain('judge.1');
       });
 
+      then('outputs reminder to continue route', () => {
+        expect(res.cli.stdout).toContain('the way continues, run');
+        expect(res.cli.stdout).toContain('rhx route.drive');
+      });
+
+      then('stdout matches snapshot', () => {
+        expect(res.cli.stdout).toMatchSnapshot();
+      });
+
       then('creates passage marker', () => {
         expect(res.passageExists).toBe(true);
       });
@@ -318,6 +336,11 @@ describe('driver.route.set.acceptance', () => {
 
       then('stderr contains progress output', () => {
         expect(res.cli.stderr.length).toBeGreaterThan(0);
+      });
+
+      then('does NOT output reminder (blocked)', () => {
+        expect(res.cli.stdout).not.toContain('the way continues');
+        expect(res.cli.stdout).not.toContain('rhx route.drive');
       });
 
       then('does not create passage marker', () => {
