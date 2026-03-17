@@ -11,7 +11,7 @@ exports[`driver.route.journey.acceptance given: [journey] weather api route when
 
 exports[`driver.route.journey.acceptance given: [journey] weather api route when: [t1] 1.vision artifact is created and pass attempted then: stdout has good vibes 1`] = `
 "🦉 the way speaks for itself
-   └─ ✗ judge.1 - failed [TIME]
+   └─ ✗ judge.1 - blocked 0.5s
 
 🗿 route.stone.set
    ├─ stone = 1.vision
@@ -38,7 +38,7 @@ exports[`driver.route.journey.acceptance given: [journey] weather api route when
 
 exports[`driver.route.journey.acceptance given: [journey] weather api route when: [t3] 1.vision pass is reattempted after approval then: stdout has good vibes 1`] = `
 "🦉 the way speaks for itself
-   └─ ✓ judge.1 - passed [TIME]
+   └─ ✓ judge.1 - allowed 0.7s
 
 🗿 route.stone.set
    ├─ stone = 1.vision
@@ -207,9 +207,9 @@ exports[`driver.route.journey.acceptance given: [journey] weather api route when
 
 exports[`driver.route.journey.acceptance given: [journey] weather api route when: [t9.5] 3.blueprint review set to pass and pass reattempted then: stdout has good vibes 1`] = `
 "🦉 the way speaks for itself
-   ├─ ✓ review.1 - done (cached)
-   ├─ ✓ judge.1 - passed (cached)
-   └─ ✗ judge.2 - failed [TIME]
+   ├─ ✓ review.1 - completed (cached)
+   ├─ ✓ judge.1 - allowed (cached)
+   └─ ✗ judge.2 - blocked 1.7s
 
 🗿 route.stone.set
    ├─ stone = 3.blueprint
@@ -232,9 +232,9 @@ exports[`driver.route.journey.acceptance given: [journey] weather api route when
 
 exports[`driver.route.journey.acceptance given: [journey] weather api route when: [t9] 3.blueprint pass reattempted after promise then: stdout has good vibes 1`] = `
 "🦉 the way speaks for itself
-   ├─ ✓ review.1 - done [TIME]
-   ├─ ✗ judge.1 - failed [TIME]
-   └─ ✗ judge.2 - failed [TIME]
+   ├─ ✓ review.1 - completed 0.0s
+   ├─ ✗ judge.1 - blocked 1.3s
+   └─ ✗ judge.2 - blocked 1.0s
 
 🗿 route.stone.set
    ├─ stone = 3.blueprint
@@ -260,9 +260,9 @@ exports[`driver.route.journey.acceptance given: [journey] weather api route when
 
 exports[`driver.route.journey.acceptance given: [journey] weather api route when: [t10] 3.blueprint approved and self-review completed then: stdout has good vibes 1`] = `
 "🦉 the way speaks for itself
-   ├─ ✓ review.1 - done (cached)
-   ├─ ✓ judge.1 - passed [TIME]
-   └─ ✓ judge.2 - passed [TIME]
+   ├─ ✓ review.1 - completed (cached)
+   ├─ ✓ judge.1 - allowed 1.2s
+   └─ ✓ judge.2 - allowed 2.5s
 
 🗿 route.stone.set
    ├─ stone = 3.blueprint
@@ -292,8 +292,8 @@ exports[`driver.route.journey.acceptance given: [journey] weather api route when
 
 exports[`driver.route.journey.acceptance given: [journey] weather api route when: [t12] 5.execute artifact created and pass attempted then: stdout has good vibes 1`] = `
 "🦉 the way speaks for itself
-   ├─ ✓ review.1 - done [TIME]
-   └─ ✓ judge.1 - passed [TIME]
+   ├─ ✓ review.1 - completed 0.1s
+   └─ ✓ judge.1 - allowed 1.6s
 
 🗿 route.stone.set
    ├─ stone = 5.execute

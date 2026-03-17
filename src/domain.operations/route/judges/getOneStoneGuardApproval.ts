@@ -1,9 +1,9 @@
+import * as fs from 'fs/promises';
 import * as path from 'path';
 
 import type { RouteStone } from '@src/domain.objects/Driver/RouteStone';
 import { RouteStoneGuardApproveArtifact } from '@src/domain.objects/Driver/RouteStoneGuardApproveArtifact';
 
-import { getAllPassageReports } from '../passage/getAllPassageReports';
 import { compareStonePrefix } from '../stones/compareStonePrefix';
 import {
   computeStoneOrderPrefix,
@@ -18,18 +18,33 @@ import {
  *         if a rewind entry for stone M appears AFTER an approval for stone N,
  *         and M <= N (rewind target is at or before approved stone),
  *         then the approval is stale
+ *
+ * .note = reads raw passage.jsonl to preserve log order for invalidation checks
  */
 export const getOneStoneGuardApproval = async (input: {
   stone: RouteStone;
   route: string;
 }): Promise<RouteStoneGuardApproveArtifact | null> => {
-  // get all passage reports to check log order
-  const reports = await getAllPassageReports({ route: input.route });
+  const passagePath = path.join(input.route, '.route', 'passage.jsonl');
 
-  // find latest approval for this stone (with index)
+  // check if file exists
+  const fileFound = await fs
+    .access(passagePath)
+    .then(() => true)
+    .catch(() => false);
+  if (!fileFound) return null;
+
+  // read raw log to preserve chronological order for invalidation checks
+  const content = await fs.readFile(passagePath, 'utf-8');
+  const allReports = content
+    .split('\n')
+    .filter(Boolean)
+    .map((line) => JSON.parse(line) as { stone: string; status: string });
+
+  // find latest approval for this stone (with index in raw log)
   let approvalIndex = -1;
-  for (let i = reports.length - 1; i >= 0; i--) {
-    const report = reports[i]!;
+  for (let i = allReports.length - 1; i >= 0; i--) {
+    const report = allReports[i]!;
     if (report.stone === input.stone.name && report.status === 'approved') {
       approvalIndex = i;
       break;
@@ -46,8 +61,8 @@ export const getOneStoneGuardApproval = async (input: {
   // AND the rewound stone prefix <= this stone's prefix
   const thisPrefix = computeStoneOrderPrefix({ stone: input.stone });
 
-  for (let i = approvalIndex + 1; i < reports.length; i++) {
-    const report = reports[i]!;
+  for (let i = approvalIndex + 1; i < allReports.length; i++) {
+    const report = allReports[i]!;
     if (report.status === 'rewound') {
       // extract prefix from rewound stone name
       const rewoundPrefix = getStoneOrderPrefixFromName(report.stone);
@@ -62,6 +77,6 @@ export const getOneStoneGuardApproval = async (input: {
   // approval is valid
   return new RouteStoneGuardApproveArtifact({
     stone: { path: input.stone.path },
-    path: path.join(input.route, '.route', 'passage.jsonl'),
+    path: passagePath,
   });
 };

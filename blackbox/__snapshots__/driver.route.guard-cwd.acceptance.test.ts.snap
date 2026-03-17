@@ -2,8 +2,8 @@
 
 exports[`driver.route.guard-cwd.acceptance given: [case1] guard with $route in judge command when: [t0] artifact created but no approval then: stdout has good vibes 1`] = `
 "🦉 the way speaks for itself
-   ├─ ✓ review.1 - done [TIME]
-   └─ ✗ judge.1 - failed [TIME]
+   ├─ ✓ review.1 - completed 0.0s
+   └─ ✗ judge.1 - blocked 1.5s
 
 🗿 route.stone.set
    ├─ stone = 1.vision
@@ -25,8 +25,8 @@ exports[`driver.route.guard-cwd.acceptance given: [case1] guard with $route in j
 
 exports[`driver.route.guard-cwd.acceptance given: [case1] guard with $route in judge command when: [t1] approval granted and pass reattempted then: stdout has good vibes 1`] = `
 "🦉 the way speaks for itself
-   ├─ ✓ review.1 - done (cached)
-   └─ ✓ judge.1 - passed [TIME]
+   ├─ ✓ review.1 - completed (cached)
+   └─ ✓ judge.1 - allowed 1.3s
 
 🗿 route.stone.set
    ├─ stone = 1.vision
@@ -45,8 +45,8 @@ exports[`driver.route.guard-cwd.acceptance given: [case1] guard with $route in j
 
 exports[`driver.route.guard-cwd.acceptance given: [case2] guard with $route works from nested route directory when: [t0] judge runs on nested route then: stdout has good vibes 1`] = `
 "🦉 the way speaks for itself
-   ├─ ✓ review.1 - done [TIME]
-   └─ ✗ judge.1 - failed [TIME]
+   ├─ ✓ review.1 - completed 0.0s
+   └─ ✗ judge.1 - blocked 2.7s
 
 🗿 route.stone.set
    ├─ stone = 1.vision
@@ -68,8 +68,8 @@ exports[`driver.route.guard-cwd.acceptance given: [case2] guard with $route work
 
 exports[`driver.route.guard-cwd.acceptance given: [case2] guard with $route works from nested route directory when: [t1] approval granted on nested route then: stdout has good vibes 1`] = `
 "🦉 the way speaks for itself
-   ├─ ✓ review.1 - done (cached)
-   └─ ✓ judge.1 - passed [TIME]
+   ├─ ✓ review.1 - completed (cached)
+   └─ ✓ judge.1 - allowed 1.5s
 
 🗿 route.stone.set
    ├─ stone = 1.vision

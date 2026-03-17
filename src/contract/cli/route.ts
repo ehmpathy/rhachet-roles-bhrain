@@ -10,6 +10,7 @@ import { getDecisionIsArtifactProtected } from '@src/domain.operations/route/bou
 import { getRouteBouncerCache } from '@src/domain.operations/route/bouncer/getRouteBouncerCache';
 import { computeStoneReviewInputHash } from '@src/domain.operations/route/guard/computeStoneReviewInputHash';
 import { genContextCliEmit } from '@src/domain.operations/route/guard/genContextCliEmit';
+import { getLatestReviewFilesPerIndex } from '@src/domain.operations/route/guard/getLatestReviewFilesPerIndex';
 import { getOneStoneGuardApproval } from '@src/domain.operations/route/judges/getOneStoneGuardApproval';
 import { stepRouteDrive } from '@src/domain.operations/route/stepRouteDrive';
 import { stepRouteReview } from '@src/domain.operations/route/stepRouteReview';
@@ -809,13 +810,15 @@ const judgeReviewed = async (input: {
     process.exit(2);
   }
 
-  // parse blockers and nitpicks from review files
+  // get latest review per index (later iterations supersede earlier)
+  const latestReviewFiles = getLatestReviewFilesPerIndex({ reviewFiles });
+
+  // parse blockers and nitpicks from latest reviews only
   let totalBlockers = 0;
   let totalNitpicks = 0;
 
-  for (const filePath of reviewFiles) {
+  for (const filePath of latestReviewFiles) {
     const content = await fs.readFile(filePath, 'utf-8');
-
     // match both formats:
     // 1. "blockers: N" (yaml/key-value format from review tools)
     // 2. "N blockers" (tree/prose format from skill output)

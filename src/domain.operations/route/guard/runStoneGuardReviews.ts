@@ -130,9 +130,17 @@ export const runStoneGuardReviews = async (
     hash: input.hash,
     route: input.route,
   });
-  const doneIndices = new Set(priorArtifacts.reviews.map((r) => r.index));
 
-  const reviews: RouteStoneGuardReviewArtifact[] = [...priorArtifacts.reviews];
+  // filter to only cache successful reviews (exitClass === 'passed')
+  // .note = errors should not be cached because:
+  //         - malfunctions: reviewer may have been fixed and needs re-run
+  //         - constraints: artifact may have been fixed and needs re-review
+  const cachedReviews = priorArtifacts.reviews.filter(
+    (r) => r.exitClass === 'passed',
+  );
+  const doneIndices = new Set(cachedReviews.map((r) => r.index));
+
+  const reviews: RouteStoneGuardReviewArtifact[] = [...cachedReviews];
 
   // execute each peer review command that hasn't been done
   const peerReviews = getGuardPeerReviews(input.guard);

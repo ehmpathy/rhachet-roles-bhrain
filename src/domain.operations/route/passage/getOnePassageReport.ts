@@ -3,11 +3,10 @@ import type { PassageReport } from '@src/domain.objects/Driver/PassageReport';
 import { getAllPassageReports } from './getAllPassageReports';
 
 /**
- * .what = reads latest passage report for a stone from passage.jsonl
- * .why = enables current passage state lookup
+ * .what = reads passage report for a stone from passage.jsonl
+ * .why = enables passage state and approval gate lookup
  *
- * .note = returns latest entry for stone, only if status matches filter (if provided)
- *         this ensures 'rewound' invalidates prior 'passed' entries
+ * .note = getAllPassageReports handles deduplication semantics
  */
 export const getOnePassageReport = async (input: {
   stone: string;
@@ -16,15 +15,11 @@ export const getOnePassageReport = async (input: {
 }): Promise<PassageReport | null> => {
   const reports = await getAllPassageReports({ route: input.route });
 
-  // get latest entry for this stone (no filter)
-  const stoneReports = reports.filter((r) => r.stone === input.stone);
-  const latest =
-    stoneReports.length > 0 ? stoneReports[stoneReports.length - 1]! : null;
+  // find entry for this stone with status (if provided)
+  const found = reports.find(
+    (r) =>
+      r.stone === input.stone && (!input.status || r.status === input.status),
+  );
 
-  // if status filter provided, return null if latest doesn't match
-  if (input.status && latest?.status !== input.status) {
-    return null;
-  }
-
-  return latest;
+  return found ?? null;
 };

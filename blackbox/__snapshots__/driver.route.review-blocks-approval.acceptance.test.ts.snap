@@ -11,9 +11,9 @@ exports[`driver.route.review-blocks-approval.acceptance given: [review-blocks] s
 
 exports[`driver.route.review-blocks-approval.acceptance given: [review-blocks] stone with review + approval guard when: [t2] pass attempted with approval but reviews still fail then: stdout has good vibes 1`] = `
 "🦉 the way speaks for itself
-   ├─ ✓ review.1 - done [TIME]
-   ├─ ✗ judge.1 - failed [TIME]
-   └─ ✓ judge.2 - passed [TIME]
+   ├─ ✓ review.1 - completed 0.0s
+   ├─ ✗ judge.1 - blocked 0.5s
+   └─ ✓ judge.2 - allowed 0.5s
 
 🗿 route.stone.set
    ├─ stone = 1.plan
@@ -38,9 +38,9 @@ exports[`driver.route.review-blocks-approval.acceptance given: [review-blocks] s
 
 exports[`driver.route.review-blocks-approval.acceptance given: [review-blocks] stone with review + approval guard when: [t4] pass reattempted after fix then: stdout has good vibes 1`] = `
 "🦉 the way speaks for itself
-   ├─ ✓ review.1 - done [TIME]
-   ├─ ✓ judge.1 - passed [TIME]
-   └─ ✓ judge.2 - passed [TIME]
+   ├─ ✓ review.1 - completed 0.0s
+   ├─ ✓ judge.1 - allowed 0.5s
+   └─ ✓ judge.2 - allowed 0.5s
 
 🗿 route.stone.set
    ├─ stone = 1.plan

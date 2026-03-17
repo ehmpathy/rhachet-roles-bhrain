@@ -2,7 +2,7 @@
 
 exports[`driver.route.failsafe.acceptance given: [case1] reviewer exits with code 0 (passed) when: [t0] route.stone.set --as passed is invoked then: stdout matches snapshot 1`] = `
 "🦉 the way speaks for itself
-   ├─ ✓ review.1 - completed 0.0s
+   ├─ ✓ review.1 - completed 0.1s
    └─ ✓ judge.1 - allowed 0.0s
 
 🗿 route.stone.set
@@ -88,7 +88,7 @@ exports[`driver.route.failsafe.acceptance given: [case3] reviewer exits with cod
 
 exports[`driver.route.failsafe.acceptance given: [case3] reviewer exits with code 1 (malfunction) when: [t0] route.stone.set --as passed is invoked then: stdout matches snapshot 1`] = `
 "🦉 the way speaks for itself
-   ├─ ✓ review.1 - malfunctioned 0.0s
+   ├─ ✓ review.1 - malfunctioned 0.1s
    └─ ✓ judge.1 - allowed 0.0s
 
 🗿 route.stone.set

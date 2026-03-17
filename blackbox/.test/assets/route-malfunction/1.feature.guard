@@ -1,0 +1,9 @@
+artifacts:
+  - 1.feature*.md
+
+reviews:
+  peer:
+    - bash $route/.test/mock-reviewer.sh
+
+judges:
+  - rhx route.stone.judge --mechanism reviewed? --stone $stone --route $route --allow-blockers 0
