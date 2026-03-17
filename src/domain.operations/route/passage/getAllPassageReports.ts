@@ -3,6 +3,9 @@ import * as path from 'path';
 
 import { PassageReport } from '@src/domain.objects/Driver/PassageReport';
 
+import { compareStonePrefix } from '../stones/compareStonePrefix';
+import { getStoneOrderPrefixFromName } from '../stones/computeStoneOrderPrefix';
+
 /**
  * .what = reads current passage state per stone from passage.jsonl
  * .why = enables current passage state lookup
@@ -10,7 +13,7 @@ import { PassageReport } from '@src/domain.objects/Driver/PassageReport';
  * .note = passage.jsonl is append-only with specific deduplication rules:
  *         - passage states (passed/blocked/malfunction): last entry wins
  *         - approved: sticky (persists) unless rewound after it
- *         - rewound: clears both passage state AND approval
+ *         - rewound: clears approval for this stone AND all later stones (cross-stone invalidation)
  */
 export const getAllPassageReports = async (input: {
   route: string;
@@ -40,8 +43,14 @@ export const getAllPassageReports = async (input: {
       // approved is sticky until rewound
       approvedByStone.set(report.stone, report);
     } else if (report.status === 'rewound') {
-      // rewound clears approval
-      approvedByStone.delete(report.stone);
+      // rewound clears approval for this stone AND all later stones (cross-stone invalidation)
+      const rewoundPrefix = getStoneOrderPrefixFromName(report.stone);
+      for (const [stoneName] of approvedByStone) {
+        const stonePrefix = getStoneOrderPrefixFromName(stoneName);
+        if (compareStonePrefix({ a: rewoundPrefix, b: stonePrefix }) <= 0) {
+          approvedByStone.delete(stoneName);
+        }
+      }
       latestByStone.set(report.stone, report);
     } else {
       // other statuses: last entry wins
