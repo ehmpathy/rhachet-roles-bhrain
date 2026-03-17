@@ -16,6 +16,16 @@ const HEADER_GET = '🦉 and then?';
 const HEADER_SET = `🦉 the way speaks for itself`;
 const HEADER_DEL = `🦉 hoo needs 'em`;
 
+/**
+ * .what = reminder to continue the route after passage
+ * .why = guides driver to next step without confusion
+ */
+const REMINDER_LINES = [
+  '   │',
+  '   └─ the way continues, run',
+  '      └─ rhx route.drive',
+];
+
 type FormatInput =
   | {
       operation: 'route.stone.get';
@@ -160,7 +170,11 @@ export const formatRouteStoneEmit = (input: FormatInput): string => {
         note: input.note ?? null,
         reason: input.reason ?? null,
         guard: input.guard,
+        isLast: input.passage !== 'allowed',
       });
+      if (input.passage === 'allowed') {
+        return [header, '', tree, ...REMINDER_LINES].join('\n');
+      }
       return [header, '', tree].join('\n');
     }
 
@@ -325,6 +339,7 @@ export const formatRouteStoneEmit = (input: FormatInput): string => {
         ? `${input.passage} (${input.note})`
         : input.passage;
 
+      // branch: blocked or malfunction with reason
       if (
         (input.passage === 'blocked' || input.passage === 'malfunction') &&
         input.reason
@@ -332,9 +347,21 @@ export const formatRouteStoneEmit = (input: FormatInput): string => {
         lines.push(`   ├─ stone = ${input.stone}`);
         lines.push(`   ├─ passage = ${passageValue}`);
         lines.push(`   └─ reason = ${input.reason}`);
-      } else {
+      }
+
+      // branch: allowed or no reason
+      if (
+        !(
+          (input.passage === 'blocked' || input.passage === 'malfunction') &&
+          input.reason
+        )
+      ) {
         lines.push(`   ├─ stone = ${input.stone}`);
-        lines.push(`   └─ passage = ${passageValue}`);
+        const passageConnector = input.passage === 'allowed' ? '├─' : '└─';
+        lines.push(`   ${passageConnector} passage = ${passageValue}`);
+        if (input.passage === 'allowed') {
+          lines.push(...REMINDER_LINES);
+        }
       }
     }
   }
