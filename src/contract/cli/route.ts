@@ -22,14 +22,23 @@ import { enumFilesFromGlob } from '@src/utils/enumFilesFromGlob';
 
 /**
  * .what = detects if node was invoked via `node -e "code"` (eval mode)
- * .why = in eval mode, argv has no entrypoint path
+ * .why = in eval mode, argv has no entrypoint path and args come after --
+ *
+ * argv patterns:
+ *   normal: ['node', '/path/to/entry.js', '--arg', 'val']
+ *   eval:   ['node', 'arg1', 'arg2'] (node strips -e and code from argv!)
+ *
+ * detection: if argv[1] doesn't look like a file path, assume eval mode
  */
 const isNodeEvalMode = (argv: string[]): boolean => {
   const secondArg = argv[1];
   if (!secondArg) return false;
-  const looksLikeEntrypointPath =
-    /\.(js|ts|mjs|cjs)$/.test(secondArg) || !secondArg.startsWith('--');
-  return !looksLikeEntrypointPath;
+
+  // entrypoint path (ends with js/ts extension) = normal mode
+  if (/\.(js|ts|mjs|cjs)$/.test(secondArg)) return false;
+
+  // otherwise assume eval mode (node strips -e and code from argv)
+  return true;
 };
 
 /**
@@ -1023,6 +1032,112 @@ export const routeBounce = async (): Promise<void> => {
         const globPrefix = isLastGlob ? '└─' : '├─';
         console.log(`${childPrefix}${globPrefix} ${p.glob}`);
       }
+    }
+  } catch (error) {
+    if (error instanceof Error) {
+      console.error(`error: ${error.message}`);
+    }
+    process.exit(1);
+  }
+};
+
+/**
+ * .what = cli entrypoint for route.mutate grant commands
+ * .why = manages privilege flags for route protection bypass
+ */
+export const routeMutateGrant = async (): Promise<void> => {
+  const options = parseArgs(process.argv);
+
+  // first positional arg after "grant" is the action
+  const skipCount = isNodeEvalMode(process.argv) ? 1 : 2;
+  const positionalArgs = process.argv
+    .slice(skipCount)
+    .filter((arg) => arg !== '--' && !arg.startsWith('--'));
+
+  // expect: grant <action> (positional) or --grant <action> (named)
+  const grantIndex = positionalArgs.indexOf('grant');
+  let action = grantIndex >= 0 ? positionalArgs[grantIndex + 1] : undefined;
+
+  // fallback to named arg format (--grant allow) for compatibility
+  if (!action && options.grant) {
+    action = options.grant;
+  }
+
+  if (!action || !['allow', 'block', 'get'].includes(action)) {
+    console.log(`
+route.mutate grant - manage route protection privilege
+
+usage:
+  rhx route.mutate grant allow   # grant privilege (human only)
+  rhx route.mutate grant block   # revoke privilege
+  rhx route.mutate grant get     # check privilege state
+
+options:
+  --route <path>    route path (default: auto-detect from branch)
+`);
+    process.exit(1);
+  }
+
+  try {
+    // get route from option or auto-detect
+    let routePath = options.route;
+    if (!routePath) {
+      const bind = await getRouteBindByBranch({ branch: null });
+      if (!bind) {
+        console.error('error: no bound route found. use --route to specify.');
+        process.exit(1);
+      }
+      routePath = bind.route;
+    }
+
+    const privilegeFlagPath = path.join(
+      routePath,
+      '.route',
+      '.privilege.mutate.flag',
+    );
+
+    if (action === 'allow') {
+      // ensure .route dir exists
+      await fs.mkdir(path.dirname(privilegeFlagPath), { recursive: true });
+      // create flag file
+      await fs.writeFile(privilegeFlagPath, '');
+
+      console.log('');
+      console.log('🦉 privilege granted');
+      console.log('');
+      console.log('🗿 route.mutate grant allow');
+      console.log(`   ├─ route = ${routePath}`);
+      console.log('   └─ flag = .route/.privilege.mutate.flag created');
+      console.log('');
+      console.log('✨ route mutation now allowed until revoked');
+      console.log('');
+    } else if (action === 'block') {
+      // remove flag file (idempotent)
+      await fs.rm(privilegeFlagPath, { force: true });
+
+      console.log('');
+      console.log('🦉 privilege revoked');
+      console.log('');
+      console.log('🗿 route.mutate grant block');
+      console.log(`   ├─ route = ${routePath}`);
+      console.log('   └─ flag = .route/.privilege.mutate.flag removed');
+      console.log('');
+      console.log('🔒 route mutation now blocked');
+      console.log('');
+    } else if (action === 'get') {
+      // check flag existence
+      const hasPrivilege = await fs
+        .access(privilegeFlagPath)
+        .then(() => true)
+        .catch(() => false);
+
+      console.log('');
+      console.log('🗿 route.mutate grant get');
+      console.log(`   ├─ route = ${routePath}`);
+      console.log(
+        `   └─ status = ${hasPrivilege ? 'allowed' : 'blocked (no privilege flag)'}`,
+      );
+      console.log('');
     }
   } catch (error) {
     if (error instanceof Error) {

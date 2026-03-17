@@ -105,6 +105,17 @@
             "author": "repo=ehmpathy/role=mechanic"
           }
         ]
+      },
+      {
+        "matcher": "Read|Write|Edit|Bash",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "./node_modules/.bin/rhx route.mutate.guard --mode hook",
+            "timeout": 5,
+            "author": "repo=bhrain/role=driver"
+          }
+        ]
       }
     ],
     "Stop": [
@@ -365,18 +376,14 @@
       "Bash(npx rhachet run --skill git.commit.uses set:*)",
       "Bash(sed:*)",
       "Bash(tee:*)",
-      "Edit(**/.route/**)",
       "Edit(*/**/.route/**)",
       "Edit(.branch/.bind/*)",
       "Edit(.meter/*)",
-      "Edit(.route/**)",
       "EnterPlanMode",
       "Read(.quarantine/*)",
-      "Write(**/.route/**)",
       "Write(*/**/.route/**)",
       "Write(.branch/.bind/*)",
-      "Write(.meter/*)",
-      "Write(.route/**)"
+      "Write(.meter/*)"
     ],
     "ask": [
       "Bash(bash:*)",

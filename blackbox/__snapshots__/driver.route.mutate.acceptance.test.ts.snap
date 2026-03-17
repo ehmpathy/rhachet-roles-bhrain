@@ -1,0 +1,354 @@
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
+
+exports[`driver.route.mutate.acceptance given: [case1] bound route with no privilege when: [t0] guard blocks Read of *.stone then: guard output matches snapshot: guard blocks Read *.stone 1`] = `
+"
+🦉 to chase all paths, is to reach none. focus.
+
+🗿 route.mutate guard
+   ├─ route = .behavior/example
+   ├─ path = .behavior/example/2.criteria.stone
+   ├─ access = blocked
+   │
+   ├─ the route is sealed
+   ├─ it reveals itself one stone at a time
+   │
+   └─ instead, run
+      └─ rhx route.drive
+
+🔭 focus is a virtue
+   │
+   ├─ "a great task is accomplished by a series of small acts" — lao tzu
+   ├─ "the man who moves a mountain begins by carrying away small stones" — confucius
+   ├─ "it does not matter how slowly you go so long as you do not stop" — confucius
+   │
+   ├─ "if you seek tranquility, do less" — marcus aurelius
+   ├─ "curb your desire — don't set your heart on so many things" — epictetus
+   ├─ "beware the barrenness of a busy life" — socrates
+   ├─ "withdrawal from some to deal effectively with others" — william james
+   ├─ "you can do anything but not everything" — greg mckeown
+   │
+   ├─ "who acts in stillness finds stillness in his life" — lao tzu
+   ├─ "unify your attention" — confucius
+   ├─ "a calm mind is the greatest weapon" — uncle iroh
+   │
+   └─ "simplicity, patience, compassion — these three are your greatest treasures" — lao tzu
+
+"
+`;
+
+exports[`driver.route.mutate.acceptance given: [case1] bound route with no privilege when: [t1] guard blocks Read of *.guard then: guard output matches snapshot: guard blocks Read *.guard 1`] = `
+"
+🦉 to chase all paths, is to reach none. focus.
+
+🗿 route.mutate guard
+   ├─ route = .behavior/example
+   ├─ path = .behavior/example/2.criteria.guard
+   ├─ access = blocked
+   │
+   ├─ the route is sealed
+   ├─ it reveals itself one stone at a time
+   │
+   └─ instead, run
+      └─ rhx route.drive
+
+🔭 focus is a virtue
+   │
+   ├─ "a great task is accomplished by a series of small acts" — lao tzu
+   ├─ "the man who moves a mountain begins by carrying away small stones" — confucius
+   ├─ "it does not matter how slowly you go so long as you do not stop" — confucius
+   │
+   ├─ "if you seek tranquility, do less" — marcus aurelius
+   ├─ "curb your desire — don't set your heart on so many things" — epictetus
+   ├─ "beware the barrenness of a busy life" — socrates
+   ├─ "withdrawal from some to deal effectively with others" — william james
+   ├─ "you can do anything but not everything" — greg mckeown
+   │
+   ├─ "who acts in stillness finds stillness in his life" — lao tzu
+   ├─ "unify your attention" — confucius
+   ├─ "a calm mind is the greatest weapon" — uncle iroh
+   │
+   └─ "simplicity, patience, compassion — these three are your greatest treasures" — lao tzu
+
+"
+`;
+
+exports[`driver.route.mutate.acceptance given: [case1] bound route with no privilege when: [t2] guard allows Read of artifact then: guard output matches snapshot: guard allows artifact 1`] = `""`;
+
+exports[`driver.route.mutate.acceptance given: [case1] bound route with no privilege when: [t3] guard blocks Bash cat on *.stone then: guard output matches snapshot: guard blocks Bash cat 1`] = `
+"
+🦉 to chase all paths, is to reach none. focus.
+
+🗿 route.mutate guard
+   ├─ route = .behavior/example
+   ├─ path = .behavior/example/2.criteria.stone
+   ├─ access = blocked
+   │
+   ├─ the route is sealed
+   ├─ it reveals itself one stone at a time
+   │
+   └─ instead, run
+      └─ rhx route.drive
+
+🔭 focus is a virtue
+   │
+   ├─ "a great task is accomplished by a series of small acts" — lao tzu
+   ├─ "the man who moves a mountain begins by carrying away small stones" — confucius
+   ├─ "it does not matter how slowly you go so long as you do not stop" — confucius
+   │
+   ├─ "if you seek tranquility, do less" — marcus aurelius
+   ├─ "curb your desire — don't set your heart on so many things" — epictetus
+   ├─ "beware the barrenness of a busy life" — socrates
+   ├─ "withdrawal from some to deal effectively with others" — william james
+   ├─ "you can do anything but not everything" — greg mckeown
+   │
+   ├─ "who acts in stillness finds stillness in his life" — lao tzu
+   ├─ "unify your attention" — confucius
+   ├─ "a calm mind is the greatest weapon" — uncle iroh
+   │
+   └─ "simplicity, patience, compassion — these three are your greatest treasures" — lao tzu
+
+"
+`;
+
+exports[`driver.route.mutate.acceptance given: [case1] bound route with no privilege when: [t4] guard blocks Write to .route/** then: guard output matches snapshot: guard blocks Write .route 1`] = `
+"
+🦉 to chase all paths, is to reach none. focus.
+
+🗿 route.mutate guard
+   ├─ route = .behavior/example
+   ├─ path = .behavior/example/.route/passage.jsonl
+   ├─ access = blocked
+   │
+   ├─ the route is sealed
+   ├─ it reveals itself one stone at a time
+   │
+   └─ instead, run
+      └─ rhx route.drive
+
+🔭 focus is a virtue
+   │
+   ├─ "a great task is accomplished by a series of small acts" — lao tzu
+   ├─ "the man who moves a mountain begins by carrying away small stones" — confucius
+   ├─ "it does not matter how slowly you go so long as you do not stop" — confucius
+   │
+   ├─ "if you seek tranquility, do less" — marcus aurelius
+   ├─ "curb your desire — don't set your heart on so many things" — epictetus
+   ├─ "beware the barrenness of a busy life" — socrates
+   ├─ "withdrawal from some to deal effectively with others" — william james
+   ├─ "you can do anything but not everything" — greg mckeown
+   │
+   ├─ "who acts in stillness finds stillness in his life" — lao tzu
+   ├─ "unify your attention" — confucius
+   ├─ "a calm mind is the greatest weapon" — uncle iroh
+   │
+   └─ "simplicity, patience, compassion — these three are your greatest treasures" — lao tzu
+
+"
+`;
+
+exports[`driver.route.mutate.acceptance given: [case1] bound route with no privilege when: [t5] block message matches snapshot then: stderr matches snapshot 1`] = `
+"
+🦉 to chase all paths, is to reach none. focus.
+
+🗿 route.mutate guard
+   ├─ route = .behavior/example
+   ├─ path = .behavior/example/2.criteria.stone
+   ├─ access = blocked
+   │
+   ├─ the route is sealed
+   ├─ it reveals itself one stone at a time
+   │
+   └─ instead, run
+      └─ rhx route.drive
+
+🔭 focus is a virtue
+   │
+   ├─ "a great task is accomplished by a series of small acts" — lao tzu
+   ├─ "the man who moves a mountain begins by carrying away small stones" — confucius
+   ├─ "it does not matter how slowly you go so long as you do not stop" — confucius
+   │
+   ├─ "if you seek tranquility, do less" — marcus aurelius
+   ├─ "curb your desire — don't set your heart on so many things" — epictetus
+   ├─ "beware the barrenness of a busy life" — socrates
+   ├─ "withdrawal from some to deal effectively with others" — william james
+   ├─ "you can do anything but not everything" — greg mckeown
+   │
+   ├─ "who acts in stillness finds stillness in his life" — lao tzu
+   ├─ "unify your attention" — confucius
+   ├─ "a calm mind is the greatest weapon" — uncle iroh
+   │
+   └─ "simplicity, patience, compassion — these three are your greatest treasures" — lao tzu
+
+"
+`;
+
+exports[`driver.route.mutate.acceptance given: [case4] privilege management when: [t0] grant get shows blocked then: output matches snapshot: grant get - blocked 1`] = `
+"
+🗿 route.mutate grant get
+   ├─ route = .behavior/example
+   └─ status = blocked (no privilege flag)
+
+"
+`;
+
+exports[`driver.route.mutate.acceptance given: [case4] privilege management when: [t1] grant allow creates flag then: output matches snapshot: grant allow 1`] = `
+"
+🦉 privilege granted
+
+🗿 route.mutate grant allow
+   ├─ route = .behavior/example
+   └─ flag = .route/.privilege.mutate.flag created
+
+✨ route mutation now allowed until revoked
+
+"
+`;
+
+exports[`driver.route.mutate.acceptance given: [case4] privilege management when: [t2] grant get shows allowed then: output matches snapshot: grant get - allowed 1`] = `
+"
+🗿 route.mutate grant get
+   ├─ route = .behavior/example
+   └─ status = allowed
+
+"
+`;
+
+exports[`driver.route.mutate.acceptance given: [case4] privilege management when: [t3] grant block removes flag then: output matches snapshot: grant block 1`] = `
+"
+🦉 privilege revoked
+
+🗿 route.mutate grant block
+   ├─ route = .behavior/example
+   └─ flag = .route/.privilege.mutate.flag removed
+
+🔒 route mutation now blocked
+
+"
+`;
+
+exports[`driver.route.mutate.acceptance given: [case6] journey: blocked -> grant -> allowed -> revoke -> blocked when: [t0] journey executes sequentially then: completes full privilege cycle with snapshots: phase 1a: grant get (blocked) 1`] = `
+"
+🗿 route.mutate grant get
+   ├─ route = .behavior/example
+   └─ status = blocked (no privilege flag)
+
+"
+`;
+
+exports[`driver.route.mutate.acceptance given: [case6] journey: blocked -> grant -> allowed -> revoke -> blocked when: [t0] journey executes sequentially then: completes full privilege cycle with snapshots: phase 1b: guard blocked 1`] = `
+"
+🦉 to chase all paths, is to reach none. focus.
+
+🗿 route.mutate guard
+   ├─ route = .behavior/example
+   ├─ path = .behavior/example/2.criteria.stone
+   ├─ access = blocked
+   │
+   ├─ the route is sealed
+   ├─ it reveals itself one stone at a time
+   │
+   └─ instead, run
+      └─ rhx route.drive
+
+🔭 focus is a virtue
+   │
+   ├─ "a great task is accomplished by a series of small acts" — lao tzu
+   ├─ "the man who moves a mountain begins by carrying away small stones" — confucius
+   ├─ "it does not matter how slowly you go so long as you do not stop" — confucius
+   │
+   ├─ "if you seek tranquility, do less" — marcus aurelius
+   ├─ "curb your desire — don't set your heart on so many things" — epictetus
+   ├─ "beware the barrenness of a busy life" — socrates
+   ├─ "withdrawal from some to deal effectively with others" — william james
+   ├─ "you can do anything but not everything" — greg mckeown
+   │
+   ├─ "who acts in stillness finds stillness in his life" — lao tzu
+   ├─ "unify your attention" — confucius
+   ├─ "a calm mind is the greatest weapon" — uncle iroh
+   │
+   └─ "simplicity, patience, compassion — these three are your greatest treasures" — lao tzu
+
+"
+`;
+
+exports[`driver.route.mutate.acceptance given: [case6] journey: blocked -> grant -> allowed -> revoke -> blocked when: [t0] journey executes sequentially then: completes full privilege cycle with snapshots: phase 2: grant allow 1`] = `
+"
+🦉 privilege granted
+
+🗿 route.mutate grant allow
+   ├─ route = .behavior/example
+   └─ flag = .route/.privilege.mutate.flag created
+
+✨ route mutation now allowed until revoked
+
+"
+`;
+
+exports[`driver.route.mutate.acceptance given: [case6] journey: blocked -> grant -> allowed -> revoke -> blocked when: [t0] journey executes sequentially then: completes full privilege cycle with snapshots: phase 3a: grant get (allowed) 1`] = `
+"
+🗿 route.mutate grant get
+   ├─ route = .behavior/example
+   └─ status = allowed
+
+"
+`;
+
+exports[`driver.route.mutate.acceptance given: [case6] journey: blocked -> grant -> allowed -> revoke -> blocked when: [t0] journey executes sequentially then: completes full privilege cycle with snapshots: phase 3b: guard allowed 1`] = `""`;
+
+exports[`driver.route.mutate.acceptance given: [case6] journey: blocked -> grant -> allowed -> revoke -> blocked when: [t0] journey executes sequentially then: completes full privilege cycle with snapshots: phase 4: grant block 1`] = `
+"
+🦉 privilege revoked
+
+🗿 route.mutate grant block
+   ├─ route = .behavior/example
+   └─ flag = .route/.privilege.mutate.flag removed
+
+🔒 route mutation now blocked
+
+"
+`;
+
+exports[`driver.route.mutate.acceptance given: [case6] journey: blocked -> grant -> allowed -> revoke -> blocked when: [t0] journey executes sequentially then: completes full privilege cycle with snapshots: phase 5a: grant get (blocked again) 1`] = `
+"
+🗿 route.mutate grant get
+   ├─ route = .behavior/example
+   └─ status = blocked (no privilege flag)
+
+"
+`;
+
+exports[`driver.route.mutate.acceptance given: [case6] journey: blocked -> grant -> allowed -> revoke -> blocked when: [t0] journey executes sequentially then: completes full privilege cycle with snapshots: phase 5b: guard blocked again 1`] = `
+"
+🦉 to chase all paths, is to reach none. focus.
+
+🗿 route.mutate guard
+   ├─ route = .behavior/example
+   ├─ path = .behavior/example/2.criteria.stone
+   ├─ access = blocked
+   │
+   ├─ the route is sealed
+   ├─ it reveals itself one stone at a time
+   │
+   └─ instead, run
+      └─ rhx route.drive
+
+🔭 focus is a virtue
+   │
+   ├─ "a great task is accomplished by a series of small acts" — lao tzu
+   ├─ "the man who moves a mountain begins by carrying away small stones" — confucius
+   ├─ "it does not matter how slowly you go so long as you do not stop" — confucius
+   │
+   ├─ "if you seek tranquility, do less" — marcus aurelius
+   ├─ "curb your desire — don't set your heart on so many things" — epictetus
+   ├─ "beware the barrenness of a busy life" — socrates
+   ├─ "withdrawal from some to deal effectively with others" — william james
+   ├─ "you can do anything but not everything" — greg mckeown
+   │
+   ├─ "who acts in stillness finds stillness in his life" — lao tzu
+   ├─ "unify your attention" — confucius
+   ├─ "a calm mind is the greatest weapon" — uncle iroh
+   │
+   └─ "simplicity, patience, compassion — these three are your greatest treasures" — lao tzu
+
+"
+`;

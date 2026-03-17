@@ -1,0 +1,12 @@
+# criteria guard (protected)
+
+this guard file is protected by the route.mutate guard.
+
+drivers should not be able to read guard files to game the system.
+
+---
+
+## reviews
+
+- has-genuine-reflection
+- has-iteration-count
