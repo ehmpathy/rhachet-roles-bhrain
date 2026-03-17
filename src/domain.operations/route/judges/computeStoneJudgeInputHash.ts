@@ -5,6 +5,7 @@ import * as path from 'path';
 import type { RouteStone } from '@src/domain.objects/Driver/RouteStone';
 import { enumFilesFromGlob } from '@src/utils/enumFilesFromGlob';
 
+import { getLatestReviewFilesPerIndex } from '../guard/getLatestReviewFilesPerIndex';
 import { getOnePassageReport } from '../passage/getOnePassageReport';
 
 /**
@@ -33,13 +34,13 @@ export const computeStoneJudgeInputHash = async (input: {
     // .route/ may not exist yet
   }
 
-  // sort for deterministic order
-  const sortedReviewFiles = [...reviewFiles].sort();
+  // get latest review per index (later iterations supersede earlier)
+  const latestReviewFiles = getLatestReviewFilesPerIndex({ reviewFiles });
 
-  // read review contents
+  // read review contents from latest reviews only
   // note: enumFilesFromGlob returns absolute paths, so use directly
   const reviewContents: string[] = [];
-  for (const filePath of sortedReviewFiles) {
+  for (const filePath of latestReviewFiles) {
     const content = await fs.readFile(filePath, 'utf-8');
     // use basename for deterministic hash (absolute paths vary by environment)
     reviewContents.push(`review:${path.basename(filePath)}:${content}`);

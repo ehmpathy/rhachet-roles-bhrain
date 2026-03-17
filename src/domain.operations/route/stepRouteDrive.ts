@@ -45,8 +45,12 @@ export const stepRouteDrive = async (input: {
   await setRouteBouncerCache({ cache: bouncerCache, route });
 
   // in hook mode, check for malfunction status immediately
+  // .note = getAllPassageReports returns latest per stone (last entry wins)
+  //         a subsequent 'passed' status resolves the malfunction
   if (input.mode === 'hook') {
     const passageReports = await getAllPassageReports({ route });
+
+    // check if any stone's latest status is malfunction
     const malfunctionReport = passageReports.find(
       (r) => r.status === 'malfunction',
     );
