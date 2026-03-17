@@ -17,7 +17,8 @@ export const getOnePassageReport = async (input: {
 
   // find entry for this stone with status (if provided)
   const found = reports.find(
-    (r) => r.stone === input.stone && (!input.status || r.status === input.status),
+    (r) =>
+      r.stone === input.stone && (!input.status || r.status === input.status),
   );
 
   return found ?? null;

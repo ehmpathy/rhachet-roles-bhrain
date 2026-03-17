@@ -47,7 +47,10 @@ describe('getAllPassageReports', () => {
   });
 
   given('[case3] passage states use last-entry-wins per stone', () => {
-    const tempDir = path.join(os.tmpdir(), `test-passage-lastwin-${Date.now()}`);
+    const tempDir = path.join(
+      os.tmpdir(),
+      `test-passage-lastwin-${Date.now()}`,
+    );
 
     beforeEach(async () => {
       await fs.mkdir(path.join(tempDir, '.route'), { recursive: true });
@@ -277,14 +280,17 @@ describe('getAllPassageReports', () => {
       await fs.rm(tempDir, { recursive: true, force: true });
     });
 
-    when('[t0] typical approval flow: blocked then approved then passed', () => {
-      then('returns approved AND passed', async () => {
-        const reports = await getAllPassageReports({ route: tempDir });
-        expect(reports).toHaveLength(2);
-        const statuses = reports.map((r) => r.status).sort();
-        expect(statuses).toEqual(['approved', 'passed']);
-      });
-    });
+    when(
+      '[t0] typical approval flow: blocked then approved then passed',
+      () => {
+        then('returns approved AND passed', async () => {
+          const reports = await getAllPassageReports({ route: tempDir });
+          expect(reports).toHaveLength(2);
+          const statuses = reports.map((r) => r.status).sort();
+          expect(statuses).toEqual(['approved', 'passed']);
+        });
+      },
+    );
   });
 
   given('[case10] re-approve after rewind', () => {
@@ -314,12 +320,15 @@ describe('getAllPassageReports', () => {
     });
 
     when('[t0] approved, passed, rewound, then re-approved and blocked', () => {
-      then('returns new approval AND blocked (approval sticky after re-approve)', async () => {
-        const reports = await getAllPassageReports({ route: tempDir });
-        expect(reports).toHaveLength(2);
-        const statuses = reports.map((r) => r.status).sort();
-        expect(statuses).toEqual(['approved', 'blocked']);
-      });
+      then(
+        'returns new approval AND blocked (approval sticky after re-approve)',
+        async () => {
+          const reports = await getAllPassageReports({ route: tempDir });
+          expect(reports).toHaveLength(2);
+          const statuses = reports.map((r) => r.status).sort();
+          expect(statuses).toEqual(['approved', 'blocked']);
+        },
+      );
     });
   });
 });
