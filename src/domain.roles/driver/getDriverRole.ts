@@ -9,6 +9,7 @@ export const ROLE_DRIVER: Role = Role.build({
   name: 'Driver',
   purpose: 'navigate thought routes via stone milestones',
   readme: { uri: __dirname + '/readme.md' },
+  boot: { uri: __dirname + '/boot.yml' },
   traits: [],
   skills: {
     dirs: [{ uri: __dirname + '/skills' }],
@@ -19,12 +20,6 @@ export const ROLE_DRIVER: Role = Role.build({
   },
   hooks: {
     onBrain: {
-      onBoot: [
-        {
-          command: './node_modules/.bin/rhx route.drive --mode hook',
-          timeout: 'PT5S',
-        },
-      ],
       onTool: [
         {
           command: './node_modules/.bin/rhx route.bounce --mode hook',
