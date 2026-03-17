@@ -332,138 +332,153 @@ describe('getAllPassageReports', () => {
     });
   });
 
-  given('[case11] cross-stone invalidation: rewind earlier clears later approval', () => {
-    const tempDir = path.join(
-      os.tmpdir(),
-      `test-passage-crossstone-clears-${Date.now()}`,
-    );
-
-    beforeEach(async () => {
-      await fs.mkdir(path.join(tempDir, '.route'), { recursive: true });
-      const content =
-        [
-          JSON.stringify({ stone: '1.vision', status: 'passed' }),
-          JSON.stringify({ stone: '2.plan', status: 'approved' }),
-          JSON.stringify({ stone: '2.plan', status: 'passed' }),
-          JSON.stringify({ stone: '1.vision', status: 'rewound' }), // rewind to 1 should clear 2's approval
-        ].join('\n') + '\n';
-      await fs.writeFile(
-        path.join(tempDir, '.route', 'passage.jsonl'),
-        content,
+  given(
+    '[case11] cross-stone invalidation: rewind earlier clears later approval',
+    () => {
+      const tempDir = path.join(
+        os.tmpdir(),
+        `test-passage-crossstone-clears-${Date.now()}`,
       );
-    });
 
-    afterEach(async () => {
-      await fs.rm(tempDir, { recursive: true, force: true });
-    });
-
-    when('[t0] stone 1 rewound after stone 2 approved', () => {
-      then('stone 2 approval is cleared (cross-stone invalidation)', async () => {
-        const reports = await getAllPassageReports({ route: tempDir });
-
-        // should have: 1.vision rewound, 2.plan passed (no approval)
-        const approvals = reports.filter((r) => r.status === 'approved');
-        expect(approvals).toHaveLength(0);
-
-        const stone2Reports = reports.filter((r) => r.stone === '2.plan');
-        expect(stone2Reports).toHaveLength(1);
-        expect(stone2Reports[0]!.status).toEqual('passed');
+      beforeEach(async () => {
+        await fs.mkdir(path.join(tempDir, '.route'), { recursive: true });
+        const content =
+          [
+            JSON.stringify({ stone: '1.vision', status: 'passed' }),
+            JSON.stringify({ stone: '2.plan', status: 'approved' }),
+            JSON.stringify({ stone: '2.plan', status: 'passed' }),
+            JSON.stringify({ stone: '1.vision', status: 'rewound' }), // rewind to 1 should clear 2's approval
+          ].join('\n') + '\n';
+        await fs.writeFile(
+          path.join(tempDir, '.route', 'passage.jsonl'),
+          content,
+        );
       });
-    });
-  });
 
-  given('[case12] cross-stone invalidation: rewind later does NOT clear earlier approval', () => {
-    const tempDir = path.join(
-      os.tmpdir(),
-      `test-passage-crossstone-keeps-${Date.now()}`,
-    );
+      afterEach(async () => {
+        await fs.rm(tempDir, { recursive: true, force: true });
+      });
 
-    beforeEach(async () => {
-      await fs.mkdir(path.join(tempDir, '.route'), { recursive: true });
-      const content =
-        [
-          JSON.stringify({ stone: '1.vision', status: 'approved' }),
-          JSON.stringify({ stone: '1.vision', status: 'passed' }),
-          JSON.stringify({ stone: '2.plan', status: 'approved' }),
-          JSON.stringify({ stone: '2.plan', status: 'passed' }),
-          JSON.stringify({ stone: '2.plan', status: 'rewound' }), // rewind to 2 should NOT clear 1's approval
-        ].join('\n') + '\n';
-      await fs.writeFile(
-        path.join(tempDir, '.route', 'passage.jsonl'),
-        content,
+      when('[t0] stone 1 rewound after stone 2 approved', () => {
+        then(
+          'stone 2 approval is cleared (cross-stone invalidation)',
+          async () => {
+            const reports = await getAllPassageReports({ route: tempDir });
+
+            // should have: 1.vision rewound, 2.plan passed (no approval)
+            const approvals = reports.filter((r) => r.status === 'approved');
+            expect(approvals).toHaveLength(0);
+
+            const stone2Reports = reports.filter((r) => r.stone === '2.plan');
+            expect(stone2Reports).toHaveLength(1);
+            expect(stone2Reports[0]!.status).toEqual('passed');
+          },
+        );
+      });
+    },
+  );
+
+  given(
+    '[case12] cross-stone invalidation: rewind later does NOT clear earlier approval',
+    () => {
+      const tempDir = path.join(
+        os.tmpdir(),
+        `test-passage-crossstone-keeps-${Date.now()}`,
       );
-    });
 
-    afterEach(async () => {
-      await fs.rm(tempDir, { recursive: true, force: true });
-    });
-
-    when('[t0] stone 2 rewound after both stones approved', () => {
-      then('stone 1 approval is preserved (not invalidated by later rewind)', async () => {
-        const reports = await getAllPassageReports({ route: tempDir });
-
-        // stone 1 should still have approval
-        const stone1Reports = reports.filter((r) => r.stone === '1.vision');
-        const stone1Statuses = stone1Reports.map((r) => r.status).sort();
-        expect(stone1Statuses).toEqual(['approved', 'passed']);
-
-        // stone 2 should have no approval (rewound clears same-stone)
-        const stone2Reports = reports.filter((r) => r.stone === '2.plan');
-        expect(stone2Reports).toHaveLength(1);
-        expect(stone2Reports[0]!.status).toEqual('rewound');
+      beforeEach(async () => {
+        await fs.mkdir(path.join(tempDir, '.route'), { recursive: true });
+        const content =
+          [
+            JSON.stringify({ stone: '1.vision', status: 'approved' }),
+            JSON.stringify({ stone: '1.vision', status: 'passed' }),
+            JSON.stringify({ stone: '2.plan', status: 'approved' }),
+            JSON.stringify({ stone: '2.plan', status: 'passed' }),
+            JSON.stringify({ stone: '2.plan', status: 'rewound' }), // rewind to 2 should NOT clear 1's approval
+          ].join('\n') + '\n';
+        await fs.writeFile(
+          path.join(tempDir, '.route', 'passage.jsonl'),
+          content,
+        );
       });
-    });
-  });
 
-  given('[case13] cross-stone invalidation: cascade through multiple stones', () => {
-    const tempDir = path.join(
-      os.tmpdir(),
-      `test-passage-crossstone-cascade-${Date.now()}`,
-    );
+      afterEach(async () => {
+        await fs.rm(tempDir, { recursive: true, force: true });
+      });
 
-    beforeEach(async () => {
-      await fs.mkdir(path.join(tempDir, '.route'), { recursive: true });
-      const content =
-        [
-          JSON.stringify({ stone: '1.vision', status: 'approved' }),
-          JSON.stringify({ stone: '1.vision', status: 'passed' }),
-          JSON.stringify({ stone: '2.plan', status: 'approved' }),
-          JSON.stringify({ stone: '2.plan', status: 'passed' }),
-          JSON.stringify({ stone: '3.execute', status: 'approved' }),
-          JSON.stringify({ stone: '3.execute', status: 'blocked' }),
-          JSON.stringify({ stone: '1.vision', status: 'rewound' }), // cascade: clears 1, 2, and 3 approvals
-        ].join('\n') + '\n';
-      await fs.writeFile(
-        path.join(tempDir, '.route', 'passage.jsonl'),
-        content,
+      when('[t0] stone 2 rewound after both stones approved', () => {
+        then(
+          'stone 1 approval is preserved (not invalidated by later rewind)',
+          async () => {
+            const reports = await getAllPassageReports({ route: tempDir });
+
+            // stone 1 should still have approval
+            const stone1Reports = reports.filter((r) => r.stone === '1.vision');
+            const stone1Statuses = stone1Reports.map((r) => r.status).sort();
+            expect(stone1Statuses).toEqual(['approved', 'passed']);
+
+            // stone 2 should have no approval (rewound clears same-stone)
+            const stone2Reports = reports.filter((r) => r.stone === '2.plan');
+            expect(stone2Reports).toHaveLength(1);
+            expect(stone2Reports[0]!.status).toEqual('rewound');
+          },
+        );
+      });
+    },
+  );
+
+  given(
+    '[case13] cross-stone invalidation: cascade through multiple stones',
+    () => {
+      const tempDir = path.join(
+        os.tmpdir(),
+        `test-passage-crossstone-cascade-${Date.now()}`,
       );
-    });
 
-    afterEach(async () => {
-      await fs.rm(tempDir, { recursive: true, force: true });
-    });
-
-    when('[t0] stone 1 rewound after all three stones approved', () => {
-      then('all approvals are cleared (cascade invalidation)', async () => {
-        const reports = await getAllPassageReports({ route: tempDir });
-
-        // no approvals should remain
-        const approvals = reports.filter((r) => r.status === 'approved');
-        expect(approvals).toHaveLength(0);
-
-        // check each stone has correct passage state
-        const stone1 = reports.filter((r) => r.stone === '1.vision');
-        expect(stone1).toHaveLength(1);
-        expect(stone1[0]!.status).toEqual('rewound');
-
-        const stone2 = reports.filter((r) => r.stone === '2.plan');
-        expect(stone2).toHaveLength(1);
-        expect(stone2[0]!.status).toEqual('passed');
-
-        const stone3 = reports.filter((r) => r.stone === '3.execute');
-        expect(stone3).toHaveLength(1);
-        expect(stone3[0]!.status).toEqual('blocked');
+      beforeEach(async () => {
+        await fs.mkdir(path.join(tempDir, '.route'), { recursive: true });
+        const content =
+          [
+            JSON.stringify({ stone: '1.vision', status: 'approved' }),
+            JSON.stringify({ stone: '1.vision', status: 'passed' }),
+            JSON.stringify({ stone: '2.plan', status: 'approved' }),
+            JSON.stringify({ stone: '2.plan', status: 'passed' }),
+            JSON.stringify({ stone: '3.execute', status: 'approved' }),
+            JSON.stringify({ stone: '3.execute', status: 'blocked' }),
+            JSON.stringify({ stone: '1.vision', status: 'rewound' }), // cascade: clears 1, 2, and 3 approvals
+          ].join('\n') + '\n';
+        await fs.writeFile(
+          path.join(tempDir, '.route', 'passage.jsonl'),
+          content,
+        );
       });
-    });
-  });
+
+      afterEach(async () => {
+        await fs.rm(tempDir, { recursive: true, force: true });
+      });
+
+      when('[t0] stone 1 rewound after all three stones approved', () => {
+        then('all approvals are cleared (cascade invalidation)', async () => {
+          const reports = await getAllPassageReports({ route: tempDir });
+
+          // no approvals should remain
+          const approvals = reports.filter((r) => r.status === 'approved');
+          expect(approvals).toHaveLength(0);
+
+          // check each stone has correct passage state
+          const stone1 = reports.filter((r) => r.stone === '1.vision');
+          expect(stone1).toHaveLength(1);
+          expect(stone1[0]!.status).toEqual('rewound');
+
+          const stone2 = reports.filter((r) => r.stone === '2.plan');
+          expect(stone2).toHaveLength(1);
+          expect(stone2[0]!.status).toEqual('passed');
+
+          const stone3 = reports.filter((r) => r.stone === '3.execute');
+          expect(stone3).toHaveLength(1);
+          expect(stone3[0]!.status).toEqual('blocked');
+        });
+      });
+    },
+  );
 });
