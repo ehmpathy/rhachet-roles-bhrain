@@ -13,6 +13,7 @@ import {
 import type { RouteStoneGuardJudgeArtifact } from '@src/domain.objects/Driver/RouteStoneGuardJudgeArtifact';
 import type { RouteStoneGuardReviewArtifact } from '@src/domain.objects/Driver/RouteStoneGuardReviewArtifact';
 
+import { delBlockedTriggeredReport } from '../blocked/delBlockedTriggeredReport';
 import { computeRouteBouncerCache } from '../bouncer/computeRouteBouncerCache';
 import { setRouteBouncerCache } from '../bouncer/setRouteBouncerCache';
 import { delStoneGuardBlockerReport } from '../drive/delStoneGuardBlockerReport';
@@ -70,6 +71,13 @@ export const setStoneAsPassed = async (
   // if no guard, auto-pass
   if (!stoneMatched.guard) {
     await setStonePassage({ stone: stoneMatched, route: input.route });
+
+    // clear blocked triggers for this stone and all earlier stones
+    await clearBlockedTriggersUpTo({
+      stone: stoneMatched,
+      stones,
+      route: input.route,
+    });
 
     // update bouncer cache (stone passage may release protected artifacts)
     const bouncerCache = await computeRouteBouncerCache({
@@ -162,6 +170,13 @@ export const setStoneAsPassed = async (
   const peerReviews = getGuardPeerReviews(stoneMatched.guard);
   if (peerReviews.length === 0 && stoneMatched.guard.judges.length === 0) {
     await setStonePassage({ stone: stoneMatched, route: input.route });
+
+    // clear blocked triggers for this stone and all earlier stones
+    await clearBlockedTriggersUpTo({
+      stone: stoneMatched,
+      stones,
+      route: input.route,
+    });
 
     // update bouncer cache (stone passage may release protected artifacts)
     const bouncerCache = await computeRouteBouncerCache({
@@ -372,6 +387,13 @@ export const setStoneAsPassed = async (
   if (allJudgesPassed) {
     await setStonePassage({ stone: stoneMatched, route: input.route });
 
+    // clear blocked triggers for this stone and all earlier stones
+    await clearBlockedTriggersUpTo({
+      stone: stoneMatched,
+      stones,
+      route: input.route,
+    });
+
     // update bouncer cache (stone passage may release protected artifacts)
     const bouncerCache = await computeRouteBouncerCache({
       cwd: process.cwd(),
@@ -578,4 +600,24 @@ const computeBlockedOn = (input: {
   if (hasReviewFailure) return 'review.peer';
   if (hasApprovalFailure && !hasOtherFailure) return 'approval';
   return 'judge';
+};
+
+/**
+ * .what = clears blocked triggers for a stone and all earlier stones
+ * .why = when a later stone is passed, earlier blocked states are resolved
+ */
+const clearBlockedTriggersUpTo = async (input: {
+  stone: RouteStone;
+  stones: RouteStone[];
+  route: string;
+}): Promise<void> => {
+  // find index of current stone
+  const stoneIndex = input.stones.findIndex((s) => s.name === input.stone.name);
+  if (stoneIndex < 0) return;
+
+  // clear blocked triggers for this stone and all earlier stones
+  const stonesToClear = input.stones.slice(0, stoneIndex + 1);
+  for (const stone of stonesToClear) {
+    await delBlockedTriggeredReport({ stone: stone.name, route: input.route });
+  }
 };
