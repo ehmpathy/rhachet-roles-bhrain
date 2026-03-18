@@ -3,6 +3,7 @@ import * as path from 'path';
 import { given, then, useBeforeAll, useThen, when } from 'test-fns';
 
 import {
+  createHookStdin,
   execAsync,
   genTempDirForRhachet,
   invokeRouteSkill,
@@ -41,12 +42,17 @@ describe('driver.route.bounce.acceptance', () => {
       return { tempDir };
     });
 
-    when('[t0] route.bounce --mode hook --path src/feature.ts', () => {
+    when('[t0] route.bounce via stdin Write to src/feature.ts', () => {
       const result = useThen('returns blocked', async () =>
         invokeRouteSkill({
           skill: 'route.bounce',
-          args: { mode: 'hook', path: 'src/feature.ts' },
+          args: { mode: 'hook' },
           cwd: scene.tempDir,
+          stdin: createHookStdin({
+            toolName: 'Write',
+            filePath: 'src/feature.ts',
+            cwd: scene.tempDir,
+          }),
         }),
       );
 
@@ -55,17 +61,22 @@ describe('driver.route.bounce.acceptance', () => {
       });
 
       then('output contains blocked feedback', () => {
-        expect(result.stdout).toContain('blocked');
-        expect(result.stdout).toContain('artifact = src/feature.ts');
+        expect(result.stderr).toContain('blocked');
+        expect(result.stderr).toContain('artifact = src/feature.ts');
       });
     });
 
-    when('[t1] route.bounce --mode hook --path unprotected.txt', () => {
+    when('[t1] route.bounce via stdin Write to unprotected.txt', () => {
       const result = useThen('returns allowed', async () =>
         invokeRouteSkill({
           skill: 'route.bounce',
-          args: { mode: 'hook', path: 'unprotected.txt' },
+          args: { mode: 'hook' },
           cwd: scene.tempDir,
+          stdin: createHookStdin({
+            toolName: 'Write',
+            filePath: 'unprotected.txt',
+            cwd: scene.tempDir,
+          }),
         }),
       );
 
@@ -98,25 +109,30 @@ describe('driver.route.bounce.acceptance', () => {
       const result = useThen('blocked with feedback', async () =>
         invokeRouteSkill({
           skill: 'route.bounce',
-          args: { mode: 'hook', path: 'src/feature.ts' },
+          args: { mode: 'hook' },
           cwd: scene.tempDir,
+          stdin: createHookStdin({
+            toolName: 'Write',
+            filePath: 'src/feature.ts',
+            cwd: scene.tempDir,
+          }),
         }),
       );
 
       then('feedback includes guard name', () => {
-        expect(result.stdout).toContain('1.blueprint.guard');
+        expect(result.stderr).toContain('1.blueprint.guard');
       });
 
       then('feedback includes stone name', () => {
-        expect(result.stdout).toContain('1.blueprint');
+        expect(result.stderr).toContain('1.blueprint');
       });
 
       then('feedback includes instructions', () => {
-        expect(result.stdout).toContain('rhx route.drive');
+        expect(result.stderr).toContain('rhx route.drive');
       });
 
-      then('stdout matches snapshot', () => {
-        expect(result.stdout).toMatchSnapshot();
+      then('stderr matches snapshot', () => {
+        expect(result.stderr).toMatchSnapshot();
       });
     });
   });
@@ -144,8 +160,13 @@ describe('driver.route.bounce.acceptance', () => {
       const result = useThen('src/feature.ts is blocked', async () =>
         invokeRouteSkill({
           skill: 'route.bounce',
-          args: { mode: 'hook', path: 'src/feature.ts' },
+          args: { mode: 'hook' },
           cwd: scene.tempDir,
+          stdin: createHookStdin({
+            toolName: 'Write',
+            filePath: 'src/feature.ts',
+            cwd: scene.tempDir,
+          }),
         }),
       );
 
@@ -179,8 +200,13 @@ describe('driver.route.bounce.acceptance', () => {
       const result = useThen('src/feature.ts is allowed', async () =>
         invokeRouteSkill({
           skill: 'route.bounce',
-          args: { mode: 'hook', path: 'src/feature.ts' },
+          args: { mode: 'hook' },
           cwd: scene.tempDir,
+          stdin: createHookStdin({
+            toolName: 'Write',
+            filePath: 'src/feature.ts',
+            cwd: scene.tempDir,
+          }),
         }),
       );
 
@@ -213,8 +239,13 @@ describe('driver.route.bounce.acceptance', () => {
       const result = useThen('src/feature.ts is blocked', async () =>
         invokeRouteSkill({
           skill: 'route.bounce',
-          args: { mode: 'hook', path: 'src/feature.ts' },
+          args: { mode: 'hook' },
           cwd: scene.tempDir,
+          stdin: createHookStdin({
+            toolName: 'Write',
+            filePath: 'src/feature.ts',
+            cwd: scene.tempDir,
+          }),
         }),
       );
 
@@ -257,8 +288,13 @@ describe('driver.route.bounce.acceptance', () => {
       const result = useThen('src/feature.ts is allowed', async () =>
         invokeRouteSkill({
           skill: 'route.bounce',
-          args: { mode: 'hook', path: 'src/feature.ts' },
+          args: { mode: 'hook' },
           cwd: scene.tempDir,
+          stdin: createHookStdin({
+            toolName: 'Write',
+            filePath: 'src/feature.ts',
+            cwd: scene.tempDir,
+          }),
         }),
       );
 
@@ -306,8 +342,13 @@ describe('driver.route.bounce.acceptance', () => {
       const result = useThen('src/feature.ts is blocked', async () =>
         invokeRouteSkill({
           skill: 'route.bounce',
-          args: { mode: 'hook', path: 'src/feature.ts' },
+          args: { mode: 'hook' },
           cwd: scene.tempDir,
+          stdin: createHookStdin({
+            toolName: 'Write',
+            filePath: 'src/feature.ts',
+            cwd: scene.tempDir,
+          }),
         }),
       );
 
@@ -332,8 +373,13 @@ describe('driver.route.bounce.acceptance', () => {
         // check if still blocked (second guard not passed)
         return invokeRouteSkill({
           skill: 'route.bounce',
-          args: { mode: 'hook', path: 'src/feature.ts' },
+          args: { mode: 'hook' },
           cwd: scene.tempDir,
+          stdin: createHookStdin({
+            toolName: 'Write',
+            filePath: 'src/feature.ts',
+            cwd: scene.tempDir,
+          }),
         });
       });
 
@@ -358,8 +404,13 @@ describe('driver.route.bounce.acceptance', () => {
         // check if now allowed
         return invokeRouteSkill({
           skill: 'route.bounce',
-          args: { mode: 'hook', path: 'src/feature.ts' },
+          args: { mode: 'hook' },
           cwd: scene.tempDir,
+          stdin: createHookStdin({
+            toolName: 'Write',
+            filePath: 'src/feature.ts',
+            cwd: scene.tempDir,
+          }),
         });
       });
 
@@ -400,12 +451,17 @@ describe('driver.route.bounce.acceptance', () => {
       return { tempDir };
     });
 
-    when('[t0] route.bounce --mode hook --path src/feature.ts', () => {
+    when('[t0] Write to src/feature.ts via stdin', () => {
       const result = useThen('allowed (no protection)', async () =>
         invokeRouteSkill({
           skill: 'route.bounce',
-          args: { mode: 'hook', path: 'src/feature.ts' },
+          args: { mode: 'hook' },
           cwd: scene.tempDir,
+          stdin: createHookStdin({
+            toolName: 'Write',
+            filePath: 'src/feature.ts',
+            cwd: scene.tempDir,
+          }),
         }),
       );
 
@@ -505,22 +561,32 @@ describe('driver.route.bounce.acceptance', () => {
       const srcResult = useThen('src/feature.ts is blocked', async () =>
         invokeRouteSkill({
           skill: 'route.bounce',
-          args: { mode: 'hook', path: 'src/feature.ts' },
+          args: { mode: 'hook' },
           cwd: scene.tempDir,
+          stdin: createHookStdin({
+            toolName: 'Write',
+            filePath: 'src/feature.ts',
+            cwd: scene.tempDir,
+          }),
         }),
       );
 
       const testsResult = useThen('tests/feature.test.ts is allowed', async () =>
         invokeRouteSkill({
           skill: 'route.bounce',
-          args: { mode: 'hook', path: 'tests/feature.test.ts' },
+          args: { mode: 'hook' },
           cwd: scene.tempDir,
+          stdin: createHookStdin({
+            toolName: 'Write',
+            filePath: 'tests/feature.test.ts',
+            cwd: scene.tempDir,
+          }),
         }),
       );
 
       then('src is blocked (route-a bound, protects src)', () => {
         expect(srcResult.code).toEqual(2);
-        expect(srcResult.stdout).toContain('1.design');
+        expect(srcResult.stderr).toContain('1.design');
       });
 
       then('tests is allowed (route-b not bound)', () => {
@@ -544,8 +610,13 @@ describe('driver.route.bounce.acceptance', () => {
         // check src path
         return invokeRouteSkill({
           skill: 'route.bounce',
-          args: { mode: 'hook', path: 'src/feature.ts' },
+          args: { mode: 'hook' },
           cwd: scene.tempDir,
+          stdin: createHookStdin({
+            toolName: 'Write',
+            filePath: 'src/feature.ts',
+            cwd: scene.tempDir,
+          }),
         });
       });
 
@@ -579,12 +650,17 @@ describe('driver.route.bounce.acceptance', () => {
         // phase 1: blocked
         const blocked = await invokeRouteSkill({
           skill: 'route.bounce',
-          args: { mode: 'hook', path: 'src/feature.ts' },
+          args: { mode: 'hook' },
           cwd: scene.tempDir,
+          stdin: createHookStdin({
+            toolName: 'Write',
+            filePath: 'src/feature.ts',
+            cwd: scene.tempDir,
+          }),
         });
         expect(blocked.code).toEqual(2);
-        expect(blocked.stdout).toContain('blocked');
-        expect(blocked.stdout).toMatchSnapshot('blocked feedback');
+        expect(blocked.stderr).toContain('blocked');
+        expect(blocked.stderr).toMatchSnapshot('blocked feedback');
 
         // phase 2: list protections
         const list = await invokeRouteSkill({
@@ -611,8 +687,13 @@ describe('driver.route.bounce.acceptance', () => {
         // phase 4: allowed
         const allowed = await invokeRouteSkill({
           skill: 'route.bounce',
-          args: { mode: 'hook', path: 'src/feature.ts' },
+          args: { mode: 'hook' },
           cwd: scene.tempDir,
+          stdin: createHookStdin({
+            toolName: 'Write',
+            filePath: 'src/feature.ts',
+            cwd: scene.tempDir,
+          }),
         });
         expect(allowed.code).toEqual(0);
 
@@ -624,6 +705,274 @@ describe('driver.route.bounce.acceptance', () => {
         });
         expect(listAfter.stdout).toContain('✓');
         expect(listAfter.stdout).toMatchSnapshot('protection list after pass');
+      });
+    });
+  });
+
+  // =========================================================================
+  // NEGATIVE TEST CASES - fail-open behavior
+  // =========================================================================
+
+  given('[neg.1] stdin empty', () => {
+    const scene = useBeforeAll(async () => {
+      const tempDir = genTempDirForRhachet({
+        slug: 'bounce-neg-empty',
+        clone: ASSETS_DIR,
+      });
+      await execAsync('npx rhachet roles link --role driver', { cwd: tempDir });
+      await execAsync('git checkout -b vlad/test-bounce', { cwd: tempDir });
+      await execAsync('npx rhx route.bind.set --route .', { cwd: tempDir });
+      await invokeRouteSkill({ skill: 'route.drive', args: {}, cwd: tempDir });
+      return { tempDir };
+    });
+
+    when('[t0] stdin is empty', () => {
+      const result = useThen('fails open', async () =>
+        invokeRouteSkill({
+          skill: 'route.bounce',
+          args: { mode: 'hook' },
+          cwd: scene.tempDir,
+          stdin: '',
+        }),
+      );
+
+      then('exit 0 (fail open)', () => {
+        expect(result.code).toEqual(0);
+      });
+    });
+  });
+
+  given('[neg.2] stdin invalid JSON', () => {
+    const scene = useBeforeAll(async () => {
+      const tempDir = genTempDirForRhachet({
+        slug: 'bounce-neg-json',
+        clone: ASSETS_DIR,
+      });
+      await execAsync('npx rhachet roles link --role driver', { cwd: tempDir });
+      await execAsync('git checkout -b vlad/test-bounce', { cwd: tempDir });
+      await execAsync('npx rhx route.bind.set --route .', { cwd: tempDir });
+      await invokeRouteSkill({ skill: 'route.drive', args: {}, cwd: tempDir });
+      return { tempDir };
+    });
+
+    when('[t0] stdin is not valid JSON', () => {
+      const result = useThen('fails open', async () =>
+        invokeRouteSkill({
+          skill: 'route.bounce',
+          args: { mode: 'hook' },
+          cwd: scene.tempDir,
+          stdin: 'not json {broken',
+        }),
+      );
+
+      then('exit 0 (fail open)', () => {
+        expect(result.code).toEqual(0);
+      });
+    });
+  });
+
+  given('[neg.3] file_path absent in tool_input', () => {
+    const scene = useBeforeAll(async () => {
+      const tempDir = genTempDirForRhachet({
+        slug: 'bounce-neg-nopath',
+        clone: ASSETS_DIR,
+      });
+      await execAsync('npx rhachet roles link --role driver', { cwd: tempDir });
+      await execAsync('git checkout -b vlad/test-bounce', { cwd: tempDir });
+      await execAsync('npx rhx route.bind.set --route .', { cwd: tempDir });
+      await invokeRouteSkill({ skill: 'route.drive', args: {}, cwd: tempDir });
+      return { tempDir };
+    });
+
+    when('[t0] tool_input has no file_path', () => {
+      const result = useThen('fails open', async () =>
+        invokeRouteSkill({
+          skill: 'route.bounce',
+          args: { mode: 'hook' },
+          cwd: scene.tempDir,
+          stdin: JSON.stringify({
+            hook_event_name: 'PreToolUse',
+            tool_name: 'Write',
+            tool_input: { content: 'some content but no file_path' },
+          }),
+        }),
+      );
+
+      then('exit 0 (fail open)', () => {
+        expect(result.code).toEqual(0);
+      });
+    });
+  });
+
+  given('[neg.4] tool_name is Read', () => {
+    const scene = useBeforeAll(async () => {
+      const tempDir = genTempDirForRhachet({
+        slug: 'bounce-neg-read',
+        clone: ASSETS_DIR,
+      });
+      await execAsync('npx rhachet roles link --role driver', { cwd: tempDir });
+      await execAsync('git checkout -b vlad/test-bounce', { cwd: tempDir });
+      await execAsync('npx rhx route.bind.set --route .', { cwd: tempDir });
+      await invokeRouteSkill({ skill: 'route.drive', args: {}, cwd: tempDir });
+      return { tempDir };
+    });
+
+    when('[t0] tool_name is Read (not a mutation)', () => {
+      const result = useThen('allowed (not a mutation tool)', async () =>
+        invokeRouteSkill({
+          skill: 'route.bounce',
+          args: { mode: 'hook' },
+          cwd: scene.tempDir,
+          stdin: createHookStdin({
+            toolName: 'Read',
+            filePath: 'src/feature.ts',
+            cwd: scene.tempDir,
+          }),
+        }),
+      );
+
+      then('exit 0 (Read is not blocked)', () => {
+        expect(result.code).toEqual(0);
+      });
+    });
+  });
+
+  given('[neg.5] tool_name is Bash', () => {
+    const scene = useBeforeAll(async () => {
+      const tempDir = genTempDirForRhachet({
+        slug: 'bounce-neg-bash',
+        clone: ASSETS_DIR,
+      });
+      await execAsync('npx rhachet roles link --role driver', { cwd: tempDir });
+      await execAsync('git checkout -b vlad/test-bounce', { cwd: tempDir });
+      await execAsync('npx rhx route.bind.set --route .', { cwd: tempDir });
+      await invokeRouteSkill({ skill: 'route.drive', args: {}, cwd: tempDir });
+      return { tempDir };
+    });
+
+    when('[t0] tool_name is Bash', () => {
+      const result = useThen('allowed (Bash fails open for now)', async () =>
+        invokeRouteSkill({
+          skill: 'route.bounce',
+          args: { mode: 'hook' },
+          cwd: scene.tempDir,
+          stdin: JSON.stringify({
+            hook_event_name: 'PreToolUse',
+            tool_name: 'Bash',
+            tool_input: { command: 'echo "hello" > src/feature.ts' },
+          }),
+        }),
+      );
+
+      then('exit 0 (Bash fails open)', () => {
+        expect(result.code).toEqual(0);
+      });
+    });
+  });
+
+  given('[neg.6] path outside repo', () => {
+    const scene = useBeforeAll(async () => {
+      const tempDir = genTempDirForRhachet({
+        slug: 'bounce-neg-outside',
+        clone: ASSETS_DIR,
+      });
+      await execAsync('npx rhachet roles link --role driver', { cwd: tempDir });
+      await execAsync('git checkout -b vlad/test-bounce', { cwd: tempDir });
+      await execAsync('npx rhx route.bind.set --route .', { cwd: tempDir });
+      await invokeRouteSkill({ skill: 'route.drive', args: {}, cwd: tempDir });
+      return { tempDir };
+    });
+
+    when('[t0] absolute path outside repo', () => {
+      const result = useThen('allowed (cannot match relative globs)', async () =>
+        invokeRouteSkill({
+          skill: 'route.bounce',
+          args: { mode: 'hook' },
+          cwd: scene.tempDir,
+          stdin: JSON.stringify({
+            hook_event_name: 'PreToolUse',
+            tool_name: 'Write',
+            tool_input: { file_path: '/etc/passwd' },
+          }),
+        }),
+      );
+
+      then('exit 0 (path outside repo)', () => {
+        expect(result.code).toEqual(0);
+      });
+    });
+  });
+
+  given('[neg.7] cache corrupt', () => {
+    const scene = useBeforeAll(async () => {
+      const tempDir = genTempDirForRhachet({
+        slug: 'bounce-neg-corrupt',
+        clone: ASSETS_DIR,
+      });
+      await execAsync('npx rhachet roles link --role driver', { cwd: tempDir });
+      await execAsync('git checkout -b vlad/test-bounce', { cwd: tempDir });
+      await execAsync('npx rhx route.bind.set --route .', { cwd: tempDir });
+      await invokeRouteSkill({ skill: 'route.drive', args: {}, cwd: tempDir });
+
+      // corrupt the bouncer cache
+      await fs.writeFile(
+        path.join(tempDir, '.route', '.bouncer.cache.json'),
+        'not valid json {{{',
+      );
+
+      return { tempDir };
+    });
+
+    when('[t0] bouncer cache is corrupt', () => {
+      const result = useThen('fails open', async () =>
+        invokeRouteSkill({
+          skill: 'route.bounce',
+          args: { mode: 'hook' },
+          cwd: scene.tempDir,
+          stdin: createHookStdin({
+            toolName: 'Write',
+            filePath: 'src/feature.ts',
+            cwd: scene.tempDir,
+          }),
+        }),
+      );
+
+      then('exit 0 (fail open on corrupt cache)', () => {
+        expect(result.code).toEqual(0);
+      });
+    });
+  });
+
+  given('[neg.8] tool_input at root (wrong structure)', () => {
+    const scene = useBeforeAll(async () => {
+      const tempDir = genTempDirForRhachet({
+        slug: 'bounce-neg-struct',
+        clone: ASSETS_DIR,
+      });
+      await execAsync('npx rhachet roles link --role driver', { cwd: tempDir });
+      await execAsync('git checkout -b vlad/test-bounce', { cwd: tempDir });
+      await execAsync('npx rhx route.bind.set --route .', { cwd: tempDir });
+      await invokeRouteSkill({ skill: 'route.drive', args: {}, cwd: tempDir });
+      return { tempDir };
+    });
+
+    when('[t0] file_path at root instead of tool_input.file_path', () => {
+      const result = useThen('fails open', async () =>
+        invokeRouteSkill({
+          skill: 'route.bounce',
+          args: { mode: 'hook' },
+          cwd: scene.tempDir,
+          stdin: JSON.stringify({
+            hook_event_name: 'PreToolUse',
+            tool_name: 'Write',
+            // wrong structure: file_path at root instead of in tool_input
+            file_path: path.join(scene.tempDir, 'src/feature.ts'),
+          }),
+        }),
+      );
+
+      then('exit 0 (fail open on wrong structure)', () => {
+        expect(result.code).toEqual(0);
       });
     });
   });

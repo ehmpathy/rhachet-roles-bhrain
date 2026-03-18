@@ -31,15 +31,18 @@ exports[`driver.route.guard-cwd.acceptance given: [case1] guard with $route in j
 🗿 route.stone.set
    ├─ stone = 1.vision
    ├─ passage = allowed
-   └─ guard
-      ├─ artifacts
-      │   └─ 1.vision.md
-      ├─ reviews
-      │   └─ r1: bash -c 'if [ -f "$route/1.vision.md" ]; then echo "blockers: 0"; echo "artifact present at $route"; else echo "blockers: 1"; echo "artifact absent at $route"; fi'
-      │       └─ · cached
-      └─ judges
-          └─ j1: rhx route.stone.judge --mechanism approved? --stone $stone --route $route
-              └─ finished [TIME] ✓
+   ├─ guard
+   │  ├─ artifacts
+   │  │   └─ 1.vision.md
+   │  ├─ reviews
+   │  │   └─ r1: bash -c 'if [ -f "$route/1.vision.md" ]; then echo "blockers: 0"; echo "artifact present at $route"; else echo "blockers: 1"; echo "artifact absent at $route"; fi'
+   │  │       └─ · cached
+   │  └─ judges
+   │      └─ j1: rhx route.stone.judge --mechanism approved? --stone $stone --route $route
+   │          └─ finished [TIME] ✓
+   │
+   └─ the way continues, run
+      └─ rhx route.drive
 "
 `;
 
@@ -74,14 +77,17 @@ exports[`driver.route.guard-cwd.acceptance given: [case2] guard with $route work
 🗿 route.stone.set
    ├─ stone = 1.vision
    ├─ passage = allowed
-   └─ guard
-      ├─ artifacts
-      │   └─ 1.vision.md
-      ├─ reviews
-      │   └─ r1: bash -c 'if [ -f "$route/1.vision.md" ]; then echo "blockers: 0"; echo "artifact present at $route"; else echo "blockers: 1"; echo "artifact absent at $route"; fi'
-      │       └─ · cached
-      └─ judges
-          └─ j1: rhx route.stone.judge --mechanism approved? --stone $stone --route $route
-              └─ finished [TIME] ✓
+   ├─ guard
+   │  ├─ artifacts
+   │  │   └─ 1.vision.md
+   │  ├─ reviews
+   │  │   └─ r1: bash -c 'if [ -f "$route/1.vision.md" ]; then echo "blockers: 0"; echo "artifact present at $route"; else echo "blockers: 1"; echo "artifact absent at $route"; fi'
+   │  │       └─ · cached
+   │  └─ judges
+   │      └─ j1: rhx route.stone.judge --mechanism approved? --stone $stone --route $route
+   │          └─ finished [TIME] ✓
+   │
+   └─ the way continues, run
+      └─ rhx route.drive
 "
 `;

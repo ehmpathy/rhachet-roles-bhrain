@@ -122,7 +122,10 @@ exports[`driver.route.rewind-drive.acceptance given: [case4] re-pass after rewin
 
 🗿 route.stone.set
    ├─ stone = 1.vision
-   └─ passage = allowed (unguarded)
+   ├─ passage = allowed (unguarded)
+   │
+   └─ the way continues, run
+      └─ rhx route.drive
 "
 `;
 
@@ -180,7 +183,10 @@ exports[`driver.route.rewind-drive.acceptance given: [case4] re-pass after rewin
 
 🗿 route.stone.set
    ├─ stone = 1.vision
-   └─ passage = allowed (unguarded)
+   ├─ passage = allowed (unguarded)
+   │
+   └─ the way continues, run
+      └─ rhx route.drive
 "
 `;
 

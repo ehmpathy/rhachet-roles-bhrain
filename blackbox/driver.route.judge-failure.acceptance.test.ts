@@ -98,7 +98,7 @@ describe('driver.route.judge-failure.acceptance', () => {
         // if it were wrongly cached as passed, it would exit 0
         // the judge should either re-run and fail, or show cached failure
         expect(result.stdout).toContain('judge');
-        expect(result.stdout).toContain('blocked');
+        expect(result.stderr).toContain('blocked');
       });
 
       then('stdout matches snapshot', () => {
