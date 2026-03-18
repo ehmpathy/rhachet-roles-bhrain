@@ -2,8 +2,8 @@
 
 exports[`driver.route.escape-hatch.acceptance given: [escape-hatch] stone with perma-fail review when: [t0] artifact created and pass attempted then: stdout has good vibes 1`] = `
 "🦉 the way speaks for itself
-   ├─ ✓ review.1 - completed 0.1s
-   └─ ✗ judge.1 - blocked 1.9s
+   ├─ ✓ review.1 - completed [TIME]
+   └─ ✗ judge.1 - blocked [TIME]
 
 🗿 route.stone.set
    ├─ stone = 1.design

@@ -60,7 +60,10 @@ export const setStoneAsRewound = async (
     reviews: number;
     judges: number;
     promises: number;
-    triggers: number;
+    triggers: {
+      blockers: number;
+      promises: number;
+    };
   }> = [];
 
   // rewind each affected stone
@@ -91,7 +94,7 @@ export const setStoneAsRewound = async (
     action: 'rewound',
     cascade: deletionResults.map((r) => ({
       stone: r.stone,
-      deleted: `${r.reviews} reviews, ${r.judges} judges, ${r.promises} promises, ${r.triggers} triggers`,
+      deleted: `${r.reviews} reviews, ${r.judges} judges, ${r.promises} promises, ${r.triggers.promises + r.triggers.blockers} triggers`,
       passage: 'rewound',
     })),
   });

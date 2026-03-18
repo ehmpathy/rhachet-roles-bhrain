@@ -54,7 +54,10 @@ export const sanitizeTimeForSnapshot = (output: string): string => {
     .replace(/done \d+\.\d+s/g, 'done [TIME]')
     .replace(/passed \d+\.\d+s/g, 'passed [TIME]')
     .replace(/failed \d+\.\d+s/g, 'failed [TIME]')
-    .replace(/inflight \d+\.\d+s/g, 'inflight [TIME]');
+    .replace(/inflight \d+\.\d+s/g, 'inflight [TIME]')
+    .replace(/completed \d+\.\d+s/g, 'completed [TIME]')
+    .replace(/allowed \d+\.\d+s/g, 'allowed [TIME]')
+    .replace(/blocked \d+\.\d+s/g, 'blocked [TIME]');
 };
 
 

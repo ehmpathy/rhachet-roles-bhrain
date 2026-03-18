@@ -191,8 +191,8 @@ exports[`driver.route.review.self.acceptance given: [case1] stone with reviews.s
 
 exports[`driver.route.review.self.acceptance given: [case1] stone with reviews.self defined when: [t3] pass attempted with all promises then: stdout has good vibes 1`] = `
 "🦉 the way speaks for itself
-   ├─ ✓ review.1 - completed 0.0s
-   └─ ✓ judge.1 - allowed 0.6s
+   ├─ ✓ review.1 - completed [TIME]
+   └─ ✓ judge.1 - allowed [TIME]
 
 🗿 route.stone.set
    ├─ stone = 1
@@ -305,8 +305,8 @@ exports[`driver.route.review.self.acceptance given: [case3] hashless promises su
 
 exports[`driver.route.review.self.acceptance given: [case4] flat reviews array (backwards compatible) when: [t0] pass attempted with flat reviews then: stdout has good vibes 1`] = `
 "🦉 the way speaks for itself
-   ├─ ✓ review.1 - completed 0.0s
-   └─ ✓ judge.1 - allowed 0.4s
+   ├─ ✓ review.1 - completed [TIME]
+   └─ ✓ judge.1 - allowed [TIME]
 
 🗿 route.stone.set
    ├─ stone = 1

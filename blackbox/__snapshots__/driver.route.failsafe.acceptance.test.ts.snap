@@ -2,8 +2,8 @@
 
 exports[`driver.route.failsafe.acceptance given: [case1] reviewer exits with code 0 (passed) when: [t0] route.stone.set --as passed is invoked then: stdout matches snapshot 1`] = `
 "🦉 the way speaks for itself
-   ├─ ✓ review.1 - completed 0.1s
-   └─ ✓ judge.1 - allowed 0.0s
+   ├─ ✓ review.1 - completed [TIME]
+   └─ ✓ judge.1 - allowed [TIME]
 
 🗿 route.stone.set
    ├─ stone = 1.review-pass
@@ -43,8 +43,8 @@ exports[`driver.route.failsafe.acceptance given: [case2] reviewer exits with cod
 
 exports[`driver.route.failsafe.acceptance given: [case2] reviewer exits with code 2 (constraint) when: [t0] route.stone.set --as passed is invoked then: stdout matches snapshot 1`] = `
 "🦉 the way speaks for itself
-   ├─ ✓ review.1 - completed 0.0s
-   └─ ✗ judge.1 - blocked 0.0s
+   ├─ ✓ review.1 - completed [TIME]
+   └─ ✗ judge.1 - blocked [TIME]
 
 🗿 route.stone.set
    ├─ stone = 2.review-constraint
@@ -88,8 +88,8 @@ exports[`driver.route.failsafe.acceptance given: [case3] reviewer exits with cod
 
 exports[`driver.route.failsafe.acceptance given: [case3] reviewer exits with code 1 (malfunction) when: [t0] route.stone.set --as passed is invoked then: stdout matches snapshot 1`] = `
 "🦉 the way speaks for itself
-   ├─ ✓ review.1 - malfunctioned 0.1s
-   └─ ✓ judge.1 - allowed 0.0s
+   ├─ ✓ review.1 - malfunctioned [TIME]
+   └─ ✓ judge.1 - allowed [TIME]
 
 🗿 route.stone.set
    ├─ stone = 3.review-malfunction
@@ -123,7 +123,7 @@ exports[`driver.route.failsafe.acceptance given: [case3] reviewer exits with cod
 
 exports[`driver.route.failsafe.acceptance given: [case4] judge exits with code 0 (passed) when: [t0] route.stone.set --as passed is invoked then: stdout matches snapshot 1`] = `
 "🦉 the way speaks for itself
-   └─ ✓ judge.1 - allowed 0.0s
+   └─ ✓ judge.1 - allowed [TIME]
 
 🗿 route.stone.set
    ├─ stone = 4.judge-pass
@@ -159,7 +159,7 @@ exports[`driver.route.failsafe.acceptance given: [case5] judge exits with code 2
 
 exports[`driver.route.failsafe.acceptance given: [case5] judge exits with code 2 (constraint) when: [t0] route.stone.set --as passed is invoked then: stdout matches snapshot 1`] = `
 "🦉 the way speaks for itself
-   └─ ✗ judge.1 - blocked 0.0s
+   └─ ✗ judge.1 - blocked [TIME]
 
 🗿 route.stone.set
    ├─ stone = 5.judge-constraint
@@ -198,7 +198,7 @@ exports[`driver.route.failsafe.acceptance given: [case6] judge exits with code 1
 
 exports[`driver.route.failsafe.acceptance given: [case6] judge exits with code 1 (malfunction) when: [t0] route.stone.set --as passed is invoked then: stdout matches snapshot 1`] = `
 "🦉 the way speaks for itself
-   └─ ✗ judge.1 - blocked 0.0s
+   └─ ✗ judge.1 - blocked [TIME]
 
 🗿 route.stone.set
    ├─ stone = 6.judge-malfunction
@@ -268,7 +268,7 @@ exports[`driver.route.failsafe.acceptance given: [case7] both reviewer and judge
 exports[`driver.route.failsafe.acceptance given: [case7] both reviewer and judge malfunction when: [t0] route.stone.set --as passed is invoked then: stdout matches snapshot 1`] = `
 "🦉 the way speaks for itself
    ├─ ✓ review.1 - malfunctioned 0.0s
-   └─ ✗ judge.1 - blocked 0.0s
+   └─ ✗ judge.1 - blocked [TIME]
 
 🗿 route.stone.set
    ├─ stone = 7.both-malfunction

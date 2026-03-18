@@ -30,7 +30,7 @@ describe('delStoneGuardArtifacts', () => {
           reviews: 0,
           judges: 0,
           promises: 0,
-          triggers: 0,
+          triggers: { blockers: 0, promises: 0 },
         });
       });
     });
@@ -186,7 +186,7 @@ describe('delStoneGuardArtifacts', () => {
           stone: '1.vision',
           route: tempDir,
         });
-        expect(result.triggers).toBe(1);
+        expect(result.triggers.promises).toBe(1);
       });
     });
   });
@@ -242,7 +242,7 @@ describe('delStoneGuardArtifacts', () => {
           reviews: 1,
           judges: 1,
           promises: 1,
-          triggers: 1,
+          triggers: { blockers: 0, promises: 1 },
         });
       });
     });
@@ -272,7 +272,7 @@ describe('delStoneGuardArtifacts', () => {
           reviews: 0,
           judges: 0,
           promises: 0,
-          triggers: 0,
+          triggers: { blockers: 0, promises: 0 },
         });
       });
     });
@@ -355,6 +355,42 @@ describe('delStoneGuardArtifacts', () => {
         const files = await fs.readdir(routeDir);
         const guardFiles = files.filter((f) => f.includes('.guard.'));
         expect(guardFiles).toHaveLength(0);
+      });
+    });
+  });
+
+  given('[case10] a stone with blocked trigger file', () => {
+    const tempDir = path.join(
+      os.tmpdir(),
+      `test-del-guard-artifacts-blocked-${Date.now()}`,
+    );
+    const routeDir = path.join(tempDir, '.route');
+
+    beforeEach(async () => {
+      await fs.mkdir(routeDir, { recursive: true });
+      await fs.writeFile(path.join(routeDir, '1.vision.blocked.triggered'), '');
+    });
+
+    afterEach(async () => {
+      await fs.rm(tempDir, { recursive: true, force: true });
+    });
+
+    when('[t0] delStoneGuardArtifacts is called', () => {
+      then('deletes blocked trigger file', async () => {
+        await delStoneGuardArtifacts({ stone: '1.vision', route: tempDir });
+
+        const files = await fs.readdir(routeDir);
+        expect(
+          files.filter((f) => f.includes('.blocked.triggered')),
+        ).toHaveLength(0);
+      });
+
+      then('returns correct blocked trigger count', async () => {
+        const result = await delStoneGuardArtifacts({
+          stone: '1.vision',
+          route: tempDir,
+        });
+        expect(result.triggers.blockers).toBe(1);
       });
     });
   });

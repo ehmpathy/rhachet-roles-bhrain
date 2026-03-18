@@ -14,7 +14,10 @@ export const delStoneGuardArtifacts = async (input: {
   reviews: number;
   judges: number;
   promises: number;
-  triggers: number;
+  triggers: {
+    blockers: number;
+    promises: number;
+  };
 }> => {
   const routeDir = path.join(input.route, '.route');
 
@@ -22,7 +25,12 @@ export const delStoneGuardArtifacts = async (input: {
   try {
     await fs.access(routeDir);
   } catch {
-    return { reviews: 0, judges: 0, promises: 0, triggers: 0 };
+    return {
+      reviews: 0,
+      judges: 0,
+      promises: 0,
+      triggers: { blockers: 0, promises: 0 },
+    };
   }
 
   // glob for review files: $stone.guard.review.*.md
@@ -54,12 +62,20 @@ export const delStoneGuardArtifacts = async (input: {
     dot: true,
   });
 
+  // glob for blocked trigger files: $stone.blocked.triggered
+  const blockedTriggerFiles = await enumFilesFromGlob({
+    glob: `${input.stone}.blocked.triggered`,
+    cwd: routeDir,
+    dot: true,
+  });
+
   // delete all found files
   const allFiles = [
     ...reviewFiles,
     ...judgeFiles,
     ...promiseFiles,
     ...triggerFiles,
+    ...blockedTriggerFiles,
   ];
   for (const filePath of allFiles) {
     await fs.rm(filePath, { force: true });
@@ -69,6 +85,9 @@ export const delStoneGuardArtifacts = async (input: {
     reviews: reviewFiles.length,
     judges: judgeFiles.length,
     promises: promiseFiles.length,
-    triggers: triggerFiles.length,
+    triggers: {
+      blockers: blockedTriggerFiles.length,
+      promises: triggerFiles.length,
+    },
   };
 };

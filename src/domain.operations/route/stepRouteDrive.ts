@@ -44,13 +44,13 @@ export const stepRouteDrive = async (input: {
   });
   await setRouteBouncerCache({ cache: bouncerCache, route });
 
-  // in hook mode, check for malfunction status immediately
+  // in hook mode, check for malfunction or blocked status immediately
   // .note = getAllPassageReports returns latest per stone (last entry wins)
-  //         a subsequent 'passed' status resolves the malfunction
+  //         a subsequent 'passed' status resolves the malfunction or blocked state
   if (input.mode === 'hook') {
     const passageReports = await getAllPassageReports({ route });
 
-    // check if any stone's latest status is malfunction
+    // check for malfunction
     const malfunctionReport = passageReports.find(
       (r) => r.status === 'malfunction',
     );
@@ -69,6 +69,30 @@ export const stepRouteDrive = async (input: {
           },
         },
       };
+    }
+
+    // check for blocked status (agent explicitly marked stone as blocked via --as blocked)
+    // note: must check that blocked is the LATEST status for that stone
+    // since passage.jsonl is append-only, later entries supersede earlier ones
+    // note: guard-initiated blocks have a `blocker` field (e.g., 'approval', 'review.self')
+    //       while agent-initiated blocks do not - only show this path for agent-initiated
+    const blockedReport = passageReports.find((r) => r.status === 'blocked');
+    if (blockedReport) {
+      // find the latest report for this stone
+      const latestForStone = passageReports
+        .filter((r) => r.stone === blockedReport.stone)
+        .pop();
+      // only report blocked if it's still the latest status AND it's agent-initiated (no blocker field)
+      if (latestForStone?.status === 'blocked' && !latestForStone.blocker) {
+        return {
+          emit: {
+            stdout: formatRouteDriveBlocked({
+              route,
+              stone: blockedReport.stone,
+            }),
+          },
+        };
+      }
     }
   }
 
@@ -97,13 +121,6 @@ export const stepRouteDrive = async (input: {
   // get first stone and read its content
   const stone = nextStones[0]!;
   const stoneContent = await fs.readFile(stone.path, 'utf-8');
-
-  // format output
-  const stdout = formatRouteDrive({
-    route,
-    stone: stone.name,
-    content: stoneContent,
-  });
 
   // in hook mode, track and potentially block stop
   if (input.mode === 'hook') {
@@ -164,6 +181,14 @@ export const stepRouteDrive = async (input: {
       };
     }
 
+    // format output (with blocked suggestion if count > 5)
+    const stdout = formatRouteDrive({
+      route,
+      stone: stone.name,
+      content: stoneContent,
+      suggestBlocked: state.count > 5,
+    });
+
     // block stop - same content in stdout AND stderr (for visibility), exit code 2 to signal
     return {
       emit: {
@@ -172,6 +197,14 @@ export const stepRouteDrive = async (input: {
       },
     };
   }
+
+  // format output for direct mode (no blocked suggestion)
+  const stdout = formatRouteDrive({
+    route,
+    stone: stone.name,
+    content: stoneContent,
+    suggestBlocked: false,
+  });
 
   // direct mode, just show output
   return {
@@ -314,6 +347,28 @@ const formatRouteDriveMalfunctionEscalate = (input: {
 };
 
 /**
+ * .what = formats route.drive output when stone is blocked
+ * .why = allows agent to stop gracefully when stone marked as blocked
+ */
+const formatRouteDriveBlocked = (input: {
+  route: string;
+  stone: string;
+}): string => {
+  const articulationPath = `${input.route}/.route/blocker/${input.stone}.md`;
+  const lines: string[] = [];
+  lines.push(`🦉 where were we?`);
+  lines.push('');
+  lines.push(`🗿 route.drive`);
+  lines.push(`   ├─ where do we go?`);
+  lines.push(`   │  ├─ route = ${input.route}`);
+  lines.push(`   │  └─ stone = ${input.stone}`);
+  lines.push(`   │`);
+  lines.push(`   └─ halted, stone marked blocked`);
+  lines.push(`      └─ reason: ${articulationPath}`);
+  return lines.join('\n');
+};
+
+/**
  * .what = formats route.drive output with stone content
  * .why = provides GPS-like guidance with full stone context
  */
@@ -321,6 +376,7 @@ const formatRouteDrive = (input: {
   route: string;
   stone: string;
   content: string;
+  suggestBlocked: boolean;
 }): string => {
   const lines: string[] = [];
 
@@ -355,9 +411,20 @@ const formatRouteDrive = (input: {
   lines.push(`   │  └─`);
   lines.push(`   │`);
 
-  // pass command (second instance, for easy copy)
-  lines.push(`   └─ are we there yet? if so, run`);
-  lines.push(`      └─ ${passCmd}`);
+  // pass command or blocked suggestion
+  if (input.suggestBlocked) {
+    // show both pass and blocked options
+    const blockedCmd = `rhx route.stone.set --stone ${input.stone} --as blocked`;
+    lines.push(`   ├─ are we there yet? if so, run`);
+    lines.push(`   │  └─ ${passCmd}`);
+    lines.push(`   │`);
+    lines.push(`   └─ are you blocked? if so, run`);
+    lines.push(`      └─ ${blockedCmd}`);
+  } else {
+    // just pass command
+    lines.push(`   └─ are we there yet? if so, run`);
+    lines.push(`      └─ ${passCmd}`);
+  }
 
   return lines.join('\n');
 };

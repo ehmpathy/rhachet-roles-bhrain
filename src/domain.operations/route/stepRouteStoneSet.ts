@@ -3,6 +3,7 @@ import { BadRequestError, UnexpectedCodePathError } from 'helpful-errors';
 import type { ContextCliEmit } from '@src/domain.objects/Driver/ContextCliEmit';
 import { getGuardSelfReviews } from '@src/domain.objects/Driver/RouteStoneGuard';
 
+import { setStoneAsBlocked } from './blocked/setStoneAsBlocked';
 import { delDriveBlockerState } from './drive/delDriveBlockerState';
 import { formatRouteStoneEmit } from './formatRouteStoneEmit';
 import { computeStoneReviewInputHash } from './guard/computeStoneReviewInputHash';
@@ -23,7 +24,7 @@ export const stepRouteStoneSet = async (
   input: {
     stone: string;
     route: string;
-    as: 'passed' | 'approved' | 'promised' | 'rewound';
+    as: 'passed' | 'approved' | 'promised' | 'rewound' | 'blocked';
     that?: string;
   },
   context: ContextCliEmit & { isTTY: boolean },
@@ -32,6 +33,7 @@ export const stepRouteStoneSet = async (
   approved?: boolean;
   promised?: boolean;
   rewound?: boolean;
+  blocked?: boolean;
   challenged?: boolean;
   refs?: { reviews: string[]; judges: string[] };
   emit: { stdout: string; stderr?: string } | null;
@@ -201,6 +203,18 @@ export const stepRouteStoneSet = async (
           nextReview,
         }),
       },
+    };
+  }
+
+  if (input.as === 'blocked') {
+    const result = await setStoneAsBlocked({
+      stone: input.stone,
+      route: input.route,
+    });
+    return {
+      blocked: result.blocked,
+      challenged: result.challenged,
+      emit: result.emit,
     };
   }
 

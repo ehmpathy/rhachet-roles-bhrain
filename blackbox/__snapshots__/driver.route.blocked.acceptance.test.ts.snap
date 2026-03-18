@@ -1,0 +1,314 @@
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
+
+exports[`driver.route.blocked.acceptance given: [journey] blocked flow when: [t0] robot attempts to block without articulation then: stdout has good vibes 1`] = `
+"🦉 the way speaks for itself
+
+🗿 route.stone.set
+   ├─ stone = 1.design
+   └─ passage = unchanged (articulation required)
+
+🍂 failure is only the opportunity to begin again
+   │
+   ├─ ...
+   │
+   ├─ what blocks you, grows you 🪷
+   │  ├─
+   │  │
+   │  │  the obstacle is not in the way
+   │  │  the obstacle is the way
+   │  │  have you learned from it yet?
+   │  │
+   │  └─
+   │
+   ├─ before you escalate 🪷
+   │  ├─
+   │  │
+   │  │  have you tried --as passed first?
+   │  │  have you tried to figure it out on your own?
+   │  │  have you been true to the way? skipped no steps?
+   │  │
+   │  └─
+   │
+   ├─ articulate into
+   │  │  └─ .route/blocker/1.design.md
+   │  │
+   │  ├─ what blocks you 🪘
+   │  │  ├─
+   │  │  │
+   │  │  │  describe the obstacle clearly
+   │  │  │  so the human knows where to step in
+   │  │  │
+   │  │  └─
+   │  │
+   │  ├─ what you tried 🪘
+   │  │  ├─
+   │  │  │
+   │  │  │  show your work
+   │  │  │  so the human knows you walked the way
+   │  │  │
+   │  │  └─
+   │  │
+   │  └─ what you need 🪘
+   │     ├─
+   │     │
+   │     │  ask for exactly what would unblock you
+   │     │  so the human can provide it
+   │     │
+   │     └─
+   │
+   └─ when you've truly reflected, run
+      └─ rhx route.stone.set --stone 1.design --as blocked
+"
+`;
+
+exports[`driver.route.blocked.acceptance given: [journey] blocked flow when: [t1] robot attempts block again without articulation then: stdout has good vibes 1`] = `
+"🦉 the way speaks for itself
+
+🗿 route.stone.set
+   ├─ stone = 1.design
+   └─ passage = unchanged (articulation required)
+
+🍂 failure is only the opportunity to begin again
+   │
+   ├─ ...
+   │
+   ├─ what blocks you, grows you 🪷
+   │  ├─
+   │  │
+   │  │  the obstacle is not in the way
+   │  │  the obstacle is the way
+   │  │  have you learned from it yet?
+   │  │
+   │  └─
+   │
+   ├─ before you escalate 🪷
+   │  ├─
+   │  │
+   │  │  have you tried --as passed first?
+   │  │  have you tried to figure it out on your own?
+   │  │  have you been true to the way? skipped no steps?
+   │  │
+   │  └─
+   │
+   ├─ articulate into
+   │  │  └─ .route/blocker/1.design.md
+   │  │
+   │  ├─ what blocks you 🪘
+   │  │  ├─
+   │  │  │
+   │  │  │  describe the obstacle clearly
+   │  │  │  so the human knows where to step in
+   │  │  │
+   │  │  └─
+   │  │
+   │  ├─ what you tried 🪘
+   │  │  ├─
+   │  │  │
+   │  │  │  show your work
+   │  │  │  so the human knows you walked the way
+   │  │  │
+   │  │  └─
+   │  │
+   │  └─ what you need 🪘
+   │     ├─
+   │     │
+   │     │  ask for exactly what would unblock you
+   │     │  so the human can provide it
+   │     │
+   │     └─
+   │
+   └─ when you've truly reflected, run
+      └─ rhx route.stone.set --stone 1.design --as blocked
+"
+`;
+
+exports[`driver.route.blocked.acceptance given: [journey] blocked flow when: [t3] robot confirms block with articulation then: stdout has good vibes 1`] = `
+"🦉 the way speaks for itself
+
+🗿 route.stone.set
+   ├─ stone = 1.design
+   ├─ passage = blocked
+   └─ reason: .route/blocker/1.design.md
+"
+`;
+
+exports[`driver.route.blocked.acceptance given: [journey] blocked flow when: [t4] route.drive is called in hook mode then: stdout has good vibes 1`] = `
+"🦉 where were we?
+
+🗿 route.drive
+   ├─ where do we go?
+   │  ├─ route = .
+   │  └─ stone = 1.design
+   │
+   └─ halted, stone marked blocked
+      └─ reason: ./.route/blocker/1.design.md
+"
+`;
+
+exports[`driver.route.blocked.acceptance given: [journey] blocked flow when: [t5] robot unblocks via --as passed then: stdout has good vibes 1`] = `
+"🦉 the way speaks for itself
+
+🗿 route.stone.set
+   ├─ stone = 1.design
+   └─ passage = allowed (unguarded)
+"
+`;
+
+exports[`driver.route.blocked.acceptance given: [journey] blocked flow when: [t6] route.drive after unblock then: stdout has good vibes 1`] = `
+"🦉 where were we?
+
+🗿 route.drive
+   ├─ where do we go?
+   │  ├─ route = .
+   │  └─ stone = 2.implement
+   │
+   ├─ are we there yet? if so, run
+   │  └─ rhx route.stone.set --stone 2.implement --as passed
+   │
+   ├─ here's the stone
+   │  ├─
+   │  │
+   │  │  # 2.implement
+   │  │  
+   │  │  implement the design.
+   │  │  
+   │  │  artifacts:
+   │  │  - 2.implement.i1.md
+   │  │  
+   │  └─
+   │
+   └─ are we there yet? if so, run
+      └─ rhx route.stone.set --stone 2.implement --as passed
+"
+`;
+
+exports[`driver.route.blocked.acceptance given: [journey] blocked trigger shed when later stone passed when: [t0] robot attempts to block 1.design then: stdout has good vibes 1`] = `
+"🦉 the way speaks for itself
+
+🗿 route.stone.set
+   ├─ stone = 1.design
+   └─ passage = unchanged (articulation required)
+
+🍂 failure is only the opportunity to begin again
+   │
+   ├─ ...
+   │
+   ├─ what blocks you, grows you 🪷
+   │  ├─
+   │  │
+   │  │  the obstacle is not in the way
+   │  │  the obstacle is the way
+   │  │  have you learned from it yet?
+   │  │
+   │  └─
+   │
+   ├─ before you escalate 🪷
+   │  ├─
+   │  │
+   │  │  have you tried --as passed first?
+   │  │  have you tried to figure it out on your own?
+   │  │  have you been true to the way? skipped no steps?
+   │  │
+   │  └─
+   │
+   ├─ articulate into
+   │  │  └─ .route/blocker/1.design.md
+   │  │
+   │  ├─ what blocks you 🪘
+   │  │  ├─
+   │  │  │
+   │  │  │  describe the obstacle clearly
+   │  │  │  so the human knows where to step in
+   │  │  │
+   │  │  └─
+   │  │
+   │  ├─ what you tried 🪘
+   │  │  ├─
+   │  │  │
+   │  │  │  show your work
+   │  │  │  so the human knows you walked the way
+   │  │  │
+   │  │  └─
+   │  │
+   │  └─ what you need 🪘
+   │     ├─
+   │     │
+   │     │  ask for exactly what would unblock you
+   │     │  so the human can provide it
+   │     │
+   │     └─
+   │
+   └─ when you've truly reflected, run
+      └─ rhx route.stone.set --stone 1.design --as blocked
+"
+`;
+
+exports[`driver.route.blocked.acceptance given: [journey] blocked trigger shed when later stone passed when: [t1] robot passes 2.implement (later stone) then: stdout has good vibes 1`] = `
+"🦉 the way speaks for itself
+
+🗿 route.stone.set
+   ├─ stone = 2.implement
+   └─ passage = allowed (unguarded)
+"
+`;
+
+exports[`driver.route.blocked.acceptance given: [journey] blocked trigger shed when later stone passed when: [t2] robot attempts to block 1.design again then: stdout has good vibes 1`] = `
+"🦉 the way speaks for itself
+
+🗿 route.stone.set
+   ├─ stone = 1.design
+   └─ passage = unchanged (articulation required)
+
+🍂 failure is only the opportunity to begin again
+   │
+   ├─ ...
+   │
+   ├─ what blocks you, grows you 🪷
+   │  ├─
+   │  │
+   │  │  the obstacle is not in the way
+   │  │  the obstacle is the way
+   │  │  have you learned from it yet?
+   │  │
+   │  └─
+   │
+   ├─ before you escalate 🪷
+   │  ├─
+   │  │
+   │  │  have you tried --as passed first?
+   │  │  have you tried to figure it out on your own?
+   │  │  have you been true to the way? skipped no steps?
+   │  │
+   │  └─
+   │
+   ├─ articulate into
+   │  │  └─ .route/blocker/1.design.md
+   │  │
+   │  ├─ what blocks you 🪘
+   │  │  ├─
+   │  │  │
+   │  │  │  describe the obstacle clearly
+   │  │  │  so the human knows where to step in
+   │  │  │
+   │  │  └─
+   │  │
+   │  ├─ what you tried 🪘
+   │  │  ├─
+   │  │  │
+   │  │  │  show your work
+   │  │  │  so the human knows you walked the way
+   │  │  │
+   │  │  └─
+   │  │
+   │  └─ what you need 🪘
+   │     ├─
+   │     │
+   │     │  ask for exactly what would unblock you
+   │     │  so the human can provide it
+   │     │
+   │     └─
+   │
+   └─ when you've truly reflected, run
+      └─ rhx route.stone.set --stone 1.design --as blocked
+"
+`;
