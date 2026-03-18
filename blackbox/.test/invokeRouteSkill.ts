@@ -1,4 +1,4 @@
-import { exec } from 'child_process';
+import { exec, spawn } from 'child_process';
 import * as path from 'path';
 import { promisify } from 'util';
 
@@ -117,6 +117,7 @@ export const invokeRouteSkill = async (input: {
   args: Record<string, string | boolean | string[] | undefined>;
   cwd: string;
   env?: Record<string, string>;
+  stdin?: string;
 }): Promise<{ stdout: string; stderr: string; code: number }> => {
   // map skill name to shell command filename
   const skillFile = `${input.skill}.sh`;
@@ -126,16 +127,49 @@ export const invokeRouteSkill = async (input: {
     skillFile,
   );
 
-  // build args string; arrays expand to repeated flags
-  const argsStr = Object.entries(input.args)
+  // build args array; arrays expand to repeated flags
+  const argsArray = Object.entries(input.args)
     .filter(([_, v]) => v !== undefined)
     .flatMap(([k, v]) => {
       if (v === true) return [`--${k}`];
-      if (Array.isArray(v)) return v.map((val) => `--${k} "${val}"`);
-      return [`--${k} "${v}"`];
-    })
-    .join(' ');
+      if (Array.isArray(v)) return v.flatMap((val) => [`--${k}`, val]);
+      return [`--${k}`, String(v)];
+    });
 
+  // if stdin provided, use spawn to pipe stdin
+  if (input.stdin !== undefined) {
+    return new Promise((done) => {
+      const child = spawn('bash', [skillPath, ...argsArray], {
+        cwd: input.cwd,
+        env: { ...process.env, ...input.env },
+        stdio: ['pipe', 'pipe', 'pipe'], // explicitly set stdin to pipe
+      });
+
+      let stdout = '';
+      let stderr = '';
+
+      child.stdout.on('data', (data) => {
+        stdout += data.toString();
+      });
+
+      child.stderr.on('data', (data) => {
+        stderr += data.toString();
+      });
+
+      child.on('close', (code) => {
+        done({ stdout, stderr, code: code ?? 0 });
+      });
+
+      // write stdin and close
+      child.stdin.write(input.stdin);
+      child.stdin.end();
+    });
+  }
+
+  // no stdin, use exec (simpler)
+  const argsStr = argsArray
+    .map((arg) => (arg.startsWith('--') ? arg : `"${arg}"`))
+    .join(' ');
   const cmd = `bash "${skillPath}" ${argsStr}`;
 
   try {
@@ -152,4 +186,22 @@ export const invokeRouteSkill = async (input: {
       code: execError.code ?? 1,
     };
   }
+};
+
+/**
+ * .what = creates the JSON stdin that Claude Code sends to PreToolUse hooks
+ * .why = claude code PreToolUse hooks receive tool input as JSON on stdin
+ */
+export const createHookStdin = (input: {
+  toolName: 'Write' | 'Edit' | 'Read' | 'Bash';
+  filePath: string;
+  cwd: string;
+}): string => {
+  return JSON.stringify({
+    hook_event_name: 'PreToolUse',
+    tool_name: input.toolName,
+    tool_input: {
+      file_path: path.join(input.cwd, input.filePath),
+    },
+  });
 };

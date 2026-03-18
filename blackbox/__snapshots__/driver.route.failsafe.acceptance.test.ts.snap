@@ -8,16 +8,19 @@ exports[`driver.route.failsafe.acceptance given: [case1] reviewer exits with cod
 🗿 route.stone.set
    ├─ stone = 1.review-pass
    ├─ passage = allowed
-   └─ guard
-      ├─ artifacts
-      │   └─ 1.review-pass.i1.md
-      ├─ reviews
-      │   └─ r1: bash $route/.test/mock-exit-0.sh
-      │       ├─ finished [TIME] ✓
-      │       └─ review: .route/1.review-pass.guard.review.i1.96c9a7a18d919f1fd1f7df7391020182cef05d7eaa5344005705566716a6d7a3.r1.md
-      └─ judges
-          └─ j1: bash $route/.test/mock-judge-exit-0.sh
-              └─ finished [TIME] ✓
+   ├─ guard
+   │  ├─ artifacts
+   │  │   └─ 1.review-pass.i1.md
+   │  ├─ reviews
+   │  │   └─ r1: bash $route/.test/mock-exit-0.sh
+   │  │       ├─ finished [TIME] ✓
+   │  │       └─ review: .route/1.review-pass.guard.review.i1.96c9a7a18d919f1fd1f7df7391020182cef05d7eaa5344005705566716a6d7a3.r1.md
+   │  └─ judges
+   │      └─ j1: bash $route/.test/mock-judge-exit-0.sh
+   │          └─ finished [TIME] ✓
+   │
+   └─ the way continues, run
+      └─ rhx route.drive
 "
 `;
 
@@ -128,12 +131,15 @@ exports[`driver.route.failsafe.acceptance given: [case4] judge exits with code 0
 🗿 route.stone.set
    ├─ stone = 4.judge-pass
    ├─ passage = allowed
-   └─ guard
-      ├─ artifacts
-      │   └─ 4.judge-pass.i1.md
-      └─ judges
-          └─ j1: bash $route/.test/mock-judge-exit-0.sh
-              └─ finished [TIME] ✓
+   ├─ guard
+   │  ├─ artifacts
+   │  │   └─ 4.judge-pass.i1.md
+   │  └─ judges
+   │      └─ j1: bash $route/.test/mock-judge-exit-0.sh
+   │          └─ finished [TIME] ✓
+   │
+   └─ the way continues, run
+      └─ rhx route.drive
 "
 `;
 

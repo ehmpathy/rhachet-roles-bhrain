@@ -4,6 +4,7 @@ import { given, then, useBeforeAll, useThen, when } from 'test-fns';
 
 import { getSelfReviewArticulationPath } from '../src/domain.operations/route/guard/getSelfReviewArticulationPath';
 import {
+  createHookStdin,
   execAsync,
   genTempDirForRhachet,
   invokeRouteSkill,
@@ -324,8 +325,13 @@ describe('driver.route.journey.acceptance', () => {
       const result = useThen('route.bounce returns blocked', async () =>
         invokeRouteSkill({
           skill: 'route.bounce',
-          args: { mode: 'hook', path: 'src/weather.ts' },
+          args: { mode: 'hook' },
           cwd: scene.tempDir,
+          stdin: createHookStdin({
+            toolName: 'Write',
+            filePath: 'src/weather.ts',
+            cwd: scene.tempDir,
+          }),
         }),
       );
 
@@ -334,15 +340,15 @@ describe('driver.route.journey.acceptance', () => {
       });
 
       then('output contains blocked message', () => {
-        expect(result.stdout).toContain('blocked');
+        expect(result.stderr).toContain('blocked');
       });
 
       then('output contains guard name', () => {
-        expect(result.stdout).toContain('3.blueprint.guard');
+        expect(result.stderr).toContain('3.blueprint.guard');
       });
 
-      then('stdout has good vibes', () => {
-        expect(sanitizeTimeForSnapshot(result.stdout)).toMatchSnapshot();
+      then('stderr has good vibes', () => {
+        expect(sanitizeTimeForSnapshot(result.stderr)).toMatchSnapshot();
       });
     });
 
@@ -559,8 +565,13 @@ describe('driver.route.journey.acceptance', () => {
       const result = useThen('route.bounce returns allowed', async () =>
         invokeRouteSkill({
           skill: 'route.bounce',
-          args: { mode: 'hook', path: 'src/weather.ts' },
+          args: { mode: 'hook' },
           cwd: scene.tempDir,
+          stdin: createHookStdin({
+            toolName: 'Write',
+            filePath: 'src/weather.ts',
+            cwd: scene.tempDir,
+          }),
         }),
       );
 

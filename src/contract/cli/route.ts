@@ -929,12 +929,14 @@ usage:
 
 options:
   --mode <type>      mode: hook = pretool check, list = show protected files (default)
-  --path <path>      file path to check (for --mode hook; reads from stdin if absent)
   --help             show this help message
+
+stdin (for --mode hook):
+  claude code PreToolUse hooks pipe JSON with tool_input.file_path
 
 examples:
   route.bounce                              # list protected artifacts
-  route.bounce --mode hook --path src/f.ts  # pretool check (exit 2 if blocked)
+  route.bounce --mode hook                  # pretool check via stdin (exit 2 if blocked)
 `.trim(),
   );
 };
@@ -942,36 +944,76 @@ examples:
 /**
  * .what = reads tool input from stdin synchronously
  * .why = claude code PreToolUse hooks receive tool input as JSON on stdin
+ *
+ * stdin format from Claude Code:
+ * {
+ *   "hook_event_name": "PreToolUse",
+ *   "tool_name": "Write" | "Edit" | ...,
+ *   "tool_input": { "file_path": "/absolute/path/...", ... }
+ * }
  */
-const readToolInputFromStdin = (): { file_path?: string } | null => {
-  // check if stdin has data available (non-TTY means piped input)
+const readToolInputFromStdin = (): {
+  tool_name?: string;
+  tool_input?: { file_path?: string };
+} | null => {
+  // first check RHACHET_STDIN env var (set by shell wrapper to work around node -e stdin issues)
+  const envStdin = process.env.RHACHET_STDIN;
+  if (envStdin) {
+    try {
+      return JSON.parse(envStdin);
+    } catch (error) {
+      // JSON.parse throws SyntaxError for malformed JSON; fail open for invalid input
+      // note: stderr output makes this observable per rule.prefer.helpful-error-wrap
+      if (error instanceof SyntaxError) {
+        console.error(
+          `[route.bounce] fail-open: RHACHET_STDIN contains invalid JSON: ${error.message}`,
+        );
+        return null;
+      }
+      throw error;
+    }
+  }
+
+  // fallback: check if stdin has data available (non-TTY means piped input)
   if (process.stdin.isTTY) return null;
 
-  try {
-    // read stdin synchronously via fd 0
-    const chunks: Buffer[] = [];
-    const BUFSIZE = 256;
-    const buf = Buffer.allocUnsafe(BUFSIZE);
-    let bytesRead: number;
+  // read stdin synchronously via fd 0
+  const chunks: Buffer[] = [];
+  const BUFSIZE = 256;
+  const buf = Buffer.allocUnsafe(BUFSIZE);
+  let bytesRead: number;
 
-    // eslint-disable-next-line @typescript-eslint/no-require-imports, @typescript-eslint/no-var-requires
-    const fsSync = require('fs');
+  // eslint-disable-next-line @typescript-eslint/no-require-imports, @typescript-eslint/no-var-requires
+  const fsSync = require('fs');
 
-    while (true) {
-      try {
-        bytesRead = fsSync.readSync(0, buf, 0, BUFSIZE, null);
-        if (bytesRead === 0) break;
-        chunks.push(buf.slice(0, bytesRead));
-      } catch {
+  while (true) {
+    try {
+      bytesRead = fsSync.readSync(0, buf, 0, BUFSIZE, null);
+      if (bytesRead === 0) break;
+      // use Buffer.from() to copy the data, not slice() which returns a view into the same buffer
+      chunks.push(Buffer.from(buf.subarray(0, bytesRead)));
+    } catch (error) {
+      // readSync throws on pipe closed (EAGAIN/EWOULDBLOCK) or EOF conditions
+      // only break on expected EOF-like errors; rethrow unexpected I/O errors
+      if (
+        error instanceof Error &&
+        'code' in error &&
+        (error.code === 'EAGAIN' ||
+          error.code === 'EWOULDBLOCK' ||
+          error.code === 'EOF')
+      ) {
         break;
       }
+      throw error;
     }
+  }
 
-    if (chunks.length === 0) return null;
+  if (chunks.length === 0) return null;
 
-    const input = Buffer.concat(chunks).toString('utf-8').trim();
-    if (!input) return null;
+  const input = Buffer.concat(chunks).toString('utf-8').trim();
+  if (!input) return null;
 
+  try {
     return JSON.parse(input);
   } catch (error) {
     // allowlist SyntaxError from JSON.parse: return null for invalid JSON
@@ -995,102 +1037,179 @@ export const routeBounce = async (): Promise<void> => {
 
   const mode = options.mode ?? 'list';
 
-  try {
-    // load bouncer cache
-    const cache = await getRouteBouncerCache();
+  // hook mode: routeBounceHook handles all expected errors internally (returns early)
+  // any unexpected error will crash with stack trace (fail-fast)
+  // note: Claude Code treats crashed hooks as "error but allow" (fail-open semantics)
+  if (mode === 'hook') {
+    await routeBounceHook();
+    return;
+  }
 
-    // handle hook mode (pretool check)
-    if (mode === 'hook') {
-      // get file path from --path arg or stdin (claude code PreToolUse provides tool input via stdin)
-      let filePath = options.path;
-      if (!filePath) {
-        const toolInput = readToolInputFromStdin();
-        filePath = toolInput?.file_path;
+  // list mode: no catch block (fail-fast with stack trace for debug)
+  await routeBounceList();
+};
+
+/**
+ * .what = hook mode implementation for route.bounce
+ * .why = checks if a file mutation is blocked by an unpassed stone guard
+ */
+const routeBounceHook = async (): Promise<void> => {
+  // load bouncer cache
+  const cache = await getRouteBouncerCache();
+
+  // read tool input from stdin (claude code PreToolUse provides tool input via stdin)
+  const toolInput = readToolInputFromStdin();
+
+  // only check Write and Edit tools (file mutation operations)
+  // todo: Bash tool could bypass protection via redirects like `echo "..." > src/file.ts`
+  //       for now we fail open on Bash. we assume bonintent robots. revisit if malintent escapes via cat/redirects.
+  const toolName = toolInput?.tool_name;
+  if (toolName !== 'Write' && toolName !== 'Edit') {
+    return; // not a file mutation tool, allow through
+  }
+
+  // extract file_path from nested tool_input (claude code sends { tool_input: { file_path } })
+  let filePath = toolInput?.tool_input?.file_path;
+
+  if (!filePath) {
+    // no path to check, allow through (fail open)
+    return;
+  }
+
+  // convert absolute path to relative for glob match
+  // dereference symlinks to canonical paths before comparison (handles symlinked worktrees)
+  if (path.isAbsolute(filePath)) {
+    // eslint-disable-next-line @typescript-eslint/no-require-imports, @typescript-eslint/no-var-requires
+    const fsSync = require('fs');
+    const cwd = process.cwd();
+
+    // dereference both paths to canonical forms to handle symlinks
+    let cwdCanonical: string;
+    let filePathCanonical: string;
+    try {
+      cwdCanonical = fsSync.realpathSync(cwd);
+      // file may not exist yet (we check before write), so dereference parent dir
+      const fileDir = path.dirname(filePath);
+      const fileName = path.basename(filePath);
+      try {
+        const fileDirCanonical = fsSync.realpathSync(fileDir);
+        filePathCanonical = path.join(fileDirCanonical, fileName);
+      } catch (error) {
+        // handle only ENOENT (parent dir doesn't exist), rethrow unexpected errors
+        // note: stderr output makes this observable per rule.prefer.helpful-error-wrap
+        if (
+          error &&
+          typeof error === 'object' &&
+          'code' in error &&
+          error.code === 'ENOENT'
+        ) {
+          console.error(
+            `[route.bounce] fail-open: parent dir does not exist: ${fileDir}`,
+          );
+          filePathCanonical = filePath;
+        } else {
+          throw error;
+        }
       }
-
-      if (!filePath) {
-        // no path to check, allow through (e.g., tool that doesn't have file_path)
-        return;
+    } catch (error) {
+      // handle only ENOENT (cwd doesn't exist), rethrow unexpected errors
+      // note: stderr output makes this observable per rule.prefer.helpful-error-wrap
+      if (
+        error &&
+        typeof error === 'object' &&
+        'code' in error &&
+        error.code === 'ENOENT'
+      ) {
+        console.error(`[route.bounce] fail-open: cwd does not exist: ${cwd}`);
+        cwdCanonical = cwd;
+        filePathCanonical = filePath;
+      } else {
+        throw error;
       }
+    }
 
-      const decision = getDecisionIsArtifactProtected({
-        path: filePath,
-        cache,
-      });
-
-      if (decision.blocked && decision.protection) {
-        // output blocked feedback in zen format per blueprint
-        const lines = [
-          '🦉 patience, friend',
-          '',
-          '🗿 route.bounce',
-          '   ├─ blocked',
-          `   │  ├─ artifact = ${filePath}`,
-          `   │  └─ guard = ${path.basename(decision.protection.guard)}`,
-          '   │',
-          '   ├─ a journey of a thousand miles begins with a single step 🪷',
-          '   │  ├─',
-          '   │  │',
-          `   │  │  this artifact is locked until stone ${decision.protection.stone} is passed.`,
-          '   │  │',
-          '   │  │  the way cannot be rushed. each stone builds on the last.',
-          '   │  │',
-          '   │  └─',
-          '   │',
-          '   └─ to pass this stone and unlock this gate, run',
-          '      └─ rhx route.drive',
-        ];
-        console.log(lines.join('\n'));
-        process.exit(2);
-      }
-
-      // not blocked, exit 0 silently for hook
+    if (!filePathCanonical.startsWith(cwdCanonical)) {
+      // path outside repo, cannot match relative globs, allow through
       return;
     }
+    filePath = path.relative(cwdCanonical, filePathCanonical);
+  }
 
-    // handle list mode (default)
-    if (cache.protections.length === 0) {
-      console.log('no protected artifacts');
-      return;
+  const decision = getDecisionIsArtifactProtected({
+    path: filePath,
+    cache,
+  });
+
+  if (decision.blocked && decision.protection) {
+    // output blocked feedback in zen format per blueprint
+    const lines = [
+      '🦉 patience, friend',
+      '',
+      '🗿 route.bounce',
+      '   ├─ blocked',
+      `   │  ├─ artifact = ${filePath}`,
+      `   │  └─ guard = ${path.basename(decision.protection.guard)}`,
+      '   │',
+      '   ├─ a journey of a thousand miles begins with a single step 🪷',
+      '   │  ├─',
+      '   │  │',
+      `   │  │  this artifact is locked until stone ${decision.protection.stone} is passed.`,
+      '   │  │',
+      '   │  │  the way cannot be rushed. each stone builds on the last.',
+      '   │  │',
+      '   │  └─',
+      '   │',
+      '   └─ to pass this stone and unlock this gate, run',
+      '      └─ rhx route.drive',
+    ];
+    console.error(lines.join('\n'));
+    process.exit(2);
+  }
+
+  // not blocked, exit 0 silently for hook
+};
+
+/**
+ * .what = list mode implementation for route.bounce
+ * .why = displays all protected artifacts and their guard status
+ */
+const routeBounceList = async (): Promise<void> => {
+  // load bouncer cache
+  const cache = await getRouteBouncerCache();
+
+  if (cache.protections.length === 0) {
+    console.log('no protected artifacts');
+    return;
+  }
+
+  // group protections by stone
+  const byStone = new Map<string, typeof cache.protections>();
+  for (const p of cache.protections) {
+    const list = byStone.get(p.stone) ?? [];
+    list.push(p);
+    byStone.set(p.stone, list);
+  }
+
+  console.log('🗿 route.bounce');
+  console.log('   └─ protected artifacts');
+
+  const stones = Array.from(byStone.keys());
+  for (let i = 0; i < stones.length; i++) {
+    const stone = stones[i]!;
+    const protections = byStone.get(stone)!;
+    const isLast = i === stones.length - 1;
+    const prefix = isLast ? '      └─' : '      ├─';
+
+    const stoneStatus = protections[0]?.passed ? '✓' : '○';
+    console.log(`${prefix} ${stone} ${stoneStatus}`);
+
+    const childPrefix = isLast ? '         ' : '      │  ';
+    for (let j = 0; j < protections.length; j++) {
+      const p = protections[j]!;
+      const isLastGlob = j === protections.length - 1;
+      const globPrefix = isLastGlob ? '└─' : '├─';
+      console.log(`${childPrefix}${globPrefix} ${p.glob}`);
     }
-
-    // group protections by stone
-    const byStone = new Map<string, typeof cache.protections>();
-    for (const p of cache.protections) {
-      const list = byStone.get(p.stone) ?? [];
-      list.push(p);
-      byStone.set(p.stone, list);
-    }
-
-    console.log('🗿 route.bounce');
-    console.log('   └─ protected artifacts');
-
-    const stones = Array.from(byStone.keys());
-    for (let i = 0; i < stones.length; i++) {
-      const stone = stones[i]!;
-      const protections = byStone.get(stone)!;
-      const isLast = i === stones.length - 1;
-      const prefix = isLast ? '      └─' : '      ├─';
-
-      const stoneStatus = protections[0]?.passed ? '✓' : '○';
-      console.log(`${prefix} ${stone} ${stoneStatus}`);
-
-      const childPrefix = isLast ? '         ' : '      │  ';
-      for (let j = 0; j < protections.length; j++) {
-        const p = protections[j]!;
-        const isLastGlob = j === protections.length - 1;
-        const globPrefix = isLastGlob ? '└─' : '├─';
-        console.log(`${childPrefix}${globPrefix} ${p.glob}`);
-      }
-    }
-  } catch (error) {
-    // allowlist BadRequestError: format nicely and exit 2
-    if (error instanceof BadRequestError) {
-      console.error(`error: ${error.message}`);
-      process.exit(2);
-    }
-    // rethrow unexpected errors (no failhide)
-    throw error;
   }
 };
 

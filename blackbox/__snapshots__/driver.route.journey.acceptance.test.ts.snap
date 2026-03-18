@@ -81,7 +81,7 @@ exports[`driver.route.journey.acceptance given: [journey] weather api route when
 "
 `;
 
-exports[`driver.route.journey.acceptance given: [journey] weather api route when: [t7.6] bouncer blocks write to protected artifact then: stdout has good vibes 1`] = `
+exports[`driver.route.journey.acceptance given: [journey] weather api route when: [t7.6] bouncer blocks write to protected artifact then: stderr has good vibes 1`] = `
 "🦉 patience, friend
 
 🗿 route.bounce

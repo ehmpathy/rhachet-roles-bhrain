@@ -1,6 +1,6 @@
 // Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
 
-exports[`driver.route.bounce.acceptance given: [case2] driver receives actionable feedback when: [t0] route.bounce blocks src/feature.ts then: stdout matches snapshot 1`] = `
+exports[`driver.route.bounce.acceptance given: [case2] driver receives actionable feedback when: [t0] route.bounce blocks src/feature.ts then: stderr matches snapshot 1`] = `
 "🦉 patience, friend
 
 🗿 route.bounce
