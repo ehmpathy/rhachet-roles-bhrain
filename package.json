@@ -75,6 +75,7 @@
   "dependencies": {
     "@ehmpathy/as-command": "1.0.3",
     "@ehmpathy/uni-time": "1.8.1",
+    "archiver": "7.0.1",
     "as-procedure": "1.1.7",
     "domain-objects": "0.31.9",
     "fast-glob": "3.3.3",
@@ -102,6 +103,7 @@
     "@swc/jest": "0.2.39",
     "@tsconfig/node20": "20.1.5",
     "@tsconfig/strictest": "2.0.5",
+    "@types/archiver": "6.0.3",
     "@types/jest": "30.0.0",
     "@types/node": "22.15.21",
     "cz-conventional-changelog": "3.3.0",

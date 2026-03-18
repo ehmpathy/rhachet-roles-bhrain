@@ -1,0 +1,152 @@
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
+
+exports[`reflect.journey.acceptance given: [journey] full reflect workflow when: [t1] first savepoint is created then: stdout matches snapshot 1`] = `
+"🦉 know thyself
+
+🌕 reflect.savepoint set
+   ├─ repo = [ISO_TEMP].reflect-journey.[HASH]
+   ├─ tree = [ISO_TEMP].reflect-journey.[HASH]
+   ├─ branch = main
+   │
+   ├─ staged.patch = [SIZE]ytes
+   ├─ unstaged.patch = [SIZE]ytes
+   ├─ hash = [HASH]
+   │
+   └─ artifacts
+      ├─ ~/.rhachet/storage/repo=bhrain/role=reflector/skills/reflect.snapshot/gitrepo=[ISO_TEMP].reflect-journey.[HASH]/worktree=[ISO_TEMP].reflect-journey.[HASH]/branch=main/savepoints/[TIMESTAMP].staged.patch
+      └─ ~/.rhachet/storage/repo=bhrain/role=reflector/skills/reflect.snapshot/gitrepo=[ISO_TEMP].reflect-journey.[HASH]/worktree=[ISO_TEMP].reflect-journey.[HASH]/branch=main/savepoints/[TIMESTAMP].unstaged.patch
+
+✨ savepoint captured
+
+"
+`;
+
+exports[`reflect.journey.acceptance given: [journey] full reflect workflow when: [t2] second savepoint is created with new staged file then: stdout matches snapshot 1`] = `
+"🦉 know thyself
+
+🌕 reflect.savepoint set
+   ├─ repo = [ISO_TEMP].reflect-journey.[HASH]
+   ├─ tree = [ISO_TEMP].reflect-journey.[HASH]
+   ├─ branch = main
+   │
+   ├─ staged.patch = [SIZE]ytes
+   ├─ unstaged.patch = [SIZE]ytes
+   ├─ hash = [HASH]
+   │
+   └─ artifacts
+      ├─ ~/.rhachet/storage/repo=bhrain/role=reflector/skills/reflect.snapshot/gitrepo=[ISO_TEMP].reflect-journey.[HASH]/worktree=[ISO_TEMP].reflect-journey.[HASH]/branch=main/savepoints/[TIMESTAMP].staged.patch
+      └─ ~/.rhachet/storage/repo=bhrain/role=reflector/skills/reflect.snapshot/gitrepo=[ISO_TEMP].reflect-journey.[HASH]/worktree=[ISO_TEMP].reflect-journey.[HASH]/branch=main/savepoints/[TIMESTAMP].unstaged.patch
+
+✨ savepoint captured
+
+"
+`;
+
+exports[`reflect.journey.acceptance given: [journey] full reflect workflow when: [t3] savepoints are listed then: stdout matches snapshot 1`] = `
+"🦉 know thyself
+
+🌕 reflect.savepoint get
+   ├─ repo = [ISO_TEMP].reflect-journey.[HASH]
+   ├─ tree = [ISO_TEMP].reflect-journey.[HASH]
+   ├─ branch = main
+   │
+   ├─ savepoints = 2
+   ├─ size = [SIZE]ytes
+   │
+   └─ list
+      ├─ [TIMESTAMP] (hash=[HASH], [SIZE]ytes)
+      │  ├─ [TIMESTAMP].staged.patch
+      │  └─ [TIMESTAMP].unstaged.patch
+      └─ [TIMESTAMP] (hash=[HASH], [SIZE]ytes)
+         ├─ [TIMESTAMP].staged.patch
+         └─ [TIMESTAMP].unstaged.patch
+
+"
+`;
+
+exports[`reflect.journey.acceptance given: [journey] full reflect workflow when: [t4] first annotation is created then: stdout matches snapshot 1`] = `
+"🦉 know thyself
+
+🌕 reflect.snapshot annotate
+   ├─ repo = [ISO_TEMP].reflect-journey.[HASH]
+   ├─ tree = [ISO_TEMP].reflect-journey.[HASH]
+   ├─ branch = main
+   │
+   └─ annotation = ~/.rhachet/storage/repo=bhrain/role=reflector/skills/reflect.snapshot/gitrepo=[ISO_TEMP].reflect-journey.[HASH]/worktree=[ISO_TEMP].reflect-journey.[HASH]/branch=main/annotations/[TIMESTAMP].annotation.md
+
+✨ annotated
+
+"
+`;
+
+exports[`reflect.journey.acceptance given: [journey] full reflect workflow when: [t5] second annotation is created then: stdout matches snapshot 1`] = `
+"🦉 know thyself
+
+🌕 reflect.snapshot annotate
+   ├─ repo = [ISO_TEMP].reflect-journey.[HASH]
+   ├─ tree = [ISO_TEMP].reflect-journey.[HASH]
+   ├─ branch = main
+   │
+   └─ annotation = ~/.rhachet/storage/repo=bhrain/role=reflector/skills/reflect.snapshot/gitrepo=[ISO_TEMP].reflect-journey.[HASH]/worktree=[ISO_TEMP].reflect-journey.[HASH]/branch=main/annotations/[TIMESTAMP].annotation.md
+
+✨ annotated
+
+"
+`;
+
+exports[`reflect.journey.acceptance given: [journey] full reflect workflow when: [t6] snapshot get shows annotations then: stdout matches snapshot 1`] = `
+"🦉 know thyself
+
+🌕 reflect.snapshot get
+   ├─ repo = [ISO_TEMP].reflect-journey.[HASH]
+   ├─ tree = [ISO_TEMP].reflect-journey.[HASH]
+   ├─ branch = main
+   │
+   ├─ snapshots = 0
+   ├─ annotations = 2
+   └─ size = [SIZE]ytes
+
+"
+`;
+
+exports[`reflect.journey.acceptance given: [journey] full reflect workflow when: [t7] snapshot is captured then: stdout matches snapshot 1`] = `
+"🦉 know thyself
+
+🌕 reflect.snapshot capture
+   ├─ repo = [ISO_TEMP].reflect-journey.[HASH]
+   ├─ tree = [ISO_TEMP].reflect-journey.[HASH]
+   ├─ branch = main
+   │
+   ├─ transcript
+   │  ├─ episodes = [N]
+   │  └─ mainFile = abc123-def456.jsonl
+   │
+   ├─ savepoints = 2
+   ├─ annotations = 2
+   │
+   └─ artifacts
+      └─ ~/.rhachet/storage/repo=bhrain/role=reflector/skills/reflect.snapshot/gitrepo=[ISO_TEMP].reflect-journey.[HASH]/worktree=[ISO_TEMP].reflect-journey.[HASH]/branch=main/snapshots/date=[DATE]/[TIMESTAMP].snap.zip
+
+✨ snapshot captured
+
+"
+`;
+
+exports[`reflect.journey.acceptance given: [journey] full reflect workflow when: [t8] snapshot get shows captured snapshot then: stdout matches snapshot 1`] = `
+"🦉 know thyself
+
+🌕 reflect.snapshot get
+   ├─ repo = [ISO_TEMP].reflect-journey.[HASH]
+   ├─ tree = [ISO_TEMP].reflect-journey.[HASH]
+   ├─ branch = main
+   │
+   ├─ snapshots = 1
+   ├─ annotations = 2
+   ├─ size = [SIZE]
+   │
+   └─ list
+      └─ [TIMESTAMP] (episodes=1, savepoints=2)
+         └─ ~/.rhachet/storage/repo=bhrain/role=reflector/skills/reflect.snapshot/gitrepo=[ISO_TEMP].reflect-journey.[HASH]/worktree=[ISO_TEMP].reflect-journey.[HASH]/branch=main/snapshots/date=[DATE]/[TIMESTAMP].snap.zip
+
+"
+`;

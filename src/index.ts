@@ -8,7 +8,15 @@ export { stepReview } from '@src/domain.operations/review/stepReview';
 export { getRoleRegistry } from '@src/domain.roles/getRoleRegistry';
 
 // cli entry points - also available via fast 'rhachet-roles-bhrain/cli' subpath
-import { reflect } from '@src/contract/cli/reflect';
+import {
+  reflect,
+  reflectSavepointGet,
+  reflectSavepointSet,
+  reflectSnapshotAnnotate,
+  reflectSnapshotBackup,
+  reflectSnapshotCapture,
+  reflectSnapshotGet,
+} from '@src/contract/cli/reflect';
 import { review } from '@src/contract/cli/review';
 import {
   routeBindDel,
@@ -23,7 +31,19 @@ import {
 
 export const cli = {
   review,
-  reflect,
+  reflect: {
+    legacy: reflect,
+    snapshot: {
+      capture: reflectSnapshotCapture,
+      get: reflectSnapshotGet,
+      annotate: reflectSnapshotAnnotate,
+      backup: reflectSnapshotBackup,
+    },
+    savepoint: {
+      set: reflectSavepointSet,
+      get: reflectSavepointGet,
+    },
+  },
   route: {
     bind: {
       set: routeBindSet,

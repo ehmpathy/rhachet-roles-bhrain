@@ -1,0 +1,16 @@
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
+
+exports[`reflect.snapshot.annotate given: [case1] valid annotation text when: [t0] annotation is created then: output matches snapshot 1`] = `
+"🦉 know thyself
+
+🌕 reflect.snapshot annotate
+   ├─ repo = [ISO_TEMP].reflect-annotate-case1.[HASH]
+   ├─ tree = [ISO_TEMP].reflect-annotate-case1.[HASH]
+   ├─ branch = main
+   │
+   └─ annotation = ~/.rhachet/storage/repo=bhrain/role=reflector/skills/reflect.snapshot/gitrepo=[ISO_TEMP].reflect-annotate-case1.[HASH]/worktree=[ISO_TEMP].reflect-annotate-case1.[HASH]/branch=main/annotations/[TIMESTAMP].annotation.md
+
+✨ annotated
+
+"
+`;
