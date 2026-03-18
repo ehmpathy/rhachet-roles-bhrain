@@ -34,6 +34,14 @@ export const ROLE_DRIVER: Role = Role.build({
             when: 'before',
           },
         },
+        {
+          command: './node_modules/.bin/rhx route.mutate.guard --mode hook',
+          timeout: 'PT5S',
+          filter: {
+            what: 'Read|Write|Edit|Bash',
+            when: 'before',
+          },
+        },
       ],
       onStop: [
         {

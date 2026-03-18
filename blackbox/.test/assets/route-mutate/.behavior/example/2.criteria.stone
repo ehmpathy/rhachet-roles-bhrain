@@ -1,0 +1,14 @@
+# criteria stone (protected)
+
+this file is protected by the route.mutate guard.
+
+drivers should not be able to read this file directly.
+
+---
+
+## usecases
+
+given('a bound route')
+  when('driver attempts to read this file')
+    then('access is blocked')
+    then('driver is guided to use route.drive')

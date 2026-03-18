@@ -58,6 +58,46 @@ export const sanitizeTimeForSnapshot = (output: string): string => {
 };
 
 
+/**
+ * .what = invokes the route.mutate guard hook with stdin JSON
+ * .why = hook receives tool call context via stdin, not args
+ */
+export const invokeRouteMutateGuard = async (input: {
+  cwd: string;
+  stdin: {
+    tool_name: 'Read' | 'Write' | 'Edit' | 'Bash';
+    tool_input: {
+      file_path?: string;
+      command?: string;
+    };
+  };
+}): Promise<{ stdout: string; stderr: string; code: number }> => {
+  const skillPath = path.join(
+    input.cwd,
+    '.agent/repo=bhrain/role=driver/skills',
+    'route.mutate.sh',
+  );
+  const stdinJson = JSON.stringify(input.stdin);
+
+  const cmd = `echo '${stdinJson}' | bash "${skillPath}" guard --mode hook`;
+
+  try {
+    const result = await execAsync(cmd, { cwd: input.cwd });
+    return { ...result, code: 0 };
+  } catch (error) {
+    const execError = error as {
+      stdout?: string;
+      stderr?: string;
+      code?: number;
+    };
+    return {
+      stdout: execError.stdout ?? '',
+      stderr: execError.stderr ?? '',
+      code: execError.code ?? 1,
+    };
+  }
+};
+
 export const invokeRouteSkill = async (input: {
   skill:
     | 'route.bind.set'
@@ -65,6 +105,7 @@ export const invokeRouteSkill = async (input: {
     | 'route.bind.del'
     | 'route.bounce'
     | 'route.drive'
+    | 'route.mutate'
     | 'route.review'
     | 'route.stone.get'
     | 'route.stone.set'
