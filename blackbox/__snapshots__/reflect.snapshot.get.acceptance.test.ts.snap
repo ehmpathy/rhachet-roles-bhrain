@@ -1,0 +1,16 @@
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
+
+exports[`reflect.snapshot.get given: [case1] repo with no snapshots when: [t0] get is invoked then: output matches snapshot 1`] = `
+"🦉 know thyself
+
+🌕 reflect.snapshot get
+   ├─ repo = [ISO_TEMP].reflect-get-case1.[HASH]
+   ├─ tree = [ISO_TEMP].reflect-get-case1.[HASH]
+   ├─ branch = main
+   │
+   ├─ snapshots = 0
+   ├─ annotations = 0
+   └─ size = [SIZE]ytes
+
+"
+`;

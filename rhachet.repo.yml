@@ -25,3 +25,9 @@ roles:
       dirs: dist/domain.roles/librarian/briefs
     skills:
       dirs: dist/domain.roles/librarian/skills
+  - slug: reflector
+    readme: dist/domain.roles/reflector/readme.md
+    briefs:
+      dirs: []
+    skills:
+      dirs: dist/domain.roles/reflector/skills
