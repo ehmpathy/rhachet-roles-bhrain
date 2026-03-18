@@ -2,6 +2,7 @@ import * as fs from 'fs/promises';
 import * as path from 'path';
 import { given, then, useBeforeAll, useThen, when } from 'test-fns';
 
+import { getSelfReviewArticulationPath } from '../src/domain.operations/route/guard/getSelfReviewArticulationPath';
 import {
   execAsync,
   genTempDirForRhachet,
@@ -70,14 +71,26 @@ describe('driver.route.review.self.acceptance', () => {
         '# Implementation\n\nFeature implemented.',
       );
 
-      // create articulation files for both self-reviews (index prefix for sort order)
-      await fs.mkdir(path.join(tempDir, 'review', 'self'), { recursive: true });
+      // create articulation files for both self-reviews
+      const articulationPath1 = getSelfReviewArticulationPath({
+        route: tempDir,
+        stone: '1',
+        index: 1,
+        slug: 'all-done',
+      });
+      const articulationPath2 = getSelfReviewArticulationPath({
+        route: tempDir,
+        stone: '1',
+        index: 2,
+        slug: 'tests-pass',
+      });
+      await fs.mkdir(path.dirname(articulationPath1), { recursive: true });
       await fs.writeFile(
-        path.join(tempDir, 'review', 'self', '1.1.all-done.md'),
+        articulationPath1,
         '# Self-Review: all-done\n\nI reviewed all requirements.\n',
       );
       await fs.writeFile(
-        path.join(tempDir, 'review', 'self', '1.2.tests-pass.md'),
+        articulationPath2,
         '# Self-Review: tests-pass\n\nI verified all tests pass.\n',
       );
 
@@ -269,14 +282,26 @@ describe('driver.route.review.self.acceptance', () => {
         '# Implementation\n\nFeature implemented.',
       );
 
-      // create articulation files for both self-reviews (index prefix for sort order)
-      await fs.mkdir(path.join(tempDir, 'review', 'self'), { recursive: true });
+      // create articulation files for both self-reviews
+      const articulationPath1 = getSelfReviewArticulationPath({
+        route: tempDir,
+        stone: '1',
+        index: 1,
+        slug: 'all-done',
+      });
+      const articulationPath2 = getSelfReviewArticulationPath({
+        route: tempDir,
+        stone: '1',
+        index: 2,
+        slug: 'tests-pass',
+      });
+      await fs.mkdir(path.dirname(articulationPath1), { recursive: true });
       await fs.writeFile(
-        path.join(tempDir, 'review', 'self', '1.1.all-done.md'),
+        articulationPath1,
         '# Self-Review: all-done\n\nI reviewed all requirements.\n',
       );
       await fs.writeFile(
-        path.join(tempDir, 'review', 'self', '1.2.tests-pass.md'),
+        articulationPath2,
         '# Self-Review: tests-pass\n\nI verified all tests pass.\n',
       );
 
@@ -453,9 +478,15 @@ judges:
       );
 
       // create articulation file so test focuses on time enforcement (not absent file)
-      await fs.mkdir(path.join(tempDir, 'review', 'self'), { recursive: true });
+      const articulationPath = getSelfReviewArticulationPath({
+        route: tempDir,
+        stone: '1',
+        index: 1,
+        slug: 'all-done',
+      });
+      await fs.mkdir(path.dirname(articulationPath), { recursive: true });
       await fs.writeFile(
-        path.join(tempDir, 'review', 'self', '1.1.all-done.md'),
+        articulationPath,
         '# self-review\n\nreviewed and looks good.',
       );
 
@@ -574,12 +605,16 @@ judges:
           cwd: scene.tempDir,
         });
 
-        // create articulation file (required for promise to succeed, index prefix for sort order)
-        await fs.mkdir(path.join(scene.tempDir, 'review', 'self'), {
-          recursive: true,
+        // create articulation file (required for promise to succeed)
+        const articulationPath = getSelfReviewArticulationPath({
+          route: scene.tempDir,
+          stone: '1',
+          index: 1,
+          slug: 'all-done',
         });
+        await fs.mkdir(path.dirname(articulationPath), { recursive: true });
         await fs.writeFile(
-          path.join(scene.tempDir, 'review', 'self', '1.1.all-done.md'),
+          articulationPath,
           '# self-review\n\nreviewed and looks good.',
         );
 
@@ -645,9 +680,15 @@ judges:
 
     when('[t2] promise tests-pass and complete stone', () => {
       then('all self-reviews satisfied', async () => {
-        // create articulation file for tests-pass (required for promise to succeed, index prefix)
+        // create articulation file for tests-pass (required for promise to succeed)
+        const articulationPath = getSelfReviewArticulationPath({
+          route: scene.tempDir,
+          stone: '1',
+          index: 2,
+          slug: 'tests-pass',
+        });
         await fs.writeFile(
-          path.join(scene.tempDir, 'review', 'self', '1.2.tests-pass.md'),
+          articulationPath,
           '# self-review\n\nall tests pass.',
         );
 
@@ -698,10 +739,16 @@ judges:
         '# Implementation\n\nFeature implemented.',
       );
 
-      // create articulation file (required for plowthrough to work, index prefix for sort order)
-      await fs.mkdir(path.join(tempDir, 'review', 'self'), { recursive: true });
+      // create articulation file (required for plowthrough to work)
+      const articulationPath = getSelfReviewArticulationPath({
+        route: tempDir,
+        stone: '1',
+        index: 1,
+        slug: 'all-done',
+      });
+      await fs.mkdir(path.dirname(articulationPath), { recursive: true });
       await fs.writeFile(
-        path.join(tempDir, 'review', 'self', '1.1.all-done.md'),
+        articulationPath,
         '# Self-Review: all-done\n\nI reviewed and found everything in order.\n',
       );
 
@@ -787,7 +834,7 @@ judges:
       });
 
       then('shows articulation path with index', () => {
-        expect(result.stdout).toContain('review/self/1.1.all-done.md');
+        expect(result.stdout).toContain('review/self/for.1._.r1.all-done.md');
       });
 
       then('stdout has good vibes', () => {
@@ -832,12 +879,16 @@ judges:
 
     when('[t2] third promise attempt (file created, too soon)', () => {
       const result = useThen('returns challenge:rushed', async () => {
-        // create articulation file (index prefix for sort order)
-        await fs.mkdir(path.join(scene.tempDir, 'review', 'self'), {
-          recursive: true,
+        // create articulation file
+        const articulationPath = getSelfReviewArticulationPath({
+          route: scene.tempDir,
+          stone: '1',
+          index: 1,
+          slug: 'all-done',
         });
+        await fs.mkdir(path.dirname(articulationPath), { recursive: true });
         await fs.writeFile(
-          path.join(scene.tempDir, 'review', 'self', '1.1.all-done.md'),
+          articulationPath,
           '# self-review\n\nreviewed and looks good.',
         );
 
