@@ -1,5 +1,6 @@
 import { execSync } from 'child_process';
 import * as fs from 'fs/promises';
+import { BadRequestError } from 'helpful-errors';
 import * as path from 'path';
 
 import { delRouteBind } from '@src/domain.operations/route/bind/delRouteBind';
@@ -121,7 +122,7 @@ options:
 const printSetHelp = (): void => {
   console.log(
     `
-route.stone.set - mark stone as passed, approved, promised, blocked, or rewound
+route.stone.set - mark stone as passed, approved, promised, blocked, rewound, or arrived
 
 usage:
   route.stone.set [options]
@@ -129,11 +130,15 @@ usage:
 options:
   --stone <name>     stone name or glob pattern (required)
   --route <path>     path to route directory (required)
-  --as <status>      status to set: passed, approved, promised, blocked, or rewound (required)
+  --as <status>      status to set: passed, approved, promised, blocked, rewound, or arrived (required)
   --that <slug>      review.self slug to promise (required for --as promised)
   --help             show this help message
 
+note:
+  --as arrived is an alias for --as passed (state claim, not judgment claim)
+
 examples:
+  route.stone.set --stone 1.vision --as arrived
   route.stone.set --stone 1.vision --as passed
   route.stone.set --stone 1.vision --as approved
   route.stone.set --stone 1.vision --as promised --that all-done
@@ -321,10 +326,13 @@ export const routeDrive = async (): Promise<void> => {
       process.exit(result.emit.stderr.code);
     }
   } catch (error) {
-    if (error instanceof Error) {
+    // allowlist BadRequestError: format nicely and exit 2
+    if (error instanceof BadRequestError) {
       console.error(`error: ${error.message}`);
+      process.exit(2);
     }
-    process.exit(1);
+    // rethrow unexpected errors (no failhide)
+    throw error;
   }
 };
 
@@ -344,15 +352,20 @@ export const routeReview = async (): Promise<void> => {
   if (options.open) {
     try {
       execSync(`command -v ${options.open}`, { stdio: 'pipe' });
-    } catch {
-      const errorLines = [
-        '🦉 look for the light',
-        '',
-        '🗿 route.review',
-        `   └─ ✗ opener '${options.open}' not found in PATH`,
-      ];
-      console.error(errorLines.join('\n'));
-      process.exit(2);
+    } catch (error) {
+      // allowlist command-not-found (exit code 1 or 127): format nicely and exit 2
+      if (error && typeof error === 'object' && 'status' in error) {
+        const errorLines = [
+          '🦉 look for the light',
+          '',
+          '🗿 route.review',
+          `   └─ ✗ opener '${options.open}' not found in PATH`,
+        ];
+        console.error(errorLines.join('\n'));
+        process.exit(2);
+      }
+      // rethrow unexpected errors (no failhide)
+      throw error;
     }
   }
 
@@ -372,10 +385,13 @@ export const routeReview = async (): Promise<void> => {
       process.exit(result.emit.stderr.code);
     }
   } catch (error) {
-    if (error instanceof Error) {
+    // allowlist BadRequestError: format nicely and exit 2
+    if (error instanceof BadRequestError) {
       console.error(`error: ${error.message}`);
+      process.exit(2);
     }
-    process.exit(1);
+    // rethrow unexpected errors (no failhide)
+    throw error;
   }
 };
 
@@ -401,10 +417,13 @@ export const routeBindSet = async (): Promise<void> => {
     const result = await setRouteBind({ route: options.route });
     console.log(`bound route: ${result.route}`);
   } catch (error) {
-    if (error instanceof Error) {
+    // allowlist BadRequestError: format nicely and exit 2
+    if (error instanceof BadRequestError) {
       console.error(`error: ${error.message}`);
+      process.exit(2);
     }
-    process.exit(1);
+    // rethrow unexpected errors (no failhide)
+    throw error;
   }
 };
 
@@ -428,10 +447,13 @@ export const routeBindGet = async (): Promise<void> => {
       console.log('not bound');
     }
   } catch (error) {
-    if (error instanceof Error) {
+    // allowlist BadRequestError: format nicely and exit 2
+    if (error instanceof BadRequestError) {
       console.error(`error: ${error.message}`);
+      process.exit(2);
     }
-    process.exit(1);
+    // rethrow unexpected errors (no failhide)
+    throw error;
   }
 };
 
@@ -455,10 +477,13 @@ export const routeBindDel = async (): Promise<void> => {
       console.log('not bound (no bind to remove)');
     }
   } catch (error) {
-    if (error instanceof Error) {
+    // allowlist BadRequestError: format nicely and exit 2
+    if (error instanceof BadRequestError) {
       console.error(`error: ${error.message}`);
+      process.exit(2);
     }
-    process.exit(1);
+    // rethrow unexpected errors (no failhide)
+    throw error;
   }
 };
 
@@ -514,10 +539,13 @@ export const routeStoneGet = async (): Promise<void> => {
       console.log(result.stones.map((s) => s.name).join('\n'));
     }
   } catch (error) {
-    if (error instanceof Error) {
+    // allowlist BadRequestError: format nicely and exit 2
+    if (error instanceof BadRequestError) {
       console.error(`error: ${error.message}`);
+      process.exit(2);
     }
-    process.exit(1);
+    // rethrow unexpected errors (no failhide)
+    throw error;
   }
 };
 
@@ -533,43 +561,45 @@ export const routeStoneSet = async (): Promise<void> => {
     return;
   }
 
-  if (!options.stone) {
-    console.error('error: --stone is required');
-    console.error('run with --help for usage');
-    process.exit(2);
-  }
+  // validate --stone required
+  if (!options.stone)
+    throw new BadRequestError('--stone is required', {
+      hint: '--help for usage',
+    });
+
+  // validate --route required (or resolve from bind)
   if (!options.route) {
     const routeFromBind = await resolveRouteFromBind();
     if (routeFromBind) {
       options.route = routeFromBind;
     } else {
-      console.error(
-        'error: no route bound to this branch. use --route or route.bind',
+      throw new BadRequestError(
+        'no route bound to this branch. use --route or route.bind',
       );
-      process.exit(2);
     }
   }
+
+  // validate --as required and valid
   if (
     !options.as ||
     (options.as !== 'passed' &&
       options.as !== 'approved' &&
       options.as !== 'promised' &&
       options.as !== 'blocked' &&
-      options.as !== 'rewound')
+      options.as !== 'rewound' &&
+      options.as !== 'arrived')
   ) {
-    console.error(
-      'error: --as must be "passed", "approved", "promised", "blocked", or "rewound"',
+    throw new BadRequestError(
+      '--as must be "passed", "approved", "promised", "blocked", "rewound", or "arrived"',
+      { hint: '--help for usage' },
     );
-    console.error('run with --help for usage');
-    process.exit(2);
   }
 
   // validate --that required for promised
-  if (options.as === 'promised' && !options.that) {
-    console.error('error: --that is required when --as is "promised"');
-    console.error('run with --help for usage');
-    process.exit(2);
-  }
+  if (options.as === 'promised' && !options.that)
+    throw new BadRequestError('--that is required when --as is "promised"', {
+      hint: '--help for usage',
+    });
 
   // detect TTY for human vs agent
   // allow approval in test/CI environments (Jest sets NODE_ENV=test, CI runners set CI=true)
@@ -594,7 +624,8 @@ export const routeStoneSet = async (): Promise<void> => {
           | 'approved'
           | 'promised'
           | 'blocked'
-          | 'rewound',
+          | 'rewound'
+          | 'arrived',
         that: options.that,
       },
       { ...progress.context, isTTY },
@@ -625,10 +656,13 @@ export const routeStoneSet = async (): Promise<void> => {
     }
   } catch (error) {
     progress.done();
-    if (error instanceof Error) {
+    // allowlist BadRequestError: format nicely and exit 2
+    if (error instanceof BadRequestError) {
       console.error(`error: ${error.message}`);
+      process.exit(2);
     }
-    process.exit(1);
+    // rethrow unexpected errors (no failhide)
+    throw error;
   }
 };
 
@@ -678,10 +712,13 @@ export const routeStoneDel = async (): Promise<void> => {
       console.log(result.emit.stdout);
     }
   } catch (error) {
-    if (error instanceof Error) {
+    // allowlist BadRequestError: format nicely and exit 2
+    if (error instanceof BadRequestError) {
       console.error(`error: ${error.message}`);
+      process.exit(2);
     }
-    process.exit(1);
+    // rethrow unexpected errors (no failhide)
+    throw error;
   }
 };
 
@@ -737,10 +774,13 @@ export const routeStoneJudge = async (): Promise<void> => {
       process.exit(2);
     }
   } catch (error) {
-    if (error instanceof Error) {
+    // allowlist BadRequestError: format nicely and exit 2
+    if (error instanceof BadRequestError) {
       console.error(`error: ${error.message}`);
+      process.exit(2);
     }
-    process.exit(1);
+    // rethrow unexpected errors (no failhide)
+    throw error;
   }
 };
 
@@ -933,8 +973,11 @@ const readToolInputFromStdin = (): { file_path?: string } | null => {
     if (!input) return null;
 
     return JSON.parse(input);
-  } catch {
-    return null;
+  } catch (error) {
+    // allowlist SyntaxError from JSON.parse: return null for invalid JSON
+    if (error instanceof SyntaxError) return null;
+    // rethrow unexpected errors (no failhide)
+    throw error;
   }
 };
 
@@ -1041,10 +1084,13 @@ export const routeBounce = async (): Promise<void> => {
       }
     }
   } catch (error) {
-    if (error instanceof Error) {
+    // allowlist BadRequestError: format nicely and exit 2
+    if (error instanceof BadRequestError) {
       console.error(`error: ${error.message}`);
+      process.exit(2);
     }
-    process.exit(1);
+    // rethrow unexpected errors (no failhide)
+    throw error;
   }
 };
 

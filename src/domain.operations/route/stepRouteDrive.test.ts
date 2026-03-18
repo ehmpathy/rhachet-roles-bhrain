@@ -17,14 +17,25 @@ describe('stepRouteDrive', () => {
     });
 
     when('[t0] stepRouteDrive called in direct mode', () => {
-      then('returns stone content and pass command', async () => {
+      then('returns stone content and command options', async () => {
         const result = await stepRouteDrive({ route: scene.tempDir });
         expect(result.emit?.stdout).toContain('where were we?');
         expect(result.emit?.stdout).toContain('route.drive');
         expect(result.emit?.stdout).toContain('stone = 1.vision');
+        // both options shown
+        expect(result.emit?.stdout).toContain(
+          'rhx route.stone.set --stone 1.vision --as arrived',
+        );
         expect(result.emit?.stdout).toContain(
           'rhx route.stone.set --stone 1.vision --as passed',
         );
+      });
+
+      then('shows "are you here?" prompt with both options', async () => {
+        const result = await stepRouteDrive({ route: scene.tempDir });
+        expect(result.emit?.stdout).toContain('are you here?');
+        expect(result.emit?.stdout).toContain('when ready for review, run:');
+        expect(result.emit?.stdout).toContain('when ready to continue, run:');
       });
 
       then('includes stone content in output', async () => {
@@ -255,6 +266,74 @@ describe('stepRouteDrive', () => {
 
     when('[t2] malfunction output snapshot', () => {
       then('output matches snapshot', async () => {
+        const result = await stepRouteDrive({
+          route: scene.tempDir,
+          mode: 'hook',
+        });
+        // replace temp path for snapshot stability
+        const outputStable = result.emit?.stdout?.replace(
+          scene.tempDir,
+          '<ROUTE>',
+        );
+        expect(outputStable).toMatchSnapshot();
+      });
+    });
+  });
+
+  given('[case6] drum nudge after 7+ hooks', () => {
+    const scene = useBeforeAll(async () => {
+      const tempDir = genTempDir({
+        slug: 'drive-nudge',
+        clone: path.join(ASSETS_DIR, 'route.simple'),
+      });
+      return { tempDir };
+    });
+
+    when('[t0] fewer than 7 hooks triggered', () => {
+      then('output does NOT contain drum nudge', async () => {
+        // call hook mode 3 times (count 1, 2, 3)
+        for (let i = 0; i < 3; i++) {
+          await stepRouteDrive({ route: scene.tempDir, mode: 'hook' });
+        }
+        const result = await stepRouteDrive({
+          route: scene.tempDir,
+          mode: 'hook',
+        });
+        expect(result.emit?.stdout).not.toContain('walk the way');
+        expect(result.emit?.stdout).not.toContain('tao te ching');
+        // still shows the prompt
+        expect(result.emit?.stdout).toContain('are you here?');
+      });
+    });
+
+    when('[t1] 7 or more hooks triggered', () => {
+      then('output contains drum nudge with tao te ching quote', async () => {
+        // continue to call hook mode to reach count >= 7
+        // (we already have 4 from [t0], need 3 more)
+        for (let i = 0; i < 3; i++) {
+          await stepRouteDrive({ route: scene.tempDir, mode: 'hook' });
+        }
+        // now count should be 7 or higher
+        const result = await stepRouteDrive({
+          route: scene.tempDir,
+          mode: 'hook',
+        });
+        expect(result.emit?.stdout).toContain('walk the way');
+        expect(result.emit?.stdout).toContain('do your work, then step back');
+        expect(result.emit?.stdout).toContain('tao te ching');
+        // still shows the prompt and both options
+        expect(result.emit?.stdout).toContain('are you here?');
+        expect(result.emit?.stdout).toContain('--as arrived');
+        expect(result.emit?.stdout).toContain('--as passed');
+      });
+    });
+
+    when('[t2] nudge output snapshot', () => {
+      then('output matches snapshot', async () => {
+        // ensure we're at count >= 7 by a few more calls
+        for (let i = 0; i < 2; i++) {
+          await stepRouteDrive({ route: scene.tempDir, mode: 'hook' });
+        }
         const result = await stepRouteDrive({
           route: scene.tempDir,
           mode: 'hook',

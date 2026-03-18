@@ -24,7 +24,7 @@ export const stepRouteStoneSet = async (
   input: {
     stone: string;
     route: string;
-    as: 'passed' | 'approved' | 'promised' | 'rewound' | 'blocked';
+    as: 'passed' | 'approved' | 'promised' | 'rewound' | 'blocked' | 'arrived';
     that?: string;
   },
   context: ContextCliEmit & { isTTY: boolean },
@@ -38,6 +38,11 @@ export const stepRouteStoneSet = async (
   refs?: { reviews: string[]; judges: string[] };
   emit: { stdout: string; stderr?: string } | null;
 }> => {
+  // alias translator: 'arrived' maps to 'passed'
+  if (input.as === 'arrived') {
+    input = { ...input, as: 'passed' };
+  }
+
   // dispatch to appropriate operation
   if (input.as === 'approved') {
     const result = await setStoneAsApproved(

@@ -285,4 +285,52 @@ describe('stepRouteStoneSet', () => {
       });
     });
   });
+
+  given('[case5] set stone as arrived (alias for passed)', () => {
+    const tempDir = path.join(
+      os.tmpdir(),
+      `test-step-set-arrived-${Date.now()}`,
+    );
+
+    beforeEach(async () => {
+      await fs.cp(path.join(ASSETS_DIR, 'route.simple'), tempDir, {
+        recursive: true,
+      });
+      // create artifact for 1.vision
+      await fs.writeFile(path.join(tempDir, '1.vision.md'), '# Vision');
+    });
+
+    afterEach(async () => {
+      await fs.rm(tempDir, { recursive: true, force: true });
+    });
+
+    when('[t0] --as arrived with artifact present', () => {
+      then('behaves same as --as passed', async () => {
+        const result = await stepRouteStoneSet(
+          {
+            stone: '1.vision',
+            route: tempDir,
+            as: 'arrived',
+          },
+          noopContext,
+        );
+        expect(result.passed).toBe(true);
+        expect(result.emit?.stdout).toContain('passage = allowed');
+      });
+
+      then('returns refs object', async () => {
+        const result = await stepRouteStoneSet(
+          {
+            stone: '1.vision',
+            route: tempDir,
+            as: 'arrived',
+          },
+          noopContext,
+        );
+        expect(result.refs).toBeDefined();
+        expect(result.refs?.reviews).toEqual([]);
+        expect(result.refs?.judges).toEqual([]);
+      });
+    });
+  });
 });
