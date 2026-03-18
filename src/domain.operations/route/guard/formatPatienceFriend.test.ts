@@ -1,6 +1,7 @@
 import { given, then, when } from 'test-fns';
 
 import { formatPatienceFriend } from './formatPatienceFriend';
+import { getSelfReviewArticulationPath } from './getSelfReviewArticulationPath';
 
 describe('formatPatienceFriend', () => {
   given('[case1] challenged review.self', () => {
@@ -54,7 +55,12 @@ describe('formatPatienceFriend', () => {
         expect(output).toContain('walk the way 🪷');
         expect(output).toContain('articulate into');
         expect(output).toContain(
-          '.behavior/v2026_03_05.behavior-example/review/self/1.vision.1.all-done.md',
+          getSelfReviewArticulationPath({
+            route: '.behavior/v2026_03_05.behavior-example',
+            stone: '1.vision',
+            index: 1,
+            slug: 'all-done',
+          }),
         );
         expect(output).toContain('for each found issue 🪘');
         expect(output).toContain('for each non issue 🪘');

@@ -1,19 +1,29 @@
 import { given, then, when } from 'test-fns';
 
 import { formatRouteStoneEmit } from './formatRouteStoneEmit';
+import { getSelfReviewArticulationPath } from './guard/getSelfReviewArticulationPath';
 
 describe('formatRouteStoneEmit', () => {
   given('[case1] challenge:absent action', () => {
+    const route = '.behavior/v2026_03_08.feature';
+    const stone = '3.1.blueprint';
+    const slug = 'design';
+    const articulationPath = getSelfReviewArticulationPath({
+      route,
+      stone,
+      index: 1,
+      slug,
+    });
+
     when('[t0] formatRouteStoneEmit called with challenge:absent', () => {
       then('output contains what have you seen header', () => {
         const output = formatRouteStoneEmit({
           operation: 'route.stone.set',
-          stone: '3.1.blueprint',
+          stone,
           action: 'challenge:absent',
-          slug: 'design',
-          route: '.behavior/v2026_03_08.feature',
-          articulationPath:
-            '.behavior/v2026_03_08.feature/review/self/3.1.blueprint.design.md',
+          slug,
+          route,
+          articulationPath,
         });
         expect(output).toContain('🍂 what have you seen?');
       });
@@ -21,27 +31,23 @@ describe('formatRouteStoneEmit', () => {
       then('output contains articulation path', () => {
         const output = formatRouteStoneEmit({
           operation: 'route.stone.set',
-          stone: '3.1.blueprint',
+          stone,
           action: 'challenge:absent',
-          slug: 'design',
-          route: '.behavior/v2026_03_08.feature',
-          articulationPath:
-            '.behavior/v2026_03_08.feature/review/self/3.1.blueprint.design.md',
+          slug,
+          route,
+          articulationPath,
         });
-        expect(output).toContain(
-          '.behavior/v2026_03_08.feature/review/self/3.1.blueprint.design.md',
-        );
+        expect(output).toContain(articulationPath);
       });
 
       then('output contains patience friend message', () => {
         const output = formatRouteStoneEmit({
           operation: 'route.stone.set',
-          stone: '3.1.blueprint',
+          stone,
           action: 'challenge:absent',
-          slug: 'design',
-          route: '.behavior/v2026_03_08.feature',
-          articulationPath:
-            '.behavior/v2026_03_08.feature/review/self/3.1.blueprint.design.md',
+          slug,
+          route,
+          articulationPath,
         });
         expect(output).toContain('🗿 patience, friend');
       });
@@ -49,12 +55,11 @@ describe('formatRouteStoneEmit', () => {
       then('snapshot matches vision', () => {
         const output = formatRouteStoneEmit({
           operation: 'route.stone.set',
-          stone: '3.1.blueprint',
+          stone,
           action: 'challenge:absent',
-          slug: 'design',
-          route: '.behavior/v2026_03_08.feature',
-          articulationPath:
-            '.behavior/v2026_03_08.feature/review/self/3.1.blueprint.design.md',
+          slug,
+          route,
+          articulationPath,
         });
         expect(output).toMatchSnapshot();
       });

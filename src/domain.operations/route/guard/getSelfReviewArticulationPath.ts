@@ -8,4 +8,4 @@ export const getSelfReviewArticulationPath = (input: {
   index: number;
   slug: string;
 }): string =>
-  `${input.route}/review/self/${input.stone}.${input.index}.${input.slug}.md`;
+  `${input.route}/review/self/for.${input.stone}._.r${input.index}.${input.slug}.md`;
