@@ -2,6 +2,7 @@ import * as fs from 'fs/promises';
 import * as path from 'path';
 import { given, then, useBeforeAll, useThen, when } from 'test-fns';
 
+import { getSelfReviewArticulationPath } from '../src/domain.operations/route/guard/getSelfReviewArticulationPath';
 import {
   execAsync,
   genTempDirForRhachet,
@@ -378,12 +379,14 @@ describe('driver.route.journey.acceptance', () => {
     when('[t8.5] 3.blueprint review.self is promised', () => {
       const result = useThen('promise succeeds', async () => {
         // create articulation file (required by file presence check)
-        // format: {route}/review/self/{stone}.{index}.{slug}.md
-        await fs.mkdir(path.join(scene.tempDir, 'review', 'self'), { recursive: true });
-        await fs.writeFile(
-          path.join(scene.tempDir, 'review', 'self', '3.blueprint.1.design-complete.md'),
-          '# design review\n\napi design looks complete.',
-        );
+        const articulationPath = getSelfReviewArticulationPath({
+          route: scene.tempDir,
+          stone: '3.blueprint',
+          index: 1,
+          slug: 'design-complete',
+        });
+        await fs.mkdir(path.dirname(articulationPath), { recursive: true });
+        await fs.writeFile(articulationPath, '# design review\n\napi design looks complete.');
 
         // backdate triggered report to bypass time enforcement
         await backdateTriggeredReport({
@@ -511,10 +514,16 @@ describe('driver.route.journey.acceptance', () => {
           slug: 'design-complete',
         });
 
-        // create articulation file (format: {route}/review/self/{stone}.{index}.{slug}.md)
-        await fs.mkdir(path.join(scene.tempDir, 'review', 'self'), { recursive: true });
+        // create articulation file
+        const articulationPath = getSelfReviewArticulationPath({
+          route: scene.tempDir,
+          stone: '3.blueprint',
+          index: 1,
+          slug: 'design-complete',
+        });
+        await fs.mkdir(path.dirname(articulationPath), { recursive: true });
         await fs.writeFile(
-          path.join(scene.tempDir, 'review', 'self', '3.blueprint.1.design-complete.md'),
+          articulationPath,
           '# design review\n\napi design is complete with all endpoints documented.',
         );
 
