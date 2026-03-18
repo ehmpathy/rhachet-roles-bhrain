@@ -5,7 +5,7 @@ exports[`formatWhatHaveYouSeen given: [case1] output structure matches vision wh
    ├─ ...
    │
    ├─ the articulation is absent
-   │  └─ .behavior/v2026_03_08.feature/review/self/3.1.blueprint.design.md
+   │  └─ .behavior/v2026_03_08.feature/review/self/for.3.1.blueprint._.r1.design.md
    │
    ├─ a promise without words
    │  ├─ is not a promise

@@ -1,11 +1,16 @@
 import { given, then, when } from 'test-fns';
 
 import { formatWhatHaveYouSeen } from './formatWhatHaveYouSeen';
+import { getSelfReviewArticulationPath } from './getSelfReviewArticulationPath';
 
 describe('formatWhatHaveYouSeen', () => {
   given('[case1] output structure matches vision', () => {
-    const articulationPath =
-      '.behavior/v2026_03_08.feature/review/self/3.1.blueprint.design.md';
+    const articulationPath = getSelfReviewArticulationPath({
+      route: '.behavior/v2026_03_08.feature',
+      stone: '3.1.blueprint',
+      index: 1,
+      slug: 'design',
+    });
 
     when('[t0] formatWhatHaveYouSeen called', () => {
       then('contains fallen leaf header', () => {

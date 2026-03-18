@@ -3,6 +3,7 @@ import * as os from 'os';
 import * as path from 'path';
 import { given, then, when } from 'test-fns';
 
+import { getSelfReviewArticulationPath } from '../guard/getSelfReviewArticulationPath';
 import { getSelfReviewChallengeDecision } from './getSelfReviewChallengeDecision';
 import { setSelfReviewTriggeredReport } from './setSelfReviewTriggeredReport';
 
@@ -16,15 +17,10 @@ const createArticulationFile = async (input: {
   index: number;
   slug: string;
 }): Promise<void> => {
-  const articulationDir = path.join(input.route, 'review', 'self');
+  const articulationPath = getSelfReviewArticulationPath(input);
+  const articulationDir = path.dirname(articulationPath);
   await fs.mkdir(articulationDir, { recursive: true });
-  await fs.writeFile(
-    path.join(
-      articulationDir,
-      `${input.stone}.${input.index}.${input.slug}.md`,
-    ),
-    '# self-review\n',
-  );
+  await fs.writeFile(articulationPath, '# self-review\n');
 };
 
 describe('getSelfReviewChallengeDecision', () => {
@@ -58,7 +54,12 @@ describe('getSelfReviewChallengeDecision', () => {
 
           expect(result.decision).toEqual('challenge:absent');
           expect(result.articulationPath).toEqual(
-            `${tempDir}/review/self/1.vision.1.all-done.md`,
+            getSelfReviewArticulationPath({
+              route: tempDir,
+              stone: '1.vision',
+              index: 1,
+              slug: 'all-done',
+            }),
           );
 
           // cleanup
@@ -213,7 +214,12 @@ describe('getSelfReviewChallengeDecision', () => {
 
         expect(result.decision).toEqual('challenge:first');
         expect(result.articulationPath).toEqual(
-          `${tempDir}/review/self/1.vision.1.all-done.md`,
+          getSelfReviewArticulationPath({
+            route: tempDir,
+            stone: '1.vision',
+            index: 1,
+            slug: 'all-done',
+          }),
         );
 
         // cleanup

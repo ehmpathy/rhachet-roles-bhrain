@@ -2,6 +2,7 @@ import * as fs from 'fs/promises';
 import * as path from 'path';
 import { given, then, useBeforeAll, useThen, when } from 'test-fns';
 
+import { getSelfReviewArticulationPath } from '../src/domain.operations/route/guard/getSelfReviewArticulationPath';
 import {
   execAsync,
   genTempDirForRhachet,
@@ -308,16 +309,15 @@ describe('driver.route.drive.blocker.acceptance', () => {
         });
 
         // create articulation file (required by file presence check)
-        await fs.mkdir(path.join(scene.tempDir, 'review', 'self'), {
-          recursive: true,
+        const articulationPath = getSelfReviewArticulationPath({
+          route: scene.tempDir,
+          stone: '3.blueprint',
+          index: 1,
+          slug: 'design-complete',
         });
+        await fs.mkdir(path.dirname(articulationPath), { recursive: true });
         await fs.writeFile(
-          path.join(
-            scene.tempDir,
-            'review',
-            'self',
-            '3.blueprint.1.design-complete.md',
-          ),
+          articulationPath,
           '# design review\n\napi design is complete.',
         );
 

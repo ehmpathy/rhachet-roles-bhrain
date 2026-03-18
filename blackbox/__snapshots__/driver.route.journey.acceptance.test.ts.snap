@@ -11,7 +11,7 @@ exports[`driver.route.journey.acceptance given: [journey] weather api route when
 
 exports[`driver.route.journey.acceptance given: [journey] weather api route when: [t1] 1.vision artifact is created and pass attempted then: stdout has good vibes 1`] = `
 "🦉 the way speaks for itself
-   └─ ✗ judge.1 - blocked 0.5s
+   └─ ✗ judge.1 - blocked 0.4s
 
 🗿 route.stone.set
    ├─ stone = 1.vision
@@ -38,17 +38,20 @@ exports[`driver.route.journey.acceptance given: [journey] weather api route when
 
 exports[`driver.route.journey.acceptance given: [journey] weather api route when: [t3] 1.vision pass is reattempted after approval then: stdout has good vibes 1`] = `
 "🦉 the way speaks for itself
-   └─ ✓ judge.1 - allowed 0.7s
+   └─ ✓ judge.1 - allowed 0.3s
 
 🗿 route.stone.set
    ├─ stone = 1.vision
    ├─ passage = allowed
-   └─ guard
-      ├─ artifacts
-      │   └─ 1.vision.md
-      └─ judges
-          └─ j1: rhx route.stone.judge --mechanism approved? --stone $stone --route $route
-              └─ finished [TIME] ✓
+   ├─ guard
+   │  ├─ artifacts
+   │  │   └─ 1.vision.md
+   │  └─ judges
+   │      └─ j1: rhx route.stone.judge --mechanism approved? --stone $stone --route $route
+   │          └─ finished [TIME] ✓
+   │
+   └─ the way continues, run
+      └─ rhx route.drive
 "
 `;
 
@@ -71,7 +74,10 @@ exports[`driver.route.journey.acceptance given: [journey] weather api route when
 
 🗿 route.stone.set
    ├─ stone = 2.research
-   └─ passage = allowed (unguarded)
+   ├─ passage = allowed (unguarded)
+   │
+   └─ the way continues, run
+      └─ rhx route.drive
 "
 `;
 
@@ -182,7 +188,7 @@ exports[`driver.route.journey.acceptance given: [journey] weather api route when
    ├─ walk the way 🪷
    │  │
    │  ├─ articulate into
-   │  │  └─ /review/self/3.blueprint.1.design-complete.md
+   │  │  └─ /review/self/for.3.blueprint._.r1.design-complete.md
    │  │
    │  ├─ for each found issue 🪘
    │  │  ├─
@@ -209,7 +215,7 @@ exports[`driver.route.journey.acceptance given: [journey] weather api route when
 "🦉 the way speaks for itself
    ├─ ✓ review.1 - completed (cached)
    ├─ ✓ judge.1 - allowed (cached)
-   └─ ✗ judge.2 - blocked 1.7s
+   └─ ✗ judge.2 - blocked 0.3s
 
 🗿 route.stone.set
    ├─ stone = 3.blueprint
@@ -233,8 +239,8 @@ exports[`driver.route.journey.acceptance given: [journey] weather api route when
 exports[`driver.route.journey.acceptance given: [journey] weather api route when: [t9] 3.blueprint pass reattempted after promise then: stdout has good vibes 1`] = `
 "🦉 the way speaks for itself
    ├─ ✓ review.1 - completed 0.0s
-   ├─ ✗ judge.1 - blocked 1.3s
-   └─ ✗ judge.2 - blocked 1.0s
+   ├─ ✗ judge.1 - blocked 0.4s
+   └─ ✗ judge.2 - blocked 0.3s
 
 🗿 route.stone.set
    ├─ stone = 3.blueprint
@@ -261,23 +267,26 @@ exports[`driver.route.journey.acceptance given: [journey] weather api route when
 exports[`driver.route.journey.acceptance given: [journey] weather api route when: [t10] 3.blueprint approved and self-review completed then: stdout has good vibes 1`] = `
 "🦉 the way speaks for itself
    ├─ ✓ review.1 - completed (cached)
-   ├─ ✓ judge.1 - allowed 1.2s
-   └─ ✓ judge.2 - allowed 2.5s
+   ├─ ✓ judge.1 - allowed 0.3s
+   └─ ✓ judge.2 - allowed 0.3s
 
 🗿 route.stone.set
    ├─ stone = 3.blueprint
    ├─ passage = allowed
-   └─ guard
-      ├─ artifacts
-      │   └─ 3.blueprint.md
-      ├─ reviews
-      │   └─ r1: bash $route/.test/mock-review.sh
-      │       └─ · cached
-      └─ judges
-          ├─ j1: rhx route.stone.judge --mechanism reviewed? --stone $stone --route $route --allow-blockers 0 --allow-nitpicks 2
-          │   └─ finished [TIME] ✓
-          └─ j2: rhx route.stone.judge --mechanism approved? --stone $stone --route $route
-              └─ finished [TIME] ✓
+   ├─ guard
+   │  ├─ artifacts
+   │  │   └─ 3.blueprint.md
+   │  ├─ reviews
+   │  │   └─ r1: bash $route/.test/mock-review.sh
+   │  │       └─ · cached
+   │  └─ judges
+   │      ├─ j1: rhx route.stone.judge --mechanism reviewed? --stone $stone --route $route --allow-blockers 0 --allow-nitpicks 2
+   │      │   └─ finished [TIME] ✓
+   │      └─ j2: rhx route.stone.judge --mechanism approved? --stone $stone --route $route
+   │          └─ finished [TIME] ✓
+   │
+   └─ the way continues, run
+      └─ rhx route.drive
 "
 `;
 
@@ -292,22 +301,25 @@ exports[`driver.route.journey.acceptance given: [journey] weather api route when
 
 exports[`driver.route.journey.acceptance given: [journey] weather api route when: [t12] 5.execute artifact created and pass attempted then: stdout has good vibes 1`] = `
 "🦉 the way speaks for itself
-   ├─ ✓ review.1 - completed 0.1s
-   └─ ✓ judge.1 - allowed 1.6s
+   ├─ ✓ review.1 - completed 0.0s
+   └─ ✓ judge.1 - allowed 0.3s
 
 🗿 route.stone.set
    ├─ stone = 5.execute
    ├─ passage = allowed
-   └─ guard
-      ├─ artifacts
-      │   └─ weather.ts
-      ├─ reviews
-      │   └─ r1: bash $route/.test/mock-review.sh
-      │       ├─ finished [TIME] ✓
-      │       └─ review: .route/5.execute.guard.review.i1.e5c031c5923de2dd7ebc77d84ac1c222cfdb9d3143fa8c0bc27ed9d821ce74e3.r1.md
-      └─ judges
-          └─ j1: rhx route.stone.judge --mechanism reviewed? --stone $stone --route $route --allow-blockers 0 --allow-nitpicks 1
-              └─ finished [TIME] ✓
+   ├─ guard
+   │  ├─ artifacts
+   │  │   └─ weather.ts
+   │  ├─ reviews
+   │  │   └─ r1: bash $route/.test/mock-review.sh
+   │  │       ├─ finished [TIME] ✓
+   │  │       └─ review: .route/5.execute.guard.review.i1.e5c031c5923de2dd7ebc77d84ac1c222cfdb9d3143fa8c0bc27ed9d821ce74e3.r1.md
+   │  └─ judges
+   │      └─ j1: rhx route.stone.judge --mechanism reviewed? --stone $stone --route $route --allow-blockers 0 --allow-nitpicks 1
+   │          └─ finished [TIME] ✓
+   │
+   └─ the way continues, run
+      └─ rhx route.drive
 "
 `;
 

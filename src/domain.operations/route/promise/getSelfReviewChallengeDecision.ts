@@ -65,14 +65,7 @@ export const getSelfReviewChallengeDecision = async (input: {
 
   // check articulation file presence (only after they've seen challenge:first)
   const fileExists = await fs
-    .access(
-      path.join(
-        input.route,
-        'review',
-        'self',
-        `${input.stone}.${input.index}.${input.slug}.md`,
-      ),
-    )
+    .access(articulationPath)
     .then(() => true)
     .catch(() => false);
   if (!fileExists) {

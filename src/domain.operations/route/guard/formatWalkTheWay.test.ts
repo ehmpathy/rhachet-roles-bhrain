@@ -1,6 +1,7 @@
 import { given, then, when } from 'test-fns';
 
 import { formatWalkTheWay } from './formatWalkTheWay';
+import { getSelfReviewArticulationPath } from './getSelfReviewArticulationPath';
 
 describe('formatWalkTheWay', () => {
   given('[case1] articulation with drum blocks', () => {
@@ -37,7 +38,12 @@ describe('formatWalkTheWay', () => {
 
         expect(output.join('\n')).toContain('articulate into');
         expect(output.join('\n')).toContain(
-          '.behavior/v2026_03_05.behavior-example/review/self/1.vision.1.all-done.md',
+          getSelfReviewArticulationPath({
+            route: '.behavior/v2026_03_05.behavior-example',
+            stone: '1.vision',
+            index: 1,
+            slug: 'all-done',
+          }),
         );
       });
 

@@ -2,6 +2,7 @@ import * as fs from 'fs/promises';
 import * as path from 'path';
 import { given, then, useBeforeAll, useThen, when } from 'test-fns';
 
+import { getSelfReviewArticulationPath } from '../src/domain.operations/route/guard/getSelfReviewArticulationPath';
 import {
   execAsync,
   genTempDirForRhachet,
@@ -359,11 +360,14 @@ describe('driver.route.drive.acceptance', () => {
       await backdateTriggeredReport({ tempDir, stone: '1', slug: 'all-done' });
 
       // create articulation file for first review.self (required by file presence check)
-      await fs.mkdir(path.join(tempDir, 'review', 'self'), { recursive: true });
-      await fs.writeFile(
-        path.join(tempDir, 'review', 'self', '1.1.all-done.md'),
-        '# self-review\n\nall done.',
-      );
+      const articulationPath1 = getSelfReviewArticulationPath({
+        route: tempDir,
+        stone: '1',
+        index: 1,
+        slug: 'all-done',
+      });
+      await fs.mkdir(path.dirname(articulationPath1), { recursive: true });
+      await fs.writeFile(articulationPath1, '# self-review\n\nall done.');
 
       // promise first review.self
       await invokeRouteSkill({
@@ -381,10 +385,13 @@ describe('driver.route.drive.acceptance', () => {
       await backdateTriggeredReport({ tempDir, stone: '1', slug: 'tests-pass' });
 
       // create articulation file for second review.self (required by file presence check)
-      await fs.writeFile(
-        path.join(tempDir, 'review', 'self', '1.2.tests-pass.md'),
-        '# self-review\n\ntests pass.',
-      );
+      const articulationPath2 = getSelfReviewArticulationPath({
+        route: tempDir,
+        stone: '1',
+        index: 2,
+        slug: 'tests-pass',
+      });
+      await fs.writeFile(articulationPath2, '# self-review\n\ntests pass.');
 
       // promise second review.self
       await invokeRouteSkill({
