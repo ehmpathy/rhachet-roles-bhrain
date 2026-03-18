@@ -155,6 +155,7 @@ export const stepRouteDrive = async (input: {
     }
 
     // track this block attempt
+    // .note = state.count tracks hooks without passage attempt; used for nudge threshold
     const { state } = await setDriveBlockerState({ route, stone: stone.name });
 
     // check if we've exceeded max consecutive blocks (cutoff: 21)
@@ -181,11 +182,12 @@ export const stepRouteDrive = async (input: {
       };
     }
 
-    // format output (with blocked suggestion if count > 5)
+    // format output with nudge threshold and blocked suggestion
     const stdout = formatRouteDrive({
       route,
       stone: stone.name,
       content: stoneContent,
+      count: state.count,
       suggestBlocked: state.count > 5,
     });
 
@@ -198,15 +200,14 @@ export const stepRouteDrive = async (input: {
     };
   }
 
-  // format output for direct mode (no blocked suggestion)
+  // direct mode, just show output (no nudge, no blocked suggestion)
   const stdout = formatRouteDrive({
     route,
     stone: stone.name,
     content: stoneContent,
+    count: 0,
     suggestBlocked: false,
   });
-
-  // direct mode, just show output
   return {
     emit: { stdout },
   };
@@ -369,13 +370,36 @@ const formatRouteDriveBlocked = (input: {
 };
 
 /**
+ * .what = returns drum nudge tree bucket for stuck clones
+ * .why = gentle reminder after 7+ hooks without passage attempt
+ */
+const formatRouteDriveNudge = (): string[] => {
+  return [
+    `   ├─ 🪘 walk the way`,
+    `   │  ├─`,
+    `   │  │`,
+    `   │  │  do your work, then step back`,
+    `   │  │  the only path to serenity`,
+    `   │  │`,
+    `   │  │  — tao te ching`,
+    `   │  │`,
+    `   │  └─`,
+    `   │`,
+  ];
+};
+
+/**
  * .what = formats route.drive output with stone content
  * .why = provides GPS-like guidance with full stone context
+ *
+ * .note = count tracks hooks without passage attempt (via setDriveBlockerState)
+ *         if count >= 7, includes drum nudge to encourage action
  */
 const formatRouteDrive = (input: {
   route: string;
   stone: string;
   content: string;
+  count: number;
   suggestBlocked: boolean;
 }): string => {
   const lines: string[] = [];
@@ -391,11 +415,20 @@ const formatRouteDrive = (input: {
   lines.push(`   │  └─ stone = ${input.stone}`);
   lines.push(`   │`);
 
-  // pass command (first instance)
-  const passCmd = `rhx route.stone.set --stone ${input.stone} --as passed`;
-  lines.push(`   ├─ are we there yet? if so, run`);
-  lines.push(`   │  └─ ${passCmd}`);
+  // command prompt with both options
+  const arrivedCmd = `rhx route.stone.set --stone ${input.stone} --as arrived`;
+  const passedCmd = `rhx route.stone.set --stone ${input.stone} --as passed`;
+  lines.push(`   ├─ are you here?`);
+  lines.push(`   │  ├─ when ready for review, run:`);
+  lines.push(`   │  │  └─ ${arrivedCmd}`);
+  lines.push(`   │  └─ when ready to continue, run:`);
+  lines.push(`   │     └─ ${passedCmd}`);
   lines.push(`   │`);
+
+  // drum nudge for stuck clones (7+ hooks without passage attempt)
+  if (input.count >= 7) {
+    lines.push(...formatRouteDriveNudge());
+  }
 
   // stone content block
   lines.push(`   ├─ here's the stone`);
@@ -411,19 +444,24 @@ const formatRouteDrive = (input: {
   lines.push(`   │  └─`);
   lines.push(`   │`);
 
-  // pass command or blocked suggestion
+  // command prompt at bottom (easy copy after you read the stone)
   if (input.suggestBlocked) {
-    // show both pass and blocked options
+    // show blocked option when stuck
     const blockedCmd = `rhx route.stone.set --stone ${input.stone} --as blocked`;
-    lines.push(`   ├─ are we there yet? if so, run`);
-    lines.push(`   │  └─ ${passCmd}`);
+    lines.push(`   ├─ are you here?`);
+    lines.push(`   │  ├─ when ready for review, run:`);
+    lines.push(`   │  │  └─ ${arrivedCmd}`);
+    lines.push(`   │  └─ when ready to continue, run:`);
+    lines.push(`   │     └─ ${passedCmd}`);
     lines.push(`   │`);
     lines.push(`   └─ are you blocked? if so, run`);
     lines.push(`      └─ ${blockedCmd}`);
   } else {
-    // just pass command
-    lines.push(`   └─ are we there yet? if so, run`);
-    lines.push(`      └─ ${passCmd}`);
+    lines.push(`   └─ are you here?`);
+    lines.push(`      ├─ when ready for review, run:`);
+    lines.push(`      │  └─ ${arrivedCmd}`);
+    lines.push(`      └─ when ready to continue, run:`);
+    lines.push(`         └─ ${passedCmd}`);
   }
 
   return lines.join('\n');
