@@ -8,6 +8,8 @@ import type { ContextCliEmit } from '@src/domain.objects/Driver/ContextCliEmit';
 import type { RouteStone } from '@src/domain.objects/Driver/RouteStone';
 import type { RouteStoneGuard } from '@src/domain.objects/Driver/RouteStoneGuard';
 import { RouteStoneGuardJudgeArtifact } from '@src/domain.objects/Driver/RouteStoneGuardJudgeArtifact';
+import { formatTreeBucket } from '@src/domain.operations/route/guard/formatTreeBucket';
+import { getExitCodeClass } from '@src/domain.operations/route/guard/getExitCodeClass';
 import { enumFilesFromGlob } from '@src/utils/enumFilesFromGlob';
 
 import { computeStoneJudgeInputHash } from './computeStoneJudgeInputHash';
@@ -70,44 +72,45 @@ export const runOneStoneGuardJudge = async (input: {
     const result = await execAsync(cmd, { env: execEnv });
     stdout = result.stdout;
     stderr = result.stderr;
+    exitCode = 0;
   } catch (error: unknown) {
-    exitCode = 1;
-    // capture output even on failure
+    // capture output and exit code even on failure
     if (error && typeof error === 'object') {
       const errObj = error as Record<string, unknown>;
       stdout = typeof errObj.stdout === 'string' ? errObj.stdout : '';
       stderr = typeof errObj.stderr === 'string' ? errObj.stderr : '';
+      exitCode = typeof errObj.code === 'number' ? errObj.code : 1;
     }
   }
 
-  // write output if command produced output and no file was written
-  // failfast: include both stdout and stderr for observability
-  // also include exit code so cached reads can extract failure reason
-  const fileWritten = await isFilePresent(outputPath);
-  if (!fileWritten) {
-    const outputParts = [stdout, stderr].filter(Boolean);
-    if (exitCode !== 0) {
-      outputParts.push(`\n---metadata---\nexit code: ${exitCode}`);
-    }
-    const output = outputParts.join('\n\n---stderr---\n');
-    if (output) {
-      await fs.writeFile(outputPath, output);
-    }
+  // classify exit code
+  const exitClass = getExitCodeClass({ code: exitCode });
+
+  // format artifact content with tree buckets
+  const artifactLines: string[] = [];
+  artifactLines.push(formatTreeBucket({ label: 'stdout', content: stdout }));
+  artifactLines.push(formatTreeBucket({ label: 'stderr', content: stderr }));
+
+  // add passage footer for non-zero exit
+  if (exitCode !== 0) {
+    const blockReason =
+      exitClass === 'constraint'
+        ? 'blocked by constraints'
+        : 'blocked by malfunction';
+    const exitEmoji = exitClass === 'constraint' ? '✋' : '💥';
+    artifactLines.push('└─ passage blocked');
+    artifactLines.push(`   ├─ ${blockReason}`);
+    artifactLines.push(`   └─ exit code: ${exitCode} ${exitEmoji}`);
   }
 
-  // read the output file to parse metadata
-  let content = '';
-  try {
-    content = await fs.readFile(outputPath, 'utf-8');
-  } catch {
-    // file may not exist if command failed with no output
-    content = `judge command failed with exit code ${exitCode}\n\nstderr: ${stderr || '(none)'}\nstdout: ${stdout || '(none)'}`;
-    await fs.writeFile(outputPath, content);
-  }
+  const artifactContent = artifactLines.join('\n');
 
-  // parse passed and reason from content
-  const passed = parsePassed(content, exitCode);
-  const reason = parseReason(content, exitCode);
+  // write artifact file
+  await fs.writeFile(outputPath, artifactContent);
+
+  // parse passed and reason from stdout (where judge tools output)
+  const passed = parsePassed(stdout, exitCode);
+  const reason = parseReason(stdout, exitCode);
 
   return new RouteStoneGuardJudgeArtifact({
     stone: { path: input.stone.path },
@@ -117,6 +120,10 @@ export const runOneStoneGuardJudge = async (input: {
     path: outputPath,
     passed,
     reason,
+    exitCode,
+    exitClass,
+    stdout,
+    stderr,
   });
 };
 
@@ -169,8 +176,12 @@ export const runStoneGuardJudges = async (
   const priorByIndex = new Map<number, RouteStoneGuardJudgeArtifact>();
   for (const filePath of priorJudgeFiles) {
     const content = await fs.readFile(filePath, 'utf-8');
-    const passed = parsePassed(content, null);
-    const reason = parseReason(content, null);
+
+    // extract stdout/stderr from tree buckets
+    const { stdout, stderr, exitCode } = parseTreeBucketContent(content);
+    const exitClass = getExitCodeClass({ code: exitCode });
+    const passed = parsePassed(stdout, exitCode);
+    const reason = parseReason(stdout, exitCode);
 
     // parse index from filename: $stone.guard.judge.i$rp$j.$reviewHash.$judgeHash.j$index.md
     const indexMatch = filePath.match(/\.j(\d+)\.md$/);
@@ -194,6 +205,10 @@ export const runStoneGuardJudges = async (
           path: filePath,
           passed,
           reason,
+          exitCode,
+          exitClass,
+          stdout,
+          stderr,
         }),
       );
     }
@@ -254,10 +269,13 @@ export const runStoneGuardJudges = async (
       outcome: {
         path: judge.path,
         review: null,
-        judge: {
-          decision: judge.passed ? 'passed' : 'failed',
-          reason: judge.reason,
-        },
+        judge:
+          judge.exitClass === 'malfunction'
+            ? { malfunction: new Error(`exit code ${judge.exitCode}`) }
+            : {
+                decision: judge.passed ? 'allowed' : 'blocked',
+                reason: judge.reason,
+              },
       },
     });
 
@@ -357,6 +375,40 @@ const parseReason = (
   }
 
   return null;
+};
+
+/**
+ * .what = extracts stdout, stderr, and exitCode from tree bucket artifact content
+ * .why = enables parse of cached artifacts to reconstruct artifact fields
+ */
+const parseTreeBucketContent = (
+  content: string,
+): { stdout: string; stderr: string; exitCode: number } => {
+  // extract stdout from tree bucket (between "│  │" lines after "├─ stdout")
+  const stdoutMatch = content.match(
+    /├─ stdout[\s\S]*?│ {2}├─\n│ {2}│\n([\s\S]*?)│ {2}│\n│ {2}└─/,
+  );
+  const stdoutLines =
+    stdoutMatch?.[1]
+      ?.split('\n')
+      .map((line) => line.replace(/^│ {2}│ {2}/, ''))
+      .join('\n') ?? '';
+
+  // extract stderr from tree bucket
+  const stderrMatch = content.match(
+    /├─ stderr[\s\S]*?│ {2}├─\n│ {2}│\n([\s\S]*?)│ {2}│\n│ {2}└─/,
+  );
+  const stderrLines =
+    stderrMatch?.[1]
+      ?.split('\n')
+      .map((line) => line.replace(/^│ {2}│ {2}/, ''))
+      .join('\n') ?? '';
+
+  // extract exit code from passage blocked footer
+  const exitCodeMatch = content.match(/exit code:\s*(\d+)/);
+  const exitCode = exitCodeMatch?.[1] ? parseInt(exitCodeMatch[1], 10) : 0;
+
+  return { stdout: stdoutLines.trim(), stderr: stderrLines.trim(), exitCode };
 };
 
 /**

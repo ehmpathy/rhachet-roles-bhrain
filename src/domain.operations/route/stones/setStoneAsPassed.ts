@@ -4,6 +4,7 @@ import * as path from 'path';
 
 import type { ContextCliEmit } from '@src/domain.objects/Driver/ContextCliEmit';
 import type { GuardProgressEvent } from '@src/domain.objects/Driver/GuardProgressEvent';
+import { PassageReport } from '@src/domain.objects/Driver/PassageReport';
 import type { RouteStone } from '@src/domain.objects/Driver/RouteStone';
 import {
   getGuardPeerReviews,
@@ -12,6 +13,9 @@ import {
 import type { RouteStoneGuardJudgeArtifact } from '@src/domain.objects/Driver/RouteStoneGuardJudgeArtifact';
 import type { RouteStoneGuardReviewArtifact } from '@src/domain.objects/Driver/RouteStoneGuardReviewArtifact';
 
+import { delBlockedTriggeredReport } from '../blocked/delBlockedTriggeredReport';
+import { computeRouteBouncerCache } from '../bouncer/computeRouteBouncerCache';
+import { setRouteBouncerCache } from '../bouncer/setRouteBouncerCache';
 import { delStoneGuardBlockerReport } from '../drive/delStoneGuardBlockerReport';
 import { setStoneGuardBlockerReport } from '../drive/setStoneGuardBlockerReport';
 import { formatRouteStoneEmit } from '../formatRouteStoneEmit';
@@ -19,6 +23,7 @@ import { computeStoneReviewInputHash } from '../guard/computeStoneReviewInputHas
 import { getAllStoneGuardArtifactsByHash } from '../guard/getAllStoneGuardArtifactsByHash';
 import { runStoneGuardReviews } from '../guard/runStoneGuardReviews';
 import { runStoneGuardJudges } from '../judges/runStoneGuardJudges';
+import { setPassageReport } from '../passage/setPassageReport';
 import { getStonePromises } from '../promise/getStonePromises';
 import { setSelfReviewTriggeredReport } from '../promise/setSelfReviewTriggeredReport';
 import { findOneStoneByPattern } from './asStoneGlob';
@@ -66,6 +71,21 @@ export const setStoneAsPassed = async (
   // if no guard, auto-pass
   if (!stoneMatched.guard) {
     await setStonePassage({ stone: stoneMatched, route: input.route });
+
+    // clear blocked triggers for this stone and all earlier stones
+    await clearBlockedTriggersUpTo({
+      stone: stoneMatched,
+      stones,
+      route: input.route,
+    });
+
+    // update bouncer cache (stone passage may release protected artifacts)
+    const bouncerCache = await computeRouteBouncerCache({
+      cwd: process.cwd(),
+      route: input.route,
+    });
+    await setRouteBouncerCache({ cache: bouncerCache, route: input.route });
+
     return {
       passed: true,
       refs: { reviews: [], judges: [] },
@@ -150,6 +170,21 @@ export const setStoneAsPassed = async (
   const peerReviews = getGuardPeerReviews(stoneMatched.guard);
   if (peerReviews.length === 0 && stoneMatched.guard.judges.length === 0) {
     await setStonePassage({ stone: stoneMatched, route: input.route });
+
+    // clear blocked triggers for this stone and all earlier stones
+    await clearBlockedTriggersUpTo({
+      stone: stoneMatched,
+      stones,
+      route: input.route,
+    });
+
+    // update bouncer cache (stone passage may release protected artifacts)
+    const bouncerCache = await computeRouteBouncerCache({
+      cwd: process.cwd(),
+      route: input.route,
+    });
+    await setRouteBouncerCache({ cache: bouncerCache, route: input.route });
+
     return {
       passed: true,
       refs: { reviews: [], judges: [] },
@@ -259,6 +294,83 @@ export const setStoneAsPassed = async (
         )
       : [];
 
+  // check for malfunctions (exit code != 0 and != 2)
+  const reviewMalfunctions = reviewArtifacts.filter(
+    (r) => r.exitClass === 'malfunction',
+  );
+  const judgeMalfunctions = judgeArtifacts.filter(
+    (j) => j.exitClass === 'malfunction',
+  );
+  const hasMalfunction =
+    reviewMalfunctions.length > 0 || judgeMalfunctions.length > 0;
+
+  if (hasMalfunction) {
+    // record malfunction status in passage.jsonl
+    await setPassageReport({
+      report: new PassageReport({
+        stone: stoneMatched.name,
+        status: 'malfunction',
+      }),
+      route: input.route,
+    });
+
+    // build guard data for output
+    const guardData = computeGuardData({
+      stone: stoneMatched,
+      artifactFiles,
+      reviewArtifacts,
+      judgeArtifacts,
+      events,
+      route: input.route,
+    });
+
+    // collect malfunction details for stderr
+    const stderrLines: string[] = [];
+    for (const review of reviewMalfunctions) {
+      if (stderrLines.length > 0) stderrLines.push('');
+      stderrLines.push(`🔎 review ${review.index}`);
+      try {
+        const content = await fs.readFile(review.path, 'utf-8');
+        for (const line of content.split('\n')) {
+          stderrLines.push(`   ${line}`);
+        }
+      } catch {
+        stderrLines.push(`   └─ malfunction (exit code ${review.exitCode})`);
+      }
+    }
+    for (const judge of judgeMalfunctions) {
+      if (stderrLines.length > 0) stderrLines.push('');
+      stderrLines.push(`🪶 judge ${judge.index}`);
+      try {
+        const content = await fs.readFile(judge.path, 'utf-8');
+        for (const line of content.split('\n')) {
+          stderrLines.push(`   ${line}`);
+        }
+      } catch {
+        stderrLines.push(`   └─ malfunction (exit code ${judge.exitCode})`);
+      }
+    }
+
+    return {
+      passed: false,
+      refs: {
+        reviews: reviewArtifacts.map((r) => r.path),
+        judges: judgeArtifacts.map((j) => j.path),
+      },
+      emit: {
+        stdout: formatRouteStoneEmit({
+          operation: 'route.stone.set',
+          stone: stoneMatched.name,
+          action: 'passed',
+          passage: 'malfunction',
+          reason: 'reviewer or judge malfunctioned',
+          guard: guardData,
+        }),
+        stderr: stderrLines.length > 0 ? stderrLines.join('\n') : undefined,
+      },
+    };
+  }
+
   // build guard data from artifacts and events for tree output
   const guardData = computeGuardData({
     stone: stoneMatched,
@@ -274,6 +386,20 @@ export const setStoneAsPassed = async (
 
   if (allJudgesPassed) {
     await setStonePassage({ stone: stoneMatched, route: input.route });
+
+    // clear blocked triggers for this stone and all earlier stones
+    await clearBlockedTriggersUpTo({
+      stone: stoneMatched,
+      stones,
+      route: input.route,
+    });
+
+    // update bouncer cache (stone passage may release protected artifacts)
+    const bouncerCache = await computeRouteBouncerCache({
+      cwd: process.cwd(),
+      route: input.route,
+    });
+    await setRouteBouncerCache({ cache: bouncerCache, route: input.route });
 
     // clear any prior blocker report
     await delStoneGuardBlockerReport({
@@ -327,21 +453,15 @@ export const setStoneAsPassed = async (
       stderrLines.push('');
     }
 
-    stderrLines.push(`🔎 judge ${judge.index}`);
+    stderrLines.push(`🪶 judge ${judge.index}`);
 
-    // read and parse artifact content
+    // read artifact content (already formatted with tree buckets)
     try {
       const artifactContent = await fs.readFile(judge.path, 'utf-8');
-      const parsed = parseJudgeArtifactForStderr(artifactContent);
-
-      // format as tree bucket (like route.drive's stone content)
-      stderrLines.push(`   ├─`);
-      stderrLines.push(`   │`);
-      for (const line of parsed.lines) {
-        stderrLines.push(`   │  ${line}`);
+      // indent each line by 3 spaces to nest under 🔎 judge N
+      for (const line of artifactContent.split('\n')) {
+        stderrLines.push(`   ${line}`);
       }
-      stderrLines.push(`   │`);
-      stderrLines.push(`   └─`);
     } catch {
       // fallback to reason if file read fails
       if (judge.reason) {
@@ -483,28 +603,21 @@ const computeBlockedOn = (input: {
 };
 
 /**
- * .what = parses judge artifact content for stderr output
- * .why = strips internal markers and extracts meaningful error info
- *
- * .note = keeps indent whitespace for tree-structured output
- *         collapses consecutive blank lines into one
+ * .what = clears blocked triggers for a stone and all earlier stones
+ * .why = when a later stone is passed, earlier blocked states are resolved
  */
-const parseJudgeArtifactForStderr = (content: string): { lines: string[] } => {
-  // strip internal markers and trim start/end blank lines
-  const cleaned = content
-    .replace(/---stderr---/g, '')
-    .replace(/---metadata---/g, '')
-    .trim();
+const clearBlockedTriggersUpTo = async (input: {
+  stone: RouteStone;
+  stones: RouteStone[];
+  route: string;
+}): Promise<void> => {
+  // find index of current stone
+  const stoneIndex = input.stones.findIndex((s) => s.name === input.stone.name);
+  if (stoneIndex < 0) return;
 
-  // collapse consecutive blank lines into one
-  const lines: string[] = [];
-  let prevWasBlank = false;
-  for (const line of cleaned.split('\n')) {
-    const isBlank = line.trim() === '';
-    if (isBlank && prevWasBlank) continue; // skip consecutive blanks
-    lines.push(line);
-    prevWasBlank = isBlank;
+  // clear blocked triggers for this stone and all earlier stones
+  const stonesToClear = input.stones.slice(0, stoneIndex + 1);
+  for (const stone of stonesToClear) {
+    await delBlockedTriggeredReport({ stone: stone.name, route: input.route });
   }
-
-  return { lines };
 };

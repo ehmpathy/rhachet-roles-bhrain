@@ -58,6 +58,7 @@ describe('getAllStoneArtifacts', () => {
         artifacts: ['src/**/*.ts'],
         reviews: [],
         judges: [],
+        protect: [],
       },
     });
 

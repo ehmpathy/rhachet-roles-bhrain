@@ -22,6 +22,7 @@ describe('runStoneGuardJudges', () => {
       artifacts: ['1.test*.md'],
       reviews: [],
       judges: ['echo "passed: true\\nreason: all checks passed"'],
+      protect: [],
     });
 
     when('[t0] judges are executed', () => {
@@ -87,6 +88,7 @@ describe('runStoneGuardJudges', () => {
       artifacts: ['1.test*.md'],
       reviews: [],
       judges: ['echo "passed: false\\nreason: blockers found"'],
+      protect: [],
     });
 
     when('[t0] judges are executed', () => {
@@ -122,6 +124,7 @@ describe('runStoneGuardJudges', () => {
         'echo "passed: true\\nreason: review passed"',
         'echo "passed: false\\nreason: approval required"',
       ],
+      protect: [],
     });
 
     when('[t0] judges are executed', () => {
@@ -165,6 +168,7 @@ describe('runStoneGuardJudges', () => {
           '$route',
         ),
       ],
+      protect: [],
     });
 
     beforeEach(async () => {
@@ -219,6 +223,7 @@ describe('runStoneGuardJudges', () => {
       artifacts: ['1.test*.md'],
       reviews: [],
       judges: ['echo "passed: true\\nreason: all checks passed"'],
+      protect: [],
     });
 
     when('[t0] judge passes on first attempt', () => {
@@ -257,6 +262,7 @@ describe('runStoneGuardJudges', () => {
       artifacts: ['1.test*.md'],
       reviews: [],
       judges: ['echo "passed: false\\nreason: blockers found"'],
+      protect: [],
     });
 
     when('[t0] judge fails on first attempt', () => {
@@ -283,7 +289,156 @@ describe('runStoneGuardJudges', () => {
     });
   });
 
-  given('[case7] blocked judge (exit 2) is NOT cached', () => {
+  given('[case7] judge exits with code 0 (passed)', () => {
+    const tempDir = genTempDir({ slug: 'judges-exit0' });
+    const stone = new RouteStone({
+      name: '1.test',
+      path: path.join(tempDir, '1.test.stone'),
+      guard: null,
+    });
+    const guard = new RouteStoneGuard({
+      path: path.join(tempDir, '1.test.guard'),
+      artifacts: ['1.test*.md'],
+      reviews: [],
+      judges: ['echo "passed: true\\nreason: judge passed"'],
+      protect: [],
+    });
+
+    when('[t0] judge exits 0', () => {
+      then('exitCode is 0 and exitClass is passed', async () => {
+        const judges = await runStoneGuardJudges(
+          { stone, guard, hash: 'exit0hash', iteration: 1, route: tempDir },
+          noopContext,
+        );
+        expect(judges[0]?.exitCode).toEqual(0);
+        expect(judges[0]?.exitClass).toEqual('passed');
+      });
+
+      then('artifact contains stdout in tree bucket', async () => {
+        const judges = await runStoneGuardJudges(
+          { stone, guard, hash: 'exit0hash2', iteration: 1, route: tempDir },
+          noopContext,
+        );
+        const content = await fs.readFile(judges[0]?.path ?? '', 'utf-8');
+        expect(content).toContain('├─ stdout');
+        expect(content).toContain('judge passed');
+      });
+
+      then('artifact snapshot matches', async () => {
+        const judges = await runStoneGuardJudges(
+          { stone, guard, hash: 'exit0snap', iteration: 1, route: tempDir },
+          noopContext,
+        );
+        const content = await fs.readFile(judges[0]?.path ?? '', 'utf-8');
+        expect(content).toMatchSnapshot();
+      });
+    });
+  });
+
+  given('[case8] judge exits with code 2 (constraint)', () => {
+    const tempDir = genTempDir({ slug: 'judges-exit2' });
+    const stone = new RouteStone({
+      name: '1.test',
+      path: path.join(tempDir, '1.test.stone'),
+      guard: null,
+    });
+    const guard = new RouteStoneGuard({
+      path: path.join(tempDir, '1.test.guard'),
+      artifacts: ['1.test*.md'],
+      reviews: [],
+      judges: [
+        'bash -c "echo passed: false; echo reason: approval required; exit 2"',
+      ],
+      protect: [],
+    });
+
+    when('[t0] judge exits 2', () => {
+      then('exitCode is 2 and exitClass is constraint', async () => {
+        const judges = await runStoneGuardJudges(
+          { stone, guard, hash: 'exit2hash', iteration: 1, route: tempDir },
+          noopContext,
+        );
+        expect(judges[0]?.exitCode).toEqual(2);
+        expect(judges[0]?.exitClass).toEqual('constraint');
+      });
+
+      then('artifact contains blocked by constraints', async () => {
+        const judges = await runStoneGuardJudges(
+          { stone, guard, hash: 'exit2hash2', iteration: 1, route: tempDir },
+          noopContext,
+        );
+        const content = await fs.readFile(judges[0]?.path ?? '', 'utf-8');
+        expect(content).toContain('blocked by constraints');
+        expect(content).toContain('exit code: 2');
+      });
+
+      then('artifact snapshot matches', async () => {
+        const judges = await runStoneGuardJudges(
+          { stone, guard, hash: 'exit2snap', iteration: 1, route: tempDir },
+          noopContext,
+        );
+        const content = await fs.readFile(judges[0]?.path ?? '', 'utf-8');
+        expect(content).toMatchSnapshot();
+      });
+    });
+  });
+
+  given('[case9] judge exits with code 1 (malfunction)', () => {
+    const tempDir = genTempDir({ slug: 'judges-exit1' });
+    const stone = new RouteStone({
+      name: '1.test',
+      path: path.join(tempDir, '1.test.stone'),
+      guard: null,
+    });
+    const guard = new RouteStoneGuard({
+      path: path.join(tempDir, '1.test.guard'),
+      artifacts: ['1.test*.md'],
+      reviews: [],
+      judges: ['bash -c "echo stdout output; echo stderr error >&2; exit 1"'],
+      protect: [],
+    });
+
+    when('[t0] judge exits 1', () => {
+      then('exitCode is 1 and exitClass is malfunction', async () => {
+        const judges = await runStoneGuardJudges(
+          { stone, guard, hash: 'exit1hash', iteration: 1, route: tempDir },
+          noopContext,
+        );
+        expect(judges[0]?.exitCode).toEqual(1);
+        expect(judges[0]?.exitClass).toEqual('malfunction');
+      });
+
+      then('artifact contains blocked by malfunction', async () => {
+        const judges = await runStoneGuardJudges(
+          { stone, guard, hash: 'exit1hash2', iteration: 1, route: tempDir },
+          noopContext,
+        );
+        const content = await fs.readFile(judges[0]?.path ?? '', 'utf-8');
+        expect(content).toContain('blocked by malfunction');
+        expect(content).toContain('exit code: 1');
+      });
+
+      then('artifact captures both stdout and stderr', async () => {
+        const judges = await runStoneGuardJudges(
+          { stone, guard, hash: 'exit1hash3', iteration: 1, route: tempDir },
+          noopContext,
+        );
+        expect(judges[0]?.stdout).toContain('stdout output');
+        expect(judges[0]?.stderr).toContain('stderr error');
+      });
+
+      then('artifact snapshot matches', async () => {
+        const judges = await runStoneGuardJudges(
+          { stone, guard, hash: 'exit1snap', iteration: 1, route: tempDir },
+          noopContext,
+        );
+        const content = await fs.readFile(judges[0]?.path ?? '', 'utf-8');
+        expect(content).toMatchSnapshot();
+      });
+    });
+  });
+
+  given('[case10] blocked judge (exit 2) is NOT cached', () => {
     const tempDir = genTempDir({ slug: 'judges-nocache-block' });
     const stone = new RouteStone({
       name: '1.test',
@@ -298,6 +453,7 @@ describe('runStoneGuardJudges', () => {
       judges: [
         'bash -c \'echo "passed: false"; echo "reason: approval required"; exit 2\'',
       ],
+      protect: [],
     });
 
     when('[t0] judge blocks on first attempt', () => {

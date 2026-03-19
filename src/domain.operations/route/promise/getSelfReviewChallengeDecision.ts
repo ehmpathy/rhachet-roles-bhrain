@@ -1,13 +1,20 @@
 import * as fs from 'fs/promises';
 import * as path from 'path';
 
+import { getSelfReviewArticulationPath } from '../guard/getSelfReviewArticulationPath';
 import { getSelfReviewTriggeredCount } from './getSelfReviewTriggeredCount';
 import { getSelfReviewTriggeredReport } from './getSelfReviewTriggeredReport';
 import { setSelfReviewTriggeredReport } from './setSelfReviewTriggeredReport';
 
 /**
- * .what = decide if promise should be allowed, challenged first, or challenged rushed
- * .why = encapsulates trigger lookup, time enforcement, hashbar threshold, rush detection, plowthrough, and report creation
+ * .what = decide if promise should be allowed, challenged first, challenged rushed, or challenged absent
+ * .why = encapsulates trigger lookup, file presence check, time enforcement, hashbar threshold, rush detection, plowthrough, and report creation
+ *
+ * .note = order matters:
+ *   1. challenge:first when no prior report (introduces concept, shows path)
+ *   2. challenge:absent when file absent (holds accountable after they know about it)
+ *   3. challenge:rushed when too soon
+ *   4. allowed when time passed
  *
  * .note = plowthrough: if attempts >= 3 on same hash, allow without timer
  * .note = hashbar controls timer behavior on hash change:
@@ -23,10 +30,25 @@ export const getSelfReviewChallengeDecision = async (input: {
   slug: string;
   hash: string;
   route: string;
+  index: number;
   hashbar?: number;
 }): Promise<{
-  decision: 'allowed' | 'challenge:first' | 'challenge:rushed';
+  decision:
+    | 'allowed'
+    | 'challenge:first'
+    | 'challenge:rushed'
+    | 'challenge:absent';
+  articulationPath?: string;
 }> => {
+  // compute articulation path (used for challenge:absent and formatters)
+  // note: index is 1-based so files sort in order of review (1.slug, 2.slug, etc.)
+  const articulationPath = getSelfReviewArticulationPath({
+    route: input.route,
+    stone: input.stone,
+    index: input.index,
+    slug: input.slug,
+  });
+
   // default hashbar to 1
   const hashbar = input.hashbar ?? 1;
   const threshold = 30 * 1000;
@@ -35,10 +57,19 @@ export const getSelfReviewChallengeDecision = async (input: {
   // lookup trigger report for this hash
   const report = await getSelfReviewTriggeredReport(input);
 
-  // no report = first challenge, start timer now
+  // no report = first challenge, start timer now (introduces concept before file check)
   if (!report) {
     await setSelfReviewTriggeredReport(input);
-    return { decision: 'challenge:first' };
+    return { decision: 'challenge:first', articulationPath };
+  }
+
+  // check articulation file presence (only after they've seen challenge:first)
+  const fileExists = await fs
+    .access(articulationPath)
+    .then(() => true)
+    .catch(() => false);
+  if (!fileExists) {
+    return { decision: 'challenge:absent', articulationPath };
   }
 
   // check for rush BEFORE update: .uptil exists = re-attempt

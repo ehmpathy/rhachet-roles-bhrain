@@ -40,7 +40,7 @@ describe('getOnePassageReport.integration', () => {
     });
 
     when('[t1] multiple reports set, latest retrieved', () => {
-      then('returns latest report', async () => {
+      then('returns latest report when no filter', async () => {
         // set blocked first
         await setPassageReport({
           report: new PassageReport({
@@ -67,13 +67,22 @@ describe('getOnePassageReport.integration', () => {
         });
         expect(found?.status).toEqual('passed');
 
-        // get with status filter (should be blocked)
+        // get with status filter that matches latest (should return it)
+        const passed = await getOnePassageReport({
+          stone: '1.vision',
+          status: 'passed',
+          route: tempDir,
+        });
+        expect(passed?.status).toEqual('passed');
+
+        // get with status filter that does NOT match latest (should return null)
+        // note: new semantics — status filter checks LATEST entry only
         const blocked = await getOnePassageReport({
           stone: '1.vision',
           status: 'blocked',
           route: tempDir,
         });
-        expect(blocked?.status).toEqual('blocked');
+        expect(blocked).toBeNull();
       });
     });
   });

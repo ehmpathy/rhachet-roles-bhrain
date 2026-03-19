@@ -1,8 +1,8 @@
 import { RoleRegistry } from 'rhachet';
 
-import { ROLE_BRAIN } from '@src/domain.roles/brain/getBrainRole';
 import { ROLE_DRIVER } from '@src/domain.roles/driver/getDriverRole';
 import { ROLE_LIBRARIAN } from '@src/domain.roles/librarian/getLibrarianRole';
+import { ROLE_REFLECTOR } from '@src/domain.roles/reflector/getReflectorRole';
 import { ROLE_REVIEWER } from '@src/domain.roles/reviewer/getReviewerRole';
 import { ROLE_THINKER } from '@src/domain.roles/thinker/getThinkerRole';
 
@@ -19,8 +19,8 @@ export const getRoleRegistry = (): RoleRegistry =>
     roles: [
       ROLE_THINKER,
       ROLE_REVIEWER,
-      ROLE_BRAIN,
       ROLE_DRIVER,
       ROLE_LIBRARIAN,
+      ROLE_REFLECTOR,
     ],
   });

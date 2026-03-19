@@ -3,6 +3,7 @@ import * as os from 'os';
 import * as path from 'path';
 import { getError, given, then, when } from 'test-fns';
 
+import { getSelfReviewArticulationPath } from './guard/getSelfReviewArticulationPath';
 import { stepRouteStoneSet } from './stepRouteStoneSet';
 
 const ASSETS_DIR = path.join(__dirname, '.test/assets');
@@ -171,6 +172,16 @@ describe('stepRouteStoneSet', () => {
       });
       // create artifact for 1.vision
       await fs.writeFile(path.join(tempDir, '1.vision.md'), '# Vision');
+      // create articulation file for 1.vision.r1.all-done (required by file presence check)
+      // format: {route}/review/self/{stone}.r{index}.{slug}.md
+      const articulationPath = getSelfReviewArticulationPath({
+        route: tempDir,
+        stone: '1.vision',
+        index: 1,
+        slug: 'all-done',
+      });
+      await fs.mkdir(path.dirname(articulationPath), { recursive: true });
+      await fs.writeFile(articulationPath, '# self-review\n');
     });
 
     afterEach(async () => {
@@ -271,6 +282,54 @@ describe('stepRouteStoneSet', () => {
         );
         expect(error).toBeInstanceOf(Error);
         expect(error.message).toContain('--that is required');
+      });
+    });
+  });
+
+  given('[case5] set stone as arrived (alias for passed)', () => {
+    const tempDir = path.join(
+      os.tmpdir(),
+      `test-step-set-arrived-${Date.now()}`,
+    );
+
+    beforeEach(async () => {
+      await fs.cp(path.join(ASSETS_DIR, 'route.simple'), tempDir, {
+        recursive: true,
+      });
+      // create artifact for 1.vision
+      await fs.writeFile(path.join(tempDir, '1.vision.md'), '# Vision');
+    });
+
+    afterEach(async () => {
+      await fs.rm(tempDir, { recursive: true, force: true });
+    });
+
+    when('[t0] --as arrived with artifact present', () => {
+      then('behaves same as --as passed', async () => {
+        const result = await stepRouteStoneSet(
+          {
+            stone: '1.vision',
+            route: tempDir,
+            as: 'arrived',
+          },
+          noopContext,
+        );
+        expect(result.passed).toBe(true);
+        expect(result.emit?.stdout).toContain('passage = allowed');
+      });
+
+      then('returns refs object', async () => {
+        const result = await stepRouteStoneSet(
+          {
+            stone: '1.vision',
+            route: tempDir,
+            as: 'arrived',
+          },
+          noopContext,
+        );
+        expect(result.refs).toBeDefined();
+        expect(result.refs?.reviews).toEqual([]);
+        expect(result.refs?.judges).toEqual([]);
       });
     });
   });

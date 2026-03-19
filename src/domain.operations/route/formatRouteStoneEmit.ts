@@ -3,7 +3,9 @@ import type { RouteStoneGuardReviewSelf } from '@src/domain.objects/Driver/Route
 import { formatGuardTree } from './guard/formatGuardTree';
 import { formatLetsReflect } from './guard/formatLetsReflect';
 import { formatPatienceFriend } from './guard/formatPatienceFriend';
+import { formatWhatHaveYouSeen } from './guard/formatWhatHaveYouSeen';
 import { formatWhatsTheRush } from './guard/formatWhatsTheRush';
+import { getSelfReviewArticulationPath } from './guard/getSelfReviewArticulationPath';
 
 /**
  * .what = formats route stone operation output with good vibes
@@ -13,6 +15,16 @@ import { formatWhatsTheRush } from './guard/formatWhatsTheRush';
 const HEADER_GET = '🦉 and then?';
 const HEADER_SET = `🦉 the way speaks for itself`;
 const HEADER_DEL = `🦉 hoo needs 'em`;
+
+/**
+ * .what = reminder to continue the route after passage
+ * .why = guides driver to next step without confusion
+ */
+const REMINDER_LINES = [
+  '   │',
+  '   └─ the way continues, run',
+  '      └─ rhx route.drive',
+];
 
 type FormatInput =
   | {
@@ -25,6 +37,16 @@ type FormatInput =
       operation: 'route.stone.set';
       stone: string;
       action: 'approved';
+    }
+  | {
+      operation: 'route.stone.set';
+      stone: string;
+      action: 'rewound';
+      cascade: Array<{
+        stone: string;
+        deleted: string;
+        passage: string;
+      }>;
     }
   | {
       operation: 'route.stone.set';
@@ -49,9 +71,10 @@ type FormatInput =
   | {
       operation: 'route.stone.set';
       stone: string;
-      action: 'challenge:first' | 'challenge:rushed';
+      action: 'challenge:first' | 'challenge:rushed' | 'challenge:absent';
       slug: string;
       route: string;
+      articulationPath?: string;
       selfReview?: {
         reviewSelf: RouteStoneGuardReviewSelf;
         index: number;
@@ -62,7 +85,7 @@ type FormatInput =
       operation: 'route.stone.set';
       stone: string;
       action: 'passed';
-      passage: 'allowed' | 'blocked';
+      passage: 'allowed' | 'blocked' | 'malfunction';
       note?: string;
       reason?: string;
       slug?: string;
@@ -147,7 +170,11 @@ export const formatRouteStoneEmit = (input: FormatInput): string => {
         note: input.note ?? null,
         reason: input.reason ?? null,
         guard: input.guard,
+        isLast: input.passage !== 'allowed',
       });
+      if (input.passage === 'allowed') {
+        return [header, '', tree, ...REMINDER_LINES].join('\n');
+      }
       return [header, '', tree].join('\n');
     }
 
@@ -172,6 +199,51 @@ export const formatRouteStoneEmit = (input: FormatInput): string => {
       return lines.join('\n');
     }
 
+    // handle challenge:absent case (file presence check)
+    if (input.action === 'challenge:absent') {
+      // prepend what have you seen confrontation (articulationPath always present for absent)
+      const index = input.selfReview?.index ?? 1;
+      lines.push(
+        formatWhatHaveYouSeen({
+          articulationPath:
+            input.articulationPath ??
+            getSelfReviewArticulationPath({
+              route: input.route,
+              stone: input.stone,
+              index,
+              slug: input.slug,
+            }),
+        }),
+      );
+      lines.push('');
+
+      // show patience message
+      lines.push(
+        formatPatienceFriend({
+          stone: input.stone,
+          slug: input.slug,
+          route: input.route,
+          index,
+        }),
+      );
+      lines.push('');
+
+      // then show lets reflect reminder with the guide
+      if (input.selfReview) {
+        lines.push(
+          formatLetsReflect({
+            stone: input.stone,
+            slug: input.slug,
+            route: input.route,
+            reviewSelf: input.selfReview.reviewSelf,
+            index: input.selfReview.index,
+            total: input.selfReview.total,
+          }),
+        );
+      }
+      return lines.join('\n');
+    }
+
     // handle challenge cases (time enforcement and rush detection)
     if (
       input.action === 'challenge:first' ||
@@ -184,11 +256,13 @@ export const formatRouteStoneEmit = (input: FormatInput): string => {
       }
 
       // show patience message
+      const index = input.selfReview?.index ?? 1;
       lines.push(
         formatPatienceFriend({
           stone: input.stone,
           slug: input.slug,
           route: input.route,
+          index,
         }),
       );
       lines.push('');
@@ -212,18 +286,32 @@ export const formatRouteStoneEmit = (input: FormatInput): string => {
     // handle blocked case (agent tried to approve)
     if (input.action === 'blocked') {
       lines.push(`🗿 ${input.operation}`);
-      lines.push(`   └─ stone = ${input.stone}`);
-      lines.push(`      ├─ ✗ ${input.reason}`);
-      lines.push(`      └─ ${input.guidance}`);
+      lines.push(`   ├─ stone = ${input.stone}`);
+      lines.push(`   ├─ ✗ ${input.reason}`);
+      lines.push(`   └─ ${input.guidance}`);
       return lines.join('\n');
     }
 
     lines.push(`🗿 ${input.operation}`);
-    lines.push(`   └─ stone = ${input.stone}`);
 
     if (input.action === 'approved') {
-      lines.push(`      └─ ✓ approved`);
+      lines.push(`   ├─ stone = ${input.stone}`);
+      lines.push(`   └─ ✓ approved`);
+    } else if (input.action === 'rewound') {
+      // format cascade with deletion counts
+      lines.push(`   ├─ stone = ${input.stone}`);
+      lines.push(`   ├─ cascade`);
+      input.cascade.forEach((c, i) => {
+        const isLast = i === input.cascade.length - 1;
+        const connector = isLast ? '└─' : '├─';
+        lines.push(`   │  ${connector} ${c.stone}`);
+        lines.push(`   │  ${isLast ? ' ' : '│'}  ├─ deleted: ${c.deleted}`);
+        lines.push(`   │  ${isLast ? ' ' : '│'}  └─ passage: ${c.passage}`);
+      });
+      lines.push(`   └─ done`);
+      return lines.join('\n');
     } else if (input.action === 'promised') {
+      lines.push(`   ├─ stone = ${input.stone}`);
       // show progress per vision: "passage = progressed (review.self N/M promised)"
       lines.push(
         `   └─ passage = progressed (review.self ${input.progress.index}/${input.progress.total} promised)`,
@@ -251,11 +339,29 @@ export const formatRouteStoneEmit = (input: FormatInput): string => {
         ? `${input.passage} (${input.note})`
         : input.passage;
 
-      if (input.passage === 'blocked' && input.reason) {
+      // branch: blocked or malfunction with reason
+      if (
+        (input.passage === 'blocked' || input.passage === 'malfunction') &&
+        input.reason
+      ) {
+        lines.push(`   ├─ stone = ${input.stone}`);
         lines.push(`   ├─ passage = ${passageValue}`);
         lines.push(`   └─ reason = ${input.reason}`);
-      } else {
-        lines.push(`   └─ passage = ${passageValue}`);
+      }
+
+      // branch: allowed or no reason
+      if (
+        !(
+          (input.passage === 'blocked' || input.passage === 'malfunction') &&
+          input.reason
+        )
+      ) {
+        lines.push(`   ├─ stone = ${input.stone}`);
+        const passageConnector = input.passage === 'allowed' ? '├─' : '└─';
+        lines.push(`   ${passageConnector} passage = ${passageValue}`);
+        if (input.passage === 'allowed') {
+          lines.push(...REMINDER_LINES);
+        }
       }
     }
   }

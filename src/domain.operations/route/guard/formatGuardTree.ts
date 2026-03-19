@@ -4,7 +4,7 @@
  */
 export const formatGuardTree = (input: {
   stone: string;
-  passage: 'allowed' | 'blocked';
+  passage: 'allowed' | 'blocked' | 'malfunction';
   note: string | null;
   reason: string | null;
   guard: {
@@ -28,6 +28,11 @@ export const formatGuardTree = (input: {
       path: string;
     }>;
   } | null;
+  /**
+   * .what = whether guard is the last item in the tree
+   * .why = determines box-draw connector (└─ vs ├─) and inner indent
+   */
+  isLast?: boolean;
 }): string => {
   const lines: string[] = [];
 
@@ -41,7 +46,10 @@ export const formatGuardTree = (input: {
 
   // if no guard, emit passage as the last line
   if (!input.guard) {
-    if (input.passage === 'blocked' && input.reason) {
+    if (
+      (input.passage === 'blocked' || input.passage === 'malfunction') &&
+      input.reason
+    ) {
       lines.push(`   ├─ passage = ${passageLabel}`);
       lines.push(`   └─ reason = ${input.reason}`);
     } else {
@@ -53,8 +61,11 @@ export const formatGuardTree = (input: {
   // emit passage line (not last — guard section follows)
   lines.push(`   ├─ passage = ${passageLabel}`);
 
-  // emit reason if blocked
-  if (input.passage === 'blocked' && input.reason) {
+  // emit reason if blocked or malfunction
+  if (
+    (input.passage === 'blocked' || input.passage === 'malfunction') &&
+    input.reason
+  ) {
     lines.push(`   ├─ reason = ${input.reason}`);
   }
 
@@ -62,7 +73,12 @@ export const formatGuardTree = (input: {
   const hasReviews = input.guard.reviews.length > 0;
   const hasJudges = input.guard.judges.length > 0;
 
-  lines.push(`   └─ guard`);
+  // isLast determines connector and inner indent
+  const guardIsLast = input.isLast ?? true;
+  const guardConnector = guardIsLast ? '└─' : '├─';
+  const guardIndent = guardIsLast ? '      ' : '   │  ';
+
+  lines.push(`   ${guardConnector} guard`);
 
   // determine which sub-sections are last for correct box-draw
   const sections: Array<{ type: 'artifacts' | 'reviews' | 'judges' }> = [];
@@ -77,18 +93,18 @@ export const formatGuardTree = (input: {
     const sectionIndent = isSectionLast ? '   ' : '│  ';
 
     if (section.type === 'artifacts') {
-      lines.push(`      ${sectionPrefix} artifacts`);
+      lines.push(`${guardIndent}${sectionPrefix} artifacts`);
       for (let a = 0; a < input.guard.artifactFiles.length; a++) {
         const isArtifactLast = a === input.guard.artifactFiles.length - 1;
         const artPrefix = isArtifactLast ? '└─' : '├─';
         lines.push(
-          `      ${sectionIndent} ${artPrefix} ${input.guard.artifactFiles[a]}`,
+          `${guardIndent}${sectionIndent} ${artPrefix} ${input.guard.artifactFiles[a]}`,
         );
       }
     }
 
     if (section.type === 'reviews') {
-      lines.push(`      ${sectionPrefix} reviews`);
+      lines.push(`${guardIndent}${sectionPrefix} reviews`);
       for (let r = 0; r < input.guard.reviews.length; r++) {
         const review = input.guard.reviews[r]!;
         const isReviewLast = r === input.guard.reviews.length - 1;
@@ -96,11 +112,13 @@ export const formatGuardTree = (input: {
         const reviewIndent = isReviewLast ? '   ' : '│  ';
 
         lines.push(
-          `      ${sectionIndent} ${reviewPrefix} r${review.index}: ${review.cmd}`,
+          `${guardIndent}${sectionIndent} ${reviewPrefix} r${review.index}: ${review.cmd}`,
         );
 
         if (review.cached) {
-          lines.push(`      ${sectionIndent} ${reviewIndent} └─ · cached`);
+          lines.push(
+            `${guardIndent}${sectionIndent} ${reviewIndent} └─ · cached`,
+          );
         } else {
           // build detail lines for fresh review
           const detailLines: string[] = [];
@@ -123,7 +141,7 @@ export const formatGuardTree = (input: {
             const isDetailLast = d === detailLines.length - 1;
             const detailPrefix = isDetailLast ? '└─' : '├─';
             lines.push(
-              `      ${sectionIndent} ${reviewIndent} ${detailPrefix} ${detailLines[d]}`,
+              `${guardIndent}${sectionIndent} ${reviewIndent} ${detailPrefix} ${detailLines[d]}`,
             );
           }
         }
@@ -131,7 +149,7 @@ export const formatGuardTree = (input: {
     }
 
     if (section.type === 'judges') {
-      lines.push(`      ${sectionPrefix} judges`);
+      lines.push(`${guardIndent}${sectionPrefix} judges`);
       for (let j = 0; j < input.guard.judges.length; j++) {
         const judge = input.guard.judges[j]!;
         const isJudgeLast = j === input.guard.judges.length - 1;
@@ -139,11 +157,13 @@ export const formatGuardTree = (input: {
         const judgeIndent = isJudgeLast ? '   ' : '│  ';
 
         lines.push(
-          `      ${sectionIndent} ${judgePrefix} j${judge.index}: ${judge.cmd}`,
+          `${guardIndent}${sectionIndent} ${judgePrefix} j${judge.index}: ${judge.cmd}`,
         );
 
         if (judge.cached) {
-          lines.push(`      ${sectionIndent} ${judgeIndent} └─ · cached`);
+          lines.push(
+            `${guardIndent}${sectionIndent} ${judgeIndent} └─ · cached`,
+          );
         } else {
           const detailLines: string[] = [];
           const dur =
@@ -160,7 +180,7 @@ export const formatGuardTree = (input: {
             const isDetailLast = d === detailLines.length - 1;
             const detailPrefix = isDetailLast ? '└─' : '├─';
             lines.push(
-              `      ${sectionIndent} ${judgeIndent} ${detailPrefix} ${detailLines[d]}`,
+              `${guardIndent}${sectionIndent} ${judgeIndent} ${detailPrefix} ${detailLines[d]}`,
             );
           }
         }

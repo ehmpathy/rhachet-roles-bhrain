@@ -1,9 +1,12 @@
 import * as fs from 'fs/promises';
 
 import { getRouteBindByBranch } from './bind/getRouteBindByBranch';
+import { computeRouteBouncerCache } from './bouncer/computeRouteBouncerCache';
+import { setRouteBouncerCache } from './bouncer/setRouteBouncerCache';
 import { getStoneGuardBlockerReport } from './drive/getStoneGuardBlockerReport';
 import { setDriveBlockerState } from './drive/setDriveBlockerState';
 import { getOneStoneGuardApproval } from './judges/getOneStoneGuardApproval';
+import { getAllPassageReports } from './passage/getAllPassageReports';
 import { computeNextStones } from './stones/computeNextStones';
 import { getAllStoneDriveArtifacts } from './stones/getAllStoneDriveArtifacts';
 import { getAllStones } from './stones/getAllStones';
@@ -34,6 +37,65 @@ export const stepRouteDrive = async (input: {
     route = bind.route;
   }
 
+  // precompute bouncer cache for artifact gate enforcement
+  const bouncerCache = await computeRouteBouncerCache({
+    cwd: process.cwd(),
+    route,
+  });
+  await setRouteBouncerCache({ cache: bouncerCache, route });
+
+  // in hook mode, check for malfunction or blocked status immediately
+  // .note = getAllPassageReports returns latest per stone (last entry wins)
+  //         a subsequent 'passed' status resolves the malfunction or blocked state
+  if (input.mode === 'hook') {
+    const passageReports = await getAllPassageReports({ route });
+
+    // check for malfunction
+    const malfunctionReport = passageReports.find(
+      (r) => r.status === 'malfunction',
+    );
+    if (malfunctionReport) {
+      return {
+        emit: {
+          stdout: formatRouteDriveMalfunction({
+            route,
+            stone: malfunctionReport.stone,
+          }),
+          stderr: {
+            reason: formatRouteDriveMalfunctionEscalate({
+              stone: malfunctionReport.stone,
+            }),
+            code: 3,
+          },
+        },
+      };
+    }
+
+    // check for blocked status (agent explicitly marked stone as blocked via --as blocked)
+    // note: must check that blocked is the LATEST status for that stone
+    // since passage.jsonl is append-only, later entries supersede earlier ones
+    // note: guard-initiated blocks have a `blocker` field (e.g., 'approval', 'review.self')
+    //       while agent-initiated blocks do not - only show this path for agent-initiated
+    const blockedReport = passageReports.find((r) => r.status === 'blocked');
+    if (blockedReport) {
+      // find the latest report for this stone
+      const latestForStone = passageReports
+        .filter((r) => r.stone === blockedReport.stone)
+        .pop();
+      // only report blocked if it's still the latest status AND it's agent-initiated (no blocker field)
+      if (latestForStone?.status === 'blocked' && !latestForStone.blocker) {
+        return {
+          emit: {
+            stdout: formatRouteDriveBlocked({
+              route,
+              stone: blockedReport.stone,
+            }),
+          },
+        };
+      }
+    }
+  }
+
   // get all stones and artifacts
   const stones = await getAllStones({ route });
   const artifacts = await getAllStoneDriveArtifacts({ route });
@@ -59,13 +121,6 @@ export const stepRouteDrive = async (input: {
   // get first stone and read its content
   const stone = nextStones[0]!;
   const stoneContent = await fs.readFile(stone.path, 'utf-8');
-
-  // format output
-  const stdout = formatRouteDrive({
-    route,
-    stone: stone.name,
-    content: stoneContent,
-  });
 
   // in hook mode, track and potentially block stop
   if (input.mode === 'hook') {
@@ -100,6 +155,7 @@ export const stepRouteDrive = async (input: {
     }
 
     // track this block attempt
+    // .note = state.count tracks hooks without passage attempt; used for nudge threshold
     const { state } = await setDriveBlockerState({ route, stone: stone.name });
 
     // check if we've exceeded max consecutive blocks (cutoff: 21)
@@ -126,6 +182,15 @@ export const stepRouteDrive = async (input: {
       };
     }
 
+    // format output with nudge threshold and blocked suggestion
+    const stdout = formatRouteDrive({
+      route,
+      stone: stone.name,
+      content: stoneContent,
+      count: state.count,
+      suggestBlocked: state.count > 5,
+    });
+
     // block stop - same content in stdout AND stderr (for visibility), exit code 2 to signal
     return {
       emit: {
@@ -135,7 +200,14 @@ export const stepRouteDrive = async (input: {
     };
   }
 
-  // direct mode, just show output
+  // direct mode, just show output (no nudge, no blocked suggestion)
+  const stdout = formatRouteDrive({
+    route,
+    stone: stone.name,
+    content: stoneContent,
+    count: 0,
+    suggestBlocked: false,
+  });
   return {
     emit: { stdout },
   };
@@ -243,13 +315,92 @@ const formatRouteDriveNeedsApproval = (input: {
 };
 
 /**
+ * .what = formats route.drive output when reviewer/judge malfunctioned
+ * .why = immediate halt with escalation to human
+ */
+const formatRouteDriveMalfunction = (input: {
+  route: string;
+  stone: string;
+}): string => {
+  const lines: string[] = [];
+  lines.push(`🦉 where were we?`);
+  lines.push('');
+  lines.push(`🗿 route.drive`);
+  lines.push(`   ├─ where do we go?`);
+  lines.push(`   │  ├─ route = ${input.route}`);
+  lines.push(`   │  └─ stone = ${input.stone}`);
+  lines.push(`   │`);
+  lines.push(`   └─ 💥 halted, guard malfunction`);
+  lines.push(
+    `      └─ please tell a human this needs to be fixed before you can continue`,
+  );
+  return lines.join('\n');
+};
+
+/**
+ * .what = formats escalation message for stderr when malfunction detected
+ * .why = provides context for human intervention
+ */
+const formatRouteDriveMalfunctionEscalate = (input: {
+  stone: string;
+}): string => {
+  return `reviewer or judge malfunctioned on stone ${input.stone}. a human must fix the malfunction before the route can proceed.`;
+};
+
+/**
+ * .what = formats route.drive output when stone is blocked
+ * .why = allows agent to stop gracefully when stone marked as blocked
+ */
+const formatRouteDriveBlocked = (input: {
+  route: string;
+  stone: string;
+}): string => {
+  const articulationPath = `${input.route}/.route/blocker/${input.stone}.md`;
+  const lines: string[] = [];
+  lines.push(`🦉 where were we?`);
+  lines.push('');
+  lines.push(`🗿 route.drive`);
+  lines.push(`   ├─ where do we go?`);
+  lines.push(`   │  ├─ route = ${input.route}`);
+  lines.push(`   │  └─ stone = ${input.stone}`);
+  lines.push(`   │`);
+  lines.push(`   └─ halted, stone marked blocked`);
+  lines.push(`      └─ reason: ${articulationPath}`);
+  return lines.join('\n');
+};
+
+/**
+ * .what = returns drum nudge tree bucket for stuck clones
+ * .why = gentle reminder after 7+ hooks without passage attempt
+ */
+const formatRouteDriveNudge = (): string[] => {
+  return [
+    `   ├─ 🪘 walk the way`,
+    `   │  ├─`,
+    `   │  │`,
+    `   │  │  do your work, then step back`,
+    `   │  │  the only path to serenity`,
+    `   │  │`,
+    `   │  │  — tao te ching`,
+    `   │  │`,
+    `   │  └─`,
+    `   │`,
+  ];
+};
+
+/**
  * .what = formats route.drive output with stone content
  * .why = provides GPS-like guidance with full stone context
+ *
+ * .note = count tracks hooks without passage attempt (via setDriveBlockerState)
+ *         if count >= 7, includes drum nudge to encourage action
  */
 const formatRouteDrive = (input: {
   route: string;
   stone: string;
   content: string;
+  count: number;
+  suggestBlocked: boolean;
 }): string => {
   const lines: string[] = [];
 
@@ -264,11 +415,20 @@ const formatRouteDrive = (input: {
   lines.push(`   │  └─ stone = ${input.stone}`);
   lines.push(`   │`);
 
-  // pass command (first instance)
-  const passCmd = `rhx route.stone.set --stone ${input.stone} --as passed`;
-  lines.push(`   ├─ are we there yet? if so, run`);
-  lines.push(`   │  └─ ${passCmd}`);
+  // command prompt with both options
+  const arrivedCmd = `rhx route.stone.set --stone ${input.stone} --as arrived`;
+  const passedCmd = `rhx route.stone.set --stone ${input.stone} --as passed`;
+  lines.push(`   ├─ are you here?`);
+  lines.push(`   │  ├─ when ready for review, run:`);
+  lines.push(`   │  │  └─ ${arrivedCmd}`);
+  lines.push(`   │  └─ when ready to continue, run:`);
+  lines.push(`   │     └─ ${passedCmd}`);
   lines.push(`   │`);
+
+  // drum nudge for stuck clones (7+ hooks without passage attempt)
+  if (input.count >= 7) {
+    lines.push(...formatRouteDriveNudge());
+  }
 
   // stone content block
   lines.push(`   ├─ here's the stone`);
@@ -284,9 +444,25 @@ const formatRouteDrive = (input: {
   lines.push(`   │  └─`);
   lines.push(`   │`);
 
-  // pass command (second instance, for easy copy)
-  lines.push(`   └─ are we there yet? if so, run`);
-  lines.push(`      └─ ${passCmd}`);
+  // command prompt at bottom (easy copy after you read the stone)
+  if (input.suggestBlocked) {
+    // show blocked option when stuck
+    const blockedCmd = `rhx route.stone.set --stone ${input.stone} --as blocked`;
+    lines.push(`   ├─ are you here?`);
+    lines.push(`   │  ├─ when ready for review, run:`);
+    lines.push(`   │  │  └─ ${arrivedCmd}`);
+    lines.push(`   │  └─ when ready to continue, run:`);
+    lines.push(`   │     └─ ${passedCmd}`);
+    lines.push(`   │`);
+    lines.push(`   └─ are you blocked? if so, run`);
+    lines.push(`      └─ ${blockedCmd}`);
+  } else {
+    lines.push(`   └─ are you here?`);
+    lines.push(`      ├─ when ready for review, run:`);
+    lines.push(`      │  └─ ${arrivedCmd}`);
+    lines.push(`      └─ when ready to continue, run:`);
+    lines.push(`         └─ ${passedCmd}`);
+  }
 
   return lines.join('\n');
 };

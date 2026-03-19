@@ -1,6 +1,7 @@
 import { given, then, when } from 'test-fns';
 
 import { formatLetsReflect } from './formatLetsReflect';
+import { getSelfReviewArticulationPath } from './getSelfReviewArticulationPath';
 
 describe('formatLetsReflect', () => {
   given('[case1] standard review.self', () => {
@@ -58,7 +59,7 @@ describe('formatLetsReflect', () => {
         expect(output).toContain('review guide content');
       });
 
-      then('contains articulation section', () => {
+      then('contains walk the way section', () => {
         const output = formatLetsReflect({
           stone: '1.vision',
           slug: 'all-done',
@@ -71,10 +72,18 @@ describe('formatLetsReflect', () => {
           total: 1,
         });
 
+        expect(output).toContain('walk the way 🪷');
         expect(output).toContain('articulate into');
         expect(output).toContain(
-          '.behavior/v2026_03_05.behavior-example/review/self/1.vision.all-done.md',
+          getSelfReviewArticulationPath({
+            route: '.behavior/v2026_03_05.behavior-example',
+            stone: '1.vision',
+            index: 1,
+            slug: 'all-done',
+          }),
         );
+        expect(output).toContain('for each found issue 🪘');
+        expect(output).toContain('for each non issue 🪘');
       });
 
       then('contains final instruction', () => {

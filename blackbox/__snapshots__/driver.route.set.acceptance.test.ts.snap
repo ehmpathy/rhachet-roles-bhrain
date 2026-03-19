@@ -1,11 +1,51 @@
 // Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
 
+exports[`driver.route.set.acceptance given: [case1] route.stone.set --as passed when: [t0] stone has artifact then: stdout matches snapshot 1`] = `
+"🦉 the way speaks for itself
+
+🗿 route.stone.set
+   ├─ stone = 1.vision
+   ├─ passage = allowed (unguarded)
+   │
+   └─ the way continues, run
+      └─ rhx route.drive
+"
+`;
+
+exports[`driver.route.set.acceptance given: [case3] route.stone.set --as passed with guard (allowed) when: [t0] guarded stone with review + judge that pass then: stdout matches snapshot 1`] = `
+"🦉 the way speaks for itself
+   ├─ ✓ review.1 - completed 0.0s
+   └─ ✓ judge.1 - allowed 0.0s
+
+🗿 route.stone.set
+   ├─ stone = 1.test
+   ├─ passage = allowed
+   ├─ guard
+   │  ├─ artifacts
+   │  │   └─ 1.test.md
+   │  ├─ reviews
+   │  │   └─ r1: echo "blockers: 0\\nnitpicks: 1\\ntest review content"
+   │  │       ├─ finished 0.0s ✓
+   │  │       ├─ review: .route/1.test.guard.review.i1.e2f8d2b5671b203b4a673b24f3772d3f6a7cac1669258302d777591e974dc82b.r1.md
+   │  │       └─ 1 nitpick 🟠
+   │  └─ judges
+   │      └─ j1: echo "passed: true\\nreason: all checks passed"
+   │          └─ finished 0.0s ✓
+   │
+   └─ the way continues, run
+      └─ rhx route.drive
+"
+`;
+
 exports[`driver.route.set.acceptance given: [case5] route.stone.set with flexible pattern lookup when: [t0] partial pattern matches single stone then: stdout matches snapshot 1`] = `
 "🦉 the way speaks for itself
 
 🗿 route.stone.set
-   └─ stone = 1.vision
-   └─ passage = allowed (unguarded)
+   ├─ stone = 1.vision
+   ├─ passage = allowed (unguarded)
+   │
+   └─ the way continues, run
+      └─ rhx route.drive
 "
 `;
 
@@ -13,9 +53,9 @@ exports[`driver.route.set.acceptance given: [case5] route.stone.set with flexibl
 "🦉 the way speaks for itself
 
 🗿 route.stone.set
-   └─ stone = 2.criteria
-      ├─ ✗ only humans can approve
-      └─ please ask a human to run this command
+   ├─ stone = 2.criteria
+   ├─ ✗ only humans can approve
+   └─ please ask a human to run this command
 "
 `;
 
@@ -30,5 +70,21 @@ exports[`driver.route.set.acceptance given: [case6] route.stone.set with ambiguo
     "3.plan"
   ]
 }
+"
+`;
+
+exports[`driver.route.set.acceptance given: [case8] route.stone.set --as rewound when: [t1] cascade rewind affects subsequent stones then: stdout matches snapshot 1`] = `
+"🦉 the way speaks for itself
+
+🗿 route.stone.set
+   ├─ stone = 2.criteria
+   ├─ cascade
+   │  ├─ 2.criteria
+   │  │  ├─ deleted: 1 reviews, 0 judges, 0 promises, 0 triggers
+   │  │  └─ passage: rewound
+   │  └─ 3.plan
+   │     ├─ deleted: 1 reviews, 0 judges, 0 promises, 0 triggers
+   │     └─ passage: rewound
+   └─ done
 "
 `;

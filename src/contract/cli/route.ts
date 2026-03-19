@@ -1,14 +1,20 @@
+import { execSync } from 'child_process';
 import * as fs from 'fs/promises';
+import { BadRequestError } from 'helpful-errors';
 import * as path from 'path';
 
 import { delRouteBind } from '@src/domain.operations/route/bind/delRouteBind';
 import { getRouteBind } from '@src/domain.operations/route/bind/getRouteBind';
 import { getRouteBindByBranch } from '@src/domain.operations/route/bind/getRouteBindByBranch';
 import { setRouteBind } from '@src/domain.operations/route/bind/setRouteBind';
+import { getDecisionIsArtifactProtected } from '@src/domain.operations/route/bouncer/getDecisionIsArtifactProtected';
+import { getRouteBouncerCache } from '@src/domain.operations/route/bouncer/getRouteBouncerCache';
 import { computeStoneReviewInputHash } from '@src/domain.operations/route/guard/computeStoneReviewInputHash';
 import { genContextCliEmit } from '@src/domain.operations/route/guard/genContextCliEmit';
+import { getLatestReviewFilesPerIndex } from '@src/domain.operations/route/guard/getLatestReviewFilesPerIndex';
 import { getOneStoneGuardApproval } from '@src/domain.operations/route/judges/getOneStoneGuardApproval';
 import { stepRouteDrive } from '@src/domain.operations/route/stepRouteDrive';
+import { stepRouteReview } from '@src/domain.operations/route/stepRouteReview';
 import { stepRouteStoneDel } from '@src/domain.operations/route/stepRouteStoneDel';
 import { stepRouteStoneGet } from '@src/domain.operations/route/stepRouteStoneGet';
 import { stepRouteStoneSet } from '@src/domain.operations/route/stepRouteStoneSet';
@@ -17,14 +23,23 @@ import { enumFilesFromGlob } from '@src/utils/enumFilesFromGlob';
 
 /**
  * .what = detects if node was invoked via `node -e "code"` (eval mode)
- * .why = in eval mode, argv has no entrypoint path
+ * .why = in eval mode, argv has no entrypoint path and args come after --
+ *
+ * argv patterns:
+ *   normal: ['node', '/path/to/entry.js', '--arg', 'val']
+ *   eval:   ['node', 'arg1', 'arg2'] (node strips -e and code from argv!)
+ *
+ * detection: if argv[1] doesn't look like a file path, assume eval mode
  */
 const isNodeEvalMode = (argv: string[]): boolean => {
   const secondArg = argv[1];
   if (!secondArg) return false;
-  const looksLikeEntrypointPath =
-    /\.(js|ts|mjs|cjs)$/.test(secondArg) || !secondArg.startsWith('--');
-  return !looksLikeEntrypointPath;
+
+  // entrypoint path (ends with js/ts extension) = normal mode
+  if (/\.(js|ts|mjs|cjs)$/.test(secondArg)) return false;
+
+  // otherwise assume eval mode (node strips -e and code from argv)
+  return true;
 };
 
 /**
@@ -107,7 +122,7 @@ options:
 const printSetHelp = (): void => {
   console.log(
     `
-route.stone.set - mark stone as passed, approved, or promised
+route.stone.set - mark stone as passed, approved, promised, blocked, rewound, or arrived
 
 usage:
   route.stone.set [options]
@@ -115,14 +130,20 @@ usage:
 options:
   --stone <name>     stone name or glob pattern (required)
   --route <path>     path to route directory (required)
-  --as <status>      status to set: passed, approved, or promised (required)
+  --as <status>      status to set: passed, approved, promised, blocked, rewound, or arrived (required)
   --that <slug>      review.self slug to promise (required for --as promised)
   --help             show this help message
 
+note:
+  --as arrived is an alias for --as passed (state claim, not judgment claim)
+
 examples:
+  route.stone.set --stone 1.vision --as arrived
   route.stone.set --stone 1.vision --as passed
   route.stone.set --stone 1.vision --as approved
   route.stone.set --stone 1.vision --as promised --that all-done
+  route.stone.set --stone 3.blueprint --as blocked
+  route.stone.set --stone 3.blueprint --as rewound
 `.trim(),
   );
 };
@@ -251,6 +272,31 @@ examples:
 };
 
 /**
+ * .what = prints help for route.review
+ */
+const printReviewHelp = (): void => {
+  console.log(
+    `
+route.review - review stone artifacts with change stats
+
+usage:
+  route.review [options]
+
+options:
+  --stone <name>     stone name to review (defaults to next blocked on approval)
+  --route <path>     path to route directory (uses bound route if absent)
+  --open <opener>    editor to open artifact in (vim, code, nvim, etc.)
+  --help             show this help message
+
+examples:
+  route.review                    # review next stone blocked on approval
+  route.review --open vim         # open artifact in vim (if single file)
+  route.review --stone 3.blueprint --open code
+`.trim(),
+  );
+};
+
+/**
  * .what = cli entrypoint for route.drive skill
  * .why = echoes current stone and pass command as GPS-like guidance
  */
@@ -280,10 +326,72 @@ export const routeDrive = async (): Promise<void> => {
       process.exit(result.emit.stderr.code);
     }
   } catch (error) {
-    if (error instanceof Error) {
+    // allowlist BadRequestError: format nicely and exit 2
+    if (error instanceof BadRequestError) {
       console.error(`error: ${error.message}`);
+      process.exit(2);
     }
-    process.exit(1);
+    // rethrow unexpected errors (no failhide)
+    throw error;
+  }
+};
+
+/**
+ * .what = cli entrypoint for route.review skill
+ * .why = enables foremen to scan artifacts and review in editor
+ */
+export const routeReview = async (): Promise<void> => {
+  const options = parseArgs(process.argv);
+
+  if (options.help) {
+    printReviewHelp();
+    return;
+  }
+
+  // validate opener command exists in PATH
+  if (options.open) {
+    try {
+      execSync(`command -v ${options.open}`, { stdio: 'pipe' });
+    } catch (error) {
+      // allowlist command-not-found (exit code 1 or 127): format nicely and exit 2
+      if (error && typeof error === 'object' && 'status' in error) {
+        const errorLines = [
+          '🦉 look for the light',
+          '',
+          '🗿 route.review',
+          `   └─ ✗ opener '${options.open}' not found in PATH`,
+        ];
+        console.error(errorLines.join('\n'));
+        process.exit(2);
+      }
+      // rethrow unexpected errors (no failhide)
+      throw error;
+    }
+  }
+
+  try {
+    const result = await stepRouteReview({
+      route: options.route,
+      stone: options.stone,
+      open: options.open,
+    });
+
+    if (result.emit.stdout) {
+      console.log(result.emit.stdout);
+    }
+
+    if (result.emit.stderr) {
+      console.error(result.emit.stderr.reason);
+      process.exit(result.emit.stderr.code);
+    }
+  } catch (error) {
+    // allowlist BadRequestError: format nicely and exit 2
+    if (error instanceof BadRequestError) {
+      console.error(`error: ${error.message}`);
+      process.exit(2);
+    }
+    // rethrow unexpected errors (no failhide)
+    throw error;
   }
 };
 
@@ -309,10 +417,13 @@ export const routeBindSet = async (): Promise<void> => {
     const result = await setRouteBind({ route: options.route });
     console.log(`bound route: ${result.route}`);
   } catch (error) {
-    if (error instanceof Error) {
+    // allowlist BadRequestError: format nicely and exit 2
+    if (error instanceof BadRequestError) {
       console.error(`error: ${error.message}`);
+      process.exit(2);
     }
-    process.exit(1);
+    // rethrow unexpected errors (no failhide)
+    throw error;
   }
 };
 
@@ -336,10 +447,13 @@ export const routeBindGet = async (): Promise<void> => {
       console.log('not bound');
     }
   } catch (error) {
-    if (error instanceof Error) {
+    // allowlist BadRequestError: format nicely and exit 2
+    if (error instanceof BadRequestError) {
       console.error(`error: ${error.message}`);
+      process.exit(2);
     }
-    process.exit(1);
+    // rethrow unexpected errors (no failhide)
+    throw error;
   }
 };
 
@@ -363,10 +477,13 @@ export const routeBindDel = async (): Promise<void> => {
       console.log('not bound (no bind to remove)');
     }
   } catch (error) {
-    if (error instanceof Error) {
+    // allowlist BadRequestError: format nicely and exit 2
+    if (error instanceof BadRequestError) {
       console.error(`error: ${error.message}`);
+      process.exit(2);
     }
-    process.exit(1);
+    // rethrow unexpected errors (no failhide)
+    throw error;
   }
 };
 
@@ -422,10 +539,13 @@ export const routeStoneGet = async (): Promise<void> => {
       console.log(result.stones.map((s) => s.name).join('\n'));
     }
   } catch (error) {
-    if (error instanceof Error) {
+    // allowlist BadRequestError: format nicely and exit 2
+    if (error instanceof BadRequestError) {
       console.error(`error: ${error.message}`);
+      process.exit(2);
     }
-    process.exit(1);
+    // rethrow unexpected errors (no failhide)
+    throw error;
   }
 };
 
@@ -441,39 +561,45 @@ export const routeStoneSet = async (): Promise<void> => {
     return;
   }
 
-  if (!options.stone) {
-    console.error('error: --stone is required');
-    console.error('run with --help for usage');
-    process.exit(2);
-  }
+  // validate --stone required
+  if (!options.stone)
+    throw new BadRequestError('--stone is required', {
+      hint: '--help for usage',
+    });
+
+  // validate --route required (or resolve from bind)
   if (!options.route) {
     const routeFromBind = await resolveRouteFromBind();
     if (routeFromBind) {
       options.route = routeFromBind;
     } else {
-      console.error(
-        'error: no route bound to this branch. use --route or route.bind',
+      throw new BadRequestError(
+        'no route bound to this branch. use --route or route.bind',
       );
-      process.exit(2);
     }
   }
+
+  // validate --as required and valid
   if (
     !options.as ||
     (options.as !== 'passed' &&
       options.as !== 'approved' &&
-      options.as !== 'promised')
+      options.as !== 'promised' &&
+      options.as !== 'blocked' &&
+      options.as !== 'rewound' &&
+      options.as !== 'arrived')
   ) {
-    console.error('error: --as must be "passed", "approved", or "promised"');
-    console.error('run with --help for usage');
-    process.exit(2);
+    throw new BadRequestError(
+      '--as must be "passed", "approved", "promised", "blocked", "rewound", or "arrived"',
+      { hint: '--help for usage' },
+    );
   }
 
   // validate --that required for promised
-  if (options.as === 'promised' && !options.that) {
-    console.error('error: --that is required when --as is "promised"');
-    console.error('run with --help for usage');
-    process.exit(2);
-  }
+  if (options.as === 'promised' && !options.that)
+    throw new BadRequestError('--that is required when --as is "promised"', {
+      hint: '--help for usage',
+    });
 
   // detect TTY for human vs agent
   // allow approval in test/CI environments (Jest sets NODE_ENV=test, CI runners set CI=true)
@@ -493,7 +619,13 @@ export const routeStoneSet = async (): Promise<void> => {
       {
         stone: options.stone,
         route: options.route,
-        as: options.as as 'passed' | 'approved' | 'promised',
+        as: options.as as
+          | 'passed'
+          | 'approved'
+          | 'promised'
+          | 'blocked'
+          | 'rewound'
+          | 'arrived',
         that: options.that,
       },
       { ...progress.context, isTTY },
@@ -524,10 +656,13 @@ export const routeStoneSet = async (): Promise<void> => {
     }
   } catch (error) {
     progress.done();
-    if (error instanceof Error) {
+    // allowlist BadRequestError: format nicely and exit 2
+    if (error instanceof BadRequestError) {
       console.error(`error: ${error.message}`);
+      process.exit(2);
     }
-    process.exit(1);
+    // rethrow unexpected errors (no failhide)
+    throw error;
   }
 };
 
@@ -577,10 +712,13 @@ export const routeStoneDel = async (): Promise<void> => {
       console.log(result.emit.stdout);
     }
   } catch (error) {
-    if (error instanceof Error) {
+    // allowlist BadRequestError: format nicely and exit 2
+    if (error instanceof BadRequestError) {
       console.error(`error: ${error.message}`);
+      process.exit(2);
     }
-    process.exit(1);
+    // rethrow unexpected errors (no failhide)
+    throw error;
   }
 };
 
@@ -636,10 +774,13 @@ export const routeStoneJudge = async (): Promise<void> => {
       process.exit(2);
     }
   } catch (error) {
-    if (error instanceof Error) {
+    // allowlist BadRequestError: format nicely and exit 2
+    if (error instanceof BadRequestError) {
       console.error(`error: ${error.message}`);
+      process.exit(2);
     }
-    process.exit(1);
+    // rethrow unexpected errors (no failhide)
+    throw error;
   }
 };
 
@@ -725,13 +866,15 @@ const judgeReviewed = async (input: {
     process.exit(2);
   }
 
-  // parse blockers and nitpicks from review files
+  // get latest review per index (later iterations supersede earlier)
+  const latestReviewFiles = getLatestReviewFilesPerIndex({ reviewFiles });
+
+  // parse blockers and nitpicks from latest reviews only
   let totalBlockers = 0;
   let totalNitpicks = 0;
 
-  for (const filePath of reviewFiles) {
+  for (const filePath of latestReviewFiles) {
     const content = await fs.readFile(filePath, 'utf-8');
-
     // match both formats:
     // 1. "blockers: N" (yaml/key-value format from review tools)
     // 2. "N blockers" (tree/prose format from skill output)
@@ -771,4 +914,407 @@ const judgeReviewed = async (input: {
   console.log(
     `reason: reviews pass (blockers: ${totalBlockers}/${input.allowBlockers}, nitpicks: ${totalNitpicks}/${input.allowNitpicks})`,
   );
+};
+
+/**
+ * .what = prints help for route.bounce
+ */
+const printBounceHelp = (): void => {
+  console.log(
+    `
+route.bounce - artifact gate enforcement for protected files
+
+usage:
+  route.bounce [options]
+
+options:
+  --mode <type>      mode: hook = pretool check, list = show protected files (default)
+  --help             show this help message
+
+stdin (for --mode hook):
+  claude code PreToolUse hooks pipe JSON with tool_input.file_path
+
+examples:
+  route.bounce                              # list protected artifacts
+  route.bounce --mode hook                  # pretool check via stdin (exit 2 if blocked)
+`.trim(),
+  );
+};
+
+/**
+ * .what = reads tool input from stdin synchronously
+ * .why = claude code PreToolUse hooks receive tool input as JSON on stdin
+ *
+ * stdin format from Claude Code:
+ * {
+ *   "hook_event_name": "PreToolUse",
+ *   "tool_name": "Write" | "Edit" | ...,
+ *   "tool_input": { "file_path": "/absolute/path/...", ... }
+ * }
+ */
+const readToolInputFromStdin = (): {
+  tool_name?: string;
+  tool_input?: { file_path?: string };
+} | null => {
+  // first check RHACHET_STDIN env var (set by shell wrapper to work around node -e stdin issues)
+  const envStdin = process.env.RHACHET_STDIN;
+  if (envStdin) {
+    try {
+      return JSON.parse(envStdin);
+    } catch (error) {
+      // JSON.parse throws SyntaxError for malformed JSON; fail open for invalid input
+      // note: stderr output makes this observable per rule.prefer.helpful-error-wrap
+      if (error instanceof SyntaxError) {
+        console.error(
+          `[route.bounce] fail-open: RHACHET_STDIN contains invalid JSON: ${error.message}`,
+        );
+        return null;
+      }
+      throw error;
+    }
+  }
+
+  // fallback: check if stdin has data available (non-TTY means piped input)
+  if (process.stdin.isTTY) return null;
+
+  // read stdin synchronously via fd 0
+  const chunks: Buffer[] = [];
+  const BUFSIZE = 256;
+  const buf = Buffer.allocUnsafe(BUFSIZE);
+  let bytesRead: number;
+
+  // eslint-disable-next-line @typescript-eslint/no-require-imports, @typescript-eslint/no-var-requires
+  const fsSync = require('fs');
+
+  while (true) {
+    try {
+      bytesRead = fsSync.readSync(0, buf, 0, BUFSIZE, null);
+      if (bytesRead === 0) break;
+      // use Buffer.from() to copy the data, not slice() which returns a view into the same buffer
+      chunks.push(Buffer.from(buf.subarray(0, bytesRead)));
+    } catch (error) {
+      // readSync throws on pipe closed (EAGAIN/EWOULDBLOCK) or EOF conditions
+      // only break on expected EOF-like errors; rethrow unexpected I/O errors
+      if (
+        error instanceof Error &&
+        'code' in error &&
+        (error.code === 'EAGAIN' ||
+          error.code === 'EWOULDBLOCK' ||
+          error.code === 'EOF')
+      ) {
+        break;
+      }
+      throw error;
+    }
+  }
+
+  if (chunks.length === 0) return null;
+
+  const input = Buffer.concat(chunks).toString('utf-8').trim();
+  if (!input) return null;
+
+  try {
+    return JSON.parse(input);
+  } catch (error) {
+    // allowlist SyntaxError from JSON.parse: return null for invalid JSON
+    if (error instanceof SyntaxError) return null;
+    // rethrow unexpected errors (no failhide)
+    throw error;
+  }
+};
+
+/**
+ * .what = cli entrypoint for route.bounce skill
+ * .why = enforces artifact gate protection before file writes/edits
+ */
+export const routeBounce = async (): Promise<void> => {
+  const options = parseArgs(process.argv);
+
+  if (options.help) {
+    printBounceHelp();
+    return;
+  }
+
+  const mode = options.mode ?? 'list';
+
+  // hook mode: routeBounceHook handles all expected errors internally (returns early)
+  // any unexpected error will crash with stack trace (fail-fast)
+  // note: Claude Code treats crashed hooks as "error but allow" (fail-open semantics)
+  if (mode === 'hook') {
+    await routeBounceHook();
+    return;
+  }
+
+  // list mode: no catch block (fail-fast with stack trace for debug)
+  await routeBounceList();
+};
+
+/**
+ * .what = hook mode implementation for route.bounce
+ * .why = checks if a file mutation is blocked by an unpassed stone guard
+ */
+const routeBounceHook = async (): Promise<void> => {
+  // load bouncer cache
+  const cache = await getRouteBouncerCache();
+
+  // read tool input from stdin (claude code PreToolUse provides tool input via stdin)
+  const toolInput = readToolInputFromStdin();
+
+  // only check Write and Edit tools (file mutation operations)
+  // todo: Bash tool could bypass protection via redirects like `echo "..." > src/file.ts`
+  //       for now we fail open on Bash. we assume bonintent robots. revisit if malintent escapes via cat/redirects.
+  const toolName = toolInput?.tool_name;
+  if (toolName !== 'Write' && toolName !== 'Edit') {
+    return; // not a file mutation tool, allow through
+  }
+
+  // extract file_path from nested tool_input (claude code sends { tool_input: { file_path } })
+  let filePath = toolInput?.tool_input?.file_path;
+
+  if (!filePath) {
+    // no path to check, allow through (fail open)
+    return;
+  }
+
+  // convert absolute path to relative for glob match
+  // dereference symlinks to canonical paths before comparison (handles symlinked worktrees)
+  if (path.isAbsolute(filePath)) {
+    // eslint-disable-next-line @typescript-eslint/no-require-imports, @typescript-eslint/no-var-requires
+    const fsSync = require('fs');
+    const cwd = process.cwd();
+
+    // dereference both paths to canonical forms to handle symlinks
+    let cwdCanonical: string;
+    let filePathCanonical: string;
+    try {
+      cwdCanonical = fsSync.realpathSync(cwd);
+      // file may not exist yet (we check before write), so dereference parent dir
+      const fileDir = path.dirname(filePath);
+      const fileName = path.basename(filePath);
+      try {
+        const fileDirCanonical = fsSync.realpathSync(fileDir);
+        filePathCanonical = path.join(fileDirCanonical, fileName);
+      } catch (error) {
+        // handle only ENOENT (parent dir doesn't exist), rethrow unexpected errors
+        // note: stderr output makes this observable per rule.prefer.helpful-error-wrap
+        if (
+          error &&
+          typeof error === 'object' &&
+          'code' in error &&
+          error.code === 'ENOENT'
+        ) {
+          console.error(
+            `[route.bounce] fail-open: parent dir does not exist: ${fileDir}`,
+          );
+          filePathCanonical = filePath;
+        } else {
+          throw error;
+        }
+      }
+    } catch (error) {
+      // handle only ENOENT (cwd doesn't exist), rethrow unexpected errors
+      // note: stderr output makes this observable per rule.prefer.helpful-error-wrap
+      if (
+        error &&
+        typeof error === 'object' &&
+        'code' in error &&
+        error.code === 'ENOENT'
+      ) {
+        console.error(`[route.bounce] fail-open: cwd does not exist: ${cwd}`);
+        cwdCanonical = cwd;
+        filePathCanonical = filePath;
+      } else {
+        throw error;
+      }
+    }
+
+    if (!filePathCanonical.startsWith(cwdCanonical)) {
+      // path outside repo, cannot match relative globs, allow through
+      return;
+    }
+    filePath = path.relative(cwdCanonical, filePathCanonical);
+  }
+
+  const decision = getDecisionIsArtifactProtected({
+    path: filePath,
+    cache,
+  });
+
+  if (decision.blocked && decision.protection) {
+    // output blocked feedback in zen format per blueprint
+    const lines = [
+      '🦉 patience, friend',
+      '',
+      '🗿 route.bounce',
+      '   ├─ blocked',
+      `   │  ├─ artifact = ${filePath}`,
+      `   │  └─ guard = ${path.basename(decision.protection.guard)}`,
+      '   │',
+      '   ├─ a journey of a thousand miles begins with a single step 🪷',
+      '   │  ├─',
+      '   │  │',
+      `   │  │  this artifact is locked until stone ${decision.protection.stone} is passed.`,
+      '   │  │',
+      '   │  │  the way cannot be rushed. each stone builds on the last.',
+      '   │  │',
+      '   │  └─',
+      '   │',
+      '   └─ to pass this stone and unlock this gate, run',
+      '      └─ rhx route.drive',
+    ];
+    console.error(lines.join('\n'));
+    process.exit(2);
+  }
+
+  // not blocked, exit 0 silently for hook
+};
+
+/**
+ * .what = list mode implementation for route.bounce
+ * .why = displays all protected artifacts and their guard status
+ */
+const routeBounceList = async (): Promise<void> => {
+  // load bouncer cache
+  const cache = await getRouteBouncerCache();
+
+  if (cache.protections.length === 0) {
+    console.log('no protected artifacts');
+    return;
+  }
+
+  // group protections by stone
+  const byStone = new Map<string, typeof cache.protections>();
+  for (const p of cache.protections) {
+    const list = byStone.get(p.stone) ?? [];
+    list.push(p);
+    byStone.set(p.stone, list);
+  }
+
+  console.log('🗿 route.bounce');
+  console.log('   └─ protected artifacts');
+
+  const stones = Array.from(byStone.keys());
+  for (let i = 0; i < stones.length; i++) {
+    const stone = stones[i]!;
+    const protections = byStone.get(stone)!;
+    const isLast = i === stones.length - 1;
+    const prefix = isLast ? '      └─' : '      ├─';
+
+    const stoneStatus = protections[0]?.passed ? '✓' : '○';
+    console.log(`${prefix} ${stone} ${stoneStatus}`);
+
+    const childPrefix = isLast ? '         ' : '      │  ';
+    for (let j = 0; j < protections.length; j++) {
+      const p = protections[j]!;
+      const isLastGlob = j === protections.length - 1;
+      const globPrefix = isLastGlob ? '└─' : '├─';
+      console.log(`${childPrefix}${globPrefix} ${p.glob}`);
+    }
+  }
+};
+
+/**
+ * .what = cli entrypoint for route.mutate grant commands
+ * .why = manages privilege flags for route protection bypass
+ */
+export const routeMutateGrant = async (): Promise<void> => {
+  const options = parseArgs(process.argv);
+
+  // first positional arg after "grant" is the action
+  const skipCount = isNodeEvalMode(process.argv) ? 1 : 2;
+  const positionalArgs = process.argv
+    .slice(skipCount)
+    .filter((arg) => arg !== '--' && !arg.startsWith('--'));
+
+  // expect: grant <action> (positional) or --grant <action> (named)
+  const grantIndex = positionalArgs.indexOf('grant');
+  let action = grantIndex >= 0 ? positionalArgs[grantIndex + 1] : undefined;
+
+  // fallback to named arg format (--grant allow) for compatibility
+  if (!action && options.grant) {
+    action = options.grant;
+  }
+
+  if (!action || !['allow', 'block', 'get'].includes(action)) {
+    console.log(`
+route.mutate grant - manage route protection privilege
+
+usage:
+  rhx route.mutate grant allow   # grant privilege (human only)
+  rhx route.mutate grant block   # revoke privilege
+  rhx route.mutate grant get     # check privilege state
+
+options:
+  --route <path>    route path (default: auto-detect from branch)
+`);
+    process.exit(1);
+  }
+
+  try {
+    // get route from option or auto-detect
+    let routePath = options.route;
+    if (!routePath) {
+      const bind = await getRouteBindByBranch({ branch: null });
+      if (!bind) {
+        console.error('error: no bound route found. use --route to specify.');
+        process.exit(1);
+      }
+      routePath = bind.route;
+    }
+
+    const privilegeFlagPath = path.join(
+      routePath,
+      '.route',
+      '.privilege.mutate.flag',
+    );
+
+    if (action === 'allow') {
+      // ensure .route dir exists
+      await fs.mkdir(path.dirname(privilegeFlagPath), { recursive: true });
+      // create flag file
+      await fs.writeFile(privilegeFlagPath, '');
+
+      console.log('');
+      console.log('🦉 privilege granted');
+      console.log('');
+      console.log('🗿 route.mutate grant allow');
+      console.log(`   ├─ route = ${routePath}`);
+      console.log('   └─ flag = .route/.privilege.mutate.flag created');
+      console.log('');
+      console.log('✨ route mutation now allowed until revoked');
+      console.log('');
+    } else if (action === 'block') {
+      // remove flag file (idempotent)
+      await fs.rm(privilegeFlagPath, { force: true });
+
+      console.log('');
+      console.log('🦉 privilege revoked');
+      console.log('');
+      console.log('🗿 route.mutate grant block');
+      console.log(`   ├─ route = ${routePath}`);
+      console.log('   └─ flag = .route/.privilege.mutate.flag removed');
+      console.log('');
+      console.log('🔒 route mutation now blocked');
+      console.log('');
+    } else if (action === 'get') {
+      // check flag existence
+      const hasPrivilege = await fs
+        .access(privilegeFlagPath)
+        .then(() => true)
+        .catch(() => false);
+
+      console.log('');
+      console.log('🗿 route.mutate grant get');
+      console.log(`   ├─ route = ${routePath}`);
+      console.log(
+        `   └─ status = ${hasPrivilege ? 'allowed' : 'blocked (no privilege flag)'}`,
+      );
+      console.log('');
+    }
+  } catch (error) {
+    if (error instanceof Error) {
+      console.error(`error: ${error.message}`);
+    }
+    process.exit(1);
+  }
 };

@@ -1,4 +1,4 @@
-import { exec } from 'child_process';
+import { exec, spawn } from 'child_process';
 import * as path from 'path';
 import { promisify } from 'util';
 
@@ -25,6 +25,10 @@ export const genTempDirForRhachet = (input: {
         to: 'package.json',
       },
       { at: 'node_modules/rhachet-roles-bhrain/dist', to: 'dist' },
+      {
+        at: 'node_modules/rhachet-roles-bhrain/rhachet.repo.yml',
+        to: 'rhachet.repo.yml',
+      },
       // symlink .bin for npx to find rhx/rhachet commands
       { at: 'node_modules/.bin', to: 'node_modules/.bin' },
       // symlink rhachet so rhx entrypoint can find ../rhachet/bin/rhx
@@ -50,7 +54,51 @@ export const sanitizeTimeForSnapshot = (output: string): string => {
     .replace(/done \d+\.\d+s/g, 'done [TIME]')
     .replace(/passed \d+\.\d+s/g, 'passed [TIME]')
     .replace(/failed \d+\.\d+s/g, 'failed [TIME]')
-    .replace(/inflight \d+\.\d+s/g, 'inflight [TIME]');
+    .replace(/inflight \d+\.\d+s/g, 'inflight [TIME]')
+    .replace(/completed \d+\.\d+s/g, 'completed [TIME]')
+    .replace(/allowed \d+\.\d+s/g, 'allowed [TIME]')
+    .replace(/blocked \d+\.\d+s/g, 'blocked [TIME]');
+};
+
+
+/**
+ * .what = invokes the route.mutate guard hook with stdin JSON
+ * .why = hook receives tool call context via stdin, not args
+ */
+export const invokeRouteMutateGuard = async (input: {
+  cwd: string;
+  stdin: {
+    tool_name: 'Read' | 'Write' | 'Edit' | 'Bash';
+    tool_input: {
+      file_path?: string;
+      command?: string;
+    };
+  };
+}): Promise<{ stdout: string; stderr: string; code: number }> => {
+  const skillPath = path.join(
+    input.cwd,
+    '.agent/repo=bhrain/role=driver/skills',
+    'route.mutate.sh',
+  );
+  const stdinJson = JSON.stringify(input.stdin);
+
+  const cmd = `echo '${stdinJson}' | bash "${skillPath}" guard --mode hook`;
+
+  try {
+    const result = await execAsync(cmd, { cwd: input.cwd });
+    return { ...result, code: 0 };
+  } catch (error) {
+    const execError = error as {
+      stdout?: string;
+      stderr?: string;
+      code?: number;
+    };
+    return {
+      stdout: execError.stdout ?? '',
+      stderr: execError.stderr ?? '',
+      code: execError.code ?? 1,
+    };
+  }
 };
 
 export const invokeRouteSkill = async (input: {
@@ -58,7 +106,10 @@ export const invokeRouteSkill = async (input: {
     | 'route.bind.set'
     | 'route.bind.get'
     | 'route.bind.del'
+    | 'route.bounce'
     | 'route.drive'
+    | 'route.mutate'
+    | 'route.review'
     | 'route.stone.get'
     | 'route.stone.set'
     | 'route.stone.del'
@@ -66,6 +117,7 @@ export const invokeRouteSkill = async (input: {
   args: Record<string, string | boolean | string[] | undefined>;
   cwd: string;
   env?: Record<string, string>;
+  stdin?: string;
 }): Promise<{ stdout: string; stderr: string; code: number }> => {
   // map skill name to shell command filename
   const skillFile = `${input.skill}.sh`;
@@ -75,16 +127,49 @@ export const invokeRouteSkill = async (input: {
     skillFile,
   );
 
-  // build args string; arrays expand to repeated flags
-  const argsStr = Object.entries(input.args)
+  // build args array; arrays expand to repeated flags
+  const argsArray = Object.entries(input.args)
     .filter(([_, v]) => v !== undefined)
     .flatMap(([k, v]) => {
       if (v === true) return [`--${k}`];
-      if (Array.isArray(v)) return v.map((val) => `--${k} "${val}"`);
-      return [`--${k} "${v}"`];
-    })
-    .join(' ');
+      if (Array.isArray(v)) return v.flatMap((val) => [`--${k}`, val]);
+      return [`--${k}`, String(v)];
+    });
 
+  // if stdin provided, use spawn to pipe stdin
+  if (input.stdin !== undefined) {
+    return new Promise((done) => {
+      const child = spawn('bash', [skillPath, ...argsArray], {
+        cwd: input.cwd,
+        env: { ...process.env, ...input.env },
+        stdio: ['pipe', 'pipe', 'pipe'], // explicitly set stdin to pipe
+      });
+
+      let stdout = '';
+      let stderr = '';
+
+      child.stdout.on('data', (data) => {
+        stdout += data.toString();
+      });
+
+      child.stderr.on('data', (data) => {
+        stderr += data.toString();
+      });
+
+      child.on('close', (code) => {
+        done({ stdout, stderr, code: code ?? 0 });
+      });
+
+      // write stdin and close
+      child.stdin.write(input.stdin);
+      child.stdin.end();
+    });
+  }
+
+  // no stdin, use exec (simpler)
+  const argsStr = argsArray
+    .map((arg) => (arg.startsWith('--') ? arg : `"${arg}"`))
+    .join(' ');
   const cmd = `bash "${skillPath}" ${argsStr}`;
 
   try {
@@ -101,4 +186,22 @@ export const invokeRouteSkill = async (input: {
       code: execError.code ?? 1,
     };
   }
+};
+
+/**
+ * .what = creates the JSON stdin that Claude Code sends to PreToolUse hooks
+ * .why = claude code PreToolUse hooks receive tool input as JSON on stdin
+ */
+export const createHookStdin = (input: {
+  toolName: 'Write' | 'Edit' | 'Read' | 'Bash';
+  filePath: string;
+  cwd: string;
+}): string => {
+  return JSON.stringify({
+    hook_event_name: 'PreToolUse',
+    tool_name: input.toolName,
+    tool_input: {
+      file_path: path.join(input.cwd, input.filePath),
+    },
+  });
 };

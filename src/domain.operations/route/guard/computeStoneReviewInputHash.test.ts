@@ -50,6 +50,7 @@ describe('computeStoneReviewInputHash', () => {
         artifacts: ['src/**/*.ts'],
         reviews: [],
         judges: [],
+        protect: [],
       },
     });
 

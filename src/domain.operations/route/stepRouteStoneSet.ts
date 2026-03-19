@@ -3,6 +3,7 @@ import { BadRequestError, UnexpectedCodePathError } from 'helpful-errors';
 import type { ContextCliEmit } from '@src/domain.objects/Driver/ContextCliEmit';
 import { getGuardSelfReviews } from '@src/domain.objects/Driver/RouteStoneGuard';
 
+import { setStoneAsBlocked } from './blocked/setStoneAsBlocked';
 import { delDriveBlockerState } from './drive/delDriveBlockerState';
 import { formatRouteStoneEmit } from './formatRouteStoneEmit';
 import { computeStoneReviewInputHash } from './guard/computeStoneReviewInputHash';
@@ -13,16 +14,17 @@ import { findOneStoneByPattern } from './stones/asStoneGlob';
 import { getAllStones } from './stones/getAllStones';
 import { setStoneAsApproved } from './stones/setStoneAsApproved';
 import { setStoneAsPassed } from './stones/setStoneAsPassed';
+import { setStoneAsRewound } from './stones/setStoneAsRewound';
 
 /**
- * .what = orchestrates set of stone status (passed, approved, or promised)
- * .why = enables robots and humans to mark milestones complete
+ * .what = orchestrates set of stone status (passed, approved, promised, or rewound)
+ * .why = enables robots and humans to mark milestones complete or rewind for fresh evaluation
  */
 export const stepRouteStoneSet = async (
   input: {
     stone: string;
     route: string;
-    as: 'passed' | 'approved' | 'promised';
+    as: 'passed' | 'approved' | 'promised' | 'rewound' | 'blocked' | 'arrived';
     that?: string;
   },
   context: ContextCliEmit & { isTTY: boolean },
@@ -30,10 +32,17 @@ export const stepRouteStoneSet = async (
   passed?: boolean;
   approved?: boolean;
   promised?: boolean;
+  rewound?: boolean;
+  blocked?: boolean;
   challenged?: boolean;
   refs?: { reviews: string[]; judges: string[] };
   emit: { stdout: string; stderr?: string } | null;
 }> => {
+  // alias translator: 'arrived' maps to 'passed'
+  if (input.as === 'arrived') {
+    input = { ...input, as: 'passed' };
+  }
+
   // dispatch to appropriate operation
   if (input.as === 'approved') {
     const result = await setStoneAsApproved(
@@ -45,6 +54,20 @@ export const stepRouteStoneSet = async (
     );
     return {
       approved: result.approved,
+      emit: result.emit,
+    };
+  }
+
+  if (input.as === 'rewound') {
+    const result = await setStoneAsRewound(
+      {
+        stone: input.stone,
+        route: input.route,
+      },
+      context,
+    );
+    return {
+      rewound: result.rewound,
       emit: result.emit,
     };
   }
@@ -108,20 +131,18 @@ export const stepRouteStoneSet = async (
 
     // check time enforcement and hashbar threshold for self-review
     const reviewSelf = selfReviews.find((r) => r.slug === input.that);
+    const reviewIndex = selfReviews.findIndex((r) => r.slug === input.that);
     const challengeDecision = await getSelfReviewChallengeDecision({
       stone: stoneMatched.name,
       slug: input.that,
       hash,
       route: input.route,
+      index: reviewIndex + 1, // 1-based for file naming
       hashbar: reviewSelf?.hashbar,
     });
 
-    // if challenged, return early with patience message (optionally with rush confrontation)
-    if (
-      challengeDecision.decision === 'challenge:first' ||
-      challengeDecision.decision === 'challenge:rushed'
-    ) {
-      const reviewIndex = selfReviews.findIndex((r) => r.slug === input.that);
+    // if challenged, return early with patience message (and optionally absent or rush confrontation)
+    if (challengeDecision.decision !== 'allowed') {
       return {
         challenged: true,
         emit: {
@@ -131,6 +152,7 @@ export const stepRouteStoneSet = async (
             action: challengeDecision.decision,
             slug: input.that,
             route: input.route,
+            articulationPath: challengeDecision.articulationPath,
             selfReview: reviewSelf
               ? {
                   reviewSelf,
@@ -186,6 +208,18 @@ export const stepRouteStoneSet = async (
           nextReview,
         }),
       },
+    };
+  }
+
+  if (input.as === 'blocked') {
+    const result = await setStoneAsBlocked({
+      stone: input.stone,
+      route: input.route,
+    });
+    return {
+      blocked: result.blocked,
+      challenged: result.challenged,
+      emit: result.emit,
     };
   }
 

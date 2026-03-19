@@ -1,0 +1,63 @@
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
+
+exports[`driver.route.bounce.acceptance given: [case2] driver receives actionable feedback when: [t0] route.bounce blocks src/feature.ts then: stderr matches snapshot 1`] = `
+"🦉 patience, friend
+
+🗿 route.bounce
+   ├─ blocked
+   │  ├─ artifact = src/feature.ts
+   │  └─ guard = 1.blueprint.guard
+   │
+   ├─ a journey of a thousand miles begins with a single step 🪷
+   │  ├─
+   │  │
+   │  │  this artifact is locked until stone 1.blueprint is passed.
+   │  │
+   │  │  the way cannot be rushed. each stone builds on the last.
+   │  │
+   │  └─
+   │
+   └─ to pass this stone and unlock this gate, run
+      └─ rhx route.drive
+"
+`;
+
+exports[`driver.route.bounce.acceptance given: [case8] journey: blocked → pass stone → allowed when: [t0] journey executes sequentially then: completes full flow from blocked → pass → allowed: blocked feedback 1`] = `
+"🦉 patience, friend
+
+🗿 route.bounce
+   ├─ blocked
+   │  ├─ artifact = src/feature.ts
+   │  └─ guard = 1.blueprint.guard
+   │
+   ├─ a journey of a thousand miles begins with a single step 🪷
+   │  ├─
+   │  │
+   │  │  this artifact is locked until stone 1.blueprint is passed.
+   │  │
+   │  │  the way cannot be rushed. each stone builds on the last.
+   │  │
+   │  └─
+   │
+   └─ to pass this stone and unlock this gate, run
+      └─ rhx route.drive
+"
+`;
+
+exports[`driver.route.bounce.acceptance given: [case8] journey: blocked → pass stone → allowed when: [t0] journey executes sequentially then: completes full flow from blocked → pass → allowed: protection list 1`] = `
+"🗿 route.bounce
+   └─ protected artifacts
+      └─ 1.blueprint ○
+         ├─ src/**/*.ts
+         └─ src/**/*.tsx
+"
+`;
+
+exports[`driver.route.bounce.acceptance given: [case8] journey: blocked → pass stone → allowed when: [t0] journey executes sequentially then: completes full flow from blocked → pass → allowed: protection list after pass 1`] = `
+"🗿 route.bounce
+   └─ protected artifacts
+      └─ 1.blueprint ✓
+         ├─ src/**/*.ts
+         └─ src/**/*.tsx
+"
+`;

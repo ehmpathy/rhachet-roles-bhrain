@@ -1,0 +1,42 @@
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
+
+exports[`runStoneGuardJudges given: [case7] judge exits with code 0 (passed) when: [t0] judge exits 0 then: artifact snapshot matches 1`] = `
+"├─ stdout
+│  ├─
+│  │  passed: true
+│  │  reason: judge passed
+│  └─
+├─ stderr
+│  ├─
+│  │  
+│  └─"
+`;
+
+exports[`runStoneGuardJudges given: [case8] judge exits with code 2 (constraint) when: [t0] judge exits 2 then: artifact snapshot matches 1`] = `
+"├─ stdout
+│  ├─
+│  │  passed: false
+│  │  reason: approval required
+│  └─
+├─ stderr
+│  ├─
+│  │  
+│  └─
+└─ passage blocked
+   ├─ blocked by constraints
+   └─ exit code: 2 ✋"
+`;
+
+exports[`runStoneGuardJudges given: [case9] judge exits with code 1 (malfunction) when: [t0] judge exits 1 then: artifact snapshot matches 1`] = `
+"├─ stdout
+│  ├─
+│  │  stdout output
+│  └─
+├─ stderr
+│  ├─
+│  │  stderr error
+│  └─
+└─ passage blocked
+   ├─ blocked by malfunction
+   └─ exit code: 1 💥"
+`;

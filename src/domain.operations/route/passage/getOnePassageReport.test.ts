@@ -68,16 +68,27 @@ describe('getOnePassageReport', () => {
       });
     });
 
-    when('[t1] queried with status filter', () => {
-      then('returns latest report with that status', async () => {
+    when('[t1] queried with status filter that matches latest', () => {
+      then('returns latest report', async () => {
+        const report = await getOnePassageReport({
+          stone: '1.vision',
+          status: 'passed',
+          route: tempDir,
+        });
+        expect(report).toBeInstanceOf(PassageReport);
+        expect(report?.status).toEqual('passed');
+      });
+    });
+
+    when('[t1b] queried with status filter that does NOT match latest', () => {
+      then('returns null (old status superseded)', async () => {
+        // latest status is "passed", query for "blocked" returns null
         const report = await getOnePassageReport({
           stone: '1.vision',
           status: 'blocked',
           route: tempDir,
         });
-        expect(report).toBeInstanceOf(PassageReport);
-        expect(report?.status).toEqual('blocked');
-        expect(report?.blocker).toEqual('review.self');
+        expect(report).toBeNull();
       });
     });
 
@@ -99,6 +110,64 @@ describe('getOnePassageReport', () => {
           route: tempDir,
         });
         expect(report).toBeNull();
+      });
+    });
+  });
+
+  given('[case3] stone passed then rewound (invalidation)', () => {
+    const tempDir = path.join(
+      os.tmpdir(),
+      `test-passage-invalidation-${Date.now()}`,
+    );
+
+    beforeEach(async () => {
+      await fs.mkdir(path.join(tempDir, '.route'), { recursive: true });
+      const content =
+        [
+          JSON.stringify({ stone: '1.vision', status: 'passed' }),
+          JSON.stringify({ stone: '1.vision', status: 'rewound' }),
+        ].join('\n') + '\n';
+      await fs.writeFile(
+        path.join(tempDir, '.route', 'passage.jsonl'),
+        content,
+      );
+    });
+
+    afterEach(async () => {
+      await fs.rm(tempDir, { recursive: true, force: true });
+    });
+
+    when('[t0] queried for status "passed"', () => {
+      then('returns null (rewind invalidated prior passage)', async () => {
+        const report = await getOnePassageReport({
+          stone: '1.vision',
+          status: 'passed',
+          route: tempDir,
+        });
+        expect(report).toBeNull();
+      });
+    });
+
+    when('[t1] queried without status filter', () => {
+      then('returns latest (rewound)', async () => {
+        const report = await getOnePassageReport({
+          stone: '1.vision',
+          route: tempDir,
+        });
+        expect(report).toBeInstanceOf(PassageReport);
+        expect(report?.status).toEqual('rewound');
+      });
+    });
+
+    when('[t2] queried for status "rewound"', () => {
+      then('returns the rewound entry', async () => {
+        const report = await getOnePassageReport({
+          stone: '1.vision',
+          status: 'rewound',
+          route: tempDir,
+        });
+        expect(report).toBeInstanceOf(PassageReport);
+        expect(report?.status).toEqual('rewound');
       });
     });
   });

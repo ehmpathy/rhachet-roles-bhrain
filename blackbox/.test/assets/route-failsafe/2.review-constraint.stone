@@ -1,0 +1,3 @@
+# stone: reviewer constraint (exit 2)
+
+test that reviewer exit 2 shows "blocked by constraints" with tree bucket

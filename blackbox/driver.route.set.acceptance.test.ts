@@ -64,6 +64,15 @@ describe('driver.route.set.acceptance', () => {
         expect(res.cli.stdout).toContain('passage = allowed');
       });
 
+      then('outputs reminder to continue route', () => {
+        expect(res.cli.stdout).toContain('the way continues, run');
+        expect(res.cli.stdout).toContain('rhx route.drive');
+      });
+
+      then('stdout matches snapshot', () => {
+        expect(res.cli.stdout).toMatchSnapshot();
+      });
+
       then('creates passage marker', () => {
         expect(res.passageExists).toBe(true);
       });
@@ -235,6 +244,15 @@ describe('driver.route.set.acceptance', () => {
         expect(res.cli.stdout).toContain('judge.1');
       });
 
+      then('outputs reminder to continue route', () => {
+        expect(res.cli.stdout).toContain('the way continues, run');
+        expect(res.cli.stdout).toContain('rhx route.drive');
+      });
+
+      then('stdout matches snapshot', () => {
+        expect(res.cli.stdout).toMatchSnapshot();
+      });
+
       then('creates passage marker', () => {
         expect(res.passageExists).toBe(true);
       });
@@ -318,6 +336,11 @@ describe('driver.route.set.acceptance', () => {
 
       then('stderr contains progress output', () => {
         expect(res.cli.stderr.length).toBeGreaterThan(0);
+      });
+
+      then('does NOT output reminder (blocked)', () => {
+        expect(res.cli.stdout).not.toContain('the way continues');
+        expect(res.cli.stdout).not.toContain('rhx route.drive');
       });
 
       then('does not create passage marker', () => {
@@ -501,6 +524,240 @@ describe('driver.route.set.acceptance', () => {
 
       then('stdout contains passage = allowed', () => {
         expect(res.cli.stdout).toContain('passage = allowed');
+      });
+    });
+  });
+
+  given('[case8] route.stone.set --as rewound', () => {
+    when('[t0] rewind a single stone with guard artifacts', () => {
+      const res = useThen('invoke rewound on stone with artifacts', async () => {
+        const tempDir = genTempDirForRhachet({
+          slug: 'driver-set-rewound-single',
+          clone: ASSETS_DIR,
+        });
+
+        await execAsync('npx rhachet roles link --role driver', { cwd: tempDir });
+
+        // create .route directory and guard artifacts
+        await fs.mkdir(path.join(tempDir, '.route'), { recursive: true });
+        await fs.writeFile(
+          path.join(tempDir, '.route', '1.vision.guard.review.i1.abc.r1.md'),
+          '# review',
+        );
+        await fs.writeFile(
+          path.join(tempDir, '.route', '1.vision.guard.judge.i1.abc.j1.md'),
+          '# judge',
+        );
+
+        // invoke rewind
+        const cli = await invokeRouteSkill({
+          skill: 'route.stone.set',
+          args: { stone: '1.vision', route: '.', as: 'rewound' },
+          cwd: tempDir,
+        });
+
+        console.log('\n--- [case8] cli.stdout ---');
+        console.log(cli.stdout);
+        console.log('\n--- [case8] cli.stderr ---');
+        console.log(cli.stderr);
+        console.log('--- end [case8] cli ---\n');
+
+        // check passage.jsonl for rewound entry
+        const passagePath = path.join(tempDir, '.route', 'passage.jsonl');
+        const passageContent = await fs.readFile(passagePath, 'utf-8').catch(() => '');
+        const rewoundExists = passageContent
+          .split('\n')
+          .filter(Boolean)
+          .some((line) => {
+            const entry = JSON.parse(line);
+            return entry.stone === '1.vision' && entry.status === 'rewound';
+          });
+
+        // check guard artifacts are deleted
+        const routeFiles = await fs.readdir(path.join(tempDir, '.route'));
+        const guardFiles = routeFiles.filter((f) => f.includes('.guard.'));
+
+        return { cli, tempDir, rewoundExists, guardFiles };
+      });
+
+      then('cli completes successfully', () => {
+        expect(res.cli.code).toEqual(0);
+      });
+
+      then('stdout contains rewound output tree', () => {
+        expect(res.cli.stdout).toContain('1.vision');
+        expect(res.cli.stdout).toContain('cascade');
+        expect(res.cli.stdout).toContain('done');
+      });
+
+      then('creates passage marker with status rewound', () => {
+        expect(res.rewoundExists).toBe(true);
+      });
+
+      then('deletes guard artifacts', () => {
+        expect(res.guardFiles).toHaveLength(0);
+      });
+    });
+
+    when('[t1] cascade rewind affects subsequent stones', () => {
+      const res = useThen('invoke rewound with cascade', async () => {
+        const tempDir = genTempDirForRhachet({
+          slug: 'driver-set-rewound-cascade',
+          clone: ASSETS_DIR,
+        });
+
+        await execAsync('npx rhachet roles link --role driver', { cwd: tempDir });
+
+        // create .route directory with artifacts for multiple stones
+        await fs.mkdir(path.join(tempDir, '.route'), { recursive: true });
+        await fs.writeFile(
+          path.join(tempDir, '.route', '1.vision.guard.review.i1.abc.r1.md'),
+          '# review',
+        );
+        await fs.writeFile(
+          path.join(tempDir, '.route', '2.criteria.guard.review.i1.abc.r1.md'),
+          '# review',
+        );
+        await fs.writeFile(
+          path.join(tempDir, '.route', '3.plan.guard.review.i1.abc.r1.md'),
+          '# review',
+        );
+
+        // invoke rewind on stone 2 (should cascade to 2 and 3, not 1)
+        const cli = await invokeRouteSkill({
+          skill: 'route.stone.set',
+          args: { stone: '2.criteria', route: '.', as: 'rewound' },
+          cwd: tempDir,
+        });
+
+        // check which guard files remain
+        const routeFiles = await fs.readdir(path.join(tempDir, '.route'));
+        const guardFiles = routeFiles.filter((f) => f.includes('.guard.'));
+
+        // check passage.jsonl for rewound entries
+        const passagePath = path.join(tempDir, '.route', 'passage.jsonl');
+        const passageContent = await fs.readFile(passagePath, 'utf-8').catch(() => '');
+        const lines = passageContent.split('\n').filter(Boolean);
+        const rewoundStones = lines
+          .map((line) => JSON.parse(line))
+          .filter((e: { status: string }) => e.status === 'rewound')
+          .map((e: { stone: string }) => e.stone);
+
+        return { cli, tempDir, guardFiles, rewoundStones };
+      });
+
+      then('cli completes successfully', () => {
+        expect(res.cli.code).toEqual(0);
+      });
+
+      then('stdout shows cascade for stones 2 and 3', () => {
+        expect(res.cli.stdout).toContain('2.criteria');
+        expect(res.cli.stdout).toContain('3.plan');
+      });
+
+      then('passage contains rewound entries for stones 2 and 3', () => {
+        expect(res.rewoundStones).toContain('2.criteria');
+        expect(res.rewoundStones).toContain('3.plan');
+        expect(res.rewoundStones).not.toContain('1.vision');
+      });
+
+      then('only stone 1 guard artifacts remain', () => {
+        expect(res.guardFiles).toHaveLength(1);
+        expect(res.guardFiles[0]).toContain('1.vision');
+      });
+
+      then('stdout matches snapshot', () => {
+        expect(res.cli.stdout).toMatchSnapshot();
+      });
+    });
+
+    when('[t2] rewind invalidates prior approval', () => {
+      const res = useThen('invoke rewound after approval', async () => {
+        const tempDir = genTempDirForRhachet({
+          slug: 'driver-set-rewound-invalid',
+          clone: ASSETS_DIR,
+        });
+
+        await execAsync('npx rhachet roles link --role driver', { cwd: tempDir });
+
+        // create .route directory with prior approval
+        await fs.mkdir(path.join(tempDir, '.route'), { recursive: true });
+        await fs.writeFile(
+          path.join(tempDir, '.route', 'passage.jsonl'),
+          '{"stone":"1.vision","status":"approved"}\n',
+        );
+
+        // invoke rewind
+        const cli = await invokeRouteSkill({
+          skill: 'route.stone.set',
+          args: { stone: '1.vision', route: '.', as: 'rewound' },
+          cwd: tempDir,
+        });
+
+        // check passage.jsonl for both entries
+        const passagePath = path.join(tempDir, '.route', 'passage.jsonl');
+        const passageContent = await fs.readFile(passagePath, 'utf-8');
+        const lines = passageContent.split('\n').filter(Boolean);
+
+        return { cli, tempDir, lines };
+      });
+
+      then('cli completes successfully', () => {
+        expect(res.cli.code).toEqual(0);
+      });
+
+      then('passage.jsonl contains approved then rewound entries (cascade)', () => {
+        // cascade rewinds all 3 stones (1, 2, 3)
+        expect(res.lines).toHaveLength(4);
+        expect(res.lines[0]).toContain('approved');
+        expect(res.lines[1]).toContain('rewound');
+        expect(res.lines[2]).toContain('rewound');
+        expect(res.lines[3]).toContain('rewound');
+      });
+    });
+
+    when('[t3] idempotent rewind (twice)', () => {
+      const res = useThen('invoke rewound twice', async () => {
+        const tempDir = genTempDirForRhachet({
+          slug: 'driver-set-rewound-idempotent',
+          clone: ASSETS_DIR,
+        });
+
+        await execAsync('npx rhachet roles link --role driver', { cwd: tempDir });
+
+        // create .route directory
+        await fs.mkdir(path.join(tempDir, '.route'), { recursive: true });
+
+        // first rewind
+        await invokeRouteSkill({
+          skill: 'route.stone.set',
+          args: { stone: '1.vision', route: '.', as: 'rewound' },
+          cwd: tempDir,
+        });
+
+        // second rewind
+        const cli = await invokeRouteSkill({
+          skill: 'route.stone.set',
+          args: { stone: '1.vision', route: '.', as: 'rewound' },
+          cwd: tempDir,
+        });
+
+        // check passage.jsonl for entries
+        const passagePath = path.join(tempDir, '.route', 'passage.jsonl');
+        const passageContent = await fs.readFile(passagePath, 'utf-8');
+        const lines = passageContent.split('\n').filter(Boolean);
+
+        return { cli, tempDir, lines };
+      });
+
+      then('cli completes successfully on second call', () => {
+        expect(res.cli.code).toEqual(0);
+      });
+
+      then('passage.jsonl contains rewound entries for each cascade (3 stones × 2 rewinds)', () => {
+        // cascade rewinds all 3 stones twice = 6 entries
+        expect(res.lines).toHaveLength(6);
+        expect(res.lines.every((l: string) => l.includes('rewound'))).toBe(true);
       });
     });
   });

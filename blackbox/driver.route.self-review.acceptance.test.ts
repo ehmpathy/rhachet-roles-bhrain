@@ -2,6 +2,7 @@ import * as fs from 'fs/promises';
 import * as path from 'path';
 import { given, then, useBeforeAll, useThen, when } from 'test-fns';
 
+import { getSelfReviewArticulationPath } from '../src/domain.operations/route/guard/getSelfReviewArticulationPath';
 import {
   execAsync,
   genTempDirForRhachet,
@@ -17,6 +18,7 @@ const ASSETS_DIR = path.join(__dirname, '.test/assets/route-drive');
  *
  * .note = only .since files are backdated; .uptil stays current (simulates proper wait)
  * .note = backdates ALL matched .since files (there may be multiple with different hashes)
+ * .note = stone pattern matches resolved names (e.g., '1' matches '1.stone')
  */
 const backdateTriggeredReport = async (input: {
   tempDir: string;
@@ -24,11 +26,14 @@ const backdateTriggeredReport = async (input: {
   slug: string;
 }): Promise<void> => {
   // find ALL triggered .since files for this slug (for hashbar check)
+  // note: stone '1' becomes '1.stone' in file names
+  const stonePattern = input.stone.includes('.') ? input.stone : `${input.stone}.`;
   const routeDir = path.join(input.tempDir, '.route');
   const files = await fs.readdir(routeDir).catch(() => []);
   const sinceFiles = files.filter(
     (f) =>
-      f.includes(`${input.stone}.guard.selfreview.${input.slug}`) &&
+      f.startsWith(stonePattern) &&
+      f.includes(`guard.selfreview.${input.slug}`) &&
       f.endsWith('.triggered.since'),
   );
   // backdate all .since files (needed for hashbar threshold check)
@@ -64,6 +69,29 @@ describe('driver.route.review.self.acceptance', () => {
       await fs.writeFile(
         path.join(tempDir, '1.stone.i1.md'),
         '# Implementation\n\nFeature implemented.',
+      );
+
+      // create articulation files for both self-reviews
+      const articulationPath1 = getSelfReviewArticulationPath({
+        route: tempDir,
+        stone: '1',
+        index: 1,
+        slug: 'all-done',
+      });
+      const articulationPath2 = getSelfReviewArticulationPath({
+        route: tempDir,
+        stone: '1',
+        index: 2,
+        slug: 'tests-pass',
+      });
+      await fs.mkdir(path.dirname(articulationPath1), { recursive: true });
+      await fs.writeFile(
+        articulationPath1,
+        '# Self-Review: all-done\n\nI reviewed all requirements.\n',
+      );
+      await fs.writeFile(
+        articulationPath2,
+        '# Self-Review: tests-pass\n\nI verified all tests pass.\n',
       );
 
       return { tempDir };
@@ -254,6 +282,29 @@ describe('driver.route.review.self.acceptance', () => {
         '# Implementation\n\nFeature implemented.',
       );
 
+      // create articulation files for both self-reviews
+      const articulationPath1 = getSelfReviewArticulationPath({
+        route: tempDir,
+        stone: '1',
+        index: 1,
+        slug: 'all-done',
+      });
+      const articulationPath2 = getSelfReviewArticulationPath({
+        route: tempDir,
+        stone: '1',
+        index: 2,
+        slug: 'tests-pass',
+      });
+      await fs.mkdir(path.dirname(articulationPath1), { recursive: true });
+      await fs.writeFile(
+        articulationPath1,
+        '# Self-Review: all-done\n\nI reviewed all requirements.\n',
+      );
+      await fs.writeFile(
+        articulationPath2,
+        '# Self-Review: tests-pass\n\nI verified all tests pass.\n',
+      );
+
       return { tempDir };
     });
 
@@ -426,26 +477,24 @@ judges:
         '# Implementation\n\nFeature implemented.',
       );
 
+      // create articulation file so test focuses on time enforcement (not absent file)
+      const articulationPath = getSelfReviewArticulationPath({
+        route: tempDir,
+        stone: '1',
+        index: 1,
+        slug: 'all-done',
+      });
+      await fs.mkdir(path.dirname(articulationPath), { recursive: true });
+      await fs.writeFile(
+        articulationPath,
+        '# self-review\n\nreviewed and looks good.',
+      );
+
       return { tempDir };
     });
 
-    when('[t0] review.self is triggered', () => {
-      const result = useThen('shows lets reflect prompt', async () =>
-        invokeRouteSkill({
-          skill: 'route.stone.set',
-          args: { stone: '1', route: '.', as: 'passed' },
-          cwd: scene.tempDir,
-        }),
-      );
-
-      then('shows review.self prompt', () => {
-        expect(result.stdout).toContain('lets reflect');
-      });
-    });
-
-    when('[t1] promise attempted immediately (before 30 seconds)', () => {
-      const result = useThen('challenged by time enforcement', async () =>
-        // no backdate — promise immediately after trigger
+    when('[t0] first promise attempt (creates trigger)', () => {
+      const result = useThen('returns challenge:first', async () =>
         invokeRouteSkill({
           skill: 'route.stone.set',
           args: { stone: '1', route: '.', as: 'promised', that: 'all-done' },
@@ -460,17 +509,32 @@ judges:
       then('shows patience challenge', () => {
         expect(result.stdout).toContain('patience, friend');
       });
+    });
+
+    when('[t1] second promise attempt (too quickly)', () => {
+      const result = useThen('returns challenge:rushed', async () =>
+        // no backdate — promise immediately after first attempt
+        invokeRouteSkill({
+          skill: 'route.stone.set',
+          args: { stone: '1', route: '.', as: 'promised', that: 'all-done' },
+          cwd: scene.tempDir,
+        }),
+      );
+
+      then('exit code is non-zero', () => {
+        expect(result.code).not.toEqual(0);
+      });
+
+      then('shows what is the rush', () => {
+        expect(result.stdout).toContain('what is the rush');
+      });
+
+      then('shows patience challenge after rush prefix', () => {
+        expect(result.stdout).toContain('patience, friend');
+      });
 
       then('shows pond barely rippled', () => {
         expect(result.stdout).toContain('pond barely rippled');
-      });
-
-      then('shows truly reflection prompt', () => {
-        expect(result.stdout).toContain("when you've truly reflected, run");
-      });
-
-      then('shows be here now guidance', () => {
-        expect(result.stdout).toContain('be here now');
       });
 
       then('stdout has good vibes', () => {
@@ -478,8 +542,10 @@ judges:
       });
     });
 
-    when('[t2] promise attempted after time passes (30+ seconds)', () => {
+    when('[t2] third promise attempt (after time passes)', () => {
       const result = useThen('promise accepted', async () => {
+        // articulation file already created in setup
+
         // backdate to simulate elapsed time
         await backdateTriggeredReport({
           tempDir: scene.tempDir,
@@ -538,6 +604,20 @@ judges:
           args: { stone: '1', route: '.', as: 'passed' },
           cwd: scene.tempDir,
         });
+
+        // create articulation file (required for promise to succeed)
+        const articulationPath = getSelfReviewArticulationPath({
+          route: scene.tempDir,
+          stone: '1',
+          index: 1,
+          slug: 'all-done',
+        });
+        await fs.mkdir(path.dirname(articulationPath), { recursive: true });
+        await fs.writeFile(
+          articulationPath,
+          '# self-review\n\nreviewed and looks good.',
+        );
+
         // backdate to bypass time enforcement
         await backdateTriggeredReport({
           tempDir: scene.tempDir,
@@ -600,6 +680,18 @@ judges:
 
     when('[t2] promise tests-pass and complete stone', () => {
       then('all self-reviews satisfied', async () => {
+        // create articulation file for tests-pass (required for promise to succeed)
+        const articulationPath = getSelfReviewArticulationPath({
+          route: scene.tempDir,
+          stone: '1',
+          index: 2,
+          slug: 'tests-pass',
+        });
+        await fs.writeFile(
+          articulationPath,
+          '# self-review\n\nall tests pass.',
+        );
+
         // backdate tests-pass triggered report
         await backdateTriggeredReport({
           tempDir: scene.tempDir,
@@ -647,6 +739,19 @@ judges:
         '# Implementation\n\nFeature implemented.',
       );
 
+      // create articulation file (required for plowthrough to work)
+      const articulationPath = getSelfReviewArticulationPath({
+        route: tempDir,
+        stone: '1',
+        index: 1,
+        slug: 'all-done',
+      });
+      await fs.mkdir(path.dirname(articulationPath), { recursive: true });
+      await fs.writeFile(
+        articulationPath,
+        '# Self-Review: all-done\n\nI reviewed and found everything in order.\n',
+      );
+
       return { tempDir };
     });
 
@@ -679,6 +784,168 @@ judges:
         });
         expect(result.code).toEqual(0);
         expect(result.stdout).toContain('progressed');
+      });
+    });
+  });
+
+  given('[case8] full challenge journey (first → absent → rushed → allowed)', () => {
+    const scene = useBeforeAll(async () => {
+      const tempDir = genTempDirForRhachet({
+        slug: 'review.self-case8',
+        clone: ASSETS_DIR,
+      });
+
+      // link the driver role
+      await execAsync('npx rhachet roles link --role driver', { cwd: tempDir });
+
+      // create feature branch (bind rejects protected branches like main)
+      await execAsync('git checkout -b vlad/test-review.self-case8', {
+        cwd: tempDir,
+      });
+
+      // create artifact for the stone
+      await fs.writeFile(
+        path.join(tempDir, '1.stone.i1.md'),
+        '# Implementation\n\nFeature implemented.',
+      );
+
+      return { tempDir };
+    });
+
+    when('[t0] first promise attempt (no prior trigger)', () => {
+      const result = useThen('returns challenge:first', async () =>
+        invokeRouteSkill({
+          skill: 'route.stone.set',
+          args: { stone: '1', route: '.', as: 'promised', that: 'all-done' },
+          cwd: scene.tempDir,
+        }),
+      );
+
+      then('exit code is non-zero', () => {
+        expect(result.code).not.toEqual(0);
+      });
+
+      then('shows patience challenge', () => {
+        expect(result.stdout).toContain('patience, friend');
+      });
+
+      then('shows lets reflect guidance', () => {
+        expect(result.stdout).toContain('lets reflect');
+      });
+
+      then('shows articulation path with index', () => {
+        expect(result.stdout).toContain('review/self/for.1._.r1.all-done.md');
+      });
+
+      then('stdout has good vibes', () => {
+        expect(sanitizeTimeForSnapshot(result.stdout)).toMatchSnapshot();
+      });
+    });
+
+    when('[t1] second promise attempt (file still absent)', () => {
+      const result = useThen('returns challenge:absent', async () =>
+        invokeRouteSkill({
+          skill: 'route.stone.set',
+          args: { stone: '1', route: '.', as: 'promised', that: 'all-done' },
+          cwd: scene.tempDir,
+        }),
+      );
+
+      then('exit code is non-zero', () => {
+        expect(result.code).not.toEqual(0);
+      });
+
+      then('shows what have you seen', () => {
+        expect(result.stdout).toContain('what have you seen');
+      });
+
+      then('shows articulation is absent', () => {
+        expect(result.stdout).toContain('articulation is absent');
+      });
+
+      then('shows promise without words message', () => {
+        expect(result.stdout).toContain('promise without words');
+        expect(result.stdout).toContain('daydream');
+      });
+
+      then('shows patience challenge after absent prefix', () => {
+        expect(result.stdout).toContain('patience, friend');
+      });
+
+      then('stdout has good vibes', () => {
+        expect(sanitizeTimeForSnapshot(result.stdout)).toMatchSnapshot();
+      });
+    });
+
+    when('[t2] third promise attempt (file created, too soon)', () => {
+      const result = useThen('returns challenge:rushed', async () => {
+        // create articulation file
+        const articulationPath = getSelfReviewArticulationPath({
+          route: scene.tempDir,
+          stone: '1',
+          index: 1,
+          slug: 'all-done',
+        });
+        await fs.mkdir(path.dirname(articulationPath), { recursive: true });
+        await fs.writeFile(
+          articulationPath,
+          '# self-review\n\nreviewed and looks good.',
+        );
+
+        return invokeRouteSkill({
+          skill: 'route.stone.set',
+          args: { stone: '1', route: '.', as: 'promised', that: 'all-done' },
+          cwd: scene.tempDir,
+        });
+      });
+
+      then('exit code is non-zero', () => {
+        expect(result.code).not.toEqual(0);
+      });
+
+      then('shows patience challenge (not absent)', () => {
+        expect(result.stdout).toContain('patience, friend');
+      });
+
+      then('does NOT show what have you seen', () => {
+        expect(result.stdout).not.toContain('what have you seen');
+      });
+
+      then('shows what is the rush', () => {
+        expect(result.stdout).toContain('what is the rush');
+      });
+
+      then('stdout has good vibes', () => {
+        expect(sanitizeTimeForSnapshot(result.stdout)).toMatchSnapshot();
+      });
+    });
+
+    when('[t3] fourth promise attempt (file exists, time elapsed)', () => {
+      const result = useThen('returns allowed', async () => {
+        // backdate triggered report to simulate elapsed time
+        await backdateTriggeredReport({
+          tempDir: scene.tempDir,
+          stone: '1',
+          slug: 'all-done',
+        });
+
+        return invokeRouteSkill({
+          skill: 'route.stone.set',
+          args: { stone: '1', route: '.', as: 'promised', that: 'all-done' },
+          cwd: scene.tempDir,
+        });
+      });
+
+      then('exit code is 0', () => {
+        expect(result.code).toEqual(0);
+      });
+
+      then('shows progressed', () => {
+        expect(result.stdout).toContain('progressed');
+      });
+
+      then('stdout has good vibes', () => {
+        expect(sanitizeTimeForSnapshot(result.stdout)).toMatchSnapshot();
       });
     });
   });

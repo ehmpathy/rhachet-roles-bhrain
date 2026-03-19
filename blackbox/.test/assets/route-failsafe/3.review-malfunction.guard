@@ -1,0 +1,8 @@
+artifacts:
+  - 3.review-malfunction*.md
+
+reviews:
+  - bash $route/.test/mock-exit-1.sh
+
+judges:
+  - bash $route/.test/mock-judge-exit-0.sh

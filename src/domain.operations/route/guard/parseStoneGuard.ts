@@ -30,6 +30,7 @@ export const parseStoneGuard = async (input: {
     artifacts: parsed.artifacts ?? [],
     reviews: parsed.reviews ?? [],
     judges: parsed.judges ?? [],
+    protect: parsed.protect ?? [],
   });
 };
 
@@ -44,15 +45,17 @@ const parseSimpleYaml = async (
   artifacts?: string[];
   reviews?: RouteStoneGuardReviewPeer[] | RouteStoneGuardReviewsStructured;
   judges?: string[];
+  protect?: string[];
 }> => {
   const result: {
     artifacts?: string[];
     reviews?: RouteStoneGuardReviewPeer[] | RouteStoneGuardReviewsStructured;
     judges?: string[];
+    protect?: string[];
   } = {};
 
   const lines = content.split('\n');
-  let currentKey: 'artifacts' | 'reviews' | 'judges' | null = null;
+  let currentKey: 'artifacts' | 'reviews' | 'judges' | 'protect' | null = null;
   let currentSubKey: 'self' | 'peer' | null = null;
   let structuredReviews: RouteStoneGuardReviewsStructured | null = null;
   let flatReviews: string[] | null = null;
@@ -112,6 +115,12 @@ const parseSimpleYaml = async (
       result.judges = [];
       continue;
     }
+    if (trimmed === 'protect:') {
+      currentKey = 'protect';
+      currentSubKey = null;
+      result.protect = [];
+      continue;
+    }
 
     // check for reviews sub-keys (structured format)
     if (currentKey === 'reviews') {
@@ -139,6 +148,8 @@ const parseSimpleYaml = async (
         result.artifacts?.push(value);
       } else if (currentKey === 'judges') {
         result.judges?.push(value);
+      } else if (currentKey === 'protect') {
+        result.protect?.push(value);
       } else if (currentKey === 'reviews') {
         if (currentSubKey === 'peer') {
           structuredReviews?.peer.push(value);

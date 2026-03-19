@@ -1,9 +1,20 @@
+import * as path from 'path';
 import {
   genContextBrain,
   getAvailableBrains,
   getAvailableBrainsInWords,
 } from 'rhachet/brains';
 
+import { getAllAnnotations } from '@src/domain.operations/reflect/annotation/getAllAnnotations';
+import { setAnnotation } from '@src/domain.operations/reflect/annotation/setAnnotation';
+import { getAllSavepoints } from '@src/domain.operations/reflect/savepoint/getAllSavepoints';
+import { getOneSavepoint } from '@src/domain.operations/reflect/savepoint/getOneSavepoint';
+import { setSavepoint } from '@src/domain.operations/reflect/savepoint/setSavepoint';
+import { getReflectScope } from '@src/domain.operations/reflect/scope/getReflectScope';
+import { backupSnapshots } from '@src/domain.operations/reflect/snapshot/backupSnapshots';
+import { captureSnapshot } from '@src/domain.operations/reflect/snapshot/captureSnapshot';
+import { getAllSnapshots } from '@src/domain.operations/reflect/snapshot/getAllSnapshots';
+import { getOneSnapshot } from '@src/domain.operations/reflect/snapshot/getOneSnapshot';
 import { stepReflect } from '@src/domain.operations/reflect/stepReflect';
 
 /**
@@ -141,4 +152,358 @@ export const reflect = async (): Promise<void> => {
     },
     { brain },
   );
+};
+
+/**
+ * .what = prints owl-vibed header
+ * .why = consistent output format across all reflect commands
+ */
+const printOwlHeader = (): void => {
+  console.log('🦉 know thyself\n');
+};
+
+/**
+ * .what = formats bytes into human-readable string
+ * .why = enables readable output for file sizes
+ */
+const formatBytes = (bytes: number): string => {
+  if (bytes === 0) return '0 bytes';
+  const k = 1024;
+  const sizes = ['bytes', 'kb', 'mb', 'gb'];
+  const i = Math.floor(Math.log(bytes) / Math.log(k));
+  return `${parseFloat((bytes / k ** i).toFixed(1))}${sizes[i]}`;
+};
+
+/**
+ * .what = replaces $HOME with ~/ in path strings
+ * .why = enables concise, readable output for paths
+ */
+const asHomePath = (pathStr: string): string => {
+  const home = process.env.HOME;
+  if (!home) return pathStr;
+  if (pathStr.startsWith(home)) {
+    return pathStr.replace(home, '~');
+  }
+  return pathStr;
+};
+
+/**
+ * .what = cli entrypoint for reflect.snapshot capture
+ * .why = enables shell invocation to capture experience snapshots
+ */
+export const reflectSnapshotCapture = async (): Promise<void> => {
+  printOwlHeader();
+
+  const scope = getReflectScope({ cwd: process.cwd() });
+  const snapshot = await captureSnapshot({ scope });
+
+  console.log(`🌕 reflect.snapshot capture`);
+  console.log(`   ├─ repo = ${scope.gitRepoName}`);
+  console.log(`   ├─ tree = ${scope.worktreeName}`);
+  console.log(`   ├─ branch = ${scope.branch}`);
+  console.log(`   │`);
+  console.log(`   ├─ transcript`);
+  console.log(
+    `   │  ├─ episodes = ${snapshot.metadata.transcript.episodeCount}`,
+  );
+  console.log(`   │  └─ mainFile = ${snapshot.metadata.transcript.mainFile}`);
+  console.log(`   │`);
+  console.log(`   ├─ savepoints = ${snapshot.metadata.savepoints.count}`);
+  console.log(`   ├─ annotations = ${snapshot.metadata.annotations.count}`);
+  console.log(`   │`);
+  console.log(`   └─ artifacts`);
+  console.log(`      └─ ${asHomePath(snapshot.path)}`);
+  console.log(`\n✨ snapshot captured\n`);
+};
+
+/**
+ * .what = parses --at argument from argv
+ * .why = enables timestamp selection for get commands
+ */
+const parseAtArg = (argv: string[]): string | null => {
+  const atIndex = argv.indexOf('--at');
+  if (atIndex === -1 || atIndex >= argv.length - 1) return null;
+  return argv[atIndex + 1] ?? null;
+};
+
+/**
+ * .what = cli entrypoint for reflect.snapshot get
+ * .why = enables shell invocation to browse and list snapshots
+ */
+export const reflectSnapshotGet = async (): Promise<void> => {
+  printOwlHeader();
+
+  const scope = getReflectScope({ cwd: process.cwd() });
+  const at = parseAtArg(process.argv);
+
+  if (at) {
+    // get specific snapshot
+    const snapshot = getOneSnapshot({ scope, at });
+    if (!snapshot) {
+      console.log(`🌕 reflect.snapshot get --at ${at}`);
+      console.log(`   └─ 💥 snapshot not found`);
+      process.exit(1);
+    }
+
+    console.log(`🌕 reflect.snapshot get --at ${at}`);
+    console.log(`   ├─ repo = ${scope.gitRepoName}`);
+    console.log(`   ├─ tree = ${scope.worktreeName}`);
+    console.log(`   ├─ branch = ${scope.branch}`);
+    console.log(`   │`);
+    console.log(`   ├─ transcript`);
+    console.log(
+      `   │  └─ episodes = ${snapshot.metadata.transcript.episodeCount}`,
+    );
+    console.log(`   │`);
+    console.log(`   ├─ savepoints = ${snapshot.metadata.savepoints.count}`);
+    console.log(`   ├─ annotations = ${snapshot.metadata.annotations.count}`);
+    console.log(`   ├─ size = ${formatBytes(snapshot.sizeBytes)}`);
+    console.log(`   │`);
+    console.log(`   └─ path = ${asHomePath(snapshot.path)}`);
+  } else {
+    // list all snapshots
+    const summary = getAllSnapshots({ scope });
+    const annotations = getAllAnnotations({ scope });
+
+    console.log(`🌕 reflect.snapshot get`);
+    console.log(`   ├─ repo = ${scope.gitRepoName}`);
+    console.log(`   ├─ tree = ${scope.worktreeName}`);
+    console.log(`   ├─ branch = ${scope.branch}`);
+    console.log(`   │`);
+    console.log(`   ├─ snapshots = ${summary.count}`);
+    console.log(`   ├─ annotations = ${annotations.count}`);
+
+    if (summary.snapshots.length > 0) {
+      console.log(`   ├─ size = ${formatBytes(summary.totalBytes)}`);
+      console.log(`   │`);
+      console.log(`   └─ list`);
+      for (let i = 0; i < summary.snapshots.length; i++) {
+        const snap = summary.snapshots[i];
+        if (!snap) continue;
+        const isLast = i === summary.snapshots.length - 1;
+        const prefix = isLast ? '└─' : '├─';
+        const continuation = isLast ? ' ' : '│';
+        const meta = snap.metadata;
+        const stats = meta
+          ? `(episodes=${meta.transcript.episodeCount}, savepoints=${meta.savepoints.count})`
+          : '';
+        console.log(`      ${prefix} ${snap.timestamp} ${stats}`);
+        console.log(`      ${continuation}  └─ ${asHomePath(snap.path)}`);
+      }
+    } else {
+      console.log(`   └─ size = ${formatBytes(summary.totalBytes)}`);
+    }
+  }
+  console.log('');
+};
+
+/**
+ * .what = parses positional text argument from argv
+ * .why = enables text extraction for annotate command
+ */
+const parseTextArg = (argv: string[]): string => {
+  // skip node binary and entrypoint, plus -- separator
+  const skipCount = isNodeEvalMode(argv) ? 1 : 2;
+  const args = argv.slice(skipCount).filter((arg) => arg !== '--');
+
+  // find first non-flag arg
+  for (let i = 0; i < args.length; i++) {
+    const arg = args[i];
+    if (!arg) continue;
+    if (!arg.startsWith('--')) {
+      return arg;
+    }
+    // skip flag values
+    if (arg.startsWith('--') && args[i + 1] && !args[i + 1]?.startsWith('--')) {
+      i++;
+    }
+  }
+  return '';
+};
+
+/**
+ * .what = cli entrypoint for reflect.snapshot annotate
+ * .why = enables shell invocation to annotate timeline moments
+ */
+export const reflectSnapshotAnnotate = async (): Promise<void> => {
+  printOwlHeader();
+
+  const scope = getReflectScope({ cwd: process.cwd() });
+  const text = parseTextArg(process.argv);
+
+  if (!text) {
+    console.log(`🌕 reflect.snapshot annotate`);
+    console.log(`   └─ 💥 annotation text required`);
+    console.log('');
+    console.log('usage: rhx reflect.snapshot.annotate "your annotation text"');
+    process.exit(1);
+  }
+
+  const annotation = setAnnotation({ scope, text });
+
+  console.log(`🌕 reflect.snapshot annotate`);
+  console.log(`   ├─ repo = ${scope.gitRepoName}`);
+  console.log(`   ├─ tree = ${scope.worktreeName}`);
+  console.log(`   ├─ branch = ${scope.branch}`);
+  console.log(`   │`);
+  console.log(`   └─ annotation = ${asHomePath(annotation.path)}`);
+  console.log(`\n✨ annotated\n`);
+};
+
+/**
+ * .what = parses --into argument from argv
+ * .why = enables s3 uri extraction for backup command
+ */
+const parseIntoArg = (argv: string[]): string | null => {
+  const intoIndex = argv.indexOf('--into');
+  if (intoIndex === -1 || intoIndex >= argv.length - 1) return null;
+  return argv[intoIndex + 1] ?? null;
+};
+
+/**
+ * .what = cli entrypoint for reflect.snapshot backup
+ * .why = enables shell invocation to backup snapshots to s3
+ */
+export const reflectSnapshotBackup = async (): Promise<void> => {
+  printOwlHeader();
+
+  const into = parseIntoArg(process.argv);
+
+  if (!into) {
+    console.log(`🌕 reflect.snapshot backup`);
+    console.log(`   └─ 💥 --into s3://bucket required`);
+    console.log('');
+    console.log('usage: rhx reflect.snapshot.backup --into s3://my-bucket');
+    process.exit(1);
+  }
+
+  const scope = getReflectScope({ cwd: process.cwd() });
+  const sourceDir = `${scope.storagePath}/snapshots`;
+
+  const result = backupSnapshots({ sourceDir, into });
+
+  console.log(`🌕 reflect.snapshot backup`);
+  console.log(`   ├─ source = ${asHomePath(result.sourceDir)}`);
+  console.log(`   ├─ target = ${result.targetUri}`);
+  console.log(`   │`);
+  console.log(`   ├─ files = ${result.fileCount}`);
+  console.log(`   └─ size = ${formatBytes(result.totalBytes)}`);
+  console.log(`\n✨ synced\n`);
+};
+
+/**
+ * .what = parses --mode argument from argv
+ * .why = enables mode selection for savepoint set command
+ */
+const parseModeArg = (argv: string[]): 'plan' | 'apply' => {
+  const modeIndex = argv.indexOf('--mode');
+  if (modeIndex === -1 || modeIndex >= argv.length - 1) return 'plan';
+  const mode = argv[modeIndex + 1];
+  if (mode === 'apply') return 'apply';
+  return 'plan';
+};
+
+/**
+ * .what = cli entrypoint for reflect.savepoint set
+ * .why = enables shell invocation to capture code state savepoints
+ */
+export const reflectSavepointSet = async (): Promise<void> => {
+  printOwlHeader();
+
+  const scope = getReflectScope({ cwd: process.cwd() });
+  const mode = parseModeArg(process.argv);
+
+  const savepoint = setSavepoint({ scope, mode });
+
+  console.log(`🌕 reflect.savepoint set`);
+  console.log(`   ├─ repo = ${scope.gitRepoName}`);
+  console.log(`   ├─ tree = ${scope.worktreeName}`);
+  console.log(`   ├─ branch = ${scope.branch}`);
+  console.log(`   │`);
+  console.log(
+    `   ├─ staged.patch = ${formatBytes(savepoint.stagedPatchBytes)}`,
+  );
+  console.log(
+    `   ├─ unstaged.patch = ${formatBytes(savepoint.unstagedPatchBytes)}`,
+  );
+
+  console.log(`   ├─ hash = ${savepoint.hash}`);
+  console.log(`   │`);
+  console.log(`   └─ artifacts`);
+  console.log(`      ├─ ${asHomePath(savepoint.stagedPatchPath)}`);
+  console.log(`      └─ ${asHomePath(savepoint.unstagedPatchPath)}`);
+
+  if (mode === 'plan') {
+    console.log(`\n✨ savepoint planned (use --mode apply to write)\n`);
+  } else {
+    console.log(`\n✨ savepoint captured\n`);
+  }
+};
+
+/**
+ * .what = cli entrypoint for reflect.savepoint get
+ * .why = enables shell invocation to browse and list savepoints
+ */
+export const reflectSavepointGet = async (): Promise<void> => {
+  printOwlHeader();
+
+  const scope = getReflectScope({ cwd: process.cwd() });
+  const at = parseAtArg(process.argv);
+
+  if (at) {
+    // get specific savepoint
+    const savepoint = getOneSavepoint({ scope, at });
+    if (!savepoint) {
+      console.log(`🌕 reflect.savepoint get --at ${at}`);
+      console.log(`   └─ 💥 savepoint not found`);
+      process.exit(1);
+    }
+
+    console.log(`🌕 reflect.savepoint get --at ${at}`);
+    console.log(
+      `   ├─ staged.patch = ${formatBytes(savepoint.stagedPatchBytes)}`,
+    );
+    console.log(`   │  └─ ${asHomePath(savepoint.stagedPatchPath)}`);
+    console.log(`   │`);
+    console.log(
+      `   └─ unstaged.patch = ${formatBytes(savepoint.unstagedPatchBytes)}`,
+    );
+    console.log(`      └─ ${asHomePath(savepoint.unstagedPatchPath)}`);
+  } else {
+    // list all savepoints
+    const summary = getAllSavepoints({ scope });
+
+    console.log(`🌕 reflect.savepoint get`);
+    console.log(`   ├─ repo = ${scope.gitRepoName}`);
+    console.log(`   ├─ tree = ${scope.worktreeName}`);
+    console.log(`   ├─ branch = ${scope.branch}`);
+    console.log(`   │`);
+    console.log(`   ├─ savepoints = ${summary.count}`);
+
+    if (summary.savepoints.length > 0) {
+      console.log(`   ├─ size = ${formatBytes(summary.totalBytes)}`);
+      console.log(`   │`);
+      console.log(`   └─ list`);
+      for (let i = 0; i < summary.savepoints.length; i++) {
+        const sp = summary.savepoints[i];
+        if (!sp) continue;
+        const isLast = i === summary.savepoints.length - 1;
+        const prefix = isLast ? '└─' : '├─';
+        const size = sp.stagedPatchBytes + sp.unstagedPatchBytes;
+        const continuation = isLast ? ' ' : '│';
+        console.log(
+          `      ${prefix} ${sp.timestamp} (hash=${sp.hash.slice(0, 7)}, ${formatBytes(size)})`,
+        );
+        console.log(
+          `      ${continuation}  ├─ ${path.basename(sp.stagedPatchPath)}`,
+        );
+        console.log(
+          `      ${continuation}  └─ ${path.basename(sp.unstagedPatchPath)}`,
+        );
+      }
+    } else {
+      console.log(`   └─ size = ${formatBytes(summary.totalBytes)}`);
+    }
+  }
+  console.log('');
 };

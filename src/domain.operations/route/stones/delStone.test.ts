@@ -64,6 +64,7 @@ describe('delStone', () => {
             artifacts: ['1.vision*.md'],
             reviews: [],
             judges: [],
+            protect: [],
           }),
         });
         await delStone({ stone, route: tempDir });
@@ -80,6 +81,7 @@ describe('delStone', () => {
             artifacts: ['1.vision*.md'],
             reviews: [],
             judges: [],
+            protect: [],
           }),
         });
         await delStone({ stone, route: tempDir });

@@ -1,0 +1,59 @@
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
+
+exports[`driver.route.review.acceptance given: [case1] route with single stone artifact when: [t0] route.review is invoked for stone 1 then: stdout matches snapshot 1`] = `
+"🦉 look for the light
+
+🗿 route.review
+   ├─ the path leads here
+   │  ├─ route = .
+   │  └─ stone = 1
+   │
+   ├─ and finds these artifacts
+   │  ├─ 1 file to review
+   │  └─ [~] ./1.stone.i1.md   4 lines  +0 -0
+   │
+   └─ when ready, run
+      └─ rhx route.stone.set --stone 1 --as approved
+"
+`;
+
+exports[`driver.route.review.acceptance given: [case2] route bound but stone not found when: [t0] route.review is invoked for nonexistent stone then: stderr matches snapshot 1`] = `
+"🦉 look for the light
+
+🗿 route.review
+   └─ ✗ stone 'nonexistent' not found in route
+"
+`;
+
+exports[`driver.route.review.acceptance given: [case3] no route bound when: [t0] route.review is invoked then: stderr matches snapshot 1`] = `
+"🦉 look for the light
+
+🗿 route.review
+   └─ ✗ no route bound, use --route
+"
+`;
+
+exports[`driver.route.review.acceptance given: [case4] explicit route without bind when: [t0] route.review is invoked with --route then: stdout matches snapshot 1`] = `
+"🦉 look for the light
+
+🗿 route.review
+   ├─ the path leads here
+   │  ├─ route = .
+   │  └─ stone = 1
+   │
+   ├─ and finds these artifacts
+   │  ├─ 1 file to review
+   │  └─ [~] ./1.stone.i1.md   4 lines  +0 -0
+   │
+   └─ when ready, run
+      └─ rhx route.stone.set --stone 1 --as approved
+"
+`;
+
+exports[`driver.route.review.acceptance given: [case5] opener command not found in PATH when: [t0] route.review is invoked with invalid opener then: stderr matches snapshot 1`] = `
+"🦉 look for the light
+
+🗿 route.review
+   └─ ✗ opener 'nonexistent-editor-xyz' not found in PATH
+"
+`;

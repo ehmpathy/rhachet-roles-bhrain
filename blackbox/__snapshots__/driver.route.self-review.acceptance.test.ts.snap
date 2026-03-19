@@ -64,8 +64,26 @@ exports[`driver.route.review.self.acceptance given: [case1] stone with reviews.s
    │  │
    │  └─
    │
-   ├─ articulate into
-   │  └─ /review/self/1.all-done.md
+   ├─ walk the way 🪷
+   │  │
+   │  ├─ articulate into
+   │  │  └─ /review/self/for.1._.r1.all-done.md
+   │  │
+   │  ├─ for each found issue 🪘
+   │  │  ├─
+   │  │  │
+   │  │  │  articulate how it was fixed
+   │  │  │  so you remember for next time
+   │  │  │
+   │  │  └─
+   │  │
+   │  └─ for each non issue 🪘
+   │     ├─
+   │     │
+   │     │  articulate why it holds
+   │     │  so others can learn from it
+   │     │
+   │     └─
    │
    └─ when you've truly reflected, run
       └─ rhx route.stone.set --stone 1 --as promised --that all-done
@@ -76,7 +94,7 @@ exports[`driver.route.review.self.acceptance given: [case1] stone with reviews.s
 "🦉 the way speaks for itself
 
 🗿 route.stone.set
-   └─ stone = 1
+   ├─ stone = 1
    └─ passage = progressed (review.self 1/2 promised)
 
 🌕 lets reflect
@@ -136,8 +154,26 @@ exports[`driver.route.review.self.acceptance given: [case1] stone with reviews.s
    │  │
    │  └─
    │
-   ├─ articulate into
-   │  └─ ./review/self/1.tests-pass.md
+   ├─ walk the way 🪷
+   │  │
+   │  ├─ articulate into
+   │  │  └─ ./review/self/for.1._.r1.tests-pass.md
+   │  │
+   │  ├─ for each found issue 🪘
+   │  │  ├─
+   │  │  │
+   │  │  │  articulate how it was fixed
+   │  │  │  so you remember for next time
+   │  │  │
+   │  │  └─
+   │  │
+   │  └─ for each non issue 🪘
+   │     ├─
+   │     │
+   │     │  articulate why it holds
+   │     │  so others can learn from it
+   │     │
+   │     └─
    │
    └─ when you've truly reflected, run
       └─ rhx route.stone.set --stone 1 --as promised --that tests-pass
@@ -148,29 +184,32 @@ exports[`driver.route.review.self.acceptance given: [case1] stone with reviews.s
 "🦉 the way speaks for itself
 
 🗿 route.stone.set
-   └─ stone = 1
+   ├─ stone = 1
    └─ passage = progressed (review.self 2/2 promised)
 "
 `;
 
 exports[`driver.route.review.self.acceptance given: [case1] stone with reviews.self defined when: [t3] pass attempted with all promises then: stdout has good vibes 1`] = `
 "🦉 the way speaks for itself
-   ├─ ✓ review.1 - done [TIME]
-   └─ ✓ judge.1 - passed [TIME]
+   ├─ ✓ review.1 - completed [TIME]
+   └─ ✓ judge.1 - allowed [TIME]
 
 🗿 route.stone.set
    ├─ stone = 1
    ├─ passage = allowed
-   └─ guard
-      ├─ artifacts
-      │   └─ 1.stone.i1.md
-      ├─ reviews
-      │   └─ r1: .test/mock-review.sh --paths 1.stone*.md
-      │       ├─ finished [TIME] ✓
-      │       └─ review: .route/1.guard.review.i1.3323f7a0e391b72d09ba5b4f51f33a2bfc06024571e276ee021a5f7e84874cc1.r1.md
-      └─ judges
-          └─ j1: rhx route.stone.judge --mechanism reviewed? --stone $stone --route $route --allow-blockers 0
-              └─ finished [TIME] ✓
+   ├─ guard
+   │  ├─ artifacts
+   │  │   └─ 1.stone.i1.md
+   │  ├─ reviews
+   │  │   └─ r1: .test/mock-review.sh --paths 1.stone*.md
+   │  │       ├─ finished [TIME] ✓
+   │  │       └─ review: .route/1.guard.review.i1.3323f7a0e391b72d09ba5b4f51f33a2bfc06024571e276ee021a5f7e84874cc1.r1.md
+   │  └─ judges
+   │      └─ j1: rhx route.stone.judge --mechanism reviewed? --stone $stone --route $route --allow-blockers 0
+   │          └─ finished [TIME] ✓
+   │
+   └─ the way continues, run
+      └─ rhx route.drive
 "
 `;
 
@@ -238,8 +277,26 @@ exports[`driver.route.review.self.acceptance given: [case3] hashless promises su
    │  │
    │  └─
    │
-   ├─ articulate into
-   │  └─ /review/self/1.tests-pass.md
+   ├─ walk the way 🪷
+   │  │
+   │  ├─ articulate into
+   │  │  └─ /review/self/for.1._.r2.tests-pass.md
+   │  │
+   │  ├─ for each found issue 🪘
+   │  │  ├─
+   │  │  │
+   │  │  │  articulate how it was fixed
+   │  │  │  so you remember for next time
+   │  │  │
+   │  │  └─
+   │  │
+   │  └─ for each non issue 🪘
+   │     ├─
+   │     │
+   │     │  articulate why it holds
+   │     │  so others can learn from it
+   │     │
+   │     └─
    │
    └─ when you've truly reflected, run
       └─ rhx route.stone.set --stone 1 --as promised --that tests-pass
@@ -248,27 +305,50 @@ exports[`driver.route.review.self.acceptance given: [case3] hashless promises su
 
 exports[`driver.route.review.self.acceptance given: [case4] flat reviews array (backwards compatible) when: [t0] pass attempted with flat reviews then: stdout has good vibes 1`] = `
 "🦉 the way speaks for itself
-   ├─ ✓ review.1 - done [TIME]
-   └─ ✓ judge.1 - passed [TIME]
+   ├─ ✓ review.1 - completed [TIME]
+   └─ ✓ judge.1 - allowed [TIME]
 
 🗿 route.stone.set
    ├─ stone = 1
    ├─ passage = allowed
-   └─ guard
-      ├─ artifacts
-      │   └─ 1.stone.i1.md
-      ├─ reviews
-      │   └─ r1: .test/mock-review.sh --paths 1.stone*.md
-      │       ├─ finished [TIME] ✓
-      │       └─ review: .route/1.guard.review.i1.3323f7a0e391b72d09ba5b4f51f33a2bfc06024571e276ee021a5f7e84874cc1.r1.md
-      └─ judges
-          └─ j1: rhx route.stone.judge --mechanism reviewed? --stone $stone --route $route --allow-blockers 0
-              └─ finished [TIME] ✓
+   ├─ guard
+   │  ├─ artifacts
+   │  │   └─ 1.stone.i1.md
+   │  ├─ reviews
+   │  │   └─ r1: .test/mock-review.sh --paths 1.stone*.md
+   │  │       ├─ finished [TIME] ✓
+   │  │       └─ review: .route/1.guard.review.i1.3323f7a0e391b72d09ba5b4f51f33a2bfc06024571e276ee021a5f7e84874cc1.r1.md
+   │  └─ judges
+   │      └─ j1: rhx route.stone.judge --mechanism reviewed? --stone $stone --route $route --allow-blockers 0
+   │          └─ finished [TIME] ✓
+   │
+   └─ the way continues, run
+      └─ rhx route.drive
 "
 `;
 
-exports[`driver.route.review.self.acceptance given: [case5] clone promises too quickly (time enforcement) when: [t1] promise attempted immediately (before 30 seconds) then: stdout has good vibes 1`] = `
+exports[`driver.route.review.self.acceptance given: [case5] clone promises too quickly (time enforcement) when: [t1] second promise attempt (too quickly) then: stdout has good vibes 1`] = `
 "🦉 the way speaks for itself
+
+🍂 what is the rush?
+   ├─ ...
+   │
+   ├─ what does haste cost?
+   ├─ ...
+   │
+   ├─ does the self weigh more than the whole?
+   │  ├─ what you miss, they must find
+   │  ├─ minutes saved, hours spent
+   │  └─ your haste, their burden
+   │
+   ├─ each review is an opportunity
+   │  ├─ a chance to find a deeper truth
+   │  ├─ not one to squander
+   │  └─ no matter how repetitive
+   │
+   └─ trust the way
+      ├─ what calls for pause, calls for cause
+      └─ be true to the review 🍵
 
 🗿 patience, friend
    │
@@ -304,8 +384,26 @@ exports[`driver.route.review.self.acceptance given: [case5] clone promises too q
    │  │
    │  └─
    │
-   ├─ articulate into
-   │  └─ ./review/self/1.all-done.md
+   ├─ walk the way 🪷
+   │  │
+   │  ├─ articulate into
+   │  │  └─ ./review/self/for.1._.r1.all-done.md
+   │  │
+   │  ├─ for each found issue 🪘
+   │  │  ├─
+   │  │  │
+   │  │  │  articulate how it was fixed
+   │  │  │  so you remember for next time
+   │  │  │
+   │  │  └─
+   │  │
+   │  └─ for each non issue 🪘
+   │     ├─
+   │     │
+   │     │  articulate why it holds
+   │     │  so others can learn from it
+   │     │
+   │     └─
    │
    └─ when you've truly reflected, run
       └─ rhx route.stone.set --stone 1 --as promised --that all-done
@@ -367,10 +465,585 @@ exports[`driver.route.review.self.acceptance given: [case5] clone promises too q
    │  │
    │  └─
    │
-   ├─ articulate into
-   │  └─ ./review/self/1.all-done.md
+   ├─ walk the way 🪷
+   │  │
+   │  ├─ articulate into
+   │  │  └─ ./review/self/for.1._.r1.all-done.md
+   │  │
+   │  ├─ for each found issue 🪘
+   │  │  ├─
+   │  │  │
+   │  │  │  articulate how it was fixed
+   │  │  │  so you remember for next time
+   │  │  │
+   │  │  └─
+   │  │
+   │  └─ for each non issue 🪘
+   │     ├─
+   │     │
+   │     │  articulate why it holds
+   │     │  so others can learn from it
+   │     │
+   │     └─
    │
    └─ when you've truly reflected, run
       └─ rhx route.stone.set --stone 1 --as promised --that all-done
+"
+`;
+
+exports[`driver.route.review.self.acceptance given: [case8] full challenge journey (first → absent → rushed → allowed) when: [t0] first promise attempt (no prior trigger) then: stdout has good vibes 1`] = `
+"🦉 the way speaks for itself
+
+🗿 patience, friend
+   │
+   ├─ the pond barely rippled
+   │
+   ├─ be here now 🪷
+   │  ├─
+   │  │
+   │  │  the review is the work.
+   │  │  not a gate to pass.
+   │  │  not a step to complete.
+   │  │  the work itself.
+   │  │
+   │  │  you are not the author.
+   │  │  you are the reviewer.
+   │  │
+   │  └─
+   │
+   ├─ trust the way 🪷
+   │  ├─
+   │  │
+   │  │  when you see this prompt
+   │  │    pause and articulate what you found
+   │  │
+   │  │  when you found issues
+   │  │    fix them before you continue
+   │  │
+   │  │  when you found no issues
+   │  │    articulate why it holds
+   │  │
+   │  │  when you cannot articulate either
+   │  │    you have not reviewed
+   │  │
+   │  └─
+   │
+   ├─ walk the way 🪷
+   │  │
+   │  ├─ articulate into
+   │  │  └─ ./review/self/for.1._.r1.all-done.md
+   │  │
+   │  ├─ for each found issue 🪘
+   │  │  ├─
+   │  │  │
+   │  │  │  articulate how it was fixed
+   │  │  │  so you remember for next time
+   │  │  │
+   │  │  └─
+   │  │
+   │  └─ for each non issue 🪘
+   │     ├─
+   │     │
+   │     │  articulate why it holds
+   │     │  so others can learn from it
+   │     │
+   │     └─
+   │
+   └─ when you've truly reflected, run
+      └─ rhx route.stone.set --stone 1 --as promised --that all-done
+
+🌕 lets reflect
+   │
+   ├─ review.self 1/2
+   │  ├─ slug = all-done
+   │  ├─ question all, especially yourself
+   │  └─ see the guide below
+   │
+   ├─ stillness 🪷
+   │  ├─
+   │  │
+   │  │  so it is. a chance to slow down, breathe, and see clearly.
+   │  │
+   │  │  self review time is a sanctuary. a gift. a luxury not always available.
+   │  │
+   │  │  it is not every day one has a quiet moment to take a slow,
+   │  │  methodical, patient, and thorough review.
+   │  │
+   │  │  tea first. then, we proceed 🍵
+   │  │
+   │  └─
+   │
+   ├─ before you begin 🪷
+   │  ├─
+   │  │
+   │  │  - clear your mind. this is dedicated review time.
+   │  │  - open each artifact mentioned in the guide
+   │  │  - read through them slowly, line by line
+   │  │  - question every assumption made
+   │  │  - look with fresh eyes, as if for the first time
+   │  │
+   │  └─
+   │
+   ├─ here's the guide
+   │  ├─
+   │  │
+   │  │  did you complete all that was requested in this stone?
+   │  │    have you re-read the stone goal and verified each requirement?
+   │  │
+   │  └─
+   │
+   ├─ be here now 🪷
+   │  ├─
+   │  │
+   │  │  refocus.
+   │  │
+   │  │  the review is the work.
+   │  │  not a step to complete.
+   │  │  not a gate to pass.
+   │  │  not a checkbox to check.
+   │  │
+   │  │  it is the work itself.
+   │  │
+   │  │  you do not care about the stone.
+   │  │  you only care about the review.
+   │  │
+   │  └─
+   │
+   ├─ walk the way 🪷
+   │  │
+   │  ├─ articulate into
+   │  │  └─ ./review/self/for.1._.r1.all-done.md
+   │  │
+   │  ├─ for each found issue 🪘
+   │  │  ├─
+   │  │  │
+   │  │  │  articulate how it was fixed
+   │  │  │  so you remember for next time
+   │  │  │
+   │  │  └─
+   │  │
+   │  └─ for each non issue 🪘
+   │     ├─
+   │     │
+   │     │  articulate why it holds
+   │     │  so others can learn from it
+   │     │
+   │     └─
+   │
+   └─ when you've truly reflected, run
+      └─ rhx route.stone.set --stone 1 --as promised --that all-done
+"
+`;
+
+exports[`driver.route.review.self.acceptance given: [case8] full challenge journey (first → absent → rushed → allowed) when: [t1] second promise attempt (file still absent) then: stdout has good vibes 1`] = `
+"🦉 the way speaks for itself
+
+🍂 what have you seen?
+   ├─ ...
+   │
+   ├─ the articulation is absent
+   │  └─ ./review/self/for.1._.r1.all-done.md
+   │
+   ├─ a promise without words
+   │  ├─ is not a promise
+   │  └─ it is a daydream
+   │
+   └─ the way asks
+      ├─ write what you found
+      ├─ write what you didn't
+      └─ then return 🍵
+
+🗿 patience, friend
+   │
+   ├─ the pond barely rippled
+   │
+   ├─ be here now 🪷
+   │  ├─
+   │  │
+   │  │  the review is the work.
+   │  │  not a gate to pass.
+   │  │  not a step to complete.
+   │  │  the work itself.
+   │  │
+   │  │  you are not the author.
+   │  │  you are the reviewer.
+   │  │
+   │  └─
+   │
+   ├─ trust the way 🪷
+   │  ├─
+   │  │
+   │  │  when you see this prompt
+   │  │    pause and articulate what you found
+   │  │
+   │  │  when you found issues
+   │  │    fix them before you continue
+   │  │
+   │  │  when you found no issues
+   │  │    articulate why it holds
+   │  │
+   │  │  when you cannot articulate either
+   │  │    you have not reviewed
+   │  │
+   │  └─
+   │
+   ├─ walk the way 🪷
+   │  │
+   │  ├─ articulate into
+   │  │  └─ ./review/self/for.1._.r1.all-done.md
+   │  │
+   │  ├─ for each found issue 🪘
+   │  │  ├─
+   │  │  │
+   │  │  │  articulate how it was fixed
+   │  │  │  so you remember for next time
+   │  │  │
+   │  │  └─
+   │  │
+   │  └─ for each non issue 🪘
+   │     ├─
+   │     │
+   │     │  articulate why it holds
+   │     │  so others can learn from it
+   │     │
+   │     └─
+   │
+   └─ when you've truly reflected, run
+      └─ rhx route.stone.set --stone 1 --as promised --that all-done
+
+🌕 lets reflect
+   │
+   ├─ review.self 1/2
+   │  ├─ slug = all-done
+   │  ├─ question all, especially yourself
+   │  └─ see the guide below
+   │
+   ├─ stillness 🪷
+   │  ├─
+   │  │
+   │  │  so it is. a chance to slow down, breathe, and see clearly.
+   │  │
+   │  │  self review time is a sanctuary. a gift. a luxury not always available.
+   │  │
+   │  │  it is not every day one has a quiet moment to take a slow,
+   │  │  methodical, patient, and thorough review.
+   │  │
+   │  │  tea first. then, we proceed 🍵
+   │  │
+   │  └─
+   │
+   ├─ before you begin 🪷
+   │  ├─
+   │  │
+   │  │  - clear your mind. this is dedicated review time.
+   │  │  - open each artifact mentioned in the guide
+   │  │  - read through them slowly, line by line
+   │  │  - question every assumption made
+   │  │  - look with fresh eyes, as if for the first time
+   │  │
+   │  └─
+   │
+   ├─ here's the guide
+   │  ├─
+   │  │
+   │  │  did you complete all that was requested in this stone?
+   │  │    have you re-read the stone goal and verified each requirement?
+   │  │
+   │  └─
+   │
+   ├─ be here now 🪷
+   │  ├─
+   │  │
+   │  │  refocus.
+   │  │
+   │  │  the review is the work.
+   │  │  not a step to complete.
+   │  │  not a gate to pass.
+   │  │  not a checkbox to check.
+   │  │
+   │  │  it is the work itself.
+   │  │
+   │  │  you do not care about the stone.
+   │  │  you only care about the review.
+   │  │
+   │  └─
+   │
+   ├─ walk the way 🪷
+   │  │
+   │  ├─ articulate into
+   │  │  └─ ./review/self/for.1._.r1.all-done.md
+   │  │
+   │  ├─ for each found issue 🪘
+   │  │  ├─
+   │  │  │
+   │  │  │  articulate how it was fixed
+   │  │  │  so you remember for next time
+   │  │  │
+   │  │  └─
+   │  │
+   │  └─ for each non issue 🪘
+   │     ├─
+   │     │
+   │     │  articulate why it holds
+   │     │  so others can learn from it
+   │     │
+   │     └─
+   │
+   └─ when you've truly reflected, run
+      └─ rhx route.stone.set --stone 1 --as promised --that all-done
+"
+`;
+
+exports[`driver.route.review.self.acceptance given: [case8] full challenge journey (first → absent → rushed → allowed) when: [t2] third promise attempt (file created, too soon) then: stdout has good vibes 1`] = `
+"🦉 the way speaks for itself
+
+🍂 what is the rush?
+   ├─ ...
+   │
+   ├─ what does haste cost?
+   ├─ ...
+   │
+   ├─ does the self weigh more than the whole?
+   │  ├─ what you miss, they must find
+   │  ├─ minutes saved, hours spent
+   │  └─ your haste, their burden
+   │
+   ├─ each review is an opportunity
+   │  ├─ a chance to find a deeper truth
+   │  ├─ not one to squander
+   │  └─ no matter how repetitive
+   │
+   └─ trust the way
+      ├─ what calls for pause, calls for cause
+      └─ be true to the review 🍵
+
+🗿 patience, friend
+   │
+   ├─ the pond barely rippled
+   │
+   ├─ be here now 🪷
+   │  ├─
+   │  │
+   │  │  the review is the work.
+   │  │  not a gate to pass.
+   │  │  not a step to complete.
+   │  │  the work itself.
+   │  │
+   │  │  you are not the author.
+   │  │  you are the reviewer.
+   │  │
+   │  └─
+   │
+   ├─ trust the way 🪷
+   │  ├─
+   │  │
+   │  │  when you see this prompt
+   │  │    pause and articulate what you found
+   │  │
+   │  │  when you found issues
+   │  │    fix them before you continue
+   │  │
+   │  │  when you found no issues
+   │  │    articulate why it holds
+   │  │
+   │  │  when you cannot articulate either
+   │  │    you have not reviewed
+   │  │
+   │  └─
+   │
+   ├─ walk the way 🪷
+   │  │
+   │  ├─ articulate into
+   │  │  └─ ./review/self/for.1._.r1.all-done.md
+   │  │
+   │  ├─ for each found issue 🪘
+   │  │  ├─
+   │  │  │
+   │  │  │  articulate how it was fixed
+   │  │  │  so you remember for next time
+   │  │  │
+   │  │  └─
+   │  │
+   │  └─ for each non issue 🪘
+   │     ├─
+   │     │
+   │     │  articulate why it holds
+   │     │  so others can learn from it
+   │     │
+   │     └─
+   │
+   └─ when you've truly reflected, run
+      └─ rhx route.stone.set --stone 1 --as promised --that all-done
+
+🌕 lets reflect
+   │
+   ├─ review.self 1/2
+   │  ├─ slug = all-done
+   │  ├─ question all, especially yourself
+   │  └─ see the guide below
+   │
+   ├─ stillness 🪷
+   │  ├─
+   │  │
+   │  │  so it is. a chance to slow down, breathe, and see clearly.
+   │  │
+   │  │  self review time is a sanctuary. a gift. a luxury not always available.
+   │  │
+   │  │  it is not every day one has a quiet moment to take a slow,
+   │  │  methodical, patient, and thorough review.
+   │  │
+   │  │  tea first. then, we proceed 🍵
+   │  │
+   │  └─
+   │
+   ├─ before you begin 🪷
+   │  ├─
+   │  │
+   │  │  - clear your mind. this is dedicated review time.
+   │  │  - open each artifact mentioned in the guide
+   │  │  - read through them slowly, line by line
+   │  │  - question every assumption made
+   │  │  - look with fresh eyes, as if for the first time
+   │  │
+   │  └─
+   │
+   ├─ here's the guide
+   │  ├─
+   │  │
+   │  │  did you complete all that was requested in this stone?
+   │  │    have you re-read the stone goal and verified each requirement?
+   │  │
+   │  └─
+   │
+   ├─ be here now 🪷
+   │  ├─
+   │  │
+   │  │  refocus.
+   │  │
+   │  │  the review is the work.
+   │  │  not a step to complete.
+   │  │  not a gate to pass.
+   │  │  not a checkbox to check.
+   │  │
+   │  │  it is the work itself.
+   │  │
+   │  │  you do not care about the stone.
+   │  │  you only care about the review.
+   │  │
+   │  └─
+   │
+   ├─ walk the way 🪷
+   │  │
+   │  ├─ articulate into
+   │  │  └─ ./review/self/for.1._.r1.all-done.md
+   │  │
+   │  ├─ for each found issue 🪘
+   │  │  ├─
+   │  │  │
+   │  │  │  articulate how it was fixed
+   │  │  │  so you remember for next time
+   │  │  │
+   │  │  └─
+   │  │
+   │  └─ for each non issue 🪘
+   │     ├─
+   │     │
+   │     │  articulate why it holds
+   │     │  so others can learn from it
+   │     │
+   │     └─
+   │
+   └─ when you've truly reflected, run
+      └─ rhx route.stone.set --stone 1 --as promised --that all-done
+"
+`;
+
+exports[`driver.route.review.self.acceptance given: [case8] full challenge journey (first → absent → rushed → allowed) when: [t3] fourth promise attempt (file exists, time elapsed) then: stdout has good vibes 1`] = `
+"🦉 the way speaks for itself
+
+🗿 route.stone.set
+   ├─ stone = 1
+   └─ passage = progressed (review.self 1/2 promised)
+
+🌕 lets reflect
+   │
+   ├─ review.self 1/2
+   │  ├─ slug = tests-pass
+   │  ├─ question all, especially yourself
+   │  └─ see the guide below
+   │
+   ├─ stillness 🪷
+   │  ├─
+   │  │
+   │  │  so it is. a chance to slow down, breathe, and see clearly.
+   │  │
+   │  │  self review time is a sanctuary. a gift. a luxury not always available.
+   │  │
+   │  │  it is not every day one has a quiet moment to take a slow,
+   │  │  methodical, patient, and thorough review.
+   │  │
+   │  │  tea first. then, we proceed 🍵
+   │  │
+   │  └─
+   │
+   ├─ before you begin 🪷
+   │  ├─
+   │  │
+   │  │  - clear your mind. this is dedicated review time.
+   │  │  - open each artifact mentioned in the guide
+   │  │  - read through them slowly, line by line
+   │  │  - question every assumption made
+   │  │  - look with fresh eyes, as if for the first time
+   │  │
+   │  └─
+   │
+   ├─ here's the guide
+   │  ├─
+   │  │
+   │  │  do all tests pass? have you run the full test suite
+   │  │    and verified no regressions were introduced?
+   │  │
+   │  └─
+   │
+   ├─ be here now 🪷
+   │  ├─
+   │  │
+   │  │  refocus.
+   │  │
+   │  │  the review is the work.
+   │  │  not a step to complete.
+   │  │  not a gate to pass.
+   │  │  not a checkbox to check.
+   │  │
+   │  │  it is the work itself.
+   │  │
+   │  │  you do not care about the stone.
+   │  │  you only care about the review.
+   │  │
+   │  └─
+   │
+   ├─ walk the way 🪷
+   │  │
+   │  ├─ articulate into
+   │  │  └─ ./review/self/for.1._.r1.tests-pass.md
+   │  │
+   │  ├─ for each found issue 🪘
+   │  │  ├─
+   │  │  │
+   │  │  │  articulate how it was fixed
+   │  │  │  so you remember for next time
+   │  │  │
+   │  │  └─
+   │  │
+   │  └─ for each non issue 🪘
+   │     ├─
+   │     │
+   │     │  articulate why it holds
+   │     │  so others can learn from it
+   │     │
+   │     └─
+   │
+   └─ when you've truly reflected, run
+      └─ rhx route.stone.set --stone 1 --as promised --that tests-pass
 "
 `;

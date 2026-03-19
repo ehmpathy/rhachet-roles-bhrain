@@ -1,0 +1,8 @@
+{
+  "name": "route-blocked-test",
+  "version": "1.0.0",
+  "description": "test fixture for --as blocked acceptance test",
+  "devDependencies": {
+    "rhachet-roles-bhrain": "link:../../../.."
+  }
+}

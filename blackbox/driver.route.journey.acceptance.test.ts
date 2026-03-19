@@ -2,7 +2,9 @@ import * as fs from 'fs/promises';
 import * as path from 'path';
 import { given, then, useBeforeAll, useThen, when } from 'test-fns';
 
+import { getSelfReviewArticulationPath } from '../src/domain.operations/route/guard/getSelfReviewArticulationPath';
 import {
+  createHookStdin,
   execAsync,
   genTempDirForRhachet,
   invokeRouteSkill,
@@ -286,6 +288,70 @@ describe('driver.route.journey.acceptance', () => {
       });
     });
 
+    when('[t7.5] bouncer cache is computed via route.drive', () => {
+      const result = useThen('route.drive succeeds', async () =>
+        invokeRouteSkill({
+          skill: 'route.drive',
+          args: { route: '.' },
+          cwd: scene.tempDir,
+        }),
+      );
+
+      then('exit code is 0', () => {
+        expect(result.code).toEqual(0);
+      });
+
+      then('bouncer cache is created', async () => {
+        const cachePath = path.join(scene.tempDir, '.route', '.bouncer.cache.json');
+        const cacheContent = await fs.readFile(cachePath, 'utf-8');
+        const cache = JSON.parse(cacheContent);
+        expect(cache.protections).toBeDefined();
+        expect(cache.protections.length).toBeGreaterThan(0);
+      });
+
+      then('cache contains src/**/*.ts protection', async () => {
+        const cachePath = path.join(scene.tempDir, '.route', '.bouncer.cache.json');
+        const cacheContent = await fs.readFile(cachePath, 'utf-8');
+        const cache = JSON.parse(cacheContent);
+        const srcProtection = cache.protections.find(
+          (p: { glob: string }) => p.glob === 'src/**/*.ts',
+        );
+        expect(srcProtection).toBeDefined();
+        expect(srcProtection.passed).toBe(false);
+      });
+    });
+
+    when('[t7.6] bouncer blocks write to protected artifact', () => {
+      const result = useThen('route.bounce returns blocked', async () =>
+        invokeRouteSkill({
+          skill: 'route.bounce',
+          args: { mode: 'hook' },
+          cwd: scene.tempDir,
+          stdin: createHookStdin({
+            toolName: 'Write',
+            filePath: 'src/weather.ts',
+            cwd: scene.tempDir,
+          }),
+        }),
+      );
+
+      then('exit code is 2 (blocked)', () => {
+        expect(result.code).toEqual(2);
+      });
+
+      then('output contains blocked message', () => {
+        expect(result.stderr).toContain('blocked');
+      });
+
+      then('output contains guard name', () => {
+        expect(result.stderr).toContain('3.blueprint.guard');
+      });
+
+      then('stderr has good vibes', () => {
+        expect(sanitizeTimeForSnapshot(result.stderr)).toMatchSnapshot();
+      });
+    });
+
     when('[t8] 3.blueprint artifact created and pass attempted', () => {
       const result = useThen('pass blocked by review.self', async () => {
         await fs.writeFile(
@@ -318,6 +384,16 @@ describe('driver.route.journey.acceptance', () => {
 
     when('[t8.5] 3.blueprint review.self is promised', () => {
       const result = useThen('promise succeeds', async () => {
+        // create articulation file (required by file presence check)
+        const articulationPath = getSelfReviewArticulationPath({
+          route: scene.tempDir,
+          stone: '3.blueprint',
+          index: 1,
+          slug: 'design-complete',
+        });
+        await fs.mkdir(path.dirname(articulationPath), { recursive: true });
+        await fs.writeFile(articulationPath, '# design review\n\napi design looks complete.');
+
         // backdate triggered report to bypass time enforcement
         await backdateTriggeredReport({
           tempDir: scene.tempDir,
@@ -445,9 +521,15 @@ describe('driver.route.journey.acceptance', () => {
         });
 
         // create articulation file
-        await fs.mkdir(path.join(scene.tempDir, 'review', 'self'), { recursive: true });
+        const articulationPath = getSelfReviewArticulationPath({
+          route: scene.tempDir,
+          stone: '3.blueprint',
+          index: 1,
+          slug: 'design-complete',
+        });
+        await fs.mkdir(path.dirname(articulationPath), { recursive: true });
         await fs.writeFile(
-          path.join(scene.tempDir, 'review', 'self', '3.blueprint.design-complete.md'),
+          articulationPath,
           '# design review\n\napi design is complete with all endpoints documented.',
         );
 
@@ -476,6 +558,36 @@ describe('driver.route.journey.acceptance', () => {
 
       then('stdout has good vibes', () => {
         expect(sanitizeTimeForSnapshot(result.stdout)).toMatchSnapshot();
+      });
+    });
+
+    when('[t10.5] bouncer allows write after stone passes', () => {
+      const result = useThen('route.bounce returns allowed', async () =>
+        invokeRouteSkill({
+          skill: 'route.bounce',
+          args: { mode: 'hook' },
+          cwd: scene.tempDir,
+          stdin: createHookStdin({
+            toolName: 'Write',
+            filePath: 'src/weather.ts',
+            cwd: scene.tempDir,
+          }),
+        }),
+      );
+
+      then('exit code is 0 (allowed)', () => {
+        expect(result.code).toEqual(0);
+      });
+
+      then('cache shows protection passed', async () => {
+        const cachePath = path.join(scene.tempDir, '.route', '.bouncer.cache.json');
+        const cacheContent = await fs.readFile(cachePath, 'utf-8');
+        const cache = JSON.parse(cacheContent);
+        const srcProtection = cache.protections.find(
+          (p: { glob: string }) => p.glob === 'src/**/*.ts',
+        );
+        expect(srcProtection).toBeDefined();
+        expect(srcProtection.passed).toBe(true);
       });
     });
 

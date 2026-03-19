@@ -11,9 +11,20 @@ import {
 
 const ASSETS_DIR = path.join(__dirname, '.test/assets/codebase-mechanic');
 
+/**
+ * .what = config for probabilistic tests that invoke LLM brains
+ * .why = LLM responses can timeout or vary; retry ensures CI stability
+ *
+ * @see .agent/repo=.this/role=any/briefs/rule.require.repeatable-for-llm-tests.md
+ */
+const REPEATABLE_CONFIG = {
+  attempts: 3,
+  criteria: process.env.CI ? 'SOME' : 'EVERY',
+} as const;
+
 describe('review.join.acceptance', () => {
   given('[case1] intersect mode with both diffs and paths', () => {
-    when('[t0] only dirty.ts is changed, paths matches both files', () => {
+    when.repeatably(REPEATABLE_CONFIG)('[t0] only dirty.ts is changed, paths matches both files', () => {
       const res = useThen('invoke review with intersect', async () => {
         // clone fixture to temp dir with git initialized (all files committed to main)
         const tempDir = genTempDirForRhachet({
@@ -141,7 +152,7 @@ describe('review.join.acceptance', () => {
   });
 
   given('[case3] union mode with empty diffs', () => {
-    when('[t0] no files changed, paths matches files, union mode', () => {
+    when.repeatably(REPEATABLE_CONFIG)('[t0] no files changed, paths matches files, union mode', () => {
       const res = useThen('invoke review with union on unchanged repo', async () => {
         // clone fixture (all files committed, no changes)
         const tempDir = genTempDirForRhachet({
@@ -193,7 +204,7 @@ describe('review.join.acceptance', () => {
   });
 
   given('[case4] default mode is intersect', () => {
-    when('[t0] no --join specified, only dirty.ts changed', () => {
+    when.repeatably(REPEATABLE_CONFIG)('[t0] no --join specified, only dirty.ts changed', () => {
       const res = useThen('invoke review without --join flag', async () => {
         // clone fixture
         const tempDir = genTempDirForRhachet({
@@ -252,7 +263,7 @@ describe('review.join.acceptance', () => {
   });
 
   given('[case5] only --paths specified (no --diffs)', () => {
-    when('[t0] single source, join mode does not apply', () => {
+    when.repeatably(REPEATABLE_CONFIG)('[t0] single source, join mode does not apply', () => {
       const res = useThen('invoke review with only paths', async () => {
         // clone fixture
         const tempDir = genTempDirForRhachet({

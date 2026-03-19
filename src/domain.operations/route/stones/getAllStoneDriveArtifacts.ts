@@ -27,20 +27,16 @@ export const getAllStoneDriveArtifacts = async (input: {
     });
 
     // check for passage report in passage.jsonl
+    // note: only explicit 'passed' status constitutes valid passage
+    //       auto-pass removed — require explicit passage for all stones
     const passageReport = await getOnePassageReport({
       stone: stone.name,
       status: 'passed',
       route: input.route,
     });
-    let passage: string | null = null;
-    if (passageReport) {
-      passage = path.join(input.route, '.route', 'passage.jsonl');
-    }
-
-    // auto-pass unguarded stones that have output artifacts
-    if (!passage && !stone.guard && outputs.length > 0) {
-      passage = 'auto:unguarded';
-    }
+    const passage: string | null = passageReport
+      ? path.join(input.route, '.route', 'passage.jsonl')
+      : null;
 
     artifacts.push(
       new RouteStoneDriveArtifacts({

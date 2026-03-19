@@ -2,25 +2,31 @@
 
 exports[`driver.route.judge-failure.acceptance given: [case1] judge command fails without proper passed: metadata when: [t0] route.stone.set --as passed is invoked then: stderr matches snapshot 1`] = `
 "
-🔎 judge 1
-   ├─
-   │
-   │  error: evaluation crashed unexpectedly
-   │  
-   │  exit code: 1
-   │
-   └─
+🪶 judge 1
+   ├─ stdout
+   │  ├─
+   │  │
+   │  │  error: evaluation crashed unexpectedly
+   │  │
+   │  └─
+   ├─ stderr
+   │  ├─
+   │  │
+   │  └─
+   └─ passage blocked
+      ├─ blocked by malfunction
+      └─ exit code: 1 💥
 "
 `;
 
 exports[`driver.route.judge-failure.acceptance given: [case1] judge command fails without proper passed: metadata when: [t0] route.stone.set --as passed is invoked then: stdout matches snapshot 1`] = `
 "🦉 the way speaks for itself
-   └─ ✗ judge.1 - failed [TIME]
+   └─ ✗ judge.1 - blocked [TIME]
 
 🗿 route.stone.set
    ├─ stone = 1
-   ├─ passage = blocked
-   ├─ reason = command exited 1; see judge artifact for details
+   ├─ passage = malfunction
+   ├─ reason = reviewer or judge malfunctioned
    └─ guard
       ├─ artifacts
       │   └─ 1.stone.i1.md
@@ -33,25 +39,31 @@ exports[`driver.route.judge-failure.acceptance given: [case1] judge command fail
 
 exports[`driver.route.judge-failure.acceptance given: [case1] judge command fails without proper passed: metadata when: [t1] route.stone.set --as passed is invoked again then: stderr matches snapshot 1`] = `
 "
-🔎 judge 1
-   ├─
-   │
-   │  error: evaluation crashed unexpectedly
-   │  
-   │  exit code: 1
-   │
-   └─
+🪶 judge 1
+   ├─ stdout
+   │  ├─
+   │  │
+   │  │  error: evaluation crashed unexpectedly
+   │  │
+   │  └─
+   ├─ stderr
+   │  ├─
+   │  │
+   │  └─
+   └─ passage blocked
+      ├─ blocked by malfunction
+      └─ exit code: 1 💥
 "
 `;
 
 exports[`driver.route.judge-failure.acceptance given: [case1] judge command fails without proper passed: metadata when: [t1] route.stone.set --as passed is invoked again then: stdout matches snapshot 1`] = `
 "🦉 the way speaks for itself
-   └─ ✗ judge.1 - failed [TIME]
+   └─ ✗ judge.1 - blocked [TIME]
 
 🗿 route.stone.set
    ├─ stone = 1
-   ├─ passage = blocked
-   ├─ reason = command exited 1; see judge artifact for details
+   ├─ passage = malfunction
+   ├─ reason = reviewer or judge malfunctioned
    └─ guard
       ├─ artifacts
       │   └─ 1.stone.i1.md

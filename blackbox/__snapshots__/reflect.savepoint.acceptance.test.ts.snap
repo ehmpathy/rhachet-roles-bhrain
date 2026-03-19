@@ -1,0 +1,62 @@
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
+
+exports[`reflect.savepoint given: [case1] repo with staged and unstaged changes when: [t0] reflect.savepoint.set is invoked in plan mode then: output matches snapshot 1`] = `
+"🦉 know thyself
+
+🌕 reflect.savepoint set
+   ├─ repo = [ISO_TEMP].reflect-savepoint-case1.[HASH]
+   ├─ tree = [ISO_TEMP].reflect-savepoint-case1.[HASH]
+   ├─ branch = main
+   │
+   ├─ staged.patch = [SIZE]ytes
+   ├─ unstaged.patch = [SIZE]ytes
+   ├─ hash = [HASH]
+   │
+   └─ artifacts
+      ├─ ~/.rhachet/storage/repo=bhrain/role=reflector/skills/reflect.snapshot/gitrepo=[ISO_TEMP].reflect-savepoint-case1.[HASH]/worktree=[ISO_TEMP].reflect-savepoint-case1.[HASH]/branch=main/savepoints/[TIMESTAMP].staged.patch
+      └─ ~/.rhachet/storage/repo=bhrain/role=reflector/skills/reflect.snapshot/gitrepo=[ISO_TEMP].reflect-savepoint-case1.[HASH]/worktree=[ISO_TEMP].reflect-savepoint-case1.[HASH]/branch=main/savepoints/[TIMESTAMP].unstaged.patch
+
+✨ savepoint planned (use --mode apply to write)
+
+"
+`;
+
+exports[`reflect.savepoint given: [case1] repo with staged and unstaged changes when: [t1] reflect.savepoint.set is invoked with --mode apply then: output matches snapshot 1`] = `
+"🦉 know thyself
+
+🌕 reflect.savepoint set
+   ├─ repo = [ISO_TEMP].reflect-savepoint-case1.[HASH]
+   ├─ tree = [ISO_TEMP].reflect-savepoint-case1.[HASH]
+   ├─ branch = main
+   │
+   ├─ staged.patch = [SIZE]ytes
+   ├─ unstaged.patch = [SIZE]ytes
+   ├─ hash = [HASH]
+   │
+   └─ artifacts
+      ├─ ~/.rhachet/storage/repo=bhrain/role=reflector/skills/reflect.snapshot/gitrepo=[ISO_TEMP].reflect-savepoint-case1.[HASH]/worktree=[ISO_TEMP].reflect-savepoint-case1.[HASH]/branch=main/savepoints/[TIMESTAMP].staged.patch
+      └─ ~/.rhachet/storage/repo=bhrain/role=reflector/skills/reflect.snapshot/gitrepo=[ISO_TEMP].reflect-savepoint-case1.[HASH]/worktree=[ISO_TEMP].reflect-savepoint-case1.[HASH]/branch=main/savepoints/[TIMESTAMP].unstaged.patch
+
+✨ savepoint captured
+
+"
+`;
+
+exports[`reflect.savepoint given: [case1] repo with staged and unstaged changes when: [t2] reflect.savepoint.get is invoked then: output matches snapshot 1`] = `
+"🦉 know thyself
+
+🌕 reflect.savepoint get
+   ├─ repo = [ISO_TEMP].reflect-savepoint-case1.[HASH]
+   ├─ tree = [ISO_TEMP].reflect-savepoint-case1.[HASH]
+   ├─ branch = main
+   │
+   ├─ savepoints = 1
+   ├─ size = [SIZE]ytes
+   │
+   └─ list
+      └─ [TIMESTAMP] (hash=[HASH], [SIZE]ytes)
+         ├─ [TIMESTAMP].staged.patch
+         └─ [TIMESTAMP].unstaged.patch
+
+"
+`;
