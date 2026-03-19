@@ -3,4 +3,5 @@ always:
     ref:
       - briefs/im_a.bhrain_owl.md
       - briefs/define.routes-are-gardened.[philosophy].md
+      - briefs/research.importance-of-focus.[philosophy].md
       - briefs/howto.create-routes.[ref].md
