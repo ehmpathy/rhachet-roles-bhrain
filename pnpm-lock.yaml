@@ -148,8 +148,8 @@ importers:
         specifier: 0.14.4
         version: 0.14.4(@huggingface/transformers@3.8.1)(@tensorflow/tfjs@4.22.0(seedrandom@3.0.5))(@types/node@22.15.21)(rhachet-roles-bhrain@)
       rhachet-roles-ehmpathy:
-        specifier: 1.31.0
-        version: 1.31.0(@huggingface/transformers@3.8.1)(@tensorflow/tfjs@4.22.0(seedrandom@3.0.5))(@types/node@22.15.21)(rhachet@1.37.18(zod@4.3.4))
+        specifier: 1.32.0
+        version: 1.32.0(@huggingface/transformers@3.8.1)(@tensorflow/tfjs@4.22.0(seedrandom@3.0.5))(@types/node@22.15.21)(rhachet@1.37.18(zod@4.3.4))
       test-fns:
         specifier: 1.15.0
         version: 1.15.0(@huggingface/transformers@3.8.1)(@tensorflow/tfjs@4.22.0(seedrandom@3.0.5))(@types/node@22.15.21)(zod@4.3.4)
@@ -2373,8 +2373,8 @@ packages:
   bare-path@3.0.0:
     resolution: {integrity: sha512-tyfW2cQcB5NN8Saijrhqn0Zh7AnFNsnczRcuWODH0eYAXBsJ5gVxAUuNr7tsHSC6IZ77cA0SitzT+s47kot8Mw==}
 
-  bare-stream@2.8.1:
-    resolution: {integrity: sha512-bSeR8RfvbRwDpD7HWZvn8M3uYNDrk7m9DQjYOFkENZlXW8Ju/MPaqUPQq5LqJ3kyjEm07siTaAQ7wBKCU59oHg==}
+  bare-stream@2.9.1:
+    resolution: {integrity: sha512-S9lqQXbwhTEMffRhb3qTVT74M0qzLDgxt4+uV3wBwWj2e+uSYH49Yv1el9Mw+qPRk0o2f+ntXgTQHP7LypVGMA==}
     peerDependencies:
       bare-buffer: '*'
       bare-events: '*'
@@ -4238,8 +4238,8 @@ packages:
     peerDependencies:
       rhachet-roles-bhrain: '>=0.12.1'
 
-  rhachet-roles-ehmpathy@1.31.0:
-    resolution: {integrity: sha512-Eok+CBUwGH1t1//nZe+jvqAnHoY7q2v9sAaxIXXOXUkfM2XhKdIG56dPUayTcLocmJpJkb0a9E5dLczjLxmqjw==}
+  rhachet-roles-ehmpathy@1.32.0:
+    resolution: {integrity: sha512-Sljqmt4DzAX22X2OvGc3fxzt0lGwZovKv7kMYD3MOXYYZEiln+eo9ruXUDcoNgfs8KT/LRMpjw4hWBkV5FIPOA==}
     engines: {node: '>=8.0.0'}
 
   rhachet@1.37.18:
@@ -4399,8 +4399,8 @@ packages:
     resolution: {integrity: sha512-XlkWvfIm6RmsWtNJx+uqtKLS8eqFbxUg0ZzLXqY0caEy9l7hruX8IpiDnjsLavoBgqCCR71TqWO8MaXYheJ3RQ==}
     engines: {node: '>=10'}
 
-  streamx@2.23.0:
-    resolution: {integrity: sha512-kn+e44esVfn2Fa/O0CPFcex27fjIL6MkVae0Mm6q+E6f0hWv578YCERbv+4m02cjxvDsPKLnmxral/rR6lBMAg==}
+  streamx@2.24.0:
+    resolution: {integrity: sha512-PmzO9Pf1UnzKM9L7tzRv5idKMHTBlxY+XC3eWXCyM8uuIOs3sQAKJ+N+EJ1KRCWAeI9TTnbs+uTBj7t09cwb6g==}
 
   string-length@4.0.2:
     resolution: {integrity: sha512-+l6rNN5fYHNhZZy41RXsYptCjA2Igmq4EG7kZAYFQI1E1VTXarr6ZPXBg6eq7Y6eK4FEhY6AJlyuFIb/v/S0VQ==}
@@ -7531,7 +7531,7 @@ snapshots:
     dependencies:
       bare-events: 2.8.2
       bare-path: 3.0.0
-      bare-stream: 2.8.1(bare-events@2.8.2)
+      bare-stream: 2.9.1(bare-events@2.8.2)
       bare-url: 2.3.2
       fast-fifo: 1.3.2
     transitivePeerDependencies:
@@ -7544,9 +7544,9 @@ snapshots:
     dependencies:
       bare-os: 3.8.0
 
-  bare-stream@2.8.1(bare-events@2.8.2):
+  bare-stream@2.9.1(bare-events@2.8.2):
     dependencies:
-      streamx: 2.23.0
+      streamx: 2.24.0
       teex: 1.0.1
     optionalDependencies:
       bare-events: 2.8.2
@@ -8062,7 +8062,7 @@ snapshots:
       helpful-errors: 1.5.3
       joi: 17.4.0
       rhachet: 1.37.18(zod@4.3.4)
-      rhachet-roles-ehmpathy: 1.31.0(@huggingface/transformers@3.8.1)(@tensorflow/tfjs@4.22.0(seedrandom@3.0.5))(@types/node@22.15.21)(rhachet@1.37.18(zod@4.3.4))
+      rhachet-roles-ehmpathy: 1.32.0(@huggingface/transformers@3.8.1)(@tensorflow/tfjs@4.22.0(seedrandom@3.0.5))(@types/node@22.15.21)(rhachet@1.37.18(zod@4.3.4))
       type-fns: 1.21.0
       uuid-fns: 1.1.3
     transitivePeerDependencies:
@@ -9732,7 +9732,7 @@ snapshots:
       - aws-crt
       - ws
 
-  rhachet-roles-ehmpathy@1.31.0(@huggingface/transformers@3.8.1)(@tensorflow/tfjs@4.22.0(seedrandom@3.0.5))(@types/node@22.15.21)(rhachet@1.37.18(zod@4.3.4)):
+  rhachet-roles-ehmpathy@1.32.0(@huggingface/transformers@3.8.1)(@tensorflow/tfjs@4.22.0(seedrandom@3.0.5))(@types/node@22.15.21)(rhachet@1.37.18(zod@4.3.4)):
     dependencies:
       '@atjsh/llmlingua-2': 2.0.3(@huggingface/transformers@3.8.1)(@tensorflow/tfjs@4.22.0(seedrandom@3.0.5))(js-tiktoken@1.0.21)
       '@ehmpathy/as-command': 1.0.3
@@ -9981,7 +9981,7 @@ snapshots:
     dependencies:
       escape-string-regexp: 2.0.0
 
-  streamx@2.23.0:
+  streamx@2.24.0:
     dependencies:
       events-universal: 1.0.1
       fast-fifo: 1.3.2
@@ -10054,7 +10054,7 @@ snapshots:
       b4a: 1.8.0
       bare-fs: 4.5.5
       fast-fifo: 1.3.2
-      streamx: 2.23.0
+      streamx: 2.24.0
     transitivePeerDependencies:
       - bare-abort-controller
       - bare-buffer
@@ -10070,7 +10070,7 @@ snapshots:
 
   teex@1.0.1:
     dependencies:
-      streamx: 2.23.0
+      streamx: 2.24.0
     transitivePeerDependencies:
       - bare-abort-controller
       - react-native-b4a

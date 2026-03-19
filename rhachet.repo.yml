@@ -19,6 +19,7 @@ roles:
       dirs: dist/domain.roles/driver/briefs
     skills:
       dirs: dist/domain.roles/driver/skills
+    boot: dist/domain.roles/driver/boot.yml
   - slug: librarian
     readme: dist/domain.roles/librarian/.readme.[seed].md
     briefs:
