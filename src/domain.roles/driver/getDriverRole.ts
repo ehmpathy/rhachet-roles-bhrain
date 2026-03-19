@@ -20,6 +20,12 @@ export const ROLE_DRIVER: Role = Role.build({
   },
   hooks: {
     onBrain: {
+      onBoot: [
+        {
+          command: './node_modules/.bin/rhx route.drive --mode hook',
+          timeout: 'PT5S',
+        },
+      ],
       onTool: [
         {
           command: './node_modules/.bin/rhx route.bounce --mode hook',
