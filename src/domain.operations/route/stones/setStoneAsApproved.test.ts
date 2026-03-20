@@ -145,7 +145,7 @@ describe('setStoneAsApproved', () => {
         expect(result.emit?.stdout).toContain('only humans can approve');
       });
 
-      then('output contains "please ask a human"', async () => {
+      then('output contains driver guidance', async () => {
         const result = await setStoneAsApproved(
           {
             stone: '1.vision',
@@ -153,7 +153,10 @@ describe('setStoneAsApproved', () => {
           },
           { isTTY: false },
         );
-        expect(result.emit?.stdout).toContain('please ask a human');
+        expect(result.emit?.stdout).toContain('as a driver, you should:');
+        expect(result.emit?.stdout).toContain('--as passed');
+        expect(result.emit?.stdout).toContain('--as arrived');
+        expect(result.emit?.stdout).toContain('--as blocked');
       });
     });
   });

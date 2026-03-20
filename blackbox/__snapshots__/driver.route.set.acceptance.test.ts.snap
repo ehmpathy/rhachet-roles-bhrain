@@ -52,10 +52,18 @@ exports[`driver.route.set.acceptance given: [case5] route.stone.set with flexibl
 exports[`driver.route.set.acceptance given: [case5] route.stone.set with flexible pattern lookup when: [t1] numeric prefix pattern agent approval locked then: stdout matches snapshot 1`] = `
 "🦉 the way speaks for itself
 
+🦉 patience, friend.
+
 🗿 route.stone.set
    ├─ stone = 2.criteria
    ├─ ✗ only humans can approve
-   └─ please ask a human to run this command
+   │
+   └─ as a driver, you should:
+         ├─ \`--as passed\` = signal work complete, proceed
+         ├─ \`--as arrived\` = signal work complete, request review
+         └─ \`--as blocked\` = escalate if stuck
+      
+      the human will run \`--as approved\` when ready.
 "
 `;
 

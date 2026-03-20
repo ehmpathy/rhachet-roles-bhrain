@@ -188,4 +188,43 @@ describe('formatRouteStoneEmit', () => {
       });
     });
   });
+
+  given('[case6] blocked action (agent tried to approve)', () => {
+    when('[t0] format is called with blocked action', () => {
+      const output = formatRouteStoneEmit({
+        operation: 'route.stone.set',
+        stone: '1.vision',
+        action: 'blocked',
+        reason: 'only humans can approve',
+        guidance: [
+          'as a driver, you should:',
+          '   ├─ `--as passed` to signal work complete, proceed',
+          '   ├─ `--as arrived` to signal work complete, request review',
+          '   └─ `--as blocked` to escalate if stuck',
+          '',
+          'the human will run `--as approved` when ready.',
+        ].join('\n'),
+      });
+
+      then('output contains owl header', () => {
+        expect(output).toContain('🦉 the way speaks for itself');
+      });
+
+      then('output contains driver guidance', () => {
+        expect(output).toContain('as a driver, you should:');
+      });
+
+      then('output contains all three alternatives', () => {
+        expect(output).toContain('--as passed');
+        expect(output).toContain('--as arrived');
+        expect(output).toContain('--as blocked');
+      });
+
+      then('output contains human note', () => {
+        expect(output).toContain(
+          'the human will run `--as approved` when ready.',
+        );
+      });
+    });
+  });
 });
