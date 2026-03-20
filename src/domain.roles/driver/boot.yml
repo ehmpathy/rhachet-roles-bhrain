@@ -5,6 +5,8 @@ always:
       - briefs/define.routes-are-gardened.[philosophy].md
       - briefs/research.importance-of-focus.[philosophy].md
       - briefs/howto.create-routes.[ref].md
+    say:
+      - briefs/howto.drive-routes.[guide].md
   skills:
     say:
       - skills/route.stone.set.sh

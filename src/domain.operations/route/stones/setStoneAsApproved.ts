@@ -43,7 +43,14 @@ export const setStoneAsApproved = async (
           stone: stoneMatched.name,
           action: 'blocked',
           reason: 'only humans can approve',
-          guidance: 'please ask a human to run this command',
+          guidance: [
+            'as a driver, you should:',
+            '   ├─ `--as passed` to signal work complete, proceed',
+            '   ├─ `--as arrived` to signal work complete, request review',
+            '   └─ `--as blocked` to escalate if stuck',
+            '',
+            'the human will run `--as approved` when ready.',
+          ].join('\n'),
         }),
       },
     };

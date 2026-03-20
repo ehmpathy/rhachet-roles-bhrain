@@ -288,7 +288,12 @@ export const formatRouteStoneEmit = (input: FormatInput): string => {
       lines.push(`🗿 ${input.operation}`);
       lines.push(`   ├─ stone = ${input.stone}`);
       lines.push(`   ├─ ✗ ${input.reason}`);
-      lines.push(`   └─ ${input.guidance}`);
+      lines.push(`   │`);
+      const guidanceLines = input.guidance.split('\n');
+      guidanceLines.forEach((line, i) => {
+        const prefix = i === 0 ? '   └─ ' : '      ';
+        lines.push(`${prefix}${line}`);
+      });
       return lines.join('\n');
     }
 

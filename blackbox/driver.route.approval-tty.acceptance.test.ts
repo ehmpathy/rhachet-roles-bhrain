@@ -86,7 +86,9 @@ describe('driver.route.approval-tty', () => {
           env: { NODE_ENV: 'production', CI: '' },
         });
         expect(result.stdout).toContain('only humans can approve');
-        expect(result.stdout).toContain('please ask a human');
+        expect(result.stdout).toContain('--as passed');
+        expect(result.stdout).toContain('--as arrived');
+        expect(result.stdout).toContain('--as blocked');
       });
     });
   });
