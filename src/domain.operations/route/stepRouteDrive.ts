@@ -408,6 +408,28 @@ const formatRouteDrive = (input: {
   lines.push(`🦉 where were we?`);
   lines.push('');
 
+  // tea pause for stuck drivers (same trigger as suggestBlocked)
+  if (input.suggestBlocked) {
+    const arrivedCmd = `rhx route.stone.set --stone ${input.stone} --as arrived`;
+    const passedCmd = `rhx route.stone.set --stone ${input.stone} --as passed`;
+    const blockedCmd = `rhx route.stone.set --stone ${input.stone} --as blocked`;
+    lines.push(`🍵 tea first. then, choose your path.`);
+    lines.push(`   │`);
+    lines.push(`   ├─ you must choose one`);
+    lines.push(`   │  ├─ ready for review?`);
+    lines.push(`   │  │  └─ ${arrivedCmd}`);
+    lines.push(`   │  │`);
+    lines.push(`   │  ├─ ready to continue?`);
+    lines.push(`   │  │  └─ ${passedCmd}`);
+    lines.push(`   │  │`);
+    lines.push(`   │  └─ blocked and need help?`);
+    lines.push(`   │     └─ ${blockedCmd}`);
+    lines.push(`   │`);
+    lines.push(`   └─ ⚠️ to refuse is not an option.`);
+    lines.push(`      work on the stone, or mark your status.`);
+    lines.push('');
+  }
+
   // route.drive tree
   lines.push(`🗿 route.drive`);
   lines.push(`   ├─ where do we go?`);
