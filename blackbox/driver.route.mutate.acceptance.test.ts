@@ -571,4 +571,110 @@ describe('driver.route.mutate.acceptance', () => {
       });
     });
   });
+
+  given('[case7] bound route at .route/xyz/ (not .behavior/)', () => {
+    const scene = useBeforeAll(async () => {
+      const tempDir = genTempDirForRhachet({
+        slug: 'mutate-route-loc',
+        clone: ASSETS_DIR,
+      });
+
+      // link the driver role
+      await execAsync('npx rhachet roles link --role driver', { cwd: tempDir });
+
+      // create feature branch (simple name, no slashes)
+      await execAsync('git checkout -b test-route-loc', { cwd: tempDir });
+
+      // create route at .route/xyz/ (NOT .behavior/)
+      const routeDir = path.join(
+        tempDir,
+        '.route',
+        'v2026_03_19.declapract.upgrade',
+      );
+      const routeMeta = path.join(routeDir, '.route');
+      await fs.mkdir(routeMeta, { recursive: true });
+
+      // create a stone file
+      await fs.writeFile(
+        path.join(routeDir, '1.upgrade.invoke.stone'),
+        '# upgrade invoke\n\nstone content.\n',
+      );
+
+      // create bind flag (bind the route to current branch)
+      await fs.writeFile(
+        path.join(routeMeta, '.bind.test-route-loc.flag'),
+        'bound_by: test-route-loc\n',
+      );
+
+      return { tempDir, routeDir, routeMeta };
+    });
+
+    when('[t0] guard allows Write to .route/xyz/artifact.md', () => {
+      const result = useThen('returns allowed', async () =>
+        invokeRouteMutateGuard({
+          cwd: scene.tempDir,
+          stdin: {
+            tool_name: 'Write',
+            tool_input: {
+              file_path: '.route/v2026_03_19.declapract.upgrade/1.upgrade.invoke.md',
+            },
+          },
+        }),
+      );
+
+      then('exit code is 0 (allowed)', () => {
+        expect(result.code).toEqual(0);
+      });
+
+      then('stdout matches snapshot', () => {
+        expect(result.stdout).toMatchSnapshot('guard allows artifact in .route/xyz/');
+      });
+    });
+
+    when('[t1] guard blocks Write to .route/xyz/.route/passage.jsonl', () => {
+      const result = useThen('returns blocked', async () =>
+        invokeRouteMutateGuard({
+          cwd: scene.tempDir,
+          stdin: {
+            tool_name: 'Write',
+            tool_input: {
+              file_path:
+                '.route/v2026_03_19.declapract.upgrade/.route/passage.jsonl',
+            },
+          },
+        }),
+      );
+
+      then('exit code is 2 (blocked)', () => {
+        expect(result.code).toEqual(2);
+      });
+
+      then('stderr matches snapshot', () => {
+        expect(result.stderr).toMatchSnapshot('guard blocks metadata in .route/xyz/');
+      });
+    });
+
+    when('[t2] guard blocks Read of *.stone in .route/xyz/', () => {
+      const result = useThen('returns blocked', async () =>
+        invokeRouteMutateGuard({
+          cwd: scene.tempDir,
+          stdin: {
+            tool_name: 'Read',
+            tool_input: {
+              file_path:
+                '.route/v2026_03_19.declapract.upgrade/1.upgrade.invoke.stone',
+            },
+          },
+        }),
+      );
+
+      then('exit code is 2 (blocked)', () => {
+        expect(result.code).toEqual(2);
+      });
+
+      then('stderr matches snapshot', () => {
+        expect(result.stderr).toMatchSnapshot('guard blocks *.stone in .route/xyz/');
+      });
+    });
+  });
 });

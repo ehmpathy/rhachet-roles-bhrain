@@ -1,0 +1,11 @@
+{"tool":"Read","path":"/home/vlad/git/ehmpathy/_worktrees/rhachet-roles-bhrain.vlad.fix-route-mutate-guard/.behavior/v2026_03_19.fix-route-mutate-guard/1.vision.guard","verdict":"blocked","reason":"*.guard"}
+{"tool":"Bash","command":"printf '# blocker: 1.vision
+
+## what blocks me
+
+the wish file at `.behavior/v2026_03_19.fix-route-mu","verdict":"blocked","reason":".route/**"}
+{"tool":"Read","path":"/home/vlad/git/ehmpathy/_worktrees/rhachet-roles-bhrain.vlad.fix-route-mutate-guard/.behavior/v2026_03_19.fix-route-mutate-guard/1.vision.stone","verdict":"blocked","reason":"*.stone"}
+{"tool":"Read","path":"/home/vlad/git/ehmpathy/_worktrees/rhachet-roles-bhrain.vlad.fix-route-mutate-guard/.behavior/v2026_03_19.fix-route-mutate-guard/1.vision.stone","verdict":"blocked","reason":"*.stone"}
+{"tool":"Read","path":"/home/vlad/git/ehmpathy/_worktrees/rhachet-roles-bhrain.vlad.fix-route-mutate-guard/.behavior/v2026_03_19.fix-route-mutate-guard/2.1.criteria.blackbox.stone","verdict":"blocked","reason":"*.stone"}
+{"tool":"Read","path":"/home/vlad/git/ehmpathy/_worktrees/rhachet-roles-bhrain.vlad.fix-route-mutate-guard/.behavior/v2026_03_19.fix-route-mutate-guard/1.vision.stone","verdict":"blocked","reason":"*.stone"}
+{"tool":"Read","path":"/home/vlad/git/ehmpathy/_worktrees/rhachet-roles-bhrain.vlad.fix-route-mutate-guard/.behavior/v2026_03_19.fix-route-mutate-guard/5.3.verification.v1.stone","verdict":"blocked","reason":"*.stone"}

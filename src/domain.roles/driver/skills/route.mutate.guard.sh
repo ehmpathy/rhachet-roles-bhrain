@@ -127,22 +127,18 @@ if [[ "$TOOL_NAME" == "Bash" && -n "$COMMAND" ]]; then
       fi
     fi
 
-    # check for .route/ paths
-    if [[ -z "$MATCH_REASON" ]] && echo "$COMMAND" | grep -qE "\.route/"; then
-      if echo "$COMMAND" | grep -q "$ROUTE_DIR"; then
-        TARGET_PATH=$(echo "$COMMAND" | grep -oE "[^ \"']+\.route/[^ \"']*" | head -n1)
-        MATCH_REASON=".route/**"
-      fi
+    # check for .route/ metadata subdir paths (not routes located at .route/)
+    if [[ -z "$MATCH_REASON" ]] && echo "$COMMAND" | grep -qE "${ROUTE_DIR}/\.route/"; then
+      TARGET_PATH=$(echo "$COMMAND" | grep -oE "[^ \"']*${ROUTE_DIR}/\.route/[^ \"']*" | head -n1)
+      MATCH_REASON=".route/**"
     fi
   fi
 
-  # check for write commands on protected patterns
+  # check for write commands on metadata subdir (not routes located at .route/)
   if [[ -z "$MATCH_REASON" ]] && echo "$COMMAND" | grep -qE "(echo.*>|printf.*>|tee|sed\s+-i)"; then
-    if echo "$COMMAND" | grep -qE "\.route/"; then
-      if echo "$COMMAND" | grep -q "$ROUTE_DIR"; then
-        TARGET_PATH=$(echo "$COMMAND" | grep -oE "[^ \"']+\.route/[^ \"']*" | head -n1)
-        MATCH_REASON=".route/**"
-      fi
+    if echo "$COMMAND" | grep -qE "${ROUTE_DIR}/\.route/"; then
+      TARGET_PATH=$(echo "$COMMAND" | grep -oE "[^ \"']*${ROUTE_DIR}/\.route/[^ \"']*" | head -n1)
+      MATCH_REASON=".route/**"
     fi
   fi
 
@@ -158,7 +154,8 @@ else
       elif echo "$FILE_PATH" | grep -qE "\.guard$"; then
         TARGET_PATH="$FILE_PATH"
         MATCH_REASON="*.guard"
-      elif echo "$FILE_PATH" | grep -qE "\.route/"; then
+      elif echo "$FILE_PATH" | grep -qE "^${ROUTE_DIR}/\.route/"; then
+        # match metadata subdir only (not routes located at .route/)
         TARGET_PATH="$FILE_PATH"
         MATCH_REASON=".route/**"
       fi

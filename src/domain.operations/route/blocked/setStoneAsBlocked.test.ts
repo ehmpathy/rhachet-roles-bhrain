@@ -107,8 +107,8 @@ describe('setStoneAsBlocked', () => {
           'stone: 3.blueprint\n',
         );
 
-        // create articulation file
-        const blockerDir = path.join(routeDir, 'blocker');
+        // create articulation file (at route root, not .route/)
+        const blockerDir = path.join(tempDir, 'blocker');
         await fs.mkdir(blockerDir, { recursive: true });
         await fs.writeFile(
           path.join(blockerDir, '3.blueprint.md'),

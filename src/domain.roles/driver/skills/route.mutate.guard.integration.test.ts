@@ -40,15 +40,19 @@ const invokeGuardHook = async (input: {
     const result = await execAsync(cmd, { cwd: input.cwd });
     return { ...result, code: 0 };
   } catch (error) {
+    // allow: exec error on non-zero exit (expected when guard blocks)
+    // exec throws with code, stdout, stderr properties on non-zero exit
     const execError = error as {
       stdout?: string;
       stderr?: string;
       code?: number;
     };
+    // check: this is an exec error (has numeric exit code), not system error
+    if (typeof execError.code !== 'number') throw error;
     return {
       stdout: execError.stdout ?? '',
       stderr: execError.stderr ?? '',
-      code: execError.code ?? 1,
+      code: execError.code,
     };
   }
 };
@@ -597,6 +601,138 @@ describe('route.mutate.guard', () => {
 
       then('exits with code 0 (allowed - different branch route)', () => {
         expect(result.code).toEqual(0);
+      });
+    });
+  });
+
+  given('[case8] bound route at .route/xyz/ (not .behavior/)', () => {
+    const scene = useBeforeAll(async () => {
+      // create temp dir with route at .route/ location
+      const tempDir = genTempDir({ slug: 'mutate-guard-case8', git: true });
+
+      // create branch that matches bind flag
+      const branch = 'test-branch';
+      await createGitBranch({ cwd: tempDir, branch });
+
+      // create route at .route/xyz/ (NOT .behavior/)
+      const routeDir = path.join(
+        tempDir,
+        '.route',
+        'v2026_03_19.declapract.upgrade',
+      );
+      const routeMeta = path.join(routeDir, '.route');
+      await fs.mkdir(routeMeta, { recursive: true });
+
+      // create bind flag for this branch
+      await fs.writeFile(
+        path.join(routeMeta, `.bind.${branch}.flag`),
+        `bound_by: ${branch}\n`,
+      );
+
+      // create metadata files
+      await fs.writeFile(
+        path.join(routeMeta, 'passage.jsonl'),
+        '{"stone":"0.wish","status":"passed"}\n',
+      );
+
+      // create artifacts (should be allowed)
+      await fs.writeFile(
+        path.join(routeDir, '1.upgrade.invoke.md'),
+        '# artifact\n',
+      );
+
+      // create subdir with artifact
+      const subDir = path.join(routeDir, 'subdir');
+      await fs.mkdir(subDir, { recursive: true });
+      await fs.writeFile(path.join(subDir, 'doc.md'), '# doc\n');
+
+      return { tempDir, routeDir, routeMeta, branch };
+    });
+
+    when('[t0] Write to .route/xyz/artifact.md', () => {
+      const result = useThen('hook is invoked', async () =>
+        invokeGuardHook({
+          cwd: scene.tempDir,
+          stdin: {
+            tool_name: 'Write',
+            tool_input: {
+              file_path:
+                '.route/v2026_03_19.declapract.upgrade/1.upgrade.invoke.md',
+            },
+          },
+        }),
+      );
+
+      then('exits with code 0 (allowed)', () => {
+        expect(result.code).toEqual(0);
+      });
+
+      then('stderr matches snapshot', () => {
+        expect(result.stderr).toMatchSnapshot();
+      });
+    });
+
+    when('[t1] Write to .route/xyz/subdir/doc.md', () => {
+      const result = useThen('hook is invoked', async () =>
+        invokeGuardHook({
+          cwd: scene.tempDir,
+          stdin: {
+            tool_name: 'Write',
+            tool_input: {
+              file_path: '.route/v2026_03_19.declapract.upgrade/subdir/doc.md',
+            },
+          },
+        }),
+      );
+
+      then('exits with code 0 (allowed)', () => {
+        expect(result.code).toEqual(0);
+      });
+
+      then('stderr matches snapshot', () => {
+        expect(result.stderr).toMatchSnapshot();
+      });
+    });
+
+    when('[t2] Write to .route/xyz/.route/passage.jsonl', () => {
+      const result = useThen('hook is invoked', async () =>
+        invokeGuardHook({
+          cwd: scene.tempDir,
+          stdin: {
+            tool_name: 'Write',
+            tool_input: {
+              file_path:
+                '.route/v2026_03_19.declapract.upgrade/.route/passage.jsonl',
+            },
+          },
+        }),
+      );
+
+      then('exits with code 2 (blocked)', () => {
+        expect(result.code).toEqual(2);
+      });
+
+      then('stderr matches snapshot', () => {
+        expect(result.stderr).toMatchSnapshot();
+      });
+    });
+
+    when('[t3] Read to .route/xyz/.route/passage.jsonl', () => {
+      const result = useThen('hook is invoked', async () =>
+        invokeGuardHook({
+          cwd: scene.tempDir,
+          stdin: {
+            tool_name: 'Read',
+            tool_input: {
+              file_path:
+                '.route/v2026_03_19.declapract.upgrade/.route/passage.jsonl',
+            },
+          },
+        }),
+      );
+
+      then('exits with code 2 (blocked)', () => {
+        expect(result.code).toEqual(2);
       });
     });
   });
