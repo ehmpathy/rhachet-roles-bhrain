@@ -19,9 +19,7 @@ describe('getBlockedChallengeDecision', () => {
         });
 
         expect(result.decision).toBe('challenge:first');
-        expect(result.articulationPath).toContain(
-          '.route/blocker/3.blueprint.md',
-        );
+        expect(result.articulationPath).toContain('blocker/3.blueprint.md');
 
         await fs.rm(tempDir, { recursive: true });
       });
@@ -70,8 +68,8 @@ describe('getBlockedChallengeDecision', () => {
           'stone: 3.blueprint\n',
         );
 
-        // create blocker dir with articulation file
-        const blockerDir = path.join(routeDir, 'blocker');
+        // create blocker dir with articulation file (at route root, not .route/)
+        const blockerDir = path.join(tempDir, 'blocker');
         await fs.mkdir(blockerDir, { recursive: true });
         await fs.writeFile(
           path.join(blockerDir, '3.blueprint.md'),

@@ -8,8 +8,11 @@ exports[`driver.route.drive.acceptance given: [case1] route bound with unpassed 
    │  ├─ route = .
    │  └─ stone = 1
    │
-   ├─ are we there yet? if so, run
-   │  └─ rhx route.stone.set --stone 1 --as passed
+   ├─ are you here?
+   │  ├─ when ready for review, run:
+   │  │  └─ rhx route.stone.set --stone 1 --as arrived
+   │  └─ when ready to continue, run:
+   │     └─ rhx route.stone.set --stone 1 --as passed
    │
    ├─ here's the stone
    │  ├─
@@ -24,8 +27,11 @@ exports[`driver.route.drive.acceptance given: [case1] route bound with unpassed 
    │  │  
    │  └─
    │
-   └─ are we there yet? if so, run
-      └─ rhx route.stone.set --stone 1 --as passed
+   └─ are you here?
+      ├─ when ready for review, run:
+      │  └─ rhx route.stone.set --stone 1 --as arrived
+      └─ when ready to continue, run:
+         └─ rhx route.stone.set --stone 1 --as passed
 "
 `;
 
@@ -45,8 +51,11 @@ exports[`driver.route.drive.acceptance given: [case4] hook mode blocks stop when
    │  ├─ route = .
    │  └─ stone = 1
    │
-   ├─ are we there yet? if so, run
-   │  └─ rhx route.stone.set --stone 1 --as passed
+   ├─ are you here?
+   │  ├─ when ready for review, run:
+   │  │  └─ rhx route.stone.set --stone 1 --as arrived
+   │  └─ when ready to continue, run:
+   │     └─ rhx route.stone.set --stone 1 --as passed
    │
    ├─ here's the stone
    │  ├─
@@ -61,7 +70,10 @@ exports[`driver.route.drive.acceptance given: [case4] hook mode blocks stop when
    │  │  
    │  └─
    │
-   └─ are we there yet? if so, run
-      └─ rhx route.stone.set --stone 1 --as passed
+   └─ are you here?
+      ├─ when ready for review, run:
+      │  └─ rhx route.stone.set --stone 1 --as arrived
+      └─ when ready to continue, run:
+         └─ rhx route.stone.set --stone 1 --as passed
 "
 `;

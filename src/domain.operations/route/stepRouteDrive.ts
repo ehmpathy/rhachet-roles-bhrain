@@ -355,7 +355,7 @@ const formatRouteDriveBlocked = (input: {
   route: string;
   stone: string;
 }): string => {
-  const articulationPath = `${input.route}/.route/blocker/${input.stone}.md`;
+  const articulationPath = `${input.route}/blocker/${input.stone}.md`;
   const lines: string[] = [];
   lines.push(`🦉 where were we?`);
   lines.push('');

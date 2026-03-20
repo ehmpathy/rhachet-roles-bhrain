@@ -8,8 +8,11 @@ exports[`driver.route.rewind-drive.acceptance given: [case1] route.drive after r
    │  ├─ route = .
    │  └─ stone = 1.vision
    │
-   ├─ are we there yet? if so, run
-   │  └─ rhx route.stone.set --stone 1.vision --as passed
+   ├─ are you here?
+   │  ├─ when ready for review, run:
+   │  │  └─ rhx route.stone.set --stone 1.vision --as arrived
+   │  └─ when ready to continue, run:
+   │     └─ rhx route.stone.set --stone 1.vision --as passed
    │
    ├─ here's the stone
    │  ├─
@@ -25,8 +28,11 @@ exports[`driver.route.rewind-drive.acceptance given: [case1] route.drive after r
    │  │  
    │  └─
    │
-   └─ are we there yet? if so, run
-      └─ rhx route.stone.set --stone 1.vision --as passed
+   └─ are you here?
+      ├─ when ready for review, run:
+      │  └─ rhx route.stone.set --stone 1.vision --as arrived
+      └─ when ready to continue, run:
+         └─ rhx route.stone.set --stone 1.vision --as passed
 "
 `;
 
@@ -38,8 +44,11 @@ exports[`driver.route.rewind-drive.acceptance given: [case1] route.drive after r
    │  ├─ route = .
    │  └─ stone = 2.criteria
    │
-   ├─ are we there yet? if so, run
-   │  └─ rhx route.stone.set --stone 2.criteria --as passed
+   ├─ are you here?
+   │  ├─ when ready for review, run:
+   │  │  └─ rhx route.stone.set --stone 2.criteria --as arrived
+   │  └─ when ready to continue, run:
+   │     └─ rhx route.stone.set --stone 2.criteria --as passed
    │
    ├─ here's the stone
    │  ├─
@@ -55,8 +64,11 @@ exports[`driver.route.rewind-drive.acceptance given: [case1] route.drive after r
    │  │  
    │  └─
    │
-   └─ are we there yet? if so, run
-      └─ rhx route.stone.set --stone 2.criteria --as passed
+   └─ are you here?
+      ├─ when ready for review, run:
+      │  └─ rhx route.stone.set --stone 2.criteria --as arrived
+      └─ when ready to continue, run:
+         └─ rhx route.stone.set --stone 2.criteria --as passed
 "
 `;
 
@@ -68,8 +80,11 @@ exports[`driver.route.rewind-drive.acceptance given: [case2] unguarded stone wit
    │  ├─ route = .
    │  └─ stone = 2.criteria
    │
-   ├─ are we there yet? if so, run
-   │  └─ rhx route.stone.set --stone 2.criteria --as passed
+   ├─ are you here?
+   │  ├─ when ready for review, run:
+   │  │  └─ rhx route.stone.set --stone 2.criteria --as arrived
+   │  └─ when ready to continue, run:
+   │     └─ rhx route.stone.set --stone 2.criteria --as passed
    │
    ├─ here's the stone
    │  ├─
@@ -85,8 +100,11 @@ exports[`driver.route.rewind-drive.acceptance given: [case2] unguarded stone wit
    │  │  
    │  └─
    │
-   └─ are we there yet? if so, run
-      └─ rhx route.stone.set --stone 2.criteria --as passed
+   └─ are you here?
+      ├─ when ready for review, run:
+      │  └─ rhx route.stone.set --stone 2.criteria --as arrived
+      └─ when ready to continue, run:
+         └─ rhx route.stone.set --stone 2.criteria --as passed
 "
 `;
 
@@ -156,8 +174,11 @@ exports[`driver.route.rewind-drive.acceptance given: [case4] re-pass after rewin
    │  ├─ route = .
    │  └─ stone = 1.vision
    │
-   ├─ are we there yet? if so, run
-   │  └─ rhx route.stone.set --stone 1.vision --as passed
+   ├─ are you here?
+   │  ├─ when ready for review, run:
+   │  │  └─ rhx route.stone.set --stone 1.vision --as arrived
+   │  └─ when ready to continue, run:
+   │     └─ rhx route.stone.set --stone 1.vision --as passed
    │
    ├─ here's the stone
    │  ├─
@@ -173,8 +194,11 @@ exports[`driver.route.rewind-drive.acceptance given: [case4] re-pass after rewin
    │  │  
    │  └─
    │
-   └─ are we there yet? if so, run
-      └─ rhx route.stone.set --stone 1.vision --as passed
+   └─ are you here?
+      ├─ when ready for review, run:
+      │  └─ rhx route.stone.set --stone 1.vision --as arrived
+      └─ when ready to continue, run:
+         └─ rhx route.stone.set --stone 1.vision --as passed
 "
 `;
 
@@ -198,8 +222,11 @@ exports[`driver.route.rewind-drive.acceptance given: [case4] re-pass after rewin
    │  ├─ route = .
    │  └─ stone = 2.criteria
    │
-   ├─ are we there yet? if so, run
-   │  └─ rhx route.stone.set --stone 2.criteria --as passed
+   ├─ are you here?
+   │  ├─ when ready for review, run:
+   │  │  └─ rhx route.stone.set --stone 2.criteria --as arrived
+   │  └─ when ready to continue, run:
+   │     └─ rhx route.stone.set --stone 2.criteria --as passed
    │
    ├─ here's the stone
    │  ├─
@@ -215,7 +242,10 @@ exports[`driver.route.rewind-drive.acceptance given: [case4] re-pass after rewin
    │  │  
    │  └─
    │
-   └─ are we there yet? if so, run
-      └─ rhx route.stone.set --stone 2.criteria --as passed
+   └─ are you here?
+      ├─ when ready for review, run:
+      │  └─ rhx route.stone.set --stone 2.criteria --as arrived
+      └─ when ready to continue, run:
+         └─ rhx route.stone.set --stone 2.criteria --as passed
 "
 `;

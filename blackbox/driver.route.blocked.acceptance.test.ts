@@ -71,7 +71,7 @@ describe('driver.route.blocked.acceptance', () => {
       });
 
       then('stdout contains articulation path', () => {
-        expect(result.stdout).toContain('.route/blocker/1.design.md');
+        expect(result.stdout).toContain('./blocker/1.design.md');
       });
 
       then('triggered file was created', async () => {
@@ -122,7 +122,8 @@ describe('driver.route.blocked.acceptance', () => {
 
     when('[t2] robot articulates the blocker', () => {
       then('articulation file is created', async () => {
-        const blockerDir = path.join(scene.tempDir, '.route', 'blocker');
+        // blocker dir at route root (visible alongside artifacts)
+        const blockerDir = path.join(scene.tempDir, 'blocker');
         await fs.mkdir(blockerDir, { recursive: true });
 
         const articulationPath = path.join(blockerDir, '1.design.md');
@@ -171,7 +172,7 @@ human decision on whether to use approach A or B.
       });
 
       then('stdout contains reason path', () => {
-        expect(result.stdout).toContain('.route/blocker/1.design.md');
+        expect(result.stdout).toContain('blocker/1.design.md');
       });
 
       then('passage.jsonl records blocked status', async () => {
@@ -204,7 +205,7 @@ human decision on whether to use approach A or B.
       });
 
       then('stdout contains reason path', () => {
-        expect(result.stdout).toContain('.route/blocker/1.design.md');
+        expect(result.stdout).toContain('blocker/1.design.md');
       });
 
       then('stdout has good vibes', () => {

@@ -1,5 +1,4 @@
 import { BadRequestError } from 'helpful-errors';
-import * as path from 'path';
 
 import { PassageReport } from '@src/domain.objects/Driver/PassageReport';
 
@@ -44,13 +43,16 @@ export const setStoneAsBlocked = async (input: {
       route: input.route,
     });
 
+    // format path for display
+    const displayPath = `${input.route}/blocker/${stoneMatched.name}.md`;
+
     return {
       blocked: false,
       challenged: true,
       emit: {
         stdout: formatBlockedNudge({
           stone: stoneMatched.name,
-          articulationPath: path.relative(process.cwd(), articulationPath),
+          articulationPath: displayPath,
         }),
       },
     };
@@ -58,13 +60,16 @@ export const setStoneAsBlocked = async (input: {
 
   // if no articulation, return nudge (already triggered)
   if (decision === 'challenge:absent') {
+    // format path for display
+    const displayPath = `${input.route}/blocker/${stoneMatched.name}.md`;
+
     return {
       blocked: false,
       challenged: true,
       emit: {
         stdout: formatBlockedNudge({
           stone: stoneMatched.name,
-          articulationPath: path.relative(process.cwd(), articulationPath),
+          articulationPath: displayPath,
         }),
       },
     };
@@ -79,13 +84,16 @@ export const setStoneAsBlocked = async (input: {
     route: input.route,
   });
 
+  // format path for display
+  const displayPath = `${input.route}/blocker/${stoneMatched.name}.md`;
+
   return {
     blocked: true,
     challenged: false,
     emit: {
       stdout: formatBlockedSuccess({
         stone: stoneMatched.name,
-        articulationPath: path.relative(process.cwd(), articulationPath),
+        articulationPath: displayPath,
       }),
     },
   };

@@ -1,0 +1,41 @@
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
+
+exports[`route.mutate.guard given: [case8] bound route at .route/xyz/ (not .behavior/) when: [t0] Write to .route/xyz/artifact.md then: stderr matches snapshot 1`] = `""`;
+
+exports[`route.mutate.guard given: [case8] bound route at .route/xyz/ (not .behavior/) when: [t1] Write to .route/xyz/subdir/doc.md then: stderr matches snapshot 1`] = `""`;
+
+exports[`route.mutate.guard given: [case8] bound route at .route/xyz/ (not .behavior/) when: [t2] Write to .route/xyz/.route/passage.jsonl then: stderr matches snapshot 1`] = `
+"
+🦉 to chase all paths, is to reach none. focus.
+
+🗿 route.mutate guard
+   ├─ route = .route/v2026_03_19.declapract.upgrade
+   ├─ path = .route/v2026_03_19.declapract.upgrade/.route/passage.jsonl
+   ├─ access = blocked
+   │
+   ├─ the route is sealed
+   ├─ it reveals itself one stone at a time
+   │
+   └─ instead, run
+      └─ rhx route.drive
+
+🔭 focus is a virtue
+   │
+   ├─ "a great task is accomplished by a series of small acts" — lao tzu
+   ├─ "the man who moves a mountain begins by carrying away small stones" — confucius
+   ├─ "it does not matter how slowly you go so long as you do not stop" — confucius
+   │
+   ├─ "if you seek tranquility, do less" — marcus aurelius
+   ├─ "curb your desire — don't set your heart on so many things" — epictetus
+   ├─ "beware the barrenness of a busy life" — socrates
+   ├─ "withdrawal from some to deal effectively with others" — william james
+   ├─ "you can do anything but not everything" — greg mckeown
+   │
+   ├─ "who acts in stillness finds stillness in his life" — lao tzu
+   ├─ "unify your attention" — confucius
+   ├─ "a calm mind is the greatest weapon" — uncle iroh
+   │
+   └─ "simplicity, patience, compassion — these three are your greatest treasures" — lao tzu
+
+"
+`;

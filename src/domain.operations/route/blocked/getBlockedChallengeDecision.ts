@@ -19,10 +19,9 @@ export const getBlockedChallengeDecision = async (input: {
   decision: BlockedChallengeDecision;
   articulationPath: string;
 }> => {
-  // compute articulation file path
+  // compute articulation file path (visible alongside artifacts)
   const articulationPath = path.join(
     input.route,
-    '.route',
     'blocker',
     `${input.stone}.md`,
   );
@@ -42,7 +41,11 @@ export const getBlockedChallengeDecision = async (input: {
   const articulationFound = await fs
     .access(articulationPath)
     .then(() => true)
-    .catch(() => false);
+    .catch((error: NodeJS.ErrnoException) => {
+      // allow: ENOENT (file not found) is expected when file absent
+      if (error.code === 'ENOENT') return false;
+      throw error;
+    });
 
   // if no articulation, robot hasn't reflected yet
   if (!articulationFound) {

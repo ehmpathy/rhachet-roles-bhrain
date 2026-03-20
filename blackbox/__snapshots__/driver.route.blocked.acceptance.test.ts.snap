@@ -30,7 +30,7 @@ exports[`driver.route.blocked.acceptance given: [journey] blocked flow when: [t0
    │  └─
    │
    ├─ articulate into
-   │  │  └─ .route/blocker/1.design.md
+   │  │  └─ ./blocker/1.design.md
    │  │
    │  ├─ what blocks you 🪘
    │  │  ├─
@@ -91,7 +91,7 @@ exports[`driver.route.blocked.acceptance given: [journey] blocked flow when: [t1
    │  └─
    │
    ├─ articulate into
-   │  │  └─ .route/blocker/1.design.md
+   │  │  └─ ./blocker/1.design.md
    │  │
    │  ├─ what blocks you 🪘
    │  │  ├─
@@ -128,7 +128,7 @@ exports[`driver.route.blocked.acceptance given: [journey] blocked flow when: [t3
 🗿 route.stone.set
    ├─ stone = 1.design
    ├─ passage = blocked
-   └─ reason: .route/blocker/1.design.md
+   └─ reason: ./blocker/1.design.md
 "
 `;
 
@@ -141,7 +141,7 @@ exports[`driver.route.blocked.acceptance given: [journey] blocked flow when: [t4
    │  └─ stone = 1.design
    │
    └─ halted, stone marked blocked
-      └─ reason: ./.route/blocker/1.design.md
+      └─ reason: ./blocker/1.design.md
 "
 `;
 
@@ -150,7 +150,10 @@ exports[`driver.route.blocked.acceptance given: [journey] blocked flow when: [t5
 
 🗿 route.stone.set
    ├─ stone = 1.design
-   └─ passage = allowed (unguarded)
+   ├─ passage = allowed (unguarded)
+   │
+   └─ the way continues, run
+      └─ rhx route.drive
 "
 `;
 
@@ -162,8 +165,11 @@ exports[`driver.route.blocked.acceptance given: [journey] blocked flow when: [t6
    │  ├─ route = .
    │  └─ stone = 2.implement
    │
-   ├─ are we there yet? if so, run
-   │  └─ rhx route.stone.set --stone 2.implement --as passed
+   ├─ are you here?
+   │  ├─ when ready for review, run:
+   │  │  └─ rhx route.stone.set --stone 2.implement --as arrived
+   │  └─ when ready to continue, run:
+   │     └─ rhx route.stone.set --stone 2.implement --as passed
    │
    ├─ here's the stone
    │  ├─
@@ -177,8 +183,11 @@ exports[`driver.route.blocked.acceptance given: [journey] blocked flow when: [t6
    │  │  
    │  └─
    │
-   └─ are we there yet? if so, run
-      └─ rhx route.stone.set --stone 2.implement --as passed
+   └─ are you here?
+      ├─ when ready for review, run:
+      │  └─ rhx route.stone.set --stone 2.implement --as arrived
+      └─ when ready to continue, run:
+         └─ rhx route.stone.set --stone 2.implement --as passed
 "
 `;
 
@@ -212,7 +221,7 @@ exports[`driver.route.blocked.acceptance given: [journey] blocked trigger shed w
    │  └─
    │
    ├─ articulate into
-   │  │  └─ .route/blocker/1.design.md
+   │  │  └─ ./blocker/1.design.md
    │  │
    │  ├─ what blocks you 🪘
    │  │  ├─
@@ -248,7 +257,10 @@ exports[`driver.route.blocked.acceptance given: [journey] blocked trigger shed w
 
 🗿 route.stone.set
    ├─ stone = 2.implement
-   └─ passage = allowed (unguarded)
+   ├─ passage = allowed (unguarded)
+   │
+   └─ the way continues, run
+      └─ rhx route.drive
 "
 `;
 
@@ -282,7 +294,7 @@ exports[`driver.route.blocked.acceptance given: [journey] blocked trigger shed w
    │  └─
    │
    ├─ articulate into
-   │  │  └─ .route/blocker/1.design.md
+   │  │  └─ ./blocker/1.design.md
    │  │
    │  ├─ what blocks you 🪘
    │  │  ├─
