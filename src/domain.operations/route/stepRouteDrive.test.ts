@@ -347,4 +347,75 @@ describe('stepRouteDrive', () => {
       });
     });
   });
+
+  given('[case7] tea pause after 5+ hooks', () => {
+    const scene = useBeforeAll(async () => {
+      const tempDir = genTempDir({
+        slug: 'drive-tea-pause',
+        clone: path.join(ASSETS_DIR, 'route.simple'),
+      });
+      return { tempDir };
+    });
+
+    when('[t0] fewer than 6 hooks triggered', () => {
+      then('output does NOT contain tea pause', async () => {
+        // call hook mode 3 times (count 1, 2, 3)
+        for (let i = 0; i < 3; i++) {
+          await stepRouteDrive({ route: scene.tempDir, mode: 'hook' });
+        }
+        const result = await stepRouteDrive({
+          route: scene.tempDir,
+          mode: 'hook',
+        });
+        expect(result.emit?.stdout).not.toContain('tea first');
+        expect(result.emit?.stdout).not.toContain('to refuse is not an option');
+        // still shows the standard prompt
+        expect(result.emit?.stdout).toContain('are you here?');
+      });
+    });
+
+    when('[t1] 6 or more hooks triggered', () => {
+      then('output contains tea pause with all three options', async () => {
+        // continue to call hook mode to reach count > 5
+        // (we already have 4 from [t0], need 2 more)
+        for (let i = 0; i < 2; i++) {
+          await stepRouteDrive({ route: scene.tempDir, mode: 'hook' });
+        }
+        // now count should be 6 or higher (suggestBlocked = count > 5)
+        const result = await stepRouteDrive({
+          route: scene.tempDir,
+          mode: 'hook',
+        });
+        // tea pause header
+        expect(result.emit?.stdout).toContain('tea first');
+        expect(result.emit?.stdout).toContain('choose your path');
+        // all three options
+        expect(result.emit?.stdout).toContain('--as arrived');
+        expect(result.emit?.stdout).toContain('--as passed');
+        expect(result.emit?.stdout).toContain('--as blocked');
+        // mandate
+        expect(result.emit?.stdout).toContain('to refuse is not an option');
+        expect(result.emit?.stdout).toContain('work on the stone');
+      });
+    });
+
+    when('[t2] tea pause snapshot', () => {
+      then('output matches snapshot', async () => {
+        // ensure we're at count > 5 by a few more calls
+        for (let i = 0; i < 2; i++) {
+          await stepRouteDrive({ route: scene.tempDir, mode: 'hook' });
+        }
+        const result = await stepRouteDrive({
+          route: scene.tempDir,
+          mode: 'hook',
+        });
+        // replace temp path for snapshot stability
+        const outputStable = result.emit?.stdout?.replace(
+          scene.tempDir,
+          '<ROUTE>',
+        );
+        expect(outputStable).toMatchSnapshot();
+      });
+    });
+  });
 });

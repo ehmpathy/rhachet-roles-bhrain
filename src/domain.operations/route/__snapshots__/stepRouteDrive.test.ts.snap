@@ -56,6 +56,21 @@ exports[`stepRouteDrive given: [case5] route with malfunction status when: [t2] 
 exports[`stepRouteDrive given: [case6] drum nudge after 7+ hooks when: [t2] nudge output snapshot then: output matches snapshot 1`] = `
 "🦉 where were we?
 
+🍵 tea first. then, choose your path.
+   │
+   ├─ you must choose one
+   │  ├─ ready for review?
+   │  │  └─ rhx route.stone.set --stone 1.vision --as arrived
+   │  │
+   │  ├─ ready to continue?
+   │  │  └─ rhx route.stone.set --stone 1.vision --as passed
+   │  │
+   │  └─ blocked and need help?
+   │     └─ rhx route.stone.set --stone 1.vision --as blocked
+   │
+   └─ ⚠️ to refuse is not an option.
+      work on the stone, or mark your status.
+
 🗿 route.drive
    ├─ where do we go?
    │  ├─ route = <ROUTE>
@@ -90,9 +105,74 @@ exports[`stepRouteDrive given: [case6] drum nudge after 7+ hooks when: [t2] nudg
    │  │  
    │  └─
    │
-   └─ are you here?
-      ├─ when ready for review, run:
-      │  └─ rhx route.stone.set --stone 1.vision --as arrived
-      └─ when ready to continue, run:
-         └─ rhx route.stone.set --stone 1.vision --as passed"
+   ├─ are you here?
+   │  ├─ when ready for review, run:
+   │  │  └─ rhx route.stone.set --stone 1.vision --as arrived
+   │  └─ when ready to continue, run:
+   │     └─ rhx route.stone.set --stone 1.vision --as passed
+   │
+   └─ are you blocked? if so, run
+      └─ rhx route.stone.set --stone 1.vision --as blocked"
+`;
+
+exports[`stepRouteDrive given: [case7] tea pause after 5+ hooks when: [t2] tea pause snapshot then: output matches snapshot 1`] = `
+"🦉 where were we?
+
+🍵 tea first. then, choose your path.
+   │
+   ├─ you must choose one
+   │  ├─ ready for review?
+   │  │  └─ rhx route.stone.set --stone 1.vision --as arrived
+   │  │
+   │  ├─ ready to continue?
+   │  │  └─ rhx route.stone.set --stone 1.vision --as passed
+   │  │
+   │  └─ blocked and need help?
+   │     └─ rhx route.stone.set --stone 1.vision --as blocked
+   │
+   └─ ⚠️ to refuse is not an option.
+      work on the stone, or mark your status.
+
+🗿 route.drive
+   ├─ where do we go?
+   │  ├─ route = <ROUTE>
+   │  └─ stone = 1.vision
+   │
+   ├─ are you here?
+   │  ├─ when ready for review, run:
+   │  │  └─ rhx route.stone.set --stone 1.vision --as arrived
+   │  └─ when ready to continue, run:
+   │     └─ rhx route.stone.set --stone 1.vision --as passed
+   │
+   ├─ 🪘 walk the way
+   │  ├─
+   │  │
+   │  │  do your work, then step back
+   │  │  the only path to serenity
+   │  │
+   │  │  — tao te ching
+   │  │
+   │  └─
+   │
+   ├─ here's the stone
+   │  ├─
+   │  │
+   │  │  illustrate the vision implied in the wish
+   │  │  
+   │  │  describe:
+   │  │  - the outcome world (before vs after)
+   │  │  - the user experience
+   │  │  - the mental model
+   │  │  - how well it solves the goals
+   │  │  
+   │  └─
+   │
+   ├─ are you here?
+   │  ├─ when ready for review, run:
+   │  │  └─ rhx route.stone.set --stone 1.vision --as arrived
+   │  └─ when ready to continue, run:
+   │     └─ rhx route.stone.set --stone 1.vision --as passed
+   │
+   └─ are you blocked? if so, run
+      └─ rhx route.stone.set --stone 1.vision --as blocked"
 `;
