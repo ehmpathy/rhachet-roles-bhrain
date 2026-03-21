@@ -3,6 +3,7 @@ import * as path from 'path';
 import { given, then, useBeforeAll, useThen, when } from 'test-fns';
 
 import { genTestBrainContext } from '@src/.test/genTestBrainContext';
+import { REPEATABLY_CONFIG } from '@src/.test/infra/repeatably';
 import type { ReviewerReflectManifest } from '@src/domain.objects/Reviewer/ReviewerReflectManifest';
 
 import { setupSourceRepo, setupTargetDir } from './.test/setup';
@@ -17,13 +18,26 @@ describe('stepReflect.casePriorRules.grok-4.1-fast', () => {
   }));
 
   given('[case1] target with prior rule (explicit brain arg)', () => {
-    when('[t0] stepReflect completes', () => {
+    // track cleanup paths outside useThen to avoid deferred proxy issues
+    const cleanup: { sourceDir?: string; targetDir?: string } = {};
+    afterAll(async () => {
+      if (cleanup.sourceDir)
+        await fs.rm(cleanup.sourceDir, { recursive: true, force: true });
+      if (cleanup.targetDir)
+        await fs.rm(cleanup.targetDir, { recursive: true, force: true });
+    });
+
+    when.repeatably(REPEATABLY_CONFIG)('[t0] stepReflect completes', () => {
       // single API call, result shared across assertions
       const scene = useThen('stepReflect succeeds', async () => {
         // setup source and target
         const { repoDir: sourceDir } =
           await setupSourceRepo('typescript-quality');
         const { targetDir } = await setupTargetDir();
+
+        // track for cleanup
+        cleanup.sourceDir = sourceDir;
+        cleanup.targetDir = targetDir;
 
         // add prior rule that matches feedback topic
         await fs.mkdir(path.join(targetDir, 'practices'), {
@@ -46,11 +60,6 @@ describe('stepReflect.casePriorRules.grok-4.1-fast', () => {
         );
 
         return { sourceDir, targetDir, result };
-      });
-
-      afterAll(async () => {
-        await fs.rm(scene.sourceDir, { recursive: true, force: true });
-        await fs.rm(scene.targetDir, { recursive: true, force: true });
       });
 
       then('manifest includes operations for all pure rules', async () => {
