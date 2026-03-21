@@ -3,6 +3,7 @@ import * as path from 'path';
 import { given, then, useBeforeAll, useThen, when } from 'test-fns';
 
 import { genTestBrainContext } from '@src/.test/genTestBrainContext';
+import { REPEATABLY_CONFIG } from '@src/.test/infra/repeatably';
 import type { ReviewerReflectManifest } from '@src/domain.objects/Reviewer/ReviewerReflectManifest';
 
 import { setupSourceRepo, setupTargetDir } from './.test/setup';
@@ -17,7 +18,7 @@ describe('stepReflect.casePriorRules.grok-4.1-fast', () => {
   }));
 
   given('[case1] target with prior rule (explicit brain arg)', () => {
-    when('[t0] stepReflect completes', () => {
+    when.repeatably(REPEATABLY_CONFIG)('[t0] stepReflect completes', () => {
       // single API call, result shared across assertions
       const scene = useThen('stepReflect succeeds', async () => {
         // setup source and target
