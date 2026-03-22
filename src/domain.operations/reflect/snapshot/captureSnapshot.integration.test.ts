@@ -12,26 +12,36 @@ import { captureSnapshot } from './captureSnapshot';
  * .what = creates a mock claude code project for tests
  * .why = captureSnapshot requires transcript source to exist
  */
-const setupMockClaudeProject = (input: { cwd: string }): string => {
+const setupMockClaudeProject = (input: {
+  cwd: string;
+  sessionCount?: number;
+}): string => {
   // compute project slug (same as getTranscriptSource)
   const slug = input.cwd.replace(/\//g, '-');
   const projectDir = path.join(os.homedir(), '.claude', 'projects', slug);
   fs.mkdirSync(projectDir, { recursive: true });
 
-  // create mock transcript file
-  const transcriptPath = path.join(projectDir, 'test-transcript.jsonl');
-  const mockMessages = [
-    { type: 'user', timestamp: '2026-03-16T12:00:00.000Z', message: 'hello' },
-    {
-      type: 'assistant',
-      timestamp: '2026-03-16T12:00:01.000Z',
-      message: 'hi there',
-    },
-  ];
-  fs.writeFileSync(
-    transcriptPath,
-    mockMessages.map((m) => JSON.stringify(m)).join('\n'),
-  );
+  // create mock transcript files (default 1 session)
+  const count = input.sessionCount ?? 1;
+  for (let i = 0; i < count; i++) {
+    const transcriptPath = path.join(projectDir, `session-${i}.jsonl`);
+    const mockMessages = [
+      {
+        type: 'user',
+        timestamp: `2026-03-16T1${i}:00:00.000Z`,
+        message: `hello from session ${i}`,
+      },
+      {
+        type: 'assistant',
+        timestamp: `2026-03-16T1${i}:00:01.000Z`,
+        message: `hi there from session ${i}`,
+      },
+    ];
+    fs.writeFileSync(
+      transcriptPath,
+      mockMessages.map((m) => JSON.stringify(m)).join('\n'),
+    );
+  }
 
   return projectDir;
 };
@@ -122,7 +132,55 @@ describe('captureSnapshot', () => {
     });
   });
 
-  given('[case2] repo without claude project', () => {
+  given('[case2] repo with multiple peer brain sessions', () => {
+    const tempDir = path.join(
+      os.tmpdir(),
+      `reflect-capture-peers-${Date.now()}`,
+    );
+    let mockProjectDir: string;
+
+    const scene = useBeforeAll(async () => {
+      // create temp git repo
+      fs.mkdirSync(tempDir, { recursive: true });
+      const { execSync } = require('child_process');
+      execSync('git init', { cwd: tempDir });
+      execSync('git config user.email "test@test.com"', { cwd: tempDir });
+      execSync('git config user.name "Test"', { cwd: tempDir });
+
+      // create initial commit
+      fs.writeFileSync(path.join(tempDir, 'init.txt'), 'init');
+      execSync('git add init.txt', { cwd: tempDir });
+      execSync('git commit -m "initial"', { cwd: tempDir });
+
+      // setup mock claude project with 3 peer brain sessions
+      mockProjectDir = setupMockClaudeProject({ cwd: tempDir, sessionCount: 3 });
+
+      // get scope and capture snapshot
+      const scope = getReflectScope({ cwd: tempDir });
+      const snapshot = await captureSnapshot({ scope });
+
+      return { scope, snapshot };
+    });
+
+    afterAll(() => {
+      fs.rmSync(tempDir, { recursive: true, force: true });
+      if (mockProjectDir && fs.existsSync(mockProjectDir)) {
+        fs.rmSync(mockProjectDir, { recursive: true, force: true });
+      }
+    });
+
+    when('[t0] snapshot captures all peer sessions', () => {
+      then('sessionCount should be 3', () => {
+        expect(scene.snapshot.metadata.transcript.sessionCount).toEqual(3);
+      });
+
+      then('fileCount should be 3 (one file per session)', () => {
+        expect(scene.snapshot.metadata.transcript.fileCount).toEqual(3);
+      });
+    });
+  });
+
+  given('[case3] repo without claude project', () => {
     const tempDir = path.join(
       os.tmpdir(),
       `reflect-capture-noproj-${Date.now()}`,
