@@ -20,20 +20,25 @@ describe('getTranscriptSource', () => {
         expect(source.projectDir.startsWith(os.homedir())).toBe(true);
       });
 
-      then('should find main transcript file', () => {
+      then('should have at least 1 session', () => {
         if (!source) return;
-        expect(source.mainFile).toBeDefined();
-        expect(source.mainFile.endsWith('.jsonl')).toBe(true);
+        expect(source.sessionCount).toBeGreaterThanOrEqual(1);
+        expect(source.sessions.length).toBeGreaterThanOrEqual(1);
       });
 
-      then('should have at least 1 episode', () => {
+      then('each session should have main file with .jsonl extension', () => {
         if (!source) return;
-        expect(source.episodeCount).toBeGreaterThanOrEqual(1);
+        for (const session of source.sessions) {
+          expect(session.mainFile).toBeDefined();
+          expect(session.mainFile.endsWith('.jsonl')).toBe(true);
+        }
       });
 
-      then('compactionFiles should be array', () => {
+      then('each session subagentFiles should be array', () => {
         if (!source) return;
-        expect(Array.isArray(source.compactionFiles)).toBe(true);
+        for (const session of source.sessions) {
+          expect(Array.isArray(session.subagentFiles)).toBe(true);
+        }
       });
     });
   });

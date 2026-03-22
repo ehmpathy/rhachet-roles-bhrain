@@ -114,7 +114,7 @@ describe('getAllSnapshots', () => {
         const result = getAllSnapshots({ scope: scene.scope });
         for (const snapshot of result.snapshots) {
           expect(snapshot.metadata).not.toBeNull();
-          expect(snapshot.metadata?.transcript.episodeCount).toBeGreaterThan(0);
+          expect(snapshot.metadata?.transcript.sessionCount).toBeGreaterThan(0);
         }
       });
     });

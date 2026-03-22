@@ -32,8 +32,14 @@ export interface Snapshot {
     worktreeName: string;
     branch: string;
     transcript: {
-      episodeCount: number;
-      mainFile: string;
+      /**
+       * number of peer brain sessions captured
+       */
+      sessionCount: number;
+      /**
+       * total number of files (main + subagent transcripts)
+       */
+      fileCount: number;
     };
     savepoints: {
       count: number;
@@ -99,25 +105,29 @@ export const captureSnapshot = async (input: {
   // create temp directory for assembly
   const tempDir = fs.mkdtempSync(path.join(os.tmpdir(), 'reflect-snapshot-'));
 
+  // count total transcript files for metadata
+  let transcriptFileCount = 0;
+
   try {
-    // copy transcript files
+    // copy transcript files from all sessions (peer brains)
     const transcriptDir = path.join(tempDir, 'transcript');
     fs.mkdirSync(transcriptDir, { recursive: true });
 
-    // copy main transcript file
-    const mainFileName = path.basename(transcriptSource.mainFile);
-    fs.copyFileSync(
-      transcriptSource.mainFile,
-      path.join(transcriptDir, mainFileName),
-    );
+    for (const session of transcriptSource.sessions) {
+      // copy main transcript file for this session
+      const mainFileName = path.basename(session.mainFile);
+      fs.copyFileSync(session.mainFile, path.join(transcriptDir, mainFileName));
+      transcriptFileCount++;
 
-    // copy compaction files if present
-    for (const compactionFile of transcriptSource.compactionFiles) {
-      const compactionFileName = path.basename(compactionFile);
-      fs.copyFileSync(
-        compactionFile,
-        path.join(transcriptDir, compactionFileName),
-      );
+      // copy subagent files for this session
+      for (const subagentFile of session.subagentFiles) {
+        const subagentFileName = path.basename(subagentFile);
+        fs.copyFileSync(
+          subagentFile,
+          path.join(transcriptDir, subagentFileName),
+        );
+        transcriptFileCount++;
+      }
     }
 
     // copy savepoint patches
@@ -182,8 +192,8 @@ export const captureSnapshot = async (input: {
       branch: input.scope.branch,
       timestamp,
       transcript: {
-        episodeCount: transcriptSource.episodeCount,
-        mainFile: mainFileName,
+        sessionCount: transcriptSource.sessionCount,
+        fileCount: transcriptFileCount,
       },
       savepoints: {
         count: savepointsSummary.count,

@@ -269,8 +269,8 @@ describe('reflect.journey.acceptance', () => {
       });
 
       then('output shows transcript stats', () => {
-        expect(result.stdout).toContain('episodes');
-        expect(result.stdout).toContain('mainFile');
+        expect(result.stdout).toContain('sessions');
+        expect(result.stdout).toContain('files');
       });
 
       then('output shows savepoints bundled', () => {

@@ -107,7 +107,7 @@ describe('getOneSnapshot', () => {
           at: scene.snapshot.timestamp,
         });
         expect(result?.metadata).toBeDefined();
-        expect(result?.metadata.transcript.episodeCount).toBeGreaterThan(0);
+        expect(result?.metadata.transcript.sessionCount).toBeGreaterThan(0);
       });
     });
   });

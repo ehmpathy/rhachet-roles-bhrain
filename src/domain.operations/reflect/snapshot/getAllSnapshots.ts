@@ -15,7 +15,7 @@ export interface SnapshotSummaryItem {
   sizeBytes: number;
   metadata: {
     transcript: {
-      episodeCount: number;
+      sessionCount: number;
     };
     savepoints: {
       count: number;
@@ -61,7 +61,10 @@ const readMetadataFromZip = (
     const full = JSON.parse(content);
 
     return {
-      transcript: { episodeCount: full.transcript?.episodeCount ?? 0 },
+      transcript: {
+        sessionCount:
+          full.transcript?.sessionCount ?? full.transcript?.episodeCount ?? 0,
+      },
       savepoints: { count: full.savepoints?.count ?? 0 },
       annotations: { count: full.annotations?.count ?? 0 },
     };

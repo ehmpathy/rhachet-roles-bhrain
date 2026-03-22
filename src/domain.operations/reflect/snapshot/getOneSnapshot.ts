@@ -33,8 +33,8 @@ export interface SnapshotDetails {
     worktreeName: string;
     branch: string;
     transcript: {
-      episodeCount: number;
-      mainFile: string;
+      sessionCount: number;
+      fileCount: number;
     };
     savepoints: {
       count: number;
