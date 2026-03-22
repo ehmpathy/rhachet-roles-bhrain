@@ -61,7 +61,10 @@ const readMetadataFromZip = (
     const full = JSON.parse(content);
 
     return {
-      transcript: { sessionCount: full.transcript?.sessionCount ?? full.transcript?.episodeCount ?? 0 },
+      transcript: {
+        sessionCount:
+          full.transcript?.sessionCount ?? full.transcript?.episodeCount ?? 0,
+      },
       savepoints: { count: full.savepoints?.count ?? 0 },
       annotations: { count: full.annotations?.count ?? 0 },
     };

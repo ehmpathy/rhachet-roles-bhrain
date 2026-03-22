@@ -255,9 +255,7 @@ export const reflectSnapshotGet = async (): Promise<void> => {
     console.log(
       `   │  ├─ sessions = ${snapshot.metadata.transcript.sessionCount}`,
     );
-    console.log(
-      `   │  └─ files = ${snapshot.metadata.transcript.fileCount}`,
-    );
+    console.log(`   │  └─ files = ${snapshot.metadata.transcript.fileCount}`);
     console.log(`   │`);
     console.log(`   ├─ savepoints = ${snapshot.metadata.savepoints.count}`);
     console.log(`   ├─ annotations = ${snapshot.metadata.annotations.count}`);
