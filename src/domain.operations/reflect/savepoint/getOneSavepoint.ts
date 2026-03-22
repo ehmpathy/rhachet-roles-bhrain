@@ -26,11 +26,17 @@ export const getOneSavepoint = (input: {
     savepointsDir,
     `${input.at}.unstaged.patch`,
   );
+  const commitPath = path.join(savepointsDir, `${input.at}.commit`);
 
   // check if savepoint exists
   if (!fs.existsSync(stagedPatchPath) || !fs.existsSync(unstagedPatchPath)) {
     return null;
   }
+
+  // read commit hash (may be absent for legacy savepoints)
+  const commitHash = fs.existsSync(commitPath)
+    ? fs.readFileSync(commitPath, 'utf-8').trim()
+    : 'unknown';
 
   // read patch contents to compute stats
   const stagedContent = fs.readFileSync(stagedPatchPath, 'utf-8');
@@ -41,10 +47,15 @@ export const getOneSavepoint = (input: {
 
   return {
     timestamp: input.at,
-    hash,
-    stagedPatchPath,
-    stagedPatchBytes: Buffer.byteLength(stagedContent),
-    unstagedPatchPath,
-    unstagedPatchBytes: Buffer.byteLength(unstagedContent),
+    commit: {
+      hash: commitHash,
+    },
+    patches: {
+      hash,
+      stagedPath: stagedPatchPath,
+      stagedBytes: Buffer.byteLength(stagedContent),
+      unstagedPath: unstagedPatchPath,
+      unstagedBytes: Buffer.byteLength(unstagedContent),
+    },
   };
 };

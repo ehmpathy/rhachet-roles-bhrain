@@ -124,18 +124,13 @@ export const sanitizeReflectOutputForSnapshot = (output: string): string => {
  * .why = enables blackbox acceptance tests against the skill
  */
 export const invokeReflectSkill = async (input: {
-  skill:
-    | 'reflect.snapshot.capture'
-    | 'reflect.snapshot.get'
-    | 'reflect.snapshot.annotate'
-    | 'reflect.snapshot.backup'
-    | 'reflect.savepoint.set'
-    | 'reflect.savepoint.get';
-  args: Record<string, string | boolean | string[] | undefined>;
+  skill: 'reflect.snapshot' | 'reflect.savepoint';
+  subcommand: 'capture' | 'get' | 'annotate' | 'backup' | 'set';
+  args?: Record<string, string | boolean | string[] | undefined>;
   cwd: string;
   env?: Record<string, string>;
 }): Promise<{ stdout: string; stderr: string; code: number }> => {
-  // map skill name to shell command filename
+  // dispatcher pattern: skill.sh subcommand [args]
   const skillFile = `${input.skill}.sh`;
   const skillPath = path.join(
     input.cwd,
@@ -145,8 +140,9 @@ export const invokeReflectSkill = async (input: {
 
   // build args string; arrays expand to repeated flags
   // special key '_' represents positional arguments (passed after --)
-  const positionalArgs = input.args._ ? `-- "${input.args._}"` : '';
-  const flagArgs = Object.entries(input.args)
+  const args = input.args ?? {};
+  const positionalArgs = args._ ? `-- "${args._}"` : '';
+  const flagArgs = Object.entries(args)
     .filter(([k, v]) => k !== '_' && v !== undefined)
     .flatMap(([k, v]) => {
       if (v === true) return [`--${k}`];
@@ -156,7 +152,7 @@ export const invokeReflectSkill = async (input: {
     .join(' ');
 
   const argsStr = [flagArgs, positionalArgs].filter(Boolean).join(' ');
-  const cmd = `bash "${skillPath}" ${argsStr}`;
+  const cmd = `bash "${skillPath}" ${input.subcommand} ${argsStr}`.trim();
 
   try {
     const result = await execAsync(cmd, {

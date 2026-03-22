@@ -1,6 +1,6 @@
 // Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
 
-exports[`reflect.snapshot.get given: [case1] repo with no snapshots when: [t0] get is invoked then: output matches snapshot 1`] = `
+exports[`reflect.snapshot get given: [case1] repo with no snapshots when: [t0] get is invoked then: output matches snapshot 1`] = `
 "🦉 know thyself
 
 🌕 reflect.snapshot get

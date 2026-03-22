@@ -12,7 +12,7 @@ import {
 
 const ASSETS_DIR = path.join(__dirname, '.test/assets/reflect-snapshot');
 
-describe('reflect.snapshot.annotate', () => {
+describe('reflect.snapshot annotate', () => {
   given('[case1] valid annotation text', () => {
     const tempDir = genTempDirForReflector({
       slug: 'reflect-annotate-case1',
@@ -28,7 +28,8 @@ describe('reflect.snapshot.annotate', () => {
     when('[t0] annotation is created', () => {
       const result = useThen('skill invocation succeeds', async () =>
         invokeReflectSkill({
-          skill: 'reflect.snapshot.annotate',
+          skill: 'reflect.snapshot',
+          subcommand: 'annotate',
           args: { _: 'detected a defect: model hallucinated api endpoint' },
           cwd: tempDir,
         }),
@@ -56,7 +57,8 @@ describe('reflect.snapshot.annotate', () => {
         // wait a bit for timestamp difference
         await new Promise((resolve) => setTimeout(resolve, 10));
         return invokeReflectSkill({
-          skill: 'reflect.snapshot.annotate',
+          skill: 'reflect.snapshot',
+          subcommand: 'annotate',
           args: { _: 'corrected defect: added validation' },
           cwd: tempDir,
         });
@@ -87,7 +89,8 @@ describe('reflect.snapshot.annotate', () => {
     when('[t0] annotation is attempted with empty text', () => {
       const result = useThen('skill invocation fails', async () =>
         invokeReflectSkill({
-          skill: 'reflect.snapshot.annotate',
+          skill: 'reflect.snapshot',
+          subcommand: 'annotate',
           args: { _: '' },
           cwd: tempDir,
         }),

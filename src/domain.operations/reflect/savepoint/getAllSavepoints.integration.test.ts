@@ -74,10 +74,10 @@ describe('getAllSavepoints', () => {
       then('totalBytes should sum all patch sizes', () => {
         const result = getAllSavepoints({ scope: scene.scope });
         const expected =
-          scene.savepoint1.stagedPatchBytes +
-          scene.savepoint1.unstagedPatchBytes +
-          scene.savepoint2.stagedPatchBytes +
-          scene.savepoint2.unstagedPatchBytes;
+          scene.savepoint1.patches.stagedBytes +
+          scene.savepoint1.patches.unstagedBytes +
+          scene.savepoint2.patches.stagedBytes +
+          scene.savepoint2.patches.unstagedBytes;
         expect(result.totalBytes).toEqual(expected);
       });
     });

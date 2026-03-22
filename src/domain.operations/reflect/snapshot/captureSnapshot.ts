@@ -5,6 +5,7 @@ import * as path from 'path';
 
 import { getAllAnnotations } from '../annotation/getAllAnnotations';
 import { getAllSavepoints } from '../savepoint/getAllSavepoints';
+import { setSavepoint } from '../savepoint/setSavepoint';
 import type { ReflectScope } from '../scope/getReflectScope';
 import { getTranscriptSource } from '../transcript/getTranscriptSource';
 
@@ -37,6 +38,7 @@ export interface Snapshot {
     savepoints: {
       count: number;
       totalBytes: number;
+      freshTimestamp: string;
     };
     annotations: {
       count: number;
@@ -74,7 +76,10 @@ export const captureSnapshot = async (input: {
     );
   }
 
-  // get savepoints and annotations
+  // capture a savepoint at snapshot time to preserve current git state
+  const freshSavepoint = setSavepoint({ scope: input.scope, mode: 'apply' });
+
+  // get all savepoints (with the fresh one) and annotations
   const savepointsSummary = getAllSavepoints({ scope: input.scope });
   const annotationsSummary = getAllAnnotations({ scope: input.scope });
 
@@ -122,20 +127,33 @@ export const captureSnapshot = async (input: {
 
       for (const savepoint of savepointsSummary.savepoints) {
         // copy staged patch
-        const stagedFileName = path.basename(savepoint.stagedPatchPath);
-        if (fs.existsSync(savepoint.stagedPatchPath)) {
+        const stagedFileName = path.basename(savepoint.patches.stagedPath);
+        if (fs.existsSync(savepoint.patches.stagedPath)) {
           fs.copyFileSync(
-            savepoint.stagedPatchPath,
+            savepoint.patches.stagedPath,
             path.join(savepointsDir, stagedFileName),
           );
         }
 
         // copy unstaged patch
-        const unstagedFileName = path.basename(savepoint.unstagedPatchPath);
-        if (fs.existsSync(savepoint.unstagedPatchPath)) {
+        const unstagedFileName = path.basename(savepoint.patches.unstagedPath);
+        if (fs.existsSync(savepoint.patches.unstagedPath)) {
           fs.copyFileSync(
-            savepoint.unstagedPatchPath,
+            savepoint.patches.unstagedPath,
             path.join(savepointsDir, unstagedFileName),
+          );
+        }
+
+        // copy commit hash file
+        const commitFileName = `${savepoint.timestamp}.commit`;
+        const commitFilePath = path.join(
+          path.dirname(savepoint.patches.stagedPath),
+          commitFileName,
+        );
+        if (fs.existsSync(commitFilePath)) {
+          fs.copyFileSync(
+            commitFilePath,
+            path.join(savepointsDir, commitFileName),
           );
         }
       }
@@ -170,6 +188,7 @@ export const captureSnapshot = async (input: {
       savepoints: {
         count: savepointsSummary.count,
         totalBytes: savepointsSummary.totalBytes,
+        freshTimestamp: freshSavepoint.timestamp,
       },
       annotations: {
         count: annotationsSummary.count,

@@ -11,7 +11,7 @@ import {
 
 const ASSETS_DIR = path.join(__dirname, '.test/assets/reflect-snapshot');
 
-describe('reflect.snapshot.capture', () => {
+describe('reflect.snapshot capture', () => {
   given('[case1] repo without claude code project', () => {
     const tempDir = genTempDirForReflector({
       slug: 'reflect-capture-case1',
@@ -27,8 +27,8 @@ describe('reflect.snapshot.capture', () => {
     when('[t0] capture is attempted', () => {
       const result = useThen('skill invocation fails', async () =>
         invokeReflectSkill({
-          skill: 'reflect.snapshot.capture',
-          args: {},
+          skill: 'reflect.snapshot',
+          subcommand: 'capture',
           cwd: tempDir,
         }),
       );

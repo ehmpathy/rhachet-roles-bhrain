@@ -70,12 +70,11 @@ const hasHelpFlag = (argv: string[]): boolean => {
  *        we skip different counts to slice argv correctly
  */
 const isNodeEvalMode = (argv: string[]): boolean => {
-  // in eval mode, argv[1] is the first user arg (e.g., --source), not an entrypoint path
-  // entrypoint paths end with .js, .ts, .mjs, etc. and don't start with --
+  // in eval mode, argv[1] is the first user arg (e.g., --source or 'hello')
+  // in normal mode, argv[1] is an entrypoint file ending with .js, .ts, .mjs, .cjs
   const secondArg = argv[1];
   if (!secondArg) return false;
-  const looksLikeEntrypointPath =
-    /\.(js|ts|mjs|cjs)$/.test(secondArg) || !secondArg.startsWith('--');
+  const looksLikeEntrypointPath = /\.(js|ts|mjs|cjs)$/.test(secondArg);
   return !looksLikeEntrypointPath;
 };
 
@@ -208,7 +207,9 @@ export const reflectSnapshotCapture = async (): Promise<void> => {
   );
   console.log(`   │  └─ mainFile = ${snapshot.metadata.transcript.mainFile}`);
   console.log(`   │`);
-  console.log(`   ├─ savepoints = ${snapshot.metadata.savepoints.count}`);
+  console.log(
+    `   ├─ savepoints = ${snapshot.metadata.savepoints.count} (+1 fresh at ${snapshot.metadata.savepoints.freshTimestamp})`,
+  );
   console.log(`   ├─ annotations = ${snapshot.metadata.annotations.count}`);
   console.log(`   │`);
   console.log(`   └─ artifacts`);
@@ -420,18 +421,19 @@ export const reflectSavepointSet = async (): Promise<void> => {
   console.log(`   ├─ tree = ${scope.worktreeName}`);
   console.log(`   ├─ branch = ${scope.branch}`);
   console.log(`   │`);
+  console.log(`   ├─ commit = ${savepoint.commit.hash.slice(0, 7)}`);
   console.log(
-    `   ├─ staged.patch = ${formatBytes(savepoint.stagedPatchBytes)}`,
+    `   ├─ staged.patch = ${formatBytes(savepoint.patches.stagedBytes)}`,
   );
   console.log(
-    `   ├─ unstaged.patch = ${formatBytes(savepoint.unstagedPatchBytes)}`,
+    `   ├─ unstaged.patch = ${formatBytes(savepoint.patches.unstagedBytes)}`,
   );
 
-  console.log(`   ├─ hash = ${savepoint.hash}`);
+  console.log(`   ├─ patches.hash = ${savepoint.patches.hash}`);
   console.log(`   │`);
   console.log(`   └─ artifacts`);
-  console.log(`      ├─ ${asHomePath(savepoint.stagedPatchPath)}`);
-  console.log(`      └─ ${asHomePath(savepoint.unstagedPatchPath)}`);
+  console.log(`      ├─ ${asHomePath(savepoint.patches.stagedPath)}`);
+  console.log(`      └─ ${asHomePath(savepoint.patches.unstagedPath)}`);
 
   if (mode === 'plan') {
     console.log(`\n✨ savepoint planned (use --mode apply to write)\n`);
@@ -460,15 +462,16 @@ export const reflectSavepointGet = async (): Promise<void> => {
     }
 
     console.log(`🌕 reflect.savepoint get --at ${at}`);
+    console.log(`   ├─ commit = ${savepoint.commit.hash.slice(0, 7)}`);
     console.log(
-      `   ├─ staged.patch = ${formatBytes(savepoint.stagedPatchBytes)}`,
+      `   ├─ staged.patch = ${formatBytes(savepoint.patches.stagedBytes)}`,
     );
-    console.log(`   │  └─ ${asHomePath(savepoint.stagedPatchPath)}`);
+    console.log(`   │  └─ ${asHomePath(savepoint.patches.stagedPath)}`);
     console.log(`   │`);
     console.log(
-      `   └─ unstaged.patch = ${formatBytes(savepoint.unstagedPatchBytes)}`,
+      `   └─ unstaged.patch = ${formatBytes(savepoint.patches.unstagedBytes)}`,
     );
-    console.log(`      └─ ${asHomePath(savepoint.unstagedPatchPath)}`);
+    console.log(`      └─ ${asHomePath(savepoint.patches.unstagedPath)}`);
   } else {
     // list all savepoints
     const summary = getAllSavepoints({ scope });
@@ -489,16 +492,16 @@ export const reflectSavepointGet = async (): Promise<void> => {
         if (!sp) continue;
         const isLast = i === summary.savepoints.length - 1;
         const prefix = isLast ? '└─' : '├─';
-        const size = sp.stagedPatchBytes + sp.unstagedPatchBytes;
+        const size = sp.patches.stagedBytes + sp.patches.unstagedBytes;
         const continuation = isLast ? ' ' : '│';
         console.log(
-          `      ${prefix} ${sp.timestamp} (hash=${sp.hash.slice(0, 7)}, ${formatBytes(size)})`,
+          `      ${prefix} ${sp.timestamp} (commit=${sp.commit.hash.slice(0, 7)}, patches=${sp.patches.hash.slice(0, 7)}, ${formatBytes(size)})`,
         );
         console.log(
-          `      ${continuation}  ├─ ${path.basename(sp.stagedPatchPath)}`,
+          `      ${continuation}  ├─ ${path.basename(sp.patches.stagedPath)}`,
         );
         console.log(
-          `      ${continuation}  └─ ${path.basename(sp.unstagedPatchPath)}`,
+          `      ${continuation}  └─ ${path.basename(sp.patches.unstagedPath)}`,
         );
       }
     } else {
