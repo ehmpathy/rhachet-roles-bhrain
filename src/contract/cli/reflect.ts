@@ -203,9 +203,9 @@ export const reflectSnapshotCapture = async (): Promise<void> => {
   console.log(`   │`);
   console.log(`   ├─ transcript`);
   console.log(
-    `   │  ├─ episodes = ${snapshot.metadata.transcript.episodeCount}`,
+    `   │  ├─ sessions = ${snapshot.metadata.transcript.sessionCount}`,
   );
-  console.log(`   │  └─ mainFile = ${snapshot.metadata.transcript.mainFile}`);
+  console.log(`   │  └─ files = ${snapshot.metadata.transcript.fileCount}`);
   console.log(`   │`);
   console.log(
     `   ├─ savepoints = ${snapshot.metadata.savepoints.count} (+1 fresh at ${snapshot.metadata.savepoints.freshTimestamp})`,
@@ -253,7 +253,10 @@ export const reflectSnapshotGet = async (): Promise<void> => {
     console.log(`   │`);
     console.log(`   ├─ transcript`);
     console.log(
-      `   │  └─ episodes = ${snapshot.metadata.transcript.episodeCount}`,
+      `   │  ├─ sessions = ${snapshot.metadata.transcript.sessionCount}`,
+    );
+    console.log(
+      `   │  └─ files = ${snapshot.metadata.transcript.fileCount}`,
     );
     console.log(`   │`);
     console.log(`   ├─ savepoints = ${snapshot.metadata.savepoints.count}`);
@@ -286,7 +289,7 @@ export const reflectSnapshotGet = async (): Promise<void> => {
         const continuation = isLast ? ' ' : '│';
         const meta = snap.metadata;
         const stats = meta
-          ? `(episodes=${meta.transcript.episodeCount}, savepoints=${meta.savepoints.count})`
+          ? `(sessions=${meta.transcript.sessionCount}, savepoints=${meta.savepoints.count})`
           : '';
         console.log(`      ${prefix} ${snap.timestamp} ${stats}`);
         console.log(`      ${continuation}  └─ ${asHomePath(snap.path)}`);

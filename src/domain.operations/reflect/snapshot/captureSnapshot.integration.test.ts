@@ -102,10 +102,10 @@ describe('captureSnapshot', () => {
       });
 
       then('metadata should include transcript info', () => {
-        expect(scene.snapshot.metadata.transcript.episodeCount).toBeGreaterThan(
+        expect(scene.snapshot.metadata.transcript.sessionCount).toBeGreaterThan(
           0,
         );
-        expect(scene.snapshot.metadata.transcript.mainFile).toBeDefined();
+        expect(scene.snapshot.metadata.transcript.fileCount).toBeGreaterThan(0);
       });
 
       then('metadata should include savepoint count', () => {

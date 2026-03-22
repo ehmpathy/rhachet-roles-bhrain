@@ -8,7 +8,7 @@ exports[`reflect.journey.acceptance given: [journey] full reflect workflow when:
    ├─ tree = [ISO_TEMP].reflect-journey.[HASH]
    ├─ branch = main
    │
-   ├─ commit = ff72aa2
+   ├─ commit = 577edf8
    ├─ staged.patch = [SIZE]ytes
    ├─ unstaged.patch = [SIZE]ytes
    ├─ patches.hash = [HASH]
@@ -30,7 +30,7 @@ exports[`reflect.journey.acceptance given: [journey] full reflect workflow when:
    ├─ tree = [ISO_TEMP].reflect-journey.[HASH]
    ├─ branch = main
    │
-   ├─ commit = ff72aa2
+   ├─ commit = 577edf8
    ├─ staged.patch = [SIZE]ytes
    ├─ unstaged.patch = [SIZE]ytes
    ├─ patches.hash = [HASH]
@@ -56,10 +56,10 @@ exports[`reflect.journey.acceptance given: [journey] full reflect workflow when:
    ├─ size = [SIZE]ytes
    │
    └─ list
-      ├─ [TIMESTAMP] (commit=ff72aa2, patches=04f1ec0, [SIZE]ytes)
+      ├─ [TIMESTAMP] (commit=577edf8, patches=04f1ec0, [SIZE]ytes)
       │  ├─ [TIMESTAMP].staged.patch
       │  └─ [TIMESTAMP].unstaged.patch
-      └─ [TIMESTAMP] (commit=ff72aa2, patches=8f56415, [SIZE]ytes)
+      └─ [TIMESTAMP] (commit=577edf8, patches=8f56415, [SIZE]ytes)
          ├─ [TIMESTAMP].staged.patch
          └─ [TIMESTAMP].unstaged.patch
 
@@ -120,8 +120,8 @@ exports[`reflect.journey.acceptance given: [journey] full reflect workflow when:
    ├─ branch = main
    │
    ├─ transcript
-   │  ├─ episodes = [N]
-   │  └─ mainFile = abc123-def456.jsonl
+   │  ├─ sessions = 1
+   │  └─ files = 1
    │
    ├─ savepoints = 3 (+1 fresh at [STACK]
    ├─ annotations = 2
@@ -147,7 +147,7 @@ exports[`reflect.journey.acceptance given: [journey] full reflect workflow when:
    ├─ size = [SIZE]
    │
    └─ list
-      └─ [TIMESTAMP] (episodes=1, savepoints=3)
+      └─ [TIMESTAMP] (sessions=1, savepoints=3)
          └─ ~/.rhachet/storage/repo=bhrain/role=reflector/skills/reflect.snapshot/gitrepo=[ISO_TEMP].reflect-journey.[HASH]/worktree=[ISO_TEMP].reflect-journey.[HASH]/branch=main/snapshots/date=[DATE]/[TIMESTAMP].snap.zip
 
 "

@@ -3,6 +3,22 @@ import * as os from 'os';
 import * as path from 'path';
 
 /**
+ * .what = a single transcript session with its subagent files
+ * .why = represents one claude code conversation and its spawned subagents
+ */
+export interface TranscriptSession {
+  /**
+   * path to the main transcript file for this session
+   */
+  mainFile: string;
+
+  /**
+   * paths to subagent transcript files for this session
+   */
+  subagentFiles: string[];
+}
+
+/**
  * .what = transcript source info from claude code project
  * .why = provides paths to transcript files for snapshot capture
  */
@@ -13,19 +29,14 @@ export interface TranscriptSource {
   projectDir: string;
 
   /**
-   * path to main transcript file (most recent *.jsonl)
+   * all transcript sessions (one per peer brain)
    */
-  mainFile: string;
+  sessions: TranscriptSession[];
 
   /**
-   * paths to compaction/subagent transcript files
+   * total session count (number of peer brains)
    */
-  compactionFiles: string[];
-
-  /**
-   * total episode count (main + compactions)
-   */
-  episodeCount: number;
+  sessionCount: number;
 }
 
 /**
@@ -49,10 +60,10 @@ export const computeProjectSlug = (input: { cwd: string }): string => {
 };
 
 /**
- * .what = finds most recent jsonl file in directory by mtime
- * .why = the main transcript is the most recently modified jsonl file
+ * .what = finds all jsonl files in directory sorted by mtime (newest first)
+ * .why = captures all peer brain transcripts for complete experience preservation
  */
-const findMostRecentJsonl = (input: { dir: string }): string | null => {
+const findAllJsonl = (input: { dir: string }): string[] => {
   const files = fs.readdirSync(input.dir);
   const jsonlFiles = files
     .filter((f) => f.endsWith('.jsonl'))
@@ -63,7 +74,7 @@ const findMostRecentJsonl = (input: { dir: string }): string | null => {
     }))
     .sort((a, b) => b.mtime - a.mtime);
 
-  return jsonlFiles[0]?.path ?? null;
+  return jsonlFiles.map((f) => f.path);
 };
 
 /**
@@ -82,33 +93,35 @@ export const getTranscriptSource = (input: {
     return null;
   }
 
-  // find main transcript file
-  const mainFile = findMostRecentJsonl({ dir: projectDir });
-  if (!mainFile) {
+  // find all transcript files (one per peer brain session)
+  const mainFiles = findAllJsonl({ dir: projectDir });
+  if (mainFiles.length === 0) {
     return null;
   }
 
-  // find compaction files
-  // they live in <UUID>/subagents/ directories
-  const compactionFiles: string[] = [];
-  const mainFileName = path.basename(mainFile, '.jsonl');
-  const subagentsDir = path.join(projectDir, mainFileName, 'subagents');
+  // build sessions array with each main file and its subagents
+  const sessions: TranscriptSession[] = mainFiles.map((mainFile) => {
+    const mainFileName = path.basename(mainFile, '.jsonl');
+    const subagentsDir = path.join(projectDir, mainFileName, 'subagents');
+    const subagentFiles: string[] = [];
 
-  if (fs.existsSync(subagentsDir)) {
-    const subagentFiles = fs.readdirSync(subagentsDir);
-    for (const file of subagentFiles) {
-      if (file.endsWith('.jsonl')) {
-        compactionFiles.push(path.join(subagentsDir, file));
+    if (fs.existsSync(subagentsDir)) {
+      const files = fs.readdirSync(subagentsDir);
+      for (const file of files) {
+        if (file.endsWith('.jsonl')) {
+          subagentFiles.push(path.join(subagentsDir, file));
+        }
       }
+      // sort by name (they have timestamps in names)
+      subagentFiles.sort();
     }
-    // sort by name (they have timestamps in names)
-    compactionFiles.sort();
-  }
+
+    return { mainFile, subagentFiles };
+  });
 
   return {
     projectDir,
-    mainFile,
-    compactionFiles,
-    episodeCount: 1 + compactionFiles.length,
+    sessions,
+    sessionCount: sessions.length,
   };
 };
