@@ -153,7 +153,10 @@ describe('captureSnapshot', () => {
       execSync('git commit -m "initial"', { cwd: tempDir });
 
       // setup mock claude project with 3 peer brain sessions
-      mockProjectDir = setupMockClaudeProject({ cwd: tempDir, sessionCount: 3 });
+      mockProjectDir = setupMockClaudeProject({
+        cwd: tempDir,
+        sessionCount: 3,
+      });
 
       // get scope and capture snapshot
       const scope = getReflectScope({ cwd: tempDir });
