@@ -49,12 +49,20 @@ describe('getOneSavepoint', () => {
         expect(result?.timestamp).toEqual(scene.savepoint.timestamp);
       });
 
-      then('should return savepoint with correct hash', () => {
+      then('should return savepoint with correct commit hash', () => {
         const result = getOneSavepoint({
           scope: scene.scope,
           at: scene.savepoint.timestamp,
         });
-        expect(result?.hash).toEqual(scene.savepoint.hash);
+        expect(result?.commit.hash).toEqual(scene.savepoint.commit.hash);
+      });
+
+      then('should return savepoint with correct patches hash', () => {
+        const result = getOneSavepoint({
+          scope: scene.scope,
+          at: scene.savepoint.timestamp,
+        });
+        expect(result?.patches.hash).toEqual(scene.savepoint.patches.hash);
       });
 
       then('should return savepoint with correct byte sizes', () => {
@@ -62,11 +70,11 @@ describe('getOneSavepoint', () => {
           scope: scene.scope,
           at: scene.savepoint.timestamp,
         });
-        expect(result?.stagedPatchBytes).toEqual(
-          scene.savepoint.stagedPatchBytes,
+        expect(result?.patches.stagedBytes).toEqual(
+          scene.savepoint.patches.stagedBytes,
         );
-        expect(result?.unstagedPatchBytes).toEqual(
-          scene.savepoint.unstagedPatchBytes,
+        expect(result?.patches.unstagedBytes).toEqual(
+          scene.savepoint.patches.unstagedBytes,
         );
       });
     });

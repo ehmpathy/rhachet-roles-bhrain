@@ -17,34 +17,40 @@ describe('setSavepoint', () => {
         expect(savepoint.timestamp).toMatch(/^\d{4}-\d{2}-\d{2}\.\d{6}$/);
       });
 
-      then('hash should be 7 chars', () => {
-        expect(savepoint.hash).toHaveLength(7);
+      then('commit.hash should be 40 chars', () => {
+        expect(savepoint.commit.hash).toHaveLength(40);
+      });
+
+      then('patches.hash should be 7 chars', () => {
+        expect(savepoint.patches.hash).toHaveLength(7);
       });
 
       then('paths should be under storagePath', () => {
-        expect(savepoint.stagedPatchPath.startsWith(scope.storagePath)).toBe(
+        expect(savepoint.patches.stagedPath.startsWith(scope.storagePath)).toBe(
           true,
         );
-        expect(savepoint.unstagedPatchPath.startsWith(scope.storagePath)).toBe(
-          true,
-        );
+        expect(
+          savepoint.patches.unstagedPath.startsWith(scope.storagePath),
+        ).toBe(true);
       });
 
       then('paths should have correct extensions', () => {
-        expect(savepoint.stagedPatchPath.endsWith('.staged.patch')).toBe(true);
-        expect(savepoint.unstagedPatchPath.endsWith('.unstaged.patch')).toBe(
+        expect(savepoint.patches.stagedPath.endsWith('.staged.patch')).toBe(
+          true,
+        );
+        expect(savepoint.patches.unstagedPath.endsWith('.unstaged.patch')).toBe(
           true,
         );
       });
 
       then('bytes should be non-negative', () => {
-        expect(savepoint.stagedPatchBytes).toBeGreaterThanOrEqual(0);
-        expect(savepoint.unstagedPatchBytes).toBeGreaterThanOrEqual(0);
+        expect(savepoint.patches.stagedBytes).toBeGreaterThanOrEqual(0);
+        expect(savepoint.patches.unstagedBytes).toBeGreaterThanOrEqual(0);
       });
 
       then('files should NOT be written in plan mode', () => {
-        expect(fs.existsSync(savepoint.stagedPatchPath)).toBe(false);
-        expect(fs.existsSync(savepoint.unstagedPatchPath)).toBe(false);
+        expect(fs.existsSync(savepoint.patches.stagedPath)).toBe(false);
+        expect(fs.existsSync(savepoint.patches.unstagedPath)).toBe(false);
       });
     });
   });
@@ -91,29 +97,53 @@ describe('setSavepoint', () => {
 
       afterAll(() => {
         // cleanup savepoint files
-        if (fs.existsSync(savepoint.stagedPatchPath)) {
-          fs.rmSync(savepoint.stagedPatchPath);
+        if (fs.existsSync(savepoint.patches.stagedPath)) {
+          fs.rmSync(savepoint.patches.stagedPath);
         }
-        if (fs.existsSync(savepoint.unstagedPatchPath)) {
-          fs.rmSync(savepoint.unstagedPatchPath);
+        if (fs.existsSync(savepoint.patches.unstagedPath)) {
+          fs.rmSync(savepoint.patches.unstagedPath);
         }
+        const commitPath = savepoint.patches.stagedPath.replace(
+          '.staged.patch',
+          '.commit',
+        );
+        if (fs.existsSync(commitPath)) {
+          fs.rmSync(commitPath);
+        }
+      });
+
+      then('commit.hash should be valid git hash', () => {
+        expect(savepoint.commit.hash).toMatch(/^[a-f0-9]{40}$/);
       });
 
       then('staged.patch should be written', () => {
-        expect(fs.existsSync(savepoint.stagedPatchPath)).toBe(true);
+        expect(fs.existsSync(savepoint.patches.stagedPath)).toBe(true);
       });
 
       then('unstaged.patch should be written', () => {
-        expect(fs.existsSync(savepoint.unstagedPatchPath)).toBe(true);
+        expect(fs.existsSync(savepoint.patches.unstagedPath)).toBe(true);
+      });
+
+      then('.commit file should be written', () => {
+        const commitPath = savepoint.patches.stagedPath.replace(
+          '.staged.patch',
+          '.commit',
+        );
+        expect(fs.existsSync(commitPath)).toBe(true);
+        const content = fs.readFileSync(commitPath, 'utf-8');
+        expect(content).toEqual(savepoint.commit.hash);
       });
 
       then('staged.patch should contain staged diff', () => {
-        const content = fs.readFileSync(savepoint.stagedPatchPath, 'utf-8');
+        const content = fs.readFileSync(savepoint.patches.stagedPath, 'utf-8');
         expect(content).toContain('staged content');
       });
 
       then('unstaged.patch should contain unstaged diff', () => {
-        const content = fs.readFileSync(savepoint.unstagedPatchPath, 'utf-8');
+        const content = fs.readFileSync(
+          savepoint.patches.unstagedPath,
+          'utf-8',
+        );
         expect(content).toContain('v2');
       });
     });

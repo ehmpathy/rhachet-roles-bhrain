@@ -36,11 +36,11 @@ describe('reflect.savepoint', () => {
       );
     });
 
-    when('[t0] reflect.savepoint.set is invoked in plan mode', () => {
+    when('[t0] reflect.savepoint set is invoked in plan mode', () => {
       const result = useThen('skill invocation succeeds', async () =>
         invokeReflectSkill({
-          skill: 'reflect.savepoint.set',
-          args: {},
+          skill: 'reflect.savepoint',
+          subcommand: 'set',
           cwd: tempDir,
         }),
       );
@@ -76,10 +76,11 @@ describe('reflect.savepoint', () => {
       });
     });
 
-    when('[t1] reflect.savepoint.set is invoked with --mode apply', () => {
+    when('[t1] reflect.savepoint set is invoked with --mode apply', () => {
       const result = useThen('skill invocation completes', async () =>
         invokeReflectSkill({
-          skill: 'reflect.savepoint.set',
+          skill: 'reflect.savepoint',
+          subcommand: 'set',
           args: { mode: 'apply' },
           cwd: tempDir,
         }),
@@ -111,11 +112,11 @@ describe('reflect.savepoint', () => {
       });
     });
 
-    when('[t2] reflect.savepoint.get is invoked', () => {
+    when('[t2] reflect.savepoint get is invoked', () => {
       const result = useThen('skill invocation succeeds', async () =>
         invokeReflectSkill({
-          skill: 'reflect.savepoint.get',
-          args: {},
+          skill: 'reflect.savepoint',
+          subcommand: 'get',
           cwd: tempDir,
         }),
       );

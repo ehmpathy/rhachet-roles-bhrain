@@ -11,7 +11,7 @@ import {
 
 const ASSETS_DIR = path.join(__dirname, '.test/assets/reflect-snapshot');
 
-describe('reflect.snapshot.get', () => {
+describe('reflect.snapshot get', () => {
   given('[case1] repo with no snapshots', () => {
     when('[t0] get is invoked', () => {
       const res = useThen('skill invocation succeeds', async () => {
@@ -25,8 +25,8 @@ describe('reflect.snapshot.get', () => {
         });
 
         const cli = await invokeReflectSkill({
-          skill: 'reflect.snapshot.get',
-          args: {},
+          skill: 'reflect.snapshot',
+          subcommand: 'get',
           cwd: tempDir,
         });
 
@@ -62,7 +62,8 @@ describe('reflect.snapshot.get', () => {
         });
 
         const cli = await invokeReflectSkill({
-          skill: 'reflect.snapshot.get',
+          skill: 'reflect.snapshot',
+          subcommand: 'get',
           args: { at: '1999-01-01.000000' },
           cwd: tempDir,
         });

@@ -1,6 +1,6 @@
 // Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
 
-exports[`reflect.snapshot.annotate given: [case1] valid annotation text when: [t0] annotation is created then: output matches snapshot 1`] = `
+exports[`reflect.snapshot annotate given: [case1] valid annotation text when: [t0] annotation is created then: output matches snapshot 1`] = `
 "🦉 know thyself
 
 🌕 reflect.snapshot annotate

@@ -59,7 +59,8 @@ export const getAllSavepoints = (input: {
     const savepoint = getOneSavepoint({ scope: input.scope, at: timestamp });
     if (savepoint) {
       savepoints.push(savepoint);
-      totalBytes += savepoint.stagedPatchBytes + savepoint.unstagedPatchBytes;
+      totalBytes +=
+        savepoint.patches.stagedBytes + savepoint.patches.unstagedBytes;
     }
   }
 

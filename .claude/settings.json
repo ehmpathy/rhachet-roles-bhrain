@@ -33,12 +33,6 @@
             "command": "./node_modules/.bin/rhachet run --repo bhuild --role behaver --init claude.hooks/sessionstart.boot-behavior",
             "timeout": 10,
             "author": "repo=bhuild/role=behaver"
-          },
-          {
-            "type": "command",
-            "command": "./node_modules/.bin/rhx route.drive --mode hook",
-            "timeout": 5,
-            "author": "repo=bhrain/role=driver"
           }
         ]
       }
@@ -182,7 +176,8 @@
       "Bash(git ls-files:*)",
       "Bash(git ls-tree:*)",
       "Bash(git cat-file:*)",
-      "Bash(git release --watch)",
+      "Bash(npx rhachet run --skill git.release:*)",
+      "Bash(rhx git.release:*)",
       "Bash(npx rhachet run --skill sedreplace:*)",
       "Bash(npx rhachet run --skill sedreplace --old 'oldName' --new 'newName' --glob 'src/**/*.ts')",
       "Bash(npx rhachet run --skill sedreplace --old 'oldName' --new 'newName' --glob 'src/**/*.ts' --mode apply)",
@@ -392,6 +387,7 @@
       "Bash(git config:*)",
       "Bash(git reflog delete:*)",
       "Bash(git reflog expire:*)",
+      "Bash(git release:*)",
       "Bash(git remote add:*)",
       "Bash(git remote remove:*)",
       "Bash(git remote set-url:*)",

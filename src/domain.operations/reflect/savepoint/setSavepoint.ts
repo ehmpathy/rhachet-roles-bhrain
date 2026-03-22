@@ -23,29 +23,45 @@ export interface Savepoint {
   timestamp: string;
 
   /**
-   * hash of combined staged + unstaged patches
+   * git commit state at time of savepoint
    */
-  hash: string;
+  commit: {
+    /**
+     * HEAD commit hash
+     * .why = enables reconstruction via: checkout hash, then apply patches
+     */
+    hash: string;
+  };
 
   /**
-   * path to staged.patch file
+   * patch state (staged + unstaged diffs)
    */
-  stagedPatchPath: string;
+  patches: {
+    /**
+     * sha256 hash of combined patches (for deduplication)
+     */
+    hash: string;
 
-  /**
-   * size of staged.patch in bytes
-   */
-  stagedPatchBytes: number;
+    /**
+     * path to staged.patch file
+     */
+    stagedPath: string;
 
-  /**
-   * path to unstaged.patch file
-   */
-  unstagedPatchPath: string;
+    /**
+     * size of staged.patch in bytes
+     */
+    stagedBytes: number;
 
-  /**
-   * size of unstaged.patch in bytes
-   */
-  unstagedPatchBytes: number;
+    /**
+     * path to unstaged.patch file
+     */
+    unstagedPath: string;
+
+    /**
+     * size of unstaged.patch in bytes
+     */
+    unstagedBytes: number;
+  };
 }
 
 /**
@@ -74,6 +90,12 @@ export const setSavepoint = (input: {
   // generate timestamp
   const timestamp = generateTimestamp();
 
+  // get HEAD commit hash
+  const commitHash = execSync('git rev-parse HEAD', {
+    cwd: input.scope.gitRepoRoot,
+    encoding: 'utf-8',
+  }).trim();
+
   // get staged diff
   const stagedPatch = execSync('git diff --staged', {
     cwd: input.scope.gitRepoRoot,
@@ -96,20 +118,27 @@ export const setSavepoint = (input: {
     savepointsDir,
     `${timestamp}.unstaged.patch`,
   );
+  const commitPath = path.join(savepointsDir, `${timestamp}.commit`);
 
-  // write patches if apply mode
+  // write files if apply mode
   if (input.mode === 'apply') {
     fs.mkdirSync(savepointsDir, { recursive: true });
     fs.writeFileSync(stagedPatchPath, stagedPatch);
     fs.writeFileSync(unstagedPatchPath, unstagedPatch);
+    fs.writeFileSync(commitPath, commitHash);
   }
 
   return {
     timestamp,
-    hash,
-    stagedPatchPath,
-    stagedPatchBytes: Buffer.byteLength(stagedPatch),
-    unstagedPatchPath,
-    unstagedPatchBytes: Buffer.byteLength(unstagedPatch),
+    commit: {
+      hash: commitHash,
+    },
+    patches: {
+      hash,
+      stagedPath: stagedPatchPath,
+      stagedBytes: Buffer.byteLength(stagedPatch),
+      unstagedPath: unstagedPatchPath,
+      unstagedBytes: Buffer.byteLength(unstagedPatch),
+    },
   };
 };

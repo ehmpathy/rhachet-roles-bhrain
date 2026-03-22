@@ -80,7 +80,8 @@ describe('reflect.journey.acceptance', () => {
       const result = useThen('savepoint is captured', async () => {
         const { tempDir } = scene;
         return invokeReflectSkill({
-          skill: 'reflect.savepoint.set',
+          skill: 'reflect.savepoint',
+          subcommand: 'set',
           args: { mode: 'apply' },
           cwd: tempDir,
         });
@@ -121,7 +122,8 @@ describe('reflect.journey.acceptance', () => {
         await execAsync('git add src/second.ts', { cwd: tempDir });
 
         return invokeReflectSkill({
-          skill: 'reflect.savepoint.set',
+          skill: 'reflect.savepoint',
+          subcommand: 'set',
           args: { mode: 'apply' },
           cwd: tempDir,
         });
@@ -146,8 +148,8 @@ describe('reflect.journey.acceptance', () => {
       const result = useThen('savepoint list is retrieved', async () => {
         const { tempDir } = scene;
         return invokeReflectSkill({
-          skill: 'reflect.savepoint.get',
-          args: {},
+          skill: 'reflect.savepoint',
+          subcommand: 'get',
           cwd: tempDir,
         });
       });
@@ -171,7 +173,8 @@ describe('reflect.journey.acceptance', () => {
       const result = useThen('annotation is created', async () => {
         const { tempDir } = scene;
         return invokeReflectSkill({
-          skill: 'reflect.snapshot.annotate',
+          skill: 'reflect.snapshot',
+          subcommand: 'annotate',
           args: { _: 'detected defect: model hallucinated api endpoint' },
           cwd: tempDir,
         });
@@ -200,7 +203,8 @@ describe('reflect.journey.acceptance', () => {
         await new Promise((done) => setTimeout(done, 1100));
 
         return invokeReflectSkill({
-          skill: 'reflect.snapshot.annotate',
+          skill: 'reflect.snapshot',
+          subcommand: 'annotate',
           args: { _: 'corrected defect: added validation' },
           cwd: tempDir,
         });
@@ -225,8 +229,8 @@ describe('reflect.journey.acceptance', () => {
       const result = useThen('snapshot get is retrieved', async () => {
         const { tempDir } = scene;
         return invokeReflectSkill({
-          skill: 'reflect.snapshot.get',
-          args: {},
+          skill: 'reflect.snapshot',
+          subcommand: 'get',
           cwd: tempDir,
         });
       });
@@ -250,8 +254,8 @@ describe('reflect.journey.acceptance', () => {
       const result = useThen('snapshot capture succeeds', async () => {
         const { tempDir } = scene;
         return invokeReflectSkill({
-          skill: 'reflect.snapshot.capture',
-          args: {},
+          skill: 'reflect.snapshot',
+          subcommand: 'capture',
           cwd: tempDir,
         });
       });
@@ -284,8 +288,8 @@ describe('reflect.journey.acceptance', () => {
       const result = useThen('snapshot get is retrieved', async () => {
         const { tempDir } = scene;
         return invokeReflectSkill({
-          skill: 'reflect.snapshot.get',
-          args: {},
+          skill: 'reflect.snapshot',
+          subcommand: 'get',
           cwd: tempDir,
         });
       });
