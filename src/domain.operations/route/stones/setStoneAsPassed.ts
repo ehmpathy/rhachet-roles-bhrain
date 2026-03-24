@@ -515,18 +515,27 @@ const computeGuardData = (input: {
     ? getGuardPeerReviews(input.stone.guard)
     : [];
 
+  // compute artifact file names for display
+  const artifactFileNames = input.artifactFiles.map((f) => path.basename(f));
+
+  // use original artifact globs for cachedOn (shows what invalidates the cache)
+  const artifactGlobs = input.stone.guard?.artifacts ?? [];
+
   return {
-    artifactFiles: input.artifactFiles.map((f) => path.basename(f)),
+    artifactFiles: artifactFileNames,
     reviews: input.reviewArtifacts.map((r) => {
       // match event by step.index (0-based) to artifact.index (1-based)
       const event = reviewEventsCompleted.find(
         (e) => e.step.index === r.index - 1,
       );
       const durationSec = computeDuration(event);
+      const isCached = !event;
       return {
         index: r.index,
         cmd: stonePeerReviews[r.index - 1] ?? '',
-        cached: !event,
+        cached: isCached
+          ? ({ hit: true, on: artifactGlobs } as { hit: true; on: string[] })
+          : (false as const),
         durationSec,
         blockers: r.blockers,
         nitpicks: r.nitpicks,
@@ -538,10 +547,13 @@ const computeGuardData = (input: {
         (e) => e.step.index === j.index - 1,
       );
       const durationSec = computeDuration(event);
+      const isCached = !event;
       return {
         index: j.index,
         cmd: input.stone.guard?.judges[j.index - 1] ?? '',
-        cached: !event,
+        cached: isCached
+          ? ({ hit: true, on: artifactGlobs } as { hit: true; on: string[] })
+          : (false as const),
         durationSec,
         passed: j.passed,
         reason: j.reason,

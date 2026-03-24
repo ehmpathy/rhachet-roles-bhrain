@@ -52,16 +52,14 @@ exports[`driver.route.set.acceptance given: [case5] route.stone.set with flexibl
 exports[`driver.route.set.acceptance given: [case5] route.stone.set with flexible pattern lookup when: [t1] numeric prefix pattern agent approval locked then: stdout matches snapshot 1`] = `
 "🦉 the way speaks for itself
 
-🦉 patience, friend.
-
 🗿 route.stone.set
    ├─ stone = 2.criteria
    ├─ ✗ only humans can approve
    │
    └─ as a driver, you should:
-         ├─ \`--as passed\` = signal work complete, proceed
-         ├─ \`--as arrived\` = signal work complete, request review
-         └─ \`--as blocked\` = escalate if stuck
+         ├─ \`--as passed\` to signal work complete, proceed
+         ├─ \`--as arrived\` to signal work complete, request review
+         └─ \`--as blocked\` to escalate if stuck
       
       the human will run \`--as approved\` when ready.
 "
@@ -78,6 +76,31 @@ exports[`driver.route.set.acceptance given: [case6] route.stone.set with ambiguo
     "3.plan"
   ]
 }
+"
+`;
+
+exports[`driver.route.set.acceptance given: [case7] route.stone.set --as passed with guard (cached) when: [t0] second run with same artifact reuses cached results then: stdout matches snapshot 1`] = `
+"🦉 the way speaks for itself
+   ├─ ✓ review.1 - completed (cached)
+   └─ ✓ judge.1 - allowed (cached)
+
+🗿 route.stone.set
+   ├─ stone = 1.test
+   ├─ passage = allowed
+   ├─ guard
+   │  ├─ artifacts
+   │  │   └─ 1.test.md
+   │  ├─ reviews
+   │  │   └─ r1: echo "blockers: 0\\nnitpicks: 1\\ntest review content"
+   │  │       └─ · cached
+   │  │          └─ on 1.test*.md
+   │  └─ judges
+   │      └─ j1: echo "passed: true\\nreason: all checks passed"
+   │          └─ · cached
+   │             └─ on 1.test*.md
+   │
+   └─ the way continues, run
+      └─ rhx route.drive
 "
 `;
 

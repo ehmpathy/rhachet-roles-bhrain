@@ -127,7 +127,7 @@ describe('formatGuardTree', () => {
                 {
                   index: 1,
                   cmd: 'reviewer/reflect',
-                  cached: true,
+                  cached: { hit: true, on: ['1.vision.v1.md'] },
                   durationSec: null,
                   blockers: 0,
                   nitpicks: 0,
@@ -179,7 +179,7 @@ describe('formatGuardTree', () => {
               {
                 index: 1,
                 cmd: 'reviewer/reflect',
-                cached: true,
+                cached: { hit: true, on: ['1.vision.v1.md'] },
                 durationSec: null,
                 blockers: 0,
                 nitpicks: 0,
@@ -190,7 +190,7 @@ describe('formatGuardTree', () => {
               {
                 index: 1,
                 cmd: 'reviewed?',
-                cached: true,
+                cached: { hit: true, on: ['1.vision.v1.md'] },
                 durationSec: null,
                 passed: true,
                 reason: null,
@@ -393,7 +393,7 @@ describe('formatGuardTree', () => {
                 {
                   index: 1,
                   cmd: 'reviewer/reflect',
-                  cached: true,
+                  cached: { hit: true, on: ['1.vision.v1.md'] },
                   durationSec: null,
                   blockers: 0,
                   nitpicks: 0,
@@ -404,7 +404,7 @@ describe('formatGuardTree', () => {
                 {
                   index: 1,
                   cmd: 'reviewed?',
-                  cached: true,
+                  cached: { hit: true, on: ['1.vision.v1.md'] },
                   durationSec: null,
                   passed: false,
                   reason: 'blockers exceed threshold',
@@ -472,4 +472,59 @@ describe('formatGuardTree', () => {
       });
     });
   });
+
+  given(
+    '[case12] cached review on src/**/* artifacts — 5.1.execute stone with glob pattern',
+    () => {
+      when('[t0] called with cached review and glob pattern', () => {
+        then('output contains glob pattern, not enumerated files', () => {
+          const result = formatGuardTree({
+            stone: '5.1.execute',
+            passage: 'allowed',
+            note: null,
+            reason: null,
+            guard: {
+              // artifactFiles = expanded files (what matched the glob)
+              artifactFiles: [
+                'src/domain/execute.ts',
+                'src/domain/execute.test.ts',
+                'src/utils/helper.ts',
+              ],
+              reviews: [
+                {
+                  index: 1,
+                  cmd: 'reviewer/review --rules ".agent/**/rules/*.md" --paths "src/**/*"',
+                  // cached.on = original glob (what invalidates the cache)
+                  cached: { hit: true, on: ['src/**/*'] },
+                  durationSec: null,
+                  blockers: 0,
+                  nitpicks: 0,
+                  path: '.route/5.1.execute.guard.review.i1.abc123.r1.md',
+                },
+              ],
+              judges: [
+                {
+                  index: 1,
+                  cmd: 'reviewed?',
+                  cached: { hit: true, on: ['src/**/*'] },
+                  durationSec: null,
+                  passed: true,
+                  reason: null,
+                  path: '.route/5.1.execute.guard.judge.i1p1.abc123.def456.j1.md',
+                },
+              ],
+            },
+          });
+          expect(result).toContain('stone = 5.1.execute');
+          expect(result).toContain('· cached');
+          // glob pattern displayed, not individual files
+          expect(result).toContain('on src/**/*');
+          expect(result).not.toContain('on src/domain/execute.ts');
+          expect(result).not.toContain('on src/domain/execute.test.ts');
+          expect(result).not.toContain('on src/utils/helper.ts');
+          expect(result).toMatchSnapshot();
+        });
+      });
+    },
+  );
 });

@@ -522,8 +522,17 @@ describe('driver.route.set.acceptance', () => {
         expect(res.cli.stdout).toContain('cached');
       });
 
+      then('stdout shows glob pattern under cached indicator with on prefix', () => {
+        // the cachedOn feature shows the original glob (what invalidates the cache)
+        expect(res.cli.stdout).toContain('on 1.test*.md');
+      });
+
       then('stdout contains passage = allowed', () => {
         expect(res.cli.stdout).toContain('passage = allowed');
+      });
+
+      then('stdout matches snapshot', () => {
+        expect(res.cli.stdout).toMatchSnapshot();
       });
     });
   });
