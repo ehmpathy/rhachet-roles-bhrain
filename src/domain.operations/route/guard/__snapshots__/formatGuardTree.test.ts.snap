@@ -50,6 +50,7 @@ exports[`formatGuardTree given: [case3] some cached reviews — 1 cached + 1 fre
       ├─ reviews
       │   ├─ r1: reviewer/reflect
       │   │   └─ · cached
+      │   │      └─ on 1.vision.v1.md
       │   └─ r2: reviewer/review
       │       ├─ finished 10.3s ✓
       │       ├─ review: .route/1.vision.guard.review.i1.abc123.r2.md
@@ -69,9 +70,11 @@ exports[`formatGuardTree given: [case4] all cached — all reviews + judges cach
       ├─ reviews
       │   └─ r1: reviewer/reflect
       │       └─ · cached
+      │          └─ on 1.vision.v1.md
       └─ judges
           └─ j1: reviewed?
-              └─ · cached"
+              └─ · cached
+                 └─ on 1.vision.v1.md"
 `;
 
 exports[`formatGuardTree given: [case5] unguarded stone — no guard input when: [t0] called with no guard then: output matches snapshot 1`] = `
@@ -154,9 +157,11 @@ exports[`formatGuardTree given: [case10] cached judge that had failed — shows 
       ├─ reviews
       │   └─ r1: reviewer/reflect
       │       └─ · cached
+      │          └─ on 1.vision.v1.md
       └─ judges
           └─ j1: reviewed?
-              └─ · cached"
+              └─ · cached
+                 └─ on 1.vision.v1.md"
 `;
 
 exports[`formatGuardTree given: [case11] passage with reason — blocked + combined reasons when: [t0] called with blocked and reason then: output matches snapshot 1`] = `
@@ -179,4 +184,23 @@ exports[`formatGuardTree given: [case11] passage with reason — blocked + combi
           └─ j2: approved?
               ├─ finished 0.2s ✗
               └─ reason: judge 2 failed"
+`;
+
+exports[`formatGuardTree given: [case12] cached review on src/**/* artifacts — 5.1.execute stone with glob pattern when: [t0] called with cached review and glob pattern then: output contains glob pattern, not enumerated files 1`] = `
+"🗿 route.stone.set
+   ├─ stone = 5.1.execute
+   ├─ passage = allowed
+   └─ guard
+      ├─ artifacts
+      │   ├─ src/domain/execute.ts
+      │   ├─ src/domain/execute.test.ts
+      │   └─ src/utils/helper.ts
+      ├─ reviews
+      │   └─ r1: reviewer/review --rules ".agent/**/rules/*.md" --paths "src/**/*"
+      │       └─ · cached
+      │          └─ on src/**/*
+      └─ judges
+          └─ j1: reviewed?
+              └─ · cached
+                 └─ on src/**/*"
 `;

@@ -100,7 +100,7 @@ type FormatInput =
         reviews: Array<{
           index: number;
           cmd: string;
-          cached: boolean;
+          cached: { hit: true; on: string[] } | false;
           durationSec: number | null;
           blockers: number;
           nitpicks: number;
@@ -109,7 +109,7 @@ type FormatInput =
         judges: Array<{
           index: number;
           cmd: string;
-          cached: boolean;
+          cached: { hit: true; on: string[] } | false;
           durationSec: number | null;
           passed: boolean;
           reason: string | null;

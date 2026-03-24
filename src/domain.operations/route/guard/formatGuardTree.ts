@@ -12,7 +12,7 @@ export const formatGuardTree = (input: {
     reviews: Array<{
       index: number;
       cmd: string;
-      cached: boolean;
+      cached: { hit: true; on: string[] } | false;
       durationSec: number | null;
       blockers: number;
       nitpicks: number;
@@ -21,7 +21,7 @@ export const formatGuardTree = (input: {
     judges: Array<{
       index: number;
       cmd: string;
-      cached: boolean;
+      cached: { hit: true; on: string[] } | false;
       durationSec: number | null;
       passed: boolean;
       reason: string | null;
@@ -116,9 +116,17 @@ export const formatGuardTree = (input: {
         );
 
         if (review.cached) {
+          // show what artifacts the cache was based on
           lines.push(
             `${guardIndent}${sectionIndent} ${reviewIndent} └─ · cached`,
           );
+          for (let c = 0; c < review.cached.on.length; c++) {
+            const isCachedOnLast = c === review.cached.on.length - 1;
+            const cachedOnPrefix = isCachedOnLast ? '└─' : '├─';
+            lines.push(
+              `${guardIndent}${sectionIndent} ${reviewIndent}    ${cachedOnPrefix} on ${review.cached.on[c]}`,
+            );
+          }
         } else {
           // build detail lines for fresh review
           const detailLines: string[] = [];
@@ -161,9 +169,17 @@ export const formatGuardTree = (input: {
         );
 
         if (judge.cached) {
+          // show what artifacts the cache was based on
           lines.push(
             `${guardIndent}${sectionIndent} ${judgeIndent} └─ · cached`,
           );
+          for (let c = 0; c < judge.cached.on.length; c++) {
+            const isCachedOnLast = c === judge.cached.on.length - 1;
+            const cachedOnPrefix = isCachedOnLast ? '└─' : '├─';
+            lines.push(
+              `${guardIndent}${sectionIndent} ${judgeIndent}    ${cachedOnPrefix} on ${judge.cached.on[c]}`,
+            );
+          }
         } else {
           const detailLines: string[] = [];
           const dur =
