@@ -37,6 +37,7 @@ exports[`driver.route.guard-cwd.acceptance given: [case1] guard with $route in j
    │  ├─ reviews
    │  │   └─ r1: bash -c 'if [ -f "$route/1.vision.md" ]; then echo "blockers: 0"; echo "artifact present at $route"; else echo "blockers: 1"; echo "artifact absent at $route"; fi'
    │  │       └─ · cached
+   │  │          └─ on $route/1.vision*.md
    │  └─ judges
    │      └─ j1: rhx route.stone.judge --mechanism approved? --stone $stone --route $route
    │          └─ finished [TIME] ✓
@@ -83,6 +84,7 @@ exports[`driver.route.guard-cwd.acceptance given: [case2] guard with $route work
    │  ├─ reviews
    │  │   └─ r1: bash -c 'if [ -f "$route/1.vision.md" ]; then echo "blockers: 0"; echo "artifact present at $route"; else echo "blockers: 1"; echo "artifact absent at $route"; fi'
    │  │       └─ · cached
+   │  │          └─ on $route/1.vision*.md
    │  └─ judges
    │      └─ j1: rhx route.stone.judge --mechanism approved? --stone $stone --route $route
    │          └─ finished [TIME] ✓

@@ -72,7 +72,7 @@ describe('driver.route.escape-hatch.acceptance', () => {
           path.join(scene.tempDir, '1.design.guard'),
           [
             'artifacts:',
-            '  - 1.design*.md',
+            '  - "$route/1.design*.md"',
             '',
             'reviews: []',
             '',

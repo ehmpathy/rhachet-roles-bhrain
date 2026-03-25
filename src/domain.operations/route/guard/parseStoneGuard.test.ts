@@ -19,7 +19,7 @@ describe('parseStoneGuard', () => {
       then('returns RouteStoneGuard with artifacts and judges', async () => {
         const result = await parseStoneGuard({ path: guardPath });
         expect(result.path).toEqual(guardPath);
-        expect(result.artifacts).toContain('1.vision*.md');
+        expect(result.artifacts).toContain('$route/1.vision*.md');
         expect(getGuardPeerReviews(result)).toHaveLength(0);
         expect(result.judges).toHaveLength(1);
       });
@@ -37,7 +37,7 @@ describe('parseStoneGuard', () => {
       then('returns RouteStoneGuard with reviews as flat array', async () => {
         const result = await parseStoneGuard({ path: guardPath });
         expect(result.path).toEqual(guardPath);
-        expect(result.artifacts).toContain('src/**/*.ts');
+        expect(result.artifacts).toContain('src/**/*'); // matches repo root src/
         expect(isReviewsStructured(result.reviews)).toBe(false);
         expect(getGuardPeerReviews(result)).toHaveLength(1);
         expect(getGuardSelfReviews(result)).toHaveLength(0);
@@ -57,7 +57,7 @@ describe('parseStoneGuard', () => {
       then('returns RouteStoneGuard with structured reviews', async () => {
         const result = await parseStoneGuard({ path: guardPath });
         expect(result.path).toEqual(guardPath);
-        expect(result.artifacts).toContain('1.vision*.md');
+        expect(result.artifacts).toContain('$route/1.vision*.md');
         expect(isReviewsStructured(result.reviews)).toBe(true);
       });
 

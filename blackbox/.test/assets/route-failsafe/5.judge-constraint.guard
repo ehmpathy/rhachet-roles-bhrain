@@ -1,5 +1,5 @@
 artifacts:
-  - 5.judge-constraint*.md
+  - $route/5.judge-constraint*.md
 
 judges:
   - bash $route/.test/mock-judge-exit-2.sh

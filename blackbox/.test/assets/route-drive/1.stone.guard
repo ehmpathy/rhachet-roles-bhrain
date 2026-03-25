@@ -1,5 +1,5 @@
 artifacts:
-  - 1.stone*.md
+  - $route/1.stone*.md
 
 reviews:
   self:

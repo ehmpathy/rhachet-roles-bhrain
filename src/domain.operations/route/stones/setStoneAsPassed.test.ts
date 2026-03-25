@@ -98,7 +98,7 @@ describe('setStoneAsPassed', () => {
         await fs.writeFile(path.join(tempDir, '1.test.stone'), '# Test');
         await fs.writeFile(
           path.join(tempDir, '1.test.guard'),
-          'artifacts:\n  - 1.test*.md\nreviews:\n  - echo "blockers: 0"\njudges: []',
+          'artifacts:\n  - "$route/1.test*.md"\nreviews:\n  - echo "blockers: 0"\njudges: []',
         );
         await fs.writeFile(path.join(tempDir, '1.test.md'), '# Artifact');
 
@@ -126,7 +126,7 @@ describe('setStoneAsPassed', () => {
       await fs.writeFile(path.join(tempDir, '1.test.stone'), '# Test');
       await fs.writeFile(
         path.join(tempDir, '1.test.guard'),
-        'artifacts:\n  - 1.test*.md\nreviews: []\njudges: []',
+        'artifacts:\n  - "$route/1.test*.md"\nreviews: []\njudges: []',
       );
       await fs.writeFile(path.join(tempDir, '1.test.md'), '# Artifact');
     });
@@ -162,7 +162,7 @@ describe('setStoneAsPassed', () => {
       await fs.writeFile(
         path.join(tempDir, '1.test.guard'),
         `artifacts:
-  - 1.test*.md
+  - "$route/1.test*.md"
 reviews:
   self:
     - slug: all-done

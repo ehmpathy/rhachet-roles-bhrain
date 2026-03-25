@@ -261,7 +261,7 @@ describe('driver.route.bounce.acceptance', () => {
           path.join(scene.tempDir, '1.blueprint.guard'),
           [
             'artifacts:',
-            '  - 1.blueprint*.md',
+            '  - "$route/1.blueprint*.md"',
             'reviews:',
             '  - echo "blockers: 0\\nnitpicks: 0\\ntest review content"',
             'judges:',
@@ -316,7 +316,7 @@ describe('driver.route.bounce.acceptance', () => {
         path.join(tempDir, '2.execute.guard'),
         [
           'artifacts:',
-          '  - 2.execute*.md',
+          '  - "$route/2.execute*.md"',
           'reviews:',
           '  - echo "blockers: 0\\nnitpicks: 0\\ntest review content"',
           'judges:',
@@ -436,7 +436,7 @@ describe('driver.route.bounce.acceptance', () => {
         path.join(tempDir, '1.blueprint.guard'),
         [
           'artifacts:',
-          '  - 1.blueprint*.md',
+          '  - "$route/1.blueprint*.md"',
           'reviews: []',
           'judges: []',
         ].join('\n'),
@@ -498,7 +498,7 @@ describe('driver.route.bounce.acceptance', () => {
         path.join(tempDir, 'route-a', '1.design.guard'),
         [
           'artifacts:',
-          '  - 1.design*.md',
+          '  - "$route/1.design*.md"',
           'reviews:',
           '  - echo "blockers: 0\\nnitpicks: 0\\ntest review content"',
           'judges:',
@@ -518,7 +518,7 @@ describe('driver.route.bounce.acceptance', () => {
         path.join(tempDir, 'route-b', '1.plan.guard'),
         [
           'artifacts:',
-          '  - 1.plan*.md',
+          '  - "$route/1.plan*.md"',
           'reviews:',
           '  - echo "blockers: 0\\nnitpicks: 0\\ntest review content"',
           'judges:',

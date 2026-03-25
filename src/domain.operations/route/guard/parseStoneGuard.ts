@@ -144,8 +144,11 @@ const parseSimpleYaml = async (
     if (trimmed.startsWith('- ') && currentKey) {
       const value = trimmed.slice(2).trim();
 
+      // strip outer quotes (yaml string delimiters)
+      const unquoted = value.replace(/^["'](.*)["']$/, '$1');
+
       if (currentKey === 'artifacts') {
-        result.artifacts?.push(value);
+        result.artifacts?.push(unquoted);
       } else if (currentKey === 'judges') {
         result.judges?.push(value);
       } else if (currentKey === 'protect') {

@@ -55,7 +55,7 @@ describe('getAllStoneArtifacts', () => {
       path: path.join(routePath, '1.implement.stone'),
       guard: {
         path: path.join(routePath, '1.implement.guard'),
-        artifacts: ['src/**/*.ts'],
+        artifacts: ['src/**/*'],
         reviews: [],
         judges: [],
         protect: [],
@@ -63,14 +63,13 @@ describe('getAllStoneArtifacts', () => {
     });
 
     when('[t0] guard artifacts glob matches files', () => {
-      then('returns array with matched files', async () => {
+      then('returns array with matched files from repo root', async () => {
         const artifacts = await getAllStoneArtifacts({
           stone,
           route: routePath,
         });
         expect(artifacts.length).toBeGreaterThan(0);
-        expect(artifacts.some((a) => a.includes('clean.ts'))).toBe(true);
-        expect(artifacts.some((a) => a.includes('dirty.ts'))).toBe(true);
+        expect(artifacts.some((a) => a.includes('src/index.ts'))).toBe(true);
       });
     });
   });

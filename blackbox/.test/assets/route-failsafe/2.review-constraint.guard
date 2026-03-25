@@ -1,5 +1,5 @@
 artifacts:
-  - 2.review-constraint*.md
+  - $route/2.review-constraint*.md
 
 reviews:
   - bash $route/.test/mock-exit-2.sh

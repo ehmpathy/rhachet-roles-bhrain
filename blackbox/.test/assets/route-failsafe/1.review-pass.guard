@@ -1,5 +1,5 @@
 artifacts:
-  - 1.review-pass*.md
+  - $route/1.review-pass*.md
 
 reviews:
   - bash $route/.test/mock-exit-0.sh

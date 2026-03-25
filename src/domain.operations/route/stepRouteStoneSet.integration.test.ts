@@ -49,7 +49,7 @@ describe('stepRouteStoneSet.integration', () => {
         path.join(tempDir, '1.test.guard'),
         [
           'artifacts:',
-          '  - 1.test*.md',
+          '  - "$route/1.test*.md"',
           'reviews:',
           '  - echo "blockers: 0\\nnitpicks: 0"',
           'judges:',

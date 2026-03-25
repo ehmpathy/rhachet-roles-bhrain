@@ -1,5 +1,5 @@
 artifacts:
-  - 3.blueprint*.md
+  - $route/3.blueprint*.md
 
 protect:
   - src/**/*.ts
