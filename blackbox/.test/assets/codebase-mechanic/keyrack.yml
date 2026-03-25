@@ -1,0 +1,4 @@
+org: ehmpathy
+
+env.prep:
+  - XAI_API_KEY
