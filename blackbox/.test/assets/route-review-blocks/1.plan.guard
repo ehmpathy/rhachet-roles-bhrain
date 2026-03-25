@@ -1,5 +1,5 @@
 artifacts:
-  - 1.plan*.md
+  - $route/1.plan*.md
 
 reviews:
   - bash $route/.test/mock-review.sh

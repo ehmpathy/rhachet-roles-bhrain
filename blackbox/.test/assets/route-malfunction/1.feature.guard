@@ -1,5 +1,5 @@
 artifacts:
-  - 1.feature*.md
+  - $route/1.feature*.md
 
 reviews:
   peer:

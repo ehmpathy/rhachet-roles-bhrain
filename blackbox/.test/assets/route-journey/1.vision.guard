@@ -1,5 +1,5 @@
 artifacts:
-  - 1.vision*.md
+  - $route/1.vision*.md
 
 reviews: []
 

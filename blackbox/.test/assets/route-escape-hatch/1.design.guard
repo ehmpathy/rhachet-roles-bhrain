@@ -1,5 +1,5 @@
 artifacts:
-  - 1.design*.md
+  - $route/1.design*.md
 
 reviews:
   - bash $route/.test/perma-fail-review.sh

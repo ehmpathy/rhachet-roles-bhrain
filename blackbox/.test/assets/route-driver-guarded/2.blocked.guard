@@ -1,5 +1,5 @@
 artifacts:
-  - 2.blocked*.md
+  - $route/2.blocked*.md
 reviews:
   - echo "blockers: 3\nnitpicks: 1\nreview with blockers"
 judges:
