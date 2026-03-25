@@ -1,5 +1,5 @@
 artifacts:
-  - 1.vision*.md
+  - $route/1.vision*.md
 
 reviews:
   - bash -c 'if [ -f "$route/1.vision.md" ]; then echo "blockers: 0"; echo "artifact present at $route"; else echo "blockers: 1"; echo "artifact absent at $route"; fi'
