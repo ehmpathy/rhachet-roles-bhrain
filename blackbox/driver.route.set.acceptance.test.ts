@@ -524,7 +524,7 @@ describe('driver.route.set.acceptance', () => {
 
       then('stdout shows glob pattern under cached indicator with on prefix', () => {
         // the cachedOn feature shows the original glob (what invalidates the cache)
-        expect(res.cli.stdout).toContain('on 1.test*.md');
+        expect(res.cli.stdout).toContain('on $route/1.test*.md');
       });
 
       then('stdout contains passage = allowed', () => {
