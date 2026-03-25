@@ -1,0 +1,3 @@
+.goal = verify $route works in artifact globs
+
+.artifacts = [$route/1.vision*.md]

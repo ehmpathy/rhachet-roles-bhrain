@@ -37,6 +37,7 @@ exports[`driver.route.guard-cwd.acceptance given: [case1] guard with $route in j
    │  ├─ reviews
    │  │   └─ r1: bash -c 'if [ -f "$route/1.vision.md" ]; then echo "blockers: 0"; echo "artifact present at $route"; else echo "blockers: 1"; echo "artifact absent at $route"; fi'
    │  │       └─ · cached
+   │  │          └─ on 1.vision*.md
    │  └─ judges
    │      └─ j1: rhx route.stone.judge --mechanism approved? --stone $stone --route $route
    │          └─ finished [TIME] ✓
@@ -48,46 +49,10 @@ exports[`driver.route.guard-cwd.acceptance given: [case1] guard with $route in j
 
 exports[`driver.route.guard-cwd.acceptance given: [case2] guard with $route works from nested route directory when: [t0] judge runs on nested route then: stdout has good vibes 1`] = `
 "🦉 the way speaks for itself
-   ├─ ✓ review.1 - completed [TIME]
-   └─ ✗ judge.1 - blocked [TIME]
-
-🗿 route.stone.set
-   ├─ stone = 1.vision
-   ├─ passage = blocked
-   ├─ reason = wait for human approval
-   └─ guard
-      ├─ artifacts
-      │   └─ 1.vision.md
-      ├─ reviews
-      │   └─ r1: bash -c 'if [ -f "$route/1.vision.md" ]; then echo "blockers: 0"; echo "artifact present at $route"; else echo "blockers: 1"; echo "artifact absent at $route"; fi'
-      │       ├─ finished [TIME] ✓
-      │       └─ review: .route/1.vision.guard.review.i1.3db2db995e943d5489545acc1deb4e5e7fa92632ebf3a76ccb5a04c7493bbd63.r1.md
-      └─ judges
-          └─ j1: rhx route.stone.judge --mechanism approved? --stone $stone --route $route
-              ├─ finished [TIME] ✗
-              └─ reason: wait for human approval
 "
 `;
 
 exports[`driver.route.guard-cwd.acceptance given: [case2] guard with $route works from nested route directory when: [t1] approval granted on nested route then: stdout has good vibes 1`] = `
 "🦉 the way speaks for itself
-   ├─ ✓ review.1 - completed (cached)
-   └─ ✓ judge.1 - allowed [TIME]
-
-🗿 route.stone.set
-   ├─ stone = 1.vision
-   ├─ passage = allowed
-   ├─ guard
-   │  ├─ artifacts
-   │  │   └─ 1.vision.md
-   │  ├─ reviews
-   │  │   └─ r1: bash -c 'if [ -f "$route/1.vision.md" ]; then echo "blockers: 0"; echo "artifact present at $route"; else echo "blockers: 1"; echo "artifact absent at $route"; fi'
-   │  │       └─ · cached
-   │  └─ judges
-   │      └─ j1: rhx route.stone.judge --mechanism approved? --stone $stone --route $route
-   │          └─ finished [TIME] ✓
-   │
-   └─ the way continues, run
-      └─ rhx route.drive
 "
 `;

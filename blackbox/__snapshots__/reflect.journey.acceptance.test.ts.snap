@@ -8,7 +8,7 @@ exports[`reflect.journey.acceptance given: [journey] full reflect workflow when:
    ├─ tree = [ISO_TEMP].reflect-journey.[HASH]
    ├─ branch = main
    │
-   ├─ commit = 577edf8
+   ├─ commit = 8711275
    ├─ staged.patch = [SIZE]ytes
    ├─ unstaged.patch = [SIZE]ytes
    ├─ patches.hash = [HASH]
@@ -30,7 +30,7 @@ exports[`reflect.journey.acceptance given: [journey] full reflect workflow when:
    ├─ tree = [ISO_TEMP].reflect-journey.[HASH]
    ├─ branch = main
    │
-   ├─ commit = 577edf8
+   ├─ commit = 8711275
    ├─ staged.patch = [SIZE]ytes
    ├─ unstaged.patch = [SIZE]ytes
    ├─ patches.hash = [HASH]
@@ -56,10 +56,10 @@ exports[`reflect.journey.acceptance given: [journey] full reflect workflow when:
    ├─ size = [SIZE]ytes
    │
    └─ list
-      ├─ [TIMESTAMP] (commit=577edf8, patches=04f1ec0, [SIZE]ytes)
+      ├─ [TIMESTAMP] (commit=8711275, patches=04f1ec0, [SIZE]ytes)
       │  ├─ [TIMESTAMP].staged.patch
       │  └─ [TIMESTAMP].unstaged.patch
-      └─ [TIMESTAMP] (commit=577edf8, patches=8f56415, [SIZE]ytes)
+      └─ [TIMESTAMP] (commit=8711275, patches=8f56415, [SIZE]ytes)
          ├─ [TIMESTAMP].staged.patch
          └─ [TIMESTAMP].unstaged.patch
 

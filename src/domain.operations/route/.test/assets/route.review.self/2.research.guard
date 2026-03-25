@@ -1,5 +1,5 @@
 artifacts:
-  - 2.research*.md
+  - $route/2.research*.md
 
 reviews:
   - rhx review --rules .agent/**/rules/*.md --paths 2.research*.md

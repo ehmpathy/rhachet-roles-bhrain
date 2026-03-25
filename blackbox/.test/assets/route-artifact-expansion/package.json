@@ -1,0 +1,9 @@
+{
+  "name": "route-artifact-expansion-test",
+  "private": true,
+  "version": "0.0.0",
+  "description": "test fixture for $route expansion in artifact globs",
+  "devDependencies": {
+    "rhachet-roles-bhrain": "link:."
+  }
+}

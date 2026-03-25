@@ -227,9 +227,11 @@ exports[`driver.route.journey.acceptance given: [journey] weather api route when
       ├─ reviews
       │   └─ r1: bash $route/.test/mock-review.sh
       │       └─ · cached
+      │          └─ on 3.blueprint*.md
       └─ judges
           ├─ j1: rhx route.stone.judge --mechanism reviewed? --stone $stone --route $route --allow-blockers 0 --allow-nitpicks 2
           │   └─ · cached
+          │      └─ on 3.blueprint*.md
           └─ j2: rhx route.stone.judge --mechanism approved? --stone $stone --route $route
               ├─ finished [TIME] ✗
               └─ reason: wait for human approval
@@ -279,6 +281,7 @@ exports[`driver.route.journey.acceptance given: [journey] weather api route when
    │  ├─ reviews
    │  │   └─ r1: bash $route/.test/mock-review.sh
    │  │       └─ · cached
+   │  │          └─ on 3.blueprint*.md
    │  └─ judges
    │      ├─ j1: rhx route.stone.judge --mechanism reviewed? --stone $stone --route $route --allow-blockers 0 --allow-nitpicks 2
    │      │   └─ finished [TIME] ✓

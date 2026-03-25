@@ -57,6 +57,10 @@ stones with same numeric prefix can be worked in parallel:
 ## guard syntax
 
 ```yaml
+artifacts:
+  - $route/3.1.a*.md
+  - src/**/*
+
 judges:
   - rhx route.stone.judge --mechanism reviewed? --stone $stone --route $route
   - rhx route.stone.judge --mechanism approved? --stone $stone --route $route
@@ -73,6 +77,16 @@ reviews:
         are there any hidden assumptions?
         surface all hidden assumptions and question each one.
 ```
+
+### guard variables
+
+| variable | expands to | example |
+|----------|------------|---------|
+| `$route` | route directory path | `.behavior/v2026_03_15.my-feature/` |
+| `$stone` | stone name | `1.vision` |
+| `$hash` | content hash | `abc123...` |
+
+note: `$route` works unquoted in yaml — no `"$route/..."` needed.
 
 ---
 

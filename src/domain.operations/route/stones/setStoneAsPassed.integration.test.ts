@@ -22,7 +22,7 @@ describe('setStoneAsPassed.integration', () => {
         path.join(tempDir, '1.test.guard'),
         [
           'artifacts:',
-          '  - 1.test*.md',
+          '  - "$route/1.test*.md"',
           'reviews:',
           '  - echo "blockers: 0\\nnitpicks: 1\\ntest review"',
           'judges:',
@@ -79,7 +79,7 @@ describe('setStoneAsPassed.integration', () => {
         path.join(tempDir, '1.test.guard'),
         [
           'artifacts:',
-          '  - 1.test*.md',
+          '  - "$route/1.test*.md"',
           'reviews: []',
           'judges:',
           '  - echo "passed: false\\nreason: blockers found"',
@@ -125,7 +125,7 @@ describe('setStoneAsPassed.integration', () => {
         path.join(tempDir, '1.test.guard'),
         [
           'artifacts:',
-          '  - 1.test*.md',
+          '  - "$route/1.test*.md"',
           'reviews:',
           '  - echo "blockers: 0\\nnitpicks: 0"',
           'judges:',
