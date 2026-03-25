@@ -7,6 +7,7 @@ import {
   getAvailableBrainsInWords,
 } from 'rhachet/brains';
 
+import { getXaiCredsFromKeyrack } from '@src/domain.operations/credentials/getXaiCredsFromKeyrack';
 import { genDefaultReviewOutputPath } from '@src/domain.operations/review/genDefaultReviewOutputPath';
 import { stepReview } from '@src/domain.operations/review/stepReview';
 
@@ -178,6 +179,12 @@ export const review = async (): Promise<void> => {
   // resolve output path (generate default if not specified)
   const cwd = process.cwd();
   const outputResolved = options.output ?? genDefaultReviewOutputPath({ cwd });
+
+  // fetch xai credentials from keyrack if xai brain selected
+  const isXaiBrain = options.brain.startsWith('xai/');
+  if (isXaiBrain) {
+    await getXaiCredsFromKeyrack();
+  }
 
   // create brain context via discovery (expensive)
   const brain = await genContextBrain({ choice: options.brain });

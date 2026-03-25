@@ -5,6 +5,7 @@ import {
   getAvailableBrainsInWords,
 } from 'rhachet/brains';
 
+import { getXaiCredsFromKeyrack } from '@src/domain.operations/credentials/getXaiCredsFromKeyrack';
 import { getAllAnnotations } from '@src/domain.operations/reflect/annotation/getAllAnnotations';
 import { setAnnotation } from '@src/domain.operations/reflect/annotation/setAnnotation';
 import { getAllSavepoints } from '@src/domain.operations/reflect/savepoint/getAllSavepoints';
@@ -137,8 +138,16 @@ export const reflect = async (): Promise<void> => {
     return;
   }
 
-  // parse args and create brain context via discovery
+  // parse args
   const options = parseArgs(process.argv);
+
+  // fetch xai credentials from keyrack if xai brain selected
+  const isXaiBrain = options.brain.startsWith('xai/');
+  if (isXaiBrain) {
+    await getXaiCredsFromKeyrack();
+  }
+
+  // create brain context via discovery (expensive)
   const brain = await genContextBrain({ choice: options.brain });
 
   // invoke stepReflect

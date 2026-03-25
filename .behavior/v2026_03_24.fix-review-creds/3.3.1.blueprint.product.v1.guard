@@ -1,0 +1,9 @@
+# guard for blueprint stone
+# includes standardized self-review frame + human approval
+
+protect:
+  - src/**/*
+
+
+judges:
+  - npx rhachet run --repo bhrain --skill route.stone.judge --mechanism approved? --stone $stone --route $route
