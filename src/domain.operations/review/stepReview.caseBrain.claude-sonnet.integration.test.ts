@@ -18,7 +18,11 @@ const ASSETS_PROSE = path.join(
   '.test/assets/example.repo/prose-author',
 );
 
-describe('stepReview.caseBrain.claude-sonnet', () => {
+/**
+ * .skip = anthropic api too pricey for ci
+ * .note = run manually with THOROUGH=true if needed
+ */
+describe.skip('stepReview.caseBrain.claude-sonnet', () => {
   // increase timeout for brain invocations (3 minutes)
   jest.setTimeout(180000);
 
