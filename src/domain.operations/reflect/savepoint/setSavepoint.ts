@@ -1,16 +1,8 @@
 import { execSync } from 'child_process';
-import { createHash } from 'crypto';
 import * as fs from 'fs';
 import * as path from 'path';
 
 import type { ReflectScope } from '../scope/getReflectScope';
-
-/**
- * .what = computes sha256 hash of content
- * .why = enables content deduplication for savepoints
- */
-const computeHash = (content: string): string =>
-  createHash('sha256').update(content).digest('hex');
 
 /**
  * .what = a savepoint captures git diff state at a moment in time
@@ -87,29 +79,16 @@ export const setSavepoint = (input: {
   scope: ReflectScope;
   mode: 'plan' | 'apply';
 }): Savepoint => {
+  const cwd = input.scope.gitRepoRoot;
+
   // generate timestamp
   const timestamp = generateTimestamp();
 
-  // get HEAD commit hash
+  // get HEAD commit hash (small output, safe to buffer)
   const commitHash = execSync('git rev-parse HEAD', {
-    cwd: input.scope.gitRepoRoot,
+    cwd,
     encoding: 'utf-8',
   }).trim();
-
-  // get staged diff
-  const stagedPatch = execSync('git diff --staged', {
-    cwd: input.scope.gitRepoRoot,
-    encoding: 'utf-8',
-  });
-
-  // get unstaged diff
-  const unstagedPatch = execSync('git diff', {
-    cwd: input.scope.gitRepoRoot,
-    encoding: 'utf-8',
-  });
-
-  // compute hash of combined patches
-  const hash = computeHash(stagedPatch + unstagedPatch).slice(0, 7);
 
   // construct paths
   const savepointsDir = path.join(input.scope.storagePath, 'savepoints');
@@ -120,25 +99,58 @@ export const setSavepoint = (input: {
   );
   const commitPath = path.join(savepointsDir, `${timestamp}.commit`);
 
-  // write files if apply mode
+  // apply mode: write files and compute from files
   if (input.mode === 'apply') {
     fs.mkdirSync(savepointsDir, { recursive: true });
-    fs.writeFileSync(stagedPatchPath, stagedPatch);
-    fs.writeFileSync(unstagedPatchPath, unstagedPatch);
+
+    // write diffs directly to files via shell redirect
+    execSync(`git diff --staged > "${stagedPatchPath}"`, { cwd });
+    execSync(`git diff > "${unstagedPatchPath}"`, { cwd });
     fs.writeFileSync(commitPath, commitHash);
+
+    // hash from files via shell (portable: linux sha256sum, macos shasum)
+    const combinedHash = execSync(
+      `cat "${stagedPatchPath}" "${unstagedPatchPath}" | (sha256sum 2>/dev/null || shasum -a 256) | cut -d' ' -f1`,
+      { cwd, encoding: 'utf-8' },
+    ).trim();
+
+    return {
+      timestamp,
+      commit: { hash: commitHash },
+      patches: {
+        hash: combinedHash.slice(0, 7),
+        stagedPath: stagedPatchPath,
+        stagedBytes: fs.statSync(stagedPatchPath).size,
+        unstagedPath: unstagedPatchPath,
+        unstagedBytes: fs.statSync(unstagedPatchPath).size,
+      },
+    };
   }
+
+  // plan mode: hash and sizes via shell pipes (no files written)
+  const combinedHash = execSync(
+    `(git diff --staged; git diff) | (sha256sum 2>/dev/null || shasum -a 256) | cut -d' ' -f1`,
+    { cwd, encoding: 'utf-8' },
+  ).trim();
 
   return {
     timestamp,
-    commit: {
-      hash: commitHash,
-    },
+    commit: { hash: commitHash },
     patches: {
-      hash,
+      hash: combinedHash.slice(0, 7),
       stagedPath: stagedPatchPath,
-      stagedBytes: Buffer.byteLength(stagedPatch),
+      stagedBytes: parseInt(
+        execSync(`git diff --staged | wc -c`, {
+          cwd,
+          encoding: 'utf-8',
+        }).trim(),
+        10,
+      ),
       unstagedPath: unstagedPatchPath,
-      unstagedBytes: Buffer.byteLength(unstagedPatch),
+      unstagedBytes: parseInt(
+        execSync(`git diff | wc -c`, { cwd, encoding: 'utf-8' }).trim(),
+        10,
+      ),
     },
   };
 };
