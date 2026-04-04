@@ -11,7 +11,8 @@ import { stepArticulate } from '@src/domain.roles/thinker/skills/brief.articulat
 
 jest.setTimeout(toMilliseconds({ minutes: 5 }));
 
-describe('stepArticulate', () => {
+// .note = skipped due to OpenAI quota issues in CI; re-enable when quota restored
+describe.skip('stepArticulate', () => {
   const context = {
     ...genContextLogTrail(),
     ...genContextStitchTrail(),
