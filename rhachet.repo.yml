@@ -13,6 +13,7 @@ roles:
       dirs: dist/domain.roles/reviewer/briefs
     skills:
       dirs: dist/domain.roles/reviewer/skills
+    keyrack: dist/domain.roles/reviewer/keyrack.yml
   - slug: driver
     readme: dist/domain.roles/driver/readme.md
     briefs:
