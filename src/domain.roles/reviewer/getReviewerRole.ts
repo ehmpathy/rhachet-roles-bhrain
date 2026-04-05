@@ -17,4 +17,5 @@ export const ROLE_REVIEWER: Role = Role.build({
   briefs: {
     dirs: [{ uri: __dirname + '/briefs' }],
   },
+  keyrack: { uri: __dirname + '/keyrack.yml' },
 });
