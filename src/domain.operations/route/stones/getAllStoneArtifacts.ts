@@ -12,11 +12,15 @@ export const getAllStoneArtifacts = async (input: {
   route: string;
 }): Promise<string[]> => {
   // determine glob pattern from guard or default
+  // default globs: .yield* (new pattern) + *.md (legacy pattern)
   const hasCustomArtifacts =
     input.stone.guard?.artifacts && input.stone.guard.artifacts.length > 0;
   const globs = hasCustomArtifacts
     ? input.stone.guard!.artifacts
-    : [`${input.route}/${input.stone.name}*.md`];
+    : [
+        `${input.route}/${input.stone.name}.yield*`, // new: .yield, .yield.md, .yield.json
+        `${input.route}/${input.stone.name}*.md`, // legacy: .v1.i1.md, .i1.md
+      ];
 
   // enumerate all matches across all globs
   const allMatches: string[] = [];

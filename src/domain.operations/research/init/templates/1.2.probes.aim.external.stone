@@ -1,5 +1,5 @@
 read the wish in $RESEARCH_DIR_REL/0.wish.md
-read the internal probes in $RESEARCH_DIR_REL/1.1.probes.aim.internal.v1.i1.md
+read the internal probes in $RESEARCH_DIR_REL/1.1.probes.aim.internal.yield.md
 
 websearch to discover what additional questions to ask based on external sources:
 - what do experts in this domain ask?
@@ -9,4 +9,4 @@ websearch to discover what additional questions to ask based on external sources
 
 ---
 
-emit to $RESEARCH_DIR_REL/1.2.probes.aim.external.v1.i1.md
+emit to $RESEARCH_DIR_REL/1.2.probes.aim.external.yield.md

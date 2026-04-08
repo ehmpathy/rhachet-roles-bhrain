@@ -1,8 +1,8 @@
 read:
 - $RESEARCH_DIR_REL/0.wish.md
-- $RESEARCH_DIR_REL/3.2.absorb.clusters.v1.i1.md
-- $RESEARCH_DIR_REL/3.3.absorb.gaps.v1.i1.md
-- $RESEARCH_DIR_REL/kernel/*.absorb.kernels.v1.i1.md
+- $RESEARCH_DIR_REL/3.2.absorb.clusters.yield.md
+- $RESEARCH_DIR_REL/3.3.absorb.gaps.yield.md
+- $RESEARCH_DIR_REL/kernel/*.absorb.kernels.yield.md
 
 ---
 
@@ -34,7 +34,7 @@ propose a blueprint for the knowledge course breakdown:
 
 emit a full treestruct of filediffs for the proposed brief structure:
 
-$RESEARCH_DIR_REL/5.1.briefs.curate.blueprint.v1.i1.md
+$RESEARCH_DIR_REL/5.1.briefs.curate.blueprint.yield.md
 
 example format:
 ```

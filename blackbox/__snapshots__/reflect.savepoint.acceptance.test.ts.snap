@@ -56,7 +56,7 @@ exports[`reflect.savepoint given: [case1] repo with staged and unstaged changes 
    ├─ size = [SIZE]ytes
    │
    └─ list
-      └─ [TIMESTAMP] (commit=0a9291b, patches=04f1ec0, [SIZE]ytes)
+      └─ [TIMESTAMP] (commit=c34fdcb, patches=04f1ec0, [SIZE]ytes)
          ├─ [TIMESTAMP].staged.patch
          └─ [TIMESTAMP].unstaged.patch
 

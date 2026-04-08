@@ -1,4 +1,4 @@
-read the gaps identified in $RESEARCH_DIR_REL/3.3.absorb.gaps.v1.i1.md
+read the gaps identified in $RESEARCH_DIR_REL/3.3.absorb.gaps.yield.md
 
 ---
 
@@ -7,7 +7,7 @@ read the gaps identified in $RESEARCH_DIR_REL/3.3.absorb.gaps.v1.i1.md
 formulate supplemental probes to fill the gaps:
 - one probe per gap
 - dispatch parallel subagents to investigate (same pattern as 2.probes.emit)
-- each subagent emits to $RESEARCH_DIR_REL/probe.v2/q$N.probe.research.response.v1.i1.md
+- each subagent emits to $RESEARCH_DIR_REL/probe.v2/q$N.probe.research.response.yield.md
 
 ---
 

@@ -34,7 +34,7 @@ https://github.com/{org}/{repo}/blob/{ref}/{path}
 ### examples
 
 ```md
-source: https://github.com/ehmpathy/declastruct-aws/blob/main/.behavior/v2025_12_05.aws-account-provision/5.1.execution.phase0_to_phaseN.v1.i1.md.%5Bfeedback%5D.v1.%5Bgiven%5D.by_human.md
+source: https://github.com/ehmpathy/declastruct-aws/blob/main/.behavior/v2025_12_05.aws-account-provision/5.1.execution.phase0_to_phaseN.yield.md.%5Bfeedback%5D.v1.%5Bgiven%5D.by_human.md
 
 source: https://github.com/acme/project/blob/abc123/.behavior/v2025_01_01.feature/execution.md.[feedback].v2.[given].by_human.md
 ```

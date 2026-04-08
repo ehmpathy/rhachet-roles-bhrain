@@ -1,7 +1,7 @@
 read:
-- $RESEARCH_DIR_REL/probe.v1/*.probe.research.response.v1.i1.md
-- $RESEARCH_DIR_REL/kernel/*.absorb.kernels.v1.i1.md
-- $RESEARCH_DIR_REL/3.2.absorb.clusters.v1.i1.md
+- $RESEARCH_DIR_REL/probe.v1/*.probe.research.response.yield.md
+- $RESEARCH_DIR_REL/kernel/*.absorb.kernels.yield.md
+- $RESEARCH_DIR_REL/3.2.absorb.clusters.yield.md
 
 ---
 
@@ -18,4 +18,4 @@ surface knowledge gaps across the research:
 
 ## output
 
-emit to $RESEARCH_DIR_REL/3.3.absorb.gaps.v1.i1.md
+emit to $RESEARCH_DIR_REL/3.3.absorb.gaps.yield.md
