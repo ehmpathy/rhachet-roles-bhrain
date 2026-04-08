@@ -1,0 +1,35 @@
+reviews:
+  self:
+    - slug: has-ubiquitous-language
+      say: |
+        double-check: did you define the ubiquitous language?
+
+        for each domain term:
+        - is it clearly defined? can a newcomer understand it?
+        - are there any synonyms that should be eliminated?
+        - are there any terms that mean different facts in different contexts?
+
+        ubiquitous language reduces cognitive load. each ambiguity
+        becomes a bug, a support ticket, or hours of confused discussion.
+
+    - slug: has-bounded-contexts
+      say: |
+        double-check: did you identify the bounded contexts?
+
+        - which concepts belong together?
+        - where are the natural boundaries between contexts?
+        - what are the relationships between contexts?
+
+        bounded contexts prevent the "big ball of mud" — where all pieces
+        depend on all other pieces. clear boundaries enable parallel work.
+
+    - slug: has-core-domain-identified
+      say: |
+        double-check: did you identify the core domain?
+
+        - what is the heart of the business problem?
+        - what differentiates this system from a generic solution?
+        - where should we invest the most care and attention?
+
+        the core domain is where competitive advantage lives.
+        generic code can be bought or borrowed. core domain code must be crafted.

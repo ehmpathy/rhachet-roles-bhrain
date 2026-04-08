@@ -1,0 +1,27 @@
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
+
+exports[`goal cli output given: [case1] emitSubBucket renders connected treebucket when: [t0] render field content then: open bracket, continuation, and close bracket all connect 1`] = `
+"   │  │  │  ├─
+   │  │  │  │  
+   │  │  │  │    fix the flaky test
+   │  │  │  │  
+   │  │  │  └─"
+`;
+
+exports[`goal cli output given: [case2] emitSubBucket at different indent level when: [t0] render with shallower indent then: treebucket still connects properly 1`] = `
+"   │  │     ├─
+   │  │     │  
+   │  │     │    team can ship
+   │  │     │  
+   │  │     └─"
+`;
+
+exports[`goal cli output given: [case3] emitSubBucket with multiline content when: [t0] content has multiple lines then: each line is indented within the bucket 1`] = `
+"   │  │  │  ├─
+   │  │  │  │  
+   │  │  │  │    line one
+   │  │  │  │    line two
+   │  │  │  │    line three
+   │  │  │  │  
+   │  │  │  └─"
+`;

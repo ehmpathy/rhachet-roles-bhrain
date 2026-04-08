@@ -1,0 +1,17 @@
+slug: 'playtest-goal'
+status:
+  choice: 'enqueued'
+  reason: 'goal created'
+source: 'peer:human'
+meta:
+  complete: false
+  absent:
+    - 'why.purpose'
+    - 'why.benefit'
+    - 'what.outcome'
+    - 'how.task'
+    - 'how.gate'
+createdAt: '2026-04-06'
+updatedAt: '2026-04-06'
+why:
+  ask: 'verify partial goal flow works'

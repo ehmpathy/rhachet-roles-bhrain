@@ -1,5 +1,6 @@
 import { RoleRegistry } from 'rhachet';
 
+import { ROLE_ACHIEVER } from '@src/domain.roles/achiever/getAchieverRole';
 import { ROLE_DRIVER } from '@src/domain.roles/driver/getDriverRole';
 import { ROLE_LIBRARIAN } from '@src/domain.roles/librarian/getLibrarianRole';
 import { ROLE_REFLECTOR } from '@src/domain.roles/reflector/getReflectorRole';
@@ -17,6 +18,7 @@ export const getRoleRegistry = (): RoleRegistry =>
     slug: 'bhrain',
     readme: { uri: __dirname + '/readme.md' },
     roles: [
+      ROLE_ACHIEVER,
       ROLE_THINKER,
       ROLE_REVIEWER,
       ROLE_DRIVER,
