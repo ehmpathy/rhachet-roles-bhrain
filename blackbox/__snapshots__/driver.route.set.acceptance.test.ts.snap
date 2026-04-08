@@ -93,11 +93,11 @@ exports[`driver.route.set.acceptance given: [case7] route.stone.set --as passed 
    │  ├─ reviews
    │  │   └─ r1: echo "blockers: 0\\nnitpicks: 1\\ntest review content"
    │  │       └─ · cached
-   │  │          └─ on 1.test*.md
+   │  │          └─ on $route/1.test*.md
    │  └─ judges
    │      └─ j1: echo "passed: true\\nreason: all checks passed"
    │          └─ · cached
-   │             └─ on 1.test*.md
+   │             └─ on $route/1.test*.md
    │
    └─ the way continues, run
       └─ rhx route.drive

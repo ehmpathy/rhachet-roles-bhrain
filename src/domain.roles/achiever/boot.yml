@@ -1,0 +1,12 @@
+always:
+  briefs:
+    ref:
+      - briefs/im_a.bhrain_owl.md
+    say:
+      - briefs/define.goals-are-promises.[philosophy].md
+      - briefs/howto.triage-goals.[guide].md
+  skills:
+    say:
+      - skills/goal.memory.set.sh
+      - skills/goal.memory.get.sh
+      - skills/goal.infer.triage.sh

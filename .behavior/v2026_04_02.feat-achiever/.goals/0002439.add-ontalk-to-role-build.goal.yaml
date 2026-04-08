@@ -1,0 +1,14 @@
+slug: 'add-ontalk-to-role-build'
+source: 'peer:human'
+status:
+  choice: 'enqueued'
+  reason: 'handoff for rhachet enhancement'
+why:
+  ask: 'rhachet Role.build needs onTalk support'
+  purpose: 'enable UserPromptSubmit hooks via role definition'
+  benefit: 'achiever can accumulate asks without init script workaround'
+what:
+  outcome: 'Role.build supports onTalk hook that maps to UserPromptSubmit'
+how:
+  task: 'add onTalk to rhachet hooks schema, map to UserPromptSubmit in settings generation'
+  gate: 'achiever role declares onTalk in getAchieverRole.ts and it works'

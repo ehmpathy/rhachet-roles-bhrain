@@ -1,6 +1,13 @@
 slug: bhrain
 readme: dist/domain.roles/readme.md
 roles:
+  - slug: achiever
+    readme: dist/domain.roles/achiever/readme.md
+    briefs:
+      dirs: dist/domain.roles/achiever/briefs
+    skills:
+      dirs: dist/domain.roles/achiever/skills
+    boot: dist/domain.roles/achiever/boot.yml
   - slug: thinker
     readme: dist/domain.roles/thinker/readme.md
     briefs:

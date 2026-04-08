@@ -173,6 +173,12 @@
             "command": "./node_modules/.bin/rhx route.drive --mode hook",
             "timeout": 5,
             "author": "repo=bhrain/role=driver"
+          },
+          {
+            "type": "command",
+            "command": "./node_modules/.bin/rhx goal.infer.triage --mode hook.onStop",
+            "timeout": 10,
+            "author": "repo=bhrain/role=achiever"
           }
         ]
       }
@@ -286,8 +292,8 @@
       "Bash(rhx git.repo.get lines --in ehmpathy/domain-objects --words 'DomainEntity')",
       "Bash(rhx git.repo.get lines --in ehmpathy/domain-objects --paths 'src/index.ts')",
       "Bash(rhx git.repo.get files --repos 'ehmpathy/*' --words 'DomainEntity')",
-      "Bash(rhx keyrack unlock --owner ehmpath --env:*)",
-      "Bash(npx rhx keyrack unlock --owner ehmpath --env:*)",
+      "Bash(rhx keyrack unlock --owner ehmpath --prikey ~/.ssh/ehmpath --env all)",
+      "Bash(npx rhx keyrack unlock --owner ehmpath --prikey ~/.ssh/ehmpath --env all)",
       "Bash(npx rhachet run --skill show.gh.action.logs:*)",
       "Bash(npx rhachet run --skill show.gh.test.errors:*)",
       "Bash(npx rhachet run --skill show.gh.test.errors --scope test-integration)",
@@ -323,6 +329,7 @@
       "Bash(pnpm help:*)",
       "Bash(pnpm why:*)",
       "Bash(npm ci)",
+      "Bash(pnpm install --frozen-lockfile)",
       "Bash(npx tsx ./bin/run:*)",
       "Bash(npm run build:*)",
       "Bash(npm run build:compile)",

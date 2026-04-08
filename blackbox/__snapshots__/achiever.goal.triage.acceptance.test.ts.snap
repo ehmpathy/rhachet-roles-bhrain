@@ -1,0 +1,989 @@
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
+
+exports[`achiever.goal.triage.acceptance given: [case1] multi-part request triage flow when: [t0] first ask is created as a goal then: stdout has good vibes 1`] = `
+"🦉 to forget an ask is to break a promise. remember.
+
+🔮 goal.memory.set --scope repo
+   ├─ goal
+   │  ├─ slug = fix-auth-test
+   │  ├─ why
+   │  │  ├─ ask
+   │  │  │  ├─
+   │  │  │  │  
+   │  │  │  │    fix the flaky test in auth.test.ts
+   │  │  │  │  
+   │  │  │  └─
+   │  │  ├─ purpose
+   │  │  │  ├─
+   │  │  │  │  
+   │  │  │  │    ci should pass before merge
+   │  │  │  │  
+   │  │  │  └─
+   │  │  └─ benefit
+   │  │     ├─
+   │  │     │  
+   │  │     │    team can ship
+   │  │     │  
+   │  │     └─
+   │  ├─ what
+   │  │  └─ outcome
+   │  │     ├─
+   │  │     │  
+   │  │     │    auth.test.ts passes reliably
+   │  │     │  
+   │  │     └─
+   │  ├─ how
+   │  │  ├─ task
+   │  │  │  ├─
+   │  │  │  │  
+   │  │  │  │    run test in isolation, identify flake source
+   │  │  │  │  
+   │  │  │  └─
+   │  │  └─ gate
+   │  │     ├─
+   │  │     │  
+   │  │     │    10 consecutive passes
+   │  │     │  
+   │  │     └─
+   │  ├─ status
+   │  │  ├─ choice = enqueued
+   │  │  └─ reason
+   │  │     ├─
+   │  │     │  
+   │  │     │    goal created from triage
+   │  │     │  
+   │  │     └─
+   │  └─ source = peer:human
+   │
+   ├─ path = .goals/[BRANCH]/00000-1.fix-auth-test.goal.yaml
+   └─ persisted
+"
+`;
+
+exports[`achiever.goal.triage.acceptance given: [case1] multi-part request triage flow when: [t1] second ask is created as a goal then: stdout has good vibes 1`] = `
+"🦉 to forget an ask is to break a promise. remember.
+
+🔮 goal.memory.set --scope repo
+   ├─ goal
+   │  ├─ slug = update-readme-env
+   │  ├─ why
+   │  │  ├─ ask
+   │  │  │  ├─
+   │  │  │  │  
+   │  │  │  │    update the readme to mention the new env var
+   │  │  │  │  
+   │  │  │  └─
+   │  │  ├─ purpose
+   │  │  │  ├─
+   │  │  │  │  
+   │  │  │  │    docs should be current for new contributors
+   │  │  │  │  
+   │  │  │  └─
+   │  │  └─ benefit
+   │  │     ├─
+   │  │     │  
+   │  │     │    reduces first-time setup friction
+   │  │     │  
+   │  │     └─
+   │  ├─ what
+   │  │  └─ outcome
+   │  │     ├─
+   │  │     │  
+   │  │     │    readme documents the new env var
+   │  │     │  
+   │  │     └─
+   │  ├─ how
+   │  │  ├─ task
+   │  │  │  ├─
+   │  │  │  │  
+   │  │  │  │    edit readme, add env var to configuration section
+   │  │  │  │  
+   │  │  │  └─
+   │  │  └─ gate
+   │  │     ├─
+   │  │     │  
+   │  │     │    env var name and example are documented
+   │  │     │  
+   │  │     └─
+   │  ├─ status
+   │  │  ├─ choice = enqueued
+   │  │  └─ reason
+   │  │     ├─
+   │  │     │  
+   │  │     │    goal created from triage
+   │  │     │  
+   │  │     └─
+   │  └─ source = peer:human
+   │
+   ├─ path = .goals/[BRANCH]/[OFFSET].update-readme-env.goal.yaml
+   └─ persisted
+"
+`;
+
+exports[`achiever.goal.triage.acceptance given: [case1] multi-part request triage flow when: [t2] third ask is created as a goal then: stdout has good vibes 1`] = `
+"🦉 to forget an ask is to break a promise. remember.
+
+🔮 goal.memory.set --scope repo
+   ├─ goal
+   │  ├─ slug = notify-slack-done
+   │  ├─ why
+   │  │  ├─ ask
+   │  │  │  ├─
+   │  │  │  │  
+   │  │  │  │    notify me on slack when done
+   │  │  │  │  
+   │  │  │  └─
+   │  │  ├─ purpose
+   │  │  │  ├─
+   │  │  │  │  
+   │  │  │  │    human wants visibility into completion
+   │  │  │  │  
+   │  │  │  └─
+   │  │  └─ benefit
+   │  │     ├─
+   │  │     │  
+   │  │     │    can move on to next task promptly
+   │  │     │  
+   │  │     └─
+   │  ├─ what
+   │  │  └─ outcome
+   │  │     ├─
+   │  │     │  
+   │  │     │    slack message sent upon completion
+   │  │     │  
+   │  │     └─
+   │  ├─ how
+   │  │  ├─ task
+   │  │  │  ├─
+   │  │  │  │  
+   │  │  │  │    call slack api with completion message
+   │  │  │  │  
+   │  │  │  └─
+   │  │  └─ gate
+   │  │     ├─
+   │  │     │  
+   │  │     │    slack message delivered
+   │  │     │  
+   │  │     └─
+   │  ├─ status
+   │  │  ├─ choice = enqueued
+   │  │  └─ reason
+   │  │     ├─
+   │  │     │  
+   │  │     │    goal created from triage
+   │  │     │  
+   │  │     └─
+   │  └─ source = peer:human
+   │
+   ├─ path = .goals/[BRANCH]/[OFFSET].notify-slack-done.goal.yaml
+   └─ persisted
+"
+`;
+
+exports[`achiever.goal.triage.acceptance given: [case1] multi-part request triage flow when: [t3] all goals are listed then: stdout has good vibes 1`] = `
+"🦉 to forget an ask is to break a promise. remember.
+
+🔮 goal.memory.get --scope repo
+   └─ goals (3)
+      ├─ (1)
+      │  ├─ slug = fix-auth-test
+      │  ├─ why
+      │  │  ├─ ask = fix the flaky test in auth.test.ts
+      │  │  ├─ purpose = ci should pass before merge
+      │  │  └─ benefit = team can ship
+      │  ├─ what
+      │  │  └─ outcome = auth.test.ts passes reliably
+      │  ├─ how
+      │  │  ├─ task = run test in isolation, identify flake source
+      │  │  └─ gate = 10 consecutive passes
+      │  ├─ status
+      │  │  ├─ choice = enqueued
+      │  │  └─ reason = goal created from triage
+      │  └─ source = peer:human
+      ├─ (2)
+      │  ├─ slug = notify-slack-done
+      │  ├─ why
+      │  │  ├─ ask = notify me on slack when done
+      │  │  ├─ purpose = human wants visibility into completion
+      │  │  └─ benefit = can move on to next task promptly
+      │  ├─ what
+      │  │  └─ outcome = slack message sent upon completion
+      │  ├─ how
+      │  │  ├─ task = call slack api with completion message
+      │  │  └─ gate = slack message delivered
+      │  ├─ status
+      │  │  ├─ choice = enqueued
+      │  │  └─ reason = goal created from triage
+      │  └─ source = peer:human
+      └─ (3)
+         ├─ slug = update-readme-env
+         ├─ why
+         │  ├─ ask = update the readme to mention the new env var
+         │  ├─ purpose = docs should be current for new contributors
+         │  └─ benefit = reduces first-time setup friction
+         ├─ what
+         │  └─ outcome = readme documents the new env var
+         ├─ how
+         │  ├─ task = edit readme, add env var to configuration section
+         │  └─ gate = env var name and example are documented
+         ├─ status
+         │  ├─ choice = enqueued
+         │  └─ reason = goal created from triage
+         └─ source = peer:human
+"
+`;
+
+exports[`achiever.goal.triage.acceptance given: [case1] multi-part request triage flow when: [t4] goals are filtered by status then: filter stdout has good vibes 1`] = `
+"🦉 to forget an ask is to break a promise. remember.
+
+🔮 goal.memory.get --scope repo
+   └─ goals (2)
+      ├─ (1)
+      │  ├─ slug = notify-slack-done
+      │  ├─ why
+      │  │  ├─ ask = notify me on slack when done
+      │  │  ├─ purpose = human wants visibility into completion
+      │  │  └─ benefit = can move on to next task promptly
+      │  ├─ what
+      │  │  └─ outcome = slack message sent upon completion
+      │  ├─ how
+      │  │  ├─ task = call slack api with completion message
+      │  │  └─ gate = slack message delivered
+      │  ├─ status
+      │  │  ├─ choice = enqueued
+      │  │  └─ reason = goal created from triage
+      │  └─ source = peer:human
+      └─ (2)
+         ├─ slug = update-readme-env
+         ├─ why
+         │  ├─ ask = update the readme to mention the new env var
+         │  ├─ purpose = docs should be current for new contributors
+         │  └─ benefit = reduces first-time setup friction
+         ├─ what
+         │  └─ outcome = readme documents the new env var
+         ├─ how
+         │  ├─ task = edit readme, add env var to configuration section
+         │  └─ gate = env var name and example are documented
+         ├─ status
+         │  ├─ choice = enqueued
+         │  └─ reason = goal created from triage
+         └─ source = peer:human
+"
+`;
+
+exports[`achiever.goal.triage.acceptance given: [case2] triage of asks with goal coverage when: [t0] goal created with coverage hash then: stdout has good vibes 1`] = `
+"🦉 to forget an ask is to break a promise. remember.
+
+🔮 goal.memory.set --scope repo
+   ├─ goal
+   │  ├─ slug = complete-task
+   │  ├─ why
+   │  │  ├─ ask
+   │  │  │  ├─
+   │  │  │  │  
+   │  │  │  │    complete this task
+   │  │  │  │  
+   │  │  │  └─
+   │  │  ├─ purpose
+   │  │  │  ├─
+   │  │  │  │  
+   │  │  │  │    task must be done
+   │  │  │  │  
+   │  │  │  └─
+   │  │  └─ benefit
+   │  │     ├─
+   │  │     │  
+   │  │     │    progress is made
+   │  │     │  
+   │  │     └─
+   │  ├─ what
+   │  │  └─ outcome
+   │  │     ├─
+   │  │     │  
+   │  │     │    task is complete
+   │  │     │  
+   │  │     └─
+   │  ├─ how
+   │  │  ├─ task
+   │  │  │  ├─
+   │  │  │  │  
+   │  │  │  │    do the work
+   │  │  │  │  
+   │  │  │  └─
+   │  │  └─ gate
+   │  │     ├─
+   │  │     │  
+   │  │     │    work is done
+   │  │     │  
+   │  │     └─
+   │  ├─ status
+   │  │  ├─ choice = enqueued
+   │  │  └─ reason
+   │  │     ├─
+   │  │     │  
+   │  │     │    goal created from triage
+   │  │     │  
+   │  │     └─
+   │  └─ source = peer:human
+   │
+   ├─ covered
+   │  └─ abc123def456
+   ├─ path = .goals/[BRANCH]/[OFFSET].complete-task.goal.yaml
+   └─ persisted
+"
+`;
+
+exports[`achiever.goal.triage.acceptance given: [case3] goal status transitions through full lifecycle when: [t0] goal transitions to blocked then: stdout has good vibes 1`] = `
+"🦉 to forget an ask is to break a promise. remember.
+
+🔮 goal.memory.set --slug lifecycle-goal --status blocked
+   ├─ goal
+   │  ├─ slug = lifecycle-goal
+   │  ├─ why
+   │  │  ├─ ask
+   │  │  │  ├─
+   │  │  │  │  
+   │  │  │  │    test the lifecycle
+   │  │  │  │  
+   │  │  │  └─
+   │  │  ├─ purpose
+   │  │  │  ├─
+   │  │  │  │  
+   │  │  │  │    verify status transitions
+   │  │  │  │  
+   │  │  │  └─
+   │  │  └─ benefit
+   │  │     ├─
+   │  │     │  
+   │  │     │    confidence in the system
+   │  │     │  
+   │  │     └─
+   │  ├─ what
+   │  │  └─ outcome
+   │  │     ├─
+   │  │     │  
+   │  │     │    all statuses work
+   │  │     │  
+   │  │     └─
+   │  ├─ how
+   │  │  ├─ task
+   │  │  │  ├─
+   │  │  │  │  
+   │  │  │  │    transition through statuses
+   │  │  │  │  
+   │  │  │  └─
+   │  │  └─ gate
+   │  │     ├─
+   │  │     │  
+   │  │     │    all transitions succeed
+   │  │     │  
+   │  │     └─
+   │  ├─ status
+   │  │  ├─ choice = blocked
+   │  │  └─ reason
+   │  │     ├─
+   │  │     │  
+   │  │     │    blocked on external dependency
+   │  │     │  
+   │  │     └─
+   │  └─ source = peer:human
+   │
+   ├─ path = .goals/[BRANCH]/[OFFSET].lifecycle-goal.goal.yaml
+   └─ persisted
+"
+`;
+
+exports[`achiever.goal.triage.acceptance given: [case3] goal status transitions through full lifecycle when: [t1] goal transitions to inflight then: stdout has good vibes 1`] = `
+"🦉 to forget an ask is to break a promise. remember.
+
+🔮 goal.memory.set --slug lifecycle-goal --status inflight
+   ├─ goal
+   │  ├─ slug = lifecycle-goal
+   │  ├─ why
+   │  │  ├─ ask
+   │  │  │  ├─
+   │  │  │  │  
+   │  │  │  │    test the lifecycle
+   │  │  │  │  
+   │  │  │  └─
+   │  │  ├─ purpose
+   │  │  │  ├─
+   │  │  │  │  
+   │  │  │  │    verify status transitions
+   │  │  │  │  
+   │  │  │  └─
+   │  │  └─ benefit
+   │  │     ├─
+   │  │     │  
+   │  │     │    confidence in the system
+   │  │     │  
+   │  │     └─
+   │  ├─ what
+   │  │  └─ outcome
+   │  │     ├─
+   │  │     │  
+   │  │     │    all statuses work
+   │  │     │  
+   │  │     └─
+   │  ├─ how
+   │  │  ├─ task
+   │  │  │  ├─
+   │  │  │  │  
+   │  │  │  │    transition through statuses
+   │  │  │  │  
+   │  │  │  └─
+   │  │  └─ gate
+   │  │     ├─
+   │  │     │  
+   │  │     │    all transitions succeed
+   │  │     │  
+   │  │     └─
+   │  ├─ status
+   │  │  ├─ choice = inflight
+   │  │  └─ reason
+   │  │     ├─
+   │  │     │  
+   │  │     │    dependency resolved, work resumed
+   │  │     │  
+   │  │     └─
+   │  └─ source = peer:human
+   │
+   ├─ path = .goals/[BRANCH]/[OFFSET].lifecycle-goal.goal.yaml
+   └─ persisted
+"
+`;
+
+exports[`achiever.goal.triage.acceptance given: [case3] goal status transitions through full lifecycle when: [t2] goal transitions to fulfilled then: stdout has good vibes 1`] = `
+"🦉 to forget an ask is to break a promise. remember.
+
+🔮 goal.memory.set --slug lifecycle-goal --status fulfilled
+   ├─ goal
+   │  ├─ slug = lifecycle-goal
+   │  ├─ why
+   │  │  ├─ ask
+   │  │  │  ├─
+   │  │  │  │  
+   │  │  │  │    test the lifecycle
+   │  │  │  │  
+   │  │  │  └─
+   │  │  ├─ purpose
+   │  │  │  ├─
+   │  │  │  │  
+   │  │  │  │    verify status transitions
+   │  │  │  │  
+   │  │  │  └─
+   │  │  └─ benefit
+   │  │     ├─
+   │  │     │  
+   │  │     │    confidence in the system
+   │  │     │  
+   │  │     └─
+   │  ├─ what
+   │  │  └─ outcome
+   │  │     ├─
+   │  │     │  
+   │  │     │    all statuses work
+   │  │     │  
+   │  │     └─
+   │  ├─ how
+   │  │  ├─ task
+   │  │  │  ├─
+   │  │  │  │  
+   │  │  │  │    transition through statuses
+   │  │  │  │  
+   │  │  │  └─
+   │  │  └─ gate
+   │  │     ├─
+   │  │     │  
+   │  │     │    all transitions succeed
+   │  │     │  
+   │  │     └─
+   │  ├─ status
+   │  │  ├─ choice = fulfilled
+   │  │  └─ reason
+   │  │     ├─
+   │  │     │  
+   │  │     │    all transitions verified successfully
+   │  │     │  
+   │  │     └─
+   │  └─ source = peer:human
+   │
+   ├─ path = .goals/[BRANCH]/[OFFSET].lifecycle-goal.goal.yaml
+   └─ persisted
+"
+`;
+
+exports[`achiever.goal.triage.acceptance given: [case4] partial goals via CLI flags when: [t0] partial goal with slug and one field flag then: stdout has good vibes 1`] = `
+"🦉 to forget an ask is to break a promise. remember.
+
+🔮 goal.memory.set --scope repo
+   ├─ goal
+   │  ├─ slug = quick-capture-test
+   │  ├─ why
+   │  │  ├─ ask
+   │  │  │  ├─
+   │  │  │  │  
+   │  │  │  │    fix the flaky test
+   │  │  │  │  
+   │  │  │  └─
+   │  │  ├─ purpose = ✋ omitted
+   │  │  └─ benefit = ✋ omitted
+   │  ├─ what
+   │  │  └─ outcome = ✋ omitted
+   │  ├─ how
+   │  │  ├─ task = ✋ omitted
+   │  │  └─ gate = ✋ omitted
+   │  ├─ status
+   │  │  ├─ choice = incomplete
+   │  │  └─ reason
+   │  │     ├─
+   │  │     │  
+   │  │     │    goal created
+   │  │     │  
+   │  │     └─
+   │  └─ source = peer:human
+   │
+   ├─ path = .goals/[BRANCH]/[OFFSET].quick-capture-test.goal.yaml
+   └─ persisted
+"
+`;
+
+exports[`achiever.goal.triage.acceptance given: [case4] partial goals via CLI flags when: [t1] partial goal with slug only (minimal capture) then: stdout has good vibes 1`] = `
+"🦉 to forget an ask is to break a promise. remember.
+
+🔮 goal.memory.set --scope repo
+   ├─ goal
+   │  ├─ slug = minimal-capture-test
+   │  ├─ why
+   │  │  ├─ ask = ✋ omitted
+   │  │  ├─ purpose = ✋ omitted
+   │  │  └─ benefit = ✋ omitted
+   │  ├─ what
+   │  │  └─ outcome = ✋ omitted
+   │  ├─ how
+   │  │  ├─ task = ✋ omitted
+   │  │  └─ gate = ✋ omitted
+   │  ├─ status
+   │  │  ├─ choice = incomplete
+   │  │  └─ reason
+   │  │     ├─
+   │  │     │  
+   │  │     │    goal created
+   │  │     │  
+   │  │     └─
+   │  └─ source = peer:human
+   │
+   ├─ path = .goals/[BRANCH]/[OFFSET].minimal-capture-test.goal.yaml
+   └─ persisted
+"
+`;
+
+exports[`achiever.goal.triage.acceptance given: [case4] partial goals via CLI flags when: [t2] partial goal with multiple field flags then: stdout has good vibes 1`] = `
+"🦉 to forget an ask is to break a promise. remember.
+
+🔮 goal.memory.set --scope repo
+   ├─ goal
+   │  ├─ slug = multi-field-test
+   │  ├─ why
+   │  │  ├─ ask
+   │  │  │  ├─
+   │  │  │  │  
+   │  │  │  │    fix the flaky test
+   │  │  │  │  
+   │  │  │  └─
+   │  │  ├─ purpose
+   │  │  │  ├─
+   │  │  │  │  
+   │  │  │  │    ci needs to pass
+   │  │  │  │  
+   │  │  │  └─
+   │  │  └─ benefit = ✋ omitted
+   │  ├─ what
+   │  │  └─ outcome
+   │  │     ├─
+   │  │     │  
+   │  │     │    test passes reliably
+   │  │     │  
+   │  │     └─
+   │  ├─ how
+   │  │  ├─ task = ✋ omitted
+   │  │  └─ gate = ✋ omitted
+   │  ├─ status
+   │  │  ├─ choice = incomplete
+   │  │  └─ reason
+   │  │     ├─
+   │  │     │  
+   │  │     │    goal created
+   │  │     │  
+   │  │     └─
+   │  └─ source = peer:human
+   │
+   ├─ path = .goals/[BRANCH]/[OFFSET].multi-field-test.goal.yaml
+   └─ persisted
+"
+`;
+
+exports[`achiever.goal.triage.acceptance given: [case4] partial goals via CLI flags when: [t3] update partial goal with additional fields then: stdout has good vibes 1`] = `
+"🦉 to forget an ask is to break a promise. remember.
+
+🔮 goal.memory.set --scope repo
+   ├─ goal
+   │  ├─ slug = quick-capture-test
+   │  ├─ why
+   │  │  ├─ ask
+   │  │  │  ├─
+   │  │  │  │  
+   │  │  │  │    fix the flaky test
+   │  │  │  │  
+   │  │  │  └─
+   │  │  ├─ purpose
+   │  │  │  ├─
+   │  │  │  │  
+   │  │  │  │    ci must pass before merge
+   │  │  │  │  
+   │  │  │  └─
+   │  │  └─ benefit
+   │  │     ├─
+   │  │     │  
+   │  │     │    team can ship
+   │  │     │  
+   │  │     └─
+   │  ├─ what
+   │  │  └─ outcome = ✋ omitted
+   │  ├─ how
+   │  │  ├─ task = ✋ omitted
+   │  │  └─ gate = ✋ omitted
+   │  ├─ status
+   │  │  ├─ choice = incomplete
+   │  │  └─ reason
+   │  │     ├─
+   │  │     │  
+   │  │     │    goal created
+   │  │     │  
+   │  │     └─
+   │  └─ source = peer:human
+   │
+   ├─ path = .goals/[BRANCH]/[OFFSET].quick-capture-test.goal.yaml
+   └─ persisted
+"
+`;
+
+exports[`achiever.goal.triage.acceptance given: [case4] partial goals via CLI flags when: [t4] complete a partial goal with all rest fields then: stdout has good vibes 1`] = `
+"🦉 to forget an ask is to break a promise. remember.
+
+🔮 goal.memory.set --scope repo
+   ├─ goal
+   │  ├─ slug = quick-capture-test
+   │  ├─ why
+   │  │  ├─ ask
+   │  │  │  ├─
+   │  │  │  │  
+   │  │  │  │    fix the flaky test
+   │  │  │  │  
+   │  │  │  └─
+   │  │  ├─ purpose
+   │  │  │  ├─
+   │  │  │  │  
+   │  │  │  │    ci must pass before merge
+   │  │  │  │  
+   │  │  │  └─
+   │  │  └─ benefit
+   │  │     ├─
+   │  │     │  
+   │  │     │    team can ship
+   │  │     │  
+   │  │     └─
+   │  ├─ what
+   │  │  └─ outcome
+   │  │     ├─
+   │  │     │  
+   │  │     │    test passes 10 consecutive runs
+   │  │     │  
+   │  │     └─
+   │  ├─ how
+   │  │  ├─ task
+   │  │  │  ├─
+   │  │  │  │  
+   │  │  │  │    diagnose flake, apply fix
+   │  │  │  │  
+   │  │  │  └─
+   │  │  └─ gate
+   │  │     ├─
+   │  │     │  
+   │  │     │    10 consecutive passes
+   │  │     │  
+   │  │     └─
+   │  ├─ status
+   │  │  ├─ choice = enqueued
+   │  │  └─ reason
+   │  │     ├─
+   │  │     │  
+   │  │     │    goal completed, ready for work
+   │  │     │  
+   │  │     └─
+   │  └─ source = peer:human
+   │
+   ├─ path = .goals/[BRANCH]/[OFFSET].quick-capture-test.goal.yaml
+   └─ persisted
+"
+`;
+
+exports[`achiever.goal.triage.acceptance given: [case6] goal.infer.triage shows incomplete goals separately when: [t0] goal.infer.triage is invoked then: stdout has good vibes 1`] = `
+"🦉 to forget an ask is to break a promise. remember.
+
+🔮 goal.infer.triage --scope repo
+   ├─ asks = 0
+   ├─ uncovered = 0
+   ├─ goals = 2
+   │  ├─ complete = 1
+   │  └─ incomplete = 1
+   ├─ coverage = 0
+   │
+   ├─ incomplete goals
+   │  └─ incomplete-goal [incomplete]
+   │     └─ absent: why.purpose, why.benefit, what.outcome, how.task, how.gate
+   │
+   ├─ complete goals
+   │  └─ complete-goal [enqueued]
+   │
+   └─ triage required
+      ├─ complete incomplete goals
+      └─ then re-run goal.infer.triage
+"
+`;
+
+exports[`achiever.goal.triage.acceptance given: [case6] goal.infer.triage shows incomplete goals separately when: [t1] all goals are complete then: stdout has good vibes 1`] = `
+"🦉 to forget an ask is to break a promise. remember.
+
+🔮 goal.infer.triage --scope repo
+   ├─ asks = 0
+   ├─ uncovered = 0
+   ├─ goals = 2
+   │  ├─ complete = 2
+   │  └─ incomplete = 0
+   ├─ coverage = 0
+   │
+   ├─ complete goals
+   │  ├─ complete-goal [enqueued]
+   │  └─ incomplete-goal [enqueued]
+   │
+   └─ all asks covered, all goals complete
+"
+`;
+
+exports[`achiever.goal.triage.acceptance given: [case8] route scope goal persistence when: [t0] goal.memory.set with --scope route within a route then: stdout has good vibes 1`] = `
+"🦉 to forget an ask is to break a promise. remember.
+
+🔮 goal.memory.set --scope route
+   ├─ goal
+   │  ├─ slug = route-scoped-goal
+   │  ├─ why
+   │  │  ├─ ask
+   │  │  │  ├─
+   │  │  │  │  
+   │  │  │  │    test route scope
+   │  │  │  │  
+   │  │  │  └─
+   │  │  ├─ purpose
+   │  │  │  ├─
+   │  │  │  │  
+   │  │  │  │    verify route isolation
+   │  │  │  │  
+   │  │  │  └─
+   │  │  └─ benefit
+   │  │     ├─
+   │  │     │  
+   │  │     │    confidence in scope behavior
+   │  │     │  
+   │  │     └─
+   │  ├─ what
+   │  │  └─ outcome
+   │  │     ├─
+   │  │     │  
+   │  │     │    goal persists in route .goals/
+   │  │     │  
+   │  │     └─
+   │  ├─ how
+   │  │  ├─ task
+   │  │  │  ├─
+   │  │  │  │  
+   │  │  │  │    create goal with --scope route
+   │  │  │  │  
+   │  │  │  └─
+   │  │  └─ gate
+   │  │     ├─
+   │  │     │  
+   │  │     │    goal file exists in route .goals/
+   │  │     │  
+   │  │     └─
+   │  ├─ status
+   │  │  ├─ choice = enqueued
+   │  │  └─ reason
+   │  │     ├─
+   │  │     │  
+   │  │     │    route scope test
+   │  │     │  
+   │  │     └─
+   │  └─ source = peer:human
+   │
+   ├─ path = .goals/[OFFSET].route-scoped-goal.goal.yaml
+   └─ persisted
+"
+`;
+
+exports[`achiever.goal.triage.acceptance given: [case8] route scope goal persistence when: [t1] goal.memory.get with --scope route retrieves route goals then: stdout has good vibes 1`] = `
+"🦉 to forget an ask is to break a promise. remember.
+
+🔮 goal.memory.get --scope route
+   └─ goals (1)
+      └─ (1)
+         ├─ slug = route-scoped-goal
+         ├─ why
+         │  ├─ ask = test route scope
+         │  ├─ purpose = verify route isolation
+         │  └─ benefit = confidence in scope behavior
+         ├─ what
+         │  └─ outcome = goal persists in route .goals/
+         ├─ how
+         │  ├─ task = create goal with --scope route
+         │  └─ gate = goal file exists in route .goals/
+         ├─ status
+         │  ├─ choice = enqueued
+         │  └─ reason = route scope test
+         └─ source = peer:human
+"
+`;
+
+exports[`achiever.goal.triage.acceptance given: [case8] route scope goal persistence when: [t2] goal.infer.triage with --scope route shows route state then: stdout has good vibes 1`] = `
+"🦉 to forget an ask is to break a promise. remember.
+
+🔮 goal.infer.triage --scope route
+   ├─ asks = 0
+   ├─ uncovered = 0
+   ├─ goals = 1
+   │  ├─ complete = 1
+   │  └─ incomplete = 0
+   ├─ coverage = 0
+   │
+   ├─ complete goals
+   │  └─ route-scoped-goal [enqueued]
+   │
+   └─ all asks covered, all goals complete
+"
+`;
+
+exports[`achiever.goal.triage.acceptance given: [case9] partial goal blocks onStop until complete (journey) when: [t0] partial goal is created then: stdout has good vibes 1`] = `
+"🦉 to forget an ask is to break a promise. remember.
+
+🔮 goal.memory.set --scope repo
+   ├─ goal
+   │  ├─ slug = incomplete-blocks-session
+   │  ├─ why
+   │  │  ├─ ask
+   │  │  │  ├─
+   │  │  │  │  
+   │  │  │  │    test onStop halt behavior
+   │  │  │  │  
+   │  │  │  └─
+   │  │  ├─ purpose = ✋ omitted
+   │  │  └─ benefit = ✋ omitted
+   │  ├─ what
+   │  │  └─ outcome = ✋ omitted
+   │  ├─ how
+   │  │  ├─ task = ✋ omitted
+   │  │  └─ gate = ✋ omitted
+   │  ├─ status
+   │  │  ├─ choice = incomplete
+   │  │  └─ reason
+   │  │     ├─
+   │  │     │  
+   │  │     │    goal created
+   │  │     │  
+   │  │     └─
+   │  └─ source = peer:human
+   │
+   ├─ path = .goals/[BRANCH]/00000-1.incomplete-blocks-session.goal.yaml
+   └─ persisted
+"
+`;
+
+exports[`achiever.goal.triage.acceptance given: [case9] partial goal blocks onStop until complete (journey) when: [t1] hook.onStop fires with incomplete goal then: stderr has good vibes 1`] = `
+"🦉 to forget an ask is to break a promise. remember.
+
+🔮 goal.infer.triage --mode hook.onStop
+   ├─ incomplete goals = 1
+   │  └─ incomplete-blocks-session
+   │     └─ absent: why.purpose, why.benefit, what.outcome, how.task, how.gate
+   │
+   └─ halted, triage required
+      ├─ incomplete goals must be articulated
+      │
+      └─ to continue, run
+         └─ rhx goal.infer.triage
+"
+`;
+
+exports[`achiever.goal.triage.acceptance given: [case9] partial goal blocks onStop until complete (journey) when: [t2] partial goal is completed then: stdout has good vibes 1`] = `
+"🦉 to forget an ask is to break a promise. remember.
+
+🔮 goal.memory.set --scope repo
+   ├─ goal
+   │  ├─ slug = incomplete-blocks-session
+   │  ├─ why
+   │  │  ├─ ask
+   │  │  │  ├─
+   │  │  │  │  
+   │  │  │  │    test onStop halt behavior
+   │  │  │  │  
+   │  │  │  └─
+   │  │  ├─ purpose
+   │  │  │  ├─
+   │  │  │  │  
+   │  │  │  │    verify onStop unblocks
+   │  │  │  │  
+   │  │  │  └─
+   │  │  └─ benefit
+   │  │     ├─
+   │  │     │  
+   │  │     │    confidence in hook behavior
+   │  │     │  
+   │  │     └─
+   │  ├─ what
+   │  │  └─ outcome
+   │  │     ├─
+   │  │     │  
+   │  │     │    session can end
+   │  │     │  
+   │  │     └─
+   │  ├─ how
+   │  │  ├─ task
+   │  │  │  ├─
+   │  │  │  │  
+   │  │  │  │    complete all fields
+   │  │  │  │  
+   │  │  │  └─
+   │  │  └─ gate
+   │  │     ├─
+   │  │     │  
+   │  │     │    onStop exits 0
+   │  │     │  
+   │  │     └─
+   │  ├─ status
+   │  │  ├─ choice = enqueued
+   │  │  └─ reason
+   │  │     ├─
+   │  │     │  
+   │  │     │    goal completed, ready for work
+   │  │     │  
+   │  │     └─
+   │  └─ source = peer:human
+   │
+   ├─ path = .goals/[BRANCH]/00000-1.incomplete-blocks-session.goal.yaml
+   └─ persisted
+"
+`;
+
+exports[`achiever.goal.triage.acceptance given: [case9] partial goal blocks onStop until complete (journey) when: [t3] hook.onStop fires with complete goals then: output is silent (good vibes) 1`] = `
+"stdout: 
+stderr: "
+`;

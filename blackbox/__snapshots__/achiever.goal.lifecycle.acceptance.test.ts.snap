@@ -1,0 +1,258 @@
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
+
+exports[`achiever.goal.lifecycle.acceptance given: [case1] goal status transitions via CLI when: [t0] goal.memory.set creates new goal then: stdout has good vibes 1`] = `
+"🦉 to forget an ask is to break a promise. remember.
+
+🔮 goal.memory.set --scope repo
+   ├─ goal
+   │  ├─ slug = fix-auth-test
+   │  ├─ why
+   │  │  ├─ ask
+   │  │  │  ├─
+   │  │  │  │  
+   │  │  │  │    fix the flaky test
+   │  │  │  │  
+   │  │  │  └─
+   │  │  ├─ purpose
+   │  │  │  ├─
+   │  │  │  │  
+   │  │  │  │    ci should pass before merge
+   │  │  │  │  
+   │  │  │  └─
+   │  │  └─ benefit
+   │  │     ├─
+   │  │     │  
+   │  │     │    team can ship
+   │  │     │  
+   │  │     └─
+   │  ├─ what
+   │  │  └─ outcome
+   │  │     ├─
+   │  │     │  
+   │  │     │    auth.test.ts passes reliably
+   │  │     │  
+   │  │     └─
+   │  ├─ how
+   │  │  ├─ task
+   │  │  │  ├─
+   │  │  │  │  
+   │  │  │  │    run test in isolation, identify flake source
+   │  │  │  │  
+   │  │  │  └─
+   │  │  └─ gate
+   │  │     ├─
+   │  │     │  
+   │  │     │    10 consecutive passes
+   │  │     │  
+   │  │     └─
+   │  ├─ status
+   │  │  ├─ choice = enqueued
+   │  │  └─ reason
+   │  │     ├─
+   │  │     │  
+   │  │     │    goal created from triage
+   │  │     │  
+   │  │     └─
+   │  └─ source = peer:human
+   │
+   ├─ path = .goals/[BRANCH]/00000-1.fix-auth-test.goal.yaml
+   └─ persisted
+"
+`;
+
+exports[`achiever.goal.lifecycle.acceptance given: [case1] goal status transitions via CLI when: [t1] goal.memory.get retrieves the goal then: stdout has good vibes 1`] = `
+"🦉 to forget an ask is to break a promise. remember.
+
+🔮 goal.memory.get --scope repo
+   └─ goals (1)
+      └─ (1)
+         ├─ slug = fix-auth-test
+         ├─ why
+         │  ├─ ask = fix the flaky test
+         │  ├─ purpose = ci should pass before merge
+         │  └─ benefit = team can ship
+         ├─ what
+         │  └─ outcome = auth.test.ts passes reliably
+         ├─ how
+         │  ├─ task = run test in isolation, identify flake source
+         │  └─ gate = 10 consecutive passes
+         ├─ status
+         │  ├─ choice = enqueued
+         │  └─ reason = goal created from triage
+         └─ source = peer:human
+"
+`;
+
+exports[`achiever.goal.lifecycle.acceptance given: [case1] goal status transitions via CLI when: [t2] goal.memory.set updates status to inflight then: stdout has good vibes 1`] = `
+"🦉 to forget an ask is to break a promise. remember.
+
+🔮 goal.memory.set --slug fix-auth-test --status inflight
+   ├─ goal
+   │  ├─ slug = fix-auth-test
+   │  ├─ why
+   │  │  ├─ ask
+   │  │  │  ├─
+   │  │  │  │  
+   │  │  │  │    fix the flaky test
+   │  │  │  │  
+   │  │  │  └─
+   │  │  ├─ purpose
+   │  │  │  ├─
+   │  │  │  │  
+   │  │  │  │    ci should pass before merge
+   │  │  │  │  
+   │  │  │  └─
+   │  │  └─ benefit
+   │  │     ├─
+   │  │     │  
+   │  │     │    team can ship
+   │  │     │  
+   │  │     └─
+   │  ├─ what
+   │  │  └─ outcome
+   │  │     ├─
+   │  │     │  
+   │  │     │    auth.test.ts passes reliably
+   │  │     │  
+   │  │     └─
+   │  ├─ how
+   │  │  ├─ task
+   │  │  │  ├─
+   │  │  │  │  
+   │  │  │  │    run test in isolation, identify flake source
+   │  │  │  │  
+   │  │  │  └─
+   │  │  └─ gate
+   │  │     ├─
+   │  │     │  
+   │  │     │    10 consecutive passes
+   │  │     │  
+   │  │     └─
+   │  ├─ status
+   │  │  ├─ choice = inflight
+   │  │  └─ reason
+   │  │     ├─
+   │  │     │  
+   │  │     │    work started on flake diagnosis
+   │  │     │  
+   │  │     └─
+   │  └─ source = peer:human
+   │
+   ├─ path = .goals/[BRANCH]/00000-1.fix-auth-test.goal.yaml
+   └─ persisted
+"
+`;
+
+exports[`achiever.goal.lifecycle.acceptance given: [case1] goal status transitions via CLI when: [t3] goal.memory.get shows updated status then: stdout has good vibes 1`] = `
+"🦉 to forget an ask is to break a promise. remember.
+
+🔮 goal.memory.get --scope repo
+   └─ goals (1)
+      └─ (1)
+         ├─ slug = fix-auth-test
+         ├─ why
+         │  ├─ ask = fix the flaky test
+         │  ├─ purpose = ci should pass before merge
+         │  └─ benefit = team can ship
+         ├─ what
+         │  └─ outcome = auth.test.ts passes reliably
+         ├─ how
+         │  ├─ task = run test in isolation, identify flake source
+         │  └─ gate = 10 consecutive passes
+         ├─ status
+         │  ├─ choice = inflight
+         │  └─ reason = work started on flake diagnosis
+         └─ source = peer:human
+"
+`;
+
+exports[`achiever.goal.lifecycle.acceptance given: [case1] goal status transitions via CLI when: [t4] goal.memory.set updates status to fulfilled then: stdout has good vibes 1`] = `
+"🦉 to forget an ask is to break a promise. remember.
+
+🔮 goal.memory.set --slug fix-auth-test --status fulfilled
+   ├─ goal
+   │  ├─ slug = fix-auth-test
+   │  ├─ why
+   │  │  ├─ ask
+   │  │  │  ├─
+   │  │  │  │  
+   │  │  │  │    fix the flaky test
+   │  │  │  │  
+   │  │  │  └─
+   │  │  ├─ purpose
+   │  │  │  ├─
+   │  │  │  │  
+   │  │  │  │    ci should pass before merge
+   │  │  │  │  
+   │  │  │  └─
+   │  │  └─ benefit
+   │  │     ├─
+   │  │     │  
+   │  │     │    team can ship
+   │  │     │  
+   │  │     └─
+   │  ├─ what
+   │  │  └─ outcome
+   │  │     ├─
+   │  │     │  
+   │  │     │    auth.test.ts passes reliably
+   │  │     │  
+   │  │     └─
+   │  ├─ how
+   │  │  ├─ task
+   │  │  │  ├─
+   │  │  │  │  
+   │  │  │  │    run test in isolation, identify flake source
+   │  │  │  │  
+   │  │  │  └─
+   │  │  └─ gate
+   │  │     ├─
+   │  │     │  
+   │  │     │    10 consecutive passes
+   │  │     │  
+   │  │     └─
+   │  ├─ status
+   │  │  ├─ choice = fulfilled
+   │  │  └─ reason
+   │  │     ├─
+   │  │     │  
+   │  │     │    test passes 10 consecutive runs after mock stabilization
+   │  │     │  
+   │  │     └─
+   │  └─ source = peer:human
+   │
+   ├─ path = .goals/[BRANCH]/00000-1.fix-auth-test.goal.yaml
+   └─ persisted
+"
+`;
+
+exports[`achiever.goal.lifecycle.acceptance given: [case1] goal status transitions via CLI when: [t5] goal.memory.get filter by status works then: filter stdout has good vibes 1`] = `
+"🦉 to forget an ask is to break a promise. remember.
+
+🔮 goal.memory.get --scope repo
+   └─ goals (1)
+      └─ (1)
+         ├─ slug = update-readme
+         ├─ why
+         │  ├─ ask = update the readme
+         │  ├─ purpose = docs should be current
+         │  └─ benefit = new contributors can onboard
+         ├─ what
+         │  └─ outcome = readme documents new env var
+         ├─ how
+         │  ├─ task = edit readme
+         │  └─ gate = env var is documented
+         ├─ status
+         │  ├─ choice = enqueued
+         │  └─ reason = created from triage
+         └─ source = peer:human
+"
+`;
+
+exports[`achiever.goal.lifecycle.acceptance given: [case3] negative: goal.memory.get on empty goals dir when: [t0] no goals exist then: stdout has good vibes 1`] = `
+"🦉 to forget an ask is to break a promise. remember.
+
+🔮 goal.memory.get --scope repo
+   └─ goals = (none)
+"
+`;

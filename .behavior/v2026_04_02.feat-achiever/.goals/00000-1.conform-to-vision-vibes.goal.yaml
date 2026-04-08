@@ -1,0 +1,15 @@
+slug: 'conform-to-vision-vibes'
+source: 'peer:human'
+status:
+  choice: 'enqueued'
+  reason: 'goal completed, ready for work'
+updatedAt: '2026-04-08'
+why:
+  ask: 'conform to the stdout vibes in the vision'
+  purpose: 'ensure CLI output matches vision spec'
+  benefit: 'consistent UX for brain operators'
+what:
+  outcome: 'all skill stdout follows treestruct from vision'
+how:
+  task: 'audit each skill output against vision examples'
+  gate: 'all skills emit owl vibes and treestruct per vision'
