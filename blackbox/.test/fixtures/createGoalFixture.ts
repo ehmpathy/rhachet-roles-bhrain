@@ -25,20 +25,24 @@ export const createGoalFixture = (
 ): Goal => {
   const now = new Date().toISOString().split('T')[0] as string;
 
+  const why = new GoalWhy({
+    ask: overrides.why?.ask ?? 'test ask',
+    purpose: overrides.why?.purpose ?? 'test purpose',
+    benefit: overrides.why?.benefit ?? 'test benefit',
+  });
+  const what = new GoalWhat({
+    outcome: overrides.what?.outcome ?? 'test outcome',
+  });
+  const how = new GoalHow({
+    task: overrides.how?.task ?? 'test task',
+    gate: overrides.how?.gate ?? 'test gate',
+  });
+
   return new Goal({
     slug: overrides.slug ?? 'test-goal',
-    why: new GoalWhy({
-      ask: overrides.why?.ask ?? 'test ask',
-      purpose: overrides.why?.purpose ?? 'test purpose',
-      benefit: overrides.why?.benefit ?? 'test benefit',
-    }),
-    what: new GoalWhat({
-      outcome: overrides.what?.outcome ?? 'test outcome',
-    }),
-    how: new GoalHow({
-      task: overrides.how?.task ?? 'test task',
-      gate: overrides.how?.gate ?? 'test gate',
-    }),
+    why,
+    what,
+    how,
     status: new GoalStatus({
       choice: overrides.status?.choice ?? 'enqueued',
       reason: overrides.status?.reason ?? 'test reason',

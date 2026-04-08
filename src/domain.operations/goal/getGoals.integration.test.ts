@@ -195,7 +195,7 @@ describe('getGoals.integration', () => {
 
         expect(result.goals).toHaveLength(1);
         expect(result.goals[0]?.slug).toEqual('target-goal');
-        expect(result.goals[0]?.why.ask).toEqual('target ask');
+        expect(result.goals[0]?.why?.ask).toEqual('target ask');
       });
     });
   });

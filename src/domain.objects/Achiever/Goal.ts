@@ -220,11 +220,6 @@ export interface Goal {
   source: GoalSource;
 
   /**
-   * completeness metadata
-   */
-  meta: GoalMeta;
-
-  /**
    * when the goal was created
    */
   createdAt: string;
@@ -242,6 +237,5 @@ export class Goal extends DomainLiteral<Goal> implements Goal {
     how: GoalHow,
     status: GoalStatus,
     when: GoalWhen,
-    meta: GoalMeta,
   };
 }

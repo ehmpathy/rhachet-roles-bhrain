@@ -40,14 +40,16 @@ describe('Goal', () => {
         });
 
         expect(goal.slug).toEqual('fix-auth-test');
-        expect(goal.why.ask).toEqual('fix the flaky test in auth.test.ts');
-        expect(goal.why.purpose).toEqual('human wants ci to pass before merge');
-        expect(goal.why.benefit).toEqual('unblocks the pr, team can ship');
-        expect(goal.what.outcome).toEqual('auth.test.ts passes reliably');
-        expect(goal.how.task).toEqual(
+        expect(goal.why?.ask).toEqual('fix the flaky test in auth.test.ts');
+        expect(goal.why?.purpose).toEqual(
+          'human wants ci to pass before merge',
+        );
+        expect(goal.why?.benefit).toEqual('unblocks the pr, team can ship');
+        expect(goal.what?.outcome).toEqual('auth.test.ts passes reliably');
+        expect(goal.how?.task).toEqual(
           'run test in isolation, identify flake source, apply fix',
         );
-        expect(goal.how.gate).toEqual('test passes 10 consecutive runs');
+        expect(goal.how?.gate).toEqual('test passes 10 consecutive runs');
         expect(goal.status.choice).toEqual('enqueued');
         expect(goal.status.reason).toEqual('goal created from triage');
         expect(goal.source).toEqual('peer:human');
@@ -340,9 +342,7 @@ describe('Goal', () => {
 
   given('[case12] partial goal instantiation', () => {
     when('[t0] only slug and status provided', () => {
-      then('goal should be created with meta.complete = false', () => {
-        const meta = computeGoalCompleteness({});
-
+      then('computeGoalCompleteness should return complete = false', () => {
         const goal = new Goal({
           slug: 'quick-capture',
           status: new GoalStatus({
@@ -350,7 +350,6 @@ describe('Goal', () => {
             reason: 'captured quickly',
           }),
           source: 'peer:human',
-          meta,
           createdAt: '2026-04-04',
           updatedAt: '2026-04-04',
         });
@@ -359,42 +358,42 @@ describe('Goal', () => {
         expect(goal.why).toBeUndefined();
         expect(goal.what).toBeUndefined();
         expect(goal.how).toBeUndefined();
-        expect(goal.meta.complete).toBe(false);
-        expect(goal.meta.absent).toHaveLength(6);
+
+        const meta = computeGoalCompleteness(goal);
+        expect(meta.complete).toBe(false);
+        expect(meta.absent).toHaveLength(6);
       });
     });
   });
 
   given('[case13] partial goal with some fields', () => {
     when('[t0] slug, why.ask, and what.outcome provided', () => {
-      then('goal should track which fields are absent', () => {
-        const meta = computeGoalCompleteness({
-          why: { ask: 'fix the test' },
-          what: { outcome: 'test passes' },
-        });
+      then(
+        'computeGoalCompleteness should track which fields are absent',
+        () => {
+          const goal = new Goal({
+            slug: 'partial-articulated',
+            why: new GoalWhy({ ask: 'fix the test', purpose: '', benefit: '' }),
+            what: new GoalWhat({ outcome: 'test passes' }),
+            status: new GoalStatus({
+              choice: 'enqueued',
+              reason: 'in progress articulation',
+            }),
+            source: 'peer:human',
+            createdAt: '2026-04-04',
+            updatedAt: '2026-04-04',
+          });
 
-        const goal = new Goal({
-          slug: 'partial-articulated',
-          why: new GoalWhy({ ask: 'fix the test', purpose: '', benefit: '' }),
-          what: new GoalWhat({ outcome: 'test passes' }),
-          status: new GoalStatus({
-            choice: 'enqueued',
-            reason: 'in progress articulation',
-          }),
-          source: 'peer:human',
-          meta,
-          createdAt: '2026-04-04',
-          updatedAt: '2026-04-04',
-        });
-
-        expect(goal.meta.complete).toBe(false);
-        expect(goal.meta.absent).toContain('why.purpose');
-        expect(goal.meta.absent).toContain('why.benefit');
-        expect(goal.meta.absent).toContain('how.task');
-        expect(goal.meta.absent).toContain('how.gate');
-        expect(goal.meta.absent).not.toContain('why.ask');
-        expect(goal.meta.absent).not.toContain('what.outcome');
-      });
+          const meta = computeGoalCompleteness(goal);
+          expect(meta.complete).toBe(false);
+          expect(meta.absent).toContain('why.purpose');
+          expect(meta.absent).toContain('why.benefit');
+          expect(meta.absent).toContain('how.task');
+          expect(meta.absent).toContain('how.gate');
+          expect(meta.absent).not.toContain('why.ask');
+          expect(meta.absent).not.toContain('what.outcome');
+        },
+      );
     });
   });
 

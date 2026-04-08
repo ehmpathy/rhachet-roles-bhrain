@@ -114,7 +114,8 @@ describe('goal cli output', () => {
             reason: 'goal created from triage',
           }),
           source: 'peer:human',
-          meta: { complete: true, absent: [] },
+          createdAt: '2026-04-02',
+          updatedAt: '2026-04-02',
         });
 
         // just verify the goal was constructed correctly

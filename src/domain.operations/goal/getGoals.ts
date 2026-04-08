@@ -5,7 +5,6 @@ import * as path from 'path';
 const yaml = require('js-yaml');
 
 import {
-  computeGoalCompleteness,
   Goal,
   GoalHow,
   type GoalSource,
@@ -83,13 +82,6 @@ export const getGoals = async (input: {
     const what = parsedWhat ? new GoalWhat(parsedWhat as GoalWhat) : undefined;
     const how = parsedHow ? new GoalHow(parsedHow as GoalHow) : undefined;
 
-    // compute completeness on read (for CLI display)
-    const meta = computeGoalCompleteness({
-      why: parsedWhy,
-      what: parsedWhat,
-      how: parsedHow,
-    });
-
     const goal = new Goal({
       slug: parsed.slug as string,
       why,
@@ -101,7 +93,6 @@ export const getGoals = async (input: {
       }),
       when: parsedWhen ? (new GoalWhen(parsedWhen) as Goal['when']) : undefined,
       source: parsed.source as GoalSource,
-      meta,
       createdAt: parsed.createdAt as string,
       updatedAt: parsed.updatedAt as string,
     });

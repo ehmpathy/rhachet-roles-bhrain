@@ -3,7 +3,10 @@ import * as path from 'path';
 
 import { Ask } from '@src/domain.objects/Achiever/Ask';
 import { Coverage } from '@src/domain.objects/Achiever/Coverage';
-import type { Goal } from '@src/domain.objects/Achiever/Goal';
+import {
+  computeGoalCompleteness,
+  type Goal,
+} from '@src/domain.objects/Achiever/Goal';
 
 import { getGoals } from './getGoals';
 
@@ -58,9 +61,13 @@ export const getTriageState = async (input: {
   // get extant goals
   const { goals } = await getGoals({ scopeDir: input.scopeDir });
 
-  // partition goals by completeness
-  const goalsComplete = goals.filter((g) => g.meta?.complete === true);
-  const goalsIncomplete = goals.filter((g) => g.meta?.complete !== true);
+  // partition goals by completeness (computed on the fly)
+  const goalsComplete = goals.filter(
+    (g) => computeGoalCompleteness(g).complete === true,
+  );
+  const goalsIncomplete = goals.filter(
+    (g) => computeGoalCompleteness(g).complete !== true,
+  );
 
   return {
     asks,

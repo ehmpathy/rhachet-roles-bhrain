@@ -58,8 +58,8 @@ const emitSubBucket = (content: string, indent: string): void => {
  * .note = shows ✋ omitted inline for absent fields
  */
 const emitGoalFull = (goal: Goal, indent: string = '   '): void => {
-  const absent = goal.meta?.absent ?? [];
-  const isAbsent = (field: string) => absent.includes(field);
+  const meta = computeGoalCompleteness(goal);
+  const isAbsent = (field: string) => meta.absent.includes(field);
 
   console.log(`${indent}├─ goal`);
   console.log(`${indent}│  ├─ slug = ${goal.slug}`);
@@ -133,8 +133,8 @@ const emitGoalCondensed = (
   const isLast = index === total - 1;
   const branch = isLast ? '└─' : '├─';
   const cont = isLast ? '   ' : '│  ';
-  const absent = goal.meta?.absent ?? [];
-  const isAbsent = (field: string) => absent.includes(field);
+  const meta = computeGoalCompleteness(goal);
+  const isAbsent = (field: string) => meta.absent.includes(field);
 
   console.log(`${indent}${branch} (${index + 1})`);
   console.log(`${indent}${cont}├─ slug = ${goal.slug}`);
@@ -541,7 +541,6 @@ const buildGoalFromFlags = (
     how,
     status: goalStatus,
     source: (fields.source as Goal['source']) ?? 'peer:human',
-    meta,
     createdAt: now,
     updatedAt: now,
   });
@@ -799,7 +798,6 @@ export const goalMemorySet = async (): Promise<void> => {
     how,
     status: goalStatus,
     source: (parsed.source as Goal['source']) ?? 'peer:human',
-    meta,
     createdAt: (parsed.createdAt as string) || now,
     updatedAt: (parsed.updatedAt as string) || now,
   });
@@ -890,11 +888,8 @@ export const goalInferTriage = async (): Promise<void> => {
           const branch = isLast ? '└─' : '├─';
           const cont = isLast ? '   ' : '│  ';
           console.error(`   │  ${branch} ${goal.slug}`);
-          if (goal.meta) {
-            console.error(
-              `   │  ${cont}└─ absent: ${goal.meta.absent.join(', ')}`,
-            );
-          }
+          const meta = computeGoalCompleteness(goal);
+          console.error(`   │  ${cont}└─ absent: ${meta.absent.join(', ')}`);
         }
       }
 
@@ -954,9 +949,8 @@ export const goalInferTriage = async (): Promise<void> => {
       const branch = isLast ? '└─' : '├─';
       const cont = isLast ? '   ' : '│  ';
       console.log(`   │  ${branch} ${goal.slug} [${goal.status.choice}]`);
-      if (goal.meta) {
-        console.log(`   │  ${cont}└─ absent: ${goal.meta.absent.join(', ')}`);
-      }
+      const meta = computeGoalCompleteness(goal);
+      console.log(`   │  ${cont}└─ absent: ${meta.absent.join(', ')}`);
     }
   }
 
