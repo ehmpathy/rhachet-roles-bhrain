@@ -20,7 +20,7 @@ each kernel should:
 - cite the source with exact quote
 - cluster by domain within the probe
 
-each subagent emits to: $RESEARCH_DIR_REL/kernel/q$N.absorb.kernels.v1.i1.md
+each subagent emits to: $RESEARCH_DIR_REL/kernel/q$N.absorb.kernels.yield.md
 - where $N is the question number of the source probe
 
 ---

@@ -1,8 +1,8 @@
 read:
-- $RESEARCH_DIR_REL/5.1.briefs.curate.blueprint.v1.i1.md
-- $RESEARCH_DIR_REL/kernel/*.absorb.kernels.v1.i1.md
-- $RESEARCH_DIR_REL/probe.v1/*.probe.research.response.v1.i1.md
-- $RESEARCH_DIR_REL/probe.v2/*.probe.research.response.v1.i1.md (if present)
+- $RESEARCH_DIR_REL/5.1.briefs.curate.blueprint.yield.md
+- $RESEARCH_DIR_REL/kernel/*.absorb.kernels.yield.md
+- $RESEARCH_DIR_REL/probe.v1/*.probe.research.response.yield.md
+- $RESEARCH_DIR_REL/probe.v2/*.probe.research.response.yield.md (if present)
 
 ---
 

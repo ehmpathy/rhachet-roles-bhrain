@@ -1,4 +1,4 @@
-read the probe questions collected in $RESEARCH_DIR_REL/1.3.probes.aim.blend.v1.i1.md
+read the probe questions collected in $RESEARCH_DIR_REL/1.3.probes.aim.blend.yield.md
 
 for each question, launch a parallel subagent to investigate:
 - one probe subagent per one question
@@ -19,7 +19,7 @@ each probe subagent must do a thorough investigation:
 
 this is not a shallow citation list — each probe must thoroughly investigate each citation.
 
-each subagent emits to: $RESEARCH_DIR_REL/probe.v1/q$N.probe.research.response.v1.i1.md
+each subagent emits to: $RESEARCH_DIR_REL/probe.v1/q$N.probe.research.response.yield.md
 - where $N is the question number assigned to that probe
 
 ---

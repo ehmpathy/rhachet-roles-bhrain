@@ -20,11 +20,19 @@ export const getAllStoneDriveArtifacts = async (input: {
   const artifacts: RouteStoneDriveArtifacts[] = [];
   for (const stone of stones) {
     // find output files via glob
-    const outputGlob = `${stone.name}*.md`;
-    const outputs = await enumFilesFromGlob({
-      glob: outputGlob,
+    // globs: .yield* (new pattern) + *.md (legacy pattern)
+    const yieldGlob = `${stone.name}.yield*`;
+    const legacyGlob = `${stone.name}*.md`;
+    const yieldMatches = await enumFilesFromGlob({
+      glob: yieldGlob,
       cwd: input.route,
     });
+    const legacyMatches = await enumFilesFromGlob({
+      glob: legacyGlob,
+      cwd: input.route,
+    });
+    // combine and dedupe (some files match both patterns)
+    const outputs = [...new Set([...yieldMatches, ...legacyMatches])];
 
     // check for passage report in passage.jsonl
     // note: only explicit 'passed' status constitutes valid passage
