@@ -1,0 +1,15 @@
+slug: 'playtest-inflight-2'
+source: 'peer:human'
+status:
+  choice: 'fulfilled'
+  reason: 'also completed'
+updatedAt: '2026-04-11'
+why:
+  ask: 'test the inflight reminder'
+  purpose: 'verification'
+  benefit: 'confidence'
+what:
+  outcome: 'reminder appears at session end'
+how:
+  task: 'run goal.triage.next'
+  gate: 'output shows inflight goal'

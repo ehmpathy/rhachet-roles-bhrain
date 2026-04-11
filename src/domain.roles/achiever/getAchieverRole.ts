@@ -20,12 +20,28 @@ export const ROLE_ACHIEVER: Role = Role.build({
   },
   hooks: {
     onBrain: {
+      // onTool: protect .goals/ from direct manipulation
+      onTool: [
+        {
+          command: './node_modules/.bin/rhx goal.guard',
+          timeout: 'PT5S',
+          filter: {
+            what: 'Read|Write|Edit|Bash',
+            when: 'before',
+          },
+        },
+      ],
       // onStop: enforce goal triage before session ends
       // halts until all asks are covered by goals
       onStop: [
         {
           command:
             './node_modules/.bin/rhx goal.infer.triage --mode hook.onStop',
+          timeout: 'PT10S',
+        },
+        {
+          command:
+            './node_modules/.bin/rhx goal.triage.next --when hook.onStop',
           timeout: 'PT10S',
         },
       ],

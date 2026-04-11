@@ -61,7 +61,12 @@ export const sanitizeGoalOutputForSnapshot = (output: string): string => {
  * because ESM module resolution fails with symlinked packages in temp dirs
  */
 export const invokeGoalSkill = async (input: {
-  skill: 'goal.memory.set' | 'goal.memory.get' | 'goal.infer.triage';
+  skill:
+    | 'goal.memory.set'
+    | 'goal.memory.get'
+    | 'goal.infer.triage'
+    | 'goal.guard'
+    | 'goal.triage.next';
   args: Record<string, string | boolean | undefined>;
   cwd: string;
   stdin?: string;
@@ -71,6 +76,8 @@ export const invokeGoalSkill = async (input: {
     'goal.memory.set': 'goalMemorySet',
     'goal.memory.get': 'goalMemoryGet',
     'goal.infer.triage': 'goalInferTriage',
+    'goal.guard': 'goalGuard',
+    'goal.triage.next': 'goalTriageNext',
   };
   const fnName = skillToFunction[input.skill];
 
@@ -122,6 +129,46 @@ export const invokeGoalSkill = async (input: {
       child.stdin.write(input.stdin);
     }
     child.stdin.end();
+  });
+};
+
+/**
+ * .what = invokes goal.guard with tool input as stdin
+ * .why = enables acceptance tests for PreToolUse hook
+ */
+export const invokeGoalGuard = async (input: {
+  toolName: string;
+  toolInput: { file_path?: string; command?: string };
+  cwd: string;
+}): Promise<{ stdout: string; stderr: string; code: number }> => {
+  const stdinJson = JSON.stringify({
+    tool_name: input.toolName,
+    tool_input: input.toolInput,
+  });
+  return invokeGoalSkill({
+    skill: 'goal.guard',
+    args: {},
+    cwd: input.cwd,
+    stdin: stdinJson,
+  });
+};
+
+/**
+ * .what = invokes goal.triage.next with args
+ * .why = enables acceptance tests for onStop hook
+ */
+export const invokeGoalTriageNext = async (input: {
+  when: string;
+  scope?: string;
+  cwd: string;
+}): Promise<{ stdout: string; stderr: string; code: number }> => {
+  return invokeGoalSkill({
+    skill: 'goal.triage.next',
+    args: {
+      when: input.when,
+      scope: input.scope,
+    },
+    cwd: input.cwd,
   });
 };
 

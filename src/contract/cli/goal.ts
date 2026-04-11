@@ -14,6 +14,7 @@ import {
   GoalWhat,
   GoalWhy,
 } from '@src/domain.objects/Achiever/Goal';
+import { getGoalGuardVerdict } from '@src/domain.operations/goal/getGoalGuardVerdict';
 import { getGoals } from '@src/domain.operations/goal/getGoals';
 import { getTriageState } from '@src/domain.operations/goal/getTriageState';
 import { setGoal, setGoalStatus } from '@src/domain.operations/goal/setGoal';
@@ -361,7 +362,11 @@ const parseArgsForSet = async (
     if (FIELD_FLAGS.includes(arg as FieldFlag) && nextArg) {
       const fieldName = arg.slice(2); // remove '--' prefix
       flagValues.set(fieldName, nextArg);
-      hasFieldFlags = true;
+      // --status.reason doesn't count as "field flag" for mode detection
+      // (allows simple status update with explicit reason via mode 1)
+      if (arg !== '--status.reason') {
+        hasFieldFlags = true;
+      }
       i++;
     }
   }
@@ -556,9 +561,10 @@ export const goalMemorySet = async (): Promise<void> => {
     await parseArgsForSet(process.argv, stdinContent);
   const scopeDir = await getScopeDir(scope);
 
-  // mode 1: status update (--slug and --status, no field flags)
+  // mode 1: status update (--slug and --status, with optional --status.reason)
+  // note: --status.reason @stdin requires explicit flag (no implicit stdin consumption)
   if (slug && status && !hasFieldFlags) {
-    const reason = stdinContent.trim() || 'status updated';
+    const reason = fields['status.reason']?.trim() || 'status updated';
 
     const result = await setGoalStatus({
       slug,
@@ -683,6 +689,44 @@ export const goalMemorySet = async (): Promise<void> => {
 
   // mode 2b: minimal partial goal (--slug only, no field flags, no status)
   if (slug && !hasFieldFlags && !status) {
+    // check if goal already exists (upsert semantics)
+    const extantGoals = await getGoals({ scopeDir });
+    const extantGoal = extantGoals.goals.find((g) => g.slug === slug);
+
+    if (extantGoal) {
+      // goal exists, update in place (no-op for minimal goal with no changes)
+      const result = await setGoalStatus({
+        slug,
+        status: undefined, // no status change
+        fields: {}, // no field changes
+        covers,
+        scopeDir,
+      });
+
+      // fetch updated goal for full display
+      const updatedGoals = await getGoals({ scopeDir, filter: { slug } });
+      const updatedGoal = updatedGoals.goals[0];
+
+      // emit treestruct output with full goal display
+      emitOwlHeader();
+      console.log(`🔮 goal.memory.set --scope ${scope}`);
+      if (updatedGoal) {
+        emitGoalFull(updatedGoal);
+        console.log(`   │`);
+      }
+      console.log(`   ├─ path = ${result.path}`);
+      if (result.covered.length > 0) {
+        console.log(`   ├─ covered`);
+        for (let i = 0; i < result.covered.length; i++) {
+          const isLast = i === result.covered.length - 1;
+          console.log(`   │  ${isLast ? '└─' : '├─'} ${result.covered[i]}`);
+        }
+      }
+      console.log(`   └─ persisted`);
+      return;
+    }
+
+    // goal does not exist, create new
     const goal = buildGoalFromFlags(slug, {}, undefined);
 
     const result = await setGoal({
@@ -802,17 +846,57 @@ export const goalMemorySet = async (): Promise<void> => {
     updatedAt: (parsed.updatedAt as string) || now,
   });
 
-  const result = await setGoal({
-    goal,
-    covers,
-    scopeDir,
-  });
+  // check if goal already exists (upsert semantics)
+  const extantGoals = await getGoals({ scopeDir });
+  const extantGoal = extantGoals.goals.find((g) => g.slug === goal.slug);
+
+  let result: { path: string; covered: string[] };
+  let updatedGoal: Goal | undefined;
+
+  if (extantGoal) {
+    // goal exists, update in place with new fields
+    result = await setGoalStatus({
+      slug: goal.slug,
+      status: parsedStatus
+        ? {
+            choice: parsedStatus.choice as GoalStatusChoice,
+            reason: parsedStatus.reason ?? 'goal updated',
+          }
+        : undefined,
+      fields: {
+        why: why
+          ? { ask: why.ask, purpose: why.purpose, benefit: why.benefit }
+          : undefined,
+        what: what ? { outcome: what.outcome } : undefined,
+        how: how ? { task: how.task, gate: how.gate } : undefined,
+      },
+      covers,
+      scopeDir,
+    });
+
+    // fetch updated goal for display
+    const fetchedGoals = await getGoals({
+      scopeDir,
+      filter: { slug: goal.slug },
+    });
+    updatedGoal = fetchedGoals.goals[0];
+  } else {
+    // goal does not exist, create new
+    result = await setGoal({
+      goal,
+      covers,
+      scopeDir,
+    });
+    updatedGoal = goal;
+  }
 
   // emit treestruct output with full goal display
   emitOwlHeader();
   console.log(`🔮 goal.memory.set --scope ${scope}`);
-  emitGoalFull(goal);
-  console.log(`   │`);
+  if (updatedGoal) {
+    emitGoalFull(updatedGoal);
+    console.log(`   │`);
+  }
   if (covers && covers.length > 0) {
     console.log(`   ├─ covered`);
     for (let i = 0; i < covers.length; i++) {
@@ -981,5 +1065,199 @@ export const goalInferTriage = async (): Promise<void> => {
       console.log(`      ├─ complete incomplete goals`);
     }
     console.log(`      └─ then re-run goal.infer.triage`);
+  }
+};
+
+/**
+ * .what = owl wisdom for goal guard blocks
+ * .why = gentler vibe for guard blocks
+ */
+const OWL_WISDOM_GUARD = '🦉 patience, friend.';
+
+/**
+ * .what = cli entrypoint for goal.guard PreToolUse hook
+ * .why = blocks direct access to .goals/ to enforce skill usage
+ *
+ * reads tool invocation JSON from stdin (from claude code harness)
+ * exits 0 if allowed (silent)
+ * exits 2 if blocked (stderr output)
+ */
+export const goalGuard = async (): Promise<void> => {
+  // read stdin JSON (from claude code PreToolUse hook)
+  const stdinChunks: Buffer[] = [];
+  for await (const chunk of process.stdin) {
+    stdinChunks.push(chunk);
+  }
+  const stdinContent = Buffer.concat(stdinChunks).toString('utf-8').trim();
+
+  // if no input, allow (edge case)
+  if (!stdinContent) {
+    return;
+  }
+
+  // parse tool invocation
+  let toolName: string;
+  let toolInput: { file_path?: string; command?: string };
+  try {
+    const parsed = JSON.parse(stdinContent);
+    toolName = parsed.tool_name ?? '';
+    toolInput = parsed.tool_input ?? {};
+  } catch {
+    // malformed JSON, allow (harness issue)
+    return;
+  }
+
+  // evaluate verdict
+  const verdict = getGoalGuardVerdict({ toolName, toolInput });
+
+  // if allowed, silent exit
+  if (verdict.verdict === 'allowed') {
+    return;
+  }
+
+  // blocked: emit treestruct to stderr
+  console.error(OWL_WISDOM_GUARD);
+  console.error('');
+  console.error('🔮 goal.guard');
+  console.error('   ├─ ✋ blocked: direct access to .goals/ is forbidden');
+  console.error('   │');
+  console.error('   └─ use skills instead');
+  console.error('      ├─ goal.memory.set — persist or update a goal');
+  console.error('      ├─ goal.memory.get — retrieve goal state');
+  console.error('      ├─ goal.infer.triage — detect uncovered asks');
+  console.error('      └─ goal.triage.next — show unfinished goals');
+
+  process.exit(2);
+};
+
+/**
+ * .what = parse args for goal.triage.next
+ * .why = extract --when, --scope from argv
+ */
+const parseArgsForTriageNext = async (
+  argv: string[],
+): Promise<{
+  when: 'hook.onStop';
+  scope: 'route' | 'repo';
+}> => {
+  const args = isNodeEvalMode() ? argv.slice(1) : argv.slice(2);
+
+  let when: 'hook.onStop' | undefined;
+  let scope: 'route' | 'repo' = await getDefaultScope();
+
+  for (let i = 0; i < args.length; i++) {
+    const arg = args[i];
+    if (arg === '--when' && args[i + 1]) {
+      const whenValue = args[i + 1];
+      if (whenValue !== 'hook.onStop') {
+        throw new BadRequestError(
+          `invalid --when: ${whenValue}. must be 'hook.onStop'`,
+          { when: whenValue },
+        );
+      }
+      when = whenValue;
+      i++;
+    }
+    if (arg === '--scope' && args[i + 1]) {
+      const scopeValue = args[i + 1];
+      if (scopeValue !== 'route' && scopeValue !== 'repo') {
+        throw new BadRequestError(
+          `invalid scope: ${scopeValue}. must be 'route' or 'repo'`,
+          { scope: scopeValue },
+        );
+      }
+      scope = scopeValue;
+      i++;
+    }
+  }
+
+  if (!when) {
+    throw new BadRequestError('--when hook.onStop is required', {});
+  }
+
+  return { when, scope };
+};
+
+/**
+ * .what = cli entrypoint for goal.triage.next skill
+ * .why = onStop hook that shows unfinished goals to mandate continuation
+ *
+ * shows inflight goals if any exist (priority)
+ * shows enqueued goals if no inflight
+ * silent exit if no unfinished goals
+ */
+export const goalTriageNext = async (): Promise<void> => {
+  // parse args
+  const { scope } = await parseArgsForTriageNext(process.argv);
+
+  // get scope directory
+  let scopeDir: string;
+  try {
+    scopeDir = await getScopeDir(scope);
+  } catch {
+    // scope dir unavailable (e.g., not bound to route), no goals
+    return;
+  }
+
+  // get inflight and enqueued goals
+  const inflightGoals = await getGoals({
+    scopeDir,
+    filter: { status: 'inflight' },
+  });
+  const enqueuedGoals = await getGoals({
+    scopeDir,
+    filter: { status: 'enqueued' },
+  });
+
+  // if no unfinished goals, silent exit
+  if (inflightGoals.goals.length === 0 && enqueuedGoals.goals.length === 0) {
+    return;
+  }
+
+  // emit treestruct to stderr (for visibility on exit 2)
+  console.error(OWL_WISDOM);
+  console.error('');
+  console.error(`🔮 goal.triage.next --when hook.onStop`);
+
+  // show inflight if any (priority)
+  if (inflightGoals.goals.length > 0) {
+    console.error(`   └─ inflight (${inflightGoals.goals.length})`);
+    for (let i = 0; i < inflightGoals.goals.length; i++) {
+      const goal = inflightGoals.goals[i] as Goal;
+      const isLast = i === inflightGoals.goals.length - 1;
+      const branch = isLast ? '└─' : '├─';
+      const cont = isLast ? '   ' : '│  ';
+      console.error(`      ${branch} (${i + 1})`);
+      console.error(`      ${cont}├─ slug = ${goal.slug}`);
+      const askText = goal.why?.ask ?? '(no ask)';
+      const askShort =
+        askText.length > 60 ? askText.slice(0, 60) + '...' : askText;
+      console.error(`      ${cont}├─ why.ask = ${askShort}`);
+      console.error(`      ${cont}└─ status = inflight → ✋ finish this first`);
+    }
+    console.error('');
+    console.error(`   💡 hint: rhx goal.memory.get`);
+    process.exit(2);
+  }
+
+  // show enqueued if no inflight
+  if (enqueuedGoals.goals.length > 0) {
+    console.error(`   └─ enqueued (${enqueuedGoals.goals.length})`);
+    for (let i = 0; i < enqueuedGoals.goals.length; i++) {
+      const goal = enqueuedGoals.goals[i] as Goal;
+      const isLast = i === enqueuedGoals.goals.length - 1;
+      const branch = isLast ? '└─' : '├─';
+      const cont = isLast ? '   ' : '│  ';
+      console.error(`      ${branch} (${i + 1})`);
+      console.error(`      ${cont}├─ slug = ${goal.slug}`);
+      const askText = goal.why?.ask ?? '(no ask)';
+      const askShort =
+        askText.length > 60 ? askText.slice(0, 60) + '...' : askText;
+      console.error(`      ${cont}├─ why.ask = ${askShort}`);
+      console.error(`      ${cont}└─ status = enqueued → ✋ finish this first`);
+    }
+    console.error('');
+    console.error(`   💡 hint: rhx goal.memory.get`);
+    process.exit(2);
   }
 };

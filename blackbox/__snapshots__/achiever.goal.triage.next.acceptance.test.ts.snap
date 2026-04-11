@@ -1,0 +1,43 @@
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
+
+exports[`achiever.goal.triage.next.acceptance given: [case3] inflight goals exist when: [t0] goal.triage.next is called then: stderr matches snapshot 1`] = `
+"🦉 to forget an ask is to break a promise. remember.
+
+🔮 goal.triage.next --when hook.onStop
+   └─ inflight (1)
+      └─ (1)
+         ├─ slug = fix-auth-test
+         ├─ why.ask = fix the flaky test in auth.test.ts
+         └─ status = inflight → ✋ finish this first
+
+   💡 hint: rhx goal.memory.get
+"
+`;
+
+exports[`achiever.goal.triage.next.acceptance given: [case4] enqueued goals exist but no inflight when: [t0] goal.triage.next is called then: stderr matches snapshot 1`] = `
+"🦉 to forget an ask is to break a promise. remember.
+
+🔮 goal.triage.next --when hook.onStop
+   └─ enqueued (1)
+      └─ (1)
+         ├─ slug = update-readme-env
+         ├─ why.ask = update the readme to mention the new env var
+         └─ status = enqueued → ✋ finish this first
+
+   💡 hint: rhx goal.memory.get
+"
+`;
+
+exports[`achiever.goal.triage.next.acceptance given: [case5] both inflight and enqueued goals exist when: [t0] goal.triage.next is called then: stderr matches snapshot 1`] = `
+"🦉 to forget an ask is to break a promise. remember.
+
+🔮 goal.triage.next --when hook.onStop
+   └─ inflight (1)
+      └─ (1)
+         ├─ slug = fix-auth-test
+         ├─ why.ask = fix the flaky test
+         └─ status = inflight → ✋ finish this first
+
+   💡 hint: rhx goal.memory.get
+"
+`;
