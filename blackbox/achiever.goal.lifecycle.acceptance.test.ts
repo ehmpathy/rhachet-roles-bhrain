@@ -384,4 +384,102 @@ why:
       });
     });
   });
+
+  given('[case6] upsert semantics: same slug twice updates (not duplicates)', () => {
+    const scene = useBeforeAll(async () => {
+      const tempDir = genTempDirForGoals({ slug: 'goal-upsert' });
+      await execAsync('npx rhachet roles link --role achiever', { cwd: tempDir });
+      await execAsync('git checkout -b feat/test-upsert', { cwd: tempDir });
+      return { tempDir };
+    });
+
+    when('[t0] first goal.memory.set creates the goal', () => {
+      const result = useThen('invoke goal.memory.set with YAML', async () => {
+        const goalYaml = createGoalYaml({
+          slug: 'upsert-test-goal',
+          why: {
+            ask: 'test upsert behavior',
+            purpose: 'verify same slug updates',
+            benefit: 'no duplicate files',
+          },
+          what: { outcome: 'original outcome' },
+          how: { task: 'set goal twice', gate: 'single file exists' },
+          status: { choice: 'enqueued', reason: 'first creation' },
+          source: 'peer:human',
+        });
+
+        return invokeGoalSkill({
+          skill: 'goal.memory.set',
+          args: { scope: 'repo' },
+          cwd: scene.tempDir,
+          stdin: goalYaml,
+        });
+      });
+
+      then('exit code is 0', () => {
+        expect(result.code).toEqual(0);
+      });
+
+      then('stdout contains goal slug', () => {
+        expect(result.stdout).toContain('upsert-test-goal');
+      });
+    });
+
+    when('[t1] second goal.memory.set with same slug updates (not duplicates)', () => {
+      const result = useThen('invoke goal.memory.set again', async () => {
+        const goalYaml = createGoalYaml({
+          slug: 'upsert-test-goal', // SAME slug
+          why: {
+            ask: 'test upsert behavior',
+            purpose: 'verify same slug updates',
+            benefit: 'no duplicate files',
+          },
+          what: { outcome: 'updated outcome' }, // DIFFERENT outcome
+          how: { task: 'set goal twice', gate: 'single file exists' },
+          status: { choice: 'inflight', reason: 'updated to inflight' }, // DIFFERENT status
+          source: 'peer:human',
+        });
+
+        return invokeGoalSkill({
+          skill: 'goal.memory.set',
+          args: { scope: 'repo' },
+          cwd: scene.tempDir,
+          stdin: goalYaml,
+        });
+      });
+
+      then('exit code is 0', () => {
+        expect(result.code).toEqual(0);
+      });
+
+      then('stdout contains updated status', () => {
+        expect(result.stdout).toContain('inflight');
+      });
+
+      then('only one goal file exists (no duplicate)', async () => {
+        const goalsDir = `${scene.tempDir}/.goals/feat.test-upsert`;
+        const files = await fs.readdir(goalsDir);
+        const goalFiles = files.filter((f) => f.endsWith('.goal.yaml'));
+        expect(goalFiles).toHaveLength(1);
+      });
+    });
+
+    when('[t2] goal.memory.get confirms updated content', () => {
+      const result = useThen('invoke goal.memory.get', async () => {
+        return invokeGoalSkill({
+          skill: 'goal.memory.get',
+          args: { scope: 'repo' },
+          cwd: scene.tempDir,
+        });
+      });
+
+      then('shows updated status', () => {
+        expect(result.stdout).toContain('inflight');
+      });
+
+      then('shows updated outcome', () => {
+        expect(result.stdout).toContain('updated outcome');
+      });
+    });
+  });
 });

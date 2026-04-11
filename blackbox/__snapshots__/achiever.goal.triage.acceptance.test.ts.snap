@@ -55,7 +55,7 @@ exports[`achiever.goal.triage.acceptance given: [case1] multi-part request triag
    │  │     └─
    │  └─ source = peer:human
    │
-   ├─ path = .goals/[BRANCH]/00000-1.fix-auth-test.goal.yaml
+   ├─ path = .goals/[BRANCH]/[OFFSET].fix-auth-test.goal.yaml
    └─ persisted
 "
 `;
@@ -383,7 +383,7 @@ exports[`achiever.goal.triage.acceptance given: [case3] goal status transitions 
    │  │  └─ reason
    │  │     ├─
    │  │     │  
-   │  │     │    blocked on external dependency
+   │  │     │    status updated
    │  │     │  
    │  │     └─
    │  └─ source = peer:human
@@ -443,7 +443,7 @@ exports[`achiever.goal.triage.acceptance given: [case3] goal status transitions 
    │  │  └─ reason
    │  │     ├─
    │  │     │  
-   │  │     │    dependency resolved, work resumed
+   │  │     │    status updated
    │  │     │  
    │  │     └─
    │  └─ source = peer:human
@@ -503,7 +503,7 @@ exports[`achiever.goal.triage.acceptance given: [case3] goal status transitions 
    │  │  └─ reason
    │  │     ├─
    │  │     │  
-   │  │     │    all transitions verified successfully
+   │  │     │    status updated
    │  │     │  
    │  │     └─
    │  └─ source = peer:human
@@ -902,7 +902,7 @@ exports[`achiever.goal.triage.acceptance given: [case9] partial goal blocks onSt
    │  │     └─
    │  └─ source = peer:human
    │
-   ├─ path = .goals/[BRANCH]/00000-1.incomplete-blocks-session.goal.yaml
+   ├─ path = .goals/[BRANCH]/[OFFSET].incomplete-blocks-session.goal.yaml
    └─ persisted
 "
 `;
@@ -978,7 +978,7 @@ exports[`achiever.goal.triage.acceptance given: [case9] partial goal blocks onSt
    │  │     └─
    │  └─ source = peer:human
    │
-   ├─ path = .goals/[BRANCH]/00000-1.incomplete-blocks-session.goal.yaml
+   ├─ path = .goals/[BRANCH]/[OFFSET].incomplete-blocks-session.goal.yaml
    └─ persisted
 "
 `;

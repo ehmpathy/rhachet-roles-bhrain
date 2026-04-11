@@ -55,7 +55,7 @@ exports[`achiever.goal.lifecycle.acceptance given: [case1] goal status transitio
    │  │     └─
    │  └─ source = peer:human
    │
-   ├─ path = .goals/[BRANCH]/00000-1.fix-auth-test.goal.yaml
+   ├─ path = .goals/[BRANCH]/[OFFSET].fix-auth-test.goal.yaml
    └─ persisted
 "
 `;
@@ -133,12 +133,12 @@ exports[`achiever.goal.lifecycle.acceptance given: [case1] goal status transitio
    │  │  └─ reason
    │  │     ├─
    │  │     │  
-   │  │     │    work started on flake diagnosis
+   │  │     │    status updated
    │  │     │  
    │  │     └─
    │  └─ source = peer:human
    │
-   ├─ path = .goals/[BRANCH]/00000-1.fix-auth-test.goal.yaml
+   ├─ path = .goals/[BRANCH]/[OFFSET].fix-auth-test.goal.yaml
    └─ persisted
 "
 `;
@@ -161,7 +161,7 @@ exports[`achiever.goal.lifecycle.acceptance given: [case1] goal status transitio
          │  └─ gate = 10 consecutive passes
          ├─ status
          │  ├─ choice = inflight
-         │  └─ reason = work started on flake diagnosis
+         │  └─ reason = status updated
          └─ source = peer:human
 "
 `;
@@ -216,12 +216,12 @@ exports[`achiever.goal.lifecycle.acceptance given: [case1] goal status transitio
    │  │  └─ reason
    │  │     ├─
    │  │     │  
-   │  │     │    test passes 10 consecutive runs after mock stabilization
+   │  │     │    status updated
    │  │     │  
    │  │     └─
    │  └─ source = peer:human
    │
-   ├─ path = .goals/[BRANCH]/00000-1.fix-auth-test.goal.yaml
+   ├─ path = .goals/[BRANCH]/[OFFSET].fix-auth-test.goal.yaml
    └─ persisted
 "
 `;

@@ -1,0 +1,15 @@
+slug: 'add-triage-hint'
+source: 'peer:human'
+status:
+  choice: 'fulfilled'
+  reason: 'hint added to triage output'
+updatedAt: '2026-04-11'
+why:
+  ask: 'add hint to goal.triage.next showing how to get full goal details'
+  purpose: 'discoverability'
+  benefit: 'bots know how to inspect goals'
+what:
+  outcome: 'triage output includes hint like "rhx goal.memory.get --slug X"'
+how:
+  task: 'update goalTriageNext output format'
+  gate: 'hint visible in triage output'
