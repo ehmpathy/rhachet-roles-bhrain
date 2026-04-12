@@ -39,7 +39,7 @@ describe('achiever.goal.guard.acceptance', () => {
       then('stderr lists allowed skills', () => {
         expect(result.stderr).toContain('goal.memory.set');
         expect(result.stderr).toContain('goal.memory.get');
-        expect(result.stderr).toContain('goal.infer.triage');
+        expect(result.stderr).toContain('goal.triage.infer');
         expect(result.stderr).toContain('goal.triage.next');
       });
 

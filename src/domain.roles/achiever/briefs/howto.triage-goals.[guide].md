@@ -16,7 +16,7 @@ run triage:
 ### step 1: check triage state
 
 ```bash
-./goal.infer.triage.sh --scope repo
+./goal.triage.infer.sh --scope repo
 ```
 
 this shows:
@@ -63,7 +63,7 @@ for extant goal, just add coverage:
 ### step 4: verify all covered
 
 ```bash
-./goal.infer.triage.sh --scope repo
+./goal.triage.infer.sh --scope repo
 ```
 
 when uncovered = 0, triage is complete.

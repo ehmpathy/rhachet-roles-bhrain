@@ -9,4 +9,4 @@ always:
     say:
       - skills/goal.memory.set.sh
       - skills/goal.memory.get.sh
-      - skills/goal.infer.triage.sh
+      - skills/goal.triage.infer.sh

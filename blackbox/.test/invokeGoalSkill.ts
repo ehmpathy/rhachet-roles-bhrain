@@ -64,7 +64,7 @@ export const invokeGoalSkill = async (input: {
   skill:
     | 'goal.memory.set'
     | 'goal.memory.get'
-    | 'goal.infer.triage'
+    | 'goal.triage.infer'
     | 'goal.guard'
     | 'goal.triage.next';
   args: Record<string, string | boolean | undefined>;
@@ -75,7 +75,7 @@ export const invokeGoalSkill = async (input: {
   const skillToFunction: Record<string, string> = {
     'goal.memory.set': 'goalMemorySet',
     'goal.memory.get': 'goalMemoryGet',
-    'goal.infer.triage': 'goalInferTriage',
+    'goal.triage.infer': 'goalTriageInfer',
     'goal.guard': 'goalGuard',
     'goal.triage.next': 'goalTriageNext',
   };

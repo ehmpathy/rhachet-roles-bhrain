@@ -13,7 +13,7 @@ the achiever role enables goal detection, persistence, and triage — so no ask 
 
 - `goal.memory.set` - create or update a goal
 - `goal.memory.get` - retrieve extant goals
-- `goal.infer.triage` - show uncovered asks for triage
+- `goal.triage.infer` - show uncovered asks for triage
 
 ### concepts
 

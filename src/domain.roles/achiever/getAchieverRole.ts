@@ -36,7 +36,7 @@ export const ROLE_ACHIEVER: Role = Role.build({
       onStop: [
         {
           command:
-            './node_modules/.bin/rhx goal.infer.triage --mode hook.onStop',
+            './node_modules/.bin/rhx goal.triage.infer --when hook.onStop',
           timeout: 'PT10S',
         },
         {

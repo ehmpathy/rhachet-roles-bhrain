@@ -8,7 +8,7 @@
 #         - appends to asks.inventory.jsonl
 #         - does NOT halt brain — just reminds to consider goals
 #
-# .how  = invokes goal.infer.triage --mode hook.onTalk
+# .how  = invokes goal.triage.infer --when hook.onTalk
 #         which accumulates the ask and emits a reminder
 #
 # usage:
@@ -24,6 +24,6 @@ set -euo pipefail
 
 # invoke triage in onTalk mode
 # exits 0 regardless of outcome (does not halt)
-./node_modules/.bin/rhx goal.infer.triage --mode hook.onTalk || true
+./node_modules/.bin/rhx goal.triage.infer --when hook.onTalk || true
 
 exit 0

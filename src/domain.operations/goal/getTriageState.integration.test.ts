@@ -263,4 +263,219 @@ describe('getTriageState.integration', () => {
       });
     });
   });
+
+  given('[case7] status-based partition', () => {
+    const tempDir = path.join(
+      os.tmpdir(),
+      `test-getTriageState-status-${Date.now()}`,
+    );
+
+    afterEach(async () => {
+      await fs.rm(tempDir, { recursive: true, force: true });
+    });
+
+    when('[t0] goal with status=incomplete and all fields filled', () => {
+      then('goal is in goalsIncomplete', async () => {
+        // goal has all fields but status is incomplete
+        const goal = new Goal({
+          slug: 'incomplete-but-filled',
+          why: new GoalWhy({
+            ask: 'do the task',
+            purpose: 'purpose here',
+            benefit: 'benefit here',
+          }),
+          what: new GoalWhat({ outcome: 'outcome here' }),
+          how: new GoalHow({ task: 'task here', gate: 'gate here' }),
+          status: new GoalStatus({ choice: 'incomplete', reason: 'new' }),
+          source: 'peer:human',
+          createdAt: '2026-04-12',
+          updatedAt: '2026-04-12',
+        });
+
+        await setGoal({ goal, scopeDir: tempDir });
+
+        const result = await getTriageState({ scopeDir: tempDir });
+
+        expect(result.goalsIncomplete).toHaveLength(1);
+        expect(result.goalsComplete).toHaveLength(0);
+        expect(result.goalsIncomplete[0]?.slug).toEqual(
+          'incomplete-but-filled',
+        );
+      });
+    });
+
+    when('[t1] goal with status=enqueued', () => {
+      then('goal is in goalsComplete', async () => {
+        const goal = new Goal({
+          slug: 'enqueued-goal',
+          why: new GoalWhy({
+            ask: 'do the task',
+            purpose: 'purpose here',
+            benefit: 'benefit here',
+          }),
+          what: new GoalWhat({ outcome: 'outcome here' }),
+          how: new GoalHow({ task: 'task here', gate: 'gate here' }),
+          status: new GoalStatus({ choice: 'enqueued', reason: 'triaged' }),
+          source: 'peer:human',
+          createdAt: '2026-04-12',
+          updatedAt: '2026-04-12',
+        });
+
+        await setGoal({ goal, scopeDir: tempDir });
+
+        const result = await getTriageState({ scopeDir: tempDir });
+
+        expect(result.goalsComplete).toHaveLength(1);
+        expect(result.goalsIncomplete).toHaveLength(0);
+        expect(result.goalsComplete[0]?.slug).toEqual('enqueued-goal');
+      });
+    });
+
+    when('[t2] goal with status=inflight', () => {
+      then('goal is in goalsComplete', async () => {
+        const goal = new Goal({
+          slug: 'inflight-goal',
+          why: new GoalWhy({
+            ask: 'do the task',
+            purpose: 'purpose here',
+            benefit: 'benefit here',
+          }),
+          what: new GoalWhat({ outcome: 'outcome here' }),
+          how: new GoalHow({ task: 'task here', gate: 'gate here' }),
+          status: new GoalStatus({ choice: 'inflight', reason: 'started' }),
+          source: 'peer:human',
+          createdAt: '2026-04-12',
+          updatedAt: '2026-04-12',
+        });
+
+        await setGoal({ goal, scopeDir: tempDir });
+
+        const result = await getTriageState({ scopeDir: tempDir });
+
+        expect(result.goalsComplete).toHaveLength(1);
+        expect(result.goalsIncomplete).toHaveLength(0);
+      });
+    });
+
+    when('[t3] goal with status=blocked', () => {
+      then('goal is in goalsComplete', async () => {
+        const goal = new Goal({
+          slug: 'blocked-goal',
+          why: new GoalWhy({
+            ask: 'do the task',
+            purpose: 'purpose here',
+            benefit: 'benefit here',
+          }),
+          what: new GoalWhat({ outcome: 'outcome here' }),
+          how: new GoalHow({ task: 'task here', gate: 'gate here' }),
+          status: new GoalStatus({ choice: 'blocked', reason: 'blocked by X' }),
+          source: 'peer:human',
+          createdAt: '2026-04-12',
+          updatedAt: '2026-04-12',
+        });
+
+        await setGoal({ goal, scopeDir: tempDir });
+
+        const result = await getTriageState({ scopeDir: tempDir });
+
+        expect(result.goalsComplete).toHaveLength(1);
+        expect(result.goalsIncomplete).toHaveLength(0);
+      });
+    });
+
+    when('[t4] goal with status=fulfilled', () => {
+      then('goal is in goalsComplete', async () => {
+        const goal = new Goal({
+          slug: 'fulfilled-goal',
+          why: new GoalWhy({
+            ask: 'do the task',
+            purpose: 'purpose here',
+            benefit: 'benefit here',
+          }),
+          what: new GoalWhat({ outcome: 'outcome here' }),
+          how: new GoalHow({ task: 'task here', gate: 'gate here' }),
+          status: new GoalStatus({ choice: 'fulfilled', reason: 'done' }),
+          source: 'peer:human',
+          createdAt: '2026-04-12',
+          updatedAt: '2026-04-12',
+        });
+
+        await setGoal({ goal, scopeDir: tempDir });
+
+        const result = await getTriageState({ scopeDir: tempDir });
+
+        expect(result.goalsComplete).toHaveLength(1);
+        expect(result.goalsIncomplete).toHaveLength(0);
+      });
+    });
+
+    when('[t5] mix of statuses', () => {
+      then('goals are partitioned correctly', async () => {
+        // incomplete goal (status=incomplete, even though fields filled)
+        const goalIncomplete = new Goal({
+          slug: 'incomplete-one',
+          why: new GoalWhy({
+            ask: 'ask here',
+            purpose: '',
+            benefit: '',
+          }),
+          what: new GoalWhat({ outcome: '' }),
+          how: new GoalHow({ task: '', gate: '' }),
+          status: new GoalStatus({ choice: 'incomplete', reason: 'new' }),
+          source: 'peer:human',
+          createdAt: '2026-04-12',
+          updatedAt: '2026-04-12',
+        });
+
+        // enqueued goal
+        const goalEnqueued = new Goal({
+          slug: 'enqueued-one',
+          why: new GoalWhy({
+            ask: 'ask here',
+            purpose: 'purpose',
+            benefit: 'benefit',
+          }),
+          what: new GoalWhat({ outcome: 'outcome' }),
+          how: new GoalHow({ task: 'task', gate: 'gate' }),
+          status: new GoalStatus({ choice: 'enqueued', reason: 'triaged' }),
+          source: 'peer:human',
+          createdAt: '2026-04-12',
+          updatedAt: '2026-04-12',
+        });
+
+        // inflight goal
+        const goalInflight = new Goal({
+          slug: 'inflight-one',
+          why: new GoalWhy({
+            ask: 'ask here',
+            purpose: 'purpose',
+            benefit: 'benefit',
+          }),
+          what: new GoalWhat({ outcome: 'outcome' }),
+          how: new GoalHow({ task: 'task', gate: 'gate' }),
+          status: new GoalStatus({ choice: 'inflight', reason: 'started' }),
+          source: 'peer:human',
+          createdAt: '2026-04-12',
+          updatedAt: '2026-04-12',
+        });
+
+        await setGoal({ goal: goalIncomplete, scopeDir: tempDir });
+        await setGoal({ goal: goalEnqueued, scopeDir: tempDir });
+        await setGoal({ goal: goalInflight, scopeDir: tempDir });
+
+        const result = await getTriageState({ scopeDir: tempDir });
+
+        expect(result.goals).toHaveLength(3);
+        expect(result.goalsIncomplete).toHaveLength(1);
+        expect(result.goalsComplete).toHaveLength(2);
+        expect(result.goalsIncomplete[0]?.slug).toEqual('incomplete-one');
+        expect(result.goalsComplete.map((g) => g.slug)).toContain(
+          'enqueued-one',
+        );
+        expect(result.goalsComplete.map((g) => g.slug)).toContain(
+          'inflight-one',
+        );
+      });
+    });
+  });
 });

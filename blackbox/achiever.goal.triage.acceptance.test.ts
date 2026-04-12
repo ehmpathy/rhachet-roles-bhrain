@@ -619,7 +619,7 @@ describe('achiever.goal.triage.acceptance', () => {
     });
   });
 
-  given('[case6] goal.infer.triage shows incomplete goals separately', () => {
+  given('[case6] goal.triage.infer shows incomplete goals separately', () => {
     const scene = useBeforeAll(async () => {
       const tempDir = genTempDirForGoals({ slug: 'goal-triage-incomplete' });
       await execAsync('npx rhachet roles link --role achiever', { cwd: tempDir });
@@ -660,10 +660,10 @@ describe('achiever.goal.triage.acceptance', () => {
       return { tempDir };
     });
 
-    when('[t0] goal.infer.triage is invoked', () => {
-      const result = useThen('invoke goal.infer.triage', async () => {
+    when('[t0] goal.triage.infer is invoked', () => {
+      const result = useThen('invoke goal.triage.infer', async () => {
         return invokeGoalSkill({
-          skill: 'goal.infer.triage',
+          skill: 'goal.triage.infer',
           args: { scope: 'repo' },
           cwd: scene.tempDir,
         });
@@ -712,9 +712,9 @@ describe('achiever.goal.triage.acceptance', () => {
         });
       });
 
-      const result = useThen('invoke goal.infer.triage after completion', async () => {
+      const result = useThen('invoke goal.triage.infer after completion', async () => {
         return invokeGoalSkill({
-          skill: 'goal.infer.triage',
+          skill: 'goal.triage.infer',
           args: { scope: 'repo' },
           cwd: scene.tempDir,
         });
@@ -736,7 +736,7 @@ describe('achiever.goal.triage.acceptance', () => {
     });
   });
 
-  given('[case7] goal.infer.triage negative cases', () => {
+  given('[case7] goal.triage.infer negative cases', () => {
     const scene = useBeforeAll(async () => {
       const tempDir = genTempDirForGoals({ slug: 'goal-triage-negative' });
       await execAsync('npx rhachet roles link --role achiever', { cwd: tempDir });
@@ -745,9 +745,9 @@ describe('achiever.goal.triage.acceptance', () => {
     });
 
     when('[t0] invalid scope value', () => {
-      const result = useThen('invoke goal.infer.triage with invalid scope', async () => {
+      const result = useThen('invoke goal.triage.infer with invalid scope', async () => {
         return invokeGoalSkill({
-          skill: 'goal.infer.triage',
+          skill: 'goal.triage.infer',
           args: { scope: 'invalid-scope' },
           cwd: scene.tempDir,
         });
@@ -843,10 +843,10 @@ describe('achiever.goal.triage.acceptance', () => {
       });
     });
 
-    when('[t2] goal.infer.triage with --scope route shows route state', () => {
-      const result = useThen('invoke goal.infer.triage --scope route', async () => {
+    when('[t2] goal.triage.infer with --scope route shows route state', () => {
+      const result = useThen('invoke goal.triage.infer --scope route', async () => {
         return invokeGoalSkill({
-          skill: 'goal.infer.triage',
+          skill: 'goal.triage.infer',
           args: { scope: 'route' },
           cwd: scene.routeDir,
         });
@@ -921,10 +921,10 @@ describe('achiever.goal.triage.acceptance', () => {
     });
 
     when('[t1] hook.onStop fires with incomplete goal', () => {
-      const result = useThen('invoke goal.infer.triage --mode hook.onStop', async () => {
+      const result = useThen('invoke goal.triage.infer --when hook.onStop', async () => {
         return invokeGoalSkill({
-          skill: 'goal.infer.triage',
-          args: { scope: 'repo', mode: 'hook.onStop' },
+          skill: 'goal.triage.infer',
+          args: { scope: 'repo', when: 'hook.onStop' },
           cwd: scene.tempDir,
         });
       });
@@ -976,10 +976,10 @@ describe('achiever.goal.triage.acceptance', () => {
     });
 
     when('[t3] hook.onStop fires with complete goals', () => {
-      const result = useThen('invoke goal.infer.triage --mode hook.onStop after completion', async () => {
+      const result = useThen('invoke goal.triage.infer --when hook.onStop after completion', async () => {
         return invokeGoalSkill({
-          skill: 'goal.infer.triage',
-          args: { scope: 'repo', mode: 'hook.onStop' },
+          skill: 'goal.triage.infer',
+          args: { scope: 'repo', when: 'hook.onStop' },
           cwd: scene.tempDir,
         });
       });
@@ -1061,10 +1061,10 @@ describe('achiever.goal.triage.acceptance', () => {
       });
     });
 
-    when('[t2] goal.infer.triage --scope route outside a route', () => {
-      const result = useThen('invoke goal.infer.triage --scope route', async () => {
+    when('[t2] goal.triage.infer --scope route outside a route', () => {
+      const result = useThen('invoke goal.triage.infer --scope route', async () => {
         return invokeGoalSkill({
-          skill: 'goal.infer.triage',
+          skill: 'goal.triage.infer',
           args: { scope: 'route' },
           cwd: scene.tempDir, // NOT in a route directory
         });
