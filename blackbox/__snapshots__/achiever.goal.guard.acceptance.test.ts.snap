@@ -9,7 +9,7 @@ exports[`achiever.goal.guard.acceptance given: [case1] Read tool with .goals/ pa
    └─ use skills instead
       ├─ goal.memory.set — persist or update a goal
       ├─ goal.memory.get — retrieve goal state
-      ├─ goal.infer.triage — detect uncovered asks
+      ├─ goal.triage.infer — detect uncovered asks
       └─ goal.triage.next — show unfinished goals
 "
 `;

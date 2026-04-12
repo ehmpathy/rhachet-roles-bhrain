@@ -143,12 +143,6 @@
             "command": "./node_modules/.bin/rhx route.mutate.guard --mode hook",
             "timeout": 5,
             "author": "repo=bhrain/role=driver"
-          },
-          {
-            "type": "command",
-            "command": "./node_modules/.bin/rhx goal.guard",
-            "timeout": 5,
-            "author": "repo=bhrain/role=achiever"
           }
         ]
       },
@@ -179,12 +173,6 @@
             "command": "./node_modules/.bin/rhx route.drive --mode hook",
             "timeout": 5,
             "author": "repo=bhrain/role=driver"
-          },
-          {
-            "type": "command",
-            "command": "./node_modules/.bin/rhx goal.triage.next --when hook.onStop",
-            "timeout": 10,
-            "author": "repo=bhrain/role=achiever"
           }
         ]
       }

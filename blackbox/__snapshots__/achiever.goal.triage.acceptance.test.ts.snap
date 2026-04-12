@@ -728,10 +728,10 @@ exports[`achiever.goal.triage.acceptance given: [case4] partial goals via CLI fl
 "
 `;
 
-exports[`achiever.goal.triage.acceptance given: [case6] goal.infer.triage shows incomplete goals separately when: [t0] goal.infer.triage is invoked then: stdout has good vibes 1`] = `
+exports[`achiever.goal.triage.acceptance given: [case6] goal.triage.infer shows incomplete goals separately when: [t0] goal.triage.infer is invoked then: stdout has good vibes 1`] = `
 "🦉 to forget an ask is to break a promise. remember.
 
-🔮 goal.infer.triage --scope repo
+🔮 goal.triage.infer --scope repo
    ├─ asks = 0
    ├─ uncovered = 0
    ├─ goals = 2
@@ -741,21 +741,22 @@ exports[`achiever.goal.triage.acceptance given: [case6] goal.infer.triage shows 
    │
    ├─ incomplete goals
    │  └─ incomplete-goal [incomplete]
-   │     └─ absent: why.purpose, why.benefit, what.outcome, how.task, how.gate
+   │     ├─ absent: why.purpose, why.benefit, what.outcome, how.task, how.gate
+   │     └─ to fix, run: \`rhx goal.memory.set --slug incomplete-goal --why.purpose "..."\`
    │
    ├─ complete goals
    │  └─ complete-goal [enqueued]
    │
    └─ triage required
-      ├─ complete incomplete goals
-      └─ then re-run goal.infer.triage
+      ├─ complete incomplete goals via \`rhx goal.memory.set\`
+      └─ then re-run \`rhx goal.triage.infer\`
 "
 `;
 
-exports[`achiever.goal.triage.acceptance given: [case6] goal.infer.triage shows incomplete goals separately when: [t1] all goals are complete then: stdout has good vibes 1`] = `
+exports[`achiever.goal.triage.acceptance given: [case6] goal.triage.infer shows incomplete goals separately when: [t1] all goals are complete then: stdout has good vibes 1`] = `
 "🦉 to forget an ask is to break a promise. remember.
 
-🔮 goal.infer.triage --scope repo
+🔮 goal.triage.infer --scope repo
    ├─ asks = 0
    ├─ uncovered = 0
    ├─ goals = 2
@@ -854,10 +855,10 @@ exports[`achiever.goal.triage.acceptance given: [case8] route scope goal persist
 "
 `;
 
-exports[`achiever.goal.triage.acceptance given: [case8] route scope goal persistence when: [t2] goal.infer.triage with --scope route shows route state then: stdout has good vibes 1`] = `
+exports[`achiever.goal.triage.acceptance given: [case8] route scope goal persistence when: [t2] goal.triage.infer with --scope route shows route state then: stdout has good vibes 1`] = `
 "🦉 to forget an ask is to break a promise. remember.
 
-🔮 goal.infer.triage --scope route
+🔮 goal.triage.infer --scope route
    ├─ asks = 0
    ├─ uncovered = 0
    ├─ goals = 1
@@ -910,16 +911,17 @@ exports[`achiever.goal.triage.acceptance given: [case9] partial goal blocks onSt
 exports[`achiever.goal.triage.acceptance given: [case9] partial goal blocks onStop until complete (journey) when: [t1] hook.onStop fires with incomplete goal then: stderr has good vibes 1`] = `
 "🦉 to forget an ask is to break a promise. remember.
 
-🔮 goal.infer.triage --mode hook.onStop
+🔮 goal.triage.infer --when hook.onStop
    ├─ incomplete goals = 1
    │  └─ incomplete-blocks-session
-   │     └─ absent: why.purpose, why.benefit, what.outcome, how.task, how.gate
+   │     ├─ absent: why.purpose, why.benefit, what.outcome, how.task, how.gate
+   │     └─ to fix, run: \`rhx goal.memory.set --slug incomplete-blocks-session --why.purpose "..."\`
    │
    └─ halted, triage required
       ├─ incomplete goals must be articulated
       │
       └─ to continue, run
-         └─ rhx goal.infer.triage
+         └─ rhx goal.triage.infer
 "
 `;
 

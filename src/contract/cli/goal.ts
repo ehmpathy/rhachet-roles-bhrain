@@ -429,7 +429,7 @@ const parseArgsForGet = async (
 };
 
 /**
- * .what = parse args for goal.infer.triage
+ * .what = parse args for goal.triage.infer
  * .why = extract --scope from argv
  */
 const parseArgsForTriage = async (
@@ -458,7 +458,7 @@ const parseArgsForTriage = async (
       scope = scopeValue;
       i++;
     }
-    if (arg === '--mode' && args[i + 1]) {
+    if (arg === '--when' && args[i + 1]) {
       mode = args[i + 1] as 'triage' | 'hook.onStop';
       i++;
     }
@@ -938,10 +938,10 @@ export const goalMemoryGet = async (): Promise<void> => {
 };
 
 /**
- * .what = cli entrypoint for goal.infer.triage skill
+ * .what = cli entrypoint for goal.triage.infer skill
  * .why = enables shell invocation via package-level import
  */
-export const goalInferTriage = async (): Promise<void> => {
+export const goalTriageInfer = async (): Promise<void> => {
   // parse and validate args
   const { scope, mode } = await parseArgsForTriage(process.argv);
 
@@ -957,7 +957,7 @@ export const goalInferTriage = async (): Promise<void> => {
     if (hasUncovered || hasIncomplete) {
       console.error('🦉 to forget an ask is to break a promise. remember.');
       console.error('');
-      console.error('🔮 goal.infer.triage --mode hook.onStop');
+      console.error('🔮 goal.triage.infer --when hook.onStop');
 
       if (hasUncovered) {
         console.error(`   ├─ uncovered asks = ${state.asksUncovered.length}`);
@@ -973,7 +973,11 @@ export const goalInferTriage = async (): Promise<void> => {
           const cont = isLast ? '   ' : '│  ';
           console.error(`   │  ${branch} ${goal.slug}`);
           const meta = computeGoalCompleteness(goal);
-          console.error(`   │  ${cont}└─ absent: ${meta.absent.join(', ')}`);
+          console.error(`   │  ${cont}├─ absent: ${meta.absent.join(', ')}`);
+          const firstAbsent = meta.absent[0] ?? 'why.purpose';
+          console.error(
+            `   │  ${cont}└─ to fix, run: \`rhx goal.memory.set --slug ${goal.slug} --${firstAbsent} "..."\``,
+          );
         }
       }
 
@@ -989,7 +993,7 @@ export const goalInferTriage = async (): Promise<void> => {
 
       console.error('      │');
       console.error('      └─ to continue, run');
-      console.error('         └─ rhx goal.infer.triage');
+      console.error('         └─ rhx goal.triage.infer');
       process.exit(2); // constraint error: user must fix
     }
     // all asks covered and all goals complete, silent exit
@@ -998,7 +1002,7 @@ export const goalInferTriage = async (): Promise<void> => {
 
   // triage mode: show full state with treestruct vibes
   emitOwlHeader();
-  console.log(`🔮 goal.infer.triage --scope ${scope}`);
+  console.log(`🔮 goal.triage.infer --scope ${scope}`);
 
   // summary
   console.log(`   ├─ asks = ${state.asks.length}`);
@@ -1034,7 +1038,11 @@ export const goalInferTriage = async (): Promise<void> => {
       const cont = isLast ? '   ' : '│  ';
       console.log(`   │  ${branch} ${goal.slug} [${goal.status.choice}]`);
       const meta = computeGoalCompleteness(goal);
-      console.log(`   │  ${cont}└─ absent: ${meta.absent.join(', ')}`);
+      console.log(`   │  ${cont}├─ absent: ${meta.absent.join(', ')}`);
+      const firstAbsent = meta.absent[0] ?? 'why.purpose';
+      console.log(
+        `   │  ${cont}└─ to fix, run: \`rhx goal.memory.set --slug ${goal.slug} --${firstAbsent} "..."\``,
+      );
     }
   }
 
@@ -1062,9 +1070,11 @@ export const goalInferTriage = async (): Promise<void> => {
       console.log(`      ├─ cover uncovered asks with goals`);
     }
     if (state.goalsIncomplete.length > 0) {
-      console.log(`      ├─ complete incomplete goals`);
+      console.log(
+        `      ├─ complete incomplete goals via \`rhx goal.memory.set\``,
+      );
     }
-    console.log(`      └─ then re-run goal.infer.triage`);
+    console.log(`      └─ then re-run \`rhx goal.triage.infer\``);
   }
 };
 
@@ -1124,7 +1134,7 @@ export const goalGuard = async (): Promise<void> => {
   console.error('   └─ use skills instead');
   console.error('      ├─ goal.memory.set — persist or update a goal');
   console.error('      ├─ goal.memory.get — retrieve goal state');
-  console.error('      ├─ goal.infer.triage — detect uncovered asks');
+  console.error('      ├─ goal.triage.infer — detect uncovered asks');
   console.error('      └─ goal.triage.next — show unfinished goals');
 
   process.exit(2);
@@ -1194,7 +1204,9 @@ export const goalTriageNext = async (): Promise<void> => {
   let scopeDir: string;
   try {
     scopeDir = await getScopeDir(scope);
-  } catch {
+  } catch (error) {
+    // allowlist BadRequestError (scope unavailable), rethrow real errors
+    if (!(error instanceof BadRequestError)) throw error;
     // scope dir unavailable (e.g., not bound to route), no goals
     return;
   }
@@ -1233,10 +1245,11 @@ export const goalTriageNext = async (): Promise<void> => {
       const askShort =
         askText.length > 60 ? askText.slice(0, 60) + '...' : askText;
       console.error(`      ${cont}├─ why.ask = ${askShort}`);
-      console.error(`      ${cont}└─ status = inflight → ✋ finish this first`);
+      console.error(`      ${cont}├─ status = inflight → ✋ finish this first`);
+      console.error(
+        `      ${cont}└─ tip: run \`rhx goal.memory.get --slug ${goal.slug}\` to see the goal`,
+      );
     }
-    console.error('');
-    console.error(`   💡 hint: rhx goal.memory.get`);
     process.exit(2);
   }
 
@@ -1254,10 +1267,11 @@ export const goalTriageNext = async (): Promise<void> => {
       const askShort =
         askText.length > 60 ? askText.slice(0, 60) + '...' : askText;
       console.error(`      ${cont}├─ why.ask = ${askShort}`);
-      console.error(`      ${cont}└─ status = enqueued → ✋ finish this first`);
+      console.error(`      ${cont}├─ status = enqueued → ✋ finish this first`);
+      console.error(
+        `      ${cont}└─ tip: run \`rhx goal.memory.get --slug ${goal.slug}\` to see the goal`,
+      );
     }
-    console.error('');
-    console.error(`   💡 hint: rhx goal.memory.get`);
     process.exit(2);
   }
 };

@@ -3,10 +3,7 @@ import * as path from 'path';
 
 import { Ask } from '@src/domain.objects/Achiever/Ask';
 import { Coverage } from '@src/domain.objects/Achiever/Coverage';
-import {
-  computeGoalCompleteness,
-  type Goal,
-} from '@src/domain.objects/Achiever/Goal';
+import type { Goal } from '@src/domain.objects/Achiever/Goal';
 
 import { getGoals } from './getGoals';
 
@@ -34,7 +31,10 @@ export const getTriageState = async (input: {
       const parsed = JSON.parse(line);
       asks.push(new Ask(parsed));
     }
-  } catch {
+  } catch (error) {
+    // allowlist ENOENT (file not found), rethrow real errors
+    const fsError = error as NodeJS.ErrnoException;
+    if (fsError.code !== 'ENOENT') throw error;
     // file does not exist, no asks
   }
 
@@ -48,7 +48,10 @@ export const getTriageState = async (input: {
       const parsed = JSON.parse(line);
       coverage.push(new Coverage(parsed));
     }
-  } catch {
+  } catch (error) {
+    // allowlist ENOENT (file not found), rethrow real errors
+    const fsError = error as NodeJS.ErrnoException;
+    if (fsError.code !== 'ENOENT') throw error;
     // file does not exist, no coverage
   }
 
@@ -61,13 +64,11 @@ export const getTriageState = async (input: {
   // get extant goals
   const { goals } = await getGoals({ scopeDir: input.scopeDir });
 
-  // partition goals by completeness (computed on the fly)
-  const goalsComplete = goals.filter(
-    (g) => computeGoalCompleteness(g).complete === true,
-  );
-  const goalsIncomplete = goals.filter(
-    (g) => computeGoalCompleteness(g).complete !== true,
-  );
+  // partition goals by status (not field completeness)
+  // triage complete = already past triage stage (enqueued, inflight, blocked, fulfilled)
+  // triage incomplete = status is incomplete (needs fields filled)
+  const goalsComplete = goals.filter((g) => g.status.choice !== 'incomplete');
+  const goalsIncomplete = goals.filter((g) => g.status.choice === 'incomplete');
 
   return {
     asks,
