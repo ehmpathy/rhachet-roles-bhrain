@@ -411,16 +411,16 @@ describe('getTriageState.integration', () => {
 
     when('[t5] mix of statuses', () => {
       then('goals are partitioned correctly', async () => {
-        // incomplete goal
+        // incomplete goal (status=incomplete, even though fields filled)
         const goalIncomplete = new Goal({
           slug: 'incomplete-one',
           why: new GoalWhy({
             ask: 'ask here',
-            purpose: null,
-            benefit: null,
+            purpose: '',
+            benefit: '',
           }),
-          what: new GoalWhat({ outcome: null }),
-          how: new GoalHow({ task: null, gate: null }),
+          what: new GoalWhat({ outcome: '' }),
+          how: new GoalHow({ task: '', gate: '' }),
           status: new GoalStatus({ choice: 'incomplete', reason: 'new' }),
           source: 'peer:human',
           createdAt: '2026-04-12',
