@@ -29,8 +29,9 @@ const config: Config = {
   testMatch: ['**/*.acceptance.test.ts', '!**/.yalc/**', '!**/.scratch/**'],
   setupFilesAfterEnv: ['./jest.acceptance.env.ts'],
 
-  // use 50% of threads to leave headroom for other processes
-  maxWorkers: '50%', // https://stackoverflow.com/questions/71287710/why-does-jest-run-faster-with-maxworkers-50
+  // run sequentially to prevent symlink race conditions in temp dir setup
+  // LLM tests create temp dirs with symlinks to dist/; parallelism causes conflicts
+  maxWorkers: 1,
 };
 
 // eslint-disable-next-line import/no-default-export

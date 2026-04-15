@@ -1,0 +1,107 @@
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
+
+exports[`driver.route.stone.add.acceptance given: [case1] default plan mode with literal source when: [t0] invoke without --mode flag then: stdout matches snapshot 1`] = `
+"🦉 another stone on the path
+
+🗿 route.stone.add --mode plan
+   ├─ stone  = 3.1.research.custom
+   ├─ route  = .
+   ├─ source = custom research content
+   ├─ preview
+   │  ├─
+   │  │
+   │  │  custom research content
+   │  │
+   │  └─
+   └─ ✋ created = false, rerun with --mode apply to execute
+"
+`;
+
+exports[`driver.route.stone.add.acceptance given: [case2] apply mode with literal source when: [t0] invoke with --mode apply then: stdout matches snapshot 1`] = `
+"🦉 another stone on the path
+
+🗿 route.stone.add --mode apply
+   ├─ stone  = 3.1.research.custom
+   ├─ route  = .
+   └─ created = 3.1.research.custom.stone
+      └─ the way continues, run \`rhx route.drive\`
+"
+`;
+
+exports[`driver.route.stone.add.acceptance given: [case3] collision detection when: [t0] stone already exists then: stderr matches snapshot 1`] = `
+"error: BadRequestError: stone already exists with different content; use \`route.stone.del\` first
+
+{
+  "stone": "1.vision",
+  "path": "1.vision.stone"
+}
+"
+`;
+
+exports[`driver.route.stone.add.acceptance given: [case4] invalid stone name - no numeric prefix when: [t0] invoke with invalid stone name then: stderr matches snapshot 1`] = `
+"error: BadRequestError: stone name must have numeric prefix followed by at least one alpha segment (e.g., 3.1.6.research.custom)
+"
+`;
+
+exports[`driver.route.stone.add.acceptance given: [case5] template source when: [t0] invoke with template($behavior/...) source then: stdout matches snapshot 1`] = `
+"🦉 another stone on the path
+
+🗿 route.stone.add --mode apply
+   ├─ stone  = 3.1.research.adhoc
+   ├─ route  = .
+   └─ created = 3.1.research.adhoc.stone
+      └─ the way continues, run \`rhx route.drive\`
+"
+`;
+
+exports[`driver.route.stone.add.acceptance given: [case6] stdin source when: [t0] invoke with @stdin source then: stdout matches snapshot 1`] = `
+"🦉 another stone on the path
+
+🗿 route.stone.add --mode apply
+   ├─ stone  = 3.2.research.api
+   ├─ route  = .
+   └─ created = 3.2.research.api.stone
+      └─ the way continues, run \`rhx route.drive\`
+"
+`;
+
+exports[`driver.route.stone.add.acceptance given: [case7] stdin source with no content when: [t0] invoke with @stdin but no stdin provided then: stderr matches snapshot 1`] = `
+"error: BadRequestError: no content provided via stdin
+"
+`;
+
+exports[`driver.route.stone.add.acceptance given: [case8] template not found when: [t0] invoke with nonexistent template then: stderr matches snapshot 1`] = `
+"error: BadRequestError: template file not found
+
+{
+  "path": "./refs/nonexistent.stone"
+}
+"
+`;
+
+exports[`driver.route.stone.add.acceptance given: [case9] required args validation when: [t0] invoke without --stone then: stderr matches snapshot 1`] = `
+"error: BadRequestError: --stone is required
+
+{
+  "hint": "--help for usage"
+}
+"
+`;
+
+exports[`driver.route.stone.add.acceptance given: [case9] required args validation when: [t1] invoke without --source then: stderr matches snapshot 1`] = `
+"error: BadRequestError: --from is required
+
+{
+  "hint": "--help for usage"
+}
+"
+`;
+
+exports[`driver.route.stone.add.acceptance given: [case10] route not found when: [t0] invoke with nonexistent route then: stderr matches snapshot 1`] = `
+"error: BadRequestError: route not found
+
+{
+  "route": "./nonexistent"
+}
+"
+`;

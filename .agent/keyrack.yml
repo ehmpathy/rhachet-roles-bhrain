@@ -1,7 +1,11 @@
 org: ehmpathy
 extends:
+  - .agent/repo=bhrain/role=reviewer/keyrack.yml
   - .agent/repo=ehmpathy/role=mechanic/keyrack.yml
 env.prod: null
-env.test: null
+env.test:
+  - OPENAI_API_KEY
+  - ANTHROPIC_API_KEY
+  - TAVILY_API_KEY
 env.all:
   - XAI_API_KEY

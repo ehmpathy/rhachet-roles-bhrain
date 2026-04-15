@@ -15,6 +15,7 @@ import { getLatestReviewFilesPerIndex } from '@src/domain.operations/route/guard
 import { getOneStoneGuardApproval } from '@src/domain.operations/route/judges/getOneStoneGuardApproval';
 import { stepRouteDrive } from '@src/domain.operations/route/stepRouteDrive';
 import { stepRouteReview } from '@src/domain.operations/route/stepRouteReview';
+import { stepRouteStoneAdd } from '@src/domain.operations/route/stepRouteStoneAdd';
 import { stepRouteStoneDel } from '@src/domain.operations/route/stepRouteStoneDel';
 import { stepRouteStoneGet } from '@src/domain.operations/route/stepRouteStoneGet';
 import { stepRouteStoneSet } from '@src/domain.operations/route/stepRouteStoneSet';
@@ -43,12 +44,128 @@ const isNodeEvalMode = (argv: string[]): boolean => {
 };
 
 /**
+ * .what = copies bytes read from a buffer into a new buffer
+ * .why = encapsulates buffer slice for readability in stdin read loops
+ */
+const asBufferChunkCopy = (input: {
+  buffer: Buffer;
+  bytesRead: number;
+}): Buffer => {
+  return Buffer.from(input.buffer.subarray(0, input.bytesRead));
+};
+
+/**
+ * .what = canonicalizes absolute path to relative, handles symlinks
+ * .why = encapsulates path canonicalization for glob match in route.bounce
+ */
+const asRelativePathFromAbsolute = (input: {
+  filePath: string;
+  cwd: string;
+  fsSync: { realpathSync: (p: string) => string };
+}): string | null => {
+  let cwdCanonical: string;
+  let filePathCanonical: string;
+
+  try {
+    cwdCanonical = input.fsSync.realpathSync(input.cwd);
+    const fileDir = path.dirname(input.filePath);
+    const fileName = path.basename(input.filePath);
+    try {
+      const fileDirCanonical = input.fsSync.realpathSync(fileDir);
+      filePathCanonical = path.join(fileDirCanonical, fileName);
+    } catch (error) {
+      if (
+        error &&
+        typeof error === 'object' &&
+        'code' in error &&
+        error.code === 'ENOENT'
+      ) {
+        console.error(
+          `[route.bounce] fail-open: parent dir does not exist: ${fileDir}`,
+        );
+        filePathCanonical = input.filePath;
+      } else {
+        throw error;
+      }
+    }
+  } catch (error) {
+    if (
+      error &&
+      typeof error === 'object' &&
+      'code' in error &&
+      error.code === 'ENOENT'
+    ) {
+      console.error(
+        `[route.bounce] fail-open: cwd does not exist: ${input.cwd}`,
+      );
+      cwdCanonical = input.cwd;
+      filePathCanonical = input.filePath;
+    } else {
+      throw error;
+    }
+  }
+
+  if (!filePathCanonical.startsWith(cwdCanonical)) {
+    return null;
+  }
+  return path.relative(cwdCanonical, filePathCanonical);
+};
+
+/**
+ * .what = extracts grant action from positional args or named option
+ * .why = encapsulates grant action parse for readability in routeMutateGrant
+ */
+const getGrantActionFromArgs = (input: {
+  argv: string[];
+  grantOption: string | undefined;
+}): string | undefined => {
+  const positionalArgs = getCleanArgsFromArgv({ argv: input.argv }).filter(
+    (arg) => !arg.startsWith('--'),
+  );
+  const grantIndex = positionalArgs.indexOf('grant');
+  const positionalAction =
+    grantIndex >= 0 ? positionalArgs[grantIndex + 1] : undefined;
+  return positionalAction ?? input.grantOption;
+};
+
+/**
+ * .what = valid stone passage actions for route.stone.set
+ * .why = enables clear validation without inline enum check
+ */
+const VALID_STONE_PASSAGE_ACTIONS = new Set([
+  'passed',
+  'approved',
+  'promised',
+  'blocked',
+  'rewound',
+  'arrived',
+]);
+
+/**
+ * .what = checks if action is a valid stone passage action
+ * .why = encapsulates action validation for readability
+ */
+const isValidStonePassageAction = (input: {
+  action: string | undefined;
+}): input is { action: string } => {
+  return !!input.action && VALID_STONE_PASSAGE_ACTIONS.has(input.action);
+};
+
+/**
+ * .what = extracts clean args from argv, skipping node/entrypoint args and separators
+ * .why = encapsulates argv preprocessing for readability
+ */
+const getCleanArgsFromArgv = (input: { argv: string[] }): string[] => {
+  const skipCount = isNodeEvalMode(input.argv) ? 1 : 2;
+  return input.argv.slice(skipCount).filter((arg) => arg !== '--');
+};
+
+/**
  * .what = parses cli args into options object
  * .why = simple arg parser without external dependencies
  */
 const parseArgs = (argv: string[]): Record<string, string | undefined> => {
-  const skipCount = isNodeEvalMode(argv) ? 1 : 2;
-  const args = argv.slice(skipCount).filter((arg) => arg !== '--');
+  const args = getCleanArgsFromArgv({ argv });
   const options: Record<string, string | undefined> = {};
 
   for (let i = 0; i < args.length; i++) {
@@ -76,8 +193,7 @@ const parseArgs = (argv: string[]): Record<string, string | undefined> => {
  * .why = enables multi-value support for --stone in route.stone.del
  */
 const collectArgsMulti = (argv: string[], key: string): string[] => {
-  const skipCount = isNodeEvalMode(argv) ? 1 : 2;
-  const args = argv.slice(skipCount).filter((arg) => arg !== '--');
+  const args = getCleanArgsFromArgv({ argv });
   const values: string[] = [];
 
   for (let i = 0; i < args.length; i++) {
@@ -94,6 +210,47 @@ const collectArgsMulti = (argv: string[], key: string): string[] => {
   }
 
   return values;
+};
+
+/**
+ * .what = collects stdin content synchronously
+ * .why = enables @stdin source for route.stone.add
+ */
+const collectStdinContent = (): string | null => {
+  // check if stdin has data (non-TTY means piped input)
+  if (process.stdin.isTTY) return null;
+
+  // read stdin synchronously via fd 0
+  const chunks: Buffer[] = [];
+  const BUFSIZE = 256;
+  const buf = Buffer.allocUnsafe(BUFSIZE);
+
+  // eslint-disable-next-line @typescript-eslint/no-require-imports, @typescript-eslint/no-var-requires
+  const fsSync = require('fs');
+
+  while (true) {
+    try {
+      const bytesRead = fsSync.readSync(0, buf, 0, BUFSIZE, null);
+      if (bytesRead === 0) break;
+      chunks.push(asBufferChunkCopy({ buffer: buf, bytesRead }));
+    } catch (error) {
+      // readSync throws on pipe closed (EAGAIN/EWOULDBLOCK) or EOF conditions
+      // only break on expected EOF-like errors; rethrow unexpected I/O errors
+      if (
+        error instanceof Error &&
+        'code' in error &&
+        (error.code === 'EAGAIN' ||
+          error.code === 'EWOULDBLOCK' ||
+          error.code === 'EOF')
+      ) {
+        break;
+      }
+      throw error;
+    }
+  }
+
+  if (chunks.length === 0) return null;
+  return Buffer.concat(chunks).toString('utf-8');
 };
 
 /**
@@ -166,6 +323,35 @@ options:
   --route <path>     path to route directory (required)
   --mode <plan|apply> plan = preview (default), apply = execute deletion
   --help             show this help message
+`.trim(),
+  );
+};
+
+/**
+ * .what = prints help for route.stone.add
+ */
+const printAddHelp = (): void => {
+  console.log(
+    `
+route.stone.add - add a stone to a route
+
+usage:
+  route.stone.add [options]
+
+options:
+  --stone <name>     stone name (required, e.g., 3.1.6.research.custom)
+  --from <source>    content source (required):
+                       @stdin = read from stdin
+                       template($behavior/refs/...) = read from template file
+                       '<text>' = literal content
+  --route <path>     path to route directory (optional, uses bound route)
+  --mode <plan|apply> plan = preview (default), apply = create stone
+  --help             show this help message
+
+examples:
+  echo "content" | route.stone.add --stone 3.1.research.adhoc --from @stdin
+  route.stone.add --stone 3.1.research.adhoc --from 'template($behavior/refs/template.research.adhoc.stone)'
+  route.stone.add --stone 3.1.research.adhoc --from 'investigate the topic'
 `.trim(),
   );
 };
@@ -488,13 +674,28 @@ export const routeBindDel = async (): Promise<void> => {
 };
 
 /**
- * .what = resolves --route from bind when absent
- * .why = enables auto-resolve fallback for all route.stone.* commands
+ * .what = looks up route from bind
+ * .why = enables auto-detect fallback for all route.stone.* commands
  */
-const resolveRouteFromBind = async (): Promise<string | null> => {
+const getRouteFromBindOrNull = async (): Promise<string | null> => {
   const bind = await getRouteBindByBranch({ branch: null });
   if (bind) return bind.route;
   return null;
+};
+
+/**
+ * .what = gets route from option or bind, throws if neither available
+ * .why = encapsulates route lookup for readability in orchestrators
+ */
+const getRouteOrThrow = async (input: {
+  route: string | undefined;
+}): Promise<string> => {
+  if (input.route) return input.route;
+  const routeFromBind = await getRouteFromBindOrNull();
+  if (routeFromBind) return routeFromBind;
+  throw new BadRequestError(
+    'no route bound to this branch. use --route or route.bind',
+  );
 };
 
 /**
@@ -510,26 +711,16 @@ export const routeStoneGet = async (): Promise<void> => {
   }
 
   if (!options.stone) {
-    console.error('error: --stone is required');
-    console.error('run with --help for usage');
-    process.exit(2);
+    throw new BadRequestError('--stone is required', {
+      hint: '--help for usage',
+    });
   }
-  if (!options.route) {
-    const routeFromBind = await resolveRouteFromBind();
-    if (routeFromBind) {
-      options.route = routeFromBind;
-    } else {
-      console.error(
-        'error: no route bound to this branch. use --route or route.bind',
-      );
-      process.exit(2);
-    }
-  }
+  const route = await getRouteOrThrow({ route: options.route });
 
   try {
     const result = await stepRouteStoneGet({
       stone: options.stone as '@next-one' | '@next-all' | string,
-      route: options.route,
+      route,
       say: options.say === 'true',
     });
 
@@ -567,28 +758,11 @@ export const routeStoneSet = async (): Promise<void> => {
       hint: '--help for usage',
     });
 
-  // validate --route required (or resolve from bind)
-  if (!options.route) {
-    const routeFromBind = await resolveRouteFromBind();
-    if (routeFromBind) {
-      options.route = routeFromBind;
-    } else {
-      throw new BadRequestError(
-        'no route bound to this branch. use --route or route.bind',
-      );
-    }
-  }
+  // validate --route required (or get from bind)
+  const route = await getRouteOrThrow({ route: options.route });
 
   // validate --as required and valid
-  if (
-    !options.as ||
-    (options.as !== 'passed' &&
-      options.as !== 'approved' &&
-      options.as !== 'promised' &&
-      options.as !== 'blocked' &&
-      options.as !== 'rewound' &&
-      options.as !== 'arrived')
-  ) {
+  if (!isValidStonePassageAction({ action: options.as })) {
     throw new BadRequestError(
       '--as must be "passed", "approved", "promised", "blocked", "rewound", or "arrived"',
       { hint: '--help for usage' },
@@ -618,7 +792,7 @@ export const routeStoneSet = async (): Promise<void> => {
     const result = await stepRouteStoneSet(
       {
         stone: options.stone,
-        route: options.route,
+        route,
         as: options.as as
           | 'passed'
           | 'approved'
@@ -671,40 +845,88 @@ export const routeStoneSet = async (): Promise<void> => {
  * .why = enables shell invocation via package-level import
  */
 export const routeStoneDel = async (): Promise<void> => {
-  const options = parseArgs(process.argv);
-
-  if (options.help) {
-    printDelHelp();
-    return;
-  }
-
-  // collect all --stone values for multi-pattern support
-  const stones = collectArgsMulti(process.argv, 'stone');
-  if (stones.length === 0) {
-    console.error('error: --stone is required');
-    console.error('run with --help for usage');
-    process.exit(2);
-  }
-
-  if (!options.route) {
-    const routeFromBind = await resolveRouteFromBind();
-    if (routeFromBind) {
-      options.route = routeFromBind;
-    } else {
-      console.error(
-        'error: no route bound to this branch. use --route or route.bind',
-      );
-      process.exit(2);
-    }
-  }
-
-  // parse mode with default to plan
-  const mode = options.mode === 'apply' ? 'apply' : ('plan' as const);
-
   try {
+    const options = parseArgs(process.argv);
+
+    if (options.help) {
+      printDelHelp();
+      return;
+    }
+
+    // collect all --stone values for multi-pattern support
+    const stones = collectArgsMulti(process.argv, 'stone');
+    if (stones.length === 0) {
+      throw new BadRequestError('--stone is required', {
+        hint: '--help for usage',
+      });
+    }
+
+    const route = await getRouteOrThrow({ route: options.route });
+
+    // parse mode with default to plan
+    const mode = options.mode === 'apply' ? 'apply' : ('plan' as const);
+
     const result = await stepRouteStoneDel({
       stones,
-      route: options.route,
+      route,
+      mode,
+    });
+
+    if (result.emit) {
+      console.log(result.emit.stdout);
+    }
+  } catch (error) {
+    // allowlist BadRequestError: format nicely and exit 2
+    if (error instanceof BadRequestError) {
+      console.error(`error: ${error.message}`);
+      process.exit(2);
+    }
+    // rethrow unexpected errors (no failhide)
+    throw error;
+  }
+};
+
+/**
+ * .what = cli entrypoint for route.stone.add skill
+ * .why = enables drivers to add stones to their route on the fly
+ */
+export const routeStoneAdd = async (): Promise<void> => {
+  try {
+    const options = parseArgs(process.argv);
+
+    if (options.help) {
+      printAddHelp();
+      return;
+    }
+
+    // validate --stone is provided
+    if (!options.stone) {
+      throw new BadRequestError('--stone is required', {
+        hint: '--help for usage',
+      });
+    }
+
+    // validate --from is provided
+    if (!options.from) {
+      throw new BadRequestError('--from is required', {
+        hint: '--help for usage',
+      });
+    }
+
+    // get route from option or bind
+    const route = await getRouteOrThrow({ route: options.route });
+
+    // collect stdin if source is @stdin
+    const stdin = options.from === '@stdin' ? collectStdinContent() : null;
+
+    // parse mode with default to plan
+    const mode = options.mode === 'apply' ? 'apply' : ('plan' as const);
+
+    const result = await stepRouteStoneAdd({
+      stone: options.stone,
+      source: options.from,
+      stdin,
+      route,
       mode,
     });
 
@@ -735,43 +957,33 @@ export const routeStoneJudge = async (): Promise<void> => {
   }
 
   if (!options.mechanism) {
-    console.error('error: --mechanism is required');
-    console.error('run with --help for usage');
-    process.exit(2);
+    throw new BadRequestError('--mechanism is required', {
+      hint: '--help for usage',
+    });
   }
   if (!options.stone) {
-    console.error('error: --stone is required');
-    console.error('run with --help for usage');
-    process.exit(2);
+    throw new BadRequestError('--stone is required', {
+      hint: '--help for usage',
+    });
   }
-  if (!options.route) {
-    const routeFromBind = await resolveRouteFromBind();
-    if (routeFromBind) {
-      options.route = routeFromBind;
-    } else {
-      console.error(
-        'error: no route bound to this branch. use --route or route.bind',
-      );
-      process.exit(2);
-    }
-  }
+  const route = await getRouteOrThrow({ route: options.route });
 
   try {
     if (options.mechanism === 'approved?') {
-      await judgeApproved({ stone: options.stone, route: options.route });
+      await judgeApproved({ stone: options.stone, route });
     } else if (options.mechanism === 'reviewed?') {
       const allowBlockers = parseInt(options['allow-blockers'] ?? '0', 10);
       const allowNitpicks = parseInt(options['allow-nitpicks'] ?? '0', 10);
       await judgeReviewed({
         stone: options.stone,
-        route: options.route,
+        route,
         allowBlockers,
         allowNitpicks,
       });
     } else {
-      console.error(`error: unknown mechanism "${options.mechanism}"`);
-      console.error('run with --help for usage');
-      process.exit(2);
+      throw new BadRequestError(`unknown mechanism "${options.mechanism}"`, {
+        hint: '--help for usage',
+      });
     }
   } catch (error) {
     // allowlist BadRequestError: format nicely and exit 2
@@ -827,6 +1039,29 @@ const judgeApproved = async (input: {
 };
 
 /**
+ * .what = extracts blocker and nitpick counts from review content
+ * .why = encapsulates regex extraction for readability
+ */
+const getReviewCountsFromContent = (input: {
+  content: string;
+}): { blockers: number; nitpicks: number } => {
+  // match both formats:
+  // 1. "blockers: N" (yaml/key-value format from review tools)
+  // 2. "N blockers" (tree/prose format from skill output)
+  const blockerMatch =
+    input.content.match(/blockers?:\s*(\d+)/i) ||
+    input.content.match(/(\d+)\s+blockers?/i);
+  const nitpickMatch =
+    input.content.match(/nitpicks?:\s*(\d+)/i) ||
+    input.content.match(/(\d+)\s+nitpicks?/i);
+
+  return {
+    blockers: blockerMatch?.[1] ? parseInt(blockerMatch[1], 10) : 0,
+    nitpicks: nitpickMatch?.[1] ? parseInt(nitpickMatch[1], 10) : 0,
+  };
+};
+
+/**
  * .what = judge mechanism for review threshold check
  * .why = enables milestones gated on code review quality
  */
@@ -875,22 +1110,9 @@ const judgeReviewed = async (input: {
 
   for (const filePath of latestReviewFiles) {
     const content = await fs.readFile(filePath, 'utf-8');
-    // match both formats:
-    // 1. "blockers: N" (yaml/key-value format from review tools)
-    // 2. "N blockers" (tree/prose format from skill output)
-    const blockerMatch =
-      content.match(/blockers?:\s*(\d+)/i) ||
-      content.match(/(\d+)\s+blockers?/i);
-    const nitpickMatch =
-      content.match(/nitpicks?:\s*(\d+)/i) ||
-      content.match(/(\d+)\s+nitpicks?/i);
-
-    if (blockerMatch?.[1]) {
-      totalBlockers += parseInt(blockerMatch[1], 10);
-    }
-    if (nitpickMatch?.[1]) {
-      totalNitpicks += parseInt(nitpickMatch[1], 10);
-    }
+    const counts = getReviewCountsFromContent({ content });
+    totalBlockers += counts.blockers;
+    totalNitpicks += counts.nitpicks;
   }
 
   // check thresholds
@@ -990,8 +1212,7 @@ const readToolInputFromStdin = (): {
     try {
       bytesRead = fsSync.readSync(0, buf, 0, BUFSIZE, null);
       if (bytesRead === 0) break;
-      // use Buffer.from() to copy the data, not slice() which returns a view into the same buffer
-      chunks.push(Buffer.from(buf.subarray(0, bytesRead)));
+      chunks.push(asBufferChunkCopy({ buffer: buf, bytesRead }));
     } catch (error) {
       // readSync throws on pipe closed (EAGAIN/EWOULDBLOCK) or EOF conditions
       // only break on expected EOF-like errors; rethrow unexpected I/O errors
@@ -1077,62 +1298,19 @@ const routeBounceHook = async (): Promise<void> => {
   }
 
   // convert absolute path to relative for glob match
-  // dereference symlinks to canonical paths before comparison (handles symlinked worktrees)
   if (path.isAbsolute(filePath)) {
     // eslint-disable-next-line @typescript-eslint/no-require-imports, @typescript-eslint/no-var-requires
     const fsSync = require('fs');
-    const cwd = process.cwd();
-
-    // dereference both paths to canonical forms to handle symlinks
-    let cwdCanonical: string;
-    let filePathCanonical: string;
-    try {
-      cwdCanonical = fsSync.realpathSync(cwd);
-      // file may not exist yet (we check before write), so dereference parent dir
-      const fileDir = path.dirname(filePath);
-      const fileName = path.basename(filePath);
-      try {
-        const fileDirCanonical = fsSync.realpathSync(fileDir);
-        filePathCanonical = path.join(fileDirCanonical, fileName);
-      } catch (error) {
-        // handle only ENOENT (parent dir doesn't exist), rethrow unexpected errors
-        // note: stderr output makes this observable per rule.prefer.helpful-error-wrap
-        if (
-          error &&
-          typeof error === 'object' &&
-          'code' in error &&
-          error.code === 'ENOENT'
-        ) {
-          console.error(
-            `[route.bounce] fail-open: parent dir does not exist: ${fileDir}`,
-          );
-          filePathCanonical = filePath;
-        } else {
-          throw error;
-        }
-      }
-    } catch (error) {
-      // handle only ENOENT (cwd doesn't exist), rethrow unexpected errors
-      // note: stderr output makes this observable per rule.prefer.helpful-error-wrap
-      if (
-        error &&
-        typeof error === 'object' &&
-        'code' in error &&
-        error.code === 'ENOENT'
-      ) {
-        console.error(`[route.bounce] fail-open: cwd does not exist: ${cwd}`);
-        cwdCanonical = cwd;
-        filePathCanonical = filePath;
-      } else {
-        throw error;
-      }
-    }
-
-    if (!filePathCanonical.startsWith(cwdCanonical)) {
+    const relativePath = asRelativePathFromAbsolute({
+      filePath,
+      cwd: process.cwd(),
+      fsSync,
+    });
+    if (relativePath === null) {
       // path outside repo, cannot match relative globs, allow through
       return;
     }
-    filePath = path.relative(cwdCanonical, filePathCanonical);
+    filePath = relativePath;
   }
 
   const decision = getDecisionIsArtifactProtected({
@@ -1220,20 +1398,11 @@ const routeBounceList = async (): Promise<void> => {
 export const routeMutateGrant = async (): Promise<void> => {
   const options = parseArgs(process.argv);
 
-  // first positional arg after "grant" is the action
-  const skipCount = isNodeEvalMode(process.argv) ? 1 : 2;
-  const positionalArgs = process.argv
-    .slice(skipCount)
-    .filter((arg) => arg !== '--' && !arg.startsWith('--'));
-
-  // expect: grant <action> (positional) or --grant <action> (named)
-  const grantIndex = positionalArgs.indexOf('grant');
-  let action = grantIndex >= 0 ? positionalArgs[grantIndex + 1] : undefined;
-
-  // fallback to named arg format (--grant allow) for compatibility
-  if (!action && options.grant) {
-    action = options.grant;
-  }
+  // extract action from positional args or named option
+  const action = getGrantActionFromArgs({
+    argv: process.argv,
+    grantOption: options.grant,
+  });
 
   if (!action || !['allow', 'block', 'get'].includes(action)) {
     console.log(`
