@@ -188,7 +188,9 @@ describe('stepRouteStoneAdd.integration', () => {
         );
 
         expect(error).toBeInstanceOf(Error);
-        expect(error.message).toContain('stone already exists with different content');
+        expect(error.message).toContain(
+          'stone already exists with different content',
+        );
       });
     });
 
