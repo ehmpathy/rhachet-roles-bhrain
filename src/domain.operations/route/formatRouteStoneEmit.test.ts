@@ -83,6 +83,10 @@ describe('formatRouteStoneEmit', () => {
       then('output contains route.drive command', () => {
         expect(output).toContain('rhx route.drive');
       });
+
+      then('snapshot matches', () => {
+        expect(output).toMatchSnapshot();
+      });
     });
   });
 
@@ -99,6 +103,10 @@ describe('formatRouteStoneEmit', () => {
       then('output does NOT contain reminder', () => {
         expect(output).not.toContain('the way continues');
         expect(output).not.toContain('rhx route.drive');
+      });
+
+      then('snapshot matches', () => {
+        expect(output).toMatchSnapshot();
       });
     });
   });
@@ -144,6 +152,10 @@ describe('formatRouteStoneEmit', () => {
       then('output contains route.drive command', () => {
         expect(output).toContain('rhx route.drive');
       });
+
+      then('snapshot matches', () => {
+        expect(output).toMatchSnapshot();
+      });
     });
   });
 
@@ -186,6 +198,10 @@ describe('formatRouteStoneEmit', () => {
         expect(output).not.toContain('the way continues');
         expect(output).not.toContain('rhx route.drive');
       });
+
+      then('snapshot matches', () => {
+        expect(output).toMatchSnapshot();
+      });
     });
   });
 
@@ -224,6 +240,97 @@ describe('formatRouteStoneEmit', () => {
         expect(output).toContain(
           'the human will run `--as approved` when ready.',
         );
+      });
+
+      then('snapshot matches', () => {
+        expect(output).toMatchSnapshot();
+      });
+    });
+  });
+
+  given('[case7] route.stone.add plan mode', () => {
+    when('[t0] format is called with plan mode', () => {
+      const output = formatRouteStoneEmit({
+        operation: 'route.stone.add',
+        mode: 'plan',
+        stone: '3.1.6.research.custom',
+        route: '.behavior/v2026_04_12.myroute',
+        source: '@stdin',
+        content:
+          'investigate X:\n- what is X?\n- how does X relate to our wish?',
+        path: '.behavior/v2026_04_12.myroute/3.1.6.research.custom.stone',
+      });
+
+      then('output contains owl header', () => {
+        expect(output).toContain('🦉 another stone on the path');
+      });
+
+      then('output contains stone name', () => {
+        expect(output).toContain('stone  = 3.1.6.research.custom');
+      });
+
+      then('output contains route', () => {
+        expect(output).toContain('route  = .behavior/v2026_04_12.myroute');
+      });
+
+      then('output contains source', () => {
+        expect(output).toContain('source = @stdin');
+      });
+
+      then('output contains preview with content', () => {
+        expect(output).toContain('preview');
+        expect(output).toContain('investigate X:');
+      });
+
+      then('output indicates no creation in plan mode', () => {
+        expect(output).toContain('✋ created = false');
+      });
+
+      then('output contains rerun hint', () => {
+        expect(output).toContain('rerun with --mode apply to execute');
+      });
+
+      then('snapshot matches', () => {
+        expect(output).toMatchSnapshot();
+      });
+    });
+  });
+
+  given('[case8] route.stone.add apply mode', () => {
+    when('[t0] format is called with apply mode', () => {
+      const output = formatRouteStoneEmit({
+        operation: 'route.stone.add',
+        mode: 'apply',
+        stone: '3.1.6.research.custom',
+        route: '.behavior/v2026_04_12.myroute',
+        source: '@stdin',
+        content:
+          'investigate X:\n- what is X?\n- how does X relate to our wish?',
+        path: '.behavior/v2026_04_12.myroute/3.1.6.research.custom.stone',
+      });
+
+      then('output contains owl header', () => {
+        expect(output).toContain('🦉 another stone on the path');
+      });
+
+      then('output contains created path', () => {
+        expect(output).toContain(
+          'created = .behavior/v2026_04_12.myroute/3.1.6.research.custom.stone',
+        );
+      });
+
+      then('output contains reminder to drive', () => {
+        expect(output).toContain('the way continues, run');
+        expect(output).toContain('rhx route.drive');
+      });
+
+      then('output does not contain preview', () => {
+        expect(output).not.toContain('preview');
+        expect(output).not.toContain('source =');
+      });
+
+      then('snapshot matches', () => {
+        expect(output).toMatchSnapshot();
       });
     });
   });

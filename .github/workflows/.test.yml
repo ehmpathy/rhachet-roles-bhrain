@@ -227,6 +227,9 @@ jobs:
       - name: start:livedb:dev
         run: npm run start:livedb:dev --if-present
 
+      - name: prepare:rhachet
+        run: npm run prepare:rhachet --if-present
+
       - name: build
         run: npm run build
 
@@ -302,6 +305,9 @@ jobs:
 
       - name: start:livedb:dev
         run: npm run start:livedb:dev --if-present
+
+      - name: prepare:rhachet
+        run: npm run prepare:rhachet --if-present
 
       - name: build
         run: npm run build

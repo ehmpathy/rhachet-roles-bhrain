@@ -15,6 +15,7 @@ import { getSelfReviewArticulationPath } from './guard/getSelfReviewArticulation
 const HEADER_GET = '🦉 and then?';
 const HEADER_SET = `🦉 the way speaks for itself`;
 const HEADER_DEL = `🦉 hoo needs 'em`;
+const HEADER_ADD = `🦉 another stone on the path`;
 
 /**
  * .what = reminder to continue the route after passage
@@ -129,6 +130,15 @@ type FormatInput =
       }[];
       countDelete: number;
       countRetain: number;
+    }
+  | {
+      operation: 'route.stone.add';
+      mode: 'plan' | 'apply';
+      stone: string;
+      route: string;
+      source: string;
+      content: string;
+      path: string;
     };
 
 /**
@@ -137,6 +147,7 @@ type FormatInput =
  */
 export const formatRouteStoneEmit = (input: FormatInput): string => {
   if (input.operation === 'route.stone.del') return formatDel(input);
+  if (input.operation === 'route.stone.add') return formatAdd(input);
 
   const header =
     input.operation === 'route.stone.get' ? HEADER_GET : HEADER_SET;
@@ -441,6 +452,50 @@ const formatDel = (input: {
   if (input.mode === 'plan') {
     lines.push('');
     lines.push('rerun with --mode apply to execute');
+  }
+
+  return lines.join('\n');
+};
+
+/**
+ * .what = formats add variant as treestruct with header
+ * .why = enables scannable plan/apply output for stone creation
+ */
+const formatAdd = (input: {
+  mode: 'plan' | 'apply';
+  stone: string;
+  route: string;
+  source: string;
+  content: string;
+  path: string;
+}): string => {
+  const lines: string[] = [HEADER_ADD, ''];
+
+  // operation line
+  lines.push(`🗿 route.stone.add --mode ${input.mode}`);
+  lines.push(`   ├─ stone  = ${input.stone}`);
+  lines.push(`   ├─ route  = ${input.route}`);
+
+  if (input.mode === 'plan') {
+    lines.push(`   ├─ source = ${input.source}`);
+    lines.push(`   ├─ preview`);
+    lines.push(`   │  ├─`);
+    lines.push(`   │  │`);
+
+    // indent content lines (trim end newlines to avoid double blanks)
+    const contentLines = input.content.replace(/\n+$/, '').split('\n');
+    contentLines.forEach((line) => {
+      lines.push(`   │  │  ${line}`);
+    });
+
+    lines.push(`   │  │`);
+    lines.push(`   │  └─`);
+    lines.push(`   └─ ✋ created = false, rerun with --mode apply to execute`);
+  }
+
+  if (input.mode === 'apply') {
+    lines.push(`   └─ created = ${input.path}`);
+    lines.push(`      └─ the way continues, run \`rhx route.drive\``);
   }
 
   return lines.join('\n');

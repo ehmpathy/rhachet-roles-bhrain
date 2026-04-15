@@ -111,6 +111,7 @@ export const invokeRouteSkill = async (input: {
     | 'route.drive'
     | 'route.mutate'
     | 'route.review'
+    | 'route.stone.add'
     | 'route.stone.get'
     | 'route.stone.set'
     | 'route.stone.del'
@@ -168,8 +169,9 @@ export const invokeRouteSkill = async (input: {
   }
 
   // no stdin, use exec (simpler)
+  // .note = single quotes prevent bash variable expansion (e.g., $behavior)
   const argsStr = argsArray
-    .map((arg) => (arg.startsWith('--') ? arg : `"${arg}"`))
+    .map((arg) => (arg.startsWith('--') ? arg : `'${arg}'`))
     .join(' ');
   const cmd = `bash "${skillPath}" ${argsStr}`;
 

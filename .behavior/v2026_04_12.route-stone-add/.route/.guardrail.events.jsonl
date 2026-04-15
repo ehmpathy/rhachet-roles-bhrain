@@ -1,0 +1,17 @@
+{"tool":"Read","path":"/home/vlad/git/ehmpathy/_worktrees/rhachet-roles-bhrain.vlad.route-stone-add/.behavior/v2026_04_12.route-stone-add/1.vision.guard","verdict":"blocked","reason":"*.guard"}
+{"tool":"Bash","command":"cat /home/vlad/git/ehmpathy/_worktrees/rhachet-roles-bhrain.vlad.route-stone-add/.behavior/v2026_04_","verdict":"blocked","reason":"*.stone"}
+{"tool":"Bash","command":"cat .behavior/v2026_04_12.route-stone-add/.route/passage.jsonl 2>/dev/null || echo \"(no passage reco","verdict":"blocked","reason":".route/**"}
+{"tool":"Read","path":"/home/vlad/git/ehmpathy/_worktrees/rhachet-roles-bhrain.vlad.route-stone-add/.behavior/v2026_04_12.route-stone-add/1.vision.stone","verdict":"blocked","reason":"*.stone"}
+{"tool":"Read","path":"/home/vlad/git/ehmpathy/_worktrees/rhachet-roles-bhrain.vlad.route-stone-add/.behavior/v2026_04_12.route-stone-add/1.vision.guard","verdict":"blocked","reason":"*.guard"}
+{"tool":"Read","path":"/home/vlad/git/ehmpathy/_worktrees/rhachet-roles-bhrain.vlad.route-stone-add/.behavior/v2026_04_12.route-stone-add/1.vision.stone","verdict":"blocked","reason":"*.stone"}
+{"tool":"Read","path":"/home/vlad/git/ehmpathy/_worktrees/rhachet-roles-bhrain.vlad.route-stone-add/.behavior/v2026_04_12.route-stone-add/1.vision.stone","verdict":"blocked","reason":"*.stone"}
+{"tool":"Read","path":"/home/vlad/git/ehmpathy/_worktrees/rhachet-roles-bhrain.vlad.route-stone-add/.behavior/v2026_04_12.route-stone-add/2.1.criteria.blackbox.stone","verdict":"blocked","reason":"*.stone"}
+{"tool":"Read","path":"/home/vlad/git/ehmpathy/_worktrees/rhachet-roles-bhrain.vlad.route-stone-add/.behavior/v2026_04_12.route-stone-add/3.3.1.blueprint.product.stone","verdict":"blocked","reason":"*.stone"}
+{"tool":"Read","path":"/home/vlad/git/ehmpathy/_worktrees/rhachet-roles-bhrain.vlad.route-stone-add/.behavior/v2026_04_12.route-stone-add/2.1.criteria.blackbox.stone","verdict":"blocked","reason":"*.stone"}
+{"tool":"Read","path":"/home/vlad/git/ehmpathy/_worktrees/rhachet-roles-bhrain.vlad.route-stone-add/.behavior/v2026_04_12.route-stone-add/1.vision.stone","verdict":"blocked","reason":"*.stone"}
+{"tool":"Bash","command":"cat .behavior/v2026_04_12.route-stone-add/2.1.criteria.blackbox.stone","verdict":"blocked","reason":"*.stone"}
+{"tool":"Read","path":"/home/vlad/git/ehmpathy/_worktrees/rhachet-roles-bhrain.vlad.route-stone-add/.behavior/v2026_04_12.route-stone-add/5.3.verification.stone","verdict":"blocked","reason":"*.stone"}
+{"tool":"Read","path":"/home/vlad/git/ehmpathy/_worktrees/rhachet-roles-bhrain.vlad.route-stone-add/.behavior/v2026_04_12.route-stone-add/1.vision.stone","verdict":"blocked","reason":"*.stone"}
+{"tool":"Read","path":"/home/vlad/git/ehmpathy/_worktrees/rhachet-roles-bhrain.vlad.route-stone-add/.behavior/v2026_04_12.route-stone-add/5.3.verification.guard","verdict":"blocked","reason":"*.guard"}
+{"tool":"Read","path":"/home/vlad/git/ehmpathy/_worktrees/rhachet-roles-bhrain.vlad.route-stone-add/.behavior/v2026_04_12.route-stone-add/2.1.criteria.blackbox.stone","verdict":"blocked","reason":"*.stone"}
+{"tool":"Read","path":"/home/vlad/git/ehmpathy/_worktrees/rhachet-roles-bhrain.vlad.route-stone-add/.behavior/v2026_04_12.route-stone-add/2.1.criteria.blackbox.stone","verdict":"blocked","reason":"*.stone"}
