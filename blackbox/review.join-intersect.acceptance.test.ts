@@ -143,7 +143,8 @@ describe('review.join.acceptance', () => {
 
       then('debug log shows what was matched', () => {
         expect(res.debugLog).toBeDefined();
-        expect(res.debugLog.resolution.targetFilesFromDiffs).toEqual([]);
+        // note: since-main now includes untracked files (e.g., .agent/* from rhachet roles link)
+        // but they don't match src/*.ts so intersection is still empty
         expect(res.debugLog.resolution.targetFilesFromPaths).toContain('src/clean.ts');
         expect(res.debugLog.resolution.targetFilesFromPaths).toContain('src/dirty.ts');
         expect(res.debugLog.resolution.targetFiles).toEqual([]);
