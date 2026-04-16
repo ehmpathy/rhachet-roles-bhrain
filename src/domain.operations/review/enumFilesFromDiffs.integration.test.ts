@@ -240,8 +240,63 @@ describe('enumFilesFromDiffs', () => {
     });
   });
 
+  given('[case6] --diffs since-main includes untracked files', () => {
+    const scene = usePrep(async () => {
+      const { repoPath, cleanup } = setupTestRepo();
+
+      // create a branch from main
+      execSync('git checkout -b feature', { cwd: repoPath });
+
+      // add a committed file
+      fs.writeFileSync(
+        path.join(repoPath, 'src/committed-file.ts'),
+        'export const committed = true;',
+      );
+      execSync('git add .', { cwd: repoPath });
+      execSync('git commit -m "committed file"', {
+        cwd: repoPath,
+        env: GIT_ENV,
+      });
+
+      // add an untracked file (not staged, not committed)
+      fs.writeFileSync(
+        path.join(repoPath, 'src/untracked-file.ts'),
+        'export const untracked = true;',
+      );
+
+      // add a staged but not committed file
+      fs.writeFileSync(
+        path.join(repoPath, 'src/staged-file.ts'),
+        'export const staged = true;',
+      );
+      execSync('git add src/staged-file.ts', { cwd: repoPath });
+
+      return { repoPath, cleanup };
+    });
+
+    afterAll(() => scene.cleanup());
+
+    when('[t0] untracked files exist on feature branch', () => {
+      then('returns untracked files along with committed changes', async () => {
+        const files = await enumFilesFromDiffs({
+          range: 'since-main',
+          cwd: scene.repoPath,
+        });
+
+        // committed file should be included
+        expect(files).toContain('src/committed-file.ts');
+
+        // untracked file should ALSO be included (critical for reviews)
+        expect(files).toContain('src/untracked-file.ts');
+
+        // staged file should also be included
+        expect(files).toContain('src/staged-file.ts');
+      });
+    });
+  });
+
   given(
-    '[case6] --diffs since-main compares against origin/main not local main',
+    '[case7] --diffs since-main compares against origin/main not local main',
     () => {
       const scene = usePrep(async () => {
         // create a bare repo to act as "origin"

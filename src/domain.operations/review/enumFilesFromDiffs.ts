@@ -42,8 +42,26 @@ const resolveMainBranch = (input: { cwd: string }): string => {
 };
 
 /**
+ * .what = enumerates untracked files in a git repo
+ * .why = git diff doesn't show untracked files, but reviews need them
+ */
+const enumUntrackedFiles = (input: { cwd: string }): string[] => {
+  const output = execSync('git ls-files --others --exclude-standard', {
+    cwd: input.cwd,
+    encoding: 'utf-8',
+  });
+  return output
+    .split('\n')
+    .map((line) => line.trim())
+    .filter((line) => line.length > 0);
+};
+
+/**
  * .what = enumerates files changed in a git diff range
- * .why = supports --diffs input for reviewing changed files
+ * .why = supports --diffs input for review of changed files
+ *
+ * .note = for since-main and since-commit, untracked files are included
+ *         because they represent new work that should be reviewed
  */
 export const enumFilesFromDiffs = async (input: {
   range: 'since-main' | 'since-commit' | 'since-staged';
@@ -51,8 +69,11 @@ export const enumFilesFromDiffs = async (input: {
 }): Promise<string[]> => {
   const cwd = input.cwd ?? process.cwd();
 
-  // build git command based on range
-  const gitCommand = (() => {
+  // collect all file paths from relevant git commands
+  const allPaths: string[] = [];
+
+  // get diff-based changes
+  const gitDiffCommand = (() => {
     if (input.range === 'since-main') {
       const mainBranch = resolveMainBranch({ cwd });
       // use merge-base to only show changes since branch point, not changes on main
@@ -67,21 +88,40 @@ export const enumFilesFromDiffs = async (input: {
     throw new UnexpectedCodePathError('invalid range', { range: input.range });
   })();
 
-  // execute git command
-  const output = execSync(gitCommand, {
+  // execute git diff command
+  const diffOutput = execSync(gitDiffCommand, {
     cwd,
     encoding: 'utf-8',
   });
+  allPaths.push(
+    ...diffOutput
+      .split('\n')
+      .map((line) => line.trim())
+      .filter((line) => line.length > 0),
+  );
 
-  // parse output into file paths
-  const paths = output
-    .split('\n')
-    .map((line) => line.trim())
-    .filter((line) => line.length > 0);
+  // for since-main and since-commit, also include staged changes and untracked files
+  // (these represent new work that should be reviewed)
+  if (input.range === 'since-main' || input.range === 'since-commit') {
+    // include staged changes (git diff --staged)
+    const stagedOutput = execSync('git diff --staged --name-only', {
+      cwd,
+      encoding: 'utf-8',
+    });
+    allPaths.push(
+      ...stagedOutput
+        .split('\n')
+        .map((line) => line.trim())
+        .filter((line) => line.length > 0),
+    );
+
+    // include untracked files
+    allPaths.push(...enumUntrackedFiles({ cwd }));
+  }
 
   // filter to only include files (exclude directories and symlinks to directories)
   const files = await Promise.all(
-    paths.map(async (filePath) => {
+    allPaths.map(async (filePath) => {
       try {
         const stat = await fs.stat(path.join(cwd, filePath));
         return stat.isFile() ? filePath : null;
