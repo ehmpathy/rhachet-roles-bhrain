@@ -323,7 +323,9 @@ export const formatRouteStoneEmit = (input: FormatInput): string => {
         const connector = isLast ? '└─' : '├─';
         const yieldPart = c.yield === 'archived' ? ', 1 yield' : '';
         lines.push(`   │  ${connector} ${c.stone}`);
-        lines.push(`   │  ${isLast ? ' ' : '│'}  ├─ deleted: ${c.deleted}${yieldPart}`);
+        lines.push(
+          `   │  ${isLast ? ' ' : '│'}  ├─ deleted: ${c.deleted}${yieldPart}`,
+        );
         lines.push(`   │  ${isLast ? ' ' : '│'}  └─ passage: ${c.passage}`);
       });
       lines.push(`   └─ done`);
