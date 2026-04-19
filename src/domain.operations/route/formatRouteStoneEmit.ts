@@ -46,6 +46,7 @@ type FormatInput =
       cascade: Array<{
         stone: string;
         deleted: string;
+        yield: 'archived' | 'preserved' | 'absent';
         passage: string;
       }>;
     }
@@ -314,14 +315,17 @@ export const formatRouteStoneEmit = (input: FormatInput): string => {
       lines.push(`   ├─ stone = ${input.stone}`);
       lines.push(`   └─ ✓ approved`);
     } else if (input.action === 'rewound') {
-      // format cascade with deletion counts
+      // format cascade with deletion counts and yield outcomes
       lines.push(`   ├─ stone = ${input.stone}`);
       lines.push(`   ├─ cascade`);
       input.cascade.forEach((c, i) => {
         const isLast = i === input.cascade.length - 1;
         const connector = isLast ? '└─' : '├─';
+        const yieldPart = c.yield === 'archived' ? ', 1 yield' : '';
         lines.push(`   │  ${connector} ${c.stone}`);
-        lines.push(`   │  ${isLast ? ' ' : '│'}  ├─ deleted: ${c.deleted}`);
+        lines.push(
+          `   │  ${isLast ? ' ' : '│'}  ├─ deleted: ${c.deleted}${yieldPart}`,
+        );
         lines.push(`   │  ${isLast ? ' ' : '│'}  └─ passage: ${c.passage}`);
       });
       lines.push(`   └─ done`);

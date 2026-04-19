@@ -1,0 +1,55 @@
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
+
+exports[`driver.route.set.yield.acceptance given: [case1] route.stone.set --as rewound --yield drop when: [t0] stone has yield file then: stdout matches snapshot 1`] = `
+"🦉 the way speaks for itself
+
+🗿 route.stone.set
+   ├─ stone = 1.vision
+   ├─ cascade
+   │  ├─ 1.vision
+   │  │  ├─ deleted: 0 reviews, 0 judges, 0 promises, 0 triggers, 1 yield
+   │  │  └─ passage: rewound
+   │  ├─ 2.criteria
+   │  │  ├─ deleted: 0 reviews, 0 judges, 0 promises, 0 triggers
+   │  │  └─ passage: rewound
+   │  └─ 3.plan
+   │     ├─ deleted: 0 reviews, 0 judges, 0 promises, 0 triggers
+   │     └─ passage: rewound
+   └─ done
+"
+`;
+
+exports[`driver.route.set.yield.acceptance given: [case2] route.stone.set --as rewound --yield keep when: [t0] stone has yield file then: stdout matches snapshot 1`] = `
+"🦉 the way speaks for itself
+
+🗿 route.stone.set
+   ├─ stone = 1.vision
+   ├─ cascade
+   │  ├─ 1.vision
+   │  │  ├─ deleted: 0 reviews, 0 judges, 0 promises, 0 triggers
+   │  │  └─ passage: rewound
+   │  ├─ 2.criteria
+   │  │  ├─ deleted: 0 reviews, 0 judges, 0 promises, 0 triggers
+   │  │  └─ passage: rewound
+   │  └─ 3.plan
+   │     ├─ deleted: 0 reviews, 0 judges, 0 promises, 0 triggers
+   │     └─ passage: rewound
+   └─ done
+"
+`;
+
+exports[`driver.route.set.yield.acceptance given: [case6] cascade yield drop affects multiple stones when: [t0] rewind stone 2 with yield drop cascades to stone 3 then: stdout matches snapshot 1`] = `
+"🦉 the way speaks for itself
+
+🗿 route.stone.set
+   ├─ stone = 2.criteria
+   ├─ cascade
+   │  ├─ 2.criteria
+   │  │  ├─ deleted: 0 reviews, 0 judges, 0 promises, 0 triggers, 1 yield
+   │  │  └─ passage: rewound
+   │  └─ 3.plan
+   │     ├─ deleted: 0 reviews, 0 judges, 0 promises, 0 triggers, 1 yield
+   │     └─ passage: rewound
+   └─ done
+"
+`;
