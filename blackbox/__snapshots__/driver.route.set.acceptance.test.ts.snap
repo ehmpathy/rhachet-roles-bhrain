@@ -12,6 +12,33 @@ exports[`driver.route.set.acceptance given: [case1] route.stone.set --as passed 
 "
 `;
 
+exports[`driver.route.set.acceptance given: [case1] route.stone.set --as passed when: [t1] stone has no artifact then: stderr matches snapshot 1`] = `
+"error: BadRequestError: artifact not found; run route.stone.get --stone 1.vision --say to see instructions
+
+{
+  "stone": "1.vision"
+}
+"
+`;
+
+exports[`driver.route.set.acceptance given: [case2] route.stone.set --as approved when: [t0] agent tries to approve then: stderr matches snapshot 1`] = `""`;
+
+exports[`driver.route.set.acceptance given: [case2] route.stone.set --as approved when: [t0] agent tries to approve then: stdout matches snapshot 1`] = `
+"🦉 the way speaks for itself
+
+🗿 route.stone.set
+   ├─ stone = 1.vision
+   ├─ ✗ only humans can approve
+   │
+   └─ as a driver, you should:
+         ├─ \`--as passed\` to signal work complete, proceed
+         ├─ \`--as arrived\` to signal work complete, request review
+         └─ \`--as blocked\` to escalate if stuck
+      
+      the human will run \`--as approved\` when ready.
+"
+`;
+
 exports[`driver.route.set.acceptance given: [case3] route.stone.set --as passed with guard (allowed) when: [t0] guarded stone with review + judge that pass then: stdout matches snapshot 1`] = `
 "🦉 the way speaks for itself
    ├─ ✓ review.1 - completed 0.0s
@@ -34,6 +61,48 @@ exports[`driver.route.set.acceptance given: [case3] route.stone.set --as passed 
    │
    └─ the way continues, run
       └─ rhx route.drive
+"
+`;
+
+exports[`driver.route.set.acceptance given: [case4] route.stone.set --as passed with guard (blocked) when: [t0] guarded stone with review + judge that fail then: stderr matches snapshot 1`] = `
+"
+🪶 judge 1
+   ├─ stdout
+   │  ├─
+   │  │
+   │  │  passed: false
+   │  │  reason: blockers exceed threshold (3 > 0)
+   │  │
+   │  └─
+   ├─ stderr
+   │  ├─
+   │  │
+   │  └─
+"
+`;
+
+exports[`driver.route.set.acceptance given: [case4] route.stone.set --as passed with guard (blocked) when: [t0] guarded stone with review + judge that fail then: stdout matches snapshot 1`] = `
+"🦉 the way speaks for itself
+   ├─ ✓ review.1 - completed 0.1s
+   └─ ✗ judge.1 - blocked 0.0s
+
+🗿 route.stone.set
+   ├─ stone = 2.blocked
+   ├─ passage = blocked
+   ├─ reason = blockers exceed threshold (3 > 0)
+   └─ guard
+      ├─ artifacts
+      │   └─ 2.blocked.md
+      ├─ reviews
+      │   └─ r1: echo "blockers: 3\\nnitpicks: 1\\nreview with blockers"
+      │       ├─ finished 0.1s ✓
+      │       ├─ review: .route/2.blocked.guard.review.i1.017c9b4c5e71d0216f9140cf06d029c9f3dd492bb8128d136e39c2c3a617f3df.r1.md
+      │       ├─ 3 blockers 🔴
+      │       └─ 1 nitpick 🟠
+      └─ judges
+          └─ j1: echo "passed: false\\nreason: blockers exceed threshold (3 > 0)"
+              ├─ finished 0.0s ✗
+              └─ reason: blockers exceed threshold (3 > 0)
 "
 `;
 
@@ -104,6 +173,25 @@ exports[`driver.route.set.acceptance given: [case7] route.stone.set --as passed 
 "
 `;
 
+exports[`driver.route.set.acceptance given: [case8] route.stone.set --as rewound when: [t0] rewind a single stone with guard artifacts then: stdout matches snapshot 1`] = `
+"🦉 the way speaks for itself
+
+🗿 route.stone.set
+   ├─ stone = 1.vision
+   ├─ cascade
+   │  ├─ 1.vision
+   │  │  ├─ deleted: 1 reviews, 1 judges, 0 promises, 0 triggers
+   │  │  └─ passage: rewound
+   │  ├─ 2.criteria
+   │  │  ├─ deleted: 0 reviews, 0 judges, 0 promises, 0 triggers
+   │  │  └─ passage: rewound
+   │  └─ 3.plan
+   │     ├─ deleted: 0 reviews, 0 judges, 0 promises, 0 triggers
+   │     └─ passage: rewound
+   └─ done
+"
+`;
+
 exports[`driver.route.set.acceptance given: [case8] route.stone.set --as rewound when: [t1] cascade rewind affects subsequent stones then: stdout matches snapshot 1`] = `
 "🦉 the way speaks for itself
 
@@ -115,6 +203,44 @@ exports[`driver.route.set.acceptance given: [case8] route.stone.set --as rewound
    │  │  └─ passage: rewound
    │  └─ 3.plan
    │     ├─ deleted: 1 reviews, 0 judges, 0 promises, 0 triggers
+   │     └─ passage: rewound
+   └─ done
+"
+`;
+
+exports[`driver.route.set.acceptance given: [case8] route.stone.set --as rewound when: [t2] rewind invalidates prior approval then: stdout matches snapshot 1`] = `
+"🦉 the way speaks for itself
+
+🗿 route.stone.set
+   ├─ stone = 1.vision
+   ├─ cascade
+   │  ├─ 1.vision
+   │  │  ├─ deleted: 0 reviews, 0 judges, 0 promises, 0 triggers
+   │  │  └─ passage: rewound
+   │  ├─ 2.criteria
+   │  │  ├─ deleted: 0 reviews, 0 judges, 0 promises, 0 triggers
+   │  │  └─ passage: rewound
+   │  └─ 3.plan
+   │     ├─ deleted: 0 reviews, 0 judges, 0 promises, 0 triggers
+   │     └─ passage: rewound
+   └─ done
+"
+`;
+
+exports[`driver.route.set.acceptance given: [case8] route.stone.set --as rewound when: [t3] idempotent rewind (twice) then: stdout matches snapshot 1`] = `
+"🦉 the way speaks for itself
+
+🗿 route.stone.set
+   ├─ stone = 1.vision
+   ├─ cascade
+   │  ├─ 1.vision
+   │  │  ├─ deleted: 0 reviews, 0 judges, 0 promises, 0 triggers
+   │  │  └─ passage: rewound
+   │  ├─ 2.criteria
+   │  │  ├─ deleted: 0 reviews, 0 judges, 0 promises, 0 triggers
+   │  │  └─ passage: rewound
+   │  └─ 3.plan
+   │     ├─ deleted: 0 reviews, 0 judges, 0 promises, 0 triggers
    │     └─ passage: rewound
    └─ done
 "

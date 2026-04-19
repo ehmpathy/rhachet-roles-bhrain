@@ -1,15 +1,12 @@
 import { BadRequestError } from 'helpful-errors';
 
 import type { ContextCliEmit } from '@src/domain.objects/Driver/ContextCliEmit';
-import { PassageReport } from '@src/domain.objects/Driver/PassageReport';
 
 import { formatRouteStoneEmit } from '../formatRouteStoneEmit';
-import { setPassageReport } from '../passage/setPassageReport';
 import { findOneStoneByPattern } from './asStoneGlob';
-import { compareStonePrefix } from './compareStonePrefix';
-import { computeStoneOrderPrefix } from './computeStoneOrderPrefix';
-import { delStoneGuardArtifacts } from './delStoneGuardArtifacts';
+import { computeAffectedStonesForRewind } from './computeAffectedStonesForRewind';
 import { getAllStones } from './getAllStones';
+import { rewindAffectedStones } from './rewindAffectedStones';
 
 /**
  * .what = rewinds a stone and all subsequent stones by clear validation state
@@ -19,6 +16,7 @@ export const setStoneAsRewound = async (
   input: {
     stone: string;
     route: string;
+    yield?: 'keep' | 'drop';
   },
   _context: ContextCliEmit,
 ): Promise<{
@@ -38,65 +36,26 @@ export const setStoneAsRewound = async (
     throw new BadRequestError('stone not found', { stone: input.stone });
   }
 
-  // get stone order prefix for cascade comparison
-  const matchedPrefix = computeStoneOrderPrefix({ stone: stoneMatched });
-
-  // find all stones at or after the matched stone (cascade)
-  const affectedStones = stones.filter((s) => {
-    const prefix = computeStoneOrderPrefix({ stone: s });
-    return compareStonePrefix({ a: prefix, b: matchedPrefix }) >= 0;
+  // compute stones affected by this rewind (cascade)
+  const affectedStones = computeAffectedStonesForRewind({
+    stones,
+    fromStone: stoneMatched,
   });
 
-  // sort affected stones by prefix order
-  affectedStones.sort((a, b) => {
-    const prefixA = computeStoneOrderPrefix({ stone: a });
-    const prefixB = computeStoneOrderPrefix({ stone: b });
-    return compareStonePrefix({ a: prefixA, b: prefixB });
+  // rewind each affected stone (delete artifacts, handle yield, set passage)
+  const yieldMode = input.yield ?? 'keep';
+  const { cascade } = await rewindAffectedStones({
+    affectedStones,
+    route: input.route,
+    yieldMode,
   });
-
-  // track deletion counts for each stone
-  const deletionResults: Array<{
-    stone: string;
-    reviews: number;
-    judges: number;
-    promises: number;
-    triggers: {
-      blockers: number;
-      promises: number;
-    };
-  }> = [];
-
-  // rewind each affected stone
-  for (const stone of affectedStones) {
-    // delete guard artifacts
-    const deleted = await delStoneGuardArtifacts({
-      stone: stone.name,
-      route: input.route,
-    });
-
-    deletionResults.push({
-      stone: stone.name,
-      ...deleted,
-    });
-
-    // append passage report with status: 'rewound'
-    const report = new PassageReport({
-      stone: stone.name,
-      status: 'rewound',
-    });
-    await setPassageReport({ report, route: input.route });
-  }
 
   // format stdout
   const stdout = formatRouteStoneEmit({
     operation: 'route.stone.set',
     stone: stoneMatched.name,
     action: 'rewound',
-    cascade: deletionResults.map((r) => ({
-      stone: r.stone,
-      deleted: `${r.reviews} reviews, ${r.judges} judges, ${r.promises} promises, ${r.triggers.promises + r.triggers.blockers} triggers`,
-      passage: 'rewound',
-    })),
+    cascade,
   });
 
   return {

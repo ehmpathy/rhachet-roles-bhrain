@@ -7,8 +7,15 @@ import { setStoneAsBlocked } from './blocked/setStoneAsBlocked';
 import { delDriveBlockerState } from './drive/delDriveBlockerState';
 import { formatRouteStoneEmit } from './formatRouteStoneEmit';
 import { computeStoneReviewInputHash } from './guard/computeStoneReviewInputHash';
+import { computePromisedReviewCount } from './promise/computePromisedReviewCount';
+import { findNextUnpromisedReview } from './promise/findNextUnpromisedReview';
+import { findSelfReviewBySlug } from './promise/findSelfReviewBySlug';
+import { getPromisedSlugsSet } from './promise/getPromisedSlugsSet';
 import { getSelfReviewChallengeDecision } from './promise/getSelfReviewChallengeDecision';
+import { getSelfReviewIndex } from './promise/getSelfReviewIndex';
+import { getSelfReviewSlugs } from './promise/getSelfReviewSlugs';
 import { getStonePromises } from './promise/getStonePromises';
+import { isInvalidSelfReviewSlug } from './promise/isInvalidSelfReviewSlug';
 import { setStoneAsPromised } from './promise/setStoneAsPromised';
 import { findOneStoneByPattern } from './stones/asStoneGlob';
 import { getAllStones } from './stones/getAllStones';
@@ -26,6 +33,7 @@ export const stepRouteStoneSet = async (
     route: string;
     as: 'passed' | 'approved' | 'promised' | 'rewound' | 'blocked' | 'arrived';
     that?: string;
+    yield?: 'keep' | 'drop';
   },
   context: ContextCliEmit & { isTTY: boolean },
 ): Promise<{
@@ -63,6 +71,7 @@ export const stepRouteStoneSet = async (
       {
         stone: input.stone,
         route: input.route,
+        yield: input.yield,
       },
       context,
     );
@@ -115,8 +124,8 @@ export const stepRouteStoneSet = async (
     const selfReviews = stoneMatched.guard
       ? getGuardSelfReviews(stoneMatched.guard)
       : [];
-    const validSlugs = selfReviews.map((r) => r.slug);
-    if (validSlugs.length > 0 && !validSlugs.includes(input.that)) {
+    const validSlugs = getSelfReviewSlugs({ selfReviews });
+    if (isInvalidSelfReviewSlug({ slug: input.that, validSlugs })) {
       throw new BadRequestError(
         `invalid review.self slug: "${input.that}". valid options: ${validSlugs.join(', ')}`,
         { stone: input.stone, slug: input.that, validSlugs },
@@ -130,14 +139,14 @@ export const stepRouteStoneSet = async (
     });
 
     // check time enforcement and hashbar threshold for self-review
-    const reviewSelf = selfReviews.find((r) => r.slug === input.that);
-    const reviewIndex = selfReviews.findIndex((r) => r.slug === input.that);
+    const reviewSelf = findSelfReviewBySlug({ selfReviews, slug: input.that });
+    const reviewIndex = getSelfReviewIndex({ selfReviews, slug: input.that });
     const challengeDecision = await getSelfReviewChallengeDecision({
       stone: stoneMatched.name,
       slug: input.that,
       hash,
       route: input.route,
-      index: reviewIndex + 1, // 1-based for file naming
+      index: reviewIndex, // 1-based (computed by getSelfReviewIndex)
       hashbar: reviewSelf?.hashbar,
     });
 
@@ -156,7 +165,7 @@ export const stepRouteStoneSet = async (
             selfReview: reviewSelf
               ? {
                   reviewSelf,
-                  index: reviewIndex + 1,
+                  index: reviewIndex,
                   total: selfReviews.length,
                 }
               : undefined,
@@ -177,23 +186,18 @@ export const stepRouteStoneSet = async (
       stone: stoneMatched,
       route: input.route,
     });
-    const promisedSlugs = new Set(promisesAfter.map((p) => p.slug));
+    const promisedSlugs = getPromisedSlugsSet({ promises: promisesAfter });
 
     // compute progress: how many promised out of total
     const total = selfReviews.length;
-    const promisedCount = selfReviews.filter((r) =>
-      promisedSlugs.has(r.slug),
-    ).length;
+    const promisedCount = computePromisedReviewCount({
+      selfReviews,
+      promisedSlugs,
+    });
 
     // find next unpromised review (if any)
-    const nextUnpromised = selfReviews.find((r) => !promisedSlugs.has(r.slug));
-    const nextReview = nextUnpromised
-      ? {
-          reviewSelf: nextUnpromised,
-          index: selfReviews.indexOf(nextUnpromised),
-          total,
-        }
-      : undefined;
+    const nextReview =
+      findNextUnpromisedReview({ selfReviews, promisedSlugs }) ?? undefined;
 
     return {
       promised: true,

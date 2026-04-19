@@ -9,6 +9,8 @@ import { getRouteBindByBranch } from '@src/domain.operations/route/bind/getRoute
 import { setRouteBind } from '@src/domain.operations/route/bind/setRouteBind';
 import { getDecisionIsArtifactProtected } from '@src/domain.operations/route/bouncer/getDecisionIsArtifactProtected';
 import { getRouteBouncerCache } from '@src/domain.operations/route/bouncer/getRouteBouncerCache';
+import { computeReviewThresholdVerdict } from '@src/domain.operations/route/guard/computeReviewThresholdVerdict';
+import { computeReviewTotalsFromFiles } from '@src/domain.operations/route/guard/computeReviewTotalsFromFiles';
 import { computeStoneReviewInputHash } from '@src/domain.operations/route/guard/computeStoneReviewInputHash';
 import { genContextCliEmit } from '@src/domain.operations/route/guard/genContextCliEmit';
 import { getLatestReviewFilesPerIndex } from '@src/domain.operations/route/guard/getLatestReviewFilesPerIndex';
@@ -19,7 +21,10 @@ import { stepRouteStoneAdd } from '@src/domain.operations/route/stepRouteStoneAd
 import { stepRouteStoneDel } from '@src/domain.operations/route/stepRouteStoneDel';
 import { stepRouteStoneGet } from '@src/domain.operations/route/stepRouteStoneGet';
 import { stepRouteStoneSet } from '@src/domain.operations/route/stepRouteStoneSet';
+import { asYieldModeForRewound } from '@src/domain.operations/route/stones/asYieldModeForRewound';
+import { findStoneByName } from '@src/domain.operations/route/stones/findStoneByName';
 import { getAllStones } from '@src/domain.operations/route/stones/getAllStones';
+import { isPromisedActionSlugAbsent } from '@src/domain.operations/route/stones/isPromisedActionSlugAbsent';
 import { enumFilesFromGlob } from '@src/utils/enumFilesFromGlob';
 
 /**
@@ -770,10 +775,18 @@ export const routeStoneSet = async (): Promise<void> => {
   }
 
   // validate --that required for promised
-  if (options.as === 'promised' && !options.that)
+  if (isPromisedActionSlugAbsent({ action: options.as, slug: options.that }))
     throw new BadRequestError('--that is required when --as is "promised"', {
       hint: '--help for usage',
     });
+
+  // validate and derive yield mode (only for rewound)
+  const yieldMode = asYieldModeForRewound({
+    asAction: options.as,
+    hard: options.hard,
+    soft: options.soft,
+    yield: options.yield,
+  });
 
   // detect TTY for human vs agent
   // allow approval in test/CI environments (Jest sets NODE_ENV=test, CI runners set CI=true)
@@ -801,6 +814,7 @@ export const routeStoneSet = async (): Promise<void> => {
           | 'rewound'
           | 'arrived',
         that: options.that,
+        yield: yieldMode,
       },
       { ...progress.context, isTTY },
     );
@@ -1006,7 +1020,7 @@ const judgeApproved = async (input: {
 }): Promise<void> => {
   // find the stone
   const stones = await getAllStones({ route: input.route });
-  const stoneMatched = stones.find((s) => s.name === input.stone);
+  const stoneMatched = findStoneByName({ stones, name: input.stone });
   if (!stoneMatched) {
     console.log('passed: false');
     console.log('reason: stone not found');
@@ -1039,29 +1053,6 @@ const judgeApproved = async (input: {
 };
 
 /**
- * .what = extracts blocker and nitpick counts from review content
- * .why = encapsulates regex extraction for readability
- */
-const getReviewCountsFromContent = (input: {
-  content: string;
-}): { blockers: number; nitpicks: number } => {
-  // match both formats:
-  // 1. "blockers: N" (yaml/key-value format from review tools)
-  // 2. "N blockers" (tree/prose format from skill output)
-  const blockerMatch =
-    input.content.match(/blockers?:\s*(\d+)/i) ||
-    input.content.match(/(\d+)\s+blockers?/i);
-  const nitpickMatch =
-    input.content.match(/nitpicks?:\s*(\d+)/i) ||
-    input.content.match(/(\d+)\s+nitpicks?/i);
-
-  return {
-    blockers: blockerMatch?.[1] ? parseInt(blockerMatch[1], 10) : 0,
-    nitpicks: nitpickMatch?.[1] ? parseInt(nitpickMatch[1], 10) : 0,
-  };
-};
-
-/**
  * .what = judge mechanism for review threshold check
  * .why = enables milestones gated on code review quality
  */
@@ -1073,7 +1064,7 @@ const judgeReviewed = async (input: {
 }): Promise<void> => {
   // find the stone to compute artifact hash
   const stones = await getAllStones({ route: input.route });
-  const stoneMatched = stones.find((s) => s.name === input.stone);
+  const stoneMatched = findStoneByName({ stones, name: input.stone });
   if (!stoneMatched) {
     console.log('passed: false');
     console.log('reason: stone not found');
@@ -1104,38 +1095,25 @@ const judgeReviewed = async (input: {
   // get latest review per index (later iterations supersede earlier)
   const latestReviewFiles = getLatestReviewFilesPerIndex({ reviewFiles });
 
-  // parse blockers and nitpicks from latest reviews only
-  let totalBlockers = 0;
-  let totalNitpicks = 0;
-
-  for (const filePath of latestReviewFiles) {
-    const content = await fs.readFile(filePath, 'utf-8');
-    const counts = getReviewCountsFromContent({ content });
-    totalBlockers += counts.blockers;
-    totalNitpicks += counts.nitpicks;
-  }
+  // compute total blockers and nitpicks from latest reviews
+  const { totalBlockers, totalNitpicks } = await computeReviewTotalsFromFiles({
+    reviewFiles: latestReviewFiles,
+  });
 
   // check thresholds
-  if (totalBlockers > input.allowBlockers) {
-    console.log('passed: false');
-    console.log(
-      `reason: blockers exceed threshold (${totalBlockers} > ${input.allowBlockers})`,
-    );
+  const verdict = computeReviewThresholdVerdict({
+    totalBlockers,
+    totalNitpicks,
+    allowBlockers: input.allowBlockers,
+    allowNitpicks: input.allowNitpicks,
+  });
+
+  // output verdict
+  console.log(`passed: ${verdict.passed}`);
+  console.log(`reason: ${verdict.reason}`);
+  if (!verdict.passed) {
     process.exit(2);
   }
-
-  if (totalNitpicks > input.allowNitpicks) {
-    console.log('passed: false');
-    console.log(
-      `reason: nitpicks exceed threshold (${totalNitpicks} > ${input.allowNitpicks})`,
-    );
-    process.exit(2);
-  }
-
-  console.log('passed: true');
-  console.log(
-    `reason: reviews pass (blockers: ${totalBlockers}/${input.allowBlockers}, nitpicks: ${totalNitpicks}/${input.allowNitpicks})`,
-  );
 };
 
 /**

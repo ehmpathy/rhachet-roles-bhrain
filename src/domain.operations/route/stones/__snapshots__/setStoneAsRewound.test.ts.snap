@@ -1,5 +1,41 @@
 // Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
 
+exports[`setStoneAsRewound given: [case1] a route with a single stone when: [t0] setStoneAsRewound is called then: stdout matches snapshot 1`] = `
+"🦉 the way speaks for itself
+
+🗿 route.stone.set
+   ├─ stone = 1.vision
+   ├─ cascade
+   │  └─ 1.vision
+   │     ├─ deleted: 0 reviews, 0 judges, 0 promises, 0 triggers
+   │     └─ passage: rewound
+   └─ done"
+`;
+
+exports[`setStoneAsRewound given: [case3] a stone with guard artifacts when: [t0] setStoneAsRewound is called then: stdout matches snapshot 1`] = `
+"🦉 the way speaks for itself
+
+🗿 route.stone.set
+   ├─ stone = 1.vision
+   ├─ cascade
+   │  └─ 1.vision
+   │     ├─ deleted: 1 reviews, 1 judges, 0 promises, 0 triggers
+   │     └─ passage: rewound
+   └─ done"
+`;
+
+exports[`setStoneAsRewound given: [case6] idempotent rewind when: [t0] setStoneAsRewound is called twice then: stdout matches snapshot for idempotent call 1`] = `
+"🦉 the way speaks for itself
+
+🗿 route.stone.set
+   ├─ stone = 1.vision
+   ├─ cascade
+   │  └─ 1.vision
+   │     ├─ deleted: 0 reviews, 0 judges, 0 promises, 0 triggers
+   │     └─ passage: rewound
+   └─ done"
+`;
+
 exports[`setStoneAsRewound given: [case7] stdout snapshot for cascade rewind when: [t0] setStoneAsRewound is called for stone 2 then: stdout matches snapshot 1`] = `
 "🦉 the way speaks for itself
 
@@ -11,6 +47,51 @@ exports[`setStoneAsRewound given: [case7] stdout snapshot for cascade rewind whe
    │  │  └─ passage: rewound
    │  └─ 3.blueprint
    │     ├─ deleted: 0 reviews, 0 judges, 1 promises, 0 triggers
+   │     └─ passage: rewound
+   └─ done"
+`;
+
+exports[`setStoneAsRewound given: [case8] nested stone prefixes (3.1 vs 3.2) when: [t0] setStoneAsRewound is called for 3.2 then: stdout matches snapshot 1`] = `
+"🦉 the way speaks for itself
+
+🗿 route.stone.set
+   ├─ stone = 3.2.research.patterns
+   ├─ cascade
+   │  ├─ 3.2.research.patterns
+   │  │  ├─ deleted: 0 reviews, 0 judges, 0 promises, 0 triggers
+   │  │  └─ passage: rewound
+   │  └─ 3.3.blueprint
+   │     ├─ deleted: 0 reviews, 0 judges, 0 promises, 0 triggers
+   │     └─ passage: rewound
+   └─ done"
+`;
+
+exports[`setStoneAsRewound given: [case14] stdout snapshot yield drop when: [t0] setStoneAsRewound with yield drop then: stdout matches snapshot 1`] = `
+"🦉 the way speaks for itself
+
+🗿 route.stone.set
+   ├─ stone = 2.criteria
+   ├─ cascade
+   │  ├─ 2.criteria
+   │  │  ├─ deleted: 0 reviews, 0 judges, 0 promises, 0 triggers, 1 yield
+   │  │  └─ passage: rewound
+   │  └─ 3.blueprint
+   │     ├─ deleted: 0 reviews, 0 judges, 0 promises, 0 triggers
+   │     └─ passage: rewound
+   └─ done"
+`;
+
+exports[`setStoneAsRewound given: [case15] stdout snapshot yield keep when: [t0] setStoneAsRewound with yield keep then: stdout matches snapshot 1`] = `
+"🦉 the way speaks for itself
+
+🗿 route.stone.set
+   ├─ stone = 2.criteria
+   ├─ cascade
+   │  ├─ 2.criteria
+   │  │  ├─ deleted: 0 reviews, 0 judges, 0 promises, 0 triggers
+   │  │  └─ passage: rewound
+   │  └─ 3.blueprint
+   │     ├─ deleted: 0 reviews, 0 judges, 0 promises, 0 triggers
    │     └─ passage: rewound
    └─ done"
 `;

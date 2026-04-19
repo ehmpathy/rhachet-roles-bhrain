@@ -103,6 +103,10 @@ describe('driver.route.set.acceptance', () => {
       then('error mentions artifact not found', () => {
         expect(res.cli.stderr).toContain('artifact not found');
       });
+
+      then('stderr matches snapshot', () => {
+        expect(res.cli.stderr).toMatchSnapshot();
+      });
     });
   });
 
@@ -150,6 +154,14 @@ describe('driver.route.set.acceptance', () => {
 
       then('does NOT create approval marker', () => {
         expect(res.approvalExists).toBe(false);
+      });
+
+      then('stdout matches snapshot', () => {
+        expect(res.cli.stdout).toMatchSnapshot();
+      });
+
+      then('stderr matches snapshot', () => {
+        expect(res.cli.stderr).toMatchSnapshot();
       });
     });
   });
@@ -345,6 +357,16 @@ describe('driver.route.set.acceptance', () => {
 
       then('does not create passage marker', () => {
         expect(res.passageExists).toBe(false);
+      });
+
+      then('stdout matches snapshot', () => {
+        expect(res.cli.stdout).toMatchSnapshot();
+      });
+
+      // note: stderr contains progress output (spinners) which may vary between runs
+      // if this snapshot becomes flaky, consider ANSI code removal before snapshot
+      then('stderr matches snapshot', () => {
+        expect(res.cli.stderr).toMatchSnapshot();
       });
     });
   });
@@ -596,7 +618,7 @@ describe('driver.route.set.acceptance', () => {
       then('stdout contains rewound output tree', () => {
         expect(res.cli.stdout).toContain('1.vision');
         expect(res.cli.stdout).toContain('cascade');
-        expect(res.cli.stdout).toContain('done');
+        expect(res.cli.stdout).toContain('passage: rewound');
       });
 
       then('creates passage marker with status rewound', () => {
@@ -605,6 +627,10 @@ describe('driver.route.set.acceptance', () => {
 
       then('deletes guard artifacts', () => {
         expect(res.guardFiles).toHaveLength(0);
+      });
+
+      then('stdout matches snapshot', () => {
+        expect(res.cli.stdout).toMatchSnapshot();
       });
     });
 
@@ -723,6 +749,10 @@ describe('driver.route.set.acceptance', () => {
         expect(res.lines[2]).toContain('rewound');
         expect(res.lines[3]).toContain('rewound');
       });
+
+      then('stdout matches snapshot', () => {
+        expect(res.cli.stdout).toMatchSnapshot();
+      });
     });
 
     when('[t3] idempotent rewind (twice)', () => {
@@ -767,6 +797,10 @@ describe('driver.route.set.acceptance', () => {
         // cascade rewinds all 3 stones twice = 6 entries
         expect(res.lines).toHaveLength(6);
         expect(res.lines.every((l: string) => l.includes('rewound'))).toBe(true);
+      });
+
+      then('stdout matches snapshot', () => {
+        expect(res.cli.stdout).toMatchSnapshot();
       });
     });
   });
