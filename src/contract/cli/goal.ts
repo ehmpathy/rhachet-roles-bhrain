@@ -15,10 +15,10 @@ import {
   GoalWhat,
   GoalWhy,
 } from '@src/domain.objects/Achiever/Goal';
+import { expandAbbreviatedHashes } from '@src/domain.operations/goal/expandAbbreviatedHashes';
 import { getGoalGuardVerdict } from '@src/domain.operations/goal/getGoalGuardVerdict';
 import { getGoals } from '@src/domain.operations/goal/getGoals';
 import { getTriageState } from '@src/domain.operations/goal/getTriageState';
-import { expandAbbreviatedHashes } from '@src/domain.operations/goal/expandAbbreviatedHashes';
 import { setAsk } from '@src/domain.operations/goal/setAsk';
 import { setGoal, setGoalStatus } from '@src/domain.operations/goal/setGoal';
 import { getRouteBindByBranch } from '@src/domain.operations/route/bind/getRouteBindByBranch';
@@ -286,10 +286,7 @@ const emitGoalCondensed = (
  * .what = emit single goal directly under command header (no "└─ goal" wrapper)
  * .why = for single goal view, the redundant header adds noise
  */
-const emitGoalCondensedForSingle = (
-  goal: Goal,
-  hasCovers: boolean,
-): void => {
+const emitGoalCondensedForSingle = (goal: Goal, hasCovers: boolean): void => {
   const meta = computeGoalCompleteness(goal);
   const isAbsent = (field: string) => meta.absent.includes(field);
 
@@ -844,8 +841,14 @@ const buildGoalFromFlags = (
  */
 export const goalMemorySet = async (): Promise<void> => {
   const stdinContent = readStdin();
-  const { scope, covers: coversRaw, slug, status, fields, hasFieldFlags } =
-    await parseArgsForSet(process.argv, stdinContent);
+  const {
+    scope,
+    covers: coversRaw,
+    slug,
+    status,
+    fields,
+    hasFieldFlags,
+  } = await parseArgsForSet(process.argv, stdinContent);
   const scopeDir = await getScopeDir(scope);
 
   // expand abbreviated hashes to full hashes for coverage lookup
