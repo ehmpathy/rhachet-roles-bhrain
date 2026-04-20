@@ -15,12 +15,14 @@ import {
   GoalWhat,
   GoalWhy,
 } from '@src/domain.objects/Achiever/Goal';
+import { delGoalBlockerState } from '@src/domain.operations/goal/delGoalBlockerState';
 import { expandAbbreviatedHashes } from '@src/domain.operations/goal/expandAbbreviatedHashes';
 import { getGoalGuardVerdict } from '@src/domain.operations/goal/getGoalGuardVerdict';
 import { getGoals } from '@src/domain.operations/goal/getGoals';
 import { getTriageState } from '@src/domain.operations/goal/getTriageState';
 import { setAsk } from '@src/domain.operations/goal/setAsk';
 import { setGoal, setGoalStatus } from '@src/domain.operations/goal/setGoal';
+import { setGoalBlockerState } from '@src/domain.operations/goal/setGoalBlockerState';
 import { getRouteBindByBranch } from '@src/domain.operations/route/bind/getRouteBindByBranch';
 
 // eslint-disable-next-line @typescript-eslint/no-require-imports
@@ -903,6 +905,11 @@ export const goalMemorySet = async (): Promise<void> => {
       scopeDir,
     });
 
+    // clear blocker state on terminal status (progress was made)
+    if (status === 'fulfilled' || status === 'blocked') {
+      await delGoalBlockerState({ scopeDir });
+    }
+
     // fetch updated goal for full display
     const updatedGoals = await getGoals({ scopeDir, filter: { slug } });
     const updatedGoal = getFirstGoal(updatedGoals.goals);
@@ -959,6 +966,11 @@ export const goalMemorySet = async (): Promise<void> => {
         covers,
         scopeDir,
       });
+
+      // clear blocker state on terminal status (progress was made)
+      if (status === 'fulfilled' || status === 'blocked') {
+        await delGoalBlockerState({ scopeDir });
+      }
 
       // fetch updated goal for full display
       const updatedGoals = await getGoals({ scopeDir, filter: { slug } });
@@ -1636,8 +1648,18 @@ export const goalTriageNext = async (): Promise<void> => {
     return;
   }
 
+  // track blocker state for escalation
+  const priorityGoal =
+    inflightGoals.goals.length > 0
+      ? (inflightGoals.goals[0] as Goal)
+      : (enqueuedGoals.goals[0] as Goal);
+  const { state: blockerState } = await setGoalBlockerState({
+    scopeDir,
+    goalSlug: priorityGoal.slug,
+  });
+
   // emit treestruct to stderr (for visibility on exit 2)
-  console.error(OWL_WISDOM);
+  console.error(escalateMessageByCount(blockerState.count));
   console.error('');
   console.error(`🔮 goal.triage.next --when hook.onStop`);
 
