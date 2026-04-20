@@ -21,7 +21,7 @@ exports[`achiever.goal.triage.next.acceptance given: [case4] enqueued goals exis
       └─ (1)
          ├─ slug = update-readme-env
          ├─ why.ask = update the readme to mention the new env var
-         ├─ status = enqueued → ✋ finish this first
+         ├─ status = enqueued → ✋ start this next
          └─ tip: run \`rhx goal.memory.get --slug update-readme-env\` to see the goal
 "
 `;

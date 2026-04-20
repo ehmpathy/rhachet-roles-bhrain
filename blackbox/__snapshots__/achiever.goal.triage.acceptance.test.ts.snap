@@ -342,7 +342,7 @@ exports[`achiever.goal.triage.acceptance given: [case2] triage of asks with goal
 exports[`achiever.goal.triage.acceptance given: [case3] goal status transitions through full lifecycle when: [t0] goal transitions to blocked then: stdout has good vibes 1`] = `
 "🦉 to forget an ask is to break a promise. remember.
 
-🔮 goal.memory.set --slug lifecycle-goal --status blocked
+🔮 goal.memory.set --slug lifecycle-goal --status.choice blocked
    ├─ goal
    │  ├─ slug = lifecycle-goal
    │  ├─ why
@@ -402,7 +402,7 @@ exports[`achiever.goal.triage.acceptance given: [case3] goal status transitions 
 exports[`achiever.goal.triage.acceptance given: [case3] goal status transitions through full lifecycle when: [t1] goal transitions to inflight then: stdout has good vibes 1`] = `
 "🦉 to forget an ask is to break a promise. remember.
 
-🔮 goal.memory.set --slug lifecycle-goal --status inflight
+🔮 goal.memory.set --slug lifecycle-goal --status.choice inflight
    ├─ goal
    │  ├─ slug = lifecycle-goal
    │  ├─ why
@@ -462,7 +462,7 @@ exports[`achiever.goal.triage.acceptance given: [case3] goal status transitions 
 exports[`achiever.goal.triage.acceptance given: [case3] goal status transitions through full lifecycle when: [t2] goal transitions to fulfilled then: stdout has good vibes 1`] = `
 "🦉 to forget an ask is to break a promise. remember.
 
-🔮 goal.memory.set --slug lifecycle-goal --status fulfilled
+🔮 goal.memory.set --slug lifecycle-goal --status.choice fulfilled
    ├─ goal
    │  ├─ slug = lifecycle-goal
    │  ├─ why

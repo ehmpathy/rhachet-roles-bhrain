@@ -98,7 +98,7 @@ describe('achiever.goal.lifecycle.acceptance', () => {
           args: {
             scope: 'repo',
             slug: 'fix-auth-test',
-            status: 'inflight',
+            'status.choice': 'inflight',
           },
           cwd: scene.tempDir,
           stdin: 'work started on flake diagnosis',
@@ -143,7 +143,7 @@ describe('achiever.goal.lifecycle.acceptance', () => {
           args: {
             scope: 'repo',
             slug: 'fix-auth-test',
-            status: 'fulfilled',
+            'status.choice': 'fulfilled',
           },
           cwd: scene.tempDir,
           stdin: 'test passes 10 consecutive runs after mock stabilization',
@@ -189,7 +189,7 @@ describe('achiever.goal.lifecycle.acceptance', () => {
       const filterResult = useThen('invoke goal.memory.get --status enqueued', async () => {
         return invokeGoalSkill({
           skill: 'goal.memory.get',
-          args: { scope: 'repo', status: 'enqueued' },
+          args: { scope: 'repo', 'status.choice': 'enqueued' },
           cwd: scene.tempDir,
         });
       });

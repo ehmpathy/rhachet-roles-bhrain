@@ -17,4 +17,15 @@ export const ROLE_LIBRARIAN: Role = Role.build({
   briefs: {
     dirs: [{ uri: __dirname + '/briefs' }],
   },
+  hooks: {
+    onBrain: {
+      onBoot: [
+        {
+          command:
+            './node_modules/.bin/npx rhachet roles boot --role librarian',
+          timeout: 'PT30S',
+        },
+      ],
+    },
+  },
 });

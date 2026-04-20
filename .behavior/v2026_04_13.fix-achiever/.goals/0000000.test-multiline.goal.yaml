@@ -1,0 +1,15 @@
+slug: 'test-multiline'
+source: 'peer:human'
+status:
+  choice: 'fulfilled'
+  reason: 'test goal, cleaned up'
+updatedAt: '2026-04-19'
+why:
+  ask: "this is a multiline ask\nthat spans two lines"
+  purpose: 'test purpose'
+  benefit: 'test benefit'
+what:
+  outcome: 'test outcome'
+how:
+  task: 'test task'
+  gate: 'test gate'

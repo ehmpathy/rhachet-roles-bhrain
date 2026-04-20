@@ -1,20 +1,30 @@
 #!/usr/bin/env bash
 ######################################################################
-# .what = onStop hook to show unfinished goals and mandate continuation
+# .what = show unfinished goals at session boundaries
 #
-# .why = ensures bots complete their committed work:
-#        - shows inflight goals (priority)
-#        - shows enqueued goals if no inflight
-#        - exit 2 to soft-block session end
+# .why = ensures goals persist across compaction and session end:
+#        - inflight goals have priority (finish first)
+#        - enqueued goals shown if no inflight
+#        - escalates after 5 repeated reminders
+#
+# modes:
+#   hook.onBoot = informational refresh after compaction (exit 0)
+#   hook.onStop = halt until goals fulfilled (exit 2)
 #
 # usage:
-#   configured as onStop hook via getAchieverRole.ts
-#   ./goal.triage.next.sh --when hook.onStop
-#   ./goal.triage.next.sh --when hook.onStop --scope repo
+#   rhx goal.triage.next --when hook.onBoot   # refresh after compaction
+#   rhx goal.triage.next --when hook.onStop   # halt until fulfilled
 #
 # exit codes:
 #   0 = no unfinished goals (silent)
-#   2 = unfinished goals exist (treestruct to stderr)
+#   0 = onBoot mode (informational refresh to stdout)
+#   2 = onStop mode with unfinished goals (halt, treestruct to stderr)
+#
+# note: scope is automatic based on route bind state.
+#
+# configured as hooks via getAchieverRole.ts:
+#   onBoot = refresh goal state into context after compaction
+#   onStop = halt until all goals fulfilled
 ######################################################################
 set -euo pipefail
 

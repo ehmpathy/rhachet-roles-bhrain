@@ -15,12 +15,14 @@ import {
   GoalWhat,
   GoalWhy,
 } from '@src/domain.objects/Achiever/Goal';
+import { delGoalBlockerState } from '@src/domain.operations/goal/delGoalBlockerState';
 import { expandAbbreviatedHashes } from '@src/domain.operations/goal/expandAbbreviatedHashes';
 import { getGoalGuardVerdict } from '@src/domain.operations/goal/getGoalGuardVerdict';
 import { getGoals } from '@src/domain.operations/goal/getGoals';
 import { getTriageState } from '@src/domain.operations/goal/getTriageState';
 import { setAsk } from '@src/domain.operations/goal/setAsk';
 import { setGoal, setGoalStatus } from '@src/domain.operations/goal/setGoal';
+import { setGoalBlockerState } from '@src/domain.operations/goal/setGoalBlockerState';
 import { getRouteBindByBranch } from '@src/domain.operations/route/bind/getRouteBindByBranch';
 
 // eslint-disable-next-line @typescript-eslint/no-require-imports
@@ -120,6 +122,36 @@ const isStatusUpdateMode = (
  * .why = sets the vibe for goal operations
  */
 const OWL_WISDOM = '🦉 to forget an ask is to break a promise. remember.';
+
+/**
+ * .what = escalation threshold for blocker count
+ * .why = wisher specified 5 repeated blocks before escalation
+ */
+const ESCALATION_THRESHOLD = 5;
+
+/**
+ * .what = escalated owl wisdom for repeated reminders
+ * .why = after 5 reminders, message should be more insistent
+ */
+const OWL_WISDOM_ESCALATED =
+  '🦉 friend, you have been reminded many times. the work must be done.';
+
+/**
+ * .what = owl wisdom for onBoot refresh
+ * .why = after compaction, remind brain of goals without halt
+ */
+const OWL_WISDOM_BOOT = '🦉 the path continues. here is where you left off.';
+
+/**
+ * .what = get escalated owl message based on blocker count
+ * .why = escalate message intensity after 5 repeated blocks
+ */
+export const escalateMessageByCount = (count: number): string => {
+  if (count >= ESCALATION_THRESHOLD) {
+    return OWL_WISDOM_ESCALATED;
+  }
+  return OWL_WISDOM;
+};
 
 /**
  * .what = emit owl header
@@ -579,7 +611,7 @@ const parseArgsForSet = async (
       i++;
       continue;
     }
-    if (arg === '--status' && nextArg) {
+    if ((arg === '--status' || arg === '--status.choice') && nextArg) {
       status = nextArg as GoalStatusChoice;
       i++;
       continue;
@@ -643,7 +675,7 @@ const parseArgsForGet = async (
       scope = scopeValue;
       i++;
     }
-    if (arg === '--status' && args[i + 1]) {
+    if ((arg === '--status' || arg === '--status.choice') && args[i + 1]) {
       status = args[i + 1] as GoalStatusChoice;
       i++;
     }
@@ -873,6 +905,11 @@ export const goalMemorySet = async (): Promise<void> => {
       scopeDir,
     });
 
+    // clear blocker state on terminal status (progress was made)
+    if (status === 'fulfilled' || status === 'blocked') {
+      await delGoalBlockerState({ scopeDir });
+    }
+
     // fetch updated goal for full display
     const updatedGoals = await getGoals({ scopeDir, filter: { slug } });
     const updatedGoal = getFirstGoal(updatedGoals.goals);
@@ -929,6 +966,11 @@ export const goalMemorySet = async (): Promise<void> => {
         covers,
         scopeDir,
       });
+
+      // clear blocker state on terminal status (progress was made)
+      if (status === 'fulfilled' || status === 'blocked') {
+        await delGoalBlockerState({ scopeDir });
+      }
 
       // fetch updated goal for full display
       const updatedGoals = await getGoals({ scopeDir, filter: { slug } });
@@ -1606,8 +1648,18 @@ export const goalTriageNext = async (): Promise<void> => {
     return;
   }
 
+  // track blocker state for escalation
+  const priorityGoal =
+    inflightGoals.goals.length > 0
+      ? (inflightGoals.goals[0] as Goal)
+      : (enqueuedGoals.goals[0] as Goal);
+  const { state: blockerState } = await setGoalBlockerState({
+    scopeDir,
+    goalSlug: priorityGoal.slug,
+  });
+
   // emit treestruct to stderr (for visibility on exit 2)
-  console.error(OWL_WISDOM);
+  console.error(escalateMessageByCount(blockerState.count));
   console.error('');
   console.error(`🔮 goal.triage.next --when hook.onStop`);
 

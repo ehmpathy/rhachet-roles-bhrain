@@ -41,7 +41,7 @@ exports[`driver.route.set.acceptance given: [case2] route.stone.set --as approve
 
 exports[`driver.route.set.acceptance given: [case3] route.stone.set --as passed with guard (allowed) when: [t0] guarded stone with review + judge that pass then: stdout matches snapshot 1`] = `
 "🦉 the way speaks for itself
-   ├─ ✓ review.1 - completed 0.0s
+   ├─ ✓ review.1 - completed 0.1s
    └─ ✓ judge.1 - allowed 0.0s
 
 🗿 route.stone.set
@@ -52,7 +52,7 @@ exports[`driver.route.set.acceptance given: [case3] route.stone.set --as passed 
    │  │   └─ 1.test.md
    │  ├─ reviews
    │  │   └─ r1: echo "blockers: 0\\nnitpicks: 1\\ntest review content"
-   │  │       ├─ finished 0.0s ✓
+   │  │       ├─ finished 0.1s ✓
    │  │       ├─ review: .route/1.test.guard.review.i1.e2f8d2b5671b203b4a673b24f3772d3f6a7cac1669258302d777591e974dc82b.r1.md
    │  │       └─ 1 nitpick 🟠
    │  └─ judges

@@ -178,7 +178,7 @@ describe('achiever.goal.triage.acceptance', () => {
           args: {
             scope: 'repo',
             slug: 'fix-auth-test',
-            status: 'inflight',
+            'status.choice': 'inflight',
           },
           cwd: scene.tempDir,
           stdin: 'work started on flake diagnosis',
@@ -188,7 +188,7 @@ describe('achiever.goal.triage.acceptance', () => {
       const filterResult = useThen('invoke goal.memory.get --status enqueued', async () => {
         return invokeGoalSkill({
           skill: 'goal.memory.get',
-          args: { scope: 'repo', status: 'enqueued' },
+          args: { scope: 'repo', 'status.choice': 'enqueued' },
           cwd: scene.tempDir,
         });
       });
@@ -305,7 +305,7 @@ describe('achiever.goal.triage.acceptance', () => {
           args: {
             scope: 'repo',
             slug: 'lifecycle-goal',
-            status: 'blocked',
+            'status.choice': 'blocked',
           },
           cwd: scene.tempDir,
           stdin: 'blocked on external dependency',
@@ -332,7 +332,7 @@ describe('achiever.goal.triage.acceptance', () => {
           args: {
             scope: 'repo',
             slug: 'lifecycle-goal',
-            status: 'inflight',
+            'status.choice': 'inflight',
           },
           cwd: scene.tempDir,
           stdin: 'dependency resolved, work resumed',
@@ -359,7 +359,7 @@ describe('achiever.goal.triage.acceptance', () => {
           args: {
             scope: 'repo',
             slug: 'lifecycle-goal',
-            status: 'fulfilled',
+            'status.choice': 'fulfilled',
           },
           cwd: scene.tempDir,
           stdin: 'all transitions verified successfully',

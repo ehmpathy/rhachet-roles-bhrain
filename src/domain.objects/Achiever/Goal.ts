@@ -17,6 +17,18 @@ export type GoalStatusChoice =
   | 'fulfilled';
 
 /**
+ * .what = array of valid status choices for runtime validation
+ * .why = enables fail-fast on invalid status values in CLI
+ */
+export const GOAL_STATUS_CHOICES: GoalStatusChoice[] = [
+  'incomplete',
+  'blocked',
+  'enqueued',
+  'inflight',
+  'fulfilled',
+];
+
+/**
  * .what = source of the goal
  * .why = distinguishes peer asks from self-generated goals
  */

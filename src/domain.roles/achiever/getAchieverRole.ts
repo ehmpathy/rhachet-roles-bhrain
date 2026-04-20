@@ -20,6 +20,18 @@ export const ROLE_ACHIEVER: Role = Role.build({
   },
   hooks: {
     onBrain: {
+      // onBoot: boot briefs/skills then refresh goal state after compaction
+      onBoot: [
+        {
+          command: './node_modules/.bin/npx rhachet roles boot --role achiever',
+          timeout: 'PT30S',
+        },
+        {
+          command:
+            './node_modules/.bin/rhx goal.triage.next --when hook.onBoot',
+          timeout: 'PT10S',
+        },
+      ],
       // onTool: protect .goals/ from direct manipulation
       onTool: [
         {
