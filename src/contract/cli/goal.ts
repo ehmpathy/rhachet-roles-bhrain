@@ -5,6 +5,7 @@
 import { execSync } from 'child_process';
 import { BadRequestError } from 'helpful-errors';
 
+import type { Ask } from '@src/domain.objects/Achiever/Ask';
 import {
   computeGoalCompleteness,
   GOAL_STATUS_CHOICES,
@@ -16,16 +17,107 @@ import {
   GoalWhy,
 } from '@src/domain.objects/Achiever/Goal';
 import { delGoalBlockerState } from '@src/domain.operations/goal/delGoalBlockerState';
+import { expandAbbreviatedHashes } from '@src/domain.operations/goal/expandAbbreviatedHashes';
 import { getGoalBlockerState } from '@src/domain.operations/goal/getGoalBlockerState';
 import { getGoalGuardVerdict } from '@src/domain.operations/goal/getGoalGuardVerdict';
 import { getGoals } from '@src/domain.operations/goal/getGoals';
 import { getTriageState } from '@src/domain.operations/goal/getTriageState';
+import { setAsk } from '@src/domain.operations/goal/setAsk';
 import { setGoal, setGoalStatus } from '@src/domain.operations/goal/setGoal';
 import { setGoalBlockerState } from '@src/domain.operations/goal/setGoalBlockerState';
 import { getRouteBindByBranch } from '@src/domain.operations/route/bind/getRouteBindByBranch';
 
 // eslint-disable-next-line @typescript-eslint/no-require-imports
 const yaml = require('js-yaml');
+
+// ============================================================================
+// transformers
+// ============================================================================
+
+/**
+ * .what = extract date string from current timestamp
+ * .why = separates date computation from orchestrator logic for readability
+ */
+const asCurrentDateString = (): string => {
+  return new Date().toISOString().split('T')[0] as string;
+};
+
+/**
+ * .what = convert branch name to slug format
+ * .why = branch paths use / but file paths need . as separator
+ */
+const asBranchSlug = (branch: string): string => {
+  return branch.replace(/\//g, '.');
+};
+
+/**
+ * .what = remove undefined values from object
+ * .why = enables partial updates without overwriting extant fields
+ */
+const omitUndefinedFields = <T extends Record<string, unknown>>(
+  obj: T,
+): Partial<T> =>
+  Object.fromEntries(
+    Object.entries(obj).filter(([_, v]) => v !== undefined),
+  ) as Partial<T>;
+
+/**
+ * .what = extract short hash prefix for display
+ * .why = 7 chars is standard git short hash format
+ */
+const asHashShort = (hash: string): string => hash.slice(0, 7);
+
+/**
+ * .what = extract content preview for display
+ * .why = 50 chars fits on one line for triage output
+ */
+const asContentPreview = (content: string): string => content.slice(0, 50);
+
+/**
+ * .what = get first absent field or default value
+ * .why = guides user to fill first required field
+ */
+const getFirstAbsentField = (
+  absent: string[],
+  defaultField: string = 'why.purpose',
+): string => absent[0] ?? defaultField;
+
+/**
+ * .what = truncate text with ellipsis for display
+ * .why = keeps output scannable in treestruct format
+ */
+const asTruncatedText = (text: string, limit: number): string =>
+  text.length > limit ? text.slice(0, limit) + '...' : text;
+
+/**
+ * .what = get first goal from goals array
+ * .why = after filter by slug, result contains at most one goal
+ */
+const getFirstGoal = (goals: Goal[]): Goal | undefined => goals[0];
+
+/**
+ * .what = check if triage state is all clear
+ * .why = all asks covered and all goals complete means no triage needed
+ */
+const isTriageClear = (state: {
+  asksUncovered: unknown[];
+  goalsIncomplete: unknown[];
+}): boolean =>
+  state.asksUncovered.length === 0 && state.goalsIncomplete.length === 0;
+
+/**
+ * .what = determine if operation is status-only update
+ * .why = mode 1 updates status without field changes
+ */
+const isStatusUpdateMode = (
+  slug: string | undefined,
+  status: GoalStatusChoice | undefined,
+  hasFieldFlags: boolean,
+): boolean => Boolean(slug && status && !hasFieldFlags);
+
+// ============================================================================
+// output emitters
+// ============================================================================
 
 /**
  * .what = owl wisdom header
@@ -70,183 +162,6 @@ export const escalateMessageByCount = (count: number): string => {
 const emitOwlHeader = (): void => {
   console.log(OWL_WISDOM);
   console.log('');
-};
-
-/**
- * .what = emit comprehensive help output for goal.memory.set
- * .why = helps brains understand how to use goals with best practices
- */
-export const emitHelpOutput = (): void => {
-  console.log('🦉 goal.memory.set — persist a goal');
-  console.log('');
-  console.log('🔮 usage');
-  console.log('   ├─ example: create goal');
-  console.log('   │  ├─');
-  console.log('   │  │');
-  console.log('   │  │  rhx goal.memory.set \\');
-  console.log('   │  │    --slug fix-typo \\');
-  console.log('   │  │    --why.ask "fix the typo in readme" \\');
-  console.log('   │  │    --why.purpose "docs should be correct" \\');
-  console.log('   │  │    --why.benefit "users trust the project" \\');
-  console.log('   │  │    --what.outcome "readme has no typos" \\');
-  console.log('   │  │    --how.task "find and fix the typo" \\');
-  console.log('   │  │    --how.gate "spell check passes" \\');
-  console.log('   │  │    --source peer:human');
-  console.log('   │  │');
-  console.log('   │  └─');
-  console.log('   │');
-  console.log('   ├─ example: create goal (multiline)');
-  console.log('   │  ├─');
-  console.log('   │  │');
-  console.log('   │  │  rhx goal.memory.set \\');
-  console.log('   │  │    --slug refactor-auth-module \\');
-  console.log(
-    '   │  │    --why.ask "refactor the auth module to use JWT tokens',
-  );
-  console.log(
-    '   │  │      instead of session cookies for better stateless scale" \\',
-  );
-  console.log(
-    '   │  │    --why.purpose "current session-based auth requires sticky',
-  );
-  console.log(
-    '   │  │      sessions which limits horizontal scale options" \\',
-  );
-  console.log(
-    '   │  │    --why.benefit "infrastructure can scale horizontally without',
-  );
-  console.log(
-    '   │  │      session affinity, reduces costs and improves reliability" \\',
-  );
-  console.log('   │  │    --what.outcome "auth module uses JWT tokens for all');
-  console.log('   │  │      authentication flows, sessions are stateless" \\');
-  console.log(
-    '   │  │    --how.task "1. add JWT library, 2. update auth middleware,',
-  );
-  console.log(
-    '   │  │      3. migrate extant sessions, 4. update client code" \\',
-  );
-  console.log('   │  │    --how.gate "all auth tests pass, load test shows');
-  console.log('   │  │      no session affinity required" \\');
-  console.log('   │  │    --status.choice enqueued \\');
-  console.log('   │  │    --status.reason "will start after current task" \\');
-  console.log('   │  │    --source peer:human');
-  console.log('   │  │');
-  console.log('   │  └─');
-  console.log('   │');
-  console.log('   ├─ example: fulfill goal');
-  console.log('   │  ├─');
-  console.log('   │  │');
-  console.log('   │  │  rhx goal.memory.set \\');
-  console.log('   │  │    --slug fix-login-bug \\');
-  console.log('   │  │    --status.choice fulfilled \\');
-  console.log('   │  │    --status.reason "fixed in commit abc123,');
-  console.log('   │  │      root cause was race condition in token refresh"');
-  console.log('   │  │');
-  console.log('   │  └─');
-  console.log('   │');
-  console.log('   ├─ example: block goal');
-  console.log('   │  ├─');
-  console.log('   │  │');
-  console.log('   │  │  rhx goal.memory.set \\');
-  console.log('   │  │    --slug deploy-to-prod \\');
-  console.log('   │  │    --status.choice blocked \\');
-  console.log('   │  │    --status.reason "blocked on security review,');
-  console.log('   │  │      awaited infosec team approval by 2026-04-20"');
-  console.log('   │  │');
-  console.log('   │  └─');
-  console.log('   │');
-  console.log('   ├─ required fields');
-  console.log('   │  ├─ --slug           goal identifier');
-  console.log('   │  ├─ --why.ask        the original ask from human');
-  console.log('   │  ├─ --why.purpose    why this matters');
-  console.log('   │  ├─ --why.benefit    what success enables');
-  console.log('   │  ├─ --what.outcome   expected result');
-  console.log('   │  ├─ --how.task       work to be done');
-  console.log('   │  └─ --how.gate       success criteria');
-  console.log('   │');
-  console.log('   └─ optional fields');
-  console.log(
-    '      ├─ --status.choice  incomplete | blocked | enqueued | inflight | fulfilled',
-  );
-  console.log('      ├─ --status.reason  reason for current status');
-  console.log('      ├─ --covers         comma-separated ask hashes');
-  console.log('      ├─ --source         peer:human | peer:system');
-  console.log(
-    '      └─ --scope          route | repo (automatic — rarely needed)',
-  );
-};
-
-/**
- * .what = emit help output for goal.memory.get
- * .why = helps brains understand how to retrieve goals
- */
-export const emitHelpOutputGet = (): void => {
-  console.log('🦉 goal.memory.get — retrieve goals');
-  console.log('');
-  console.log('🔮 usage');
-  console.log('   ├─ example: list all goals');
-  console.log('   │  └─ rhx goal.memory.get');
-  console.log('   │');
-  console.log('   ├─ example: filter by status');
-  console.log('   │  └─ rhx goal.memory.get --status.choice inflight');
-  console.log('   │');
-  console.log('   ├─ example: get specific goal');
-  console.log('   │  └─ rhx goal.memory.get --slug fix-login-bug');
-  console.log('   │');
-  console.log('   └─ flags');
-  console.log('      ├─ --slug           filter by goal slug');
-  console.log(
-    '      ├─ --status.choice  filter by status (incomplete | blocked | enqueued | inflight | fulfilled)',
-  );
-  console.log(
-    '      └─ --scope          route | repo (automatic — rarely needed)',
-  );
-};
-
-/**
- * .what = emit help output for goal.triage.infer
- * .why = helps brains understand how to check triage state
- */
-export const emitHelpOutputTriage = (): void => {
-  console.log('🦉 goal.triage.infer — check triage state');
-  console.log('');
-  console.log('🔮 usage');
-  console.log('   ├─ example: show triage state');
-  console.log('   │  └─ rhx goal.triage.infer');
-  console.log('   │');
-  console.log('   ├─ what it shows');
-  console.log('   │  ├─ uncovered asks (need goals)');
-  console.log('   │  ├─ incomplete goals (need fields)');
-  console.log('   │  └─ coverage summary');
-  console.log('   │');
-  console.log('   └─ flags');
-  console.log('      ├─ --when   triage | hook.onStop (default: triage)');
-  console.log('      └─ --scope  route | repo (automatic — rarely needed)');
-};
-
-/**
- * .what = emit help output for goal.triage.next
- * .why = helps brains understand how to get next goal
- */
-export const emitHelpOutputTriageNext = (): void => {
-  console.log('🦉 goal.triage.next — get next goal to work on');
-  console.log('');
-  console.log('🔮 usage');
-  console.log('   ├─ hook modes');
-  console.log('   │  ├─ rhx goal.triage.next --when hook.onBoot');
-  console.log('   │  │  └─ refreshes goal state into context after compaction');
-  console.log('   │  │');
-  console.log('   │  └─ rhx goal.triage.next --when hook.onStop');
-  console.log('   │     └─ halts with reminder if unfinished goals remain');
-  console.log('   │');
-  console.log('   ├─ what it shows');
-  console.log('   │  ├─ inflight goals (priority)');
-  console.log('   │  └─ enqueued goals (queued)');
-  console.log('   │');
-  console.log('   └─ flags');
-  console.log('      ├─ --when   hook.onBoot | hook.onStop (required)');
-  console.log('      └─ --scope  route | repo (automatic — rarely needed)');
 };
 
 /**
@@ -341,15 +256,22 @@ const emitGoalCondensed = (
   index: number,
   total: number,
   indent: string = '      ',
+  coversCount: number = 0,
 ): void => {
   const isLast = index === total - 1;
   const branch = isLast ? '└─' : '├─';
-  const cont = isLast ? '   ' : '│  ';
+  // for single goal, no extra indentation; for list, indent under the (N) index
+  const cont = total === 1 ? '' : isLast ? '   ' : '│  ';
   const meta = computeGoalCompleteness(goal);
   const isAbsent = (field: string) => meta.absent.includes(field);
 
-  console.log(`${indent}${branch} (${index + 1})`);
-  console.log(`${indent}${cont}├─ slug = ${goal.slug}`);
+  // skip index for single goal view
+  if (total === 1) {
+    console.log(`${indent}├─ slug = ${goal.slug}`);
+  } else {
+    console.log(`${indent}${branch} (${index + 1})`);
+    console.log(`${indent}${cont}├─ slug = ${goal.slug}`);
+  }
 
   // why condensed (always show section, mark absent fields)
   console.log(`${indent}${cont}├─ why`);
@@ -383,12 +305,139 @@ const emitGoalCondensed = (
   console.log(`${indent}${cont}│  ├─ choice = ${goal.status.choice}`);
   console.log(`${indent}${cont}│  └─ reason = ${goal.status.reason}`);
 
+  // covers (only if > 0)
+  if (coversCount > 0) {
+    console.log(
+      `${indent}${cont}├─ covers = ${coversCount} ask${coversCount === 1 ? '' : 's'}`,
+    );
+  }
+
   // source
   console.log(`${indent}${cont}└─ source = ${goal.source}`);
 };
 
 /**
- * .what = detect if running in node -e mode
+ * .what = emit single goal directly under command header (no "└─ goal" wrapper)
+ * .why = for single goal view, the redundant header adds noise
+ */
+const emitGoalCondensedForSingle = (goal: Goal, hasCovers: boolean): void => {
+  const meta = computeGoalCompleteness(goal);
+  const isAbsent = (field: string) => meta.absent.includes(field);
+
+  // all properties at root level, directly under the command
+  console.log(`   ├─ slug = ${goal.slug}`);
+
+  // why condensed
+  console.log(`   ├─ why`);
+  console.log(
+    `   │  ├─ ask = ${goal.why?.ask ?? (isAbsent('why.ask') ? '✋ omitted' : '')}`,
+  );
+  console.log(
+    `   │  ├─ purpose = ${goal.why?.purpose ?? (isAbsent('why.purpose') ? '✋ omitted' : '')}`,
+  );
+  console.log(
+    `   │  └─ benefit = ${goal.why?.benefit ?? (isAbsent('why.benefit') ? '✋ omitted' : '')}`,
+  );
+
+  // what condensed
+  console.log(`   ├─ what`);
+  console.log(
+    `   │  └─ outcome = ${goal.what?.outcome ?? (isAbsent('what.outcome') ? '✋ omitted' : '')}`,
+  );
+
+  // how condensed
+  console.log(`   ├─ how`);
+  console.log(
+    `   │  ├─ task = ${goal.how?.task ?? (isAbsent('how.task') ? '✋ omitted' : '')}`,
+  );
+  console.log(
+    `   │  └─ gate = ${goal.how?.gate ?? (isAbsent('how.gate') ? '✋ omitted' : '')}`,
+  );
+
+  // status condensed
+  console.log(`   ├─ status`);
+  console.log(`   │  ├─ choice = ${goal.status.choice}`);
+  console.log(`   │  └─ reason = ${goal.status.reason}`);
+
+  // source - use └─ if no covers follow, ├─ if covers will follow
+  const sourceBranch = hasCovers ? '├─' : '└─';
+  console.log(`   ${sourceBranch} source = ${goal.source}`);
+};
+
+/**
+ * .what = emit list of goals in condensed format
+ * .why = encapsulates loop logic for narrative flow in orchestrator
+ */
+const emitGoalsList = (
+  goals: Goal[],
+  coversBySlug?: Map<string, number>,
+): void => {
+  goals.forEach((goal, index) => {
+    const coversCount = coversBySlug?.get(goal.slug) ?? 0;
+    emitGoalCondensed(goal, index, goals.length, '      ', coversCount);
+  });
+};
+
+/**
+ * .what = emit list of uncovered asks in treestruct format with full content
+ * .why = clone needs to see full ask to create meaningful goal that covers it
+ */
+const emitUncoveredAsksList = (asks: Ask[]): void => {
+  asks.forEach((ask, index) => {
+    const isLast = index === asks.length - 1;
+    const branch = isLast ? '└─' : '├─';
+    const cont = isLast ? '   ' : '│  ';
+    const hashShort = asHashShort(ask.hash);
+    console.log(`   │  ${branch} [${hashShort}]`);
+    console.log(`   │  ${cont}├─`);
+    console.log(`   │  ${cont}│`);
+    for (const line of ask.content.split('\n')) {
+      console.log(`   │  ${cont}│  ${line}`);
+    }
+    console.log(`   │  ${cont}│`);
+    console.log(`   │  ${cont}└─`);
+  });
+};
+
+/**
+ * .what = emit list of incomplete goals in treestruct format
+ * .why = encapsulates loop logic for narrative flow in orchestrator
+ */
+const emitIncompleteGoalsList = (
+  goals: Goal[],
+  options?: { emit?: typeof console.log; showStatus?: boolean },
+): void => {
+  const emit = options?.emit ?? console.log;
+  const showStatus = options?.showStatus ?? true;
+  goals.forEach((goal, index) => {
+    const isLast = index === goals.length - 1;
+    const branch = isLast ? '└─' : '├─';
+    const cont = isLast ? '   ' : '│  ';
+    const statusPart = showStatus ? ` [${goal.status.choice}]` : '';
+    emit(`   │  ${branch} ${goal.slug}${statusPart}`);
+    const meta = computeGoalCompleteness(goal);
+    emit(`   │  ${cont}├─ absent: ${meta.absent.join(', ')}`);
+    const firstAbsent = getFirstAbsentField(meta.absent);
+    emit(
+      `   │  ${cont}└─ to fix, run: \`rhx goal.memory.set --slug ${goal.slug} --${firstAbsent} "..."\``,
+    );
+  });
+};
+
+/**
+ * .what = emit list of complete goals in treestruct format
+ * .why = encapsulates loop logic for narrative flow in orchestrator
+ */
+const emitCompleteGoalsList = (goals: Goal[]): void => {
+  goals.forEach((goal, index) => {
+    const isLast = index === goals.length - 1;
+    const branch = isLast ? '└─' : '├─';
+    console.log(`   │  ${branch} ${goal.slug} [${goal.status.choice}]`);
+  });
+};
+
+/**
+ * .what = detect if in node -e mode
  * .why = node -e mode has different argv structure (no file path in argv[1])
  *
  * normal mode: node file.js --arg value → argv = [node, file.js, --arg, value]
@@ -424,7 +473,7 @@ const getScopeDir = async (scope: 'route' | 'repo'): Promise<string> => {
       });
     }
     // flatten branch name: vlad/feat-achiever → vlad.feat-achiever
-    const branchFlat = branch.replace(/\//g, '.');
+    const branchFlat = asBranchSlug(branch);
     return `.goals/${branchFlat}`;
   }
 
@@ -455,283 +504,6 @@ const FIELD_FLAGS = [
 ] as const;
 
 type FieldFlag = (typeof FIELD_FLAGS)[number];
-
-/**
- * .what = all valid flags for goal.memory.set
- * .why = enables fail-fast on unknown flags
- */
-export const KNOWN_FLAGS = [
-  '--slug',
-  '--scope',
-  '--status.choice',
-  '--covers',
-  '--help',
-  ...FIELD_FLAGS,
-] as const;
-
-/**
- * .what = all valid top-level keys for goal YAML input
- * .why = enables fail-fast on unknown YAML keys
- */
-export const ALLOWED_YAML_KEYS = [
-  'slug',
-  'why',
-  'what',
-  'how',
-  'status',
-  'source',
-  'covers',
-  'createdAt',
-  'updatedAt',
-] as const;
-
-/**
- * .what = all valid keys within the 'why' section of goal YAML
- * .why = enables fail-fast on unknown nested keys
- */
-export const ALLOWED_WHY_KEYS = ['ask', 'purpose', 'benefit'] as const;
-
-/**
- * .what = all valid keys within the 'what' section of goal YAML
- * .why = enables fail-fast on unknown nested keys
- */
-export const ALLOWED_WHAT_KEYS = ['outcome'] as const;
-
-/**
- * .what = all valid keys within the 'how' section of goal YAML
- * .why = enables fail-fast on unknown nested keys
- */
-export const ALLOWED_HOW_KEYS = ['task', 'gate'] as const;
-
-/**
- * .what = all valid keys within the 'status' section of goal YAML
- * .why = enables fail-fast on unknown nested keys
- */
-export const ALLOWED_STATUS_KEYS = ['choice', 'reason'] as const;
-
-/**
- * .what = all valid flags for goal.memory.get
- * .why = enables fail-fast on unknown flags
- */
-export const KNOWN_FLAGS_GET = [
-  '--scope',
-  '--status.choice',
-  '--slug',
-  '--help',
-] as const;
-
-/**
- * .what = all valid flags for goal.triage.infer
- * .why = enables fail-fast on unknown flags
- */
-export const KNOWN_FLAGS_TRIAGE = ['--scope', '--when', '--help'] as const;
-
-/**
- * .what = all valid flags for goal.triage.next
- * .why = enables fail-fast on unknown flags
- */
-export const KNOWN_FLAGS_TRIAGE_NEXT = ['--when', '--scope', '--help'] as const;
-
-/**
- * .what = emit validation error in owl vibes format
- * .why = consistent error output across all validation failures
- */
-const emitValidationError = (input: {
-  context: string;
-  error: string;
-  details?: string[];
-  allowed?: string[];
-  hint?: string;
-}): void => {
-  console.error('🦉 patience, friend.');
-  console.error('');
-  console.error(`🔮 ${input.context}`);
-  console.error(`   ├─ ✋ ${input.error}`);
-  if (input.details && input.details.length > 0) {
-    for (const detail of input.details) {
-      console.error(`   │  └─ ${detail}`);
-    }
-  }
-  console.error('   │');
-  if (input.allowed && input.allowed.length > 0) {
-    console.error('   └─ allowed');
-    for (let i = 0; i < input.allowed.length; i++) {
-      const isLast = i === input.allowed.length - 1;
-      console.error(`      ${isLast ? '└─' : '├─'} ${input.allowed[i]}`);
-    }
-  }
-  if (input.hint) {
-    console.error(`   └─ hint: ${input.hint}`);
-  }
-};
-
-/**
- * .what = rhachet meta-flags to skip in validation
- * .why = rhachet passes --skill to shell scripts, must be filtered out
- */
-const RHACHET_META_FLAGS = ['--skill'] as const;
-
-/**
- * .what = collect unknown flags from argv
- * .why = enables fail-fast with error that shows unknown flags
- */
-const collectUnknownFlags = (
-  args: string[],
-  knownFlags: readonly string[],
-): string[] => {
-  const unknown: string[] = [];
-  for (let i = 0; i < args.length; i++) {
-    const arg = args[i] as string;
-    if (arg.startsWith('--')) {
-      // skip rhachet meta-flags (e.g., --skill passed by rhx)
-      if (
-        RHACHET_META_FLAGS.includes(arg as (typeof RHACHET_META_FLAGS)[number])
-      ) {
-        const next = args[i + 1];
-        if (next && !next.startsWith('--')) {
-          i++; // skip the value
-        }
-        continue;
-      }
-      if (!knownFlags.includes(arg)) {
-        unknown.push(arg);
-      }
-      // skip next arg if it's a value (not a flag)
-      const next = args[i + 1];
-      if (next && !next.startsWith('--')) {
-        i++;
-      }
-    }
-  }
-  return unknown;
-};
-
-/**
- * .what = validate status value is a valid choice
- * .why = fail-fast on invalid status with helpful error
- */
-const validateStatusValue = (status: string): GoalStatusChoice => {
-  if (!GOAL_STATUS_CHOICES.includes(status as GoalStatusChoice)) {
-    throw new BadRequestError(`invalid status: ${status}`, {
-      context: 'goal.memory.set --status.choice',
-      status,
-      allowed: GOAL_STATUS_CHOICES,
-      hint: `use one of: ${GOAL_STATUS_CHOICES.join(', ')}`,
-    });
-  }
-  return status as GoalStatusChoice;
-};
-
-/**
- * .what = collect unknown keys from YAML input
- * .why = enables fail-fast with error that shows each unknown key
- */
-const collectUnknownYamlKeys = (
-  parsed: Record<string, unknown>,
-): { path: string; key: string }[] => {
-  const unknown: { path: string; key: string }[] = [];
-
-  // check top-level keys
-  for (const key of Object.keys(parsed)) {
-    if (
-      !ALLOWED_YAML_KEYS.includes(key as (typeof ALLOWED_YAML_KEYS)[number])
-    ) {
-      unknown.push({ path: '', key });
-    }
-  }
-
-  // check nested keys in 'why'
-  if (parsed.why && typeof parsed.why === 'object') {
-    for (const key of Object.keys(parsed.why as object)) {
-      if (
-        !ALLOWED_WHY_KEYS.includes(key as (typeof ALLOWED_WHY_KEYS)[number])
-      ) {
-        unknown.push({ path: 'why', key });
-      }
-    }
-  }
-
-  // check nested keys in 'what'
-  if (parsed.what && typeof parsed.what === 'object') {
-    for (const key of Object.keys(parsed.what as object)) {
-      if (
-        !ALLOWED_WHAT_KEYS.includes(key as (typeof ALLOWED_WHAT_KEYS)[number])
-      ) {
-        unknown.push({ path: 'what', key });
-      }
-    }
-  }
-
-  // check nested keys in 'how'
-  if (parsed.how && typeof parsed.how === 'object') {
-    for (const key of Object.keys(parsed.how as object)) {
-      if (
-        !ALLOWED_HOW_KEYS.includes(key as (typeof ALLOWED_HOW_KEYS)[number])
-      ) {
-        unknown.push({ path: 'how', key });
-      }
-    }
-  }
-
-  // check nested keys in 'status'
-  if (parsed.status && typeof parsed.status === 'object') {
-    for (const key of Object.keys(parsed.status as object)) {
-      if (
-        !ALLOWED_STATUS_KEYS.includes(
-          key as (typeof ALLOWED_STATUS_KEYS)[number],
-        )
-      ) {
-        unknown.push({ path: 'status', key });
-      }
-    }
-  }
-
-  return unknown;
-};
-
-/**
- * .what = validate YAML input has no unknown keys
- * .why = fail-fast with error that shows each unknown key
- */
-const validateYamlKeys = (parsed: Record<string, unknown>): void => {
-  const unknown = collectUnknownYamlKeys(parsed);
-  if (unknown.length > 0) {
-    const details = unknown.map(({ path, key }) =>
-      path ? `${path}.${key}` : key,
-    );
-    throw new BadRequestError(`unknown keys: ${details.join(', ')}`, {
-      context: 'goal.memory.set (yaml input)',
-      unknownKeys: details,
-      allowed: [
-        ...ALLOWED_YAML_KEYS,
-        'why.{ask, purpose, benefit}',
-        'what.{outcome}',
-        'how.{task, gate}',
-        'status.{choice, reason}',
-      ],
-      hint: 'remove unknown keys from yaml input',
-    });
-  }
-};
-
-/**
- * .what = validate status.choice in YAML is a valid value
- * .why = fail-fast on invalid status with helpful error
- */
-const validateYamlStatusChoice = (parsed: Record<string, unknown>): void => {
-  const parsedStatus = parsed.status as Record<string, unknown> | undefined;
-  if (parsedStatus?.choice) {
-    const choice = parsedStatus.choice as string;
-    if (!GOAL_STATUS_CHOICES.includes(choice as GoalStatusChoice)) {
-      throw new BadRequestError(`invalid status.choice: ${choice}`, {
-        context: 'goal.memory.set (yaml input)',
-        choice,
-        allowed: GOAL_STATUS_CHOICES,
-        hint: `use one of: ${GOAL_STATUS_CHOICES.join(', ')}`,
-      });
-    }
-  }
-};
 
 /**
  * .what = parsed field values from CLI flags
@@ -792,31 +564,8 @@ const parseStdinValues = (
 };
 
 /**
- * .what = assert --scope repo is not used while bound to a route
- * .why = scope is automatic when bound to a route; explicit repo scope is forbidden
- */
-const assertScopeWhenBound = async (
-  explicitScope: 'route' | 'repo' | undefined,
-): Promise<void> => {
-  if (explicitScope !== 'repo') {
-    return; // no explicit --scope repo, check not needed
-  }
-
-  // check if bound to a route
-  const bind = await getRouteBindByBranch({ branch: null });
-  if (bind) {
-    emitValidationError({
-      context: 'goal.memory.set --scope repo',
-      error: 'scope is automatic when bound to a route',
-      hint: 'remove --scope flag; scope defaults to route when bound',
-    });
-    process.exit(2);
-  }
-};
-
-/**
  * .what = parse args for goal.memory.set
- * .why = extract --scope, --covers, --slug, --status.choice, and field flags from argv
+ * .why = extract --scope, --covers, --slug, --status, and field flags from argv
  */
 const parseArgsForSet = async (
   argv: string[],
@@ -828,39 +577,21 @@ const parseArgsForSet = async (
   status?: GoalStatusChoice;
   fields: ParsedFields;
   hasFieldFlags: boolean;
-  hasHelp: boolean;
 }> => {
   // in -e mode: argv = [node, --arg, value] → slice(1) to get args
   // in normal mode: argv = [node, file.js, --arg, value] → slice(2) to skip file
   const args = isNodeEvalMode() ? argv.slice(1) : argv.slice(2);
 
-  // validate unknown flags before parse
-  const unknownFlags = collectUnknownFlags(args, KNOWN_FLAGS);
-  if (unknownFlags.length > 0) {
-    emitValidationError({
-      context: 'goal.memory.set',
-      error: `unknown flags: ${unknownFlags.join(', ')}`,
-      allowed: KNOWN_FLAGS as unknown as string[],
-    });
-    process.exit(2);
-  }
-
   let scope: 'route' | 'repo' = await getDefaultScope();
-  let explicitScope: 'route' | 'repo' | undefined;
   let covers: string[] | undefined;
   let slug: string | undefined;
   let status: GoalStatusChoice | undefined;
   const flagValues = new Map<string, string>();
   let hasFieldFlags = false;
-  let hasHelp = false;
 
   for (let i = 0; i < args.length; i++) {
     const arg = args[i] as string;
     const nextArg = args[i + 1];
-    if (arg === '--help') {
-      hasHelp = true;
-      continue;
-    }
     if (arg === '--scope' && nextArg) {
       if (nextArg !== 'route' && nextArg !== 'repo') {
         throw new BadRequestError(
@@ -869,7 +600,6 @@ const parseArgsForSet = async (
         );
       }
       scope = nextArg;
-      explicitScope = nextArg;
       i++;
       continue;
     }
@@ -883,9 +613,8 @@ const parseArgsForSet = async (
       i++;
       continue;
     }
-    if (arg === '--status.choice' && nextArg) {
-      // validate status value
-      status = validateStatusValue(nextArg);
+    if (arg === '--status' && nextArg) {
+      status = nextArg as GoalStatusChoice;
       i++;
       continue;
     }
@@ -911,15 +640,12 @@ const parseArgsForSet = async (
     (fields as Record<string, string>)[key] = value;
   }
 
-  // validate --scope repo is not used while bound to a route
-  await assertScopeWhenBound(explicitScope);
-
-  return { scope, covers, slug, status, fields, hasFieldFlags, hasHelp };
+  return { scope, covers, slug, status, fields, hasFieldFlags };
 };
 
 /**
  * .what = parse args for goal.memory.get
- * .why = extract --scope, --status.choice, --slug, --help from argv
+ * .why = extract --scope, --status, --slug from argv
  */
 const parseArgsForGet = async (
   argv: string[],
@@ -927,34 +653,19 @@ const parseArgsForGet = async (
   scope: 'route' | 'repo';
   status?: GoalStatusChoice;
   slug?: string;
-  hasHelp: boolean;
+  withAsks: boolean;
 }> => {
   // in -e mode: argv = [node, --arg, value] → slice(1) to get args
   // in normal mode: argv = [node, file.js, --arg, value] → slice(2) to skip file
   const args = isNodeEvalMode() ? argv.slice(1) : argv.slice(2);
 
-  // validate unknown flags before parse
-  const unknownFlags = collectUnknownFlags(args, KNOWN_FLAGS_GET);
-  if (unknownFlags.length > 0) {
-    emitValidationError({
-      context: 'goal.memory.get',
-      error: `unknown flags: ${unknownFlags.join(', ')}`,
-      allowed: KNOWN_FLAGS_GET as unknown as string[],
-    });
-    process.exit(2);
-  }
-
   let scope: 'route' | 'repo' = await getDefaultScope();
   let status: GoalStatusChoice | undefined;
   let slug: string | undefined;
-  let hasHelp = false;
+  let withAsks = false;
 
   for (let i = 0; i < args.length; i++) {
     const arg = args[i];
-    if (arg === '--help') {
-      hasHelp = true;
-      continue;
-    }
     if (arg === '--scope' && args[i + 1]) {
       const scopeValue = args[i + 1];
       if (scopeValue !== 'route' && scopeValue !== 'repo') {
@@ -966,7 +677,7 @@ const parseArgsForGet = async (
       scope = scopeValue;
       i++;
     }
-    if (arg === '--status.choice' && args[i + 1]) {
+    if (arg === '--status' && args[i + 1]) {
       status = args[i + 1] as GoalStatusChoice;
       i++;
     }
@@ -974,47 +685,34 @@ const parseArgsForGet = async (
       slug = args[i + 1];
       i++;
     }
+    if (arg === '--with' && args[i + 1] === 'asks') {
+      withAsks = true;
+      i++;
+    }
   }
 
-  return { scope, status, slug, hasHelp };
+  return { scope, status, slug, withAsks };
 };
 
 /**
  * .what = parse args for goal.triage.infer
- * .why = extract --scope, --when, --help from argv
+ * .why = extract --scope from argv
  */
 const parseArgsForTriage = async (
   argv: string[],
 ): Promise<{
   scope: 'route' | 'repo';
-  mode: 'triage' | 'hook.onStop';
-  hasHelp: boolean;
+  mode: 'triage' | 'hook.onStop' | 'hook.onTalk';
 }> => {
   // in -e mode: argv = [node, --arg, value] → slice(1) to get args
   // in normal mode: argv = [node, file.js, --arg, value] → slice(2) to skip file
   const args = isNodeEvalMode() ? argv.slice(1) : argv.slice(2);
 
-  // validate unknown flags before parse
-  const unknownFlags = collectUnknownFlags(args, KNOWN_FLAGS_TRIAGE);
-  if (unknownFlags.length > 0) {
-    emitValidationError({
-      context: 'goal.triage.infer',
-      error: `unknown flags: ${unknownFlags.join(', ')}`,
-      allowed: KNOWN_FLAGS_TRIAGE as unknown as string[],
-    });
-    process.exit(2);
-  }
-
   let scope: 'route' | 'repo' = await getDefaultScope();
-  let mode: 'triage' | 'hook.onStop' = 'triage';
-  let hasHelp = false;
+  let mode: 'triage' | 'hook.onStop' | 'hook.onTalk' = 'triage';
 
   for (let i = 0; i < args.length; i++) {
     const arg = args[i];
-    if (arg === '--help') {
-      hasHelp = true;
-      continue;
-    }
     if (arg === '--scope' && args[i + 1]) {
       const scopeValue = args[i + 1];
       if (scopeValue !== 'route' && scopeValue !== 'repo') {
@@ -1027,12 +725,12 @@ const parseArgsForTriage = async (
       i++;
     }
     if (arg === '--when' && args[i + 1]) {
-      mode = args[i + 1] as 'triage' | 'hook.onStop';
+      mode = args[i + 1] as 'triage' | 'hook.onStop' | 'hook.onTalk';
       i++;
     }
   }
 
-  return { scope, mode, hasHelp };
+  return { scope, mode };
 };
 
 /**
@@ -1059,6 +757,58 @@ const readStdin = (): string => {
 };
 
 /**
+ * .what = parse prompt from Claude Code stdin JSON string
+ * .why = separates pure parsing from I/O for testability
+ */
+export const parseStdinPrompt = (raw: string): string | null => {
+  if (!raw.trim()) return null;
+
+  try {
+    const json = JSON.parse(raw);
+    const prompt = json.prompt;
+    if (typeof prompt !== 'string' || !prompt.trim()) return null;
+    return prompt;
+  } catch (error) {
+    // allowlist SyntaxError (malformed JSON)
+    if (error instanceof SyntaxError) return null;
+    // rethrow real errors
+    throw error;
+  }
+};
+
+/**
+ * .what = extract prompt from Claude Code stdin JSON
+ * .why = UserPromptSubmit hook receives JSON with prompt field
+ */
+const extractPromptFromStdin = (): string | null => {
+  const raw = readStdin();
+  return parseStdinPrompt(raw);
+};
+
+/**
+ * .what = emit onTalk reminder to stderr
+ * .why = vision specifies this exact format
+ */
+const emitOnTalkReminder = (content: string): void => {
+  console.error(OWL_WISDOM);
+  console.error('');
+  console.error('🔮 goal.triage.infer --from peer --when hook.onTalk');
+  console.error('   ├─ from = peer:human');
+  console.error('   ├─ ask');
+  console.error('   │  ├─');
+  console.error('   │  │  ');
+  for (const line of content.split('\n')) {
+    console.error(`   │  │    ${line}`);
+  }
+  console.error('   │  │  ');
+  console.error('   │  └─');
+  console.error('   │');
+  console.error('   └─ consider: does this impact your goals?');
+  console.error('      ├─ if yes, triage before you proceed');
+  console.error('      └─ run `rhx goal.triage.infer`');
+};
+
+/**
  * .what = build goal from CLI flags
  * .why = enables partial goal creation via flags without YAML
  */
@@ -1067,7 +817,7 @@ const buildGoalFromFlags = (
   fields: ParsedFields,
   status?: GoalStatusChoice,
 ): Goal => {
-  const now = new Date().toISOString().split('T')[0] as string;
+  const now = asCurrentDateString();
 
   // build why if any field present
   const hasWhy =
@@ -1125,36 +875,45 @@ const buildGoalFromFlags = (
  */
 export const goalMemorySet = async (): Promise<void> => {
   const stdinContent = readStdin();
-  const { scope, covers, slug, status, fields, hasFieldFlags, hasHelp } =
-    await parseArgsForSet(process.argv, stdinContent);
-
-  // handle --help
-  if (hasHelp) {
-    emitHelpOutput();
-    return;
-  }
-
+  const {
+    scope,
+    covers: coversRaw,
+    slug,
+    status,
+    fields,
+    hasFieldFlags,
+  } = await parseArgsForSet(process.argv, stdinContent);
   const scopeDir = await getScopeDir(scope);
 
-  // mode 1: status update (--slug and --status.choice, with optional --status.reason)
+  // expand abbreviated hashes to full hashes for coverage lookup
+  let covers: string[] | undefined;
+  if (coversRaw && coversRaw.length > 0) {
+    const { fullHashes } = await expandAbbreviatedHashes({
+      abbreviatedHashes: coversRaw,
+      scopeDir,
+    });
+    covers = fullHashes;
+  }
+
+  // mode 1: status update (--slug and --status, with optional --status.reason)
   // note: --status.reason @stdin requires explicit flag (no implicit stdin consumption)
-  if (slug && status && !hasFieldFlags) {
+  if (isStatusUpdateMode(slug, status, hasFieldFlags)) {
     const reason = fields['status.reason']?.trim() || 'status updated';
 
     const result = await setGoalStatus({
-      slug,
-      status: { choice: status, reason },
+      slug: slug!,
+      status: { choice: status!, reason },
       covers,
       scopeDir,
     });
 
     // fetch updated goal for full display
     const updatedGoals = await getGoals({ scopeDir, filter: { slug } });
-    const updatedGoal = updatedGoals.goals[0];
+    const updatedGoal = getFirstGoal(updatedGoals.goals);
 
     // emit treestruct output with full goal display
     emitOwlHeader();
-    console.log(`🔮 goal.memory.set --slug ${slug} --status.choice ${status}`);
+    console.log(`🔮 goal.memory.set --slug ${slug} --status ${status}`);
     if (updatedGoal) {
       emitGoalFull(updatedGoal);
       console.log(`   │`);
@@ -1179,14 +938,6 @@ export const goalMemorySet = async (): Promise<void> => {
 
     if (extantGoal) {
       // update extant goal: merge new fields with extant fields
-      // filter out undefined values so they don't overwrite extant fields
-      const filterUndefined = <T extends Record<string, unknown>>(
-        obj: T,
-      ): Partial<T> =>
-        Object.fromEntries(
-          Object.entries(obj).filter(([_, v]) => v !== undefined),
-        ) as Partial<T>;
-
       const result = await setGoalStatus({
         slug,
         status: status
@@ -1196,15 +947,15 @@ export const goalMemorySet = async (): Promise<void> => {
             }
           : undefined,
         fields: {
-          why: filterUndefined({
+          why: omitUndefinedFields({
             ask: fields['why.ask'],
             purpose: fields['why.purpose'],
             benefit: fields['why.benefit'],
           }),
-          what: filterUndefined({
+          what: omitUndefinedFields({
             outcome: fields['what.outcome'],
           }),
-          how: filterUndefined({
+          how: omitUndefinedFields({
             task: fields['how.task'],
             gate: fields['how.gate'],
           }),
@@ -1215,7 +966,7 @@ export const goalMemorySet = async (): Promise<void> => {
 
       // fetch updated goal for full display
       const updatedGoals = await getGoals({ scopeDir, filter: { slug } });
-      const updatedGoal = updatedGoals.goals[0];
+      const updatedGoal = getFirstGoal(updatedGoals.goals);
 
       // emit treestruct output with full goal display
       emitOwlHeader();
@@ -1280,7 +1031,7 @@ export const goalMemorySet = async (): Promise<void> => {
 
       // fetch updated goal for full display
       const updatedGoals = await getGoals({ scopeDir, filter: { slug } });
-      const updatedGoal = updatedGoals.goals[0];
+      const updatedGoal = getFirstGoal(updatedGoals.goals);
 
       // emit treestruct output with full goal display
       emitOwlHeader();
@@ -1329,26 +1080,21 @@ export const goalMemorySet = async (): Promise<void> => {
 
   // mode 3: full goal via YAML stdin
   if (!stdinContent.trim()) {
-    throw new BadRequestError(
-      'goal YAML required via stdin, or use --slug with field flags',
-      {
-        context: 'goal.memory.set',
-        hint: [
-          'usage (full goal via YAML):',
-          '  cat goal.yaml | rhx goal.memory.set',
-          '',
-          'usage (partial goal via flags):',
-          "  rhx goal.memory.set --slug 'fix-test' --why.ask 'fix the flaky test'",
-        ].join('\n'),
-      },
+    console.error(
+      'error: goal YAML required via stdin, or use --slug with field flags',
     );
+    console.error('');
+    console.error('usage (full goal via YAML):');
+    console.error('  cat goal.yaml | rhx goal.memory.set --scope repo');
+    console.error('');
+    console.error('usage (partial goal via flags):');
+    console.error(
+      "  rhx goal.memory.set --scope repo --slug 'fix-test' --why.ask 'fix the flaky test'",
+    );
+    process.exit(2);
   }
 
   const parsed = yaml.load(stdinContent) as Record<string, unknown>;
-
-  // validate YAML keys and status choice
-  validateYamlKeys(parsed);
-  validateYamlStatusChoice(parsed);
 
   // validate: slug is required
   if (!parsed.slug) {
@@ -1362,7 +1108,7 @@ export const goalMemorySet = async (): Promise<void> => {
   const parsedHow = parsed.how as Record<string, string> | undefined;
   const parsedStatus = parsed.status as Record<string, string> | undefined;
 
-  const now = new Date().toISOString().split('T')[0] as string;
+  const now = asCurrentDateString();
 
   // build why if present in YAML
   const why = parsedWhy
@@ -1493,14 +1239,7 @@ export const goalMemorySet = async (): Promise<void> => {
  * .why = enables shell invocation via package-level import
  */
 export const goalMemoryGet = async (): Promise<void> => {
-  const { scope, status, slug, hasHelp } = await parseArgsForGet(process.argv);
-
-  // handle --help
-  if (hasHelp) {
-    emitHelpOutputGet();
-    return;
-  }
-
+  const { scope, status, slug, withAsks } = await parseArgsForGet(process.argv);
   const scopeDir = await getScopeDir(scope);
 
   const result = await getGoals({
@@ -1510,17 +1249,114 @@ export const goalMemoryGet = async (): Promise<void> => {
 
   // emit treestruct output
   emitOwlHeader();
-  console.log(`🔮 goal.memory.get --scope ${scope}`);
+
+  // --with asks only expands content for single goal via --slug
+  const expandAsks = withAsks && slug;
+
+  const argsDisplay = expandAsks
+    ? `goal.memory.get --scope ${scope} --slug ${slug} --with asks`
+    : slug
+      ? `goal.memory.get --scope ${scope} --slug ${slug}`
+      : `goal.memory.get --scope ${scope}`;
+  console.log(`🔮 ${argsDisplay}`);
 
   if (result.goals.length === 0) {
     console.log('   └─ goals = (none)');
     return;
   }
 
-  console.log(`   └─ goals (${result.goals.length})`);
-  for (let i = 0; i < result.goals.length; i++) {
-    const goal = result.goals[i] as Goal;
-    emitGoalCondensed(goal, i, result.goals.length);
+  // load coverage state for all display paths
+  const triageState = await getTriageState({ scopeDir });
+
+  // compute coverage counts per goal slug
+  const coversBySlug = new Map<string, number>();
+  for (const coverage of triageState.coverage) {
+    const current = coversBySlug.get(coverage.goalSlug) ?? 0;
+    coversBySlug.set(coverage.goalSlug, current + 1);
+  }
+
+  // single goal with --with asks: expand full ask content
+  if (expandAsks) {
+    const asksByHash = new Map(triageState.asks.map((a) => [a.hash, a]));
+    const goal = result.goals[0]!;
+
+    // find coverage entries for this goal
+    const goalCoverage = triageState.coverage.filter(
+      (c) => c.goalSlug === goal.slug,
+    );
+
+    // emit goal directly under command (no redundant "└─ goal" header)
+    emitGoalCondensedForSingle(goal, goalCoverage.length > 0);
+
+    // emit covers with full ask content
+    if (goalCoverage.length > 0) {
+      console.log(`   │`);
+      console.log(`   └─ covers (${goalCoverage.length} asks)`);
+      goalCoverage.forEach((coverage, covIndex) => {
+        const isLastCov = covIndex === goalCoverage.length - 1;
+        const covBranch = isLastCov ? '└─' : '├─';
+        const covCont = isLastCov ? '   ' : '│  ';
+        const hashShort = asHashShort(coverage.hash);
+        const ask = asksByHash.get(coverage.hash);
+        console.log(`      ${covBranch} [${hashShort}]`);
+        if (ask) {
+          console.log(`      ${covCont}├─`);
+          console.log(`      ${covCont}│`);
+          for (const line of ask.content.split('\n')) {
+            console.log(`      ${covCont}│  ${line}`);
+          }
+          console.log(`      ${covCont}│`);
+          console.log(`      ${covCont}└─`);
+        }
+      });
+    }
+  } else if (slug && result.goals.length === 1) {
+    // single goal view without --with asks: show truncated ask previews
+    const asksByHash = new Map(triageState.asks.map((a) => [a.hash, a]));
+    const goal = result.goals[0]!;
+
+    // find coverage entries for this goal
+    const goalCoverage = triageState.coverage.filter(
+      (c) => c.goalSlug === goal.slug,
+    );
+
+    // emit goal directly under command (no redundant "└─ goal" header)
+    emitGoalCondensedForSingle(goal, goalCoverage.length > 0);
+
+    // emit covers section as part of the tree
+    if (goalCoverage.length > 0) {
+      console.log(`   │`);
+      console.log(`   └─ covers (${goalCoverage.length} asks)`);
+      goalCoverage.forEach((coverage, covIndex) => {
+        const isLastCov = covIndex === goalCoverage.length - 1;
+        const covBranch = isLastCov ? '└─' : '├─';
+        const hashShort = asHashShort(coverage.hash);
+        const ask = asksByHash.get(coverage.hash);
+        // show first 30 chars of ask content, single line
+        const preview = ask
+          ? ask.content.replace(/\n/g, ' ').slice(0, 30) +
+            (ask.content.length > 30 ? '...' : '')
+          : '';
+        console.log(`      ${covBranch} [${hashShort}] ${preview}`);
+      });
+
+      console.log('');
+      console.log('✨ did you know?');
+      console.log('   └─ --with asks to see full asks covered');
+    }
+  } else {
+    // list view: show coverage counts per goal
+    console.log(`   └─ goals (${result.goals.length})`);
+    emitGoalsList(result.goals, coversBySlug);
+
+    // hint for single goal details
+    if (result.goals.length > 0) {
+      console.log('');
+      console.log('✨ did you know?');
+      console.log(
+        '   └─ run rhx goal.memory.get --slug $goal to see full goal details',
+      );
+    }
   }
 };
 
@@ -1530,15 +1366,19 @@ export const goalMemoryGet = async (): Promise<void> => {
  */
 export const goalTriageInfer = async (): Promise<void> => {
   // parse and validate args
-  const { scope, mode, hasHelp } = await parseArgsForTriage(process.argv);
-
-  // handle --help
-  if (hasHelp) {
-    emitHelpOutputTriage();
-    return;
-  }
+  const { scope, mode } = await parseArgsForTriage(process.argv);
 
   const scopeDir = await getScopeDir(scope);
+
+  // hook.onTalk mode: accumulate ask, emit reminder, exit 0
+  if (mode === 'hook.onTalk') {
+    const prompt = extractPromptFromStdin();
+    if (!prompt) process.exit(0); // empty or malformed stdin → silent exit
+
+    await setAsk({ content: prompt, scopeDir });
+    emitOnTalkReminder(prompt);
+    process.exit(0);
+  }
 
   const state = await getTriageState({ scopeDir });
 
@@ -1548,49 +1388,37 @@ export const goalTriageInfer = async (): Promise<void> => {
     const hasIncomplete = state.goalsIncomplete.length > 0;
 
     if (hasUncovered || hasIncomplete) {
-      // build formatted message for constraint error
-      const lines: string[] = [];
-      lines.push('🦉 to forget an ask is to break a promise. remember.');
-      lines.push('');
-      lines.push('🔮 goal.triage.infer --when hook.onStop');
+      console.error('🦉 to forget an ask is to break a promise. remember.');
+      console.error('');
+      console.error('🔮 goal.triage.infer --when hook.onStop');
 
       if (hasUncovered) {
-        lines.push(`   ├─ uncovered asks = ${state.asksUncovered.length}`);
+        console.error(`   ├─ uncovered asks = ${state.asksUncovered.length}`);
       }
       if (hasIncomplete) {
-        lines.push(`   ├─ incomplete goals = ${state.goalsIncomplete.length}`);
-        for (let i = 0; i < state.goalsIncomplete.length; i++) {
-          const goal = state.goalsIncomplete[i]!;
-          const isLast = i === state.goalsIncomplete.length - 1;
-          const branch = isLast ? '└─' : '├─';
-          const cont = isLast ? '   ' : '│  ';
-          lines.push(`   │  ${branch} ${goal.slug}`);
-          const meta = computeGoalCompleteness(goal);
-          lines.push(`   │  ${cont}├─ absent: ${meta.absent.join(', ')}`);
-          const firstAbsent = meta.absent[0] ?? 'why.purpose';
-          lines.push(
-            `   │  ${cont}└─ to fix, run: \`rhx goal.memory.set --slug ${goal.slug} --${firstAbsent} "..."\``,
-          );
-        }
+        console.error(
+          `   ├─ incomplete goals = ${state.goalsIncomplete.length}`,
+        );
+        emitIncompleteGoalsList(state.goalsIncomplete, {
+          emit: console.error,
+          showStatus: false,
+        });
       }
 
-      lines.push('   │');
-      lines.push('   └─ halted, triage required');
+      console.error('   │');
+      console.error('   └─ halted, triage required');
 
       if (hasUncovered) {
-        lines.push('      ├─ each ask must be covered by a goal');
+        console.error('      ├─ each ask must be covered by a goal');
       }
       if (hasIncomplete) {
-        lines.push('      ├─ incomplete goals must be articulated');
+        console.error('      ├─ incomplete goals must be articulated');
       }
 
-      lines.push('      │');
-      lines.push('      └─ to continue, run');
-      lines.push('         └─ rhx goal.triage.infer');
-
-      // emit formatted message to stderr, then exit with constraint code
-      console.error(lines.join('\n'));
-      process.exit(2);
+      console.error('      │');
+      console.error('      └─ to continue, run');
+      console.error('         └─ rhx goal.triage.infer');
+      process.exit(2); // constraint error: user must fix
     }
     // all asks covered and all goals complete, silent exit
     return;
@@ -1600,77 +1428,65 @@ export const goalTriageInfer = async (): Promise<void> => {
   emitOwlHeader();
   console.log(`🔮 goal.triage.infer --scope ${scope}`);
 
-  // summary
-  console.log(`   ├─ asks = ${state.asks.length}`);
-  console.log(`   ├─ uncovered = ${state.asksUncovered.length}`);
-  console.log(`   ├─ goals = ${state.goals.length}`);
-  console.log(`   │  ├─ complete = ${state.goalsComplete.length}`);
-  console.log(`   │  └─ incomplete = ${state.goalsIncomplete.length}`);
-  console.log(`   ├─ coverage = ${state.coverage.length}`);
+  // stats section (counts only)
+  console.log(`   │`);
+  console.log(`   ├─ stats`);
+  console.log(`   │  ├─ asks = ${state.asks.length}`);
+  console.log(`   │  ├─ uncovered = ${state.asksUncovered.length}`);
+  console.log(`   │  ├─ goals = ${state.goals.length}`);
+  console.log(`   │  │  ├─ complete = ${state.goalsComplete.length}`);
+  console.log(`   │  │  └─ incomplete = ${state.goalsIncomplete.length}`);
+  console.log(`   │  └─ coverage = ${state.coverage.length}`);
 
   // uncovered asks
   if (state.asksUncovered.length > 0) {
     console.log(`   │`);
     console.log(`   ├─ uncovered asks`);
-    for (let i = 0; i < state.asksUncovered.length; i++) {
-      const ask = state.asksUncovered[i]!;
-      const isLast = i === state.asksUncovered.length - 1;
-      const branch = isLast ? '└─' : '├─';
-      const hashShort = ask.hash.slice(0, 7);
-      const contentShort = ask.content.slice(0, 50);
-      const ellipsis = ask.content.length > 50 ? '...' : '';
-      console.log(`   │  ${branch} [${hashShort}] ${contentShort}${ellipsis}`);
-    }
+    emitUncoveredAsksList(state.asksUncovered);
   }
 
   // incomplete goals
   if (state.goalsIncomplete.length > 0) {
     console.log(`   │`);
     console.log(`   ├─ incomplete goals`);
-    for (let i = 0; i < state.goalsIncomplete.length; i++) {
-      const goal = state.goalsIncomplete[i]!;
-      const isLast = i === state.goalsIncomplete.length - 1;
-      const branch = isLast ? '└─' : '├─';
-      const cont = isLast ? '   ' : '│  ';
-      console.log(`   │  ${branch} ${goal.slug} [${goal.status.choice}]`);
-      const meta = computeGoalCompleteness(goal);
-      console.log(`   │  ${cont}├─ absent: ${meta.absent.join(', ')}`);
-      const firstAbsent = meta.absent[0] ?? 'why.purpose';
-      console.log(
-        `   │  ${cont}└─ to fix, run: \`rhx goal.memory.set --slug ${goal.slug} --${firstAbsent} "..."\``,
-      );
-    }
+    emitIncompleteGoalsList(state.goalsIncomplete);
   }
 
   // complete goals
   if (state.goalsComplete.length > 0) {
     console.log(`   │`);
     console.log(`   ├─ complete goals`);
-    for (let i = 0; i < state.goalsComplete.length; i++) {
-      const goal = state.goalsComplete[i]!;
-      const isLast = i === state.goalsComplete.length - 1;
-      const branch = isLast ? '└─' : '├─';
-      console.log(`   │  ${branch} ${goal.slug} [${goal.status.choice}]`);
-    }
+    emitCompleteGoalsList(state.goalsComplete);
   }
 
   // status
-  const allClear =
-    state.asksUncovered.length === 0 && state.goalsIncomplete.length === 0;
+  const allClear = isTriageClear(state);
   console.log(`   │`);
   if (allClear) {
     console.log(`   └─ all asks covered, all goals complete`);
   } else {
     console.log(`   └─ triage required`);
-    if (state.asksUncovered.length > 0) {
-      console.log(`      ├─ cover uncovered asks with goals`);
-    }
-    if (state.goalsIncomplete.length > 0) {
+    const hasUncovered = state.asksUncovered.length > 0;
+    const hasIncomplete = state.goalsIncomplete.length > 0;
+
+    if (hasUncovered) {
+      const branch = hasIncomplete ? '├─' : '└─';
+      const cont = hasIncomplete ? '│ ' : '  ';
+      console.log(`      ${branch} create a goal for each uncovered ask`);
+      console.log(`      ${cont} ├─ new goal for asks not yet represented`);
       console.log(
-        `      ├─ complete incomplete goals via \`rhx goal.memory.set\``,
+        `      ${cont} │  └─ rhx goal.memory.set --slug $new --covers [hash]`,
+      );
+      console.log(`      ${cont} └─ append to open goal for related asks`);
+      console.log(
+        `      ${cont}    └─ rhx goal.memory.set --slug $open --covers [hash]`,
       );
     }
-    console.log(`      └─ then re-run \`rhx goal.triage.infer\``);
+    if (hasIncomplete) {
+      console.log(
+        `      └─ complete incomplete goals via \`rhx goal.memory.set\``,
+      );
+    }
   }
 };
 
@@ -1708,9 +1524,11 @@ export const goalGuard = async (): Promise<void> => {
     const parsed = JSON.parse(stdinContent);
     toolName = parsed.tool_name ?? '';
     toolInput = parsed.tool_input ?? {};
-  } catch {
-    // malformed JSON, allow (harness issue)
-    return;
+  } catch (error) {
+    // allowlist SyntaxError (malformed JSON from harness)
+    if (error instanceof SyntaxError) return;
+    // rethrow real errors
+    throw error;
   }
 
   // evaluate verdict
@@ -1733,19 +1551,8 @@ export const goalGuard = async (): Promise<void> => {
   console.error('      ├─ goal.triage.infer — detect uncovered asks');
   console.error('      └─ goal.triage.next — show unfinished goals');
 
-  // exit with constraint code (message already printed to stderr)
   process.exit(2);
 };
-
-/**
- * .what = valid values for --when flag in goal.triage.next
- * .why = enables type-safe validation of when parameter
- */
-type TriageNextWhen = 'hook.onStop' | 'hook.onBoot';
-const TRIAGE_NEXT_WHEN_VALUES: TriageNextWhen[] = [
-  'hook.onStop',
-  'hook.onBoot',
-];
 
 /**
  * .what = parse args for goal.triage.next
@@ -1754,38 +1561,21 @@ const TRIAGE_NEXT_WHEN_VALUES: TriageNextWhen[] = [
 const parseArgsForTriageNext = async (
   argv: string[],
 ): Promise<{
-  when?: TriageNextWhen;
+  when: 'hook.onStop';
   scope: 'route' | 'repo';
-  hasHelp: boolean;
 }> => {
   const args = isNodeEvalMode() ? argv.slice(1) : argv.slice(2);
 
-  // validate unknown flags before parse
-  const unknownFlags = collectUnknownFlags(args, KNOWN_FLAGS_TRIAGE_NEXT);
-  if (unknownFlags.length > 0) {
-    emitValidationError({
-      context: 'goal.triage.next',
-      error: `unknown flags: ${unknownFlags.join(', ')}`,
-      allowed: KNOWN_FLAGS_TRIAGE_NEXT as unknown as string[],
-    });
-    process.exit(2);
-  }
-
-  let when: TriageNextWhen | undefined;
+  let when: 'hook.onStop' | undefined;
   let scope: 'route' | 'repo' = await getDefaultScope();
-  let hasHelp = false;
 
   for (let i = 0; i < args.length; i++) {
     const arg = args[i];
-    if (arg === '--help') {
-      hasHelp = true;
-      continue;
-    }
     if (arg === '--when' && args[i + 1]) {
-      const whenValue = args[i + 1] as TriageNextWhen;
-      if (!TRIAGE_NEXT_WHEN_VALUES.includes(whenValue)) {
+      const whenValue = args[i + 1];
+      if (whenValue !== 'hook.onStop') {
         throw new BadRequestError(
-          `invalid --when: ${whenValue}. must be one of: ${TRIAGE_NEXT_WHEN_VALUES.join(', ')}`,
+          `invalid --when: ${whenValue}. must be 'hook.onStop'`,
           { when: whenValue },
         );
       }
@@ -1805,104 +1595,16 @@ const parseArgsForTriageNext = async (
     }
   }
 
-  // --when required unless --help
-  if (!when && !hasHelp) {
-    throw new BadRequestError(
-      `--when is required. must be one of: ${TRIAGE_NEXT_WHEN_VALUES.join(', ')}`,
-      {},
-    );
+  if (!when) {
+    throw new BadRequestError('--when hook.onStop is required', {});
   }
 
-  return { when, scope, hasHelp };
-};
-
-/**
- * .what = emit goals summary for triage
- * .why = shared output for both onBoot (informational) and onStop (halt) modes
- */
-const emitGoalsSummary = (input: {
-  inflightGoals: Goal[];
-  enqueuedGoals: Goal[];
-  toStream: 'stdout' | 'stderr';
-  isEscalated?: boolean;
-}): void => {
-  const emit =
-    input.toStream === 'stdout'
-      ? (msg: string) => console.log(msg)
-      : (msg: string) => console.error(msg);
-  const isEscalated = input.isEscalated ?? false;
-
-  // show inflight if any (priority)
-  if (input.inflightGoals.length > 0) {
-    emit(`   └─ inflight (${input.inflightGoals.length})`);
-    for (let i = 0; i < input.inflightGoals.length; i++) {
-      const goal = input.inflightGoals[i] as Goal;
-      const isLast = i === input.inflightGoals.length - 1;
-      const branch = isLast ? '└─' : '├─';
-      const cont = isLast ? '   ' : '│  ';
-      emit(`      ${branch} (${i + 1})`);
-      emit(`      ${cont}├─ slug = ${goal.slug}`);
-      const askText = goal.why?.ask ?? '(no ask)';
-      const askShort =
-        askText.length > 60 ? askText.slice(0, 60) + '...' : askText;
-      emit(`      ${cont}├─ why.ask = ${askShort}`);
-      emit(`      ${cont}├─ status = inflight → ✋ finish this first`);
-      if (isEscalated) {
-        emit(`      ${cont}├─ tip: if halted, run:`);
-        emit(
-          `      ${cont}│  └─ rhx goal.memory.set --slug ${goal.slug} --status.choice blocked --status.reason "..."`,
-        );
-        emit(
-          `      ${cont}└─ hint: run \`rhx goal.memory.get --slug ${goal.slug}\` to see the goal`,
-        );
-      } else {
-        emit(
-          `      ${cont}└─ tip: run \`rhx goal.memory.get --slug ${goal.slug}\` to see the goal`,
-        );
-      }
-    }
-    return;
-  }
-
-  // show enqueued if no inflight
-  if (input.enqueuedGoals.length > 0) {
-    emit(`   └─ enqueued (${input.enqueuedGoals.length})`);
-    for (let i = 0; i < input.enqueuedGoals.length; i++) {
-      const goal = input.enqueuedGoals[i] as Goal;
-      const isLast = i === input.enqueuedGoals.length - 1;
-      const branch = isLast ? '└─' : '├─';
-      const cont = isLast ? '   ' : '│  ';
-      emit(`      ${branch} (${i + 1})`);
-      emit(`      ${cont}├─ slug = ${goal.slug}`);
-      const askText = goal.why?.ask ?? '(no ask)';
-      const askShort =
-        askText.length > 60 ? askText.slice(0, 60) + '...' : askText;
-      emit(`      ${cont}├─ why.ask = ${askShort}`);
-      emit(`      ${cont}├─ status = enqueued → ✋ start this next`);
-      if (isEscalated) {
-        emit(`      ${cont}├─ tip: if halted, run:`);
-        emit(
-          `      ${cont}│  └─ rhx goal.memory.set --slug ${goal.slug} --status.choice blocked --status.reason "..."`,
-        );
-        emit(
-          `      ${cont}└─ hint: run \`rhx goal.memory.get --slug ${goal.slug}\` to see the goal`,
-        );
-      } else {
-        emit(
-          `      ${cont}└─ tip: run \`rhx goal.memory.get --slug ${goal.slug}\` to see the goal`,
-        );
-      }
-    }
-  }
+  return { when, scope };
 };
 
 /**
  * .what = cli entrypoint for goal.triage.next skill
- * .why = hook that shows unfinished goals
- *
- * modes:
- * - onBoot: informational refresh after compaction (exit 0)
- * - onStop: halt until goals fulfilled (exit 2)
+ * .why = onStop hook that shows unfinished goals to mandate continuation
  *
  * shows inflight goals if any exist (priority)
  * shows enqueued goals if no inflight
@@ -1910,18 +1612,7 @@ const emitGoalsSummary = (input: {
  */
 export const goalTriageNext = async (): Promise<void> => {
   // parse args
-  const { when, scope, hasHelp } = await parseArgsForTriageNext(process.argv);
-
-  // handle --help
-  if (hasHelp) {
-    emitHelpOutputTriageNext();
-    return;
-  }
-
-  // when is required at this point (validated in parseArgsForTriageNext)
-  if (!when) {
-    throw new BadRequestError('--when is required', {});
-  }
+  const { scope } = await parseArgsForTriageNext(process.argv);
 
   // get scope directory
   let scopeDir: string;
@@ -1944,55 +1635,55 @@ export const goalTriageNext = async (): Promise<void> => {
     filter: { status: 'enqueued' },
   });
 
-  // if no unfinished goals, clear blocker state and silent exit
+  // if no unfinished goals, silent exit
   if (inflightGoals.goals.length === 0 && enqueuedGoals.goals.length === 0) {
-    await delGoalBlockerState({ scopeDir });
     return;
   }
 
-  // onBoot mode: informational refresh, no halt
-  if (when === 'hook.onBoot') {
-    console.log(OWL_WISDOM_BOOT);
-    console.log('');
-    console.log(`🔮 goal.triage.next --when hook.onBoot`);
-    emitGoalsSummary({
-      inflightGoals: inflightGoals.goals,
-      enqueuedGoals: enqueuedGoals.goals,
-      toStream: 'stdout',
-    });
-    return; // exit 0, informational
-  }
-
-  // onStop mode: halt with escalation until goals fulfilled
-
-  // get first inflight or enqueued goal slug for blocker state
-  const firstGoalSlug =
-    inflightGoals.goals[0]?.slug ?? enqueuedGoals.goals[0]?.slug ?? 'unknown';
-
-  // get current blocker state
-  const blockerState = await getGoalBlockerState({ scopeDir });
-
-  // increment blocker count for this reminder
-  await setGoalBlockerState({ scopeDir, goalSlug: firstGoalSlug });
-
-  // use escalated message if count exceeds threshold
-  const newCount = blockerState.count + 1;
-  const escalatedMessage = escalateMessageByCount(newCount);
-  const isEscalated = newCount >= ESCALATION_THRESHOLD;
-
-  // emit treestruct to stderr (for visibility on constraint error)
-  console.error(escalatedMessage);
+  // emit treestruct to stderr (for visibility on exit 2)
+  console.error(OWL_WISDOM);
   console.error('');
   console.error(`🔮 goal.triage.next --when hook.onStop`);
 
-  // emit goals summary
-  emitGoalsSummary({
-    inflightGoals: inflightGoals.goals,
-    enqueuedGoals: enqueuedGoals.goals,
-    toStream: 'stderr',
-    isEscalated,
-  });
+  // show inflight if any (priority)
+  if (inflightGoals.goals.length > 0) {
+    console.error(`   └─ inflight (${inflightGoals.goals.length})`);
+    for (let i = 0; i < inflightGoals.goals.length; i++) {
+      const goal = inflightGoals.goals[i] as Goal;
+      const isLast = i === inflightGoals.goals.length - 1;
+      const branch = isLast ? '└─' : '├─';
+      const cont = isLast ? '   ' : '│  ';
+      console.error(`      ${branch} (${i + 1})`);
+      console.error(`      ${cont}├─ slug = ${goal.slug}`);
+      const askText = goal.why?.ask ?? '(no ask)';
+      const askShort = asTruncatedText(askText, 60);
+      console.error(`      ${cont}├─ why.ask = ${askShort}`);
+      console.error(`      ${cont}├─ status = inflight → ✋ finish this first`);
+      console.error(
+        `      ${cont}└─ tip: run \`rhx goal.memory.get --slug ${goal.slug}\` to see the goal`,
+      );
+    }
+    process.exit(2);
+  }
 
-  // exit with constraint code (message already printed to stderr)
-  process.exit(2);
+  // show enqueued if no inflight
+  if (enqueuedGoals.goals.length > 0) {
+    console.error(`   └─ enqueued (${enqueuedGoals.goals.length})`);
+    for (let i = 0; i < enqueuedGoals.goals.length; i++) {
+      const goal = enqueuedGoals.goals[i] as Goal;
+      const isLast = i === enqueuedGoals.goals.length - 1;
+      const branch = isLast ? '└─' : '├─';
+      const cont = isLast ? '   ' : '│  ';
+      console.error(`      ${branch} (${i + 1})`);
+      console.error(`      ${cont}├─ slug = ${goal.slug}`);
+      const askText = goal.why?.ask ?? '(no ask)';
+      const askShort = asTruncatedText(askText, 60);
+      console.error(`      ${cont}├─ why.ask = ${askShort}`);
+      console.error(`      ${cont}├─ status = enqueued → ✋ finish this first`);
+      console.error(
+        `      ${cont}└─ tip: run \`rhx goal.memory.get --slug ${goal.slug}\` to see the goal`,
+      );
+    }
+    process.exit(2);
+  }
 };

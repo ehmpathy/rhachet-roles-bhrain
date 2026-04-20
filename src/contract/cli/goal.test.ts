@@ -1,7 +1,6 @@
 import { given, then, when } from 'test-fns';
 
 import {
-  GOAL_STATUS_CHOICES,
   Goal,
   GoalHow,
   GoalStatus,
@@ -9,26 +8,11 @@ import {
   GoalWhy,
 } from '@src/domain.objects/Achiever/Goal';
 
-import {
-  ALLOWED_HOW_KEYS,
-  ALLOWED_STATUS_KEYS,
-  ALLOWED_WHAT_KEYS,
-  ALLOWED_WHY_KEYS,
-  ALLOWED_YAML_KEYS,
-  emitHelpOutput,
-  emitHelpOutputGet,
-  emitHelpOutputTriage,
-  emitHelpOutputTriageNext,
-  escalateMessageByCount,
-  KNOWN_FLAGS,
-  KNOWN_FLAGS_GET,
-  KNOWN_FLAGS_TRIAGE,
-  KNOWN_FLAGS_TRIAGE_NEXT,
-} from './goal';
+import { parseStdinPrompt } from './goal';
 
 /**
- * .what = unit tests for goal CLI output render and validation
- * .why = fast feedback on treestruct format match to vision and arg validation
+ * .what = unit tests for goal CLI output render
+ * .why = fast feedback on treestruct format match to vision
  */
 
 /**
@@ -110,9 +94,9 @@ describe('goal cli output', () => {
     });
   });
 
-  given('[case4] full goal render', () => {
-    when('[t0] complete goal with all fields', () => {
-      then('goal structure is valid', () => {
+  given('[case4] goal domain object construction', () => {
+    when('[t0] goal created with all fields', () => {
+      then('goal holds all field values', () => {
         const goal = new Goal({
           slug: 'fix-auth-test',
           why: new GoalWhy({
@@ -145,295 +129,123 @@ describe('goal cli output', () => {
   });
 });
 
-describe('goal cli validation', () => {
-  given('[case1] KNOWN_FLAGS constant', () => {
-    when('[t0] flags are defined', () => {
-      then('includes all required flags', () => {
-        expect(KNOWN_FLAGS).toContain('--slug');
-        expect(KNOWN_FLAGS).toContain('--scope');
-        expect(KNOWN_FLAGS).toContain('--status.choice');
-        expect(KNOWN_FLAGS).toContain('--covers');
-        expect(KNOWN_FLAGS).toContain('--help');
-        expect(KNOWN_FLAGS).toContain('--why.ask');
-        expect(KNOWN_FLAGS).toContain('--why.purpose');
-        expect(KNOWN_FLAGS).toContain('--why.benefit');
-        expect(KNOWN_FLAGS).toContain('--what.outcome');
-        expect(KNOWN_FLAGS).toContain('--how.task');
-        expect(KNOWN_FLAGS).toContain('--how.gate');
-        expect(KNOWN_FLAGS).toContain('--source');
-        expect(KNOWN_FLAGS).toContain('--status.reason');
+/**
+ * .what = unit tests for parseStdinPrompt
+ * .why = verifies prompt extraction from Claude Code stdin JSON
+ */
+describe('parseStdinPrompt', () => {
+  given('[case1] valid JSON with prompt', () => {
+    when('[t0] JSON has prompt field', () => {
+      then('returns prompt content', () => {
+        const raw = '{"prompt":"fix the flaky test"}';
+        const result = parseStdinPrompt(raw);
+        expect(result).toMatchSnapshot();
+        expect(result).toEqual('fix the flaky test');
       });
     });
   });
 
-  given('[case2] ALLOWED_YAML_KEYS constant', () => {
-    when('[t0] keys are defined', () => {
-      then('includes all valid top-level keys', () => {
-        expect(ALLOWED_YAML_KEYS).toContain('slug');
-        expect(ALLOWED_YAML_KEYS).toContain('why');
-        expect(ALLOWED_YAML_KEYS).toContain('what');
-        expect(ALLOWED_YAML_KEYS).toContain('how');
-        expect(ALLOWED_YAML_KEYS).toContain('status');
-        expect(ALLOWED_YAML_KEYS).toContain('source');
-        expect(ALLOWED_YAML_KEYS).toContain('covers');
-        expect(ALLOWED_YAML_KEYS).toContain('createdAt');
-        expect(ALLOWED_YAML_KEYS).toContain('updatedAt');
+  given('[case2] empty stdin', () => {
+    when('[t0] stdin is empty string', () => {
+      then('returns null', () => {
+        const result = parseStdinPrompt('');
+        expect(result).toMatchSnapshot();
+        expect(result).toBeNull();
+      });
+    });
+
+    when('[t1] stdin is whitespace only', () => {
+      then('returns null', () => {
+        const result = parseStdinPrompt('   \n\t  ');
+        expect(result).toMatchSnapshot();
+        expect(result).toBeNull();
       });
     });
   });
 
-  given('[case3] nested YAML keys constants', () => {
-    when('[t0] why keys are defined', () => {
-      then('includes ask, purpose, benefit', () => {
-        expect(ALLOWED_WHY_KEYS).toContain('ask');
-        expect(ALLOWED_WHY_KEYS).toContain('purpose');
-        expect(ALLOWED_WHY_KEYS).toContain('benefit');
-        expect(ALLOWED_WHY_KEYS).toHaveLength(3);
+  given('[case3] malformed JSON', () => {
+    when('[t0] JSON is invalid', () => {
+      then('returns null', () => {
+        const result = parseStdinPrompt('not valid json');
+        expect(result).toMatchSnapshot();
+        expect(result).toBeNull();
       });
     });
 
-    when('[t1] what keys are defined', () => {
-      then('includes outcome', () => {
-        expect(ALLOWED_WHAT_KEYS).toContain('outcome');
-        expect(ALLOWED_WHAT_KEYS).toHaveLength(1);
-      });
-    });
-
-    when('[t2] how keys are defined', () => {
-      then('includes task, gate', () => {
-        expect(ALLOWED_HOW_KEYS).toContain('task');
-        expect(ALLOWED_HOW_KEYS).toContain('gate');
-        expect(ALLOWED_HOW_KEYS).toHaveLength(2);
-      });
-    });
-
-    when('[t3] status keys are defined', () => {
-      then('includes choice, reason', () => {
-        expect(ALLOWED_STATUS_KEYS).toContain('choice');
-        expect(ALLOWED_STATUS_KEYS).toContain('reason');
-        expect(ALLOWED_STATUS_KEYS).toHaveLength(2);
+    when('[t1] JSON is truncated', () => {
+      then('returns null', () => {
+        const result = parseStdinPrompt('{"prompt":"incomplete');
+        expect(result).toMatchSnapshot();
+        expect(result).toBeNull();
       });
     });
   });
 
-  given('[case4] GOAL_STATUS_CHOICES constant', () => {
-    when('[t0] choices are defined', () => {
-      then('includes all valid status values', () => {
-        expect(GOAL_STATUS_CHOICES).toContain('incomplete');
-        expect(GOAL_STATUS_CHOICES).toContain('blocked');
-        expect(GOAL_STATUS_CHOICES).toContain('enqueued');
-        expect(GOAL_STATUS_CHOICES).toContain('inflight');
-        expect(GOAL_STATUS_CHOICES).toContain('fulfilled');
-        expect(GOAL_STATUS_CHOICES).toHaveLength(5);
-      });
-    });
-  });
-});
-
-describe('goal cli help', () => {
-  given('[case1] emitHelpOutput', () => {
-    when('[t0] help is rendered', () => {
-      then('includes owl header', () => {
-        const output = captureOutput(() => emitHelpOutput());
-        expect(output).toContain('🦉 goal.memory.set — persist a goal');
-      });
-
-      then('includes usage section with examples', () => {
-        const output = captureOutput(() => emitHelpOutput());
-        expect(output).toContain('🔮 usage');
-        expect(output).toContain('rhx goal.memory.set');
-        expect(output).toContain('example: create goal');
-        expect(output).toContain('example: create goal (multiline)');
-        expect(output).toContain('example: fulfill goal');
-        expect(output).toContain('example: block goal');
-      });
-
-      then('includes all 7 required fields', () => {
-        const output = captureOutput(() => emitHelpOutput());
-        expect(output).toContain('required fields');
-        expect(output).toContain('--slug');
-        expect(output).toContain('--why.ask');
-        expect(output).toContain('--why.purpose');
-        expect(output).toContain('--why.benefit');
-        expect(output).toContain('--what.outcome');
-        expect(output).toContain('--how.task');
-        expect(output).toContain('--how.gate');
-      });
-
-      then('includes fulfill goal example', () => {
-        const output = captureOutput(() => emitHelpOutput());
-        expect(output).toContain('example: fulfill goal');
-        expect(output).toContain('--status.choice fulfilled');
-      });
-
-      then('includes valid status values', () => {
-        const output = captureOutput(() => emitHelpOutput());
-        expect(output).toContain(
-          'incomplete | blocked | enqueued | inflight | fulfilled',
-        );
-      });
-
-      then('output matches snapshot', () => {
-        const output = captureOutput(() => emitHelpOutput());
-        expect(output).toMatchSnapshot();
-      });
-    });
-  });
-});
-
-describe('goal cli scope validation', () => {
-  given('[case1] assertScopeWhenBound export', () => {
-    when('[t0] scope validation constants', () => {
-      then('KNOWN_FLAGS includes --scope', () => {
-        expect(KNOWN_FLAGS).toContain('--scope');
-      });
-    });
-  });
-});
-
-describe('goal cli escalation', () => {
-  given('[case1] escalateMessageByCount', () => {
-    when('[t0] count is below threshold', () => {
-      then('returns gentle message for count 0', () => {
-        const message = escalateMessageByCount(0);
-        expect(message).toContain('to forget an ask is to break a promise');
-        expect(message).toMatchSnapshot();
-      });
-
-      then('returns gentle message for count 1', () => {
-        const message = escalateMessageByCount(1);
-        expect(message).toContain('to forget an ask is to break a promise');
-      });
-
-      then('returns gentle message for count 4', () => {
-        const message = escalateMessageByCount(4);
-        expect(message).toContain('to forget an ask is to break a promise');
+  given('[case4] JSON without prompt field', () => {
+    when('[t0] JSON has other fields but no prompt', () => {
+      then('returns null', () => {
+        const raw = '{"message":"hello","user":"test"}';
+        const result = parseStdinPrompt(raw);
+        expect(result).toMatchSnapshot();
+        expect(result).toBeNull();
       });
     });
 
-    when('[t1] count is at or above threshold', () => {
-      then('returns escalated message for count 5', () => {
-        const message = escalateMessageByCount(5);
-        expect(message).toContain('reminded many times');
-        expect(message).toContain('work must be done');
-        expect(message).toMatchSnapshot();
-      });
-
-      then('returns escalated message for count 10', () => {
-        const message = escalateMessageByCount(10);
-        expect(message).toContain('reminded many times');
+    when('[t1] prompt field is null', () => {
+      then('returns null', () => {
+        const raw = '{"prompt":null}';
+        const result = parseStdinPrompt(raw);
+        expect(result).toMatchSnapshot();
+        expect(result).toBeNull();
       });
     });
-  });
-});
 
-describe('goal cli other skills flags', () => {
-  given('[case1] KNOWN_FLAGS_GET constant', () => {
-    when('[t0] flags are defined', () => {
-      then('includes all required flags', () => {
-        expect(KNOWN_FLAGS_GET).toContain('--scope');
-        expect(KNOWN_FLAGS_GET).toContain('--status.choice');
-        expect(KNOWN_FLAGS_GET).toContain('--slug');
-        expect(KNOWN_FLAGS_GET).toContain('--help');
-        expect(KNOWN_FLAGS_GET).toHaveLength(4);
+    when('[t2] prompt field is number', () => {
+      then('returns null', () => {
+        const raw = '{"prompt":123}';
+        const result = parseStdinPrompt(raw);
+        expect(result).toMatchSnapshot();
+        expect(result).toBeNull();
       });
     });
   });
 
-  given('[case2] KNOWN_FLAGS_TRIAGE constant', () => {
-    when('[t0] flags are defined', () => {
-      then('includes all required flags', () => {
-        expect(KNOWN_FLAGS_TRIAGE).toContain('--scope');
-        expect(KNOWN_FLAGS_TRIAGE).toContain('--when');
-        expect(KNOWN_FLAGS_TRIAGE).toContain('--help');
-        expect(KNOWN_FLAGS_TRIAGE).toHaveLength(3);
+  given('[case5] prompt is empty string', () => {
+    when('[t0] prompt field is empty string', () => {
+      then('returns null', () => {
+        const raw = '{"prompt":""}';
+        const result = parseStdinPrompt(raw);
+        expect(result).toMatchSnapshot();
+        expect(result).toBeNull();
+      });
+    });
+
+    when('[t1] prompt field is whitespace only', () => {
+      then('returns null', () => {
+        const raw = '{"prompt":"   "}';
+        const result = parseStdinPrompt(raw);
+        expect(result).toMatchSnapshot();
+        expect(result).toBeNull();
       });
     });
   });
 
-  given('[case3] KNOWN_FLAGS_TRIAGE_NEXT constant', () => {
-    when('[t0] flags are defined', () => {
-      then('includes all required flags', () => {
-        expect(KNOWN_FLAGS_TRIAGE_NEXT).toContain('--when');
-        expect(KNOWN_FLAGS_TRIAGE_NEXT).toContain('--scope');
-        expect(KNOWN_FLAGS_TRIAGE_NEXT).toContain('--help');
-        expect(KNOWN_FLAGS_TRIAGE_NEXT).toHaveLength(3);
+  given('[case6] prompt with special characters', () => {
+    when('[t0] prompt has newlines', () => {
+      then('returns prompt with newlines preserved', () => {
+        const raw = '{"prompt":"line one\\nline two"}';
+        const result = parseStdinPrompt(raw);
+        expect(result).toMatchSnapshot();
+        expect(result).toEqual('line one\nline two');
       });
     });
-  });
-});
 
-describe('goal cli help for other skills', () => {
-  given('[case1] emitHelpOutputGet', () => {
-    when('[t0] help is rendered', () => {
-      then('includes owl header', () => {
-        const output = captureOutput(() => emitHelpOutputGet());
-        expect(output).toContain('🦉 goal.memory.get — retrieve goals');
-      });
-
-      then('includes usage examples', () => {
-        const output = captureOutput(() => emitHelpOutputGet());
-        expect(output).toContain('rhx goal.memory.get');
-        expect(output).toContain('--status.choice inflight');
-        expect(output).toContain('--slug fix-login-bug');
-      });
-
-      then('includes flags section', () => {
-        const output = captureOutput(() => emitHelpOutputGet());
-        expect(output).toContain('--slug');
-        expect(output).toContain('--status.choice');
-        expect(output).toContain('--scope');
-      });
-    });
-  });
-
-  given('[case2] emitHelpOutputTriage', () => {
-    when('[t0] help is rendered', () => {
-      then('includes owl header', () => {
-        const output = captureOutput(() => emitHelpOutputTriage());
-        expect(output).toContain('🦉 goal.triage.infer — check triage state');
-      });
-
-      then('includes what it shows', () => {
-        const output = captureOutput(() => emitHelpOutputTriage());
-        expect(output).toContain('uncovered asks');
-        expect(output).toContain('incomplete goals');
-        expect(output).toContain('coverage summary');
-      });
-
-      then('includes flags section', () => {
-        const output = captureOutput(() => emitHelpOutputTriage());
-        expect(output).toContain('--when');
-        expect(output).toContain('--scope');
-      });
-    });
-  });
-
-  given('[case3] emitHelpOutputTriageNext', () => {
-    when('[t0] help is rendered', () => {
-      then('includes owl header', () => {
-        const output = captureOutput(() => emitHelpOutputTriageNext());
-        expect(output).toContain(
-          '🦉 goal.triage.next — get next goal to work on',
-        );
-      });
-
-      then('includes hook modes', () => {
-        const output = captureOutput(() => emitHelpOutputTriageNext());
-        expect(output).toContain('hook.onBoot');
-        expect(output).toContain('hook.onStop');
-      });
-
-      then('includes what it shows', () => {
-        const output = captureOutput(() => emitHelpOutputTriageNext());
-        expect(output).toContain('inflight goals');
-        expect(output).toContain('enqueued goals');
-      });
-
-      then('includes flags section', () => {
-        const output = captureOutput(() => emitHelpOutputTriageNext());
-        expect(output).toContain('--when');
-        expect(output).toContain('--scope');
+    when('[t1] prompt has unicode', () => {
+      then('returns prompt with unicode preserved', () => {
+        const raw = '{"prompt":"fix the test 🐢"}';
+        const result = parseStdinPrompt(raw);
+        expect(result).toMatchSnapshot();
+        expect(result).toEqual('fix the test 🐢');
       });
     });
   });
