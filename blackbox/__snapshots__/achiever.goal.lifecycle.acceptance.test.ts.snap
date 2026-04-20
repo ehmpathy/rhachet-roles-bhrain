@@ -88,7 +88,7 @@ exports[`achiever.goal.lifecycle.acceptance given: [case1] goal status transitio
 exports[`achiever.goal.lifecycle.acceptance given: [case1] goal status transitions via CLI when: [t2] goal.memory.set updates status to inflight then: stdout has good vibes 1`] = `
 "🦉 to forget an ask is to break a promise. remember.
 
-🔮 goal.memory.set --slug fix-auth-test --status inflight
+🔮 goal.memory.set --slug fix-auth-test --status.choice inflight
    ├─ goal
    │  ├─ slug = fix-auth-test
    │  ├─ why
@@ -173,7 +173,7 @@ exports[`achiever.goal.lifecycle.acceptance given: [case1] goal status transitio
 exports[`achiever.goal.lifecycle.acceptance given: [case1] goal status transitions via CLI when: [t4] goal.memory.set updates status to fulfilled then: stdout has good vibes 1`] = `
 "🦉 to forget an ask is to break a promise. remember.
 
-🔮 goal.memory.set --slug fix-auth-test --status fulfilled
+🔮 goal.memory.set --slug fix-auth-test --status.choice fulfilled
    ├─ goal
    │  ├─ slug = fix-auth-test
    │  ├─ why

@@ -5,7 +5,7 @@ import util from 'util';
 import { keyrack } from 'rhachet/keyrack';
 
 // eslint-disable-next-line no-undef
-jest.setTimeout(180000); // LLM calls can take 2-3 minutes under load
+jest.setTimeout(90000); // we're calling downstream apis
 
 // set console.log to not truncate nested objects
 util.inspect.defaultOptions.depth = 5;
@@ -37,7 +37,9 @@ if (
 
 /**
  * .what = source credentials from keyrack for test env
- * .why = auto-inject keys into process.env, fail fast if absent
+ * .why =
+ *   - auto-inject keys into process.env
+ *   - fail fast with helpful error if keyrack locked or keys absent
  */
 const keyrackYmlPath = join(process.cwd(), '.agent/keyrack.yml');
 if (existsSync(keyrackYmlPath))

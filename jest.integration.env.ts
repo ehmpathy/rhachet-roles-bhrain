@@ -87,7 +87,9 @@ if (requiresTestDb) {
 
 /**
  * .what = source credentials from keyrack for test env
- * .why = auto-inject keys into process.env, fail fast if absent
+ * .why =
+ *   - auto-inject keys into process.env
+ *   - fail fast with helpful error if keyrack locked or keys absent
  */
 const keyrackYmlPath = join(process.cwd(), '.agent/keyrack.yml');
 if (existsSync(keyrackYmlPath))

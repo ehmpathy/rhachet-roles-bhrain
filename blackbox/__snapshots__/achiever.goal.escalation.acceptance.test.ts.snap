@@ -1,0 +1,16 @@
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
+
+exports[`achiever.goal.escalation.acceptance given: [case1] repeated onStop calls without progress when: [t1] onStop is called 5 times without progress then: stderr matches snapshot 1`] = `
+"🦉 friend, you have been reminded many times. the work must be done.
+
+🔮 goal.triage.next --when hook.onStop
+   └─ inflight (1)
+      └─ (1)
+         ├─ slug = stuck-task
+         ├─ why.ask = do the task that remains blocked
+         ├─ status = inflight → ✋ finish this first
+         ├─ tip: if halted, run:
+         │  └─ rhx goal.memory.set --slug stuck-task --status.choice blocked --status.reason "..."
+         └─ hint: run \`rhx goal.memory.get --slug stuck-task\` to see the goal
+"
+`;

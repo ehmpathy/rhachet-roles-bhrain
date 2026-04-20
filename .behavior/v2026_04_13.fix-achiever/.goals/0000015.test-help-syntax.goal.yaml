@@ -1,0 +1,15 @@
+slug: 'test-help-syntax'
+source: 'peer:human'
+status:
+  choice: 'fulfilled'
+  reason: 'test goal, cleaned up'
+updatedAt: '2026-04-19'
+why:
+  ask: "refactor the auth module to use JWT tokens\n    instead of session cookies for better stateless scale"
+  purpose: "current session-based auth requires sticky\n    sessions which limits horizontal scale options"
+  benefit: 'infrastructure can scale horizontally'
+what:
+  outcome: 'auth module uses JWT tokens'
+how:
+  task: '1. add JWT library, 2. update auth middleware'
+  gate: 'all auth tests pass'

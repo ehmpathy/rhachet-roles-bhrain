@@ -1,5 +1,90 @@
 // Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
 
+exports[`goal cli escalation given: [case1] escalateMessageByCount when: [t0] count is below threshold then: returns gentle message for count 0 1`] = `"🦉 to forget an ask is to break a promise. remember."`;
+
+exports[`goal cli escalation given: [case1] escalateMessageByCount when: [t1] count is at or above threshold then: returns escalated message for count 5 1`] = `"🦉 friend, you have been reminded many times. the work must be done."`;
+
+exports[`goal cli help given: [case1] emitHelpOutput when: [t0] help is rendered then: output matches snapshot 1`] = `
+"🦉 goal.memory.set — persist a goal
+
+🔮 usage
+   ├─ example: create goal
+   │  ├─
+   │  │
+   │  │  rhx goal.memory.set \\
+   │  │    --slug fix-typo \\
+   │  │    --why.ask "fix the typo in readme" \\
+   │  │    --why.purpose "docs should be correct" \\
+   │  │    --why.benefit "users trust the project" \\
+   │  │    --what.outcome "readme has no typos" \\
+   │  │    --how.task "find and fix the typo" \\
+   │  │    --how.gate "spell check passes" \\
+   │  │    --source peer:human
+   │  │
+   │  └─
+   │
+   ├─ example: create goal (multiline)
+   │  ├─
+   │  │
+   │  │  rhx goal.memory.set \\
+   │  │    --slug refactor-auth-module \\
+   │  │    --why.ask "refactor the auth module to use JWT tokens
+   │  │      instead of session cookies for better stateless scale" \\
+   │  │    --why.purpose "current session-based auth requires sticky
+   │  │      sessions which limits horizontal scale options" \\
+   │  │    --why.benefit "infrastructure can scale horizontally without
+   │  │      session affinity, reduces costs and improves reliability" \\
+   │  │    --what.outcome "auth module uses JWT tokens for all
+   │  │      authentication flows, sessions are stateless" \\
+   │  │    --how.task "1. add JWT library, 2. update auth middleware,
+   │  │      3. migrate extant sessions, 4. update client code" \\
+   │  │    --how.gate "all auth tests pass, load test shows
+   │  │      no session affinity required" \\
+   │  │    --status.choice enqueued \\
+   │  │    --status.reason "will start after current task" \\
+   │  │    --source peer:human
+   │  │
+   │  └─
+   │
+   ├─ example: fulfill goal
+   │  ├─
+   │  │
+   │  │  rhx goal.memory.set \\
+   │  │    --slug fix-login-bug \\
+   │  │    --status.choice fulfilled \\
+   │  │    --status.reason "fixed in commit abc123,
+   │  │      root cause was race condition in token refresh"
+   │  │
+   │  └─
+   │
+   ├─ example: block goal
+   │  ├─
+   │  │
+   │  │  rhx goal.memory.set \\
+   │  │    --slug deploy-to-prod \\
+   │  │    --status.choice blocked \\
+   │  │    --status.reason "blocked on security review,
+   │  │      awaited infosec team approval by 2026-04-20"
+   │  │
+   │  └─
+   │
+   ├─ required fields
+   │  ├─ --slug           goal identifier
+   │  ├─ --why.ask        the original ask from human
+   │  ├─ --why.purpose    why this matters
+   │  ├─ --why.benefit    what success enables
+   │  ├─ --what.outcome   expected result
+   │  ├─ --how.task       work to be done
+   │  └─ --how.gate       success criteria
+   │
+   └─ optional fields
+      ├─ --status.choice  incomplete | blocked | enqueued | inflight | fulfilled
+      ├─ --status.reason  reason for current status
+      ├─ --covers         comma-separated ask hashes
+      ├─ --source         peer:human | peer:system
+      └─ --scope          route | repo (automatic — rarely needed)"
+`;
+
 exports[`goal cli output given: [case1] emitSubBucket renders connected treebucket when: [t0] render field content then: open bracket, continuation, and close bracket all connect 1`] = `
 "   │  │  │  ├─
    │  │  │  │  

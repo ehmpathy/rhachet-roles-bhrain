@@ -16,7 +16,7 @@ run triage:
 ### step 1: check triage state
 
 ```bash
-./goal.triage.infer.sh --scope repo
+rhx goal.triage.infer
 ```
 
 this shows:
@@ -32,38 +32,31 @@ this shows:
 
 ### step 3: create or update goals
 
-for new goal:
-```yaml
-# pipe to goal.memory.set
-slug: fix-auth-test
-why:
-  ask: fix the flaky test in auth.test.ts
-  purpose: human wants ci to pass before merge
-  benefit: team can ship
-what:
-  outcome: auth.test.ts passes reliably
-how:
-  task: run test in isolation, find flake source, fix
-  gate: test passes 10 consecutive runs
-status:
-  choice: enqueued
-  reason: goal created from triage
-source: peer:human
-```
-
+for new goal (flags one-by-one):
 ```bash
-cat goal.yaml | ./goal.memory.set.sh --scope repo --covers $askHash
+rhx goal.memory.set \
+  --slug fix-auth-test \
+  --why.ask "fix the flaky test in auth.test.ts" \
+  --why.purpose "human wants ci to pass before merge" \
+  --why.benefit "team can ship" \
+  --what.outcome "auth.test.ts passes reliably" \
+  --how.task "run test in isolation, find flake source, fix" \
+  --how.gate "test passes 10 consecutive runs" \
+  --status.choice enqueued \
+  --status.reason "goal created from triage" \
+  --source peer:human \
+  --covers $askHash
 ```
 
 for extant goal, just add coverage:
 ```bash
-./goal.memory.set.sh --scope repo --slug fix-auth-test --status inflight --covers $askHash
+rhx goal.memory.set --slug fix-auth-test --status.choice inflight --covers $askHash
 ```
 
 ### step 4: verify all covered
 
 ```bash
-./goal.triage.infer.sh --scope repo
+rhx goal.triage.infer
 ```
 
 when uncovered = 0, triage is complete.

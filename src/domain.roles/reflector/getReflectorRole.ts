@@ -17,4 +17,15 @@ export const ROLE_REFLECTOR: Role = Role.build({
   briefs: {
     dirs: [],
   },
+  hooks: {
+    onBrain: {
+      onBoot: [
+        {
+          command:
+            './node_modules/.bin/npx rhachet roles boot --role reflector',
+          timeout: 'PT30S',
+        },
+      ],
+    },
+  },
 });
