@@ -1,6 +1,7 @@
 import * as fs from 'fs/promises';
 import * as path from 'path';
 
+import { findsertSelfReviewGitignore } from '../gitignore/findsertSelfReviewGitignore';
 import { getSelfReviewArticulationPath } from '../guard/getSelfReviewArticulationPath';
 import { getSelfReviewTriggeredCount } from './getSelfReviewTriggeredCount';
 import { getSelfReviewTriggeredReport } from './getSelfReviewTriggeredReport';
@@ -59,6 +60,8 @@ export const getSelfReviewChallengeDecision = async (input: {
 
   // no report = first challenge, start timer now (introduces concept before file check)
   if (!report) {
+    // ensure review/self/.gitignore found or created before driver writes
+    await findsertSelfReviewGitignore({ route: input.route });
     await setSelfReviewTriggeredReport(input);
     return { decision: 'challenge:first', articulationPath };
   }
@@ -67,7 +70,10 @@ export const getSelfReviewChallengeDecision = async (input: {
   const fileExists = await fs
     .access(articulationPath)
     .then(() => true)
-    .catch(() => false);
+    .catch((error: NodeJS.ErrnoException) => {
+      if (error.code === 'ENOENT') return false;
+      throw error;
+    });
   if (!fileExists) {
     return { decision: 'challenge:absent', articulationPath };
   }
@@ -79,7 +85,10 @@ export const getSelfReviewChallengeDecision = async (input: {
   const uptilExisted = await fs
     .access(uptilPath)
     .then(() => true)
-    .catch(() => false);
+    .catch((error: NodeJS.ErrnoException) => {
+      if (error.code === 'ENOENT') return false;
+      throw error;
+    });
   const isRush = uptilExisted;
 
   // update .uptil mtime and increment attempts (creates if absent, updates if present)
