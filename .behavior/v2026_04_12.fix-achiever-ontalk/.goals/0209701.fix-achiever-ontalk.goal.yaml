@@ -1,0 +1,15 @@
+slug: 'fix-achiever-ontalk'
+source: 'peer:human'
+status:
+  choice: 'fulfilled'
+  reason: 'status updated'
+updatedAt: '2026-04-19'
+why:
+  ask: 'fix the achiever role''s onTalk hook behavior'
+  purpose: 'accumulate asks to inventory when peer sends message'
+  benefit: 'ensures asks are tracked and not forgotten'
+what:
+  outcome: 'hook.onTalk mode reads stdin, calls setAsk, emits reminder, exits 0'
+how:
+  task: 'add hook.onTalk handling to goalInferTriage in goal.ts'
+  gate: 'acceptance test passes, manual verification works'

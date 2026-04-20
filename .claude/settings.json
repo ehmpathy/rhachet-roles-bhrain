@@ -45,6 +45,18 @@
             "command": "./node_modules/.bin/rhachet roles boot --repo ehmpathy --role ergonomist",
             "timeout": 60,
             "author": "repo=ehmpathy/role=ergonomist"
+          },
+          {
+            "type": "command",
+            "command": "npx rhachet roles boot --role behaver",
+            "timeout": 10,
+            "author": "repo=bhuild/role=behaver"
+          },
+          {
+            "type": "command",
+            "command": "npx rhachet roles boot --role dreamer",
+            "timeout": 10,
+            "author": "repo=bhuild/role=dreamer"
           }
         ]
       },
@@ -85,6 +97,12 @@
           {
             "type": "command",
             "command": "./node_modules/.bin/rhachet run --repo ehmpathy --role mechanic --init claude.hooks/pretooluse.forbid-sedreplace-special-chars",
+            "timeout": 5,
+            "author": "repo=ehmpathy/role=mechanic"
+          },
+          {
+            "type": "command",
+            "command": "./node_modules/.bin/rhachet run --repo ehmpathy --role mechanic --init claude.hooks/pretooluse.forbid-test-background",
             "timeout": 5,
             "author": "repo=ehmpathy/role=mechanic"
           }
@@ -188,6 +206,19 @@
           }
         ]
       }
+    ],
+    "UserPromptSubmit": [
+      {
+        "matcher": "*",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "./node_modules/.bin/rhx goal.triage.infer --when hook.onTalk",
+            "timeout": 5,
+            "author": "repo=bhrain/role=achiever"
+          }
+        ]
+      }
     ]
   },
   "permissions": {
@@ -213,8 +244,6 @@
       "Bash(jq)",
       "Bash(echo:*)",
       "Bash(printf:*)",
-      "Bash(git mv:*)",
-      "Bash(git rm:*)",
       "Bash(git log:*)",
       "Bash(git status:*)",
       "Bash(git diff:*)",

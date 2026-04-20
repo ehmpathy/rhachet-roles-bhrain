@@ -45,10 +45,14 @@ export const ROLE_ACHIEVER: Role = Role.build({
           timeout: 'PT10S',
         },
       ],
-      // onTalk: implemented via init executable (inits/init.claude.hooks.sh)
-      // rhachet's Role.build() only supports onBoot, onTool, onStop
-      // the init adds UserPromptSubmit hook directly to settings.json
-      // run: npx rhachet roles init --role achiever
+      // onTalk: accumulate asks as they arrive
+      onTalk: [
+        {
+          command:
+            './node_modules/.bin/rhx goal.triage.infer --when hook.onTalk',
+          timeout: 'PT5S',
+        },
+      ],
     },
   },
 });

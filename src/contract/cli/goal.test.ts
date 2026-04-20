@@ -8,6 +8,8 @@ import {
   GoalWhy,
 } from '@src/domain.objects/Achiever/Goal';
 
+import { parseStdinPrompt } from './goal';
+
 /**
  * .what = unit tests for goal CLI output render
  * .why = fast feedback on treestruct format match to vision
@@ -92,9 +94,9 @@ describe('goal cli output', () => {
     });
   });
 
-  given('[case4] full goal render', () => {
-    when('[t0] complete goal with all fields', () => {
-      then('goal structure is valid', () => {
+  given('[case4] goal domain object construction', () => {
+    when('[t0] goal created with all fields', () => {
+      then('goal holds all field values', () => {
         const goal = new Goal({
           slug: 'fix-auth-test',
           why: new GoalWhy({
@@ -122,6 +124,128 @@ describe('goal cli output', () => {
         expect(goal.slug).toEqual('fix-auth-test');
         expect(goal.why?.ask).toEqual('fix the flaky test');
         expect(goal.status.choice).toEqual('enqueued');
+      });
+    });
+  });
+});
+
+/**
+ * .what = unit tests for parseStdinPrompt
+ * .why = verifies prompt extraction from Claude Code stdin JSON
+ */
+describe('parseStdinPrompt', () => {
+  given('[case1] valid JSON with prompt', () => {
+    when('[t0] JSON has prompt field', () => {
+      then('returns prompt content', () => {
+        const raw = '{"prompt":"fix the flaky test"}';
+        const result = parseStdinPrompt(raw);
+        expect(result).toMatchSnapshot();
+        expect(result).toEqual('fix the flaky test');
+      });
+    });
+  });
+
+  given('[case2] empty stdin', () => {
+    when('[t0] stdin is empty string', () => {
+      then('returns null', () => {
+        const result = parseStdinPrompt('');
+        expect(result).toMatchSnapshot();
+        expect(result).toBeNull();
+      });
+    });
+
+    when('[t1] stdin is whitespace only', () => {
+      then('returns null', () => {
+        const result = parseStdinPrompt('   \n\t  ');
+        expect(result).toMatchSnapshot();
+        expect(result).toBeNull();
+      });
+    });
+  });
+
+  given('[case3] malformed JSON', () => {
+    when('[t0] JSON is invalid', () => {
+      then('returns null', () => {
+        const result = parseStdinPrompt('not valid json');
+        expect(result).toMatchSnapshot();
+        expect(result).toBeNull();
+      });
+    });
+
+    when('[t1] JSON is truncated', () => {
+      then('returns null', () => {
+        const result = parseStdinPrompt('{"prompt":"incomplete');
+        expect(result).toMatchSnapshot();
+        expect(result).toBeNull();
+      });
+    });
+  });
+
+  given('[case4] JSON without prompt field', () => {
+    when('[t0] JSON has other fields but no prompt', () => {
+      then('returns null', () => {
+        const raw = '{"message":"hello","user":"test"}';
+        const result = parseStdinPrompt(raw);
+        expect(result).toMatchSnapshot();
+        expect(result).toBeNull();
+      });
+    });
+
+    when('[t1] prompt field is null', () => {
+      then('returns null', () => {
+        const raw = '{"prompt":null}';
+        const result = parseStdinPrompt(raw);
+        expect(result).toMatchSnapshot();
+        expect(result).toBeNull();
+      });
+    });
+
+    when('[t2] prompt field is number', () => {
+      then('returns null', () => {
+        const raw = '{"prompt":123}';
+        const result = parseStdinPrompt(raw);
+        expect(result).toMatchSnapshot();
+        expect(result).toBeNull();
+      });
+    });
+  });
+
+  given('[case5] prompt is empty string', () => {
+    when('[t0] prompt field is empty string', () => {
+      then('returns null', () => {
+        const raw = '{"prompt":""}';
+        const result = parseStdinPrompt(raw);
+        expect(result).toMatchSnapshot();
+        expect(result).toBeNull();
+      });
+    });
+
+    when('[t1] prompt field is whitespace only', () => {
+      then('returns null', () => {
+        const raw = '{"prompt":"   "}';
+        const result = parseStdinPrompt(raw);
+        expect(result).toMatchSnapshot();
+        expect(result).toBeNull();
+      });
+    });
+  });
+
+  given('[case6] prompt with special characters', () => {
+    when('[t0] prompt has newlines', () => {
+      then('returns prompt with newlines preserved', () => {
+        const raw = '{"prompt":"line one\\nline two"}';
+        const result = parseStdinPrompt(raw);
+        expect(result).toMatchSnapshot();
+        expect(result).toEqual('line one\nline two');
+      });
+    });
+
+    when('[t1] prompt has unicode', () => {
+      then('returns prompt with unicode preserved', () => {
+        const raw = '{"prompt":"fix the test 🐢"}';
+        const result = parseStdinPrompt(raw);
+        expect(result).toMatchSnapshot();
+        expect(result).toEqual('fix the test 🐢');
       });
     });
   });

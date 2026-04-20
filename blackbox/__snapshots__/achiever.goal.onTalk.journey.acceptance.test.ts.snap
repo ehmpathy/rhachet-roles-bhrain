@@ -1,0 +1,121 @@
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
+
+exports[`achiever.goal.onTalk.journey given: [case1] onTalk accumulates asks then triage shows them when: [t0] before any asks then: stdout matches snapshot 1`] = `
+"🦉 to forget an ask is to break a promise. remember.
+
+🔮 goal.triage.infer --scope repo
+   │
+   ├─ stats
+   │  ├─ asks = 0
+   │  ├─ uncovered = 0
+   │  ├─ goals = 0
+   │  │  ├─ complete = 0
+   │  │  └─ incomplete = 0
+   │  └─ coverage = 0
+   │
+   └─ all asks covered, all goals complete
+"
+`;
+
+exports[`achiever.goal.onTalk.journey given: [case1] onTalk accumulates asks then triage shows them when: [t2] triage.infer shows uncovered asks then: stdout matches snapshot 1`] = `
+"🦉 to forget an ask is to break a promise. remember.
+
+🔮 goal.triage.infer --scope repo
+   │
+   ├─ stats
+   │  ├─ asks = 3
+   │  ├─ uncovered = 3
+   │  ├─ goals = 0
+   │  │  ├─ complete = 0
+   │  │  └─ incomplete = 0
+   │  └─ coverage = 0
+   │
+   ├─ uncovered asks
+   │  ├─ [HASH]
+   │  │  ├─
+   │  │  │
+   │  │  │  fix the flaky test in auth module
+   │  │  │
+   │  │  └─
+   │  ├─ [HASH]
+   │  │  ├─
+   │  │  │
+   │  │  │  add retry logic to the api client
+   │  │  │
+   │  │  └─
+   │  └─ [HASH]
+   │     ├─
+   │     │
+   │     │  update the readme with new setup steps
+   │     │
+   │     └─
+   │
+   └─ triage required
+      └─ create a goal for each uncovered ask
+         ├─ new goal for asks not yet represented
+         │  └─ rhx goal.memory.set --slug $new --covers [hash]
+         └─ append to open goal for related asks
+            └─ rhx goal.memory.set --slug $open --covers [hash]
+"
+`;
+
+exports[`achiever.goal.onTalk.journey given: [case1] onTalk accumulates asks then triage shows them when: [t4] triage shows partial coverage then: stdout matches snapshot 1`] = `
+"🦉 to forget an ask is to break a promise. remember.
+
+🔮 goal.triage.infer --scope repo
+   │
+   ├─ stats
+   │  ├─ asks = 3
+   │  ├─ uncovered = 2
+   │  ├─ goals = 1
+   │  │  ├─ complete = 1
+   │  │  └─ incomplete = 0
+   │  └─ coverage = 1
+   │
+   ├─ uncovered asks
+   │  ├─ [HASH]
+   │  │  ├─
+   │  │  │
+   │  │  │  add retry logic to the api client
+   │  │  │
+   │  │  └─
+   │  └─ [HASH]
+   │     ├─
+   │     │
+   │     │  update the readme with new setup steps
+   │     │
+   │     └─
+   │
+   ├─ complete goals
+   │  └─ fix-flaky-auth-test [enqueued]
+   │
+   └─ triage required
+      └─ create a goal for each uncovered ask
+         ├─ new goal for asks not yet represented
+         │  └─ rhx goal.memory.set --slug $new --covers [hash]
+         └─ append to open goal for related asks
+            └─ rhx goal.memory.set --slug $open --covers [hash]
+"
+`;
+
+exports[`achiever.goal.onTalk.journey given: [case1] onTalk accumulates asks then triage shows them when: [t5] all asks covered by goals then: stdout matches snapshot 1`] = `
+"🦉 to forget an ask is to break a promise. remember.
+
+🔮 goal.triage.infer --scope repo
+   │
+   ├─ stats
+   │  ├─ asks = 3
+   │  ├─ uncovered = 0
+   │  ├─ goals = 3
+   │  │  ├─ complete = 3
+   │  │  └─ incomplete = 0
+   │  └─ coverage = 3
+   │
+   ├─ complete goals
+   │  ├─ task-3 [enqueued]
+   │  ├─ task-2 [enqueued]
+   │  └─ fix-flaky-auth-test [enqueued]
+   │
+   └─ all asks covered, all goals complete
+"
+`;
