@@ -49,7 +49,9 @@ describe('findsertSelfReviewGitignore', () => {
 
       then('creates .gitignore with correct content', async () => {
         const result = await findsertSelfReviewGitignore({ route: tempDir });
-        expect(normalizeResult(result, tempDir)).toMatchSnapshot('result-created');
+        expect(normalizeResult(result, tempDir)).toMatchSnapshot(
+          'result-created',
+        );
         const content = await fs.readFile(result.path, 'utf-8');
         expect(content).toMatchSnapshot('gitignore-content');
       });
@@ -81,7 +83,9 @@ describe('findsertSelfReviewGitignore', () => {
     when('[t0] findsert is called', () => {
       then('returns unchanged', async () => {
         const result = await findsertSelfReviewGitignore({ route: tempDir });
-        expect(normalizeResult(result, tempDir)).toMatchSnapshot('result-unchanged');
+        expect(normalizeResult(result, tempDir)).toMatchSnapshot(
+          'result-unchanged',
+        );
       });
     });
   });
@@ -107,7 +111,9 @@ describe('findsertSelfReviewGitignore', () => {
     when('[t0] findsert is called', () => {
       then('overwrites with correct content', async () => {
         const result = await findsertSelfReviewGitignore({ route: tempDir });
-        expect(normalizeResult(result, tempDir)).toMatchSnapshot('result-overwrite');
+        expect(normalizeResult(result, tempDir)).toMatchSnapshot(
+          'result-overwrite',
+        );
         const content = await fs.readFile(result.path, 'utf-8');
         expect(content).toMatchSnapshot('gitignore-content-overwrite');
       });
@@ -208,7 +214,10 @@ describe('findsertSelfReviewGitignore', () => {
 
     beforeEach(async () => {
       await fs.mkdir(path.join(tempDir, 'review'), { recursive: true });
-      await fs.writeFile(path.join(tempDir, 'review', 'self'), 'not a directory');
+      await fs.writeFile(
+        path.join(tempDir, 'review', 'self'),
+        'not a directory',
+      );
     });
 
     afterEach(async () => {

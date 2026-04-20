@@ -43,13 +43,19 @@ describe('findsertSelfReviewGitignore.integration', () => {
     when('[t0] findsert is called multiple times', () => {
       then('only creates once, subsequent calls return unchanged', async () => {
         const result1 = await findsertSelfReviewGitignore({ route: tempDir });
-        expect(normalizeResult(result1, tempDir)).toMatchSnapshot('result-first-call');
+        expect(normalizeResult(result1, tempDir)).toMatchSnapshot(
+          'result-first-call',
+        );
 
         const result2 = await findsertSelfReviewGitignore({ route: tempDir });
-        expect(normalizeResult(result2, tempDir)).toMatchSnapshot('result-second-call');
+        expect(normalizeResult(result2, tempDir)).toMatchSnapshot(
+          'result-second-call',
+        );
 
         const result3 = await findsertSelfReviewGitignore({ route: tempDir });
-        expect(normalizeResult(result3, tempDir)).toMatchSnapshot('result-third-call');
+        expect(normalizeResult(result3, tempDir)).toMatchSnapshot(
+          'result-third-call',
+        );
       });
     });
   });
@@ -82,7 +88,9 @@ describe('findsertSelfReviewGitignore.integration', () => {
 
         // findsert gitignore
         const result = await findsertSelfReviewGitignore({ route: tempDir });
-        expect(normalizeResult(result, tempDir)).toMatchSnapshot('result-with-files-present');
+        expect(normalizeResult(result, tempDir)).toMatchSnapshot(
+          'result-with-files-present',
+        );
 
         // verify both files coexist
         const files = await fs.readdir(path.join(tempDir, 'review', 'self'));
@@ -152,7 +160,9 @@ describe('findsertSelfReviewGitignore.integration', () => {
     when('[t0] findsert is called', () => {
       then('overwrites with correct content', async () => {
         const result = await findsertSelfReviewGitignore({ route: tempDir });
-        expect(normalizeResult(result, tempDir)).toMatchSnapshot('result-overwrite');
+        expect(normalizeResult(result, tempDir)).toMatchSnapshot(
+          'result-overwrite',
+        );
       });
     });
   });
@@ -213,7 +223,10 @@ describe('findsertSelfReviewGitignore.integration', () => {
 
     beforeEach(async () => {
       await fs.mkdir(path.join(tempDir, 'review'), { recursive: true });
-      await fs.writeFile(path.join(tempDir, 'review', 'self'), 'not a directory');
+      await fs.writeFile(
+        path.join(tempDir, 'review', 'self'),
+        'not a directory',
+      );
     });
 
     afterEach(async () => {
