@@ -8,7 +8,6 @@ import { BadRequestError } from 'helpful-errors';
 import type { Ask } from '@src/domain.objects/Achiever/Ask';
 import {
   computeGoalCompleteness,
-  GOAL_STATUS_CHOICES,
   Goal,
   GoalHow,
   GoalStatus,
@@ -16,15 +15,12 @@ import {
   GoalWhat,
   GoalWhy,
 } from '@src/domain.objects/Achiever/Goal';
-import { delGoalBlockerState } from '@src/domain.operations/goal/delGoalBlockerState';
 import { expandAbbreviatedHashes } from '@src/domain.operations/goal/expandAbbreviatedHashes';
-import { getGoalBlockerState } from '@src/domain.operations/goal/getGoalBlockerState';
 import { getGoalGuardVerdict } from '@src/domain.operations/goal/getGoalGuardVerdict';
 import { getGoals } from '@src/domain.operations/goal/getGoals';
 import { getTriageState } from '@src/domain.operations/goal/getTriageState';
 import { setAsk } from '@src/domain.operations/goal/setAsk';
 import { setGoal, setGoalStatus } from '@src/domain.operations/goal/setGoal';
-import { setGoalBlockerState } from '@src/domain.operations/goal/setGoalBlockerState';
 import { getRouteBindByBranch } from '@src/domain.operations/route/bind/getRouteBindByBranch';
 
 // eslint-disable-next-line @typescript-eslint/no-require-imports
