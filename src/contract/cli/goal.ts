@@ -611,7 +611,7 @@ const parseArgsForSet = async (
       i++;
       continue;
     }
-    if (arg === '--status' && nextArg) {
+    if ((arg === '--status' || arg === '--status.choice') && nextArg) {
       status = nextArg as GoalStatusChoice;
       i++;
       continue;
@@ -675,7 +675,7 @@ const parseArgsForGet = async (
       scope = scopeValue;
       i++;
     }
-    if (arg === '--status' && args[i + 1]) {
+    if ((arg === '--status' || arg === '--status.choice') && args[i + 1]) {
       status = args[i + 1] as GoalStatusChoice;
       i++;
     }
