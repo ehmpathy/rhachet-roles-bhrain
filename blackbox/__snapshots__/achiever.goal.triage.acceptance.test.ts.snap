@@ -230,6 +230,9 @@ exports[`achiever.goal.triage.acceptance given: [case1] multi-part request triag
          │  ├─ choice = enqueued
          │  └─ reason = goal created from triage
          └─ source = peer:human
+
+✨ did you know?
+   └─ run rhx goal.memory.get --slug $goal to see full goal details
 "
 `;
 
@@ -268,6 +271,9 @@ exports[`achiever.goal.triage.acceptance given: [case1] multi-part request triag
          │  ├─ choice = enqueued
          │  └─ reason = goal created from triage
          └─ source = peer:human
+
+✨ did you know?
+   └─ run rhx goal.memory.get --slug $goal to see full goal details
 "
 `;
 
@@ -327,7 +333,7 @@ exports[`achiever.goal.triage.acceptance given: [case2] triage of asks with goal
    │  └─ source = peer:human
    │
    ├─ covered
-   │  └─ abc123def456
+   │  └─ [SHA256]
    ├─ path = .goals/[BRANCH]/[OFFSET].complete-task.goal.yaml
    └─ persisted
 "
@@ -732,12 +738,14 @@ exports[`achiever.goal.triage.acceptance given: [case6] goal.triage.infer shows 
 "🦉 to forget an ask is to break a promise. remember.
 
 🔮 goal.triage.infer --scope repo
-   ├─ asks = 0
-   ├─ uncovered = 0
-   ├─ goals = 2
-   │  ├─ complete = 1
-   │  └─ incomplete = 1
-   ├─ coverage = 0
+   │
+   ├─ stats
+   │  ├─ asks = 0
+   │  ├─ uncovered = 0
+   │  ├─ goals = 2
+   │  │  ├─ complete = 1
+   │  │  └─ incomplete = 1
+   │  └─ coverage = 0
    │
    ├─ incomplete goals
    │  └─ incomplete-goal [incomplete]
@@ -748,8 +756,7 @@ exports[`achiever.goal.triage.acceptance given: [case6] goal.triage.infer shows 
    │  └─ complete-goal [enqueued]
    │
    └─ triage required
-      ├─ complete incomplete goals via \`rhx goal.memory.set\`
-      └─ then re-run \`rhx goal.triage.infer\`
+      └─ complete incomplete goals via \`rhx goal.memory.set\`
 "
 `;
 
@@ -757,12 +764,14 @@ exports[`achiever.goal.triage.acceptance given: [case6] goal.triage.infer shows 
 "🦉 to forget an ask is to break a promise. remember.
 
 🔮 goal.triage.infer --scope repo
-   ├─ asks = 0
-   ├─ uncovered = 0
-   ├─ goals = 2
-   │  ├─ complete = 2
-   │  └─ incomplete = 0
-   ├─ coverage = 0
+   │
+   ├─ stats
+   │  ├─ asks = 0
+   │  ├─ uncovered = 0
+   │  ├─ goals = 2
+   │  │  ├─ complete = 2
+   │  │  └─ incomplete = 0
+   │  └─ coverage = 0
    │
    ├─ complete goals
    │  ├─ complete-goal [enqueued]
@@ -837,21 +846,23 @@ exports[`achiever.goal.triage.acceptance given: [case8] route scope goal persist
 
 🔮 goal.memory.get --scope route
    └─ goals (1)
-      └─ (1)
-         ├─ slug = route-scoped-goal
-         ├─ why
-         │  ├─ ask = test route scope
-         │  ├─ purpose = verify route isolation
-         │  └─ benefit = confidence in scope behavior
-         ├─ what
-         │  └─ outcome = goal persists in route .goals/
-         ├─ how
-         │  ├─ task = create goal with --scope route
-         │  └─ gate = goal file exists in route .goals/
-         ├─ status
-         │  ├─ choice = enqueued
-         │  └─ reason = route scope test
-         └─ source = peer:human
+      ├─ slug = route-scoped-goal
+      ├─ why
+      │  ├─ ask = test route scope
+      │  ├─ purpose = verify route isolation
+      │  └─ benefit = confidence in scope behavior
+      ├─ what
+      │  └─ outcome = goal persists in route .goals/
+      ├─ how
+      │  ├─ task = create goal with --scope route
+      │  └─ gate = goal file exists in route .goals/
+      ├─ status
+      │  ├─ choice = enqueued
+      │  └─ reason = route scope test
+      └─ source = peer:human
+
+✨ did you know?
+   └─ run rhx goal.memory.get --slug $goal to see full goal details
 "
 `;
 
@@ -859,12 +870,14 @@ exports[`achiever.goal.triage.acceptance given: [case8] route scope goal persist
 "🦉 to forget an ask is to break a promise. remember.
 
 🔮 goal.triage.infer --scope route
-   ├─ asks = 0
-   ├─ uncovered = 0
-   ├─ goals = 1
-   │  ├─ complete = 1
-   │  └─ incomplete = 0
-   ├─ coverage = 0
+   │
+   ├─ stats
+   │  ├─ asks = 0
+   │  ├─ uncovered = 0
+   │  ├─ goals = 1
+   │  │  ├─ complete = 1
+   │  │  └─ incomplete = 0
+   │  └─ coverage = 0
    │
    ├─ complete goals
    │  └─ route-scoped-goal [enqueued]

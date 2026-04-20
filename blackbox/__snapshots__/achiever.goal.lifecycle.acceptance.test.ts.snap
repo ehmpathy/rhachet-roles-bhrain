@@ -65,21 +65,23 @@ exports[`achiever.goal.lifecycle.acceptance given: [case1] goal status transitio
 
 🔮 goal.memory.get --scope repo
    └─ goals (1)
-      └─ (1)
-         ├─ slug = fix-auth-test
-         ├─ why
-         │  ├─ ask = fix the flaky test
-         │  ├─ purpose = ci should pass before merge
-         │  └─ benefit = team can ship
-         ├─ what
-         │  └─ outcome = auth.test.ts passes reliably
-         ├─ how
-         │  ├─ task = run test in isolation, identify flake source
-         │  └─ gate = 10 consecutive passes
-         ├─ status
-         │  ├─ choice = enqueued
-         │  └─ reason = goal created from triage
-         └─ source = peer:human
+      ├─ slug = fix-auth-test
+      ├─ why
+      │  ├─ ask = fix the flaky test
+      │  ├─ purpose = ci should pass before merge
+      │  └─ benefit = team can ship
+      ├─ what
+      │  └─ outcome = auth.test.ts passes reliably
+      ├─ how
+      │  ├─ task = run test in isolation, identify flake source
+      │  └─ gate = 10 consecutive passes
+      ├─ status
+      │  ├─ choice = enqueued
+      │  └─ reason = goal created from triage
+      └─ source = peer:human
+
+✨ did you know?
+   └─ run rhx goal.memory.get --slug $goal to see full goal details
 "
 `;
 
@@ -148,21 +150,23 @@ exports[`achiever.goal.lifecycle.acceptance given: [case1] goal status transitio
 
 🔮 goal.memory.get --scope repo
    └─ goals (1)
-      └─ (1)
-         ├─ slug = fix-auth-test
-         ├─ why
-         │  ├─ ask = fix the flaky test
-         │  ├─ purpose = ci should pass before merge
-         │  └─ benefit = team can ship
-         ├─ what
-         │  └─ outcome = auth.test.ts passes reliably
-         ├─ how
-         │  ├─ task = run test in isolation, identify flake source
-         │  └─ gate = 10 consecutive passes
-         ├─ status
-         │  ├─ choice = inflight
-         │  └─ reason = status updated
-         └─ source = peer:human
+      ├─ slug = fix-auth-test
+      ├─ why
+      │  ├─ ask = fix the flaky test
+      │  ├─ purpose = ci should pass before merge
+      │  └─ benefit = team can ship
+      ├─ what
+      │  └─ outcome = auth.test.ts passes reliably
+      ├─ how
+      │  ├─ task = run test in isolation, identify flake source
+      │  └─ gate = 10 consecutive passes
+      ├─ status
+      │  ├─ choice = inflight
+      │  └─ reason = status updated
+      └─ source = peer:human
+
+✨ did you know?
+   └─ run rhx goal.memory.get --slug $goal to see full goal details
 "
 `;
 
@@ -231,21 +235,23 @@ exports[`achiever.goal.lifecycle.acceptance given: [case1] goal status transitio
 
 🔮 goal.memory.get --scope repo
    └─ goals (1)
-      └─ (1)
-         ├─ slug = update-readme
-         ├─ why
-         │  ├─ ask = update the readme
-         │  ├─ purpose = docs should be current
-         │  └─ benefit = new contributors can onboard
-         ├─ what
-         │  └─ outcome = readme documents new env var
-         ├─ how
-         │  ├─ task = edit readme
-         │  └─ gate = env var is documented
-         ├─ status
-         │  ├─ choice = enqueued
-         │  └─ reason = created from triage
-         └─ source = peer:human
+      ├─ slug = update-readme
+      ├─ why
+      │  ├─ ask = update the readme
+      │  ├─ purpose = docs should be current
+      │  └─ benefit = new contributors can onboard
+      ├─ what
+      │  └─ outcome = readme documents new env var
+      ├─ how
+      │  ├─ task = edit readme
+      │  └─ gate = env var is documented
+      ├─ status
+      │  ├─ choice = enqueued
+      │  └─ reason = created from triage
+      └─ source = peer:human
+
+✨ did you know?
+   └─ run rhx goal.memory.get --slug $goal to see full goal details
 "
 `;
 
@@ -254,5 +260,110 @@ exports[`achiever.goal.lifecycle.acceptance given: [case3] negative: goal.memory
 
 🔮 goal.memory.get --scope repo
    └─ goals = (none)
+"
+`;
+
+exports[`achiever.goal.lifecycle.acceptance given: [case7] goal.memory.get display modes: list, --slug, --with asks when: [t0] goal.memory.get list mode shows coverage counts then: stdout has good vibes 1`] = `
+"🦉 to forget an ask is to break a promise. remember.
+
+🔮 goal.memory.get --scope repo
+   └─ goals (2)
+      ├─ (1)
+      │  ├─ slug = display-test-goal-1
+      │  ├─ why
+      │  │  ├─ ask = test display modes
+      │  │  ├─ purpose = verify output formats
+      │  │  └─ benefit = proper UX
+      │  ├─ what
+      │  │  └─ outcome = first goal outcome
+      │  ├─ how
+      │  │  ├─ task = display test
+      │  │  └─ gate = snapshots match
+      │  ├─ status
+      │  │  ├─ choice = enqueued
+      │  │  └─ reason = test
+      │  ├─ covers = 2 asks
+      │  └─ source = peer:human
+      └─ (2)
+         ├─ slug = display-test-goal-2
+         ├─ why
+         │  ├─ ask = another test goal
+         │  ├─ purpose = verify multiple goals
+         │  └─ benefit = list mode works
+         ├─ what
+         │  └─ outcome = second goal outcome
+         ├─ how
+         │  ├─ task = display test
+         │  └─ gate = snapshots match
+         ├─ status
+         │  ├─ choice = inflight
+         │  └─ reason = test
+         └─ source = peer:human
+
+✨ did you know?
+   └─ run rhx goal.memory.get --slug $goal to see full goal details
+"
+`;
+
+exports[`achiever.goal.lifecycle.acceptance given: [case7] goal.memory.get display modes: list, --slug, --with asks when: [t1] goal.memory.get --slug shows truncated ask previews then: stdout has good vibes 1`] = `
+"🦉 to forget an ask is to break a promise. remember.
+
+🔮 goal.memory.get --scope repo
+   ├─ slug = display-test-goal-1
+   ├─ why
+   │  ├─ ask = test display modes
+   │  ├─ purpose = verify output formats
+   │  └─ benefit = proper UX
+   ├─ what
+   │  └─ outcome = first goal outcome
+   ├─ how
+   │  ├─ task = display test
+   │  └─ gate = snapshots match
+   ├─ status
+   │  ├─ choice = enqueued
+   │  └─ reason = test
+   ├─ source = peer:human
+   │
+   └─ covers (2 asks)
+      ├─ [HASH] fix the display mode output fo...
+      └─ [HASH] add truncated previews for ask...
+
+✨ did you know?
+   └─ --with asks to see full asks covered
+"
+`;
+
+exports[`achiever.goal.lifecycle.acceptance given: [case7] goal.memory.get display modes: list, --slug, --with asks when: [t2] goal.memory.get --slug --with asks shows full content then: stdout has good vibes 1`] = `
+"🦉 to forget an ask is to break a promise. remember.
+
+🔮 goal.memory.get --scope repo --slug display-test-goal-1 --with asks
+   ├─ slug = display-test-goal-1
+   ├─ why
+   │  ├─ ask = test display modes
+   │  ├─ purpose = verify output formats
+   │  └─ benefit = proper UX
+   ├─ what
+   │  └─ outcome = first goal outcome
+   ├─ how
+   │  ├─ task = display test
+   │  └─ gate = snapshots match
+   ├─ status
+   │  ├─ choice = enqueued
+   │  └─ reason = test
+   ├─ source = peer:human
+   │
+   └─ covers (2 asks)
+      ├─ [HASH]
+      │  ├─
+      │  │
+      │  │  fix the display mode output format
+      │  │
+      │  └─
+      └─ [HASH]
+         ├─
+         │
+         │  add truncated previews for asks in slug mode
+         │
+         └─
 "
 `;

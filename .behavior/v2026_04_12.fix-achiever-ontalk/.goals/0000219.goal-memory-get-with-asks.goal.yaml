@@ -1,0 +1,15 @@
+slug: 'goal-memory-get-with-asks'
+source: 'peer:human'
+status:
+  choice: 'fulfilled'
+  reason: 'status updated'
+updatedAt: '2026-04-18'
+why:
+  ask: 'goal.memory.get should show which asks are covered, with hash and full content'
+  purpose: 'enable clone to see coverage details per goal'
+  benefit: 'full visibility into what each goal covers'
+what:
+  outcome: 'goal.memory.get --slug xyz --with asks shows covered asks in sub.bucket format'
+how:
+  task: 'add --with asks flag, lookup coverage by goalSlug, add to --help, suggest in output'
+  gate: 'rhx goal.memory.get --slug xyz --with asks shows asks with full content'

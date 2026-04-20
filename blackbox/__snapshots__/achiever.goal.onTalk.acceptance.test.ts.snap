@@ -1,0 +1,258 @@
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
+
+exports[`achiever.goal.onTalk.integration given: [case1] normal message via stdin when: [t0] hook.onTalk is invoked with prompt then: stderr matches snapshot 1`] = `
+"🦉 to forget an ask is to break a promise. remember.
+
+🔮 goal.triage.infer --from peer --when hook.onTalk
+   ├─ from = peer:human
+   ├─ ask
+   │  ├─
+   │  │  
+   │  │    help me refactor the auth module
+   │  │  
+   │  └─
+   │
+   └─ consider: does this impact your goals?
+      ├─ if yes, triage before you proceed
+      └─ run \`rhx goal.triage.infer\`
+"
+`;
+
+exports[`achiever.goal.onTalk.integration given: [case1] normal message via stdin when: [t0] hook.onTalk is invoked with prompt then: stdout matches snapshot 1`] = `""`;
+
+exports[`achiever.goal.onTalk.integration given: [case2] empty message via stdin when: [t0] hook.onTalk is invoked with empty prompt then: stderr matches snapshot 1`] = `""`;
+
+exports[`achiever.goal.onTalk.integration given: [case2] empty message via stdin when: [t0] hook.onTalk is invoked with empty prompt then: stdout matches snapshot 1`] = `""`;
+
+exports[`achiever.goal.onTalk.integration given: [case3] multiple messages in sequence when: [t0] three messages are sent in sequence then: stderr of message 1 matches snapshot 1`] = `
+"🦉 to forget an ask is to break a promise. remember.
+
+🔮 goal.triage.infer --from peer --when hook.onTalk
+   ├─ from = peer:human
+   ├─ ask
+   │  ├─
+   │  │  
+   │  │    first message
+   │  │  
+   │  └─
+   │
+   └─ consider: does this impact your goals?
+      ├─ if yes, triage before you proceed
+      └─ run \`rhx goal.triage.infer\`
+"
+`;
+
+exports[`achiever.goal.onTalk.integration given: [case3] multiple messages in sequence when: [t0] three messages are sent in sequence then: stderr of message 2 matches snapshot 1`] = `
+"🦉 to forget an ask is to break a promise. remember.
+
+🔮 goal.triage.infer --from peer --when hook.onTalk
+   ├─ from = peer:human
+   ├─ ask
+   │  ├─
+   │  │  
+   │  │    second message
+   │  │  
+   │  └─
+   │
+   └─ consider: does this impact your goals?
+      ├─ if yes, triage before you proceed
+      └─ run \`rhx goal.triage.infer\`
+"
+`;
+
+exports[`achiever.goal.onTalk.integration given: [case3] multiple messages in sequence when: [t0] three messages are sent in sequence then: stderr of message 3 matches snapshot 1`] = `
+"🦉 to forget an ask is to break a promise. remember.
+
+🔮 goal.triage.infer --from peer --when hook.onTalk
+   ├─ from = peer:human
+   ├─ ask
+   │  ├─
+   │  │  
+   │  │    third message
+   │  │  
+   │  └─
+   │
+   └─ consider: does this impact your goals?
+      ├─ if yes, triage before you proceed
+      └─ run \`rhx goal.triage.infer\`
+"
+`;
+
+exports[`achiever.goal.onTalk.integration given: [case3] multiple messages in sequence when: [t0] three messages are sent in sequence then: stdout of message 1 matches snapshot 1`] = `""`;
+
+exports[`achiever.goal.onTalk.integration given: [case3] multiple messages in sequence when: [t0] three messages are sent in sequence then: stdout of message 2 matches snapshot 1`] = `""`;
+
+exports[`achiever.goal.onTalk.integration given: [case3] multiple messages in sequence when: [t0] three messages are sent in sequence then: stdout of message 3 matches snapshot 1`] = `""`;
+
+exports[`achiever.goal.onTalk.integration given: [case4] duplicate message when: [t0] same message is sent twice then: stderr of invocation 1 matches snapshot 1`] = `
+"🦉 to forget an ask is to break a promise. remember.
+
+🔮 goal.triage.infer --from peer --when hook.onTalk
+   ├─ from = peer:human
+   ├─ ask
+   │  ├─
+   │  │  
+   │  │    same message
+   │  │  
+   │  └─
+   │
+   └─ consider: does this impact your goals?
+      ├─ if yes, triage before you proceed
+      └─ run \`rhx goal.triage.infer\`
+"
+`;
+
+exports[`achiever.goal.onTalk.integration given: [case4] duplicate message when: [t0] same message is sent twice then: stderr of invocation 2 matches snapshot 1`] = `
+"🦉 to forget an ask is to break a promise. remember.
+
+🔮 goal.triage.infer --from peer --when hook.onTalk
+   ├─ from = peer:human
+   ├─ ask
+   │  ├─
+   │  │  
+   │  │    same message
+   │  │  
+   │  └─
+   │
+   └─ consider: does this impact your goals?
+      ├─ if yes, triage before you proceed
+      └─ run \`rhx goal.triage.infer\`
+"
+`;
+
+exports[`achiever.goal.onTalk.integration given: [case4] duplicate message when: [t0] same message is sent twice then: stdout of invocation 1 matches snapshot 1`] = `""`;
+
+exports[`achiever.goal.onTalk.integration given: [case4] duplicate message when: [t0] same message is sent twice then: stdout of invocation 2 matches snapshot 1`] = `""`;
+
+exports[`achiever.goal.onTalk.integration given: [case5] malformed JSON stdin when: [t0] hook.onTalk is invoked with malformed JSON then: stderr matches snapshot 1`] = `""`;
+
+exports[`achiever.goal.onTalk.integration given: [case5] malformed JSON stdin when: [t0] hook.onTalk is invoked with malformed JSON then: stdout matches snapshot 1`] = `""`;
+
+exports[`achiever.goal.onTalk.integration given: [case6] output format matches vision when: [t0] hook.onTalk is invoked then: stderr matches snapshot 1`] = `
+"🦉 to forget an ask is to break a promise. remember.
+
+🔮 goal.triage.infer --from peer --when hook.onTalk
+   ├─ from = peer:human
+   ├─ ask
+   │  ├─
+   │  │  
+   │  │    test the format output
+   │  │  
+   │  └─
+   │
+   └─ consider: does this impact your goals?
+      ├─ if yes, triage before you proceed
+      └─ run \`rhx goal.triage.infer\`
+"
+`;
+
+exports[`achiever.goal.onTalk.integration given: [case6] output format matches vision when: [t0] hook.onTalk is invoked then: stdout matches snapshot 1`] = `""`;
+
+exports[`achiever.goal.onTalk.integration given: [case7] special chars and emoji when: [t0] message contains emoji and special chars then: stderr matches snapshot 1`] = `
+"🦉 to forget an ask is to break a promise. remember.
+
+🔮 goal.triage.infer --from peer --when hook.onTalk
+   ├─ from = peer:human
+   ├─ ask
+   │  ├─
+   │  │  
+   │  │    fix the test 🐢🌊 with special chars: <>&"'
+   │  │  
+   │  └─
+   │
+   └─ consider: does this impact your goals?
+      ├─ if yes, triage before you proceed
+      └─ run \`rhx goal.triage.infer\`
+"
+`;
+
+exports[`achiever.goal.onTalk.integration given: [case7] special chars and emoji when: [t0] message contains emoji and special chars then: stdout matches snapshot 1`] = `""`;
+
+exports[`achiever.goal.onTalk.integration given: [case8] multiline message when: [t0] message contains newlines then: multiline stderr matches snapshot 1`] = `
+"🦉 to forget an ask is to break a promise. remember.
+
+🔮 goal.triage.infer --from peer --when hook.onTalk
+   ├─ from = peer:human
+   ├─ ask
+   │  ├─
+   │  │  
+   │  │    line one
+   │  │    line two
+   │  │    line three
+   │  │  
+   │  └─
+   │
+   └─ consider: does this impact your goals?
+      ├─ if yes, triage before you proceed
+      └─ run \`rhx goal.triage.infer\`
+"
+`;
+
+exports[`achiever.goal.onTalk.integration given: [case8] multiline message when: [t0] message contains newlines then: stdout matches snapshot 1`] = `""`;
+
+exports[`achiever.goal.onTalk.integration given: [case9] invalid scope argument (negative path) when: [t0] hook.onTalk is invoked with invalid --scope then: error output matches snapshot 1`] = `
+"CATCH: BadRequestError: BadRequestError: invalid scope: invalid. must be 'route' or 'repo'
+
+{
+  "scope": "invalid"
+}
+    at parseArgsForTriage (/home/vlad/git/ehmpathy/_worktrees/rhachet-roles-bhrain.vlad.fix-achiever-ontalk/dist/contract/cli/goal.js:485:23)
+    at async Module.goalTriageInfer (/home/vlad/git/ehmpathy/_worktrees/rhachet-roles-bhrain.vlad.fix-achiever-ontalk/dist/contract/cli/goal.js:1048:29)
+"
+`;
+
+exports[`achiever.goal.onTalk.integration given: [case9] invalid scope argument (negative path) when: [t0] hook.onTalk is invoked with invalid --scope then: stdout matches snapshot 1`] = `""`;
+
+exports[`achiever.goal.onTalk.integration given: [case10] --help flag (edge case) when: [t0] --help is invoked then: stderr matches snapshot 1`] = `""`;
+
+exports[`achiever.goal.onTalk.integration given: [case10] --help flag (edge case) when: [t0] --help is invoked then: stdout matches snapshot 1`] = `
+"🦉 to forget an ask is to break a promise. remember.
+
+🔮 goal.triage.infer --scope repo
+   │
+   ├─ stats
+   │  ├─ asks = 0
+   │  ├─ uncovered = 0
+   │  ├─ goals = 0
+   │  │  ├─ complete = 0
+   │  │  └─ incomplete = 0
+   │  └─ coverage = 0
+   │
+   └─ all asks covered, all goals complete
+"
+`;
+
+exports[`achiever.goal.onTalk.integration given: [case11] prompt field is null (edge case) when: [t0] prompt field is null then: stderr matches snapshot 1`] = `""`;
+
+exports[`achiever.goal.onTalk.integration given: [case11] prompt field is null (edge case) when: [t0] prompt field is null then: stdout matches snapshot 1`] = `""`;
+
+exports[`achiever.goal.onTalk.integration given: [case12] prompt field is number (edge case) when: [t0] prompt field is a number then: stderr matches snapshot 1`] = `""`;
+
+exports[`achiever.goal.onTalk.integration given: [case12] prompt field is number (edge case) when: [t0] prompt field is a number then: stdout matches snapshot 1`] = `""`;
+
+exports[`achiever.goal.onTalk.integration given: [case13] prompt field is absent (edge case) when: [t0] JSON has no prompt field then: stderr matches snapshot 1`] = `""`;
+
+exports[`achiever.goal.onTalk.integration given: [case13] prompt field is absent (edge case) when: [t0] JSON has no prompt field then: stdout matches snapshot 1`] = `""`;
+
+exports[`achiever.goal.onTalk.integration given: [case14] empty stdin (edge case) when: [t0] stdin is empty then: stderr matches snapshot 1`] = `""`;
+
+exports[`achiever.goal.onTalk.integration given: [case14] empty stdin (edge case) when: [t0] stdin is empty then: stdout matches snapshot 1`] = `""`;
+
+exports[`achiever.goal.onTalk.integration given: [case15] unrecognized --when argument (edge case) when: [t0] --when has unrecognized value then: stderr matches snapshot 1`] = `""`;
+
+exports[`achiever.goal.onTalk.integration given: [case15] unrecognized --when argument (edge case) when: [t0] --when has unrecognized value then: stdout matches snapshot 1`] = `
+"🦉 to forget an ask is to break a promise. remember.
+
+🔮 goal.triage.infer --scope repo
+   │
+   ├─ stats
+   │  ├─ asks = 0
+   │  ├─ uncovered = 0
+   │  ├─ goals = 0
+   │  │  ├─ complete = 0
+   │  │  └─ incomplete = 0
+   │  └─ coverage = 0
+   │
+   └─ all asks covered, all goals complete
+"
+`;

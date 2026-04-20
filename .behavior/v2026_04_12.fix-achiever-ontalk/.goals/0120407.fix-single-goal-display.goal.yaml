@@ -1,0 +1,15 @@
+slug: 'fix-single-goal-display'
+source: 'peer:human'
+status:
+  choice: 'fulfilled'
+  reason: 'status updated'
+updatedAt: '2026-04-19'
+why:
+  ask: 'single goal view shows (1) implying list when it should not'
+  purpose: 'cleaner display for single goal view'
+  benefit: 'better ux, no misleading treestruct'
+what:
+  outcome: 'goal.memory.get --slug xyz shows goal without (1) index'
+how:
+  task: 'modify emitGoalCondensed to skip index when total=1, or create separate emitGoalSingle'
+  gate: 'snapshot shows slug directly under goal without (1)'

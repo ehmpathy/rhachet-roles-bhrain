@@ -210,7 +210,23 @@ describe('achiever.goal.triage.acceptance', () => {
       const tempDir = genTempDirForGoals({ slug: 'goal-triage-coverage' });
       await execAsync('npx rhachet roles link --role achiever', { cwd: tempDir });
       await execAsync('git checkout -b feat/test-triage-coverage', { cwd: tempDir });
-      return { tempDir };
+
+      // create an ask to cover via hook.onTalk
+      await invokeGoalSkill({
+        skill: 'goal.triage.infer',
+        args: { when: 'hook.onTalk' },
+        cwd: tempDir,
+        stdin: JSON.stringify({ prompt: 'complete this important task' }),
+      });
+
+      // read the ask hash from inventory
+      const inventoryPath = `${tempDir}/.goals/feat.test-triage-coverage/asks.inventory.jsonl`;
+      const inventoryContent = await fs.readFile(inventoryPath, 'utf-8');
+      const ask = JSON.parse(inventoryContent.trim().split('\n')[0]!) as {
+        hash: string;
+      };
+
+      return { tempDir, askHash: ask.hash.slice(0, 7) };
     });
 
     when('[t0] goal created with coverage hash', () => {
@@ -228,10 +244,10 @@ describe('achiever.goal.triage.acceptance', () => {
           source: 'peer:human',
         });
 
-        // simulate an ask hash that this goal covers
+        // use the real abbreviated ask hash from the inventory
         return invokeGoalSkill({
           skill: 'goal.memory.set',
-          args: { scope: 'repo', covers: 'abc123def456' },
+          args: { scope: 'repo', covers: scene.askHash },
           cwd: scene.tempDir,
           stdin: goalYaml,
         });

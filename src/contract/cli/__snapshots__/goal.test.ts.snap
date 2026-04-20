@@ -25,3 +25,30 @@ exports[`goal cli output given: [case3] emitSubBucket with multiline content whe
    │  │  │  │  
    │  │  │  └─"
 `;
+
+exports[`parseStdinPrompt given: [case1] valid JSON with prompt when: [t0] JSON has prompt field then: returns prompt content 1`] = `"fix the flaky test"`;
+
+exports[`parseStdinPrompt given: [case2] empty stdin when: [t0] stdin is empty string then: returns null 1`] = `null`;
+
+exports[`parseStdinPrompt given: [case2] empty stdin when: [t1] stdin is whitespace only then: returns null 1`] = `null`;
+
+exports[`parseStdinPrompt given: [case3] malformed JSON when: [t0] JSON is invalid then: returns null 1`] = `null`;
+
+exports[`parseStdinPrompt given: [case3] malformed JSON when: [t1] JSON is truncated then: returns null 1`] = `null`;
+
+exports[`parseStdinPrompt given: [case4] JSON without prompt field when: [t0] JSON has other fields but no prompt then: returns null 1`] = `null`;
+
+exports[`parseStdinPrompt given: [case4] JSON without prompt field when: [t1] prompt field is null then: returns null 1`] = `null`;
+
+exports[`parseStdinPrompt given: [case4] JSON without prompt field when: [t2] prompt field is number then: returns null 1`] = `null`;
+
+exports[`parseStdinPrompt given: [case5] prompt is empty string when: [t0] prompt field is empty string then: returns null 1`] = `null`;
+
+exports[`parseStdinPrompt given: [case5] prompt is empty string when: [t1] prompt field is whitespace only then: returns null 1`] = `null`;
+
+exports[`parseStdinPrompt given: [case6] prompt with special characters when: [t0] prompt has newlines then: returns prompt with newlines preserved 1`] = `
+"line one
+line two"
+`;
+
+exports[`parseStdinPrompt given: [case6] prompt with special characters when: [t1] prompt has unicode then: returns prompt with unicode preserved 1`] = `"fix the test 🐢"`;

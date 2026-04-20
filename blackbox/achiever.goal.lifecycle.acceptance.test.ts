@@ -482,4 +482,181 @@ why:
       });
     });
   });
+
+  given('[case7] goal.memory.get display modes: list, --slug, --with asks', () => {
+    const scene = useBeforeAll(async () => {
+      const tempDir = genTempDirForGoals({ slug: 'goal-display-modes' });
+      await execAsync('npx rhachet roles link --role achiever', { cwd: tempDir });
+      await execAsync('git checkout -b feat/test-display-modes', { cwd: tempDir });
+
+      // create two goals
+      const goal1 = createGoalYaml({
+        slug: 'display-test-goal-1',
+        why: {
+          ask: 'test display modes',
+          purpose: 'verify output formats',
+          benefit: 'proper UX',
+        },
+        what: { outcome: 'first goal outcome' },
+        how: { task: 'display test', gate: 'snapshots match' },
+        status: { choice: 'enqueued', reason: 'test' },
+        source: 'peer:human',
+      });
+
+      const goal2 = createGoalYaml({
+        slug: 'display-test-goal-2',
+        why: {
+          ask: 'another test goal',
+          purpose: 'verify multiple goals',
+          benefit: 'list mode works',
+        },
+        what: { outcome: 'second goal outcome' },
+        how: { task: 'display test', gate: 'snapshots match' },
+        status: { choice: 'inflight', reason: 'test' },
+        source: 'peer:human',
+      });
+
+      // set goals
+      await invokeGoalSkill({
+        skill: 'goal.memory.set',
+        args: { scope: 'repo' },
+        cwd: tempDir,
+        stdin: goal1,
+      });
+
+      await invokeGoalSkill({
+        skill: 'goal.memory.set',
+        args: { scope: 'repo' },
+        cwd: tempDir,
+        stdin: goal2,
+      });
+
+      // accumulate asks and cover first goal with them
+      const asks = [
+        'fix the display mode output format',
+        'add truncated previews for asks in slug mode',
+      ];
+
+      // simulate asks via onTalk
+      for (const ask of asks) {
+        await invokeGoalSkill({
+          skill: 'goal.triage.infer',
+          args: { when: 'hook.onTalk' },
+          cwd: tempDir,
+          stdin: JSON.stringify({ prompt: ask }),
+        });
+      }
+
+      // read ask hashes to cover them
+      const inventoryPath = `${tempDir}/.goals/feat.test-display-modes/asks.inventory.jsonl`;
+      const inventoryContent = await fs.readFile(inventoryPath, 'utf-8');
+      const askHashes = inventoryContent
+        .trim()
+        .split('\n')
+        .map((line) => (JSON.parse(line) as { hash: string }).hash);
+
+      // cover first goal with both asks
+      for (const hash of askHashes) {
+        await invokeGoalSkill({
+          skill: 'goal.memory.set',
+          args: { scope: 'repo', slug: 'display-test-goal-1', covers: hash },
+          cwd: tempDir,
+        });
+      }
+
+      return { tempDir };
+    });
+
+    when('[t0] goal.memory.get list mode shows coverage counts', () => {
+      const result = useThen('invoke goal.memory.get', async () => {
+        return invokeGoalSkill({
+          skill: 'goal.memory.get',
+          args: { scope: 'repo' },
+          cwd: scene.tempDir,
+        });
+      });
+
+      then('exit code is 0', () => {
+        expect(result.code).toEqual(0);
+      });
+
+      then('shows both goals', () => {
+        expect(result.stdout).toContain('display-test-goal-1');
+        expect(result.stdout).toContain('display-test-goal-2');
+      });
+
+      then('shows coverage count for first goal', () => {
+        expect(result.stdout).toContain('covers = 2 asks');
+      });
+
+      then('shows tip for --slug', () => {
+        expect(result.stdout).toContain('--slug');
+      });
+
+      then('stdout has good vibes', () => {
+        expect(sanitizeGoalOutputForSnapshot(result.stdout)).toMatchSnapshot();
+      });
+    });
+
+    when('[t1] goal.memory.get --slug shows truncated ask previews', () => {
+      const result = useThen('invoke goal.memory.get --slug', async () => {
+        return invokeGoalSkill({
+          skill: 'goal.memory.get',
+          args: { scope: 'repo', slug: 'display-test-goal-1' },
+          cwd: scene.tempDir,
+        });
+      });
+
+      then('exit code is 0', () => {
+        expect(result.code).toEqual(0);
+      });
+
+      then('shows only the requested goal', () => {
+        expect(result.stdout).toContain('display-test-goal-1');
+        expect(result.stdout).not.toContain('display-test-goal-2');
+      });
+
+      then('shows covered asks section', () => {
+        expect(result.stdout).toContain('covers (2 asks)');
+      });
+
+      then('shows truncated ask content', () => {
+        // should show first 30 chars of each ask
+        expect(result.stdout).toContain('fix the display mode output fo...');
+      });
+
+      then('shows tip for --with asks', () => {
+        expect(result.stdout).toContain('--with asks');
+      });
+
+      then('stdout has good vibes', () => {
+        expect(sanitizeGoalOutputForSnapshot(result.stdout)).toMatchSnapshot();
+      });
+    });
+
+    when('[t2] goal.memory.get --slug --with asks shows full content', () => {
+      const result = useThen('invoke goal.memory.get --slug --with asks', async () => {
+        return invokeGoalSkill({
+          skill: 'goal.memory.get',
+          args: { scope: 'repo', slug: 'display-test-goal-1', with: 'asks' },
+          cwd: scene.tempDir,
+        });
+      });
+
+      then('exit code is 0', () => {
+        expect(result.code).toEqual(0);
+      });
+
+      then('shows full ask content in sub.bucket', () => {
+        expect(result.stdout).toContain('fix the display mode output format');
+        expect(result.stdout).toContain(
+          'add truncated previews for asks in slug mode',
+        );
+      });
+
+      then('stdout has good vibes', () => {
+        expect(sanitizeGoalOutputForSnapshot(result.stdout)).toMatchSnapshot();
+      });
+    });
+  });
 });
