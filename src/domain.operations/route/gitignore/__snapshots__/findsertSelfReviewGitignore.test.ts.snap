@@ -1,0 +1,46 @@
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
+
+exports[`findsertSelfReviewGitignore given: [case1] no review/self directory when: [t0] findsert is called then: creates .gitignore with correct content: gitignore-content 1`] = `
+"# ignore all self-review files
+*
+!.gitignore
+"
+`;
+
+exports[`findsertSelfReviewGitignore given: [case1] no review/self directory when: [t0] findsert is called then: creates .gitignore with correct content: result-created 1`] = `
+{
+  "action": "created",
+  "pathRelative": "$ROUTE/review/self/.gitignore",
+}
+`;
+
+exports[`findsertSelfReviewGitignore given: [case2] .gitignore already present with correct content when: [t0] findsert is called then: returns unchanged: result-unchanged 1`] = `
+{
+  "action": "unchanged",
+  "pathRelative": "$ROUTE/review/self/.gitignore",
+}
+`;
+
+exports[`findsertSelfReviewGitignore given: [case3] .gitignore present with incorrect content when: [t0] findsert is called then: overwrites with correct content: gitignore-content-overwrite 1`] = `
+"# ignore all self-review files
+*
+!.gitignore
+"
+`;
+
+exports[`findsertSelfReviewGitignore given: [case3] .gitignore present with incorrect content when: [t0] findsert is called then: overwrites with correct content: result-overwrite 1`] = `
+{
+  "action": "created",
+  "pathRelative": "$ROUTE/review/self/.gitignore",
+}
+`;
+
+exports[`findsertSelfReviewGitignore given: [case4] read error other than ENOENT when: [t0] findsert is called then: throws the error: error-eisdir 1`] = `[Error: EISDIR: illegal operation on a directory, read]`;
+
+exports[`findsertSelfReviewGitignore given: [case5] invalid route path when: [t0] findsert is called with non-writable path then: throws mkdir error: error-eacces 1`] = `[Error: EACCES: permission denied, mkdir '/nonexistent']`;
+
+exports[`findsertSelfReviewGitignore given: [case6] route is a file instead of directory when: [t0] findsert is called then: throws ENOTDIR error: error-enotdir-route 1`] = `[Error: ENOTDIR: not a directory, mkdir '/tmp/test-selfreview-gitignore-route-file-1776642892530/route-as-file/review/self']`;
+
+exports[`findsertSelfReviewGitignore given: [case7] review path is a file instead of directory when: [t0] findsert is called then: throws ENOTDIR error: error-enotdir-review 1`] = `[Error: ENOTDIR: not a directory, mkdir '/tmp/test-selfreview-gitignore-review-file-1776642892531/review/self']`;
+
+exports[`findsertSelfReviewGitignore given: [case8] self path is a file instead of directory when: [t0] findsert is called then: throws ENOTDIR error: error-enotdir-self 1`] = `[Error: EEXIST: file already exists, mkdir '/tmp/test-selfreview-gitignore-self-file-1776642892533/review/self']`;
