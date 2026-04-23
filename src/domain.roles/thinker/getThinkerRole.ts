@@ -51,7 +51,7 @@ export const ROLE_THINKER: Role = Role.build({
     onBrain: {
       onBoot: [
         {
-          command: './node_modules/.bin/npx rhachet roles boot --role thinker',
+          command: './node_modules/.bin/rhachet roles boot --role thinker',
           timeout: 'PT30S',
         },
       ],
