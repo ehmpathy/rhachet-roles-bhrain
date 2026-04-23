@@ -21,8 +21,7 @@ export const ROLE_LIBRARIAN: Role = Role.build({
     onBrain: {
       onBoot: [
         {
-          command:
-            './node_modules/.bin/rhachet roles boot --role librarian',
+          command: './node_modules/.bin/rhachet roles boot --role librarian',
           timeout: 'PT30S',
         },
       ],

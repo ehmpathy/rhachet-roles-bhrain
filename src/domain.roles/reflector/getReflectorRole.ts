@@ -21,8 +21,7 @@ export const ROLE_REFLECTOR: Role = Role.build({
     onBrain: {
       onBoot: [
         {
-          command:
-            './node_modules/.bin/rhachet roles boot --role reflector',
+          command: './node_modules/.bin/rhachet roles boot --role reflector',
           timeout: 'PT30S',
         },
       ],
