@@ -195,7 +195,7 @@ human decision on whether to use approach A or B.
       const result = useThen('drive shows blocked state', async () =>
         invokeRouteSkill({
           skill: 'route.drive',
-          args: { mode: 'hook', route: '.' },
+          args: { when: 'hook.onBoot', route: '.' },
           cwd: scene.tempDir,
         }),
       );
@@ -270,7 +270,7 @@ human decision on whether to use approach A or B.
       const result = useThen('drive shows normal flow', async () =>
         invokeRouteSkill({
           skill: 'route.drive',
-          args: { mode: 'hook', route: '.' },
+          args: { when: 'hook.onBoot', route: '.' },
           cwd: scene.tempDir,
         }),
       );

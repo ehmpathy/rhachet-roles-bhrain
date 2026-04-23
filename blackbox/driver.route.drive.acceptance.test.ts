@@ -140,7 +140,7 @@ describe('driver.route.drive.acceptance', () => {
       const result = useThen('route.drive exits silently', async () =>
         invokeRouteSkill({
           skill: 'route.drive',
-          args: { mode: 'hook' },
+          args: { when: 'hook.onBoot' },
           cwd: scene.tempDir,
         }),
       );
@@ -244,7 +244,7 @@ describe('driver.route.drive.acceptance', () => {
       const result = useThen('route.drive blocks', async () =>
         invokeRouteSkill({
           skill: 'route.drive',
-          args: { mode: 'hook' },
+          args: { when: 'hook.onBoot' },
           cwd: scene.tempDir,
         }),
       );
@@ -274,13 +274,13 @@ describe('driver.route.drive.acceptance', () => {
         // first call
         await invokeRouteSkill({
           skill: 'route.drive',
-          args: { mode: 'hook' },
+          args: { when: 'hook.onBoot' },
           cwd: scene.tempDir,
         });
         // second call
         return invokeRouteSkill({
           skill: 'route.drive',
-          args: { mode: 'hook' },
+          args: { when: 'hook.onBoot' },
           cwd: scene.tempDir,
         });
       });
@@ -331,12 +331,12 @@ describe('driver.route.drive.acceptance', () => {
       // trigger a few blocks
       await invokeRouteSkill({
         skill: 'route.drive',
-        args: { mode: 'hook' },
+        args: { when: 'hook.onBoot' },
         cwd: tempDir,
       });
       await invokeRouteSkill({
         skill: 'route.drive',
-        args: { mode: 'hook' },
+        args: { when: 'hook.onBoot' },
         cwd: tempDir,
       });
 
@@ -453,7 +453,7 @@ describe('driver.route.drive.acceptance', () => {
       const result = useThen('block count resets to 1', async () =>
         invokeRouteSkill({
           skill: 'route.drive',
-          args: { mode: 'hook' },
+          args: { when: 'hook.onBoot' },
           cwd: scene.tempDir,
         }),
       );
@@ -499,7 +499,7 @@ given('[case6] hook mode allows stop when blocked on approval', () => {
       const result = useThen('route.drive blocks (no blocker file)', async () =>
         invokeRouteSkill({
           skill: 'route.drive',
-          args: { mode: 'hook' },
+          args: { when: 'hook.onBoot' },
           cwd: scene.tempDir,
         }),
       );
@@ -532,7 +532,7 @@ given('[case6] hook mode allows stop when blocked on approval', () => {
       const result = useThen('route.drive allows stop', async () =>
         invokeRouteSkill({
           skill: 'route.drive',
-          args: { mode: 'hook' },
+          args: { when: 'hook.onBoot' },
           cwd: scene.tempDir,
         }),
       );
@@ -569,7 +569,7 @@ given('[case6] hook mode allows stop when blocked on approval', () => {
       const result = useThen('route.drive blocks (work remains)', async () =>
         invokeRouteSkill({
           skill: 'route.drive',
-          args: { mode: 'hook' },
+          args: { when: 'hook.onBoot' },
           cwd: scene.tempDir,
         }),
       );

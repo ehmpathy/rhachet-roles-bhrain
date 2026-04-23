@@ -59,7 +59,7 @@ describe('driver.route.malfunction.acceptance', () => {
       const result = useThen('route.drive halts on malfunction', async () =>
         invokeRouteSkill({
           skill: 'route.drive',
-          args: { mode: 'hook' },
+          args: { when: 'hook.onBoot' },
           cwd: scene.tempDir,
         }),
       );
@@ -84,7 +84,7 @@ describe('driver.route.malfunction.acceptance', () => {
 
         return invokeRouteSkill({
           skill: 'route.drive',
-          args: { mode: 'hook' },
+          args: { when: 'hook.onBoot' },
           cwd: scene.tempDir,
         });
       });
