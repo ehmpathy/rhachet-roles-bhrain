@@ -22,7 +22,7 @@ export const ROLE_REVIEWER: Role = Role.build({
     onBrain: {
       onBoot: [
         {
-          command: './node_modules/.bin/npx rhachet roles boot --role reviewer',
+          command: './node_modules/.bin/rhachet roles boot --role reviewer',
           timeout: 'PT30S',
         },
       ],

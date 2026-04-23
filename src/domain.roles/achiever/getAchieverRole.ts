@@ -23,7 +23,7 @@ export const ROLE_ACHIEVER: Role = Role.build({
       // onBoot: boot briefs/skills then refresh goal state after compaction
       onBoot: [
         {
-          command: './node_modules/.bin/npx rhachet roles boot --role achiever',
+          command: './node_modules/.bin/rhachet roles boot --role achiever',
           timeout: 'PT30S',
         },
         {

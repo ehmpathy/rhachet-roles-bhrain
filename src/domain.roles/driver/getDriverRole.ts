@@ -22,7 +22,7 @@ export const ROLE_DRIVER: Role = Role.build({
     onBrain: {
       onBoot: [
         {
-          command: './node_modules/.bin/npx rhachet roles boot --role driver',
+          command: './node_modules/.bin/rhachet roles boot --role driver',
           timeout: 'PT30S',
         },
         {

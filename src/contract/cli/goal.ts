@@ -743,7 +743,7 @@ const readStdin = (): string => {
     return execSync('cat', {
       encoding: 'utf-8',
       stdio: ['inherit', 'pipe', 'pipe'],
-      timeout: 100,
+      timeout: 5000,
     });
   } catch (error) {
     // timeout expected when no stdin content piped - allowlist this
@@ -1569,21 +1569,21 @@ export const goalGuard = async (): Promise<void> => {
 const parseArgsForTriageNext = async (
   argv: string[],
 ): Promise<{
-  when: 'hook.onStop';
+  when: 'hook.onStop' | 'hook.onBoot';
   scope: 'route' | 'repo';
 }> => {
   const args = isNodeEvalMode() ? argv.slice(1) : argv.slice(2);
 
-  let when: 'hook.onStop' | undefined;
+  let when: 'hook.onStop' | 'hook.onBoot' | undefined;
   let scope: 'route' | 'repo' = await getDefaultScope();
 
   for (let i = 0; i < args.length; i++) {
     const arg = args[i];
     if (arg === '--when' && args[i + 1]) {
       const whenValue = args[i + 1];
-      if (whenValue !== 'hook.onStop') {
+      if (whenValue !== 'hook.onStop' && whenValue !== 'hook.onBoot') {
         throw new BadRequestError(
-          `invalid --when: ${whenValue}. must be 'hook.onStop'`,
+          `invalid --when: ${whenValue}. must be 'hook.onStop' or 'hook.onBoot'`,
           { when: whenValue },
         );
       }
@@ -1604,7 +1604,7 @@ const parseArgsForTriageNext = async (
   }
 
   if (!when) {
-    throw new BadRequestError('--when hook.onStop is required', {});
+    throw new BadRequestError('--when hook.onStop|hook.onBoot is required', {});
   }
 
   return { when, scope };
@@ -1620,7 +1620,7 @@ const parseArgsForTriageNext = async (
  */
 export const goalTriageNext = async (): Promise<void> => {
   // parse args
-  const { scope } = await parseArgsForTriageNext(process.argv);
+  const { scope, when } = await parseArgsForTriageNext(process.argv);
 
   // get scope directory
   let scopeDir: string;
@@ -1661,7 +1661,7 @@ export const goalTriageNext = async (): Promise<void> => {
   // emit treestruct to stderr (for visibility on exit 2)
   console.error(escalateMessageByCount(blockerState.count));
   console.error('');
-  console.error(`🔮 goal.triage.next --when hook.onStop`);
+  console.error(`🔮 goal.triage.next --when ${when}`);
 
   // show inflight if any (priority)
   if (inflightGoals.goals.length > 0) {
