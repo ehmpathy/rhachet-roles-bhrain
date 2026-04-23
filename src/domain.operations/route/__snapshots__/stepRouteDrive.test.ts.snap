@@ -176,3 +176,71 @@ exports[`stepRouteDrive given: [case7] tea pause after 5+ hooks when: [t2] tea p
    └─ are you blocked? if so, run
       └─ rhx route.stone.set --stone 1.vision --as blocked"
 `;
+
+exports[`stepRouteDrive given: [case8] when=hook.onBoot with unpassed stones when: [t0] stepRouteDrive called with when=hook.onBoot then: output matches snapshot 1`] = `
+"🦉 where were we?
+
+🗿 route.drive
+   ├─ where do we go?
+   │  ├─ route = <ROUTE>
+   │  └─ stone = 1.vision
+   │
+   ├─ are you here?
+   │  ├─ when ready for review, run:
+   │  │  └─ rhx route.stone.set --stone 1.vision --as arrived
+   │  └─ when ready to continue, run:
+   │     └─ rhx route.stone.set --stone 1.vision --as passed
+   │
+   ├─ here's the stone
+   │  ├─
+   │  │
+   │  │  illustrate the vision implied in the wish
+   │  │  
+   │  │  describe:
+   │  │  - the outcome world (before vs after)
+   │  │  - the user experience
+   │  │  - the mental model
+   │  │  - how well it solves the goals
+   │  │  
+   │  └─
+   │
+   └─ are you here?
+      ├─ when ready for review, run:
+      │  └─ rhx route.stone.set --stone 1.vision --as arrived
+      └─ when ready to continue, run:
+         └─ rhx route.stone.set --stone 1.vision --as passed"
+`;
+
+exports[`stepRouteDrive given: [case10] when=hook.onStop with unpassed stones when: [t0] stepRouteDrive called with when=hook.onStop then: output matches snapshot 1`] = `
+"🦉 where were we?
+
+🗿 route.drive
+   ├─ where do we go?
+   │  ├─ route = <ROUTE>
+   │  └─ stone = 1.vision
+   │
+   ├─ are you here?
+   │  ├─ when ready for review, run:
+   │  │  └─ rhx route.stone.set --stone 1.vision --as arrived
+   │  └─ when ready to continue, run:
+   │     └─ rhx route.stone.set --stone 1.vision --as passed
+   │
+   ├─ here's the stone
+   │  ├─
+   │  │
+   │  │  illustrate the vision implied in the wish
+   │  │  
+   │  │  describe:
+   │  │  - the outcome world (before vs after)
+   │  │  - the user experience
+   │  │  - the mental model
+   │  │  - how well it solves the goals
+   │  │  
+   │  └─
+   │
+   └─ are you here?
+      ├─ when ready for review, run:
+      │  └─ rhx route.stone.set --stone 1.vision --as arrived
+      └─ when ready to continue, run:
+         └─ rhx route.stone.set --stone 1.vision --as passed"
+`;

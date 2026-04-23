@@ -24,12 +24,6 @@
           },
           {
             "type": "command",
-            "command": "./node_modules/.bin/rhx route.drive --mode hook",
-            "timeout": 5,
-            "author": "repo=bhrain/role=driver"
-          },
-          {
-            "type": "command",
             "command": "./node_modules/.bin/rhachet run --repo bhuild --role behaver --init claude.hooks/sessionstart.boot-behavior",
             "timeout": 10,
             "author": "repo=bhuild/role=behaver"
@@ -81,6 +75,12 @@
             "command": "npx rhachet roles boot --role behaver",
             "timeout": 10,
             "author": "repo=bhuild/role=behaver"
+          },
+          {
+            "type": "command",
+            "command": "./node_modules/.bin/rhx route.drive --when hook.onBoot",
+            "timeout": 5,
+            "author": "repo=bhrain/role=driver"
           }
         ]
       },
@@ -212,12 +212,6 @@
         "hooks": [
           {
             "type": "command",
-            "command": "./node_modules/.bin/rhx route.drive --mode hook",
-            "timeout": 5,
-            "author": "repo=bhrain/role=driver"
-          },
-          {
-            "type": "command",
             "command": "./node_modules/.bin/rhx goal.triage.infer --when hook.onStop",
             "timeout": 10,
             "author": "repo=bhrain/role=achiever"
@@ -227,6 +221,12 @@
             "command": "./node_modules/.bin/rhx goal.triage.next --when hook.onStop",
             "timeout": 10,
             "author": "repo=bhrain/role=achiever"
+          },
+          {
+            "type": "command",
+            "command": "./node_modules/.bin/rhx route.drive --when hook.onStop",
+            "timeout": 5,
+            "author": "repo=bhrain/role=driver"
           }
         ]
       }

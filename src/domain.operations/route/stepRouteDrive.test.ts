@@ -46,11 +46,11 @@ describe('stepRouteDrive', () => {
       });
     });
 
-    when('[t1] stepRouteDrive called in hook mode', () => {
+    when('[t1] stepRouteDrive called with when=hook.onStop', () => {
       then('returns stdout with stone content', async () => {
         const result = await stepRouteDrive({
           route: scene.tempDir,
-          mode: 'hook',
+          when: 'hook.onStop',
         });
         expect(result.emit?.stdout).toContain('where were we?');
         expect(result.emit?.stdout).toContain('stone = 1.vision');
@@ -61,7 +61,7 @@ describe('stepRouteDrive', () => {
         async () => {
           const result = await stepRouteDrive({
             route: scene.tempDir,
-            mode: 'hook',
+            when: 'hook.onStop',
           });
           expect(result.emit?.stderr).toBeDefined();
           expect(result.emit?.stderr?.code).toBe(2);
@@ -77,11 +77,11 @@ describe('stepRouteDrive', () => {
         // after 21 blocks, escalation occurs (exit code 3)
         const result1 = await stepRouteDrive({
           route: scene.tempDir,
-          mode: 'hook',
+          when: 'hook.onStop',
         });
         const result2 = await stepRouteDrive({
           route: scene.tempDir,
-          mode: 'hook',
+          when: 'hook.onStop',
         });
         // both should block with code 2 and contain stone content
         expect(result1.emit?.stderr?.code).toBe(2);
@@ -120,11 +120,11 @@ describe('stepRouteDrive', () => {
       });
     });
 
-    when('[t1] stepRouteDrive called in hook mode', () => {
+    when('[t1] stepRouteDrive called with when=hook.onStop', () => {
       then('returns null emit (silent, route done)', async () => {
         const result = await stepRouteDrive({
           route: scene.tempDir,
-          mode: 'hook',
+          when: 'hook.onStop',
         });
         expect(result.emit).toBeNull();
       });
@@ -234,11 +234,11 @@ describe('stepRouteDrive', () => {
       );
     });
 
-    when('[t1] stepRouteDrive called in hook mode', () => {
+    when('[t1] stepRouteDrive called with when=hook.onStop', () => {
       then('returns halted message with exit code 3', async () => {
         const result = await stepRouteDrive({
           route: scene.tempDir,
-          mode: 'hook',
+          when: 'hook.onStop',
         });
         expect(result.emit?.stdout).toContain('halted, guard malfunction');
         expect(result.emit?.stdout).toContain('please tell a human');
@@ -248,7 +248,7 @@ describe('stepRouteDrive', () => {
       then('stderr contains escalation message', async () => {
         const result = await stepRouteDrive({
           route: scene.tempDir,
-          mode: 'hook',
+          when: 'hook.onStop',
         });
         expect(result.emit?.stderr?.reason).toContain('malfunctioned');
         expect(result.emit?.stderr?.reason).toContain('1.vision');
@@ -258,7 +258,7 @@ describe('stepRouteDrive', () => {
       then('output mentions affected stone', async () => {
         const result = await stepRouteDrive({
           route: scene.tempDir,
-          mode: 'hook',
+          when: 'hook.onStop',
         });
         expect(result.emit?.stdout).toContain('stone = 1.vision');
       });
@@ -268,7 +268,7 @@ describe('stepRouteDrive', () => {
       then('output matches snapshot', async () => {
         const result = await stepRouteDrive({
           route: scene.tempDir,
-          mode: 'hook',
+          when: 'hook.onStop',
         });
         // replace temp path for snapshot stability
         const outputStable = result.emit?.stdout?.replace(
@@ -291,13 +291,13 @@ describe('stepRouteDrive', () => {
 
     when('[t0] fewer than 7 hooks triggered', () => {
       then('output does NOT contain drum nudge', async () => {
-        // call hook mode 3 times (count 1, 2, 3)
+        // call with when=hook.onStop 3 times (count 1, 2, 3)
         for (let i = 0; i < 3; i++) {
-          await stepRouteDrive({ route: scene.tempDir, mode: 'hook' });
+          await stepRouteDrive({ route: scene.tempDir, when: 'hook.onStop' });
         }
         const result = await stepRouteDrive({
           route: scene.tempDir,
-          mode: 'hook',
+          when: 'hook.onStop',
         });
         expect(result.emit?.stdout).not.toContain('walk the way');
         expect(result.emit?.stdout).not.toContain('tao te ching');
@@ -308,15 +308,15 @@ describe('stepRouteDrive', () => {
 
     when('[t1] 7 or more hooks triggered', () => {
       then('output contains drum nudge with tao te ching quote', async () => {
-        // continue to call hook mode to reach count >= 7
+        // continue to call with when=hook.onStop to reach count >= 7
         // (we already have 4 from [t0], need 3 more)
         for (let i = 0; i < 3; i++) {
-          await stepRouteDrive({ route: scene.tempDir, mode: 'hook' });
+          await stepRouteDrive({ route: scene.tempDir, when: 'hook.onStop' });
         }
         // now count should be 7 or higher
         const result = await stepRouteDrive({
           route: scene.tempDir,
-          mode: 'hook',
+          when: 'hook.onStop',
         });
         expect(result.emit?.stdout).toContain('walk the way');
         expect(result.emit?.stdout).toContain('do your work, then step back');
@@ -332,11 +332,11 @@ describe('stepRouteDrive', () => {
       then('output matches snapshot', async () => {
         // ensure we're at count >= 7 by a few more calls
         for (let i = 0; i < 2; i++) {
-          await stepRouteDrive({ route: scene.tempDir, mode: 'hook' });
+          await stepRouteDrive({ route: scene.tempDir, when: 'hook.onStop' });
         }
         const result = await stepRouteDrive({
           route: scene.tempDir,
-          mode: 'hook',
+          when: 'hook.onStop',
         });
         // replace temp path for snapshot stability
         const outputStable = result.emit?.stdout?.replace(
@@ -359,13 +359,13 @@ describe('stepRouteDrive', () => {
 
     when('[t0] fewer than 6 hooks triggered', () => {
       then('output does NOT contain tea pause', async () => {
-        // call hook mode 3 times (count 1, 2, 3)
+        // call with when=hook.onStop 3 times (count 1, 2, 3)
         for (let i = 0; i < 3; i++) {
-          await stepRouteDrive({ route: scene.tempDir, mode: 'hook' });
+          await stepRouteDrive({ route: scene.tempDir, when: 'hook.onStop' });
         }
         const result = await stepRouteDrive({
           route: scene.tempDir,
-          mode: 'hook',
+          when: 'hook.onStop',
         });
         expect(result.emit?.stdout).not.toContain('tea first');
         expect(result.emit?.stdout).not.toContain('to refuse is not an option');
@@ -376,15 +376,15 @@ describe('stepRouteDrive', () => {
 
     when('[t1] 6 or more hooks triggered', () => {
       then('output contains tea pause with all three options', async () => {
-        // continue to call hook mode to reach count > 5
+        // continue to call with when=hook.onStop to reach count > 5
         // (we already have 4 from [t0], need 2 more)
         for (let i = 0; i < 2; i++) {
-          await stepRouteDrive({ route: scene.tempDir, mode: 'hook' });
+          await stepRouteDrive({ route: scene.tempDir, when: 'hook.onStop' });
         }
         // now count should be 6 or higher (suggestBlocked = count > 5)
         const result = await stepRouteDrive({
           route: scene.tempDir,
-          mode: 'hook',
+          when: 'hook.onStop',
         });
         // tea pause header
         expect(result.emit?.stdout).toContain('tea first');
@@ -403,11 +403,11 @@ describe('stepRouteDrive', () => {
       then('output matches snapshot', async () => {
         // ensure we're at count > 5 by a few more calls
         for (let i = 0; i < 2; i++) {
-          await stepRouteDrive({ route: scene.tempDir, mode: 'hook' });
+          await stepRouteDrive({ route: scene.tempDir, when: 'hook.onStop' });
         }
         const result = await stepRouteDrive({
           route: scene.tempDir,
-          mode: 'hook',
+          when: 'hook.onStop',
         });
         // replace temp path for snapshot stability
         const outputStable = result.emit?.stdout?.replace(
@@ -415,6 +415,140 @@ describe('stepRouteDrive', () => {
           '<ROUTE>',
         );
         expect(outputStable).toMatchSnapshot();
+      });
+    });
+  });
+
+  given('[case8] when=hook.onBoot with unpassed stones', () => {
+    const scene = useBeforeAll(async () => {
+      const tempDir = genTempDir({
+        slug: 'drive-onboot-unpassed',
+        clone: path.join(ASSETS_DIR, 'route.simple'),
+      });
+      return { tempDir };
+    });
+
+    when('[t0] stepRouteDrive called with when=hook.onBoot', () => {
+      then('returns guidance without exit code (no block)', async () => {
+        const result = await stepRouteDrive({
+          route: scene.tempDir,
+          when: 'hook.onBoot',
+        });
+        expect(result.emit?.stdout).toContain('where were we?');
+        expect(result.emit?.stdout).toContain('stone = 1.vision');
+        // onBoot should NOT block - no stderr
+        expect(result.emit?.stderr).toBeUndefined();
+      });
+
+      then('output matches snapshot', async () => {
+        const result = await stepRouteDrive({
+          route: scene.tempDir,
+          when: 'hook.onBoot',
+        });
+        const outputStable = result.emit?.stdout?.replace(
+          scene.tempDir,
+          '<ROUTE>',
+        );
+        expect(outputStable).toMatchSnapshot();
+      });
+    });
+  });
+
+  given('[case9] when=hook.onBoot with all stones passed', () => {
+    const scene = useBeforeAll(async () => {
+      const tempDir = genTempDir({
+        slug: 'drive-onboot-passed',
+        clone: path.join(ASSETS_DIR, 'route.simple'),
+      });
+
+      // mark all stones passed
+      const routeDir = path.join(tempDir, '.route');
+      await fs.mkdir(routeDir, { recursive: true });
+      const passageContent =
+        [
+          '{"stone":"1.vision","status":"passed"}',
+          '{"stone":"2.criteria","status":"passed"}',
+          '{"stone":"3.plan","status":"passed"}',
+        ].join('\n') + '\n';
+      await fs.writeFile(path.join(routeDir, 'passage.jsonl'), passageContent);
+
+      return { tempDir };
+    });
+
+    when('[t0] stepRouteDrive called with when=hook.onBoot', () => {
+      then('returns null emit (silent, route complete)', async () => {
+        const result = await stepRouteDrive({
+          route: scene.tempDir,
+          when: 'hook.onBoot',
+        });
+        expect(result.emit).toBeNull();
+      });
+    });
+  });
+
+  given('[case10] when=hook.onStop with unpassed stones', () => {
+    const scene = useBeforeAll(async () => {
+      const tempDir = genTempDir({
+        slug: 'drive-onstop-unpassed',
+        clone: path.join(ASSETS_DIR, 'route.simple'),
+      });
+      return { tempDir };
+    });
+
+    when('[t0] stepRouteDrive called with when=hook.onStop', () => {
+      then('returns guidance with exit code 2 (block stop)', async () => {
+        const result = await stepRouteDrive({
+          route: scene.tempDir,
+          when: 'hook.onStop',
+        });
+        expect(result.emit?.stdout).toContain('where were we?');
+        expect(result.emit?.stdout).toContain('stone = 1.vision');
+        // onStop should block
+        expect(result.emit?.stderr?.code).toBe(2);
+      });
+
+      then('output matches snapshot', async () => {
+        const result = await stepRouteDrive({
+          route: scene.tempDir,
+          when: 'hook.onStop',
+        });
+        const outputStable = result.emit?.stdout?.replace(
+          scene.tempDir,
+          '<ROUTE>',
+        );
+        expect(outputStable).toMatchSnapshot();
+      });
+    });
+  });
+
+  given('[case11] when=hook.onStop with all stones passed', () => {
+    const scene = useBeforeAll(async () => {
+      const tempDir = genTempDir({
+        slug: 'drive-onstop-passed',
+        clone: path.join(ASSETS_DIR, 'route.simple'),
+      });
+
+      // mark all stones passed
+      const routeDir = path.join(tempDir, '.route');
+      await fs.mkdir(routeDir, { recursive: true });
+      const passageContent =
+        [
+          '{"stone":"1.vision","status":"passed"}',
+          '{"stone":"2.criteria","status":"passed"}',
+          '{"stone":"3.plan","status":"passed"}',
+        ].join('\n') + '\n';
+      await fs.writeFile(path.join(routeDir, 'passage.jsonl'), passageContent);
+
+      return { tempDir };
+    });
+
+    when('[t0] stepRouteDrive called with when=hook.onStop', () => {
+      then('returns null emit (silent, ok to stop)', async () => {
+        const result = await stepRouteDrive({
+          route: scene.tempDir,
+          when: 'hook.onStop',
+        });
+        expect(result.emit).toBeNull();
       });
     });
   });
