@@ -1,0 +1,20 @@
+always:
+  briefs:
+    say:
+      - briefs/review.tactics.md
+      - briefs/on.rules/rules101.[article].md
+      - briefs/on.rules/rules101.structure.[article].md
+      - briefs/on.rules/rules101.content.[article].md
+    ref:
+      - briefs/on.rules/rules101.citations.[article].md
+      - briefs/on.rules/rules101.collocated.[article].md
+      - briefs/on.rules/rules101.content.[demo].forbid.failhide.md
+      - briefs/on.rules/rules101.content.[demo].forbid.gerunds.md
+      - briefs/on.rules/rules101.content.[demo].require.failfast.md
+      - briefs/lessons/lesson.brain-selection-for-review.[finding].md
+      - briefs/lessons/lesson.brain-software-vs-general.[finding].md
+      - briefs/lessons/lesson.performance-singleturn-vs-multiturn.[finding].md
+  skills:
+    say:
+      - skills/review.sh
+      - skills/reflect.sh

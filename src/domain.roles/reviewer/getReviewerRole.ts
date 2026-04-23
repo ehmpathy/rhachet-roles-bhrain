@@ -9,6 +9,7 @@ export const ROLE_REVIEWER: Role = Role.build({
   name: 'Reviewer',
   purpose: 'review artifacts against declared rules',
   readme: { uri: __dirname + '/readme.md' },
+  boot: { uri: __dirname + '/boot.yml' },
   traits: [],
   skills: {
     dirs: [{ uri: __dirname + '/skills' }],
