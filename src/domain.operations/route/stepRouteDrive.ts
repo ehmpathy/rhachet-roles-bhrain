@@ -129,7 +129,35 @@ export const stepRouteDrive = async (input: {
   const stoneContent = await fs.readFile(stone.path, 'utf-8');
 
   // onBoot: show stone guidance, exit 0 (don't block session start)
+  // but if blocked on approval, show the approval-needed message
   if (hookContext === 'hook.onBoot') {
+    // check blocker report to see if agent is blocked on human approval
+    const blockerReport = await getStoneGuardBlockerReport({
+      stone: stone.name,
+      route,
+    });
+
+    // if blocked on approval and approval not yet granted, show approval-needed message
+    if (blockerReport?.blocker === 'approval') {
+      const approvalArtifact = await getOneStoneGuardApproval({
+        stone,
+        route,
+      });
+
+      if (!approvalArtifact) {
+        // approval NOT granted yet - show guidance for human approval
+        return {
+          emit: {
+            stdout: formatRouteDriveNeedsApproval({
+              route,
+              stone: stone.name,
+            }),
+          },
+        };
+      }
+    }
+
+    // otherwise, show generic stone guidance
     const stdout = formatRouteDrive({
       route,
       stone: stone.name,
