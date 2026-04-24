@@ -96,9 +96,9 @@ describe('stepRouteDrive.integration', () => {
       });
     });
 
-    when('[t1] stepRouteDrive is called in hook mode', () => {
+    when('[t1] stepRouteDrive is called with when=hook.onStop', () => {
       const result = useThen('returns null emit', async () =>
-        stepRouteDrive({ route: scene.tempDir, mode: 'hook' }),
+        stepRouteDrive({ route: scene.tempDir, when: 'hook.onStop' }),
       );
 
       then('emit is null (silent)', () => {
@@ -127,6 +127,127 @@ describe('stepRouteDrive.integration', () => {
 
       then('shows route complete (no stones to pass)', () => {
         expect(result.emit?.stdout?.toLowerCase()).toContain('complete');
+      });
+    });
+  });
+
+  given('[case4] route with unpassed stones called at onBoot', () => {
+    const scene = useBeforeAll(async () => {
+      const tempDir = genTempDir({ slug: 'drive-int-case4', git: true });
+
+      // create route structure
+      await fs.writeFile(
+        path.join(tempDir, '0.wish.md'),
+        '# wish\n\nbuild a feature.',
+      );
+      await fs.writeFile(
+        path.join(tempDir, '1.stone'),
+        '# stone: implement\n\ndone when:\n- feature works',
+      );
+
+      return { tempDir };
+    });
+
+    when('[t0] stepRouteDrive is called with when=hook.onBoot', () => {
+      const result = useThen('returns guidance without error', async () =>
+        stepRouteDrive({ route: scene.tempDir, when: 'hook.onBoot' }),
+      );
+
+      then('emit is not null', () => {
+        expect(result.emit).not.toBeNull();
+      });
+
+      then('stdout contains stone info', () => {
+        expect(result.emit?.stdout).toContain('1');
+      });
+
+      then('stderr is undefined (no error at boot)', () => {
+        expect(result.emit?.stderr).toBeUndefined();
+      });
+
+      then('stdout matches snapshot (normalized)', () => {
+        const normalized = result.emit?.stdout?.replace(
+          /route: .*$/m,
+          'route: <tempdir>',
+        );
+        expect(normalized).toMatchSnapshot();
+      });
+    });
+
+    when('[t1] stepRouteDrive is called with when=hook.onStop', () => {
+      const result = useThen('returns guidance with exit code 2', async () =>
+        stepRouteDrive({ route: scene.tempDir, when: 'hook.onStop' }),
+      );
+
+      then('emit is not null', () => {
+        expect(result.emit).not.toBeNull();
+      });
+
+      then('stdout contains stone info', () => {
+        expect(result.emit?.stdout).toContain('1');
+      });
+
+      then('stderr has exit code 2 (block premature stop)', () => {
+        expect(result.emit?.stderr?.code).toEqual(2);
+      });
+
+      then('stdout matches snapshot (normalized)', () => {
+        const normalized = result.emit?.stdout?.replace(
+          /route: .*$/m,
+          'route: <tempdir>',
+        );
+        expect(normalized).toMatchSnapshot();
+      });
+    });
+  });
+
+  given('[case5] route with all stones passed called at onBoot', () => {
+    const scene = useBeforeAll(async () => {
+      const tempDir = genTempDir({ slug: 'drive-int-case5', git: true });
+
+      // create route structure
+      await fs.writeFile(
+        path.join(tempDir, '0.wish.md'),
+        '# wish\n\nbuild a feature.',
+      );
+      await fs.writeFile(
+        path.join(tempDir, '1.stone'),
+        '# stone: implement\n\ndone when:\n- feature works',
+      );
+
+      // create artifact
+      await fs.writeFile(
+        path.join(tempDir, '1.i1.md'),
+        '# implementation\n\nfeature implemented.',
+      );
+
+      // mark as passed
+      await fs.mkdir(path.join(tempDir, '.route'), { recursive: true });
+      await fs.writeFile(
+        path.join(tempDir, '.route', 'passage.jsonl'),
+        JSON.stringify({ stone: '1', status: 'passed' }) + '\n',
+      );
+
+      return { tempDir };
+    });
+
+    when('[t0] stepRouteDrive is called with when=hook.onBoot', () => {
+      const result = useThen('returns null emit (silent)', async () =>
+        stepRouteDrive({ route: scene.tempDir, when: 'hook.onBoot' }),
+      );
+
+      then('emit is null (route complete, silent at boot)', () => {
+        expect(result.emit).toBeNull();
+      });
+    });
+
+    when('[t1] stepRouteDrive is called with when=hook.onStop', () => {
+      const result = useThen('returns null emit (silent)', async () =>
+        stepRouteDrive({ route: scene.tempDir, when: 'hook.onStop' }),
+      );
+
+      then('emit is null (route complete, ok to stop)', () => {
+        expect(result.emit).toBeNull();
       });
     });
   });

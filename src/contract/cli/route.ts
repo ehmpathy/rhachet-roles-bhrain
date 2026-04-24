@@ -452,12 +452,15 @@ usage:
 
 options:
   --route <path>     path to route directory (uses bound route if absent)
-  --mode <hook>      mode: hook = silent on route complete (for hooks)
+  --when <context>   hook context: hook.onBoot or hook.onStop
+                     onBoot: show guidance, exit 0 (don't block session start)
+                     onStop: show guidance, exit 2 (block premature stop)
   --help             show this help message
 
 examples:
-  route.drive                    # echo current stone
-  route.drive --mode hook        # silent if route complete (for hooks)
+  route.drive                        # echo current stone
+  route.drive --when hook.onBoot     # show stone, exit 0 (for onBoot hooks)
+  route.drive --when hook.onStop     # show stone, exit 2 if unpassed (for onStop hooks)
 `.trim(),
   );
 };
@@ -500,10 +503,15 @@ export const routeDrive = async (): Promise<void> => {
   }
 
   try {
-    const mode = options.mode === 'hook' ? 'hook' : undefined;
+    // parse --when parameter
+    const when =
+      options.when === 'hook.onBoot' || options.when === 'hook.onStop'
+        ? options.when
+        : undefined;
+
     const result = await stepRouteDrive({
       route: options.route,
-      mode,
+      when,
     });
 
     if (result.emit?.stdout) {

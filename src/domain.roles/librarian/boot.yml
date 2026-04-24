@@ -1,0 +1,29 @@
+always:
+  briefs:
+    say:
+      # overview
+      - briefs/knowledge/kno201.documents._.[catalog].md
+      # role
+      - briefs/knowledge/kno401.actors.1.role.librarian.[article].md
+      # 101 primitives
+      - briefs/knowledge/kno101.primitives.1.ontology.[article].frame.docs_as_materializations.md
+      - briefs/knowledge/kno101.primitives.2.rel.many_to_many.[article].md
+      - briefs/knowledge/kno101.primitives.3.instances.[article].md
+      - briefs/knowledge/kno101.primitives.4.documents.[article].md
+      - briefs/knowledge/kno101.primitives.5.concepts.[article].md
+      # 301 enbrief tactics
+      - briefs/knowledge/kno301.doc.enbrief.2.articulate.[article].md
+      - briefs/knowledge/kno301.doc.enbrief.2.catalogize.[article].md
+      - briefs/knowledge/kno301.doc.enbrief.2.demonstrate.[article].md
+    ref:
+      # 201 document types
+      - briefs/knowledge/kno201.documents._.[article].md
+      - briefs/knowledge/kno201.documents.articles.[article].md
+      - briefs/knowledge/kno201.documents.catalogs.[article].md
+      - briefs/knowledge/kno201.documents.demos.[article].md
+      - briefs/knowledge/kno201.documents.lessons.[article].md
+      # 301 compression
+      - briefs/knowledge/kno301.doc.compression._.[article].md
+  skills:
+    say:
+      - skills/init.research.sh

@@ -81,7 +81,7 @@ describe('driver.route.drive.blocker.acceptance', () => {
       const result = useThen('route.drive blocks (no blocker file)', async () =>
         invokeRouteSkill({
           skill: 'route.drive',
-          args: { mode: 'hook' },
+          args: { when: 'hook.onStop' },
           cwd: scene.tempDir,
         }),
       );
@@ -125,7 +125,7 @@ describe('driver.route.drive.blocker.acceptance', () => {
       const result = useThen('route.drive allows stop', async () =>
         invokeRouteSkill({
           skill: 'route.drive',
-          args: { mode: 'hook' },
+          args: { when: 'hook.onBoot' },
           cwd: scene.tempDir,
         }),
       );
@@ -283,7 +283,7 @@ describe('driver.route.drive.blocker.acceptance', () => {
       const result = useThen('route.drive blocks', async () =>
         invokeRouteSkill({
           skill: 'route.drive',
-          args: { mode: 'hook' },
+          args: { when: 'hook.onStop' },
           cwd: scene.tempDir,
         }),
       );
@@ -356,7 +356,7 @@ describe('driver.route.drive.blocker.acceptance', () => {
       const result = useThen('route.drive blocks', async () =>
         invokeRouteSkill({
           skill: 'route.drive',
-          args: { mode: 'hook' },
+          args: { when: 'hook.onStop' },
           cwd: scene.tempDir,
         }),
       );
@@ -436,7 +436,7 @@ describe('driver.route.drive.blocker.acceptance', () => {
       const result = useThen('route.drive allows stop', async () =>
         invokeRouteSkill({
           skill: 'route.drive',
-          args: { mode: 'hook' },
+          args: { when: 'hook.onBoot' },
           cwd: scene.tempDir,
         }),
       );

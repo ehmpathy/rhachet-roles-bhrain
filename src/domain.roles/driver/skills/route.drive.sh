@@ -6,13 +6,14 @@
 #        content and the command to mark it as passed
 #
 # usage:
-#   ./route.drive.sh                     # echo current stone
-#   ./route.drive.sh --mode hook         # silent if route complete
+#   ./route.drive.sh                           # echo current stone
+#   ./route.drive.sh --when hook.onBoot        # show stone, exit 0 (session start)
+#   ./route.drive.sh --when hook.onStop        # show stone, exit 2 if unpassed
 #   ./route.drive.sh --route .behavior/my-feature
 #
 # options:
 #   --route   path to route directory (uses bound route if absent)
-#   --mode    hook = silent on route complete (for hooks)
+#   --when    hook context: hook.onBoot or hook.onStop
 ######################################################################
 set -euo pipefail
 

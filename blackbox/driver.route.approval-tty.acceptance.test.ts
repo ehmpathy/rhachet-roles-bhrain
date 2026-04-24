@@ -134,7 +134,7 @@ describe('driver.route.approval-tty', () => {
     when('[t0] agent blocked on approval and runs route.drive hook', () => {
       then('hook shows approval command', async () => {
         // run route.drive --mode hook to see the guidance
-        const cmd = `npx tsx -e "import('rhachet-roles-bhrain/cli/route').then(m => m.routeDrive())" -- --route ${tempDir} --mode hook`;
+        const cmd = `npx tsx -e "import('rhachet-roles-bhrain/cli/route').then(m => m.routeDrive())" -- --route ${tempDir} --when hook.onBoot`;
         let result: { stdout: string; stderr: string; code: number };
         try {
           const execResult = await execAsync(cmd, { cwd: process.cwd() });
@@ -155,7 +155,7 @@ describe('driver.route.approval-tty', () => {
       });
 
       then('hook shows "once they do, run"', async () => {
-        const cmd = `npx tsx -e "import('rhachet-roles-bhrain/cli/route').then(m => m.routeDrive())" -- --route ${tempDir} --mode hook`;
+        const cmd = `npx tsx -e "import('rhachet-roles-bhrain/cli/route').then(m => m.routeDrive())" -- --route ${tempDir} --when hook.onBoot`;
         let result: { stdout: string; stderr: string; code: number };
         try {
           const execResult = await execAsync(cmd, { cwd: process.cwd() });

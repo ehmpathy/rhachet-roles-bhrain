@@ -14,16 +14,22 @@ import { getAllStones } from './stones/getAllStones';
 /**
  * .what = echoes current stone and pass command for bound route
  * .why = provides GPS-like guidance for clones at session start/end
+ *
+ * .note = `when` parameter distinguishes hook contexts:
+ *         - hook.onBoot: show stone, exit 0 (don't block session start)
+ *         - hook.onStop: show stone, exit 2 (block premature stop)
  */
 export const stepRouteDrive = async (input: {
   route?: string;
-  mode?: 'hook';
+  when?: 'hook.onBoot' | 'hook.onStop';
 }): Promise<{
   emit: {
     stdout?: string;
     stderr?: { reason: string; code: number };
   } | null;
 }> => {
+  // derive effective hook context from input
+  const hookContext = input.when;
   // derive route from input or bound branch
   let route = input.route;
   if (!route) {
@@ -47,7 +53,7 @@ export const stepRouteDrive = async (input: {
   // in hook mode, check for malfunction or blocked status immediately
   // .note = getAllPassageReports returns latest per stone (last entry wins)
   //         a subsequent 'passed' status resolves the malfunction or blocked state
-  if (input.mode === 'hook') {
+  if (hookContext) {
     const passageReports = await getAllPassageReports({ route });
 
     // check for malfunction
@@ -110,7 +116,7 @@ export const stepRouteDrive = async (input: {
   // no next stones → route complete, ok to stop
   if (nextStones.length === 0) {
     // in hook mode, silent exit when route complete
-    if (input.mode === 'hook') {
+    if (hookContext) {
       return { emit: null };
     }
     return {
@@ -122,8 +128,50 @@ export const stepRouteDrive = async (input: {
   const stone = nextStones[0]!;
   const stoneContent = await fs.readFile(stone.path, 'utf-8');
 
-  // in hook mode, track and potentially block stop
-  if (input.mode === 'hook') {
+  // onBoot: show stone guidance, exit 0 (don't block session start)
+  // but if blocked on approval, show the approval-needed message
+  if (hookContext === 'hook.onBoot') {
+    // check blocker report to see if agent is blocked on human approval
+    const blockerReport = await getStoneGuardBlockerReport({
+      stone: stone.name,
+      route,
+    });
+
+    // if blocked on approval and approval not yet granted, show approval-needed message
+    if (blockerReport?.blocker === 'approval') {
+      const approvalArtifact = await getOneStoneGuardApproval({
+        stone,
+        route,
+      });
+
+      if (!approvalArtifact) {
+        // approval NOT granted yet - show guidance for human approval
+        return {
+          emit: {
+            stdout: formatRouteDriveNeedsApproval({
+              route,
+              stone: stone.name,
+            }),
+          },
+        };
+      }
+    }
+
+    // otherwise, show generic stone guidance
+    const stdout = formatRouteDrive({
+      route,
+      stone: stone.name,
+      content: stoneContent,
+      count: 0,
+      suggestBlocked: false,
+    });
+    return {
+      emit: { stdout },
+    };
+  }
+
+  // onStop: track and potentially block premature stop
+  if (hookContext === 'hook.onStop') {
     // check blocker report to see if agent is blocked on human approval
     // this is set by route.stone.set --as passed when it fails
     const blockerReport = await getStoneGuardBlockerReport({

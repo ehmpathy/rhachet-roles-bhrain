@@ -26,7 +26,7 @@ export const ROLE_DRIVER: Role = Role.build({
           timeout: 'PT30S',
         },
         {
-          command: './node_modules/.bin/rhx route.drive --mode hook',
+          command: './node_modules/.bin/rhx route.drive --when hook.onBoot',
           timeout: 'PT5S',
         },
       ],
@@ -50,7 +50,7 @@ export const ROLE_DRIVER: Role = Role.build({
       ],
       onStop: [
         {
-          command: './node_modules/.bin/rhx route.drive --mode hook',
+          command: './node_modules/.bin/rhx route.drive --when hook.onStop',
           timeout: 'PT5S',
         },
       ],

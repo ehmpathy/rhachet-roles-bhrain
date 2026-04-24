@@ -200,7 +200,7 @@ describe('driver.route.failsafe.acceptance', () => {
       const result = useThen('route.drive halts', async () =>
         invokeRouteSkill({
           skill: 'route.drive',
-          args: { mode: 'hook' },
+          args: { when: 'hook.onBoot' },
           cwd: scene.tempDir,
         }),
       );
@@ -417,7 +417,7 @@ describe('driver.route.failsafe.acceptance', () => {
       const result = useThen('route.drive halts', async () =>
         invokeRouteSkill({
           skill: 'route.drive',
-          args: { mode: 'hook' },
+          args: { when: 'hook.onBoot' },
           cwd: scene.tempDir,
         }),
       );
