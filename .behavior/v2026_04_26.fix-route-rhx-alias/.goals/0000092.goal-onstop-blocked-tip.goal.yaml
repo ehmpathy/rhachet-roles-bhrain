@@ -1,0 +1,14 @@
+slug: 'goal-onstop-blocked-tip'
+source: 'peer:human'
+status:
+  choice: 'fulfilled'
+  reason: 'implemented in src/contract/cli/goal.ts'
+why:
+  ask: 'update onStop to remind folks they can mark goal as blocked'
+  purpose: 'help users understand they can defer goals'
+  benefit: 'clearer workflow when blocked on external factors'
+what:
+  outcome: 'onStop shows tip about marking goals as blocked'
+how:
+  task: 'add tip line to goal.triage.next output'
+  gate: 'onStop shows blocked tip for inflight/enqueued goals'

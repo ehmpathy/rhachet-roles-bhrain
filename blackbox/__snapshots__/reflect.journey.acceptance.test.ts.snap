@@ -56,10 +56,10 @@ exports[`reflect.journey.acceptance given: [journey] full reflect workflow when:
    ├─ size = [SIZE]ytes
    │
    └─ list
-      ├─ [TIMESTAMP] (commit=d8e010e, patches=04f1ec0, [SIZE]ytes)
+      ├─ [TIMESTAMP] (commit=019dd25, patches=04f1ec0, [SIZE]ytes)
       │  ├─ [TIMESTAMP].staged.patch
       │  └─ [TIMESTAMP].unstaged.patch
-      └─ [TIMESTAMP] (commit=d8e010e, patches=8f56415, [SIZE]ytes)
+      └─ [TIMESTAMP] (commit=019dd25, patches=8f56415, [SIZE]ytes)
          ├─ [TIMESTAMP].staged.patch
          └─ [TIMESTAMP].unstaged.patch
 

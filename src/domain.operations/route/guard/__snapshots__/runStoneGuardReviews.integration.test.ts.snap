@@ -1,5 +1,110 @@
 // Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
 
+exports[`runStoneGuardReviews given: [case1] guard with echo review command when: [t0] reviews are executed then: artifact snapshot matches 1`] = `
+"├─ stdout
+│  ├─
+│  │
+│  │  blockers: 0
+│  │  nitpicks: 1
+│  │  review output
+│  │
+│  └─
+├─ stderr
+│  ├─
+│  │
+│  └─"
+`;
+
+exports[`runStoneGuardReviews given: [case1] guard with echo review command when: [t0] reviews are executed then: return value snapshot matches 1`] = `
+[
+  {
+    "blockers": 0,
+    "exitClass": "passed",
+    "exitCode": 0,
+    "hash": "case1ret",
+    "index": 1,
+    "iteration": 1,
+    "nitpicks": 1,
+    "path": "<route>/.route/1.test.guard.review.i1.case1ret.r1.md",
+    "stderr": "",
+    "stdout": "blockers: 0
+nitpicks: 1
+review output
+",
+    "stone": {
+      "path": "/tmp/test-reviews-1777246077504/1.test.stone",
+    },
+  },
+]
+`;
+
+exports[`runStoneGuardReviews given: [case2] guard with multiple review commands when: [t0] reviews are executed then: artifact snapshots match 1`] = `
+"├─ stdout
+│  ├─
+│  │
+│  │  blockers: 1
+│  │  nitpicks: 0
+│  │
+│  └─
+├─ stderr
+│  ├─
+│  │
+│  └─"
+`;
+
+exports[`runStoneGuardReviews given: [case2] guard with multiple review commands when: [t0] reviews are executed then: artifact snapshots match 2`] = `
+"├─ stdout
+│  ├─
+│  │
+│  │  blockers: 0
+│  │  nitpicks: 2
+│  │
+│  └─
+├─ stderr
+│  ├─
+│  │
+│  └─"
+`;
+
+exports[`runStoneGuardReviews given: [case2] guard with multiple review commands when: [t0] reviews are executed then: return value snapshot matches 1`] = `
+[
+  {
+    "blockers": 1,
+    "exitClass": "passed",
+    "exitCode": 0,
+    "hash": "case2ret",
+    "index": 1,
+    "iteration": 1,
+    "nitpicks": 0,
+    "path": "<route>/.route/1.test.guard.review.i1.case2ret.r1.md",
+    "stderr": "",
+    "stdout": "blockers: 1
+nitpicks: 0
+",
+    "stone": {
+      "path": "/tmp/test-reviews-multi-1777246077505/1.test.stone",
+    },
+  },
+  {
+    "blockers": 0,
+    "exitClass": "passed",
+    "exitCode": 0,
+    "hash": "case2ret",
+    "index": 2,
+    "iteration": 1,
+    "nitpicks": 2,
+    "path": "<route>/.route/1.test.guard.review.i1.case2ret.r2.md",
+    "stderr": "",
+    "stdout": "blockers: 0
+nitpicks: 2
+",
+    "stone": {
+      "path": "/tmp/test-reviews-multi-1777246077505/1.test.stone",
+    },
+  },
+]
+`;
+
 exports[`runStoneGuardReviews given: [case3] review exits with code 0 (passed) when: [t0] review exits 0 then: artifact snapshot matches 1`] = `
 "├─ stdout
 │  ├─
@@ -12,6 +117,28 @@ exports[`runStoneGuardReviews given: [case3] review exits with code 0 (passed) w
 │  ├─
 │  │
 │  └─"
+`;
+
+exports[`runStoneGuardReviews given: [case3] review exits with code 0 (passed) when: [t0] review exits 0 then: return value snapshot matches 1`] = `
+[
+  {
+    "blockers": 0,
+    "exitClass": "passed",
+    "exitCode": 0,
+    "hash": "case3ret",
+    "index": 1,
+    "iteration": 1,
+    "nitpicks": 0,
+    "path": "<route>/.route/1.test.guard.review.i1.case3ret.r1.md",
+    "stderr": "",
+    "stdout": "blockers: 0
+review passed
+",
+    "stone": {
+      "path": "/tmp/test-reviews-exit0-1777246077505/1.test.stone",
+    },
+  },
+]
 `;
 
 exports[`runStoneGuardReviews given: [case4] review exits with code 2 (constraint) when: [t0] review exits 2 then: artifact snapshot matches 1`] = `
@@ -31,6 +158,28 @@ exports[`runStoneGuardReviews given: [case4] review exits with code 2 (constrain
    └─ exit code: 2 ✋"
 `;
 
+exports[`runStoneGuardReviews given: [case4] review exits with code 2 (constraint) when: [t0] review exits 2 then: return value snapshot matches 1`] = `
+[
+  {
+    "blockers": 1,
+    "exitClass": "constraint",
+    "exitCode": 2,
+    "hash": "case4ret",
+    "index": 1,
+    "iteration": 1,
+    "nitpicks": 0,
+    "path": "<route>/.route/1.test.guard.review.i1.case4ret.r1.md",
+    "stderr": "",
+    "stdout": "blockers: 1
+constraint failure
+",
+    "stone": {
+      "path": "/tmp/test-reviews-exit2-1777246077505/1.test.stone",
+    },
+  },
+]
+`;
+
 exports[`runStoneGuardReviews given: [case5] review exits with code 1 (malfunction) when: [t0] review exits 1 then: artifact snapshot matches 1`] = `
 "├─ stdout
 │  ├─
@@ -47,4 +196,140 @@ exports[`runStoneGuardReviews given: [case5] review exits with code 1 (malfuncti
 └─ passage blocked
    ├─ blocked by malfunction
    └─ exit code: 1 💥"
+`;
+
+exports[`runStoneGuardReviews given: [case5] review exits with code 1 (malfunction) when: [t0] review exits 1 then: return value snapshot matches 1`] = `
+[
+  {
+    "blockers": 0,
+    "exitClass": "malfunction",
+    "exitCode": 1,
+    "hash": "case5ret",
+    "index": 1,
+    "iteration": 1,
+    "nitpicks": 0,
+    "path": "<route>/.route/1.test.guard.review.i1.case5ret.r1.md",
+    "stderr": "stderr error
+",
+    "stdout": "stdout output
+",
+    "stone": {
+      "path": "/tmp/test-reviews-exit1-1777246077506/1.test.stone",
+    },
+  },
+]
+`;
+
+exports[`runStoneGuardReviews given: [case6] guard with $route variable in review command when: [t0] reviews are executed with $route substitution then: artifact snapshot matches 1`] = `
+"├─ stdout
+│  ├─
+│  │
+│  │  blockers: 0
+│  │  nitpicks: 0
+│  │  marker found at <route-path>
+│  │
+│  └─
+├─ stderr
+│  ├─
+│  │
+│  └─"
+`;
+
+exports[`runStoneGuardReviews given: [case6] guard with $route variable in review command when: [t0] reviews are executed with $route substitution then: return value snapshot matches 1`] = `
+[
+  {
+    "blockers": 0,
+    "exitClass": "passed",
+    "exitCode": 0,
+    "hash": "case6ret",
+    "index": 1,
+    "iteration": 1,
+    "nitpicks": 0,
+    "path": "<route>/.route/1.test.guard.review.i1.case6ret.r1.md",
+    "stderr": "",
+    "stdout": "blockers: 0
+nitpicks: 0
+marker found at <route-path>
+",
+    "stone": {
+      "path": "/tmp/test-reviews-route-1777246077506/1.test.stone",
+    },
+  },
+]
+`;
+
+exports[`runStoneGuardReviews given: [case7] guard with $rhx variable in review command when: [t0] review uses $rhx variable then: artifact snapshot matches 1`] = `
+"├─ stdout
+│  ├─
+│  │
+│  │  blockers: 0
+│  │  nitpicks: 0
+│  │  rhx=<repo-root>/node_modules/.bin/rhx
+│  │
+│  └─
+├─ stderr
+│  ├─
+│  │
+│  └─"
+`;
+
+exports[`runStoneGuardReviews given: [case7] guard with $rhx variable in review command when: [t0] review uses $rhx variable then: return value snapshot matches 1`] = `
+[
+  {
+    "blockers": 0,
+    "exitClass": "passed",
+    "exitCode": 0,
+    "hash": "case7ret",
+    "index": 1,
+    "iteration": 1,
+    "nitpicks": 0,
+    "path": "<route>/.route/1.test.guard.review.i1.case7ret.r1.md",
+    "stderr": "",
+    "stdout": "blockers: 0
+nitpicks: 0
+rhx=<repo-root>/node_modules/.bin/rhx
+",
+    "stone": {
+      "path": "/tmp/test-reviews-rhx-1777246077506/1.test.stone",
+    },
+  },
+]
+`;
+
+exports[`runStoneGuardReviews given: [case8] guard with $rhachet variable in review command when: [t0] review uses $rhachet variable then: artifact snapshot matches 1`] = `
+"├─ stdout
+│  ├─
+│  │
+│  │  blockers: 0
+│  │  nitpicks: 0
+│  │  rhachet=<repo-root>/node_modules/.bin/rhachet
+│  │
+│  └─
+├─ stderr
+│  ├─
+│  │
+│  └─"
+`;
+
+exports[`runStoneGuardReviews given: [case8] guard with $rhachet variable in review command when: [t0] review uses $rhachet variable then: return value snapshot matches 1`] = `
+[
+  {
+    "blockers": 0,
+    "exitClass": "passed",
+    "exitCode": 0,
+    "hash": "case8ret",
+    "index": 1,
+    "iteration": 1,
+    "nitpicks": 0,
+    "path": "<route>/.route/1.test.guard.review.i1.case8ret.r1.md",
+    "stderr": "",
+    "stdout": "blockers: 0
+nitpicks: 0
+rhachet=<repo-root>/node_modules/.bin/rhachet
+",
+    "stone": {
+      "path": "/tmp/test-reviews-rhachet-1777246077506/1.test.stone",
+    },
+  },
+]
 `;

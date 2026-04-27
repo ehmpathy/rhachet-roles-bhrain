@@ -1678,7 +1678,10 @@ export const goalTriageNext = async (): Promise<void> => {
       console.error(`      ${cont}├─ why.ask = ${askShort}`);
       console.error(`      ${cont}├─ status = inflight → ✋ finish this first`);
       console.error(
-        `      ${cont}└─ tip: run \`rhx goal.memory.get --slug ${goal.slug}\` to see the goal`,
+        `      ${cont}├─ tip: run \`rhx goal.memory.get --slug ${goal.slug}\` to see the goal`,
+      );
+      console.error(
+        `      ${cont}└─ tip: if blocked, run \`rhx goal.memory.set --slug ${goal.slug} --status.choice blocked --status.reason "..."\``,
       );
     }
     process.exit(2);
@@ -1699,7 +1702,10 @@ export const goalTriageNext = async (): Promise<void> => {
       console.error(`      ${cont}├─ why.ask = ${askShort}`);
       console.error(`      ${cont}├─ status = enqueued → ✋ finish this first`);
       console.error(
-        `      ${cont}└─ tip: run \`rhx goal.memory.get --slug ${goal.slug}\` to see the goal`,
+        `      ${cont}├─ tip: run \`rhx goal.memory.get --slug ${goal.slug}\` to see the goal`,
+      );
+      console.error(
+        `      ${cont}└─ tip: if blocked, run \`rhx goal.memory.set --slug ${goal.slug} --status.choice blocked --status.reason "..."\``,
       );
     }
     process.exit(2);

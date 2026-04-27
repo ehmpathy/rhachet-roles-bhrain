@@ -75,6 +75,12 @@
             "command": "./node_modules/.bin/rhx route.drive --when hook.onBoot",
             "timeout": 5,
             "author": "repo=bhrain/role=driver"
+          },
+          {
+            "type": "command",
+            "command": "./node_modules/.bin/rhachet roles boot --role librarian",
+            "timeout": 30,
+            "author": "repo=bhrain/role=librarian"
           }
         ]
       },
@@ -221,6 +227,19 @@
             "command": "./node_modules/.bin/rhx route.drive --when hook.onStop",
             "timeout": 5,
             "author": "repo=bhrain/role=driver"
+          }
+        ]
+      }
+    ],
+    "UserPromptSubmit": [
+      {
+        "matcher": "*",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "./node_modules/.bin/rhx goal.triage.infer --when hook.onTalk",
+            "timeout": 5,
+            "author": "repo=bhrain/role=achiever"
           }
         ]
       }

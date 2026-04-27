@@ -1,0 +1,15 @@
+slug: 'fix-route-rhx-alias'
+source: 'peer:human'
+status:
+  choice: 'fulfilled'
+  reason: 'route complete, all tests pass'
+updatedAt: '2026-04-27'
+why:
+  ask: 'support $rhx and $rhachet aliases in route judge/reviewer commands, failfast on npx usage'
+  purpose: 'reduce latency and avoid cross-platform npx issues'
+  benefit: 'faster, more reliable route command execution'
+what:
+  outcome: 'route judge/reviewer commands expand $rhx and $rhachet aliases, reject npx patterns'
+how:
+  task: 'illustrate vision, then implement alias expansion and npx failfast'
+  gate: 'tests verify alias expansion works, npx usage fails fast'

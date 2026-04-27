@@ -112,9 +112,9 @@ exports[`achiever.goal.onTalk.journey given: [case1] onTalk accumulates asks the
    │  └─ coverage = 3
    │
    ├─ complete goals
-   │  ├─ task-3 [enqueued]
+   │  ├─ fix-flaky-auth-test [enqueued]
    │  ├─ task-2 [enqueued]
-   │  └─ fix-flaky-auth-test [enqueued]
+   │  └─ task-3 [enqueued]
    │
    └─ all asks covered, all goals complete
 "

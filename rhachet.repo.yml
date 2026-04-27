@@ -20,6 +20,7 @@ roles:
       dirs: dist/domain.roles/reviewer/briefs
     skills:
       dirs: dist/domain.roles/reviewer/skills
+    boot: dist/domain.roles/reviewer/boot.yml
     keyrack: dist/domain.roles/reviewer/keyrack.yml
   - slug: driver
     readme: dist/domain.roles/driver/readme.md
@@ -34,6 +35,7 @@ roles:
       dirs: dist/domain.roles/librarian/briefs
     skills:
       dirs: dist/domain.roles/librarian/skills
+    boot: dist/domain.roles/librarian/boot.yml
   - slug: reflector
     readme: dist/domain.roles/reflector/readme.md
     briefs:
