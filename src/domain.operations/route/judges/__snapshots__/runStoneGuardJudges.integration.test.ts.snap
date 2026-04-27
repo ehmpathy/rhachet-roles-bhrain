@@ -1,5 +1,252 @@
 // Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
 
+exports[`runStoneGuardJudges given: [case1] guard with echo judge command that passes when: [t0] judges are executed then: artifact snapshot matches 1`] = `
+"├─ stdout
+│  ├─
+│  │
+│  │  passed: true
+│  │  reason: all checks passed
+│  │
+│  └─
+├─ stderr
+│  ├─
+│  │
+│  └─"
+`;
+
+exports[`runStoneGuardJudges given: [case1] guard with echo judge command that passes when: [t0] judges are executed then: return value snapshot matches 1`] = `
+[
+  {
+    "exitClass": "passed",
+    "exitCode": 0,
+    "hash": "baa259ce2bbf70ec6fd96873e33712b2ee13021b31d1e08a6813d04f490653d6",
+    "index": 1,
+    "iteration": 1,
+    "passed": true,
+    "path": "<route>/.route/1.test.guard.judge.i1p1.case1ret.baa259ce2bbf70ec6fd96873e33712b2ee13021b31d1e08a6813d04f490653d6.j1.md",
+    "reason": "all checks passed",
+    "stderr": "",
+    "stdout": "passed: true
+reason: all checks passed
+",
+    "stone": {
+      "path": "/home/vlad/git/ehmpathy/_worktrees/rhachet-roles-bhrain.vlad.fix-route-rhx-alias/.temp/genTempDir.symlink/2026-04-26T23-27-59.194Z.judges-pass.0c6aa8ef/1.test.stone",
+    },
+  },
+]
+`;
+
+exports[`runStoneGuardJudges given: [case2] guard with judge command that fails when: [t0] judges are executed then: artifact snapshot matches 1`] = `
+"├─ stdout
+│  ├─
+│  │
+│  │  passed: false
+│  │  reason: blockers found
+│  │
+│  └─
+├─ stderr
+│  ├─
+│  │
+│  └─"
+`;
+
+exports[`runStoneGuardJudges given: [case2] guard with judge command that fails when: [t0] judges are executed then: return value snapshot matches 1`] = `
+[
+  {
+    "exitClass": "passed",
+    "exitCode": 0,
+    "hash": "35de907c96386d6245179dfbe77c24549694511ef78e6ff396045c7ed87776ed",
+    "index": 1,
+    "iteration": 1,
+    "passed": false,
+    "path": "<route>/.route/1.test.guard.judge.i1p1.case2ret.35de907c96386d6245179dfbe77c24549694511ef78e6ff396045c7ed87776ed.j1.md",
+    "reason": "blockers found",
+    "stderr": "",
+    "stdout": "passed: false
+reason: blockers found
+",
+    "stone": {
+      "path": "/home/vlad/git/ehmpathy/_worktrees/rhachet-roles-bhrain.vlad.fix-route-rhx-alias/.temp/genTempDir.symlink/2026-04-26T23-27-59.205Z.judges-fail.61021b46/1.test.stone",
+    },
+  },
+]
+`;
+
+exports[`runStoneGuardJudges given: [case3] guard with multiple judge commands when: [t0] judges are executed then: artifact snapshots match 1`] = `
+"├─ stdout
+│  ├─
+│  │
+│  │  passed: true
+│  │  reason: review passed
+│  │
+│  └─
+├─ stderr
+│  ├─
+│  │
+│  └─"
+`;
+
+exports[`runStoneGuardJudges given: [case3] guard with multiple judge commands when: [t0] judges are executed then: artifact snapshots match 2`] = `
+"├─ stdout
+│  ├─
+│  │
+│  │  passed: false
+│  │  reason: approval required
+│  │
+│  └─
+├─ stderr
+│  ├─
+│  │
+│  └─"
+`;
+
+exports[`runStoneGuardJudges given: [case3] guard with multiple judge commands when: [t0] judges are executed then: return value snapshot matches 1`] = `
+[
+  {
+    "exitClass": "passed",
+    "exitCode": 0,
+    "hash": "cb985ad87779e52e8477f97ffc3060c0702e16800b3f58e5fed3961b8a298196",
+    "index": 1,
+    "iteration": 1,
+    "passed": true,
+    "path": "<route>/.route/1.test.guard.judge.i1p1.case3ret.cb985ad87779e52e8477f97ffc3060c0702e16800b3f58e5fed3961b8a298196.j1.md",
+    "reason": "review passed",
+    "stderr": "",
+    "stdout": "passed: true
+reason: review passed
+",
+    "stone": {
+      "path": "/home/vlad/git/ehmpathy/_worktrees/rhachet-roles-bhrain.vlad.fix-route-rhx-alias/.temp/genTempDir.symlink/2026-04-26T23-27-59.216Z.judges-multi.b0d01f57/1.test.stone",
+    },
+  },
+  {
+    "exitClass": "passed",
+    "exitCode": 0,
+    "hash": "cb985ad87779e52e8477f97ffc3060c0702e16800b3f58e5fed3961b8a298196",
+    "index": 2,
+    "iteration": 1,
+    "passed": false,
+    "path": "<route>/.route/1.test.guard.judge.i1p1.case3ret.cb985ad87779e52e8477f97ffc3060c0702e16800b3f58e5fed3961b8a298196.j2.md",
+    "reason": "approval required",
+    "stderr": "",
+    "stdout": "passed: false
+reason: approval required
+",
+    "stone": {
+      "path": "/home/vlad/git/ehmpathy/_worktrees/rhachet-roles-bhrain.vlad.fix-route-rhx-alias/.temp/genTempDir.symlink/2026-04-26T23-27-59.216Z.judges-multi.b0d01f57/1.test.stone",
+    },
+  },
+]
+`;
+
+exports[`runStoneGuardJudges given: [case4] guard with $route variable in judge command when: [t0] judges are executed with $route substitution then: artifact snapshot matches 1`] = `
+"├─ stdout
+│  ├─
+│  │
+│  │  passed: true
+│  │  reason: marker found at <route-path>
+│  │
+│  └─
+├─ stderr
+│  ├─
+│  │
+│  └─"
+`;
+
+exports[`runStoneGuardJudges given: [case4] guard with $route variable in judge command when: [t0] judges are executed with $route substitution then: return value snapshot matches 1`] = `
+[
+  {
+    "exitClass": "passed",
+    "exitCode": 0,
+    "hash": "12f2a697862b70746c83268e3dc5c381c118faa3b8c42f17f91eca5360798bce",
+    "index": 1,
+    "iteration": 1,
+    "passed": true,
+    "path": "<route>/.route/1.test.guard.judge.i1p1.case4ret.12f2a697862b70746c83268e3dc5c381c118faa3b8c42f17f91eca5360798bce.j1.md",
+    "reason": "marker found at <route-path>",
+    "stderr": "",
+    "stdout": "passed: true
+reason: marker found at /home/vlad/git/ehmpathy/_worktrees/rhachet-roles-bhrain.vlad.fix-route-rhx-alias/.temp/genTempDir.symlink/2026-04-26T23-27-59.226Z.judges-route-var.cb906cfa
+",
+    "stone": {
+      "path": "/home/vlad/git/ehmpathy/_worktrees/rhachet-roles-bhrain.vlad.fix-route-rhx-alias/.temp/genTempDir.symlink/2026-04-26T23-27-59.226Z.judges-route-var.cb906cfa/1.test.stone",
+    },
+  },
+]
+`;
+
+exports[`runStoneGuardJudges given: [case5] passed judge is cached on retry when: [t0] judge passes on first attempt then: artifact snapshot matches 1`] = `
+"├─ stdout
+│  ├─
+│  │
+│  │  passed: true
+│  │  reason: all checks passed
+│  │
+│  └─
+├─ stderr
+│  ├─
+│  │
+│  └─"
+`;
+
+exports[`runStoneGuardJudges given: [case5] passed judge is cached on retry when: [t0] judge passes on first attempt then: return value snapshot matches 1`] = `
+[
+  {
+    "exitClass": "passed",
+    "exitCode": 0,
+    "hash": "1b61af1e7a1550c026820c278ce84d7ec476b3a7eaa021bb06d5f4b159d67a06",
+    "index": 1,
+    "iteration": 1,
+    "passed": true,
+    "path": "<route>/.route/1.test.guard.judge.i1p1.case5ret.1b61af1e7a1550c026820c278ce84d7ec476b3a7eaa021bb06d5f4b159d67a06.j1.md",
+    "reason": "all checks passed",
+    "stderr": "",
+    "stdout": "passed: true
+reason: all checks passed
+",
+    "stone": {
+      "path": "/home/vlad/git/ehmpathy/_worktrees/rhachet-roles-bhrain.vlad.fix-route-rhx-alias/.temp/genTempDir.symlink/2026-04-26T23-27-59.236Z.judges-cache-pass.5cc02905/1.test.stone",
+    },
+  },
+]
+`;
+
+exports[`runStoneGuardJudges given: [case6] failed judge is NOT cached (retries fresh) when: [t0] judge fails on first attempt then: artifact snapshot matches 1`] = `
+"├─ stdout
+│  ├─
+│  │
+│  │  passed: false
+│  │  reason: blockers found
+│  │
+│  └─
+├─ stderr
+│  ├─
+│  │
+│  └─"
+`;
+
+exports[`runStoneGuardJudges given: [case6] failed judge is NOT cached (retries fresh) when: [t0] judge fails on first attempt then: return value snapshot matches 1`] = `
+[
+  {
+    "exitClass": "passed",
+    "exitCode": 0,
+    "hash": "c39f019e0ea9d00615015b316b116e440da2919a17c695f3c620760175acf474",
+    "index": 1,
+    "iteration": 1,
+    "passed": false,
+    "path": "<route>/.route/1.test.guard.judge.i1p1.case6ret.c39f019e0ea9d00615015b316b116e440da2919a17c695f3c620760175acf474.j1.md",
+    "reason": "blockers found",
+    "stderr": "",
+    "stdout": "passed: false
+reason: blockers found
+",
+    "stone": {
+      "path": "/home/vlad/git/ehmpathy/_worktrees/rhachet-roles-bhrain.vlad.fix-route-rhx-alias/.temp/genTempDir.symlink/2026-04-26T23-27-59.247Z.judges-nocache-fail.74122aa7/1.test.stone",
+    },
+  },
+]
+`;
+
 exports[`runStoneGuardJudges given: [case7] judge exits with code 0 (passed) when: [t0] judge exits 0 then: artifact snapshot matches 1`] = `
 "├─ stdout
 │  ├─
@@ -12,6 +259,28 @@ exports[`runStoneGuardJudges given: [case7] judge exits with code 0 (passed) whe
 │  ├─
 │  │
 │  └─"
+`;
+
+exports[`runStoneGuardJudges given: [case7] judge exits with code 0 (passed) when: [t0] judge exits 0 then: return value snapshot matches 1`] = `
+[
+  {
+    "exitClass": "passed",
+    "exitCode": 0,
+    "hash": "5c396ed654e0293de767587f13171673668a974d11a5c3291f627256cc6827d4",
+    "index": 1,
+    "iteration": 1,
+    "passed": true,
+    "path": "<route>/.route/1.test.guard.judge.i1p1.case7ret.5c396ed654e0293de767587f13171673668a974d11a5c3291f627256cc6827d4.j1.md",
+    "reason": "judge passed",
+    "stderr": "",
+    "stdout": "passed: true
+reason: judge passed
+",
+    "stone": {
+      "path": "/home/vlad/git/ehmpathy/_worktrees/rhachet-roles-bhrain.vlad.fix-route-rhx-alias/.temp/genTempDir.symlink/2026-04-26T23-27-59.256Z.judges-exit0.c98c03af/1.test.stone",
+    },
+  },
+]
 `;
 
 exports[`runStoneGuardJudges given: [case8] judge exits with code 2 (constraint) when: [t0] judge exits 2 then: artifact snapshot matches 1`] = `
@@ -31,6 +300,28 @@ exports[`runStoneGuardJudges given: [case8] judge exits with code 2 (constraint)
    └─ exit code: 2 ✋"
 `;
 
+exports[`runStoneGuardJudges given: [case8] judge exits with code 2 (constraint) when: [t0] judge exits 2 then: return value snapshot matches 1`] = `
+[
+  {
+    "exitClass": "constraint",
+    "exitCode": 2,
+    "hash": "9501ddcb1e6b10ed368a8adea8077f69443fc54a962a67b8999d4d298b9af789",
+    "index": 1,
+    "iteration": 1,
+    "passed": false,
+    "path": "<route>/.route/1.test.guard.judge.i1p1.case8ret.9501ddcb1e6b10ed368a8adea8077f69443fc54a962a67b8999d4d298b9af789.j1.md",
+    "reason": "approval required",
+    "stderr": "",
+    "stdout": "passed: false
+reason: approval required
+",
+    "stone": {
+      "path": "/home/vlad/git/ehmpathy/_worktrees/rhachet-roles-bhrain.vlad.fix-route-rhx-alias/.temp/genTempDir.symlink/2026-04-26T23-27-59.268Z.judges-exit2.d433f3da/1.test.stone",
+    },
+  },
+]
+`;
+
 exports[`runStoneGuardJudges given: [case9] judge exits with code 1 (malfunction) when: [t0] judge exits 1 then: artifact snapshot matches 1`] = `
 "├─ stdout
 │  ├─
@@ -47,4 +338,137 @@ exports[`runStoneGuardJudges given: [case9] judge exits with code 1 (malfunction
 └─ passage blocked
    ├─ blocked by malfunction
    └─ exit code: 1 💥"
+`;
+
+exports[`runStoneGuardJudges given: [case9] judge exits with code 1 (malfunction) when: [t0] judge exits 1 then: return value snapshot matches 1`] = `
+[
+  {
+    "exitClass": "malfunction",
+    "exitCode": 1,
+    "hash": "8efb3a6ece605f83b074be36e2420181c30f7bf5c39415133cbc82fea0b16f60",
+    "index": 1,
+    "iteration": 1,
+    "passed": false,
+    "path": "<route>/.route/1.test.guard.judge.i1p1.case9ret.8efb3a6ece605f83b074be36e2420181c30f7bf5c39415133cbc82fea0b16f60.j1.md",
+    "reason": "command exited 1; see judge artifact for details",
+    "stderr": "stderr error
+",
+    "stdout": "stdout output
+",
+    "stone": {
+      "path": "/home/vlad/git/ehmpathy/_worktrees/rhachet-roles-bhrain.vlad.fix-route-rhx-alias/.temp/genTempDir.symlink/2026-04-26T23-27-59.280Z.judges-exit1.708f16ca/1.test.stone",
+    },
+  },
+]
+`;
+
+exports[`runStoneGuardJudges given: [case10] blocked judge (exit 2) is NOT cached when: [t0] judge blocks on first attempt then: artifact snapshot matches 1`] = `
+"├─ stdout
+│  ├─
+│  │
+│  │  passed: false
+│  │  reason: approval required
+│  │
+│  └─
+├─ stderr
+│  ├─
+│  │
+│  └─
+└─ passage blocked
+   ├─ blocked by constraints
+   └─ exit code: 2 ✋"
+`;
+
+exports[`runStoneGuardJudges given: [case10] blocked judge (exit 2) is NOT cached when: [t0] judge blocks on first attempt then: return value snapshot matches 1`] = `
+[
+  {
+    "exitClass": "constraint",
+    "exitCode": 2,
+    "hash": "17b402baa5b3d2a725d0a03ab63b39c3b423972294f189e1932629e659bd1769",
+    "index": 1,
+    "iteration": 1,
+    "passed": false,
+    "path": "<route>/.route/1.test.guard.judge.i1p1.case10ret.17b402baa5b3d2a725d0a03ab63b39c3b423972294f189e1932629e659bd1769.j1.md",
+    "reason": "approval required",
+    "stderr": "",
+    "stdout": "passed: false
+reason: approval required
+",
+    "stone": {
+      "path": "/home/vlad/git/ehmpathy/_worktrees/rhachet-roles-bhrain.vlad.fix-route-rhx-alias/.temp/genTempDir.symlink/2026-04-26T23-27-59.292Z.judges-nocache-block.e9d1c5a5/1.test.stone",
+    },
+  },
+]
+`;
+
+exports[`runStoneGuardJudges given: [case11] guard with $rhx variable in judge command when: [t0] judge uses $rhx variable then: artifact snapshot matches 1`] = `
+"├─ stdout
+│  ├─
+│  │
+│  │  passed: true
+│  │  reason: rhx=<repo-root>/node_modules/.bin/rhx
+│  │
+│  └─
+├─ stderr
+│  ├─
+│  │
+│  └─"
+`;
+
+exports[`runStoneGuardJudges given: [case11] guard with $rhx variable in judge command when: [t0] judge uses $rhx variable then: return value snapshot matches 1`] = `
+[
+  {
+    "exitClass": "passed",
+    "exitCode": 0,
+    "hash": "882bf5835ad89202f2b20e1ac5f81dc66fc96fd9cc38678deaed00d76bd2cd36",
+    "index": 1,
+    "iteration": 1,
+    "passed": true,
+    "path": "<route>/.route/1.test.guard.judge.i1p1.case11ret.882bf5835ad89202f2b20e1ac5f81dc66fc96fd9cc38678deaed00d76bd2cd36.j1.md",
+    "reason": "rhx=<repo-root>/node_modules/.bin/rhx",
+    "stderr": "",
+    "stdout": "passed: true
+reason: rhx=/home/vlad/git/ehmpathy/_worktrees/rhachet-roles-bhrain.vlad.fix-route-rhx-alias/node_modules/.bin/rhx
+",
+    "stone": {
+      "path": "/home/vlad/git/ehmpathy/_worktrees/rhachet-roles-bhrain.vlad.fix-route-rhx-alias/.temp/genTempDir.symlink/2026-04-26T23-27-59.304Z.judges-rhx-var.d0cc7552/1.test.stone",
+    },
+  },
+]
+`;
+
+exports[`runStoneGuardJudges given: [case12] guard with $rhachet variable in judge command when: [t0] judge uses $rhachet variable then: artifact snapshot matches 1`] = `
+"├─ stdout
+│  ├─
+│  │
+│  │  passed: true
+│  │  reason: rhachet=<repo-root>/node_modules/.bin/rhachet
+│  │
+│  └─
+├─ stderr
+│  ├─
+│  │
+│  └─"
+`;
+
+exports[`runStoneGuardJudges given: [case12] guard with $rhachet variable in judge command when: [t0] judge uses $rhachet variable then: return value snapshot matches 1`] = `
+[
+  {
+    "exitClass": "passed",
+    "exitCode": 0,
+    "hash": "b95604e449521dbab8f7255f99e66929e4fd661b4e67a4e1cbdbc29e62d54a36",
+    "index": 1,
+    "iteration": 1,
+    "passed": true,
+    "path": "<route>/.route/1.test.guard.judge.i1p1.case12ret.b95604e449521dbab8f7255f99e66929e4fd661b4e67a4e1cbdbc29e62d54a36.j1.md",
+    "reason": "rhachet=<repo-root>/node_modules/.bin/rhachet",
+    "stderr": "",
+    "stdout": "passed: true
+reason: rhachet=/home/vlad/git/ehmpathy/_worktrees/rhachet-roles-bhrain.vlad.fix-route-rhx-alias/node_modules/.bin/rhachet
+",
+    "stone": {
+      "path": "/home/vlad/git/ehmpathy/_worktrees/rhachet-roles-bhrain.vlad.fix-route-rhx-alias/.temp/genTempDir.symlink/2026-04-26T23-27-59.316Z.judges-rhachet-var.2a703790/1.test.stone",
+    },
+  },
+]
 `;

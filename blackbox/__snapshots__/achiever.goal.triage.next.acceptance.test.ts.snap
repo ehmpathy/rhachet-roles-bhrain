@@ -9,7 +9,8 @@ exports[`achiever.goal.triage.next.acceptance given: [case3] inflight goals exis
          ├─ slug = fix-auth-test
          ├─ why.ask = fix the flaky test in auth.test.ts
          ├─ status = inflight → ✋ finish this first
-         └─ tip: run \`rhx goal.memory.get --slug fix-auth-test\` to see the goal
+         ├─ tip: run \`rhx goal.memory.get --slug fix-auth-test\` to see the goal
+         └─ tip: if blocked, run \`rhx goal.memory.set --slug fix-auth-test --status.choice blocked --status.reason "..."\`
 "
 `;
 
@@ -22,7 +23,8 @@ exports[`achiever.goal.triage.next.acceptance given: [case4] enqueued goals exis
          ├─ slug = update-readme-env
          ├─ why.ask = update the readme to mention the new env var
          ├─ status = enqueued → ✋ finish this first
-         └─ tip: run \`rhx goal.memory.get --slug update-readme-env\` to see the goal
+         ├─ tip: run \`rhx goal.memory.get --slug update-readme-env\` to see the goal
+         └─ tip: if blocked, run \`rhx goal.memory.set --slug update-readme-env --status.choice blocked --status.reason "..."\`
 "
 `;
 
@@ -35,7 +37,8 @@ exports[`achiever.goal.triage.next.acceptance given: [case5] both inflight and e
          ├─ slug = fix-auth-test
          ├─ why.ask = fix the flaky test
          ├─ status = inflight → ✋ finish this first
-         └─ tip: run \`rhx goal.memory.get --slug fix-auth-test\` to see the goal
+         ├─ tip: run \`rhx goal.memory.get --slug fix-auth-test\` to see the goal
+         └─ tip: if blocked, run \`rhx goal.memory.set --slug fix-auth-test --status.choice blocked --status.reason "..."\`
 "
 `;
 
@@ -48,7 +51,8 @@ exports[`achiever.goal.triage.next.acceptance given: [case6] hook.onBoot with in
          ├─ slug = fix-auth-test
          ├─ why.ask = fix the flaky test in auth.test.ts
          ├─ status = inflight → ✋ finish this first
-         └─ tip: run \`rhx goal.memory.get --slug fix-auth-test\` to see the goal
+         ├─ tip: run \`rhx goal.memory.get --slug fix-auth-test\` to see the goal
+         └─ tip: if blocked, run \`rhx goal.memory.set --slug fix-auth-test --status.choice blocked --status.reason "..."\`
 "
 `;
 
@@ -61,6 +65,7 @@ exports[`achiever.goal.triage.next.acceptance given: [case7] hook.onBoot with en
          ├─ slug = update-readme-env
          ├─ why.ask = update the readme to mention the new env var
          ├─ status = enqueued → ✋ finish this first
-         └─ tip: run \`rhx goal.memory.get --slug update-readme-env\` to see the goal
+         ├─ tip: run \`rhx goal.memory.get --slug update-readme-env\` to see the goal
+         └─ tip: if blocked, run \`rhx goal.memory.set --slug update-readme-env --status.choice blocked --status.reason "..."\`
 "
 `;

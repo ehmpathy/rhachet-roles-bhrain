@@ -9,8 +9,7 @@ exports[`achiever.goal.escalation.acceptance given: [case1] repeated onStop call
          ├─ slug = stuck-task
          ├─ why.ask = do the task that remains blocked
          ├─ status = inflight → ✋ finish this first
-         ├─ tip: if halted, run:
-         │  └─ rhx goal.memory.set --slug stuck-task --status.choice blocked --status.reason "..."
-         └─ hint: run \`rhx goal.memory.get --slug stuck-task\` to see the goal
+         ├─ tip: run \`rhx goal.memory.get --slug stuck-task\` to see the goal
+         └─ tip: if blocked, run \`rhx goal.memory.set --slug stuck-task --status.choice blocked --status.reason "..."\`
 "
 `;

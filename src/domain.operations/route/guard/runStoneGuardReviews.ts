@@ -1,6 +1,7 @@
 import { exec } from 'child_process';
 import * as fs from 'fs/promises';
 import * as path from 'path';
+import { getGitRepoRoot } from 'rhachet-artifact-git';
 import { promisify } from 'util';
 
 import type { ContextCliEmit } from '@src/domain.objects/Driver/ContextCliEmit';
@@ -33,6 +34,18 @@ export const runOneStoneGuardReview = async (input: {
   const routeDir = path.join(input.route, '.route');
   await fs.mkdir(routeDir, { recursive: true });
 
+  // lookup repo root for $rhx/$rhachet paths
+  // .note = falls back to cwd when not in a git repo (e.g., integration tests)
+  let repoRoot: string;
+  try {
+    repoRoot = await getGitRepoRoot({ from: input.route });
+  } catch {
+    repoRoot = process.cwd();
+  }
+
+  // validate no npx patterns before variable substitution
+  validateNoNpx(input.reviewCmd);
+
   // substitute variables in command
   const outputPath = path.join(
     routeDir,
@@ -43,14 +56,22 @@ export const runOneStoneGuardReview = async (input: {
     route: input.route,
     hash: input.hash,
     output: outputPath,
+    repoRoot,
   });
 
-  // execute command from repo root so $route paths work correctly
+  // execute command with node_modules/.bin in PATH
+  // .why = enables guards to use `rhx` or `rhachet` directly without npx
+  const nodeModulesBin = path.join(repoRoot, 'node_modules', '.bin');
+  const execEnv = {
+    ...process.env,
+    PATH: `${nodeModulesBin}${path.delimiter}${process.env.PATH ?? ''}`,
+  };
+
   let stdout = '';
   let stderr = '';
   let exitCode = 0;
   try {
-    const result = await execAsync(cmd);
+    const result = await execAsync(cmd, { env: execEnv });
     stdout = result.stdout;
     stderr = result.stderr;
     exitCode = 0;
@@ -200,18 +221,50 @@ export const runStoneGuardReviews = async (
 };
 
 /**
+ * .what = validates command does not use npx rhachet/rhx patterns
+ * .why = npx adds 500-2000ms latency and has cross-platform issues
+ */
+const validateNoNpx = (cmd: string): void => {
+  if (cmd.includes('npx rhachet') || cmd.includes('npx rhx')) {
+    const pattern = cmd.includes('npx rhachet') ? 'npx rhachet' : 'npx rhx';
+    const alias = cmd.includes('npx rhachet') ? '$rhachet' : '$rhx';
+    throw new Error(
+      `guard uses ${pattern} which causes latency and cross-platform issues\n\n` +
+        `fix: use ${alias} alias instead\n` +
+        `  - ${alias} expands to ./node_modules/.bin/${alias.slice(1)}\n`,
+    );
+  }
+};
+
+/**
  * .what = substitutes variables in a command string
  * .why = enables dynamic command templates in guard files
  */
 const substituteVars = (
   cmd: string,
-  vars: { stone: string; route: string; hash: string; output: string },
+  vars: {
+    stone: string;
+    route: string;
+    hash: string;
+    output: string;
+    repoRoot: string;
+  },
 ): string => {
+  const rhxPath = path.join(vars.repoRoot, 'node_modules', '.bin', 'rhx');
+  const rhachetPath = path.join(
+    vars.repoRoot,
+    'node_modules',
+    '.bin',
+    'rhachet',
+  );
+
   return cmd
     .replace(/\$stone/g, vars.stone)
     .replace(/\$route/g, vars.route)
     .replace(/\$hash/g, vars.hash)
-    .replace(/\$output/g, vars.output);
+    .replace(/\$output/g, vars.output)
+    .replace(/\$rhx/g, rhxPath)
+    .replace(/\$rhachet/g, rhachetPath);
 };
 
 /**

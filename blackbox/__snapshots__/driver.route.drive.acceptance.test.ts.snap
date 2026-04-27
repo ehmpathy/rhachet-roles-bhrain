@@ -43,7 +43,7 @@ exports[`driver.route.drive.acceptance given: [case3] route bound with all stone
 "
 `;
 
-exports[`driver.route.drive.acceptance given: [case4] hook mode blocks stop when stones remain when: [t0] route.drive is invoked with --mode hook then: stdout matches non-hook mode (same content) 1`] = `
+exports[`driver.route.drive.acceptance given: [case4] hook mode blocks stop when stones remain when: [t0] route.drive is invoked with --when hook.onStop then: stdout matches non-hook mode (same content) 1`] = `
 "🦉 where were we?
 
 🗿 route.drive

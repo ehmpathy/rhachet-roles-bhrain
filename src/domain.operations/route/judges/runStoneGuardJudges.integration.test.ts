@@ -73,6 +73,28 @@ describe('runStoneGuardJudges', () => {
         );
         expect(judges[0]?.reason).toEqual('all checks passed');
       });
+
+      then('artifact snapshot matches', async () => {
+        const judges = await runStoneGuardJudges(
+          { stone, guard, hash: 'case1snap', iteration: 1, route: tempDir },
+          noopContext,
+        );
+        const content = await fs.readFile(judges[0]?.path ?? '', 'utf-8');
+        expect(content).toMatchSnapshot();
+      });
+
+      then('return value snapshot matches', async () => {
+        const judges = await runStoneGuardJudges(
+          { stone, guard, hash: 'case1ret', iteration: 1, route: tempDir },
+          noopContext,
+        );
+        // sanitize dynamic paths for portable snapshots
+        const sanitized = judges.map((j) => ({
+          ...j,
+          path: j.path?.replace(tempDir, '<route>'),
+        }));
+        expect(sanitized).toMatchSnapshot();
+      });
     });
   });
 
@@ -105,6 +127,27 @@ describe('runStoneGuardJudges', () => {
         );
         expect(judges[0]?.passed).toEqual(false);
         expect(judges[0]?.reason).toEqual('blockers found');
+      });
+
+      then('artifact snapshot matches', async () => {
+        const judges = await runStoneGuardJudges(
+          { stone, guard, hash: 'case2snap', iteration: 1, route: tempDir },
+          noopContext,
+        );
+        const content = await fs.readFile(judges[0]?.path ?? '', 'utf-8');
+        expect(content).toMatchSnapshot();
+      });
+
+      then('return value snapshot matches', async () => {
+        const judges = await runStoneGuardJudges(
+          { stone, guard, hash: 'case2ret', iteration: 1, route: tempDir },
+          noopContext,
+        );
+        const sanitized = judges.map((j) => ({
+          ...j,
+          path: j.path?.replace(tempDir, '<route>'),
+        }));
+        expect(sanitized).toMatchSnapshot();
       });
     });
   });
@@ -144,6 +187,29 @@ describe('runStoneGuardJudges', () => {
         expect(judges[0]?.passed).toEqual(true);
         expect(judges[1]?.index).toEqual(2);
         expect(judges[1]?.passed).toEqual(false);
+      });
+
+      then('artifact snapshots match', async () => {
+        const judges = await runStoneGuardJudges(
+          { stone, guard, hash: 'case3snap', iteration: 1, route: tempDir },
+          noopContext,
+        );
+        const content1 = await fs.readFile(judges[0]?.path ?? '', 'utf-8');
+        const content2 = await fs.readFile(judges[1]?.path ?? '', 'utf-8');
+        expect(content1).toMatchSnapshot();
+        expect(content2).toMatchSnapshot();
+      });
+
+      then('return value snapshot matches', async () => {
+        const judges = await runStoneGuardJudges(
+          { stone, guard, hash: 'case3ret', iteration: 1, route: tempDir },
+          noopContext,
+        );
+        const sanitized = judges.map((j) => ({
+          ...j,
+          path: j.path?.replace(tempDir, '<route>'),
+        }));
+        expect(sanitized).toMatchSnapshot();
       });
     });
   });
@@ -208,6 +274,36 @@ describe('runStoneGuardJudges', () => {
         // reason should include the actual route path
         expect(judges[0]?.reason).toContain(tempDir);
       });
+
+      then('artifact snapshot matches', async () => {
+        const judges = await runStoneGuardJudges(
+          { stone, guard, hash: 'case4snap', iteration: 1, route: tempDir },
+          noopContext,
+        );
+        const content = await fs.readFile(judges[0]?.path ?? '', 'utf-8');
+        // sanitize dynamic temp path for portable snapshots
+        const sanitized = content.replace(
+          new RegExp(tempDir.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'g'),
+          '<route-path>',
+        );
+        expect(sanitized).toMatchSnapshot();
+      });
+
+      then('return value snapshot matches', async () => {
+        const judges = await runStoneGuardJudges(
+          { stone, guard, hash: 'case4ret', iteration: 1, route: tempDir },
+          noopContext,
+        );
+        const sanitized = judges.map((j) => ({
+          ...j,
+          path: j.path?.replace(tempDir, '<route>'),
+          reason: j.reason?.replace(
+            new RegExp(tempDir.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'g'),
+            '<route-path>',
+          ),
+        }));
+        expect(sanitized).toMatchSnapshot();
+      });
     });
   });
 
@@ -247,6 +343,27 @@ describe('runStoneGuardJudges', () => {
         // same artifact path = cached result reused
         expect(judgesSecond[0]?.path).toEqual(firstPath);
       });
+
+      then('artifact snapshot matches', async () => {
+        const judges = await runStoneGuardJudges(
+          { stone, guard, hash: 'case5snap', iteration: 1, route: tempDir },
+          noopContext,
+        );
+        const content = await fs.readFile(judges[0]?.path ?? '', 'utf-8');
+        expect(content).toMatchSnapshot();
+      });
+
+      then('return value snapshot matches', async () => {
+        const judges = await runStoneGuardJudges(
+          { stone, guard, hash: 'case5ret', iteration: 1, route: tempDir },
+          noopContext,
+        );
+        const sanitized = judges.map((j) => ({
+          ...j,
+          path: j.path?.replace(tempDir, '<route>'),
+        }));
+        expect(sanitized).toMatchSnapshot();
+      });
     });
   });
 
@@ -285,6 +402,27 @@ describe('runStoneGuardJudges', () => {
         expect(judgesSecond[0]?.passed).toEqual(false);
         // different artifact path = fresh execution (not cached)
         expect(judgesSecond[0]?.path).not.toEqual(firstPath);
+      });
+
+      then('artifact snapshot matches', async () => {
+        const judges = await runStoneGuardJudges(
+          { stone, guard, hash: 'case6snap', iteration: 1, route: tempDir },
+          noopContext,
+        );
+        const content = await fs.readFile(judges[0]?.path ?? '', 'utf-8');
+        expect(content).toMatchSnapshot();
+      });
+
+      then('return value snapshot matches', async () => {
+        const judges = await runStoneGuardJudges(
+          { stone, guard, hash: 'case6ret', iteration: 1, route: tempDir },
+          noopContext,
+        );
+        const sanitized = judges.map((j) => ({
+          ...j,
+          path: j.path?.replace(tempDir, '<route>'),
+        }));
+        expect(sanitized).toMatchSnapshot();
       });
     });
   });
@@ -331,6 +469,18 @@ describe('runStoneGuardJudges', () => {
         );
         const content = await fs.readFile(judges[0]?.path ?? '', 'utf-8');
         expect(content).toMatchSnapshot();
+      });
+
+      then('return value snapshot matches', async () => {
+        const judges = await runStoneGuardJudges(
+          { stone, guard, hash: 'case7ret', iteration: 1, route: tempDir },
+          noopContext,
+        );
+        const sanitized = judges.map((j) => ({
+          ...j,
+          path: j.path?.replace(tempDir, '<route>'),
+        }));
+        expect(sanitized).toMatchSnapshot();
       });
     });
   });
@@ -379,6 +529,18 @@ describe('runStoneGuardJudges', () => {
         );
         const content = await fs.readFile(judges[0]?.path ?? '', 'utf-8');
         expect(content).toMatchSnapshot();
+      });
+
+      then('return value snapshot matches', async () => {
+        const judges = await runStoneGuardJudges(
+          { stone, guard, hash: 'case8ret', iteration: 1, route: tempDir },
+          noopContext,
+        );
+        const sanitized = judges.map((j) => ({
+          ...j,
+          path: j.path?.replace(tempDir, '<route>'),
+        }));
+        expect(sanitized).toMatchSnapshot();
       });
     });
   });
@@ -435,6 +597,18 @@ describe('runStoneGuardJudges', () => {
         const content = await fs.readFile(judges[0]?.path ?? '', 'utf-8');
         expect(content).toMatchSnapshot();
       });
+
+      then('return value snapshot matches', async () => {
+        const judges = await runStoneGuardJudges(
+          { stone, guard, hash: 'case9ret', iteration: 1, route: tempDir },
+          noopContext,
+        );
+        const sanitized = judges.map((j) => ({
+          ...j,
+          path: j.path?.replace(tempDir, '<route>'),
+        }));
+        expect(sanitized).toMatchSnapshot();
+      });
     });
   });
 
@@ -488,6 +662,236 @@ describe('runStoneGuardJudges', () => {
         expect(judgesSecond[0]?.passed).toEqual(false);
         // different artifact path = fresh execution (not cached)
         expect(judgesSecond[0]?.path).not.toEqual(firstPath);
+      });
+
+      then('artifact snapshot matches', async () => {
+        const judges = await runStoneGuardJudges(
+          { stone, guard, hash: 'case10snap', iteration: 1, route: tempDir },
+          noopContext,
+        );
+        const content = await fs.readFile(judges[0]?.path ?? '', 'utf-8');
+        expect(content).toMatchSnapshot();
+      });
+
+      then('return value snapshot matches', async () => {
+        const judges = await runStoneGuardJudges(
+          { stone, guard, hash: 'case10ret', iteration: 1, route: tempDir },
+          noopContext,
+        );
+        const sanitized = judges.map((j) => ({
+          ...j,
+          path: j.path?.replace(tempDir, '<route>'),
+        }));
+        expect(sanitized).toMatchSnapshot();
+      });
+    });
+  });
+
+  given('[case11] guard with $rhx variable in judge command', () => {
+    const tempDir = genTempDir({ slug: 'judges-rhx-var' });
+    const stone = new RouteStone({
+      name: '1.test',
+      path: path.join(tempDir, '1.test.stone'),
+      guard: null,
+    });
+    // command echoes $rhx to show what it expands to
+    const guard = new RouteStoneGuard({
+      path: path.join(tempDir, '1.test.guard'),
+      artifacts: ['1.test*.md'],
+      reviews: [],
+      judges: [`bash -c 'echo "passed: true"; echo "reason: rhx=$rhx"'`],
+      protect: [],
+    });
+
+    when('[t0] judge uses $rhx variable', () => {
+      then('$rhx is substituted with node_modules/.bin/rhx path', async () => {
+        const judges = await runStoneGuardJudges(
+          {
+            stone,
+            guard,
+            hash: 'rhxhash',
+            iteration: 1,
+            route: tempDir,
+          },
+          noopContext,
+        );
+        expect(judges).toHaveLength(1);
+        // should contain the expanded path in output
+        const content = await fs.readFile(judges[0]?.path ?? '', 'utf-8');
+        expect(content).toContain('node_modules/.bin/rhx');
+      });
+
+      then('artifact snapshot matches', async () => {
+        const judges = await runStoneGuardJudges(
+          { stone, guard, hash: 'rhxsnap', iteration: 1, route: tempDir },
+          noopContext,
+        );
+        const content = await fs.readFile(judges[0]?.path ?? '', 'utf-8');
+        // sanitize absolute path for portable snapshots
+        const sanitized = content.replace(
+          /rhx=.*\/node_modules/g,
+          'rhx=<repo-root>/node_modules',
+        );
+        expect(sanitized).toMatchSnapshot();
+      });
+
+      then('return value snapshot matches', async () => {
+        const judges = await runStoneGuardJudges(
+          { stone, guard, hash: 'case11ret', iteration: 1, route: tempDir },
+          noopContext,
+        );
+        const sanitized = judges.map((j) => ({
+          ...j,
+          path: j.path?.replace(tempDir, '<route>'),
+          reason: j.reason?.replace(
+            /rhx=.*\/node_modules/g,
+            'rhx=<repo-root>/node_modules',
+          ),
+        }));
+        expect(sanitized).toMatchSnapshot();
+      });
+    });
+  });
+
+  given('[case12] guard with $rhachet variable in judge command', () => {
+    const tempDir = genTempDir({ slug: 'judges-rhachet-var' });
+    const stone = new RouteStone({
+      name: '1.test',
+      path: path.join(tempDir, '1.test.stone'),
+      guard: null,
+    });
+    // command echoes $rhachet to show what it expands to
+    const guard = new RouteStoneGuard({
+      path: path.join(tempDir, '1.test.guard'),
+      artifacts: ['1.test*.md'],
+      reviews: [],
+      judges: [
+        `bash -c 'echo "passed: true"; echo "reason: rhachet=$rhachet"'`,
+      ],
+      protect: [],
+    });
+
+    when('[t0] judge uses $rhachet variable', () => {
+      then(
+        '$rhachet is substituted with node_modules/.bin/rhachet path',
+        async () => {
+          const judges = await runStoneGuardJudges(
+            {
+              stone,
+              guard,
+              hash: 'rhachethash',
+              iteration: 1,
+              route: tempDir,
+            },
+            noopContext,
+          );
+          expect(judges).toHaveLength(1);
+          // should contain the expanded path in output
+          const content = await fs.readFile(judges[0]?.path ?? '', 'utf-8');
+          expect(content).toContain('node_modules/.bin/rhachet');
+        },
+      );
+
+      then('artifact snapshot matches', async () => {
+        const judges = await runStoneGuardJudges(
+          { stone, guard, hash: 'rhachetsnap', iteration: 1, route: tempDir },
+          noopContext,
+        );
+        const content = await fs.readFile(judges[0]?.path ?? '', 'utf-8');
+        // sanitize absolute path for portable snapshots
+        const sanitized = content.replace(
+          /rhachet=.*\/node_modules/g,
+          'rhachet=<repo-root>/node_modules',
+        );
+        expect(sanitized).toMatchSnapshot();
+      });
+
+      then('return value snapshot matches', async () => {
+        const judges = await runStoneGuardJudges(
+          { stone, guard, hash: 'case12ret', iteration: 1, route: tempDir },
+          noopContext,
+        );
+        const sanitized = judges.map((j) => ({
+          ...j,
+          path: j.path?.replace(tempDir, '<route>'),
+          reason: j.reason?.replace(
+            /rhachet=.*\/node_modules/g,
+            'rhachet=<repo-root>/node_modules',
+          ),
+        }));
+        expect(sanitized).toMatchSnapshot();
+      });
+    });
+  });
+
+  given('[case13] guard with npx rhachet in judge command', () => {
+    const tempDir = genTempDir({ slug: 'judges-npx-rhachet' });
+    const stone = new RouteStone({
+      name: '1.test',
+      path: path.join(tempDir, '1.test.stone'),
+      guard: null,
+    });
+    const guard = new RouteStoneGuard({
+      path: path.join(tempDir, '1.test.guard'),
+      artifacts: ['1.test*.md'],
+      reviews: [],
+      judges: ['npx rhachet run --skill route.stone.judge'],
+      protect: [],
+    });
+
+    when('[t0] judge uses npx rhachet', () => {
+      then('throws error with fix suggestion', async () => {
+        await expect(
+          runStoneGuardJudges(
+            { stone, guard, hash: 'npxhash', iteration: 1, route: tempDir },
+            noopContext,
+          ),
+        ).rejects.toThrow('guard uses npx rhachet which causes latency');
+      });
+
+      then('error message suggests $rhachet alias', async () => {
+        await expect(
+          runStoneGuardJudges(
+            { stone, guard, hash: 'npxhash2', iteration: 1, route: tempDir },
+            noopContext,
+          ),
+        ).rejects.toThrow('use $rhachet alias instead');
+      });
+    });
+  });
+
+  given('[case14] guard with npx rhx in judge command', () => {
+    const tempDir = genTempDir({ slug: 'judges-npx-rhx' });
+    const stone = new RouteStone({
+      name: '1.test',
+      path: path.join(tempDir, '1.test.stone'),
+      guard: null,
+    });
+    const guard = new RouteStoneGuard({
+      path: path.join(tempDir, '1.test.guard'),
+      artifacts: ['1.test*.md'],
+      reviews: [],
+      judges: ['npx rhx route.stone.judge --stone 1.test'],
+      protect: [],
+    });
+
+    when('[t0] judge uses npx rhx', () => {
+      then('throws error with fix suggestion', async () => {
+        await expect(
+          runStoneGuardJudges(
+            { stone, guard, hash: 'npxrhxhash', iteration: 1, route: tempDir },
+            noopContext,
+          ),
+        ).rejects.toThrow('guard uses npx rhx which causes latency');
+      });
+
+      then('error message suggests $rhx alias', async () => {
+        await expect(
+          runStoneGuardJudges(
+            { stone, guard, hash: 'npxrhxhash2', iteration: 1, route: tempDir },
+            noopContext,
+          ),
+        ).rejects.toThrow('use $rhx alias instead');
       });
     });
   });
