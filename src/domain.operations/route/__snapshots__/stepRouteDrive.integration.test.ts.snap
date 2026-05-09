@@ -5,7 +5,7 @@ exports[`stepRouteDrive.integration given: [case4] route with unpassed stones ca
 
 🗿 route.drive
    ├─ where do we go?
-   │  ├─ route = /home/vlad/git/ehmpathy/_worktrees/rhachet-roles-bhrain.vlad.fix-route-rhx-alias/.temp/genTempDir.symlink/2026-04-26T23-28-03.115Z.drive-int-case4.6bd8778e
+   │  ├─ route = .temp/genTempDir.symlink/<ts>.drive-int-case4.<hash>
    │  └─ stone = 1
    │
    ├─ are you here?
@@ -35,7 +35,7 @@ exports[`stepRouteDrive.integration given: [case4] route with unpassed stones ca
 
 🗿 route.drive
    ├─ where do we go?
-   │  ├─ route = /home/vlad/git/ehmpathy/_worktrees/rhachet-roles-bhrain.vlad.fix-route-rhx-alias/.temp/genTempDir.symlink/2026-04-26T23-28-03.115Z.drive-int-case4.6bd8778e
+   │  ├─ route = .temp/genTempDir.symlink/<ts>.drive-int-case4.<hash>
    │  └─ stone = 1
    │
    ├─ are you here?

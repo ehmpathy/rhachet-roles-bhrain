@@ -394,7 +394,7 @@ exports[`achiever.goal.triage.acceptance given: [case3] goal status transitions 
    │  │     └─
    │  └─ source = peer:human
    │
-   ├─ path = .goals/[BRANCH]/[OFFSET].lifecycle-goal.goal.yaml
+   ├─ path = .goals/[BRANCH]/00000-1.lifecycle-goal.goal.yaml
    └─ persisted
 "
 `;
@@ -454,7 +454,7 @@ exports[`achiever.goal.triage.acceptance given: [case3] goal status transitions 
    │  │     └─
    │  └─ source = peer:human
    │
-   ├─ path = .goals/[BRANCH]/[OFFSET].lifecycle-goal.goal.yaml
+   ├─ path = .goals/[BRANCH]/00000-1.lifecycle-goal.goal.yaml
    └─ persisted
 "
 `;
@@ -514,7 +514,7 @@ exports[`achiever.goal.triage.acceptance given: [case3] goal status transitions 
    │  │     └─
    │  └─ source = peer:human
    │
-   ├─ path = .goals/[BRANCH]/[OFFSET].lifecycle-goal.goal.yaml
+   ├─ path = .goals/[BRANCH]/00000-1.lifecycle-goal.goal.yaml
    └─ persisted
 "
 `;
@@ -549,7 +549,7 @@ exports[`achiever.goal.triage.acceptance given: [case4] partial goals via CLI fl
    │  │     └─
    │  └─ source = peer:human
    │
-   ├─ path = .goals/[BRANCH]/[OFFSET].quick-capture-test.goal.yaml
+   ├─ path = .goals/[BRANCH]/00000-1.quick-capture-test.goal.yaml
    └─ persisted
 "
 `;
@@ -669,7 +669,7 @@ exports[`achiever.goal.triage.acceptance given: [case4] partial goals via CLI fl
    │  │     └─
    │  └─ source = peer:human
    │
-   ├─ path = .goals/[BRANCH]/[OFFSET].quick-capture-test.goal.yaml
+   ├─ path = .goals/[BRANCH]/00000-1.quick-capture-test.goal.yaml
    └─ persisted
 "
 `;
@@ -729,7 +729,7 @@ exports[`achiever.goal.triage.acceptance given: [case4] partial goals via CLI fl
    │  │     └─
    │  └─ source = peer:human
    │
-   ├─ path = .goals/[BRANCH]/[OFFSET].quick-capture-test.goal.yaml
+   ├─ path = .goals/[BRANCH]/00000-1.quick-capture-test.goal.yaml
    └─ persisted
 "
 `;

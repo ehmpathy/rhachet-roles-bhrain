@@ -11,11 +11,11 @@ exports[`driver.route.artifact-expansion.acceptance given: [case1] guard with $r
    ├─ reason = wait for human approval
    └─ guard
       ├─ artifacts
-      │   └─ 1.vision.md
+      │   └─ $route/1.vision*.md
       ├─ reviews
       │   └─ r1: bash -c 'if [ -f "$route/1.vision.md" ]; then echo "blockers: 0"; echo "artifact present at $route"; else echo "blockers: 1"; echo "artifact absent at $route"; fi'
       │       ├─ finished [TIME] ✓
-      │       └─ review: .route/1.vision.guard.review.i1.b8e920970d841849e881399c4e5aa3f3a65139d95e252dfe2d9da99b9d1a487c.r1.md
+      │       └─ review: .route/1.vision.guard.review.i1.0e5633ef7ed403dccb68d850141f95ee88dfe895fdccb3dc09c1342c38cb97f5.r1.md
       └─ judges
           └─ j1: rhx route.stone.judge --mechanism approved? --stone $stone --route $route
               ├─ finished [TIME] ✗
@@ -33,7 +33,7 @@ exports[`driver.route.artifact-expansion.acceptance given: [case1] guard with $r
    ├─ passage = allowed
    ├─ guard
    │  ├─ artifacts
-   │  │   └─ 1.vision.md
+   │  │   └─ $route/1.vision*.md
    │  ├─ reviews
    │  │   └─ r1: bash -c 'if [ -f "$route/1.vision.md" ]; then echo "blockers: 0"; echo "artifact present at $route"; else echo "blockers: 1"; echo "artifact absent at $route"; fi'
    │  │       └─ · cached
@@ -58,11 +58,11 @@ exports[`driver.route.artifact-expansion.acceptance given: [case2] guard with $r
    ├─ reason = wait for human approval
    └─ guard
       ├─ artifacts
-      │   └─ 1.vision.md
+      │   └─ $route/1.vision*.md
       ├─ reviews
       │   └─ r1: bash -c 'if [ -f "$route/1.vision.md" ]; then echo "blockers: 0"; echo "artifact present at $route"; else echo "blockers: 1"; echo "artifact absent at $route"; fi'
       │       ├─ finished [TIME] ✓
-      │       └─ review: .route/1.vision.guard.review.i1.3db2db995e943d5489545acc1deb4e5e7fa92632ebf3a76ccb5a04c7493bbd63.r1.md
+      │       └─ review: .route/1.vision.guard.review.i1.cf66a6fa1ab9aaeee6c8003c1fc2b5e88eafec45fd48399d39e7847da42f30b7.r1.md
       └─ judges
           └─ j1: rhx route.stone.judge --mechanism approved? --stone $stone --route $route
               ├─ finished [TIME] ✗
@@ -80,7 +80,7 @@ exports[`driver.route.artifact-expansion.acceptance given: [case2] guard with $r
    ├─ passage = allowed
    ├─ guard
    │  ├─ artifacts
-   │  │   └─ 1.vision.md
+   │  │   └─ $route/1.vision*.md
    │  ├─ reviews
    │  │   └─ r1: bash -c 'if [ -f "$route/1.vision.md" ]; then echo "blockers: 0"; echo "artifact present at $route"; else echo "blockers: 1"; echo "artifact absent at $route"; fi'
    │  │       └─ · cached

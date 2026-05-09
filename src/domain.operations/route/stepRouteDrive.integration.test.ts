@@ -166,9 +166,10 @@ describe('stepRouteDrive.integration', () => {
       });
 
       then('stdout matches snapshot (normalized)', () => {
+        // mask timestamp and hash, keep slug visible
         const normalized = result.emit?.stdout?.replace(
-          /route: .*$/m,
-          'route: <tempdir>',
+          /\.temp\/genTempDir\.symlink\/[\dT.-]+Z\.([^.]+)\.[a-f0-9]+/,
+          '.temp/genTempDir.symlink/<ts>.$1.<hash>',
         );
         expect(normalized).toMatchSnapshot();
       });
@@ -192,9 +193,10 @@ describe('stepRouteDrive.integration', () => {
       });
 
       then('stdout matches snapshot (normalized)', () => {
+        // mask timestamp and hash, keep slug visible
         const normalized = result.emit?.stdout?.replace(
-          /route: .*$/m,
-          'route: <tempdir>',
+          /\.temp\/genTempDir\.symlink\/[\dT.-]+Z\.([^.]+)\.[a-f0-9]+/,
+          '.temp/genTempDir.symlink/<ts>.$1.<hash>',
         );
         expect(normalized).toMatchSnapshot();
       });

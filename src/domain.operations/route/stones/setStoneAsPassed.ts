@@ -334,7 +334,13 @@ export const setStoneAsPassed = async (
         for (const line of content.split('\n')) {
           stderrLines.push(`   ${line}`);
         }
-      } catch {
+      } catch (error) {
+        // graceful fallback for display: file may not exist or be unreadable
+        const isExpected =
+          error instanceof Error &&
+          (error.message.includes('ENOENT') ||
+            error.message.includes('EACCES'));
+        if (!isExpected) throw error;
         stderrLines.push(`   └─ malfunction (exit code ${review.exitCode})`);
       }
     }
@@ -346,7 +352,13 @@ export const setStoneAsPassed = async (
         for (const line of content.split('\n')) {
           stderrLines.push(`   ${line}`);
         }
-      } catch {
+      } catch (error) {
+        // graceful fallback for display: file may not exist or be unreadable
+        const isExpected =
+          error instanceof Error &&
+          (error.message.includes('ENOENT') ||
+            error.message.includes('EACCES'));
+        if (!isExpected) throw error;
         stderrLines.push(`   └─ malfunction (exit code ${judge.exitCode})`);
       }
     }
@@ -462,7 +474,12 @@ export const setStoneAsPassed = async (
       for (const line of artifactContent.split('\n')) {
         stderrLines.push(`   ${line}`);
       }
-    } catch {
+    } catch (error) {
+      // graceful fallback for display: file may not exist or be unreadable
+      const isExpected =
+        error instanceof Error &&
+        (error.message.includes('ENOENT') || error.message.includes('EACCES'));
+      if (!isExpected) throw error;
       // fallback to reason if file read fails
       if (judge.reason) {
         stderrLines.push(`   └─ ${judge.reason}`);
@@ -515,14 +532,12 @@ const computeGuardData = (input: {
     ? getGuardPeerReviews(input.stone.guard)
     : [];
 
-  // compute artifact file names for display
-  const artifactFileNames = input.artifactFiles.map((f) => path.basename(f));
-
-  // use original artifact globs for cachedOn (shows what invalidates the cache)
+  // use original artifact globs for display (not expanded file paths)
+  // this prevents 700+ lines of output when guard declares src/**/*
   const artifactGlobs = input.stone.guard?.artifacts ?? [];
 
   return {
-    artifactFiles: artifactFileNames,
+    artifactFiles: artifactGlobs,
     reviews: input.reviewArtifacts.map((r) => {
       // match event by step.index (0-based) to artifact.index (1-based)
       const event = reviewEventsCompleted.find(
