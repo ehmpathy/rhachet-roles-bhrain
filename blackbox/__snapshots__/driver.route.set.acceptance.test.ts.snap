@@ -49,11 +49,11 @@ exports[`driver.route.set.acceptance given: [case3] route.stone.set --as passed 
    ├─ passage = allowed
    ├─ guard
    │  ├─ artifacts
-   │  │   └─ 1.test.md
+   │  │   └─ $route/1.test*.md
    │  ├─ reviews
    │  │   └─ r1: echo "blockers: 0\\nnitpicks: 1\\ntest review content"
    │  │       ├─ finished 0.0s ✓
-   │  │       ├─ review: .route/1.test.guard.review.i1.e2f8d2b5671b203b4a673b24f3772d3f6a7cac1669258302d777591e974dc82b.r1.md
+   │  │       ├─ review: .route/1.test.guard.review.i1.9689fc92d884d9c4b3a38070de81b96159605214ebb0ac479ceb398d09a2d68b.r1.md
    │  │       └─ 1 nitpick 🟠
    │  └─ judges
    │      └─ j1: echo "passed: true\\nreason: all checks passed"
@@ -92,11 +92,11 @@ exports[`driver.route.set.acceptance given: [case4] route.stone.set --as passed 
    ├─ reason = blockers exceed threshold (3 > 0)
    └─ guard
       ├─ artifacts
-      │   └─ 2.blocked.md
+      │   └─ $route/2.blocked*.md
       ├─ reviews
       │   └─ r1: echo "blockers: 3\\nnitpicks: 1\\nreview with blockers"
       │       ├─ finished 0.0s ✓
-      │       ├─ review: .route/2.blocked.guard.review.i1.017c9b4c5e71d0216f9140cf06d029c9f3dd492bb8128d136e39c2c3a617f3df.r1.md
+      │       ├─ review: .route/2.blocked.guard.review.i1.a5ef6a70ff81374ace4a9363a4eef33bf8d86e57f16a5b53cf2f08e5c44a74bf.r1.md
       │       ├─ 3 blockers 🔴
       │       └─ 1 nitpick 🟠
       └─ judges
@@ -158,7 +158,7 @@ exports[`driver.route.set.acceptance given: [case7] route.stone.set --as passed 
    ├─ passage = allowed
    ├─ guard
    │  ├─ artifacts
-   │  │   └─ 1.test.md
+   │  │   └─ $route/1.test*.md
    │  ├─ reviews
    │  │   └─ r1: echo "blockers: 0\\nnitpicks: 1\\ntest review content"
    │  │       └─ · cached

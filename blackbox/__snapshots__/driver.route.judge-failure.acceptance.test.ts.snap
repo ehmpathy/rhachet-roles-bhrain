@@ -29,7 +29,7 @@ exports[`driver.route.judge-failure.acceptance given: [case1] judge command fail
    ├─ reason = reviewer or judge malfunctioned
    └─ guard
       ├─ artifacts
-      │   └─ 1.stone.i1.md
+      │   └─ $route/1.stone*.md
       └─ judges
           └─ j1: .test/mock-judge-fail.sh --stone $stone --route $route
               ├─ finished [TIME] ✗
@@ -66,7 +66,7 @@ exports[`driver.route.judge-failure.acceptance given: [case1] judge command fail
    ├─ reason = reviewer or judge malfunctioned
    └─ guard
       ├─ artifacts
-      │   └─ 1.stone.i1.md
+      │   └─ $route/1.stone*.md
       └─ judges
           └─ j1: .test/mock-judge-fail.sh --stone $stone --route $route
               ├─ finished [TIME] ✗

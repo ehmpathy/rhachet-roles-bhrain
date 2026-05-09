@@ -42,18 +42,6 @@
           },
           {
             "type": "command",
-            "command": "./node_modules/.bin/rhx goal.triage.next --when hook.onBoot",
-            "timeout": 10,
-            "author": "repo=bhrain/role=achiever"
-          },
-          {
-            "type": "command",
-            "command": "./node_modules/.bin/rhachet roles boot --role achiever",
-            "timeout": 30,
-            "author": "repo=bhrain/role=achiever"
-          },
-          {
-            "type": "command",
             "command": "./node_modules/.bin/rhachet roles boot --role driver",
             "timeout": 30,
             "author": "repo=bhrain/role=driver"
@@ -66,12 +54,6 @@
           },
           {
             "type": "command",
-            "command": "npx rhachet roles boot --role behaver",
-            "timeout": 10,
-            "author": "repo=bhuild/role=behaver"
-          },
-          {
-            "type": "command",
             "command": "./node_modules/.bin/rhx route.drive --when hook.onBoot",
             "timeout": 5,
             "author": "repo=bhrain/role=driver"
@@ -81,6 +63,18 @@
             "command": "./node_modules/.bin/rhachet roles boot --role librarian",
             "timeout": 30,
             "author": "repo=bhrain/role=librarian"
+          },
+          {
+            "type": "command",
+            "command": "./node_modules/.bin/rhachet roles boot --role behaver",
+            "timeout": 10,
+            "author": "repo=bhuild/role=behaver"
+          },
+          {
+            "type": "command",
+            "command": "./node_modules/.bin/rhachet roles boot --role dreamer",
+            "timeout": 10,
+            "author": "repo=bhuild/role=dreamer"
           }
         ]
       },
@@ -185,12 +179,6 @@
             "command": "./node_modules/.bin/rhx route.mutate.guard --mode hook",
             "timeout": 5,
             "author": "repo=bhrain/role=driver"
-          },
-          {
-            "type": "command",
-            "command": "./node_modules/.bin/rhx goal.guard",
-            "timeout": 5,
-            "author": "repo=bhrain/role=achiever"
           }
         ]
       },
@@ -212,18 +200,6 @@
         "hooks": [
           {
             "type": "command",
-            "command": "./node_modules/.bin/rhx goal.triage.infer --when hook.onStop",
-            "timeout": 10,
-            "author": "repo=bhrain/role=achiever"
-          },
-          {
-            "type": "command",
-            "command": "./node_modules/.bin/rhx goal.triage.next --when hook.onStop",
-            "timeout": 10,
-            "author": "repo=bhrain/role=achiever"
-          },
-          {
-            "type": "command",
             "command": "./node_modules/.bin/rhx route.drive --when hook.onStop",
             "timeout": 5,
             "author": "repo=bhrain/role=driver"
@@ -231,19 +207,7 @@
         ]
       }
     ],
-    "UserPromptSubmit": [
-      {
-        "matcher": "*",
-        "hooks": [
-          {
-            "type": "command",
-            "command": "./node_modules/.bin/rhx goal.triage.infer --when hook.onTalk",
-            "timeout": 5,
-            "author": "repo=bhrain/role=achiever"
-          }
-        ]
-      }
-    ]
+    "UserPromptSubmit": []
   },
   "permissions": {
     "allow": [
@@ -288,6 +252,9 @@
       "Bash(rhx git.repo.test --what unit)",
       "Bash(rhx git.repo.test --what integration)",
       "Bash(rhx git.repo.test --what acceptance)",
+      "Bash(rhx git.repo.test --what unit --scope 'name://getUserById')",
+      "Bash(rhx git.repo.test --what integration --scope 'name://invoice')",
+      "Bash(rhx git.repo.test --what unit --scope 'path://src/domain.operations/customer')",
       "Bash(rhx git.repo.test --what unit --scope getUserById)",
       "Bash(rhx git.repo.test --what integration --scope invoice)",
       "Bash(rhx git.repo.test --what unit --scope src/domain.operations/customer)",

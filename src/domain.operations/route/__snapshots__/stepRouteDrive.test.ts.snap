@@ -5,7 +5,7 @@ exports[`stepRouteDrive given: [case4] vibecheck snapshots when: [t0] route has 
 
 🗿 route.drive
    ├─ where do we go?
-   │  ├─ route = <ROUTE>
+   │  ├─ route = .temp/genTempDir.symlink/<ts>.drive-snap.<hash>
    │  └─ stone = 1.vision
    │
    ├─ are you here?
@@ -46,7 +46,7 @@ exports[`stepRouteDrive given: [case5] route with malfunction status when: [t2] 
 
 🗿 route.drive
    ├─ where do we go?
-   │  ├─ route = <ROUTE>
+   │  ├─ route = .temp/genTempDir.symlink/<ts>.drive-malfunction.<hash>
    │  └─ stone = 1.vision
    │
    └─ 💥 halted, guard malfunction
@@ -73,7 +73,7 @@ exports[`stepRouteDrive given: [case6] drum nudge after 7+ hooks when: [t2] nudg
 
 🗿 route.drive
    ├─ where do we go?
-   │  ├─ route = <ROUTE>
+   │  ├─ route = .temp/genTempDir.symlink/<ts>.drive-nudge.<hash>
    │  └─ stone = 1.vision
    │
    ├─ are you here?
@@ -135,7 +135,7 @@ exports[`stepRouteDrive given: [case7] tea pause after 5+ hooks when: [t2] tea p
 
 🗿 route.drive
    ├─ where do we go?
-   │  ├─ route = <ROUTE>
+   │  ├─ route = .temp/genTempDir.symlink/<ts>.drive-tea-pause.<hash>
    │  └─ stone = 1.vision
    │
    ├─ are you here?
@@ -182,7 +182,7 @@ exports[`stepRouteDrive given: [case8] when=hook.onBoot with unpassed stones whe
 
 🗿 route.drive
    ├─ where do we go?
-   │  ├─ route = <ROUTE>
+   │  ├─ route = .temp/genTempDir.symlink/<ts>.drive-onboot-unpassed.<hash>
    │  └─ stone = 1.vision
    │
    ├─ are you here?
@@ -216,7 +216,7 @@ exports[`stepRouteDrive given: [case10] when=hook.onStop with unpassed stones wh
 
 🗿 route.drive
    ├─ where do we go?
-   │  ├─ route = <ROUTE>
+   │  ├─ route = .temp/genTempDir.symlink/<ts>.drive-onstop-unpassed.<hash>
    │  └─ stone = 1.vision
    │
    ├─ are you here?

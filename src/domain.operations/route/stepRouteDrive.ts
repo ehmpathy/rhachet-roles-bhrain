@@ -1,4 +1,5 @@
 import * as fs from 'fs/promises';
+import * as path from 'path';
 
 import { getRouteBindByBranch } from './bind/getRouteBindByBranch';
 import { computeRouteBouncerCache } from './bouncer/computeRouteBouncerCache';
@@ -315,7 +316,7 @@ const formatRouteDriveExhausted = (input: {
   lines.push('');
   lines.push(`🗿 route.drive`);
   lines.push(`   ├─ where do we go?`);
-  lines.push(`   │  ├─ route = ${input.route}`);
+  lines.push(`   │  ├─ route = ${path.relative(process.cwd(), input.route)}`);
   lines.push(`   │  └─ stone = ${input.stone}`);
   lines.push(`   │`);
   lines.push(`   └─ ⚠️ stuck! blocked ${input.count}x (max: ${input.max})`);
@@ -350,7 +351,7 @@ const formatRouteDriveNeedsApproval = (input: {
   lines.push('');
   lines.push(`🗿 route.drive`);
   lines.push(`   ├─ where do we go?`);
-  lines.push(`   │  ├─ route = ${input.route}`);
+  lines.push(`   │  ├─ route = ${path.relative(process.cwd(), input.route)}`);
   lines.push(`   │  └─ stone = ${input.stone}`);
   lines.push(`   │`);
   lines.push(`   └─ halted, human approval required`);
@@ -375,7 +376,7 @@ const formatRouteDriveMalfunction = (input: {
   lines.push('');
   lines.push(`🗿 route.drive`);
   lines.push(`   ├─ where do we go?`);
-  lines.push(`   │  ├─ route = ${input.route}`);
+  lines.push(`   │  ├─ route = ${path.relative(process.cwd(), input.route)}`);
   lines.push(`   │  └─ stone = ${input.stone}`);
   lines.push(`   │`);
   lines.push(`   └─ 💥 halted, guard malfunction`);
@@ -403,13 +404,14 @@ const formatRouteDriveBlocked = (input: {
   route: string;
   stone: string;
 }): string => {
-  const articulationPath = `${input.route}/blocker/${input.stone}.md`;
+  const routeRelative = path.relative(process.cwd(), input.route);
+  const articulationPath = `${routeRelative}/blocker/${input.stone}.md`;
   const lines: string[] = [];
   lines.push(`🦉 where were we?`);
   lines.push('');
   lines.push(`🗿 route.drive`);
   lines.push(`   ├─ where do we go?`);
-  lines.push(`   │  ├─ route = ${input.route}`);
+  lines.push(`   │  ├─ route = ${routeRelative}`);
   lines.push(`   │  └─ stone = ${input.stone}`);
   lines.push(`   │`);
   lines.push(`   └─ halted, stone marked blocked`);
@@ -481,7 +483,7 @@ const formatRouteDrive = (input: {
   // route.drive tree
   lines.push(`🗿 route.drive`);
   lines.push(`   ├─ where do we go?`);
-  lines.push(`   │  ├─ route = ${input.route}`);
+  lines.push(`   │  ├─ route = ${path.relative(process.cwd(), input.route)}`);
   lines.push(`   │  └─ stone = ${input.stone}`);
   lines.push(`   │`);
 

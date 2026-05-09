@@ -19,7 +19,7 @@ exports[`driver.route.journey.acceptance given: [journey] weather api route when
    ├─ reason = wait for human approval
    └─ guard
       ├─ artifacts
-      │   └─ 1.vision.md
+      │   └─ $route/1.vision*.md
       └─ judges
           └─ j1: rhx route.stone.judge --mechanism approved? --stone $stone --route $route
               ├─ finished [TIME] ✗
@@ -45,7 +45,7 @@ exports[`driver.route.journey.acceptance given: [journey] weather api route when
    ├─ passage = allowed
    ├─ guard
    │  ├─ artifacts
-   │  │   └─ 1.vision.md
+   │  │   └─ $route/1.vision*.md
    │  └─ judges
    │      └─ j1: rhx route.stone.judge --mechanism approved? --stone $stone --route $route
    │          └─ finished [TIME] ✓
@@ -223,7 +223,7 @@ exports[`driver.route.journey.acceptance given: [journey] weather api route when
    ├─ reason = wait for human approval
    └─ guard
       ├─ artifacts
-      │   └─ 3.blueprint.md
+      │   └─ $route/3.blueprint*.md
       ├─ reviews
       │   └─ r1: bash $route/.test/mock-review.sh
       │       └─ · cached
@@ -250,11 +250,11 @@ exports[`driver.route.journey.acceptance given: [journey] weather api route when
    ├─ reason = blockers exceed threshold (1 > 0); wait for human approval
    └─ guard
       ├─ artifacts
-      │   └─ 3.blueprint.md
+      │   └─ $route/3.blueprint*.md
       ├─ reviews
       │   └─ r1: bash $route/.test/mock-review.sh
       │       ├─ finished [TIME] ✓
-      │       ├─ review: .route/3.blueprint.guard.review.i1.fd29f621e589e44175adf2201fa80bf72797235b994355101b4f50e08e4ebe44.r1.md
+      │       ├─ review: .route/3.blueprint.guard.review.i1.1d56dead46a5a7fadd50021f11880e1db6d0ac194a624845a509135664bd1d38.r1.md
       │       └─ 1 blocker 🔴
       └─ judges
           ├─ j1: rhx route.stone.judge --mechanism reviewed? --stone $stone --route $route --allow-blockers 0 --allow-nitpicks 2
@@ -277,7 +277,7 @@ exports[`driver.route.journey.acceptance given: [journey] weather api route when
    ├─ passage = allowed
    ├─ guard
    │  ├─ artifacts
-   │  │   └─ 3.blueprint.md
+   │  │   └─ $route/3.blueprint*.md
    │  ├─ reviews
    │  │   └─ r1: bash $route/.test/mock-review.sh
    │  │       └─ · cached
@@ -312,11 +312,11 @@ exports[`driver.route.journey.acceptance given: [journey] weather api route when
    ├─ passage = allowed
    ├─ guard
    │  ├─ artifacts
-   │  │   └─ weather.ts
+   │  │   └─ src/**/*.ts
    │  ├─ reviews
    │  │   └─ r1: bash $route/.test/mock-review.sh
    │  │       ├─ finished [TIME] ✓
-   │  │       └─ review: .route/5.execute.guard.review.i1.e5c031c5923de2dd7ebc77d84ac1c222cfdb9d3143fa8c0bc27ed9d821ce74e3.r1.md
+   │  │       └─ review: .route/5.execute.guard.review.i1.702cbb466dde718a696823f05a6c6d6614e3be4f25ef1f63e578d23844e407cf.r1.md
    │  └─ judges
    │      └─ j1: rhx route.stone.judge --mechanism reviewed? --stone $stone --route $route --allow-blockers 0 --allow-nitpicks 1
    │          └─ finished [TIME] ✓

@@ -32,7 +32,7 @@ nitpicks: 1
 review output
 ",
     "stone": {
-      "path": "/tmp/test-reviews-1777246077504/1.test.stone",
+      "path": "/tmp/test-reviews-1778328373657/1.test.stone",
     },
   },
 ]
@@ -82,7 +82,7 @@ exports[`runStoneGuardReviews given: [case2] guard with multiple review commands
 nitpicks: 0
 ",
     "stone": {
-      "path": "/tmp/test-reviews-multi-1777246077505/1.test.stone",
+      "path": "/tmp/test-reviews-multi-1778328373658/1.test.stone",
     },
   },
   {
@@ -99,7 +99,7 @@ nitpicks: 0
 nitpicks: 2
 ",
     "stone": {
-      "path": "/tmp/test-reviews-multi-1777246077505/1.test.stone",
+      "path": "/tmp/test-reviews-multi-1778328373658/1.test.stone",
     },
   },
 ]
@@ -135,7 +135,7 @@ exports[`runStoneGuardReviews given: [case3] review exits with code 0 (passed) w
 review passed
 ",
     "stone": {
-      "path": "/tmp/test-reviews-exit0-1777246077505/1.test.stone",
+      "path": "/tmp/test-reviews-exit0-1778328373659/1.test.stone",
     },
   },
 ]
@@ -174,7 +174,7 @@ exports[`runStoneGuardReviews given: [case4] review exits with code 2 (constrain
 constraint failure
 ",
     "stone": {
-      "path": "/tmp/test-reviews-exit2-1777246077505/1.test.stone",
+      "path": "/tmp/test-reviews-exit2-1778328373660/1.test.stone",
     },
   },
 ]
@@ -214,7 +214,7 @@ exports[`runStoneGuardReviews given: [case5] review exits with code 1 (malfuncti
     "stdout": "stdout output
 ",
     "stone": {
-      "path": "/tmp/test-reviews-exit1-1777246077506/1.test.stone",
+      "path": "/tmp/test-reviews-exit1-1778328373661/1.test.stone",
     },
   },
 ]
@@ -252,7 +252,7 @@ nitpicks: 0
 marker found at <route-path>
 ",
     "stone": {
-      "path": "/tmp/test-reviews-route-1777246077506/1.test.stone",
+      "path": "/tmp/test-reviews-route-1778328373662/1.test.stone",
     },
   },
 ]
@@ -290,7 +290,7 @@ nitpicks: 0
 rhx=<repo-root>/node_modules/.bin/rhx
 ",
     "stone": {
-      "path": "/tmp/test-reviews-rhx-1777246077506/1.test.stone",
+      "path": "/tmp/test-reviews-rhx-1778328373663/1.test.stone",
     },
   },
 ]
@@ -328,7 +328,7 @@ nitpicks: 0
 rhachet=<repo-root>/node_modules/.bin/rhachet
 ",
     "stone": {
-      "path": "/tmp/test-reviews-rhachet-1777246077506/1.test.stone",
+      "path": "/tmp/test-reviews-rhachet-1778328373664/1.test.stone",
     },
   },
 ]

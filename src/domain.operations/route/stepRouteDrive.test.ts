@@ -157,10 +157,10 @@ describe('stepRouteDrive', () => {
     when('[t0] route has next stone', () => {
       then('output matches snapshot', async () => {
         const result = await stepRouteDrive({ route: scene.tempDir });
-        // replace temp path for snapshot stability
+        // mask timestamp and hash, keep slug visible
         const outputStable = result.emit?.stdout?.replace(
-          scene.tempDir,
-          '<ROUTE>',
+          /\.temp\/genTempDir\.symlink\/[\dT.-]+Z\.([^.]+)\.[a-f0-9]+/,
+          '.temp/genTempDir.symlink/<ts>.$1.<hash>',
         );
         expect(outputStable).toMatchSnapshot();
       });
@@ -270,10 +270,10 @@ describe('stepRouteDrive', () => {
           route: scene.tempDir,
           when: 'hook.onStop',
         });
-        // replace temp path for snapshot stability
+        // mask timestamp and hash, keep slug visible
         const outputStable = result.emit?.stdout?.replace(
-          scene.tempDir,
-          '<ROUTE>',
+          /\.temp\/genTempDir\.symlink\/[\dT.-]+Z\.([^.]+)\.[a-f0-9]+/,
+          '.temp/genTempDir.symlink/<ts>.$1.<hash>',
         );
         expect(outputStable).toMatchSnapshot();
       });
@@ -338,10 +338,10 @@ describe('stepRouteDrive', () => {
           route: scene.tempDir,
           when: 'hook.onStop',
         });
-        // replace temp path for snapshot stability
+        // mask timestamp and hash, keep slug visible
         const outputStable = result.emit?.stdout?.replace(
-          scene.tempDir,
-          '<ROUTE>',
+          /\.temp\/genTempDir\.symlink\/[\dT.-]+Z\.([^.]+)\.[a-f0-9]+/,
+          '.temp/genTempDir.symlink/<ts>.$1.<hash>',
         );
         expect(outputStable).toMatchSnapshot();
       });
@@ -409,10 +409,10 @@ describe('stepRouteDrive', () => {
           route: scene.tempDir,
           when: 'hook.onStop',
         });
-        // replace temp path for snapshot stability
+        // mask timestamp and hash, keep slug visible
         const outputStable = result.emit?.stdout?.replace(
-          scene.tempDir,
-          '<ROUTE>',
+          /\.temp\/genTempDir\.symlink\/[\dT.-]+Z\.([^.]+)\.[a-f0-9]+/,
+          '.temp/genTempDir.symlink/<ts>.$1.<hash>',
         );
         expect(outputStable).toMatchSnapshot();
       });
@@ -445,9 +445,10 @@ describe('stepRouteDrive', () => {
           route: scene.tempDir,
           when: 'hook.onBoot',
         });
+        // mask timestamp and hash, keep slug visible
         const outputStable = result.emit?.stdout?.replace(
-          scene.tempDir,
-          '<ROUTE>',
+          /\.temp\/genTempDir\.symlink\/[\dT.-]+Z\.([^.]+)\.[a-f0-9]+/,
+          '.temp/genTempDir.symlink/<ts>.$1.<hash>',
         );
         expect(outputStable).toMatchSnapshot();
       });
@@ -512,9 +513,10 @@ describe('stepRouteDrive', () => {
           route: scene.tempDir,
           when: 'hook.onStop',
         });
+        // mask timestamp and hash, keep slug visible
         const outputStable = result.emit?.stdout?.replace(
-          scene.tempDir,
-          '<ROUTE>',
+          /\.temp\/genTempDir\.symlink\/[\dT.-]+Z\.([^.]+)\.[a-f0-9]+/,
+          '.temp/genTempDir.symlink/<ts>.$1.<hash>',
         );
         expect(outputStable).toMatchSnapshot();
       });

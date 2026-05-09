@@ -11,11 +11,11 @@ exports[`driver.route.escape-hatch.acceptance given: [escape-hatch] stone with p
    ├─ reason = blockers exceed threshold (1 > 0)
    └─ guard
       ├─ artifacts
-      │   └─ 1.design.md
+      │   └─ $route/1.design*.md
       ├─ reviews
       │   └─ r1: bash $route/.test/perma-fail-review.sh
       │       ├─ finished [TIME] ✓
-      │       ├─ review: .route/1.design.guard.review.i1.9a1abf10a35fb1f3aebd56a1685a92c738b5f171df478c06b2985c2ed0f0be31.r1.md
+      │       ├─ review: .route/1.design.guard.review.i1.3f8f65c54b07f246f3b1115dbcdae8965f85c7439835a982a73b20147d1507cc.r1.md
       │       └─ 1 blocker 🔴
       └─ judges
           └─ j1: rhx route.stone.judge --mechanism reviewed? --stone $stone --route $route --allow-blockers 0 --allow-nitpicks 0

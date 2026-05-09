@@ -229,7 +229,8 @@ describe('driver.route.set.acceptance', () => {
 
       then('stdout contains artifacts section', () => {
         expect(res.cli.stdout).toContain('artifacts');
-        expect(res.cli.stdout).toContain('1.test.md');
+        // artifacts display shows glob patterns (not resolved paths) to prevent 700+ line output
+        expect(res.cli.stdout).toContain('1.test');
       });
 
       then('stdout contains reviews section with r1 label', () => {

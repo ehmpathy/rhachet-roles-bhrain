@@ -10,11 +10,11 @@ exports[`driver.route.failsafe.acceptance given: [case1] reviewer exits with cod
    ├─ passage = allowed
    ├─ guard
    │  ├─ artifacts
-   │  │   └─ 1.review-pass.i1.md
+   │  │   └─ $route/1.review-pass*.md
    │  ├─ reviews
    │  │   └─ r1: bash $route/.test/mock-exit-0.sh
    │  │       ├─ finished [TIME] ✓
-   │  │       └─ review: .route/1.review-pass.guard.review.i1.96c9a7a18d919f1fd1f7df7391020182cef05d7eaa5344005705566716a6d7a3.r1.md
+   │  │       └─ review: .route/1.review-pass.guard.review.i1.613add76074d51bb1332d56c64b0c45a94da112c85ba83422faee5eae7fe4c86.r1.md
    │  └─ judges
    │      └─ j1: bash $route/.test/mock-judge-exit-0.sh
    │          └─ finished [TIME] ✓
@@ -55,11 +55,11 @@ exports[`driver.route.failsafe.acceptance given: [case2] reviewer exits with cod
    ├─ reason = threshold exceeded (1 > 0)
    └─ guard
       ├─ artifacts
-      │   └─ 2.review-constraint.i1.md
+      │   └─ $route/2.review-constraint*.md
       ├─ reviews
       │   └─ r1: bash $route/.test/mock-exit-2.sh
       │       ├─ finished [TIME] ✓
-      │       ├─ review: .route/2.review-constraint.guard.review.i1.b56785d011f06948b7467241f7356dc1639af6210b9a38fb3f2fd1d2cf79f6b6.r1.md
+      │       ├─ review: .route/2.review-constraint.guard.review.i1.7dfff6c4342f88fd78bd95ce11cfcb64115248ebd29ccf8d471c3af3dd324524.r1.md
       │       └─ 1 blocker 🔴
       └─ judges
           └─ j1: bash $route/.test/mock-judge-exit-2.sh
@@ -100,11 +100,11 @@ exports[`driver.route.failsafe.acceptance given: [case3] reviewer exits with cod
    ├─ reason = reviewer or judge malfunctioned
    └─ guard
       ├─ artifacts
-      │   └─ 3.review-malfunction.i1.md
+      │   └─ $route/3.review-malfunction*.md
       ├─ reviews
       │   └─ r1: bash $route/.test/mock-exit-1.sh
       │       ├─ finished [TIME] ✓
-      │       └─ review: .route/3.review-malfunction.guard.review.i1.cd37f3c443ffc670978ec359a4de6bf24c6fad95c6db08ae9c1bb3e66dd17b6d.r1.md
+      │       └─ review: .route/3.review-malfunction.guard.review.i1.e6899cb4b34e29da3e2511dce8b873fd8200e69c57349ae281c9b7a2de77c767.r1.md
       └─ judges
           └─ j1: bash $route/.test/mock-judge-exit-0.sh
               └─ finished [TIME] ✓
@@ -133,7 +133,7 @@ exports[`driver.route.failsafe.acceptance given: [case4] judge exits with code 0
    ├─ passage = allowed
    ├─ guard
    │  ├─ artifacts
-   │  │   └─ 4.judge-pass.i1.md
+   │  │   └─ $route/4.judge-pass*.md
    │  └─ judges
    │      └─ j1: bash $route/.test/mock-judge-exit-0.sh
    │          └─ finished [TIME] ✓
@@ -173,7 +173,7 @@ exports[`driver.route.failsafe.acceptance given: [case5] judge exits with code 2
    ├─ reason = threshold exceeded (1 > 0)
    └─ guard
       ├─ artifacts
-      │   └─ 5.judge-constraint.i1.md
+      │   └─ $route/5.judge-constraint*.md
       └─ judges
           └─ j1: bash $route/.test/mock-judge-exit-2.sh
               ├─ finished [TIME] ✗
@@ -212,7 +212,7 @@ exports[`driver.route.failsafe.acceptance given: [case6] judge exits with code 1
    ├─ reason = reviewer or judge malfunctioned
    └─ guard
       ├─ artifacts
-      │   └─ 6.judge-malfunction.i1.md
+      │   └─ $route/6.judge-malfunction*.md
       └─ judges
           └─ j1: bash $route/.test/mock-judge-exit-1.sh
               ├─ finished [TIME] ✗
@@ -282,11 +282,10 @@ exports[`driver.route.failsafe.acceptance given: [case7] both reviewer and judge
    ├─ reason = reviewer or judge malfunctioned
    └─ guard
       ├─ artifacts
-      │   └─ 7.both-malfunction.i1.md
       ├─ reviews
       │   └─ r1: bash $route/.test/mock-exit-1.sh
       │       ├─ finished [TIME] ✓
-      │       └─ review: .route/7.both-malfunction.guard.review.i1.59340206c39ecea9e5e2da1f683a3c61f71fd21173161122443880dc2bfc519c.r1.md
+      │       └─ review: .route/7.both-malfunction.guard.review.i1.34b72e4e57a437f43fc6f51afed9bd3c19a078bd10bfa8ff437f4f1956821e9a.r1.md
       └─ judges
           └─ j1: bash $route/.test/mock-judge-exit-1.sh
               ├─ finished [TIME] ✗

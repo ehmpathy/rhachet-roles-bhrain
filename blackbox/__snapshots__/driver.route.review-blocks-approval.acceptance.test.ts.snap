@@ -21,11 +21,11 @@ exports[`driver.route.review-blocks-approval.acceptance given: [review-blocks] s
    ├─ reason = blockers exceed threshold (1 > 0)
    └─ guard
       ├─ artifacts
-      │   └─ 1.plan.md
+      │   └─ $route/1.plan*.md
       ├─ reviews
       │   └─ r1: bash $route/.test/mock-review.sh
       │       ├─ finished [TIME] ✓
-      │       ├─ review: .route/1.plan.guard.review.i1.0492a9fb2b499c70f4acde2cab892c6f7a39b07b00e33bbd020d47b3ede47ef0.r1.md
+      │       ├─ review: .route/1.plan.guard.review.i1.9e74862afb365a9a3c13042ff29f4a595a5a43214389645509c64c67e49cd7e0.r1.md
       │       └─ 1 blocker 🔴
       └─ judges
           ├─ j1: rhx route.stone.judge --mechanism reviewed? --stone $stone --route $route --allow-blockers 0 --allow-nitpicks 0
@@ -47,11 +47,11 @@ exports[`driver.route.review-blocks-approval.acceptance given: [review-blocks] s
    ├─ passage = allowed
    ├─ guard
    │  ├─ artifacts
-   │  │   └─ 1.plan.md
+   │  │   └─ $route/1.plan*.md
    │  ├─ reviews
    │  │   └─ r1: bash $route/.test/mock-review.sh
    │  │       ├─ finished [TIME] ✓
-   │  │       └─ review: .route/1.plan.guard.review.i1.d8ed0868a677f608e0a3c48cc7a8c7061dcdb60a0b154c7644d723ab94c25089.r1.md
+   │  │       └─ review: .route/1.plan.guard.review.i1.a55ef6b3427da69365712851ee0b3057fde5c6ebed6ed7e18f4fa4fcde58a0dd.r1.md
    │  └─ judges
    │      ├─ j1: rhx route.stone.judge --mechanism reviewed? --stone $stone --route $route --allow-blockers 0 --allow-nitpicks 0
    │      │   └─ finished [TIME] ✓
