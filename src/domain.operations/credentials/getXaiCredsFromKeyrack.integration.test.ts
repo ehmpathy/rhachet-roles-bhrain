@@ -22,28 +22,29 @@ describe('getXaiCredsFromKeyrack', () => {
         expect(hasHardcodedOrg).toBe(false);
       });
 
-      then('it should allow keyrack to infer org from manifest (@this)', async () => {
-        const sourcePath = path.join(__dirname, 'getXaiCredsFromKeyrack.ts');
-        const sourceCode = await fs.readFile(sourcePath, 'utf-8');
+      then(
+        'it should allow keyrack to infer org from manifest (@this)',
+        async () => {
+          const sourcePath = path.join(__dirname, 'getXaiCredsFromKeyrack.ts');
+          const sourceCode = await fs.readFile(sourcePath, 'utf-8');
 
-        // extract the keyrack command from source
-        const commandMatch = sourceCode.match(
-          /rhx keyrack get[^'"]*/,
-        );
+          // extract the keyrack command from source
+          const commandMatch = sourceCode.match(/rhx keyrack get[^'"]*/);
 
-        expect(commandMatch).toBeDefined();
+          expect(commandMatch).toBeDefined();
 
-        const command = commandMatch![0];
+          const command = commandMatch![0];
 
-        // verify the command does NOT contain --org (keyrack defaults to @this)
-        expect(command).not.toContain('--org');
+          // verify the command does NOT contain --org (keyrack defaults to @this)
+          expect(command).not.toContain('--org');
 
-        // verify essential flags are still present
-        expect(command).toContain('--owner ehmpath');
-        expect(command).toContain('--key XAI_API_KEY');
-        expect(command).toContain('--env prep');
-        expect(command).toContain('--json');
-      });
+          // verify essential flags are still present
+          expect(command).toContain('--owner ehmpath');
+          expect(command).toContain('--key XAI_API_KEY');
+          expect(command).toContain('--env prep');
+          expect(command).toContain('--json');
+        },
+      );
     });
   });
 
@@ -57,26 +58,29 @@ describe('getXaiCredsFromKeyrack', () => {
      * the fix: remove --org flag, let keyrack infer from manifest
      */
     when('[t0] keyrack command is executed without --org flag', () => {
-      then('keyrack reads org from manifest (verified via command structure)', async () => {
-        const sourcePath = path.join(__dirname, 'getXaiCredsFromKeyrack.ts');
-        const sourceCode = await fs.readFile(sourcePath, 'utf-8');
+      then(
+        'keyrack reads org from manifest (verified via command structure)',
+        async () => {
+          const sourcePath = path.join(__dirname, 'getXaiCredsFromKeyrack.ts');
+          const sourceCode = await fs.readFile(sourcePath, 'utf-8');
 
-        // the fix should result in a command like:
-        // rhx keyrack get --owner ehmpath --key XAI_API_KEY --env prep --json
-        // without any --org flag
+          // the fix should result in a command like:
+          // rhx keyrack get --owner ehmpath --key XAI_API_KEY --env prep --json
+          // without any --org flag
 
-        const commandMatch = sourceCode.match(
-          /execSync\(\s*['"`]([^'"`]+rhx keyrack get[^'"`]+)['"`]/,
-        );
+          const commandMatch = sourceCode.match(
+            /execSync\(\s*['"`]([^'"`]+rhx keyrack get[^'"`]+)['"`]/,
+          );
 
-        expect(commandMatch).toBeDefined();
+          expect(commandMatch).toBeDefined();
 
-        const fullCommand = commandMatch![1];
+          const fullCommand = commandMatch![1];
 
-        // the command must NOT contain any --org flag
-        // this allows keyrack to use its default @this behavior
-        expect(fullCommand).not.toMatch(/--org\s+\S+/);
-      });
+          // the command must NOT contain any --org flag
+          // this allows keyrack to use its default @this behavior
+          expect(fullCommand).not.toMatch(/--org\s+\S+/);
+        },
+      );
     });
   });
 });
