@@ -12,9 +12,22 @@ import {
 
 const ASSETS_DIR = path.join(__dirname, '.test/assets/codebase-mechanic');
 
+/**
+ * .what = config for probabilistic tests that invoke LLM brains
+ * .why = LLM responses can timeout or vary; retry ensures CI stability
+ *
+ * @see .agent/repo=.this/role=any/briefs/rule.require.repeatable-for-llm-tests.md
+ */
+const REPEATABLE_CONFIG = {
+  attempts: 3,
+  criteria: process.env.CI ? 'SOME' : 'EVERY',
+} as const;
+
 describe('review.acceptance', () => {
   given('[case2] mechanic codebase with dirty code', () => {
-    when('[t0] review skill on dirty.ts with goal=representative', () => {
+    when.repeatably(REPEATABLE_CONFIG)(
+      '[t0] review skill on dirty.ts with goal=representative',
+      () => {
       const res = useThen('invoke review skill on dirty code', async () => {
         // clone fixture to temp dir with git initialized
         const tempDir = genTempDirForRhachet({ slug: 'review-rep-dirty', clone: ASSETS_DIR });
