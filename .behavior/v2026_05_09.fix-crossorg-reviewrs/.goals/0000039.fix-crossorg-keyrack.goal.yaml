@@ -1,0 +1,15 @@
+slug: 'fix-crossorg-keyrack'
+source: 'peer:human'
+status:
+  choice: 'blocked'
+  reason: 'vision complete, waiting for human approval: rhx route.stone.set --stone 1.vision --as approved'
+updatedAt: '2026-05-09'
+why:
+  ask: 'fix bhrain''s hardcoded --org ehmpathy in keyrack calls'
+  purpose: 'enable cross-org brains to work without org mismatch errors'
+  benefit: 'repos in different orgs (e.g., ahbode) can use bhrain brains'
+what:
+  outcome: 'keyrack calls infer org from manifest, no hardcoded --org'
+how:
+  task: 'remove --org flag or read dynamically from keyrack.yml'
+  gate: 'bhrain works in ahbode repo without org mismatch'

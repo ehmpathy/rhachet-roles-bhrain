@@ -31,7 +31,7 @@ export const getXaiCredsFromKeyrack = async (): Promise<{
   // note: use ./node_modules/.bin/rhx to ensure correct resolution regardless of PATH
   try {
     const result = execSync(
-      './node_modules/.bin/rhx keyrack get --owner ehmpath --key XAI_API_KEY --env prep --org ehmpathy --json',
+      './node_modules/.bin/rhx keyrack get --owner ehmpath --key XAI_API_KEY --env prep --json',
       { encoding: 'utf-8', stdio: ['pipe', 'pipe', 'pipe'] },
     );
 

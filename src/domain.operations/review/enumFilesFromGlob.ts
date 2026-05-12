@@ -75,9 +75,11 @@ export const enumFilesFromGlob = async (input: {
     .map((p) => p.slice(1)); // remove ! prefix for ignore
 
   // enumerate files
+  // .note = always exclude node_modules to prevent OOM on large dependency trees
+  //         see: rule.forbid.unbounded-recursive-globs
   const files = await fg(positivePatterns, {
     cwd,
-    ignore: negativePatterns,
+    ignore: ['**/node_modules/**', ...negativePatterns],
     onlyFiles: true,
     dot: true, // include dotfiles
   });

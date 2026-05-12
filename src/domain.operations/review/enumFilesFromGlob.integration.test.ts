@@ -126,4 +126,54 @@ describe('enumFilesFromGlob', () => {
       });
     });
   });
+
+  given('[case5] node_modules exclusion', () => {
+    when('[t0] glob pattern scoped outside node_modules', () => {
+      then('node_modules is excluded by default', async () => {
+        // enumerate all .ts files from repo root
+        // this should NOT traverse node_modules even though pattern is unbounded
+        const files = await enumFilesFromGlob({
+          glob: 'src/domain.operations/review/enumFilesFromGlob.ts',
+        });
+        // should find the source file
+        expect(files).toContain(
+          'src/domain.operations/review/enumFilesFromGlob.ts',
+        );
+        // should not contain any node_modules paths
+        const nodeModulesFiles = files.filter((f) =>
+          f.includes('node_modules'),
+        );
+        expect(nodeModulesFiles).toEqual([]);
+      });
+    });
+
+    when('[t1] recursive glob from repo root', () => {
+      then('excludes node_modules from traversal', async () => {
+        // enumerate files with broad pattern
+        const files = await enumFilesFromGlob({
+          glob: 'src/domain.operations/review/*.ts',
+        });
+        // should find source files
+        expect(files.length).toBeGreaterThan(0);
+        // should not contain any node_modules paths
+        const nodeModulesFiles = files.filter((f) =>
+          f.includes('node_modules'),
+        );
+        expect(nodeModulesFiles).toEqual([]);
+      });
+    });
+
+    when('[t2] unbounded glob from repo root', () => {
+      then('excludes node_modules from traversal', async () => {
+        // unbounded glob would OOM without node_modules exclusion
+        const files = await enumFilesFromGlob({
+          glob: '**/*.json',
+        });
+        // should find package.json at minimum
+        expect(files).toContain('package.json');
+        // must not contain any node_modules paths
+        expect(files.some((f) => f.includes('node_modules'))).toBe(false);
+      });
+    });
+  });
 });
