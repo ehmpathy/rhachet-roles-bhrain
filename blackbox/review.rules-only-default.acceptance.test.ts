@@ -14,6 +14,14 @@ import {
 const ASSETS_DIR = path.join(__dirname, '.test/assets/codebase-mechanic');
 
 /**
+ * .what = extend jest timeout for LLM tests
+ * .why = LLM operations can take 60-120s; default 90s timeout kills test before retry
+ *
+ * @see .handoff/test-fns.timeout-for-repeatably.md
+ */
+jest.setTimeout(180_000);
+
+/**
  * .what = config for probabilistic tests that invoke LLM brains
  * .why = LLM responses can timeout or vary; retry ensures CI stability
  *
