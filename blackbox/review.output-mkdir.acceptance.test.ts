@@ -13,9 +13,20 @@ import {
 
 const ASSETS_DIR = path.join(__dirname, '.test/assets/codebase-mechanic');
 
+/**
+ * .what = config for probabilistic tests that invoke LLM brains
+ * .why = LLM responses can timeout or vary; retry ensures CI stability
+ *
+ * @see .agent/repo=.this/role=any/briefs/rule.require.repeatable-for-llm-tests.md
+ */
+const REPEATABLE_CONFIG = {
+  attempts: 3,
+  criteria: process.env.CI ? 'SOME' : 'EVERY',
+} as const;
+
 describe('review.output-mkdir.acceptance', () => {
   given('[case1] mechanic codebase with review skill', () => {
-    when('[t0] review skill invoked with --output to absent parent dir', () => {
+    when.repeatably(REPEATABLE_CONFIG)('[t0] review skill invoked with --output to absent parent dir', () => {
       const res = useThen(
         'invoke review skill with --output to absent parent',
         async () => {
