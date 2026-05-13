@@ -14,6 +14,25 @@ import {
 const ASSETS_DIR = path.join(__dirname, '.test/assets/codebase-mechanic');
 
 /**
+ * .what = extend jest timeout for LLM tests
+ * .why = LLM operations can take 60-120s; default 90s timeout kills test before retry
+ *
+ * @see .handoff/test-fns.timeout-for-repeatably.md
+ */
+jest.setTimeout(180_000);
+
+/**
+ * .what = config for probabilistic tests that invoke LLM brains
+ * .why = LLM responses can timeout or vary; retry ensures CI stability
+ *
+ * @see .agent/repo=.this/role=any/briefs/rule.require.repeatable-for-llm-tests.md
+ */
+const REPEATABLE_CONFIG = {
+  attempts: 3,
+  criteria: process.env.CI ? 'SOME' : 'EVERY',
+} as const;
+
+/**
  * .what = git identity env for commits
  * .why = avoids need for global git config on cicd machines
  */
@@ -27,7 +46,7 @@ const GIT_ENV = {
 
 describe('review.acceptance', () => {
   given('[case1] user specifies only --rules (default case)', () => {
-    when('[t0] review skill invoked with only --rules dirpath', () => {
+    when.repeatably(REPEATABLE_CONFIG)('[t0] review skill invoked with only --rules dirpath', () => {
       const res = useThen('invoke review skill with rules only', async () => {
         // clone fixture to temp dir with git initialized
         const tempDir = genTempDirForRhachet({
@@ -132,7 +151,7 @@ describe('review.acceptance', () => {
   });
 
   given('[case2] user excludes .behavior via negation pattern', () => {
-    when('[t0] review with --diffs since-main --paths !.behavior/**', () => {
+    when.repeatably(REPEATABLE_CONFIG)('[t0] review with --diffs since-main --paths !.behavior/**', () => {
       const res = useThen('invoke review with exclusion pattern', async () => {
         // clone fixture to temp dir with git initialized
         const tempDir = genTempDirForRhachet({

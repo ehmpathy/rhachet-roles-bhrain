@@ -12,12 +12,31 @@ import {
 
 const ASSETS_DIR = path.join(__dirname, '.test/assets/codebase-mechanic');
 
+/**
+ * .what = extend jest timeout for LLM tests
+ * .why = LLM operations can take 60-120s; default 90s timeout kills test before retry
+ *
+ * @see .handoff/test-fns.timeout-for-repeatably.md
+ */
+jest.setTimeout(180_000);
+
+/**
+ * .what = config for probabilistic tests that invoke LLM brains
+ * .why = LLM responses can timeout or vary; retry ensures CI stability
+ *
+ * @see .agent/repo=.this/role=any/briefs/rule.require.repeatable-for-llm-tests.md
+ */
+const REPEATABLE_CONFIG = {
+  attempts: 3,
+  criteria: process.env.CI ? 'SOME' : 'EVERY',
+} as const;
+
 describe('review.refs-glob.acceptance', () => {
   /**
    * usecase.2: pass multiple refs via glob pattern
    */
   given('[case1] glob pattern matches multiple ref files', () => {
-    when('[t0] review skill invoked with --refs set to glob pattern', () => {
+    when.repeatably(REPEATABLE_CONFIG)('[t0] review skill invoked with --refs set to glob pattern', () => {
       const res = useThen('invoke review skill with glob refs', async () => {
         // clone fixture to temp dir
         const tempDir = genTempDirForRhachet({
@@ -81,7 +100,7 @@ describe('review.refs-glob.acceptance', () => {
    * usecase.7: multiple --refs via repeated flags
    */
   given('[case2] multiple refs via repeated --refs flags', () => {
-    when('[t0] review skill invoked with --refs specified multiple times', () => {
+    when.repeatably(REPEATABLE_CONFIG)('[t0] review skill invoked with --refs specified multiple times', () => {
       const res = useThen(
         'invoke review skill with repeated refs flags',
         async () => {
