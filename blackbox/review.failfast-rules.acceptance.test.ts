@@ -10,12 +10,23 @@ import {
 
 const ASSETS_DIR = path.join(__dirname, '.test/assets/codebase-mechanic');
 
+/**
+ * .what = config for probabilistic tests that invoke LLM brains
+ * .why = LLM responses can timeout or vary; retry ensures CI stability
+ *
+ * @see .agent/repo=.this/role=any/briefs/rule.require.repeatable-for-llm-tests.md
+ */
+const REPEATABLE_CONFIG = {
+  attempts: 3,
+  criteria: process.env.CI ? 'SOME' : 'EVERY',
+} as const;
+
 describe('review.failfast-rules.acceptance', () => {
   /**
    * usecase: rules glob matches zero files
    */
   given('[case1] rules glob matches no files', () => {
-    when('[t0] review skill invoked with rules glob that resolves to zero', () => {
+    when.repeatably(REPEATABLE_CONFIG)('[t0] review skill invoked with rules glob that resolves to zero', () => {
       const res = useThen(
         'invoke review skill with empty rules glob',
         async () => {
@@ -69,7 +80,7 @@ describe('review.failfast-rules.acceptance', () => {
    * usecase: explicit rules path does not exist
    */
   given('[case2] explicit rules path does not exist', () => {
-    when('[t0] review skill invoked with non-existent rules path', () => {
+    when.repeatably(REPEATABLE_CONFIG)('[t0] review skill invoked with non-existent rules path', () => {
       const res = useThen(
         'invoke review skill with invalid rules path',
         async () => {
