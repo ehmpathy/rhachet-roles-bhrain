@@ -1,0 +1,23 @@
+# rule.forbid.stdout-on-exit-errors
+
+error messages with `process.exit(1|2)` must use `stderr` (console.error), not `stdout`.
+
+## .why
+
+- cli hooks show stderr separately; stdout may be hidden on non-zero exit
+- unix convention: stderr for errors, stdout for output
+- pipe safety: errors on stdout corrupt data stream
+
+## .pattern
+
+```ts
+// good
+console.error('blocked'); process.exit(2);
+
+// bad
+console.log('blocked'); process.exit(2);
+```
+
+## .enforcement
+
+`console.log` followed by `process.exit(1|2)` = **BLOCKER**

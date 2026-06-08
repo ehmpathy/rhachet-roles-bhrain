@@ -1,0 +1,7 @@
+{
+  "name": "route-peer-budget-all-terminal-halt",
+  "private": true,
+  "devDependencies": {
+    "rhachet-roles-bhrain": "link:../../../../"
+  }
+}

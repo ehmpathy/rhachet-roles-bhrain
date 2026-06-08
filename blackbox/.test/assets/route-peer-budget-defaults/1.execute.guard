@@ -1,0 +1,13 @@
+artifacts:
+  - src/**/*.ts
+
+reviews:
+  peer:
+    # no budget or level fields - should use defaults
+    # budget: Infinity (unlimited)
+    # level: 1
+    - slug: legacy-reviewer
+      run: bash $route/.test/mock-review.sh
+
+judges:
+  - rhx route.stone.judge --mechanism reviewed? --stone $stone --route $route --allow-blockers 0 --allow-nitpicks 1

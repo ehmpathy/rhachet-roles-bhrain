@@ -1,0 +1,8 @@
+{
+  "name": "route-peer-budget-3level-fixture",
+  "private": true,
+  "description": "fixture for peer budget 3level acceptance test",
+  "dependencies": {
+    "rhachet-roles-bhrain": "link:."
+  }
+}

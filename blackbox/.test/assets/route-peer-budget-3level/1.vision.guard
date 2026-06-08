@@ -1,0 +1,25 @@
+artifacts:
+  - src/**/*.ts
+
+reviews:
+  peer:
+    # level 1: basic checker, runs first
+    - slug: basic-checker
+      run: bash $route/.test/mock-review-basic.sh
+      budget: 5
+      level: 1
+
+    # level 2: advanced checker, awaits level 1
+    - slug: advanced-checker
+      run: bash $route/.test/mock-review-advanced.sh
+      budget: 5
+      level: 2
+
+    # level 3: premium checker, awaits level 2
+    - slug: premium-checker
+      run: bash $route/.test/mock-review-premium.sh
+      budget: 5
+      level: 3
+
+judges:
+  - rhx route.stone.judge --mechanism reviewed? --stone $stone --route $route --allow-blockers 0 --allow-nitpicks 1

@@ -32,6 +32,7 @@ const config: Config = {
     '!**/*.integration.test.ts',
     '!**/.yalc/**',
     '!**/.scratch/**',
+    '!**/.agent/**',
   ],
   setupFilesAfterEnv: ['./jest.unit.env.ts'],
 

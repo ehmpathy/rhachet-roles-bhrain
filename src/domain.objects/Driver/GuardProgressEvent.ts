@@ -42,10 +42,15 @@ export interface GuardProgressEvent {
    * result data (null while active or cached; populated on finish)
    */
   outcome: {
-    path: string;
+    /**
+     * path to review/judge artifact (null for skipped states)
+     */
+    path: string | null;
     review:
       | { blockers: number; nitpicks: number }
       | { malfunction: Error }
+      | { exhausted: true }
+      | { queued: true }
       | null;
     judge:
       | { decision: 'allowed' | 'blocked'; reason: string | null }

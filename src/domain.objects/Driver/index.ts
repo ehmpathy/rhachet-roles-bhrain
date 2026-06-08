@@ -6,7 +6,7 @@ export { RouteStoneDriveArtifacts } from './RouteStoneDriveArtifacts';
 export {
   getGuardPeerReviews,
   getGuardSelfReviews,
-  isReviewsStructured,
+  getReviewPeerRunCmd,
   RouteStoneGuard,
   type RouteStoneGuardReviewPeer,
   type RouteStoneGuardReviewSelf,
@@ -18,4 +18,5 @@ export {
   RouteStoneGuardReviewArtifact, // deprecated alias
   RouteStoneGuardReviewPeerArtifact,
 } from './RouteStoneGuardReviewArtifact';
+export { RouteStoneGuardReviewPeerMeter } from './RouteStoneGuardReviewPeerMeter';
 export { RouteStoneGuardReviewSelfArtifact } from './RouteStoneGuardReviewSelfArtifact';

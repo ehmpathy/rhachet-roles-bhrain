@@ -58,7 +58,10 @@ export const sanitizeTimeForSnapshot = (output: string): string => {
     .replace(/completed \d+\.\d+s/g, 'completed [TIME]')
     .replace(/allowed \d+\.\d+s/g, 'allowed [TIME]')
     .replace(/blocked \d+\.\d+s/g, 'blocked [TIME]')
-    .replace(/malfunctioned \d+\.\d+s/g, 'malfunctioned [TIME]');
+    .replace(/malfunctioned \d+\.\d+s/g, 'malfunctioned [TIME]')
+    .replace(/approved \d+\.\d+s/g, 'approved [TIME]')
+    .replace(/rejected \d+\.\d+s/g, 'rejected [TIME]')
+    .replace(/exhausted \d+\.\d+s/g, 'exhausted [TIME]');
 };
 
 
@@ -109,6 +112,7 @@ export const invokeRouteSkill = async (input: {
     | 'route.bind.del'
     | 'route.bounce'
     | 'route.drive'
+    | 'route.guard.budget'
     | 'route.mutate'
     | 'route.review'
     | 'route.stone.add'

@@ -1,11 +1,20 @@
 import * as fs from 'fs/promises';
 import * as path from 'path';
 
+import type { RouteStone } from '@src/domain.objects/Driver/RouteStone';
+
 import { getRouteBindByBranch } from './bind/getRouteBindByBranch';
 import { computeRouteBouncerCache } from './bouncer/computeRouteBouncerCache';
 import { setRouteBouncerCache } from './bouncer/setRouteBouncerCache';
 import { getStoneGuardBlockerReport } from './drive/getStoneGuardBlockerReport';
 import { setDriveBlockerState } from './drive/setDriveBlockerState';
+import { computeStoneReviewInputHash } from './guard/computeStoneReviewInputHash';
+import {
+  formatReviewsMeterLines,
+  type GuardPeerMeterStatus,
+} from './guard/formatGuardTree';
+import { getAllReviewPeerMeterStatuses } from './guard/reviewPeerMeter/getAllReviewPeerMeterStatuses';
+import { isReviewPeerVerdictExhausted } from './guard/reviewPeerMeter/isReviewPeerLevelTerminal';
 import { getOneStoneGuardApproval } from './judges/getOneStoneGuardApproval';
 import { getAllPassageReports } from './passage/getAllPassageReports';
 import { computeNextStones } from './stones/computeNextStones';
@@ -158,6 +167,36 @@ export const stepRouteDrive = async (input: {
       }
     }
 
+    // if blocked on exhausted peer review budget, show budget exhausted message
+    if (blockerReport?.blocker === 'review.peer.exhausted') {
+      const approvalArtifact = await getOneStoneGuardApproval({
+        stone,
+        route,
+      });
+
+      if (!approvalArtifact) {
+        // recompute current exhausted slugs (budget may have been extended since blocker was set)
+        const { exhaustedSlugs, meters } = await computeCurrentExhaustedSlugs({
+          stone,
+          route,
+        });
+
+        // if no reviewers are currently exhausted, blocker is stale - skip exhaustion message
+        if (exhaustedSlugs.length > 0) {
+          return {
+            emit: {
+              stdout: formatRouteDriveBudgetExhausted({
+                route,
+                stone: stone.name,
+                reason: `peer reviewer budget exhausted: ${exhaustedSlugs.join(', ')}`,
+                meters,
+              }),
+            },
+          };
+        }
+      }
+    }
+
     // otherwise, show generic stone guidance
     const stdout = formatRouteDrive({
       route,
@@ -199,6 +238,38 @@ export const stepRouteDrive = async (input: {
             }),
           },
         };
+      }
+      // fall through to block logic when approval was granted
+    }
+
+    // if blocked on exhausted peer review budget, check if approval was granted
+    if (blockerReport?.blocker === 'review.peer.exhausted') {
+      const approvalArtifact = await getOneStoneGuardApproval({
+        stone,
+        route,
+      });
+
+      // approval granted means agent CAN proceed
+      if (!approvalArtifact) {
+        // recompute current exhausted slugs (budget may have been extended since blocker was set)
+        const { exhaustedSlugs, meters } = await computeCurrentExhaustedSlugs({
+          stone,
+          route,
+        });
+
+        // if no reviewers are currently exhausted, blocker is stale - skip exhaustion message
+        if (exhaustedSlugs.length > 0) {
+          return {
+            emit: {
+              stdout: formatRouteDriveBudgetExhausted({
+                route,
+                stone: stone.name,
+                reason: `peer reviewer budget exhausted: ${exhaustedSlugs.join(', ')}`,
+                meters,
+              }),
+            },
+          };
+        }
       }
       // fall through to block logic when approval was granted
     }
@@ -249,7 +320,62 @@ export const stepRouteDrive = async (input: {
     };
   }
 
-  // direct mode, just show output (no nudge, no blocked suggestion)
+  // direct mode: check for blocker status and show appropriate message
+  const blockerReport = await getStoneGuardBlockerReport({
+    stone: stone.name,
+    route,
+  });
+
+  // if blocked on approval, show approval-needed message
+  if (blockerReport?.blocker === 'approval') {
+    const approvalArtifact = await getOneStoneGuardApproval({
+      stone,
+      route,
+    });
+
+    if (!approvalArtifact) {
+      return {
+        emit: {
+          stdout: formatRouteDriveNeedsApproval({
+            route,
+            stone: stone.name,
+          }),
+        },
+      };
+    }
+  }
+
+  // if blocked on exhausted peer review budget, show budget exhausted message
+  if (blockerReport?.blocker === 'review.peer.exhausted') {
+    const approvalArtifact = await getOneStoneGuardApproval({
+      stone,
+      route,
+    });
+
+    if (!approvalArtifact) {
+      // recompute current exhausted slugs (budget may have been extended since blocker was set)
+      const { exhaustedSlugs, meters } = await computeCurrentExhaustedSlugs({
+        stone,
+        route,
+      });
+
+      // if no reviewers are currently exhausted, blocker is stale - skip exhaustion message
+      if (exhaustedSlugs.length > 0) {
+        return {
+          emit: {
+            stdout: formatRouteDriveBudgetExhausted({
+              route,
+              stone: stone.name,
+              reason: `peer reviewer budget exhausted: ${exhaustedSlugs.join(', ')}`,
+              meters,
+            }),
+          },
+        };
+      }
+    }
+  }
+
+  // no blocker or already approved, show generic stone guidance
   const stdout = formatRouteDrive({
     route,
     stone: stone.name,
@@ -259,6 +385,41 @@ export const stepRouteDrive = async (input: {
   });
   return {
     emit: { stdout },
+  };
+};
+
+/**
+ * .what = computes currently exhausted reviewer slugs from current peerMeters
+ * .why = blocker report reason may be stale (budget extended since recorded)
+ */
+const computeCurrentExhaustedSlugs = async (input: {
+  stone: RouteStone;
+  route: string;
+}): Promise<{
+  exhaustedSlugs: string[];
+  meters: GuardPeerMeterStatus[];
+}> => {
+  // compute current hash for this stone's artifacts
+  const hash = await computeStoneReviewInputHash({
+    stone: input.stone,
+    route: input.route,
+  });
+
+  // get current peer meter statuses (uses current budget after any extensions)
+  const peerMeters = await getAllReviewPeerMeterStatuses({
+    stone: input.stone,
+    hash,
+    route: input.route,
+  });
+
+  // filter to currently exhausted
+  const exhaustedSlugs = peerMeters
+    .filter((m) => isReviewPeerVerdictExhausted(m.verdict))
+    .map((m) => m.slug);
+
+  return {
+    exhaustedSlugs,
+    meters: peerMeters,
   };
 };
 
@@ -360,6 +521,71 @@ const formatRouteDriveNeedsApproval = (input: {
   lines.push(`      │`);
   lines.push(`      └─ once they do, run`);
   lines.push(`         └─ ${passCmd}`);
+  return lines.join('\n');
+};
+
+/**
+ * .what = formats route.drive output when peer reviewer budget exhausted
+ * .why = allows agent to stop gracefully when blocked on budget exhaustion
+ */
+const formatRouteDriveBudgetExhausted = (input: {
+  route: string;
+  stone: string;
+  reason: string | null;
+  meters: GuardPeerMeterStatus[];
+}): string => {
+  const approveCmd = `rhx route.stone.set --stone ${input.stone} --as approved`;
+  const passCmd = `rhx route.stone.set --stone ${input.stone} --as passed`;
+
+  // extract exhausted slugs from reason (format: "peer reviewer budget exhausted: slug1, slug2")
+  const exhaustedSlugs: string[] = [];
+  if (input.reason) {
+    const match = input.reason.match(/budget exhausted:\s*(.+)$/);
+    if (match?.[1]) {
+      exhaustedSlugs.push(...match[1].split(',').map((s) => s.trim()));
+    }
+  }
+
+  // if single slug, include --peer; if multiple, omit (affects all)
+  const peerArg =
+    exhaustedSlugs.length === 1 ? ` --peer ${exhaustedSlugs[0]}` : '';
+
+  const lines: string[] = [];
+  lines.push(`🦉 where were we?`);
+  lines.push('');
+  lines.push(`🗿 route.drive`);
+  lines.push(`   ├─ where do we go?`);
+  lines.push(`   │  ├─ route = ${input.route}`);
+  lines.push(`   │  └─ stone = ${input.stone}`);
+  lines.push(`   │`);
+  lines.push(`   └─ halted, peer reviewer budget exhausted`);
+  // display reason without slug suffix (slugs shown in reviews section)
+  lines.push(`      ├─ reason: peer reviewer budget exhausted`);
+  lines.push(`      │`);
+
+  // add peer reviewer meters section via shared formatter
+  const meterLines = formatReviewsMeterLines({
+    meters: input.meters,
+    baseIndent: '      ',
+    sectionIndent: '│  ',
+    includeHeader: true,
+    headerPrefix: '├─',
+  });
+  lines.push(...meterLines);
+  lines.push(`      │`);
+
+  lines.push(`      ├─ please ask a human to either`);
+  lines.push(`      │  ├─ approve as-is`);
+  lines.push(`      │  │  └─ ${approveCmd}`);
+  lines.push(`      │  │`);
+  lines.push(`      │  └─ extend budget (then rerun)`);
+  lines.push(
+    `      │     └─ rhx route.guard.budget --for review --add N${peerArg} --stone ${input.stone}`,
+  );
+  lines.push(`      │`);
+  lines.push(`      └─ once they approve, run`);
+  lines.push(`         └─ ${passCmd}`);
+
   return lines.join('\n');
 };
 

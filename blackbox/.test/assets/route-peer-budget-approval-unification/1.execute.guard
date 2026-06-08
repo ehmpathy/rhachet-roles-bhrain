@@ -1,0 +1,15 @@
+artifacts:
+  - src/**/*.ts
+
+reviews:
+  peer:
+    # reviewer with small budget that will exhaust
+    - slug: strict-checker
+      run: bash $route/.test/mock-review.sh
+      budget: 2
+      level: 1
+
+judges:
+  # both reviewed? and approved? judges
+  - rhx route.stone.judge --mechanism reviewed? --stone $stone --route $route --allow-blockers 0 --allow-nitpicks 1
+  - rhx route.stone.judge --mechanism approved? --stone $stone --route $route

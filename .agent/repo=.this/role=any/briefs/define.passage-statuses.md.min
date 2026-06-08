@@ -1,0 +1,16 @@
+# define.passage-statuses
+
+only `'passed'` constitutes valid passage.
+
+| status | is passage? |
+|--------|-------------|
+| `'passed'` | **yes** — driver explicitly marked complete |
+| `'approved'` | no — permission granted, not action taken |
+| `'blocked'` | no — cannot proceed |
+| `'rewound'` | no — prior passage revoked |
+
+guard flow: `review → judge → approve → judge → pass`
+
+approval = permission. passage = action.
+
+> passage requires intent. only explicit `--as passed` constitutes passage.

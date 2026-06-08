@@ -1,0 +1,7 @@
+# 2.deploy
+
+within-budget reviewers pass: no approval needed
+
+- single reviewer with budget
+- no explicit approved? judge
+- when reviewer passes → stone passes automatically

@@ -8,11 +8,11 @@ exports[`formatGuardTree given: [case1] reviews+judges, allowed, all fresh — 2
       ├─ artifacts
       │   └─ 1.vision.v1.md
       ├─ reviews
-      │   ├─ r1: reviewer/reflect
-      │   │   ├─ finished 8.2s ✓
+      │   ├─ r1: reviewer/reflect (l1, 1/∞, approved)
+      │   │   ├─ approved 8.2s ✓
       │   │   └─ review: .route/1.vision.guard.review.i1.abc123.r1.md
-      │   └─ r2: reviewer/review
-      │       ├─ finished 15.1s ✓
+      │   └─ r2: reviewer/review (l1, 1/∞, rejected)
+      │       ├─ rejected 15.1s
       │       ├─ review: .route/1.vision.guard.review.i1.abc123.r2.md
       │       ├─ 3 blockers 🔴
       │       └─ 1 nitpick 🟠
@@ -30,8 +30,8 @@ exports[`formatGuardTree given: [case2] reviews+judges, blocked, all fresh — 1
       ├─ artifacts
       │   └─ 3.1.research.domain._.v1.md
       ├─ reviews
-      │   └─ r1: reviewer/reflect
-      │       ├─ finished 12.4s ✓
+      │   └─ r1: reviewer/reflect (l1, 1/∞, rejected)
+      │       ├─ rejected 12.4s
       │       ├─ review: .route/3.1.research.domain.guard.review.i1.abc123.r1.md
       │       └─ 1 blocker 🔴
       └─ judges
@@ -48,11 +48,11 @@ exports[`formatGuardTree given: [case3] some cached reviews — 1 cached + 1 fre
       ├─ artifacts
       │   └─ 1.vision.v1.md
       ├─ reviews
-      │   ├─ r1: reviewer/reflect
-      │   │   └─ · cached
-      │   │      └─ on 1.vision.v1.md
-      │   └─ r2: reviewer/review
-      │       ├─ finished 10.3s ✓
+      │   ├─ r1: reviewer/reflect (l1, 1/∞, approved)
+      │   │   ├─ cached ✓
+      │   │   └─ review: .route/1.vision.guard.review.i1.abc123.r1.md
+      │   └─ r2: reviewer/review (l1, 1/∞, approved)
+      │       ├─ approved 10.3s ✓
       │       ├─ review: .route/1.vision.guard.review.i1.abc123.r2.md
       │       └─ 2 nitpicks 🟠
       └─ judges
@@ -68,9 +68,9 @@ exports[`formatGuardTree given: [case4] all cached — all reviews + judges cach
       ├─ artifacts
       │   └─ 1.vision.v1.md
       ├─ reviews
-      │   └─ r1: reviewer/reflect
-      │       └─ · cached
-      │          └─ on 1.vision.v1.md
+      │   └─ r1: reviewer/reflect (l1, 1/∞, approved)
+      │       ├─ cached ✓
+      │       └─ review: .route/1.vision.guard.review.i1.abc123.r1.md
       └─ judges
           └─ j1: reviewed?
               └─ · cached
@@ -102,8 +102,8 @@ exports[`formatGuardTree given: [case7] multiple artifacts — 3 artifact files 
       │   ├─ 3.1.research.domain.terms.v1.md
       │   └─ 3.1.research.domain.refs.v1.md
       ├─ reviews
-      │   └─ r1: reviewer/reflect
-      │       ├─ finished 5.0s ✓
+      │   └─ r1: reviewer/reflect (l1, 1/∞, approved)
+      │       ├─ approved 5.0s ✓
       │       └─ review: .route/3.1.research.domain.guard.review.i1.abc123.r1.md
       └─ judges
           └─ j1: reviewed?
@@ -118,8 +118,8 @@ exports[`formatGuardTree given: [case8] review with nitpicks only — 0 blockers
       ├─ artifacts
       │   └─ 1.vision.v1.md
       ├─ reviews
-      │   └─ r1: reviewer/reflect
-      │       ├─ finished 7.0s ✓
+      │   └─ r1: reviewer/reflect (l1, 1/∞, approved)
+      │       ├─ approved 7.0s ✓
       │       ├─ review: .route/1.vision.guard.review.i1.abc123.r1.md
       │       └─ 2 nitpicks 🟠
       └─ judges
@@ -136,8 +136,8 @@ exports[`formatGuardTree given: [case9] review with both blockers and nitpicks �
       ├─ artifacts
       │   └─ 1.vision.v1.md
       ├─ reviews
-      │   └─ r1: reviewer/reflect
-      │       ├─ finished 12.0s ✓
+      │   └─ r1: reviewer/reflect (l1, 1/∞, rejected)
+      │       ├─ rejected 12.0s
       │       ├─ review: .route/1.vision.guard.review.i1.abc123.r1.md
       │       ├─ 3 blockers 🔴
       │       └─ 1 nitpick 🟠
@@ -155,9 +155,9 @@ exports[`formatGuardTree given: [case10] cached judge that had failed — shows 
       ├─ artifacts
       │   └─ 1.vision.v1.md
       ├─ reviews
-      │   └─ r1: reviewer/reflect
-      │       └─ · cached
-      │          └─ on 1.vision.v1.md
+      │   └─ r1: reviewer/reflect (l1, 1/∞, approved)
+      │       ├─ cached ✓
+      │       └─ review: .route/1.vision.guard.review.i1.abc123.r1.md
       └─ judges
           └─ j1: reviewed?
               └─ · cached
@@ -173,8 +173,8 @@ exports[`formatGuardTree given: [case11] passage with reason — blocked + combi
       ├─ artifacts
       │   └─ 1.vision.v1.md
       ├─ reviews
-      │   └─ r1: reviewer/reflect
-      │       ├─ finished 5.0s ✓
+      │   └─ r1: reviewer/reflect (l1, 1/∞, rejected)
+      │       ├─ rejected 5.0s
       │       ├─ review: .route/1.vision.guard.review.i1.abc123.r1.md
       │       └─ 2 blockers 🔴
       └─ judges
@@ -196,11 +196,58 @@ exports[`formatGuardTree given: [case12] cached review on src/**/* artifacts —
       │   ├─ src/domain/execute.test.ts
       │   └─ src/utils/helper.ts
       ├─ reviews
-      │   └─ r1: reviewer/review --rules ".agent/**/rules/*.md" --paths "src/**/*"
-      │       └─ · cached
-      │          └─ on src/**/*
+      │   └─ r1: reviewer/review (l1, 1/∞, approved)
+      │       ├─ cached ✓
+      │       └─ review: .route/5.1.execute.guard.review.i1.abc123.r1.md
       └─ judges
           └─ j1: reviewed?
               └─ · cached
                  └─ on src/**/*"
+`;
+
+exports[`formatGuardTree given: [case13] peerMeters — rNum uses meter order, not artifact order when: [t0] l2 reviewer ran but l1 reviewers did not then: rNum reflects declared position (r3 not r1) 1`] = `
+"🗿 route.stone.set
+   ├─ stone = 5.5.playtest
+   ├─ passage = blocked
+   ├─ reason = wait for human approval
+   └─ guard
+      ├─ artifacts
+      │   └─ 5.5.playtest.yield.md
+      └─ reviews
+          ├─ r1: quick-pass (l1, 1/1, exhausted)
+          │   └─ exhausted
+          ├─ r2: medium-pass (l1, 0/2, queued)
+          │   └─ awaits arrival
+          └─ r3: slow-fail (l2, 2/2, approved)
+              ├─ approved 15.0s ✓
+              └─ review: .route/5.5.playtest.guard.review.i1.abc123.r3.md"
+`;
+
+exports[`formatGuardTree given: [case14] peerMeters — exhausted reviewer shows prior review path when: [t0] reviewer exhausted with cached review then: shows review path not just exhausted 1`] = `
+"🗿 route.stone.set
+   ├─ stone = 5.5.playtest
+   ├─ passage = blocked
+   ├─ reason = reviewer exhausted
+   └─ guard
+      ├─ artifacts
+      │   └─ 5.5.playtest.yield.md
+      └─ reviews
+          └─ r1: quick-pass (l1, 1/1, exhausted)
+              ├─ exhausted
+              └─ review: .route/5.5.playtest.guard.review.i1.abc123.r1.md"
+`;
+
+exports[`formatGuardTree given: [case15] peerMeters — awaits shown in header verdict when: [t0] l2 reviewer awaits l1 then: header shows awaits not queued 1`] = `
+"🗿 route.stone.set
+   ├─ stone = 5.5.playtest
+   ├─ passage = blocked
+   ├─ reason = blockers found
+   └─ guard
+      ├─ artifacts
+      │   └─ 5.5.playtest.yield.md
+      └─ reviews
+          ├─ r1: cheapo (l1, 0/10, queued)
+          │   └─ awaits arrival
+          └─ r2: primo (l2, 0/3, awaits)
+              └─ awaits l1"
 `;

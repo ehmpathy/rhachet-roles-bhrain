@@ -1,14 +1,29 @@
 import * as fs from 'fs/promises';
 import * as os from 'os';
 import * as path from 'path';
-import { given, then, when } from 'test-fns';
+import { given, then, useThen, when } from 'test-fns';
 
 import { RouteStone } from '@src/domain.objects/Driver/RouteStone';
 import { RouteStoneGuard } from '@src/domain.objects/Driver/RouteStoneGuard';
 
+import { getAllRouteStoneGuardReviewPeerMeters } from './reviewPeerMeter/getAllRouteStoneGuardReviewPeerMeters';
 import { runStoneGuardReviews } from './runStoneGuardReviews';
 
 const noopContext = { cliEmit: { onGuardProgress: () => {} } };
+
+/**
+ * .what = helper to create structured peer reviews from command strings
+ * .why = tests were written before structured format was required
+ */
+const asPeerReview = (
+  cmd: string,
+  index: number,
+): { slug: string; run: string; budget: number; level: number } => ({
+  slug: cmd.split(/\s+/)[0] ?? `peer-${index + 1}`,
+  run: cmd,
+  budget: Infinity,
+  level: 1,
+});
 
 describe('runStoneGuardReviews', () => {
   given('[case1] guard with echo review command', () => {
@@ -21,7 +36,12 @@ describe('runStoneGuardReviews', () => {
     const guard = new RouteStoneGuard({
       path: path.join(tempDir, '1.test.guard'),
       artifacts: ['1.test*.md'],
-      reviews: ['echo "blockers: 0\\nnitpicks: 1\\nreview output"'],
+      reviews: {
+        self: [],
+        peer: [
+          asPeerReview('echo "blockers: 0\\nnitpicks: 1\\nreview output"', 0),
+        ],
+      },
       judges: [],
       protect: [],
     });
@@ -114,10 +134,13 @@ describe('runStoneGuardReviews', () => {
     const guard = new RouteStoneGuard({
       path: path.join(tempDir, '1.test.guard'),
       artifacts: ['1.test*.md'],
-      reviews: [
-        'echo "blockers: 1\\nnitpicks: 0"',
-        'echo "blockers: 0\\nnitpicks: 2"',
-      ],
+      reviews: {
+        self: [],
+        peer: [
+          asPeerReview('echo "blockers: 1\\nnitpicks: 0"', 0),
+          asPeerReview('echo "blockers: 0\\nnitpicks: 2"', 1),
+        ],
+      },
       judges: [],
       protect: [],
     });
@@ -182,7 +205,10 @@ describe('runStoneGuardReviews', () => {
     const guard = new RouteStoneGuard({
       path: path.join(tempDir, '1.test.guard'),
       artifacts: ['1.test*.md'],
-      reviews: ['echo "blockers: 0\\nreview passed"'],
+      reviews: {
+        self: [],
+        peer: [asPeerReview('echo "blockers: 0\\nreview passed"', 0)],
+      },
       judges: [],
       protect: [],
     });
@@ -248,7 +274,15 @@ describe('runStoneGuardReviews', () => {
     const guard = new RouteStoneGuard({
       path: path.join(tempDir, '1.test.guard'),
       artifacts: ['1.test*.md'],
-      reviews: ['bash -c "echo blockers: 1; echo constraint failure; exit 2"'],
+      reviews: {
+        self: [],
+        peer: [
+          asPeerReview(
+            'bash -c "echo blockers: 1; echo constraint failure; exit 2"',
+            0,
+          ),
+        ],
+      },
       judges: [],
       protect: [],
     });
@@ -314,7 +348,15 @@ describe('runStoneGuardReviews', () => {
     const guard = new RouteStoneGuard({
       path: path.join(tempDir, '1.test.guard'),
       artifacts: ['1.test*.md'],
-      reviews: ['bash -c "echo stdout output; echo stderr error >&2; exit 1"'],
+      reviews: {
+        self: [],
+        peer: [
+          asPeerReview(
+            'bash -c "echo stdout output; echo stderr error >&2; exit 1"',
+            0,
+          ),
+        ],
+      },
       judges: [],
       protect: [],
     });
@@ -390,9 +432,15 @@ describe('runStoneGuardReviews', () => {
     const guard = new RouteStoneGuard({
       path: path.join(tempDir, '1.test.guard'),
       artifacts: ['1.test*.md'],
-      reviews: [
-        `bash -c 'if [ -f "$route/.marker" ]; then echo "blockers: 0"; echo "nitpicks: 0"; echo "marker found at $route"; else echo "blockers: 1"; echo "nitpicks: 0"; echo "marker not found at $route"; fi'`,
-      ],
+      reviews: {
+        self: [],
+        peer: [
+          asPeerReview(
+            `bash -c 'if [ -f "$route/.marker" ]; then echo "blockers: 0"; echo "nitpicks: 0"; echo "marker found at $route"; else echo "blockers: 1"; echo "nitpicks: 0"; echo "marker not found at $route"; fi'`,
+            0,
+          ),
+        ],
+      },
       judges: [],
       protect: [],
     });
@@ -486,9 +534,15 @@ describe('runStoneGuardReviews', () => {
     const guard = new RouteStoneGuard({
       path: path.join(tempDir, '1.test.guard'),
       artifacts: ['1.test*.md'],
-      reviews: [
-        `bash -c 'echo "blockers: 0"; echo "nitpicks: 0"; echo "rhx=$rhx"'`,
-      ],
+      reviews: {
+        self: [],
+        peer: [
+          asPeerReview(
+            `bash -c 'echo "blockers: 0"; echo "nitpicks: 0"; echo "rhx=$rhx"'`,
+            0,
+          ),
+        ],
+      },
       judges: [],
       protect: [],
     });
@@ -565,9 +619,15 @@ describe('runStoneGuardReviews', () => {
     const guard = new RouteStoneGuard({
       path: path.join(tempDir, '1.test.guard'),
       artifacts: ['1.test*.md'],
-      reviews: [
-        `bash -c 'echo "blockers: 0"; echo "nitpicks: 0"; echo "rhachet=$rhachet"'`,
-      ],
+      reviews: {
+        self: [],
+        peer: [
+          asPeerReview(
+            `bash -c 'echo "blockers: 0"; echo "nitpicks: 0"; echo "rhachet=$rhachet"'`,
+            0,
+          ),
+        ],
+      },
       judges: [],
       protect: [],
     });
@@ -643,7 +703,10 @@ describe('runStoneGuardReviews', () => {
     const guard = new RouteStoneGuard({
       path: path.join(tempDir, '1.test.guard'),
       artifacts: ['1.test*.md'],
-      reviews: ['npx rhachet run --skill review'],
+      reviews: {
+        self: [],
+        peer: [asPeerReview('npx rhachet run --skill review', 0)],
+      },
       judges: [],
       protect: [],
     });
@@ -687,7 +750,10 @@ describe('runStoneGuardReviews', () => {
     const guard = new RouteStoneGuard({
       path: path.join(tempDir, '1.test.guard'),
       artifacts: ['1.test*.md'],
-      reviews: ['npx rhx review --rules "*.md"'],
+      reviews: {
+        self: [],
+        peer: [asPeerReview('npx rhx review --rules "*.md"', 0)],
+      },
       judges: [],
       protect: [],
     });
@@ -717,6 +783,247 @@ describe('runStoneGuardReviews', () => {
             noopContext,
           ),
         ).rejects.toThrow('use $rhx alias instead');
+      });
+    });
+  });
+
+  given('[case11] budget not consumed on malfunction', () => {
+    const tempDir = path.join(
+      os.tmpdir(),
+      `test-reviews-budget-malfunction-${Date.now()}`,
+    );
+    const stone = new RouteStone({
+      name: '1.test',
+      path: path.join(tempDir, '1.test.stone'),
+      guard: null,
+    });
+    const guard = new RouteStoneGuard({
+      path: path.join(tempDir, '1.test.guard'),
+      artifacts: ['1.test*.md'],
+      reviews: {
+        self: [],
+        peer: [
+          {
+            slug: 'malfunc-reviewer',
+            budget: 3,
+            run: 'bash -c "echo error; exit 1"',
+            level: 1,
+          },
+        ],
+      },
+      judges: [],
+      protect: [],
+    });
+
+    beforeAll(async () => {
+      await fs.mkdir(tempDir, { recursive: true });
+    });
+
+    afterAll(async () => {
+      await fs.rm(tempDir, { recursive: true, force: true });
+    });
+
+    when('[t0] review malfunctions (exit 1)', () => {
+      const reviews = useThen('review runs', async () => {
+        return runStoneGuardReviews(
+          { stone, guard, hash: 'malfunchash', iteration: 1, route: tempDir },
+          noopContext,
+        );
+      });
+
+      then('review reports malfunction', () => {
+        expect(reviews[0]?.exitClass).toEqual('malfunction');
+      });
+
+      then('budget NOT consumed (meter rounds is 0)', async () => {
+        const meters = await getAllRouteStoneGuardReviewPeerMeters({
+          route: tempDir,
+          stone: '1.test',
+        });
+        expect(meters).toHaveLength(0);
+      });
+    });
+  });
+
+  given('[case12] budget consumed on successful review (exit 0)', () => {
+    const tempDir = path.join(
+      os.tmpdir(),
+      `test-reviews-budget-success-${Date.now()}`,
+    );
+    const stone = new RouteStone({
+      name: '1.test',
+      path: path.join(tempDir, '1.test.stone'),
+      guard: null,
+    });
+    const guard = new RouteStoneGuard({
+      path: path.join(tempDir, '1.test.guard'),
+      artifacts: ['1.test*.md'],
+      reviews: {
+        self: [],
+        peer: [
+          {
+            slug: 'success-reviewer',
+            budget: 3,
+            run: 'echo "blockers: 0"',
+            level: 1,
+          },
+        ],
+      },
+      judges: [],
+      protect: [],
+    });
+
+    beforeAll(async () => {
+      await fs.mkdir(tempDir, { recursive: true });
+    });
+
+    afterAll(async () => {
+      await fs.rm(tempDir, { recursive: true, force: true });
+    });
+
+    when('[t0] review succeeds (exit 0)', () => {
+      const reviews = useThen('review runs', async () => {
+        return runStoneGuardReviews(
+          { stone, guard, hash: 'successhash', iteration: 1, route: tempDir },
+          noopContext,
+        );
+      });
+
+      then('review reports passed', () => {
+        expect(reviews[0]?.exitClass).toEqual('passed');
+      });
+
+      then('budget consumed (meter rounds is 1)', async () => {
+        const meters = await getAllRouteStoneGuardReviewPeerMeters({
+          route: tempDir,
+          stone: '1.test',
+        });
+        expect(meters).toHaveLength(1);
+        expect(meters[0]?.rounds).toEqual(1);
+      });
+    });
+  });
+
+  given('[case13] budget not consumed on cache hit', () => {
+    const tempDir = path.join(
+      os.tmpdir(),
+      `test-reviews-budget-cache-${Date.now()}`,
+    );
+    const stone = new RouteStone({
+      name: '1.test',
+      path: path.join(tempDir, '1.test.stone'),
+      guard: null,
+    });
+    const guard = new RouteStoneGuard({
+      path: path.join(tempDir, '1.test.guard'),
+      artifacts: ['1.test*.md'],
+      reviews: {
+        self: [],
+        peer: [
+          {
+            slug: 'cache-reviewer',
+            budget: 3,
+            run: 'echo "blockers: 0"',
+            level: 1,
+          },
+        ],
+      },
+      judges: [],
+      protect: [],
+    });
+
+    beforeAll(async () => {
+      await fs.mkdir(tempDir, { recursive: true });
+    });
+
+    afterAll(async () => {
+      await fs.rm(tempDir, { recursive: true, force: true });
+    });
+
+    when('[t0] review runs twice with same hash', () => {
+      useThen('first review runs', async () => {
+        return runStoneGuardReviews(
+          { stone, guard, hash: 'cachehash', iteration: 1, route: tempDir },
+          noopContext,
+        );
+      });
+
+      useThen('second review runs (cache hit)', async () => {
+        return runStoneGuardReviews(
+          { stone, guard, hash: 'cachehash', iteration: 2, route: tempDir },
+          noopContext,
+        );
+      });
+
+      then('budget consumed only once (rounds is 1)', async () => {
+        const meters = await getAllRouteStoneGuardReviewPeerMeters({
+          route: tempDir,
+          stone: '1.test',
+        });
+        expect(meters).toHaveLength(1);
+        expect(meters[0]?.rounds).toEqual(1);
+      });
+    });
+  });
+
+  given('[case14] budget not consumed on cache hit with blockers', () => {
+    const tempDir = path.join(
+      os.tmpdir(),
+      `test-reviews-budget-cache-blockers-${Date.now()}`,
+    );
+    const stone = new RouteStone({
+      name: '1.test',
+      path: path.join(tempDir, '1.test.stone'),
+      guard: null,
+    });
+    const guard = new RouteStoneGuard({
+      path: path.join(tempDir, '1.test.guard'),
+      artifacts: ['1.test*.md'],
+      reviews: {
+        self: [],
+        peer: [
+          {
+            slug: 'blocker-reviewer',
+            budget: 3,
+            run: 'echo "blockers: 1"',
+            level: 1,
+          },
+        ],
+      },
+      judges: [],
+      protect: [],
+    });
+
+    beforeAll(async () => {
+      await fs.mkdir(tempDir, { recursive: true });
+    });
+
+    afterAll(async () => {
+      await fs.rm(tempDir, { recursive: true, force: true });
+    });
+
+    when('[t0] review with blockers runs twice with same hash', () => {
+      useThen('first review runs (has blockers)', async () => {
+        return runStoneGuardReviews(
+          { stone, guard, hash: 'blockhash', iteration: 1, route: tempDir },
+          noopContext,
+        );
+      });
+
+      useThen('second review runs (cache hit)', async () => {
+        return runStoneGuardReviews(
+          { stone, guard, hash: 'blockhash', iteration: 2, route: tempDir },
+          noopContext,
+        );
+      });
+
+      then('budget consumed only once (rounds is 1)', async () => {
+        const meters = await getAllRouteStoneGuardReviewPeerMeters({
+          route: tempDir,
+          stone: '1.test',
+        });
+        expect(meters).toHaveLength(1);
+        expect(meters[0]?.rounds).toEqual(1);
       });
     });
   });

@@ -1,0 +1,290 @@
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
+
+exports[`driver.route.peer-budget-multilevel.journey.acceptance given: [journey 4] multi-level mixed terminal + budget extension when: [t0] artifact created, level 1 reviewers run first then: snapshot [t0]: level 1 active, level 2 awaits 1`] = `
+"🦉 the way speaks for itself
+   ├─ ✓ review.1 - completed [TIME]
+   ├─ ✓ review.2 - completed [TIME]
+   └─ ✗ judge.1 - blocked [TIME]
+
+🗿 route.stone.set
+   ├─ stone = 1.vision
+   ├─ passage = blocked
+   ├─ reason = blockers exceed threshold (2 > 0)
+   └─ guard
+      ├─ artifacts
+      │   └─ src/**/*.ts
+      ├─ reviews
+      │   ├─ r1: linter (l1, 1/2, rejected)
+      │   │   ├─ rejected [TIME]
+      │   │   ├─ review: .route/1.vision.guard.review.i1.e0aae4264c854c203aaff5a5ed15c176fb117aacd9ea5fed2ac8d500fa35679b.r1.md
+      │   │   └─ 1 blocker 🔴
+      │   ├─ r2: spellcheck (l1, 1/3, rejected)
+      │   │   ├─ rejected [TIME]
+      │   │   ├─ review: .route/1.vision.guard.review.i1.e0aae4264c854c203aaff5a5ed15c176fb117aacd9ea5fed2ac8d500fa35679b.r2.md
+      │   │   └─ 1 blocker 🔴
+      │   └─ r3: architect (l2, 0/2, awaits)
+      │       └─ awaits l1
+      └─ judges
+          └─ j1: rhx route.stone.judge --mechanism reviewed? --stone $stone --route $route --allow-blockers 0 --allow-nitpicks 1
+              ├─ finished [TIME] ✗
+              └─ reason: blockers exceed threshold (2 > 0)
+"
+`;
+
+exports[`driver.route.peer-budget-multilevel.journey.acceptance given: [journey 4] multi-level mixed terminal + budget extension when: [t1] second attempt, linter uses more budget then: snapshot [t1]: linter 2/2 exhausted, spellcheck 2/3 1`] = `
+"🦉 the way speaks for itself
+   ├─ ✓ review.1 - completed [TIME]
+   ├─ ✓ review.2 - completed [TIME]
+   └─ ✗ judge.1 - blocked [TIME]
+
+🗿 route.stone.set
+   ├─ stone = 1.vision
+   ├─ passage = blocked
+   ├─ reason = blockers exceed threshold (2 > 0)
+   └─ guard
+      ├─ artifacts
+      │   └─ src/**/*.ts
+      ├─ reviews
+      │   ├─ r1: linter (l1, 2/2, exhausted)
+      │   │   ├─ exhausted
+      │   │   └─ review: .route/1.vision.guard.review.i1.6b085541feda505cf8c0d0d4929a3b937eac477a6af3437f758a27001cdbadae.r1.md
+      │   ├─ r2: spellcheck (l1, 2/3, rejected)
+      │   │   ├─ rejected [TIME]
+      │   │   ├─ review: .route/1.vision.guard.review.i1.6b085541feda505cf8c0d0d4929a3b937eac477a6af3437f758a27001cdbadae.r2.md
+      │   │   └─ 1 blocker 🔴
+      │   └─ r3: architect (l2, 0/2, awaits)
+      │       └─ awaits l1
+      └─ judges
+          └─ j1: rhx route.stone.judge --mechanism reviewed? --stone $stone --route $route --allow-blockers 0 --allow-nitpicks 1
+              ├─ finished [TIME] ✗
+              └─ reason: blockers exceed threshold (2 > 0)
+"
+`;
+
+exports[`driver.route.peer-budget-multilevel.journey.acceptance given: [journey 4] multi-level mixed terminal + budget extension when: [t2] third attempt, spellcheck passes (linter already exhausted) then: snapshot [t2]: level 1 terminal, architect unlocked 1`] = `
+"🦉 the way speaks for itself
+   ├─ ✓ review.2 - completed [TIME]
+   ├─ ✓ review.3 - completed [TIME]
+   └─ ✗ judge.1 - blocked [TIME]
+
+🗿 route.stone.set
+   ├─ stone = 1.vision
+   ├─ passage = blocked
+   ├─ reason = blockers exceed threshold (1 > 0)
+   └─ guard
+      ├─ artifacts
+      │   └─ src/**/*.ts
+      ├─ reviews
+      │   ├─ r1: linter (l1, 2/2, exhausted)
+      │   │   └─ exhausted
+      │   ├─ r2: spellcheck (l1, 3/3, approved)
+      │   │   ├─ approved [TIME] ✓
+      │   │   └─ review: .route/1.vision.guard.review.i1.7de8f5be336f95e3dd2e5b02467258533bcf304b0cbe0502fc0a08f5debbcc27.r2.md
+      │   └─ r3: architect (l2, 1/2, rejected)
+      │       ├─ rejected [TIME]
+      │       ├─ review: .route/1.vision.guard.review.i1.7de8f5be336f95e3dd2e5b02467258533bcf304b0cbe0502fc0a08f5debbcc27.r3.md
+      │       └─ 1 blocker 🔴
+      └─ judges
+          └─ j1: rhx route.stone.judge --mechanism reviewed? --stone $stone --route $route --allow-blockers 0 --allow-nitpicks 1
+              ├─ finished [TIME] ✗
+              └─ reason: blockers exceed threshold (1 > 0)
+"
+`;
+
+exports[`driver.route.peer-budget-multilevel.journey.acceptance given: [journey 4] multi-level mixed terminal + budget extension when: [t3] fourth attempt, architect exhausts then: snapshot [t3]: architect exhausted 1`] = `
+"🦉 the way speaks for itself
+   ├─ ✓ review.3 - completed [TIME]
+
+🗿 route.stone.set
+   ├─ stone = 1.vision
+   ├─ passage = blocked
+   ├─ reason = peer reviewer budget exhausted: linter, spellcheck, architect
+   ├─ options
+   │  ├─ increase budget
+   │  │  └─ rhx route.guard.budget --for review --add N --stone 1.vision
+   │  └─ approve as-is
+   │     └─ rhx route.stone.set --stone 1.vision --as approved
+   └─ guard
+      ├─ artifacts
+      │   └─ src/**/*.ts
+      └─ reviews
+          ├─ r1: linter (l1, 2/2, exhausted)
+          │   └─ exhausted
+          ├─ r2: spellcheck (l1, 3/3, exhausted)
+          │   └─ exhausted
+          └─ r3: architect (l2, 2/2, exhausted)
+              ├─ exhausted
+              └─ review: .route/1.vision.guard.review.i1.9715ae938550a2a1c5d630c0e6acc4e404f733ff9a46eab56f99e55cde0f75f7.r3.md
+"
+`;
+
+exports[`driver.route.peer-budget-multilevel.journey.acceptance given: [journey 4] multi-level mixed terminal + budget extension when: [t4] route.drive shows exhaustion status then: snapshot [t4]: drive status with exhaustion 1`] = `
+"🦉 where were we?
+
+🗿 route.drive
+   ├─ where do we go?
+   │  ├─ route = .
+   │  └─ stone = 1.vision
+   │
+   └─ halted, peer reviewer budget exhausted
+      ├─ reason: peer reviewer budget exhausted
+      │
+      ├─ reviews
+      │   ├─ r1: linter (l1, 2/2, exhausted)
+      │   │   └─ exhausted
+      │   ├─ r2: spellcheck (l1, 3/3, exhausted)
+      │   │   └─ exhausted
+      │   └─ r3: architect (l2, 2/2, exhausted)
+      │       └─ exhausted
+      │
+      ├─ please ask a human to either
+      │  ├─ approve as-is
+      │  │  └─ rhx route.stone.set --stone 1.vision --as approved
+      │  │
+      │  └─ extend budget (then rerun)
+      │     └─ rhx route.guard.budget --for review --add N --stone 1.vision
+      │
+      └─ once they approve, run
+         └─ rhx route.stone.set --stone 1.vision --as passed
+"
+`;
+
+exports[`driver.route.peer-budget-multilevel.journey.acceptance given: [journey 4] multi-level mixed terminal + budget extension when: [t5] extend budget for architect then: snapshot [t5]: budget extended 1`] = `
+"
+🦉 budget extended
+
+🗿 route.guard.budget
+   ├─ route = .
+   ├─ add = 2
+   ├─ peer = architect
+   └─ updates
+      └─ architect: 2 → 4
+
+"
+`;
+
+exports[`driver.route.peer-budget-multilevel.journey.acceptance given: [journey 4] multi-level mixed terminal + budget extension when: [t6] after budget extension, architect can continue then: snapshot [t6]: architect can continue 1`] = `
+"🦉 where were we?
+
+🗿 route.drive
+   ├─ where do we go?
+   │  ├─ route = .
+   │  └─ stone = 1.vision
+   │
+   └─ halted, peer reviewer budget exhausted
+      ├─ reason: peer reviewer budget exhausted
+      │
+      ├─ reviews
+      │   ├─ r1: linter (l1, 2/2, exhausted)
+      │   │   └─ exhausted
+      │   ├─ r2: spellcheck (l1, 3/3, exhausted)
+      │   │   └─ exhausted
+      │   └─ r3: architect (l2, 2/4, rejected)
+      │       └─ rejected
+      │
+      ├─ please ask a human to either
+      │  ├─ approve as-is
+      │  │  └─ rhx route.stone.set --stone 1.vision --as approved
+      │  │
+      │  └─ extend budget (then rerun)
+      │     └─ rhx route.guard.budget --for review --add N --stone 1.vision
+      │
+      └─ once they approve, run
+         └─ rhx route.stone.set --stone 1.vision --as passed
+"
+`;
+
+exports[`driver.route.peer-budget-multilevel.journey.acceptance given: [journey 4] multi-level mixed terminal + budget extension when: [t7] make architect pass then: snapshot [t7]: architect approved, linter still exhausted 1`] = `
+"🦉 the way speaks for itself
+   ├─ ✓ review.3 - completed [TIME]
+
+🗿 route.stone.set
+   ├─ stone = 1.vision
+   ├─ passage = blocked
+   ├─ reason = peer reviewer budget exhausted: linter, spellcheck
+   ├─ options
+   │  ├─ increase budget
+   │  │  └─ rhx route.guard.budget --for review --add N --stone 1.vision
+   │  └─ approve as-is
+   │     └─ rhx route.stone.set --stone 1.vision --as approved
+   └─ guard
+      ├─ artifacts
+      │   └─ src/**/*.ts
+      └─ reviews
+          ├─ r1: linter (l1, 2/2, exhausted)
+          │   └─ exhausted
+          ├─ r2: spellcheck (l1, 3/3, exhausted)
+          │   └─ exhausted
+          └─ r3: architect (l2, 3/4, approved)
+              ├─ approved [TIME] ✓
+              └─ review: .route/1.vision.guard.review.i1.42cb3f0d9d5c6118a09c5ed6095b040760efdc4f1ce6622c779bff444c55db3f.r3.md
+"
+`;
+
+exports[`driver.route.peer-budget-multilevel.journey.acceptance given: [journey 4] multi-level mixed terminal + budget extension when: [t8] route.drive shows need for human approval then: snapshot [t8]: needs approval for exhaustion 1`] = `
+"🦉 where were we?
+
+🗿 route.drive
+   ├─ where do we go?
+   │  ├─ route = .
+   │  └─ stone = 1.vision
+   │
+   └─ halted, peer reviewer budget exhausted
+      ├─ reason: peer reviewer budget exhausted
+      │
+      ├─ reviews
+      │   ├─ r1: linter (l1, 2/2, exhausted)
+      │   │   └─ exhausted
+      │   ├─ r2: spellcheck (l1, 3/3, exhausted)
+      │   │   └─ exhausted
+      │   └─ r3: architect (l2, 3/4, approved)
+      │       └─ approved
+      │
+      ├─ please ask a human to either
+      │  ├─ approve as-is
+      │  │  └─ rhx route.stone.set --stone 1.vision --as approved
+      │  │
+      │  └─ extend budget (then rerun)
+      │     └─ rhx route.guard.budget --for review --add N --stone 1.vision
+      │
+      └─ once they approve, run
+         └─ rhx route.stone.set --stone 1.vision --as passed
+"
+`;
+
+exports[`driver.route.peer-budget-multilevel.journey.acceptance given: [journey 4] multi-level mixed terminal + budget extension when: [t9] human approves then: snapshot [t9]: approved 1`] = `
+"🦉 the way speaks for itself
+
+🗿 route.stone.set
+   ├─ stone = 1.vision
+   └─ ✓ approved
+"
+`;
+
+exports[`driver.route.peer-budget-multilevel.journey.acceptance given: [journey 4] multi-level mixed terminal + budget extension when: [t10] pass after human approval then: snapshot [t10]: journey complete 1`] = `
+"🦉 the way speaks for itself
+   ├─ ✓ review.3 - completed (cached)
+   └─ ✓ judge.1 - allowed [TIME]
+
+🗿 route.stone.set
+   ├─ stone = 1.vision
+   ├─ passage = allowed
+   ├─ guard
+   │  ├─ artifacts
+   │  │   └─ src/**/*.ts
+   │  ├─ reviews
+   │  │   ├─ r1: linter (l1, 2/2, exhausted)
+   │  │   │   └─ exhausted
+   │  │   ├─ r2: spellcheck (l1, 3/3, exhausted)
+   │  │   │   └─ exhausted
+   │  │   └─ r3: architect (l2, 3/4, approved)
+   │  │       ├─ cached ✓
+   │  │       └─ review: .route/1.vision.guard.review.i1.42cb3f0d9d5c6118a09c5ed6095b040760efdc4f1ce6622c779bff444c55db3f.r3.md
+   │  └─ judges
+   │      └─ j1: rhx route.stone.judge --mechanism reviewed? --stone $stone --route $route --allow-blockers 0 --allow-nitpicks 1
+   │          └─ finished [TIME] ✓
+   │
+   └─ the way continues, run
+      └─ rhx route.drive
+"
+`;

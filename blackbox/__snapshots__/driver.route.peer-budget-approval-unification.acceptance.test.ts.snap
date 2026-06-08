@@ -1,0 +1,114 @@
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
+
+exports[`driver.route.peer-budget-approval-unification.acceptance given: [usecase.8] exhaustion + explicit approved? judge → one approval covers both when: [t0] artifact created, first review attempt then: snapshot [t0]: first attempt blocked 1`] = `
+"🦉 the way speaks for itself
+   ├─ ✓ review.1 - completed [TIME]
+   ├─ ✗ judge.1 - blocked [TIME]
+   └─ ✗ judge.2 - blocked [TIME]
+
+🗿 route.stone.set
+   ├─ stone = 1.execute
+   ├─ passage = blocked
+   ├─ reason = blockers exceed threshold (1 > 0); wait for human approval
+   └─ guard
+      ├─ artifacts
+      │   └─ src/**/*.ts
+      ├─ reviews
+      │   └─ r1: strict-checker (l1, 1/2, rejected)
+      │       ├─ rejected [TIME]
+      │       ├─ review: .route/1.execute.guard.review.i1.e0aae4264c854c203aaff5a5ed15c176fb117aacd9ea5fed2ac8d500fa35679b.r1.md
+      │       └─ 1 blocker 🔴
+      └─ judges
+          ├─ j1: rhx route.stone.judge --mechanism reviewed? --stone $stone --route $route --allow-blockers 0 --allow-nitpicks 1
+          │   ├─ finished [TIME] ✗
+          │   └─ reason: blockers exceed threshold (1 > 0)
+          └─ j2: rhx route.stone.judge --mechanism approved? --stone $stone --route $route
+              ├─ finished [TIME] ✗
+              └─ reason: wait for human approval
+"
+`;
+
+exports[`driver.route.peer-budget-approval-unification.acceptance given: [usecase.8] exhaustion + explicit approved? judge → one approval covers both when: [t1] second attempt, budget exhausts then: snapshot [t1]: exhausted, needs approval 1`] = `
+"🦉 the way speaks for itself
+   ├─ ✓ review.1 - completed [TIME]
+
+🗿 route.stone.set
+   ├─ stone = 1.execute
+   ├─ passage = blocked
+   ├─ reason = peer reviewer budget exhausted: strict-checker
+   ├─ options
+   │  ├─ increase budget
+   │  │  └─ rhx route.guard.budget --for review --add N --peer strict-checker --stone 1.execute
+   │  └─ approve as-is
+   │     └─ rhx route.stone.set --stone 1.execute --as approved
+   └─ guard
+      ├─ artifacts
+      │   └─ src/**/*.ts
+      └─ reviews
+          └─ r1: strict-checker (l1, 2/2, exhausted)
+              ├─ exhausted
+              └─ review: .route/1.execute.guard.review.i1.6b085541feda505cf8c0d0d4929a3b937eac477a6af3437f758a27001cdbadae.r1.md
+"
+`;
+
+exports[`driver.route.peer-budget-approval-unification.acceptance given: [usecase.8] exhaustion + explicit approved? judge → one approval covers both when: [t2] route.drive shows exhaustion requires approval then: snapshot [t2]: halted, wait for approval 1`] = `
+"🦉 where were we?
+
+🗿 route.drive
+   ├─ where do we go?
+   │  ├─ route = .
+   │  └─ stone = 1.execute
+   │
+   └─ halted, peer reviewer budget exhausted
+      ├─ reason: peer reviewer budget exhausted
+      │
+      ├─ reviews
+      │   └─ r1: strict-checker (l1, 2/2, exhausted)
+      │       └─ exhausted
+      │
+      ├─ please ask a human to either
+      │  ├─ approve as-is
+      │  │  └─ rhx route.stone.set --stone 1.execute --as approved
+      │  │
+      │  └─ extend budget (then rerun)
+      │     └─ rhx route.guard.budget --for review --add N --peer strict-checker --stone 1.execute
+      │
+      └─ once they approve, run
+         └─ rhx route.stone.set --stone 1.execute --as passed
+"
+`;
+
+exports[`driver.route.peer-budget-approval-unification.acceptance given: [usecase.8] exhaustion + explicit approved? judge → one approval covers both when: [t3] human approves then: snapshot [t3]: approved 1`] = `
+"🦉 the way speaks for itself
+
+🗿 route.stone.set
+   ├─ stone = 1.execute
+   └─ ✓ approved
+"
+`;
+
+exports[`driver.route.peer-budget-approval-unification.acceptance given: [usecase.8] exhaustion + explicit approved? judge → one approval covers both when: [t4] pass after approval then: snapshot [t4]: journey complete, both judges satisfied 1`] = `
+"🦉 the way speaks for itself
+   ├─ ✓ judge.1 - allowed [TIME]
+   └─ ✓ judge.2 - allowed [TIME]
+
+🗿 route.stone.set
+   ├─ stone = 1.execute
+   ├─ passage = allowed
+   ├─ guard
+   │  ├─ artifacts
+   │  │   └─ src/**/*.ts
+   │  ├─ reviews
+   │  │   └─ r1: strict-checker (l1, 2/2, exhausted)
+   │  │       ├─ exhausted
+   │  │       └─ review: .route/1.execute.guard.review.i1.6b085541feda505cf8c0d0d4929a3b937eac477a6af3437f758a27001cdbadae.r1.md
+   │  └─ judges
+   │      ├─ j1: rhx route.stone.judge --mechanism reviewed? --stone $stone --route $route --allow-blockers 0 --allow-nitpicks 1
+   │      │   └─ finished [TIME] ✓
+   │      └─ j2: rhx route.stone.judge --mechanism approved? --stone $stone --route $route
+   │          └─ finished [TIME] ✓
+   │
+   └─ the way continues, run
+      └─ rhx route.drive
+"
+`;

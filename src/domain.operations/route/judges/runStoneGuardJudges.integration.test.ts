@@ -20,7 +20,7 @@ describe('runStoneGuardJudges', () => {
     const guard = new RouteStoneGuard({
       path: path.join(tempDir, '1.test.guard'),
       artifacts: ['1.test*.md'],
-      reviews: [],
+      reviews: { self: [], peer: [] },
       judges: ['echo "passed: true\\nreason: all checks passed"'],
       protect: [],
     });
@@ -108,7 +108,7 @@ describe('runStoneGuardJudges', () => {
     const guard = new RouteStoneGuard({
       path: path.join(tempDir, '1.test.guard'),
       artifacts: ['1.test*.md'],
-      reviews: [],
+      reviews: { self: [], peer: [] },
       judges: ['echo "passed: false\\nreason: blockers found"'],
       protect: [],
     });
@@ -162,7 +162,7 @@ describe('runStoneGuardJudges', () => {
     const guard = new RouteStoneGuard({
       path: path.join(tempDir, '1.test.guard'),
       artifacts: ['1.test*.md'],
-      reviews: [],
+      reviews: { self: [], peer: [] },
       judges: [
         'echo "passed: true\\nreason: review passed"',
         'echo "passed: false\\nreason: approval required"',
@@ -227,7 +227,7 @@ describe('runStoneGuardJudges', () => {
     const guard = new RouteStoneGuard({
       path: path.join(tempDir, '1.test.guard'),
       artifacts: ['1.test*.md'],
-      reviews: [],
+      reviews: { self: [], peer: [] },
       judges: [
         `bash -c 'if [ -f "$route/.marker" ]; then echo "passed: true"; echo "reason: marker found at $route"; else echo "passed: false"; echo "reason: marker not found at $route"; fi'`.replace(
           /\$route/g,
@@ -317,7 +317,7 @@ describe('runStoneGuardJudges', () => {
     const guard = new RouteStoneGuard({
       path: path.join(tempDir, '1.test.guard'),
       artifacts: ['1.test*.md'],
-      reviews: [],
+      reviews: { self: [], peer: [] },
       judges: ['echo "passed: true\\nreason: all checks passed"'],
       protect: [],
     });
@@ -377,7 +377,7 @@ describe('runStoneGuardJudges', () => {
     const guard = new RouteStoneGuard({
       path: path.join(tempDir, '1.test.guard'),
       artifacts: ['1.test*.md'],
-      reviews: [],
+      reviews: { self: [], peer: [] },
       judges: ['echo "passed: false\\nreason: blockers found"'],
       protect: [],
     });
@@ -437,7 +437,7 @@ describe('runStoneGuardJudges', () => {
     const guard = new RouteStoneGuard({
       path: path.join(tempDir, '1.test.guard'),
       artifacts: ['1.test*.md'],
-      reviews: [],
+      reviews: { self: [], peer: [] },
       judges: ['echo "passed: true\\nreason: judge passed"'],
       protect: [],
     });
@@ -495,7 +495,7 @@ describe('runStoneGuardJudges', () => {
     const guard = new RouteStoneGuard({
       path: path.join(tempDir, '1.test.guard'),
       artifacts: ['1.test*.md'],
-      reviews: [],
+      reviews: { self: [], peer: [] },
       judges: [
         'bash -c "echo passed: false; echo reason: approval required; exit 2"',
       ],
@@ -555,7 +555,7 @@ describe('runStoneGuardJudges', () => {
     const guard = new RouteStoneGuard({
       path: path.join(tempDir, '1.test.guard'),
       artifacts: ['1.test*.md'],
-      reviews: [],
+      reviews: { self: [], peer: [] },
       judges: ['bash -c "echo stdout output; echo stderr error >&2; exit 1"'],
       protect: [],
     });
@@ -623,7 +623,7 @@ describe('runStoneGuardJudges', () => {
     const guard = new RouteStoneGuard({
       path: path.join(tempDir, '1.test.guard'),
       artifacts: ['1.test*.md'],
-      reviews: [],
+      reviews: { self: [], peer: [] },
       judges: [
         'bash -c \'echo "passed: false"; echo "reason: approval required"; exit 2\'',
       ],
@@ -698,7 +698,7 @@ describe('runStoneGuardJudges', () => {
     const guard = new RouteStoneGuard({
       path: path.join(tempDir, '1.test.guard'),
       artifacts: ['1.test*.md'],
-      reviews: [],
+      reviews: { self: [], peer: [] },
       judges: [`bash -c 'echo "passed: true"; echo "reason: rhx=$rhx"'`],
       protect: [],
     });
@@ -764,7 +764,7 @@ describe('runStoneGuardJudges', () => {
     const guard = new RouteStoneGuard({
       path: path.join(tempDir, '1.test.guard'),
       artifacts: ['1.test*.md'],
-      reviews: [],
+      reviews: { self: [], peer: [] },
       judges: [
         `bash -c 'echo "passed: true"; echo "reason: rhachet=$rhachet"'`,
       ],
@@ -834,7 +834,7 @@ describe('runStoneGuardJudges', () => {
     const guard = new RouteStoneGuard({
       path: path.join(tempDir, '1.test.guard'),
       artifacts: ['1.test*.md'],
-      reviews: [],
+      reviews: { self: [], peer: [] },
       judges: ['npx rhachet run --skill route.stone.judge'],
       protect: [],
     });
@@ -870,7 +870,7 @@ describe('runStoneGuardJudges', () => {
     const guard = new RouteStoneGuard({
       path: path.join(tempDir, '1.test.guard'),
       artifacts: ['1.test*.md'],
-      reviews: [],
+      reviews: { self: [], peer: [] },
       judges: ['npx rhx route.stone.judge --stone 1.test'],
       protect: [],
     });

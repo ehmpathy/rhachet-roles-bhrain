@@ -1,0 +1,22 @@
+# rule.forbid.timestamps-in-route-artifacts
+
+route artifacts must not include timestamps. dates (YYYY-MM-DD) ok; time precision not.
+
+## .why
+
+timestamps = false precision, merge conflicts, complex diffs.
+
+## .pattern
+
+```jsonl
+// good
+{"stone": "1.vision", "status": "passed"}
+{"stone": "1.vision", "status": "passed", "on": "2026-03-08"}
+
+// bad
+{"stone": "1.vision", "status": "passed", "at": "2026-03-08T12:34:56Z"}
+```
+
+## .enforcement
+
+timestamp fields in route artifacts = **BLOCKER**

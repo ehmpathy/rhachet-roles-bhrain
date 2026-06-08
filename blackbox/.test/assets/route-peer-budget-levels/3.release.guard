@@ -1,0 +1,13 @@
+artifacts:
+  - release/**/*.md
+
+reviews:
+  peer:
+    - slug: releaser
+      run: bash $route/.test/mock-review-releaser.sh
+      budget: 5
+      level: 1
+
+judges:
+  - rhx route.stone.judge --mechanism reviewed? --stone $stone --route $route --allow-blockers 0 --allow-nitpicks 1
+  - rhx route.stone.judge --mechanism approved? --stone $stone --route $route

@@ -1,0 +1,28 @@
+# rule.forbid.duplicate-format-tree-operations
+
+forbid duplicate format*Tree operations. reuse shared format functions.
+
+## .why
+
+duplicate formatters drift, require multi-place changes, cause visual inconsistency.
+
+## .pattern
+
+create ONE shared format function with parameters for context differences.
+
+```ts
+// good - one shared function
+export const formatReviewsMeterLines = (input: {
+  meters: GuardPeerMeterStatus[];
+  headerPrefix?: string;
+  headerText?: string;
+}): string[] => { ... };
+
+// bad - duplicate functions
+const formatReviewsMeterLines = (...) => { ... };
+const formatReviewPeerMeterTree = (...) => { ... }; // same logic
+```
+
+## .enforcement
+
+duplicate format*Tree operation = **BLOCKER**

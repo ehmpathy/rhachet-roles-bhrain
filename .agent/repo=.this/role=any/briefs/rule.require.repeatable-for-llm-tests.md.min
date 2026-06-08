@@ -1,0 +1,28 @@
+# rule.require.repeatable-for-llm-tests
+
+LLM tests must use `when.repeatably(REPEATABLE_CONFIG)` instead of plain `when`.
+
+## config
+
+```ts
+const REPEATABLE_CONFIG = { attempts: 3, criteria: process.env.CI ? 'SOME' : 'EVERY' } as const;
+```
+
+| criteria | semantics |
+|----------|-----------|
+| `'SOME'` | pass if ANY attempt succeeds (CI) |
+| `'EVERY'` | pass if ALL attempts succeed (local) |
+
+## when to apply
+
+- invokes brain, review, reflect operations
+- calls any LLM internally
+
+## when NOT to apply
+
+- tests error conditions before LLM invocation
+- tests pure/deterministic logic
+
+## enforcement
+
+LLM test without `when.repeatably` = **BLOCKER**

@@ -26,7 +26,12 @@ const config: Config = {
   transformIgnorePatterns: [
     // empty = transform all node_modules (needed for esm packages in pnpm)
   ],
-  testMatch: ['**/*.acceptance.test.ts', '!**/.yalc/**', '!**/.scratch/**'],
+  testMatch: [
+    '**/*.acceptance.test.ts',
+    '!**/.yalc/**',
+    '!**/.scratch/**',
+    '!**/.agent/**',
+  ],
   setupFilesAfterEnv: ['./jest.acceptance.env.ts'],
 
   // run sequentially to prevent symlink race conditions in temp dir setup

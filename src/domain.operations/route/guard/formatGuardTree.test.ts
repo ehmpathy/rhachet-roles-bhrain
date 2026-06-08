@@ -49,8 +49,8 @@ describe('formatGuardTree', () => {
             },
           });
           expect(result).toContain('passage = allowed');
-          expect(result).toContain('finished 8.2s ✓');
-          expect(result).toContain('finished 15.1s ✓');
+          expect(result).toContain('approved 8.2s ✓'); // r1: 0 blockers → approved
+          expect(result).toContain('rejected 15.1s'); // r2: 3 blockers → rejected
           expect(result).toContain('3 blockers 🔴');
           expect(result).toContain('1 nitpick 🟠');
           expect(result).toContain('finished 0.8s ✓');
@@ -101,7 +101,7 @@ describe('formatGuardTree', () => {
           expect(result).toContain(
             'reason = blockers exceed threshold (1 > 0)',
           );
-          expect(result).toContain('finished 12.4s ✓');
+          expect(result).toContain('rejected 12.4s'); // 1 blocker → rejected
           expect(result).toContain('1 blocker 🔴');
           expect(result).toContain('finished 0.8s ✗');
           expect(result).toContain('reason: blockers exceed threshold (1 > 0)');
@@ -156,8 +156,8 @@ describe('formatGuardTree', () => {
               ],
             },
           });
-          expect(result).toContain('· cached');
-          expect(result).toContain('finished 10.3s ✓');
+          expect(result).toContain('cached ✓');
+          expect(result).toContain('approved 10.3s ✓'); // 0 blockers → approved
           expect(result).toContain('2 nitpicks 🟠');
           expect(result).toMatchSnapshot();
         });
@@ -527,4 +527,162 @@ describe('formatGuardTree', () => {
       });
     },
   );
+
+  given(
+    '[case13] peerMeters — rNum uses meter order, not artifact order',
+    () => {
+      when('[t0] l2 reviewer ran but l1 reviewers did not', () => {
+        then('rNum reflects declared position (r3 not r1)', () => {
+          const result = formatGuardTree({
+            stone: '5.5.playtest',
+            passage: 'blocked',
+            note: null,
+            reason: 'wait for human approval',
+            guard: {
+              artifactFiles: ['5.5.playtest.yield.md'],
+              reviews: [
+                // only the l2 reviewer ran (index 3 in declaration)
+                {
+                  index: 3,
+                  cmd: 'slow-fail',
+                  cached: false,
+                  durationSec: 15.0,
+                  blockers: 0,
+                  nitpicks: 0,
+                  path: '.route/5.5.playtest.guard.review.i1.abc123.r3.md',
+                  peer: { slug: 'slow-fail', level: 2, rounds: 2, budget: 2 },
+                },
+              ],
+              judges: [],
+              peerMeters: [
+                // l1 reviewers
+                {
+                  slug: 'quick-pass',
+                  level: 1,
+                  rounds: 1,
+                  budget: 1,
+                  verdict: 'exhausted',
+                  awaits: false,
+                },
+                {
+                  slug: 'medium-pass',
+                  level: 1,
+                  rounds: 0,
+                  budget: 2,
+                  verdict: 'queued',
+                  awaits: false,
+                },
+                // l2 reviewer
+                {
+                  slug: 'slow-fail',
+                  level: 2,
+                  rounds: 2,
+                  budget: 2,
+                  verdict: 'approved',
+                  awaits: false,
+                },
+              ],
+            },
+          });
+          // slow-fail should be r3 (its declared position), not r1 (artifact array index)
+          expect(result).toContain('r1: quick-pass');
+          expect(result).toContain('r2: medium-pass');
+          expect(result).toContain('r3: slow-fail');
+          expect(result).not.toMatch(/r1: slow-fail/);
+          expect(result).toMatchSnapshot();
+        });
+      });
+    },
+  );
+
+  given(
+    '[case14] peerMeters — exhausted reviewer shows prior review path',
+    () => {
+      when('[t0] reviewer exhausted with cached review', () => {
+        then('shows review path not just exhausted', () => {
+          const result = formatGuardTree({
+            stone: '5.5.playtest',
+            passage: 'blocked',
+            note: null,
+            reason: 'reviewer exhausted',
+            guard: {
+              artifactFiles: ['5.5.playtest.yield.md'],
+              reviews: [
+                {
+                  index: 1,
+                  cmd: 'quick-pass',
+                  cached: { hit: true, on: ['5.5.playtest.yield.md'] },
+                  durationSec: null,
+                  blockers: 1,
+                  nitpicks: 0,
+                  path: '.route/5.5.playtest.guard.review.i1.abc123.r1.md',
+                  peer: { slug: 'quick-pass', level: 1, rounds: 1, budget: 1 },
+                },
+              ],
+              judges: [],
+              peerMeters: [
+                {
+                  slug: 'quick-pass',
+                  level: 1,
+                  rounds: 1,
+                  budget: 1,
+                  verdict: 'exhausted',
+                  awaits: false,
+                },
+              ],
+            },
+          });
+          // exhausted reviewer should show its review path
+          expect(result).toContain('exhausted');
+          expect(result).toContain(
+            'review: .route/5.5.playtest.guard.review.i1.abc123.r1.md',
+          );
+          expect(result).toMatchSnapshot();
+        });
+      });
+    },
+  );
+
+  given('[case15] peerMeters — awaits shown in header verdict', () => {
+    when('[t0] l2 reviewer awaits l1', () => {
+      then('header shows awaits not queued', () => {
+        const result = formatGuardTree({
+          stone: '5.5.playtest',
+          passage: 'blocked',
+          note: null,
+          reason: 'blockers found',
+          guard: {
+            artifactFiles: ['5.5.playtest.yield.md'],
+            reviews: [],
+            judges: [],
+            peerMeters: [
+              {
+                slug: 'cheapo',
+                level: 1,
+                rounds: 0,
+                budget: 10,
+                verdict: 'queued',
+                awaits: false,
+              },
+              {
+                slug: 'primo',
+                level: 2,
+                rounds: 0,
+                budget: 3,
+                verdict: 'queued',
+                awaits: { level: 1 },
+              },
+            ],
+          },
+        });
+        // l1 reviewer shows queued (no awaits)
+        expect(result).toContain('r1: cheapo (l1, 0/10, queued)');
+        // l2 reviewer shows awaits in header (not queued)
+        expect(result).toContain('r2: primo (l2, 0/3, awaits)');
+        expect(result).not.toMatch(/primo.*queued/);
+        expect(result).toContain('awaits l1');
+        expect(result).toMatchSnapshot();
+      });
+    });
+  });
 });

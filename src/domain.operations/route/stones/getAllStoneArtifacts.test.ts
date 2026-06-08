@@ -56,7 +56,7 @@ describe('getAllStoneArtifacts', () => {
       guard: {
         path: path.join(routePath, '1.implement.guard'),
         artifacts: ['src/**/*'],
-        reviews: [],
+        reviews: { self: [], peer: [] },
         judges: [],
         protect: [],
       },

@@ -7,6 +7,7 @@ import { DomainLiteral } from 'domain-objects';
  * blocker values:
  * - 'review.self': agent needs to promise review.selfs
  * - 'review.peer': peer reviews have blockers (agent can fix)
+ * - 'review.peer.exhausted': peer reviewer budget exhausted (needs approval or budget extension)
  * - 'judge': non-approval judges failed (agent can fix)
  * - 'approval': only approval judge blocks (agent must wait for human)
  */
@@ -19,7 +20,12 @@ export interface RouteStoneGuardBlockerReport {
   /**
    * what blocks passage
    */
-  blocker: 'review.self' | 'review.peer' | 'judge' | 'approval';
+  blocker:
+    | 'review.self'
+    | 'review.peer'
+    | 'review.peer.exhausted'
+    | 'judge'
+    | 'approval';
 
   /**
    * human-readable reason for the block

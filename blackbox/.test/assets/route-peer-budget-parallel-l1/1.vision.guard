@@ -1,0 +1,24 @@
+artifacts:
+  - src/**/*.ts
+
+reviews:
+  peer:
+    # level 1: two parallel reviewers
+    - slug: alpha-checker
+      run: bash $route/.test/mock-review-alpha.sh
+      budget: 5
+      level: 1
+
+    - slug: beta-checker
+      run: bash $route/.test/mock-review-beta.sh
+      budget: 5
+      level: 1
+
+    # level 2: final checker, awaits ALL level 1 reviewers
+    - slug: final-checker
+      run: bash $route/.test/mock-review-final.sh
+      budget: 5
+      level: 2
+
+judges:
+  - rhx route.stone.judge --mechanism reviewed? --stone $stone --route $route --allow-blockers 0 --allow-nitpicks 1

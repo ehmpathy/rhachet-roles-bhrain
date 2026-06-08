@@ -1,0 +1,137 @@
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
+
+exports[`driver.route.peer-budget-malfunction.acceptance given: [journey] review malfunction does not consume budget when: [t0] artifact created, review malfunctions (exit 1) then: stdout has good vibes 1`] = `
+"🦉 the way speaks for itself
+   ├─ ✓ review.1 - malfunctioned [TIME]
+   └─ ✓ judge.1 - allowed [TIME]
+
+🗿 route.stone.set
+   ├─ stone = 1.execute
+   ├─ passage = malfunction
+   ├─ reason = reviewer or judge malfunctioned
+   └─ guard
+      ├─ artifacts
+      │   └─ src/**/*.ts
+      ├─ reviews
+      │   └─ r1: flaky-reviewer (l1, 0/2, approved)
+      │       ├─ approved [TIME] ✓
+      │       └─ review: .route/1.execute.guard.review.i1.e0aae4264c854c203aaff5a5ed15c176fb117aacd9ea5fed2ac8d500fa35679b.r1.md
+      └─ judges
+          └─ j1: rhx route.stone.judge --mechanism reviewed? --stone $stone --route $route --allow-blockers 0 --allow-nitpicks 1
+              └─ finished [TIME] ✓
+"
+`;
+
+exports[`driver.route.peer-budget-malfunction.acceptance given: [journey] review malfunction does not consume budget when: [t1] malfunction cleared, review succeeds with blockers then: stdout has good vibes 1`] = `
+"🦉 the way speaks for itself
+   ├─ ✓ review.1 - completed [TIME]
+   └─ ✗ judge.1 - blocked [TIME]
+
+🗿 route.stone.set
+   ├─ stone = 1.execute
+   ├─ passage = blocked
+   ├─ reason = blockers exceed threshold (1 > 0)
+   └─ guard
+      ├─ artifacts
+      │   └─ src/**/*.ts
+      ├─ reviews
+      │   └─ r1: flaky-reviewer (l1, 1/2, rejected)
+      │       ├─ rejected [TIME]
+      │       ├─ review: .route/1.execute.guard.review.i1.6b085541feda505cf8c0d0d4929a3b937eac477a6af3437f758a27001cdbadae.r1.md
+      │       └─ 1 blocker 🔴
+      └─ judges
+          └─ j1: rhx route.stone.judge --mechanism reviewed? --stone $stone --route $route --allow-blockers 0 --allow-nitpicks 1
+              ├─ finished [TIME] ✗
+              └─ reason: blockers exceed threshold (1 > 0)
+"
+`;
+
+exports[`driver.route.peer-budget-malfunction.acceptance given: [journey] review malfunction does not consume budget when: [t2] second successful review consumes second budget then: stdout has good vibes 1`] = `
+"🦉 the way speaks for itself
+   ├─ ✓ review.1 - completed [TIME]
+
+🗿 route.stone.set
+   ├─ stone = 1.execute
+   ├─ passage = blocked
+   ├─ reason = peer reviewer budget exhausted: flaky-reviewer
+   ├─ options
+   │  ├─ increase budget
+   │  │  └─ rhx route.guard.budget --for review --add N --peer flaky-reviewer --stone 1.execute
+   │  └─ approve as-is
+   │     └─ rhx route.stone.set --stone 1.execute --as approved
+   └─ guard
+      ├─ artifacts
+      │   └─ src/**/*.ts
+      └─ reviews
+          └─ r1: flaky-reviewer (l1, 2/2, exhausted)
+              ├─ exhausted
+              └─ review: .route/1.execute.guard.review.i1.7de8f5be336f95e3dd2e5b02467258533bcf304b0cbe0502fc0a08f5debbcc27.r1.md
+"
+`;
+
+exports[`driver.route.peer-budget-malfunction.acceptance given: [journey] review malfunction does not consume budget when: [t3] third attempt after exhaustion then: stdout has good vibes 1`] = `
+"🦉 the way speaks for itself
+
+🗿 route.stone.set
+   ├─ stone = 1.execute
+   ├─ passage = blocked
+   ├─ reason = peer reviewer budget exhausted: flaky-reviewer
+   ├─ options
+   │  ├─ increase budget
+   │  │  └─ rhx route.guard.budget --for review --add N --peer flaky-reviewer --stone 1.execute
+   │  └─ approve as-is
+   │     └─ rhx route.stone.set --stone 1.execute --as approved
+   └─ guard
+      ├─ artifacts
+      │   └─ src/**/*.ts
+      └─ reviews
+          └─ r1: flaky-reviewer (l1, 2/2, exhausted)
+              └─ exhausted
+"
+`;
+
+exports[`driver.route.peer-budget-malfunction.acceptance given: [journey] review malfunction does not consume budget when: [t4] malfunction after budget extension then: stdout has good vibes 1`] = `
+"🦉 the way speaks for itself
+   ├─ ✓ review.1 - malfunctioned [TIME]
+   └─ ✓ judge.1 - allowed [TIME]
+
+🗿 route.stone.set
+   ├─ stone = 1.execute
+   ├─ passage = malfunction
+   ├─ reason = reviewer or judge malfunctioned
+   └─ guard
+      ├─ artifacts
+      │   └─ src/**/*.ts
+      ├─ reviews
+      │   └─ r1: flaky-reviewer (l1, 2/3, approved)
+      │       ├─ approved [TIME] ✓
+      │       └─ review: .route/1.execute.guard.review.i1.42cb3f0d9d5c6118a09c5ed6095b040760efdc4f1ce6622c779bff444c55db3f.r1.md
+      └─ judges
+          └─ j1: rhx route.stone.judge --mechanism reviewed? --stone $stone --route $route --allow-blockers 0 --allow-nitpicks 1
+              └─ finished [TIME] ✓
+"
+`;
+
+exports[`driver.route.peer-budget-malfunction.acceptance given: [journey] review malfunction does not consume budget when: [t5] recover from malfunction, review passes then: stdout has good vibes 1`] = `
+"🦉 the way speaks for itself
+   ├─ ✓ review.1 - completed [TIME]
+   └─ ✓ judge.1 - allowed [TIME]
+
+🗿 route.stone.set
+   ├─ stone = 1.execute
+   ├─ passage = allowed
+   ├─ guard
+   │  ├─ artifacts
+   │  │   └─ src/**/*.ts
+   │  ├─ reviews
+   │  │   └─ r1: flaky-reviewer (l1, 3/3, approved)
+   │  │       ├─ approved [TIME] ✓
+   │  │       └─ review: .route/1.execute.guard.review.i1.81d49623747ff1409651ddfe52f47dc86daec463fc714560b69c8b5f93ce35e6.r1.md
+   │  └─ judges
+   │      └─ j1: rhx route.stone.judge --mechanism reviewed? --stone $stone --route $route --allow-blockers 0 --allow-nitpicks 1
+   │          └─ finished [TIME] ✓
+   │
+   └─ the way continues, run
+      └─ rhx route.drive
+"
+`;

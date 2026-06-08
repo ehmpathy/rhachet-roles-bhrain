@@ -19,9 +19,23 @@ export const genTempDirForRhachet = (input: {
     clone: input.clone,
     git: true,
     symlink: [
-      // symlink only the required parts, not the whole repo
-      { at: 'node_modules/rhachet-roles-bhrain/package.json', to: 'package.json' },
+      // symlink rhachet-roles-bhrain package for the reviewer role
+      {
+        at: 'node_modules/rhachet-roles-bhrain/package.json',
+        to: 'package.json',
+      },
       { at: 'node_modules/rhachet-roles-bhrain/dist', to: 'dist' },
+      {
+        at: 'node_modules/rhachet-roles-bhrain/rhachet.repo.yml',
+        to: 'rhachet.repo.yml',
+      },
+      // symlink .bin for npx to find rhx/rhachet commands
+      { at: 'node_modules/.bin', to: 'node_modules/.bin' },
+      // symlink rhachet so rhx entrypoint can find ../rhachet/bin/rhx
+      { at: 'node_modules/rhachet', to: 'node_modules/rhachet' },
+      // symlink .pnpm for pnpm-generated wrapper scripts that use relative paths
+      // .why = rhx wrapper does $basedir/../.pnpm/... which needs .pnpm to exist
+      { at: 'node_modules/.pnpm', to: 'node_modules/.pnpm' },
     ],
   });
 };

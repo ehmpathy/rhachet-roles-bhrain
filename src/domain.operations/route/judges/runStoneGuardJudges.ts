@@ -75,7 +75,9 @@ export const runOneStoneGuardJudge = async (input: {
   let stderr = '';
   let exitCode = 0;
   try {
-    const result = await execAsync(cmd, { env: execEnv });
+    // execute with cwd = repoRoot so relative route paths (e.g., '.') work correctly
+    // .why = the cmd may use --route . which must be relative to repoRoot, not process.cwd()
+    const result = await execAsync(cmd, { env: execEnv, cwd: repoRoot });
     stdout = result.stdout;
     stderr = result.stderr;
     exitCode = 0;

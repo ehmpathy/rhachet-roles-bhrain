@@ -1,0 +1,54 @@
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
+
+exports[`driver.route.peer-budget-all-terminal-halt.acceptance given: [case1] level 1 exhausts but level 2 still has budget when: [t0] artifact created, first attempt then: snapshot [t0]: l1 exhausted, l2 rejected, no halt 1`] = `
+"🦉 the way speaks for itself
+   ├─ ✓ review.1 - completed [TIME]
+   ├─ ✓ review.2 - completed [TIME]
+   └─ ✗ judge.1 - blocked [TIME]
+
+🗿 route.stone.set
+   ├─ stone = 1.vision
+   ├─ passage = blocked
+   ├─ reason = blockers exceed threshold (2 > 0)
+   └─ guard
+      ├─ artifacts
+      │   └─ src/**/*.ts
+      ├─ reviews
+      │   ├─ r1: quick-fail (l1, 1/1, exhausted)
+      │   │   ├─ exhausted
+      │   │   └─ review: .route/1.vision.guard.review.i1.e0aae4264c854c203aaff5a5ed15c176fb117aacd9ea5fed2ac8d500fa35679b.r1.md
+      │   └─ r2: thorough (l2, 1/2, rejected)
+      │       ├─ rejected [TIME]
+      │       ├─ review: .route/1.vision.guard.review.i1.e0aae4264c854c203aaff5a5ed15c176fb117aacd9ea5fed2ac8d500fa35679b.r2.md
+      │       └─ 1 blocker 🔴
+      └─ judges
+          └─ j1: rhx route.stone.judge --mechanism reviewed? --stone $stone --route $route --allow-blockers 0 --allow-nitpicks 1
+              ├─ finished [TIME] ✗
+              └─ reason: blockers exceed threshold (2 > 0)
+"
+`;
+
+exports[`driver.route.peer-budget-all-terminal-halt.acceptance given: [case1] level 1 exhausts but level 2 still has budget when: [t1] second attempt, level 2 also exhausts then: snapshot [t1]: all terminal, route halted 1`] = `
+"🦉 the way speaks for itself
+   ├─ ✓ review.2 - completed [TIME]
+
+🗿 route.stone.set
+   ├─ stone = 1.vision
+   ├─ passage = blocked
+   ├─ reason = peer reviewer budget exhausted: quick-fail, thorough
+   ├─ options
+   │  ├─ increase budget
+   │  │  └─ rhx route.guard.budget --for review --add N --stone 1.vision
+   │  └─ approve as-is
+   │     └─ rhx route.stone.set --stone 1.vision --as approved
+   └─ guard
+      ├─ artifacts
+      │   └─ src/**/*.ts
+      └─ reviews
+          ├─ r1: quick-fail (l1, 1/1, exhausted)
+          │   └─ exhausted
+          └─ r2: thorough (l2, 2/2, exhausted)
+              ├─ exhausted
+              └─ review: .route/1.vision.guard.review.i1.6b085541feda505cf8c0d0d4929a3b937eac477a6af3437f758a27001cdbadae.r2.md
+"
+`;
