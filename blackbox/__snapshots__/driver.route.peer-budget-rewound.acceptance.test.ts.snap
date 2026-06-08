@@ -1,0 +1,85 @@
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
+
+exports[`driver.route.peer-budget-rewound.acceptance given: [journey] rewound resets exhausted budget to full when: [t1] second attempt exhausts budget then: stdout has good vibes 1`] = `
+"🦉 the way speaks for itself
+   ├─ ✓ review.1 - completed [TIME]
+
+🗿 route.stone.set
+   ├─ stone = 1.execute
+   ├─ passage = blocked
+   ├─ reason = peer reviewer budget exhausted: mock-reviewer
+   ├─ options
+   │  ├─ increase budget
+   │  │  └─ rhx route.guard.budget --for review --add N --peer mock-reviewer --stone 1.execute
+   │  └─ approve as-is
+   │     └─ rhx route.stone.set --stone 1.execute --as approved
+   └─ guard
+      ├─ artifacts
+      │   └─ src/**/*.ts
+      └─ reviews
+          └─ r1: mock-reviewer (l1, 2/2, exhausted)
+              ├─ exhausted
+              └─ review: .route/1.execute.guard.review.i1.6b085541feda505cf8c0d0d4929a3b937eac477a6af3437f758a27001cdbadae.r1.md
+"
+`;
+
+exports[`driver.route.peer-budget-rewound.acceptance given: [journey] rewound resets exhausted budget to full when: [t2] stone is rewound then: stdout has good vibes 1`] = `
+"🦉 the way speaks for itself
+
+🗿 route.stone.set
+   ├─ stone = 1.execute
+   ├─ cascade
+   │  └─ 1.execute
+   │     ├─ deleted: 2 reviews, 1 judges, 0 promises, 0 triggers
+   │     └─ passage: rewound
+   └─ done
+"
+`;
+
+exports[`driver.route.peer-budget-rewound.acceptance given: [journey] rewound resets exhausted budget to full when: [t3] attempt after rewind - budget should be fresh then: stdout has good vibes 1`] = `
+"🦉 the way speaks for itself
+   ├─ ✓ review.1 - completed [TIME]
+   └─ ✗ judge.1 - blocked [TIME]
+
+🗿 route.stone.set
+   ├─ stone = 1.execute
+   ├─ passage = blocked
+   ├─ reason = blockers exceed threshold (1 > 0)
+   └─ guard
+      ├─ artifacts
+      │   └─ src/**/*.ts
+      ├─ reviews
+      │   └─ r1: mock-reviewer (l1, 1/2, rejected)
+      │       ├─ rejected [TIME]
+      │       ├─ review: .route/1.execute.guard.review.i1.7de8f5be336f95e3dd2e5b02467258533bcf304b0cbe0502fc0a08f5debbcc27.r1.md
+      │       └─ 1 blocker 🔴
+      └─ judges
+          └─ j1: rhx route.stone.judge --mechanism reviewed? --stone $stone --route $route --allow-blockers 0 --allow-nitpicks 1
+              ├─ finished [TIME] ✗
+              └─ reason: blockers exceed threshold (1 > 0)
+"
+`;
+
+exports[`driver.route.peer-budget-rewound.acceptance given: [journey] rewound resets exhausted budget to full when: [t4] pass after rewind with review that passes then: stdout has good vibes 1`] = `
+"🦉 the way speaks for itself
+   ├─ ✓ review.1 - completed [TIME]
+   └─ ✓ judge.1 - allowed [TIME]
+
+🗿 route.stone.set
+   ├─ stone = 1.execute
+   ├─ passage = allowed
+   ├─ guard
+   │  ├─ artifacts
+   │  │   └─ src/**/*.ts
+   │  ├─ reviews
+   │  │   └─ r1: mock-reviewer (l1, 2/2, approved)
+   │  │       ├─ approved [TIME] ✓
+   │  │       └─ review: .route/1.execute.guard.review.i1.8991072e84931bf0298195a33d866685be7e16f9ca921210660a6416559d694d.r1.md
+   │  └─ judges
+   │      └─ j1: rhx route.stone.judge --mechanism reviewed? --stone $stone --route $route --allow-blockers 0 --allow-nitpicks 1
+   │          └─ finished [TIME] ✓
+   │
+   └─ the way continues, run
+      └─ rhx route.drive
+"
+`;

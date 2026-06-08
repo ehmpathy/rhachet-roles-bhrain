@@ -1,0 +1,25 @@
+# rule.forbid.unbounded-recursive-globs
+
+recursive globs (`**`) must exclude `node_modules`.
+
+## .why
+
+`**` with `cwd: process.cwd()` traverses node_modules (50k+ files) = OOM.
+
+## .pattern
+
+```ts
+// bad
+enumFilesFromGlob({ glob: '**/*.flag', cwd: process.cwd() });
+
+// good
+enumFilesFromGlob({ glob: '**/*.flag', cwd: process.cwd(), ignore: ['**/node_modules/**'] });
+```
+
+## .exception
+
+scoped globs ok: `enumFilesFromGlob({ glob: '*.md', cwd: input.route })`
+
+## .enforcement
+
+unbounded `**` glob without ignore = **BLOCKER**

@@ -6,6 +6,7 @@ import {
   execAsync,
   genTempDirForRhachet,
   invokeRouteSkill,
+  sanitizeTimeForSnapshot,
 } from './.test/invokeRouteSkill';
 
 const ASSETS_DIR = path.join(__dirname, '.test/assets/route-driver');
@@ -70,7 +71,7 @@ describe('driver.route.set.acceptance', () => {
       });
 
       then('stdout matches snapshot', () => {
-        expect(res.cli.stdout).toMatchSnapshot();
+        expect(sanitizeTimeForSnapshot(res.cli.stdout)).toMatchSnapshot();
       });
 
       then('creates passage marker', () => {
@@ -105,7 +106,7 @@ describe('driver.route.set.acceptance', () => {
       });
 
       then('stderr matches snapshot', () => {
-        expect(res.cli.stderr).toMatchSnapshot();
+        expect(sanitizeTimeForSnapshot(res.cli.stderr)).toMatchSnapshot();
       });
     });
   });
@@ -157,11 +158,11 @@ describe('driver.route.set.acceptance', () => {
       });
 
       then('stdout matches snapshot', () => {
-        expect(res.cli.stdout).toMatchSnapshot();
+        expect(sanitizeTimeForSnapshot(res.cli.stdout)).toMatchSnapshot();
       });
 
       then('stderr matches snapshot', () => {
-        expect(res.cli.stderr).toMatchSnapshot();
+        expect(sanitizeTimeForSnapshot(res.cli.stderr)).toMatchSnapshot();
       });
     });
   });
@@ -263,7 +264,7 @@ describe('driver.route.set.acceptance', () => {
       });
 
       then('stdout matches snapshot', () => {
-        expect(res.cli.stdout).toMatchSnapshot();
+        expect(sanitizeTimeForSnapshot(res.cli.stdout)).toMatchSnapshot();
       });
 
       then('creates passage marker', () => {
@@ -361,13 +362,13 @@ describe('driver.route.set.acceptance', () => {
       });
 
       then('stdout matches snapshot', () => {
-        expect(res.cli.stdout).toMatchSnapshot();
+        expect(sanitizeTimeForSnapshot(res.cli.stdout)).toMatchSnapshot();
       });
 
       // note: stderr contains progress output (spinners) which may vary between runs
       // if this snapshot becomes flaky, consider ANSI code removal before snapshot
       then('stderr matches snapshot', () => {
-        expect(res.cli.stderr).toMatchSnapshot();
+        expect(sanitizeTimeForSnapshot(res.cli.stderr)).toMatchSnapshot();
       });
     });
   });
@@ -405,7 +406,7 @@ describe('driver.route.set.acceptance', () => {
       });
 
       then('stdout matches snapshot', () => {
-        expect(res.cli.stdout).toMatchSnapshot();
+        expect(sanitizeTimeForSnapshot(res.cli.stdout)).toMatchSnapshot();
       });
     });
 
@@ -442,7 +443,7 @@ describe('driver.route.set.acceptance', () => {
       });
 
       then('stdout matches snapshot', () => {
-        expect(res.cli.stdout).toMatchSnapshot();
+        expect(sanitizeTimeForSnapshot(res.cli.stdout)).toMatchSnapshot();
       });
     });
   });
@@ -484,7 +485,7 @@ describe('driver.route.set.acceptance', () => {
       });
 
       then('stderr matches snapshot', () => {
-        expect(res.cli.stderr).toMatchSnapshot();
+        expect(sanitizeTimeForSnapshot(res.cli.stderr)).toMatchSnapshot();
       });
     });
   });
@@ -555,7 +556,7 @@ describe('driver.route.set.acceptance', () => {
       });
 
       then('stdout matches snapshot', () => {
-        expect(res.cli.stdout).toMatchSnapshot();
+        expect(sanitizeTimeForSnapshot(res.cli.stdout)).toMatchSnapshot();
       });
     });
   });
@@ -631,7 +632,7 @@ describe('driver.route.set.acceptance', () => {
       });
 
       then('stdout matches snapshot', () => {
-        expect(res.cli.stdout).toMatchSnapshot();
+        expect(sanitizeTimeForSnapshot(res.cli.stdout)).toMatchSnapshot();
       });
     });
 
@@ -703,7 +704,7 @@ describe('driver.route.set.acceptance', () => {
       });
 
       then('stdout matches snapshot', () => {
-        expect(res.cli.stdout).toMatchSnapshot();
+        expect(sanitizeTimeForSnapshot(res.cli.stdout)).toMatchSnapshot();
       });
     });
 
@@ -752,7 +753,7 @@ describe('driver.route.set.acceptance', () => {
       });
 
       then('stdout matches snapshot', () => {
-        expect(res.cli.stdout).toMatchSnapshot();
+        expect(sanitizeTimeForSnapshot(res.cli.stdout)).toMatchSnapshot();
       });
     });
 
@@ -801,7 +802,7 @@ describe('driver.route.set.acceptance', () => {
       });
 
       then('stdout matches snapshot', () => {
-        expect(res.cli.stdout).toMatchSnapshot();
+        expect(sanitizeTimeForSnapshot(res.cli.stdout)).toMatchSnapshot();
       });
     });
   });

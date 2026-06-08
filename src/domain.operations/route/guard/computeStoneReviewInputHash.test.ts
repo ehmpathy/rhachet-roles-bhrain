@@ -48,7 +48,7 @@ describe('computeStoneReviewInputHash', () => {
       guard: {
         path: path.join(routePath, '1.implement.guard'),
         artifacts: ['src/**/*.ts'],
-        reviews: [],
+        reviews: { self: [], peer: [] },
         judges: [],
         protect: [],
       },

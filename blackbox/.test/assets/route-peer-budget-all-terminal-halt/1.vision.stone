@@ -1,0 +1,6 @@
+ask: create a feature
+
+---
+
+output:
+  - src/**/*.ts

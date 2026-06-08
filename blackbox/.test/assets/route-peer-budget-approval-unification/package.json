@@ -1,0 +1,8 @@
+{
+  "name": "route-peer-budget-approval-unification-fixture",
+  "private": true,
+  "description": "fixture for approval unification acceptance test",
+  "dependencies": {
+    "rhachet-roles-bhrain": "link:."
+  }
+}

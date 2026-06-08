@@ -1,6 +1,9 @@
 import type { RouteStoneGuardReviewSelf } from '@src/domain.objects/Driver/RouteStoneGuard';
 
-import { formatGuardTree } from './guard/formatGuardTree';
+import {
+  formatGuardTree,
+  type GuardPeerMeterStatus,
+} from './guard/formatGuardTree';
 import { formatLetsReflect } from './guard/formatLetsReflect';
 import { formatPatienceFriend } from './guard/formatPatienceFriend';
 import { formatWhatHaveYouSeen } from './guard/formatWhatHaveYouSeen';
@@ -107,6 +110,12 @@ type FormatInput =
           blockers: number;
           nitpicks: number;
           path: string;
+          peer?: {
+            slug: string;
+            level: number;
+            rounds: number;
+            budget: number;
+          };
         }>;
         judges: Array<{
           index: number;
@@ -117,6 +126,7 @@ type FormatInput =
           reason: string | null;
           path: string;
         }>;
+        peerMeters?: GuardPeerMeterStatus[];
       };
     }
   | {
@@ -366,7 +376,36 @@ export const formatRouteStoneEmit = (input: FormatInput): string => {
       ) {
         lines.push(`   ├─ stone = ${input.stone}`);
         lines.push(`   ├─ passage = ${passageValue}`);
-        lines.push(`   └─ reason = ${input.reason}`);
+
+        // detect budget exhaustion to add options hint
+        const isBudgetExhausted = input.reason.includes('budget exhausted');
+        const reasonConnector = isBudgetExhausted ? '├─' : '└─';
+        lines.push(`   ${reasonConnector} reason = ${input.reason}`);
+
+        if (isBudgetExhausted) {
+          // extract exhausted slugs from reason (format: "peer reviewer budget exhausted: slug1, slug2")
+          const exhaustedSlugs: string[] = [];
+          const match = input.reason.match(/budget exhausted:\s*(.+)$/);
+          if (match?.[1]) {
+            exhaustedSlugs.push(...match[1].split(',').map((s) => s.trim()));
+          }
+
+          // if single slug, include --peer; if multiple, omit (affects all)
+          const peerArg =
+            exhaustedSlugs.length === 1 ? ` --peer ${exhaustedSlugs[0]}` : '';
+
+          // add options as separate block with did you know header
+          lines.push('');
+          lines.push('✨ did you know?');
+          lines.push(`   ├─ increase budget`);
+          lines.push(
+            `   │  └─ rhx route.guard.budget --for review --add N${peerArg} --stone ${input.stone}`,
+          );
+          lines.push(`   └─ approve as-is`);
+          lines.push(
+            `      └─ rhx route.stone.set --stone ${input.stone} --as approved`,
+          );
+        }
       }
 
       // branch: allowed or no reason

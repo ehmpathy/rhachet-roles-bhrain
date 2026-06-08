@@ -26,7 +26,12 @@ const config: Config = {
   transformIgnorePatterns: [
     // empty = transform all node_modules (needed for esm packages in pnpm)
   ],
-  testMatch: ['**/*.integration.test.ts', '!**/.yalc/**', '!**/.scratch/**'],
+  testMatch: [
+    '**/*.integration.test.ts',
+    '!**/.yalc/**',
+    '!**/.scratch/**',
+    '!**/.agent/**',
+  ],
   setupFilesAfterEnv: ['./jest.integration.env.ts'],
 
   // use 50% of threads to leave headroom for other processes

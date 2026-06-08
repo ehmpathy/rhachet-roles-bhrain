@@ -1,0 +1,13 @@
+artifacts:
+  - beta/**/*.ts
+
+reviews:
+  peer:
+    # same reviewer slug as stone 1, but independent budget
+    - slug: shared-reviewer
+      run: bash $route/.test/mock-review-beta.sh
+      budget: 2
+      level: 1
+
+judges:
+  - rhx route.stone.judge --mechanism reviewed? --stone $stone --route $route --allow-blockers 0 --allow-nitpicks 1

@@ -25,18 +25,78 @@ export interface RouteStoneGuardReviewSelf {
 }
 
 /**
- * .what = shell command for peer review
- * .why = enables external validation of artifacts
+ * .what = structured peer review with budget and level
+ * .why = enables external validation with consumption limits and execution order
  */
-export type RouteStoneGuardReviewPeer = string;
+export interface RouteStoneGuardReviewPeer {
+  /**
+   * identifier for the peer review
+   */
+  slug: string;
+
+  /**
+   * shell command to run the review
+   */
+  run: string;
+
+  /**
+   * number of rounds budgeted for this reviewer
+   *
+   * each successful review invocation consumes one round.
+   * when rounds consumed >= budget, verdict becomes 'exhausted'.
+   */
+  budget: number;
+
+  /**
+   * execution level (default: 1)
+   *
+   * higher levels run first. level N-1 reviewers wait until
+   * all level N reviewers are terminal (approved | exhausted).
+   */
+  level?: number;
+}
+
+export class RouteStoneGuardReviewPeer
+  extends DomainLiteral<RouteStoneGuardReviewPeer>
+  implements RouteStoneGuardReviewPeer
+{
+  public static unique = ['slug'] as const;
+}
 
 /**
- * .what = structured reviews with self and peer sections
+ * .what = legacy peer review as raw shell command string
+ * .why = backwards compat for migration to structured format
+ *
+ * .note = deprecated: use RouteStoneGuardReviewPeer structured format
+ */
+export type RouteStoneGuardReviewPeerLegacy = string;
+
+/**
+ * .what = peer review in any supported format
+ * .why = allows incremental migration from string to structured
+ */
+export type RouteStoneGuardReviewPeerAny =
+  | RouteStoneGuardReviewPeer
+  | RouteStoneGuardReviewPeerLegacy;
+
+/**
+ * .what = extracts run command from peer review
+ * .why = accessor for run command
+ */
+export const getReviewPeerRunCmd = (
+  review: RouteStoneGuardReviewPeer,
+): string => review.run;
+
+/**
+ * .what = structured reviews with self and/or peer sections
  * .why = enables self-check before peer review
+ *
+ * .note = at least one of self or peer must be present
+ * .note = all reviews are structured; legacy strings converted at parse time
  */
 export interface RouteStoneGuardReviewsStructured {
-  self: RouteStoneGuardReviewSelf[];
-  peer: RouteStoneGuardReviewPeer[];
+  self?: RouteStoneGuardReviewSelf[];
+  peer?: RouteStoneGuardReviewPeer[];
 }
 
 /**
@@ -57,11 +117,12 @@ export interface RouteStoneGuard {
   /**
    * shell commands to run reviews
    *
-   * flat array (backwards compat) or structured object with self and peer
+   * structured object with self and peer sections
+   * .note = legacy flat array format converted to structured at parse time
    *
    * each peer command produces a review artifact under .route/
    */
-  reviews: RouteStoneGuardReviewPeer[] | RouteStoneGuardReviewsStructured;
+  reviews: RouteStoneGuardReviewsStructured;
 
   /**
    * shell commands to run judges
@@ -83,43 +144,21 @@ export class RouteStoneGuard
   implements RouteStoneGuard {}
 
 /**
- * .what = check if reviews is structured format
- * .why = enables type guard for structured reviews
- */
-export const isReviewsStructured = (
-  reviews: RouteStoneGuardReviewPeer[] | RouteStoneGuardReviewsStructured,
-): reviews is RouteStoneGuardReviewsStructured => {
-  return (
-    !Array.isArray(reviews) &&
-    typeof reviews === 'object' &&
-    reviews !== null &&
-    'self' in reviews &&
-    'peer' in reviews
-  );
-};
-
-/**
  * .what = extracts peer reviews from guard.reviews
- * .why = provides backwards compatible access to peer reviews
+ * .why = accessor for peer reviews
  */
 export const getGuardPeerReviews = (
   guard: RouteStoneGuard,
 ): RouteStoneGuardReviewPeer[] => {
-  if (isReviewsStructured(guard.reviews)) {
-    return guard.reviews.peer;
-  }
-  return guard.reviews;
+  return guard.reviews.peer ?? [];
 };
 
 /**
  * .what = extracts self reviews from guard.reviews
- * .why = provides access to self reviews when defined
+ * .why = accessor for self reviews
  */
 export const getGuardSelfReviews = (
   guard: RouteStoneGuard,
 ): RouteStoneGuardReviewSelf[] => {
-  if (isReviewsStructured(guard.reviews)) {
-    return guard.reviews.self;
-  }
-  return [];
+  return guard.reviews.self ?? [];
 };

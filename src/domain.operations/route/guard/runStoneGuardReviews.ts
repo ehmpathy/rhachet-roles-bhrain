@@ -8,15 +8,46 @@ import type { ContextCliEmit } from '@src/domain.objects/Driver/ContextCliEmit';
 import type { RouteStone } from '@src/domain.objects/Driver/RouteStone';
 import {
   getGuardPeerReviews,
+  getReviewPeerRunCmd,
   type RouteStoneGuard,
+  type RouteStoneGuardReviewPeer,
 } from '@src/domain.objects/Driver/RouteStoneGuard';
 import { RouteStoneGuardReviewArtifact } from '@src/domain.objects/Driver/RouteStoneGuardReviewArtifact';
+import { RouteStoneGuardReviewPeerMeter } from '@src/domain.objects/Driver/RouteStoneGuardReviewPeerMeter';
 
 import { formatTreeBucket } from './formatTreeBucket';
 import { getAllStoneGuardArtifactsByHash } from './getAllStoneGuardArtifactsByHash';
 import { getExitCodeClass } from './getExitCodeClass';
+import { computeReviewPeerVerdict } from './reviewPeerMeter/computeReviewPeerVerdict';
+import { getAllRouteStoneGuardReviewPeerMeters } from './reviewPeerMeter/getAllRouteStoneGuardReviewPeerMeters';
+import {
+  isReviewPeerLevelTerminal,
+  isReviewPeerVerdictExhausted,
+} from './reviewPeerMeter/isReviewPeerLevelTerminal';
+import { setRouteStoneGuardReviewPeerMeter } from './reviewPeerMeter/setRouteStoneGuardReviewPeerMeter';
 
 const execAsync = promisify(exec);
+
+/**
+ * .what = extracts slug from peer review
+ * .why = accessor for slug
+ */
+const getReviewPeerSlug = (review: RouteStoneGuardReviewPeer): string =>
+  review.slug;
+
+/**
+ * .what = extracts level from peer review
+ * .why = accessor for level with default
+ */
+const getReviewPeerLevel = (review: RouteStoneGuardReviewPeer): number =>
+  review.level ?? 1;
+
+/**
+ * .what = extracts budget from peer review
+ * .why = accessor for budget
+ */
+const getReviewPeerBudget = (review: RouteStoneGuardReviewPeer): number =>
+  review.budget;
 
 /**
  * .what = executes a single guard review command and produces review artifact
@@ -159,24 +190,138 @@ export const runStoneGuardReviews = async (
   const cachedReviews = priorArtifacts.reviews.filter(
     (r) => r.exitClass === 'passed',
   );
-  const doneIndices = new Set(cachedReviews.map((r) => r.index));
 
-  const reviews: RouteStoneGuardReviewArtifact[] = [...cachedReviews];
+  // reviews are added as we process each peer review (not pre-populated)
+  const reviews: RouteStoneGuardReviewArtifact[] = [];
 
-  // execute each peer review command that hasn't been done
+  // load current meters for budget state (per stone)
+  const meters = await getAllRouteStoneGuardReviewPeerMeters({
+    route: input.route,
+    stone: input.stone.name,
+  });
+  const meterBySlug = new Map<string, RouteStoneGuardReviewPeerMeter>();
+  for (const meter of meters) {
+    meterBySlug.set(meter.reviewer.slug, meter);
+  }
+
+  // get peer reviews with indices and sort by level (low-to-high = cheapest first)
+  // .why = cheap (low level) runs first, expensive (high level) only after cheap clears
   const peerReviews = getGuardPeerReviews(input.guard);
-  for (let i = 0; i < peerReviews.length; i++) {
-    const reviewCmd = peerReviews[i];
-    if (!reviewCmd) continue;
-    const index = i + 1;
+  const peerReviewsWithIndex = peerReviews.map((review, i) => ({
+    review,
+    index: i + 1,
+    arrayIndex: i,
+    slug: getReviewPeerSlug(review),
+    level: getReviewPeerLevel(review),
+    budget: getReviewPeerBudget(review),
+  }));
+  peerReviewsWithIndex.sort((a, b) => a.level - b.level);
 
-    // skip if already done (emit cached event for progress output)
-    if (doneIndices.has(index)) {
+  // compute current verdicts for level unlock logic
+  const computeVerdicts = () =>
+    peerReviewsWithIndex.map((pr) => {
+      const meter = meterBySlug.get(pr.slug);
+      const rounds = meter?.rounds ?? 0;
+      // check fresh reviews first (this run), then cached reviews (prior runs)
+      const freshReview = reviews.find((r) => r.index === pr.index);
+      const cachedReview = cachedReviews.find((r) => r.index === pr.index);
+      const blockers =
+        freshReview?.blockers ?? cachedReview?.blockers ?? Infinity;
+      return {
+        slug: pr.slug,
+        level: pr.level,
+        verdict: computeReviewPeerVerdict({
+          rounds,
+          budget: pr.budget,
+          blockers,
+        }),
+      };
+    });
+
+  // execute each peer review in level order
+  for (const pr of peerReviewsWithIndex) {
+    const cachedReview = cachedReviews.find((r) => r.index === pr.index);
+
+    // skip if already approved (cached with no blockers)
+    // .why = per wish: "if that review has said all good already, then its already cached and budget wont be used"
+    // .note = cache check MUST come before exhaustion check to honor this contract
+    if (cachedReview && cachedReview.blockers === 0) {
       context.cliEmit.onGuardProgress({
         stone: input.stone,
-        step: { phase: 'review', index: i },
+        step: { phase: 'review', index: pr.arrayIndex },
         inflight: null,
         outcome: null,
+      });
+      reviews.push(cachedReview);
+      continue;
+    }
+
+    // compute verdict (exhaustion check)
+    const meter = meterBySlug.get(pr.slug);
+    const rounds = meter?.rounds ?? 0;
+    const verdict = computeReviewPeerVerdict({
+      rounds,
+      budget: pr.budget,
+      blockers: cachedReview?.blockers ?? Infinity,
+    });
+
+    // skip if exhausted
+    // .note = still add cached review for display purposes (shows last review path)
+    if (isReviewPeerVerdictExhausted(verdict)) {
+      if (cachedReview) {
+        reviews.push(cachedReview);
+      }
+      context.cliEmit.onGuardProgress({
+        stone: input.stone,
+        step: { phase: 'review', index: pr.arrayIndex },
+        inflight: null,
+        outcome: {
+          path: cachedReview?.path ?? null,
+          review: { exhausted: true },
+          judge: null,
+        },
+      });
+      continue;
+    }
+
+    // if cached with blockers, emit cached and add to reviews
+    // .note = budget NOT consumed here because no actual review command runs
+    //         budget was consumed when review originally ran
+    if (cachedReview && cachedReview.blockers > 0) {
+      context.cliEmit.onGuardProgress({
+        stone: input.stone,
+        step: { phase: 'review', index: pr.arrayIndex },
+        inflight: null,
+        outcome: null,
+      });
+
+      // still add to reviews array for judge to see
+      reviews.push(cachedReview);
+      continue;
+    }
+
+    // check if lower levels are all terminal before higher level runs
+    // .why = cheap (low level) runs first, expensive (high level) only after cheap clears
+    const verdicts = computeVerdicts();
+    let canRun = true;
+    for (let level = 1; level < pr.level; level++) {
+      if (!isReviewPeerLevelTerminal({ reviewers: verdicts, level })) {
+        canRun = false;
+        break;
+      }
+    }
+
+    // skip if level not yet unlocked (emit queued event)
+    if (!canRun) {
+      context.cliEmit.onGuardProgress({
+        stone: input.stone,
+        step: { phase: 'review', index: pr.arrayIndex },
+        inflight: null,
+        outcome: {
+          path: null,
+          review: { queued: true },
+          judge: null,
+        },
       });
       continue;
     }
@@ -185,24 +330,38 @@ export const runStoneGuardReviews = async (
     const beganAt = new Date().toISOString();
     context.cliEmit.onGuardProgress({
       stone: input.stone,
-      step: { phase: 'review', index: i },
+      step: { phase: 'review', index: pr.arrayIndex },
       inflight: { beganAt, endedAt: null },
       outcome: null,
     });
 
     const review = await runOneStoneGuardReview({
       stone: input.stone,
-      reviewCmd,
-      index,
+      reviewCmd: getReviewPeerRunCmd(pr.review),
+      index: pr.index,
       hash: input.hash,
       iteration: input.iteration,
       route: input.route,
     });
 
+    // increment meter on successful review (not malfunction)
+    if (review.exitClass !== 'malfunction') {
+      const newMeter = new RouteStoneGuardReviewPeerMeter({
+        stone: input.stone.name,
+        reviewer: { slug: pr.slug },
+        rounds: rounds + 1,
+      });
+      await setRouteStoneGuardReviewPeerMeter({
+        meter: newMeter,
+        route: input.route,
+      });
+      meterBySlug.set(pr.slug, newMeter);
+    }
+
     // emit finished event after review
     context.cliEmit.onGuardProgress({
       stone: input.stone,
-      step: { phase: 'review', index: i },
+      step: { phase: 'review', index: pr.arrayIndex },
       inflight: { beganAt, endedAt: new Date().toISOString() },
       outcome: {
         path: review.path,

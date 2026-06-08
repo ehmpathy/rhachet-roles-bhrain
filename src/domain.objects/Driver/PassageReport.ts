@@ -25,7 +25,12 @@ export interface PassageReport {
   /**
    * what blocks passage (only for status='blocked')
    */
-  blocker?: 'review.self' | 'review.peer' | 'judge' | 'approval';
+  blocker?:
+    | 'review.self'
+    | 'review.peer'
+    | 'review.peer.exhausted'
+    | 'judge'
+    | 'approval';
 
   /**
    * human-readable reason (optional)

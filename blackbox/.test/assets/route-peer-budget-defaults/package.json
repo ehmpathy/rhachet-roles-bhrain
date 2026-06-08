@@ -1,0 +1,8 @@
+{
+  "name": "route-peer-budget-defaults-fixture",
+  "private": true,
+  "description": "fixture for peer budget defaults acceptance test",
+  "dependencies": {
+    "rhachet-roles-bhrain": "link:."
+  }
+}

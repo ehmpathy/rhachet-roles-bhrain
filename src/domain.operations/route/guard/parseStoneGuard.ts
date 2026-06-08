@@ -28,7 +28,7 @@ export const parseStoneGuard = async (input: {
   return new RouteStoneGuard({
     path: input.path,
     artifacts: parsed.artifacts ?? [],
-    reviews: parsed.reviews ?? [],
+    reviews: parsed.reviews ?? { self: [], peer: [] },
     judges: parsed.judges ?? [],
     protect: parsed.protect ?? [],
   });
@@ -43,13 +43,13 @@ const parseSimpleYaml = async (
   guardDir: string,
 ): Promise<{
   artifacts?: string[];
-  reviews?: RouteStoneGuardReviewPeer[] | RouteStoneGuardReviewsStructured;
+  reviews?: RouteStoneGuardReviewsStructured;
   judges?: string[];
   protect?: string[];
 }> => {
   const result: {
     artifacts?: string[];
-    reviews?: RouteStoneGuardReviewPeer[] | RouteStoneGuardReviewsStructured;
+    reviews?: RouteStoneGuardReviewsStructured;
     judges?: string[];
     protect?: string[];
   } = {};
@@ -60,8 +60,31 @@ const parseSimpleYaml = async (
   let structuredReviews: RouteStoneGuardReviewsStructured | null = null;
   let flatReviews: string[] | null = null;
   let currentSelfReview: Partial<RouteStoneGuardReviewSelf> | null = null;
+  let currentPeerReview: Partial<RouteStoneGuardReviewPeer> | null = null;
   let inMultilineSay = false;
   let multilineSayContent: string[] = [];
+
+  /**
+   * .what = finalizes and stores the current peer review if complete
+   * .why = enables structured peer reviews with slug, run, budget, level
+   * .note = budget defaults to Infinity (unlimited) for backwards compat
+   */
+  const finalizePeerReview = () => {
+    if (
+      currentPeerReview?.slug &&
+      currentPeerReview?.run &&
+      structuredReviews
+    ) {
+      structuredReviews.peer = structuredReviews.peer ?? [];
+      structuredReviews.peer.push({
+        slug: currentPeerReview.slug,
+        run: currentPeerReview.run,
+        budget: currentPeerReview.budget ?? Infinity,
+        level: currentPeerReview.level ?? 1,
+      });
+    }
+    currentPeerReview = null;
+  };
 
   for (let i = 0; i < lines.length; i++) {
     const line = lines[i];
@@ -83,6 +106,7 @@ const parseSimpleYaml = async (
             currentSelfReview.say &&
             structuredReviews
           ) {
+            structuredReviews.self = structuredReviews.self ?? [];
             structuredReviews.self.push(
               currentSelfReview as RouteStoneGuardReviewSelf,
             );
@@ -155,7 +179,25 @@ const parseSimpleYaml = async (
         result.protect?.push(value);
       } else if (currentKey === 'reviews') {
         if (currentSubKey === 'peer') {
-          structuredReviews?.peer.push(value);
+          // check for start of structured peer review (- slug: ...)
+          if (value.startsWith('slug:')) {
+            // finalize any prior peer review in progress
+            finalizePeerReview();
+            currentPeerReview = {
+              slug: value.slice(5).trim(),
+            };
+          } else if (structuredReviews) {
+            // legacy string format under peer: section - convert to structured
+            structuredReviews.peer = structuredReviews.peer ?? [];
+            structuredReviews.peer.push({
+              slug:
+                value.split(/\s+/)[0] ??
+                `peer-${structuredReviews.peer.length + 1}`,
+              run: value,
+              budget: Infinity,
+              level: 1,
+            });
+          }
         } else if (currentSubKey === 'self') {
           // start of a new self review object (- slug: ...)
           if (value.startsWith('slug:')) {
@@ -195,8 +237,13 @@ const parseSimpleYaml = async (
               `failed to expand @path reference: ${refPath} (full path: ${fullPath})`,
             );
           }
-          if (currentSelfReview.slug && currentSelfReview.say) {
-            structuredReviews?.self.push(
+          if (
+            currentSelfReview.slug &&
+            currentSelfReview.say &&
+            structuredReviews
+          ) {
+            structuredReviews.self = structuredReviews.self ?? [];
+            structuredReviews.self.push(
               currentSelfReview as RouteStoneGuardReviewSelf,
             );
             currentSelfReview = null;
@@ -204,8 +251,13 @@ const parseSimpleYaml = async (
         } else {
           // inline say value
           currentSelfReview.say = sayValue.replace(/^"/, '').replace(/"$/, '');
-          if (currentSelfReview.slug && currentSelfReview.say) {
-            structuredReviews?.self.push(
+          if (
+            currentSelfReview.slug &&
+            currentSelfReview.say &&
+            structuredReviews
+          ) {
+            structuredReviews.self = structuredReviews.self ?? [];
+            structuredReviews.self.push(
               currentSelfReview as RouteStoneGuardReviewSelf,
             );
             currentSelfReview = null;
@@ -213,12 +265,29 @@ const parseSimpleYaml = async (
         }
       }
     }
+
+    // handle peer review object properties
+    if (currentSubKey === 'peer' && currentPeerReview) {
+      if (trimmed.startsWith('slug:')) {
+        currentPeerReview.slug = trimmed.slice(5).trim();
+      } else if (trimmed.startsWith('run:')) {
+        currentPeerReview.run = trimmed.slice(4).trim();
+      } else if (trimmed.startsWith('budget:')) {
+        currentPeerReview.budget = parseInt(trimmed.slice(7).trim(), 10);
+      } else if (trimmed.startsWith('level:')) {
+        currentPeerReview.level = parseInt(trimmed.slice(6).trim(), 10);
+      }
+    }
   }
+
+  // finalize any pending peer review
+  finalizePeerReview();
 
   // handle any final multiline content
   if (inMultilineSay && currentSelfReview) {
     currentSelfReview.say = multilineSayContent.join('\n').trim();
     if (currentSelfReview.slug && currentSelfReview.say && structuredReviews) {
+      structuredReviews.self = structuredReviews.self ?? [];
       structuredReviews.self.push(
         currentSelfReview as RouteStoneGuardReviewSelf,
       );
@@ -226,10 +295,21 @@ const parseSimpleYaml = async (
   }
 
   // set reviews based on what was parsed
+  // convert flat reviews (legacy string format) to structured format at parse time
+  // .why = eliminates parallel code paths; single format everywhere downstream
   if (structuredReviews) {
     result.reviews = structuredReviews;
   } else if (flatReviews) {
-    result.reviews = flatReviews;
+    // flat reviews: each string becomes a structured review with defaults
+    result.reviews = {
+      self: [],
+      peer: flatReviews.map((cmd, index) => ({
+        slug: cmd.split(/\s+/)[0] ?? `peer-${index + 1}`,
+        run: cmd,
+        budget: Infinity,
+        level: 1,
+      })),
+    };
   }
 
   return result;

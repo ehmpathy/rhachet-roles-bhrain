@@ -2,6 +2,7 @@ import { PassageReport } from '@src/domain.objects/Driver/PassageReport';
 import type { RouteStone } from '@src/domain.objects/Driver/RouteStone';
 import { enumFilesFromGlob } from '@src/utils/enumFilesFromGlob';
 
+import { resetRouteStoneGuardReviewPeerMeters } from '../guard/reviewPeerMeter/resetRouteStoneGuardReviewPeerMeters';
 import { setPassageReport } from '../passage/setPassageReport';
 import { archiveStoneYield } from './archiveStoneYield';
 import { delStoneGuardArtifacts } from './delStoneGuardArtifacts';
@@ -32,6 +33,12 @@ export const rewindAffectedStones = async (input: {
   for (const stone of input.affectedStones) {
     // delete guard artifacts
     const deleted = await delStoneGuardArtifacts({
+      stone: stone.name,
+      route: input.route,
+    });
+
+    // reset peer review meters to 0 rounds (fresh budget)
+    await resetRouteStoneGuardReviewPeerMeters({
       stone: stone.name,
       route: input.route,
     });

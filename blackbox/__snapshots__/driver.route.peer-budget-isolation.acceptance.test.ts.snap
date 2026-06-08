@@ -1,0 +1,72 @@
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
+
+exports[`driver.route.peer-budget-isolation.acceptance given: [journey] per-stone budget isolation when: [t1] second alpha attempt exhausts budget then: stdout has good vibes 1`] = `
+"🦉 the way speaks for itself
+   ├─ ✓ review.1 - completed [TIME]
+
+🗿 route.stone.set
+   ├─ stone = 1.alpha
+   ├─ passage = blocked
+   ├─ reason = peer reviewer budget exhausted: shared-reviewer
+   ├─ options
+   │  ├─ increase budget
+   │  │  └─ rhx route.guard.budget --for review --add N --peer shared-reviewer --stone 1.alpha
+   │  └─ approve as-is
+   │     └─ rhx route.stone.set --stone 1.alpha --as approved
+   └─ guard
+      ├─ artifacts
+      │   └─ alpha/**/*.ts
+      └─ reviews
+          └─ r1: shared-reviewer (l1, 2/2, exhausted)
+              ├─ exhausted
+              └─ review: .route/1.alpha.guard.review.i1.3adc177d156055c3b0f6d53d11b41ace35a2efeee4b7a553d7f22089647b12f1.r1.md
+"
+`;
+
+exports[`driver.route.peer-budget-isolation.acceptance given: [journey] per-stone budget isolation when: [t3] beta artifact created, verify fresh budget then: stdout has good vibes 1`] = `
+"🦉 the way speaks for itself
+   ├─ ✓ review.1 - completed [TIME]
+   └─ ✗ judge.1 - blocked [TIME]
+
+🗿 route.stone.set
+   ├─ stone = 2.beta
+   ├─ passage = blocked
+   ├─ reason = blockers exceed threshold (1 > 0)
+   └─ guard
+      ├─ artifacts
+      │   └─ beta/**/*.ts
+      ├─ reviews
+      │   └─ r1: shared-reviewer (l1, 1/2, rejected)
+      │       ├─ rejected [TIME]
+      │       ├─ review: .route/2.beta.guard.review.i1.e44d2e91863b59abc648336c6c0c44205bc509ba4552d67440888c684c2759ed.r1.md
+      │       └─ 1 blocker 🔴
+      └─ judges
+          └─ j1: rhx route.stone.judge --mechanism reviewed? --stone $stone --route $route --allow-blockers 0 --allow-nitpicks 1
+              ├─ finished [TIME] ✗
+              └─ reason: blockers exceed threshold (1 > 0)
+"
+`;
+
+exports[`driver.route.peer-budget-isolation.acceptance given: [journey] per-stone budget isolation when: [t4] beta passes within budget then: stdout has good vibes 1`] = `
+"🦉 the way speaks for itself
+   ├─ ✓ review.1 - completed [TIME]
+   └─ ✓ judge.1 - allowed [TIME]
+
+🗿 route.stone.set
+   ├─ stone = 2.beta
+   ├─ passage = allowed
+   ├─ guard
+   │  ├─ artifacts
+   │  │   └─ beta/**/*.ts
+   │  ├─ reviews
+   │  │   └─ r1: shared-reviewer (l1, 2/2, approved)
+   │  │       ├─ approved [TIME] ✓
+   │  │       └─ review: .route/2.beta.guard.review.i1.63793d941ecd718cba4050d810a1bab800b35afe9fa3743aa80ae6dcb334533d.r1.md
+   │  └─ judges
+   │      └─ j1: rhx route.stone.judge --mechanism reviewed? --stone $stone --route $route --allow-blockers 0 --allow-nitpicks 1
+   │          └─ finished [TIME] ✓
+   │
+   └─ the way continues, run
+      └─ rhx route.drive
+"
+`;

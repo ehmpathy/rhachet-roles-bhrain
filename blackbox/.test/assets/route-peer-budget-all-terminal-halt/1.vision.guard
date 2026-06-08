@@ -1,0 +1,19 @@
+artifacts:
+  - src/**/*.ts
+
+reviews:
+  peer:
+    # level 1: cheap reviewer that always fails (budget 1 = exhausts immediately)
+    - slug: quick-fail
+      run: bash $route/.test/mock-review-quick-fail.sh
+      budget: 1
+      level: 1
+
+    # level 2: expensive reviewer that continues after level 1 exhausts
+    - slug: thorough
+      run: bash $route/.test/mock-review-thorough.sh
+      budget: 2
+      level: 2
+
+judges:
+  - rhx route.stone.judge --mechanism reviewed? --stone $stone --route $route --allow-blockers 0 --allow-nitpicks 1

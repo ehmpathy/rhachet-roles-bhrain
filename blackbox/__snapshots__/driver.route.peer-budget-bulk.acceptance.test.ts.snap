@@ -1,0 +1,52 @@
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
+
+exports[`driver.route.peer-budget-bulk.acceptance given: [case1] bulk budget extension affects all peers when: [t1] bulk budget extension (without --peer) then: stdout has good vibes 1`] = `
+"
+🦉 budget extended
+
+🗿 route.guard.budget
+   ├─ route = .
+   ├─ add = 2
+   └─ updates
+      ├─ linter: 2 → 4
+      ├─ spellcheck: 3 → 5
+      └─ architect: 2 → 4
+
+"
+`;
+
+exports[`driver.route.peer-budget-bulk.acceptance given: [case1] bulk budget extension affects all peers when: [t2] reviewers run again after bulk extension then: stdout has good vibes 1`] = `
+"🦉 the way speaks for itself
+   ├─ ✓ review.1 - completed [TIME]
+   ├─ ✓ review.2 - completed [TIME]
+   └─ ✗ judge.1 - blocked [TIME]
+
+🗿 route.stone.set
+   ├─ stone = 1.vision
+   ├─ passage = blocked
+   ├─ reason = blockers exceed threshold (2 > 0)
+   └─ guard
+      ├─ artifacts
+      │   └─ src/**/*.ts
+      ├─ reviews
+      │   ├─ r1: linter (l1, 3/4, rejected)
+      │   │   ├─ rejected [TIME]
+      │   │   ├─ review: .route/1.vision.guard.review.i1.228d29f52e0cef068ecbac451b93e43f209c2eb3143a103b93ecc7dc78debbe7.r1.md
+      │   │   └─ 1 blocker 🔴
+      │   ├─ r2: spellcheck (l1, 4/5, rejected)
+      │   │   ├─ rejected [TIME]
+      │   │   ├─ review: .route/1.vision.guard.review.i1.228d29f52e0cef068ecbac451b93e43f209c2eb3143a103b93ecc7dc78debbe7.r2.md
+      │   │   └─ 1 blocker 🔴
+      │   └─ r3: architect (l2, 2/4, awaits)
+      │       └─ awaits l1
+      └─ judges
+          └─ j1: rhx route.stone.judge --mechanism reviewed? --stone $stone --route $route --allow-blockers 0 --allow-nitpicks 1
+              ├─ finished [TIME] ✗
+              └─ reason: blockers exceed threshold (2 > 0)
+"
+`;
+
+exports[`driver.route.peer-budget-bulk.acceptance given: [case2] invalid peer slug returns clear error when: [t0] budget extension with invalid peer slug then: stderr has error output 1`] = `
+"error: peer reviewer not found: nonexistent-peer
+"
+`;

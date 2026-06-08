@@ -62,7 +62,7 @@ describe('delStone', () => {
           guard: new RouteStoneGuard({
             path: guardPath,
             artifacts: ['1.vision*.md'],
-            reviews: [],
+            reviews: { self: [], peer: [] },
             judges: [],
             protect: [],
           }),
@@ -79,7 +79,7 @@ describe('delStone', () => {
           guard: new RouteStoneGuard({
             path: guardPath,
             artifacts: ['1.vision*.md'],
-            reviews: [],
+            reviews: { self: [], peer: [] },
             judges: [],
             protect: [],
           }),

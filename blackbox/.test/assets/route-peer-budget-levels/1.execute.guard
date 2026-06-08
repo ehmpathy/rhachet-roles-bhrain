@@ -1,0 +1,19 @@
+artifacts:
+  - src/**/*.ts
+
+reviews:
+  peer:
+    # level 1: cheap reviewer, runs first
+    - slug: cheapo
+      run: bash $route/.test/mock-review-cheapo.sh
+      budget: 2
+      level: 1
+
+    # level 2: expensive reviewer, runs after level 1 is terminal
+    - slug: primo
+      run: bash $route/.test/mock-review-primo.sh
+      budget: 2
+      level: 2
+
+judges:
+  - rhx route.stone.judge --mechanism reviewed? --stone $stone --route $route --allow-blockers 0 --allow-nitpicks 1

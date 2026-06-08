@@ -1,0 +1,21 @@
+# rule.require.explicit-stdin-flags
+
+stdin inputs must be explicitly declared via flags like `--reason @stdin`, never implicitly consumed.
+
+## .why
+
+implicit stdin = magic behavior: surprises users, breaks composability, hides contract.
+
+## .pattern
+
+```bash
+# bad
+echo "reason" | rhx goal.set --slug foo
+
+# good
+echo "reason" | rhx goal.set --slug foo --reason @stdin
+```
+
+## .enforcement
+
+implicit stdin consumption = **BLOCKER**

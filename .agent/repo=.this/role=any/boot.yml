@@ -1,0 +1,36 @@
+always:
+  briefs:
+    say:
+      # identity
+      - briefs/im_a.bhrain_owl.md
+      - briefs/define.bhrain-repo-mascot.md
+
+      # core domain concepts
+      - briefs/define.passage-statuses.md
+
+      # rules - always active
+      - briefs/rule.forbid.duplicate-format-tree-operations.md
+      - briefs/rule.forbid.cwd-outside-gitroot.md
+      - briefs/rule.forbid.stdout-on-exit-errors.md
+      - briefs/rule.forbid.timestamps-in-route-artifacts.md
+      - briefs/rule.forbid.unbounded-recursive-globs.md
+      - briefs/rule.require.explicit-stdin-flags.md
+      - briefs/rule.require.isolated-cli-subpath-exports.md
+      - briefs/rule.require.repeatable-for-llm-tests.md
+
+    ref:
+      # lessons - load on demand
+      - briefs/howto.acceptance-test-flow.[lesson].md
+      - briefs/howto.acceptance-test-setup.[lesson].md
+      - briefs/howto.acceptance.test.bdd.[lesson].md
+      - briefs/howto.debug-tempdir-symlink-failures.[lesson].md
+      - briefs/howto.detect-bound-route.[lesson].md
+      - briefs/howto.diagnose-branch-failures.[lesson].md
+      - briefs/howto.fast-cli-subpath.[lesson].md
+      - briefs/howto.fast-skill-invocation.[lesson].md
+      - briefs/howto.journey-tests-reveal-cache-bugs.[lesson].md
+      - briefs/howto.rhachet.integration.[lesson].md
+      - briefs/howto.test-skills-yourself.[lesson].md
+
+      # research - load on demand
+      - briefs/research.selfreview-effectiveness.md

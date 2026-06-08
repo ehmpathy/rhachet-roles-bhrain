@@ -1,0 +1,123 @@
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
+
+exports[`driver.route.peer-budget-3level.acceptance given: [journey] 3-level hierarchy: l3 awaits l2 awaits l1 when: [t0] artifact created, only l1 runs then: stdout has good vibes 1`] = `
+"🦉 the way speaks for itself
+   ├─ ✓ review.1 - completed [TIME]
+   └─ ✗ judge.1 - blocked [TIME]
+
+🗿 route.stone.set
+   ├─ stone = 1.vision
+   ├─ passage = blocked
+   ├─ reason = blockers exceed threshold (1 > 0)
+   └─ guard
+      ├─ artifacts
+      │   └─ src/**/*.ts
+      ├─ reviews
+      │   ├─ r1: basic-checker (l1, 1/5, rejected)
+      │   │   ├─ rejected [TIME]
+      │   │   ├─ review: .route/1.vision.guard.review.i1.e0aae4264c854c203aaff5a5ed15c176fb117aacd9ea5fed2ac8d500fa35679b.r1.md
+      │   │   └─ 1 blocker 🔴
+      │   ├─ r2: advanced-checker (l2, 0/5, awaits)
+      │   │   └─ awaits l1
+      │   └─ r3: premium-checker (l3, 0/5, awaits)
+      │       └─ awaits l1
+      └─ judges
+          └─ j1: rhx route.stone.judge --mechanism reviewed? --stone $stone --route $route --allow-blockers 0 --allow-nitpicks 1
+              ├─ finished [TIME] ✗
+              └─ reason: blockers exceed threshold (1 > 0)
+"
+`;
+
+exports[`driver.route.peer-budget-3level.acceptance given: [journey] 3-level hierarchy: l3 awaits l2 awaits l1 when: [t1] l1 passes, l2 unlocks, l3 still awaits then: stdout has good vibes 1`] = `
+"🦉 the way speaks for itself
+   ├─ ✓ review.1 - completed [TIME]
+   ├─ ✓ review.2 - completed [TIME]
+   └─ ✗ judge.1 - blocked [TIME]
+
+🗿 route.stone.set
+   ├─ stone = 1.vision
+   ├─ passage = blocked
+   ├─ reason = blockers exceed threshold (1 > 0)
+   └─ guard
+      ├─ artifacts
+      │   └─ src/**/*.ts
+      ├─ reviews
+      │   ├─ r1: basic-checker (l1, 2/5, approved)
+      │   │   ├─ approved [TIME] ✓
+      │   │   └─ review: .route/1.vision.guard.review.i1.6b085541feda505cf8c0d0d4929a3b937eac477a6af3437f758a27001cdbadae.r1.md
+      │   ├─ r2: advanced-checker (l2, 1/5, rejected)
+      │   │   ├─ rejected [TIME]
+      │   │   ├─ review: .route/1.vision.guard.review.i1.6b085541feda505cf8c0d0d4929a3b937eac477a6af3437f758a27001cdbadae.r2.md
+      │   │   └─ 1 blocker 🔴
+      │   └─ r3: premium-checker (l3, 0/5, awaits)
+      │       └─ awaits l2
+      └─ judges
+          └─ j1: rhx route.stone.judge --mechanism reviewed? --stone $stone --route $route --allow-blockers 0 --allow-nitpicks 1
+              ├─ finished [TIME] ✗
+              └─ reason: blockers exceed threshold (1 > 0)
+"
+`;
+
+exports[`driver.route.peer-budget-3level.acceptance given: [journey] 3-level hierarchy: l3 awaits l2 awaits l1 when: [t2] l2 passes, l3 unlocks and runs then: stdout has good vibes 1`] = `
+"🦉 the way speaks for itself
+   ├─ ✓ review.1 - completed [TIME]
+   ├─ ✓ review.2 - completed [TIME]
+   ├─ ✓ review.3 - completed [TIME]
+   └─ ✗ judge.1 - blocked [TIME]
+
+🗿 route.stone.set
+   ├─ stone = 1.vision
+   ├─ passage = blocked
+   ├─ reason = blockers exceed threshold (1 > 0)
+   └─ guard
+      ├─ artifacts
+      │   └─ src/**/*.ts
+      ├─ reviews
+      │   ├─ r1: basic-checker (l1, 3/5, approved)
+      │   │   ├─ approved [TIME] ✓
+      │   │   └─ review: .route/1.vision.guard.review.i1.7de8f5be336f95e3dd2e5b02467258533bcf304b0cbe0502fc0a08f5debbcc27.r1.md
+      │   ├─ r2: advanced-checker (l2, 2/5, approved)
+      │   │   ├─ approved [TIME] ✓
+      │   │   └─ review: .route/1.vision.guard.review.i1.7de8f5be336f95e3dd2e5b02467258533bcf304b0cbe0502fc0a08f5debbcc27.r2.md
+      │   └─ r3: premium-checker (l3, 1/5, rejected)
+      │       ├─ rejected [TIME]
+      │       ├─ review: .route/1.vision.guard.review.i1.7de8f5be336f95e3dd2e5b02467258533bcf304b0cbe0502fc0a08f5debbcc27.r3.md
+      │       └─ 1 blocker 🔴
+      └─ judges
+          └─ j1: rhx route.stone.judge --mechanism reviewed? --stone $stone --route $route --allow-blockers 0 --allow-nitpicks 1
+              ├─ finished [TIME] ✗
+              └─ reason: blockers exceed threshold (1 > 0)
+"
+`;
+
+exports[`driver.route.peer-budget-3level.acceptance given: [journey] 3-level hierarchy: l3 awaits l2 awaits l1 when: [t3] l3 passes, stone passes then: stdout has good vibes 1`] = `
+"🦉 the way speaks for itself
+   ├─ ✓ review.1 - completed [TIME]
+   ├─ ✓ review.2 - completed [TIME]
+   ├─ ✓ review.3 - completed [TIME]
+   └─ ✓ judge.1 - allowed [TIME]
+
+🗿 route.stone.set
+   ├─ stone = 1.vision
+   ├─ passage = allowed
+   ├─ guard
+   │  ├─ artifacts
+   │  │   └─ src/**/*.ts
+   │  ├─ reviews
+   │  │   ├─ r1: basic-checker (l1, 4/5, approved)
+   │  │   │   ├─ approved [TIME] ✓
+   │  │   │   └─ review: .route/1.vision.guard.review.i1.7e36a690f2f6f8d2a5e590ffa5f9478b5a71c201c0dd14b6e05db02cf0a3e292.r1.md
+   │  │   ├─ r2: advanced-checker (l2, 3/5, approved)
+   │  │   │   ├─ approved [TIME] ✓
+   │  │   │   └─ review: .route/1.vision.guard.review.i1.7e36a690f2f6f8d2a5e590ffa5f9478b5a71c201c0dd14b6e05db02cf0a3e292.r2.md
+   │  │   └─ r3: premium-checker (l3, 2/5, approved)
+   │  │       ├─ approved [TIME] ✓
+   │  │       └─ review: .route/1.vision.guard.review.i1.7e36a690f2f6f8d2a5e590ffa5f9478b5a71c201c0dd14b6e05db02cf0a3e292.r3.md
+   │  └─ judges
+   │      └─ j1: rhx route.stone.judge --mechanism reviewed? --stone $stone --route $route --allow-blockers 0 --allow-nitpicks 1
+   │          └─ finished [TIME] ✓
+   │
+   └─ the way continues, run
+      └─ rhx route.drive
+"
+`;

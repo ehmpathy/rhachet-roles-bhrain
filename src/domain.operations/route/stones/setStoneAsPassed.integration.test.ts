@@ -223,4 +223,94 @@ describe('setStoneAsPassed.integration', () => {
       });
     });
   });
+
+  given(
+    '[case5] peer reviewer budget exhaustion triggers implicit approval gate',
+    () => {
+      const scene = useBeforeAll(async () => {
+        const tempDir = path.join(
+          os.tmpdir(),
+          `test-set-passed-exhausted-${Date.now()}`,
+        );
+        await fs.mkdir(tempDir, { recursive: true });
+
+        // create stone file
+        await fs.writeFile(path.join(tempDir, '1.test.stone'), '# Test stone');
+
+        // create guard with structured peer review that has budget: 1
+        await fs.writeFile(
+          path.join(tempDir, '1.test.guard'),
+          [
+            'artifacts:',
+            '  - "$route/1.test*.md"',
+            'reviews:',
+            '  peer:',
+            '    - slug: limited',
+            '      run: echo "blockers: 1\\nnitpicks: 0\\ntest review"',
+            '      budget: 1',
+            '      level: 1',
+            'judges:',
+            '  - echo "passed: false\\nreason: blockers found"',
+          ].join('\n'),
+        );
+
+        // create artifact
+        await fs.writeFile(path.join(tempDir, '1.test.md'), '# Test artifact');
+
+        return { tempDir };
+      });
+
+      afterAll(async () => {
+        await fs.rm(scene.tempDir, { recursive: true, force: true });
+      });
+
+      when('[t0] first attempt consumes the budget', () => {
+        const result = useThen('first attempt completes', async () =>
+          setStoneAsPassed(
+            { stone: '1.test', route: scene.tempDir },
+            noopContext,
+          ),
+        );
+
+        then('is blocked by review blockers (not exhausted yet)', () => {
+          expect(result.passed).toBe(false);
+          // first attempt consumes budget but returns blockers, so judge fails
+          expect(result.emit?.stdout).toContain('blocked');
+        });
+      });
+
+      when('[t1] second attempt hits exhausted budget', () => {
+        const result = useThen('second attempt completes', async () =>
+          setStoneAsPassed(
+            { stone: '1.test', route: scene.tempDir },
+            noopContext,
+          ),
+        );
+
+        then('is blocked by review.peer.exhausted', async () => {
+          expect(result.passed).toBe(false);
+          expect(result.emit?.stdout).toContain('exhausted');
+        });
+
+        then('records exhausted blocker in passage.jsonl', async () => {
+          const passagePath = path.join(
+            scene.tempDir,
+            '.route',
+            'passage.jsonl',
+          );
+          const content = await fs.readFile(passagePath, 'utf-8');
+          const lines = content.trim().split('\n');
+          const blockedEntry = lines
+            .map((line) => JSON.parse(line))
+            .find(
+              (entry) =>
+                entry.status === 'blocked' &&
+                entry.blocker === 'review.peer.exhausted',
+            );
+          expect(blockedEntry).toBeDefined();
+          expect(blockedEntry.reason).toContain('limited');
+        });
+      });
+    },
+  );
 });

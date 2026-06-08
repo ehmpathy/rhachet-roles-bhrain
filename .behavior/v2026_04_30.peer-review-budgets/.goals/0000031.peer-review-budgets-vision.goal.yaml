@@ -1,0 +1,15 @@
+slug: 'peer-review-budgets-vision'
+source: 'peer:human'
+status:
+  choice: 'blocked'
+  reason: 'vision complete, awaiting human approval via: rhx route.stone.set --stone 1.vision --as approved'
+updatedAt: '2026-04-30'
+why:
+  ask: 'proceed with peer-review-budgets behavior route'
+  purpose: 'human wants to implement configurable budgets for peer reviewers'
+  benefit: 'prevents runaway review loops, gives humans control over review costs'
+what:
+  outcome: '1.vision.yield.md illustrates the outcome world, contracts, and mental model'
+how:
+  task: 'research extant review structure, paint vision, emit yield artifact'
+  gate: 'vision artifact exists and covers all stone requirements'

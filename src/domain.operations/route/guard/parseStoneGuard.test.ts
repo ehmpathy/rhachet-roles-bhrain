@@ -4,7 +4,6 @@ import { given, then, when } from 'test-fns';
 import {
   getGuardPeerReviews,
   getGuardSelfReviews,
-  isReviewsStructured,
 } from '@src/domain.objects/Driver/RouteStoneGuard';
 
 import { parseStoneGuard } from './parseStoneGuard';
@@ -34,15 +33,21 @@ describe('parseStoneGuard', () => {
     );
 
     when('[t0] guard is parsed', () => {
-      then('returns RouteStoneGuard with reviews as flat array', async () => {
-        const result = await parseStoneGuard({ path: guardPath });
-        expect(result.path).toEqual(guardPath);
-        expect(result.artifacts).toContain('src/**/*'); // matches repo root src/
-        expect(isReviewsStructured(result.reviews)).toBe(false);
-        expect(getGuardPeerReviews(result)).toHaveLength(1);
-        expect(getGuardSelfReviews(result)).toHaveLength(0);
-        expect(result.judges).toHaveLength(2);
-      });
+      then(
+        'returns RouteStoneGuard with reviews converted to structured',
+        async () => {
+          const result = await parseStoneGuard({ path: guardPath });
+          expect(result.path).toEqual(guardPath);
+          expect(result.artifacts).toContain('src/**/*'); // matches repo root src/
+          // flat reviews are converted to structured at parse time
+          const peerReviews = getGuardPeerReviews(result);
+          expect(peerReviews).toHaveLength(1);
+          expect(peerReviews[0]?.slug).toBeDefined();
+          expect(peerReviews[0]?.run).toBeDefined();
+          expect(getGuardSelfReviews(result)).toHaveLength(0);
+          expect(result.judges).toHaveLength(2);
+        },
+      );
     });
   });
 
@@ -58,7 +63,9 @@ describe('parseStoneGuard', () => {
         const result = await parseStoneGuard({ path: guardPath });
         expect(result.path).toEqual(guardPath);
         expect(result.artifacts).toContain('$route/1.vision*.md');
-        expect(isReviewsStructured(result.reviews)).toBe(true);
+        // all reviews are structured at parse time
+        expect(result.reviews.self).toBeDefined();
+        expect(result.reviews.peer).toBeDefined();
       });
 
       then('self reviews are parsed with multiline say', async () => {
@@ -82,7 +89,7 @@ describe('parseStoneGuard', () => {
         const result = await parseStoneGuard({ path: guardPath });
         const peerReviews = getGuardPeerReviews(result);
         expect(peerReviews).toHaveLength(1);
-        expect(peerReviews[0]).toContain('rhx review');
+        expect(peerReviews[0]?.run).toContain('rhx review');
       });
 
       then('judges are parsed', async () => {
@@ -100,12 +107,18 @@ describe('parseStoneGuard', () => {
     );
 
     when('[t0] guard is parsed', () => {
-      then('returns RouteStoneGuard with flat reviews array', async () => {
-        const result = await parseStoneGuard({ path: guardPath });
-        expect(isReviewsStructured(result.reviews)).toBe(false);
-        expect(getGuardPeerReviews(result)).toHaveLength(1);
-        expect(getGuardSelfReviews(result)).toHaveLength(0);
-      });
+      then(
+        'returns RouteStoneGuard with flat reviews converted to structured',
+        async () => {
+          const result = await parseStoneGuard({ path: guardPath });
+          // flat reviews are converted to structured at parse time
+          const peerReviews = getGuardPeerReviews(result);
+          expect(peerReviews).toHaveLength(1);
+          expect(peerReviews[0]?.slug).toBeDefined();
+          expect(peerReviews[0]?.run).toBeDefined();
+          expect(getGuardSelfReviews(result)).toHaveLength(0);
+        },
+      );
     });
   });
 
@@ -137,4 +150,65 @@ describe('parseStoneGuard', () => {
       });
     });
   });
+
+  given(
+    '[case7] a guard file with structured peer reviews (budget + level)',
+    () => {
+      const guardPath = path.join(
+        ASSETS_DIR,
+        'route.peer.budget',
+        '1.vision.guard',
+      );
+
+      when('[t0] guard is parsed', () => {
+        then('returns RouteStoneGuard with structured reviews', async () => {
+          const result = await parseStoneGuard({ path: guardPath });
+          expect(result.path).toEqual(guardPath);
+          // all reviews are structured at parse time
+          expect(result.reviews.self).toBeDefined();
+          expect(result.reviews.peer).toBeDefined();
+        });
+
+        then('peer reviews are parsed with structured format', async () => {
+          const result = await parseStoneGuard({ path: guardPath });
+          const peerReviews = getGuardPeerReviews(result);
+          expect(peerReviews).toHaveLength(3);
+
+          // all peer reviews have slug, run, budget, level
+          expect(peerReviews.every((r) => r.slug && r.run)).toBe(true);
+        });
+
+        then('primo peer review has correct budget and level', async () => {
+          const result = await parseStoneGuard({ path: guardPath });
+          const peerReviews = getGuardPeerReviews(result);
+          const primo = peerReviews.find((r) => r.slug === 'primo');
+
+          expect(primo).toBeDefined();
+          expect(primo!.slug).toEqual('primo');
+          expect(primo!.run).toContain('rhx review');
+          expect(primo!.run).toContain('--brain opus');
+          expect(primo!.budget).toEqual(3);
+          expect(primo!.level).toEqual(2);
+        });
+
+        then('cheapo peer review has correct budget and level', async () => {
+          const result = await parseStoneGuard({ path: guardPath });
+          const peerReviews = getGuardPeerReviews(result);
+          const cheapo = peerReviews.find((r) => r.slug === 'cheapo');
+
+          expect(cheapo).toBeDefined();
+          expect(cheapo!.slug).toEqual('cheapo');
+          expect(cheapo!.budget).toEqual(10);
+          expect(cheapo!.level).toEqual(1);
+        });
+
+        then('self reviews are parsed alongside structured peer', async () => {
+          const result = await parseStoneGuard({ path: guardPath });
+          const selfReviews = getGuardSelfReviews(result);
+          expect(selfReviews).toHaveLength(1);
+          expect(selfReviews[0]?.slug).toEqual('all-done');
+        });
+      });
+    },
+  );
 });

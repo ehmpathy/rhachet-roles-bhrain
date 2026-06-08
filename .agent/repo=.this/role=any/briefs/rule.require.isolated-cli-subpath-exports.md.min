@@ -1,0 +1,32 @@
+# rule.require.isolated-cli-subpath-exports
+
+every cli command must have isolated export subpath. aggregated `/cli` loads all modules = OOM.
+
+## pattern
+
+| operation | needs brain? | import path |
+|-----------|--------------|-------------|
+| route.* | no | `pkg/cli/route` |
+| review | yes | `pkg/cli/review` |
+| reflect | yes | `pkg/cli/reflect` |
+
+## fix
+
+package.json:
+```json
+"exports": { "./cli/route": "...", "./cli/review": "...", "./cli/reflect": "..." }
+```
+
+shell:
+```bash
+# bad: import('pkg/cli') — loads ALL
+# good: import('pkg/cli/route') — loads only route
+```
+
+## symptoms
+
+OOM on simple ops, slow startup, memory spikes before work
+
+## enforcement
+
+violation = **BLOCKER**

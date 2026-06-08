@@ -14,6 +14,11 @@ import { computeReviewTotalsFromFiles } from '@src/domain.operations/route/guard
 import { computeStoneReviewInputHash } from '@src/domain.operations/route/guard/computeStoneReviewInputHash';
 import { genContextCliEmit } from '@src/domain.operations/route/guard/genContextCliEmit';
 import { getLatestReviewFilesPerIndex } from '@src/domain.operations/route/guard/getLatestReviewFilesPerIndex';
+import { getAllReviewPeerMeterStatuses } from '@src/domain.operations/route/guard/reviewPeerMeter/getAllReviewPeerMeterStatuses';
+import {
+  isReviewPeerVerdictExhausted,
+  isReviewPeerVerdictTerminal,
+} from '@src/domain.operations/route/guard/reviewPeerMeter/isReviewPeerLevelTerminal';
 import { getOneStoneGuardApproval } from '@src/domain.operations/route/judges/getOneStoneGuardApproval';
 import { stepRouteDrive } from '@src/domain.operations/route/stepRouteDrive';
 import { stepRouteReview } from '@src/domain.operations/route/stepRouteReview';
@@ -754,6 +759,33 @@ export const routeStoneGet = async (): Promise<void> => {
 };
 
 /**
+ * .what = strips owl header and trims lead newlines from stdout
+ * .why = owl header is printed early for progress display, must remove to avoid duplication
+ */
+const asStdoutWithoutOwlHeader = (input: {
+  stdout: string;
+  owlHeader: string;
+}): string => {
+  return input.stdout.replace(input.owlHeader, '').replace(/^\n+/, '');
+};
+
+/**
+ * .what = determines if guard requires exit with code 2
+ * .why = encapsulates exit decision logic for guard block or approval states
+ */
+const isGuardExitRequired = (input: {
+  passed: boolean | undefined;
+  challenged: boolean | undefined;
+  approved: boolean | undefined;
+}): boolean => {
+  return (
+    input.passed === false ||
+    input.challenged === true ||
+    input.approved === false
+  );
+};
+
+/**
  * .what = cli entrypoint for route.stone.set skill
  * .why = enables shell invocation via package-level import
  */
@@ -830,10 +862,10 @@ export const routeStoneSet = async (): Promise<void> => {
     progress.done();
 
     if (result.emit) {
-      // strip owl header (printed early) to avoid duplication
-      const stdoutWithoutOwl = result.emit.stdout
-        .replace(owlHeader, '')
-        .replace(/^\n+/, ''); // trim lead newlines left behind
+      const stdoutWithoutOwl = asStdoutWithoutOwlHeader({
+        stdout: result.emit.stdout,
+        owlHeader,
+      });
       console.log(''); // blank line after progress, before tree
       console.log(stdoutWithoutOwl);
       if (result.emit.stderr) {
@@ -844,9 +876,11 @@ export const routeStoneSet = async (): Promise<void> => {
 
     // exit with code 2 for intentional guard block or approval blocked
     if (
-      result.passed === false ||
-      result.challenged === true ||
-      result.approved === false
+      isGuardExitRequired({
+        passed: result.passed,
+        challenged: result.challenged,
+        approved: result.approved,
+      })
     ) {
       process.exit(2);
     }
@@ -1095,6 +1129,34 @@ const judgeReviewed = async (input: {
   });
 
   if (reviewFiles.length === 0) {
+    // check if all peer reviewers are exhausted with human approval
+    const peerStatuses = await getAllReviewPeerMeterStatuses({
+      stone: stoneMatched,
+      hash,
+      route: input.route,
+    });
+
+    // check if all are in terminal state (exhausted or approved) with at least one exhausted
+    const allTerminal =
+      peerStatuses.length > 0 &&
+      peerStatuses.every((s) => isReviewPeerVerdictTerminal(s.verdict));
+    const anyExhausted = peerStatuses.some((s) =>
+      isReviewPeerVerdictExhausted(s.verdict),
+    );
+
+    // if all exhausted/approved and at least one exhausted, check for human approval
+    if (allTerminal && anyExhausted) {
+      const approval = await getOneStoneGuardApproval({
+        stone: stoneMatched,
+        route: input.route,
+      });
+      if (approval) {
+        console.log('passed: true');
+        console.log('reason: human approval overrides exhausted reviewers');
+        return;
+      }
+    }
+
     console.log('passed: false');
     console.log(`reason: no review files found for hash ${hash.slice(0, 8)}`);
     process.exit(2);
@@ -1102,6 +1164,32 @@ const judgeReviewed = async (input: {
 
   // get latest review per index (later iterations supersede earlier)
   const latestReviewFiles = getLatestReviewFilesPerIndex({ reviewFiles });
+
+  // check for exhausted reviewers with human approval override
+  // .why = per wish: "once they approve for either, they approve for both"
+  //        if reviewer is exhausted AND stone is approved, bypass blocker check
+  const peerStatuses = await getAllReviewPeerMeterStatuses({
+    stone: stoneMatched,
+    hash,
+    route: input.route,
+  });
+  const allTerminal =
+    peerStatuses.length > 0 &&
+    peerStatuses.every((s) => isReviewPeerVerdictTerminal(s.verdict));
+  const anyExhausted = peerStatuses.some((s) =>
+      isReviewPeerVerdictExhausted(s.verdict),
+    );
+  if (allTerminal && anyExhausted) {
+    const approval = await getOneStoneGuardApproval({
+      stone: stoneMatched,
+      route: input.route,
+    });
+    if (approval) {
+      console.log('passed: true');
+      console.log('reason: human approval overrides exhausted reviewers');
+      return;
+    }
+  }
 
   // compute total blockers and nitpicks from latest reviews
   const { totalBlockers, totalNitpicks } = await computeReviewTotalsFromFiles({
@@ -1412,7 +1500,7 @@ options:
       const bind = await getRouteBindByBranch({ branch: null });
       if (!bind) {
         console.error('error: no bound route found. use --route to specify.');
-        process.exit(1);
+        process.exit(2);
       }
       routePath = bind.route;
     }
@@ -1467,9 +1555,319 @@ options:
       console.log('');
     }
   } catch (error) {
-    if (error instanceof Error) {
+    // allowlist BadRequestError: format nicely and exit 2
+    if (error instanceof BadRequestError) {
       console.error(`error: ${error.message}`);
+      process.exit(2);
     }
+    throw error;
+  }
+};
+
+/**
+ * .what = extract and update budget values from guard file content
+ * .why = named transformer to isolate YAML structure navigation from orchestrator
+ */
+const updateGuardPeerBudgets = (input: {
+  content: string;
+  addAmount: number;
+  peerSlug: string | null;
+  guardName: string;
+}): {
+  content: string;
+  modified: boolean;
+  updates: Array<{
+    guard: string;
+    peer: string;
+    budgetBefore: number;
+    budgetAfter: number;
+  }>;
+} => {
+  const lines = input.content.split('\n');
+  let modified = false;
+  let currentPeerSlug: string | null = null;
+  let inPeerSection = false;
+  const updates: Array<{
+    guard: string;
+    peer: string;
+    budgetBefore: number;
+    budgetAfter: number;
+  }> = [];
+
+  for (let i = 0; i < lines.length; i++) {
+    const line = lines[i] ?? '';
+    const trimmed = line.trim();
+
+    // detect peer section start
+    if (trimmed === 'peer:') {
+      inPeerSection = true;
+      continue;
+    }
+
+    // exit peer section on other top-level keys
+    if (
+      inPeerSection &&
+      !line.startsWith(' ') &&
+      !line.startsWith('\t') &&
+      trimmed !== ''
+    ) {
+      if (
+        trimmed.endsWith(':') &&
+        !trimmed.startsWith('-') &&
+        !trimmed.startsWith('slug:') &&
+        !trimmed.startsWith('run:') &&
+        !trimmed.startsWith('budget:') &&
+        !trimmed.startsWith('level:')
+      ) {
+        inPeerSection = false;
+        currentPeerSlug = null;
+      }
+    }
+
+    // track current peer slug
+    if (inPeerSection && trimmed.startsWith('- slug:')) {
+      currentPeerSlug = trimmed.slice(7).trim();
+      continue;
+    }
+    if (inPeerSection && trimmed.startsWith('slug:')) {
+      currentPeerSlug = trimmed.slice(5).trim();
+      continue;
+    }
+
+    // find and update budget line
+    if (inPeerSection && trimmed.startsWith('budget:')) {
+      // skip if filter targets specific peer and this is not it
+      if (input.peerSlug && currentPeerSlug !== input.peerSlug) {
+        continue;
+      }
+
+      const budgetMatch = trimmed.match(/^budget:\s*(\d+)/);
+      if (budgetMatch) {
+        const budgetBefore = parseInt(budgetMatch[1]!, 10);
+        const budgetAfter = budgetBefore + input.addAmount;
+        const indent = line.match(/^(\s*)/)?.[1] ?? '';
+        lines[i] = `${indent}budget: ${budgetAfter}`;
+        modified = true;
+
+        updates.push({
+          guard: input.guardName,
+          peer: currentPeerSlug ?? 'unknown',
+          budgetBefore,
+          budgetAfter,
+        });
+      }
+    }
+  }
+
+  return {
+    content: lines.join('\n'),
+    modified,
+    updates,
+  };
+};
+
+/**
+ * .what = parses string to positive integer or returns null
+ * .why = encapsulates add amount validation for guard budget
+ */
+const asPositiveIntegerOrNull = (input: { value: string }): number | null => {
+  const parsed = parseInt(input.value, 10);
+  if (isNaN(parsed) || parsed <= 0) return null;
+  return parsed;
+};
+
+/**
+ * .what = formats budget update entries as tree structure lines
+ * .why = encapsulates treestruct output format for guard budget updates
+ */
+const asGuardBudgetUpdateLines = (input: {
+  updates: Array<{
+    peer: string;
+    budgetBefore: number;
+    budgetAfter: number;
+  }>;
+}): string[] => {
+  // display ∞ for infinite budget
+  const fmt = (n: number) => (n === Infinity ? '∞' : String(n));
+  return input.updates.map((u, i) => {
+    const isLast = i === input.updates.length - 1;
+    const prefix = isLast ? '      └─' : '      ├─';
+    return `${prefix} ${u.peer}: ${fmt(u.budgetBefore)} → ${fmt(u.budgetAfter)}`;
+  });
+};
+
+/**
+ * .what = processes guard files and updates peer budgets
+ * .why = encapsulates file I/O loop for guard budget updates
+ */
+const processGuardFileBudgets = async (input: {
+  guardPaths: string[];
+  addAmount: number;
+  peerSlug: string | null;
+}): Promise<
+  Array<{
+    guard: string;
+    peer: string;
+    budgetBefore: number;
+    budgetAfter: number;
+  }>
+> => {
+  const updates: Array<{
+    guard: string;
+    peer: string;
+    budgetBefore: number;
+    budgetAfter: number;
+  }> = [];
+
+  for (const guardPath of input.guardPaths) {
+    const content = await fs.readFile(guardPath, 'utf-8');
+    const result = updateGuardPeerBudgets({
+      content,
+      addAmount: input.addAmount,
+      peerSlug: input.peerSlug,
+      guardName: path.basename(guardPath),
+    });
+
+    if (result.modified) {
+      await fs.writeFile(guardPath, result.content);
+    }
+
+    updates.push(...result.updates);
+  }
+
+  return updates;
+};
+
+/**
+ * .what = cli entrypoint for route.guard.budget skill
+ * .why = extends peer reviewer budgets when exhausted
+ */
+export const routeGuardBudget = async (): Promise<void> => {
+  const options = parseArgs(process.argv);
+
+  // validate --for option (required, must be "review")
+  if (!options.for) {
+    console.error('error: --for is required');
+    console.error('');
+    console.error(
+      'usage: rhx route.guard.budget --for review --add N --stone <stone>',
+    );
+    process.exit(2);
+  }
+  if (options.for !== 'review') {
+    console.error(`error: --for must be "review", got "${options.for}"`);
+    process.exit(2);
+  }
+
+  // validate --add option
+  const addStr = options.add;
+  if (!addStr) {
+    console.log(`
+route.guard.budget - extend peer reviewer budget
+
+usage:
+  rhx route.guard.budget --for review --add 2 --stone 1.vision            # extend all peers
+  rhx route.guard.budget --for review --add 2 --peer primo --stone 1.vision  # extend specific peer
+  rhx route.guard.budget --for review --add 2 --stone 1.vision --route .behavior/my-feature
+
+options:
+  --for     resource type: "review" (required)
+  --add     number of budget rounds to add (required)
+  --stone   stone name with guard to update (required)
+  --peer    peer reviewer slug to extend (default: all peers)
+  --route   path to route directory (default: auto-detect from branch)
+`);
     process.exit(1);
+  }
+
+  const addAmount = asPositiveIntegerOrNull({ value: addStr });
+  if (addAmount === null) {
+    console.error('error: --add must be a positive integer');
+    process.exit(1);
+  }
+
+  const peerSlug = options.peer;
+  const stoneName = options.stone;
+
+  // require --stone to prevent accidental blast radius across all guards
+  if (!stoneName) {
+    console.error('error: --stone is required');
+    console.error('');
+    console.error(
+      'usage: rhx route.guard.budget --for review --add N --stone <stone>',
+    );
+    console.error('');
+    console.error(
+      '.why = prevents accidental budget changes across unrelated stones',
+    );
+    process.exit(2);
+  }
+
+  try {
+    // get route from option or auto-detect
+    let routePath = options.route;
+    if (!routePath) {
+      const bind = await getRouteBindByBranch({ branch: null });
+      if (!bind) {
+        console.error('error: no bound route found. use --route to specify.');
+        process.exit(2);
+      }
+      routePath = bind.route;
+    }
+
+    // find guard files in the route
+    const guardFiles = await enumFilesFromGlob({
+      glob: '*.guard',
+      cwd: routePath,
+    });
+
+    if (guardFiles.length === 0) {
+      console.error(`error: no guard files found in ${routePath}`);
+      process.exit(2);
+    }
+
+    // filter to specific stone if provided
+    const targetGuards = stoneName
+      ? guardFiles.filter((f) => path.basename(f).startsWith(stoneName))
+      : guardFiles;
+
+    if (targetGuards.length === 0) {
+      console.error(`error: no guard file found for stone ${stoneName}`);
+      process.exit(2);
+    }
+
+    const updates = await processGuardFileBudgets({
+      guardPaths: targetGuards,
+      addAmount,
+      peerSlug: peerSlug ?? null,
+    });
+
+    // validate peer was found if specific peer requested
+    if (peerSlug && updates.length === 0) {
+      console.error(`error: peer reviewer not found: ${peerSlug}`);
+      process.exit(2);
+    }
+
+    // emit output
+    console.log('');
+    console.log('🦉 budget extended');
+    console.log('');
+    console.log('🗿 route.guard.budget');
+    console.log(`   ├─ route = ${routePath}`);
+    console.log(`   ├─ add = ${addAmount}`);
+    if (peerSlug) {
+      console.log(`   ├─ peer = ${peerSlug}`);
+    }
+    console.log('   └─ updates');
+    const updateLines = asGuardBudgetUpdateLines({ updates });
+    updateLines.forEach((line) => console.log(line));
+    console.log('');
+  } catch (error) {
+    // allowlist BadRequestError: format nicely and exit 2
+    if (error instanceof BadRequestError) {
+      console.error(`error: ${error.message}`);
+      process.exit(2);
+    }
+    throw error;
   }
 };

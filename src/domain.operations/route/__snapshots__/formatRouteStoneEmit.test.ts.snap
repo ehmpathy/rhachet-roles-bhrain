@@ -108,8 +108,8 @@ exports[`formatRouteStoneEmit given: [case4] guarded stone, passage allowed when
    │  ├─ artifacts
    │  │   └─ 3.blueprint.md
    │  ├─ reviews
-   │  │   └─ r1: review cmd
-   │  │       ├─ finished 1.5s ✓
+   │  │   └─ r1: review (l1, 1/∞, approved)
+   │  │       ├─ approved 1.5s ✓
    │  │       └─ review: review.md
    │  └─ judges
    │      └─ j1: judge cmd
@@ -130,8 +130,8 @@ exports[`formatRouteStoneEmit given: [case5] guarded stone, passage blocked when
       ├─ artifacts
       │   └─ 3.blueprint.md
       ├─ reviews
-      │   └─ r1: review cmd
-      │       ├─ finished 1.5s ✓
+      │   └─ r1: review (l1, 1/∞, rejected)
+      │       ├─ rejected 1.5s
       │       ├─ review: review.md
       │       ├─ 3 blockers 🔴
       │       └─ 1 nitpick 🟠

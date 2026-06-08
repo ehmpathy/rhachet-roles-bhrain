@@ -1,0 +1,8 @@
+{
+  "name": "route-peer-budget-isolation-fixture",
+  "private": true,
+  "description": "fixture for peer budget isolation acceptance test",
+  "dependencies": {
+    "rhachet-roles-bhrain": "link:."
+  }
+}
