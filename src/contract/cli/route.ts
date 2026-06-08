@@ -1177,8 +1177,8 @@ const judgeReviewed = async (input: {
     peerStatuses.length > 0 &&
     peerStatuses.every((s) => isReviewPeerVerdictTerminal(s.verdict));
   const anyExhausted = peerStatuses.some((s) =>
-      isReviewPeerVerdictExhausted(s.verdict),
-    );
+    isReviewPeerVerdictExhausted(s.verdict),
+  );
   if (allTerminal && anyExhausted) {
     const approval = await getOneStoneGuardApproval({
       stone: stoneMatched,

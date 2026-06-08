@@ -23,8 +23,8 @@ import { formatRouteStoneEmit } from '../formatRouteStoneEmit';
 import { computeStoneReviewInputHash } from '../guard/computeStoneReviewInputHash';
 import type { GuardPeerMeterStatus } from '../guard/formatGuardTree';
 import { getAllStoneGuardArtifactsByHash } from '../guard/getAllStoneGuardArtifactsByHash';
-import { getAllReviewPeerMeterStatuses } from '../guard/reviewPeerMeter/getAllReviewPeerMeterStatuses';
 import { computeReviewPeerVerdict } from '../guard/reviewPeerMeter/computeReviewPeerVerdict';
+import { getAllReviewPeerMeterStatuses } from '../guard/reviewPeerMeter/getAllReviewPeerMeterStatuses';
 import {
   isReviewPeerVerdictExhausted,
   isReviewPeerVerdictTerminal,
