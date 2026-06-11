@@ -3,6 +3,7 @@ always:
     say:
       # identity
       - briefs/im_a.bhrain_owl.md
+      - briefs/im_an.obsessive_learner.md
       - briefs/define.bhrain-repo-mascot.md
 
       # core domain concepts

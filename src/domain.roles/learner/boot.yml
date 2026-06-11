@@ -1,0 +1,9 @@
+always:
+  briefs:
+    say:
+      # identity
+      - briefs/im_an.obsessive_learner.md
+
+      # rules
+      - briefs/rule.always.externalize.lessons.into_briefs.md
+      - briefs/rule.always.externalize.tactics.into_skills.md

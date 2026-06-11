@@ -6,6 +6,13 @@ repo=$repo specifies the docs that are scoped to any rhachet repo
 
 ---
 
+roles
+
+- **any** — applies to all agents in this repo
+- **debunker** — challenges assumptions and questions claims
+
+---
+
 glossary
 
 agents = actors w/ delegated authority
