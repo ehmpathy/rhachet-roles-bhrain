@@ -22,6 +22,12 @@ used to review artifacts against declared rules. designed to be composed into re
 
 ---
 
+## 📜 learner
+
+used for durable retention of knowledge. externalizes lessons into briefs and tactics into skills.
+
+---
+
 ## 🔬 architect
 
 used to document and compare architectures of replic brains (LLMs behind REPLs).

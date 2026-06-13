@@ -2,6 +2,7 @@ import { RoleRegistry } from 'rhachet';
 
 import { ROLE_ACHIEVER } from '@src/domain.roles/achiever/getAchieverRole';
 import { ROLE_DRIVER } from '@src/domain.roles/driver/getDriverRole';
+import { ROLE_LEARNER } from '@src/domain.roles/learner/getLearnerRole';
 import { ROLE_LIBRARIAN } from '@src/domain.roles/librarian/getLibrarianRole';
 import { ROLE_REFLECTOR } from '@src/domain.roles/reflector/getReflectorRole';
 import { ROLE_REVIEWER } from '@src/domain.roles/reviewer/getReviewerRole';
@@ -19,10 +20,11 @@ export const getRoleRegistry = (): RoleRegistry =>
     readme: { uri: __dirname + '/readme.md' },
     roles: [
       ROLE_ACHIEVER,
-      ROLE_THINKER,
-      ROLE_REVIEWER,
       ROLE_DRIVER,
+      ROLE_LEARNER,
       ROLE_LIBRARIAN,
       ROLE_REFLECTOR,
+      ROLE_REVIEWER,
+      ROLE_THINKER,
     ],
   });
