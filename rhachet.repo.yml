@@ -8,20 +8,6 @@ roles:
     skills:
       dirs: dist/domain.roles/achiever/skills
     boot: dist/domain.roles/achiever/boot.yml
-  - slug: thinker
-    readme: dist/domain.roles/thinker/readme.md
-    briefs:
-      dirs: dist/domain.roles/thinker/briefs
-    skills:
-      dirs: []
-  - slug: reviewer
-    readme: dist/domain.roles/reviewer/readme.md
-    briefs:
-      dirs: dist/domain.roles/reviewer/briefs
-    skills:
-      dirs: dist/domain.roles/reviewer/skills
-    boot: dist/domain.roles/reviewer/boot.yml
-    keyrack: dist/domain.roles/reviewer/keyrack.yml
   - slug: driver
     readme: dist/domain.roles/driver/readme.md
     briefs:
@@ -29,6 +15,13 @@ roles:
     skills:
       dirs: dist/domain.roles/driver/skills
     boot: dist/domain.roles/driver/boot.yml
+  - slug: learner
+    readme: dist/domain.roles/learner/readme.md
+    briefs:
+      dirs: dist/domain.roles/learner/briefs
+    skills:
+      dirs: []
+    boot: dist/domain.roles/learner/boot.yml
   - slug: librarian
     readme: dist/domain.roles/librarian/.readme.[seed].md
     briefs:
@@ -42,3 +35,17 @@ roles:
       dirs: []
     skills:
       dirs: dist/domain.roles/reflector/skills
+  - slug: reviewer
+    readme: dist/domain.roles/reviewer/readme.md
+    briefs:
+      dirs: dist/domain.roles/reviewer/briefs
+    skills:
+      dirs: dist/domain.roles/reviewer/skills
+    boot: dist/domain.roles/reviewer/boot.yml
+    keyrack: dist/domain.roles/reviewer/keyrack.yml
+  - slug: thinker
+    readme: dist/domain.roles/thinker/readme.md
+    briefs:
+      dirs: dist/domain.roles/thinker/briefs
+    skills:
+      dirs: []
