@@ -2,7 +2,13 @@
 
 exports[`driver.route.guard-cwd.acceptance given: [case1] guard with $route in judge command when: [t0] artifact created but no approval then: stdout has good vibes 1`] = `
 "🦉 the way speaks for itself
-   ├─ ✓ review.1 - completed [TIME]
+   │
+   ├─ r1: bash (l1, 0/∞)
+   │   ├─ approved [TIME]
+   │   ├─ 0 blockers ✓
+   │   ├─ 0 nitpicks ✓
+   │   └─ review: .route/1.vision.guard.review.i1.19bdec249480a7a036.r1.md
+   │
    └─ ✗ judge.1 - blocked [TIME]
 
 🗿 route.stone.set
@@ -13,9 +19,11 @@ exports[`driver.route.guard-cwd.acceptance given: [case1] guard with $route in j
       ├─ artifacts
       │   └─ $route/1.vision*.md
       ├─ reviews
-      │   └─ r1: bash -c 'if [ -f "$route/1.vision.md" ]; then echo "blockers: 0"; echo "artifact present at $route"; else echo "blockers: 1"; echo "artifact absent at $route"; fi'
-      │       ├─ finished [TIME] ✓
-      │       └─ review: .route/1.vision.guard.review.i1.0e5633ef7ed403dccb68d850141f95ee88dfe895fdccb3dc09c1342c38cb97f5.r1.md
+      │   └─ r1: bash (l1, 1/∞)
+      │       ├─ approved [TIME]
+      │       ├─ 0 blockers ✓
+      │       ├─ 0 nitpicks ✓
+      │       └─ review: .route/1.vision.guard.review.i1.19bdec249480a7a036.r1.md
       └─ judges
           └─ j1: rhx route.stone.judge --mechanism approved? --stone $stone --route $route
               ├─ finished [TIME] ✗
@@ -25,7 +33,13 @@ exports[`driver.route.guard-cwd.acceptance given: [case1] guard with $route in j
 
 exports[`driver.route.guard-cwd.acceptance given: [case1] guard with $route in judge command when: [t1] approval granted and pass reattempted then: stdout has good vibes 1`] = `
 "🦉 the way speaks for itself
-   ├─ ✓ review.1 - completed (cached)
+   │
+   ├─ r1: bash (l1, 1/∞)
+   │   ├─ approved, cached
+   │   ├─ 0 blockers ✓
+   │   ├─ 0 nitpicks ✓
+   │   └─ review: .route/1.vision.guard.review.i1.19bdec249480a7a036.r1.md
+   │
    └─ ✓ judge.1 - allowed [TIME]
 
 🗿 route.stone.set
@@ -35,9 +49,11 @@ exports[`driver.route.guard-cwd.acceptance given: [case1] guard with $route in j
    │  ├─ artifacts
    │  │   └─ $route/1.vision*.md
    │  ├─ reviews
-   │  │   └─ r1: bash -c 'if [ -f "$route/1.vision.md" ]; then echo "blockers: 0"; echo "artifact present at $route"; else echo "blockers: 1"; echo "artifact absent at $route"; fi'
-   │  │       └─ · cached
-   │  │          └─ on $route/1.vision*.md
+   │  │   └─ r1: bash (l1, 1/∞)
+   │  │       ├─ approved, cached
+   │  │       ├─ 0 blockers ✓
+   │  │       ├─ 0 nitpicks ✓
+   │  │       └─ review: .route/1.vision.guard.review.i1.19bdec249480a7a036.r1.md
    │  └─ judges
    │      └─ j1: rhx route.stone.judge --mechanism approved? --stone $stone --route $route
    │          └─ finished [TIME] ✓
@@ -49,7 +65,13 @@ exports[`driver.route.guard-cwd.acceptance given: [case1] guard with $route in j
 
 exports[`driver.route.guard-cwd.acceptance given: [case2] guard with $route works from nested route directory when: [t0] judge runs on nested route then: stdout has good vibes 1`] = `
 "🦉 the way speaks for itself
-   ├─ ✓ review.1 - completed [TIME]
+   │
+   ├─ r1: bash (l1, 0/∞)
+   │   ├─ approved [TIME]
+   │   ├─ 0 blockers ✓
+   │   ├─ 0 nitpicks ✓
+   │   └─ review: .behavior/test-feature/.route/1.vision.guard.review.i1.9b72e27ac4d438845c.r1.md
+   │
    └─ ✗ judge.1 - blocked [TIME]
 
 🗿 route.stone.set
@@ -60,9 +82,11 @@ exports[`driver.route.guard-cwd.acceptance given: [case2] guard with $route work
       ├─ artifacts
       │   └─ $route/1.vision*.md
       ├─ reviews
-      │   └─ r1: bash -c 'if [ -f "$route/1.vision.md" ]; then echo "blockers: 0"; echo "artifact present at $route"; else echo "blockers: 1"; echo "artifact absent at $route"; fi'
-      │       ├─ finished [TIME] ✓
-      │       └─ review: .route/1.vision.guard.review.i1.cf66a6fa1ab9aaeee6c8003c1fc2b5e88eafec45fd48399d39e7847da42f30b7.r1.md
+      │   └─ r1: bash (l1, 1/∞)
+      │       ├─ approved [TIME]
+      │       ├─ 0 blockers ✓
+      │       ├─ 0 nitpicks ✓
+      │       └─ review: .behavior/test-feature/.route/1.vision.guard.review.i1.9b72e27ac4d438845c.r1.md
       └─ judges
           └─ j1: rhx route.stone.judge --mechanism approved? --stone $stone --route $route
               ├─ finished [TIME] ✗
@@ -72,7 +96,13 @@ exports[`driver.route.guard-cwd.acceptance given: [case2] guard with $route work
 
 exports[`driver.route.guard-cwd.acceptance given: [case2] guard with $route works from nested route directory when: [t1] approval granted on nested route then: stdout has good vibes 1`] = `
 "🦉 the way speaks for itself
-   ├─ ✓ review.1 - completed (cached)
+   │
+   ├─ r1: bash (l1, 1/∞)
+   │   ├─ approved, cached
+   │   ├─ 0 blockers ✓
+   │   ├─ 0 nitpicks ✓
+   │   └─ review: .behavior/test-feature/.route/1.vision.guard.review.i1.9b72e27ac4d438845c.r1.md
+   │
    └─ ✓ judge.1 - allowed [TIME]
 
 🗿 route.stone.set
@@ -82,9 +112,11 @@ exports[`driver.route.guard-cwd.acceptance given: [case2] guard with $route work
    │  ├─ artifacts
    │  │   └─ $route/1.vision*.md
    │  ├─ reviews
-   │  │   └─ r1: bash -c 'if [ -f "$route/1.vision.md" ]; then echo "blockers: 0"; echo "artifact present at $route"; else echo "blockers: 1"; echo "artifact absent at $route"; fi'
-   │  │       └─ · cached
-   │  │          └─ on $route/1.vision*.md
+   │  │   └─ r1: bash (l1, 1/∞)
+   │  │       ├─ approved, cached
+   │  │       ├─ 0 blockers ✓
+   │  │       ├─ 0 nitpicks ✓
+   │  │       └─ review: .behavior/test-feature/.route/1.vision.guard.review.i1.9b72e27ac4d438845c.r1.md
    │  └─ judges
    │      └─ j1: rhx route.stone.judge --mechanism approved? --stone $stone --route $route
    │          └─ finished [TIME] ✓

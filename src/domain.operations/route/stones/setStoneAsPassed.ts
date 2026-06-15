@@ -1,6 +1,7 @@
 import * as fs from 'fs/promises';
 import { BadRequestError } from 'helpful-errors';
 import * as path from 'path';
+import { getGitRepoRoot } from 'rhachet-artifact-git';
 
 import type { ContextCliEmit } from '@src/domain.objects/Driver/ContextCliEmit';
 import type { GuardProgressEvent } from '@src/domain.objects/Driver/GuardProgressEvent';
@@ -23,7 +24,7 @@ import { formatRouteStoneEmit } from '../formatRouteStoneEmit';
 import { computeStoneReviewInputHash } from '../guard/computeStoneReviewInputHash';
 import type { GuardPeerMeterStatus } from '../guard/formatGuardTree';
 import { getAllStoneGuardArtifactsByHash } from '../guard/getAllStoneGuardArtifactsByHash';
-import { computeReviewPeerVerdict } from '../guard/reviewPeerMeter/computeReviewPeerVerdict';
+import { getMaxStoneGuardIteration } from '../guard/getMaxStoneGuardIteration';
 import { getAllReviewPeerMeterStatuses } from '../guard/reviewPeerMeter/getAllReviewPeerMeterStatuses';
 import {
   isReviewPeerVerdictExhausted,
@@ -63,6 +64,15 @@ export const setStoneAsPassed = async (
   });
   if (!stoneMatched) {
     throw new BadRequestError('stone not found', { stone: input.stone });
+  }
+
+  // lookup git root for path relativization
+  // .why = paths in output should be relative to git root (e.g., .behavior/v.../...), not route
+  let gitRoot: string;
+  try {
+    gitRoot = await getGitRepoRoot({ from: input.route });
+  } catch {
+    gitRoot = process.cwd();
   }
 
   // check artifact found
@@ -232,19 +242,19 @@ export const setStoneAsPassed = async (
     route: input.route,
   });
 
-  // check for prior artifacts to determine iteration number
+  // check for prior artifacts for cache lookup
   const priorArtifacts = await getAllStoneGuardArtifactsByHash({
     stone: stoneMatched,
     hash,
     route: input.route,
   });
 
-  // determine current iteration (shared for both reviews and judges)
-  const maxPriorIteration = Math.max(
-    0,
-    ...priorArtifacts.reviews.map((r) => r.iteration),
-    ...priorArtifacts.judges.map((j) => j.iteration),
-  );
+  // determine current iteration across ALL artifacts for this stone (not just per-hash)
+  // .note = iteration increments globally so filenames show progression even when hash changes
+  const maxPriorIteration = await getMaxStoneGuardIteration({
+    stone: stoneMatched,
+    route: input.route,
+  });
   const iteration = maxPriorIteration + 1;
 
   // collect progress events for guard tree output
@@ -270,11 +280,12 @@ export const setStoneAsPassed = async (
           total: totalItems,
         });
       },
+      onGuardHalted: context.cliEmit.onGuardHalted,
     },
   };
 
   // run reviews (reuses prior artifacts internally, only runs incomplete ones)
-  const reviewArtifacts =
+  const reviewResult =
     peerReviews.length > 0
       ? await runStoneGuardReviews(
           {
@@ -286,40 +297,44 @@ export const setStoneAsPassed = async (
           },
           collectContext,
         )
-      : [];
+      : { artifacts: [], exhaustedReviewerSlugs: [] };
+  const reviewArtifacts = reviewResult.artifacts;
 
   // compute peer meter statuses for guard tree output
+  // pass skipped slugs so wasExhausted can be computed correctly
   const peerMeters = await getAllReviewPeerMeterStatuses({
     stone: stoneMatched,
     hash,
     route: input.route,
+    exhaustedReviewerSlugs: reviewResult.exhaustedReviewerSlugs,
   });
 
   // check for peer review exhaustion
-  // if any reviewer is exhausted AND all reviewers are terminal (exhausted | approved),
-  // trigger implicit approval gate via 'review.peer.exhausted' blocker
+  // halt only if a review was SKIPPED due to exhaustion (not if it ran and depleted budget)
+  // .why = if review ran at 2/2 and got blockers, should proceed to judge (blocked), not halt
+  //        halt only on attempt 3/2 when review can't run because budget already at 2/2
   // note: if stone is already approved, skip this check (human already signed off)
   const approvalPrior = await getOnePassageReport({
     stone: stoneMatched.name,
     status: 'approved',
     route: input.route,
   });
-  // compute exhaustion from peerMeters (accurate: uses rounds/budget/blockers)
-  // not from events (events' exhausted flag only set when review is SKIPPED,
-  // not when review RUNS and depletes budget)
-  const exhaustedSlugs = peerMeters
-    .filter((m) => isReviewPeerVerdictExhausted(m.verdict))
-    .map((m) => m.slug);
+  // get slugs of reviews that were SKIPPED (not ran) due to exhaustion
+  // .note = verdict 'exhausted' is only set when wasExhausted = true (see define.invariant.review.peer.exhausted)
+  const exhaustedMeters = peerMeters.filter((m) =>
+    isReviewPeerVerdictExhausted(m.verdict),
+  );
+  const skippedSlugs = exhaustedMeters.map((m) => m.slug);
   const allTerminal =
     peerMeters.length > 0 &&
     peerMeters.every((m) => isReviewPeerVerdictTerminal(m.verdict));
   const exhaustionCheck = {
-    anyExhausted: exhaustedSlugs.length > 0,
+    anySkippedDueToExhaustion: exhaustedMeters.length > 0,
     allTerminal,
-    exhaustedSlugs,
+    skippedSlugs,
   };
   if (
-    exhaustionCheck.anyExhausted &&
+    exhaustionCheck.anySkippedDueToExhaustion &&
     exhaustionCheck.allTerminal &&
     !approvalPrior
   ) {
@@ -331,6 +346,7 @@ export const setStoneAsPassed = async (
       judgeArtifacts: [],
       events,
       route: input.route,
+      gitRoot,
       peerMeters,
     });
 
@@ -339,7 +355,12 @@ export const setStoneAsPassed = async (
       stone: stoneMatched.name,
       route: input.route,
       blocker: 'review.peer.exhausted',
-      reason: `peer reviewer budget exhausted: ${exhaustionCheck.exhaustedSlugs.join(', ')}`,
+      reason: `peer reviewer budget exhausted: ${exhaustionCheck.skippedSlugs.join(', ')}`,
+    });
+
+    // emit tree terminator since no judge will follow
+    context.cliEmit.onGuardHalted?.({
+      reason: 'peer reviewer budget exhausted',
     });
 
     return {
@@ -354,7 +375,7 @@ export const setStoneAsPassed = async (
           stone: stoneMatched.name,
           action: 'passed',
           passage: 'blocked',
-          reason: `peer reviewer budget exhausted: ${exhaustionCheck.exhaustedSlugs.join(', ')}`,
+          reason: `peer reviewer budget exhausted: ${exhaustionCheck.skippedSlugs.join(', ')}`,
           guard: guardData,
         }),
       },
@@ -404,6 +425,7 @@ export const setStoneAsPassed = async (
       judgeArtifacts,
       events,
       route: input.route,
+      gitRoot,
       peerMeters,
     });
 
@@ -466,6 +488,77 @@ export const setStoneAsPassed = async (
     };
   }
 
+  // check for genuine constraints (exit code 2 without blockers)
+  // .note = exit 2 with blockers = review completed, found issues (not a constraint)
+  // .note = exit 2 without blockers = genuine constraint (e.g., absent API key)
+  const reviewConstraints = reviewArtifacts.filter(
+    (r) => r.exitClass === 'constraint' && r.blockers === 0,
+  );
+  const hasConstraint = reviewConstraints.length > 0;
+
+  if (hasConstraint) {
+    // record blocked status in passage.jsonl
+    await setPassageReport({
+      report: new PassageReport({
+        stone: stoneMatched.name,
+        status: 'blocked',
+      }),
+      route: input.route,
+    });
+
+    // build guard data for output
+    const guardDataForConstraint = computeGuardData({
+      stone: stoneMatched,
+      artifactFiles,
+      reviewArtifacts,
+      judgeArtifacts,
+      events,
+      route: input.route,
+      gitRoot,
+      peerMeters,
+    });
+
+    // collect constraint details for stderr
+    const stderrLines: string[] = [];
+    for (const review of reviewConstraints) {
+      if (stderrLines.length > 0) stderrLines.push('');
+      stderrLines.push(`🔎 review ${review.index}`);
+      try {
+        const content = await fs.readFile(review.path, 'utf-8');
+        for (const line of content.split('\n')) {
+          stderrLines.push(`   ${line}`);
+        }
+      } catch (error) {
+        // graceful fallback for display: file may not exist or be unreadable
+        const isExpected =
+          error instanceof Error &&
+          (error.message.includes('ENOENT') ||
+            error.message.includes('EACCES'));
+        if (!isExpected) throw error;
+        stderrLines.push(`   └─ constraint (exit code ${review.exitCode})`);
+      }
+    }
+
+    return {
+      passed: false,
+      refs: {
+        reviews: reviewArtifacts.map((r) => r.path),
+        judges: judgeArtifacts.map((j) => j.path),
+      },
+      emit: {
+        stdout: formatRouteStoneEmit({
+          operation: 'route.stone.set',
+          stone: stoneMatched.name,
+          action: 'passed',
+          passage: 'blocked',
+          reason: 'reviewer constraint',
+          guard: guardDataForConstraint,
+        }),
+        stderr: stderrLines.length > 0 ? stderrLines.join('\n') : undefined,
+      },
+    };
+  }
+
   // build guard data from artifacts and events for tree output
   const guardData = computeGuardData({
     stone: stoneMatched,
@@ -474,6 +567,7 @@ export const setStoneAsPassed = async (
     judgeArtifacts,
     events,
     route: input.route,
+    gitRoot,
     peerMeters,
   });
 
@@ -602,6 +696,7 @@ const computeGuardData = (input: {
   judgeArtifacts: RouteStoneGuardJudgeArtifact[];
   events: GuardProgressEvent[];
   route: string;
+  gitRoot: string;
   peerMeters?: GuardPeerMeterStatus[];
 }) => {
   // find events that completed (have endedAt)
@@ -628,8 +723,14 @@ const computeGuardData = (input: {
       const event = reviewEventsCompleted.find(
         (e) => e.step.index === r.index - 1,
       );
-      const durationSec = computeDuration(event);
       const isCached = !event;
+      // for cached reviews, use duration from artifact (parsed from stdout)
+      // for fresh reviews, use duration from event time
+      const durationSec = isCached
+        ? r.durationMs !== null
+          ? r.durationMs / 1000
+          : null
+        : computeDuration(event);
       const peerReview = stonePeerReviews[r.index - 1];
 
       // build peer info from review + meter state
@@ -653,7 +754,8 @@ const computeGuardData = (input: {
         durationSec,
         blockers: r.blockers,
         nitpicks: r.nitpicks,
-        path: path.relative(input.route, r.path),
+        path: path.relative(input.gitRoot, r.path),
+        exitClass: r.exitClass,
         peer,
       };
     }),
@@ -675,25 +777,11 @@ const computeGuardData = (input: {
         path: path.relative(input.route, j.path),
       };
     }),
-    // merge peerMeters with actual review verdicts
-    // - file-based meters can have stale verdict (e.g., 'queued' when review already ran)
-    // - but we still need meters for reviewers that haven't run yet (to show 'awaits l1')
-    // so: for reviewers WITH artifacts, derive verdict from blockers+budget; else keep original meter
-    peerMeters: input.peerMeters?.map((meter) => {
-      const artifact = input.reviewArtifacts.find((r) => {
-        const peerReview = stonePeerReviews[r.index - 1];
-        return peerReview?.slug === meter.slug;
-      });
-      if (!artifact) return meter; // no artifact = keep original meter
-      // derive verdict from actual blockers AND budget
-      const peerReview = stonePeerReviews.find((p) => p.slug === meter.slug);
-      const verdict = computeReviewPeerVerdict({
-        rounds: meter.rounds,
-        budget: peerReview?.budget ?? Infinity,
-        blockers: artifact.blockers,
-      });
-      return { ...meter, verdict };
-    }),
+    // use peerMeters as-is (source of truth for verdicts)
+    // .note = getAllReviewPeerMeterStatuses already computed verdict
+    //         with full context (exitClass, nitpicks, allowBlockers, allowNitpicks)
+    // @see rule.require.single-source-of-truth-for-render
+    peerMeters: input.peerMeters,
   };
 };
 

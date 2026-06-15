@@ -108,13 +108,61 @@ const genLogTimestamp = (): string => {
 };
 
 /**
- * .what = simple spinner for CLI feedback
- * .why = shows progress during long operations
+ * .what = 21 minute timeout for review operations
+ * .why = prevents hung LLM calls from wait indefinitely
+ * .note = override via RHACHET_REVIEW_TIMEOUT_MS env var for testing
+ */
+export const REVIEW_TIMEOUT_MS =
+  process.env.RHACHET_REVIEW_TIMEOUT_MS !== undefined
+    ? parseInt(process.env.RHACHET_REVIEW_TIMEOUT_MS, 10)
+    : 21 * 60 * 1000;
+
+/**
+ * .what = error thrown when review times out
+ * .why = enables caller to detect timeout vs other failures
+ */
+export class ReviewTimeoutError extends Error {
+  constructor(timeoutMs: number) {
+    super(
+      `💥 malfunction: review timed out after ${Math.floor(timeoutMs / 60000)} minutes`,
+    );
+    this.name = 'ReviewTimeoutError';
+  }
+}
+
+/**
+ * .what = simple spinner for CLI feedback with timeout
+ * .why = shows progress for long operations, fails fast on hang
+ * .note = suppresses output when RHACHET_GUARD_CONTEXT is set (guard has its own spinner)
  */
 const withSpinner = async <T>(input: {
   message: string;
   operation: () => Promise<T>;
+  timeoutMs?: number;
 }): Promise<T> => {
+  const timeoutMs = input.timeoutMs ?? REVIEW_TIMEOUT_MS;
+
+  // create timeout with cleanup handle
+  let timeoutId: NodeJS.Timeout | undefined;
+  const timeoutPromise = new Promise<never>((_, reject) => {
+    timeoutId = setTimeout(() => {
+      reject(new ReviewTimeoutError(timeoutMs));
+    }, timeoutMs);
+  });
+
+  // suppress spinner when invoked from guard context
+  // .why = guard already displays its own progress spinner
+  if (process.env.RHACHET_GUARD_CONTEXT === '1') {
+    try {
+      const result = await Promise.race([input.operation(), timeoutPromise]);
+      clearTimeout(timeoutId);
+      return result;
+    } catch (error) {
+      clearTimeout(timeoutId);
+      throw error;
+    }
+  }
+
   const frames = ['⠋', '⠙', '⠹', '⠸', '⠼', '⠴', '⠦', '⠧', '⠇', '⠏'];
   const startTime = Date.now();
   let i = 0;
@@ -135,12 +183,14 @@ const withSpinner = async <T>(input: {
   }, 100);
 
   try {
-    const result = await input.operation();
+    const result = await Promise.race([input.operation(), timeoutPromise]);
+    clearTimeout(timeoutId);
     clearInterval(interval);
     const elapsed = Math.floor((Date.now() - startTime) / 1000);
     process.stdout.write(`\r   └─ elapsed: ${elapsed}s ✓\n\n`);
     return result;
   } catch (error) {
+    clearTimeout(timeoutId);
     clearInterval(interval);
     const elapsed = Math.floor((Date.now() - startTime) / 1000);
     process.stdout.write(`\r   └─ elapsed: ${elapsed}s ✗\n`);

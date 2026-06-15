@@ -1,0 +1,157 @@
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
+
+exports[`driver.route.peer-budget-exhaustion-unlocks-level.acceptance given: [journey] exhaustion unlocks higher level when: [t0] round 1/2: l1 rejected, l3 awaits then: stdout has good vibes 1`] = `
+"🦉 the way speaks for itself
+   │
+   ├─ r1: l1-reviewer (l1, 1/2)
+   │   ├─ rejected [TIME]
+   │   ├─ 1 blocker 🔴
+   │   ├─ 0 nitpicks ✓
+   │   └─ review: .route/1.execute.guard.review.i1.8739656801d5e77f22.r1.md
+   │
+   ├─ r2: l3-reviewer (l3, 0/5)
+   │   └─ awaits arrival
+   │
+   └─ ✗ judge.1 - blocked [TIME]
+
+🗿 route.stone.set
+   ├─ stone = 1.execute
+   ├─ passage = blocked
+   ├─ reason = blockers exceed threshold (1 > 0)
+   └─ guard
+      ├─ artifacts
+      │   └─ src/**/*.ts
+      ├─ reviews
+      │   ├─ r1: l1-reviewer (l1, 1/2)
+      │   │   ├─ rejected [TIME]
+      │   │   ├─ 1 blocker 🔴
+      │   │   ├─ 0 nitpicks ✓
+      │   │   └─ review: .route/1.execute.guard.review.i1.8739656801d5e77f22.r1.md
+      │   └─ r2: l3-reviewer (l3, 0/5)
+      │       └─ awaits l1 terminal
+      └─ judges
+          └─ j1: rhx route.stone.judge --mechanism reviewed? --stone $stone --route $route --allow-blockers 0 --allow-nitpicks 1
+              ├─ finished [TIME] ✗
+              └─ reason: blockers exceed threshold (1 > 0)
+"
+`;
+
+exports[`driver.route.peer-budget-exhaustion-unlocks-level.acceptance given: [journey] exhaustion unlocks higher level when: [t1] round 2/2: l1 rejected, l3 awaits then: stdout has good vibes 1`] = `
+"🦉 the way speaks for itself
+   │
+   ├─ r1: l1-reviewer (l1, 2/2)
+   │   ├─ rejected [TIME]
+   │   ├─ 1 blocker 🔴
+   │   ├─ 0 nitpicks ✓
+   │   └─ review: .route/1.execute.guard.review.i2.dfc5faff83ea2fcb55.r1.md
+   │
+   ├─ r2: l3-reviewer (l3, 0/5)
+   │   └─ awaits arrival
+   │
+   └─ ✗ judge.1 - blocked [TIME]
+
+🗿 route.stone.set
+   ├─ stone = 1.execute
+   ├─ passage = blocked
+   ├─ reason = blockers exceed threshold (1 > 0)
+   └─ guard
+      ├─ artifacts
+      │   └─ src/**/*.ts
+      ├─ reviews
+      │   ├─ r1: l1-reviewer (l1, 2/2)
+      │   │   ├─ rejected [TIME]
+      │   │   ├─ 1 blocker 🔴
+      │   │   ├─ 0 nitpicks ✓
+      │   │   └─ review: .route/1.execute.guard.review.i2.dfc5faff83ea2fcb55.r1.md
+      │   └─ r2: l3-reviewer (l3, 0/5)
+      │       └─ awaits l1 terminal
+      └─ judges
+          └─ j1: rhx route.stone.judge --mechanism reviewed? --stone $stone --route $route --allow-blockers 0 --allow-nitpicks 1
+              ├─ finished [TIME] ✗
+              └─ reason: blockers exceed threshold (1 > 0)
+"
+`;
+
+exports[`driver.route.peer-budget-exhaustion-unlocks-level.acceptance given: [journey] exhaustion unlocks higher level when: [t2] round 3/2: l1 exhausted, l3 unlocks then: stdout has good vibes 1`] = `
+"🦉 the way speaks for itself
+   │
+   ├─ r1: l1-reviewer (l1, 2/2)
+   │   ├─ exhausted, cached
+   │   ├─ 1 blocker 🔴
+   │   ├─ 0 nitpicks ✓
+   │   └─ review: .route/1.execute.guard.review.i2.dfc5faff83ea2fcb55.r1.md
+   │
+   ├─ r2: l3-reviewer (l3, 1/5)
+   │   ├─ rejected [TIME]
+   │   ├─ 1 blocker 🔴
+   │   ├─ 0 nitpicks ✓
+   │   └─ review: .route/1.execute.guard.review.i3.457fd5ef46e053a35e.r2.md
+   │
+   └─ ✗ judge.1 - blocked [TIME]
+
+🗿 route.stone.set
+   ├─ stone = 1.execute
+   ├─ passage = blocked
+   ├─ reason = blockers exceed threshold (1 > 0)
+   └─ guard
+      ├─ artifacts
+      │   └─ src/**/*.ts
+      ├─ reviews
+      │   ├─ r1: l1-reviewer (l1, 2/2)
+      │   │   ├─ exhausted, cached
+      │   │   ├─ 1 blocker 🔴
+      │   │   ├─ 0 nitpicks ✓
+      │   │   └─ review: .route/1.execute.guard.review.i2.dfc5faff83ea2fcb55.r1.md
+      │   └─ r2: l3-reviewer (l3, 1/5)
+      │       ├─ rejected [TIME]
+      │       ├─ 1 blocker 🔴
+      │       ├─ 0 nitpicks ✓
+      │       └─ review: .route/1.execute.guard.review.i3.457fd5ef46e053a35e.r2.md
+      └─ judges
+          └─ j1: rhx route.stone.judge --mechanism reviewed? --stone $stone --route $route --allow-blockers 0 --allow-nitpicks 1
+              ├─ finished [TIME] ✗
+              └─ reason: blockers exceed threshold (1 > 0)
+"
+`;
+
+exports[`driver.route.peer-budget-exhaustion-unlocks-level.acceptance given: [journey] exhaustion unlocks higher level when: [t3] exhausted state persists across hash changes then: stdout has good vibes 1`] = `
+"🦉 the way speaks for itself
+   │
+   ├─ r1: l1-reviewer (l1, 2/2)
+   │   ├─ exhausted, cached
+   │   ├─ 1 blocker 🔴
+   │   ├─ 0 nitpicks ✓
+   │   └─ review: .route/1.execute.guard.review.i2.dfc5faff83ea2fcb55.r1.md
+   │
+   ├─ r2: l3-reviewer (l3, 2/5)
+   │   ├─ rejected [TIME]
+   │   ├─ 1 blocker 🔴
+   │   ├─ 0 nitpicks ✓
+   │   └─ review: .route/1.execute.guard.review.i4.06fcb8d2e60f371042.r2.md
+   │
+   └─ ✗ judge.1 - blocked [TIME]
+
+🗿 route.stone.set
+   ├─ stone = 1.execute
+   ├─ passage = blocked
+   ├─ reason = blockers exceed threshold (1 > 0)
+   └─ guard
+      ├─ artifacts
+      │   └─ src/**/*.ts
+      ├─ reviews
+      │   ├─ r1: l1-reviewer (l1, 2/2)
+      │   │   ├─ exhausted, cached
+      │   │   ├─ 1 blocker 🔴
+      │   │   ├─ 0 nitpicks ✓
+      │   │   └─ review: .route/1.execute.guard.review.i2.dfc5faff83ea2fcb55.r1.md
+      │   └─ r2: l3-reviewer (l3, 2/5)
+      │       ├─ rejected [TIME]
+      │       ├─ 1 blocker 🔴
+      │       ├─ 0 nitpicks ✓
+      │       └─ review: .route/1.execute.guard.review.i4.06fcb8d2e60f371042.r2.md
+      └─ judges
+          └─ j1: rhx route.stone.judge --mechanism reviewed? --stone $stone --route $route --allow-blockers 0 --allow-nitpicks 1
+              ├─ finished [TIME] ✗
+              └─ reason: blockers exceed threshold (1 > 0)
+"
+`;

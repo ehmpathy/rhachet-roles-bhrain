@@ -11,8 +11,15 @@ exports[`driver.route.review-blocks-approval.acceptance given: [review-blocks] s
 
 exports[`driver.route.review-blocks-approval.acceptance given: [review-blocks] stone with review + approval guard when: [t2] pass attempted with approval but reviews still fail then: stdout has good vibes 1`] = `
 "🦉 the way speaks for itself
-   ├─ ✓ review.1 - completed [TIME]
+   │
+   ├─ r1: bash (l1, 0/∞)
+   │   ├─ rejected [TIME]
+   │   ├─ 1 blocker 🔴
+   │   ├─ 0 nitpicks ✓
+   │   └─ review: .route/1.plan.guard.review.i1.e7639ab384369331ef.r1.md
+   │
    ├─ ✗ judge.1 - blocked [TIME]
+   │
    └─ ✓ judge.2 - allowed [TIME]
 
 🗿 route.stone.set
@@ -23,10 +30,11 @@ exports[`driver.route.review-blocks-approval.acceptance given: [review-blocks] s
       ├─ artifacts
       │   └─ $route/1.plan*.md
       ├─ reviews
-      │   └─ r1: bash $route/.test/mock-review.sh
-      │       ├─ finished [TIME] ✓
-      │       ├─ review: .route/1.plan.guard.review.i1.9e74862afb365a9a3c13042ff29f4a595a5a43214389645509c64c67e49cd7e0.r1.md
-      │       └─ 1 blocker 🔴
+      │   └─ r1: bash (l1, 1/∞)
+      │       ├─ rejected [TIME]
+      │       ├─ 1 blocker 🔴
+      │       ├─ 0 nitpicks ✓
+      │       └─ review: .route/1.plan.guard.review.i1.e7639ab384369331ef.r1.md
       └─ judges
           ├─ j1: rhx route.stone.judge --mechanism reviewed? --stone $stone --route $route --allow-blockers 0 --allow-nitpicks 0
           │   ├─ finished [TIME] ✗
@@ -38,8 +46,15 @@ exports[`driver.route.review-blocks-approval.acceptance given: [review-blocks] s
 
 exports[`driver.route.review-blocks-approval.acceptance given: [review-blocks] stone with review + approval guard when: [t4] pass reattempted after fix then: stdout has good vibes 1`] = `
 "🦉 the way speaks for itself
-   ├─ ✓ review.1 - completed [TIME]
+   │
+   ├─ r1: bash (l1, 1/∞)
+   │   ├─ approved [TIME]
+   │   ├─ 0 blockers ✓
+   │   ├─ 0 nitpicks ✓
+   │   └─ review: .route/1.plan.guard.review.i2.011b7ed6745dcad7a6.r1.md
+   │
    ├─ ✓ judge.1 - allowed [TIME]
+   │
    └─ ✓ judge.2 - allowed [TIME]
 
 🗿 route.stone.set
@@ -49,9 +64,11 @@ exports[`driver.route.review-blocks-approval.acceptance given: [review-blocks] s
    │  ├─ artifacts
    │  │   └─ $route/1.plan*.md
    │  ├─ reviews
-   │  │   └─ r1: bash $route/.test/mock-review.sh
-   │  │       ├─ finished [TIME] ✓
-   │  │       └─ review: .route/1.plan.guard.review.i1.a55ef6b3427da69365712851ee0b3057fde5c6ebed6ed7e18f4fa4fcde58a0dd.r1.md
+   │  │   └─ r1: bash (l1, 2/∞)
+   │  │       ├─ approved [TIME]
+   │  │       ├─ 0 blockers ✓
+   │  │       ├─ 0 nitpicks ✓
+   │  │       └─ review: .route/1.plan.guard.review.i2.011b7ed6745dcad7a6.r1.md
    │  └─ judges
    │      ├─ j1: rhx route.stone.judge --mechanism reviewed? --stone $stone --route $route --allow-blockers 0 --allow-nitpicks 0
    │      │   └─ finished [TIME] ✓

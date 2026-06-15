@@ -79,13 +79,42 @@ describe('driver.route.peer-budget-exhausted-hash-change.acceptance', () => {
         });
       });
 
-      then('budget is exhausted', () => {
+      then('budget at limit, reviewer rejected', () => {
+        // .note = at 2/2, review RAN so verdict is 'rejected' not 'exhausted'
+        //         'exhausted' only when review SKIPPED (rounds >= budget BEFORE attempt)
         expect(result.code).not.toEqual(0);
-        expect(result.stdout.toLowerCase()).toContain('exhaust');
+        expect(result.stdout.toLowerCase()).toContain('rejected');
         expect(result.stdout).toContain('2/2');
       });
 
-      then('snapshot [t1]: exhausted on hash A', () => {
+      then('snapshot [t1]: rejected at limit on hash A', () => {
+        expect(sanitizeTimeForSnapshot(result.stdout)).toMatchSnapshot();
+      });
+    });
+
+    when('[t1.5] third attempt, review SKIPPED (exhausted)', () => {
+      const result = useThen('reviewer is exhausted', async () => {
+        // .note = change artifact to trigger re-check
+        await fs.writeFile(
+          path.join(scene.tempDir, 'src', 'feature.ts'),
+          'export const feature = () => "hash-A-v3";',
+        );
+
+        return invokeRouteSkill({
+          skill: 'route.stone.set',
+          args: { stone: '1.execute', route: '.', as: 'passed' },
+          cwd: scene.tempDir,
+        });
+      });
+
+      then('reviewer is exhausted (review was SKIPPED at 3/2)', () => {
+        // .note = at 3/2, rounds >= budget BEFORE attempt, so review is SKIPPED
+        //         verdict is 'exhausted' not 'rejected'
+        expect(result.code).not.toEqual(0);
+        expect(result.stdout.toLowerCase()).toContain('exhausted');
+      });
+
+      then('snapshot [t1.5]: exhausted on hash A', () => {
         expect(sanitizeTimeForSnapshot(result.stdout)).toMatchSnapshot();
       });
     });

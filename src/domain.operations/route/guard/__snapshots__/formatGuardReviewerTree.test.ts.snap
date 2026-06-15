@@ -1,0 +1,92 @@
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
+
+exports[`formatGuardReviewerTree given: [case1] approved reviewer with 0 blockers, 0 nitpicks when: [t0] formatted as last item then: output matches snapshot 1`] = `
+"└─ r1: self/reflect (l1, 1/∞)
+    ├─ approved 8.2s
+    ├─ 0 blockers ✓
+    ├─ 0 nitpicks ✓
+    └─ review: .route/5.1.execution.guard.review.i1.abc123.r1.md"
+`;
+
+exports[`formatGuardReviewerTree given: [case1] approved reviewer with 0 blockers, 0 nitpicks when: [t1] formatted as intermediate item then: output matches snapshot 1`] = `
+"├─ r1: self/reflect (l1, 1/∞)
+│   ├─ approved 8.2s
+│   ├─ 0 blockers ✓
+│   ├─ 0 nitpicks ✓
+│   └─ review: .route/5.1.execution.guard.review.i1.abc123.r1.md"
+`;
+
+exports[`formatGuardReviewerTree given: [case2] approved reviewer with 0 blockers, 2 nitpicks when: [t0] formatted then: output matches snapshot 1`] = `
+"└─ r1: self/reflect (l1, 1/∞)
+    ├─ approved 8.2s
+    ├─ 0 blockers ✓
+    ├─ 2 nitpicks 🟠
+    └─ review: .route/5.1.execution.guard.review.i1.abc123.r1.md"
+`;
+
+exports[`formatGuardReviewerTree given: [case3] rejected reviewer with 3 blockers, 1 nitpick when: [t0] formatted then: output matches snapshot 1`] = `
+"└─ r1: self/reflect (l1, 1/∞)
+    ├─ rejected 5.1s
+    ├─ 3 blockers 🔴
+    ├─ 1 nitpick 🟠
+    └─ review: .route/5.1.execution.guard.review.i1.abc123.r1.md"
+`;
+
+exports[`formatGuardReviewerTree given: [case4] exhausted reviewer with blockers when: [t0] formatted then: output matches snapshot 1`] = `
+"└─ r1: peer/budget-aware (l1, 2/2)
+    ├─ exhausted
+    ├─ 1 blocker 🔴
+    ├─ 0 nitpicks ✓
+    └─ review: .route/5.1.execution.guard.review.i1.abc123.r1.md"
+`;
+
+exports[`formatGuardReviewerTree given: [case5] inflight reviewer when: [t0] formatted then: output matches snapshot 1`] = `
+"└─ r1: self/reflect (l1, 0/∞)
+    └─ ⠋ inflight 4.2s"
+`;
+
+exports[`formatGuardReviewerTree given: [case6] awaits l1 terminal when: [t0] formatted then: output matches snapshot 1`] = `
+"└─ r2: peer/expensive (l2, 0/1)
+    └─ awaits l1 terminal"
+`;
+
+exports[`formatGuardReviewerTree given: [case7] queued reviewer when: [t0] formatted then: output matches snapshot 1`] = `
+"└─ r1: self/reflect (l1, 0/∞)
+    └─ awaits arrival"
+`;
+
+exports[`formatGuardReviewerTree given: [case8] cached approved reviewer when: [t0] formatted then: output matches snapshot 1`] = `
+"└─ r1: self/reflect (l1, 1/∞)
+    ├─ approved, cached
+    ├─ 0 blockers ✓
+    ├─ 0 nitpicks ✓
+    └─ review: .route/5.1.execution.guard.review.i1.abc123.r1.md"
+`;
+
+exports[`formatGuardReviewerTree given: [case9] malfunction reviewer when: [t0] formatted then: output matches snapshot 1`] = `
+"└─ r1: self/reflect (l1, 0/∞)
+    ├─ 💥 malfunction
+    └─ review: .route/5.1.execution.guard.review.i1.abc123.r1.md"
+`;
+
+exports[`formatGuardReviewerTree given: [case10] constraint reviewer when: [t0] formatted then: output matches snapshot 1`] = `
+"└─ r1: self/reflect (l1, 0/∞)
+    ├─ ✋ constraint
+    └─ review: .route/5.1.execution.guard.review.i1.abc123.r1.md"
+`;
+
+exports[`formatGuardReviewerTree given: [case11] reviewer with finite budget when: [t0] formatted then: output shows rounds/budget correctly 1`] = `
+"└─ r2: peer/budget-aware (l1, 1/3)
+    ├─ rejected 5.0s
+    ├─ 2 blockers 🔴
+    ├─ 0 nitpicks ✓
+    └─ review: .route/5.1.execution.guard.review.i1.abc123.r2.md"
+`;
+
+exports[`formatGuardReviewerTree given: [case12] base indent provided when: [t0] formatted with base indent then: all lines have base indent 1`] = `
+"      └─ r1: self/reflect (l1, 1/∞)
+          ├─ approved 8.2s
+          ├─ 0 blockers ✓
+          ├─ 0 nitpicks ✓
+          └─ review: .route/5.1.execution.guard.review.i1.abc123.r1.md"
+`;

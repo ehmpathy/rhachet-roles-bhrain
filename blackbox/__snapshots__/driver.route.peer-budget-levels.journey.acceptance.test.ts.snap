@@ -2,7 +2,16 @@
 
 exports[`driver.route.peer-budget-levels.journey.acceptance given: [journey] stone 1.execute: exhaustion and levels when: [t0] artifact created, level 1 (cheapo) runs first then: stdout has good vibes 1`] = `
 "🦉 the way speaks for itself
-   ├─ ✓ review.1 - completed [TIME]
+   │
+   ├─ r1: cheapo (l1, 1/2)
+   │   ├─ rejected [TIME]
+   │   ├─ 1 blocker 🔴
+   │   ├─ 0 nitpicks ✓
+   │   └─ review: .route/1.execute.guard.review.i1.8739656801d5e77f22.r1.md
+   │
+   ├─ r2: primo (l2, 0/2)
+   │   └─ awaits arrival
+   │
    └─ ✗ judge.1 - blocked [TIME]
 
 🗿 route.stone.set
@@ -13,12 +22,13 @@ exports[`driver.route.peer-budget-levels.journey.acceptance given: [journey] sto
       ├─ artifacts
       │   └─ src/**/*.ts
       ├─ reviews
-      │   ├─ r1: cheapo (l1, 1/2, rejected)
+      │   ├─ r1: cheapo (l1, 1/2)
       │   │   ├─ rejected [TIME]
-      │   │   ├─ review: .route/1.execute.guard.review.i1.e0aae4264c854c203aaff5a5ed15c176fb117aacd9ea5fed2ac8d500fa35679b.r1.md
-      │   │   └─ 1 blocker 🔴
-      │   └─ r2: primo (l2, 0/2, awaits)
-      │       └─ awaits l1
+      │   │   ├─ 1 blocker 🔴
+      │   │   ├─ 0 nitpicks ✓
+      │   │   └─ review: .route/1.execute.guard.review.i1.8739656801d5e77f22.r1.md
+      │   └─ r2: primo (l2, 0/2)
+      │       └─ awaits l1 terminal
       └─ judges
           └─ j1: rhx route.stone.judge --mechanism reviewed? --stone $stone --route $route --allow-blockers 0 --allow-nitpicks 1
               ├─ finished [TIME] ✗
@@ -28,82 +38,140 @@ exports[`driver.route.peer-budget-levels.journey.acceptance given: [journey] sto
 
 exports[`driver.route.peer-budget-levels.journey.acceptance given: [journey] stone 1.execute: exhaustion and levels when: [t1] second attempt, cheapo uses more budget then: stdout has good vibes 1`] = `
 "🦉 the way speaks for itself
-   ├─ ✓ review.1 - completed [TIME]
-   ├─ ✓ review.2 - completed [TIME]
+   │
+   ├─ r1: cheapo (l1, 2/2)
+   │   ├─ rejected [TIME]
+   │   ├─ 1 blocker 🔴
+   │   ├─ 0 nitpicks ✓
+   │   └─ review: .route/1.execute.guard.review.i2.dfc5faff83ea2fcb55.r1.md
+   │
+   ├─ r2: primo (l2, 0/2)
+   │   └─ awaits arrival
+   │
    └─ ✗ judge.1 - blocked [TIME]
 
 🗿 route.stone.set
    ├─ stone = 1.execute
    ├─ passage = blocked
-   ├─ reason = blockers exceed threshold (2 > 0)
+   ├─ reason = blockers exceed threshold (1 > 0)
    └─ guard
       ├─ artifacts
       │   └─ src/**/*.ts
       ├─ reviews
-      │   ├─ r1: cheapo (l1, 2/2, exhausted)
-      │   │   ├─ exhausted
-      │   │   └─ review: .route/1.execute.guard.review.i1.6b085541feda505cf8c0d0d4929a3b937eac477a6af3437f758a27001cdbadae.r1.md
-      │   └─ r2: primo (l2, 1/2, rejected)
-      │       ├─ rejected [TIME]
-      │       ├─ review: .route/1.execute.guard.review.i1.6b085541feda505cf8c0d0d4929a3b937eac477a6af3437f758a27001cdbadae.r2.md
-      │       └─ 1 blocker 🔴
+      │   ├─ r1: cheapo (l1, 2/2)
+      │   │   ├─ rejected [TIME]
+      │   │   ├─ 1 blocker 🔴
+      │   │   ├─ 0 nitpicks ✓
+      │   │   └─ review: .route/1.execute.guard.review.i2.dfc5faff83ea2fcb55.r1.md
+      │   └─ r2: primo (l2, 0/2)
+      │       └─ awaits l1 terminal
       └─ judges
           └─ j1: rhx route.stone.judge --mechanism reviewed? --stone $stone --route $route --allow-blockers 0 --allow-nitpicks 1
               ├─ finished [TIME] ✗
-              └─ reason: blockers exceed threshold (2 > 0)
+              └─ reason: blockers exceed threshold (1 > 0)
 "
 `;
 
 exports[`driver.route.peer-budget-levels.journey.acceptance given: [journey] stone 1.execute: exhaustion and levels when: [t2] third attempt, cheapo exhausts budget then: stdout has good vibes 1`] = `
 "🦉 the way speaks for itself
-   ├─ ✓ review.2 - completed [TIME]
+   │
+   ├─ r1: cheapo (l1, 2/2)
+   │   ├─ exhausted, cached
+   │   ├─ 1 blocker 🔴
+   │   ├─ 0 nitpicks ✓
+   │   └─ review: .route/1.execute.guard.review.i2.dfc5faff83ea2fcb55.r1.md
+   │
+   ├─ r2: primo (l2, 1/2)
+   │   ├─ rejected [TIME]
+   │   ├─ 1 blocker 🔴
+   │   ├─ 0 nitpicks ✓
+   │   └─ review: .route/1.execute.guard.review.i3.457fd5ef46e053a35e.r2.md
+   │
+   └─ ✗ judge.1 - blocked [TIME]
 
 🗿 route.stone.set
    ├─ stone = 1.execute
    ├─ passage = blocked
-   ├─ reason = peer reviewer budget exhausted: cheapo, primo
-   ├─ options
-   │  ├─ increase budget
-   │  │  └─ rhx route.guard.budget --for review --add N --stone 1.execute
-   │  └─ approve as-is
-   │     └─ rhx route.stone.set --stone 1.execute --as approved
+   ├─ reason = blockers exceed threshold (1 > 0)
    └─ guard
       ├─ artifacts
       │   └─ src/**/*.ts
-      └─ reviews
-          ├─ r1: cheapo (l1, 2/2, exhausted)
-          │   └─ exhausted
-          └─ r2: primo (l2, 2/2, exhausted)
-              ├─ exhausted
-              └─ review: .route/1.execute.guard.review.i1.7de8f5be336f95e3dd2e5b02467258533bcf304b0cbe0502fc0a08f5debbcc27.r2.md
+      ├─ reviews
+      │   ├─ r1: cheapo (l1, 2/2)
+      │   │   ├─ exhausted, cached
+      │   │   ├─ 1 blocker 🔴
+      │   │   ├─ 0 nitpicks ✓
+      │   │   └─ review: .route/1.execute.guard.review.i2.dfc5faff83ea2fcb55.r1.md
+      │   └─ r2: primo (l2, 1/2)
+      │       ├─ rejected [TIME]
+      │       ├─ 1 blocker 🔴
+      │       ├─ 0 nitpicks ✓
+      │       └─ review: .route/1.execute.guard.review.i3.457fd5ef46e053a35e.r2.md
+      └─ judges
+          └─ j1: rhx route.stone.judge --mechanism reviewed? --stone $stone --route $route --allow-blockers 0 --allow-nitpicks 1
+              ├─ finished [TIME] ✗
+              └─ reason: blockers exceed threshold (1 > 0)
 "
 `;
 
 exports[`driver.route.peer-budget-levels.journey.acceptance given: [journey] stone 1.execute: exhaustion and levels when: [t3] fourth attempt, primo uses budget then: stdout has good vibes 1`] = `
 "🦉 the way speaks for itself
+   │
+   ├─ r1: cheapo (l1, 2/2)
+   │   ├─ exhausted, cached
+   │   ├─ 1 blocker 🔴
+   │   ├─ 0 nitpicks ✓
+   │   └─ review: .route/1.execute.guard.review.i2.dfc5faff83ea2fcb55.r1.md
+   │
+   ├─ r2: primo (l2, 2/2)
+   │   ├─ rejected [TIME]
+   │   ├─ 1 blocker 🔴
+   │   ├─ 0 nitpicks ✓
+   │   └─ review: .route/1.execute.guard.review.i4.6dddc53e1de2efc1da.r2.md
+   │
+   └─ ✗ judge.1 - blocked [TIME]
 
 🗿 route.stone.set
    ├─ stone = 1.execute
    ├─ passage = blocked
-   ├─ reason = peer reviewer budget exhausted: cheapo, primo
-   ├─ options
-   │  ├─ increase budget
-   │  │  └─ rhx route.guard.budget --for review --add N --stone 1.execute
-   │  └─ approve as-is
-   │     └─ rhx route.stone.set --stone 1.execute --as approved
+   ├─ reason = blockers exceed threshold (1 > 0)
    └─ guard
       ├─ artifacts
       │   └─ src/**/*.ts
-      └─ reviews
-          ├─ r1: cheapo (l1, 2/2, exhausted)
-          │   └─ exhausted
-          └─ r2: primo (l2, 2/2, exhausted)
-              └─ exhausted
+      ├─ reviews
+      │   ├─ r1: cheapo (l1, 2/2)
+      │   │   ├─ exhausted, cached
+      │   │   ├─ 1 blocker 🔴
+      │   │   ├─ 0 nitpicks ✓
+      │   │   └─ review: .route/1.execute.guard.review.i2.dfc5faff83ea2fcb55.r1.md
+      │   └─ r2: primo (l2, 2/2)
+      │       ├─ rejected [TIME]
+      │       ├─ 1 blocker 🔴
+      │       ├─ 0 nitpicks ✓
+      │       └─ review: .route/1.execute.guard.review.i4.6dddc53e1de2efc1da.r2.md
+      └─ judges
+          └─ j1: rhx route.stone.judge --mechanism reviewed? --stone $stone --route $route --allow-blockers 0 --allow-nitpicks 1
+              ├─ finished [TIME] ✗
+              └─ reason: blockers exceed threshold (1 > 0)
 "
 `;
 
 exports[`driver.route.peer-budget-levels.journey.acceptance given: [journey] stone 1.execute: exhaustion and levels when: [t4] fifth attempt, primo exhausts budget then: stdout has good vibes 1`] = `
 "🦉 the way speaks for itself
+   │
+   ├─ r1: cheapo (l1, 2/2)
+   │   ├─ exhausted, cached
+   │   ├─ 1 blocker 🔴
+   │   ├─ 0 nitpicks ✓
+   │   └─ review: .route/1.execute.guard.review.i2.dfc5faff83ea2fcb55.r1.md
+   │
+   ├─ r2: primo (l2, 2/2)
+   │   ├─ exhausted, cached
+   │   ├─ 1 blocker 🔴
+   │   ├─ 0 nitpicks ✓
+   │   └─ review: .route/1.execute.guard.review.i4.6dddc53e1de2efc1da.r2.md
+   │
+   └─ halted: peer reviewer budget exhausted
 
 🗿 route.stone.set
    ├─ stone = 1.execute
@@ -118,10 +186,16 @@ exports[`driver.route.peer-budget-levels.journey.acceptance given: [journey] sto
       ├─ artifacts
       │   └─ src/**/*.ts
       └─ reviews
-          ├─ r1: cheapo (l1, 2/2, exhausted)
-          │   └─ exhausted
-          └─ r2: primo (l2, 2/2, exhausted)
-              └─ exhausted
+          ├─ r1: cheapo (l1, 2/2)
+          │   ├─ exhausted, cached
+          │   ├─ 1 blocker 🔴
+          │   ├─ 0 nitpicks ✓
+          │   └─ review: .route/1.execute.guard.review.i2.dfc5faff83ea2fcb55.r1.md
+          └─ r2: primo (l2, 2/2)
+              ├─ exhausted, cached
+              ├─ 1 blocker 🔴
+              ├─ 0 nitpicks ✓
+              └─ review: .route/1.execute.guard.review.i4.6dddc53e1de2efc1da.r2.md
 "
 `;
 
@@ -136,6 +210,19 @@ exports[`driver.route.peer-budget-levels.journey.acceptance given: [journey] sto
 
 exports[`driver.route.peer-budget-levels.journey.acceptance given: [journey] stone 1.execute: exhaustion and levels when: [t6] pass after human approval then: stdout has good vibes 1`] = `
 "🦉 the way speaks for itself
+   │
+   ├─ r1: cheapo (l1, 2/2)
+   │   ├─ exhausted, cached
+   │   ├─ 1 blocker 🔴
+   │   ├─ 0 nitpicks ✓
+   │   └─ review: .route/1.execute.guard.review.i2.dfc5faff83ea2fcb55.r1.md
+   │
+   ├─ r2: primo (l2, 2/2)
+   │   ├─ exhausted, cached
+   │   ├─ 1 blocker 🔴
+   │   ├─ 0 nitpicks ✓
+   │   └─ review: .route/1.execute.guard.review.i4.6dddc53e1de2efc1da.r2.md
+   │
    └─ ✓ judge.1 - allowed [TIME]
 
 🗿 route.stone.set
@@ -145,10 +232,16 @@ exports[`driver.route.peer-budget-levels.journey.acceptance given: [journey] sto
    │  ├─ artifacts
    │  │   └─ src/**/*.ts
    │  ├─ reviews
-   │  │   ├─ r1: cheapo (l1, 2/2, exhausted)
-   │  │   │   └─ exhausted
-   │  │   └─ r2: primo (l2, 2/2, exhausted)
-   │  │       └─ exhausted
+   │  │   ├─ r1: cheapo (l1, 2/2)
+   │  │   │   ├─ exhausted, cached
+   │  │   │   ├─ 1 blocker 🔴
+   │  │   │   ├─ 0 nitpicks ✓
+   │  │   │   └─ review: .route/1.execute.guard.review.i2.dfc5faff83ea2fcb55.r1.md
+   │  │   └─ r2: primo (l2, 2/2)
+   │  │       ├─ exhausted, cached
+   │  │       ├─ 1 blocker 🔴
+   │  │       ├─ 0 nitpicks ✓
+   │  │       └─ review: .route/1.execute.guard.review.i4.6dddc53e1de2efc1da.r2.md
    │  └─ judges
    │      └─ j1: rhx route.stone.judge --mechanism reviewed? --stone $stone --route $route --allow-blockers 0 --allow-nitpicks 1
    │          └─ finished [TIME] ✓
@@ -160,7 +253,13 @@ exports[`driver.route.peer-budget-levels.journey.acceptance given: [journey] sto
 
 exports[`driver.route.peer-budget-levels.journey.acceptance given: [journey] stone 2.deploy: within-budget pass, no approval needed when: [t0] artifact created, reviewer passes within budget then: stdout has good vibes 1`] = `
 "🦉 the way speaks for itself
-   ├─ ✓ review.1 - completed [TIME]
+   │
+   ├─ r1: deployer (l1, 1/5)
+   │   ├─ approved [TIME]
+   │   ├─ 0 blockers ✓
+   │   ├─ 0 nitpicks ✓
+   │   └─ review: .route/2.deploy.guard.review.i1.345d6c58ae9529da69.r1.md
+   │
    └─ ✓ judge.1 - allowed [TIME]
 
 🗿 route.stone.set
@@ -170,9 +269,11 @@ exports[`driver.route.peer-budget-levels.journey.acceptance given: [journey] sto
    │  ├─ artifacts
    │  │   └─ deploy/**/*.yaml
    │  ├─ reviews
-   │  │   └─ r1: deployer (l1, 1/5, approved)
-   │  │       ├─ approved [TIME] ✓
-   │  │       └─ review: .route/2.deploy.guard.review.i1.6b267fbb8da273138c9365544e0749ae7c0b710eabf88eda66bb6465d98e60d1.r1.md
+   │  │   └─ r1: deployer (l1, 1/5)
+   │  │       ├─ approved [TIME]
+   │  │       ├─ 0 blockers ✓
+   │  │       ├─ 0 nitpicks ✓
+   │  │       └─ review: .route/2.deploy.guard.review.i1.345d6c58ae9529da69.r1.md
    │  └─ judges
    │      └─ j1: rhx route.stone.judge --mechanism reviewed? --stone $stone --route $route --allow-blockers 0 --allow-nitpicks 1
    │          └─ finished [TIME] ✓
@@ -184,8 +285,15 @@ exports[`driver.route.peer-budget-levels.journey.acceptance given: [journey] sto
 
 exports[`driver.route.peer-budget-levels.journey.acceptance given: [journey] stone 3.release: within-budget + explicit approval judge when: [t0] artifact created, reviewer passes but approval still needed then: stdout has good vibes 1`] = `
 "🦉 the way speaks for itself
-   ├─ ✓ review.1 - completed [TIME]
+   │
+   ├─ r1: releaser (l1, 1/5)
+   │   ├─ approved [TIME]
+   │   ├─ 0 blockers ✓
+   │   ├─ 0 nitpicks ✓
+   │   └─ review: .route/3.release.guard.review.i1.40f6892fa1e51b0694.r1.md
+   │
    ├─ ✓ judge.1 - allowed [TIME]
+   │
    └─ ✗ judge.2 - blocked [TIME]
 
 🗿 route.stone.set
@@ -196,9 +304,11 @@ exports[`driver.route.peer-budget-levels.journey.acceptance given: [journey] sto
       ├─ artifacts
       │   └─ release/**/*.md
       ├─ reviews
-      │   └─ r1: releaser (l1, 1/5, approved)
-      │       ├─ approved [TIME] ✓
-      │       └─ review: .route/3.release.guard.review.i1.5f3f41202c154d1237e193fce7d0f05279c804d91216c02941b08db14e34b89b.r1.md
+      │   └─ r1: releaser (l1, 1/5)
+      │       ├─ approved [TIME]
+      │       ├─ 0 blockers ✓
+      │       ├─ 0 nitpicks ✓
+      │       └─ review: .route/3.release.guard.review.i1.40f6892fa1e51b0694.r1.md
       └─ judges
           ├─ j1: rhx route.stone.judge --mechanism reviewed? --stone $stone --route $route --allow-blockers 0 --allow-nitpicks 1
           │   └─ finished [TIME] ✓
@@ -219,8 +329,15 @@ exports[`driver.route.peer-budget-levels.journey.acceptance given: [journey] sto
 
 exports[`driver.route.peer-budget-levels.journey.acceptance given: [journey] stone 3.release: within-budget + explicit approval judge when: [t2] pass after approval then: stdout has good vibes 1`] = `
 "🦉 the way speaks for itself
-   ├─ ✓ review.1 - completed (cached)
+   │
+   ├─ r1: releaser (l1, 1/5)
+   │   ├─ approved, cached
+   │   ├─ 0 blockers ✓
+   │   ├─ 0 nitpicks ✓
+   │   └─ review: .route/3.release.guard.review.i1.40f6892fa1e51b0694.r1.md
+   │
    ├─ ✓ judge.1 - allowed [TIME]
+   │
    └─ ✓ judge.2 - allowed [TIME]
 
 🗿 route.stone.set
@@ -230,9 +347,11 @@ exports[`driver.route.peer-budget-levels.journey.acceptance given: [journey] sto
    │  ├─ artifacts
    │  │   └─ release/**/*.md
    │  ├─ reviews
-   │  │   └─ r1: releaser (l1, 1/5, approved)
-   │  │       ├─ cached ✓
-   │  │       └─ review: .route/3.release.guard.review.i1.5f3f41202c154d1237e193fce7d0f05279c804d91216c02941b08db14e34b89b.r1.md
+   │  │   └─ r1: releaser (l1, 1/5)
+   │  │       ├─ approved, cached
+   │  │       ├─ 0 blockers ✓
+   │  │       ├─ 0 nitpicks ✓
+   │  │       └─ review: .route/3.release.guard.review.i1.40f6892fa1e51b0694.r1.md
    │  └─ judges
    │      ├─ j1: rhx route.stone.judge --mechanism reviewed? --stone $stone --route $route --allow-blockers 0 --allow-nitpicks 1
    │      │   └─ finished [TIME] ✓

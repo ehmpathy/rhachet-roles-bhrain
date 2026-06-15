@@ -1,0 +1,118 @@
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
+
+exports[`driver.route.peer-review-exit-codes.acceptance given: [journey] exit code scenarios when: [t0] exit 0 with blockers (rejected) then: stdout has good vibes 1`] = `
+"🦉 the way speaks for itself
+   │
+   ├─ r1: exit-code-reviewer (l1, 1/2)
+   │   ├─ rejected [TIME]
+   │   ├─ 1 blocker 🔴
+   │   ├─ 0 nitpicks ✓
+   │   └─ review: .route/1.execute.guard.review.i1.8739656801d5e77f22.r1.md
+   │
+   └─ ✗ judge.1 - blocked [TIME]
+
+🗿 route.stone.set
+   ├─ stone = 1.execute
+   ├─ passage = blocked
+   ├─ reason = blockers exceed threshold (1 > 0)
+   └─ guard
+      ├─ artifacts
+      │   └─ src/**/*.ts
+      ├─ reviews
+      │   └─ r1: exit-code-reviewer (l1, 1/2)
+      │       ├─ rejected [TIME]
+      │       ├─ 1 blocker 🔴
+      │       ├─ 0 nitpicks ✓
+      │       └─ review: .route/1.execute.guard.review.i1.8739656801d5e77f22.r1.md
+      └─ judges
+          └─ j1: rhx route.stone.judge --mechanism reviewed? --stone $stone --route $route --allow-blockers 0 --allow-nitpicks 1
+              ├─ finished [TIME] ✗
+              └─ reason: blockers exceed threshold (1 > 0)
+"
+`;
+
+exports[`driver.route.peer-review-exit-codes.acceptance given: [journey] exit code scenarios when: [t1] exit 2 genuine constraint (no blockers) then: stdout has good vibes 1`] = `
+"🦉 the way speaks for itself
+   │
+   ├─ r1: exit-code-reviewer (l1, 2/2)
+   │   ├─ ✋ constraint
+   │   └─ review: .route/1.execute.guard.review.i2.dfc5faff83ea2fcb55.r1.md
+   │
+   └─ ✓ judge.1 - allowed [TIME]
+
+🗿 route.stone.set
+   ├─ stone = 1.execute
+   ├─ passage = blocked
+   ├─ reason = reviewer constraint
+   └─ guard
+      ├─ artifacts
+      │   └─ src/**/*.ts
+      ├─ reviews
+      │   └─ r1: exit-code-reviewer (l1, 1/2)
+      │       ├─ approved [TIME]
+      │       ├─ 0 blockers ✓
+      │       ├─ 0 nitpicks ✓
+      │       └─ review: .route/1.execute.guard.review.i2.dfc5faff83ea2fcb55.r1.md
+      └─ judges
+          └─ j1: rhx route.stone.judge --mechanism reviewed? --stone $stone --route $route --allow-blockers 0 --allow-nitpicks 1
+              └─ finished [TIME] ✓
+"
+`;
+
+exports[`driver.route.peer-review-exit-codes.acceptance given: [journey] exit code scenarios when: [t2] exit 1 malfunction then: stdout has good vibes 1`] = `
+"🦉 the way speaks for itself
+   │
+   ├─ r1: exit-code-reviewer (l1, 2/2)
+   │   ├─ 💥 malfunction
+   │   └─ review: .route/1.execute.guard.review.i3.457fd5ef46e053a35e.r1.md
+   │
+   └─ ✓ judge.1 - allowed [TIME]
+
+🗿 route.stone.set
+   ├─ stone = 1.execute
+   ├─ passage = malfunction
+   ├─ reason = reviewer or judge malfunctioned
+   └─ guard
+      ├─ artifacts
+      │   └─ src/**/*.ts
+      ├─ reviews
+      │   └─ r1: exit-code-reviewer (l1, 1/2)
+      │       ├─ 💥 malfunction
+      │       └─ review: .route/1.execute.guard.review.i3.457fd5ef46e053a35e.r1.md
+      └─ judges
+          └─ j1: rhx route.stone.judge --mechanism reviewed? --stone $stone --route $route --allow-blockers 0 --allow-nitpicks 1
+              └─ finished [TIME] ✓
+"
+`;
+
+exports[`driver.route.peer-review-exit-codes.acceptance given: [journey] exit code scenarios when: [t3] exit 0 pass (approved) then: stdout has good vibes 1`] = `
+"🦉 the way speaks for itself
+   │
+   ├─ r1: exit-code-reviewer (l1, 2/2)
+   │   ├─ approved [TIME]
+   │   ├─ 0 blockers ✓
+   │   ├─ 0 nitpicks ✓
+   │   └─ review: .route/1.execute.guard.review.i4.d1bd0b8547352e6396.r1.md
+   │
+   └─ ✓ judge.1 - allowed [TIME]
+
+🗿 route.stone.set
+   ├─ stone = 1.execute
+   ├─ passage = allowed
+   ├─ guard
+   │  ├─ artifacts
+   │  │   └─ src/**/*.ts
+   │  ├─ reviews
+   │  │   └─ r1: exit-code-reviewer (l1, 2/2)
+   │  │       ├─ approved [TIME]
+   │  │       ├─ 0 blockers ✓
+   │  │       ├─ 0 nitpicks ✓
+   │  │       └─ review: .route/1.execute.guard.review.i4.d1bd0b8547352e6396.r1.md
+   │  └─ judges
+   │      └─ j1: rhx route.stone.judge --mechanism reviewed? --stone $stone --route $route --allow-blockers 0 --allow-nitpicks 1
+   │          └─ finished [TIME] ✓
+   │
+   └─ the way continues, run
+      └─ rhx route.drive
+"
+`;

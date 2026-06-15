@@ -1,0 +1,8 @@
+{
+  "name": "route-peer-budget-exhaustion-unlocks-level-test",
+  "private": true,
+  "description": "fixture for exhaustion-unlocks-level acceptance test",
+  "dependencies": {
+    "rhachet-roles-bhrain": "link:."
+  }
+}

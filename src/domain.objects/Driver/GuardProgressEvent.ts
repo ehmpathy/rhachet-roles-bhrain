@@ -29,6 +29,19 @@ export interface GuardProgressEvent {
   };
 
   /**
+   * reviewer metadata (for review phase only)
+   *
+   * enables display of full slug, level, budget, rounds in progress output
+   */
+  reviewer?: {
+    index: number;
+    slug: string;
+    level: number;
+    budget: number;
+    rounds: number;
+  };
+
+  /**
    * lifecycle timestamps (null when cached)
    *
    * endedAt is null while active, populated on finish
@@ -49,7 +62,8 @@ export interface GuardProgressEvent {
     review:
       | { blockers: number; nitpicks: number }
       | { malfunction: Error }
-      | { exhausted: true }
+      | { constraint: Error }
+      | { exhausted: true; blockers: number; nitpicks: number }
       | { queued: true }
       | null;
     judge:

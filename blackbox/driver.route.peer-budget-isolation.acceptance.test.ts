@@ -81,9 +81,47 @@ describe('driver.route.peer-budget-isolation.acceptance', () => {
         expect(result.code).not.toEqual(0);
       });
 
-      then('shared-reviewer is exhausted on alpha', () => {
+      then('shared-reviewer rejected at budget limit', () => {
+        // .note = at 2/2, review RAN so verdict is 'rejected' not 'exhausted'
+        //         'exhausted' only when review SKIPPED (rounds >= budget BEFORE attempt)
         const output = result.stdout.toLowerCase();
-        expect(output).toContain('exhaust');
+        expect(output).toContain('rejected');
+        expect(output).toContain('2/2');
+      });
+
+      then('stdout has good vibes', () => {
+        expect(sanitizeTimeForSnapshot(result.stdout)).toMatchSnapshot();
+      });
+    });
+
+    // =========================================================================
+    // PHASE 1.5: third attempt → exhausted (review SKIPPED at 3/2)
+    // =========================================================================
+
+    when('[t1.5] third alpha attempt, review skipped (exhausted)', () => {
+      const result = useThen('shared-reviewer is exhausted', async () => {
+        // .note = change artifact to trigger re-check
+        await fs.writeFile(
+          path.join(scene.tempDir, 'alpha', 'feature.ts'),
+          'export const alpha = () => "v3";',
+        );
+
+        return invokeRouteSkill({
+          skill: 'route.stone.set',
+          args: { stone: '1.alpha', route: '.', as: 'passed' },
+          cwd: scene.tempDir,
+        });
+      });
+
+      then('exit code is non-zero', () => {
+        expect(result.code).not.toEqual(0);
+      });
+
+      then('shared-reviewer is exhausted (review was SKIPPED)', () => {
+        // .note = at 3/2, rounds >= budget BEFORE attempt, so review is SKIPPED
+        //         verdict is 'exhausted' not 'rejected'
+        const output = result.stdout.toLowerCase();
+        expect(output).toContain('exhausted');
       });
 
       then('stdout has good vibes', () => {

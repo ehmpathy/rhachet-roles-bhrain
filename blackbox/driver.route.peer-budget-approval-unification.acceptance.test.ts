@@ -92,15 +92,51 @@ describe('driver.route.peer-budget-approval-unification.acceptance', () => {
         expect(result.code).not.toEqual(0);
       });
 
-      then('reviewer is exhausted', () => {
-        expect(result.stdout.toLowerCase()).toContain('exhaust');
+      then('reviewer rejected at budget limit', () => {
+        // .note = at 2/2, review RAN so verdict is 'rejected' not 'exhausted'
+        //         'exhausted' only when review SKIPPED (rounds >= budget BEFORE attempt)
+        expect(result.stdout.toLowerCase()).toContain('rejected');
       });
 
       then('budget is 2/2', () => {
         expect(result.stdout).toContain('2/2');
       });
 
-      then('snapshot [t1]: exhausted, needs approval', () => {
+      then('snapshot [t1]: rejected at limit, needs approval', () => {
+        expect(sanitizeTimeForSnapshot(result.stdout)).toMatchSnapshot();
+      });
+    });
+
+    // -------------------------------------------------------------------------
+    // PHASE 2.5: third attempt → exhausted (review SKIPPED at 3/2)
+    // -------------------------------------------------------------------------
+
+    when('[t1.5] third attempt, review skipped (exhausted)', () => {
+      const result = useThen('reviewer is exhausted', async () => {
+        // .note = change artifact to trigger re-check
+        await fs.writeFile(
+          path.join(scene.tempDir, 'src', 'feature.ts'),
+          'export const feature = () => "v3";',
+        );
+
+        return invokeRouteSkill({
+          skill: 'route.stone.set',
+          args: { stone: '1.execute', route: '.', as: 'passed' },
+          cwd: scene.tempDir,
+        });
+      });
+
+      then('exit code is non-zero', () => {
+        expect(result.code).not.toEqual(0);
+      });
+
+      then('reviewer is exhausted (review was SKIPPED)', () => {
+        // .note = at 3/2, rounds >= budget BEFORE attempt, so review is SKIPPED
+        //         verdict is 'exhausted' not 'rejected'
+        expect(result.stdout.toLowerCase()).toContain('exhausted');
+      });
+
+      then('snapshot [t1.5]: exhausted, review skipped', () => {
         expect(sanitizeTimeForSnapshot(result.stdout)).toMatchSnapshot();
       });
     });
@@ -118,14 +154,11 @@ describe('driver.route.peer-budget-approval-unification.acceptance', () => {
         }),
       );
 
-      then('shows exhausted', () => {
-        expect(result.stdout.toLowerCase()).toContain('exhaust');
-      });
-
-      then('shows guidance to proceed', () => {
-        // route.drive shows standard prompts; exhaustion shown in peer budget state
-        // actual approval unification proven in [t3] and [t4] where one approval covers both
-        expect(result.stdout).toContain('--as approved');
+      then('shows stone and standard guidance', () => {
+        // .note = route.drive shows current stone, not reviewer exhaustion details
+        //         reviewer exhaustion details shown in route.stone.set output
+        //         actual approval unification proven in [t3] and [t4]
+        expect(result.stdout).toContain('stone = 1.execute');
         expect(result.stdout).toContain('--as passed');
       });
 

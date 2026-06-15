@@ -8,14 +8,16 @@ exports[`formatGuardTree given: [case1] reviews+judges, allowed, all fresh — 2
       ├─ artifacts
       │   └─ 1.vision.v1.md
       ├─ reviews
-      │   ├─ r1: reviewer/reflect (l1, 1/∞, approved)
-      │   │   ├─ approved 8.2s ✓
+      │   ├─ r1: reviewer/reflect (l1, 1/∞)
+      │   │   ├─ approved 8.2s
+      │   │   ├─ 0 blockers ✓
+      │   │   ├─ 0 nitpicks ✓
       │   │   └─ review: .route/1.vision.guard.review.i1.abc123.r1.md
-      │   └─ r2: reviewer/review (l1, 1/∞, rejected)
+      │   └─ r2: reviewer/review (l1, 1/∞)
       │       ├─ rejected 15.1s
-      │       ├─ review: .route/1.vision.guard.review.i1.abc123.r2.md
       │       ├─ 3 blockers 🔴
-      │       └─ 1 nitpick 🟠
+      │       ├─ 1 nitpick 🟠
+      │       └─ review: .route/1.vision.guard.review.i1.abc123.r2.md
       └─ judges
           └─ j1: reviewed?
               └─ finished 0.8s ✓"
@@ -30,10 +32,11 @@ exports[`formatGuardTree given: [case2] reviews+judges, blocked, all fresh — 1
       ├─ artifacts
       │   └─ 3.1.research.domain._.v1.md
       ├─ reviews
-      │   └─ r1: reviewer/reflect (l1, 1/∞, rejected)
+      │   └─ r1: reviewer/reflect (l1, 1/∞)
       │       ├─ rejected 12.4s
-      │       ├─ review: .route/3.1.research.domain.guard.review.i1.abc123.r1.md
-      │       └─ 1 blocker 🔴
+      │       ├─ 1 blocker 🔴
+      │       ├─ 0 nitpicks ✓
+      │       └─ review: .route/3.1.research.domain.guard.review.i1.abc123.r1.md
       └─ judges
           └─ j1: reviewed?
               ├─ finished 0.8s ✗
@@ -48,13 +51,16 @@ exports[`formatGuardTree given: [case3] some cached reviews — 1 cached + 1 fre
       ├─ artifacts
       │   └─ 1.vision.v1.md
       ├─ reviews
-      │   ├─ r1: reviewer/reflect (l1, 1/∞, approved)
-      │   │   ├─ cached ✓
+      │   ├─ r1: reviewer/reflect (l1, 1/∞)
+      │   │   ├─ approved, cached
+      │   │   ├─ 0 blockers ✓
+      │   │   ├─ 0 nitpicks ✓
       │   │   └─ review: .route/1.vision.guard.review.i1.abc123.r1.md
-      │   └─ r2: reviewer/review (l1, 1/∞, approved)
-      │       ├─ approved 10.3s ✓
-      │       ├─ review: .route/1.vision.guard.review.i1.abc123.r2.md
-      │       └─ 2 nitpicks 🟠
+      │   └─ r2: reviewer/review (l1, 1/∞)
+      │       ├─ rejected 10.3s
+      │       ├─ 0 blockers ✓
+      │       ├─ 2 nitpicks 🟠
+      │       └─ review: .route/1.vision.guard.review.i1.abc123.r2.md
       └─ judges
           └─ j1: reviewed?
               └─ finished 0.5s ✓"
@@ -68,8 +74,10 @@ exports[`formatGuardTree given: [case4] all cached — all reviews + judges cach
       ├─ artifacts
       │   └─ 1.vision.v1.md
       ├─ reviews
-      │   └─ r1: reviewer/reflect (l1, 1/∞, approved)
-      │       ├─ cached ✓
+      │   └─ r1: reviewer/reflect (l1, 1/∞)
+      │       ├─ approved, cached
+      │       ├─ 0 blockers ✓
+      │       ├─ 0 nitpicks ✓
       │       └─ review: .route/1.vision.guard.review.i1.abc123.r1.md
       └─ judges
           └─ j1: reviewed?
@@ -102,8 +110,10 @@ exports[`formatGuardTree given: [case7] multiple artifacts — 3 artifact files 
       │   ├─ 3.1.research.domain.terms.v1.md
       │   └─ 3.1.research.domain.refs.v1.md
       ├─ reviews
-      │   └─ r1: reviewer/reflect (l1, 1/∞, approved)
-      │       ├─ approved 5.0s ✓
+      │   └─ r1: reviewer/reflect (l1, 1/∞)
+      │       ├─ approved 5.0s
+      │       ├─ 0 blockers ✓
+      │       ├─ 0 nitpicks ✓
       │       └─ review: .route/3.1.research.domain.guard.review.i1.abc123.r1.md
       └─ judges
           └─ j1: reviewed?
@@ -118,10 +128,11 @@ exports[`formatGuardTree given: [case8] review with nitpicks only — 0 blockers
       ├─ artifacts
       │   └─ 1.vision.v1.md
       ├─ reviews
-      │   └─ r1: reviewer/reflect (l1, 1/∞, approved)
-      │       ├─ approved 7.0s ✓
-      │       ├─ review: .route/1.vision.guard.review.i1.abc123.r1.md
-      │       └─ 2 nitpicks 🟠
+      │   └─ r1: reviewer/reflect (l1, 1/∞)
+      │       ├─ rejected 7.0s
+      │       ├─ 0 blockers ✓
+      │       ├─ 2 nitpicks 🟠
+      │       └─ review: .route/1.vision.guard.review.i1.abc123.r1.md
       └─ judges
           └─ j1: reviewed?
               └─ finished 0.3s ✓"
@@ -136,11 +147,11 @@ exports[`formatGuardTree given: [case9] review with both blockers and nitpicks �
       ├─ artifacts
       │   └─ 1.vision.v1.md
       ├─ reviews
-      │   └─ r1: reviewer/reflect (l1, 1/∞, rejected)
+      │   └─ r1: reviewer/reflect (l1, 1/∞)
       │       ├─ rejected 12.0s
-      │       ├─ review: .route/1.vision.guard.review.i1.abc123.r1.md
       │       ├─ 3 blockers 🔴
-      │       └─ 1 nitpick 🟠
+      │       ├─ 1 nitpick 🟠
+      │       └─ review: .route/1.vision.guard.review.i1.abc123.r1.md
       └─ judges
           └─ j1: reviewed?
               ├─ finished 0.4s ✗
@@ -155,8 +166,10 @@ exports[`formatGuardTree given: [case10] cached judge that had failed — shows 
       ├─ artifacts
       │   └─ 1.vision.v1.md
       ├─ reviews
-      │   └─ r1: reviewer/reflect (l1, 1/∞, approved)
-      │       ├─ cached ✓
+      │   └─ r1: reviewer/reflect (l1, 1/∞)
+      │       ├─ approved, cached
+      │       ├─ 0 blockers ✓
+      │       ├─ 0 nitpicks ✓
       │       └─ review: .route/1.vision.guard.review.i1.abc123.r1.md
       └─ judges
           └─ j1: reviewed?
@@ -173,10 +186,11 @@ exports[`formatGuardTree given: [case11] passage with reason — blocked + combi
       ├─ artifacts
       │   └─ 1.vision.v1.md
       ├─ reviews
-      │   └─ r1: reviewer/reflect (l1, 1/∞, rejected)
+      │   └─ r1: reviewer/reflect (l1, 1/∞)
       │       ├─ rejected 5.0s
-      │       ├─ review: .route/1.vision.guard.review.i1.abc123.r1.md
-      │       └─ 2 blockers 🔴
+      │       ├─ 2 blockers 🔴
+      │       ├─ 0 nitpicks ✓
+      │       └─ review: .route/1.vision.guard.review.i1.abc123.r1.md
       └─ judges
           ├─ j1: reviewed?
           │   ├─ finished 0.3s ✗
@@ -196,8 +210,10 @@ exports[`formatGuardTree given: [case12] cached review on src/**/* artifacts —
       │   ├─ src/domain/execute.test.ts
       │   └─ src/utils/helper.ts
       ├─ reviews
-      │   └─ r1: reviewer/review (l1, 1/∞, approved)
-      │       ├─ cached ✓
+      │   └─ r1: reviewer/review (l1, 1/∞)
+      │       ├─ approved, cached
+      │       ├─ 0 blockers ✓
+      │       ├─ 0 nitpicks ✓
       │       └─ review: .route/5.1.execute.guard.review.i1.abc123.r1.md
       └─ judges
           └─ j1: reviewed?
@@ -214,12 +230,17 @@ exports[`formatGuardTree given: [case13] peerMeters — rNum uses meter order, n
       ├─ artifacts
       │   └─ 5.5.playtest.yield.md
       └─ reviews
-          ├─ r1: quick-pass (l1, 1/1, exhausted)
-          │   └─ exhausted
-          ├─ r2: medium-pass (l1, 0/2, queued)
+          ├─ r1: quick-pass (l1, 1/1)
+          │   ├─ exhausted
+          │   ├─ 0 blockers ✓
+          │   ├─ 0 nitpicks ✓
+          │   └─ review: .route/5.5.playtest.guard.review.i1.abc123.r1.md
+          ├─ r2: medium-pass (l1, 0/2)
           │   └─ awaits arrival
-          └─ r3: slow-fail (l2, 2/2, approved)
-              ├─ approved 15.0s ✓
+          └─ r3: slow-fail (l2, 2/2)
+              ├─ approved 15.0s
+              ├─ 0 blockers ✓
+              ├─ 0 nitpicks ✓
               └─ review: .route/5.5.playtest.guard.review.i1.abc123.r3.md"
 `;
 
@@ -232,8 +253,10 @@ exports[`formatGuardTree given: [case14] peerMeters — exhausted reviewer shows
       ├─ artifacts
       │   └─ 5.5.playtest.yield.md
       └─ reviews
-          └─ r1: quick-pass (l1, 1/1, exhausted)
-              ├─ exhausted
+          └─ r1: quick-pass (l1, 1/1)
+              ├─ exhausted, cached
+              ├─ 1 blocker 🔴
+              ├─ 0 nitpicks ✓
               └─ review: .route/5.5.playtest.guard.review.i1.abc123.r1.md"
 `;
 
@@ -246,8 +269,8 @@ exports[`formatGuardTree given: [case15] peerMeters — awaits shown in header v
       ├─ artifacts
       │   └─ 5.5.playtest.yield.md
       └─ reviews
-          ├─ r1: cheapo (l1, 0/10, queued)
+          ├─ r1: cheapo (l1, 0/10)
           │   └─ awaits arrival
-          └─ r2: primo (l2, 0/3, awaits)
-              └─ awaits l1"
+          └─ r2: primo (l2, 0/3)
+              └─ awaits l1 terminal"
 `;

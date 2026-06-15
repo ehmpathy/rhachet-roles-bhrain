@@ -24,5 +24,10 @@ export interface ContextCliEmit {
       event: GuardProgressEvent,
       position?: ContextGuardProgress,
     ) => void;
+    /**
+     * .what = emits a tree terminator when guard halts early
+     * .why = closes the tree visually when no judge follows reviews
+     */
+    onGuardHalted?: (input: { reason: string }) => void;
   };
 }

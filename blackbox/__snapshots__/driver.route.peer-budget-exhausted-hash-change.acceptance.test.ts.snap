@@ -1,8 +1,15 @@
 // Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
 
-exports[`driver.route.peer-budget-exhausted-hash-change.acceptance given: [matrix.2.row2] hash change after exhaustion stays exhausted when: [t1] second attempt exhausts budget (hash A variant) then: snapshot [t1]: exhausted on hash A 1`] = `
+exports[`driver.route.peer-budget-exhausted-hash-change.acceptance given: [matrix.2.row2] hash change after exhaustion stays exhausted when: [t1.5] third attempt, review SKIPPED (exhausted) then: snapshot [t1.5]: exhausted on hash A 1`] = `
 "🦉 the way speaks for itself
-   ├─ ✓ review.1 - completed [TIME]
+   │
+   ├─ r1: mock-reviewer (l1, 2/2)
+   │   ├─ exhausted, cached
+   │   ├─ 1 blocker 🔴
+   │   ├─ 0 nitpicks ✓
+   │   └─ review: .route/1.execute.guard.review.i2.580b7bfdddc2b7279d.r1.md
+   │
+   └─ halted: peer reviewer budget exhausted
 
 🗿 route.stone.set
    ├─ stone = 1.execute
@@ -17,14 +24,55 @@ exports[`driver.route.peer-budget-exhausted-hash-change.acceptance given: [matri
       ├─ artifacts
       │   └─ src/**/*.ts
       └─ reviews
-          └─ r1: mock-reviewer (l1, 2/2, exhausted)
-              ├─ exhausted
-              └─ review: .route/1.execute.guard.review.i1.ddc834428e3392b902387c603242a48c7cb97f11b908eb83076ccc8bba7cfdc3.r1.md
+          └─ r1: mock-reviewer (l1, 2/2)
+              ├─ exhausted, cached
+              ├─ 1 blocker 🔴
+              ├─ 0 nitpicks ✓
+              └─ review: .route/1.execute.guard.review.i2.580b7bfdddc2b7279d.r1.md
+"
+`;
+
+exports[`driver.route.peer-budget-exhausted-hash-change.acceptance given: [matrix.2.row2] hash change after exhaustion stays exhausted when: [t1] second attempt exhausts budget (hash A variant) then: snapshot [t1]: rejected at limit on hash A 1`] = `
+"🦉 the way speaks for itself
+   │
+   ├─ r1: mock-reviewer (l1, 2/2)
+   │   ├─ rejected [TIME]
+   │   ├─ 1 blocker 🔴
+   │   ├─ 0 nitpicks ✓
+   │   └─ review: .route/1.execute.guard.review.i2.580b7bfdddc2b7279d.r1.md
+   │
+   └─ ✗ judge.1 - blocked [TIME]
+
+🗿 route.stone.set
+   ├─ stone = 1.execute
+   ├─ passage = blocked
+   ├─ reason = blockers exceed threshold (1 > 0)
+   └─ guard
+      ├─ artifacts
+      │   └─ src/**/*.ts
+      ├─ reviews
+      │   └─ r1: mock-reviewer (l1, 2/2)
+      │       ├─ rejected [TIME]
+      │       ├─ 1 blocker 🔴
+      │       ├─ 0 nitpicks ✓
+      │       └─ review: .route/1.execute.guard.review.i2.580b7bfdddc2b7279d.r1.md
+      └─ judges
+          └─ j1: rhx route.stone.judge --mechanism reviewed? --stone $stone --route $route --allow-blockers 0 --allow-nitpicks 1
+              ├─ finished [TIME] ✗
+              └─ reason: blockers exceed threshold (1 > 0)
 "
 `;
 
 exports[`driver.route.peer-budget-exhausted-hash-change.acceptance given: [matrix.2.row2] hash change after exhaustion stays exhausted when: [t2] artifact changes to hash B, attempt to pass then: snapshot [t2]: hash B, still exhausted 1`] = `
 "🦉 the way speaks for itself
+   │
+   ├─ r1: mock-reviewer (l1, 2/2)
+   │   ├─ exhausted, cached
+   │   ├─ 1 blocker 🔴
+   │   ├─ 0 nitpicks ✓
+   │   └─ review: .route/1.execute.guard.review.i2.580b7bfdddc2b7279d.r1.md
+   │
+   └─ halted: peer reviewer budget exhausted
 
 🗿 route.stone.set
    ├─ stone = 1.execute
@@ -39,13 +87,24 @@ exports[`driver.route.peer-budget-exhausted-hash-change.acceptance given: [matri
       ├─ artifacts
       │   └─ src/**/*.ts
       └─ reviews
-          └─ r1: mock-reviewer (l1, 2/2, exhausted)
-              └─ exhausted
+          └─ r1: mock-reviewer (l1, 2/2)
+              ├─ exhausted, cached
+              ├─ 1 blocker 🔴
+              ├─ 0 nitpicks ✓
+              └─ review: .route/1.execute.guard.review.i2.580b7bfdddc2b7279d.r1.md
 "
 `;
 
 exports[`driver.route.peer-budget-exhausted-hash-change.acceptance given: [matrix.2.row2] hash change after exhaustion stays exhausted when: [t3] artifact changes to hash C, still exhausted then: snapshot [t3]: hash C, exhausted persists 1`] = `
 "🦉 the way speaks for itself
+   │
+   ├─ r1: mock-reviewer (l1, 2/2)
+   │   ├─ exhausted, cached
+   │   ├─ 1 blocker 🔴
+   │   ├─ 0 nitpicks ✓
+   │   └─ review: .route/1.execute.guard.review.i2.580b7bfdddc2b7279d.r1.md
+   │
+   └─ halted: peer reviewer budget exhausted
 
 🗿 route.stone.set
    ├─ stone = 1.execute
@@ -60,7 +119,10 @@ exports[`driver.route.peer-budget-exhausted-hash-change.acceptance given: [matri
       ├─ artifacts
       │   └─ src/**/*.ts
       └─ reviews
-          └─ r1: mock-reviewer (l1, 2/2, exhausted)
-              └─ exhausted
+          └─ r1: mock-reviewer (l1, 2/2)
+              ├─ exhausted, cached
+              ├─ 1 blocker 🔴
+              ├─ 0 nitpicks ✓
+              └─ review: .route/1.execute.guard.review.i2.580b7bfdddc2b7279d.r1.md
 "
 `;

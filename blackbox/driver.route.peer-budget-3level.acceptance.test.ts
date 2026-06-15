@@ -65,11 +65,11 @@ describe('driver.route.peer-budget-3level.acceptance', () => {
       });
 
       then('advanced-checker (l2) awaits l1', () => {
-        expect(result.stdout).toMatch(/advanced-checker.*awaits/);
+        expect(result.stdout).toMatch(/advanced-checker.*awaits/s);
       });
 
       then('premium-checker (l3) awaits l2', () => {
-        expect(result.stdout).toMatch(/premium-checker.*awaits/);
+        expect(result.stdout).toMatch(/premium-checker.*awaits/s);
       });
 
       then('stdout has good vibes', () => {
@@ -104,7 +104,7 @@ describe('driver.route.peer-budget-3level.acceptance', () => {
       });
 
       then('basic-checker (l1) approved', () => {
-        expect(result.stdout).toMatch(/basic-checker.*approved/);
+        expect(result.stdout).toMatch(/basic-checker.*approved/s);
       });
 
       then('advanced-checker (l2) ran', () => {
@@ -113,7 +113,7 @@ describe('driver.route.peer-budget-3level.acceptance', () => {
       });
 
       then('premium-checker (l3) still awaits l2', () => {
-        expect(result.stdout).toMatch(/premium-checker.*awaits/);
+        expect(result.stdout).toMatch(/premium-checker.*awaits/s);
       });
 
       then('stdout has good vibes', () => {
@@ -148,13 +148,13 @@ describe('driver.route.peer-budget-3level.acceptance', () => {
       });
 
       then('advanced-checker (l2) approved', () => {
-        expect(result.stdout).toMatch(/advanced-checker.*approved/);
+        expect(result.stdout).toMatch(/advanced-checker.*approved/s);
       });
 
       then('premium-checker (l3) ran', () => {
         // l3 should have run and failed (no flag file)
         expect(result.stdout).toContain('premium-checker');
-        expect(result.stdout).not.toMatch(/premium-checker.*awaits/);
+        expect(result.stdout).not.toMatch(/premium-checker.*awaits/s);
       });
 
       then('stdout has good vibes', () => {
@@ -193,9 +193,9 @@ describe('driver.route.peer-budget-3level.acceptance', () => {
       });
 
       then('all 3 levels approved', () => {
-        expect(result.stdout).toMatch(/basic-checker.*approved/);
-        expect(result.stdout).toMatch(/advanced-checker.*approved/);
-        expect(result.stdout).toMatch(/premium-checker.*approved/);
+        expect(result.stdout).toMatch(/basic-checker.*approved/s);
+        expect(result.stdout).toMatch(/advanced-checker.*approved/s);
+        expect(result.stdout).toMatch(/premium-checker.*approved/s);
       });
 
       then('stdout has good vibes', () => {
