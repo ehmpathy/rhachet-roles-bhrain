@@ -67,7 +67,9 @@ describe('runStoneGuardReviews', () => {
           noopContext,
         );
         expect(result.artifacts).toHaveLength(1);
-        expect(result.artifacts[0]?.path).toContain('.guard.review.i1.testhash.r1.md');
+        expect(result.artifacts[0]?.path).toContain(
+          '.guard.review.i1.testhash.r1.md',
+        );
         const stat = await fs.stat(result.artifacts[0]?.path ?? '');
         expect(stat.isFile()).toBe(true);
       });
@@ -105,7 +107,10 @@ describe('runStoneGuardReviews', () => {
           { stone, guard, hash: 'case1snap', iteration: 1, route: tempDir },
           noopContext,
         );
-        const content = await fs.readFile(result.artifacts[0]?.path ?? '', 'utf-8');
+        const content = await fs.readFile(
+          result.artifacts[0]?.path ?? '',
+          'utf-8',
+        );
         expect(content).toMatchSnapshot();
       });
 
@@ -175,8 +180,14 @@ describe('runStoneGuardReviews', () => {
           { stone, guard, hash: 'case2snap', iteration: 1, route: tempDir },
           noopContext,
         );
-        const content1 = await fs.readFile(result.artifacts[0]?.path ?? '', 'utf-8');
-        const content2 = await fs.readFile(result.artifacts[1]?.path ?? '', 'utf-8');
+        const content1 = await fs.readFile(
+          result.artifacts[0]?.path ?? '',
+          'utf-8',
+        );
+        const content2 = await fs.readFile(
+          result.artifacts[1]?.path ?? '',
+          'utf-8',
+        );
         expect(content1).toMatchSnapshot();
         expect(content2).toMatchSnapshot();
       });
@@ -236,7 +247,10 @@ describe('runStoneGuardReviews', () => {
           { stone, guard, hash: 'exit0hash2', iteration: 1, route: tempDir },
           noopContext,
         );
-        const content = await fs.readFile(result.artifacts[0]?.path ?? '', 'utf-8');
+        const content = await fs.readFile(
+          result.artifacts[0]?.path ?? '',
+          'utf-8',
+        );
         expect(content).toContain('├─ stdout');
         expect(content).toContain('review passed');
       });
@@ -246,7 +260,10 @@ describe('runStoneGuardReviews', () => {
           { stone, guard, hash: 'exit0snap', iteration: 1, route: tempDir },
           noopContext,
         );
-        const content = await fs.readFile(result.artifacts[0]?.path ?? '', 'utf-8');
+        const content = await fs.readFile(
+          result.artifacts[0]?.path ?? '',
+          'utf-8',
+        );
         expect(content).toMatchSnapshot();
       });
 
@@ -310,7 +327,10 @@ describe('runStoneGuardReviews', () => {
           { stone, guard, hash: 'exit2hash2', iteration: 1, route: tempDir },
           noopContext,
         );
-        const content = await fs.readFile(result.artifacts[0]?.path ?? '', 'utf-8');
+        const content = await fs.readFile(
+          result.artifacts[0]?.path ?? '',
+          'utf-8',
+        );
         expect(content).toContain('blocked by constraints');
         expect(content).toContain('exit code: 2');
       });
@@ -320,7 +340,10 @@ describe('runStoneGuardReviews', () => {
           { stone, guard, hash: 'exit2snap', iteration: 1, route: tempDir },
           noopContext,
         );
-        const content = await fs.readFile(result.artifacts[0]?.path ?? '', 'utf-8');
+        const content = await fs.readFile(
+          result.artifacts[0]?.path ?? '',
+          'utf-8',
+        );
         expect(content).toMatchSnapshot();
       });
 
@@ -384,7 +407,10 @@ describe('runStoneGuardReviews', () => {
           { stone, guard, hash: 'exit1hash2', iteration: 1, route: tempDir },
           noopContext,
         );
-        const content = await fs.readFile(result.artifacts[0]?.path ?? '', 'utf-8');
+        const content = await fs.readFile(
+          result.artifacts[0]?.path ?? '',
+          'utf-8',
+        );
         expect(content).toContain('blocked by malfunction');
         expect(content).toContain('exit code: 1');
       });
@@ -403,7 +429,10 @@ describe('runStoneGuardReviews', () => {
           { stone, guard, hash: 'exit1snap', iteration: 1, route: tempDir },
           noopContext,
         );
-        const content = await fs.readFile(result.artifacts[0]?.path ?? '', 'utf-8');
+        const content = await fs.readFile(
+          result.artifacts[0]?.path ?? '',
+          'utf-8',
+        );
         expect(content).toMatchSnapshot();
       });
 
@@ -468,7 +497,10 @@ describe('runStoneGuardReviews', () => {
           noopContext,
         );
         expect(result.artifacts).toHaveLength(1);
-        const content = await fs.readFile(result.artifacts[0]?.path ?? '', 'utf-8');
+        const content = await fs.readFile(
+          result.artifacts[0]?.path ?? '',
+          'utf-8',
+        );
         // should contain the route path in output
         expect(content).toContain(tempDir);
       });
@@ -487,7 +519,10 @@ describe('runStoneGuardReviews', () => {
         // if $route was doubled, the marker wouldn't be found
         // and blockers would be 1 instead of 0
         expect(result.artifacts[0]?.blockers).toEqual(0);
-        const content = await fs.readFile(result.artifacts[0]?.path ?? '', 'utf-8');
+        const content = await fs.readFile(
+          result.artifacts[0]?.path ?? '',
+          'utf-8',
+        );
         expect(content).toContain('marker found');
       });
 
@@ -496,7 +531,10 @@ describe('runStoneGuardReviews', () => {
           { stone, guard, hash: 'case6snap', iteration: 1, route: tempDir },
           noopContext,
         );
-        const content = await fs.readFile(result.artifacts[0]?.path ?? '', 'utf-8');
+        const content = await fs.readFile(
+          result.artifacts[0]?.path ?? '',
+          'utf-8',
+        );
         // sanitize dynamic temp path for portable snapshots
         const sanitized = content.replace(
           new RegExp(tempDir.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'g'),
@@ -569,7 +607,10 @@ describe('runStoneGuardReviews', () => {
         );
         expect(result.artifacts).toHaveLength(1);
         // should contain the expanded path in output
-        const content = await fs.readFile(result.artifacts[0]?.path ?? '', 'utf-8');
+        const content = await fs.readFile(
+          result.artifacts[0]?.path ?? '',
+          'utf-8',
+        );
         expect(content).toContain('node_modules/.bin/rhx');
       });
 
@@ -578,7 +619,10 @@ describe('runStoneGuardReviews', () => {
           { stone, guard, hash: 'rhxsnap', iteration: 1, route: tempDir },
           noopContext,
         );
-        const content = await fs.readFile(result.artifacts[0]?.path ?? '', 'utf-8');
+        const content = await fs.readFile(
+          result.artifacts[0]?.path ?? '',
+          'utf-8',
+        );
         // sanitize absolute path for portable snapshots
         const sanitized = content.replace(
           /rhx=.*\/node_modules/g,
@@ -656,7 +700,10 @@ describe('runStoneGuardReviews', () => {
           );
           expect(result.artifacts).toHaveLength(1);
           // should contain the expanded path in output
-          const content = await fs.readFile(result.artifacts[0]?.path ?? '', 'utf-8');
+          const content = await fs.readFile(
+            result.artifacts[0]?.path ?? '',
+            'utf-8',
+          );
           expect(content).toContain('node_modules/.bin/rhachet');
         },
       );
@@ -666,7 +713,10 @@ describe('runStoneGuardReviews', () => {
           { stone, guard, hash: 'rhachetsnap', iteration: 1, route: tempDir },
           noopContext,
         );
-        const content = await fs.readFile(result.artifacts[0]?.path ?? '', 'utf-8');
+        const content = await fs.readFile(
+          result.artifacts[0]?.path ?? '',
+          'utf-8',
+        );
         // sanitize absolute path for portable snapshots
         const sanitized = content.replace(
           /rhachet=.*\/node_modules/g,

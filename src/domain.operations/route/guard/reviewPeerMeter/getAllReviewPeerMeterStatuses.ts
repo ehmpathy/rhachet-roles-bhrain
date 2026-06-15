@@ -67,7 +67,12 @@ export const getAllReviewPeerMeterStatuses = async (input: {
   const reviewByIndex = new Map<
     number,
     {
-      review: { blockers: number; nitpicks: number; path: string; exitClass: 'passed' | 'constraint' | 'malfunction' } | null;
+      review: {
+        blockers: number;
+        nitpicks: number;
+        path: string;
+        exitClass: 'passed' | 'constraint' | 'malfunction';
+      } | null;
       hasReviewForCurrentHash: boolean;
     }
   >();
@@ -75,7 +80,9 @@ export const getAllReviewPeerMeterStatuses = async (input: {
     const rounds = meterBySlug.get(reviewer.slug)?.rounds ?? 0;
 
     // first try current hash, then fallback to latest review (for exhausted reviewers)
-    const reviewForCurrentHash = cachedReviews.find((r) => r.index === reviewer.index);
+    const reviewForCurrentHash = cachedReviews.find(
+      (r) => r.index === reviewer.index,
+    );
     let review = reviewForCurrentHash;
     if (!review && rounds > 0) {
       // reviewer has rounds but no review for current hash = likely exhausted
@@ -100,7 +107,8 @@ export const getAllReviewPeerMeterStatuses = async (input: {
     const rounds = meter?.rounds ?? 0;
     const reviewEntry = reviewByIndex.get(reviewer.index);
     const cachedReview = reviewEntry?.review ?? null;
-    const hasReviewForCurrentHash = reviewEntry?.hasReviewForCurrentHash ?? false;
+    const hasReviewForCurrentHash =
+      reviewEntry?.hasReviewForCurrentHash ?? false;
 
     const blockers = cachedReview?.blockers ?? Infinity;
     const nitpicks = cachedReview?.nitpicks ?? 0;
@@ -133,7 +141,8 @@ export const getAllReviewPeerMeterStatuses = async (input: {
         const entry = reviewByIndex.get(r.index);
         const cr = entry?.review ?? null;
         const rRounds = meterBySlug.get(r.slug)?.rounds ?? 0;
-        const rHasReviewForCurrentHash = entry?.hasReviewForCurrentHash ?? false;
+        const rHasReviewForCurrentHash =
+          entry?.hasReviewForCurrentHash ?? false;
         const rWasSkipped =
           input.exhaustedReviewerSlugs !== undefined
             ? exhaustedSet.has(r.slug)

@@ -1,7 +1,7 @@
 import { getError } from 'helpful-errors';
 import { given, then, when } from 'test-fns';
 
-import { ReviewTimeoutError, REVIEW_TIMEOUT_MS } from './stepReview';
+import { REVIEW_TIMEOUT_MS, ReviewTimeoutError } from './stepReview';
 
 /**
  * .what = helper to test timeout behavior with configurable delay
