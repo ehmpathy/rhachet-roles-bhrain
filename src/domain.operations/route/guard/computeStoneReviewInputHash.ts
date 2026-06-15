@@ -1,4 +1,4 @@
-import * as crypto from 'crypto';
+import { asHashShake256 } from 'hash-fns';
 import * as path from 'path';
 
 import type { RouteStone } from '@src/domain.objects/Driver/RouteStone';
@@ -48,7 +48,8 @@ export const computeStoneReviewInputHash = async (input: {
   // format as sorted hash entries
   const hashEntries = asSortedHashEntries({ files: allFiles, blobHashes, cwd });
 
-  // compute combined hash
+  // compute combined hash via shake256 (variable-length cryptographic hash)
+  // .note = 9 bytes = 18 hex chars = 72 bits of entropy, collision probability negligible
   const concatenated = hashEntries.join('\n');
-  return crypto.createHash('sha256').update(concatenated).digest('hex');
+  return asHashShake256(concatenated, { bytes: 9 });
 };

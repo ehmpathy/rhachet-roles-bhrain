@@ -17,8 +17,22 @@ exports[`driver.route.peer-budget-bulk.acceptance given: [case1] bulk budget ext
 
 exports[`driver.route.peer-budget-bulk.acceptance given: [case1] bulk budget extension affects all peers when: [t2] reviewers run again after bulk extension then: stdout has good vibes 1`] = `
 "🦉 the way speaks for itself
-   ├─ ✓ review.1 - completed [TIME]
-   ├─ ✓ review.2 - completed [TIME]
+   │
+   ├─ r1: linter (l1, 3/4)
+   │   ├─ rejected [TIME]
+   │   ├─ 1 blocker 🔴
+   │   ├─ 0 nitpicks ✓
+   │   └─ review: .route/1.vision.guard.review.i6.deec084a9ead287f47.r1.md
+   │
+   ├─ r2: spellcheck (l1, 4/5)
+   │   ├─ rejected [TIME]
+   │   ├─ 1 blocker 🔴
+   │   ├─ 0 nitpicks ✓
+   │   └─ review: .route/1.vision.guard.review.i6.deec084a9ead287f47.r2.md
+   │
+   ├─ r3: architect (l2, 2/4)
+   │   └─ awaits arrival
+   │
    └─ ✗ judge.1 - blocked [TIME]
 
 🗿 route.stone.set
@@ -29,16 +43,18 @@ exports[`driver.route.peer-budget-bulk.acceptance given: [case1] bulk budget ext
       ├─ artifacts
       │   └─ src/**/*.ts
       ├─ reviews
-      │   ├─ r1: linter (l1, 3/4, rejected)
+      │   ├─ r1: linter (l1, 3/4)
       │   │   ├─ rejected [TIME]
-      │   │   ├─ review: .route/1.vision.guard.review.i1.228d29f52e0cef068ecbac451b93e43f209c2eb3143a103b93ecc7dc78debbe7.r1.md
-      │   │   └─ 1 blocker 🔴
-      │   ├─ r2: spellcheck (l1, 4/5, rejected)
+      │   │   ├─ 1 blocker 🔴
+      │   │   ├─ 0 nitpicks ✓
+      │   │   └─ review: .route/1.vision.guard.review.i6.deec084a9ead287f47.r1.md
+      │   ├─ r2: spellcheck (l1, 4/5)
       │   │   ├─ rejected [TIME]
-      │   │   ├─ review: .route/1.vision.guard.review.i1.228d29f52e0cef068ecbac451b93e43f209c2eb3143a103b93ecc7dc78debbe7.r2.md
-      │   │   └─ 1 blocker 🔴
-      │   └─ r3: architect (l2, 2/4, awaits)
-      │       └─ awaits l1
+      │   │   ├─ 1 blocker 🔴
+      │   │   ├─ 0 nitpicks ✓
+      │   │   └─ review: .route/1.vision.guard.review.i6.deec084a9ead287f47.r2.md
+      │   └─ r3: architect (l2, 2/4)
+      │       └─ awaits l1 terminal
       └─ judges
           └─ j1: rhx route.stone.judge --mechanism reviewed? --stone $stone --route $route --allow-blockers 0 --allow-nitpicks 1
               ├─ finished [TIME] ✗

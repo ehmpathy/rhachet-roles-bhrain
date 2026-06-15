@@ -129,6 +129,7 @@ describe('formatRouteStoneEmit', () => {
               blockers: 0,
               nitpicks: 0,
               path: 'review.md',
+              exitClass: 'passed',
             },
           ],
           judges: [
@@ -178,6 +179,7 @@ describe('formatRouteStoneEmit', () => {
               blockers: 3,
               nitpicks: 1,
               path: 'review.md',
+              exitClass: 'passed',
             },
           ],
           judges: [

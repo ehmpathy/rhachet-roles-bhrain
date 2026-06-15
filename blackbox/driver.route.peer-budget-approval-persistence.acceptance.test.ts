@@ -82,9 +82,10 @@ describe('driver.route.peer-budget-approval-persistence.acceptance', () => {
         expect(result.code).not.toEqual(0);
       });
 
-      then('output mentions exhaustion', () => {
-        const output = result.stdout.toLowerCase() + result.stderr.toLowerCase();
-        expect(output).toMatch(/exhaust|budget/);
+      then('review shows rejected (ran at 2/2, not skipped)', () => {
+        // .note = review RAN at 2/2 and produced blockers, so verdict is 'rejected'
+        //         'exhausted' only applies when review is SKIPPED (round >= budget BEFORE attempt)
+        expect(result.stdout).toMatch(/rejected/i);
       });
 
       then('stdout has good vibes', () => {

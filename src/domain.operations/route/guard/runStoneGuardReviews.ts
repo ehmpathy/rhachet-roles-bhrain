@@ -18,8 +18,11 @@ import { RouteStoneGuardReviewPeerMeter } from '@src/domain.objects/Driver/Route
 import { formatTreeBucket } from './formatTreeBucket';
 import { getAllStoneGuardArtifactsByHash } from './getAllStoneGuardArtifactsByHash';
 import { getExitCodeClass } from './getExitCodeClass';
+import { getLatestReviewArtifactForIndex } from './getLatestReviewArtifactForIndex';
+import { getReviewCountsFromContent } from './getReviewCountsFromContent';
 import { computeReviewPeerVerdict } from './reviewPeerMeter/computeReviewPeerVerdict';
 import { getAllRouteStoneGuardReviewPeerMeters } from './reviewPeerMeter/getAllRouteStoneGuardReviewPeerMeters';
+import { getReviewedJudgeThresholds } from './reviewPeerMeter/getReviewedJudgeThresholds';
 import {
   isReviewPeerLevelTerminal,
   isReviewPeerVerdictExhausted,
@@ -48,6 +51,16 @@ const getReviewPeerLevel = (review: RouteStoneGuardReviewPeer): number =>
  */
 const getReviewPeerBudget = (review: RouteStoneGuardReviewPeer): number =>
   review.budget;
+
+/**
+ * .what = 21 minute timeout for review command execution
+ * .why = prevents hung review processes from wait indefinitely
+ * .note = override via RHACHET_REVIEW_TIMEOUT_MS env var for tests
+ */
+const REVIEW_TIMEOUT_MS =
+  process.env.RHACHET_REVIEW_TIMEOUT_MS !== undefined
+    ? parseInt(process.env.RHACHET_REVIEW_TIMEOUT_MS, 10)
+    : 21 * 60 * 1000;
 
 /**
  * .what = executes a single guard review command and produces review artifact
@@ -96,13 +109,19 @@ export const runOneStoneGuardReview = async (input: {
   const execEnv = {
     ...process.env,
     PATH: `${nodeModulesBin}${path.delimiter}${process.env.PATH ?? ''}`,
+    // signal to child processes that they execute within a guard context
+    // .why = child skills should suppress their own progress spinners
+    RHACHET_GUARD_CONTEXT: '1',
   };
 
   let stdout = '';
   let stderr = '';
   let exitCode = 0;
   try {
-    const result = await execAsync(cmd, { env: execEnv });
+    const result = await execAsync(cmd, {
+      env: execEnv,
+      timeout: REVIEW_TIMEOUT_MS,
+    });
     stdout = result.stdout;
     stderr = result.stderr;
     exitCode = 0;
@@ -112,7 +131,14 @@ export const runOneStoneGuardReview = async (input: {
       const errObj = error as Record<string, unknown>;
       stdout = typeof errObj.stdout === 'string' ? errObj.stdout : '';
       stderr = typeof errObj.stderr === 'string' ? errObj.stderr : '';
-      exitCode = typeof errObj.code === 'number' ? errObj.code : 1;
+
+      // detect timeout (process killed by signal)
+      if (errObj.killed === true) {
+        stderr = `💥 malfunction: review timed out after ${Math.floor(REVIEW_TIMEOUT_MS / 60000)} minutes`;
+        exitCode = 1;
+      } else {
+        exitCode = typeof errObj.code === 'number' ? errObj.code : 1;
+      }
     }
   }
 
@@ -141,9 +167,14 @@ export const runOneStoneGuardReview = async (input: {
   // write artifact file
   await fs.writeFile(outputPath, artifactContent);
 
-  // parse blockers and nitpicks from stdout (where review tools output)
-  const blockers = parseCount(stdout, /blockers?:\s*(\d+)/i);
-  const nitpicks = parseCount(stdout, /nitpicks?:\s*(\d+)/i);
+  // parse blockers and nitpicks from stdout via shared operation
+  const counts = getReviewCountsFromContent({ content: stdout });
+  const { blockers, nitpicks } = counts;
+
+  // parse duration from stdout
+  // format: "└─ total: 51455ms" under metrics.realized > time
+  const durationMatch = stdout.match(/total:\s*(\d+)ms/i);
+  const durationMs = durationMatch?.[1] ? parseInt(durationMatch[1], 10) : null;
 
   return new RouteStoneGuardReviewArtifact({
     stone: { path: input.stone.path },
@@ -157,6 +188,7 @@ export const runOneStoneGuardReview = async (input: {
     exitClass,
     stdout,
     stderr,
+    durationMs,
   });
 };
 
@@ -173,7 +205,19 @@ export const runStoneGuardReviews = async (
     route: string;
   },
   context: ContextCliEmit,
-): Promise<RouteStoneGuardReviewArtifact[]> => {
+): Promise<{
+  artifacts: RouteStoneGuardReviewArtifact[];
+  exhaustedReviewerSlugs: string[];
+}> => {
+  // lookup git root for path relativization
+  // .why = paths in output should be relative to git root (e.g., .behavior/v.../...), not route
+  let gitRoot: string;
+  try {
+    gitRoot = await getGitRepoRoot({ from: input.route });
+  } catch {
+    gitRoot = process.cwd();
+  }
+
   // get prior artifacts for this hash to determine which reviews already done
   // reviews are cached by hash: same artifact content = reuse prior review
   // this avoids redundant compute when artifact hasn't changed
@@ -193,6 +237,9 @@ export const runStoneGuardReviews = async (
 
   // reviews are added as we process each peer review (not pre-populated)
   const reviews: RouteStoneGuardReviewArtifact[] = [];
+
+  // track which reviewers were skipped due to exhaustion in THIS iteration
+  const exhaustedReviewerSlugs: string[] = [];
 
   // load current meters for budget state (per stone)
   const meters = await getAllRouteStoneGuardReviewPeerMeters({
@@ -217,6 +264,15 @@ export const runStoneGuardReviews = async (
   }));
   peerReviewsWithIndex.sort((a, b) => a.level - b.level);
 
+  // get thresholds for verdict computation
+  // .why = verdicts need allowBlockers/allowNitpicks from guard judge
+  // .note = defaults to (0, 0) when no reviewed? judge is configured
+  const thresholds = getReviewedJudgeThresholds(input.guard) ?? {
+    allowBlockers: 0,
+    allowNitpicks: 0,
+  };
+  const { allowBlockers, allowNitpicks } = thresholds;
+
   // compute current verdicts for level unlock logic
   const computeVerdicts = () =>
     peerReviewsWithIndex.map((pr) => {
@@ -225,8 +281,14 @@ export const runStoneGuardReviews = async (
       // check fresh reviews first (this run), then cached reviews (prior runs)
       const freshReview = reviews.find((r) => r.index === pr.index);
       const cachedReview = cachedReviews.find((r) => r.index === pr.index);
-      const blockers =
-        freshReview?.blockers ?? cachedReview?.blockers ?? Infinity;
+      const review = freshReview ?? cachedReview;
+      const blockers = review?.blockers ?? Infinity;
+      // wasExhausted = no review for this hash AND budget exhausted
+      // .note = if review ran (fresh or cached), wasExhausted is false
+      // .fix = must check review.hash matches current hash, not just existence
+      //        otherwise reviewForDisplay (from prior hash) makes wasExhausted false
+      const hasReviewForHash = review?.hash === input.hash;
+      const wasExhausted = !hasReviewForHash && rounds >= pr.budget;
       return {
         slug: pr.slug,
         level: pr.level,
@@ -234,6 +296,11 @@ export const runStoneGuardReviews = async (
           rounds,
           budget: pr.budget,
           blockers,
+          nitpicks: review?.nitpicks ?? 0,
+          exitClass: review?.exitClass,
+          allowBlockers,
+          allowNitpicks,
+          wasExhausted,
         }),
       };
     });
@@ -242,6 +309,10 @@ export const runStoneGuardReviews = async (
   for (const pr of peerReviewsWithIndex) {
     const cachedReview = cachedReviews.find((r) => r.index === pr.index);
 
+    // lookup meter state for this reviewer (needed for rounds display and verdict)
+    const meter = meterBySlug.get(pr.slug);
+    const rounds = meter?.rounds ?? 0;
+
     // skip if already approved (cached with no blockers)
     // .why = per wish: "if that review has said all good already, then its already cached and budget wont be used"
     // .note = cache check MUST come before exhaustion check to honor this contract
@@ -249,38 +320,83 @@ export const runStoneGuardReviews = async (
       context.cliEmit.onGuardProgress({
         stone: input.stone,
         step: { phase: 'review', index: pr.arrayIndex },
+        reviewer: {
+          index: pr.index,
+          slug: pr.slug,
+          level: pr.level,
+          budget: pr.budget,
+          rounds,
+        },
         inflight: null,
-        outcome: null,
+        outcome: {
+          path: path.relative(gitRoot, cachedReview.path),
+          review: {
+            blockers: cachedReview.blockers,
+            nitpicks: cachedReview.nitpicks,
+          },
+          judge: null,
+        },
       });
       reviews.push(cachedReview);
       continue;
     }
 
     // compute verdict (exhaustion check)
-    const meter = meterBySlug.get(pr.slug);
-    const rounds = meter?.rounds ?? 0;
+    // wasExhausted = true when rounds >= budget (we will skip if exhausted)
+    const wasExhausted = rounds >= pr.budget;
     const verdict = computeReviewPeerVerdict({
       rounds,
       budget: pr.budget,
       blockers: cachedReview?.blockers ?? Infinity,
+      nitpicks: cachedReview?.nitpicks ?? 0,
+      exitClass: cachedReview?.exitClass,
+      allowBlockers,
+      allowNitpicks,
+      wasExhausted,
     });
 
     // skip if exhausted
-    // .note = still add cached review for display purposes (shows last review path)
+    // .note = still add latest review for display purposes (shows blockers/nitpicks/path)
+    //         when hash changed, cachedReview may be null, so lookup latest by index
     if (isReviewPeerVerdictExhausted(verdict)) {
-      if (cachedReview) {
-        reviews.push(cachedReview);
+      // use cached review if available; otherwise lookup latest review for this index
+      // .why = hash may have changed since exhaustion, but we still need prior review data
+      const reviewForDisplay =
+        cachedReview ??
+        (await getLatestReviewArtifactForIndex({
+          stone: input.stone,
+          index: pr.index,
+          route: input.route,
+        }));
+
+      if (reviewForDisplay) {
+        reviews.push(reviewForDisplay);
       }
       context.cliEmit.onGuardProgress({
         stone: input.stone,
         step: { phase: 'review', index: pr.arrayIndex },
+        reviewer: {
+          index: pr.index,
+          slug: pr.slug,
+          level: pr.level,
+          budget: pr.budget,
+          rounds,
+        },
         inflight: null,
         outcome: {
-          path: cachedReview?.path ?? null,
-          review: { exhausted: true },
+          path: reviewForDisplay
+            ? path.relative(gitRoot, reviewForDisplay.path)
+            : null,
+          review: {
+            exhausted: true,
+            blockers: reviewForDisplay?.blockers ?? 0,
+            nitpicks: reviewForDisplay?.nitpicks ?? 0,
+          },
           judge: null,
         },
       });
+      // track that this reviewer was skipped in THIS iteration
+      exhaustedReviewerSlugs.push(pr.slug);
       continue;
     }
 
@@ -291,8 +407,22 @@ export const runStoneGuardReviews = async (
       context.cliEmit.onGuardProgress({
         stone: input.stone,
         step: { phase: 'review', index: pr.arrayIndex },
+        reviewer: {
+          index: pr.index,
+          slug: pr.slug,
+          level: pr.level,
+          budget: pr.budget,
+          rounds,
+        },
         inflight: null,
-        outcome: null,
+        outcome: {
+          path: path.relative(gitRoot, cachedReview.path),
+          review: {
+            blockers: cachedReview.blockers,
+            nitpicks: cachedReview.nitpicks,
+          },
+          judge: null,
+        },
       });
 
       // still add to reviews array for judge to see
@@ -316,6 +446,13 @@ export const runStoneGuardReviews = async (
       context.cliEmit.onGuardProgress({
         stone: input.stone,
         step: { phase: 'review', index: pr.arrayIndex },
+        reviewer: {
+          index: pr.index,
+          slug: pr.slug,
+          level: pr.level,
+          budget: pr.budget,
+          rounds,
+        },
         inflight: null,
         outcome: {
           path: null,
@@ -331,6 +468,13 @@ export const runStoneGuardReviews = async (
     context.cliEmit.onGuardProgress({
       stone: input.stone,
       step: { phase: 'review', index: pr.arrayIndex },
+      reviewer: {
+        index: pr.index,
+        slug: pr.slug,
+        level: pr.level,
+        budget: pr.budget,
+        rounds,
+      },
       inflight: { beganAt, endedAt: null },
       outcome: null,
     });
@@ -344,8 +488,17 @@ export const runStoneGuardReviews = async (
       route: input.route,
     });
 
-    // increment meter on successful review (not malfunction)
-    if (review.exitClass !== 'malfunction') {
+    // determine if review actually completed (vs constraint/malfunction)
+    // .note = exit 2 with blockers = review worked, found issues
+    // .note = exit 2 without blockers = genuine constraint (e.g., absent API key)
+    const isGenuineConstraint =
+      review.exitClass === 'constraint' && review.blockers === 0;
+    const reviewCompleted =
+      review.exitClass === 'passed' ||
+      (review.exitClass === 'constraint' && review.blockers > 0);
+
+    // increment meter only when review actually completed
+    if (reviewCompleted) {
       const newMeter = new RouteStoneGuardReviewPeerMeter({
         stone: input.stone.name,
         reviewer: { slug: pr.slug },
@@ -359,16 +512,34 @@ export const runStoneGuardReviews = async (
     }
 
     // emit finished event after review
+    // .note = rounds is +1 only when review completed
+    const roundsAfter = reviewCompleted ? rounds + 1 : rounds;
+
+    // determine review outcome based on exit class and blockers
+    // .note = constraint (exit 2) with blockers = review worked, show blockers
+    // .note = constraint (exit 2) without blockers = genuine constraint, show constraint error
+    const reviewOutcome = (() => {
+      if (review.exitClass === 'malfunction')
+        return { malfunction: new Error(`exit code ${review.exitCode}`) };
+      if (isGenuineConstraint)
+        return { constraint: new Error(`exit code ${review.exitCode}`) };
+      return { blockers: review.blockers, nitpicks: review.nitpicks };
+    })();
+
     context.cliEmit.onGuardProgress({
       stone: input.stone,
       step: { phase: 'review', index: pr.arrayIndex },
+      reviewer: {
+        index: pr.index,
+        slug: pr.slug,
+        level: pr.level,
+        budget: pr.budget,
+        rounds: roundsAfter,
+      },
       inflight: { beganAt, endedAt: new Date().toISOString() },
       outcome: {
         path: review.path,
-        review:
-          review.exitClass === 'malfunction'
-            ? { malfunction: new Error(`exit code ${review.exitCode}`) }
-            : { blockers: review.blockers, nitpicks: review.nitpicks },
+        review: reviewOutcome,
         judge: null,
       },
     });
@@ -376,7 +547,7 @@ export const runStoneGuardReviews = async (
     reviews.push(review);
   }
 
-  return reviews;
+  return { artifacts: reviews, exhaustedReviewerSlugs };
 };
 
 /**
@@ -424,15 +595,6 @@ const substituteVars = (
     .replace(/\$output/g, vars.output)
     .replace(/\$rhx/g, rhxPath)
     .replace(/\$rhachet/g, rhachetPath);
-};
-
-/**
- * .what = parses numeric count from content via regex
- * .why = extracts blocker/nitpick counts from review output
- */
-const parseCount = (content: string, pattern: RegExp): number => {
-  const match = content.match(pattern);
-  return match?.[1] ? parseInt(match[1], 10) : 0;
 };
 
 /**

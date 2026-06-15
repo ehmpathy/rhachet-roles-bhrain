@@ -145,7 +145,8 @@ describe('genContextCliEmit', () => {
 
         done();
 
-        expect(mock.chunks).toHaveLength(1);
+        // 2 lines: blank line + judge line
+        expect(mock.chunks).toHaveLength(2);
         const combined = mock.chunks.join('');
         expect(combined).toContain('✓ judge.1 - allowed 0.8s');
       });
@@ -177,7 +178,8 @@ describe('genContextCliEmit', () => {
 
         done();
 
-        expect(mock.chunks).toHaveLength(1);
+        // 2 lines: blank line + judge line
+        expect(mock.chunks).toHaveLength(2);
         const combined = mock.chunks.join('');
         expect(combined).toContain('✗ judge.1 - blocked 2.1s');
       });

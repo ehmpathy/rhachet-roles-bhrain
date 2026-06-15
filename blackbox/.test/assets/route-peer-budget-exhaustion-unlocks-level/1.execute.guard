@@ -1,0 +1,19 @@
+artifacts:
+  - src/**/*.ts
+
+reviews:
+  peer:
+    # level 1: cheap reviewer with budget=2
+    - slug: l1-reviewer
+      run: bash $route/.test/mock-review-l1.sh
+      budget: 2
+      level: 1
+
+    # level 3: expensive reviewer, awaits l1 terminal
+    - slug: l3-reviewer
+      run: bash $route/.test/mock-review-l3.sh
+      budget: 5
+      level: 3
+
+judges:
+  - rhx route.stone.judge --mechanism reviewed? --stone $stone --route $route --allow-blockers 0 --allow-nitpicks 1

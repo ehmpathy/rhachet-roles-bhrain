@@ -254,7 +254,8 @@ describe('driver.route.set.acceptance', () => {
 
       then('stdout contains progress output with branch format', () => {
         // progress lines appear in stdout as part of owl header
-        expect(res.cli.stdout).toContain('review.1');
+        // reviews show as r1: {slug} with reviewer tree format
+        expect(res.cli.stdout).toContain('r1:');
         expect(res.cli.stdout).toContain('judge.1');
       });
 

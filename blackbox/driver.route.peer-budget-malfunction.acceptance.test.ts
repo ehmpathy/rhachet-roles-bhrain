@@ -72,10 +72,11 @@ describe('driver.route.peer-budget-malfunction.acceptance', () => {
       });
 
       then('budget NOT consumed (still 0/2)', () => {
-        // if budget was consumed, it would show 1/2
-        // malfunction should leave it at 0/2
+        // .note = in-flight header may show predicted "1/2" but final summary shows actual "0/2"
+        //         malfunction does not consume budget, so final summary must show 0/2
         const output = result.stdout + result.stderr;
-        expect(output).not.toContain('1/2');
+        // final summary section shows actual budget consumed
+        expect(output).toContain('0/2');
       });
 
       then('stdout has good vibes', () => {
@@ -119,8 +120,8 @@ describe('driver.route.peer-budget-malfunction.acceptance', () => {
       });
     });
 
-    when('[t2] second successful review consumes second budget', () => {
-      const result = useThen('review runs, blocked by blockers', async () => {
+    when('[t2] second successful review at budget limit', () => {
+      const result = useThen('review runs, rejected at limit', async () => {
         // update artifact to trigger fresh review
         await fs.writeFile(
           path.join(scene.tempDir, 'src', 'feature.ts'),
@@ -138,9 +139,12 @@ describe('driver.route.peer-budget-malfunction.acceptance', () => {
         expect(result.code).not.toEqual(0);
       });
 
-      then('budget consumed (now 2/2)', () => {
-        const output = result.stdout + result.stderr;
-        expect(output).toContain('2/2');
+      then('reviewer rejected at budget limit (2/2)', () => {
+        // .note = at 2/2, review RAN so verdict is 'rejected' not 'exhausted'
+        //         'exhausted' only when review SKIPPED (rounds >= budget BEFORE attempt)
+        const output = result.stdout.toLowerCase();
+        expect(output).toContain('rejected');
+        expect(result.stdout).toContain('2/2');
       });
 
       then('stdout has good vibes', () => {
@@ -152,7 +156,7 @@ describe('driver.route.peer-budget-malfunction.acceptance', () => {
     // PHASE 3: budget exhausted after 2 successful reviews (not 3)
     // =========================================================================
 
-    when('[t3] third attempt after exhaustion', () => {
+    when('[t3] third attempt, review SKIPPED (exhausted)', () => {
       const result = useThen('blocked with exhaustion', async () => {
         // update artifact again
         await fs.writeFile(
@@ -171,9 +175,11 @@ describe('driver.route.peer-budget-malfunction.acceptance', () => {
         expect(result.code).not.toEqual(0);
       });
 
-      then('output mentions exhaustion', () => {
-        const output = result.stdout.toLowerCase() + result.stderr.toLowerCase();
-        expect(output).toMatch(/exhaust|budget/);
+      then('reviewer is exhausted (review was SKIPPED at 3/2)', () => {
+        // .note = at 3/2, rounds >= budget BEFORE attempt, so review is SKIPPED
+        //         verdict is 'exhausted' not 'rejected'
+        const output = result.stdout.toLowerCase();
+        expect(output).toContain('exhausted');
       });
 
       then('stdout has good vibes', () => {

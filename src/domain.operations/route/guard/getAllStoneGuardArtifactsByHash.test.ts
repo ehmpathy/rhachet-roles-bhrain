@@ -45,16 +45,25 @@ describe('getAllStoneGuardArtifactsByHash', () => {
     beforeEach(async () => {
       await fs.mkdir(routeDir, { recursive: true });
 
-      // create review file
+      // create review file with treestruct format (matches actual output)
       await fs.writeFile(
         path.join(routeDir, `1.vision.guard.review.i1.${testHash}.r1.md`),
-        '---\nblockers: 2\nnitpicks: 3\n---\nreview content',
+        `├─ stdout
+│  ├─
+│  │  🦉 needs your talons
+│  │     └─ summary
+│  │        ├─ 2 blockers 🔴
+│  │        └─ 3 nitpicks 🟠
+│  └─
+├─ stderr
+│  └─`,
       );
 
-      // create judge file
+      // create judge file with treestruct format
       await fs.writeFile(
         path.join(routeDir, `1.vision.guard.judge.i1.${testHash}.j1.md`),
-        '---\npassed: false\nreason: blockers found\n---\njudge content',
+        `passed: false
+reason: blockers found`,
       );
     });
 
@@ -95,6 +104,197 @@ describe('getAllStoneGuardArtifactsByHash', () => {
         });
         expect(result.reviews).toHaveLength(0);
         expect(result.judges).toHaveLength(0);
+      });
+    });
+  });
+
+  given('[case3] review with zero blockers', () => {
+    const tempDir = path.join(
+      os.tmpdir(),
+      `test-guard-zero-blockers-${Date.now()}`,
+    );
+    const routeDir = path.join(tempDir, '.route');
+    const testHash = 'zeroblockershash';
+    const stone = new RouteStone({
+      name: '1.vision',
+      path: path.join(tempDir, '1.vision.stone'),
+      guard: null,
+    });
+
+    beforeEach(async () => {
+      await fs.mkdir(routeDir, { recursive: true });
+
+      // create review file with zero blockers (approved format)
+      await fs.writeFile(
+        path.join(routeDir, `1.vision.guard.review.i1.${testHash}.r1.md`),
+        `├─ stdout
+│  ├─
+│  │  🦉 the way speaks for itself
+│  │     └─ summary
+│  │        ├─ 0 blockers ✓
+│  │        └─ 0 nitpicks ✓
+│  └─
+├─ stderr
+│  └─`,
+      );
+    });
+
+    afterEach(async () => {
+      await fs.rm(tempDir, { recursive: true, force: true });
+    });
+
+    when('[t0] artifacts are fetched', () => {
+      then('returns review with zero blockers', async () => {
+        const result = await getAllStoneGuardArtifactsByHash({
+          stone,
+          hash: testHash,
+          route: tempDir,
+        });
+        expect(result.reviews).toHaveLength(1);
+        expect(result.reviews[0]?.blockers).toEqual(0);
+        expect(result.reviews[0]?.nitpicks).toEqual(0);
+      });
+    });
+  });
+
+  given('[case4] review with singular blocker/nitpick', () => {
+    const tempDir = path.join(os.tmpdir(), `test-guard-singular-${Date.now()}`);
+    const routeDir = path.join(tempDir, '.route');
+    const testHash = 'singularhash';
+    const stone = new RouteStone({
+      name: '1.vision',
+      path: path.join(tempDir, '1.vision.stone'),
+      guard: null,
+    });
+
+    beforeEach(async () => {
+      await fs.mkdir(routeDir, { recursive: true });
+
+      // create review file with singular forms
+      await fs.writeFile(
+        path.join(routeDir, `1.vision.guard.review.i1.${testHash}.r1.md`),
+        `├─ stdout
+│  ├─
+│  │  🦉 needs your talons
+│  │     └─ summary
+│  │        ├─ 1 blocker 🔴
+│  │        └─ 1 nitpick 🟠
+│  └─
+├─ stderr
+│  └─`,
+      );
+    });
+
+    afterEach(async () => {
+      await fs.rm(tempDir, { recursive: true, force: true });
+    });
+
+    when('[t0] artifacts are fetched', () => {
+      then('returns review with singular counts', async () => {
+        const result = await getAllStoneGuardArtifactsByHash({
+          stone,
+          hash: testHash,
+          route: tempDir,
+        });
+        expect(result.reviews).toHaveLength(1);
+        expect(result.reviews[0]?.blockers).toEqual(1);
+        expect(result.reviews[0]?.nitpicks).toEqual(1);
+      });
+    });
+  });
+
+  given('[case5] review with duration in stdout', () => {
+    const tempDir = path.join(os.tmpdir(), `test-guard-duration-${Date.now()}`);
+    const routeDir = path.join(tempDir, '.route');
+    const testHash = 'durationhash';
+    const stone = new RouteStone({
+      name: '1.vision',
+      path: path.join(tempDir, '1.vision.stone'),
+      guard: null,
+    });
+
+    beforeEach(async () => {
+      await fs.mkdir(routeDir, { recursive: true });
+
+      // create review file with duration in metrics.realized
+      await fs.writeFile(
+        path.join(routeDir, `1.vision.guard.review.i1.${testHash}.r1.md`),
+        `├─ stdout
+│  ├─
+│  │  🦉 the way speaks for itself
+│  │     └─ summary
+│  │        ├─ 0 blockers ✓
+│  │        └─ 0 nitpicks ✓
+│  │  ✨ metrics.realized
+│  │     └─ time
+│  │        └─ total: 51455ms
+│  └─
+├─ stderr
+│  └─`,
+      );
+    });
+
+    afterEach(async () => {
+      await fs.rm(tempDir, { recursive: true, force: true });
+    });
+
+    when('[t0] artifacts are fetched', () => {
+      then('returns review with duration parsed', async () => {
+        const result = await getAllStoneGuardArtifactsByHash({
+          stone,
+          hash: testHash,
+          route: tempDir,
+        });
+        expect(result.reviews).toHaveLength(1);
+        expect(result.reviews[0]?.durationMs).toEqual(51455);
+      });
+    });
+  });
+
+  given('[case6] review without duration in stdout', () => {
+    const tempDir = path.join(
+      os.tmpdir(),
+      `test-guard-no-duration-${Date.now()}`,
+    );
+    const routeDir = path.join(tempDir, '.route');
+    const testHash = 'nodurationhash';
+    const stone = new RouteStone({
+      name: '1.vision',
+      path: path.join(tempDir, '1.vision.stone'),
+      guard: null,
+    });
+
+    beforeEach(async () => {
+      await fs.mkdir(routeDir, { recursive: true });
+
+      // create review file without duration
+      await fs.writeFile(
+        path.join(routeDir, `1.vision.guard.review.i1.${testHash}.r1.md`),
+        `├─ stdout
+│  ├─
+│  │  🦉 the way speaks for itself
+│  │     └─ summary
+│  │        ├─ 0 blockers ✓
+│  │        └─ 0 nitpicks ✓
+│  └─
+├─ stderr
+│  └─`,
+      );
+    });
+
+    afterEach(async () => {
+      await fs.rm(tempDir, { recursive: true, force: true });
+    });
+
+    when('[t0] artifacts are fetched', () => {
+      then('returns review with null duration', async () => {
+        const result = await getAllStoneGuardArtifactsByHash({
+          stone,
+          hash: testHash,
+          route: tempDir,
+        });
+        expect(result.reviews).toHaveLength(1);
+        expect(result.reviews[0]?.durationMs).toBeNull();
       });
     });
   });

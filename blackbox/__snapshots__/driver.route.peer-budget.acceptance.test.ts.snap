@@ -2,7 +2,13 @@
 
 exports[`driver.route.peer-budget.acceptance given: [journey] peer review budget exhaustion and extension when: [t0] artifact created and pass attempted with failed reviews then: stdout has good vibes 1`] = `
 "🦉 the way speaks for itself
-   ├─ ✓ review.1 - completed [TIME]
+   │
+   ├─ r1: mock-reviewer (l1, 1/2)
+   │   ├─ rejected [TIME]
+   │   ├─ 1 blocker 🔴
+   │   ├─ 0 nitpicks ✓
+   │   └─ review: .route/1.execute.guard.review.i1.8739656801d5e77f22.r1.md
+   │
    └─ ✗ judge.1 - blocked [TIME]
 
 🗿 route.stone.set
@@ -13,10 +19,11 @@ exports[`driver.route.peer-budget.acceptance given: [journey] peer review budget
       ├─ artifacts
       │   └─ src/**/*.ts
       ├─ reviews
-      │   └─ r1: mock-reviewer (l1, 1/2, rejected)
+      │   └─ r1: mock-reviewer (l1, 1/2)
       │       ├─ rejected [TIME]
-      │       ├─ review: .route/1.execute.guard.review.i1.e0aae4264c854c203aaff5a5ed15c176fb117aacd9ea5fed2ac8d500fa35679b.r1.md
-      │       └─ 1 blocker 🔴
+      │       ├─ 1 blocker 🔴
+      │       ├─ 0 nitpicks ✓
+      │       └─ review: .route/1.execute.guard.review.i1.8739656801d5e77f22.r1.md
       └─ judges
           └─ j1: rhx route.stone.judge --mechanism reviewed? --stone $stone --route $route --allow-blockers 0 --allow-nitpicks 1
               ├─ finished [TIME] ✗
@@ -24,31 +31,47 @@ exports[`driver.route.peer-budget.acceptance given: [journey] peer review budget
 "
 `;
 
-exports[`driver.route.peer-budget.acceptance given: [journey] peer review budget exhaustion and extension when: [t1] second pass attempt (consumes more budget) then: stdout has good vibes 1`] = `
+exports[`driver.route.peer-budget.acceptance given: [journey] peer review budget exhaustion and extension when: [t1] second pass attempt (budget at limit) then: stdout has good vibes 1`] = `
 "🦉 the way speaks for itself
-   ├─ ✓ review.1 - completed [TIME]
+   │
+   ├─ r1: mock-reviewer (l1, 2/2)
+   │   ├─ rejected [TIME]
+   │   ├─ 1 blocker 🔴
+   │   ├─ 0 nitpicks ✓
+   │   └─ review: .route/1.execute.guard.review.i2.dfc5faff83ea2fcb55.r1.md
+   │
+   └─ ✗ judge.1 - blocked [TIME]
 
 🗿 route.stone.set
    ├─ stone = 1.execute
    ├─ passage = blocked
-   ├─ reason = peer reviewer budget exhausted: mock-reviewer
-   ├─ options
-   │  ├─ increase budget
-   │  │  └─ rhx route.guard.budget --for review --add N --peer mock-reviewer --stone 1.execute
-   │  └─ approve as-is
-   │     └─ rhx route.stone.set --stone 1.execute --as approved
+   ├─ reason = blockers exceed threshold (1 > 0)
    └─ guard
       ├─ artifacts
       │   └─ src/**/*.ts
-      └─ reviews
-          └─ r1: mock-reviewer (l1, 2/2, exhausted)
-              ├─ exhausted
-              └─ review: .route/1.execute.guard.review.i1.6b085541feda505cf8c0d0d4929a3b937eac477a6af3437f758a27001cdbadae.r1.md
+      ├─ reviews
+      │   └─ r1: mock-reviewer (l1, 2/2)
+      │       ├─ rejected [TIME]
+      │       ├─ 1 blocker 🔴
+      │       ├─ 0 nitpicks ✓
+      │       └─ review: .route/1.execute.guard.review.i2.dfc5faff83ea2fcb55.r1.md
+      └─ judges
+          └─ j1: rhx route.stone.judge --mechanism reviewed? --stone $stone --route $route --allow-blockers 0 --allow-nitpicks 1
+              ├─ finished [TIME] ✗
+              └─ reason: blockers exceed threshold (1 > 0)
 "
 `;
 
-exports[`driver.route.peer-budget.acceptance given: [journey] peer review budget exhaustion and extension when: [t2] third pass attempt (budget should exhaust) then: stdout has good vibes 1`] = `
+exports[`driver.route.peer-budget.acceptance given: [journey] peer review budget exhaustion and extension when: [t2] third pass attempt (review SKIPPED, exhausted) then: stdout has good vibes 1`] = `
 "🦉 the way speaks for itself
+   │
+   ├─ r1: mock-reviewer (l1, 2/2)
+   │   ├─ exhausted, cached
+   │   ├─ 1 blocker 🔴
+   │   ├─ 0 nitpicks ✓
+   │   └─ review: .route/1.execute.guard.review.i2.dfc5faff83ea2fcb55.r1.md
+   │
+   └─ halted: peer reviewer budget exhausted
 
 🗿 route.stone.set
    ├─ stone = 1.execute
@@ -63,8 +86,11 @@ exports[`driver.route.peer-budget.acceptance given: [journey] peer review budget
       ├─ artifacts
       │   └─ src/**/*.ts
       └─ reviews
-          └─ r1: mock-reviewer (l1, 2/2, exhausted)
-              └─ exhausted
+          └─ r1: mock-reviewer (l1, 2/2)
+              ├─ exhausted, cached
+              ├─ 1 blocker 🔴
+              ├─ 0 nitpicks ✓
+              └─ review: .route/1.execute.guard.review.i2.dfc5faff83ea2fcb55.r1.md
 "
 `;
 
@@ -84,7 +110,13 @@ exports[`driver.route.peer-budget.acceptance given: [journey] peer review budget
 
 exports[`driver.route.peer-budget.acceptance given: [journey] peer review budget exhaustion and extension when: [t4] pass attempted after budget extension with passed reviews then: stdout has good vibes 1`] = `
 "🦉 the way speaks for itself
-   ├─ ✓ review.1 - completed [TIME]
+   │
+   ├─ r1: mock-reviewer (l1, 3/4)
+   │   ├─ approved [TIME]
+   │   ├─ 0 blockers ✓
+   │   ├─ 0 nitpicks ✓
+   │   └─ review: .route/1.execute.guard.review.i3.8f7cfd245244bc91e6.r1.md
+   │
    └─ ✓ judge.1 - allowed [TIME]
 
 🗿 route.stone.set
@@ -94,9 +126,11 @@ exports[`driver.route.peer-budget.acceptance given: [journey] peer review budget
    │  ├─ artifacts
    │  │   └─ src/**/*.ts
    │  ├─ reviews
-   │  │   └─ r1: mock-reviewer (l1, 3/4, approved)
-   │  │       ├─ approved [TIME] ✓
-   │  │       └─ review: .route/1.execute.guard.review.i1.8991072e84931bf0298195a33d866685be7e16f9ca921210660a6416559d694d.r1.md
+   │  │   └─ r1: mock-reviewer (l1, 3/4)
+   │  │       ├─ approved [TIME]
+   │  │       ├─ 0 blockers ✓
+   │  │       ├─ 0 nitpicks ✓
+   │  │       └─ review: .route/1.execute.guard.review.i3.8f7cfd245244bc91e6.r1.md
    │  └─ judges
    │      └─ j1: rhx route.stone.judge --mechanism reviewed? --stone $stone --route $route --allow-blockers 0 --allow-nitpicks 1
    │          └─ finished [TIME] ✓
@@ -108,7 +142,12 @@ exports[`driver.route.peer-budget.acceptance given: [journey] peer review budget
 
 exports[`driver.route.peer-budget.acceptance given: [journey] peer review budget exhaustion and extension when: [t5] pass re-attempted (cached review, same artifact hash) then: stdout has good vibes 1`] = `
 "🦉 the way speaks for itself
-   ├─ ✓ review.1 - completed (cached)
+   │
+   ├─ r1: mock-reviewer (l1, 3/4)
+   │   ├─ approved, cached
+   │   ├─ 0 blockers ✓
+   │   ├─ 0 nitpicks ✓
+   │   └─ review: .route/1.execute.guard.review.i3.8f7cfd245244bc91e6.r1.md
    └─ ✓ judge.1 - allowed (cached)
 
 🗿 route.stone.set
@@ -118,9 +157,11 @@ exports[`driver.route.peer-budget.acceptance given: [journey] peer review budget
    │  ├─ artifacts
    │  │   └─ src/**/*.ts
    │  ├─ reviews
-   │  │   └─ r1: mock-reviewer (l1, 3/4, approved)
-   │  │       ├─ cached ✓
-   │  │       └─ review: .route/1.execute.guard.review.i1.8991072e84931bf0298195a33d866685be7e16f9ca921210660a6416559d694d.r1.md
+   │  │   └─ r1: mock-reviewer (l1, 3/4)
+   │  │       ├─ approved, cached
+   │  │       ├─ 0 blockers ✓
+   │  │       ├─ 0 nitpicks ✓
+   │  │       └─ review: .route/1.execute.guard.review.i3.8f7cfd245244bc91e6.r1.md
    │  └─ judges
    │      └─ j1: rhx route.stone.judge --mechanism reviewed? --stone $stone --route $route --allow-blockers 0 --allow-nitpicks 1
    │          └─ · cached

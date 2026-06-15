@@ -1,0 +1,27 @@
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
+
+exports[`driver.route.peer-review-timeout.acceptance given: [journey] review timeout surfaces as malfunction when: [t0] artifact created, review times out then: stdout has good vibes 1`] = `
+"🦉 the way speaks for itself
+   │
+   ├─ r1: slow-reviewer (l1, 1/2)
+   │   ├─ 💥 malfunction
+   │   └─ review: .route/1.execute.guard.review.i1.8739656801d5e77f22.r1.md
+   │
+   └─ ✓ judge.1 - allowed [TIME]
+
+🗿 route.stone.set
+   ├─ stone = 1.execute
+   ├─ passage = malfunction
+   ├─ reason = reviewer or judge malfunctioned
+   └─ guard
+      ├─ artifacts
+      │   └─ src/**/*.ts
+      ├─ reviews
+      │   └─ r1: slow-reviewer (l1, 0/2)
+      │       ├─ 💥 malfunction
+      │       └─ review: .route/1.execute.guard.review.i1.8739656801d5e77f22.r1.md
+      └─ judges
+          └─ j1: rhx route.stone.judge --mechanism reviewed? --stone $stone --route $route --allow-blockers 0 --allow-nitpicks 1
+              └─ finished [TIME] ✓
+"
+`;

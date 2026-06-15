@@ -11,6 +11,7 @@ exports[`driver.route.journey.acceptance given: [journey] weather api route when
 
 exports[`driver.route.journey.acceptance given: [journey] weather api route when: [t1] 1.vision artifact is created and pass attempted then: stdout has good vibes 1`] = `
 "🦉 the way speaks for itself
+   │
    └─ ✗ judge.1 - blocked [TIME]
 
 🗿 route.stone.set
@@ -38,6 +39,7 @@ exports[`driver.route.journey.acceptance given: [journey] weather api route when
 
 exports[`driver.route.journey.acceptance given: [journey] weather api route when: [t3] 1.vision pass is reattempted after approval then: stdout has good vibes 1`] = `
 "🦉 the way speaks for itself
+   │
    └─ ✓ judge.1 - allowed [TIME]
 
 🗿 route.stone.set
@@ -213,8 +215,14 @@ exports[`driver.route.journey.acceptance given: [journey] weather api route when
 
 exports[`driver.route.journey.acceptance given: [journey] weather api route when: [t9.5] 3.blueprint review set to pass and pass reattempted then: stdout has good vibes 1`] = `
 "🦉 the way speaks for itself
-   ├─ ✓ review.1 - completed (cached)
+   │
+   ├─ r1: bash (l1, 2/∞)
+   │   ├─ approved, cached
+   │   ├─ 0 blockers ✓
+   │   ├─ 0 nitpicks ✓
+   │   └─ review: .route/3.blueprint.guard.review.i2.79ce73effeb06a18dd.r1.md
    ├─ ✓ judge.1 - allowed (cached)
+   │
    └─ ✗ judge.2 - blocked [TIME]
 
 🗿 route.stone.set
@@ -225,9 +233,11 @@ exports[`driver.route.journey.acceptance given: [journey] weather api route when
       ├─ artifacts
       │   └─ $route/3.blueprint*.md
       ├─ reviews
-      │   └─ r1: bash $route/.test/mock-review.sh
-      │       └─ · cached
-      │          └─ on $route/3.blueprint*.md
+      │   └─ r1: bash (l1, 2/∞)
+      │       ├─ approved, cached
+      │       ├─ 0 blockers ✓
+      │       ├─ 0 nitpicks ✓
+      │       └─ review: .route/3.blueprint.guard.review.i2.79ce73effeb06a18dd.r1.md
       └─ judges
           ├─ j1: rhx route.stone.judge --mechanism reviewed? --stone $stone --route $route --allow-blockers 0 --allow-nitpicks 2
           │   └─ · cached
@@ -240,8 +250,15 @@ exports[`driver.route.journey.acceptance given: [journey] weather api route when
 
 exports[`driver.route.journey.acceptance given: [journey] weather api route when: [t9] 3.blueprint pass reattempted after promise then: stdout has good vibes 1`] = `
 "🦉 the way speaks for itself
-   ├─ ✓ review.1 - completed [TIME]
+   │
+   ├─ r1: bash (l1, 0/∞)
+   │   ├─ rejected [TIME]
+   │   ├─ 1 blocker 🔴
+   │   ├─ 0 nitpicks ✓
+   │   └─ review: .route/3.blueprint.guard.review.i1.3e91961a538c3c8774.r1.md
+   │
    ├─ ✗ judge.1 - blocked [TIME]
+   │
    └─ ✗ judge.2 - blocked [TIME]
 
 🗿 route.stone.set
@@ -252,10 +269,11 @@ exports[`driver.route.journey.acceptance given: [journey] weather api route when
       ├─ artifacts
       │   └─ $route/3.blueprint*.md
       ├─ reviews
-      │   └─ r1: bash $route/.test/mock-review.sh
-      │       ├─ finished [TIME] ✓
-      │       ├─ review: .route/3.blueprint.guard.review.i1.1d56dead46a5a7fadd50021f11880e1db6d0ac194a624845a509135664bd1d38.r1.md
-      │       └─ 1 blocker 🔴
+      │   └─ r1: bash (l1, 1/∞)
+      │       ├─ rejected [TIME]
+      │       ├─ 1 blocker 🔴
+      │       ├─ 0 nitpicks ✓
+      │       └─ review: .route/3.blueprint.guard.review.i1.3e91961a538c3c8774.r1.md
       └─ judges
           ├─ j1: rhx route.stone.judge --mechanism reviewed? --stone $stone --route $route --allow-blockers 0 --allow-nitpicks 2
           │   ├─ finished [TIME] ✗
@@ -268,8 +286,15 @@ exports[`driver.route.journey.acceptance given: [journey] weather api route when
 
 exports[`driver.route.journey.acceptance given: [journey] weather api route when: [t10] 3.blueprint approved and self-review completed then: stdout has good vibes 1`] = `
 "🦉 the way speaks for itself
-   ├─ ✓ review.1 - completed (cached)
+   │
+   ├─ r1: bash (l1, 2/∞)
+   │   ├─ approved, cached
+   │   ├─ 0 blockers ✓
+   │   ├─ 0 nitpicks ✓
+   │   └─ review: .route/3.blueprint.guard.review.i2.79ce73effeb06a18dd.r1.md
+   │
    ├─ ✓ judge.1 - allowed [TIME]
+   │
    └─ ✓ judge.2 - allowed [TIME]
 
 🗿 route.stone.set
@@ -279,9 +304,11 @@ exports[`driver.route.journey.acceptance given: [journey] weather api route when
    │  ├─ artifacts
    │  │   └─ $route/3.blueprint*.md
    │  ├─ reviews
-   │  │   └─ r1: bash $route/.test/mock-review.sh
-   │  │       └─ · cached
-   │  │          └─ on $route/3.blueprint*.md
+   │  │   └─ r1: bash (l1, 2/∞)
+   │  │       ├─ approved, cached
+   │  │       ├─ 0 blockers ✓
+   │  │       ├─ 0 nitpicks ✓
+   │  │       └─ review: .route/3.blueprint.guard.review.i2.79ce73effeb06a18dd.r1.md
    │  └─ judges
    │      ├─ j1: rhx route.stone.judge --mechanism reviewed? --stone $stone --route $route --allow-blockers 0 --allow-nitpicks 2
    │      │   └─ finished [TIME] ✓
@@ -304,7 +331,13 @@ exports[`driver.route.journey.acceptance given: [journey] weather api route when
 
 exports[`driver.route.journey.acceptance given: [journey] weather api route when: [t12] 5.execute artifact created and pass attempted then: stdout has good vibes 1`] = `
 "🦉 the way speaks for itself
-   ├─ ✓ review.1 - completed [TIME]
+   │
+   ├─ r1: bash (l1, 0/∞)
+   │   ├─ approved [TIME]
+   │   ├─ 0 blockers ✓
+   │   ├─ 0 nitpicks ✓
+   │   └─ review: .route/5.execute.guard.review.i1.cfd13790ea94701543.r1.md
+   │
    └─ ✓ judge.1 - allowed [TIME]
 
 🗿 route.stone.set
@@ -314,9 +347,11 @@ exports[`driver.route.journey.acceptance given: [journey] weather api route when
    │  ├─ artifacts
    │  │   └─ src/**/*.ts
    │  ├─ reviews
-   │  │   └─ r1: bash $route/.test/mock-review.sh
-   │  │       ├─ finished [TIME] ✓
-   │  │       └─ review: .route/5.execute.guard.review.i1.702cbb466dde718a696823f05a6c6d6614e3be4f25ef1f63e578d23844e407cf.r1.md
+   │  │   └─ r1: bash (l1, 1/∞)
+   │  │       ├─ approved [TIME]
+   │  │       ├─ 0 blockers ✓
+   │  │       ├─ 0 nitpicks ✓
+   │  │       └─ review: .route/5.execute.guard.review.i1.cfd13790ea94701543.r1.md
    │  └─ judges
    │      └─ j1: rhx route.stone.judge --mechanism reviewed? --stone $stone --route $route --allow-blockers 0 --allow-nitpicks 1
    │          └─ finished [TIME] ✓

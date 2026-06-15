@@ -191,7 +191,13 @@ exports[`driver.route.review.self.acceptance given: [case1] stone with reviews.s
 
 exports[`driver.route.review.self.acceptance given: [case1] stone with reviews.self defined when: [t3] pass attempted with all promises then: stdout has good vibes 1`] = `
 "🦉 the way speaks for itself
-   ├─ ✓ review.1 - completed [TIME]
+   │
+   ├─ r1: .test/mock-review.sh (l1, 0/∞)
+   │   ├─ approved [TIME]
+   │   ├─ 0 blockers ✓
+   │   ├─ 0 nitpicks ✓
+   │   └─ review: .route/1.guard.review.i1.11a1a67a230e75f442.r1.md
+   │
    └─ ✓ judge.1 - allowed [TIME]
 
 🗿 route.stone.set
@@ -201,9 +207,11 @@ exports[`driver.route.review.self.acceptance given: [case1] stone with reviews.s
    │  ├─ artifacts
    │  │   └─ $route/1.stone*.md
    │  ├─ reviews
-   │  │   └─ r1: .test/mock-review.sh --paths 1.stone*.md
-   │  │       ├─ finished [TIME] ✓
-   │  │       └─ review: .route/1.guard.review.i1.24f765ae9fd7993af854aa5b89c7adf0c8932c11e946065fb3ee2121d0df1b89.r1.md
+   │  │   └─ r1: .test/mock-review.sh (l1, 1/∞)
+   │  │       ├─ approved [TIME]
+   │  │       ├─ 0 blockers ✓
+   │  │       ├─ 0 nitpicks ✓
+   │  │       └─ review: .route/1.guard.review.i1.11a1a67a230e75f442.r1.md
    │  └─ judges
    │      └─ j1: rhx route.stone.judge --mechanism reviewed? --stone $stone --route $route --allow-blockers 0
    │          └─ finished [TIME] ✓
@@ -305,7 +313,13 @@ exports[`driver.route.review.self.acceptance given: [case3] hashless promises su
 
 exports[`driver.route.review.self.acceptance given: [case4] flat reviews array (backwards compatible) when: [t0] pass attempted with flat reviews then: stdout has good vibes 1`] = `
 "🦉 the way speaks for itself
-   ├─ ✓ review.1 - completed [TIME]
+   │
+   ├─ r1: .test/mock-review.sh (l1, 0/∞)
+   │   ├─ approved [TIME]
+   │   ├─ 0 blockers ✓
+   │   ├─ 0 nitpicks ✓
+   │   └─ review: .route/1.guard.review.i1.11a1a67a230e75f442.r1.md
+   │
    └─ ✓ judge.1 - allowed [TIME]
 
 🗿 route.stone.set
@@ -315,9 +329,11 @@ exports[`driver.route.review.self.acceptance given: [case4] flat reviews array (
    │  ├─ artifacts
    │  │   └─ 1.stone*.md
    │  ├─ reviews
-   │  │   └─ r1: .test/mock-review.sh --paths 1.stone*.md
-   │  │       ├─ finished [TIME] ✓
-   │  │       └─ review: .route/1.guard.review.i1.24f765ae9fd7993af854aa5b89c7adf0c8932c11e946065fb3ee2121d0df1b89.r1.md
+   │  │   └─ r1: .test/mock-review.sh (l1, 1/∞)
+   │  │       ├─ approved [TIME]
+   │  │       ├─ 0 blockers ✓
+   │  │       ├─ 0 nitpicks ✓
+   │  │       └─ review: .route/1.guard.review.i1.11a1a67a230e75f442.r1.md
    │  └─ judges
    │      └─ j1: rhx route.stone.judge --mechanism reviewed? --stone $stone --route $route --allow-blockers 0
    │          └─ finished [TIME] ✓

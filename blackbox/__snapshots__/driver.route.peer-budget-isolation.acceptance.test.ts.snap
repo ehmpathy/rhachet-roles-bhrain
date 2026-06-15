@@ -1,8 +1,15 @@
 // Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
 
-exports[`driver.route.peer-budget-isolation.acceptance given: [journey] per-stone budget isolation when: [t1] second alpha attempt exhausts budget then: stdout has good vibes 1`] = `
+exports[`driver.route.peer-budget-isolation.acceptance given: [journey] per-stone budget isolation when: [t1.5] third alpha attempt, review skipped (exhausted) then: stdout has good vibes 1`] = `
 "🦉 the way speaks for itself
-   ├─ ✓ review.1 - completed [TIME]
+   │
+   ├─ r1: shared-reviewer (l1, 2/2)
+   │   ├─ exhausted, cached
+   │   ├─ 1 blocker 🔴
+   │   ├─ 0 nitpicks ✓
+   │   └─ review: .route/1.alpha.guard.review.i2.7b0642204fa64344b4.r1.md
+   │
+   └─ halted: peer reviewer budget exhausted
 
 🗿 route.stone.set
    ├─ stone = 1.alpha
@@ -17,15 +24,54 @@ exports[`driver.route.peer-budget-isolation.acceptance given: [journey] per-ston
       ├─ artifacts
       │   └─ alpha/**/*.ts
       └─ reviews
-          └─ r1: shared-reviewer (l1, 2/2, exhausted)
-              ├─ exhausted
-              └─ review: .route/1.alpha.guard.review.i1.3adc177d156055c3b0f6d53d11b41ace35a2efeee4b7a553d7f22089647b12f1.r1.md
+          └─ r1: shared-reviewer (l1, 2/2)
+              ├─ exhausted, cached
+              ├─ 1 blocker 🔴
+              ├─ 0 nitpicks ✓
+              └─ review: .route/1.alpha.guard.review.i2.7b0642204fa64344b4.r1.md
+"
+`;
+
+exports[`driver.route.peer-budget-isolation.acceptance given: [journey] per-stone budget isolation when: [t1] second alpha attempt exhausts budget then: stdout has good vibes 1`] = `
+"🦉 the way speaks for itself
+   │
+   ├─ r1: shared-reviewer (l1, 2/2)
+   │   ├─ rejected [TIME]
+   │   ├─ 1 blocker 🔴
+   │   ├─ 0 nitpicks ✓
+   │   └─ review: .route/1.alpha.guard.review.i2.7b0642204fa64344b4.r1.md
+   │
+   └─ ✗ judge.1 - blocked [TIME]
+
+🗿 route.stone.set
+   ├─ stone = 1.alpha
+   ├─ passage = blocked
+   ├─ reason = blockers exceed threshold (1 > 0)
+   └─ guard
+      ├─ artifacts
+      │   └─ alpha/**/*.ts
+      ├─ reviews
+      │   └─ r1: shared-reviewer (l1, 2/2)
+      │       ├─ rejected [TIME]
+      │       ├─ 1 blocker 🔴
+      │       ├─ 0 nitpicks ✓
+      │       └─ review: .route/1.alpha.guard.review.i2.7b0642204fa64344b4.r1.md
+      └─ judges
+          └─ j1: rhx route.stone.judge --mechanism reviewed? --stone $stone --route $route --allow-blockers 0 --allow-nitpicks 1
+              ├─ finished [TIME] ✗
+              └─ reason: blockers exceed threshold (1 > 0)
 "
 `;
 
 exports[`driver.route.peer-budget-isolation.acceptance given: [journey] per-stone budget isolation when: [t3] beta artifact created, verify fresh budget then: stdout has good vibes 1`] = `
 "🦉 the way speaks for itself
-   ├─ ✓ review.1 - completed [TIME]
+   │
+   ├─ r1: shared-reviewer (l1, 1/2)
+   │   ├─ rejected [TIME]
+   │   ├─ 1 blocker 🔴
+   │   ├─ 0 nitpicks ✓
+   │   └─ review: .route/2.beta.guard.review.i1.e4d78222654bf1beda.r1.md
+   │
    └─ ✗ judge.1 - blocked [TIME]
 
 🗿 route.stone.set
@@ -36,10 +82,11 @@ exports[`driver.route.peer-budget-isolation.acceptance given: [journey] per-ston
       ├─ artifacts
       │   └─ beta/**/*.ts
       ├─ reviews
-      │   └─ r1: shared-reviewer (l1, 1/2, rejected)
+      │   └─ r1: shared-reviewer (l1, 1/2)
       │       ├─ rejected [TIME]
-      │       ├─ review: .route/2.beta.guard.review.i1.e44d2e91863b59abc648336c6c0c44205bc509ba4552d67440888c684c2759ed.r1.md
-      │       └─ 1 blocker 🔴
+      │       ├─ 1 blocker 🔴
+      │       ├─ 0 nitpicks ✓
+      │       └─ review: .route/2.beta.guard.review.i1.e4d78222654bf1beda.r1.md
       └─ judges
           └─ j1: rhx route.stone.judge --mechanism reviewed? --stone $stone --route $route --allow-blockers 0 --allow-nitpicks 1
               ├─ finished [TIME] ✗
@@ -49,7 +96,13 @@ exports[`driver.route.peer-budget-isolation.acceptance given: [journey] per-ston
 
 exports[`driver.route.peer-budget-isolation.acceptance given: [journey] per-stone budget isolation when: [t4] beta passes within budget then: stdout has good vibes 1`] = `
 "🦉 the way speaks for itself
-   ├─ ✓ review.1 - completed [TIME]
+   │
+   ├─ r1: shared-reviewer (l1, 2/2)
+   │   ├─ approved [TIME]
+   │   ├─ 0 blockers ✓
+   │   ├─ 0 nitpicks ✓
+   │   └─ review: .route/2.beta.guard.review.i2.891c50a3c7d474cdf4.r1.md
+   │
    └─ ✓ judge.1 - allowed [TIME]
 
 🗿 route.stone.set
@@ -59,9 +112,11 @@ exports[`driver.route.peer-budget-isolation.acceptance given: [journey] per-ston
    │  ├─ artifacts
    │  │   └─ beta/**/*.ts
    │  ├─ reviews
-   │  │   └─ r1: shared-reviewer (l1, 2/2, approved)
-   │  │       ├─ approved [TIME] ✓
-   │  │       └─ review: .route/2.beta.guard.review.i1.63793d941ecd718cba4050d810a1bab800b35afe9fa3743aa80ae6dcb334533d.r1.md
+   │  │   └─ r1: shared-reviewer (l1, 2/2)
+   │  │       ├─ approved [TIME]
+   │  │       ├─ 0 blockers ✓
+   │  │       ├─ 0 nitpicks ✓
+   │  │       └─ review: .route/2.beta.guard.review.i2.891c50a3c7d474cdf4.r1.md
    │  └─ judges
    │      └─ j1: rhx route.stone.judge --mechanism reviewed? --stone $stone --route $route --allow-blockers 0 --allow-nitpicks 1
    │          └─ finished [TIME] ✓

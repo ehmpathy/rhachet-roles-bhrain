@@ -7,6 +7,7 @@ import { RouteStoneGuardReviewArtifact } from '@src/domain.objects/Driver/RouteS
 import { enumFilesFromGlob } from '@src/utils/enumFilesFromGlob';
 
 import { getExitCodeClass } from './getExitCodeClass';
+import { getReviewCountsFromContent } from './getReviewCountsFromContent';
 
 /**
  * .what = retrieves prior guard artifacts for a specific hash
@@ -61,6 +62,7 @@ export const getAllStoneGuardArtifactsByHash = async (input: {
         exitClass: parsed.exitClass,
         stdout: parsed.stdout,
         stderr: parsed.stderr,
+        durationMs: parsed.durationMs,
       }),
     );
   }
@@ -106,6 +108,7 @@ const parseReviewMetadata = (
   exitClass: 'passed' | 'constraint' | 'malfunction';
   stdout: string;
   stderr: string;
+  durationMs: number | null;
 } => {
   // filename pattern: $stone.guard.review.i$iter.$hash.r$n.md
   const filename = path.basename(filePath);
@@ -116,11 +119,14 @@ const parseReviewMetadata = (
   const index = indexMatch?.[1] ? parseInt(indexMatch[1], 10) : 0;
 
   // parse blockers and nitpicks from content
-  const blockerMatch = content.match(/blockers?:\s*(\d+)/i);
-  const nitpickMatch = content.match(/nitpicks?:\s*(\d+)/i);
+  const counts = getReviewCountsFromContent({ content });
+  const blockers = counts.blockers;
+  const nitpicks = counts.nitpicks;
 
-  const blockers = blockerMatch?.[1] ? parseInt(blockerMatch[1], 10) : 0;
-  const nitpicks = nitpickMatch?.[1] ? parseInt(nitpickMatch[1], 10) : 0;
+  // parse duration from content
+  // format: "└─ total: 51455ms" under metrics.realized > time
+  const durationMatch = content.match(/total:\s*(\d+)ms/i);
+  const durationMs = durationMatch?.[1] ? parseInt(durationMatch[1], 10) : null;
 
   // parse exit code from tree bucket format
   const exitCodeMatch = content.match(/exit code:\s*(\d+)/);
@@ -139,6 +145,7 @@ const parseReviewMetadata = (
     exitClass,
     stdout,
     stderr,
+    durationMs,
   };
 };
 

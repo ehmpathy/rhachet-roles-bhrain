@@ -132,7 +132,8 @@ describe('driver.route.peer-budget-levels.journey.acceptance', () => {
 
       then('cheapo is exhausted', () => {
         const output = result.stdout.toLowerCase();
-        expect(output).toMatch(/cheapo.*exhaust|exhaust.*cheapo/);
+        // .note = use /s flag to match across newlines (dotAll mode)
+        expect(output).toMatch(/cheapo.*exhaust|exhaust.*cheapo/s);
       });
 
       then('primo now runs (level 2 activated)', () => {

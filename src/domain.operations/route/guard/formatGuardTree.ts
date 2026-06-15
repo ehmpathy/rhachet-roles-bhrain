@@ -1,6 +1,10 @@
 import type { RouteStoneGuardReviewPeerArtifact } from '@src/domain.objects/Driver/RouteStoneGuardReviewArtifact';
 
 import {
+  formatGuardReviewerTree,
+  type ReviewerTreeState,
+} from './formatGuardReviewerTree';
+import {
   computeReviewPeerVerdict,
   type ReviewPeerVerdict,
 } from './reviewPeerMeter/computeReviewPeerVerdict';
@@ -16,6 +20,10 @@ export interface GuardPeerMeterStatus {
   budget: number;
   verdict: ReviewPeerVerdict;
   awaits: { level: number } | false;
+  blockers: number;
+  nitpicks: number;
+  /** path to review artifact file */
+  path: string | null;
 }
 
 /**
@@ -31,7 +39,7 @@ export interface RouteFormatTreeGuardReviewRecord {
   /** from RouteStoneGuardReviewPeerArtifact */
   artifact: Pick<
     RouteStoneGuardReviewPeerArtifact,
-    'index' | 'path' | 'blockers' | 'nitpicks'
+    'index' | 'path' | 'blockers' | 'nitpicks' | 'exitClass'
   >;
   /** command that was run (from guard file) */
   cmd: string;
@@ -51,6 +59,8 @@ export interface RouteFormatTreeGuardReviewRecord {
 /**
  * .what = derives peerMeters from reviews when not explicitly provided
  * .why = all reviews are metered - when explicit meters absent, use defaults
+ *
+ * .note = uses default thresholds (0, 0) since guard judges not available here
  */
 const deriveMetersFromReviews = (
   reviews: RouteFormatTreeGuardReviewRecord[],
@@ -64,19 +74,39 @@ const deriveMetersFromReviews = (
     const level = review.peer?.level ?? 1;
     const budget = review.peer?.budget ?? Infinity;
     const rounds = review.peer?.rounds ?? 1;
-    // derive verdict from rounds, budget, and blockers
+    // derive verdict from rounds, budget, blockers, nitpicks, exitClass (defaults for thresholds)
+    // wasExhausted: false since review artifact exists = review ran
     const verdict = computeReviewPeerVerdict({
       rounds,
       budget,
       blockers: review.artifact.blockers,
+      nitpicks: review.artifact.nitpicks,
+      exitClass: review.artifact.exitClass,
+      wasExhausted: false,
     });
-    return { slug, level, rounds, budget, verdict, awaits: false };
+    return {
+      slug,
+      level,
+      rounds,
+      budget,
+      verdict,
+      awaits: false,
+      blockers: review.artifact.blockers,
+      nitpicks: review.artifact.nitpicks,
+      path: review.artifact.path,
+    };
   });
 };
 
 /**
- * .what = formats peer reviewer meters as tree lines
+ * .what = formats peer reviewer meters as tree lines via shared formatter
  * .why = shared format for reviews section in guard output and route.drive status
+ *
+ * delegates to formatGuardReviewerTree for consistent format:
+ * - header: r${index}: slug (l${level}, ${rounds}/${budget})
+ * - verdict + duration as first detail line
+ * - blockers/nitpicks always shown (even 0)
+ * - path as final detail line
  *
  * @see rule.forbid.duplicate-format-tree-operations
  */
@@ -117,84 +147,104 @@ export const formatReviewsMeterLines = (input: {
     }
   }
 
+  // convert each meter to ReviewerTreeState and format via shared formatter
   for (let m = 0; m < input.meters.length; m++) {
     const meter = input.meters[m]!;
     const isLast = m === input.meters.length - 1;
-    const prefix = isLast ? '└─' : '├─';
-    const indent = isLast ? '   ' : '│  ';
-
-    // find review artifact for this reviewer (if ran)
     const review = reviewBySlug.get(meter.slug);
 
-    // format header: r${index}: slug (l${level}, ${rounds}/${budget}, ${verdict})
-    const rNum = m + 1;
-    const displayVerdict = meter.awaits ? 'awaits' : meter.verdict;
-    const displayBudget = meter.budget === Infinity ? '∞' : meter.budget;
-    const header = `r${rNum}: ${meter.slug} (l${meter.level}, ${meter.rounds}/${displayBudget}, ${displayVerdict})`;
-    lines.push(`${baseIndent}${sectionIndent} ${prefix} ${header}`);
+    // convert meter + review to ReviewerTreeState
+    const state = asReviewerTreeStateFromMeter({
+      meter,
+      review,
+      index: m + 1,
+    });
 
-    // show details based on state
-    if (meter.awaits) {
-      lines.push(
-        `${baseIndent}${sectionIndent} ${indent} └─ awaits l${meter.awaits.level}`,
-      );
-    } else if (meter.verdict === 'queued') {
-      lines.push(`${baseIndent}${sectionIndent} ${indent} └─ awaits arrival`);
-    } else if (meter.verdict === 'exhausted') {
-      if (review) {
-        lines.push(`${baseIndent}${sectionIndent} ${indent} ├─ exhausted`);
-        lines.push(
-          `${baseIndent}${sectionIndent} ${indent} └─ review: ${review.artifact.path}`,
-        );
-      } else {
-        lines.push(`${baseIndent}${sectionIndent} ${indent} └─ exhausted`);
-      }
-    } else if (meter.verdict === 'rejected' || meter.verdict === 'approved') {
-      if (review) {
-        if (review.cached) {
-          lines.push(`${baseIndent}${sectionIndent} ${indent} ├─ cached ✓`);
-          lines.push(
-            `${baseIndent}${sectionIndent} ${indent} └─ review: ${review.artifact.path}`,
-          );
-        } else {
-          const detailLines: string[] = [];
-          const dur =
-            review.durationSec !== null
-              ? `${review.durationSec.toFixed(1)}s`
-              : '0.0s';
-          const checkmark = meter.verdict === 'approved' ? ' ✓' : '';
-          detailLines.push(`${meter.verdict} ${dur}${checkmark}`);
-          detailLines.push(`review: ${review.artifact.path}`);
-          if (review.artifact.blockers > 0) {
-            const label =
-              review.artifact.blockers === 1 ? 'blocker' : 'blockers';
-            detailLines.push(`${review.artifact.blockers} ${label} 🔴`);
-          }
-          if (review.artifact.nitpicks > 0) {
-            const label =
-              review.artifact.nitpicks === 1 ? 'nitpick' : 'nitpicks';
-            detailLines.push(`${review.artifact.nitpicks} ${label} 🟠`);
-          }
-
-          for (let d = 0; d < detailLines.length; d++) {
-            const isDetailLast = d === detailLines.length - 1;
-            const detailPrefix = isDetailLast ? '└─' : '├─';
-            lines.push(
-              `${baseIndent}${sectionIndent} ${indent} ${detailPrefix} ${detailLines[d]}`,
-            );
-          }
-        }
-      } else {
-        lines.push(
-          `${baseIndent}${sectionIndent} ${indent} └─ ${meter.verdict}`,
-        );
-      }
-    } else {
-      lines.push(`${baseIndent}${sectionIndent} ${indent} └─ ${meter.verdict}`);
-    }
+    // format via shared formatter
+    const reviewerLines = formatGuardReviewerTree({
+      reviewer: state,
+      isLast,
+      baseIndent: `${baseIndent}${sectionIndent} `,
+    });
+    lines.push(...reviewerLines);
   }
 
   return lines;
+};
+
+/**
+ * .what = converts meter + review to ReviewerTreeState
+ * .why = bridges final result shape to shared formatter input
+ */
+const asReviewerTreeStateFromMeter = (input: {
+  meter: GuardPeerMeterStatus;
+  review?: RouteFormatTreeGuardReviewRecord;
+  index: number;
+}): ReviewerTreeState => {
+  const { meter, review, index } = input;
+
+  // awaits state
+  if (meter.awaits) {
+    return {
+      index,
+      slug: meter.slug,
+      level: meter.level,
+      rounds: meter.rounds,
+      budget: meter.budget,
+      state: { type: 'awaits', level: meter.awaits.level },
+    };
+  }
+
+  // queued state
+  if (meter.verdict === 'queued') {
+    return {
+      index,
+      slug: meter.slug,
+      level: meter.level,
+      rounds: meter.rounds,
+      budget: meter.budget,
+      state: { type: 'queued' },
+    };
+  }
+
+  // malfunction state
+  if (meter.verdict === 'malfunction') {
+    const path = review?.artifact.path ?? meter.path ?? '';
+    return {
+      index,
+      slug: meter.slug,
+      level: meter.level,
+      rounds: meter.rounds,
+      budget: meter.budget,
+      state: { type: 'malfunction', path },
+    };
+  }
+
+  // finished states (approved, rejected, exhausted)
+  // prefer review artifact values; fallback to meter values (always populated)
+  const blockers = review?.artifact.blockers ?? meter.blockers;
+  const nitpicks = review?.artifact.nitpicks ?? meter.nitpicks;
+  const path = review?.artifact.path ?? meter.path ?? '';
+  const cached = review?.cached ? true : false;
+  // use durationSec from review (fresh: from event, cached: from artifact stdout)
+  const durationSec = review?.durationSec ?? null;
+
+  return {
+    index,
+    slug: meter.slug,
+    level: meter.level,
+    rounds: meter.rounds,
+    budget: meter.budget,
+    state: {
+      type: 'finished',
+      verdict: meter.verdict as 'approved' | 'rejected' | 'exhausted',
+      durationSec,
+      blockers,
+      nitpicks,
+      path,
+      cached,
+    },
+  };
 };
 
 /**
@@ -216,6 +266,7 @@ export const formatGuardTree = (input: {
       blockers: number;
       nitpicks: number;
       path: string;
+      exitClass: 'passed' | 'constraint' | 'malfunction';
       /** peer info if available: slug, level, rounds/budget */
       peer?: {
         slug: string;
@@ -378,6 +429,7 @@ export const formatGuardTree = (input: {
             path: r.path,
             blockers: r.blockers,
             nitpicks: r.nitpicks,
+            exitClass: r.exitClass,
           },
           cmd: r.cmd,
           cached: r.cached,

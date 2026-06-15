@@ -19,19 +19,28 @@ const ASSETS_DIR = path.join(__dirname, '.test/assets/route-peer-budget-all-term
  *        would never get a chance to run and find the real issues.
  *
  * critical behavior:
- *   - level 1 exhausts (budget 1), level 2 unlocks immediately
- *   - route does NOT halt until level 2 also exhausts
+ *   - level 2 only unlocks when level 1 is TERMINAL (approved or exhausted)
+ *   - "rejected" is NOT terminal (driver should fix and retry)
  *   - route halts ONLY when ALL reviewers across ALL levels are terminal
  *
  * fixture setup:
- *   - level 1: quick-fail (budget: 1) - exhausts after first run
- *   - level 2: thorough (budget: 2) - continues after level 1 exhausts
+ *   - level 1: quick-fail (budget: 1) - always rejects
+ *   - level 2: thorough (budget: 2) - always rejects
  *
  * expected timeline:
- *   [t0]: quick-fail runs (1/1, exhausted), thorough unlocks and runs (1/2, rejected)
- *         - route blocked by judge but NOT halted (thorough still active)
- *   [t1]: artifact changes, thorough runs (2/2, exhausted)
- *         - NOW all terminal, route halts with exhaustion message
+ *   [t0]: quick-fail runs (1/1, rejected)
+ *         - quick-fail NOT terminal (rejected means retry possible)
+ *         - thorough AWAITS (level 1 not terminal)
+ *   [t1]: artifact changes, quick-fail SKIPPED (2/1, exhausted), thorough unlocks (1/2, rejected)
+ *         - quick-fail NOW terminal (exhausted)
+ *         - thorough unlocks and runs, rejected
+ *         - thorough NOT terminal (rejected)
+ *   [t2]: artifact changes, quick-fail cached (exhausted), thorough runs (2/2, rejected)
+ *         - thorough at budget limit, review RAN → rejected (NOT exhausted)
+ *         - thorough still NOT terminal
+ *   [t2.5]: artifact changes, both SKIPPED (exhausted)
+ *         - thorough now 3/2, review SKIPPED → exhausted
+ *         - ALL terminal, route halts with exhaustion message
  */
 describe('driver.route.peer-budget-all-terminal-halt.acceptance', () => {
   given('[case1] level 1 exhausts but level 2 still has budget', () => {
@@ -49,7 +58,7 @@ describe('driver.route.peer-budget-all-terminal-halt.acceptance', () => {
     });
 
     when('[t0] artifact created, first attempt', () => {
-      const result = useThen('both levels run in first attempt', async () => {
+      const result = useThen('quick-fail runs, thorough awaits', async () => {
         await fs.mkdir(path.join(scene.tempDir, 'src'), { recursive: true });
         await fs.writeFile(
           path.join(scene.tempDir, 'src', 'feature.ts'),
@@ -63,21 +72,23 @@ describe('driver.route.peer-budget-all-terminal-halt.acceptance', () => {
         });
       });
 
-      then('quick-fail exhausts immediately (1/1)', () => {
+      then('quick-fail rejected at budget limit (1/1)', () => {
         const output = result.stdout.toLowerCase();
         expect(output).toContain('quick-fail');
-        // budget 1 + blockers = exhausted after first run
-        expect(output).toMatch(/quick-fail.*1\/1.*exhaust/s);
+        // .note = at 1/1, review RAN so verdict is 'rejected' not 'exhausted'
+        //         'exhausted' only when review SKIPPED (rounds >= budget BEFORE attempt)
+        expect(output).toMatch(/quick-fail.*1\/1.*reject/s);
       });
 
-      then('thorough unlocks and runs (level 1 now terminal)', () => {
+      then('thorough AWAITS (level 1 NOT terminal - rejected is not terminal)', () => {
         const output = result.stdout.toLowerCase();
         expect(output).toContain('thorough');
-        // thorough should show rejected (ran and found blockers), not awaits
-        expect(output).toMatch(/thorough.*1\/2.*reject/s);
+        // .note = thorough awaits because 'rejected' is NOT terminal
+        //         level 2 only unlocks when level 1 is terminal (approved or exhausted)
+        expect(output).toMatch(/thorough.*await/s);
       });
 
-      then('route does NOT halt (thorough still active)', () => {
+      then('route does NOT halt (level 1 not even terminal yet)', () => {
         const output = result.stdout.toLowerCase();
         // should not show the exhaustion halt message yet
         expect(output).not.toContain('peer reviewer budget exhausted');
@@ -89,13 +100,13 @@ describe('driver.route.peer-budget-all-terminal-halt.acceptance', () => {
         expect(output).toContain('blocker');
       });
 
-      then('snapshot [t0]: l1 exhausted, l2 rejected, no halt', () => {
+      then('snapshot [t0]: l1 rejected, l2 awaits, no halt', () => {
         expect(sanitizeTimeForSnapshot(result.stdout)).toMatchSnapshot();
       });
     });
 
-    when('[t1] second attempt, level 2 also exhausts', () => {
-      const result = useThen('thorough exhausts at 2/2', async () => {
+    when('[t1] second attempt, level 1 exhausts, level 2 unlocks', () => {
+      const result = useThen('quick-fail exhausted, thorough unlocks and runs', async () => {
         // change artifact to force re-review
         await fs.writeFile(
           path.join(scene.tempDir, 'src', 'feature.ts'),
@@ -109,19 +120,100 @@ describe('driver.route.peer-budget-all-terminal-halt.acceptance', () => {
         });
       });
 
-      then('quick-fail remains exhausted (no re-run)', () => {
+      then('quick-fail is exhausted (review SKIPPED at 2/1)', () => {
+        // .note = quick-fail had budget 1, ran at 1/1 (rejected)
+        //         now at round 2/1, review is SKIPPED → 'exhausted'
         const output = result.stdout.toLowerCase();
-        expect(output).toMatch(/quick-fail.*1\/1.*exhaust/s);
+        expect(output).toMatch(/quick-fail.*exhausted/s);
       });
 
-      then('thorough now exhausted (2/2)', () => {
+      then('thorough now unlocked, rejected at 1/2', () => {
+        // .note = thorough just unlocked (level 1 is now terminal)
+        //         first run, 1/2, found blockers → rejected
         const output = result.stdout.toLowerCase();
-        expect(output).toMatch(/thorough.*2\/2.*exhaust/s);
+        expect(output).toMatch(/thorough.*1\/2.*reject/s);
       });
 
-      then('NOW route halts (all reviewers terminal)', () => {
+      then('route does NOT halt yet (thorough not terminal)', () => {
         const output = result.stdout.toLowerCase();
-        // NOW should show the exhaustion halt message
+        // thorough is rejected (not terminal), so route doesn't halt
+        expect(output).not.toContain('peer reviewer budget exhausted');
+      });
+
+      then('snapshot [t1]: l1 exhausted, l2 rejected (1/2)', () => {
+        expect(sanitizeTimeForSnapshot(result.stdout)).toMatchSnapshot();
+      });
+    });
+
+    when('[t2] third attempt, thorough at budget limit', () => {
+      const result = useThen('thorough runs at 2/2', async () => {
+        // change artifact to force re-review
+        await fs.writeFile(
+          path.join(scene.tempDir, 'src', 'feature.ts'),
+          'export const feature = () => "v3";',
+        );
+
+        return invokeRouteSkill({
+          skill: 'route.stone.set',
+          args: { stone: '1.vision', route: '.', as: 'passed' },
+          cwd: scene.tempDir,
+        });
+      });
+
+      then('quick-fail remains exhausted (cached)', () => {
+        const output = result.stdout.toLowerCase();
+        expect(output).toMatch(/quick-fail.*exhausted/s);
+      });
+
+      then('thorough rejected at budget limit (2/2)', () => {
+        // .note = at 2/2, review RAN so verdict is 'rejected' not 'exhausted'
+        //         'exhausted' only when review SKIPPED (rounds >= budget BEFORE attempt)
+        const output = result.stdout.toLowerCase();
+        expect(output).toMatch(/thorough.*2\/2.*reject/s);
+      });
+
+      then('route still does NOT halt (rejected is not terminal)', () => {
+        // .note = at 2/2, review ran and found blockers → 'rejected'
+        //         'rejected' is NOT terminal, driver should fix and retry
+        const output = result.stdout.toLowerCase();
+        expect(output).not.toContain('peer reviewer budget exhausted');
+      });
+
+      then('snapshot [t2]: l1 exhausted, l2 rejected (2/2)', () => {
+        expect(sanitizeTimeForSnapshot(result.stdout)).toMatchSnapshot();
+      });
+    });
+
+    when('[t2.5] fourth attempt, thorough now exhausted (review SKIPPED)', () => {
+      const result = useThen('both exhausted, route halts', async () => {
+        // .note = change artifact to trigger re-check
+        await fs.writeFile(
+          path.join(scene.tempDir, 'src', 'feature.ts'),
+          'export const feature = () => "v4";',
+        );
+
+        return invokeRouteSkill({
+          skill: 'route.stone.set',
+          args: { stone: '1.vision', route: '.', as: 'passed' },
+          cwd: scene.tempDir,
+        });
+      });
+
+      then('quick-fail remains exhausted', () => {
+        const output = result.stdout.toLowerCase();
+        expect(output).toMatch(/quick-fail.*exhausted/s);
+      });
+
+      then('thorough now exhausted (review was SKIPPED at 3/2)', () => {
+        // .note = at 3/2, rounds >= budget BEFORE attempt, so review is SKIPPED
+        //         verdict is 'exhausted' not 'rejected'
+        const output = result.stdout.toLowerCase();
+        expect(output).toMatch(/thorough.*exhausted/s);
+      });
+
+      then('NOW route halts (ALL reviewers terminal)', () => {
+        const output = result.stdout.toLowerCase();
+        // NOW should show the exhaustion halt message - all reviewers exhausted
         expect(output).toContain('peer reviewer budget exhausted');
       });
 
@@ -136,7 +228,7 @@ describe('driver.route.peer-budget-all-terminal-halt.acceptance', () => {
         expect(output).toMatch(/increase budget|approve/);
       });
 
-      then('snapshot [t1]: all terminal, route halted', () => {
+      then('snapshot [t2.5]: both exhausted, route halted', () => {
         expect(sanitizeTimeForSnapshot(result.stdout)).toMatchSnapshot();
       });
     });

@@ -5,7 +5,7 @@ exports[`driver.route.drive.acceptance given: [case1] route bound with unpassed 
 
 🗿 route.drive
    ├─ where do we go?
-   │  ├─ route = .
+   │  ├─ route = 
    │  └─ stone = 1
    │
    ├─ are you here?
@@ -48,7 +48,7 @@ exports[`driver.route.drive.acceptance given: [case4] hook mode blocks stop when
 
 🗿 route.drive
    ├─ where do we go?
-   │  ├─ route = .
+   │  ├─ route = 
    │  └─ stone = 1
    │
    ├─ are you here?

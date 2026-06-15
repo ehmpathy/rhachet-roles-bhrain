@@ -110,6 +110,7 @@ type FormatInput =
           blockers: number;
           nitpicks: number;
           path: string;
+          exitClass: 'passed' | 'constraint' | 'malfunction';
           peer?: {
             slug: string;
             level: number;

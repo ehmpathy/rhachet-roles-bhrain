@@ -24,6 +24,7 @@ describe('formatGuardTree', () => {
                   blockers: 0,
                   nitpicks: 0,
                   path: '.route/1.vision.guard.review.i1.abc123.r1.md',
+                  exitClass: 'passed',
                 },
                 {
                   index: 2,
@@ -33,6 +34,7 @@ describe('formatGuardTree', () => {
                   blockers: 3,
                   nitpicks: 1,
                   path: '.route/1.vision.guard.review.i1.abc123.r2.md',
+                  exitClass: 'passed',
                 },
               ],
               judges: [
@@ -49,10 +51,10 @@ describe('formatGuardTree', () => {
             },
           });
           expect(result).toContain('passage = allowed');
-          expect(result).toContain('approved 8.2s ✓'); // r1: 0 blockers → approved
+          expect(result).toContain('approved 8.2s'); // r1: 0 blockers → approved (no checkmark at end in new format)
           expect(result).toContain('rejected 15.1s'); // r2: 3 blockers → rejected
-          expect(result).toContain('3 blockers 🔴');
-          expect(result).toContain('1 nitpick 🟠');
+          expect(result).toContain('3 blockers 🔴'); // emoji after count
+          expect(result).toContain('1 nitpick 🟠'); // emoji after count
           expect(result).toContain('finished 0.8s ✓');
           expect(result).not.toContain('reason:');
           expect(result).toMatchSnapshot();
@@ -82,6 +84,7 @@ describe('formatGuardTree', () => {
                   blockers: 1,
                   nitpicks: 0,
                   path: '.route/3.1.research.domain.guard.review.i1.abc123.r1.md',
+                  exitClass: 'passed',
                 },
               ],
               judges: [
@@ -102,7 +105,7 @@ describe('formatGuardTree', () => {
             'reason = blockers exceed threshold (1 > 0)',
           );
           expect(result).toContain('rejected 12.4s'); // 1 blocker → rejected
-          expect(result).toContain('1 blocker 🔴');
+          expect(result).toContain('1 blocker 🔴'); // emoji after count
           expect(result).toContain('finished 0.8s ✗');
           expect(result).toContain('reason: blockers exceed threshold (1 > 0)');
           expect(result).toMatchSnapshot();
@@ -132,6 +135,7 @@ describe('formatGuardTree', () => {
                   blockers: 0,
                   nitpicks: 0,
                   path: '.route/1.vision.guard.review.i1.abc123.r1.md',
+                  exitClass: 'passed',
                 },
                 {
                   index: 2,
@@ -141,6 +145,7 @@ describe('formatGuardTree', () => {
                   blockers: 0,
                   nitpicks: 2,
                   path: '.route/1.vision.guard.review.i1.abc123.r2.md',
+                  exitClass: 'passed',
                 },
               ],
               judges: [
@@ -156,9 +161,9 @@ describe('formatGuardTree', () => {
               ],
             },
           });
-          expect(result).toContain('cached ✓');
-          expect(result).toContain('approved 10.3s ✓'); // 0 blockers → approved
-          expect(result).toContain('2 nitpicks 🟠');
+          expect(result).toContain('approved, cached'); // new format: verdict + cached
+          expect(result).toContain('rejected 10.3s'); // 2 nitpicks > allowNitpicks=0 → rejected
+          expect(result).toContain('2 nitpicks 🟠'); // emoji after count
           expect(result).toMatchSnapshot();
         });
       });
@@ -184,6 +189,7 @@ describe('formatGuardTree', () => {
                 blockers: 0,
                 nitpicks: 0,
                 path: '.route/1.vision.guard.review.i1.abc123.r1.md',
+                exitClass: 'passed',
               },
             ],
             judges: [
@@ -269,6 +275,7 @@ describe('formatGuardTree', () => {
                 blockers: 0,
                 nitpicks: 0,
                 path: '.route/3.1.research.domain.guard.review.i1.abc123.r1.md',
+                exitClass: 'passed',
               },
             ],
             judges: [
@@ -311,6 +318,7 @@ describe('formatGuardTree', () => {
                 blockers: 0,
                 nitpicks: 2,
                 path: '.route/1.vision.guard.review.i1.abc123.r1.md',
+                exitClass: 'passed',
               },
             ],
             judges: [
@@ -326,8 +334,8 @@ describe('formatGuardTree', () => {
             ],
           },
         });
-        expect(result).not.toContain('blockers');
-        expect(result).toContain('2 nitpicks 🟠');
+        expect(result).toContain('0 blockers ✓'); // emoji after count
+        expect(result).toContain('2 nitpicks 🟠'); // emoji after count
         expect(result).toMatchSnapshot();
       });
     });
@@ -354,6 +362,7 @@ describe('formatGuardTree', () => {
                   blockers: 3,
                   nitpicks: 1,
                   path: '.route/1.vision.guard.review.i1.abc123.r1.md',
+                  exitClass: 'passed',
                 },
               ],
               judges: [
@@ -369,8 +378,8 @@ describe('formatGuardTree', () => {
               ],
             },
           });
-          expect(result).toContain('3 blockers 🔴');
-          expect(result).toContain('1 nitpick 🟠');
+          expect(result).toContain('3 blockers 🔴'); // emoji after count
+          expect(result).toContain('1 nitpick 🟠'); // emoji after count
           expect(result).toMatchSnapshot();
         });
       });
@@ -398,6 +407,7 @@ describe('formatGuardTree', () => {
                   blockers: 0,
                   nitpicks: 0,
                   path: '.route/1.vision.guard.review.i1.abc123.r1.md',
+                  exitClass: 'passed',
                 },
               ],
               judges: [
@@ -440,6 +450,7 @@ describe('formatGuardTree', () => {
                 blockers: 2,
                 nitpicks: 0,
                 path: '.route/1.vision.guard.review.i1.abc123.r1.md',
+                exitClass: 'passed',
               },
             ],
             judges: [
@@ -500,6 +511,7 @@ describe('formatGuardTree', () => {
                   blockers: 0,
                   nitpicks: 0,
                   path: '.route/5.1.execute.guard.review.i1.abc123.r1.md',
+                  exitClass: 'passed',
                 },
               ],
               judges: [
@@ -550,6 +562,7 @@ describe('formatGuardTree', () => {
                   blockers: 0,
                   nitpicks: 0,
                   path: '.route/5.5.playtest.guard.review.i1.abc123.r3.md',
+                  exitClass: 'passed',
                   peer: { slug: 'slow-fail', level: 2, rounds: 2, budget: 2 },
                 },
               ],
@@ -563,6 +576,9 @@ describe('formatGuardTree', () => {
                   budget: 1,
                   verdict: 'exhausted',
                   awaits: false,
+                  blockers: 0,
+                  nitpicks: 0,
+                  path: '.route/5.5.playtest.guard.review.i1.abc123.r1.md',
                 },
                 {
                   slug: 'medium-pass',
@@ -571,6 +587,9 @@ describe('formatGuardTree', () => {
                   budget: 2,
                   verdict: 'queued',
                   awaits: false,
+                  blockers: 0,
+                  nitpicks: 0,
+                  path: null,
                 },
                 // l2 reviewer
                 {
@@ -580,6 +599,9 @@ describe('formatGuardTree', () => {
                   budget: 2,
                   verdict: 'approved',
                   awaits: false,
+                  blockers: 0,
+                  nitpicks: 0,
+                  path: '.route/5.5.playtest.guard.review.i1.abc123.r3.md',
                 },
               ],
             },
@@ -616,6 +638,7 @@ describe('formatGuardTree', () => {
                   blockers: 1,
                   nitpicks: 0,
                   path: '.route/5.5.playtest.guard.review.i1.abc123.r1.md',
+                  exitClass: 'passed',
                   peer: { slug: 'quick-pass', level: 1, rounds: 1, budget: 1 },
                 },
               ],
@@ -628,6 +651,9 @@ describe('formatGuardTree', () => {
                   budget: 1,
                   verdict: 'exhausted',
                   awaits: false,
+                  blockers: 1,
+                  nitpicks: 0,
+                  path: '.route/5.5.playtest.guard.review.i1.abc123.r1.md',
                 },
               ],
             },
@@ -663,6 +689,9 @@ describe('formatGuardTree', () => {
                 budget: 10,
                 verdict: 'queued',
                 awaits: false,
+                blockers: 0,
+                nitpicks: 0,
+                path: null,
               },
               {
                 slug: 'primo',
@@ -671,16 +700,19 @@ describe('formatGuardTree', () => {
                 budget: 3,
                 verdict: 'queued',
                 awaits: { level: 1 },
+                blockers: 0,
+                nitpicks: 0,
+                path: null,
               },
             ],
           },
         });
-        // l1 reviewer shows queued (no awaits)
-        expect(result).toContain('r1: cheapo (l1, 0/10, queued)');
-        // l2 reviewer shows awaits in header (not queued)
-        expect(result).toContain('r2: primo (l2, 0/3, awaits)');
-        expect(result).not.toMatch(/primo.*queued/);
-        expect(result).toContain('awaits l1');
+        // verdict NOT in header per wish requirement
+        expect(result).toContain('r1: cheapo (l1, 0/10)'); // no verdict in header
+        expect(result).toContain('r2: primo (l2, 0/3)'); // no verdict in header
+        // details show state
+        expect(result).toContain('awaits arrival'); // l1 queued shows awaits arrival
+        expect(result).toContain('awaits l1 terminal'); // l2 shows awaits l1
         expect(result).toMatchSnapshot();
       });
     });

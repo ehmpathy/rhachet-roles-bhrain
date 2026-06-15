@@ -71,7 +71,7 @@ describe('driver.route.peer-budget-parallel-l1.acceptance', () => {
       });
 
       then('final-checker (L2) awaits L1', () => {
-        expect(result.stdout).toMatch(/final-checker.*awaits/);
+        expect(result.stdout).toMatch(/final-checker.*awaits/s);
       });
 
       then('stdout has good vibes', () => {
@@ -109,16 +109,16 @@ describe('driver.route.peer-budget-parallel-l1.acceptance', () => {
       });
 
       then('alpha-checker (L1) approved', () => {
-        expect(result.stdout).toMatch(/alpha-checker.*approved/);
+        expect(result.stdout).toMatch(/alpha-checker.*approved/s);
       });
 
       then('beta-checker (L1) rejected (still has blockers)', () => {
-        expect(result.stdout).toMatch(/beta-checker.*rejected/);
+        expect(result.stdout).toMatch(/beta-checker.*rejected/s);
       });
 
       then('final-checker (L2) STILL awaits (not all L1s terminal)', () => {
         // this is the key assertion: L2 should still await because beta is rejected, not terminal
-        expect(result.stdout).toMatch(/final-checker.*awaits/);
+        expect(result.stdout).toMatch(/final-checker.*awaits/s);
       });
 
       then('stdout has good vibes', () => {
@@ -156,16 +156,16 @@ describe('driver.route.peer-budget-parallel-l1.acceptance', () => {
       });
 
       then('alpha-checker (L1) approved', () => {
-        expect(result.stdout).toMatch(/alpha-checker.*approved/);
+        expect(result.stdout).toMatch(/alpha-checker.*approved/s);
       });
 
       then('beta-checker (L1) approved', () => {
-        expect(result.stdout).toMatch(/beta-checker.*approved/);
+        expect(result.stdout).toMatch(/beta-checker.*approved/s);
       });
 
       then('final-checker (L2) ran (no longer awaits)', () => {
         expect(result.stdout).toContain('final-checker');
-        expect(result.stdout).not.toMatch(/final-checker.*awaits/);
+        expect(result.stdout).not.toMatch(/final-checker.*awaits/s);
       });
 
       then('stdout has good vibes', () => {
@@ -207,9 +207,9 @@ describe('driver.route.peer-budget-parallel-l1.acceptance', () => {
       });
 
       then('all reviewers approved', () => {
-        expect(result.stdout).toMatch(/alpha-checker.*approved/);
-        expect(result.stdout).toMatch(/beta-checker.*approved/);
-        expect(result.stdout).toMatch(/final-checker.*approved/);
+        expect(result.stdout).toMatch(/alpha-checker.*approved/s);
+        expect(result.stdout).toMatch(/beta-checker.*approved/s);
+        expect(result.stdout).toMatch(/final-checker.*approved/s);
       });
 
       then('stdout has good vibes', () => {

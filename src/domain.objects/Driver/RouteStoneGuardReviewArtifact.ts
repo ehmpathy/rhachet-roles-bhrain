@@ -63,6 +63,11 @@ export interface RouteStoneGuardReviewPeerArtifact {
    * command stderr
    */
   stderr: string;
+
+  /**
+   * review duration in milliseconds (parsed from stdout metrics)
+   */
+  durationMs: number | null;
 }
 
 export class RouteStoneGuardReviewPeerArtifact

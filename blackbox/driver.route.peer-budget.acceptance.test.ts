@@ -73,8 +73,8 @@ describe('driver.route.peer-budget.acceptance', () => {
       });
     });
 
-    when('[t1] second pass attempt (consumes more budget)', () => {
-      const result = useThen('still blocked by peer review blockers', async () => {
+    when('[t1] second pass attempt (budget at limit)', () => {
+      const result = useThen('rejected at budget limit', async () => {
         // update artifact to force re-review
         await fs.writeFile(
           path.join(scene.tempDir, 'src', 'feature.ts'),
@@ -92,6 +92,14 @@ describe('driver.route.peer-budget.acceptance', () => {
         expect(result.code).not.toEqual(0);
       });
 
+      then('reviewer rejected at budget limit (2/2)', () => {
+        // .note = at 2/2, review RAN so verdict is 'rejected' not 'exhausted'
+        //         'exhausted' only when review SKIPPED (rounds >= budget BEFORE attempt)
+        const output = result.stdout.toLowerCase();
+        expect(output).toContain('rejected');
+        expect(result.stdout).toContain('2/2');
+      });
+
       then('stdout has good vibes', () => {
         expect(sanitizeTimeForSnapshot(result.stdout)).toMatchSnapshot();
       });
@@ -101,8 +109,8 @@ describe('driver.route.peer-budget.acceptance', () => {
     // PHASE 2: budget exhaustion
     // =========================================================================
 
-    when('[t2] third pass attempt (budget should exhaust)', () => {
-      const result = useThen('blocked with budget exhaustion', async () => {
+    when('[t2] third pass attempt (review SKIPPED, exhausted)', () => {
+      const result = useThen('blocked with exhaustion', async () => {
         // update artifact again
         await fs.writeFile(
           path.join(scene.tempDir, 'src', 'feature.ts'),
@@ -120,9 +128,11 @@ describe('driver.route.peer-budget.acceptance', () => {
         expect(result.code).not.toEqual(0);
       });
 
-      then('output mentions exhaustion', () => {
-        const output = result.stdout.toLowerCase() + result.stderr.toLowerCase();
-        expect(output).toMatch(/exhaust|budget/);
+      then('reviewer is exhausted (review was SKIPPED at 3/2)', () => {
+        // .note = at 3/2, rounds >= budget BEFORE attempt, so review is SKIPPED
+        //         verdict is 'exhausted' not 'rejected'
+        const output = result.stdout.toLowerCase();
+        expect(output).toContain('exhausted');
       });
 
       then('stdout has good vibes', () => {

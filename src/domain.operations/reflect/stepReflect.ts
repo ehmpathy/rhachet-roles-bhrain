@@ -92,12 +92,19 @@ export type StepReflectResult = {
 
 /**
  * .what = simple spinner for CLI feedback
- * .why = shows progress while operations run
+ * .why = shows progress for long operations
+ * .note = suppresses output when RHACHET_GUARD_CONTEXT is set (guard has its own spinner)
  */
 const withSpinner = async <T>(input: {
   message: string;
   operation: () => Promise<T>;
 }): Promise<T> => {
+  // suppress spinner when invoked from guard context
+  // .why = guard already displays its own progress spinner
+  if (process.env.RHACHET_GUARD_CONTEXT === '1') {
+    return input.operation();
+  }
+
   const frames = ['⠋', '⠙', '⠹', '⠸', '⠼', '⠴', '⠦', '⠧', '⠇', '⠏'];
   const startTime = Date.now();
   let i = 0;

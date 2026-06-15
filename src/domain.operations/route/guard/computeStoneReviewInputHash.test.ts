@@ -17,13 +17,14 @@ describe('computeStoneReviewInputHash', () => {
     });
 
     when('[t0] hash is computed', () => {
-      then('returns non-empty hash string', async () => {
+      then('returns 18-char hex hash', async () => {
         const hash = await computeStoneReviewInputHash({
           stone,
           route: routePath,
         });
         expect(hash).toBeDefined();
-        expect(hash.length).toBeGreaterThan(0);
+        expect(hash.length).toBe(18);
+        expect(hash).toMatch(/^[0-9a-f]{18}$/);
       });
 
       then('returns deterministic hash', async () => {
@@ -55,13 +56,14 @@ describe('computeStoneReviewInputHash', () => {
     });
 
     when('[t0] hash is computed', () => {
-      then('returns hash based on guard artifacts', async () => {
+      then('returns 18-char hex hash based on guard artifacts', async () => {
         const hash = await computeStoneReviewInputHash({
           stone,
           route: routePath,
         });
         expect(hash).toBeDefined();
-        expect(hash.length).toBeGreaterThan(0);
+        expect(hash.length).toBe(18);
+        expect(hash).toMatch(/^[0-9a-f]{18}$/);
       });
     });
   });

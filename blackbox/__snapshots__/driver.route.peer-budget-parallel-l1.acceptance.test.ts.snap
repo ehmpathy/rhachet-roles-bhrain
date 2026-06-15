@@ -2,8 +2,22 @@
 
 exports[`driver.route.peer-budget-parallel-l1.acceptance given: [journey] parallel L1: L2 awaits ALL L1s when: [t0] artifact created, both L1s run, L2 awaits then: stdout has good vibes 1`] = `
 "🦉 the way speaks for itself
-   ├─ ✓ review.1 - completed [TIME]
-   ├─ ✓ review.2 - completed [TIME]
+   │
+   ├─ r1: alpha-checker (l1, 1/5)
+   │   ├─ rejected [TIME]
+   │   ├─ 1 blocker 🔴
+   │   ├─ 0 nitpicks ✓
+   │   └─ review: .route/1.vision.guard.review.i1.8739656801d5e77f22.r1.md
+   │
+   ├─ r2: beta-checker (l1, 1/5)
+   │   ├─ rejected [TIME]
+   │   ├─ 1 blocker 🔴
+   │   ├─ 0 nitpicks ✓
+   │   └─ review: .route/1.vision.guard.review.i1.8739656801d5e77f22.r2.md
+   │
+   ├─ r3: final-checker (l2, 0/5)
+   │   └─ awaits arrival
+   │
    └─ ✗ judge.1 - blocked [TIME]
 
 🗿 route.stone.set
@@ -14,16 +28,18 @@ exports[`driver.route.peer-budget-parallel-l1.acceptance given: [journey] parall
       ├─ artifacts
       │   └─ src/**/*.ts
       ├─ reviews
-      │   ├─ r1: alpha-checker (l1, 1/5, rejected)
+      │   ├─ r1: alpha-checker (l1, 1/5)
       │   │   ├─ rejected [TIME]
-      │   │   ├─ review: .route/1.vision.guard.review.i1.e0aae4264c854c203aaff5a5ed15c176fb117aacd9ea5fed2ac8d500fa35679b.r1.md
-      │   │   └─ 1 blocker 🔴
-      │   ├─ r2: beta-checker (l1, 1/5, rejected)
+      │   │   ├─ 1 blocker 🔴
+      │   │   ├─ 0 nitpicks ✓
+      │   │   └─ review: .route/1.vision.guard.review.i1.8739656801d5e77f22.r1.md
+      │   ├─ r2: beta-checker (l1, 1/5)
       │   │   ├─ rejected [TIME]
-      │   │   ├─ review: .route/1.vision.guard.review.i1.e0aae4264c854c203aaff5a5ed15c176fb117aacd9ea5fed2ac8d500fa35679b.r2.md
-      │   │   └─ 1 blocker 🔴
-      │   └─ r3: final-checker (l2, 0/5, awaits)
-      │       └─ awaits l1
+      │   │   ├─ 1 blocker 🔴
+      │   │   ├─ 0 nitpicks ✓
+      │   │   └─ review: .route/1.vision.guard.review.i1.8739656801d5e77f22.r2.md
+      │   └─ r3: final-checker (l2, 0/5)
+      │       └─ awaits l1 terminal
       └─ judges
           └─ j1: rhx route.stone.judge --mechanism reviewed? --stone $stone --route $route --allow-blockers 0 --allow-nitpicks 1
               ├─ finished [TIME] ✗
@@ -33,8 +49,22 @@ exports[`driver.route.peer-budget-parallel-l1.acceptance given: [journey] parall
 
 exports[`driver.route.peer-budget-parallel-l1.acceptance given: [journey] parallel L1: L2 awaits ALL L1s when: [t1] alpha passes but beta fails, L2 STILL awaits then: stdout has good vibes 1`] = `
 "🦉 the way speaks for itself
-   ├─ ✓ review.1 - completed [TIME]
-   ├─ ✓ review.2 - completed [TIME]
+   │
+   ├─ r1: alpha-checker (l1, 2/5)
+   │   ├─ approved [TIME]
+   │   ├─ 0 blockers ✓
+   │   ├─ 0 nitpicks ✓
+   │   └─ review: .route/1.vision.guard.review.i2.dfc5faff83ea2fcb55.r1.md
+   │
+   ├─ r2: beta-checker (l1, 2/5)
+   │   ├─ rejected [TIME]
+   │   ├─ 1 blocker 🔴
+   │   ├─ 0 nitpicks ✓
+   │   └─ review: .route/1.vision.guard.review.i2.dfc5faff83ea2fcb55.r2.md
+   │
+   ├─ r3: final-checker (l2, 0/5)
+   │   └─ awaits arrival
+   │
    └─ ✗ judge.1 - blocked [TIME]
 
 🗿 route.stone.set
@@ -45,15 +75,18 @@ exports[`driver.route.peer-budget-parallel-l1.acceptance given: [journey] parall
       ├─ artifacts
       │   └─ src/**/*.ts
       ├─ reviews
-      │   ├─ r1: alpha-checker (l1, 2/5, approved)
-      │   │   ├─ approved [TIME] ✓
-      │   │   └─ review: .route/1.vision.guard.review.i1.6b085541feda505cf8c0d0d4929a3b937eac477a6af3437f758a27001cdbadae.r1.md
-      │   ├─ r2: beta-checker (l1, 2/5, rejected)
+      │   ├─ r1: alpha-checker (l1, 2/5)
+      │   │   ├─ approved [TIME]
+      │   │   ├─ 0 blockers ✓
+      │   │   ├─ 0 nitpicks ✓
+      │   │   └─ review: .route/1.vision.guard.review.i2.dfc5faff83ea2fcb55.r1.md
+      │   ├─ r2: beta-checker (l1, 2/5)
       │   │   ├─ rejected [TIME]
-      │   │   ├─ review: .route/1.vision.guard.review.i1.6b085541feda505cf8c0d0d4929a3b937eac477a6af3437f758a27001cdbadae.r2.md
-      │   │   └─ 1 blocker 🔴
-      │   └─ r3: final-checker (l2, 0/5, awaits)
-      │       └─ awaits l1
+      │   │   ├─ 1 blocker 🔴
+      │   │   ├─ 0 nitpicks ✓
+      │   │   └─ review: .route/1.vision.guard.review.i2.dfc5faff83ea2fcb55.r2.md
+      │   └─ r3: final-checker (l2, 0/5)
+      │       └─ awaits l1 terminal
       └─ judges
           └─ j1: rhx route.stone.judge --mechanism reviewed? --stone $stone --route $route --allow-blockers 0 --allow-nitpicks 1
               ├─ finished [TIME] ✗
@@ -63,9 +96,25 @@ exports[`driver.route.peer-budget-parallel-l1.acceptance given: [journey] parall
 
 exports[`driver.route.peer-budget-parallel-l1.acceptance given: [journey] parallel L1: L2 awaits ALL L1s when: [t2] both L1s pass, L2 unlocks then: stdout has good vibes 1`] = `
 "🦉 the way speaks for itself
-   ├─ ✓ review.1 - completed [TIME]
-   ├─ ✓ review.2 - completed [TIME]
-   ├─ ✓ review.3 - completed [TIME]
+   │
+   ├─ r1: alpha-checker (l1, 3/5)
+   │   ├─ approved [TIME]
+   │   ├─ 0 blockers ✓
+   │   ├─ 0 nitpicks ✓
+   │   └─ review: .route/1.vision.guard.review.i3.457fd5ef46e053a35e.r1.md
+   │
+   ├─ r2: beta-checker (l1, 3/5)
+   │   ├─ approved [TIME]
+   │   ├─ 0 blockers ✓
+   │   ├─ 0 nitpicks ✓
+   │   └─ review: .route/1.vision.guard.review.i3.457fd5ef46e053a35e.r2.md
+   │
+   ├─ r3: final-checker (l2, 1/5)
+   │   ├─ rejected [TIME]
+   │   ├─ 1 blocker 🔴
+   │   ├─ 0 nitpicks ✓
+   │   └─ review: .route/1.vision.guard.review.i3.457fd5ef46e053a35e.r3.md
+   │
    └─ ✗ judge.1 - blocked [TIME]
 
 🗿 route.stone.set
@@ -76,16 +125,21 @@ exports[`driver.route.peer-budget-parallel-l1.acceptance given: [journey] parall
       ├─ artifacts
       │   └─ src/**/*.ts
       ├─ reviews
-      │   ├─ r1: alpha-checker (l1, 3/5, approved)
-      │   │   ├─ approved [TIME] ✓
-      │   │   └─ review: .route/1.vision.guard.review.i1.7de8f5be336f95e3dd2e5b02467258533bcf304b0cbe0502fc0a08f5debbcc27.r1.md
-      │   ├─ r2: beta-checker (l1, 3/5, approved)
-      │   │   ├─ approved [TIME] ✓
-      │   │   └─ review: .route/1.vision.guard.review.i1.7de8f5be336f95e3dd2e5b02467258533bcf304b0cbe0502fc0a08f5debbcc27.r2.md
-      │   └─ r3: final-checker (l2, 1/5, rejected)
+      │   ├─ r1: alpha-checker (l1, 3/5)
+      │   │   ├─ approved [TIME]
+      │   │   ├─ 0 blockers ✓
+      │   │   ├─ 0 nitpicks ✓
+      │   │   └─ review: .route/1.vision.guard.review.i3.457fd5ef46e053a35e.r1.md
+      │   ├─ r2: beta-checker (l1, 3/5)
+      │   │   ├─ approved [TIME]
+      │   │   ├─ 0 blockers ✓
+      │   │   ├─ 0 nitpicks ✓
+      │   │   └─ review: .route/1.vision.guard.review.i3.457fd5ef46e053a35e.r2.md
+      │   └─ r3: final-checker (l2, 1/5)
       │       ├─ rejected [TIME]
-      │       ├─ review: .route/1.vision.guard.review.i1.7de8f5be336f95e3dd2e5b02467258533bcf304b0cbe0502fc0a08f5debbcc27.r3.md
-      │       └─ 1 blocker 🔴
+      │       ├─ 1 blocker 🔴
+      │       ├─ 0 nitpicks ✓
+      │       └─ review: .route/1.vision.guard.review.i3.457fd5ef46e053a35e.r3.md
       └─ judges
           └─ j1: rhx route.stone.judge --mechanism reviewed? --stone $stone --route $route --allow-blockers 0 --allow-nitpicks 1
               ├─ finished [TIME] ✗
@@ -95,9 +149,25 @@ exports[`driver.route.peer-budget-parallel-l1.acceptance given: [journey] parall
 
 exports[`driver.route.peer-budget-parallel-l1.acceptance given: [journey] parallel L1: L2 awaits ALL L1s when: [t3] L2 passes, stone passes then: stdout has good vibes 1`] = `
 "🦉 the way speaks for itself
-   ├─ ✓ review.1 - completed [TIME]
-   ├─ ✓ review.2 - completed [TIME]
-   ├─ ✓ review.3 - completed [TIME]
+   │
+   ├─ r1: alpha-checker (l1, 4/5)
+   │   ├─ approved [TIME]
+   │   ├─ 0 blockers ✓
+   │   ├─ 0 nitpicks ✓
+   │   └─ review: .route/1.vision.guard.review.i4.d1bd0b8547352e6396.r1.md
+   │
+   ├─ r2: beta-checker (l1, 4/5)
+   │   ├─ approved [TIME]
+   │   ├─ 0 blockers ✓
+   │   ├─ 0 nitpicks ✓
+   │   └─ review: .route/1.vision.guard.review.i4.d1bd0b8547352e6396.r2.md
+   │
+   ├─ r3: final-checker (l2, 2/5)
+   │   ├─ approved [TIME]
+   │   ├─ 0 blockers ✓
+   │   ├─ 0 nitpicks ✓
+   │   └─ review: .route/1.vision.guard.review.i4.d1bd0b8547352e6396.r3.md
+   │
    └─ ✓ judge.1 - allowed [TIME]
 
 🗿 route.stone.set
@@ -107,15 +177,21 @@ exports[`driver.route.peer-budget-parallel-l1.acceptance given: [journey] parall
    │  ├─ artifacts
    │  │   └─ src/**/*.ts
    │  ├─ reviews
-   │  │   ├─ r1: alpha-checker (l1, 4/5, approved)
-   │  │   │   ├─ approved [TIME] ✓
-   │  │   │   └─ review: .route/1.vision.guard.review.i1.7e36a690f2f6f8d2a5e590ffa5f9478b5a71c201c0dd14b6e05db02cf0a3e292.r1.md
-   │  │   ├─ r2: beta-checker (l1, 4/5, approved)
-   │  │   │   ├─ approved [TIME] ✓
-   │  │   │   └─ review: .route/1.vision.guard.review.i1.7e36a690f2f6f8d2a5e590ffa5f9478b5a71c201c0dd14b6e05db02cf0a3e292.r2.md
-   │  │   └─ r3: final-checker (l2, 2/5, approved)
-   │  │       ├─ approved [TIME] ✓
-   │  │       └─ review: .route/1.vision.guard.review.i1.7e36a690f2f6f8d2a5e590ffa5f9478b5a71c201c0dd14b6e05db02cf0a3e292.r3.md
+   │  │   ├─ r1: alpha-checker (l1, 4/5)
+   │  │   │   ├─ approved [TIME]
+   │  │   │   ├─ 0 blockers ✓
+   │  │   │   ├─ 0 nitpicks ✓
+   │  │   │   └─ review: .route/1.vision.guard.review.i4.d1bd0b8547352e6396.r1.md
+   │  │   ├─ r2: beta-checker (l1, 4/5)
+   │  │   │   ├─ approved [TIME]
+   │  │   │   ├─ 0 blockers ✓
+   │  │   │   ├─ 0 nitpicks ✓
+   │  │   │   └─ review: .route/1.vision.guard.review.i4.d1bd0b8547352e6396.r2.md
+   │  │   └─ r3: final-checker (l2, 2/5)
+   │  │       ├─ approved [TIME]
+   │  │       ├─ 0 blockers ✓
+   │  │       ├─ 0 nitpicks ✓
+   │  │       └─ review: .route/1.vision.guard.review.i4.d1bd0b8547352e6396.r3.md
    │  └─ judges
    │      └─ j1: rhx route.stone.judge --mechanism reviewed? --stone $stone --route $route --allow-blockers 0 --allow-nitpicks 1
    │          └─ finished [TIME] ✓

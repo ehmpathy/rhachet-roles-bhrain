@@ -2,8 +2,22 @@
 
 exports[`driver.route.peer-budget-multilevel.journey.acceptance given: [journey 4] multi-level mixed terminal + budget extension when: [t0] artifact created, level 1 reviewers run first then: snapshot [t0]: level 1 active, level 2 awaits 1`] = `
 "🦉 the way speaks for itself
-   ├─ ✓ review.1 - completed [TIME]
-   ├─ ✓ review.2 - completed [TIME]
+   │
+   ├─ r1: linter (l1, 1/2)
+   │   ├─ rejected [TIME]
+   │   ├─ 1 blocker 🔴
+   │   ├─ 0 nitpicks ✓
+   │   └─ review: .route/1.vision.guard.review.i1.8739656801d5e77f22.r1.md
+   │
+   ├─ r2: spellcheck (l1, 1/3)
+   │   ├─ rejected [TIME]
+   │   ├─ 1 blocker 🔴
+   │   ├─ 0 nitpicks ✓
+   │   └─ review: .route/1.vision.guard.review.i1.8739656801d5e77f22.r2.md
+   │
+   ├─ r3: architect (l2, 0/2)
+   │   └─ awaits arrival
+   │
    └─ ✗ judge.1 - blocked [TIME]
 
 🗿 route.stone.set
@@ -14,16 +28,18 @@ exports[`driver.route.peer-budget-multilevel.journey.acceptance given: [journey 
       ├─ artifacts
       │   └─ src/**/*.ts
       ├─ reviews
-      │   ├─ r1: linter (l1, 1/2, rejected)
+      │   ├─ r1: linter (l1, 1/2)
       │   │   ├─ rejected [TIME]
-      │   │   ├─ review: .route/1.vision.guard.review.i1.e0aae4264c854c203aaff5a5ed15c176fb117aacd9ea5fed2ac8d500fa35679b.r1.md
-      │   │   └─ 1 blocker 🔴
-      │   ├─ r2: spellcheck (l1, 1/3, rejected)
+      │   │   ├─ 1 blocker 🔴
+      │   │   ├─ 0 nitpicks ✓
+      │   │   └─ review: .route/1.vision.guard.review.i1.8739656801d5e77f22.r1.md
+      │   ├─ r2: spellcheck (l1, 1/3)
       │   │   ├─ rejected [TIME]
-      │   │   ├─ review: .route/1.vision.guard.review.i1.e0aae4264c854c203aaff5a5ed15c176fb117aacd9ea5fed2ac8d500fa35679b.r2.md
-      │   │   └─ 1 blocker 🔴
-      │   └─ r3: architect (l2, 0/2, awaits)
-      │       └─ awaits l1
+      │   │   ├─ 1 blocker 🔴
+      │   │   ├─ 0 nitpicks ✓
+      │   │   └─ review: .route/1.vision.guard.review.i1.8739656801d5e77f22.r2.md
+      │   └─ r3: architect (l2, 0/2)
+      │       └─ awaits l1 terminal
       └─ judges
           └─ j1: rhx route.stone.judge --mechanism reviewed? --stone $stone --route $route --allow-blockers 0 --allow-nitpicks 1
               ├─ finished [TIME] ✗
@@ -33,8 +49,22 @@ exports[`driver.route.peer-budget-multilevel.journey.acceptance given: [journey 
 
 exports[`driver.route.peer-budget-multilevel.journey.acceptance given: [journey 4] multi-level mixed terminal + budget extension when: [t1] second attempt, linter uses more budget then: snapshot [t1]: linter 2/2 exhausted, spellcheck 2/3 1`] = `
 "🦉 the way speaks for itself
-   ├─ ✓ review.1 - completed [TIME]
-   ├─ ✓ review.2 - completed [TIME]
+   │
+   ├─ r1: linter (l1, 2/2)
+   │   ├─ rejected [TIME]
+   │   ├─ 1 blocker 🔴
+   │   ├─ 0 nitpicks ✓
+   │   └─ review: .route/1.vision.guard.review.i2.dfc5faff83ea2fcb55.r1.md
+   │
+   ├─ r2: spellcheck (l1, 2/3)
+   │   ├─ rejected [TIME]
+   │   ├─ 1 blocker 🔴
+   │   ├─ 0 nitpicks ✓
+   │   └─ review: .route/1.vision.guard.review.i2.dfc5faff83ea2fcb55.r2.md
+   │
+   ├─ r3: architect (l2, 0/2)
+   │   └─ awaits arrival
+   │
    └─ ✗ judge.1 - blocked [TIME]
 
 🗿 route.stone.set
@@ -45,15 +75,18 @@ exports[`driver.route.peer-budget-multilevel.journey.acceptance given: [journey 
       ├─ artifacts
       │   └─ src/**/*.ts
       ├─ reviews
-      │   ├─ r1: linter (l1, 2/2, exhausted)
-      │   │   ├─ exhausted
-      │   │   └─ review: .route/1.vision.guard.review.i1.6b085541feda505cf8c0d0d4929a3b937eac477a6af3437f758a27001cdbadae.r1.md
-      │   ├─ r2: spellcheck (l1, 2/3, rejected)
+      │   ├─ r1: linter (l1, 2/2)
       │   │   ├─ rejected [TIME]
-      │   │   ├─ review: .route/1.vision.guard.review.i1.6b085541feda505cf8c0d0d4929a3b937eac477a6af3437f758a27001cdbadae.r2.md
-      │   │   └─ 1 blocker 🔴
-      │   └─ r3: architect (l2, 0/2, awaits)
-      │       └─ awaits l1
+      │   │   ├─ 1 blocker 🔴
+      │   │   ├─ 0 nitpicks ✓
+      │   │   └─ review: .route/1.vision.guard.review.i2.dfc5faff83ea2fcb55.r1.md
+      │   ├─ r2: spellcheck (l1, 2/3)
+      │   │   ├─ rejected [TIME]
+      │   │   ├─ 1 blocker 🔴
+      │   │   ├─ 0 nitpicks ✓
+      │   │   └─ review: .route/1.vision.guard.review.i2.dfc5faff83ea2fcb55.r2.md
+      │   └─ r3: architect (l2, 0/2)
+      │       └─ awaits l1 terminal
       └─ judges
           └─ j1: rhx route.stone.judge --mechanism reviewed? --stone $stone --route $route --allow-blockers 0 --allow-nitpicks 1
               ├─ finished [TIME] ✗
@@ -63,8 +96,25 @@ exports[`driver.route.peer-budget-multilevel.journey.acceptance given: [journey 
 
 exports[`driver.route.peer-budget-multilevel.journey.acceptance given: [journey 4] multi-level mixed terminal + budget extension when: [t2] third attempt, spellcheck passes (linter already exhausted) then: snapshot [t2]: level 1 terminal, architect unlocked 1`] = `
 "🦉 the way speaks for itself
-   ├─ ✓ review.2 - completed [TIME]
-   ├─ ✓ review.3 - completed [TIME]
+   │
+   ├─ r1: linter (l1, 2/2)
+   │   ├─ exhausted, cached
+   │   ├─ 1 blocker 🔴
+   │   ├─ 0 nitpicks ✓
+   │   └─ review: .route/1.vision.guard.review.i2.dfc5faff83ea2fcb55.r1.md
+   │
+   ├─ r2: spellcheck (l1, 3/3)
+   │   ├─ approved [TIME]
+   │   ├─ 0 blockers ✓
+   │   ├─ 0 nitpicks ✓
+   │   └─ review: .route/1.vision.guard.review.i3.457fd5ef46e053a35e.r2.md
+   │
+   ├─ r3: architect (l2, 1/2)
+   │   ├─ rejected [TIME]
+   │   ├─ 1 blocker 🔴
+   │   ├─ 0 nitpicks ✓
+   │   └─ review: .route/1.vision.guard.review.i3.457fd5ef46e053a35e.r3.md
+   │
    └─ ✗ judge.1 - blocked [TIME]
 
 🗿 route.stone.set
@@ -75,15 +125,21 @@ exports[`driver.route.peer-budget-multilevel.journey.acceptance given: [journey 
       ├─ artifacts
       │   └─ src/**/*.ts
       ├─ reviews
-      │   ├─ r1: linter (l1, 2/2, exhausted)
-      │   │   └─ exhausted
-      │   ├─ r2: spellcheck (l1, 3/3, approved)
-      │   │   ├─ approved [TIME] ✓
-      │   │   └─ review: .route/1.vision.guard.review.i1.7de8f5be336f95e3dd2e5b02467258533bcf304b0cbe0502fc0a08f5debbcc27.r2.md
-      │   └─ r3: architect (l2, 1/2, rejected)
+      │   ├─ r1: linter (l1, 2/2)
+      │   │   ├─ exhausted, cached
+      │   │   ├─ 1 blocker 🔴
+      │   │   ├─ 0 nitpicks ✓
+      │   │   └─ review: .route/1.vision.guard.review.i2.dfc5faff83ea2fcb55.r1.md
+      │   ├─ r2: spellcheck (l1, 3/3)
+      │   │   ├─ approved [TIME]
+      │   │   ├─ 0 blockers ✓
+      │   │   ├─ 0 nitpicks ✓
+      │   │   └─ review: .route/1.vision.guard.review.i3.457fd5ef46e053a35e.r2.md
+      │   └─ r3: architect (l2, 1/2)
       │       ├─ rejected [TIME]
-      │       ├─ review: .route/1.vision.guard.review.i1.7de8f5be336f95e3dd2e5b02467258533bcf304b0cbe0502fc0a08f5debbcc27.r3.md
-      │       └─ 1 blocker 🔴
+      │       ├─ 1 blocker 🔴
+      │       ├─ 0 nitpicks ✓
+      │       └─ review: .route/1.vision.guard.review.i3.457fd5ef46e053a35e.r3.md
       └─ judges
           └─ j1: rhx route.stone.judge --mechanism reviewed? --stone $stone --route $route --allow-blockers 0 --allow-nitpicks 1
               ├─ finished [TIME] ✗
@@ -91,14 +147,33 @@ exports[`driver.route.peer-budget-multilevel.journey.acceptance given: [journey 
 "
 `;
 
-exports[`driver.route.peer-budget-multilevel.journey.acceptance given: [journey 4] multi-level mixed terminal + budget extension when: [t3] fourth attempt, architect exhausts then: snapshot [t3]: architect exhausted 1`] = `
+exports[`driver.route.peer-budget-multilevel.journey.acceptance given: [journey 4] multi-level mixed terminal + budget extension when: [t3.5] fifth attempt, architect exhausted (review SKIPPED) then: snapshot [t3.5]: architect exhausted 1`] = `
 "🦉 the way speaks for itself
-   ├─ ✓ review.3 - completed [TIME]
+   │
+   ├─ r1: linter (l1, 2/2)
+   │   ├─ exhausted, cached
+   │   ├─ 1 blocker 🔴
+   │   ├─ 0 nitpicks ✓
+   │   └─ review: .route/1.vision.guard.review.i2.dfc5faff83ea2fcb55.r1.md
+   │
+   ├─ r2: spellcheck (l1, 3/3)
+   │   ├─ exhausted, cached
+   │   ├─ 0 blockers ✓
+   │   ├─ 0 nitpicks ✓
+   │   └─ review: .route/1.vision.guard.review.i3.457fd5ef46e053a35e.r2.md
+   │
+   ├─ r3: architect (l2, 2/2)
+   │   ├─ exhausted, cached
+   │   ├─ 1 blocker 🔴
+   │   ├─ 0 nitpicks ✓
+   │   └─ review: .route/1.vision.guard.review.i4.6dddc53e1de2efc1da.r3.md
+   │
+   └─ halted: peer reviewer budget exhausted
 
 🗿 route.stone.set
    ├─ stone = 1.vision
    ├─ passage = blocked
-   ├─ reason = peer reviewer budget exhausted: linter, spellcheck, architect
+   ├─ reason = peer reviewer budget exhausted: linter, architect
    ├─ options
    │  ├─ increase budget
    │  │  └─ rhx route.guard.budget --for review --add N --stone 1.vision
@@ -108,13 +183,74 @@ exports[`driver.route.peer-budget-multilevel.journey.acceptance given: [journey 
       ├─ artifacts
       │   └─ src/**/*.ts
       └─ reviews
-          ├─ r1: linter (l1, 2/2, exhausted)
-          │   └─ exhausted
-          ├─ r2: spellcheck (l1, 3/3, exhausted)
-          │   └─ exhausted
-          └─ r3: architect (l2, 2/2, exhausted)
-              ├─ exhausted
-              └─ review: .route/1.vision.guard.review.i1.9715ae938550a2a1c5d630c0e6acc4e404f733ff9a46eab56f99e55cde0f75f7.r3.md
+          ├─ r1: linter (l1, 2/2)
+          │   ├─ exhausted, cached
+          │   ├─ 1 blocker 🔴
+          │   ├─ 0 nitpicks ✓
+          │   └─ review: .route/1.vision.guard.review.i2.dfc5faff83ea2fcb55.r1.md
+          ├─ r2: spellcheck (l1, 3/3)
+          │   ├─ approved, cached
+          │   ├─ 0 blockers ✓
+          │   ├─ 0 nitpicks ✓
+          │   └─ review: .route/1.vision.guard.review.i3.457fd5ef46e053a35e.r2.md
+          └─ r3: architect (l2, 2/2)
+              ├─ exhausted, cached
+              ├─ 1 blocker 🔴
+              ├─ 0 nitpicks ✓
+              └─ review: .route/1.vision.guard.review.i4.6dddc53e1de2efc1da.r3.md
+"
+`;
+
+exports[`driver.route.peer-budget-multilevel.journey.acceptance given: [journey 4] multi-level mixed terminal + budget extension when: [t3] fourth attempt, architect at budget limit then: snapshot [t3]: architect rejected at limit 1`] = `
+"🦉 the way speaks for itself
+   │
+   ├─ r1: linter (l1, 2/2)
+   │   ├─ exhausted, cached
+   │   ├─ 1 blocker 🔴
+   │   ├─ 0 nitpicks ✓
+   │   └─ review: .route/1.vision.guard.review.i2.dfc5faff83ea2fcb55.r1.md
+   │
+   ├─ r2: spellcheck (l1, 3/3)
+   │   ├─ exhausted, cached
+   │   ├─ 0 blockers ✓
+   │   ├─ 0 nitpicks ✓
+   │   └─ review: .route/1.vision.guard.review.i3.457fd5ef46e053a35e.r2.md
+   │
+   ├─ r3: architect (l2, 2/2)
+   │   ├─ rejected [TIME]
+   │   ├─ 1 blocker 🔴
+   │   ├─ 0 nitpicks ✓
+   │   └─ review: .route/1.vision.guard.review.i4.6dddc53e1de2efc1da.r3.md
+   │
+   └─ ✗ judge.1 - blocked [TIME]
+
+🗿 route.stone.set
+   ├─ stone = 1.vision
+   ├─ passage = blocked
+   ├─ reason = blockers exceed threshold (1 > 0)
+   └─ guard
+      ├─ artifacts
+      │   └─ src/**/*.ts
+      ├─ reviews
+      │   ├─ r1: linter (l1, 2/2)
+      │   │   ├─ exhausted, cached
+      │   │   ├─ 1 blocker 🔴
+      │   │   ├─ 0 nitpicks ✓
+      │   │   └─ review: .route/1.vision.guard.review.i2.dfc5faff83ea2fcb55.r1.md
+      │   ├─ r2: spellcheck (l1, 3/3)
+      │   │   ├─ approved, cached
+      │   │   ├─ 0 blockers ✓
+      │   │   ├─ 0 nitpicks ✓
+      │   │   └─ review: .route/1.vision.guard.review.i3.457fd5ef46e053a35e.r2.md
+      │   └─ r3: architect (l2, 2/2)
+      │       ├─ rejected [TIME]
+      │       ├─ 1 blocker 🔴
+      │       ├─ 0 nitpicks ✓
+      │       └─ review: .route/1.vision.guard.review.i4.6dddc53e1de2efc1da.r3.md
+      └─ judges
+          └─ j1: rhx route.stone.judge --mechanism reviewed? --stone $stone --route $route --allow-blockers 0 --allow-nitpicks 1
+              ├─ finished [TIME] ✗
+              └─ reason: blockers exceed threshold (1 > 0)
 "
 `;
 
@@ -130,12 +266,21 @@ exports[`driver.route.peer-budget-multilevel.journey.acceptance given: [journey 
       ├─ reason: peer reviewer budget exhausted
       │
       ├─ reviews
-      │   ├─ r1: linter (l1, 2/2, exhausted)
-      │   │   └─ exhausted
-      │   ├─ r2: spellcheck (l1, 3/3, exhausted)
-      │   │   └─ exhausted
-      │   └─ r3: architect (l2, 2/2, exhausted)
-      │       └─ exhausted
+      │   ├─ r1: linter (l1, 2/2)
+      │   │   ├─ exhausted
+      │   │   ├─ 1 blocker 🔴
+      │   │   ├─ 0 nitpicks ✓
+      │   │   └─ review: /tmp/test-fns/rhachet-roles-bhrain.vlad.fix-route-review-peer-stdout/.temp/2026-06-15T07-30-31.315Z.peer-budget-multilevel.e35c79e5/.route/1.vision.guard.review.i2.dfc5faff83ea2fcb55.r1.md
+      │   ├─ r2: spellcheck (l1, 3/3)
+      │   │   ├─ approved
+      │   │   ├─ 0 blockers ✓
+      │   │   ├─ 0 nitpicks ✓
+      │   │   └─ review: /tmp/test-fns/rhachet-roles-bhrain.vlad.fix-route-review-peer-stdout/.temp/2026-06-15T07-30-31.315Z.peer-budget-multilevel.e35c79e5/.route/1.vision.guard.review.i3.457fd5ef46e053a35e.r2.md
+      │   └─ r3: architect (l2, 2/2)
+      │       ├─ exhausted
+      │       ├─ 1 blocker 🔴
+      │       ├─ 0 nitpicks ✓
+      │       └─ review: /tmp/test-fns/rhachet-roles-bhrain.vlad.fix-route-review-peer-stdout/.temp/2026-06-15T07-30-31.315Z.peer-budget-multilevel.e35c79e5/.route/1.vision.guard.review.i4.6dddc53e1de2efc1da.r3.md
       │
       ├─ please ask a human to either
       │  ├─ approve as-is
@@ -175,19 +320,28 @@ exports[`driver.route.peer-budget-multilevel.journey.acceptance given: [journey 
       ├─ reason: peer reviewer budget exhausted
       │
       ├─ reviews
-      │   ├─ r1: linter (l1, 2/2, exhausted)
-      │   │   └─ exhausted
-      │   ├─ r2: spellcheck (l1, 3/3, exhausted)
-      │   │   └─ exhausted
-      │   └─ r3: architect (l2, 2/4, rejected)
-      │       └─ rejected
+      │   ├─ r1: linter (l1, 2/2)
+      │   │   ├─ exhausted
+      │   │   ├─ 1 blocker 🔴
+      │   │   ├─ 0 nitpicks ✓
+      │   │   └─ review: /tmp/test-fns/rhachet-roles-bhrain.vlad.fix-route-review-peer-stdout/.temp/2026-06-15T07-30-31.315Z.peer-budget-multilevel.e35c79e5/.route/1.vision.guard.review.i2.dfc5faff83ea2fcb55.r1.md
+      │   ├─ r2: spellcheck (l1, 3/3)
+      │   │   ├─ approved
+      │   │   ├─ 0 blockers ✓
+      │   │   ├─ 0 nitpicks ✓
+      │   │   └─ review: /tmp/test-fns/rhachet-roles-bhrain.vlad.fix-route-review-peer-stdout/.temp/2026-06-15T07-30-31.315Z.peer-budget-multilevel.e35c79e5/.route/1.vision.guard.review.i3.457fd5ef46e053a35e.r2.md
+      │   └─ r3: architect (l2, 2/4)
+      │       ├─ rejected
+      │       ├─ 1 blocker 🔴
+      │       ├─ 0 nitpicks ✓
+      │       └─ review: /tmp/test-fns/rhachet-roles-bhrain.vlad.fix-route-review-peer-stdout/.temp/2026-06-15T07-30-31.315Z.peer-budget-multilevel.e35c79e5/.route/1.vision.guard.review.i4.6dddc53e1de2efc1da.r3.md
       │
       ├─ please ask a human to either
       │  ├─ approve as-is
       │  │  └─ rhx route.stone.set --stone 1.vision --as approved
       │  │
       │  └─ extend budget (then rerun)
-      │     └─ rhx route.guard.budget --for review --add N --stone 1.vision
+      │     └─ rhx route.guard.budget --for review --add N --peer linter --stone 1.vision
       │
       └─ once they approve, run
          └─ rhx route.stone.set --stone 1.vision --as passed
@@ -196,28 +350,55 @@ exports[`driver.route.peer-budget-multilevel.journey.acceptance given: [journey 
 
 exports[`driver.route.peer-budget-multilevel.journey.acceptance given: [journey 4] multi-level mixed terminal + budget extension when: [t7] make architect pass then: snapshot [t7]: architect approved, linter still exhausted 1`] = `
 "🦉 the way speaks for itself
-   ├─ ✓ review.3 - completed [TIME]
+   │
+   ├─ r1: linter (l1, 2/2)
+   │   ├─ exhausted, cached
+   │   ├─ 1 blocker 🔴
+   │   ├─ 0 nitpicks ✓
+   │   └─ review: .route/1.vision.guard.review.i2.dfc5faff83ea2fcb55.r1.md
+   │
+   ├─ r2: spellcheck (l1, 3/3)
+   │   ├─ exhausted, cached
+   │   ├─ 0 blockers ✓
+   │   ├─ 0 nitpicks ✓
+   │   └─ review: .route/1.vision.guard.review.i3.457fd5ef46e053a35e.r2.md
+   │
+   ├─ r3: architect (l2, 3/4)
+   │   ├─ approved [TIME]
+   │   ├─ 0 blockers ✓
+   │   ├─ 0 nitpicks ✓
+   │   └─ review: .route/1.vision.guard.review.i5.0997a4c5910ffe05d0.r3.md
+   │
+   └─ halted: peer reviewer budget exhausted
 
 🗿 route.stone.set
    ├─ stone = 1.vision
    ├─ passage = blocked
-   ├─ reason = peer reviewer budget exhausted: linter, spellcheck
+   ├─ reason = peer reviewer budget exhausted: linter
    ├─ options
    │  ├─ increase budget
-   │  │  └─ rhx route.guard.budget --for review --add N --stone 1.vision
+   │  │  └─ rhx route.guard.budget --for review --add N --peer linter --stone 1.vision
    │  └─ approve as-is
    │     └─ rhx route.stone.set --stone 1.vision --as approved
    └─ guard
       ├─ artifacts
       │   └─ src/**/*.ts
       └─ reviews
-          ├─ r1: linter (l1, 2/2, exhausted)
-          │   └─ exhausted
-          ├─ r2: spellcheck (l1, 3/3, exhausted)
-          │   └─ exhausted
-          └─ r3: architect (l2, 3/4, approved)
-              ├─ approved [TIME] ✓
-              └─ review: .route/1.vision.guard.review.i1.42cb3f0d9d5c6118a09c5ed6095b040760efdc4f1ce6622c779bff444c55db3f.r3.md
+          ├─ r1: linter (l1, 2/2)
+          │   ├─ exhausted, cached
+          │   ├─ 1 blocker 🔴
+          │   ├─ 0 nitpicks ✓
+          │   └─ review: .route/1.vision.guard.review.i2.dfc5faff83ea2fcb55.r1.md
+          ├─ r2: spellcheck (l1, 3/3)
+          │   ├─ approved, cached
+          │   ├─ 0 blockers ✓
+          │   ├─ 0 nitpicks ✓
+          │   └─ review: .route/1.vision.guard.review.i3.457fd5ef46e053a35e.r2.md
+          └─ r3: architect (l2, 3/4)
+              ├─ approved [TIME]
+              ├─ 0 blockers ✓
+              ├─ 0 nitpicks ✓
+              └─ review: .route/1.vision.guard.review.i5.0997a4c5910ffe05d0.r3.md
 "
 `;
 
@@ -233,19 +414,28 @@ exports[`driver.route.peer-budget-multilevel.journey.acceptance given: [journey 
       ├─ reason: peer reviewer budget exhausted
       │
       ├─ reviews
-      │   ├─ r1: linter (l1, 2/2, exhausted)
-      │   │   └─ exhausted
-      │   ├─ r2: spellcheck (l1, 3/3, exhausted)
-      │   │   └─ exhausted
-      │   └─ r3: architect (l2, 3/4, approved)
-      │       └─ approved
+      │   ├─ r1: linter (l1, 2/2)
+      │   │   ├─ exhausted
+      │   │   ├─ 1 blocker 🔴
+      │   │   ├─ 0 nitpicks ✓
+      │   │   └─ review: /tmp/test-fns/rhachet-roles-bhrain.vlad.fix-route-review-peer-stdout/.temp/2026-06-15T07-30-31.315Z.peer-budget-multilevel.e35c79e5/.route/1.vision.guard.review.i2.dfc5faff83ea2fcb55.r1.md
+      │   ├─ r2: spellcheck (l1, 3/3)
+      │   │   ├─ approved
+      │   │   ├─ 0 blockers ✓
+      │   │   ├─ 0 nitpicks ✓
+      │   │   └─ review: /tmp/test-fns/rhachet-roles-bhrain.vlad.fix-route-review-peer-stdout/.temp/2026-06-15T07-30-31.315Z.peer-budget-multilevel.e35c79e5/.route/1.vision.guard.review.i3.457fd5ef46e053a35e.r2.md
+      │   └─ r3: architect (l2, 3/4)
+      │       ├─ approved
+      │       ├─ 0 blockers ✓
+      │       ├─ 0 nitpicks ✓
+      │       └─ review: /tmp/test-fns/rhachet-roles-bhrain.vlad.fix-route-review-peer-stdout/.temp/2026-06-15T07-30-31.315Z.peer-budget-multilevel.e35c79e5/.route/1.vision.guard.review.i5.0997a4c5910ffe05d0.r3.md
       │
       ├─ please ask a human to either
       │  ├─ approve as-is
       │  │  └─ rhx route.stone.set --stone 1.vision --as approved
       │  │
       │  └─ extend budget (then rerun)
-      │     └─ rhx route.guard.budget --for review --add N --stone 1.vision
+      │     └─ rhx route.guard.budget --for review --add N --peer linter --stone 1.vision
       │
       └─ once they approve, run
          └─ rhx route.stone.set --stone 1.vision --as passed
@@ -263,7 +453,25 @@ exports[`driver.route.peer-budget-multilevel.journey.acceptance given: [journey 
 
 exports[`driver.route.peer-budget-multilevel.journey.acceptance given: [journey 4] multi-level mixed terminal + budget extension when: [t10] pass after human approval then: snapshot [t10]: journey complete 1`] = `
 "🦉 the way speaks for itself
-   ├─ ✓ review.3 - completed (cached)
+   │
+   ├─ r1: linter (l1, 2/2)
+   │   ├─ exhausted, cached
+   │   ├─ 1 blocker 🔴
+   │   ├─ 0 nitpicks ✓
+   │   └─ review: .route/1.vision.guard.review.i2.dfc5faff83ea2fcb55.r1.md
+   │
+   ├─ r2: spellcheck (l1, 3/3)
+   │   ├─ exhausted, cached
+   │   ├─ 0 blockers ✓
+   │   ├─ 0 nitpicks ✓
+   │   └─ review: .route/1.vision.guard.review.i3.457fd5ef46e053a35e.r2.md
+   │
+   ├─ r3: architect (l2, 3/4)
+   │   ├─ approved, cached
+   │   ├─ 0 blockers ✓
+   │   ├─ 0 nitpicks ✓
+   │   └─ review: .route/1.vision.guard.review.i5.0997a4c5910ffe05d0.r3.md
+   │
    └─ ✓ judge.1 - allowed [TIME]
 
 🗿 route.stone.set
@@ -273,13 +481,21 @@ exports[`driver.route.peer-budget-multilevel.journey.acceptance given: [journey 
    │  ├─ artifacts
    │  │   └─ src/**/*.ts
    │  ├─ reviews
-   │  │   ├─ r1: linter (l1, 2/2, exhausted)
-   │  │   │   └─ exhausted
-   │  │   ├─ r2: spellcheck (l1, 3/3, exhausted)
-   │  │   │   └─ exhausted
-   │  │   └─ r3: architect (l2, 3/4, approved)
-   │  │       ├─ cached ✓
-   │  │       └─ review: .route/1.vision.guard.review.i1.42cb3f0d9d5c6118a09c5ed6095b040760efdc4f1ce6622c779bff444c55db3f.r3.md
+   │  │   ├─ r1: linter (l1, 2/2)
+   │  │   │   ├─ exhausted, cached
+   │  │   │   ├─ 1 blocker 🔴
+   │  │   │   ├─ 0 nitpicks ✓
+   │  │   │   └─ review: .route/1.vision.guard.review.i2.dfc5faff83ea2fcb55.r1.md
+   │  │   ├─ r2: spellcheck (l1, 3/3)
+   │  │   │   ├─ approved, cached
+   │  │   │   ├─ 0 blockers ✓
+   │  │   │   ├─ 0 nitpicks ✓
+   │  │   │   └─ review: .route/1.vision.guard.review.i3.457fd5ef46e053a35e.r2.md
+   │  │   └─ r3: architect (l2, 3/4)
+   │  │       ├─ approved, cached
+   │  │       ├─ 0 blockers ✓
+   │  │       ├─ 0 nitpicks ✓
+   │  │       └─ review: .route/1.vision.guard.review.i5.0997a4c5910ffe05d0.r3.md
    │  └─ judges
    │      └─ j1: rhx route.stone.judge --mechanism reviewed? --stone $stone --route $route --allow-blockers 0 --allow-nitpicks 1
    │          └─ finished [TIME] ✓

@@ -1,36 +1,99 @@
 // Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
 
-exports[`driver.route.peer-budget-all-terminal-halt.acceptance given: [case1] level 1 exhausts but level 2 still has budget when: [t0] artifact created, first attempt then: snapshot [t0]: l1 exhausted, l2 rejected, no halt 1`] = `
+exports[`driver.route.peer-budget-all-terminal-halt.acceptance given: [case1] level 1 exhausts but level 2 still has budget when: [t0] artifact created, first attempt then: snapshot [t0]: l1 rejected, l2 awaits, no halt 1`] = `
 "🦉 the way speaks for itself
-   ├─ ✓ review.1 - completed [TIME]
-   ├─ ✓ review.2 - completed [TIME]
+   │
+   ├─ r1: quick-fail (l1, 1/1)
+   │   ├─ rejected [TIME]
+   │   ├─ 1 blocker 🔴
+   │   ├─ 0 nitpicks ✓
+   │   └─ review: .route/1.vision.guard.review.i1.8739656801d5e77f22.r1.md
+   │
+   ├─ r2: thorough (l2, 0/2)
+   │   └─ awaits arrival
+   │
    └─ ✗ judge.1 - blocked [TIME]
 
 🗿 route.stone.set
    ├─ stone = 1.vision
    ├─ passage = blocked
-   ├─ reason = blockers exceed threshold (2 > 0)
+   ├─ reason = blockers exceed threshold (1 > 0)
    └─ guard
       ├─ artifacts
       │   └─ src/**/*.ts
       ├─ reviews
-      │   ├─ r1: quick-fail (l1, 1/1, exhausted)
-      │   │   ├─ exhausted
-      │   │   └─ review: .route/1.vision.guard.review.i1.e0aae4264c854c203aaff5a5ed15c176fb117aacd9ea5fed2ac8d500fa35679b.r1.md
-      │   └─ r2: thorough (l2, 1/2, rejected)
-      │       ├─ rejected [TIME]
-      │       ├─ review: .route/1.vision.guard.review.i1.e0aae4264c854c203aaff5a5ed15c176fb117aacd9ea5fed2ac8d500fa35679b.r2.md
-      │       └─ 1 blocker 🔴
+      │   ├─ r1: quick-fail (l1, 1/1)
+      │   │   ├─ rejected [TIME]
+      │   │   ├─ 1 blocker 🔴
+      │   │   ├─ 0 nitpicks ✓
+      │   │   └─ review: .route/1.vision.guard.review.i1.8739656801d5e77f22.r1.md
+      │   └─ r2: thorough (l2, 0/2)
+      │       └─ awaits l1 terminal
       └─ judges
           └─ j1: rhx route.stone.judge --mechanism reviewed? --stone $stone --route $route --allow-blockers 0 --allow-nitpicks 1
               ├─ finished [TIME] ✗
-              └─ reason: blockers exceed threshold (2 > 0)
+              └─ reason: blockers exceed threshold (1 > 0)
 "
 `;
 
-exports[`driver.route.peer-budget-all-terminal-halt.acceptance given: [case1] level 1 exhausts but level 2 still has budget when: [t1] second attempt, level 2 also exhausts then: snapshot [t1]: all terminal, route halted 1`] = `
+exports[`driver.route.peer-budget-all-terminal-halt.acceptance given: [case1] level 1 exhausts but level 2 still has budget when: [t1] second attempt, level 1 exhausts, level 2 unlocks then: snapshot [t1]: l1 exhausted, l2 rejected (1/2) 1`] = `
 "🦉 the way speaks for itself
-   ├─ ✓ review.2 - completed [TIME]
+   │
+   ├─ r1: quick-fail (l1, 1/1)
+   │   ├─ exhausted, cached
+   │   ├─ 1 blocker 🔴
+   │   ├─ 0 nitpicks ✓
+   │   └─ review: .route/1.vision.guard.review.i1.8739656801d5e77f22.r1.md
+   │
+   ├─ r2: thorough (l2, 1/2)
+   │   ├─ rejected [TIME]
+   │   ├─ 1 blocker 🔴
+   │   ├─ 0 nitpicks ✓
+   │   └─ review: .route/1.vision.guard.review.i2.dfc5faff83ea2fcb55.r2.md
+   │
+   └─ ✗ judge.1 - blocked [TIME]
+
+🗿 route.stone.set
+   ├─ stone = 1.vision
+   ├─ passage = blocked
+   ├─ reason = blockers exceed threshold (1 > 0)
+   └─ guard
+      ├─ artifacts
+      │   └─ src/**/*.ts
+      ├─ reviews
+      │   ├─ r1: quick-fail (l1, 1/1)
+      │   │   ├─ exhausted, cached
+      │   │   ├─ 1 blocker 🔴
+      │   │   ├─ 0 nitpicks ✓
+      │   │   └─ review: .route/1.vision.guard.review.i1.8739656801d5e77f22.r1.md
+      │   └─ r2: thorough (l2, 1/2)
+      │       ├─ rejected [TIME]
+      │       ├─ 1 blocker 🔴
+      │       ├─ 0 nitpicks ✓
+      │       └─ review: .route/1.vision.guard.review.i2.dfc5faff83ea2fcb55.r2.md
+      └─ judges
+          └─ j1: rhx route.stone.judge --mechanism reviewed? --stone $stone --route $route --allow-blockers 0 --allow-nitpicks 1
+              ├─ finished [TIME] ✗
+              └─ reason: blockers exceed threshold (1 > 0)
+"
+`;
+
+exports[`driver.route.peer-budget-all-terminal-halt.acceptance given: [case1] level 1 exhausts but level 2 still has budget when: [t2.5] fourth attempt, thorough now exhausted (review SKIPPED) then: snapshot [t2.5]: both exhausted, route halted 1`] = `
+"🦉 the way speaks for itself
+   │
+   ├─ r1: quick-fail (l1, 1/1)
+   │   ├─ exhausted, cached
+   │   ├─ 1 blocker 🔴
+   │   ├─ 0 nitpicks ✓
+   │   └─ review: .route/1.vision.guard.review.i1.8739656801d5e77f22.r1.md
+   │
+   ├─ r2: thorough (l2, 2/2)
+   │   ├─ exhausted, cached
+   │   ├─ 1 blocker 🔴
+   │   ├─ 0 nitpicks ✓
+   │   └─ review: .route/1.vision.guard.review.i3.457fd5ef46e053a35e.r2.md
+   │
+   └─ halted: peer reviewer budget exhausted
 
 🗿 route.stone.set
    ├─ stone = 1.vision
@@ -45,10 +108,57 @@ exports[`driver.route.peer-budget-all-terminal-halt.acceptance given: [case1] le
       ├─ artifacts
       │   └─ src/**/*.ts
       └─ reviews
-          ├─ r1: quick-fail (l1, 1/1, exhausted)
-          │   └─ exhausted
-          └─ r2: thorough (l2, 2/2, exhausted)
-              ├─ exhausted
-              └─ review: .route/1.vision.guard.review.i1.6b085541feda505cf8c0d0d4929a3b937eac477a6af3437f758a27001cdbadae.r2.md
+          ├─ r1: quick-fail (l1, 1/1)
+          │   ├─ exhausted, cached
+          │   ├─ 1 blocker 🔴
+          │   ├─ 0 nitpicks ✓
+          │   └─ review: .route/1.vision.guard.review.i1.8739656801d5e77f22.r1.md
+          └─ r2: thorough (l2, 2/2)
+              ├─ exhausted, cached
+              ├─ 1 blocker 🔴
+              ├─ 0 nitpicks ✓
+              └─ review: .route/1.vision.guard.review.i3.457fd5ef46e053a35e.r2.md
+"
+`;
+
+exports[`driver.route.peer-budget-all-terminal-halt.acceptance given: [case1] level 1 exhausts but level 2 still has budget when: [t2] third attempt, thorough at budget limit then: snapshot [t2]: l1 exhausted, l2 rejected (2/2) 1`] = `
+"🦉 the way speaks for itself
+   │
+   ├─ r1: quick-fail (l1, 1/1)
+   │   ├─ exhausted, cached
+   │   ├─ 1 blocker 🔴
+   │   ├─ 0 nitpicks ✓
+   │   └─ review: .route/1.vision.guard.review.i1.8739656801d5e77f22.r1.md
+   │
+   ├─ r2: thorough (l2, 2/2)
+   │   ├─ rejected [TIME]
+   │   ├─ 1 blocker 🔴
+   │   ├─ 0 nitpicks ✓
+   │   └─ review: .route/1.vision.guard.review.i3.457fd5ef46e053a35e.r2.md
+   │
+   └─ ✗ judge.1 - blocked [TIME]
+
+🗿 route.stone.set
+   ├─ stone = 1.vision
+   ├─ passage = blocked
+   ├─ reason = blockers exceed threshold (1 > 0)
+   └─ guard
+      ├─ artifacts
+      │   └─ src/**/*.ts
+      ├─ reviews
+      │   ├─ r1: quick-fail (l1, 1/1)
+      │   │   ├─ exhausted, cached
+      │   │   ├─ 1 blocker 🔴
+      │   │   ├─ 0 nitpicks ✓
+      │   │   └─ review: .route/1.vision.guard.review.i1.8739656801d5e77f22.r1.md
+      │   └─ r2: thorough (l2, 2/2)
+      │       ├─ rejected [TIME]
+      │       ├─ 1 blocker 🔴
+      │       ├─ 0 nitpicks ✓
+      │       └─ review: .route/1.vision.guard.review.i3.457fd5ef46e053a35e.r2.md
+      └─ judges
+          └─ j1: rhx route.stone.judge --mechanism reviewed? --stone $stone --route $route --allow-blockers 0 --allow-nitpicks 1
+              ├─ finished [TIME] ✗
+              └─ reason: blockers exceed threshold (1 > 0)
 "
 `;

@@ -2,7 +2,13 @@
 
 exports[`driver.route.escape-hatch.acceptance given: [escape-hatch] stone with perma-fail review when: [t0] artifact created and pass attempted then: stdout has good vibes 1`] = `
 "🦉 the way speaks for itself
-   ├─ ✓ review.1 - completed [TIME]
+   │
+   ├─ r1: bash (l1, 0/∞)
+   │   ├─ rejected [TIME]
+   │   ├─ 1 blocker 🔴
+   │   ├─ 0 nitpicks ✓
+   │   └─ review: .route/1.design.guard.review.i1.eeb68127f67e09a218.r1.md
+   │
    └─ ✗ judge.1 - blocked [TIME]
 
 🗿 route.stone.set
@@ -13,10 +19,11 @@ exports[`driver.route.escape-hatch.acceptance given: [escape-hatch] stone with p
       ├─ artifacts
       │   └─ $route/1.design*.md
       ├─ reviews
-      │   └─ r1: bash $route/.test/perma-fail-review.sh
-      │       ├─ finished [TIME] ✓
-      │       ├─ review: .route/1.design.guard.review.i1.3f8f65c54b07f246f3b1115dbcdae8965f85c7439835a982a73b20147d1507cc.r1.md
-      │       └─ 1 blocker 🔴
+      │   └─ r1: bash (l1, 1/∞)
+      │       ├─ rejected [TIME]
+      │       ├─ 1 blocker 🔴
+      │       ├─ 0 nitpicks ✓
+      │       └─ review: .route/1.design.guard.review.i1.eeb68127f67e09a218.r1.md
       └─ judges
           └─ j1: rhx route.stone.judge --mechanism reviewed? --stone $stone --route $route --allow-blockers 0 --allow-nitpicks 0
               ├─ finished [TIME] ✗

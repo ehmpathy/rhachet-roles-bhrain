@@ -56,7 +56,7 @@ describe('runStoneGuardReviews', () => {
 
     when('[t0] reviews are executed', () => {
       then('creates review artifact file', async () => {
-        const reviews = await runStoneGuardReviews(
+        const result = await runStoneGuardReviews(
           {
             stone,
             guard,
@@ -66,14 +66,14 @@ describe('runStoneGuardReviews', () => {
           },
           noopContext,
         );
-        expect(reviews).toHaveLength(1);
-        expect(reviews[0]?.path).toContain('.guard.review.i1.testhash.r1.md');
-        const stat = await fs.stat(reviews[0]?.path ?? '');
+        expect(result.artifacts).toHaveLength(1);
+        expect(result.artifacts[0]?.path).toContain('.guard.review.i1.testhash.r1.md');
+        const stat = await fs.stat(result.artifacts[0]?.path ?? '');
         expect(stat.isFile()).toBe(true);
       });
 
       then('parses blockers from output', async () => {
-        const reviews = await runStoneGuardReviews(
+        const result = await runStoneGuardReviews(
           {
             stone,
             guard,
@@ -83,11 +83,11 @@ describe('runStoneGuardReviews', () => {
           },
           noopContext,
         );
-        expect(reviews[0]?.blockers).toEqual(0);
+        expect(result.artifacts[0]?.blockers).toEqual(0);
       });
 
       then('parses nitpicks from output', async () => {
-        const reviews = await runStoneGuardReviews(
+        const result = await runStoneGuardReviews(
           {
             stone,
             guard,
@@ -97,25 +97,25 @@ describe('runStoneGuardReviews', () => {
           },
           noopContext,
         );
-        expect(reviews[0]?.nitpicks).toEqual(1);
+        expect(result.artifacts[0]?.nitpicks).toEqual(1);
       });
 
       then('artifact snapshot matches', async () => {
-        const reviews = await runStoneGuardReviews(
+        const result = await runStoneGuardReviews(
           { stone, guard, hash: 'case1snap', iteration: 1, route: tempDir },
           noopContext,
         );
-        const content = await fs.readFile(reviews[0]?.path ?? '', 'utf-8');
+        const content = await fs.readFile(result.artifacts[0]?.path ?? '', 'utf-8');
         expect(content).toMatchSnapshot();
       });
 
       then('return value snapshot matches', async () => {
-        const reviews = await runStoneGuardReviews(
+        const result = await runStoneGuardReviews(
           { stone, guard, hash: 'case1ret', iteration: 1, route: tempDir },
           noopContext,
         );
         // sanitize dynamic paths for portable snapshots
-        const sanitized = reviews.map((r) => ({
+        const sanitized = result.artifacts.map((r) => ({
           ...r,
           path: r.path?.replace(tempDir, '<route>'),
         }));
@@ -155,7 +155,7 @@ describe('runStoneGuardReviews', () => {
 
     when('[t0] reviews are executed', () => {
       then('creates artifact for each review', async () => {
-        const reviews = await runStoneGuardReviews(
+        const result = await runStoneGuardReviews(
           {
             stone,
             guard,
@@ -165,28 +165,28 @@ describe('runStoneGuardReviews', () => {
           },
           noopContext,
         );
-        expect(reviews).toHaveLength(2);
-        expect(reviews[0]?.index).toEqual(1);
-        expect(reviews[1]?.index).toEqual(2);
+        expect(result.artifacts).toHaveLength(2);
+        expect(result.artifacts[0]?.index).toEqual(1);
+        expect(result.artifacts[1]?.index).toEqual(2);
       });
 
       then('artifact snapshots match', async () => {
-        const reviews = await runStoneGuardReviews(
+        const result = await runStoneGuardReviews(
           { stone, guard, hash: 'case2snap', iteration: 1, route: tempDir },
           noopContext,
         );
-        const content1 = await fs.readFile(reviews[0]?.path ?? '', 'utf-8');
-        const content2 = await fs.readFile(reviews[1]?.path ?? '', 'utf-8');
+        const content1 = await fs.readFile(result.artifacts[0]?.path ?? '', 'utf-8');
+        const content2 = await fs.readFile(result.artifacts[1]?.path ?? '', 'utf-8');
         expect(content1).toMatchSnapshot();
         expect(content2).toMatchSnapshot();
       });
 
       then('return value snapshot matches', async () => {
-        const reviews = await runStoneGuardReviews(
+        const result = await runStoneGuardReviews(
           { stone, guard, hash: 'case2ret', iteration: 1, route: tempDir },
           noopContext,
         );
-        const sanitized = reviews.map((r) => ({
+        const sanitized = result.artifacts.map((r) => ({
           ...r,
           path: r.path?.replace(tempDir, '<route>'),
         }));
@@ -223,39 +223,39 @@ describe('runStoneGuardReviews', () => {
 
     when('[t0] review exits 0', () => {
       then('exitCode is 0 and exitClass is passed', async () => {
-        const reviews = await runStoneGuardReviews(
+        const result = await runStoneGuardReviews(
           { stone, guard, hash: 'exit0hash', iteration: 1, route: tempDir },
           noopContext,
         );
-        expect(reviews[0]?.exitCode).toEqual(0);
-        expect(reviews[0]?.exitClass).toEqual('passed');
+        expect(result.artifacts[0]?.exitCode).toEqual(0);
+        expect(result.artifacts[0]?.exitClass).toEqual('passed');
       });
 
       then('artifact contains stdout in tree bucket', async () => {
-        const reviews = await runStoneGuardReviews(
+        const result = await runStoneGuardReviews(
           { stone, guard, hash: 'exit0hash2', iteration: 1, route: tempDir },
           noopContext,
         );
-        const content = await fs.readFile(reviews[0]?.path ?? '', 'utf-8');
+        const content = await fs.readFile(result.artifacts[0]?.path ?? '', 'utf-8');
         expect(content).toContain('├─ stdout');
         expect(content).toContain('review passed');
       });
 
       then('artifact snapshot matches', async () => {
-        const reviews = await runStoneGuardReviews(
+        const result = await runStoneGuardReviews(
           { stone, guard, hash: 'exit0snap', iteration: 1, route: tempDir },
           noopContext,
         );
-        const content = await fs.readFile(reviews[0]?.path ?? '', 'utf-8');
+        const content = await fs.readFile(result.artifacts[0]?.path ?? '', 'utf-8');
         expect(content).toMatchSnapshot();
       });
 
       then('return value snapshot matches', async () => {
-        const reviews = await runStoneGuardReviews(
+        const result = await runStoneGuardReviews(
           { stone, guard, hash: 'case3ret', iteration: 1, route: tempDir },
           noopContext,
         );
-        const sanitized = reviews.map((r) => ({
+        const sanitized = result.artifacts.map((r) => ({
           ...r,
           path: r.path?.replace(tempDir, '<route>'),
         }));
@@ -297,39 +297,39 @@ describe('runStoneGuardReviews', () => {
 
     when('[t0] review exits 2', () => {
       then('exitCode is 2 and exitClass is constraint', async () => {
-        const reviews = await runStoneGuardReviews(
+        const result = await runStoneGuardReviews(
           { stone, guard, hash: 'exit2hash', iteration: 1, route: tempDir },
           noopContext,
         );
-        expect(reviews[0]?.exitCode).toEqual(2);
-        expect(reviews[0]?.exitClass).toEqual('constraint');
+        expect(result.artifacts[0]?.exitCode).toEqual(2);
+        expect(result.artifacts[0]?.exitClass).toEqual('constraint');
       });
 
       then('artifact contains blocked by constraints', async () => {
-        const reviews = await runStoneGuardReviews(
+        const result = await runStoneGuardReviews(
           { stone, guard, hash: 'exit2hash2', iteration: 1, route: tempDir },
           noopContext,
         );
-        const content = await fs.readFile(reviews[0]?.path ?? '', 'utf-8');
+        const content = await fs.readFile(result.artifacts[0]?.path ?? '', 'utf-8');
         expect(content).toContain('blocked by constraints');
         expect(content).toContain('exit code: 2');
       });
 
       then('artifact snapshot matches', async () => {
-        const reviews = await runStoneGuardReviews(
+        const result = await runStoneGuardReviews(
           { stone, guard, hash: 'exit2snap', iteration: 1, route: tempDir },
           noopContext,
         );
-        const content = await fs.readFile(reviews[0]?.path ?? '', 'utf-8');
+        const content = await fs.readFile(result.artifacts[0]?.path ?? '', 'utf-8');
         expect(content).toMatchSnapshot();
       });
 
       then('return value snapshot matches', async () => {
-        const reviews = await runStoneGuardReviews(
+        const result = await runStoneGuardReviews(
           { stone, guard, hash: 'case4ret', iteration: 1, route: tempDir },
           noopContext,
         );
-        const sanitized = reviews.map((r) => ({
+        const sanitized = result.artifacts.map((r) => ({
           ...r,
           path: r.path?.replace(tempDir, '<route>'),
         }));
@@ -371,48 +371,48 @@ describe('runStoneGuardReviews', () => {
 
     when('[t0] review exits 1', () => {
       then('exitCode is 1 and exitClass is malfunction', async () => {
-        const reviews = await runStoneGuardReviews(
+        const result = await runStoneGuardReviews(
           { stone, guard, hash: 'exit1hash', iteration: 1, route: tempDir },
           noopContext,
         );
-        expect(reviews[0]?.exitCode).toEqual(1);
-        expect(reviews[0]?.exitClass).toEqual('malfunction');
+        expect(result.artifacts[0]?.exitCode).toEqual(1);
+        expect(result.artifacts[0]?.exitClass).toEqual('malfunction');
       });
 
       then('artifact contains blocked by malfunction', async () => {
-        const reviews = await runStoneGuardReviews(
+        const result = await runStoneGuardReviews(
           { stone, guard, hash: 'exit1hash2', iteration: 1, route: tempDir },
           noopContext,
         );
-        const content = await fs.readFile(reviews[0]?.path ?? '', 'utf-8');
+        const content = await fs.readFile(result.artifacts[0]?.path ?? '', 'utf-8');
         expect(content).toContain('blocked by malfunction');
         expect(content).toContain('exit code: 1');
       });
 
       then('artifact captures both stdout and stderr', async () => {
-        const reviews = await runStoneGuardReviews(
+        const result = await runStoneGuardReviews(
           { stone, guard, hash: 'exit1hash3', iteration: 1, route: tempDir },
           noopContext,
         );
-        expect(reviews[0]?.stdout).toContain('stdout output');
-        expect(reviews[0]?.stderr).toContain('stderr error');
+        expect(result.artifacts[0]?.stdout).toContain('stdout output');
+        expect(result.artifacts[0]?.stderr).toContain('stderr error');
       });
 
       then('artifact snapshot matches', async () => {
-        const reviews = await runStoneGuardReviews(
+        const result = await runStoneGuardReviews(
           { stone, guard, hash: 'exit1snap', iteration: 1, route: tempDir },
           noopContext,
         );
-        const content = await fs.readFile(reviews[0]?.path ?? '', 'utf-8');
+        const content = await fs.readFile(result.artifacts[0]?.path ?? '', 'utf-8');
         expect(content).toMatchSnapshot();
       });
 
       then('return value snapshot matches', async () => {
-        const reviews = await runStoneGuardReviews(
+        const result = await runStoneGuardReviews(
           { stone, guard, hash: 'case5ret', iteration: 1, route: tempDir },
           noopContext,
         );
-        const sanitized = reviews.map((r) => ({
+        const sanitized = result.artifacts.map((r) => ({
           ...r,
           path: r.path?.replace(tempDir, '<route>'),
         }));
@@ -457,7 +457,7 @@ describe('runStoneGuardReviews', () => {
 
     when('[t0] reviews are executed with $route substitution', () => {
       then('$route is substituted with route path', async () => {
-        const reviews = await runStoneGuardReviews(
+        const result = await runStoneGuardReviews(
           {
             stone,
             guard,
@@ -467,14 +467,14 @@ describe('runStoneGuardReviews', () => {
           },
           noopContext,
         );
-        expect(reviews).toHaveLength(1);
-        const content = await fs.readFile(reviews[0]?.path ?? '', 'utf-8');
+        expect(result.artifacts).toHaveLength(1);
+        const content = await fs.readFile(result.artifacts[0]?.path ?? '', 'utf-8');
         // should contain the route path in output
         expect(content).toContain(tempDir);
       });
 
       then('review command receives correct path', async () => {
-        const reviews = await runStoneGuardReviews(
+        const result = await runStoneGuardReviews(
           {
             stone,
             guard,
@@ -486,17 +486,17 @@ describe('runStoneGuardReviews', () => {
         );
         // if $route was doubled, the marker wouldn't be found
         // and blockers would be 1 instead of 0
-        expect(reviews[0]?.blockers).toEqual(0);
-        const content = await fs.readFile(reviews[0]?.path ?? '', 'utf-8');
+        expect(result.artifacts[0]?.blockers).toEqual(0);
+        const content = await fs.readFile(result.artifacts[0]?.path ?? '', 'utf-8');
         expect(content).toContain('marker found');
       });
 
       then('artifact snapshot matches', async () => {
-        const reviews = await runStoneGuardReviews(
+        const result = await runStoneGuardReviews(
           { stone, guard, hash: 'case6snap', iteration: 1, route: tempDir },
           noopContext,
         );
-        const content = await fs.readFile(reviews[0]?.path ?? '', 'utf-8');
+        const content = await fs.readFile(result.artifacts[0]?.path ?? '', 'utf-8');
         // sanitize dynamic temp path for portable snapshots
         const sanitized = content.replace(
           new RegExp(tempDir.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'g'),
@@ -506,11 +506,11 @@ describe('runStoneGuardReviews', () => {
       });
 
       then('return value snapshot matches', async () => {
-        const reviews = await runStoneGuardReviews(
+        const result = await runStoneGuardReviews(
           { stone, guard, hash: 'case6ret', iteration: 1, route: tempDir },
           noopContext,
         );
-        const sanitized = reviews.map((r) => ({
+        const sanitized = result.artifacts.map((r) => ({
           ...r,
           path: r.path?.replace(tempDir, '<route>'),
           stdout: r.stdout?.replace(
@@ -557,7 +557,7 @@ describe('runStoneGuardReviews', () => {
 
     when('[t0] review uses $rhx variable', () => {
       then('$rhx is substituted with node_modules/.bin/rhx path', async () => {
-        const reviews = await runStoneGuardReviews(
+        const result = await runStoneGuardReviews(
           {
             stone,
             guard,
@@ -567,18 +567,18 @@ describe('runStoneGuardReviews', () => {
           },
           noopContext,
         );
-        expect(reviews).toHaveLength(1);
+        expect(result.artifacts).toHaveLength(1);
         // should contain the expanded path in output
-        const content = await fs.readFile(reviews[0]?.path ?? '', 'utf-8');
+        const content = await fs.readFile(result.artifacts[0]?.path ?? '', 'utf-8');
         expect(content).toContain('node_modules/.bin/rhx');
       });
 
       then('artifact snapshot matches', async () => {
-        const reviews = await runStoneGuardReviews(
+        const result = await runStoneGuardReviews(
           { stone, guard, hash: 'rhxsnap', iteration: 1, route: tempDir },
           noopContext,
         );
-        const content = await fs.readFile(reviews[0]?.path ?? '', 'utf-8');
+        const content = await fs.readFile(result.artifacts[0]?.path ?? '', 'utf-8');
         // sanitize absolute path for portable snapshots
         const sanitized = content.replace(
           /rhx=.*\/node_modules/g,
@@ -588,11 +588,11 @@ describe('runStoneGuardReviews', () => {
       });
 
       then('return value snapshot matches', async () => {
-        const reviews = await runStoneGuardReviews(
+        const result = await runStoneGuardReviews(
           { stone, guard, hash: 'case7ret', iteration: 1, route: tempDir },
           noopContext,
         );
-        const sanitized = reviews.map((r) => ({
+        const sanitized = result.artifacts.map((r) => ({
           ...r,
           path: r.path?.replace(tempDir, '<route>'),
           stdout: r.stdout?.replace(
@@ -644,7 +644,7 @@ describe('runStoneGuardReviews', () => {
       then(
         '$rhachet is substituted with node_modules/.bin/rhachet path',
         async () => {
-          const reviews = await runStoneGuardReviews(
+          const result = await runStoneGuardReviews(
             {
               stone,
               guard,
@@ -654,19 +654,19 @@ describe('runStoneGuardReviews', () => {
             },
             noopContext,
           );
-          expect(reviews).toHaveLength(1);
+          expect(result.artifacts).toHaveLength(1);
           // should contain the expanded path in output
-          const content = await fs.readFile(reviews[0]?.path ?? '', 'utf-8');
+          const content = await fs.readFile(result.artifacts[0]?.path ?? '', 'utf-8');
           expect(content).toContain('node_modules/.bin/rhachet');
         },
       );
 
       then('artifact snapshot matches', async () => {
-        const reviews = await runStoneGuardReviews(
+        const result = await runStoneGuardReviews(
           { stone, guard, hash: 'rhachetsnap', iteration: 1, route: tempDir },
           noopContext,
         );
-        const content = await fs.readFile(reviews[0]?.path ?? '', 'utf-8');
+        const content = await fs.readFile(result.artifacts[0]?.path ?? '', 'utf-8');
         // sanitize absolute path for portable snapshots
         const sanitized = content.replace(
           /rhachet=.*\/node_modules/g,
@@ -676,11 +676,11 @@ describe('runStoneGuardReviews', () => {
       });
 
       then('return value snapshot matches', async () => {
-        const reviews = await runStoneGuardReviews(
+        const result = await runStoneGuardReviews(
           { stone, guard, hash: 'case8ret', iteration: 1, route: tempDir },
           noopContext,
         );
-        const sanitized = reviews.map((r) => ({
+        const sanitized = result.artifacts.map((r) => ({
           ...r,
           path: r.path?.replace(tempDir, '<route>'),
           stdout: r.stdout?.replace(
@@ -832,7 +832,7 @@ describe('runStoneGuardReviews', () => {
       });
 
       then('review reports malfunction', () => {
-        expect(reviews[0]?.exitClass).toEqual('malfunction');
+        expect(reviews.artifacts[0]?.exitClass).toEqual('malfunction');
       });
 
       then('budget NOT consumed (meter rounds is 0)', async () => {
@@ -890,7 +890,7 @@ describe('runStoneGuardReviews', () => {
       });
 
       then('review reports passed', () => {
-        expect(reviews[0]?.exitClass).toEqual('passed');
+        expect(reviews.artifacts[0]?.exitClass).toEqual('passed');
       });
 
       then('budget consumed (meter rounds is 1)', async () => {
