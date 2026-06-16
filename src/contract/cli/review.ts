@@ -7,15 +7,14 @@ import {
   getAvailableBrainsInWords,
 } from 'rhachet/brains';
 
-import { getXaiCredsFromKeyrack } from '@src/domain.operations/credentials/getXaiCredsFromKeyrack';
 import { genDefaultReviewOutputPath } from '@src/domain.operations/review/genDefaultReviewOutputPath';
 import { stepReview } from '@src/domain.operations/review/stepReview';
 
 /**
  * .what = default brain for review skill
- * .why = xai/grok/code-fast-1 is fast, cheap, and effective for code review
+ * .why = fireworks/deepseek/v4-flash is better, cheaper, and faster for code review
  */
-const DEFAULT_BRAIN = 'xai/grok/code-fast-1';
+const DEFAULT_BRAIN = 'fireworks/deepseek/v4-flash';
 
 /**
  * .what = prints help message with available brains
@@ -176,18 +175,15 @@ export const review = async (): Promise<void> => {
     process.exit(2);
   }
 
-  // resolve output path (generate default if not specified)
+  // determine output path (generate default if not specified)
   const cwd = process.cwd();
-  const outputResolved = options.output ?? genDefaultReviewOutputPath({ cwd });
+  const outputPath = options.output ?? genDefaultReviewOutputPath({ cwd });
 
-  // fetch xai credentials from keyrack if xai brain selected
-  const isXaiBrain = options.brain.startsWith('xai/');
-  if (isXaiBrain) {
-    await getXaiCredsFromKeyrack();
-  }
-
-  // create brain context via discovery (expensive)
-  const brain = await genContextBrain({ choice: options.brain });
+  // create brain context via discovery with credentials
+  const brain = await genContextBrain({
+    choice: options.brain,
+    creds: { keyrack: { owner: 'ehmpath', env: 'prep' } },
+  });
 
   // invoke stepReview with validation error handler
   try {
@@ -202,7 +198,7 @@ export const review = async (): Promise<void> => {
         pathsWout: options.pathsWout,
         join: options.join,
         refs: options.refs,
-        output: outputResolved,
+        output: outputPath,
         focus: options.focus,
         goal: options.goal,
       },
@@ -211,9 +207,9 @@ export const review = async (): Promise<void> => {
 
     // open output file if --open specified
     if (options.open) {
-      const outputAbsolute = path.isAbsolute(outputResolved)
-        ? outputResolved
-        : path.join(cwd, outputResolved);
+      const outputAbsolute = path.isAbsolute(outputPath)
+        ? outputPath
+        : path.join(cwd, outputPath);
       const command = `${options.open} "${outputAbsolute}"`;
       try {
         execSync(command, { stdio: 'inherit' });
@@ -227,6 +223,7 @@ export const review = async (): Promise<void> => {
     }
   } catch (error) {
     if (error instanceof BadRequestError) {
+      console.error(`\n✋ ${error.message}`);
       process.exit(2);
     }
     throw error;

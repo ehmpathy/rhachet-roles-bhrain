@@ -1,4 +1,4 @@
 org: ehmpathy
 
 env.prep:
-  - XAI_API_KEY
+  - FIREWORKS_API_KEY

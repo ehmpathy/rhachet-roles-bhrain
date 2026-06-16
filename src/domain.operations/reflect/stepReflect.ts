@@ -242,11 +242,13 @@ export const stepReflect = async (
     message: '⛏️  step 1: propose pure rules from feedback...',
     operation: async () => {
       // invoke brain with step 1 prompt to get rules as structured JSON
-      const brainOutput = await context.brain.brain.choice.ask({
-        role: {},
-        prompt: step1Prompt.prompt,
-        schema: { output: schemaStep1Response },
-      });
+      const brainOutput = await context.brain.brain.choice.ask(
+        {
+          role: {},
+          prompt: step1Prompt.prompt,
+          schema: { output: schemaStep1Response },
+        },
+      );
       const response: Step1Response = brainOutput.output;
 
       // write each rule file to pureDir
@@ -278,11 +280,13 @@ export const stepReflect = async (
     message: '🪨 step 2: blend proposals with prior rules...',
     operation: async () => {
       // invoke brain with step 2 prompt to get manifest as structured JSON
-      const brainOutput = await context.brain.brain.choice.ask({
-        role: {},
-        prompt: step2PromptFinal.prompt,
-        schema: { output: schemaStep2Response },
-      });
+      const brainOutput = await context.brain.brain.choice.ask(
+        {
+          role: {},
+          prompt: step2PromptFinal.prompt,
+          schema: { output: schemaStep2Response },
+        },
+      );
       const response: Step2Response = brainOutput.output;
 
       // write manifest.json to draftDir
