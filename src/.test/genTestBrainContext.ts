@@ -18,9 +18,11 @@ import { getBrainAtomsByXAI } from 'rhachet-brains-xai';
 
 /**
  * .what = default brain for tests
- * .why = fireworks/deepseek/v4-flash is fast, cheap, and effective for agentic code tasks
+ * .why = xai/grok/code-fast-1 is fast, cheap, and effective for agentic code tasks
+ *
+ * .note = fireworks/deepseek/v4-flash would be preferred but FIREWORKS_API_KEY is not yet in CI
  */
-export const DEFAULT_TEST_BRAIN = 'fireworks/deepseek/v4-flash';
+export const DEFAULT_TEST_BRAIN = 'xai/grok/code-fast-1';
 
 /**
  * .what = loads all available brain atoms from installed packages
