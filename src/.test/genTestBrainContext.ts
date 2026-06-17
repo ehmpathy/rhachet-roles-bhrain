@@ -44,10 +44,19 @@ const loadAllRepls = (): BrainRepl[] => {
 };
 
 /**
+ * .what = default keyrack creds for tests
+ * .why = enables keyrack to read env vars exported by keyrack firewall in CI
+ */
+const DEFAULT_TEST_CREDS = {
+  keyrack: { owner: 'ehmpath', env: 'test' },
+} as const;
+
+/**
  * .what = creates a brain context for tests
  * .why = enables integration tests to invoke brain-dependent operations
  *
  * .note = this is a TEST UTILITY only; prod code should receive brain context via DI
+ * .note = defaults to keyrack creds for test env; keyrack firewall exports env vars in CI
  */
 export const genTestBrainContext = (input: {
   brain: string;
@@ -59,6 +68,6 @@ export const genTestBrainContext = (input: {
   return genContextBrain({
     brains: { atoms, repls },
     choice: input.brain,
-    creds: input.creds,
+    creds: input.creds ?? DEFAULT_TEST_CREDS,
   });
 };
