@@ -55,6 +55,7 @@ export const genTestBrainContext = (input: {
 }): ContextBrain<BrainChoice> => {
   const atoms = loadAllAtoms();
   const repls = loadAllRepls();
+
   return genContextBrain({
     brains: { atoms, repls },
     choice: input.brain,
