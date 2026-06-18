@@ -36,6 +36,24 @@ export const genTempDirForRhachet = (input: {
       // symlink .pnpm for pnpm-generated wrapper scripts that use relative paths
       // .why = rhx wrapper does $basedir/../.pnpm/... which needs .pnpm to exist
       { at: 'node_modules/.pnpm', to: 'node_modules/.pnpm' },
+      // symlink brain packages for brain discovery
+      // .why = discoverBrainPackages reads fixture's package.json, then imports the packages
+      {
+        at: 'node_modules/rhachet-brains-fireworksai',
+        to: 'node_modules/rhachet-brains-fireworksai',
+      },
+      {
+        at: 'node_modules/rhachet-brains-anthropic',
+        to: 'node_modules/rhachet-brains-anthropic',
+      },
+      {
+        at: 'node_modules/rhachet-brains-openai',
+        to: 'node_modules/rhachet-brains-openai',
+      },
+      {
+        at: 'node_modules/rhachet-brains-xai',
+        to: 'node_modules/rhachet-brains-xai',
+      },
     ],
   });
 };

@@ -42,7 +42,7 @@ exports[`driver.route.set.acceptance given: [case2] route.stone.set --as approve
 exports[`driver.route.set.acceptance given: [case3] route.stone.set --as passed with guard (allowed) when: [t0] guarded stone with review + judge that pass then: stdout matches snapshot 1`] = `
 "🦉 the way speaks for itself
    │
-   ├─ r1: echo (l1, 0/∞)
+   ├─ r1: echo (l1, 1/∞)
    │   ├─ approved [TIME]
    │   ├─ 0 blockers ✓
    │   ├─ 1 nitpick 🟠
@@ -91,7 +91,7 @@ exports[`driver.route.set.acceptance given: [case4] route.stone.set --as passed 
 exports[`driver.route.set.acceptance given: [case4] route.stone.set --as passed with guard (blocked) when: [t0] guarded stone with review + judge that fail then: stdout matches snapshot 1`] = `
 "🦉 the way speaks for itself
    │
-   ├─ r1: echo (l1, 0/∞)
+   ├─ r1: echo (l1, 1/∞)
    │   ├─ rejected [TIME]
    │   ├─ 3 blockers 🔴
    │   ├─ 1 nitpick 🟠
