@@ -10,7 +10,7 @@ describe('getReviewCountsFromContent', () => {
 │  │  🪨 run solid skill repo=bhrain/role=reviewer/skill=review
 │  │
 │  │  🦉 let's review
-│  │     ├─ brain: xai/grok/code-fast-1
+│  │     ├─ brain: fireworks/deepseek/v4-flash
 │  │     ├─ focus: push
 │  │     └─ scope
 │  │        ├─ diffs: since-main

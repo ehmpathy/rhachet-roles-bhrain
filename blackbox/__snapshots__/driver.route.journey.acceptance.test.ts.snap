@@ -251,7 +251,7 @@ exports[`driver.route.journey.acceptance given: [journey] weather api route when
 exports[`driver.route.journey.acceptance given: [journey] weather api route when: [t9] 3.blueprint pass reattempted after promise then: stdout has good vibes 1`] = `
 "🦉 the way speaks for itself
    │
-   ├─ r1: bash (l1, 0/∞)
+   ├─ r1: bash (l1, 1/∞)
    │   ├─ rejected [TIME]
    │   ├─ 1 blocker 🔴
    │   ├─ 0 nitpicks ✓
@@ -332,7 +332,7 @@ exports[`driver.route.journey.acceptance given: [journey] weather api route when
 exports[`driver.route.journey.acceptance given: [journey] weather api route when: [t12] 5.execute artifact created and pass attempted then: stdout has good vibes 1`] = `
 "🦉 the way speaks for itself
    │
-   ├─ r1: bash (l1, 0/∞)
+   ├─ r1: bash (l1, 1/∞)
    │   ├─ approved [TIME]
    │   ├─ 0 blockers ✓
    │   ├─ 0 nitpicks ✓

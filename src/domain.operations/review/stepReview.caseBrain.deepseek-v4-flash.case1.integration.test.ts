@@ -18,21 +18,22 @@ const ASSETS_PROSE = path.join(
   '.test/assets/example.repo/prose-author',
 );
 
-describe('stepReview.caseBrain.grok-code-fast-1.case3', () => {
+describe('stepReview.caseBrain.deepseek-v4-flash.case1', () => {
   // increase timeout for brain invocations (3 minutes)
   jest.setTimeout(180000);
 
+  // brain context for this test suite
   const scene = useBeforeAll(async () => ({
-    brain: genTestBrainContext({ brain: 'xai/grok/code-fast-1' }),
+    brain: genTestBrainContext({ brain: 'fireworks/deepseek/v4-flash' }),
   }));
 
-  given('[case1] subset of rules against subset of paths', () => {
+  given('[case1] prose-author example with fireworks/deepseek/v4-flash', () => {
     when.repeatably(REPEATABLY_CONFIG)(
-      '[t0] single rule applied to single chapter',
+      '[t0] stepReview on clean chapter',
       () => {
         const outputPath = path.join(
           os.tmpdir(),
-          'review-grok-code-fast-1-subset.md',
+          'review-deepseek-v4-flash-clean.md',
         );
         afterAll(async () => fs.rm(outputPath, { force: true }));
 
@@ -40,8 +41,8 @@ describe('stepReview.caseBrain.grok-code-fast-1.case3', () => {
         const result = useThen('stepReview succeeds', async () => {
           const res = await stepReview(
             {
-              rules: '.agent/**/briefs/rules/rule.no-gerunds.md',
-              paths: 'chapters/chapter1.md',
+              rules: '.agent/**/briefs/rules/*.md',
+              paths: 'chapters/chapter2.fixed.md',
               output: outputPath,
               focus: 'push',
               goal: 'representative',
@@ -52,33 +53,41 @@ describe('stepReview.caseBrain.grok-code-fast-1.case3', () => {
 
           // log output for observability
           logOutputHead({
-            label: 'grok-code-fast-1.subset.review',
+            label: 'deepseek-v4-flash.clean.review',
             output: res.review.formatted,
           });
 
           return res;
         });
 
-        then('uses only the specified rule', async () => {
-          expect(result.metrics.files.rulesCount).toBe(1);
+        then('review is defined and non-empty', async () => {
+          expect(result.review.formatted).toBeDefined();
+          expect(result.review.formatted.length).toBeGreaterThan(0);
         });
 
-        then('targets only the specified file', async () => {
+        then('review contains no blockers', async () => {
+          expect(result.review.formatted.toLowerCase()).not.toContain(
+            'blocker',
+          );
+        });
+
+        then('metrics.files shows correct counts', async () => {
+          expect(result.metrics.files.rulesCount).toBe(2);
           expect(result.metrics.files.targetsCount).toBe(1);
         });
 
-        then('review is defined', async () => {
-          expect(result.review.formatted).toBeDefined();
+        then('metrics.expected contains token estimates', async () => {
+          expect(result.metrics.expected.tokens.estimate).toBeGreaterThan(0);
         });
       },
     );
 
     when.repeatably(REPEATABLY_CONFIG)(
-      '[t1] single rule applied to multiple chapters',
+      '[t1] stepReview on dirty chapter',
       () => {
         const outputPath = path.join(
           os.tmpdir(),
-          'review-grok-code-fast-1-subset-multi.md',
+          'review-deepseek-v4-flash-dirty.md',
         );
         afterAll(async () => fs.rm(outputPath, { force: true }));
 
@@ -86,8 +95,8 @@ describe('stepReview.caseBrain.grok-code-fast-1.case3', () => {
         const result = useThen('stepReview succeeds', async () => {
           const res = await stepReview(
             {
-              rules: '.agent/**/briefs/rules/rule.no-gerunds.md',
-              paths: 'chapters/chapter*.md',
+              rules: '.agent/**/briefs/rules/*.md',
+              paths: 'chapters/chapter2.md',
               output: outputPath,
               focus: 'push',
               goal: 'representative',
@@ -98,27 +107,19 @@ describe('stepReview.caseBrain.grok-code-fast-1.case3', () => {
 
           // log output for observability
           logOutputHead({
-            label: 'grok-code-fast-1.subset-multi.review',
+            label: 'deepseek-v4-flash.dirty.review',
             output: res.review.formatted,
           });
 
           return res;
         });
 
-        then('uses only the specified rule', async () => {
-          expect(result.metrics.files.rulesCount).toBe(1);
-        });
-
-        then('applies rule to all matched paths', async () => {
-          expect(result.metrics.files.targetsCount).toBe(3);
-        });
-
-        then('review is defined', async () => {
+        then('review is defined and non-empty', async () => {
           expect(result.review.formatted).toBeDefined();
+          expect(result.review.formatted.length).toBeGreaterThan(0);
         });
 
-        then('review detects violations in dirty chapters', async () => {
-          // chapter2.md has gerund violations
+        then('review contains blockers for gerund violations', async () => {
           expect(result.review.formatted.toLowerCase()).toContain('blocker');
         });
       },

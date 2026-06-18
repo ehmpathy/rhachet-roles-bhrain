@@ -6,7 +6,7 @@ import { getError, given, then, when } from 'test-fns';
 import { compileReviewPrompt } from './compileReviewPrompt';
 
 /**
- * .what = fixture cost spec for xai/grok brain
+ * .what = fixture cost spec for brain cost calculation
  * .why = enables cost calculation in compile prompt tests
  */
 const costSpecFixture: BrainSpec['cost']['cash'] = {

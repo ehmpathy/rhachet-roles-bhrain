@@ -43,7 +43,7 @@ describe('review.output-default.acceptance', () => {
           paths: 'src/clean.ts',
           focus: 'push',
           goal: 'representative',
-          brain: 'xai/grok/code-fast-1',
+          brain: 'fireworks/deepseek/v4-flash',
           cwd: tempDir,
         });
 

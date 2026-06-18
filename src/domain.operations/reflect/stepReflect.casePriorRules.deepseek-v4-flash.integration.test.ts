@@ -9,12 +9,12 @@ import type { ReviewerReflectManifest } from '@src/domain.objects/Reviewer/Revie
 import { setupSourceRepo, setupTargetDir } from './.test/setup';
 import { stepReflect } from './stepReflect';
 
-describe('stepReflect.casePriorRules.grok-4.1-fast', () => {
+describe('stepReflect.casePriorRules.deepseek-v4-flash', () => {
   // increase timeout for brain invocations (5 minutes)
   jest.setTimeout(300000);
 
   const brainScene = useBeforeAll(async () => ({
-    brain: genTestBrainContext({ brain: 'xai/grok/4.1-fast-wout-reason' }),
+    brain: genTestBrainContext({ brain: 'fireworks/deepseek/v4-flash' }),
   }));
 
   given('[case1] target with prior rule (explicit brain arg)', () => {
@@ -49,7 +49,7 @@ describe('stepReflect.casePriorRules.grok-4.1-fast', () => {
           'utf-8',
         );
 
-        // run stepReflect with xai brain
+        // run stepReflect with fireworks brain
         const result = await stepReflect(
           {
             source: sourceDir,

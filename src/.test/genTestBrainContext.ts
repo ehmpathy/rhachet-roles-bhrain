@@ -9,6 +9,7 @@ import {
   getBrainAtomsByAnthropic,
   getBrainReplsByAnthropic,
 } from 'rhachet-brains-anthropic';
+import { getBrainAtomsByFireworksAI } from 'rhachet-brains-fireworksai';
 import {
   getBrainAtomsByOpenAI,
   getBrainReplsByOpenAI,
@@ -17,9 +18,9 @@ import { getBrainAtomsByXAI } from 'rhachet-brains-xai';
 
 /**
  * .what = default brain for tests
- * .why = xai/grok/code-fast-1 is fast, cheap, and effective for agentic code tasks
+ * .why = fireworks/deepseek/v4-flash is fast, cheap, and effective for agentic code tasks
  */
-export const DEFAULT_TEST_BRAIN = 'xai/grok/code-fast-1';
+export const DEFAULT_TEST_BRAIN = 'fireworks/deepseek/v4-flash';
 
 /**
  * .what = loads all available brain atoms from installed packages
@@ -30,6 +31,7 @@ const loadAllAtoms = (): BrainAtom[] => {
     ...getBrainAtomsByXAI(),
     ...getBrainAtomsByAnthropic(),
     ...getBrainAtomsByOpenAI(),
+    ...getBrainAtomsByFireworksAI(),
   ];
 };
 
@@ -46,11 +48,17 @@ const loadAllRepls = (): BrainRepl[] => {
  * .why = enables integration tests to invoke brain-dependent operations
  *
  * .note = this is a TEST UTILITY only; prod code should receive brain context via DI
+ * .note = uses keyrack shorthand to fetch credentials for fireworks/anthropic/openai brains
  */
 export const genTestBrainContext = (input: {
   brain: string;
 }): ContextBrain<BrainChoice> => {
   const atoms = loadAllAtoms();
   const repls = loadAllRepls();
-  return genContextBrain({ brains: { atoms, repls }, choice: input.brain });
+
+  return genContextBrain({
+    brains: { atoms, repls },
+    choice: input.brain,
+    creds: { keyrack: { owner: 'ehmpath', env: 'test' } },
+  });
 };

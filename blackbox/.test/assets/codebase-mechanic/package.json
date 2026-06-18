@@ -4,6 +4,7 @@
   "description": "fixture for acceptance tests - enables brain discovery",
   "dependencies": {
     "rhachet-brains-anthropic": "0.3.3",
+    "rhachet-brains-fireworksai": "0.1.2",
     "rhachet-brains-openai": "0.2.1",
     "rhachet-brains-xai": "0.2.1",
     "rhachet-roles-bhrain": "link:."
