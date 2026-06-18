@@ -144,7 +144,7 @@ export const reflect = async (): Promise<void> => {
   // create brain context via discovery with credentials
   const brain = await genContextBrain({
     choice: options.brain,
-    creds: { keyrack: { owner: 'ehmpath', env: 'prep' } },
+    creds: { keyrack: { owner: 'ehmpath', env: 'test' } },
   });
 
   // invoke stepReflect with validation error handler
