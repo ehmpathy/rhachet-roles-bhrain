@@ -41,7 +41,7 @@ describe('review.acceptance', () => {
           output: outputPath,
           focus: 'push',
           goal: 'exhaustive',
-          brain: 'xai/grok/code-fast-1',
+          brain: 'fireworks/deepseek/v4-flash',
           cwd: tempDir,
         });
 

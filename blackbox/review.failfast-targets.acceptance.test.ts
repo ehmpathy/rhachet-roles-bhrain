@@ -38,7 +38,7 @@ describe('review.failfast-targets.acceptance', () => {
             output: outputPath,
             focus: 'push',
             goal: 'representative',
-            brain: 'xai/grok/code-fast-1',
+            brain: 'fireworks/deepseek/v4-flash',
             cwd: tempDir,
           });
 
@@ -91,7 +91,7 @@ describe('review.failfast-targets.acceptance', () => {
             output: outputPath,
             focus: 'push',
             goal: 'representative',
-            brain: 'xai/grok/code-fast-1',
+            brain: 'fireworks/deepseek/v4-flash',
             cwd: tempDir,
           });
 

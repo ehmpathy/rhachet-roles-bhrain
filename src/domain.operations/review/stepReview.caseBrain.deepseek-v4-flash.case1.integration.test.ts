@@ -22,12 +22,9 @@ describe('stepReview.caseBrain.deepseek-v4-flash.case1', () => {
   // increase timeout for brain invocations (3 minutes)
   jest.setTimeout(180000);
 
-  // brain context for this test suite (creds threaded via genContextBrain)
+  // brain context for this test suite
   const scene = useBeforeAll(async () => ({
-    brain: genTestBrainContext({
-      brain: 'fireworks/deepseek/v4-flash',
-      creds: { keyrack: { owner: 'ehmpath', env: 'test' } },
-    }),
+    brain: genTestBrainContext({ brain: 'fireworks/deepseek/v4-flash' }),
   }));
 
   given('[case1] prose-author example with fireworks/deepseek/v4-flash', () => {

@@ -19,7 +19,7 @@ describe('stepReflect.casePriorRules.default', () => {
     brain: genTestBrainContext({ brain: DEFAULT_TEST_BRAIN }),
   }));
 
-  given('[case1] target with prior rule (default brain = xai/grok)', () => {
+  given('[case1] target with prior rule (default brain = fireworks/deepseek)', () => {
     const scene = useBeforeAll(async () => {
       const { repoDir: sourceDir } =
         await setupSourceRepo('typescript-quality');
@@ -33,7 +33,7 @@ describe('stepReflect.casePriorRules.default', () => {
         'utf-8',
       );
 
-      // use default brain (xai/grok/code-fast-1)
+      // use default brain (fireworks/deepseek/v4-flash)
       const result = await stepReflect(
         {
           source: sourceDir,

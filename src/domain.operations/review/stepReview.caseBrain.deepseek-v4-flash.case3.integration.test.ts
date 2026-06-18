@@ -18,12 +18,12 @@ const ASSETS_PROSE = path.join(
   '.test/assets/example.repo/prose-author',
 );
 
-describe('stepReview.caseBrain.grok-code-fast-1.case3', () => {
+describe('stepReview.caseBrain.deepseek-v4-flash.case3', () => {
   // increase timeout for brain invocations (3 minutes)
   jest.setTimeout(180000);
 
   const scene = useBeforeAll(async () => ({
-    brain: genTestBrainContext({ brain: 'xai/grok/code-fast-1' }),
+    brain: genTestBrainContext({ brain: 'fireworks/deepseek/v4-flash' }),
   }));
 
   given('[case1] subset of rules against subset of paths', () => {
@@ -32,7 +32,7 @@ describe('stepReview.caseBrain.grok-code-fast-1.case3', () => {
       () => {
         const outputPath = path.join(
           os.tmpdir(),
-          'review-grok-code-fast-1-subset.md',
+          'review-deepseek-v4-flash-subset.md',
         );
         afterAll(async () => fs.rm(outputPath, { force: true }));
 
@@ -52,7 +52,7 @@ describe('stepReview.caseBrain.grok-code-fast-1.case3', () => {
 
           // log output for observability
           logOutputHead({
-            label: 'grok-code-fast-1.subset.review',
+            label: 'deepseek-v4-flash.subset.review',
             output: res.review.formatted,
           });
 
@@ -78,7 +78,7 @@ describe('stepReview.caseBrain.grok-code-fast-1.case3', () => {
       () => {
         const outputPath = path.join(
           os.tmpdir(),
-          'review-grok-code-fast-1-subset-multi.md',
+          'review-deepseek-v4-flash-subset-multi.md',
         );
         afterAll(async () => fs.rm(outputPath, { force: true }));
 
@@ -98,7 +98,7 @@ describe('stepReview.caseBrain.grok-code-fast-1.case3', () => {
 
           // log output for observability
           logOutputHead({
-            label: 'grok-code-fast-1.subset-multi.review',
+            label: 'deepseek-v4-flash.subset-multi.review',
             output: res.review.formatted,
           });
 
