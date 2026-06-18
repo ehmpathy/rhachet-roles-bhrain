@@ -71,6 +71,7 @@
     "upgrade:rhachet": "rhachet upgrade"
   },
   "peerDependencies": {
+    "rhachet-brains-fireworksai": ">=0.1.2",
     "rhachet-brains-xai": ">=0.3.0"
   },
   "dependencies": {
