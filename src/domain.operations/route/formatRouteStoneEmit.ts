@@ -45,6 +45,17 @@ type FormatInput =
   | {
       operation: 'route.stone.set';
       stone: string;
+      action: 'overruled';
+    }
+  | {
+      operation: 'route.stone.set';
+      stone: string;
+      action: 'forced';
+      details: string;
+    }
+  | {
+      operation: 'route.stone.set';
+      stone: string;
       action: 'rewound';
       cascade: Array<{
         stone: string;
@@ -325,6 +336,17 @@ export const formatRouteStoneEmit = (input: FormatInput): string => {
     if (input.action === 'approved') {
       lines.push(`   ├─ stone = ${input.stone}`);
       lines.push(`   └─ ✓ approved`);
+    } else if (input.action === 'overruled') {
+      lines.push(`   ├─ stone = ${input.stone}`);
+      lines.push(`   └─ ✓ overruled`);
+    } else if (input.action === 'forced') {
+      lines.push(`   ├─ stone = ${input.stone}`);
+      lines.push(`   └─ ✓ forced`);
+      const detailLines = input.details.split('\n');
+      detailLines.forEach((line, i) => {
+        const prefix = i === detailLines.length - 1 ? '      └─ ' : '      ├─ ';
+        lines.push(`${prefix}${line}`);
+      });
     } else if (input.action === 'rewound') {
       // format cascade with deletion counts and yield outcomes
       lines.push(`   ├─ stone = ${input.stone}`);

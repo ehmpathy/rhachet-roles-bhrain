@@ -3,7 +3,7 @@
 exports[`driver.route.failsafe.acceptance given: [case1] reviewer exits with code 0 (passed) when: [t0] route.stone.set --as passed is invoked then: stdout matches snapshot 1`] = `
 "🦉 the way speaks for itself
    │
-   ├─ r1: bash (l1, 0/∞)
+   ├─ r1: bash (l1, 1/∞)
    │   ├─ approved [TIME]
    │   ├─ 0 blockers ✓
    │   ├─ 0 nitpicks ✓
@@ -55,8 +55,10 @@ exports[`driver.route.failsafe.acceptance given: [case2] reviewer exits with cod
 exports[`driver.route.failsafe.acceptance given: [case2] reviewer exits with code 2 (constraint) when: [t0] route.stone.set --as passed is invoked then: stdout matches snapshot 1`] = `
 "🦉 the way speaks for itself
    │
-   ├─ r1: bash (l1, 0/∞)
-   │   ├─ ✋ constraint
+   ├─ r1: bash (l1, 1/∞)
+   │   ├─ rejected [TIME]
+   │   ├─ 1 blocker 🔴
+   │   ├─ 0 nitpicks ✓
    │   └─ review: .route/2.review-constraint.guard.review.i1.c090dd3895c99e392c.r1.md
    │
    └─ ✗ judge.1 - blocked [TIME]
@@ -105,7 +107,7 @@ exports[`driver.route.failsafe.acceptance given: [case3] reviewer exits with cod
 exports[`driver.route.failsafe.acceptance given: [case3] reviewer exits with code 1 (malfunction) when: [t0] route.stone.set --as passed is invoked then: stdout matches snapshot 1`] = `
 "🦉 the way speaks for itself
    │
-   ├─ r1: bash (l1, 0/∞)
+   ├─ r1: bash (l1, 1/∞)
    │   ├─ 💥 malfunction
    │   └─ review: .route/3.review-malfunction.guard.review.i1.b6fcd55294fe610638.r1.md
    │
@@ -294,7 +296,7 @@ exports[`driver.route.failsafe.acceptance given: [case7] both reviewer and judge
 exports[`driver.route.failsafe.acceptance given: [case7] both reviewer and judge malfunction when: [t0] route.stone.set --as passed is invoked then: stdout matches snapshot 1`] = `
 "🦉 the way speaks for itself
    │
-   ├─ r1: bash (l1, 0/∞)
+   ├─ r1: bash (l1, 1/∞)
    │   ├─ 💥 malfunction
    │   └─ review: .route/7.both-malfunction.guard.review.i1.a4c505990c8a7a5349.r1.md
    │

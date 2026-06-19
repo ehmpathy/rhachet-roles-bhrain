@@ -20,6 +20,7 @@ import {
   isReviewPeerVerdictTerminal,
 } from '@src/domain.operations/route/guard/reviewPeerMeter/isReviewPeerLevelTerminal';
 import { getOneStoneGuardApproval } from '@src/domain.operations/route/judges/getOneStoneGuardApproval';
+import { getOneStoneGuardOverrule } from '@src/domain.operations/route/judges/getOneStoneGuardOverrule';
 import { stepRouteDrive } from '@src/domain.operations/route/stepRouteDrive';
 import { stepRouteReview } from '@src/domain.operations/route/stepRouteReview';
 import { stepRouteStoneAdd } from '@src/domain.operations/route/stepRouteStoneAdd';
@@ -149,6 +150,8 @@ const VALID_STONE_PASSAGE_ACTIONS = new Set([
   'blocked',
   'rewound',
   'arrived',
+  'overruled',
+  'forced',
 ]);
 
 /**
@@ -289,7 +292,7 @@ options:
 const printSetHelp = (): void => {
   console.log(
     `
-route.stone.set - mark stone as passed, approved, promised, blocked, rewound, or arrived
+route.stone.set - mark stone as passed, approved, promised, blocked, rewound, arrived, overruled, or forced
 
 usage:
   route.stone.set [options]
@@ -297,12 +300,21 @@ usage:
 options:
   --stone <name>     stone name or glob pattern (required)
   --route <path>     path to route directory (required)
-  --as <status>      status to set: passed, approved, promised, blocked, rewound, or arrived (required)
+  --as <status>      status to set (required):
+                       passed   - work complete, proceed
+                       arrived  - work complete, get reviews
+                       approved - human approval granted (human only)
+                       promised - review.self promise made
+                       blocked  - stuck, need help
+                       rewound  - clear validation state
+                       overruled - bypass review thresholds (human only)
+                       forced   - approve AND overrule (human only)
   --that <slug>      review.self slug to promise (required for --as promised)
   --help             show this help message
 
 note:
-  --as arrived is an alias for --as passed (state claim, not judgment claim)
+  --as overruled bypasses reviewed? judge thresholds for overzealous reviewers
+  --as forced is shorthand for --as approved + --as overruled
 
 examples:
   route.stone.set --stone 1.vision --as arrived
@@ -311,6 +323,8 @@ examples:
   route.stone.set --stone 1.vision --as promised --that all-done
   route.stone.set --stone 3.blueprint --as blocked
   route.stone.set --stone 3.blueprint --as rewound
+  route.stone.set --stone 1.vision --as overruled
+  route.stone.set --stone 1.vision --as forced
 `.trim(),
   );
 };
@@ -777,11 +791,15 @@ const isGuardExitRequired = (input: {
   passed: boolean | undefined;
   challenged: boolean | undefined;
   approved: boolean | undefined;
+  overruled: boolean | undefined;
+  forced: boolean | undefined;
 }): boolean => {
   return (
     input.passed === false ||
     input.challenged === true ||
-    input.approved === false
+    input.approved === false ||
+    input.overruled === false ||
+    input.forced === false
   );
 };
 
@@ -809,7 +827,7 @@ export const routeStoneSet = async (): Promise<void> => {
   // validate --as required and valid
   if (!isValidStonePassageAction({ action: options.as })) {
     throw new BadRequestError(
-      '--as must be "passed", "approved", "promised", "blocked", "rewound", or "arrived"',
+      '--as must be "passed", "approved", "promised", "blocked", "rewound", "arrived", "overruled", or "forced"',
       { hint: '--help for usage' },
     );
   }
@@ -852,7 +870,9 @@ export const routeStoneSet = async (): Promise<void> => {
           | 'promised'
           | 'blocked'
           | 'rewound'
-          | 'arrived',
+          | 'arrived'
+          | 'overruled'
+          | 'forced',
         that: options.that,
         yield: yieldMode,
       },
@@ -874,12 +894,14 @@ export const routeStoneSet = async (): Promise<void> => {
       }
     }
 
-    // exit with code 2 for intentional guard block or approval blocked
+    // exit with code 2 for intentional guard block or approval/overrule/force blocked
     if (
       isGuardExitRequired({
         passed: result.passed,
         challenged: result.challenged,
         approved: result.approved,
+        overruled: result.overruled,
+        forced: result.forced,
       })
     ) {
       process.exit(2);
@@ -1111,6 +1133,17 @@ const judgeReviewed = async (input: {
     console.log('passed: false');
     console.log('reason: stone not found');
     process.exit(2);
+  }
+
+  // check for human overrule first (bypasses all review checks)
+  const overrule = await getOneStoneGuardOverrule({
+    stone: stoneMatched,
+    route: input.route,
+  });
+  if (overrule) {
+    console.log('passed: true');
+    console.log('reason: human overruled');
+    return;
   }
 
   // compute artifact hash to find reviews for current content

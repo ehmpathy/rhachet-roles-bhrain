@@ -270,17 +270,17 @@ exports[`driver.route.peer-budget-multilevel.journey.acceptance given: [journey 
       │   │   ├─ exhausted
       │   │   ├─ 1 blocker 🔴
       │   │   ├─ 0 nitpicks ✓
-      │   │   └─ review: /tmp/test-fns/rhachet-roles-bhrain.vlad.fix-route-review-peer-stdout/.temp/2026-06-15T07-30-31.315Z.peer-budget-multilevel.e35c79e5/.route/1.vision.guard.review.i2.dfc5faff83ea2fcb55.r1.md
+      │   │   └─ review: /tmp/test-fns/rhachet-roles-bhrain.vlad.fix-route-breakout/.temp/2026-06-19T10-01-14.836Z.peer-budget-multilevel.d19df7c3/.route/1.vision.guard.review.i2.dfc5faff83ea2fcb55.r1.md
       │   ├─ r2: spellcheck (l1, 3/3)
       │   │   ├─ approved
       │   │   ├─ 0 blockers ✓
       │   │   ├─ 0 nitpicks ✓
-      │   │   └─ review: /tmp/test-fns/rhachet-roles-bhrain.vlad.fix-route-review-peer-stdout/.temp/2026-06-15T07-30-31.315Z.peer-budget-multilevel.e35c79e5/.route/1.vision.guard.review.i3.457fd5ef46e053a35e.r2.md
+      │   │   └─ review: /tmp/test-fns/rhachet-roles-bhrain.vlad.fix-route-breakout/.temp/2026-06-19T10-01-14.836Z.peer-budget-multilevel.d19df7c3/.route/1.vision.guard.review.i3.457fd5ef46e053a35e.r2.md
       │   └─ r3: architect (l2, 2/2)
       │       ├─ exhausted
       │       ├─ 1 blocker 🔴
       │       ├─ 0 nitpicks ✓
-      │       └─ review: /tmp/test-fns/rhachet-roles-bhrain.vlad.fix-route-review-peer-stdout/.temp/2026-06-15T07-30-31.315Z.peer-budget-multilevel.e35c79e5/.route/1.vision.guard.review.i4.6dddc53e1de2efc1da.r3.md
+      │       └─ review: /tmp/test-fns/rhachet-roles-bhrain.vlad.fix-route-breakout/.temp/2026-06-19T10-01-14.836Z.peer-budget-multilevel.d19df7c3/.route/1.vision.guard.review.i4.6dddc53e1de2efc1da.r3.md
       │
       ├─ please ask a human to either
       │  ├─ approve as-is
@@ -324,17 +324,17 @@ exports[`driver.route.peer-budget-multilevel.journey.acceptance given: [journey 
       │   │   ├─ exhausted
       │   │   ├─ 1 blocker 🔴
       │   │   ├─ 0 nitpicks ✓
-      │   │   └─ review: /tmp/test-fns/rhachet-roles-bhrain.vlad.fix-route-review-peer-stdout/.temp/2026-06-15T07-30-31.315Z.peer-budget-multilevel.e35c79e5/.route/1.vision.guard.review.i2.dfc5faff83ea2fcb55.r1.md
+      │   │   └─ review: /tmp/test-fns/rhachet-roles-bhrain.vlad.fix-route-breakout/.temp/2026-06-19T10-01-14.836Z.peer-budget-multilevel.d19df7c3/.route/1.vision.guard.review.i2.dfc5faff83ea2fcb55.r1.md
       │   ├─ r2: spellcheck (l1, 3/3)
       │   │   ├─ approved
       │   │   ├─ 0 blockers ✓
       │   │   ├─ 0 nitpicks ✓
-      │   │   └─ review: /tmp/test-fns/rhachet-roles-bhrain.vlad.fix-route-review-peer-stdout/.temp/2026-06-15T07-30-31.315Z.peer-budget-multilevel.e35c79e5/.route/1.vision.guard.review.i3.457fd5ef46e053a35e.r2.md
+      │   │   └─ review: /tmp/test-fns/rhachet-roles-bhrain.vlad.fix-route-breakout/.temp/2026-06-19T10-01-14.836Z.peer-budget-multilevel.d19df7c3/.route/1.vision.guard.review.i3.457fd5ef46e053a35e.r2.md
       │   └─ r3: architect (l2, 2/4)
       │       ├─ rejected
       │       ├─ 1 blocker 🔴
       │       ├─ 0 nitpicks ✓
-      │       └─ review: /tmp/test-fns/rhachet-roles-bhrain.vlad.fix-route-review-peer-stdout/.temp/2026-06-15T07-30-31.315Z.peer-budget-multilevel.e35c79e5/.route/1.vision.guard.review.i4.6dddc53e1de2efc1da.r3.md
+      │       └─ review: /tmp/test-fns/rhachet-roles-bhrain.vlad.fix-route-breakout/.temp/2026-06-19T10-01-14.836Z.peer-budget-multilevel.d19df7c3/.route/1.vision.guard.review.i4.6dddc53e1de2efc1da.r3.md
       │
       ├─ please ask a human to either
       │  ├─ approve as-is
@@ -418,17 +418,17 @@ exports[`driver.route.peer-budget-multilevel.journey.acceptance given: [journey 
       │   │   ├─ exhausted
       │   │   ├─ 1 blocker 🔴
       │   │   ├─ 0 nitpicks ✓
-      │   │   └─ review: /tmp/test-fns/rhachet-roles-bhrain.vlad.fix-route-review-peer-stdout/.temp/2026-06-15T07-30-31.315Z.peer-budget-multilevel.e35c79e5/.route/1.vision.guard.review.i2.dfc5faff83ea2fcb55.r1.md
+      │   │   └─ review: /tmp/test-fns/rhachet-roles-bhrain.vlad.fix-route-breakout/.temp/2026-06-19T10-01-14.836Z.peer-budget-multilevel.d19df7c3/.route/1.vision.guard.review.i2.dfc5faff83ea2fcb55.r1.md
       │   ├─ r2: spellcheck (l1, 3/3)
       │   │   ├─ approved
       │   │   ├─ 0 blockers ✓
       │   │   ├─ 0 nitpicks ✓
-      │   │   └─ review: /tmp/test-fns/rhachet-roles-bhrain.vlad.fix-route-review-peer-stdout/.temp/2026-06-15T07-30-31.315Z.peer-budget-multilevel.e35c79e5/.route/1.vision.guard.review.i3.457fd5ef46e053a35e.r2.md
+      │   │   └─ review: /tmp/test-fns/rhachet-roles-bhrain.vlad.fix-route-breakout/.temp/2026-06-19T10-01-14.836Z.peer-budget-multilevel.d19df7c3/.route/1.vision.guard.review.i3.457fd5ef46e053a35e.r2.md
       │   └─ r3: architect (l2, 3/4)
       │       ├─ approved
       │       ├─ 0 blockers ✓
       │       ├─ 0 nitpicks ✓
-      │       └─ review: /tmp/test-fns/rhachet-roles-bhrain.vlad.fix-route-review-peer-stdout/.temp/2026-06-15T07-30-31.315Z.peer-budget-multilevel.e35c79e5/.route/1.vision.guard.review.i5.0997a4c5910ffe05d0.r3.md
+      │       └─ review: /tmp/test-fns/rhachet-roles-bhrain.vlad.fix-route-breakout/.temp/2026-06-19T10-01-14.836Z.peer-budget-multilevel.d19df7c3/.route/1.vision.guard.review.i5.0997a4c5910ffe05d0.r3.md
       │
       ├─ please ask a human to either
       │  ├─ approve as-is
