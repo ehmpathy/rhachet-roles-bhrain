@@ -1,0 +1,43 @@
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
+
+exports[`setStoneAsApproved given: [case1] route.simple fixture when: [t0] stone is approved by human then: output matches snapshot 1`] = `
+"🦉 the way speaks for itself
+
+🗿 route.stone.set
+   ├─ stone = 1.vision
+   └─ ✓ approved"
+`;
+
+exports[`setStoneAsApproved given: [case3] caller is not human when: [t0] isTTY is false then: output matches snapshot 1`] = `
+"🦉 the way speaks for itself
+
+🗿 route.stone.set
+   ├─ stone = 1.vision
+   ├─ ✗ only humans can approve
+   │
+   └─ as a driver, you should:
+         ├─ \`--as passed\` to signal work complete, proceed
+         ├─ \`--as arrived\` to signal work complete, request review
+         └─ \`--as blocked\` to escalate if stuck
+      
+      the human will run \`--as approved\` when ready."
+`;
+
+exports[`setStoneAsApproved given: [case4] stone already approved when: [t0] human tries to approve already-approved stone (idempotent) then: output matches snapshot 1`] = `
+"🦉 the way speaks for itself
+
+🗿 route.stone.set
+   ├─ stone = 1.vision
+   └─ ✓ approved"
+`;
+
+exports[`setStoneAsApproved given: [case4] stone already approved when: [t1] bot tries to approve already-approved stone then: output matches snapshot 1`] = `
+"🦉 the way speaks for itself
+
+🗿 route.stone.set
+   ├─ stone = 1.vision
+   ├─ ✗ already approved
+   │
+   └─ to continue, run:
+         └─ rhx route.stone.set --stone 1.vision --as passed"
+`;
