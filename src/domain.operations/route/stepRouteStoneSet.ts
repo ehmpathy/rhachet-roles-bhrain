@@ -60,7 +60,9 @@ export const stepRouteStoneSet = async (
 }> => {
   // alias translator: 'arrived' maps to 'passed' (creates immutable copy)
   const input =
-    inputRaw.as === 'arrived' ? { ...inputRaw, as: 'passed' as const } : inputRaw;
+    inputRaw.as === 'arrived'
+      ? { ...inputRaw, as: 'passed' as const }
+      : inputRaw;
 
   // dispatch to appropriate operation
   if (input.as === 'approved') {
