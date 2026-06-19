@@ -101,15 +101,20 @@ export const runOneStoneGuardReview = async (input: {
   // validate no npx patterns before variable substitution
   validateNoNpx(input.reviewCmd);
 
+  // sanitize slug for filename
+  // .why = legacy peer reviews use command as slug (e.g., ".test/mock-review.sh")
+  //        path separators would create nested directories
+  const sanitizedSlug = input.slug.replace(/[/\\]/g, '-');
+
   // generate stdout path (what guard writes) and report path (what review skill writes)
   // .note = symmetric names: stdout is .md, report is .report.md
   const stdoutPath = path.join(
     reviewsDir,
-    `${input.stone.name}._.review.i${input.iteration}.${input.hash}.r${input.index}._.given.by_peer.${input.slug}.md`,
+    `${input.stone.name}._.review.i${input.iteration}.${input.hash}.r${input.index}._.given.by_peer.${sanitizedSlug}.md`,
   );
   const reportPath = path.join(
     reviewsDir,
-    `${input.stone.name}._.review.i${input.iteration}.${input.hash}.r${input.index}._.given.by_peer.${input.slug}.report.md`,
+    `${input.stone.name}._.review.i${input.iteration}.${input.hash}.r${input.index}._.given.by_peer.${sanitizedSlug}.report.md`,
   );
 
   // substitute variables in command
@@ -138,6 +143,7 @@ export const runOneStoneGuardReview = async (input: {
   let exitCode = 0;
   try {
     const result = await execAsync(cmd, {
+      cwd: input.route,
       env: execEnv,
       timeout: REVIEW_TIMEOUT_MS,
     });
