@@ -7,7 +7,7 @@ exports[`driver.route.peer-budget-exhausted-hash-change.acceptance given: [matri
    │   ├─ exhausted, cached
    │   ├─ 1 blocker 🔴
    │   ├─ 0 nitpicks ✓
-   │   └─ review: .route/1.execute.guard.review.i2.580b7bfdddc2b7279d.r1.md
+   │   └─ review: .reviews/peer/1.execute._.review.i2.580b7bfdddc2b7279d.r1._.given.by_peer.mock-reviewer.md
    │
    └─ halted: peer reviewer budget exhausted
 
@@ -28,7 +28,7 @@ exports[`driver.route.peer-budget-exhausted-hash-change.acceptance given: [matri
               ├─ exhausted, cached
               ├─ 1 blocker 🔴
               ├─ 0 nitpicks ✓
-              └─ review: .route/1.execute.guard.review.i2.580b7bfdddc2b7279d.r1.md
+              └─ review: .reviews/peer/1.execute._.review.i2.580b7bfdddc2b7279d.r1._.given.by_peer.mock-reviewer.md
 "
 `;
 
@@ -39,7 +39,7 @@ exports[`driver.route.peer-budget-exhausted-hash-change.acceptance given: [matri
    │   ├─ rejected [TIME]
    │   ├─ 1 blocker 🔴
    │   ├─ 0 nitpicks ✓
-   │   └─ review: .route/1.execute.guard.review.i2.580b7bfdddc2b7279d.r1.md
+   │   └─ review: .reviews/peer/1.execute._.review.i2.580b7bfdddc2b7279d.r1._.given.by_peer.mock-reviewer.md
    │
    └─ ✗ judge.1 - blocked [TIME]
 
@@ -55,7 +55,7 @@ exports[`driver.route.peer-budget-exhausted-hash-change.acceptance given: [matri
       │       ├─ rejected [TIME]
       │       ├─ 1 blocker 🔴
       │       ├─ 0 nitpicks ✓
-      │       └─ review: .route/1.execute.guard.review.i2.580b7bfdddc2b7279d.r1.md
+      │       └─ review: .reviews/peer/1.execute._.review.i2.580b7bfdddc2b7279d.r1._.given.by_peer.mock-reviewer.md
       └─ judges
           └─ j1: rhx route.stone.judge --mechanism reviewed? --stone $stone --route $route --allow-blockers 0 --allow-nitpicks 1
               ├─ finished [TIME] ✗
@@ -70,7 +70,7 @@ exports[`driver.route.peer-budget-exhausted-hash-change.acceptance given: [matri
    │   ├─ exhausted, cached
    │   ├─ 1 blocker 🔴
    │   ├─ 0 nitpicks ✓
-   │   └─ review: .route/1.execute.guard.review.i2.580b7bfdddc2b7279d.r1.md
+   │   └─ review: .reviews/peer/1.execute._.review.i2.580b7bfdddc2b7279d.r1._.given.by_peer.mock-reviewer.md
    │
    └─ halted: peer reviewer budget exhausted
 
@@ -91,7 +91,7 @@ exports[`driver.route.peer-budget-exhausted-hash-change.acceptance given: [matri
               ├─ exhausted, cached
               ├─ 1 blocker 🔴
               ├─ 0 nitpicks ✓
-              └─ review: .route/1.execute.guard.review.i2.580b7bfdddc2b7279d.r1.md
+              └─ review: .reviews/peer/1.execute._.review.i2.580b7bfdddc2b7279d.r1._.given.by_peer.mock-reviewer.md
 "
 `;
 
@@ -102,7 +102,7 @@ exports[`driver.route.peer-budget-exhausted-hash-change.acceptance given: [matri
    │   ├─ exhausted, cached
    │   ├─ 1 blocker 🔴
    │   ├─ 0 nitpicks ✓
-   │   └─ review: .route/1.execute.guard.review.i2.580b7bfdddc2b7279d.r1.md
+   │   └─ review: .reviews/peer/1.execute._.review.i2.580b7bfdddc2b7279d.r1._.given.by_peer.mock-reviewer.md
    │
    └─ halted: peer reviewer budget exhausted
 
@@ -123,6 +123,6 @@ exports[`driver.route.peer-budget-exhausted-hash-change.acceptance given: [matri
               ├─ exhausted, cached
               ├─ 1 blocker 🔴
               ├─ 0 nitpicks ✓
-              └─ review: .route/1.execute.guard.review.i2.580b7bfdddc2b7279d.r1.md
+              └─ review: .reviews/peer/1.execute._.review.i2.580b7bfdddc2b7279d.r1._.given.by_peer.mock-reviewer.md
 "
 `;

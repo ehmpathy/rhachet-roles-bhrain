@@ -22,13 +22,13 @@ exports[`driver.route.peer-budget-bulk.acceptance given: [case1] bulk budget ext
    │   ├─ rejected [TIME]
    │   ├─ 1 blocker 🔴
    │   ├─ 0 nitpicks ✓
-   │   └─ review: .route/1.vision.guard.review.i6.deec084a9ead287f47.r1.md
+   │   └─ review: .reviews/peer/1.vision._.review.i6.deec084a9ead287f47.r1._.given.by_peer.linter.md
    │
    ├─ r2: spellcheck (l1, 4/5)
    │   ├─ rejected [TIME]
    │   ├─ 1 blocker 🔴
    │   ├─ 0 nitpicks ✓
-   │   └─ review: .route/1.vision.guard.review.i6.deec084a9ead287f47.r2.md
+   │   └─ review: .reviews/peer/1.vision._.review.i6.deec084a9ead287f47.r2._.given.by_peer.spellcheck.md
    │
    ├─ r3: architect (l2, 2/4)
    │   └─ awaits arrival
@@ -47,12 +47,12 @@ exports[`driver.route.peer-budget-bulk.acceptance given: [case1] bulk budget ext
       │   │   ├─ rejected [TIME]
       │   │   ├─ 1 blocker 🔴
       │   │   ├─ 0 nitpicks ✓
-      │   │   └─ review: .route/1.vision.guard.review.i6.deec084a9ead287f47.r1.md
+      │   │   └─ review: .reviews/peer/1.vision._.review.i6.deec084a9ead287f47.r1._.given.by_peer.linter.md
       │   ├─ r2: spellcheck (l1, 4/5)
       │   │   ├─ rejected [TIME]
       │   │   ├─ 1 blocker 🔴
       │   │   ├─ 0 nitpicks ✓
-      │   │   └─ review: .route/1.vision.guard.review.i6.deec084a9ead287f47.r2.md
+      │   │   └─ review: .reviews/peer/1.vision._.review.i6.deec084a9ead287f47.r2._.given.by_peer.spellcheck.md
       │   └─ r3: architect (l2, 2/4)
       │       └─ awaits l1 terminal
       └─ judges

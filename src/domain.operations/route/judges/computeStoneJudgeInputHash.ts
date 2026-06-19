@@ -3,8 +3,8 @@ import * as fs from 'fs/promises';
 import * as path from 'path';
 
 import type { RouteStone } from '@src/domain.objects/Driver/RouteStone';
-import { enumFilesFromGlob } from '@src/utils/enumFilesFromGlob';
 
+import { enumRouteGuardReviewPeerFiles } from '../guard/enumRouteGuardReviewPeerFiles';
 import { getLatestReviewFilesPerIndex } from '../guard/getLatestReviewFilesPerIndex';
 import { getOnePassageReport } from '../passage/getOnePassageReport';
 
@@ -23,22 +23,19 @@ export const computeStoneJudgeInputHash = async (input: {
   reviewInputHash: string;
   route: string;
 }): Promise<string> => {
-  const routeDir = path.join(input.route, '.route');
-
   // find all review files for this review input hash
-  const reviewGlob = `${input.stone.name}.guard.review.*.${input.reviewInputHash}.*.md`;
-  let reviewFiles: string[] = [];
-  try {
-    reviewFiles = await enumFilesFromGlob({ glob: reviewGlob, cwd: routeDir });
-  } catch {
-    // .route/ may not exist yet
-  }
+  // review pattern: $stone._.review.i$iter.$hash.r$idx._.given.by_peer.$slug.md
+  const reviewFiles = await enumRouteGuardReviewPeerFiles({
+    route: input.route,
+    stone: input.stone.name,
+    hash: input.reviewInputHash,
+  });
 
   // get latest review per index (later iterations supersede earlier)
   const latestReviewFiles = getLatestReviewFilesPerIndex({ reviewFiles });
 
   // read review contents from latest reviews only
-  // note: enumFilesFromGlob returns absolute paths, so use directly
+  // note: enumRouteGuardReviewPeerFiles returns absolute paths, so use directly
   const reviewContents: string[] = [];
   for (const filePath of latestReviewFiles) {
     const content = await fs.readFile(filePath, 'utf-8');

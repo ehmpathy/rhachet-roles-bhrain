@@ -68,7 +68,7 @@ describe('runStoneGuardReviews', () => {
         );
         expect(result.artifacts).toHaveLength(1);
         expect(result.artifacts[0]?.path).toContain(
-          '.guard.review.i1.testhash.r1.md',
+          '.reviews/peer/1.test._.review.i1.testhash.r1._.given.by_peer.echo.md',
         );
         const stat = await fs.stat(result.artifacts[0]?.path ?? '');
         expect(stat.isFile()).toBe(true);
@@ -107,10 +107,13 @@ describe('runStoneGuardReviews', () => {
           { stone, guard, hash: 'case1snap', iteration: 1, route: tempDir },
           noopContext,
         );
+        expect(result.artifacts).toHaveLength(1);
+        expect(result.artifacts[0]?.path).toBeDefined();
         const content = await fs.readFile(
           result.artifacts[0]?.path ?? '',
           'utf-8',
         );
+        expect(content).toContain('stdout');
         expect(content).toMatchSnapshot();
       });
 
@@ -119,6 +122,9 @@ describe('runStoneGuardReviews', () => {
           { stone, guard, hash: 'case1ret', iteration: 1, route: tempDir },
           noopContext,
         );
+        expect(result.artifacts).toHaveLength(1);
+        expect(result.artifacts[0]?.exitCode).toBe(0);
+        expect(result.artifacts[0]?.exitClass).toBe('passed');
         // sanitize dynamic paths for portable snapshots
         const sanitized = result.artifacts.map((r) => ({
           ...r,
@@ -180,6 +186,9 @@ describe('runStoneGuardReviews', () => {
           { stone, guard, hash: 'case2snap', iteration: 1, route: tempDir },
           noopContext,
         );
+        expect(result.artifacts).toHaveLength(2);
+        expect(result.artifacts[0]?.path).toBeDefined();
+        expect(result.artifacts[1]?.path).toBeDefined();
         const content1 = await fs.readFile(
           result.artifacts[0]?.path ?? '',
           'utf-8',
@@ -188,6 +197,8 @@ describe('runStoneGuardReviews', () => {
           result.artifacts[1]?.path ?? '',
           'utf-8',
         );
+        expect(content1).toContain('stdout');
+        expect(content2).toContain('stdout');
         expect(content1).toMatchSnapshot();
         expect(content2).toMatchSnapshot();
       });
@@ -197,6 +208,9 @@ describe('runStoneGuardReviews', () => {
           { stone, guard, hash: 'case2ret', iteration: 1, route: tempDir },
           noopContext,
         );
+        expect(result.artifacts).toHaveLength(2);
+        expect(result.artifacts[0]?.exitCode).toBe(0);
+        expect(result.artifacts[1]?.exitCode).toBe(0);
         const sanitized = result.artifacts.map((r) => ({
           ...r,
           path: r.path?.replace(tempDir, '<route>'),
@@ -260,10 +274,13 @@ describe('runStoneGuardReviews', () => {
           { stone, guard, hash: 'exit0snap', iteration: 1, route: tempDir },
           noopContext,
         );
+        expect(result.artifacts).toHaveLength(1);
+        expect(result.artifacts[0]?.path).toBeDefined();
         const content = await fs.readFile(
           result.artifacts[0]?.path ?? '',
           'utf-8',
         );
+        expect(content).toContain('stdout');
         expect(content).toMatchSnapshot();
       });
 
@@ -272,6 +289,9 @@ describe('runStoneGuardReviews', () => {
           { stone, guard, hash: 'case3ret', iteration: 1, route: tempDir },
           noopContext,
         );
+        expect(result.artifacts).toHaveLength(1);
+        expect(result.artifacts[0]?.exitCode).toBe(0);
+        expect(result.artifacts[0]?.exitClass).toBe('passed');
         const sanitized = result.artifacts.map((r) => ({
           ...r,
           path: r.path?.replace(tempDir, '<route>'),
@@ -340,10 +360,13 @@ describe('runStoneGuardReviews', () => {
           { stone, guard, hash: 'exit2snap', iteration: 1, route: tempDir },
           noopContext,
         );
+        expect(result.artifacts).toHaveLength(1);
+        expect(result.artifacts[0]?.path).toBeDefined();
         const content = await fs.readFile(
           result.artifacts[0]?.path ?? '',
           'utf-8',
         );
+        expect(content).toContain('blocked by constraints');
         expect(content).toMatchSnapshot();
       });
 
@@ -352,6 +375,9 @@ describe('runStoneGuardReviews', () => {
           { stone, guard, hash: 'case4ret', iteration: 1, route: tempDir },
           noopContext,
         );
+        expect(result.artifacts).toHaveLength(1);
+        expect(result.artifacts[0]?.exitCode).toBe(2);
+        expect(result.artifacts[0]?.exitClass).toBe('constraint');
         const sanitized = result.artifacts.map((r) => ({
           ...r,
           path: r.path?.replace(tempDir, '<route>'),
@@ -429,10 +455,13 @@ describe('runStoneGuardReviews', () => {
           { stone, guard, hash: 'exit1snap', iteration: 1, route: tempDir },
           noopContext,
         );
+        expect(result.artifacts).toHaveLength(1);
+        expect(result.artifacts[0]?.path).toBeDefined();
         const content = await fs.readFile(
           result.artifacts[0]?.path ?? '',
           'utf-8',
         );
+        expect(content).toContain('blocked by malfunction');
         expect(content).toMatchSnapshot();
       });
 
@@ -441,6 +470,9 @@ describe('runStoneGuardReviews', () => {
           { stone, guard, hash: 'case5ret', iteration: 1, route: tempDir },
           noopContext,
         );
+        expect(result.artifacts).toHaveLength(1);
+        expect(result.artifacts[0]?.exitCode).toBe(1);
+        expect(result.artifacts[0]?.exitClass).toBe('malfunction');
         const sanitized = result.artifacts.map((r) => ({
           ...r,
           path: r.path?.replace(tempDir, '<route>'),
@@ -531,10 +563,13 @@ describe('runStoneGuardReviews', () => {
           { stone, guard, hash: 'case6snap', iteration: 1, route: tempDir },
           noopContext,
         );
+        expect(result.artifacts).toHaveLength(1);
+        expect(result.artifacts[0]?.path).toBeDefined();
         const content = await fs.readFile(
           result.artifacts[0]?.path ?? '',
           'utf-8',
         );
+        expect(content).toContain('marker found');
         // sanitize dynamic temp path for portable snapshots
         const sanitized = content.replace(
           new RegExp(tempDir.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'g'),
@@ -548,6 +583,9 @@ describe('runStoneGuardReviews', () => {
           { stone, guard, hash: 'case6ret', iteration: 1, route: tempDir },
           noopContext,
         );
+        expect(result.artifacts).toHaveLength(1);
+        expect(result.artifacts[0]?.exitCode).toBe(0);
+        expect(result.artifacts[0]?.blockers).toBe(0);
         const sanitized = result.artifacts.map((r) => ({
           ...r,
           path: r.path?.replace(tempDir, '<route>'),
@@ -619,10 +657,13 @@ describe('runStoneGuardReviews', () => {
           { stone, guard, hash: 'rhxsnap', iteration: 1, route: tempDir },
           noopContext,
         );
+        expect(result.artifacts).toHaveLength(1);
+        expect(result.artifacts[0]?.path).toBeDefined();
         const content = await fs.readFile(
           result.artifacts[0]?.path ?? '',
           'utf-8',
         );
+        expect(content).toContain('node_modules/.bin/rhx');
         // sanitize absolute path for portable snapshots
         const sanitized = content.replace(
           /rhx=.*\/node_modules/g,
@@ -636,6 +677,9 @@ describe('runStoneGuardReviews', () => {
           { stone, guard, hash: 'case7ret', iteration: 1, route: tempDir },
           noopContext,
         );
+        expect(result.artifacts).toHaveLength(1);
+        expect(result.artifacts[0]?.exitCode).toBe(0);
+        expect(result.artifacts[0]?.blockers).toBe(0);
         const sanitized = result.artifacts.map((r) => ({
           ...r,
           path: r.path?.replace(tempDir, '<route>'),
@@ -713,10 +757,13 @@ describe('runStoneGuardReviews', () => {
           { stone, guard, hash: 'rhachetsnap', iteration: 1, route: tempDir },
           noopContext,
         );
+        expect(result.artifacts).toHaveLength(1);
+        expect(result.artifacts[0]?.path).toBeDefined();
         const content = await fs.readFile(
           result.artifacts[0]?.path ?? '',
           'utf-8',
         );
+        expect(content).toContain('node_modules/.bin/rhachet');
         // sanitize absolute path for portable snapshots
         const sanitized = content.replace(
           /rhachet=.*\/node_modules/g,
@@ -730,6 +777,9 @@ describe('runStoneGuardReviews', () => {
           { stone, guard, hash: 'case8ret', iteration: 1, route: tempDir },
           noopContext,
         );
+        expect(result.artifacts).toHaveLength(1);
+        expect(result.artifacts[0]?.exitCode).toBe(0);
+        expect(result.artifacts[0]?.blockers).toBe(0);
         const sanitized = result.artifacts.map((r) => ({
           ...r,
           path: r.path?.replace(tempDir, '<route>'),

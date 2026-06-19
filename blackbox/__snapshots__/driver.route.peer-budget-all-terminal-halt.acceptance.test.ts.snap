@@ -7,7 +7,7 @@ exports[`driver.route.peer-budget-all-terminal-halt.acceptance given: [case1] le
    │   ├─ rejected [TIME]
    │   ├─ 1 blocker 🔴
    │   ├─ 0 nitpicks ✓
-   │   └─ review: .route/1.vision.guard.review.i1.8739656801d5e77f22.r1.md
+   │   └─ review: .reviews/peer/1.vision._.review.i1.8739656801d5e77f22.r1._.given.by_peer.quick-fail.md
    │
    ├─ r2: thorough (l2, 0/2)
    │   └─ awaits arrival
@@ -26,7 +26,7 @@ exports[`driver.route.peer-budget-all-terminal-halt.acceptance given: [case1] le
       │   │   ├─ rejected [TIME]
       │   │   ├─ 1 blocker 🔴
       │   │   ├─ 0 nitpicks ✓
-      │   │   └─ review: .route/1.vision.guard.review.i1.8739656801d5e77f22.r1.md
+      │   │   └─ review: .reviews/peer/1.vision._.review.i1.8739656801d5e77f22.r1._.given.by_peer.quick-fail.md
       │   └─ r2: thorough (l2, 0/2)
       │       └─ awaits l1 terminal
       └─ judges
@@ -43,13 +43,13 @@ exports[`driver.route.peer-budget-all-terminal-halt.acceptance given: [case1] le
    │   ├─ exhausted, cached
    │   ├─ 1 blocker 🔴
    │   ├─ 0 nitpicks ✓
-   │   └─ review: .route/1.vision.guard.review.i1.8739656801d5e77f22.r1.md
+   │   └─ review: .reviews/peer/1.vision._.review.i1.8739656801d5e77f22.r1._.given.by_peer.quick-fail.md
    │
    ├─ r2: thorough (l2, 1/2)
    │   ├─ rejected [TIME]
    │   ├─ 1 blocker 🔴
    │   ├─ 0 nitpicks ✓
-   │   └─ review: .route/1.vision.guard.review.i2.dfc5faff83ea2fcb55.r2.md
+   │   └─ review: .reviews/peer/1.vision._.review.i2.dfc5faff83ea2fcb55.r2._.given.by_peer.thorough.md
    │
    └─ ✗ judge.1 - blocked [TIME]
 
@@ -65,12 +65,12 @@ exports[`driver.route.peer-budget-all-terminal-halt.acceptance given: [case1] le
       │   │   ├─ exhausted, cached
       │   │   ├─ 1 blocker 🔴
       │   │   ├─ 0 nitpicks ✓
-      │   │   └─ review: .route/1.vision.guard.review.i1.8739656801d5e77f22.r1.md
+      │   │   └─ review: .reviews/peer/1.vision._.review.i1.8739656801d5e77f22.r1._.given.by_peer.quick-fail.md
       │   └─ r2: thorough (l2, 1/2)
       │       ├─ rejected [TIME]
       │       ├─ 1 blocker 🔴
       │       ├─ 0 nitpicks ✓
-      │       └─ review: .route/1.vision.guard.review.i2.dfc5faff83ea2fcb55.r2.md
+      │       └─ review: .reviews/peer/1.vision._.review.i2.dfc5faff83ea2fcb55.r2._.given.by_peer.thorough.md
       └─ judges
           └─ j1: rhx route.stone.judge --mechanism reviewed? --stone $stone --route $route --allow-blockers 0 --allow-nitpicks 1
               ├─ finished [TIME] ✗
@@ -85,13 +85,13 @@ exports[`driver.route.peer-budget-all-terminal-halt.acceptance given: [case1] le
    │   ├─ exhausted, cached
    │   ├─ 1 blocker 🔴
    │   ├─ 0 nitpicks ✓
-   │   └─ review: .route/1.vision.guard.review.i1.8739656801d5e77f22.r1.md
+   │   └─ review: .reviews/peer/1.vision._.review.i1.8739656801d5e77f22.r1._.given.by_peer.quick-fail.md
    │
    ├─ r2: thorough (l2, 2/2)
    │   ├─ exhausted, cached
    │   ├─ 1 blocker 🔴
    │   ├─ 0 nitpicks ✓
-   │   └─ review: .route/1.vision.guard.review.i3.457fd5ef46e053a35e.r2.md
+   │   └─ review: .reviews/peer/1.vision._.review.i3.457fd5ef46e053a35e.r2._.given.by_peer.thorough.md
    │
    └─ halted: peer reviewer budget exhausted
 
@@ -112,12 +112,12 @@ exports[`driver.route.peer-budget-all-terminal-halt.acceptance given: [case1] le
           │   ├─ exhausted, cached
           │   ├─ 1 blocker 🔴
           │   ├─ 0 nitpicks ✓
-          │   └─ review: .route/1.vision.guard.review.i1.8739656801d5e77f22.r1.md
+          │   └─ review: .reviews/peer/1.vision._.review.i1.8739656801d5e77f22.r1._.given.by_peer.quick-fail.md
           └─ r2: thorough (l2, 2/2)
               ├─ exhausted, cached
               ├─ 1 blocker 🔴
               ├─ 0 nitpicks ✓
-              └─ review: .route/1.vision.guard.review.i3.457fd5ef46e053a35e.r2.md
+              └─ review: .reviews/peer/1.vision._.review.i3.457fd5ef46e053a35e.r2._.given.by_peer.thorough.md
 "
 `;
 
@@ -128,13 +128,13 @@ exports[`driver.route.peer-budget-all-terminal-halt.acceptance given: [case1] le
    │   ├─ exhausted, cached
    │   ├─ 1 blocker 🔴
    │   ├─ 0 nitpicks ✓
-   │   └─ review: .route/1.vision.guard.review.i1.8739656801d5e77f22.r1.md
+   │   └─ review: .reviews/peer/1.vision._.review.i1.8739656801d5e77f22.r1._.given.by_peer.quick-fail.md
    │
    ├─ r2: thorough (l2, 2/2)
    │   ├─ rejected [TIME]
    │   ├─ 1 blocker 🔴
    │   ├─ 0 nitpicks ✓
-   │   └─ review: .route/1.vision.guard.review.i3.457fd5ef46e053a35e.r2.md
+   │   └─ review: .reviews/peer/1.vision._.review.i3.457fd5ef46e053a35e.r2._.given.by_peer.thorough.md
    │
    └─ ✗ judge.1 - blocked [TIME]
 
@@ -150,12 +150,12 @@ exports[`driver.route.peer-budget-all-terminal-halt.acceptance given: [case1] le
       │   │   ├─ exhausted, cached
       │   │   ├─ 1 blocker 🔴
       │   │   ├─ 0 nitpicks ✓
-      │   │   └─ review: .route/1.vision.guard.review.i1.8739656801d5e77f22.r1.md
+      │   │   └─ review: .reviews/peer/1.vision._.review.i1.8739656801d5e77f22.r1._.given.by_peer.quick-fail.md
       │   └─ r2: thorough (l2, 2/2)
       │       ├─ rejected [TIME]
       │       ├─ 1 blocker 🔴
       │       ├─ 0 nitpicks ✓
-      │       └─ review: .route/1.vision.guard.review.i3.457fd5ef46e053a35e.r2.md
+      │       └─ review: .reviews/peer/1.vision._.review.i3.457fd5ef46e053a35e.r2._.given.by_peer.thorough.md
       └─ judges
           └─ j1: rhx route.stone.judge --mechanism reviewed? --stone $stone --route $route --allow-blockers 0 --allow-nitpicks 1
               ├─ finished [TIME] ✗

@@ -7,7 +7,7 @@ exports[`driver.route.peer-budget-defaults.acceptance given: [journey] peer revi
    │   ├─ rejected [TIME]
    │   ├─ 1 blocker 🔴
    │   ├─ 0 nitpicks ✓
-   │   └─ review: .route/1.execute.guard.review.i1.8739656801d5e77f22.r1.md
+   │   └─ review: .reviews/peer/1.execute._.review.i1.8739656801d5e77f22.r1._.given.by_peer.legacy-reviewer.md
    │
    └─ ✗ judge.1 - blocked [TIME]
 
@@ -23,7 +23,7 @@ exports[`driver.route.peer-budget-defaults.acceptance given: [journey] peer revi
       │       ├─ rejected [TIME]
       │       ├─ 1 blocker 🔴
       │       ├─ 0 nitpicks ✓
-      │       └─ review: .route/1.execute.guard.review.i1.8739656801d5e77f22.r1.md
+      │       └─ review: .reviews/peer/1.execute._.review.i1.8739656801d5e77f22.r1._.given.by_peer.legacy-reviewer.md
       └─ judges
           └─ j1: rhx route.stone.judge --mechanism reviewed? --stone $stone --route $route --allow-blockers 0 --allow-nitpicks 1
               ├─ finished [TIME] ✗
@@ -38,7 +38,7 @@ exports[`driver.route.peer-budget-defaults.acceptance given: [journey] peer revi
    │   ├─ rejected [TIME]
    │   ├─ 1 blocker 🔴
    │   ├─ 0 nitpicks ✓
-   │   └─ review: .route/1.execute.guard.review.i6.f3f272257af6779ffe.r1.md
+   │   └─ review: .reviews/peer/1.execute._.review.i6.f3f272257af6779ffe.r1._.given.by_peer.legacy-reviewer.md
    │
    └─ ✗ judge.1 - blocked [TIME]
 
@@ -54,7 +54,7 @@ exports[`driver.route.peer-budget-defaults.acceptance given: [journey] peer revi
       │       ├─ rejected [TIME]
       │       ├─ 1 blocker 🔴
       │       ├─ 0 nitpicks ✓
-      │       └─ review: .route/1.execute.guard.review.i6.f3f272257af6779ffe.r1.md
+      │       └─ review: .reviews/peer/1.execute._.review.i6.f3f272257af6779ffe.r1._.given.by_peer.legacy-reviewer.md
       └─ judges
           └─ j1: rhx route.stone.judge --mechanism reviewed? --stone $stone --route $route --allow-blockers 0 --allow-nitpicks 1
               ├─ finished [TIME] ✗
@@ -69,7 +69,7 @@ exports[`driver.route.peer-budget-defaults.acceptance given: [journey] peer revi
    │   ├─ approved [TIME]
    │   ├─ 0 blockers ✓
    │   ├─ 0 nitpicks ✓
-   │   └─ review: .route/1.execute.guard.review.i7.f349fccd9ea124b5ab.r1.md
+   │   └─ review: .reviews/peer/1.execute._.review.i7.f349fccd9ea124b5ab.r1._.given.by_peer.legacy-reviewer.md
    │
    └─ ✓ judge.1 - allowed [TIME]
 
@@ -84,7 +84,7 @@ exports[`driver.route.peer-budget-defaults.acceptance given: [journey] peer revi
    │  │       ├─ approved [TIME]
    │  │       ├─ 0 blockers ✓
    │  │       ├─ 0 nitpicks ✓
-   │  │       └─ review: .route/1.execute.guard.review.i7.f349fccd9ea124b5ab.r1.md
+   │  │       └─ review: .reviews/peer/1.execute._.review.i7.f349fccd9ea124b5ab.r1._.given.by_peer.legacy-reviewer.md
    │  └─ judges
    │      └─ j1: rhx route.stone.judge --mechanism reviewed? --stone $stone --route $route --allow-blockers 0 --allow-nitpicks 1
    │          └─ finished [TIME] ✓

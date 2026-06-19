@@ -38,32 +38,34 @@ describe('getMaxStoneGuardIteration', () => {
 
     beforeAll(async () => {
       const routeDir = path.join(tempDir, '.route');
+      const reviewsDir = path.join(tempDir, '.reviews', 'peer');
       await fs.mkdir(routeDir, { recursive: true });
+      await fs.mkdir(reviewsDir, { recursive: true });
 
-      // create review artifacts with different iterations and hashes
+      // create review artifacts in .reviews/peer/ with new filename pattern
       // simulates: i1 with hash1, i2 with hash2, i5 with hash3
       await fs.writeFile(
         path.join(
-          routeDir,
-          '1.vision.guard.review.i1.abc123def456789012.r1.md',
+          reviewsDir,
+          '1.vision._.review.i1.abc123def456789012.r1._.given.by_peer.test-reviewer.md',
         ),
         'review 1',
       );
       await fs.writeFile(
         path.join(
-          routeDir,
-          '1.vision.guard.review.i2.def456abc123789012.r1.md',
+          reviewsDir,
+          '1.vision._.review.i2.def456abc123789012.r1._.given.by_peer.test-reviewer.md',
         ),
         'review 2',
       );
       await fs.writeFile(
         path.join(
-          routeDir,
-          '1.vision.guard.review.i5.789012abc123def456.r1.md',
+          reviewsDir,
+          '1.vision._.review.i5.789012abc123def456.r1._.given.by_peer.test-reviewer.md',
         ),
         'review 5',
       );
-      // create judge artifact at i3
+      // create judge artifact at i3 in .route/
       await fs.writeFile(
         path.join(routeDir, '1.vision.guard.judge.i3.abc123def456789012.j1.md'),
         'judge 3',
@@ -93,21 +95,21 @@ describe('getMaxStoneGuardIteration', () => {
     const tempDir = path.join(__dirname, '../.test/temp-iteration-multi-stone');
 
     beforeAll(async () => {
-      const routeDir = path.join(tempDir, '.route');
-      await fs.mkdir(routeDir, { recursive: true });
+      const reviewsDir = path.join(tempDir, '.reviews', 'peer');
+      await fs.mkdir(reviewsDir, { recursive: true });
 
-      // create artifacts for different stones
+      // create review artifacts for different stones in .reviews/peer/
       await fs.writeFile(
         path.join(
-          routeDir,
-          '1.vision.guard.review.i3.abc123def456789012.r1.md',
+          reviewsDir,
+          '1.vision._.review.i3.abc123def456789012.r1._.given.by_peer.test-reviewer.md',
         ),
         'vision review',
       );
       await fs.writeFile(
         path.join(
-          routeDir,
-          '2.execution.guard.review.i10.abc123def456789012.r1.md',
+          reviewsDir,
+          '2.execution._.review.i10.abc123def456789012.r1._.given.by_peer.test-reviewer.md',
         ),
         'execution review',
       );

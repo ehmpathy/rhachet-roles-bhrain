@@ -1,5 +1,6 @@
 import { exec } from 'child_process';
 import * as fs from 'fs/promises';
+import { BadRequestError } from 'helpful-errors';
 import * as path from 'path';
 import { getGitRepoRoot } from 'rhachet-artifact-git';
 import { promisify } from 'util';
@@ -20,6 +21,7 @@ import { getAllStoneGuardArtifactsByHash } from './getAllStoneGuardArtifactsByHa
 import { getExitCodeClass } from './getExitCodeClass';
 import { getLatestReviewArtifactForIndex } from './getLatestReviewArtifactForIndex';
 import { getReviewCountsFromContent } from './getReviewCountsFromContent';
+import { isENOENT } from './isENOENT';
 import { computeReviewPeerVerdict } from './reviewPeerMeter/computeReviewPeerVerdict';
 import { getAllRouteStoneGuardReviewPeerMeters } from './reviewPeerMeter/getAllRouteStoneGuardReviewPeerMeters';
 import { getReviewedJudgeThresholds } from './reviewPeerMeter/getReviewedJudgeThresholds';
@@ -73,33 +75,55 @@ export const runOneStoneGuardReview = async (input: {
   hash: string;
   iteration: number;
   route: string;
+  slug: string;
 }): Promise<RouteStoneGuardReviewArtifact> => {
-  // ensure .route directory found or created
-  const routeDir = path.join(input.route, '.route');
-  await fs.mkdir(routeDir, { recursive: true });
+  // ensure .reviews/peer directory found or created
+  // .why = peer reviews go to .reviews/peer/ so drivers can read them
+  //        (.route/ is sealed by route.mutate.guard)
+  const reviewsDir = path.join(input.route, '.reviews', 'peer');
+  await fs.mkdir(reviewsDir, { recursive: true });
 
   // lookup repo root for $rhx/$rhachet paths
   // .note = falls back to cwd when not in a git repo (e.g., integration tests)
   let repoRoot: string;
   try {
     repoRoot = await getGitRepoRoot({ from: input.route });
-  } catch {
+  } catch (error) {
+    // only catch "not in git repo" error; rethrow any other errors
+    // .note = check error message instead of instanceof due to cross-module class instances
+    const isNotInGitRepoError =
+      error instanceof Error && error.message.includes('Not inside a Git');
+    if (!isNotInGitRepoError) throw error;
+
     repoRoot = process.cwd();
   }
 
   // validate no npx patterns before variable substitution
   validateNoNpx(input.reviewCmd);
 
-  // substitute variables in command
-  const outputPath = path.join(
-    routeDir,
-    `${input.stone.name}.guard.review.i${input.iteration}.${input.hash}.r${input.index}.md`,
+  // sanitize slug for filename
+  // .why = legacy peer reviews use command as slug (e.g., ".test/mock-review.sh")
+  //        path separators would create nested directories
+  const sanitizedSlug = input.slug.replace(/[/\\]/g, '-');
+
+  // generate stdout path (what guard writes) and report path (what review skill writes)
+  // .note = symmetric names: stdout is .md, report is .report.md
+  const stdoutPath = path.join(
+    reviewsDir,
+    `${input.stone.name}._.review.i${input.iteration}.${input.hash}.r${input.index}._.given.by_peer.${sanitizedSlug}.md`,
   );
+  const reportPath = path.join(
+    reviewsDir,
+    `${input.stone.name}._.review.i${input.iteration}.${input.hash}.r${input.index}._.given.by_peer.${sanitizedSlug}.report.md`,
+  );
+
+  // substitute variables in command
+  // .note = $output points to report path (for review skill to write)
   const cmd = substituteVars(input.reviewCmd, {
     stone: input.stone.name,
     route: input.route,
     hash: input.hash,
-    output: outputPath,
+    output: reportPath,
     repoRoot,
   });
 
@@ -119,6 +143,7 @@ export const runOneStoneGuardReview = async (input: {
   let exitCode = 0;
   try {
     const result = await execAsync(cmd, {
+      cwd: input.route,
       env: execEnv,
       timeout: REVIEW_TIMEOUT_MS,
     });
@@ -126,19 +151,30 @@ export const runOneStoneGuardReview = async (input: {
     stderr = result.stderr;
     exitCode = 0;
   } catch (error: unknown) {
-    // capture output and exit code even on failure
-    if (error && typeof error === 'object') {
-      const errObj = error as Record<string, unknown>;
-      stdout = typeof errObj.stdout === 'string' ? errObj.stdout : '';
-      stderr = typeof errObj.stderr === 'string' ? errObj.stderr : '';
+    // capture output and exit code from command failure
+    // exec errors have specific shape: { stdout, stderr, code, killed }
+    // rethrow if error doesn't match this shape (unexpected error)
+    if (
+      !error ||
+      typeof error !== 'object' ||
+      !('code' in error || 'killed' in error)
+    ) {
+      throw error;
+    }
 
-      // detect timeout (process killed by signal)
-      if (errObj.killed === true) {
-        stderr = `💥 malfunction: review timed out after ${Math.floor(REVIEW_TIMEOUT_MS / 60000)} minutes`;
-        exitCode = 1;
-      } else {
-        exitCode = typeof errObj.code === 'number' ? errObj.code : 1;
-      }
+    const errObj = error as Record<string, unknown>;
+    stdout = typeof errObj.stdout === 'string' ? errObj.stdout : '';
+    stderr = typeof errObj.stderr === 'string' ? errObj.stderr : '';
+
+    // detect timeout (process killed by signal)
+    if (errObj.killed === true) {
+      stderr = `💥 malfunction: review timed out after ${Math.floor(REVIEW_TIMEOUT_MS / 60000)} minutes`;
+      exitCode = 1;
+    }
+
+    // extract exit code from error
+    if (errObj.killed !== true) {
+      exitCode = typeof errObj.code === 'number' ? errObj.code : 1;
     }
   }
 
@@ -164,8 +200,8 @@ export const runOneStoneGuardReview = async (input: {
 
   const artifactContent = artifactLines.join('\n');
 
-  // write artifact file
-  await fs.writeFile(outputPath, artifactContent);
+  // write stdout artifact file
+  await fs.writeFile(stdoutPath, artifactContent);
 
   // parse blockers and nitpicks from stdout via shared operation
   const counts = getReviewCountsFromContent({ content: stdout });
@@ -181,7 +217,7 @@ export const runOneStoneGuardReview = async (input: {
     hash: input.hash,
     iteration: input.iteration,
     index: input.index,
-    path: outputPath,
+    path: stdoutPath,
     blockers,
     nitpicks,
     exitCode,
@@ -214,7 +250,13 @@ export const runStoneGuardReviews = async (
   let gitRoot: string;
   try {
     gitRoot = await getGitRepoRoot({ from: input.route });
-  } catch {
+  } catch (error) {
+    // only catch "not in git repo" error; rethrow any other errors
+    // .note = check error name instead of instanceof due to cross-module class instances
+    const isNotInGitRepoError =
+      error instanceof Error && error.message.includes('Not inside a Git');
+    if (!isNotInGitRepoError) throw error;
+
     gitRoot = process.cwd();
   }
 
@@ -487,6 +529,7 @@ export const runStoneGuardReviews = async (
       hash: input.hash,
       iteration: input.iteration,
       route: input.route,
+      slug: pr.slug,
     });
 
     // determine if review actually completed (vs constraint/malfunction)
@@ -518,12 +561,24 @@ export const runStoneGuardReviews = async (
 
     // determine review outcome based on exit class and blockers
     // .note = constraint (exit 2) with blockers = review worked, show blockers
-    // .note = constraint (exit 2) without blockers = genuine constraint, show constraint error
+    // .note = constraint (exit 2) without blockers = genuine constraint, show constraint message
+    // .note = malfunction/constraint outcomes are messages, not Error objects
+    //         (Error objects should only be constructed when thrown)
     const reviewOutcome = (() => {
-      if (review.exitClass === 'malfunction')
-        return { malfunction: new Error(`exit code ${review.exitCode}`) };
+      if (review.exitClass === 'malfunction') {
+        // include first line of stderr if available for actionable context
+        const stderrFirstLine = review.stderr.split('\n')[0]?.trim();
+        const detail = stderrFirstLine
+          ? `. ${stderrFirstLine}`
+          : `. see review artifact for details`;
+        return {
+          malfunction: `review command failed with exit code ${review.exitCode}${detail}`,
+        };
+      }
       if (isGenuineConstraint)
-        return { constraint: new Error(`exit code ${review.exitCode}`) };
+        return {
+          constraint: `review returned constraint (exit code ${review.exitCode}) without blockers`,
+        };
       return { blockers: review.blockers, nitpicks: review.nitpicks };
     })();
 
@@ -556,13 +611,17 @@ export const runStoneGuardReviews = async (
  * .why = npx adds 500-2000ms latency and has cross-platform issues
  */
 const validateNoNpx = (cmd: string): void => {
+  // reject guards that use npx patterns
   if (cmd.includes('npx rhachet') || cmd.includes('npx rhx')) {
     const pattern = cmd.includes('npx rhachet') ? 'npx rhachet' : 'npx rhx';
     const alias = cmd.includes('npx rhachet') ? '$rhachet' : '$rhx';
-    throw new Error(
-      `guard uses ${pattern} which causes latency and cross-platform issues\n\n` +
-        `fix: use ${alias} alias instead\n` +
-        `  - ${alias} expands to ./node_modules/.bin/${alias.slice(1)}\n`,
+    BadRequestError.throw(
+      `guard uses ${pattern} which causes latency and cross-platform issues. ` +
+        `fix: use ${alias} alias instead (${alias} expands to ./node_modules/.bin/${alias.slice(1)})`,
+      {
+        pattern,
+        alias,
+      },
     );
   }
 };
@@ -606,7 +665,9 @@ const isFilePresent = async (filePath: string): Promise<boolean> => {
   try {
     await fs.access(filePath);
     return true;
-  } catch {
-    return false;
+  } catch (error) {
+    // only catch ENOENT (file not found); rethrow other errors
+    if (isENOENT(error)) return false;
+    throw error;
   }
 };

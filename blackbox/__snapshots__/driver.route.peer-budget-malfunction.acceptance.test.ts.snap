@@ -5,7 +5,7 @@ exports[`driver.route.peer-budget-malfunction.acceptance given: [journey] review
    │
    ├─ r1: flaky-reviewer (l1, 1/2)
    │   ├─ 💥 malfunction
-   │   └─ review: .route/1.execute.guard.review.i1.8739656801d5e77f22.r1.md
+   │   └─ review: .reviews/peer/1.execute._.review.i1.8739656801d5e77f22.r1._.given.by_peer.flaky-reviewer.md
    │
    └─ ✓ judge.1 - allowed [TIME]
 
@@ -19,7 +19,7 @@ exports[`driver.route.peer-budget-malfunction.acceptance given: [journey] review
       ├─ reviews
       │   └─ r1: flaky-reviewer (l1, 0/2)
       │       ├─ 💥 malfunction
-      │       └─ review: .route/1.execute.guard.review.i1.8739656801d5e77f22.r1.md
+      │       └─ review: .reviews/peer/1.execute._.review.i1.8739656801d5e77f22.r1._.given.by_peer.flaky-reviewer.md
       └─ judges
           └─ j1: rhx route.stone.judge --mechanism reviewed? --stone $stone --route $route --allow-blockers 0 --allow-nitpicks 1
               └─ finished [TIME] ✓
@@ -33,7 +33,7 @@ exports[`driver.route.peer-budget-malfunction.acceptance given: [journey] review
    │   ├─ rejected [TIME]
    │   ├─ 1 blocker 🔴
    │   ├─ 0 nitpicks ✓
-   │   └─ review: .route/1.execute.guard.review.i2.dfc5faff83ea2fcb55.r1.md
+   │   └─ review: .reviews/peer/1.execute._.review.i2.dfc5faff83ea2fcb55.r1._.given.by_peer.flaky-reviewer.md
    │
    └─ ✗ judge.1 - blocked [TIME]
 
@@ -49,7 +49,7 @@ exports[`driver.route.peer-budget-malfunction.acceptance given: [journey] review
       │       ├─ rejected [TIME]
       │       ├─ 1 blocker 🔴
       │       ├─ 0 nitpicks ✓
-      │       └─ review: .route/1.execute.guard.review.i2.dfc5faff83ea2fcb55.r1.md
+      │       └─ review: .reviews/peer/1.execute._.review.i2.dfc5faff83ea2fcb55.r1._.given.by_peer.flaky-reviewer.md
       └─ judges
           └─ j1: rhx route.stone.judge --mechanism reviewed? --stone $stone --route $route --allow-blockers 0 --allow-nitpicks 1
               ├─ finished [TIME] ✗
@@ -64,7 +64,7 @@ exports[`driver.route.peer-budget-malfunction.acceptance given: [journey] review
    │   ├─ rejected [TIME]
    │   ├─ 1 blocker 🔴
    │   ├─ 0 nitpicks ✓
-   │   └─ review: .route/1.execute.guard.review.i3.457fd5ef46e053a35e.r1.md
+   │   └─ review: .reviews/peer/1.execute._.review.i3.457fd5ef46e053a35e.r1._.given.by_peer.flaky-reviewer.md
    │
    └─ ✗ judge.1 - blocked [TIME]
 
@@ -80,7 +80,7 @@ exports[`driver.route.peer-budget-malfunction.acceptance given: [journey] review
       │       ├─ rejected [TIME]
       │       ├─ 1 blocker 🔴
       │       ├─ 0 nitpicks ✓
-      │       └─ review: .route/1.execute.guard.review.i3.457fd5ef46e053a35e.r1.md
+      │       └─ review: .reviews/peer/1.execute._.review.i3.457fd5ef46e053a35e.r1._.given.by_peer.flaky-reviewer.md
       └─ judges
           └─ j1: rhx route.stone.judge --mechanism reviewed? --stone $stone --route $route --allow-blockers 0 --allow-nitpicks 1
               ├─ finished [TIME] ✗
@@ -95,7 +95,7 @@ exports[`driver.route.peer-budget-malfunction.acceptance given: [journey] review
    │   ├─ exhausted, cached
    │   ├─ 1 blocker 🔴
    │   ├─ 0 nitpicks ✓
-   │   └─ review: .route/1.execute.guard.review.i3.457fd5ef46e053a35e.r1.md
+   │   └─ review: .reviews/peer/1.execute._.review.i3.457fd5ef46e053a35e.r1._.given.by_peer.flaky-reviewer.md
    │
    └─ halted: peer reviewer budget exhausted
 
@@ -116,7 +116,7 @@ exports[`driver.route.peer-budget-malfunction.acceptance given: [journey] review
               ├─ exhausted, cached
               ├─ 1 blocker 🔴
               ├─ 0 nitpicks ✓
-              └─ review: .route/1.execute.guard.review.i3.457fd5ef46e053a35e.r1.md
+              └─ review: .reviews/peer/1.execute._.review.i3.457fd5ef46e053a35e.r1._.given.by_peer.flaky-reviewer.md
 "
 `;
 
@@ -125,7 +125,7 @@ exports[`driver.route.peer-budget-malfunction.acceptance given: [journey] review
    │
    ├─ r1: flaky-reviewer (l1, 3/3)
    │   ├─ 💥 malfunction
-   │   └─ review: .route/1.execute.guard.review.i4.0997a4c5910ffe05d0.r1.md
+   │   └─ review: .reviews/peer/1.execute._.review.i4.0997a4c5910ffe05d0.r1._.given.by_peer.flaky-reviewer.md
    │
    └─ ✓ judge.1 - allowed [TIME]
 
@@ -139,7 +139,7 @@ exports[`driver.route.peer-budget-malfunction.acceptance given: [journey] review
       ├─ reviews
       │   └─ r1: flaky-reviewer (l1, 2/3)
       │       ├─ 💥 malfunction
-      │       └─ review: .route/1.execute.guard.review.i4.0997a4c5910ffe05d0.r1.md
+      │       └─ review: .reviews/peer/1.execute._.review.i4.0997a4c5910ffe05d0.r1._.given.by_peer.flaky-reviewer.md
       └─ judges
           └─ j1: rhx route.stone.judge --mechanism reviewed? --stone $stone --route $route --allow-blockers 0 --allow-nitpicks 1
               └─ finished [TIME] ✓
@@ -153,7 +153,7 @@ exports[`driver.route.peer-budget-malfunction.acceptance given: [journey] review
    │   ├─ approved [TIME]
    │   ├─ 0 blockers ✓
    │   ├─ 0 nitpicks ✓
-   │   └─ review: .route/1.execute.guard.review.i5.ae29d35593838b9619.r1.md
+   │   └─ review: .reviews/peer/1.execute._.review.i5.ae29d35593838b9619.r1._.given.by_peer.flaky-reviewer.md
    │
    └─ ✓ judge.1 - allowed [TIME]
 
@@ -168,7 +168,7 @@ exports[`driver.route.peer-budget-malfunction.acceptance given: [journey] review
    │  │       ├─ approved [TIME]
    │  │       ├─ 0 blockers ✓
    │  │       ├─ 0 nitpicks ✓
-   │  │       └─ review: .route/1.execute.guard.review.i5.ae29d35593838b9619.r1.md
+   │  │       └─ review: .reviews/peer/1.execute._.review.i5.ae29d35593838b9619.r1._.given.by_peer.flaky-reviewer.md
    │  └─ judges
    │      └─ j1: rhx route.stone.judge --mechanism reviewed? --stone $stone --route $route --allow-blockers 0 --allow-nitpicks 1
    │          └─ finished [TIME] ✓

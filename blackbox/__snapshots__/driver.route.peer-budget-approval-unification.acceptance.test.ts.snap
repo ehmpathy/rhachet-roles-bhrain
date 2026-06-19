@@ -7,7 +7,7 @@ exports[`driver.route.peer-budget-approval-unification.acceptance given: [usecas
    │   ├─ rejected [TIME]
    │   ├─ 1 blocker 🔴
    │   ├─ 0 nitpicks ✓
-   │   └─ review: .route/1.execute.guard.review.i1.8739656801d5e77f22.r1.md
+   │   └─ review: .reviews/peer/1.execute._.review.i1.8739656801d5e77f22.r1._.given.by_peer.strict-checker.md
    │
    ├─ ✗ judge.1 - blocked [TIME]
    │
@@ -25,7 +25,7 @@ exports[`driver.route.peer-budget-approval-unification.acceptance given: [usecas
       │       ├─ rejected [TIME]
       │       ├─ 1 blocker 🔴
       │       ├─ 0 nitpicks ✓
-      │       └─ review: .route/1.execute.guard.review.i1.8739656801d5e77f22.r1.md
+      │       └─ review: .reviews/peer/1.execute._.review.i1.8739656801d5e77f22.r1._.given.by_peer.strict-checker.md
       └─ judges
           ├─ j1: rhx route.stone.judge --mechanism reviewed? --stone $stone --route $route --allow-blockers 0 --allow-nitpicks 1
           │   ├─ finished [TIME] ✗
@@ -43,7 +43,7 @@ exports[`driver.route.peer-budget-approval-unification.acceptance given: [usecas
    │   ├─ exhausted, cached
    │   ├─ 1 blocker 🔴
    │   ├─ 0 nitpicks ✓
-   │   └─ review: .route/1.execute.guard.review.i2.dfc5faff83ea2fcb55.r1.md
+   │   └─ review: .reviews/peer/1.execute._.review.i2.dfc5faff83ea2fcb55.r1._.given.by_peer.strict-checker.md
    │
    └─ halted: peer reviewer budget exhausted
 
@@ -64,7 +64,7 @@ exports[`driver.route.peer-budget-approval-unification.acceptance given: [usecas
               ├─ exhausted, cached
               ├─ 1 blocker 🔴
               ├─ 0 nitpicks ✓
-              └─ review: .route/1.execute.guard.review.i2.dfc5faff83ea2fcb55.r1.md
+              └─ review: .reviews/peer/1.execute._.review.i2.dfc5faff83ea2fcb55.r1._.given.by_peer.strict-checker.md
 "
 `;
 
@@ -75,7 +75,7 @@ exports[`driver.route.peer-budget-approval-unification.acceptance given: [usecas
    │   ├─ rejected [TIME]
    │   ├─ 1 blocker 🔴
    │   ├─ 0 nitpicks ✓
-   │   └─ review: .route/1.execute.guard.review.i2.dfc5faff83ea2fcb55.r1.md
+   │   └─ review: .reviews/peer/1.execute._.review.i2.dfc5faff83ea2fcb55.r1._.given.by_peer.strict-checker.md
    │
    ├─ ✗ judge.1 - blocked [TIME]
    │
@@ -93,7 +93,7 @@ exports[`driver.route.peer-budget-approval-unification.acceptance given: [usecas
       │       ├─ rejected [TIME]
       │       ├─ 1 blocker 🔴
       │       ├─ 0 nitpicks ✓
-      │       └─ review: .route/1.execute.guard.review.i2.dfc5faff83ea2fcb55.r1.md
+      │       └─ review: .reviews/peer/1.execute._.review.i2.dfc5faff83ea2fcb55.r1._.given.by_peer.strict-checker.md
       └─ judges
           ├─ j1: rhx route.stone.judge --mechanism reviewed? --stone $stone --route $route --allow-blockers 0 --allow-nitpicks 1
           │   ├─ finished [TIME] ✗
@@ -120,7 +120,7 @@ exports[`driver.route.peer-budget-approval-unification.acceptance given: [usecas
       │       ├─ exhausted
       │       ├─ 1 blocker 🔴
       │       ├─ 0 nitpicks ✓
-      │       └─ review: /tmp/test-fns/rhachet-roles-bhrain.vlad.fix-route-breakout/.temp/2026-06-19T10-11-32.289Z.peer-budget-approval-unification.015f5289/.route/1.execute.guard.review.i2.dfc5faff83ea2fcb55.r1.md
+      │       └─ review: /tmp/test-fns/rhachet-roles-bhrain.vlad.fix-review-blocker-access/.temp/2026-06-19T12-15-40.398Z.peer-budget-approval-unification.7be10513/.reviews/peer/1.execute._.review.i2.dfc5faff83ea2fcb55.r1._.given.by_peer.strict-checker.md
       │
       ├─ please ask a human to either
       │  ├─ approve as-is
@@ -150,7 +150,7 @@ exports[`driver.route.peer-budget-approval-unification.acceptance given: [usecas
    │   ├─ exhausted, cached
    │   ├─ 1 blocker 🔴
    │   ├─ 0 nitpicks ✓
-   │   └─ review: .route/1.execute.guard.review.i2.dfc5faff83ea2fcb55.r1.md
+   │   └─ review: .reviews/peer/1.execute._.review.i2.dfc5faff83ea2fcb55.r1._.given.by_peer.strict-checker.md
    │
    ├─ ✓ judge.1 - allowed [TIME]
    │
@@ -167,7 +167,7 @@ exports[`driver.route.peer-budget-approval-unification.acceptance given: [usecas
    │  │       ├─ exhausted, cached
    │  │       ├─ 1 blocker 🔴
    │  │       ├─ 0 nitpicks ✓
-   │  │       └─ review: .route/1.execute.guard.review.i2.dfc5faff83ea2fcb55.r1.md
+   │  │       └─ review: .reviews/peer/1.execute._.review.i2.dfc5faff83ea2fcb55.r1._.given.by_peer.strict-checker.md
    │  └─ judges
    │      ├─ j1: rhx route.stone.judge --mechanism reviewed? --stone $stone --route $route --allow-blockers 0 --allow-nitpicks 1
    │      │   └─ finished [TIME] ✓

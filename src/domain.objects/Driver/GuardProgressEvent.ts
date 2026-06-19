@@ -61,14 +61,14 @@ export interface GuardProgressEvent {
     path: string | null;
     review:
       | { blockers: number; nitpicks: number }
-      | { malfunction: Error }
-      | { constraint: Error }
+      | { malfunction: string }
+      | { constraint: string }
       | { exhausted: true; blockers: number; nitpicks: number }
       | { queued: true }
       | null;
     judge:
       | { decision: 'allowed' | 'blocked'; reason: string | null }
-      | { malfunction: Error }
+      | { malfunction: string }
       | null;
   } | null;
 }

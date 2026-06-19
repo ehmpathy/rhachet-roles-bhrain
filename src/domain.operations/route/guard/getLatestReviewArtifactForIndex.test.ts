@@ -10,10 +10,10 @@ import { getLatestReviewArtifactForIndex } from './getLatestReviewArtifactForInd
 describe('getLatestReviewArtifactForIndex', () => {
   given('[case1] route with review files for different iterations', () => {
     const scene = useBeforeAll(async () => {
-      // create temp route dir
+      // create temp route with .reviews/peer/ dir
       const tempDir = await fs.mkdtemp(path.join(os.tmpdir(), 'test-route-'));
-      const routeDir = path.join(tempDir, '.route');
-      await fs.mkdir(routeDir, { recursive: true });
+      const reviewsDir = path.join(tempDir, '.reviews', 'peer');
+      await fs.mkdir(reviewsDir, { recursive: true });
 
       // create review files for different iterations
       const reviewContentI1 = `├─ stdout
@@ -58,23 +58,35 @@ describe('getLatestReviewArtifactForIndex', () => {
 │  │
 │  └─`;
 
-      // write files with different iterations and hashes
+      // write files with new filename pattern: $stone._.review.i$iter.$hash.r$idx._.given.by_peer.$slug.md
       await fs.writeFile(
-        path.join(routeDir, 'test.stone.guard.review.i1.hash1.r1.md'),
+        path.join(
+          reviewsDir,
+          'test.stone._.review.i1.a1b2c3d4.r1._.given.by_peer.test-reviewer.md',
+        ),
         reviewContentI1,
       );
       await fs.writeFile(
-        path.join(routeDir, 'test.stone.guard.review.i2.hash2.r1.md'),
+        path.join(
+          reviewsDir,
+          'test.stone._.review.i2.e5f6a7b8.r1._.given.by_peer.test-reviewer.md',
+        ),
         reviewContentI2,
       );
       await fs.writeFile(
-        path.join(routeDir, 'test.stone.guard.review.i3.hash3.r1.md'),
+        path.join(
+          reviewsDir,
+          'test.stone._.review.i3.c9d0e1f2.r1._.given.by_peer.test-reviewer.md',
+        ),
         reviewContentI3,
       );
 
       // also create file for r2
       await fs.writeFile(
-        path.join(routeDir, 'test.stone.guard.review.i3.hash3.r2.md'),
+        path.join(
+          reviewsDir,
+          'test.stone._.review.i3.c9d0e1f2.r2._.given.by_peer.test-reviewer.md',
+        ),
         `├─ stdout
 │  ├─
 │  │
@@ -138,10 +150,10 @@ describe('getLatestReviewArtifactForIndex', () => {
     });
   });
 
-  given('[case2] no .route directory', () => {
+  given('[case2] no .reviews/peer directory', () => {
     const scene = useBeforeAll(async () => {
       const tempDir = await fs.mkdtemp(path.join(os.tmpdir(), 'test-route-'));
-      // no .route dir
+      // no .reviews/peer dir
       const stone = {
         name: 'test.stone',
         path: path.join(tempDir, 'test.stone.stone'),

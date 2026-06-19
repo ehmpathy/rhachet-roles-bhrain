@@ -12,6 +12,7 @@ import { getRouteBouncerCache } from '@src/domain.operations/route/bouncer/getRo
 import { computeReviewThresholdVerdict } from '@src/domain.operations/route/guard/computeReviewThresholdVerdict';
 import { computeReviewTotalsFromFiles } from '@src/domain.operations/route/guard/computeReviewTotalsFromFiles';
 import { computeStoneReviewInputHash } from '@src/domain.operations/route/guard/computeStoneReviewInputHash';
+import { enumRouteGuardReviewPeerFiles } from '@src/domain.operations/route/guard/enumRouteGuardReviewPeerFiles';
 import { genContextCliEmit } from '@src/domain.operations/route/guard/genContextCliEmit';
 import { getLatestReviewFilesPerIndex } from '@src/domain.operations/route/guard/getLatestReviewFilesPerIndex';
 import { getAllReviewPeerMeterStatuses } from '@src/domain.operations/route/guard/reviewPeerMeter/getAllReviewPeerMeterStatuses';
@@ -1153,12 +1154,10 @@ const judgeReviewed = async (input: {
   });
 
   // find review files for this stone and hash
-  const routeDir = path.join(input.route, '.route');
-  const reviewGlob = `${input.stone}.guard.review.*.${hash}.*.md`;
-
-  const reviewFiles = await enumFilesFromGlob({
-    glob: reviewGlob,
-    cwd: routeDir,
+  const reviewFiles = await enumRouteGuardReviewPeerFiles({
+    route: input.route,
+    stone: input.stone,
+    hash,
   });
 
   if (reviewFiles.length === 0) {

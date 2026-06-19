@@ -41,16 +41,22 @@ describe('delStoneGuardArtifacts', () => {
       os.tmpdir(),
       `test-del-guard-artifacts-reviews-${Date.now()}`,
     );
-    const routeDir = path.join(tempDir, '.route');
+    const reviewsDir = path.join(tempDir, '.reviews', 'peer');
 
     beforeEach(async () => {
-      await fs.mkdir(routeDir, { recursive: true });
+      await fs.mkdir(reviewsDir, { recursive: true });
       await fs.writeFile(
-        path.join(routeDir, '1.vision.guard.review.i1.abc123.r1.md'),
+        path.join(
+          reviewsDir,
+          '1.vision._.review.i1.abc123.r1._.given.by_peer.test-reviewer.md',
+        ),
         'review 1',
       );
       await fs.writeFile(
-        path.join(routeDir, '1.vision.guard.review.i1.abc123.r2.md'),
+        path.join(
+          reviewsDir,
+          '1.vision._.review.i1.abc123.r2._.given.by_peer.test-reviewer.md',
+        ),
         'review 2',
       );
     });
@@ -63,7 +69,7 @@ describe('delStoneGuardArtifacts', () => {
       then('deletes review files', async () => {
         await delStoneGuardArtifacts({ stone: '1.vision', route: tempDir });
 
-        const files = await fs.readdir(routeDir);
+        const files = await fs.readdir(reviewsDir);
         expect(files.filter((f) => f.includes('.review.'))).toHaveLength(0);
       });
 
@@ -197,13 +203,20 @@ describe('delStoneGuardArtifacts', () => {
       `test-del-guard-artifacts-mixed-${Date.now()}`,
     );
     const routeDir = path.join(tempDir, '.route');
+    const reviewsDir = path.join(tempDir, '.reviews', 'peer');
 
     beforeEach(async () => {
       await fs.mkdir(routeDir, { recursive: true });
+      await fs.mkdir(reviewsDir, { recursive: true });
+      // reviews go to .reviews/peer/
       await fs.writeFile(
-        path.join(routeDir, '1.vision.guard.review.i1.abc123.r1.md'),
+        path.join(
+          reviewsDir,
+          '1.vision._.review.i1.abc123.r1._.given.by_peer.test-reviewer.md',
+        ),
         'review',
       );
+      // judges, promises, triggers stay in .route/
       await fs.writeFile(
         path.join(routeDir, '1.vision.guard.judge.i1.abc123.j1.md'),
         'judge',
@@ -229,8 +242,10 @@ describe('delStoneGuardArtifacts', () => {
       then('deletes all guard artifact types', async () => {
         await delStoneGuardArtifacts({ stone: '1.vision', route: tempDir });
 
-        const files = await fs.readdir(routeDir);
-        expect(files).toHaveLength(0);
+        const routeFiles = await fs.readdir(routeDir);
+        expect(routeFiles).toHaveLength(0);
+        const reviewFiles = await fs.readdir(reviewsDir);
+        expect(reviewFiles).toHaveLength(0);
       });
 
       then('returns correct counts for all types', async () => {
@@ -283,16 +298,22 @@ describe('delStoneGuardArtifacts', () => {
       os.tmpdir(),
       `test-del-guard-artifacts-preserve-${Date.now()}`,
     );
-    const routeDir = path.join(tempDir, '.route');
+    const reviewsDir = path.join(tempDir, '.reviews', 'peer');
 
     beforeEach(async () => {
-      await fs.mkdir(routeDir, { recursive: true });
+      await fs.mkdir(reviewsDir, { recursive: true });
       await fs.writeFile(
-        path.join(routeDir, '1.vision.guard.review.i1.abc123.r1.md'),
+        path.join(
+          reviewsDir,
+          '1.vision._.review.i1.abc123.r1._.given.by_peer.test-reviewer.md',
+        ),
         'review for 1.vision',
       );
       await fs.writeFile(
-        path.join(routeDir, '2.criteria.guard.review.i1.def456.r1.md'),
+        path.join(
+          reviewsDir,
+          '2.criteria._.review.i1.def456.r1._.given.by_peer.test-reviewer.md',
+        ),
         'review for 2.criteria',
       );
     });
@@ -305,7 +326,7 @@ describe('delStoneGuardArtifacts', () => {
       then('only deletes 1.vision artifacts', async () => {
         await delStoneGuardArtifacts({ stone: '1.vision', route: tempDir });
 
-        const files = await fs.readdir(routeDir);
+        const files = await fs.readdir(reviewsDir);
         expect(files).toHaveLength(1);
         expect(files[0]).toContain('2.criteria');
       });
@@ -318,14 +339,20 @@ describe('delStoneGuardArtifacts', () => {
       `test-del-guard-artifacts-gitignore-${Date.now()}`,
     );
     const routeDir = path.join(tempDir, '.route');
+    const reviewsDir = path.join(tempDir, '.reviews', 'peer');
 
     beforeEach(async () => {
       await fs.mkdir(routeDir, { recursive: true });
+      await fs.mkdir(reviewsDir, { recursive: true });
       // create .gitignore that ignores all files
       await fs.writeFile(path.join(routeDir, '.gitignore'), '*\n');
+      await fs.writeFile(path.join(reviewsDir, '.gitignore'), '*\n');
       // create guard artifacts (would be gitignored in production)
       await fs.writeFile(
-        path.join(routeDir, '1.vision.guard.review.i1.abc123.r1.md'),
+        path.join(
+          reviewsDir,
+          '1.vision._.review.i1.abc123.r1._.given.by_peer.test-reviewer.md',
+        ),
         'review',
       );
       await fs.writeFile(
@@ -352,9 +379,15 @@ describe('delStoneGuardArtifacts', () => {
       then('files are actually deleted', async () => {
         await delStoneGuardArtifacts({ stone: '1.vision', route: tempDir });
 
-        const files = await fs.readdir(routeDir);
-        const guardFiles = files.filter((f) => f.includes('.guard.'));
+        const routeFiles = await fs.readdir(routeDir);
+        const guardFiles = routeFiles.filter((f) => f.includes('.guard.'));
         expect(guardFiles).toHaveLength(0);
+
+        const reviewFiles = await fs.readdir(reviewsDir);
+        const reviewArtifacts = reviewFiles.filter((f) =>
+          f.includes('.review.'),
+        );
+        expect(reviewArtifacts).toHaveLength(0);
       });
     });
   });

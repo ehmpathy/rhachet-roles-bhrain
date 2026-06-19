@@ -4,7 +4,7 @@ import * as path from 'path';
  * .what = groups review files by index, keeps only latest iteration per index
  * .why = review artifacts are versioned via iteration (i$N); latest supersedes earlier
  *
- * .note = filename format: $stone.guard.review.i$iteration.$hash.r$index.md
+ * .note = filename format: $stone._.review.i$iteration.$hash.r$index._.given.by_peer.$slug.md
  *         later iterations represent re-runs after fix
  */
 export const getLatestReviewFilesPerIndex = (input: {
@@ -15,8 +15,9 @@ export const getLatestReviewFilesPerIndex = (input: {
 
   for (const filePath of input.reviewFiles) {
     // parse iteration and index from filename
+    // .note = format: $stone._.review.i$iteration.$hash.r$index._.given.by_peer.$slug.md
     const iterMatch = path.basename(filePath).match(/\.i(\d+)\./);
-    const indexMatch = path.basename(filePath).match(/\.r(\d+)\.md$/);
+    const indexMatch = path.basename(filePath).match(/\.r(\d+)\./);
     const iteration = iterMatch?.[1] ? parseInt(iterMatch[1], 10) : 0;
     const index = indexMatch?.[1] ? parseInt(indexMatch[1], 10) : 0;
 

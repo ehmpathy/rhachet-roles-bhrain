@@ -1,11 +1,13 @@
 import * as fs from 'fs/promises';
+import { UnexpectedCodePathError } from 'helpful-errors';
 import * as path from 'path';
 
 import type { RouteStone } from '@src/domain.objects/Driver/RouteStone';
 import { RouteStoneGuardJudgeArtifact } from '@src/domain.objects/Driver/RouteStoneGuardJudgeArtifact';
 import { RouteStoneGuardReviewArtifact } from '@src/domain.objects/Driver/RouteStoneGuardReviewArtifact';
-import { enumFilesFromGlob } from '@src/utils/enumFilesFromGlob';
 
+import { enumRouteGuardJudgeFiles } from './enumRouteGuardJudgeFiles';
+import { enumRouteGuardReviewPeerFiles } from './enumRouteGuardReviewPeerFiles';
 import { getExitCodeClass } from './getExitCodeClass';
 import { getReviewCountsFromContent } from './getReviewCountsFromContent';
 
@@ -21,28 +23,24 @@ export const getAllStoneGuardArtifactsByHash = async (input: {
   reviews: RouteStoneGuardReviewArtifact[];
   judges: RouteStoneGuardJudgeArtifact[];
 }> => {
-  const routeDir = path.join(input.route, '.route');
+  // enumerate review files from .reviews/peer/
+  const reviewFiles = await enumRouteGuardReviewPeerFiles({
+    route: input.route,
+    stone: input.stone.name,
+    hash: input.hash,
+  });
 
-  // check if .route dir found
-  try {
-    await fs.access(routeDir);
-  } catch {
+  // enumerate judge files from .route/
+  const judgeFiles = await enumRouteGuardJudgeFiles({
+    route: input.route,
+    stone: input.stone.name,
+    hash: input.hash,
+  });
+
+  // return early if no files found
+  if (reviewFiles.length === 0 && judgeFiles.length === 0) {
     return { reviews: [], judges: [] };
   }
-
-  // glob for review files: $stone.guard.review.i$iter.$hash.r$n.md
-  const reviewGlob = `${input.stone.name}.guard.review.*.${input.hash}.*.md`;
-  const reviewFiles = await enumFilesFromGlob({
-    glob: reviewGlob,
-    cwd: routeDir,
-  });
-
-  // glob for judge files: $stone.guard.judge.i$iter.$hash.j$n.md
-  const judgeGlob = `${input.stone.name}.guard.judge.*.${input.hash}.*.md`;
-  const judgeFiles = await enumFilesFromGlob({
-    glob: judgeGlob,
-    cwd: routeDir,
-  });
 
   // parse review files into artifacts
   const reviews: RouteStoneGuardReviewArtifact[] = [];
@@ -110,13 +108,33 @@ const parseReviewMetadata = (
   stderr: string;
   durationMs: number | null;
 } => {
-  // filename pattern: $stone.guard.review.i$iter.$hash.r$n.md
+  // filename format: $stone._.review.i$iter.$hash.r$n._.given.by_peer.$slug.md
   const filename = path.basename(filePath);
   const iterMatch = filename.match(/\.i(\d+)\./);
-  const indexMatch = filename.match(/\.r(\d+)\.md$/);
+  const indexMatch = filename.match(/\.r(\d+)\./);
 
-  const iteration = iterMatch?.[1] ? parseInt(iterMatch[1], 10) : 0;
-  const index = indexMatch?.[1] ? parseInt(indexMatch[1], 10) : 0;
+  // iteration is required - file matched our glob, must have iteration marker
+  if (!iterMatch?.[1])
+    UnexpectedCodePathError.throw(
+      'review file lacks iteration marker in filename. ' +
+        'expected format: $stone._.review.i$iter.$hash.r$n._.given.by_peer.$slug.md. ' +
+        'fix: delete the malformed file and re-run the guard',
+      { filename, filePath },
+    );
+  const iteration = parseInt(iterMatch[1], 10);
+
+  // index is required - file matched our glob, must have reviewer index
+  if (!indexMatch?.[1])
+    UnexpectedCodePathError.throw(
+      'review file lacks reviewer index in filename. ' +
+        'expected format: $stone._.review.i$iter.$hash.r$n._.given.by_peer.$slug.md. ' +
+        'fix: delete the malformed file and re-run the guard',
+      {
+        filename,
+        filePath,
+      },
+    );
+  const index = parseInt(indexMatch[1], 10);
 
   // parse blockers and nitpicks from content
   const counts = getReviewCountsFromContent({ content });
@@ -166,13 +184,36 @@ const parseJudgeMetadata = (
   stdout: string;
   stderr: string;
 } => {
-  // filename pattern: $stone.guard.judge.i$iter.$hash.j$n.md
+  // filename format: $stone.guard.judge.i$rp$j.$reviewHash.$judgeHash.j$index.md
   const filename = path.basename(filePath);
-  const iterMatch = filename.match(/\.i(\d+)\./);
+  const iterMatch = filename.match(/\.i(\d+)[p.]/);
   const indexMatch = filename.match(/\.j(\d+)\.md$/);
 
-  const iteration = iterMatch?.[1] ? parseInt(iterMatch[1], 10) : 0;
-  const index = indexMatch?.[1] ? parseInt(indexMatch[1], 10) : 0;
+  // iteration is required - file matched our glob, must have iteration marker
+  if (!iterMatch?.[1])
+    UnexpectedCodePathError.throw(
+      'judge file lacks iteration marker in filename. ' +
+        'expected format: $stone.guard.judge.i$rp$j.$hash.j$index.md. ' +
+        'fix: delete the malformed file and re-run the guard',
+      {
+        filename,
+        filePath,
+      },
+    );
+  const iteration = parseInt(iterMatch[1], 10);
+
+  // index is required - file matched our glob, must have judge index
+  if (!indexMatch?.[1])
+    UnexpectedCodePathError.throw(
+      'judge file lacks judge index in filename. ' +
+        'expected format: $stone.guard.judge.i$rp$j.$hash.j$index.md. ' +
+        'fix: delete the malformed file and re-run the guard',
+      {
+        filename,
+        filePath,
+      },
+    );
+  const index = parseInt(indexMatch[1], 10);
 
   // parse passed and reason from content
   const passedMatch = content.match(/passed:\s*(true|false)/i);

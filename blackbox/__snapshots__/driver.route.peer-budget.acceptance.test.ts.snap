@@ -7,7 +7,7 @@ exports[`driver.route.peer-budget.acceptance given: [journey] peer review budget
    │   ├─ rejected [TIME]
    │   ├─ 1 blocker 🔴
    │   ├─ 0 nitpicks ✓
-   │   └─ review: .route/1.execute.guard.review.i1.8739656801d5e77f22.r1.md
+   │   └─ review: .reviews/peer/1.execute._.review.i1.8739656801d5e77f22.r1._.given.by_peer.mock-reviewer.md
    │
    └─ ✗ judge.1 - blocked [TIME]
 
@@ -23,7 +23,7 @@ exports[`driver.route.peer-budget.acceptance given: [journey] peer review budget
       │       ├─ rejected [TIME]
       │       ├─ 1 blocker 🔴
       │       ├─ 0 nitpicks ✓
-      │       └─ review: .route/1.execute.guard.review.i1.8739656801d5e77f22.r1.md
+      │       └─ review: .reviews/peer/1.execute._.review.i1.8739656801d5e77f22.r1._.given.by_peer.mock-reviewer.md
       └─ judges
           └─ j1: rhx route.stone.judge --mechanism reviewed? --stone $stone --route $route --allow-blockers 0 --allow-nitpicks 1
               ├─ finished [TIME] ✗
@@ -38,7 +38,7 @@ exports[`driver.route.peer-budget.acceptance given: [journey] peer review budget
    │   ├─ rejected [TIME]
    │   ├─ 1 blocker 🔴
    │   ├─ 0 nitpicks ✓
-   │   └─ review: .route/1.execute.guard.review.i2.dfc5faff83ea2fcb55.r1.md
+   │   └─ review: .reviews/peer/1.execute._.review.i2.dfc5faff83ea2fcb55.r1._.given.by_peer.mock-reviewer.md
    │
    └─ ✗ judge.1 - blocked [TIME]
 
@@ -54,7 +54,7 @@ exports[`driver.route.peer-budget.acceptance given: [journey] peer review budget
       │       ├─ rejected [TIME]
       │       ├─ 1 blocker 🔴
       │       ├─ 0 nitpicks ✓
-      │       └─ review: .route/1.execute.guard.review.i2.dfc5faff83ea2fcb55.r1.md
+      │       └─ review: .reviews/peer/1.execute._.review.i2.dfc5faff83ea2fcb55.r1._.given.by_peer.mock-reviewer.md
       └─ judges
           └─ j1: rhx route.stone.judge --mechanism reviewed? --stone $stone --route $route --allow-blockers 0 --allow-nitpicks 1
               ├─ finished [TIME] ✗
@@ -69,7 +69,7 @@ exports[`driver.route.peer-budget.acceptance given: [journey] peer review budget
    │   ├─ exhausted, cached
    │   ├─ 1 blocker 🔴
    │   ├─ 0 nitpicks ✓
-   │   └─ review: .route/1.execute.guard.review.i2.dfc5faff83ea2fcb55.r1.md
+   │   └─ review: .reviews/peer/1.execute._.review.i2.dfc5faff83ea2fcb55.r1._.given.by_peer.mock-reviewer.md
    │
    └─ halted: peer reviewer budget exhausted
 
@@ -90,7 +90,7 @@ exports[`driver.route.peer-budget.acceptance given: [journey] peer review budget
               ├─ exhausted, cached
               ├─ 1 blocker 🔴
               ├─ 0 nitpicks ✓
-              └─ review: .route/1.execute.guard.review.i2.dfc5faff83ea2fcb55.r1.md
+              └─ review: .reviews/peer/1.execute._.review.i2.dfc5faff83ea2fcb55.r1._.given.by_peer.mock-reviewer.md
 "
 `;
 
@@ -115,7 +115,7 @@ exports[`driver.route.peer-budget.acceptance given: [journey] peer review budget
    │   ├─ approved [TIME]
    │   ├─ 0 blockers ✓
    │   ├─ 0 nitpicks ✓
-   │   └─ review: .route/1.execute.guard.review.i3.8f7cfd245244bc91e6.r1.md
+   │   └─ review: .reviews/peer/1.execute._.review.i3.8f7cfd245244bc91e6.r1._.given.by_peer.mock-reviewer.md
    │
    └─ ✓ judge.1 - allowed [TIME]
 
@@ -130,7 +130,7 @@ exports[`driver.route.peer-budget.acceptance given: [journey] peer review budget
    │  │       ├─ approved [TIME]
    │  │       ├─ 0 blockers ✓
    │  │       ├─ 0 nitpicks ✓
-   │  │       └─ review: .route/1.execute.guard.review.i3.8f7cfd245244bc91e6.r1.md
+   │  │       └─ review: .reviews/peer/1.execute._.review.i3.8f7cfd245244bc91e6.r1._.given.by_peer.mock-reviewer.md
    │  └─ judges
    │      └─ j1: rhx route.stone.judge --mechanism reviewed? --stone $stone --route $route --allow-blockers 0 --allow-nitpicks 1
    │          └─ finished [TIME] ✓
@@ -147,8 +147,7 @@ exports[`driver.route.peer-budget.acceptance given: [journey] peer review budget
    │   ├─ approved, cached
    │   ├─ 0 blockers ✓
    │   ├─ 0 nitpicks ✓
-   │   └─ review: .route/1.execute.guard.review.i3.8f7cfd245244bc91e6.r1.md
-   └─ ✓ judge.1 - allowed (cached)
+   │   └─ review: .reviews/peer/1.execute._.review.i3.8f7cfd245244bc91e6.r1._.given.by_peer.mock-reviewer.md
 
 🗿 route.stone.set
    ├─ stone = 1.execute
@@ -161,7 +160,7 @@ exports[`driver.route.peer-budget.acceptance given: [journey] peer review budget
    │  │       ├─ approved, cached
    │  │       ├─ 0 blockers ✓
    │  │       ├─ 0 nitpicks ✓
-   │  │       └─ review: .route/1.execute.guard.review.i3.8f7cfd245244bc91e6.r1.md
+   │  │       └─ review: .reviews/peer/1.execute._.review.i3.8f7cfd245244bc91e6.r1._.given.by_peer.mock-reviewer.md
    │  └─ judges
    │      └─ j1: rhx route.stone.judge --mechanism reviewed? --stone $stone --route $route --allow-blockers 0 --allow-nitpicks 1
    │          └─ · cached

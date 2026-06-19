@@ -1,10 +1,11 @@
 import * as fs from 'fs/promises';
+import { UnexpectedCodePathError } from 'helpful-errors';
 import * as path from 'path';
 
 import type { RouteStone } from '@src/domain.objects/Driver/RouteStone';
 import { RouteStoneGuardReviewArtifact } from '@src/domain.objects/Driver/RouteStoneGuardReviewArtifact';
-import { enumFilesFromGlob } from '@src/utils/enumFilesFromGlob';
 
+import { enumRouteGuardReviewPeerFiles } from './enumRouteGuardReviewPeerFiles';
 import { getExitCodeClass } from './getExitCodeClass';
 import { getReviewCountsFromContent } from './getReviewCountsFromContent';
 
@@ -12,7 +13,7 @@ import { getReviewCountsFromContent } from './getReviewCountsFromContent';
  * .what = finds the latest review artifact for a specific reviewer index, regardless of hash
  * .why = when a reviewer is exhausted, we need their latest review even if hash changed
  *
- * .note = filename format: $stone.guard.review.i$iteration.$hash.r$index.md
+ * .note = filename format: $stone._.review.i$iteration.$hash.r$index._.given.by_peer.$slug.md
  *         finds all reviews for this index, returns highest iteration
  */
 export const getLatestReviewArtifactForIndex = async (input: {
@@ -20,21 +21,11 @@ export const getLatestReviewArtifactForIndex = async (input: {
   index: number;
   route: string;
 }): Promise<RouteStoneGuardReviewArtifact | null> => {
-  const routeDir = path.join(input.route, '.route');
-
-  // check if .route dir found
-  try {
-    await fs.access(routeDir);
-  } catch {
-    return null;
-  }
-
-  // glob for all review files that match this index (any hash, any iteration)
-  // pattern: $stone.guard.review.i*.*.r$index.md
-  const reviewGlob = `${input.stone.name}.guard.review.*.r${input.index}.md`;
-  const reviewFiles = await enumFilesFromGlob({
-    glob: reviewGlob,
-    cwd: routeDir,
+  // find all reviews for this reviewer index
+  const reviewFiles = await enumRouteGuardReviewPeerFiles({
+    route: input.route,
+    stone: input.stone.name,
+    index: input.index,
   });
 
   if (reviewFiles.length === 0) return null;
@@ -45,9 +36,18 @@ export const getLatestReviewArtifactForIndex = async (input: {
 
   for (const filePath of reviewFiles) {
     const filename = path.basename(filePath);
-    // parse iteration from filename: $stone.guard.review.i$iter.$hash.r$index.md
+    // parse iteration from filename
     const iterMatch = filename.match(/\.i(\d+)\./);
-    const iteration = iterMatch?.[1] ? parseInt(iterMatch[1], 10) : 0;
+
+    // iteration is required - file matched our glob, must have iteration marker
+    if (!iterMatch?.[1])
+      UnexpectedCodePathError.throw(
+        'review file lacks iteration marker in filename. ' +
+          'expected format: $stone._.review.i$iter.$hash.r$n._.given.by_peer.$slug.md. ' +
+          'fix: delete the malformed file and re-run the guard',
+        { filename, filePath },
+      );
+    const iteration = parseInt(iterMatch[1], 10);
 
     if (iteration > latestIteration) {
       latestIteration = iteration;
@@ -61,10 +61,22 @@ export const getLatestReviewArtifactForIndex = async (input: {
   const content = await fs.readFile(latestFile, 'utf-8');
   const filename = path.basename(latestFile);
 
-  // extract hash from filename: $stone.guard.review.i$iter.$hash.r$index.md
-  // the hash is between the iteration and the index
-  const hashMatch = filename.match(/\.i\d+\.([a-f0-9]+)\.r\d+\.md$/);
-  const hash = hashMatch?.[1] ?? '';
+  // extract hash from filename
+  // format: .i$iter.$hash.r$n._.given...
+  const hashMatch = filename.match(/\.i\d+\.([a-f0-9]+)\.r\d+\./);
+
+  // hash is required - file matched our glob, must have hash
+  if (!hashMatch?.[1])
+    UnexpectedCodePathError.throw(
+      'review file lacks hash in filename. ' +
+        'expected format: $stone._.review.i$iter.$hash.r$n._.given.by_peer.$slug.md. ' +
+        'fix: delete the malformed file and re-run the guard',
+      {
+        filename,
+        filePath: latestFile,
+      },
+    );
+  const hash = hashMatch[1];
 
   // parse blockers and nitpicks from stdout
   const counts = getReviewCountsFromContent({ content });

@@ -165,15 +165,15 @@ describe('driver.route.malfunction.acceptance', () => {
       });
 
       then('review artifact was created with malfunction', async () => {
-        const routeDir = path.join(scene.tempDir, '.route');
-        const files = await fs.readdir(routeDir);
+        const reviewsDir = path.join(scene.tempDir, '.reviews', 'peer');
+        const files = await fs.readdir(reviewsDir);
         const reviewFiles = files.filter(
-          (f) => f.includes('.guard.review.') && f.endsWith('.md'),
+          (f) => f.includes('._.review.') && f.endsWith('.md'),
         );
         expect(reviewFiles.length).toBeGreaterThan(0);
 
         // check first review artifact contains malfunction
-        const reviewPath = path.join(routeDir, reviewFiles[0]!);
+        const reviewPath = path.join(reviewsDir, reviewFiles[0]!);
         const content = await fs.readFile(reviewPath, 'utf-8');
         expect(content).toContain('malfunction');
       });
@@ -193,10 +193,10 @@ describe('driver.route.malfunction.acceptance', () => {
         );
 
         // count review artifacts before
-        const routeDir = path.join(scene.tempDir, '.route');
-        const filesBefore = await fs.readdir(routeDir);
+        const reviewsDir = path.join(scene.tempDir, '.reviews', 'peer');
+        const filesBefore = await fs.readdir(reviewsDir);
         const reviewFilesBefore = filesBefore.filter(
-          (f) => f.includes('.guard.review.') && f.endsWith('.md'),
+          (f) => f.includes('._.review.') && f.endsWith('.md'),
         );
         const countBefore = reviewFilesBefore.length;
 
@@ -208,9 +208,9 @@ describe('driver.route.malfunction.acceptance', () => {
         });
 
         // count review artifacts after
-        const filesAfter = await fs.readdir(routeDir);
+        const filesAfter = await fs.readdir(reviewsDir);
         const reviewFilesAfter = filesAfter.filter(
-          (f) => f.includes('.guard.review.') && f.endsWith('.md'),
+          (f) => f.includes('._.review.') && f.endsWith('.md'),
         );
         const countAfter = reviewFilesAfter.length;
 
@@ -235,9 +235,9 @@ describe('driver.route.malfunction.acceptance', () => {
         // sort by name to get latest (includes iteration number)
         const sorted = result.reviewFilesAfter.sort();
         const latestFile = sorted[sorted.length - 1]!;
-        const routeDir = path.join(scene.tempDir, '.route');
+        const reviewsDir = path.join(scene.tempDir, '.reviews', 'peer');
         const content = await fs.readFile(
-          path.join(routeDir, latestFile),
+          path.join(reviewsDir, latestFile),
           'utf-8',
         );
         expect(content).toContain('review passed');
@@ -300,10 +300,10 @@ describe('driver.route.malfunction.acceptance', () => {
       });
 
       then('review artifact was created', async () => {
-        const routeDir = path.join(scene.tempDir, '.route');
-        const files = await fs.readdir(routeDir);
+        const reviewsDir = path.join(scene.tempDir, '.reviews', 'peer');
+        const files = await fs.readdir(reviewsDir);
         const reviewFiles = files.filter(
-          (f) => f.includes('.guard.review.') && f.endsWith('.md'),
+          (f) => f.includes('._.review.') && f.endsWith('.md'),
         );
         expect(reviewFiles.length).toBeGreaterThan(0);
       });
@@ -323,10 +323,10 @@ describe('driver.route.malfunction.acceptance', () => {
         );
 
         // count review artifacts before
-        const routeDir = path.join(scene.tempDir, '.route');
-        const filesBefore = await fs.readdir(routeDir);
+        const reviewsDir = path.join(scene.tempDir, '.reviews', 'peer');
+        const filesBefore = await fs.readdir(reviewsDir);
         const reviewFilesBefore = filesBefore.filter(
-          (f) => f.includes('.guard.review.') && f.endsWith('.md'),
+          (f) => f.includes('._.review.') && f.endsWith('.md'),
         );
         const countBefore = reviewFilesBefore.length;
 
@@ -338,9 +338,9 @@ describe('driver.route.malfunction.acceptance', () => {
         });
 
         // count review artifacts after
-        const filesAfter = await fs.readdir(routeDir);
+        const filesAfter = await fs.readdir(reviewsDir);
         const reviewFilesAfter = filesAfter.filter(
-          (f) => f.includes('.guard.review.') && f.endsWith('.md'),
+          (f) => f.includes('._.review.') && f.endsWith('.md'),
         );
         const countAfter = reviewFilesAfter.length;
 
@@ -365,9 +365,9 @@ describe('driver.route.malfunction.acceptance', () => {
         // sort by name to get latest (includes iteration number)
         const sorted = result.reviewFilesAfter.sort();
         const latestFile = sorted[sorted.length - 1]!;
-        const routeDir = path.join(scene.tempDir, '.route');
+        const reviewsDir = path.join(scene.tempDir, '.reviews', 'peer');
         const content = await fs.readFile(
-          path.join(routeDir, latestFile),
+          path.join(reviewsDir, latestFile),
           'utf-8',
         );
         expect(content).toContain('review passed');

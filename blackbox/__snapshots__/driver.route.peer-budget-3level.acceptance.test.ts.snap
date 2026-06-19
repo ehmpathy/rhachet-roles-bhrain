@@ -7,7 +7,7 @@ exports[`driver.route.peer-budget-3level.acceptance given: [journey] 3-level hie
    │   ├─ rejected [TIME]
    │   ├─ 1 blocker 🔴
    │   ├─ 0 nitpicks ✓
-   │   └─ review: .route/1.vision.guard.review.i1.8739656801d5e77f22.r1.md
+   │   └─ review: .reviews/peer/1.vision._.review.i1.8739656801d5e77f22.r1._.given.by_peer.basic-checker.md
    │
    ├─ r2: advanced-checker (l2, 0/5)
    │   └─ awaits arrival
@@ -29,7 +29,7 @@ exports[`driver.route.peer-budget-3level.acceptance given: [journey] 3-level hie
       │   │   ├─ rejected [TIME]
       │   │   ├─ 1 blocker 🔴
       │   │   ├─ 0 nitpicks ✓
-      │   │   └─ review: .route/1.vision.guard.review.i1.8739656801d5e77f22.r1.md
+      │   │   └─ review: .reviews/peer/1.vision._.review.i1.8739656801d5e77f22.r1._.given.by_peer.basic-checker.md
       │   ├─ r2: advanced-checker (l2, 0/5)
       │   │   └─ awaits l1 terminal
       │   └─ r3: premium-checker (l3, 0/5)
@@ -48,13 +48,13 @@ exports[`driver.route.peer-budget-3level.acceptance given: [journey] 3-level hie
    │   ├─ approved [TIME]
    │   ├─ 0 blockers ✓
    │   ├─ 0 nitpicks ✓
-   │   └─ review: .route/1.vision.guard.review.i2.dfc5faff83ea2fcb55.r1.md
+   │   └─ review: .reviews/peer/1.vision._.review.i2.dfc5faff83ea2fcb55.r1._.given.by_peer.basic-checker.md
    │
    ├─ r2: advanced-checker (l2, 1/5)
    │   ├─ rejected [TIME]
    │   ├─ 1 blocker 🔴
    │   ├─ 0 nitpicks ✓
-   │   └─ review: .route/1.vision.guard.review.i2.dfc5faff83ea2fcb55.r2.md
+   │   └─ review: .reviews/peer/1.vision._.review.i2.dfc5faff83ea2fcb55.r2._.given.by_peer.advanced-checker.md
    │
    ├─ r3: premium-checker (l3, 0/5)
    │   └─ awaits arrival
@@ -73,12 +73,12 @@ exports[`driver.route.peer-budget-3level.acceptance given: [journey] 3-level hie
       │   │   ├─ approved [TIME]
       │   │   ├─ 0 blockers ✓
       │   │   ├─ 0 nitpicks ✓
-      │   │   └─ review: .route/1.vision.guard.review.i2.dfc5faff83ea2fcb55.r1.md
+      │   │   └─ review: .reviews/peer/1.vision._.review.i2.dfc5faff83ea2fcb55.r1._.given.by_peer.basic-checker.md
       │   ├─ r2: advanced-checker (l2, 1/5)
       │   │   ├─ rejected [TIME]
       │   │   ├─ 1 blocker 🔴
       │   │   ├─ 0 nitpicks ✓
-      │   │   └─ review: .route/1.vision.guard.review.i2.dfc5faff83ea2fcb55.r2.md
+      │   │   └─ review: .reviews/peer/1.vision._.review.i2.dfc5faff83ea2fcb55.r2._.given.by_peer.advanced-checker.md
       │   └─ r3: premium-checker (l3, 0/5)
       │       └─ awaits l2 terminal
       └─ judges
@@ -95,19 +95,19 @@ exports[`driver.route.peer-budget-3level.acceptance given: [journey] 3-level hie
    │   ├─ approved [TIME]
    │   ├─ 0 blockers ✓
    │   ├─ 0 nitpicks ✓
-   │   └─ review: .route/1.vision.guard.review.i3.457fd5ef46e053a35e.r1.md
+   │   └─ review: .reviews/peer/1.vision._.review.i3.457fd5ef46e053a35e.r1._.given.by_peer.basic-checker.md
    │
    ├─ r2: advanced-checker (l2, 2/5)
    │   ├─ approved [TIME]
    │   ├─ 0 blockers ✓
    │   ├─ 0 nitpicks ✓
-   │   └─ review: .route/1.vision.guard.review.i3.457fd5ef46e053a35e.r2.md
+   │   └─ review: .reviews/peer/1.vision._.review.i3.457fd5ef46e053a35e.r2._.given.by_peer.advanced-checker.md
    │
    ├─ r3: premium-checker (l3, 1/5)
    │   ├─ rejected [TIME]
    │   ├─ 1 blocker 🔴
    │   ├─ 0 nitpicks ✓
-   │   └─ review: .route/1.vision.guard.review.i3.457fd5ef46e053a35e.r3.md
+   │   └─ review: .reviews/peer/1.vision._.review.i3.457fd5ef46e053a35e.r3._.given.by_peer.premium-checker.md
    │
    └─ ✗ judge.1 - blocked [TIME]
 
@@ -123,17 +123,17 @@ exports[`driver.route.peer-budget-3level.acceptance given: [journey] 3-level hie
       │   │   ├─ approved [TIME]
       │   │   ├─ 0 blockers ✓
       │   │   ├─ 0 nitpicks ✓
-      │   │   └─ review: .route/1.vision.guard.review.i3.457fd5ef46e053a35e.r1.md
+      │   │   └─ review: .reviews/peer/1.vision._.review.i3.457fd5ef46e053a35e.r1._.given.by_peer.basic-checker.md
       │   ├─ r2: advanced-checker (l2, 2/5)
       │   │   ├─ approved [TIME]
       │   │   ├─ 0 blockers ✓
       │   │   ├─ 0 nitpicks ✓
-      │   │   └─ review: .route/1.vision.guard.review.i3.457fd5ef46e053a35e.r2.md
+      │   │   └─ review: .reviews/peer/1.vision._.review.i3.457fd5ef46e053a35e.r2._.given.by_peer.advanced-checker.md
       │   └─ r3: premium-checker (l3, 1/5)
       │       ├─ rejected [TIME]
       │       ├─ 1 blocker 🔴
       │       ├─ 0 nitpicks ✓
-      │       └─ review: .route/1.vision.guard.review.i3.457fd5ef46e053a35e.r3.md
+      │       └─ review: .reviews/peer/1.vision._.review.i3.457fd5ef46e053a35e.r3._.given.by_peer.premium-checker.md
       └─ judges
           └─ j1: rhx route.stone.judge --mechanism reviewed? --stone $stone --route $route --allow-blockers 0 --allow-nitpicks 1
               ├─ finished [TIME] ✗
@@ -148,19 +148,19 @@ exports[`driver.route.peer-budget-3level.acceptance given: [journey] 3-level hie
    │   ├─ approved [TIME]
    │   ├─ 0 blockers ✓
    │   ├─ 0 nitpicks ✓
-   │   └─ review: .route/1.vision.guard.review.i4.d1bd0b8547352e6396.r1.md
+   │   └─ review: .reviews/peer/1.vision._.review.i4.d1bd0b8547352e6396.r1._.given.by_peer.basic-checker.md
    │
    ├─ r2: advanced-checker (l2, 3/5)
    │   ├─ approved [TIME]
    │   ├─ 0 blockers ✓
    │   ├─ 0 nitpicks ✓
-   │   └─ review: .route/1.vision.guard.review.i4.d1bd0b8547352e6396.r2.md
+   │   └─ review: .reviews/peer/1.vision._.review.i4.d1bd0b8547352e6396.r2._.given.by_peer.advanced-checker.md
    │
    ├─ r3: premium-checker (l3, 2/5)
    │   ├─ approved [TIME]
    │   ├─ 0 blockers ✓
    │   ├─ 0 nitpicks ✓
-   │   └─ review: .route/1.vision.guard.review.i4.d1bd0b8547352e6396.r3.md
+   │   └─ review: .reviews/peer/1.vision._.review.i4.d1bd0b8547352e6396.r3._.given.by_peer.premium-checker.md
    │
    └─ ✓ judge.1 - allowed [TIME]
 
@@ -175,17 +175,17 @@ exports[`driver.route.peer-budget-3level.acceptance given: [journey] 3-level hie
    │  │   │   ├─ approved [TIME]
    │  │   │   ├─ 0 blockers ✓
    │  │   │   ├─ 0 nitpicks ✓
-   │  │   │   └─ review: .route/1.vision.guard.review.i4.d1bd0b8547352e6396.r1.md
+   │  │   │   └─ review: .reviews/peer/1.vision._.review.i4.d1bd0b8547352e6396.r1._.given.by_peer.basic-checker.md
    │  │   ├─ r2: advanced-checker (l2, 3/5)
    │  │   │   ├─ approved [TIME]
    │  │   │   ├─ 0 blockers ✓
    │  │   │   ├─ 0 nitpicks ✓
-   │  │   │   └─ review: .route/1.vision.guard.review.i4.d1bd0b8547352e6396.r2.md
+   │  │   │   └─ review: .reviews/peer/1.vision._.review.i4.d1bd0b8547352e6396.r2._.given.by_peer.advanced-checker.md
    │  │   └─ r3: premium-checker (l3, 2/5)
    │  │       ├─ approved [TIME]
    │  │       ├─ 0 blockers ✓
    │  │       ├─ 0 nitpicks ✓
-   │  │       └─ review: .route/1.vision.guard.review.i4.d1bd0b8547352e6396.r3.md
+   │  │       └─ review: .reviews/peer/1.vision._.review.i4.d1bd0b8547352e6396.r3._.given.by_peer.premium-checker.md
    │  └─ judges
    │      └─ j1: rhx route.stone.judge --mechanism reviewed? --stone $stone --route $route --allow-blockers 0 --allow-nitpicks 1
    │          └─ finished [TIME] ✓
