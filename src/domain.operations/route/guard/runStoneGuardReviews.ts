@@ -100,11 +100,8 @@ export const runOneStoneGuardReview = async (input: {
   hash: string;
   iteration: number;
   route: string;
-<<<<<<< HEAD
   slug: string;
-=======
   timeout: IsoDuration;
->>>>>>> 98f10c5 (fix(guard): add configurable timeout for peer reviews)
 }): Promise<RouteStoneGuardReviewArtifact> => {
   // ensure .reviews/peer directory found or created
   // .why = peer reviews go to .reviews/peer/ so drivers can read them
@@ -183,32 +180,6 @@ export const runOneStoneGuardReview = async (input: {
     stderr = result.stderr;
     exitCode = 0;
   } catch (error: unknown) {
-<<<<<<< HEAD
-    // capture output and exit code from command failure
-    // exec errors have specific shape: { stdout, stderr, code, killed }
-    // rethrow if error doesn't match this shape (unexpected error)
-    if (
-      !error ||
-      typeof error !== 'object' ||
-      !('code' in error || 'killed' in error)
-    ) {
-      throw error;
-    }
-
-    const errObj = error as Record<string, unknown>;
-    stdout = typeof errObj.stdout === 'string' ? errObj.stdout : '';
-    stderr = typeof errObj.stderr === 'string' ? errObj.stderr : '';
-
-    // detect timeout (process killed by signal)
-    if (errObj.killed === true) {
-      stderr = `💥 malfunction: review timed out after ${Math.floor(REVIEW_TIMEOUT_MS / 60000)} minutes`;
-      exitCode = 1;
-    }
-
-    // extract exit code from error
-    if (errObj.killed !== true) {
-      exitCode = typeof errObj.code === 'number' ? errObj.code : 1;
-=======
     // capture output and exit code even on failure
     // .note = exec errors have stdout/stderr/code properties; rethrow other error types
     if (
@@ -230,7 +201,6 @@ export const runOneStoneGuardReview = async (input: {
     } else {
       // rethrow non-exec errors (code defects, unexpected state)
       throw error;
->>>>>>> 98f10c5 (fix(guard): add configurable timeout for peer reviews)
     }
   }
 
@@ -585,11 +555,8 @@ export const runStoneGuardReviews = async (
       hash: input.hash,
       iteration: input.iteration,
       route: input.route,
-<<<<<<< HEAD
       slug: pr.slug,
-=======
       timeout: getReviewPeerTimeout(pr.review),
->>>>>>> 98f10c5 (fix(guard): add configurable timeout for peer reviews)
     });
 
     // determine if review actually completed (vs constraint/malfunction)
@@ -675,20 +642,11 @@ const validateNoNpx = (cmd: string): void => {
   if (cmd.includes('npx rhachet') || cmd.includes('npx rhx')) {
     const pattern = cmd.includes('npx rhachet') ? 'npx rhachet' : 'npx rhx';
     const alias = cmd.includes('npx rhachet') ? '$rhachet' : '$rhx';
-<<<<<<< HEAD
-    BadRequestError.throw(
-      `guard uses ${pattern} which causes latency and cross-platform issues. ` +
-        `fix: use ${alias} alias instead (${alias} expands to ./node_modules/.bin/${alias.slice(1)})`,
-      {
-        pattern,
-        alias,
-=======
     throw new BadRequestError(
       `guard uses ${pattern} which causes latency and cross-platform issues`,
       {
         pattern,
         hint: `use ${alias} alias instead (expands to ./node_modules/.bin/${alias.slice(1)})`,
->>>>>>> 98f10c5 (fix(guard): add configurable timeout for peer reviews)
       },
     );
   }
