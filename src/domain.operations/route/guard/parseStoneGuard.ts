@@ -35,6 +35,41 @@ export const parseStoneGuard = async (input: {
 };
 
 /**
+ * .what = ensures all peer review slugs are unique via .N suffix for collisions
+ * .why = downstream code can use slug as stable key without collision
+ * .note = if slug is already unique, leaves it as-is; adds suffix only when collision detected
+ */
+const standardizePeerReviewSlugs = (input: {
+  peers: RouteStoneGuardReviewPeer[];
+}): RouteStoneGuardReviewPeer[] => {
+  // count occurrences of each slug
+  const slugCounts = new Map<string, number>();
+  for (const peer of input.peers) {
+    slugCounts.set(peer.slug, (slugCounts.get(peer.slug) ?? 0) + 1);
+  }
+
+  // track which slugs have collisions and their current index
+  const slugIndices = new Map<string, number>();
+
+  // process each peer, add suffix only for collisions
+  return input.peers.map((peer) => {
+    const count = slugCounts.get(peer.slug) ?? 1;
+
+    // if unique, leave as-is
+    if (count === 1) return peer;
+
+    // collision detected: add .N suffix (1-indexed)
+    const index = (slugIndices.get(peer.slug) ?? 0) + 1;
+    slugIndices.set(peer.slug, index);
+
+    return {
+      ...peer,
+      slug: `${peer.slug}.${index}`,
+    };
+  });
+};
+
+/**
  * .what = parses simple yaml with list values
  * .why = handles guard file format without external yaml dependency
  */
@@ -310,6 +345,14 @@ const parseSimpleYaml = async (
         level: 1,
       })),
     };
+  }
+
+  // standardize peer review slugs to guarantee uniqueness
+  // .why = downstream code can use slug as stable key without collision
+  if (result.reviews?.peer) {
+    result.reviews.peer = standardizePeerReviewSlugs({
+      peers: result.reviews.peer,
+    });
   }
 
   return result;

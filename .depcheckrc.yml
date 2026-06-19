@@ -24,4 +24,9 @@ ignores:
   - rhachet-roles-bhuild
   - rhachet-roles-ehmpathy
   - rhachet-brains-anthropic
-  - rhachet-brains-fireworksai
+  - vitest # test asset via symlink
+  - uuid # test asset via symlink
+  - "@jest/reporters" # test asset via symlink
+
+ignorePatterns:
+  - "**/.test/assets/**"

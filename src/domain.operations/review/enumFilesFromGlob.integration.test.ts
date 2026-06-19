@@ -127,7 +127,79 @@ describe('enumFilesFromGlob', () => {
     });
   });
 
-  given('[case5] node_modules exclusion', () => {
+  given('[case5] symlink traversal to node_modules', () => {
+    const SYMLINK_PATH =
+      'src/domain.operations/review/.test/assets/example.symlink';
+
+    when('[t0] glob pattern traverses symlink to node_modules', () => {
+      then(
+        'returns files through symlink (symlink paths not filtered)',
+        async () => {
+          // symlink path: via-symlink -> node_modules/test-fns/dist
+          // the ignore pattern applies to the PATTERN path, not the resolved path
+          // so symlinks to node_modules work correctly
+          const files = await enumFilesFromGlob({
+            glob: `${SYMLINK_PATH}/via-symlink/**/*.d.ts`,
+          });
+          // files through symlink are found
+          expect(files.length).toBeGreaterThan(0);
+          // all paths use the symlink path, not the resolved node_modules path
+          expect(files.every((f) => f.startsWith(SYMLINK_PATH))).toBe(true);
+          // no paths contain node_modules directly
+          expect(files.every((f) => !f.includes('node_modules'))).toBe(true);
+        },
+      );
+    });
+
+    when('[t1] direct node_modules path in glob', () => {
+      then('excludes files (node_modules filtered)', async () => {
+        // direct node_modules paths are filtered by the ignore pattern
+        const files = await enumFilesFromGlob({
+          glob: 'node_modules/test-fns/**/*.d.ts',
+        });
+        // direct node_modules paths are always excluded
+        expect(files).toEqual([]);
+      });
+    });
+
+    when('[t2] glob pattern traverses symlink to regular directory', () => {
+      then('returns files through symlink', async () => {
+        // symlink path: via-symlink-rules -> ../example.repo/rules
+        // .note = this tests that symlinks to non-node_modules directories work
+        const files = await enumFilesFromGlob({
+          glob: `${SYMLINK_PATH}/via-symlink-rules/**/*.md`,
+        });
+        // files through symlink are found
+        expect(files.length).toBeGreaterThan(0);
+        // all paths use the symlink path
+        expect(files.every((f) => f.startsWith(SYMLINK_PATH))).toBe(true);
+        // should find the rule files
+        expect(files).toContain(
+          `${SYMLINK_PATH}/via-symlink-rules/rule.no-any.md`,
+        );
+        expect(files).toContain(
+          `${SYMLINK_PATH}/via-symlink-rules/rule.no-console.md`,
+        );
+      });
+    });
+
+    when('[t3] explicit file path through symlink to node_modules', () => {
+      then(
+        'returns the file (not filtered by node_modules ignore)',
+        async () => {
+          // .note = this tests explicit file paths through symlinks, not globs
+          //         this is the pattern used when guards pass specific rule paths
+          const files = await enumFilesFromGlob({
+            glob: `${SYMLINK_PATH}/via-symlink/index.d.ts`,
+          });
+          // explicit file through symlink should be found
+          expect(files).toContain(`${SYMLINK_PATH}/via-symlink/index.d.ts`);
+        },
+      );
+    });
+  });
+
+  given('[case6] node_modules exclusion', () => {
     when('[t0] glob pattern scoped outside node_modules', () => {
       then('node_modules is excluded by default', async () => {
         // enumerate all .ts files from repo root

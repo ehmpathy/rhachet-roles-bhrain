@@ -136,14 +136,14 @@ export const formatReviewsMeterLines = (input: {
   }
 
   // create lookup of review inputs by slug
+  // .note = slugs are guaranteed unique at parse time via standardizePeerReviewSlugs
   const reviewBySlug = new Map<string, RouteFormatTreeGuardReviewRecord>();
   if (input.reviews) {
     for (const review of input.reviews) {
-      const slug =
-        review.peer?.slug ??
-        review.cmd.split(/\s+/)[0] ??
-        `r${review.artifact.index}`;
-      reviewBySlug.set(slug, review);
+      reviewBySlug.set(
+        review.peer?.slug ?? review.cmd.split(/\s+/)[0] ?? '',
+        review,
+      );
     }
   }
 
@@ -154,6 +154,7 @@ export const formatReviewsMeterLines = (input: {
     const review = reviewBySlug.get(meter.slug);
 
     // convert meter + review to ReviewerTreeState
+    // .note = use position in meters array (m + 1) for r labels
     const state = asReviewerTreeStateFromMeter({
       meter,
       review,

@@ -500,4 +500,67 @@ describe('stepReview', () => {
       });
     });
   });
+
+  given('[case10] rules traversal through symlink via stepReview', () => {
+    // .what = tests that stepReview finds and uses rules through a symlink
+    // .why = wish requires proof of symlink fix 'via the review skill'
+    const ASSETS_SYMLINK = path.join(__dirname, '.test/assets');
+
+    when.repeatably(REPEATABLY_CONFIG)(
+      '[t0] stepReview with rules glob through symlink',
+      () => {
+        const outputPath = path.join(os.tmpdir(), 'symlink-rules-review.md');
+        afterAll(async () => fs.rm(outputPath, { force: true }));
+
+        // single API call, result shared across assertions
+        const result = useThen(
+          'stepReview succeeds with symlink rules',
+          async () => {
+            const res = await stepReview(
+              {
+                // rules path goes through symlink to example.repo/rules/
+                rules: 'example.symlink/via-symlink-rules/**/*.md',
+                // target file with violations from example.repo/src/
+                paths: 'example.repo/src/invalid.ts',
+                output: outputPath,
+                focus: 'push',
+                goal: 'representative',
+                cwd: ASSETS_SYMLINK,
+              },
+              { brain: scene.brain },
+            );
+
+            // log output for observability
+            logOutputHead({
+              label: 'symlink.rules.review',
+              output: res.review.formatted,
+            });
+
+            return res;
+          },
+        );
+
+        then('review completes without "rules not found" error', async () => {
+          expect(result.review.formatted).toBeDefined();
+          expect(result.review.formatted.length).toBeGreaterThan(0);
+        });
+
+        then('metrics show rules were found through symlink', async () => {
+          // 2 rules in example.repo/rules/ via symlink
+          expect(result.metrics.files.rulesCount).toBe(2);
+          // 1 target file
+          expect(result.metrics.files.targetsCount).toBe(1);
+        });
+
+        then(
+          'review detects violations (rules applied correctly)',
+          async () => {
+            // invalid.ts has console.log and any type violations
+            // rules should detect these since symlink traversal works
+            expect(result.review.formatted.toLowerCase()).toContain('blocker');
+          },
+        );
+      },
+    );
+  });
 });

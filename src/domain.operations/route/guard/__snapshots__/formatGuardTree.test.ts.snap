@@ -274,3 +274,49 @@ exports[`formatGuardTree given: [case15] peerMeters — awaits shown in header v
           └─ r2: primo (l2, 0/3)
               └─ awaits l1 terminal"
 `;
+
+exports[`formatGuardTree given: [case16] peerMeters — unique slugs via standardization shows correct individual data when: [t0] reviewers have unique slugs (standardized at parse time) then: each reviewer shows its own blockers/path 1`] = `
+"🗿 route.stone.set
+   ├─ stone = 5.3.verification
+   ├─ passage = blocked
+   ├─ reason = blockers exceed threshold
+   └─ guard
+      ├─ artifacts
+      │   └─ $route/5.3.verification.yield.md
+      └─ reviews
+          ├─ r1: $rhx.1 (l1, 13/∞)
+          │   ├─ rejected 43.7s
+          │   ├─ 1 blocker 🔴
+          │   ├─ 0 nitpicks ✓
+          │   └─ review: .route/5.3.verification.guard.review.i3.abc123.r1.md
+          ├─ r2: $rhx.2 (l1, 14/∞)
+          │   ├─ approved 13.2s
+          │   ├─ 0 blockers ✓
+          │   ├─ 0 nitpicks ✓
+          │   └─ review: .route/5.3.verification.guard.review.i3.abc123.r2.md
+          └─ r3: $rhx.3 (l1, 18/∞)
+              ├─ approved 14.9s
+              ├─ 0 blockers ✓
+              ├─ 0 nitpicks ✓
+              └─ review: .route/5.3.verification.guard.review.i3.abc123.r6.md"
+`;
+
+exports[`formatReviewsMeterLines given: [case1] unique slugs via standardization — slug-based lookup when: [t0] reviewers have unique slugs (standardized at parse time) then: each reviewer shows its own blockers/path via slug lookup 1`] = `
+[
+  "    ├─ r1: $rhx.1 (l1, 13/∞)",
+  "    │   ├─ rejected 43.7s",
+  "    │   ├─ 1 blocker 🔴",
+  "    │   ├─ 0 nitpicks ✓",
+  "    │   └─ review: .route/r1.md",
+  "    ├─ r2: $rhx.2 (l1, 14/∞)",
+  "    │   ├─ approved 13.2s",
+  "    │   ├─ 0 blockers ✓",
+  "    │   ├─ 0 nitpicks ✓",
+  "    │   └─ review: .route/r2.md",
+  "    └─ r3: $rhx.3 (l1, 18/∞)",
+  "        ├─ approved 14.9s",
+  "        ├─ 0 blockers ✓",
+  "        ├─ 0 nitpicks ✓",
+  "        └─ review: .route/r6.md",
+]
+`;

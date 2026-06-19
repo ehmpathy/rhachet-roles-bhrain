@@ -1,3 +1,5 @@
+import * as fs from 'fs/promises';
+import * as os from 'os';
 import * as path from 'path';
 import { given, then, when } from 'test-fns';
 
@@ -211,4 +213,63 @@ describe('parseStoneGuard', () => {
       });
     },
   );
+
+  given('[case6] flat reviews with duplicate slugs', () => {
+    when('[t0] multiple peer reviews derive same slug from cmd', () => {
+      then('slugs are standardized to be unique via .N suffix', async () => {
+        // create temp guard with duplicate slugs
+        const tempDir = await fs.mkdtemp(
+          path.join(os.tmpdir(), 'test-guard-dup-slug-'),
+        );
+        const guardFile = path.join(tempDir, '1.test.guard');
+        // all three commands start with $rhx, so derived slugs would collide
+        await fs.writeFile(
+          guardFile,
+          `artifacts:
+  - src/**/*
+reviews:
+  - $rhx --rules briefs/arch.md
+  - $rhx --rules briefs/ergo.md
+  - $rhx --rules briefs/mech.md
+`,
+        );
+
+        const result = await parseStoneGuard({ path: guardFile });
+        const peerReviews = getGuardPeerReviews(result);
+
+        expect(peerReviews).toHaveLength(3);
+        // each slug should have .N suffix since they all derived from $rhx
+        expect(peerReviews[0]?.slug).toEqual('$rhx.1');
+        expect(peerReviews[1]?.slug).toEqual('$rhx.2');
+        expect(peerReviews[2]?.slug).toEqual('$rhx.3');
+      });
+
+      then('unique slugs are left as-is', async () => {
+        // create temp guard with unique slugs
+        const tempDir = await fs.mkdtemp(
+          path.join(os.tmpdir(), 'test-guard-unique-slug-'),
+        );
+        const guardFile = path.join(tempDir, '1.test.guard');
+        await fs.writeFile(
+          guardFile,
+          `artifacts:
+  - src/**/*
+reviews:
+  - arch-review --rules briefs/arch.md
+  - ergo-review --rules briefs/ergo.md
+  - mech-review --rules briefs/mech.md
+`,
+        );
+
+        const result = await parseStoneGuard({ path: guardFile });
+        const peerReviews = getGuardPeerReviews(result);
+
+        expect(peerReviews).toHaveLength(3);
+        // unique slugs should not have suffix
+        expect(peerReviews[0]?.slug).toEqual('arch-review');
+        expect(peerReviews[1]?.slug).toEqual('ergo-review');
+        expect(peerReviews[2]?.slug).toEqual('mech-review');
+      });
+    });
+  });
 });
