@@ -30,6 +30,7 @@ export const getAllReviewPeerMeterStatuses = async (input: {
   const exhaustedSet = new Set(input.exhaustedReviewerSlugs ?? []);
 
   // load current meters for rounds consumed (per stone)
+  // .note = slugs are guaranteed unique at parse time via standardizePeerReviewSlugs
   const meters = await getAllRouteStoneGuardReviewPeerMeters({
     route: input.route,
     stone: input.stone.name,

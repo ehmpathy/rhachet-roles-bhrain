@@ -717,4 +717,259 @@ describe('formatGuardTree', () => {
       });
     });
   });
+
+  given(
+    '[case16] peerMeters — unique slugs via standardization shows correct individual data',
+    () => {
+      when(
+        '[t0] reviewers have unique slugs (standardized at parse time)',
+        () => {
+          then('each reviewer shows its own blockers/path', () => {
+            // slugs are now standardized at parse time: $rhx.1, $rhx.2, $rhx.3
+            // .note = standardizePeerReviewSlugs adds .N suffix for collisions
+            const result = formatGuardTree({
+              stone: '5.3.verification',
+              passage: 'blocked',
+              note: null,
+              reason: 'blockers exceed threshold',
+              guard: {
+                artifactFiles: ['$route/5.3.verification.yield.md'],
+                reviews: [
+                  {
+                    index: 1,
+                    cmd: '$rhx --rules briefs/r1.md',
+                    cached: false,
+                    durationSec: 43.7,
+                    blockers: 1,
+                    nitpicks: 0,
+                    path: '.route/5.3.verification.guard.review.i3.abc123.r1.md',
+                    exitClass: 'passed',
+                    peer: {
+                      slug: '$rhx.1',
+                      level: 1,
+                      rounds: 13,
+                      budget: Infinity,
+                    },
+                  },
+                  {
+                    index: 2,
+                    cmd: '$rhx --rules briefs/r2.md',
+                    cached: false,
+                    durationSec: 13.2,
+                    blockers: 0,
+                    nitpicks: 0,
+                    path: '.route/5.3.verification.guard.review.i3.abc123.r2.md',
+                    exitClass: 'passed',
+                    peer: {
+                      slug: '$rhx.2',
+                      level: 1,
+                      rounds: 14,
+                      budget: Infinity,
+                    },
+                  },
+                  {
+                    index: 6,
+                    cmd: '$rhx --rules briefs/r6.md',
+                    cached: false,
+                    durationSec: 14.9,
+                    blockers: 0,
+                    nitpicks: 0,
+                    path: '.route/5.3.verification.guard.review.i3.abc123.r6.md',
+                    exitClass: 'passed',
+                    peer: {
+                      slug: '$rhx.3',
+                      level: 1,
+                      rounds: 18,
+                      budget: Infinity,
+                    },
+                  },
+                ],
+                judges: [],
+                peerMeters: [
+                  {
+                    slug: '$rhx.1',
+                    level: 1,
+                    rounds: 13,
+                    budget: Infinity,
+                    verdict: 'rejected',
+                    awaits: false,
+                    blockers: 1,
+                    nitpicks: 0,
+                    path: '.route/5.3.verification.guard.review.i3.abc123.r1.md',
+                  },
+                  {
+                    slug: '$rhx.2',
+                    level: 1,
+                    rounds: 14,
+                    budget: Infinity,
+                    verdict: 'approved',
+                    awaits: false,
+                    blockers: 0,
+                    nitpicks: 0,
+                    path: '.route/5.3.verification.guard.review.i3.abc123.r2.md',
+                  },
+                  {
+                    slug: '$rhx.3',
+                    level: 1,
+                    rounds: 18,
+                    budget: Infinity,
+                    verdict: 'approved',
+                    awaits: false,
+                    blockers: 0,
+                    nitpicks: 0,
+                    path: '.route/5.3.verification.guard.review.i3.abc123.r6.md',
+                  },
+                ],
+              },
+            });
+            // each reviewer shows its own data via unique slug lookup
+            // .note = r labels use position in meters array (1-based)
+            expect(result).toContain('r1: $rhx.1 (l1, 13/∞)'); // r1 has rounds=13
+            expect(result).toContain('r2: $rhx.2 (l1, 14/∞)'); // r2 has rounds=14
+            expect(result).toContain('r3: $rhx.3 (l1, 18/∞)'); // position=3, rounds=18
+            // r1 shows its own blockers and path
+            expect(result).toContain('1 blocker'); // r1 has 1 blocker
+            expect(result).toContain('r1.md'); // r1 references r1.md
+            // r2 and r6 show their own paths
+            expect(result).toContain('r2.md'); // r2 references r2.md
+            expect(result).toContain('r6.md'); // r6 references r6.md
+            expect(result).toMatchSnapshot();
+          });
+        },
+      );
+    },
+  );
+});
+
+describe('formatReviewsMeterLines', () => {
+  given('[case1] unique slugs via standardization — slug-based lookup', () => {
+    when(
+      '[t0] reviewers have unique slugs (standardized at parse time)',
+      () => {
+        then(
+          'each reviewer shows its own blockers/path via slug lookup',
+          async () => {
+            // dynamically import to access the exported function
+            const { formatReviewsMeterLines } = await import(
+              './formatGuardTree'
+            );
+
+            // slugs are standardized at parse time: $rhx.1, $rhx.2, $rhx.3
+            // .note = standardizePeerReviewSlugs adds .N suffix for collisions
+            const lines = formatReviewsMeterLines({
+              meters: [
+                {
+                  slug: '$rhx.1',
+                  level: 1,
+                  rounds: 13,
+                  budget: Infinity,
+                  verdict: 'rejected',
+                  awaits: false,
+                  blockers: 1,
+                  nitpicks: 0,
+                  path: '.route/r1.md',
+                },
+                {
+                  slug: '$rhx.2',
+                  level: 1,
+                  rounds: 14,
+                  budget: Infinity,
+                  verdict: 'approved',
+                  awaits: false,
+                  blockers: 0,
+                  nitpicks: 0,
+                  path: '.route/r2.md',
+                },
+                {
+                  slug: '$rhx.3',
+                  level: 1,
+                  rounds: 18,
+                  budget: Infinity,
+                  verdict: 'approved',
+                  awaits: false,
+                  blockers: 0,
+                  nitpicks: 0,
+                  path: '.route/r6.md',
+                },
+              ],
+              reviews: [
+                {
+                  artifact: {
+                    index: 1,
+                    path: '.route/r1.md',
+                    blockers: 1,
+                    nitpicks: 0,
+                    exitClass: 'passed',
+                  },
+                  cmd: '$rhx --rules r1.md',
+                  cached: false,
+                  durationSec: 43.7,
+                  peer: {
+                    slug: '$rhx.1',
+                    level: 1,
+                    rounds: 13,
+                    budget: Infinity,
+                  },
+                },
+                {
+                  artifact: {
+                    index: 2,
+                    path: '.route/r2.md',
+                    blockers: 0,
+                    nitpicks: 0,
+                    exitClass: 'passed',
+                  },
+                  cmd: '$rhx --rules r2.md',
+                  cached: false,
+                  durationSec: 13.2,
+                  peer: {
+                    slug: '$rhx.2',
+                    level: 1,
+                    rounds: 14,
+                    budget: Infinity,
+                  },
+                },
+                {
+                  artifact: {
+                    index: 6,
+                    path: '.route/r6.md',
+                    blockers: 0,
+                    nitpicks: 0,
+                    exitClass: 'passed',
+                  },
+                  cmd: '$rhx --rules r6.md',
+                  cached: false,
+                  durationSec: 14.9,
+                  peer: {
+                    slug: '$rhx.3',
+                    level: 1,
+                    rounds: 18,
+                    budget: Infinity,
+                  },
+                },
+              ],
+              includeHeader: false,
+            });
+
+            const output = lines.join('\n');
+            // each reviewer shows its own blockers: r1=1, r2=0, r3(index 6)=0
+            expect(output).toContain('1 blocker');
+            // each reviewer shows its own path
+            expect(output).toContain('r1.md');
+            expect(output).toContain('r2.md');
+            expect(output).toContain('r6.md');
+
+            // verify r1 is rejected (has blocker), r2/r3 approved (no blockers)
+            // count occurrences: should have 1 "rejected" and 2 "approved"
+            const rejectedCount = (output.match(/rejected/g) || []).length;
+            const approvedCount = (output.match(/approved/g) || []).length;
+            expect(rejectedCount).toBe(1);
+            expect(approvedCount).toBe(2);
+
+            expect(lines).toMatchSnapshot();
+          },
+        );
+      },
+    );
+  });
 });

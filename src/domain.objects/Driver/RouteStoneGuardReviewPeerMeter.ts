@@ -16,6 +16,8 @@ export interface RouteStoneGuardReviewPeerMeter {
    * reference to the reviewer by slug
    *
    * matches RouteStoneGuardReviewPeer.slug
+   *
+   * .note = slugs are guaranteed unique at parse time via standardizePeerReviewSlugs
    */
   reviewer: { slug: string };
 

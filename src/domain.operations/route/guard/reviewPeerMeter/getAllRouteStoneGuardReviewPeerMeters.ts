@@ -30,6 +30,7 @@ export const getAllRouteStoneGuardReviewPeerMeters = async (input: {
     .map((line) => new RouteStoneGuardReviewPeerMeter(JSON.parse(line)));
 
   // filter to this stone, last entry wins per slug
+  // .note = slugs are guaranteed unique at parse time via standardizePeerReviewSlugs
   const latestBySlug = new Map<string, RouteStoneGuardReviewPeerMeter>();
   for (const meter of allMeters) {
     if (meter.stone === input.stone) {

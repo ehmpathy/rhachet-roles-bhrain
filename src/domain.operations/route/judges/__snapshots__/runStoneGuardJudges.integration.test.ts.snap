@@ -30,7 +30,7 @@ exports[`runStoneGuardJudges given: [case1] guard with echo judge command that p
 reason: all checks passed
 ",
     "stone": {
-      "path": "/home/vlad/git/ehmpathy/_worktrees/rhachet-roles-bhrain.vlad.fix-route-breakout/.temp/genTempDir.symlink/2026-06-18T13-02-07.268Z.judges-pass.39f1a337/1.test.stone",
+      "path": "/home/vlad/git/ehmpathy/_worktrees/rhachet-roles-bhrain.vlad.fix-symlinks/.temp/genTempDir.symlink/2026-06-19T10-59-57.412Z.judges-pass.0c8b7565/1.test.stone",
     },
   },
 ]
@@ -66,7 +66,7 @@ exports[`runStoneGuardJudges given: [case2] guard with judge command that fails 
 reason: blockers found
 ",
     "stone": {
-      "path": "/home/vlad/git/ehmpathy/_worktrees/rhachet-roles-bhrain.vlad.fix-route-breakout/.temp/genTempDir.symlink/2026-06-18T13-02-07.436Z.judges-fail.0c445896/1.test.stone",
+      "path": "/home/vlad/git/ehmpathy/_worktrees/rhachet-roles-bhrain.vlad.fix-symlinks/.temp/genTempDir.symlink/2026-06-19T10-59-57.434Z.judges-fail.334b10bf/1.test.stone",
     },
   },
 ]
@@ -116,7 +116,7 @@ exports[`runStoneGuardJudges given: [case3] guard with multiple judge commands w
 reason: review passed
 ",
     "stone": {
-      "path": "/home/vlad/git/ehmpathy/_worktrees/rhachet-roles-bhrain.vlad.fix-route-breakout/.temp/genTempDir.symlink/2026-06-18T13-02-07.579Z.judges-multi.463cb87f/1.test.stone",
+      "path": "/home/vlad/git/ehmpathy/_worktrees/rhachet-roles-bhrain.vlad.fix-symlinks/.temp/genTempDir.symlink/2026-06-19T10-59-57.449Z.judges-multi.13d16485/1.test.stone",
     },
   },
   {
@@ -133,7 +133,7 @@ reason: review passed
 reason: approval required
 ",
     "stone": {
-      "path": "/home/vlad/git/ehmpathy/_worktrees/rhachet-roles-bhrain.vlad.fix-route-breakout/.temp/genTempDir.symlink/2026-06-18T13-02-07.579Z.judges-multi.463cb87f/1.test.stone",
+      "path": "/home/vlad/git/ehmpathy/_worktrees/rhachet-roles-bhrain.vlad.fix-symlinks/.temp/genTempDir.symlink/2026-06-19T10-59-57.449Z.judges-multi.13d16485/1.test.stone",
     },
   },
 ]
@@ -166,10 +166,10 @@ exports[`runStoneGuardJudges given: [case4] guard with $route variable in judge 
     "reason": "marker found at <route-path>",
     "stderr": "",
     "stdout": "passed: true
-reason: marker found at /home/vlad/git/ehmpathy/_worktrees/rhachet-roles-bhrain.vlad.fix-route-breakout/.temp/genTempDir.symlink/2026-06-18T13-02-07.732Z.judges-route-var.5db36741
+reason: marker found at /home/vlad/git/ehmpathy/_worktrees/rhachet-roles-bhrain.vlad.fix-symlinks/.temp/genTempDir.symlink/2026-06-19T10-59-57.472Z.judges-route-var.4e684cc1
 ",
     "stone": {
-      "path": "/home/vlad/git/ehmpathy/_worktrees/rhachet-roles-bhrain.vlad.fix-route-breakout/.temp/genTempDir.symlink/2026-06-18T13-02-07.732Z.judges-route-var.5db36741/1.test.stone",
+      "path": "/home/vlad/git/ehmpathy/_worktrees/rhachet-roles-bhrain.vlad.fix-symlinks/.temp/genTempDir.symlink/2026-06-19T10-59-57.472Z.judges-route-var.4e684cc1/1.test.stone",
     },
   },
 ]
@@ -205,7 +205,7 @@ exports[`runStoneGuardJudges given: [case5] passed judge is cached on retry when
 reason: all checks passed
 ",
     "stone": {
-      "path": "/home/vlad/git/ehmpathy/_worktrees/rhachet-roles-bhrain.vlad.fix-route-breakout/.temp/genTempDir.symlink/2026-06-18T13-02-07.983Z.judges-cache-pass.046c21cd/1.test.stone",
+      "path": "/home/vlad/git/ehmpathy/_worktrees/rhachet-roles-bhrain.vlad.fix-symlinks/.temp/genTempDir.symlink/2026-06-19T10-59-57.492Z.judges-cache-pass.099dd5d1/1.test.stone",
     },
   },
 ]
@@ -241,7 +241,7 @@ exports[`runStoneGuardJudges given: [case6] failed judge is NOT cached (retries 
 reason: blockers found
 ",
     "stone": {
-      "path": "/home/vlad/git/ehmpathy/_worktrees/rhachet-roles-bhrain.vlad.fix-route-breakout/.temp/genTempDir.symlink/2026-06-18T13-02-08.147Z.judges-nocache-fail.2ce00042/1.test.stone",
+      "path": "/home/vlad/git/ehmpathy/_worktrees/rhachet-roles-bhrain.vlad.fix-symlinks/.temp/genTempDir.symlink/2026-06-19T10-59-57.535Z.judges-nocache-fail.cf1822cf/1.test.stone",
     },
   },
 ]
@@ -277,7 +277,7 @@ exports[`runStoneGuardJudges given: [case7] judge exits with code 0 (passed) whe
 reason: judge passed
 ",
     "stone": {
-      "path": "/home/vlad/git/ehmpathy/_worktrees/rhachet-roles-bhrain.vlad.fix-route-breakout/.temp/genTempDir.symlink/2026-06-18T13-02-08.343Z.judges-exit0.6d2351a4/1.test.stone",
+      "path": "/home/vlad/git/ehmpathy/_worktrees/rhachet-roles-bhrain.vlad.fix-symlinks/.temp/genTempDir.symlink/2026-06-19T10-59-57.612Z.judges-exit0.c23ed647/1.test.stone",
     },
   },
 ]
@@ -316,7 +316,7 @@ exports[`runStoneGuardJudges given: [case8] judge exits with code 2 (constraint)
 reason: approval required
 ",
     "stone": {
-      "path": "/home/vlad/git/ehmpathy/_worktrees/rhachet-roles-bhrain.vlad.fix-route-breakout/.temp/genTempDir.symlink/2026-06-18T13-02-08.503Z.judges-exit2.3aa1f09b/1.test.stone",
+      "path": "/home/vlad/git/ehmpathy/_worktrees/rhachet-roles-bhrain.vlad.fix-symlinks/.temp/genTempDir.symlink/2026-06-19T10-59-57.667Z.judges-exit2.f52a1f15/1.test.stone",
     },
   },
 ]
@@ -356,7 +356,7 @@ exports[`runStoneGuardJudges given: [case9] judge exits with code 1 (malfunction
     "stdout": "stdout output
 ",
     "stone": {
-      "path": "/home/vlad/git/ehmpathy/_worktrees/rhachet-roles-bhrain.vlad.fix-route-breakout/.temp/genTempDir.symlink/2026-06-18T13-02-08.765Z.judges-exit1.0ab3a830/1.test.stone",
+      "path": "/home/vlad/git/ehmpathy/_worktrees/rhachet-roles-bhrain.vlad.fix-symlinks/.temp/genTempDir.symlink/2026-06-19T10-59-57.728Z.judges-exit1.23d892e3/1.test.stone",
     },
   },
 ]
@@ -395,7 +395,7 @@ exports[`runStoneGuardJudges given: [case10] blocked judge (exit 2) is NOT cache
 reason: approval required
 ",
     "stone": {
-      "path": "/home/vlad/git/ehmpathy/_worktrees/rhachet-roles-bhrain.vlad.fix-route-breakout/.temp/genTempDir.symlink/2026-06-18T13-02-08.989Z.judges-nocache-block.72d153a7/1.test.stone",
+      "path": "/home/vlad/git/ehmpathy/_worktrees/rhachet-roles-bhrain.vlad.fix-symlinks/.temp/genTempDir.symlink/2026-06-19T10-59-57.775Z.judges-nocache-block.3bcce248/1.test.stone",
     },
   },
 ]
@@ -428,10 +428,10 @@ exports[`runStoneGuardJudges given: [case11] guard with $rhx variable in judge c
     "reason": "rhx=<repo-root>/node_modules/.bin/rhx",
     "stderr": "",
     "stdout": "passed: true
-reason: rhx=/home/vlad/git/ehmpathy/_worktrees/rhachet-roles-bhrain.vlad.fix-route-breakout/node_modules/.bin/rhx
+reason: rhx=/home/vlad/git/ehmpathy/_worktrees/rhachet-roles-bhrain.vlad.fix-symlinks/node_modules/.bin/rhx
 ",
     "stone": {
-      "path": "/home/vlad/git/ehmpathy/_worktrees/rhachet-roles-bhrain.vlad.fix-route-breakout/.temp/genTempDir.symlink/2026-06-18T13-02-09.306Z.judges-rhx-var.e403f39c/1.test.stone",
+      "path": "/home/vlad/git/ehmpathy/_worktrees/rhachet-roles-bhrain.vlad.fix-symlinks/.temp/genTempDir.symlink/2026-06-19T10-59-57.817Z.judges-rhx-var.fb669779/1.test.stone",
     },
   },
 ]
@@ -464,10 +464,10 @@ exports[`runStoneGuardJudges given: [case12] guard with $rhachet variable in jud
     "reason": "rhachet=<repo-root>/node_modules/.bin/rhachet",
     "stderr": "",
     "stdout": "passed: true
-reason: rhachet=/home/vlad/git/ehmpathy/_worktrees/rhachet-roles-bhrain.vlad.fix-route-breakout/node_modules/.bin/rhachet
+reason: rhachet=/home/vlad/git/ehmpathy/_worktrees/rhachet-roles-bhrain.vlad.fix-symlinks/node_modules/.bin/rhachet
 ",
     "stone": {
-      "path": "/home/vlad/git/ehmpathy/_worktrees/rhachet-roles-bhrain.vlad.fix-route-breakout/.temp/genTempDir.symlink/2026-06-18T13-02-09.433Z.judges-rhachet-var.aba9fb0f/1.test.stone",
+      "path": "/home/vlad/git/ehmpathy/_worktrees/rhachet-roles-bhrain.vlad.fix-symlinks/.temp/genTempDir.symlink/2026-06-19T10-59-57.869Z.judges-rhachet-var.d7a2e2b4/1.test.stone",
     },
   },
 ]

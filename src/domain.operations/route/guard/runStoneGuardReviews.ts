@@ -242,6 +242,7 @@ export const runStoneGuardReviews = async (
   const exhaustedReviewerSlugs: string[] = [];
 
   // load current meters for budget state (per stone)
+  // .note = slugs are guaranteed unique at parse time via standardizePeerReviewSlugs
   const meters = await getAllRouteStoneGuardReviewPeerMeters({
     route: input.route,
     stone: input.stone.name,
