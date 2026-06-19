@@ -1,4 +1,5 @@
 import * as fs from 'fs/promises';
+import { BadRequestError } from 'helpful-errors';
 import * as os from 'os';
 import * as path from 'path';
 import { getError, given, then, when } from 'test-fns';
@@ -37,6 +38,14 @@ describe('setStoneAsApproved', () => {
         expect(result.emit?.stdout).toContain('✓ approved');
       });
 
+      then('output matches snapshot', async () => {
+        const result = await setStoneAsApproved(
+          { stone: '1.vision', route: tempDir },
+          { isTTY: true },
+        );
+        expect(result.emit?.stdout).toMatchSnapshot();
+      });
+
       then('appends approval to passage.jsonl', async () => {
         await setStoneAsApproved(
           { stone: '1.vision', route: tempDir },
@@ -57,7 +66,7 @@ describe('setStoneAsApproved', () => {
             { isTTY: true },
           ),
         );
-        expect(error).toBeInstanceOf(Error);
+        expect(error).toBeInstanceOf(BadRequestError);
         expect(error.message).toContain('stone not found');
       });
     });
@@ -100,7 +109,7 @@ describe('setStoneAsApproved', () => {
             { isTTY: true },
           ),
         );
-        expect(error).toBeInstanceOf(Error);
+        expect(error).toBeInstanceOf(BadRequestError);
         expect(error.message).toContain('stone not found');
       });
     });
@@ -157,6 +166,108 @@ describe('setStoneAsApproved', () => {
         expect(result.emit?.stdout).toContain('--as passed');
         expect(result.emit?.stdout).toContain('--as arrived');
         expect(result.emit?.stdout).toContain('--as blocked');
+      });
+
+      then('output matches snapshot', async () => {
+        const result = await setStoneAsApproved(
+          { stone: '1.vision', route: tempDir },
+          { isTTY: false },
+        );
+        expect(result.emit?.stdout).toMatchSnapshot();
+      });
+    });
+  });
+
+  given('[case4] stone already approved', () => {
+    const tempDir = path.join(
+      os.tmpdir(),
+      `test-set-approved-already-${Date.now()}`,
+    );
+
+    beforeEach(async () => {
+      await fs.cp(path.join(ASSETS_DIR, 'route.simple'), tempDir, {
+        recursive: true,
+      });
+      // pre-approve the stone as human
+      await setStoneAsApproved(
+        { stone: '1.vision', route: tempDir },
+        { isTTY: true },
+      );
+    });
+
+    afterEach(async () => {
+      await fs.rm(tempDir, { recursive: true, force: true });
+    });
+
+    when(
+      '[t0] human tries to approve already-approved stone (idempotent)',
+      () => {
+        then('approval returns true (idempotent success)', async () => {
+          const result = await setStoneAsApproved(
+            { stone: '1.vision', route: tempDir },
+            { isTTY: true },
+          );
+          expect(result.approved).toBe(true);
+        });
+
+        then('output contains "approved"', async () => {
+          const result = await setStoneAsApproved(
+            { stone: '1.vision', route: tempDir },
+            { isTTY: true },
+          );
+          expect(result.emit?.stdout).toContain('approved');
+        });
+
+        then('output matches snapshot', async () => {
+          const result = await setStoneAsApproved(
+            { stone: '1.vision', route: tempDir },
+            { isTTY: true },
+          );
+          expect(result.emit?.stdout).toMatchSnapshot();
+        });
+      },
+    );
+
+    when('[t1] bot tries to approve already-approved stone', () => {
+      then('approval returns false', async () => {
+        const result = await setStoneAsApproved(
+          { stone: '1.vision', route: tempDir },
+          { isTTY: false },
+        );
+        expect(result.approved).toBe(false);
+      });
+
+      then('output contains "already approved"', async () => {
+        const result = await setStoneAsApproved(
+          { stone: '1.vision', route: tempDir },
+          { isTTY: false },
+        );
+        expect(result.emit?.stdout).toContain('already approved');
+      });
+
+      then('output tells bot to run --as passed', async () => {
+        const result = await setStoneAsApproved(
+          { stone: '1.vision', route: tempDir },
+          { isTTY: false },
+        );
+        expect(result.emit?.stdout).toContain('to continue, run:');
+        expect(result.emit?.stdout).toContain('--as passed');
+      });
+
+      then('output does NOT contain "only humans can approve"', async () => {
+        const result = await setStoneAsApproved(
+          { stone: '1.vision', route: tempDir },
+          { isTTY: false },
+        );
+        expect(result.emit?.stdout).not.toContain('only humans can approve');
+      });
+
+      then('output matches snapshot', async () => {
+        const result = await setStoneAsApproved(
+          { stone: '1.vision', route: tempDir },
+          { isTTY: false },
+        );
+        expect(result.emit?.stdout).toMatchSnapshot();
       });
     });
   });

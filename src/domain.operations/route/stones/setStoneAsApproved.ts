@@ -2,8 +2,11 @@ import { BadRequestError } from 'helpful-errors';
 
 import { formatRouteStoneEmit } from '../formatRouteStoneEmit';
 import { getDecisionIsCallerHuman } from '../getDecisionIsCallerHuman';
+import { getOneStoneGuardApproval } from '../judges/getOneStoneGuardApproval';
 import { setStoneGuardApproval } from '../judges/setStoneGuardApproval';
 import { findOneStoneByPattern } from './asStoneGlob';
+import { formatGuidanceForAlreadyApproved } from './formatGuidanceForAlreadyApproved';
+import { formatGuidanceForOnlyHumansCanApprove } from './formatGuidanceForOnlyHumansCanApprove';
 import { getAllStones } from './getAllStones';
 
 /**
@@ -32,9 +35,46 @@ export const setStoneAsApproved = async (
     throw new BadRequestError('stone not found', { stone: input.stone });
   }
 
+  // check if already approved by human
+  const approvalFound = await getOneStoneGuardApproval({
+    stone: stoneMatched,
+    route: input.route,
+  });
+
   // check if caller is human
   const { isHuman } = getDecisionIsCallerHuman({ isTTY: context.isTTY });
-  if (!isHuman) {
+
+  // human already approved -> idempotent success (no-op)
+  if (isHuman && approvalFound) {
+    return {
+      approved: true,
+      emit: {
+        stdout: formatRouteStoneEmit({
+          operation: 'route.stone.set',
+          stone: stoneMatched.name,
+          action: 'approved',
+        }),
+      },
+    };
+  }
+
+  // human not yet approved -> approve
+  if (isHuman) {
+    await setStoneGuardApproval({ stone: stoneMatched, route: input.route });
+    return {
+      approved: true,
+      emit: {
+        stdout: formatRouteStoneEmit({
+          operation: 'route.stone.set',
+          stone: stoneMatched.name,
+          action: 'approved',
+        }),
+      },
+    };
+  }
+
+  // bot on already-approved stone -> guide to pass
+  if (approvalFound) {
     return {
       approved: false,
       emit: {
@@ -42,30 +82,25 @@ export const setStoneAsApproved = async (
           operation: 'route.stone.set',
           stone: stoneMatched.name,
           action: 'blocked',
-          reason: 'only humans can approve',
-          guidance: [
-            'as a driver, you should:',
-            '   ├─ `--as passed` to signal work complete, proceed',
-            '   ├─ `--as arrived` to signal work complete, request review',
-            '   └─ `--as blocked` to escalate if stuck',
-            '',
-            'the human will run `--as approved` when ready.',
-          ].join('\n'),
+          reason: 'already approved',
+          guidance: formatGuidanceForAlreadyApproved({
+            stone: stoneMatched.name,
+          }),
         }),
       },
     };
   }
 
-  // set approval marker
-  await setStoneGuardApproval({ stone: stoneMatched, route: input.route });
-
+  // not approved yet, tell bot only humans can approve
   return {
-    approved: true,
+    approved: false,
     emit: {
       stdout: formatRouteStoneEmit({
         operation: 'route.stone.set',
         stone: stoneMatched.name,
-        action: 'approved',
+        action: 'blocked',
+        reason: 'only humans can approve',
+        guidance: formatGuidanceForOnlyHumansCanApprove(),
       }),
     },
   };
