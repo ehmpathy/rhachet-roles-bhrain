@@ -1,5 +1,6 @@
 import { exec } from 'child_process';
 import * as fs from 'fs/promises';
+import { BadRequestError } from 'helpful-errors';
 import * as path from 'path';
 import { getGitRepoRoot } from 'rhachet-artifact-git';
 import { promisify } from 'util';
@@ -10,6 +11,7 @@ import type { RouteStoneGuard } from '@src/domain.objects/Driver/RouteStoneGuard
 import { RouteStoneGuardJudgeArtifact } from '@src/domain.objects/Driver/RouteStoneGuardJudgeArtifact';
 import { formatTreeBucket } from '@src/domain.operations/route/guard/formatTreeBucket';
 import { getExitCodeClass } from '@src/domain.operations/route/guard/getExitCodeClass';
+import { isENOENT } from '@src/domain.operations/route/guard/isENOENT';
 import { enumFilesFromGlob } from '@src/utils/enumFilesFromGlob';
 
 import { computeStoneJudgeInputHash } from './computeStoneJudgeInputHash';
@@ -39,7 +41,13 @@ export const runOneStoneGuardJudge = async (input: {
   let repoRoot: string;
   try {
     repoRoot = await getGitRepoRoot({ from: input.route });
-  } catch {
+  } catch (error) {
+    // only catch "not in git repo" error; rethrow any other errors
+    // .note = check error message instead of instanceof due to cross-module class instances
+    const isNotInGitRepoError =
+      error instanceof Error && error.message.includes('Not inside a Git');
+    if (!isNotInGitRepoError) throw error;
+
     repoRoot = process.cwd();
   }
 
@@ -82,13 +90,21 @@ export const runOneStoneGuardJudge = async (input: {
     stderr = result.stderr;
     exitCode = 0;
   } catch (error: unknown) {
-    // capture output and exit code even on failure
-    if (error && typeof error === 'object') {
-      const errObj = error as Record<string, unknown>;
-      stdout = typeof errObj.stdout === 'string' ? errObj.stdout : '';
-      stderr = typeof errObj.stderr === 'string' ? errObj.stderr : '';
-      exitCode = typeof errObj.code === 'number' ? errObj.code : 1;
+    // capture output and exit code from command failure
+    // exec errors have specific shape: { stdout, stderr, code, killed }
+    // rethrow if error doesn't match this shape (unexpected error)
+    if (
+      !error ||
+      typeof error !== 'object' ||
+      !('code' in error || 'killed' in error)
+    ) {
+      throw error;
     }
+
+    const errObj = error as Record<string, unknown>;
+    stdout = typeof errObj.stdout === 'string' ? errObj.stdout : '';
+    stderr = typeof errObj.stderr === 'string' ? errObj.stderr : '';
+    exitCode = typeof errObj.code === 'number' ? errObj.code : 1;
   }
 
   // classify exit code
@@ -174,8 +190,9 @@ export const runStoneGuardJudges = async (
       glob: judgeGlob,
       cwd: routeDir,
     });
-  } catch {
-    // .route/ may not exist yet
+  } catch (error) {
+    // .route/ may not exist yet; rethrow any other errors
+    if (!isENOENT(error)) throw error;
   }
 
   // parse prior judges to build cache
@@ -238,11 +255,19 @@ export const runStoneGuardJudges = async (
     const prior = priorByIndex.get(index);
     if (prior) {
       // emit cached event for progress output
+      // .note = include outcome data for consistency with reviews cached events
       context.cliEmit.onGuardProgress({
         stone: input.stone,
         step: { phase: 'judge', index: i },
         inflight: null,
-        outcome: null,
+        outcome: {
+          path: prior.path,
+          review: null,
+          judge: {
+            decision: prior.passed ? 'allowed' : 'blocked',
+            reason: prior.reason,
+          },
+        },
       });
       judges.push(prior);
       continue;
@@ -279,7 +304,9 @@ export const runStoneGuardJudges = async (
         review: null,
         judge:
           judge.exitClass === 'malfunction'
-            ? { malfunction: new Error(`exit code ${judge.exitCode}`) }
+            ? {
+                malfunction: `judge command failed with exit code ${judge.exitCode}`,
+              }
             : {
                 decision: judge.passed ? 'allowed' : 'blocked',
                 reason: judge.reason,
@@ -298,13 +325,17 @@ export const runStoneGuardJudges = async (
  * .why = npx adds 500-2000ms latency and has cross-platform issues
  */
 const validateNoNpx = (cmd: string): void => {
+  // reject guards that use npx patterns
   if (cmd.includes('npx rhachet') || cmd.includes('npx rhx')) {
     const pattern = cmd.includes('npx rhachet') ? 'npx rhachet' : 'npx rhx';
     const alias = cmd.includes('npx rhachet') ? '$rhachet' : '$rhx';
-    throw new Error(
-      `guard uses ${pattern} which causes latency and cross-platform issues\n\n` +
-        `fix: use ${alias} alias instead\n` +
-        `  - ${alias} expands to ./node_modules/.bin/${alias.slice(1)}\n`,
+    BadRequestError.throw(
+      `guard uses ${pattern} which causes latency and cross-platform issues. ` +
+        `fix: use ${alias} alias instead (${alias} expands to ./node_modules/.bin/${alias.slice(1)})`,
+      {
+        pattern,
+        alias,
+      },
     );
   }
 };
@@ -459,7 +490,9 @@ const isFilePresent = async (filePath: string): Promise<boolean> => {
   try {
     await fs.access(filePath);
     return true;
-  } catch {
-    return false;
+  } catch (error) {
+    // only catch ENOENT (file not found); rethrow other errors
+    if (isENOENT(error)) return false;
+    throw error;
   }
 };

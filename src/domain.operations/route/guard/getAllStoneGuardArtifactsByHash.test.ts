@@ -8,7 +8,7 @@ import { RouteStone } from '@src/domain.objects/Driver/RouteStone';
 import { getAllStoneGuardArtifactsByHash } from './getAllStoneGuardArtifactsByHash';
 
 describe('getAllStoneGuardArtifactsByHash', () => {
-  given('[case1] route with no .route directory', () => {
+  given('[case1] route with no .reviews/peer or .route directory', () => {
     const routePath = path.join(os.tmpdir(), `test-no-route-${Date.now()}`);
     const stone = new RouteStone({
       name: '1.vision',
@@ -34,6 +34,7 @@ describe('getAllStoneGuardArtifactsByHash', () => {
       os.tmpdir(),
       `test-guard-artifacts-${Date.now()}`,
     );
+    const reviewsDir = path.join(tempDir, '.reviews', 'peer');
     const routeDir = path.join(tempDir, '.route');
     const testHash = 'abc123def456';
     const stone = new RouteStone({
@@ -43,11 +44,15 @@ describe('getAllStoneGuardArtifactsByHash', () => {
     });
 
     beforeEach(async () => {
+      await fs.mkdir(reviewsDir, { recursive: true });
       await fs.mkdir(routeDir, { recursive: true });
 
-      // create review file with treestruct format (matches actual output)
+      // create review file in .reviews/peer/ with new filename pattern
       await fs.writeFile(
-        path.join(routeDir, `1.vision.guard.review.i1.${testHash}.r1.md`),
+        path.join(
+          reviewsDir,
+          `1.vision._.review.i1.${testHash}.r1._.given.by_peer.test-reviewer.md`,
+        ),
         `├─ stdout
 │  ├─
 │  │  🦉 needs your talons
@@ -59,7 +64,7 @@ describe('getAllStoneGuardArtifactsByHash', () => {
 │  └─`,
       );
 
-      // create judge file with treestruct format
+      // create judge file in .route/ (judges still live there)
       await fs.writeFile(
         path.join(routeDir, `1.vision.guard.judge.i1.${testHash}.j1.md`),
         `passed: false
@@ -113,7 +118,7 @@ reason: blockers found`,
       os.tmpdir(),
       `test-guard-zero-blockers-${Date.now()}`,
     );
-    const routeDir = path.join(tempDir, '.route');
+    const reviewsDir = path.join(tempDir, '.reviews', 'peer');
     const testHash = 'zeroblockershash';
     const stone = new RouteStone({
       name: '1.vision',
@@ -122,11 +127,14 @@ reason: blockers found`,
     });
 
     beforeEach(async () => {
-      await fs.mkdir(routeDir, { recursive: true });
+      await fs.mkdir(reviewsDir, { recursive: true });
 
       // create review file with zero blockers (approved format)
       await fs.writeFile(
-        path.join(routeDir, `1.vision.guard.review.i1.${testHash}.r1.md`),
+        path.join(
+          reviewsDir,
+          `1.vision._.review.i1.${testHash}.r1._.given.by_peer.test-reviewer.md`,
+        ),
         `├─ stdout
 │  ├─
 │  │  🦉 the way speaks for itself
@@ -159,7 +167,7 @@ reason: blockers found`,
 
   given('[case4] review with singular blocker/nitpick', () => {
     const tempDir = path.join(os.tmpdir(), `test-guard-singular-${Date.now()}`);
-    const routeDir = path.join(tempDir, '.route');
+    const reviewsDir = path.join(tempDir, '.reviews', 'peer');
     const testHash = 'singularhash';
     const stone = new RouteStone({
       name: '1.vision',
@@ -168,11 +176,14 @@ reason: blockers found`,
     });
 
     beforeEach(async () => {
-      await fs.mkdir(routeDir, { recursive: true });
+      await fs.mkdir(reviewsDir, { recursive: true });
 
       // create review file with singular forms
       await fs.writeFile(
-        path.join(routeDir, `1.vision.guard.review.i1.${testHash}.r1.md`),
+        path.join(
+          reviewsDir,
+          `1.vision._.review.i1.${testHash}.r1._.given.by_peer.test-reviewer.md`,
+        ),
         `├─ stdout
 │  ├─
 │  │  🦉 needs your talons
@@ -205,7 +216,7 @@ reason: blockers found`,
 
   given('[case5] review with duration in stdout', () => {
     const tempDir = path.join(os.tmpdir(), `test-guard-duration-${Date.now()}`);
-    const routeDir = path.join(tempDir, '.route');
+    const reviewsDir = path.join(tempDir, '.reviews', 'peer');
     const testHash = 'durationhash';
     const stone = new RouteStone({
       name: '1.vision',
@@ -214,11 +225,14 @@ reason: blockers found`,
     });
 
     beforeEach(async () => {
-      await fs.mkdir(routeDir, { recursive: true });
+      await fs.mkdir(reviewsDir, { recursive: true });
 
       // create review file with duration in metrics.realized
       await fs.writeFile(
-        path.join(routeDir, `1.vision.guard.review.i1.${testHash}.r1.md`),
+        path.join(
+          reviewsDir,
+          `1.vision._.review.i1.${testHash}.r1._.given.by_peer.test-reviewer.md`,
+        ),
         `├─ stdout
 │  ├─
 │  │  🦉 the way speaks for itself
@@ -256,7 +270,7 @@ reason: blockers found`,
       os.tmpdir(),
       `test-guard-no-duration-${Date.now()}`,
     );
-    const routeDir = path.join(tempDir, '.route');
+    const reviewsDir = path.join(tempDir, '.reviews', 'peer');
     const testHash = 'nodurationhash';
     const stone = new RouteStone({
       name: '1.vision',
@@ -265,11 +279,14 @@ reason: blockers found`,
     });
 
     beforeEach(async () => {
-      await fs.mkdir(routeDir, { recursive: true });
+      await fs.mkdir(reviewsDir, { recursive: true });
 
       // create review file without duration
       await fs.writeFile(
-        path.join(routeDir, `1.vision.guard.review.i1.${testHash}.r1.md`),
+        path.join(
+          reviewsDir,
+          `1.vision._.review.i1.${testHash}.r1._.given.by_peer.test-reviewer.md`,
+        ),
         `├─ stdout
 │  ├─
 │  │  🦉 the way speaks for itself

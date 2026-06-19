@@ -1,0 +1,8 @@
+{
+  "name": "route-peer-review-output-fixture",
+  "private": true,
+  "description": "fixture for peer review output acceptance test",
+  "dependencies": {
+    "rhachet-roles-bhrain": "link:."
+  }
+}

@@ -1,0 +1,12 @@
+artifacts:
+  - 1.execute*.md
+
+reviews:
+  peer:
+    - slug: mock-output
+      budget: 3
+      level: 1
+      run: bash $route/.test/mock-review-with-output.sh --output $output
+
+judges:
+  - rhx route.stone.judge --mechanism reviewed? --stone $stone --route $route --allow-blockers 0 --allow-nitpicks 1

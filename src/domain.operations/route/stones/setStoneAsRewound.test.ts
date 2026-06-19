@@ -124,14 +124,21 @@ describe('setStoneAsRewound', () => {
       `test-set-rewound-artifacts-${Date.now()}`,
     );
     const routeDir = path.join(tempDir, '.route');
+    const reviewsDir = path.join(tempDir, '.reviews', 'peer');
 
     beforeEach(async () => {
       await fs.mkdir(routeDir, { recursive: true });
+      await fs.mkdir(reviewsDir, { recursive: true });
       await fs.writeFile(path.join(tempDir, '1.vision.stone'), 'stone content');
+      // reviews go to .reviews/peer/
       await fs.writeFile(
-        path.join(routeDir, '1.vision.guard.review.i1.abc123.r1.md'),
+        path.join(
+          reviewsDir,
+          '1.vision._.review.i1.abc123.r1._.given.by_peer.test-reviewer.md',
+        ),
         'review',
       );
+      // judges stay in .route/
       await fs.writeFile(
         path.join(routeDir, '1.vision.guard.judge.i1.abc123.j1.md'),
         'judge',
@@ -148,8 +155,12 @@ describe('setStoneAsRewound', () => {
           { stone: '1.vision', route: tempDir },
           mockContext,
         );
-        const files = await fs.readdir(routeDir);
-        expect(files.filter((f) => f.includes('.guard.'))).toHaveLength(0);
+        const routeFiles = await fs.readdir(routeDir);
+        expect(routeFiles.filter((f) => f.includes('.guard.'))).toHaveLength(0);
+        const reviewFiles = await fs.readdir(reviewsDir);
+        expect(reviewFiles.filter((f) => f.includes('.review.'))).toHaveLength(
+          0,
+        );
       });
 
       then('stdout matches snapshot', async () => {
@@ -279,17 +290,23 @@ describe('setStoneAsRewound', () => {
       `test-set-rewound-snapshot-${Date.now()}`,
     );
     const routeDir = path.join(tempDir, '.route');
+    const reviewsDir = path.join(tempDir, '.reviews', 'peer');
 
     beforeEach(async () => {
       await fs.mkdir(routeDir, { recursive: true });
+      await fs.mkdir(reviewsDir, { recursive: true });
       await fs.writeFile(path.join(tempDir, '1.vision.stone'), 'stone 1');
       await fs.writeFile(path.join(tempDir, '2.criteria.stone'), 'stone 2');
       await fs.writeFile(path.join(tempDir, '3.blueprint.stone'), 'stone 3');
-      // add guard artifacts
+      // reviews go to .reviews/peer/
       await fs.writeFile(
-        path.join(routeDir, '2.criteria.guard.review.i1.abc123.r1.md'),
+        path.join(
+          reviewsDir,
+          '2.criteria._.review.i1.abc123.r1._.given.by_peer.test-reviewer.md',
+        ),
         'review',
       );
+      // judges and promises stay in .route/
       await fs.writeFile(
         path.join(routeDir, '2.criteria.guard.judge.i1.abc123.j1.md'),
         'judge',

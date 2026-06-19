@@ -1,0 +1,52 @@
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
+
+exports[`driver.route.peer-review-output.acceptance given: [output-test] guard with --output $output variable when: [t1] driver tries to pass the stone then: stdout has good vibes 1`] = `
+"🦉 the way speaks for itself
+   │
+   ├─ r1: mock-output (l1, 1/3)
+   │   ├─ approved [TIME]
+   │   ├─ 0 blockers ✓
+   │   ├─ 1 nitpick 🟠
+   │   └─ review: .reviews/peer/1.execute._.review.i1.1c1cfc20e88065ecab.r1._.given.by_peer.mock-output.md
+   │
+   └─ ✓ judge.1 - allowed [TIME]
+
+🗿 route.stone.set
+   ├─ stone = 1.execute
+   ├─ passage = allowed
+   ├─ guard
+   │  ├─ artifacts
+   │  │   └─ 1.execute*.md
+   │  ├─ reviews
+   │  │   └─ r1: mock-output (l1, 1/3)
+   │  │       ├─ approved [TIME]
+   │  │       ├─ 0 blockers ✓
+   │  │       ├─ 1 nitpick 🟠
+   │  │       └─ review: .reviews/peer/1.execute._.review.i1.1c1cfc20e88065ecab.r1._.given.by_peer.mock-output.md
+   │  └─ judges
+   │      └─ j1: rhx route.stone.judge --mechanism reviewed? --stone $stone --route $route --allow-blockers 0 --allow-nitpicks 1
+   │          └─ finished [TIME] ✓
+   │
+   └─ the way continues, run
+      └─ rhx route.drive
+"
+`;
+
+exports[`driver.route.peer-review-output.acceptance given: [output-test] guard with --output $output variable when: [t2] report file was written then: report content matches snapshot 1`] = `
+"# detailed review report
+
+this is the detailed review report that was written to the $output path.
+
+## summary
+
+the review found no blockers but 1 nitpick.
+
+## nitpicks
+
+1. consider more comments to improve code readability
+
+## notes
+
+this file proves that the --output $output variable substitution works correctly.
+"
+`;
