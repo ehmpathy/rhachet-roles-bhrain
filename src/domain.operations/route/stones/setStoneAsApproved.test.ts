@@ -199,31 +199,34 @@ describe('setStoneAsApproved', () => {
       await fs.rm(tempDir, { recursive: true, force: true });
     });
 
-    when('[t0] human tries to approve already-approved stone (idempotent)', () => {
-      then('approval returns true (idempotent success)', async () => {
-        const result = await setStoneAsApproved(
-          { stone: '1.vision', route: tempDir },
-          { isTTY: true },
-        );
-        expect(result.approved).toBe(true);
-      });
+    when(
+      '[t0] human tries to approve already-approved stone (idempotent)',
+      () => {
+        then('approval returns true (idempotent success)', async () => {
+          const result = await setStoneAsApproved(
+            { stone: '1.vision', route: tempDir },
+            { isTTY: true },
+          );
+          expect(result.approved).toBe(true);
+        });
 
-      then('output contains "approved"', async () => {
-        const result = await setStoneAsApproved(
-          { stone: '1.vision', route: tempDir },
-          { isTTY: true },
-        );
-        expect(result.emit?.stdout).toContain('approved');
-      });
+        then('output contains "approved"', async () => {
+          const result = await setStoneAsApproved(
+            { stone: '1.vision', route: tempDir },
+            { isTTY: true },
+          );
+          expect(result.emit?.stdout).toContain('approved');
+        });
 
-      then('output matches snapshot', async () => {
-        const result = await setStoneAsApproved(
-          { stone: '1.vision', route: tempDir },
-          { isTTY: true },
-        );
-        expect(result.emit?.stdout).toMatchSnapshot();
-      });
-    });
+        then('output matches snapshot', async () => {
+          const result = await setStoneAsApproved(
+            { stone: '1.vision', route: tempDir },
+            { isTTY: true },
+          );
+          expect(result.emit?.stdout).toMatchSnapshot();
+        });
+      },
+    );
 
     when('[t1] bot tries to approve already-approved stone', () => {
       then('approval returns false', async () => {
