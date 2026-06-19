@@ -220,8 +220,7 @@ exports[`driver.route.journey.acceptance given: [journey] weather api route when
    │   ├─ approved, cached
    │   ├─ 0 blockers ✓
    │   ├─ 0 nitpicks ✓
-   │   └─ review: .route/3.blueprint.guard.review.i2.79ce73effeb06a18dd.r1.md
-   ├─ ✓ judge.1 - allowed (cached)
+   │   └─ review: .reviews/peer/3.blueprint._.review.i2.79ce73effeb06a18dd.r1._.given.by_peer.bash.md
    │
    └─ ✗ judge.2 - blocked [TIME]
 
@@ -237,7 +236,7 @@ exports[`driver.route.journey.acceptance given: [journey] weather api route when
       │       ├─ approved, cached
       │       ├─ 0 blockers ✓
       │       ├─ 0 nitpicks ✓
-      │       └─ review: .route/3.blueprint.guard.review.i2.79ce73effeb06a18dd.r1.md
+      │       └─ review: .reviews/peer/3.blueprint._.review.i2.79ce73effeb06a18dd.r1._.given.by_peer.bash.md
       └─ judges
           ├─ j1: rhx route.stone.judge --mechanism reviewed? --stone $stone --route $route --allow-blockers 0 --allow-nitpicks 2
           │   └─ · cached
@@ -255,7 +254,7 @@ exports[`driver.route.journey.acceptance given: [journey] weather api route when
    │   ├─ rejected [TIME]
    │   ├─ 1 blocker 🔴
    │   ├─ 0 nitpicks ✓
-   │   └─ review: .route/3.blueprint.guard.review.i1.3e91961a538c3c8774.r1.md
+   │   └─ review: .reviews/peer/3.blueprint._.review.i1.3e91961a538c3c8774.r1._.given.by_peer.bash.md
    │
    ├─ ✗ judge.1 - blocked [TIME]
    │
@@ -273,7 +272,7 @@ exports[`driver.route.journey.acceptance given: [journey] weather api route when
       │       ├─ rejected [TIME]
       │       ├─ 1 blocker 🔴
       │       ├─ 0 nitpicks ✓
-      │       └─ review: .route/3.blueprint.guard.review.i1.3e91961a538c3c8774.r1.md
+      │       └─ review: .reviews/peer/3.blueprint._.review.i1.3e91961a538c3c8774.r1._.given.by_peer.bash.md
       └─ judges
           ├─ j1: rhx route.stone.judge --mechanism reviewed? --stone $stone --route $route --allow-blockers 0 --allow-nitpicks 2
           │   ├─ finished [TIME] ✗
@@ -291,7 +290,7 @@ exports[`driver.route.journey.acceptance given: [journey] weather api route when
    │   ├─ approved, cached
    │   ├─ 0 blockers ✓
    │   ├─ 0 nitpicks ✓
-   │   └─ review: .route/3.blueprint.guard.review.i2.79ce73effeb06a18dd.r1.md
+   │   └─ review: .reviews/peer/3.blueprint._.review.i2.79ce73effeb06a18dd.r1._.given.by_peer.bash.md
    │
    ├─ ✓ judge.1 - allowed [TIME]
    │
@@ -308,7 +307,7 @@ exports[`driver.route.journey.acceptance given: [journey] weather api route when
    │  │       ├─ approved, cached
    │  │       ├─ 0 blockers ✓
    │  │       ├─ 0 nitpicks ✓
-   │  │       └─ review: .route/3.blueprint.guard.review.i2.79ce73effeb06a18dd.r1.md
+   │  │       └─ review: .reviews/peer/3.blueprint._.review.i2.79ce73effeb06a18dd.r1._.given.by_peer.bash.md
    │  └─ judges
    │      ├─ j1: rhx route.stone.judge --mechanism reviewed? --stone $stone --route $route --allow-blockers 0 --allow-nitpicks 2
    │      │   └─ finished [TIME] ✓
@@ -336,7 +335,7 @@ exports[`driver.route.journey.acceptance given: [journey] weather api route when
    │   ├─ approved [TIME]
    │   ├─ 0 blockers ✓
    │   ├─ 0 nitpicks ✓
-   │   └─ review: .route/5.execute.guard.review.i1.cfd13790ea94701543.r1.md
+   │   └─ review: .reviews/peer/5.execute._.review.i1.cfd13790ea94701543.r1._.given.by_peer.bash.md
    │
    └─ ✓ judge.1 - allowed [TIME]
 
@@ -351,7 +350,7 @@ exports[`driver.route.journey.acceptance given: [journey] weather api route when
    │  │       ├─ approved [TIME]
    │  │       ├─ 0 blockers ✓
    │  │       ├─ 0 nitpicks ✓
-   │  │       └─ review: .route/5.execute.guard.review.i1.cfd13790ea94701543.r1.md
+   │  │       └─ review: .reviews/peer/5.execute._.review.i1.cfd13790ea94701543.r1._.given.by_peer.bash.md
    │  └─ judges
    │      └─ j1: rhx route.stone.judge --mechanism reviewed? --stone $stone --route $route --allow-blockers 0 --allow-nitpicks 1
    │          └─ finished [TIME] ✓

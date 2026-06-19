@@ -7,7 +7,7 @@ exports[`driver.route.peer-budget-levels.journey.acceptance given: [journey] sto
    │   ├─ rejected [TIME]
    │   ├─ 1 blocker 🔴
    │   ├─ 0 nitpicks ✓
-   │   └─ review: .route/1.execute.guard.review.i1.8739656801d5e77f22.r1.md
+   │   └─ review: .reviews/peer/1.execute._.review.i1.8739656801d5e77f22.r1._.given.by_peer.cheapo.md
    │
    ├─ r2: primo (l2, 0/2)
    │   └─ awaits arrival
@@ -26,7 +26,7 @@ exports[`driver.route.peer-budget-levels.journey.acceptance given: [journey] sto
       │   │   ├─ rejected [TIME]
       │   │   ├─ 1 blocker 🔴
       │   │   ├─ 0 nitpicks ✓
-      │   │   └─ review: .route/1.execute.guard.review.i1.8739656801d5e77f22.r1.md
+      │   │   └─ review: .reviews/peer/1.execute._.review.i1.8739656801d5e77f22.r1._.given.by_peer.cheapo.md
       │   └─ r2: primo (l2, 0/2)
       │       └─ awaits l1 terminal
       └─ judges
@@ -43,7 +43,7 @@ exports[`driver.route.peer-budget-levels.journey.acceptance given: [journey] sto
    │   ├─ rejected [TIME]
    │   ├─ 1 blocker 🔴
    │   ├─ 0 nitpicks ✓
-   │   └─ review: .route/1.execute.guard.review.i2.dfc5faff83ea2fcb55.r1.md
+   │   └─ review: .reviews/peer/1.execute._.review.i2.dfc5faff83ea2fcb55.r1._.given.by_peer.cheapo.md
    │
    ├─ r2: primo (l2, 0/2)
    │   └─ awaits arrival
@@ -62,7 +62,7 @@ exports[`driver.route.peer-budget-levels.journey.acceptance given: [journey] sto
       │   │   ├─ rejected [TIME]
       │   │   ├─ 1 blocker 🔴
       │   │   ├─ 0 nitpicks ✓
-      │   │   └─ review: .route/1.execute.guard.review.i2.dfc5faff83ea2fcb55.r1.md
+      │   │   └─ review: .reviews/peer/1.execute._.review.i2.dfc5faff83ea2fcb55.r1._.given.by_peer.cheapo.md
       │   └─ r2: primo (l2, 0/2)
       │       └─ awaits l1 terminal
       └─ judges
@@ -79,13 +79,13 @@ exports[`driver.route.peer-budget-levels.journey.acceptance given: [journey] sto
    │   ├─ exhausted, cached
    │   ├─ 1 blocker 🔴
    │   ├─ 0 nitpicks ✓
-   │   └─ review: .route/1.execute.guard.review.i2.dfc5faff83ea2fcb55.r1.md
+   │   └─ review: .reviews/peer/1.execute._.review.i2.dfc5faff83ea2fcb55.r1._.given.by_peer.cheapo.md
    │
    ├─ r2: primo (l2, 1/2)
    │   ├─ rejected [TIME]
    │   ├─ 1 blocker 🔴
    │   ├─ 0 nitpicks ✓
-   │   └─ review: .route/1.execute.guard.review.i3.457fd5ef46e053a35e.r2.md
+   │   └─ review: .reviews/peer/1.execute._.review.i3.457fd5ef46e053a35e.r2._.given.by_peer.primo.md
    │
    └─ ✗ judge.1 - blocked [TIME]
 
@@ -101,12 +101,12 @@ exports[`driver.route.peer-budget-levels.journey.acceptance given: [journey] sto
       │   │   ├─ exhausted, cached
       │   │   ├─ 1 blocker 🔴
       │   │   ├─ 0 nitpicks ✓
-      │   │   └─ review: .route/1.execute.guard.review.i2.dfc5faff83ea2fcb55.r1.md
+      │   │   └─ review: .reviews/peer/1.execute._.review.i2.dfc5faff83ea2fcb55.r1._.given.by_peer.cheapo.md
       │   └─ r2: primo (l2, 1/2)
       │       ├─ rejected [TIME]
       │       ├─ 1 blocker 🔴
       │       ├─ 0 nitpicks ✓
-      │       └─ review: .route/1.execute.guard.review.i3.457fd5ef46e053a35e.r2.md
+      │       └─ review: .reviews/peer/1.execute._.review.i3.457fd5ef46e053a35e.r2._.given.by_peer.primo.md
       └─ judges
           └─ j1: rhx route.stone.judge --mechanism reviewed? --stone $stone --route $route --allow-blockers 0 --allow-nitpicks 1
               ├─ finished [TIME] ✗
@@ -121,13 +121,13 @@ exports[`driver.route.peer-budget-levels.journey.acceptance given: [journey] sto
    │   ├─ exhausted, cached
    │   ├─ 1 blocker 🔴
    │   ├─ 0 nitpicks ✓
-   │   └─ review: .route/1.execute.guard.review.i2.dfc5faff83ea2fcb55.r1.md
+   │   └─ review: .reviews/peer/1.execute._.review.i2.dfc5faff83ea2fcb55.r1._.given.by_peer.cheapo.md
    │
    ├─ r2: primo (l2, 2/2)
    │   ├─ rejected [TIME]
    │   ├─ 1 blocker 🔴
    │   ├─ 0 nitpicks ✓
-   │   └─ review: .route/1.execute.guard.review.i4.6dddc53e1de2efc1da.r2.md
+   │   └─ review: .reviews/peer/1.execute._.review.i4.6dddc53e1de2efc1da.r2._.given.by_peer.primo.md
    │
    └─ ✗ judge.1 - blocked [TIME]
 
@@ -143,12 +143,12 @@ exports[`driver.route.peer-budget-levels.journey.acceptance given: [journey] sto
       │   │   ├─ exhausted, cached
       │   │   ├─ 1 blocker 🔴
       │   │   ├─ 0 nitpicks ✓
-      │   │   └─ review: .route/1.execute.guard.review.i2.dfc5faff83ea2fcb55.r1.md
+      │   │   └─ review: .reviews/peer/1.execute._.review.i2.dfc5faff83ea2fcb55.r1._.given.by_peer.cheapo.md
       │   └─ r2: primo (l2, 2/2)
       │       ├─ rejected [TIME]
       │       ├─ 1 blocker 🔴
       │       ├─ 0 nitpicks ✓
-      │       └─ review: .route/1.execute.guard.review.i4.6dddc53e1de2efc1da.r2.md
+      │       └─ review: .reviews/peer/1.execute._.review.i4.6dddc53e1de2efc1da.r2._.given.by_peer.primo.md
       └─ judges
           └─ j1: rhx route.stone.judge --mechanism reviewed? --stone $stone --route $route --allow-blockers 0 --allow-nitpicks 1
               ├─ finished [TIME] ✗
@@ -163,13 +163,13 @@ exports[`driver.route.peer-budget-levels.journey.acceptance given: [journey] sto
    │   ├─ exhausted, cached
    │   ├─ 1 blocker 🔴
    │   ├─ 0 nitpicks ✓
-   │   └─ review: .route/1.execute.guard.review.i2.dfc5faff83ea2fcb55.r1.md
+   │   └─ review: .reviews/peer/1.execute._.review.i2.dfc5faff83ea2fcb55.r1._.given.by_peer.cheapo.md
    │
    ├─ r2: primo (l2, 2/2)
    │   ├─ exhausted, cached
    │   ├─ 1 blocker 🔴
    │   ├─ 0 nitpicks ✓
-   │   └─ review: .route/1.execute.guard.review.i4.6dddc53e1de2efc1da.r2.md
+   │   └─ review: .reviews/peer/1.execute._.review.i4.6dddc53e1de2efc1da.r2._.given.by_peer.primo.md
    │
    └─ halted: peer reviewer budget exhausted
 
@@ -190,12 +190,12 @@ exports[`driver.route.peer-budget-levels.journey.acceptance given: [journey] sto
           │   ├─ exhausted, cached
           │   ├─ 1 blocker 🔴
           │   ├─ 0 nitpicks ✓
-          │   └─ review: .route/1.execute.guard.review.i2.dfc5faff83ea2fcb55.r1.md
+          │   └─ review: .reviews/peer/1.execute._.review.i2.dfc5faff83ea2fcb55.r1._.given.by_peer.cheapo.md
           └─ r2: primo (l2, 2/2)
               ├─ exhausted, cached
               ├─ 1 blocker 🔴
               ├─ 0 nitpicks ✓
-              └─ review: .route/1.execute.guard.review.i4.6dddc53e1de2efc1da.r2.md
+              └─ review: .reviews/peer/1.execute._.review.i4.6dddc53e1de2efc1da.r2._.given.by_peer.primo.md
 "
 `;
 
@@ -215,13 +215,13 @@ exports[`driver.route.peer-budget-levels.journey.acceptance given: [journey] sto
    │   ├─ exhausted, cached
    │   ├─ 1 blocker 🔴
    │   ├─ 0 nitpicks ✓
-   │   └─ review: .route/1.execute.guard.review.i2.dfc5faff83ea2fcb55.r1.md
+   │   └─ review: .reviews/peer/1.execute._.review.i2.dfc5faff83ea2fcb55.r1._.given.by_peer.cheapo.md
    │
    ├─ r2: primo (l2, 2/2)
    │   ├─ exhausted, cached
    │   ├─ 1 blocker 🔴
    │   ├─ 0 nitpicks ✓
-   │   └─ review: .route/1.execute.guard.review.i4.6dddc53e1de2efc1da.r2.md
+   │   └─ review: .reviews/peer/1.execute._.review.i4.6dddc53e1de2efc1da.r2._.given.by_peer.primo.md
    │
    └─ ✓ judge.1 - allowed [TIME]
 
@@ -236,12 +236,12 @@ exports[`driver.route.peer-budget-levels.journey.acceptance given: [journey] sto
    │  │   │   ├─ exhausted, cached
    │  │   │   ├─ 1 blocker 🔴
    │  │   │   ├─ 0 nitpicks ✓
-   │  │   │   └─ review: .route/1.execute.guard.review.i2.dfc5faff83ea2fcb55.r1.md
+   │  │   │   └─ review: .reviews/peer/1.execute._.review.i2.dfc5faff83ea2fcb55.r1._.given.by_peer.cheapo.md
    │  │   └─ r2: primo (l2, 2/2)
    │  │       ├─ exhausted, cached
    │  │       ├─ 1 blocker 🔴
    │  │       ├─ 0 nitpicks ✓
-   │  │       └─ review: .route/1.execute.guard.review.i4.6dddc53e1de2efc1da.r2.md
+   │  │       └─ review: .reviews/peer/1.execute._.review.i4.6dddc53e1de2efc1da.r2._.given.by_peer.primo.md
    │  └─ judges
    │      └─ j1: rhx route.stone.judge --mechanism reviewed? --stone $stone --route $route --allow-blockers 0 --allow-nitpicks 1
    │          └─ finished [TIME] ✓
@@ -258,7 +258,7 @@ exports[`driver.route.peer-budget-levels.journey.acceptance given: [journey] sto
    │   ├─ approved [TIME]
    │   ├─ 0 blockers ✓
    │   ├─ 0 nitpicks ✓
-   │   └─ review: .route/2.deploy.guard.review.i1.345d6c58ae9529da69.r1.md
+   │   └─ review: .reviews/peer/2.deploy._.review.i1.345d6c58ae9529da69.r1._.given.by_peer.deployer.md
    │
    └─ ✓ judge.1 - allowed [TIME]
 
@@ -273,7 +273,7 @@ exports[`driver.route.peer-budget-levels.journey.acceptance given: [journey] sto
    │  │       ├─ approved [TIME]
    │  │       ├─ 0 blockers ✓
    │  │       ├─ 0 nitpicks ✓
-   │  │       └─ review: .route/2.deploy.guard.review.i1.345d6c58ae9529da69.r1.md
+   │  │       └─ review: .reviews/peer/2.deploy._.review.i1.345d6c58ae9529da69.r1._.given.by_peer.deployer.md
    │  └─ judges
    │      └─ j1: rhx route.stone.judge --mechanism reviewed? --stone $stone --route $route --allow-blockers 0 --allow-nitpicks 1
    │          └─ finished [TIME] ✓
@@ -290,7 +290,7 @@ exports[`driver.route.peer-budget-levels.journey.acceptance given: [journey] sto
    │   ├─ approved [TIME]
    │   ├─ 0 blockers ✓
    │   ├─ 0 nitpicks ✓
-   │   └─ review: .route/3.release.guard.review.i1.40f6892fa1e51b0694.r1.md
+   │   └─ review: .reviews/peer/3.release._.review.i1.40f6892fa1e51b0694.r1._.given.by_peer.releaser.md
    │
    ├─ ✓ judge.1 - allowed [TIME]
    │
@@ -308,7 +308,7 @@ exports[`driver.route.peer-budget-levels.journey.acceptance given: [journey] sto
       │       ├─ approved [TIME]
       │       ├─ 0 blockers ✓
       │       ├─ 0 nitpicks ✓
-      │       └─ review: .route/3.release.guard.review.i1.40f6892fa1e51b0694.r1.md
+      │       └─ review: .reviews/peer/3.release._.review.i1.40f6892fa1e51b0694.r1._.given.by_peer.releaser.md
       └─ judges
           ├─ j1: rhx route.stone.judge --mechanism reviewed? --stone $stone --route $route --allow-blockers 0 --allow-nitpicks 1
           │   └─ finished [TIME] ✓
@@ -334,7 +334,7 @@ exports[`driver.route.peer-budget-levels.journey.acceptance given: [journey] sto
    │   ├─ approved, cached
    │   ├─ 0 blockers ✓
    │   ├─ 0 nitpicks ✓
-   │   └─ review: .route/3.release.guard.review.i1.40f6892fa1e51b0694.r1.md
+   │   └─ review: .reviews/peer/3.release._.review.i1.40f6892fa1e51b0694.r1._.given.by_peer.releaser.md
    │
    ├─ ✓ judge.1 - allowed [TIME]
    │
@@ -351,7 +351,7 @@ exports[`driver.route.peer-budget-levels.journey.acceptance given: [journey] sto
    │  │       ├─ approved, cached
    │  │       ├─ 0 blockers ✓
    │  │       ├─ 0 nitpicks ✓
-   │  │       └─ review: .route/3.release.guard.review.i1.40f6892fa1e51b0694.r1.md
+   │  │       └─ review: .reviews/peer/3.release._.review.i1.40f6892fa1e51b0694.r1._.given.by_peer.releaser.md
    │  └─ judges
    │      ├─ j1: rhx route.stone.judge --mechanism reviewed? --stone $stone --route $route --allow-blockers 0 --allow-nitpicks 1
    │      │   └─ finished [TIME] ✓

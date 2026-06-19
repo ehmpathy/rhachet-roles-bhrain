@@ -7,7 +7,7 @@ exports[`driver.route.peer-budget-exhaustion-unlocks-level.acceptance given: [jo
    │   ├─ rejected [TIME]
    │   ├─ 1 blocker 🔴
    │   ├─ 0 nitpicks ✓
-   │   └─ review: .route/1.execute.guard.review.i1.8739656801d5e77f22.r1.md
+   │   └─ review: .reviews/peer/1.execute._.review.i1.8739656801d5e77f22.r1._.given.by_peer.l1-reviewer.md
    │
    ├─ r2: l3-reviewer (l3, 0/5)
    │   └─ awaits arrival
@@ -26,7 +26,7 @@ exports[`driver.route.peer-budget-exhaustion-unlocks-level.acceptance given: [jo
       │   │   ├─ rejected [TIME]
       │   │   ├─ 1 blocker 🔴
       │   │   ├─ 0 nitpicks ✓
-      │   │   └─ review: .route/1.execute.guard.review.i1.8739656801d5e77f22.r1.md
+      │   │   └─ review: .reviews/peer/1.execute._.review.i1.8739656801d5e77f22.r1._.given.by_peer.l1-reviewer.md
       │   └─ r2: l3-reviewer (l3, 0/5)
       │       └─ awaits l1 terminal
       └─ judges
@@ -43,7 +43,7 @@ exports[`driver.route.peer-budget-exhaustion-unlocks-level.acceptance given: [jo
    │   ├─ rejected [TIME]
    │   ├─ 1 blocker 🔴
    │   ├─ 0 nitpicks ✓
-   │   └─ review: .route/1.execute.guard.review.i2.dfc5faff83ea2fcb55.r1.md
+   │   └─ review: .reviews/peer/1.execute._.review.i2.dfc5faff83ea2fcb55.r1._.given.by_peer.l1-reviewer.md
    │
    ├─ r2: l3-reviewer (l3, 0/5)
    │   └─ awaits arrival
@@ -62,7 +62,7 @@ exports[`driver.route.peer-budget-exhaustion-unlocks-level.acceptance given: [jo
       │   │   ├─ rejected [TIME]
       │   │   ├─ 1 blocker 🔴
       │   │   ├─ 0 nitpicks ✓
-      │   │   └─ review: .route/1.execute.guard.review.i2.dfc5faff83ea2fcb55.r1.md
+      │   │   └─ review: .reviews/peer/1.execute._.review.i2.dfc5faff83ea2fcb55.r1._.given.by_peer.l1-reviewer.md
       │   └─ r2: l3-reviewer (l3, 0/5)
       │       └─ awaits l1 terminal
       └─ judges
@@ -79,13 +79,13 @@ exports[`driver.route.peer-budget-exhaustion-unlocks-level.acceptance given: [jo
    │   ├─ exhausted, cached
    │   ├─ 1 blocker 🔴
    │   ├─ 0 nitpicks ✓
-   │   └─ review: .route/1.execute.guard.review.i2.dfc5faff83ea2fcb55.r1.md
+   │   └─ review: .reviews/peer/1.execute._.review.i2.dfc5faff83ea2fcb55.r1._.given.by_peer.l1-reviewer.md
    │
    ├─ r2: l3-reviewer (l3, 1/5)
    │   ├─ rejected [TIME]
    │   ├─ 1 blocker 🔴
    │   ├─ 0 nitpicks ✓
-   │   └─ review: .route/1.execute.guard.review.i3.457fd5ef46e053a35e.r2.md
+   │   └─ review: .reviews/peer/1.execute._.review.i3.457fd5ef46e053a35e.r2._.given.by_peer.l3-reviewer.md
    │
    └─ ✗ judge.1 - blocked [TIME]
 
@@ -101,12 +101,12 @@ exports[`driver.route.peer-budget-exhaustion-unlocks-level.acceptance given: [jo
       │   │   ├─ exhausted, cached
       │   │   ├─ 1 blocker 🔴
       │   │   ├─ 0 nitpicks ✓
-      │   │   └─ review: .route/1.execute.guard.review.i2.dfc5faff83ea2fcb55.r1.md
+      │   │   └─ review: .reviews/peer/1.execute._.review.i2.dfc5faff83ea2fcb55.r1._.given.by_peer.l1-reviewer.md
       │   └─ r2: l3-reviewer (l3, 1/5)
       │       ├─ rejected [TIME]
       │       ├─ 1 blocker 🔴
       │       ├─ 0 nitpicks ✓
-      │       └─ review: .route/1.execute.guard.review.i3.457fd5ef46e053a35e.r2.md
+      │       └─ review: .reviews/peer/1.execute._.review.i3.457fd5ef46e053a35e.r2._.given.by_peer.l3-reviewer.md
       └─ judges
           └─ j1: rhx route.stone.judge --mechanism reviewed? --stone $stone --route $route --allow-blockers 0 --allow-nitpicks 1
               ├─ finished [TIME] ✗
@@ -121,13 +121,13 @@ exports[`driver.route.peer-budget-exhaustion-unlocks-level.acceptance given: [jo
    │   ├─ exhausted, cached
    │   ├─ 1 blocker 🔴
    │   ├─ 0 nitpicks ✓
-   │   └─ review: .route/1.execute.guard.review.i2.dfc5faff83ea2fcb55.r1.md
+   │   └─ review: .reviews/peer/1.execute._.review.i2.dfc5faff83ea2fcb55.r1._.given.by_peer.l1-reviewer.md
    │
    ├─ r2: l3-reviewer (l3, 2/5)
    │   ├─ rejected [TIME]
    │   ├─ 1 blocker 🔴
    │   ├─ 0 nitpicks ✓
-   │   └─ review: .route/1.execute.guard.review.i4.06fcb8d2e60f371042.r2.md
+   │   └─ review: .reviews/peer/1.execute._.review.i4.06fcb8d2e60f371042.r2._.given.by_peer.l3-reviewer.md
    │
    └─ ✗ judge.1 - blocked [TIME]
 
@@ -143,12 +143,12 @@ exports[`driver.route.peer-budget-exhaustion-unlocks-level.acceptance given: [jo
       │   │   ├─ exhausted, cached
       │   │   ├─ 1 blocker 🔴
       │   │   ├─ 0 nitpicks ✓
-      │   │   └─ review: .route/1.execute.guard.review.i2.dfc5faff83ea2fcb55.r1.md
+      │   │   └─ review: .reviews/peer/1.execute._.review.i2.dfc5faff83ea2fcb55.r1._.given.by_peer.l1-reviewer.md
       │   └─ r2: l3-reviewer (l3, 2/5)
       │       ├─ rejected [TIME]
       │       ├─ 1 blocker 🔴
       │       ├─ 0 nitpicks ✓
-      │       └─ review: .route/1.execute.guard.review.i4.06fcb8d2e60f371042.r2.md
+      │       └─ review: .reviews/peer/1.execute._.review.i4.06fcb8d2e60f371042.r2._.given.by_peer.l3-reviewer.md
       └─ judges
           └─ j1: rhx route.stone.judge --mechanism reviewed? --stone $stone --route $route --allow-blockers 0 --allow-nitpicks 1
               ├─ finished [TIME] ✗

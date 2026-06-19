@@ -16,7 +16,7 @@ exports[`driver.route.overrule.acceptance given: [case1] human overrules blocked
    │   ├─ rejected, cached
    │   ├─ 3 blockers 🔴
    │   ├─ 7 nitpicks 🟠
-   │   └─ review: .route/1.plan.guard.review.i1.ec6c3f2f9d5189084f.r1.md
+   │   └─ review: .reviews/peer/1.plan._.review.i1.ec6c3f2f9d5189084f.r1._.given.by_peer.bash.md
    │
    └─ ✓ judge.1 - allowed [TIME]
 
@@ -31,7 +31,7 @@ exports[`driver.route.overrule.acceptance given: [case1] human overrules blocked
    │  │       ├─ rejected, cached
    │  │       ├─ 3 blockers 🔴
    │  │       ├─ 7 nitpicks 🟠
-   │  │       └─ review: .route/1.plan.guard.review.i1.ec6c3f2f9d5189084f.r1.md
+   │  │       └─ review: .reviews/peer/1.plan._.review.i1.ec6c3f2f9d5189084f.r1._.given.by_peer.bash.md
    │  └─ judges
    │      └─ j1: rhx route.stone.judge --mechanism reviewed? --stone $stone --route $route --allow-blockers 0 --allow-nitpicks 0
    │          └─ finished [TIME] ✓
