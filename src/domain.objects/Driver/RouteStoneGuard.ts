@@ -1,4 +1,5 @@
 import { DomainLiteral } from 'domain-objects';
+import type { IsoDuration } from 'iso-time';
 
 /**
  * .what = represents a review.self prompt for the clone
@@ -54,6 +55,16 @@ export interface RouteStoneGuardReviewPeer {
    * all level N reviewers are terminal (approved | exhausted).
    */
   level?: number;
+
+  /**
+   * timeout for review command execution (default: "PT21M")
+   *
+   * ISO 8601 duration format. examples:
+   * - "PT90S" = 90 seconds
+   * - "PT2M" = 2 minutes
+   * - "PT21M" = 21 minutes (default)
+   */
+  timeout?: IsoDuration;
 }
 
 export class RouteStoneGuardReviewPeer

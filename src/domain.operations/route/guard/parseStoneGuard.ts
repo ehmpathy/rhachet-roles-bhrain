@@ -1,4 +1,6 @@
 import * as fs from 'fs/promises';
+import { BadRequestError } from 'helpful-errors';
+import { type IsoDuration, toMilliseconds } from 'iso-time';
 import * as path from 'path';
 
 import type {
@@ -101,7 +103,7 @@ const parseSimpleYaml = async (
 
   /**
    * .what = finalizes and stores the current peer review if complete
-   * .why = enables structured peer reviews with slug, run, budget, level
+   * .why = enables structured peer reviews with slug, run, budget, level, timeout
    * .note = budget defaults to Infinity (unlimited) for backwards compat
    */
   const finalizePeerReview = () => {
@@ -116,6 +118,7 @@ const parseSimpleYaml = async (
         run: currentPeerReview.run,
         budget: currentPeerReview.budget ?? Infinity,
         level: currentPeerReview.level ?? 1,
+        timeout: currentPeerReview.timeout,
       });
     }
     currentPeerReview = null;
@@ -267,9 +270,10 @@ const parseSimpleYaml = async (
           const fullPath = path.join(guardDir, refPath);
           try {
             currentSelfReview.say = await fs.readFile(fullPath, 'utf-8');
-          } catch {
-            throw new Error(
-              `failed to expand @path reference: ${refPath} (full path: ${fullPath})`,
+          } catch (error) {
+            throw new BadRequestError(
+              `failed to expand @path reference: ${refPath}`,
+              { refPath, fullPath, cause: error instanceof Error ? error : undefined },
             );
           }
           if (
@@ -311,6 +315,32 @@ const parseSimpleYaml = async (
         currentPeerReview.budget = parseInt(trimmed.slice(7).trim(), 10);
       } else if (trimmed.startsWith('level:')) {
         currentPeerReview.level = parseInt(trimmed.slice(6).trim(), 10);
+      } else if (trimmed.startsWith('timeout:')) {
+        // strip quotes from timeout value (yaml string delimiters)
+        const rawTimeout = trimmed.slice(8).trim();
+        const timeout = rawTimeout.replace(
+          /^["'](.*)["']$/,
+          '$1',
+        ) as IsoDuration;
+
+        // validate timeout is valid IsoDuration with positive value
+        try {
+          const ms = toMilliseconds(timeout);
+          if (ms <= 0) {
+            throw new BadRequestError(
+              `timeout must be positive: ${timeout}`,
+              { timeout, ms },
+            );
+          }
+        } catch (error) {
+          if (error instanceof BadRequestError) throw error;
+          throw new BadRequestError(
+            `invalid timeout format: ${timeout}`,
+            { timeout, cause: error instanceof Error ? error : undefined },
+          );
+        }
+
+        currentPeerReview.timeout = timeout;
       }
     }
   }
