@@ -273,7 +273,11 @@ const parseSimpleYaml = async (
           } catch (error) {
             throw new BadRequestError(
               `failed to expand @path reference: ${refPath}`,
-              { refPath, fullPath, cause: error instanceof Error ? error : undefined },
+              {
+                refPath,
+                fullPath,
+                cause: error instanceof Error ? error : undefined,
+              },
             );
           }
           if (
@@ -327,17 +331,17 @@ const parseSimpleYaml = async (
         try {
           const ms = toMilliseconds(timeout);
           if (ms <= 0) {
-            throw new BadRequestError(
-              `timeout must be positive: ${timeout}`,
-              { timeout, ms },
-            );
+            throw new BadRequestError(`timeout must be positive: ${timeout}`, {
+              timeout,
+              ms,
+            });
           }
         } catch (error) {
           if (error instanceof BadRequestError) throw error;
-          throw new BadRequestError(
-            `invalid timeout format: ${timeout}`,
-            { timeout, cause: error instanceof Error ? error : undefined },
-          );
+          throw new BadRequestError(`invalid timeout format: ${timeout}`, {
+            timeout,
+            cause: error instanceof Error ? error : undefined,
+          });
         }
 
         currentPeerReview.timeout = timeout;
