@@ -1,0 +1,30 @@
+artifacts:
+  - $route/1.vision*.md
+
+reviews:
+  self:
+    - slug: all-done
+      say: |
+        did you complete all that was requested?
+
+  peer:
+    - slug: quick-with-quotes
+      run: rhx review --rules .agent/**/rules/*.md --paths 1.vision*.md --brain haiku
+      budget: 10
+      level: 1
+      timeout: "PT30S"
+
+    - slug: slow-without-quotes
+      run: rhx review --rules .agent/**/rules/*.md --paths 1.vision*.md --brain opus
+      budget: 3
+      level: 2
+      timeout: PT90S
+
+    - slug: default-timeout
+      run: rhx review --rules .agent/**/rules/*.md --paths 1.vision*.md --brain sonnet
+      budget: 5
+      level: 1
+
+judges:
+  - rhx route.stone.judge --mechanism reviewed? --stone $stone --route $route
+  - rhx route.stone.judge --mechanism approved? --stone $stone --route $route

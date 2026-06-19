@@ -1,6 +1,7 @@
 import { exec } from 'child_process';
 import * as fs from 'fs/promises';
 import { BadRequestError } from 'helpful-errors';
+import { type IsoDuration, toMilliseconds } from 'iso-time';
 import * as path from 'path';
 import { getGitRepoRoot } from 'rhachet-artifact-git';
 import { promisify } from 'util';
@@ -55,14 +56,38 @@ const getReviewPeerBudget = (review: RouteStoneGuardReviewPeer): number =>
   review.budget;
 
 /**
- * .what = 21 minute timeout for review command execution
- * .why = prevents hung review processes from wait indefinitely
+ * .what = default timeout for review command execution
+ * .why = preserves backwards compat when timeout not specified
+ */
+const DEFAULT_REVIEW_TIMEOUT: IsoDuration = 'PT21M';
+
+/**
+ * .what = extracts timeout from peer review
+ * .why = accessor for timeout with default
+ */
+const getReviewPeerTimeout = (review: RouteStoneGuardReviewPeer): IsoDuration =>
+  review.timeout ?? DEFAULT_REVIEW_TIMEOUT;
+
+/**
+ * .what = converts IsoDuration to milliseconds
+ * .why = enables per-reviewer timeout configuration
  * .note = override via RHACHET_REVIEW_TIMEOUT_MS env var for tests
  */
-const REVIEW_TIMEOUT_MS =
+const getReviewTimeoutMs = (timeout: IsoDuration): number =>
   process.env.RHACHET_REVIEW_TIMEOUT_MS !== undefined
     ? parseInt(process.env.RHACHET_REVIEW_TIMEOUT_MS, 10)
-    : 21 * 60 * 1000;
+    : toMilliseconds(timeout);
+
+/**
+ * .what = formats timeout for human-readable error message
+ * .why = shows timeout in appropriate unit (seconds vs minutes)
+ */
+const formatTimeoutForHuman = (ms: number): string => {
+  const seconds = Math.floor(ms / 1000);
+  if (seconds < 60) return `${seconds} seconds`;
+  const minutes = Math.floor(seconds / 60);
+  return `${minutes} minutes`;
+};
 
 /**
  * .what = executes a single guard review command and produces review artifact
@@ -76,6 +101,7 @@ export const runOneStoneGuardReview = async (input: {
   iteration: number;
   route: string;
   slug: string;
+  timeout: IsoDuration;
 }): Promise<RouteStoneGuardReviewArtifact> => {
   // ensure .reviews/peer directory found or created
   // .why = peer reviews go to .reviews/peer/ so drivers can read them
@@ -138,6 +164,9 @@ export const runOneStoneGuardReview = async (input: {
     RHACHET_GUARD_CONTEXT: '1',
   };
 
+  // compute timeout in milliseconds
+  const timeoutMs = getReviewTimeoutMs(input.timeout);
+
   let stdout = '';
   let stderr = '';
   let exitCode = 0;
@@ -145,36 +174,33 @@ export const runOneStoneGuardReview = async (input: {
     const result = await execAsync(cmd, {
       cwd: input.route,
       env: execEnv,
-      timeout: REVIEW_TIMEOUT_MS,
+      timeout: timeoutMs,
     });
     stdout = result.stdout;
     stderr = result.stderr;
     exitCode = 0;
   } catch (error: unknown) {
-    // capture output and exit code from command failure
-    // exec errors have specific shape: { stdout, stderr, code, killed }
-    // rethrow if error doesn't match this shape (unexpected error)
+    // capture output and exit code even on failure
+    // .note = exec errors have stdout/stderr/code properties; rethrow other error types
     if (
-      !error ||
-      typeof error !== 'object' ||
-      !('code' in error || 'killed' in error)
+      error &&
+      typeof error === 'object' &&
+      ('stdout' in error || 'stderr' in error || 'code' in error)
     ) {
+      const errObj = error as Record<string, unknown>;
+      stdout = typeof errObj.stdout === 'string' ? errObj.stdout : '';
+      stderr = typeof errObj.stderr === 'string' ? errObj.stderr : '';
+
+      // detect timeout (process killed by signal)
+      if (errObj.killed === true) {
+        stderr = `💥 malfunction: review timed out after ${formatTimeoutForHuman(timeoutMs)}`;
+        exitCode = 1;
+      } else {
+        exitCode = typeof errObj.code === 'number' ? errObj.code : 1;
+      }
+    } else {
+      // rethrow non-exec errors (code defects, unexpected state)
       throw error;
-    }
-
-    const errObj = error as Record<string, unknown>;
-    stdout = typeof errObj.stdout === 'string' ? errObj.stdout : '';
-    stderr = typeof errObj.stderr === 'string' ? errObj.stderr : '';
-
-    // detect timeout (process killed by signal)
-    if (errObj.killed === true) {
-      stderr = `💥 malfunction: review timed out after ${Math.floor(REVIEW_TIMEOUT_MS / 60000)} minutes`;
-      exitCode = 1;
-    }
-
-    // extract exit code from error
-    if (errObj.killed !== true) {
-      exitCode = typeof errObj.code === 'number' ? errObj.code : 1;
     }
   }
 
@@ -530,6 +556,7 @@ export const runStoneGuardReviews = async (
       iteration: input.iteration,
       route: input.route,
       slug: pr.slug,
+      timeout: getReviewPeerTimeout(pr.review),
     });
 
     // determine if review actually completed (vs constraint/malfunction)
@@ -615,12 +642,11 @@ const validateNoNpx = (cmd: string): void => {
   if (cmd.includes('npx rhachet') || cmd.includes('npx rhx')) {
     const pattern = cmd.includes('npx rhachet') ? 'npx rhachet' : 'npx rhx';
     const alias = cmd.includes('npx rhachet') ? '$rhachet' : '$rhx';
-    BadRequestError.throw(
-      `guard uses ${pattern} which causes latency and cross-platform issues. ` +
-        `fix: use ${alias} alias instead (${alias} expands to ./node_modules/.bin/${alias.slice(1)})`,
+    throw new BadRequestError(
+      `guard uses ${pattern} which causes latency and cross-platform issues`,
       {
         pattern,
-        alias,
+        hint: `use ${alias} alias instead (expands to ./node_modules/.bin/${alias.slice(1)})`,
       },
     );
   }

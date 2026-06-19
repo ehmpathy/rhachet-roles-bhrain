@@ -153,8 +153,51 @@ describe('parseStoneGuard', () => {
     });
   });
 
+  given('[case7] a guard file with structured peer reviews (timeout)', () => {
+    const guardPath = path.join(
+      ASSETS_DIR,
+      'route.peer.timeout',
+      '1.vision.guard',
+    );
+
+    when('[t0] guard is parsed', () => {
+      then('peer reviews with quoted timeout are parsed', async () => {
+        const result = await parseStoneGuard({ path: guardPath });
+        const peerReviews = getGuardPeerReviews(result);
+        const quickReview = peerReviews.find(
+          (r) => r.slug === 'quick-with-quotes',
+        );
+
+        expect(quickReview).toBeDefined();
+        expect(quickReview!.timeout).toEqual('PT30S');
+      });
+
+      then('peer reviews with unquoted timeout are parsed', async () => {
+        const result = await parseStoneGuard({ path: guardPath });
+        const peerReviews = getGuardPeerReviews(result);
+        const slowReview = peerReviews.find(
+          (r) => r.slug === 'slow-without-quotes',
+        );
+
+        expect(slowReview).toBeDefined();
+        expect(slowReview!.timeout).toEqual('PT90S');
+      });
+
+      then('peer reviews without timeout have undefined', async () => {
+        const result = await parseStoneGuard({ path: guardPath });
+        const peerReviews = getGuardPeerReviews(result);
+        const defaultReview = peerReviews.find(
+          (r) => r.slug === 'default-timeout',
+        );
+
+        expect(defaultReview).toBeDefined();
+        expect(defaultReview!.timeout).toBeUndefined();
+      });
+    });
+  });
+
   given(
-    '[case7] a guard file with structured peer reviews (budget + level)',
+    '[case8] a guard file with structured peer reviews (budget + level)',
     () => {
       const guardPath = path.join(
         ASSETS_DIR,

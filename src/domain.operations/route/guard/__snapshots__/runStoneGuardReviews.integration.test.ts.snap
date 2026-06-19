@@ -26,14 +26,14 @@ exports[`runStoneGuardReviews given: [case1] guard with echo review command when
     "index": 1,
     "iteration": 1,
     "nitpicks": 1,
-    "path": "<route>/.reviews/peer/1.test._.review.i1.case1ret.r1._.given.by_peer.echo.md",
+    "path": "<route>/.route/1.test.guard.review.i1.case1ret.r1.md",
     "stderr": "",
     "stdout": "blockers: 0
 nitpicks: 1
 review output
 ",
     "stone": {
-      "path": "/tmp/test-reviews-1781865229158/1.test.stone",
+      "path": "/tmp/test-reviews-1781868187222/1.test.stone",
     },
   },
 ]
@@ -78,13 +78,13 @@ exports[`runStoneGuardReviews given: [case2] guard with multiple review commands
     "index": 1,
     "iteration": 1,
     "nitpicks": 0,
-    "path": "<route>/.reviews/peer/1.test._.review.i1.case2ret.r1._.given.by_peer.echo.md",
+    "path": "<route>/.route/1.test.guard.review.i1.case2ret.r1.md",
     "stderr": "",
     "stdout": "blockers: 1
 nitpicks: 0
 ",
     "stone": {
-      "path": "/tmp/test-reviews-multi-1781865229161/1.test.stone",
+      "path": "/tmp/test-reviews-multi-1781868187223/1.test.stone",
     },
   },
   {
@@ -96,13 +96,13 @@ nitpicks: 0
     "index": 2,
     "iteration": 1,
     "nitpicks": 2,
-    "path": "<route>/.reviews/peer/1.test._.review.i1.case2ret.r2._.given.by_peer.echo.md",
+    "path": "<route>/.route/1.test.guard.review.i1.case2ret.r2.md",
     "stderr": "",
     "stdout": "blockers: 0
 nitpicks: 2
 ",
     "stone": {
-      "path": "/tmp/test-reviews-multi-1781865229161/1.test.stone",
+      "path": "/tmp/test-reviews-multi-1781868187223/1.test.stone",
     },
   },
 ]
@@ -133,13 +133,13 @@ exports[`runStoneGuardReviews given: [case3] review exits with code 0 (passed) w
     "index": 1,
     "iteration": 1,
     "nitpicks": 0,
-    "path": "<route>/.reviews/peer/1.test._.review.i1.case3ret.r1._.given.by_peer.echo.md",
+    "path": "<route>/.route/1.test.guard.review.i1.case3ret.r1.md",
     "stderr": "",
     "stdout": "blockers: 0
 review passed
 ",
     "stone": {
-      "path": "/tmp/test-reviews-exit0-1781865229162/1.test.stone",
+      "path": "/tmp/test-reviews-exit0-1781868187224/1.test.stone",
     },
   },
 ]
@@ -173,13 +173,13 @@ exports[`runStoneGuardReviews given: [case4] review exits with code 2 (constrain
     "index": 1,
     "iteration": 1,
     "nitpicks": 0,
-    "path": "<route>/.reviews/peer/1.test._.review.i1.case4ret.r1._.given.by_peer.bash.md",
+    "path": "<route>/.route/1.test.guard.review.i1.case4ret.r1.md",
     "stderr": "",
     "stdout": "blockers: 1
 constraint failure
 ",
     "stone": {
-      "path": "/tmp/test-reviews-exit2-1781865229163/1.test.stone",
+      "path": "/tmp/test-reviews-exit2-1781868187224/1.test.stone",
     },
   },
 ]
@@ -214,13 +214,13 @@ exports[`runStoneGuardReviews given: [case5] review exits with code 1 (malfuncti
     "index": 1,
     "iteration": 1,
     "nitpicks": 0,
-    "path": "<route>/.reviews/peer/1.test._.review.i1.case5ret.r1._.given.by_peer.bash.md",
+    "path": "<route>/.route/1.test.guard.review.i1.case5ret.r1.md",
     "stderr": "stderr error
 ",
     "stdout": "stdout output
 ",
     "stone": {
-      "path": "/tmp/test-reviews-exit1-1781865229164/1.test.stone",
+      "path": "/tmp/test-reviews-exit1-1781868187225/1.test.stone",
     },
   },
 ]
@@ -252,14 +252,14 @@ exports[`runStoneGuardReviews given: [case6] guard with $route variable in revie
     "index": 1,
     "iteration": 1,
     "nitpicks": 0,
-    "path": "<route>/.reviews/peer/1.test._.review.i1.case6ret.r1._.given.by_peer.bash.md",
+    "path": "<route>/.route/1.test.guard.review.i1.case6ret.r1.md",
     "stderr": "",
     "stdout": "blockers: 0
 nitpicks: 0
 marker found at <route-path>
 ",
     "stone": {
-      "path": "/tmp/test-reviews-route-1781865229165/1.test.stone",
+      "path": "/tmp/test-reviews-route-1781868187225/1.test.stone",
     },
   },
 ]
@@ -291,14 +291,14 @@ exports[`runStoneGuardReviews given: [case7] guard with $rhx variable in review 
     "index": 1,
     "iteration": 1,
     "nitpicks": 0,
-    "path": "<route>/.reviews/peer/1.test._.review.i1.case7ret.r1._.given.by_peer.bash.md",
+    "path": "<route>/.route/1.test.guard.review.i1.case7ret.r1.md",
     "stderr": "",
     "stdout": "blockers: 0
 nitpicks: 0
 rhx=<repo-root>/node_modules/.bin/rhx
 ",
     "stone": {
-      "path": "/tmp/test-reviews-rhx-1781865229174/1.test.stone",
+      "path": "/tmp/test-reviews-rhx-1781868187226/1.test.stone",
     },
   },
 ]
@@ -330,14 +330,14 @@ exports[`runStoneGuardReviews given: [case8] guard with $rhachet variable in rev
     "index": 1,
     "iteration": 1,
     "nitpicks": 0,
-    "path": "<route>/.reviews/peer/1.test._.review.i1.case8ret.r1._.given.by_peer.bash.md",
+    "path": "<route>/.route/1.test.guard.review.i1.case8ret.r1.md",
     "stderr": "",
     "stdout": "blockers: 0
 nitpicks: 0
 rhachet=<repo-root>/node_modules/.bin/rhachet
 ",
     "stone": {
-      "path": "/tmp/test-reviews-rhachet-1781865229175/1.test.stone",
+      "path": "/tmp/test-reviews-rhachet-1781868187226/1.test.stone",
     },
   },
 ]
