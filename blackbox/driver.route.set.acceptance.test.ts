@@ -572,10 +572,16 @@ describe('driver.route.set.acceptance', () => {
 
         await execAsync('npx rhachet roles link --role driver', { cwd: tempDir });
 
-        // create .route directory and guard artifacts
+        // create .reviews/peer/ directory and guard artifacts
+        await fs.mkdir(path.join(tempDir, '.reviews', 'peer'), { recursive: true });
         await fs.mkdir(path.join(tempDir, '.route'), { recursive: true });
         await fs.writeFile(
-          path.join(tempDir, '.route', '1.vision.guard.review.i1.abc.r1.md'),
+          path.join(
+            tempDir,
+            '.reviews',
+            'peer',
+            '1.vision._.review.i1.abc.r1._.given.by_peer.mock.md',
+          ),
           '# review',
         );
         await fs.writeFile(
@@ -607,11 +613,13 @@ describe('driver.route.set.acceptance', () => {
             return entry.stone === '1.vision' && entry.status === 'rewound';
           });
 
-        // check guard artifacts are deleted
+        // check guard artifacts are deleted (reviews in .reviews/peer/, judges in .route/)
+        const reviewsDir = path.join(tempDir, '.reviews', 'peer');
+        const reviewFiles = await fs.readdir(reviewsDir).catch(() => [] as string[]);
         const routeFiles = await fs.readdir(path.join(tempDir, '.route'));
-        const guardFiles = routeFiles.filter((f) => f.includes('.guard.'));
+        const judgeFiles = routeFiles.filter((f) => f.includes('.guard.judge.'));
 
-        return { cli, tempDir, rewoundExists, guardFiles };
+        return { cli, tempDir, rewoundExists, reviewFiles, judgeFiles };
       });
 
       then('cli completes successfully', () => {
@@ -629,7 +637,8 @@ describe('driver.route.set.acceptance', () => {
       });
 
       then('deletes guard artifacts', () => {
-        expect(res.guardFiles).toHaveLength(0);
+        expect(res.reviewFiles).toHaveLength(0);
+        expect(res.judgeFiles).toHaveLength(0);
       });
 
       then('stdout matches snapshot', () => {
@@ -646,18 +655,34 @@ describe('driver.route.set.acceptance', () => {
 
         await execAsync('npx rhachet roles link --role driver', { cwd: tempDir });
 
-        // create .route directory with artifacts for multiple stones
+        // create .reviews/peer/ directory with review artifacts for multiple stones
+        await fs.mkdir(path.join(tempDir, '.reviews', 'peer'), { recursive: true });
         await fs.mkdir(path.join(tempDir, '.route'), { recursive: true });
         await fs.writeFile(
-          path.join(tempDir, '.route', '1.vision.guard.review.i1.abc.r1.md'),
+          path.join(
+            tempDir,
+            '.reviews',
+            'peer',
+            '1.vision._.review.i1.abc.r1._.given.by_peer.mock.md',
+          ),
           '# review',
         );
         await fs.writeFile(
-          path.join(tempDir, '.route', '2.criteria.guard.review.i1.abc.r1.md'),
+          path.join(
+            tempDir,
+            '.reviews',
+            'peer',
+            '2.criteria._.review.i1.abc.r1._.given.by_peer.mock.md',
+          ),
           '# review',
         );
         await fs.writeFile(
-          path.join(tempDir, '.route', '3.plan.guard.review.i1.abc.r1.md'),
+          path.join(
+            tempDir,
+            '.reviews',
+            'peer',
+            '3.plan._.review.i1.abc.r1._.given.by_peer.mock.md',
+          ),
           '# review',
         );
 
@@ -668,9 +693,9 @@ describe('driver.route.set.acceptance', () => {
           cwd: tempDir,
         });
 
-        // check which guard files remain
-        const routeFiles = await fs.readdir(path.join(tempDir, '.route'));
-        const guardFiles = routeFiles.filter((f) => f.includes('.guard.'));
+        // check which review files remain in .reviews/peer/
+        const reviewsDir = path.join(tempDir, '.reviews', 'peer');
+        const reviewFiles = await fs.readdir(reviewsDir).catch(() => [] as string[]);
 
         // check passage.jsonl for rewound entries
         const passagePath = path.join(tempDir, '.route', 'passage.jsonl');
@@ -681,7 +706,7 @@ describe('driver.route.set.acceptance', () => {
           .filter((e: { status: string }) => e.status === 'rewound')
           .map((e: { stone: string }) => e.stone);
 
-        return { cli, tempDir, guardFiles, rewoundStones };
+        return { cli, tempDir, reviewFiles, rewoundStones };
       });
 
       then('cli completes successfully', () => {
@@ -699,9 +724,9 @@ describe('driver.route.set.acceptance', () => {
         expect(res.rewoundStones).not.toContain('1.vision');
       });
 
-      then('only stone 1 guard artifacts remain', () => {
-        expect(res.guardFiles).toHaveLength(1);
-        expect(res.guardFiles[0]).toContain('1.vision');
+      then('only stone 1 review artifacts remain', () => {
+        expect(res.reviewFiles).toHaveLength(1);
+        expect(res.reviewFiles[0]).toContain('1.vision');
       });
 
       then('stdout matches snapshot', () => {

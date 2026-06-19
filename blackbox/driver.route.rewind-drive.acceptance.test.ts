@@ -175,13 +175,16 @@ describe('driver.route.rewind-drive.acceptance', () => {
 
         await execAsync('npx rhachet roles link --role driver', { cwd: tempDir });
 
-        // create .route with gitignore that ignores all content
+        // create .route and .reviews/peer/ directories
         await fs.mkdir(path.join(tempDir, '.route'), { recursive: true });
-        await fs.writeFile(path.join(tempDir, '.route', '.gitignore'), '*\n');
+        await fs.mkdir(path.join(tempDir, '.reviews', 'peer'), { recursive: true });
+
+        // create gitignore that ignores all content in .reviews/peer/
+        await fs.writeFile(path.join(tempDir, '.reviews', 'peer', '.gitignore'), '*\n');
 
         // create guard artifacts (would be ignored by gitignore)
         await fs.writeFile(
-          path.join(tempDir, '.route', '1.vision.guard.review.i1.abc.r1.md'),
+          path.join(tempDir, '.reviews', 'peer', '1.vision._.review.i1.abc.r1._.given.by_peer.mock.md'),
           '# review',
         );
         await fs.writeFile(
@@ -190,8 +193,10 @@ describe('driver.route.rewind-drive.acceptance', () => {
         );
 
         // count files before
-        const filesBefore = await fs.readdir(path.join(tempDir, '.route'));
-        const guardFilesBefore = filesBefore.filter((f) => f.includes('.guard.'));
+        const reviewFilesBefore = await fs.readdir(path.join(tempDir, '.reviews', 'peer'));
+        const reviewCountBefore = reviewFilesBefore.filter((f) => f.includes('._.review.'));
+        const judgeFilesBefore = await fs.readdir(path.join(tempDir, '.route'));
+        const judgeCountBefore = judgeFilesBefore.filter((f) => f.includes('.guard.judge.'));
 
         // invoke rewind
         const cli = await invokeRouteSkill({
@@ -201,22 +206,26 @@ describe('driver.route.rewind-drive.acceptance', () => {
         });
 
         // count files after
-        const filesAfter = await fs.readdir(path.join(tempDir, '.route'));
-        const guardFilesAfter = filesAfter.filter((f) => f.includes('.guard.'));
+        const reviewFilesAfter = await fs.readdir(path.join(tempDir, '.reviews', 'peer'));
+        const reviewCountAfter = reviewFilesAfter.filter((f) => f.includes('._.review.'));
+        const judgeFilesAfter = await fs.readdir(path.join(tempDir, '.route'));
+        const judgeCountAfter = judgeFilesAfter.filter((f) => f.includes('.guard.judge.'));
 
         console.log('\n--- cli.stdout ---');
         console.log(cli.stdout);
         console.log('--- end ---\n');
 
-        return { cli, guardFilesBefore, guardFilesAfter, tempDir };
+        return { cli, reviewCountBefore, reviewCountAfter, judgeCountBefore, judgeCountAfter, tempDir };
       });
 
       then('guard artifacts existed before rewind', () => {
-        expect(res.guardFilesBefore).toHaveLength(2);
+        expect(res.reviewCountBefore).toHaveLength(1);
+        expect(res.judgeCountBefore).toHaveLength(1);
       });
 
       then('guard artifacts deleted after rewind (even if gitignored)', () => {
-        expect(res.guardFilesAfter).toHaveLength(0);
+        expect(res.reviewCountAfter).toHaveLength(0);
+        expect(res.judgeCountAfter).toHaveLength(0);
       });
 
       then('cli output shows deleted counts', () => {
