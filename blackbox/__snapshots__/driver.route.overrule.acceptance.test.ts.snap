@@ -1,0 +1,85 @@
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
+
+exports[`driver.route.overrule.acceptance given: [case1] human overrules blocked review when: [t0] human runs --as overruled then: stdout shows overrule confirmation 1`] = `
+"🦉 the way speaks for itself
+
+🗿 route.stone.set
+   ├─ stone = 1.plan
+   └─ ✓ overruled
+"
+`;
+
+exports[`driver.route.overrule.acceptance given: [case1] human overrules blocked review when: [t1] pass attempted after overrule then: stdout confirms passage 1`] = `
+"🦉 the way speaks for itself
+   │
+   ├─ r1: bash (l1, 1/∞)
+   │   ├─ rejected, cached
+   │   ├─ 3 blockers 🔴
+   │   ├─ 7 nitpicks 🟠
+   │   └─ review: .route/1.plan.guard.review.i1.ec6c3f2f9d5189084f.r1.md
+   │
+   └─ ✓ judge.1 - allowed [TIME]
+
+🗿 route.stone.set
+   ├─ stone = 1.plan
+   ├─ passage = allowed
+   ├─ guard
+   │  ├─ artifacts
+   │  │   └─ $route/1.plan*.md
+   │  ├─ reviews
+   │  │   └─ r1: bash (l1, 1/∞)
+   │  │       ├─ rejected, cached
+   │  │       ├─ 3 blockers 🔴
+   │  │       ├─ 7 nitpicks 🟠
+   │  │       └─ review: .route/1.plan.guard.review.i1.ec6c3f2f9d5189084f.r1.md
+   │  └─ judges
+   │      └─ j1: rhx route.stone.judge --mechanism reviewed? --stone $stone --route $route --allow-blockers 0 --allow-nitpicks 0
+   │          └─ finished [TIME] ✓
+   │
+   └─ the way continues, run
+      └─ rhx route.drive
+"
+`;
+
+exports[`driver.route.overrule.acceptance given: [case2] robot attempts overrule when: [t0] robot runs --as overruled (non-TTY, production) then: stdout shows guidance 1`] = `
+"🦉 the way speaks for itself
+
+🗿 route.stone.set
+   ├─ stone = 1.plan
+   ├─ ✗ only humans can overrule
+   │
+   └─ as a driver, you should:
+         ├─ \`--as passed\` to signal work complete, proceed
+         ├─ \`--as arrived\` to signal work complete, request review
+         └─ \`--as blocked\` to escalate if stuck
+      
+      the human will run \`--as overruled\` when ready.
+"
+`;
+
+exports[`driver.route.overrule.acceptance given: [case5] human forces blocked stone when: [t0] human runs --as forced then: stdout shows both approval and overrule 1`] = `
+"🦉 the way speaks for itself
+
+🗿 route.stone.set
+   ├─ stone = 1.plan
+   └─ ✓ forced
+      ├─ approved = ✓
+      └─ overruled = ✓
+"
+`;
+
+exports[`driver.route.overrule.acceptance given: [case6] robot attempts force when: [t0] robot runs --as forced (non-TTY, production) then: stdout shows guidance 1`] = `
+"🦉 the way speaks for itself
+
+🗿 route.stone.set
+   ├─ stone = 1.plan
+   ├─ ✗ only humans can force
+   │
+   └─ as a driver, you should:
+         ├─ \`--as passed\` to signal work complete, proceed
+         ├─ \`--as arrived\` to signal work complete, request review
+         └─ \`--as blocked\` to escalate if stuck
+      
+      the human will run \`--as forced\` when ready.
+"
+`;

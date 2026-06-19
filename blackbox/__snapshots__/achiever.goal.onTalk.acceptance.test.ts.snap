@@ -196,8 +196,8 @@ exports[`achiever.goal.onTalk.integration given: [case9] invalid scope argument 
 {
   "scope": "invalid"
 }
-    at parseArgsForTriage (/home/vlad/git/ehmpathy/_worktrees/rhachet-roles-bhrain.vlad.fix-reviewer-creds/dist/contract/cli/goal.js:542:23)
-    at async Module.goalTriageInfer (/home/vlad/git/ehmpathy/_worktrees/rhachet-roles-bhrain.vlad.fix-reviewer-creds/dist/contract/cli/goal.js:1117:29)
+    at parseArgsForTriage (/home/vlad/git/ehmpathy/_worktrees/rhachet-roles-bhrain.vlad.fix-route-breakout/dist/contract/cli/goal.js:542:23)
+    at async Module.goalTriageInfer (/home/vlad/git/ehmpathy/_worktrees/rhachet-roles-bhrain.vlad.fix-route-breakout/dist/contract/cli/goal.js:1117:29)
 "
 `;
 

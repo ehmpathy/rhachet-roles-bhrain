@@ -20,7 +20,13 @@ export interface PassageReport {
   /**
    * the passage status
    */
-  status: 'passed' | 'approved' | 'blocked' | 'rewound' | 'malfunction';
+  status:
+    | 'passed'
+    | 'approved'
+    | 'blocked'
+    | 'rewound'
+    | 'malfunction'
+    | 'overruled';
 
   /**
    * what blocks passage (only for status='blocked')

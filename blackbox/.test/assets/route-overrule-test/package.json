@@ -1,0 +1,8 @@
+{
+  "name": "route-overrule-fixture",
+  "private": true,
+  "description": "fixture for acceptance tests - enables rhachet role discovery",
+  "dependencies": {
+    "rhachet-roles-bhrain": "link:."
+  }
+}

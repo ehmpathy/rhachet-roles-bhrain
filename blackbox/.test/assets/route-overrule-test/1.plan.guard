@@ -1,0 +1,8 @@
+artifacts:
+  - $route/1.plan*.md
+
+reviews:
+  - bash $route/.test/mock-review.sh
+
+judges:
+  - rhx route.stone.judge --mechanism reviewed? --stone $stone --route $route --allow-blockers 0 --allow-nitpicks 0

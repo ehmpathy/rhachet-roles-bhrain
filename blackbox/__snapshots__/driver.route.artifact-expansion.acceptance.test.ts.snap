@@ -3,7 +3,7 @@
 exports[`driver.route.artifact-expansion.acceptance given: [case1] guard with $route in artifact pattern (root route) when: [t1] artifact created at route path then: stdout has good vibes 1`] = `
 "🦉 the way speaks for itself
    │
-   ├─ r1: bash (l1, 0/∞)
+   ├─ r1: bash (l1, 1/∞)
    │   ├─ approved [TIME]
    │   ├─ 0 blockers ✓
    │   ├─ 0 nitpicks ✓
@@ -66,7 +66,7 @@ exports[`driver.route.artifact-expansion.acceptance given: [case1] guard with $r
 exports[`driver.route.artifact-expansion.acceptance given: [case2] guard with $route in nested route directory when: [t0] artifact created in nested route then: stdout has good vibes 1`] = `
 "🦉 the way speaks for itself
    │
-   ├─ r1: bash (l1, 0/∞)
+   ├─ r1: bash (l1, 1/∞)
    │   ├─ approved [TIME]
    │   ├─ 0 blockers ✓
    │   ├─ 0 nitpicks ✓

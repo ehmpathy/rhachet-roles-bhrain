@@ -20,6 +20,8 @@ import { setStoneAsPromised } from './promise/setStoneAsPromised';
 import { findOneStoneByPattern } from './stones/asStoneGlob';
 import { getAllStones } from './stones/getAllStones';
 import { setStoneAsApproved } from './stones/setStoneAsApproved';
+import { setStoneAsForced } from './stones/setStoneAsForced';
+import { setStoneAsOverruled } from './stones/setStoneAsOverruled';
 import { setStoneAsPassed } from './stones/setStoneAsPassed';
 import { setStoneAsRewound } from './stones/setStoneAsRewound';
 
@@ -28,10 +30,18 @@ import { setStoneAsRewound } from './stones/setStoneAsRewound';
  * .why = enables robots and humans to mark milestones complete or rewind for fresh evaluation
  */
 export const stepRouteStoneSet = async (
-  input: {
+  inputRaw: {
     stone: string;
     route: string;
-    as: 'passed' | 'approved' | 'promised' | 'rewound' | 'blocked' | 'arrived';
+    as:
+      | 'passed'
+      | 'approved'
+      | 'promised'
+      | 'rewound'
+      | 'blocked'
+      | 'arrived'
+      | 'overruled'
+      | 'forced';
     that?: string;
     yield?: 'keep' | 'drop';
   },
@@ -42,14 +52,17 @@ export const stepRouteStoneSet = async (
   promised?: boolean;
   rewound?: boolean;
   blocked?: boolean;
+  overruled?: boolean;
+  forced?: boolean;
   challenged?: boolean;
   refs?: { reviews: string[]; judges: string[] };
   emit: { stdout: string; stderr?: string } | null;
 }> => {
-  // alias translator: 'arrived' maps to 'passed'
-  if (input.as === 'arrived') {
-    input = { ...input, as: 'passed' };
-  }
+  // alias translator: 'arrived' maps to 'passed' (creates immutable copy)
+  const input =
+    inputRaw.as === 'arrived'
+      ? { ...inputRaw, as: 'passed' as const }
+      : inputRaw;
 
   // dispatch to appropriate operation
   if (input.as === 'approved') {
@@ -223,6 +236,34 @@ export const stepRouteStoneSet = async (
     return {
       blocked: result.blocked,
       challenged: result.challenged,
+      emit: result.emit,
+    };
+  }
+
+  if (input.as === 'overruled') {
+    const result = await setStoneAsOverruled(
+      {
+        stone: input.stone,
+        route: input.route,
+      },
+      { isTTY: context.isTTY },
+    );
+    return {
+      overruled: result.overruled,
+      emit: result.emit,
+    };
+  }
+
+  if (input.as === 'forced') {
+    const result = await setStoneAsForced(
+      {
+        stone: input.stone,
+        route: input.route,
+      },
+      { isTTY: context.isTTY },
+    );
+    return {
+      forced: result.forced,
       emit: result.emit,
     };
   }
