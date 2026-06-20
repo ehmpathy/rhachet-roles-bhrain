@@ -5,7 +5,7 @@ exports[`driver.route.peer-review-timeout.acceptance given: [journey] review tim
    │
    ├─ r1: slow-reviewer (l1, 1/2)
    │   ├─ 💥 malfunction
-   │   └─ review: .route/1.execute.guard.review.i1.8739656801d5e77f22.r1.md
+   │   └─ review: .reviews/peer/1.execute._.review.i1.8739656801d5e77f22.r1._.given.by_peer.slow-reviewer.md
    │
    └─ ✓ judge.1 - allowed [TIME]
 
@@ -19,7 +19,7 @@ exports[`driver.route.peer-review-timeout.acceptance given: [journey] review tim
       ├─ reviews
       │   └─ r1: slow-reviewer (l1, 0/2)
       │       ├─ 💥 malfunction
-      │       └─ review: .route/1.execute.guard.review.i1.8739656801d5e77f22.r1.md
+      │       └─ review: .reviews/peer/1.execute._.review.i1.8739656801d5e77f22.r1._.given.by_peer.slow-reviewer.md
       └─ judges
           └─ j1: rhx route.stone.judge --mechanism reviewed? --stone $stone --route $route --allow-blockers 0 --allow-nitpicks 1
               └─ finished [TIME] ✓

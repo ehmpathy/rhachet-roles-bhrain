@@ -172,7 +172,7 @@ export const runOneStoneGuardReview = async (input: {
   let exitCode = 0;
   try {
     const result = await execAsync(cmd, {
-      cwd: input.route,
+      cwd: repoRoot,
       env: execEnv,
       timeout: timeoutMs,
     });
