@@ -180,9 +180,10 @@ export const review = async (): Promise<void> => {
   const outputPath = options.output ?? genDefaultReviewOutputPath({ cwd });
 
   // create brain context via discovery with credentials
+  // .note = uses env: 'prep' because review is used to prepare code, not test it
   const brain = await genContextBrain({
     choice: options.brain,
-    creds: { keyrack: { owner: 'ehmpath', env: 'test' } },
+    creds: { keyrack: { owner: 'ehmpath', env: 'prep' } },
   });
 
   // invoke stepReview with validation error handler
