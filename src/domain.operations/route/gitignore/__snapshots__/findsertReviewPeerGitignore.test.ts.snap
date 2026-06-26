@@ -1,0 +1,46 @@
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
+
+exports[`findsertReviewPeerGitignore given: [case1] no .reviews/peer directory when: [t0] findsert is called then: creates .gitignore with correct content: gitignore-content 1`] = `
+"# ignore all peer-review files
+*
+!.gitignore
+"
+`;
+
+exports[`findsertReviewPeerGitignore given: [case1] no .reviews/peer directory when: [t0] findsert is called then: creates .gitignore with correct content: result-created 1`] = `
+{
+  "action": "created",
+  "pathRelative": "$ROUTE/.reviews/peer/.gitignore",
+}
+`;
+
+exports[`findsertReviewPeerGitignore given: [case2] .gitignore already present with correct content when: [t0] findsert is called then: returns unchanged: result-unchanged 1`] = `
+{
+  "action": "unchanged",
+  "pathRelative": "$ROUTE/.reviews/peer/.gitignore",
+}
+`;
+
+exports[`findsertReviewPeerGitignore given: [case3] .gitignore present with incorrect content when: [t0] findsert is called then: overwrites with correct content: gitignore-content-overwrite 1`] = `
+"# ignore all peer-review files
+*
+!.gitignore
+"
+`;
+
+exports[`findsertReviewPeerGitignore given: [case3] .gitignore present with incorrect content when: [t0] findsert is called then: overwrites with correct content: result-overwrite 1`] = `
+{
+  "action": "created",
+  "pathRelative": "$ROUTE/.reviews/peer/.gitignore",
+}
+`;
+
+exports[`findsertReviewPeerGitignore given: [case4] read error other than ENOENT when: [t0] findsert is called then: throws the error: error-eisdir 1`] = `[Error: EISDIR: illegal operation on a directory, read]`;
+
+exports[`findsertReviewPeerGitignore given: [case5] invalid route path when: [t0] findsert is called with non-writable path then: throws mkdir error: error-eacces 1`] = `[Error: EACCES: permission denied, mkdir '/nonexistent']`;
+
+exports[`findsertReviewPeerGitignore given: [case6] route is a file instead of directory when: [t0] findsert is called then: throws ENOTDIR error: error-enotdir-route 1`] = `[Error: ENOTDIR: not a directory, mkdir '/tmp/test-reviewpeer-gitignore-route-file-1782440725770/route-as-file/.reviews/peer']`;
+
+exports[`findsertReviewPeerGitignore given: [case7] .reviews path is a file instead of directory when: [t0] findsert is called then: throws ENOTDIR error: error-enotdir-reviews 1`] = `[Error: ENOTDIR: not a directory, mkdir '/tmp/test-reviewpeer-gitignore-reviews-file-1782440725771/.reviews/peer']`;
+
+exports[`findsertReviewPeerGitignore given: [case8] peer path is a file instead of directory when: [t0] findsert is called then: throws ENOTDIR error: error-enotdir-peer 1`] = `[Error: EEXIST: file already exists, mkdir '/tmp/test-reviewpeer-gitignore-peer-file-1782440725772/.reviews/peer']`;

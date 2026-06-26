@@ -3,7 +3,7 @@ import * as os from 'os';
 import * as path from 'path';
 import { given, then, when } from 'test-fns';
 
-import { findsertSelfReviewGitignore } from './findsertSelfReviewGitignore';
+import { findsertReviewSelfGitignore } from './findsertReviewSelfGitignore';
 
 const normalizeResult = (
   result: { action: string; path: string },
@@ -29,7 +29,7 @@ const normalizeResult = (
  * | negative: ENOTDIR review | error-enotdir-review | case7 |
  * | negative: ENOTDIR self | error-enotdir-self | case8 |
  */
-describe('findsertSelfReviewGitignore', () => {
+describe('findsertReviewSelfGitignore', () => {
   given('[case1] no review/self directory', () => {
     const tempDir = path.join(
       os.tmpdir(),
@@ -42,13 +42,13 @@ describe('findsertSelfReviewGitignore', () => {
 
     when('[t0] findsert is called', () => {
       then('creates review/self directory', async () => {
-        await findsertSelfReviewGitignore({ route: tempDir });
+        await findsertReviewSelfGitignore({ route: tempDir });
         const stat = await fs.stat(path.join(tempDir, 'review', 'self'));
         expect(stat.isDirectory()).toBe(true);
       });
 
       then('creates .gitignore with correct content', async () => {
-        const result = await findsertSelfReviewGitignore({ route: tempDir });
+        const result = await findsertReviewSelfGitignore({ route: tempDir });
         expect(normalizeResult(result, tempDir)).toMatchSnapshot(
           'result-created',
         );
@@ -82,7 +82,7 @@ describe('findsertSelfReviewGitignore', () => {
 
     when('[t0] findsert is called', () => {
       then('returns unchanged', async () => {
-        const result = await findsertSelfReviewGitignore({ route: tempDir });
+        const result = await findsertReviewSelfGitignore({ route: tempDir });
         expect(normalizeResult(result, tempDir)).toMatchSnapshot(
           'result-unchanged',
         );
@@ -110,7 +110,7 @@ describe('findsertSelfReviewGitignore', () => {
 
     when('[t0] findsert is called', () => {
       then('overwrites with correct content', async () => {
-        const result = await findsertSelfReviewGitignore({ route: tempDir });
+        const result = await findsertReviewSelfGitignore({ route: tempDir });
         expect(normalizeResult(result, tempDir)).toMatchSnapshot(
           'result-overwrite',
         );
@@ -139,7 +139,7 @@ describe('findsertSelfReviewGitignore', () => {
     when('[t0] findsert is called', () => {
       then('throws the error', async () => {
         await expect(
-          findsertSelfReviewGitignore({ route: tempDir }),
+          findsertReviewSelfGitignore({ route: tempDir }),
         ).rejects.toMatchSnapshot('error-eisdir');
       });
     });
@@ -149,7 +149,7 @@ describe('findsertSelfReviewGitignore', () => {
     when('[t0] findsert is called with non-writable path', () => {
       then('throws mkdir error', async () => {
         await expect(
-          findsertSelfReviewGitignore({
+          findsertReviewSelfGitignore({
             route: '/nonexistent/path/that/cannot/be/created',
           }),
         ).rejects.toMatchSnapshot('error-eacces');
@@ -176,7 +176,7 @@ describe('findsertSelfReviewGitignore', () => {
     when('[t0] findsert is called', () => {
       then('throws ENOTDIR error', async () => {
         await expect(
-          findsertSelfReviewGitignore({ route: routeFile }),
+          findsertReviewSelfGitignore({ route: routeFile }),
         ).rejects.toMatchSnapshot('error-enotdir-route');
       });
     });
@@ -200,7 +200,7 @@ describe('findsertSelfReviewGitignore', () => {
     when('[t0] findsert is called', () => {
       then('throws ENOTDIR error', async () => {
         await expect(
-          findsertSelfReviewGitignore({ route: tempDir }),
+          findsertReviewSelfGitignore({ route: tempDir }),
         ).rejects.toMatchSnapshot('error-enotdir-review');
       });
     });
@@ -227,7 +227,7 @@ describe('findsertSelfReviewGitignore', () => {
     when('[t0] findsert is called', () => {
       then('throws ENOTDIR error', async () => {
         await expect(
-          findsertSelfReviewGitignore({ route: tempDir }),
+          findsertReviewSelfGitignore({ route: tempDir }),
         ).rejects.toMatchSnapshot('error-enotdir-self');
       });
     });

@@ -2,24 +2,25 @@ import * as fs from 'fs/promises';
 import * as path from 'path';
 
 /**
- * .what = findserts .gitignore into $route/review/self/ directory
- * .why = ensures self-review artifacts are gitignored while gitignore itself is tracked
+ * .what = findserts .gitignore into $route/.reviews/peer/ directory
+ * .why = ensures peer-review artifacts are gitignored while gitignore itself is tracked
  */
-export const findsertSelfReviewGitignore = async (input: {
+export const findsertReviewPeerGitignore = async (input: {
   route: string;
 }): Promise<{ path: string; action: 'created' | 'unchanged' }> => {
-  const selfReviewDir = path.join(input.route, 'review', 'self');
-  const gitignorePath = path.join(selfReviewDir, '.gitignore');
+  const reviewPeerDir = path.join(input.route, '.reviews', 'peer');
+  const gitignorePath = path.join(reviewPeerDir, '.gitignore');
 
-  const gitignoreContent = `# ignore all self-review files
+  const gitignoreContent = `# ignore all peer-review files
 *
 !.gitignore
 `;
 
-  // ensure review/self dir found or created
-  await fs.mkdir(selfReviewDir, { recursive: true });
+  // ensure .reviews/peer dir found or created
+  await fs.mkdir(reviewPeerDir, { recursive: true });
 
   // check if gitignore found with correct content
+  // .note = rethrow non-ENOENT so real faults (EISDIR, EACCES) surface loudly
   const contentFound = await fs
     .readFile(gitignorePath, 'utf-8')
     .catch((error: NodeJS.ErrnoException) => {

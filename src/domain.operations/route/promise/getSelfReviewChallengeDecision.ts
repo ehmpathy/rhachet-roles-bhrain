@@ -1,7 +1,7 @@
 import * as fs from 'fs/promises';
 import * as path from 'path';
 
-import { findsertSelfReviewGitignore } from '../gitignore/findsertSelfReviewGitignore';
+import { findsertReviewSelfGitignore } from '../gitignore/findsertReviewSelfGitignore';
 import { getSelfReviewArticulationPath } from '../guard/getSelfReviewArticulationPath';
 import { getSelfReviewTriggeredCount } from './getSelfReviewTriggeredCount';
 import { getSelfReviewTriggeredReport } from './getSelfReviewTriggeredReport';
@@ -61,7 +61,7 @@ export const getSelfReviewChallengeDecision = async (input: {
   // no report = first challenge, start timer now (introduces concept before file check)
   if (!report) {
     // ensure review/self/.gitignore found or created before driver writes
-    await findsertSelfReviewGitignore({ route: input.route });
+    await findsertReviewSelfGitignore({ route: input.route });
     await setSelfReviewTriggeredReport(input);
     return { decision: 'challenge:first', articulationPath };
   }
