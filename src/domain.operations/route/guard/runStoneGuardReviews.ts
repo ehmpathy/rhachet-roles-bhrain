@@ -17,6 +17,7 @@ import {
 import { RouteStoneGuardReviewArtifact } from '@src/domain.objects/Driver/RouteStoneGuardReviewArtifact';
 import { RouteStoneGuardReviewPeerMeter } from '@src/domain.objects/Driver/RouteStoneGuardReviewPeerMeter';
 
+import { findsertReviewPeerGitignore } from '../gitignore/findsertReviewPeerGitignore';
 import { formatTreeBucket } from './formatTreeBucket';
 import { getAllStoneGuardArtifactsByHash } from './getAllStoneGuardArtifactsByHash';
 import { getExitCodeClass } from './getExitCodeClass';
@@ -108,6 +109,10 @@ export const runOneStoneGuardReview = async (input: {
   //        (.route/ is sealed by route.mutate.guard)
   const reviewsDir = path.join(input.route, '.reviews', 'peer');
   await fs.mkdir(reviewsDir, { recursive: true });
+
+  // findsert gitignore to keep peer-review artifacts out of git
+  // .why = guard runs spam git with one artifact per reviewer/iteration/hash
+  await findsertReviewPeerGitignore({ route: input.route });
 
   // lookup repo root for $rhx/$rhachet paths
   // .note = falls back to cwd when not in a git repo (e.g., integration tests)
