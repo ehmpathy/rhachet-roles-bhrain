@@ -24,12 +24,6 @@
           },
           {
             "type": "command",
-            "command": "./node_modules/.bin/rhachet run --repo bhuild --role behaver --init claude.hooks/sessionstart.boot-behavior",
-            "timeout": 10,
-            "author": "repo=bhuild/role=behaver"
-          },
-          {
-            "type": "command",
             "command": "./node_modules/.bin/rhachet roles boot --repo ehmpathy --role architect",
             "timeout": 60,
             "author": "repo=ehmpathy/role=architect"
@@ -48,15 +42,27 @@
           },
           {
             "type": "command",
-            "command": "./node_modules/.bin/rhachet roles boot --role reviewer",
-            "timeout": 30,
-            "author": "repo=bhrain/role=reviewer"
-          },
-          {
-            "type": "command",
             "command": "./node_modules/.bin/rhx route.drive --when hook.onBoot",
             "timeout": 5,
             "author": "repo=bhrain/role=driver"
+          },
+          {
+            "type": "command",
+            "command": "./node_modules/.bin/rhachet roles boot --role learner",
+            "timeout": 30,
+            "author": "repo=bhrain/role=learner"
+          },
+          {
+            "type": "command",
+            "command": "./node_modules/.bin/rhachet roles boot --role librarian",
+            "timeout": 30,
+            "author": "repo=bhrain/role=librarian"
+          },
+          {
+            "type": "command",
+            "command": "./node_modules/.bin/rhachet roles boot --role reviewer",
+            "timeout": 30,
+            "author": "repo=bhrain/role=reviewer"
           },
           {
             "type": "command",
@@ -66,9 +72,9 @@
           },
           {
             "type": "command",
-            "command": "./node_modules/.bin/rhachet roles boot --role dreamer",
+            "command": "./node_modules/.bin/rhachet run --repo bhuild --role behaver --init claude.hooks/sessionstart.boot-behavior",
             "timeout": 10,
-            "author": "repo=bhuild/role=dreamer"
+            "author": "repo=bhuild/role=behaver"
           },
           {
             "type": "command",
@@ -78,9 +84,9 @@
           },
           {
             "type": "command",
-            "command": "./node_modules/.bin/rhachet roles boot --role learner",
-            "timeout": 30,
-            "author": "repo=bhrain/role=learner"
+            "command": "./node_modules/.bin/rhachet roles boot --role dreamer",
+            "timeout": 10,
+            "author": "repo=bhuild/role=dreamer"
           }
         ]
       },
@@ -178,17 +184,6 @@
         ]
       },
       {
-        "matcher": "Read|Write|Edit|Bash",
-        "hooks": [
-          {
-            "type": "command",
-            "command": "./node_modules/.bin/rhx route.mutate.guard --mode hook",
-            "timeout": 5,
-            "author": "repo=bhrain/role=driver"
-          }
-        ]
-      },
-      {
         "matcher": "Write|Edit|Read|Bash",
         "hooks": [
           {
@@ -196,6 +191,17 @@
             "command": "./node_modules/.bin/rhachet run --repo ehmpathy --role mechanic --init claude.hooks/pretooluse.forbid-tmp-writes",
             "timeout": 5,
             "author": "repo=ehmpathy/role=mechanic"
+          }
+        ]
+      },
+      {
+        "matcher": "Read|Write|Edit|Bash",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "./node_modules/.bin/rhx route.mutate.guard --mode hook",
+            "timeout": 5,
+            "author": "repo=bhrain/role=driver"
           }
         ]
       }
@@ -406,8 +412,7 @@
       "Bash(gh search prs:*)",
       "Bash(gh search commits:*)",
       "Bash(gh api -X GET:*)",
-      "Bash(gh api --method GET:*)",
-      "Bash(source .agent/repo=.this/role=any/skills/use.apikeys.sh)"
+      "Bash(gh api --method GET:*)"
     ],
     "deny": [
       "Bash(bash:*)",
