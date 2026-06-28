@@ -1,0 +1,8 @@
+{
+  "name": "route-tier-escalation",
+  "private": true,
+  "description": "fixture for tier escalation acceptance tests - enables rhachet role discovery",
+  "dependencies": {
+    "rhachet-roles-bhrain": "link:."
+  }
+}

@@ -228,4 +228,65 @@ describe('computeReviewPeerVerdict', () => {
       });
     });
   });
+
+  given('[case8] exitClass is malfunction', () => {
+    when('[t0] review process failed', () => {
+      then('verdict is malfunction (regardless of blockers)', () => {
+        // .why = malfunction means review process itself failed
+        // blockers/nitpicks are not meaningful in this case
+        const verdict = computeReviewPeerVerdict({
+          rounds: 1,
+          budget: 3,
+          blockers: 0, // even with no blockers, malfunction takes precedence
+          exitClass: 'malfunction',
+        });
+        expect(verdict).toEqual('malfunction');
+      });
+    });
+
+    when('[t1] malfunction with blockers', () => {
+      then('verdict is malfunction (blockers ignored)', () => {
+        const verdict = computeReviewPeerVerdict({
+          rounds: 2,
+          budget: 3,
+          blockers: 5,
+          exitClass: 'malfunction',
+        });
+        expect(verdict).toEqual('malfunction');
+      });
+    });
+  });
+
+  given('[case9] exitClass is constraint', () => {
+    when('[t0] genuine constraint: exit 2 with no blockers', () => {
+      then('verdict is constraint (terminal for tier escalation)', () => {
+        // .why = a genuine constraint (e.g., absent api key, absent rule file) means
+        //        the reviewer could not run a real review and cannot proceed without
+        //        external action; this is terminal so l2/l3 can still run
+        const verdict = computeReviewPeerVerdict({
+          rounds: 1,
+          budget: 3,
+          blockers: 0,
+          exitClass: 'constraint',
+        });
+        expect(verdict).toEqual('constraint');
+      });
+    });
+
+    when('[t1] exit 2 with blockers: review ran and found issues', () => {
+      then('verdict is rejected (not a genuine constraint)', () => {
+        // .why = exit 2 WITH blockers means the reviewer ran and found issues,
+        //        and used exit 2 as its rejection signal; this is a normal rejection
+        //        (non-terminal), to match setStoneAsPassed constraint detection
+        //        (exitClass === 'constraint' && blockers === 0)
+        const verdict = computeReviewPeerVerdict({
+          rounds: 1,
+          budget: 3,
+          blockers: 5,
+          exitClass: 'constraint',
+        });
+        expect(verdict).toEqual('rejected');
+      });
+    });
+  });
 });

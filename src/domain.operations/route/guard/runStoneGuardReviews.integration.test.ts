@@ -1127,4 +1127,638 @@ describe('runStoneGuardReviews', () => {
       });
     });
   });
+
+  given('[case15] l1 malfunction does not block l3 execution', () => {
+    const tempDir = path.join(
+      os.tmpdir(),
+      `test-reviews-tier-escalation-${Date.now()}`,
+    );
+    const stone = new RouteStone({
+      name: '1.test',
+      path: path.join(tempDir, '1.test.stone'),
+      guard: null,
+    });
+    const guard = new RouteStoneGuard({
+      path: path.join(tempDir, '1.test.guard'),
+      artifacts: ['1.test*.md'],
+      reviews: {
+        self: [],
+        peer: [
+          {
+            slug: 'l1-breaker',
+            budget: 1,
+            run: 'bash -c "echo l1 broke; exit 1"',
+            level: 1,
+          },
+          {
+            slug: 'l3-checker',
+            budget: 1,
+            run: 'echo "blockers: 0"',
+            level: 3,
+          },
+        ],
+      },
+      judges: [],
+      protect: [],
+    });
+
+    beforeAll(async () => {
+      await fs.mkdir(tempDir, { recursive: true });
+    });
+
+    afterAll(async () => {
+      await fs.rm(tempDir, { recursive: true, force: true });
+    });
+
+    when('[t0] l1 reviewer malfunctions', () => {
+      const reviews = useThen('reviews run', async () => {
+        return runStoneGuardReviews(
+          { stone, guard, hash: 'tierescalate', iteration: 1, route: tempDir },
+          noopContext,
+        );
+      });
+
+      then('l1 reviewer reports malfunction', () => {
+        const l1 = reviews.artifacts.find((a) =>
+          a.path?.includes('l1-breaker'),
+        );
+        expect(l1?.exitClass).toEqual('malfunction');
+      });
+
+      then('l3 reviewer still executes despite l1 malfunction', () => {
+        const l3 = reviews.artifacts.find((a) =>
+          a.path?.includes('l3-checker'),
+        );
+        expect(l3).toBeDefined();
+        expect(l3?.exitClass).toEqual('passed');
+        expect(l3?.blockers).toEqual(0);
+      });
+
+      then('both reviewers appear in artifacts', () => {
+        expect(reviews.artifacts).toHaveLength(2);
+      });
+
+      then('snapshot matches', () => {
+        const sanitized = reviews.artifacts.map((r) => ({
+          ...r,
+          path: r.path?.replace(tempDir, '<route>'),
+        }));
+        expect(sanitized).toMatchSnapshot();
+      });
+    });
+  });
+
+  given('[case16] l1 constraint does not block l3 execution', () => {
+    const tempDir = path.join(
+      os.tmpdir(),
+      `test-reviews-tier-constraint-${Date.now()}`,
+    );
+    const stone = new RouteStone({
+      name: '1.test',
+      path: path.join(tempDir, '1.test.stone'),
+      guard: null,
+    });
+    const guard = new RouteStoneGuard({
+      path: path.join(tempDir, '1.test.guard'),
+      artifacts: ['1.test*.md'],
+      reviews: {
+        self: [],
+        peer: [
+          {
+            slug: 'l1-constrained',
+            budget: 1,
+            run: 'bash -c "echo blockers: 0; exit 2"',
+            level: 1,
+          },
+          {
+            slug: 'l3-checker',
+            budget: 1,
+            run: 'echo "blockers: 0"',
+            level: 3,
+          },
+        ],
+      },
+      judges: [],
+      protect: [],
+    });
+
+    beforeAll(async () => {
+      await fs.mkdir(tempDir, { recursive: true });
+    });
+
+    afterAll(async () => {
+      await fs.rm(tempDir, { recursive: true, force: true });
+    });
+
+    when('[t0] l1 reviewer hits constraint', () => {
+      const reviews = useThen('reviews run', async () => {
+        return runStoneGuardReviews(
+          {
+            stone,
+            guard,
+            hash: 'tierconstraint',
+            iteration: 1,
+            route: tempDir,
+          },
+          noopContext,
+        );
+      });
+
+      then('l1 reviewer reports constraint', () => {
+        const l1 = reviews.artifacts.find((a) =>
+          a.path?.includes('l1-constrained'),
+        );
+        expect(l1?.exitClass).toEqual('constraint');
+      });
+
+      then('l3 reviewer still executes despite l1 constraint', () => {
+        const l3 = reviews.artifacts.find((a) =>
+          a.path?.includes('l3-checker'),
+        );
+        expect(l3).toBeDefined();
+        expect(l3?.exitClass).toEqual('passed');
+        expect(l3?.blockers).toEqual(0);
+      });
+
+      then('both reviewers appear in artifacts', () => {
+        expect(reviews.artifacts).toHaveLength(2);
+      });
+
+      then('snapshot matches', () => {
+        const sanitized = reviews.artifacts.map((r) => ({
+          ...r,
+          path: r.path?.replace(tempDir, '<route>'),
+        }));
+        expect(sanitized).toMatchSnapshot();
+      });
+    });
+  });
+
+  // =========================================================================
+  // Exhaustive tier escalation combinations
+  // =========================================================================
+
+  given('[case17] multiple l1 malfunctions do not block l3 execution', () => {
+    const tempDir = path.join(
+      os.tmpdir(),
+      `test-reviews-multi-l1-malfunction-${Date.now()}`,
+    );
+    const stone = new RouteStone({
+      name: '1.test',
+      path: path.join(tempDir, '1.test.stone'),
+      guard: null,
+    });
+    const guard = new RouteStoneGuard({
+      path: path.join(tempDir, '1.test.guard'),
+      artifacts: ['1.test*.md'],
+      reviews: {
+        self: [],
+        peer: [
+          {
+            slug: 'l1-breaker-a',
+            budget: 1,
+            run: 'bash -c "echo l1-a broke; exit 1"',
+            level: 1,
+          },
+          {
+            slug: 'l1-breaker-b',
+            budget: 1,
+            run: 'bash -c "echo l1-b broke; exit 1"',
+            level: 1,
+          },
+          {
+            slug: 'l3-checker',
+            budget: 1,
+            run: 'echo "blockers: 0"',
+            level: 3,
+          },
+        ],
+      },
+      judges: [],
+      protect: [],
+    });
+
+    beforeAll(async () => {
+      await fs.mkdir(tempDir, { recursive: true });
+    });
+
+    afterAll(async () => {
+      await fs.rm(tempDir, { recursive: true, force: true });
+    });
+
+    when('[t0] multiple l1 reviewers malfunction', () => {
+      const reviews = useThen('reviews run', async () => {
+        return runStoneGuardReviews(
+          { stone, guard, hash: 'multil1mal', iteration: 1, route: tempDir },
+          noopContext,
+        );
+      });
+
+      then('both l1 reviewers report malfunction', () => {
+        const l1a = reviews.artifacts.find((a) =>
+          a.path?.includes('l1-breaker-a'),
+        );
+        const l1b = reviews.artifacts.find((a) =>
+          a.path?.includes('l1-breaker-b'),
+        );
+        expect(l1a?.exitClass).toEqual('malfunction');
+        expect(l1b?.exitClass).toEqual('malfunction');
+      });
+
+      then('l3 reviewer still executes', () => {
+        const l3 = reviews.artifacts.find((a) =>
+          a.path?.includes('l3-checker'),
+        );
+        expect(l3).toBeDefined();
+        expect(l3?.exitClass).toEqual('passed');
+      });
+
+      then('all three reviewers appear in artifacts', () => {
+        expect(reviews.artifacts).toHaveLength(3);
+      });
+
+      then('snapshot matches', () => {
+        const sanitized = reviews.artifacts.map((r) => ({
+          ...r,
+          path: r.path?.replace(tempDir, '<route>'),
+        }));
+        expect(sanitized).toMatchSnapshot();
+      });
+    });
+  });
+
+  given(
+    '[case18] mixed l1 terminal states (malfunction + constraint) do not block l3',
+    () => {
+      const tempDir = path.join(
+        os.tmpdir(),
+        `test-reviews-mixed-l1-terminal-${Date.now()}`,
+      );
+      const stone = new RouteStone({
+        name: '1.test',
+        path: path.join(tempDir, '1.test.stone'),
+        guard: null,
+      });
+      const guard = new RouteStoneGuard({
+        path: path.join(tempDir, '1.test.guard'),
+        artifacts: ['1.test*.md'],
+        reviews: {
+          self: [],
+          peer: [
+            {
+              slug: 'l1-malfunctioner',
+              budget: 1,
+              run: 'bash -c "echo malfunction; exit 1"',
+              level: 1,
+            },
+            {
+              slug: 'l1-constrainer',
+              budget: 1,
+              run: 'bash -c "echo constraint; exit 2"',
+              level: 1,
+            },
+            {
+              slug: 'l3-checker',
+              budget: 1,
+              run: 'echo "blockers: 0"',
+              level: 3,
+            },
+          ],
+        },
+        judges: [],
+        protect: [],
+      });
+
+      beforeAll(async () => {
+        await fs.mkdir(tempDir, { recursive: true });
+      });
+
+      afterAll(async () => {
+        await fs.rm(tempDir, { recursive: true, force: true });
+      });
+
+      when('[t0] l1 has both malfunction and constraint', () => {
+        const reviews = useThen('reviews run', async () => {
+          return runStoneGuardReviews(
+            { stone, guard, hash: 'mixedl1', iteration: 1, route: tempDir },
+            noopContext,
+          );
+        });
+
+        then('l1 malfunction is captured', () => {
+          const mal = reviews.artifacts.find((a) =>
+            a.path?.includes('l1-malfunctioner'),
+          );
+          expect(mal?.exitClass).toEqual('malfunction');
+        });
+
+        then('l1 constraint is captured', () => {
+          const con = reviews.artifacts.find((a) =>
+            a.path?.includes('l1-constrainer'),
+          );
+          expect(con?.exitClass).toEqual('constraint');
+        });
+
+        then('l3 reviewer still executes despite mixed l1 failures', () => {
+          const l3 = reviews.artifacts.find((a) =>
+            a.path?.includes('l3-checker'),
+          );
+          expect(l3).toBeDefined();
+          expect(l3?.exitClass).toEqual('passed');
+        });
+
+        then('snapshot matches', () => {
+          const sanitized = reviews.artifacts.map((r) => ({
+            ...r,
+            path: r.path?.replace(tempDir, '<route>'),
+          }));
+          expect(sanitized).toMatchSnapshot();
+        });
+      });
+    },
+  );
+
+  given('[case19] l1 passed + l1 malfunction still allows l3 execution', () => {
+    const tempDir = path.join(
+      os.tmpdir(),
+      `test-reviews-partial-l1-${Date.now()}`,
+    );
+    const stone = new RouteStone({
+      name: '1.test',
+      path: path.join(tempDir, '1.test.stone'),
+      guard: null,
+    });
+    const guard = new RouteStoneGuard({
+      path: path.join(tempDir, '1.test.guard'),
+      artifacts: ['1.test*.md'],
+      reviews: {
+        self: [],
+        peer: [
+          {
+            slug: 'l1-good',
+            budget: 1,
+            run: 'echo "blockers: 0"',
+            level: 1,
+          },
+          {
+            slug: 'l1-bad',
+            budget: 1,
+            run: 'bash -c "echo broke; exit 1"',
+            level: 1,
+          },
+          {
+            slug: 'l3-checker',
+            budget: 1,
+            run: 'echo "blockers: 0"',
+            level: 3,
+          },
+        ],
+      },
+      judges: [],
+      protect: [],
+    });
+
+    beforeAll(async () => {
+      await fs.mkdir(tempDir, { recursive: true });
+    });
+
+    afterAll(async () => {
+      await fs.rm(tempDir, { recursive: true, force: true });
+    });
+
+    when('[t0] l1 has mix of passed and malfunction', () => {
+      const reviews = useThen('reviews run', async () => {
+        return runStoneGuardReviews(
+          { stone, guard, hash: 'partiall1', iteration: 1, route: tempDir },
+          noopContext,
+        );
+      });
+
+      then('l1-good passes', () => {
+        const good = reviews.artifacts.find((a) => a.path?.includes('l1-good'));
+        expect(good?.exitClass).toEqual('passed');
+      });
+
+      then('l1-bad malfunctions', () => {
+        const bad = reviews.artifacts.find((a) => a.path?.includes('l1-bad'));
+        expect(bad?.exitClass).toEqual('malfunction');
+      });
+
+      then('l3 still executes', () => {
+        const l3 = reviews.artifacts.find((a) =>
+          a.path?.includes('l3-checker'),
+        );
+        expect(l3).toBeDefined();
+        expect(l3?.exitClass).toEqual('passed');
+      });
+
+      then('snapshot matches', () => {
+        const sanitized = reviews.artifacts.map((r) => ({
+          ...r,
+          path: r.path?.replace(tempDir, '<route>'),
+        }));
+        expect(sanitized).toMatchSnapshot();
+      });
+    });
+  });
+
+  given(
+    '[case20] three-level cascade: l1 malfunction, l2 constraint, l3 runs',
+    () => {
+      const tempDir = path.join(
+        os.tmpdir(),
+        `test-reviews-3level-cascade-${Date.now()}`,
+      );
+      const stone = new RouteStone({
+        name: '1.test',
+        path: path.join(tempDir, '1.test.stone'),
+        guard: null,
+      });
+      const guard = new RouteStoneGuard({
+        path: path.join(tempDir, '1.test.guard'),
+        artifacts: ['1.test*.md'],
+        reviews: {
+          self: [],
+          peer: [
+            {
+              slug: 'l1-malfunction',
+              budget: 1,
+              run: 'bash -c "echo l1 broke; exit 1"',
+              level: 1,
+            },
+            {
+              slug: 'l2-constraint',
+              budget: 1,
+              run: 'bash -c "echo l2 constrained; exit 2"',
+              level: 2,
+            },
+            {
+              slug: 'l3-checker',
+              budget: 1,
+              run: 'echo "blockers: 0"',
+              level: 3,
+            },
+          ],
+        },
+        judges: [],
+        protect: [],
+      });
+
+      beforeAll(async () => {
+        await fs.mkdir(tempDir, { recursive: true });
+      });
+
+      afterAll(async () => {
+        await fs.rm(tempDir, { recursive: true, force: true });
+      });
+
+      when('[t0] l1 malfunctions and l2 hits constraint', () => {
+        const reviews = useThen('reviews run', async () => {
+          return runStoneGuardReviews(
+            {
+              stone,
+              guard,
+              hash: '3levelcascade',
+              iteration: 1,
+              route: tempDir,
+            },
+            noopContext,
+          );
+        });
+
+        then('l1 reports malfunction', () => {
+          const l1 = reviews.artifacts.find((a) =>
+            a.path?.includes('l1-malfunction'),
+          );
+          expect(l1?.exitClass).toEqual('malfunction');
+        });
+
+        then('l2 reports constraint', () => {
+          const l2 = reviews.artifacts.find((a) =>
+            a.path?.includes('l2-constraint'),
+          );
+          expect(l2?.exitClass).toEqual('constraint');
+        });
+
+        then('l3 still executes despite l1 and l2 failures', () => {
+          const l3 = reviews.artifacts.find((a) =>
+            a.path?.includes('l3-checker'),
+          );
+          expect(l3).toBeDefined();
+          expect(l3?.exitClass).toEqual('passed');
+        });
+
+        then('all three reviewers appear in artifacts', () => {
+          expect(reviews.artifacts).toHaveLength(3);
+        });
+
+        then('snapshot matches', () => {
+          const sanitized = reviews.artifacts.map((r) => ({
+            ...r,
+            path: r.path?.replace(tempDir, '<route>'),
+          }));
+          expect(sanitized).toMatchSnapshot();
+        });
+      });
+    },
+  );
+
+  given('[case21] all l1 terminal (malfunction+constraint) unlocks l3', () => {
+    const tempDir = path.join(
+      os.tmpdir(),
+      `test-reviews-all-l1-terminal-${Date.now()}`,
+    );
+    const stone = new RouteStone({
+      name: '1.test',
+      path: path.join(tempDir, '1.test.stone'),
+      guard: null,
+    });
+    const guard = new RouteStoneGuard({
+      path: path.join(tempDir, '1.test.guard'),
+      artifacts: ['1.test*.md'],
+      reviews: {
+        self: [],
+        peer: [
+          {
+            slug: 'l1-mal-1',
+            budget: 1,
+            run: 'bash -c "exit 1"',
+            level: 1,
+          },
+          {
+            slug: 'l1-mal-2',
+            budget: 1,
+            run: 'bash -c "exit 1"',
+            level: 1,
+          },
+          {
+            slug: 'l1-con-1',
+            budget: 1,
+            run: 'bash -c "exit 2"',
+            level: 1,
+          },
+          {
+            slug: 'l3-checker',
+            budget: 1,
+            run: 'echo "blockers: 0"',
+            level: 3,
+          },
+        ],
+      },
+      judges: [],
+      protect: [],
+    });
+
+    beforeAll(async () => {
+      await fs.mkdir(tempDir, { recursive: true });
+    });
+
+    afterAll(async () => {
+      await fs.rm(tempDir, { recursive: true, force: true });
+    });
+
+    when('[t0] all l1 reviewers are terminal', () => {
+      const reviews = useThen('reviews run', async () => {
+        return runStoneGuardReviews(
+          { stone, guard, hash: 'alll1term', iteration: 1, route: tempDir },
+          noopContext,
+        );
+      });
+
+      then('first l1 malfunction captured', () => {
+        const m1 = reviews.artifacts.find((a) => a.path?.includes('l1-mal-1'));
+        expect(m1?.exitClass).toEqual('malfunction');
+      });
+
+      then('second l1 malfunction captured', () => {
+        const m2 = reviews.artifacts.find((a) => a.path?.includes('l1-mal-2'));
+        expect(m2?.exitClass).toEqual('malfunction');
+      });
+
+      then('l1 constraint captured', () => {
+        const c1 = reviews.artifacts.find((a) => a.path?.includes('l1-con-1'));
+        expect(c1?.exitClass).toEqual('constraint');
+      });
+
+      then('l3 executes because all l1 are terminal', () => {
+        const l3 = reviews.artifacts.find((a) =>
+          a.path?.includes('l3-checker'),
+        );
+        expect(l3).toBeDefined();
+        expect(l3?.exitClass).toEqual('passed');
+      });
+
+      then('all four reviewers appear in artifacts', () => {
+        expect(reviews.artifacts).toHaveLength(4);
+      });
+
+      then('snapshot matches', () => {
+        const sanitized = reviews.artifacts.map((r) => ({
+          ...r,
+          path: r.path?.replace(tempDir, '<route>'),
+        }));
+        expect(sanitized).toMatchSnapshot();
+      });
+    });
+  });
 });

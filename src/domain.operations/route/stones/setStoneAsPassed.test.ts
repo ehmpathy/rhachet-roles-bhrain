@@ -1,8 +1,12 @@
+import { execSync } from 'child_process';
 import * as fs from 'fs/promises';
 import * as os from 'os';
 import * as path from 'path';
 import { getError, given, then, when } from 'test-fns';
 
+import { PassageReport } from '@src/domain.objects/Driver/PassageReport';
+
+import { setPassageReport } from '../passage/setPassageReport';
 import { setStoneAsPassed } from './setStoneAsPassed';
 
 const ASSETS_DIR = path.join(__dirname, '../.test/assets');
@@ -21,6 +25,8 @@ describe('setStoneAsPassed', () => {
       await fs.cp(path.join(ASSETS_DIR, 'route.simple'), tempDir, {
         recursive: true,
       });
+      // initialize git repo (required by getGitRepoRoot)
+      execSync('git init', { cwd: tempDir, stdio: 'ignore' });
       // create artifact for 1.vision
       await fs.writeFile(
         path.join(tempDir, '1.vision.md'),
@@ -95,6 +101,7 @@ describe('setStoneAsPassed', () => {
           `test-set-passed-reviewonly-${Date.now()}`,
         );
         await fs.mkdir(tempDir, { recursive: true });
+        execSync('git init', { cwd: tempDir, stdio: 'ignore' });
         await fs.writeFile(path.join(tempDir, '1.test.stone'), '# Test');
         await fs.writeFile(
           path.join(tempDir, '1.test.guard'),
@@ -123,6 +130,7 @@ describe('setStoneAsPassed', () => {
 
     beforeEach(async () => {
       await fs.mkdir(tempDir, { recursive: true });
+      execSync('git init', { cwd: tempDir, stdio: 'ignore' });
       await fs.writeFile(path.join(tempDir, '1.test.stone'), '# Test');
       await fs.writeFile(
         path.join(tempDir, '1.test.guard'),
@@ -158,6 +166,7 @@ describe('setStoneAsPassed', () => {
 
     beforeEach(async () => {
       await fs.mkdir(tempDir, { recursive: true });
+      execSync('git init', { cwd: tempDir, stdio: 'ignore' });
       await fs.writeFile(path.join(tempDir, '1.test.stone'), '# Test');
       await fs.writeFile(
         path.join(tempDir, '1.test.guard'),
@@ -221,6 +230,147 @@ judges:
         expect(result.emit?.stdout).toContain('review.self required');
         expect(result.emit?.stdout).toContain('review.self 2/2');
         expect(result.emit?.stdout).toContain('slug = tests-pass');
+      });
+    });
+  });
+
+  given('[case5] guard with malfunctioned reviewer', () => {
+    const tempDir = path.join(
+      os.tmpdir(),
+      `test-set-passed-malfunction-${Date.now()}`,
+    );
+
+    beforeEach(async () => {
+      await fs.mkdir(tempDir, { recursive: true });
+      execSync('git init', { cwd: tempDir, stdio: 'ignore' });
+      await fs.writeFile(path.join(tempDir, '1.test.stone'), '# Test');
+      // guard with a review that exits with code 1 (malfunction)
+      await fs.writeFile(
+        path.join(tempDir, '1.test.guard'),
+        `artifacts:
+  - "$route/1.test*.md"
+reviews:
+  peer:
+    - slug: malfunctioner
+      run: exit 1
+      budget: 1
+      level: 1
+judges:
+  - echo "passed: true"`,
+      );
+      await fs.writeFile(path.join(tempDir, '1.test.md'), '# Artifact');
+    });
+
+    afterEach(async () => {
+      await fs.rm(tempDir, { recursive: true, force: true });
+    });
+
+    when('[t0] no overrule marker', () => {
+      then('blocks due to malfunction', async () => {
+        const result = await setStoneAsPassed(
+          {
+            stone: '1.test',
+            route: tempDir,
+          },
+          noopContext,
+        );
+        expect(result.passed).toBe(false);
+        expect(result.emit?.stdout).toContain('passage = malfunction');
+      });
+    });
+
+    when('[t1] overrule marker present', () => {
+      then('passes despite malfunction (human overruled)', async () => {
+        // create overrule marker
+        await setPassageReport({
+          report: new PassageReport({
+            stone: '1.test',
+            status: 'overruled',
+          }),
+          route: tempDir,
+        });
+
+        const result = await setStoneAsPassed(
+          {
+            stone: '1.test',
+            route: tempDir,
+          },
+          noopContext,
+        );
+        // overrule should bypass malfunction
+        expect(result.passed).toBe(true);
+        expect(result.emit?.stdout).toContain('overruled');
+      });
+    });
+  });
+
+  given('[case6] guard with constrained reviewer (exit 2, blockers 0)', () => {
+    const tempDir = path.join(
+      os.tmpdir(),
+      `test-set-passed-constraint-${Date.now()}`,
+    );
+
+    beforeEach(async () => {
+      await fs.mkdir(tempDir, { recursive: true });
+      execSync('git init', { cwd: tempDir, stdio: 'ignore' });
+      await fs.writeFile(path.join(tempDir, '1.test.stone'), '# Test');
+      // guard with a review that exits with code 2 but reports 0 blockers (constraint)
+      await fs.writeFile(
+        path.join(tempDir, '1.test.guard'),
+        `artifacts:
+  - "$route/1.test*.md"
+reviews:
+  peer:
+    - slug: constrainer
+      run: sh -c 'echo blockers: 0; exit 2'
+      budget: 1
+      level: 1
+judges:
+  - echo "passed: true"`,
+      );
+      await fs.writeFile(path.join(tempDir, '1.test.md'), '# Artifact');
+    });
+
+    afterEach(async () => {
+      await fs.rm(tempDir, { recursive: true, force: true });
+    });
+
+    when('[t0] no overrule marker', () => {
+      then('blocks due to constraint', async () => {
+        const result = await setStoneAsPassed(
+          {
+            stone: '1.test',
+            route: tempDir,
+          },
+          noopContext,
+        );
+        expect(result.passed).toBe(false);
+        expect(result.emit?.stdout).toContain('passage = blocked');
+        expect(result.emit?.stdout).toContain('reviewer constraint');
+      });
+    });
+
+    when('[t1] overrule marker present', () => {
+      then('passes despite constraint (human overruled)', async () => {
+        // create overrule marker
+        await setPassageReport({
+          report: new PassageReport({
+            stone: '1.test',
+            status: 'overruled',
+          }),
+          route: tempDir,
+        });
+
+        const result = await setStoneAsPassed(
+          {
+            stone: '1.test',
+            route: tempDir,
+          },
+          noopContext,
+        );
+        // overrule should bypass constraint
+        expect(result.passed).toBe(true);
+        expect(result.emit?.stdout).toContain('overruled');
       });
     });
   });
