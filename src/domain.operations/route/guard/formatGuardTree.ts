@@ -249,12 +249,26 @@ const asReviewerTreeStateFromMeter = (input: {
 };
 
 /**
+ * .what = detects a terminal reviewer failure (malfunction or constraint)
+ * .why = these states should offer overrule guidance, like exhausted offers
+ *        budget options — a broken reviewer must not permablock the driver
+ */
+const isTerminalReviewerFailure = (
+  passage: 'allowed' | 'overruled' | 'blocked' | 'malfunction',
+  reason: string,
+): boolean => {
+  if (passage === 'malfunction') return true;
+  if (passage === 'blocked' && reason.includes('constraint')) return true;
+  return false;
+};
+
+/**
  * .what = formats guard results as a tree string with box-draw characters
  * .why = enables human-readable cli output for guard execution results
  */
 export const formatGuardTree = (input: {
   stone: string;
-  passage: 'allowed' | 'blocked' | 'malfunction';
+  passage: 'allowed' | 'overruled' | 'blocked' | 'malfunction';
   note: string | null;
   reason: string | null;
   guard: {
@@ -311,9 +325,12 @@ export const formatGuardTree = (input: {
     ) {
       lines.push(`   ├─ passage = ${passageLabel}`);
 
-      // detect budget exhaustion to add options hint
+      // detect cases that append an options block (reason then needs ├─, not └─)
       const isBudgetExhausted = input.reason.includes('budget exhausted');
-      const reasonConnector = isBudgetExhausted ? '├─' : '└─';
+      const hasOptions =
+        isBudgetExhausted ||
+        isTerminalReviewerFailure(input.passage, input.reason);
+      const reasonConnector = hasOptions ? '├─' : '└─';
       lines.push(`   ${reasonConnector} reason = ${input.reason}`);
 
       if (isBudgetExhausted) {
@@ -338,6 +355,16 @@ export const formatGuardTree = (input: {
         lines.push(
           `         └─ rhx route.stone.set --stone ${input.stone} --as approved`,
         );
+      } else if (isTerminalReviewerFailure(input.passage, input.reason)) {
+        // add overrule guidance for terminal reviewer failures (malfunction, constraint)
+        const noun =
+          input.passage === 'malfunction' ? 'malfunction' : 'constraint';
+        lines.push(`   └─ options`);
+        lines.push(`      ├─ overrule the ${noun}`);
+        lines.push(
+          `      │  └─ rhx route.stone.set --stone ${input.stone} --as overruled`,
+        );
+        lines.push(`      └─ or fix the reviewer, then retry`);
       }
     } else {
       lines.push(`   └─ passage = ${passageLabel}`);
@@ -378,6 +405,18 @@ export const formatGuardTree = (input: {
       lines.push(
         `   │     └─ rhx route.stone.set --stone ${input.stone} --as approved`,
       );
+    } else if (isTerminalReviewerFailure(input.passage, input.reason)) {
+      // add overrule guidance for terminal reviewer failures (malfunction, constraint)
+      // .why = a broken reviewer must not permablock the driver; the human can
+      //        overrule it or fix the reviewer, just like exhausted offers options
+      const noun =
+        input.passage === 'malfunction' ? 'malfunction' : 'constraint';
+      lines.push(`   ├─ options`);
+      lines.push(`   │  ├─ overrule the ${noun}`);
+      lines.push(
+        `   │  │  └─ rhx route.stone.set --stone ${input.stone} --as overruled`,
+      );
+      lines.push(`   │  └─ or fix the reviewer, then retry`);
     }
   }
 

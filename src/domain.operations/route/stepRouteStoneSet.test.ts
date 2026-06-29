@@ -1,3 +1,4 @@
+import { execSync } from 'child_process';
 import * as fs from 'fs/promises';
 import * as os from 'os';
 import * as path from 'path';
@@ -21,6 +22,8 @@ describe('stepRouteStoneSet', () => {
       await fs.cp(path.join(ASSETS_DIR, 'route.simple'), tempDir, {
         recursive: true,
       });
+      // initialize git repo (required by getGitRepoRoot)
+      execSync('git init', { cwd: tempDir, stdio: 'ignore' });
       // create artifact for 1.vision
       await fs.writeFile(path.join(tempDir, '1.vision.md'), '# Vision');
     });
@@ -69,6 +72,8 @@ describe('stepRouteStoneSet', () => {
       await fs.cp(path.join(ASSETS_DIR, 'route.simple'), tempDir, {
         recursive: true,
       });
+      // initialize git repo (required by getGitRepoRoot)
+      execSync('git init', { cwd: tempDir, stdio: 'ignore' });
     });
 
     afterEach(async () => {
@@ -113,6 +118,8 @@ describe('stepRouteStoneSet', () => {
       await fs.cp(path.join(ASSETS_DIR, 'route.simple'), tempDir, {
         recursive: true,
       });
+      // initialize git repo (required by getGitRepoRoot)
+      execSync('git init', { cwd: tempDir, stdio: 'ignore' });
     });
 
     afterEach(async () => {
@@ -170,6 +177,8 @@ describe('stepRouteStoneSet', () => {
       await fs.cp(path.join(ASSETS_DIR, 'route.review.self'), tempDir, {
         recursive: true,
       });
+      // initialize git repo (required by getGitRepoRoot)
+      execSync('git init', { cwd: tempDir, stdio: 'ignore' });
       // create artifact for 1.vision
       await fs.writeFile(path.join(tempDir, '1.vision.md'), '# Vision');
       // create articulation file for 1.vision.r1.all-done (required by file presence check)
@@ -296,6 +305,8 @@ describe('stepRouteStoneSet', () => {
       await fs.cp(path.join(ASSETS_DIR, 'route.simple'), tempDir, {
         recursive: true,
       });
+      // initialize git repo (required by getGitRepoRoot)
+      execSync('git init', { cwd: tempDir, stdio: 'ignore' });
       // create artifact for 1.vision
       await fs.writeFile(path.join(tempDir, '1.vision.md'), '# Vision');
     });

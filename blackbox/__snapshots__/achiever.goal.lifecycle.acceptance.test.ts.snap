@@ -55,7 +55,7 @@ exports[`achiever.goal.lifecycle.acceptance given: [case1] goal status transitio
    │  │     └─
    │  └─ source = peer:human
    │
-   ├─ path = .goals/[BRANCH]/[OFFSET].fix-auth-test.goal.yaml
+   ├─ path = .goals/[BRANCH]/00000-1.fix-auth-test.goal.yaml
    └─ persisted
 "
 `;
@@ -140,7 +140,7 @@ exports[`achiever.goal.lifecycle.acceptance given: [case1] goal status transitio
    │  │     └─
    │  └─ source = peer:human
    │
-   ├─ path = .goals/[BRANCH]/[OFFSET].fix-auth-test.goal.yaml
+   ├─ path = .goals/[BRANCH]/00000-1.fix-auth-test.goal.yaml
    └─ persisted
 "
 `;
@@ -225,7 +225,7 @@ exports[`achiever.goal.lifecycle.acceptance given: [case1] goal status transitio
    │  │     └─
    │  └─ source = peer:human
    │
-   ├─ path = .goals/[BRANCH]/[OFFSET].fix-auth-test.goal.yaml
+   ├─ path = .goals/[BRANCH]/00000-1.fix-auth-test.goal.yaml
    └─ persisted
 "
 `;

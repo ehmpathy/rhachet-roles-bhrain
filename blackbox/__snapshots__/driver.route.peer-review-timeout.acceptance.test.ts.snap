@@ -13,6 +13,10 @@ exports[`driver.route.peer-review-timeout.acceptance given: [journey] review tim
    ├─ stone = 1.execute
    ├─ passage = malfunction
    ├─ reason = reviewer or judge malfunctioned
+   ├─ options
+   │  ├─ overrule the malfunction
+   │  │  └─ rhx route.stone.set --stone 1.execute --as overruled
+   │  └─ or fix the reviewer, then retry
    └─ guard
       ├─ artifacts
       │   └─ src/**/*.ts

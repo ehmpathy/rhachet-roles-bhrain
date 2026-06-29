@@ -33,6 +33,26 @@ describe('isReviewPeerVerdictTerminal', () => {
       });
     });
   });
+
+  given('[case3] malfunction verdict', () => {
+    when('[t0] verdict is malfunction', () => {
+      then('returns true (malfunction is terminal for tier escalation)', () => {
+        // .why = broken reviewers should not block tier escalation
+        // a malfunctioned reviewer cannot proceed without external intervention
+        expect(isReviewPeerVerdictTerminal('malfunction')).toBe(true);
+      });
+    });
+  });
+
+  given('[case4] constraint verdict', () => {
+    when('[t0] verdict is constraint', () => {
+      then('returns true (constraint is terminal for tier escalation)', () => {
+        // .why = constrained reviewers (exit 2) should not block tier escalation
+        // a constrained reviewer cannot proceed without external intervention
+        expect(isReviewPeerVerdictTerminal('constraint')).toBe(true);
+      });
+    });
+  });
 });
 
 describe('isReviewPeerLevelTerminal', () => {
@@ -198,6 +218,80 @@ describe('isReviewPeerLevelTerminal', () => {
           { level: 1, verdict: 'queued' as const },
         ];
         expect(isReviewPeerLevelTerminal({ reviewers, level: 1 })).toBe(false);
+      });
+    });
+  });
+
+  given('[case8] malfunctioned reviewers at level', () => {
+    when('[t0] single reviewer malfunctioned', () => {
+      then('returns true (malfunction is terminal for tier escalation)', () => {
+        // .why = broken reviewer should not block higher tiers from run
+        const result = isReviewPeerLevelTerminal({
+          reviewers: [{ level: 1, verdict: 'malfunction' }],
+          level: 1,
+        });
+        expect(result).toBe(true);
+      });
+    });
+
+    when('[t1] malfunctioned among approved', () => {
+      then('returns true', () => {
+        const result = isReviewPeerLevelTerminal({
+          reviewers: [
+            { level: 1, verdict: 'approved' },
+            { level: 1, verdict: 'malfunction' },
+          ],
+          level: 1,
+        });
+        expect(result).toBe(true);
+      });
+    });
+
+    when('[t2] l1 malfunctioned, l2 queued', () => {
+      then('l1 terminal allows l2 to proceed', () => {
+        const reviewers = [
+          { level: 1, verdict: 'malfunction' as const },
+          { level: 2, verdict: 'queued' as const },
+        ];
+        // l1 is terminal (malfunction should not block l2)
+        expect(isReviewPeerLevelTerminal({ reviewers, level: 1 })).toBe(true);
+      });
+    });
+  });
+
+  given('[case9] constrained reviewers at level', () => {
+    when('[t0] single reviewer constrained', () => {
+      then('returns true (constraint is terminal for tier escalation)', () => {
+        // .why = constrained reviewer should not block higher tiers from run
+        const result = isReviewPeerLevelTerminal({
+          reviewers: [{ level: 1, verdict: 'constraint' }],
+          level: 1,
+        });
+        expect(result).toBe(true);
+      });
+    });
+
+    when('[t1] constrained among approved', () => {
+      then('returns true', () => {
+        const result = isReviewPeerLevelTerminal({
+          reviewers: [
+            { level: 1, verdict: 'approved' },
+            { level: 1, verdict: 'constraint' },
+          ],
+          level: 1,
+        });
+        expect(result).toBe(true);
+      });
+    });
+
+    when('[t2] l1 constrained, l2 queued', () => {
+      then('l1 terminal allows l2 to proceed', () => {
+        const reviewers = [
+          { level: 1, verdict: 'constraint' as const },
+          { level: 2, verdict: 'queued' as const },
+        ];
+        // l1 is terminal (constraint should not block l2)
+        expect(isReviewPeerLevelTerminal({ reviewers, level: 1 })).toBe(true);
       });
     });
   });

@@ -839,6 +839,104 @@ describe('formatGuardTree', () => {
       );
     },
   );
+
+  given('[case17] malfunction passage — offers overrule guidance', () => {
+    when('[t0] a reviewer malfunctioned', () => {
+      then('output offers overrule the malfunction option', () => {
+        const result = formatGuardTree({
+          stone: '1.feature',
+          passage: 'malfunction',
+          note: null,
+          reason: 'reviewer or judge malfunctioned',
+          guard: {
+            artifactFiles: ['1.feature.md'],
+            reviews: [
+              {
+                index: 1,
+                cmd: 'basic-checker',
+                cached: false,
+                durationSec: 0.0,
+                blockers: 0,
+                nitpicks: 0,
+                path: '.route/1.feature.guard.review.i1.abc123.r1.md',
+                exitClass: 'malfunction',
+              },
+            ],
+            judges: [],
+          },
+        });
+        expect(result).toContain('passage = malfunction');
+        expect(result).toContain('reason = reviewer or judge malfunctioned');
+        // offers overrule guidance, just like exhausted offers budget options
+        expect(result).toContain('overrule the malfunction');
+        expect(result).toContain(
+          'rhx route.stone.set --stone 1.feature --as overruled',
+        );
+        expect(result).toContain('or fix the reviewer, then retry');
+        expect(result).toMatchSnapshot();
+      });
+    });
+  });
+
+  given('[case18] constraint passage — offers overrule guidance', () => {
+    when('[t0] a reviewer hit a constraint', () => {
+      then('output offers overrule the constraint option', () => {
+        const result = formatGuardTree({
+          stone: '1.feature',
+          passage: 'blocked',
+          note: null,
+          reason: 'reviewer constraint',
+          guard: {
+            artifactFiles: ['1.feature.md'],
+            reviews: [
+              {
+                index: 1,
+                cmd: 'basic-checker',
+                cached: false,
+                durationSec: 0.0,
+                blockers: 0,
+                nitpicks: 0,
+                path: '.route/1.feature.guard.review.i1.abc123.r1.md',
+                exitClass: 'constraint',
+              },
+            ],
+            judges: [],
+          },
+        });
+        expect(result).toContain('passage = blocked');
+        expect(result).toContain('reason = reviewer constraint');
+        expect(result).toContain('overrule the constraint');
+        expect(result).toContain(
+          'rhx route.stone.set --stone 1.feature --as overruled',
+        );
+        expect(result).toContain('or fix the reviewer, then retry');
+        expect(result).toMatchSnapshot();
+      });
+    });
+  });
+
+  given(
+    '[case19] malfunction passage, no guard — offers overrule guidance',
+    () => {
+      when('[t0] malfunction with no guard data', () => {
+        then('output offers overrule the malfunction option', () => {
+          const result = formatGuardTree({
+            stone: '1.feature',
+            passage: 'malfunction',
+            note: null,
+            reason: 'reviewer or judge malfunctioned',
+            guard: null,
+          });
+          expect(result).toContain('passage = malfunction');
+          expect(result).toContain('overrule the malfunction');
+          expect(result).toContain(
+            'rhx route.stone.set --stone 1.feature --as overruled',
+          );
+          expect(result).toMatchSnapshot();
+        });
+      });
+    },
+  );
 });
 
 describe('formatReviewsMeterLines', () => {

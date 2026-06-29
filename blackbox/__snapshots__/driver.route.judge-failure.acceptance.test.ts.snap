@@ -28,6 +28,10 @@ exports[`driver.route.judge-failure.acceptance given: [case1] judge command fail
    ├─ stone = 1
    ├─ passage = malfunction
    ├─ reason = reviewer or judge malfunctioned
+   ├─ options
+   │  ├─ overrule the malfunction
+   │  │  └─ rhx route.stone.set --stone 1 --as overruled
+   │  └─ or fix the reviewer, then retry
    └─ guard
       ├─ artifacts
       │   └─ $route/1.stone*.md
@@ -66,6 +70,10 @@ exports[`driver.route.judge-failure.acceptance given: [case1] judge command fail
    ├─ stone = 1
    ├─ passage = malfunction
    ├─ reason = reviewer or judge malfunctioned
+   ├─ options
+   │  ├─ overrule the malfunction
+   │  │  └─ rhx route.stone.set --stone 1 --as overruled
+   │  └─ or fix the reviewer, then retry
    └─ guard
       ├─ artifacts
       │   └─ $route/1.stone*.md

@@ -44,12 +44,16 @@ exports[`driver.route.peer-review-exit-codes.acceptance given: [journey] exit co
    ├─ stone = 1.execute
    ├─ passage = blocked
    ├─ reason = reviewer constraint
+   ├─ options
+   │  ├─ overrule the constraint
+   │  │  └─ rhx route.stone.set --stone 1.execute --as overruled
+   │  └─ or fix the reviewer, then retry
    └─ guard
       ├─ artifacts
       │   └─ src/**/*.ts
       ├─ reviews
       │   └─ r1: exit-code-reviewer (l1, 1/2)
-      │       ├─ approved [TIME]
+      │       ├─ constraint 0.0s
       │       ├─ 0 blockers ✓
       │       ├─ 0 nitpicks ✓
       │       └─ review: .reviews/peer/1.execute._.review.i2.dfc5faff83ea2fcb55.r1._.given.by_peer.exit-code-reviewer.md
@@ -72,6 +76,10 @@ exports[`driver.route.peer-review-exit-codes.acceptance given: [journey] exit co
    ├─ stone = 1.execute
    ├─ passage = malfunction
    ├─ reason = reviewer or judge malfunctioned
+   ├─ options
+   │  ├─ overrule the malfunction
+   │  │  └─ rhx route.stone.set --stone 1.execute --as overruled
+   │  └─ or fix the reviewer, then retry
    └─ guard
       ├─ artifacts
       │   └─ src/**/*.ts

@@ -31,6 +31,7 @@ import {
   isReviewPeerVerdictTerminal,
 } from '../guard/reviewPeerMeter/isReviewPeerLevelTerminal';
 import { runStoneGuardReviews } from '../guard/runStoneGuardReviews';
+import { getOneStoneGuardOverrule } from '../judges/getOneStoneGuardOverrule';
 import { runStoneGuardJudges } from '../judges/runStoneGuardJudges';
 import { getOnePassageReport } from '../passage/getOnePassageReport';
 import { setPassageReport } from '../passage/setPassageReport';
@@ -397,6 +398,12 @@ export const setStoneAsPassed = async (
         )
       : [];
 
+  // check for human overrule marker (bypasses malfunction and constraint handlers)
+  const overrule = await getOneStoneGuardOverrule({
+    stone: stoneMatched,
+    route: input.route,
+  });
+
   // check for malfunctions (exit code != 0 and != 2)
   const reviewMalfunctions = reviewArtifacts.filter(
     (r) => r.exitClass === 'malfunction',
@@ -407,7 +414,8 @@ export const setStoneAsPassed = async (
   const hasMalfunction =
     reviewMalfunctions.length > 0 || judgeMalfunctions.length > 0;
 
-  if (hasMalfunction) {
+  // .note = overrule bypasses malfunction handler (human explicitly overrode)
+  if (hasMalfunction && !overrule) {
     // record malfunction status in passage.jsonl
     await setPassageReport({
       report: new PassageReport({
@@ -496,7 +504,8 @@ export const setStoneAsPassed = async (
   );
   const hasConstraint = reviewConstraints.length > 0;
 
-  if (hasConstraint) {
+  // .note = overrule bypasses constraint handler (human explicitly overrode)
+  if (hasConstraint && !overrule) {
     // record blocked status in passage.jsonl
     await setPassageReport({
       report: new PassageReport({
@@ -597,6 +606,10 @@ export const setStoneAsPassed = async (
       route: input.route,
     });
 
+    // determine passage reason
+    // .note = if overrule marker exists, passage was enabled by overrule
+    const passageReason = overrule ? 'overruled' : 'allowed';
+
     return {
       passed: true,
       refs: {
@@ -608,7 +621,7 @@ export const setStoneAsPassed = async (
           operation: 'route.stone.set',
           stone: stoneMatched.name,
           action: 'passed',
-          passage: 'allowed',
+          passage: passageReason,
           guard: guardData,
         }),
       },

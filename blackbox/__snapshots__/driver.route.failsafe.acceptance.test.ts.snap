@@ -117,6 +117,10 @@ exports[`driver.route.failsafe.acceptance given: [case3] reviewer exits with cod
    ├─ stone = 3.review-malfunction
    ├─ passage = malfunction
    ├─ reason = reviewer or judge malfunctioned
+   ├─ options
+   │  ├─ overrule the malfunction
+   │  │  └─ rhx route.stone.set --stone 3.review-malfunction --as overruled
+   │  └─ or fix the reviewer, then retry
    └─ guard
       ├─ artifacts
       │   └─ $route/3.review-malfunction*.md
@@ -232,6 +236,10 @@ exports[`driver.route.failsafe.acceptance given: [case6] judge exits with code 1
    ├─ stone = 6.judge-malfunction
    ├─ passage = malfunction
    ├─ reason = reviewer or judge malfunctioned
+   ├─ options
+   │  ├─ overrule the malfunction
+   │  │  └─ rhx route.stone.set --stone 6.judge-malfunction --as overruled
+   │  └─ or fix the reviewer, then retry
    └─ guard
       ├─ artifacts
       │   └─ $route/6.judge-malfunction*.md
@@ -306,6 +314,10 @@ exports[`driver.route.failsafe.acceptance given: [case7] both reviewer and judge
    ├─ stone = 7.both-malfunction
    ├─ passage = malfunction
    ├─ reason = reviewer or judge malfunctioned
+   ├─ options
+   │  ├─ overrule the malfunction
+   │  │  └─ rhx route.stone.set --stone 7.both-malfunction --as overruled
+   │  └─ or fix the reviewer, then retry
    └─ guard
       ├─ artifacts
       ├─ reviews

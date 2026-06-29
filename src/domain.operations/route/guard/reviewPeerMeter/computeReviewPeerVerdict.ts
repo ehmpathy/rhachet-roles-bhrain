@@ -18,7 +18,8 @@ export type ReviewPeerVerdict =
   | 'rejected'
   | 'approved'
   | 'exhausted'
-  | 'malfunction';
+  | 'malfunction'
+  | 'constraint';
 
 export const computeReviewPeerVerdict = (input: {
   rounds: number;
@@ -40,6 +41,15 @@ export const computeReviewPeerVerdict = (input: {
   // malfunction takes precedence over all other checks
   // .why = review process failed, blockers/nitpicks are not meaningful
   if (input.exitClass === 'malfunction') return 'malfunction';
+
+  // genuine constraint: exit 2 with no blockers (e.g., absent api key, absent rule file)
+  // .why = reviewer could not run a real review; cannot proceed without external action
+  // .note = constraint is terminal for tier escalation (l2/l3 can run even if l1 constrained)
+  // .note = exit 2 WITH blockers means the reviewer ran and found issues — that is a
+  //         normal rejection (non-terminal), not a genuine constraint. this matches the
+  //         detection in setStoneAsPassed (exitClass === 'constraint' && blockers === 0).
+  if (input.exitClass === 'constraint' && input.blockers === 0)
+    return 'constraint';
 
   // defaults match reviewed? judge defaults
   const allowBlockers = input.allowBlockers ?? 0;

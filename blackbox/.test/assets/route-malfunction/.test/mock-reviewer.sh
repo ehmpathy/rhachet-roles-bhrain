@@ -24,16 +24,18 @@ if [[ -f "$ROUTE_DIR/.test/reviewer-should-malfunction" ]]; then
   exit 1
 fi
 
-# check if we should constraint (exit 2 = constraint)
+# check if we should constraint (exit 2 with 0 blockers = genuine constraint)
+# .note = a genuine constraint (e.g., absent api key, absent rule file) emits NO
+#         blockers — the reviewer could not run a real review. exit 2 WITH blockers
+#         would instead be a normal rejection (see computeReviewPeerVerdict).
 if [[ -f "$ROUTE_DIR/.test/reviewer-should-constraint" ]]; then
   echo "---"
-  echo "blockers: 1"
+  echo "blockers: 0"
   echo "nitpicks: 0"
   echo "---"
-  echo "review found constraints (mock)"
+  echo "review could not run (mock constraint)"
   echo ""
-  echo "## blockers"
-  echo "- mock constraint: create .test/reviewer-should-pass to pass"
+  echo "reviewer hit a constraint and cannot proceed without external action"
   exit 2
 fi
 

@@ -7,7 +7,7 @@ exports[`driver.route.artifact-expansion.acceptance given: [case1] guard with $r
    │   ├─ approved [TIME]
    │   ├─ 0 blockers ✓
    │   ├─ 0 nitpicks ✓
-   │   └─ review: .route/1.vision.guard.review.i1.19bdec249480a7a036.r1.md
+   │   └─ review: .reviews/peer/1.vision._.review.i1.19bdec249480a7a036.r1._.given.by_peer.bash.md
    │
    └─ ✗ judge.1 - blocked [TIME]
 
@@ -23,7 +23,7 @@ exports[`driver.route.artifact-expansion.acceptance given: [case1] guard with $r
       │       ├─ approved [TIME]
       │       ├─ 0 blockers ✓
       │       ├─ 0 nitpicks ✓
-      │       └─ review: .route/1.vision.guard.review.i1.19bdec249480a7a036.r1.md
+      │       └─ review: .reviews/peer/1.vision._.review.i1.19bdec249480a7a036.r1._.given.by_peer.bash.md
       └─ judges
           └─ j1: rhx route.stone.judge --mechanism approved? --stone $stone --route $route
               ├─ finished [TIME] ✗
@@ -38,7 +38,7 @@ exports[`driver.route.artifact-expansion.acceptance given: [case1] guard with $r
    │   ├─ approved, cached
    │   ├─ 0 blockers ✓
    │   ├─ 0 nitpicks ✓
-   │   └─ review: .route/1.vision.guard.review.i1.19bdec249480a7a036.r1.md
+   │   └─ review: .reviews/peer/1.vision._.review.i1.19bdec249480a7a036.r1._.given.by_peer.bash.md
    │
    └─ ✓ judge.1 - allowed [TIME]
 
@@ -53,7 +53,7 @@ exports[`driver.route.artifact-expansion.acceptance given: [case1] guard with $r
    │  │       ├─ approved, cached
    │  │       ├─ 0 blockers ✓
    │  │       ├─ 0 nitpicks ✓
-   │  │       └─ review: .route/1.vision.guard.review.i1.19bdec249480a7a036.r1.md
+   │  │       └─ review: .reviews/peer/1.vision._.review.i1.19bdec249480a7a036.r1._.given.by_peer.bash.md
    │  └─ judges
    │      └─ j1: rhx route.stone.judge --mechanism approved? --stone $stone --route $route
    │          └─ finished [TIME] ✓
@@ -70,7 +70,7 @@ exports[`driver.route.artifact-expansion.acceptance given: [case2] guard with $r
    │   ├─ approved [TIME]
    │   ├─ 0 blockers ✓
    │   ├─ 0 nitpicks ✓
-   │   └─ review: .behavior/test-feature/.route/1.vision.guard.review.i1.9b72e27ac4d438845c.r1.md
+   │   └─ review: .behavior/test-feature/.reviews/peer/1.vision._.review.i1.9b72e27ac4d438845c.r1._.given.by_peer.bash.md
    │
    └─ ✗ judge.1 - blocked [TIME]
 
@@ -86,7 +86,7 @@ exports[`driver.route.artifact-expansion.acceptance given: [case2] guard with $r
       │       ├─ approved [TIME]
       │       ├─ 0 blockers ✓
       │       ├─ 0 nitpicks ✓
-      │       └─ review: .behavior/test-feature/.route/1.vision.guard.review.i1.9b72e27ac4d438845c.r1.md
+      │       └─ review: .behavior/test-feature/.reviews/peer/1.vision._.review.i1.9b72e27ac4d438845c.r1._.given.by_peer.bash.md
       └─ judges
           └─ j1: rhx route.stone.judge --mechanism approved? --stone $stone --route $route
               ├─ finished [TIME] ✗
@@ -101,7 +101,7 @@ exports[`driver.route.artifact-expansion.acceptance given: [case2] guard with $r
    │   ├─ approved, cached
    │   ├─ 0 blockers ✓
    │   ├─ 0 nitpicks ✓
-   │   └─ review: .behavior/test-feature/.route/1.vision.guard.review.i1.9b72e27ac4d438845c.r1.md
+   │   └─ review: .behavior/test-feature/.reviews/peer/1.vision._.review.i1.9b72e27ac4d438845c.r1._.given.by_peer.bash.md
    │
    └─ ✓ judge.1 - allowed [TIME]
 
@@ -116,7 +116,7 @@ exports[`driver.route.artifact-expansion.acceptance given: [case2] guard with $r
    │  │       ├─ approved, cached
    │  │       ├─ 0 blockers ✓
    │  │       ├─ 0 nitpicks ✓
-   │  │       └─ review: .behavior/test-feature/.route/1.vision.guard.review.i1.9b72e27ac4d438845c.r1.md
+   │  │       └─ review: .behavior/test-feature/.reviews/peer/1.vision._.review.i1.9b72e27ac4d438845c.r1._.given.by_peer.bash.md
    │  └─ judges
    │      └─ j1: rhx route.stone.judge --mechanism approved? --stone $stone --route $route
    │          └─ finished [TIME] ✓

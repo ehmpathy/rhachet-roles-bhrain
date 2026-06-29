@@ -12,17 +12,24 @@ export const isReviewPeerVerdictExhausted = (
  * .what = checks if a single verdict is terminal
  * .why = single source of truth for terminal verdict definition
  *
- * terminal verdicts: approved | exhausted
+ * terminal verdicts: approved | exhausted | malfunction | constraint
+ *
+ * .note = malfunction and constraint are terminal because:
+ *   - a broken/constrained reviewer cannot proceed without external intervention
+ *   - broken reviewers should not block tier escalation (l2/l3 can run)
+ *   - human can overrule if needed
  */
 export const isReviewPeerVerdictTerminal = (
   verdict: ReviewPeerVerdict,
-): boolean => verdict === 'approved' || isReviewPeerVerdictExhausted(verdict);
+): boolean =>
+  verdict === 'approved' ||
+  verdict === 'malfunction' ||
+  verdict === 'constraint' ||
+  isReviewPeerVerdictExhausted(verdict);
 
 /**
  * .what = checks if all reviewers at a level are terminal
  * .why = determines if higher levels can be unlocked
- *
- * terminal verdicts: approved | exhausted
  */
 export const isReviewPeerLevelTerminal = (input: {
   reviewers: Array<{ level: number; verdict: ReviewPeerVerdict }>;
