@@ -1,0 +1,25 @@
+# guard for execution stone (from vision - nano size)
+# includes standardized self-review frame
+
+artifacts:
+  # track execution progress
+  - "$route/5.1.execution.from_vision.yield.md"
+  # track actual implementation in src/
+  - "src/**/*"
+
+reviews:
+  peer:
+    # --- level 3: expensive reviewers (run after level 1 is terminal) ---
+
+    - slug: enroll-impl-behavior-intent
+      run: $rhx enroll claude --model sonnet --roles behaver,architect,mechanic -p 'review the current implementation for omissions or divergences from the wished and envisioned behavioral intent. in particular flag any ergonomic friction that is unaddressed or friction hazards that are not clearly covered with acceptance tests and snaps'
+      budget: 3
+      level: 3
+
+    - slug: enroll-impl-arch-defects
+      run: $rhx enroll claude --model sonnet --roles behaver,architect,mechanic -p 'review the current implementation for architectural defects and omissions; opports to decompose for recompose, prevent scope leaks, and eliminate maintenance and behavior hazards structurally'
+      budget: 3
+      level: 3
+
+judges:
+  - $rhachet run --repo bhrain --skill route.stone.judge --mechanism reviewed? --stone $stone --route $route --allow-blockers 0 --allow-nitpicks 3
