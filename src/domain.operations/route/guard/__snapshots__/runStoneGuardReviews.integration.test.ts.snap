@@ -33,7 +33,7 @@ nitpicks: 1
 review output
 ",
     "stone": {
-      "path": "/tmp/test-reviews-1782679208302/1.test.stone",
+      "path": "<route>/1.test.stone",
     },
   },
 ]
@@ -84,7 +84,7 @@ exports[`runStoneGuardReviews given: [case2] guard with multiple review commands
 nitpicks: 0
 ",
     "stone": {
-      "path": "/tmp/test-reviews-multi-1782679208303/1.test.stone",
+      "path": "<route>/1.test.stone",
     },
   },
   {
@@ -102,7 +102,7 @@ nitpicks: 0
 nitpicks: 2
 ",
     "stone": {
-      "path": "/tmp/test-reviews-multi-1782679208303/1.test.stone",
+      "path": "<route>/1.test.stone",
     },
   },
 ]
@@ -139,7 +139,7 @@ exports[`runStoneGuardReviews given: [case3] review exits with code 0 (passed) w
 review passed
 ",
     "stone": {
-      "path": "/tmp/test-reviews-exit0-1782679208304/1.test.stone",
+      "path": "<route>/1.test.stone",
     },
   },
 ]
@@ -179,7 +179,7 @@ exports[`runStoneGuardReviews given: [case4] review exits with code 2 (constrain
 constraint failure
 ",
     "stone": {
-      "path": "/tmp/test-reviews-exit2-1782679208304/1.test.stone",
+      "path": "<route>/1.test.stone",
     },
   },
 ]
@@ -220,7 +220,7 @@ exports[`runStoneGuardReviews given: [case5] review exits with code 1 (malfuncti
     "stdout": "stdout output
 ",
     "stone": {
-      "path": "/tmp/test-reviews-exit1-1782679208304/1.test.stone",
+      "path": "<route>/1.test.stone",
     },
   },
 ]
@@ -259,7 +259,7 @@ nitpicks: 0
 marker found at <route-path>
 ",
     "stone": {
-      "path": "/tmp/test-reviews-route-1782679208305/1.test.stone",
+      "path": "<route>/1.test.stone",
     },
   },
 ]
@@ -298,7 +298,7 @@ nitpicks: 0
 rhx=<repo-root>/node_modules/.bin/rhx
 ",
     "stone": {
-      "path": "/tmp/test-reviews-rhx-1782679208305/1.test.stone",
+      "path": "<route>/1.test.stone",
     },
   },
 ]
@@ -337,379 +337,7 @@ nitpicks: 0
 rhachet=<repo-root>/node_modules/.bin/rhachet
 ",
     "stone": {
-      "path": "/tmp/test-reviews-rhachet-1782679208305/1.test.stone",
-    },
-  },
-]
-`;
-
-exports[`runStoneGuardReviews given: [case15] l1 malfunction does not block l3 execution when: [t0] l1 reviewer malfunctions then: snapshot matches 1`] = `
-[
-  {
-    "blockers": 0,
-    "durationMs": null,
-    "exitClass": "malfunction",
-    "exitCode": 1,
-    "hash": "tierescalate",
-    "index": 1,
-    "iteration": 1,
-    "nitpicks": 0,
-    "path": "<route>/.reviews/peer/1.test._.review.i1.tierescalate.r1._.given.by_peer.l1-breaker.md",
-    "stderr": "",
-    "stdout": "l1 broke
-",
-    "stone": {
-      "path": "/tmp/test-reviews-tier-escalation-1782679208308/1.test.stone",
-    },
-  },
-  {
-    "blockers": 0,
-    "durationMs": null,
-    "exitClass": "passed",
-    "exitCode": 0,
-    "hash": "tierescalate",
-    "index": 2,
-    "iteration": 1,
-    "nitpicks": 0,
-    "path": "<route>/.reviews/peer/1.test._.review.i1.tierescalate.r2._.given.by_peer.l3-checker.md",
-    "stderr": "",
-    "stdout": "blockers: 0
-",
-    "stone": {
-      "path": "/tmp/test-reviews-tier-escalation-1782679208308/1.test.stone",
-    },
-  },
-]
-`;
-
-exports[`runStoneGuardReviews given: [case16] l1 constraint does not block l3 execution when: [t0] l1 reviewer hits constraint then: snapshot matches 1`] = `
-[
-  {
-    "blockers": 0,
-    "durationMs": null,
-    "exitClass": "constraint",
-    "exitCode": 2,
-    "hash": "tierconstraint",
-    "index": 1,
-    "iteration": 1,
-    "nitpicks": 0,
-    "path": "<route>/.reviews/peer/1.test._.review.i1.tierconstraint.r1._.given.by_peer.l1-constrained.md",
-    "stderr": "",
-    "stdout": "blockers: 0
-",
-    "stone": {
-      "path": "/tmp/test-reviews-tier-constraint-1782679208308/1.test.stone",
-    },
-  },
-  {
-    "blockers": 0,
-    "durationMs": null,
-    "exitClass": "passed",
-    "exitCode": 0,
-    "hash": "tierconstraint",
-    "index": 2,
-    "iteration": 1,
-    "nitpicks": 0,
-    "path": "<route>/.reviews/peer/1.test._.review.i1.tierconstraint.r2._.given.by_peer.l3-checker.md",
-    "stderr": "",
-    "stdout": "blockers: 0
-",
-    "stone": {
-      "path": "/tmp/test-reviews-tier-constraint-1782679208308/1.test.stone",
-    },
-  },
-]
-`;
-
-exports[`runStoneGuardReviews given: [case17] multiple l1 malfunctions do not block l3 execution when: [t0] multiple l1 reviewers malfunction then: snapshot matches 1`] = `
-[
-  {
-    "blockers": 0,
-    "durationMs": null,
-    "exitClass": "malfunction",
-    "exitCode": 1,
-    "hash": "multil1mal",
-    "index": 1,
-    "iteration": 1,
-    "nitpicks": 0,
-    "path": "<route>/.reviews/peer/1.test._.review.i1.multil1mal.r1._.given.by_peer.l1-breaker-a.md",
-    "stderr": "",
-    "stdout": "l1-a broke
-",
-    "stone": {
-      "path": "/tmp/test-reviews-multi-l1-malfunction-1782679208308/1.test.stone",
-    },
-  },
-  {
-    "blockers": 0,
-    "durationMs": null,
-    "exitClass": "malfunction",
-    "exitCode": 1,
-    "hash": "multil1mal",
-    "index": 2,
-    "iteration": 1,
-    "nitpicks": 0,
-    "path": "<route>/.reviews/peer/1.test._.review.i1.multil1mal.r2._.given.by_peer.l1-breaker-b.md",
-    "stderr": "",
-    "stdout": "l1-b broke
-",
-    "stone": {
-      "path": "/tmp/test-reviews-multi-l1-malfunction-1782679208308/1.test.stone",
-    },
-  },
-  {
-    "blockers": 0,
-    "durationMs": null,
-    "exitClass": "passed",
-    "exitCode": 0,
-    "hash": "multil1mal",
-    "index": 3,
-    "iteration": 1,
-    "nitpicks": 0,
-    "path": "<route>/.reviews/peer/1.test._.review.i1.multil1mal.r3._.given.by_peer.l3-checker.md",
-    "stderr": "",
-    "stdout": "blockers: 0
-",
-    "stone": {
-      "path": "/tmp/test-reviews-multi-l1-malfunction-1782679208308/1.test.stone",
-    },
-  },
-]
-`;
-
-exports[`runStoneGuardReviews given: [case18] mixed l1 terminal states (malfunction + constraint) do not block l3 when: [t0] l1 has both malfunction and constraint then: snapshot matches 1`] = `
-[
-  {
-    "blockers": 0,
-    "durationMs": null,
-    "exitClass": "malfunction",
-    "exitCode": 1,
-    "hash": "mixedl1",
-    "index": 1,
-    "iteration": 1,
-    "nitpicks": 0,
-    "path": "<route>/.reviews/peer/1.test._.review.i1.mixedl1.r1._.given.by_peer.l1-malfunctioner.md",
-    "stderr": "",
-    "stdout": "malfunction
-",
-    "stone": {
-      "path": "/tmp/test-reviews-mixed-l1-terminal-1782679208309/1.test.stone",
-    },
-  },
-  {
-    "blockers": 0,
-    "durationMs": null,
-    "exitClass": "constraint",
-    "exitCode": 2,
-    "hash": "mixedl1",
-    "index": 2,
-    "iteration": 1,
-    "nitpicks": 0,
-    "path": "<route>/.reviews/peer/1.test._.review.i1.mixedl1.r2._.given.by_peer.l1-constrainer.md",
-    "stderr": "",
-    "stdout": "constraint
-",
-    "stone": {
-      "path": "/tmp/test-reviews-mixed-l1-terminal-1782679208309/1.test.stone",
-    },
-  },
-  {
-    "blockers": 0,
-    "durationMs": null,
-    "exitClass": "passed",
-    "exitCode": 0,
-    "hash": "mixedl1",
-    "index": 3,
-    "iteration": 1,
-    "nitpicks": 0,
-    "path": "<route>/.reviews/peer/1.test._.review.i1.mixedl1.r3._.given.by_peer.l3-checker.md",
-    "stderr": "",
-    "stdout": "blockers: 0
-",
-    "stone": {
-      "path": "/tmp/test-reviews-mixed-l1-terminal-1782679208309/1.test.stone",
-    },
-  },
-]
-`;
-
-exports[`runStoneGuardReviews given: [case19] l1 passed + l1 malfunction still allows l3 execution when: [t0] l1 has mix of passed and malfunction then: snapshot matches 1`] = `
-[
-  {
-    "blockers": 0,
-    "durationMs": null,
-    "exitClass": "passed",
-    "exitCode": 0,
-    "hash": "partiall1",
-    "index": 1,
-    "iteration": 1,
-    "nitpicks": 0,
-    "path": "<route>/.reviews/peer/1.test._.review.i1.partiall1.r1._.given.by_peer.l1-good.md",
-    "stderr": "",
-    "stdout": "blockers: 0
-",
-    "stone": {
-      "path": "/tmp/test-reviews-partial-l1-1782679208309/1.test.stone",
-    },
-  },
-  {
-    "blockers": 0,
-    "durationMs": null,
-    "exitClass": "malfunction",
-    "exitCode": 1,
-    "hash": "partiall1",
-    "index": 2,
-    "iteration": 1,
-    "nitpicks": 0,
-    "path": "<route>/.reviews/peer/1.test._.review.i1.partiall1.r2._.given.by_peer.l1-bad.md",
-    "stderr": "",
-    "stdout": "broke
-",
-    "stone": {
-      "path": "/tmp/test-reviews-partial-l1-1782679208309/1.test.stone",
-    },
-  },
-  {
-    "blockers": 0,
-    "durationMs": null,
-    "exitClass": "passed",
-    "exitCode": 0,
-    "hash": "partiall1",
-    "index": 3,
-    "iteration": 1,
-    "nitpicks": 0,
-    "path": "<route>/.reviews/peer/1.test._.review.i1.partiall1.r3._.given.by_peer.l3-checker.md",
-    "stderr": "",
-    "stdout": "blockers: 0
-",
-    "stone": {
-      "path": "/tmp/test-reviews-partial-l1-1782679208309/1.test.stone",
-    },
-  },
-]
-`;
-
-exports[`runStoneGuardReviews given: [case20] three-level cascade: l1 malfunction, l2 constraint, l3 runs when: [t0] l1 malfunctions and l2 hits constraint then: snapshot matches 1`] = `
-[
-  {
-    "blockers": 0,
-    "durationMs": null,
-    "exitClass": "malfunction",
-    "exitCode": 1,
-    "hash": "3levelcascade",
-    "index": 1,
-    "iteration": 1,
-    "nitpicks": 0,
-    "path": "<route>/.reviews/peer/1.test._.review.i1.3levelcascade.r1._.given.by_peer.l1-malfunction.md",
-    "stderr": "",
-    "stdout": "l1 broke
-",
-    "stone": {
-      "path": "/tmp/test-reviews-3level-cascade-1782679208309/1.test.stone",
-    },
-  },
-  {
-    "blockers": 0,
-    "durationMs": null,
-    "exitClass": "constraint",
-    "exitCode": 2,
-    "hash": "3levelcascade",
-    "index": 2,
-    "iteration": 1,
-    "nitpicks": 0,
-    "path": "<route>/.reviews/peer/1.test._.review.i1.3levelcascade.r2._.given.by_peer.l2-constraint.md",
-    "stderr": "",
-    "stdout": "l2 constrained
-",
-    "stone": {
-      "path": "/tmp/test-reviews-3level-cascade-1782679208309/1.test.stone",
-    },
-  },
-  {
-    "blockers": 0,
-    "durationMs": null,
-    "exitClass": "passed",
-    "exitCode": 0,
-    "hash": "3levelcascade",
-    "index": 3,
-    "iteration": 1,
-    "nitpicks": 0,
-    "path": "<route>/.reviews/peer/1.test._.review.i1.3levelcascade.r3._.given.by_peer.l3-checker.md",
-    "stderr": "",
-    "stdout": "blockers: 0
-",
-    "stone": {
-      "path": "/tmp/test-reviews-3level-cascade-1782679208309/1.test.stone",
-    },
-  },
-]
-`;
-
-exports[`runStoneGuardReviews given: [case21] all l1 terminal (malfunction+constraint) unlocks l3 when: [t0] all l1 reviewers are terminal then: snapshot matches 1`] = `
-[
-  {
-    "blockers": 0,
-    "durationMs": null,
-    "exitClass": "malfunction",
-    "exitCode": 1,
-    "hash": "alll1term",
-    "index": 1,
-    "iteration": 1,
-    "nitpicks": 0,
-    "path": "<route>/.reviews/peer/1.test._.review.i1.alll1term.r1._.given.by_peer.l1-mal-1.md",
-    "stderr": "",
-    "stdout": "",
-    "stone": {
-      "path": "/tmp/test-reviews-all-l1-terminal-1782679208310/1.test.stone",
-    },
-  },
-  {
-    "blockers": 0,
-    "durationMs": null,
-    "exitClass": "malfunction",
-    "exitCode": 1,
-    "hash": "alll1term",
-    "index": 2,
-    "iteration": 1,
-    "nitpicks": 0,
-    "path": "<route>/.reviews/peer/1.test._.review.i1.alll1term.r2._.given.by_peer.l1-mal-2.md",
-    "stderr": "",
-    "stdout": "",
-    "stone": {
-      "path": "/tmp/test-reviews-all-l1-terminal-1782679208310/1.test.stone",
-    },
-  },
-  {
-    "blockers": 0,
-    "durationMs": null,
-    "exitClass": "constraint",
-    "exitCode": 2,
-    "hash": "alll1term",
-    "index": 3,
-    "iteration": 1,
-    "nitpicks": 0,
-    "path": "<route>/.reviews/peer/1.test._.review.i1.alll1term.r3._.given.by_peer.l1-con-1.md",
-    "stderr": "",
-    "stdout": "",
-    "stone": {
-      "path": "/tmp/test-reviews-all-l1-terminal-1782679208310/1.test.stone",
-    },
-  },
-  {
-    "blockers": 0,
-    "durationMs": null,
-    "exitClass": "passed",
-    "exitCode": 0,
-    "hash": "alll1term",
-    "index": 4,
-    "iteration": 1,
-    "nitpicks": 0,
-    "path": "<route>/.reviews/peer/1.test._.review.i1.alll1term.r4._.given.by_peer.l3-checker.md",
-    "stderr": "",
-    "stdout": "blockers: 0
-",
-    "stone": {
-      "path": "/tmp/test-reviews-all-l1-terminal-1782679208310/1.test.stone",
+      "path": "<route>/1.test.stone",
     },
   },
 ]
