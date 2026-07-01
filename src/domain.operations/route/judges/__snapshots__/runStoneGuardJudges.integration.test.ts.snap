@@ -30,7 +30,7 @@ exports[`runStoneGuardJudges given: [case1] guard with echo judge command that p
 reason: all checks passed
 ",
     "stone": {
-      "path": "/home/vlad/git/ehmpathy/_worktrees/rhachet-roles-bhrain.vlad.fix-driver-overruled-even-error/.temp/genTempDir.symlink/2026-06-28T20-40-34.910Z.judges-pass.7abe4ea3/1.test.stone",
+      "path": "/home/vlad/git/ehmpathy/_worktrees/rhachet-roles-bhrain.vlad.fix-leveled-overrules/.temp/genTempDir.symlink/2026-07-01T12-13-29.548Z.judges-pass.74625a68/1.test.stone",
     },
   },
 ]
@@ -66,7 +66,7 @@ exports[`runStoneGuardJudges given: [case2] guard with judge command that fails 
 reason: blockers found
 ",
     "stone": {
-      "path": "/home/vlad/git/ehmpathy/_worktrees/rhachet-roles-bhrain.vlad.fix-driver-overruled-even-error/.temp/genTempDir.symlink/2026-06-28T20-40-34.959Z.judges-fail.cbade865/1.test.stone",
+      "path": "/home/vlad/git/ehmpathy/_worktrees/rhachet-roles-bhrain.vlad.fix-leveled-overrules/.temp/genTempDir.symlink/2026-07-01T12-13-29.571Z.judges-fail.fa047836/1.test.stone",
     },
   },
 ]
@@ -116,7 +116,7 @@ exports[`runStoneGuardJudges given: [case3] guard with multiple judge commands w
 reason: review passed
 ",
     "stone": {
-      "path": "/home/vlad/git/ehmpathy/_worktrees/rhachet-roles-bhrain.vlad.fix-driver-overruled-even-error/.temp/genTempDir.symlink/2026-06-28T20-40-35.008Z.judges-multi.9fa2b224/1.test.stone",
+      "path": "/home/vlad/git/ehmpathy/_worktrees/rhachet-roles-bhrain.vlad.fix-leveled-overrules/.temp/genTempDir.symlink/2026-07-01T12-13-29.595Z.judges-multi.d0176e13/1.test.stone",
     },
   },
   {
@@ -133,7 +133,7 @@ reason: review passed
 reason: approval required
 ",
     "stone": {
-      "path": "/home/vlad/git/ehmpathy/_worktrees/rhachet-roles-bhrain.vlad.fix-driver-overruled-even-error/.temp/genTempDir.symlink/2026-06-28T20-40-35.008Z.judges-multi.9fa2b224/1.test.stone",
+      "path": "/home/vlad/git/ehmpathy/_worktrees/rhachet-roles-bhrain.vlad.fix-leveled-overrules/.temp/genTempDir.symlink/2026-07-01T12-13-29.595Z.judges-multi.d0176e13/1.test.stone",
     },
   },
 ]
@@ -166,10 +166,10 @@ exports[`runStoneGuardJudges given: [case4] guard with $route variable in judge 
     "reason": "marker found at <route-path>",
     "stderr": "",
     "stdout": "passed: true
-reason: marker found at /home/vlad/git/ehmpathy/_worktrees/rhachet-roles-bhrain.vlad.fix-driver-overruled-even-error/.temp/genTempDir.symlink/2026-06-28T20-40-35.054Z.judges-route-var.1840cfee
+reason: marker found at /home/vlad/git/ehmpathy/_worktrees/rhachet-roles-bhrain.vlad.fix-leveled-overrules/.temp/genTempDir.symlink/2026-07-01T12-13-29.608Z.judges-route-var.98b7fcdb
 ",
     "stone": {
-      "path": "/home/vlad/git/ehmpathy/_worktrees/rhachet-roles-bhrain.vlad.fix-driver-overruled-even-error/.temp/genTempDir.symlink/2026-06-28T20-40-35.054Z.judges-route-var.1840cfee/1.test.stone",
+      "path": "/home/vlad/git/ehmpathy/_worktrees/rhachet-roles-bhrain.vlad.fix-leveled-overrules/.temp/genTempDir.symlink/2026-07-01T12-13-29.608Z.judges-route-var.98b7fcdb/1.test.stone",
     },
   },
 ]
@@ -205,7 +205,7 @@ exports[`runStoneGuardJudges given: [case5] passed judge is cached on retry when
 reason: all checks passed
 ",
     "stone": {
-      "path": "/home/vlad/git/ehmpathy/_worktrees/rhachet-roles-bhrain.vlad.fix-driver-overruled-even-error/.temp/genTempDir.symlink/2026-06-28T20-40-35.089Z.judges-cache-pass.0dab7927/1.test.stone",
+      "path": "/home/vlad/git/ehmpathy/_worktrees/rhachet-roles-bhrain.vlad.fix-leveled-overrules/.temp/genTempDir.symlink/2026-07-01T12-13-29.621Z.judges-cache-pass.3f83a373/1.test.stone",
     },
   },
 ]
@@ -241,7 +241,7 @@ exports[`runStoneGuardJudges given: [case6] failed judge is NOT cached (retries 
 reason: blockers found
 ",
     "stone": {
-      "path": "/home/vlad/git/ehmpathy/_worktrees/rhachet-roles-bhrain.vlad.fix-driver-overruled-even-error/.temp/genTempDir.symlink/2026-06-28T20-40-35.148Z.judges-nocache-fail.c5f6e294/1.test.stone",
+      "path": "/home/vlad/git/ehmpathy/_worktrees/rhachet-roles-bhrain.vlad.fix-leveled-overrules/.temp/genTempDir.symlink/2026-07-01T12-13-29.630Z.judges-nocache-fail.c74449d9/1.test.stone",
     },
   },
 ]
@@ -277,7 +277,7 @@ exports[`runStoneGuardJudges given: [case7] judge exits with code 0 (passed) whe
 reason: judge passed
 ",
     "stone": {
-      "path": "/home/vlad/git/ehmpathy/_worktrees/rhachet-roles-bhrain.vlad.fix-driver-overruled-even-error/.temp/genTempDir.symlink/2026-06-28T20-40-35.196Z.judges-exit0.d9880012/1.test.stone",
+      "path": "/home/vlad/git/ehmpathy/_worktrees/rhachet-roles-bhrain.vlad.fix-leveled-overrules/.temp/genTempDir.symlink/2026-07-01T12-13-29.642Z.judges-exit0.56323778/1.test.stone",
     },
   },
 ]
@@ -316,7 +316,7 @@ exports[`runStoneGuardJudges given: [case8] judge exits with code 2 (constraint)
 reason: approval required
 ",
     "stone": {
-      "path": "/home/vlad/git/ehmpathy/_worktrees/rhachet-roles-bhrain.vlad.fix-driver-overruled-even-error/.temp/genTempDir.symlink/2026-06-28T20-40-35.230Z.judges-exit2.a247f57b/1.test.stone",
+      "path": "/home/vlad/git/ehmpathy/_worktrees/rhachet-roles-bhrain.vlad.fix-leveled-overrules/.temp/genTempDir.symlink/2026-07-01T12-13-29.656Z.judges-exit2.ed8ce086/1.test.stone",
     },
   },
 ]
@@ -356,7 +356,7 @@ exports[`runStoneGuardJudges given: [case9] judge exits with code 1 (malfunction
     "stdout": "stdout output
 ",
     "stone": {
-      "path": "/home/vlad/git/ehmpathy/_worktrees/rhachet-roles-bhrain.vlad.fix-driver-overruled-even-error/.temp/genTempDir.symlink/2026-06-28T20-40-35.266Z.judges-exit1.677165ac/1.test.stone",
+      "path": "/home/vlad/git/ehmpathy/_worktrees/rhachet-roles-bhrain.vlad.fix-leveled-overrules/.temp/genTempDir.symlink/2026-07-01T12-13-29.668Z.judges-exit1.c60b4d07/1.test.stone",
     },
   },
 ]
@@ -395,7 +395,7 @@ exports[`runStoneGuardJudges given: [case10] blocked judge (exit 2) is NOT cache
 reason: approval required
 ",
     "stone": {
-      "path": "/home/vlad/git/ehmpathy/_worktrees/rhachet-roles-bhrain.vlad.fix-driver-overruled-even-error/.temp/genTempDir.symlink/2026-06-28T20-40-35.302Z.judges-nocache-block.df31828a/1.test.stone",
+      "path": "/home/vlad/git/ehmpathy/_worktrees/rhachet-roles-bhrain.vlad.fix-leveled-overrules/.temp/genTempDir.symlink/2026-07-01T12-13-29.680Z.judges-nocache-block.65251377/1.test.stone",
     },
   },
 ]
@@ -428,10 +428,10 @@ exports[`runStoneGuardJudges given: [case11] guard with $rhx variable in judge c
     "reason": "rhx=<repo-root>/node_modules/.bin/rhx",
     "stderr": "",
     "stdout": "passed: true
-reason: rhx=/home/vlad/git/ehmpathy/_worktrees/rhachet-roles-bhrain.vlad.fix-driver-overruled-even-error/node_modules/.bin/rhx
+reason: rhx=/home/vlad/git/ehmpathy/_worktrees/rhachet-roles-bhrain.vlad.fix-leveled-overrules/node_modules/.bin/rhx
 ",
     "stone": {
-      "path": "/home/vlad/git/ehmpathy/_worktrees/rhachet-roles-bhrain.vlad.fix-driver-overruled-even-error/.temp/genTempDir.symlink/2026-06-28T20-40-35.340Z.judges-rhx-var.cbec91cf/1.test.stone",
+      "path": "/home/vlad/git/ehmpathy/_worktrees/rhachet-roles-bhrain.vlad.fix-leveled-overrules/.temp/genTempDir.symlink/2026-07-01T12-13-29.688Z.judges-rhx-var.0b086957/1.test.stone",
     },
   },
 ]
@@ -464,10 +464,10 @@ exports[`runStoneGuardJudges given: [case12] guard with $rhachet variable in jud
     "reason": "rhachet=<repo-root>/node_modules/.bin/rhachet",
     "stderr": "",
     "stdout": "passed: true
-reason: rhachet=/home/vlad/git/ehmpathy/_worktrees/rhachet-roles-bhrain.vlad.fix-driver-overruled-even-error/node_modules/.bin/rhachet
+reason: rhachet=/home/vlad/git/ehmpathy/_worktrees/rhachet-roles-bhrain.vlad.fix-leveled-overrules/node_modules/.bin/rhachet
 ",
     "stone": {
-      "path": "/home/vlad/git/ehmpathy/_worktrees/rhachet-roles-bhrain.vlad.fix-driver-overruled-even-error/.temp/genTempDir.symlink/2026-06-28T20-40-35.387Z.judges-rhachet-var.dc65996c/1.test.stone",
+      "path": "/home/vlad/git/ehmpathy/_worktrees/rhachet-roles-bhrain.vlad.fix-leveled-overrules/.temp/genTempDir.symlink/2026-07-01T12-13-29.699Z.judges-rhachet-var.18941e30/1.test.stone",
     },
   },
 ]

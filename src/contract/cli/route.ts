@@ -3,6 +3,7 @@ import * as fs from 'fs/promises';
 import { BadRequestError } from 'helpful-errors';
 import * as path from 'path';
 
+import { getGuardPeerReviews } from '@src/domain.objects/Driver/RouteStoneGuard';
 import { delRouteBind } from '@src/domain.operations/route/bind/delRouteBind';
 import { getRouteBind } from '@src/domain.operations/route/bind/getRouteBind';
 import { getRouteBindByBranch } from '@src/domain.operations/route/bind/getRouteBindByBranch';
@@ -21,7 +22,7 @@ import {
   isReviewPeerVerdictTerminal,
 } from '@src/domain.operations/route/guard/reviewPeerMeter/isReviewPeerLevelTerminal';
 import { getOneStoneGuardApproval } from '@src/domain.operations/route/judges/getOneStoneGuardApproval';
-import { getOneStoneGuardOverrule } from '@src/domain.operations/route/judges/getOneStoneGuardOverrule';
+import { getStoneGuardOverruledLevels } from '@src/domain.operations/route/judges/getStoneGuardOverruledLevels';
 import { stepRouteDrive } from '@src/domain.operations/route/stepRouteDrive';
 import { stepRouteReview } from '@src/domain.operations/route/stepRouteReview';
 import { stepRouteStoneAdd } from '@src/domain.operations/route/stepRouteStoneAdd';
@@ -1136,12 +1137,18 @@ const judgeReviewed = async (input: {
     process.exit(2);
   }
 
-  // check for human overrule first (bypasses all review checks)
-  const overrule = await getOneStoneGuardOverrule({
-    stone: stoneMatched,
-    route: input.route,
-  });
-  if (overrule) {
+  // load human overrules, scoped per review level
+  // .why = overrule is level-scoped: an overrule at level N forgives only the
+  //        reviewers at level N, so higher levels still gate passage
+  const { levels: overruledLevels, all: overruledAll } =
+    await getStoneGuardOverruledLevels({
+      stone: stoneMatched,
+      route: input.route,
+    });
+
+  // a legacy (level-less) overrule bypasses all review checks
+  // .note = preserves pre-level-scope behavior for stones overruled stone-wide
+  if (overruledAll) {
     console.log('passed: true');
     console.log('reason: human overruled');
     return;
@@ -1223,9 +1230,25 @@ const judgeReviewed = async (input: {
     }
   }
 
-  // compute total blockers and nitpicks from latest reviews
+  // forgive reviews at overruled levels: their blockers do not gate passage
+  // .why = the human waved a stuck level through; higher levels still count
+  const peerReviews = stoneMatched.guard
+    ? getGuardPeerReviews(stoneMatched.guard)
+    : [];
+  const levelByReviewIndex = new Map<number, number>();
+  peerReviews.forEach((review, i) =>
+    levelByReviewIndex.set(i + 1, review.level ?? 1),
+  );
+  const reviewFilesToCount = latestReviewFiles.filter((filePath) => {
+    const indexMatch = path.basename(filePath).match(/\.r(\d+)\./);
+    const reviewIndex = indexMatch?.[1] ? parseInt(indexMatch[1], 10) : 0;
+    const reviewLevel = levelByReviewIndex.get(reviewIndex) ?? 1;
+    return !overruledLevels.has(reviewLevel);
+  });
+
+  // compute total blockers and nitpicks from non-overruled reviews
   const { totalBlockers, totalNitpicks } = await computeReviewTotalsFromFiles({
-    reviewFiles: latestReviewFiles,
+    reviewFiles: reviewFilesToCount,
   });
 
   // check thresholds

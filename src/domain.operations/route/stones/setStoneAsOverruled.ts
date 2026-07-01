@@ -2,6 +2,7 @@ import { BadRequestError } from 'helpful-errors';
 
 import { formatRouteStoneEmit } from '../formatRouteStoneEmit';
 import { getDecisionIsCallerHuman } from '../getDecisionIsCallerHuman';
+import { getStoneReviewLevelState } from '../guard/getStoneReviewLevelState';
 import { setStoneGuardOverrule } from '../judges/setStoneGuardOverrule';
 import { findOneStoneByPattern } from './asStoneGlob';
 import { getAllStones } from './getAllStones';
@@ -56,8 +57,27 @@ export const setStoneAsOverruled = async (
     };
   }
 
-  // set overrule marker
-  await setStoneGuardOverrule({ stone: stoneMatched, route: input.route });
+  // compute the level state to scope the overrule to the active level
+  // .why = overrule applies only to the current active level, so higher levels
+  //        still run after the human waves the stuck level through
+  const levelState = await getStoneReviewLevelState({
+    stone: stoneMatched,
+    route: input.route,
+  });
+
+  // determine which level to overrule
+  // .note = no peer reviews = legacy stone-wide overrule (level undefined)
+  // .note = all levels resolved = fall back to the terminal level (harmless)
+  const levelToOverrule = !levelState.hasLevels
+    ? undefined
+    : (levelState.activeLevel ?? levelState.terminalLevel ?? undefined);
+
+  // set overrule marker scoped to the active level
+  await setStoneGuardOverrule({
+    stone: stoneMatched,
+    route: input.route,
+    level: levelToOverrule,
+  });
 
   return {
     overruled: true,
@@ -66,6 +86,8 @@ export const setStoneAsOverruled = async (
         operation: 'route.stone.set',
         stone: stoneMatched.name,
         action: 'overruled',
+        level: levelToOverrule,
+        readyLevel: levelState.nextActiveLevel,
       }),
     },
   };

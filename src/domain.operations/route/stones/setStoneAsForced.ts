@@ -2,6 +2,7 @@ import { BadRequestError } from 'helpful-errors';
 
 import { formatRouteStoneEmit } from '../formatRouteStoneEmit';
 import { getDecisionIsCallerHuman } from '../getDecisionIsCallerHuman';
+import { getStoneReviewLevelState } from '../guard/getStoneReviewLevelState';
 import { setStoneGuardApproval } from '../judges/setStoneGuardApproval';
 import { setStoneGuardOverrule } from '../judges/setStoneGuardOverrule';
 import { findOneStoneByPattern } from './asStoneGlob';
@@ -57,9 +58,52 @@ export const setStoneAsForced = async (
     };
   }
 
-  // set both approval and overrule markers (composites approved + overruled)
-  await setStoneGuardApproval({ stone: stoneMatched, route: input.route });
-  await setStoneGuardOverrule({ stone: stoneMatched, route: input.route });
+  // compute level state to scope the force to the active level
+  // .why = force overrules the active level, but only grants approval once the
+  //        active level is the terminal level — approval of unseen levels is
+  //        illogical (a later level may dramatically change the design)
+  const levelState = await getStoneReviewLevelState({
+    stone: stoneMatched,
+    route: input.route,
+  });
+
+  // determine which level to overrule
+  // .note = no peer reviews = legacy stone-wide overrule (level undefined)
+  // .note = all levels resolved = fall back to the terminal level (harmless)
+  const levelToOverrule = !levelState.hasLevels
+    ? undefined
+    : (levelState.activeLevel ?? levelState.terminalLevel ?? undefined);
+
+  // grant approval only when at the terminal level
+  // .why = withhold approval until the highest level has been reached
+  // .note = no peer reviews, or all levels resolved, counts as "at terminal"
+  const atTerminalLevel =
+    !levelState.hasLevels ||
+    levelState.activeLevel === null ||
+    levelState.activeLevel === levelState.terminalLevel;
+
+  // always overrule the active level
+  await setStoneGuardOverrule({
+    stone: stoneMatched,
+    route: input.route,
+    level: levelToOverrule,
+  });
+
+  // approve only when at the terminal level
+  if (atTerminalLevel) {
+    await setStoneGuardApproval({ stone: stoneMatched, route: input.route });
+  }
+
+  // build output details
+  // .note = when approval is withheld, omit the approval line entirely — its
+  //         absence is the signal (no "withheld" placeholder)
+  const overruledLine =
+    levelToOverrule !== undefined
+      ? `overruled = ✓ (level ${levelToOverrule})`
+      : `overruled = ✓`;
+  const detailLines = atTerminalLevel
+    ? [overruledLine, `approved  = ✓`]
+    : [overruledLine];
 
   return {
     forced: true,
@@ -68,7 +112,7 @@ export const setStoneAsForced = async (
         operation: 'route.stone.set',
         stone: stoneMatched.name,
         action: 'forced',
-        details: ['approved = ✓', 'overruled = ✓'].join('\n'),
+        details: detailLines.join('\n'),
       }),
     },
   };

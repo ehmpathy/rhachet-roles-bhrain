@@ -1,0 +1,20 @@
+artifacts:
+  - $route/1.feature*.md
+
+reviews:
+  peer:
+    # level 1: basic checker, default rejects with a blocker
+    - slug: basic-checker
+      run: bash $route/.test/mock-review-l1.sh
+      budget: 5
+      level: 1
+
+    # level 3: premium checker, always passes
+    - slug: premium-checker
+      run: bash $route/.test/mock-review-l3.sh
+      budget: 5
+      level: 3
+
+judges:
+  - rhx route.stone.judge --mechanism reviewed? --stone $stone --route $route --allow-blockers 0 --allow-nitpicks 0
+  - rhx route.stone.judge --mechanism approved? --stone $stone --route $route
