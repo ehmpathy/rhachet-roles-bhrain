@@ -1,0 +1,8 @@
+{
+  "name": "route-force-multilevel",
+  "private": true,
+  "description": "fixture for multi-level force acceptance tests - guard has both reviewed? and approved? judges",
+  "dependencies": {
+    "rhachet-roles-bhrain": "link:."
+  }
+}

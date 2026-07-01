@@ -270,17 +270,17 @@ exports[`driver.route.peer-budget-multilevel.journey.acceptance given: [journey 
       │   │   ├─ exhausted
       │   │   ├─ 1 blocker 🔴
       │   │   ├─ 0 nitpicks ✓
-      │   │   └─ review: /tmp/test-fns/rhachet-roles-bhrain.vlad.fix-driver-overruled-even-error/.temp/2026-06-28T22-20-43.020Z.peer-budget-multilevel.5f29f31d/.reviews/peer/1.vision._.review.i2.dfc5faff83ea2fcb55.r1._.given.by_peer.linter.md
+      │   │   └─ review: /tmp/test-fns/rhachet-roles-bhrain.vlad.fix-leveled-overrules/.temp/2026-07-01T11-33-15.035Z.peer-budget-multilevel.efa79ac5/.reviews/peer/1.vision._.review.i2.dfc5faff83ea2fcb55.r1._.given.by_peer.linter.md
       │   ├─ r2: spellcheck (l1, 3/3)
       │   │   ├─ approved
       │   │   ├─ 0 blockers ✓
       │   │   ├─ 0 nitpicks ✓
-      │   │   └─ review: /tmp/test-fns/rhachet-roles-bhrain.vlad.fix-driver-overruled-even-error/.temp/2026-06-28T22-20-43.020Z.peer-budget-multilevel.5f29f31d/.reviews/peer/1.vision._.review.i3.457fd5ef46e053a35e.r2._.given.by_peer.spellcheck.md
+      │   │   └─ review: /tmp/test-fns/rhachet-roles-bhrain.vlad.fix-leveled-overrules/.temp/2026-07-01T11-33-15.035Z.peer-budget-multilevel.efa79ac5/.reviews/peer/1.vision._.review.i3.457fd5ef46e053a35e.r2._.given.by_peer.spellcheck.md
       │   └─ r3: architect (l2, 2/2)
       │       ├─ exhausted
       │       ├─ 1 blocker 🔴
       │       ├─ 0 nitpicks ✓
-      │       └─ review: /tmp/test-fns/rhachet-roles-bhrain.vlad.fix-driver-overruled-even-error/.temp/2026-06-28T22-20-43.020Z.peer-budget-multilevel.5f29f31d/.reviews/peer/1.vision._.review.i4.6dddc53e1de2efc1da.r3._.given.by_peer.architect.md
+      │       └─ review: /tmp/test-fns/rhachet-roles-bhrain.vlad.fix-leveled-overrules/.temp/2026-07-01T11-33-15.035Z.peer-budget-multilevel.efa79ac5/.reviews/peer/1.vision._.review.i4.6dddc53e1de2efc1da.r3._.given.by_peer.architect.md
       │
       ├─ please ask a human to either
       │  ├─ approve as-is
@@ -324,17 +324,17 @@ exports[`driver.route.peer-budget-multilevel.journey.acceptance given: [journey 
       │   │   ├─ exhausted
       │   │   ├─ 1 blocker 🔴
       │   │   ├─ 0 nitpicks ✓
-      │   │   └─ review: /tmp/test-fns/rhachet-roles-bhrain.vlad.fix-driver-overruled-even-error/.temp/2026-06-28T22-20-43.020Z.peer-budget-multilevel.5f29f31d/.reviews/peer/1.vision._.review.i2.dfc5faff83ea2fcb55.r1._.given.by_peer.linter.md
+      │   │   └─ review: /tmp/test-fns/rhachet-roles-bhrain.vlad.fix-leveled-overrules/.temp/2026-07-01T11-33-15.035Z.peer-budget-multilevel.efa79ac5/.reviews/peer/1.vision._.review.i2.dfc5faff83ea2fcb55.r1._.given.by_peer.linter.md
       │   ├─ r2: spellcheck (l1, 3/3)
       │   │   ├─ approved
       │   │   ├─ 0 blockers ✓
       │   │   ├─ 0 nitpicks ✓
-      │   │   └─ review: /tmp/test-fns/rhachet-roles-bhrain.vlad.fix-driver-overruled-even-error/.temp/2026-06-28T22-20-43.020Z.peer-budget-multilevel.5f29f31d/.reviews/peer/1.vision._.review.i3.457fd5ef46e053a35e.r2._.given.by_peer.spellcheck.md
+      │   │   └─ review: /tmp/test-fns/rhachet-roles-bhrain.vlad.fix-leveled-overrules/.temp/2026-07-01T11-33-15.035Z.peer-budget-multilevel.efa79ac5/.reviews/peer/1.vision._.review.i3.457fd5ef46e053a35e.r2._.given.by_peer.spellcheck.md
       │   └─ r3: architect (l2, 2/4)
       │       ├─ rejected
       │       ├─ 1 blocker 🔴
       │       ├─ 0 nitpicks ✓
-      │       └─ review: /tmp/test-fns/rhachet-roles-bhrain.vlad.fix-driver-overruled-even-error/.temp/2026-06-28T22-20-43.020Z.peer-budget-multilevel.5f29f31d/.reviews/peer/1.vision._.review.i4.6dddc53e1de2efc1da.r3._.given.by_peer.architect.md
+      │       └─ review: /tmp/test-fns/rhachet-roles-bhrain.vlad.fix-leveled-overrules/.temp/2026-07-01T11-33-15.035Z.peer-budget-multilevel.efa79ac5/.reviews/peer/1.vision._.review.i4.6dddc53e1de2efc1da.r3._.given.by_peer.architect.md
       │
       ├─ please ask a human to either
       │  ├─ approve as-is
@@ -418,17 +418,17 @@ exports[`driver.route.peer-budget-multilevel.journey.acceptance given: [journey 
       │   │   ├─ exhausted
       │   │   ├─ 1 blocker 🔴
       │   │   ├─ 0 nitpicks ✓
-      │   │   └─ review: /tmp/test-fns/rhachet-roles-bhrain.vlad.fix-driver-overruled-even-error/.temp/2026-06-28T22-20-43.020Z.peer-budget-multilevel.5f29f31d/.reviews/peer/1.vision._.review.i2.dfc5faff83ea2fcb55.r1._.given.by_peer.linter.md
+      │   │   └─ review: /tmp/test-fns/rhachet-roles-bhrain.vlad.fix-leveled-overrules/.temp/2026-07-01T11-33-15.035Z.peer-budget-multilevel.efa79ac5/.reviews/peer/1.vision._.review.i2.dfc5faff83ea2fcb55.r1._.given.by_peer.linter.md
       │   ├─ r2: spellcheck (l1, 3/3)
       │   │   ├─ approved
       │   │   ├─ 0 blockers ✓
       │   │   ├─ 0 nitpicks ✓
-      │   │   └─ review: /tmp/test-fns/rhachet-roles-bhrain.vlad.fix-driver-overruled-even-error/.temp/2026-06-28T22-20-43.020Z.peer-budget-multilevel.5f29f31d/.reviews/peer/1.vision._.review.i3.457fd5ef46e053a35e.r2._.given.by_peer.spellcheck.md
+      │   │   └─ review: /tmp/test-fns/rhachet-roles-bhrain.vlad.fix-leveled-overrules/.temp/2026-07-01T11-33-15.035Z.peer-budget-multilevel.efa79ac5/.reviews/peer/1.vision._.review.i3.457fd5ef46e053a35e.r2._.given.by_peer.spellcheck.md
       │   └─ r3: architect (l2, 3/4)
       │       ├─ approved
       │       ├─ 0 blockers ✓
       │       ├─ 0 nitpicks ✓
-      │       └─ review: /tmp/test-fns/rhachet-roles-bhrain.vlad.fix-driver-overruled-even-error/.temp/2026-06-28T22-20-43.020Z.peer-budget-multilevel.5f29f31d/.reviews/peer/1.vision._.review.i5.0997a4c5910ffe05d0.r3._.given.by_peer.architect.md
+      │       └─ review: /tmp/test-fns/rhachet-roles-bhrain.vlad.fix-leveled-overrules/.temp/2026-07-01T11-33-15.035Z.peer-budget-multilevel.efa79ac5/.reviews/peer/1.vision._.review.i5.0997a4c5910ffe05d0.r3._.given.by_peer.architect.md
       │
       ├─ please ask a human to either
       │  ├─ approve as-is

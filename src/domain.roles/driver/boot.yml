@@ -6,7 +6,9 @@ always:
       - briefs/research.importance-of-focus.[philosophy].md
       - briefs/howto.create-routes.[ref].md
     say:
+      - briefs/rule.always.drive-autonomously.md
       - briefs/howto.drive-routes.[guide].md
+      - briefs/howto.run-self-reviews.[guide].md
   skills:
     say:
       - skills/route.stone.set.sh

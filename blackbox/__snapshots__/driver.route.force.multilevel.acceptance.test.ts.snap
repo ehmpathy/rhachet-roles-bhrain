@@ -1,0 +1,22 @@
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
+
+exports[`driver.route.force.multilevel.acceptance given: [case1] force at a non-terminal level withholds approval when: [t1] human forces while l1 is the active level then: snapshot shows overrule only, approval withheld 1`] = `
+"🦉 the way speaks for itself
+
+🗿 route.stone.set
+   ├─ stone = 1.feature
+   └─ ✓ forced
+      └─ overruled = ✓ (level 1)
+"
+`;
+
+exports[`driver.route.force.multilevel.acceptance given: [case2] force at the terminal level grants approval when: [t1] human forces while l3 is the active (terminal) level then: snapshot shows overrule + approval at terminal level 1`] = `
+"🦉 the way speaks for itself
+
+🗿 route.stone.set
+   ├─ stone = 1.feature
+   └─ ✓ forced
+      ├─ overruled = ✓ (level 3)
+      └─ approved  = ✓
+"
+`;
