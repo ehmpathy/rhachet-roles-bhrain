@@ -27,10 +27,8 @@ import { isENOENT } from './isENOENT';
 import { computeReviewPeerVerdict } from './reviewPeerMeter/computeReviewPeerVerdict';
 import { getAllRouteStoneGuardReviewPeerMeters } from './reviewPeerMeter/getAllRouteStoneGuardReviewPeerMeters';
 import { getReviewedJudgeThresholds } from './reviewPeerMeter/getReviewedJudgeThresholds';
-import {
-  isReviewPeerLevelTerminal,
-  isReviewPeerVerdictExhausted,
-} from './reviewPeerMeter/isReviewPeerLevelTerminal';
+import { isReviewPeerVerdictExhausted } from './reviewPeerMeter/isReviewPeerLevelTerminal';
+import { isReviewPeerLevelUnlocked } from './reviewPeerMeter/isReviewPeerLevelUnlocked';
 import { setRouteStoneGuardReviewPeerMeter } from './reviewPeerMeter/setRouteStoneGuardReviewPeerMeter';
 
 const execAsync = promisify(exec);
@@ -507,13 +505,10 @@ export const runStoneGuardReviews = async (
     // check if lower levels are all terminal before higher level runs
     // .why = cheap (low level) runs first, expensive (high level) only after cheap clears
     const verdicts = computeVerdicts();
-    let canRun = true;
-    for (let level = 1; level < pr.level; level++) {
-      if (!isReviewPeerLevelTerminal({ reviewers: verdicts, level })) {
-        canRun = false;
-        break;
-      }
-    }
+    const canRun = isReviewPeerLevelUnlocked({
+      reviewers: verdicts,
+      level: pr.level,
+    });
 
     // skip if level not yet unlocked (emit queued event)
     if (!canRun) {
