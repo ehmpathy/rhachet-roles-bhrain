@@ -5,17 +5,61 @@ import { type BrainSpec, calcBrainOutputCost } from 'rhachet/brains';
 import { estimateTokenCount } from './estimateTokenCount';
 
 /**
+ * .what = renders one target in push focus: diff first, then full content
+ * .why = leads the reviewer with what changed (the delta) and follows with the
+ *        full file purely as context, so it focuses on changed lines and does
+ *        not churn untouched code
+ */
+const renderPushTarget = (input: {
+  target: {
+    path: string;
+    content: string | null;
+    diff?: string | null;
+    changeKind?: 'new' | 'edited' | 'deleted';
+  };
+}): string => {
+  const { target } = input;
+
+  // deleted file: emit a lone void-tag marker only — no removal diff, no content
+  if (target.changeKind === 'deleted') {
+    return `<target.file path="${target.path}" change="deleted" />`;
+  }
+
+  // full content block (context) — content may be null for safety; drop one
+  // final newline so the close tag sits flush on the next line (no blank gap)
+  const fileBody = (target.content ?? '').replace(/\n$/, '');
+  const fileBlock = `<target.file path="${target.path}">\n${fileBody}\n</target.file>`;
+
+  // no diff present (e.g. path-only unchanged file): content only
+  if (target.diff === undefined || target.diff === null) {
+    return fileBlock;
+  }
+
+  // new/edited file with a diff: diff first (focus), then content (context);
+  // drop the diff's last newline for the same flush-close-tag reason
+  const diffBody = target.diff.replace(/\n$/, '');
+  const diffBlock = `<target.diff path="${target.path}">\n${diffBody}\n</target.diff>`;
+  return `${diffBlock}\n\n${fileBlock}`;
+};
+
+/**
  * .what = compiles the review prompt from rules and target files
  * .why = prepares the prompt for brain invocation with token safeguards
  */
 export const compileReviewPrompt = (input: {
   rules: Array<{ path: string; content: string }>;
   refs: Array<{ path: string; content: string }>;
-  targets: Array<{ path: string; content: string }>;
+  targets: Array<{
+    path: string;
+    content: string | null;
+    diff?: string | null;
+    changeKind?: 'new' | 'edited' | 'deleted';
+  }>;
   focus: 'pull' | 'push';
   goal: 'exhaustive' | 'representative';
   contextWindowSize: number;
   costSpec: BrainSpec['cost']['cash'];
+  diffRange?: string;
 }): {
   prompt: string;
   tokenEstimate: number;
@@ -43,15 +87,18 @@ export const compileReviewPrompt = (input: {
   const targetSection = (() => {
     if (input.focus === 'pull') {
       // pull focus: paths only, instruct brain to open files
+      // .why = the brain has tool use — it reads files and runs `git diff`
+      //        itself, so we inject neither diff nor content, just the range
       const pathList = input.targets.map((t) => `- ${t.path}`).join('\n');
-      return `the following files are in scope for review. please open and read them as needed:\n\n${pathList}`;
+      const rangeNote = input.diffRange
+        ? `\n\nthe diff range for "this pr" is \`${input.diffRange}\` — run \`git diff\` against that base to see what changed.`
+        : '';
+      return `the following files are in scope for review. please open and read them as needed:\n\n${pathList}${rangeNote}`;
     }
 
-    // push focus: inject contents
+    // push focus: inject diff (what changed) then content (context) per target
     return input.targets
-      .map(
-        (target) => `### ${target.path}\n\n\`\`\`\n${target.content}\n\`\`\``,
-      )
+      .map((target) => renderPushTarget({ target }))
       .join('\n\n---\n\n');
   })();
 
@@ -79,6 +126,16 @@ you are a reviewer. apply the rules below to the target files.
 3. if you see "bad: X" or "good: Y" in a rule, those are examples to learn from, NOT content to flag
 4. the "locations" array must ONLY contain paths from <target>, never from <rules>
 5. if you cannot find the violation in <target>, do not report it${refsSection ? '\n6. <refs> section contains reference documents for context — use them to inform your review but do not flag content from refs' : ''}
+
+## how to use the diff (FOCUS ON THE DELTA)
+
+each changed target may carry a \`<target.diff path="...">\` block (what changed in this pr) and a \`<target.file path="...">\` block (the full current file, for context). when a diff is present:
+
+- focus your review on the diff — the lines this pr added or changed. do NOT churn unrelated untouched code; fix-forward. BUT DO flag untouched code that this change breaks.
+- line numbers for "locations" come from the diff hunk headers (\`@@ -X,Y +A,B @@\`) — the \`+A\` side is the authoritative anchor for changed lines. use those numbers rather than count content lines by hand.
+- copy "snippet.code" from the clean \`<target.file>\` content, NEVER from the diff's \`+\`/\`-\` prefixed lines.
+- diff \`-\` lines are REMOVED code — this pr deletes them, they no longer exist. NEVER flag a \`-\` line. only \`+\` lines and surrounding context are code that exists and may be flagged.
+- a file shown as \`<target.file path="..." change="deleted" />\` is gone — do not review or flag it.
 
 ${goalInstructions}
 

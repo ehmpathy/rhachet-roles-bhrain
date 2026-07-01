@@ -7,7 +7,6 @@ import { type BrainChoice, type ContextBrain, isBrainRepl } from 'rhachet';
 import { z } from 'zod';
 
 import { compileReviewPrompt } from '@src/domain.operations/review/compileReviewPrompt';
-import { enumFilesFromDiffs } from '@src/domain.operations/review/enumFilesFromDiffs';
 import { enumFilesFromGlob } from '@src/domain.operations/review/enumFilesFromGlob';
 import { formatReviewOutput } from '@src/domain.operations/review/formatReviewOutput';
 import {
@@ -17,6 +16,10 @@ import {
 import { genReviewOutputStdout } from '@src/domain.operations/review/genReviewOutputStdout';
 import { genTokenBreakdownMarkdown } from '@src/domain.operations/review/genTokenBreakdownMarkdown';
 import { genTokenBreakdownReport } from '@src/domain.operations/review/genTokenBreakdownReport';
+import {
+  type FileDiff,
+  getAllFileDiffsFromRange,
+} from '@src/domain.operations/review/getAllFileDiffsFromRange';
 import { writeInputArtifacts } from '@src/domain.operations/review/writeInputArtifacts';
 import { writeOutputArtifacts } from '@src/domain.operations/review/writeOutputArtifacts';
 
@@ -274,8 +277,8 @@ export const stepReview = async (
     throw new BadRequestError('--rules glob was ineffective');
   }
 
-  // enumerate target files from diffs
-  const targetFilesFromDiffs = await (async () => {
+  // enumerate target file diffs from the range (kind + patch per changed file)
+  const fileDiffsFromRange = await (async (): Promise<FileDiff[]> => {
     if (!input.diffs) return [];
 
     // validate range is a known value
@@ -292,11 +295,17 @@ export const stepReview = async (
       throw new BadRequestError('validation failed');
     }
 
-    return enumFilesFromDiffs({
+    return getAllFileDiffsFromRange({
       range: input.diffs as 'since-main' | 'since-commit' | 'since-staged',
       cwd,
     });
   })();
+
+  // derive the plain path list (for joins/exclusions) and a lookup by path
+  const targetFilesFromDiffs = fileDiffsFromRange.map((d) => d.path);
+  const fileDiffByPath = new Map<string, FileDiff>(
+    fileDiffsFromRange.map((d) => [d.path, d]),
+  );
 
   // enumerate target files from paths
   // build positive globs from --paths (legacy) and --paths-with
@@ -478,10 +487,26 @@ export const stepReview = async (
     })),
   );
   const targetContents = await Promise.all(
-    targetFiles.map(async (file) => ({
-      path: file,
-      content: await readFileContent(file),
-    })),
+    targetFiles.map(async (file) => {
+      const fileDiff = fileDiffByPath.get(file);
+
+      // deleted file: no content to read (file gone) — marker only
+      if (fileDiff?.changeKind === 'deleted')
+        return {
+          path: file,
+          content: null,
+          diff: fileDiff.diff,
+          changeKind: fileDiff.changeKind,
+        };
+
+      // new/edited/path-only file: read full content, attach diff when present
+      return {
+        path: file,
+        content: await readFileContent(file),
+        diff: fileDiff?.diff,
+        changeKind: fileDiff?.changeKind,
+      };
+    }),
   );
   const refContents = await Promise.all(
     refFiles.map(async (file) => ({
@@ -490,11 +515,21 @@ export const stepReview = async (
     })),
   );
 
+  // recompute target contents for the token breakdown:
+  // - null content (deleted) counts as empty
+  // - fold in the diff bytes so the estimate stays honest (they land in prompt)
+  const targetContentsForBreakdown = targetContents.map((t) => ({
+    path: t.path,
+    content: `${t.content ?? ''}${t.diff ? `\n${t.diff}` : ''}`,
+  }));
+
   // generate and write token breakdown reports
-  const allContents = [...ruleContents, ...targetContents];
+  const allContents = [...ruleContents, ...targetContentsForBreakdown];
   const allBreakdown = genTokenBreakdownReport({ files: allContents });
   const rulesBreakdown = genTokenBreakdownReport({ files: ruleContents });
-  const targetsBreakdown = genTokenBreakdownReport({ files: targetContents });
+  const targetsBreakdown = genTokenBreakdownReport({
+    files: targetContentsForBreakdown,
+  });
   await fs.writeFile(
     path.join(logDir, 'tokens.expected.json'),
     JSON.stringify(
@@ -530,6 +565,7 @@ export const stepReview = async (
         goal: input.goal,
         contextWindowSize: brainSpec.gain.size.context.tokens,
         costSpec: brainSpec.cost.cash,
+        diffRange: input.diffs,
       });
     } catch (error) {
       if (!(error instanceof BadRequestError)) throw error;
