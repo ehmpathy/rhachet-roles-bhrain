@@ -118,19 +118,22 @@ describe('isReviewPeerLevelUnlocked', () => {
     });
   });
 
-  given('[case6] a middle level between the target and level 1 not terminal', () => {
-    when('[t0] l1 terminal but l2 rejected while target is l3', () => {
-      then('l3 stays locked — every level below must clear', () => {
-        const result = isReviewPeerLevelUnlocked({
-          reviewers: [
-            asReviewer(1, 'exhausted'),
-            asReviewer(2, 'rejected'),
-            asReviewer(3, 'queued'),
-          ],
-          level: 3,
+  given(
+    '[case6] a middle level between the target and level 1 not terminal',
+    () => {
+      when('[t0] l1 terminal but l2 rejected while target is l3', () => {
+        then('l3 stays locked — every level below must clear', () => {
+          const result = isReviewPeerLevelUnlocked({
+            reviewers: [
+              asReviewer(1, 'exhausted'),
+              asReviewer(2, 'rejected'),
+              asReviewer(3, 'queued'),
+            ],
+            level: 3,
+          });
+          expect(result).toBe(false);
         });
-        expect(result).toBe(false);
       });
-    });
-  });
+    },
+  );
 });
