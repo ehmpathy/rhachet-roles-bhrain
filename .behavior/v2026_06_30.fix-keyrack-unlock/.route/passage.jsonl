@@ -12,3 +12,4 @@
 {"stone":"5.3.verification","status":"blocked","blocker":"review.self","reason":"review.self required: has-snap-changes-rationalized"}
 {"stone":"5.3.verification","status":"passed"}
 {"stone":"5.3.verification","status":"passed"}
+{"stone":"5.3.verification","status":"malfunction"}

@@ -11,11 +11,16 @@ import { spawnSync } from 'child_process';
  * .note = on success, stay silent — keyrack's output is captured, not printed.
  * .note = uses ./node_modules/.bin/rhx for resolution regardless of PATH; reviewers run
  *         from gitroot (see rule.forbid.cwd-outside-gitroot).
+ * .note = in CI, creds arrive via the keyrack firewall (exported to env), not the keyrack
+ *         daemon — the daemon is absent there, so skip the unlock and let env creds flow.
  */
 export const setKeyrackUnlocked = (input: {
   owner: string;
   env: string;
 }): void => {
+  // skip in CI: creds come from the keyrack firewall via env, not the local daemon
+  if (process.env.CI) return;
+
   // unlock the keyrack for this owner/env; capture output so success stays silent
   const result = spawnSync(
     './node_modules/.bin/rhx',
