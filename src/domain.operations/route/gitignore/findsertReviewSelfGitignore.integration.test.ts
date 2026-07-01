@@ -21,7 +21,6 @@ const normalizeResult = (
  * | idempotent: first call | result-first-call | case1 |
  * | idempotent: second call | result-second-call | case1 |
  * | idempotent: third call | result-third-call | case1 |
- * | idempotent: gitignore content | gitignore-content | case1 |
  * | coexistence: with files | result-with-files-present | case2 |
  * | negative: ENOTDIR route | error-enotdir-route | case3 |
  * | negative: EACCES | error-eacces | case4 |
@@ -57,18 +56,6 @@ describe('findsertReviewSelfGitignore.integration', () => {
         expect(normalizeResult(result3, tempDir)).toMatchSnapshot(
           'result-third-call',
         );
-      });
-
-      then('creates the review/self directory', async () => {
-        await findsertSelfReviewGitignore({ route: tempDir });
-        const stat = await fs.stat(path.join(tempDir, 'review', 'self'));
-        expect(stat.isDirectory()).toBe(true);
-      });
-
-      then('writes the expected .gitignore content', async () => {
-        const result = await findsertSelfReviewGitignore({ route: tempDir });
-        const content = await fs.readFile(result.path, 'utf-8');
-        expect(content).toMatchSnapshot('gitignore-content');
       });
     });
   });

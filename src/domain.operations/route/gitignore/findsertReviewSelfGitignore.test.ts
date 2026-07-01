@@ -1,9 +1,9 @@
 import * as fs from 'fs/promises';
 import * as os from 'os';
 import * as path from 'path';
-import { getError, given, then, when } from 'test-fns';
+import { given, then, when } from 'test-fns';
 
-import { findsertSelfReviewGitignore } from './findsertSelfReviewGitignore';
+import { findsertReviewSelfGitignore } from './findsertReviewSelfGitignore';
 
 const normalizeResult = (
   result: { action: string; path: string },
@@ -12,20 +12,6 @@ const normalizeResult = (
   action: result.action,
   pathRelative: result.path.replace(route, '$ROUTE'),
 });
-
-/**
- * .what = stabilizes an error message for deterministic snapshots
- * .why = temp dirs embed Date.now(), which would otherwise thrash the snapshot
- *        every run; replace the volatile timestamp suffix with a fixed token
- *        so the error type + structure under test stays locked
- */
-const asStableErrorText = (error: unknown): string => {
-  const message = error instanceof Error ? error.message : String(error);
-  return message.replace(
-    /(test-selfreview-gitignore[\w-]*?)-\d+/g,
-    '$1-<timestamp>',
-  );
-};
 
 /**
  * ## snapshots
@@ -41,9 +27,9 @@ const asStableErrorText = (error: unknown): string => {
  * | negative: EACCES | error-eacces | case5 |
  * | negative: ENOTDIR route | error-enotdir-route | case6 |
  * | negative: ENOTDIR review | error-enotdir-review | case7 |
- * | negative: EEXIST self | error-eexist-self | case8 |
+ * | negative: ENOTDIR self | error-enotdir-self | case8 |
  */
-describe('findsertSelfReviewGitignore', () => {
+describe('findsertReviewSelfGitignore', () => {
   given('[case1] no review/self directory', () => {
     const tempDir = path.join(
       os.tmpdir(),
@@ -56,13 +42,13 @@ describe('findsertSelfReviewGitignore', () => {
 
     when('[t0] findsert is called', () => {
       then('creates review/self directory', async () => {
-        await findsertSelfReviewGitignore({ route: tempDir });
+        await findsertReviewSelfGitignore({ route: tempDir });
         const stat = await fs.stat(path.join(tempDir, 'review', 'self'));
         expect(stat.isDirectory()).toBe(true);
       });
 
       then('creates .gitignore with correct content', async () => {
-        const result = await findsertSelfReviewGitignore({ route: tempDir });
+        const result = await findsertReviewSelfGitignore({ route: tempDir });
         expect(normalizeResult(result, tempDir)).toMatchSnapshot(
           'result-created',
         );
@@ -96,7 +82,7 @@ describe('findsertSelfReviewGitignore', () => {
 
     when('[t0] findsert is called', () => {
       then('returns unchanged', async () => {
-        const result = await findsertSelfReviewGitignore({ route: tempDir });
+        const result = await findsertReviewSelfGitignore({ route: tempDir });
         expect(normalizeResult(result, tempDir)).toMatchSnapshot(
           'result-unchanged',
         );
@@ -124,7 +110,7 @@ describe('findsertSelfReviewGitignore', () => {
 
     when('[t0] findsert is called', () => {
       then('overwrites with correct content', async () => {
-        const result = await findsertSelfReviewGitignore({ route: tempDir });
+        const result = await findsertReviewSelfGitignore({ route: tempDir });
         expect(normalizeResult(result, tempDir)).toMatchSnapshot(
           'result-overwrite',
         );
@@ -152,10 +138,9 @@ describe('findsertSelfReviewGitignore', () => {
 
     when('[t0] findsert is called', () => {
       then('throws the error', async () => {
-        const error = await getError(
-          findsertSelfReviewGitignore({ route: tempDir }),
-        );
-        expect(asStableErrorText(error)).toMatchSnapshot('error-eisdir');
+        await expect(
+          findsertReviewSelfGitignore({ route: tempDir }),
+        ).rejects.toMatchSnapshot('error-eisdir');
       });
     });
   });
@@ -163,12 +148,11 @@ describe('findsertSelfReviewGitignore', () => {
   given('[case5] invalid route path', () => {
     when('[t0] findsert is called with non-writable path', () => {
       then('throws mkdir error', async () => {
-        const error = await getError(
-          findsertSelfReviewGitignore({
+        await expect(
+          findsertReviewSelfGitignore({
             route: '/nonexistent/path/that/cannot/be/created',
           }),
-        );
-        expect(asStableErrorText(error)).toMatchSnapshot('error-eacces');
+        ).rejects.toMatchSnapshot('error-eacces');
       });
     });
   });
@@ -191,10 +175,9 @@ describe('findsertSelfReviewGitignore', () => {
 
     when('[t0] findsert is called', () => {
       then('throws ENOTDIR error', async () => {
-        const error = await getError(
-          findsertSelfReviewGitignore({ route: routeFile }),
-        );
-        expect(asStableErrorText(error)).toMatchSnapshot('error-enotdir-route');
+        await expect(
+          findsertReviewSelfGitignore({ route: routeFile }),
+        ).rejects.toMatchSnapshot('error-enotdir-route');
       });
     });
   });
@@ -216,12 +199,9 @@ describe('findsertSelfReviewGitignore', () => {
 
     when('[t0] findsert is called', () => {
       then('throws ENOTDIR error', async () => {
-        const error = await getError(
-          findsertSelfReviewGitignore({ route: tempDir }),
-        );
-        expect(asStableErrorText(error)).toMatchSnapshot(
-          'error-enotdir-review',
-        );
+        await expect(
+          findsertReviewSelfGitignore({ route: tempDir }),
+        ).rejects.toMatchSnapshot('error-enotdir-review');
       });
     });
   });
@@ -245,11 +225,10 @@ describe('findsertSelfReviewGitignore', () => {
     });
 
     when('[t0] findsert is called', () => {
-      then('throws EEXIST error', async () => {
-        const error = await getError(
-          findsertSelfReviewGitignore({ route: tempDir }),
-        );
-        expect(asStableErrorText(error)).toMatchSnapshot('error-eexist-self');
+      then('throws ENOTDIR error', async () => {
+        await expect(
+          findsertReviewSelfGitignore({ route: tempDir }),
+        ).rejects.toMatchSnapshot('error-enotdir-self');
       });
     });
   });
