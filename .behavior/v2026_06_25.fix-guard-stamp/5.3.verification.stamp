@@ -1,0 +1,88 @@
+🦉 the way speaks for itself
+
+🗿 route.stone.set
+   ├─ stone = 5.3.verification
+   ├─ passage = blocked
+   ├─ reason = nitpicks exceed threshold (1 > 0)
+   └─ guard
+      ├─ artifacts
+      │   ├─ $route/5.3.verification.yield.md
+      │   └─ src/**/*
+      ├─ reviews
+      │   ├─ r1: ergo-contract-snapshots (l1, 7/7)
+      │   │   ├─ exhausted, cached
+      │   │   ├─ 2 blockers 🔴
+      │   │   ├─ 0 nitpicks ✓
+      │   │   └─ review: .behavior/v2026_06_25.fix-guard-stamp/.reviews/peer/5.3.verification._.review.i1.1469de44f7e760013e.r1._.given.by_peer.ergo-contract-snapshots.md
+      │   ├─ r2: mech-external-contracts (l1, 7/7)
+      │   │   ├─ approved, cached
+      │   │   ├─ 0 blockers ✓
+      │   │   ├─ 0 nitpicks ✓
+      │   │   └─ review: .behavior/v2026_06_25.fix-guard-stamp/.reviews/peer/5.3.verification._.review.i1.1469de44f7e760013e.r2._.given.by_peer.mech-external-contracts.md
+      │   ├─ r3: ergo-acceptance-journey-coverage (l1, 7/7)
+      │   │   ├─ approved, cached
+      │   │   ├─ 0 blockers ✓
+      │   │   ├─ 0 nitpicks ✓
+      │   │   └─ review: .behavior/v2026_06_25.fix-guard-stamp/.reviews/peer/5.3.verification._.review.i1.1469de44f7e760013e.r3._.given.by_peer.ergo-acceptance-journey-coverage.md
+      │   ├─ r4: ergo-snapshot-visual-blemishes (l1, 7/7)
+      │   │   ├─ approved, cached
+      │   │   ├─ 0 blockers ✓
+      │   │   ├─ 0 nitpicks ✓
+      │   │   └─ review: .behavior/v2026_06_25.fix-guard-stamp/.reviews/peer/5.3.verification._.review.i1.1469de44f7e760013e.r4._.given.by_peer.ergo-snapshot-visual-blemishes.md
+      │   ├─ r5: mech-given-when-then (l1, 7/7)
+      │   │   ├─ approved, cached
+      │   │   ├─ 0 blockers ✓
+      │   │   ├─ 0 nitpicks ✓
+      │   │   └─ review: .behavior/v2026_06_25.fix-guard-stamp/.reviews/peer/5.3.verification._.review.i1.1469de44f7e760013e.r5._.given.by_peer.mech-given-when-then.md
+      │   ├─ r6: mech-test-intent (l1, 7/7)
+      │   │   ├─ approved, cached
+      │   │   ├─ 0 blockers ✓
+      │   │   ├─ 0 nitpicks ✓
+      │   │   └─ review: .behavior/v2026_06_25.fix-guard-stamp/.reviews/peer/5.3.verification._.review.i1.1469de44f7e760013e.r6._.given.by_peer.mech-test-intent.md
+      │   ├─ r7: mech-test-scope-purity (l1, 7/7)
+      │   │   ├─ exhausted, cached
+      │   │   ├─ 2 blockers 🔴
+      │   │   ├─ 0 nitpicks ✓
+      │   │   └─ review: .behavior/v2026_06_25.fix-guard-stamp/.reviews/peer/5.3.verification._.review.i1.1469de44f7e760013e.r7._.given.by_peer.mech-test-scope-purity.md
+      │   ├─ r8: enroll-verif-snapshot-coverage (l3, 2/5)
+      │   │   ├─ approved 196.1s
+      │   │   ├─ 0 blockers ✓
+      │   │   ├─ 0 nitpicks ✓
+      │   │   └─ review: .behavior/v2026_06_25.fix-guard-stamp/.reviews/peer/5.3.verification._.review.i2.f1bbca834b05123094.r8._.given.by_peer.enroll-verif-snapshot-coverage.md
+      │   ├─ r9: enroll-verif-snapshot-blemishes (l3, 2/5)
+      │   │   ├─ approved 106.0s
+      │   │   ├─ 0 blockers ✓
+      │   │   ├─ 0 nitpicks ✓
+      │   │   └─ review: .behavior/v2026_06_25.fix-guard-stamp/.reviews/peer/5.3.verification._.review.i2.f1bbca834b05123094.r9._.given.by_peer.enroll-verif-snapshot-blemishes.md
+      │   └─ r10: enroll-verif-test-intent (l3, 2/5)
+      │       ├─ rejected 123.9s
+      │       ├─ 0 blockers ✓
+      │       ├─ 1 nitpick 🟠
+      │       └─ review: .behavior/v2026_06_25.fix-guard-stamp/.reviews/peer/5.3.verification._.review.i2.f1bbca834b05123094.r10._.given.by_peer.enroll-verif-test-intent.md
+      └─ judges
+          └─ j1: $rhachet run --repo bhrain --skill route.stone.judge --mechanism reviewed? --stone $stone --route $route --allow-blockers 0 --allow-nitpicks 0
+              ├─ finished 1.2s ✗
+              └─ reason: nitpicks exceed threshold (1 > 0)
+
+────────────────────────────────────────────────────────────────
+
+🪶 judge 1
+   ├─ stdout
+   │  ├─
+   │  │
+   │  │  🪨 run solid skill repo=bhrain/role=driver/skill=route.stone.judge
+   │  │  
+   │  │  passed: false
+   │  │  reason: nitpicks exceed threshold (1 > 0)
+   │  │
+   │  └─
+   ├─ stderr
+   │  ├─
+   │  │
+   │  │  🪨 run solid skill repo=bhrain/role=driver/skill=route.stone.judge
+   │  │     └─ ✋ blocked by constraints
+   │  │
+   │  └─
+   └─ passage blocked
+      ├─ blocked by constraints
+      └─ exit code: 2 ✋

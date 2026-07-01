@@ -31,6 +31,7 @@ import {
   isReviewPeerVerdictTerminal,
 } from '../guard/reviewPeerMeter/isReviewPeerLevelTerminal';
 import { runStoneGuardReviews } from '../guard/runStoneGuardReviews';
+import { setStoneGuardStamp } from '../guard/setStoneGuardStamp';
 import { getOneStoneGuardOverrule } from '../judges/getOneStoneGuardOverrule';
 import { runStoneGuardJudges } from '../judges/runStoneGuardJudges';
 import { getOnePassageReport } from '../passage/getOnePassageReport';
@@ -228,6 +229,23 @@ export const setStoneAsPassed = async (
     });
   }
 
+  // stamp the guard report next to the stone when peer reviews ran
+  // .why = persists the latest border-gate result so folks can review it without a guard re-run (per wish)
+  // .note = stamps only when peer reviews ran; judges-only guards leave no stamp
+  // .note = passes the emit through unchanged so each branch can `return { ..., emit: await stampGuardReport(...) }`
+  const stampGuardReport = async (emit: {
+    stdout: string;
+    stderr?: string;
+  }): Promise<{ stdout: string; stderr?: string }> => {
+    if (peerReviews.length > 0)
+      await setStoneGuardStamp({
+        stone: stoneMatched,
+        route: input.route,
+        emit,
+      });
+    return emit;
+  };
+
   // compute review input hash for cache lookup
   //
   // hash principle: each component hashes its inputs
@@ -370,7 +388,7 @@ export const setStoneAsPassed = async (
         reviews: reviewArtifacts.map((r) => r.path),
         judges: [],
       },
-      emit: {
+      emit: await stampGuardReport({
         stdout: formatRouteStoneEmit({
           operation: 'route.stone.set',
           stone: stoneMatched.name,
@@ -379,7 +397,7 @@ export const setStoneAsPassed = async (
           reason: `peer reviewer budget exhausted: ${exhaustionCheck.skippedSlugs.join(', ')}`,
           guard: guardData,
         }),
-      },
+      }),
     };
   }
 
@@ -482,7 +500,7 @@ export const setStoneAsPassed = async (
         reviews: reviewArtifacts.map((r) => r.path),
         judges: judgeArtifacts.map((j) => j.path),
       },
-      emit: {
+      emit: await stampGuardReport({
         stdout: formatRouteStoneEmit({
           operation: 'route.stone.set',
           stone: stoneMatched.name,
@@ -492,7 +510,7 @@ export const setStoneAsPassed = async (
           guard: guardData,
         }),
         stderr: stderrLines.length > 0 ? stderrLines.join('\n') : undefined,
-      },
+      }),
     };
   }
 
@@ -554,7 +572,7 @@ export const setStoneAsPassed = async (
         reviews: reviewArtifacts.map((r) => r.path),
         judges: judgeArtifacts.map((j) => j.path),
       },
-      emit: {
+      emit: await stampGuardReport({
         stdout: formatRouteStoneEmit({
           operation: 'route.stone.set',
           stone: stoneMatched.name,
@@ -564,7 +582,7 @@ export const setStoneAsPassed = async (
           guard: guardDataForConstraint,
         }),
         stderr: stderrLines.length > 0 ? stderrLines.join('\n') : undefined,
-      },
+      }),
     };
   }
 
@@ -616,7 +634,7 @@ export const setStoneAsPassed = async (
         reviews: reviewArtifacts.map((r) => r.path),
         judges: judgeArtifacts.map((j) => j.path),
       },
-      emit: {
+      emit: await stampGuardReport({
         stdout: formatRouteStoneEmit({
           operation: 'route.stone.set',
           stone: stoneMatched.name,
@@ -624,7 +642,7 @@ export const setStoneAsPassed = async (
           passage: passageReason,
           guard: guardData,
         }),
-      },
+      }),
     };
   }
 
@@ -684,7 +702,7 @@ export const setStoneAsPassed = async (
       reviews: reviewArtifacts.map((r) => r.path),
       judges: judgeArtifacts.map((j) => j.path),
     },
-    emit: {
+    emit: await stampGuardReport({
       stdout: formatRouteStoneEmit({
         operation: 'route.stone.set',
         stone: stoneMatched.name,
@@ -694,7 +712,7 @@ export const setStoneAsPassed = async (
         guard: guardData,
       }),
       stderr: stderrLines.length > 0 ? stderrLines.join('\n') : undefined,
-    },
+    }),
   };
 };
 

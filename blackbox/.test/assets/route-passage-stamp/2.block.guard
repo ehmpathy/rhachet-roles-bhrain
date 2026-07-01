@@ -1,0 +1,12 @@
+artifacts:
+  - 2.block*.md
+
+reviews:
+  peer:
+    - slug: mock-blocker
+      budget: 3
+      level: 1
+      run: bash $route/.test/mock-review-blocker.sh
+
+judges:
+  - rhx route.stone.judge --mechanism reviewed? --stone $stone --route $route --allow-blockers 0 --allow-nitpicks 0

@@ -1,0 +1,61 @@
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
+
+exports[`setStoneGuardStamp.integration given: [case1] guard with a peer review and a judge that passes when: [t0] stone is set as passed then: the allowed-passage stamp matches snapshot: stamp-allowed 1`] = `
+"🦉 the way speaks for itself
+
+🗿 route.stone.set
+   ├─ stone = 1.test
+   ├─ passage = allowed
+   ├─ guard
+   │  ├─ artifacts
+   │  │   └─ $route/1.test*.md
+   │  ├─ reviews
+   │  │   └─ r1: echo (l1, 1/∞)
+   │  │       ├─ approved [TIME]
+   │  │       ├─ 0 blockers ✓
+   │  │       ├─ 0 nitpicks ✓
+   │  │       └─ review: ../../../../../..$ROUTE/.reviews/peer/1.test._.review.i[N].[HASH].r1._.given.by_peer.echo.md
+   │  └─ judges
+   │      └─ j1: echo "passed: true\\nreason: all checks passed"
+   │          └─ finished [TIME] ✓
+   │
+   └─ the way continues, run
+      └─ rhx route.drive"
+`;
+
+exports[`setStoneGuardStamp.integration given: [case2] guard with a peer review and a judge that blocks when: [t0] stone is set as passed but judge blocks then: the blocked-passage stamp matches snapshot: stamp-blocked 1`] = `
+"🦉 the way speaks for itself
+
+🗿 route.stone.set
+   ├─ stone = 1.test
+   ├─ passage = blocked
+   ├─ reason = blockers found
+   └─ guard
+      ├─ artifacts
+      │   └─ $route/1.test*.md
+      ├─ reviews
+      │   └─ r1: echo (l1, 1/∞)
+      │       ├─ approved [TIME]
+      │       ├─ 0 blockers ✓
+      │       ├─ 0 nitpicks ✓
+      │       └─ review: ../../../../../..$ROUTE/.reviews/peer/1.test._.review.i[N].[HASH].r1._.given.by_peer.echo.md
+      └─ judges
+          └─ j1: echo "passed: false\\nreason: blockers found"
+              ├─ finished [TIME] ✗
+              └─ reason: blockers found
+
+────────────────────────────────────────────────────────────────
+
+🪶 judge 1
+   ├─ stdout
+   │  ├─
+   │  │
+   │  │  passed: false
+   │  │  reason: blockers found
+   │  │
+   │  └─
+   ├─ stderr
+   │  ├─
+   │  │
+   │  └─"
+`;

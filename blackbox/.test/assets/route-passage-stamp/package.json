@@ -1,0 +1,8 @@
+{
+  "name": "route-passage-stamp-fixture",
+  "private": true,
+  "description": "fixture for passage stamp acceptance test",
+  "dependencies": {
+    "rhachet-roles-bhrain": "link:."
+  }
+}
