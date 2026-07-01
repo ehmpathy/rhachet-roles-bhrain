@@ -1,7 +1,7 @@
 import * as fs from 'fs/promises';
 import * as os from 'os';
 import * as path from 'path';
-import { given, then, when } from 'test-fns';
+import { getError, given, then, when } from 'test-fns';
 
 import { findsertReviewPeerGitignore } from './findsertReviewPeerGitignore';
 
@@ -181,9 +181,12 @@ describe('findsertReviewPeerGitignore', () => {
 
     when('[t0] findsert is called', () => {
       then('throws ENOTDIR error', async () => {
-        await expect(
+        const error = await getError(
           findsertReviewPeerGitignore({ route: routeFile }),
-        ).rejects.toMatchSnapshot('error-enotdir-route');
+        );
+        expect(error.message.replace(tempDir, '<route>')).toMatchSnapshot(
+          'error-enotdir-route',
+        );
       });
     });
   });
@@ -205,9 +208,12 @@ describe('findsertReviewPeerGitignore', () => {
 
     when('[t0] findsert is called', () => {
       then('throws ENOTDIR error', async () => {
-        await expect(
+        const error = await getError(
           findsertReviewPeerGitignore({ route: tempDir }),
-        ).rejects.toMatchSnapshot('error-enotdir-reviews');
+        );
+        expect(error.message.replace(tempDir, '<route>')).toMatchSnapshot(
+          'error-enotdir-reviews',
+        );
       });
     });
   });
@@ -232,9 +238,12 @@ describe('findsertReviewPeerGitignore', () => {
 
     when('[t0] findsert is called', () => {
       then('throws ENOTDIR error', async () => {
-        await expect(
+        const error = await getError(
           findsertReviewPeerGitignore({ route: tempDir }),
-        ).rejects.toMatchSnapshot('error-enotdir-peer');
+        );
+        expect(error.message.replace(tempDir, '<route>')).toMatchSnapshot(
+          'error-enotdir-peer',
+        );
       });
     });
   });

@@ -92,6 +92,10 @@ describe('runStoneGuardJudges', () => {
         const sanitized = judges.map((j) => ({
           ...j,
           path: j.path?.replace(tempDir, '<route>'),
+          stone: {
+            ...j.stone,
+            path: j.stone?.path?.replace(tempDir, '<route>'),
+          },
         }));
         expect(sanitized).toMatchSnapshot();
       });
@@ -146,6 +150,10 @@ describe('runStoneGuardJudges', () => {
         const sanitized = judges.map((j) => ({
           ...j,
           path: j.path?.replace(tempDir, '<route>'),
+          stone: {
+            ...j.stone,
+            path: j.stone?.path?.replace(tempDir, '<route>'),
+          },
         }));
         expect(sanitized).toMatchSnapshot();
       });
@@ -208,6 +216,10 @@ describe('runStoneGuardJudges', () => {
         const sanitized = judges.map((j) => ({
           ...j,
           path: j.path?.replace(tempDir, '<route>'),
+          stone: {
+            ...j.stone,
+            path: j.stone?.path?.replace(tempDir, '<route>'),
+          },
         }));
         expect(sanitized).toMatchSnapshot();
       });
@@ -297,7 +309,15 @@ describe('runStoneGuardJudges', () => {
         const sanitized = judges.map((j) => ({
           ...j,
           path: j.path?.replace(tempDir, '<route>'),
+          stone: {
+            ...j.stone,
+            path: j.stone?.path?.replace(tempDir, '<route>'),
+          },
           reason: j.reason?.replace(
+            new RegExp(tempDir.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'g'),
+            '<route-path>',
+          ),
+          stdout: j.stdout?.replace(
             new RegExp(tempDir.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'g'),
             '<route-path>',
           ),
@@ -361,6 +381,10 @@ describe('runStoneGuardJudges', () => {
         const sanitized = judges.map((j) => ({
           ...j,
           path: j.path?.replace(tempDir, '<route>'),
+          stone: {
+            ...j.stone,
+            path: j.stone?.path?.replace(tempDir, '<route>'),
+          },
         }));
         expect(sanitized).toMatchSnapshot();
       });
@@ -421,6 +445,10 @@ describe('runStoneGuardJudges', () => {
         const sanitized = judges.map((j) => ({
           ...j,
           path: j.path?.replace(tempDir, '<route>'),
+          stone: {
+            ...j.stone,
+            path: j.stone?.path?.replace(tempDir, '<route>'),
+          },
         }));
         expect(sanitized).toMatchSnapshot();
       });
@@ -479,6 +507,10 @@ describe('runStoneGuardJudges', () => {
         const sanitized = judges.map((j) => ({
           ...j,
           path: j.path?.replace(tempDir, '<route>'),
+          stone: {
+            ...j.stone,
+            path: j.stone?.path?.replace(tempDir, '<route>'),
+          },
         }));
         expect(sanitized).toMatchSnapshot();
       });
@@ -539,6 +571,10 @@ describe('runStoneGuardJudges', () => {
         const sanitized = judges.map((j) => ({
           ...j,
           path: j.path?.replace(tempDir, '<route>'),
+          stone: {
+            ...j.stone,
+            path: j.stone?.path?.replace(tempDir, '<route>'),
+          },
         }));
         expect(sanitized).toMatchSnapshot();
       });
@@ -606,6 +642,10 @@ describe('runStoneGuardJudges', () => {
         const sanitized = judges.map((j) => ({
           ...j,
           path: j.path?.replace(tempDir, '<route>'),
+          stone: {
+            ...j.stone,
+            path: j.stone?.path?.replace(tempDir, '<route>'),
+          },
         }));
         expect(sanitized).toMatchSnapshot();
       });
@@ -681,6 +721,10 @@ describe('runStoneGuardJudges', () => {
         const sanitized = judges.map((j) => ({
           ...j,
           path: j.path?.replace(tempDir, '<route>'),
+          stone: {
+            ...j.stone,
+            path: j.stone?.path?.replace(tempDir, '<route>'),
+          },
         }));
         expect(sanitized).toMatchSnapshot();
       });
@@ -743,7 +787,15 @@ describe('runStoneGuardJudges', () => {
         const sanitized = judges.map((j) => ({
           ...j,
           path: j.path?.replace(tempDir, '<route>'),
+          stone: {
+            ...j.stone,
+            path: j.stone?.path?.replace(tempDir, '<route>'),
+          },
           reason: j.reason?.replace(
+            /rhx=.*\/node_modules/g,
+            'rhx=<repo-root>/node_modules',
+          ),
+          stdout: j.stdout?.replace(
             /rhx=.*\/node_modules/g,
             'rhx=<repo-root>/node_modules',
           ),
@@ -814,7 +866,15 @@ describe('runStoneGuardJudges', () => {
         const sanitized = judges.map((j) => ({
           ...j,
           path: j.path?.replace(tempDir, '<route>'),
+          stone: {
+            ...j.stone,
+            path: j.stone?.path?.replace(tempDir, '<route>'),
+          },
           reason: j.reason?.replace(
+            /rhachet=.*\/node_modules/g,
+            'rhachet=<repo-root>/node_modules',
+          ),
+          stdout: j.stdout?.replace(
             /rhachet=.*\/node_modules/g,
             'rhachet=<repo-root>/node_modules',
           ),
