@@ -364,8 +364,6 @@ export const runStoneGuardReviews = async (
       return {
         slug: pr.slug,
         level: pr.level,
-        rounds,
-        budget: pr.budget,
         verdict: computeReviewPeerVerdict({
           rounds,
           budget: pr.budget,
