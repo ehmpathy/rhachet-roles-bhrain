@@ -268,18 +268,20 @@ describe('stepReview', () => {
         const { enumFilesFromGlob } = await import(
           '@src/domain.operations/review/enumFilesFromGlob'
         );
-        const { enumFilesFromDiffs } = await import(
-          '@src/domain.operations/review/enumFilesFromDiffs'
+        const { getAllFileDiffsFromRange } = await import(
+          '@src/domain.operations/review/getAllFileDiffsFromRange'
         );
 
         const pathFiles = await enumFilesFromGlob({
           glob: 'src/valid.ts',
           cwd: scene.repoDir,
         });
-        const diffFiles = await enumFilesFromDiffs({
-          range: 'since-staged',
-          cwd: scene.repoDir,
-        });
+        const diffFiles = (
+          await getAllFileDiffsFromRange({
+            range: 'since-staged',
+            cwd: scene.repoDir,
+          })
+        ).map((d) => d.path);
 
         // verify union works
         const allFiles = [...new Set([...pathFiles, ...diffFiles])].sort();
@@ -314,15 +316,17 @@ describe('stepReview', () => {
 
     when('[t0] negation pattern excludes file from diffs', () => {
       then('excluded file is not in target files', async () => {
-        const { enumFilesFromDiffs } = await import(
-          '@src/domain.operations/review/enumFilesFromDiffs'
+        const { getAllFileDiffsFromRange } = await import(
+          '@src/domain.operations/review/getAllFileDiffsFromRange'
         );
 
         // get all diff files first
-        const allDiffFiles = await enumFilesFromDiffs({
-          range: 'since-staged',
-          cwd: scene.repoDir,
-        });
+        const allDiffFiles = (
+          await getAllFileDiffsFromRange({
+            range: 'since-staged',
+            cwd: scene.repoDir,
+          })
+        ).map((d) => d.path);
         expect(allDiffFiles).toContain('package-lock.json');
 
         // now test that negation pattern would filter it
@@ -341,14 +345,16 @@ describe('stepReview', () => {
 
     when('[t1] glob negation pattern excludes files', () => {
       then('excluded glob pattern filters matching files', async () => {
-        const { enumFilesFromDiffs } = await import(
-          '@src/domain.operations/review/enumFilesFromDiffs'
+        const { getAllFileDiffsFromRange } = await import(
+          '@src/domain.operations/review/getAllFileDiffsFromRange'
         );
 
-        const allDiffFiles = await enumFilesFromDiffs({
-          range: 'since-staged',
-          cwd: scene.repoDir,
-        });
+        const allDiffFiles = (
+          await getAllFileDiffsFromRange({
+            range: 'since-staged',
+            cwd: scene.repoDir,
+          })
+        ).map((d) => d.path);
 
         // test glob pattern exclusion
         const negativePatterns = ['*.json'];

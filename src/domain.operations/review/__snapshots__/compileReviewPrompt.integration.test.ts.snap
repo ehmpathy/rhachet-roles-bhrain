@@ -1,0 +1,222 @@
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
+
+exports[`compileReviewPrompt (realistic end-to-end exemplar) given: [case1] a feature branch that adds 3 files, edits 3, and deletes 3 when: [t0] the prompt is compiled from the real diffs then: captures the full compiled prompt as a snapshot 1`] = `
+"# review task
+
+you are a reviewer. apply the rules below to the target files.
+
+## CRITICAL INSTRUCTIONS — READ CAREFULLY
+
+1. ONLY review content in the <target> section
+2. NEVER flag anything from the <rules> section — rules contain examples of bad patterns for illustration only
+3. if you see "bad: X" or "good: Y" in a rule, those are examples to learn from, NOT content to flag
+4. the "locations" array must ONLY contain paths from <target>, never from <rules>
+5. if you cannot find the violation in <target>, do not report it
+
+## how to use the diff (FOCUS ON THE DELTA)
+
+each changed target may carry a \`<target.diff path="...">\` block (what changed in this pr) and a \`<target.file path="...">\` block (the full current file, for context). when a diff is present:
+
+- focus your review on the diff — the lines this pr added or changed. do NOT churn unrelated untouched code; fix-forward. BUT DO flag untouched code that this change breaks.
+- line numbers for "locations" come from the diff hunk headers (\`@@ -X,Y +A,B @@\`) — the \`+A\` side is the authoritative anchor for changed lines. use those numbers rather than count content lines by hand.
+- copy "snippet.code" from the clean \`<target.file>\` content, NEVER from the diff's \`+\`/\`-\` prefixed lines.
+- diff \`-\` lines are REMOVED code — this pr deletes them, they no longer exist. NEVER flag a \`-\` line. only \`+\` lines and surrounding context are code that exists and may be flagged.
+- a file shown as \`<target.file path="..." change="deleted" />\` is gone — do not review or flag it.
+
+## goal: exhaustive
+
+report all the issues found, exhaustively. do not limit the number of issues. every violation of every rule should be documented. if there are many similar issues, collect their locations under one violation. be thorough and comprehensive.
+
+## rules (FOR REFERENCE ONLY — DO NOT FLAG CONTENT FROM THIS SECTION)
+
+<rules>
+### rules/rule.no-magic-numbers.md
+
+# rule: no-magic-numbers
+forbid unexplained numeric literals; name them as constants
+</rules>
+
+## target (REVIEW THIS SECTION ONLY)
+
+<target>
+<target.diff path="src/cart/freight.ts">
+diff --git a/src/cart/freight.ts b/src/cart/freight.ts
+index 3dea03043ae3b6d9b284879f9f629e858eebaa33..dfe58b73ce985999db3a8134aa5d381f7d47796e 100644
+--- a/src/cart/freight.ts
++++ b/src/cart/freight.ts
+@@ -1,3 +1,5 @@
+ export const freightFee = (weightKg: number): number => {
++  // free freight over 10kg, flat rate below
++  if (weightKg > 10) return 0;
+   return weightKg * 5;
+ };
+</target.diff>
+
+<target.file path="src/cart/freight.ts">
+export const freightFee = (weightKg: number): number => {
+  // free freight over 10kg, flat rate below
+  if (weightKg > 10) return 0;
+  return weightKg * 5;
+};
+</target.file>
+
+---
+
+<target.diff path="src/cart/price.ts">
+diff --git a/src/cart/price.ts b/src/cart/price.ts
+index 5eb85b7e9b0f81f6c85fbc5adaebbc7ba3b13ffc..aaee2209d73119bbce682d6a05286eca1312fcd1 100644
+--- a/src/cart/price.ts
++++ b/src/cart/price.ts
+@@ -1,3 +1,5 @@
+ export const applyDiscount = (price: number, percent: number): number => {
+-  return price - price * percent;
++  // clamp percent to [0, 1] so a bad input can never yield a negative price
++  const safePercent = Math.min(Math.max(percent, 0), 1);
++  return price - price * safePercent;
+ };
+</target.diff>
+
+<target.file path="src/cart/price.ts">
+export const applyDiscount = (price: number, percent: number): number => {
+  // clamp percent to [0, 1] so a bad input can never yield a negative price
+  const safePercent = Math.min(Math.max(percent, 0), 1);
+  return price - price * safePercent;
+};
+</target.file>
+
+---
+
+<target.diff path="src/cart/tax.ts">
+diff --git a/src/cart/tax.ts b/src/cart/tax.ts
+index 938d79886f812068cbd8b5923cc8974f83086ee0..cd6b309f4bd9623f9372226cee7bc0725bcf0489 100644
+--- a/src/cart/tax.ts
++++ b/src/cart/tax.ts
+@@ -1,3 +1,4 @@
+ export const applyTax = (price: number, rate: number): number => {
+-  return price + price * rate;
++  const safeRate = Math.max(rate, 0);
++  return price + price * safeRate;
+ };
+</target.diff>
+
+<target.file path="src/cart/tax.ts">
+export const applyTax = (price: number, rate: number): number => {
+  const safeRate = Math.max(rate, 0);
+  return price + price * safeRate;
+};
+</target.file>
+
+---
+
+<target.diff path="src/checkout/currency.ts">
+diff --git a/src/checkout/currency.ts b/src/checkout/currency.ts
+new file mode 100644
+index 0000000000000000000000000000000000000000..3bd7c8d803ef342725a72405564ce85b052a368a
+--- /dev/null
++++ b/src/checkout/currency.ts
+@@ -0,0 +1,3 @@
++export const toMinorUnits = (amount: number): number => {
++  return Math.round(amount * 100);
++};
+</target.diff>
+
+<target.file path="src/checkout/currency.ts">
+export const toMinorUnits = (amount: number): number => {
+  return Math.round(amount * 100);
+};
+</target.file>
+
+---
+
+<target.diff path="src/checkout/discount.ts">
+diff --git a/src/checkout/discount.ts b/src/checkout/discount.ts
+new file mode 100644
+index 0000000000000000000000000000000000000000..18e16ec6bb88c0261a852e3b19a79c63de88ecdb
+--- /dev/null
++++ b/src/checkout/discount.ts
+@@ -0,0 +1,3 @@
++export const stackDiscounts = (percents: number[]): number => {
++  return percents.reduce((rest, p) => rest * (1 - p), 1);
++};
+</target.diff>
+
+<target.file path="src/checkout/discount.ts">
+export const stackDiscounts = (percents: number[]): number => {
+  return percents.reduce((rest, p) => rest * (1 - p), 1);
+};
+</target.file>
+
+---
+
+<target.diff path="src/checkout/receipt.ts">
+diff --git a/src/checkout/receipt.ts b/src/checkout/receipt.ts
+new file mode 100644
+index 0000000000000000000000000000000000000000..983ba5fbfd9688c8321c4ba97f85cb0c60539ea1
+--- /dev/null
++++ b/src/checkout/receipt.ts
+@@ -0,0 +1,3 @@
++export const renderReceiptLine = (label: string, cents: number): string => {
++  return label + ': ' + (cents / 100).toFixed(2);
++};
+</target.diff>
+
+<target.file path="src/checkout/receipt.ts">
+export const renderReceiptLine = (label: string, cents: number): string => {
+  return label + ': ' + (cents / 100).toFixed(2);
+};
+</target.file>
+
+---
+
+<target.file path="src/legacy/formatLegacy.ts" change="deleted" />
+
+---
+
+<target.file path="src/legacy/parseLegacy.ts" change="deleted" />
+
+---
+
+<target.file path="src/legacy/roundLegacy.ts" change="deleted" />
+</target>
+
+## output format
+
+IMPORTANT: output your review as text directly. do not use any tools to write files. your final response must be the JSON object below, printed as plain text.
+
+note: the "locations" array must contain ONLY paths from the <target> section. never include rule file paths in locations.
+
+\`\`\`json
+{
+  "done": true,
+  "blockers": [
+    {
+      "rule": "path/to/rule.md (which rule was violated)",
+      "title": "short title for the issue",
+      "description": "detailed multiline explanation of the issue.\\ninclude context about why this violates the rule.\\nbe specific about what needs to change.",
+      "locations": ["path/to/target-file.ts:42 (only target files, never rule files)"],
+      "snippet": {
+        "lang": "ts",
+        "code": "// the exact code from the target file that violates the rule\\nconst x = badPattern();"
+      }
+    }
+  ],
+  "nitpicks": [
+    {
+      "rule": "path/to/rule.md (which rule was violated)",
+      "title": "short title for the issue",
+      "description": "detailed multiline explanation of the issue.\\ninclude context about why this violates the rule.\\nbe specific about what needs to change.",
+      "locations": ["path/to/target-file.ts:42 (only target files, never rule files)"],
+      "snippet": {
+        "lang": "ts",
+        "code": "// the exact code from the target file that violates the rule\\nconst x = badPattern();"
+      }
+    }
+  ]
+}
+\`\`\`
+
+IMPORTANT: every violation MUST include a "snippet" with the actual code from the target file that violates the rule. copy the exact code so the reader can identify the violation.
+
+if no issues found, output: \`{"done": true, "blockers": [], "nitpicks": []}\`
+"
+`;

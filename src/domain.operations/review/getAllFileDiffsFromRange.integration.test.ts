@@ -4,11 +4,11 @@ import * as os from 'os';
 import * as path from 'path';
 import { given, then, usePrep, when } from 'test-fns';
 
-import { enumFilesFromDiffs } from './enumFilesFromDiffs';
+import { getAllFileDiffsFromRange } from './getAllFileDiffsFromRange';
 
 /**
  * .what = git identity env for commits
- * .why = avoids requiring global git config on cicd machines
+ * .why = avoids the need for global git config on cicd machines
  */
 const GIT_ENV = {
   ...process.env,
@@ -19,8 +19,8 @@ const GIT_ENV = {
 };
 
 /**
- * .what = creates an isolated git repo in tmp for testing
- * .why = avoids git-in-git issues when testing diff operations
+ * .what = creates an isolated git repo in tmp for the test
+ * .why = avoids git-in-git issues when the test exercises diff operations
  */
 const setupTestRepo = (): { repoPath: string; cleanup: () => void } => {
   // create tmp directory
@@ -45,7 +45,7 @@ const setupTestRepo = (): { repoPath: string; cleanup: () => void } => {
   };
 };
 
-describe('enumFilesFromDiffs', () => {
+describe('getAllFileDiffsFromRange', () => {
   given('[case1] --diffs since-main', () => {
     const scene = usePrep(async () => {
       const { repoPath, cleanup } = setupTestRepo();
@@ -69,13 +69,24 @@ describe('enumFilesFromDiffs', () => {
     afterAll(() => scene.cleanup());
 
     when('[t0] changes exist between HEAD and main', () => {
-      then('returns changed files', async () => {
-        const files = await enumFilesFromDiffs({
+      then('returns changed files with kinds and diffs', async () => {
+        const diffs = await getAllFileDiffsFromRange({
           range: 'since-main',
           cwd: scene.repoPath,
         });
-        expect(files).toContain('src/new-file.ts');
-        expect(files).toContain('src/valid.ts');
+        const paths = diffs.map((d) => d.path);
+        expect(paths).toContain('src/new-file.ts');
+        expect(paths).toContain('src/valid.ts');
+
+        // new file: changeKind new, diff present
+        const newFile = diffs.find((d) => d.path === 'src/new-file.ts');
+        expect(newFile?.changeKind).toEqual('new');
+        expect(newFile?.diff).toContain('export const x = 1;');
+
+        // edited file: changeKind edited, diff present with the added line
+        const editedFile = diffs.find((d) => d.path === 'src/valid.ts');
+        expect(editedFile?.changeKind).toEqual('edited');
+        expect(editedFile?.diff).toContain('// modified');
       });
     });
   });
@@ -96,11 +107,12 @@ describe('enumFilesFromDiffs', () => {
           '\n// unstaged',
         );
 
-        const files = await enumFilesFromDiffs({
+        const diffs = await getAllFileDiffsFromRange({
           range: 'since-commit',
           cwd: scene.repoPath,
         });
-        expect(files).toContain('src/valid.ts');
+        const paths = diffs.map((d) => d.path);
+        expect(paths).toContain('src/valid.ts');
       });
     });
 
@@ -113,11 +125,12 @@ describe('enumFilesFromDiffs', () => {
         );
         execSync('git add src/staged.ts', { cwd: scene.repoPath });
 
-        const files = await enumFilesFromDiffs({
+        const diffs = await getAllFileDiffsFromRange({
           range: 'since-commit',
           cwd: scene.repoPath,
         });
-        expect(files).toContain('src/staged.ts');
+        const paths = diffs.map((d) => d.path);
+        expect(paths).toContain('src/staged.ts');
       });
     });
   });
@@ -145,12 +158,13 @@ describe('enumFilesFromDiffs', () => {
         );
         execSync('git add src/staged-only.ts', { cwd: scene.repoPath });
 
-        const files = await enumFilesFromDiffs({
+        const diffs = await getAllFileDiffsFromRange({
           range: 'since-staged',
           cwd: scene.repoPath,
         });
-        expect(files).toContain('src/staged-only.ts');
-        expect(files).not.toContain('src/valid.ts');
+        const paths = diffs.map((d) => d.path);
+        expect(paths).toContain('src/staged-only.ts');
+        expect(paths).not.toContain('src/valid.ts');
       });
     });
   });
@@ -165,11 +179,11 @@ describe('enumFilesFromDiffs', () => {
 
     when('[t0] repo is clean', () => {
       then('returns empty array', async () => {
-        const files = await enumFilesFromDiffs({
+        const diffs = await getAllFileDiffsFromRange({
           range: 'since-commit',
           cwd: scene.repoPath,
         });
-        expect(files).toEqual([]);
+        expect(diffs).toEqual([]);
       });
     });
   });
@@ -214,28 +228,29 @@ describe('enumFilesFromDiffs', () => {
       then(
         'returns only feature branch changes, not main changes',
         async () => {
-          const files = await enumFilesFromDiffs({
+          const diffs = await getAllFileDiffsFromRange({
             range: 'since-main',
             cwd: scene.repoPath,
           });
+          const paths = diffs.map((d) => d.path);
 
           // should include the feature branch file
-          expect(files).toContain('src/feature-file.ts');
+          expect(paths).toContain('src/feature-file.ts');
 
           // should NOT include the other PR file that was merged to main
-          // (this is the key assertion - before the merge-base fix, this would fail)
-          expect(files).not.toContain('src/other-pr-file.ts');
+          // (this is the key assertion - merge-base excludes it)
+          expect(paths).not.toContain('src/other-pr-file.ts');
         },
       );
 
       then('returns correct count of changed files', async () => {
-        const files = await enumFilesFromDiffs({
+        const diffs = await getAllFileDiffsFromRange({
           range: 'since-main',
           cwd: scene.repoPath,
         });
 
         // only 1 file changed on our branch
-        expect(files).toHaveLength(1);
+        expect(diffs).toHaveLength(1);
       });
     });
   });
@@ -278,19 +293,26 @@ describe('enumFilesFromDiffs', () => {
 
     when('[t0] untracked files exist on feature branch', () => {
       then('returns untracked files along with committed changes', async () => {
-        const files = await enumFilesFromDiffs({
+        const diffs = await getAllFileDiffsFromRange({
           range: 'since-main',
           cwd: scene.repoPath,
         });
+        const paths = diffs.map((d) => d.path);
 
         // committed file should be included
-        expect(files).toContain('src/committed-file.ts');
+        expect(paths).toContain('src/committed-file.ts');
 
         // untracked file should ALSO be included (critical for reviews)
-        expect(files).toContain('src/untracked-file.ts');
+        expect(paths).toContain('src/untracked-file.ts');
 
         // staged file should also be included
-        expect(files).toContain('src/staged-file.ts');
+        expect(paths).toContain('src/staged-file.ts');
+
+        // untracked file: changeKind new with a valid new-file diff
+        const untracked = diffs.find((d) => d.path === 'src/untracked-file.ts');
+        expect(untracked?.changeKind).toEqual('new');
+        expect(untracked?.diff).toContain('export const untracked = true;');
+        expect(untracked?.diff).toContain('/dev/null');
       });
     });
   });
@@ -370,34 +392,72 @@ describe('enumFilesFromDiffs', () => {
 
       when('[t0] local main has commits not on origin/main', () => {
         then('compares against origin/main, not local main', async () => {
-          const files = await enumFilesFromDiffs({
+          const diffs = await getAllFileDiffsFromRange({
             range: 'since-main',
             cwd: scene.repoPath,
           });
+          const paths = diffs.map((d) => d.path);
 
           // should include the feature branch file
-          expect(files).toContain('src/feature-file.ts');
+          expect(paths).toContain('src/feature-file.ts');
 
           // should NOT include the file that was pushed to origin/main
           // (merge-base with origin/main excludes it)
-          expect(files).not.toContain('src/other-pr-on-origin.ts');
+          expect(paths).not.toContain('src/other-pr-on-origin.ts');
 
           // should NOT include the local-only file that exists only on local main
           // (we compare against origin/main, so local main divergence is ignored)
-          expect(files).not.toContain('src/local-only-file.ts');
+          expect(paths).not.toContain('src/local-only-file.ts');
         });
 
         then('returns only feature branch changes', async () => {
-          const files = await enumFilesFromDiffs({
+          const diffs = await getAllFileDiffsFromRange({
             range: 'since-main',
             cwd: scene.repoPath,
           });
+          const paths = diffs.map((d) => d.path);
 
           // only 1 file: our feature branch change
-          expect(files).toHaveLength(1);
-          expect(files).toEqual(['src/feature-file.ts']);
+          expect(paths).toHaveLength(1);
+          expect(paths).toEqual(['src/feature-file.ts']);
         });
       });
     },
   );
+
+  given('[case8] deleted file', () => {
+    const scene = usePrep(async () => {
+      const { repoPath, cleanup } = setupTestRepo();
+
+      // create a feature branch and delete a tracked file
+      execSync('git checkout -b feature', { cwd: repoPath });
+      execSync('git rm src/valid.ts', { cwd: repoPath, env: GIT_ENV });
+      execSync('git commit -m "delete valid.ts"', {
+        cwd: repoPath,
+        env: GIT_ENV,
+      });
+
+      return { repoPath, cleanup };
+    });
+
+    afterAll(() => scene.cleanup());
+
+    when('[t0] a tracked file was removed', () => {
+      then('file appears with changeKind deleted and diff null', async () => {
+        const diffs = await getAllFileDiffsFromRange({
+          range: 'since-main',
+          cwd: scene.repoPath,
+        });
+        const paths = diffs.map((d) => d.path);
+
+        // deleted file must still appear (not dropped)
+        expect(paths).toContain('src/valid.ts');
+
+        // deleted file carries a marker only: kind deleted, diff null
+        const deleted = diffs.find((d) => d.path === 'src/valid.ts');
+        expect(deleted?.changeKind).toEqual('deleted');
+        expect(deleted?.diff).toBeNull();
+      });
+    });
+  });
 });
