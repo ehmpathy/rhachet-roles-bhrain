@@ -7,6 +7,7 @@ import {
   getAvailableBrainsInWords,
 } from 'rhachet/brains';
 
+import { setKeyrackUnlocked } from '@src/domain.operations/credentials/setKeyrackUnlocked';
 import { genDefaultReviewOutputPath } from '@src/domain.operations/review/genDefaultReviewOutputPath';
 import { stepReview } from '@src/domain.operations/review/stepReview';
 
@@ -178,6 +179,11 @@ export const review = async (): Promise<void> => {
   // determine output path (generate default if not specified)
   const cwd = process.cwd();
   const outputPath = options.output ?? genDefaultReviewOutputPath({ cwd });
+
+  // unlock keyrack upfront, since reviewers always need these creds
+  // .note = failfasts here (forwards keyrack's own output) if unlock is impossible,
+  //         instead of a fake malfunction deep in brain invocation
+  setKeyrackUnlocked({ owner: 'ehmpath', env: 'prep' });
 
   // create brain context via discovery with credentials
   // .note = uses env: 'prep' because review is used to prepare code, not test it

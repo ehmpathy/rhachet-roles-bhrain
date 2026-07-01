@@ -6,6 +6,7 @@ import {
   getAvailableBrainsInWords,
 } from 'rhachet/brains';
 
+import { setKeyrackUnlocked } from '@src/domain.operations/credentials/setKeyrackUnlocked';
 import { getAllAnnotations } from '@src/domain.operations/reflect/annotation/getAllAnnotations';
 import { setAnnotation } from '@src/domain.operations/reflect/annotation/setAnnotation';
 import { getAllSavepoints } from '@src/domain.operations/reflect/savepoint/getAllSavepoints';
@@ -141,10 +142,16 @@ export const reflect = async (): Promise<void> => {
   // parse args
   const options = parseArgs(process.argv);
 
+  // unlock keyrack upfront, since reviewers always need these creds
+  // .note = failfasts here (forwards keyrack's own output) if unlock is impossible,
+  //         instead of a fake malfunction deep in brain invocation
+  setKeyrackUnlocked({ owner: 'ehmpath', env: 'prep' });
+
   // create brain context via discovery with credentials
+  // .note = uses env: 'prep' to match review; reviewers always target ehmpath/prep creds
   const brain = await genContextBrain({
     choice: options.brain,
-    creds: { keyrack: { owner: 'ehmpath', env: 'test' } },
+    creds: { keyrack: { owner: 'ehmpath', env: 'prep' } },
   });
 
   // invoke stepReflect with validation error handler
