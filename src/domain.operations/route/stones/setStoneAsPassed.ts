@@ -32,7 +32,7 @@ import {
 } from '../guard/reviewPeerMeter/isReviewPeerLevelTerminal';
 import { runStoneGuardReviews } from '../guard/runStoneGuardReviews';
 import { setStoneGuardStamp } from '../guard/setStoneGuardStamp';
-import { getOneStoneGuardOverrule } from '../judges/getOneStoneGuardOverrule';
+import { getStoneGuardOverruledLevels } from '../judges/getStoneGuardOverruledLevels';
 import { runStoneGuardJudges } from '../judges/runStoneGuardJudges';
 import { getOnePassageReport } from '../passage/getOnePassageReport';
 import { setPassageReport } from '../passage/setPassageReport';
@@ -338,10 +338,36 @@ export const setStoneAsPassed = async (
     status: 'approved',
     route: input.route,
   });
+  // load human overrules so an exhausted-but-overruled level does not halt
+  // .why = a level the human waved through must not block passage on exhaustion;
+  //        the judge forgives its blockers, so let the flow reach the judge
+  const { levels: overruledLevels, all: overruledAll } =
+    await getStoneGuardOverruledLevels({
+      stone: stoneMatched,
+      route: input.route,
+    });
+
+  // map review index -> level, to scope error forgiveness per level
+  // .why = an overrule at level N forgives that level's malfunction/constraint,
+  //        but a higher level's error still surfaces (it was not waved through)
+  const peerReviewsForLevel = stoneMatched.guard
+    ? getGuardPeerReviews(stoneMatched.guard)
+    : [];
+  const levelByReviewIndex = new Map<number, number>();
+  peerReviewsForLevel.forEach((review, i) =>
+    levelByReviewIndex.set(i + 1, review.level ?? 1),
+  );
+  const isReviewLevelOverruled = (index: number): boolean => {
+    if (overruledAll) return true;
+    const level = levelByReviewIndex.get(index) ?? 1;
+    return overruledLevels.has(level);
+  };
   // get slugs of reviews that were SKIPPED (not ran) due to exhaustion
   // .note = verdict 'exhausted' is only set when wasExhausted = true (see define.invariant.review.peer.exhausted)
-  const exhaustedMeters = peerMeters.filter((m) =>
-    isReviewPeerVerdictExhausted(m.verdict),
+  // .note = exhausted reviewers at overruled levels are excluded — they are forgiven
+  const exhaustedMeters = peerMeters.filter(
+    (m) =>
+      isReviewPeerVerdictExhausted(m.verdict) && !overruledLevels.has(m.level),
   );
   const skippedSlugs = exhaustedMeters.map((m) => m.slug);
   const allTerminal =
@@ -416,24 +442,19 @@ export const setStoneAsPassed = async (
         )
       : [];
 
-  // check for human overrule marker (bypasses malfunction and constraint handlers)
-  const overrule = await getOneStoneGuardOverrule({
-    stone: stoneMatched,
-    route: input.route,
-  });
-
   // check for malfunctions (exit code != 0 and != 2)
+  // .note = a malfunction at an overruled level is forgiven (human waved it through)
+  // .note = judge malfunctions are forgiven only by a legacy stone-wide overrule
   const reviewMalfunctions = reviewArtifacts.filter(
-    (r) => r.exitClass === 'malfunction',
+    (r) => r.exitClass === 'malfunction' && !isReviewLevelOverruled(r.index),
   );
-  const judgeMalfunctions = judgeArtifacts.filter(
-    (j) => j.exitClass === 'malfunction',
-  );
+  const judgeMalfunctions = overruledAll
+    ? []
+    : judgeArtifacts.filter((j) => j.exitClass === 'malfunction');
   const hasMalfunction =
     reviewMalfunctions.length > 0 || judgeMalfunctions.length > 0;
 
-  // .note = overrule bypasses malfunction handler (human explicitly overrode)
-  if (hasMalfunction && !overrule) {
+  if (hasMalfunction) {
     // record malfunction status in passage.jsonl
     await setPassageReport({
       report: new PassageReport({
@@ -517,13 +538,16 @@ export const setStoneAsPassed = async (
   // check for genuine constraints (exit code 2 without blockers)
   // .note = exit 2 with blockers = review completed, found issues (not a constraint)
   // .note = exit 2 without blockers = genuine constraint (e.g., absent API key)
+  // .note = a constraint at an overruled level is forgiven (human waved it through)
   const reviewConstraints = reviewArtifacts.filter(
-    (r) => r.exitClass === 'constraint' && r.blockers === 0,
+    (r) =>
+      r.exitClass === 'constraint' &&
+      r.blockers === 0 &&
+      !isReviewLevelOverruled(r.index),
   );
   const hasConstraint = reviewConstraints.length > 0;
 
-  // .note = overrule bypasses constraint handler (human explicitly overrode)
-  if (hasConstraint && !overrule) {
+  if (hasConstraint) {
     // record blocked status in passage.jsonl
     await setPassageReport({
       report: new PassageReport({
@@ -625,8 +649,10 @@ export const setStoneAsPassed = async (
     });
 
     // determine passage reason
-    // .note = if overrule marker exists, passage was enabled by overrule
-    const passageReason = overrule ? 'overruled' : 'allowed';
+    // .note = if any level (or legacy all) was overruled, passage was enabled
+    //         by overrule; else it passed the judges cleanly
+    const passageReason =
+      overruledAll || overruledLevels.size > 0 ? 'overruled' : 'allowed';
 
     return {
       passed: true,

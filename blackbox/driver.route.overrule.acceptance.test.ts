@@ -1052,4 +1052,119 @@ describe('driver.route.overrule.acceptance', () => {
       });
     });
   });
+
+  // =========================================================================
+  // leveled overrule: L1 REJECTS (perma-blocker), overrule unlocks L3
+  // =========================================================================
+
+  given(
+    '[case15] leveled overrule: L1 rejects (blockers), overrule unlocks L3',
+    () => {
+      const scene = useBeforeAll(async () => {
+        const tempDir = genTempDirForRhachet({
+          slug: 'leveled-overrule',
+          clone: TIER_ESCALATION_ASSETS_DIR,
+        });
+
+        await execAsync('npx rhachet roles link --role driver', {
+          cwd: tempDir,
+        });
+        await execAsync('chmod +x .test/mock-review-l1.sh', { cwd: tempDir });
+        await execAsync('chmod +x .test/mock-review-l3.sh', { cwd: tempDir });
+
+        // create artifact
+        await fs.writeFile(
+          path.join(tempDir, '1.feature.md'),
+          '# Feature\n\nL1 reviewer perma-blocks; L3 has not run yet.',
+        );
+
+        // .note = no flag files = default L1 behavior = emit 1 blocker (rejection)
+        //         this is a NON-terminal verdict, so L3 stays queued behind L1
+
+        return { tempDir };
+      });
+
+      when('[t0] initial pass attempted (L1 rejects, L3 queued)', () => {
+        const result = useThen('pass fails due to L1 blocker', async () =>
+          invokeRouteSkill({
+            skill: 'route.stone.set',
+            args: { stone: '1.feature', route: '.', as: 'passed' },
+            cwd: scene.tempDir,
+          }),
+        );
+
+        then('exit code is non-zero', () => {
+          expect(result.code).not.toEqual(0);
+        });
+
+        then('output shows L1 reviewer ran', () => {
+          expect(result.stdout).toContain('basic-checker');
+        });
+
+        then('L3 did not run yet (queued behind the L1 blocker)', () => {
+          // premium-checker (L3) should not have produced a review verdict yet
+          expect(result.stdout).not.toMatch(/premium-checker.*0 blockers ✓/s);
+        });
+      });
+
+      when('[t1] human overrules the active level (L1)', () => {
+        const result = useThen('overrule succeeds', async () =>
+          invokeRouteSkill({
+            skill: 'route.stone.set',
+            args: { stone: '1.feature', route: '.', as: 'overruled' },
+            cwd: scene.tempDir,
+          }),
+        );
+
+        then('exit code is 0', () => {
+          expect(result.code).toEqual(0);
+        });
+
+        then('stdout names the overruled level (level 1)', () => {
+          expect(result.stdout).toContain('overruled');
+          expect(result.stdout).toContain('level 1, overruled');
+        });
+
+        then('stdout names the level that becomes ready (level 3)', () => {
+          // the l1 overrule unlocks l3, which is queued — so l3 becomes ready
+          expect(result.stdout).toContain('level 3, ready');
+        });
+
+        then('snapshot shows active + ready levels', () => {
+          expect(sanitizeTimeForSnapshot(result.stdout)).toMatchSnapshot();
+        });
+      });
+
+      when('[t2] pass attempted after the L1 overrule', () => {
+        const result = useThen(
+          'pass succeeds, L3 runs and approves',
+          async () => {
+            await invokeRouteSkill({
+              skill: 'route.stone.set',
+              args: { stone: '1.feature', route: '.', as: 'overruled' },
+              cwd: scene.tempDir,
+            });
+            // L1 forgiven -> L3 unlocks and runs -> L3 approves -> stone passes
+            return invokeRouteSkill({
+              skill: 'route.stone.set',
+              args: { stone: '1.feature', route: '.', as: 'passed' },
+              cwd: scene.tempDir,
+            });
+          },
+        );
+
+        then('exit code is 0', () => {
+          expect(result.code).toEqual(0);
+        });
+
+        then('L3 reviewer ran (unlocked by the overrule)', () => {
+          expect(result.stdout).toContain('premium-checker');
+        });
+
+        then('snapshot matches', () => {
+          expect(sanitizeTimeForSnapshot(result.stdout)).toMatchSnapshot();
+        });
+      });
+    },
+  );
 });

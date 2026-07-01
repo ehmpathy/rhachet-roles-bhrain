@@ -10,6 +10,7 @@ import { DomainLiteral } from 'domain-objects';
  * - 'blocked': stone is blocked from passage
  * - 'rewound': stone validation state has been cleared for fresh evaluation
  * - 'malfunction': reviewer or judge malfunctioned (exit code != 0 and != 2)
+ * - 'overruled': human bypassed the review threshold for one review level
  */
 export interface PassageReport {
   /**
@@ -37,6 +38,16 @@ export interface PassageReport {
     | 'review.peer.exhausted'
     | 'judge'
     | 'approval';
+
+  /**
+   * the review level this report scopes to (only for status='overruled')
+   *
+   * .why = overrule is level-scoped: an overrule with level=N forgives the
+   *        blockers of reviewers at level N only, so higher levels still run.
+   * .note = absent on legacy overrule rows (pre-level-scope); absent treated
+   *         as "all levels" for backward compatibility.
+   */
+  level?: number;
 
   /**
    * human-readable reason (optional)

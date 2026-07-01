@@ -1,0 +1,36 @@
+# howto: run self reviews
+
+## .what
+how to run the self reviews a guard asks for before peer reviews run.
+
+## take them seriously
+the review IS the work — not a gate, not a checkbox. question yourself severely. these
+reviews encode lessons from production. a promise without a true review is a daydream; the
+guard checks the file holds real findings.
+- found issue → articulate how fixed
+- non-issue → articulate why it holds
+- can articulate neither → you have not reviewed
+
+## flow
+self reviews gate peer reviews. promise every one before peers run.
+
+1. `--as passed` → guard halts: `review.self N/M — slug = <slug>` + guide + `articulate into` path
+2. read guide + artifact slowly
+3. write findings into the EXACT path the guard printed (see level pitfall)
+4. `--as promised --that <slug>`
+5. repeat until all M/M promised → peers run
+
+## the level pitfall ⚠️
+filename carries a **level** = the `rN` prefix:
+```
+review/self/for.<stone>._.r2.has-questioned-assumptions.md
+                          └ level   └ slug
+```
+the guard assigns the level — you do NOT. `rN` does not count 1,2,3 in order; it tracks
+review iteration and can repeat or jump (r1, r2, r2...).
+
+- ⛔ never compute or increment the level yourself
+- ✅ copy the `articulate into` path verbatim
+
+wrong level → guard says "articulation is absent" and refuses the promise (it looks at its
+path, not yours).

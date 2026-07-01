@@ -18,6 +18,7 @@ import { RouteStoneGuardReviewArtifact } from '@src/domain.objects/Driver/RouteS
 import { RouteStoneGuardReviewPeerMeter } from '@src/domain.objects/Driver/RouteStoneGuardReviewPeerMeter';
 
 import { findsertReviewPeerGitignore } from '../gitignore/findsertReviewPeerGitignore';
+import { getStoneGuardOverruledLevels } from '../judges/getStoneGuardOverruledLevels';
 import { formatTreeBucket } from './formatTreeBucket';
 import { getAllStoneGuardArtifactsByHash } from './getAllStoneGuardArtifactsByHash';
 import { getExitCodeClass } from './getExitCodeClass';
@@ -345,6 +346,14 @@ export const runStoneGuardReviews = async (
   };
   const { allowBlockers, allowNitpicks } = thresholds;
 
+  // load human overrules so an overruled level counts as terminal for unlock
+  // .why = after a human overrules l1, l1's blockers are forgiven and l1 is
+  //        terminal, so the next level (l3) can run in this same pass
+  const { levels: overruledLevels } = await getStoneGuardOverruledLevels({
+    stone: input.stone,
+    route: input.route,
+  });
+
   // compute current verdicts for level unlock logic
   const computeVerdicts = () =>
     peerReviewsWithIndex.map((pr) => {
@@ -504,9 +513,12 @@ export const runStoneGuardReviews = async (
 
     // check if lower levels are all terminal before higher level runs
     // .why = cheap (low level) runs first, expensive (high level) only after cheap clears
+    // .note = an overruled level counts as terminal: a human waved it through, so
+    //         higher levels unlock even if that level still has blockers. drop the
+    //         overruled levels' verdicts so those levels read as empty (=terminal).
     const verdicts = computeVerdicts();
     const canRun = isReviewPeerLevelUnlocked({
-      reviewers: verdicts,
+      reviewers: verdicts.filter((v) => !overruledLevels.has(v.level)),
       level: pr.level,
     });
 

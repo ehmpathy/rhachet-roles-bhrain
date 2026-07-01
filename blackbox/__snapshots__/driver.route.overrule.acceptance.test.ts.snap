@@ -6,6 +6,7 @@ exports[`driver.route.overrule.acceptance given: [case1] human overrules blocked
 🗿 route.stone.set
    ├─ stone = 1.plan
    └─ ✓ overruled
+      └─ level 1, overruled
 "
 `;
 
@@ -63,8 +64,8 @@ exports[`driver.route.overrule.acceptance given: [case5] human forces blocked st
 🗿 route.stone.set
    ├─ stone = 1.plan
    └─ ✓ forced
-      ├─ approved = ✓
-      └─ overruled = ✓
+      ├─ overruled = ✓ (level 1)
+      └─ approved  = ✓
 "
 `;
 
@@ -247,6 +248,7 @@ exports[`driver.route.overrule.acceptance given: [case13] tier escalation: L1 ma
 🗿 route.stone.set
    ├─ stone = 1.feature
    └─ ✓ overruled
+      └─ level 1, overruled
 "
 `;
 
@@ -338,6 +340,7 @@ exports[`driver.route.overrule.acceptance given: [case14] tier escalation: L1 co
 🗿 route.stone.set
    ├─ stone = 1.feature
    └─ ✓ overruled
+      └─ level 1, overruled
 "
 `;
 
@@ -373,6 +376,57 @@ exports[`driver.route.overrule.acceptance given: [case14] tier escalation: L1 co
    │  │       ├─ 0 blockers ✓
    │  │       ├─ 0 nitpicks ✓
    │  │       └─ review: .reviews/peer/1.feature._.review.i1.bf3993d1d36b238918.r2._.given.by_peer.premium-checker.md
+   │  └─ judges
+   │      └─ j1: rhx route.stone.judge --mechanism reviewed? --stone $stone --route $route --allow-blockers 0
+   │          └─ finished [TIME] ✓
+   │
+   └─ the way continues, run
+      └─ rhx route.drive
+"
+`;
+
+exports[`driver.route.overrule.acceptance given: [case15] leveled overrule: L1 rejects (blockers), overrule unlocks L3 when: [t1] human overrules the active level (L1) then: snapshot shows active + ready levels 1`] = `
+"🦉 the way speaks for itself
+
+🗿 route.stone.set
+   ├─ stone = 1.feature
+   └─ ✓ overruled
+      ├─ level 1, overruled
+      └─ level 3, ready
+"
+`;
+
+exports[`driver.route.overrule.acceptance given: [case15] leveled overrule: L1 rejects (blockers), overrule unlocks L3 when: [t2] pass attempted after the L1 overrule then: snapshot matches 1`] = `
+"🦉 the way speaks for itself
+   │
+   ├─ r1: basic-checker (l1, 1/5)
+   │   ├─ rejected, cached
+   │   ├─ 1 blocker 🔴
+   │   ├─ 0 nitpicks ✓
+   │   └─ review: .reviews/peer/1.feature._.review.i1.61a1a4cb139b1d868b.r1._.given.by_peer.basic-checker.md
+   │
+   ├─ r2: premium-checker (l3, 1/5)
+   │   ├─ approved [TIME]
+   │   ├─ 0 blockers ✓
+   │   ├─ 0 nitpicks ✓
+   │   └─ review: .reviews/peer/1.feature._.review.i2.61a1a4cb139b1d868b.r2._.given.by_peer.premium-checker.md
+   │
+   └─ ✓ judge.1 - allowed [TIME]
+
+🗿 route.stone.set
+   ├─ stone = 1.feature
+   ├─ passage = overruled
+   ├─ guard
+   │  ├─ artifacts
+   │  │   └─ $route/1.feature*.md
+   │  ├─ reviews
+   │  │   ├─ r1: basic-checker (l1, 1/5)
+   │  │   │   ├─ rejected, cached
+   │  │   │   ├─ 1 blocker 🔴
+   │  │   │   ├─ 0 nitpicks ✓
+   │  │   │   └─ review: .reviews/peer/1.feature._.review.i1.61a1a4cb139b1d868b.r1._.given.by_peer.basic-checker.md
+   │  │   └─ r2: premium-checker (l3, 1/5)
+   │  │       └─ awaits l1 terminal
    │  └─ judges
    │      └─ j1: rhx route.stone.judge --mechanism reviewed? --stone $stone --route $route --allow-blockers 0
    │          └─ finished [TIME] ✓
