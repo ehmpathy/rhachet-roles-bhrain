@@ -1,5 +1,5 @@
-import { glob } from 'fast-glob';
 import * as fs from 'fs';
+import globby from 'globby';
 import * as path from 'path';
 
 import { RouteStone } from '@src/domain.objects/Driver/RouteStone';
@@ -14,7 +14,7 @@ export const getAllStones = async (input: {
   route: string;
 }): Promise<RouteStone[]> => {
   // glob for all stone files: *.stone, *.src.stone, *.src
-  const stoneFiles = await glob(['*.stone', '*.src.stone', '*.src'], {
+  const stoneFiles = await globby(['*.stone', '*.src.stone', '*.src'], {
     cwd: input.route,
     absolute: false,
   });

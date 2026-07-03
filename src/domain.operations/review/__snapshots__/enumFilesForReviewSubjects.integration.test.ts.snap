@@ -1,0 +1,8 @@
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
+
+exports[`enumFilesForReviewSubjects given: [case1] gitignored directory inside the repo when: [t0] enumFilesForReviewSubjects scans **/* then: excludes the gitignored directory 1`] = `
+[
+  "src/domain.operations/review/.test/assets/example.gitignored/.gitignore",
+  "src/domain.operations/review/.test/assets/example.gitignored/allowed.ts",
+]
+`;

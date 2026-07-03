@@ -1,4 +1,4 @@
-import fg from 'fast-glob';
+import globby from 'globby';
 
 /**
  * .what = enumerates files that match a glob pattern
@@ -10,12 +10,12 @@ export const enumFilesFromGlob = async (input: {
   dot?: boolean;
   ignore?: string[];
 }): Promise<string[]> => {
-  const matches = await fg(input.glob, {
+  const matches = await globby(input.glob, {
     cwd: input.cwd,
     absolute: true,
     onlyFiles: true,
     dot: input.dot,
-    ignore: input.ignore,
+    ignore: input.ignore ?? [], // globby v11 requires array, not undefined
   });
   return matches;
 };
