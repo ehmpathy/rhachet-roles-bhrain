@@ -6,7 +6,7 @@ exports[`reflect.savepoint given: [case1] repo with staged and unstaged changes 
 🌕 reflect.savepoint set
    ├─ repo = [ISO_TEMP].reflect-savepoint-case1.[HASH]
    ├─ tree = [ISO_TEMP].reflect-savepoint-case1.[HASH]
-   ├─ branch = main
+   ├─ branch = [BRANCH]
    │
    ├─ commit = [HASH]
    ├─ staged.patch = [SIZE]ytes
@@ -28,7 +28,7 @@ exports[`reflect.savepoint given: [case1] repo with staged and unstaged changes 
 🌕 reflect.savepoint set
    ├─ repo = [ISO_TEMP].reflect-savepoint-case1.[HASH]
    ├─ tree = [ISO_TEMP].reflect-savepoint-case1.[HASH]
-   ├─ branch = main
+   ├─ branch = [BRANCH]
    │
    ├─ commit = [HASH]
    ├─ staged.patch = [SIZE]ytes
@@ -50,13 +50,13 @@ exports[`reflect.savepoint given: [case1] repo with staged and unstaged changes 
 🌕 reflect.savepoint get
    ├─ repo = [ISO_TEMP].reflect-savepoint-case1.[HASH]
    ├─ tree = [ISO_TEMP].reflect-savepoint-case1.[HASH]
-   ├─ branch = main
+   ├─ branch = [BRANCH]
    │
    ├─ savepoints = 1
    ├─ size = [SIZE]ytes
    │
    └─ list
-      └─ [TIMESTAMP] (commit=ff03be3, patches=04f1ec0, [SIZE]ytes)
+      └─ [TIMESTAMP] (commit=[HASH], patches=04f1ec0, [SIZE]ytes)
          ├─ [TIMESTAMP].staged.patch
          └─ [TIMESTAMP].unstaged.patch
 

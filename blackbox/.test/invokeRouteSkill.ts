@@ -50,6 +50,11 @@ export const genTempDirForRhachet = (input: {
  */
 export const sanitizeTimeForSnapshot = (output: string): string => {
   return output
+    // collapse volatile temp-dir prefix; keep the stable suffix
+    // e.g. /tmp/test-fns/<repodir>/.temp/<iso>.<slug>.<hash>/.reviews/... -> [TEMP]/.reviews/...
+    // .why = repodir carries the worktree name and .temp carries a timestamp+hash,
+    //        both machine-specific; only the suffix after them is stable
+    .replace(/\/tmp\/test-fns\/[^/]+\/\.temp\/[^/]+\//g, '[TEMP]/')
     .replace(/finished \d+\.\d+s/g, 'finished [TIME]')
     .replace(/done \d+\.\d+s/g, 'done [TIME]')
     .replace(/passed \d+\.\d+s/g, 'passed [TIME]')

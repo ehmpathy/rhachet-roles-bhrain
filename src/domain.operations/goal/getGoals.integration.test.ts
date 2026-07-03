@@ -200,6 +200,53 @@ describe('getGoals.integration', () => {
     });
   });
 
+  given('[case5] deterministic order across reads', () => {
+    // .why = regression guard; getGoals once used raw fs.readdir order which
+    //        varies per machine/run and leaked into acceptance snapshots.
+    //        goal filenames carry a numeric offset prefix, so a lexical sort
+    //        yields a stable, meaningful (creation) order.
+    const tempDir = path.join(os.tmpdir(), `test-getGoals-order-${Date.now()}`);
+
+    afterEach(async () => {
+      await fs.rm(tempDir, { recursive: true, force: true });
+    });
+
+    when('[t0] multiple goals exist', () => {
+      then('returns the same order on every read', async () => {
+        const slugs = ['gamma-goal', 'alpha-goal', 'beta-goal'];
+        for (const slug of slugs) {
+          await setGoal({
+            goal: new Goal({
+              slug,
+              why: new GoalWhy({
+                ask: 'ask',
+                purpose: 'purpose',
+                benefit: 'benefit',
+              }),
+              what: new GoalWhat({ outcome: 'outcome' }),
+              how: new GoalHow({ task: 'task', gate: 'gate' }),
+              status: new GoalStatus({ choice: 'enqueued', reason: 'new' }),
+              source: 'peer:human',
+              createdAt: '2026-04-02',
+              updatedAt: '2026-04-02',
+            }),
+            scopeDir: tempDir,
+          });
+        }
+
+        // read twice; order must be identical and deterministic
+        const first = await getGoals({ scopeDir: tempDir });
+        const second = await getGoals({ scopeDir: tempDir });
+
+        const firstOrder = first.goals.map((g) => g.slug);
+        const secondOrder = second.goals.map((g) => g.slug);
+        expect(firstOrder).toEqual(secondOrder);
+        // same-second creation shares offset prefix, so slug decides order
+        expect(firstOrder).toEqual(['alpha-goal', 'beta-goal', 'gamma-goal']);
+      });
+    });
+  });
+
   given('[case4] status from flag file', () => {
     const tempDir = path.join(
       os.tmpdir(),

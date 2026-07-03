@@ -6,7 +6,7 @@ exports[`reflect.snapshot get given: [case1] repo with no snapshots when: [t0] g
 🌕 reflect.snapshot get
    ├─ repo = [ISO_TEMP].reflect-get-case1.[HASH]
    ├─ tree = [ISO_TEMP].reflect-get-case1.[HASH]
-   ├─ branch = main
+   ├─ branch = [BRANCH]
    │
    ├─ snapshots = 0
    ├─ annotations = 0

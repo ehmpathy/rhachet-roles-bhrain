@@ -6,7 +6,7 @@ exports[`reflect.journey.acceptance given: [journey] full reflect workflow when:
 🌕 reflect.savepoint set
    ├─ repo = [ISO_TEMP].reflect-journey.[HASH]
    ├─ tree = [ISO_TEMP].reflect-journey.[HASH]
-   ├─ branch = main
+   ├─ branch = [BRANCH]
    │
    ├─ commit = [HASH]
    ├─ staged.patch = [SIZE]ytes
@@ -28,7 +28,7 @@ exports[`reflect.journey.acceptance given: [journey] full reflect workflow when:
 🌕 reflect.savepoint set
    ├─ repo = [ISO_TEMP].reflect-journey.[HASH]
    ├─ tree = [ISO_TEMP].reflect-journey.[HASH]
-   ├─ branch = main
+   ├─ branch = [BRANCH]
    │
    ├─ commit = [HASH]
    ├─ staged.patch = [SIZE]ytes
@@ -50,16 +50,16 @@ exports[`reflect.journey.acceptance given: [journey] full reflect workflow when:
 🌕 reflect.savepoint get
    ├─ repo = [ISO_TEMP].reflect-journey.[HASH]
    ├─ tree = [ISO_TEMP].reflect-journey.[HASH]
-   ├─ branch = main
+   ├─ branch = [BRANCH]
    │
    ├─ savepoints = 2
    ├─ size = [SIZE]ytes
    │
    └─ list
-      ├─ [TIMESTAMP] (commit=af6de32, patches=04f1ec0, [SIZE]ytes)
+      ├─ [TIMESTAMP] (commit=[HASH], patches=04f1ec0, [SIZE]ytes)
       │  ├─ [TIMESTAMP].staged.patch
       │  └─ [TIMESTAMP].unstaged.patch
-      └─ [TIMESTAMP] (commit=af6de32, patches=8f56415, [SIZE]ytes)
+      └─ [TIMESTAMP] (commit=[HASH], patches=8f56415, [SIZE]ytes)
          ├─ [TIMESTAMP].staged.patch
          └─ [TIMESTAMP].unstaged.patch
 
@@ -72,7 +72,7 @@ exports[`reflect.journey.acceptance given: [journey] full reflect workflow when:
 🌕 reflect.snapshot annotate
    ├─ repo = [ISO_TEMP].reflect-journey.[HASH]
    ├─ tree = [ISO_TEMP].reflect-journey.[HASH]
-   ├─ branch = main
+   ├─ branch = [BRANCH]
    │
    └─ annotation = ~/.rhachet/storage/repo=bhrain/role=reflector/skills/reflect.snapshot/gitrepo=[ISO_TEMP].reflect-journey.[HASH]/worktree=[ISO_TEMP].reflect-journey.[HASH]/branch=main/annotations/[TIMESTAMP].annotation.md
 
@@ -87,7 +87,7 @@ exports[`reflect.journey.acceptance given: [journey] full reflect workflow when:
 🌕 reflect.snapshot annotate
    ├─ repo = [ISO_TEMP].reflect-journey.[HASH]
    ├─ tree = [ISO_TEMP].reflect-journey.[HASH]
-   ├─ branch = main
+   ├─ branch = [BRANCH]
    │
    └─ annotation = ~/.rhachet/storage/repo=bhrain/role=reflector/skills/reflect.snapshot/gitrepo=[ISO_TEMP].reflect-journey.[HASH]/worktree=[ISO_TEMP].reflect-journey.[HASH]/branch=main/annotations/[TIMESTAMP].annotation.md
 
@@ -102,7 +102,7 @@ exports[`reflect.journey.acceptance given: [journey] full reflect workflow when:
 🌕 reflect.snapshot get
    ├─ repo = [ISO_TEMP].reflect-journey.[HASH]
    ├─ tree = [ISO_TEMP].reflect-journey.[HASH]
-   ├─ branch = main
+   ├─ branch = [BRANCH]
    │
    ├─ snapshots = 0
    ├─ annotations = 2
@@ -117,7 +117,7 @@ exports[`reflect.journey.acceptance given: [journey] full reflect workflow when:
 🌕 reflect.snapshot capture
    ├─ repo = [ISO_TEMP].reflect-journey.[HASH]
    ├─ tree = [ISO_TEMP].reflect-journey.[HASH]
-   ├─ branch = main
+   ├─ branch = [BRANCH]
    │
    ├─ transcript
    │  ├─ sessions = 1
@@ -140,7 +140,7 @@ exports[`reflect.journey.acceptance given: [journey] full reflect workflow when:
 🌕 reflect.snapshot get
    ├─ repo = [ISO_TEMP].reflect-journey.[HASH]
    ├─ tree = [ISO_TEMP].reflect-journey.[HASH]
-   ├─ branch = main
+   ├─ branch = [BRANCH]
    │
    ├─ snapshots = 1
    ├─ annotations = 2

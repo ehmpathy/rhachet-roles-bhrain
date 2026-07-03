@@ -49,6 +49,9 @@ export const sanitizeGoalOutputForSnapshot = (output: string): string => {
     .replace(/[a-f0-9]{64}/g, '[SHA256]') // full sha256 hashes
     .replace(/\d{7}\./g, '[OFFSET].') // goal offset prefixes
     .replace(/\/tmp\/[^\s]+/g, '[TMPDIR]') // temp directory paths
+    // collapse absolute repo-root prefix in stack traces (machine-specific)
+    // e.g. /home/vlad/.../<worktree>/dist/... or /home/runner/work/.../dist/... -> [REPO]/dist/...
+    .replace(/\/[^\s()]*\/dist\//g, '[REPO]/dist/')
     .replace(/\.goals\/[^\s\/]+\//g, '.goals/[BRANCH]/') // branch names in paths
     .replace(/\d{4}-\d{2}-\d{2}/g, '[DATE]'); // ISO dates
 };

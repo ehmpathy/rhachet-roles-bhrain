@@ -275,4 +275,53 @@ describe('setGoal.integration', () => {
       });
     });
   });
+
+  given('[case3] scope dir mtime ahead of now', () => {
+    // .why = regression guard; offset = seconds since dir creation, computed
+    //        as floor((now - mtime)/1000). when the filesystem mtime is briefly
+    //        ahead of now (timestamp resolution/clock skew), the raw value went
+    //        negative and rendered as "00000-1" via padStart, which broke the
+    //        numeric offset contract. offset must clamp at 0.
+    const tempDir = path.join(
+      os.tmpdir(),
+      `test-setGoal-future-mtime-${Date.now()}`,
+    );
+
+    afterEach(async () => {
+      await fs.rm(tempDir, { recursive: true, force: true });
+    });
+
+    when('[t0] goal is created', () => {
+      then('offset stays non-negative (no dash in filename)', async () => {
+        await fs.mkdir(tempDir, { recursive: true });
+
+        // force the dir mtime one hour into the future
+        const future = new Date(Date.now() + 60 * 60 * 1000);
+        await fs.utimes(tempDir, future, future);
+
+        const goal = new Goal({
+          slug: 'future-goal',
+          why: new GoalWhy({
+            ask: 'ask',
+            purpose: 'purpose',
+            benefit: 'benefit',
+          }),
+          what: new GoalWhat({ outcome: 'outcome' }),
+          how: new GoalHow({ task: 'task', gate: 'gate' }),
+          status: new GoalStatus({ choice: 'enqueued', reason: 'new' }),
+          source: 'peer:human',
+          createdAt: '2026-04-02',
+          updatedAt: '2026-04-02',
+        });
+
+        const result = await setGoal({ goal, scopeDir: tempDir });
+
+        // the offset prefix must be a clean 7-digit number, never "00000-1"
+        const fileName = path.basename(result.path);
+        const offsetStr = fileName.split('.')[0] ?? '';
+        expect(offsetStr).toMatch(/^\d{7}$/);
+        expect(offsetStr).toEqual('0000000');
+      });
+    });
+  });
 });
