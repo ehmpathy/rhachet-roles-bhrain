@@ -1,4 +1,4 @@
-import { glob } from 'fast-glob';
+import globby from 'globby';
 import { enrollThread, genContextStitchTrail, genRoleSkill } from 'rhachet';
 import { genArtifactGitFile, getArtifactObsDir } from 'rhachet-artifact-git';
 
@@ -85,7 +85,7 @@ export const SKILL_CATALOGIZE = genRoleSkill({
             input.references
               ?.split(',')
               .filter((uri) => !!uri)
-              .map(async (pattern) => await glob(pattern)) ?? [], // support glob references
+              .map(async (pattern) => await globby(pattern)) ?? [], // support glob references
           )
         )
           .flat()

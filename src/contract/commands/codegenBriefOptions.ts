@@ -1,6 +1,6 @@
 import { asCommand } from '@ehmpathy/as-command';
-import glob from 'fast-glob';
 import fs from 'fs';
+import globby from 'globby';
 import path from 'path';
 import { getGitRepoRoot } from 'rhachet-artifact-git';
 
@@ -21,7 +21,7 @@ const command = asCommand(
       path.join(briefsDir, '**/*'), // include all
       '!' + path.join(briefsDir, '**/*.stub.*'), // exclude .stub.* files, since those were the stubs that the full briefs were expanded from
     ];
-    const filePaths = await glob(patterns, { onlyFiles: true });
+    const filePaths = await globby(patterns, { onlyFiles: true });
 
     // declare each path as a key
     const keys = filePaths

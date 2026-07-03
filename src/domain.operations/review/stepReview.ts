@@ -1,5 +1,5 @@
 import * as fs from 'fs/promises';
-import { BadRequestError } from 'helpful-errors';
+import { BadRequestError, UnexpectedCodePathError } from 'helpful-errors';
 import { asIsoPriceHuman, type IsoPriceHuman } from 'iso-price';
 import { asDurationInWords, type IsoDuration } from 'iso-time';
 import * as path from 'path';
@@ -7,7 +7,8 @@ import { type BrainChoice, type ContextBrain, isBrainRepl } from 'rhachet';
 import { z } from 'zod';
 
 import { compileReviewPrompt } from '@src/domain.operations/review/compileReviewPrompt';
-import { enumFilesFromGlob } from '@src/domain.operations/review/enumFilesFromGlob';
+import { enumFilesForReviewSubjects } from '@src/domain.operations/review/enumFilesForReviewSubjects';
+import { enumFilesForReviewSupplies } from '@src/domain.operations/review/enumFilesForReviewSupplies';
 import { formatReviewOutput } from '@src/domain.operations/review/formatReviewOutput';
 import {
   genReviewHeaderStdout,
@@ -20,6 +21,7 @@ import {
   type FileDiff,
   getAllFileDiffsFromRange,
 } from '@src/domain.operations/review/getAllFileDiffsFromRange';
+import { isPathMatchedByGlob } from '@src/domain.operations/review/isPathMatchedByGlob';
 import { writeInputArtifacts } from '@src/domain.operations/review/writeInputArtifacts';
 import { writeOutputArtifacts } from '@src/domain.operations/review/writeOutputArtifacts';
 
@@ -122,12 +124,17 @@ export const REVIEW_TIMEOUT_MS =
 
 /**
  * .what = error thrown when review times out
- * .why = enables caller to detect timeout vs other failures
+ * .why = a timeout is a server-side malfunction, not a caller fault
+ *
+ * .note = extends UnexpectedCodePathError (helpful-errors server-fault base) so it
+ *         carries helpful-error semantics and maps to exit 1, distinct from the
+ *         caller-fault BadRequestError (exit 2) handled in contract/cli/review.ts
  */
-export class ReviewTimeoutError extends Error {
+export class ReviewTimeoutError extends UnexpectedCodePathError {
   constructor(timeoutMs: number) {
     super(
       `💥 malfunction: review timed out after ${Math.floor(timeoutMs / 60000)} minutes`,
+      { timeoutMs },
     );
     this.name = 'ReviewTimeoutError';
   }
@@ -261,7 +268,7 @@ export const stepReview = async (
   const ruleGlobs = Array.isArray(input.rules)
     ? input.rules
     : [input.rules].filter(Boolean);
-  const ruleFiles = await enumFilesFromGlob({ glob: ruleGlobs, cwd });
+  const ruleFiles = await enumFilesForReviewSupplies({ glob: ruleGlobs, cwd });
   if (ruleGlobs.length > 0 && ruleFiles.length === 0) {
     console.error('');
     console.error('🦉 woah there');
@@ -335,7 +342,7 @@ export const stepReview = async (
     ...pathsWoutGlobs,
   ];
 
-  const targetFilesFromPaths = await enumFilesFromGlob({
+  const targetFilesFromPaths = await enumFilesForReviewSubjects({
     glob: positivePathGlobs,
     cwd,
   });
@@ -365,18 +372,12 @@ export const stepReview = async (
     return [...new Set([...targetFilesFromDiffs, ...targetFilesFromPaths])];
   })();
   const targetFiles = targetFilesJoined
-    .filter((file) => {
-      for (const pattern of negativePathGlobs) {
-        if (file === pattern || file.endsWith(`/${pattern}`)) return false;
-        if (pattern.includes('*')) {
-          const regex = new RegExp(
-            '^' + pattern.replace(/\*/g, '.*').replace(/\?/g, '.') + '$',
-          );
-          if (regex.test(file)) return false;
-        }
-      }
-      return true;
-    })
+    .filter(
+      (file) =>
+        !negativePathGlobs.some((glob) =>
+          isPathMatchedByGlob({ path: file, glob }),
+        ),
+    )
     .sort();
 
   // write scope debug file before validation (enables debug even on failure)
@@ -440,7 +441,9 @@ export const stepReview = async (
       : [input.refs]
     : [];
   const refFiles =
-    refGlobs.length > 0 ? await enumFilesFromGlob({ glob: refGlobs, cwd }) : [];
+    refGlobs.length > 0
+      ? await enumFilesForReviewSupplies({ glob: refGlobs, cwd })
+      : [];
 
   // validate refs exist (fail-fast on zero matches when refs was specified)
   if (refGlobs.length > 0 && refFiles.length === 0) {
@@ -473,7 +476,9 @@ export const stepReview = async (
       return await fs.readFile(path.join(cwd, file), 'utf-8');
     } catch (error) {
       if (!(error instanceof Error)) throw error;
-      throw new BadRequestError(`failed to read file: ${file}`, {
+      // a file we just enumerated failed to read = server fault, not caller fault
+      // .note = UnexpectedCodePathError maps to exit 1, distinct from BadRequestError (exit 2)
+      throw new UnexpectedCodePathError(`failed to read file: ${file}`, {
         file,
         fullPath: path.join(cwd, file),
         error: error.message,
