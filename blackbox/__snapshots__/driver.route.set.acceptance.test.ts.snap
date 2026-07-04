@@ -34,7 +34,7 @@ exports[`driver.route.set.acceptance given: [case2] route.stone.set --as approve
          ├─ \`--as passed\` to signal work complete, proceed
          ├─ \`--as arrived\` to signal work complete, request review
          └─ \`--as blocked\` to escalate if stuck
-      
+
       the human will run \`--as approved\` when ready.
 "
 `;
@@ -142,7 +142,7 @@ exports[`driver.route.set.acceptance given: [case5] route.stone.set with flexibl
          ├─ \`--as passed\` to signal work complete, proceed
          ├─ \`--as arrived\` to signal work complete, request review
          └─ \`--as blocked\` to escalate if stuck
-      
+
       the human will run \`--as approved\` when ready.
 "
 `;

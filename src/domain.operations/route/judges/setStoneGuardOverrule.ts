@@ -4,30 +4,36 @@ import { PassageReport } from '@src/domain.objects/Driver/PassageReport';
 import type { RouteStone } from '@src/domain.objects/Driver/RouteStone';
 
 import { setPassageReport } from '../passage/setPassageReport';
-import { getOneStoneGuardOverrule } from './getOneStoneGuardOverrule';
+import { getStoneGuardOverruledLevels } from './getStoneGuardOverruledLevels';
 
 /**
- * .what = creates overrule marker for a stone (findsert pattern)
- * .why = enables human to bypass review thresholds for gated milestones
- * .note = idempotent: returns extant if already overruled
+ * .what = creates an overrule marker for a stone, scoped to a review level
+ * .why = enables a human to bypass the review threshold for one level, so the
+ *        next level can still run (leveled overrule)
+ * .note = idempotent: returns extant if this level is already overruled
+ * .note = level omitted = legacy stone-wide overrule (forgives all levels)
  */
 export const setStoneGuardOverrule = async (input: {
   stone: RouteStone;
   route: string;
+  level?: number;
 }): Promise<{ path: string }> => {
-  // check if already overruled (findsert guard)
-  const overruleFound = await getOneStoneGuardOverrule({
+  // findsert guard: skip if this level (or legacy all) is already overruled
+  const { levels, all } = await getStoneGuardOverruledLevels({
     stone: input.stone,
     route: input.route,
   });
-  if (overruleFound) {
+  const alreadyOverruled =
+    input.level === undefined ? all : levels.has(input.level);
+  if (alreadyOverruled) {
     return { path: path.join(input.route, '.route', 'passage.jsonl') };
   }
 
-  // create passage report with status overruled
+  // create passage report with status overruled (scoped to level when given)
   const report = new PassageReport({
     stone: input.stone.name,
     status: 'overruled',
+    ...(input.level !== undefined ? { level: input.level } : {}),
   });
 
   // delegate to setPassageReport

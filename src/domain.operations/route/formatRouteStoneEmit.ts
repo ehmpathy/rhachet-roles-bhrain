@@ -46,6 +46,10 @@ type FormatInput =
       operation: 'route.stone.set';
       stone: string;
       action: 'overruled';
+      /** the review level scoped to (absent for legacy stone-wide overrule) */
+      level?: number;
+      /** the level that becomes ready once this level is overruled (if any) */
+      readyLevel?: number | null;
     }
   | {
       operation: 'route.stone.set';
@@ -325,6 +329,12 @@ export const formatRouteStoneEmit = (input: FormatInput): string => {
       lines.push(`   │`);
       const guidanceLines = input.guidance.split('\n');
       guidanceLines.forEach((line, i) => {
+        // .note = empty guidance lines emit a bare blank line (no prefix), so
+        //         no whitespace tail leaks into the snapshot
+        if (line === '') {
+          lines.push('');
+          return;
+        }
         const prefix = i === 0 ? '   └─ ' : '      ';
         lines.push(`${prefix}${line}`);
       });
@@ -339,6 +349,19 @@ export const formatRouteStoneEmit = (input: FormatInput): string => {
     } else if (input.action === 'overruled') {
       lines.push(`   ├─ stone = ${input.stone}`);
       lines.push(`   └─ ✓ overruled`);
+      // name the level scoped to, so the human sees what was waved through;
+      // and the level that becomes ready to run as a result (if any)
+      if (input.level !== undefined) {
+        const hasReady =
+          input.readyLevel !== undefined && input.readyLevel !== null;
+        const overruledConnector = hasReady ? '├─' : '└─';
+        lines.push(
+          `      ${overruledConnector} level ${input.level}, overruled`,
+        );
+        if (hasReady) {
+          lines.push(`      └─ level ${input.readyLevel}, ready`);
+        }
+      }
     } else if (input.action === 'forced') {
       lines.push(`   ├─ stone = ${input.stone}`);
       lines.push(`   └─ ✓ forced`);

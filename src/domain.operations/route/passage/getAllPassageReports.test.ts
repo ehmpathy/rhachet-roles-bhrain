@@ -481,4 +481,112 @@ describe('getAllPassageReports', () => {
       });
     },
   );
+
+  given(
+    '[case12] overrule is sticky per level (survives later passage)',
+    () => {
+      const tempDir = path.join(
+        os.tmpdir(),
+        `test-passage-overrule-sticky-${Date.now()}`,
+      );
+
+      beforeEach(async () => {
+        await fs.mkdir(path.join(tempDir, '.route'), { recursive: true });
+        const content =
+          [
+            JSON.stringify({ stone: '5.exec', status: 'overruled', level: 1 }),
+            JSON.stringify({ stone: '5.exec', status: 'blocked' }),
+          ].join('\n') + '\n';
+        await fs.writeFile(
+          path.join(tempDir, '.route', 'passage.jsonl'),
+          content,
+        );
+      });
+
+      afterEach(async () => {
+        await fs.rm(tempDir, { recursive: true, force: true });
+      });
+
+      when('[t0] level-1 overruled then blocked', () => {
+        then(
+          'overrule persists alongside the latest passage state',
+          async () => {
+            const reports = await getAllPassageReports({ route: tempDir });
+            const overrules = reports.filter((r) => r.status === 'overruled');
+            expect(overrules).toHaveLength(1);
+            expect(overrules[0]!.level).toEqual(1);
+            const blocked = reports.filter((r) => r.status === 'blocked');
+            expect(blocked).toHaveLength(1);
+          },
+        );
+      });
+    },
+  );
+
+  given('[case13] multiple levels overruled are all retained', () => {
+    const tempDir = path.join(
+      os.tmpdir(),
+      `test-passage-overrule-multi-${Date.now()}`,
+    );
+
+    beforeEach(async () => {
+      await fs.mkdir(path.join(tempDir, '.route'), { recursive: true });
+      const content =
+        [
+          JSON.stringify({ stone: '5.exec', status: 'overruled', level: 1 }),
+          JSON.stringify({ stone: '5.exec', status: 'overruled', level: 3 }),
+        ].join('\n') + '\n';
+      await fs.writeFile(
+        path.join(tempDir, '.route', 'passage.jsonl'),
+        content,
+      );
+    });
+
+    afterEach(async () => {
+      await fs.rm(tempDir, { recursive: true, force: true });
+    });
+
+    when('[t0] both level 1 and level 3 overruled', () => {
+      then('both overrule levels are present', async () => {
+        const reports = await getAllPassageReports({ route: tempDir });
+        const levels = reports
+          .filter((r) => r.status === 'overruled')
+          .map((r) => r.level)
+          .sort();
+        expect(levels).toEqual([1, 3]);
+      });
+    });
+  });
+
+  given('[case14] rewind clears overrule markers', () => {
+    const tempDir = path.join(
+      os.tmpdir(),
+      `test-passage-overrule-rewind-${Date.now()}`,
+    );
+
+    beforeEach(async () => {
+      await fs.mkdir(path.join(tempDir, '.route'), { recursive: true });
+      const content =
+        [
+          JSON.stringify({ stone: '5.exec', status: 'overruled', level: 1 }),
+          JSON.stringify({ stone: '5.exec', status: 'rewound' }),
+        ].join('\n') + '\n';
+      await fs.writeFile(
+        path.join(tempDir, '.route', 'passage.jsonl'),
+        content,
+      );
+    });
+
+    afterEach(async () => {
+      await fs.rm(tempDir, { recursive: true, force: true });
+    });
+
+    when('[t0] level-1 overruled then rewound', () => {
+      then('no overrule remains (cleared by rewind)', async () => {
+        const reports = await getAllPassageReports({ route: tempDir });
+        const overrules = reports.filter((r) => r.status === 'overruled');
+        expect(overrules).toHaveLength(0);
+      });
+    });
+  });
 });

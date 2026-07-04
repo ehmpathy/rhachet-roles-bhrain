@@ -1,0 +1,31 @@
+🦉 the way speaks for itself
+
+🗿 route.stone.set
+   ├─ stone = 5.3.verification
+   ├─ passage = allowed
+   ├─ guard
+   │  ├─ artifacts
+   │  │   ├─ $route/5.3.verification.yield.md
+   │  │   └─ src/**/*
+   │  ├─ reviews
+   │  │   ├─ r1: enroll-verif-snapshot-coverage (l3, 2/3)
+   │  │   │   ├─ approved 118.8s
+   │  │   │   ├─ 0 blockers ✓
+   │  │   │   ├─ 0 nitpicks ✓
+   │  │   │   └─ review: .behavior/v2026_06_26.fix-leveled-overrules/.reviews/peer/5.3.verification._.review.i4.139af04f9fcdf61f28.r1._.given.by_peer.enroll-verif-snapshot-coverage.md
+   │  │   ├─ r2: enroll-verif-snapshot-blemishes (l3, 2/3)
+   │  │   │   ├─ approved 146.8s
+   │  │   │   ├─ 0 blockers ✓
+   │  │   │   ├─ 0 nitpicks ✓
+   │  │   │   └─ review: .behavior/v2026_06_26.fix-leveled-overrules/.reviews/peer/5.3.verification._.review.i4.139af04f9fcdf61f28.r2._.given.by_peer.enroll-verif-snapshot-blemishes.md
+   │  │   └─ r3: enroll-verif-test-intent (l3, 2/3)
+   │  │       ├─ approved 255.6s
+   │  │       ├─ 0 blockers ✓
+   │  │       ├─ 0 nitpicks ✓
+   │  │       └─ review: .behavior/v2026_06_26.fix-leveled-overrules/.reviews/peer/5.3.verification._.review.i4.139af04f9fcdf61f28.r3._.given.by_peer.enroll-verif-test-intent.md
+   │  └─ judges
+   │      └─ j1: $rhachet run --repo bhrain --skill route.stone.judge --mechanism reviewed? --stone $stone --route $route --allow-blockers 0 --allow-nitpicks 0
+   │          └─ finished 0.5s ✓
+   │
+   └─ the way continues, run
+      └─ rhx route.drive
