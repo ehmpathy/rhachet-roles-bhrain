@@ -177,4 +177,33 @@ describe('driver.route.force.multilevel.acceptance', () => {
       });
     });
   });
+
+  given('[case3] robot cannot force (negative path)', () => {
+    const scene = useBeforeAll(async () => setupScene('force-multi-robot'));
+
+    when('[t0] robot runs --as forced (non-TTY, production)', () => {
+      const result = useThen('force is rejected for a non-human', async () =>
+        invokeRouteSkill({
+          skill: 'route.stone.set',
+          args: { stone: '1.feature', route: '.', as: 'forced' },
+          cwd: scene.tempDir,
+          env: { NODE_ENV: 'production', CI: '' },
+        }),
+      );
+
+      then('exit code is non-zero', () => {
+        expect(result.code).not.toEqual(0);
+      });
+
+      then('stdout explains only humans can force', () => {
+        // .why = force is a human-only authority; a robot attempt must be
+        //        rejected with guidance, never silently granted
+        expect(result.stdout).toContain('only humans can force');
+      });
+
+      then('snapshot shows the robot-force rejection', () => {
+        expect(sanitizeTimeForSnapshot(result.stdout)).toMatchSnapshot();
+      });
+    });
+  });
 });

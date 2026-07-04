@@ -154,7 +154,7 @@ exports[`formatRouteStoneEmit given: [case6] blocked action (agent tried to appr
          ├─ \`--as passed\` to signal work complete, proceed
          ├─ \`--as arrived\` to signal work complete, request review
          └─ \`--as blocked\` to escalate if stuck
-      
+
       the human will run \`--as approved\` when ready."
 `;
 

@@ -19,7 +19,7 @@ exports[`setStoneAsApproved given: [case3] caller is not human when: [t0] isTTY 
          ├─ \`--as passed\` to signal work complete, proceed
          ├─ \`--as arrived\` to signal work complete, request review
          └─ \`--as blocked\` to escalate if stuck
-      
+
       the human will run \`--as approved\` when ready."
 `;
 

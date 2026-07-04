@@ -329,6 +329,12 @@ export const formatRouteStoneEmit = (input: FormatInput): string => {
       lines.push(`   │`);
       const guidanceLines = input.guidance.split('\n');
       guidanceLines.forEach((line, i) => {
+        // .note = empty guidance lines emit a bare blank line (no prefix), so
+        //         no whitespace tail leaks into the snapshot
+        if (line === '') {
+          lines.push('');
+          return;
+        }
         const prefix = i === 0 ? '   └─ ' : '      ';
         lines.push(`${prefix}${line}`);
       });
