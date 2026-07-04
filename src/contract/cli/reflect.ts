@@ -142,10 +142,15 @@ export const reflect = async (): Promise<void> => {
   // parse args
   const options = parseArgs(process.argv);
 
-  // unlock keyrack upfront, since reviewers always need these creds
-  // .note = failfasts here (forwards keyrack's own output) if unlock is impossible,
+  // ensure keyrack creds upfront, since reviewers always need them
+  // .note = failfasts here (forwards keyrack's own output) if the cred is unavailable,
   //         instead of a fake malfunction deep in brain invocation
-  setKeyrackUnlocked({ owner: 'ehmpath', env: 'prep' });
+  // .note = probes FIREWORKS_API_KEY — the reviewer's canonical { ehmpath, prep } cred
+  setKeyrackUnlocked({
+    owner: 'ehmpath',
+    env: 'prep',
+    key: 'FIREWORKS_API_KEY',
+  });
 
   // create brain context via discovery with credentials
   // .note = uses env: 'prep' to match review; reviewers always target ehmpath/prep creds
