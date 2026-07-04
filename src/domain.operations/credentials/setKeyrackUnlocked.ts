@@ -9,18 +9,16 @@ import { spawnSync } from 'child_process';
  * .note = on failure, forward keyrack's own stdout/stderr verbatim and propagate its exit
  *         code — keyrack owns the locked/absent/prikey vocabulary; we do not re-wrap it.
  * .note = on success, stay silent — keyrack's output is captured, not printed.
- * .note = uses ./node_modules/.bin/rhx for resolution regardless of PATH; reviewers run
- *         from gitroot (see rule.forbid.cwd-outside-gitroot).
- * .note = in CI, creds arrive via the keyrack firewall (exported to env), not the keyrack
- *         daemon — the daemon is absent there, so skip the unlock and let env creds flow.
+ * .note = uses ./node_modules/.bin/rhx regardless of PATH; reviewers run from gitroot
+ *         (see rule.forbid.cwd-outside-gitroot).
+ * .note = we do NOT branch on process.env here — unlock is keyrack's job. locally keyrack
+ *         reads the vault into its daemon; in CI the keyrack firewall feeds creds from env
+ *         into the daemon. our code just asks keyrack to unlock, unconditionally.
  */
 export const setKeyrackUnlocked = (input: {
   owner: string;
   env: string;
 }): void => {
-  // skip in CI: creds come from the keyrack firewall via env, not the local daemon
-  if (process.env.CI) return;
-
   // unlock the keyrack for this owner/env; capture output so success stays silent
   const result = spawnSync(
     './node_modules/.bin/rhx',

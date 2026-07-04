@@ -56,16 +56,10 @@ const setFakeRhx = (input: {
  */
 const invokeHelper = async (input: {
   cwd: string;
-  ci?: boolean;
 }): Promise<{ stdout: string; stderr: string; code: number }> => {
   const cmd = `${TSX_BIN} -e "require('${HELPER_PATH}').setKeyrackUnlocked({ owner: 'ehmpath', env: 'prep' })"`;
-  // control the child's CI flag: the helper skips the daemon unlock when CI is set.
-  // for spawn-behavior cases we must clear CI (jest itself runs with CI=true in ci).
-  const childEnv = { ...process.env };
-  if (input.ci) childEnv.CI = 'true';
-  else delete childEnv.CI;
   try {
-    const result = await execAsync(cmd, { cwd: input.cwd, env: childEnv });
+    const result = await execAsync(cmd, { cwd: input.cwd });
     return { ...result, code: 0 };
   } catch (error) {
     const execError = error as {
@@ -137,36 +131,6 @@ describe('setKeyrackUnlocked', () => {
 
       then('it stays silent (does not forward success output)', () => {
         expect(res.cli.stdout).not.toContain('SUCCESS_NOISE');
-        expect(res.cli.stdout).toEqual('');
-      });
-    });
-  });
-
-  given('[case3] in CI (creds come via keyrack firewall env)', () => {
-    when('[t0] the helper is invoked with CI set', () => {
-      const res = useThen(
-        'it runs with CI=true against a fake rhx that would fail',
-        async () => {
-          const dir = genTempDir({ slug: 'set-keyrack-unlocked-ci' });
-          // fake rhx would fail if called — proves the daemon unlock is skipped in CI
-          setFakeRhx({
-            dir,
-            stdout: 'SHOULD_NOT_APPEAR\n',
-            stderr: 'SHOULD_NOT_APPEAR_ERR\n',
-            exit: 2,
-          });
-          const cli = await invokeHelper({ cwd: dir, ci: true });
-          const spawned = fs.existsSync(path.join(dir, 'rhx.args.txt'));
-          return { cli, spawned };
-        },
-      );
-
-      then('it does not invoke keyrack unlock (no daemon in CI)', () => {
-        expect(res.spawned).toEqual(false);
-      });
-
-      then('it exits 0 and stays silent', () => {
-        expect(res.cli.code).toEqual(0);
         expect(res.cli.stdout).toEqual('');
       });
     });
