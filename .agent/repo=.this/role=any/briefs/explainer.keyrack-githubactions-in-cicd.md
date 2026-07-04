@@ -55,22 +55,32 @@ keyrack grants the same creds in both places — only the *source* differs:
 | credential home | vault (os.secure / 1password / …)    | github actions secrets                   |
 | into env        | (n/a — vault read on unlock)         | keyrack firewall → `$GITHUB_ENV`         |
 | host manifest   | present (`rhx keyrack init` was run) | absent                                   |
-| into daemon     | `keyrack unlock` reads vault         | keyrack hoists env-supplied keys         |
-| test access     | daemon grant                         | daemon grant (env-supplied)              |
+| cred source     | vault, via `keyrack unlock`          | env var, via `keyrack get`               |
+| test access     | daemon grant                         | env grant (never daemon)                 |
 
-the key insight: **`keyrack unlock` only demands a host manifest when the key was NOT
-already supplied via env var.** in cicd the firewall supplies the keys via env, so the
-daemon can hoist them without a host manifest — which cicd does not have.
+the key insight: **`keyrack get` grants uniformly (daemon → env → locked), but
+`keyrack unlock` is vault-only and hard-requires a host manifest.** in cicd the firewall
+supplied the cred via env, so `get` finds it — but `unlock` would still crash on the
+absent host manifest.
 
-app code therefore calls `keyrack unlock` (or `get`) **unconditionally**, with no
-`process.env.CI` branch. keyrack decides the source; the caller stays dumb.
+so app code must **ask before it unlocks**:
+
+1. `keyrack get --key … --owner … --env …` — is the cred already grantable?
+   - yes → done. stay silent, do NOT unlock. (the CI firewall path.)
+   - no → `keyrack unlock` on the user's behalf. (the local vault path.)
+
+this get-then-unlock shape means the caller **never reads `process.env` and never
+branches on `CI`** — keyrack owns the source decision. and critically, we **do not load
+env-supplied creds into the daemon**: an env var is scoped to one terminal / one CI job,
+and a copy into the machine-wide daemon would pollute the global session for every other
+terminal. the daemon is for vault-sourced creds only.
 
 ## .what breaks it
 
 | symptom in cicd                          | root cause                                                    |
 | ---------------------------------------- | ------------------------------------------------------------ |
 | `credential '…' is locked / absent`      | secret not set in repo, or not declared in keyrack.yml env=test |
-| `host manifest not found`                | firewall step absent, so key never reached env for the daemon to hoist |
+| `host manifest not found`                | code called `keyrack unlock` in cicd without a `get` probe first — unlock is vault-only and cicd has no host manifest |
 | tests pass locally, fail only in cicd    | key declared for the wrong env, or firewall `--env` mismatch |
 
 checklist when a cred fails in cicd:
@@ -82,6 +92,8 @@ checklist when a cred fails in cicd:
 
 - never read `process.env.<SECRET>` in app code — ask keyrack
 - never branch on `process.env.CI` for credential logic — keyrack abstracts the source
+- `get` before `unlock`: probe first, unlock only when the cred is not already granted
+- never load env-supplied creds into the daemon — env is per-terminal, the daemon is global
 - keep the firewall step ahead of every step that needs creds
 
 ## .see also
