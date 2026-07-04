@@ -38,7 +38,10 @@ export const getGoals = async (input: {
   const files = await fs.readdir(input.scopeDir);
 
   // find all goal yaml files
-  const goalFiles = files.filter((f) => f.endsWith('.goal.yaml'));
+  // .note = sort for stable order; fs.readdir yields filesystem order which
+  //         varies per machine/run. filenames start with a numeric offset
+  //         prefix, so lexical sort = creation order (deterministic + meaningful)
+  const goalFiles = files.filter((f) => f.endsWith('.goal.yaml')).sort();
 
   // if slug filter, narrow to match
   const filteredGoalFiles = input.filter?.slug

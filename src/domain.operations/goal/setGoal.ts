@@ -31,11 +31,16 @@ export const setGoal = async (input: {
   await fs.mkdir(input.scopeDir, { recursive: true });
 
   // compute offset from parent dir mtime (seconds since dir creation)
+  // .note = clamp at 0; filesystem mtime can be momentarily ahead of now
+  //         (timestamp resolution/clock skew), which would yield a negative
+  //         offset. a negative "seconds since creation" is nonsensical and
+  //         renders as e.g. "00000-1" (String(-1).padStart(7,'0')), which
+  //         breaks the numeric offset contract
   let offset = 0;
   try {
     const dirStat = await fs.stat(input.scopeDir);
     const now = Date.now();
-    offset = Math.floor((now - dirStat.mtimeMs) / 1000);
+    offset = Math.max(0, Math.floor((now - dirStat.mtimeMs) / 1000));
   } catch {
     // if stat fails, use 0
   }

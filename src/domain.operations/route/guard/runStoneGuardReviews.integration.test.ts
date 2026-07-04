@@ -129,6 +129,10 @@ describe('runStoneGuardReviews', () => {
         const sanitized = result.artifacts.map((r) => ({
           ...r,
           path: r.path?.replace(tempDir, '<route>'),
+          stone: {
+            ...r.stone,
+            path: r.stone?.path?.replace(tempDir, '<route>'),
+          },
         }));
         expect(sanitized).toMatchSnapshot();
       });
@@ -214,6 +218,10 @@ describe('runStoneGuardReviews', () => {
         const sanitized = result.artifacts.map((r) => ({
           ...r,
           path: r.path?.replace(tempDir, '<route>'),
+          stone: {
+            ...r.stone,
+            path: r.stone?.path?.replace(tempDir, '<route>'),
+          },
         }));
         expect(sanitized).toMatchSnapshot();
       });
@@ -295,6 +303,10 @@ describe('runStoneGuardReviews', () => {
         const sanitized = result.artifacts.map((r) => ({
           ...r,
           path: r.path?.replace(tempDir, '<route>'),
+          stone: {
+            ...r.stone,
+            path: r.stone?.path?.replace(tempDir, '<route>'),
+          },
         }));
         expect(sanitized).toMatchSnapshot();
       });
@@ -381,6 +393,10 @@ describe('runStoneGuardReviews', () => {
         const sanitized = result.artifacts.map((r) => ({
           ...r,
           path: r.path?.replace(tempDir, '<route>'),
+          stone: {
+            ...r.stone,
+            path: r.stone?.path?.replace(tempDir, '<route>'),
+          },
         }));
         expect(sanitized).toMatchSnapshot();
       });
@@ -476,6 +492,10 @@ describe('runStoneGuardReviews', () => {
         const sanitized = result.artifacts.map((r) => ({
           ...r,
           path: r.path?.replace(tempDir, '<route>'),
+          stone: {
+            ...r.stone,
+            path: r.stone?.path?.replace(tempDir, '<route>'),
+          },
         }));
         expect(sanitized).toMatchSnapshot();
       });
@@ -589,6 +609,10 @@ describe('runStoneGuardReviews', () => {
         const sanitized = result.artifacts.map((r) => ({
           ...r,
           path: r.path?.replace(tempDir, '<route>'),
+          stone: {
+            ...r.stone,
+            path: r.stone?.path?.replace(tempDir, '<route>'),
+          },
           stdout: r.stdout?.replace(
             new RegExp(tempDir.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'g'),
             '<route-path>',
@@ -683,6 +707,10 @@ describe('runStoneGuardReviews', () => {
         const sanitized = result.artifacts.map((r) => ({
           ...r,
           path: r.path?.replace(tempDir, '<route>'),
+          stone: {
+            ...r.stone,
+            path: r.stone?.path?.replace(tempDir, '<route>'),
+          },
           stdout: r.stdout?.replace(
             /rhx=.*\/node_modules/g,
             'rhx=<repo-root>/node_modules',
@@ -783,6 +811,10 @@ describe('runStoneGuardReviews', () => {
         const sanitized = result.artifacts.map((r) => ({
           ...r,
           path: r.path?.replace(tempDir, '<route>'),
+          stone: {
+            ...r.stone,
+            path: r.stone?.path?.replace(tempDir, '<route>'),
+          },
           stdout: r.stdout?.replace(
             /rhachet=.*\/node_modules/g,
             'rhachet=<repo-root>/node_modules',
@@ -1202,6 +1234,10 @@ describe('runStoneGuardReviews', () => {
         const sanitized = reviews.artifacts.map((r) => ({
           ...r,
           path: r.path?.replace(tempDir, '<route>'),
+          stone: {
+            ...r.stone,
+            path: r.stone?.path?.replace(tempDir, '<route>'),
+          },
         }));
         expect(sanitized).toMatchSnapshot();
       });
@@ -1288,6 +1324,10 @@ describe('runStoneGuardReviews', () => {
         const sanitized = reviews.artifacts.map((r) => ({
           ...r,
           path: r.path?.replace(tempDir, '<route>'),
+          stone: {
+            ...r.stone,
+            path: r.stone?.path?.replace(tempDir, '<route>'),
+          },
         }));
         expect(sanitized).toMatchSnapshot();
       });
@@ -1381,6 +1421,10 @@ describe('runStoneGuardReviews', () => {
         const sanitized = reviews.artifacts.map((r) => ({
           ...r,
           path: r.path?.replace(tempDir, '<route>'),
+          stone: {
+            ...r.stone,
+            path: r.stone?.path?.replace(tempDir, '<route>'),
+          },
         }));
         expect(sanitized).toMatchSnapshot();
       });
@@ -1471,6 +1515,10 @@ describe('runStoneGuardReviews', () => {
           const sanitized = reviews.artifacts.map((r) => ({
             ...r,
             path: r.path?.replace(tempDir, '<route>'),
+            stone: {
+              ...r.stone,
+              path: r.stone?.path?.replace(tempDir, '<route>'),
+            },
           }));
           expect(sanitized).toMatchSnapshot();
         });
@@ -1556,6 +1604,10 @@ describe('runStoneGuardReviews', () => {
         const sanitized = reviews.artifacts.map((r) => ({
           ...r,
           path: r.path?.replace(tempDir, '<route>'),
+          stone: {
+            ...r.stone,
+            path: r.stone?.path?.replace(tempDir, '<route>'),
+          },
         }));
         expect(sanitized).toMatchSnapshot();
       });
@@ -1656,6 +1708,10 @@ describe('runStoneGuardReviews', () => {
           const sanitized = reviews.artifacts.map((r) => ({
             ...r,
             path: r.path?.replace(tempDir, '<route>'),
+            stone: {
+              ...r.stone,
+              path: r.stone?.path?.replace(tempDir, '<route>'),
+            },
           }));
           expect(sanitized).toMatchSnapshot();
         });
@@ -1756,6 +1812,10 @@ describe('runStoneGuardReviews', () => {
         const sanitized = reviews.artifacts.map((r) => ({
           ...r,
           path: r.path?.replace(tempDir, '<route>'),
+          stone: {
+            ...r.stone,
+            path: r.stone?.path?.replace(tempDir, '<route>'),
+          },
         }));
         expect(sanitized).toMatchSnapshot();
       });

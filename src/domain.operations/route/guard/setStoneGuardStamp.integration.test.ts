@@ -35,6 +35,12 @@ const asStableStamp = (stamp: string, tempDir: string): string =>
   stamp
     .split(tempDir)
     .join('$ROUTE')
+    // collapse the machine-depth relative prefix before $ROUTE.
+    // .why = the review path is stored relative to repoRoot; this test puts the
+    //        route under /tmp, so path.relative emits one "../" per repoRoot
+    //        depth level, which differs across hosts (local worktree vs ci).
+    //        in real usage the route lives inside the repo, so no such prefix.
+    .replace(/(?:\.\.\/)*\.\.\$ROUTE/g, '$ROUTE')
     .replace(
       /\b(finished|allowed|blocked|malfunctioned|approved|rejected|exhausted) \d+\.\d+s/g,
       '$1 [TIME]',

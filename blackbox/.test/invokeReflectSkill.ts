@@ -99,17 +99,22 @@ export const sanitizeReflectOutputForSnapshot = (output: string): string => {
     // sanitize .rhachet storage paths: preserve structure, replace dynamic parts
     // gitrepo/worktree values are temp dir basenames like "2026-03-17T19-06-58.037Z.reflect-journey.eb7d5802"
     // the slug (e.g., "reflect-journey") is constant; only timestamp and hash are dynamic
-    // branch is constant ("main" for fresh git init) - no sanitization needed
+    // git default branch differs by host (local "main" vs ci "master") - sanitize to stay stable
+    // two forms: the display line "branch = main" and the storage path segment "branch=main/"
+    .replace(/branch = (?:main|master)/g, 'branch = [BRANCH]')
+    .replace(/branch=(?:main|master)(?=\/|\s|$)/g, 'branch=[BRANCH]')
     .replace(/date=\d{4}-\d{2}-\d{2}/g, 'date=[DATE]')
     // replace $HOME prefix with ~
     .replace(new RegExp(process.env.HOME ?? '/home/user', 'g'), '~')
     // sanitize byte sizes (e.g., "0 bytes", "12kb", "1.5MB")
     .replace(/\d+(\.\d+)?\s*bytes/gi, '[SIZE]ytes')
     .replace(/\d+(\.\d+)?[kmgKMG][bB]/g, '[SIZE]')
-    // sanitize hash values (e.g., hash = a1b2c3d, commit = a1b2c3d)
+    // sanitize hash values (e.g., hash = a1b2c3d, commit = a1b2c3d, commit=a1b2c3d)
+    // .note = git commit sha varies per run (fresh temp repo); patches sha is content-derived and stable
     .replace(/hash=[a-f0-9]{7}/g, 'hash=[HASH]')
     .replace(/hash = [a-f0-9]{7}/g, 'hash = [HASH]')
     .replace(/commit = [a-f0-9]{7}/g, 'commit = [HASH]')
+    .replace(/commit=[a-f0-9]{7}/g, 'commit=[HASH]')
     // sanitize episode and message counts (variable across sessions)
     .replace(/episodes = \d+/g, 'episodes = [N]')
     .replace(/messages = \d+/g, 'messages = [N]')
