@@ -14,8 +14,8 @@ exports[`reflect.journey.acceptance given: [journey] full reflect workflow when:
    ├─ patches.hash = [HASH]
    │
    └─ artifacts
-      ├─ ~/.rhachet/storage/repo=bhrain/role=reflector/skills/reflect.snapshot/gitrepo=[ISO_TEMP].reflect-journey.[HASH]/worktree=[ISO_TEMP].reflect-journey.[HASH]/branch=main/savepoints/[TIMESTAMP].staged.patch
-      └─ ~/.rhachet/storage/repo=bhrain/role=reflector/skills/reflect.snapshot/gitrepo=[ISO_TEMP].reflect-journey.[HASH]/worktree=[ISO_TEMP].reflect-journey.[HASH]/branch=main/savepoints/[TIMESTAMP].unstaged.patch
+      ├─ ~/.rhachet/storage/repo=bhrain/role=reflector/skills/reflect.snapshot/gitrepo=[ISO_TEMP].reflect-journey.[HASH]/worktree=[ISO_TEMP].reflect-journey.[HASH]/branch=[BRANCH]/savepoints/[TIMESTAMP].staged.patch
+      └─ ~/.rhachet/storage/repo=bhrain/role=reflector/skills/reflect.snapshot/gitrepo=[ISO_TEMP].reflect-journey.[HASH]/worktree=[ISO_TEMP].reflect-journey.[HASH]/branch=[BRANCH]/savepoints/[TIMESTAMP].unstaged.patch
 
 ✨ savepoint captured
 
@@ -36,8 +36,8 @@ exports[`reflect.journey.acceptance given: [journey] full reflect workflow when:
    ├─ patches.hash = [HASH]
    │
    └─ artifacts
-      ├─ ~/.rhachet/storage/repo=bhrain/role=reflector/skills/reflect.snapshot/gitrepo=[ISO_TEMP].reflect-journey.[HASH]/worktree=[ISO_TEMP].reflect-journey.[HASH]/branch=main/savepoints/[TIMESTAMP].staged.patch
-      └─ ~/.rhachet/storage/repo=bhrain/role=reflector/skills/reflect.snapshot/gitrepo=[ISO_TEMP].reflect-journey.[HASH]/worktree=[ISO_TEMP].reflect-journey.[HASH]/branch=main/savepoints/[TIMESTAMP].unstaged.patch
+      ├─ ~/.rhachet/storage/repo=bhrain/role=reflector/skills/reflect.snapshot/gitrepo=[ISO_TEMP].reflect-journey.[HASH]/worktree=[ISO_TEMP].reflect-journey.[HASH]/branch=[BRANCH]/savepoints/[TIMESTAMP].staged.patch
+      └─ ~/.rhachet/storage/repo=bhrain/role=reflector/skills/reflect.snapshot/gitrepo=[ISO_TEMP].reflect-journey.[HASH]/worktree=[ISO_TEMP].reflect-journey.[HASH]/branch=[BRANCH]/savepoints/[TIMESTAMP].unstaged.patch
 
 ✨ savepoint captured
 
@@ -74,7 +74,7 @@ exports[`reflect.journey.acceptance given: [journey] full reflect workflow when:
    ├─ tree = [ISO_TEMP].reflect-journey.[HASH]
    ├─ branch = [BRANCH]
    │
-   └─ annotation = ~/.rhachet/storage/repo=bhrain/role=reflector/skills/reflect.snapshot/gitrepo=[ISO_TEMP].reflect-journey.[HASH]/worktree=[ISO_TEMP].reflect-journey.[HASH]/branch=main/annotations/[TIMESTAMP].annotation.md
+   └─ annotation = ~/.rhachet/storage/repo=bhrain/role=reflector/skills/reflect.snapshot/gitrepo=[ISO_TEMP].reflect-journey.[HASH]/worktree=[ISO_TEMP].reflect-journey.[HASH]/branch=[BRANCH]/annotations/[TIMESTAMP].annotation.md
 
 ✨ annotated
 
@@ -89,7 +89,7 @@ exports[`reflect.journey.acceptance given: [journey] full reflect workflow when:
    ├─ tree = [ISO_TEMP].reflect-journey.[HASH]
    ├─ branch = [BRANCH]
    │
-   └─ annotation = ~/.rhachet/storage/repo=bhrain/role=reflector/skills/reflect.snapshot/gitrepo=[ISO_TEMP].reflect-journey.[HASH]/worktree=[ISO_TEMP].reflect-journey.[HASH]/branch=main/annotations/[TIMESTAMP].annotation.md
+   └─ annotation = ~/.rhachet/storage/repo=bhrain/role=reflector/skills/reflect.snapshot/gitrepo=[ISO_TEMP].reflect-journey.[HASH]/worktree=[ISO_TEMP].reflect-journey.[HASH]/branch=[BRANCH]/annotations/[TIMESTAMP].annotation.md
 
 ✨ annotated
 
@@ -127,7 +127,7 @@ exports[`reflect.journey.acceptance given: [journey] full reflect workflow when:
    ├─ annotations = 2
    │
    └─ artifacts
-      └─ ~/.rhachet/storage/repo=bhrain/role=reflector/skills/reflect.snapshot/gitrepo=[ISO_TEMP].reflect-journey.[HASH]/worktree=[ISO_TEMP].reflect-journey.[HASH]/branch=main/snapshots/date=[DATE]/[TIMESTAMP].snap.zip
+      └─ ~/.rhachet/storage/repo=bhrain/role=reflector/skills/reflect.snapshot/gitrepo=[ISO_TEMP].reflect-journey.[HASH]/worktree=[ISO_TEMP].reflect-journey.[HASH]/branch=[BRANCH]/snapshots/date=[DATE]/[TIMESTAMP].snap.zip
 
 ✨ snapshot captured
 
@@ -148,7 +148,7 @@ exports[`reflect.journey.acceptance given: [journey] full reflect workflow when:
    │
    └─ list
       └─ [TIMESTAMP] (sessions=1, savepoints=3)
-         └─ ~/.rhachet/storage/repo=bhrain/role=reflector/skills/reflect.snapshot/gitrepo=[ISO_TEMP].reflect-journey.[HASH]/worktree=[ISO_TEMP].reflect-journey.[HASH]/branch=main/snapshots/date=[DATE]/[TIMESTAMP].snap.zip
+         └─ ~/.rhachet/storage/repo=bhrain/role=reflector/skills/reflect.snapshot/gitrepo=[ISO_TEMP].reflect-journey.[HASH]/worktree=[ISO_TEMP].reflect-journey.[HASH]/branch=[BRANCH]/snapshots/date=[DATE]/[TIMESTAMP].snap.zip
 
 "
 `;

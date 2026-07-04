@@ -8,7 +8,7 @@ exports[`reflect.snapshot annotate given: [case1] valid annotation text when: [t
    ├─ tree = [ISO_TEMP].reflect-annotate-case1.[HASH]
    ├─ branch = [BRANCH]
    │
-   └─ annotation = ~/.rhachet/storage/repo=bhrain/role=reflector/skills/reflect.snapshot/gitrepo=[ISO_TEMP].reflect-annotate-case1.[HASH]/worktree=[ISO_TEMP].reflect-annotate-case1.[HASH]/branch=main/annotations/[TIMESTAMP].annotation.md
+   └─ annotation = ~/.rhachet/storage/repo=bhrain/role=reflector/skills/reflect.snapshot/gitrepo=[ISO_TEMP].reflect-annotate-case1.[HASH]/worktree=[ISO_TEMP].reflect-annotate-case1.[HASH]/branch=[BRANCH]/annotations/[TIMESTAMP].annotation.md
 
 ✨ annotated
 

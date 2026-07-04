@@ -100,7 +100,9 @@ export const sanitizeReflectOutputForSnapshot = (output: string): string => {
     // gitrepo/worktree values are temp dir basenames like "2026-03-17T19-06-58.037Z.reflect-journey.eb7d5802"
     // the slug (e.g., "reflect-journey") is constant; only timestamp and hash are dynamic
     // git default branch differs by host (local "main" vs ci "master") - sanitize to stay stable
+    // two forms: the display line "branch = main" and the storage path segment "branch=main/"
     .replace(/branch = (?:main|master)/g, 'branch = [BRANCH]')
+    .replace(/branch=(?:main|master)(?=\/|\s|$)/g, 'branch=[BRANCH]')
     .replace(/date=\d{4}-\d{2}-\d{2}/g, 'date=[DATE]')
     // replace $HOME prefix with ~
     .replace(new RegExp(process.env.HOME ?? '/home/user', 'g'), '~')
