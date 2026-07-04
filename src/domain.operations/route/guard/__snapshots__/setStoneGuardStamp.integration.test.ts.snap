@@ -14,7 +14,7 @@ exports[`setStoneGuardStamp.integration given: [case1] guard with a peer review 
    │  │       ├─ approved [TIME]
    │  │       ├─ 0 blockers ✓
    │  │       ├─ 0 nitpicks ✓
-   │  │       └─ review: ../../../../../..$ROUTE/.reviews/peer/1.test._.review.i[N].[HASH].r1._.given.by_peer.echo.md
+   │  │       └─ review: $ROUTE/.reviews/peer/1.test._.review.i[N].[HASH].r1._.given.by_peer.echo.md
    │  └─ judges
    │      └─ j1: echo "passed: true\\nreason: all checks passed"
    │          └─ finished [TIME] ✓
@@ -38,7 +38,7 @@ exports[`setStoneGuardStamp.integration given: [case2] guard with a peer review 
       │       ├─ approved [TIME]
       │       ├─ 0 blockers ✓
       │       ├─ 0 nitpicks ✓
-      │       └─ review: ../../../../../..$ROUTE/.reviews/peer/1.test._.review.i[N].[HASH].r1._.given.by_peer.echo.md
+      │       └─ review: $ROUTE/.reviews/peer/1.test._.review.i[N].[HASH].r1._.given.by_peer.echo.md
       └─ judges
           └─ j1: echo "passed: false\\nreason: blockers found"
               ├─ finished [TIME] ✗
