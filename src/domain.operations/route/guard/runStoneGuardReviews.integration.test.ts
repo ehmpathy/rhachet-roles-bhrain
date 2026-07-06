@@ -240,7 +240,12 @@ describe('runStoneGuardReviews', () => {
       artifacts: ['1.test*.md'],
       reviews: {
         self: [],
-        peer: [asPeerReview('echo "blockers: 0\\nreview passed"', 0)],
+        peer: [
+          asPeerReview(
+            'echo "blockers: 0"; echo "nitpicks: 0"; echo "review passed"',
+            0,
+          ),
+        ],
       },
       judges: [],
       protect: [],
@@ -996,7 +1001,7 @@ describe('runStoneGuardReviews', () => {
           {
             slug: 'success-reviewer',
             budget: 3,
-            run: 'echo "blockers: 0"',
+            run: 'echo "blockers: 0"; echo "nitpicks: 0"',
             level: 1,
           },
         ],
@@ -1055,7 +1060,7 @@ describe('runStoneGuardReviews', () => {
           {
             slug: 'cache-reviewer',
             budget: 3,
-            run: 'echo "blockers: 0"',
+            run: 'echo "blockers: 0"; echo "nitpicks: 0"',
             level: 1,
           },
         ],
@@ -1117,7 +1122,7 @@ describe('runStoneGuardReviews', () => {
           {
             slug: 'blocker-reviewer',
             budget: 3,
-            run: 'echo "blockers: 1"',
+            run: 'echo "blockers: 1"; echo "nitpicks: 0"',
             level: 1,
           },
         ],
@@ -1185,7 +1190,7 @@ describe('runStoneGuardReviews', () => {
           {
             slug: 'l3-checker',
             budget: 1,
-            run: 'echo "blockers: 0"',
+            run: 'echo "blockers: 0"; echo "nitpicks: 0"',
             level: 3,
           },
         ],
@@ -1269,7 +1274,7 @@ describe('runStoneGuardReviews', () => {
           {
             slug: 'l3-checker',
             budget: 1,
-            run: 'echo "blockers: 0"',
+            run: 'echo "blockers: 0"; echo "nitpicks: 0"',
             level: 3,
           },
         ],
@@ -1369,7 +1374,7 @@ describe('runStoneGuardReviews', () => {
           {
             slug: 'l3-checker',
             budget: 1,
-            run: 'echo "blockers: 0"',
+            run: 'echo "blockers: 0"; echo "nitpicks: 0"',
             level: 3,
           },
         ],
@@ -1464,7 +1469,7 @@ describe('runStoneGuardReviews', () => {
             {
               slug: 'l3-checker',
               budget: 1,
-              run: 'echo "blockers: 0"',
+              run: 'echo "blockers: 0"; echo "nitpicks: 0"',
               level: 3,
             },
           ],
@@ -1545,7 +1550,7 @@ describe('runStoneGuardReviews', () => {
           {
             slug: 'l1-good',
             budget: 1,
-            run: 'echo "blockers: 0"',
+            run: 'echo "blockers: 0"; echo "nitpicks: 0"',
             level: 1,
           },
           {
@@ -1557,7 +1562,7 @@ describe('runStoneGuardReviews', () => {
           {
             slug: 'l3-checker',
             budget: 1,
-            run: 'echo "blockers: 0"',
+            run: 'echo "blockers: 0"; echo "nitpicks: 0"',
             level: 3,
           },
         ],
@@ -1647,7 +1652,7 @@ describe('runStoneGuardReviews', () => {
             {
               slug: 'l3-checker',
               budget: 1,
-              run: 'echo "blockers: 0"',
+              run: 'echo "blockers: 0"; echo "nitpicks: 0"',
               level: 3,
             },
           ],
@@ -1756,7 +1761,7 @@ describe('runStoneGuardReviews', () => {
           {
             slug: 'l3-checker',
             budget: 1,
-            run: 'echo "blockers: 0"',
+            run: 'echo "blockers: 0"; echo "nitpicks: 0"',
             level: 3,
           },
         ],
@@ -1818,6 +1823,129 @@ describe('runStoneGuardReviews', () => {
           },
         }));
         expect(sanitized).toMatchSnapshot();
+      });
+    });
+  });
+
+  given(
+    '[case22] reviewer exits 0 but emits no numeric count (unparseable)',
+    () => {
+      // .why = a reviewer that succeeds but declares no numeric blocker/nitpick count
+      //        must NOT read as a silent 0/0 approval. it is promoted to malfunction so
+      //        the guard blocks. see rule.forbid.failhide + contract.reviewer-output.
+      const tempDir = path.join(
+        os.tmpdir(),
+        `test-reviews-nocount-${Date.now()}`,
+      );
+      const stone = new RouteStone({
+        name: '1.test',
+        path: path.join(tempDir, '1.test.stone'),
+        guard: null,
+      });
+      const guard = new RouteStoneGuard({
+        path: path.join(tempDir, '1.test.guard'),
+        artifacts: ['1.test*.md'],
+        reviews: {
+          self: [],
+          peer: [asPeerReview('echo "looks solid, ship it"', 0)],
+        },
+        judges: [],
+        protect: [],
+      });
+
+      beforeEach(async () => {
+        await fs.mkdir(tempDir, { recursive: true });
+      });
+
+      afterEach(async () => {
+        await fs.rm(tempDir, { recursive: true, force: true });
+      });
+
+      when('[t0] reviews are executed', () => {
+        const reviews = useThen('runs the reviewer', async () =>
+          runStoneGuardReviews(
+            { stone, guard, hash: 'nocount', iteration: 1, route: tempDir },
+            noopContext,
+          ),
+        );
+
+        then('the reviewer is promoted to malfunction', () => {
+          const artifact = reviews.artifacts[0];
+          expect(artifact?.exitClass).toEqual('malfunction');
+          expect(artifact?.exitCode).toEqual(1);
+        });
+
+        then('the malfunction reason names the contract brief', () => {
+          expect(reviews.artifacts[0]?.stderr).toContain(
+            'contract.reviewer-output.md',
+          );
+        });
+
+        then('the malfunction output matches snapshot', () => {
+          // .why = the reviewer-visible malfunction message is user friction;
+          //        snap it so message regressions surface in prs (rule.require.snapshots)
+          const artifact = reviews.artifacts[0];
+          expect({
+            exitCode: artifact?.exitCode,
+            exitClass: artifact?.exitClass,
+            stdout: artifact?.stdout,
+            stderr: artifact?.stderr,
+          }).toMatchSnapshot();
+        });
+      });
+    },
+  );
+
+  given('[case23] reviewer exits 0 but declares only one dimension', () => {
+    // .why = both dimensions must carry a numeric count; a half-declared review is
+    //        undetectable and must fail as a malfunction, not a partial approval.
+    const tempDir = path.join(os.tmpdir(), `test-reviews-onedim-${Date.now()}`);
+    const stone = new RouteStone({
+      name: '1.test',
+      path: path.join(tempDir, '1.test.stone'),
+      guard: null,
+    });
+    const guard = new RouteStoneGuard({
+      path: path.join(tempDir, '1.test.guard'),
+      artifacts: ['1.test*.md'],
+      reviews: {
+        self: [],
+        peer: [asPeerReview('echo "blockers: 0"', 0)],
+      },
+      judges: [],
+      protect: [],
+    });
+
+    beforeEach(async () => {
+      await fs.mkdir(tempDir, { recursive: true });
+    });
+
+    afterEach(async () => {
+      await fs.rm(tempDir, { recursive: true, force: true });
+    });
+
+    when('[t0] reviews are executed', () => {
+      const reviews = useThen('runs the reviewer', async () =>
+        runStoneGuardReviews(
+          { stone, guard, hash: 'onedim', iteration: 1, route: tempDir },
+          noopContext,
+        ),
+      );
+
+      then('the reviewer is promoted to malfunction', () => {
+        expect(reviews.artifacts[0]?.exitClass).toEqual('malfunction');
+      });
+
+      then('the malfunction output matches snapshot', () => {
+        // .why = one-dimension output is a distinct user-visible friction path; snap it so
+        //        message regressions surface in prs (rule.require.snapshots)
+        const artifact = reviews.artifacts[0];
+        expect({
+          exitCode: artifact?.exitCode,
+          exitClass: artifact?.exitClass,
+          stdout: artifact?.stdout,
+          stderr: artifact?.stderr,
+        }).toMatchSnapshot();
       });
     });
   });

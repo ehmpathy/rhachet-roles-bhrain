@@ -3,7 +3,6 @@ import * as fs from 'fs/promises';
 import { BadRequestError } from 'helpful-errors';
 import { type IsoDuration, toMilliseconds } from 'iso-time';
 import * as path from 'path';
-import { getGitRepoRoot } from 'rhachet-artifact-git';
 import { promisify } from 'util';
 
 import type { ContextCliEmit } from '@src/domain.objects/Driver/ContextCliEmit';
@@ -21,10 +20,11 @@ import { findsertReviewPeerGitignore } from '../gitignore/findsertReviewPeerGiti
 import { getStoneGuardOverruledLevels } from '../judges/getStoneGuardOverruledLevels';
 import { formatTreeBucket } from './formatTreeBucket';
 import { getAllStoneGuardArtifactsByHash } from './getAllStoneGuardArtifactsByHash';
+import { getDurationMsFromContent } from './getDurationMsFromContent';
 import { getExitCodeClass } from './getExitCodeClass';
 import { getLatestReviewArtifactForIndex } from './getLatestReviewArtifactForIndex';
+import { getRepoRootWithFallback } from './getRepoRootWithFallback';
 import { getReviewCountsFromContent } from './getReviewCountsFromContent';
-import { isENOENT } from './isENOENT';
 import { computeReviewPeerVerdict } from './reviewPeerMeter/computeReviewPeerVerdict';
 import { getAllRouteStoneGuardReviewPeerMeters } from './reviewPeerMeter/getAllRouteStoneGuardReviewPeerMeters';
 import { getReviewedJudgeThresholds } from './reviewPeerMeter/getReviewedJudgeThresholds';
@@ -33,6 +33,13 @@ import { isReviewPeerLevelUnlocked } from './reviewPeerMeter/isReviewPeerLevelUn
 import { setRouteStoneGuardReviewPeerMeter } from './reviewPeerMeter/setRouteStoneGuardReviewPeerMeter';
 
 const execAsync = promisify(exec);
+
+/**
+ * .what = path to the reviewer-output contract brief
+ * .why = named once so the malfunction reason and its comment cannot drift if the brief moves
+ */
+const REVIEWER_OUTPUT_CONTRACT_BRIEF =
+  '.agent/repo=bhrain/role=reviewer/briefs/contract.reviewer-output.md';
 
 /**
  * .what = extracts slug from peer review
@@ -113,20 +120,8 @@ export const runOneStoneGuardReview = async (input: {
   // .why = guard runs spam git with one artifact per reviewer/iteration/hash
   await findsertReviewPeerGitignore({ route: input.route });
 
-  // lookup repo root for $rhx/$rhachet paths
-  // .note = falls back to cwd when not in a git repo (e.g., integration tests)
-  let repoRoot: string;
-  try {
-    repoRoot = await getGitRepoRoot({ from: input.route });
-  } catch (error) {
-    // only catch "not in git repo" error; rethrow any other errors
-    // .note = check error message instead of instanceof due to cross-module class instances
-    const isNotInGitRepoError =
-      error instanceof Error && error.message.includes('Not inside a Git');
-    if (!isNotInGitRepoError) throw error;
-
-    repoRoot = process.cwd();
-  }
+  // lookup repo root for $rhx/$rhachet paths (cwd fallback when not in a git repo)
+  const repoRoot = await getRepoRootWithFallback({ from: input.route });
 
   // validate no npx patterns before variable substitution
   validateNoNpx(input.reviewCmd);
@@ -171,6 +166,10 @@ export const runOneStoneGuardReview = async (input: {
   // compute timeout in milliseconds
   const timeoutMs = getReviewTimeoutMs(input.timeout);
 
+  // .note = deliberate mutation. stdout/stderr/exitCode accumulate across the exec
+  //         try/catch (success vs error branch) and the later malfunction promotion.
+  //         an imperative accumulator is the clearest shape for capture-output-on-both-paths;
+  //         see rule.require.immutable-vars (annotated-mutation exception).
   let stdout = '';
   let stderr = '';
   let exitCode = 0;
@@ -208,7 +207,27 @@ export const runOneStoneGuardReview = async (input: {
     }
   }
 
-  // classify exit code
+  // parse blockers and nitpicks from stdout via shared operation
+  // .note = parsed before artifact build so an undetectable count can promote to malfunction
+  const counts = getReviewCountsFromContent({ content: stdout });
+  const { blockers, nitpicks } = counts;
+
+  // promote a "successful" review to malfunction when its counts are undetectable
+  // .why = a reviewer that exits 0 but declares no numeric blocker/nitpick count cannot be
+  //        trusted as "approved" — the guard cannot see its verdict. a silent 0/0 would look
+  //        like a clean review when in truth no review was read. failfast as a malfunction so
+  //        the guard blocks this reviewer instead. see rule.forbid.failhide.
+  //        contract: REVIEWER_OUTPUT_CONTRACT_BRIEF
+  if (exitCode === 0 && !counts.detected) {
+    exitCode = 1;
+    const reason =
+      '💥 malfunction: reviewer output lacks a numeric blocker/nitpick count ' +
+      '(expected `N blockers` and `N nitpicks`; use `0 blockers` / `0 nitpicks` to declare clean). ' +
+      `see ${REVIEWER_OUTPUT_CONTRACT_BRIEF}`;
+    stderr = [stderr, reason].filter((line) => line !== '').join('\n');
+  }
+
+  // classify exit code (after possible malfunction promotion)
   const exitClass = getExitCodeClass({ code: exitCode });
 
   // format artifact content with tree buckets
@@ -233,14 +252,8 @@ export const runOneStoneGuardReview = async (input: {
   // write stdout artifact file
   await fs.writeFile(stdoutPath, artifactContent);
 
-  // parse blockers and nitpicks from stdout via shared operation
-  const counts = getReviewCountsFromContent({ content: stdout });
-  const { blockers, nitpicks } = counts;
-
-  // parse duration from stdout
-  // format: "└─ total: 51455ms" under metrics.realized > time
-  const durationMatch = stdout.match(/total:\s*(\d+)ms/i);
-  const durationMs = durationMatch?.[1] ? parseInt(durationMatch[1], 10) : null;
+  // parse duration from stdout via shared operation
+  const durationMs = getDurationMsFromContent({ content: stdout });
 
   return new RouteStoneGuardReviewArtifact({
     stone: { path: input.stone.path },
@@ -277,18 +290,7 @@ export const runStoneGuardReviews = async (
 }> => {
   // lookup git root for path relativization
   // .why = paths in output should be relative to git root (e.g., .behavior/v.../...), not route
-  let gitRoot: string;
-  try {
-    gitRoot = await getGitRepoRoot({ from: input.route });
-  } catch (error) {
-    // only catch "not in git repo" error; rethrow any other errors
-    // .note = check error name instead of instanceof due to cross-module class instances
-    const isNotInGitRepoError =
-      error instanceof Error && error.message.includes('Not inside a Git');
-    if (!isNotInGitRepoError) throw error;
-
-    gitRoot = process.cwd();
-  }
+  const gitRoot = await getRepoRootWithFallback({ from: input.route });
 
   // get prior artifacts for this hash to determine which reviews already done
   // reviews are cached by hash: same artifact content = reuse prior review
@@ -693,19 +695,4 @@ const substituteVars = (
     .replace(/\$output/g, vars.output)
     .replace(/\$rhx/g, rhxPath)
     .replace(/\$rhachet/g, rhachetPath);
-};
-
-/**
- * .what = checks if file is present at path
- * .why = enables detection of files written by external commands
- */
-const isFilePresent = async (filePath: string): Promise<boolean> => {
-  try {
-    await fs.access(filePath);
-    return true;
-  } catch (error) {
-    // only catch ENOENT (file not found); rethrow other errors
-    if (isENOENT(error)) return false;
-    throw error;
-  }
 };

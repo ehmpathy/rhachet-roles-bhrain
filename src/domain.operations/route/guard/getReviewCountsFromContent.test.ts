@@ -31,8 +31,9 @@ describe('getReviewCountsFromContent', () => {
 │  └─`;
 
     when('[t0] parsed', () => {
-      then('extracts correct counts', () => {
+      then('extracts correct counts and detects both', () => {
         const counts = getReviewCountsFromContent({ content });
+        expect(counts.detected).toBe(true);
         expect(counts.blockers).toBe(8);
         expect(counts.nitpicks).toBe(1);
       });
@@ -44,8 +45,9 @@ describe('getReviewCountsFromContent', () => {
 nitpicks: 5`;
 
     when('[t0] parsed', () => {
-      then('extracts correct counts', () => {
+      then('extracts correct counts and detects both', () => {
         const counts = getReviewCountsFromContent({ content });
+        expect(counts.detected).toBe(true);
         expect(counts.blockers).toBe(3);
         expect(counts.nitpicks).toBe(5);
       });
@@ -56,36 +58,119 @@ nitpicks: 5`;
     const content = `found 12 blockers and 4 nitpicks in the review`;
 
     when('[t0] parsed', () => {
-      then('extracts correct counts', () => {
+      then('extracts correct counts and detects both', () => {
         const counts = getReviewCountsFromContent({ content });
+        expect(counts.detected).toBe(true);
         expect(counts.blockers).toBe(12);
         expect(counts.nitpicks).toBe(4);
       });
     });
   });
 
-  given('[case4] no blockers or nitpicks', () => {
+  given('[case4] prose with no numeric counts', () => {
     const content = `all good, no issues found`;
 
     when('[t0] parsed', () => {
-      then('returns zeros', () => {
+      then('is undetected (must not silently read as zero)', () => {
         const counts = getReviewCountsFromContent({ content });
+        expect(counts.detected).toBe(false);
+      });
+    });
+  });
+
+  given('[case5] singular blocker/nitpick with explicit zero', () => {
+    const content = `├─ 1 blocker 🔴
+└─ 0 nitpicks`;
+
+    when('[t0] parsed', () => {
+      then('extracts correct counts and detects both', () => {
+        const counts = getReviewCountsFromContent({ content });
+        expect(counts.detected).toBe(true);
+        expect(counts.blockers).toBe(1);
+        expect(counts.nitpicks).toBe(0);
+      });
+    });
+  });
+
+  given('[case6] explicit zeros for both dimensions', () => {
+    const content = `0 blockers
+0 nitpicks`;
+
+    when('[t0] parsed', () => {
+      then('detects both as a clean review', () => {
+        const counts = getReviewCountsFromContent({ content });
+        expect(counts.detected).toBe(true);
         expect(counts.blockers).toBe(0);
         expect(counts.nitpicks).toBe(0);
       });
     });
   });
 
-  given('[case5] singular blocker/nitpick', () => {
-    const content = `├─ 1 blocker 🔴
-└─ 0 nitpicks`;
+  given('[case7] only blockers declared, nitpicks absent', () => {
+    const content = `3 blockers`;
 
     when('[t0] parsed', () => {
-      then('extracts correct counts', () => {
+      then('is undetected (nitpicks dimension absent)', () => {
         const counts = getReviewCountsFromContent({ content });
-        expect(counts.blockers).toBe(1);
-        expect(counts.nitpicks).toBe(0);
+        expect(counts.detected).toBe(false);
       });
     });
   });
+
+  given('[case8] only nitpicks declared, blockers absent', () => {
+    const content = `2 nitpicks`;
+
+    when('[t0] parsed', () => {
+      then('is undetected (blockers dimension absent)', () => {
+        const counts = getReviewCountsFromContent({ content });
+        expect(counts.detected).toBe(false);
+      });
+    });
+  });
+
+  given('[case9] word-form "none" is not a numeric count', () => {
+    const content = `blockers = none
+nitpicks = none`;
+
+    when('[t0] parsed', () => {
+      then('is undetected (numbers-only contract)', () => {
+        const counts = getReviewCountsFromContent({ content });
+        expect(counts.detected).toBe(false);
+      });
+    });
+  });
+
+  given('[case10] empty stdout (reviewer crashed)', () => {
+    const content = ``;
+
+    when('[t0] parsed', () => {
+      then('is undetected', () => {
+        const counts = getReviewCountsFromContent({ content });
+        expect(counts.detected).toBe(false);
+      });
+    });
+  });
+
+  given(
+    '[case11] incidental prose count precedes the authoritative summary',
+    () => {
+      // a reviewer that mentions an earlier count in prose then declares the real
+      // count last — the authoritative declaration is the LAST one, not the first
+      const content = `i reviewed the 3 blockers from last round. all fixed.
+0 blockers
+0 nitpicks`;
+
+      when('[t0] parsed', () => {
+        then(
+          'takes the last declaration, not the incidental first mention',
+          () => {
+            const counts = getReviewCountsFromContent({ content });
+            expect(counts.detected).toBe(true);
+            expect(counts.blockers).toBe(0);
+            expect(counts.nitpicks).toBe(0);
+          },
+        );
+      });
+    },
+  );
 });
