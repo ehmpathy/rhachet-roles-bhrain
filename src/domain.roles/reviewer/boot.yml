@@ -1,6 +1,7 @@
 always:
   briefs:
     say:
+      - briefs/contract.reviewer-output.md
       - briefs/review.tactics.md
       - briefs/on.rules/rules101.[article].md
       - briefs/on.rules/rules101.structure.[article].md

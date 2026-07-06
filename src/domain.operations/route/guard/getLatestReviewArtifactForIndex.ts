@@ -6,6 +6,7 @@ import type { RouteStone } from '@src/domain.objects/Driver/RouteStone';
 import { RouteStoneGuardReviewArtifact } from '@src/domain.objects/Driver/RouteStoneGuardReviewArtifact';
 
 import { enumRouteGuardReviewPeerFiles } from './enumRouteGuardReviewPeerFiles';
+import { getDurationMsFromContent } from './getDurationMsFromContent';
 import { getExitCodeClass } from './getExitCodeClass';
 import { getReviewCountsFromContent } from './getReviewCountsFromContent';
 
@@ -81,9 +82,8 @@ export const getLatestReviewArtifactForIndex = async (input: {
   // parse blockers and nitpicks from stdout
   const counts = getReviewCountsFromContent({ content });
 
-  // parse duration from content
-  const durationMatch = content.match(/total:\s*(\d+)ms/i);
-  const durationMs = durationMatch?.[1] ? parseInt(durationMatch[1], 10) : null;
+  // parse duration from content via shared operation
+  const durationMs = getDurationMsFromContent({ content });
 
   // parse exit code from tree bucket format
   const exitCodeMatch = content.match(/exit code:\s*(\d+)/);
