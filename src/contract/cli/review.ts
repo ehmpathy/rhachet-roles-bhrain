@@ -7,7 +7,6 @@ import {
   getAvailableBrainsInWords,
 } from 'rhachet/brains';
 
-import { setKeyrackUnlocked } from '@src/domain.operations/credentials/setKeyrackUnlocked';
 import { genDefaultReviewOutputPath } from '@src/domain.operations/review/genDefaultReviewOutputPath';
 import { stepReview } from '@src/domain.operations/review/stepReview';
 
@@ -180,18 +179,10 @@ export const review = async (): Promise<void> => {
   const cwd = process.cwd();
   const outputPath = options.output ?? genDefaultReviewOutputPath({ cwd });
 
-  // ensure keyrack creds upfront, since reviewers always need them
-  // .note = failfasts here (forwards keyrack's own output) if the cred is unavailable,
-  //         instead of a fake malfunction deep in brain invocation
-  // .note = probes FIREWORKS_API_KEY — the default review brain's credential
-  setKeyrackUnlocked({
-    owner: 'ehmpath',
-    env: 'prep',
-    key: 'FIREWORKS_API_KEY',
-  });
-
   // create brain context via discovery with credentials
   // .note = uses env: 'prep' because review is used to prepare code, not test it
+  // .note = keyrack auto-unlocks locked keys internally when the brain fetches its
+  //         own creds (rhachet >=1.43 get-or-unlock), so no upfront unlock is needed
   const brain = await genContextBrain({
     choice: options.brain,
     creds: { keyrack: { owner: 'ehmpath', env: 'prep' } },
