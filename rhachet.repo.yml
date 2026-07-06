@@ -20,7 +20,7 @@ roles:
     briefs:
       dirs: dist/domain.roles/learner/briefs
     skills:
-      dirs: []
+      dirs: dist/domain.roles/learner/skills
     boot: dist/domain.roles/learner/boot.yml
   - slug: librarian
     readme: dist/domain.roles/librarian/.readme.[seed].md

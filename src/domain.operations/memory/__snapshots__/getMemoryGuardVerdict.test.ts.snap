@@ -1,0 +1,15 @@
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
+
+exports[`getMemoryGuardVerdict allowed verdict shape (with snapshot) 1`] = `
+{
+  "verdict": "allowed",
+}
+`;
+
+exports[`getMemoryGuardVerdict blocked verdict carries reason + path (with snapshot) 1`] = `
+{
+  "path": "/home/agent/.claude/projects/x/memory/MEMORY.md",
+  "reason": "write to claude native memory is forbidden: /home/agent/.claude/projects/x/memory/MEMORY.md",
+  "verdict": "blocked",
+}
+`;

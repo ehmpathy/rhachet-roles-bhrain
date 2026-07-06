@@ -1,0 +1,102 @@
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
+
+exports[`memoryGuard (integration) given: [case1] a Write to claude native memory when: [t0] the guard runs then: the full nudge stderr matches snapshot 1`] = `
+"🦉 hold on, friend — that memory would fade.
+
+📜 memory.guard
+   ├─ ✋ blocked: write to claude native memory
+   │  └─ /home/agent/.claude/projects/x/memory/MEMORY.md
+   │
+   ├─ why
+   │  └─ ~/.claude memory is machine-local + invisible in git
+   │     it will not survive for the next traveler
+   │
+   ├─ capture it durably instead
+   │  ├─ lesson → .agent/repo=.this/role=any/briefs/<name>.md
+   │  └─ tactic → .agent/repo=.this/role=any/skills/<name>.sh
+   │
+   ├─ ⚠️ machine-local secrets or paths?
+   │  └─ generalize them — keep the raw secret or path out of durable memory
+   │
+   └─ 🪷 the instinct is right — pave the path for whoever comes next
+"
+`;
+
+exports[`memoryGuard (integration) given: [case2] a Write to a normal repo file when: [t0] the guard runs then: the allow variant matches snapshot (silent, no stderr) 1`] = `
+{
+  "exitCode": 0,
+  "stderr": "",
+}
+`;
+
+exports[`memoryGuard (integration) given: [case3] a Write to ~/.claude/settings.json (config, not memory) when: [t0] the guard runs then: the allow variant matches snapshot (silent, no stderr) 1`] = `
+{
+  "exitCode": 0,
+  "stderr": "",
+}
+`;
+
+exports[`memoryGuard (integration) given: [case4] a Bash write into a memory path when: [t0] the guard runs then: the nudge renders the bash-extracted path 1`] = `
+"🦉 hold on, friend — that memory would fade.
+
+📜 memory.guard
+   ├─ ✋ blocked: write to claude native memory
+   │  └─ /home/agent/.claude/projects/x/memory/note.md
+   │
+   ├─ why
+   │  └─ ~/.claude memory is machine-local + invisible in git
+   │     it will not survive for the next traveler
+   │
+   ├─ capture it durably instead
+   │  ├─ lesson → .agent/repo=.this/role=any/briefs/<name>.md
+   │  └─ tactic → .agent/repo=.this/role=any/skills/<name>.sh
+   │
+   ├─ ⚠️ machine-local secrets or paths?
+   │  └─ generalize them — keep the raw secret or path out of durable memory
+   │
+   └─ 🪷 the instinct is right — pave the path for whoever comes next
+"
+`;
+
+exports[`memoryGuard (integration) given: [case4b] an Edit to claude native memory when: [t0] the guard runs then: the full Edit-path nudge matches snapshot 1`] = `
+"🦉 hold on, friend — that memory would fade.
+
+📜 memory.guard
+   ├─ ✋ blocked: write to claude native memory
+   │  └─ /home/agent/.claude/projects/x/memory/user_role.md
+   │
+   ├─ why
+   │  └─ ~/.claude memory is machine-local + invisible in git
+   │     it will not survive for the next traveler
+   │
+   ├─ capture it durably instead
+   │  ├─ lesson → .agent/repo=.this/role=any/briefs/<name>.md
+   │  └─ tactic → .agent/repo=.this/role=any/skills/<name>.sh
+   │
+   ├─ ⚠️ machine-local secrets or paths?
+   │  └─ generalize them — keep the raw secret or path out of durable memory
+   │
+   └─ 🪷 the instinct is right — pave the path for whoever comes next
+"
+`;
+
+exports[`memoryGuard (integration) given: [case4c] a Bash read (cat) of a memory path when: [t0] the guard runs then: the allow variant matches snapshot (silent, no stderr) 1`] = `
+{
+  "exitCode": 0,
+  "stderr": "",
+}
+`;
+
+exports[`memoryGuard (integration) given: [case5] empty stdin (harness hiccup) when: [t0] the guard runs then: the fail-open variant matches snapshot (silent, no stderr) 1`] = `
+{
+  "exitCode": 0,
+  "stderr": "",
+}
+`;
+
+exports[`memoryGuard (integration) given: [case6] malformed json stdin when: [t0] the guard runs then: the fail-open variant matches snapshot (silent, no stderr) 1`] = `
+{
+  "exitCode": 0,
+  "stderr": "",
+}
+`;
