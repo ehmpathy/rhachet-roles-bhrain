@@ -1,0 +1,104 @@
+🦉 the way speaks for itself
+
+🗿 route.stone.set
+   ├─ stone = 5.3.verification
+   ├─ passage = blocked
+   ├─ reason = reviewer constraint
+   ├─ options
+   │  ├─ overrule the constraint
+   │  │  └─ rhx route.stone.set --stone 5.3.verification --as overruled
+   │  └─ or fix the reviewer, then retry
+   └─ guard
+      ├─ artifacts
+      │   ├─ $route/5.3.verification.yield.md
+      │   └─ src/**/*
+      ├─ reviews
+      │   ├─ r1: repo-rules (l1, 1/3)
+      │   │   ├─ approved 39.6s
+      │   │   ├─ 0 blockers ✓
+      │   │   ├─ 0 nitpicks ✓
+      │   │   └─ review: .behavior/v2026_07_05.fix-stone-set-foreground/.reviews/peer/5.3.verification._.review.i1.75da87f3b99195ed40.r1._.given.by_peer.repo-rules.md
+      │   ├─ r2: ergo-contract-snapshots (l1, 1/3)
+      │   │   ├─ approved 32.7s
+      │   │   ├─ 0 blockers ✓
+      │   │   ├─ 0 nitpicks ✓
+      │   │   └─ review: .behavior/v2026_07_05.fix-stone-set-foreground/.reviews/peer/5.3.verification._.review.i1.75da87f3b99195ed40.r2._.given.by_peer.ergo-contract-snapshots.md
+      │   ├─ r3: mech-external-contracts (l1, 1/3)
+      │   │   ├─ approved 23.2s
+      │   │   ├─ 0 blockers ✓
+      │   │   ├─ 0 nitpicks ✓
+      │   │   └─ review: .behavior/v2026_07_05.fix-stone-set-foreground/.reviews/peer/5.3.verification._.review.i1.75da87f3b99195ed40.r3._.given.by_peer.mech-external-contracts.md
+      │   ├─ r4: ergo-acceptance-journey-coverage (l1, 1/3)
+      │   │   ├─ approved 28.4s
+      │   │   ├─ 0 blockers ✓
+      │   │   ├─ 0 nitpicks ✓
+      │   │   └─ review: .behavior/v2026_07_05.fix-stone-set-foreground/.reviews/peer/5.3.verification._.review.i1.75da87f3b99195ed40.r4._.given.by_peer.ergo-acceptance-journey-coverage.md
+      │   ├─ r5: ergo-snapshot-visual-blemishes (l1, 1/3)
+      │   │   ├─ approved 23.2s
+      │   │   ├─ 0 blockers ✓
+      │   │   ├─ 0 nitpicks ✓
+      │   │   └─ review: .behavior/v2026_07_05.fix-stone-set-foreground/.reviews/peer/5.3.verification._.review.i1.75da87f3b99195ed40.r5._.given.by_peer.ergo-snapshot-visual-blemishes.md
+      │   ├─ r6: mech-given-when-then (l1, 1/3)
+      │   │   ├─ approved 19.2s
+      │   │   ├─ 0 blockers ✓
+      │   │   ├─ 0 nitpicks ✓
+      │   │   └─ review: .behavior/v2026_07_05.fix-stone-set-foreground/.reviews/peer/5.3.verification._.review.i1.75da87f3b99195ed40.r6._.given.by_peer.mech-given-when-then.md
+      │   ├─ r7: mech-test-intent (l1, 1/3)
+      │   │   ├─ approved 27.5s
+      │   │   ├─ 0 blockers ✓
+      │   │   ├─ 0 nitpicks ✓
+      │   │   └─ review: .behavior/v2026_07_05.fix-stone-set-foreground/.reviews/peer/5.3.verification._.review.i1.75da87f3b99195ed40.r7._.given.by_peer.mech-test-intent.md
+      │   ├─ r8: mech-test-scope-purity (l1, 0/3)
+      │   │   ├─ constraint 10.5s
+      │   │   ├─ 0 blockers ✓
+      │   │   ├─ 0 nitpicks ✓
+      │   │   └─ review: .behavior/v2026_07_05.fix-stone-set-foreground/.reviews/peer/5.3.verification._.review.i1.75da87f3b99195ed40.r8._.given.by_peer.mech-test-scope-purity.md
+      │   ├─ r9: enroll-verif-snapshot-coverage (l3, 1/3)
+      │   │   ├─ approved 130.4s
+      │   │   ├─ 0 blockers ✓
+      │   │   ├─ 0 nitpicks ✓
+      │   │   └─ review: .behavior/v2026_07_05.fix-stone-set-foreground/.reviews/peer/5.3.verification._.review.i1.75da87f3b99195ed40.r9._.given.by_peer.enroll-verif-snapshot-coverage.md
+      │   ├─ r10: enroll-verif-snapshot-blemishes (l3, 1/3)
+      │   │   ├─ approved 154.4s
+      │   │   ├─ 0 blockers ✓
+      │   │   ├─ 0 nitpicks ✓
+      │   │   └─ review: .behavior/v2026_07_05.fix-stone-set-foreground/.reviews/peer/5.3.verification._.review.i1.75da87f3b99195ed40.r10._.given.by_peer.enroll-verif-snapshot-blemishes.md
+      │   └─ r11: enroll-verif-test-intent (l3, 1/3)
+      │       ├─ approved 828.1s
+      │       ├─ 0 blockers ✓
+      │       ├─ 0 nitpicks ✓
+      │       └─ review: .behavior/v2026_07_05.fix-stone-set-foreground/.reviews/peer/5.3.verification._.review.i1.75da87f3b99195ed40.r11._.given.by_peer.enroll-verif-test-intent.md
+      └─ judges
+          └─ j1: $rhachet run --repo bhrain --skill route.stone.judge --mechanism reviewed? --stone $stone --route $route --allow-blockers 0 --allow-nitpicks 0
+              └─ · cached
+                 ├─ on $route/5.3.verification.yield.md
+                 └─ on src/**/*
+
+────────────────────────────────────────────────────────────────
+
+🔎 review 8
+   ├─ stdout
+   │  ├─
+   │  │
+   │  │  🪨 run solid skill repo=bhrain/role=reviewer/skill=review
+   │  │
+   │  └─
+   ├─ stderr
+   │  ├─
+   │  │
+   │  │  🪨 run solid skill repo=bhrain/role=reviewer/skill=review
+   │  │     └─ ✋ blocked by constraints
+   │  │  
+   │  │  🦉 woah there
+   │  │  
+   │  │  ✋ --rules glob found nada
+   │  │     ├─ rules: .agent/repo=ehmpathy/role=mechanic/briefs/practices/code.test/scope.coverage/rule.require.test-coverage-by-grain.md,.agent/repo=ehmpathy/role=mechanic/briefs/practices/code.test/scope.unit/rule.forbid.unit.remote-boundaries.md,.agent/repo=ehmpathy/role=mechanic/briefs/practices/code.test/scope.integration/rule.forbid.integration.mocks.md,.agent/repo=ehmpathy/role=mechanic/briefs/practices/code.test/scope.acceptance/rule.forbid.acceptance.mocks.md,.agent/repo=ehmpathy/role=mechanic/briefs/practices/code.test/scope.acceptance/rule.require.acceptance.blackbox.md
+   │  │     └─ hint: verify the glob pattern matches files in your repo
+   │  │  
+   │  │  
+   │  │  ✋ BadRequestError: --rules glob was ineffective
+   │  │
+   │  └─
+   └─ passage blocked
+      ├─ blocked by constraints
+      └─ exit code: 2 ✋

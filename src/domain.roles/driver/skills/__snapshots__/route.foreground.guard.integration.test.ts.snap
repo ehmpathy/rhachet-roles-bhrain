@@ -1,0 +1,184 @@
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
+
+exports[`route.foreground.guard given: [case1] route.stone.set in background when: [t0] rhx form then: stderr matches snapshot 1`] = `
+"
+🦉 walk this path in the open, not in shadow. be present.
+
+🗿 route.foreground guard
+   ├─ skill = route.stone.set
+   ├─ mode = background
+   ├─ access = blocked
+   │
+   ├─ route.stone.set speaks back — self-reviews, blockers, the way ahead
+   ├─ in background its voice is lost to a poll, and tokens are wasted
+   │
+   └─ instead, run it in the foreground
+      └─ remove run_in_background from your Bash call
+
+🔭 presence is a virtue
+   │
+   ├─ "the present moment is the only moment available to us" — thich nhat hanh
+   ├─ "wherever you are, be there totally" — eckhart tolle
+   ├─ "do every act of your life as though it were the last" — marcus aurelius
+   │
+   └─ "tea first, then we proceed" — the owl by the pond
+
+"
+`;
+
+exports[`route.foreground.guard given: [case1] route.stone.set in background when: [t1] npx rhachet run --skill form then: stderr matches snapshot 1`] = `
+"
+🦉 walk this path in the open, not in shadow. be present.
+
+🗿 route.foreground guard
+   ├─ skill = route.stone.set
+   ├─ mode = background
+   ├─ access = blocked
+   │
+   ├─ route.stone.set speaks back — self-reviews, blockers, the way ahead
+   ├─ in background its voice is lost to a poll, and tokens are wasted
+   │
+   └─ instead, run it in the foreground
+      └─ remove run_in_background from your Bash call
+
+🔭 presence is a virtue
+   │
+   ├─ "the present moment is the only moment available to us" — thich nhat hanh
+   ├─ "wherever you are, be there totally" — eckhart tolle
+   ├─ "do every act of your life as though it were the last" — marcus aurelius
+   │
+   └─ "tea first, then we proceed" — the owl by the pond
+
+"
+`;
+
+exports[`route.foreground.guard given: [case1] route.stone.set in background when: [t2] ./node_modules/.bin/rhx form then: stderr matches snapshot 1`] = `
+"
+🦉 walk this path in the open, not in shadow. be present.
+
+🗿 route.foreground guard
+   ├─ skill = route.stone.set
+   ├─ mode = background
+   ├─ access = blocked
+   │
+   ├─ route.stone.set speaks back — self-reviews, blockers, the way ahead
+   ├─ in background its voice is lost to a poll, and tokens are wasted
+   │
+   └─ instead, run it in the foreground
+      └─ remove run_in_background from your Bash call
+
+🔭 presence is a virtue
+   │
+   ├─ "the present moment is the only moment available to us" — thich nhat hanh
+   ├─ "wherever you are, be there totally" — eckhart tolle
+   ├─ "do every act of your life as though it were the last" — marcus aurelius
+   │
+   └─ "tea first, then we proceed" — the owl by the pond
+
+"
+`;
+
+exports[`route.foreground.guard given: [case2] route.stone.set in foreground when: [t0] run_in_background is false then: stderr is empty (no block) — snapshot 1`] = `""`;
+
+exports[`route.foreground.guard given: [case2] route.stone.set in foreground when: [t1] run_in_background absent then: stderr is empty (no block) — snapshot 1`] = `""`;
+
+exports[`route.foreground.guard given: [case3] a different command in background when: [t0] git.repo.test in background then: stderr is empty (no block) — snapshot 1`] = `""`;
+
+exports[`route.foreground.guard given: [case3] a different command in background when: [t1] route.stone.get in background (a peer skill) then: stderr is empty (no block) — snapshot 1`] = `""`;
+
+exports[`route.foreground.guard given: [case4] non-Bash tool when: [t0] Read tool, background flag present then: stderr is empty (no block) — snapshot 1`] = `""`;
+
+exports[`route.foreground.guard given: [case5] boundary edges (fail-open) when: [t0] Bash tool, background, empty command then: stderr is empty (no block) — snapshot 1`] = `""`;
+
+exports[`route.foreground.guard given: [case5] boundary edges (fail-open) when: [t1] every-as form is blocked (arrived, blocked, approved) then: block message is identical across --as variants — snapshot 1`] = `
+"
+🦉 walk this path in the open, not in shadow. be present.
+
+🗿 route.foreground guard
+   ├─ skill = route.stone.set
+   ├─ mode = background
+   ├─ access = blocked
+   │
+   ├─ route.stone.set speaks back — self-reviews, blockers, the way ahead
+   ├─ in background its voice is lost to a poll, and tokens are wasted
+   │
+   └─ instead, run it in the foreground
+      └─ remove run_in_background from your Bash call
+
+🔭 presence is a virtue
+   │
+   ├─ "the present moment is the only moment available to us" — thich nhat hanh
+   ├─ "wherever you are, be there totally" — eckhart tolle
+   ├─ "do every act of your life as though it were the last" — marcus aurelius
+   │
+   └─ "tea first, then we proceed" — the owl by the pond
+
+"
+`;
+
+exports[`route.foreground.guard given: [case5] boundary edges (fail-open) when: [t2] a chained command with route.stone.set in background then: stderr matches snapshot 1`] = `
+"
+🦉 walk this path in the open, not in shadow. be present.
+
+🗿 route.foreground guard
+   ├─ skill = route.stone.set
+   ├─ mode = background
+   ├─ access = blocked
+   │
+   ├─ route.stone.set speaks back — self-reviews, blockers, the way ahead
+   ├─ in background its voice is lost to a poll, and tokens are wasted
+   │
+   └─ instead, run it in the foreground
+      └─ remove run_in_background from your Bash call
+
+🔭 presence is a virtue
+   │
+   ├─ "the present moment is the only moment available to us" — thich nhat hanh
+   ├─ "wherever you are, be there totally" — eckhart tolle
+   ├─ "do every act of your life as though it were the last" — marcus aurelius
+   │
+   └─ "tea first, then we proceed" — the owl by the pond
+
+"
+`;
+
+exports[`route.foreground.guard given: [case6] infrastructure failure paths (fail loud, not silent) when: [t0] jq is not available on PATH then: stderr matches snapshot 1`] = `
+"🦉 route.foreground guard: jq is required but not available — cannot parse tool input
+"
+`;
+
+exports[`route.foreground.guard given: [case6] infrastructure failure paths (fail loud, not silent) when: [t1] stdin is malformed json then: stderr matches snapshot 1`] = `
+"jq: parse error: Invalid literal at line 1, column 5
+🦉 route.foreground guard: failed to parse tool_name from tool input json
+"
+`;
+
+exports[`route.foreground.guard given: [case6] infrastructure failure paths (fail loud, not silent) when: [t2] run_in_background is a non-boolean value then: stderr is empty (no block) — snapshot 1`] = `""`;
+
+exports[`route.foreground.guard given: [case7] path precision for the .bin/rhx form when: [t0] an unrelated other/bin/rhx path in background then: stderr is empty (no block) — snapshot 1`] = `""`;
+
+exports[`route.foreground.guard given: [case7] path precision for the .bin/rhx form when: [t1] the real node_modules/.bin/rhx path in background then: stderr matches snapshot 1`] = `
+"
+🦉 walk this path in the open, not in shadow. be present.
+
+🗿 route.foreground guard
+   ├─ skill = route.stone.set
+   ├─ mode = background
+   ├─ access = blocked
+   │
+   ├─ route.stone.set speaks back — self-reviews, blockers, the way ahead
+   ├─ in background its voice is lost to a poll, and tokens are wasted
+   │
+   └─ instead, run it in the foreground
+      └─ remove run_in_background from your Bash call
+
+🔭 presence is a virtue
+   │
+   ├─ "the present moment is the only moment available to us" — thich nhat hanh
+   ├─ "wherever you are, be there totally" — eckhart tolle
+   ├─ "do every act of your life as though it were the last" — marcus aurelius
+   │
+   └─ "tea first, then we proceed" — the owl by the pond
+
+"
+`;
