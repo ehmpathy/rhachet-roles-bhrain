@@ -2,6 +2,8 @@ import * as fs from 'fs/promises';
 import * as path from 'path';
 import { given, then, when } from 'test-fns';
 
+import { ROLE_DRIVER } from './getDriverRole';
+
 describe('getDriverRole', () => {
   given('[case1] boot.yml completeness', () => {
     when('[t0] briefs directory is enumerated', () => {
@@ -51,6 +53,27 @@ describe('getDriverRole', () => {
         for (const declared of declaredBriefs) {
           expect(briefFiles).toContain(declared);
         }
+      });
+    });
+  });
+
+  given('[case2] the foreground guard hook', () => {
+    when('[t0] the driver role onTool hooks are inspected', () => {
+      then('the foreground guard is bound as a Bash before-hook', () => {
+        const onTool = ROLE_DRIVER.hooks?.onBrain?.onTool ?? [];
+        const guardHook = onTool.find((hook) =>
+          hook.command.includes('route.foreground.guard'),
+        );
+
+        // the guard must be present so background route.stone.set is blocked
+        expect(guardHook).toBeDefined();
+
+        // it must fire before Bash tool calls (where run_in_background lives)
+        expect(guardHook?.filter?.what).toEqual('Bash');
+        expect(guardHook?.filter?.when).toEqual('before');
+
+        // it must invoke the hook in --mode hook so it reads stdin json
+        expect(guardHook?.command).toContain('--mode hook');
       });
     });
   });

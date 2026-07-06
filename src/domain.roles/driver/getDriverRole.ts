@@ -47,6 +47,14 @@ export const ROLE_DRIVER: Role = Role.build({
             when: 'before',
           },
         },
+        {
+          command: './node_modules/.bin/rhx route.foreground.guard --mode hook',
+          timeout: 'PT5S',
+          filter: {
+            what: 'Bash',
+            when: 'before',
+          },
+        },
       ],
       onStop: [
         {

@@ -75,18 +75,6 @@
             "command": "./node_modules/.bin/rhachet roles boot --role dispatcher",
             "timeout": 10,
             "author": "repo=bhuild/role=dispatcher"
-          },
-          {
-            "type": "command",
-            "command": "./node_modules/.bin/rhachet roles boot --role learner",
-            "timeout": 30,
-            "author": "repo=bhrain/role=learner"
-          },
-          {
-            "type": "command",
-            "command": "./node_modules/.bin/rhachet roles boot --role dreamer",
-            "timeout": 10,
-            "author": "repo=bhuild/role=dreamer"
           }
         ]
       },
@@ -135,6 +123,12 @@
             "command": "./node_modules/.bin/rhachet run --repo ehmpathy --role mechanic --init claude.hooks/pretooluse.forbid-test-background",
             "timeout": 5,
             "author": "repo=ehmpathy/role=mechanic"
+          },
+          {
+            "type": "command",
+            "command": "./node_modules/.bin/rhx route.foreground.guard --mode hook",
+            "timeout": 5,
+            "author": "repo=bhrain/role=driver"
           }
         ]
       },

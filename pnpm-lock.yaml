@@ -157,8 +157,8 @@ importers:
         specifier: 0.21.19
         version: 0.21.19(@huggingface/transformers@3.8.1)(@tensorflow/tfjs@4.22.0(seedrandom@3.0.5))(rhachet-brains-xai@0.3.3(rhachet@1.42.5(@huggingface/transformers@3.8.1)(@tensorflow/tfjs@4.22.0(seedrandom@3.0.5))(zod@4.3.4)))(rhachet-roles-bhrain@)
       rhachet-roles-ehmpathy:
-        specifier: 1.37.6
-        version: 1.37.6(@huggingface/transformers@3.8.1)(@tensorflow/tfjs@4.22.0(seedrandom@3.0.5))
+        specifier: 1.37.7
+        version: 1.37.7(@huggingface/transformers@3.8.1)(@tensorflow/tfjs@4.22.0(seedrandom@3.0.5))
       rhachet-roles-rhachet:
         specifier: 0.1.7
         version: 0.1.7(rhachet@1.42.5(@huggingface/transformers@3.8.1)(@tensorflow/tfjs@4.22.0(seedrandom@3.0.5))(zod@4.3.4))
@@ -4388,8 +4388,8 @@ packages:
       rhachet-brains-xai: '>=0.3.3'
       rhachet-roles-bhrain: '>=0.12.1'
 
-  rhachet-roles-ehmpathy@1.37.6:
-    resolution: {integrity: sha512-seLEfO5wnZYoI/Hhjl+8KbZGvyWQ88YdzGTU49nNvjLdT9Sb4UL2wHwboqB6NDEh7booIhQflAAUUsZb7ncTnA==}
+  rhachet-roles-ehmpathy@1.37.7:
+    resolution: {integrity: sha512-AmfNpPEd5ODCbaVhpFg/i6MQh/28ZNwMGA9VP4xwFMI0D8KEih/1iuCOEpQl0oTNzM4/y7xeoPXKnpL757TIEg==}
     engines: {node: '>=8.0.0'}
 
   rhachet-roles-rhachet@0.1.7:
@@ -8446,7 +8446,7 @@ snapshots:
       helpful-errors: 1.5.3
       joi: 17.4.0
       rhachet: 1.42.5(@huggingface/transformers@3.8.1)(@tensorflow/tfjs@4.22.0(seedrandom@3.0.5))(zod@4.3.4)
-      rhachet-roles-ehmpathy: 1.37.6(@huggingface/transformers@3.8.1)(@tensorflow/tfjs@4.22.0(seedrandom@3.0.5))
+      rhachet-roles-ehmpathy: 1.37.7(@huggingface/transformers@3.8.1)(@tensorflow/tfjs@4.22.0(seedrandom@3.0.5))
       type-fns: 1.21.0
       uuid-fns: 1.1.3
     transitivePeerDependencies:
@@ -10181,7 +10181,7 @@ snapshots:
       - '@tensorflow/tfjs'
       - aws-crt
 
-  rhachet-roles-ehmpathy@1.37.6(@huggingface/transformers@3.8.1)(@tensorflow/tfjs@4.22.0(seedrandom@3.0.5)):
+  rhachet-roles-ehmpathy@1.37.7(@huggingface/transformers@3.8.1)(@tensorflow/tfjs@4.22.0(seedrandom@3.0.5)):
     dependencies:
       '@atjsh/llmlingua-2': 2.0.3(@huggingface/transformers@3.8.1)(@tensorflow/tfjs@4.22.0(seedrandom@3.0.5))(js-tiktoken@1.0.21)
       '@ehmpathy/as-command': 1.0.5
