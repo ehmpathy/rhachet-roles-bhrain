@@ -14,7 +14,6 @@ import {
   getBrainAtomsByOpenAI,
   getBrainReplsByOpenAI,
 } from 'rhachet-brains-openai';
-import { getBrainAtomsByXAI } from 'rhachet-brains-xai';
 
 /**
  * .what = default brain for tests
@@ -28,7 +27,6 @@ export const DEFAULT_TEST_BRAIN = 'fireworks/deepseek/v4-flash';
  */
 const loadAllAtoms = (): BrainAtom[] => {
   return [
-    ...getBrainAtomsByXAI(),
     ...getBrainAtomsByAnthropic(),
     ...getBrainAtomsByOpenAI(),
     ...getBrainAtomsByFireworksAI(),

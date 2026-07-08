@@ -50,10 +50,6 @@ export const genTempDirForRhachet = (input: {
         at: 'node_modules/rhachet-brains-openai',
         to: 'node_modules/rhachet-brains-openai',
       },
-      {
-        at: 'node_modules/rhachet-brains-xai',
-        to: 'node_modules/rhachet-brains-xai',
-      },
     ],
   });
 };
