@@ -7,6 +7,7 @@ always:
       - briefs/howto.create-routes.[ref].md
     say:
       - briefs/rule.always.drive-autonomously.md
+      - briefs/rule.always.converge-with-reviewers.md
       - briefs/howto.drive-routes.[guide].md
       - briefs/howto.run-self-reviews.[guide].md
   skills:
