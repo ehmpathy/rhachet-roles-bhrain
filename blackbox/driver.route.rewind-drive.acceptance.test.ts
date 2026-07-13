@@ -184,7 +184,7 @@ describe('driver.route.rewind-drive.acceptance', () => {
 
         // create guard artifacts (would be ignored by gitignore)
         await fs.writeFile(
-          path.join(tempDir, '.reviews', 'peer', '1.vision._.review.i1.abc.r1._.given.by_peer.mock.md'),
+          path.join(tempDir, '.reviews', 'peer', '1.vision._.review.i001.abc.r001._.given.by_peer.mock.md'),
           '# review',
         );
         await fs.writeFile(

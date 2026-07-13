@@ -569,4 +569,80 @@ describe('stepReview', () => {
       },
     );
   });
+
+  given(
+    '[case11] --conversation threads prior-dialogue files into the prompt',
+    () => {
+      // .what = regression for the doubled-path read fault: a --conversation file
+      //         given by a cwd-relative glob (as the guard now expands $conversation)
+      //         must be READ and threaded into input.prompt.md
+      // .why = the absolute-path bug did `path.join(cwd, abs)` which concatenated
+      //        rather than reset, to make a doubled path that failed to read and
+      //        malfunctioned every conversation-enabled reviewer. this case reads a
+      //        real conversation file by a relative glob and asserts its sentinel
+      //        content lands in the compiled prompt under the conversation section
+      const SENTINEL = 'CONVERSATION_SENTINEL_PRIOR_CRITIQUE_a1b2c3';
+
+      const testScene = useBeforeAll(async () => {
+        const { repoDir } = await setupGitRepo();
+
+        // seed a prior-dialogue file at a cwd-relative path
+        await fs.mkdir(path.join(repoDir, '.reviews', 'peer'), {
+          recursive: true,
+        });
+        await fs.writeFile(
+          path.join(repoDir, '.reviews', 'peer', 'prior.given.by_peer.md'),
+          `---\nblockers: 1\nnitpicks: 0\n---\n${SENTINEL}: the design lacks a bounded context\n`,
+          'utf-8',
+        );
+
+        return { repoDir };
+      });
+      afterAll(async () =>
+        fs.rm(testScene.repoDir, { recursive: true, force: true }),
+      );
+
+      when.repeatably(REPEATABLY_CONFIG)(
+        '[t0] stepReview is called with a relative --conversation glob',
+        () => {
+          const result = useThen('stepReview succeeds', async () =>
+            stepReview(
+              {
+                rules: '.agent/**/briefs/rules/*.md',
+                paths: 'src/valid.ts',
+                conversation: '.reviews/peer/*.given.by_peer.md',
+                output: path.join(os.tmpdir(), 'conversation-regression.md'),
+                focus: 'push',
+                goal: 'representative',
+                cwd: testScene.repoDir,
+              },
+              { brain: scene.brain },
+            ),
+          );
+
+          then(
+            'the conversation file is read (no doubled-path read fault)',
+            async () => {
+              // a read fault would throw UnexpectedCodePathError before this resolves
+              expect(result.review.formatted).toBeDefined();
+            },
+          );
+
+          then(
+            'the compiled prompt threads the conversation content',
+            async () => {
+              const prompt = await fs.readFile(
+                path.join(result.log.dir, 'input.prompt.md'),
+                'utf-8',
+              );
+              // the sentinel proves the file was READ, not silently skipped
+              expect(prompt).toContain(SENTINEL);
+              // rendered under its own labeled section, distinct from refs
+              expect(prompt).toContain('## prior conversation');
+            },
+          );
+        },
+      );
+    },
+  );
 });

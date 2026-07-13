@@ -1,0 +1,121 @@
+🦉 the way speaks for itself
+
+🗿 route.stone.set
+   ├─ stone = 5.3.verification
+   ├─ passage = malfunction
+   ├─ reason = reviewer or judge malfunctioned
+   ├─ options
+   │  ├─ overrule the malfunction
+   │  │  └─ rhx route.stone.set --stone 5.3.verification --as overruled
+   │  └─ or fix the reviewer, then retry
+   └─ guard
+      ├─ artifacts
+      │   ├─ $route/5.3.verification.yield.md
+      │   └─ src/**/*
+      ├─ reviews
+      │   ├─ r1: repo-rules (l1, 6/6)
+      │   │   ├─ approved, cached
+      │   │   ├─ 0 blockers ✓
+      │   │   ├─ 0 nitpicks ✓
+      │   │   ├─ given: .behavior/v2026_07_07.peer-review-conversation/.reviews/peer/5.3.verification._.review.i006.f5c2ef8579967c8562.r001._.given.by_peer.repo-rules.md
+      │   │   └─ taken: .behavior/v2026_07_07.peer-review-conversation/.reviews/peer/5.3.verification._.review.i006.f5c2ef8579967c8562.r001._.taken.by_self.repo-rules.md
+      │   ├─ r2: ergo-contract-snapshots (l1, 6/6)
+      │   │   ├─ approved, cached
+      │   │   ├─ 0 blockers ✓
+      │   │   ├─ 0 nitpicks ✓
+      │   │   ├─ given: .behavior/v2026_07_07.peer-review-conversation/.reviews/peer/5.3.verification._.review.i008.a9e5647ec334df0230.r002._.given.by_peer.ergo-contract-snapshots.md
+      │   │   └─ taken: .behavior/v2026_07_07.peer-review-conversation/.reviews/peer/5.3.verification._.review.i008.a9e5647ec334df0230.r002._.taken.by_self.ergo-contract-snapshots.md
+      │   ├─ r3: mech-external-contracts (l1, 6/6)
+      │   │   ├─ approved, cached
+      │   │   ├─ 0 blockers ✓
+      │   │   ├─ 0 nitpicks ✓
+      │   │   ├─ given: .behavior/v2026_07_07.peer-review-conversation/.reviews/peer/5.3.verification._.review.i008.a9e5647ec334df0230.r003._.given.by_peer.mech-external-contracts.md
+      │   │   └─ taken: .behavior/v2026_07_07.peer-review-conversation/.reviews/peer/5.3.verification._.review.i008.a9e5647ec334df0230.r003._.taken.by_self.mech-external-contracts.md
+      │   ├─ r4: ergo-acceptance-journey-coverage (l1, 6/6)
+      │   │   ├─ approved, cached
+      │   │   ├─ 0 blockers ✓
+      │   │   ├─ 0 nitpicks ✓
+      │   │   ├─ given: .behavior/v2026_07_07.peer-review-conversation/.reviews/peer/5.3.verification._.review.i008.a9e5647ec334df0230.r004._.given.by_peer.ergo-acceptance-journey-coverage.md
+      │   │   └─ taken: .behavior/v2026_07_07.peer-review-conversation/.reviews/peer/5.3.verification._.review.i008.a9e5647ec334df0230.r004._.taken.by_self.ergo-acceptance-journey-coverage.md
+      │   ├─ r5: ergo-snapshot-visual-blemishes (l1, 6/6)
+      │   │   ├─ approved, cached
+      │   │   ├─ 0 blockers ✓
+      │   │   ├─ 0 nitpicks ✓
+      │   │   ├─ given: .behavior/v2026_07_07.peer-review-conversation/.reviews/peer/5.3.verification._.review.i007.c3d3375e4fc3be3347.r005._.given.by_peer.ergo-snapshot-visual-blemishes.md
+      │   │   └─ taken: .behavior/v2026_07_07.peer-review-conversation/.reviews/peer/5.3.verification._.review.i007.c3d3375e4fc3be3347.r005._.taken.by_self.ergo-snapshot-visual-blemishes.md
+      │   ├─ r6: mech-given-when-then (l1, 6/6)
+      │   │   ├─ approved, cached
+      │   │   ├─ 0 blockers ✓
+      │   │   ├─ 0 nitpicks ✓
+      │   │   ├─ given: .behavior/v2026_07_07.peer-review-conversation/.reviews/peer/5.3.verification._.review.i008.a9e5647ec334df0230.r006._.given.by_peer.mech-given-when-then.md
+      │   │   └─ taken: .behavior/v2026_07_07.peer-review-conversation/.reviews/peer/5.3.verification._.review.i008.a9e5647ec334df0230.r006._.taken.by_self.mech-given-when-then.md
+      │   ├─ r7: mech-test-intent (l1, 6/6)
+      │   │   ├─ approved, cached
+      │   │   ├─ 0 blockers ✓
+      │   │   ├─ 0 nitpicks ✓
+      │   │   ├─ given: .behavior/v2026_07_07.peer-review-conversation/.reviews/peer/5.3.verification._.review.i007.c3d3375e4fc3be3347.r007._.given.by_peer.mech-test-intent.md
+      │   │   └─ taken: .behavior/v2026_07_07.peer-review-conversation/.reviews/peer/5.3.verification._.review.i007.c3d3375e4fc3be3347.r007._.taken.by_self.mech-test-intent.md
+      │   ├─ r8: mech-test-scope-purity (l1, 6/6)
+      │   │   ├─ approved, cached
+      │   │   ├─ 0 blockers ✓
+      │   │   ├─ 0 nitpicks ✓
+      │   │   ├─ given: .behavior/v2026_07_07.peer-review-conversation/.reviews/peer/5.3.verification._.review.i008.a9e5647ec334df0230.r008._.given.by_peer.mech-test-scope-purity.md
+      │   │   └─ taken: .behavior/v2026_07_07.peer-review-conversation/.reviews/peer/5.3.verification._.review.i008.a9e5647ec334df0230.r008._.taken.by_self.mech-test-scope-purity.md
+      │   ├─ r9: enroll-verif-snapshot-coverage (l3, 2/6)
+      │   │   ├─ rejected 181.4s
+      │   │   ├─ 1 blocker 🔴
+      │   │   ├─ 1 nitpick 🟠
+      │   │   ├─ given: .behavior/v2026_07_07.peer-review-conversation/.reviews/peer/5.3.verification._.review.i009.c3e7ef5052a91c1113.r009._.given.by_peer.enroll-verif-snapshot-coverage.md
+      │   │   └─ taken: .behavior/v2026_07_07.peer-review-conversation/.reviews/peer/5.3.verification._.review.i009.c3e7ef5052a91c1113.r009._.taken.by_self.enroll-verif-snapshot-coverage.md
+      │   ├─ r10: enroll-verif-snapshot-blemishes (l3, 3/6)
+      │   │   ├─ approved 192.4s
+      │   │   ├─ 0 blockers ✓
+      │   │   ├─ 0 nitpicks ✓
+      │   │   ├─ given: .behavior/v2026_07_07.peer-review-conversation/.reviews/peer/5.3.verification._.review.i009.c3e7ef5052a91c1113.r010._.given.by_peer.enroll-verif-snapshot-blemishes.md
+      │   │   └─ taken: .behavior/v2026_07_07.peer-review-conversation/.reviews/peer/5.3.verification._.review.i009.c3e7ef5052a91c1113.r010._.taken.by_self.enroll-verif-snapshot-blemishes.md
+      │   └─ r11: enroll-verif-test-intent (l3, 1/6)
+      │       ├─ 💥 malfunction
+      │       ├─ given: .behavior/v2026_07_07.peer-review-conversation/.reviews/peer/5.3.verification._.review.i009.c3e7ef5052a91c1113.r011._.given.by_peer.enroll-verif-test-intent.md
+      │       └─ taken: .behavior/v2026_07_07.peer-review-conversation/.reviews/peer/5.3.verification._.review.i009.c3e7ef5052a91c1113.r011._.taken.by_self.enroll-verif-test-intent.md
+      └─ judges
+          └─ j1: $rhachet run --repo bhrain --skill route.stone.judge --mechanism reviewed? --stone $stone --route $route --allow-blockers 0 --allow-nitpicks 0
+              ├─ finished 1.0s ✗
+              └─ reason: blockers exceed threshold (1 > 0)
+
+────────────────────────────────────────────────────────────────
+
+🔎 review 11
+   ├─ stdout
+   │  ├─
+   │  │
+   │  │  ## Verdict: no blocker
+   │  │  
+   │  │  I independently re-verified every diff touching test files and snapshots against `main`, cross-checked against the full `mech-test-intent` / `enroll-verif-test-intent` review conversation across all 8 iterations. **No assertion was loosened; no criteria were weakened.**
+   │  │  
+   │  │  ### What I found, verified directly against the diffs
+   │  │  
+   │  │  **1. Real assertion-value changes (2), both are corrections tracing to verified production fixes — not loosenings:**
+   │  │  
+   │  │  - `getGoals.integration.test.ts`: expected order `['alpha-goal','beta-goal','gamma-goal']` → `['gamma-goal','alpha-goal','beta-goal']`. Confirmed via comment + diff: this follows `setGoal.ts`'s fix from a non-deterministic mtime-offset to a strictly-monotonic `max(extant)+1`. The new expectation is *more* correct (creation order), not looser.
+   │  │  - `achiever.goal.triage.acceptance.test.ts.snap`: two goal entries swapped position — same root cause (goal ordering), same verdict: a corrected expected value, still asserting full exact content per entry. This is a snapshot the prior reviewer chain didn't call out by name, but it's the identical, already-justified root cause.
+   │  │  
+   │  │  **2. One assertion-count *increase* (strengthening, not loosening):** `genContextCliEmit.test.ts` — `toHaveLength(1)` → `toHaveLength(2)`, plus 2 new equally-strict test cases added. Traces to a real fix (blank-line separator + single-source-of-truth verdict computation). More assertions, not fewer.
+   │  │  
+   │  │  **3. One deleted test suite, verified as legitimate dead-code removal:** `computeReviewerVerdict`'s 5-case suite was deleted from `formatGuardReviewerTree.test.ts`. I confirmed via grep that `computeReviewerVerdict` no longer exists anywhere in `src/`, and its replacement `computeReviewPeerVerdict` was moved (pure rename, 0 content diff) with its own equivalent test file fully intact.
+   │  │  
+   │  │  **4. Everything else** (checked exhaustively via `git diff main --stat` across every modified `.test.ts`/`.integration.test.ts`/`.snap` file): pure import-path fixes from the `guard/` sub-noun cluster move, mechanical zero-padding grammar fixes (`i1`/`r1` → `i001`/`r001`) matching the real filename format, and additive-only changes (new snapshot cases, new `given:`/`taken:` label lines for the new feature). No blocker/nitpick counts or pass/fail verdicts changed in any of these.
+   │  │  
+   │  │  This matches and independently confirms the conclusion already reached in the review conversation (`mech-test-intent` r007 at i002→i007, `enroll-verif-test-intent` r011 at i006/i008, with the driver's `.taken` responses accepted). I found nothing beyond what was already caught and justified.
+   │  │
+   │  └─
+   ├─ stderr
+   │  ├─
+   │  │
+   │  │  Warning: no stdin data received in 3s, proceeding without it. If piping from a slow command, redirect stdin explicitly: < /dev/null to skip, or wait longer.
+   │  │  
+   │  │  💥 malfunction: reviewer output lacks a numeric blocker/nitpick count (expected `N blockers` and `N nitpicks`; use `0 blockers` / `0 nitpicks` to declare clean). see .agent/repo=bhrain/role=reviewer/briefs/contract.reviewer-output.md
+   │  │
+   │  └─
+   └─ passage blocked
+      ├─ blocked by malfunction
+      └─ exit code: 1 💥

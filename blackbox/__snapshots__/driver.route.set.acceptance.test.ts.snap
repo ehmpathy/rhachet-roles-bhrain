@@ -43,10 +43,11 @@ exports[`driver.route.set.acceptance given: [case3] route.stone.set --as passed 
 "🦉 the way speaks for itself
    │
    ├─ r1: echo (l1, 1/∞)
-   │   ├─ approved [TIME]
+   │   ├─ rejected [TIME]
    │   ├─ 0 blockers ✓
    │   ├─ 1 nitpick 🟠
-   │   └─ review: .reviews/peer/1.test._.review.i1.35e3128f097925a158.r1._.given.by_peer.echo.md
+   │   ├─ given: .reviews/peer/1.test._.review.i001.35e3128f097925a158.r001._.given.by_peer.echo.md
+   │   └─ taken: .reviews/peer/1.test._.review.i001.35e3128f097925a158.r001._.taken.by_self.echo.md
    │
    └─ ✓ judge.1 - allowed [TIME]
 
@@ -61,7 +62,8 @@ exports[`driver.route.set.acceptance given: [case3] route.stone.set --as passed 
    │  │       ├─ rejected [TIME]
    │  │       ├─ 0 blockers ✓
    │  │       ├─ 1 nitpick 🟠
-   │  │       └─ review: .reviews/peer/1.test._.review.i1.35e3128f097925a158.r1._.given.by_peer.echo.md
+   │  │       ├─ given: .reviews/peer/1.test._.review.i001.35e3128f097925a158.r001._.given.by_peer.echo.md
+   │  │       └─ taken: .reviews/peer/1.test._.review.i001.35e3128f097925a158.r001._.taken.by_self.echo.md
    │  └─ judges
    │      └─ j1: echo "passed: true\\nreason: all checks passed"
    │          └─ finished [TIME] ✓
@@ -95,7 +97,8 @@ exports[`driver.route.set.acceptance given: [case4] route.stone.set --as passed 
    │   ├─ rejected [TIME]
    │   ├─ 3 blockers 🔴
    │   ├─ 1 nitpick 🟠
-   │   └─ review: .reviews/peer/2.blocked._.review.i1.fb9cffb3eb889d2f8e.r1._.given.by_peer.echo.md
+   │   ├─ given: .reviews/peer/2.blocked._.review.i001.fb9cffb3eb889d2f8e.r001._.given.by_peer.echo.md
+   │   └─ taken: .reviews/peer/2.blocked._.review.i001.fb9cffb3eb889d2f8e.r001._.taken.by_self.echo.md
    │
    └─ ✗ judge.1 - blocked [TIME]
 
@@ -111,7 +114,8 @@ exports[`driver.route.set.acceptance given: [case4] route.stone.set --as passed 
       │       ├─ rejected [TIME]
       │       ├─ 3 blockers 🔴
       │       ├─ 1 nitpick 🟠
-      │       └─ review: .reviews/peer/2.blocked._.review.i1.fb9cffb3eb889d2f8e.r1._.given.by_peer.echo.md
+      │       ├─ given: .reviews/peer/2.blocked._.review.i001.fb9cffb3eb889d2f8e.r001._.given.by_peer.echo.md
+      │       └─ taken: .reviews/peer/2.blocked._.review.i001.fb9cffb3eb889d2f8e.r001._.taken.by_self.echo.md
       └─ judges
           └─ j1: echo "passed: false\\nreason: blockers exceed threshold (3 > 0)"
               ├─ finished [TIME] ✗
@@ -165,10 +169,13 @@ exports[`driver.route.set.acceptance given: [case7] route.stone.set --as passed 
 "🦉 the way speaks for itself
    │
    ├─ r1: echo (l1, 1/∞)
-   │   ├─ approved, cached
+   │   ├─ rejected, cached
    │   ├─ 0 blockers ✓
    │   ├─ 1 nitpick 🟠
-   │   └─ review: .reviews/peer/1.test._.review.i1.faa07cdc907435dee8.r1._.given.by_peer.echo.md
+   │   ├─ given: .reviews/peer/1.test._.review.i001.faa07cdc907435dee8.r001._.given.by_peer.echo.md
+   │   └─ taken: .reviews/peer/1.test._.review.i001.faa07cdc907435dee8.r001._.taken.by_self.echo.md
+   │
+   └─ ✓ judge.1 - allowed (cached)
 
 🗿 route.stone.set
    ├─ stone = 1.test
@@ -181,7 +188,8 @@ exports[`driver.route.set.acceptance given: [case7] route.stone.set --as passed 
    │  │       ├─ rejected, cached
    │  │       ├─ 0 blockers ✓
    │  │       ├─ 1 nitpick 🟠
-   │  │       └─ review: .reviews/peer/1.test._.review.i1.faa07cdc907435dee8.r1._.given.by_peer.echo.md
+   │  │       ├─ given: .reviews/peer/1.test._.review.i001.faa07cdc907435dee8.r001._.given.by_peer.echo.md
+   │  │       └─ taken: .reviews/peer/1.test._.review.i001.faa07cdc907435dee8.r001._.taken.by_self.echo.md
    │  └─ judges
    │      └─ j1: echo "passed: true\\nreason: all checks passed"
    │          └─ · cached

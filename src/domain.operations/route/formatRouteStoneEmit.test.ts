@@ -1,7 +1,7 @@
 import { given, then, when } from 'test-fns';
 
 import { formatRouteStoneEmit } from './formatRouteStoneEmit';
-import { getSelfReviewArticulationPath } from './guard/getSelfReviewArticulationPath';
+import { getSelfReviewArticulationPath } from './guard/review/self/getSelfReviewArticulationPath';
 
 describe('formatRouteStoneEmit', () => {
   given('[case1] challenge:absent action', () => {

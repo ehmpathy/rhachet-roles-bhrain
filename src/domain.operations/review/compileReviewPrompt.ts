@@ -49,6 +49,7 @@ const renderPushTarget = (input: {
 export const compileReviewPrompt = (input: {
   rules: Array<{ path: string; content: string }>;
   refs: Array<{ path: string; content: string }>;
+  conversation?: Array<{ path: string; content: string }>;
   targets: Array<{
     path: string;
     content: string | null;
@@ -80,6 +81,17 @@ export const compileReviewPrompt = (input: {
     input.refs.length > 0
       ? input.refs
           .map((ref) => `### ${ref.path}\n\n${ref.content}`)
+          .join('\n\n---\n\n')
+      : null;
+
+  // build conversation section (the prior peer-review dialogue for context)
+  // .why = distinct from refs so the reviewer knows it reads a back-and-forth of
+  //        its own prior critiques (.given) and the driver's responses (.taken)
+  const conversation = input.conversation ?? [];
+  const conversationSection =
+    conversation.length > 0
+      ? conversation
+          .map((file) => `### ${file.path}\n\n${file.content}`)
           .join('\n\n---\n\n')
       : null;
 
@@ -125,7 +137,7 @@ you are a reviewer. apply the rules below to the target files.
 2. NEVER flag anything from the <rules> section — rules contain examples of bad patterns for illustration only
 3. if you see "bad: X" or "good: Y" in a rule, those are examples to learn from, NOT content to flag
 4. the "locations" array must ONLY contain paths from <target>, never from <rules>
-5. if you cannot find the violation in <target>, do not report it${refsSection ? '\n6. <refs> section contains reference documents for context — use them to inform your review but do not flag content from refs' : ''}
+5. if you cannot find the violation in <target>, do not report it${refsSection ? '\n6. <refs> section contains reference documents for context — use them to inform your review but do not flag content from refs' : ''}${conversationSection ? "\n7. <conversation> section is the prior peer-review dialogue — your earlier critiques (.given, with detailed .report) and the driver's responses (.taken). for each prior point the driver answers with a [REPAIR] (a claimed code fix) or a [REFUTE] (a reasoned argument the critique does not hold). weigh each on its merits: (a) [REPAIR] present in <target> → drop the point; (b) [REPAIR] absent from <target> → re-raise it; (c) [REFUTE] that is sound (e.g. extant code out of scope, a false positive, a deliberate tradeoff) → concede and drop it, the driver need not change code to be right; (d) [REFUTE] that is unsound → hold the point and say why the argument fails. the driver is a peer, not a subordinate — a well-argued [REFUTE] is a valid resolution. do NOT flag content from conversation" : ''}
 
 ## how to use the diff (FOCUS ON THE DELTA)
 
@@ -152,6 +164,16 @@ ${
 <refs>
 ${refsSection}
 </refs>
+`
+    : ''
+}${
+  conversationSection
+    ? `
+## prior conversation (YOUR PAST CRITIQUES + THE DRIVER'S [REPAIR]/[REFUTE] RESPONSES — WEIGH BOTH ON MERIT, DO NOT FLAG)
+
+<conversation>
+${conversationSection}
+</conversation>
 `
     : ''
 }

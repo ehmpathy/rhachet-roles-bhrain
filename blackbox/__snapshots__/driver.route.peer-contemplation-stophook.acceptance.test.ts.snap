@@ -1,0 +1,18 @@
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
+
+exports[`driver.route.peer-contemplation-stophook.acceptance given: [case1] a stone blocked on an absent contemplation when: [t0] the driver reaches the halt via all three surfaces then: the shared reply-prompt block matches snapshot 1`] = `
+"🦉 the reviewers await your reply
+
+🌕 lets respond
+   │
+   ├─ review.peer 1/1
+   │  ├─ slug = architect
+   │  ├─ verdict = 1 blocker, 0 nitpicks
+   │  ├─ contemplate from
+   │  │  └─ [TEMP]/.reviews/peer/1.execute._.review.i001.df6243be244b1651df.r001._.given.by_peer.architect.md
+   │  └─ articulate into
+   │     └─ [TEMP]/.reviews/peer/1.execute._.review.i001.df6243be244b1651df.r001._.taken.by_self.architect.md
+   │
+   └─ when you've contemplated each reviewer, run
+      └─ rhx route.stone.set --stone 1.execute --as contemplated --that architect"
+`;

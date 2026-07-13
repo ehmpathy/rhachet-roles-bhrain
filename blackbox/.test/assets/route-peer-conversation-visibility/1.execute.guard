@@ -1,0 +1,16 @@
+artifacts:
+  - 1.execute*.md
+
+reviews:
+  peer:
+    - slug: seer
+      budget: 3
+      level: 1
+      run: bash $route/.test/mock-review-conversation.sh --conversation $conversation
+    - slug: blind
+      budget: 3
+      level: 1
+      run: bash $route/.test/mock-review-conversation.sh
+
+judges:
+  - rhx route.stone.judge --mechanism reviewed? --stone $stone --route $route --allow-blockers 1 --allow-nitpicks 5

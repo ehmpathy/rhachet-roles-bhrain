@@ -1,0 +1,8 @@
+{
+  "name": "route-peer-partial-fixture",
+  "private": true,
+  "description": "fixture for the partial-contemplation acceptance test (two blocker reviewers)",
+  "dependencies": {
+    "rhachet-roles-bhrain": "link:."
+  }
+}

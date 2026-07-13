@@ -9,9 +9,9 @@ import type { ContextCliEmit } from '@src/domain.objects/Driver/ContextCliEmit';
 import type { RouteStone } from '@src/domain.objects/Driver/RouteStone';
 import type { RouteStoneGuard } from '@src/domain.objects/Driver/RouteStoneGuard';
 import { RouteStoneGuardJudgeArtifact } from '@src/domain.objects/Driver/RouteStoneGuardJudgeArtifact';
-import { formatTreeBucket } from '@src/domain.operations/route/guard/formatTreeBucket';
 import { getExitCodeClass } from '@src/domain.operations/route/guard/getExitCodeClass';
 import { isENOENT } from '@src/domain.operations/route/guard/isENOENT';
+import { formatTreeBucket } from '@src/domain.operations/route/guard/tree/formatTreeBucket';
 import { enumFilesFromGlob } from '@src/utils/enumFilesFromGlob';
 
 import { computeStoneJudgeInputHash } from './computeStoneJudgeInputHash';

@@ -1,0 +1,16 @@
+artifacts:
+  - src/**/*.ts
+
+reviews:
+  peer:
+    - slug: malfunctioner
+      run: bash $route/.test/mock-review-malfunction.sh
+      budget: 3
+      level: 1
+    - slug: uncontemplated
+      run: bash $route/.test/mock-review-blocker.sh
+      budget: 3
+      level: 1
+
+judges:
+  - rhx route.stone.judge --mechanism reviewed? --stone $stone --route $route --allow-blockers 5 --allow-nitpicks 5

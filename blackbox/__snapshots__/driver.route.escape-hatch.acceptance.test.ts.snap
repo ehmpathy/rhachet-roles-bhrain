@@ -7,7 +7,8 @@ exports[`driver.route.escape-hatch.acceptance given: [escape-hatch] stone with p
    │   ├─ rejected [TIME]
    │   ├─ 1 blocker 🔴
    │   ├─ 0 nitpicks ✓
-   │   └─ review: .reviews/peer/1.design._.review.i1.eeb68127f67e09a218.r1._.given.by_peer.bash.md
+   │   ├─ given: .reviews/peer/1.design._.review.i001.eeb68127f67e09a218.r001._.given.by_peer.bash.md
+   │   └─ taken: .reviews/peer/1.design._.review.i001.eeb68127f67e09a218.r001._.taken.by_self.bash.md
    │
    └─ ✗ judge.1 - blocked [TIME]
 
@@ -23,7 +24,8 @@ exports[`driver.route.escape-hatch.acceptance given: [escape-hatch] stone with p
       │       ├─ rejected [TIME]
       │       ├─ 1 blocker 🔴
       │       ├─ 0 nitpicks ✓
-      │       └─ review: .reviews/peer/1.design._.review.i1.eeb68127f67e09a218.r1._.given.by_peer.bash.md
+      │       ├─ given: .reviews/peer/1.design._.review.i001.eeb68127f67e09a218.r001._.given.by_peer.bash.md
+      │       └─ taken: .reviews/peer/1.design._.review.i001.eeb68127f67e09a218.r001._.taken.by_self.bash.md
       └─ judges
           └─ j1: rhx route.stone.judge --mechanism reviewed? --stone $stone --route $route --allow-blockers 0 --allow-nitpicks 0
               ├─ finished [TIME] ✗

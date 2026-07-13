@@ -7,13 +7,15 @@ exports[`driver.route.peer-budget-multilevel.journey.acceptance given: [journey 
    │   ├─ rejected [TIME]
    │   ├─ 1 blocker 🔴
    │   ├─ 0 nitpicks ✓
-   │   └─ review: .reviews/peer/1.vision._.review.i1.8739656801d5e77f22.r1._.given.by_peer.linter.md
+   │   ├─ given: .reviews/peer/1.vision._.review.i001.8739656801d5e77f22.r001._.given.by_peer.linter.md
+   │   └─ taken: .reviews/peer/1.vision._.review.i001.8739656801d5e77f22.r001._.taken.by_self.linter.md
    │
    ├─ r2: spellcheck (l1, 1/3)
    │   ├─ rejected [TIME]
    │   ├─ 1 blocker 🔴
    │   ├─ 0 nitpicks ✓
-   │   └─ review: .reviews/peer/1.vision._.review.i1.8739656801d5e77f22.r2._.given.by_peer.spellcheck.md
+   │   ├─ given: .reviews/peer/1.vision._.review.i001.8739656801d5e77f22.r002._.given.by_peer.spellcheck.md
+   │   └─ taken: .reviews/peer/1.vision._.review.i001.8739656801d5e77f22.r002._.taken.by_self.spellcheck.md
    │
    ├─ r3: architect (l2, 0/2)
    │   └─ awaits arrival
@@ -32,12 +34,14 @@ exports[`driver.route.peer-budget-multilevel.journey.acceptance given: [journey 
       │   │   ├─ rejected [TIME]
       │   │   ├─ 1 blocker 🔴
       │   │   ├─ 0 nitpicks ✓
-      │   │   └─ review: .reviews/peer/1.vision._.review.i1.8739656801d5e77f22.r1._.given.by_peer.linter.md
+      │   │   ├─ given: .reviews/peer/1.vision._.review.i001.8739656801d5e77f22.r001._.given.by_peer.linter.md
+      │   │   └─ taken: .reviews/peer/1.vision._.review.i001.8739656801d5e77f22.r001._.taken.by_self.linter.md
       │   ├─ r2: spellcheck (l1, 1/3)
       │   │   ├─ rejected [TIME]
       │   │   ├─ 1 blocker 🔴
       │   │   ├─ 0 nitpicks ✓
-      │   │   └─ review: .reviews/peer/1.vision._.review.i1.8739656801d5e77f22.r2._.given.by_peer.spellcheck.md
+      │   │   ├─ given: .reviews/peer/1.vision._.review.i001.8739656801d5e77f22.r002._.given.by_peer.spellcheck.md
+      │   │   └─ taken: .reviews/peer/1.vision._.review.i001.8739656801d5e77f22.r002._.taken.by_self.spellcheck.md
       │   └─ r3: architect (l2, 0/2)
       │       └─ awaits l1 terminal
       └─ judges
@@ -54,13 +58,15 @@ exports[`driver.route.peer-budget-multilevel.journey.acceptance given: [journey 
    │   ├─ rejected [TIME]
    │   ├─ 1 blocker 🔴
    │   ├─ 0 nitpicks ✓
-   │   └─ review: .reviews/peer/1.vision._.review.i2.dfc5faff83ea2fcb55.r1._.given.by_peer.linter.md
+   │   ├─ given: .reviews/peer/1.vision._.review.i002.dfc5faff83ea2fcb55.r001._.given.by_peer.linter.md
+   │   └─ taken: .reviews/peer/1.vision._.review.i002.dfc5faff83ea2fcb55.r001._.taken.by_self.linter.md
    │
    ├─ r2: spellcheck (l1, 2/3)
    │   ├─ rejected [TIME]
    │   ├─ 1 blocker 🔴
    │   ├─ 0 nitpicks ✓
-   │   └─ review: .reviews/peer/1.vision._.review.i2.dfc5faff83ea2fcb55.r2._.given.by_peer.spellcheck.md
+   │   ├─ given: .reviews/peer/1.vision._.review.i002.dfc5faff83ea2fcb55.r002._.given.by_peer.spellcheck.md
+   │   └─ taken: .reviews/peer/1.vision._.review.i002.dfc5faff83ea2fcb55.r002._.taken.by_self.spellcheck.md
    │
    ├─ r3: architect (l2, 0/2)
    │   └─ awaits arrival
@@ -79,12 +85,14 @@ exports[`driver.route.peer-budget-multilevel.journey.acceptance given: [journey 
       │   │   ├─ rejected [TIME]
       │   │   ├─ 1 blocker 🔴
       │   │   ├─ 0 nitpicks ✓
-      │   │   └─ review: .reviews/peer/1.vision._.review.i2.dfc5faff83ea2fcb55.r1._.given.by_peer.linter.md
+      │   │   ├─ given: .reviews/peer/1.vision._.review.i002.dfc5faff83ea2fcb55.r001._.given.by_peer.linter.md
+      │   │   └─ taken: .reviews/peer/1.vision._.review.i002.dfc5faff83ea2fcb55.r001._.taken.by_self.linter.md
       │   ├─ r2: spellcheck (l1, 2/3)
       │   │   ├─ rejected [TIME]
       │   │   ├─ 1 blocker 🔴
       │   │   ├─ 0 nitpicks ✓
-      │   │   └─ review: .reviews/peer/1.vision._.review.i2.dfc5faff83ea2fcb55.r2._.given.by_peer.spellcheck.md
+      │   │   ├─ given: .reviews/peer/1.vision._.review.i002.dfc5faff83ea2fcb55.r002._.given.by_peer.spellcheck.md
+      │   │   └─ taken: .reviews/peer/1.vision._.review.i002.dfc5faff83ea2fcb55.r002._.taken.by_self.spellcheck.md
       │   └─ r3: architect (l2, 0/2)
       │       └─ awaits l1 terminal
       └─ judges
@@ -101,19 +109,22 @@ exports[`driver.route.peer-budget-multilevel.journey.acceptance given: [journey 
    │   ├─ exhausted, cached
    │   ├─ 1 blocker 🔴
    │   ├─ 0 nitpicks ✓
-   │   └─ review: .reviews/peer/1.vision._.review.i2.dfc5faff83ea2fcb55.r1._.given.by_peer.linter.md
+   │   ├─ given: .reviews/peer/1.vision._.review.i002.dfc5faff83ea2fcb55.r001._.given.by_peer.linter.md
+   │   └─ taken: .reviews/peer/1.vision._.review.i002.dfc5faff83ea2fcb55.r001._.taken.by_self.linter.md
    │
    ├─ r2: spellcheck (l1, 3/3)
    │   ├─ approved [TIME]
    │   ├─ 0 blockers ✓
    │   ├─ 0 nitpicks ✓
-   │   └─ review: .reviews/peer/1.vision._.review.i3.457fd5ef46e053a35e.r2._.given.by_peer.spellcheck.md
+   │   ├─ given: .reviews/peer/1.vision._.review.i003.457fd5ef46e053a35e.r002._.given.by_peer.spellcheck.md
+   │   └─ taken: .reviews/peer/1.vision._.review.i003.457fd5ef46e053a35e.r002._.taken.by_self.spellcheck.md
    │
    ├─ r3: architect (l2, 1/2)
    │   ├─ rejected [TIME]
    │   ├─ 1 blocker 🔴
    │   ├─ 0 nitpicks ✓
-   │   └─ review: .reviews/peer/1.vision._.review.i3.457fd5ef46e053a35e.r3._.given.by_peer.architect.md
+   │   ├─ given: .reviews/peer/1.vision._.review.i003.457fd5ef46e053a35e.r003._.given.by_peer.architect.md
+   │   └─ taken: .reviews/peer/1.vision._.review.i003.457fd5ef46e053a35e.r003._.taken.by_self.architect.md
    │
    └─ ✗ judge.1 - blocked [TIME]
 
@@ -129,17 +140,20 @@ exports[`driver.route.peer-budget-multilevel.journey.acceptance given: [journey 
       │   │   ├─ exhausted, cached
       │   │   ├─ 1 blocker 🔴
       │   │   ├─ 0 nitpicks ✓
-      │   │   └─ review: .reviews/peer/1.vision._.review.i2.dfc5faff83ea2fcb55.r1._.given.by_peer.linter.md
+      │   │   ├─ given: .reviews/peer/1.vision._.review.i002.dfc5faff83ea2fcb55.r001._.given.by_peer.linter.md
+      │   │   └─ taken: .reviews/peer/1.vision._.review.i002.dfc5faff83ea2fcb55.r001._.taken.by_self.linter.md
       │   ├─ r2: spellcheck (l1, 3/3)
       │   │   ├─ approved [TIME]
       │   │   ├─ 0 blockers ✓
       │   │   ├─ 0 nitpicks ✓
-      │   │   └─ review: .reviews/peer/1.vision._.review.i3.457fd5ef46e053a35e.r2._.given.by_peer.spellcheck.md
+      │   │   ├─ given: .reviews/peer/1.vision._.review.i003.457fd5ef46e053a35e.r002._.given.by_peer.spellcheck.md
+      │   │   └─ taken: .reviews/peer/1.vision._.review.i003.457fd5ef46e053a35e.r002._.taken.by_self.spellcheck.md
       │   └─ r3: architect (l2, 1/2)
       │       ├─ rejected [TIME]
       │       ├─ 1 blocker 🔴
       │       ├─ 0 nitpicks ✓
-      │       └─ review: .reviews/peer/1.vision._.review.i3.457fd5ef46e053a35e.r3._.given.by_peer.architect.md
+      │       ├─ given: .reviews/peer/1.vision._.review.i003.457fd5ef46e053a35e.r003._.given.by_peer.architect.md
+      │       └─ taken: .reviews/peer/1.vision._.review.i003.457fd5ef46e053a35e.r003._.taken.by_self.architect.md
       └─ judges
           └─ j1: rhx route.stone.judge --mechanism reviewed? --stone $stone --route $route --allow-blockers 0 --allow-nitpicks 1
               ├─ finished [TIME] ✗
@@ -154,19 +168,22 @@ exports[`driver.route.peer-budget-multilevel.journey.acceptance given: [journey 
    │   ├─ exhausted, cached
    │   ├─ 1 blocker 🔴
    │   ├─ 0 nitpicks ✓
-   │   └─ review: .reviews/peer/1.vision._.review.i2.dfc5faff83ea2fcb55.r1._.given.by_peer.linter.md
+   │   ├─ given: .reviews/peer/1.vision._.review.i002.dfc5faff83ea2fcb55.r001._.given.by_peer.linter.md
+   │   └─ taken: .reviews/peer/1.vision._.review.i002.dfc5faff83ea2fcb55.r001._.taken.by_self.linter.md
    │
    ├─ r2: spellcheck (l1, 3/3)
    │   ├─ exhausted, cached
    │   ├─ 0 blockers ✓
    │   ├─ 0 nitpicks ✓
-   │   └─ review: .reviews/peer/1.vision._.review.i3.457fd5ef46e053a35e.r2._.given.by_peer.spellcheck.md
+   │   ├─ given: .reviews/peer/1.vision._.review.i003.457fd5ef46e053a35e.r002._.given.by_peer.spellcheck.md
+   │   └─ taken: .reviews/peer/1.vision._.review.i003.457fd5ef46e053a35e.r002._.taken.by_self.spellcheck.md
    │
    ├─ r3: architect (l2, 2/2)
    │   ├─ exhausted, cached
    │   ├─ 1 blocker 🔴
    │   ├─ 0 nitpicks ✓
-   │   └─ review: .reviews/peer/1.vision._.review.i4.6dddc53e1de2efc1da.r3._.given.by_peer.architect.md
+   │   ├─ given: .reviews/peer/1.vision._.review.i004.6dddc53e1de2efc1da.r003._.given.by_peer.architect.md
+   │   └─ taken: .reviews/peer/1.vision._.review.i004.6dddc53e1de2efc1da.r003._.taken.by_self.architect.md
    │
    └─ halted: peer reviewer budget exhausted
 
@@ -187,17 +204,20 @@ exports[`driver.route.peer-budget-multilevel.journey.acceptance given: [journey 
           │   ├─ exhausted, cached
           │   ├─ 1 blocker 🔴
           │   ├─ 0 nitpicks ✓
-          │   └─ review: .reviews/peer/1.vision._.review.i2.dfc5faff83ea2fcb55.r1._.given.by_peer.linter.md
+          │   ├─ given: .reviews/peer/1.vision._.review.i002.dfc5faff83ea2fcb55.r001._.given.by_peer.linter.md
+          │   └─ taken: .reviews/peer/1.vision._.review.i002.dfc5faff83ea2fcb55.r001._.taken.by_self.linter.md
           ├─ r2: spellcheck (l1, 3/3)
           │   ├─ approved, cached
           │   ├─ 0 blockers ✓
           │   ├─ 0 nitpicks ✓
-          │   └─ review: .reviews/peer/1.vision._.review.i3.457fd5ef46e053a35e.r2._.given.by_peer.spellcheck.md
+          │   ├─ given: .reviews/peer/1.vision._.review.i003.457fd5ef46e053a35e.r002._.given.by_peer.spellcheck.md
+          │   └─ taken: .reviews/peer/1.vision._.review.i003.457fd5ef46e053a35e.r002._.taken.by_self.spellcheck.md
           └─ r3: architect (l2, 2/2)
               ├─ exhausted, cached
               ├─ 1 blocker 🔴
               ├─ 0 nitpicks ✓
-              └─ review: .reviews/peer/1.vision._.review.i4.6dddc53e1de2efc1da.r3._.given.by_peer.architect.md
+              ├─ given: .reviews/peer/1.vision._.review.i004.6dddc53e1de2efc1da.r003._.given.by_peer.architect.md
+              └─ taken: .reviews/peer/1.vision._.review.i004.6dddc53e1de2efc1da.r003._.taken.by_self.architect.md
 "
 `;
 
@@ -208,19 +228,22 @@ exports[`driver.route.peer-budget-multilevel.journey.acceptance given: [journey 
    │   ├─ exhausted, cached
    │   ├─ 1 blocker 🔴
    │   ├─ 0 nitpicks ✓
-   │   └─ review: .reviews/peer/1.vision._.review.i2.dfc5faff83ea2fcb55.r1._.given.by_peer.linter.md
+   │   ├─ given: .reviews/peer/1.vision._.review.i002.dfc5faff83ea2fcb55.r001._.given.by_peer.linter.md
+   │   └─ taken: .reviews/peer/1.vision._.review.i002.dfc5faff83ea2fcb55.r001._.taken.by_self.linter.md
    │
    ├─ r2: spellcheck (l1, 3/3)
    │   ├─ exhausted, cached
    │   ├─ 0 blockers ✓
    │   ├─ 0 nitpicks ✓
-   │   └─ review: .reviews/peer/1.vision._.review.i3.457fd5ef46e053a35e.r2._.given.by_peer.spellcheck.md
+   │   ├─ given: .reviews/peer/1.vision._.review.i003.457fd5ef46e053a35e.r002._.given.by_peer.spellcheck.md
+   │   └─ taken: .reviews/peer/1.vision._.review.i003.457fd5ef46e053a35e.r002._.taken.by_self.spellcheck.md
    │
    ├─ r3: architect (l2, 2/2)
    │   ├─ rejected [TIME]
    │   ├─ 1 blocker 🔴
    │   ├─ 0 nitpicks ✓
-   │   └─ review: .reviews/peer/1.vision._.review.i4.6dddc53e1de2efc1da.r3._.given.by_peer.architect.md
+   │   ├─ given: .reviews/peer/1.vision._.review.i004.6dddc53e1de2efc1da.r003._.given.by_peer.architect.md
+   │   └─ taken: .reviews/peer/1.vision._.review.i004.6dddc53e1de2efc1da.r003._.taken.by_self.architect.md
    │
    └─ ✗ judge.1 - blocked [TIME]
 
@@ -236,17 +259,20 @@ exports[`driver.route.peer-budget-multilevel.journey.acceptance given: [journey 
       │   │   ├─ exhausted, cached
       │   │   ├─ 1 blocker 🔴
       │   │   ├─ 0 nitpicks ✓
-      │   │   └─ review: .reviews/peer/1.vision._.review.i2.dfc5faff83ea2fcb55.r1._.given.by_peer.linter.md
+      │   │   ├─ given: .reviews/peer/1.vision._.review.i002.dfc5faff83ea2fcb55.r001._.given.by_peer.linter.md
+      │   │   └─ taken: .reviews/peer/1.vision._.review.i002.dfc5faff83ea2fcb55.r001._.taken.by_self.linter.md
       │   ├─ r2: spellcheck (l1, 3/3)
       │   │   ├─ approved, cached
       │   │   ├─ 0 blockers ✓
       │   │   ├─ 0 nitpicks ✓
-      │   │   └─ review: .reviews/peer/1.vision._.review.i3.457fd5ef46e053a35e.r2._.given.by_peer.spellcheck.md
+      │   │   ├─ given: .reviews/peer/1.vision._.review.i003.457fd5ef46e053a35e.r002._.given.by_peer.spellcheck.md
+      │   │   └─ taken: .reviews/peer/1.vision._.review.i003.457fd5ef46e053a35e.r002._.taken.by_self.spellcheck.md
       │   └─ r3: architect (l2, 2/2)
       │       ├─ rejected [TIME]
       │       ├─ 1 blocker 🔴
       │       ├─ 0 nitpicks ✓
-      │       └─ review: .reviews/peer/1.vision._.review.i4.6dddc53e1de2efc1da.r3._.given.by_peer.architect.md
+      │       ├─ given: .reviews/peer/1.vision._.review.i004.6dddc53e1de2efc1da.r003._.given.by_peer.architect.md
+      │       └─ taken: .reviews/peer/1.vision._.review.i004.6dddc53e1de2efc1da.r003._.taken.by_self.architect.md
       └─ judges
           └─ j1: rhx route.stone.judge --mechanism reviewed? --stone $stone --route $route --allow-blockers 0 --allow-nitpicks 1
               ├─ finished [TIME] ✗
@@ -270,17 +296,20 @@ exports[`driver.route.peer-budget-multilevel.journey.acceptance given: [journey 
       │   │   ├─ exhausted
       │   │   ├─ 1 blocker 🔴
       │   │   ├─ 0 nitpicks ✓
-      │   │   └─ review: [TEMP]/.reviews/peer/1.vision._.review.i2.dfc5faff83ea2fcb55.r1._.given.by_peer.linter.md
+      │   │   ├─ given: [TEMP]/.reviews/peer/1.vision._.review.i002.dfc5faff83ea2fcb55.r001._.given.by_peer.linter.md
+      │   │   └─ taken: [TEMP]/.reviews/peer/1.vision._.review.i002.dfc5faff83ea2fcb55.r001._.taken.by_self.linter.md
       │   ├─ r2: spellcheck (l1, 3/3)
       │   │   ├─ approved
       │   │   ├─ 0 blockers ✓
       │   │   ├─ 0 nitpicks ✓
-      │   │   └─ review: [TEMP]/.reviews/peer/1.vision._.review.i3.457fd5ef46e053a35e.r2._.given.by_peer.spellcheck.md
+      │   │   ├─ given: [TEMP]/.reviews/peer/1.vision._.review.i003.457fd5ef46e053a35e.r002._.given.by_peer.spellcheck.md
+      │   │   └─ taken: [TEMP]/.reviews/peer/1.vision._.review.i003.457fd5ef46e053a35e.r002._.taken.by_self.spellcheck.md
       │   └─ r3: architect (l2, 2/2)
       │       ├─ exhausted
       │       ├─ 1 blocker 🔴
       │       ├─ 0 nitpicks ✓
-      │       └─ review: [TEMP]/.reviews/peer/1.vision._.review.i4.6dddc53e1de2efc1da.r3._.given.by_peer.architect.md
+      │       ├─ given: [TEMP]/.reviews/peer/1.vision._.review.i004.6dddc53e1de2efc1da.r003._.given.by_peer.architect.md
+      │       └─ taken: [TEMP]/.reviews/peer/1.vision._.review.i004.6dddc53e1de2efc1da.r003._.taken.by_self.architect.md
       │
       ├─ please ask a human to either
       │  ├─ approve as-is
@@ -324,17 +353,20 @@ exports[`driver.route.peer-budget-multilevel.journey.acceptance given: [journey 
       │   │   ├─ exhausted
       │   │   ├─ 1 blocker 🔴
       │   │   ├─ 0 nitpicks ✓
-      │   │   └─ review: [TEMP]/.reviews/peer/1.vision._.review.i2.dfc5faff83ea2fcb55.r1._.given.by_peer.linter.md
+      │   │   ├─ given: [TEMP]/.reviews/peer/1.vision._.review.i002.dfc5faff83ea2fcb55.r001._.given.by_peer.linter.md
+      │   │   └─ taken: [TEMP]/.reviews/peer/1.vision._.review.i002.dfc5faff83ea2fcb55.r001._.taken.by_self.linter.md
       │   ├─ r2: spellcheck (l1, 3/3)
       │   │   ├─ approved
       │   │   ├─ 0 blockers ✓
       │   │   ├─ 0 nitpicks ✓
-      │   │   └─ review: [TEMP]/.reviews/peer/1.vision._.review.i3.457fd5ef46e053a35e.r2._.given.by_peer.spellcheck.md
+      │   │   ├─ given: [TEMP]/.reviews/peer/1.vision._.review.i003.457fd5ef46e053a35e.r002._.given.by_peer.spellcheck.md
+      │   │   └─ taken: [TEMP]/.reviews/peer/1.vision._.review.i003.457fd5ef46e053a35e.r002._.taken.by_self.spellcheck.md
       │   └─ r3: architect (l2, 2/4)
       │       ├─ rejected
       │       ├─ 1 blocker 🔴
       │       ├─ 0 nitpicks ✓
-      │       └─ review: [TEMP]/.reviews/peer/1.vision._.review.i4.6dddc53e1de2efc1da.r3._.given.by_peer.architect.md
+      │       ├─ given: [TEMP]/.reviews/peer/1.vision._.review.i004.6dddc53e1de2efc1da.r003._.given.by_peer.architect.md
+      │       └─ taken: [TEMP]/.reviews/peer/1.vision._.review.i004.6dddc53e1de2efc1da.r003._.taken.by_self.architect.md
       │
       ├─ please ask a human to either
       │  ├─ approve as-is
@@ -355,19 +387,22 @@ exports[`driver.route.peer-budget-multilevel.journey.acceptance given: [journey 
    │   ├─ exhausted, cached
    │   ├─ 1 blocker 🔴
    │   ├─ 0 nitpicks ✓
-   │   └─ review: .reviews/peer/1.vision._.review.i2.dfc5faff83ea2fcb55.r1._.given.by_peer.linter.md
+   │   ├─ given: .reviews/peer/1.vision._.review.i002.dfc5faff83ea2fcb55.r001._.given.by_peer.linter.md
+   │   └─ taken: .reviews/peer/1.vision._.review.i002.dfc5faff83ea2fcb55.r001._.taken.by_self.linter.md
    │
    ├─ r2: spellcheck (l1, 3/3)
    │   ├─ exhausted, cached
    │   ├─ 0 blockers ✓
    │   ├─ 0 nitpicks ✓
-   │   └─ review: .reviews/peer/1.vision._.review.i3.457fd5ef46e053a35e.r2._.given.by_peer.spellcheck.md
+   │   ├─ given: .reviews/peer/1.vision._.review.i003.457fd5ef46e053a35e.r002._.given.by_peer.spellcheck.md
+   │   └─ taken: .reviews/peer/1.vision._.review.i003.457fd5ef46e053a35e.r002._.taken.by_self.spellcheck.md
    │
    ├─ r3: architect (l2, 3/4)
    │   ├─ approved [TIME]
    │   ├─ 0 blockers ✓
    │   ├─ 0 nitpicks ✓
-   │   └─ review: .reviews/peer/1.vision._.review.i5.0997a4c5910ffe05d0.r3._.given.by_peer.architect.md
+   │   ├─ given: .reviews/peer/1.vision._.review.i005.0997a4c5910ffe05d0.r003._.given.by_peer.architect.md
+   │   └─ taken: .reviews/peer/1.vision._.review.i005.0997a4c5910ffe05d0.r003._.taken.by_self.architect.md
    │
    └─ halted: peer reviewer budget exhausted
 
@@ -388,17 +423,20 @@ exports[`driver.route.peer-budget-multilevel.journey.acceptance given: [journey 
           │   ├─ exhausted, cached
           │   ├─ 1 blocker 🔴
           │   ├─ 0 nitpicks ✓
-          │   └─ review: .reviews/peer/1.vision._.review.i2.dfc5faff83ea2fcb55.r1._.given.by_peer.linter.md
+          │   ├─ given: .reviews/peer/1.vision._.review.i002.dfc5faff83ea2fcb55.r001._.given.by_peer.linter.md
+          │   └─ taken: .reviews/peer/1.vision._.review.i002.dfc5faff83ea2fcb55.r001._.taken.by_self.linter.md
           ├─ r2: spellcheck (l1, 3/3)
           │   ├─ approved, cached
           │   ├─ 0 blockers ✓
           │   ├─ 0 nitpicks ✓
-          │   └─ review: .reviews/peer/1.vision._.review.i3.457fd5ef46e053a35e.r2._.given.by_peer.spellcheck.md
+          │   ├─ given: .reviews/peer/1.vision._.review.i003.457fd5ef46e053a35e.r002._.given.by_peer.spellcheck.md
+          │   └─ taken: .reviews/peer/1.vision._.review.i003.457fd5ef46e053a35e.r002._.taken.by_self.spellcheck.md
           └─ r3: architect (l2, 3/4)
               ├─ approved [TIME]
               ├─ 0 blockers ✓
               ├─ 0 nitpicks ✓
-              └─ review: .reviews/peer/1.vision._.review.i5.0997a4c5910ffe05d0.r3._.given.by_peer.architect.md
+              ├─ given: .reviews/peer/1.vision._.review.i005.0997a4c5910ffe05d0.r003._.given.by_peer.architect.md
+              └─ taken: .reviews/peer/1.vision._.review.i005.0997a4c5910ffe05d0.r003._.taken.by_self.architect.md
 "
 `;
 
@@ -418,17 +456,20 @@ exports[`driver.route.peer-budget-multilevel.journey.acceptance given: [journey 
       │   │   ├─ exhausted
       │   │   ├─ 1 blocker 🔴
       │   │   ├─ 0 nitpicks ✓
-      │   │   └─ review: [TEMP]/.reviews/peer/1.vision._.review.i2.dfc5faff83ea2fcb55.r1._.given.by_peer.linter.md
+      │   │   ├─ given: [TEMP]/.reviews/peer/1.vision._.review.i002.dfc5faff83ea2fcb55.r001._.given.by_peer.linter.md
+      │   │   └─ taken: [TEMP]/.reviews/peer/1.vision._.review.i002.dfc5faff83ea2fcb55.r001._.taken.by_self.linter.md
       │   ├─ r2: spellcheck (l1, 3/3)
       │   │   ├─ approved
       │   │   ├─ 0 blockers ✓
       │   │   ├─ 0 nitpicks ✓
-      │   │   └─ review: [TEMP]/.reviews/peer/1.vision._.review.i3.457fd5ef46e053a35e.r2._.given.by_peer.spellcheck.md
+      │   │   ├─ given: [TEMP]/.reviews/peer/1.vision._.review.i003.457fd5ef46e053a35e.r002._.given.by_peer.spellcheck.md
+      │   │   └─ taken: [TEMP]/.reviews/peer/1.vision._.review.i003.457fd5ef46e053a35e.r002._.taken.by_self.spellcheck.md
       │   └─ r3: architect (l2, 3/4)
       │       ├─ approved
       │       ├─ 0 blockers ✓
       │       ├─ 0 nitpicks ✓
-      │       └─ review: [TEMP]/.reviews/peer/1.vision._.review.i5.0997a4c5910ffe05d0.r3._.given.by_peer.architect.md
+      │       ├─ given: [TEMP]/.reviews/peer/1.vision._.review.i005.0997a4c5910ffe05d0.r003._.given.by_peer.architect.md
+      │       └─ taken: [TEMP]/.reviews/peer/1.vision._.review.i005.0997a4c5910ffe05d0.r003._.taken.by_self.architect.md
       │
       ├─ please ask a human to either
       │  ├─ approve as-is
@@ -458,19 +499,22 @@ exports[`driver.route.peer-budget-multilevel.journey.acceptance given: [journey 
    │   ├─ exhausted, cached
    │   ├─ 1 blocker 🔴
    │   ├─ 0 nitpicks ✓
-   │   └─ review: .reviews/peer/1.vision._.review.i2.dfc5faff83ea2fcb55.r1._.given.by_peer.linter.md
+   │   ├─ given: .reviews/peer/1.vision._.review.i002.dfc5faff83ea2fcb55.r001._.given.by_peer.linter.md
+   │   └─ taken: .reviews/peer/1.vision._.review.i002.dfc5faff83ea2fcb55.r001._.taken.by_self.linter.md
    │
    ├─ r2: spellcheck (l1, 3/3)
    │   ├─ exhausted, cached
    │   ├─ 0 blockers ✓
    │   ├─ 0 nitpicks ✓
-   │   └─ review: .reviews/peer/1.vision._.review.i3.457fd5ef46e053a35e.r2._.given.by_peer.spellcheck.md
+   │   ├─ given: .reviews/peer/1.vision._.review.i003.457fd5ef46e053a35e.r002._.given.by_peer.spellcheck.md
+   │   └─ taken: .reviews/peer/1.vision._.review.i003.457fd5ef46e053a35e.r002._.taken.by_self.spellcheck.md
    │
    ├─ r3: architect (l2, 3/4)
    │   ├─ approved, cached
    │   ├─ 0 blockers ✓
    │   ├─ 0 nitpicks ✓
-   │   └─ review: .reviews/peer/1.vision._.review.i5.0997a4c5910ffe05d0.r3._.given.by_peer.architect.md
+   │   ├─ given: .reviews/peer/1.vision._.review.i005.0997a4c5910ffe05d0.r003._.given.by_peer.architect.md
+   │   └─ taken: .reviews/peer/1.vision._.review.i005.0997a4c5910ffe05d0.r003._.taken.by_self.architect.md
    │
    └─ ✓ judge.1 - allowed [TIME]
 
@@ -485,17 +529,20 @@ exports[`driver.route.peer-budget-multilevel.journey.acceptance given: [journey 
    │  │   │   ├─ exhausted, cached
    │  │   │   ├─ 1 blocker 🔴
    │  │   │   ├─ 0 nitpicks ✓
-   │  │   │   └─ review: .reviews/peer/1.vision._.review.i2.dfc5faff83ea2fcb55.r1._.given.by_peer.linter.md
+   │  │   │   ├─ given: .reviews/peer/1.vision._.review.i002.dfc5faff83ea2fcb55.r001._.given.by_peer.linter.md
+   │  │   │   └─ taken: .reviews/peer/1.vision._.review.i002.dfc5faff83ea2fcb55.r001._.taken.by_self.linter.md
    │  │   ├─ r2: spellcheck (l1, 3/3)
    │  │   │   ├─ approved, cached
    │  │   │   ├─ 0 blockers ✓
    │  │   │   ├─ 0 nitpicks ✓
-   │  │   │   └─ review: .reviews/peer/1.vision._.review.i3.457fd5ef46e053a35e.r2._.given.by_peer.spellcheck.md
+   │  │   │   ├─ given: .reviews/peer/1.vision._.review.i003.457fd5ef46e053a35e.r002._.given.by_peer.spellcheck.md
+   │  │   │   └─ taken: .reviews/peer/1.vision._.review.i003.457fd5ef46e053a35e.r002._.taken.by_self.spellcheck.md
    │  │   └─ r3: architect (l2, 3/4)
    │  │       ├─ approved, cached
    │  │       ├─ 0 blockers ✓
    │  │       ├─ 0 nitpicks ✓
-   │  │       └─ review: .reviews/peer/1.vision._.review.i5.0997a4c5910ffe05d0.r3._.given.by_peer.architect.md
+   │  │       ├─ given: .reviews/peer/1.vision._.review.i005.0997a4c5910ffe05d0.r003._.given.by_peer.architect.md
+   │  │       └─ taken: .reviews/peer/1.vision._.review.i005.0997a4c5910ffe05d0.r003._.taken.by_self.architect.md
    │  └─ judges
    │      └─ j1: rhx route.stone.judge --mechanism reviewed? --stone $stone --route $route --allow-blockers 0 --allow-nitpicks 1
    │          └─ finished [TIME] ✓

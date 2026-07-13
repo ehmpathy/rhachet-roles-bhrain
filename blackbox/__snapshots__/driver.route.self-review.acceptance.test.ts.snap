@@ -67,7 +67,8 @@ exports[`driver.route.review.self.acceptance given: [case1] stone with reviews.s
    ├─ walk the way 🪷
    │  │
    │  ├─ articulate into
-   │  │  └─ /review/self/for.1._.r1.all-done.md
+   │  │  ├─ /review/self/for.1._.r1.all-done.md
+   │  │  └─ the guard looks precisely here, write exactly to this path
    │  │
    │  ├─ for each found issue 🪘
    │  │  ├─
@@ -157,7 +158,8 @@ exports[`driver.route.review.self.acceptance given: [case1] stone with reviews.s
    ├─ walk the way 🪷
    │  │
    │  ├─ articulate into
-   │  │  └─ ./review/self/for.1._.r1.tests-pass.md
+   │  │  ├─ ./review/self/for.1._.r1.tests-pass.md
+   │  │  └─ the guard looks precisely here, write exactly to this path
    │  │
    │  ├─ for each found issue 🪘
    │  │  ├─
@@ -196,7 +198,8 @@ exports[`driver.route.review.self.acceptance given: [case1] stone with reviews.s
    │   ├─ approved [TIME]
    │   ├─ 0 blockers ✓
    │   ├─ 0 nitpicks ✓
-   │   └─ review: .reviews/peer/1._.review.i1.11a1a67a230e75f442.r1._.given.by_peer..test-mock-review.sh.md
+   │   ├─ given: .reviews/peer/1._.review.i001.11a1a67a230e75f442.r001._.given.by_peer..test-mock-review.sh.md
+   │   └─ taken: .reviews/peer/1._.review.i001.11a1a67a230e75f442.r001._.taken.by_self..test-mock-review.sh.md
    │
    └─ ✓ judge.1 - allowed [TIME]
 
@@ -211,7 +214,8 @@ exports[`driver.route.review.self.acceptance given: [case1] stone with reviews.s
    │  │       ├─ approved [TIME]
    │  │       ├─ 0 blockers ✓
    │  │       ├─ 0 nitpicks ✓
-   │  │       └─ review: .reviews/peer/1._.review.i1.11a1a67a230e75f442.r1._.given.by_peer..test-mock-review.sh.md
+   │  │       ├─ given: .reviews/peer/1._.review.i001.11a1a67a230e75f442.r001._.given.by_peer..test-mock-review.sh.md
+   │  │       └─ taken: .reviews/peer/1._.review.i001.11a1a67a230e75f442.r001._.taken.by_self..test-mock-review.sh.md
    │  └─ judges
    │      └─ j1: rhx route.stone.judge --mechanism reviewed? --stone $stone --route $route --allow-blockers 0
    │          └─ finished [TIME] ✓
@@ -288,7 +292,8 @@ exports[`driver.route.review.self.acceptance given: [case3] hashless promises su
    ├─ walk the way 🪷
    │  │
    │  ├─ articulate into
-   │  │  └─ /review/self/for.1._.r2.tests-pass.md
+   │  │  ├─ /review/self/for.1._.r2.tests-pass.md
+   │  │  └─ the guard looks precisely here, write exactly to this path
    │  │
    │  ├─ for each found issue 🪘
    │  │  ├─
@@ -318,7 +323,8 @@ exports[`driver.route.review.self.acceptance given: [case4] flat reviews array (
    │   ├─ approved [TIME]
    │   ├─ 0 blockers ✓
    │   ├─ 0 nitpicks ✓
-   │   └─ review: .reviews/peer/1._.review.i1.11a1a67a230e75f442.r1._.given.by_peer..test-mock-review.sh.md
+   │   ├─ given: .reviews/peer/1._.review.i001.11a1a67a230e75f442.r001._.given.by_peer..test-mock-review.sh.md
+   │   └─ taken: .reviews/peer/1._.review.i001.11a1a67a230e75f442.r001._.taken.by_self..test-mock-review.sh.md
    │
    └─ ✓ judge.1 - allowed [TIME]
 
@@ -333,7 +339,8 @@ exports[`driver.route.review.self.acceptance given: [case4] flat reviews array (
    │  │       ├─ approved [TIME]
    │  │       ├─ 0 blockers ✓
    │  │       ├─ 0 nitpicks ✓
-   │  │       └─ review: .reviews/peer/1._.review.i1.11a1a67a230e75f442.r1._.given.by_peer..test-mock-review.sh.md
+   │  │       ├─ given: .reviews/peer/1._.review.i001.11a1a67a230e75f442.r001._.given.by_peer..test-mock-review.sh.md
+   │  │       └─ taken: .reviews/peer/1._.review.i001.11a1a67a230e75f442.r001._.taken.by_self..test-mock-review.sh.md
    │  └─ judges
    │      └─ j1: rhx route.stone.judge --mechanism reviewed? --stone $stone --route $route --allow-blockers 0
    │          └─ finished [TIME] ✓
@@ -403,7 +410,8 @@ exports[`driver.route.review.self.acceptance given: [case5] clone promises too q
    ├─ walk the way 🪷
    │  │
    │  ├─ articulate into
-   │  │  └─ ./review/self/for.1._.r1.all-done.md
+   │  │  ├─ ./review/self/for.1._.r1.all-done.md
+   │  │  └─ the guard looks precisely here, write exactly to this path
    │  │
    │  ├─ for each found issue 🪘
    │  │  ├─
@@ -484,7 +492,8 @@ exports[`driver.route.review.self.acceptance given: [case5] clone promises too q
    ├─ walk the way 🪷
    │  │
    │  ├─ articulate into
-   │  │  └─ ./review/self/for.1._.r1.all-done.md
+   │  │  ├─ ./review/self/for.1._.r1.all-done.md
+   │  │  └─ the guard looks precisely here, write exactly to this path
    │  │
    │  ├─ for each found issue 🪘
    │  │  ├─
@@ -547,7 +556,8 @@ exports[`driver.route.review.self.acceptance given: [case8] full challenge journ
    ├─ walk the way 🪷
    │  │
    │  ├─ articulate into
-   │  │  └─ ./review/self/for.1._.r1.all-done.md
+   │  │  ├─ ./review/self/for.1._.r1.all-done.md
+   │  │  └─ the guard looks precisely here, write exactly to this path
    │  │
    │  ├─ for each found issue 🪘
    │  │  ├─
@@ -628,7 +638,8 @@ exports[`driver.route.review.self.acceptance given: [case8] full challenge journ
    ├─ walk the way 🪷
    │  │
    │  ├─ articulate into
-   │  │  └─ ./review/self/for.1._.r1.all-done.md
+   │  │  ├─ ./review/self/for.1._.r1.all-done.md
+   │  │  └─ the guard looks precisely here, write exactly to this path
    │  │
    │  ├─ for each found issue 🪘
    │  │  ├─
@@ -706,7 +717,8 @@ exports[`driver.route.review.self.acceptance given: [case8] full challenge journ
    ├─ walk the way 🪷
    │  │
    │  ├─ articulate into
-   │  │  └─ ./review/self/for.1._.r1.all-done.md
+   │  │  ├─ ./review/self/for.1._.r1.all-done.md
+   │  │  └─ the guard looks precisely here, write exactly to this path
    │  │
    │  ├─ for each found issue 🪘
    │  │  ├─
@@ -787,7 +799,8 @@ exports[`driver.route.review.self.acceptance given: [case8] full challenge journ
    ├─ walk the way 🪷
    │  │
    │  ├─ articulate into
-   │  │  └─ ./review/self/for.1._.r1.all-done.md
+   │  │  ├─ ./review/self/for.1._.r1.all-done.md
+   │  │  └─ the guard looks precisely here, write exactly to this path
    │  │
    │  ├─ for each found issue 🪘
    │  │  ├─
@@ -870,7 +883,8 @@ exports[`driver.route.review.self.acceptance given: [case8] full challenge journ
    ├─ walk the way 🪷
    │  │
    │  ├─ articulate into
-   │  │  └─ ./review/self/for.1._.r1.all-done.md
+   │  │  ├─ ./review/self/for.1._.r1.all-done.md
+   │  │  └─ the guard looks precisely here, write exactly to this path
    │  │
    │  ├─ for each found issue 🪘
    │  │  ├─
@@ -951,7 +965,8 @@ exports[`driver.route.review.self.acceptance given: [case8] full challenge journ
    ├─ walk the way 🪷
    │  │
    │  ├─ articulate into
-   │  │  └─ ./review/self/for.1._.r1.all-done.md
+   │  │  ├─ ./review/self/for.1._.r1.all-done.md
+   │  │  └─ the guard looks precisely here, write exactly to this path
    │  │
    │  ├─ for each found issue 🪘
    │  │  ├─
@@ -1041,7 +1056,8 @@ exports[`driver.route.review.self.acceptance given: [case8] full challenge journ
    ├─ walk the way 🪷
    │  │
    │  ├─ articulate into
-   │  │  └─ ./review/self/for.1._.r1.tests-pass.md
+   │  │  ├─ ./review/self/for.1._.r1.tests-pass.md
+   │  │  └─ the guard looks precisely here, write exactly to this path
    │  │
    │  ├─ for each found issue 🪘
    │  │  ├─

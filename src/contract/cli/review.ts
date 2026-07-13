@@ -43,6 +43,7 @@ options:
   --diffs <range>     diff range: since-main, since-commit, since-staged (default: since-main)
   --join <mode>       how to join --paths-with and --diffs: intersect or union (default: intersect)
   --refs <globs>      glob pattern(s) for reference files (can repeat)
+  --conversation <files>  comma-separated prior peer-review dialogue files (.given + .taken) to thread as context (opt-in; guard expands $conversation)
   --output <path>     output file path (default: .review/$branch/$isotime.output.md)
   --focus <mode>      review focus: push or pull (default: push)
   --goal <goal>       review goal: exhaustive or representative (default: representative)
@@ -81,9 +82,11 @@ const isNodeEvalMode = (argv: string[]): boolean => {
 
 /**
  * .what = parses cli args into options object
- * .why = simple arg parser without external dependencies
+ * .why = simple arg parser without external dependencies; exported so the flag
+ *        contract (e.g. --conversation comma-split → array) is testable without
+ *        an expensive end-to-end brain round-trip
  */
-const parseArgs = (
+export const parseReviewArgs = (
   argv: string[],
 ): {
   rules: string;
@@ -93,6 +96,7 @@ const parseArgs = (
   pathsWout: string | undefined;
   join: 'union' | 'intersect';
   refs: string[] | undefined;
+  conversation: string[] | undefined;
   output: string | undefined;
   focus: 'push' | 'pull';
   goal: 'exhaustive' | 'representative';
@@ -120,6 +124,8 @@ const parseArgs = (
           i++;
         }
       } else if (value && !value.startsWith('--')) {
+        // .note = --conversation is a normal single-value flag: the guard expands
+        //         $conversation to ONE comma-joined token, split into files below
         options[key] = value;
         i++;
       }
@@ -134,6 +140,9 @@ const parseArgs = (
     pathsWout: options['paths-wout'] as string | undefined,
     join: (options.join as 'union' | 'intersect') ?? 'intersect',
     refs: options.refs as string[] | undefined,
+    conversation: options.conversation
+      ? (options.conversation as string).split(',')
+      : undefined,
     output: options.output as string | undefined,
     focus: (options.focus as 'push' | 'pull') ?? 'push',
     goal: (options.goal as 'exhaustive' | 'representative') ?? 'representative',
@@ -148,7 +157,7 @@ const parseArgs = (
  */
 export const review = async (): Promise<void> => {
   // parse args first for fast validation
-  const options = parseArgs(process.argv);
+  const options = parseReviewArgs(process.argv);
 
   // handle --help flag
   if (hasHelpFlag(process.argv)) {
@@ -201,6 +210,7 @@ export const review = async (): Promise<void> => {
         pathsWout: options.pathsWout,
         join: options.join,
         refs: options.refs,
+        conversation: options.conversation,
         output: outputPath,
         focus: options.focus,
         goal: options.goal,

@@ -241,8 +241,9 @@ describe('getGoals.integration', () => {
         const firstOrder = first.goals.map((g) => g.slug);
         const secondOrder = second.goals.map((g) => g.slug);
         expect(firstOrder).toEqual(secondOrder);
-        // same-second creation shares offset prefix, so slug decides order
-        expect(firstOrder).toEqual(['alpha-goal', 'beta-goal', 'gamma-goal']);
+        // each goal gets a strictly-monotonic offset (max extant + 1), so the
+        // order is creation order — the order the slugs were written above
+        expect(firstOrder).toEqual(['gamma-goal', 'alpha-goal', 'beta-goal']);
       });
     });
   });

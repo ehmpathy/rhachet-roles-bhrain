@@ -1,0 +1,62 @@
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
+
+exports[`formatPatienceFriend given: [case1] challenged review.self when: [t0] formatPatienceFriend called then: output matches snapshot (vibecheck) 1`] = `
+"🗿 patience, friend
+   │
+   ├─ the pond barely rippled
+   │
+   ├─ be here now 🪷
+   │  ├─
+   │  │
+   │  │  the review is the work.
+   │  │  not a gate to pass.
+   │  │  not a step to complete.
+   │  │  the work itself.
+   │  │
+   │  │  you are not the author.
+   │  │  you are the reviewer.
+   │  │
+   │  └─
+   │
+   ├─ trust the way 🪷
+   │  ├─
+   │  │
+   │  │  when you see this prompt
+   │  │    pause and articulate what you found
+   │  │
+   │  │  when you found issues
+   │  │    fix them before you continue
+   │  │
+   │  │  when you found no issues
+   │  │    articulate why it holds
+   │  │
+   │  │  when you cannot articulate either
+   │  │    you have not reviewed
+   │  │
+   │  └─
+   │
+   ├─ walk the way 🪷
+   │  │
+   │  ├─ articulate into
+   │  │  ├─ .behavior/v2026_03_05.behavior-example/review/self/for.1.vision._.r1.all-done.md
+   │  │  └─ the guard looks precisely here, write exactly to this path
+   │  │
+   │  ├─ for each found issue 🪘
+   │  │  ├─
+   │  │  │
+   │  │  │  articulate how it was fixed
+   │  │  │  so you remember for next time
+   │  │  │
+   │  │  └─
+   │  │
+   │  └─ for each non issue 🪘
+   │     ├─
+   │     │
+   │     │  articulate why it holds
+   │     │  so others can learn from it
+   │     │
+   │     └─
+   │
+   └─ when you've truly reflected, run
+      └─ rhx route.stone.set --stone 1.vision --as promised --that all-done"
+`;

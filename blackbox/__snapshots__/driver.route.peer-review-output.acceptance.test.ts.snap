@@ -7,7 +7,8 @@ exports[`driver.route.peer-review-output.acceptance given: [output-test] guard w
    │   ├─ approved [TIME]
    │   ├─ 0 blockers ✓
    │   ├─ 1 nitpick 🟠
-   │   └─ review: .reviews/peer/1.execute._.review.i1.1c1cfc20e88065ecab.r1._.given.by_peer.mock-output.md
+   │   ├─ given: .reviews/peer/1.execute._.review.i001.1c1cfc20e88065ecab.r001._.given.by_peer.mock-output.md
+   │   └─ taken: .reviews/peer/1.execute._.review.i001.1c1cfc20e88065ecab.r001._.taken.by_self.mock-output.md
    │
    └─ ✓ judge.1 - allowed [TIME]
 
@@ -22,7 +23,8 @@ exports[`driver.route.peer-review-output.acceptance given: [output-test] guard w
    │  │       ├─ approved [TIME]
    │  │       ├─ 0 blockers ✓
    │  │       ├─ 1 nitpick 🟠
-   │  │       └─ review: .reviews/peer/1.execute._.review.i1.1c1cfc20e88065ecab.r1._.given.by_peer.mock-output.md
+   │  │       ├─ given: .reviews/peer/1.execute._.review.i001.1c1cfc20e88065ecab.r001._.given.by_peer.mock-output.md
+   │  │       └─ taken: .reviews/peer/1.execute._.review.i001.1c1cfc20e88065ecab.r001._.taken.by_self.mock-output.md
    │  └─ judges
    │      └─ j1: rhx route.stone.judge --mechanism reviewed? --stone $stone --route $route --allow-blockers 0 --allow-nitpicks 1
    │          └─ finished [TIME] ✓

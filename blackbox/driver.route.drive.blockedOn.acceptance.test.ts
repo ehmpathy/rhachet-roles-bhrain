@@ -2,11 +2,12 @@ import * as fs from 'fs/promises';
 import * as path from 'path';
 import { given, then, useBeforeAll, useThen, when } from 'test-fns';
 
-import { getSelfReviewArticulationPath } from '../src/domain.operations/route/guard/getSelfReviewArticulationPath';
+import { getSelfReviewArticulationPath } from '../src/domain.operations/route/guard/review/self/getSelfReviewArticulationPath';
 import {
   execAsync,
   genTempDirForRhachet,
   invokeRouteSkill,
+  sanitizeTimeForSnapshot,
 } from './.test/invokeRouteSkill';
 
 const JOURNEY_ASSETS_DIR = path.join(__dirname, '.test/assets/route-journey');
@@ -94,6 +95,14 @@ describe('driver.route.drive.blocker.acceptance', () => {
       then('stderr has stone content (same as stdout)', () => {
         expect(result.stderr).toContain('where were we?');
       });
+
+      then('[t0] output matches snapshot', () => {
+        expect({
+          code: result.code,
+          stdout: sanitizeTimeForSnapshot(result.stdout),
+          stderr: sanitizeTimeForSnapshot(result.stderr),
+        }).toMatchSnapshot();
+      });
     });
 
     when('[t1] agent attempts to pass stone (blocked on approval)', () => {
@@ -119,6 +128,14 @@ describe('driver.route.drive.blocker.acceptance', () => {
         expect(blockerReport).toBeDefined();
         expect(blockerReport.blocker).toEqual('approval');
       });
+
+      then('[t1] output matches snapshot', () => {
+        expect({
+          code: result.code,
+          stdout: sanitizeTimeForSnapshot(result.stdout),
+          stderr: sanitizeTimeForSnapshot(result.stderr),
+        }).toMatchSnapshot();
+      });
     });
 
     when('[t2] route.drive hook mode after blocked on approval', () => {
@@ -141,6 +158,14 @@ describe('driver.route.drive.blocker.acceptance', () => {
       then('stdout shows approve command', () => {
         expect(result.stdout).toContain('--as approved');
       });
+
+      then('[t2] output matches snapshot', () => {
+        expect({
+          code: result.code,
+          stdout: sanitizeTimeForSnapshot(result.stdout),
+          stderr: sanitizeTimeForSnapshot(result.stderr),
+        }).toMatchSnapshot();
+      });
     });
 
     when('[t3] human grants approval', () => {
@@ -154,6 +179,14 @@ describe('driver.route.drive.blocker.acceptance', () => {
 
       then('exit code is 0', () => {
         expect(result.code).toEqual(0);
+      });
+
+      then('[t3] output matches snapshot', () => {
+        expect({
+          code: result.code,
+          stdout: sanitizeTimeForSnapshot(result.stdout),
+          stderr: sanitizeTimeForSnapshot(result.stderr),
+        }).toMatchSnapshot();
       });
     });
 
@@ -176,6 +209,14 @@ describe('driver.route.drive.blocker.acceptance', () => {
         const reports = content.trim().split('\n').map((line) => JSON.parse(line));
         const latestReport = reports.filter((r) => r.stone === '1.vision').pop();
         expect(latestReport.status).toEqual('passed');
+      });
+
+      then('[t4] output matches snapshot', () => {
+        expect({
+          code: result.code,
+          stdout: sanitizeTimeForSnapshot(result.stdout),
+          stderr: sanitizeTimeForSnapshot(result.stderr),
+        }).toMatchSnapshot();
       });
     });
   });
@@ -277,6 +318,14 @@ describe('driver.route.drive.blocker.acceptance', () => {
         expect(blockerReport).toBeDefined();
         expect(blockerReport.blocker).toEqual('review.self');
       });
+
+      then('[t0] output matches snapshot', () => {
+        expect({
+          code: result.code,
+          stdout: sanitizeTimeForSnapshot(result.stdout),
+          stderr: sanitizeTimeForSnapshot(result.stderr),
+        }).toMatchSnapshot();
+      });
     });
 
     when('[t1] route.drive hook mode when blocked on review.self', () => {
@@ -296,6 +345,14 @@ describe('driver.route.drive.blocker.acceptance', () => {
       then('does NOT say approval needed (other blockers exist)', () => {
         // "halted, human approval required" should only appear when approval is the ONLY blocker
         expect(result.stdout).not.toContain('halted, human approval required');
+      });
+
+      then('[t1] output matches snapshot', () => {
+        expect({
+          code: result.code,
+          stdout: sanitizeTimeForSnapshot(result.stdout),
+          stderr: sanitizeTimeForSnapshot(result.stderr),
+        }).toMatchSnapshot();
       });
     });
 
@@ -350,6 +407,14 @@ describe('driver.route.drive.blocker.acceptance', () => {
         expect(blockerReport).toBeDefined();
         expect(blockerReport.blocker).toEqual('review.peer');
       });
+
+      then('[t2] output matches snapshot', () => {
+        expect({
+          code: result.code,
+          stdout: sanitizeTimeForSnapshot(result.stdout),
+          stderr: sanitizeTimeForSnapshot(result.stderr),
+        }).toMatchSnapshot();
+      });
     });
 
     when('[t3] route.drive hook mode when blocked on review.peer', () => {
@@ -370,6 +435,14 @@ describe('driver.route.drive.blocker.acceptance', () => {
         // key: "halted, human approval required" should only appear
         // when approval is the ONLY blocker, not when review also failed
         expect(result.stdout).not.toContain('halted, human approval required');
+      });
+
+      then('[t3] output matches snapshot', () => {
+        expect({
+          code: result.code,
+          stdout: sanitizeTimeForSnapshot(result.stdout),
+          stderr: sanitizeTimeForSnapshot(result.stderr),
+        }).toMatchSnapshot();
       });
     });
 
@@ -430,6 +503,14 @@ describe('driver.route.drive.blocker.acceptance', () => {
         expect(blockerReport).toBeDefined();
         expect(blockerReport.blocker).toEqual('approval');
       });
+
+      then('[t4] output matches snapshot', () => {
+        expect({
+          code: result.code,
+          stdout: sanitizeTimeForSnapshot(result.stdout),
+          stderr: sanitizeTimeForSnapshot(result.stderr),
+        }).toMatchSnapshot();
+      });
     });
 
     when('[t5] route.drive hook mode when blocked on approval', () => {
@@ -447,6 +528,14 @@ describe('driver.route.drive.blocker.acceptance', () => {
 
       then('stdout shows approval needed', () => {
         expect(result.stdout).toContain('halted, human approval required');
+      });
+
+      then('[t5] output matches snapshot', () => {
+        expect({
+          code: result.code,
+          stdout: sanitizeTimeForSnapshot(result.stdout),
+          stderr: sanitizeTimeForSnapshot(result.stderr),
+        }).toMatchSnapshot();
       });
     });
   });

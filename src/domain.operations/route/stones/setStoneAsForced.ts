@@ -2,7 +2,7 @@ import { BadRequestError } from 'helpful-errors';
 
 import { formatRouteStoneEmit } from '../formatRouteStoneEmit';
 import { getDecisionIsCallerHuman } from '../getDecisionIsCallerHuman';
-import { getStoneReviewLevelState } from '../guard/getStoneReviewLevelState';
+import { getStoneReviewLevelState } from '../guard/review/getStoneReviewLevelState';
 import { setStoneGuardApproval } from '../judges/setStoneGuardApproval';
 import { setStoneGuardOverrule } from '../judges/setStoneGuardOverrule';
 import { findOneStoneByPattern } from './asStoneGlob';

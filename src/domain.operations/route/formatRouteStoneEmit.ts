@@ -1,14 +1,14 @@
 import type { RouteStoneGuardReviewSelf } from '@src/domain.objects/Driver/RouteStoneGuard';
 
+import { getSelfReviewArticulationPath } from './guard/review/self/getSelfReviewArticulationPath';
 import {
   formatGuardTree,
   type GuardPeerMeterStatus,
-} from './guard/formatGuardTree';
-import { formatLetsReflect } from './guard/formatLetsReflect';
-import { formatPatienceFriend } from './guard/formatPatienceFriend';
-import { formatWhatHaveYouSeen } from './guard/formatWhatHaveYouSeen';
-import { formatWhatsTheRush } from './guard/formatWhatsTheRush';
-import { getSelfReviewArticulationPath } from './guard/getSelfReviewArticulationPath';
+} from './guard/tree/formatGuardTree';
+import { formatLetsReflect } from './guard/tree/formatLetsReflect';
+import { formatPatienceFriend } from './guard/tree/formatPatienceFriend';
+import { formatWhatHaveYouSeen } from './guard/tree/formatWhatHaveYouSeen';
+import { formatWhatsTheRush } from './guard/tree/formatWhatsTheRush';
 
 /**
  * .what = formats route stone operation output with good vibes

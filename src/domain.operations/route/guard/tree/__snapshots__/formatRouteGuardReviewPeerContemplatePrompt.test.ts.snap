@@ -1,0 +1,58 @@
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
+
+exports[`formatRouteGuardReviewPeerContemplatePrompt given: [case1] the reply-prompt with two reviewers when: [t0] rendered then: matches snapshot 1`] = `
+"🦉 the reviewers await your reply
+
+🌕 lets respond
+   │
+   ├─ review.peer 1/2
+   │  ├─ slug = architect
+   │  ├─ verdict = 2 blockers, 1 nitpick
+   │  ├─ contemplate from
+   │  │  └─ .reviews/peer/1.execute._.review.i001.a1b2c3.r001._.given.by_peer.architect.md
+   │  └─ articulate into
+   │     └─ .reviews/peer/1.execute._.review.i001.a1b2c3.r001._.taken.by_self.architect.md
+   │
+   ├─ review.peer 2/2
+   │  ├─ slug = mechanic
+   │  ├─ verdict = 0 blockers, 3 nitpicks
+   │  ├─ contemplate from
+   │  │  └─ .reviews/peer/1.execute._.review.i001.a1b2c3.r002._.given.by_peer.mechanic.md
+   │  └─ articulate into
+   │     └─ .reviews/peer/1.execute._.review.i001.a1b2c3.r002._.taken.by_self.mechanic.md
+   │
+   └─ when you've contemplated each reviewer, run
+      └─ rhx route.stone.set --stone 1.execute --as contemplated --that architect"
+`;
+
+exports[`formatRouteGuardReviewPeerContemplatePrompt given: [case2] the absent case for one reviewer when: [t0] rendered then: matches snapshot 1`] = `
+"✋ contemplation absent for reviewer architect
+
+   the guard looked for your response here, and did not find it:
+   └─ .reviews/peer/1.execute._.review.i001.a1b2c3.r001._.taken.by_self.architect.md
+
+   why: --as contemplated is a promise that you engaged each critique.
+        the .taken file IS that engagement — absent it, there is
+        no ground to stand on.
+
+   what to do:
+   ├─ contemplate from
+   │  └─ .reviews/peer/1.execute._.review.i001.a1b2c3.r001._.given.by_peer.architect.md
+   └─ articulate into
+      └─ .reviews/peer/1.execute._.review.i001.a1b2c3.r001._.taken.by_self.architect.md"
+`;
+
+exports[`formatRouteGuardReviewPeerContemplatePrompt given: [case3] the stale case for one reviewer when: [t0] rendered then: matches snapshot 1`] = `
+"✋ contemplation stale for reviewer architect
+
+   your response answers a prior generation of this critique.
+
+   why: the stone artifact changed, so the reviewer re-ran at a new
+        hash. a fresh critique needs a fresh response.
+
+   what to do — re-articulate for the current iteration:
+   ├─ contemplate from
+   │  └─ .reviews/peer/1.execute._.review.i001.a1b2c3.r001._.given.by_peer.architect.md
+   └─ articulate into
+      └─ .reviews/peer/1.execute._.review.i001.a1b2c3.r001._.taken.by_self.architect.md"
+`;

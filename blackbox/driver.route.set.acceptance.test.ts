@@ -580,7 +580,7 @@ describe('driver.route.set.acceptance', () => {
             tempDir,
             '.reviews',
             'peer',
-            '1.vision._.review.i1.abc.r1._.given.by_peer.mock.md',
+            '1.vision._.review.i001.abc.r001._.given.by_peer.mock.md',
           ),
           '# review',
         );
@@ -663,7 +663,7 @@ describe('driver.route.set.acceptance', () => {
             tempDir,
             '.reviews',
             'peer',
-            '1.vision._.review.i1.abc.r1._.given.by_peer.mock.md',
+            '1.vision._.review.i001.abc.r001._.given.by_peer.mock.md',
           ),
           '# review',
         );
@@ -672,7 +672,7 @@ describe('driver.route.set.acceptance', () => {
             tempDir,
             '.reviews',
             'peer',
-            '2.criteria._.review.i1.abc.r1._.given.by_peer.mock.md',
+            '2.criteria._.review.i001.abc.r001._.given.by_peer.mock.md',
           ),
           '# review',
         );
@@ -681,7 +681,7 @@ describe('driver.route.set.acceptance', () => {
             tempDir,
             '.reviews',
             'peer',
-            '3.plan._.review.i1.abc.r1._.given.by_peer.mock.md',
+            '3.plan._.review.i001.abc.r001._.given.by_peer.mock.md',
           ),
           '# review',
         );

@@ -1,0 +1,47 @@
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
+
+exports[`review.conversation-help.acceptance given: [case1] a linked reviewer role when: [t0] review --help renders then: [t0] help output matches snapshot 1`] = `
+"review - code review against rules
+
+usage:
+  review.sh [options]
+
+options:
+  --rules <globs>     glob pattern(s) for rule files (required)
+  --paths <globs>     glob pattern(s) for target files (deprecated: use --paths-with)
+  --paths-with <globs>  include files that match these globs
+  --paths-wout <globs>  exclude files that match these globs
+  --diffs <range>     diff range: since-main, since-commit, since-staged (default: since-main)
+  --join <mode>       how to join --paths-with and --diffs: intersect or union (default: intersect)
+  --refs <globs>      glob pattern(s) for reference files (can repeat)
+  --conversation <files>  comma-separated prior peer-review dialogue files (.given + .taken) to thread as context (opt-in; guard expands $conversation)
+  --output <path>     output file path (default: .review/$branch/$isotime.output.md)
+  --focus <mode>      review focus: push or pull (default: push)
+  --goal <goal>       review goal: exhaustive or representative (default: representative)
+  --brain <slug>      brain to use for review (default: fireworks/deepseek/v4-flash)
+  --open <opener>     open output file with specified program (e.g., nvim, codium, code)
+  --help              show this help message
+
+🔭 available brains
+   ├── ↻ openai/codex
+   ├── ○ openai/gpt/4o
+   ├── ○ fireworks/glm/5.2
+   ├── ○ fireworks/glm/5.1
+   ├── ○ fireworks/kimi/k2.6
+   ├── ○ fireworks/minimax/m3
+   ├── ○ anthropic/claude/opus
+   ├── ○ fireworks/minimax/2.7
+   ├── ○ fireworks/gpt-oss/20b
+   ├── ↻ anthropic/claude/code
+   ├── ○ anthropic/claude/haiku
+   ├── ○ fireworks/gpt-oss/120b
+   ├── ○ anthropic/claude/sonnet
+   ├── ○ fireworks/qwen/3.7-plus
+   ├── ○ fireworks/kimi/k2.7-code
+   ├── ○ fireworks/deepseek/v4-pro
+   ├── ↻ anthropic/claude/code/opus
+   ├── ○ fireworks/deepseek/v4-flash
+   ├── ↻ anthropic/claude/code/haiku
+   └── ↻ anthropic/claude/code/sonnet
+"
+`;

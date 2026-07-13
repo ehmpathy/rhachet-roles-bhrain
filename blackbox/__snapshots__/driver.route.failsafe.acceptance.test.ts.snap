@@ -7,7 +7,8 @@ exports[`driver.route.failsafe.acceptance given: [case1] reviewer exits with cod
    │   ├─ approved [TIME]
    │   ├─ 0 blockers ✓
    │   ├─ 0 nitpicks ✓
-   │   └─ review: .reviews/peer/1.review-pass._.review.i1.02a05f3dadac64ddd2.r1._.given.by_peer.bash.md
+   │   ├─ given: .reviews/peer/1.review-pass._.review.i001.02a05f3dadac64ddd2.r001._.given.by_peer.bash.md
+   │   └─ taken: .reviews/peer/1.review-pass._.review.i001.02a05f3dadac64ddd2.r001._.taken.by_self.bash.md
    │
    └─ ✓ judge.1 - allowed [TIME]
 
@@ -22,7 +23,8 @@ exports[`driver.route.failsafe.acceptance given: [case1] reviewer exits with cod
    │  │       ├─ approved [TIME]
    │  │       ├─ 0 blockers ✓
    │  │       ├─ 0 nitpicks ✓
-   │  │       └─ review: .reviews/peer/1.review-pass._.review.i1.02a05f3dadac64ddd2.r1._.given.by_peer.bash.md
+   │  │       ├─ given: .reviews/peer/1.review-pass._.review.i001.02a05f3dadac64ddd2.r001._.given.by_peer.bash.md
+   │  │       └─ taken: .reviews/peer/1.review-pass._.review.i001.02a05f3dadac64ddd2.r001._.taken.by_self.bash.md
    │  └─ judges
    │      └─ j1: bash $route/.test/mock-judge-exit-0.sh
    │          └─ finished [TIME] ✓
@@ -59,7 +61,8 @@ exports[`driver.route.failsafe.acceptance given: [case2] reviewer exits with cod
    │   ├─ rejected [TIME]
    │   ├─ 1 blocker 🔴
    │   ├─ 0 nitpicks ✓
-   │   └─ review: .reviews/peer/2.review-constraint._.review.i1.c090dd3895c99e392c.r1._.given.by_peer.bash.md
+   │   ├─ given: .reviews/peer/2.review-constraint._.review.i001.c090dd3895c99e392c.r001._.given.by_peer.bash.md
+   │   └─ taken: .reviews/peer/2.review-constraint._.review.i001.c090dd3895c99e392c.r001._.taken.by_self.bash.md
    │
    └─ ✗ judge.1 - blocked [TIME]
 
@@ -75,7 +78,8 @@ exports[`driver.route.failsafe.acceptance given: [case2] reviewer exits with cod
       │       ├─ rejected [TIME]
       │       ├─ 1 blocker 🔴
       │       ├─ 0 nitpicks ✓
-      │       └─ review: .reviews/peer/2.review-constraint._.review.i1.c090dd3895c99e392c.r1._.given.by_peer.bash.md
+      │       ├─ given: .reviews/peer/2.review-constraint._.review.i001.c090dd3895c99e392c.r001._.given.by_peer.bash.md
+      │       └─ taken: .reviews/peer/2.review-constraint._.review.i001.c090dd3895c99e392c.r001._.taken.by_self.bash.md
       └─ judges
           └─ j1: bash $route/.test/mock-judge-exit-2.sh
               ├─ finished [TIME] ✗
@@ -109,7 +113,8 @@ exports[`driver.route.failsafe.acceptance given: [case3] reviewer exits with cod
    │
    ├─ r1: bash (l1, 1/∞)
    │   ├─ 💥 malfunction
-   │   └─ review: .reviews/peer/3.review-malfunction._.review.i1.b6fcd55294fe610638.r1._.given.by_peer.bash.md
+   │   ├─ given: .reviews/peer/3.review-malfunction._.review.i001.b6fcd55294fe610638.r001._.given.by_peer.bash.md
+   │   └─ taken: .reviews/peer/3.review-malfunction._.review.i001.b6fcd55294fe610638.r001._.taken.by_self.bash.md
    │
    └─ ✓ judge.1 - allowed [TIME]
 
@@ -127,7 +132,8 @@ exports[`driver.route.failsafe.acceptance given: [case3] reviewer exits with cod
       ├─ reviews
       │   └─ r1: bash (l1, 0/∞)
       │       ├─ 💥 malfunction
-      │       └─ review: .reviews/peer/3.review-malfunction._.review.i1.b6fcd55294fe610638.r1._.given.by_peer.bash.md
+      │       ├─ given: .reviews/peer/3.review-malfunction._.review.i001.b6fcd55294fe610638.r001._.given.by_peer.bash.md
+      │       └─ taken: .reviews/peer/3.review-malfunction._.review.i001.b6fcd55294fe610638.r001._.taken.by_self.bash.md
       └─ judges
           └─ j1: bash $route/.test/mock-judge-exit-0.sh
               └─ finished [TIME] ✓
@@ -306,7 +312,8 @@ exports[`driver.route.failsafe.acceptance given: [case7] both reviewer and judge
    │
    ├─ r1: bash (l1, 1/∞)
    │   ├─ 💥 malfunction
-   │   └─ review: .reviews/peer/7.both-malfunction._.review.i1.a4c505990c8a7a5349.r1._.given.by_peer.bash.md
+   │   ├─ given: .reviews/peer/7.both-malfunction._.review.i001.a4c505990c8a7a5349.r001._.given.by_peer.bash.md
+   │   └─ taken: .reviews/peer/7.both-malfunction._.review.i001.a4c505990c8a7a5349.r001._.taken.by_self.bash.md
    │
    └─ ✗ judge.1 - blocked [TIME]
 
@@ -323,7 +330,8 @@ exports[`driver.route.failsafe.acceptance given: [case7] both reviewer and judge
       ├─ reviews
       │   └─ r1: bash (l1, 0/∞)
       │       ├─ 💥 malfunction
-      │       └─ review: .reviews/peer/7.both-malfunction._.review.i1.a4c505990c8a7a5349.r1._.given.by_peer.bash.md
+      │       ├─ given: .reviews/peer/7.both-malfunction._.review.i001.a4c505990c8a7a5349.r001._.given.by_peer.bash.md
+      │       └─ taken: .reviews/peer/7.both-malfunction._.review.i001.a4c505990c8a7a5349.r001._.taken.by_self.bash.md
       └─ judges
           └─ j1: bash $route/.test/mock-judge-exit-1.sh
               ├─ finished [TIME] ✗

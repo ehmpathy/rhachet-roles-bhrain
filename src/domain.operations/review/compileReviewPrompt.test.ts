@@ -554,4 +554,210 @@ describe('compileReviewPrompt', () => {
       });
     });
   });
+
+  given('[case-conversation] conversation files are supplied', () => {
+    when('[t0] compiled with a prior .given + .taken', () => {
+      then('renders a labeled conversation section distinct from refs', () => {
+        const result = compileReviewPrompt({
+          refs: [{ path: 'refs/context.md', content: 'some ref context' }],
+          conversation: [
+            {
+              path: '.reviews/peer/1.x._.review.i001.h.r001._.given.by_peer.arch.md',
+              content: '1 blockers\nfix the issue',
+            },
+            {
+              path: '.reviews/peer/1.x._.review.i001.h.r001._.taken.by_self.arch.md',
+              content: 'fixed by X',
+            },
+          ],
+          rules: [{ path: 'rule.md', content: '# rule' }],
+          targets: [{ path: 'file.ts', content: 'code' }],
+          focus: 'push',
+          goal: 'representative',
+          contextWindowSize: 200000,
+          costSpec: costSpecFixture,
+        });
+        // conversation renders under its OWN labeled section
+        expect(result.prompt).toContain('## prior conversation');
+        expect(result.prompt).toContain('<conversation>');
+        expect(result.prompt).toContain('_.given.by_peer.arch.md');
+        expect(result.prompt).toContain('_.taken.by_self.arch.md');
+        // refs remain a SEPARATE section (no merge/collision)
+        expect(result.prompt).toContain('<refs>');
+        expect(result.prompt).toContain('some ref context');
+      });
+    });
+
+    when('[t1] no conversation is supplied (first iteration)', () => {
+      then('omits the conversation section entirely', () => {
+        const result = compileReviewPrompt({
+          refs: [],
+          conversation: [],
+          rules: [{ path: 'rule.md', content: '# rule' }],
+          targets: [{ path: 'file.ts', content: 'code' }],
+          focus: 'push',
+          goal: 'representative',
+          contextWindowSize: 200000,
+          costSpec: costSpecFixture,
+        });
+        expect(result.prompt).not.toContain('## prior conversation');
+        expect(result.prompt).not.toContain('<conversation>');
+      });
+    });
+  });
+
+  // boundary-condition snapshot matrix — the EXACT prompt a reviewer receives
+  // for each initial condition it could face. these full-prompt snapshots are the
+  // artifact a human reviews to see precisely what the brain reads: the
+  // CRITICAL-INSTRUCTIONS item 7, the <conversation> block, the [REPAIR]/[REFUTE]
+  // vocabulary, and the detailed .report content, verbatim.
+  given(
+    '[case-prompt-matrix] the compiled prompt across initial conditions',
+    () => {
+      // shared fixtures so each snapshot differs ONLY by the conversation condition
+      const rules = [
+        {
+          path: 'rule.no-console.md',
+          content: '# rule: no-console\nforbid console.log',
+        },
+      ];
+      const targets = [
+        { path: 'src/valid.ts', content: 'export const valid = 1;' },
+      ];
+      const base = {
+        rules,
+        targets,
+        focus: 'push' as const,
+        goal: 'representative' as const,
+        contextWindowSize: 200000,
+        costSpec: costSpecFixture,
+      };
+
+      // the detailed .report.md content the conversation now always carries
+      const givenSummary = {
+        path: '.reviews/peer/1.x._.review.i001.h.r001._.given.by_peer.arch.md',
+        content: '1 blockers\n0 nitpicks',
+      };
+      const givenReport = {
+        path: '.reviews/peer/1.x._.review.i001.h.r001._.given.by_peer.arch.report.md',
+        content:
+          '# blocker.1: console.log left in src/valid.ts\n\n**locations**:\n- src/valid.ts:1\n\nremove the console.log',
+      };
+      const takenRepair = {
+        path: '.reviews/peer/1.x._.review.i001.h.r001._.taken.by_self.arch.md',
+        content:
+          '# blocker.1\n\n[REPAIR] removed the console.log — src/valid.ts:1.',
+      };
+      const takenRefute = {
+        path: '.reviews/peer/1.x._.review.i001.h.r001._.taken.by_self.arch.md',
+        content:
+          '# blocker.1\n\n[REFUTE] this is extant code relocated by refactor B — out of scope for this diff.',
+      };
+
+      when('[t0] no conversation (first iteration)', () => {
+        then('prompt omits the conversation section — snapshot', () => {
+          const result = compileReviewPrompt({
+            ...base,
+            refs: [],
+            conversation: [],
+          });
+          expect(result.prompt).not.toContain('<conversation>');
+          expect(result.prompt).toMatchSnapshot();
+        });
+      });
+
+      when('[t1] given-only (critique raised, not yet answered)', () => {
+        then('prompt threads the lone summary given — snapshot', () => {
+          const result = compileReviewPrompt({
+            ...base,
+            refs: [],
+            conversation: [givenSummary],
+          });
+          expect(result.prompt).toContain('## prior conversation');
+          expect(result.prompt).toMatchSnapshot();
+        });
+      });
+
+      when('[t2] given + detailed report (no taken yet)', () => {
+        then('prompt threads the detailed critique — snapshot', () => {
+          const result = compileReviewPrompt({
+            ...base,
+            refs: [],
+            conversation: [givenSummary, givenReport],
+          });
+          expect(result.prompt).toContain('console.log left in src/valid.ts');
+          expect(result.prompt).toMatchSnapshot();
+        });
+      });
+
+      when('[t3] given + report + [REPAIR] taken', () => {
+        then('prompt shows the driver claimed a fix — snapshot', () => {
+          const result = compileReviewPrompt({
+            ...base,
+            refs: [],
+            conversation: [givenSummary, givenReport, takenRepair],
+          });
+          expect(result.prompt).toContain('[REPAIR]');
+          expect(result.prompt).toMatchSnapshot();
+        });
+      });
+
+      when('[t4] given + report + [REFUTE] taken', () => {
+        then('prompt shows the driver argued back — snapshot', () => {
+          const result = compileReviewPrompt({
+            ...base,
+            refs: [],
+            conversation: [givenSummary, givenReport, takenRefute],
+          });
+          expect(result.prompt).toContain('[REFUTE]');
+          expect(result.prompt).toMatchSnapshot();
+        });
+      });
+
+      when('[t5] multi-reviewer conversation (two prior threads)', () => {
+        then('prompt threads both reviewers dialogue — snapshot', () => {
+          const result = compileReviewPrompt({
+            ...base,
+            refs: [],
+            conversation: [
+              givenSummary,
+              givenReport,
+              takenRepair,
+              {
+                path: '.reviews/peer/1.x._.review.i001.h.r002._.given.by_peer.mech.md',
+                content: '1 blockers\n0 nitpicks',
+              },
+              {
+                path: '.reviews/peer/1.x._.review.i001.h.r002._.given.by_peer.mech.report.md',
+                content:
+                  '# blocker.1: mutable accumulator\n\n**locations**:\n- src/valid.ts:1',
+              },
+              {
+                path: '.reviews/peer/1.x._.review.i001.h.r002._.taken.by_self.mech.md',
+                content: '# blocker.1\n\n[REFUTE] extant code, out of scope.',
+              },
+            ],
+          });
+          expect(result.prompt).toContain('_.given.by_peer.mech.md');
+          expect(result.prompt).toMatchSnapshot();
+        });
+      });
+
+      when('[t6] refs AND conversation both present', () => {
+        then(
+          'prompt renders two distinct sections, no collision — snapshot',
+          () => {
+            const result = compileReviewPrompt({
+              ...base,
+              refs: [{ path: 'refs/context.md', content: 'some ref context' }],
+              conversation: [givenSummary, givenReport, takenRepair],
+            });
+            expect(result.prompt).toContain('<refs>');
+            expect(result.prompt).toContain('<conversation>');
+            expect(result.prompt).toMatchSnapshot();
+          },
+        );
+      });
+    },
+  );
 });

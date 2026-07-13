@@ -2,7 +2,7 @@ import { PassageReport } from '@src/domain.objects/Driver/PassageReport';
 import type { RouteStone } from '@src/domain.objects/Driver/RouteStone';
 import { enumFilesFromGlob } from '@src/utils/enumFilesFromGlob';
 
-import { resetRouteStoneGuardReviewPeerMeters } from '../guard/reviewPeerMeter/resetRouteStoneGuardReviewPeerMeters';
+import { resetRouteStoneGuardReviewPeerMeters } from '../guard/review/peer/meter/resetRouteStoneGuardReviewPeerMeters';
 import { setPassageReport } from '../passage/setPassageReport';
 import { archiveStoneYield } from './archiveStoneYield';
 import { delStoneGuardArtifacts } from './delStoneGuardArtifacts';

@@ -15,30 +15,33 @@ import {
 import type { RouteStoneGuardJudgeArtifact } from '@src/domain.objects/Driver/RouteStoneGuardJudgeArtifact';
 import type { RouteStoneGuardReviewArtifact } from '@src/domain.objects/Driver/RouteStoneGuardReviewArtifact';
 
-import { delBlockedTriggeredReport } from '../blocked/delBlockedTriggeredReport';
 import { computeRouteBouncerCache } from '../bouncer/computeRouteBouncerCache';
 import { setRouteBouncerCache } from '../bouncer/setRouteBouncerCache';
 import { delStoneGuardBlockerReport } from '../drive/delStoneGuardBlockerReport';
-import { setStoneGuardBlockerReport } from '../drive/setStoneGuardBlockerReport';
 import { formatRouteStoneEmit } from '../formatRouteStoneEmit';
-import { computeStoneReviewInputHash } from '../guard/computeStoneReviewInputHash';
-import type { GuardPeerMeterStatus } from '../guard/formatGuardTree';
-import { getAllStoneGuardArtifactsByHash } from '../guard/getAllStoneGuardArtifactsByHash';
-import { getMaxStoneGuardIteration } from '../guard/getMaxStoneGuardIteration';
-import { getAllReviewPeerMeterStatuses } from '../guard/reviewPeerMeter/getAllReviewPeerMeterStatuses';
+import { getAllStoneGuardArtifactsByHash } from '../guard/artifact/getAllStoneGuardArtifactsByHash';
+import { getMaxStoneGuardIteration } from '../guard/artifact/getMaxStoneGuardIteration';
+import { computeStoneReviewInputHash } from '../guard/review/computeStoneReviewInputHash';
+import { asRouteGuardReviewPeerSlugList } from '../guard/review/peer/asRouteGuardReviewPeerSlugList';
+import { getRouteGuardReviewPeerContemplationStatus } from '../guard/review/peer/getRouteGuardReviewPeerContemplationStatus';
+import { getAllReviewPeerMeterStatuses } from '../guard/review/peer/meter/getAllReviewPeerMeterStatuses';
 import {
   isReviewPeerVerdictExhausted,
   isReviewPeerVerdictTerminal,
-} from '../guard/reviewPeerMeter/isReviewPeerLevelTerminal';
-import { runStoneGuardReviews } from '../guard/runStoneGuardReviews';
-import { setStoneGuardStamp } from '../guard/setStoneGuardStamp';
+} from '../guard/review/peer/meter/isReviewPeerLevelTerminal';
+import { runStoneGuardReviews } from '../guard/review/runStoneGuardReviews';
+import { getStonePromises } from '../guard/review/self/getStonePromises';
+import { setSelfReviewTriggeredReport } from '../guard/review/self/setSelfReviewTriggeredReport';
+import { setStoneGuardStamp } from '../guard/stamp/setStoneGuardStamp';
+import type { GuardPeerMeterStatus } from '../guard/tree/formatGuardTree';
+import { formatRouteGuardReviewPeerContemplatePrompt } from '../guard/tree/formatRouteGuardReviewPeerContemplatePrompt';
 import { getStoneGuardOverruledLevels } from '../judges/getStoneGuardOverruledLevels';
 import { runStoneGuardJudges } from '../judges/runStoneGuardJudges';
 import { getOnePassageReport } from '../passage/getOnePassageReport';
 import { setPassageReport } from '../passage/setPassageReport';
-import { getStonePromises } from '../promise/getStonePromises';
-import { setSelfReviewTriggeredReport } from '../promise/setSelfReviewTriggeredReport';
 import { findOneStoneByPattern } from './asStoneGlob';
+import { delBlockedTriggeredReport } from './blocked/delBlockedTriggeredReport';
+import { genStoneGuardBlockedEmit } from './genStoneGuardBlockedEmit';
 import { getAllStoneArtifacts } from './getAllStoneArtifacts';
 import { getAllStones } from './getAllStones';
 import { setStonePassage } from './setStonePassage';
@@ -158,16 +161,13 @@ export const setStoneAsPassed = async (
         { sinceOnly: true },
       );
 
-      // record blocker report: blocked on review.self
-      await setStoneGuardBlockerReport({
+      // blocked on review.self — persist + return via the shared blocked tail
+      // .note = raw emit (no stamp): peer reviews have not run at this point
+      return genStoneGuardBlockedEmit({
         stone: stoneMatched.name,
         route: input.route,
         blocker: 'review.self',
         reason: `review.self required: ${nextReview.slug}`,
-      });
-
-      return {
-        passed: false,
         refs: { reviews: [], judges: [] },
         emit: {
           stdout: formatRouteStoneEmit({
@@ -183,7 +183,7 @@ export const setStoneAsPassed = async (
             },
           }),
         },
-      };
+      });
     }
   }
 
@@ -395,21 +395,17 @@ export const setStoneAsPassed = async (
       peerMeters,
     });
 
-    // record blocker report: blocked on exhausted peer reviewers
-    await setStoneGuardBlockerReport({
-      stone: stoneMatched.name,
-      route: input.route,
-      blocker: 'review.peer.exhausted',
-      reason: `peer reviewer budget exhausted: ${exhaustionCheck.skippedSlugs.join(', ')}`,
-    });
-
     // emit tree terminator since no judge will follow
     context.cliEmit.onGuardHalted?.({
       reason: 'peer reviewer budget exhausted',
     });
 
-    return {
-      passed: false,
+    // blocked on exhausted peer reviewers — persist + return via the shared tail
+    return genStoneGuardBlockedEmit({
+      stone: stoneMatched.name,
+      route: input.route,
+      blocker: 'review.peer.exhausted',
+      reason: `peer reviewer budget exhausted: ${exhaustionCheck.skippedSlugs.join(', ')}`,
       refs: {
         reviews: reviewArtifacts.map((r) => r.path),
         judges: [],
@@ -424,7 +420,7 @@ export const setStoneAsPassed = async (
           guard: guardData,
         }),
       }),
-    };
+    });
   }
 
   // run judges (reuses prior artifacts internally, only runs incomplete ones)
@@ -626,6 +622,58 @@ export const setStoneAsPassed = async (
   const allJudgesPassed = judgeArtifacts.every((j) => j.passed);
 
   if (allJudgesPassed) {
+    // gate: peer reviews must be contemplated before passage
+    // .why = a driver may not progress until it has written a .taken response to
+    //        every current-iteration peer critique that carries blockers (the wish)
+    // .note = slots BETWEEN allJudgesPassed and setStonePassage so it runs only
+    //         when judges would pass, and BEFORE the report is cleared below
+    const contemplation = await getRouteGuardReviewPeerContemplationStatus({
+      route: input.route,
+      stone: stoneMatched,
+    });
+
+    // forgive contemplation for reviewers at an overruled level
+    // .why = an admin escape (--as overruled / --as forced) must not be re-gated
+    //        by a requirement a driver must satisfy; the human took responsibility
+    //        for the passage, so a waved-through level's critique needs no .taken
+    //        (design-note B6; mirrors the malfunction/constraint per-level forgiveness)
+    const overruledSlugs = new Set(
+      peerReviewsForLevel
+        .filter((_, i) => isReviewLevelOverruled(i + 1))
+        .map((review) => review.slug),
+    );
+    const uncontemplatedToBlock = contemplation.uncontemplated.filter(
+      (reviewer) => !overruledSlugs.has(reviewer.slug),
+    );
+
+    if (uncontemplatedToBlock.length > 0) {
+      // .note = no onGuardHalted here — the contemplation gate runs only inside
+      //         allJudgesPassed, so the judge event already closed the tree; the
+      //         reply-prompt below states the halt reason. a redundant onGuardHalted
+      //         would append a second └─ terminator after the judge.
+
+      // blocked on absent peer contemplation — persist + return via the shared tail
+      return genStoneGuardBlockedEmit({
+        stone: stoneMatched.name,
+        route: input.route,
+        blocker: 'review.peer.uncontemplated',
+        reason: `peer review awaits contemplation: ${asRouteGuardReviewPeerSlugList(
+          { reviewers: uncontemplatedToBlock },
+        )}`,
+        refs: {
+          reviews: reviewArtifacts.map((r) => r.path),
+          judges: judgeArtifacts.map((j) => j.path),
+        },
+        emit: await stampGuardReport({
+          stdout: formatRouteGuardReviewPeerContemplatePrompt({
+            case: 'reply-prompt',
+            stone: stoneMatched.name,
+            reviewers: uncontemplatedToBlock,
+          }),
+        }),
+      });
+    }
+
     await setStonePassage({ stone: stoneMatched, route: input.route });
 
     // clear blocked triggers for this stone and all earlier stones
@@ -684,14 +732,6 @@ export const setStoneAsPassed = async (
     guard: stoneMatched.guard,
   });
 
-  // record blocker report
-  await setStoneGuardBlockerReport({
-    stone: stoneMatched.name,
-    route: input.route,
-    blocker,
-    reason: reasons,
-  });
-
   // build detailed stderr for failed judges as tree bucket
   const stderrLines: string[] = [];
   for (const judge of failedJudges) {
@@ -722,8 +762,12 @@ export const setStoneAsPassed = async (
     }
   }
 
-  return {
-    passed: false,
+  // blocked on failed judges — persist + return via the shared blocked tail
+  return genStoneGuardBlockedEmit({
+    stone: stoneMatched.name,
+    route: input.route,
+    blocker,
+    reason: reasons,
     refs: {
       reviews: reviewArtifacts.map((r) => r.path),
       judges: judgeArtifacts.map((j) => j.path),
@@ -739,7 +783,7 @@ export const setStoneAsPassed = async (
       }),
       stderr: stderrLines.length > 0 ? stderrLines.join('\n') : undefined,
     }),
-  };
+  });
 };
 
 /**

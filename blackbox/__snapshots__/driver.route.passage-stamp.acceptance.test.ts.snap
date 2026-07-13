@@ -15,7 +15,8 @@ exports[`driver.route.passage-stamp.acceptance given: [block-test] guard with pe
       │       ├─ rejected [TIME]
       │       ├─ 1 blocker 🔴
       │       ├─ 0 nitpicks ✓
-      │       └─ review: .reviews/peer/2.block._.review.i1.76c4a5821380f370aa.r1._.given.by_peer.mock-blocker.md
+      │       ├─ given: .reviews/peer/2.block._.review.i001.76c4a5821380f370aa.r001._.given.by_peer.mock-blocker.md
+      │       └─ taken: .reviews/peer/2.block._.review.i001.76c4a5821380f370aa.r001._.taken.by_self.mock-blocker.md
       └─ judges
           └─ j1: rhx route.stone.judge --mechanism reviewed? --stone $stone --route $route --allow-blockers 0 --allow-nitpicks 0
               ├─ finished [TIME] ✗
@@ -61,7 +62,8 @@ exports[`driver.route.passage-stamp.acceptance given: [stamp-test] guard with pe
    │  │       ├─ approved [TIME]
    │  │       ├─ 0 blockers ✓
    │  │       ├─ 0 nitpicks ✓
-   │  │       └─ review: .reviews/peer/1.execute._.review.i1.1c1cfc20e88065ecab.r1._.given.by_peer.mock-stamp.md
+   │  │       ├─ given: .reviews/peer/1.execute._.review.i001.1c1cfc20e88065ecab.r001._.given.by_peer.mock-stamp.md
+   │  │       └─ taken: .reviews/peer/1.execute._.review.i001.1c1cfc20e88065ecab.r001._.taken.by_self.mock-stamp.md
    │  └─ judges
    │      └─ j1: rhx route.stone.judge --mechanism reviewed? --stone $stone --route $route --allow-blockers 0 --allow-nitpicks 0
    │          └─ finished [TIME] ✓

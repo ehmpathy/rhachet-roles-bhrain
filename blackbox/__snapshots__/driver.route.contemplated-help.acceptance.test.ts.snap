@@ -1,0 +1,42 @@
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
+
+exports[`driver.route.contemplated-help.acceptance given: [case1] a linked driver role when: [t0] driver runs route.stone.set --help then: [t0] help output matches snapshot 1`] = `
+"route.stone.set - mark stone as passed, approved, promised, contemplated, blocked, rewound, arrived, overruled, or forced
+
+usage:
+  route.stone.set [options]
+
+options:
+  --stone <name>     stone name or glob pattern (required)
+  --route <path>     path to route directory (required)
+  --as <status>      status to set (required):
+                       passed   - work complete, proceed
+                       arrived  - work complete, get reviews
+                       approved - human approval granted (human only)
+                       promised - review.self promise made
+                       contemplated - peer review response articulated
+                       blocked  - stuck, need help
+                       rewound  - clear validation state
+                       overruled - bypass review thresholds (human only)
+                       forced   - approve AND overrule (human only)
+  --that <slug>      reviewer slug (required for --as promised / --as contemplated)
+                       for --as contemplated, use the slug exactly as shown in the
+                       reviewers-await-reply prompt (path-sanitized: slashes → dashes)
+  --help             show this help message
+
+note:
+  --as overruled bypasses reviewed? judge thresholds for overzealous reviewers
+  --as forced is shorthand for --as approved + --as overruled
+
+examples:
+  route.stone.set --stone 1.vision --as arrived
+  route.stone.set --stone 1.vision --as passed
+  route.stone.set --stone 1.vision --as approved
+  route.stone.set --stone 1.vision --as promised --that all-done
+  route.stone.set --stone 1.execute --as contemplated --that architect
+  route.stone.set --stone 3.blueprint --as blocked
+  route.stone.set --stone 3.blueprint --as rewound
+  route.stone.set --stone 1.vision --as overruled
+  route.stone.set --stone 1.vision --as forced
+"
+`;

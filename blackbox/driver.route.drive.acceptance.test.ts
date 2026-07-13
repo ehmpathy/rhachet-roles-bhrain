@@ -2,7 +2,7 @@ import * as fs from 'fs/promises';
 import * as path from 'path';
 import { given, then, useBeforeAll, useThen, when } from 'test-fns';
 
-import { getSelfReviewArticulationPath } from '../src/domain.operations/route/guard/getSelfReviewArticulationPath';
+import { getSelfReviewArticulationPath } from '../src/domain.operations/route/guard/review/self/getSelfReviewArticulationPath';
 import {
   execAsync,
   genTempDirForRhachet,

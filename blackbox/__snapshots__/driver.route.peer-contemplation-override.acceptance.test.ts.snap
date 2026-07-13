@@ -1,0 +1,22 @@
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
+
+exports[`driver.route.peer-contemplation-override.acceptance given: [case1] a stone with an uncontemplated architect blocker when: [t0] driver signals --as overruled with no .taken then: stdout matches snapshot 1`] = `
+"🦉 the way speaks for itself
+
+🗿 route.stone.set
+   ├─ stone = 1.execute
+   └─ ✓ overruled
+      └─ level 1, overruled
+"
+`;
+
+exports[`driver.route.peer-contemplation-override.acceptance given: [case1] a stone with an uncontemplated architect blocker when: [t1] driver signals --as forced with no .taken then: stdout matches snapshot 1`] = `
+"🦉 the way speaks for itself
+
+🗿 route.stone.set
+   ├─ stone = 1.execute
+   └─ ✓ forced
+      ├─ overruled = ✓ (level 1)
+      └─ approved  = ✓
+"
+`;

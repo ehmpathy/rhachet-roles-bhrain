@@ -30,19 +30,25 @@ export const setGoal = async (input: {
   // ensure goals directory found or created
   await fs.mkdir(input.scopeDir, { recursive: true });
 
-  // compute offset from parent dir mtime (seconds since dir creation)
-  // .note = clamp at 0; filesystem mtime can be momentarily ahead of now
-  //         (timestamp resolution/clock skew), which would yield a negative
-  //         offset. a negative "seconds since creation" is nonsensical and
-  //         renders as e.g. "00000-1" (String(-1).padStart(7,'0')), which
-  //         breaks the numeric offset contract
+  // compute offset as a strictly-monotonic creation-order index (max extant + 1)
+  // .note = each new goal sorts after every prior one, so a lexical sort of the
+  //         7-digit-padded prefix reproduces creation order deterministically.
+  //         a dir-mtime delta (the prior approach) was second-granular AND
+  //         non-monotonic — a directory's mtime advances on every write, so an
+  //         earlier goal could end up with a larger delta than a later one, to
+  //         flip the render order under fast runs. max+1 is also delete-safe:
+  //         it never reuses a freed index (a plain count would collide after a
+  //         delete). new dir → no goals → offset 0.
   let offset = 0;
   try {
-    const dirStat = await fs.stat(input.scopeDir);
-    const now = Date.now();
-    offset = Math.max(0, Math.floor((now - dirStat.mtimeMs) / 1000));
+    const files = await fs.readdir(input.scopeDir);
+    const offsetsExtant = files
+      .filter((f) => f.endsWith('.goal.yaml'))
+      .map((f) => Number.parseInt(f.split('.')[0] ?? '0', 10))
+      .filter((n) => Number.isFinite(n));
+    offset = offsetsExtant.length > 0 ? Math.max(...offsetsExtant) + 1 : 0;
   } catch {
-    // if stat fails, use 0
+    // if readdir fails, use 0
   }
 
   // format offset as 7-digit leftpad

@@ -26,6 +26,13 @@ export const parseStoneGuard = async (input: {
   // parse simple yaml format
   const parsed = await parseSimpleYaml(content, guardDir);
 
+  // enforce GLOBAL slug uniqueness across self + peer reviewers
+  // .why = --that dispatches per-verb (--as promised for self, --as contemplated
+  //        for peer); a slug shared by a self AND a peer reviewer makes --that
+  //        ambiguous. a loud throw at parse makes the ambiguity structurally
+  //        impossible rather than settled by convention (i8-B5)
+  assertReviewSlugsGloballyUnique({ reviews: parsed.reviews });
+
   // construct guard with defaults
   return new RouteStoneGuard({
     path: input.path,
@@ -34,6 +41,26 @@ export const parseStoneGuard = async (input: {
     judges: parsed.judges ?? [],
     protect: parsed.protect ?? [],
   });
+};
+
+/**
+ * .what = throws if any slug is shared between a self and a peer reviewer
+ * .why = --as promised (self) and --as contemplated (peer) both take --that; a
+ *        slug used by both roles makes --that ambiguous, so forbid it at parse
+ */
+const assertReviewSlugsGloballyUnique = (input: {
+  reviews: RouteStoneGuardReviewsStructured | undefined;
+}): void => {
+  const selfSlugs = new Set((input.reviews?.self ?? []).map((r) => r.slug));
+  const collisions = (input.reviews?.peer ?? [])
+    .map((r) => r.slug)
+    .filter((slug) => selfSlugs.has(slug));
+
+  if (collisions.length > 0)
+    throw new BadRequestError(
+      `reviewer slug used by BOTH a self and a peer reviewer: ${collisions.join(', ')}. slugs must be globally unique across self + peer.`,
+      { collisions },
+    );
 };
 
 /**
