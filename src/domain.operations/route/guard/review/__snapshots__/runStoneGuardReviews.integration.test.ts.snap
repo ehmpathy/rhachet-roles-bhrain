@@ -779,11 +779,7 @@ exports[`runStoneGuardReviews given: [case22] reviewer exits 0 but emits no nume
 {
   "exitClass": "malfunction",
   "exitCode": 1,
-  "stderr": "💥 malfunction: review tally fallback failed. UnexpectedCodePathError: getReviewCountsViaBrain: sub-brain tally failed
-
-{
-  "contentLength": 21
-}: genContextReviewBrainSupplyDemo: getReviewBrain called but no brain was provided (a deterministic-path test should never reach the fallback; override getReviewBrain to test the probabilistic path)",
+  "stderr": "💥 malfunction: review tally fallback failed (the sub-brain that tallies a prose review could not be reached). see .agent/repo=bhrain/role=reviewer/briefs/contract.reviewer-output.md",
   "stdout": "looks solid, ship it
 ",
 }
@@ -793,11 +789,7 @@ exports[`runStoneGuardReviews given: [case23] reviewer exits 0 but declares only
 {
   "exitClass": "malfunction",
   "exitCode": 1,
-  "stderr": "💥 malfunction: review tally fallback failed. UnexpectedCodePathError: getReviewCountsViaBrain: sub-brain tally failed
-
-{
-  "contentLength": 12
-}: genContextReviewBrainSupplyDemo: getReviewBrain called but no brain was provided (a deterministic-path test should never reach the fallback; override getReviewBrain to test the probabilistic path)",
+  "stderr": "💥 malfunction: review tally fallback failed (the sub-brain that tallies a prose review could not be reached). see .agent/repo=bhrain/role=reviewer/briefs/contract.reviewer-output.md",
   "stdout": "blockers: 0
 ",
 }
@@ -843,6 +835,16 @@ exports[`runStoneGuardReviews given: [case29] reviewer exits 0, emits no numeric
   "exitCode": 1,
   "stderr": "💥 malfunction: reviewer output lacks a numeric blocker/nitpick count (expected \`N blockers\` and \`N nitpicks\`; use \`0 blockers\` / \`0 nitpicks\` to declare clean). see .agent/repo=bhrain/role=reviewer/briefs/contract.reviewer-output.md",
   "stdout": "some prose that carries no verdict
+",
+}
+`;
+
+exports[`runStoneGuardReviews given: [case30] reviewer exits 0, emits no numeric count, and the sub-brain fallback times out when: [t0] reviews are executed then: the malfunction output matches snapshot 1`] = `
+{
+  "exitClass": "malfunction",
+  "exitCode": 1,
+  "stderr": "💥 malfunction: review tally fallback timed out (the sub-brain that tallies a prose review did not respond in time). see .agent/repo=bhrain/role=reviewer/briefs/contract.reviewer-output.md",
+  "stdout": "prose verdict, no numeric counts here
 ",
 }
 `;

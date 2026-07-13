@@ -227,4 +227,69 @@ describe('driver.route.peer-measurement.journey.acceptance', () => {
       });
     });
   });
+
+  // the numeric-REJECTION path, through the real CLI — a distinct variant from both the
+  // clean pass and the crash malfunction. the reviewer runs fine and reports a real blocker
+  // (`1 blocker`), read verbatim by the deterministic parser (so NO `tallied by` marker), and
+  // the reviewed? judge blocks the stone because 1 blocker exceeds the 0 allowed. this proves
+  // a caller sees the correct blocked stdout for a substantive rejection, not just a crash or a
+  // clean pass (rule.require.acceptance-journey-coverage).
+  given('[journey] a stone reviewed by a reviewer that reports a blocker', () => {
+    const scene = useBeforeAll(async () => {
+      const tempDir = genTempDirForRhachet({
+        slug: 'peer-measurement-journey-reject',
+        clone: ASSETS_DIR,
+      });
+
+      await execAsync('npx rhachet roles link --role driver', { cwd: tempDir });
+      await execAsync('chmod +x .test/mock-review-blockers.sh', {
+        cwd: tempDir,
+      });
+
+      return { tempDir };
+    });
+
+    // [t0] preconditions — the artifact the reviewer will review
+    when('[t0] the artifact is written', () => {
+      const result = useThen('artifact is created', async () => {
+        await fs.writeFile(
+          path.join(scene.tempDir, '3.reject.md'),
+          '# reject\n\nthis is the artifact under review.',
+        );
+        return { created: true };
+      });
+
+      then('the artifact exists', () => {
+        expect(result.created).toBe(true);
+      });
+    });
+
+    // [t1] the reviewer reports a blocker; the judge rejects the stone on substance
+    when('[t1] the stone is passed (reviewer reports a blocker)', () => {
+      const result = useThen('the guard runs the blocker reviewer', async () =>
+        invokeRouteSkill({
+          skill: 'route.stone.set',
+          args: { stone: '3.reject', route: '.', as: 'passed' },
+          cwd: scene.tempDir,
+        }),
+      );
+
+      then('exit code is non-zero (stone blocked)', () => {
+        expect(result.code).not.toEqual(0);
+      });
+
+      then('stdout reports the blocker count, not a passage', () => {
+        expect(result.stdout).toContain('1 blocker');
+        expect(result.stdout).not.toContain('passage = allowed');
+      });
+
+      then('the reviewer shows NO tallied-by marker (deterministic verbatim)', () => {
+        expect(result.stdout).not.toContain('tallied by reviewer@');
+      });
+
+      then('reject-path stdout matches snapshot', () => {
+        expect(sanitizeTimeForSnapshot(result.stdout)).toMatchSnapshot();
+      });
+    });
+  });
 });

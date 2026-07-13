@@ -323,6 +323,19 @@ describe('runStoneGuardReviews', () => {
     });
   });
 
+  // .note = INTENTIONAL count behavior for a constraint review (documented for peer review).
+  //   this reviewer's stdout is `blockers: 1\nconstraint failure` and it exits 2 (constraint).
+  //   the RETURN value records blockers:0 / nitpicks:0 / tallier:null — NOT blockers:1 — for two
+  //   reasons, each by design (rule.forbid.failhide + the exit-0 rescue gate):
+  //     1. the deterministic tally requires BOTH dimensions; `blockers: 1` alone (no nitpicks
+  //        line) is a partial count → detected:false, so no partial value is leaked. under the
+  //        pre-union flat parser this case leaked blockers:1; the union deliberately removes that
+  //        fake-partial path (see getReviewCountsViaRegex).
+  //     2. exitCode 2 is non-zero, so getReviewCounts skips the brain rescue and returns
+  //        detected:false regardless — a review that did not run cleanly is never count-rescued.
+  //   for a constraint review the trustworthy signal is exitClass:'constraint', not the count;
+  //   the artifact's stdout still carries the raw `blockers: 1` for a human. this is a conscious
+  //   change from main's 1→0, not a weakened assertion.
   given('[case4] review exits with code 2 (constraint)', () => {
     const tempDir = path.join(os.tmpdir(), `test-reviews-exit2-${Date.now()}`);
     const stone = new RouteStone({
@@ -1977,6 +1990,105 @@ describe('runStoneGuardReviews', () => {
             const stderr = reviews.artifacts[0]?.stderr ?? '';
             expect(stderr).toContain('lacks a numeric blocker/nitpick count');
             expect(stderr).not.toContain('review tally fallback failed');
+          },
+        );
+
+        then('the malfunction output matches snapshot', () => {
+          const artifact = reviews.artifacts[0];
+          expect({
+            exitCode: artifact?.exitCode,
+            exitClass: artifact?.exitClass,
+            stdout: artifact?.stdout,
+            stderr: artifact?.stderr,
+          }).toMatchSnapshot();
+        });
+      });
+    },
+  );
+
+  given(
+    '[case30] reviewer exits 0, emits no numeric count, and the sub-brain fallback times out',
+    () => {
+      // .why = the THIRD malfunction cause at this seam, distinct from case22 (fault throw →
+      //        "could not be reached") and case29 (clean abstain → "lacks a numeric count"): a
+      //        sub-brain whose ask() never settles must be time-bounded, promote to malfunction
+      //        with a TIMEOUT-specific reason ("timed out ... did not respond in time"), and stay
+      //        readable-apart from the other two causes. this drives ReviewTallyTimeoutError
+      //        through runOneStoneGuardReview's catch + isReviewTallyTimeout selection — the
+      //        contract seam the low-level getReviewCountsViaBrain.timeout unit test does NOT
+      //        cover. see blueprint "fallback timeout" + r12 obs #4 / r9 i004.
+      const tempDir = path.join(
+        os.tmpdir(),
+        `test-reviews-timeout-${Date.now()}`,
+      );
+      const stone = new RouteStone({
+        name: '1.test',
+        path: path.join(tempDir, '1.test.stone'),
+        guard: null,
+      });
+      const guard = new RouteStoneGuard({
+        path: path.join(tempDir, '1.test.guard'),
+        artifacts: ['1.test*.md'],
+        reviews: {
+          self: [],
+          peer: [
+            asPeerReview('echo "prose verdict, no numeric counts here"', 0),
+          ],
+        },
+        judges: [],
+        protect: [],
+      });
+
+      // a sub-brain whose choice.ask() never settles — the hung-fallback path.
+      // .note = documented test-double cast: a minimal fake ContextBrain shaped for the one
+      //         field getReviewCountsViaBrain reads (brain.choice.ask). not a real brain; same
+      //         pattern as case29's abstain double and the timeout unit test.
+      const timeoutContext = genContextReviewBrainSupplyDemo({
+        getReviewBrain: async () =>
+          ({
+            brain: {
+              choice: {
+                ask: () => new Promise(() => {}), // never settles — the hung call under test
+              },
+            },
+          }) as unknown as ContextBrain<BrainChoice>,
+      });
+
+      const priorTimeoutEnv = process.env.RHACHET_FALLBACK_BRAIN_TIMEOUT_MS;
+
+      beforeEach(async () => {
+        // bound the wait to 50ms so the hung call fails fast instead of the full default
+        process.env.RHACHET_FALLBACK_BRAIN_TIMEOUT_MS = '50';
+        await fs.mkdir(tempDir, { recursive: true });
+      });
+
+      afterEach(async () => {
+        if (priorTimeoutEnv === undefined)
+          delete process.env.RHACHET_FALLBACK_BRAIN_TIMEOUT_MS;
+        else process.env.RHACHET_FALLBACK_BRAIN_TIMEOUT_MS = priorTimeoutEnv;
+        await fs.rm(tempDir, { recursive: true, force: true });
+      });
+
+      when('[t0] reviews are executed', () => {
+        const reviews = useThen('runs the reviewer', async () =>
+          runStoneGuardReviews(
+            { stone, guard, hash: 'timeout', iteration: 1, route: tempDir },
+            timeoutContext,
+          ),
+        );
+
+        then('the reviewer is promoted to malfunction', () => {
+          const artifact = reviews.artifacts[0];
+          expect(artifact?.exitClass).toEqual('malfunction');
+          expect(artifact?.exitCode).toEqual(1);
+        });
+
+        then(
+          'the malfunction reason is the TIMEOUT message, distinct from the generic fault',
+          () => {
+            const stderr = reviews.artifacts[0]?.stderr ?? '';
+            expect(stderr).toContain('review tally fallback timed out');
+            expect(stderr).not.toContain('could not be reached');
           },
         );
 

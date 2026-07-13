@@ -30,7 +30,10 @@ import { getRepoRootWithFallback } from '../getRepoRootWithFallback';
 import { isENOENT } from '../isENOENT';
 import { formatTreeBucket } from '../tree/formatTreeBucket';
 import { getReviewCounts } from './getReviewCounts';
-import { ReviewTallyError } from './getReviewCountsViaBrain';
+import {
+  ReviewTallyError,
+  ReviewTallyTimeoutError,
+} from './getReviewCountsViaBrain';
 import type { ReviewCountsResolved } from './getReviewCountsViaRegex';
 import { TALLIED_FOOTER_PREFIX } from './getReviewTacticFromContent';
 import { enumRouteGuardReviewPeerConversationFiles } from './peer/enumRouteGuardReviewPeerConversationFiles';
@@ -53,17 +56,22 @@ const REVIEWER_OUTPUT_CONTRACT_BRIEF =
   '.agent/repo=bhrain/role=reviewer/briefs/contract.reviewer-output.md';
 
 /**
- * .what = extracts a human-legible reason from a caught error, including its cause
- * .why = a wrapped brain fault carries the specific cause (e.g. "timed out after PT21M",
- *        "400 Invalid json_schema") as its .cause; surfacing it lets the malfunction message
- *        distinguish a timeout from a generic brain fault (the wish's distinct-messages ask).
+ * .what = tells whether a caught tally fault is a timeout, by type — not a message match
+ * .why = the sub-brain timeout is raised as a ReviewTallyTimeoutError, then wrapped by
+ *        ReviewTallyError.wrap so it rides as a .cause. this walks that cause chain so the
+ *        seam can pick a distinct user-visible message for a timeout vs a generic brain fault
+ *        (the wish's distinct-messages ask) and NOT dump the raw wrapped message + metadata
+ *        JSON into the artifact (rule.forbid.snapshot-visual-blemishes). the raw detail stays
+ *        on the thrown error for logs; the human sees only the clean category reason.
  */
-const getErrorReason = (error: unknown): string => {
-  if (!(error instanceof Error)) return String(error);
-  // read .cause cast-free (pre-ES2022 Error type lacks it) — Reflect.get over an `as` cast
-  const cause: unknown = Reflect.get(error, 'cause');
-  const causeSuffix = cause instanceof Error ? `: ${cause.message}` : '';
-  return `${error.message}${causeSuffix}`;
+const isReviewTallyTimeout = (error: unknown): boolean => {
+  // step down the cause chain; the timeout is wrapped as a .cause of the outer tally error
+  let current: unknown = error;
+  while (current instanceof Error) {
+    if (current instanceof ReviewTallyTimeoutError) return true;
+    current = Reflect.get(current, 'cause');
+  }
+  return false;
 };
 
 /**
@@ -277,7 +285,16 @@ export const runOneStoneGuardReview = async (
     // defect is NOT ours to swallow — rethrow it so it fails loud (rule.forbid.failhide).
     if (!(error instanceof ReviewTallyError)) throw error;
     counts = { detected: false };
-    brainErrorReason = `💥 malfunction: review tally fallback failed. ${getErrorReason(error)}`;
+    // clean, category-distinct reason — a timeout reads apart from a generic fault, and NEITHER
+    // leaks the internal wrapper message / metadata JSON into the artifact (the raw detail lives
+    // on the thrown error for logs). see rule.forbid.snapshot-visual-blemishes.
+    brainErrorReason = isReviewTallyTimeout(error)
+      ? '💥 malfunction: review tally fallback timed out ' +
+        '(the sub-brain that tallies a prose review did not respond in time). ' +
+        `see ${REVIEWER_OUTPUT_CONTRACT_BRIEF}`
+      : '💥 malfunction: review tally fallback failed ' +
+        '(the sub-brain that tallies a prose review could not be reached). ' +
+        `see ${REVIEWER_OUTPUT_CONTRACT_BRIEF}`;
   }
   const blockers = counts.detected ? counts.blockers : 0;
   const nitpicks = counts.detected ? counts.nitpicks : 0;

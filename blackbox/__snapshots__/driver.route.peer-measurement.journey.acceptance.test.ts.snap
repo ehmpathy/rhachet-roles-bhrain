@@ -121,3 +121,36 @@ exports[`driver.route.peer-measurement.journey.acceptance given: [journey] a sto
               └─ finished [TIME] ✓
 "
 `;
+
+exports[`driver.route.peer-measurement.journey.acceptance given: [journey] a stone reviewed by a reviewer that reports a blocker when: [t1] the stone is passed (reviewer reports a blocker) then: reject-path stdout matches snapshot 1`] = `
+"🦉 the way speaks for itself
+   │
+   ├─ r1: blocker-reviewer (l1, 1/3)
+   │   ├─ rejected [TIME]
+   │   ├─ 1 blocker 🔴
+   │   ├─ 0 nitpicks ✓
+   │   ├─ given: .reviews/peer/3.reject._.review.i001.ccb60d2f7e0c2d3666.r001._.given.by_peer.blocker-reviewer.md
+   │   └─ taken: .reviews/peer/3.reject._.review.i001.ccb60d2f7e0c2d3666.r001._.taken.by_self.blocker-reviewer.md
+   │
+   └─ ✗ judge.1 - blocked [TIME]
+
+🗿 route.stone.set
+   ├─ stone = 3.reject
+   ├─ passage = blocked
+   ├─ reason = blockers exceed threshold (1 > 0)
+   └─ guard
+      ├─ artifacts
+      │   └─ 3.reject*.md
+      ├─ reviews
+      │   └─ r1: blocker-reviewer (l1, 1/3)
+      │       ├─ rejected [TIME]
+      │       ├─ 1 blocker 🔴
+      │       ├─ 0 nitpicks ✓
+      │       ├─ given: .reviews/peer/3.reject._.review.i001.ccb60d2f7e0c2d3666.r001._.given.by_peer.blocker-reviewer.md
+      │       └─ taken: .reviews/peer/3.reject._.review.i001.ccb60d2f7e0c2d3666.r001._.taken.by_self.blocker-reviewer.md
+      └─ judges
+          └─ j1: rhx route.stone.judge --mechanism reviewed? --stone $stone --route $route --allow-blockers 0 --allow-nitpicks 5
+              ├─ finished [TIME] ✗
+              └─ reason: blockers exceed threshold (1 > 0)
+"
+`;

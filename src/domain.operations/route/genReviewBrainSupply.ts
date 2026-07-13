@@ -1,5 +1,4 @@
 import type { BrainChoice, ContextBrain } from 'rhachet';
-import { genContextBrain } from 'rhachet/brains';
 
 /**
  * .what = the fixed sub-brain used to tally a review whose verdict is not numeric
@@ -55,10 +54,18 @@ export const genReviewBrainSupply = (
     ) => Promise<ContextBrain<BrainChoice>>;
   },
 ): ContextReviewBrainSupply => {
-  // default builder is discovery-mode genContextBrain, as review.ts uses
+  // default builder is discovery-mode genContextBrain, as review.ts uses.
+  // .note = the import is DYNAMIC (not a module-top import) so that an import of
+  //         genReviewBrainSupply — which the route.stone.set cli entry does on EVERY pass —
+  //         never eagerly loads the heavy rhachet/brains module. the load happens only when a
+  //         review actually needs the probabilistic fallback and this builder runs.
+  //         (rule.require.isolated-cli-subpath-exports)
   const build =
     options?.build ??
-    ((buildInput: ReviewBrainBuildInput) => genContextBrain(buildInput));
+    (async (buildInput: ReviewBrainBuildInput) => {
+      const { genContextBrain } = await import('rhachet/brains');
+      return genContextBrain(buildInput);
+    });
 
   // .note = deliberate mutation: the memoize cell — reassigned once, on first successful build,
   //         so later calls reuse it. a const cannot memoize; a throw memoizes no value.

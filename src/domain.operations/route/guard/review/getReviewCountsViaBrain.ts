@@ -31,6 +31,15 @@ const FALLBACK_BRAIN_TIMEOUT = 'PT21M' as IsoDuration;
 export class ReviewTallyError extends UnexpectedCodePathError {}
 
 /**
+ * .what = the specific fault class for a sub-brain tally that exceeds its time bound
+ * .why = the per-reviewer seam reports a DISTINCT user-visible message for a timeout vs a
+ *        generic brain fault (the wish's distinct-messages ask). a dedicated subclass lets
+ *        the seam tell the two apart by type — not by a fragile message match — while the
+ *        `instanceof ReviewTallyError` allowlist still catches it (it extends that class).
+ */
+export class ReviewTallyTimeoutError extends ReviewTallyError {}
+
+/**
  * .what = resolves the fallback timeout in ms, with the test env override applied
  * .why = lets a hang test bound the wait to milliseconds instead of the full PT21M default
  */
@@ -127,7 +136,7 @@ export const getReviewCountsViaBrain = async (
         timer = setTimeout(
           () =>
             reject(
-              new ReviewTallyError(
+              new ReviewTallyTimeoutError(
                 `fallback brain timed out after ${timeoutMs}ms`,
                 { timeoutMs, bound: FALLBACK_BRAIN_TIMEOUT },
               ),
