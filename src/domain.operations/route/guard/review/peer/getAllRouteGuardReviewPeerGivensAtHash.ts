@@ -1,6 +1,6 @@
 import * as fs from 'fs/promises';
 
-import { getReviewCountsFromContent } from '../getReviewCountsFromContent';
+import { getReviewCountsViaRegex } from '../getReviewCountsViaRegex';
 import { enumRouteGuardReviewPeerFiles } from './enumRouteGuardReviewPeerFiles';
 import { getRouteGuardReviewPeerPathMeta } from './getRouteGuardReviewPeerPathMeta';
 
@@ -36,12 +36,13 @@ export const getAllRouteGuardReviewPeerGivensAtHash = async (input: {
   return Promise.all(
     givenPaths.map(async (givenPath) => {
       const content = await fs.readFile(givenPath, 'utf-8');
-      const counts = getReviewCountsFromContent({ content });
+      const counts = getReviewCountsViaRegex({ content });
       const meta = getRouteGuardReviewPeerPathMeta({ path: givenPath });
+      // undetected verdicts contribute 0 — preserves prior `?? 0` behavior for absent counts
       return {
         slug: meta.slug,
-        blockers: counts.blockers,
-        nitpicks: counts.nitpicks,
+        blockers: counts.detected ? counts.blockers : 0,
+        nitpicks: counts.detected ? counts.nitpicks : 0,
         pathGiven: givenPath,
       };
     }),

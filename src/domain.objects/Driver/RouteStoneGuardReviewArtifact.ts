@@ -45,6 +45,21 @@ export interface RouteStoneGuardReviewPeerArtifact {
   nitpicks: number;
 
   /**
+   * which tallier produced the count — the contract term for the tactic that resolved it:
+   * - 'deterministic' = counts read verbatim from the reviewer's own numbers (regex)
+   * - 'probabilistic' = counts extracted from prose by the fallback sub-brain
+   * - null = a pre-fallback record (reconstructed from an artifact written before this field),
+   *   or a review with no detected verdict (a malfunction carries no tallier)
+   *
+   * .note = internally the orchestrator calls this the `tactic` it chose; on this persisted
+   *         contract the field is named for the ROLE that produced the tally (`tallier`), which
+   *         also matches the render vocabulary (`tallied by reviewer@$brain`).
+   * .note = the brain slug is NOT stored per-artifact — the model is a fixed constant, so the
+   *         render derives the display name from that constant. only this discriminant travels.
+   */
+  tallier: 'deterministic' | 'probabilistic' | null;
+
+  /**
    * command exit code
    */
   exitCode: number;

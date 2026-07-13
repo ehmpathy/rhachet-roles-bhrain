@@ -39,7 +39,7 @@ export interface RouteFormatTreeGuardReviewRecord {
   /** from RouteStoneGuardReviewPeerArtifact */
   artifact: Pick<
     RouteStoneGuardReviewPeerArtifact,
-    'index' | 'path' | 'blockers' | 'nitpicks' | 'exitClass'
+    'index' | 'path' | 'blockers' | 'nitpicks' | 'tallier' | 'exitClass'
   >;
   /** command that was run (from guard file) */
   cmd: string;
@@ -229,6 +229,12 @@ const asReviewerTreeStateFromMeter = (input: {
   const cached = review?.cached ? true : false;
   // use durationSec from review (fresh: from event, cached: from artifact stdout)
   const durationSec = review?.durationSec ?? null;
+  // source the tallier from the artifact; default to deterministic when null (pre-fallback
+  // record) or absent (meter-only fallback path) — the marker shows only for probabilistic
+  const tallier =
+    review?.artifact.tallier === 'probabilistic'
+      ? 'probabilistic'
+      : 'deterministic';
 
   return {
     index,
@@ -244,6 +250,7 @@ const asReviewerTreeStateFromMeter = (input: {
       nitpicks,
       path,
       cached,
+      tallier,
     },
   };
 };
@@ -280,6 +287,7 @@ export const formatGuardTree = (input: {
       durationSec: number | null;
       blockers: number;
       nitpicks: number;
+      tallier: 'deterministic' | 'probabilistic' | null;
       path: string;
       exitClass: 'passed' | 'constraint' | 'malfunction';
       /** peer info if available: slug, level, rounds/budget */
@@ -469,6 +477,7 @@ export const formatGuardTree = (input: {
             path: r.path,
             blockers: r.blockers,
             nitpicks: r.nitpicks,
+            tallier: r.tallier,
             exitClass: r.exitClass,
           },
           cmd: r.cmd,

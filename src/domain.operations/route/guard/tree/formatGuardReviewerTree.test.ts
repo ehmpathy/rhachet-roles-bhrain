@@ -1,5 +1,7 @@
 import { given, then, when } from 'test-fns';
 
+import { FIXED_FALLBACK_BRAIN } from '../../genReviewBrainSupply';
+import { TALLIED_FOOTER_PREFIX } from '../review/getReviewTacticFromContent';
 import {
   formatGuardReviewerTree,
   type ReviewerTreeState,
@@ -21,6 +23,7 @@ describe('formatGuardReviewerTree', () => {
         nitpicks: 0,
         path: '.route/5.1.execution.guard.review.i1.abc123.r1.md',
         cached: false,
+        tallier: 'deterministic',
       },
     };
 
@@ -54,6 +57,7 @@ describe('formatGuardReviewerTree', () => {
         nitpicks: 2,
         path: '.route/5.1.execution.guard.review.i1.abc123.r1.md',
         cached: false,
+        tallier: 'deterministic',
       },
     };
 
@@ -80,6 +84,7 @@ describe('formatGuardReviewerTree', () => {
         nitpicks: 1,
         path: '.route/5.1.execution.guard.review.i1.abc123.r1.md',
         cached: false,
+        tallier: 'deterministic',
       },
     };
 
@@ -106,6 +111,7 @@ describe('formatGuardReviewerTree', () => {
         nitpicks: 0,
         path: '.route/5.1.execution.guard.review.i1.abc123.r1.md',
         cached: false,
+        tallier: 'deterministic',
       },
     };
 
@@ -194,6 +200,7 @@ describe('formatGuardReviewerTree', () => {
         nitpicks: 0,
         path: '.route/5.1.execution.guard.review.i1.abc123.r1.md',
         cached: true,
+        tallier: 'deterministic',
       },
     };
 
@@ -262,6 +269,7 @@ describe('formatGuardReviewerTree', () => {
         nitpicks: 0,
         path: '.route/5.1.execution.guard.review.i1.abc123.r2.md',
         cached: false,
+        tallier: 'deterministic',
       },
     };
 
@@ -291,6 +299,7 @@ describe('formatGuardReviewerTree', () => {
         nitpicks: 1,
         path: pathGiven,
         cached: false,
+        tallier: 'deterministic',
       },
     };
 
@@ -327,6 +336,7 @@ describe('formatGuardReviewerTree', () => {
         nitpicks: 0,
         path: '.route/5.1.execution.guard.review.i1.abc123.r1.md',
         cached: false,
+        tallier: 'deterministic',
       },
     };
 
@@ -390,6 +400,7 @@ describe('formatGuardReviewerTree', () => {
         nitpicks: 0,
         path: '.route/5.1.execution.guard.review.i1.abc123.r1.md',
         cached: false,
+        tallier: 'deterministic',
       },
     };
 
@@ -407,4 +418,120 @@ describe('formatGuardReviewerTree', () => {
       });
     });
   });
+
+  given('[case13] probabilistic reviewer shows the tallied-by branch', () => {
+    const reviewer: ReviewerTreeState = {
+      index: 2,
+      slug: 'peer/architect',
+      level: 1,
+      rounds: 1,
+      budget: Infinity,
+      state: {
+        type: 'finished',
+        verdict: 'approved',
+        durationSec: 9.1,
+        blockers: 0,
+        nitpicks: 1,
+        path: '.route/5.1.execution.guard.review.i1.abc123.r1.md',
+        cached: false,
+        tallier: 'probabilistic',
+      },
+    };
+
+    when('[t0] formatted', () => {
+      then(
+        'output shows a tallied-by branch that names the fallback brain',
+        () => {
+          const lines = formatGuardReviewerTree({ reviewer, isLast: true });
+          const joined = lines.join('\n');
+          expect(joined).toContain(
+            `${TALLIED_FOOTER_PREFIX}${FIXED_FALLBACK_BRAIN}`,
+          );
+          expect(joined).toMatchSnapshot();
+        },
+      );
+
+      then(
+        'the tallied-by branch sits between nitpicks and the path line',
+        () => {
+          const lines = formatGuardReviewerTree({ reviewer, isLast: true });
+          const nitIdx = lines.findIndex((l) => l.includes('nitpick'));
+          const tallyIdx = lines.findIndex((l) =>
+            l.includes(TALLIED_FOOTER_PREFIX),
+          );
+          const pathIdx = lines.findIndex((l) => l.includes('given:'));
+          expect(nitIdx).toBeGreaterThanOrEqual(0);
+          expect(tallyIdx).toBeGreaterThan(nitIdx);
+          expect(pathIdx).toBeGreaterThan(tallyIdx);
+        },
+      );
+    });
+  });
+
+  given('[case14] deterministic reviewer shows NO tallied-by branch', () => {
+    const reviewer: ReviewerTreeState = {
+      index: 1,
+      slug: 'peer/mechanic',
+      level: 1,
+      rounds: 1,
+      budget: Infinity,
+      state: {
+        type: 'finished',
+        verdict: 'approved',
+        durationSec: 12.4,
+        blockers: 0,
+        nitpicks: 2,
+        path: '.route/5.1.execution.guard.review.i1.abc123.r1.md',
+        cached: false,
+        tallier: 'deterministic',
+      },
+    };
+
+    when('[t0] formatted', () => {
+      then('output shows no tallied-by branch', () => {
+        const lines = formatGuardReviewerTree({ reviewer, isLast: true });
+        expect(lines.join('\n')).not.toContain(TALLIED_FOOTER_PREFIX);
+      });
+    });
+  });
+
+  given(
+    '[case15] tallied-by prefix is the shared drift-guarded constant',
+    () => {
+      when('[t0] the probabilistic branch is rendered', () => {
+        then(
+          'it uses the exact TALLIED_FOOTER_PREFIX constant, not a literal',
+          () => {
+            const reviewer: ReviewerTreeState = {
+              index: 1,
+              slug: 'peer/architect',
+              level: 1,
+              rounds: 1,
+              budget: Infinity,
+              state: {
+                type: 'finished',
+                verdict: 'approved',
+                durationSec: 9.1,
+                blockers: 0,
+                nitpicks: 0,
+                path: '.route/x.md',
+                cached: false,
+                tallier: 'probabilistic',
+              },
+            };
+            const lines = formatGuardReviewerTree({ reviewer, isLast: true });
+            // the writer (this render) and both cache-recovery parsers all reference
+            // TALLIED_FOOTER_PREFIX; a copy tweak moves the parse contract in lockstep.
+            const tallyLine = lines.find((l) =>
+              l.includes(TALLIED_FOOTER_PREFIX),
+            );
+            expect(tallyLine).toBeDefined();
+            expect(tallyLine).toContain(
+              `${TALLIED_FOOTER_PREFIX}${FIXED_FALLBACK_BRAIN}`,
+            );
+          },
+        );
+      });
+    },
+  );
 });

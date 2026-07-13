@@ -350,6 +350,25 @@ exports[`formatGuardTree given: [case19] malfunction passage, no guard — offer
       └─ or fix the reviewer, then retry"
 `;
 
+exports[`formatReviewsMeterLines given: [case-tactic] the read-out sources tactic onto the finished state when: [t0] a review carries tactic=probabilistic then: the full guard tree shows the tallied-by branch 1`] = `
+"🗿 route.stone.set
+   ├─ stone = 1.vision
+   ├─ passage = allowed
+   └─ guard
+      ├─ artifacts
+      │   └─ 1.vision.v1.md
+      ├─ reviews
+      │   └─ r1: reviewer/architect (l1, 1/∞)
+      │       ├─ rejected 9.1s
+      │       ├─ 0 blockers ✓
+      │       ├─ 1 nitpick 🟠
+      │       ├─ tallied by reviewer@fireworks/deepseek/v4-flash
+      │       └─ given: .route/1.vision.guard.review.i1.abc123.r1.md
+      └─ judges
+          └─ j1: reviewed?
+              └─ finished 0.8s ✓"
+`;
+
 exports[`formatReviewsMeterLines given: [case1] unique slugs via standardization — slug-based lookup when: [t0] reviewers have unique slugs (standardized at parse time) then: each reviewer shows its own blockers/path via slug lookup 1`] = `
 [
   "    ├─ r1: $rhx.1 (l1, 13/∞)",

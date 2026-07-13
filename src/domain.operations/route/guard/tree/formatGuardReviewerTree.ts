@@ -1,3 +1,5 @@
+import { FIXED_FALLBACK_BRAIN } from '../../genReviewBrainSupply';
+import { TALLIED_FOOTER_PREFIX } from '../review/getReviewTacticFromContent';
 import {
   getRouteGuardReviewPeerPathTaken,
   isRouteGuardReviewPeerGivenPath,
@@ -42,6 +44,12 @@ export interface ReviewerTreeState {
         nitpicks: number;
         path: string;
         cached: boolean;
+        /**
+         * which tallier produced the tally — drives the `tallied by reviewer@$brain` branch:
+         * 'probabilistic' shows the branch (a sub-brain tallied the prose), 'deterministic'
+         * shows none (counts read verbatim). the branch's presence IS the observability signal.
+         */
+        tallier: 'deterministic' | 'probabilistic';
       }
     | {
         type: 'malfunction';
@@ -143,6 +151,14 @@ export const formatGuardReviewerTree = (input: {
       detailLines.push(`${state.nitpicks} ${nitpicksLabel} 🟠`);
     } else {
       detailLines.push(`0 ${nitpicksLabel} ✓`);
+    }
+
+    // tallied-by line: ONLY when a sub-brain tallied the prose (probabilistic fallback).
+    // .why = the deterministic path shows no branch (the silent common case), so the branch's
+    //        presence is the whole signal — a human sees exactly when a count came from the
+    //        fallback, and which brain tallied it. see rule.forbid.surprises.
+    if (state.tallier === 'probabilistic') {
+      detailLines.push(`${TALLIED_FOOTER_PREFIX}${FIXED_FALLBACK_BRAIN}`);
     }
 
     // path line: always show

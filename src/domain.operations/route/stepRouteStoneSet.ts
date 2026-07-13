@@ -5,6 +5,7 @@ import { getGuardSelfReviews } from '@src/domain.objects/Driver/RouteStoneGuard'
 
 import { delDriveBlockerState } from './drive/delDriveBlockerState';
 import { formatRouteStoneEmit } from './formatRouteStoneEmit';
+import type { ContextReviewBrainSupply } from './genReviewBrainSupply';
 import { computeStoneReviewInputHash } from './guard/review/computeStoneReviewInputHash';
 import { computePromisedReviewCount } from './guard/review/self/computePromisedReviewCount';
 import { findNextUnpromisedReview } from './guard/review/self/findNextUnpromisedReview';
@@ -47,7 +48,7 @@ export const stepRouteStoneSet = async (
     that?: string;
     yield?: 'keep' | 'drop';
   },
-  context: ContextCliEmit & { isTTY: boolean },
+  context: ContextCliEmit & ContextReviewBrainSupply & { isTTY: boolean },
 ): Promise<{
   passed?: boolean;
   approved?: boolean;

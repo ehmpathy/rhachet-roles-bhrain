@@ -7,7 +7,8 @@ import { RouteStoneGuardReviewArtifact } from '@src/domain.objects/Driver/RouteS
 
 import { getDurationMsFromContent } from '../../getDurationMsFromContent';
 import { getExitCodeClass } from '../../getExitCodeClass';
-import { getReviewCountsFromContent } from '../getReviewCountsFromContent';
+import { getReviewCountsViaRegex } from '../getReviewCountsViaRegex';
+import { getReviewTacticFromContent } from '../getReviewTacticFromContent';
 import { enumRouteGuardReviewPeerFiles } from './enumRouteGuardReviewPeerFiles';
 
 /**
@@ -79,8 +80,14 @@ export const getLatestReviewArtifactForIndex = async (input: {
     );
   const hash = hashMatch[1];
 
-  // parse blockers and nitpicks from stdout
-  const counts = getReviewCountsFromContent({ content });
+  // parse blockers and nitpicks from stdout — undetected reviews reconstruct as 0/0
+  const counts = getReviewCountsViaRegex({ content });
+  const blockers = counts.detected ? counts.blockers : 0;
+  const nitpicks = counts.detected ? counts.nitpicks : 0;
+
+  // recover which tallier produced the count from the persisted footer (shared parse). the
+  // computed value is the internal tactic; it lands on the contract `tallier` field below.
+  const tactic = getReviewTacticFromContent({ content });
 
   // parse duration from content via shared operation
   const durationMs = getDurationMsFromContent({ content });
@@ -101,8 +108,9 @@ export const getLatestReviewArtifactForIndex = async (input: {
     iteration: latestIteration,
     index: input.index,
     path: latestFile,
-    blockers: counts.blockers,
-    nitpicks: counts.nitpicks,
+    blockers,
+    nitpicks,
+    tallier: tactic,
     exitCode,
     exitClass,
     stdout,

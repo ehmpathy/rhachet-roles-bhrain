@@ -1,0 +1,8 @@
+{
+  "name": "route-peer-measurement-fixture",
+  "private": true,
+  "description": "fixture for the peer-measurement cascade journey acceptance test",
+  "dependencies": {
+    "rhachet-roles-bhrain": "link:."
+  }
+}

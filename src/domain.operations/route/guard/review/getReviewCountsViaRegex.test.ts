@@ -1,8 +1,8 @@
 import { given, then, when } from 'test-fns';
 
-import { getReviewCountsFromContent } from './getReviewCountsFromContent';
+import { getReviewCountsViaRegex } from './getReviewCountsViaRegex';
 
-describe('getReviewCountsFromContent', () => {
+describe('getReviewCountsViaRegex', () => {
   given('[case1] tree-bucket format with blockers and nitpicks', () => {
     const content = `├─ stdout
 │  ├─
@@ -32,8 +32,9 @@ describe('getReviewCountsFromContent', () => {
 
     when('[t0] parsed', () => {
       then('extracts correct counts and detects both', () => {
-        const counts = getReviewCountsFromContent({ content });
+        const counts = getReviewCountsViaRegex({ content });
         expect(counts.detected).toBe(true);
+        if (!counts.detected) throw new Error('expected detected');
         expect(counts.blockers).toBe(8);
         expect(counts.nitpicks).toBe(1);
       });
@@ -46,8 +47,9 @@ nitpicks: 5`;
 
     when('[t0] parsed', () => {
       then('extracts correct counts and detects both', () => {
-        const counts = getReviewCountsFromContent({ content });
+        const counts = getReviewCountsViaRegex({ content });
         expect(counts.detected).toBe(true);
+        if (!counts.detected) throw new Error('expected detected');
         expect(counts.blockers).toBe(3);
         expect(counts.nitpicks).toBe(5);
       });
@@ -59,8 +61,9 @@ nitpicks: 5`;
 
     when('[t0] parsed', () => {
       then('extracts correct counts and detects both', () => {
-        const counts = getReviewCountsFromContent({ content });
+        const counts = getReviewCountsViaRegex({ content });
         expect(counts.detected).toBe(true);
+        if (!counts.detected) throw new Error('expected detected');
         expect(counts.blockers).toBe(12);
         expect(counts.nitpicks).toBe(4);
       });
@@ -72,7 +75,7 @@ nitpicks: 5`;
 
     when('[t0] parsed', () => {
       then('is undetected (must not silently read as zero)', () => {
-        const counts = getReviewCountsFromContent({ content });
+        const counts = getReviewCountsViaRegex({ content });
         expect(counts.detected).toBe(false);
       });
     });
@@ -84,8 +87,9 @@ nitpicks: 5`;
 
     when('[t0] parsed', () => {
       then('extracts correct counts and detects both', () => {
-        const counts = getReviewCountsFromContent({ content });
+        const counts = getReviewCountsViaRegex({ content });
         expect(counts.detected).toBe(true);
+        if (!counts.detected) throw new Error('expected detected');
         expect(counts.blockers).toBe(1);
         expect(counts.nitpicks).toBe(0);
       });
@@ -98,8 +102,9 @@ nitpicks: 5`;
 
     when('[t0] parsed', () => {
       then('detects both as a clean review', () => {
-        const counts = getReviewCountsFromContent({ content });
+        const counts = getReviewCountsViaRegex({ content });
         expect(counts.detected).toBe(true);
+        if (!counts.detected) throw new Error('expected detected');
         expect(counts.blockers).toBe(0);
         expect(counts.nitpicks).toBe(0);
       });
@@ -111,7 +116,7 @@ nitpicks: 5`;
 
     when('[t0] parsed', () => {
       then('is undetected (nitpicks dimension absent)', () => {
-        const counts = getReviewCountsFromContent({ content });
+        const counts = getReviewCountsViaRegex({ content });
         expect(counts.detected).toBe(false);
       });
     });
@@ -122,7 +127,7 @@ nitpicks: 5`;
 
     when('[t0] parsed', () => {
       then('is undetected (blockers dimension absent)', () => {
-        const counts = getReviewCountsFromContent({ content });
+        const counts = getReviewCountsViaRegex({ content });
         expect(counts.detected).toBe(false);
       });
     });
@@ -134,7 +139,7 @@ nitpicks = none`;
 
     when('[t0] parsed', () => {
       then('is undetected (numbers-only contract)', () => {
-        const counts = getReviewCountsFromContent({ content });
+        const counts = getReviewCountsViaRegex({ content });
         expect(counts.detected).toBe(false);
       });
     });
@@ -145,7 +150,7 @@ nitpicks = none`;
 
     when('[t0] parsed', () => {
       then('is undetected', () => {
-        const counts = getReviewCountsFromContent({ content });
+        const counts = getReviewCountsViaRegex({ content });
         expect(counts.detected).toBe(false);
       });
     });
@@ -164,8 +169,9 @@ nitpicks = none`;
         then(
           'takes the last declaration, not the incidental first mention',
           () => {
-            const counts = getReviewCountsFromContent({ content });
+            const counts = getReviewCountsViaRegex({ content });
             expect(counts.detected).toBe(true);
+            if (!counts.detected) throw new Error('expected detected');
             expect(counts.blockers).toBe(0);
             expect(counts.nitpicks).toBe(0);
           },

@@ -99,3 +99,12 @@ exports[`formatGuardReviewerTree given: [case13] finished PEER reviewer renders 
     ├─ given: .reviews/peer/1.execute._.review.i001.a1b2c3.r001._.given.by_peer.architect.md
     └─ taken: .reviews/peer/1.execute._.review.i001.a1b2c3.r001._.taken.by_self.architect.md"
 `;
+
+exports[`formatGuardReviewerTree given: [case13] probabilistic reviewer shows the tallied-by branch when: [t0] formatted then: output shows a tallied-by branch that names the fallback brain 1`] = `
+"└─ r2: peer/architect (l1, 1/∞)
+    ├─ approved 9.1s
+    ├─ 0 blockers ✓
+    ├─ 1 nitpick 🟠
+    ├─ tallied by reviewer@fireworks/deepseek/v4-flash
+    └─ given: .route/5.1.execution.guard.review.i1.abc123.r1.md"
+`;

@@ -135,7 +135,7 @@ exports[`driver.route.overrule.acceptance given: [case10] overrule bypasses revi
    │  │   └─ $route/1.feature*.md
    │  ├─ reviews
    │  │   └─ r1: bash (l1, 0/∞)
-   │  │       ├─ constraint 0.0s
+   │  │       ├─ constraint [TIME]
    │  │       ├─ 0 blockers ✓
    │  │       ├─ 0 nitpicks ✓
    │  │       ├─ given: .reviews/peer/1.feature._.review.i002.d6ef1aa3fad755e23c.r001._.given.by_peer.bash.md
@@ -197,7 +197,7 @@ exports[`driver.route.overrule.acceptance given: [case12] forced bypasses review
    │  │   └─ $route/1.feature*.md
    │  ├─ reviews
    │  │   └─ r1: bash (l1, 0/∞)
-   │  │       ├─ constraint 0.0s
+   │  │       ├─ constraint [TIME]
    │  │       ├─ 0 blockers ✓
    │  │       ├─ 0 nitpicks ✓
    │  │       ├─ given: .reviews/peer/1.feature._.review.i001.d6ef1aa3fad755e23c.r001._.given.by_peer.bash.md
@@ -339,7 +339,7 @@ exports[`driver.route.overrule.acceptance given: [case14] tier escalation: L1 co
       │   └─ $route/1.feature*.md
       ├─ reviews
       │   ├─ r1: basic-checker (l1, 0/5)
-      │   │   ├─ constraint 0.0s
+      │   │   ├─ constraint [TIME]
       │   │   ├─ 0 blockers ✓
       │   │   ├─ 0 nitpicks ✓
       │   │   ├─ given: .reviews/peer/1.feature._.review.i001.bf3993d1d36b238918.r001._.given.by_peer.basic-checker.md
@@ -391,7 +391,7 @@ exports[`driver.route.overrule.acceptance given: [case14] tier escalation: L1 co
    │  │   └─ $route/1.feature*.md
    │  ├─ reviews
    │  │   ├─ r1: basic-checker (l1, 0/5)
-   │  │   │   ├─ constraint 0.0s
+   │  │   │   ├─ constraint [TIME]
    │  │   │   ├─ 0 blockers ✓
    │  │   │   ├─ 0 nitpicks ✓
    │  │   │   ├─ given: .reviews/peer/1.feature._.review.i002.bf3993d1d36b238918.r001._.given.by_peer.basic-checker.md

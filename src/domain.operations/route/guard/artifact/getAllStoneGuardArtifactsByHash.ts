@@ -9,7 +9,8 @@ import { RouteStoneGuardReviewArtifact } from '@src/domain.objects/Driver/RouteS
 import { getDurationMsFromContent } from '../getDurationMsFromContent';
 import { getExitCodeClass } from '../getExitCodeClass';
 import { enumRouteGuardJudgeFiles } from '../judge/enumRouteGuardJudgeFiles';
-import { getReviewCountsFromContent } from '../review/getReviewCountsFromContent';
+import { getReviewCountsViaRegex } from '../review/getReviewCountsViaRegex';
+import { getReviewTacticFromContent } from '../review/getReviewTacticFromContent';
 import { enumRouteGuardReviewPeerFiles } from '../review/peer/enumRouteGuardReviewPeerFiles';
 
 /**
@@ -57,6 +58,7 @@ export const getAllStoneGuardArtifactsByHash = async (input: {
         path: filePath,
         blockers: parsed.blockers,
         nitpicks: parsed.nitpicks,
+        tallier: parsed.tallier,
         exitCode: parsed.exitCode,
         exitClass: parsed.exitClass,
         stdout: parsed.stdout,
@@ -103,6 +105,7 @@ const parseReviewMetadata = (
   index: number;
   blockers: number;
   nitpicks: number;
+  tallier: 'deterministic' | 'probabilistic' | null;
   exitCode: number;
   exitClass: 'passed' | 'constraint' | 'malfunction';
   stdout: string;
@@ -137,10 +140,14 @@ const parseReviewMetadata = (
     );
   const index = parseInt(indexMatch[1], 10);
 
-  // parse blockers and nitpicks from content
-  const counts = getReviewCountsFromContent({ content });
-  const blockers = counts.blockers;
-  const nitpicks = counts.nitpicks;
+  // parse blockers and nitpicks from content — undetected reviews reconstruct as 0/0
+  const counts = getReviewCountsViaRegex({ content });
+  const blockers = counts.detected ? counts.blockers : 0;
+  const nitpicks = counts.detected ? counts.nitpicks : 0;
+
+  // recover which tallier produced the count from the persisted footer (shared parse). the
+  // computed value is the internal tactic; it lands on the contract `tallier` field below.
+  const tactic = getReviewTacticFromContent({ content });
 
   // parse duration from content via shared operation
   const durationMs = getDurationMsFromContent({ content });
@@ -158,6 +165,7 @@ const parseReviewMetadata = (
     index,
     blockers,
     nitpicks,
+    tallier: tactic,
     exitCode,
     exitClass,
     stdout,

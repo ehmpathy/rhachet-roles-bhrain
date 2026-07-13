@@ -15,6 +15,15 @@ const FRAMES = ['⠋', '⠙', '⠹', '⠸', '⠼', '⠴', '⠦', '⠧', '⠇', '
 const SPIN_MS = 80;
 
 /**
+ * .what = the tallier a live-progress reviewer row defaults to
+ * .why = live progress events predate the persisted `tallied` footer, so they cannot know a
+ *        reviewer's real tallier — the `tallied by reviewer@…` marker only appears in the FINAL
+ *        guard tree (formatGuardTree, from artifacts). one shared default keeps the three
+ *        in-flight/legacy build sites in lockstep (rule.forbid.duplicate-format-tree-operations).
+ */
+const DEFAULT_TALLIER_FOR_INFLIGHT = 'deterministic' as const;
+
+/**
  * .what = creates a ContextCliEmit that drives stderr progress output as tree
  * .why = enables live feedback via spinner under owl header as guards execute
  */
@@ -386,6 +395,7 @@ const asReviewerTreeState = (
         nitpicks: review.nitpicks,
         path: path ?? '',
         cached: false,
+        tallier: DEFAULT_TALLIER_FOR_INFLIGHT,
       },
     };
   }
@@ -437,6 +447,7 @@ const asReviewerTreeState = (
         nitpicks: review.nitpicks,
         path: path ?? '',
         cached: false,
+        tallier: DEFAULT_TALLIER_FOR_INFLIGHT,
       },
     };
   }
@@ -456,6 +467,7 @@ const asReviewerTreeState = (
       nitpicks: 0,
       path: path ?? '',
       cached: false,
+      tallier: DEFAULT_TALLIER_FOR_INFLIGHT,
     },
   };
 };

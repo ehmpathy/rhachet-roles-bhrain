@@ -144,6 +144,30 @@ exports[`formatRouteStoneEmit given: [case5] guarded stone, passage blocked when
               └─ reason: blockers exceed threshold"
 `;
 
+exports[`formatRouteStoneEmit given: [case5b] guarded stone, a review tallied by the sub-brain fallback when: [t0] format is called with a probabilistic review then: snapshot matches 1`] = `
+"🦉 the way speaks for itself
+
+🗿 route.stone.set
+   ├─ stone = 3.blueprint
+   ├─ passage = allowed
+   ├─ guard
+   │  ├─ artifacts
+   │  │   └─ 3.blueprint.md
+   │  ├─ reviews
+   │  │   └─ r1: review (l1, 1/∞)
+   │  │       ├─ rejected 1.5s
+   │  │       ├─ 0 blockers ✓
+   │  │       ├─ 1 nitpick 🟠
+   │  │       ├─ tallied by reviewer@fireworks/deepseek/v4-flash
+   │  │       └─ given: review.md
+   │  └─ judges
+   │      └─ j1: judge cmd
+   │          └─ finished 0.5s ✓
+   │
+   └─ the way continues, run
+      └─ rhx route.drive"
+`;
+
 exports[`formatRouteStoneEmit given: [case6] blocked action (agent tried to approve) when: [t0] format is called with blocked action then: snapshot matches 1`] = `
 "🦉 the way speaks for itself
 

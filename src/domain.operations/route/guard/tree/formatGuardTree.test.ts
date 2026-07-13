@@ -25,6 +25,7 @@ describe('formatGuardTree', () => {
                   nitpicks: 0,
                   path: '.route/1.vision.guard.review.i1.abc123.r1.md',
                   exitClass: 'passed',
+                  tallier: null,
                 },
                 {
                   index: 2,
@@ -35,6 +36,7 @@ describe('formatGuardTree', () => {
                   nitpicks: 1,
                   path: '.route/1.vision.guard.review.i1.abc123.r2.md',
                   exitClass: 'passed',
+                  tallier: null,
                 },
               ],
               judges: [
@@ -85,6 +87,7 @@ describe('formatGuardTree', () => {
                   nitpicks: 0,
                   path: '.route/3.1.research.domain.guard.review.i1.abc123.r1.md',
                   exitClass: 'passed',
+                  tallier: null,
                 },
               ],
               judges: [
@@ -136,6 +139,7 @@ describe('formatGuardTree', () => {
                   nitpicks: 0,
                   path: '.route/1.vision.guard.review.i1.abc123.r1.md',
                   exitClass: 'passed',
+                  tallier: null,
                 },
                 {
                   index: 2,
@@ -146,6 +150,7 @@ describe('formatGuardTree', () => {
                   nitpicks: 2,
                   path: '.route/1.vision.guard.review.i1.abc123.r2.md',
                   exitClass: 'passed',
+                  tallier: null,
                 },
               ],
               judges: [
@@ -190,6 +195,7 @@ describe('formatGuardTree', () => {
                 nitpicks: 0,
                 path: '.route/1.vision.guard.review.i1.abc123.r1.md',
                 exitClass: 'passed',
+                tallier: null,
               },
             ],
             judges: [
@@ -276,6 +282,7 @@ describe('formatGuardTree', () => {
                 nitpicks: 0,
                 path: '.route/3.1.research.domain.guard.review.i1.abc123.r1.md',
                 exitClass: 'passed',
+                tallier: null,
               },
             ],
             judges: [
@@ -319,6 +326,7 @@ describe('formatGuardTree', () => {
                 nitpicks: 2,
                 path: '.route/1.vision.guard.review.i1.abc123.r1.md',
                 exitClass: 'passed',
+                tallier: null,
               },
             ],
             judges: [
@@ -363,6 +371,7 @@ describe('formatGuardTree', () => {
                   nitpicks: 1,
                   path: '.route/1.vision.guard.review.i1.abc123.r1.md',
                   exitClass: 'passed',
+                  tallier: null,
                 },
               ],
               judges: [
@@ -408,6 +417,7 @@ describe('formatGuardTree', () => {
                   nitpicks: 0,
                   path: '.route/1.vision.guard.review.i1.abc123.r1.md',
                   exitClass: 'passed',
+                  tallier: null,
                 },
               ],
               judges: [
@@ -451,6 +461,7 @@ describe('formatGuardTree', () => {
                 nitpicks: 0,
                 path: '.route/1.vision.guard.review.i1.abc123.r1.md',
                 exitClass: 'passed',
+                tallier: null,
               },
             ],
             judges: [
@@ -512,6 +523,7 @@ describe('formatGuardTree', () => {
                   nitpicks: 0,
                   path: '.route/5.1.execute.guard.review.i1.abc123.r1.md',
                   exitClass: 'passed',
+                  tallier: null,
                 },
               ],
               judges: [
@@ -563,6 +575,7 @@ describe('formatGuardTree', () => {
                   nitpicks: 0,
                   path: '.route/5.5.playtest.guard.review.i1.abc123.r3.md',
                   exitClass: 'passed',
+                  tallier: null,
                   peer: { slug: 'slow-fail', level: 2, rounds: 2, budget: 2 },
                 },
               ],
@@ -639,6 +652,7 @@ describe('formatGuardTree', () => {
                   nitpicks: 0,
                   path: '.route/5.5.playtest.guard.review.i1.abc123.r1.md',
                   exitClass: 'passed',
+                  tallier: null,
                   peer: { slug: 'quick-pass', level: 1, rounds: 1, budget: 1 },
                 },
               ],
@@ -744,6 +758,7 @@ describe('formatGuardTree', () => {
                     nitpicks: 0,
                     path: '.route/5.3.verification.guard.review.i3.abc123.r1.md',
                     exitClass: 'passed',
+                    tallier: null,
                     peer: {
                       slug: '$rhx.1',
                       level: 1,
@@ -760,6 +775,7 @@ describe('formatGuardTree', () => {
                     nitpicks: 0,
                     path: '.route/5.3.verification.guard.review.i3.abc123.r2.md',
                     exitClass: 'passed',
+                    tallier: null,
                     peer: {
                       slug: '$rhx.2',
                       level: 1,
@@ -776,6 +792,7 @@ describe('formatGuardTree', () => {
                     nitpicks: 0,
                     path: '.route/5.3.verification.guard.review.i3.abc123.r6.md',
                     exitClass: 'passed',
+                    tallier: null,
                     peer: {
                       slug: '$rhx.3',
                       level: 1,
@@ -860,6 +877,7 @@ describe('formatGuardTree', () => {
                 nitpicks: 0,
                 path: '.route/1.feature.guard.review.i1.abc123.r1.md',
                 exitClass: 'malfunction',
+                tallier: null,
               },
             ],
             judges: [],
@@ -898,6 +916,7 @@ describe('formatGuardTree', () => {
                 nitpicks: 0,
                 path: '.route/1.feature.guard.review.i1.abc123.r1.md',
                 exitClass: 'constraint',
+                tallier: null,
               },
             ],
             judges: [],
@@ -998,6 +1017,7 @@ describe('formatReviewsMeterLines', () => {
                     blockers: 1,
                     nitpicks: 0,
                     exitClass: 'passed',
+                    tallier: null,
                   },
                   cmd: '$rhx --rules r1.md',
                   cached: false,
@@ -1016,6 +1036,7 @@ describe('formatReviewsMeterLines', () => {
                     blockers: 0,
                     nitpicks: 0,
                     exitClass: 'passed',
+                    tallier: null,
                   },
                   cmd: '$rhx --rules r2.md',
                   cached: false,
@@ -1034,6 +1055,7 @@ describe('formatReviewsMeterLines', () => {
                     blockers: 0,
                     nitpicks: 0,
                     exitClass: 'passed',
+                    tallier: null,
                   },
                   cmd: '$rhx --rules r6.md',
                   cached: false,
@@ -1070,4 +1092,130 @@ describe('formatReviewsMeterLines', () => {
       },
     );
   });
+
+  given(
+    '[case-tactic] the read-out sources tactic onto the finished state',
+    () => {
+      when('[t0] a review carries tactic=probabilistic', () => {
+        then('the full guard tree shows the tallied-by branch', () => {
+          const result = formatGuardTree({
+            stone: '1.vision',
+            passage: 'allowed',
+            note: null,
+            reason: null,
+            guard: {
+              artifactFiles: ['1.vision.v1.md'],
+              reviews: [
+                {
+                  index: 1,
+                  cmd: 'reviewer/architect',
+                  cached: false,
+                  durationSec: 9.1,
+                  blockers: 0,
+                  nitpicks: 1,
+                  path: '.route/1.vision.guard.review.i1.abc123.r1.md',
+                  exitClass: 'passed',
+                  tallier: 'probabilistic',
+                },
+              ],
+              judges: [
+                {
+                  index: 1,
+                  cmd: 'reviewed?',
+                  cached: false,
+                  durationSec: 0.8,
+                  passed: true,
+                  reason: 'reviews pass',
+                  path: '.route/1.vision.guard.judge.i1p1.abc123.def456.j1.md',
+                },
+              ],
+            },
+          });
+          expect(result).toContain('tallied by reviewer@');
+          expect(result).toMatchSnapshot();
+        });
+      });
+
+      when('[t1] a review carries tactic=deterministic', () => {
+        then('the full guard tree shows NO tallied-by branch', () => {
+          const result = formatGuardTree({
+            stone: '1.vision',
+            passage: 'allowed',
+            note: null,
+            reason: null,
+            guard: {
+              artifactFiles: ['1.vision.v1.md'],
+              reviews: [
+                {
+                  index: 1,
+                  cmd: 'reviewer/mechanic',
+                  cached: false,
+                  durationSec: 12.4,
+                  blockers: 0,
+                  nitpicks: 2,
+                  path: '.route/1.vision.guard.review.i1.abc123.r1.md',
+                  exitClass: 'passed',
+                  tallier: 'deterministic',
+                },
+              ],
+              judges: [
+                {
+                  index: 1,
+                  cmd: 'reviewed?',
+                  cached: false,
+                  durationSec: 0.8,
+                  passed: true,
+                  reason: 'reviews pass',
+                  path: '.route/1.vision.guard.judge.i1p1.abc123.def456.j1.md',
+                },
+              ],
+            },
+          });
+          expect(result).not.toContain('tallied by reviewer@');
+        });
+      });
+
+      when('[t2] a review carries tactic=null (pre-fallback record)', () => {
+        then(
+          'the read-out defaults to deterministic — no tallied-by branch',
+          () => {
+            const result = formatGuardTree({
+              stone: '1.vision',
+              passage: 'allowed',
+              note: null,
+              reason: null,
+              guard: {
+                artifactFiles: ['1.vision.v1.md'],
+                reviews: [
+                  {
+                    index: 1,
+                    cmd: 'reviewer/mechanic',
+                    cached: false,
+                    durationSec: 12.4,
+                    blockers: 0,
+                    nitpicks: 0,
+                    path: '.route/1.vision.guard.review.i1.abc123.r1.md',
+                    exitClass: 'passed',
+                    tallier: null,
+                  },
+                ],
+                judges: [
+                  {
+                    index: 1,
+                    cmd: 'reviewed?',
+                    cached: false,
+                    durationSec: 0.8,
+                    passed: true,
+                    reason: 'reviews pass',
+                    path: '.route/1.vision.guard.judge.i1p1.abc123.def456.j1.md',
+                  },
+                ],
+              },
+            });
+            expect(result).not.toContain('tallied by reviewer@');
+          },
+        );
+      });
+    },
+  );
 });
