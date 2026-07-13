@@ -22,7 +22,10 @@ exports[`driver.route.conversation-visibility.acceptance given: [case1] a prior 
 │  └─
 └─ passage blocked
    ├─ blocked by malfunction
-   └─ exit code: 1 💥"
+   └─ exit code: 1 💥
+└─ tallied
+   ├─ 1 blocker
+   └─ 0 nitpicks"
 `;
 
 exports[`driver.route.conversation-visibility.acceptance given: [case1] a prior round with a FIXED .taken, two reviewers when: [t0] driver attempts --as passed, guard re-runs both reviewers then: seer given matches snapshot 1`] = `
@@ -45,7 +48,10 @@ exports[`driver.route.conversation-visibility.acceptance given: [case1] a prior 
 ├─ stderr
 │  ├─
 │  │
-│  └─"
+│  └─
+└─ tallied
+   ├─ 0 blockers
+   └─ 0 nitpicks"
 `;
 
 exports[`driver.route.conversation-visibility.acceptance given: [case2] a first round with no prior generation when: [t0] driver attempts --as passed with no prior conversation then: stdout matches snapshot 1`] = `
