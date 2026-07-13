@@ -43,7 +43,7 @@ exports[`driver.route.set.acceptance given: [case3] route.stone.set --as passed 
 "🦉 the way speaks for itself
    │
    ├─ r1: echo (l1, 1/∞)
-   │   ├─ approved [TIME]
+   │   ├─ rejected [TIME]
    │   ├─ 0 blockers ✓
    │   ├─ 1 nitpick 🟠
    │   ├─ given: .reviews/peer/1.test._.review.i001.35e3128f097925a158.r001._.given.by_peer.echo.md
@@ -169,7 +169,7 @@ exports[`driver.route.set.acceptance given: [case7] route.stone.set --as passed 
 "🦉 the way speaks for itself
    │
    ├─ r1: echo (l1, 1/∞)
-   │   ├─ approved, cached
+   │   ├─ rejected, cached
    │   ├─ 0 blockers ✓
    │   ├─ 1 nitpick 🟠
    │   ├─ given: .reviews/peer/1.test._.review.i001.faa07cdc907435dee8.r001._.given.by_peer.echo.md
