@@ -23,16 +23,12 @@ options:
   --help              show this help message
 
 🔭 available brains
-   ├── ○ xai/grok/3
-   ├── ○ xai/grok/4
    ├── ↻ openai/codex
    ├── ○ openai/gpt/4o
-   ├── ○ xai/grok/3-mini
    ├── ○ fireworks/glm/5.2
    ├── ○ fireworks/glm/5.1
    ├── ○ fireworks/kimi/k2.6
    ├── ○ fireworks/minimax/m3
-   ├── ○ xai/grok/code-fast-1
    ├── ○ anthropic/claude/opus
    ├── ○ fireworks/minimax/2.7
    ├── ○ fireworks/gpt-oss/20b
@@ -44,6 +40,8 @@ options:
    ├── ○ fireworks/kimi/k2.7-code
    ├── ○ fireworks/deepseek/v4-pro
    ├── ↻ anthropic/claude/code/opus
-   └── (and 7 more)
+   ├── ○ fireworks/deepseek/v4-flash
+   ├── ↻ anthropic/claude/code/haiku
+   └── ↻ anthropic/claude/code/sonnet
 "
 `;
