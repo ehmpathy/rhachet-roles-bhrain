@@ -55,7 +55,8 @@ exports[`formatRouteStoneEmit given: [case1] challenge:absent action when: [t0] 
    ├─ walk the way 🪷
    │  │
    │  ├─ articulate into
-   │  │  └─ .behavior/v2026_03_08.feature/review/self/for.3.1.blueprint._.r1.design.md
+   │  │  ├─ .behavior/v2026_03_08.feature/review/self/for.3.1.blueprint._.r1.design.md
+   │  │  └─ the guard looks precisely here, write exactly to this path
    │  │
    │  ├─ for each found issue 🪘
    │  │  ├─
@@ -112,7 +113,7 @@ exports[`formatRouteStoneEmit given: [case4] guarded stone, passage allowed when
    │  │       ├─ approved 1.5s
    │  │       ├─ 0 blockers ✓
    │  │       ├─ 0 nitpicks ✓
-   │  │       └─ review: review.md
+   │  │       └─ given: review.md
    │  └─ judges
    │      └─ j1: judge cmd
    │          └─ finished 0.5s ✓
@@ -136,7 +137,7 @@ exports[`formatRouteStoneEmit given: [case5] guarded stone, passage blocked when
       │       ├─ rejected 1.5s
       │       ├─ 3 blockers 🔴
       │       ├─ 1 nitpick 🟠
-      │       └─ review: review.md
+      │       └─ given: review.md
       └─ judges
           └─ j1: judge cmd
               ├─ finished 0.5s ✗

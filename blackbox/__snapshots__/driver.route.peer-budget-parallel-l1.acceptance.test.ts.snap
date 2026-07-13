@@ -7,13 +7,15 @@ exports[`driver.route.peer-budget-parallel-l1.acceptance given: [journey] parall
    │   ├─ rejected [TIME]
    │   ├─ 1 blocker 🔴
    │   ├─ 0 nitpicks ✓
-   │   └─ review: .reviews/peer/1.vision._.review.i1.8739656801d5e77f22.r1._.given.by_peer.alpha-checker.md
+   │   ├─ given: .reviews/peer/1.vision._.review.i001.8739656801d5e77f22.r001._.given.by_peer.alpha-checker.md
+   │   └─ taken: .reviews/peer/1.vision._.review.i001.8739656801d5e77f22.r001._.taken.by_self.alpha-checker.md
    │
    ├─ r2: beta-checker (l1, 1/5)
    │   ├─ rejected [TIME]
    │   ├─ 1 blocker 🔴
    │   ├─ 0 nitpicks ✓
-   │   └─ review: .reviews/peer/1.vision._.review.i1.8739656801d5e77f22.r2._.given.by_peer.beta-checker.md
+   │   ├─ given: .reviews/peer/1.vision._.review.i001.8739656801d5e77f22.r002._.given.by_peer.beta-checker.md
+   │   └─ taken: .reviews/peer/1.vision._.review.i001.8739656801d5e77f22.r002._.taken.by_self.beta-checker.md
    │
    ├─ r3: final-checker (l2, 0/5)
    │   └─ awaits arrival
@@ -32,12 +34,14 @@ exports[`driver.route.peer-budget-parallel-l1.acceptance given: [journey] parall
       │   │   ├─ rejected [TIME]
       │   │   ├─ 1 blocker 🔴
       │   │   ├─ 0 nitpicks ✓
-      │   │   └─ review: .reviews/peer/1.vision._.review.i1.8739656801d5e77f22.r1._.given.by_peer.alpha-checker.md
+      │   │   ├─ given: .reviews/peer/1.vision._.review.i001.8739656801d5e77f22.r001._.given.by_peer.alpha-checker.md
+      │   │   └─ taken: .reviews/peer/1.vision._.review.i001.8739656801d5e77f22.r001._.taken.by_self.alpha-checker.md
       │   ├─ r2: beta-checker (l1, 1/5)
       │   │   ├─ rejected [TIME]
       │   │   ├─ 1 blocker 🔴
       │   │   ├─ 0 nitpicks ✓
-      │   │   └─ review: .reviews/peer/1.vision._.review.i1.8739656801d5e77f22.r2._.given.by_peer.beta-checker.md
+      │   │   ├─ given: .reviews/peer/1.vision._.review.i001.8739656801d5e77f22.r002._.given.by_peer.beta-checker.md
+      │   │   └─ taken: .reviews/peer/1.vision._.review.i001.8739656801d5e77f22.r002._.taken.by_self.beta-checker.md
       │   └─ r3: final-checker (l2, 0/5)
       │       └─ awaits l1 terminal
       └─ judges
@@ -54,13 +58,15 @@ exports[`driver.route.peer-budget-parallel-l1.acceptance given: [journey] parall
    │   ├─ approved [TIME]
    │   ├─ 0 blockers ✓
    │   ├─ 0 nitpicks ✓
-   │   └─ review: .reviews/peer/1.vision._.review.i2.dfc5faff83ea2fcb55.r1._.given.by_peer.alpha-checker.md
+   │   ├─ given: .reviews/peer/1.vision._.review.i002.dfc5faff83ea2fcb55.r001._.given.by_peer.alpha-checker.md
+   │   └─ taken: .reviews/peer/1.vision._.review.i002.dfc5faff83ea2fcb55.r001._.taken.by_self.alpha-checker.md
    │
    ├─ r2: beta-checker (l1, 2/5)
    │   ├─ rejected [TIME]
    │   ├─ 1 blocker 🔴
    │   ├─ 0 nitpicks ✓
-   │   └─ review: .reviews/peer/1.vision._.review.i2.dfc5faff83ea2fcb55.r2._.given.by_peer.beta-checker.md
+   │   ├─ given: .reviews/peer/1.vision._.review.i002.dfc5faff83ea2fcb55.r002._.given.by_peer.beta-checker.md
+   │   └─ taken: .reviews/peer/1.vision._.review.i002.dfc5faff83ea2fcb55.r002._.taken.by_self.beta-checker.md
    │
    ├─ r3: final-checker (l2, 0/5)
    │   └─ awaits arrival
@@ -79,12 +85,14 @@ exports[`driver.route.peer-budget-parallel-l1.acceptance given: [journey] parall
       │   │   ├─ approved [TIME]
       │   │   ├─ 0 blockers ✓
       │   │   ├─ 0 nitpicks ✓
-      │   │   └─ review: .reviews/peer/1.vision._.review.i2.dfc5faff83ea2fcb55.r1._.given.by_peer.alpha-checker.md
+      │   │   ├─ given: .reviews/peer/1.vision._.review.i002.dfc5faff83ea2fcb55.r001._.given.by_peer.alpha-checker.md
+      │   │   └─ taken: .reviews/peer/1.vision._.review.i002.dfc5faff83ea2fcb55.r001._.taken.by_self.alpha-checker.md
       │   ├─ r2: beta-checker (l1, 2/5)
       │   │   ├─ rejected [TIME]
       │   │   ├─ 1 blocker 🔴
       │   │   ├─ 0 nitpicks ✓
-      │   │   └─ review: .reviews/peer/1.vision._.review.i2.dfc5faff83ea2fcb55.r2._.given.by_peer.beta-checker.md
+      │   │   ├─ given: .reviews/peer/1.vision._.review.i002.dfc5faff83ea2fcb55.r002._.given.by_peer.beta-checker.md
+      │   │   └─ taken: .reviews/peer/1.vision._.review.i002.dfc5faff83ea2fcb55.r002._.taken.by_self.beta-checker.md
       │   └─ r3: final-checker (l2, 0/5)
       │       └─ awaits l1 terminal
       └─ judges
@@ -101,19 +109,22 @@ exports[`driver.route.peer-budget-parallel-l1.acceptance given: [journey] parall
    │   ├─ approved [TIME]
    │   ├─ 0 blockers ✓
    │   ├─ 0 nitpicks ✓
-   │   └─ review: .reviews/peer/1.vision._.review.i3.457fd5ef46e053a35e.r1._.given.by_peer.alpha-checker.md
+   │   ├─ given: .reviews/peer/1.vision._.review.i003.457fd5ef46e053a35e.r001._.given.by_peer.alpha-checker.md
+   │   └─ taken: .reviews/peer/1.vision._.review.i003.457fd5ef46e053a35e.r001._.taken.by_self.alpha-checker.md
    │
    ├─ r2: beta-checker (l1, 3/5)
    │   ├─ approved [TIME]
    │   ├─ 0 blockers ✓
    │   ├─ 0 nitpicks ✓
-   │   └─ review: .reviews/peer/1.vision._.review.i3.457fd5ef46e053a35e.r2._.given.by_peer.beta-checker.md
+   │   ├─ given: .reviews/peer/1.vision._.review.i003.457fd5ef46e053a35e.r002._.given.by_peer.beta-checker.md
+   │   └─ taken: .reviews/peer/1.vision._.review.i003.457fd5ef46e053a35e.r002._.taken.by_self.beta-checker.md
    │
    ├─ r3: final-checker (l2, 1/5)
    │   ├─ rejected [TIME]
    │   ├─ 1 blocker 🔴
    │   ├─ 0 nitpicks ✓
-   │   └─ review: .reviews/peer/1.vision._.review.i3.457fd5ef46e053a35e.r3._.given.by_peer.final-checker.md
+   │   ├─ given: .reviews/peer/1.vision._.review.i003.457fd5ef46e053a35e.r003._.given.by_peer.final-checker.md
+   │   └─ taken: .reviews/peer/1.vision._.review.i003.457fd5ef46e053a35e.r003._.taken.by_self.final-checker.md
    │
    └─ ✗ judge.1 - blocked [TIME]
 
@@ -129,17 +140,20 @@ exports[`driver.route.peer-budget-parallel-l1.acceptance given: [journey] parall
       │   │   ├─ approved [TIME]
       │   │   ├─ 0 blockers ✓
       │   │   ├─ 0 nitpicks ✓
-      │   │   └─ review: .reviews/peer/1.vision._.review.i3.457fd5ef46e053a35e.r1._.given.by_peer.alpha-checker.md
+      │   │   ├─ given: .reviews/peer/1.vision._.review.i003.457fd5ef46e053a35e.r001._.given.by_peer.alpha-checker.md
+      │   │   └─ taken: .reviews/peer/1.vision._.review.i003.457fd5ef46e053a35e.r001._.taken.by_self.alpha-checker.md
       │   ├─ r2: beta-checker (l1, 3/5)
       │   │   ├─ approved [TIME]
       │   │   ├─ 0 blockers ✓
       │   │   ├─ 0 nitpicks ✓
-      │   │   └─ review: .reviews/peer/1.vision._.review.i3.457fd5ef46e053a35e.r2._.given.by_peer.beta-checker.md
+      │   │   ├─ given: .reviews/peer/1.vision._.review.i003.457fd5ef46e053a35e.r002._.given.by_peer.beta-checker.md
+      │   │   └─ taken: .reviews/peer/1.vision._.review.i003.457fd5ef46e053a35e.r002._.taken.by_self.beta-checker.md
       │   └─ r3: final-checker (l2, 1/5)
       │       ├─ rejected [TIME]
       │       ├─ 1 blocker 🔴
       │       ├─ 0 nitpicks ✓
-      │       └─ review: .reviews/peer/1.vision._.review.i3.457fd5ef46e053a35e.r3._.given.by_peer.final-checker.md
+      │       ├─ given: .reviews/peer/1.vision._.review.i003.457fd5ef46e053a35e.r003._.given.by_peer.final-checker.md
+      │       └─ taken: .reviews/peer/1.vision._.review.i003.457fd5ef46e053a35e.r003._.taken.by_self.final-checker.md
       └─ judges
           └─ j1: rhx route.stone.judge --mechanism reviewed? --stone $stone --route $route --allow-blockers 0 --allow-nitpicks 1
               ├─ finished [TIME] ✗
@@ -154,19 +168,22 @@ exports[`driver.route.peer-budget-parallel-l1.acceptance given: [journey] parall
    │   ├─ approved [TIME]
    │   ├─ 0 blockers ✓
    │   ├─ 0 nitpicks ✓
-   │   └─ review: .reviews/peer/1.vision._.review.i4.d1bd0b8547352e6396.r1._.given.by_peer.alpha-checker.md
+   │   ├─ given: .reviews/peer/1.vision._.review.i004.d1bd0b8547352e6396.r001._.given.by_peer.alpha-checker.md
+   │   └─ taken: .reviews/peer/1.vision._.review.i004.d1bd0b8547352e6396.r001._.taken.by_self.alpha-checker.md
    │
    ├─ r2: beta-checker (l1, 4/5)
    │   ├─ approved [TIME]
    │   ├─ 0 blockers ✓
    │   ├─ 0 nitpicks ✓
-   │   └─ review: .reviews/peer/1.vision._.review.i4.d1bd0b8547352e6396.r2._.given.by_peer.beta-checker.md
+   │   ├─ given: .reviews/peer/1.vision._.review.i004.d1bd0b8547352e6396.r002._.given.by_peer.beta-checker.md
+   │   └─ taken: .reviews/peer/1.vision._.review.i004.d1bd0b8547352e6396.r002._.taken.by_self.beta-checker.md
    │
    ├─ r3: final-checker (l2, 2/5)
    │   ├─ approved [TIME]
    │   ├─ 0 blockers ✓
    │   ├─ 0 nitpicks ✓
-   │   └─ review: .reviews/peer/1.vision._.review.i4.d1bd0b8547352e6396.r3._.given.by_peer.final-checker.md
+   │   ├─ given: .reviews/peer/1.vision._.review.i004.d1bd0b8547352e6396.r003._.given.by_peer.final-checker.md
+   │   └─ taken: .reviews/peer/1.vision._.review.i004.d1bd0b8547352e6396.r003._.taken.by_self.final-checker.md
    │
    └─ ✓ judge.1 - allowed [TIME]
 
@@ -181,17 +198,20 @@ exports[`driver.route.peer-budget-parallel-l1.acceptance given: [journey] parall
    │  │   │   ├─ approved [TIME]
    │  │   │   ├─ 0 blockers ✓
    │  │   │   ├─ 0 nitpicks ✓
-   │  │   │   └─ review: .reviews/peer/1.vision._.review.i4.d1bd0b8547352e6396.r1._.given.by_peer.alpha-checker.md
+   │  │   │   ├─ given: .reviews/peer/1.vision._.review.i004.d1bd0b8547352e6396.r001._.given.by_peer.alpha-checker.md
+   │  │   │   └─ taken: .reviews/peer/1.vision._.review.i004.d1bd0b8547352e6396.r001._.taken.by_self.alpha-checker.md
    │  │   ├─ r2: beta-checker (l1, 4/5)
    │  │   │   ├─ approved [TIME]
    │  │   │   ├─ 0 blockers ✓
    │  │   │   ├─ 0 nitpicks ✓
-   │  │   │   └─ review: .reviews/peer/1.vision._.review.i4.d1bd0b8547352e6396.r2._.given.by_peer.beta-checker.md
+   │  │   │   ├─ given: .reviews/peer/1.vision._.review.i004.d1bd0b8547352e6396.r002._.given.by_peer.beta-checker.md
+   │  │   │   └─ taken: .reviews/peer/1.vision._.review.i004.d1bd0b8547352e6396.r002._.taken.by_self.beta-checker.md
    │  │   └─ r3: final-checker (l2, 2/5)
    │  │       ├─ approved [TIME]
    │  │       ├─ 0 blockers ✓
    │  │       ├─ 0 nitpicks ✓
-   │  │       └─ review: .reviews/peer/1.vision._.review.i4.d1bd0b8547352e6396.r3._.given.by_peer.final-checker.md
+   │  │       ├─ given: .reviews/peer/1.vision._.review.i004.d1bd0b8547352e6396.r003._.given.by_peer.final-checker.md
+   │  │       └─ taken: .reviews/peer/1.vision._.review.i004.d1bd0b8547352e6396.r003._.taken.by_self.final-checker.md
    │  └─ judges
    │      └─ j1: rhx route.stone.judge --mechanism reviewed? --stone $stone --route $route --allow-blockers 0 --allow-nitpicks 1
    │          └─ finished [TIME] ✓

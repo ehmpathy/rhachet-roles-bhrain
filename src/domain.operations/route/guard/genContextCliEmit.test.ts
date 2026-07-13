@@ -432,8 +432,8 @@ describe('genContextCliEmit', () => {
       });
     });
 
-    when('[t1] cached judge event', () => {
-      then('outputs cached line with allowed status', () => {
+    when('[t1] cached judge event (outcome-less legacy shape)', () => {
+      then('outputs blank line + cached line with allowed status', () => {
         const mock = genMockStderr({ isTTY: false });
         const { context, done } = genContextCliEmit({ stderr: mock.stream });
 
@@ -448,9 +448,66 @@ describe('genContextCliEmit', () => {
 
         done();
 
-        expect(mock.chunks).toHaveLength(1);
+        // 2 lines: blank separator + judge line (matches completed judge)
+        expect(mock.chunks).toHaveLength(2);
         const combined = mock.chunks.join('');
         expect(combined).toContain('✓ judge.1 - allowed (cached)');
+      });
+    });
+
+    when('[t2] cached judge event with outcome (real cached shape)', () => {
+      then('closes the tree with the allowed cached line', () => {
+        const mock = genMockStderr({ isTTY: false });
+        const { context, done } = genContextCliEmit({ stderr: mock.stream });
+
+        context.cliEmit.onGuardProgress(
+          genEvent({
+            phase: 'judge',
+            index: 0,
+            inflight: null,
+            outcome: {
+              path: '/tmp/.route/1.test.guard.judge.i1p1.abc.def.j1.md',
+              review: null,
+              judge: { decision: 'allowed', reason: 'all checks pass' },
+            },
+          }),
+        );
+
+        done();
+
+        // 2 lines: blank separator + judge line
+        expect(mock.chunks).toHaveLength(2);
+        const combined = mock.chunks.join('');
+        expect(combined).toContain('✓ judge.1 - allowed (cached)');
+      });
+    });
+
+    when('[t3] cached judge event with blocked outcome', () => {
+      then('closes the tree with the blocked cached line', () => {
+        const mock = genMockStderr({ isTTY: false });
+        const { context, done } = genContextCliEmit({ stderr: mock.stream });
+
+        context.cliEmit.onGuardProgress(
+          genEvent({
+            phase: 'judge',
+            index: 0,
+            inflight: null,
+            outcome: {
+              path: '/tmp/.route/1.test.guard.judge.i1p1.abc.def.j1.md',
+              review: null,
+              judge: {
+                decision: 'blocked',
+                reason: 'blockers exceed threshold',
+              },
+            },
+          }),
+        );
+
+        done();
+
+        expect(mock.chunks).toHaveLength(2);
+        const combined = mock.chunks.join('');
+        expect(combined).toContain('✗ judge.1 - blocked (cached)');
       });
     });
   });

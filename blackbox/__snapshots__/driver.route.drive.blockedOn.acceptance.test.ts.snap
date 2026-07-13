@@ -1,0 +1,611 @@
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
+
+exports[`driver.route.drive.blocker.acceptance given: [case1] stone with only approval judge (1.vision) when: [t0] route.drive hook mode before pass attempt then: [t0] output matches snapshot 1`] = `
+{
+  "code": 2,
+  "stderr": "🦉 where were we?
+
+🗿 route.drive
+   ├─ where do we go?
+   │  ├─ route = 
+   │  └─ stone = 1.vision
+   │
+   ├─ are you here?
+   │  ├─ when ready for review, run:
+   │  │  └─ rhx route.stone.set --stone 1.vision --as arrived
+   │  └─ when ready to continue, run:
+   │     └─ rhx route.stone.set --stone 1.vision --as passed
+   │
+   ├─ here's the stone
+   │  ├─
+   │  │
+   │  │  # 1.vision
+   │  │  
+   │  │  illustrate the vision implied in the wish.
+   │  │  
+   │  │  describe:
+   │  │  - the user experience
+   │  │  - the key interactions
+   │  │  - the expected outcomes
+   │  │  
+   │  └─
+   │
+   └─ are you here?
+      ├─ when ready for review, run:
+      │  └─ rhx route.stone.set --stone 1.vision --as arrived
+      └─ when ready to continue, run:
+         └─ rhx route.stone.set --stone 1.vision --as passed
+",
+  "stdout": "🦉 where were we?
+
+🗿 route.drive
+   ├─ where do we go?
+   │  ├─ route = 
+   │  └─ stone = 1.vision
+   │
+   ├─ are you here?
+   │  ├─ when ready for review, run:
+   │  │  └─ rhx route.stone.set --stone 1.vision --as arrived
+   │  └─ when ready to continue, run:
+   │     └─ rhx route.stone.set --stone 1.vision --as passed
+   │
+   ├─ here's the stone
+   │  ├─
+   │  │
+   │  │  # 1.vision
+   │  │  
+   │  │  illustrate the vision implied in the wish.
+   │  │  
+   │  │  describe:
+   │  │  - the user experience
+   │  │  - the key interactions
+   │  │  - the expected outcomes
+   │  │  
+   │  └─
+   │
+   └─ are you here?
+      ├─ when ready for review, run:
+      │  └─ rhx route.stone.set --stone 1.vision --as arrived
+      └─ when ready to continue, run:
+         └─ rhx route.stone.set --stone 1.vision --as passed
+",
+}
+`;
+
+exports[`driver.route.drive.blocker.acceptance given: [case1] stone with only approval judge (1.vision) when: [t1] agent attempts to pass stone (blocked on approval) then: [t1] output matches snapshot 1`] = `
+{
+  "code": 2,
+  "stderr": "
+🪶 judge 1
+   ├─ stdout
+   │  ├─
+   │  │
+   │  │  🪨 run solid skill repo=bhrain/role=driver/skill=route.stone.judge
+   │  │  
+   │  │  passed: false
+   │  │  reason: wait for human approval
+   │  │  
+   │  │  ✋ halted, human approval required
+   │  │     ├─ please ask your human to
+   │  │     │  └─ rhx route.stone.set --stone 1.vision --as approved
+   │  │     │
+   │  │     └─ after human approves, run
+   │  │        └─ rhx route.stone.set --stone 1.vision --as passed
+   │  │
+   │  └─
+   ├─ stderr
+   │  ├─
+   │  │
+   │  │  
+   │  │  🪨 run solid skill repo=bhrain/role=driver/skill=route.stone.judge
+   │  │     └─ ✋ blocked by constraints
+   │  │  
+   │  │
+   │  └─
+   └─ passage blocked
+      ├─ blocked by constraints
+      └─ exit code: 2 ✋
+",
+  "stdout": "🦉 the way speaks for itself
+   │
+   └─ ✗ judge.1 - blocked [TIME]
+
+🗿 route.stone.set
+   ├─ stone = 1.vision
+   ├─ passage = blocked
+   ├─ reason = wait for human approval
+   └─ guard
+      ├─ artifacts
+      │   └─ $route/1.vision*.md
+      └─ judges
+          └─ j1: rhx route.stone.judge --mechanism approved? --stone $stone --route $route
+              ├─ finished [TIME] ✗
+              └─ reason: wait for human approval
+",
+}
+`;
+
+exports[`driver.route.drive.blocker.acceptance given: [case1] stone with only approval judge (1.vision) when: [t2] route.drive hook mode after blocked on approval then: [t2] output matches snapshot 1`] = `
+{
+  "code": 0,
+  "stderr": "",
+  "stdout": "🦉 where were we?
+
+🗿 route.drive
+   ├─ where do we go?
+   │  ├─ route = 
+   │  └─ stone = 1.vision
+   │
+   └─ halted, human approval required
+      ├─ please ask a human to
+      │  └─ rhx route.stone.set --stone 1.vision --as approved
+      │
+      └─ once they do, run
+         └─ rhx route.stone.set --stone 1.vision --as passed
+",
+}
+`;
+
+exports[`driver.route.drive.blocker.acceptance given: [case1] stone with only approval judge (1.vision) when: [t3] human grants approval then: [t3] output matches snapshot 1`] = `
+{
+  "code": 0,
+  "stderr": "",
+  "stdout": "🦉 the way speaks for itself
+
+🗿 route.stone.set
+   ├─ stone = 1.vision
+   └─ ✓ approved
+",
+}
+`;
+
+exports[`driver.route.drive.blocker.acceptance given: [case1] stone with only approval judge (1.vision) when: [t4] agent passes stone after approval then: [t4] output matches snapshot 1`] = `
+{
+  "code": 0,
+  "stderr": "",
+  "stdout": "🦉 the way speaks for itself
+   │
+   └─ ✓ judge.1 - allowed [TIME]
+
+🗿 route.stone.set
+   ├─ stone = 1.vision
+   ├─ passage = allowed
+   ├─ guard
+   │  ├─ artifacts
+   │  │   └─ $route/1.vision*.md
+   │  └─ judges
+   │      └─ j1: rhx route.stone.judge --mechanism approved? --stone $stone --route $route
+   │          └─ finished [TIME] ✓
+   │
+   └─ the way continues, run
+      └─ rhx route.drive
+",
+}
+`;
+
+exports[`driver.route.drive.blocker.acceptance given: [case2] stone with review + approval (3.blueprint) when: [t0] agent attempts pass without review.self promise then: [t0] output matches snapshot 1`] = `
+{
+  "code": 2,
+  "stderr": "",
+  "stdout": "🦉 the way speaks for itself
+
+🗿 route.stone.set
+   ├─ stone = 3.blueprint
+   └─ passage = blocked (review.self required)
+
+🌕 lets reflect
+   │
+   ├─ review.self 1/1
+   │  ├─ slug = design-complete
+   │  ├─ question all, especially yourself
+   │  └─ see the guide below
+   │
+   ├─ stillness 🪷
+   │  ├─
+   │  │
+   │  │  so it is. a chance to slow down, breathe, and see clearly.
+   │  │
+   │  │  self review time is a sanctuary. a gift. a luxury not always available.
+   │  │
+   │  │  it is not every day one has a quiet moment to take a slow,
+   │  │  methodical, patient, and thorough review.
+   │  │
+   │  │  tea first. then, we proceed 🍵
+   │  │
+   │  └─
+   │
+   ├─ before you begin 🪷
+   │  ├─
+   │  │
+   │  │  - clear your mind. this is dedicated review time.
+   │  │  - open each artifact mentioned in the guide
+   │  │  - read through them slowly, line by line
+   │  │  - question every assumption made
+   │  │  - look with fresh eyes, as if for the first time
+   │  │
+   │  └─
+   │
+   ├─ here's the guide
+   │  ├─
+   │  │
+   │  │  have you completed the full api design?
+   │  │    are all endpoints, request/response shapes, and error cases documented?
+   │  │
+   │  └─
+   │
+   ├─ be here now 🪷
+   │  ├─
+   │  │
+   │  │  refocus.
+   │  │
+   │  │  the review is the work.
+   │  │  not a step to complete.
+   │  │  not a gate to pass.
+   │  │  not a checkbox to check.
+   │  │
+   │  │  it is the work itself.
+   │  │
+   │  │  you do not care about the stone.
+   │  │  you only care about the review.
+   │  │
+   │  └─
+   │
+   ├─ walk the way 🪷
+   │  │
+   │  ├─ articulate into
+   │  │  ├─ /review/self/for.3.blueprint._.r1.design-complete.md
+   │  │  └─ the guard looks precisely here, write exactly to this path
+   │  │
+   │  ├─ for each found issue 🪘
+   │  │  ├─
+   │  │  │
+   │  │  │  articulate how it was fixed
+   │  │  │  so you remember for next time
+   │  │  │
+   │  │  └─
+   │  │
+   │  └─ for each non issue 🪘
+   │     ├─
+   │     │
+   │     │  articulate why it holds
+   │     │  so others can learn from it
+   │     │
+   │     └─
+   │
+   └─ when you've truly reflected, run
+      └─ rhx route.stone.set --stone 3.blueprint --as promised --that design-complete
+",
+}
+`;
+
+exports[`driver.route.drive.blocker.acceptance given: [case2] stone with review + approval (3.blueprint) when: [t1] route.drive hook mode when blocked on review.self then: [t1] output matches snapshot 1`] = `
+{
+  "code": 2,
+  "stderr": "🦉 where were we?
+
+🗿 route.drive
+   ├─ where do we go?
+   │  ├─ route = 
+   │  └─ stone = 3.blueprint
+   │
+   ├─ are you here?
+   │  ├─ when ready for review, run:
+   │  │  └─ rhx route.stone.set --stone 3.blueprint --as arrived
+   │  └─ when ready to continue, run:
+   │     └─ rhx route.stone.set --stone 3.blueprint --as passed
+   │
+   ├─ here's the stone
+   │  ├─
+   │  │
+   │  │  # 3.blueprint
+   │  │  
+   │  │  create a technical blueprint for the weather api.
+   │  │  
+   │  │  define:
+   │  │  - the api endpoint structure
+   │  │  - the data sources
+   │  │  - the implementation approach
+   │  │  
+   │  └─
+   │
+   └─ are you here?
+      ├─ when ready for review, run:
+      │  └─ rhx route.stone.set --stone 3.blueprint --as arrived
+      └─ when ready to continue, run:
+         └─ rhx route.stone.set --stone 3.blueprint --as passed
+",
+  "stdout": "🦉 where were we?
+
+🗿 route.drive
+   ├─ where do we go?
+   │  ├─ route = 
+   │  └─ stone = 3.blueprint
+   │
+   ├─ are you here?
+   │  ├─ when ready for review, run:
+   │  │  └─ rhx route.stone.set --stone 3.blueprint --as arrived
+   │  └─ when ready to continue, run:
+   │     └─ rhx route.stone.set --stone 3.blueprint --as passed
+   │
+   ├─ here's the stone
+   │  ├─
+   │  │
+   │  │  # 3.blueprint
+   │  │  
+   │  │  create a technical blueprint for the weather api.
+   │  │  
+   │  │  define:
+   │  │  - the api endpoint structure
+   │  │  - the data sources
+   │  │  - the implementation approach
+   │  │  
+   │  └─
+   │
+   └─ are you here?
+      ├─ when ready for review, run:
+      │  └─ rhx route.stone.set --stone 3.blueprint --as arrived
+      └─ when ready to continue, run:
+         └─ rhx route.stone.set --stone 3.blueprint --as passed
+",
+}
+`;
+
+exports[`driver.route.drive.blocker.acceptance given: [case2] stone with review + approval (3.blueprint) when: [t2] agent promises review.self and attempts pass then: [t2] output matches snapshot 1`] = `
+{
+  "code": 2,
+  "stderr": "
+🪶 judge 1
+   ├─ stdout
+   │  ├─
+   │  │
+   │  │  🪨 run solid skill repo=bhrain/role=driver/skill=route.stone.judge
+   │  │  
+   │  │  passed: false
+   │  │  reason: blockers exceed threshold (1 > 0)
+   │  │
+   │  └─
+   ├─ stderr
+   │  ├─
+   │  │
+   │  │  
+   │  │  🪨 run solid skill repo=bhrain/role=driver/skill=route.stone.judge
+   │  │     └─ ✋ blocked by constraints
+   │  │  
+   │  │
+   │  └─
+   └─ passage blocked
+      ├─ blocked by constraints
+      └─ exit code: 2 ✋
+
+🪶 judge 2
+   ├─ stdout
+   │  ├─
+   │  │
+   │  │  🪨 run solid skill repo=bhrain/role=driver/skill=route.stone.judge
+   │  │  
+   │  │  passed: false
+   │  │  reason: wait for human approval
+   │  │  
+   │  │  ✋ halted, human approval required
+   │  │     ├─ please ask your human to
+   │  │     │  └─ rhx route.stone.set --stone 3.blueprint --as approved
+   │  │     │
+   │  │     └─ after human approves, run
+   │  │        └─ rhx route.stone.set --stone 3.blueprint --as passed
+   │  │
+   │  └─
+   ├─ stderr
+   │  ├─
+   │  │
+   │  │  
+   │  │  🪨 run solid skill repo=bhrain/role=driver/skill=route.stone.judge
+   │  │     └─ ✋ blocked by constraints
+   │  │  
+   │  │
+   │  └─
+   └─ passage blocked
+      ├─ blocked by constraints
+      └─ exit code: 2 ✋
+",
+  "stdout": "🦉 the way speaks for itself
+   │
+   ├─ r1: bash (l1, 1/∞)
+   │   ├─ rejected [TIME]
+   │   ├─ 1 blocker 🔴
+   │   ├─ 0 nitpicks ✓
+   │   ├─ given: .reviews/peer/3.blueprint._.review.i001.dc4ea706d070918331.r001._.given.by_peer.bash.md
+   │   └─ taken: .reviews/peer/3.blueprint._.review.i001.dc4ea706d070918331.r001._.taken.by_self.bash.md
+   │
+   ├─ ✗ judge.1 - blocked [TIME]
+   │
+   └─ ✗ judge.2 - blocked [TIME]
+
+🗿 route.stone.set
+   ├─ stone = 3.blueprint
+   ├─ passage = blocked
+   ├─ reason = blockers exceed threshold (1 > 0); wait for human approval
+   └─ guard
+      ├─ artifacts
+      │   └─ $route/3.blueprint*.md
+      ├─ reviews
+      │   └─ r1: bash (l1, 1/∞)
+      │       ├─ rejected [TIME]
+      │       ├─ 1 blocker 🔴
+      │       ├─ 0 nitpicks ✓
+      │       ├─ given: .reviews/peer/3.blueprint._.review.i001.dc4ea706d070918331.r001._.given.by_peer.bash.md
+      │       └─ taken: .reviews/peer/3.blueprint._.review.i001.dc4ea706d070918331.r001._.taken.by_self.bash.md
+      └─ judges
+          ├─ j1: rhx route.stone.judge --mechanism reviewed? --stone $stone --route $route --allow-blockers 0 --allow-nitpicks 2
+          │   ├─ finished [TIME] ✗
+          │   └─ reason: blockers exceed threshold (1 > 0)
+          └─ j2: rhx route.stone.judge --mechanism approved? --stone $stone --route $route
+              ├─ finished [TIME] ✗
+              └─ reason: wait for human approval
+",
+}
+`;
+
+exports[`driver.route.drive.blocker.acceptance given: [case2] stone with review + approval (3.blueprint) when: [t3] route.drive hook mode when blocked on review.peer then: [t3] output matches snapshot 1`] = `
+{
+  "code": 2,
+  "stderr": "🦉 where were we?
+
+🗿 route.drive
+   ├─ where do we go?
+   │  ├─ route = 
+   │  └─ stone = 3.blueprint
+   │
+   ├─ are you here?
+   │  ├─ when ready for review, run:
+   │  │  └─ rhx route.stone.set --stone 3.blueprint --as arrived
+   │  └─ when ready to continue, run:
+   │     └─ rhx route.stone.set --stone 3.blueprint --as passed
+   │
+   ├─ here's the stone
+   │  ├─
+   │  │
+   │  │  # 3.blueprint
+   │  │  
+   │  │  create a technical blueprint for the weather api.
+   │  │  
+   │  │  define:
+   │  │  - the api endpoint structure
+   │  │  - the data sources
+   │  │  - the implementation approach
+   │  │  
+   │  └─
+   │
+   └─ are you here?
+      ├─ when ready for review, run:
+      │  └─ rhx route.stone.set --stone 3.blueprint --as arrived
+      └─ when ready to continue, run:
+         └─ rhx route.stone.set --stone 3.blueprint --as passed
+",
+  "stdout": "🦉 where were we?
+
+🗿 route.drive
+   ├─ where do we go?
+   │  ├─ route = 
+   │  └─ stone = 3.blueprint
+   │
+   ├─ are you here?
+   │  ├─ when ready for review, run:
+   │  │  └─ rhx route.stone.set --stone 3.blueprint --as arrived
+   │  └─ when ready to continue, run:
+   │     └─ rhx route.stone.set --stone 3.blueprint --as passed
+   │
+   ├─ here's the stone
+   │  ├─
+   │  │
+   │  │  # 3.blueprint
+   │  │  
+   │  │  create a technical blueprint for the weather api.
+   │  │  
+   │  │  define:
+   │  │  - the api endpoint structure
+   │  │  - the data sources
+   │  │  - the implementation approach
+   │  │  
+   │  └─
+   │
+   └─ are you here?
+      ├─ when ready for review, run:
+      │  └─ rhx route.stone.set --stone 3.blueprint --as arrived
+      └─ when ready to continue, run:
+         └─ rhx route.stone.set --stone 3.blueprint --as passed
+",
+}
+`;
+
+exports[`driver.route.drive.blocker.acceptance given: [case2] stone with review + approval (3.blueprint) when: [t4] agent fixes review and attempts pass then: [t4] output matches snapshot 1`] = `
+{
+  "code": 2,
+  "stderr": "
+🪶 judge 2
+   ├─ stdout
+   │  ├─
+   │  │
+   │  │  🪨 run solid skill repo=bhrain/role=driver/skill=route.stone.judge
+   │  │  
+   │  │  passed: false
+   │  │  reason: wait for human approval
+   │  │  
+   │  │  ✋ halted, human approval required
+   │  │     ├─ please ask your human to
+   │  │     │  └─ rhx route.stone.set --stone 3.blueprint --as approved
+   │  │     │
+   │  │     └─ after human approves, run
+   │  │        └─ rhx route.stone.set --stone 3.blueprint --as passed
+   │  │
+   │  └─
+   ├─ stderr
+   │  ├─
+   │  │
+   │  │  
+   │  │  🪨 run solid skill repo=bhrain/role=driver/skill=route.stone.judge
+   │  │     └─ ✋ blocked by constraints
+   │  │  
+   │  │
+   │  └─
+   └─ passage blocked
+      ├─ blocked by constraints
+      └─ exit code: 2 ✋
+",
+  "stdout": "🦉 the way speaks for itself
+   │
+   ├─ r1: bash (l1, 2/∞)
+   │   ├─ approved, cached
+   │   ├─ 0 blockers ✓
+   │   ├─ 0 nitpicks ✓
+   │   ├─ given: .reviews/peer/3.blueprint._.review.i002.79ce73effeb06a18dd.r001._.given.by_peer.bash.md
+   │   └─ taken: .reviews/peer/3.blueprint._.review.i002.79ce73effeb06a18dd.r001._.taken.by_self.bash.md
+   │
+   ├─ ✓ judge.1 - allowed (cached)
+   │
+   └─ ✗ judge.2 - blocked [TIME]
+
+🗿 route.stone.set
+   ├─ stone = 3.blueprint
+   ├─ passage = blocked
+   ├─ reason = wait for human approval
+   └─ guard
+      ├─ artifacts
+      │   └─ $route/3.blueprint*.md
+      ├─ reviews
+      │   └─ r1: bash (l1, 2/∞)
+      │       ├─ approved, cached
+      │       ├─ 0 blockers ✓
+      │       ├─ 0 nitpicks ✓
+      │       ├─ given: .reviews/peer/3.blueprint._.review.i002.79ce73effeb06a18dd.r001._.given.by_peer.bash.md
+      │       └─ taken: .reviews/peer/3.blueprint._.review.i002.79ce73effeb06a18dd.r001._.taken.by_self.bash.md
+      └─ judges
+          ├─ j1: rhx route.stone.judge --mechanism reviewed? --stone $stone --route $route --allow-blockers 0 --allow-nitpicks 2
+          │   └─ · cached
+          │      └─ on $route/3.blueprint*.md
+          └─ j2: rhx route.stone.judge --mechanism approved? --stone $stone --route $route
+              ├─ finished [TIME] ✗
+              └─ reason: wait for human approval
+",
+}
+`;
+
+exports[`driver.route.drive.blocker.acceptance given: [case2] stone with review + approval (3.blueprint) when: [t5] route.drive hook mode when blocked on approval then: [t5] output matches snapshot 1`] = `
+{
+  "code": 0,
+  "stderr": "",
+  "stdout": "🦉 where were we?
+
+🗿 route.drive
+   ├─ where do we go?
+   │  ├─ route = 
+   │  └─ stone = 3.blueprint
+   │
+   └─ halted, human approval required
+      ├─ please ask a human to
+      │  └─ rhx route.stone.set --stone 3.blueprint --as approved
+      │
+      └─ once they do, run
+         └─ rhx route.stone.set --stone 3.blueprint --as passed
+",
+}
+`;

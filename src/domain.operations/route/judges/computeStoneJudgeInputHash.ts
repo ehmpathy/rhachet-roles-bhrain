@@ -4,8 +4,8 @@ import * as path from 'path';
 
 import type { RouteStone } from '@src/domain.objects/Driver/RouteStone';
 
-import { enumRouteGuardReviewPeerFiles } from '../guard/enumRouteGuardReviewPeerFiles';
-import { getLatestReviewFilesPerIndex } from '../guard/getLatestReviewFilesPerIndex';
+import { enumRouteGuardReviewPeerFiles } from '../guard/review/peer/enumRouteGuardReviewPeerFiles';
+import { getLatestReviewFilesPerIndex } from '../guard/review/peer/getLatestReviewFilesPerIndex';
 import { getOnePassageReport } from '../passage/getOnePassageReport';
 
 /**

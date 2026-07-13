@@ -3,26 +3,27 @@ import { BadRequestError, UnexpectedCodePathError } from 'helpful-errors';
 import type { ContextCliEmit } from '@src/domain.objects/Driver/ContextCliEmit';
 import { getGuardSelfReviews } from '@src/domain.objects/Driver/RouteStoneGuard';
 
-import { setStoneAsBlocked } from './blocked/setStoneAsBlocked';
 import { delDriveBlockerState } from './drive/delDriveBlockerState';
 import { formatRouteStoneEmit } from './formatRouteStoneEmit';
-import { computeStoneReviewInputHash } from './guard/computeStoneReviewInputHash';
-import { computePromisedReviewCount } from './promise/computePromisedReviewCount';
-import { findNextUnpromisedReview } from './promise/findNextUnpromisedReview';
-import { findSelfReviewBySlug } from './promise/findSelfReviewBySlug';
-import { getPromisedSlugsSet } from './promise/getPromisedSlugsSet';
-import { getSelfReviewChallengeDecision } from './promise/getSelfReviewChallengeDecision';
-import { getSelfReviewIndex } from './promise/getSelfReviewIndex';
-import { getSelfReviewSlugs } from './promise/getSelfReviewSlugs';
-import { getStonePromises } from './promise/getStonePromises';
-import { isInvalidSelfReviewSlug } from './promise/isInvalidSelfReviewSlug';
-import { setStoneAsPromised } from './promise/setStoneAsPromised';
+import { computeStoneReviewInputHash } from './guard/review/computeStoneReviewInputHash';
+import { computePromisedReviewCount } from './guard/review/self/computePromisedReviewCount';
+import { findNextUnpromisedReview } from './guard/review/self/findNextUnpromisedReview';
+import { findSelfReviewBySlug } from './guard/review/self/findSelfReviewBySlug';
+import { getPromisedSlugsSet } from './guard/review/self/getPromisedSlugsSet';
+import { getSelfReviewChallengeDecision } from './guard/review/self/getSelfReviewChallengeDecision';
+import { getSelfReviewIndex } from './guard/review/self/getSelfReviewIndex';
+import { getSelfReviewSlugs } from './guard/review/self/getSelfReviewSlugs';
+import { getStonePromises } from './guard/review/self/getStonePromises';
+import { isInvalidSelfReviewSlug } from './guard/review/self/isInvalidSelfReviewSlug';
 import { findOneStoneByPattern } from './stones/asStoneGlob';
 import { getAllStones } from './stones/getAllStones';
 import { setStoneAsApproved } from './stones/setStoneAsApproved';
+import { setStoneAsBlocked } from './stones/setStoneAsBlocked';
+import { setStoneAsContemplated } from './stones/setStoneAsContemplated';
 import { setStoneAsForced } from './stones/setStoneAsForced';
 import { setStoneAsOverruled } from './stones/setStoneAsOverruled';
 import { setStoneAsPassed } from './stones/setStoneAsPassed';
+import { setStoneAsPromised } from './stones/setStoneAsPromised';
 import { setStoneAsRewound } from './stones/setStoneAsRewound';
 
 /**
@@ -37,6 +38,7 @@ export const stepRouteStoneSet = async (
       | 'passed'
       | 'approved'
       | 'promised'
+      | 'contemplated'
       | 'rewound'
       | 'blocked'
       | 'arrived'
@@ -50,6 +52,7 @@ export const stepRouteStoneSet = async (
   passed?: boolean;
   approved?: boolean;
   promised?: boolean;
+  contemplated?: boolean;
   rewound?: boolean;
   blocked?: boolean;
   overruled?: boolean;
@@ -225,6 +228,24 @@ export const stepRouteStoneSet = async (
           nextReview,
         }),
       },
+    };
+  }
+
+  if (input.as === 'contemplated') {
+    // validate --that is provided (which reviewer's critique this contemplates)
+    if (!input.that)
+      throw new BadRequestError('--that is required for --as contemplated', {
+        stone: input.stone,
+      });
+
+    const result = await setStoneAsContemplated({
+      stone: input.stone,
+      route: input.route,
+      slug: input.that,
+    });
+    return {
+      contemplated: result.contemplated,
+      emit: result.emit,
     };
   }
 

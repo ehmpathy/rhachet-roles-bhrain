@@ -221,6 +221,7 @@ export const stepReview = async (
     pathsWout?: string | string[];
     join?: 'union' | 'intersect';
     refs?: string | string[];
+    conversation?: string | string[];
     output: string;
     focus: 'pull' | 'push';
     goal: 'exhaustive' | 'representative';
@@ -463,24 +464,49 @@ export const stepReview = async (
     throw new BadRequestError('validation failed');
   }
 
+  // enumerate conversation files (opt-in; the peer-review dialogue)
+  // .why = --conversation threads the prior .given + .taken exchange as reference
+  //        context so a reviewer sees its own critique and the driver's response.
+  //        unlike --refs, zero matches is NOT an error — the first iteration has
+  //        no prior conversation, which is expected
+  const conversationGlobs = input.conversation
+    ? Array.isArray(input.conversation)
+      ? input.conversation
+      : [input.conversation]
+    : [];
+  const conversationFiles =
+    conversationGlobs.length > 0
+      ? await enumFilesForReviewSupplies({ glob: conversationGlobs, cwd })
+      : [];
+
   // write final scope file (includes refFiles which were just resolved)
   await fs.writeFile(
     path.join(logDir, 'input.scope.json'),
-    JSON.stringify({ ruleFiles, refFiles, targetFiles }, null, 2),
+    JSON.stringify(
+      { ruleFiles, refFiles, conversationFiles, targetFiles },
+      null,
+      2,
+    ),
     'utf-8',
   );
 
   // read file contents for prompt compilation
+  // .note = a file reference is normally cwd-relative (the guard expands
+  //         $conversation to repo-root-relative paths, as --rules/--refs are).
+  //         an absolute path is still read as-is as a belt: a bare
+  //         path.join(cwd, abs) concatenates rather than resets, which yields
+  //         a doubled path.
   const readFileContent = async (file: string) => {
+    const fullPath = path.isAbsolute(file) ? file : path.join(cwd, file);
     try {
-      return await fs.readFile(path.join(cwd, file), 'utf-8');
+      return await fs.readFile(fullPath, 'utf-8');
     } catch (error) {
       if (!(error instanceof Error)) throw error;
       // a file we just enumerated failed to read = server fault, not caller fault
       // .note = UnexpectedCodePathError maps to exit 1, distinct from BadRequestError (exit 2)
       throw new UnexpectedCodePathError(`failed to read file: ${file}`, {
         file,
-        fullPath: path.join(cwd, file),
+        fullPath,
         error: error.message,
       });
     }
@@ -515,6 +541,12 @@ export const stepReview = async (
   );
   const refContents = await Promise.all(
     refFiles.map(async (file) => ({
+      path: file,
+      content: await readFileContent(file),
+    })),
+  );
+  const conversationContents = await Promise.all(
+    conversationFiles.map(async (file) => ({
       path: file,
       content: await readFileContent(file),
     })),
@@ -565,6 +597,7 @@ export const stepReview = async (
       return compileReviewPrompt({
         rules: ruleContents,
         refs: refContents,
+        conversation: conversationContents,
         targets: targetContents,
         focus: input.focus,
         goal: input.goal,

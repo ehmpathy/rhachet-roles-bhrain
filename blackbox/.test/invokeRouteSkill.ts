@@ -50,6 +50,13 @@ export const genTempDirForRhachet = (input: {
  */
 export const sanitizeTimeForSnapshot = (output: string): string => {
   return output
+    // strip ANSI color/style escape codes (e.g. \x1b[0m\x1b[31m)
+    // .why = raw escape sequences are visual blemishes in snapshots — noise that
+    //        degrades readability (rule.forbid.snapshot-visual-blemishes). the
+    //        route judge writes colored stderr; the snapshot must capture the
+    //        legible text, not the terminal control bytes
+    // biome-ignore lint/suspicious/noControlCharactersInRegex: the ESC control byte is the intended target
+    .replace(/\x1b\[[0-9;]*m/g, '')
     // collapse volatile temp-dir prefix; keep the stable suffix
     // e.g. /tmp/test-fns/<repodir>/.temp/<iso>.<slug>.<hash>/.reviews/... -> [TEMP]/.reviews/...
     // .why = repodir carries the worktree name and .temp carries a timestamp+hash,

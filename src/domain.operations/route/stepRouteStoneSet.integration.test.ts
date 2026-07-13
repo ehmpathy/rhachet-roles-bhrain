@@ -3,7 +3,7 @@ import * as os from 'os';
 import * as path from 'path';
 import { given, then, useBeforeAll, useThen, when } from 'test-fns';
 
-import { getSelfReviewArticulationPath } from './guard/getSelfReviewArticulationPath';
+import { getSelfReviewArticulationPath } from './guard/review/self/getSelfReviewArticulationPath';
 import { stepRouteStoneSet } from './stepRouteStoneSet';
 
 const ASSETS_DIR = path.join(__dirname, '.test/assets');

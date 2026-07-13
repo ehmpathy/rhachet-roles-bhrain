@@ -17,7 +17,8 @@ export { stepRouteDrive } from '@src/domain.operations/route/stepRouteDrive';
 export { stepRouteStoneDel } from '@src/domain.operations/route/stepRouteStoneDel';
 export { stepRouteStoneGet } from '@src/domain.operations/route/stepRouteStoneGet';
 export { stepRouteStoneSet } from '@src/domain.operations/route/stepRouteStoneSet';
-// stone operations
 export { getAllStones } from '@src/domain.operations/route/stones/getAllStones';
 export { setStoneAsApproved } from '@src/domain.operations/route/stones/setStoneAsApproved';
+// stone operations
+export { setStoneAsContemplated } from '@src/domain.operations/route/stones/setStoneAsContemplated';
 export { setStoneAsPassed } from '@src/domain.operations/route/stones/setStoneAsPassed';

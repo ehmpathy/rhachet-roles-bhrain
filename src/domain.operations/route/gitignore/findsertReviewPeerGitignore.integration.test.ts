@@ -81,7 +81,7 @@ describe('findsertReviewPeerGitignore.integration', () => {
             tempDir,
             '.reviews',
             'peer',
-            '1.vision._.review.i1.abcd.r1._.given.by_peer.architect.md',
+            '1.vision._.review.i001.abcd.r001._.given.by_peer.architect.md',
           ),
           '# peer-review content\n',
         );
@@ -96,7 +96,7 @@ describe('findsertReviewPeerGitignore.integration', () => {
         const files = await fs.readdir(path.join(tempDir, '.reviews', 'peer'));
         expect(files).toContain('.gitignore');
         expect(files).toContain(
-          '1.vision._.review.i1.abcd.r1._.given.by_peer.architect.md',
+          '1.vision._.review.i001.abcd.r001._.given.by_peer.architect.md',
         );
       });
     });

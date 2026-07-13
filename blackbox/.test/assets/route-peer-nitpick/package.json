@@ -1,0 +1,8 @@
+{
+  "name": "route-peer-nitpick-fixture",
+  "private": true,
+  "description": "fixture for the nitpick-only contemplation quadrant acceptance test",
+  "dependencies": {
+    "rhachet-roles-bhrain": "link:."
+  }
+}

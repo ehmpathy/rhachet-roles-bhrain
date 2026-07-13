@@ -1,8 +1,8 @@
 import * as fs from 'fs/promises';
 
-import { enumRouteFiles } from '@src/domain.operations/route/guard/enumRouteFiles';
-import { enumRouteGuardJudgeFiles } from '@src/domain.operations/route/guard/enumRouteGuardJudgeFiles';
-import { enumRouteGuardReviewPeerFiles } from '@src/domain.operations/route/guard/enumRouteGuardReviewPeerFiles';
+import { enumRouteFiles } from '@src/domain.operations/route/guard/artifact/enumRouteFiles';
+import { enumRouteGuardJudgeFiles } from '@src/domain.operations/route/guard/judge/enumRouteGuardJudgeFiles';
+import { enumRouteGuardReviewPeerFiles } from '@src/domain.operations/route/guard/review/peer/enumRouteGuardReviewPeerFiles';
 
 /**
  * .what = deletes all guard artifacts for a stone

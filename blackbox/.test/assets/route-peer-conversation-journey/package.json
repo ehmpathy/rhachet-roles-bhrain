@@ -1,0 +1,8 @@
+{
+  "name": "route-peer-conversation-journey-fixture",
+  "private": true,
+  "description": "fixture for the end-to-end peer-conversation journey acceptance test",
+  "dependencies": {
+    "rhachet-roles-bhrain": "link:."
+  }
+}

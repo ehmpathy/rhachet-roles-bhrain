@@ -1,0 +1,8 @@
+{
+  "name": "route-peer-conversation-visibility-fixture",
+  "private": true,
+  "description": "fixture for peer review conversation visibility acceptance test",
+  "dependencies": {
+    "rhachet-roles-bhrain": "link:."
+  }
+}

@@ -16,7 +16,8 @@ exports[`driver.route.review-blocks-approval.acceptance given: [review-blocks] s
    │   ├─ rejected [TIME]
    │   ├─ 1 blocker 🔴
    │   ├─ 0 nitpicks ✓
-   │   └─ review: .reviews/peer/1.plan._.review.i1.e7639ab384369331ef.r1._.given.by_peer.bash.md
+   │   ├─ given: .reviews/peer/1.plan._.review.i001.e7639ab384369331ef.r001._.given.by_peer.bash.md
+   │   └─ taken: .reviews/peer/1.plan._.review.i001.e7639ab384369331ef.r001._.taken.by_self.bash.md
    │
    ├─ ✗ judge.1 - blocked [TIME]
    │
@@ -34,7 +35,8 @@ exports[`driver.route.review-blocks-approval.acceptance given: [review-blocks] s
       │       ├─ rejected [TIME]
       │       ├─ 1 blocker 🔴
       │       ├─ 0 nitpicks ✓
-      │       └─ review: .reviews/peer/1.plan._.review.i1.e7639ab384369331ef.r1._.given.by_peer.bash.md
+      │       ├─ given: .reviews/peer/1.plan._.review.i001.e7639ab384369331ef.r001._.given.by_peer.bash.md
+      │       └─ taken: .reviews/peer/1.plan._.review.i001.e7639ab384369331ef.r001._.taken.by_self.bash.md
       └─ judges
           ├─ j1: rhx route.stone.judge --mechanism reviewed? --stone $stone --route $route --allow-blockers 0 --allow-nitpicks 0
           │   ├─ finished [TIME] ✗
@@ -51,7 +53,8 @@ exports[`driver.route.review-blocks-approval.acceptance given: [review-blocks] s
    │   ├─ approved [TIME]
    │   ├─ 0 blockers ✓
    │   ├─ 0 nitpicks ✓
-   │   └─ review: .reviews/peer/1.plan._.review.i2.011b7ed6745dcad7a6.r1._.given.by_peer.bash.md
+   │   ├─ given: .reviews/peer/1.plan._.review.i002.011b7ed6745dcad7a6.r001._.given.by_peer.bash.md
+   │   └─ taken: .reviews/peer/1.plan._.review.i002.011b7ed6745dcad7a6.r001._.taken.by_self.bash.md
    │
    ├─ ✓ judge.1 - allowed [TIME]
    │
@@ -68,7 +71,8 @@ exports[`driver.route.review-blocks-approval.acceptance given: [review-blocks] s
    │  │       ├─ approved [TIME]
    │  │       ├─ 0 blockers ✓
    │  │       ├─ 0 nitpicks ✓
-   │  │       └─ review: .reviews/peer/1.plan._.review.i2.011b7ed6745dcad7a6.r1._.given.by_peer.bash.md
+   │  │       ├─ given: .reviews/peer/1.plan._.review.i002.011b7ed6745dcad7a6.r001._.given.by_peer.bash.md
+   │  │       └─ taken: .reviews/peer/1.plan._.review.i002.011b7ed6745dcad7a6.r001._.taken.by_self.bash.md
    │  └─ judges
    │      ├─ j1: rhx route.stone.judge --mechanism reviewed? --stone $stone --route $route --allow-blockers 0 --allow-nitpicks 0
    │      │   └─ finished [TIME] ✓

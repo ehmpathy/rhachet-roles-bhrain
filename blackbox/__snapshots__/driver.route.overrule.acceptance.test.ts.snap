@@ -17,7 +17,8 @@ exports[`driver.route.overrule.acceptance given: [case1] human overrules blocked
    │   ├─ rejected, cached
    │   ├─ 3 blockers 🔴
    │   ├─ 7 nitpicks 🟠
-   │   └─ review: .reviews/peer/1.plan._.review.i1.ec6c3f2f9d5189084f.r1._.given.by_peer.bash.md
+   │   ├─ given: .reviews/peer/1.plan._.review.i001.ec6c3f2f9d5189084f.r001._.given.by_peer.bash.md
+   │   └─ taken: .reviews/peer/1.plan._.review.i001.ec6c3f2f9d5189084f.r001._.taken.by_self.bash.md
    │
    └─ ✓ judge.1 - allowed [TIME]
 
@@ -32,7 +33,8 @@ exports[`driver.route.overrule.acceptance given: [case1] human overrules blocked
    │  │       ├─ rejected, cached
    │  │       ├─ 3 blockers 🔴
    │  │       ├─ 7 nitpicks 🟠
-   │  │       └─ review: .reviews/peer/1.plan._.review.i1.ec6c3f2f9d5189084f.r1._.given.by_peer.bash.md
+   │  │       ├─ given: .reviews/peer/1.plan._.review.i001.ec6c3f2f9d5189084f.r001._.given.by_peer.bash.md
+   │  │       └─ taken: .reviews/peer/1.plan._.review.i001.ec6c3f2f9d5189084f.r001._.taken.by_self.bash.md
    │  └─ judges
    │      └─ j1: rhx route.stone.judge --mechanism reviewed? --stone $stone --route $route --allow-blockers 0 --allow-nitpicks 0
    │          └─ finished [TIME] ✓
@@ -90,7 +92,8 @@ exports[`driver.route.overrule.acceptance given: [case9] overrule bypasses revie
    │
    ├─ r1: bash (l1, 1/∞)
    │   ├─ 💥 malfunction
-   │   └─ review: .reviews/peer/1.feature._.review.i2.d6ef1aa3fad755e23c.r1._.given.by_peer.bash.md
+   │   ├─ given: .reviews/peer/1.feature._.review.i002.d6ef1aa3fad755e23c.r001._.given.by_peer.bash.md
+   │   └─ taken: .reviews/peer/1.feature._.review.i002.d6ef1aa3fad755e23c.r001._.taken.by_self.bash.md
    │
    └─ ✓ judge.1 - allowed [TIME]
 
@@ -103,7 +106,8 @@ exports[`driver.route.overrule.acceptance given: [case9] overrule bypasses revie
    │  ├─ reviews
    │  │   └─ r1: bash (l1, 0/∞)
    │  │       ├─ 💥 malfunction
-   │  │       └─ review: .reviews/peer/1.feature._.review.i2.d6ef1aa3fad755e23c.r1._.given.by_peer.bash.md
+   │  │       ├─ given: .reviews/peer/1.feature._.review.i002.d6ef1aa3fad755e23c.r001._.given.by_peer.bash.md
+   │  │       └─ taken: .reviews/peer/1.feature._.review.i002.d6ef1aa3fad755e23c.r001._.taken.by_self.bash.md
    │  └─ judges
    │      └─ j1: rhx route.stone.judge --mechanism reviewed? --stone $stone --route $route --allow-blockers 0
    │          └─ finished [TIME] ✓
@@ -118,7 +122,8 @@ exports[`driver.route.overrule.acceptance given: [case10] overrule bypasses revi
    │
    ├─ r1: bash (l1, 1/∞)
    │   ├─ ✋ constraint
-   │   └─ review: .reviews/peer/1.feature._.review.i2.d6ef1aa3fad755e23c.r1._.given.by_peer.bash.md
+   │   ├─ given: .reviews/peer/1.feature._.review.i002.d6ef1aa3fad755e23c.r001._.given.by_peer.bash.md
+   │   └─ taken: .reviews/peer/1.feature._.review.i002.d6ef1aa3fad755e23c.r001._.taken.by_self.bash.md
    │
    └─ ✓ judge.1 - allowed [TIME]
 
@@ -133,7 +138,8 @@ exports[`driver.route.overrule.acceptance given: [case10] overrule bypasses revi
    │  │       ├─ constraint 0.0s
    │  │       ├─ 0 blockers ✓
    │  │       ├─ 0 nitpicks ✓
-   │  │       └─ review: .reviews/peer/1.feature._.review.i2.d6ef1aa3fad755e23c.r1._.given.by_peer.bash.md
+   │  │       ├─ given: .reviews/peer/1.feature._.review.i002.d6ef1aa3fad755e23c.r001._.given.by_peer.bash.md
+   │  │       └─ taken: .reviews/peer/1.feature._.review.i002.d6ef1aa3fad755e23c.r001._.taken.by_self.bash.md
    │  └─ judges
    │      └─ j1: rhx route.stone.judge --mechanism reviewed? --stone $stone --route $route --allow-blockers 0
    │          └─ finished [TIME] ✓
@@ -148,7 +154,8 @@ exports[`driver.route.overrule.acceptance given: [case11] forced bypasses review
    │
    ├─ r1: bash (l1, 1/∞)
    │   ├─ 💥 malfunction
-   │   └─ review: .reviews/peer/1.feature._.review.i1.d6ef1aa3fad755e23c.r1._.given.by_peer.bash.md
+   │   ├─ given: .reviews/peer/1.feature._.review.i001.d6ef1aa3fad755e23c.r001._.given.by_peer.bash.md
+   │   └─ taken: .reviews/peer/1.feature._.review.i001.d6ef1aa3fad755e23c.r001._.taken.by_self.bash.md
    │
    └─ ✓ judge.1 - allowed [TIME]
 
@@ -161,7 +168,8 @@ exports[`driver.route.overrule.acceptance given: [case11] forced bypasses review
    │  ├─ reviews
    │  │   └─ r1: bash (l1, 0/∞)
    │  │       ├─ 💥 malfunction
-   │  │       └─ review: .reviews/peer/1.feature._.review.i1.d6ef1aa3fad755e23c.r1._.given.by_peer.bash.md
+   │  │       ├─ given: .reviews/peer/1.feature._.review.i001.d6ef1aa3fad755e23c.r001._.given.by_peer.bash.md
+   │  │       └─ taken: .reviews/peer/1.feature._.review.i001.d6ef1aa3fad755e23c.r001._.taken.by_self.bash.md
    │  └─ judges
    │      └─ j1: rhx route.stone.judge --mechanism reviewed? --stone $stone --route $route --allow-blockers 0
    │          └─ finished [TIME] ✓
@@ -176,7 +184,8 @@ exports[`driver.route.overrule.acceptance given: [case12] forced bypasses review
    │
    ├─ r1: bash (l1, 1/∞)
    │   ├─ ✋ constraint
-   │   └─ review: .reviews/peer/1.feature._.review.i1.d6ef1aa3fad755e23c.r1._.given.by_peer.bash.md
+   │   ├─ given: .reviews/peer/1.feature._.review.i001.d6ef1aa3fad755e23c.r001._.given.by_peer.bash.md
+   │   └─ taken: .reviews/peer/1.feature._.review.i001.d6ef1aa3fad755e23c.r001._.taken.by_self.bash.md
    │
    └─ ✓ judge.1 - allowed [TIME]
 
@@ -191,7 +200,8 @@ exports[`driver.route.overrule.acceptance given: [case12] forced bypasses review
    │  │       ├─ constraint 0.0s
    │  │       ├─ 0 blockers ✓
    │  │       ├─ 0 nitpicks ✓
-   │  │       └─ review: .reviews/peer/1.feature._.review.i1.d6ef1aa3fad755e23c.r1._.given.by_peer.bash.md
+   │  │       ├─ given: .reviews/peer/1.feature._.review.i001.d6ef1aa3fad755e23c.r001._.given.by_peer.bash.md
+   │  │       └─ taken: .reviews/peer/1.feature._.review.i001.d6ef1aa3fad755e23c.r001._.taken.by_self.bash.md
    │  └─ judges
    │      └─ j1: rhx route.stone.judge --mechanism reviewed? --stone $stone --route $route --allow-blockers 0
    │          └─ finished [TIME] ✓
@@ -206,13 +216,15 @@ exports[`driver.route.overrule.acceptance given: [case13] tier escalation: L1 ma
    │
    ├─ r1: basic-checker (l1, 1/5)
    │   ├─ 💥 malfunction
-   │   └─ review: .reviews/peer/1.feature._.review.i1.bf3993d1d36b238918.r1._.given.by_peer.basic-checker.md
+   │   ├─ given: .reviews/peer/1.feature._.review.i001.bf3993d1d36b238918.r001._.given.by_peer.basic-checker.md
+   │   └─ taken: .reviews/peer/1.feature._.review.i001.bf3993d1d36b238918.r001._.taken.by_self.basic-checker.md
    │
    ├─ r2: premium-checker (l3, 1/5)
    │   ├─ approved [TIME]
    │   ├─ 0 blockers ✓
    │   ├─ 0 nitpicks ✓
-   │   └─ review: .reviews/peer/1.feature._.review.i1.bf3993d1d36b238918.r2._.given.by_peer.premium-checker.md
+   │   ├─ given: .reviews/peer/1.feature._.review.i001.bf3993d1d36b238918.r002._.given.by_peer.premium-checker.md
+   │   └─ taken: .reviews/peer/1.feature._.review.i001.bf3993d1d36b238918.r002._.taken.by_self.premium-checker.md
    │
    └─ ✓ judge.1 - allowed [TIME]
 
@@ -230,12 +242,14 @@ exports[`driver.route.overrule.acceptance given: [case13] tier escalation: L1 ma
       ├─ reviews
       │   ├─ r1: basic-checker (l1, 0/5)
       │   │   ├─ 💥 malfunction
-      │   │   └─ review: .reviews/peer/1.feature._.review.i1.bf3993d1d36b238918.r1._.given.by_peer.basic-checker.md
+      │   │   ├─ given: .reviews/peer/1.feature._.review.i001.bf3993d1d36b238918.r001._.given.by_peer.basic-checker.md
+      │   │   └─ taken: .reviews/peer/1.feature._.review.i001.bf3993d1d36b238918.r001._.taken.by_self.basic-checker.md
       │   └─ r2: premium-checker (l3, 1/5)
       │       ├─ approved [TIME]
       │       ├─ 0 blockers ✓
       │       ├─ 0 nitpicks ✓
-      │       └─ review: .reviews/peer/1.feature._.review.i1.bf3993d1d36b238918.r2._.given.by_peer.premium-checker.md
+      │       ├─ given: .reviews/peer/1.feature._.review.i001.bf3993d1d36b238918.r002._.given.by_peer.premium-checker.md
+      │       └─ taken: .reviews/peer/1.feature._.review.i001.bf3993d1d36b238918.r002._.taken.by_self.premium-checker.md
       └─ judges
           └─ j1: rhx route.stone.judge --mechanism reviewed? --stone $stone --route $route --allow-blockers 0
               └─ finished [TIME] ✓
@@ -257,13 +271,15 @@ exports[`driver.route.overrule.acceptance given: [case13] tier escalation: L1 ma
    │
    ├─ r1: basic-checker (l1, 1/5)
    │   ├─ 💥 malfunction
-   │   └─ review: .reviews/peer/1.feature._.review.i2.bf3993d1d36b238918.r1._.given.by_peer.basic-checker.md
+   │   ├─ given: .reviews/peer/1.feature._.review.i002.bf3993d1d36b238918.r001._.given.by_peer.basic-checker.md
+   │   └─ taken: .reviews/peer/1.feature._.review.i002.bf3993d1d36b238918.r001._.taken.by_self.basic-checker.md
    │
    ├─ r2: premium-checker (l3, 1/5)
    │   ├─ approved, cached
    │   ├─ 0 blockers ✓
    │   ├─ 0 nitpicks ✓
-   │   └─ review: .reviews/peer/1.feature._.review.i1.bf3993d1d36b238918.r2._.given.by_peer.premium-checker.md
+   │   ├─ given: .reviews/peer/1.feature._.review.i001.bf3993d1d36b238918.r002._.given.by_peer.premium-checker.md
+   │   └─ taken: .reviews/peer/1.feature._.review.i001.bf3993d1d36b238918.r002._.taken.by_self.premium-checker.md
    │
    └─ ✓ judge.1 - allowed [TIME]
 
@@ -276,12 +292,14 @@ exports[`driver.route.overrule.acceptance given: [case13] tier escalation: L1 ma
    │  ├─ reviews
    │  │   ├─ r1: basic-checker (l1, 0/5)
    │  │   │   ├─ 💥 malfunction
-   │  │   │   └─ review: .reviews/peer/1.feature._.review.i2.bf3993d1d36b238918.r1._.given.by_peer.basic-checker.md
+   │  │   │   ├─ given: .reviews/peer/1.feature._.review.i002.bf3993d1d36b238918.r001._.given.by_peer.basic-checker.md
+   │  │   │   └─ taken: .reviews/peer/1.feature._.review.i002.bf3993d1d36b238918.r001._.taken.by_self.basic-checker.md
    │  │   └─ r2: premium-checker (l3, 1/5)
    │  │       ├─ approved, cached
    │  │       ├─ 0 blockers ✓
    │  │       ├─ 0 nitpicks ✓
-   │  │       └─ review: .reviews/peer/1.feature._.review.i1.bf3993d1d36b238918.r2._.given.by_peer.premium-checker.md
+   │  │       ├─ given: .reviews/peer/1.feature._.review.i001.bf3993d1d36b238918.r002._.given.by_peer.premium-checker.md
+   │  │       └─ taken: .reviews/peer/1.feature._.review.i001.bf3993d1d36b238918.r002._.taken.by_self.premium-checker.md
    │  └─ judges
    │      └─ j1: rhx route.stone.judge --mechanism reviewed? --stone $stone --route $route --allow-blockers 0
    │          └─ finished [TIME] ✓
@@ -296,13 +314,15 @@ exports[`driver.route.overrule.acceptance given: [case14] tier escalation: L1 co
    │
    ├─ r1: basic-checker (l1, 1/5)
    │   ├─ ✋ constraint
-   │   └─ review: .reviews/peer/1.feature._.review.i1.bf3993d1d36b238918.r1._.given.by_peer.basic-checker.md
+   │   ├─ given: .reviews/peer/1.feature._.review.i001.bf3993d1d36b238918.r001._.given.by_peer.basic-checker.md
+   │   └─ taken: .reviews/peer/1.feature._.review.i001.bf3993d1d36b238918.r001._.taken.by_self.basic-checker.md
    │
    ├─ r2: premium-checker (l3, 1/5)
    │   ├─ approved [TIME]
    │   ├─ 0 blockers ✓
    │   ├─ 0 nitpicks ✓
-   │   └─ review: .reviews/peer/1.feature._.review.i1.bf3993d1d36b238918.r2._.given.by_peer.premium-checker.md
+   │   ├─ given: .reviews/peer/1.feature._.review.i001.bf3993d1d36b238918.r002._.given.by_peer.premium-checker.md
+   │   └─ taken: .reviews/peer/1.feature._.review.i001.bf3993d1d36b238918.r002._.taken.by_self.premium-checker.md
    │
    └─ ✓ judge.1 - allowed [TIME]
 
@@ -322,12 +342,14 @@ exports[`driver.route.overrule.acceptance given: [case14] tier escalation: L1 co
       │   │   ├─ constraint 0.0s
       │   │   ├─ 0 blockers ✓
       │   │   ├─ 0 nitpicks ✓
-      │   │   └─ review: .reviews/peer/1.feature._.review.i1.bf3993d1d36b238918.r1._.given.by_peer.basic-checker.md
+      │   │   ├─ given: .reviews/peer/1.feature._.review.i001.bf3993d1d36b238918.r001._.given.by_peer.basic-checker.md
+      │   │   └─ taken: .reviews/peer/1.feature._.review.i001.bf3993d1d36b238918.r001._.taken.by_self.basic-checker.md
       │   └─ r2: premium-checker (l3, 1/5)
       │       ├─ approved [TIME]
       │       ├─ 0 blockers ✓
       │       ├─ 0 nitpicks ✓
-      │       └─ review: .reviews/peer/1.feature._.review.i1.bf3993d1d36b238918.r2._.given.by_peer.premium-checker.md
+      │       ├─ given: .reviews/peer/1.feature._.review.i001.bf3993d1d36b238918.r002._.given.by_peer.premium-checker.md
+      │       └─ taken: .reviews/peer/1.feature._.review.i001.bf3993d1d36b238918.r002._.taken.by_self.premium-checker.md
       └─ judges
           └─ j1: rhx route.stone.judge --mechanism reviewed? --stone $stone --route $route --allow-blockers 0
               └─ finished [TIME] ✓
@@ -349,13 +371,15 @@ exports[`driver.route.overrule.acceptance given: [case14] tier escalation: L1 co
    │
    ├─ r1: basic-checker (l1, 1/5)
    │   ├─ ✋ constraint
-   │   └─ review: .reviews/peer/1.feature._.review.i2.bf3993d1d36b238918.r1._.given.by_peer.basic-checker.md
+   │   ├─ given: .reviews/peer/1.feature._.review.i002.bf3993d1d36b238918.r001._.given.by_peer.basic-checker.md
+   │   └─ taken: .reviews/peer/1.feature._.review.i002.bf3993d1d36b238918.r001._.taken.by_self.basic-checker.md
    │
    ├─ r2: premium-checker (l3, 1/5)
    │   ├─ approved, cached
    │   ├─ 0 blockers ✓
    │   ├─ 0 nitpicks ✓
-   │   └─ review: .reviews/peer/1.feature._.review.i1.bf3993d1d36b238918.r2._.given.by_peer.premium-checker.md
+   │   ├─ given: .reviews/peer/1.feature._.review.i001.bf3993d1d36b238918.r002._.given.by_peer.premium-checker.md
+   │   └─ taken: .reviews/peer/1.feature._.review.i001.bf3993d1d36b238918.r002._.taken.by_self.premium-checker.md
    │
    └─ ✓ judge.1 - allowed [TIME]
 
@@ -370,12 +394,14 @@ exports[`driver.route.overrule.acceptance given: [case14] tier escalation: L1 co
    │  │   │   ├─ constraint 0.0s
    │  │   │   ├─ 0 blockers ✓
    │  │   │   ├─ 0 nitpicks ✓
-   │  │   │   └─ review: .reviews/peer/1.feature._.review.i2.bf3993d1d36b238918.r1._.given.by_peer.basic-checker.md
+   │  │   │   ├─ given: .reviews/peer/1.feature._.review.i002.bf3993d1d36b238918.r001._.given.by_peer.basic-checker.md
+   │  │   │   └─ taken: .reviews/peer/1.feature._.review.i002.bf3993d1d36b238918.r001._.taken.by_self.basic-checker.md
    │  │   └─ r2: premium-checker (l3, 1/5)
    │  │       ├─ approved, cached
    │  │       ├─ 0 blockers ✓
    │  │       ├─ 0 nitpicks ✓
-   │  │       └─ review: .reviews/peer/1.feature._.review.i1.bf3993d1d36b238918.r2._.given.by_peer.premium-checker.md
+   │  │       ├─ given: .reviews/peer/1.feature._.review.i001.bf3993d1d36b238918.r002._.given.by_peer.premium-checker.md
+   │  │       └─ taken: .reviews/peer/1.feature._.review.i001.bf3993d1d36b238918.r002._.taken.by_self.premium-checker.md
    │  └─ judges
    │      └─ j1: rhx route.stone.judge --mechanism reviewed? --stone $stone --route $route --allow-blockers 0
    │          └─ finished [TIME] ✓
@@ -403,13 +429,15 @@ exports[`driver.route.overrule.acceptance given: [case15] leveled overrule: L1 r
    │   ├─ rejected, cached
    │   ├─ 1 blocker 🔴
    │   ├─ 0 nitpicks ✓
-   │   └─ review: .reviews/peer/1.feature._.review.i1.61a1a4cb139b1d868b.r1._.given.by_peer.basic-checker.md
+   │   ├─ given: .reviews/peer/1.feature._.review.i001.61a1a4cb139b1d868b.r001._.given.by_peer.basic-checker.md
+   │   └─ taken: .reviews/peer/1.feature._.review.i001.61a1a4cb139b1d868b.r001._.taken.by_self.basic-checker.md
    │
    ├─ r2: premium-checker (l3, 1/5)
    │   ├─ approved [TIME]
    │   ├─ 0 blockers ✓
    │   ├─ 0 nitpicks ✓
-   │   └─ review: .reviews/peer/1.feature._.review.i2.61a1a4cb139b1d868b.r2._.given.by_peer.premium-checker.md
+   │   ├─ given: .reviews/peer/1.feature._.review.i002.61a1a4cb139b1d868b.r002._.given.by_peer.premium-checker.md
+   │   └─ taken: .reviews/peer/1.feature._.review.i002.61a1a4cb139b1d868b.r002._.taken.by_self.premium-checker.md
    │
    └─ ✓ judge.1 - allowed [TIME]
 
@@ -424,7 +452,8 @@ exports[`driver.route.overrule.acceptance given: [case15] leveled overrule: L1 r
    │  │   │   ├─ rejected, cached
    │  │   │   ├─ 1 blocker 🔴
    │  │   │   ├─ 0 nitpicks ✓
-   │  │   │   └─ review: .reviews/peer/1.feature._.review.i1.61a1a4cb139b1d868b.r1._.given.by_peer.basic-checker.md
+   │  │   │   ├─ given: .reviews/peer/1.feature._.review.i001.61a1a4cb139b1d868b.r001._.given.by_peer.basic-checker.md
+   │  │   │   └─ taken: .reviews/peer/1.feature._.review.i001.61a1a4cb139b1d868b.r001._.taken.by_self.basic-checker.md
    │  │   └─ r2: premium-checker (l3, 1/5)
    │  │       └─ awaits l1 terminal
    │  └─ judges

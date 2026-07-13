@@ -10,17 +10,17 @@ import { getRouteBindByBranch } from '@src/domain.operations/route/bind/getRoute
 import { setRouteBind } from '@src/domain.operations/route/bind/setRouteBind';
 import { getDecisionIsArtifactProtected } from '@src/domain.operations/route/bouncer/getDecisionIsArtifactProtected';
 import { getRouteBouncerCache } from '@src/domain.operations/route/bouncer/getRouteBouncerCache';
-import { computeReviewThresholdVerdict } from '@src/domain.operations/route/guard/computeReviewThresholdVerdict';
-import { computeReviewTotalsFromFiles } from '@src/domain.operations/route/guard/computeReviewTotalsFromFiles';
-import { computeStoneReviewInputHash } from '@src/domain.operations/route/guard/computeStoneReviewInputHash';
-import { enumRouteGuardReviewPeerFiles } from '@src/domain.operations/route/guard/enumRouteGuardReviewPeerFiles';
 import { genContextCliEmit } from '@src/domain.operations/route/guard/genContextCliEmit';
-import { getLatestReviewFilesPerIndex } from '@src/domain.operations/route/guard/getLatestReviewFilesPerIndex';
-import { getAllReviewPeerMeterStatuses } from '@src/domain.operations/route/guard/reviewPeerMeter/getAllReviewPeerMeterStatuses';
+import { computeReviewThresholdVerdict } from '@src/domain.operations/route/guard/review/computeReviewThresholdVerdict';
+import { computeReviewTotalsFromFiles } from '@src/domain.operations/route/guard/review/computeReviewTotalsFromFiles';
+import { computeStoneReviewInputHash } from '@src/domain.operations/route/guard/review/computeStoneReviewInputHash';
+import { enumRouteGuardReviewPeerFiles } from '@src/domain.operations/route/guard/review/peer/enumRouteGuardReviewPeerFiles';
+import { getLatestReviewFilesPerIndex } from '@src/domain.operations/route/guard/review/peer/getLatestReviewFilesPerIndex';
+import { getAllReviewPeerMeterStatuses } from '@src/domain.operations/route/guard/review/peer/meter/getAllReviewPeerMeterStatuses';
 import {
   isReviewPeerVerdictExhausted,
   isReviewPeerVerdictTerminal,
-} from '@src/domain.operations/route/guard/reviewPeerMeter/isReviewPeerLevelTerminal';
+} from '@src/domain.operations/route/guard/review/peer/meter/isReviewPeerLevelTerminal';
 import { getOneStoneGuardApproval } from '@src/domain.operations/route/judges/getOneStoneGuardApproval';
 import { getStoneGuardOverruledLevels } from '@src/domain.operations/route/judges/getStoneGuardOverruledLevels';
 import { stepRouteDrive } from '@src/domain.operations/route/stepRouteDrive';
@@ -149,6 +149,7 @@ const VALID_STONE_PASSAGE_ACTIONS = new Set([
   'passed',
   'approved',
   'promised',
+  'contemplated',
   'blocked',
   'rewound',
   'arrived',
@@ -294,7 +295,7 @@ options:
 const printSetHelp = (): void => {
   console.log(
     `
-route.stone.set - mark stone as passed, approved, promised, blocked, rewound, arrived, overruled, or forced
+route.stone.set - mark stone as passed, approved, promised, contemplated, blocked, rewound, arrived, overruled, or forced
 
 usage:
   route.stone.set [options]
@@ -307,11 +308,14 @@ options:
                        arrived  - work complete, get reviews
                        approved - human approval granted (human only)
                        promised - review.self promise made
+                       contemplated - peer review response articulated
                        blocked  - stuck, need help
                        rewound  - clear validation state
                        overruled - bypass review thresholds (human only)
                        forced   - approve AND overrule (human only)
-  --that <slug>      review.self slug to promise (required for --as promised)
+  --that <slug>      reviewer slug (required for --as promised / --as contemplated)
+                       for --as contemplated, use the slug exactly as shown in the
+                       reviewers-await-reply prompt (path-sanitized: slashes → dashes)
   --help             show this help message
 
 note:
@@ -323,6 +327,7 @@ examples:
   route.stone.set --stone 1.vision --as passed
   route.stone.set --stone 1.vision --as approved
   route.stone.set --stone 1.vision --as promised --that all-done
+  route.stone.set --stone 1.execute --as contemplated --that architect
   route.stone.set --stone 3.blueprint --as blocked
   route.stone.set --stone 3.blueprint --as rewound
   route.stone.set --stone 1.vision --as overruled
@@ -795,13 +800,15 @@ const isGuardExitRequired = (input: {
   approved: boolean | undefined;
   overruled: boolean | undefined;
   forced: boolean | undefined;
+  contemplated: boolean | undefined;
 }): boolean => {
   return (
     input.passed === false ||
     input.challenged === true ||
     input.approved === false ||
     input.overruled === false ||
-    input.forced === false
+    input.forced === false ||
+    input.contemplated === false
   );
 };
 
@@ -829,7 +836,7 @@ export const routeStoneSet = async (): Promise<void> => {
   // validate --as required and valid
   if (!isValidStonePassageAction({ action: options.as })) {
     throw new BadRequestError(
-      '--as must be "passed", "approved", "promised", "blocked", "rewound", "arrived", "overruled", or "forced"',
+      '--as must be "passed", "approved", "promised", "contemplated", "blocked", "rewound", "arrived", "overruled", or "forced"',
       { hint: '--help for usage' },
     );
   }
@@ -870,6 +877,7 @@ export const routeStoneSet = async (): Promise<void> => {
           | 'passed'
           | 'approved'
           | 'promised'
+          | 'contemplated'
           | 'blocked'
           | 'rewound'
           | 'arrived'
@@ -904,6 +912,7 @@ export const routeStoneSet = async (): Promise<void> => {
         approved: result.approved,
         overruled: result.overruled,
         forced: result.forced,
+        contemplated: result.contemplated,
       })
     ) {
       process.exit(2);

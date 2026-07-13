@@ -1,0 +1,8 @@
+{
+  "name": "route-peer-precedence-fixture",
+  "private": true,
+  "description": "fixture for peer-contemplation precedence acceptance test",
+  "dependencies": {
+    "rhachet-roles-bhrain": "link:."
+  }
+}

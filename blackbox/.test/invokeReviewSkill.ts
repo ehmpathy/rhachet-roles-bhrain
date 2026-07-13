@@ -69,6 +69,7 @@ export const invokeReviewSkill = async (input: {
   diffs?: string;
   join?: 'union' | 'intersect';
   refs?: string | string[];
+  conversation?: string;
   output?: string;
   focus?: 'push' | 'pull';
   goal?: 'exhaustive' | 'representative';
@@ -94,6 +95,7 @@ export const invokeReviewSkill = async (input: {
     input.diffs ? `--diffs "${input.diffs}"` : '',
     input.join ? `--join ${input.join}` : '',
     refsFlags,
+    input.conversation ? `--conversation "${input.conversation}"` : '',
     input.output ? `--output "${input.output}"` : '',
     input.focus ? `--focus ${input.focus}` : '',
     input.goal ? `--goal ${input.goal}` : '',

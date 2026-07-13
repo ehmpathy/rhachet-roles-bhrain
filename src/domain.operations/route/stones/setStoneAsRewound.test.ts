@@ -134,7 +134,7 @@ describe('setStoneAsRewound', () => {
       await fs.writeFile(
         path.join(
           reviewsDir,
-          '1.vision._.review.i1.abc123.r1._.given.by_peer.test-reviewer.md',
+          '1.vision._.review.i001.abc123.r001._.given.by_peer.test-reviewer.md',
         ),
         'review',
       );
@@ -302,7 +302,7 @@ describe('setStoneAsRewound', () => {
       await fs.writeFile(
         path.join(
           reviewsDir,
-          '2.criteria._.review.i1.abc123.r1._.given.by_peer.test-reviewer.md',
+          '2.criteria._.review.i001.abc123.r001._.given.by_peer.test-reviewer.md',
         ),
         'review',
       );

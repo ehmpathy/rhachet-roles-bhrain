@@ -2,7 +2,7 @@ import * as fs from 'fs/promises';
 import * as path from 'path';
 import { given, then, useBeforeAll, useThen, when } from 'test-fns';
 
-import { getSelfReviewArticulationPath } from '../src/domain.operations/route/guard/getSelfReviewArticulationPath';
+import { getSelfReviewArticulationPath } from '../src/domain.operations/route/guard/review/self/getSelfReviewArticulationPath';
 import {
   execAsync,
   genTempDirForRhachet,
@@ -870,6 +870,18 @@ judges:
 
       then('shows patience challenge after absent prefix', () => {
         expect(result.stdout).toContain('patience, friend');
+      });
+
+      then('prints the exact current-round articulation path verbatim', () => {
+        // usecase 10 (self-review parity): the r-number is guard-assigned; the
+        // driver must copy the path, never compute the round
+        expect(result.stdout).toContain('review/self/for.1._.r1.all-done.md');
+      });
+
+      then('states the guard looks precisely here, write exactly this path', () => {
+        expect(result.stdout).toContain(
+          'the guard looks precisely here, write exactly to this path',
+        );
       });
 
       then('stdout has good vibes', () => {

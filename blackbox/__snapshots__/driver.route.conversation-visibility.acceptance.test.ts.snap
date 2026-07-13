@@ -1,0 +1,91 @@
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
+
+exports[`driver.route.conversation-visibility.acceptance given: [case1] a prior round with a FIXED .taken, two reviewers when: [t0] driver attempts --as passed, guard re-runs both reviewers then: blind given matches snapshot 1`] = `
+"├─ stdout
+│  ├─
+│  │
+│  │  ---
+│  │  blockers: 1
+│  │  nitpicks: 0
+│  │  ---
+│  │  seer: the design lacks a bounded context
+│  │  
+│  │  ## blockers
+│  │  - the design lacks a bounded context
+│  │  
+│  │  ## conversation seen (0 files)
+│  │
+│  └─
+├─ stderr
+│  ├─
+│  │
+│  └─
+└─ passage blocked
+   ├─ blocked by malfunction
+   └─ exit code: 1 💥"
+`;
+
+exports[`driver.route.conversation-visibility.acceptance given: [case1] a prior round with a FIXED .taken, two reviewers when: [t0] driver attempts --as passed, guard re-runs both reviewers then: seer given matches snapshot 1`] = `
+"├─ stdout
+│  ├─
+│  │
+│  │  ---
+│  │  blockers: 0
+│  │  nitpicks: 0
+│  │  ---
+│  │  seer: the driver's .taken claims FIXED — the blocker is dropped
+│  │  
+│  │  ## conversation seen (4 files)
+│  │  - 1.execute._.review.i001.00000000.r001._.given.by_peer.seer.md
+│  │  - 1.execute._.review.i001.00000000.r001._.taken.by_self.seer.md
+│  │  - 1.execute._.review.i001.00000000.r002._.given.by_peer.blind.md
+│  │  - 1.execute._.review.i001.00000000.r002._.taken.by_self.blind.md
+│  │
+│  └─
+├─ stderr
+│  ├─
+│  │
+│  └─"
+`;
+
+exports[`driver.route.conversation-visibility.acceptance given: [case2] a first round with no prior generation when: [t0] driver attempts --as passed with no prior conversation then: stdout matches snapshot 1`] = `
+"🦉 the way speaks for itself
+   │
+   ├─ r1: seer (l1, 1/3)
+   │   ├─ 💥 malfunction
+   │   ├─ given: .reviews/peer/1.execute._.review.i001.df6243be244b1651df.r001._.given.by_peer.seer.md
+   │   └─ taken: .reviews/peer/1.execute._.review.i001.df6243be244b1651df.r001._.taken.by_self.seer.md
+   │
+   ├─ r2: blind (l1, 1/3)
+   │   ├─ 💥 malfunction
+   │   ├─ given: .reviews/peer/1.execute._.review.i001.df6243be244b1651df.r002._.given.by_peer.blind.md
+   │   └─ taken: .reviews/peer/1.execute._.review.i001.df6243be244b1651df.r002._.taken.by_self.blind.md
+   │
+   └─ ✗ judge.1 - blocked [TIME]
+
+🗿 route.stone.set
+   ├─ stone = 1.execute
+   ├─ passage = malfunction
+   ├─ reason = reviewer or judge malfunctioned
+   ├─ options
+   │  ├─ overrule the malfunction
+   │  │  └─ rhx route.stone.set --stone 1.execute --as overruled
+   │  └─ or fix the reviewer, then retry
+   └─ guard
+      ├─ artifacts
+      │   └─ 1.execute*.md
+      ├─ reviews
+      │   ├─ r1: seer (l1, 0/3)
+      │   │   ├─ 💥 malfunction
+      │   │   ├─ given: .reviews/peer/1.execute._.review.i001.df6243be244b1651df.r001._.given.by_peer.seer.md
+      │   │   └─ taken: .reviews/peer/1.execute._.review.i001.df6243be244b1651df.r001._.taken.by_self.seer.md
+      │   └─ r2: blind (l1, 0/3)
+      │       ├─ 💥 malfunction
+      │       ├─ given: .reviews/peer/1.execute._.review.i001.df6243be244b1651df.r002._.given.by_peer.blind.md
+      │       └─ taken: .reviews/peer/1.execute._.review.i001.df6243be244b1651df.r002._.taken.by_self.blind.md
+      └─ judges
+          └─ j1: rhx route.stone.judge --mechanism reviewed? --stone $stone --route $route --allow-blockers 1 --allow-nitpicks 5
+              ├─ finished [TIME] ✗
+              └─ reason: blockers exceed threshold (2 > 1)
+"
+`;

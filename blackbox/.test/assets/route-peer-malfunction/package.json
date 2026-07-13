@@ -1,0 +1,8 @@
+{
+  "name": "route-peer-malfunction-fixture",
+  "private": true,
+  "description": "fixture for the malfunction-over-contemplation priority acceptance test",
+  "dependencies": {
+    "rhachet-roles-bhrain": "link:."
+  }
+}

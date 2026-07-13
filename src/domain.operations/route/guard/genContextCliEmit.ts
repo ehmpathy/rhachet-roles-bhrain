@@ -4,10 +4,12 @@ import type {
 } from '@src/domain.objects/Driver/ContextCliEmit';
 import type { GuardProgressEvent } from '@src/domain.objects/Driver/GuardProgressEvent';
 
+import { computeReviewPeerVerdict } from './review/peer/meter/computeReviewPeerVerdict';
+import { getReviewedJudgeThresholds } from './review/peer/meter/getReviewedJudgeThresholds';
 import {
   formatGuardReviewerTree,
   type ReviewerTreeState,
-} from './formatGuardReviewerTree';
+} from './tree/formatGuardReviewerTree';
 
 const FRAMES = ['⠋', '⠙', '⠹', '⠸', '⠼', '⠴', '⠦', '⠧', '⠇', '⠏'];
 const SPIN_MS = 80;
@@ -95,11 +97,20 @@ export const genContextCliEmit = (input: {
     const label = `judge.${num}`;
     const branch = getBranch(position);
 
-    // cached judge
-    if (!event.inflight && !event.outcome) {
+    // cached judge (inflight null); outcome may carry the allowed|blocked decision
+    // .note = cached judge events now include outcome for parity with cached reviews,
+    //         so match on !inflight (not !outcome) or the tree is left unclosed
+    if (!event.inflight) {
       clearActive();
       completedCount++;
-      seal(`   ${branch} ✓ ${label} - allowed (cached)`);
+      const judge = event.outcome?.judge;
+      const allowed =
+        !judge || ('decision' in judge && judge.decision === 'allowed');
+      const mark = allowed ? '✓' : '✗';
+      const status = allowed ? 'allowed' : 'blocked';
+      // blank line before judge for visual separation (match completed judge)
+      seal('   │');
+      seal(`   ${branch} ${mark} ${label} - ${status} (cached)`);
       return;
     }
 
@@ -153,6 +164,12 @@ export const genContextCliEmit = (input: {
 
     const { reviewer } = event;
 
+    // derive the guard's reviewed? thresholds so the live verdict matches the
+    // final tree's authoritative computeReviewPeerVerdict (single source of truth)
+    const thresholds = getReviewedJudgeThresholds({
+      judges: event.stone.guard?.judges ?? [],
+    }) ?? { allowBlockers: 0, allowNitpicks: 0 };
+
     // cached review (no inflight, has outcome with review data)
     // .note = cached events carry outcome.review with blockers/nitpicks and outcome.path
     if (!event.inflight && event.outcome) {
@@ -164,6 +181,7 @@ export const genContextCliEmit = (input: {
         review,
         event.outcome.path,
         null, // no duration for cached reviews
+        thresholds,
       );
       // mark as cached for display
       if (state.state.type === 'finished') {
@@ -222,6 +240,7 @@ export const genContextCliEmit = (input: {
         review,
         event.outcome.path,
         dur,
+        thresholds,
       );
       const lines = formatGuardReviewerTree({
         reviewer: state,
@@ -319,6 +338,7 @@ const asReviewerTreeState = (
   review: NonNullable<GuardProgressEvent['outcome']>['review'],
   path: string | null,
   durationSec: string | null,
+  thresholds: { allowBlockers: number; allowNitpicks: number },
 ): ReviewerTreeState => {
   // malfunction state
   if (review && 'malfunction' in review) {
@@ -384,9 +404,24 @@ const asReviewerTreeState = (
 
   // finished state with blockers/nitpicks
   if (review && 'blockers' in review) {
-    // compute verdict from blockers/nitpicks (default thresholds for now)
-    const verdict: 'approved' | 'rejected' =
-      review.blockers === 0 ? 'approved' : 'rejected';
+    // compute verdict via the authoritative computeReviewPeerVerdict, with the
+    // guard's real reviewed? thresholds — NOT a naive `blockers === 0` shortcut.
+    // .why = the live-progress tree must agree with the final guard tree, which
+    //        already derives its verdict this way. a hardcoded shortcut renders a
+    //        threshold-permitted reviewer as 'rejected' live but 'approved' final —
+    //        a single-source-of-truth breach visible within one stdout.
+    // .note = the review ran (exit 0 with counts), so exitClass='passed' and
+    //         wasExhausted=false; the result is only ever 'approved' | 'rejected'.
+    const verdict = computeReviewPeerVerdict({
+      rounds: reviewer.rounds,
+      budget: reviewer.budget,
+      blockers: review.blockers,
+      nitpicks: review.nitpicks,
+      allowBlockers: thresholds.allowBlockers,
+      allowNitpicks: thresholds.allowNitpicks,
+      exitClass: 'passed',
+      wasExhausted: false,
+    }) as 'approved' | 'rejected';
 
     return {
       index: reviewer.index,

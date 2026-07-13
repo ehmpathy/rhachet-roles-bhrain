@@ -1,5 +1,787 @@
 // Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
 
+exports[`compileReviewPrompt given: [case-prompt-matrix] the compiled prompt across initial conditions when: [t0] no conversation (first iteration) then: prompt omits the conversation section — snapshot 1`] = `
+"# review task
+
+you are a reviewer. apply the rules below to the target files.
+
+## CRITICAL INSTRUCTIONS — READ CAREFULLY
+
+1. ONLY review content in the <target> section
+2. NEVER flag anything from the <rules> section — rules contain examples of bad patterns for illustration only
+3. if you see "bad: X" or "good: Y" in a rule, those are examples to learn from, NOT content to flag
+4. the "locations" array must ONLY contain paths from <target>, never from <rules>
+5. if you cannot find the violation in <target>, do not report it
+
+## how to use the diff (FOCUS ON THE DELTA)
+
+each changed target may carry a \`<target.diff path="...">\` block (what changed in this pr) and a \`<target.file path="...">\` block (the full current file, for context). when a diff is present:
+
+- focus your review on the diff — the lines this pr added or changed. do NOT churn unrelated untouched code; fix-forward. BUT DO flag untouched code that this change breaks.
+- line numbers for "locations" come from the diff hunk headers (\`@@ -X,Y +A,B @@\`) — the \`+A\` side is the authoritative anchor for changed lines. use those numbers rather than count content lines by hand.
+- copy "snippet.code" from the clean \`<target.file>\` content, NEVER from the diff's \`+\`/\`-\` prefixed lines.
+- diff \`-\` lines are REMOVED code — this pr deletes them, they no longer exist. NEVER flag a \`-\` line. only \`+\` lines and surrounding context are code that exists and may be flagged.
+- a file shown as \`<target.file path="..." change="deleted" />\` is gone — do not review or flag it.
+
+## goal: representative
+
+report the most important or representative issues. limit yourself to up to 10 defects. for each defect, list a sample of the locations where the violation occurs. prioritize impact via severity and coverage over completeness.
+
+## rules (FOR REFERENCE ONLY — DO NOT FLAG CONTENT FROM THIS SECTION)
+
+<rules>
+### rule.no-console.md
+
+# rule: no-console
+forbid console.log
+</rules>
+
+## target (REVIEW THIS SECTION ONLY)
+
+<target>
+<target.file path="src/valid.ts">
+export const valid = 1;
+</target.file>
+</target>
+
+## output format
+
+IMPORTANT: output your review as text directly. do not use any tools to write files. your final response must be the JSON object below, printed as plain text.
+
+note: the "locations" array must contain ONLY paths from the <target> section. never include rule file paths in locations.
+
+\`\`\`json
+{
+  "done": true,
+  "blockers": [
+    {
+      "rule": "path/to/rule.md (which rule was violated)",
+      "title": "short title for the issue",
+      "description": "detailed multiline explanation of the issue.\\ninclude context about why this violates the rule.\\nbe specific about what needs to change.",
+      "locations": ["path/to/target-file.ts:42 (only target files, never rule files)"],
+      "snippet": {
+        "lang": "ts",
+        "code": "// the exact code from the target file that violates the rule\\nconst x = badPattern();"
+      }
+    }
+  ],
+  "nitpicks": [
+    {
+      "rule": "path/to/rule.md (which rule was violated)",
+      "title": "short title for the issue",
+      "description": "detailed multiline explanation of the issue.\\ninclude context about why this violates the rule.\\nbe specific about what needs to change.",
+      "locations": ["path/to/target-file.ts:42 (only target files, never rule files)"],
+      "snippet": {
+        "lang": "ts",
+        "code": "// the exact code from the target file that violates the rule\\nconst x = badPattern();"
+      }
+    }
+  ]
+}
+\`\`\`
+
+IMPORTANT: every violation MUST include a "snippet" with the actual code from the target file that violates the rule. copy the exact code so the reader can identify the violation.
+
+if no issues found, output: \`{"done": true, "blockers": [], "nitpicks": []}\`
+"
+`;
+
+exports[`compileReviewPrompt given: [case-prompt-matrix] the compiled prompt across initial conditions when: [t1] given-only (critique raised, not yet answered) then: prompt threads the lone summary given — snapshot 1`] = `
+"# review task
+
+you are a reviewer. apply the rules below to the target files.
+
+## CRITICAL INSTRUCTIONS — READ CAREFULLY
+
+1. ONLY review content in the <target> section
+2. NEVER flag anything from the <rules> section — rules contain examples of bad patterns for illustration only
+3. if you see "bad: X" or "good: Y" in a rule, those are examples to learn from, NOT content to flag
+4. the "locations" array must ONLY contain paths from <target>, never from <rules>
+5. if you cannot find the violation in <target>, do not report it
+7. <conversation> section is the prior peer-review dialogue — your earlier critiques (.given, with detailed .report) and the driver's responses (.taken). for each prior point the driver answers with a [REPAIR] (a claimed code fix) or a [REFUTE] (a reasoned argument the critique does not hold). weigh each on its merits: (a) [REPAIR] present in <target> → drop the point; (b) [REPAIR] absent from <target> → re-raise it; (c) [REFUTE] that is sound (e.g. extant code out of scope, a false positive, a deliberate tradeoff) → concede and drop it, the driver need not change code to be right; (d) [REFUTE] that is unsound → hold the point and say why the argument fails. the driver is a peer, not a subordinate — a well-argued [REFUTE] is a valid resolution. do NOT flag content from conversation
+
+## how to use the diff (FOCUS ON THE DELTA)
+
+each changed target may carry a \`<target.diff path="...">\` block (what changed in this pr) and a \`<target.file path="...">\` block (the full current file, for context). when a diff is present:
+
+- focus your review on the diff — the lines this pr added or changed. do NOT churn unrelated untouched code; fix-forward. BUT DO flag untouched code that this change breaks.
+- line numbers for "locations" come from the diff hunk headers (\`@@ -X,Y +A,B @@\`) — the \`+A\` side is the authoritative anchor for changed lines. use those numbers rather than count content lines by hand.
+- copy "snippet.code" from the clean \`<target.file>\` content, NEVER from the diff's \`+\`/\`-\` prefixed lines.
+- diff \`-\` lines are REMOVED code — this pr deletes them, they no longer exist. NEVER flag a \`-\` line. only \`+\` lines and surrounding context are code that exists and may be flagged.
+- a file shown as \`<target.file path="..." change="deleted" />\` is gone — do not review or flag it.
+
+## goal: representative
+
+report the most important or representative issues. limit yourself to up to 10 defects. for each defect, list a sample of the locations where the violation occurs. prioritize impact via severity and coverage over completeness.
+
+## rules (FOR REFERENCE ONLY — DO NOT FLAG CONTENT FROM THIS SECTION)
+
+<rules>
+### rule.no-console.md
+
+# rule: no-console
+forbid console.log
+</rules>
+
+## prior conversation (YOUR PAST CRITIQUES + THE DRIVER'S [REPAIR]/[REFUTE] RESPONSES — WEIGH BOTH ON MERIT, DO NOT FLAG)
+
+<conversation>
+### .reviews/peer/1.x._.review.i001.h.r001._.given.by_peer.arch.md
+
+1 blockers
+0 nitpicks
+</conversation>
+
+## target (REVIEW THIS SECTION ONLY)
+
+<target>
+<target.file path="src/valid.ts">
+export const valid = 1;
+</target.file>
+</target>
+
+## output format
+
+IMPORTANT: output your review as text directly. do not use any tools to write files. your final response must be the JSON object below, printed as plain text.
+
+note: the "locations" array must contain ONLY paths from the <target> section. never include rule file paths in locations.
+
+\`\`\`json
+{
+  "done": true,
+  "blockers": [
+    {
+      "rule": "path/to/rule.md (which rule was violated)",
+      "title": "short title for the issue",
+      "description": "detailed multiline explanation of the issue.\\ninclude context about why this violates the rule.\\nbe specific about what needs to change.",
+      "locations": ["path/to/target-file.ts:42 (only target files, never rule files)"],
+      "snippet": {
+        "lang": "ts",
+        "code": "// the exact code from the target file that violates the rule\\nconst x = badPattern();"
+      }
+    }
+  ],
+  "nitpicks": [
+    {
+      "rule": "path/to/rule.md (which rule was violated)",
+      "title": "short title for the issue",
+      "description": "detailed multiline explanation of the issue.\\ninclude context about why this violates the rule.\\nbe specific about what needs to change.",
+      "locations": ["path/to/target-file.ts:42 (only target files, never rule files)"],
+      "snippet": {
+        "lang": "ts",
+        "code": "// the exact code from the target file that violates the rule\\nconst x = badPattern();"
+      }
+    }
+  ]
+}
+\`\`\`
+
+IMPORTANT: every violation MUST include a "snippet" with the actual code from the target file that violates the rule. copy the exact code so the reader can identify the violation.
+
+if no issues found, output: \`{"done": true, "blockers": [], "nitpicks": []}\`
+"
+`;
+
+exports[`compileReviewPrompt given: [case-prompt-matrix] the compiled prompt across initial conditions when: [t2] given + detailed report (no taken yet) then: prompt threads the detailed critique — snapshot 1`] = `
+"# review task
+
+you are a reviewer. apply the rules below to the target files.
+
+## CRITICAL INSTRUCTIONS — READ CAREFULLY
+
+1. ONLY review content in the <target> section
+2. NEVER flag anything from the <rules> section — rules contain examples of bad patterns for illustration only
+3. if you see "bad: X" or "good: Y" in a rule, those are examples to learn from, NOT content to flag
+4. the "locations" array must ONLY contain paths from <target>, never from <rules>
+5. if you cannot find the violation in <target>, do not report it
+7. <conversation> section is the prior peer-review dialogue — your earlier critiques (.given, with detailed .report) and the driver's responses (.taken). for each prior point the driver answers with a [REPAIR] (a claimed code fix) or a [REFUTE] (a reasoned argument the critique does not hold). weigh each on its merits: (a) [REPAIR] present in <target> → drop the point; (b) [REPAIR] absent from <target> → re-raise it; (c) [REFUTE] that is sound (e.g. extant code out of scope, a false positive, a deliberate tradeoff) → concede and drop it, the driver need not change code to be right; (d) [REFUTE] that is unsound → hold the point and say why the argument fails. the driver is a peer, not a subordinate — a well-argued [REFUTE] is a valid resolution. do NOT flag content from conversation
+
+## how to use the diff (FOCUS ON THE DELTA)
+
+each changed target may carry a \`<target.diff path="...">\` block (what changed in this pr) and a \`<target.file path="...">\` block (the full current file, for context). when a diff is present:
+
+- focus your review on the diff — the lines this pr added or changed. do NOT churn unrelated untouched code; fix-forward. BUT DO flag untouched code that this change breaks.
+- line numbers for "locations" come from the diff hunk headers (\`@@ -X,Y +A,B @@\`) — the \`+A\` side is the authoritative anchor for changed lines. use those numbers rather than count content lines by hand.
+- copy "snippet.code" from the clean \`<target.file>\` content, NEVER from the diff's \`+\`/\`-\` prefixed lines.
+- diff \`-\` lines are REMOVED code — this pr deletes them, they no longer exist. NEVER flag a \`-\` line. only \`+\` lines and surrounding context are code that exists and may be flagged.
+- a file shown as \`<target.file path="..." change="deleted" />\` is gone — do not review or flag it.
+
+## goal: representative
+
+report the most important or representative issues. limit yourself to up to 10 defects. for each defect, list a sample of the locations where the violation occurs. prioritize impact via severity and coverage over completeness.
+
+## rules (FOR REFERENCE ONLY — DO NOT FLAG CONTENT FROM THIS SECTION)
+
+<rules>
+### rule.no-console.md
+
+# rule: no-console
+forbid console.log
+</rules>
+
+## prior conversation (YOUR PAST CRITIQUES + THE DRIVER'S [REPAIR]/[REFUTE] RESPONSES — WEIGH BOTH ON MERIT, DO NOT FLAG)
+
+<conversation>
+### .reviews/peer/1.x._.review.i001.h.r001._.given.by_peer.arch.md
+
+1 blockers
+0 nitpicks
+
+---
+
+### .reviews/peer/1.x._.review.i001.h.r001._.given.by_peer.arch.report.md
+
+# blocker.1: console.log left in src/valid.ts
+
+**locations**:
+- src/valid.ts:1
+
+remove the console.log
+</conversation>
+
+## target (REVIEW THIS SECTION ONLY)
+
+<target>
+<target.file path="src/valid.ts">
+export const valid = 1;
+</target.file>
+</target>
+
+## output format
+
+IMPORTANT: output your review as text directly. do not use any tools to write files. your final response must be the JSON object below, printed as plain text.
+
+note: the "locations" array must contain ONLY paths from the <target> section. never include rule file paths in locations.
+
+\`\`\`json
+{
+  "done": true,
+  "blockers": [
+    {
+      "rule": "path/to/rule.md (which rule was violated)",
+      "title": "short title for the issue",
+      "description": "detailed multiline explanation of the issue.\\ninclude context about why this violates the rule.\\nbe specific about what needs to change.",
+      "locations": ["path/to/target-file.ts:42 (only target files, never rule files)"],
+      "snippet": {
+        "lang": "ts",
+        "code": "// the exact code from the target file that violates the rule\\nconst x = badPattern();"
+      }
+    }
+  ],
+  "nitpicks": [
+    {
+      "rule": "path/to/rule.md (which rule was violated)",
+      "title": "short title for the issue",
+      "description": "detailed multiline explanation of the issue.\\ninclude context about why this violates the rule.\\nbe specific about what needs to change.",
+      "locations": ["path/to/target-file.ts:42 (only target files, never rule files)"],
+      "snippet": {
+        "lang": "ts",
+        "code": "// the exact code from the target file that violates the rule\\nconst x = badPattern();"
+      }
+    }
+  ]
+}
+\`\`\`
+
+IMPORTANT: every violation MUST include a "snippet" with the actual code from the target file that violates the rule. copy the exact code so the reader can identify the violation.
+
+if no issues found, output: \`{"done": true, "blockers": [], "nitpicks": []}\`
+"
+`;
+
+exports[`compileReviewPrompt given: [case-prompt-matrix] the compiled prompt across initial conditions when: [t3] given + report + [REPAIR] taken then: prompt shows the driver claimed a fix — snapshot 1`] = `
+"# review task
+
+you are a reviewer. apply the rules below to the target files.
+
+## CRITICAL INSTRUCTIONS — READ CAREFULLY
+
+1. ONLY review content in the <target> section
+2. NEVER flag anything from the <rules> section — rules contain examples of bad patterns for illustration only
+3. if you see "bad: X" or "good: Y" in a rule, those are examples to learn from, NOT content to flag
+4. the "locations" array must ONLY contain paths from <target>, never from <rules>
+5. if you cannot find the violation in <target>, do not report it
+7. <conversation> section is the prior peer-review dialogue — your earlier critiques (.given, with detailed .report) and the driver's responses (.taken). for each prior point the driver answers with a [REPAIR] (a claimed code fix) or a [REFUTE] (a reasoned argument the critique does not hold). weigh each on its merits: (a) [REPAIR] present in <target> → drop the point; (b) [REPAIR] absent from <target> → re-raise it; (c) [REFUTE] that is sound (e.g. extant code out of scope, a false positive, a deliberate tradeoff) → concede and drop it, the driver need not change code to be right; (d) [REFUTE] that is unsound → hold the point and say why the argument fails. the driver is a peer, not a subordinate — a well-argued [REFUTE] is a valid resolution. do NOT flag content from conversation
+
+## how to use the diff (FOCUS ON THE DELTA)
+
+each changed target may carry a \`<target.diff path="...">\` block (what changed in this pr) and a \`<target.file path="...">\` block (the full current file, for context). when a diff is present:
+
+- focus your review on the diff — the lines this pr added or changed. do NOT churn unrelated untouched code; fix-forward. BUT DO flag untouched code that this change breaks.
+- line numbers for "locations" come from the diff hunk headers (\`@@ -X,Y +A,B @@\`) — the \`+A\` side is the authoritative anchor for changed lines. use those numbers rather than count content lines by hand.
+- copy "snippet.code" from the clean \`<target.file>\` content, NEVER from the diff's \`+\`/\`-\` prefixed lines.
+- diff \`-\` lines are REMOVED code — this pr deletes them, they no longer exist. NEVER flag a \`-\` line. only \`+\` lines and surrounding context are code that exists and may be flagged.
+- a file shown as \`<target.file path="..." change="deleted" />\` is gone — do not review or flag it.
+
+## goal: representative
+
+report the most important or representative issues. limit yourself to up to 10 defects. for each defect, list a sample of the locations where the violation occurs. prioritize impact via severity and coverage over completeness.
+
+## rules (FOR REFERENCE ONLY — DO NOT FLAG CONTENT FROM THIS SECTION)
+
+<rules>
+### rule.no-console.md
+
+# rule: no-console
+forbid console.log
+</rules>
+
+## prior conversation (YOUR PAST CRITIQUES + THE DRIVER'S [REPAIR]/[REFUTE] RESPONSES — WEIGH BOTH ON MERIT, DO NOT FLAG)
+
+<conversation>
+### .reviews/peer/1.x._.review.i001.h.r001._.given.by_peer.arch.md
+
+1 blockers
+0 nitpicks
+
+---
+
+### .reviews/peer/1.x._.review.i001.h.r001._.given.by_peer.arch.report.md
+
+# blocker.1: console.log left in src/valid.ts
+
+**locations**:
+- src/valid.ts:1
+
+remove the console.log
+
+---
+
+### .reviews/peer/1.x._.review.i001.h.r001._.taken.by_self.arch.md
+
+# blocker.1
+
+[REPAIR] removed the console.log — src/valid.ts:1.
+</conversation>
+
+## target (REVIEW THIS SECTION ONLY)
+
+<target>
+<target.file path="src/valid.ts">
+export const valid = 1;
+</target.file>
+</target>
+
+## output format
+
+IMPORTANT: output your review as text directly. do not use any tools to write files. your final response must be the JSON object below, printed as plain text.
+
+note: the "locations" array must contain ONLY paths from the <target> section. never include rule file paths in locations.
+
+\`\`\`json
+{
+  "done": true,
+  "blockers": [
+    {
+      "rule": "path/to/rule.md (which rule was violated)",
+      "title": "short title for the issue",
+      "description": "detailed multiline explanation of the issue.\\ninclude context about why this violates the rule.\\nbe specific about what needs to change.",
+      "locations": ["path/to/target-file.ts:42 (only target files, never rule files)"],
+      "snippet": {
+        "lang": "ts",
+        "code": "// the exact code from the target file that violates the rule\\nconst x = badPattern();"
+      }
+    }
+  ],
+  "nitpicks": [
+    {
+      "rule": "path/to/rule.md (which rule was violated)",
+      "title": "short title for the issue",
+      "description": "detailed multiline explanation of the issue.\\ninclude context about why this violates the rule.\\nbe specific about what needs to change.",
+      "locations": ["path/to/target-file.ts:42 (only target files, never rule files)"],
+      "snippet": {
+        "lang": "ts",
+        "code": "// the exact code from the target file that violates the rule\\nconst x = badPattern();"
+      }
+    }
+  ]
+}
+\`\`\`
+
+IMPORTANT: every violation MUST include a "snippet" with the actual code from the target file that violates the rule. copy the exact code so the reader can identify the violation.
+
+if no issues found, output: \`{"done": true, "blockers": [], "nitpicks": []}\`
+"
+`;
+
+exports[`compileReviewPrompt given: [case-prompt-matrix] the compiled prompt across initial conditions when: [t4] given + report + [REFUTE] taken then: prompt shows the driver argued back — snapshot 1`] = `
+"# review task
+
+you are a reviewer. apply the rules below to the target files.
+
+## CRITICAL INSTRUCTIONS — READ CAREFULLY
+
+1. ONLY review content in the <target> section
+2. NEVER flag anything from the <rules> section — rules contain examples of bad patterns for illustration only
+3. if you see "bad: X" or "good: Y" in a rule, those are examples to learn from, NOT content to flag
+4. the "locations" array must ONLY contain paths from <target>, never from <rules>
+5. if you cannot find the violation in <target>, do not report it
+7. <conversation> section is the prior peer-review dialogue — your earlier critiques (.given, with detailed .report) and the driver's responses (.taken). for each prior point the driver answers with a [REPAIR] (a claimed code fix) or a [REFUTE] (a reasoned argument the critique does not hold). weigh each on its merits: (a) [REPAIR] present in <target> → drop the point; (b) [REPAIR] absent from <target> → re-raise it; (c) [REFUTE] that is sound (e.g. extant code out of scope, a false positive, a deliberate tradeoff) → concede and drop it, the driver need not change code to be right; (d) [REFUTE] that is unsound → hold the point and say why the argument fails. the driver is a peer, not a subordinate — a well-argued [REFUTE] is a valid resolution. do NOT flag content from conversation
+
+## how to use the diff (FOCUS ON THE DELTA)
+
+each changed target may carry a \`<target.diff path="...">\` block (what changed in this pr) and a \`<target.file path="...">\` block (the full current file, for context). when a diff is present:
+
+- focus your review on the diff — the lines this pr added or changed. do NOT churn unrelated untouched code; fix-forward. BUT DO flag untouched code that this change breaks.
+- line numbers for "locations" come from the diff hunk headers (\`@@ -X,Y +A,B @@\`) — the \`+A\` side is the authoritative anchor for changed lines. use those numbers rather than count content lines by hand.
+- copy "snippet.code" from the clean \`<target.file>\` content, NEVER from the diff's \`+\`/\`-\` prefixed lines.
+- diff \`-\` lines are REMOVED code — this pr deletes them, they no longer exist. NEVER flag a \`-\` line. only \`+\` lines and surrounding context are code that exists and may be flagged.
+- a file shown as \`<target.file path="..." change="deleted" />\` is gone — do not review or flag it.
+
+## goal: representative
+
+report the most important or representative issues. limit yourself to up to 10 defects. for each defect, list a sample of the locations where the violation occurs. prioritize impact via severity and coverage over completeness.
+
+## rules (FOR REFERENCE ONLY — DO NOT FLAG CONTENT FROM THIS SECTION)
+
+<rules>
+### rule.no-console.md
+
+# rule: no-console
+forbid console.log
+</rules>
+
+## prior conversation (YOUR PAST CRITIQUES + THE DRIVER'S [REPAIR]/[REFUTE] RESPONSES — WEIGH BOTH ON MERIT, DO NOT FLAG)
+
+<conversation>
+### .reviews/peer/1.x._.review.i001.h.r001._.given.by_peer.arch.md
+
+1 blockers
+0 nitpicks
+
+---
+
+### .reviews/peer/1.x._.review.i001.h.r001._.given.by_peer.arch.report.md
+
+# blocker.1: console.log left in src/valid.ts
+
+**locations**:
+- src/valid.ts:1
+
+remove the console.log
+
+---
+
+### .reviews/peer/1.x._.review.i001.h.r001._.taken.by_self.arch.md
+
+# blocker.1
+
+[REFUTE] this is extant code relocated by refactor B — out of scope for this diff.
+</conversation>
+
+## target (REVIEW THIS SECTION ONLY)
+
+<target>
+<target.file path="src/valid.ts">
+export const valid = 1;
+</target.file>
+</target>
+
+## output format
+
+IMPORTANT: output your review as text directly. do not use any tools to write files. your final response must be the JSON object below, printed as plain text.
+
+note: the "locations" array must contain ONLY paths from the <target> section. never include rule file paths in locations.
+
+\`\`\`json
+{
+  "done": true,
+  "blockers": [
+    {
+      "rule": "path/to/rule.md (which rule was violated)",
+      "title": "short title for the issue",
+      "description": "detailed multiline explanation of the issue.\\ninclude context about why this violates the rule.\\nbe specific about what needs to change.",
+      "locations": ["path/to/target-file.ts:42 (only target files, never rule files)"],
+      "snippet": {
+        "lang": "ts",
+        "code": "// the exact code from the target file that violates the rule\\nconst x = badPattern();"
+      }
+    }
+  ],
+  "nitpicks": [
+    {
+      "rule": "path/to/rule.md (which rule was violated)",
+      "title": "short title for the issue",
+      "description": "detailed multiline explanation of the issue.\\ninclude context about why this violates the rule.\\nbe specific about what needs to change.",
+      "locations": ["path/to/target-file.ts:42 (only target files, never rule files)"],
+      "snippet": {
+        "lang": "ts",
+        "code": "// the exact code from the target file that violates the rule\\nconst x = badPattern();"
+      }
+    }
+  ]
+}
+\`\`\`
+
+IMPORTANT: every violation MUST include a "snippet" with the actual code from the target file that violates the rule. copy the exact code so the reader can identify the violation.
+
+if no issues found, output: \`{"done": true, "blockers": [], "nitpicks": []}\`
+"
+`;
+
+exports[`compileReviewPrompt given: [case-prompt-matrix] the compiled prompt across initial conditions when: [t5] multi-reviewer conversation (two prior threads) then: prompt threads both reviewers dialogue — snapshot 1`] = `
+"# review task
+
+you are a reviewer. apply the rules below to the target files.
+
+## CRITICAL INSTRUCTIONS — READ CAREFULLY
+
+1. ONLY review content in the <target> section
+2. NEVER flag anything from the <rules> section — rules contain examples of bad patterns for illustration only
+3. if you see "bad: X" or "good: Y" in a rule, those are examples to learn from, NOT content to flag
+4. the "locations" array must ONLY contain paths from <target>, never from <rules>
+5. if you cannot find the violation in <target>, do not report it
+7. <conversation> section is the prior peer-review dialogue — your earlier critiques (.given, with detailed .report) and the driver's responses (.taken). for each prior point the driver answers with a [REPAIR] (a claimed code fix) or a [REFUTE] (a reasoned argument the critique does not hold). weigh each on its merits: (a) [REPAIR] present in <target> → drop the point; (b) [REPAIR] absent from <target> → re-raise it; (c) [REFUTE] that is sound (e.g. extant code out of scope, a false positive, a deliberate tradeoff) → concede and drop it, the driver need not change code to be right; (d) [REFUTE] that is unsound → hold the point and say why the argument fails. the driver is a peer, not a subordinate — a well-argued [REFUTE] is a valid resolution. do NOT flag content from conversation
+
+## how to use the diff (FOCUS ON THE DELTA)
+
+each changed target may carry a \`<target.diff path="...">\` block (what changed in this pr) and a \`<target.file path="...">\` block (the full current file, for context). when a diff is present:
+
+- focus your review on the diff — the lines this pr added or changed. do NOT churn unrelated untouched code; fix-forward. BUT DO flag untouched code that this change breaks.
+- line numbers for "locations" come from the diff hunk headers (\`@@ -X,Y +A,B @@\`) — the \`+A\` side is the authoritative anchor for changed lines. use those numbers rather than count content lines by hand.
+- copy "snippet.code" from the clean \`<target.file>\` content, NEVER from the diff's \`+\`/\`-\` prefixed lines.
+- diff \`-\` lines are REMOVED code — this pr deletes them, they no longer exist. NEVER flag a \`-\` line. only \`+\` lines and surrounding context are code that exists and may be flagged.
+- a file shown as \`<target.file path="..." change="deleted" />\` is gone — do not review or flag it.
+
+## goal: representative
+
+report the most important or representative issues. limit yourself to up to 10 defects. for each defect, list a sample of the locations where the violation occurs. prioritize impact via severity and coverage over completeness.
+
+## rules (FOR REFERENCE ONLY — DO NOT FLAG CONTENT FROM THIS SECTION)
+
+<rules>
+### rule.no-console.md
+
+# rule: no-console
+forbid console.log
+</rules>
+
+## prior conversation (YOUR PAST CRITIQUES + THE DRIVER'S [REPAIR]/[REFUTE] RESPONSES — WEIGH BOTH ON MERIT, DO NOT FLAG)
+
+<conversation>
+### .reviews/peer/1.x._.review.i001.h.r001._.given.by_peer.arch.md
+
+1 blockers
+0 nitpicks
+
+---
+
+### .reviews/peer/1.x._.review.i001.h.r001._.given.by_peer.arch.report.md
+
+# blocker.1: console.log left in src/valid.ts
+
+**locations**:
+- src/valid.ts:1
+
+remove the console.log
+
+---
+
+### .reviews/peer/1.x._.review.i001.h.r001._.taken.by_self.arch.md
+
+# blocker.1
+
+[REPAIR] removed the console.log — src/valid.ts:1.
+
+---
+
+### .reviews/peer/1.x._.review.i001.h.r002._.given.by_peer.mech.md
+
+1 blockers
+0 nitpicks
+
+---
+
+### .reviews/peer/1.x._.review.i001.h.r002._.given.by_peer.mech.report.md
+
+# blocker.1: mutable accumulator
+
+**locations**:
+- src/valid.ts:1
+
+---
+
+### .reviews/peer/1.x._.review.i001.h.r002._.taken.by_self.mech.md
+
+# blocker.1
+
+[REFUTE] extant code, out of scope.
+</conversation>
+
+## target (REVIEW THIS SECTION ONLY)
+
+<target>
+<target.file path="src/valid.ts">
+export const valid = 1;
+</target.file>
+</target>
+
+## output format
+
+IMPORTANT: output your review as text directly. do not use any tools to write files. your final response must be the JSON object below, printed as plain text.
+
+note: the "locations" array must contain ONLY paths from the <target> section. never include rule file paths in locations.
+
+\`\`\`json
+{
+  "done": true,
+  "blockers": [
+    {
+      "rule": "path/to/rule.md (which rule was violated)",
+      "title": "short title for the issue",
+      "description": "detailed multiline explanation of the issue.\\ninclude context about why this violates the rule.\\nbe specific about what needs to change.",
+      "locations": ["path/to/target-file.ts:42 (only target files, never rule files)"],
+      "snippet": {
+        "lang": "ts",
+        "code": "// the exact code from the target file that violates the rule\\nconst x = badPattern();"
+      }
+    }
+  ],
+  "nitpicks": [
+    {
+      "rule": "path/to/rule.md (which rule was violated)",
+      "title": "short title for the issue",
+      "description": "detailed multiline explanation of the issue.\\ninclude context about why this violates the rule.\\nbe specific about what needs to change.",
+      "locations": ["path/to/target-file.ts:42 (only target files, never rule files)"],
+      "snippet": {
+        "lang": "ts",
+        "code": "// the exact code from the target file that violates the rule\\nconst x = badPattern();"
+      }
+    }
+  ]
+}
+\`\`\`
+
+IMPORTANT: every violation MUST include a "snippet" with the actual code from the target file that violates the rule. copy the exact code so the reader can identify the violation.
+
+if no issues found, output: \`{"done": true, "blockers": [], "nitpicks": []}\`
+"
+`;
+
+exports[`compileReviewPrompt given: [case-prompt-matrix] the compiled prompt across initial conditions when: [t6] refs AND conversation both present then: prompt renders two distinct sections, no collision — snapshot 1`] = `
+"# review task
+
+you are a reviewer. apply the rules below to the target files.
+
+## CRITICAL INSTRUCTIONS — READ CAREFULLY
+
+1. ONLY review content in the <target> section
+2. NEVER flag anything from the <rules> section — rules contain examples of bad patterns for illustration only
+3. if you see "bad: X" or "good: Y" in a rule, those are examples to learn from, NOT content to flag
+4. the "locations" array must ONLY contain paths from <target>, never from <rules>
+5. if you cannot find the violation in <target>, do not report it
+6. <refs> section contains reference documents for context — use them to inform your review but do not flag content from refs
+7. <conversation> section is the prior peer-review dialogue — your earlier critiques (.given, with detailed .report) and the driver's responses (.taken). for each prior point the driver answers with a [REPAIR] (a claimed code fix) or a [REFUTE] (a reasoned argument the critique does not hold). weigh each on its merits: (a) [REPAIR] present in <target> → drop the point; (b) [REPAIR] absent from <target> → re-raise it; (c) [REFUTE] that is sound (e.g. extant code out of scope, a false positive, a deliberate tradeoff) → concede and drop it, the driver need not change code to be right; (d) [REFUTE] that is unsound → hold the point and say why the argument fails. the driver is a peer, not a subordinate — a well-argued [REFUTE] is a valid resolution. do NOT flag content from conversation
+
+## how to use the diff (FOCUS ON THE DELTA)
+
+each changed target may carry a \`<target.diff path="...">\` block (what changed in this pr) and a \`<target.file path="...">\` block (the full current file, for context). when a diff is present:
+
+- focus your review on the diff — the lines this pr added or changed. do NOT churn unrelated untouched code; fix-forward. BUT DO flag untouched code that this change breaks.
+- line numbers for "locations" come from the diff hunk headers (\`@@ -X,Y +A,B @@\`) — the \`+A\` side is the authoritative anchor for changed lines. use those numbers rather than count content lines by hand.
+- copy "snippet.code" from the clean \`<target.file>\` content, NEVER from the diff's \`+\`/\`-\` prefixed lines.
+- diff \`-\` lines are REMOVED code — this pr deletes them, they no longer exist. NEVER flag a \`-\` line. only \`+\` lines and surrounding context are code that exists and may be flagged.
+- a file shown as \`<target.file path="..." change="deleted" />\` is gone — do not review or flag it.
+
+## goal: representative
+
+report the most important or representative issues. limit yourself to up to 10 defects. for each defect, list a sample of the locations where the violation occurs. prioritize impact via severity and coverage over completeness.
+
+## rules (FOR REFERENCE ONLY — DO NOT FLAG CONTENT FROM THIS SECTION)
+
+<rules>
+### rule.no-console.md
+
+# rule: no-console
+forbid console.log
+</rules>
+
+## refs (REFERENCE DOCUMENTS — USE FOR CONTEXT, DO NOT FLAG)
+
+<refs>
+### refs/context.md
+
+some ref context
+</refs>
+
+## prior conversation (YOUR PAST CRITIQUES + THE DRIVER'S [REPAIR]/[REFUTE] RESPONSES — WEIGH BOTH ON MERIT, DO NOT FLAG)
+
+<conversation>
+### .reviews/peer/1.x._.review.i001.h.r001._.given.by_peer.arch.md
+
+1 blockers
+0 nitpicks
+
+---
+
+### .reviews/peer/1.x._.review.i001.h.r001._.given.by_peer.arch.report.md
+
+# blocker.1: console.log left in src/valid.ts
+
+**locations**:
+- src/valid.ts:1
+
+remove the console.log
+
+---
+
+### .reviews/peer/1.x._.review.i001.h.r001._.taken.by_self.arch.md
+
+# blocker.1
+
+[REPAIR] removed the console.log — src/valid.ts:1.
+</conversation>
+
+## target (REVIEW THIS SECTION ONLY)
+
+<target>
+<target.file path="src/valid.ts">
+export const valid = 1;
+</target.file>
+</target>
+
+## output format
+
+IMPORTANT: output your review as text directly. do not use any tools to write files. your final response must be the JSON object below, printed as plain text.
+
+note: the "locations" array must contain ONLY paths from the <target> section. never include rule file paths in locations.
+
+\`\`\`json
+{
+  "done": true,
+  "blockers": [
+    {
+      "rule": "path/to/rule.md (which rule was violated)",
+      "title": "short title for the issue",
+      "description": "detailed multiline explanation of the issue.\\ninclude context about why this violates the rule.\\nbe specific about what needs to change.",
+      "locations": ["path/to/target-file.ts:42 (only target files, never rule files)"],
+      "snippet": {
+        "lang": "ts",
+        "code": "// the exact code from the target file that violates the rule\\nconst x = badPattern();"
+      }
+    }
+  ],
+  "nitpicks": [
+    {
+      "rule": "path/to/rule.md (which rule was violated)",
+      "title": "short title for the issue",
+      "description": "detailed multiline explanation of the issue.\\ninclude context about why this violates the rule.\\nbe specific about what needs to change.",
+      "locations": ["path/to/target-file.ts:42 (only target files, never rule files)"],
+      "snippet": {
+        "lang": "ts",
+        "code": "// the exact code from the target file that violates the rule\\nconst x = badPattern();"
+      }
+    }
+  ]
+}
+\`\`\`
+
+IMPORTANT: every violation MUST include a "snippet" with the actual code from the target file that violates the rule. copy the exact code so the reader can identify the violation.
+
+if no issues found, output: \`{"done": true, "blockers": [], "nitpicks": []}\`
+"
+`;
+
 exports[`compileReviewPrompt given: [case5] --push mode with diffs per change kind when: [t0] new file (diff + content) then: renders new-file diff then full content 1`] = `
 "# review task
 

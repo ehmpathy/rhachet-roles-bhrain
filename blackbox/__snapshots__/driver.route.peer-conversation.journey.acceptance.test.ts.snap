@@ -1,0 +1,252 @@
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
+
+exports[`driver.route.peer-conversation.journey.acceptance given: [case1] a stone gated on architect (--conversation) + mechanic (clean) when: [t0] driver arrives; guard runs both reviewers then: [t0] stdout matches snapshot 1`] = `
+"🦉 the way speaks for itself
+   │
+   ├─ r1: architect (l1, 1/3)
+   │   ├─ approved [TIME]
+   │   ├─ 1 blocker 🔴
+   │   ├─ 0 nitpicks ✓
+   │   ├─ given: .reviews/peer/1.execute._.review.i001.d9a573861846c62789.r001._.given.by_peer.architect.md
+   │   └─ taken: .reviews/peer/1.execute._.review.i001.d9a573861846c62789.r001._.taken.by_self.architect.md
+   │
+   ├─ r2: mechanic (l1, 1/3)
+   │   ├─ approved [TIME]
+   │   ├─ 0 blockers ✓
+   │   ├─ 0 nitpicks ✓
+   │   ├─ given: .reviews/peer/1.execute._.review.i001.d9a573861846c62789.r002._.given.by_peer.mechanic.md
+   │   └─ taken: .reviews/peer/1.execute._.review.i001.d9a573861846c62789.r002._.taken.by_self.mechanic.md
+   │
+   └─ ✓ judge.1 - allowed [TIME]
+
+🦉 the reviewers await your reply
+
+🌕 lets respond
+   │
+   ├─ review.peer 1/1
+   │  ├─ slug = architect
+   │  ├─ verdict = 1 blocker, 0 nitpicks
+   │  ├─ contemplate from
+   │  │  └─ [TEMP]/.reviews/peer/1.execute._.review.i001.d9a573861846c62789.r001._.given.by_peer.architect.md
+   │  └─ articulate into
+   │     └─ [TEMP]/.reviews/peer/1.execute._.review.i001.d9a573861846c62789.r001._.taken.by_self.architect.md
+   │
+   └─ when you've contemplated each reviewer, run
+      └─ rhx route.stone.set --stone 1.execute --as contemplated --that architect
+"
+`;
+
+exports[`driver.route.peer-conversation.journey.acceptance given: [case1] a stone gated on architect (--conversation) + mechanic (clean) when: [t1] driver attempts --as passed with no .taken then: [t1] stdout matches snapshot 1`] = `
+"🦉 the way speaks for itself
+   │
+   ├─ r1: architect (l1, 1/3)
+   │   ├─ approved, cached
+   │   ├─ 1 blocker 🔴
+   │   ├─ 0 nitpicks ✓
+   │   ├─ given: .reviews/peer/1.execute._.review.i001.d9a573861846c62789.r001._.given.by_peer.architect.md
+   │   └─ taken: .reviews/peer/1.execute._.review.i001.d9a573861846c62789.r001._.taken.by_self.architect.md
+   │
+   ├─ r2: mechanic (l1, 1/3)
+   │   ├─ approved, cached
+   │   ├─ 0 blockers ✓
+   │   ├─ 0 nitpicks ✓
+   │   ├─ given: .reviews/peer/1.execute._.review.i001.d9a573861846c62789.r002._.given.by_peer.mechanic.md
+   │   └─ taken: .reviews/peer/1.execute._.review.i001.d9a573861846c62789.r002._.taken.by_self.mechanic.md
+   │
+   └─ ✓ judge.1 - allowed (cached)
+
+🦉 the reviewers await your reply
+
+🌕 lets respond
+   │
+   ├─ review.peer 1/1
+   │  ├─ slug = architect
+   │  ├─ verdict = 1 blocker, 0 nitpicks
+   │  ├─ contemplate from
+   │  │  └─ [TEMP]/.reviews/peer/1.execute._.review.i001.d9a573861846c62789.r001._.given.by_peer.architect.md
+   │  └─ articulate into
+   │     └─ [TEMP]/.reviews/peer/1.execute._.review.i001.d9a573861846c62789.r001._.taken.by_self.architect.md
+   │
+   └─ when you've contemplated each reviewer, run
+      └─ rhx route.stone.set --stone 1.execute --as contemplated --that architect
+"
+`;
+
+exports[`driver.route.peer-conversation.journey.acceptance given: [case1] a stone gated on architect (--conversation) + mechanic (clean) when: [t2] driver signals --as contemplated before the .taken exists then: [t2] stdout matches snapshot 1`] = `
+"🦉 the way speaks for itself
+
+✋ contemplation absent for reviewer architect
+
+   the guard looked for your response here, and did not find it:
+   └─ [TEMP]/.reviews/peer/1.execute._.review.i001.d9a573861846c62789.r001._.taken.by_self.architect.md
+
+   why: --as contemplated is a promise that you engaged each critique.
+        the .taken file IS that engagement — absent it, there is
+        no ground to stand on.
+
+   what to do:
+   ├─ contemplate from
+   │  └─ [TEMP]/.reviews/peer/1.execute._.review.i001.d9a573861846c62789.r001._.given.by_peer.architect.md
+   └─ articulate into
+      └─ [TEMP]/.reviews/peer/1.execute._.review.i001.d9a573861846c62789.r001._.taken.by_self.architect.md
+"
+`;
+
+exports[`driver.route.peer-conversation.journey.acceptance given: [case1] a stone gated on architect (--conversation) + mechanic (clean) when: [t3] driver writes the FIXED .taken then contemplates architect then: [t3] stdout matches snapshot 1`] = `
+"🦉 the way speaks for itself
+
+🦉 contemplated: architect
+   └─ your response is recorded — the reviewer will see it next round
+"
+`;
+
+exports[`driver.route.peer-conversation.journey.acceptance given: [case1] a stone gated on architect (--conversation) + mechanic (clean) when: [t4] driver attempts --as passed with architect answered then: [t4] stdout matches snapshot 1`] = `
+"🦉 the way speaks for itself
+   │
+   ├─ r1: architect (l1, 2/3)
+   │   ├─ approved [TIME]
+   │   ├─ 0 blockers ✓
+   │   ├─ 0 nitpicks ✓
+   │   ├─ given: .reviews/peer/1.execute._.review.i002.d9a573861846c62789.r001._.given.by_peer.architect.md
+   │   └─ taken: .reviews/peer/1.execute._.review.i002.d9a573861846c62789.r001._.taken.by_self.architect.md
+   │
+   ├─ r2: mechanic (l1, 1/3)
+   │   ├─ approved, cached
+   │   ├─ 0 blockers ✓
+   │   ├─ 0 nitpicks ✓
+   │   ├─ given: .reviews/peer/1.execute._.review.i001.d9a573861846c62789.r002._.given.by_peer.mechanic.md
+   │   └─ taken: .reviews/peer/1.execute._.review.i001.d9a573861846c62789.r002._.taken.by_self.mechanic.md
+   │
+   └─ ✓ judge.1 - allowed [TIME]
+
+🗿 route.stone.set
+   ├─ stone = 1.execute
+   ├─ passage = allowed
+   ├─ guard
+   │  ├─ artifacts
+   │  │   └─ 1.execute*.md
+   │  ├─ reviews
+   │  │   ├─ r1: architect (l1, 2/3)
+   │  │   │   ├─ approved [TIME]
+   │  │   │   ├─ 0 blockers ✓
+   │  │   │   ├─ 0 nitpicks ✓
+   │  │   │   ├─ given: .reviews/peer/1.execute._.review.i002.d9a573861846c62789.r001._.given.by_peer.architect.md
+   │  │   │   └─ taken: .reviews/peer/1.execute._.review.i002.d9a573861846c62789.r001._.taken.by_self.architect.md
+   │  │   └─ r2: mechanic (l1, 1/3)
+   │  │       ├─ approved, cached
+   │  │       ├─ 0 blockers ✓
+   │  │       ├─ 0 nitpicks ✓
+   │  │       ├─ given: .reviews/peer/1.execute._.review.i001.d9a573861846c62789.r002._.given.by_peer.mechanic.md
+   │  │       └─ taken: .reviews/peer/1.execute._.review.i001.d9a573861846c62789.r002._.taken.by_self.mechanic.md
+   │  └─ judges
+   │      └─ j1: rhx route.stone.judge --mechanism reviewed? --stone $stone --route $route --allow-blockers 1 --allow-nitpicks 5
+   │          └─ finished [TIME] ✓
+   │
+   └─ the way continues, run
+      └─ rhx route.drive
+"
+`;
+
+exports[`driver.route.peer-conversation.journey.acceptance given: [case1] a stone gated on architect (--conversation) + mechanic (clean) when: [t5] the artifact changes; architect re-runs WITH --conversation then: [t5] stdout matches snapshot 1`] = `
+"🦉 the way speaks for itself
+   │
+   ├─ r1: architect (l1, 3/3)
+   │   ├─ approved [TIME]
+   │   ├─ 0 blockers ✓
+   │   ├─ 0 nitpicks ✓
+   │   ├─ given: .reviews/peer/1.execute._.review.i003.93f1080dbfbccf8751.r001._.given.by_peer.architect.md
+   │   └─ taken: .reviews/peer/1.execute._.review.i003.93f1080dbfbccf8751.r001._.taken.by_self.architect.md
+   │
+   ├─ r2: mechanic (l1, 2/3)
+   │   ├─ approved [TIME]
+   │   ├─ 0 blockers ✓
+   │   ├─ 0 nitpicks ✓
+   │   ├─ given: .reviews/peer/1.execute._.review.i003.93f1080dbfbccf8751.r002._.given.by_peer.mechanic.md
+   │   └─ taken: .reviews/peer/1.execute._.review.i003.93f1080dbfbccf8751.r002._.taken.by_self.mechanic.md
+   │
+   └─ ✓ judge.1 - allowed [TIME]
+
+🗿 route.stone.set
+   ├─ stone = 1.execute
+   ├─ passage = allowed
+   ├─ guard
+   │  ├─ artifacts
+   │  │   └─ 1.execute*.md
+   │  ├─ reviews
+   │  │   ├─ r1: architect (l1, 3/3)
+   │  │   │   ├─ approved [TIME]
+   │  │   │   ├─ 0 blockers ✓
+   │  │   │   ├─ 0 nitpicks ✓
+   │  │   │   ├─ given: .reviews/peer/1.execute._.review.i003.93f1080dbfbccf8751.r001._.given.by_peer.architect.md
+   │  │   │   └─ taken: .reviews/peer/1.execute._.review.i003.93f1080dbfbccf8751.r001._.taken.by_self.architect.md
+   │  │   └─ r2: mechanic (l1, 2/3)
+   │  │       ├─ approved [TIME]
+   │  │       ├─ 0 blockers ✓
+   │  │       ├─ 0 nitpicks ✓
+   │  │       ├─ given: .reviews/peer/1.execute._.review.i003.93f1080dbfbccf8751.r002._.given.by_peer.mechanic.md
+   │  │       └─ taken: .reviews/peer/1.execute._.review.i003.93f1080dbfbccf8751.r002._.taken.by_self.mechanic.md
+   │  └─ judges
+   │      └─ j1: rhx route.stone.judge --mechanism reviewed? --stone $stone --route $route --allow-blockers 1 --allow-nitpicks 5
+   │          └─ finished [TIME] ✓
+   │
+   └─ the way continues, run
+      └─ rhx route.drive
+"
+`;
+
+exports[`driver.route.peer-conversation.journey.acceptance given: [case1] a stone gated on architect (--conversation) + mechanic (clean) when: [t6] driver re-attempts --as passed post-convergence then: [t6] stdout matches snapshot 1`] = `
+"🦉 the way speaks for itself
+   │
+   ├─ r1: architect (l1, 3/3)
+   │   ├─ approved, cached
+   │   ├─ 0 blockers ✓
+   │   ├─ 0 nitpicks ✓
+   │   ├─ given: .reviews/peer/1.execute._.review.i003.93f1080dbfbccf8751.r001._.given.by_peer.architect.md
+   │   └─ taken: .reviews/peer/1.execute._.review.i003.93f1080dbfbccf8751.r001._.taken.by_self.architect.md
+   │
+   ├─ r2: mechanic (l1, 2/3)
+   │   ├─ approved, cached
+   │   ├─ 0 blockers ✓
+   │   ├─ 0 nitpicks ✓
+   │   ├─ given: .reviews/peer/1.execute._.review.i003.93f1080dbfbccf8751.r002._.given.by_peer.mechanic.md
+   │   └─ taken: .reviews/peer/1.execute._.review.i003.93f1080dbfbccf8751.r002._.taken.by_self.mechanic.md
+   │
+   └─ ✓ judge.1 - allowed (cached)
+
+🗿 route.stone.set
+   ├─ stone = 1.execute
+   ├─ passage = allowed
+   ├─ guard
+   │  ├─ artifacts
+   │  │   └─ 1.execute*.md
+   │  ├─ reviews
+   │  │   ├─ r1: architect (l1, 3/3)
+   │  │   │   ├─ approved, cached
+   │  │   │   ├─ 0 blockers ✓
+   │  │   │   ├─ 0 nitpicks ✓
+   │  │   │   ├─ given: .reviews/peer/1.execute._.review.i003.93f1080dbfbccf8751.r001._.given.by_peer.architect.md
+   │  │   │   └─ taken: .reviews/peer/1.execute._.review.i003.93f1080dbfbccf8751.r001._.taken.by_self.architect.md
+   │  │   └─ r2: mechanic (l1, 2/3)
+   │  │       ├─ approved, cached
+   │  │       ├─ 0 blockers ✓
+   │  │       ├─ 0 nitpicks ✓
+   │  │       ├─ given: .reviews/peer/1.execute._.review.i003.93f1080dbfbccf8751.r002._.given.by_peer.mechanic.md
+   │  │       └─ taken: .reviews/peer/1.execute._.review.i003.93f1080dbfbccf8751.r002._.taken.by_self.mechanic.md
+   │  └─ judges
+   │      └─ j1: rhx route.stone.judge --mechanism reviewed? --stone $stone --route $route --allow-blockers 1 --allow-nitpicks 5
+   │          └─ · cached
+   │             └─ on 1.execute*.md
+   │
+   └─ the way continues, run
+      └─ rhx route.drive
+"
+`;
+
+exports[`driver.route.peer-conversation.journey.acceptance given: [case1] a stone gated on architect (--conversation) + mechanic (clean) when: [t7] the review dir holds a legible given↔taken transcript then: [t7] transcript matches snapshot 1`] = `
+"1.execute._.review.i[N].[HASH].r[N]._.given.by_peer.architect.md
+1.execute._.review.i[N].[HASH].r[N]._.given.by_peer.architect.md
+1.execute._.review.i[N].[HASH].r[N]._.given.by_peer.architect.md
+1.execute._.review.i[N].[HASH].r[N]._.given.by_peer.mechanic.md
+1.execute._.review.i[N].[HASH].r[N]._.given.by_peer.mechanic.md
+1.execute._.review.i[N].[HASH].r[N]._.taken.by_self.architect.md"
+`;

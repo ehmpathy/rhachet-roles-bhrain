@@ -1,0 +1,46 @@
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
+
+exports[`driver.route.peer-contemplation-precedence.acceptance given: [case1] one reviewer malfunctions while another holds a blocker when: [t0] the driver attempts to pass while both reviewers run then: stdout matches snapshot 1`] = `
+"🦉 the way speaks for itself
+   │
+   ├─ r1: malfunctioner (l1, 1/3)
+   │   ├─ 💥 malfunction
+   │   ├─ given: .reviews/peer/1.execute._.review.i001.cd59c2d9bea69fd22c.r001._.given.by_peer.malfunctioner.md
+   │   └─ taken: .reviews/peer/1.execute._.review.i001.cd59c2d9bea69fd22c.r001._.taken.by_self.malfunctioner.md
+   │
+   ├─ r2: uncontemplated (l1, 1/3)
+   │   ├─ approved [TIME]
+   │   ├─ 1 blocker 🔴
+   │   ├─ 0 nitpicks ✓
+   │   ├─ given: .reviews/peer/1.execute._.review.i001.cd59c2d9bea69fd22c.r002._.given.by_peer.uncontemplated.md
+   │   └─ taken: .reviews/peer/1.execute._.review.i001.cd59c2d9bea69fd22c.r002._.taken.by_self.uncontemplated.md
+   │
+   └─ ✓ judge.1 - allowed [TIME]
+
+🗿 route.stone.set
+   ├─ stone = 1.execute
+   ├─ passage = malfunction
+   ├─ reason = reviewer or judge malfunctioned
+   ├─ options
+   │  ├─ overrule the malfunction
+   │  │  └─ rhx route.stone.set --stone 1.execute --as overruled
+   │  └─ or fix the reviewer, then retry
+   └─ guard
+      ├─ artifacts
+      │   └─ src/**/*.ts
+      ├─ reviews
+      │   ├─ r1: malfunctioner (l1, 0/3)
+      │   │   ├─ 💥 malfunction
+      │   │   ├─ given: .reviews/peer/1.execute._.review.i001.cd59c2d9bea69fd22c.r001._.given.by_peer.malfunctioner.md
+      │   │   └─ taken: .reviews/peer/1.execute._.review.i001.cd59c2d9bea69fd22c.r001._.taken.by_self.malfunctioner.md
+      │   └─ r2: uncontemplated (l1, 1/3)
+      │       ├─ approved [TIME]
+      │       ├─ 1 blocker 🔴
+      │       ├─ 0 nitpicks ✓
+      │       ├─ given: .reviews/peer/1.execute._.review.i001.cd59c2d9bea69fd22c.r002._.given.by_peer.uncontemplated.md
+      │       └─ taken: .reviews/peer/1.execute._.review.i001.cd59c2d9bea69fd22c.r002._.taken.by_self.uncontemplated.md
+      └─ judges
+          └─ j1: rhx route.stone.judge --mechanism reviewed? --stone $stone --route $route --allow-blockers 5 --allow-nitpicks 5
+              └─ finished [TIME] ✓
+"
+`;

@@ -1,5 +1,7 @@
 import { DomainLiteral } from 'domain-objects';
 
+import type { RouteStoneGuardBlockerType } from './RouteStoneGuardBlockerReport';
+
 /**
  * .what = a report of a stone's passage status in passage.jsonl
  * .why = consolidates all passage markers (passed, approved, blocked, rewound) into one file
@@ -32,12 +34,7 @@ export interface PassageReport {
   /**
    * what blocks passage (only for status='blocked')
    */
-  blocker?:
-    | 'review.self'
-    | 'review.peer'
-    | 'review.peer.exhausted'
-    | 'judge'
-    | 'approval';
+  blocker?: RouteStoneGuardBlockerType;
 
   /**
    * the review level this report scopes to (only for status='overruled')

@@ -1,0 +1,371 @@
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
+
+exports[`formatGuardTree given: [case1] reviews+judges, allowed, all fresh — 2 reviews (0 blockers, 3 blockers) and 1 judge (passed) when: [t0] called with fresh results then: output matches snapshot 1`] = `
+"🗿 route.stone.set
+   ├─ stone = 1.vision
+   ├─ passage = allowed
+   └─ guard
+      ├─ artifacts
+      │   └─ 1.vision.v1.md
+      ├─ reviews
+      │   ├─ r1: reviewer/reflect (l1, 1/∞)
+      │   │   ├─ approved 8.2s
+      │   │   ├─ 0 blockers ✓
+      │   │   ├─ 0 nitpicks ✓
+      │   │   └─ given: .route/1.vision.guard.review.i1.abc123.r1.md
+      │   └─ r2: reviewer/review (l1, 1/∞)
+      │       ├─ rejected 15.1s
+      │       ├─ 3 blockers 🔴
+      │       ├─ 1 nitpick 🟠
+      │       └─ given: .route/1.vision.guard.review.i1.abc123.r2.md
+      └─ judges
+          └─ j1: reviewed?
+              └─ finished 0.8s ✓"
+`;
+
+exports[`formatGuardTree given: [case2] reviews+judges, blocked, all fresh — 1 review (1 blocker) and 1 judge (failed) when: [t0] called with blocked results then: output matches snapshot 1`] = `
+"🗿 route.stone.set
+   ├─ stone = 3.1.research.domain
+   ├─ passage = blocked
+   ├─ reason = blockers exceed threshold (1 > 0)
+   └─ guard
+      ├─ artifacts
+      │   └─ 3.1.research.domain._.v1.md
+      ├─ reviews
+      │   └─ r1: reviewer/reflect (l1, 1/∞)
+      │       ├─ rejected 12.4s
+      │       ├─ 1 blocker 🔴
+      │       ├─ 0 nitpicks ✓
+      │       └─ given: .route/3.1.research.domain.guard.review.i1.abc123.r1.md
+      └─ judges
+          └─ j1: reviewed?
+              ├─ finished 0.8s ✗
+              └─ reason: blockers exceed threshold (1 > 0)"
+`;
+
+exports[`formatGuardTree given: [case3] some cached reviews — 1 cached + 1 fresh review, 1 judge when: [t0] called with mixed cache state then: output matches snapshot 1`] = `
+"🗿 route.stone.set
+   ├─ stone = 1.vision
+   ├─ passage = allowed
+   └─ guard
+      ├─ artifacts
+      │   └─ 1.vision.v1.md
+      ├─ reviews
+      │   ├─ r1: reviewer/reflect (l1, 1/∞)
+      │   │   ├─ approved, cached
+      │   │   ├─ 0 blockers ✓
+      │   │   ├─ 0 nitpicks ✓
+      │   │   └─ given: .route/1.vision.guard.review.i1.abc123.r1.md
+      │   └─ r2: reviewer/review (l1, 1/∞)
+      │       ├─ rejected 10.3s
+      │       ├─ 0 blockers ✓
+      │       ├─ 2 nitpicks 🟠
+      │       └─ given: .route/1.vision.guard.review.i1.abc123.r2.md
+      └─ judges
+          └─ j1: reviewed?
+              └─ finished 0.5s ✓"
+`;
+
+exports[`formatGuardTree given: [case4] all cached — all reviews + judges cached when: [t0] called with all cached then: output matches snapshot 1`] = `
+"🗿 route.stone.set
+   ├─ stone = 1.vision
+   ├─ passage = allowed
+   └─ guard
+      ├─ artifacts
+      │   └─ 1.vision.v1.md
+      ├─ reviews
+      │   └─ r1: reviewer/reflect (l1, 1/∞)
+      │       ├─ approved, cached
+      │       ├─ 0 blockers ✓
+      │       ├─ 0 nitpicks ✓
+      │       └─ given: .route/1.vision.guard.review.i1.abc123.r1.md
+      └─ judges
+          └─ j1: reviewed?
+              └─ · cached
+                 └─ on 1.vision.v1.md"
+`;
+
+exports[`formatGuardTree given: [case5] unguarded stone — no guard input when: [t0] called with no guard then: output matches snapshot 1`] = `
+"🗿 route.stone.set
+   ├─ stone = 1.vision
+   └─ passage = allowed (unguarded)"
+`;
+
+exports[`formatGuardTree given: [case6] artifacts only guard — no reviews or judges when: [t0] called with empty reviews and judges then: output matches snapshot 1`] = `
+"🗿 route.stone.set
+   ├─ stone = 1.vision
+   ├─ passage = allowed (artifacts only)
+   └─ guard
+      └─ artifacts
+          └─ 1.vision.v1.md"
+`;
+
+exports[`formatGuardTree given: [case7] multiple artifacts — 3 artifact files when: [t0] called with 3 artifacts then: output matches snapshot 1`] = `
+"🗿 route.stone.set
+   ├─ stone = 3.1.research.domain
+   ├─ passage = allowed
+   └─ guard
+      ├─ artifacts
+      │   ├─ 3.1.research.domain._.v1.md
+      │   ├─ 3.1.research.domain.terms.v1.md
+      │   └─ 3.1.research.domain.refs.v1.md
+      ├─ reviews
+      │   └─ r1: reviewer/reflect (l1, 1/∞)
+      │       ├─ approved 5.0s
+      │       ├─ 0 blockers ✓
+      │       ├─ 0 nitpicks ✓
+      │       └─ given: .route/3.1.research.domain.guard.review.i1.abc123.r1.md
+      └─ judges
+          └─ j1: reviewed?
+              └─ finished 0.3s ✓"
+`;
+
+exports[`formatGuardTree given: [case8] review with nitpicks only — 0 blockers, 2 nitpicks when: [t0] called with nitpicks only then: output matches snapshot 1`] = `
+"🗿 route.stone.set
+   ├─ stone = 1.vision
+   ├─ passage = allowed
+   └─ guard
+      ├─ artifacts
+      │   └─ 1.vision.v1.md
+      ├─ reviews
+      │   └─ r1: reviewer/reflect (l1, 1/∞)
+      │       ├─ rejected 7.0s
+      │       ├─ 0 blockers ✓
+      │       ├─ 2 nitpicks 🟠
+      │       └─ given: .route/1.vision.guard.review.i1.abc123.r1.md
+      └─ judges
+          └─ j1: reviewed?
+              └─ finished 0.3s ✓"
+`;
+
+exports[`formatGuardTree given: [case9] review with both blockers and nitpicks — 3 blockers, 1 nitpick when: [t0] called with both then: output matches snapshot 1`] = `
+"🗿 route.stone.set
+   ├─ stone = 1.vision
+   ├─ passage = blocked
+   ├─ reason = blockers exceed threshold (3 > 0)
+   └─ guard
+      ├─ artifacts
+      │   └─ 1.vision.v1.md
+      ├─ reviews
+      │   └─ r1: reviewer/reflect (l1, 1/∞)
+      │       ├─ rejected 12.0s
+      │       ├─ 3 blockers 🔴
+      │       ├─ 1 nitpick 🟠
+      │       └─ given: .route/1.vision.guard.review.i1.abc123.r1.md
+      └─ judges
+          └─ j1: reviewed?
+              ├─ finished 0.4s ✗
+              └─ reason: blockers exceed threshold (3 > 0)"
+`;
+
+exports[`formatGuardTree given: [case10] cached judge that had failed — shows cached, omits reason when: [t0] called with cached failed judge then: output matches snapshot 1`] = `
+"🗿 route.stone.set
+   ├─ stone = 1.vision
+   ├─ passage = allowed
+   └─ guard
+      ├─ artifacts
+      │   └─ 1.vision.v1.md
+      ├─ reviews
+      │   └─ r1: reviewer/reflect (l1, 1/∞)
+      │       ├─ approved, cached
+      │       ├─ 0 blockers ✓
+      │       ├─ 0 nitpicks ✓
+      │       └─ given: .route/1.vision.guard.review.i1.abc123.r1.md
+      └─ judges
+          └─ j1: reviewed?
+              └─ · cached
+                 └─ on 1.vision.v1.md"
+`;
+
+exports[`formatGuardTree given: [case11] passage with reason — blocked + combined reasons when: [t0] called with blocked and reason then: output matches snapshot 1`] = `
+"🗿 route.stone.set
+   ├─ stone = 1.vision
+   ├─ passage = blocked
+   ├─ reason = judge 1 failed; judge 2 failed
+   └─ guard
+      ├─ artifacts
+      │   └─ 1.vision.v1.md
+      ├─ reviews
+      │   └─ r1: reviewer/reflect (l1, 1/∞)
+      │       ├─ rejected 5.0s
+      │       ├─ 2 blockers 🔴
+      │       ├─ 0 nitpicks ✓
+      │       └─ given: .route/1.vision.guard.review.i1.abc123.r1.md
+      └─ judges
+          ├─ j1: reviewed?
+          │   ├─ finished 0.3s ✗
+          │   └─ reason: judge 1 failed
+          └─ j2: approved?
+              ├─ finished 0.2s ✗
+              └─ reason: judge 2 failed"
+`;
+
+exports[`formatGuardTree given: [case12] cached review on src/**/* artifacts — 5.1.execute stone with glob pattern when: [t0] called with cached review and glob pattern then: output contains glob pattern, not enumerated files 1`] = `
+"🗿 route.stone.set
+   ├─ stone = 5.1.execute
+   ├─ passage = allowed
+   └─ guard
+      ├─ artifacts
+      │   ├─ src/domain/execute.ts
+      │   ├─ src/domain/execute.test.ts
+      │   └─ src/utils/helper.ts
+      ├─ reviews
+      │   └─ r1: reviewer/review (l1, 1/∞)
+      │       ├─ approved, cached
+      │       ├─ 0 blockers ✓
+      │       ├─ 0 nitpicks ✓
+      │       └─ given: .route/5.1.execute.guard.review.i1.abc123.r1.md
+      └─ judges
+          └─ j1: reviewed?
+              └─ · cached
+                 └─ on src/**/*"
+`;
+
+exports[`formatGuardTree given: [case13] peerMeters — rNum uses meter order, not artifact order when: [t0] l2 reviewer ran but l1 reviewers did not then: rNum reflects declared position (r3 not r1) 1`] = `
+"🗿 route.stone.set
+   ├─ stone = 5.5.playtest
+   ├─ passage = blocked
+   ├─ reason = wait for human approval
+   └─ guard
+      ├─ artifacts
+      │   └─ 5.5.playtest.yield.md
+      └─ reviews
+          ├─ r1: quick-pass (l1, 1/1)
+          │   ├─ exhausted
+          │   ├─ 0 blockers ✓
+          │   ├─ 0 nitpicks ✓
+          │   └─ given: .route/5.5.playtest.guard.review.i1.abc123.r1.md
+          ├─ r2: medium-pass (l1, 0/2)
+          │   └─ awaits arrival
+          └─ r3: slow-fail (l2, 2/2)
+              ├─ approved 15.0s
+              ├─ 0 blockers ✓
+              ├─ 0 nitpicks ✓
+              └─ given: .route/5.5.playtest.guard.review.i1.abc123.r3.md"
+`;
+
+exports[`formatGuardTree given: [case14] peerMeters — exhausted reviewer shows prior review path when: [t0] reviewer exhausted with cached review then: shows review path not just exhausted 1`] = `
+"🗿 route.stone.set
+   ├─ stone = 5.5.playtest
+   ├─ passage = blocked
+   ├─ reason = reviewer exhausted
+   └─ guard
+      ├─ artifacts
+      │   └─ 5.5.playtest.yield.md
+      └─ reviews
+          └─ r1: quick-pass (l1, 1/1)
+              ├─ exhausted, cached
+              ├─ 1 blocker 🔴
+              ├─ 0 nitpicks ✓
+              └─ given: .route/5.5.playtest.guard.review.i1.abc123.r1.md"
+`;
+
+exports[`formatGuardTree given: [case15] peerMeters — awaits shown in header verdict when: [t0] l2 reviewer awaits l1 then: header shows awaits not queued 1`] = `
+"🗿 route.stone.set
+   ├─ stone = 5.5.playtest
+   ├─ passage = blocked
+   ├─ reason = blockers found
+   └─ guard
+      ├─ artifacts
+      │   └─ 5.5.playtest.yield.md
+      └─ reviews
+          ├─ r1: cheapo (l1, 0/10)
+          │   └─ awaits arrival
+          └─ r2: primo (l2, 0/3)
+              └─ awaits l1 terminal"
+`;
+
+exports[`formatGuardTree given: [case16] peerMeters — unique slugs via standardization shows correct individual data when: [t0] reviewers have unique slugs (standardized at parse time) then: each reviewer shows its own blockers/path 1`] = `
+"🗿 route.stone.set
+   ├─ stone = 5.3.verification
+   ├─ passage = blocked
+   ├─ reason = blockers exceed threshold
+   └─ guard
+      ├─ artifacts
+      │   └─ $route/5.3.verification.yield.md
+      └─ reviews
+          ├─ r1: $rhx.1 (l1, 13/∞)
+          │   ├─ rejected 43.7s
+          │   ├─ 1 blocker 🔴
+          │   ├─ 0 nitpicks ✓
+          │   └─ given: .route/5.3.verification.guard.review.i3.abc123.r1.md
+          ├─ r2: $rhx.2 (l1, 14/∞)
+          │   ├─ approved 13.2s
+          │   ├─ 0 blockers ✓
+          │   ├─ 0 nitpicks ✓
+          │   └─ given: .route/5.3.verification.guard.review.i3.abc123.r2.md
+          └─ r3: $rhx.3 (l1, 18/∞)
+              ├─ approved 14.9s
+              ├─ 0 blockers ✓
+              ├─ 0 nitpicks ✓
+              └─ given: .route/5.3.verification.guard.review.i3.abc123.r6.md"
+`;
+
+exports[`formatGuardTree given: [case17] malfunction passage — offers overrule guidance when: [t0] a reviewer malfunctioned then: output offers overrule the malfunction option 1`] = `
+"🗿 route.stone.set
+   ├─ stone = 1.feature
+   ├─ passage = malfunction
+   ├─ reason = reviewer or judge malfunctioned
+   ├─ options
+   │  ├─ overrule the malfunction
+   │  │  └─ rhx route.stone.set --stone 1.feature --as overruled
+   │  └─ or fix the reviewer, then retry
+   └─ guard
+      ├─ artifacts
+      │   └─ 1.feature.md
+      └─ reviews
+          └─ r1: basic-checker (l1, 1/∞)
+              ├─ 💥 malfunction
+              └─ given: .route/1.feature.guard.review.i1.abc123.r1.md"
+`;
+
+exports[`formatGuardTree given: [case18] constraint passage — offers overrule guidance when: [t0] a reviewer hit a constraint then: output offers overrule the constraint option 1`] = `
+"🗿 route.stone.set
+   ├─ stone = 1.feature
+   ├─ passage = blocked
+   ├─ reason = reviewer constraint
+   ├─ options
+   │  ├─ overrule the constraint
+   │  │  └─ rhx route.stone.set --stone 1.feature --as overruled
+   │  └─ or fix the reviewer, then retry
+   └─ guard
+      ├─ artifacts
+      │   └─ 1.feature.md
+      └─ reviews
+          └─ r1: basic-checker (l1, 1/∞)
+              ├─ constraint 0.0s
+              ├─ 0 blockers ✓
+              ├─ 0 nitpicks ✓
+              └─ given: .route/1.feature.guard.review.i1.abc123.r1.md"
+`;
+
+exports[`formatGuardTree given: [case19] malfunction passage, no guard — offers overrule guidance when: [t0] malfunction with no guard data then: output offers overrule the malfunction option 1`] = `
+"🗿 route.stone.set
+   ├─ stone = 1.feature
+   ├─ passage = malfunction
+   ├─ reason = reviewer or judge malfunctioned
+   └─ options
+      ├─ overrule the malfunction
+      │  └─ rhx route.stone.set --stone 1.feature --as overruled
+      └─ or fix the reviewer, then retry"
+`;
+
+exports[`formatReviewsMeterLines given: [case1] unique slugs via standardization — slug-based lookup when: [t0] reviewers have unique slugs (standardized at parse time) then: each reviewer shows its own blockers/path via slug lookup 1`] = `
+[
+  "    ├─ r1: $rhx.1 (l1, 13/∞)",
+  "    │   ├─ rejected 43.7s",
+  "    │   ├─ 1 blocker 🔴",
+  "    │   ├─ 0 nitpicks ✓",
+  "    │   └─ given: .route/r1.md",
+  "    ├─ r2: $rhx.2 (l1, 14/∞)",
+  "    │   ├─ approved 13.2s",
+  "    │   ├─ 0 blockers ✓",
+  "    │   ├─ 0 nitpicks ✓",
+  "    │   └─ given: .route/r2.md",
+  "    └─ r3: $rhx.3 (l1, 18/∞)",
+  "        ├─ approved 14.9s",
+  "        ├─ 0 blockers ✓",
+  "        ├─ 0 nitpicks ✓",
+  "        └─ given: .route/r6.md",
+]
+`;

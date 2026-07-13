@@ -315,4 +315,66 @@ reviews:
       });
     });
   });
+
+  given(
+    '[case-slug-uniqueness] a slug shared by a self AND a peer reviewer',
+    () => {
+      when('[t0] guard is parsed', () => {
+        then(
+          'throws a loud BadRequestError that names the duplicate slug',
+          async () => {
+            const tempDir = await fs.mkdtemp(
+              path.join(os.tmpdir(), 'test-guard-slug-collision-'),
+            );
+            const guardFile = path.join(tempDir, '1.test.guard');
+            await fs.writeFile(
+              guardFile,
+              `reviews:
+  self:
+    - slug: architect
+      say: "review it"
+  peer:
+    - slug: architect
+      run: rhx review --rules briefs/arch.md
+judges:
+  - rhx judge --mechanism reviewed?
+`,
+            );
+
+            await expect(parseStoneGuard({ path: guardFile })).rejects.toThrow(
+              'architect',
+            );
+          },
+        );
+      });
+    },
+  );
+
+  given('[case-slug-distinct] distinct self + peer slugs', () => {
+    when('[t0] guard is parsed', () => {
+      then('parses without error', async () => {
+        const tempDir = await fs.mkdtemp(
+          path.join(os.tmpdir(), 'test-guard-slug-distinct-'),
+        );
+        const guardFile = path.join(tempDir, '1.test.guard');
+        await fs.writeFile(
+          guardFile,
+          `reviews:
+  self:
+    - slug: reflect
+      say: "review it"
+  peer:
+    - slug: architect
+      run: rhx review --rules briefs/arch.md
+judges:
+  - rhx judge --mechanism reviewed?
+`,
+        );
+
+        const result = await parseStoneGuard({ path: guardFile });
+        expect(getGuardSelfReviews(result)).toHaveLength(1);
+        expect(getGuardPeerReviews(result)).toHaveLength(1);
+      });
+    });
+  });
 });

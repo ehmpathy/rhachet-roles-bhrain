@@ -201,31 +201,31 @@ exports[`achiever.goal.triage.acceptance given: [case1] multi-part request triag
       │  │  └─ reason = goal created from triage
       │  └─ source = peer:human
       ├─ (2)
-      │  ├─ slug = notify-slack-done
+      │  ├─ slug = update-readme-env
       │  ├─ why
-      │  │  ├─ ask = notify me on slack when done
-      │  │  ├─ purpose = human wants visibility into completion
-      │  │  └─ benefit = can move on to next task promptly
+      │  │  ├─ ask = update the readme to mention the new env var
+      │  │  ├─ purpose = docs should be current for new contributors
+      │  │  └─ benefit = reduces first-time setup friction
       │  ├─ what
-      │  │  └─ outcome = slack message sent upon completion
+      │  │  └─ outcome = readme documents the new env var
       │  ├─ how
-      │  │  ├─ task = call slack api with completion message
-      │  │  └─ gate = slack message delivered
+      │  │  ├─ task = edit readme, add env var to configuration section
+      │  │  └─ gate = env var name and example are documented
       │  ├─ status
       │  │  ├─ choice = enqueued
       │  │  └─ reason = goal created from triage
       │  └─ source = peer:human
       └─ (3)
-         ├─ slug = update-readme-env
+         ├─ slug = notify-slack-done
          ├─ why
-         │  ├─ ask = update the readme to mention the new env var
-         │  ├─ purpose = docs should be current for new contributors
-         │  └─ benefit = reduces first-time setup friction
+         │  ├─ ask = notify me on slack when done
+         │  ├─ purpose = human wants visibility into completion
+         │  └─ benefit = can move on to next task promptly
          ├─ what
-         │  └─ outcome = readme documents the new env var
+         │  └─ outcome = slack message sent upon completion
          ├─ how
-         │  ├─ task = edit readme, add env var to configuration section
-         │  └─ gate = env var name and example are documented
+         │  ├─ task = call slack api with completion message
+         │  └─ gate = slack message delivered
          ├─ status
          │  ├─ choice = enqueued
          │  └─ reason = goal created from triage
@@ -242,31 +242,31 @@ exports[`achiever.goal.triage.acceptance given: [case1] multi-part request triag
 🔮 goal.memory.get --scope repo
    └─ goals (2)
       ├─ (1)
-      │  ├─ slug = notify-slack-done
+      │  ├─ slug = update-readme-env
       │  ├─ why
-      │  │  ├─ ask = notify me on slack when done
-      │  │  ├─ purpose = human wants visibility into completion
-      │  │  └─ benefit = can move on to next task promptly
+      │  │  ├─ ask = update the readme to mention the new env var
+      │  │  ├─ purpose = docs should be current for new contributors
+      │  │  └─ benefit = reduces first-time setup friction
       │  ├─ what
-      │  │  └─ outcome = slack message sent upon completion
+      │  │  └─ outcome = readme documents the new env var
       │  ├─ how
-      │  │  ├─ task = call slack api with completion message
-      │  │  └─ gate = slack message delivered
+      │  │  ├─ task = edit readme, add env var to configuration section
+      │  │  └─ gate = env var name and example are documented
       │  ├─ status
       │  │  ├─ choice = enqueued
       │  │  └─ reason = goal created from triage
       │  └─ source = peer:human
       └─ (2)
-         ├─ slug = update-readme-env
+         ├─ slug = notify-slack-done
          ├─ why
-         │  ├─ ask = update the readme to mention the new env var
-         │  ├─ purpose = docs should be current for new contributors
-         │  └─ benefit = reduces first-time setup friction
+         │  ├─ ask = notify me on slack when done
+         │  ├─ purpose = human wants visibility into completion
+         │  └─ benefit = can move on to next task promptly
          ├─ what
-         │  └─ outcome = readme documents the new env var
+         │  └─ outcome = slack message sent upon completion
          ├─ how
-         │  ├─ task = edit readme, add env var to configuration section
-         │  └─ gate = env var name and example are documented
+         │  ├─ task = call slack api with completion message
+         │  └─ gate = slack message delivered
          ├─ status
          │  ├─ choice = enqueued
          │  └─ reason = goal created from triage

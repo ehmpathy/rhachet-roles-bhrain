@@ -1,0 +1,11 @@
+{
+  "protections": [
+    {
+      "glob": "src/**/*",
+      "stone": "3.3.1.blueprint.product",
+      "guard": ".behavior/v2026_07_07.peer-review-conversation/3.3.1.blueprint.product.guard",
+      "route": ".behavior/v2026_07_07.peer-review-conversation",
+      "passed": true
+    }
+  ]
+}
