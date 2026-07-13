@@ -73,7 +73,11 @@ export const sanitizeTimeForSnapshot = (output: string): string => {
     .replace(/malfunctioned \d+\.\d+s/g, 'malfunctioned [TIME]')
     .replace(/approved \d+\.\d+s/g, 'approved [TIME]')
     .replace(/rejected \d+\.\d+s/g, 'rejected [TIME]')
-    .replace(/exhausted \d+\.\d+s/g, 'exhausted [TIME]');
+    .replace(/exhausted \d+\.\d+s/g, 'exhausted [TIME]')
+    // constraint verdict duration — the absent verb that flaked driver.route.overrule
+    // case14 (constraint 0.0s vs 0.1s); a sub-second mock-reviewer duration must be masked
+    // like every other verdict verb (rule.forbid.snapshot-visual-blemishes)
+    .replace(/constraint \d+\.\d+s/g, 'constraint [TIME]');
 };
 
 
