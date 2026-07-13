@@ -6,12 +6,13 @@ import { getError, given, then, when } from 'test-fns';
 
 import { PassageReport } from '@src/domain.objects/Driver/PassageReport';
 
+import { genContextReviewBrainSupplyDemo } from '../__test_assets__/genContextReviewBrainSupplyDemo';
 import { setPassageReport } from '../passage/setPassageReport';
 import { setStoneAsPassed } from './setStoneAsPassed';
 
 const ASSETS_DIR = path.join(__dirname, '../.test/assets');
 
-const noopContext = { cliEmit: { onGuardProgress: () => {} } };
+const noopContext = genContextReviewBrainSupplyDemo();
 
 describe('setStoneAsPassed', () => {
   given('[case1] route.simple fixture (no guards)', () => {

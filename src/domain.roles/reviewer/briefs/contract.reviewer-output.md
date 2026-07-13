@@ -29,6 +29,27 @@ to declare a clean review, state the zeros explicitly:
 0 nitpicks
 ```
 
+## .two severities only
+
+every issue you report is EXACTLY one of two severities — there is no third bucket:
+
+- **blocker** = must-fix / would-block / unresolved / high-severity
+- **nitpick** = optional / advisory / a suggestion / low-severity
+
+section headers like `## maintenance hazards`, `## scope leaks`, or `## worth surfaced` are
+fine as **prose** structure, but each item under them still resolves to **blocker OR nitpick**,
+and the two numeric summary lines (`N blockers` / `N nitpicks`) tally EVERY item by its severity.
+do NOT emit a count for any other category — a `## hazards: 2` line is not a severity the guard
+reads, and it will not save a review whose two required numeric lines are absent.
+
+read each item's severity from HOW YOU WROTE IT, not from the header it sits under:
+
+- a "maintenance hazard" you frame as must-fix (`🔴`, "MUST bound this", `[unresolved]`) = **blocker**
+- the SAME header, framed as advisory ("consider", "minor", `🟡`) = **nitpick**
+
+collapse your own taxonomy up front, then emit the two numeric lines. this keeps the
+deterministic parser happy and means the guard never has to fall back to a sub-brain to read you.
+
 ## .numbers only
 
 only a **number** counts. these do NOT satisfy the contract and cause a `💥 malfunction`:

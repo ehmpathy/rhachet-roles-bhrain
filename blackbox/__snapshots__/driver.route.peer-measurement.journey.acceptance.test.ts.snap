@@ -1,0 +1,123 @@
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
+
+exports[`driver.route.peer-measurement.journey.acceptance given: [journey] a stone reviewed by a deterministic peer reviewer then: stdout matches snapshot 1`] = `
+"🦉 the way speaks for itself
+   │
+   ├─ r1: numeric-reviewer (l1, 1/3)
+   │   ├─ approved [TIME]
+   │   ├─ 0 blockers ✓
+   │   ├─ 2 nitpicks 🟠
+   │   ├─ given: .reviews/peer/1.execute._.review.i001.6e46d729d4ed3dc259.r001._.given.by_peer.numeric-reviewer.md
+   │   └─ taken: .reviews/peer/1.execute._.review.i001.6e46d729d4ed3dc259.r001._.taken.by_self.numeric-reviewer.md
+   │
+   └─ ✓ judge.1 - allowed [TIME]
+
+🗿 route.stone.set
+   ├─ stone = 1.execute
+   ├─ passage = allowed
+   ├─ guard
+   │  ├─ artifacts
+   │  │   └─ 1.execute*.md
+   │  ├─ reviews
+   │  │   └─ r1: numeric-reviewer (l1, 1/3)
+   │  │       ├─ approved [TIME]
+   │  │       ├─ 0 blockers ✓
+   │  │       ├─ 2 nitpicks 🟠
+   │  │       ├─ given: .reviews/peer/1.execute._.review.i001.6e46d729d4ed3dc259.r001._.given.by_peer.numeric-reviewer.md
+   │  │       └─ taken: .reviews/peer/1.execute._.review.i001.6e46d729d4ed3dc259.r001._.taken.by_self.numeric-reviewer.md
+   │  └─ judges
+   │      └─ j1: rhx route.stone.judge --mechanism reviewed? --stone $stone --route $route --allow-blockers 0 --allow-nitpicks 5
+   │          └─ finished [TIME] ✓
+   │
+   └─ the way continues, run
+      └─ rhx route.drive
+"
+`;
+
+exports[`driver.route.peer-measurement.journey.acceptance given: [journey] a stone reviewed by a deterministic peer reviewer when: [t2] the stone is passed again (cache re-run) then: cache-run stdout matches snapshot 1`] = `
+"🦉 the way speaks for itself
+   │
+   ├─ r1: numeric-reviewer (l1, 1/3)
+   │   ├─ approved, cached
+   │   ├─ 0 blockers ✓
+   │   ├─ 2 nitpicks 🟠
+   │   ├─ given: .reviews/peer/1.execute._.review.i001.6e46d729d4ed3dc259.r001._.given.by_peer.numeric-reviewer.md
+   │   └─ taken: .reviews/peer/1.execute._.review.i001.6e46d729d4ed3dc259.r001._.taken.by_self.numeric-reviewer.md
+   │
+   └─ ✓ judge.1 - allowed (cached)
+
+🗿 route.stone.set
+   ├─ stone = 1.execute
+   ├─ passage = allowed
+   ├─ guard
+   │  ├─ artifacts
+   │  │   └─ 1.execute*.md
+   │  ├─ reviews
+   │  │   └─ r1: numeric-reviewer (l1, 1/3)
+   │  │       ├─ approved, cached
+   │  │       ├─ 0 blockers ✓
+   │  │       ├─ 2 nitpicks 🟠
+   │  │       ├─ given: .reviews/peer/1.execute._.review.i001.6e46d729d4ed3dc259.r001._.given.by_peer.numeric-reviewer.md
+   │  │       └─ taken: .reviews/peer/1.execute._.review.i001.6e46d729d4ed3dc259.r001._.taken.by_self.numeric-reviewer.md
+   │  └─ judges
+   │      └─ j1: rhx route.stone.judge --mechanism reviewed? --stone $stone --route $route --allow-blockers 0 --allow-nitpicks 5
+   │          └─ · cached
+   │             └─ on 1.execute*.md
+   │
+   └─ the way continues, run
+      └─ rhx route.drive
+"
+`;
+
+exports[`driver.route.peer-measurement.journey.acceptance given: [journey] a stone reviewed by a deterministic peer reviewer when: [tN] the persisted review artifact is inspected then: the persisted artifact content matches snapshot 1`] = `
+"├─ stdout
+│  ├─
+│  │
+│  │  ## review
+│  │  
+│  │  the change looks solid. two small style points worth a cleanup.
+│  │  
+│  │  0 blockers
+│  │  2 nitpicks
+│  │
+│  └─
+├─ stderr
+│  ├─
+│  │
+│  └─
+└─ tallied
+   ├─ 0 blockers
+   └─ 2 nitpicks"
+`;
+
+exports[`driver.route.peer-measurement.journey.acceptance given: [journey] a stone reviewed by a reviewer that crashes (non-zero exit) when: [t1] the stone is passed (crashed reviewer) then: crash-path stdout matches snapshot 1`] = `
+"🦉 the way speaks for itself
+   │
+   ├─ r1: crash-reviewer (l1, 1/3)
+   │   ├─ 💥 malfunction
+   │   ├─ given: .reviews/peer/2.crash._.review.i001.92354b4bb8ec587fe1.r001._.given.by_peer.crash-reviewer.md
+   │   └─ taken: .reviews/peer/2.crash._.review.i001.92354b4bb8ec587fe1.r001._.taken.by_self.crash-reviewer.md
+   │
+   └─ ✓ judge.1 - allowed [TIME]
+
+🗿 route.stone.set
+   ├─ stone = 2.crash
+   ├─ passage = malfunction
+   ├─ reason = reviewer or judge malfunctioned
+   ├─ options
+   │  ├─ overrule the malfunction
+   │  │  └─ rhx route.stone.set --stone 2.crash --as overruled
+   │  └─ or fix the reviewer, then retry
+   └─ guard
+      ├─ artifacts
+      │   └─ 2.crash*.md
+      ├─ reviews
+      │   └─ r1: crash-reviewer (l1, 0/3)
+      │       ├─ 💥 malfunction
+      │       ├─ given: .reviews/peer/2.crash._.review.i001.92354b4bb8ec587fe1.r001._.given.by_peer.crash-reviewer.md
+      │       └─ taken: .reviews/peer/2.crash._.review.i001.92354b4bb8ec587fe1.r001._.taken.by_self.crash-reviewer.md
+      └─ judges
+          └─ j1: rhx route.stone.judge --mechanism reviewed? --stone $stone --route $route --allow-blockers 0 --allow-nitpicks 5
+              └─ finished [TIME] ✓
+"
+`;

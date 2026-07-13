@@ -2,13 +2,10 @@ import * as fs from 'fs/promises';
 import * as path from 'path';
 import { given, then, useThen, when } from 'test-fns';
 
+import { genContextReviewBrainSupplyDemo } from '../__test_assets__/genContextReviewBrainSupplyDemo';
 import { setStoneAsPassed } from './setStoneAsPassed';
 
-const noopContext = {
-  cliEmit: {
-    onGuardProgress: () => {},
-  },
-};
+const noopContext = genContextReviewBrainSupplyDemo();
 
 describe('setStoneAsPassed.exhausted', () => {
   given('[case1] peer reviewer exhaustion writes to passage.jsonl', () => {

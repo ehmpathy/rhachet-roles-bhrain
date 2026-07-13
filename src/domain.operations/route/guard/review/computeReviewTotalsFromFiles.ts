@@ -1,6 +1,6 @@
 import * as fs from 'fs/promises';
 
-import { getReviewCountsFromContent } from './getReviewCountsFromContent';
+import { getReviewCountsViaRegex } from './getReviewCountsViaRegex';
 
 /**
  * .what = computes total blockers and nitpicks from review files
@@ -14,7 +14,9 @@ export const computeReviewTotalsFromFiles = async (input: {
 
   for (const filePath of input.reviewFiles) {
     const content = await fs.readFile(filePath, 'utf-8');
-    const counts = getReviewCountsFromContent({ content });
+    const counts = getReviewCountsViaRegex({ content });
+    // undetected reviews contribute 0 — preserves the prior `?? 0` behavior for absent counts
+    if (!counts.detected) continue;
     totalBlockers += counts.blockers;
     totalNitpicks += counts.nitpicks;
   }

@@ -12,7 +12,10 @@ exports[`runStoneGuardReviews given: [case1] guard with echo review command when
 ├─ stderr
 │  ├─
 │  │
-│  └─"
+│  └─
+└─ tallied
+   ├─ 0 blockers
+   └─ 1 nitpick"
 `;
 
 exports[`runStoneGuardReviews given: [case1] guard with echo review command when: [t0] reviews are executed then: return value snapshot matches 1`] = `
@@ -35,6 +38,7 @@ review output
     "stone": {
       "path": "<route>/1.test.stone",
     },
+    "tallier": "deterministic",
   },
 ]
 `;
@@ -50,7 +54,10 @@ exports[`runStoneGuardReviews given: [case2] guard with multiple review commands
 ├─ stderr
 │  ├─
 │  │
-│  └─"
+│  └─
+└─ tallied
+   ├─ 1 blocker
+   └─ 0 nitpicks"
 `;
 
 exports[`runStoneGuardReviews given: [case2] guard with multiple review commands when: [t0] reviews are executed then: artifact snapshots match 2`] = `
@@ -64,7 +71,10 @@ exports[`runStoneGuardReviews given: [case2] guard with multiple review commands
 ├─ stderr
 │  ├─
 │  │
-│  └─"
+│  └─
+└─ tallied
+   ├─ 0 blockers
+   └─ 2 nitpicks"
 `;
 
 exports[`runStoneGuardReviews given: [case2] guard with multiple review commands when: [t0] reviews are executed then: return value snapshot matches 1`] = `
@@ -86,6 +96,7 @@ nitpicks: 0
     "stone": {
       "path": "<route>/1.test.stone",
     },
+    "tallier": "deterministic",
   },
   {
     "blockers": 0,
@@ -104,6 +115,7 @@ nitpicks: 2
     "stone": {
       "path": "<route>/1.test.stone",
     },
+    "tallier": "deterministic",
   },
 ]
 `;
@@ -120,7 +132,10 @@ exports[`runStoneGuardReviews given: [case3] review exits with code 0 (passed) w
 ├─ stderr
 │  ├─
 │  │
-│  └─"
+│  └─
+└─ tallied
+   ├─ 0 blockers
+   └─ 0 nitpicks"
 `;
 
 exports[`runStoneGuardReviews given: [case3] review exits with code 0 (passed) when: [t0] review exits 0 then: return value snapshot matches 1`] = `
@@ -143,6 +158,7 @@ review passed
     "stone": {
       "path": "<route>/1.test.stone",
     },
+    "tallier": "deterministic",
   },
 ]
 `;
@@ -167,7 +183,7 @@ exports[`runStoneGuardReviews given: [case4] review exits with code 2 (constrain
 exports[`runStoneGuardReviews given: [case4] review exits with code 2 (constraint) when: [t0] review exits 2 then: return value snapshot matches 1`] = `
 [
   {
-    "blockers": 1,
+    "blockers": 0,
     "durationMs": null,
     "exitClass": "constraint",
     "exitCode": 2,
@@ -183,6 +199,7 @@ constraint failure
     "stone": {
       "path": "<route>/1.test.stone",
     },
+    "tallier": null,
   },
 ]
 `;
@@ -224,6 +241,7 @@ exports[`runStoneGuardReviews given: [case5] review exits with code 1 (malfuncti
     "stone": {
       "path": "<route>/1.test.stone",
     },
+    "tallier": null,
   },
 ]
 `;
@@ -240,7 +258,10 @@ exports[`runStoneGuardReviews given: [case6] guard with $route variable in revie
 ├─ stderr
 │  ├─
 │  │
-│  └─"
+│  └─
+└─ tallied
+   ├─ 0 blockers
+   └─ 0 nitpicks"
 `;
 
 exports[`runStoneGuardReviews given: [case6] guard with $route variable in review command when: [t0] reviews are executed with $route substitution then: return value snapshot matches 1`] = `
@@ -263,6 +284,7 @@ marker found at <route-path>
     "stone": {
       "path": "<route>/1.test.stone",
     },
+    "tallier": "deterministic",
   },
 ]
 `;
@@ -279,7 +301,10 @@ exports[`runStoneGuardReviews given: [case7] guard with $rhx variable in review 
 ├─ stderr
 │  ├─
 │  │
-│  └─"
+│  └─
+└─ tallied
+   ├─ 0 blockers
+   └─ 0 nitpicks"
 `;
 
 exports[`runStoneGuardReviews given: [case7] guard with $rhx variable in review command when: [t0] review uses $rhx variable then: return value snapshot matches 1`] = `
@@ -302,6 +327,7 @@ rhx=<repo-root>/node_modules/.bin/rhx
     "stone": {
       "path": "<route>/1.test.stone",
     },
+    "tallier": "deterministic",
   },
 ]
 `;
@@ -318,7 +344,10 @@ exports[`runStoneGuardReviews given: [case8] guard with $rhachet variable in rev
 ├─ stderr
 │  ├─
 │  │
-│  └─"
+│  └─
+└─ tallied
+   ├─ 0 blockers
+   └─ 0 nitpicks"
 `;
 
 exports[`runStoneGuardReviews given: [case8] guard with $rhachet variable in review command when: [t0] review uses $rhachet variable then: return value snapshot matches 1`] = `
@@ -341,6 +370,7 @@ rhachet=<repo-root>/node_modules/.bin/rhachet
     "stone": {
       "path": "<route>/1.test.stone",
     },
+    "tallier": "deterministic",
   },
 ]
 `;
@@ -363,6 +393,7 @@ exports[`runStoneGuardReviews given: [case15] l1 malfunction does not block l3 e
     "stone": {
       "path": "<route>/1.test.stone",
     },
+    "tallier": null,
   },
   {
     "blockers": 0,
@@ -381,6 +412,7 @@ nitpicks: 0
     "stone": {
       "path": "<route>/1.test.stone",
     },
+    "tallier": "deterministic",
   },
 ]
 `;
@@ -403,6 +435,7 @@ exports[`runStoneGuardReviews given: [case16] l1 constraint does not block l3 ex
     "stone": {
       "path": "<route>/1.test.stone",
     },
+    "tallier": null,
   },
   {
     "blockers": 0,
@@ -421,6 +454,7 @@ nitpicks: 0
     "stone": {
       "path": "<route>/1.test.stone",
     },
+    "tallier": "deterministic",
   },
 ]
 `;
@@ -443,6 +477,7 @@ exports[`runStoneGuardReviews given: [case17] multiple l1 malfunctions do not bl
     "stone": {
       "path": "<route>/1.test.stone",
     },
+    "tallier": null,
   },
   {
     "blockers": 0,
@@ -460,6 +495,7 @@ exports[`runStoneGuardReviews given: [case17] multiple l1 malfunctions do not bl
     "stone": {
       "path": "<route>/1.test.stone",
     },
+    "tallier": null,
   },
   {
     "blockers": 0,
@@ -478,6 +514,7 @@ nitpicks: 0
     "stone": {
       "path": "<route>/1.test.stone",
     },
+    "tallier": "deterministic",
   },
 ]
 `;
@@ -500,6 +537,7 @@ exports[`runStoneGuardReviews given: [case18] mixed l1 terminal states (malfunct
     "stone": {
       "path": "<route>/1.test.stone",
     },
+    "tallier": null,
   },
   {
     "blockers": 0,
@@ -517,6 +555,7 @@ exports[`runStoneGuardReviews given: [case18] mixed l1 terminal states (malfunct
     "stone": {
       "path": "<route>/1.test.stone",
     },
+    "tallier": null,
   },
   {
     "blockers": 0,
@@ -535,6 +574,7 @@ nitpicks: 0
     "stone": {
       "path": "<route>/1.test.stone",
     },
+    "tallier": "deterministic",
   },
 ]
 `;
@@ -558,6 +598,7 @@ nitpicks: 0
     "stone": {
       "path": "<route>/1.test.stone",
     },
+    "tallier": "deterministic",
   },
   {
     "blockers": 0,
@@ -575,6 +616,7 @@ nitpicks: 0
     "stone": {
       "path": "<route>/1.test.stone",
     },
+    "tallier": null,
   },
   {
     "blockers": 0,
@@ -593,6 +635,7 @@ nitpicks: 0
     "stone": {
       "path": "<route>/1.test.stone",
     },
+    "tallier": "deterministic",
   },
 ]
 `;
@@ -615,6 +658,7 @@ exports[`runStoneGuardReviews given: [case20] three-level cascade: l1 malfunctio
     "stone": {
       "path": "<route>/1.test.stone",
     },
+    "tallier": null,
   },
   {
     "blockers": 0,
@@ -632,6 +676,7 @@ exports[`runStoneGuardReviews given: [case20] three-level cascade: l1 malfunctio
     "stone": {
       "path": "<route>/1.test.stone",
     },
+    "tallier": null,
   },
   {
     "blockers": 0,
@@ -650,6 +695,7 @@ nitpicks: 0
     "stone": {
       "path": "<route>/1.test.stone",
     },
+    "tallier": "deterministic",
   },
 ]
 `;
@@ -671,6 +717,7 @@ exports[`runStoneGuardReviews given: [case21] all l1 terminal (malfunction+const
     "stone": {
       "path": "<route>/1.test.stone",
     },
+    "tallier": null,
   },
   {
     "blockers": 0,
@@ -687,6 +734,7 @@ exports[`runStoneGuardReviews given: [case21] all l1 terminal (malfunction+const
     "stone": {
       "path": "<route>/1.test.stone",
     },
+    "tallier": null,
   },
   {
     "blockers": 0,
@@ -703,6 +751,7 @@ exports[`runStoneGuardReviews given: [case21] all l1 terminal (malfunction+const
     "stone": {
       "path": "<route>/1.test.stone",
     },
+    "tallier": null,
   },
   {
     "blockers": 0,
@@ -721,15 +770,20 @@ nitpicks: 0
     "stone": {
       "path": "<route>/1.test.stone",
     },
+    "tallier": "deterministic",
   },
 ]
 `;
 
-exports[`runStoneGuardReviews given: [case22] reviewer exits 0 but emits no numeric count (unparseable) when: [t0] reviews are executed then: the malfunction output matches snapshot 1`] = `
+exports[`runStoneGuardReviews given: [case22] reviewer exits 0 but emits no numeric count, and the fallback faults when: [t0] reviews are executed then: the malfunction output matches snapshot 1`] = `
 {
   "exitClass": "malfunction",
   "exitCode": 1,
-  "stderr": "💥 malfunction: reviewer output lacks a numeric blocker/nitpick count (expected \`N blockers\` and \`N nitpicks\`; use \`0 blockers\` / \`0 nitpicks\` to declare clean). see .agent/repo=bhrain/role=reviewer/briefs/contract.reviewer-output.md",
+  "stderr": "💥 malfunction: review tally fallback failed. UnexpectedCodePathError: getReviewCountsViaBrain: sub-brain tally failed
+
+{
+  "contentLength": 21
+}: genContextReviewBrainSupplyDemo: getReviewBrain called but no brain was provided (a deterministic-path test should never reach the fallback; override getReviewBrain to test the probabilistic path)",
   "stdout": "looks solid, ship it
 ",
 }
@@ -739,7 +793,11 @@ exports[`runStoneGuardReviews given: [case23] reviewer exits 0 but declares only
 {
   "exitClass": "malfunction",
   "exitCode": 1,
-  "stderr": "💥 malfunction: reviewer output lacks a numeric blocker/nitpick count (expected \`N blockers\` and \`N nitpicks\`; use \`0 blockers\` / \`0 nitpicks\` to declare clean). see .agent/repo=bhrain/role=reviewer/briefs/contract.reviewer-output.md",
+  "stderr": "💥 malfunction: review tally fallback failed. UnexpectedCodePathError: getReviewCountsViaBrain: sub-brain tally failed
+
+{
+  "contentLength": 12
+}: genContextReviewBrainSupplyDemo: getReviewBrain called but no brain was provided (a deterministic-path test should never reach the fallback; override getReviewBrain to test the probabilistic path)",
   "stdout": "blockers: 0
 ",
 }
@@ -776,5 +834,15 @@ exports[`runStoneGuardReviews given: [case27] a stale .taken older than the give
   "nitpicks": 0,
   "rounds": 1,
   "slug": "conv-reviewer",
+}
+`;
+
+exports[`runStoneGuardReviews given: [case29] reviewer exits 0, emits no numeric count, and the sub-brain cleanly abstains when: [t0] reviews are executed then: the malfunction output matches snapshot 1`] = `
+{
+  "exitClass": "malfunction",
+  "exitCode": 1,
+  "stderr": "💥 malfunction: reviewer output lacks a numeric blocker/nitpick count (expected \`N blockers\` and \`N nitpicks\`; use \`0 blockers\` / \`0 nitpicks\` to declare clean). see .agent/repo=bhrain/role=reviewer/briefs/contract.reviewer-output.md",
+  "stdout": "some prose that carries no verdict
+",
 }
 `;

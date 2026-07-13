@@ -4,12 +4,13 @@ import * as os from 'os';
 import * as path from 'path';
 import { getError, given, then, when } from 'test-fns';
 
+import { genContextReviewBrainSupplyDemo } from './__test_assets__/genContextReviewBrainSupplyDemo';
 import { getSelfReviewArticulationPath } from './guard/review/self/getSelfReviewArticulationPath';
 import { stepRouteStoneSet } from './stepRouteStoneSet';
 
 const ASSETS_DIR = path.join(__dirname, '.test/assets');
 
-const noopContext = { cliEmit: { onGuardProgress: () => {} }, isTTY: true };
+const noopContext = { ...genContextReviewBrainSupplyDemo(), isTTY: true };
 
 describe('stepRouteStoneSet', () => {
   given('[case1] set stone as passed', () => {

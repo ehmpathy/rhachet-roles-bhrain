@@ -1,15 +1,20 @@
 import * as fs from 'fs/promises';
 import * as os from 'os';
 import * as path from 'path';
+import type { BrainChoice, ContextBrain } from 'rhachet';
 import { given, then, useThen, when } from 'test-fns';
 
 import { RouteStone } from '@src/domain.objects/Driver/RouteStone';
 import { RouteStoneGuard } from '@src/domain.objects/Driver/RouteStoneGuard';
 
+import { genContextReviewBrainSupplyDemo } from '../../__test_assets__/genContextReviewBrainSupplyDemo';
+import { FIXED_FALLBACK_BRAIN } from '../../genReviewBrainSupply';
+import { getAllStoneGuardArtifactsByHash } from '../artifact/getAllStoneGuardArtifactsByHash';
+import { TALLIED_FOOTER_PREFIX } from './getReviewTacticFromContent';
 import { getAllRouteStoneGuardReviewPeerMeters } from './peer/meter/getAllRouteStoneGuardReviewPeerMeters';
 import { runStoneGuardReviews } from './runStoneGuardReviews';
 
-const noopContext = { cliEmit: { onGuardProgress: () => {} } };
+const noopContext = genContextReviewBrainSupplyDemo();
 
 /**
  * .what = helper to create structured peer reviews from command strings
@@ -1828,11 +1833,16 @@ describe('runStoneGuardReviews', () => {
   });
 
   given(
-    '[case22] reviewer exits 0 but emits no numeric count (unparseable)',
+    '[case22] reviewer exits 0 but emits no numeric count, and the fallback faults',
     () => {
-      // .why = a reviewer that succeeds but declares no numeric blocker/nitpick count
-      //        must NOT read as a silent 0/0 approval. it is promoted to malfunction so
-      //        the guard blocks. see rule.forbid.failhide + contract.reviewer-output.
+      // .why = a reviewer that succeeds but declares no numeric blocker/nitpick count must NOT
+      //        read as a silent 0/0 approval. the deterministic parser misses, so the guard
+      //        falls back to the sub-brain; here the test brain (noopContext) THROWS, so the
+      //        reviewer is promoted to malfunction with a FALLBACK-FAULT reason — a fault the
+      //        human can tell apart from a genuine no-verdict. the brain-abstains path (a brain
+      //        that resolves detected=false with no throw → the contract-brief reason) is the
+      //        neighbor case24 below, plus the leaf in getReviewCountsViaBrain (garbage case).
+      //        see rule.forbid.failhide + contract.reviewer-output.
       const tempDir = path.join(
         os.tmpdir(),
         `test-reviews-nocount-${Date.now()}`,
@@ -1875,15 +1885,102 @@ describe('runStoneGuardReviews', () => {
           expect(artifact?.exitCode).toEqual(1);
         });
 
-        then('the malfunction reason names the contract brief', () => {
+        then('the malfunction reason names the fallback fault', () => {
           expect(reviews.artifacts[0]?.stderr).toContain(
-            'contract.reviewer-output.md',
+            'review tally fallback failed',
           );
         });
 
         then('the malfunction output matches snapshot', () => {
           // .why = the reviewer-visible malfunction message is user friction;
           //        snap it so message regressions surface in prs (rule.require.snapshots)
+          const artifact = reviews.artifacts[0];
+          expect({
+            exitCode: artifact?.exitCode,
+            exitClass: artifact?.exitClass,
+            stdout: artifact?.stdout,
+            stderr: artifact?.stderr,
+          }).toMatchSnapshot();
+        });
+      });
+    },
+  );
+
+  given(
+    '[case29] reviewer exits 0, emits no numeric count, and the sub-brain cleanly abstains',
+    () => {
+      // .why = the OTHER no-verdict path (distinct from case22's THROW): the cascade resolves
+      //        cleanly to { detected: false } — the sub-brain ran and honestly found no verdict,
+      //        it did NOT throw. this must promote to malfunction with the CONTRACT-BRIEF reason
+      //        ("lacks a numeric count"), NOT the fallback-fault reason. locks the default
+      //        no-verdict branch end-to-end through the guard, not just at the leaf.
+      const tempDir = path.join(
+        os.tmpdir(),
+        `test-reviews-abstain-${Date.now()}`,
+      );
+      const stone = new RouteStone({
+        name: '1.test',
+        path: path.join(tempDir, '1.test.stone'),
+        guard: null,
+      });
+      const guard = new RouteStoneGuard({
+        path: path.join(tempDir, '1.test.guard'),
+        artifacts: ['1.test*.md'],
+        reviews: {
+          self: [],
+          peer: [asPeerReview('echo "some prose that carries no verdict"', 0)],
+        },
+        judges: [],
+        protect: [],
+      });
+
+      // a sub-brain that RESOLVES to no-verdict (never throws) — the honest-abstain path.
+      // .note = documented test-double cast: a minimal fake ContextBrain shaped for the one
+      //         field getReviewCountsViaBrain reads (brain.choice.ask -> { output }). not a real
+      //         brain; confined to this abstain-path test, same pattern as the timeout unit test.
+      const abstainContext = genContextReviewBrainSupplyDemo({
+        getReviewBrain: async () =>
+          ({
+            brain: {
+              choice: {
+                ask: async () => ({ output: { detected: false } }),
+              },
+            },
+          }) as unknown as ContextBrain<BrainChoice>,
+      });
+
+      beforeEach(async () => {
+        await fs.mkdir(tempDir, { recursive: true });
+      });
+
+      afterEach(async () => {
+        await fs.rm(tempDir, { recursive: true, force: true });
+      });
+
+      when('[t0] reviews are executed', () => {
+        const reviews = useThen('runs the reviewer', async () =>
+          runStoneGuardReviews(
+            { stone, guard, hash: 'abstain', iteration: 1, route: tempDir },
+            abstainContext,
+          ),
+        );
+
+        then('the reviewer is promoted to malfunction', () => {
+          const artifact = reviews.artifacts[0];
+          expect(artifact?.exitClass).toEqual('malfunction');
+          expect(artifact?.exitCode).toEqual(1);
+        });
+
+        then(
+          'the malfunction reason is the contract-brief no-verdict message, NOT a fallback fault',
+          () => {
+            const stderr = reviews.artifacts[0]?.stderr ?? '';
+            expect(stderr).toContain('lacks a numeric blocker/nitpick count');
+            expect(stderr).not.toContain('review tally fallback failed');
+          },
+        );
+
+        then('the malfunction output matches snapshot', () => {
           const artifact = reviews.artifacts[0];
           expect({
             exitCode: artifact?.exitCode,
@@ -2371,4 +2468,289 @@ describe('runStoneGuardReviews', () => {
       },
     );
   });
+  given(
+    '[case-fallback] a prose reviewer whose sub-brain fallback faults, beside a numeric reviewer',
+    () => {
+      const tempDir = path.join(os.tmpdir(), `test-fallback-${Date.now()}`);
+      const stone = new RouteStone({
+        name: '1.test',
+        path: path.join(tempDir, '1.test.stone'),
+        guard: null,
+      });
+      const guard = new RouteStoneGuard({
+        path: path.join(tempDir, '1.test.guard'),
+        artifacts: ['1.test*.md'],
+        reviews: {
+          self: [],
+          peer: [
+            {
+              slug: 'numeric',
+              run: 'echo "blockers: 0\\nnitpicks: 2\\nlooks good"',
+              budget: Infinity,
+              level: 1,
+            },
+            {
+              // prose only, exit 0 — the deterministic parser misses, so the guard falls back
+              // to the sub-brain; the default demo getReviewBrain THROWS, so the fallback faults.
+              slug: 'prose',
+              run: 'echo "looks good overall, one optional style nitpick, zero must-fix items"',
+              budget: Infinity,
+              level: 1,
+            },
+          ],
+        },
+        judges: [],
+        protect: [],
+      });
+
+      beforeEach(async () => {
+        await fs.mkdir(tempDir, { recursive: true });
+      });
+
+      afterEach(async () => {
+        await fs.rm(tempDir, { recursive: true, force: true });
+      });
+
+      when('[t0] the guard measures both reviewers', () => {
+        const reviews = useThen('the guard runs both', async () =>
+          runStoneGuardReviews(
+            { stone, guard, hash: 'fallback', iteration: 1, route: tempDir },
+            noopContext,
+          ),
+        );
+
+        then(
+          'both reviewers produce an artifact (the guard did not crash)',
+          () => {
+            expect(reviews.artifacts).toHaveLength(2);
+          },
+        );
+
+        then(
+          'the numeric reviewer is read verbatim (deterministic, no fault)',
+          () => {
+            const numeric = reviews.artifacts.find((a) =>
+              a.path.includes('numeric'),
+            );
+            expect(numeric?.exitClass).toEqual('passed');
+            expect(numeric?.blockers).toEqual(0);
+            expect(numeric?.nitpicks).toEqual(2);
+            expect(numeric?.tallier).toEqual('deterministic');
+            expect(numeric?.stdout).not.toContain('tallied by reviewer@');
+          },
+        );
+
+        then(
+          'the prose reviewer becomes a malfunction (fallback fault, never a silent pass)',
+          () => {
+            const prose = reviews.artifacts.find((a) =>
+              a.path.includes('prose'),
+            );
+            expect(prose?.exitClass).toEqual('malfunction');
+          },
+        );
+
+        then(
+          'the prose malfunction reason names the fallback fault, distinct from other causes',
+          () => {
+            const prose = reviews.artifacts.find((a) =>
+              a.path.includes('prose'),
+            );
+            expect(prose?.stderr).toContain('review tally fallback failed');
+          },
+        );
+      });
+    },
+  );
+
+  given(
+    '[case-crash] a reviewer that exits non-zero is not rescued by the fallback',
+    () => {
+      const tempDir = path.join(os.tmpdir(), `test-crash-${Date.now()}`);
+      const stone = new RouteStone({
+        name: '1.test',
+        path: path.join(tempDir, '1.test.stone'),
+        guard: null,
+      });
+      const guard = new RouteStoneGuard({
+        path: path.join(tempDir, '1.test.guard'),
+        artifacts: ['1.test*.md'],
+        reviews: {
+          self: [],
+          peer: [
+            {
+              slug: 'crasher',
+              run: 'bash -c "echo review-crashed; exit 1"',
+              budget: Infinity,
+              level: 1,
+            },
+          ],
+        },
+        judges: [],
+        protect: [],
+      });
+
+      beforeEach(async () => {
+        await fs.mkdir(tempDir, { recursive: true });
+      });
+
+      afterEach(async () => {
+        await fs.rm(tempDir, { recursive: true, force: true });
+      });
+
+      when('[t0] the guard measures the crashed reviewer', () => {
+        const reviews = useThen('the guard runs it', async () =>
+          runStoneGuardReviews(
+            { stone, guard, hash: 'crash', iteration: 1, route: tempDir },
+            noopContext,
+          ),
+        );
+
+        then(
+          'the reviewer is a malfunction (real failure, treated as failed)',
+          () => {
+            expect(reviews.artifacts[0]?.exitClass).toEqual('malfunction');
+          },
+        );
+
+        then(
+          'the reason is NOT a fallback fault (the brain was never invoked)',
+          () => {
+            // a non-zero exit is a genuine failure; the sub-brain must never rescue it, so its
+            // stderr carries neither the fallback-fault reason nor the no-verdict reason.
+            expect(reviews.artifacts[0]?.stderr).not.toContain(
+              'review tally fallback failed',
+            );
+          },
+        );
+      });
+    },
+  );
+
+  given(
+    '[case28] a prose reviewer whose sub-brain fallback SUCCEEDS — the rescue survives a cache re-read',
+    () => {
+      // .why = the one piece of genuinely new logic — runOneStoneGuardReview persists the
+      //        `tallied by reviewer@…` footer for a SUCCESSFUL probabilistic tally, and
+      //        getAllStoneGuardArtifactsByHash recovers `tallier: 'probabilistic'` from it on a
+      //        cache hit — was untested end-to-end. every other fallback case (case22/23/24,
+      //        case-fallback) exercises the FAULT or ABSTAIN path (tallier never becomes
+      //        'probabilistic'). a bug in the footer's placement, its last-match precedence, or
+      //        the cache-recovery parse would pass every other test and only surface on a real
+      //        cache re-read of a rescued reviewer (howto.journey-tests-reveal-cache-bugs).
+      const tempDir = path.join(os.tmpdir(), `test-rescue-${Date.now()}`);
+      const stone = new RouteStone({
+        name: '1.test',
+        path: path.join(tempDir, '1.test.stone'),
+        guard: null,
+      });
+      const guard = new RouteStoneGuard({
+        path: path.join(tempDir, '1.test.guard'),
+        artifacts: ['1.test*.md'],
+        reviews: {
+          self: [],
+          peer: [
+            {
+              // prose only, exit 0 — the deterministic parser misses, so the guard falls back
+              // to the sub-brain. here the sub-brain SUCCEEDS with a detected verdict.
+              slug: 'prose',
+              run: 'echo "two must-fix items and one optional style nitpick"',
+              budget: Infinity,
+              level: 1,
+            },
+          ],
+        },
+        judges: [],
+        protect: [],
+      });
+
+      // a sub-brain that RESOLVES a real verdict (never throws) — the honest-rescue path.
+      // .note = documented test-double cast: a minimal fake ContextBrain shaped for the one
+      //         field getReviewCountsViaBrain reads (brain.choice.ask -> { output }). a real
+      //         brain is exercised by the getReviewCountsViaBrain caseBrain suite; here a
+      //         controlled double pins EXACT counts so the footer + cache round-trip can be
+      //         asserted deterministically — same pattern as case24's abstain double. the
+      //         `evidence` quote is non-empty so the fabricated-tally guard does not reject it.
+      const rescueContext = genContextReviewBrainSupplyDemo({
+        getReviewBrain: async () =>
+          ({
+            brain: {
+              choice: {
+                ask: async () => ({
+                  output: {
+                    detected: true,
+                    blockers: 2,
+                    nitpicks: 1,
+                    evidence:
+                      'two must-fix items and one optional style nitpick',
+                  },
+                }),
+              },
+            },
+          }) as unknown as ContextBrain<BrainChoice>,
+      });
+
+      beforeEach(async () => {
+        await fs.mkdir(tempDir, { recursive: true });
+      });
+
+      afterEach(async () => {
+        await fs.rm(tempDir, { recursive: true, force: true });
+      });
+
+      when('[t0] the guard measures the prose reviewer (fresh run)', () => {
+        // .note = the guard run, the disk read, and the cache recovery all happen in ONE useThen
+        //         so every filesystem touch lands while tempDir exists — the per-then afterEach
+        //         removes tempDir, so later then blocks read the captured values, not disk.
+        const captured = useThen(
+          'runs the guard, reads the persisted file, recovers from cache',
+          async () => {
+            const reviews = await runStoneGuardReviews(
+              { stone, guard, hash: 'rescue', iteration: 1, route: tempDir },
+              rescueContext,
+            );
+            const artifact = reviews.artifacts[0];
+            const persisted = await fs.readFile(artifact?.path ?? '', 'utf-8');
+            const recovered = await getAllStoneGuardArtifactsByHash({
+              stone,
+              hash: 'rescue',
+              route: tempDir,
+            });
+            return { artifact, persisted, recovered };
+          },
+        );
+
+        then('the fresh artifact carries the probabilistic tally', () => {
+          const artifact = captured.artifact;
+          expect(artifact?.exitClass).toEqual('passed');
+          expect(artifact?.blockers).toEqual(2);
+          expect(artifact?.nitpicks).toEqual(1);
+          expect(artifact?.tallier).toEqual('probabilistic');
+        });
+
+        then('the persisted file records the tallied-by footer', () => {
+          // .why = the footer is what a cache re-read recovers; assert it reached disk with the
+          //        shared prefix + fixed brain slug (drift-guarded by the shared constants).
+          const persisted = captured.persisted;
+          expect(persisted).toContain(
+            `${TALLIED_FOOTER_PREFIX}${FIXED_FALLBACK_BRAIN}`,
+          );
+          expect(persisted).toContain('2 blockers');
+          expect(persisted).toContain('1 nitpick');
+        });
+
+        then(
+          'the cached artifact still carries tallier=probabilistic (no brain call)',
+          () => {
+            // .why = the round-trip: the footer written on the fresh run must let the cache
+            //        parser recover the probabilistic tallier with NO further brain call.
+            const review = captured.recovered.reviews[0];
+            expect(review?.tallier).toEqual('probabilistic');
+            expect(review?.blockers).toEqual(2);
+            expect(review?.nitpicks).toEqual(1);
+          },
+        );
+      });
+    },
+  );
 });

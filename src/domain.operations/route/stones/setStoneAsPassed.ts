@@ -14,6 +14,7 @@ import {
 } from '@src/domain.objects/Driver/RouteStoneGuard';
 import type { RouteStoneGuardJudgeArtifact } from '@src/domain.objects/Driver/RouteStoneGuardJudgeArtifact';
 import type { RouteStoneGuardReviewArtifact } from '@src/domain.objects/Driver/RouteStoneGuardReviewArtifact';
+import type { ContextReviewBrainSupply } from '@src/domain.operations/route/genReviewBrainSupply';
 
 import { computeRouteBouncerCache } from '../bouncer/computeRouteBouncerCache';
 import { setRouteBouncerCache } from '../bouncer/setRouteBouncerCache';
@@ -55,7 +56,7 @@ export const setStoneAsPassed = async (
     stone: string;
     route: string;
   },
-  context: ContextCliEmit,
+  context: ContextCliEmit & ContextReviewBrainSupply,
 ): Promise<{
   passed: boolean;
   refs: { reviews: string[]; judges: string[] };
@@ -283,7 +284,8 @@ export const setStoneAsPassed = async (
   const totalItems = totalReviews + totalJudges;
 
   // create context that enriches events with position for branch format
-  const collectContext: ContextCliEmit = {
+  // .note = forwards getReviewBrain so the guard's fallback tactic can build the sub-brain
+  const collectContext: ContextCliEmit & ContextReviewBrainSupply = {
     cliEmit: {
       onGuardProgress: (event) => {
         events.push(event);
@@ -301,6 +303,7 @@ export const setStoneAsPassed = async (
       },
       onGuardHalted: context.cliEmit.onGuardHalted,
     },
+    getReviewBrain: context.getReviewBrain,
   };
 
   // run reviews (reuses prior artifacts internally, only runs incomplete ones)
@@ -855,6 +858,7 @@ const computeGuardData = (input: {
         durationSec,
         blockers: r.blockers,
         nitpicks: r.nitpicks,
+        tallier: r.tallier,
         path: path.relative(input.gitRoot, r.path),
         exitClass: r.exitClass,
         peer,

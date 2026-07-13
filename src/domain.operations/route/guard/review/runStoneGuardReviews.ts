@@ -16,6 +16,10 @@ import {
 import { RouteStoneGuardReviewArtifact } from '@src/domain.objects/Driver/RouteStoneGuardReviewArtifact';
 import { RouteStoneGuardReviewPeerMeter } from '@src/domain.objects/Driver/RouteStoneGuardReviewPeerMeter';
 
+import {
+  type ContextReviewBrainSupply,
+  FIXED_FALLBACK_BRAIN,
+} from '../../genReviewBrainSupply';
 import { findsertReviewPeerGitignore } from '../../gitignore/findsertReviewPeerGitignore';
 import { getStoneGuardOverruledLevels } from '../../judges/getStoneGuardOverruledLevels';
 import { getAllStoneGuardArtifactsByHash } from '../artifact/getAllStoneGuardArtifactsByHash';
@@ -25,7 +29,10 @@ import { getExitCodeClass } from '../getExitCodeClass';
 import { getRepoRootWithFallback } from '../getRepoRootWithFallback';
 import { isENOENT } from '../isENOENT';
 import { formatTreeBucket } from '../tree/formatTreeBucket';
-import { getReviewCountsFromContent } from './getReviewCountsFromContent';
+import { getReviewCounts } from './getReviewCounts';
+import { ReviewTallyError } from './getReviewCountsViaBrain';
+import type { ReviewCountsResolved } from './getReviewCountsViaRegex';
+import { TALLIED_FOOTER_PREFIX } from './getReviewTacticFromContent';
 import { enumRouteGuardReviewPeerConversationFiles } from './peer/enumRouteGuardReviewPeerConversationFiles';
 import { getLatestReviewArtifactForIndex } from './peer/getLatestReviewArtifactForIndex';
 import { getRouteGuardReviewPeerPathTaken } from './peer/getRouteGuardReviewPeerPathTaken';
@@ -44,6 +51,20 @@ const execAsync = promisify(exec);
  */
 const REVIEWER_OUTPUT_CONTRACT_BRIEF =
   '.agent/repo=bhrain/role=reviewer/briefs/contract.reviewer-output.md';
+
+/**
+ * .what = extracts a human-legible reason from a caught error, including its cause
+ * .why = a wrapped brain fault carries the specific cause (e.g. "timed out after PT21M",
+ *        "400 Invalid json_schema") as its .cause; surfacing it lets the malfunction message
+ *        distinguish a timeout from a generic brain fault (the wish's distinct-messages ask).
+ */
+const getErrorReason = (error: unknown): string => {
+  if (!(error instanceof Error)) return String(error);
+  // read .cause cast-free (pre-ES2022 Error type lacks it) — Reflect.get over an `as` cast
+  const cause: unknown = Reflect.get(error, 'cause');
+  const causeSuffix = cause instanceof Error ? `: ${cause.message}` : '';
+  return `${error.message}${causeSuffix}`;
+};
 
 /**
  * .what = extracts slug from peer review
@@ -104,16 +125,19 @@ const formatTimeoutForHuman = (ms: number): string => {
  * .what = executes a single guard review command and produces review artifact
  * .why = enables guard to validate stone artifacts via review tools
  */
-export const runOneStoneGuardReview = async (input: {
-  stone: RouteStone;
-  reviewCmd: string;
-  index: number;
-  hash: string;
-  iteration: number;
-  route: string;
-  slug: string;
-  timeout: IsoDuration;
-}): Promise<RouteStoneGuardReviewArtifact> => {
+export const runOneStoneGuardReview = async (
+  input: {
+    stone: RouteStone;
+    reviewCmd: string;
+    index: number;
+    hash: string;
+    iteration: number;
+    route: string;
+    slug: string;
+    timeout: IsoDuration;
+  },
+  context: ContextReviewBrainSupply,
+): Promise<RouteStoneGuardReviewArtifact> => {
   // ensure .reviews/peer directory found or created
   // .why = peer reviews go to .reviews/peer/ so drivers can read them
   //        (.route/ is sealed by route.mutate.guard)
@@ -237,23 +261,44 @@ export const runOneStoneGuardReview = async (input: {
     }
   }
 
-  // parse blockers and nitpicks from stdout via shared operation
-  // .note = parsed before artifact build so an undetectable count can promote to malfunction
-  const counts = getReviewCountsFromContent({ content: stdout });
-  const { blockers, nitpicks } = counts;
+  // derive blockers/nitpicks via the cascade: deterministic regex first, then a cheap
+  // sub-brain fallback when an exit-0 review phrased its verdict in prose (not numbers).
+  // .note = the cascade may THROW on a brain fault/timeout. catch it HERE (the per-reviewer
+  //         seam) and convert to a malfunction: the stone blocks loud, OTHER reviewers still
+  //         run, and the human sees a brain-error reason distinct from the no-verdict reason.
+  //         this is NOT a failhide — a brain crash becomes a malfunction, never a silent pass.
+  let counts: ReviewCountsResolved;
+  let brainErrorReason: string | null = null;
+  try {
+    counts = await getReviewCounts({ content: stdout, exitCode }, context);
+  } catch (error) {
+    // allowlist: ONLY a deliberate brain-tally fault (ReviewTallyError — the build, ask, or
+    // timeout of the sub-brain tactic) becomes a per-reviewer malfunction. an unexpected code
+    // defect is NOT ours to swallow — rethrow it so it fails loud (rule.forbid.failhide).
+    if (!(error instanceof ReviewTallyError)) throw error;
+    counts = { detected: false };
+    brainErrorReason = `💥 malfunction: review tally fallback failed. ${getErrorReason(error)}`;
+  }
+  const blockers = counts.detected ? counts.blockers : 0;
+  const nitpicks = counts.detected ? counts.nitpicks : 0;
+  // internal→contract boundary: the orchestrator's chosen `tactic` becomes the artifact's
+  // public `tallier` field (named for the role that produced the tally).
+  const tallier = counts.detected ? counts.tactic : null;
 
-  // promote a "successful" review to malfunction when its counts are undetectable
-  // .why = a reviewer that exits 0 but declares no numeric blocker/nitpick count cannot be
-  //        trusted as "approved" — the guard cannot see its verdict. a silent 0/0 would look
-  //        like a clean review when in truth no review was read. failfast as a malfunction so
-  //        the guard blocks this reviewer instead. see rule.forbid.failhide.
-  //        contract: REVIEWER_OUTPUT_CONTRACT_BRIEF
+  // promote a "successful" review to malfunction when it yields no trustworthy verdict
+  // .why = a reviewer that exits 0 but declares no numeric blocker/nitpick count — and whose
+  //        prose the sub-brain also could not tally — cannot be trusted as "approved": the
+  //        guard cannot see its verdict. a silent 0/0 would look like a clean review when in
+  //        truth no review was read. failfast as a malfunction. see rule.forbid.failhide.
+  //        the brain-error reason (if any) takes precedence so the human can tell a brain
+  //        fault apart from an odd-phrasing miss. contract: REVIEWER_OUTPUT_CONTRACT_BRIEF
   if (exitCode === 0 && !counts.detected) {
     exitCode = 1;
     const reason =
+      brainErrorReason ??
       '💥 malfunction: reviewer output lacks a numeric blocker/nitpick count ' +
-      '(expected `N blockers` and `N nitpicks`; use `0 blockers` / `0 nitpicks` to declare clean). ' +
-      `see ${REVIEWER_OUTPUT_CONTRACT_BRIEF}`;
+        '(expected `N blockers` and `N nitpicks`; use `0 blockers` / `0 nitpicks` to declare clean). ' +
+        `see ${REVIEWER_OUTPUT_CONTRACT_BRIEF}`;
     stderr = [stderr, reason].filter((line) => line !== '').join('\n');
   }
 
@@ -277,6 +322,31 @@ export const runOneStoneGuardReview = async (input: {
     artifactLines.push(`   └─ exit code: ${exitCode} ${exitEmoji}`);
   }
 
+  // persist the resolved tally as a footer so a cache re-read recovers the SAME counts (and
+  // the tactic) with NO brain call. the footer is the LAST numeric declaration, so
+  // getReviewCountsViaRegex's last-match recovers it; the `tallied by reviewer@` line marks a
+  // sub-brain tally so getReviewTacticFromContent can recover the tactic. this is one segment
+  // of the single authored write (an upsert that replaces the file wholesale) — a rerun
+  // re-authors the same content and cannot stack footers. only written for a detected verdict
+  // (a malfunction carries no trustworthy tally; its passage footer already signals the block).
+  if (counts.detected) {
+    const blockerWord = blockers === 1 ? 'blocker' : 'blockers';
+    const nitpickWord = nitpicks === 1 ? 'nitpick' : 'nitpicks';
+
+    // a probabilistic tally appends a `tallied by reviewer@$brain` line, so the nitpicks row
+    // becomes a mid-branch (├─); a deterministic tally ends on nitpicks (└─).
+    const isProbabilistic = tallier === 'probabilistic';
+    const nitpicksBranch = isProbabilistic ? '├─' : '└─';
+
+    artifactLines.push('└─ tallied');
+    artifactLines.push(`   ├─ ${blockers} ${blockerWord}`);
+    artifactLines.push(`   ${nitpicksBranch} ${nitpicks} ${nitpickWord}`);
+    if (isProbabilistic)
+      artifactLines.push(
+        `   └─ ${TALLIED_FOOTER_PREFIX}${FIXED_FALLBACK_BRAIN}`,
+      );
+  }
+
   const artifactContent = artifactLines.join('\n');
 
   // write stdout artifact file
@@ -293,6 +363,7 @@ export const runOneStoneGuardReview = async (input: {
     path: stdoutPath,
     blockers,
     nitpicks,
+    tallier,
     exitCode,
     exitClass,
     stdout,
@@ -341,7 +412,7 @@ export const runStoneGuardReviews = async (
     iteration: number;
     route: string;
   },
-  context: ContextCliEmit,
+  context: ContextCliEmit & ContextReviewBrainSupply,
 ): Promise<{
   artifacts: RouteStoneGuardReviewArtifact[];
   exhaustedReviewerSlugs: string[];
@@ -637,16 +708,19 @@ export const runStoneGuardReviews = async (
       outcome: null,
     });
 
-    const review = await runOneStoneGuardReview({
-      stone: input.stone,
-      reviewCmd: getReviewPeerRunCmd(pr.review),
-      index: pr.index,
-      hash: input.hash,
-      iteration: input.iteration,
-      route: input.route,
-      slug: pr.slug,
-      timeout: getReviewPeerTimeout(pr.review),
-    });
+    const review = await runOneStoneGuardReview(
+      {
+        stone: input.stone,
+        reviewCmd: getReviewPeerRunCmd(pr.review),
+        index: pr.index,
+        hash: input.hash,
+        iteration: input.iteration,
+        route: input.route,
+        slug: pr.slug,
+        timeout: getReviewPeerTimeout(pr.review),
+      },
+      context,
+    );
 
     // determine if review actually completed (vs constraint/malfunction)
     // .note = exit 2 with blockers = review worked, found issues

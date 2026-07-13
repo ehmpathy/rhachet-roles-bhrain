@@ -124,6 +124,7 @@ type FormatInput =
           durationSec: number | null;
           blockers: number;
           nitpicks: number;
+          tallier: 'deterministic' | 'probabilistic' | null;
           path: string;
           exitClass: 'passed' | 'constraint' | 'malfunction';
           peer?: {

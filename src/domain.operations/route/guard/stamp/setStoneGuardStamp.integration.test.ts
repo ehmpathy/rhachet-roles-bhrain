@@ -3,12 +3,11 @@ import * as os from 'os';
 import * as path from 'path';
 import { given, then, useBeforeAll, useThen, when } from 'test-fns';
 
+import { genContextReviewBrainSupplyDemo } from '../../__test_assets__/genContextReviewBrainSupplyDemo';
 import { setStoneAsPassed } from '../../stones/setStoneAsPassed';
 import { isENOENT } from '../isENOENT';
 
-const noopContext = {
-  cliEmit: { onGuardProgress: () => {}, onGuardHalted: () => {} },
-};
+const noopContext = genContextReviewBrainSupplyDemo();
 
 /**
  * .what = checks whether a file is present at the given path

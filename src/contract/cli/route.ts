@@ -10,6 +10,10 @@ import { getRouteBindByBranch } from '@src/domain.operations/route/bind/getRoute
 import { setRouteBind } from '@src/domain.operations/route/bind/setRouteBind';
 import { getDecisionIsArtifactProtected } from '@src/domain.operations/route/bouncer/getDecisionIsArtifactProtected';
 import { getRouteBouncerCache } from '@src/domain.operations/route/bouncer/getRouteBouncerCache';
+import {
+  FIXED_FALLBACK_BRAIN,
+  genReviewBrainSupply,
+} from '@src/domain.operations/route/genReviewBrainSupply';
 import { genContextCliEmit } from '@src/domain.operations/route/guard/genContextCliEmit';
 import { computeReviewThresholdVerdict } from '@src/domain.operations/route/guard/review/computeReviewThresholdVerdict';
 import { computeReviewTotalsFromFiles } from '@src/domain.operations/route/guard/review/computeReviewTotalsFromFiles';
@@ -864,6 +868,16 @@ export const routeStoneSet = async (): Promise<void> => {
   // construct progress context (stdout so it appears with tree)
   const progress = genContextCliEmit({ stderr: process.stdout });
 
+  // build a LAZY memoize-on-success supplier of the review-tally sub-brain
+  // .why = the guard's fallback tactic (getReviewCountsViaBrain) needs a brain ONLY when a
+  //        reviewer phrased its verdict in prose. the supplier defers the build to that first
+  //        fallback, so a numeric-only stone-pass never constructs a brain (zero cost).
+  // .note = env: 'prep' mirrors review.ts; keyrack auto-unlocks locked keys on first fetch
+  const reviewBrainSupply = genReviewBrainSupply({
+    choice: FIXED_FALLBACK_BRAIN,
+    creds: { keyrack: { owner: 'ehmpath', env: 'prep' } },
+  });
+
   // print owl header early so progress appears below it
   const owlHeader = `🦉 the way speaks for itself`;
   console.log(owlHeader);
@@ -886,7 +900,7 @@ export const routeStoneSet = async (): Promise<void> => {
         that: options.that,
         yield: yieldMode,
       },
-      { ...progress.context, isTTY },
+      { ...progress.context, ...reviewBrainSupply, isTTY },
     );
 
     progress.done();

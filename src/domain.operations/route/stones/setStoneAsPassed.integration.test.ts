@@ -3,11 +3,12 @@ import * as os from 'os';
 import * as path from 'path';
 import { given, then, useBeforeAll, useThen, when } from 'test-fns';
 
+import { genContextReviewBrainSupplyDemo } from '../__test_assets__/genContextReviewBrainSupplyDemo';
 import { setStoneAsPassed } from './setStoneAsPassed';
 
 const ASSETS_DIR = path.join(__dirname, '../.test/assets');
 
-const noopContext = { cliEmit: { onGuardProgress: () => {} } };
+const noopContext = genContextReviewBrainSupplyDemo();
 
 describe('setStoneAsPassed.integration', () => {
   given('[case1] guard with echo review and judge commands', () => {

@@ -130,6 +130,7 @@ describe('formatRouteStoneEmit', () => {
               nitpicks: 0,
               path: 'review.md',
               exitClass: 'passed',
+              tallier: 'deterministic',
             },
           ],
           judges: [
@@ -180,6 +181,7 @@ describe('formatRouteStoneEmit', () => {
               nitpicks: 1,
               path: 'review.md',
               exitClass: 'passed',
+              tallier: 'deterministic',
             },
           ],
           judges: [
@@ -206,6 +208,55 @@ describe('formatRouteStoneEmit', () => {
       });
     });
   });
+
+  given(
+    '[case5b] guarded stone, a review tallied by the sub-brain fallback',
+    () => {
+      when('[t0] format is called with a probabilistic review', () => {
+        const output = formatRouteStoneEmit({
+          operation: 'route.stone.set',
+          stone: '3.blueprint',
+          action: 'passed',
+          passage: 'allowed',
+          guard: {
+            artifactFiles: ['3.blueprint.md'],
+            reviews: [
+              {
+                index: 1,
+                cmd: 'review cmd',
+                cached: false,
+                durationSec: 1.5,
+                blockers: 0,
+                nitpicks: 1,
+                path: 'review.md',
+                exitClass: 'passed',
+                tallier: 'probabilistic',
+              },
+            ],
+            judges: [
+              {
+                index: 1,
+                cmd: 'judge cmd',
+                cached: false,
+                durationSec: 0.5,
+                passed: true,
+                reason: null,
+                path: 'judge.md',
+              },
+            ],
+          },
+        });
+
+        then('output shows the tallied-by branch on the pass path', () => {
+          expect(output).toContain('tallied by reviewer@');
+        });
+
+        then('snapshot matches', () => {
+          expect(output).toMatchSnapshot();
+        });
+      });
+    },
+  );
 
   given('[case6] blocked action (agent tried to approve)', () => {
     when('[t0] format is called with blocked action', () => {
