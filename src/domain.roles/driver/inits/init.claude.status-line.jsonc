@@ -1,0 +1,14 @@
+// .what = the statusLine block merged into .claude/settings.json by the driver init
+// .why  = pins the current stone (🗿 <stone>) at the bottom of the session, so
+//         observers glance at the driver's step without a command or a scroll
+{
+  // .note = invokes the renderer directly via `node -e` (not `rhx`) on purpose:
+  //         the rhx wrapper prints a "🪨 run solid skill" banner to stdout, which
+  //         the harness would render as extra status-line rows. node -e emits only
+  //         the bare line.
+  "statusLine": {
+    "type": "command",
+    "command": "node -e \"import('rhachet-roles-bhrain/cli/route').then(m => m.routeStatusLine())\"",
+    "padding": 0
+  }
+}

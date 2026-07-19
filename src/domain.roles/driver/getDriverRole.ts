@@ -18,6 +18,10 @@ export const ROLE_DRIVER: Role = Role.build({
   briefs: {
     dirs: [{ uri: __dirname + '/briefs' }],
   },
+  inits: {
+    dirs: [{ uri: __dirname + '/inits' }],
+    exec: [{ cmd: __dirname + '/inits/init.claude.status-line.sh' }],
+  },
   hooks: {
     onBrain: {
       onBoot: [

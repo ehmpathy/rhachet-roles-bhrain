@@ -1,0 +1,65 @@
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
+
+exports[`init.claude.status-line.integration given: [case1] a repo with no .claude/settings.json when: [t0] the init runs then: its owl-vibed stdout matches the configured snapshot: init.claude.status-line - configured 1`] = `
+"🦉 the path is clear
+
+🗿 init.claude.status-line
+   ├─ status = configured
+   ├─ settings = .claude/settings.json
+   └─ backup = .claude/settings.<timestamp>.<pid>.bak.json
+"
+`;
+
+exports[`init.claude.status-line.integration given: [case2] a repo with a prior settings.json holding other keys when: [t0] the init runs then: its merged settings.json matches the merge snapshot: init.claude.status-line - merged into prior settings 1`] = `
+{
+  "hooks": {
+    "SessionStart": [
+      {
+        "hooks": [],
+        "matcher": "*",
+      },
+    ],
+  },
+  "permissions": {
+    "allow": [
+      "Bash(echo:*)",
+    ],
+    "ask": [],
+    "deny": [],
+  },
+  "statusLine": {
+    "command": "<renderer node -e command>",
+    "padding": 0,
+    "type": "command",
+  },
+}
+`;
+
+exports[`init.claude.status-line.integration given: [case3] a repo where the init already ran when: [t0] the init runs a second time then: its owl-vibed no-op stdout matches the snapshot: init.claude.status-line - already-configured no-op 1`] = `
+"🦉 so it is
+
+🗿 init.claude.status-line
+   ├─ status = already configured
+   └─ settings = .claude/settings.json
+"
+`;
+
+exports[`init.claude.status-line.integration given: [case4] a repo where a human set their own statusLine when: [t0] the init runs then: its owl-vibed skip-and-warn stdout matches the snapshot: init.claude.status-line - skip-and-warn 1`] = `
+"🦉 as leaves fall
+
+🗿 init.claude.status-line
+   ├─ status = skipped
+   ├─ reason = a statusLine you set already exists; left intact to avoid a clobber
+   ├─ settings = .claude/settings.json
+   └─ yours = ./my-own-status.sh
+"
+`;
+
+exports[`init.claude.status-line.integration given: [case5] a run where the .jsonc config is absent (a genuine fault) when: [t0] the init runs with no config beside it then: its stable fault stderr matches the error-variant snapshot: init.claude.status-line - fault (config absent) 1`] = `
+"🦉 patience
+
+🗿 init.claude.status-line
+   ├─ status = blocked
+   └─ reason = status-line config not found: <path>/init.claude.status-line.jsonc
+"
+`;

@@ -1,0 +1,47 @@
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
+
+exports[`routeStatusLine.acceptance given: [case1] the renderer anchored at a git repo with no bound route when: [t0] the renderer runs with that cwd then: its output matches the unbound snapshot: route.status.line - unbound route 1`] = `
+"
+"
+`;
+
+exports[`routeStatusLine.acceptance given: [case2] a temp repo with a single bound route (one unpassed stone) when: [t0] the renderer runs with that cwd then: its output matches the bound snapshot: route.status.line - bound route 1`] = `
+"🗿 1.vision
+"
+`;
+
+exports[`routeStatusLine.acceptance given: [case3] the --help flag when: [t0] the renderer runs with --help then: its help output matches the snapshot: route.status.line - help 1`] = `
+"route.status.line - emit the current stone as a claude code status line
+
+usage:
+  route.status.line [options]
+
+options:
+  --help             show this help message
+
+output:
+  bound, stone unpassed     🗿 <stone>
+  bound, all stones passed  🗿 route complete 🎉
+  unbound / no stones       (empty line)
+
+errors:
+  a genuine fault is logged to stderr and exits non-zero; the harness then renders
+  a blank line (the fault is surfaced on stderr, never silently hidden)
+
+note:
+  the claude code harness runs this with cwd = project root and renders stdout
+  as the status line. it is invoked via the node -e command written into
+  .claude/settings.json by init.claude.status-line.sh (not via rhx, whose banner
+  would pollute the single-line output)
+
+examples:
+  node -e "import('rhachet-roles-bhrain/cli/route').then(m => m.routeStatusLine())"
+"
+`;
+
+exports[`routeStatusLine.acceptance given: [case4] an ambiguous multi-bind (a genuine lookup fault) when: [t0] the renderer runs with that cwd then: its stable fault output matches the error-variant snapshot: route.status.line - fault (multi-bind) 1`] = `"[route.status.line] fault: multiple routes bound to this branch — unbind the extra route(s) so the status line can pick one"`;
+
+exports[`routeStatusLine.acceptance given: [case5] a bound route whose stones have all passed (complete) when: [t0] the renderer runs with that cwd then: its output matches the complete snapshot: route.status.line - route complete 1`] = `
+"🗿 route complete 🎉
+"
+`;
