@@ -14,6 +14,10 @@ roles:
       dirs: dist/domain.roles/driver/briefs
     skills:
       dirs: dist/domain.roles/driver/skills
+    inits:
+      dirs: dist/domain.roles/driver/inits
+      exec:
+        - dist/domain.roles/driver/inits/init.claude.status-line.sh
     boot: dist/domain.roles/driver/boot.yml
   - slug: learner
     readme: dist/domain.roles/learner/readme.md

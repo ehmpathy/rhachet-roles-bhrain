@@ -29,6 +29,7 @@ import { getOneStoneGuardApproval } from '@src/domain.operations/route/judges/ge
 import { getStoneGuardOverruledLevels } from '@src/domain.operations/route/judges/getStoneGuardOverruledLevels';
 import { stepRouteDrive } from '@src/domain.operations/route/stepRouteDrive';
 import { stepRouteReview } from '@src/domain.operations/route/stepRouteReview';
+import { stepRouteStatusLine } from '@src/domain.operations/route/stepRouteStatusLine';
 import { stepRouteStoneAdd } from '@src/domain.operations/route/stepRouteStoneAdd';
 import { stepRouteStoneDel } from '@src/domain.operations/route/stepRouteStoneDel';
 import { stepRouteStoneGet } from '@src/domain.operations/route/stepRouteStoneGet';
@@ -496,6 +497,41 @@ examples:
 };
 
 /**
+ * .what = prints help for route.status.line
+ */
+const printStatusLineHelp = (): void => {
+  console.log(
+    `
+route.status.line - emit the current stone as a claude code status line
+
+usage:
+  route.status.line [options]
+
+options:
+  --help             show this help message
+
+output:
+  bound, stone unpassed     🗿 <stone>
+  bound, all stones passed  🗿 route complete 🎉
+  unbound / no stones       (empty line)
+
+errors:
+  a genuine fault is logged to stderr and exits non-zero; the harness then renders
+  a blank line (the fault is surfaced on stderr, never silently hidden)
+
+note:
+  the claude code harness runs this with cwd = project root and renders stdout
+  as the status line. it is invoked via the node -e command written into
+  .claude/settings.json by init.claude.status-line.sh (not via rhx, whose banner
+  would pollute the single-line output)
+
+examples:
+  node -e "import('rhachet-roles-bhrain/cli/route').then(m => m.routeStatusLine())"
+`.trim(),
+  );
+};
+
+/**
  * .what = prints help for route.review
  */
 const printReviewHelp = (): void => {
@@ -561,6 +597,77 @@ export const routeDrive = async (): Promise<void> => {
       process.exit(2);
     }
     // rethrow unexpected errors (no failhide)
+    throw error;
+  }
+};
+
+/**
+ * .what = maps a renderer fault to operator-facing guidance for stderr
+ * .why = the shared branch-bind lookup advises `--route` to disambiguate a
+ *        multi-bind, which is correct for the `--route`-taking subcommands
+ *        (route.drive, route.stone.*) but a dead end for this entrypoint — the
+ *        status line takes no `--route` flag (it derives the branch-bound route
+ *        from cwd). echoing that advice sends an operator down a path that is
+ *        silently ignored here, so for the multi-bind case we emit status-line-
+ *        scoped guidance (unbind the extras). every other fault passes through
+ *        its own message. this only reframes the logged summary; the original
+ *        error is still rethrown by the caller (fail-loud, never hidden).
+ */
+const asStatusLineFaultGuidance = (input: { error: unknown }): string => {
+  const message =
+    input.error instanceof Error ? input.error.message : String(input.error);
+
+  // the multi-bind ambiguity: drop the `--route` advice (unsupported here)
+  if (
+    input.error instanceof BadRequestError &&
+    message.includes('multiple routes bound to this branch')
+  )
+    return 'multiple routes bound to this branch — unbind the extra route(s) so the status line can pick one';
+
+  // any other fault: surface its own message
+  return message;
+};
+
+/**
+ * .what = cli entrypoint for route.status.line skill
+ * .why = emits the current stone as a claude code status line (🗿 <stone>)
+ *
+ * .note = the harness runs this with cwd = project root, so the bound-route
+ *         lookup scans from cwd directly (no chdir, no stdin payload needed).
+ *
+ * .note = fail-open by contract, but via the harness — not a swallowed error.
+ *         an unbound or complete route yields an empty line; a genuine fault is
+ *         logged loudly to stderr and rethrown, so the process exits non-zero and
+ *         the harness renders a blank line. a broken status line never breaks the
+ *         session, yet the fault is surfaced (rule.forbid.failhide +
+ *         rule.require.failloud) rather than silently hidden.
+ */
+export const routeStatusLine = async (): Promise<void> => {
+  const options = parseArgs(process.argv);
+
+  if (options.help) {
+    printStatusLineHelp();
+    return;
+  }
+
+  try {
+    // compute and emit the status line (empty when unbound or complete)
+    const result = await stepRouteStatusLine({ route: null });
+    console.log(result.line);
+  } catch (error) {
+    // fail loud, not hidden: log the fault to stderr (never stdout, which the
+    // harness renders as the line) and rethrow so the process exits non-zero.
+    // the harness blanks the line on non-zero exit, so the session is safe while
+    // the fault stays observable (not a failhide — the error is rethrown).
+    // reframe the guidance to this entrypoint (see asStatusLineFaultGuidance) so
+    // an operator is not pointed at an unsupported `--route` flag.
+    console.error(
+      `[route.status.line] fault: ${asStatusLineFaultGuidance({ error })}`,
+    );
+    // a multi-bind is a caller-must-fix constraint (unbind the extra route), so
+    // exit 2 per rule.require.exit-code-semantics, as the peer routeDrive does.
+    // any other fault is a genuine server-fix path: rethrow for a non-zero exit.
+    if (error instanceof BadRequestError) process.exit(2);
     throw error;
   }
 };
