@@ -15,6 +15,7 @@ import {
   genReviewBrainSupply,
 } from '@src/domain.operations/route/genReviewBrainSupply';
 import { genContextCliEmit } from '@src/domain.operations/route/guard/genContextCliEmit';
+import { getRepoRootWithFallback } from '@src/domain.operations/route/guard/getRepoRootWithFallback';
 import { computeReviewThresholdVerdict } from '@src/domain.operations/route/guard/review/computeReviewThresholdVerdict';
 import { computeReviewTotalsFromFiles } from '@src/domain.operations/route/guard/review/computeReviewTotalsFromFiles';
 import { computeStoneReviewInputHash } from '@src/domain.operations/route/guard/review/computeStoneReviewInputHash';
@@ -25,6 +26,8 @@ import {
   isReviewPeerVerdictExhausted,
   isReviewPeerVerdictTerminal,
 } from '@src/domain.operations/route/guard/review/peer/meter/isReviewPeerLevelTerminal';
+import { formatGuardUpgradeTree } from '@src/domain.operations/route/guard/tree/formatGuardUpgradeTree';
+import { setRouteGuardsFromProvenance } from '@src/domain.operations/route/guard/upgrade/setRouteGuardsFromProvenance';
 import { getOneStoneGuardApproval } from '@src/domain.operations/route/judges/getOneStoneGuardApproval';
 import { getStoneGuardOverruledLevels } from '@src/domain.operations/route/judges/getStoneGuardOverruledLevels';
 import { stepRouteDrive } from '@src/domain.operations/route/stepRouteDrive';
@@ -2049,6 +2052,89 @@ options:
     console.log('');
   } catch (error) {
     // allowlist BadRequestError: format nicely and exit 2
+    if (error instanceof BadRequestError) {
+      console.error(`error: ${error.message}`);
+      process.exit(2);
+    }
+    throw error;
+  }
+};
+
+/**
+ * .what = re-syncs a route's guards from their provenance source templates (D6)
+ * .why = after a supplier bump, a driver pulls the newest review frame in one command.
+ *   plan mode (default) previews a diff; apply mode overwrites the guard.
+ *
+ * .note = mirrors routeGuardBudget's shape byte-for-byte — plain console + process.exit,
+ *   NO emit-context (this verb emits no progress events). BadRequestError → exit 2
+ *   (constraint); a write-time throw propagates uncaught → exit 1 (malfunction).
+ */
+export const routeGuardUpgrade = async (): Promise<void> => {
+  const options = parseArgs(process.argv);
+
+  // --help prints usage, with the --stone BOUNDARY-match semantics called out.
+  // .trim() so there are no stray blank lines at the start or end — matches the
+  // peer `route.stone.set --help` convention (console.log adds its own newline)
+  if (options.help) {
+    console.log(
+      `
+route.guard.upgrade - re-sync a route's guards from their source templates
+
+usage:
+  rhx route.guard.upgrade                                     # plan all guards (default)
+  rhx route.guard.upgrade --mode apply                        # apply all guards
+  rhx route.guard.upgrade --stone 5.1.execution               # plan one stone's guard
+  rhx route.guard.upgrade --stone 5.1 --mode apply            # apply every 5.1.* guard
+  rhx route.guard.upgrade --route .behavior/my-feature        # target an explicit route
+
+options:
+  --stone <name>   stone name (BOUNDARY match: "5.1" hits every "5.1.*" guard but NOT "5.10.x").
+                   default: all guards in the route
+  --route <path>   path to route directory (default: auto-detect from branch)
+  --mode <mode>    plan | apply (default: plan)
+`.trim(),
+    );
+    process.exit(0);
+  }
+
+  // validate --mode (default plan; only plan|apply allowed)
+  const mode = options.mode ?? 'plan';
+  if (mode !== 'plan' && mode !== 'apply') {
+    console.error(`error: --mode must be "plan" or "apply", got "${mode}"`);
+    process.exit(2);
+  }
+
+  try {
+    // get route from option or auto-detect from the bound branch
+    let routePath = options.route;
+    if (!routePath) {
+      const bind = await getRouteBindByBranch({ branch: null });
+      if (!bind) {
+        console.error('error: no bound route found. use --route to specify.');
+        process.exit(2);
+      }
+      routePath = bind.route;
+    }
+
+    // the provenance.uri is read relative to the repo root (gitroot)
+    const repoRoot = await getRepoRootWithFallback({ from: process.cwd() });
+
+    // decide (+ write, on apply) — the orchestrator is the sole writer
+    const results = await setRouteGuardsFromProvenance({
+      route: routePath,
+      stone: options.stone ?? null,
+      mode,
+      repoRoot,
+    });
+
+    // render the owl tree to stdout; the formatter owns its final newline, so
+    // write verbatim (process.stdout.write) rather than console.log (which would
+    // append a second newline)
+    process.stdout.write(
+      formatGuardUpgradeTree({ results, route: routePath, mode }),
+    );
+  } catch (error) {
+    // allowlist BadRequestError: format nicely and exit 2 (constraint)
     if (error instanceof BadRequestError) {
       console.error(`error: ${error.message}`);
       process.exit(2);

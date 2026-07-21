@@ -1,0 +1,5 @@
+artifacts:
+  - $route/1.vision*.md
+
+judges:
+  - echo "passed: true"

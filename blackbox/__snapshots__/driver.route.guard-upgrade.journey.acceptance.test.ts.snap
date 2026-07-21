@@ -1,0 +1,123 @@
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
+
+exports[`driver.route.guard-upgrade.journey.acceptance given: [case1] a bound route two guards behind its supplier when: [t0] a driver previews all guards (plan, default) then: stdout matches snapshot 1`] = `
+"
+🦉 the way reveals itself, one stone at a time
+
+🗿 route.guard.upgrade --mode plan
+   ├─ route = route
+   │
+   ├─ 1.vision.guard
+   │  └─ decision = skipped, no provenance
+   │
+   ├─ 2.kept.guard
+   │  ├─ decision = kept, no change
+   │  └─ from = templates/2.kept.guard
+   │
+   ├─ 5.1.execution.guard
+   │  ├─ decision = upgrade available
+   │  ├─ from = templates/5.1.execution.guard
+   │  └─ diff
+   │     ├─
+   │     │
+   │     │  -   - echo "reason: old frame"
+   │     │  +   - echo "reason: new frame"
+   │     │
+   │     └─
+   │
+   ├─ 5.10.other.guard
+   │  ├─ decision = upgrade available
+   │  ├─ from = templates/5.10.other.guard
+   │  └─ diff
+   │     ├─
+   │     │
+   │     │  -   - echo "reason: old ten"
+   │     │  +   - echo "reason: new ten"
+   │     │
+   │     └─
+   │
+   ├─ 9.broken.guard
+   │  └─ decision = absent source
+   │
+   ├─ summary = 2 available, 1 kept, 1 skipped, 1 absent
+   └─ ⚠ 1 guard blocked — a full apply is refused; scope a clean stone with --stone
+"
+`;
+
+exports[`driver.route.guard-upgrade.journey.acceptance given: [case1] a bound route two guards behind its supplier when: [t1] the driver applies a single stone then: stdout matches snapshot 1`] = `
+"
+🦉 so it is
+
+🗿 route.guard.upgrade --mode apply
+   ├─ route = route
+   │
+   ├─ 5.1.execution.guard
+   │  ├─ decision = upgraded, by provenance
+   │  └─ from = templates/5.1.execution.guard
+   │
+   └─ summary = 1 upgraded
+"
+`;
+
+exports[`driver.route.guard-upgrade.journey.acceptance given: [case1] a bound route two guards behind its supplier when: [t2] the driver re-runs the same upgrade (idempotency) then: stdout matches snapshot 1`] = `
+"
+🦉 so it is
+
+🗿 route.guard.upgrade --mode apply
+   ├─ route = route
+   │
+   ├─ 5.1.execution.guard
+   │  ├─ decision = kept, no change
+   │  └─ from = templates/5.1.execution.guard
+   │
+   └─ summary = 1 kept
+"
+`;
+
+exports[`driver.route.guard-upgrade.journey.acceptance given: [case1] a bound route two guards behind its supplier when: [t3] the driver hits the blocked guard (absent source) then: stderr matches snapshot 1`] = `
+"error: BadRequestError: cannot upgrade: 1 guard blocked — 9.broken.guard (absent-source)
+
+{
+  "blocked": [
+    "9.broken.guard"
+  ]
+}
+"
+`;
+
+exports[`driver.route.guard-upgrade.journey.acceptance given: [case1] a bound route two guards behind its supplier when: [t4] the driver re-previews the whole route (final state) then: stdout matches snapshot 1`] = `
+"
+🦉 the way reveals itself, one stone at a time
+
+🗿 route.guard.upgrade --mode plan
+   ├─ route = route
+   │
+   ├─ 1.vision.guard
+   │  └─ decision = skipped, no provenance
+   │
+   ├─ 2.kept.guard
+   │  ├─ decision = kept, no change
+   │  └─ from = templates/2.kept.guard
+   │
+   ├─ 5.1.execution.guard
+   │  ├─ decision = kept, no change
+   │  └─ from = templates/5.1.execution.guard
+   │
+   ├─ 5.10.other.guard
+   │  ├─ decision = upgrade available
+   │  ├─ from = templates/5.10.other.guard
+   │  └─ diff
+   │     ├─
+   │     │
+   │     │  -   - echo "reason: old ten"
+   │     │  +   - echo "reason: new ten"
+   │     │
+   │     └─
+   │
+   ├─ 9.broken.guard
+   │  └─ decision = absent source
+   │
+   ├─ summary = 1 available, 2 kept, 1 skipped, 1 absent
+   └─ ⚠ 1 guard blocked — a full apply is refused; scope a clean stone with --stone
+"
+`;

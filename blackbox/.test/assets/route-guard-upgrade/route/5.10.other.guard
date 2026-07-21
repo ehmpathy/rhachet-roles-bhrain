@@ -1,0 +1,9 @@
+provenance:
+  uri: templates/5.10.other.guard
+
+artifacts:
+  - $route/5.10.other*.md
+
+judges:
+  - echo "passed: true"
+  - echo "reason: old ten"

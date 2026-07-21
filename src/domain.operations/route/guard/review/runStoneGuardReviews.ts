@@ -28,6 +28,10 @@ import { getDurationMsFromContent } from '../getDurationMsFromContent';
 import { getExitCodeClass } from '../getExitCodeClass';
 import { getRepoRootWithFallback } from '../getRepoRootWithFallback';
 import { isENOENT } from '../isENOENT';
+import {
+  RUNTIME_GUARD_VAR_NAMES,
+  type RuntimeGuardVarName,
+} from '../RUNTIME_GUARD_VAR_NAMES';
 import { formatTreeBucket } from '../tree/formatTreeBucket';
 import { getReviewCounts } from './getReviewCounts';
 import {
@@ -855,14 +859,27 @@ const substituteVars = (
     'rhachet',
   );
 
-  // .note = $conversation substituted BEFORE the shorter vars so its expansion
-  //         (a space-joined file list) is inserted as one unit
-  return cmd
-    .replace(/\$conversation/g, vars.conversation)
-    .replace(/\$stone/g, vars.stone)
-    .replace(/\$route/g, vars.route)
-    .replace(/\$hash/g, vars.hash)
-    .replace(/\$output/g, vars.output)
-    .replace(/\$rhx/g, rhxPath)
-    .replace(/\$rhachet/g, rhachetPath);
+  // the name→value map for every runtime var. typed by RuntimeGuardVarName so the
+  // COMPILER forbids drift: a var can be substituted here ONLY if it is in the shared
+  // RUNTIME_GUARD_VAR_NAMES const — and that same const is what getUnknownGuardVars
+  // (route.guard.upgrade) treats as the allowlist. so a new runtime var cannot be
+  // substituted unless it is also made upgrade-safe. add a name to the const without a
+  // value here, or a value without a name, and this literal fails typecheck.
+  const valueByName: Record<RuntimeGuardVarName, string> = {
+    $route: vars.route,
+    $stone: vars.stone,
+    $hash: vars.hash,
+    $output: vars.output,
+    $rhx: rhxPath,
+    $rhachet: rhachetPath,
+    $conversation: vars.conversation,
+  };
+
+  // replace each runtime var globally, in const order. no var name is contained within
+  // another, so $conversation (substituted last) is unaffected by the shorter vars, and
+  // its own expansion (a comma-joined file list) is never re-scanned.
+  return RUNTIME_GUARD_VAR_NAMES.reduce(
+    (out, name) => out.replace(new RegExp('\\' + name, 'g'), valueByName[name]),
+    cmd,
+  );
 };

@@ -1,0 +1,8 @@
+{
+  "name": "route-guard-upgrade-fixture",
+  "version": "0.0.0",
+  "private": true,
+  "devDependencies": {
+    "rhachet-roles-bhrain": "link:."
+  }
+}

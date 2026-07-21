@@ -20,6 +20,9 @@ importers:
       as-procedure:
         specifier: 1.1.7
         version: 1.1.7
+      diff:
+        specifier: 9.0.0
+        version: 9.0.0
       domain-objects:
         specifier: 0.31.9
         version: 0.31.9
@@ -2882,6 +2885,10 @@ packages:
 
   diff@4.0.2:
     resolution: {integrity: sha512-58lmxKSA4BNyLz+HHMUzlOEpg09FV+ev6ZMe3vJihgdxzgcwZ8VoEEPmALCZG9LmqfVoNMMKpttIYTVG6uDY7A==}
+    engines: {node: '>=0.3.1'}
+
+  diff@9.0.0:
+    resolution: {integrity: sha512-svtcdpS8CgJyqAjEQIXdb3OjhFVVYjzGAPO8WGCmRbrml64SPw/jJD4GoE98aR7r25A0XcgrK3F02yw9R/vhQw==}
     engines: {node: '>=0.3.1'}
 
   dir-glob@3.0.1:
@@ -8382,6 +8389,8 @@ snapshots:
 
   diff@4.0.2:
     optional: true
+
+  diff@9.0.0: {}
 
   dir-glob@3.0.1:
     dependencies:

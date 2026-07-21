@@ -1,0 +1,9 @@
+provenance:
+  uri: templates/5.1.execution.guard
+
+artifacts:
+  - $route/5.1.execution*.md
+
+judges:
+  - echo "passed: true"
+  - echo "reason: new frame"
