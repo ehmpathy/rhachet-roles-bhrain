@@ -1,0 +1,15 @@
+artifacts:
+  - src/**/*.ts
+
+reviews:
+  peer:
+    # runs the REAL review skill with an empty rules glob under --optional rules.
+    # the skip is brain-free (returns before any brain.ask()), so it is deterministic:
+    # it emits 0 blockers / 0 nitpicks + exit 0, which the guard tallies as approved.
+    - slug: optional-skip
+      budget: 3
+      level: 1
+      run: rhx review --repo bhrain --rules 'rules/DOES_NOT_EXIST/*.md' --optional rules --paths 'src/**/*.ts' --output $output --brain fireworks/deepseek/v4-flash
+
+judges:
+  - rhx route.stone.judge --mechanism reviewed? --stone $stone --route $route --allow-blockers 0 --allow-nitpicks 1

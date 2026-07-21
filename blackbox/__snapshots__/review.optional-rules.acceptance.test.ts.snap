@@ -1,0 +1,44 @@
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
+
+exports[`review.optional-rules.acceptance given: [case1] rules glob matches zero files, with --optional rules when: [t0] review skill invoked then: the skip output matches its snapshot (format regression guard) 1`] = `
+"🌙 skipped — no rules found (--optional rules)
+   ├─ review: <REVIEW_PATH>
+   └─ summary
+      ├─ 0 blockers
+      └─ 0 nitpicks
+
+---
+_no rules matched the --optional rules glob (rules/DOES_NOT_EXIST/*.md); review skipped._
+"
+`;
+
+exports[`review.optional-rules.acceptance given: [case2] rules glob matches zero files, WITHOUT --optional when: [t0] review skill invoked (strict default) then: the strict-error output matches its snapshot 1`] = `
+"
+🦉 woah there
+
+✋ --rules glob found nada
+   ├─ rules: rules/DOES_NOT_EXIST/*.md
+   └─ hint: verify the glob pattern matches files in your repo
+
+
+✋ BadRequestError: --rules glob was ineffective
+"
+`;
+
+exports[`review.optional-rules.acceptance given: [case3] --optional refs (deferred, not yet supported) when: [t0] review skill invoked then: the unsupported-refs error output matches its snapshot 1`] = `
+"error: --optional does not support: refs (supported: rules)
+run with --help for usage
+"
+`;
+
+exports[`review.optional-rules.acceptance given: [case4] --optional with an unknown supply name when: [t0] review skill invoked then: the unknown-supply error output matches its snapshot 1`] = `
+"error: --optional does not support: foo (supported: rules)
+run with --help for usage
+"
+`;
+
+exports[`review.optional-rules.acceptance given: [case5] a bare --optional with no supply value when: [t0] review skill invoked (next token is another flag) then: the bare-optional error output matches its snapshot 1`] = `
+"error: --optional requires a supply name (supported: rules)
+run with --help for usage
+"
+`;

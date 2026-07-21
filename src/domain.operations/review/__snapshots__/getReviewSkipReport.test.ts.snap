@@ -1,0 +1,13 @@
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
+
+exports[`getReviewSkipReport given: [case1] a rules-supply skip with a single glob when: [t0] the skip report is built then: the report matches its snapshot 1`] = `
+"🌙 skipped — no rules found (--optional rules)
+   ├─ review: .reviews/peer/report.md
+   └─ summary
+      ├─ 0 blockers
+      └─ 0 nitpicks
+
+---
+_no rules matched the --optional rules glob (rules/DOES_NOT_EXIST/*.md); review skipped._
+"
+`;
