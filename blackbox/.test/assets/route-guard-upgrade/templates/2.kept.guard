@@ -1,0 +1,9 @@
+provenance:
+  uri: templates/2.kept.guard
+
+artifacts:
+  - $route/2.kept*.md
+
+judges:
+  - echo "passed: true"
+  - echo "reason: same frame"

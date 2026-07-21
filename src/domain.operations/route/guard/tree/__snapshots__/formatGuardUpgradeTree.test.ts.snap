@@ -1,0 +1,141 @@
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
+
+exports[`formatGuardUpgradeTree given: [case1] a plan with an upgrade, a kept, and a skip when: [t0] rendered in plan mode then: matches snapshot 1`] = `
+"
+🦉 the way reveals itself, one stone at a time
+
+🗿 route.guard.upgrade --mode plan
+   ├─ route = .behavior/x
+   │
+   ├─ 5.1.execution.guard
+   │  ├─ decision = upgrade available
+   │  ├─ from = templates/5.1.execution.guard
+   │  └─ diff
+   │     ├─
+   │     │
+   │     │  - old line
+   │     │  + new line
+   │     │
+   │     └─
+   │
+   ├─ 2.kept.guard
+   │  ├─ decision = kept, no change
+   │  └─ from = templates/2.kept.guard
+   │
+   ├─ 1.vision.guard
+   │  └─ decision = skipped, no provenance
+   │
+   ├─ summary = 1 available, 1 kept, 1 skipped
+   └─ to apply: rhx route.guard.upgrade --mode apply
+"
+`;
+
+exports[`formatGuardUpgradeTree given: [case1] a plan with an upgrade, a kept, and a skip when: [t1] rendered in apply mode then: matches snapshot 1`] = `
+"
+🦉 so it is
+
+🗿 route.guard.upgrade --mode apply
+   ├─ route = .behavior/x
+   │
+   ├─ 5.1.execution.guard
+   │  ├─ decision = upgraded, by provenance
+   │  └─ from = templates/5.1.execution.guard
+   │
+   ├─ 2.kept.guard
+   │  ├─ decision = kept, no change
+   │  └─ from = templates/2.kept.guard
+   │
+   ├─ 1.vision.guard
+   │  └─ decision = skipped, no provenance
+   │
+   └─ summary = 1 upgraded, 1 kept, 1 skipped
+"
+`;
+
+exports[`formatGuardUpgradeTree given: [case2] the non-happy decisions (absent, invalid, unknown-var) when: [t0] rendered in plan mode then: matches snapshot 1`] = `
+"
+🦉 the way reveals itself, one stone at a time
+
+🗿 route.guard.upgrade --mode plan
+   ├─ route = .behavior/x
+   │
+   ├─ 9.broken.guard
+   │  └─ decision = absent source
+   │
+   ├─ 6.invalidsource.guard
+   │  └─ decision = invalid source
+   │
+   ├─ 4.unknownvar.guard
+   │  └─ decision = unknown var: $FOO
+   │
+   └─ summary = 1 absent, 1 invalid, 1 unknown-var
+"
+`;
+
+exports[`formatGuardUpgradeTree given: [case3] a warn annotation on a guard when: [t0] rendered in plan mode then: matches snapshot 1`] = `
+"
+🦉 the way reveals itself, one stone at a time
+
+🗿 route.guard.upgrade --mode plan
+   ├─ route = .behavior/x
+   │
+   ├─ 7.budgetgrant.guard
+   │  ├─ decision = upgrade available
+   │  ├─ from = templates/7.budgetgrant.guard
+   │  ├─ ⚠ this upgrade reverts a budget grant on 7.budgetgrant: 5 → 3
+   │  └─ diff
+   │     ├─
+   │     │
+   │     │  -       budget: 5
+   │     │
+   │     └─
+   │
+   ├─ summary = 1 available
+   └─ to apply: rhx route.guard.upgrade --mode apply
+"
+`;
+
+exports[`formatGuardUpgradeTree given: [case4] an empty route (no guard files) when: [t0] rendered in plan mode then: matches snapshot 1`] = `
+"
+🦉 the way reveals itself, one stone at a time
+
+🗿 route.guard.upgrade --mode plan
+   ├─ route = .behavior/x
+   │
+   └─ summary = no guards
+"
+`;
+
+exports[`formatGuardUpgradeTree given: [case5] passage-state advisories (already-passed + approved) when: [t0] rendered in plan mode then: matches snapshot 1`] = `
+"
+🦉 the way reveals itself, one stone at a time
+
+🗿 route.guard.upgrade --mode plan
+   ├─ route = .behavior/x
+   │
+   ├─ 5.1.execution.guard
+   │  ├─ decision = upgrade available
+   │  ├─ from = templates/5.1.execution.guard
+   │  ├─ ⚠ stone 5.1.execution already passed under the prior guard — this upgrade re-syncs its rules but does not re-validate the passage
+   │  └─ diff
+   │     ├─
+   │     │
+   │     │  - old line
+   │     │
+   │     └─
+   │
+   ├─ 5.2.review.guard
+   │  ├─ decision = upgrade available
+   │  ├─ from = templates/5.2.review.guard
+   │  ├─ ⚠ stone 5.2.review is approved but not yet passed — this upgrade changes the rules its pass will be judged against
+   │  └─ diff
+   │     ├─
+   │     │
+   │     │  - old line
+   │     │
+   │     └─
+   │
+   ├─ summary = 2 available
+   └─ to apply: rhx route.guard.upgrade --mode apply
+"
+`;

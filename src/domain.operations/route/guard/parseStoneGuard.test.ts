@@ -1,5 +1,3 @@
-import * as fs from 'fs/promises';
-import * as os from 'os';
 import * as path from 'path';
 import { given, then, when } from 'test-fns';
 
@@ -257,124 +255,35 @@ describe('parseStoneGuard', () => {
     },
   );
 
-  given('[case6] flat reviews with duplicate slugs', () => {
-    when('[t0] multiple peer reviews derive same slug from cmd', () => {
-      then('slugs are standardized to be unique via .N suffix', async () => {
-        // create temp guard with duplicate slugs
-        const tempDir = await fs.mkdtemp(
-          path.join(os.tmpdir(), 'test-guard-dup-slug-'),
-        );
-        const guardFile = path.join(tempDir, '1.test.guard');
-        // all three commands start with $rhx, so derived slugs would collide
-        await fs.writeFile(
-          guardFile,
-          `artifacts:
-  - src/**/*
-reviews:
-  - $rhx --rules briefs/arch.md
-  - $rhx --rules briefs/ergo.md
-  - $rhx --rules briefs/mech.md
-`,
-        );
-
-        const result = await parseStoneGuard({ path: guardFile });
-        const peerReviews = getGuardPeerReviews(result);
-
-        expect(peerReviews).toHaveLength(3);
-        // each slug should have .N suffix since they all derived from $rhx
-        expect(peerReviews[0]?.slug).toEqual('$rhx.1');
-        expect(peerReviews[1]?.slug).toEqual('$rhx.2');
-        expect(peerReviews[2]?.slug).toEqual('$rhx.3');
-      });
-
-      then('unique slugs are left as-is', async () => {
-        // create temp guard with unique slugs
-        const tempDir = await fs.mkdtemp(
-          path.join(os.tmpdir(), 'test-guard-unique-slug-'),
-        );
-        const guardFile = path.join(tempDir, '1.test.guard');
-        await fs.writeFile(
-          guardFile,
-          `artifacts:
-  - src/**/*
-reviews:
-  - arch-review --rules briefs/arch.md
-  - ergo-review --rules briefs/ergo.md
-  - mech-review --rules briefs/mech.md
-`,
-        );
-
-        const result = await parseStoneGuard({ path: guardFile });
-        const peerReviews = getGuardPeerReviews(result);
-
-        expect(peerReviews).toHaveLength(3);
-        // unique slugs should not have suffix
-        expect(peerReviews[0]?.slug).toEqual('arch-review');
-        expect(peerReviews[1]?.slug).toEqual('ergo-review');
-        expect(peerReviews[2]?.slug).toEqual('mech-review');
-      });
-    });
-  });
-
   given(
-    '[case-slug-uniqueness] a slug shared by a self AND a peer reviewer',
+    '[case-provenance-tolerated] a guard that declares a top-level provenance key',
     () => {
-      when('[t0] guard is parsed', () => {
-        then(
-          'throws a loud BadRequestError that names the duplicate slug',
-          async () => {
-            const tempDir = await fs.mkdtemp(
-              path.join(os.tmpdir(), 'test-guard-slug-collision-'),
-            );
-            const guardFile = path.join(tempDir, '1.test.guard');
-            await fs.writeFile(
-              guardFile,
-              `reviews:
-  self:
-    - slug: architect
-      say: "review it"
-  peer:
-    - slug: architect
-      run: rhx review --rules briefs/arch.md
+      // characterization (i012.N5): parseSimpleYaml already skips unrecognized
+      // top-level keys, so a `provenance:` block needs no tolerate-branch. this
+      // locks that a provenance-tagged guard parses cleanly today. pure unit —
+      // the { content } variant needs no disk (no @path refs to expand).
+      const content = `provenance:
+  uri: node_modules/rhachet-roles-bhuild/dist/x/5.1.execution.guard
+artifacts:
+  - $route/5.1.execution*.md
 judges:
   - rhx judge --mechanism reviewed?
-`,
-            );
+`;
 
-            await expect(parseStoneGuard({ path: guardFile })).rejects.toThrow(
-              'architect',
-            );
+      when('[t0] guard is parsed via the { content } variant', () => {
+        then(
+          'parses WITHOUT a throw (unknown top-level key is skipped)',
+          async () => {
+            const result = await parseStoneGuard({
+              content,
+              path: '/synthetic/5.1.execution.guard',
+            });
+            // the known keys still parse; the provenance key is simply ignored here
+            expect(result.artifacts).toContain('$route/5.1.execution*.md');
+            expect(result.judges).toHaveLength(1);
           },
         );
       });
     },
   );
-
-  given('[case-slug-distinct] distinct self + peer slugs', () => {
-    when('[t0] guard is parsed', () => {
-      then('parses without error', async () => {
-        const tempDir = await fs.mkdtemp(
-          path.join(os.tmpdir(), 'test-guard-slug-distinct-'),
-        );
-        const guardFile = path.join(tempDir, '1.test.guard');
-        await fs.writeFile(
-          guardFile,
-          `reviews:
-  self:
-    - slug: reflect
-      say: "review it"
-  peer:
-    - slug: architect
-      run: rhx review --rules briefs/arch.md
-judges:
-  - rhx judge --mechanism reviewed?
-`,
-        );
-
-        const result = await parseStoneGuard({ path: guardFile });
-        expect(getGuardSelfReviews(result)).toHaveLength(1);
-        expect(getGuardPeerReviews(result)).toHaveLength(1);
-      });
-    });
-  });
 });

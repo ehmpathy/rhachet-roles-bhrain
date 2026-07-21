@@ -1,0 +1,8 @@
+provenance:
+  uri: templates/absent.guard
+
+artifacts:
+  - $route/9.broken*.md
+
+judges:
+  - echo "passed: true"

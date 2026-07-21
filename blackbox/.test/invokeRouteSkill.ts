@@ -129,6 +129,7 @@ export const invokeRouteSkill = async (input: {
     | 'route.bounce'
     | 'route.drive'
     | 'route.guard.budget'
+    | 'route.guard.upgrade'
     | 'route.mutate'
     | 'route.review'
     | 'route.stone.add'

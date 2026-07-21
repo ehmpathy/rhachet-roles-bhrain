@@ -1,0 +1,366 @@
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
+
+exports[`driver.route.guard-upgrade.acceptance given: [case1] a route with mixed guards when: [t0] plan previews the whole route then: stdout matches snapshot 1`] = `
+"
+🦉 the way reveals itself, one stone at a time
+
+🗿 route.guard.upgrade --mode plan
+   ├─ route = route
+   │
+   ├─ 1.vision.guard
+   │  └─ decision = skipped, no provenance
+   │
+   ├─ 2.kept.guard
+   │  ├─ decision = kept, no change
+   │  └─ from = templates/2.kept.guard
+   │
+   ├─ 5.1.execution.guard
+   │  ├─ decision = upgrade available
+   │  ├─ from = templates/5.1.execution.guard
+   │  └─ diff
+   │     ├─
+   │     │
+   │     │  -   - echo "reason: old frame"
+   │     │  +   - echo "reason: new frame"
+   │     │
+   │     └─
+   │
+   ├─ 5.10.other.guard
+   │  ├─ decision = upgrade available
+   │  ├─ from = templates/5.10.other.guard
+   │  └─ diff
+   │     ├─
+   │     │
+   │     │  -   - echo "reason: old ten"
+   │     │  +   - echo "reason: new ten"
+   │     │
+   │     └─
+   │
+   ├─ 9.broken.guard
+   │  └─ decision = absent source
+   │
+   ├─ summary = 2 available, 1 kept, 1 skipped, 1 absent
+   └─ ⚠ 1 guard blocked — a full apply is refused; scope a clean stone with --stone
+"
+`;
+
+exports[`driver.route.guard-upgrade.acceptance given: [case2] a single stone applied when: [t0] apply --stone 5.1.execution then: stdout matches snapshot 1`] = `
+"
+🦉 so it is
+
+🗿 route.guard.upgrade --mode apply
+   ├─ route = route
+   │
+   ├─ 5.1.execution.guard
+   │  ├─ decision = upgraded, by provenance
+   │  └─ from = templates/5.1.execution.guard
+   │
+   └─ summary = 1 upgraded
+"
+`;
+
+exports[`driver.route.guard-upgrade.acceptance given: [case3] a blocked guard among good ones (apply-all) when: [t0] apply the whole route with 9.broken present then: stderr matches snapshot 1`] = `
+"error: BadRequestError: cannot upgrade: 1 guard blocked — 9.broken.guard (absent-source)
+
+{
+  "blocked": [
+    "9.broken.guard"
+  ]
+}
+"
+`;
+
+exports[`driver.route.guard-upgrade.acceptance given: [case4] --stone boundary match (5.1 not 5.10) when: [t0] plan --stone 5.1 then: stdout matches snapshot 1`] = `
+"
+🦉 the way reveals itself, one stone at a time
+
+🗿 route.guard.upgrade --mode plan
+   ├─ route = route
+   │
+   ├─ 5.1.execution.guard
+   │  ├─ decision = upgrade available
+   │  ├─ from = templates/5.1.execution.guard
+   │  └─ diff
+   │     ├─
+   │     │
+   │     │  -   - echo "reason: old frame"
+   │     │  +   - echo "reason: new frame"
+   │     │
+   │     └─
+   │
+   ├─ summary = 1 available
+   └─ to apply: rhx route.guard.upgrade --mode apply
+"
+`;
+
+exports[`driver.route.guard-upgrade.acceptance given: [case5] no bound route and no --route when: [t0] upgrade without a route target then: stderr matches snapshot 1`] = `
+"error: no bound route found. use --route to specify.
+"
+`;
+
+exports[`driver.route.guard-upgrade.acceptance given: [case6] --help when: [t0] help is requested then: stdout matches snapshot 1`] = `
+"route.guard.upgrade - re-sync a route's guards from their source templates
+
+usage:
+  rhx route.guard.upgrade                                     # plan all guards (default)
+  rhx route.guard.upgrade --mode apply                        # apply all guards
+  rhx route.guard.upgrade --stone 5.1.execution               # plan one stone's guard
+  rhx route.guard.upgrade --stone 5.1 --mode apply            # apply every 5.1.* guard
+  rhx route.guard.upgrade --route .behavior/my-feature        # target an explicit route
+
+options:
+  --stone <name>   stone name (BOUNDARY match: "5.1" hits every "5.1.*" guard but NOT "5.10.x").
+                   default: all guards in the route
+  --route <path>   path to route directory (default: auto-detect from branch)
+  --mode <mode>    plan | apply (default: plan)
+"
+`;
+
+exports[`driver.route.guard-upgrade.acceptance given: [case7] a guard whose template carries a stray $FOO (apply) when: [t0] apply --stone 4.unknownvar then: stderr matches snapshot 1`] = `
+"error: BadRequestError: cannot upgrade: 1 guard blocked — 4.unknownvar.guard (unknown-var)
+
+{
+  "blocked": [
+    "4.unknownvar.guard"
+  ]
+}
+"
+`;
+
+exports[`driver.route.guard-upgrade.acceptance given: [case7] a guard whose template carries a stray $FOO (apply) when: [t1] plan --stone 4.unknownvar (non-fatal preview) then: stdout matches snapshot 1`] = `
+"
+🦉 the way reveals itself, one stone at a time
+
+🗿 route.guard.upgrade --mode plan
+   ├─ route = route
+   │
+   ├─ 4.unknownvar.guard
+   │  └─ decision = unknown var: $FOO
+   │
+   └─ summary = 1 unknown-var
+"
+`;
+
+exports[`driver.route.guard-upgrade.acceptance given: [case8] an invalid --mode value when: [t0] --mode is neither plan nor apply then: stderr matches snapshot 1`] = `
+"error: --mode must be "plan" or "apply", got "bogus"
+"
+`;
+
+exports[`driver.route.guard-upgrade.acceptance given: [case9] a --stone that hits no guard when: [t0] plan --stone 9.absent then: stderr matches snapshot 1`] = `
+"error: BadRequestError: no guard matched --stone 9.absent. available stones: 1.vision, 2.kept, 5.1.execution, 5.10.other, 9.broken
+
+{
+  "stone": "9.absent",
+  "route": "route"
+}
+"
+`;
+
+exports[`driver.route.guard-upgrade.acceptance given: [case10] a guard whose template fails to parse (invalid-source) when: [t0] plan --stone 6.invalid (non-fatal preview) then: stdout matches snapshot 1`] = `
+"
+🦉 the way reveals itself, one stone at a time
+
+🗿 route.guard.upgrade --mode plan
+   ├─ route = route
+   │
+   ├─ 6.invalid.guard
+   │  └─ decision = invalid source
+   │
+   └─ summary = 1 invalid
+"
+`;
+
+exports[`driver.route.guard-upgrade.acceptance given: [case10] a guard whose template fails to parse (invalid-source) when: [t1] apply --stone 6.invalid (blocked) then: stderr matches snapshot 1`] = `
+"error: BadRequestError: cannot upgrade: 1 guard blocked — 6.invalid.guard (invalid-source)
+
+{
+  "blocked": [
+    "6.invalid.guard"
+  ]
+}
+"
+`;
+
+exports[`driver.route.guard-upgrade.acceptance given: [case11] an explicit --route that does not exist when: [t0] --route points at a mistyped dir then: stderr matches snapshot 1`] = `
+"error: BadRequestError: route not found: tpyo-does-not-exist. did you mistype --route?
+
+{
+  "route": "tpyo-does-not-exist",
+  "routeAbs": "[TEMP]/tpyo-does-not-exist"
+}
+"
+`;
+
+exports[`driver.route.guard-upgrade.acceptance given: [case12] an upgrade whose stone is already passed (N6 note) when: [t0] plan --stone 5.1.execution then: stdout matches snapshot 1`] = `
+"
+🦉 the way reveals itself, one stone at a time
+
+🗿 route.guard.upgrade --mode plan
+   ├─ route = route
+   │
+   ├─ 5.1.execution.guard
+   │  ├─ decision = upgrade available
+   │  ├─ from = templates/5.1.execution.guard
+   │  ├─ ⚠ stone 5.1.execution already passed under the prior guard — this upgrade re-syncs its rules but does not re-validate the passage
+   │  └─ diff
+   │     ├─
+   │     │
+   │     │  -   - echo "reason: old frame"
+   │     │  +   - echo "reason: new frame"
+   │     │
+   │     └─
+   │
+   ├─ summary = 1 available
+   └─ to apply: rhx route.guard.upgrade --mode apply
+"
+`;
+
+exports[`driver.route.guard-upgrade.acceptance given: [case13] an upgrade that reverts a peer-budget grant (B4) when: [t0] plan --stone 8.budgetgrant then: stdout matches snapshot 1`] = `
+"
+🦉 the way reveals itself, one stone at a time
+
+🗿 route.guard.upgrade --mode plan
+   ├─ route = route
+   │
+   ├─ 8.budgetgrant.guard
+   │  ├─ decision = upgrade available
+   │  ├─ from = templates/8.budgetgrant.guard
+   │  ├─ ⚠ this upgrade reverts a budget grant on r-arch: 5 → 3
+   │  └─ diff
+   │     ├─
+   │     │
+   │     │  -       budget: 5
+   │     │  +       budget: 3
+   │     │
+   │     └─
+   │
+   ├─ summary = 1 available
+   └─ to apply: rhx route.guard.upgrade --mode apply
+"
+`;
+
+exports[`driver.route.guard-upgrade.acceptance given: [case14] apply-all success (no blocker guard) when: [t0] apply the whole route (no --stone) then: stdout matches snapshot 1`] = `
+"
+🦉 so it is
+
+🗿 route.guard.upgrade --mode apply
+   ├─ route = route
+   │
+   ├─ 1.vision.guard
+   │  └─ decision = skipped, no provenance
+   │
+   ├─ 2.kept.guard
+   │  ├─ decision = kept, no change
+   │  └─ from = templates/2.kept.guard
+   │
+   ├─ 5.1.execution.guard
+   │  ├─ decision = upgraded, by provenance
+   │  └─ from = templates/5.1.execution.guard
+   │
+   ├─ 5.10.other.guard
+   │  ├─ decision = upgraded, by provenance
+   │  └─ from = templates/5.10.other.guard
+   │
+   └─ summary = 2 upgraded, 1 kept, 1 skipped
+"
+`;
+
+exports[`driver.route.guard-upgrade.acceptance given: [case15] an upgrade whose stone is approved but not passed when: [t0] plan --stone 5.1.execution then: stdout matches snapshot 1`] = `
+"
+🦉 the way reveals itself, one stone at a time
+
+🗿 route.guard.upgrade --mode plan
+   ├─ route = route
+   │
+   ├─ 5.1.execution.guard
+   │  ├─ decision = upgrade available
+   │  ├─ from = templates/5.1.execution.guard
+   │  ├─ ⚠ stone 5.1.execution is approved but not yet passed — this upgrade changes the rules its pass will be judged against
+   │  └─ diff
+   │     ├─
+   │     │
+   │     │  -   - echo "reason: old frame"
+   │     │  +   - echo "reason: new frame"
+   │     │
+   │     └─
+   │
+   ├─ summary = 1 available
+   └─ to apply: rhx route.guard.upgrade --mode apply
+"
+`;
+
+exports[`driver.route.guard-upgrade.acceptance given: [case16] one route, all six decision states, one plan when: [t0] plan the whole route (no --stone) then: stdout matches snapshot 1`] = `
+"
+🦉 the way reveals itself, one stone at a time
+
+🗿 route.guard.upgrade --mode plan
+   ├─ route = route
+   │
+   ├─ 1.vision.guard
+   │  └─ decision = skipped, no provenance
+   │
+   ├─ 2.kept.guard
+   │  ├─ decision = kept, no change
+   │  └─ from = templates/2.kept.guard
+   │
+   ├─ 4.unknownvar.guard
+   │  └─ decision = unknown var: $FOO
+   │
+   ├─ 5.1.execution.guard
+   │  ├─ decision = upgrade available
+   │  ├─ from = templates/5.1.execution.guard
+   │  └─ diff
+   │     ├─
+   │     │
+   │     │  -   - echo "reason: old frame"
+   │     │  +   - echo "reason: new frame"
+   │     │
+   │     └─
+   │
+   ├─ 5.10.other.guard
+   │  ├─ decision = upgrade available
+   │  ├─ from = templates/5.10.other.guard
+   │  └─ diff
+   │     ├─
+   │     │
+   │     │  -   - echo "reason: old ten"
+   │     │  +   - echo "reason: new ten"
+   │     │
+   │     └─
+   │
+   ├─ 6.invalid.guard
+   │  └─ decision = invalid source
+   │
+   ├─ 9.broken.guard
+   │  └─ decision = absent source
+   │
+   ├─ summary = 2 available, 1 kept, 1 skipped, 1 absent, 1 invalid, 1 unknown-var
+   └─ ⚠ 3 guards blocked — a full apply is refused; scope a clean stone with --stone
+"
+`;
+
+exports[`driver.route.guard-upgrade.acceptance given: [case17] a route directory with no guard files when: [t0] plan an empty route then: stdout matches snapshot 1`] = `
+"
+🦉 the way reveals itself, one stone at a time
+
+🗿 route.guard.upgrade --mode plan
+   ├─ route = emptyroute
+   │
+   └─ summary = no guards
+"
+`;
+
+exports[`driver.route.guard-upgrade.acceptance given: [case18] a template with a copy-time var AND a runtime var (uc.6) when: [t0] apply --stone 3.varreplay then: stdout matches snapshot 1`] = `
+"
+🦉 so it is
+
+🗿 route.guard.upgrade --mode apply
+   ├─ route = route
+   │
+   ├─ 3.varreplay.guard
+   │  ├─ decision = upgraded, by provenance
+   │  └─ from = templates/varreplay.guard
+   │
+   └─ summary = 1 upgraded
+"
+`;

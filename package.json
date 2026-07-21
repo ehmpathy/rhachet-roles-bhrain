@@ -80,6 +80,7 @@
     "@ehmpathy/uni-time": "1.8.1",
     "archiver": "7.0.1",
     "as-procedure": "1.1.7",
+    "diff": "9.0.0",
     "domain-objects": "0.31.9",
     "globby": "11.1.0",
     "hash-fns": "3.0.0",

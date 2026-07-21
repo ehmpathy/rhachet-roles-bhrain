@@ -13,14 +13,24 @@ import { RouteStoneGuard } from '@src/domain.objects/Driver/RouteStoneGuard';
 /**
  * .what = parses a guard file into a RouteStoneGuard object
  * .why = enables guard configuration to be read and validated
+ *
+ * two input variants:
+ * - `{ path }` — read the file at `path`, then parse (the original behavior).
+ * - `{ content, path }` — parse the IN-MEMORY `content` AS IF it were the file at
+ *   `path`. `path` is the source the content came from: its `dirname` is the base for
+ *   `@path` say-ref expansion, and it becomes the object's `.path`. used by
+ *   `route.guard.upgrade` (D6) to validate a var-replayed template BEFORE it overwrites
+ *   a guard — so `path` is the TEMPLATE's own path, making `@path` refs expand against
+ *   the template's dir (not the route dir).
  */
-export const parseStoneGuard = async (input: {
-  path: string;
-}): Promise<RouteStoneGuard> => {
-  // read file content
-  const content = await fs.readFile(input.path, 'utf-8');
+export const parseStoneGuard = async (
+  input: { path: string } | { content: string; path: string },
+): Promise<RouteStoneGuard> => {
+  // read file content, unless content was injected directly (in-memory variant)
+  const content =
+    'content' in input ? input.content : await fs.readFile(input.path, 'utf-8');
 
-  // get directory for @path references
+  // get directory for @path references (base = the source path's dir)
   const guardDir = path.dirname(input.path);
 
   // parse simple yaml format

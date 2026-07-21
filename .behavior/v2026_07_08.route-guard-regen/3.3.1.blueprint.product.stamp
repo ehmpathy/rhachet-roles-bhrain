@@ -1,0 +1,80 @@
+🦉 the way speaks for itself
+
+🗿 route.stone.set
+   ├─ stone = 3.3.1.blueprint.product
+   ├─ passage = overruled
+   ├─ guard
+   │  ├─ artifacts
+   │  ├─ reviews
+   │  │   ├─ r1: repo-rules (l1, 3/3)
+   │  │   │   ├─ exhausted
+   │  │   │   ├─ 0 blockers ✓
+   │  │   │   ├─ 0 nitpicks ✓
+   │  │   │   └─ given: 
+   │  │   ├─ r2: mech-failhides (l1, 3/3)
+   │  │   │   ├─ exhausted
+   │  │   │   ├─ 0 blockers ✓
+   │  │   │   ├─ 0 nitpicks ✓
+   │  │   │   └─ given: 
+   │  │   ├─ r3: mech-decode-friction (l1, 3/3)
+   │  │   │   ├─ exhausted
+   │  │   │   ├─ 0 blockers ✓
+   │  │   │   ├─ 0 nitpicks ✓
+   │  │   │   └─ given: 
+   │  │   ├─ r4: arch-opport-decomposition (l1, 4/4)
+   │  │   │   ├─ exhausted
+   │  │   │   ├─ 0 blockers ✓
+   │  │   │   ├─ 0 nitpicks ✓
+   │  │   │   └─ given: 
+   │  │   ├─ r5: arch-smell-scopeleaks (l1, 3/3)
+   │  │   │   ├─ exhausted
+   │  │   │   ├─ 0 blockers ✓
+   │  │   │   ├─ 0 nitpicks ✓
+   │  │   │   └─ given: 
+   │  │   ├─ r6: arch-hazards-maintenance (l1, 3/3)
+   │  │   │   ├─ exhausted
+   │  │   │   ├─ 0 blockers ✓
+   │  │   │   ├─ 0 nitpicks ✓
+   │  │   │   └─ given: 
+   │  │   ├─ r7: arch-hazards-behavior (l1, 3/3)
+   │  │   │   ├─ exhausted
+   │  │   │   ├─ 0 blockers ✓
+   │  │   │   ├─ 0 nitpicks ✓
+   │  │   │   └─ given: 
+   │  │   ├─ r8: arch-ambiguous-terms (l1, 3/3)
+   │  │   │   ├─ exhausted
+   │  │   │   ├─ 0 blockers ✓
+   │  │   │   ├─ 0 nitpicks ✓
+   │  │   │   └─ given: 
+   │  │   ├─ r9: ergo-acceptance-journey-coverage (l1, 3/3)
+   │  │   │   ├─ exhausted
+   │  │   │   ├─ 0 blockers ✓
+   │  │   │   ├─ 0 nitpicks ✓
+   │  │   │   └─ given: 
+   │  │   ├─ r10: ergo-snapshot-visual-blemishes (l1, 3/3)
+   │  │   │   ├─ exhausted
+   │  │   │   ├─ 0 blockers ✓
+   │  │   │   ├─ 0 nitpicks ✓
+   │  │   │   └─ given: 
+   │  │   ├─ r11: enroll-blueprint-arch-defects (l3, 3/3)
+   │  │   │   ├─ approved, cached
+   │  │   │   ├─ 0 blockers ✓
+   │  │   │   ├─ 3 nitpicks 🟠
+   │  │   │   ├─ tallied by reviewer@fireworks/deepseek/v4-flash
+   │  │   │   ├─ given: .behavior/v2026_07_08.route-guard-regen/.reviews/peer/3.3.1.blueprint.product._.review.i013.b3e027ee5afa0ebcc2.r011._.given.by_peer.enroll-blueprint-arch-defects.md
+   │  │   │   └─ taken: .behavior/v2026_07_08.route-guard-regen/.reviews/peer/3.3.1.blueprint.product._.review.i013.b3e027ee5afa0ebcc2.r011._.taken.by_self.enroll-blueprint-arch-defects.md
+   │  │   └─ r12: enroll-blueprint-behavior-intent (l3, 5/5)
+   │  │       ├─ exhausted, cached
+   │  │       ├─ 3 blockers 🔴
+   │  │       ├─ 2 nitpicks 🟠
+   │  │       ├─ tallied by reviewer@fireworks/deepseek/v4-flash
+   │  │       ├─ given: .behavior/v2026_07_08.route-guard-regen/.reviews/peer/3.3.1.blueprint.product._.review.i015.dd804a2e103f7c41b0.r012._.given.by_peer.enroll-blueprint-behavior-intent.md
+   │  │       └─ taken: .behavior/v2026_07_08.route-guard-regen/.reviews/peer/3.3.1.blueprint.product._.review.i015.dd804a2e103f7c41b0.r012._.taken.by_self.enroll-blueprint-behavior-intent.md
+   │  └─ judges
+   │      ├─ j1: $rhachet run --repo bhrain --skill route.stone.judge --mechanism reviewed? --stone $stone --route $route --allow-blockers 0 --allow-nitpicks 3
+   │      │   └─ finished 0.9s ✓
+   │      └─ j2: $rhachet run --repo bhrain --skill route.stone.judge --mechanism approved? --stone $stone --route $route
+   │          └─ finished 0.8s ✓
+   │
+   └─ the way continues, run
+      └─ rhx route.drive

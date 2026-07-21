@@ -11,6 +11,10 @@ import type { RouteStoneGuard } from '@src/domain.objects/Driver/RouteStoneGuard
 import { RouteStoneGuardJudgeArtifact } from '@src/domain.objects/Driver/RouteStoneGuardJudgeArtifact';
 import { getExitCodeClass } from '@src/domain.operations/route/guard/getExitCodeClass';
 import { isENOENT } from '@src/domain.operations/route/guard/isENOENT';
+import {
+  RUNTIME_GUARD_VAR_NAMES,
+  type RuntimeGuardVarName,
+} from '@src/domain.operations/route/guard/RUNTIME_GUARD_VAR_NAMES';
 import { formatTreeBucket } from '@src/domain.operations/route/guard/tree/formatTreeBucket';
 import { enumFilesFromGlob } from '@src/utils/enumFilesFromGlob';
 
@@ -362,13 +366,29 @@ const substituteVars = (
     'rhachet',
   );
 
-  return cmd
-    .replace(/\$stone/g, vars.stone)
-    .replace(/\$route/g, vars.route)
-    .replace(/\$hash/g, vars.hash)
-    .replace(/\$output/g, vars.output)
-    .replace(/\$rhx/g, rhxPath)
-    .replace(/\$rhachet/g, rhachetPath);
+  // the name→value map for every runtime var. typed by RuntimeGuardVarName so the
+  // COMPILER forbids drift: add a name to RUNTIME_GUARD_VAR_NAMES without a value here,
+  // or a value without a name, and this literal fails typecheck.
+  const valueByName: Record<RuntimeGuardVarName, string> = {
+    $route: vars.route,
+    $stone: vars.stone,
+    $hash: vars.hash,
+    $output: vars.output,
+    $rhx: rhxPath,
+    $rhachet: rhachetPath,
+    // $conversation is a REVIEW-run var (resolved in runStoneGuardReviews, which owns the
+    // peer-review conversation path). a judge command has no conversation context, so the
+    // judge leaves it LITERAL via this self-referential passthrough. this satisfies the
+    // shared-const drift-guard and leaves judge behavior intact (judge cmds never carry it).
+    $conversation: '$conversation',
+  };
+
+  // replace each runtime var globally; a var name is `$` + word chars, so `\<name>` is
+  // a valid literal-escaped regex (identical to the prior per-var `/\$stone/g` patterns).
+  return RUNTIME_GUARD_VAR_NAMES.reduce(
+    (out, name) => out.replace(new RegExp('\\' + name, 'g'), valueByName[name]),
+    cmd,
+  );
 };
 
 /**
