@@ -645,4 +645,99 @@ describe('stepReview', () => {
       );
     },
   );
+
+  given(
+    '[case12] empty rules + --optional rules → skip via stepReview directly (no brain)',
+    () => {
+      // .what = the SDK-level proof that stepReview() itself (not through review.ts) honors
+      //         the --optional rules skip: an empty rules glob flagged optional returns a
+      //         zeroed 0/0 result and writes a 🌙 skipped review file, with NO brain call
+      // .why = review.ts pre-checks the skip before genContextBrain, but stepReview is a
+      //        public SDK export a caller may invoke directly, so its defense-in-depth skip
+      //        branch must also hold. a review that calls the brain would cost tokens; the
+      //        skip must not — so this asserts the deterministic zero-cost path
+      const testScene = useBeforeAll(async () => {
+        const outputPath = path.join(
+          os.tmpdir(),
+          `stepReview-optional-skip-${Date.now()}.md`,
+        );
+        return { outputPath };
+      });
+      afterAll(async () =>
+        fs.rm(testScene.outputPath, { force: true }).catch(() => undefined),
+      );
+
+      when(
+        '[t0] stepReview is called with empty rules + optional rules',
+        () => {
+          const result = useThen('stepReview resolves (no throw)', async () =>
+            stepReview(
+              {
+                rules: 'nonexistent/**/*.md',
+                paths: 'src/*.ts',
+                optional: ['rules'],
+                output: testScene.outputPath,
+                focus: 'push',
+                goal: 'representative',
+                cwd: ASSETS_TYPESCRIPT,
+              },
+              { brain: scene.brain },
+            ),
+          );
+
+          then('it returns a zeroed 0/0 result tagged outcome=skipped', () => {
+            expect(result.outcome).toEqual('skipped');
+            expect(result.metrics.files.rulesCount).toEqual(0);
+            expect(result.metrics.realized.time).toEqual('PT0S');
+            expect(result.metrics.realized.tokens.input).toEqual(0);
+            expect(result.metrics.realized.tokens.output).toEqual(0);
+          });
+
+          then('its formatted review carries the skip header + 0/0', () => {
+            expect(result.review.formatted).toContain('🌙 skipped');
+            expect(result.review.formatted).toContain('0 blockers');
+            expect(result.review.formatted).toContain('0 nitpicks');
+          });
+
+          then('it writes the skip review to the --output path', async () => {
+            const written = await fs.readFile(testScene.outputPath, 'utf-8');
+            expect(written).toContain('🌙 skipped');
+            expect(written).toContain('0 blockers');
+            expect(written).toContain('0 nitpicks');
+          });
+        },
+      );
+    },
+  );
+
+  given(
+    '[case13] --optional refs → stepReview throws (refs-optional not supported)',
+    () => {
+      // .what = stepReview's defense-in-depth rejects an unsupported --optional supply name
+      //         even though review.ts would have already rejected it at the CLI boundary
+      // .why = refs-optional is deferred (YAGNI); a direct SDK caller must still fail loud
+      //        on `optional: ['refs']` rather than silently disable strictness
+      when('[t0] stepReview is called with optional refs', () => {
+        then('throws BadRequestError about unsupported supply', async () => {
+          const error = await getError(
+            stepReview(
+              {
+                rules: 'nonexistent/**/*.md',
+                paths: 'src/*.ts',
+                optional: ['refs'],
+                output: '/tmp/review-optional-refs.md',
+                focus: 'push',
+                goal: 'representative',
+                cwd: ASSETS_TYPESCRIPT,
+              },
+              { brain: scene.brain },
+            ),
+          );
+
+          expect(error).toBeDefined();
+          expect(error.message).toContain('--optional does not support: refs');
+        });
+      });
+    },
+  );
 });

@@ -1,0 +1,35 @@
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
+
+exports[`driver.route.optional-skip.acceptance given: [case1] a stone whose peer guard reviews with empty rules + --optional rules when: [t0] the driver passes the stone (guard runs the real review skill) then: the guard fan-out stdout matches its snapshot (time+temp sanitized) 1`] = `
+"🦉 the way speaks for itself
+   │
+   ├─ r1: optional-skip (l1, 1/3)
+   │   ├─ approved [TIME]
+   │   ├─ 0 blockers ✓
+   │   ├─ 0 nitpicks ✓
+   │   ├─ given: .reviews/peer/1.execute._.review.i001.a53f758c613a8ad70e.r001._.given.by_peer.optional-skip.md
+   │   └─ taken: .reviews/peer/1.execute._.review.i001.a53f758c613a8ad70e.r001._.taken.by_self.optional-skip.md
+   │
+   └─ ✓ judge.1 - allowed [TIME]
+
+🗿 route.stone.set
+   ├─ stone = 1.execute
+   ├─ passage = allowed
+   ├─ guard
+   │  ├─ artifacts
+   │  │   └─ src/**/*.ts
+   │  ├─ reviews
+   │  │   └─ r1: optional-skip (l1, 1/3)
+   │  │       ├─ approved [TIME]
+   │  │       ├─ 0 blockers ✓
+   │  │       ├─ 0 nitpicks ✓
+   │  │       ├─ given: .reviews/peer/1.execute._.review.i001.a53f758c613a8ad70e.r001._.given.by_peer.optional-skip.md
+   │  │       └─ taken: .reviews/peer/1.execute._.review.i001.a53f758c613a8ad70e.r001._.taken.by_self.optional-skip.md
+   │  └─ judges
+   │      └─ j1: rhx route.stone.judge --mechanism reviewed? --stone $stone --route $route --allow-blockers 0 --allow-nitpicks 1
+   │          └─ finished [TIME] ✓
+   │
+   └─ the way continues, run
+      └─ rhx route.drive
+"
+`;

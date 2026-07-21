@@ -14,6 +14,9 @@ options:
   --diffs <range>     diff range: since-main, since-commit, since-staged (default: since-main)
   --join <mode>       how to join --paths-with and --diffs: intersect or union (default: intersect)
   --refs <globs>      glob pattern(s) for reference files (can repeat)
+  --optional <supply> mark a supply as optional; when its glob matches zero files, skip the
+                      review (emit 0 blockers / 0 nitpicks, exit 0) instead of a fail-loud error.
+                      supported: rules (can repeat)
   --conversation <files>  comma-separated prior peer-review dialogue files (.given + .taken) to thread as context (opt-in; guard expands $conversation)
   --output <path>     output file path (default: .review/$branch/$isotime.output.md)
   --focus <mode>      review focus: push or pull (default: push)

@@ -84,6 +84,27 @@ if you author your own reviewer, the **minimal** valid stdout is just the two nu
 1 nitpick
 ```
 
+## .the skip variant (`--optional`)
+
+when the `rhx review` skill runs with `--optional rules` and the rules glob matches zero
+files, it does not grade — there is no rubric — so it **skips**. the skip still honors this
+contract: it emits a distinct `🌙 skipped` header for human legibility, plus the two required
+numeric lines (`0 blockers` / `0 nitpicks`), and exits `0`:
+
+```
+🌙 skipped — no rules found (--optional rules)
+   ├─ review: <output path>
+   └─ summary
+      ├─ 0 blockers
+      └─ 0 nitpicks
+```
+
+(no `logs:` line — a skip writes no log artifacts, so it advertises no log dir.)
+
+the `🌙 skipped` header is prose the deterministic regex harmlessly ignores (it reads only the
+two numbers), so the guard tallies the `0/0` as **approved** — no guard, verdict, or contract
+change. the real `0/0` counts (never a faked abstain) keep `rule.forbid.failhide` honored.
+
 ## .what the guard does with it
 
 | your stdout | guard reads | outcome |

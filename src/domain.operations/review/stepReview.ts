@@ -7,6 +7,7 @@ import { type BrainChoice, type ContextBrain, isBrainRepl } from 'rhachet';
 import { z } from 'zod';
 
 import { compileReviewPrompt } from '@src/domain.operations/review/compileReviewPrompt';
+import { emitReviewSkip } from '@src/domain.operations/review/emitReviewSkip';
 import { enumFilesForReviewSubjects } from '@src/domain.operations/review/enumFilesForReviewSubjects';
 import { enumFilesForReviewSupplies } from '@src/domain.operations/review/enumFilesForReviewSupplies';
 import { formatReviewOutput } from '@src/domain.operations/review/formatReviewOutput';
@@ -21,6 +22,12 @@ import {
   type FileDiff,
   getAllFileDiffsFromRange,
 } from '@src/domain.operations/review/getAllFileDiffsFromRange';
+import { getReviewDisplayPath } from '@src/domain.operations/review/getReviewDisplayPath';
+import { isReviewRulesSkip } from '@src/domain.operations/review/getReviewOptionalSkipDecision';
+import {
+  getSuppliesUnsupported,
+  SUPPLIES_OPTIONAL_SUPPORTED,
+} from '@src/domain.operations/review/getSuppliesOptionalSupported';
 import { isPathMatchedByGlob } from '@src/domain.operations/review/isPathMatchedByGlob';
 import { writeInputArtifacts } from '@src/domain.operations/review/writeInputArtifacts';
 import { writeOutputArtifacts } from '@src/domain.operations/review/writeOutputArtifacts';
@@ -61,6 +68,14 @@ const schemaOfReviewOutput = z.object({
  * .why = enables caller to inspect review outcome and artifacts
  */
 export type StepReviewResult = {
+  /**
+   * .what = which path produced this result: a real graded review, or an `--optional` skip
+   * .why = the skip path zeroes the metrics and points `log.dir` at the output file's parent
+   *        (no debug artifacts live there), so a direct SDK consumer needs a typed discriminant
+   *        to tell the two apart — without it they'd string-match `🌙 skipped` or infer from
+   *        `metrics.files.rulesCount === 0` (rule.forbid.inline-decode-friction).
+   */
+  outcome: 'reviewed' | 'skipped';
   review: {
     formatted: string;
   };
@@ -221,6 +236,7 @@ export const stepReview = async (
     pathsWout?: string | string[];
     join?: 'union' | 'intersect';
     refs?: string | string[];
+    optional?: string[];
     conversation?: string | string[];
     output: string;
     focus: 'pull' | 'push';
@@ -254,6 +270,19 @@ export const stepReview = async (
       'must specify at least one of --rules, --diffs, or --paths',
     );
 
+  // validate --optional supply names against the shared allow-list (defense-in-depth)
+  // .why = stepReview is a public SDK export; a direct caller bypasses the CLI's own
+  //        validation, so the domain op must own its invariant too — a typo'd or unsupported
+  //        supply must fail loud here, never silently no-op (rule.forbid.failhide)
+  const optionalUnsupported = getSuppliesUnsupported({
+    supplies: input.optional ?? [],
+  });
+  if (optionalUnsupported.length > 0)
+    throw new BadRequestError(
+      `--optional does not support: ${optionalUnsupported.join(', ')} (supported: ${SUPPLIES_OPTIONAL_SUPPORTED.join(', ')})`,
+      { optional: input.optional },
+    );
+
   // ensure output parent directory exists (create if absent)
   const outputParent = path.dirname(input.output);
   const outputParentAbsolute = path.isAbsolute(outputParent)
@@ -270,6 +299,20 @@ export const stepReview = async (
     ? input.rules
     : [input.rules].filter(Boolean);
   const ruleFiles = await enumFilesForReviewSupplies({ glob: ruleGlobs, cwd });
+
+  // when rules are flagged --optional, an empty rules glob is a valid skip, not an error:
+  // emit a 0/0 skip (exit 0) so the guard tallies approved and the stone proceeds.
+  // .note = defense-in-depth — the CLI (review.ts) already skips before brain discovery; this
+  //         branch covers direct SDK callers that bypass review.ts. it shares one trigger rule
+  //         (isReviewRulesSkip) with the CLI, against the rule files enumerated just above.
+  if (isReviewRulesSkip({ ruleGlobs, ruleFiles, optional: input.optional }))
+    return emitReviewSkip({
+      supply: 'rules',
+      ruleGlobs,
+      output: input.output,
+      cwd,
+    });
+
   if (ruleGlobs.length > 0 && ruleFiles.length === 0) {
     console.error('');
     console.error('🦉 woah there');
@@ -850,7 +893,10 @@ export const stepReview = async (
   const outputAbsolute = path.isAbsolute(input.output)
     ? input.output
     : path.join(cwd, input.output);
-  const reviewRelativePath = path.relative(cwd, outputAbsolute);
+  // single source of truth for the review path shown in BOTH the file header and the
+  // stdout summary — getReviewDisplayPath returns absolute when the relative form escapes
+  // cwd (starts with '..'), so the two render sites never disagree (single-source-of-truth-for-render)
+  const reviewDisplayPath = getReviewDisplayPath({ outputAbsolute, cwd });
   const blockersCount = reviewIssues.output.blockers.length;
   const nitpicksCount = reviewIssues.output.nitpicks.length;
 
@@ -861,7 +907,7 @@ export const stepReview = async (
     const lines = [
       summaryIcon,
       `   ├─ logs: ${logDirRelative}`,
-      `   ├─ review: ${reviewRelativePath}`,
+      `   ├─ review: ${reviewDisplayPath}`,
       `   └─ summary`,
       `      ├─ ${blockersCount} blockers${blockersCount > 0 ? ' 🔴' : ''}`,
       `      └─ ${nitpicksCount} nitpicks${nitpicksCount > 0 ? ' 🟠' : ''}`,
@@ -897,9 +943,7 @@ export const stepReview = async (
       },
       paths: {
         logsRelative: logDirRelative,
-        reviewRelative: reviewRelativePath.startsWith('..')
-          ? outputAbsolute
-          : reviewRelativePath,
+        reviewRelative: reviewDisplayPath,
       },
       summary: {
         blockersCount,
@@ -909,6 +953,7 @@ export const stepReview = async (
   );
 
   return {
+    outcome: 'reviewed',
     review: {
       formatted: formattedReview,
     },

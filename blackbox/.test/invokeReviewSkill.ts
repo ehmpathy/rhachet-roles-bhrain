@@ -69,6 +69,7 @@ export const invokeReviewSkill = async (input: {
   diffs?: string;
   join?: 'union' | 'intersect';
   refs?: string | string[];
+  optional?: string | string[];
   conversation?: string;
   output?: string;
   focus?: 'push' | 'pull';
@@ -88,6 +89,15 @@ export const invokeReviewSkill = async (input: {
     return refsArray.map((ref) => `--refs "${ref}"`).join(' ');
   })();
 
+  // build optional flags (support single string or array)
+  const optionalFlags = (() => {
+    if (!input.optional) return '';
+    const optionalArray = Array.isArray(input.optional)
+      ? input.optional
+      : [input.optional];
+    return optionalArray.map((supply) => `--optional "${supply}"`).join(' ');
+  })();
+
   const cmd = [
     `bash "${skillPath}"`,
     `--rules "${input.rules}"`,
@@ -95,6 +105,7 @@ export const invokeReviewSkill = async (input: {
     input.diffs ? `--diffs "${input.diffs}"` : '',
     input.join ? `--join ${input.join}` : '',
     refsFlags,
+    optionalFlags,
     input.conversation ? `--conversation "${input.conversation}"` : '',
     input.output ? `--output "${input.output}"` : '',
     input.focus ? `--focus ${input.focus}` : '',

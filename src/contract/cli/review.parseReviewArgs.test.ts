@@ -74,4 +74,56 @@ describe('parseReviewArgs', () => {
       });
     });
   });
+
+  given('[case5] a single --optional flag', () => {
+    when('[t0] parsed', () => {
+      then('accumulates the supply name into an array', () => {
+        const options = parseReviewArgs(
+          asArgv(['--rules', 'r.md', '--optional', 'rules']),
+        );
+        expect(options.optional).toEqual(['rules']);
+      });
+    });
+  });
+
+  given('[case6] a repeated --optional flag', () => {
+    when('[t0] parsed', () => {
+      then('accumulates every supply name in order', () => {
+        const options = parseReviewArgs(
+          asArgv([
+            '--rules',
+            'r.md',
+            '--optional',
+            'rules',
+            '--optional',
+            'refs',
+          ]),
+        );
+        expect(options.optional).toEqual(['rules', 'refs']);
+      });
+    });
+  });
+
+  given('[case7] no --optional flag', () => {
+    when('[t0] parsed', () => {
+      then('optional is undefined, never an empty array', () => {
+        const options = parseReviewArgs(asArgv(['--rules', 'r.md']));
+        expect(options.optional).toBeUndefined();
+      });
+    });
+  });
+
+  given('[case8] a bare --optional with no supply value', () => {
+    when('[t0] parsed (next token is another flag)', () => {
+      then(
+        'optional is a present-but-empty array (so review() can fail loud)',
+        () => {
+          const options = parseReviewArgs(
+            asArgv(['--optional', '--rules', 'r.md']),
+          );
+          expect(options.optional).toEqual([]);
+        },
+      );
+    });
+  });
 });

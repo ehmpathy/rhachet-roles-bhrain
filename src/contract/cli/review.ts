@@ -7,7 +7,13 @@ import {
   getAvailableBrainsInWords,
 } from 'rhachet/brains';
 
+import { emitReviewSkip } from '@src/domain.operations/review/emitReviewSkip';
 import { genDefaultReviewOutputPath } from '@src/domain.operations/review/genDefaultReviewOutputPath';
+import { getReviewOptionalSkipDecision } from '@src/domain.operations/review/getReviewOptionalSkipDecision';
+import {
+  getSuppliesUnsupported,
+  SUPPLIES_OPTIONAL_SUPPORTED,
+} from '@src/domain.operations/review/getSuppliesOptionalSupported';
 import { stepReview } from '@src/domain.operations/review/stepReview';
 
 /**
@@ -43,6 +49,9 @@ options:
   --diffs <range>     diff range: since-main, since-commit, since-staged (default: since-main)
   --join <mode>       how to join --paths-with and --diffs: intersect or union (default: intersect)
   --refs <globs>      glob pattern(s) for reference files (can repeat)
+  --optional <supply> mark a supply as optional; when its glob matches zero files, skip the
+                      review (emit 0 blockers / 0 nitpicks, exit 0) instead of a fail-loud error.
+                      supported: rules (can repeat)
   --conversation <files>  comma-separated prior peer-review dialogue files (.given + .taken) to thread as context (opt-in; guard expands $conversation)
   --output <path>     output file path (default: .review/$branch/$isotime.output.md)
   --focus <mode>      review focus: push or pull (default: push)
@@ -96,6 +105,7 @@ export const parseReviewArgs = (
   pathsWout: string | undefined;
   join: 'union' | 'intersect';
   refs: string[] | undefined;
+  optional: string[] | undefined;
   conversation: string[] | undefined;
   output: string | undefined;
   focus: 'push' | 'pull';
@@ -123,6 +133,14 @@ export const parseReviewArgs = (
           (options.refs as string[]).push(value);
           i++;
         }
+      } else if (key === 'optional') {
+        // --optional can repeat; record presence (as []) even when the value is absent or
+        // another flag, so review() can fail loud on a bare `--optional` (no supply named)
+        if (!options.optional) options.optional = [];
+        if (value && !value.startsWith('--')) {
+          (options.optional as string[]).push(value);
+          i++;
+        }
       } else if (value && !value.startsWith('--')) {
         // .note = --conversation is a normal single-value flag: the guard expands
         //         $conversation to ONE comma-joined token, split into files below
@@ -140,6 +158,7 @@ export const parseReviewArgs = (
     pathsWout: options['paths-wout'] as string | undefined,
     join: (options.join as 'union' | 'intersect') ?? 'intersect',
     refs: options.refs as string[] | undefined,
+    optional: options.optional as string[] | undefined,
     conversation: options.conversation
       ? (options.conversation as string).split(',')
       : undefined,
@@ -184,9 +203,52 @@ export const review = async (): Promise<void> => {
     process.exit(2);
   }
 
+  // validate --optional supply names (fail loud: never silently disable strictness)
+  // .note = only 'rules' is supported today; 'refs' is a deliberate future extension, so it
+  //         is rejected loudly rather than silently accepted as a no-op (see Q7 + edgecases)
+  if (options.optional !== undefined) {
+    // a bare `--optional` (no supply named) must not quietly disable the strict default
+    if (options.optional.length === 0) {
+      console.error(
+        'error: --optional requires a supply name (supported: rules)',
+      );
+      console.error('run with --help for usage');
+      process.exit(2);
+    }
+    // reject any unknown or not-yet-supported supply name
+    const unsupported = getSuppliesUnsupported({ supplies: options.optional });
+    if (unsupported.length > 0) {
+      console.error(
+        `error: --optional does not support: ${unsupported.join(', ')} (supported: ${SUPPLIES_OPTIONAL_SUPPORTED.join(', ')})`,
+      );
+      console.error('run with --help for usage');
+      process.exit(2);
+    }
+  }
+
   // determine output path (generate default if not specified)
   const cwd = process.cwd();
   const outputPath = options.output ?? genDefaultReviewOutputPath({ cwd });
+
+  // fast --optional skip pre-check, BEFORE expensive brain discovery
+  // .why = the vision requires an empty-rules skip to pay ZERO brain cost; genContextBrain
+  //        below walks the filesystem for brain packages, so the emptiness check must run
+  //        first (mirrors the "validate required args before expensive brain discovery"
+  //        pre-check above). the skip invokes no brain, so it is deterministic and zero-cost.
+  const skipDecision = await getReviewOptionalSkipDecision({
+    rules: options.rules,
+    optional: options.optional,
+    cwd,
+  });
+  if (skipDecision.skip) {
+    await emitReviewSkip({
+      supply: 'rules',
+      ruleGlobs: skipDecision.ruleGlobs,
+      output: outputPath,
+      cwd,
+    });
+    process.exit(0);
+  }
 
   // create brain context via discovery with credentials
   // .note = uses env: 'prep' because review is used to prepare code, not test it
@@ -210,6 +272,7 @@ export const review = async (): Promise<void> => {
         pathsWout: options.pathsWout,
         join: options.join,
         refs: options.refs,
+        optional: options.optional,
         conversation: options.conversation,
         output: outputPath,
         focus: options.focus,
