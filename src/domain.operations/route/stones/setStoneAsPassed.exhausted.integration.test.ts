@@ -121,21 +121,18 @@ describe('setStoneAsPassed.exhausted', () => {
       );
 
       then(
-        'passage.jsonl has blocked entry with review.peer.exhausted',
+        'passage.jsonl has an exhausted status entry (its own status, no blocker)',
         async () => {
           const passagePath = path.join(tempDir, '.route', 'passage.jsonl');
           const content = await fs.readFile(passagePath, 'utf-8');
           const lines = content.trim().split('\n');
-          const blockedEntry = lines
+          const exhaustedEntry = lines
             .map((line) => JSON.parse(line))
-            .find(
-              (entry) =>
-                entry.status === 'blocked' &&
-                entry.blocker === 'review.peer.exhausted',
-            );
+            .find((entry) => entry.status === 'exhausted');
 
-          expect(blockedEntry).toBeDefined();
-          expect(blockedEntry.reason).toContain('limited');
+          expect(exhaustedEntry).toBeDefined();
+          expect(exhaustedEntry.blocker).toBeUndefined();
+          expect(exhaustedEntry.reason).toContain('limited');
         },
       );
     });

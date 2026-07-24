@@ -5,7 +5,7 @@ exports[`driver.route.rewind-drive.acceptance given: [case1] route.drive after r
 
 🗿 route.drive
    ├─ where do we go?
-   │  ├─ route = 
+   │  ├─ route = .
    │  └─ stone = 1.vision
    │
    ├─ are you here?
@@ -41,7 +41,7 @@ exports[`driver.route.rewind-drive.acceptance given: [case1] route.drive after r
 
 🗿 route.drive
    ├─ where do we go?
-   │  ├─ route = 
+   │  ├─ route = .
    │  └─ stone = 2.criteria
    │
    ├─ are you here?
@@ -77,7 +77,7 @@ exports[`driver.route.rewind-drive.acceptance given: [case2] unguarded stone wit
 
 🗿 route.drive
    ├─ where do we go?
-   │  ├─ route = 
+   │  ├─ route = .
    │  └─ stone = 2.criteria
    │
    ├─ are you here?
@@ -112,7 +112,7 @@ exports[`driver.route.rewind-drive.acceptance given: [case2] unguarded stone wit
 "🦉 where were we?
 
 🗿 route.drive
-   └─ route complete! 🎉
+   └─ route complete! 🌴🤙
 "
 `;
 
@@ -171,7 +171,7 @@ exports[`driver.route.rewind-drive.acceptance given: [case4] re-pass after rewin
 
 🗿 route.drive
    ├─ where do we go?
-   │  ├─ route = 
+   │  ├─ route = .
    │  └─ stone = 1.vision
    │
    ├─ are you here?
@@ -219,7 +219,7 @@ exports[`driver.route.rewind-drive.acceptance given: [case4] re-pass after rewin
 
 🗿 route.drive
    ├─ where do we go?
-   │  ├─ route = 
+   │  ├─ route = .
    │  └─ stone = 2.criteria
    │
    ├─ are you here?

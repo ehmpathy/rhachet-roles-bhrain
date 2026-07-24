@@ -1,0 +1,128 @@
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
+
+exports[`driver.route.halt.acceptance given: [case1] a driver-wall blocked stone (status blocked, no blocker) when: [t0] route.drive is invoked in direct mode (no --when) then: stdout matches snapshot 1`] = `
+"🦉 where were we?
+
+🗿 route.drive
+   ├─ where do we go?
+   │  ├─ route = .
+   │  └─ stone = 1.feature
+   │
+   └─ halted, stone marked blocked
+      └─ reason: blocker/1.feature.md
+"
+`;
+
+exports[`driver.route.halt.acceptance given: [case2] a driver-wall blocked stone, read at onBoot when: [t0] route.drive is invoked with --when hook.onBoot then: stdout matches snapshot 1`] = `
+"🦉 where were we?
+
+🗿 route.drive
+   ├─ where do we go?
+   │  ├─ route = .
+   │  └─ stone = 1.feature
+   │
+   └─ halted, stone marked blocked
+      └─ reason: blocker/1.feature.md
+"
+`;
+
+exports[`driver.route.halt.acceptance given: [case3] an exhausted-budget stone (status exhausted) when: [t0] route.drive is invoked in direct mode (no --when) then: stdout matches snapshot 1`] = `
+"🦉 where were we?
+
+🗿 route.drive
+   ├─ where do we go?
+   │  ├─ route = .
+   │  └─ stone = 1.feature
+   │
+   └─ halted, peer reviewer budget exhausted
+      ├─ reason: peer reviewer budget exhausted
+      │
+      ├─ reviews
+      │
+      ├─ please ask a human to either
+      │  ├─ approve as-is
+      │  │  └─ rhx route.stone.set --stone 1.feature --as approved
+      │  │
+      │  └─ extend budget (then rerun)
+      │     └─ rhx route.guard.budget --for review --add N --stone 1.feature
+      │
+      └─ once they approve, run
+         └─ rhx route.stone.set --stone 1.feature --as passed
+"
+`;
+
+exports[`driver.route.halt.acceptance given: [case4] an exhausted-budget stone, read at onBoot when: [t0] route.drive is invoked with --when hook.onBoot then: stdout matches snapshot 1`] = `
+"🦉 where were we?
+
+🗿 route.drive
+   ├─ where do we go?
+   │  ├─ route = .
+   │  └─ stone = 1.feature
+   │
+   └─ halted, peer reviewer budget exhausted
+      ├─ reason: peer reviewer budget exhausted
+      │
+      ├─ reviews
+      │
+      ├─ please ask a human to either
+      │  ├─ approve as-is
+      │  │  └─ rhx route.stone.set --stone 1.feature --as approved
+      │  │
+      │  └─ extend budget (then rerun)
+      │     └─ rhx route.guard.budget --for review --add N --stone 1.feature
+      │
+      └─ once they approve, run
+         └─ rhx route.stone.set --stone 1.feature --as passed
+"
+`;
+
+exports[`driver.route.halt.acceptance given: [case5] a driver-wall blocked stone, read at onStop when: [t0] route.drive is invoked with --when hook.onStop then: stdout matches snapshot 1`] = `
+"🦉 where were we?
+
+🗿 route.drive
+   ├─ where do we go?
+   │  ├─ route = .
+   │  └─ stone = 1.feature
+   │
+   └─ halted, stone marked blocked
+      └─ reason: blocker/1.feature.md
+"
+`;
+
+exports[`driver.route.halt.acceptance given: [case6] an exhausted-budget stone, read at onStop when: [t0] route.drive is invoked with --when hook.onStop then: stdout matches snapshot 1`] = `
+"🦉 where were we?
+
+🗿 route.drive
+   ├─ where do we go?
+   │  ├─ route = .
+   │  └─ stone = 1.feature
+   │
+   └─ halted, peer reviewer budget exhausted
+      ├─ reason: peer reviewer budget exhausted
+      │
+      ├─ reviews
+      │
+      ├─ please ask a human to either
+      │  ├─ approve as-is
+      │  │  └─ rhx route.stone.set --stone 1.feature --as approved
+      │  │
+      │  └─ extend budget (then rerun)
+      │     └─ rhx route.guard.budget --for review --add N --stone 1.feature
+      │
+      └─ once they approve, run
+         └─ rhx route.stone.set --stone 1.feature --as passed
+"
+`;
+
+exports[`driver.route.halt.acceptance given: [case7] a malfunctioned stone, read at onStop when: [t0] route.drive is invoked with --when hook.onStop then: stdout matches snapshot 1`] = `
+"🦉 where were we?
+
+🗿 route.drive
+   ├─ where do we go?
+   │  ├─ route = .
+   │  └─ stone = 1.feature
+   │
+   └─ 💥 halted, guard malfunction
+      └─ please tell a human this needs to be fixed before you can continue
+"
+`;

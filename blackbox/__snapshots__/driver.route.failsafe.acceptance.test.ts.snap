@@ -140,12 +140,19 @@ exports[`driver.route.failsafe.acceptance given: [case3] reviewer exits with cod
 "
 `;
 
+exports[`driver.route.failsafe.acceptance given: [case3] reviewer exits with code 1 (malfunction) when: [t1] passage.jsonl is checked then: passage entry matches snapshot 1`] = `
+"{
+  "status": "malfunction",
+  "stone": "3.review-malfunction"
+}"
+`;
+
 exports[`driver.route.failsafe.acceptance given: [case3] reviewer exits with code 1 (malfunction) when: [t2] route.drive is invoked after malfunction then: stdout matches snapshot 1`] = `
 "🦉 where were we?
 
 🗿 route.drive
    ├─ where do we go?
-   │  ├─ route = 
+   │  ├─ route = .
    │  └─ stone = 3.review-malfunction
    │
    └─ 💥 halted, guard malfunction
@@ -256,12 +263,19 @@ exports[`driver.route.failsafe.acceptance given: [case6] judge exits with code 1
 "
 `;
 
+exports[`driver.route.failsafe.acceptance given: [case6] judge exits with code 1 (malfunction) when: [t1] passage.jsonl is checked then: passage entry matches snapshot 1`] = `
+"{
+  "status": "malfunction",
+  "stone": "6.judge-malfunction"
+}"
+`;
+
 exports[`driver.route.failsafe.acceptance given: [case6] judge exits with code 1 (malfunction) when: [t2] route.drive is invoked after malfunction then: stdout matches snapshot 1`] = `
 "🦉 where were we?
 
 🗿 route.drive
    ├─ where do we go?
-   │  ├─ route = 
+   │  ├─ route = .
    │  └─ stone = 6.judge-malfunction
    │
    └─ 💥 halted, guard malfunction
@@ -337,4 +351,11 @@ exports[`driver.route.failsafe.acceptance given: [case7] both reviewer and judge
               ├─ finished [TIME] ✗
               └─ reason: command exited 1; see judge artifact for details
 "
+`;
+
+exports[`driver.route.failsafe.acceptance given: [case7] both reviewer and judge malfunction when: [t1] passage.jsonl is checked then: passage entry matches snapshot 1`] = `
+"{
+  "status": "malfunction",
+  "stone": "7.both-malfunction"
+}"
 `;

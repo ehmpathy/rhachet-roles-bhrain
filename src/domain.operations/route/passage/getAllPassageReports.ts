@@ -1,10 +1,8 @@
-import * as fs from 'fs/promises';
-import * as path from 'path';
-
-import { PassageReport } from '@src/domain.objects/Driver/PassageReport';
+import type { PassageReport } from '@src/domain.objects/Driver/PassageReport';
 
 import { compareStonePrefix } from '../stones/compareStonePrefix';
 import { getStoneOrderPrefixFromName } from '../stones/computeStoneOrderPrefix';
+import { getAllPassageReportsRaw } from './getAllPassageReportsRaw';
 
 /**
  * .what = reads current passage state per stone from passage.jsonl
@@ -20,21 +18,8 @@ import { getStoneOrderPrefixFromName } from '../stones/computeStoneOrderPrefix';
 export const getAllPassageReports = async (input: {
   route: string;
 }): Promise<PassageReport[]> => {
-  const passagePath = path.join(input.route, '.route', 'passage.jsonl');
-
-  // check if file exists
-  const fileFound = await fs
-    .access(passagePath)
-    .then(() => true)
-    .catch(() => false);
-  if (!fileFound) return [];
-
-  // read and parse all entries
-  const content = await fs.readFile(passagePath, 'utf-8');
-  const allReports = content
-    .split('\n')
-    .filter(Boolean)
-    .map((line) => new PassageReport(JSON.parse(line)));
+  // read every entry in raw append order via the one shared parser, then re-bucket
+  const allReports = await getAllPassageReportsRaw({ route: input.route });
 
   // track latest passage state, sticky approvals, and sticky overrules
   const latestByStone = new Map<string, PassageReport>();

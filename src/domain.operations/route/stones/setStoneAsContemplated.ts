@@ -1,5 +1,6 @@
 import { BadRequestError } from 'helpful-errors';
 
+import { PassageReport } from '@src/domain.objects/Driver/PassageReport';
 import { getGuardPeerReviews } from '@src/domain.objects/Driver/RouteStoneGuard';
 
 import {
@@ -7,6 +8,7 @@ import {
   type RouteGuardReviewPeerUncontemplated,
 } from '../guard/review/peer/getRouteGuardReviewPeerContemplationStatus';
 import { formatRouteGuardReviewPeerContemplatePrompt } from '../guard/tree/formatRouteGuardReviewPeerContemplatePrompt';
+import { setPassageReport } from '../passage/setPassageReport';
 import { findOneStoneByPattern } from './asStoneGlob';
 import { getAllStones } from './getAllStones';
 
@@ -73,6 +75,20 @@ export const setStoneAsContemplated = async (input: {
   // its own readyReason (sourced from the givens it already read), so do not
   // claim a response was recorded when the reviewer simply had no critique
   if (status.ready) {
+    // record the forward motion in passage.jsonl so a prior blocker clears
+    // .why = rule.require.forward-motion-clears-blocker — the latest entry wins, so
+    //        this 'contemplated' status supersedes a stale escalation halt; its
+    //        disposition is push (the machine's own peer-review reply), so the route
+    //        keeps its own momentum
+    await setPassageReport({
+      report: new PassageReport({
+        stone: stoneMatched.name,
+        status: 'contemplated',
+        reason: `contemplated review.peer: ${input.slug}`,
+      }),
+      route: input.route,
+    });
+
     const tail =
       status.readyReason === 'responded'
         ? `   └─ your response is recorded — the reviewer will see it next round`

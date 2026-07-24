@@ -59,3 +59,227 @@ exports[`stepRouteDrive.integration given: [case4] route with unpassed stones ca
       └─ when ready to continue, run:
          └─ rhx route.stone.set --stone 1 --as passed"
 `;
+
+exports[`stepRouteDrive.integration given: [case6] a stone blocked on an agent-fixable guard blocker when: [t0] stepRouteDrive is called with when=hook.onStop then: t0 stdout matches the pushed-forward snapshot: case6.t0.pushed-forward 1`] = `
+"🦉 where were we?
+
+🗿 route.drive
+   ├─ where do we go?
+   │  ├─ route = .temp/genTempDir.symlink/<ts>.drive-int-case6.<hash>
+   │  └─ stone = 1
+   │
+   ├─ are you here?
+   │  ├─ when ready for review, run:
+   │  │  └─ rhx route.stone.set --stone 1 --as arrived
+   │  └─ when ready to continue, run:
+   │     └─ rhx route.stone.set --stone 1 --as passed
+   │
+   ├─ here's the stone
+   │  ├─
+   │  │
+   │  │  # stone: implement
+   │  │  
+   │  │  done when:
+   │  │  - it works
+   │  └─
+   │
+   └─ are you here?
+      ├─ when ready for review, run:
+      │  └─ rhx route.stone.set --stone 1 --as arrived
+      └─ when ready to continue, run:
+         └─ rhx route.stone.set --stone 1 --as passed"
+`;
+
+exports[`stepRouteDrive.integration given: [case7] a stone escalated --as blocked, then re-arrived (fails) when: [t0] stepRouteDrive is called with when=hook.onStop then: t0 stdout matches the pushed-forward snapshot: case7.t0.pushed-forward 1`] = `
+"🦉 where were we?
+
+🗿 route.drive
+   ├─ where do we go?
+   │  ├─ route = .temp/genTempDir.symlink/<ts>.drive-int-case7.<hash>
+   │  └─ stone = 1
+   │
+   ├─ are you here?
+   │  ├─ when ready for review, run:
+   │  │  └─ rhx route.stone.set --stone 1 --as arrived
+   │  └─ when ready to continue, run:
+   │     └─ rhx route.stone.set --stone 1 --as passed
+   │
+   ├─ here's the stone
+   │  ├─
+   │  │
+   │  │  # stone: implement
+   │  │  
+   │  │  done when:
+   │  │  - it works
+   │  └─
+   │
+   └─ are you here?
+      ├─ when ready for review, run:
+      │  └─ rhx route.stone.set --stone 1 --as arrived
+      └─ when ready to continue, run:
+         └─ rhx route.stone.set --stone 1 --as passed"
+`;
+
+exports[`stepRouteDrive.integration given: [case8] a stone the driver escalated --as blocked (a wall) when: [t0] stepRouteDrive is called with when=hook.onStop then: t0 stdout matches the blocked-halt snapshot: case8.t0.blocked-halt 1`] = `
+"🦉 where were we?
+
+🗿 route.drive
+   ├─ where do we go?
+   │  ├─ route = .temp/genTempDir.symlink/<ts>.drive-int-case8.<hash>
+   │  └─ stone = 1
+   │
+   └─ halted, stone marked blocked
+      └─ reason: .temp/genTempDir.symlink/<ts>.drive-int-case8.<hash>/blocker/1.md"
+`;
+
+exports[`stepRouteDrive.integration given: [case9] a stone with an exhausted peer-budget status when: [t0] stepRouteDrive is called with when=hook.onStop then: t0 stdout matches the exhausted-halt snapshot: case9.t0.exhausted-halt 1`] = `
+"🦉 where were we?
+
+🗿 route.drive
+   ├─ where do we go?
+   │  ├─ route = .temp/genTempDir.symlink/<ts>.drive-int-case9.<hash>
+   │  └─ stone = 1
+   │
+   └─ halted, peer reviewer budget exhausted
+      ├─ reason: peer reviewer budget exhausted
+      │
+      ├─ reviews
+      │
+      ├─ please ask a human to either
+      │  ├─ approve as-is
+      │  │  └─ rhx route.stone.set --stone 1 --as approved
+      │  │
+      │  └─ extend budget (then rerun)
+      │     └─ rhx route.guard.budget --for review --add N --stone 1
+      │
+      └─ once they approve, run
+         └─ rhx route.stone.set --stone 1 --as passed"
+`;
+
+exports[`stepRouteDrive.integration given: [case10] --as promised clears a prior --as blocked escalation when: [t0] onStop before the driver moves (still at the wall) then: t0 stdout matches the blocked-halt snapshot: case10.t0.blocked-halt 1`] = `
+"🦉 where were we?
+
+🗿 route.drive
+   ├─ where do we go?
+   │  ├─ route = .temp/genTempDir.symlink/<ts>.drive-int-case10.<hash>
+   │  └─ stone = 1
+   │
+   └─ halted, stone marked blocked
+      └─ reason: .temp/genTempDir.symlink/<ts>.drive-int-case10.<hash>/blocker/1.md"
+`;
+
+exports[`stepRouteDrive.integration given: [case10] --as promised clears a prior --as blocked escalation when: [t1] the driver marks --as promised (forward motion) then: t1 promise slug matches the forward-motion snapshot: case10.t1.promise-slug 1`] = `"slug-a"`;
+
+exports[`stepRouteDrive.integration given: [case10] --as promised clears a prior --as blocked escalation when: [t2] onStop after the --as promised then: t2 stdout matches the pushed-forward snapshot: case10.t2.pushed-forward 1`] = `
+"🦉 where were we?
+
+🗿 route.drive
+   ├─ where do we go?
+   │  ├─ route = .temp/genTempDir.symlink/<ts>.drive-int-case10.<hash>
+   │  └─ stone = 1
+   │
+   ├─ are you here?
+   │  ├─ when ready for review, run:
+   │  │  └─ rhx route.stone.set --stone 1 --as arrived
+   │  └─ when ready to continue, run:
+   │     └─ rhx route.stone.set --stone 1 --as passed
+   │
+   ├─ here's the stone
+   │  ├─
+   │  │
+   │  │  # stone: implement
+   │  │  
+   │  │  done when:
+   │  │  - it works
+   │  └─
+   │
+   └─ are you here?
+      ├─ when ready for review, run:
+      │  └─ rhx route.stone.set --stone 1 --as arrived
+      └─ when ready to continue, run:
+         └─ rhx route.stone.set --stone 1 --as passed"
+`;
+
+exports[`stepRouteDrive.integration given: [case11] a malfunction status, then later forward motion when: [t0] onStop while the malfunction stands then: t0 stdout matches the malfunction-halt snapshot: case11.t0.malfunction-halt 1`] = `
+"🦉 where were we?
+
+🗿 route.drive
+   ├─ where do we go?
+   │  ├─ route = .temp/genTempDir.symlink/<ts>.drive-int-case11.<hash>
+   │  └─ stone = 1
+   │
+   └─ 💥 halted, guard malfunction
+      └─ please tell a human this needs to be fixed before you can continue"
+`;
+
+exports[`stepRouteDrive.integration given: [case11] a malfunction status, then later forward motion when: [t1] a later --as arrived supersedes the malfunction then: t1 passage matches the forward-motion snapshot: case11.t1.passage-after 1`] = `
+"{"stone":"1","status":"malfunction"}
+{"stone":"1","status":"arrived","reason":"entered guard reviews"}
+"
+`;
+
+exports[`stepRouteDrive.integration given: [case11] a malfunction status, then later forward motion when: [t2] onStop after the forward motion then: t2 stdout matches the pushed-forward snapshot: case11.t2.pushed-forward 1`] = `
+"🦉 where were we?
+
+🗿 route.drive
+   ├─ where do we go?
+   │  ├─ route = .temp/genTempDir.symlink/<ts>.drive-int-case11.<hash>
+   │  └─ stone = 1
+   │
+   ├─ are you here?
+   │  ├─ when ready for review, run:
+   │  │  └─ rhx route.stone.set --stone 1 --as arrived
+   │  └─ when ready to continue, run:
+   │     └─ rhx route.stone.set --stone 1 --as passed
+   │
+   ├─ here's the stone
+   │  ├─
+   │  │
+   │  │  # stone: implement
+   │  │  
+   │  │  done when:
+   │  │  - it works
+   │  └─
+   │
+   └─ are you here?
+      ├─ when ready for review, run:
+      │  └─ rhx route.stone.set --stone 1 --as arrived
+      └─ when ready to continue, run:
+         └─ rhx route.stone.set --stone 1 --as passed"
+`;
+
+exports[`stepRouteDrive.integration given: [case12] a malfunction status, at onBoot vs onStop when: [t0] stepRouteDrive is called at onBoot then: t0 onBoot stdout matches the surfaced-malfunction snapshot: case12.t0.onboot-malfunction 1`] = `
+"🦉 where were we?
+
+🗿 route.drive
+   ├─ where do we go?
+   │  ├─ route = .temp/genTempDir.symlink/<ts>.drive-int-case12.<hash>
+   │  └─ stone = 1
+   │
+   └─ 💥 halted, guard malfunction
+      └─ please tell a human this needs to be fixed before you can continue"
+`;
+
+exports[`stepRouteDrive.integration given: [case12] a malfunction status, at onBoot vs onStop when: [t1] stepRouteDrive is called at onStop then: t1 onStop stdout matches the escalated-malfunction snapshot: case12.t1.onstop-malfunction 1`] = `
+"🦉 where were we?
+
+🗿 route.drive
+   ├─ where do we go?
+   │  ├─ route = .temp/genTempDir.symlink/<ts>.drive-int-case12.<hash>
+   │  └─ stone = 1
+   │
+   └─ 💥 halted, guard malfunction
+      └─ please tell a human this needs to be fixed before you can continue"
+`;
+
+exports[`stepRouteDrive.integration given: [case13] a driver wall (--as blocked), read in direct mode when: [t0] stepRouteDrive is called in direct mode (no --when) then: t0 stdout matches the direct-mode blocked snapshot: case13.t0.direct-blocked 1`] = `
+"🦉 where were we?
+
+🗿 route.drive
+   ├─ where do we go?
+   │  ├─ route = .temp/genTempDir.symlink/<ts>.drive-int-case13.<hash>
+   │  └─ stone = 1
+   │
+   └─ halted, stone marked blocked
+      └─ reason: .temp/genTempDir.symlink/<ts>.drive-int-case13.<hash>/blocker/1.md"
+`;

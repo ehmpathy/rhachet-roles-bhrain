@@ -38,7 +38,7 @@ exports[`stepRouteDrive given: [case4] vibecheck snapshots when: [t1] route is c
 "🦉 where were we?
 
 🗿 route.drive
-   └─ route complete! 🎉"
+   └─ route complete! 🌴🤙"
 `;
 
 exports[`stepRouteDrive given: [case5] route with malfunction status when: [t2] malfunction output snapshot then: output matches snapshot 1`] = `

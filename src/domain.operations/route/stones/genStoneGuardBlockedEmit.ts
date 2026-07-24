@@ -1,4 +1,4 @@
-import type { RouteStoneGuardBlockerReport } from '@src/domain.objects/Driver/RouteStoneGuardBlockerReport';
+import type { RouteStoneGuardBlockerType } from '@src/domain.objects/Driver/RouteStoneGuardBlockerReport';
 
 import { setStoneGuardBlockerReport } from '../drive/setStoneGuardBlockerReport';
 
@@ -23,7 +23,7 @@ import { setStoneGuardBlockerReport } from '../drive/setStoneGuardBlockerReport'
 export const genStoneGuardBlockedEmit = async (input: {
   stone: string;
   route: string;
-  blocker: RouteStoneGuardBlockerReport['blocker'];
+  blocker: RouteStoneGuardBlockerType;
   reason: string;
   refs: { reviews: string[]; judges: string[] };
   emit: { stdout: string; stderr?: string };

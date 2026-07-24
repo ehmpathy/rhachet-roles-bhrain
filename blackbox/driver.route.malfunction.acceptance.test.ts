@@ -6,6 +6,7 @@ import {
   execAsync,
   genTempDirForRhachet,
   invokeRouteSkill,
+  sanitizeTimeForSnapshot,
 } from './.test/invokeRouteSkill';
 
 const ASSETS_DIR = path.join(__dirname, '.test/assets/route-malfunction');
@@ -64,13 +65,24 @@ describe('driver.route.malfunction.acceptance', () => {
         }),
       );
 
-      then('exit code is 3 (malfunction escalate)', () => {
-        expect(result.code).toEqual(3);
+      then('exit code is 0 (onBoot never blocks boot)', () => {
+        // onBoot is a session-start hook: it surfaces the malfunction message
+        // (a halt disposition), but always exits 0 — it never blocks the boot.
+        // the escalation reaches the human via the stderr message, not the code.
+        // (onStop malfunction exits 1; see stepRouteDrive.integration case12.)
+        expect(result.code).toEqual(0);
       });
 
       then('stderr mentions malfunction', () => {
         const combined = result.stdout + result.stderr;
         expect(combined.toLowerCase()).toContain('malfunction');
+      });
+
+      then('stdout matches snapshot', () => {
+        // snap the onBoot halt render so the malfunction-halt state is
+        // reconstructable from snapshots alone
+        // (rule.require.snapshot-every-journey-step)
+        expect(sanitizeTimeForSnapshot(result.stdout)).toMatchSnapshot();
       });
     });
 
@@ -102,6 +114,13 @@ describe('driver.route.malfunction.acceptance', () => {
         expect(lines).toHaveLength(2);
         expect(lines[0]).toContain('"malfunction"');
         expect(lines[1]).toContain('"passed"');
+      });
+
+      then('stdout matches snapshot', () => {
+        // snap the onBoot render after 'passed' supersedes 'malfunction' so the
+        // cleared-halt state is reconstructable from snapshots alone
+        // (rule.require.snapshot-every-journey-step)
+        expect(sanitizeTimeForSnapshot(result.stdout)).toMatchSnapshot();
       });
     });
   });

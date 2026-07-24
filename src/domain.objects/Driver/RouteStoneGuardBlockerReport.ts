@@ -9,7 +9,10 @@ import { DomainLiteral } from 'domain-objects';
  * blocker values:
  * - 'review.self': agent needs to promise review.selfs
  * - 'review.peer': peer reviews have blockers (agent can fix)
- * - 'review.peer.exhausted': peer reviewer budget exhausted (needs approval or budget extension)
+ * - 'review.peer.exhausted': LEGACY, read-only. no current write path emits this — an
+ *   exhausted peer budget is now recorded as its OWN passage status ('exhausted'), not a
+ *   blocker (see setStoneAsPassed). the member survives only so readers can interpret old
+ *   passage.jsonl rows written before the status split; do NOT write it on a new path.
  * - 'review.peer.uncontemplated': peer reviews await a driver's .taken response (agent can fix)
  * - 'judge': non-approval judges failed (agent can fix)
  * - 'approval': only approval judge blocks (agent must wait for human)
@@ -33,9 +36,13 @@ export interface RouteStoneGuardBlockerReport {
   stone: string;
 
   /**
-   * what blocks passage
+   * what blocks passage — null for a driver wall (--as blocked with no guard blocker)
+   *
+   * .why = a driver-initiated wall has NO guard blocker kind; it is not a judge
+   *        failure. null states "blocked, but by no guard gate" truthfully, as a mirror
+   *        of PassageReport.blocker's absence. never fabricate a 'judge' here.
    */
-  blocker: RouteStoneGuardBlockerType;
+  blocker: RouteStoneGuardBlockerType | null;
 
   /**
    * human-readable reason for the block

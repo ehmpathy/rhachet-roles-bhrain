@@ -1,0 +1,40 @@
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
+
+exports[`driver.route.usage-errors.acceptance given: [case1] route.guard.budget with a non-numeric --add when: [t0] --add is not a positive integer then: stderr matches snapshot: budget --add non-numeric 1`] = `
+"error: --add must be a positive integer
+"
+`;
+
+exports[`driver.route.usage-errors.acceptance given: [case2] route.mutate grant with an invalid action when: [t0] the grant action is not allow|block|get then: stderr matches snapshot: mutate grant invalid-action 1`] = `
+"
+route.mutate grant - manage route protection privilege
+
+usage:
+  rhx route.mutate grant allow   # grant privilege (human only)
+  rhx route.mutate grant block   # revoke privilege
+  rhx route.mutate grant get     # check privilege state
+
+options:
+  --route <path>    route path (default: auto-detect from branch)
+
+"
+`;
+
+exports[`driver.route.usage-errors.acceptance given: [case3] route.guard.budget with an absent --add when: [t0] the required --add flag is omitted then: stderr matches snapshot: budget --add absent 1`] = `
+"
+route.guard.budget - extend peer reviewer budget
+
+usage:
+  rhx route.guard.budget --for review --add 2 --stone 1.vision            # extend all peers
+  rhx route.guard.budget --for review --add 2 --peer primo --stone 1.vision  # extend specific peer
+  rhx route.guard.budget --for review --add 2 --stone 1.vision --route .behavior/my-feature
+
+options:
+  --for     resource type: "review" (required)
+  --add     number of budget rounds to add (required)
+  --stone   stone name with guard to update (required)
+  --peer    peer reviewer slug to extend (default: all peers)
+  --route   path to route directory (default: auto-detect from branch)
+
+"
+`;

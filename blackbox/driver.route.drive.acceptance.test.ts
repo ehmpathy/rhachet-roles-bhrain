@@ -618,4 +618,41 @@ given('[case6] hook mode allows stop when blocked on approval', () => {
       });
     });
   });
+
+  given('[case8] the --help flag', () => {
+    const scene = useBeforeAll(async () => {
+      const tempDir = genTempDirForRhachet({
+        slug: 'drive-help',
+        clone: ASSETS_DIR,
+      });
+      // link the driver role; --help needs no bound route (it is static)
+      await execAsync('npx rhachet roles link --role driver', { cwd: tempDir });
+      return { tempDir };
+    });
+
+    when('[t0] route.drive is invoked with --help', () => {
+      const result = useThen('route.drive prints its help', async () =>
+        invokeRouteSkill({
+          skill: 'route.drive',
+          args: { help: true },
+          cwd: scene.tempDir,
+        }),
+      );
+
+      then('exit code is 0', () => {
+        expect(result.code).toEqual(0);
+      });
+
+      then('stdout documents the halt-state output block', () => {
+        // this diff added the `output:` block that documents the halt states;
+        // snapshot it so the help surface cannot drift undetected
+        expect(result.stdout).toContain('output:');
+        expect(result.stdout).toContain('halted');
+      });
+
+      then('stdout matches snapshot', () => {
+        expect(sanitizeTimeForSnapshot(result.stdout)).toMatchSnapshot();
+      });
+    });
+  });
 });

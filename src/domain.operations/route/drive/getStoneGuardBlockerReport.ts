@@ -1,6 +1,6 @@
 import { RouteStoneGuardBlockerReport } from '@src/domain.objects/Driver/RouteStoneGuardBlockerReport';
 
-import { getAllPassageReports } from '../passage/getAllPassageReports';
+import { getLatestPassageForStone } from '../passage/getLatestPassageForStone';
 
 /**
  * .what = reads the blocker report for a stone
@@ -11,24 +11,24 @@ export const getStoneGuardBlockerReport = async (input: {
   stone: string;
   route: string;
 }): Promise<RouteStoneGuardBlockerReport | null> => {
-  // get all passage reports
-  const reports = await getAllPassageReports({ route: input.route });
+  // the true chronological latest entry determines the current state
+  // .note = getLatestPassageForStone reads raw file order — NOT getAllPassageReports,
+  //         whose sticky re-bucket would return a stale 'blocked' after an 'approved'
+  const latest = await getLatestPassageForStone({
+    stone: input.stone,
+    route: input.route,
+  });
+  if (!latest) return null;
 
-  // filter to this stone and get latest
-  const stoneReports = reports.filter((r) => r.stone === input.stone);
-  if (stoneReports.length === 0) {
-    return null;
-  }
-
-  // latest entry determines current state
-  const latest = stoneReports[stoneReports.length - 1]!;
   if (latest.status !== 'blocked') {
     return null; // stone passed or approved since blocked
   }
 
+  // a driver wall (--as blocked, no guard blocker) carries no blocker kind → null,
+  // never a fabricated 'judge' (a driver wall is not a judge failure)
   return new RouteStoneGuardBlockerReport({
     stone: latest.stone,
-    blocker: latest.blocker ?? 'judge',
+    blocker: latest.blocker ?? null,
     reason: latest.reason ?? null,
   });
 };

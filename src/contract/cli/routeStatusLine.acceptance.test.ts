@@ -1,4 +1,4 @@
-import { execFileSync, execSync } from 'child_process';
+import { execSync, spawnSync } from 'child_process';
 import * as fs from 'fs';
 import * as path from 'path';
 import { genTempDir, given, then, useBeforeAll, when } from 'test-fns';
@@ -37,6 +37,11 @@ const RENDER_COMMAND = `import(${JSON.stringify(
 /**
  * .what = runs the renderer via node -e from a given cwd (the harness anchor)
  * .why = mirrors the harness invocation; captures stdout, stderr, and exit code
+ *
+ * .note = uses spawnSync (not execFileSync) so stderr is captured on BOTH the
+ *         success (exit 0) and failure paths. the phase-degrade case exits 0 yet
+ *         logs to stderr; execFileSync only surfaces stderr on a throw, so it would
+ *         drop the degrade log and leave the fault unverified.
  */
 const runRenderer = (input: {
   cwd: string;
@@ -47,29 +52,16 @@ const runRenderer = (input: {
     args.length > 0
       ? ['-e', RENDER_COMMAND, '--', ...args]
       : ['-e', RENDER_COMMAND];
-  try {
-    const stdout = execFileSync('node', nodeArgs, {
-      cwd: input.cwd,
-      encoding: 'utf-8',
-      stdio: ['ignore', 'pipe', 'pipe'],
-    });
-    return { stdout, stderr: '', exitCode: 0 };
-  } catch (error) {
-    // execFileSync throws on non-zero exit; capture streams for assertion
-    const status =
-      error && typeof error === 'object' && 'status' in error
-        ? (error as { status: number }).status
-        : 1;
-    const stdout =
-      error && typeof error === 'object' && 'stdout' in error
-        ? String((error as { stdout: unknown }).stdout)
-        : '';
-    const stderr =
-      error && typeof error === 'object' && 'stderr' in error
-        ? String((error as { stderr: unknown }).stderr)
-        : '';
-    return { stdout, stderr, exitCode: status };
-  }
+  const result = spawnSync('node', nodeArgs, {
+    cwd: input.cwd,
+    encoding: 'utf-8',
+    stdio: ['ignore', 'pipe', 'pipe'],
+  });
+  return {
+    stdout: result.stdout ?? '',
+    stderr: result.stderr ?? '',
+    exitCode: result.status ?? 1,
+  };
 };
 
 /**
@@ -83,8 +75,103 @@ const runRenderer = (input: {
  */
 const asStableFaultStderr = (input: { stderr: string }): string => {
   const anchor = 'so the status line can pick one';
-  if (!input.stderr.includes(anchor)) return '<unexpected fault stderr shape>';
+  // fail loud, never hide: if the anchor is absent the fault shape has drifted — surface
+  // the real stderr so the change is revealed, rather than mask it behind a static
+  // placeholder that would snapshot-match and hide the regression (rule.forbid.failhide)
+  if (!input.stderr.includes(anchor))
+    throw new Error(
+      `fault stderr lacks the expected guidance anchor "${anchor}"; got:\n${input.stderr}`,
+    );
   return input.stderr.trim();
+};
+
+/**
+ * .what = a peer-review guard for stone 1.vision (one reviewer, level 1, budget 3)
+ * .why = the peer/blocked/exhausted/uncontemplated/fault cases all need the same guard shape
+ */
+const PEER_GUARD = [
+  'artifacts:',
+  '  - "$route/1.vision*.md"',
+  'reviews:',
+  '  peer:',
+  '    - slug: reviewer-a',
+  '      run: echo test',
+  '      budget: 3',
+  '      level: 1',
+  'judges: []',
+].join('\n');
+
+/**
+ * .what = a self-review guard for stone 1.vision (two self reviews)
+ * .why = the self-review phase case needs two self reviews so it can render r{done}/r{total}
+ */
+const SELF_GUARD = [
+  'artifacts:',
+  '  - "$route/1.vision*.md"',
+  'reviews:',
+  '  self:',
+  '    - slug: slug-a',
+  '      say: review a',
+  '    - slug: slug-b',
+  '      say: review b',
+  'judges: []',
+].join('\n');
+
+/**
+ * .what = builds a hermetic git repo with ONE branch-bound route (stone 1.vision) + optional state
+ * .why = each phase-variant acceptance case needs a bound route whose guard/passage/meter state
+ *        yields one specific phase; this centralizes the repo scaffold (rule.prefer.wet-over-dry:
+ *        8 near-identical setups earn a shared builder) so each case declares only its own state
+ */
+const genBoundRouteRepo = (input: {
+  slug: string;
+  guard?: string;
+  passage?: Record<string, unknown>[];
+  meters?: Record<string, unknown>[];
+  metersRaw?: string;
+  promiseSlugs?: string[];
+}): string => {
+  const tempDir = genTempDir({ slug: input.slug, git: true });
+  const branch = execSync('git rev-parse --abbrev-ref HEAD', {
+    cwd: tempDir,
+    encoding: 'utf-8',
+  }).trim();
+  const branchFlat = sanitizeBranchName({ branch });
+
+  const routeDir = path.join(tempDir, 'my-route');
+  const bindDir = path.join(routeDir, '.route');
+  fs.mkdirSync(bindDir, { recursive: true });
+  fs.writeFileSync(
+    path.join(routeDir, '0.wish.md'),
+    '# wish\n\nbuild a feature.',
+  );
+  fs.writeFileSync(path.join(routeDir, '1.vision.stone'), '# stone: vision');
+  fs.writeFileSync(path.join(bindDir, `.bind.${branchFlat}.flag`), '');
+
+  if (input.guard !== undefined)
+    fs.writeFileSync(path.join(routeDir, '1.vision.guard'), input.guard);
+  if (input.passage !== undefined)
+    fs.writeFileSync(
+      path.join(bindDir, 'passage.jsonl'),
+      `${input.passage.map((e) => JSON.stringify(e)).join('\n')}\n`,
+    );
+  if (input.metersRaw !== undefined)
+    fs.writeFileSync(
+      path.join(bindDir, 'reviewPeerMeters.jsonl'),
+      input.metersRaw,
+    );
+  else if (input.meters !== undefined)
+    fs.writeFileSync(
+      path.join(bindDir, 'reviewPeerMeters.jsonl'),
+      `${input.meters.map((e) => JSON.stringify(e)).join('\n')}\n`,
+    );
+  for (const slug of input.promiseSlugs ?? [])
+    fs.writeFileSync(
+      path.join(bindDir, `1.vision.guard.promise.${slug}.md`),
+      '# promised',
+    );
+
+  return tempDir;
 };
 
 describe('routeStatusLine.acceptance', () => {
@@ -164,7 +251,7 @@ describe('routeStatusLine.acceptance', () => {
             // print rhx's "🪨 run solid skill" header, only the bare status line
             const lines = out.stdout.split('\n').filter((l) => l.trim() !== '');
             expect(lines).toHaveLength(1);
-            expect(lines[0]).toEqual('🗿 1.vision');
+            expect(lines[0]).toEqual('🗿 1.vision, yield 🌾');
           },
         );
 
@@ -298,13 +385,365 @@ describe('routeStatusLine.acceptance', () => {
         () => {
           const lines = out.stdout.split('\n').filter((l) => l.trim() !== '');
           expect(lines).toHaveLength(1);
-          expect(lines[0]).toEqual('🗿 route complete 🎉');
+          expect(lines[0]).toEqual('🗿 route complete 🌴🤙');
         },
       );
 
       then('its output matches the complete snapshot', () => {
         expect(out.stdout).toMatchSnapshot(
           'route.status.line - route complete',
+        );
+      });
+
+      then('it exits 0', () => {
+        expect(out.exitCode).toEqual(0);
+      });
+    });
+  });
+
+  given('[case6] a bound route in the self-review phase', () => {
+    const scene = useBeforeAll(async () => ({
+      tempDir: genBoundRouteRepo({
+        slug: 'statusline-cli-case6',
+        guard: SELF_GUARD,
+        promiseSlugs: ['slug-a'],
+        passage: [
+          { stone: '1.vision', status: 'blocked', blocker: 'review.self' },
+        ],
+      }),
+    }));
+
+    when('[t0] the renderer runs with that cwd', () => {
+      const out = useBeforeAll(async () => runRenderer({ cwd: scene.tempDir }));
+
+      then('it emits the self-review phase (r1/r2 + magnifier)', () => {
+        const lines = out.stdout.split('\n').filter((l) => l.trim() !== '');
+        expect(lines[0]).toEqual('🗿 1.vision, review.self, r1/r2 🔍');
+      });
+
+      then('its output matches the self-review snapshot', () => {
+        expect(out.stdout).toMatchSnapshot('route.status.line - review.self');
+      });
+
+      then('it exits 0', () => {
+        expect(out.exitCode).toEqual(0);
+      });
+    });
+  });
+
+  given('[case7] a bound route in the peer-review phase', () => {
+    const scene = useBeforeAll(async () => ({
+      tempDir: genBoundRouteRepo({
+        slug: 'statusline-cli-case7',
+        guard: PEER_GUARD,
+        meters: [
+          { stone: '1.vision', reviewer: { slug: 'reviewer-a' }, rounds: 2 },
+        ],
+        passage: [
+          { stone: '1.vision', status: 'blocked', blocker: 'review.peer' },
+        ],
+      }),
+    }));
+
+    when('[t0] the renderer runs with that cwd', () => {
+      const out = useBeforeAll(async () => runRenderer({ cwd: scene.tempDir }));
+
+      then('it emits the peer-review phase (l1@i002 + magnifier)', () => {
+        const lines = out.stdout.split('\n').filter((l) => l.trim() !== '');
+        expect(lines[0]).toEqual('🗿 1.vision, review.peer, l1@i002 🔍');
+      });
+
+      then('its output matches the peer-review snapshot', () => {
+        expect(out.stdout).toMatchSnapshot('route.status.line - review.peer');
+      });
+
+      then('it exits 0', () => {
+        expect(out.exitCode).toEqual(0);
+      });
+    });
+  });
+
+  given('[case8] a bound route blocked on human approval', () => {
+    const scene = useBeforeAll(async () => ({
+      tempDir: genBoundRouteRepo({
+        slug: 'statusline-cli-case8',
+        passage: [
+          { stone: '1.vision', status: 'blocked', blocker: 'approval' },
+        ],
+      }),
+    }));
+
+    when('[t0] the renderer runs with that cwd', () => {
+      const out = useBeforeAll(async () => runRenderer({ cwd: scene.tempDir }));
+
+      then('it emits the approval-judge phase (approved? + wave)', () => {
+        const lines = out.stdout.split('\n').filter((l) => l.trim() !== '');
+        expect(lines[0]).toEqual('🗿 1.vision, judge, approved? 👋');
+      });
+
+      then('its output matches the approval-judge snapshot', () => {
+        expect(out.stdout).toMatchSnapshot(
+          'route.status.line - judge.approval',
+        );
+      });
+
+      then('it exits 0', () => {
+        expect(out.exitCode).toEqual(0);
+      });
+    });
+  });
+
+  given('[case9] a bound route blocked on a non-approval judge', () => {
+    const scene = useBeforeAll(async () => ({
+      tempDir: genBoundRouteRepo({
+        slug: 'statusline-cli-case9',
+        passage: [{ stone: '1.vision', status: 'blocked', blocker: 'judge' }],
+      }),
+    }));
+
+    when('[t0] the renderer runs with that cwd', () => {
+      const out = useBeforeAll(async () => runRenderer({ cwd: scene.tempDir }));
+
+      then('it emits the plain judge phase (magnifier, machine turn)', () => {
+        const lines = out.stdout.split('\n').filter((l) => l.trim() !== '');
+        expect(lines[0]).toEqual('🗿 1.vision, judge 🔍');
+      });
+
+      then('its output matches the non-approval-judge snapshot', () => {
+        expect(out.stdout).toMatchSnapshot('route.status.line - judge.machine');
+      });
+
+      then('it exits 0', () => {
+        expect(out.exitCode).toEqual(0);
+      });
+    });
+  });
+
+  given('[case10] a bound route driver-blocked over a peer phase', () => {
+    const scene = useBeforeAll(async () => ({
+      tempDir: genBoundRouteRepo({
+        slug: 'statusline-cli-case10',
+        guard: PEER_GUARD,
+        meters: [
+          { stone: '1.vision', reviewer: { slug: 'reviewer-a' }, rounds: 2 },
+        ],
+        passage: [{ stone: '1.vision', status: 'blocked' }],
+      }),
+    }));
+
+    when('[t0] the renderer runs with that cwd', () => {
+      const out = useBeforeAll(async () => runRenderer({ cwd: scene.tempDir }));
+
+      then('it emits the blocked overlay (peer phase + stop-hand)', () => {
+        const lines = out.stdout.split('\n').filter((l) => l.trim() !== '');
+        expect(lines[0]).toEqual(
+          '🗿 1.vision, review.peer, l1@i002, blocked ✋',
+        );
+      });
+
+      then('its output matches the blocked-overlay snapshot', () => {
+        expect(out.stdout).toMatchSnapshot(
+          'route.status.line - blocked.overlay',
+        );
+      });
+
+      then('it exits 0', () => {
+        expect(out.exitCode).toEqual(0);
+      });
+    });
+  });
+
+  given('[case11] a bound route with an exhausted peer-budget status', () => {
+    const scene = useBeforeAll(async () => ({
+      // exhausted is its own passage status now (not a 'review.peer.exhausted'
+      // blocker); it renders over its peer phase + waves for a human (approve/extend)
+      tempDir: genBoundRouteRepo({
+        slug: 'statusline-cli-case11',
+        guard: PEER_GUARD,
+        meters: [
+          { stone: '1.vision', reviewer: { slug: 'reviewer-a' }, rounds: 3 },
+        ],
+        passage: [{ stone: '1.vision', status: 'exhausted' }],
+      }),
+    }));
+
+    when('[t0] the renderer runs with that cwd', () => {
+      const out = useBeforeAll(async () => runRenderer({ cwd: scene.tempDir }));
+
+      then('it shows the peer phase + exhausted + a wave for a human', () => {
+        const lines = out.stdout.split('\n').filter((l) => l.trim() !== '');
+        expect(lines[0]).toEqual(
+          '🗿 1.vision, review.peer, l1@i003, exhausted 👋',
+        );
+      });
+
+      then('its output matches the exhausted snapshot', () => {
+        expect(out.stdout).toMatchSnapshot(
+          'route.status.line - peer.exhausted',
+        );
+      });
+
+      then('it exits 0', () => {
+        expect(out.exitCode).toEqual(0);
+      });
+    });
+  });
+
+  given('[case12] a bound route blocked on uncontemplated peer review', () => {
+    const scene = useBeforeAll(async () => ({
+      tempDir: genBoundRouteRepo({
+        slug: 'statusline-cli-case12',
+        guard: PEER_GUARD,
+        meters: [
+          { stone: '1.vision', reviewer: { slug: 'reviewer-a' }, rounds: 2 },
+        ],
+        passage: [
+          {
+            stone: '1.vision',
+            status: 'blocked',
+            blocker: 'review.peer.uncontemplated',
+          },
+        ],
+      }),
+    }));
+
+    when('[t0] the renderer runs with that cwd', () => {
+      const out = useBeforeAll(async () => runRenderer({ cwd: scene.tempDir }));
+
+      then('it emits the peer-review phase (agent replies)', () => {
+        const lines = out.stdout.split('\n').filter((l) => l.trim() !== '');
+        expect(lines[0]).toEqual('🗿 1.vision, review.peer, l1@i002 🔍');
+      });
+
+      then('its output matches the uncontemplated snapshot', () => {
+        expect(out.stdout).toMatchSnapshot(
+          'route.status.line - peer.uncontemplated',
+        );
+      });
+
+      then('it exits 0', () => {
+        expect(out.exitCode).toEqual(0);
+      });
+    });
+  });
+
+  given(
+    '[case13] a bound route whose phase derivation faults (degrade)',
+    () => {
+      const scene = useBeforeAll(async () => ({
+        // a corrupt meter file faults the PHASE read only (not the strict lookup); the
+        // SyntaxError is allowlisted, so the renderer degrades to the plain stone line
+        tempDir: genBoundRouteRepo({
+          slug: 'statusline-cli-case13',
+          guard: PEER_GUARD,
+          metersRaw: '{ this is not valid json\n',
+        }),
+      }));
+
+      when('[t0] the renderer runs with that cwd', () => {
+        const out = useBeforeAll(async () =>
+          runRenderer({ cwd: scene.tempDir }),
+        );
+
+        then(
+          'it degrades to the plain stone line (phase dropped, base kept)',
+          () => {
+            const lines = out.stdout.split('\n').filter((l) => l.trim() !== '');
+            expect(lines[0]).toEqual('🗿 1.vision');
+          },
+        );
+
+        then('it logs the phase fault to stderr (surfaced, not hidden)', () => {
+          expect(out.stderr).toContain('[route.status.line]');
+        });
+
+        then('its stderr matches the phase-fault snapshot', () => {
+          // snap only the renderer's own diagnostic line (the first stderr line):
+          // node may append an env-volatile object dump of the caught error after it,
+          // which is not part of the stable contract — the anchor line is
+          expect(out.stderr.split('\n')[0]).toMatchSnapshot(
+            'route.status.line - phase.degrade.stderr',
+          );
+        });
+
+        then('its output matches the degrade snapshot', () => {
+          expect(out.stdout).toMatchSnapshot(
+            'route.status.line - phase.degrade',
+          );
+        });
+
+        then(
+          'it exits 0 (a benign read fault degrades, does not crash)',
+          () => {
+            expect(out.exitCode).toEqual(0);
+          },
+        );
+      });
+    },
+  );
+
+  given(
+    '[case14] a bound route with a driver-blocked guardless stone (yield phase)',
+    () => {
+      // a driver wall (--as blocked, no guard blocker) over a guardless stone: phase stays
+      // yield (no guard → no review phase), disposition is halt(blocked) → the stop-hand ✋
+      const scene = useBeforeAll(async () => ({
+        tempDir: genBoundRouteRepo({
+          slug: 'statusline-cli-case14',
+          passage: [{ stone: '1.vision', status: 'blocked' }],
+        }),
+      }));
+
+      when('[t0] the renderer runs with that cwd', () => {
+        const out = useBeforeAll(async () =>
+          runRenderer({ cwd: scene.tempDir }),
+        );
+
+        then('it yields blocked ✋ (yield + blocked + stop-hand)', () => {
+          const lines = out.stdout.split('\n').filter((l) => l.trim() !== '');
+          expect(lines[0]).toEqual('🗿 1.vision, yield, blocked ✋');
+        });
+
+        then('its output matches the blocked-yield snapshot', () => {
+          expect(out.stdout).toMatchSnapshot(
+            'route.status.line - blocked.yield',
+          );
+        });
+
+        then('it exits 0', () => {
+          expect(out.exitCode).toEqual(0);
+        });
+      });
+    },
+  );
+
+  given('[case15] a bound route with a malfunctioned reviewer', () => {
+    // a guard malfunction (status malfunction) over a peer phase: disposition halt(malfunction)
+    // → the collision 💥, the hard-stop that a human must fix
+    const scene = useBeforeAll(async () => ({
+      tempDir: genBoundRouteRepo({
+        slug: 'statusline-cli-case15',
+        guard: PEER_GUARD,
+        meters: [
+          { stone: '1.vision', reviewer: { slug: 'reviewer-a' }, rounds: 2 },
+        ],
+        passage: [{ stone: '1.vision', status: 'malfunction' }],
+      }),
+    }));
+
+    when('[t0] the renderer runs with that cwd', () => {
+      const out = useBeforeAll(async () => runRenderer({ cwd: scene.tempDir }));
+
+      then('it shows the peer phase + malfunction + collision', () => {
+        const lines = out.stdout.split('\n').filter((l) => l.trim() !== '');
+        expect(lines[0]).toEqual(
+          '🗿 1.vision, review.peer, l1@i002, malfunction 💥',
+        );
+      });
+
+      then('its output matches the malfunction snapshot', () => {
+        expect(out.stdout).toMatchSnapshot(
+          'route.status.line - peer.malfunction',
         );
       });
 
