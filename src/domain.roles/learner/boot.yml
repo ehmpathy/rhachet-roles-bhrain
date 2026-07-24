@@ -3,7 +3,17 @@ always:
     say:
       # identity
       - briefs/im_an.obsessive_learner.md
+      - briefs/im_an.obsessive_learner.for.domain.terms.md
 
       # rules
       - briefs/rule.always.externalize.lessons.into_briefs.md
       - briefs/rule.always.externalize.tactics.into_skills.md
+      # the two domain-term rules — the learner authors + tends them, so it always
+      # boots them directly. they ALSO boot org-wide via role=any/boot.yml (they govern
+      # every role's contracts, not just the learner's); listed in both spots on purpose
+      - briefs/rule.require.domain-term-itemization.md
+      - briefs/rule.forbid.domain-term-synonyms.md
+
+      # domain-term templates + guides (learner tools for HOW to distill)
+      - briefs/template.domain-term.md
+      - briefs/howto.domain-term-disputes.[guide].md

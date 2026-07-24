@@ -1,0 +1,1 @@
+../../../../repo=bhrain/role=learner/briefs/rule.require.domain-term-itemization.md

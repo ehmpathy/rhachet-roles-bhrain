@@ -1,0 +1,217 @@
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
+
+exports[`learnDomainTerms (integration) given: [case1] the clone face — reflect-and-distill when: [t0] the skill runs with no --when then: the guide output matches snapshot (aesthetic review) 1`] = `
+"🦉 tend the terms
+
+📜 learn.domain.terms
+   ├─ glossary = .agent/repo=.this/role=any/briefs/domain.terms
+   ├─ scaffold written
+   │  ├─ .agent/.cache/repo=bhrain/role=learner/skill=learn.domain.terms/.gitignore
+   │  ├─ .agent/repo=.this/role=any/briefs/domain.terms/.readme.md
+   │  ├─ .agent/repo=.this/role=any/briefs/domain.terms/rule.require.domain-term-itemization.md
+   │  └─ .agent/repo=.this/role=any/briefs/domain.terms/rule.forbid.domain-term-synonyms.md
+   │
+   ├─ do this now — review + redistill the terms this round touched
+   │  ├─ 1. recall — which domain objects & operations did you declare or engage?
+   │  │        split each name into its terms (getStone → verb \`get\` + noun \`stone\`)
+   │  ├─ 2. conform-or-dispute each EXTANT term (already in the glossary):
+   │  │     ├─ your contract uses the canonical word → conform, you are done
+   │  │     └─ you reached for a synonym → rename to the canonical word,
+   │  │           or open a dispute in its \`.reason\` (adhere, or argue — never drift)
+   │  ├─ 3. pave the path for each NEW term (born this round, not yet in the glossary):
+   │  │     ├─ write its \`term=<x>._.choice.*\` cluster:
+   │  │     │     ├─ term=<x>._.choice._.md              (say: chosen word, kind, forbidden synonyms)
+   │  │     │     ├─ term=<x>._.choice.reason.md         (ref: etymology, disputes, evidence — required)
+   │  │     │     └─ term=<x>._.choice.example=<abc>.md  (ref: one per notable example — optional)
+   │  │     └─ or cite it — point to the extant declaration you reused
+   │  └─ 4. articulate progress.md — REQUIRED, the last step every round:
+   │        ├─ what you conformed, disputed, and paved this round — and why
+   │        ├─ a term the round SETTLED (declared dobj/dop, judged synonym) → capture it NOW
+   │        ├─ defer ONLY a term you truly cannot finish (needs discovery, dispute still open)
+   │        └─ sentinel = .agent/.cache/repo=bhrain/role=learner/skill=learn.domain.terms/progress.md
+   │
+   ├─ the canon — what a term is + why it is kept
+   │  ├─ why  · im_an.obsessive_learner.for.domain.terms.md (the trait)
+   │  ├─ rule · rule.require.domain-term-itemization (itemize each declared term)
+   │  ├─ rule · rule.forbid.domain-term-synonyms (canonical term, or dispute)
+   │  ├─ how  · template.domain-term.md + howto.domain-term-disputes.[guide].md
+   │  └─ glos · .agent/repo=.this/role=any/briefs/domain.terms/.readme.md
+   │
+   └─ 🪷 distill, then rest — the glossary grows, the floor rises for all who follow
+"
+`;
+
+exports[`learnDomainTerms (integration) given: [case1] the clone face — reflect-and-distill when: [t1] the skill runs again (scaffold already present) then: the no-op guide output matches snapshot (aesthetic review) 1`] = `
+"🦉 tend the terms
+
+📜 learn.domain.terms
+   ├─ glossary = .agent/repo=.this/role=any/briefs/domain.terms
+   │
+   ├─ do this now — review + redistill the terms this round touched
+   │  ├─ 1. recall — which domain objects & operations did you declare or engage?
+   │  │        split each name into its terms (getStone → verb \`get\` + noun \`stone\`)
+   │  ├─ 2. conform-or-dispute each EXTANT term (already in the glossary):
+   │  │     ├─ your contract uses the canonical word → conform, you are done
+   │  │     └─ you reached for a synonym → rename to the canonical word,
+   │  │           or open a dispute in its \`.reason\` (adhere, or argue — never drift)
+   │  ├─ 3. pave the path for each NEW term (born this round, not yet in the glossary):
+   │  │     ├─ write its \`term=<x>._.choice.*\` cluster:
+   │  │     │     ├─ term=<x>._.choice._.md              (say: chosen word, kind, forbidden synonyms)
+   │  │     │     ├─ term=<x>._.choice.reason.md         (ref: etymology, disputes, evidence — required)
+   │  │     │     └─ term=<x>._.choice.example=<abc>.md  (ref: one per notable example — optional)
+   │  │     └─ or cite it — point to the extant declaration you reused
+   │  └─ 4. articulate progress.md — REQUIRED, the last step every round:
+   │        ├─ what you conformed, disputed, and paved this round — and why
+   │        ├─ a term the round SETTLED (declared dobj/dop, judged synonym) → capture it NOW
+   │        ├─ defer ONLY a term you truly cannot finish (needs discovery, dispute still open)
+   │        └─ sentinel = .agent/.cache/repo=bhrain/role=learner/skill=learn.domain.terms/progress.md
+   │
+   ├─ the canon — what a term is + why it is kept
+   │  ├─ why  · im_an.obsessive_learner.for.domain.terms.md (the trait)
+   │  ├─ rule · rule.require.domain-term-itemization (itemize each declared term)
+   │  ├─ rule · rule.forbid.domain-term-synonyms (canonical term, or dispute)
+   │  ├─ how  · template.domain-term.md + howto.domain-term-disputes.[guide].md
+   │  └─ glos · .agent/repo=.this/role=any/briefs/domain.terms/.readme.md
+   │
+   └─ 🪷 distill, then rest — the glossary grows, the floor rises for all who follow
+"
+`;
+
+exports[`learnDomainTerms (integration) given: [case2] the onStop hook face — a stale distillation when: [t0] the hook runs with no sentinel yet then: the nudge output matches snapshot (aesthetic review) 1`] = `
+"🦉 time again, to tend the terms
+
+📜 learn.domain.terms --when hook.onStop
+   │
+   ├─ the ask — now, before you rest
+   │  └─ review the terms this round touched, then redistill: conform-or-dispute
+   │     the extant ones, and pave the path for any new ones. the steps are below
+   │
+   ├─ the why
+   │  └─ the repo vocabulary compiles hour by hour; a term touched but not tended
+   │     is a lesson lost — the next traveler re-derives it, or drifts to a synonym.
+   │     an hour has passed, so the moment to tend it is now
+   │
+   ├─ do this now — review + redistill the terms this round touched
+   │  ├─ 1. recall — which domain objects & operations did you declare or engage?
+   │  │        split each name into its terms (getStone → verb \`get\` + noun \`stone\`)
+   │  ├─ 2. conform-or-dispute each EXTANT term (already in the glossary):
+   │  │     ├─ your contract uses the canonical word → conform, you are done
+   │  │     └─ you reached for a synonym → rename to the canonical word,
+   │  │           or open a dispute in its \`.reason\` (adhere, or argue — never drift)
+   │  ├─ 3. pave the path for each NEW term (born this round, not yet in the glossary):
+   │  │     ├─ write its \`term=<x>._.choice.*\` cluster:
+   │  │     │     ├─ term=<x>._.choice._.md              (say: chosen word, kind, forbidden synonyms)
+   │  │     │     ├─ term=<x>._.choice.reason.md         (ref: etymology, disputes, evidence — required)
+   │  │     │     └─ term=<x>._.choice.example=<abc>.md  (ref: one per notable example — optional)
+   │  │     └─ or cite it — point to the extant declaration you reused
+   │  └─ 4. articulate progress.md — REQUIRED, the last step every round:
+   │        ├─ what you conformed, disputed, and paved this round — and why
+   │        ├─ a term the round SETTLED (declared dobj/dop, judged synonym) → capture it NOW
+   │        ├─ defer ONLY a term you truly cannot finish (needs discovery, dispute still open)
+   │        └─ sentinel = .agent/.cache/repo=bhrain/role=learner/skill=learn.domain.terms/progress.md
+   │
+   ├─ the canon — what a term is + why it is kept
+   │  ├─ why  · im_an.obsessive_learner.for.domain.terms.md (the trait)
+   │  ├─ rule · rule.require.domain-term-itemization (itemize each declared term)
+   │  ├─ rule · rule.forbid.domain-term-synonyms (canonical term, or dispute)
+   │  ├─ how  · template.domain-term.md + howto.domain-term-disputes.[guide].md
+   │  └─ glos · .agent/repo=.this/role=any/briefs/domain.terms/.readme.md
+   │
+   ├─ the time to capture is now
+   │  └─ your distillation went stale (> 1 hour) — tend it before you rest
+   │
+   └─ 🪷 distill, then rest — the glossary grows, the floor rises for all who follow
+"
+`;
+
+exports[`learnDomainTerms (integration) given: [case3] the onStop hook face — a fresh distillation when: [t0] the sentinel was written moments ago then: the silent-run stderr matches snapshot (aesthetic review) 1`] = `""`;
+
+exports[`learnDomainTerms (integration) given: [case4] the hook face — an invalid --when value when: [t0] --when carries an unsupported value then: the error output matches snapshot (aesthetic review) 1`] = `
+"BadRequestError: invalid --when: hook.onBoot. only 'hook.onStop' is supported
+
+{
+  "when": "hook.onBoot"
+}
+"
+`;
+
+exports[`learnDomainTerms (integration) given: [case5] the --help flag when: [t0] the skill runs with --help then: the help output matches snapshot (aesthetic review) 1`] = `
+"🦉 tend the terms
+
+📜 learn.domain.terms
+
+  usage:
+    learn.domain.terms                  # clone face: write the scaffold,
+                                        # then guide the reflect-and-distill
+    learn.domain.terms --when hook.onStop
+                                        # hook face: staleness check
+    learn.domain.terms --help | -h      # this help
+
+  faces:
+    ├─ clone (no --when) → writes the scaffold, prints the guide; exit 0
+    └─ hook  (--when hook.onStop) → read-only staleness check
+       ├─ fresh distillation (< 1 hour) → exit 0 (session rests)
+       └─ stale (> 1 hour) → exit 2 (holds the stop, never a write)
+
+  --when values: hook.onStop (only)
+"
+`;
+
+exports[`learnDomainTerms (integration) given: [case6] the hook face — --when with no value at all when: [t0] --when is the last arg, its value absent then: the error output matches snapshot (aesthetic review) 1`] = `
+"BadRequestError: invalid --when: (absent). only 'hook.onStop' is supported
+
+{
+  "when": null
+}
+"
+`;
+
+exports[`learnDomainTerms (integration) given: [case7] an unrecognized flag (a typo) when: [t0] a typo flag is passed then: the error output matches snapshot (aesthetic review) 1`] = `
+"BadRequestError: unexpected arg(s): --wen, hook.onStop. this skill accepts only: --when hook.onStop | --help | -h
+
+{
+  "unknown": [
+    "--wen",
+    "hook.onStop"
+  ]
+}
+"
+`;
+
+exports[`learnDomainTerms (integration) given: [case10] the combined --when= form with an empty value when: [t0] --when= carries an empty value then: the error output matches snapshot (aesthetic review) 1`] = `
+"BadRequestError: invalid --when: (empty). only 'hook.onStop' is supported
+
+{
+  "when": ""
+}
+"
+`;
+
+exports[`learnDomainTerms (integration) given: [case11] a --when value that starts with a dash when: [t0] --when -x is passed (value looks like a flag) then: the error output matches snapshot (aesthetic review) 1`] = `
+"BadRequestError: invalid --when: -x. only 'hook.onStop' is supported
+
+{
+  "when": "-x"
+}
+"
+`;
+
+exports[`learnDomainTerms (integration) given: [case12] the combined --when= form with an invalid value when: [t0] --when=hook.onBoot is passed (equals form, bad value) then: the error output matches snapshot (aesthetic review) 1`] = `
+"BadRequestError: invalid --when: hook.onBoot. only 'hook.onStop' is supported
+
+{
+  "when": "hook.onBoot"
+}
+"
+`;
+
+exports[`learnDomainTerms (integration) given: [case13] a stray bare positional arg when: [t0] a bare token (no dash prefix) is passed then: the error output matches snapshot (aesthetic review) 1`] = `
+"BadRequestError: unexpected arg(s): foo. this skill accepts only: --when hook.onStop | --help | -h
+
+{
+  "unknown": [
+    "foo"
+  ]
+}
+"
+`;

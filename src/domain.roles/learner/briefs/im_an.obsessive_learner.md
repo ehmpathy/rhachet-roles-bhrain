@@ -65,6 +65,8 @@ inherits owl phrases, plus:
 - a concept was hard to discover
 - an action took multiple steps
 - an action was hard to discover
+- a **domain term** was discovered or debated — a domain object/operation named, a synonym
+  argued, a canonical word settled (see `im_an.obsessive_learner.for.domain.terms.md`)
 
 ### fix when:
 - a skill is broken or does the wrong action
