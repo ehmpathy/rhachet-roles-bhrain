@@ -487,7 +487,8 @@ export const setStoneAsPassed = async (
         stderrLines.push(`🔎 review ${review.index}`);
         try {
           const content = await fs.readFile(review.path, 'utf-8');
-          for (const line of content.split('\n')) stderrLines.push(`   ${line}`);
+          for (const line of content.split('\n'))
+            stderrLines.push(`   ${line}`);
         } catch (error) {
           const isExpected =
             error instanceof Error &&

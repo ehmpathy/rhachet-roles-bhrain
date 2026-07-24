@@ -225,7 +225,10 @@ export const formatRouteStoneEmit = (input: FormatInput): string => {
         ? getReviewPeerLadderStatus({ peerMeters: input.guard.peerMeters })
         : null;
       const ladderFooter = ladderStatus
-        ? formatGuardReviewLadderFooter({ stone: input.stone, status: ladderStatus })
+        ? formatGuardReviewLadderFooter({
+            stone: input.stone,
+            status: ladderStatus,
+          })
         : [];
       return [
         header,
