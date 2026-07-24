@@ -137,11 +137,11 @@ exports[`driver.route.blocked.acceptance given: [journey] blocked flow when: [t4
 
 🗿 route.drive
    ├─ where do we go?
-   │  ├─ route = 
+   │  ├─ route = .
    │  └─ stone = 1.design
    │
    └─ halted, stone marked blocked
-      └─ reason: /blocker/1.design.md
+      └─ reason: blocker/1.design.md
 "
 `;
 
@@ -162,7 +162,7 @@ exports[`driver.route.blocked.acceptance given: [journey] blocked flow when: [t6
 
 🗿 route.drive
    ├─ where do we go?
-   │  ├─ route = 
+   │  ├─ route = .
    │  └─ stone = 2.implement
    │
    ├─ are you here?

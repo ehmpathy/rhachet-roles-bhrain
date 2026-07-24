@@ -7,7 +7,7 @@ exports[`driver.route.drive.blocker.acceptance given: [case1] stone with only ap
 
 🗿 route.drive
    ├─ where do we go?
-   │  ├─ route = 
+   │  ├─ route = .
    │  └─ stone = 1.vision
    │
    ├─ are you here?
@@ -40,7 +40,7 @@ exports[`driver.route.drive.blocker.acceptance given: [case1] stone with only ap
 
 🗿 route.drive
    ├─ where do we go?
-   │  ├─ route = 
+   │  ├─ route = .
    │  └─ stone = 1.vision
    │
    ├─ are you here?
@@ -133,7 +133,7 @@ exports[`driver.route.drive.blocker.acceptance given: [case1] stone with only ap
 
 🗿 route.drive
    ├─ where do we go?
-   │  ├─ route = 
+   │  ├─ route = .
    │  └─ stone = 1.vision
    │
    └─ halted, human approval required
@@ -285,7 +285,7 @@ exports[`driver.route.drive.blocker.acceptance given: [case2] stone with review 
 
 🗿 route.drive
    ├─ where do we go?
-   │  ├─ route = 
+   │  ├─ route = .
    │  └─ stone = 3.blueprint
    │
    ├─ are you here?
@@ -318,7 +318,7 @@ exports[`driver.route.drive.blocker.acceptance given: [case2] stone with review 
 
 🗿 route.drive
    ├─ where do we go?
-   │  ├─ route = 
+   │  ├─ route = .
    │  └─ stone = 3.blueprint
    │
    ├─ are you here?
@@ -452,7 +452,7 @@ exports[`driver.route.drive.blocker.acceptance given: [case2] stone with review 
 
 🗿 route.drive
    ├─ where do we go?
-   │  ├─ route = 
+   │  ├─ route = .
    │  └─ stone = 3.blueprint
    │
    ├─ are you here?
@@ -485,7 +485,7 @@ exports[`driver.route.drive.blocker.acceptance given: [case2] stone with review 
 
 🗿 route.drive
    ├─ where do we go?
-   │  ├─ route = 
+   │  ├─ route = .
    │  └─ stone = 3.blueprint
    │
    ├─ are you here?
@@ -597,7 +597,7 @@ exports[`driver.route.drive.blocker.acceptance given: [case2] stone with review 
 
 🗿 route.drive
    ├─ where do we go?
-   │  ├─ route = 
+   │  ├─ route = .
    │  └─ stone = 3.blueprint
    │
    └─ halted, human approval required
