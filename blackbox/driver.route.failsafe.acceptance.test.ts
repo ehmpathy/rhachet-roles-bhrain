@@ -182,17 +182,37 @@ describe('driver.route.failsafe.acceptance', () => {
     });
 
     when('[t1] passage.jsonl is checked', () => {
-      then('malfunction status is recorded', async () => {
+      const parsed = useThen('the latest passage entry is read', async () => {
         const passagePath = path.join(scene.tempDir, '.route', 'passage.jsonl');
         const content = await fs.readFile(passagePath, 'utf-8');
         const lines = content.split('\n').filter(Boolean);
-        const entry = lines.find((line) => {
-          const parsed = JSON.parse(line);
-          return parsed.stone === '3.review-malfunction';
-        });
+        // the LATEST entry for the stone wins: `--as passed` first records an
+        // 'arrived' (entered guard reviews) — forward-motion-clears-blocker — then
+        // the review outcome 'malfunction'. assert the effective (last) status.
+        const entry = lines
+          .filter((line) => JSON.parse(line).stone === '3.review-malfunction')
+          .at(-1);
         expect(entry).toBeDefined();
-        const parsed = JSON.parse(entry!);
+        return JSON.parse(entry!);
+      });
+
+      then('malfunction status is recorded', () => {
         expect(parsed.status).toEqual('malfunction');
+      });
+
+      then('passage entry matches snapshot', () => {
+        // snap the effective passage entry so the mid-journey state transition
+        // (arrived → malfunction) is reconstructable from snapshots alone
+        // (rule.require.snapshot-every-journey-step). route artifacts carry no
+        // timestamps, so the entry is stable across runs. serialize as canonical
+        // JSON (2-space, keys sorted) so the snapshot is valid, clean JSON — jest's
+        // default object serializer appends a comma after the last key (invalid JSON).
+        const canonical = JSON.stringify(
+          parsed,
+          Object.keys(parsed).sort(),
+          2,
+        );
+        expect(canonical).toMatchSnapshot();
       });
     });
 
@@ -205,8 +225,11 @@ describe('driver.route.failsafe.acceptance', () => {
         }),
       );
 
-      then('exit code is 3 (halt)', () => {
-        expect(result.code).toEqual(3);
+      then('exit code is 0 (onBoot never blocks boot)', () => {
+        // onBoot surfaces the malfunction halt message but always exits 0 — it
+        // never blocks the boot. escalation reaches the human via the message,
+        // not the exit code. (onStop malfunction exits 1; see the integration.)
+        expect(result.code).toEqual(0);
       });
 
       then('output mentions malfunction', () => {
@@ -399,17 +422,31 @@ describe('driver.route.failsafe.acceptance', () => {
     });
 
     when('[t1] passage.jsonl is checked', () => {
-      then('malfunction status is recorded', async () => {
+      const parsed = useThen('the latest passage entry is read', async () => {
         const passagePath = path.join(scene.tempDir, '.route', 'passage.jsonl');
         const content = await fs.readFile(passagePath, 'utf-8');
         const lines = content.split('\n').filter(Boolean);
-        const entry = lines.find((line) => {
-          const parsed = JSON.parse(line);
-          return parsed.stone === '6.judge-malfunction';
-        });
+        // the LATEST entry for the stone wins: `--as passed` first records an
+        // 'arrived' (entered guard reviews) — forward-motion-clears-blocker — then
+        // the review outcome 'malfunction'. assert the effective (last) status.
+        const entry = lines
+          .filter((line) => JSON.parse(line).stone === '6.judge-malfunction')
+          .at(-1);
         expect(entry).toBeDefined();
-        const parsed = JSON.parse(entry!);
+        return JSON.parse(entry!);
+      });
+
+      then('malfunction status is recorded', () => {
         expect(parsed.status).toEqual('malfunction');
+      });
+
+      then('passage entry matches snapshot', () => {
+        // snap the effective passage entry so the mid-journey state transition
+        // (arrived → malfunction) is reconstructable from snapshots alone
+        // (rule.require.snapshot-every-journey-step). serialize as canonical JSON
+        // (2-space, keys sorted) so the snapshot is valid, clean JSON.
+        const canonical = JSON.stringify(parsed, Object.keys(parsed).sort(), 2);
+        expect(canonical).toMatchSnapshot();
       });
     });
 
@@ -422,8 +459,11 @@ describe('driver.route.failsafe.acceptance', () => {
         }),
       );
 
-      then('exit code is 3 (halt)', () => {
-        expect(result.code).toEqual(3);
+      then('exit code is 0 (onBoot never blocks boot)', () => {
+        // onBoot surfaces the malfunction halt message but always exits 0 — it
+        // never blocks the boot. escalation reaches the human via the message,
+        // not the exit code. (onStop malfunction exits 1; see the integration.)
+        expect(result.code).toEqual(0);
       });
 
       then('output mentions malfunction', () => {
@@ -514,17 +554,31 @@ describe('driver.route.failsafe.acceptance', () => {
     });
 
     when('[t1] passage.jsonl is checked', () => {
-      then('malfunction status is recorded', async () => {
+      const parsed = useThen('the latest passage entry is read', async () => {
         const passagePath = path.join(scene.tempDir, '.route', 'passage.jsonl');
         const content = await fs.readFile(passagePath, 'utf-8');
         const lines = content.split('\n').filter(Boolean);
-        const entry = lines.find((line) => {
-          const parsed = JSON.parse(line);
-          return parsed.stone === '7.both-malfunction';
-        });
+        // the LATEST entry for the stone wins: `--as passed` first records an
+        // 'arrived' (entered guard reviews) — forward-motion-clears-blocker — then
+        // the review outcome 'malfunction'. assert the effective (last) status.
+        const entry = lines
+          .filter((line) => JSON.parse(line).stone === '7.both-malfunction')
+          .at(-1);
         expect(entry).toBeDefined();
-        const parsed = JSON.parse(entry!);
+        return JSON.parse(entry!);
+      });
+
+      then('malfunction status is recorded', () => {
         expect(parsed.status).toEqual('malfunction');
+      });
+
+      then('passage entry matches snapshot', () => {
+        // snap the effective passage entry so the mid-journey state transition
+        // (arrived → malfunction) is reconstructable from snapshots alone
+        // (rule.require.snapshot-every-journey-step). serialize as canonical JSON
+        // (2-space, keys sorted) so the snapshot is valid, clean JSON.
+        const canonical = JSON.stringify(parsed, Object.keys(parsed).sort(), 2);
+        expect(canonical).toMatchSnapshot();
       });
     });
   });

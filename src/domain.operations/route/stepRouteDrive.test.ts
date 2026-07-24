@@ -74,7 +74,7 @@ describe('stepRouteDrive', () => {
 
       then('tracks block count internally (for escalation)', async () => {
         // block count is tracked but not shown in output
-        // after 21 blocks, escalation occurs (exit code 3)
+        // after 21 blocks, escalation occurs (exit code 1 = malfunction, stuck)
         const result1 = await stepRouteDrive({
           route: scene.tempDir,
           when: 'hook.onStop',
@@ -116,7 +116,7 @@ describe('stepRouteDrive', () => {
     when('[t0] stepRouteDrive called in direct mode', () => {
       then('returns route complete message', async () => {
         const result = await stepRouteDrive({ route: scene.tempDir });
-        expect(result.emit?.stdout).toContain('route complete! 🎉');
+        expect(result.emit?.stdout).toContain('route complete! 🌴🤙');
       });
     });
 
@@ -235,14 +235,14 @@ describe('stepRouteDrive', () => {
     });
 
     when('[t1] stepRouteDrive called with when=hook.onStop', () => {
-      then('returns halted message with exit code 3', async () => {
+      then('returns halted message with exit code 1', async () => {
         const result = await stepRouteDrive({
           route: scene.tempDir,
           when: 'hook.onStop',
         });
         expect(result.emit?.stdout).toContain('halted, guard malfunction');
         expect(result.emit?.stdout).toContain('please tell a human');
-        expect(result.emit?.stderr?.code).toBe(3);
+        expect(result.emit?.stderr?.code).toBe(1);
       });
 
       then('stderr contains escalation message', async () => {

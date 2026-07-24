@@ -491,6 +491,16 @@ options:
                      onStop: show guidance, exit 2 (block premature stop)
   --help             show this help message
 
+output:
+  when the stone can self-drive, route.drive echoes the current stone + guidance.
+  when it has halted and needs a human, it switches to a halt message instead:
+    ✋ halted, stone marked blocked         a driver wall (--as blocked) — clear it
+    👋 halted, peer reviewer budget exhausted   approve as-is, or extend the budget
+    💥 halted, guard malfunction            a reviewer or judge broke — a human must fix
+  onStop honors the same halt: exit 2 keeps the route in motion, exit 0 allows a
+  clean stop, exit 1 escalates a malfunction (per rule.require.exit-code-semantics).
+  onBoot always exits 0 (it never blocks session start).
+
 examples:
   route.drive                        # echo current stone
   route.drive --when hook.onBoot     # show stone, exit 0 (for onBoot hooks)
@@ -514,9 +524,19 @@ options:
   --help             show this help message
 
 output:
-  bound, stone unpassed     🗿 <stone>
-  bound, all stones passed  🗿 route complete 🎉
+  bound, stone + phase      🗿 <stone>, <phase> <emoji>
+  bound, all stones passed  🗿 route complete 🌴🤙
   unbound / no stones       (empty line)
+
+  the phase suffix names where inside the stone the driver is, tipped with an
+  attention-color emoji at the end of the line (read the color, then the words):
+    yield 🌾                 the stone yields its artifact — calm, no attention
+    review.self, r7/r10 🔍   self-reviews, r{done}/r{total} — machine's turn
+    review.peer, l3@i002 🔍  peer review, l{level}@i{rounds} — machine's turn
+    judge, approved? 👋      a human must approve — attention needed
+    ..., exhausted 👋        peer budget spent, a human must approve or extend
+    ..., blocked ✋          blocked, act now — attention needed
+    ..., malfunction 💥      a reviewer or judge broke, a human must fix
 
 errors:
   a genuine fault is logged to stderr and exits non-zero; the harness then renders
@@ -1667,7 +1687,9 @@ export const routeMutateGrant = async (): Promise<void> => {
   });
 
   if (!action || !['allow', 'block', 'get'].includes(action)) {
-    console.log(`
+    // usage on an invalid/absent action is an error path → stderr, not stdout
+    // (rule.forbid.stdout-on-exit-errors: stdout may be hidden on non-zero exit)
+    console.error(`
 route.mutate grant - manage route protection privilege
 
 usage:
@@ -1678,7 +1700,9 @@ usage:
 options:
   --route <path>    route path (default: auto-detect from branch)
 `);
-    process.exit(1);
+    // exit 2 = constraint: the caller gave a bad action and must fix the invocation
+    // (rule.require.exit-code-semantics: 0 ok, 1 malfunction, 2 constraint)
+    process.exit(2);
   }
 
   try {
@@ -1950,7 +1974,9 @@ export const routeGuardBudget = async (): Promise<void> => {
   // validate --add option
   const addStr = options.add;
   if (!addStr) {
-    console.log(`
+    // usage on an absent required flag is an error path → stderr, not stdout
+    // (rule.forbid.stdout-on-exit-errors: stdout may be hidden on non-zero exit)
+    console.error(`
 route.guard.budget - extend peer reviewer budget
 
 usage:
@@ -1965,13 +1991,17 @@ options:
   --peer    peer reviewer slug to extend (default: all peers)
   --route   path to route directory (default: auto-detect from branch)
 `);
-    process.exit(1);
+    // exit 2 = constraint: the caller omitted a required flag and must fix the invocation
+    // (rule.require.exit-code-semantics: 0 ok, 1 malfunction, 2 constraint)
+    process.exit(2);
   }
 
   const addAmount = asPositiveIntegerOrNull({ value: addStr });
   if (addAmount === null) {
     console.error('error: --add must be a positive integer');
-    process.exit(1);
+    // exit 2 = constraint: the caller passed a malformed value and must fix the
+    // invocation (rule.require.exit-code-semantics: 0 ok, 1 malfunction, 2 constraint)
+    process.exit(2);
   }
 
   const peerSlug = options.peer;

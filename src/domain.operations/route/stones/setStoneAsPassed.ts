@@ -126,6 +126,21 @@ export const setStoneAsPassed = async (
     };
   }
 
+  // on ENTRY to the guard's reviews — BEFORE any review runs — record 'arrived'
+  // .why = rule.require.forward-motion-clears-blocker: a --as arrived/passed is forward
+  //        motion, so a stale escalation halt must clear AT ONCE, not after the (slow)
+  //        peer reviews finish. the latest entry wins, so this in-flight 'arrived'
+  //        (disposition push) supersedes a prior blocked at guard entry — the statusline
+  //        reads the current phase, not a stale halt, for the whole inflight window.
+  await setPassageReport({
+    report: new PassageReport({
+      stone: stoneMatched.name,
+      status: 'arrived',
+      reason: 'entered guard reviews',
+    }),
+    route: input.route,
+  });
+
   // check for review.selfs (must be promised before peer reviews)
   const selfReviews = getGuardSelfReviews(stoneMatched.guard);
   if (selfReviews.length > 0) {
@@ -403,12 +418,26 @@ export const setStoneAsPassed = async (
       reason: 'peer reviewer budget exhausted',
     });
 
-    // blocked on exhausted peer reviewers — persist + return via the shared tail
-    return genStoneGuardBlockedEmit({
-      stone: stoneMatched.name,
+    // exhausted peer budget → its OWN passage status (not a 'blocked' + blocker)
+    // .why = by phase an exhausted peer review looks like ordinary review.peer (a calm
+    //        push), but it is truly a human-wait: a halt(exhausted) where a human must
+    //        approve or extend. as its own status it maps direct to that halt with no
+    //        phase-inference. it is ephemeral — the next --as <status> supersedes it
+    //        (latest-entry-wins), so a stale exhausted never lingers.
+    // .note = writes the status directly (like malfunction/constraint), not via
+    //         genStoneGuardBlockedEmit, which persists a 'blocked' status + blocker.
+    const exhaustedReason = `peer reviewer budget exhausted: ${exhaustionCheck.skippedSlugs.join(', ')}`;
+    await setPassageReport({
+      report: new PassageReport({
+        stone: stoneMatched.name,
+        status: 'exhausted',
+        reason: exhaustedReason,
+      }),
       route: input.route,
-      blocker: 'review.peer.exhausted',
-      reason: `peer reviewer budget exhausted: ${exhaustionCheck.skippedSlugs.join(', ')}`,
+    });
+
+    return {
+      passed: false,
       refs: {
         reviews: reviewArtifacts.map((r) => r.path),
         judges: [],
@@ -419,11 +448,11 @@ export const setStoneAsPassed = async (
           stone: stoneMatched.name,
           action: 'passed',
           passage: 'blocked',
-          reason: `peer reviewer budget exhausted: ${exhaustionCheck.skippedSlugs.join(', ')}`,
+          reason: exhaustedReason,
           guard: guardData,
         }),
       }),
-    });
+    };
   }
 
   // run judges (reuses prior artifacts internally, only runs incomplete ones)

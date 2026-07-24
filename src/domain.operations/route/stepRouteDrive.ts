@@ -1,13 +1,18 @@
 import * as fs from 'fs/promises';
 import * as path from 'path';
 
+import type { PassageReport } from '@src/domain.objects/Driver/PassageReport';
+
 import { getRouteBindByBranch } from './bind/getRouteBindByBranch';
 import { computeRouteBouncerCache } from './bouncer/computeRouteBouncerCache';
 import { setRouteBouncerCache } from './bouncer/setRouteBouncerCache';
+import { asRouteDisplayPath } from './drive/asRouteDisplayPath';
+import { asRouteStoneDisposition } from './drive/asRouteStoneDisposition';
 import { getRouteDriveBlockerMessage } from './drive/getRouteDriveBlockerMessage';
+import { getRouteDriveExhaustedMessage } from './drive/getRouteDriveExhaustedMessage';
 import { getStoneGuardBlockerReport } from './drive/getStoneGuardBlockerReport';
 import { setDriveBlockerState } from './drive/setDriveBlockerState';
-import { getAllPassageReports } from './passage/getAllPassageReports';
+import { getAllLatestPassageByStone } from './passage/getAllLatestPassageByStone';
 import { computeNextStones } from './stones/computeNextStones';
 import { getAllStoneDriveArtifacts } from './stones/getAllStoneDriveArtifacts';
 import { getAllStones } from './stones/getAllStones';
@@ -51,55 +56,82 @@ export const stepRouteDrive = async (input: {
   });
   await setRouteBouncerCache({ cache: bouncerCache, route });
 
-  // in hook mode, check for malfunction or blocked status immediately
-  // .note = getAllPassageReports returns latest per stone (last entry wins)
-  //         a subsequent 'passed' status resolves the malfunction or blocked state
-  if (hookContext) {
-    const passageReports = await getAllPassageReports({ route });
+  // read the latest passage entry per stone EXACTLY ONCE, up front, and thread that one
+  // snapshot through every branch below (hook pre-check, onBoot, onStop, direct mode).
+  // .why = passage.jsonl is append-only; a second read could observe a concurrent append
+  //        and yield a disposition that disagrees with the first read (a TOCTOU race →
+  //        the hook could allow a stop it should block, or vice versa). one read = one
+  //        consistent view, so the push/halt decision is atomic per invocation
+  //        (rule.forbid.behavior-hazards). getLatestForStone(name) reads from this
+  //        snapshot rather than a second read of the file.
+  const passageLatestByStone = await getAllLatestPassageByStone({ route });
+  const getLatestForStone = (name: string): PassageReport | null =>
+    passageLatestByStone.find((report) => report.stone === name) ?? null;
 
-    // check for malfunction
-    const malfunctionReport = passageReports.find(
-      (r) => r.status === 'malfunction',
+  // in hook mode, surface a hard-stop halt (malfunction or driver wall) immediately
+  // .why = the push/halt classification comes from asRouteStoneDisposition — the SAME single
+  //        source the onStop path and the statusline read — so the hook can never disagree
+  //        with them (rule.require.single-source-of-truth-for-render). the two hard-stop
+  //        halts are caught here, up front, so they escalate at once; the softer halts
+  //        (approval / exhausted) fall through to the per-stone onStop path below.
+  // .note = getAllLatestPassageByStone reads RAW file order (true chronological last-per-
+  //         stone), so any forward motion (a later --as entry) already superseded a stale
+  //         halt before we read it. it must NOT read getAllPassageReports, whose sticky
+  //         re-bucket would return BOTH an 'approved' row and a 'malfunction' row for a
+  //         `[malfunction, approved]` stone → a false malfunction halt after a human approved.
+  //         a driver wall = status 'blocked' with NO guard blocker → disposition halt(blocked);
+  //         an agent-fixable blocker (review.self/peer/…) → push, so it does not match here.
+  if (hookContext) {
+    const dispositions = passageLatestByStone.map((report) => ({
+      report,
+      disposition: asRouteStoneDisposition({
+        status: report.status,
+        blocker: report.blocker ?? null,
+      }),
+    }));
+
+    // a guard malfunction → surface it. malfunction takes priority over a driver wall.
+    // .why = onStop escalates to a human at once (exit 1, the malfunction code per
+    //        rule.require.exit-code-semantics: 0 ok, 1 malfunction, 2 constraint); onBoot
+    //        must NOT block session start (the hook contract: "onBoot: show stone, exit 0"),
+    //        so at boot it shows the same message but WITHOUT the exit stderr — else a
+    //        malfunction anywhere in history would make every fresh session's boot fail and
+    //        stall the route.
+    const malfunction = dispositions.find(
+      (d) => d.disposition.of === 'halt' && d.disposition.why === 'malfunction',
     );
-    if (malfunctionReport) {
+    if (malfunction) {
+      const stdout = formatRouteDriveMalfunction({
+        route,
+        stone: malfunction.report.stone,
+      });
+      if (hookContext === 'hook.onBoot') return { emit: { stdout } };
       return {
         emit: {
-          stdout: formatRouteDriveMalfunction({
-            route,
-            stone: malfunctionReport.stone,
-          }),
+          stdout,
           stderr: {
             reason: formatRouteDriveMalfunctionEscalate({
-              stone: malfunctionReport.stone,
+              stone: malfunction.report.stone,
             }),
-            code: 3,
+            code: 1,
           },
         },
       };
     }
 
-    // check for blocked status (agent explicitly marked stone as blocked via --as blocked)
-    // note: must check that blocked is the LATEST status for that stone
-    // since passage.jsonl is append-only, later entries supersede earlier ones
-    // note: guard-initiated blocks have a `blocker` field (e.g., 'approval', 'review.self')
-    //       while agent-initiated blocks do not - only show this path for agent-initiated
-    const blockedReport = passageReports.find((r) => r.status === 'blocked');
-    if (blockedReport) {
-      // find the latest report for this stone
-      const latestForStone = passageReports
-        .filter((r) => r.stone === blockedReport.stone)
-        .pop();
-      // only report blocked if it's still the latest status AND it's agent-initiated (no blocker field)
-      if (latestForStone?.status === 'blocked' && !latestForStone.blocker) {
-        return {
-          emit: {
-            stdout: formatRouteDriveBlocked({
-              route,
-              stone: blockedReport.stone,
-            }),
-          },
-        };
-      }
+    // a driver wall (--as blocked, no guard blocker) → allow a graceful stop
+    const wall = dispositions.find(
+      (d) => d.disposition.of === 'halt' && d.disposition.why === 'blocked',
+    );
+    if (wall) {
+      return {
+        emit: {
+          stdout: formatRouteDriveBlocked({
+            route,
+            stone: wall.report.stone,
+          }),
+        },
+      };
     }
   }
 
@@ -146,6 +178,22 @@ export const stepRouteDrive = async (input: {
     });
     if (blockerMessage) return { emit: { stdout: blockerMessage.stdout } };
 
+    // exhausted status → show the approve-or-extend prompt at boot too
+    // .why = an exhausted status is a halt (a human must approve or extend the peer
+    //        budget); surface that prompt rather than generic guidance. derive the halt
+    //        reason through the SAME asRouteStoneDisposition op onStop + the statusline read,
+    //        so onBoot never diverges from the one disposition truth
+    //        (rule.require.single-source-of-truth-for-render).
+    const latestForStoneBoot = getLatestForStone(stone.name);
+    const dispositionBoot = asRouteStoneDisposition({
+      status: latestForStoneBoot?.status ?? null,
+      blocker: latestForStoneBoot?.blocker ?? null,
+    });
+    if (dispositionBoot.of === 'halt' && dispositionBoot.why === 'exhausted')
+      return {
+        emit: { stdout: await getRouteDriveExhaustedMessage({ stone, route }) },
+      };
+
     // otherwise, show generic stone guidance
     const stdout = formatRouteDrive({
       route,
@@ -189,14 +237,32 @@ export const stepRouteDrive = async (input: {
       return { emit: { stdout: blockerMessage.stdout } };
     }
 
-    // track this block attempt
+    // no live blocker message → derive the disposition (the single push/halt truth
+    // the statusline also reads) from the latest passage. driver-wall blocked and
+    // malfunction already returned above; a stale volatile blocker keeps status
+    // 'blocked' and so pushes forward here. the one halt left is an exhausted
+    // status: a human must approve or extend the peer budget → allow the stop.
+    const latestForStone = getLatestForStone(stone.name);
+    const disposition = asRouteStoneDisposition({
+      status: latestForStone?.status ?? null,
+      blocker: latestForStone?.blocker ?? null,
+    });
+    if (disposition.of === 'halt' && latestForStone?.status === 'exhausted')
+      return {
+        emit: { stdout: await getRouteDriveExhaustedMessage({ stone, route }) },
+      };
+
+    // push → the route self-drives: track this block attempt and block the stop
     // .note = state.count tracks hooks without passage attempt; used for nudge threshold
     const { state } = await setDriveBlockerState({ route, stone: stone.name });
 
     // check if we've exceeded max consecutive blocks (cutoff: 21)
     const maxBlocks = 21;
     if (state.count > maxBlocks) {
-      // stop block exhausted, exit 3 = tell human about stuck state
+      // stop-block exhausted → exit 1 (malfunction: the route is stuck and a human must
+      // step in). the guard-malfunction branch uses code 1 too; per
+      // rule.require.exit-code-semantics (0 ok, 1 malfunction, 2 constraint) — never a
+      // non-standard code 3
       return {
         emit: {
           stdout: formatRouteDriveExhausted({
@@ -211,7 +277,7 @@ export const stepRouteDrive = async (input: {
               stone: stone.name,
               count: state.count,
             }),
-            code: 3,
+            code: 1,
           },
         },
       };
@@ -249,6 +315,32 @@ export const stepRouteDrive = async (input: {
   });
   if (blockerMessage) return { emit: { stdout: blockerMessage.stdout } };
 
+  // read the latest passage and derive its disposition through the SAME shared op the
+  // onStop branch reads (asRouteStoneDisposition) — so direct mode honors the vision's
+  // "one disposition, two surfaces": the halt reason is derived once, never re-inlined
+  const latestForStoneDirect = getLatestForStone(stone.name);
+  const dispositionDirect = latestForStoneDirect
+    ? asRouteStoneDisposition({
+        status: latestForStoneDirect.status,
+        blocker: latestForStoneDirect.blocker ?? null,
+      })
+    : null;
+
+  // driver wall (--as blocked, no guard blocker) → surface the same halted/blocked
+  // message hook mode shows, so direct `rhx route.drive` does not silently drop it
+  if (dispositionDirect?.of === 'halt' && dispositionDirect.why === 'blocked')
+    return {
+      emit: {
+        stdout: formatRouteDriveBlocked({ route, stone: stone.name }),
+      },
+    };
+
+  // exhausted halt → show the approve-or-extend prompt (its own halt, no blocker)
+  if (dispositionDirect?.of === 'halt' && dispositionDirect.why === 'exhausted')
+    return {
+      emit: { stdout: await getRouteDriveExhaustedMessage({ stone, route }) },
+    };
+
   // no blocker or already approved, show generic stone guidance
   const stdout = formatRouteDrive({
     route,
@@ -284,7 +376,9 @@ const formatRouteDriveComplete = (): string => {
   lines.push(`🦉 where were we?`);
   lines.push('');
   lines.push(`🗿 route.drive`);
-  lines.push(`   └─ route complete! 🎉`);
+  // .note = 🌴🤙 matches asStatusLine's complete glyph (one render truth for "done, hang
+  //         loose — close it out or rewind"); do not diverge to 🎉
+  lines.push(`   └─ route complete! 🌴🤙`);
   return lines.join('\n');
 };
 
@@ -316,7 +410,7 @@ const formatRouteDriveExhausted = (input: {
   lines.push('');
   lines.push(`🗿 route.drive`);
   lines.push(`   ├─ where do we go?`);
-  lines.push(`   │  ├─ route = ${path.relative(process.cwd(), input.route)}`);
+  lines.push(`   │  ├─ route = ${asRouteDisplayPath({ route: input.route })}`);
   lines.push(`   │  └─ stone = ${input.stone}`);
   lines.push(`   │`);
   lines.push(`   └─ ⚠️ stuck! blocked ${input.count}x (max: ${input.max})`);
@@ -349,7 +443,7 @@ const formatRouteDriveMalfunction = (input: {
   lines.push('');
   lines.push(`🗿 route.drive`);
   lines.push(`   ├─ where do we go?`);
-  lines.push(`   │  ├─ route = ${path.relative(process.cwd(), input.route)}`);
+  lines.push(`   │  ├─ route = ${asRouteDisplayPath({ route: input.route })}`);
   lines.push(`   │  └─ stone = ${input.stone}`);
   lines.push(`   │`);
   lines.push(`   └─ 💥 halted, guard malfunction`);
@@ -377,8 +471,14 @@ const formatRouteDriveBlocked = (input: {
   route: string;
   stone: string;
 }): string => {
-  const routeRelative = path.relative(process.cwd(), input.route);
-  const articulationPath = `${routeRelative}/blocker/${input.stone}.md`;
+  // render '.' when the route IS the cwd (else `route = ` shows empty), and build
+  // the reason via path.join so it never gains a spurious slash-prefix
+  const routeRelative = asRouteDisplayPath({ route: input.route });
+  const articulationPath = path.join(
+    routeRelative,
+    'blocker',
+    `${input.stone}.md`,
+  );
   const lines: string[] = [];
   lines.push(`🦉 where were we?`);
   lines.push('');
@@ -456,7 +556,7 @@ const formatRouteDrive = (input: {
   // route.drive tree
   lines.push(`🗿 route.drive`);
   lines.push(`   ├─ where do we go?`);
-  lines.push(`   │  ├─ route = ${path.relative(process.cwd(), input.route)}`);
+  lines.push(`   │  ├─ route = ${asRouteDisplayPath({ route: input.route })}`);
   lines.push(`   │  └─ stone = ${input.stone}`);
   lines.push(`   │`);
 

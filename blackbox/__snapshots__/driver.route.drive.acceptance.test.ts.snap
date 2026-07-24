@@ -5,7 +5,7 @@ exports[`driver.route.drive.acceptance given: [case1] route bound with unpassed 
 
 🗿 route.drive
    ├─ where do we go?
-   │  ├─ route = 
+   │  ├─ route = .
    │  └─ stone = 1
    │
    ├─ are you here?
@@ -39,7 +39,7 @@ exports[`driver.route.drive.acceptance given: [case3] route bound with all stone
 "🦉 where were we?
 
 🗿 route.drive
-   └─ route complete! 🎉
+   └─ route complete! 🌴🤙
 "
 `;
 
@@ -48,7 +48,7 @@ exports[`driver.route.drive.acceptance given: [case4] hook mode blocks stop when
 
 🗿 route.drive
    ├─ where do we go?
-   │  ├─ route = 
+   │  ├─ route = .
    │  └─ stone = 1
    │
    ├─ are you here?
@@ -75,5 +75,35 @@ exports[`driver.route.drive.acceptance given: [case4] hook mode blocks stop when
       │  └─ rhx route.stone.set --stone 1 --as arrived
       └─ when ready to continue, run:
          └─ rhx route.stone.set --stone 1 --as passed
+"
+`;
+
+exports[`driver.route.drive.acceptance given: [case8] the --help flag when: [t0] route.drive is invoked with --help then: stdout matches snapshot 1`] = `
+"route.drive - echo current stone and pass command for bound route
+
+usage:
+  route.drive [options]
+
+options:
+  --route <path>     path to route directory (uses bound route if absent)
+  --when <context>   hook context: hook.onBoot or hook.onStop
+                     onBoot: show guidance, exit 0 (don't block session start)
+                     onStop: show guidance, exit 2 (block premature stop)
+  --help             show this help message
+
+output:
+  when the stone can self-drive, route.drive echoes the current stone + guidance.
+  when it has halted and needs a human, it switches to a halt message instead:
+    ✋ halted, stone marked blocked         a driver wall (--as blocked) — clear it
+    👋 halted, peer reviewer budget exhausted   approve as-is, or extend the budget
+    💥 halted, guard malfunction            a reviewer or judge broke — a human must fix
+  onStop honors the same halt: exit 2 keeps the route in motion, exit 0 allows a
+  clean stop, exit 1 escalates a malfunction (per rule.require.exit-code-semantics).
+  onBoot always exits 0 (it never blocks session start).
+
+examples:
+  route.drive                        # echo current stone
+  route.drive --when hook.onBoot     # show stone, exit 0 (for onBoot hooks)
+  route.drive --when hook.onStop     # show stone, exit 2 if unpassed (for onStop hooks)
 "
 `;

@@ -226,6 +226,101 @@ describe('setStoneAsPassed.integration', () => {
   });
 
   given(
+    '[case6] a prior blocked escalation, then a re-arrival on a guarded stone',
+    () => {
+      // .why = rule.require.forward-motion-clears-blocker: --as arrived/passed writes an
+      //        'arrived' marker on ENTRY to the guard — BEFORE the (slow) peer reviews run.
+      //        the probe review captures the latest passage line at review-run time, so we
+      //        prove empirically that the stale 'blocked' cleared to 'arrived' inflight, not
+      //        after the reviews finish.
+      const scene = useBeforeAll(async () => {
+        const tempDir = path.join(
+          os.tmpdir(),
+          `test-set-passed-arrived-${Date.now()}`,
+        );
+        await fs.mkdir(tempDir, { recursive: true });
+        await fs.writeFile(path.join(tempDir, '1.test.stone'), '# Test stone');
+
+        // a peer review whose command captures the latest passage line at run time
+        // .note = execAsync runs this via /bin/sh with $route substituted; the probe file
+        //         records what the LATEST passage entry was at the moment the review ran
+        await fs.writeFile(
+          path.join(tempDir, '1.test.guard'),
+          [
+            'artifacts:',
+            '  - "$route/1.test*.md"',
+            'reviews:',
+            '  peer:',
+            '    - slug: prober',
+            '      run: tail -n1 "$route/.route/passage.jsonl" > "$route/probe.at-review.txt"; echo "blockers: 0"; echo "nitpicks: 0"',
+            '      budget: 2',
+            '      level: 1',
+            'judges:',
+            '  - echo "passed: true\\nreason: clean"',
+          ].join('\n'),
+        );
+        await fs.writeFile(path.join(tempDir, '1.test.md'), '# Test artifact');
+
+        // seed a prior driver-wall escalation (blocked) as the latest passage entry
+        const passagePath = path.join(tempDir, '.route', 'passage.jsonl');
+        await fs.mkdir(path.dirname(passagePath), { recursive: true });
+        await fs.writeFile(
+          passagePath,
+          JSON.stringify({ stone: '1.test', status: 'blocked' }) + '\n',
+        );
+
+        return { tempDir };
+      });
+
+      afterAll(async () => {
+        await fs.rm(scene.tempDir, { recursive: true, force: true });
+      });
+
+      when('[t0] the guarded stone is re-arrived', () => {
+        const result = useThen('operation completes', async () =>
+          setStoneAsPassed(
+            { stone: '1.test', route: scene.tempDir },
+            noopContext,
+          ),
+        );
+
+        then(
+          'the passage was "arrived" (not the stale "blocked") when the peer review ran',
+          async () => {
+            // the review must have actually run for the probe to exist
+            expect(result.refs.reviews.length).toBeGreaterThan(0);
+
+            const probe = await fs.readFile(
+              path.join(scene.tempDir, 'probe.at-review.txt'),
+              'utf-8',
+            );
+            const latestAtReview = JSON.parse(probe.trim());
+            // the 'arrived' marker written on guard ENTRY superseded the stale 'blocked'
+            expect(latestAtReview.status).toEqual('arrived');
+            expect(latestAtReview.status).not.toEqual('blocked');
+          },
+        );
+
+        then('an "arrived" entry was appended to passage.jsonl', async () => {
+          const passagePath = path.join(
+            scene.tempDir,
+            '.route',
+            'passage.jsonl',
+          );
+          const content = await fs.readFile(passagePath, 'utf-8');
+          const entries = content
+            .trim()
+            .split('\n')
+            .map((line) => JSON.parse(line));
+          const arrived = entries.find((e) => e.status === 'arrived');
+          expect(arrived).toBeDefined();
+          expect(arrived.reason).toContain('entered guard reviews');
+        });
+      });
+    },
+  );
+
+  given(
     '[case5] peer reviewer budget exhaustion triggers implicit approval gate',
     () => {
       const scene = useBeforeAll(async () => {
@@ -293,7 +388,7 @@ describe('setStoneAsPassed.integration', () => {
           expect(result.emit?.stdout).toContain('exhausted');
         });
 
-        then('records exhausted blocker in passage.jsonl', async () => {
+        then('records an exhausted status in passage.jsonl', async () => {
           const passagePath = path.join(
             scene.tempDir,
             '.route',
@@ -301,15 +396,12 @@ describe('setStoneAsPassed.integration', () => {
           );
           const content = await fs.readFile(passagePath, 'utf-8');
           const lines = content.trim().split('\n');
-          const blockedEntry = lines
+          const exhaustedEntry = lines
             .map((line) => JSON.parse(line))
-            .find(
-              (entry) =>
-                entry.status === 'blocked' &&
-                entry.blocker === 'review.peer.exhausted',
-            );
-          expect(blockedEntry).toBeDefined();
-          expect(blockedEntry.reason).toContain('limited');
+            .find((entry) => entry.status === 'exhausted');
+          expect(exhaustedEntry).toBeDefined();
+          expect(exhaustedEntry.blocker).toBeUndefined();
+          expect(exhaustedEntry.reason).toContain('limited');
         });
       });
     },

@@ -6,7 +6,7 @@ exports[`routeStatusLine.acceptance given: [case1] the renderer anchored at a gi
 `;
 
 exports[`routeStatusLine.acceptance given: [case2] a temp repo with a single bound route (one unpassed stone) when: [t0] the renderer runs with that cwd then: its output matches the bound snapshot: route.status.line - bound route 1`] = `
-"🗿 1.vision
+"🗿 1.vision, yield 🌾
 "
 `;
 
@@ -20,9 +20,19 @@ options:
   --help             show this help message
 
 output:
-  bound, stone unpassed     🗿 <stone>
-  bound, all stones passed  🗿 route complete 🎉
+  bound, stone + phase      🗿 <stone>, <phase> <emoji>
+  bound, all stones passed  🗿 route complete 🌴🤙
   unbound / no stones       (empty line)
+
+  the phase suffix names where inside the stone the driver is, tipped with an
+  attention-color emoji at the end of the line (read the color, then the words):
+    yield 🌾                 the stone yields its artifact — calm, no attention
+    review.self, r7/r10 🔍   self-reviews, r{done}/r{total} — machine's turn
+    review.peer, l3@i002 🔍  peer review, l{level}@i{rounds} — machine's turn
+    judge, approved? 👋      a human must approve — attention needed
+    ..., exhausted 👋        peer budget spent, a human must approve or extend
+    ..., blocked ✋          blocked, act now — attention needed
+    ..., malfunction 💥      a reviewer or judge broke, a human must fix
 
 errors:
   a genuine fault is logged to stderr and exits non-zero; the harness then renders
@@ -42,6 +52,58 @@ examples:
 exports[`routeStatusLine.acceptance given: [case4] an ambiguous multi-bind (a genuine lookup fault) when: [t0] the renderer runs with that cwd then: its stable fault output matches the error-variant snapshot: route.status.line - fault (multi-bind) 1`] = `"[route.status.line] fault: multiple routes bound to this branch — unbind the extra route(s) so the status line can pick one"`;
 
 exports[`routeStatusLine.acceptance given: [case5] a bound route whose stones have all passed (complete) when: [t0] the renderer runs with that cwd then: its output matches the complete snapshot: route.status.line - route complete 1`] = `
-"🗿 route complete 🎉
+"🗿 route complete 🌴🤙
+"
+`;
+
+exports[`routeStatusLine.acceptance given: [case6] a bound route in the self-review phase when: [t0] the renderer runs with that cwd then: its output matches the self-review snapshot: route.status.line - review.self 1`] = `
+"🗿 1.vision, review.self, r1/r2 🔍
+"
+`;
+
+exports[`routeStatusLine.acceptance given: [case7] a bound route in the peer-review phase when: [t0] the renderer runs with that cwd then: its output matches the peer-review snapshot: route.status.line - review.peer 1`] = `
+"🗿 1.vision, review.peer, l1@i002 🔍
+"
+`;
+
+exports[`routeStatusLine.acceptance given: [case8] a bound route blocked on human approval when: [t0] the renderer runs with that cwd then: its output matches the approval-judge snapshot: route.status.line - judge.approval 1`] = `
+"🗿 1.vision, judge, approved? 👋
+"
+`;
+
+exports[`routeStatusLine.acceptance given: [case9] a bound route blocked on a non-approval judge when: [t0] the renderer runs with that cwd then: its output matches the non-approval-judge snapshot: route.status.line - judge.machine 1`] = `
+"🗿 1.vision, judge 🔍
+"
+`;
+
+exports[`routeStatusLine.acceptance given: [case10] a bound route driver-blocked over a peer phase when: [t0] the renderer runs with that cwd then: its output matches the blocked-overlay snapshot: route.status.line - blocked.overlay 1`] = `
+"🗿 1.vision, review.peer, l1@i002, blocked ✋
+"
+`;
+
+exports[`routeStatusLine.acceptance given: [case11] a bound route with an exhausted peer-budget status when: [t0] the renderer runs with that cwd then: its output matches the exhausted snapshot: route.status.line - peer.exhausted 1`] = `
+"🗿 1.vision, review.peer, l1@i003, exhausted 👋
+"
+`;
+
+exports[`routeStatusLine.acceptance given: [case12] a bound route blocked on uncontemplated peer review when: [t0] the renderer runs with that cwd then: its output matches the uncontemplated snapshot: route.status.line - peer.uncontemplated 1`] = `
+"🗿 1.vision, review.peer, l1@i002 🔍
+"
+`;
+
+exports[`routeStatusLine.acceptance given: [case13] a bound route whose phase derivation faults (degrade) when: [t0] the renderer runs with that cwd then: its output matches the degrade snapshot: route.status.line - phase.degrade 1`] = `
+"🗿 1.vision
+"
+`;
+
+exports[`routeStatusLine.acceptance given: [case13] a bound route whose phase derivation faults (degrade) when: [t0] the renderer runs with that cwd then: its stderr matches the phase-fault snapshot: route.status.line - phase.degrade.stderr 1`] = `"[route.status.line] fault: phase derivation faulted for stone "1.vision", degraded to plain stone line: SyntaxError: Expected property name or '}' in JSON at position 2 (line 1 column 3)"`;
+
+exports[`routeStatusLine.acceptance given: [case14] a bound route with a driver-blocked guardless stone (yield phase) when: [t0] the renderer runs with that cwd then: its output matches the blocked-yield snapshot: route.status.line - blocked.yield 1`] = `
+"🗿 1.vision, yield, blocked ✋
+"
+`;
+
+exports[`routeStatusLine.acceptance given: [case15] a bound route with a malfunctioned reviewer when: [t0] the renderer runs with that cwd then: its output matches the malfunction snapshot: route.status.line - peer.malfunction 1`] = `
+"🗿 1.vision, review.peer, l1@i002, malfunction 💥
 "
 `;
