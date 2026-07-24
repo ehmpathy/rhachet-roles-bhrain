@@ -1,56 +1,58 @@
 import * as fs from 'fs/promises';
 import * as path from 'path';
-import { given, then, useBeforeAll, when } from 'test-fns';
+import { given, then, useBeforeAll, useThen, when } from 'test-fns';
 
 import {
   DEFAULT_TEST_BRAIN,
   genTestBrainContext,
 } from '@src/.test/genTestBrainContext';
+import { REPEATABLY_CONFIG } from '@src/.test/infra/repeatably';
 
 import { setupSourceRepo, setupTargetDir } from './.test/setup';
 import { stepReflect } from './stepReflect';
 
-/**
- * .what = repeatability config for flaky LLM tests
- * .why = local dev requires stricter (EVERY), CI allows lenient (SOME)
- */
-const REPEAT_CONFIG = {
-  attempts: process.env.CI ? 3 : 1,
-  criteria: process.env.CI ? 'SOME' : 'EVERY',
-} as const;
-
 describe('stepReflect.caseTypescriptQuality', () => {
   // increase timeout for claude-code invocations (3 minutes per attempt)
-  jest.setTimeout(180000 * REPEAT_CONFIG.attempts);
+  jest.setTimeout(180000 * REPEATABLY_CONFIG.attempts);
 
   const brainScene = useBeforeAll(async () => ({
     brain: genTestBrainContext({ brain: DEFAULT_TEST_BRAIN }),
   }));
 
   given('[case1] typescript-quality feedback with valid target', () => {
-    const scene = useBeforeAll(async () => {
-      const { repoDir: sourceDir } =
-        await setupSourceRepo('typescript-quality');
-      const { targetDir } = await setupTargetDir();
-
-      // run stepReflect once, share result across all then blocks
-      const result = await stepReflect(
-        {
-          source: sourceDir,
-          target: targetDir,
-          mode: 'push',
-        },
-        { brain: brainScene.brain },
-      );
-
-      return { sourceDir, targetDir, result };
-    });
+    // track cleanup paths outside useThen to avoid deferred proxy issues
+    const cleanup: { sourceDir?: string; targetDir?: string } = {};
     afterAll(async () => {
-      await fs.rm(scene.sourceDir, { recursive: true, force: true });
-      await fs.rm(scene.targetDir, { recursive: true, force: true });
+      if (cleanup.sourceDir)
+        await fs.rm(cleanup.sourceDir, { recursive: true, force: true });
+      if (cleanup.targetDir)
+        await fs.rm(cleanup.targetDir, { recursive: true, force: true });
     });
 
-    when('[t0] stepReflect completes', () => {
+    when.repeatably(REPEATABLY_CONFIG)('[t0] stepReflect completes', () => {
+      // single LLM invocation, result shared across assertions
+      const scene = useThen('stepReflect succeeds', async () => {
+        const { repoDir: sourceDir } =
+          await setupSourceRepo('typescript-quality');
+        const { targetDir } = await setupTargetDir();
+
+        // track for cleanup
+        cleanup.sourceDir = sourceDir;
+        cleanup.targetDir = targetDir;
+
+        // run stepReflect once, share result across all then blocks
+        const result = await stepReflect(
+          {
+            source: sourceDir,
+            target: targetDir,
+            mode: 'push',
+          },
+          { brain: brainScene.brain },
+        );
+
+        return { sourceDir, targetDir, result };
+      });
+
       then('creates draft directory structure', async () => {
         expect(scene.result.draft.dir).toContain('.draft/v');
         expect(scene.result.draft.pureDir).toContain('/pure');

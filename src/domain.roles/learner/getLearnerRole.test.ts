@@ -34,5 +34,24 @@ describe('getLearnerRole', () => {
         expect(onToolHooks[0]?.filter?.what).toEqual('Write|Edit|Bash');
       });
     });
+
+    when('[t1] its onStop hooks are inspected', () => {
+      const onStopHooks = ROLE_LEARNER.hooks?.onBrain?.onStop ?? [];
+
+      then('it registers exactly one onStop hook', () => {
+        expect(onStopHooks).toHaveLength(1);
+      });
+
+      then(
+        'the hook invokes learn.domain.terms with the onStop context',
+        () => {
+          // conformant registration: the domain-term sweephook, invoked via
+          // `rhx learn.domain.terms --when hook.onStop` (same shape as the
+          // driver role's route.drive onStop) so it can hold the stop when stale
+          expect(onStopHooks[0]?.command).toContain('rhx learn.domain.terms');
+          expect(onStopHooks[0]?.command).toContain('--when hook.onStop');
+        },
+      );
+    });
   });
 });

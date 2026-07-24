@@ -40,6 +40,17 @@ export const ROLE_LEARNER: Role = Role.build({
           },
         },
       ],
+      // onStop: the domain-term sweephook. nudges the learner to distill its
+      // domain.term lessons when the distillation has gone stale (> 1 hour,
+      // walltime). it holds the *stop* open (exit 2), never a *write* — same
+      // mechanism as the driver's route.drive onStop. read-only staleness check.
+      onStop: [
+        {
+          command:
+            './node_modules/.bin/rhx learn.domain.terms --when hook.onStop',
+          timeout: 'PT5S',
+        },
+      ],
     },
   },
 });

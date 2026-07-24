@@ -19,7 +19,27 @@ always:
       - briefs/rule.require.isolated-cli-subpath-exports.md
       - briefs/rule.require.repeatable-for-llm-tests.md
 
+      # domain.terms - the repo's glossary intro + its org-wide governance, nested
+      # under briefs/ so the boot loader pools it (it only pools files under
+      # briefs/); booted for every role so all contracts obey one vocabulary. only
+      # the lean, hand-curated readme + the two rules ride the always-booted say list
+      # — a fixed, small footprint. the per-term files are on demand under ref, so the
+      # glossary can grow without bound while every boot stays a fixed size
+      - briefs/domain.terms/.readme.md
+      - briefs/domain.terms/rule.require.domain-term-itemization.md
+      - briefs/domain.terms/rule.forbid.domain-term-synonyms.md
+
     ref:
+      # domain.terms - every per-term cluster file, surfaced on demand so the boot
+      # footprint stays fixed as the dictionary grows: the say-level choice (the
+      # canonical word + forbidden synonyms) and its ref-level members (deep record:
+      # etymology, disputes, evidence, examples). declared here explicitly — not left
+      # to the <also> fallback — so a term stays discoverable even under a scoped boot,
+      # and so the boot globs are testable. the always-booted readme points here
+      - briefs/domain.terms/term=*._.choice._.md
+      - briefs/domain.terms/term=*._.choice.reason.md
+      - briefs/domain.terms/term=*._.choice.example=*.md
+
       # lessons - load on demand
       - briefs/howto.acceptance-test-flow.[lesson].md
       - briefs/howto.acceptance-test-setup.[lesson].md

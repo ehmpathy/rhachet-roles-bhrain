@@ -237,6 +237,12 @@
             "command": "./node_modules/.bin/rhx route.drive --when hook.onStop",
             "timeout": 5,
             "author": "repo=bhrain/role=driver"
+          },
+          {
+            "type": "command",
+            "command": "./node_modules/.bin/rhx learn.domain.terms --when hook.onStop",
+            "timeout": 5,
+            "author": "repo=bhrain/role=learner"
           }
         ]
       }
@@ -251,6 +257,8 @@
       "Edit(.route/**)",
       "Write(**/.test/**)",
       "Edit(**/.test/**)",
+      "Write(.agent/.cache/repo=bhrain/role=learner/**)",
+      "Edit(.agent/.cache/repo=bhrain/role=learner/**)",
       "mcp__ide__getDiagnostics",
       "WebSearch",
       "WebFetch",

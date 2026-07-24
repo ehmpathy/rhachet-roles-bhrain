@@ -23,6 +23,7 @@
     "./cli/research": "./dist/contract/cli/research.js",
     "./cli/goal": "./dist/contract/cli/goal.js",
     "./cli/memory": "./dist/contract/cli/memory.js",
+    "./cli/learn": "./dist/contract/cli/learn.js",
     "./package.json": "./package.json"
   },
   "engines": {

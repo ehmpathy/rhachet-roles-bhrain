@@ -1,0 +1,1 @@
+../../../../repo=bhrain/role=learner/briefs/rule.forbid.domain-term-synonyms.md

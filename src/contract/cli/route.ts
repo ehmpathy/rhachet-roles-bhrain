@@ -4,6 +4,7 @@ import { BadRequestError } from 'helpful-errors';
 import * as path from 'path';
 
 import { getGuardPeerReviews } from '@src/domain.objects/Driver/RouteStoneGuard';
+import { getInvocationArgs } from '@src/domain.operations/cli/getInvocationArgs';
 import { delRouteBind } from '@src/domain.operations/route/bind/delRouteBind';
 import { getRouteBind } from '@src/domain.operations/route/bind/getRouteBind';
 import { getRouteBindByBranch } from '@src/domain.operations/route/bind/getRouteBindByBranch';
@@ -42,27 +43,6 @@ import { findStoneByName } from '@src/domain.operations/route/stones/findStoneBy
 import { getAllStones } from '@src/domain.operations/route/stones/getAllStones';
 import { isPromisedActionSlugAbsent } from '@src/domain.operations/route/stones/isPromisedActionSlugAbsent';
 import { enumFilesFromGlob } from '@src/utils/enumFilesFromGlob';
-
-/**
- * .what = detects if node was invoked via `node -e "code"` (eval mode)
- * .why = in eval mode, argv has no entrypoint path and args come after --
- *
- * argv patterns:
- *   normal: ['node', '/path/to/entry.js', '--arg', 'val']
- *   eval:   ['node', 'arg1', 'arg2'] (node strips -e and code from argv!)
- *
- * detection: if argv[1] doesn't look like a file path, assume eval mode
- */
-const isNodeEvalMode = (argv: string[]): boolean => {
-  const secondArg = argv[1];
-  if (!secondArg) return false;
-
-  // entrypoint path (ends with js/ts extension) = normal mode
-  if (/\.(js|ts|mjs|cjs)$/.test(secondArg)) return false;
-
-  // otherwise assume eval mode (node strips -e and code from argv)
-  return true;
-};
 
 /**
  * .what = copies bytes read from a buffer into a new buffer
@@ -176,13 +156,12 @@ const isValidStonePassageAction = (input: {
 };
 
 /**
- * .what = extracts clean args from argv, skipping node/entrypoint args and separators
- * .why = encapsulates argv preprocessing for readability
+ * .what = extracts clean args from argv, skips node/entrypoint args and the `--` separator
+ * .why = the canonical eval-mode slice now lives in one place (domain.operations/cli/
+ *        getInvocationArgs), so route + learn share it instead of divergent copies
  */
-const getCleanArgsFromArgv = (input: { argv: string[] }): string[] => {
-  const skipCount = isNodeEvalMode(input.argv) ? 1 : 2;
-  return input.argv.slice(skipCount).filter((arg) => arg !== '--');
-};
+const getCleanArgsFromArgv = (input: { argv: string[] }): string[] =>
+  getInvocationArgs(input.argv);
 
 /**
  * .what = parses cli args into options object
