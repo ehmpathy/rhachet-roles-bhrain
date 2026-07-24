@@ -4,7 +4,8 @@ exports[`driver.route.peer-budget-isolation.acceptance given: [journey] per-ston
 "🦉 the way speaks for itself
    │
    ├─ r1: shared-reviewer (l1, 2/2)
-   │   ├─ exhausted, cached
+   │   ├─ exhausted 🌙, cached
+   │   ├─ terminal — does not block higher levels
    │   ├─ 1 blocker 🔴
    │   ├─ 0 nitpicks ✓
    │   ├─ given: .reviews/peer/1.alpha._.review.i002.7b0642204fa64344b4.r001._.given.by_peer.shared-reviewer.md
@@ -26,7 +27,8 @@ exports[`driver.route.peer-budget-isolation.acceptance given: [journey] per-ston
       │   └─ alpha/**/*.ts
       └─ reviews
           └─ r1: shared-reviewer (l1, 2/2)
-              ├─ exhausted, cached
+              ├─ exhausted 🌙, cached
+              ├─ terminal — does not block higher levels
               ├─ 1 blocker 🔴
               ├─ 0 nitpicks ✓
               ├─ given: .reviews/peer/1.alpha._.review.i002.7b0642204fa64344b4.r001._.given.by_peer.shared-reviewer.md

@@ -270,6 +270,61 @@ const isTerminalReviewerFailure = (
 };
 
 /**
+ * .what = the ordered remedy groups a halt's "options" block offers, from its reason
+ * .why = a stone can be blocked by SEVERAL gates in one pass (e.g. a malfunctioned higher
+ *        level beside an exhausted lower level); each gate carries a different remedy, so the
+ *        human must be offered EVERY one, in precedence order (overrule first, then budget +
+ *        approve). the prior code rendered them either/or, so a mixed halt hid one remedy —
+ *        this collapses to one additive list. label + order live here once; each caller applies
+ *        only its own box-draw indentation (rule.require.single-source-of-truth-for-render).
+ * .note = the "or fix the reviewer" tail rides ONLY on an overrule-only halt; when an
+ *         exhaustion also concurs, budget + approve carry the guidance instead.
+ */
+const computeBlockRemedyGroups = (input: {
+  stone: string;
+  passage: 'allowed' | 'overruled' | 'blocked' | 'malfunction';
+  reason: string;
+}): Array<{ label: string; cmd: string | null }> => {
+  const hasBudget = input.reason.includes('budget exhausted');
+  const hasOverrule = isTerminalReviewerFailure(input.passage, input.reason);
+  if (!hasBudget && !hasOverrule) return [];
+
+  const groups: Array<{ label: string; cmd: string | null }> = [];
+
+  // overrule the malfunction/constraint (highest precedence)
+  if (hasOverrule) {
+    const noun = input.passage === 'malfunction' ? 'malfunction' : 'constraint';
+    groups.push({
+      label: `overrule the ${noun}`,
+      cmd: `rhx route.stone.set --stone ${input.stone} --as overruled`,
+    });
+  }
+
+  // an exhausted reviewer → offer budget + approve
+  if (hasBudget) {
+    const exhaustedMatch = input.reason.match(/budget exhausted:\s*(.+)/);
+    const exhaustedSlugs = exhaustedMatch
+      ? exhaustedMatch[1]!.split(',').map((s) => s.trim())
+      : [];
+    const peerArg =
+      exhaustedSlugs.length === 1 ? ` --peer ${exhaustedSlugs[0]}` : '';
+    groups.push({
+      label: `increase budget`,
+      cmd: `rhx route.guard.budget --for review --add N${peerArg} --stone ${input.stone}`,
+    });
+    groups.push({
+      label: `approve as-is`,
+      cmd: `rhx route.stone.set --stone ${input.stone} --as approved`,
+    });
+  } else if (hasOverrule) {
+    // overrule-only → the prose tail; no budget remedy applies
+    groups.push({ label: `or fix the reviewer, then retry`, cmd: null });
+  }
+
+  return groups;
+};
+
+/**
  * .what = formats guard results as a tree string with box-draw characters
  * .why = enables human-readable cli output for guard execution results
  */
@@ -334,45 +389,27 @@ export const formatGuardTree = (input: {
       lines.push(`   ├─ passage = ${passageLabel}`);
 
       // detect cases that append an options block (reason then needs ├─, not └─)
-      const isBudgetExhausted = input.reason.includes('budget exhausted');
-      const hasOptions =
-        isBudgetExhausted ||
-        isTerminalReviewerFailure(input.passage, input.reason);
+      const remedyGroups = computeBlockRemedyGroups({
+        stone: input.stone,
+        passage: input.passage,
+        reason: input.reason,
+      });
+      const hasOptions = remedyGroups.length > 0;
       const reasonConnector = hasOptions ? '├─' : '└─';
       lines.push(`   ${reasonConnector} reason = ${input.reason}`);
 
-      if (isBudgetExhausted) {
-        // extract exhausted peer slugs from reason (format: "budget exhausted: slug1, slug2")
-        const exhaustedMatch = input.reason.match(/budget exhausted:\s*(.+)/);
-        const exhaustedSlugs = exhaustedMatch
-          ? exhaustedMatch[1]!.split(',').map((s) => s.trim())
-          : [];
-        const peerArg =
-          exhaustedSlugs.length === 1
-            ? ` --peer ${exhaustedSlugs[0]}`
-            : exhaustedSlugs.length > 1
-              ? '' // multiple peers: omit --peer to affect all
-              : '';
-
+      if (hasOptions) {
+        // options is the LAST block here (no guard follows) → children indent at 6 spaces
         lines.push(`   └─ options`);
-        lines.push(`      ├─ increase budget`);
-        lines.push(
-          `      │  └─ rhx route.guard.budget --for review --add N${peerArg} --stone ${input.stone}`,
-        );
-        lines.push(`      └─ approve as-is`);
-        lines.push(
-          `         └─ rhx route.stone.set --stone ${input.stone} --as approved`,
-        );
-      } else if (isTerminalReviewerFailure(input.passage, input.reason)) {
-        // add overrule guidance for terminal reviewer failures (malfunction, constraint)
-        const noun =
-          input.passage === 'malfunction' ? 'malfunction' : 'constraint';
-        lines.push(`   └─ options`);
-        lines.push(`      ├─ overrule the ${noun}`);
-        lines.push(
-          `      │  └─ rhx route.stone.set --stone ${input.stone} --as overruled`,
-        );
-        lines.push(`      └─ or fix the reviewer, then retry`);
+        remedyGroups.forEach((group, i) => {
+          const isLast = i === remedyGroups.length - 1;
+          const connector = isLast ? '└─' : '├─';
+          lines.push(`      ${connector} ${group.label}`);
+          if (group.cmd !== null) {
+            const cmdIndent = isLast ? '   ' : '│  ';
+            lines.push(`      ${cmdIndent}└─ ${group.cmd}`);
+          }
+        });
       }
     } else {
       lines.push(`   └─ passage = ${passageLabel}`);
@@ -390,41 +427,28 @@ export const formatGuardTree = (input: {
   ) {
     lines.push(`   ├─ reason = ${input.reason}`);
 
-    // add options hint for budget exhaustion case
-    if (input.reason.includes('budget exhausted')) {
-      // extract exhausted peer slugs from reason (format: "budget exhausted: slug1, slug2")
-      const exhaustedMatch = input.reason.match(/budget exhausted:\s*(.+)/);
-      const exhaustedSlugs = exhaustedMatch
-        ? exhaustedMatch[1]!.split(',').map((s) => s.trim())
-        : [];
-      const peerArg =
-        exhaustedSlugs.length === 1
-          ? ` --peer ${exhaustedSlugs[0]}`
-          : exhaustedSlugs.length > 1
-            ? '' // multiple peers: omit --peer to affect all
-            : '';
-
+    // add the remedy options block — one additive list across every gate that fired this
+    // pass (overrule for a malfunction/constraint, budget + approve for an exhaustion), so a
+    // mixed halt names every remedy at once. a guard section follows → children indent at "│  ".
+    // .why = a broken reviewer must not permablock the driver; the human can overrule it, top
+    //        up budget, or fix the reviewer — and when several gates concur, every remedy rides
+    //        in one block, so no second unwarned block hits the human on re-arrive.
+    const remedyGroups = computeBlockRemedyGroups({
+      stone: input.stone,
+      passage: input.passage,
+      reason: input.reason,
+    });
+    if (remedyGroups.length > 0) {
       lines.push(`   ├─ options`);
-      lines.push(`   │  ├─ increase budget`);
-      lines.push(
-        `   │  │  └─ rhx route.guard.budget --for review --add N${peerArg} --stone ${input.stone}`,
-      );
-      lines.push(`   │  └─ approve as-is`);
-      lines.push(
-        `   │     └─ rhx route.stone.set --stone ${input.stone} --as approved`,
-      );
-    } else if (isTerminalReviewerFailure(input.passage, input.reason)) {
-      // add overrule guidance for terminal reviewer failures (malfunction, constraint)
-      // .why = a broken reviewer must not permablock the driver; the human can
-      //        overrule it or fix the reviewer, just like exhausted offers options
-      const noun =
-        input.passage === 'malfunction' ? 'malfunction' : 'constraint';
-      lines.push(`   ├─ options`);
-      lines.push(`   │  ├─ overrule the ${noun}`);
-      lines.push(
-        `   │  │  └─ rhx route.stone.set --stone ${input.stone} --as overruled`,
-      );
-      lines.push(`   │  └─ or fix the reviewer, then retry`);
+      remedyGroups.forEach((group, i) => {
+        const isLast = i === remedyGroups.length - 1;
+        const connector = isLast ? '└─' : '├─';
+        lines.push(`   │  ${connector} ${group.label}`);
+        if (group.cmd !== null) {
+          const cmdIndent = isLast ? '   ' : '│  ';
+          lines.push(`   │  ${cmdIndent}└─ ${group.cmd}`);
+        }
+      });
     }
   }
 

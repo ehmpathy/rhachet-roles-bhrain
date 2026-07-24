@@ -91,7 +91,8 @@ exports[`driver.route.overrule.acceptance given: [case9] overrule bypasses revie
 "🦉 the way speaks for itself
    │
    ├─ r1: bash (l1, 1/∞)
-   │   ├─ 💥 malfunction
+   │   ├─ malfunction 💥
+   │   ├─ terminal — does not block higher levels
    │   ├─ given: .reviews/peer/1.feature._.review.i002.d6ef1aa3fad755e23c.r001._.given.by_peer.bash.md
    │   └─ taken: .reviews/peer/1.feature._.review.i002.d6ef1aa3fad755e23c.r001._.taken.by_self.bash.md
    │
@@ -105,7 +106,8 @@ exports[`driver.route.overrule.acceptance given: [case9] overrule bypasses revie
    │  │   └─ $route/1.feature*.md
    │  ├─ reviews
    │  │   └─ r1: bash (l1, 0/∞)
-   │  │       ├─ 💥 malfunction
+   │  │       ├─ malfunction 💥
+   │  │       ├─ terminal — does not block higher levels
    │  │       ├─ given: .reviews/peer/1.feature._.review.i002.d6ef1aa3fad755e23c.r001._.given.by_peer.bash.md
    │  │       └─ taken: .reviews/peer/1.feature._.review.i002.d6ef1aa3fad755e23c.r001._.taken.by_self.bash.md
    │  └─ judges
@@ -121,7 +123,8 @@ exports[`driver.route.overrule.acceptance given: [case10] overrule bypasses revi
 "🦉 the way speaks for itself
    │
    ├─ r1: bash (l1, 1/∞)
-   │   ├─ ✋ constraint
+   │   ├─ constraint ✋
+   │   ├─ terminal — does not block higher levels
    │   ├─ given: .reviews/peer/1.feature._.review.i002.d6ef1aa3fad755e23c.r001._.given.by_peer.bash.md
    │   └─ taken: .reviews/peer/1.feature._.review.i002.d6ef1aa3fad755e23c.r001._.taken.by_self.bash.md
    │
@@ -153,7 +156,8 @@ exports[`driver.route.overrule.acceptance given: [case11] forced bypasses review
 "🦉 the way speaks for itself
    │
    ├─ r1: bash (l1, 1/∞)
-   │   ├─ 💥 malfunction
+   │   ├─ malfunction 💥
+   │   ├─ terminal — does not block higher levels
    │   ├─ given: .reviews/peer/1.feature._.review.i001.d6ef1aa3fad755e23c.r001._.given.by_peer.bash.md
    │   └─ taken: .reviews/peer/1.feature._.review.i001.d6ef1aa3fad755e23c.r001._.taken.by_self.bash.md
    │
@@ -167,7 +171,8 @@ exports[`driver.route.overrule.acceptance given: [case11] forced bypasses review
    │  │   └─ $route/1.feature*.md
    │  ├─ reviews
    │  │   └─ r1: bash (l1, 0/∞)
-   │  │       ├─ 💥 malfunction
+   │  │       ├─ malfunction 💥
+   │  │       ├─ terminal — does not block higher levels
    │  │       ├─ given: .reviews/peer/1.feature._.review.i001.d6ef1aa3fad755e23c.r001._.given.by_peer.bash.md
    │  │       └─ taken: .reviews/peer/1.feature._.review.i001.d6ef1aa3fad755e23c.r001._.taken.by_self.bash.md
    │  └─ judges
@@ -183,7 +188,8 @@ exports[`driver.route.overrule.acceptance given: [case12] forced bypasses review
 "🦉 the way speaks for itself
    │
    ├─ r1: bash (l1, 1/∞)
-   │   ├─ ✋ constraint
+   │   ├─ constraint ✋
+   │   ├─ terminal — does not block higher levels
    │   ├─ given: .reviews/peer/1.feature._.review.i001.d6ef1aa3fad755e23c.r001._.given.by_peer.bash.md
    │   └─ taken: .reviews/peer/1.feature._.review.i001.d6ef1aa3fad755e23c.r001._.taken.by_self.bash.md
    │
@@ -215,7 +221,8 @@ exports[`driver.route.overrule.acceptance given: [case13] tier escalation: L1 ma
 "🦉 the way speaks for itself
    │
    ├─ r1: basic-checker (l1, 1/5)
-   │   ├─ 💥 malfunction
+   │   ├─ malfunction 💥
+   │   ├─ terminal — does not block higher levels
    │   ├─ given: .reviews/peer/1.feature._.review.i001.bf3993d1d36b238918.r001._.given.by_peer.basic-checker.md
    │   └─ taken: .reviews/peer/1.feature._.review.i001.bf3993d1d36b238918.r001._.taken.by_self.basic-checker.md
    │
@@ -241,7 +248,8 @@ exports[`driver.route.overrule.acceptance given: [case13] tier escalation: L1 ma
       │   └─ $route/1.feature*.md
       ├─ reviews
       │   ├─ r1: basic-checker (l1, 0/5)
-      │   │   ├─ 💥 malfunction
+      │   │   ├─ malfunction 💥
+      │   │   ├─ terminal — does not block higher levels
       │   │   ├─ given: .reviews/peer/1.feature._.review.i001.bf3993d1d36b238918.r001._.given.by_peer.basic-checker.md
       │   │   └─ taken: .reviews/peer/1.feature._.review.i001.bf3993d1d36b238918.r001._.taken.by_self.basic-checker.md
       │   └─ r2: premium-checker (l3, 1/5)
@@ -270,7 +278,8 @@ exports[`driver.route.overrule.acceptance given: [case13] tier escalation: L1 ma
 "🦉 the way speaks for itself
    │
    ├─ r1: basic-checker (l1, 1/5)
-   │   ├─ 💥 malfunction
+   │   ├─ malfunction 💥
+   │   ├─ terminal — does not block higher levels
    │   ├─ given: .reviews/peer/1.feature._.review.i002.bf3993d1d36b238918.r001._.given.by_peer.basic-checker.md
    │   └─ taken: .reviews/peer/1.feature._.review.i002.bf3993d1d36b238918.r001._.taken.by_self.basic-checker.md
    │
@@ -291,7 +300,8 @@ exports[`driver.route.overrule.acceptance given: [case13] tier escalation: L1 ma
    │  │   └─ $route/1.feature*.md
    │  ├─ reviews
    │  │   ├─ r1: basic-checker (l1, 0/5)
-   │  │   │   ├─ 💥 malfunction
+   │  │   │   ├─ malfunction 💥
+   │  │   │   ├─ terminal — does not block higher levels
    │  │   │   ├─ given: .reviews/peer/1.feature._.review.i002.bf3993d1d36b238918.r001._.given.by_peer.basic-checker.md
    │  │   │   └─ taken: .reviews/peer/1.feature._.review.i002.bf3993d1d36b238918.r001._.taken.by_self.basic-checker.md
    │  │   └─ r2: premium-checker (l3, 1/5)
@@ -313,7 +323,8 @@ exports[`driver.route.overrule.acceptance given: [case14] tier escalation: L1 co
 "🦉 the way speaks for itself
    │
    ├─ r1: basic-checker (l1, 1/5)
-   │   ├─ ✋ constraint
+   │   ├─ constraint ✋
+   │   ├─ terminal — does not block higher levels
    │   ├─ given: .reviews/peer/1.feature._.review.i001.bf3993d1d36b238918.r001._.given.by_peer.basic-checker.md
    │   └─ taken: .reviews/peer/1.feature._.review.i001.bf3993d1d36b238918.r001._.taken.by_self.basic-checker.md
    │
@@ -370,7 +381,8 @@ exports[`driver.route.overrule.acceptance given: [case14] tier escalation: L1 co
 "🦉 the way speaks for itself
    │
    ├─ r1: basic-checker (l1, 1/5)
-   │   ├─ ✋ constraint
+   │   ├─ constraint ✋
+   │   ├─ terminal — does not block higher levels
    │   ├─ given: .reviews/peer/1.feature._.review.i002.bf3993d1d36b238918.r001._.given.by_peer.basic-checker.md
    │   └─ taken: .reviews/peer/1.feature._.review.i002.bf3993d1d36b238918.r001._.taken.by_self.basic-checker.md
    │

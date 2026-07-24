@@ -158,6 +158,12 @@ exports[`driver.route.peer-budget-parallel-l1.acceptance given: [journey] parall
           └─ j1: rhx route.stone.judge --mechanism reviewed? --stone $stone --route $route --allow-blockers 0 --allow-nitpicks 1
               ├─ finished [TIME] ✗
               └─ reason: blockers exceed threshold (1 > 0)
+
+🪷 the path continues
+   ├─ l1 is terminal (approved) — it no longer blocks you
+   ├─ l2 has engaged — address its blockers, then:
+   │  └─ rhx route.stone.set --stone 1.vision --as arrived
+   └─ a human is only needed once every level is terminal
 "
 `;
 

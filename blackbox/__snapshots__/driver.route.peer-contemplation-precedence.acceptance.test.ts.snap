@@ -4,7 +4,8 @@ exports[`driver.route.peer-contemplation-precedence.acceptance given: [case1] on
 "🦉 the way speaks for itself
    │
    ├─ r1: malfunctioner (l1, 1/3)
-   │   ├─ 💥 malfunction
+   │   ├─ malfunction 💥
+   │   ├─ terminal — does not block higher levels
    │   ├─ given: .reviews/peer/1.execute._.review.i001.cd59c2d9bea69fd22c.r001._.given.by_peer.malfunctioner.md
    │   └─ taken: .reviews/peer/1.execute._.review.i001.cd59c2d9bea69fd22c.r001._.taken.by_self.malfunctioner.md
    │
@@ -30,7 +31,8 @@ exports[`driver.route.peer-contemplation-precedence.acceptance given: [case1] on
       │   └─ src/**/*.ts
       ├─ reviews
       │   ├─ r1: malfunctioner (l1, 0/3)
-      │   │   ├─ 💥 malfunction
+      │   │   ├─ malfunction 💥
+      │   │   ├─ terminal — does not block higher levels
       │   │   ├─ given: .reviews/peer/1.execute._.review.i001.cd59c2d9bea69fd22c.r001._.given.by_peer.malfunctioner.md
       │   │   └─ taken: .reviews/peer/1.execute._.review.i001.cd59c2d9bea69fd22c.r001._.taken.by_self.malfunctioner.md
       │   └─ r2: uncontemplated (l1, 1/3)

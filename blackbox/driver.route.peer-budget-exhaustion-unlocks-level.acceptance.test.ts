@@ -171,6 +171,46 @@ describe('driver.route.peer-budget-exhaustion-unlocks-level.acceptance', () => {
         expect(result.stdout).toMatch(/l3-reviewer.*rejected/s);
       });
 
+      // ---- core invariant clamps (the wish's non-negotiable bar) ----
+
+      then('CLAMP: no exhausted-alone pass — l3 never reads awaits while l1 is exhausted', () => {
+        // .why = the driver must NEVER see l1 exhausted while l3 still awaits in the SAME
+        //        stdout. the instant l1 turns terminal, l3 runs that pass. an `awaits` here
+        //        would be the exact "oh, it is all halted" confusion the wish forbids.
+        expect(result.stdout).toContain('exhausted');
+        expect(result.stdout).not.toMatch(/l3-reviewer.*awaits/s);
+      });
+
+      then('CLAMP: no false halt — no "budget exhausted"/"halted" while l3 is non-terminal', () => {
+        // .why = the human-overrule halt fires ONLY when every level is terminal. here l3
+        //        ran and rejected (non-terminal), so no exhaustion halt may appear. a
+        //        "budget exhausted" or "halted" line mid-ladder is the forbidden false halt.
+        expect(result.stdout).not.toContain('budget exhausted');
+        expect(result.stdout).not.toContain('halted');
+      });
+
+      then('CLAMP: exhaustion narrative present — states terminal + does not block higher', () => {
+        // .why = at exhaustion the stdout must guide the driver plainly: the level is
+        //        terminal and does not hold the ladder. this is the D5 unlock narrative.
+        expect(result.stdout).toContain('exhausted 🌙');
+        expect(result.stdout).toContain('terminal — does not block higher levels');
+      });
+
+      then('CLAMP: the "path continues" footer names the live level + re-drive command', () => {
+        // .why = the vision's headline UX deliverable — the aggregate footer that answers
+        //        "so where do i go now?" once a lower level goes terminal. it must name l1
+        //        terminal, l3 now live, and the exact --as arrived command to re-drive.
+        expect(result.stdout).toContain('the path continues');
+        expect(result.stdout).toContain(
+          'l1 is terminal (exhausted 🌙) — it no longer blocks you',
+        );
+        expect(result.stdout).toContain('l3 has engaged');
+        expect(result.stdout).toMatch(/l3 has engaged[\s\S]*--as arrived/);
+        expect(result.stdout).toContain(
+          'a human is only needed once every level is terminal',
+        );
+      });
+
       then('stdout has good vibes', () => {
         expect(sanitizeTimeForSnapshot(result.stdout)).toMatchSnapshot();
       });
@@ -208,6 +248,15 @@ describe('driver.route.peer-budget-exhaustion-unlocks-level.acceptance', () => {
         expect(result.stdout).toContain('l3-reviewer');
         expect(result.stdout).toContain('l3, 2/5');
         expect(result.stdout).toMatch(/l3-reviewer.*rejected/s);
+      });
+
+      then('CLAMP: l1 already terminal on entry — l3 runs this pass, never awaits', () => {
+        // .why = when a stone is entered with l1 already exhausted (terminal), l3 must run
+        //        on THIS arrive — not wait for a second. an `awaits` here would force the
+        //        driver to re-arrive needlessly, the exact stall the wish removes.
+        expect(result.stdout).toMatch(/l1-reviewer.*exhausted/s);
+        expect(result.stdout).not.toMatch(/l3-reviewer.*awaits/s);
+        expect(result.stdout).not.toContain('budget exhausted');
       });
 
       then('stdout has good vibes', () => {

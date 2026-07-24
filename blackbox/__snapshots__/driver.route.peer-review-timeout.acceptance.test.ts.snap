@@ -4,7 +4,8 @@ exports[`driver.route.peer-review-timeout.acceptance given: [journey] review tim
 "🦉 the way speaks for itself
    │
    ├─ r1: slow-reviewer (l1, 1/2)
-   │   ├─ 💥 malfunction
+   │   ├─ malfunction 💥
+   │   ├─ terminal — does not block higher levels
    │   ├─ given: .reviews/peer/1.execute._.review.i001.8739656801d5e77f22.r001._.given.by_peer.slow-reviewer.md
    │   └─ taken: .reviews/peer/1.execute._.review.i001.8739656801d5e77f22.r001._.taken.by_self.slow-reviewer.md
    │
@@ -23,7 +24,8 @@ exports[`driver.route.peer-review-timeout.acceptance given: [journey] review tim
       │   └─ src/**/*.ts
       ├─ reviews
       │   └─ r1: slow-reviewer (l1, 0/2)
-      │       ├─ 💥 malfunction
+      │       ├─ malfunction 💥
+      │       ├─ terminal — does not block higher levels
       │       ├─ given: .reviews/peer/1.execute._.review.i001.8739656801d5e77f22.r001._.given.by_peer.slow-reviewer.md
       │       └─ taken: .reviews/peer/1.execute._.review.i001.8739656801d5e77f22.r001._.taken.by_self.slow-reviewer.md
       └─ judges

@@ -112,7 +112,8 @@ exports[`driver.route.failsafe.acceptance given: [case3] reviewer exits with cod
 "🦉 the way speaks for itself
    │
    ├─ r1: bash (l1, 1/∞)
-   │   ├─ 💥 malfunction
+   │   ├─ malfunction 💥
+   │   ├─ terminal — does not block higher levels
    │   ├─ given: .reviews/peer/3.review-malfunction._.review.i001.b6fcd55294fe610638.r001._.given.by_peer.bash.md
    │   └─ taken: .reviews/peer/3.review-malfunction._.review.i001.b6fcd55294fe610638.r001._.taken.by_self.bash.md
    │
@@ -131,7 +132,8 @@ exports[`driver.route.failsafe.acceptance given: [case3] reviewer exits with cod
       │   └─ $route/3.review-malfunction*.md
       ├─ reviews
       │   └─ r1: bash (l1, 0/∞)
-      │       ├─ 💥 malfunction
+      │       ├─ malfunction 💥
+      │       ├─ terminal — does not block higher levels
       │       ├─ given: .reviews/peer/3.review-malfunction._.review.i001.b6fcd55294fe610638.r001._.given.by_peer.bash.md
       │       └─ taken: .reviews/peer/3.review-malfunction._.review.i001.b6fcd55294fe610638.r001._.taken.by_self.bash.md
       └─ judges
@@ -325,7 +327,8 @@ exports[`driver.route.failsafe.acceptance given: [case7] both reviewer and judge
 "🦉 the way speaks for itself
    │
    ├─ r1: bash (l1, 1/∞)
-   │   ├─ 💥 malfunction
+   │   ├─ malfunction 💥
+   │   ├─ terminal — does not block higher levels
    │   ├─ given: .reviews/peer/7.both-malfunction._.review.i001.a4c505990c8a7a5349.r001._.given.by_peer.bash.md
    │   └─ taken: .reviews/peer/7.both-malfunction._.review.i001.a4c505990c8a7a5349.r001._.taken.by_self.bash.md
    │
@@ -343,7 +346,8 @@ exports[`driver.route.failsafe.acceptance given: [case7] both reviewer and judge
       ├─ artifacts
       ├─ reviews
       │   └─ r1: bash (l1, 0/∞)
-      │       ├─ 💥 malfunction
+      │       ├─ malfunction 💥
+      │       ├─ terminal — does not block higher levels
       │       ├─ given: .reviews/peer/7.both-malfunction._.review.i001.a4c505990c8a7a5349.r001._.given.by_peer.bash.md
       │       └─ taken: .reviews/peer/7.both-malfunction._.review.i001.a4c505990c8a7a5349.r001._.taken.by_self.bash.md
       └─ judges

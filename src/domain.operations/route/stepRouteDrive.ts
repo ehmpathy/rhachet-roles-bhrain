@@ -8,8 +8,10 @@ import { computeRouteBouncerCache } from './bouncer/computeRouteBouncerCache';
 import { setRouteBouncerCache } from './bouncer/setRouteBouncerCache';
 import { asRouteDisplayPath } from './drive/asRouteDisplayPath';
 import { asRouteStoneDisposition } from './drive/asRouteStoneDisposition';
+import { getCurrentExhaustedSlugs } from './drive/getCurrentExhaustedSlugs';
 import { getRouteDriveBlockerMessage } from './drive/getRouteDriveBlockerMessage';
 import { getRouteDriveExhaustedMessage } from './drive/getRouteDriveExhaustedMessage';
+import { formatRouteDriveMixedHalt } from './drive/formatRouteDriveMixedHalt';
 import { getStoneGuardBlockerReport } from './drive/getStoneGuardBlockerReport';
 import { setDriveBlockerState } from './drive/setDriveBlockerState';
 import { getAllLatestPassageByStone } from './passage/getAllLatestPassageByStone';
@@ -101,6 +103,42 @@ export const stepRouteDrive = async (input: {
       (d) => d.disposition.of === 'halt' && d.disposition.why === 'malfunction',
     );
     if (malfunction) {
+      // a MIXED halt (a malfunction that broke the SAME pass a lower level exhausted) carries
+      // both reasons in its persisted reason. render every reason + remedy — not the bare
+      // escalation — so the replay matches the live pass (no dropped exhaustion guidance).
+      const malfunctionReason = malfunction.report.reason ?? '';
+      if (malfunctionReason.includes('budget exhausted')) {
+        const stonesForHalt = await getAllStones({ route });
+        const stoneForHalt = stonesForHalt.find(
+          (s) => s.name === malfunction.report.stone,
+        );
+        if (stoneForHalt) {
+          const { meters } = await getCurrentExhaustedSlugs({
+            stone: stoneForHalt,
+            route,
+          });
+          const stdoutMixed = formatRouteDriveMixedHalt({
+            route,
+            stone: malfunction.report.stone,
+            reason: malfunctionReason,
+            meters,
+          });
+          if (hookContext === 'hook.onBoot')
+            return { emit: { stdout: stdoutMixed } };
+          return {
+            emit: {
+              stdout: stdoutMixed,
+              stderr: {
+                reason: formatRouteDriveMalfunctionEscalate({
+                  stone: malfunction.report.stone,
+                }),
+                code: 1,
+              },
+            },
+          };
+        }
+      }
+
       const stdout = formatRouteDriveMalfunction({
         route,
         stone: malfunction.report.stone,

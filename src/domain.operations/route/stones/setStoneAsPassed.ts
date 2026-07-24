@@ -427,6 +427,107 @@ export const setStoneAsPassed = async (
     // .note = writes the status directly (like malfunction/constraint), not via
     //         genStoneGuardBlockedEmit, which persists a 'blocked' status + blocker.
     const exhaustedReason = `peer reviewer budget exhausted: ${exhaustionCheck.skippedSlugs.join(', ')}`;
+
+    // detect a malfunction/constraint that UNLOCKED and broke in this SAME pass — a higher
+    // level that ran the instant the exhausted lower level went terminal.
+    // .why = the guard has three gates (malfunction > constraint > exhaustion) that can concur;
+    //        a halt that named only the exhaustion (with only budget/approve remedies) would
+    //        send a human down a path that hits a SECOND, unwarned block on re-arrive — the
+    //        malfunction still stands. so when a concurrent failure exists, ONE halt names every
+    //        reason + persists the highest-precedence status, and the render/replay surface
+    //        every remedy at once.
+    // .note = only REVIEW failures can concur here: judges never ran (the exhaustion halt returns
+    //         before them), so a concurrent break is always a higher review level that unlocked.
+    //         a review at an overruled level is forgiven (the human waved it through).
+    const concurrentMalfunctions = reviewArtifacts.filter(
+      (r) => r.exitClass === 'malfunction' && !isReviewLevelOverruled(r.index),
+    );
+    const concurrentConstraints = reviewArtifacts.filter(
+      (r) =>
+        r.exitClass === 'constraint' &&
+        r.blockers === 0 &&
+        !isReviewLevelOverruled(r.index),
+    );
+    const hasConcurrentMalfunction = concurrentMalfunctions.length > 0;
+    const hasConcurrentConstraint = concurrentConstraints.length > 0;
+
+    if (hasConcurrentMalfunction || hasConcurrentConstraint) {
+      // precedence: malfunction outranks constraint outranks exhaustion — the highest drives
+      // the persisted status + the emit's headline passage kind
+      const passage = hasConcurrentMalfunction ? 'malfunction' : 'blocked';
+
+      // name every concurrent reason in precedence order, exhaustion last — the render
+      // (additive options) + the replay both key off this ONE combined reason string
+      const reasonParts: string[] = [];
+      if (hasConcurrentMalfunction)
+        reasonParts.push('reviewer or judge malfunctioned');
+      if (hasConcurrentConstraint) reasonParts.push('reviewer constraint');
+      reasonParts.push(exhaustedReason);
+      const combinedReason = reasonParts.join('; ');
+
+      // persist the highest-precedence status + the FULL combined reason, so the onBoot/onStop
+      // replay reconstructs every reason + remedy (not the bare malfunction escalation alone)
+      await setPassageReport({
+        report: new PassageReport({
+          stone: stoneMatched.name,
+          status: passage === 'malfunction' ? 'malfunction' : 'blocked',
+          reason: combinedReason,
+        }),
+        route: input.route,
+      });
+
+      // collect the broken reviewers' detail into a stderr bucket (same shape the standalone
+      // malfunction/constraint gates emit)
+      const stderrLines: string[] = [];
+      for (const review of [
+        ...concurrentMalfunctions,
+        ...concurrentConstraints,
+      ]) {
+        if (stderrLines.length > 0) stderrLines.push('');
+        stderrLines.push(`🔎 review ${review.index}`);
+        try {
+          const content = await fs.readFile(review.path, 'utf-8');
+          for (const line of content.split('\n')) stderrLines.push(`   ${line}`);
+        } catch (error) {
+          const isExpected =
+            error instanceof Error &&
+            (error.message.includes('ENOENT') ||
+              error.message.includes('EACCES'));
+          if (!isExpected) throw error;
+          stderrLines.push(
+            `   └─ ${review.exitClass} (exit code ${review.exitCode})`,
+          );
+        }
+      }
+
+      return {
+        passed: false,
+        refs: {
+          reviews: reviewArtifacts.map((r) => r.path),
+          judges: [],
+        },
+        emit: await stampGuardReport({
+          stdout: formatRouteStoneEmit({
+            operation: 'route.stone.set',
+            stone: stoneMatched.name,
+            action: 'passed',
+            passage,
+            reason: combinedReason,
+            guard: guardData,
+          }),
+          stderr: stderrLines.length > 0 ? stderrLines.join('\n') : undefined,
+        }),
+      };
+    }
+
+    // pure exhaustion (no concurrent failure) → its OWN passage status (not a 'blocked' + blocker)
+    // .why = by phase an exhausted peer review looks like ordinary review.peer (a calm
+    //        push), but it is truly a human-wait: a halt(exhausted) where a human must
+    //        approve or extend. as its own status it maps direct to that halt with no
+    //        phase-inference. it is ephemeral — the next --as <status> supersedes it
+    //        (latest-entry-wins), so a stale exhausted never lingers.
+    // .note = writes the status directly (like malfunction/constraint), not via
+    //         genStoneGuardBlockedEmit, which persists a 'blocked' status + blocker.
     await setPassageReport({
       report: new PassageReport({
         stone: stoneMatched.name,

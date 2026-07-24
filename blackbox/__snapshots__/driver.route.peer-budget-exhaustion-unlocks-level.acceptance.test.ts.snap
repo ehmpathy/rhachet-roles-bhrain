@@ -80,7 +80,8 @@ exports[`driver.route.peer-budget-exhaustion-unlocks-level.acceptance given: [jo
 "🦉 the way speaks for itself
    │
    ├─ r1: l1-reviewer (l1, 2/2)
-   │   ├─ exhausted, cached
+   │   ├─ exhausted 🌙, cached
+   │   ├─ terminal — does not block higher levels
    │   ├─ 1 blocker 🔴
    │   ├─ 0 nitpicks ✓
    │   ├─ given: .reviews/peer/1.execute._.review.i002.dfc5faff83ea2fcb55.r001._.given.by_peer.l1-reviewer.md
@@ -104,7 +105,8 @@ exports[`driver.route.peer-budget-exhaustion-unlocks-level.acceptance given: [jo
       │   └─ src/**/*.ts
       ├─ reviews
       │   ├─ r1: l1-reviewer (l1, 2/2)
-      │   │   ├─ exhausted, cached
+      │   │   ├─ exhausted 🌙, cached
+      │   │   ├─ terminal — does not block higher levels
       │   │   ├─ 1 blocker 🔴
       │   │   ├─ 0 nitpicks ✓
       │   │   ├─ given: .reviews/peer/1.execute._.review.i002.dfc5faff83ea2fcb55.r001._.given.by_peer.l1-reviewer.md
@@ -119,6 +121,12 @@ exports[`driver.route.peer-budget-exhaustion-unlocks-level.acceptance given: [jo
           └─ j1: rhx route.stone.judge --mechanism reviewed? --stone $stone --route $route --allow-blockers 0 --allow-nitpicks 1
               ├─ finished [TIME] ✗
               └─ reason: blockers exceed threshold (1 > 0)
+
+🪷 the path continues
+   ├─ l1 is terminal (exhausted 🌙) — it no longer blocks you
+   ├─ l3 has engaged — address its blockers, then:
+   │  └─ rhx route.stone.set --stone 1.execute --as arrived
+   └─ a human is only needed once every level is terminal
 "
 `;
 
@@ -126,7 +134,8 @@ exports[`driver.route.peer-budget-exhaustion-unlocks-level.acceptance given: [jo
 "🦉 the way speaks for itself
    │
    ├─ r1: l1-reviewer (l1, 2/2)
-   │   ├─ exhausted, cached
+   │   ├─ exhausted 🌙, cached
+   │   ├─ terminal — does not block higher levels
    │   ├─ 1 blocker 🔴
    │   ├─ 0 nitpicks ✓
    │   ├─ given: .reviews/peer/1.execute._.review.i002.dfc5faff83ea2fcb55.r001._.given.by_peer.l1-reviewer.md
@@ -150,7 +159,8 @@ exports[`driver.route.peer-budget-exhaustion-unlocks-level.acceptance given: [jo
       │   └─ src/**/*.ts
       ├─ reviews
       │   ├─ r1: l1-reviewer (l1, 2/2)
-      │   │   ├─ exhausted, cached
+      │   │   ├─ exhausted 🌙, cached
+      │   │   ├─ terminal — does not block higher levels
       │   │   ├─ 1 blocker 🔴
       │   │   ├─ 0 nitpicks ✓
       │   │   ├─ given: .reviews/peer/1.execute._.review.i002.dfc5faff83ea2fcb55.r001._.given.by_peer.l1-reviewer.md
@@ -165,5 +175,11 @@ exports[`driver.route.peer-budget-exhaustion-unlocks-level.acceptance given: [jo
           └─ j1: rhx route.stone.judge --mechanism reviewed? --stone $stone --route $route --allow-blockers 0 --allow-nitpicks 1
               ├─ finished [TIME] ✗
               └─ reason: blockers exceed threshold (1 > 0)
+
+🪷 the path continues
+   ├─ l1 is terminal (exhausted 🌙) — it no longer blocks you
+   ├─ l3 has engaged — address its blockers, then:
+   │  └─ rhx route.stone.set --stone 1.execute --as arrived
+   └─ a human is only needed once every level is terminal
 "
 `;

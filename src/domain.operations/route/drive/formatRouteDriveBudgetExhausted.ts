@@ -1,3 +1,5 @@
+import { getReviewPeerLadderStatus } from '../guard/review/peer/meter/getReviewPeerLadderStatus';
+import { formatGuardReviewLadderFooter } from '../guard/tree/formatGuardReviewLadderFooter';
 import {
   formatReviewsMeterLines,
   type GuardPeerMeterStatus,
@@ -19,6 +21,40 @@ export const formatRouteDriveBudgetExhausted = (input: {
 }): string => {
   const approveCmd = `rhx route.stone.set --stone ${input.stone} --as approved`;
   const passCmd = `rhx route.stone.set --stone ${input.stone} --as passed`;
+
+  // upward unlock — a lower level is exhausted (terminal) but a HIGHER level is live again
+  // (status.unlockTransition). this is NOT a spent ladder: the "halted, budget exhausted /
+  // ask a human" text would be a FALSE HALT (the vision's forbidden state) and would
+  // contradict the footer's "a human is only needed once every level is terminal" — two
+  // opposite reads in one stdout. so here render ONLY the reviews section + the "path
+  // continues" footer, which names the live level and the --as arrived re-drive. no human
+  // is needed yet (rule.require.single-source-of-truth-for-render).
+  const status = getReviewPeerLadderStatus({ peerMeters: input.meters });
+  if (status.unlockTransition) {
+    const unlockHeader = [
+      `🦉 where were we?`,
+      '',
+      `🗿 route.drive`,
+      `   ├─ where do we go?`,
+      `   │  ├─ route = ${asRouteDisplayPath({ route: input.route })}`,
+      `   │  └─ stone = ${input.stone}`,
+      `   │`,
+    ];
+    const unlockMeterLines = formatReviewsMeterLines({
+      meters: input.meters,
+      baseIndent: '   ',
+      sectionIndent: '  ',
+      includeHeader: true,
+      headerPrefix: '└─',
+    });
+    const ladderFooter = formatGuardReviewLadderFooter({
+      stone: input.stone,
+      status,
+    });
+    return [...unlockHeader, ...unlockMeterLines, '', ...ladderFooter].join(
+      '\n',
+    );
+  }
 
   // extract exhausted slugs from reason (format: "peer reviewer budget exhausted: slug1, slug2")
   const exhaustedSlugs: string[] = [];

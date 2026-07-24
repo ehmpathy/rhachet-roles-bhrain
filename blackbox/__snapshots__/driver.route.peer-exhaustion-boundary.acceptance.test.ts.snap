@@ -1,0 +1,240 @@
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
+
+exports[`driver.route.peer-exhaustion-boundary.acceptance given: [journey] multi-reviewer exhaustion unlocks only on last-terminal when: [t0] both l1 reviewers reject, l3 awaits then: stdout has good vibes 1`] = `
+"🦉 the way speaks for itself
+   │
+   ├─ r2: l1-alpha (l1, 1/1)
+   │   ├─ rejected [TIME]
+   │   ├─ 1 blocker 🔴
+   │   ├─ 0 nitpicks ✓
+   │   ├─ given: .reviews/peer/1.execute._.review.i001.8739656801d5e77f22.r002._.given.by_peer.l1-alpha.md
+   │   └─ taken: .reviews/peer/1.execute._.review.i001.8739656801d5e77f22.r002._.taken.by_self.l1-alpha.md
+   │
+   ├─ r3: l1-beta (l1, 1/2)
+   │   ├─ rejected [TIME]
+   │   ├─ 1 blocker 🔴
+   │   ├─ 0 nitpicks ✓
+   │   ├─ given: .reviews/peer/1.execute._.review.i001.8739656801d5e77f22.r003._.given.by_peer.l1-beta.md
+   │   └─ taken: .reviews/peer/1.execute._.review.i001.8739656801d5e77f22.r003._.taken.by_self.l1-beta.md
+   │
+   ├─ r1: l3-reviewer (l3, 0/1)
+   │   └─ awaits arrival
+   │
+   └─ ✗ judge.1 - blocked [TIME]
+
+🗿 route.stone.set
+   ├─ stone = 1.execute
+   ├─ passage = blocked
+   ├─ reason = blockers exceed threshold (2 > 0)
+   └─ guard
+      ├─ artifacts
+      │   └─ src/**/*.ts
+      ├─ reviews
+      │   ├─ r1: l1-alpha (l1, 1/1)
+      │   │   ├─ rejected [TIME]
+      │   │   ├─ 1 blocker 🔴
+      │   │   ├─ 0 nitpicks ✓
+      │   │   ├─ given: .reviews/peer/1.execute._.review.i001.8739656801d5e77f22.r002._.given.by_peer.l1-alpha.md
+      │   │   └─ taken: .reviews/peer/1.execute._.review.i001.8739656801d5e77f22.r002._.taken.by_self.l1-alpha.md
+      │   ├─ r2: l1-beta (l1, 1/2)
+      │   │   ├─ rejected [TIME]
+      │   │   ├─ 1 blocker 🔴
+      │   │   ├─ 0 nitpicks ✓
+      │   │   ├─ given: .reviews/peer/1.execute._.review.i001.8739656801d5e77f22.r003._.given.by_peer.l1-beta.md
+      │   │   └─ taken: .reviews/peer/1.execute._.review.i001.8739656801d5e77f22.r003._.taken.by_self.l1-beta.md
+      │   └─ r3: l3-reviewer (l3, 0/1)
+      │       └─ awaits l1 terminal
+      └─ judges
+          └─ j1: rhx route.stone.judge --mechanism reviewed? --stone $stone --route $route --allow-blockers 0 --allow-nitpicks 1
+              ├─ finished [TIME] ✗
+              └─ reason: blockers exceed threshold (2 > 0)
+"
+`;
+
+exports[`driver.route.peer-exhaustion-boundary.acceptance given: [journey] multi-reviewer exhaustion unlocks only on last-terminal when: [t1] alpha exhausted but beta not — l3 still awaits then: stdout has good vibes 1`] = `
+"🦉 the way speaks for itself
+   │
+   ├─ r2: l1-alpha (l1, 1/1)
+   │   ├─ exhausted 🌙, cached
+   │   ├─ terminal — does not block higher levels
+   │   ├─ 1 blocker 🔴
+   │   ├─ 0 nitpicks ✓
+   │   ├─ given: .reviews/peer/1.execute._.review.i001.8739656801d5e77f22.r002._.given.by_peer.l1-alpha.md
+   │   └─ taken: .reviews/peer/1.execute._.review.i001.8739656801d5e77f22.r002._.taken.by_self.l1-alpha.md
+   │
+   ├─ r3: l1-beta (l1, 2/2)
+   │   ├─ rejected [TIME]
+   │   ├─ 1 blocker 🔴
+   │   ├─ 0 nitpicks ✓
+   │   ├─ given: .reviews/peer/1.execute._.review.i002.dfc5faff83ea2fcb55.r003._.given.by_peer.l1-beta.md
+   │   └─ taken: .reviews/peer/1.execute._.review.i002.dfc5faff83ea2fcb55.r003._.taken.by_self.l1-beta.md
+   │
+   ├─ r1: l3-reviewer (l3, 0/1)
+   │   └─ awaits arrival
+   │
+   └─ ✗ judge.1 - blocked [TIME]
+
+🗿 route.stone.set
+   ├─ stone = 1.execute
+   ├─ passage = blocked
+   ├─ reason = blockers exceed threshold (1 > 0)
+   └─ guard
+      ├─ artifacts
+      │   └─ src/**/*.ts
+      ├─ reviews
+      │   ├─ r1: l1-alpha (l1, 1/1)
+      │   │   ├─ exhausted 🌙, cached
+      │   │   ├─ terminal — does not block higher levels
+      │   │   ├─ 1 blocker 🔴
+      │   │   ├─ 0 nitpicks ✓
+      │   │   ├─ given: .reviews/peer/1.execute._.review.i001.8739656801d5e77f22.r002._.given.by_peer.l1-alpha.md
+      │   │   └─ taken: .reviews/peer/1.execute._.review.i001.8739656801d5e77f22.r002._.taken.by_self.l1-alpha.md
+      │   ├─ r2: l1-beta (l1, 2/2)
+      │   │   ├─ rejected [TIME]
+      │   │   ├─ 1 blocker 🔴
+      │   │   ├─ 0 nitpicks ✓
+      │   │   ├─ given: .reviews/peer/1.execute._.review.i002.dfc5faff83ea2fcb55.r003._.given.by_peer.l1-beta.md
+      │   │   └─ taken: .reviews/peer/1.execute._.review.i002.dfc5faff83ea2fcb55.r003._.taken.by_self.l1-beta.md
+      │   └─ r3: l3-reviewer (l3, 0/1)
+      │       └─ awaits l1 terminal
+      └─ judges
+          └─ j1: rhx route.stone.judge --mechanism reviewed? --stone $stone --route $route --allow-blockers 0 --allow-nitpicks 1
+              ├─ finished [TIME] ✗
+              └─ reason: blockers exceed threshold (1 > 0)
+"
+`;
+
+exports[`driver.route.peer-exhaustion-boundary.acceptance given: [journey] multi-reviewer exhaustion unlocks only on last-terminal when: [t2] beta exhausts, l1 level all terminal, l3 unlocks + runs same pass then: stdout has good vibes 1`] = `
+"🦉 the way speaks for itself
+   │
+   ├─ r2: l1-alpha (l1, 1/1)
+   │   ├─ exhausted 🌙, cached
+   │   ├─ terminal — does not block higher levels
+   │   ├─ 1 blocker 🔴
+   │   ├─ 0 nitpicks ✓
+   │   ├─ given: .reviews/peer/1.execute._.review.i001.8739656801d5e77f22.r002._.given.by_peer.l1-alpha.md
+   │   └─ taken: .reviews/peer/1.execute._.review.i001.8739656801d5e77f22.r002._.taken.by_self.l1-alpha.md
+   │
+   ├─ r3: l1-beta (l1, 2/2)
+   │   ├─ exhausted 🌙, cached
+   │   ├─ terminal — does not block higher levels
+   │   ├─ 1 blocker 🔴
+   │   ├─ 0 nitpicks ✓
+   │   ├─ given: .reviews/peer/1.execute._.review.i002.dfc5faff83ea2fcb55.r003._.given.by_peer.l1-beta.md
+   │   └─ taken: .reviews/peer/1.execute._.review.i002.dfc5faff83ea2fcb55.r003._.taken.by_self.l1-beta.md
+   │
+   ├─ r1: l3-reviewer (l3, 1/1)
+   │   ├─ rejected [TIME]
+   │   ├─ 1 blocker 🔴
+   │   ├─ 0 nitpicks ✓
+   │   ├─ given: .reviews/peer/1.execute._.review.i003.457fd5ef46e053a35e.r001._.given.by_peer.l3-reviewer.md
+   │   └─ taken: .reviews/peer/1.execute._.review.i003.457fd5ef46e053a35e.r001._.taken.by_self.l3-reviewer.md
+   │
+   └─ ✗ judge.1 - blocked [TIME]
+
+🗿 route.stone.set
+   ├─ stone = 1.execute
+   ├─ passage = blocked
+   ├─ reason = blockers exceed threshold (1 > 0)
+   └─ guard
+      ├─ artifacts
+      │   └─ src/**/*.ts
+      ├─ reviews
+      │   ├─ r1: l1-alpha (l1, 1/1)
+      │   │   ├─ exhausted 🌙, cached
+      │   │   ├─ terminal — does not block higher levels
+      │   │   ├─ 1 blocker 🔴
+      │   │   ├─ 0 nitpicks ✓
+      │   │   ├─ given: .reviews/peer/1.execute._.review.i001.8739656801d5e77f22.r002._.given.by_peer.l1-alpha.md
+      │   │   └─ taken: .reviews/peer/1.execute._.review.i001.8739656801d5e77f22.r002._.taken.by_self.l1-alpha.md
+      │   ├─ r2: l1-beta (l1, 2/2)
+      │   │   ├─ exhausted 🌙, cached
+      │   │   ├─ terminal — does not block higher levels
+      │   │   ├─ 1 blocker 🔴
+      │   │   ├─ 0 nitpicks ✓
+      │   │   ├─ given: .reviews/peer/1.execute._.review.i002.dfc5faff83ea2fcb55.r003._.given.by_peer.l1-beta.md
+      │   │   └─ taken: .reviews/peer/1.execute._.review.i002.dfc5faff83ea2fcb55.r003._.taken.by_self.l1-beta.md
+      │   └─ r3: l3-reviewer (l3, 1/1)
+      │       ├─ rejected [TIME]
+      │       ├─ 1 blocker 🔴
+      │       ├─ 0 nitpicks ✓
+      │       ├─ given: .reviews/peer/1.execute._.review.i003.457fd5ef46e053a35e.r001._.given.by_peer.l3-reviewer.md
+      │       └─ taken: .reviews/peer/1.execute._.review.i003.457fd5ef46e053a35e.r001._.taken.by_self.l3-reviewer.md
+      └─ judges
+          └─ j1: rhx route.stone.judge --mechanism reviewed? --stone $stone --route $route --allow-blockers 0 --allow-nitpicks 1
+              ├─ finished [TIME] ✗
+              └─ reason: blockers exceed threshold (1 > 0)
+
+🪷 the path continues
+   ├─ l1 is terminal (exhausted 🌙) — it no longer blocks you
+   ├─ l3 has engaged — address its blockers, then:
+   │  └─ rhx route.stone.set --stone 1.execute --as arrived
+   └─ a human is only needed once every level is terminal
+"
+`;
+
+exports[`driver.route.peer-exhaustion-boundary.acceptance given: [journey] multi-reviewer exhaustion unlocks only on last-terminal when: [t3] l3 exhausts, all levels terminal, the human halt is the only halt then: stdout has good vibes 1`] = `
+"🦉 the way speaks for itself
+   │
+   ├─ r2: l1-alpha (l1, 1/1)
+   │   ├─ exhausted 🌙, cached
+   │   ├─ terminal — does not block higher levels
+   │   ├─ 1 blocker 🔴
+   │   ├─ 0 nitpicks ✓
+   │   ├─ given: .reviews/peer/1.execute._.review.i001.8739656801d5e77f22.r002._.given.by_peer.l1-alpha.md
+   │   └─ taken: .reviews/peer/1.execute._.review.i001.8739656801d5e77f22.r002._.taken.by_self.l1-alpha.md
+   │
+   ├─ r3: l1-beta (l1, 2/2)
+   │   ├─ exhausted 🌙, cached
+   │   ├─ terminal — does not block higher levels
+   │   ├─ 1 blocker 🔴
+   │   ├─ 0 nitpicks ✓
+   │   ├─ given: .reviews/peer/1.execute._.review.i002.dfc5faff83ea2fcb55.r003._.given.by_peer.l1-beta.md
+   │   └─ taken: .reviews/peer/1.execute._.review.i002.dfc5faff83ea2fcb55.r003._.taken.by_self.l1-beta.md
+   │
+   ├─ r1: l3-reviewer (l3, 1/1)
+   │   ├─ exhausted 🌙, cached
+   │   ├─ terminal — does not block higher levels
+   │   ├─ 1 blocker 🔴
+   │   ├─ 0 nitpicks ✓
+   │   ├─ given: .reviews/peer/1.execute._.review.i003.457fd5ef46e053a35e.r001._.given.by_peer.l3-reviewer.md
+   │   └─ taken: .reviews/peer/1.execute._.review.i003.457fd5ef46e053a35e.r001._.taken.by_self.l3-reviewer.md
+   │
+   └─ halted: peer reviewer budget exhausted
+
+🗿 route.stone.set
+   ├─ stone = 1.execute
+   ├─ passage = blocked
+   ├─ reason = peer reviewer budget exhausted: l1-alpha, l1-beta, l3-reviewer
+   ├─ options
+   │  ├─ increase budget
+   │  │  └─ rhx route.guard.budget --for review --add N --stone 1.execute
+   │  └─ approve as-is
+   │     └─ rhx route.stone.set --stone 1.execute --as approved
+   └─ guard
+      ├─ artifacts
+      │   └─ src/**/*.ts
+      └─ reviews
+          ├─ r1: l1-alpha (l1, 1/1)
+          │   ├─ exhausted 🌙, cached
+          │   ├─ terminal — does not block higher levels
+          │   ├─ 1 blocker 🔴
+          │   ├─ 0 nitpicks ✓
+          │   ├─ given: .reviews/peer/1.execute._.review.i001.8739656801d5e77f22.r002._.given.by_peer.l1-alpha.md
+          │   └─ taken: .reviews/peer/1.execute._.review.i001.8739656801d5e77f22.r002._.taken.by_self.l1-alpha.md
+          ├─ r2: l1-beta (l1, 2/2)
+          │   ├─ exhausted 🌙, cached
+          │   ├─ terminal — does not block higher levels
+          │   ├─ 1 blocker 🔴
+          │   ├─ 0 nitpicks ✓
+          │   ├─ given: .reviews/peer/1.execute._.review.i002.dfc5faff83ea2fcb55.r003._.given.by_peer.l1-beta.md
+          │   └─ taken: .reviews/peer/1.execute._.review.i002.dfc5faff83ea2fcb55.r003._.taken.by_self.l1-beta.md
+          └─ r3: l3-reviewer (l3, 1/1)
+              ├─ exhausted 🌙, cached
+              ├─ terminal — does not block higher levels
+              ├─ 1 blocker 🔴
+              ├─ 0 nitpicks ✓
+              ├─ given: .reviews/peer/1.execute._.review.i003.457fd5ef46e053a35e.r001._.given.by_peer.l3-reviewer.md
+              └─ taken: .reviews/peer/1.execute._.review.i003.457fd5ef46e053a35e.r001._.taken.by_self.l3-reviewer.md
+"
+`;

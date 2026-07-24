@@ -226,6 +226,17 @@ describe('formatGuardReviewerTree', () => {
     };
 
     when('[t0] formatted', () => {
+      then(
+        'renders the terminal narrative — malfunction is terminal-for-unlock, so it must not read as a ladder halt',
+        () => {
+          const out = formatGuardReviewerTree({ reviewer, isLast: true }).join(
+            '\n',
+          );
+          expect(out).toContain('malfunction 💥');
+          expect(out).toContain('terminal — does not block higher levels');
+        },
+      );
+
       then('output matches snapshot', () => {
         const lines = formatGuardReviewerTree({ reviewer, isLast: true });
         expect(lines.join('\n')).toMatchSnapshot();
@@ -247,6 +258,17 @@ describe('formatGuardReviewerTree', () => {
     };
 
     when('[t0] formatted', () => {
+      then(
+        'renders the terminal narrative — constraint is terminal-for-unlock, so it must not read as a ladder halt',
+        () => {
+          const out = formatGuardReviewerTree({ reviewer, isLast: true }).join(
+            '\n',
+          );
+          expect(out).toContain('constraint ✋');
+          expect(out).toContain('terminal — does not block higher levels');
+        },
+      );
+
       then('output matches snapshot', () => {
         const lines = formatGuardReviewerTree({ reviewer, isLast: true });
         expect(lines.join('\n')).toMatchSnapshot();
@@ -375,7 +397,7 @@ describe('formatGuardReviewerTree', () => {
           const out = formatGuardReviewerTree({ reviewer, isLast: true }).join(
             '\n',
           );
-          expect(out).toContain('💥 malfunction');
+          expect(out).toContain('malfunction 💥');
           expect(out).toContain(`given: ${pathGiven}`);
           expect(out).toContain(
             'taken: .reviews/peer/1.execute._.review.i001.a1b2c3.r001._.taken.by_self.architect.md',

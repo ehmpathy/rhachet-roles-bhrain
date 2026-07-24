@@ -106,7 +106,8 @@ exports[`driver.route.peer-budget-multilevel.journey.acceptance given: [journey 
 "🦉 the way speaks for itself
    │
    ├─ r1: linter (l1, 2/2)
-   │   ├─ exhausted, cached
+   │   ├─ exhausted 🌙, cached
+   │   ├─ terminal — does not block higher levels
    │   ├─ 1 blocker 🔴
    │   ├─ 0 nitpicks ✓
    │   ├─ given: .reviews/peer/1.vision._.review.i002.dfc5faff83ea2fcb55.r001._.given.by_peer.linter.md
@@ -137,7 +138,8 @@ exports[`driver.route.peer-budget-multilevel.journey.acceptance given: [journey 
       │   └─ src/**/*.ts
       ├─ reviews
       │   ├─ r1: linter (l1, 2/2)
-      │   │   ├─ exhausted, cached
+      │   │   ├─ exhausted 🌙, cached
+      │   │   ├─ terminal — does not block higher levels
       │   │   ├─ 1 blocker 🔴
       │   │   ├─ 0 nitpicks ✓
       │   │   ├─ given: .reviews/peer/1.vision._.review.i002.dfc5faff83ea2fcb55.r001._.given.by_peer.linter.md
@@ -158,6 +160,12 @@ exports[`driver.route.peer-budget-multilevel.journey.acceptance given: [journey 
           └─ j1: rhx route.stone.judge --mechanism reviewed? --stone $stone --route $route --allow-blockers 0 --allow-nitpicks 1
               ├─ finished [TIME] ✗
               └─ reason: blockers exceed threshold (1 > 0)
+
+🪷 the path continues
+   ├─ l1 is terminal (exhausted 🌙) — it no longer blocks you
+   ├─ l2 has engaged — address its blockers, then:
+   │  └─ rhx route.stone.set --stone 1.vision --as arrived
+   └─ a human is only needed once every level is terminal
 "
 `;
 
@@ -165,21 +173,24 @@ exports[`driver.route.peer-budget-multilevel.journey.acceptance given: [journey 
 "🦉 the way speaks for itself
    │
    ├─ r1: linter (l1, 2/2)
-   │   ├─ exhausted, cached
+   │   ├─ exhausted 🌙, cached
+   │   ├─ terminal — does not block higher levels
    │   ├─ 1 blocker 🔴
    │   ├─ 0 nitpicks ✓
    │   ├─ given: .reviews/peer/1.vision._.review.i002.dfc5faff83ea2fcb55.r001._.given.by_peer.linter.md
    │   └─ taken: .reviews/peer/1.vision._.review.i002.dfc5faff83ea2fcb55.r001._.taken.by_self.linter.md
    │
    ├─ r2: spellcheck (l1, 3/3)
-   │   ├─ exhausted, cached
+   │   ├─ exhausted 🌙, cached
+   │   ├─ terminal — does not block higher levels
    │   ├─ 0 blockers ✓
    │   ├─ 0 nitpicks ✓
    │   ├─ given: .reviews/peer/1.vision._.review.i003.457fd5ef46e053a35e.r002._.given.by_peer.spellcheck.md
    │   └─ taken: .reviews/peer/1.vision._.review.i003.457fd5ef46e053a35e.r002._.taken.by_self.spellcheck.md
    │
    ├─ r3: architect (l2, 2/2)
-   │   ├─ exhausted, cached
+   │   ├─ exhausted 🌙, cached
+   │   ├─ terminal — does not block higher levels
    │   ├─ 1 blocker 🔴
    │   ├─ 0 nitpicks ✓
    │   ├─ given: .reviews/peer/1.vision._.review.i004.6dddc53e1de2efc1da.r003._.given.by_peer.architect.md
@@ -201,7 +212,8 @@ exports[`driver.route.peer-budget-multilevel.journey.acceptance given: [journey 
       │   └─ src/**/*.ts
       └─ reviews
           ├─ r1: linter (l1, 2/2)
-          │   ├─ exhausted, cached
+          │   ├─ exhausted 🌙, cached
+          │   ├─ terminal — does not block higher levels
           │   ├─ 1 blocker 🔴
           │   ├─ 0 nitpicks ✓
           │   ├─ given: .reviews/peer/1.vision._.review.i002.dfc5faff83ea2fcb55.r001._.given.by_peer.linter.md
@@ -213,7 +225,8 @@ exports[`driver.route.peer-budget-multilevel.journey.acceptance given: [journey 
           │   ├─ given: .reviews/peer/1.vision._.review.i003.457fd5ef46e053a35e.r002._.given.by_peer.spellcheck.md
           │   └─ taken: .reviews/peer/1.vision._.review.i003.457fd5ef46e053a35e.r002._.taken.by_self.spellcheck.md
           └─ r3: architect (l2, 2/2)
-              ├─ exhausted, cached
+              ├─ exhausted 🌙, cached
+              ├─ terminal — does not block higher levels
               ├─ 1 blocker 🔴
               ├─ 0 nitpicks ✓
               ├─ given: .reviews/peer/1.vision._.review.i004.6dddc53e1de2efc1da.r003._.given.by_peer.architect.md
@@ -225,14 +238,16 @@ exports[`driver.route.peer-budget-multilevel.journey.acceptance given: [journey 
 "🦉 the way speaks for itself
    │
    ├─ r1: linter (l1, 2/2)
-   │   ├─ exhausted, cached
+   │   ├─ exhausted 🌙, cached
+   │   ├─ terminal — does not block higher levels
    │   ├─ 1 blocker 🔴
    │   ├─ 0 nitpicks ✓
    │   ├─ given: .reviews/peer/1.vision._.review.i002.dfc5faff83ea2fcb55.r001._.given.by_peer.linter.md
    │   └─ taken: .reviews/peer/1.vision._.review.i002.dfc5faff83ea2fcb55.r001._.taken.by_self.linter.md
    │
    ├─ r2: spellcheck (l1, 3/3)
-   │   ├─ exhausted, cached
+   │   ├─ exhausted 🌙, cached
+   │   ├─ terminal — does not block higher levels
    │   ├─ 0 blockers ✓
    │   ├─ 0 nitpicks ✓
    │   ├─ given: .reviews/peer/1.vision._.review.i003.457fd5ef46e053a35e.r002._.given.by_peer.spellcheck.md
@@ -256,7 +271,8 @@ exports[`driver.route.peer-budget-multilevel.journey.acceptance given: [journey 
       │   └─ src/**/*.ts
       ├─ reviews
       │   ├─ r1: linter (l1, 2/2)
-      │   │   ├─ exhausted, cached
+      │   │   ├─ exhausted 🌙, cached
+      │   │   ├─ terminal — does not block higher levels
       │   │   ├─ 1 blocker 🔴
       │   │   ├─ 0 nitpicks ✓
       │   │   ├─ given: .reviews/peer/1.vision._.review.i002.dfc5faff83ea2fcb55.r001._.given.by_peer.linter.md
@@ -277,6 +293,12 @@ exports[`driver.route.peer-budget-multilevel.journey.acceptance given: [journey 
           └─ j1: rhx route.stone.judge --mechanism reviewed? --stone $stone --route $route --allow-blockers 0 --allow-nitpicks 1
               ├─ finished [TIME] ✗
               └─ reason: blockers exceed threshold (1 > 0)
+
+🪷 the path continues
+   ├─ l1 is terminal (exhausted 🌙) — it no longer blocks you
+   ├─ l2 has engaged — address its blockers, then:
+   │  └─ rhx route.stone.set --stone 1.vision --as arrived
+   └─ a human is only needed once every level is terminal
 "
 `;
 
@@ -293,7 +315,8 @@ exports[`driver.route.peer-budget-multilevel.journey.acceptance given: [journey 
       │
       ├─ reviews
       │   ├─ r1: linter (l1, 2/2)
-      │   │   ├─ exhausted
+      │   │   ├─ exhausted 🌙
+      │   │   ├─ terminal — does not block higher levels
       │   │   ├─ 1 blocker 🔴
       │   │   ├─ 0 nitpicks ✓
       │   │   ├─ given: [TEMP]/.reviews/peer/1.vision._.review.i002.dfc5faff83ea2fcb55.r001._.given.by_peer.linter.md
@@ -305,7 +328,8 @@ exports[`driver.route.peer-budget-multilevel.journey.acceptance given: [journey 
       │   │   ├─ given: [TEMP]/.reviews/peer/1.vision._.review.i003.457fd5ef46e053a35e.r002._.given.by_peer.spellcheck.md
       │   │   └─ taken: [TEMP]/.reviews/peer/1.vision._.review.i003.457fd5ef46e053a35e.r002._.taken.by_self.spellcheck.md
       │   └─ r3: architect (l2, 2/2)
-      │       ├─ exhausted
+      │       ├─ exhausted 🌙
+      │       ├─ terminal — does not block higher levels
       │       ├─ 1 blocker 🔴
       │       ├─ 0 nitpicks ✓
       │       ├─ given: [TEMP]/.reviews/peer/1.vision._.review.i004.6dddc53e1de2efc1da.r003._.given.by_peer.architect.md
@@ -345,38 +369,32 @@ exports[`driver.route.peer-budget-multilevel.journey.acceptance given: [journey 
    │  ├─ route = .
    │  └─ stone = 1.vision
    │
-   └─ halted, peer reviewer budget exhausted
-      ├─ reason: peer reviewer budget exhausted
-      │
-      ├─ reviews
-      │   ├─ r1: linter (l1, 2/2)
-      │   │   ├─ exhausted
-      │   │   ├─ 1 blocker 🔴
-      │   │   ├─ 0 nitpicks ✓
-      │   │   ├─ given: [TEMP]/.reviews/peer/1.vision._.review.i002.dfc5faff83ea2fcb55.r001._.given.by_peer.linter.md
-      │   │   └─ taken: [TEMP]/.reviews/peer/1.vision._.review.i002.dfc5faff83ea2fcb55.r001._.taken.by_self.linter.md
-      │   ├─ r2: spellcheck (l1, 3/3)
-      │   │   ├─ approved
-      │   │   ├─ 0 blockers ✓
-      │   │   ├─ 0 nitpicks ✓
-      │   │   ├─ given: [TEMP]/.reviews/peer/1.vision._.review.i003.457fd5ef46e053a35e.r002._.given.by_peer.spellcheck.md
-      │   │   └─ taken: [TEMP]/.reviews/peer/1.vision._.review.i003.457fd5ef46e053a35e.r002._.taken.by_self.spellcheck.md
-      │   └─ r3: architect (l2, 2/4)
-      │       ├─ rejected
-      │       ├─ 1 blocker 🔴
-      │       ├─ 0 nitpicks ✓
-      │       ├─ given: [TEMP]/.reviews/peer/1.vision._.review.i004.6dddc53e1de2efc1da.r003._.given.by_peer.architect.md
-      │       └─ taken: [TEMP]/.reviews/peer/1.vision._.review.i004.6dddc53e1de2efc1da.r003._.taken.by_self.architect.md
-      │
-      ├─ please ask a human to either
-      │  ├─ approve as-is
-      │  │  └─ rhx route.stone.set --stone 1.vision --as approved
-      │  │
-      │  └─ extend budget (then rerun)
-      │     └─ rhx route.guard.budget --for review --add N --peer linter --stone 1.vision
-      │
-      └─ once they approve, run
-         └─ rhx route.stone.set --stone 1.vision --as passed
+   └─ reviews
+      ├─ r1: linter (l1, 2/2)
+      │   ├─ exhausted 🌙
+      │   ├─ terminal — does not block higher levels
+      │   ├─ 1 blocker 🔴
+      │   ├─ 0 nitpicks ✓
+      │   ├─ given: [TEMP]/.reviews/peer/1.vision._.review.i002.dfc5faff83ea2fcb55.r001._.given.by_peer.linter.md
+      │   └─ taken: [TEMP]/.reviews/peer/1.vision._.review.i002.dfc5faff83ea2fcb55.r001._.taken.by_self.linter.md
+      ├─ r2: spellcheck (l1, 3/3)
+      │   ├─ approved
+      │   ├─ 0 blockers ✓
+      │   ├─ 0 nitpicks ✓
+      │   ├─ given: [TEMP]/.reviews/peer/1.vision._.review.i003.457fd5ef46e053a35e.r002._.given.by_peer.spellcheck.md
+      │   └─ taken: [TEMP]/.reviews/peer/1.vision._.review.i003.457fd5ef46e053a35e.r002._.taken.by_self.spellcheck.md
+      └─ r3: architect (l2, 2/4)
+          ├─ rejected
+          ├─ 1 blocker 🔴
+          ├─ 0 nitpicks ✓
+          ├─ given: [TEMP]/.reviews/peer/1.vision._.review.i004.6dddc53e1de2efc1da.r003._.given.by_peer.architect.md
+          └─ taken: [TEMP]/.reviews/peer/1.vision._.review.i004.6dddc53e1de2efc1da.r003._.taken.by_self.architect.md
+
+🪷 the path continues
+   ├─ l1 is terminal (exhausted 🌙) — it no longer blocks you
+   ├─ l2 has engaged — address its blockers, then:
+   │  └─ rhx route.stone.set --stone 1.vision --as arrived
+   └─ a human is only needed once every level is terminal
 "
 `;
 
@@ -384,14 +402,16 @@ exports[`driver.route.peer-budget-multilevel.journey.acceptance given: [journey 
 "🦉 the way speaks for itself
    │
    ├─ r1: linter (l1, 2/2)
-   │   ├─ exhausted, cached
+   │   ├─ exhausted 🌙, cached
+   │   ├─ terminal — does not block higher levels
    │   ├─ 1 blocker 🔴
    │   ├─ 0 nitpicks ✓
    │   ├─ given: .reviews/peer/1.vision._.review.i002.dfc5faff83ea2fcb55.r001._.given.by_peer.linter.md
    │   └─ taken: .reviews/peer/1.vision._.review.i002.dfc5faff83ea2fcb55.r001._.taken.by_self.linter.md
    │
    ├─ r2: spellcheck (l1, 3/3)
-   │   ├─ exhausted, cached
+   │   ├─ exhausted 🌙, cached
+   │   ├─ terminal — does not block higher levels
    │   ├─ 0 blockers ✓
    │   ├─ 0 nitpicks ✓
    │   ├─ given: .reviews/peer/1.vision._.review.i003.457fd5ef46e053a35e.r002._.given.by_peer.spellcheck.md
@@ -420,7 +440,8 @@ exports[`driver.route.peer-budget-multilevel.journey.acceptance given: [journey 
       │   └─ src/**/*.ts
       └─ reviews
           ├─ r1: linter (l1, 2/2)
-          │   ├─ exhausted, cached
+          │   ├─ exhausted 🌙, cached
+          │   ├─ terminal — does not block higher levels
           │   ├─ 1 blocker 🔴
           │   ├─ 0 nitpicks ✓
           │   ├─ given: .reviews/peer/1.vision._.review.i002.dfc5faff83ea2fcb55.r001._.given.by_peer.linter.md
@@ -453,7 +474,8 @@ exports[`driver.route.peer-budget-multilevel.journey.acceptance given: [journey 
       │
       ├─ reviews
       │   ├─ r1: linter (l1, 2/2)
-      │   │   ├─ exhausted
+      │   │   ├─ exhausted 🌙
+      │   │   ├─ terminal — does not block higher levels
       │   │   ├─ 1 blocker 🔴
       │   │   ├─ 0 nitpicks ✓
       │   │   ├─ given: [TEMP]/.reviews/peer/1.vision._.review.i002.dfc5faff83ea2fcb55.r001._.given.by_peer.linter.md
@@ -496,14 +518,16 @@ exports[`driver.route.peer-budget-multilevel.journey.acceptance given: [journey 
 "🦉 the way speaks for itself
    │
    ├─ r1: linter (l1, 2/2)
-   │   ├─ exhausted, cached
+   │   ├─ exhausted 🌙, cached
+   │   ├─ terminal — does not block higher levels
    │   ├─ 1 blocker 🔴
    │   ├─ 0 nitpicks ✓
    │   ├─ given: .reviews/peer/1.vision._.review.i002.dfc5faff83ea2fcb55.r001._.given.by_peer.linter.md
    │   └─ taken: .reviews/peer/1.vision._.review.i002.dfc5faff83ea2fcb55.r001._.taken.by_self.linter.md
    │
    ├─ r2: spellcheck (l1, 3/3)
-   │   ├─ exhausted, cached
+   │   ├─ exhausted 🌙, cached
+   │   ├─ terminal — does not block higher levels
    │   ├─ 0 blockers ✓
    │   ├─ 0 nitpicks ✓
    │   ├─ given: .reviews/peer/1.vision._.review.i003.457fd5ef46e053a35e.r002._.given.by_peer.spellcheck.md
@@ -526,7 +550,8 @@ exports[`driver.route.peer-budget-multilevel.journey.acceptance given: [journey 
    │  │   └─ src/**/*.ts
    │  ├─ reviews
    │  │   ├─ r1: linter (l1, 2/2)
-   │  │   │   ├─ exhausted, cached
+   │  │   │   ├─ exhausted 🌙, cached
+   │  │   │   ├─ terminal — does not block higher levels
    │  │   │   ├─ 1 blocker 🔴
    │  │   │   ├─ 0 nitpicks ✓
    │  │   │   ├─ given: .reviews/peer/1.vision._.review.i002.dfc5faff83ea2fcb55.r001._.given.by_peer.linter.md

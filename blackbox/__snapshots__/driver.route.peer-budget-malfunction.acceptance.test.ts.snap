@@ -4,7 +4,8 @@ exports[`driver.route.peer-budget-malfunction.acceptance given: [journey] review
 "🦉 the way speaks for itself
    │
    ├─ r1: flaky-reviewer (l1, 1/2)
-   │   ├─ 💥 malfunction
+   │   ├─ malfunction 💥
+   │   ├─ terminal — does not block higher levels
    │   ├─ given: .reviews/peer/1.execute._.review.i001.8739656801d5e77f22.r001._.given.by_peer.flaky-reviewer.md
    │   └─ taken: .reviews/peer/1.execute._.review.i001.8739656801d5e77f22.r001._.taken.by_self.flaky-reviewer.md
    │
@@ -23,7 +24,8 @@ exports[`driver.route.peer-budget-malfunction.acceptance given: [journey] review
       │   └─ src/**/*.ts
       ├─ reviews
       │   └─ r1: flaky-reviewer (l1, 0/2)
-      │       ├─ 💥 malfunction
+      │       ├─ malfunction 💥
+      │       ├─ terminal — does not block higher levels
       │       ├─ given: .reviews/peer/1.execute._.review.i001.8739656801d5e77f22.r001._.given.by_peer.flaky-reviewer.md
       │       └─ taken: .reviews/peer/1.execute._.review.i001.8739656801d5e77f22.r001._.taken.by_self.flaky-reviewer.md
       └─ judges
@@ -102,7 +104,8 @@ exports[`driver.route.peer-budget-malfunction.acceptance given: [journey] review
 "🦉 the way speaks for itself
    │
    ├─ r1: flaky-reviewer (l1, 2/2)
-   │   ├─ exhausted, cached
+   │   ├─ exhausted 🌙, cached
+   │   ├─ terminal — does not block higher levels
    │   ├─ 1 blocker 🔴
    │   ├─ 0 nitpicks ✓
    │   ├─ given: .reviews/peer/1.execute._.review.i003.457fd5ef46e053a35e.r001._.given.by_peer.flaky-reviewer.md
@@ -124,7 +127,8 @@ exports[`driver.route.peer-budget-malfunction.acceptance given: [journey] review
       │   └─ src/**/*.ts
       └─ reviews
           └─ r1: flaky-reviewer (l1, 2/2)
-              ├─ exhausted, cached
+              ├─ exhausted 🌙, cached
+              ├─ terminal — does not block higher levels
               ├─ 1 blocker 🔴
               ├─ 0 nitpicks ✓
               ├─ given: .reviews/peer/1.execute._.review.i003.457fd5ef46e053a35e.r001._.given.by_peer.flaky-reviewer.md
@@ -136,7 +140,8 @@ exports[`driver.route.peer-budget-malfunction.acceptance given: [journey] review
 "🦉 the way speaks for itself
    │
    ├─ r1: flaky-reviewer (l1, 3/3)
-   │   ├─ 💥 malfunction
+   │   ├─ malfunction 💥
+   │   ├─ terminal — does not block higher levels
    │   ├─ given: .reviews/peer/1.execute._.review.i004.0997a4c5910ffe05d0.r001._.given.by_peer.flaky-reviewer.md
    │   └─ taken: .reviews/peer/1.execute._.review.i004.0997a4c5910ffe05d0.r001._.taken.by_self.flaky-reviewer.md
    │
@@ -155,7 +160,8 @@ exports[`driver.route.peer-budget-malfunction.acceptance given: [journey] review
       │   └─ src/**/*.ts
       ├─ reviews
       │   └─ r1: flaky-reviewer (l1, 2/3)
-      │       ├─ 💥 malfunction
+      │       ├─ malfunction 💥
+      │       ├─ terminal — does not block higher levels
       │       ├─ given: .reviews/peer/1.execute._.review.i004.0997a4c5910ffe05d0.r001._.given.by_peer.flaky-reviewer.md
       │       └─ taken: .reviews/peer/1.execute._.review.i004.0997a4c5910ffe05d0.r001._.taken.by_self.flaky-reviewer.md
       └─ judges

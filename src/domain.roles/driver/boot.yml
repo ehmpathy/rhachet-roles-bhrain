@@ -8,8 +8,12 @@ always:
     say:
       - briefs/rule.always.drive-autonomously.md
       - briefs/rule.always.converge-with-reviewers.md
+      - briefs/rule.always.converge-to-terminal.md
+      - briefs/rule.always.defer-fulcrums-to-last.md
+      - briefs/rule.always.diagnose-reviewer-malfunctions.md
       - briefs/howto.drive-routes.[guide].md
       - briefs/howto.run-self-reviews.[guide].md
+      - briefs/howto.navigate-fulcrum-choices.[guide].md
   skills:
     say:
       - skills/route.stone.set.sh
