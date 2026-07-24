@@ -42,7 +42,8 @@ exports[`driver.route.peer-budget-all-terminal-halt.acceptance given: [case1] le
 "🦉 the way speaks for itself
    │
    ├─ r1: quick-fail (l1, 1/1)
-   │   ├─ exhausted, cached
+   │   ├─ exhausted 🌙, cached
+   │   ├─ terminal — does not block higher levels
    │   ├─ 1 blocker 🔴
    │   ├─ 0 nitpicks ✓
    │   ├─ given: .reviews/peer/1.vision._.review.i001.8739656801d5e77f22.r001._.given.by_peer.quick-fail.md
@@ -66,7 +67,8 @@ exports[`driver.route.peer-budget-all-terminal-halt.acceptance given: [case1] le
       │   └─ src/**/*.ts
       ├─ reviews
       │   ├─ r1: quick-fail (l1, 1/1)
-      │   │   ├─ exhausted, cached
+      │   │   ├─ exhausted 🌙, cached
+      │   │   ├─ terminal — does not block higher levels
       │   │   ├─ 1 blocker 🔴
       │   │   ├─ 0 nitpicks ✓
       │   │   ├─ given: .reviews/peer/1.vision._.review.i001.8739656801d5e77f22.r001._.given.by_peer.quick-fail.md
@@ -81,6 +83,12 @@ exports[`driver.route.peer-budget-all-terminal-halt.acceptance given: [case1] le
           └─ j1: rhx route.stone.judge --mechanism reviewed? --stone $stone --route $route --allow-blockers 0 --allow-nitpicks 1
               ├─ finished [TIME] ✗
               └─ reason: blockers exceed threshold (1 > 0)
+
+🪷 the path continues
+   ├─ l1 is terminal (exhausted 🌙) — it no longer blocks you
+   ├─ l2 has engaged — address its blockers, then:
+   │  └─ rhx route.stone.set --stone 1.vision --as arrived
+   └─ a human is only needed once every level is terminal
 "
 `;
 
@@ -88,14 +96,16 @@ exports[`driver.route.peer-budget-all-terminal-halt.acceptance given: [case1] le
 "🦉 the way speaks for itself
    │
    ├─ r1: quick-fail (l1, 1/1)
-   │   ├─ exhausted, cached
+   │   ├─ exhausted 🌙, cached
+   │   ├─ terminal — does not block higher levels
    │   ├─ 1 blocker 🔴
    │   ├─ 0 nitpicks ✓
    │   ├─ given: .reviews/peer/1.vision._.review.i001.8739656801d5e77f22.r001._.given.by_peer.quick-fail.md
    │   └─ taken: .reviews/peer/1.vision._.review.i001.8739656801d5e77f22.r001._.taken.by_self.quick-fail.md
    │
    ├─ r2: thorough (l2, 2/2)
-   │   ├─ exhausted, cached
+   │   ├─ exhausted 🌙, cached
+   │   ├─ terminal — does not block higher levels
    │   ├─ 1 blocker 🔴
    │   ├─ 0 nitpicks ✓
    │   ├─ given: .reviews/peer/1.vision._.review.i003.457fd5ef46e053a35e.r002._.given.by_peer.thorough.md
@@ -117,13 +127,15 @@ exports[`driver.route.peer-budget-all-terminal-halt.acceptance given: [case1] le
       │   └─ src/**/*.ts
       └─ reviews
           ├─ r1: quick-fail (l1, 1/1)
-          │   ├─ exhausted, cached
+          │   ├─ exhausted 🌙, cached
+          │   ├─ terminal — does not block higher levels
           │   ├─ 1 blocker 🔴
           │   ├─ 0 nitpicks ✓
           │   ├─ given: .reviews/peer/1.vision._.review.i001.8739656801d5e77f22.r001._.given.by_peer.quick-fail.md
           │   └─ taken: .reviews/peer/1.vision._.review.i001.8739656801d5e77f22.r001._.taken.by_self.quick-fail.md
           └─ r2: thorough (l2, 2/2)
-              ├─ exhausted, cached
+              ├─ exhausted 🌙, cached
+              ├─ terminal — does not block higher levels
               ├─ 1 blocker 🔴
               ├─ 0 nitpicks ✓
               ├─ given: .reviews/peer/1.vision._.review.i003.457fd5ef46e053a35e.r002._.given.by_peer.thorough.md
@@ -135,7 +147,8 @@ exports[`driver.route.peer-budget-all-terminal-halt.acceptance given: [case1] le
 "🦉 the way speaks for itself
    │
    ├─ r1: quick-fail (l1, 1/1)
-   │   ├─ exhausted, cached
+   │   ├─ exhausted 🌙, cached
+   │   ├─ terminal — does not block higher levels
    │   ├─ 1 blocker 🔴
    │   ├─ 0 nitpicks ✓
    │   ├─ given: .reviews/peer/1.vision._.review.i001.8739656801d5e77f22.r001._.given.by_peer.quick-fail.md
@@ -159,7 +172,8 @@ exports[`driver.route.peer-budget-all-terminal-halt.acceptance given: [case1] le
       │   └─ src/**/*.ts
       ├─ reviews
       │   ├─ r1: quick-fail (l1, 1/1)
-      │   │   ├─ exhausted, cached
+      │   │   ├─ exhausted 🌙, cached
+      │   │   ├─ terminal — does not block higher levels
       │   │   ├─ 1 blocker 🔴
       │   │   ├─ 0 nitpicks ✓
       │   │   ├─ given: .reviews/peer/1.vision._.review.i001.8739656801d5e77f22.r001._.given.by_peer.quick-fail.md
@@ -174,5 +188,11 @@ exports[`driver.route.peer-budget-all-terminal-halt.acceptance given: [case1] le
           └─ j1: rhx route.stone.judge --mechanism reviewed? --stone $stone --route $route --allow-blockers 0 --allow-nitpicks 1
               ├─ finished [TIME] ✗
               └─ reason: blockers exceed threshold (1 > 0)
+
+🪷 the path continues
+   ├─ l1 is terminal (exhausted 🌙) — it no longer blocks you
+   ├─ l2 has engaged — address its blockers, then:
+   │  └─ rhx route.stone.set --stone 1.vision --as arrived
+   └─ a human is only needed once every level is terminal
 "
 `;

@@ -17,6 +17,15 @@ const asTakenDetailLine = (pathGiven: string): string | null => {
 };
 
 /**
+ * .what = the one reassurance line every TERMINAL-for-unlock verdict carries
+ * .why = single source of truth so the four terminal verdicts (exhausted, malfunction,
+ *        constraint, and any future kind) stay in lockstep — the asymmetry this narrative
+ *        was added to kill must not recur through a copy that one branch forgets to update.
+ *        speaks only to the LADDER (higher levels unlock and run); passage may still block.
+ */
+const TERMINAL_UNLOCK_NARRATIVE = 'terminal — does not block higher levels';
+
+/**
  * .what = reviewer state for tree format
  * .why = single shape for both inflight progress and final result contexts
  */
@@ -109,7 +118,15 @@ export const formatGuardReviewerTree = (input: {
   }
 
   if (state.type === 'malfunction') {
-    const detailLines = ['💥 malfunction', `given: ${state.path}`];
+    // terminal narrative: malfunction is TERMINAL-for-unlock (isReviewPeerVerdictTerminal),
+    // so like exhausted it never holds the ladder — higher levels unlock and run. it DOES
+    // block passage (the reviewer broke), but a driver must not misread it as "the whole
+    // ladder is halted here". same reassurance line as exhausted, for the same invariant. (D5)
+    const detailLines = [
+      'malfunction 💥',
+      TERMINAL_UNLOCK_NARRATIVE,
+      `given: ${state.path}`,
+    ];
     const takenLine = asTakenDetailLine(state.path);
     if (takenLine) detailLines.push(takenLine);
     emitDetailLines({ lines, baseIndent, indent, detailLines });
@@ -117,7 +134,15 @@ export const formatGuardReviewerTree = (input: {
   }
 
   if (state.type === 'constraint') {
-    const detailLines = ['✋ constraint', `given: ${state.path}`];
+    // terminal narrative: constraint is TERMINAL-for-unlock (isReviewPeerVerdictTerminal),
+    // so like exhausted it never holds the ladder — higher levels unlock and run. it DOES
+    // block passage (needs a fix or an overrule), but a driver must not misread it as "the
+    // whole ladder is halted here". same reassurance line as exhausted, same invariant. (D5)
+    const detailLines = [
+      'constraint ✋',
+      TERMINAL_UNLOCK_NARRATIVE,
+      `given: ${state.path}`,
+    ];
     const takenLine = asTakenDetailLine(state.path);
     if (takenLine) detailLines.push(takenLine);
     emitDetailLines({ lines, baseIndent, indent, detailLines });
@@ -128,13 +153,31 @@ export const formatGuardReviewerTree = (input: {
   if (state.type === 'finished') {
     const detailLines: string[] = [];
 
+    // verdict glyph: exhausted carries the 🌙 marker — an earned exhaustion, the level
+    // spent its whole budget on genuine convergence effort and yields (see the driver
+    // brief rule.always.converge-to-terminal). only exhausted gets a glyph here.
+    const verdictGlyph = state.verdict === 'exhausted' ? ' 🌙' : '';
+
     // status line: verdict [duration] OR verdict, cached
     if (state.cached) {
-      detailLines.push(`${state.verdict}, cached`);
+      detailLines.push(`${state.verdict}${verdictGlyph}, cached`);
     } else {
       const dur =
         state.durationSec !== null ? ` ${state.durationSec.toFixed(1)}s` : '';
-      detailLines.push(`${state.verdict}${dur}`);
+      detailLines.push(`${state.verdict}${verdictGlyph}${dur}`);
+    }
+
+    // exhaustion narrative: exhausted is TERMINAL, so it never blocks higher levels — they
+    // unlock and run. a driver must never read `exhausted` as "you are blocked here"; this
+    // line states plainly the level is done and does not hold the ladder. (D5)
+    // .why = kills the "oh, it is all halted" misread at the exact spot it occurs. phrased
+    //        to hold at ANY level: at a lower level the higher one runs (shown below in the
+    //        tree); at the highest level there is no higher level to block, so it is still
+    //        true. the cross-level "next level has engaged" callout — which names WHICH level
+    //        is live + the re-drive command — is the aggregate `the path continues` footer,
+    //        rendered once beneath the reviewers by formatGuardReviewLadderFooter.
+    if (state.verdict === 'exhausted') {
+      detailLines.push(TERMINAL_UNLOCK_NARRATIVE);
     }
 
     // blockers line: always show

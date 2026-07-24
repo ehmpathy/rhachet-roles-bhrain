@@ -34,7 +34,8 @@ exports[`formatGuardReviewerTree given: [case3] rejected reviewer with 3 blocker
 
 exports[`formatGuardReviewerTree given: [case4] exhausted reviewer with blockers when: [t0] formatted then: output matches snapshot 1`] = `
 "└─ r1: peer/budget-aware (l1, 2/2)
-    ├─ exhausted
+    ├─ exhausted 🌙
+    ├─ terminal — does not block higher levels
     ├─ 1 blocker 🔴
     ├─ 0 nitpicks ✓
     └─ given: .route/5.1.execution.guard.review.i1.abc123.r1.md"
@@ -65,13 +66,15 @@ exports[`formatGuardReviewerTree given: [case8] cached approved reviewer when: [
 
 exports[`formatGuardReviewerTree given: [case9] malfunction reviewer when: [t0] formatted then: output matches snapshot 1`] = `
 "└─ r1: self/reflect (l1, 0/∞)
-    ├─ 💥 malfunction
+    ├─ malfunction 💥
+    ├─ terminal — does not block higher levels
     └─ given: .route/5.1.execution.guard.review.i1.abc123.r1.md"
 `;
 
 exports[`formatGuardReviewerTree given: [case10] constraint reviewer when: [t0] formatted then: output matches snapshot 1`] = `
 "└─ r1: self/reflect (l1, 0/∞)
-    ├─ ✋ constraint
+    ├─ constraint ✋
+    ├─ terminal — does not block higher levels
     └─ given: .route/5.1.execution.guard.review.i1.abc123.r1.md"
 `;
 

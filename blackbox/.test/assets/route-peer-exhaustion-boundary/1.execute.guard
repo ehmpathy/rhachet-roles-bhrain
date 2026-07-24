@@ -1,0 +1,26 @@
+artifacts:
+  - src/**/*.ts
+
+reviews:
+  peer:
+    # l3 declared FIRST — proves order independence: the guard sorts reviewers by level
+    # (low-first) before it runs them, so l1 always runs before l3 despite this order.
+    - slug: l3-reviewer
+      run: bash $route/.test/mock-review-l3.sh
+      budget: 1
+      level: 3
+
+    # two l1 reviewers with DIFFERENT budgets — the level unlocks l3 only when the LAST
+    # of them turns terminal. alpha (budget 1) exhausts a pass before beta (budget 2).
+    - slug: l1-alpha
+      run: bash $route/.test/mock-review-l1-alpha.sh
+      budget: 1
+      level: 1
+
+    - slug: l1-beta
+      run: bash $route/.test/mock-review-l1-beta.sh
+      budget: 2
+      level: 1
+
+judges:
+  - rhx route.stone.judge --mechanism reviewed? --stone $stone --route $route --allow-blockers 0 --allow-nitpicks 1

@@ -231,7 +231,8 @@ exports[`formatGuardTree given: [case13] peerMeters — rNum uses meter order, n
       │   └─ 5.5.playtest.yield.md
       └─ reviews
           ├─ r1: quick-pass (l1, 1/1)
-          │   ├─ exhausted
+          │   ├─ exhausted 🌙
+          │   ├─ terminal — does not block higher levels
           │   ├─ 0 blockers ✓
           │   ├─ 0 nitpicks ✓
           │   └─ given: .route/5.5.playtest.guard.review.i1.abc123.r1.md
@@ -254,7 +255,8 @@ exports[`formatGuardTree given: [case14] peerMeters — exhausted reviewer shows
       │   └─ 5.5.playtest.yield.md
       └─ reviews
           └─ r1: quick-pass (l1, 1/1)
-              ├─ exhausted, cached
+              ├─ exhausted 🌙, cached
+              ├─ terminal — does not block higher levels
               ├─ 1 blocker 🔴
               ├─ 0 nitpicks ✓
               └─ given: .route/5.5.playtest.guard.review.i1.abc123.r1.md"
@@ -315,7 +317,8 @@ exports[`formatGuardTree given: [case17] malfunction passage — offers overrule
       │   └─ 1.feature.md
       └─ reviews
           └─ r1: basic-checker (l1, 1/∞)
-              ├─ 💥 malfunction
+              ├─ malfunction 💥
+              ├─ terminal — does not block higher levels
               └─ given: .route/1.feature.guard.review.i1.abc123.r1.md"
 `;
 

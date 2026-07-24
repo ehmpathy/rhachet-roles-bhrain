@@ -37,7 +37,8 @@ exports[`driver.route.peer-review-exit-codes.acceptance given: [journey] exit co
 "🦉 the way speaks for itself
    │
    ├─ r1: exit-code-reviewer (l1, 2/2)
-   │   ├─ ✋ constraint
+   │   ├─ constraint ✋
+   │   ├─ terminal — does not block higher levels
    │   ├─ given: .reviews/peer/1.execute._.review.i002.dfc5faff83ea2fcb55.r001._.given.by_peer.exit-code-reviewer.md
    │   └─ taken: .reviews/peer/1.execute._.review.i002.dfc5faff83ea2fcb55.r001._.taken.by_self.exit-code-reviewer.md
    │
@@ -71,7 +72,8 @@ exports[`driver.route.peer-review-exit-codes.acceptance given: [journey] exit co
 "🦉 the way speaks for itself
    │
    ├─ r1: exit-code-reviewer (l1, 2/2)
-   │   ├─ 💥 malfunction
+   │   ├─ malfunction 💥
+   │   ├─ terminal — does not block higher levels
    │   ├─ given: .reviews/peer/1.execute._.review.i003.457fd5ef46e053a35e.r001._.given.by_peer.exit-code-reviewer.md
    │   └─ taken: .reviews/peer/1.execute._.review.i003.457fd5ef46e053a35e.r001._.taken.by_self.exit-code-reviewer.md
    │
@@ -90,7 +92,8 @@ exports[`driver.route.peer-review-exit-codes.acceptance given: [journey] exit co
       │   └─ src/**/*.ts
       ├─ reviews
       │   └─ r1: exit-code-reviewer (l1, 1/2)
-      │       ├─ 💥 malfunction
+      │       ├─ malfunction 💥
+      │       ├─ terminal — does not block higher levels
       │       ├─ given: .reviews/peer/1.execute._.review.i003.457fd5ef46e053a35e.r001._.given.by_peer.exit-code-reviewer.md
       │       └─ taken: .reviews/peer/1.execute._.review.i003.457fd5ef46e053a35e.r001._.taken.by_self.exit-code-reviewer.md
       └─ judges

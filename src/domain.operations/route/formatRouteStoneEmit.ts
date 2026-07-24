@@ -1,6 +1,8 @@
 import type { RouteStoneGuardReviewSelf } from '@src/domain.objects/Driver/RouteStoneGuard';
 
+import { getReviewPeerLadderStatus } from './guard/review/peer/meter/getReviewPeerLadderStatus';
 import { getSelfReviewArticulationPath } from './guard/review/self/getSelfReviewArticulationPath';
+import { formatGuardReviewLadderFooter } from './guard/tree/formatGuardReviewLadderFooter';
 import {
   formatGuardTree,
   type GuardPeerMeterStatus,
@@ -214,7 +216,26 @@ export const formatRouteStoneEmit = (input: FormatInput): string => {
       if (input.passage === 'allowed' || input.passage === 'overruled') {
         return [header, '', tree, ...REMINDER_LINES].join('\n');
       }
-      return [header, '', tree].join('\n');
+      // append the "path continues" footer at an upward unlock transition — a lower level
+      // is terminal (INCLUDING by exhaustion) while a HIGHER level is now the live gate. the
+      // footer self-gates on status.unlockTransition, so it stays silent for an all-terminal
+      // halt (the halt's own options block guides instead) or a regression state
+      // (rule.require.single-source-of-truth-for-render — derived from the same peerMeters).
+      const ladderStatus = input.guard.peerMeters
+        ? getReviewPeerLadderStatus({ peerMeters: input.guard.peerMeters })
+        : null;
+      const ladderFooter = ladderStatus
+        ? formatGuardReviewLadderFooter({
+            stone: input.stone,
+            status: ladderStatus,
+          })
+        : [];
+      return [
+        header,
+        '',
+        tree,
+        ...(ladderFooter.length > 0 ? ['', ...ladderFooter] : []),
+      ].join('\n');
     }
 
     // handle review.self blocked case

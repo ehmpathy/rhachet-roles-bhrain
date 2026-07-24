@@ -1,0 +1,8 @@
+{
+  "name": "route-peer-mixed-verdict-halt-test",
+  "private": true,
+  "description": "fixture for mixed-verdict halt acceptance test",
+  "dependencies": {
+    "rhachet-roles-bhrain": "link:."
+  }
+}

@@ -42,7 +42,8 @@ exports[`driver.route.peer-budget-approval-unification.acceptance given: [usecas
 "🦉 the way speaks for itself
    │
    ├─ r1: strict-checker (l1, 2/2)
-   │   ├─ exhausted, cached
+   │   ├─ exhausted 🌙, cached
+   │   ├─ terminal — does not block higher levels
    │   ├─ 1 blocker 🔴
    │   ├─ 0 nitpicks ✓
    │   ├─ given: .reviews/peer/1.execute._.review.i002.dfc5faff83ea2fcb55.r001._.given.by_peer.strict-checker.md
@@ -64,7 +65,8 @@ exports[`driver.route.peer-budget-approval-unification.acceptance given: [usecas
       │   └─ src/**/*.ts
       └─ reviews
           └─ r1: strict-checker (l1, 2/2)
-              ├─ exhausted, cached
+              ├─ exhausted 🌙, cached
+              ├─ terminal — does not block higher levels
               ├─ 1 blocker 🔴
               ├─ 0 nitpicks ✓
               ├─ given: .reviews/peer/1.execute._.review.i002.dfc5faff83ea2fcb55.r001._.given.by_peer.strict-checker.md
@@ -123,7 +125,8 @@ exports[`driver.route.peer-budget-approval-unification.acceptance given: [usecas
       │
       ├─ reviews
       │   └─ r1: strict-checker (l1, 2/2)
-      │       ├─ exhausted
+      │       ├─ exhausted 🌙
+      │       ├─ terminal — does not block higher levels
       │       ├─ 1 blocker 🔴
       │       ├─ 0 nitpicks ✓
       │       ├─ given: [TEMP]/.reviews/peer/1.execute._.review.i002.dfc5faff83ea2fcb55.r001._.given.by_peer.strict-checker.md
@@ -154,7 +157,8 @@ exports[`driver.route.peer-budget-approval-unification.acceptance given: [usecas
 "🦉 the way speaks for itself
    │
    ├─ r1: strict-checker (l1, 2/2)
-   │   ├─ exhausted, cached
+   │   ├─ exhausted 🌙, cached
+   │   ├─ terminal — does not block higher levels
    │   ├─ 1 blocker 🔴
    │   ├─ 0 nitpicks ✓
    │   ├─ given: .reviews/peer/1.execute._.review.i002.dfc5faff83ea2fcb55.r001._.given.by_peer.strict-checker.md
@@ -172,7 +176,8 @@ exports[`driver.route.peer-budget-approval-unification.acceptance given: [usecas
    │  │   └─ src/**/*.ts
    │  ├─ reviews
    │  │   └─ r1: strict-checker (l1, 2/2)
-   │  │       ├─ exhausted, cached
+   │  │       ├─ exhausted 🌙, cached
+   │  │       ├─ terminal — does not block higher levels
    │  │       ├─ 1 blocker 🔴
    │  │       ├─ 0 nitpicks ✓
    │  │       ├─ given: .reviews/peer/1.execute._.review.i002.dfc5faff83ea2fcb55.r001._.given.by_peer.strict-checker.md

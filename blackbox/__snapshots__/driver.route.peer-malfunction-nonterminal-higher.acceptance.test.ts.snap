@@ -1,0 +1,49 @@
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
+
+exports[`driver.route.peer-malfunction-nonterminal-higher.acceptance given: [journey] l1 malfunctions (terminal), l3 unlocks + rejects (non-terminal) when: [t0] one pass: l1 malfunctions, l3 unlocks + rejects then: stdout has good vibes 1`] = `
+"🦉 the way speaks for itself
+   │
+   ├─ r1: l1-reviewer (l1, 1/2)
+   │   ├─ malfunction 💥
+   │   ├─ terminal — does not block higher levels
+   │   ├─ given: .reviews/peer/1.execute._.review.i001.8739656801d5e77f22.r001._.given.by_peer.l1-reviewer.md
+   │   └─ taken: .reviews/peer/1.execute._.review.i001.8739656801d5e77f22.r001._.taken.by_self.l1-reviewer.md
+   │
+   ├─ r2: l3-reviewer (l3, 1/5)
+   │   ├─ rejected [TIME]
+   │   ├─ 1 blocker 🔴
+   │   ├─ 0 nitpicks ✓
+   │   ├─ given: .reviews/peer/1.execute._.review.i001.8739656801d5e77f22.r002._.given.by_peer.l3-reviewer.md
+   │   └─ taken: .reviews/peer/1.execute._.review.i001.8739656801d5e77f22.r002._.taken.by_self.l3-reviewer.md
+   │
+   └─ ✗ judge.1 - blocked [TIME]
+
+🗿 route.stone.set
+   ├─ stone = 1.execute
+   ├─ passage = malfunction
+   ├─ reason = reviewer or judge malfunctioned
+   ├─ options
+   │  ├─ overrule the malfunction
+   │  │  └─ rhx route.stone.set --stone 1.execute --as overruled
+   │  └─ or fix the reviewer, then retry
+   └─ guard
+      ├─ artifacts
+      │   └─ src/**/*.ts
+      ├─ reviews
+      │   ├─ r1: l1-reviewer (l1, 0/2)
+      │   │   ├─ malfunction 💥
+      │   │   ├─ terminal — does not block higher levels
+      │   │   ├─ given: .reviews/peer/1.execute._.review.i001.8739656801d5e77f22.r001._.given.by_peer.l1-reviewer.md
+      │   │   └─ taken: .reviews/peer/1.execute._.review.i001.8739656801d5e77f22.r001._.taken.by_self.l1-reviewer.md
+      │   └─ r2: l3-reviewer (l3, 1/5)
+      │       ├─ rejected [TIME]
+      │       ├─ 1 blocker 🔴
+      │       ├─ 0 nitpicks ✓
+      │       ├─ given: .reviews/peer/1.execute._.review.i001.8739656801d5e77f22.r002._.given.by_peer.l3-reviewer.md
+      │       └─ taken: .reviews/peer/1.execute._.review.i001.8739656801d5e77f22.r002._.taken.by_self.l3-reviewer.md
+      └─ judges
+          └─ j1: rhx route.stone.judge --mechanism reviewed? --stone $stone --route $route --allow-blockers 0 --allow-nitpicks 1
+              ├─ finished [TIME] ✗
+              └─ reason: blockers exceed threshold (1 > 0)
+"
+`;

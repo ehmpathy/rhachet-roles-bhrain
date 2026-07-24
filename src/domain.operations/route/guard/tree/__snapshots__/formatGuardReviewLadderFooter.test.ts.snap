@@ -1,0 +1,11 @@
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
+
+exports[`formatGuardReviewLadderFooter given: [case1] l1 exhausted (terminal), l3 live — the unlock moment when: [t0] rendered then: matches snapshot 1`] = `
+[
+  "🪷 the path continues",
+  "   ├─ l1 is terminal (exhausted 🌙) — it no longer blocks you",
+  "   ├─ l3 has engaged — address its blockers, then:",
+  "   │  └─ rhx route.stone.set --stone 5.3.verification --as arrived",
+  "   └─ a human is only needed once every level is terminal",
+]
+`;
