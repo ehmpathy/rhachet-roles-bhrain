@@ -73,46 +73,52 @@ describe('runOneReview', () => {
     });
   });
 
-  given('[case4] a review run with a live stdout tee (the streaming tactic)', () => {
-    when('[t0] the runner is passed an onStdoutChunk callback', () => {
-      // capture every chunk the runner tees; two writes with a gap prove progressive delivery
-      const chunks: string[] = [];
-      const run = useThen('it resolves a run', async () =>
-        runOneReview(
-          {
-            cmd: 'sh -c \'printf "blockers: 1\\nnitpicks: 0\\n"; sleep 0.2; printf "review output\\n"\'',
-            timeout: 'PT1M',
-            cwd,
-          },
-          {
-            ...noopContext,
-            onStdoutChunk: (chunk: string) => {
-              chunks.push(chunk);
+  given(
+    '[case4] a review run with a live stdout tee (the streaming tactic)',
+    () => {
+      when('[t0] the runner is passed an onStdoutChunk callback', () => {
+        // capture every chunk the runner tees; two writes with a gap prove progressive delivery
+        const chunks: string[] = [];
+        const run = useThen('it resolves a run', async () =>
+          runOneReview(
+            {
+              cmd: 'sh -c \'printf "blockers: 1\\nnitpicks: 0\\n"; sleep 0.2; printf "review output\\n"\'',
+              timeout: 'PT1M',
+              cwd,
             },
+            {
+              ...noopContext,
+              onStdoutChunk: (chunk: string) => {
+                chunks.push(chunk);
+              },
+            },
+          ),
+        );
+
+        then('it tees the child stdout live to the callback', () => {
+          expect(chunks.length).toBeGreaterThan(0);
+          expect(chunks.join('')).toContain('review output');
+        });
+
+        then('the tee is byte-identical to the accumulated capture', () => {
+          // the streamed tactic must yield the SAME stdout the buffered exec would — only delivery
+          // differs. so the concatenated chunks equal the run's captured stdout.
+          expect(chunks.join('')).toEqual(run.stdout);
+        });
+
+        then(
+          'it tallies the verdict via the spawn path exactly as exec would',
+          () => {
+            expect(run.exitCode).toEqual(0);
+            expect(run.detected).toEqual(true);
+            expect(run.tallier).toEqual('deterministic');
+            expect(run.blockers).toEqual(1);
+            expect(run.nitpicks).toEqual(0);
           },
-        ),
-      );
-
-      then('it tees the child stdout live to the callback', () => {
-        expect(chunks.length).toBeGreaterThan(0);
-        expect(chunks.join('')).toContain('review output');
+        );
       });
-
-      then('the tee is byte-identical to the accumulated capture', () => {
-        // the streamed tactic must yield the SAME stdout the buffered exec would — only delivery
-        // differs. so the concatenated chunks equal the run's captured stdout.
-        expect(chunks.join('')).toEqual(run.stdout);
-      });
-
-      then('it tallies the verdict via the spawn path exactly as exec would', () => {
-        expect(run.exitCode).toEqual(0);
-        expect(run.detected).toEqual(true);
-        expect(run.tallier).toEqual('deterministic');
-        expect(run.blockers).toEqual(1);
-        expect(run.nitpicks).toEqual(0);
-      });
-    });
-  });
+    },
+  );
 
   given('[case3] a review that crashes with no verdict', () => {
     when('[t0] the runner execs it', () => {
