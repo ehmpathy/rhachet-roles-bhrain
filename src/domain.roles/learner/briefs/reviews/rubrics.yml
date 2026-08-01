@@ -1,0 +1,28 @@
+# .what = the learner's standard review set — its rubrics
+# .why = the learner tends the repo's domain-term glossary. its review set splits into two
+#        concerns, each a rubric:
+#          - application  = are terms USED well in the code? (unambiguous, adherent, consistent)
+#          - aggregation  = are declared terms COLLECTED into the glossary? (no omission)
+#        run via:
+#          rhx review.by --repo bhrain --role reviewer -- --role learner --paths '<globs>'
+#          rhx review.by --repo bhrain --role reviewer -- --role learner --for term-application --paths '<globs>'
+
+rubrics:
+  # rubric 1 — application (into usage): the three ways a term is misused in the code
+  - slug: term-application
+    purpose: >-
+      terms are applied well in usage — no ambiguity (one word, one sense), no disadherence
+      (a contract drifts to a synonym of a canonical term), and no inconsistency (one concept
+      named with two or more words before a canon is declared)
+    rules:
+      - .agent/repo=bhrain/role=learner/briefs/rule.forbid.domain-term-ambiguity.md
+      - .agent/repo=bhrain/role=learner/briefs/rule.forbid.domain-term-synonyms.md
+      - .agent/repo=bhrain/role=learner/briefs/rule.forbid.domain-term-inconsistency.md
+
+  # rubric 2 — aggregation (into glossary): declared terms are collected into the glossary
+  - slug: term-aggregation
+    purpose: >-
+      declared terms are aggregated into the glossary — every domain object or operation this
+      repo declares has its constituent terms itemized, so no inventory omission remains
+    rules:
+      - .agent/repo=bhrain/role=learner/briefs/rule.require.domain-term-itemization.md

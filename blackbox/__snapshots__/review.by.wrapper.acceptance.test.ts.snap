@@ -1,0 +1,10 @@
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
+
+exports[`review.by.wrapper.acceptance given: [case-wrap2] the demo wrapper runs against clean code when: [t0] rhx review.by --role demo (via the demo wrapper) runs, attempt 1 then: the wrapper-dispatched stdout is stable (snapshot) 1`] = `
+"🦉 not even a vole
+
+🔍 review.by --role demo
+   └─ rubrics
+      └─ r1 demo-arrow-only ✓
+"
+`;

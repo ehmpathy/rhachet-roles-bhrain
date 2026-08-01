@@ -6,6 +6,7 @@
 import { reflect } from './reflect';
 import { researchInit } from './research';
 import { review } from './review';
+import { reviewBy } from './review.by';
 import {
   routeBindDel,
   routeBindGet,
@@ -21,6 +22,7 @@ import {
 
 export const cli = {
   review,
+  reviewBy,
   reflect,
   route: {
     bind: {

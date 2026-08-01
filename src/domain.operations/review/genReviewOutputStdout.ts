@@ -1,6 +1,10 @@
 /**
  * .what = generates the output metrics stdout (after brain invocation)
- * .why = displays realized metrics and review summary to user
+ * .why = displays realized metrics and review summary to user. the `🔍 review`
+ *        anchor row parents the logs/review/summary tree so a base review reads
+ *        with the same shape as the review.by aggregate's `🔍 review.by --role X`
+ *        anchor (genReviewByStdout). one anchor form across both review contracts
+ *        lets a reader place the tree by the same landmark.
  */
 export const genReviewOutputStdout = (input: {
   tokens: {
@@ -73,6 +77,8 @@ export const genReviewOutputStdout = (input: {
       └─ total: ${input.time.total}
 
 ${owlHeader}
+
+🔍 review
    ├─ logs: ${input.paths.logsRelative}
    ├─ review: ${input.paths.reviewRelative}
 ${summarySection}`.trim();

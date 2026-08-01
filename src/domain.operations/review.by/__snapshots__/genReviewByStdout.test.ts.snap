@@ -1,0 +1,98 @@
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
+
+exports[`genReviewByStdout given: [case1] all rubrics pass when: [t0] rendered then: it matches snapshot 1`] = `
+"🦉 not even a vole
+
+🔍 review.by --role mechanic
+   └─ rubrics
+      ├─ r1 mech-failhides ✓
+      └─ r2 mech-decode-friction ✓"
+`;
+
+exports[`genReviewByStdout given: [case2] mixed blockers + nitpicks when: [t0] rendered then: it matches snapshot 1`] = `
+"🦉 needs your talons
+
+🔍 review.by --role mechanic
+   ├─ rubrics
+   │  ├─ r1 mech-failhides ✗
+   │  │  ├─ 2 blockers 🔴
+   │  │  └─ review: .reviews/mech-failhides.md
+   │  └─ r2 mech-decode-friction ✗
+   │     ├─ 1 blocker 🔴
+   │     ├─ 3 nitpicks 🟠
+   │     └─ review: .reviews/mech-decode-friction.md
+   └─ summary
+      ├─ 3 blockers 🔴
+      └─ 3 nitpicks 🟠"
+`;
+
+exports[`genReviewByStdout given: [case3] single --for rubric passes when: [t0] rendered then: it matches snapshot 1`] = `
+"🦉 not even a vole
+
+🔍 review.by --role mechanic --for mech-failhides
+   └─ rubrics
+      └─ r1 mech-failhides ✓"
+`;
+
+exports[`genReviewByStdout given: [case4] single --for rubric with findings (guard shape) when: [t0] rendered then: it matches snapshot 1`] = `
+"🦉 needs your talons
+
+🔍 review.by --role mechanic --for mech-failhides
+   ├─ rubrics
+   │  └─ r1 mech-failhides ✗
+   │     ├─ 2 blockers 🔴
+   │     ├─ 1 nitpick 🟠
+   │     └─ review: .reviews/mech-failhides.md
+   └─ summary
+      ├─ 2 blockers 🔴
+      └─ 1 nitpick 🟠"
+`;
+
+exports[`genReviewByStdout given: [case5] nitpicks only, no blockers when: [t0] rendered then: it matches snapshot 1`] = `
+"🦉 just a few hoots
+
+🔍 review.by --role mechanic
+   ├─ rubrics
+   │  └─ r1 mech-nits ✗
+   │     ├─ 4 nitpicks 🟠
+   │     └─ review: .reviews/mech-nits.md
+   └─ summary
+      ├─ 0 blockers
+      └─ 4 nitpicks 🟠"
+`;
+
+exports[`genReviewByStdout given: [case6] a vibe override when: [t0] rendered then: it matches snapshot 1`] = `
+"🐢 not even a vole
+
+🐚 review.by --role mechanic
+   └─ rubrics
+      └─ r1 only ✓"
+`;
+
+exports[`genReviewByStdout given: [case7] a malfunctioned rubric when: [t0] rendered then: it matches snapshot 1`] = `
+"🦉 needs your talons
+
+🔍 review.by --role mechanic
+   ├─ rubrics
+   │  ├─ r1 mech-ok ✓
+   │  └─ r2 mech-broke ✗
+   │     ├─ malfunctioned 💥
+   │     └─ review: .reviews/mech-broke.md
+   └─ summary
+      ├─ 0 blockers
+      └─ 0 nitpicks"
+`;
+
+exports[`genReviewByStdout given: [case8] a malfunctioned rubric with a captured reason when: [t0] rendered then: it matches snapshot 1`] = `
+"🦉 needs your talons
+
+🔍 review.by --role mechanic
+   ├─ rubrics
+   │  └─ r1 mech-broke ✗
+   │     ├─ malfunctioned 💥
+   │     │  └─ review exited 0 with no verdict
+   │     └─ review: .reviews/mech-broke.md
+   └─ summary
+      ├─ 0 blockers
+      └─ 0 nitpicks"
+`;

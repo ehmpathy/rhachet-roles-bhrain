@@ -5,6 +5,7 @@
 .artifact
 .env
 .review
+/.reviews
 .rhachet
 .serverless
 .temp
