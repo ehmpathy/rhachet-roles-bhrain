@@ -18,6 +18,7 @@ import {
   reflectSnapshotGet,
 } from '@src/contract/cli/reflect';
 import { review } from '@src/contract/cli/review';
+import { reviewBy } from '@src/contract/cli/review.by';
 import {
   routeBindDel,
   routeBindGet,
@@ -31,6 +32,7 @@ import {
 
 export const cli = {
   review,
+  reviewBy,
   reflect: {
     legacy: reflect,
     snapshot: {

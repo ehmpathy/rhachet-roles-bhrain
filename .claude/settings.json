@@ -78,6 +78,12 @@
           },
           {
             "type": "command",
+            "command": "./node_modules/.bin/rhachet roles boot --role dreamer",
+            "timeout": 10,
+            "author": "repo=bhuild/role=dreamer"
+          },
+          {
+            "type": "command",
             "command": "./node_modules/.bin/rhachet roles boot --role learner",
             "timeout": 30,
             "author": "repo=bhrain/role=learner"
@@ -206,13 +212,13 @@
         ]
       },
       {
-        "matcher": "Write|Edit|Bash",
+        "matcher": "Write|Edit|Read",
         "hooks": [
           {
             "type": "command",
-            "command": "./node_modules/.bin/rhx memory.guard --mode hook",
+            "command": "./node_modules/.bin/rhachet run --repo ehmpathy --role mechanic --init claude.hooks/pretooluse.forbid-shouted-readme",
             "timeout": 5,
-            "author": "repo=bhrain/role=learner"
+            "author": "repo=ehmpathy/role=mechanic"
           }
         ]
       },
@@ -224,6 +230,17 @@
             "command": "./node_modules/.bin/rhachet run --repo ehmpathy --role mechanic --init claude.hooks/pretooluse.forbid-shouted-readme",
             "timeout": 5,
             "author": "repo=ehmpathy/role=mechanic"
+          }
+        ]
+      },
+      {
+        "matcher": "Write|Edit|Bash",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "./node_modules/.bin/rhx memory.guard --mode hook",
+            "timeout": 5,
+            "author": "repo=bhrain/role=learner"
           }
         ]
       }
@@ -257,8 +274,6 @@
       "Edit(.route/**)",
       "Write(**/.test/**)",
       "Edit(**/.test/**)",
-      "Write(.agent/.cache/repo=bhrain/role=learner/**)",
-      "Edit(.agent/.cache/repo=bhrain/role=learner/**)",
       "mcp__ide__getDiagnostics",
       "WebSearch",
       "WebFetch",

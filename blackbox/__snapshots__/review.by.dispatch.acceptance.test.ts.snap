@@ -1,0 +1,10 @@
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
+
+exports[`review.by.dispatch.acceptance given: [case-rhx3] the base dispatched via rhx against clean code when: [t0] rhx review.by --repo bhrain --role reviewer -- --role demo runs, attempt 1 then: the dispatched positive-path stdout is stable (snapshot) 1`] = `
+"🦉 not even a vole
+
+🔍 review.by --role demo
+   └─ rubrics
+      └─ r1 demo-arrow-only ✓
+"
+`;

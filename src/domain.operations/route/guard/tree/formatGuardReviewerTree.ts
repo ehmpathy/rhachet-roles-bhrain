@@ -86,16 +86,29 @@ export const formatGuardReviewerTree = (input: {
   isLast: boolean;
   /** base indent for all lines */
   baseIndent?: string;
+  /**
+   * when true, the header omits the `(l${level}, ${rounds}/${budget})` meter suffix — so the
+   * header reads just `r${index}: ${slug}`.
+   * .why = a route peer reviewer has a level + a per-level budget, so the meter carries real
+   *        weight. a review.by rubric has NEITHER (no route, no level, no budget), so the meter
+   *        would be meaningless noise there. this flag lets review.by reuse this exact formatter
+   *        (so its rows stay byte-conformed with peer reviews) yet omit the one field that does
+   *        not apply. defaults to false, so every extant guard call is unchanged.
+   */
+  hideMeter?: boolean;
 }): string[] => {
   const lines: string[] = [];
   const baseIndent = input.baseIndent ?? '';
   const { reviewer, isLast } = input;
 
-  // format header: r${index}: slug (l${level}, ${rounds}/${budget})
+  // format header: r${index}: slug (l${level}, ${rounds}/${budget}) — meter suffix optional
   const prefix = isLast ? '└─' : '├─';
   const indent = isLast ? '   ' : '│  ';
   const displayBudget = reviewer.budget === Infinity ? '∞' : reviewer.budget;
-  const header = `r${reviewer.index}: ${reviewer.slug} (l${reviewer.level}, ${reviewer.rounds}/${displayBudget})`;
+  const meterSuffix = input.hideMeter
+    ? ''
+    : ` (l${reviewer.level}, ${reviewer.rounds}/${displayBudget})`;
+  const header = `r${reviewer.index}: ${reviewer.slug}${meterSuffix}`;
   lines.push(`${baseIndent}${prefix} ${header}`);
 
   // format state-specific content

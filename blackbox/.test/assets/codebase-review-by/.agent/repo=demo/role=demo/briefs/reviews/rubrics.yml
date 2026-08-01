@@ -1,0 +1,5 @@
+rubrics:
+  - slug: demo-arrow-only
+    purpose: enforce arrow functions over the function keyword
+    rules:
+      - .agent/repo=demo/role=demo/briefs/rules/rule.require.arrow-only.md

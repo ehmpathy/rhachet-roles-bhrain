@@ -1,0 +1,140 @@
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
+
+exports[`review.by.acceptance given: [case1] valid role, no --for, code satisfies every rubric when: [t0] review.by against clean code, attempt 1 then: the positive-path contract stdout is stable (snapshot) 1`] = `
+"🦉 not even a vole
+
+🔍 review.by --role demo
+   └─ rubrics
+      └─ r1 demo-arrow-only ✓
+"
+`;
+
+exports[`review.by.acceptance given: [case2] valid role, code violates a rubric when: [t0] review.by against dirty code, attempt 1 then: the negative-path contract stdout is stable (snapshot) 1`] = `
+"🦉 needs your talons
+
+🔍 review.by --role demo
+   ├─ rubrics
+   │  └─ r1 demo-arrow-only ✗
+   │     ├─ 1 blocker 🔴
+   │     └─ review: .reviews/by=demo/rubric=demo-arrow-only.md
+   └─ summary
+      ├─ 1 blocker 🔴
+      └─ 0 nitpicks
+"
+`;
+
+exports[`review.by.acceptance given: [case3] --for a single valid slug, code is clean → DISINTERMEDIATE when: [t0] review.by --for runs, attempt 1 then: the disintermediated raw-review stdout is stable (full snapshot) 1`] = `
+"🦉 let's review
+   ├─ brain: fireworks/deepseek/v4-flash
+   ├─ focus: push
+   └─ scope
+      └─ paths: src/clean.ts
+
+🦉 not even a vole
+
+🔍 review
+   ├─ review: .reviews/by=demo/rubric=demo-arrow-only.md
+   └─ summary
+      ├─ 0 blockers
+      ├─ 0 nitpicks
+      └─ all good 👍"
+`;
+
+exports[`review.by.acceptance given: [case3neg] --for a single valid slug, code violates it → DISINTERMEDIATE when: [t0] review.by --for on dirty, attempt 1 then: the disintermediated findings-path stdout is stable (full snapshot) 1`] = `
+"🦉 let's review
+   ├─ brain: fireworks/deepseek/v4-flash
+   ├─ focus: push
+   └─ scope
+      └─ paths: src/dirty.ts
+
+🦉 needs your talons
+
+🔍 review
+   ├─ review: .reviews/by=demo/rubric=demo-arrow-only.md
+   └─ summary
+      ├─ 1 blocker 🔴
+      └─ 0 nitpicks"
+`;
+
+exports[`review.by.acceptance given: [case6] a role slug with no role dir when: [t0] review.by --role ghost runs then: the error message is stable (exit 1 + drift snapshot) 1`] = `"✋ BadRequestError: role not found at .agent/repo=*/role=ghost"`;
+
+exports[`review.by.acceptance given: [case7] a --for slug not present in rubrics.yml when: [t0] review.by --for ghost runs then: the error message is stable (exit 1 + drift snapshot) 1`] = `"✋ BadRequestError: rubric not found: ghost. available rubrics: demo-arrow-only"`;
+
+exports[`review.by.acceptance given: [case8] rubrics.yml with duplicate slugs when: [t0] review.by runs then: the error message is stable (exit 1 + drift snapshot) 1`] = `"✋ BadRequestError: duplicate rubric slug: dup"`;
+
+exports[`review.by.acceptance given: [case9] rubrics.yml with an empty rubrics list when: [t0] review.by runs then: the error message is stable (exit 1 + drift snapshot) 1`] = `"✋ BadRequestError: no rubrics found in rubrics.yml"`;
+
+exports[`review.by.acceptance given: [case10] a role dir with no rubrics.yml when: [t0] review.by --role norub runs then: the error message is stable (exit 1 + drift snapshot) 1`] = `"✋ BadRequestError: rubrics.yml not found for role norub"`;
+
+exports[`review.by.acceptance given: [case11] no --role arg supplied when: [t0] review.by runs with no role then: the error message is stable (exit 1 + drift snapshot) 1`] = `"error: --role is required"`;
+
+exports[`review.by.acceptance given: [case12] malformed yaml when: [t0] review.by runs then: the error message is stable (exit 1 + drift snapshot) 1`] = `"✋ BadRequestError: failed to parse rubrics.yml: missed comma between flow collection entries (2:9)"`;
+
+exports[`review.by.acceptance given: [case13] rubrics.yml declares a vibe override when: [t0] review.by runs, attempt 1 then: the vibe-override contract stdout is stable (snapshot) 1`] = `
+"🐢 not even a vole
+
+🐚 review.by --role demo
+   └─ rubrics
+      └─ r1 demo-arrow-only ✓
+"
+`;
+
+exports[`review.by.acceptance given: [case15] --for one slug, code violates it (the guard shape) when: [t0] single rubric with findings, attempt 1 then: the guard-shape captured stdout is stable (full snapshot) 1`] = `
+"🦉 let's review
+   ├─ brain: fireworks/deepseek/v4-flash
+   ├─ focus: push
+   └─ scope
+      └─ paths: src/dirty.ts
+
+🦉 needs your talons
+
+🔍 review
+   ├─ review: .reviews/by=demo/rubric=demo-arrow-only.md
+   └─ summary
+      ├─ 1 blocker 🔴
+      └─ 0 nitpicks"
+`;
+
+exports[`review.by.acceptance given: [case18] a mechanic role whose rubrics.yml declares the turtle vibe when: [t0] review.by --role mechanic runs, attempt 1 then: the mechanic turtle-vibe contract stdout is stable (snapshot) 1`] = `
+"🐢 not even a vole
+
+🐚 review.by --role mechanic
+   └─ rubrics
+      └─ r1 mech-arrow-only ✓
+"
+`;
+
+exports[`review.by.acceptance given: [case18] an unrecognized flag (a typo) when: [t0] review.by runs with a misspelled --rool then: the error message is stable (exit 1 + drift snapshot) 1`] = `"error: unknown flag(s): --rool"`;
+
+exports[`review.by.acceptance given: [case19] --help prints usage when: [t0] review.by --help runs then: the full usage text is stable (usage line + drift snapshot) 1`] = `
+"review.by - run a role's standard review set (its rubrics)
+
+usage:
+  review.by --role <role> [--for <rubric>] [options]
+
+options:
+  --role   <role>     role slug whose rubrics.yml to run (required)
+  --for    <rubric>   run a single rubric by slug (default: all)
+  --paths  <globs>    target file globs (forwarded to review as --paths-with)
+  --diffs  <range>    diff scope: since-main, since-staged (forwarded)
+  --mode   <mode>     review focus: push or pull (forwarded to review as --focus)
+  --brain  <slug>     brain override for evals (forwarded)
+  --output <dir>      output dir (default: .reviews/by=$role/)
+  --help              show this help
+
+example:
+  review.by --role mechanic --paths 'src/**/*.ts'
+  review.by --role mechanic --for mech-failhides
+"
+`;
+
+exports[`review.by.acceptance given: [case19] a behaver role whose rubrics.yml declares the beaver vibe when: [t0] review.by --role behaver runs, attempt 1 then: the behaver beaver-vibe contract stdout is stable (snapshot) 1`] = `
+"🦫 not even a vole
+
+🪵 review.by --role behaver
+   └─ rubrics
+      └─ r1 behaver-arrow-only ✓
+"
+`;
+
+exports[`review.by.acceptance given: [case20] a known value-flag given with no value when: [t0] review.by --brain runs with no slug after it then: the error message is stable (exit 1 + drift snapshot) 1`] = `"error: flag(s) expect a value: --brain"`;

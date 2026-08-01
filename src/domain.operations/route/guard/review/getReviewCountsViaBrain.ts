@@ -119,6 +119,15 @@ export const getReviewCountsViaBrain = async (
   input: { content: string },
   context: ContextReviewBrainSupply,
 ): Promise<ReviewCounts> => {
+  // empty (or whitespace-only) content is DEFINITIONALLY verdict-free — there is no text to
+  // tally. short-circuit to detected=false BEFORE any brain call: a probabilistic model asked
+  // to tally an empty string occasionally fabricates a verdict (with a fabricated evidence quote
+  // that slips past the empty-evidence guard below), so the deterministic path is both correct
+  // and more robust — and it spends no brain on the trivial case. NB: only TRULY empty content
+  // is short-circuited; "garbage but non-empty" still goes to the brain (it must judge "no
+  // discernible verdict" — see case2), which is a real tally decision, not a definitional one.
+  if (input.content.trim() === '') return { detected: false };
+
   // ask the sub-brain to tally, bounded by a timeout so a hang fails loud (never unbounds)
   const timeoutMs = getFallbackTimeoutMs();
   const output = await ReviewTallyError.wrap(

@@ -1,0 +1,16 @@
+artifacts:
+  - src/**/*.ts
+
+reviews:
+  peer:
+    # the main-consumer integration: a route guard peer runs a REAL role's review.by with `--for`.
+    # `--for` disintermediates to the base review's stdout (rule.require.review-by-disintermediates),
+    # so the guard captures a NORMAL review, tallies off it, and wraps it in its own peer tree — no
+    # review.by tree nested inside the guard tree.
+    - slug: term-application
+      run: $rhx review.by --role learner --for term-application --paths 'src/**/*.ts' --brain fireworks/deepseek/v4-flash
+      budget: 3
+      level: 1
+
+judges:
+  - $rhachet run --repo bhrain --skill route.stone.judge --mechanism reviewed? --stone $stone --route $route --allow-blockers 0 --allow-nitpicks 3

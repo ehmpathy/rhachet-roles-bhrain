@@ -1,0 +1,24 @@
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
+
+exports[`review.by.journey.acceptance given: [case17] journey: violation to fix to clean when: [t0] dirty then fixed, attempt 1 then: [t1] the violation run stdout is stable (snapshot) 1`] = `
+"🦉 needs your talons
+
+🔍 review.by --role demo
+   ├─ rubrics
+   │  └─ r1 demo-arrow-only ✗
+   │     ├─ 1 blocker 🔴
+   │     └─ review: .reviews/by=demo/rubric=demo-arrow-only.md
+   └─ summary
+      ├─ 1 blocker 🔴
+      └─ 0 nitpicks
+"
+`;
+
+exports[`review.by.journey.acceptance given: [case17] journey: violation to fix to clean when: [t0] dirty then fixed, attempt 1 then: [t3] the fixed run stdout is stable (snapshot) 1`] = `
+"🦉 not even a vole
+
+🔍 review.by --role demo
+   └─ rubrics
+      └─ r1 demo-arrow-only ✓
+"
+`;

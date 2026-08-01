@@ -1,0 +1,64 @@
+🦉 the way speaks for itself
+
+🗿 route.stone.set
+   ├─ stone = 5.1.execution.phase0_to_phaseN
+   ├─ passage = overruled
+   ├─ guard
+   │  ├─ artifacts
+   │  │   ├─ $route/5.1.execution.phase0_to_phaseN.yield.md
+   │  │   └─ src/**/*
+   │  ├─ reviews
+   │  │   ├─ r1: $rhx.1 (l1, 8/∞)
+   │  │   │   ├─ approved, cached
+   │  │   │   ├─ 0 blockers ✓
+   │  │   │   ├─ 1 nitpick 🟠
+   │  │   │   ├─ given: .behavior/v2026_06_07.skill-review-by/.reviews/peer/5.1.execution.phase0_to_phaseN._.review.i009.24bf6ebb22cdf947bc.r001._.given.by_peer.$rhx.1.md
+   │  │   │   └─ taken: .behavior/v2026_06_07.skill-review-by/.reviews/peer/5.1.execution.phase0_to_phaseN._.review.i009.24bf6ebb22cdf947bc.r001._.taken.by_self.$rhx.1.md
+   │  │   ├─ r2: $rhx.2 (l1, 0/∞)
+   │  │   │   ├─ constraint 9.0s
+   │  │   │   ├─ 0 blockers ✓
+   │  │   │   ├─ 0 nitpicks ✓
+   │  │   │   ├─ given: .behavior/v2026_06_07.skill-review-by/.reviews/peer/5.1.execution.phase0_to_phaseN._.review.i011.24bf6ebb22cdf947bc.r002._.given.by_peer.$rhx.2.md
+   │  │   │   └─ taken: .behavior/v2026_06_07.skill-review-by/.reviews/peer/5.1.execution.phase0_to_phaseN._.review.i011.24bf6ebb22cdf947bc.r002._.taken.by_self.$rhx.2.md
+   │  │   ├─ r3: $rhx.3 (l1, 8/∞)
+   │  │   │   ├─ rejected, cached
+   │  │   │   ├─ 5 blockers 🔴
+   │  │   │   ├─ 0 nitpicks ✓
+   │  │   │   ├─ given: .behavior/v2026_06_07.skill-review-by/.reviews/peer/5.1.execution.phase0_to_phaseN._.review.i009.24bf6ebb22cdf947bc.r003._.given.by_peer.$rhx.3.md
+   │  │   │   └─ taken: .behavior/v2026_06_07.skill-review-by/.reviews/peer/5.1.execution.phase0_to_phaseN._.review.i009.24bf6ebb22cdf947bc.r003._.taken.by_self.$rhx.3.md
+   │  │   ├─ r4: $rhx.4 (l1, 8/∞)
+   │  │   │   ├─ rejected, cached
+   │  │   │   ├─ 3 blockers 🔴
+   │  │   │   ├─ 0 nitpicks ✓
+   │  │   │   ├─ given: .behavior/v2026_06_07.skill-review-by/.reviews/peer/5.1.execution.phase0_to_phaseN._.review.i009.24bf6ebb22cdf947bc.r004._.given.by_peer.$rhx.4.md
+   │  │   │   └─ taken: .behavior/v2026_06_07.skill-review-by/.reviews/peer/5.1.execution.phase0_to_phaseN._.review.i009.24bf6ebb22cdf947bc.r004._.taken.by_self.$rhx.4.md
+   │  │   ├─ r5: $rhx.5 (l1, 8/∞)
+   │  │   │   ├─ rejected, cached
+   │  │   │   ├─ 4 blockers 🔴
+   │  │   │   ├─ 0 nitpicks ✓
+   │  │   │   ├─ given: .behavior/v2026_06_07.skill-review-by/.reviews/peer/5.1.execution.phase0_to_phaseN._.review.i009.24bf6ebb22cdf947bc.r005._.given.by_peer.$rhx.5.md
+   │  │   │   └─ taken: .behavior/v2026_06_07.skill-review-by/.reviews/peer/5.1.execution.phase0_to_phaseN._.review.i009.24bf6ebb22cdf947bc.r005._.taken.by_self.$rhx.5.md
+   │  │   ├─ r6: $rhx.6 (l1, 8/∞)
+   │  │   │   ├─ rejected, cached
+   │  │   │   ├─ 1 blocker 🔴
+   │  │   │   ├─ 0 nitpicks ✓
+   │  │   │   ├─ given: .behavior/v2026_06_07.skill-review-by/.reviews/peer/5.1.execution.phase0_to_phaseN._.review.i009.24bf6ebb22cdf947bc.r006._.given.by_peer.$rhx.6.md
+   │  │   │   └─ taken: .behavior/v2026_06_07.skill-review-by/.reviews/peer/5.1.execution.phase0_to_phaseN._.review.i009.24bf6ebb22cdf947bc.r006._.taken.by_self.$rhx.6.md
+   │  │   ├─ r7: $rhx.7 (l1, 8/∞)
+   │  │   │   ├─ approved, cached
+   │  │   │   ├─ 0 blockers ✓
+   │  │   │   ├─ 2 nitpicks 🟠
+   │  │   │   ├─ given: .behavior/v2026_06_07.skill-review-by/.reviews/peer/5.1.execution.phase0_to_phaseN._.review.i009.24bf6ebb22cdf947bc.r007._.given.by_peer.$rhx.7.md
+   │  │   │   └─ taken: .behavior/v2026_06_07.skill-review-by/.reviews/peer/5.1.execution.phase0_to_phaseN._.review.i009.24bf6ebb22cdf947bc.r007._.taken.by_self.$rhx.7.md
+   │  │   └─ r8: $rhx.8 (l1, 8/∞)
+   │  │       ├─ rejected, cached
+   │  │       ├─ 1 blocker 🔴
+   │  │       ├─ 0 nitpicks ✓
+   │  │       ├─ given: .behavior/v2026_06_07.skill-review-by/.reviews/peer/5.1.execution.phase0_to_phaseN._.review.i009.24bf6ebb22cdf947bc.r008._.given.by_peer.$rhx.8.md
+   │  │       └─ taken: .behavior/v2026_06_07.skill-review-by/.reviews/peer/5.1.execution.phase0_to_phaseN._.review.i009.24bf6ebb22cdf947bc.r008._.taken.by_self.$rhx.8.md
+   │  └─ judges
+   │      └─ j1: $rhachet run --repo bhrain --skill route.stone.judge --mechanism reviewed? --stone $stone --route $route --allow-blockers 0 --allow-nitpicks 3
+   │          └─ finished 1.6s ✓
+   │
+   └─ the way continues, run
+      └─ rhx route.drive

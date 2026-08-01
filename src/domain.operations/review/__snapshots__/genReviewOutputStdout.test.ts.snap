@@ -14,6 +14,8 @@ exports[`genReviewOutputStdout given: [case1] all good - no issues when: [t0] ge
       └─ total: 21s
 
 🦉 not even a vole
+
+🔍 review
    ├─ logs: .log/bhrain/review/2026-01-28T12-00-00-000Z
    ├─ review: review-output.md
    └─ summary
@@ -36,6 +38,8 @@ exports[`genReviewOutputStdout given: [case2] blockers only when: [t0] single bl
       └─ total: 15s
 
 🦉 needs your talons
+
+🔍 review
    ├─ logs: .log/bhrain/review/2026-01-28T12-00-00-000Z
    ├─ review: review-output.md
    └─ summary
@@ -57,6 +61,8 @@ exports[`genReviewOutputStdout given: [case2] blockers only when: [t1] multiple 
       └─ total: 18s
 
 🦉 needs your talons
+
+🔍 review
    ├─ logs: .log/bhrain/review/2026-01-28T12-00-00-000Z
    ├─ review: review-output.md
    └─ summary
@@ -78,6 +84,8 @@ exports[`genReviewOutputStdout given: [case3] nitpicks only when: [t0] single ni
       └─ total: 10s
 
 🦉 just a few hoots
+
+🔍 review
    ├─ logs: .log/bhrain/review/2026-01-28T12-00-00-000Z
    ├─ review: output.md
    └─ summary
@@ -99,6 +107,8 @@ exports[`genReviewOutputStdout given: [case3] nitpicks only when: [t1] multiple 
       └─ total: 12s
 
 🦉 just a few hoots
+
+🔍 review
    ├─ logs: .log/bhrain/review/2026-01-28T12-00-00-000Z
    ├─ review: output.md
    └─ summary
@@ -120,6 +130,8 @@ exports[`genReviewOutputStdout given: [case4] both blockers and nitpicks when: [
       └─ total: 25s
 
 🦉 needs your talons
+
+🔍 review
    ├─ logs: .log/bhrain/review/2026-01-28T12-00-00-000Z
    ├─ review: full-review.md
    └─ summary
@@ -141,6 +153,8 @@ exports[`genReviewOutputStdout given: [case5] large token counts when: [t0] numb
       └─ total: 2m 30s
 
 🦉 needs your talons
+
+🔍 review
    ├─ logs: .log/bhrain/review/2026-01-28T12-00-00-000Z
    ├─ review: large-review.md
    └─ summary

@@ -1,0 +1,25 @@
+# rule.prefer.scoped-tests-locally
+
+run scoped tests locally for fast feedback; let cicd shard the blast-radius suite.
+
+## .why
+acceptance/integration tests are real-brain, no-mock — cost is LLM latency, not logic. a whole suite runs serially in tens of minutes locally; cicd shards it across runners.
+
+## .two levers cut local cost
+1. **`path://` prunes the FILE set; `name://` does not.** jest imports every loaded suite before it filters by test name, so `name://` still loads all ~100 files. `path://` loads only the one file. measured: `name://guard-peer` = 101 files/695s vs `path://review.by.guard-peer` = 1 file/104s (~6.7×). reach for `path://` first; add `name://` only to narrow within it.
+2. **`criteria: 'SOME'` stops at first green attempt.** `when.repeatably` short-circuits — one green attempt skips the rest (1 LLM call, not 3). `'EVERY'` runs all 3. use `'SOME'` locally; CI still exercises repeats (`rule.require.repeatable-for-llm-tests`).
+
+## .how
+- local: always `--scope 'path://…'`; stack `name://` to narrow. start narrow, widen only as needed.
+- cicd: let the unscoped/`--thorough` sharded suite run — it is the gate.
+
+## .the trap
+a loose scope falls through to "all" (e.g. hyphenated `path://peer-measurement` matches 90 files). confirm the `matched: N files` line before you wait.
+
+## .the resnap footgun
+`--resnap` (`jest --updateSnapshot`) prunes obsolete snapshots in EVERY loaded suite. paired with `name://` (loads all ~100 files), it deletes snapshots across suites you never touched — a silent coverage regression (real incident: 471 cases pruned from 3 unrelated `driver.route.*` suites). never pair `--resnap` with `name://` — always resnap under `path://`, then `git diff --stat __snapshots__/` to confirm only intended files changed. to restore a pruned snapshot, rewrite it to its index bytes (a resnap will not restore pruned cases).
+
+## .enforcement
+- unscoped/`--thorough` whole-suite run locally while you iterate = **nitpick**
+- push that skips the full sharded cicd suite = **nitpick**
+- `--resnap` under `name://` or unscoped = **blocker** (prunes obsolete snapshots across every loaded suite)

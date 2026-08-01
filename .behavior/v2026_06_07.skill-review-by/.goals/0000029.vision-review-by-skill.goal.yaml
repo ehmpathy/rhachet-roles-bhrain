@@ -1,0 +1,15 @@
+slug: 'vision-review-by-skill'
+source: 'peer:human'
+status:
+  choice: 'blocked'
+  reason: 'vision complete, awaiting human approval: rhx route.stone.set --stone 1.vision --as approved'
+updatedAt: '2026-06-07'
+why:
+  ask: 'hi'
+  purpose: 'human greeted to start session on 1.vision stone for skill-review-by behavior'
+  benefit: 'clear vision document enables aligned execution'
+what:
+  outcome: '1.vision.yield.md emitted with outcome world, ux, mental model, evaluation, groundwork'
+how:
+  task: 'research extant review skill, paint vision, emit to yield file'
+  gate: 'stone marked passed after human review'
