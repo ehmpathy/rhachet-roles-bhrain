@@ -7,8 +7,8 @@
  *        of whitespace + ansi escapes before the `🪨` — an anchor on `🪨` alone would miss a banner
  *        that a newline pushed off column zero.
  */
-// biome-ignore lint/suspicious/noControlCharactersInRegex: the ESC control byte is the intended target
 const RHX_DISPATCH_BANNER_LEAD =
+  // biome-ignore lint/suspicious/noControlCharactersInRegex: the ESC control byte is the intended target
   /^(?:\s|\x1b\[[0-9;]*m)*🪨 run solid skill\b[^\n]*\n/;
 
 /**
