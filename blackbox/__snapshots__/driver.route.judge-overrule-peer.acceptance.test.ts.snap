@@ -1,0 +1,168 @@
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
+
+exports[`driver.route.judge-overrule-peer.acceptance given: [case1] peers pass, the judge malfunctions, human overrules the judge rung when: [t0] initial pass attempted (peers pass, judge malfunctions) then: snapshot matches 1`] = `
+"🦉 the way speaks for itself
+   │
+   ├─ r1: basic-checker (l1, 1/5)
+   │   ├─ approved [TIME]
+   │   ├─ 0 blockers ✓
+   │   ├─ 0 nitpicks ✓
+   │   ├─ given: .reviews/peer/1.feature._.review.i001.fe8386fc5d4b2e83e7.r001._.given.by_peer.basic-checker.md
+   │   └─ taken: .reviews/peer/1.feature._.review.i001.fe8386fc5d4b2e83e7.r001._.taken.by_self.basic-checker.md
+   │
+   ├─ r2: premium-checker (l3, 1/5)
+   │   ├─ approved [TIME]
+   │   ├─ 0 blockers ✓
+   │   ├─ 0 nitpicks ✓
+   │   ├─ given: .reviews/peer/1.feature._.review.i001.fe8386fc5d4b2e83e7.r002._.given.by_peer.premium-checker.md
+   │   └─ taken: .reviews/peer/1.feature._.review.i001.fe8386fc5d4b2e83e7.r002._.taken.by_self.premium-checker.md
+   │
+   └─ 💥 judge.1 - malfunction [TIME]
+
+🗿 route.stone.set
+   ├─ stone = 1.feature
+   ├─ passage = malfunction
+   ├─ reason = reviewer or judge malfunctioned
+   ├─ options
+   │  ├─ overrule the malfunction
+   │  │  └─ rhx route.stone.set --stone 1.feature --as overruled
+   │  └─ or fix the reviewer, then retry
+   └─ guard
+      ├─ artifacts
+      │   └─ $route/1.feature*.md
+      ├─ reviews
+      │   ├─ r1: basic-checker (l1, 1/5)
+      │   │   ├─ approved [TIME]
+      │   │   ├─ 0 blockers ✓
+      │   │   ├─ 0 nitpicks ✓
+      │   │   ├─ given: .reviews/peer/1.feature._.review.i001.fe8386fc5d4b2e83e7.r001._.given.by_peer.basic-checker.md
+      │   │   └─ taken: .reviews/peer/1.feature._.review.i001.fe8386fc5d4b2e83e7.r001._.taken.by_self.basic-checker.md
+      │   └─ r2: premium-checker (l3, 1/5)
+      │       ├─ approved [TIME]
+      │       ├─ 0 blockers ✓
+      │       ├─ 0 nitpicks ✓
+      │       ├─ given: .reviews/peer/1.feature._.review.i001.fe8386fc5d4b2e83e7.r002._.given.by_peer.premium-checker.md
+      │       └─ taken: .reviews/peer/1.feature._.review.i001.fe8386fc5d4b2e83e7.r002._.taken.by_self.premium-checker.md
+      └─ judges
+          └─ j1: bash $route/.test/mock-judge-exit-1.sh
+              ├─ finished [TIME] ✗
+              └─ reason: command exited 1; see judge artifact for details
+"
+`;
+
+exports[`driver.route.judge-overrule-peer.acceptance given: [case1] peers pass, the judge malfunctions, human overrules the judge rung when: [t1] human overrules the judge rung then: snapshot shows the judge overrule 1`] = `
+"🦉 the way speaks for itself
+
+🗿 route.stone.set
+   ├─ stone = 1.feature
+   └─ ✓ overruled
+      └─ judge, overruled
+"
+`;
+
+exports[`driver.route.judge-overrule-peer.acceptance given: [case1] peers pass, the judge malfunctions, human overrules the judge rung when: [t2] pass attempted after the judge overrule then: snapshot matches 1`] = `
+"🦉 the way speaks for itself
+   │
+   ├─ r1: basic-checker (l1, 1/5)
+   │   ├─ approved, cached
+   │   ├─ 0 blockers ✓
+   │   ├─ 0 nitpicks ✓
+   │   ├─ given: .reviews/peer/1.feature._.review.i001.fe8386fc5d4b2e83e7.r001._.given.by_peer.basic-checker.md
+   │   └─ taken: .reviews/peer/1.feature._.review.i001.fe8386fc5d4b2e83e7.r001._.taken.by_self.basic-checker.md
+   │
+   ├─ r2: premium-checker (l3, 1/5)
+   │   ├─ approved, cached
+   │   ├─ 0 blockers ✓
+   │   ├─ 0 nitpicks ✓
+   │   ├─ given: .reviews/peer/1.feature._.review.i001.fe8386fc5d4b2e83e7.r002._.given.by_peer.premium-checker.md
+   │   └─ taken: .reviews/peer/1.feature._.review.i001.fe8386fc5d4b2e83e7.r002._.taken.by_self.premium-checker.md
+   │
+   └─ 💥 judge.1 - malfunction [TIME]
+
+🗿 route.stone.set
+   ├─ stone = 1.feature
+   ├─ passage = overruled
+   ├─ guard
+   │  ├─ artifacts
+   │  │   └─ $route/1.feature*.md
+   │  ├─ reviews
+   │  │   ├─ r1: basic-checker (l1, 1/5)
+   │  │   │   ├─ approved, cached
+   │  │   │   ├─ 0 blockers ✓
+   │  │   │   ├─ 0 nitpicks ✓
+   │  │   │   ├─ given: .reviews/peer/1.feature._.review.i001.fe8386fc5d4b2e83e7.r001._.given.by_peer.basic-checker.md
+   │  │   │   └─ taken: .reviews/peer/1.feature._.review.i001.fe8386fc5d4b2e83e7.r001._.taken.by_self.basic-checker.md
+   │  │   └─ r2: premium-checker (l3, 1/5)
+   │  │       ├─ approved, cached
+   │  │       ├─ 0 blockers ✓
+   │  │       ├─ 0 nitpicks ✓
+   │  │       ├─ given: .reviews/peer/1.feature._.review.i001.fe8386fc5d4b2e83e7.r002._.given.by_peer.premium-checker.md
+   │  │       └─ taken: .reviews/peer/1.feature._.review.i001.fe8386fc5d4b2e83e7.r002._.taken.by_self.premium-checker.md
+   │  └─ judges
+   │      └─ j1: bash $route/.test/mock-judge-exit-1.sh
+   │          ├─ finished [TIME] ✗
+   │          └─ overruled ✓ — forgiven by human
+   │
+   └─ the way continues, run
+      └─ rhx route.drive
+"
+`;
+
+exports[`driver.route.judge-overrule-peer.acceptance given: [case2] human forces the malfunctioned judge rung on a peer+judge stone when: [t0] human forces the judge rung then: snapshot shows the judge-rung force (approval + overrule) 1`] = `
+"🦉 the way speaks for itself
+
+🗿 route.stone.set
+   ├─ stone = 1.feature
+   └─ ✓ forced
+      ├─ overruled = ✓ (judge)
+      └─ approved  = ✓
+"
+`;
+
+exports[`driver.route.judge-overrule-peer.acceptance given: [case2] human forces the malfunctioned judge rung on a peer+judge stone when: [t1] pass attempted after force then: snapshot matches 1`] = `
+"🦉 the way speaks for itself
+   │
+   ├─ r1: basic-checker (l1, 1/5)
+   │   ├─ approved, cached
+   │   ├─ 0 blockers ✓
+   │   ├─ 0 nitpicks ✓
+   │   ├─ given: .reviews/peer/1.feature._.review.i001.e0ffd62cc6d2ca4132.r001._.given.by_peer.basic-checker.md
+   │   └─ taken: .reviews/peer/1.feature._.review.i001.e0ffd62cc6d2ca4132.r001._.taken.by_self.basic-checker.md
+   │
+   ├─ r2: premium-checker (l3, 1/5)
+   │   ├─ approved, cached
+   │   ├─ 0 blockers ✓
+   │   ├─ 0 nitpicks ✓
+   │   ├─ given: .reviews/peer/1.feature._.review.i001.e0ffd62cc6d2ca4132.r002._.given.by_peer.premium-checker.md
+   │   └─ taken: .reviews/peer/1.feature._.review.i001.e0ffd62cc6d2ca4132.r002._.taken.by_self.premium-checker.md
+   │
+   └─ 💥 judge.1 - malfunction [TIME]
+
+🗿 route.stone.set
+   ├─ stone = 1.feature
+   ├─ passage = overruled
+   ├─ guard
+   │  ├─ artifacts
+   │  │   └─ $route/1.feature*.md
+   │  ├─ reviews
+   │  │   ├─ r1: basic-checker (l1, 1/5)
+   │  │   │   ├─ approved, cached
+   │  │   │   ├─ 0 blockers ✓
+   │  │   │   ├─ 0 nitpicks ✓
+   │  │   │   ├─ given: .reviews/peer/1.feature._.review.i001.e0ffd62cc6d2ca4132.r001._.given.by_peer.basic-checker.md
+   │  │   │   └─ taken: .reviews/peer/1.feature._.review.i001.e0ffd62cc6d2ca4132.r001._.taken.by_self.basic-checker.md
+   │  │   └─ r2: premium-checker (l3, 1/5)
+   │  │       ├─ approved, cached
+   │  │       ├─ 0 blockers ✓
+   │  │       ├─ 0 nitpicks ✓
+   │  │       ├─ given: .reviews/peer/1.feature._.review.i001.e0ffd62cc6d2ca4132.r002._.given.by_peer.premium-checker.md
+   │  │       └─ taken: .reviews/peer/1.feature._.review.i001.e0ffd62cc6d2ca4132.r002._.taken.by_self.premium-checker.md
+   │  └─ judges
+   │      └─ j1: bash $route/.test/mock-judge-exit-1.sh
+   │          ├─ finished [TIME] ✗
+   │          └─ overruled ✓ — forgiven by human
+   │
+   └─ the way continues, run
+      └─ rhx route.drive
+"
+`;

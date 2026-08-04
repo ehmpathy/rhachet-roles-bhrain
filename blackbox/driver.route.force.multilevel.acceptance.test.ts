@@ -48,8 +48,14 @@ describe('driver.route.force.multilevel.acceptance', () => {
         }),
       );
 
-      then('exit code is non-zero', () => {
-        expect(result.code).not.toEqual(0);
+      then('exit code is 2 (constraint — l1 blocker gates passage)', () => {
+        // exit 2 = constraint (caller must fix the l1 blocker), not a mere non-zero —
+        // a code 1 (malfunction) here would signal a crash regression
+        expect(result.code).toEqual(2);
+      });
+
+      then('snapshot shows the l1-blocked initial pass', () => {
+        expect(sanitizeTimeForSnapshot(result.stdout)).toMatchSnapshot();
       });
     });
 
@@ -102,13 +108,18 @@ describe('driver.route.force.multilevel.acceptance', () => {
       });
 
       then('pass is blocked on the approval gate (l3 is now terminal active)', () => {
-        // reviewed? passes (l1 overruled, l3 approved) but approved? still gates
-        expect(result.code).not.toEqual(0);
+        // reviewed? passes (l1 overruled, l3 approved) but approved? still gates → exit 2
+        // (constraint: awaits human approval), never a code 1 malfunction
+        expect(result.code).toEqual(2);
+      });
+
+      then('snapshot shows l3 active, blocked on the approval gate', () => {
+        expect(sanitizeTimeForSnapshot(result.stdout)).toMatchSnapshot();
       });
     });
 
-    when('[t1] human forces while l3 is the active (terminal) level', () => {
-      const result = useThen('force at terminal grants approval', async () => {
+    when('[t1] human forces to grant the approval gate (l3 already merit-approved)', () => {
+      const result = useThen('force grants approval', async () => {
         await invokeRouteSkill({
           skill: 'route.stone.set',
           args: { stone: '1.feature', route: '.', as: 'forced' },
@@ -119,7 +130,9 @@ describe('driver.route.force.multilevel.acceptance', () => {
           args: { stone: '1.feature', route: '.', as: 'passed' },
           cwd: scene.tempDir,
         });
-        // now l3 is the active (terminal) level — force grants approval
+        // l3 has approved on its own merit and l1 is overruled, so every review
+        // level is already clear (activeLevel === null); this force exists only to
+        // grant the approved? gate
         return invokeRouteSkill({
           skill: 'route.stone.set',
           args: { stone: '1.feature', route: '.', as: 'forced' },
@@ -131,15 +144,18 @@ describe('driver.route.force.multilevel.acceptance', () => {
         expect(result.code).toEqual(0);
       });
 
-      then('stdout overrules level 3', () => {
-        expect(result.stdout).toContain('overruled = ✓ (level 3)');
+      then('stdout does NOT mint a false overrule on the merit-approved l3', () => {
+        // .why = l3 cleared on its own merit — a force must not persist a bogus
+        //        "forgiven by human" marker on a level that was never blocked
+        //        (the false-provenance fix). only the approval is granted here.
+        expect(result.stdout).not.toContain('overruled = ✓ (level 3)');
       });
 
       then('stdout GRANTS approval', () => {
         expect(result.stdout).toContain('approved  = ✓');
       });
 
-      then('snapshot shows overrule + approval at terminal level', () => {
+      then('snapshot shows approval granted, no spurious l3 overrule', () => {
         expect(sanitizeTimeForSnapshot(result.stdout)).toMatchSnapshot();
       });
     });
@@ -175,6 +191,10 @@ describe('driver.route.force.multilevel.acceptance', () => {
       then('stdout confirms passage', () => {
         expect(result.stdout).toContain('passage = ');
       });
+
+      then('snapshot shows the passed stone after terminal force', () => {
+        expect(sanitizeTimeForSnapshot(result.stdout)).toMatchSnapshot();
+      });
     });
   });
 
@@ -191,8 +211,10 @@ describe('driver.route.force.multilevel.acceptance', () => {
         }),
       );
 
-      then('exit code is non-zero', () => {
-        expect(result.code).not.toEqual(0);
+      then('exit code is 2 (constraint — a non-human may not force)', () => {
+        // exit 2 = constraint (only a human at a TTY may force), not a mere non-zero —
+        // a code 1 (malfunction) here would signal a crash regression
+        expect(result.code).toEqual(2);
       });
 
       then('stdout explains only humans can force', () => {

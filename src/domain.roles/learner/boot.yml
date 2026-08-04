@@ -4,6 +4,7 @@ always:
       # identity
       - briefs/im_an.obsessive_learner.md
       - briefs/im_an.obsessive_learner.for.domain.terms.md
+      - briefs/im_an.obsessive_learner.for.domain.invariants.md
 
       # rules
       - briefs/rule.always.externalize.lessons.into_briefs.md

@@ -6,6 +6,7 @@ import {
 } from '../review/peer/meter/computeReviewPeerVerdict';
 import {
   formatGuardReviewerTree,
+  OVERRULED_NARRATIVE,
   type ReviewerTreeState,
 } from './formatGuardReviewerTree';
 
@@ -22,6 +23,15 @@ export interface GuardPeerMeterStatus {
   awaits: { level: number } | false;
   blockers: number;
   nitpicks: number;
+  /**
+   * whether the human waved this reviewer's level through (overrule).
+   * .why = an overrule is a SEPARATE forgiveness flag, not a verdict — the raw verdict of an
+   *        overruled reviewer stays 'rejected'. this flag is the single source of truth every
+   *        display consumer reads so an overruled level renders as terminal-for-unlock
+   *        (forgiven), never as an un-forgiven rejection or a bogus `awaits lower terminal`.
+   *        see rule.require.single-source-of-truth-for-render.
+   */
+  overruled: boolean;
   /** path to review artifact file */
   path: string | null;
 }
@@ -91,6 +101,7 @@ const deriveMetersFromReviews = (
       budget,
       verdict,
       awaits: false,
+      overruled: false,
       blockers: review.artifact.blockers,
       nitpicks: review.artifact.nitpicks,
       path: review.artifact.path,
@@ -124,6 +135,8 @@ export const formatReviewsMeterLines = (input: {
   /** header text: 'reviews' or '🦉 peer reviewers' */
   headerText?: string;
 }): string[] => {
+  // .note = deliberate local line-builder, scoped to this formatter — the escape hatch in
+  //         rule.require.immutable-vars permits a scoped emit builder; no array crosses a boundary.
   const lines: string[] = [];
   const baseIndent = input.baseIndent ?? '';
   const sectionIndent = input.sectionIndent ?? '   ';
@@ -192,6 +205,7 @@ const asReviewerTreeStateFromMeter = (input: {
       level: meter.level,
       rounds: meter.rounds,
       budget: meter.budget,
+      overruled: meter.overruled,
       state: { type: 'awaits', level: meter.awaits.level },
     };
   }
@@ -204,6 +218,7 @@ const asReviewerTreeStateFromMeter = (input: {
       level: meter.level,
       rounds: meter.rounds,
       budget: meter.budget,
+      overruled: meter.overruled,
       state: { type: 'queued' },
     };
   }
@@ -217,7 +232,24 @@ const asReviewerTreeStateFromMeter = (input: {
       level: meter.level,
       rounds: meter.rounds,
       budget: meter.budget,
+      overruled: meter.overruled,
       state: { type: 'malfunction', path },
+    };
+  }
+
+  // constraint state (a genuine constraint verdict — exit 2, no blockers — renders its own line,
+  // never a finished verdict). this branch also narrows the residual verdict to the finished set
+  // below, so the finished branch needs no `as` cast (rule.forbid.as-cast).
+  if (meter.verdict === 'constraint') {
+    const constraintPath = review?.artifact.path ?? meter.path ?? '';
+    return {
+      index,
+      slug: meter.slug,
+      level: meter.level,
+      rounds: meter.rounds,
+      budget: meter.budget,
+      overruled: meter.overruled,
+      state: { type: 'constraint', path: constraintPath },
     };
   }
 
@@ -242,9 +274,10 @@ const asReviewerTreeStateFromMeter = (input: {
     level: meter.level,
     rounds: meter.rounds,
     budget: meter.budget,
+    overruled: meter.overruled,
     state: {
       type: 'finished',
-      verdict: meter.verdict as 'approved' | 'rejected' | 'exhausted',
+      verdict: meter.verdict,
       durationSec,
       blockers,
       nitpicks,
@@ -361,6 +394,8 @@ export const formatGuardTree = (input: {
       passed: boolean;
       reason: string | null;
       path: string;
+      /** the human overruled this judge (a malfunction on the judge rung) — render forgiven */
+      overruled?: boolean;
     }>;
     peerMeters?: GuardPeerMeterStatus[];
   } | null;
@@ -370,6 +405,8 @@ export const formatGuardTree = (input: {
    */
   isLast?: boolean;
 }): string => {
+  // .note = deliberate local line-builder, scoped to this formatter — the escape hatch in
+  //         rule.require.immutable-vars permits a scoped emit builder; no array crosses a boundary.
   const lines: string[] = [];
 
   lines.push(`🗿 route.stone.set`);
@@ -558,7 +595,13 @@ export const formatGuardTree = (input: {
               : '0.0s';
           const mark = judge.passed ? '✓' : '✗';
           detailLines.push(`finished ${dur} ${mark}`);
-          if (!judge.passed && judge.reason) {
+          // a human overrule of the judge rung forgives a malfunctioned judge — read it as
+          // forgiven, not a bare "✗ blocked" that would contradict the top-line `passage =
+          // overruled` (the judge-tier twin of the peer-level overrule display; the exact
+          // self-contradiction the earlier peer-level fix removed)
+          if (judge.overruled) {
+            detailLines.push(OVERRULED_NARRATIVE);
+          } else if (!judge.passed && judge.reason) {
             detailLines.push(`reason: ${judge.reason}`);
           }
 

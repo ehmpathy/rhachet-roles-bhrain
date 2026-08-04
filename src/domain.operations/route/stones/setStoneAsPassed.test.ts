@@ -282,11 +282,12 @@ judges:
 
     when('[t1] overrule marker present', () => {
       then('passes despite malfunction (human overruled)', async () => {
-        // create overrule marker
+        // create overrule marker scoped to the malfunctioned rung (level 1)
         await setPassageReport({
           report: new PassageReport({
             stone: '1.test',
             status: 'overruled',
+            level: 1,
           }),
           route: tempDir,
         });
@@ -353,11 +354,12 @@ judges:
 
     when('[t1] overrule marker present', () => {
       then('passes despite constraint (human overruled)', async () => {
-        // create overrule marker
+        // create overrule marker scoped to the constrained rung (level 1)
         await setPassageReport({
           report: new PassageReport({
             stone: '1.test',
             status: 'overruled',
+            level: 1,
           }),
           route: tempDir,
         });

@@ -1,0 +1,8 @@
+{
+  "name": "route-judge-malfunction-plus-approval",
+  "private": true,
+  "description": "fixture for a two-judge guard (malfunction judge + approved?) — proves a judge-rung overrule forgives the malfunction but never the co-judge approval gate",
+  "dependencies": {
+    "rhachet-roles-bhrain": "link:."
+  }
+}

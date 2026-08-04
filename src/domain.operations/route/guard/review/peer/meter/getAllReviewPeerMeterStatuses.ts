@@ -7,7 +7,8 @@ import { getLatestReviewArtifactForIndex } from '../getLatestReviewArtifactForIn
 import { computeReviewPeerVerdict } from './computeReviewPeerVerdict';
 import { getAllRouteStoneGuardReviewPeerMeters } from './getAllRouteStoneGuardReviewPeerMeters';
 import { getReviewedJudgeThresholds } from './getReviewedJudgeThresholds';
-import { isReviewPeerLevelTerminal } from './isReviewPeerLevelTerminal';
+import { getStoneGuardLevelClearance } from './getStoneGuardLevelClearance';
+import { isLevelOverruled } from './isLevelOverruled';
 
 /**
  * .what = computes full peer meter status for all reviewers
@@ -17,7 +18,25 @@ export const getAllReviewPeerMeterStatuses = async (input: {
   stone: RouteStone;
   hash: string;
   route: string;
-  exhaustedReviewerSlugs?: string[];
+  /**
+   * the authoritative list of reviewer slugs skipped-by-exhaustion this iteration (from
+   * runStoneGuardReviews), or `null` when the caller has no authoritative list and the heuristic
+   * (`no review for hash AND rounds >= budget`) should decide instead.
+   * .why = null and [] differ — `null` = "no authoritative list, use the heuristic"; `[]` =
+   *        "authoritative: none was exhausted". modeled as `string[] | null` (not optional) so the
+   *        two cases are explicit at compile time (rule.forbid.undefined-inputs).
+   */
+  exhaustedReviewerSlugs: string[] | null;
+  /**
+   * levels the human has overruled (waved through). an overruled level is terminal-for-unlock
+   * and clear-for-passage, so a HIGHER level must NOT show `awaits l<overruled> terminal`, and
+   * the level itself is stamped `overruled` for the display consumers. required — an empty set is
+   * the explicit "none overruled" value (rule.forbid.undefined-inputs).
+   * .why = overrule is a separate forgiveness flag, not a verdict — the raw verdict of an
+   *        overruled reviewer stays 'rejected'. without this, the awaits calc reads that raw
+   *        verdict as non-terminal and paints a false `awaits` line on the level above it.
+   */
+  overruledLevels: Set<number>;
 }): Promise<GuardPeerMeterStatus[]> => {
   // check if stone has a guard
   if (!input.stone.guard) return [];
@@ -29,16 +48,26 @@ export const getAllReviewPeerMeterStatuses = async (input: {
   // convert skipped slugs to set for O(1) lookup
   const exhaustedSet = new Set(input.exhaustedReviewerSlugs ?? []);
 
+  // an overruled level is cleared for both unlock and passage — read this one predicate
+  // wherever a level's terminal-ness matters for display (awaits, overruled stamp)
+  const overruledLevels = input.overruledLevels;
+  const isOverruled = (level: number): boolean =>
+    isLevelOverruled({
+      level,
+      overruledLevels,
+    });
+
   // load current meters for rounds consumed (per stone)
   // .note = slugs are guaranteed unique at parse time via standardizePeerReviewSlugs
   const meters = await getAllRouteStoneGuardReviewPeerMeters({
     route: input.route,
     stone: input.stone.name,
   });
-  const meterBySlug = new Map<string, { rounds: number }>();
-  for (const meter of meters) {
-    meterBySlug.set(meter.reviewer.slug, { rounds: meter.rounds });
-  }
+  const meterBySlug = new Map(
+    meters.map(
+      (meter) => [meter.reviewer.slug, { rounds: meter.rounds }] as const,
+    ),
+  );
 
   // load cached reviews to get blockers (include ALL reviews, not just passed)
   const priorArtifacts = await getAllStoneGuardArtifactsByHash({
@@ -65,127 +94,121 @@ export const getAllReviewPeerMeterStatuses = async (input: {
 
   // pre-compute reviews for all reviewers (fallback to latest for exhausted)
   // track both review data and whether it's for current hash (to detect skipped)
-  const reviewByIndex = new Map<
-    number,
-    {
-      review: {
-        blockers: number;
-        nitpicks: number;
-        path: string;
-        exitClass: 'passed' | 'constraint' | 'malfunction';
-      } | null;
-      hasReviewForCurrentHash: boolean;
-    }
-  >();
-  for (const reviewer of reviewersWithIndex) {
-    const rounds = meterBySlug.get(reviewer.slug)?.rounds ?? 0;
+  const reviewByIndex = new Map(
+    await Promise.all(
+      reviewersWithIndex.map(async (reviewer) => {
+        const rounds = meterBySlug.get(reviewer.slug)?.rounds ?? 0;
 
-    // first try current hash, then fallback to latest review (for exhausted reviewers)
-    const reviewForCurrentHash = cachedReviews.find(
-      (r) => r.index === reviewer.index,
-    );
-    let review = reviewForCurrentHash;
-    if (!review && rounds > 0) {
-      // reviewer has rounds but no review for current hash = likely exhausted
-      // find their latest review regardless of hash
-      review =
-        (await getLatestReviewArtifactForIndex({
-          stone: input.stone,
-          index: reviewer.index,
-          route: input.route,
-        })) ?? undefined;
-    }
-    reviewByIndex.set(reviewer.index, {
-      review: review ?? null,
-      hasReviewForCurrentHash: !!reviewForCurrentHash,
-    });
-  }
+        // first try current hash, then fallback to latest review (for exhausted reviewers)
+        const reviewForCurrentHash = cachedReviews.find(
+          (r) => r.index === reviewer.index,
+        );
 
-  // compute verdict for each reviewer
-  const statuses: GuardPeerMeterStatus[] = [];
-  for (const reviewer of reviewersWithIndex) {
-    const meter = meterBySlug.get(reviewer.slug);
-    const rounds = meter?.rounds ?? 0;
-    const reviewEntry = reviewByIndex.get(reviewer.index);
-    const cachedReview = reviewEntry?.review ?? null;
-    const hasReviewForCurrentHash =
-      reviewEntry?.hasReviewForCurrentHash ?? false;
+        // reviewer has rounds but no review for current hash = likely exhausted;
+        // find their latest review regardless of hash
+        const fallbackReview =
+          !reviewForCurrentHash && rounds > 0
+            ? await getLatestReviewArtifactForIndex({
+                stone: input.stone,
+                index: reviewer.index,
+                route: input.route,
+              })
+            : null;
 
-    const blockers = cachedReview?.blockers ?? Infinity;
-    const nitpicks = cachedReview?.nitpicks ?? 0;
+        return [
+          reviewer.index,
+          {
+            review: reviewForCurrentHash ?? fallbackReview ?? null,
+            hasReviewForCurrentHash: !!reviewForCurrentHash,
+          },
+        ] as const;
+      }),
+    ),
+  );
 
-    // wasExhausted = reviewer was skipped in THIS iteration due to exhaustion
-    // .why = if exhaustedReviewerSlugs was passed, use it (authoritative from runStoneGuardReviews)
-    //        otherwise fall back to heuristic: no review for hash AND rounds >= budget
-    // .invariant = a review can only be 'exhausted' if it was SKIPPED (see define.invariant.review.peer.exhausted)
-    const wasExhausted =
-      input.exhaustedReviewerSlugs !== undefined
-        ? exhaustedSet.has(reviewer.slug)
-        : !hasReviewForCurrentHash && rounds >= reviewer.budget;
+  // derive each reviewer's verdict-relevant state ONCE, keyed by index. both the clearance calc
+  // (for the awaits line) and the per-reviewer status below read from this single map — so a
+  // reviewer's shown verdict can never drift from the verdict its level-clearance was judged on,
+  // and computeReviewPeerVerdict runs once per reviewer, not twice
+  // (rule.require.single-source-of-truth-for-render).
+  const derivedByIndex = new Map(
+    reviewersWithIndex.map((reviewer) => {
+      const reviewEntry = reviewByIndex.get(reviewer.index);
+      const cachedReview = reviewEntry?.review ?? null;
+      const rounds = meterBySlug.get(reviewer.slug)?.rounds ?? 0;
+      const hasReviewForCurrentHash =
+        reviewEntry?.hasReviewForCurrentHash ?? false;
 
-    const verdict = computeReviewPeerVerdict({
-      rounds,
-      budget: reviewer.budget,
-      blockers,
-      nitpicks,
-      allowBlockers,
-      allowNitpicks,
-      exitClass: cachedReview?.exitClass,
-      wasExhausted,
-    });
+      // wasExhausted = reviewer was skipped in THIS iteration due to exhaustion
+      // .why = a non-null exhaustedReviewerSlugs is authoritative (from runStoneGuardReviews); a
+      //        null one means fall back to the heuristic: no review for hash AND rounds >= budget
+      // .invariant = a review can only be 'exhausted' if it was SKIPPED (see define.invariant.review.peer.exhausted)
+      const wasExhausted =
+        input.exhaustedReviewerSlugs !== null
+          ? exhaustedSet.has(reviewer.slug)
+          : !hasReviewForCurrentHash && rounds >= reviewer.budget;
 
-    // compute if this reviewer awaits lower level
-    let awaits: { level: number } | false = false;
-    if (reviewer.level > 1) {
-      // check if any lower level is not terminal
-      const verdicts = reviewersWithIndex.map((r) => {
-        const entry = reviewByIndex.get(r.index);
-        const cr = entry?.review ?? null;
-        const rRounds = meterBySlug.get(r.slug)?.rounds ?? 0;
-        const rHasReviewForCurrentHash =
-          entry?.hasReviewForCurrentHash ?? false;
-        const rWasSkipped =
-          input.exhaustedReviewerSlugs !== undefined
-            ? exhaustedSet.has(r.slug)
-            : !rHasReviewForCurrentHash && rRounds >= r.budget;
-        return {
-          slug: r.slug,
-          level: r.level,
-          verdict: computeReviewPeerVerdict({
-            rounds: rRounds,
-            budget: r.budget,
-            blockers: cr?.blockers ?? Infinity,
-            nitpicks: cr?.nitpicks ?? 0,
-            allowBlockers,
-            allowNitpicks,
-            exitClass: cr?.exitClass,
-            wasExhausted: rWasSkipped,
-          }),
-        };
+      const verdict = computeReviewPeerVerdict({
+        rounds,
+        budget: reviewer.budget,
+        blockers: cachedReview?.blockers ?? Infinity,
+        nitpicks: cachedReview?.nitpicks ?? 0,
+        allowBlockers,
+        allowNitpicks,
+        exitClass: cachedReview?.exitClass,
+        wasExhausted,
       });
-      for (let level = 1; level < reviewer.level; level++) {
-        if (!isReviewPeerLevelTerminal({ reviewers: verdicts, level })) {
-          awaits = { level };
-          break;
-        }
-      }
-    }
 
-    statuses.push({
-      slug: reviewer.slug,
-      level: reviewer.level,
-      rounds,
-      budget: reviewer.budget,
-      verdict,
-      awaits,
-      blockers: cachedReview?.blockers ?? 0,
-      nitpicks: cachedReview?.nitpicks ?? 0,
-      path: cachedReview?.path ?? null,
-    });
-  }
+      return [reviewer.index, { cachedReview, rounds, verdict }] as const;
+    }),
+  );
 
-  // sort by level (low-to-high = cheapest first) for consistent display
-  statuses.sort((a, b) => a.level - b.level);
+  // the shared clearance primitive decides which lower levels are clear-for-unlock, from the
+  // one-per-reviewer verdicts above. an overruled lower level is clear (the human waved it) — the
+  // SAME forgiveness the unlock filter and judge apply, read from one source so the `awaits` line
+  // below cannot drift from them.
+  const clearanceByLevel = new Map(
+    getStoneGuardLevelClearance({
+      reviewers: reviewersWithIndex.map((reviewer) => ({
+        level: reviewer.level,
+        verdict: derivedByIndex.get(reviewer.index)!.verdict,
+      })),
+      overruledLevels,
+    }).map((c) => [c.level, c]),
+  );
+
+  // build each reviewer's status from the single derived map, then sort by level
+  // (low-to-high = cheapest first) for consistent display
+  const statuses: GuardPeerMeterStatus[] = reviewersWithIndex
+    .map((reviewer) => {
+      const derived = derivedByIndex.get(reviewer.index)!;
+      const { cachedReview } = derived;
+
+      // this reviewer awaits the FIRST lower level not yet clear-for-unlock (a level with no
+      // reviewers is clear — none to await); undefined = no lower level blocks
+      const awaitedLevel =
+        reviewer.level > 1
+          ? Array.from({ length: reviewer.level - 1 }, (_, i) => i + 1).find(
+              (level) => !(clearanceByLevel.get(level)?.clearForUnlock ?? true),
+            )
+          : undefined;
+      const awaits: { level: number } | false =
+        awaitedLevel !== undefined ? { level: awaitedLevel } : false;
+
+      return {
+        slug: reviewer.slug,
+        level: reviewer.level,
+        rounds: derived.rounds,
+        budget: reviewer.budget,
+        verdict: derived.verdict,
+        awaits,
+        overruled: isOverruled(reviewer.level),
+        blockers: cachedReview?.blockers ?? 0,
+        nitpicks: cachedReview?.nitpicks ?? 0,
+        path: cachedReview?.path ?? null,
+      };
+    })
+    .sort((a, b) => a.level - b.level);
 
   return statuses;
 };

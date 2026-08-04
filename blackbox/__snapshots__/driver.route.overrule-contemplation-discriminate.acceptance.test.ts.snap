@@ -1,0 +1,94 @@
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
+
+exports[`driver.route.overrule-contemplation-discriminate.acceptance given: [case1] l1 preemptively overruled, l3 blockers within judge budget → the contemplation gate holds passage when: [t0] driver passes with l1 pre-overruled (l3 runs, rejects) then: stdout has good vibes 1`] = `
+"🦉 the way speaks for itself
+   │
+   ├─ r1: basic-checker (l1, 1/5)
+   │   ├─ approved [TIME]
+   │   ├─ 1 blocker 🔴
+   │   ├─ 0 nitpicks ✓
+   │   ├─ given: .reviews/peer/1.feature._.review.i001.d6ef1aa3fad755e23c.r001._.given.by_peer.basic-checker.md
+   │   └─ taken: .reviews/peer/1.feature._.review.i001.d6ef1aa3fad755e23c.r001._.taken.by_self.basic-checker.md
+   │
+   ├─ r2: premium-checker (l3, 1/5)
+   │   ├─ approved [TIME]
+   │   ├─ 3 blockers 🔴
+   │   ├─ 0 nitpicks ✓
+   │   ├─ given: .reviews/peer/1.feature._.review.i001.d6ef1aa3fad755e23c.r002._.given.by_peer.premium-checker.md
+   │   └─ taken: .reviews/peer/1.feature._.review.i001.d6ef1aa3fad755e23c.r002._.taken.by_self.premium-checker.md
+   │
+   └─ ✓ judge.1 - allowed [TIME]
+
+🦉 the reviewers await your reply
+
+🌕 lets respond
+   │
+   ├─ review.peer 1/1
+   │  ├─ slug = premium-checker
+   │  ├─ verdict = 3 blockers, 0 nitpicks
+   │  ├─ contemplate from
+   │  │  └─ [TEMP]/.reviews/peer/1.feature._.review.i001.d6ef1aa3fad755e23c.r002._.given.by_peer.premium-checker.md
+   │  └─ articulate into
+   │     └─ [TEMP]/.reviews/peer/1.feature._.review.i001.d6ef1aa3fad755e23c.r002._.taken.by_self.premium-checker.md
+   │
+   └─ when you've contemplated each reviewer, run
+      └─ rhx route.stone.set --stone 1.feature --as contemplated --that premium-checker
+"
+`;
+
+exports[`driver.route.overrule-contemplation-discriminate.acceptance given: [case1] l1 preemptively overruled, l3 blockers within judge budget → the contemplation gate holds passage when: [t1] driver writes l3's .taken then signals --as contemplated then: stdout has good vibes 1`] = `
+"🦉 the way speaks for itself
+
+🦉 contemplated: premium-checker
+   └─ your response is recorded — the reviewer will see it next round
+"
+`;
+
+exports[`driver.route.overrule-contemplation-discriminate.acceptance given: [case1] l1 preemptively overruled, l3 blockers within judge budget → the contemplation gate holds passage when: [t2] driver passes with l3 answered (judge tolerates the blockers) then: stdout has good vibes 1`] = `
+"🦉 the way speaks for itself
+   │
+   ├─ r1: basic-checker (l1, 1/5)
+   │   ├─ approved, cached
+   │   ├─ 1 blocker 🔴
+   │   ├─ 0 nitpicks ✓
+   │   ├─ given: .reviews/peer/1.feature._.review.i001.d6ef1aa3fad755e23c.r001._.given.by_peer.basic-checker.md
+   │   └─ taken: .reviews/peer/1.feature._.review.i001.d6ef1aa3fad755e23c.r001._.taken.by_self.basic-checker.md
+   │
+   ├─ r2: premium-checker (l3, 1/5)
+   │   ├─ approved, cached
+   │   ├─ 3 blockers 🔴
+   │   ├─ 0 nitpicks ✓
+   │   ├─ given: .reviews/peer/1.feature._.review.i001.d6ef1aa3fad755e23c.r002._.given.by_peer.premium-checker.md
+   │   └─ taken: .reviews/peer/1.feature._.review.i001.d6ef1aa3fad755e23c.r002._.taken.by_self.premium-checker.md
+   │
+   └─ ✓ judge.1 - allowed (cached)
+
+🗿 route.stone.set
+   ├─ stone = 1.feature
+   ├─ passage = overruled
+   ├─ guard
+   │  ├─ artifacts
+   │  │   └─ $route/1.feature*.md
+   │  ├─ reviews
+   │  │   ├─ r1: basic-checker (l1, 1/5)
+   │  │   │   ├─ approved, cached
+   │  │   │   ├─ overruled ✓ — forgiven by human
+   │  │   │   ├─ 1 blocker 🔴
+   │  │   │   ├─ 0 nitpicks ✓
+   │  │   │   ├─ given: .reviews/peer/1.feature._.review.i001.d6ef1aa3fad755e23c.r001._.given.by_peer.basic-checker.md
+   │  │   │   └─ taken: .reviews/peer/1.feature._.review.i001.d6ef1aa3fad755e23c.r001._.taken.by_self.basic-checker.md
+   │  │   └─ r2: premium-checker (l3, 1/5)
+   │  │       ├─ approved, cached
+   │  │       ├─ 3 blockers 🔴
+   │  │       ├─ 0 nitpicks ✓
+   │  │       ├─ given: .reviews/peer/1.feature._.review.i001.d6ef1aa3fad755e23c.r002._.given.by_peer.premium-checker.md
+   │  │       └─ taken: .reviews/peer/1.feature._.review.i001.d6ef1aa3fad755e23c.r002._.taken.by_self.premium-checker.md
+   │  └─ judges
+   │      └─ j1: rhx route.stone.judge --mechanism reviewed? --stone $stone --route $route --allow-blockers 9
+   │          └─ · cached
+   │             └─ on $route/1.feature*.md
+   │
+   └─ the way continues, run
+      └─ rhx route.drive
+"
+`;

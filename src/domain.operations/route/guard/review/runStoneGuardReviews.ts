@@ -38,8 +38,9 @@ import { getRouteGuardReviewPeerPathTaken } from './peer/getRouteGuardReviewPeer
 import { computeReviewPeerVerdict } from './peer/meter/computeReviewPeerVerdict';
 import { getAllRouteStoneGuardReviewPeerMeters } from './peer/meter/getAllRouteStoneGuardReviewPeerMeters';
 import { getReviewedJudgeThresholds } from './peer/meter/getReviewedJudgeThresholds';
-import { isReviewPeerVerdictExhausted } from './peer/meter/isReviewPeerLevelTerminal';
-import { isReviewPeerLevelUnlocked } from './peer/meter/isReviewPeerLevelUnlocked';
+import { getStoneGuardLevelClearance } from './peer/meter/getStoneGuardLevelClearance';
+import { isReviewLevelUnlocked } from './peer/meter/isReviewLevelUnlocked';
+import { isReviewPeerVerdictExhausted } from './peer/meter/isReviewPeerVerdictExhausted';
 import { setRouteStoneGuardReviewPeerMeter } from './peer/meter/setRouteStoneGuardReviewPeerMeter';
 
 /**
@@ -347,7 +348,7 @@ export const runStoneGuardReviews = async (
   // load human overrules so an overruled level counts as terminal for unlock
   // .why = after a human overrules l1, l1's blockers are forgiven and l1 is
   //        terminal, so the next level (l3) can run in this same pass
-  const { levels: overruledLevels } = await getStoneGuardOverruledLevels({
+  const overruledLevels = await getStoneGuardOverruledLevels({
     stone: input.stone,
     route: input.route,
   });
@@ -528,14 +529,16 @@ export const runStoneGuardReviews = async (
 
     // check if lower levels are all terminal before higher level runs
     // .why = cheap (low level) runs first, expensive (high level) only after cheap clears
-    // .note = an overruled level counts as terminal: a human waved it through, so
-    //         higher levels unlock even if that level still has blockers. drop the
-    //         overruled levels' verdicts so those levels read as empty (=terminal).
+    // .note = read the shared clearance ladder (overrule as an explicit flag) so this
+    //         unlock gate can never disagree with the ladder status / passage judge that
+    //         read the same primitive. an overruled level is clear-for-unlock, so higher
+    //         levels unlock even if it still holds blockers.
     const verdicts = computeVerdicts();
-    const canRun = isReviewPeerLevelUnlocked({
-      reviewers: verdicts.filter((v) => !overruledLevels.has(v.level)),
-      level: pr.level,
+    const clearance = getStoneGuardLevelClearance({
+      reviewers: verdicts,
+      overruledLevels,
     });
+    const canRun = isReviewLevelUnlocked({ clearance, level: pr.level });
 
     // skip if level not yet unlocked (emit queued event)
     if (!canRun) {

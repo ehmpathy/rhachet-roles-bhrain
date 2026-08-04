@@ -22,7 +22,7 @@ exports[`driver.route.judge-failure.acceptance given: [case1] judge command fail
 exports[`driver.route.judge-failure.acceptance given: [case1] judge command fails without proper passed: metadata when: [t0] route.stone.set --as passed is invoked then: stdout matches snapshot 1`] = `
 "🦉 the way speaks for itself
    │
-   └─ ✗ judge.1 - blocked [TIME]
+   └─ 💥 judge.1 - malfunction [TIME]
 
 🗿 route.stone.set
    ├─ stone = 1
@@ -64,7 +64,7 @@ exports[`driver.route.judge-failure.acceptance given: [case1] judge command fail
 exports[`driver.route.judge-failure.acceptance given: [case1] judge command fails without proper passed: metadata when: [t1] route.stone.set --as passed is invoked again then: stdout matches snapshot 1`] = `
 "🦉 the way speaks for itself
    │
-   └─ ✗ judge.1 - blocked [TIME]
+   └─ 💥 judge.1 - malfunction [TIME]
 
 🗿 route.stone.set
    ├─ stone = 1

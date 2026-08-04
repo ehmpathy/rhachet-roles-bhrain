@@ -64,21 +64,22 @@ describe('driver.route.overrule.acceptance', () => {
       // note: we cannot truly simulate TTY in acceptance tests
       // but the implementation should allow overruled in test environment
       // real TTY check is verified in unit tests
-      then('exit code is 0', async () => {
-        const result = await invokeRouteSkill({
+      // .why = one shared overrule per useThen — a redundant second overrule
+      //        would hit the "already terminal" short-circuit, not a fresh
+      //        confirmation (setStoneAsOverruled active-level guard)
+      const result = useThen('overrule succeeds', async () =>
+        invokeRouteSkill({
           skill: 'route.stone.set',
           args: { stone: '1.plan', route: '.', as: 'overruled' },
           cwd: scene.tempDir,
-        });
+        }),
+      );
+
+      then('exit code is 0', () => {
         expect(result.code).toEqual(0);
       });
 
-      then('stdout shows overrule confirmation', async () => {
-        const result = await invokeRouteSkill({
-          skill: 'route.stone.set',
-          args: { stone: '1.plan', route: '.', as: 'overruled' },
-          cwd: scene.tempDir,
-        });
+      then('stdout shows overrule confirmation', () => {
         expect(result.stdout).toContain('overruled');
         expect(sanitizeTimeForSnapshot(result.stdout)).toMatchSnapshot();
       });
@@ -1162,6 +1163,171 @@ describe('driver.route.overrule.acceptance', () => {
         });
 
         then('snapshot matches', () => {
+          expect(sanitizeTimeForSnapshot(result.stdout)).toMatchSnapshot();
+        });
+      });
+    },
+  );
+
+  // =========================================================================
+  // redundant overrule: every level already terminal → no blocked level to
+  // forgive. the overrule must NOT fall back to the terminal level (which would
+  // persist a false "forgiven by human" record on a merit-approved level); it
+  // reports "no blocked level to overrule" and names the fix (--as passed).
+  // =========================================================================
+
+  given(
+    '[case16] redundant overrule after every level is terminal → no-op with guidance',
+    () => {
+      const scene = useBeforeAll(async () => {
+        const tempDir = genTempDirForRhachet({
+          slug: 'overrule-redundant',
+          clone: ASSETS_DIR,
+        });
+
+        await execAsync('npx rhachet roles link --role driver', {
+          cwd: tempDir,
+        });
+        await execAsync('chmod +x .test/mock-review.sh', { cwd: tempDir });
+
+        await fs.writeFile(
+          path.join(tempDir, '1.plan.md'),
+          '# Plan\n\nReviewer overzealous; the human overrules the only level once.',
+        );
+
+        // run once to give the l1 reviewer its rejected verdict
+        await invokeRouteSkill({
+          skill: 'route.stone.set',
+          args: { stone: '1.plan', route: '.', as: 'passed' },
+          cwd: tempDir,
+        });
+
+        // the human waves the only level through — now every level is terminal
+        // (l1 overruled), so activeLevel becomes null
+        await invokeRouteSkill({
+          skill: 'route.stone.set',
+          args: { stone: '1.plan', route: '.', as: 'overruled' },
+          cwd: tempDir,
+        });
+
+        return { tempDir };
+      });
+
+      when('[t0] human runs --as overruled again (no level left to forgive)', () => {
+        const result = useThen('the redundant overrule', async () =>
+          invokeRouteSkill({
+            skill: 'route.stone.set',
+            args: { stone: '1.plan', route: '.', as: 'overruled' },
+            cwd: scene.tempDir,
+          }),
+        );
+
+        then('exit code is 2 — constraint (the overrule did not apply)', () => {
+          // .why = a redundant overrule with no blocked level to forgive is a
+          //        no-op the human should notice, not a silent success. it is a
+          //        constraint (human must fix), so it pins exit 2 — NOT merely
+          //        non-zero, which would also accept a 1 (malfunction) regression
+          //        (rule.require.exit-code-semantics).
+          expect(result.code).toEqual(2);
+        });
+
+        then('stdout explains there is no blocked level to overrule', () => {
+          expect(result.stdout).toContain('no blocked level to overrule');
+        });
+
+        then('stdout names the fix (--as passed)', () => {
+          expect(result.stdout).toContain('--as passed');
+        });
+
+        then('CLAMP: no false forgiven marker is minted for a clear level', () => {
+          // .why = the r11 #1 defect — a fall-back to the terminal level would
+          //        persist a bogus "forgiven by human" record; the short-circuit
+          //        must never claim a fresh overrule happened
+          expect(result.stdout).not.toContain('✓ overruled');
+        });
+
+        then('stdout has good vibes', () => {
+          expect(sanitizeTimeForSnapshot(result.stdout)).toMatchSnapshot();
+        });
+      });
+    },
+  );
+
+  // =========================================================================
+  // overrule an ALREADY-CLEAR stone: every level approved on merit, with NO
+  // prior overrule on record. the short-circuit must still fire — the fall-back
+  // to the terminal level would mint a false "forgiven by human" marker on a
+  // level that cleared on its own merit. this pins the r7 fix: the guard is
+  // `activeLevel === null` AND no owed contemplation, NOT the old
+  // `activeLevel === null && hasPriorOverrule` (which let a merit-clear stone
+  // slip through). here the reviewer is clean (0 blockers), so no contemplation
+  // is owed and the short-circuit fires on the activeLevel-null alone.
+  // =========================================================================
+
+  const CLEAN_ASSETS_DIR = path.join(
+    __dirname,
+    '.test/assets/route-overrule-clean',
+  );
+
+  given(
+    '[case17] overrule an already-clear stone (all merit-approved, no prior overrule) → no-op',
+    () => {
+      const scene = useBeforeAll(async () => {
+        const tempDir = genTempDirForRhachet({
+          slug: 'overrule-clean-noop',
+          clone: CLEAN_ASSETS_DIR,
+        });
+
+        await execAsync('npx rhachet roles link --role driver', {
+          cwd: tempDir,
+        });
+        await execAsync('chmod +x .test/mock-review.sh', { cwd: tempDir });
+
+        await fs.writeFile(
+          path.join(tempDir, '1.plan.md'),
+          '# Plan\n\nA clean plan the reviewer approves on its own merit.',
+        );
+
+        // run --as passed: the reviewer approves (0 blockers), reviewed? clears,
+        // but the approved? gate blocks passage — so the stone is left
+        // all-reviews-approved yet unpassed, with NO overrule ever recorded
+        // (activeLevel === null, no prior overrule — the exact r7 precondition)
+        await invokeRouteSkill({
+          skill: 'route.stone.set',
+          args: { stone: '1.plan', route: '.', as: 'passed' },
+          cwd: tempDir,
+        });
+
+        return { tempDir };
+      });
+
+      when('[t0] human runs --as overruled on the already-clear stone', () => {
+        const result = useThen('the overrule is a no-op', async () =>
+          invokeRouteSkill({
+            skill: 'route.stone.set',
+            args: { stone: '1.plan', route: '.', as: 'overruled' },
+            cwd: scene.tempDir,
+          }),
+        );
+
+        then('exit code is 2 — constraint (no blocked level to overrule)', () => {
+          // .why = every review level is approved on merit; no level is blocked,
+          //        so the overrule must NOT mint a false marker — even though NO
+          //        prior overrule stands (the r7 false-provenance fix)
+          expect(result.code).toEqual(2);
+        });
+
+        then('stdout explains there is no blocked level to overrule', () => {
+          expect(result.stdout).toContain('no blocked level to overrule');
+        });
+
+        then('CLAMP: no false forgiven marker minted for a merit-clear level', () => {
+          // .why = the fall-back to the terminal level would persist a bogus
+          //        "forgiven by human" record on a level that cleared on merit
+          expect(result.stdout).not.toContain('overruled = ✓');
+        });
+
+        then('snapshot', () => {
           expect(sanitizeTimeForSnapshot(result.stdout)).toMatchSnapshot();
         });
       });

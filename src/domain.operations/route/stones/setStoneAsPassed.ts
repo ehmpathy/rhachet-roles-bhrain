@@ -25,11 +25,13 @@ import { getMaxStoneGuardIteration } from '../guard/artifact/getMaxStoneGuardIte
 import { computeStoneReviewInputHash } from '../guard/review/computeStoneReviewInputHash';
 import { asRouteGuardReviewPeerSlugList } from '../guard/review/peer/asRouteGuardReviewPeerSlugList';
 import { getRouteGuardReviewPeerContemplationStatus } from '../guard/review/peer/getRouteGuardReviewPeerContemplationStatus';
+import { getStoneGuardReviewPeerUncontemplatedUnforgiven } from '../guard/review/peer/getStoneGuardReviewPeerUncontemplatedUnforgiven';
 import { getAllReviewPeerMeterStatuses } from '../guard/review/peer/meter/getAllReviewPeerMeterStatuses';
-import {
-  isReviewPeerVerdictExhausted,
-  isReviewPeerVerdictTerminal,
-} from '../guard/review/peer/meter/isReviewPeerLevelTerminal';
+import { getExhaustedReviewerSlugs } from '../guard/review/peer/meter/getExhaustedReviewerSlugs';
+import { getReviewLevelByIndex } from '../guard/review/peer/meter/getReviewLevelByIndex';
+import { isEveryReviewLevelTerminal } from '../guard/review/peer/meter/isEveryReviewLevelTerminal';
+import { isLevelOverruled } from '../guard/review/peer/meter/isLevelOverruled';
+import { JUDGE_LEVEL } from '../guard/review/peer/meter/JUDGE_LEVEL';
 import { runStoneGuardReviews } from '../guard/review/runStoneGuardReviews';
 import { getStonePromises } from '../guard/review/self/getStonePromises';
 import { setSelfReviewTriggeredReport } from '../guard/review/self/setSelfReviewTriggeredReport';
@@ -46,6 +48,55 @@ import { genStoneGuardBlockedEmit } from './genStoneGuardBlockedEmit';
 import { getAllStoneArtifacts } from './getAllStoneArtifacts';
 import { getAllStones } from './getAllStones';
 import { setStonePassage } from './setStonePassage';
+
+/**
+ * .what = renders one artifact (review or judge) as a stderr tree bucket
+ * .why = the exhaustion, malfunction, constraint, and failed-judge branches each read an
+ *        artifact file and indent it under a `<emoji> <label> N` header, with a one-line
+ *        fallback when the file cannot be read. five near-verbatim copies had drifted apart;
+ *        one shared transformer single-sources the shape
+ *        (rule.require.single-source-of-truth-for-render, rule.prefer.wet-over-dry).
+ * .note = fallback = null emits no fallback line (the failed-judge branch, where a judge with
+ *         no reason contributes only its header).
+ */
+const formatArtifactStderrBlock = async (input: {
+  emoji: string;
+  label: string;
+  index: number;
+  path: string;
+  fallback: string | null;
+}): Promise<string[]> => {
+  const header = `${input.emoji} ${input.label} ${input.index}`;
+
+  // read the artifact and indent each line under the header
+  try {
+    const content = await fs.readFile(input.path, 'utf-8');
+    return [header, ...content.split('\n').map((line) => `   ${line}`)];
+  } catch (error) {
+    // graceful fallback for display: file may not exist or be unreadable
+    const isExpected =
+      error instanceof Error &&
+      (error.message.includes('ENOENT') || error.message.includes('EACCES'));
+    if (!isExpected) throw error;
+    return input.fallback !== null
+      ? [header, `   └─ ${input.fallback}`]
+      : [header];
+  }
+};
+
+/**
+ * .what = joins per-artifact stderr blocks into one string, a blank line between each block
+ * .why = every blocked-passage branch (exhaustion, malfunction, constraint, failed-judges) renders
+ *        the same "one block per artifact, blank-line separated" shape. one builder keeps them
+ *        identical and expresses the join functionally, so no branch mutates a local array in place
+ *        (rule.require.immutable-vars). returns undefined when empty so the caller omits stderr.
+ */
+const joinArtifactStderrBlocks = (blocks: string[][]): string | undefined =>
+  blocks.length === 0
+    ? undefined
+    : blocks
+        .flatMap((block, i) => (i === 0 ? block : ['', ...block]))
+        .join('\n');
 
 /**
  * .what = attempts to mark a stone as passed after guard validation
@@ -337,6 +388,21 @@ export const setStoneAsPassed = async (
       : { artifacts: [], exhaustedReviewerSlugs: [] };
   const reviewArtifacts = reviewResult.artifacts;
 
+  // load human overrules FIRST, so the meter statuses below are overrule-aware
+  // .why = an overruled level is terminal-for-unlock; the meter tree must not paint a false
+  //        `awaits l<overruled> terminal` on the level above it, and each overruled level must
+  //        be stamped so the tree + footer render the forgiveness (not the raw rejection).
+  const overruledLevels = await getStoneGuardOverruledLevels({
+    stone: stoneMatched,
+    route: input.route,
+  });
+
+  // the judge is the top rung of the guard ladder; a human overrule of it (JUDGE_LEVEL)
+  // forgives a failed or malfunctioned judge exactly as an overrule forgives a peer level.
+  // this is the passage side of the peer+judge fix — getStoneGuardLevelState surfaces the judge
+  // rung so a human CAN overrule it; this honors that overrule at the judge gate.
+  const judgeRungForgiven = overruledLevels.has(JUDGE_LEVEL);
+
   // compute peer meter statuses for guard tree output
   // pass skipped slugs so wasExhausted can be computed correctly
   const peerMeters = await getAllReviewPeerMeterStatuses({
@@ -344,6 +410,7 @@ export const setStoneAsPassed = async (
     hash,
     route: input.route,
     exhaustedReviewerSlugs: reviewResult.exhaustedReviewerSlugs,
+    overruledLevels,
   });
 
   // check for peer review exhaustion
@@ -356,14 +423,8 @@ export const setStoneAsPassed = async (
     status: 'approved',
     route: input.route,
   });
-  // load human overrules so an exhausted-but-overruled level does not halt
-  // .why = a level the human waved through must not block passage on exhaustion;
-  //        the judge forgives its blockers, so let the flow reach the judge
-  const { levels: overruledLevels, all: overruledAll } =
-    await getStoneGuardOverruledLevels({
-      stone: stoneMatched,
-      route: input.route,
-    });
+  // .note = overruledLevels is loaded above (before the meter statuses), so an
+  //         exhausted-but-overruled level does not halt and the judge forgives its blockers.
 
   // map review index -> level, to scope error forgiveness per level
   // .why = an overrule at level N forgives that level's malfunction/constraint,
@@ -371,28 +432,34 @@ export const setStoneAsPassed = async (
   const peerReviewsForLevel = stoneMatched.guard
     ? getGuardPeerReviews(stoneMatched.guard)
     : [];
-  const levelByReviewIndex = new Map<number, number>();
-  peerReviewsForLevel.forEach((review, i) =>
-    levelByReviewIndex.set(i + 1, review.level ?? 1),
-  );
-  const isReviewLevelOverruled = (index: number): boolean => {
-    if (overruledAll) return true;
-    const level = levelByReviewIndex.get(index) ?? 1;
-    return overruledLevels.has(level);
-  };
+  const levelByReviewIndex = getReviewLevelByIndex({
+    peerReviews: peerReviewsForLevel,
+  });
+  // per-index wrapper: map the review index to its level, then read the shared overruled check
+  // so "is this level overruled" is decided in one place (rule.require.single-source-of-truth-for-render)
+  const isReviewLevelOverruled = (index: number): boolean =>
+    isLevelOverruled({
+      level: levelByReviewIndex.get(index) ?? 1,
+      overruledLevels,
+    });
   // get slugs of reviews that were SKIPPED (not ran) due to exhaustion
   // .note = verdict 'exhausted' is only set when wasExhausted = true (see define.invariant.review.peer.exhausted)
   // .note = exhausted reviewers at overruled levels are excluded — they are forgiven
-  const exhaustedMeters = peerMeters.filter(
-    (m) =>
-      isReviewPeerVerdictExhausted(m.verdict) && !overruledLevels.has(m.level),
-  );
-  const skippedSlugs = exhaustedMeters.map((m) => m.slug);
-  const allTerminal =
-    peerMeters.length > 0 &&
-    peerMeters.every((m) => isReviewPeerVerdictTerminal(m.verdict));
+  const skippedSlugs = getExhaustedReviewerSlugs({
+    meters: peerMeters,
+    overruledLevels,
+  });
+  // every level terminal — overrule-aware, so an overruled lower level (whose raw verdict stays
+  // 'rejected') still counts as terminal. without this, an overruled l1 leaves allTerminal false
+  // and SKIPS this exhaustion halt, so an exhausted higher level passes without the human approval
+  // the invariant requires (define.invariant.review.peer.passage) — the overrule spills upward to
+  // forgive a level the human never waved.
+  const allTerminal = isEveryReviewLevelTerminal({
+    reviewers: peerMeters.map((m) => ({ level: m.level, verdict: m.verdict })),
+    overruledLevels,
+  });
   const exhaustionCheck = {
-    anySkippedDueToExhaustion: exhaustedMeters.length > 0,
+    anySkippedDueToExhaustion: skippedSlugs.length > 0,
     allTerminal,
     skippedSlugs,
   };
@@ -411,6 +478,7 @@ export const setStoneAsPassed = async (
       route: input.route,
       gitRoot,
       peerMeters,
+      judgeRungForgiven,
     });
 
     // emit tree terminator since no judge will follow
@@ -478,28 +546,17 @@ export const setStoneAsPassed = async (
 
       // collect the broken reviewers' detail into a stderr bucket (same shape the standalone
       // malfunction/constraint gates emit)
-      const stderrLines: string[] = [];
-      for (const review of [
-        ...concurrentMalfunctions,
-        ...concurrentConstraints,
-      ]) {
-        if (stderrLines.length > 0) stderrLines.push('');
-        stderrLines.push(`🔎 review ${review.index}`);
-        try {
-          const content = await fs.readFile(review.path, 'utf-8');
-          for (const line of content.split('\n'))
-            stderrLines.push(`   ${line}`);
-        } catch (error) {
-          const isExpected =
-            error instanceof Error &&
-            (error.message.includes('ENOENT') ||
-              error.message.includes('EACCES'));
-          if (!isExpected) throw error;
-          stderrLines.push(
-            `   └─ ${review.exitClass} (exit code ${review.exitCode})`,
-          );
-        }
-      }
+      const stderrBlocks = await Promise.all(
+        [...concurrentMalfunctions, ...concurrentConstraints].map((review) =>
+          formatArtifactStderrBlock({
+            emoji: '🔎',
+            label: 'review',
+            index: review.index,
+            path: review.path,
+            fallback: `${review.exitClass} (exit code ${review.exitCode})`,
+          }),
+        ),
+      );
 
       return {
         passed: false,
@@ -516,7 +573,7 @@ export const setStoneAsPassed = async (
             reason: combinedReason,
             guard: guardData,
           }),
-          stderr: stderrLines.length > 0 ? stderrLines.join('\n') : undefined,
+          stderr: joinArtifactStderrBlocks(stderrBlocks),
         }),
       };
     }
@@ -572,15 +629,26 @@ export const setStoneAsPassed = async (
         )
       : [];
 
+  // a judge is forgiven ONLY when the human overruled the judge rung AND that judge malfunctioned.
+  // .why = the single per-judge forgiveness rule that the malfunction halt, the passage gate
+  //        (allJudgesPassed), the failed-judge tally, and the tree display all read — so none can
+  //        drift apart. a rung overrule forgives a broken judge (a malfunction), never a co-judge
+  //        that legitimately holds (e.g. approved? still awaits sign-off, its own constraint exit).
+  //        that scope is the "one gate, not the corridor" invariant at the judge tier
+  //        (define.review.human-forgiveness.md; rule.require.single-source-of-truth-for-render).
+  const isJudgeForgivenByRung = (
+    judge: RouteStoneGuardJudgeArtifact,
+  ): boolean => judgeRungForgiven && judge.exitClass === 'malfunction';
+
   // check for malfunctions (exit code != 0 and != 2)
   // .note = a malfunction at an overruled level is forgiven (human waved it through)
-  // .note = judge malfunctions are forgiven only by a legacy stone-wide overrule
   const reviewMalfunctions = reviewArtifacts.filter(
     (r) => r.exitClass === 'malfunction' && !isReviewLevelOverruled(r.index),
   );
-  const judgeMalfunctions = overruledAll
-    ? []
-    : judgeArtifacts.filter((j) => j.exitClass === 'malfunction');
+  const judgeMalfunctions = judgeArtifacts.filter(
+    (judge) =>
+      judge.exitClass === 'malfunction' && !isJudgeForgivenByRung(judge),
+  );
   const hasMalfunction =
     reviewMalfunctions.length > 0 || judgeMalfunctions.length > 0;
 
@@ -604,46 +672,32 @@ export const setStoneAsPassed = async (
       route: input.route,
       gitRoot,
       peerMeters,
+      judgeRungForgiven,
     });
 
-    // collect malfunction details for stderr
-    const stderrLines: string[] = [];
-    for (const review of reviewMalfunctions) {
-      if (stderrLines.length > 0) stderrLines.push('');
-      stderrLines.push(`🔎 review ${review.index}`);
-      try {
-        const content = await fs.readFile(review.path, 'utf-8');
-        for (const line of content.split('\n')) {
-          stderrLines.push(`   ${line}`);
-        }
-      } catch (error) {
-        // graceful fallback for display: file may not exist or be unreadable
-        const isExpected =
-          error instanceof Error &&
-          (error.message.includes('ENOENT') ||
-            error.message.includes('EACCES'));
-        if (!isExpected) throw error;
-        stderrLines.push(`   └─ malfunction (exit code ${review.exitCode})`);
-      }
-    }
-    for (const judge of judgeMalfunctions) {
-      if (stderrLines.length > 0) stderrLines.push('');
-      stderrLines.push(`🪶 judge ${judge.index}`);
-      try {
-        const content = await fs.readFile(judge.path, 'utf-8');
-        for (const line of content.split('\n')) {
-          stderrLines.push(`   ${line}`);
-        }
-      } catch (error) {
-        // graceful fallback for display: file may not exist or be unreadable
-        const isExpected =
-          error instanceof Error &&
-          (error.message.includes('ENOENT') ||
-            error.message.includes('EACCES'));
-        if (!isExpected) throw error;
-        stderrLines.push(`   └─ malfunction (exit code ${judge.exitCode})`);
-      }
-    }
+    // collect malfunction details for stderr — reviews first, then judges
+    const reviewStderrBlocks = await Promise.all(
+      reviewMalfunctions.map((review) =>
+        formatArtifactStderrBlock({
+          emoji: '🔎',
+          label: 'review',
+          index: review.index,
+          path: review.path,
+          fallback: `malfunction (exit code ${review.exitCode})`,
+        }),
+      ),
+    );
+    const judgeStderrBlocks = await Promise.all(
+      judgeMalfunctions.map((judge) =>
+        formatArtifactStderrBlock({
+          emoji: '🪶',
+          label: 'judge',
+          index: judge.index,
+          path: judge.path,
+          fallback: `malfunction (exit code ${judge.exitCode})`,
+        }),
+      ),
+    );
 
     return {
       passed: false,
@@ -660,7 +714,10 @@ export const setStoneAsPassed = async (
           reason: 'reviewer or judge malfunctioned',
           guard: guardData,
         }),
-        stderr: stderrLines.length > 0 ? stderrLines.join('\n') : undefined,
+        stderr: joinArtifactStderrBlocks([
+          ...reviewStderrBlocks,
+          ...judgeStderrBlocks,
+        ]),
       }),
     };
   }
@@ -697,28 +754,21 @@ export const setStoneAsPassed = async (
       route: input.route,
       gitRoot,
       peerMeters,
+      judgeRungForgiven,
     });
 
     // collect constraint details for stderr
-    const stderrLines: string[] = [];
-    for (const review of reviewConstraints) {
-      if (stderrLines.length > 0) stderrLines.push('');
-      stderrLines.push(`🔎 review ${review.index}`);
-      try {
-        const content = await fs.readFile(review.path, 'utf-8');
-        for (const line of content.split('\n')) {
-          stderrLines.push(`   ${line}`);
-        }
-      } catch (error) {
-        // graceful fallback for display: file may not exist or be unreadable
-        const isExpected =
-          error instanceof Error &&
-          (error.message.includes('ENOENT') ||
-            error.message.includes('EACCES'));
-        if (!isExpected) throw error;
-        stderrLines.push(`   └─ constraint (exit code ${review.exitCode})`);
-      }
-    }
+    const stderrBlocks = await Promise.all(
+      reviewConstraints.map((review) =>
+        formatArtifactStderrBlock({
+          emoji: '🔎',
+          label: 'review',
+          index: review.index,
+          path: review.path,
+          fallback: `constraint (exit code ${review.exitCode})`,
+        }),
+      ),
+    );
 
     return {
       passed: false,
@@ -735,7 +785,7 @@ export const setStoneAsPassed = async (
           reason: 'reviewer constraint',
           guard: guardDataForConstraint,
         }),
-        stderr: stderrLines.length > 0 ? stderrLines.join('\n') : undefined,
+        stderr: joinArtifactStderrBlocks(stderrBlocks),
       }),
     };
   }
@@ -750,10 +800,16 @@ export const setStoneAsPassed = async (
     route: input.route,
     gitRoot,
     peerMeters,
+    judgeRungForgiven,
   });
 
-  // check if all judges pass
-  const allJudgesPassed = judgeArtifacts.every((j) => j.passed);
+  // check if all judges pass — each judge either passed on merit OR was forgiven per-judge by a
+  // rung overrule (a malfunction only). a stone-wide `judgeRungForgiven || every(passed)` would
+  // forgive an awaited approval too, the skeleton-key defect this behavior exists to close, one
+  // tier up. scope forgiveness to the malfunction via the shared predicate above.
+  const allJudgesPassed = judgeArtifacts.every(
+    (judge) => judge.passed || isJudgeForgivenByRung(judge),
+  );
 
   if (allJudgesPassed) {
     // gate: peer reviews must be contemplated before passage
@@ -771,13 +827,20 @@ export const setStoneAsPassed = async (
     //        by a requirement a driver must satisfy; the human took responsibility
     //        for the passage, so a waved-through level's critique needs no .taken
     //        (design-note B6; mirrors the malfunction/constraint per-level forgiveness)
-    const overruledSlugs = new Set(
-      peerReviewsForLevel
-        .filter((_, i) => isReviewLevelOverruled(i + 1))
-        .map((review) => review.slug),
+    // read the ONE source of truth for "uncontemplated AND not forgiven by an overrule" — the
+    // same primitive the overrule short-circuits (setStoneAsOverruled / setStoneAsForced via
+    // getStoneGuardOverruleTarget) read — so the passage gate cannot drift from them on which
+    // reviewers a waved level forgives. this is the exact seam the whole behavior exists to close:
+    // the forgiveness rule lives in one place, not hand-rolled here and there.
+    const unforgiven = await getStoneGuardReviewPeerUncontemplatedUnforgiven({
+      stone: stoneMatched,
+      route: input.route,
+    });
+    const unforgivenSlugs = new Set(
+      unforgiven.map((reviewer) => reviewer.slug),
     );
     const uncontemplatedToBlock = contemplation.uncontemplated.filter(
-      (reviewer) => !overruledSlugs.has(reviewer.slug),
+      (reviewer) => unforgivenSlugs.has(reviewer.slug),
     );
 
     if (uncontemplatedToBlock.length > 0) {
@@ -831,10 +894,9 @@ export const setStoneAsPassed = async (
     });
 
     // determine passage reason
-    // .note = if any level (or legacy all) was overruled, passage was enabled
-    //         by overrule; else it passed the judges cleanly
-    const passageReason =
-      overruledAll || overruledLevels.size > 0 ? 'overruled' : 'allowed';
+    // .note = if any rung was overruled (a peer level or the judge rung), passage was
+    //         enabled by overrule; else it passed the judges cleanly
+    const passageReason = overruledLevels.size > 0 ? 'overruled' : 'allowed';
 
     return {
       passed: true,
@@ -854,8 +916,12 @@ export const setStoneAsPassed = async (
     };
   }
 
-  // collect rejection reasons
-  const failedJudges = judgeArtifacts.filter((j) => !j.passed);
+  // collect rejection reasons — a judge forgiven by a rung overrule (a malfunction the human
+  // waved) is no longer a failure, so it drops out; only a judge that genuinely holds (e.g.
+  // approved? that awaits sign-off) stays, so the blocked reason names the real gate, not the crash
+  const failedJudges = judgeArtifacts.filter(
+    (judge) => !judge.passed && !isJudgeForgivenByRung(judge),
+  );
   const reasons = failedJudges
     .map((j) => j.reason || `judge ${j.index} failed`)
     .join('; ');
@@ -867,34 +933,17 @@ export const setStoneAsPassed = async (
   });
 
   // build detailed stderr for failed judges as tree bucket
-  const stderrLines: string[] = [];
-  for (const judge of failedJudges) {
-    // blank line between judges (not before first)
-    if (stderrLines.length > 0) {
-      stderrLines.push('');
-    }
-
-    stderrLines.push(`🪶 judge ${judge.index}`);
-
-    // read artifact content (already formatted with tree buckets)
-    try {
-      const artifactContent = await fs.readFile(judge.path, 'utf-8');
-      // indent each line by 3 spaces to nest under 🔎 judge N
-      for (const line of artifactContent.split('\n')) {
-        stderrLines.push(`   ${line}`);
-      }
-    } catch (error) {
-      // graceful fallback for display: file may not exist or be unreadable
-      const isExpected =
-        error instanceof Error &&
-        (error.message.includes('ENOENT') || error.message.includes('EACCES'));
-      if (!isExpected) throw error;
-      // fallback to reason if file read fails
-      if (judge.reason) {
-        stderrLines.push(`   └─ ${judge.reason}`);
-      }
-    }
-  }
+  const stderrBlocks = await Promise.all(
+    failedJudges.map((judge) =>
+      formatArtifactStderrBlock({
+        emoji: '🪶',
+        label: 'judge',
+        index: judge.index,
+        path: judge.path,
+        fallback: judge.reason ?? null,
+      }),
+    ),
+  );
 
   // blocked on failed judges — persist + return via the shared blocked tail
   return genStoneGuardBlockedEmit({
@@ -915,7 +964,7 @@ export const setStoneAsPassed = async (
         reason: reasons,
         guard: guardData,
       }),
-      stderr: stderrLines.length > 0 ? stderrLines.join('\n') : undefined,
+      stderr: joinArtifactStderrBlocks(stderrBlocks),
     }),
   });
 };
@@ -933,6 +982,11 @@ const computeGuardData = (input: {
   route: string;
   gitRoot: string;
   peerMeters?: GuardPeerMeterStatus[];
+  // whether the human overruled the judge rung (JUDGE_LEVEL)
+  // .why = a forgiven judge must read "overruled ✓ — forgiven by human" in the tree, not a
+  //        bare "✗ blocked" that contradicts the top-line `passage = overruled` (the judge-tier
+  //        twin of the peer-level overrule display; rule.require.single-source-of-truth-for-render)
+  judgeRungForgiven?: boolean;
 }) => {
   // find events that completed (have endedAt)
   const reviewEventsCompleted = input.events.filter(
@@ -1001,6 +1055,11 @@ const computeGuardData = (input: {
       );
       const durationSec = computeDuration(event);
       const isCached = !event;
+      // a judge reads as overruled only when the rung was forgiven AND this judge malfunctioned —
+      // the same per-judge scope the passage gate uses (allJudgesPassed), so a co-judge that
+      // legitimately holds (e.g. approved? awaiting sign-off) never falsely paints as forgiven
+      const overruled =
+        (input.judgeRungForgiven ?? false) && j.exitClass === 'malfunction';
       return {
         index: j.index,
         cmd: input.stone.guard?.judges[j.index - 1] ?? '',
@@ -1011,6 +1070,7 @@ const computeGuardData = (input: {
         passed: j.passed,
         reason: j.reason,
         path: path.relative(input.route, j.path),
+        overruled,
       };
     }),
     // use peerMeters as-is (source of truth for verdicts)

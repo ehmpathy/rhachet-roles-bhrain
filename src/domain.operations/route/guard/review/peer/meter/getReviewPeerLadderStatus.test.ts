@@ -12,6 +12,7 @@ const aMeter = (input: {
   slug: string;
   level: number;
   verdict: ReviewPeerVerdict;
+  overruled?: boolean;
 }): GuardPeerMeterStatus => ({
   slug: input.slug,
   level: input.level,
@@ -19,6 +20,7 @@ const aMeter = (input: {
   budget: 3,
   verdict: input.verdict,
   awaits: false,
+  overruled: input.overruled ?? false,
   blockers: 0,
   nitpicks: 0,
   path: null,
@@ -38,7 +40,7 @@ describe('getReviewPeerLadderStatus', () => {
 
         then('l1 is terminal with an exhausted representative verdict', () => {
           expect(status.terminalLevels).toEqual([
-            { level: 1, verdict: 'exhausted' },
+            { level: 1, verdict: 'exhausted', overruled: false },
           ]);
         });
 
@@ -68,8 +70,8 @@ describe('getReviewPeerLadderStatus', () => {
 
       then('both levels are terminal, none live', () => {
         expect(status.terminalLevels).toEqual([
-          { level: 1, verdict: 'exhausted' },
-          { level: 3, verdict: 'approved' },
+          { level: 1, verdict: 'exhausted', overruled: false },
+          { level: 3, verdict: 'approved', overruled: false },
         ]);
         expect(status.liveLevel).toEqual(null);
         expect(status.allTerminal).toEqual(true);
@@ -116,7 +118,7 @@ describe('getReviewPeerLadderStatus', () => {
         'the representative verdict is the most-escalated (malfunction)',
         () => {
           expect(status.terminalLevels).toEqual([
-            { level: 1, verdict: 'malfunction' },
+            { level: 1, verdict: 'malfunction', overruled: false },
           ]);
           expect(status.liveLevel).toEqual(3);
         },
@@ -172,7 +174,7 @@ describe('getReviewPeerLadderStatus', () => {
 
         then('l3 is terminal, l1 is the live gate', () => {
           expect(status.terminalLevels).toEqual([
-            { level: 3, verdict: 'approved' },
+            { level: 3, verdict: 'approved', overruled: false },
           ]);
           expect(status.liveLevel).toEqual(1);
         });
@@ -206,14 +208,47 @@ describe('getReviewPeerLadderStatus', () => {
 
         then('both l1 and l2 are terminal, l3 is the live gate', () => {
           expect(status.terminalLevels).toEqual([
-            { level: 1, verdict: 'exhausted' },
-            { level: 2, verdict: 'malfunction' },
+            { level: 1, verdict: 'exhausted', overruled: false },
+            { level: 2, verdict: 'malfunction', overruled: false },
           ]);
           expect(status.liveLevel).toEqual(3);
         });
 
         then('NOT an unlock transition — one malfunction suppresses it', () => {
           expect(status.unlockTransition).toEqual(false);
+        });
+      });
+    },
+  );
+
+  given(
+    '[case8] l1 OVERRULED (raw verdict still rejected), l3 rejected (live) — the overrule unlock',
+    () => {
+      when('[t0] computed', () => {
+        // .why = the verified defect: an overrule forgives l1 yet leaves its raw verdict intact
+        //        ('rejected'). the ladder status must still read l1 as terminal-via-overrule so
+        //        the unlock footer fires and l1 reads "(overruled)", not a live rejection.
+        const status = getReviewPeerLadderStatus({
+          peerMeters: [
+            aMeter({
+              slug: 'l1',
+              level: 1,
+              verdict: 'rejected',
+              overruled: true,
+            }),
+            aMeter({ slug: 'l3', level: 3, verdict: 'rejected' }),
+          ],
+        });
+
+        then('l1 is terminal, flagged overruled, l3 is the live gate', () => {
+          expect(status.terminalLevels).toEqual([
+            { level: 1, verdict: 'rejected', overruled: true },
+          ]);
+          expect(status.liveLevel).toEqual(3);
+        });
+
+        then('IS an unlock transition — the overrule defers the human', () => {
+          expect(status.unlockTransition).toEqual(true);
         });
       });
     },

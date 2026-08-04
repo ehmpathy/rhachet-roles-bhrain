@@ -1,8 +1,10 @@
-import { BadRequestError } from 'helpful-errors';
+import { BadRequestError, UnexpectedCodePathError } from 'helpful-errors';
 
 import { formatRouteStoneEmit } from '../formatRouteStoneEmit';
 import { getDecisionIsCallerHuman } from '../getDecisionIsCallerHuman';
-import { getStoneReviewLevelState } from '../guard/review/getStoneReviewLevelState';
+import { getStoneGuardLevelState } from '../guard/review/getStoneGuardLevelState';
+import { getStoneGuardOverruleTarget } from '../guard/review/getStoneGuardOverruleTarget';
+import { asRungLabel } from '../guard/review/peer/meter/asRungLabel';
 import { setStoneGuardApproval } from '../judges/setStoneGuardApproval';
 import { setStoneGuardOverrule } from '../judges/setStoneGuardOverrule';
 import { findOneStoneByPattern } from './asStoneGlob';
@@ -62,17 +64,21 @@ export const setStoneAsForced = async (
   // .why = force overrules the active level, but only grants approval once the
   //        active level is the terminal level — approval of unseen levels is
   //        illogical (a later level may dramatically change the design)
-  const levelState = await getStoneReviewLevelState({
+  const levelState = await getStoneGuardLevelState({
     stone: stoneMatched,
     route: input.route,
   });
 
-  // determine which level to overrule
-  // .note = no peer reviews = legacy stone-wide overrule (level undefined)
-  // .note = all levels resolved = fall back to the terminal level (harmless)
-  const levelToOverrule = !levelState.hasLevels
-    ? undefined
-    : (levelState.activeLevel ?? levelState.terminalLevel ?? undefined);
+  // derive the overrule target via the shared single source — force overrules a blocked
+  // active level OR an owed contemplation gate (an un-overruled in-tolerance blocker that
+  // awaits a .taken, design-note B6); a merit-clear stone has no target, so force skips the
+  // overrule and grants only its approval below (the false-provenance guard).
+  const { hasTarget, levelToOverrule } = await getStoneGuardOverruleTarget({
+    stone: stoneMatched,
+    route: input.route,
+    levelState,
+  });
+  const shouldOverrule = hasTarget;
 
   // grant approval only when at the terminal level
   // .why = withhold approval until the highest level has been reached
@@ -82,12 +88,29 @@ export const setStoneAsForced = async (
     levelState.activeLevel === null ||
     levelState.activeLevel === levelState.terminalLevel;
 
-  // always overrule the active level
-  await setStoneGuardOverrule({
-    stone: stoneMatched,
-    route: input.route,
-    level: levelToOverrule,
-  });
+  // overrule the active level — but only when a level genuinely blocks (the
+  // shouldOverrule guard skips the spurious overrule of an already-clear stone)
+  // .note = the read-above → write-here pair needs no lock. setStoneGuardOverrule is an
+  //         idempotent findsert (it re-reads the overruled levels and skips a level already
+  //         forgiven, see setStoneGuardOverrule.ts:21-30); the passage log is append-only and
+  //         read back as a Set, so a duplicate marker collapses; and both admin escapes are
+  //         human-TTY-gated. the route model is single-driver over local files — no concurrent
+  //         writer exists to race, and the idempotent write absorbs a re-drive either way
+  //         (rule.require.fewer-paths-via-idempotency).
+  if (shouldOverrule) {
+    // narrow: shouldOverrule (hasTarget) guarantees a concrete level to forgive
+    if (levelToOverrule === undefined) {
+      throw new UnexpectedCodePathError(
+        'force has an overrule target but no level to forgive',
+        { stone: stoneMatched.name, levelState },
+      );
+    }
+    await setStoneGuardOverrule({
+      stone: stoneMatched,
+      route: input.route,
+      level: levelToOverrule,
+    });
+  }
 
   // approve only when at the terminal level
   if (atTerminalLevel) {
@@ -95,15 +118,20 @@ export const setStoneAsForced = async (
   }
 
   // build output details
-  // .note = when approval is withheld, omit the approval line entirely — its
-  //         absence is the signal (no "withheld" placeholder)
+  // .note = the overrule line appears only when an overrule actually happened; the
+  //         approval line only when approval was granted. an omitted line's absence is
+  //         the signal (no "withheld" placeholder).
+  // render the forgiven rung via asRungLabel so a judge-rung force reads "(judge)" — never the
+  // raw JUDGE_LEVEL sentinel. the same transformer serves the overrule confirmation, so a force
+  // and an overrule name the judge rung identically (rule.require.single-source-of-truth-for-render).
   const overruledLine =
     levelToOverrule !== undefined
-      ? `overruled = ✓ (level ${levelToOverrule})`
+      ? `overruled = ✓ (${asRungLabel(levelToOverrule)})`
       : `overruled = ✓`;
-  const detailLines = atTerminalLevel
-    ? [overruledLine, `approved  = ✓`]
-    : [overruledLine];
+  const detailLines = [
+    ...(shouldOverrule ? [overruledLine] : []),
+    ...(atTerminalLevel ? [`approved  = ✓`] : []),
+  ];
 
   return {
     forced: true,

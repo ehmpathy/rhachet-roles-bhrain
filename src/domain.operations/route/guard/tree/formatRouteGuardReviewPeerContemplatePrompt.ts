@@ -52,6 +52,8 @@ const formatReplyPrompt = (input: {
   stone: string;
   reviewers: ContemplateReviewer[];
 }): string => {
+  // .note = deliberate local line-builder, scoped to this formatter — the escape hatch in
+  //         rule.require.immutable-vars permits a scoped emit builder; no array crosses a boundary.
   const lines: string[] = [];
   const total = input.reviewers.length;
 
@@ -88,6 +90,8 @@ const formatAbsent = (input: {
   stone: string;
   reviewer: ContemplateReviewer;
 }): string => {
+  // .note = deliberate local line-builder, scoped to this formatter — the escape hatch in
+  //         rule.require.immutable-vars permits a scoped emit builder; no array crosses a boundary.
   const lines: string[] = [];
 
   lines.push(`✋ contemplation absent for reviewer ${input.reviewer.slug}`);
@@ -123,6 +127,8 @@ const formatStale = (input: {
   stone: string;
   reviewer: ContemplateReviewer;
 }): string => {
+  // .note = deliberate local line-builder, scoped to this formatter — the escape hatch in
+  //         rule.require.immutable-vars permits a scoped emit builder; no array crosses a boundary.
   const lines: string[] = [];
 
   lines.push(`✋ contemplation stale for reviewer ${input.reviewer.slug}`);

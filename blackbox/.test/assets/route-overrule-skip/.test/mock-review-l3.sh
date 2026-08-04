@@ -1,0 +1,34 @@
+#!/usr/bin/env bash
+######################################################################
+# .what = mock l3 reviewer for the overrule-must-not-skip-higher tests
+# .why = l3 rejects by default; the invariant under test is that an
+#        un-approved (non-terminal) l3 blocks passage even after l1 is
+#        overruled. a flag lets l3 pass to prove the honest happy path.
+#
+# behavior:
+#   - if .test/l3-should-pass exists: emit 0 blockers, exit 0
+#   - otherwise: emit 1 blocker, exit 0 (a normal rejection)
+######################################################################
+set -euo pipefail
+
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+ROUTE_DIR="$(dirname "$SCRIPT_DIR")"
+
+if [[ -f "$ROUTE_DIR/.test/l3-should-pass" ]]; then
+  echo "---"
+  echo "blockers: 0"
+  echo "nitpicks: 0"
+  echo "---"
+  echo "l3 review passed (mock)"
+  exit 0
+fi
+
+echo "---"
+echo "blockers: 1"
+echo "nitpicks: 0"
+echo "---"
+echo "l3 review failed (mock)"
+echo ""
+echo "## blockers"
+echo "- mock l3 blocker: create .test/l3-should-pass to pass"
+exit 0

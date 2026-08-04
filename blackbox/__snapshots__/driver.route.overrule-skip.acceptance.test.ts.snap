@@ -1,0 +1,413 @@
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
+
+exports[`driver.route.overrule-skip.acceptance given: [case1] A2 — l1 rejected+overruled, l3 rejects → passage blocked when: [t0] driver passes after the single l1 overrule then: stdout has good vibes 1`] = `
+"🦉 the way speaks for itself
+   │
+   ├─ r1: basic-checker (l1, 1/5)
+   │   ├─ rejected, cached
+   │   ├─ 1 blocker 🔴
+   │   ├─ 0 nitpicks ✓
+   │   ├─ given: .reviews/peer/1.feature._.review.i001.d6ef1aa3fad755e23c.r001._.given.by_peer.basic-checker.md
+   │   └─ taken: .reviews/peer/1.feature._.review.i001.d6ef1aa3fad755e23c.r001._.taken.by_self.basic-checker.md
+   │
+   ├─ r2: premium-checker (l3, 1/5)
+   │   ├─ rejected [TIME]
+   │   ├─ 3 blockers 🔴
+   │   ├─ 0 nitpicks ✓
+   │   ├─ given: .reviews/peer/1.feature._.review.i002.d6ef1aa3fad755e23c.r002._.given.by_peer.premium-checker.md
+   │   └─ taken: .reviews/peer/1.feature._.review.i002.d6ef1aa3fad755e23c.r002._.taken.by_self.premium-checker.md
+   │
+   └─ ✗ judge.1 - blocked [TIME]
+
+🗿 route.stone.set
+   ├─ stone = 1.feature
+   ├─ passage = blocked
+   ├─ reason = blockers exceed threshold (3 > 0)
+   └─ guard
+      ├─ artifacts
+      │   └─ $route/1.feature*.md
+      ├─ reviews
+      │   ├─ r1: basic-checker (l1, 1/5)
+      │   │   ├─ rejected, cached
+      │   │   ├─ overruled ✓ — forgiven by human
+      │   │   ├─ 1 blocker 🔴
+      │   │   ├─ 0 nitpicks ✓
+      │   │   ├─ given: .reviews/peer/1.feature._.review.i001.d6ef1aa3fad755e23c.r001._.given.by_peer.basic-checker.md
+      │   │   └─ taken: .reviews/peer/1.feature._.review.i001.d6ef1aa3fad755e23c.r001._.taken.by_self.basic-checker.md
+      │   └─ r2: premium-checker (l3, 1/5)
+      │       ├─ rejected [TIME]
+      │       ├─ 3 blockers 🔴
+      │       ├─ 0 nitpicks ✓
+      │       ├─ given: .reviews/peer/1.feature._.review.i002.d6ef1aa3fad755e23c.r002._.given.by_peer.premium-checker.md
+      │       └─ taken: .reviews/peer/1.feature._.review.i002.d6ef1aa3fad755e23c.r002._.taken.by_self.premium-checker.md
+      └─ judges
+          └─ j1: rhx route.stone.judge --mechanism reviewed? --stone $stone --route $route --allow-blockers 0
+              ├─ finished [TIME] ✗
+              └─ reason: blockers exceed threshold (3 > 0)
+
+🪷 the path continues
+   ├─ l1 is terminal (overruled ✓) — it no longer blocks you
+   ├─ l3 has engaged — address its blockers, then:
+   │  └─ rhx route.stone.set --stone 1.feature --as arrived
+   └─ a human is only needed once every level is terminal
+"
+`;
+
+exports[`driver.route.overrule-skip.acceptance given: [case2] A1 — l1 overruled preemptively, l3 ready → passage blocked when: [t0] pass attempted with l1 pre-overruled, l3 never run then: stdout has good vibes 1`] = `
+"🦉 the way speaks for itself
+   │
+   ├─ r1: basic-checker (l1, 1/5)
+   │   ├─ rejected [TIME]
+   │   ├─ 1 blocker 🔴
+   │   ├─ 0 nitpicks ✓
+   │   ├─ given: .reviews/peer/1.feature._.review.i001.d6ef1aa3fad755e23c.r001._.given.by_peer.basic-checker.md
+   │   └─ taken: .reviews/peer/1.feature._.review.i001.d6ef1aa3fad755e23c.r001._.taken.by_self.basic-checker.md
+   │
+   ├─ r2: premium-checker (l3, 1/5)
+   │   ├─ rejected [TIME]
+   │   ├─ 3 blockers 🔴
+   │   ├─ 0 nitpicks ✓
+   │   ├─ given: .reviews/peer/1.feature._.review.i001.d6ef1aa3fad755e23c.r002._.given.by_peer.premium-checker.md
+   │   └─ taken: .reviews/peer/1.feature._.review.i001.d6ef1aa3fad755e23c.r002._.taken.by_self.premium-checker.md
+   │
+   └─ ✗ judge.1 - blocked [TIME]
+
+🗿 route.stone.set
+   ├─ stone = 1.feature
+   ├─ passage = blocked
+   ├─ reason = blockers exceed threshold (3 > 0)
+   └─ guard
+      ├─ artifacts
+      │   └─ $route/1.feature*.md
+      ├─ reviews
+      │   ├─ r1: basic-checker (l1, 1/5)
+      │   │   ├─ rejected [TIME]
+      │   │   ├─ overruled ✓ — forgiven by human
+      │   │   ├─ 1 blocker 🔴
+      │   │   ├─ 0 nitpicks ✓
+      │   │   ├─ given: .reviews/peer/1.feature._.review.i001.d6ef1aa3fad755e23c.r001._.given.by_peer.basic-checker.md
+      │   │   └─ taken: .reviews/peer/1.feature._.review.i001.d6ef1aa3fad755e23c.r001._.taken.by_self.basic-checker.md
+      │   └─ r2: premium-checker (l3, 1/5)
+      │       ├─ rejected [TIME]
+      │       ├─ 3 blockers 🔴
+      │       ├─ 0 nitpicks ✓
+      │       ├─ given: .reviews/peer/1.feature._.review.i001.d6ef1aa3fad755e23c.r002._.given.by_peer.premium-checker.md
+      │       └─ taken: .reviews/peer/1.feature._.review.i001.d6ef1aa3fad755e23c.r002._.taken.by_self.premium-checker.md
+      └─ judges
+          └─ j1: rhx route.stone.judge --mechanism reviewed? --stone $stone --route $route --allow-blockers 0
+              ├─ finished [TIME] ✗
+              └─ reason: blockers exceed threshold (3 > 0)
+
+🪷 the path continues
+   ├─ l1 is terminal (overruled ✓) — it no longer blocks you
+   ├─ l3 has engaged — address its blockers, then:
+   │  └─ rhx route.stone.set --stone 1.feature --as arrived
+   └─ a human is only needed once every level is terminal
+"
+`;
+
+exports[`driver.route.overrule-skip.acceptance given: [case3] B1 — l1 overruled, l3 approves → passage overruled (allowed) when: [t0] pass attempted (l1 overruled, l3 approves) then: stdout has good vibes 1`] = `
+"🦉 the way speaks for itself
+   │
+   ├─ r1: basic-checker (l1, 1/5)
+   │   ├─ rejected, cached
+   │   ├─ 1 blocker 🔴
+   │   ├─ 0 nitpicks ✓
+   │   ├─ given: .reviews/peer/1.feature._.review.i001.d6ef1aa3fad755e23c.r001._.given.by_peer.basic-checker.md
+   │   └─ taken: .reviews/peer/1.feature._.review.i001.d6ef1aa3fad755e23c.r001._.taken.by_self.basic-checker.md
+   │
+   ├─ r2: premium-checker (l3, 1/5)
+   │   ├─ approved [TIME]
+   │   ├─ 0 blockers ✓
+   │   ├─ 0 nitpicks ✓
+   │   ├─ given: .reviews/peer/1.feature._.review.i002.d6ef1aa3fad755e23c.r002._.given.by_peer.premium-checker.md
+   │   └─ taken: .reviews/peer/1.feature._.review.i002.d6ef1aa3fad755e23c.r002._.taken.by_self.premium-checker.md
+   │
+   └─ ✓ judge.1 - allowed [TIME]
+
+🗿 route.stone.set
+   ├─ stone = 1.feature
+   ├─ passage = overruled
+   ├─ guard
+   │  ├─ artifacts
+   │  │   └─ $route/1.feature*.md
+   │  ├─ reviews
+   │  │   ├─ r1: basic-checker (l1, 1/5)
+   │  │   │   ├─ rejected, cached
+   │  │   │   ├─ overruled ✓ — forgiven by human
+   │  │   │   ├─ 1 blocker 🔴
+   │  │   │   ├─ 0 nitpicks ✓
+   │  │   │   ├─ given: .reviews/peer/1.feature._.review.i001.d6ef1aa3fad755e23c.r001._.given.by_peer.basic-checker.md
+   │  │   │   └─ taken: .reviews/peer/1.feature._.review.i001.d6ef1aa3fad755e23c.r001._.taken.by_self.basic-checker.md
+   │  │   └─ r2: premium-checker (l3, 1/5)
+   │  │       ├─ approved [TIME]
+   │  │       ├─ 0 blockers ✓
+   │  │       ├─ 0 nitpicks ✓
+   │  │       ├─ given: .reviews/peer/1.feature._.review.i002.d6ef1aa3fad755e23c.r002._.given.by_peer.premium-checker.md
+   │  │       └─ taken: .reviews/peer/1.feature._.review.i002.d6ef1aa3fad755e23c.r002._.taken.by_self.premium-checker.md
+   │  └─ judges
+   │      └─ j1: rhx route.stone.judge --mechanism reviewed? --stone $stone --route $route --allow-blockers 0
+   │          └─ finished [TIME] ✓
+   │
+   └─ the way continues, run
+      └─ rhx route.drive
+"
+`;
+
+exports[`driver.route.overrule-skip.acceptance given: [case4] C2 — l1 overruled then l3 overruled → passage overruled (allowed) when: [t0] pass attempted after BOTH levels overruled then: stdout has good vibes 1`] = `
+"🦉 the way speaks for itself
+   │
+   ├─ r1: basic-checker (l1, 1/5)
+   │   ├─ rejected, cached
+   │   ├─ 1 blocker 🔴
+   │   ├─ 0 nitpicks ✓
+   │   ├─ given: .reviews/peer/1.feature._.review.i001.d6ef1aa3fad755e23c.r001._.given.by_peer.basic-checker.md
+   │   └─ taken: .reviews/peer/1.feature._.review.i001.d6ef1aa3fad755e23c.r001._.taken.by_self.basic-checker.md
+   │
+   ├─ r2: premium-checker (l3, 1/5)
+   │   ├─ rejected, cached
+   │   ├─ 3 blockers 🔴
+   │   ├─ 0 nitpicks ✓
+   │   ├─ given: .reviews/peer/1.feature._.review.i002.d6ef1aa3fad755e23c.r002._.given.by_peer.premium-checker.md
+   │   └─ taken: .reviews/peer/1.feature._.review.i002.d6ef1aa3fad755e23c.r002._.taken.by_self.premium-checker.md
+   │
+   └─ ✓ judge.1 - allowed [TIME]
+
+🗿 route.stone.set
+   ├─ stone = 1.feature
+   ├─ passage = overruled
+   ├─ guard
+   │  ├─ artifacts
+   │  │   └─ $route/1.feature*.md
+   │  ├─ reviews
+   │  │   ├─ r1: basic-checker (l1, 1/5)
+   │  │   │   ├─ rejected, cached
+   │  │   │   ├─ overruled ✓ — forgiven by human
+   │  │   │   ├─ 1 blocker 🔴
+   │  │   │   ├─ 0 nitpicks ✓
+   │  │   │   ├─ given: .reviews/peer/1.feature._.review.i001.d6ef1aa3fad755e23c.r001._.given.by_peer.basic-checker.md
+   │  │   │   └─ taken: .reviews/peer/1.feature._.review.i001.d6ef1aa3fad755e23c.r001._.taken.by_self.basic-checker.md
+   │  │   └─ r2: premium-checker (l3, 1/5)
+   │  │       ├─ rejected, cached
+   │  │       ├─ overruled ✓ — forgiven by human
+   │  │       ├─ 3 blockers 🔴
+   │  │       ├─ 0 nitpicks ✓
+   │  │       ├─ given: .reviews/peer/1.feature._.review.i002.d6ef1aa3fad755e23c.r002._.given.by_peer.premium-checker.md
+   │  │       └─ taken: .reviews/peer/1.feature._.review.i002.d6ef1aa3fad755e23c.r002._.taken.by_self.premium-checker.md
+   │  └─ judges
+   │      └─ j1: rhx route.stone.judge --mechanism reviewed? --stone $stone --route $route --allow-blockers 0
+   │          └─ finished [TIME] ✓
+   │
+   └─ the way continues, run
+      └─ rhx route.drive
+"
+`;
+
+exports[`driver.route.overrule-skip.acceptance given: [case5] A2-hash — l1 overruled, artifact changes, l3 re-runs → passage blocked when: [t0] pass attempted after the artifact changed then: stdout has good vibes 1`] = `
+"🦉 the way speaks for itself
+   │
+   ├─ r1: basic-checker (l1, 2/5)
+   │   ├─ rejected [TIME]
+   │   ├─ 1 blocker 🔴
+   │   ├─ 0 nitpicks ✓
+   │   ├─ given: .reviews/peer/1.feature._.review.i003.47afac0aa56824623f.r001._.given.by_peer.basic-checker.md
+   │   └─ taken: .reviews/peer/1.feature._.review.i003.47afac0aa56824623f.r001._.taken.by_self.basic-checker.md
+   │
+   ├─ r2: premium-checker (l3, 2/5)
+   │   ├─ rejected [TIME]
+   │   ├─ 3 blockers 🔴
+   │   ├─ 0 nitpicks ✓
+   │   ├─ given: .reviews/peer/1.feature._.review.i003.47afac0aa56824623f.r002._.given.by_peer.premium-checker.md
+   │   └─ taken: .reviews/peer/1.feature._.review.i003.47afac0aa56824623f.r002._.taken.by_self.premium-checker.md
+   │
+   └─ ✗ judge.1 - blocked [TIME]
+
+🗿 route.stone.set
+   ├─ stone = 1.feature
+   ├─ passage = blocked
+   ├─ reason = blockers exceed threshold (3 > 0)
+   └─ guard
+      ├─ artifacts
+      │   └─ $route/1.feature*.md
+      ├─ reviews
+      │   ├─ r1: basic-checker (l1, 2/5)
+      │   │   ├─ rejected [TIME]
+      │   │   ├─ overruled ✓ — forgiven by human
+      │   │   ├─ 1 blocker 🔴
+      │   │   ├─ 0 nitpicks ✓
+      │   │   ├─ given: .reviews/peer/1.feature._.review.i003.47afac0aa56824623f.r001._.given.by_peer.basic-checker.md
+      │   │   └─ taken: .reviews/peer/1.feature._.review.i003.47afac0aa56824623f.r001._.taken.by_self.basic-checker.md
+      │   └─ r2: premium-checker (l3, 2/5)
+      │       ├─ rejected [TIME]
+      │       ├─ 3 blockers 🔴
+      │       ├─ 0 nitpicks ✓
+      │       ├─ given: .reviews/peer/1.feature._.review.i003.47afac0aa56824623f.r002._.given.by_peer.premium-checker.md
+      │       └─ taken: .reviews/peer/1.feature._.review.i003.47afac0aa56824623f.r002._.taken.by_self.premium-checker.md
+      └─ judges
+          └─ j1: rhx route.stone.judge --mechanism reviewed? --stone $stone --route $route --allow-blockers 0
+              ├─ finished [TIME] ✗
+              └─ reason: blockers exceed threshold (3 > 0)
+
+🪷 the path continues
+   ├─ l1 is terminal (overruled ✓) — it no longer blocks you
+   ├─ l3 has engaged — address its blockers, then:
+   │  └─ rhx route.stone.set --stone 1.feature --as arrived
+   └─ a human is only needed once every level is terminal
+"
+`;
+
+exports[`driver.route.overrule-skip.acceptance given: [case6] C4 — pass before any overrule → l1 blocks, l3 locked when: [t0] pass attempted with no overrule (l1 rejects) then: stdout has good vibes 1`] = `
+"🦉 the way speaks for itself
+   │
+   ├─ r1: basic-checker (l1, 1/5)
+   │   ├─ rejected [TIME]
+   │   ├─ 1 blocker 🔴
+   │   ├─ 0 nitpicks ✓
+   │   ├─ given: .reviews/peer/1.feature._.review.i001.d6ef1aa3fad755e23c.r001._.given.by_peer.basic-checker.md
+   │   └─ taken: .reviews/peer/1.feature._.review.i001.d6ef1aa3fad755e23c.r001._.taken.by_self.basic-checker.md
+   │
+   ├─ r2: premium-checker (l3, 0/5)
+   │   └─ awaits arrival
+   │
+   └─ ✗ judge.1 - blocked [TIME]
+
+🗿 route.stone.set
+   ├─ stone = 1.feature
+   ├─ passage = blocked
+   ├─ reason = blockers exceed threshold (1 > 0)
+   └─ guard
+      ├─ artifacts
+      │   └─ $route/1.feature*.md
+      ├─ reviews
+      │   ├─ r1: basic-checker (l1, 1/5)
+      │   │   ├─ rejected [TIME]
+      │   │   ├─ 1 blocker 🔴
+      │   │   ├─ 0 nitpicks ✓
+      │   │   ├─ given: .reviews/peer/1.feature._.review.i001.d6ef1aa3fad755e23c.r001._.given.by_peer.basic-checker.md
+      │   │   └─ taken: .reviews/peer/1.feature._.review.i001.d6ef1aa3fad755e23c.r001._.taken.by_self.basic-checker.md
+      │   └─ r2: premium-checker (l3, 0/5)
+      │       └─ awaits l1 terminal
+      └─ judges
+          └─ j1: rhx route.stone.judge --mechanism reviewed? --stone $stone --route $route --allow-blockers 0
+              ├─ finished [TIME] ✗
+              └─ reason: blockers exceed threshold (1 > 0)
+"
+`;
+
+exports[`driver.route.overrule-skip.acceptance given: [case7] C1 — overrule l1, l3 blocks, driver converges l3, then passes then: stdout has good vibes (the blocked state, snapped) 1`] = `
+"🦉 the way speaks for itself
+   │
+   ├─ r1: basic-checker (l1, 1/5)
+   │   ├─ rejected, cached
+   │   ├─ 1 blocker 🔴
+   │   ├─ 0 nitpicks ✓
+   │   ├─ given: .reviews/peer/1.feature._.review.i001.d6ef1aa3fad755e23c.r001._.given.by_peer.basic-checker.md
+   │   └─ taken: .reviews/peer/1.feature._.review.i001.d6ef1aa3fad755e23c.r001._.taken.by_self.basic-checker.md
+   │
+   ├─ r2: premium-checker (l3, 1/5)
+   │   ├─ rejected [TIME]
+   │   ├─ 3 blockers 🔴
+   │   ├─ 0 nitpicks ✓
+   │   ├─ given: .reviews/peer/1.feature._.review.i002.d6ef1aa3fad755e23c.r002._.given.by_peer.premium-checker.md
+   │   └─ taken: .reviews/peer/1.feature._.review.i002.d6ef1aa3fad755e23c.r002._.taken.by_self.premium-checker.md
+   │
+   └─ ✗ judge.1 - blocked [TIME]
+
+🗿 route.stone.set
+   ├─ stone = 1.feature
+   ├─ passage = blocked
+   ├─ reason = blockers exceed threshold (3 > 0)
+   └─ guard
+      ├─ artifacts
+      │   └─ $route/1.feature*.md
+      ├─ reviews
+      │   ├─ r1: basic-checker (l1, 1/5)
+      │   │   ├─ rejected, cached
+      │   │   ├─ overruled ✓ — forgiven by human
+      │   │   ├─ 1 blocker 🔴
+      │   │   ├─ 0 nitpicks ✓
+      │   │   ├─ given: .reviews/peer/1.feature._.review.i001.d6ef1aa3fad755e23c.r001._.given.by_peer.basic-checker.md
+      │   │   └─ taken: .reviews/peer/1.feature._.review.i001.d6ef1aa3fad755e23c.r001._.taken.by_self.basic-checker.md
+      │   └─ r2: premium-checker (l3, 1/5)
+      │       ├─ rejected [TIME]
+      │       ├─ 3 blockers 🔴
+      │       ├─ 0 nitpicks ✓
+      │       ├─ given: .reviews/peer/1.feature._.review.i002.d6ef1aa3fad755e23c.r002._.given.by_peer.premium-checker.md
+      │       └─ taken: .reviews/peer/1.feature._.review.i002.d6ef1aa3fad755e23c.r002._.taken.by_self.premium-checker.md
+      └─ judges
+          └─ j1: rhx route.stone.judge --mechanism reviewed? --stone $stone --route $route --allow-blockers 0
+              ├─ finished [TIME] ✗
+              └─ reason: blockers exceed threshold (3 > 0)
+
+🪷 the path continues
+   ├─ l1 is terminal (overruled ✓) — it no longer blocks you
+   ├─ l3 has engaged — address its blockers, then:
+   │  └─ rhx route.stone.set --stone 1.feature --as arrived
+   └─ a human is only needed once every level is terminal
+"
+`;
+
+exports[`driver.route.overrule-skip.acceptance given: [case7] C1 — overrule l1, l3 blocks, driver converges l3, then passes when: [t1] driver converges l3, then passes then: stdout has good vibes 1`] = `
+"🦉 the way speaks for itself
+   │
+   ├─ r1: basic-checker (l1, 2/5)
+   │   ├─ rejected [TIME]
+   │   ├─ 1 blocker 🔴
+   │   ├─ 0 nitpicks ✓
+   │   ├─ given: .reviews/peer/1.feature._.review.i003.a03bbb986fcbcae7f0.r001._.given.by_peer.basic-checker.md
+   │   └─ taken: .reviews/peer/1.feature._.review.i003.a03bbb986fcbcae7f0.r001._.taken.by_self.basic-checker.md
+   │
+   ├─ r2: premium-checker (l3, 2/5)
+   │   ├─ approved [TIME]
+   │   ├─ 0 blockers ✓
+   │   ├─ 0 nitpicks ✓
+   │   ├─ given: .reviews/peer/1.feature._.review.i003.a03bbb986fcbcae7f0.r002._.given.by_peer.premium-checker.md
+   │   └─ taken: .reviews/peer/1.feature._.review.i003.a03bbb986fcbcae7f0.r002._.taken.by_self.premium-checker.md
+   │
+   └─ ✓ judge.1 - allowed [TIME]
+
+🗿 route.stone.set
+   ├─ stone = 1.feature
+   ├─ passage = overruled
+   ├─ guard
+   │  ├─ artifacts
+   │  │   └─ $route/1.feature*.md
+   │  ├─ reviews
+   │  │   ├─ r1: basic-checker (l1, 2/5)
+   │  │   │   ├─ rejected [TIME]
+   │  │   │   ├─ overruled ✓ — forgiven by human
+   │  │   │   ├─ 1 blocker 🔴
+   │  │   │   ├─ 0 nitpicks ✓
+   │  │   │   ├─ given: .reviews/peer/1.feature._.review.i003.a03bbb986fcbcae7f0.r001._.given.by_peer.basic-checker.md
+   │  │   │   └─ taken: .reviews/peer/1.feature._.review.i003.a03bbb986fcbcae7f0.r001._.taken.by_self.basic-checker.md
+   │  │   └─ r2: premium-checker (l3, 2/5)
+   │  │       ├─ approved [TIME]
+   │  │       ├─ 0 blockers ✓
+   │  │       ├─ 0 nitpicks ✓
+   │  │       ├─ given: .reviews/peer/1.feature._.review.i003.a03bbb986fcbcae7f0.r002._.given.by_peer.premium-checker.md
+   │  │       └─ taken: .reviews/peer/1.feature._.review.i003.a03bbb986fcbcae7f0.r002._.taken.by_self.premium-checker.md
+   │  └─ judges
+   │      └─ j1: rhx route.stone.judge --mechanism reviewed? --stone $stone --route $route --allow-blockers 0
+   │          └─ finished [TIME] ✓
+   │
+   └─ the way continues, run
+      └─ rhx route.drive
+"
+`;
+
+exports[`driver.route.overrule-skip.acceptance given: [case8] overrule-confirm — an l1 overrule names the waved level + the ready l3 gate when: [t0] human overrules the active level (l1) then: stdout has good vibes 1`] = `
+"🦉 the way speaks for itself
+
+🗿 route.stone.set
+   ├─ stone = 1.feature
+   └─ ✓ overruled
+      ├─ level 1, overruled
+      └─ level 3, ready
+"
+`;
+
+exports[`driver.route.overrule-skip.acceptance given: [case9] standalone judge — l1 overruled, l3 unlocked+queued → judge blocks when: [t0] the judge is invoked directly (not via --as passed) then: stdout has good vibes 1`] = `
+"passed: false
+reason: review level 3 not yet run (still queued) — run \`rhx route.stone.set --stone 1.feature --as arrived\` to run it
+"
+`;

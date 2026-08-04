@@ -20,6 +20,11 @@ const VERDICT_GLYPH: Partial<Record<ReviewPeerVerdict, string>> = {
  *        carries, so a driver reads the footer and the tree as one consistent story
  */
 const asTerminalLevelLabel = (level: ReviewPeerLadderLevelTerminal): string => {
+  // an overruled level reads "(overruled ✓)", not its un-forgiven raw verdict — the human waved
+  // it, so the footer names the forgiveness. this mirrors the tree's forgiven marker and the `✓
+  // overruled` confirmation glyph (single source of truth for the overrule display).
+  if (level.overruled)
+    return `l${level.level} is terminal (overruled ✓) — it no longer blocks you`;
   const glyph = VERDICT_GLYPH[level.verdict] ?? '';
   return `l${level.level} is terminal (${level.verdict}${glyph}) — it no longer blocks you`;
 };
@@ -73,6 +78,8 @@ export const formatGuardReviewLadderFooter = (input: {
 
   // render as a standalone top-level block: the 🪷 header, then box-draw children at the
   // same 3-space indent the other top-level blocks (🗿 route.stone.set) use
+  // .note = deliberate local line-builder, scoped to this formatter — the escape hatch in
+  //         rule.require.immutable-vars permits a scoped emit builder; no array crosses a boundary.
   const lines: string[] = [FOOTER_HEADER];
   groups.forEach((group, i) => {
     const isLast = i === groups.length - 1;

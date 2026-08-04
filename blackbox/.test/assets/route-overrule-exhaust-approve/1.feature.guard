@@ -1,0 +1,22 @@
+artifacts:
+  - $route/1.feature*.md
+
+reviews:
+  peer:
+    # level 1: basic checker, rejects by default; the human overrules it
+    - slug: basic-checker
+      run: bash $route/.test/mock-review-l1.sh
+      budget: 5
+      level: 1
+
+    # level 3: premium checker, ALWAYS rejects, budget 1 so it exhausts fast.
+    # after l1 is overruled + l3 exhausts, a human --as approved must combine with
+    # the l1 overrule to allow passage (B5). budget 1 => runs once (1/1), then the
+    # next attempt is skipped => exhausted (terminal).
+    - slug: premium-checker
+      run: bash $route/.test/mock-review-l3.sh
+      budget: 1
+      level: 3
+
+judges:
+  - rhx route.stone.judge --mechanism reviewed? --stone $stone --route $route --allow-blockers 0

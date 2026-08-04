@@ -1,0 +1,17 @@
+artifacts:
+  - $route/1.plan*.md
+
+reviews:
+  peer:
+    # the only reviewer approves on merit (0 blockers) — no level is ever blocked,
+    # so no overrule is ever needed to reach a clear review state
+    - slug: clean-checker
+      run: bash $route/.test/mock-review.sh
+      budget: 5
+      level: 1
+
+judges:
+  # reviewed? clears (0 blockers), but approved? still gates — so a --as passed
+  # leaves the stone all-reviews-approved yet unpassed, with no overrule on record
+  - rhx route.stone.judge --mechanism reviewed? --stone $stone --route $route --allow-blockers 0 --allow-nitpicks 0
+  - rhx route.stone.judge --mechanism approved? --stone $stone --route $route

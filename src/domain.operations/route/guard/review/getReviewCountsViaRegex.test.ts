@@ -179,4 +179,46 @@ nitpicks = none`;
       });
     },
   );
+
+  given(
+    '[case12] a clean verdict survives citations of a prior tally (glued + quoted)',
+    () => {
+      // .why = the real-world regression: a clean review states its verdict FIRST ("0 blockers,
+      //        0 nitpicks") then discusses the prior false tally, which it cites two ways — glued
+      //        to a reviewer id ("r11 blocker") and wrapped in a quote ("11 blockers"). both are
+      //        citations, not declarations; the left-edge guard drops both, so the real 0/0
+      //        verdict (also present as a bare summary) is what the parser reads.
+      const content = `Verdict: 0 blockers, 0 nitpicks — all clear.
+r009's tallied "11 blockers" was a parse-trap on the text \`r11 blocker\`, not a real result.
+0 blockers
+0 nitpicks`;
+
+      when('[t0] parsed', () => {
+        then('reads the real 0/0 verdict, not the cited tally', () => {
+          const counts = getReviewCountsViaRegex({ content });
+          expect(counts.detected).toBe(true);
+          if (!counts.detected) throw new Error('expected detected');
+          expect(counts.blockers).toBe(0);
+          expect(counts.nitpicks).toBe(0);
+        });
+      });
+    },
+  );
+
+  given(
+    '[case13] a review whose ONLY numbers are citations is undetected',
+    () => {
+      // the guard drops both citation shapes for both stems: "r11 blocker" (glued) and
+      // `"7 nitpicks"` (quoted) are references, not counts. with no bare declaration present the
+      // tally is undetected — never a silent zero (rule.forbid.failhide, contract.reviewer-output).
+      const content = `see r11 blocker and the quoted "7 nitpicks" from prior rounds`;
+
+      when('[t0] parsed', () => {
+        then('is undetected (citations are not counts)', () => {
+          const counts = getReviewCountsViaRegex({ content });
+          expect(counts.detected).toBe(false);
+        });
+      });
+    },
+  );
 });

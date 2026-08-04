@@ -44,8 +44,19 @@ const getLastCountForDimension = (input: {
   // .note = the "N word" form uses same-line whitespace ([ \t]+, not \s+) so a number on a
   //         prior line cannot bind to a word on the next (e.g. "blockers: 3\nnitpicks: 5"
   //         must not read "3 nitpicks"). count declarations are always single-line.
+  // .note = the "N word" form guards its left edge against a CITATION char so a digit that
+  //         cites another count cannot bind as a verdict. two citation shapes cause false
+  //         rejections when a clean 0/0 review discusses a prior tally:
+  //           - glued to an identifier — "r11 blocker" (reviewer #11) holds "11 blocker"
+  //           - wrapped in a quote — a review that recounts `"11 blockers"` as an artifact
+  //         both are citations, not declarations. the guard (?<![\w"'`]) requires the run to
+  //         start at a non-word, non-quote boundary (start, whitespace, tree glyph, or plain
+  //         punctuation), so a bare "0 blockers" or "found 11 blockers" still counts, but a
+  //         glued "r11 blocker" or a quoted `"11 blockers"` does not. a review whose ONLY
+  //         numbers are citations reads as undetected (never a silent zero) — see
+  //         rule.forbid.failhide + contract.reviewer-output.
   const pattern = new RegExp(
-    `${input.stem}s?:\\s*(\\d+)|(\\d+)[ \\t]+${input.stem}s?`,
+    `${input.stem}s?:\\s*(\\d+)|(?<![\\w"'\`])(\\d+)[ \\t]+${input.stem}s?`,
     'gi',
   );
   const matches = [...input.content.matchAll(pattern)];

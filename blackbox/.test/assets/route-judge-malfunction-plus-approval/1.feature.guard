@@ -1,0 +1,22 @@
+artifacts:
+  - $route/1.feature*.md
+
+reviews:
+  peer:
+    # level 1: basic checker, always passes
+    - slug: basic-checker
+      run: bash $route/.test/mock-review-l1.sh
+      budget: 5
+      level: 1
+
+    # level 3: premium checker, always passes
+    - slug: premium-checker
+      run: bash $route/.test/mock-review-l3.sh
+      budget: 5
+      level: 3
+
+judges:
+  # judge 1: a raw process that crashes (malfunction)
+  - bash $route/.test/mock-judge-exit-1.sh
+  # judge 2: a human sign-off gate — its own constraint exit when no approval exists
+  - rhx route.stone.judge --mechanism approved? --stone $stone --route $route

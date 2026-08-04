@@ -1,6 +1,6 @@
 import type { GuardPeerMeterStatus } from '../../../tree/formatGuardTree';
 import type { ReviewPeerVerdict } from './computeReviewPeerVerdict';
-import { isReviewPeerVerdictTerminal } from './isReviewPeerLevelTerminal';
+import { getStoneGuardLevelClearance } from './getStoneGuardLevelClearance';
 
 /**
  * .what = one terminal level in the ladder, with the representative verdict that
@@ -10,6 +10,13 @@ import { isReviewPeerVerdictTerminal } from './isReviewPeerLevelTerminal';
 export interface ReviewPeerLadderLevelTerminal {
   level: number;
   verdict: ReviewPeerVerdict;
+  /**
+   * whether the human overruled this level (waved it through). an overruled level is terminal
+   * regardless of its raw verdict, and it DEFERS the human (like approved/exhausted), so it is
+   * a legitimate unlock rung. the footer labels it "(overruled)" so its terminal line reads
+   * honestly rather than as the un-forgiven raw verdict.
+   */
+  overruled: boolean;
 }
 
 /**
@@ -87,32 +94,37 @@ const asRepresentativeTerminalVerdict = (
 export const getReviewPeerLadderStatus = (input: {
   peerMeters: GuardPeerMeterStatus[];
 }): ReviewPeerLadderStatus => {
-  // unique levels, low-to-high — the ladder rungs in order
-  const levels = [...new Set(input.peerMeters.map((m) => m.level))].sort(
-    (a, b) => a - b,
-  );
+  // single-source the terminal/overruled derivation: the clearance primitive decides, per level,
+  // whether it is overruled and clear-for-unlock (terminal). an overruled level is terminal
+  // regardless of its raw verdict — the human waved it, the same forgiveness the unlock filter
+  // and judge apply. the shared primitive keeps this footer aligned with the tree.
+  const clearance = getStoneGuardLevelClearance({
+    reviewers: input.peerMeters.map((m) => ({
+      level: m.level,
+      verdict: m.verdict,
+    })),
+    overruledLevels: new Set(
+      input.peerMeters.filter((m) => m.overruled).map((m) => m.level),
+    ),
+  });
+  // each terminal (clear-for-unlock) level joins the "done" list with its representative verdict;
+  // the clearance ladder is low-to-high, so terminalLevels stays low-to-high too
+  const terminalLevels: ReviewPeerLadderLevelTerminal[] = clearance
+    .filter((levelClearance) => levelClearance.clearForUnlock)
+    .map((levelClearance) => ({
+      level: levelClearance.level,
+      verdict: asRepresentativeTerminalVerdict(
+        input.peerMeters
+          .filter((m) => m.level === levelClearance.level)
+          .map((m) => m.verdict),
+      ),
+      overruled: levelClearance.overruled,
+    }));
 
-  const terminalLevels: ReviewPeerLadderLevelTerminal[] = [];
-  let liveLevel: number | null = null;
-
-  for (const level of levels) {
-    const atLevel = input.peerMeters.filter((m) => m.level === level);
-    const levelTerminal = atLevel.every((m) =>
-      isReviewPeerVerdictTerminal(m.verdict),
-    );
-
-    // a terminal level joins the "done" list with its representative verdict
-    if (levelTerminal) {
-      terminalLevels.push({
-        level,
-        verdict: asRepresentativeTerminalVerdict(atLevel.map((m) => m.verdict)),
-      });
-      continue;
-    }
-
-    // the first non-terminal level is the live gate (lowest, since levels sort low-to-high)
-    if (liveLevel === null) liveLevel = level;
-  }
+  // the live gate is the lowest non-terminal level (levels sort low-to-high), or null when all clear
+  const liveLevel =
+    clearance.find((levelClearance) => !levelClearance.clearForUnlock)?.level ??
+    null;
 
   // the unlock moment: a terminal level sits BELOW the live gate (lower-unlocks-higher) AND
   // every terminal level is human-DEFERRABLE (approved or exhausted). false when:
@@ -122,8 +134,9 @@ export const getReviewPeerLadderStatus = (input: {
   const unlockTransition =
     liveLevel !== null &&
     terminalLevels.some((terminal) => terminal.level < liveLevel) &&
-    terminalLevels.every((terminal) =>
-      isReviewPeerVerdictDeferrable(terminal.verdict),
+    terminalLevels.every(
+      (terminal) =>
+        terminal.overruled || isReviewPeerVerdictDeferrable(terminal.verdict),
     );
 
   return {

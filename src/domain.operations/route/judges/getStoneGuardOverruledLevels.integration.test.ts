@@ -5,12 +5,13 @@ import { given, then, useBeforeAll, when } from 'test-fns';
 
 import { RouteStone } from '@src/domain.objects/Driver/RouteStone';
 
+import { JUDGE_LEVEL } from '../guard/review/peer/meter/JUDGE_LEVEL';
 import { getStoneGuardOverruledLevels } from './getStoneGuardOverruledLevels';
 
 /**
  * .what = verifies getStoneGuardOverruledLevels reads level-scoped overrules
- * .why = the level partition (and the legacy `all` flag) gate passage; they
- *        must be read correctly from passage.jsonl
+ * .why = the level partition gates passage; it must be read correctly from passage.jsonl. the
+ *        judge is the top rung (JUDGE_LEVEL), and a legacy level-less record maps to it.
  */
 describe('getStoneGuardOverruledLevels', () => {
   const genStone = (name: string): RouteStone =>
@@ -43,13 +44,12 @@ describe('getStoneGuardOverruledLevels', () => {
     });
 
     when('[t0] levels are read', () => {
-      then('returns empty levels and all=false', async () => {
+      then('returns an empty set', async () => {
         const result = await getStoneGuardOverruledLevels({
           stone: genStone('5.exec'),
           route: scene.dir,
         });
-        expect([...result.levels]).toEqual([]);
-        expect(result.all).toBe(false);
+        expect([...result]).toEqual([]);
       });
     });
   });
@@ -65,13 +65,12 @@ describe('getStoneGuardOverruledLevels', () => {
     });
 
     when('[t0] levels are read', () => {
-      then('returns levels={1} and all=false', async () => {
+      then('returns {1}', async () => {
         const result = await getStoneGuardOverruledLevels({
           stone: genStone('5.exec'),
           route: scene.dir,
         });
-        expect([...result.levels].sort()).toEqual([1]);
-        expect(result.all).toBe(false);
+        expect([...result].sort((a, b) => a - b)).toEqual([1]);
       });
     });
   });
@@ -90,13 +89,12 @@ describe('getStoneGuardOverruledLevels', () => {
     });
 
     when('[t0] levels are read', () => {
-      then('returns levels={1,3} and all=false', async () => {
+      then('returns {1,3}', async () => {
         const result = await getStoneGuardOverruledLevels({
           stone: genStone('5.exec'),
           route: scene.dir,
         });
-        expect([...result.levels].sort()).toEqual([1, 3]);
-        expect(result.all).toBe(false);
+        expect([...result].sort((a, b) => a - b)).toEqual([1, 3]);
       });
     });
   });
@@ -107,7 +105,9 @@ describe('getStoneGuardOverruledLevels', () => {
         os.tmpdir(),
         `overruled-levels-legacy-${Date.now()}`,
       );
-      // .note = old (#288) code wrote overrule rows with NO level field
+      // .note = old (#288) code wrote overrule rows with NO level field; under the top-rung
+      //         model such a record maps to the judge rung (JUDGE_LEVEL) — forgives the judge
+      //         only, never the peer levels below it
       await writePassage({
         dir,
         rows: [{ stone: '5.exec', status: 'overruled' }],
@@ -116,13 +116,12 @@ describe('getStoneGuardOverruledLevels', () => {
     });
 
     when('[t0] levels are read', () => {
-      then('returns all=true (forgives every level)', async () => {
+      then('returns {JUDGE_LEVEL} — the judge rung only', async () => {
         const result = await getStoneGuardOverruledLevels({
           stone: genStone('5.exec'),
           route: scene.dir,
         });
-        expect(result.all).toBe(true);
-        expect([...result.levels]).toEqual([]);
+        expect([...result]).toEqual([JUDGE_LEVEL]);
       });
     });
   });
@@ -141,14 +140,16 @@ describe('getStoneGuardOverruledLevels', () => {
     });
 
     when('[t0] levels are read', () => {
-      then('returns all=true AND levels={3}', async () => {
-        const result = await getStoneGuardOverruledLevels({
-          stone: genStone('5.exec'),
-          route: scene.dir,
-        });
-        expect(result.all).toBe(true);
-        expect([...result.levels].sort()).toEqual([3]);
-      });
+      then(
+        'returns {3, JUDGE_LEVEL} — level 3 plus the judge rung',
+        async () => {
+          const result = await getStoneGuardOverruledLevels({
+            stone: genStone('5.exec'),
+            route: scene.dir,
+          });
+          expect([...result].sort((a, b) => a - b)).toEqual([3, JUDGE_LEVEL]);
+        },
+      );
     });
   });
 
@@ -174,8 +175,7 @@ describe('getStoneGuardOverruledLevels', () => {
           stone: genStone('5.exec'),
           route: scene.dir,
         });
-        expect([...result.levels]).toEqual([]);
-        expect(result.all).toBe(false);
+        expect([...result]).toEqual([]);
       });
     });
   });
@@ -202,8 +202,7 @@ describe('getStoneGuardOverruledLevels', () => {
           stone: genStone('5.exec'),
           route: scene.dir,
         });
-        expect([...result.levels].sort()).toEqual([1]);
-        expect(result.all).toBe(false);
+        expect([...result].sort((a, b) => a - b)).toEqual([1]);
       });
     });
   });

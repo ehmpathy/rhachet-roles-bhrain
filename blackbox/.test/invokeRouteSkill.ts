@@ -71,6 +71,10 @@ export const sanitizeTimeForSnapshot = (output: string): string => {
     .replace(/allowed \d+\.\d+s/g, 'allowed [TIME]')
     .replace(/blocked \d+\.\d+s/g, 'blocked [TIME]')
     .replace(/malfunctioned \d+\.\d+s/g, 'malfunctioned [TIME]')
+    // judge malfunction noun duration — the live judge tree renders a crashed
+    // judge as `💥 … malfunction <dur>s`; a sub-second mock-judge duration must be
+    // masked like every other status word (rule.forbid.snapshot-visual-blemishes)
+    .replace(/malfunction \d+\.\d+s/g, 'malfunction [TIME]')
     .replace(/approved \d+\.\d+s/g, 'approved [TIME]')
     .replace(/rejected \d+\.\d+s/g, 'rejected [TIME]')
     .replace(/exhausted \d+\.\d+s/g, 'exhausted [TIME]')
