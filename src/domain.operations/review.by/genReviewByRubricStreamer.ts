@@ -85,6 +85,9 @@ export const genReviewByRubricStreamer = (input: {
         level: 1,
         rounds: 0,
         budget: 1,
+        // a review.by row is a flat per-role review, never a route-ladder level, so it is
+        // never overrule-scoped
+        overruled: false,
         state: { type: 'inflight', durationSec },
       },
       isLast: false,
