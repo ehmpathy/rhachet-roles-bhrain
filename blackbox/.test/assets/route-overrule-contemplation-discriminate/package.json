@@ -1,0 +1,8 @@
+{
+  "name": "route-overrule-contemplation-discriminate",
+  "private": true,
+  "description": "fixture for the overrule / contemplation-gate discrimination (R6) acceptance test - enables rhachet role discovery",
+  "dependencies": {
+    "rhachet-roles-bhrain": "link:."
+  }
+}

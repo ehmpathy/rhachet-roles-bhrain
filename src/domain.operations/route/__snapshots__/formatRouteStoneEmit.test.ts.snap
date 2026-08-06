@@ -1,5 +1,34 @@
 // Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
 
+exports[`formatRouteStoneEmit given: [case-overrule-judge] an overrule of the judge rung when: [t0] format is called with level = JUDGE_LEVEL then: snapshot matches 1`] = `
+"🦉 the way speaks for itself
+
+🗿 route.stone.set
+   ├─ stone = 1.plan
+   └─ ✓ overruled
+      └─ judge, overruled"
+`;
+
+exports[`formatRouteStoneEmit given: [case-overrule-peer-judge-ready] an overrule of a peer level where the JUDGE becomes ready when: [t0] format is called with readyLevel = JUDGE_LEVEL then: snapshot matches 1`] = `
+"🦉 the way speaks for itself
+
+🗿 route.stone.set
+   ├─ stone = 1.plan
+   └─ ✓ overruled
+      ├─ level 3, overruled
+      └─ judge, ready"
+`;
+
+exports[`formatRouteStoneEmit given: [case-overrule-scoped] a level-scoped overrule when: [t0] format is called with a level and a ready-next level then: snapshot matches 1`] = `
+"🦉 the way speaks for itself
+
+🗿 route.stone.set
+   ├─ stone = 1.plan
+   └─ ✓ overruled
+      ├─ level 1, overruled
+      └─ level 3, ready"
+`;
+
 exports[`formatRouteStoneEmit given: [case1] challenge:absent action when: [t0] formatRouteStoneEmit called with challenge:absent then: snapshot matches vision 1`] = `
 "🦉 the way speaks for itself
 

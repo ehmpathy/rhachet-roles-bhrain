@@ -57,9 +57,8 @@ exports[`driver.route.peer-review-exit-codes.acceptance given: [journey] exit co
       │   └─ src/**/*.ts
       ├─ reviews
       │   └─ r1: exit-code-reviewer (l1, 1/2)
-      │       ├─ constraint [TIME]
-      │       ├─ 0 blockers ✓
-      │       ├─ 0 nitpicks ✓
+      │       ├─ constraint ✋
+      │       ├─ terminal — does not block higher levels
       │       ├─ given: .reviews/peer/1.execute._.review.i002.dfc5faff83ea2fcb55.r001._.given.by_peer.exit-code-reviewer.md
       │       └─ taken: .reviews/peer/1.execute._.review.i002.dfc5faff83ea2fcb55.r001._.taken.by_self.exit-code-reviewer.md
       └─ judges

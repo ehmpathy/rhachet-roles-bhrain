@@ -1,6 +1,7 @@
 import { given, then, when } from 'test-fns';
 
 import { formatRouteStoneEmit } from './formatRouteStoneEmit';
+import { JUDGE_LEVEL } from './guard/review/peer/meter/JUDGE_LEVEL';
 import { getSelfReviewArticulationPath } from './guard/review/self/getSelfReviewArticulationPath';
 
 describe('formatRouteStoneEmit', () => {
@@ -387,4 +388,89 @@ describe('formatRouteStoneEmit', () => {
       });
     });
   });
+
+  given('[case-overrule-scoped] a level-scoped overrule', () => {
+    when('[t0] format is called with a level and a ready-next level', () => {
+      const output = formatRouteStoneEmit({
+        operation: 'route.stone.set',
+        stone: '1.plan',
+        action: 'overruled',
+        level: 1,
+        readyLevel: 3,
+      });
+
+      then('it names the waved level and the newly-ready level', () => {
+        expect(output).toContain('level 1, overruled');
+        expect(output).toContain('level 3, ready');
+      });
+
+      then(
+        'it carries NO stone-wide full-forgive alert (this is the safe, scoped case)',
+        () => {
+          expect(output).not.toContain('stone-wide');
+        },
+      );
+
+      then('snapshot matches', () => {
+        expect(output).toMatchSnapshot();
+      });
+    });
+  });
+
+  given('[case-overrule-judge] an overrule of the judge rung', () => {
+    when('[t0] format is called with level = JUDGE_LEVEL', () => {
+      const output = formatRouteStoneEmit({
+        operation: 'route.stone.set',
+        stone: '1.plan',
+        action: 'overruled',
+        level: JUDGE_LEVEL,
+      });
+
+      then('it renders the judge rung, not the sentinel number', () => {
+        // .why = the judge is the top rung; the human sees "judge, overruled", never the raw
+        //        JUDGE_LEVEL sentinel value (define.review.human-forgiveness)
+        expect(output).toContain('judge, overruled');
+        expect(output).not.toContain(String(JUDGE_LEVEL));
+      });
+
+      then('it carries NO stone-wide full-forgive alert', () => {
+        expect(output).not.toContain('stone-wide');
+      });
+
+      then('snapshot matches', () => {
+        expect(output).toMatchSnapshot();
+      });
+    });
+  });
+
+  given(
+    '[case-overrule-peer-judge-ready] an overrule of a peer level where the JUDGE becomes ready',
+    () => {
+      when('[t0] format is called with readyLevel = JUDGE_LEVEL', () => {
+        const output = formatRouteStoneEmit({
+          operation: 'route.stone.set',
+          stone: '1.plan',
+          action: 'overruled',
+          level: 3,
+          readyLevel: JUDGE_LEVEL,
+        });
+
+        then(
+          'the ready line reads "judge, ready", never the sentinel number',
+          () => {
+            // .why = an overrule of the topmost peer level makes the JUDGE the next live gate; the
+            //        readyLevel render must honor the same JUDGE_LEVEL guard as the rung line,
+            //        or a human sees "level 9007199254740991, ready" (the paired sentinel-leak bug)
+            expect(output).toContain('level 3, overruled');
+            expect(output).toContain('judge, ready');
+            expect(output).not.toContain(String(JUDGE_LEVEL));
+          },
+        );
+
+        then('snapshot matches', () => {
+          expect(output).toMatchSnapshot();
+        });
+      });
+    },
+  );
 });

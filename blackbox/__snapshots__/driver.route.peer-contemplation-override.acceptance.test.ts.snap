@@ -16,7 +16,6 @@ exports[`driver.route.peer-contemplation-override.acceptance given: [case1] a st
 🗿 route.stone.set
    ├─ stone = 1.execute
    └─ ✓ forced
-      ├─ overruled = ✓ (level 1)
       └─ approved  = ✓
 "
 `;

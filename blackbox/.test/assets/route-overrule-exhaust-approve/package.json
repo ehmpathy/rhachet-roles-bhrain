@@ -1,0 +1,8 @@
+{
+  "name": "route-overrule-exhaust-approve",
+  "private": true,
+  "description": "fixture for the B5 boundary cell - l1 overruled + l3 exhausted + human approval - enables rhachet role discovery",
+  "dependencies": {
+    "rhachet-roles-bhrain": "link:."
+  }
+}

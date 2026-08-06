@@ -6,7 +6,8 @@ exports[`driver.route.overrule.acceptance given: [case1] human overrules blocked
 🗿 route.stone.set
    ├─ stone = 1.plan
    └─ ✓ overruled
-      └─ level 1, overruled
+      ├─ level 1, overruled
+      └─ judge, ready
 "
 `;
 
@@ -31,6 +32,7 @@ exports[`driver.route.overrule.acceptance given: [case1] human overrules blocked
    │  ├─ reviews
    │  │   └─ r1: bash (l1, 1/∞)
    │  │       ├─ rejected, cached
+   │  │       ├─ overruled ✓ — forgiven by human
    │  │       ├─ 3 blockers 🔴
    │  │       ├─ 7 nitpicks 🟠
    │  │       ├─ given: .reviews/peer/1.plan._.review.i001.ec6c3f2f9d5189084f.r001._.given.by_peer.bash.md
@@ -107,6 +109,7 @@ exports[`driver.route.overrule.acceptance given: [case9] overrule bypasses revie
    │  ├─ reviews
    │  │   └─ r1: bash (l1, 0/∞)
    │  │       ├─ malfunction 💥
+   │  │       ├─ overruled ✓ — forgiven by human
    │  │       ├─ terminal — does not block higher levels
    │  │       ├─ given: .reviews/peer/1.feature._.review.i002.d6ef1aa3fad755e23c.r001._.given.by_peer.bash.md
    │  │       └─ taken: .reviews/peer/1.feature._.review.i002.d6ef1aa3fad755e23c.r001._.taken.by_self.bash.md
@@ -138,9 +141,9 @@ exports[`driver.route.overrule.acceptance given: [case10] overrule bypasses revi
    │  │   └─ $route/1.feature*.md
    │  ├─ reviews
    │  │   └─ r1: bash (l1, 0/∞)
-   │  │       ├─ constraint [TIME]
-   │  │       ├─ 0 blockers ✓
-   │  │       ├─ 0 nitpicks ✓
+   │  │       ├─ constraint ✋
+   │  │       ├─ overruled ✓ — forgiven by human
+   │  │       ├─ terminal — does not block higher levels
    │  │       ├─ given: .reviews/peer/1.feature._.review.i002.d6ef1aa3fad755e23c.r001._.given.by_peer.bash.md
    │  │       └─ taken: .reviews/peer/1.feature._.review.i002.d6ef1aa3fad755e23c.r001._.taken.by_self.bash.md
    │  └─ judges
@@ -172,6 +175,7 @@ exports[`driver.route.overrule.acceptance given: [case11] forced bypasses review
    │  ├─ reviews
    │  │   └─ r1: bash (l1, 0/∞)
    │  │       ├─ malfunction 💥
+   │  │       ├─ overruled ✓ — forgiven by human
    │  │       ├─ terminal — does not block higher levels
    │  │       ├─ given: .reviews/peer/1.feature._.review.i001.d6ef1aa3fad755e23c.r001._.given.by_peer.bash.md
    │  │       └─ taken: .reviews/peer/1.feature._.review.i001.d6ef1aa3fad755e23c.r001._.taken.by_self.bash.md
@@ -203,9 +207,9 @@ exports[`driver.route.overrule.acceptance given: [case12] forced bypasses review
    │  │   └─ $route/1.feature*.md
    │  ├─ reviews
    │  │   └─ r1: bash (l1, 0/∞)
-   │  │       ├─ constraint [TIME]
-   │  │       ├─ 0 blockers ✓
-   │  │       ├─ 0 nitpicks ✓
+   │  │       ├─ constraint ✋
+   │  │       ├─ overruled ✓ — forgiven by human
+   │  │       ├─ terminal — does not block higher levels
    │  │       ├─ given: .reviews/peer/1.feature._.review.i001.d6ef1aa3fad755e23c.r001._.given.by_peer.bash.md
    │  │       └─ taken: .reviews/peer/1.feature._.review.i001.d6ef1aa3fad755e23c.r001._.taken.by_self.bash.md
    │  └─ judges
@@ -270,7 +274,8 @@ exports[`driver.route.overrule.acceptance given: [case13] tier escalation: L1 ma
 🗿 route.stone.set
    ├─ stone = 1.feature
    └─ ✓ overruled
-      └─ level 1, overruled
+      ├─ level 1, overruled
+      └─ judge, ready
 "
 `;
 
@@ -301,6 +306,7 @@ exports[`driver.route.overrule.acceptance given: [case13] tier escalation: L1 ma
    │  ├─ reviews
    │  │   ├─ r1: basic-checker (l1, 0/5)
    │  │   │   ├─ malfunction 💥
+   │  │   │   ├─ overruled ✓ — forgiven by human
    │  │   │   ├─ terminal — does not block higher levels
    │  │   │   ├─ given: .reviews/peer/1.feature._.review.i002.bf3993d1d36b238918.r001._.given.by_peer.basic-checker.md
    │  │   │   └─ taken: .reviews/peer/1.feature._.review.i002.bf3993d1d36b238918.r001._.taken.by_self.basic-checker.md
@@ -350,9 +356,8 @@ exports[`driver.route.overrule.acceptance given: [case14] tier escalation: L1 co
       │   └─ $route/1.feature*.md
       ├─ reviews
       │   ├─ r1: basic-checker (l1, 0/5)
-      │   │   ├─ constraint [TIME]
-      │   │   ├─ 0 blockers ✓
-      │   │   ├─ 0 nitpicks ✓
+      │   │   ├─ constraint ✋
+      │   │   ├─ terminal — does not block higher levels
       │   │   ├─ given: .reviews/peer/1.feature._.review.i001.bf3993d1d36b238918.r001._.given.by_peer.basic-checker.md
       │   │   └─ taken: .reviews/peer/1.feature._.review.i001.bf3993d1d36b238918.r001._.taken.by_self.basic-checker.md
       │   └─ r2: premium-checker (l3, 1/5)
@@ -373,7 +378,8 @@ exports[`driver.route.overrule.acceptance given: [case14] tier escalation: L1 co
 🗿 route.stone.set
    ├─ stone = 1.feature
    └─ ✓ overruled
-      └─ level 1, overruled
+      ├─ level 1, overruled
+      └─ judge, ready
 "
 `;
 
@@ -403,9 +409,9 @@ exports[`driver.route.overrule.acceptance given: [case14] tier escalation: L1 co
    │  │   └─ $route/1.feature*.md
    │  ├─ reviews
    │  │   ├─ r1: basic-checker (l1, 0/5)
-   │  │   │   ├─ constraint [TIME]
-   │  │   │   ├─ 0 blockers ✓
-   │  │   │   ├─ 0 nitpicks ✓
+   │  │   │   ├─ constraint ✋
+   │  │   │   ├─ overruled ✓ — forgiven by human
+   │  │   │   ├─ terminal — does not block higher levels
    │  │   │   ├─ given: .reviews/peer/1.feature._.review.i002.bf3993d1d36b238918.r001._.given.by_peer.basic-checker.md
    │  │   │   └─ taken: .reviews/peer/1.feature._.review.i002.bf3993d1d36b238918.r001._.taken.by_self.basic-checker.md
    │  │   └─ r2: premium-checker (l3, 1/5)
@@ -462,17 +468,53 @@ exports[`driver.route.overrule.acceptance given: [case15] leveled overrule: L1 r
    │  ├─ reviews
    │  │   ├─ r1: basic-checker (l1, 1/5)
    │  │   │   ├─ rejected, cached
+   │  │   │   ├─ overruled ✓ — forgiven by human
    │  │   │   ├─ 1 blocker 🔴
    │  │   │   ├─ 0 nitpicks ✓
    │  │   │   ├─ given: .reviews/peer/1.feature._.review.i001.61a1a4cb139b1d868b.r001._.given.by_peer.basic-checker.md
    │  │   │   └─ taken: .reviews/peer/1.feature._.review.i001.61a1a4cb139b1d868b.r001._.taken.by_self.basic-checker.md
    │  │   └─ r2: premium-checker (l3, 1/5)
-   │  │       └─ awaits l1 terminal
+   │  │       ├─ approved [TIME]
+   │  │       ├─ overruled ✓ — forgiven by human
+   │  │       ├─ 0 blockers ✓
+   │  │       ├─ 0 nitpicks ✓
+   │  │       ├─ given: .reviews/peer/1.feature._.review.i002.61a1a4cb139b1d868b.r002._.given.by_peer.premium-checker.md
+   │  │       └─ taken: .reviews/peer/1.feature._.review.i002.61a1a4cb139b1d868b.r002._.taken.by_self.premium-checker.md
    │  └─ judges
    │      └─ j1: rhx route.stone.judge --mechanism reviewed? --stone $stone --route $route --allow-blockers 0
    │          └─ finished [TIME] ✓
    │
    └─ the way continues, run
       └─ rhx route.drive
+"
+`;
+
+exports[`driver.route.overrule.acceptance given: [case16] redundant overrule after every level is terminal → no-op with guidance when: [t0] human runs --as overruled again (no level left to forgive) then: stdout has good vibes 1`] = `
+"🦉 the way speaks for itself
+
+🗿 route.stone.set
+   ├─ stone = 1.plan
+   ├─ ✗ no blocked level to overrule — every review level is already terminal
+   │
+   └─ each peer-review level is approved or already overruled.
+      there is no blocked level left to forgive.
+
+      the stone is ready — run:
+         └─ rhx route.stone.set --stone 1.plan --as passed
+"
+`;
+
+exports[`driver.route.overrule.acceptance given: [case17] overrule an already-clear stone (all merit-approved, no prior overrule) → no-op when: [t0] human runs --as overruled on the already-clear stone then: snapshot 1`] = `
+"🦉 the way speaks for itself
+
+🗿 route.stone.set
+   ├─ stone = 1.plan
+   ├─ ✗ no blocked level to overrule — every review level is already terminal
+   │
+   └─ each peer-review level is approved or already overruled.
+      there is no blocked level left to forgive.
+
+      the stone is ready — run:
+         └─ rhx route.stone.set --stone 1.plan --as passed
 "
 `;

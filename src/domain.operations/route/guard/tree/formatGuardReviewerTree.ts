@@ -26,6 +26,15 @@ const asTakenDetailLine = (pathGiven: string): string | null => {
 const TERMINAL_UNLOCK_NARRATIVE = 'terminal — does not block higher levels';
 
 /**
+ * .what = the one forgiven-marker line an overruled reviewer carries, next to its raw verdict
+ * .why = an overrule is a separate forgiveness flag, not a verdict — the raw verdict stays
+ *        'rejected'/'malfunction'. without this line the reviewer reads like an un-forgiven
+ *        rejection, the exact confusion the overrule-display fix removes. the `✓ overruled`
+ *        glyph matches the overrule confirmation emit (formatRouteStoneEmit).
+ */
+export const OVERRULED_NARRATIVE = 'overruled ✓ — forgiven by human';
+
+/**
  * .what = reviewer state for tree format
  * .why = single shape for both inflight progress and final result contexts
  */
@@ -40,6 +49,14 @@ export interface ReviewerTreeState {
   rounds: number;
   /** budget limit (Infinity for unlimited) */
   budget: number;
+  /**
+   * whether the human waved this reviewer's level through (overrule).
+   * .why = an overrule forgives a level's raw verdict but leaves it intact — an overruled
+   *        reviewer's verdict stays 'rejected'/'malfunction'. this flag adds the one forgiven
+   *        marker line so the tree reads "rejected … but overruled ✓" instead of a bare,
+   *        un-forgiven rejection. matches the `✓ overruled` glyph of the overrule confirmation.
+   */
+  overruled: boolean;
   /** current state */
   state:
     | { type: 'inflight'; durationSec: number }
@@ -97,6 +114,11 @@ export const formatGuardReviewerTree = (input: {
    */
   hideMeter?: boolean;
 }): string[] => {
+  // .note = deliberate local line-builder. this formatter branches per reviewer-state
+  //         (inflight/awaits/queued/malfunction/constraint/finished), each with an early return, and
+  //         the shared detail block is now built purely via formatDetailLines (returned + spread).
+  //         the residual header push is a scoped local mutation the escape hatch in
+  //         rule.require.immutable-vars permits for a line-builder; no array crosses a call boundary.
   const lines: string[] = [];
   const baseIndent = input.baseIndent ?? '';
   const { reviewer, isLast } = input;
@@ -137,13 +159,16 @@ export const formatGuardReviewerTree = (input: {
     // ladder is halted here". same reassurance line as exhausted, for the same invariant. (D5)
     const detailLines = [
       'malfunction 💥',
+      ...(reviewer.overruled ? [OVERRULED_NARRATIVE] : []),
       TERMINAL_UNLOCK_NARRATIVE,
       `given: ${state.path}`,
     ];
     const takenLine = asTakenDetailLine(state.path);
     if (takenLine) detailLines.push(takenLine);
-    emitDetailLines({ lines, baseIndent, indent, detailLines });
-    return lines;
+    return [
+      ...lines,
+      ...formatDetailLines({ baseIndent, indent, detailLines }),
+    ];
   }
 
   if (state.type === 'constraint') {
@@ -153,13 +178,16 @@ export const formatGuardReviewerTree = (input: {
     // whole ladder is halted here". same reassurance line as exhausted, same invariant. (D5)
     const detailLines = [
       'constraint ✋',
+      ...(reviewer.overruled ? [OVERRULED_NARRATIVE] : []),
       TERMINAL_UNLOCK_NARRATIVE,
       `given: ${state.path}`,
     ];
     const takenLine = asTakenDetailLine(state.path);
     if (takenLine) detailLines.push(takenLine);
-    emitDetailLines({ lines, baseIndent, indent, detailLines });
-    return lines;
+    return [
+      ...lines,
+      ...formatDetailLines({ baseIndent, indent, detailLines }),
+    ];
   }
 
   // finished state: approved, rejected, or exhausted
@@ -179,6 +207,11 @@ export const formatGuardReviewerTree = (input: {
         state.durationSec !== null ? ` ${state.durationSec.toFixed(1)}s` : '';
       detailLines.push(`${state.verdict}${verdictGlyph}${dur}`);
     }
+
+    // forgiven marker: the human overruled this level, so its raw verdict (often 'rejected') is
+    // forgiven. the line sits right under the verdict so a reader never mistakes an overruled
+    // level for a live rejection — the exact misread the overrule-display fix removes.
+    if (reviewer.overruled) detailLines.push(OVERRULED_NARRATIVE);
 
     // exhaustion narrative: exhausted is TERMINAL, so it never blocks higher levels — they
     // unlock and run. a driver must never read `exhausted` as "you are blocked here"; this
@@ -224,30 +257,29 @@ export const formatGuardReviewerTree = (input: {
     const takenLine = asTakenDetailLine(state.path);
     if (takenLine) detailLines.push(takenLine);
 
-    // emit detail lines with proper tree characters
-    emitDetailLines({ lines, baseIndent, indent, detailLines });
-
-    return lines;
+    // format detail lines with proper tree characters
+    return [
+      ...lines,
+      ...formatDetailLines({ baseIndent, indent, detailLines }),
+    ];
   }
 
   return lines;
 };
 
 /**
- * .what = appends detail lines under a reviewer header with tree characters
- * .why = shared emit so finished/malfunction/constraint states render identically
+ * .what = formats detail lines under a reviewer header with tree characters
+ * .why = shared formatter so finished/malfunction/constraint states render identically. returns
+ *        the lines (does not mutate a caller's array) so callers compose via spread — no shared
+ *        mutable state across branches (rule.require.immutable-vars).
  */
-const emitDetailLines = (input: {
-  lines: string[];
+const formatDetailLines = (input: {
   baseIndent: string;
   indent: string;
   detailLines: string[];
-}): void => {
-  for (let d = 0; d < input.detailLines.length; d++) {
+}): string[] =>
+  input.detailLines.map((detail, d) => {
     const isDetailLast = d === input.detailLines.length - 1;
     const detailPrefix = isDetailLast ? '└─' : '├─';
-    input.lines.push(
-      `${input.baseIndent}${input.indent} ${detailPrefix} ${input.detailLines[d]}`,
-    );
-  }
-};
+    return `${input.baseIndent}${input.indent} ${detailPrefix} ${detail}`;
+  });

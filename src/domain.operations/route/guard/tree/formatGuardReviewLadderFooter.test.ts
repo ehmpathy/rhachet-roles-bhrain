@@ -6,7 +6,7 @@ import { formatGuardReviewLadderFooter } from './formatGuardReviewLadderFooter';
 describe('formatGuardReviewLadderFooter', () => {
   given('[case1] l1 exhausted (terminal), l3 live — the unlock moment', () => {
     const status: ReviewPeerLadderStatus = {
-      terminalLevels: [{ level: 1, verdict: 'exhausted' }],
+      terminalLevels: [{ level: 1, verdict: 'exhausted', overruled: false }],
       liveLevel: 3,
       allTerminal: false,
       unlockTransition: true,
@@ -63,8 +63,8 @@ describe('formatGuardReviewLadderFooter', () => {
           stone: '5.3.verification',
           status: {
             terminalLevels: [
-              { level: 1, verdict: 'exhausted' },
-              { level: 3, verdict: 'approved' },
+              { level: 1, verdict: 'exhausted', overruled: false },
+              { level: 3, verdict: 'approved', overruled: false },
             ],
             liveLevel: null,
             allTerminal: true,
@@ -102,8 +102,8 @@ describe('formatGuardReviewLadderFooter', () => {
           stone: '1.execute',
           status: {
             terminalLevels: [
-              { level: 1, verdict: 'approved' },
-              { level: 2, verdict: 'exhausted' },
+              { level: 1, verdict: 'approved', overruled: false },
+              { level: 2, verdict: 'exhausted', overruled: false },
             ],
             liveLevel: 3,
             allTerminal: false,
@@ -134,7 +134,9 @@ describe('formatGuardReviewLadderFooter', () => {
             const lines = formatGuardReviewLadderFooter({
               stone: '1.execute',
               status: {
-                terminalLevels: [{ level: 3, verdict: 'approved' }],
+                terminalLevels: [
+                  { level: 3, verdict: 'approved', overruled: false },
+                ],
                 liveLevel: 1,
                 allTerminal: false,
                 unlockTransition: false,
@@ -168,8 +170,8 @@ describe('formatGuardReviewLadderFooter', () => {
                 stone: '1.execute',
                 status: {
                   terminalLevels: [
-                    { level: 1, verdict: 'exhausted' },
-                    { level: 2, verdict: 'malfunction' },
+                    { level: 1, verdict: 'exhausted', overruled: false },
+                    { level: 2, verdict: 'malfunction', overruled: false },
                   ],
                   liveLevel: 3,
                   allTerminal: false,
@@ -184,6 +186,46 @@ describe('formatGuardReviewLadderFooter', () => {
           );
         },
       );
+    },
+  );
+
+  given(
+    '[case7] l1 OVERRULED (terminal), l3 live — the overrule unlock',
+    () => {
+      const status: ReviewPeerLadderStatus = {
+        terminalLevels: [{ level: 1, verdict: 'rejected', overruled: true }],
+        liveLevel: 3,
+        allTerminal: false,
+        unlockTransition: true,
+      };
+
+      when('[t0] rendered', () => {
+        const lines = formatGuardReviewLadderFooter({
+          stone: '5.3.verification',
+          status,
+        });
+        const output = lines.join('\n');
+
+        then(
+          'names l1 terminal as (overruled ✓), NOT its raw rejection',
+          () => {
+            expect(output).toContain(
+              'l1 is terminal (overruled ✓) — it no longer blocks you',
+            );
+            expect(output).not.toContain('rejected');
+          },
+        );
+
+        then('still points the driver at the live l3 gate', () => {
+          expect(output).toContain(
+            'l3 has engaged — address its blockers, then:',
+          );
+        });
+
+        then('matches snapshot', () => {
+          expect(lines).toMatchSnapshot();
+        });
+      });
     },
   );
 });

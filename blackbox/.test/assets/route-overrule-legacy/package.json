@@ -1,0 +1,8 @@
+{
+  "name": "route-overrule-legacy-fixture",
+  "private": true,
+  "description": "fixture for acceptance tests - exercises the legacy stone-wide overrule path",
+  "dependencies": {
+    "rhachet-roles-bhrain": "link:."
+  }
+}

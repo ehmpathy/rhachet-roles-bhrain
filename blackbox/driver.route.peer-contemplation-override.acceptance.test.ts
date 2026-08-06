@@ -57,6 +57,12 @@ describe('driver.route.peer-contemplation-override.acceptance', () => {
         expect(result.stdout).not.toContain('the reviewers await your reply');
       });
 
+      then('the overrule indicator is shown (explicit, not snapshot-only)', () => {
+        // .why = pin the overrule-confirmation indicator with a hard assertion so
+        //        the coverage cannot silently drift out of the snapshot alone
+        expect(result.stdout).toContain('level 1, overruled');
+      });
+
       then('stdout matches snapshot', () => {
         expect(sanitizeTimeForSnapshot(result.stdout)).toMatchSnapshot();
       });
@@ -77,6 +83,22 @@ describe('driver.route.peer-contemplation-override.acceptance', () => {
 
       then('no contemplation reply-prompt is shown', () => {
         expect(result.stdout).not.toContain('the reviewers await your reply');
+      });
+
+      then('the force grants approval (explicit, not snapshot-only)', () => {
+        // .why = the force bypasses the contemplation gate AND grants approval on
+        //        this single, judge-clear level. it does NOT mint a false overrule
+        //        marker — l1 sits within the judge's 1-blocker budget, so the
+        //        false-provenance fix (force.multilevel case2) applies. pin the
+        //        approval grant explicitly so the intent survives beyond the snapshot.
+        expect(result.stdout).toContain('approved  = ✓');
+      });
+
+      then('the force does NOT mint a false overrule on the judge-clear level', () => {
+        // .why = l1 is merit-clear at the judge (1 blocker ≤ budget 1); a force must
+        //        not persist a bogus "forgiven by human" marker on a level that was
+        //        never judge-blocked — the same guarantee force.multilevel case2 clamps
+        expect(result.stdout).not.toContain('overruled = ✓ (level 1)');
       });
 
       then('stdout matches snapshot', () => {

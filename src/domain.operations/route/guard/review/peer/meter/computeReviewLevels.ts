@@ -1,4 +1,5 @@
 import type { ReviewPeerVerdict } from './computeReviewPeerVerdict';
+import { getStoneGuardLevelClearance } from './getStoneGuardLevelClearance';
 
 /**
  * .what = lists the distinct review levels present, sorted low-to-high
@@ -8,25 +9,6 @@ const getDistinctLevels = (reviewers: Array<{ level: number }>): number[] => {
   const levels = new Set<number>();
   for (const reviewer of reviewers) levels.add(reviewer.level);
   return [...levels].sort((a, b) => a - b);
-};
-
-/**
- * .what = checks if a level is clear for passage (every reviewer approved)
- * .why = the active level (what overrule targets) is the lowest level that
- *        still blocks final passage — a stricter notion than
- *        isReviewPeerLevelTerminal (which gates tier escalation).
- *
- * .note = malfunction, constraint, rejected, exhausted, queued all BLOCK
- *         passage even though malfunction/constraint are terminal for
- *         escalation. only an approved verdict clears a level for passage.
- */
-const isReviewLevelClearForPassage = (input: {
-  reviewers: Array<{ level: number; verdict: ReviewPeerVerdict }>;
-  level: number;
-}): boolean => {
-  const atLevel = input.reviewers.filter((r) => r.level === input.level);
-  if (atLevel.length === 0) return true; // empty level = no blocker
-  return atLevel.every((r) => r.verdict === 'approved');
 };
 
 /**
@@ -60,16 +42,13 @@ export const computeReviewActiveLevel = (input: {
   reviewers: Array<{ level: number; verdict: ReviewPeerVerdict }>;
   overruledLevels: Set<number>;
 }): number | null => {
-  const levels = getDistinctLevels(input.reviewers);
-
-  // find the lowest level that still blocks passage and is not overruled
-  for (const level of levels) {
-    if (input.overruledLevels.has(level)) continue;
-    if (isReviewLevelClearForPassage({ reviewers: input.reviewers, level }))
-      continue;
-    return level;
-  }
-
-  // no level blocks passage
-  return null;
+  // read per-level passage-clearance from the single-source primitive; its
+  // clearForPassage folds in the overrule (overruled || every reviewer approved),
+  // so the lowest level that is NOT clear-for-passage is the active level.
+  const clearance = getStoneGuardLevelClearance({
+    reviewers: input.reviewers,
+    overruledLevels: input.overruledLevels,
+  });
+  const firstHeld = clearance.find((c) => !c.clearForPassage);
+  return firstHeld?.level ?? null;
 };

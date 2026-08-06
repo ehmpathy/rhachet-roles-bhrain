@@ -6,6 +6,7 @@ import type { RouteStone } from '@src/domain.objects/Driver/RouteStone';
 import { RouteStoneGuardJudgeArtifact } from '@src/domain.objects/Driver/RouteStoneGuardJudgeArtifact';
 import { RouteStoneGuardReviewArtifact } from '@src/domain.objects/Driver/RouteStoneGuardReviewArtifact';
 
+import { asExitCodeFromArtifactContent } from '../asExitCodeFromArtifactContent';
 import { getDurationMsFromContent } from '../getDurationMsFromContent';
 import { getExitCodeClass } from '../getExitCodeClass';
 import { enumRouteGuardJudgeFiles } from '../judge/enumRouteGuardJudgeFiles';
@@ -153,8 +154,7 @@ const parseReviewMetadata = (
   const durationMs = getDurationMsFromContent({ content });
 
   // parse exit code from tree bucket format
-  const exitCodeMatch = content.match(/exit code:\s*(\d+)/);
-  const exitCode = exitCodeMatch?.[1] ? parseInt(exitCodeMatch[1], 10) : 0;
+  const exitCode = asExitCodeFromArtifactContent({ content });
   const exitClass = getExitCodeClass({ code: exitCode });
 
   // extract stdout/stderr from tree buckets
@@ -232,8 +232,7 @@ const parseJudgeMetadata = (
   const reason = reasonMatch?.[1] ? reasonMatch[1].trim() : null;
 
   // parse exit code from tree bucket format
-  const exitCodeMatch = content.match(/exit code:\s*(\d+)/);
-  const exitCode = exitCodeMatch?.[1] ? parseInt(exitCodeMatch[1], 10) : 0;
+  const exitCode = asExitCodeFromArtifactContent({ content });
   const exitClass = getExitCodeClass({ code: exitCode });
 
   // extract stdout/stderr from tree buckets

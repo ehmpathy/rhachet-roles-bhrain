@@ -112,11 +112,8 @@ export const genContextCliEmit = (input: {
     if (!event.inflight) {
       clearActive();
       completedCount++;
-      const judge = event.outcome?.judge;
-      const allowed =
-        !judge || ('decision' in judge && judge.decision === 'allowed');
-      const mark = allowed ? '✓' : '✗';
-      const status = allowed ? 'allowed' : 'blocked';
+      const judge = event.outcome?.judge ?? null;
+      const { mark, status } = asJudgeLiveMarkStatus(judge);
       // blank line before judge for visual separation (match completed judge)
       seal('   │');
       seal(`   ${branch} ${mark} ${label} - ${status} (cached)`);
@@ -144,11 +141,7 @@ export const genContextCliEmit = (input: {
       clearActive();
       const dur = computeDurationSec(event);
       completedCount++;
-      const judge = event.outcome.judge;
-      const allowed =
-        judge && 'decision' in judge && judge.decision === 'allowed';
-      const mark = allowed ? '✓' : '✗';
-      const status = allowed ? 'allowed' : 'blocked';
+      const { mark, status } = asJudgeLiveMarkStatus(event.outcome.judge);
 
       // blank line before judge for visual separation
       seal('   │');
@@ -328,6 +321,26 @@ export const genContextCliEmit = (input: {
 };
 
 /**
+ * .what = maps a judge outcome to its live-tree mark + status word
+ * .why = a malfunctioned judge must read as `💥 malfunction`, never `✗ blocked` — the
+ *        peer side already softens a broken reviewer this way (asReviewerTreeState), and a
+ *        bare "blocked" on a forgiven judge contradicts the persisted tree's
+ *        `overruled ✓ — forgiven by human`. shared by the cached + completed branches so
+ *        both read alike (rule.forbid.duplicate-format-tree-operations).
+ * .note = the live event never carries the overrule (a human action on a halted stone), so
+ *         it renders the factual verdict only; the persisted tree renders the forgiveness.
+ */
+const asJudgeLiveMarkStatus = (
+  judge: NonNullable<GuardProgressEvent['outcome']>['judge'],
+): { mark: string; status: string } => {
+  if (judge && 'malfunction' in judge)
+    return { mark: '💥', status: 'malfunction' };
+  const allowed =
+    !judge || ('decision' in judge && judge.decision === 'allowed');
+  return { mark: allowed ? '✓' : '✗', status: allowed ? 'allowed' : 'blocked' };
+};
+
+/**
  * .what = computes duration in seconds from a completed progress event
  * .why = derives display duration from event timestamps
  */
@@ -357,6 +370,9 @@ const asReviewerTreeState = (
       level: reviewer.level,
       rounds: reviewer.rounds,
       budget: reviewer.budget,
+      // live-progress events never carry an overrule (a human action on a halted stone),
+      // so the inflight tree is always un-forgiven — the persisted tree renders the overrule
+      overruled: false,
       state: {
         type: 'malfunction',
         path: path ?? '',
@@ -372,6 +388,9 @@ const asReviewerTreeState = (
       level: reviewer.level,
       rounds: reviewer.rounds,
       budget: reviewer.budget,
+      // live-progress events never carry an overrule (a human action on a halted stone),
+      // so the inflight tree is always un-forgiven — the persisted tree renders the overrule
+      overruled: false,
       state: {
         type: 'constraint',
         path: path ?? '',
@@ -387,6 +406,9 @@ const asReviewerTreeState = (
       level: reviewer.level,
       rounds: reviewer.rounds,
       budget: reviewer.budget,
+      // live-progress events never carry an overrule (a human action on a halted stone),
+      // so the inflight tree is always un-forgiven — the persisted tree renders the overrule
+      overruled: false,
       state: {
         type: 'finished',
         verdict: 'exhausted',
@@ -408,6 +430,9 @@ const asReviewerTreeState = (
       level: reviewer.level,
       rounds: reviewer.rounds,
       budget: reviewer.budget,
+      // live-progress events never carry an overrule (a human action on a halted stone),
+      // so the inflight tree is always un-forgiven — the persisted tree renders the overrule
+      overruled: false,
       state: { type: 'queued' },
     };
   }
@@ -439,6 +464,9 @@ const asReviewerTreeState = (
       level: reviewer.level,
       rounds: reviewer.rounds,
       budget: reviewer.budget,
+      // live-progress events never carry an overrule (a human action on a halted stone),
+      // so the inflight tree is always un-forgiven — the persisted tree renders the overrule
+      overruled: false,
       state: {
         type: 'finished',
         verdict,
@@ -459,6 +487,8 @@ const asReviewerTreeState = (
     level: reviewer.level,
     rounds: reviewer.rounds,
     budget: reviewer.budget,
+    // live-progress events never carry an overrule (a human action on a halted stone)
+    overruled: false,
     state: {
       type: 'finished',
       verdict: 'approved',

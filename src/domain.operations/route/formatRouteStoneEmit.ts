@@ -1,5 +1,6 @@
 import type { RouteStoneGuardReviewSelf } from '@src/domain.objects/Driver/RouteStoneGuard';
 
+import { asRungLabel } from './guard/review/peer/meter/asRungLabel';
 import { getReviewPeerLadderStatus } from './guard/review/peer/meter/getReviewPeerLadderStatus';
 import { getSelfReviewArticulationPath } from './guard/review/self/getSelfReviewArticulationPath';
 import { formatGuardReviewLadderFooter } from './guard/tree/formatGuardReviewLadderFooter';
@@ -48,8 +49,8 @@ type FormatInput =
       operation: 'route.stone.set';
       stone: string;
       action: 'overruled';
-      /** the review level scoped to (absent for legacy stone-wide overrule) */
-      level?: number;
+      /** the rung scoped to — a peer level, or JUDGE_LEVEL for the judge rung */
+      level: number;
       /** the level that becomes ready once this level is overruled (if any) */
       readyLevel?: number | null;
     }
@@ -181,6 +182,12 @@ export const formatRouteStoneEmit = (input: FormatInput): string => {
 
   const header =
     input.operation === 'route.stone.get' ? HEADER_GET : HEADER_SET;
+  // .note = deliberate local line-builder. this emit fans out across ~15 heterogeneous branches
+  //         (each operation/action/passage shape appends its own lines, several via nested forEach
+  //         with early returns). a functional pipeline over such heterogeneous branches would be
+  //         less legible and risk drift in the human-visible snapshots, so the mutation is kept but
+  //         confined to this one function scope — the escape hatch rule.require.immutable-vars
+  //         permits for a scoped line-builder.
   const lines: string[] = [header, ''];
 
   if (input.operation === 'route.stone.get') {
@@ -371,18 +378,19 @@ export const formatRouteStoneEmit = (input: FormatInput): string => {
     } else if (input.action === 'overruled') {
       lines.push(`   ├─ stone = ${input.stone}`);
       lines.push(`   └─ ✓ overruled`);
-      // name the level scoped to, so the human sees what was waved through;
-      // and the level that becomes ready to run as a result (if any)
-      if (input.level !== undefined) {
-        const hasReady =
-          input.readyLevel !== undefined && input.readyLevel !== null;
-        const overruledConnector = hasReady ? '├─' : '└─';
-        lines.push(
-          `      ${overruledConnector} level ${input.level}, overruled`,
-        );
-        if (hasReady) {
-          lines.push(`      └─ level ${input.readyLevel}, ready`);
-        }
+      // name the rung scoped to, so the human sees what was waved through;
+      // and the level that becomes ready to run as a result (if any). the judge is the top
+      // rung (JUDGE_LEVEL) — asRungLabel renders it as "judge" rather than its sentinel number,
+      // for BOTH the overruled rung and the ready rung (a ready judge must read "judge, ready",
+      // never its raw sentinel — the two labels stay in lockstep via one transformer).
+      const hasReady =
+        input.readyLevel !== undefined && input.readyLevel !== null;
+      const overruledConnector = hasReady ? '├─' : '└─';
+      lines.push(
+        `      ${overruledConnector} ${asRungLabel(input.level)}, overruled`,
+      );
+      if (hasReady) {
+        lines.push(`      └─ ${asRungLabel(input.readyLevel!)}, ready`);
       }
     } else if (input.action === 'forced') {
       lines.push(`   ├─ stone = ${input.stone}`);
@@ -512,6 +520,8 @@ const formatDel = (input: {
   countDelete: number;
   countRetain: number;
 }): string => {
+  // .note = deliberate local line-builder, confined to this scope (see formatRouteStoneEmit) —
+  //         the escape hatch rule.require.immutable-vars permits for a scoped emit builder.
   const lines: string[] = [HEADER_DEL, ''];
 
   // operation line
@@ -580,6 +590,8 @@ const formatAdd = (input: {
   content: string;
   path: string;
 }): string => {
+  // .note = deliberate local line-builder, confined to this scope (see formatRouteStoneEmit) —
+  //         the escape hatch rule.require.immutable-vars permits for a scoped emit builder.
   const lines: string[] = [HEADER_ADD, ''];
 
   // operation line

@@ -1,0 +1,69 @@
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
+
+exports[`driver.route.overrule-legacy.acceptance given: [case1] a judges-only stone (one-rung ladder), reviewed? judge blocks when: [t0] human runs --as overruled on the judges-only stone then: stdout has good vibes 1`] = `
+"🦉 the way speaks for itself
+
+🗿 route.stone.set
+   ├─ stone = 1.check
+   └─ ✓ overruled
+      └─ judge, overruled
+"
+`;
+
+exports[`driver.route.overrule-legacy.acceptance given: [case1] a judges-only stone (one-rung ladder), reviewed? judge blocks when: [t1] pass attempted after the judge-rung overrule then: stdout has good vibes 1`] = `
+"🦉 the way speaks for itself
+   │
+   └─ ✓ judge.1 - allowed [TIME]
+
+🗿 route.stone.set
+   ├─ stone = 1.check
+   ├─ passage = overruled
+   ├─ guard
+   │  ├─ artifacts
+   │  │   └─ $route/1.check*.md
+   │  └─ judges
+   │      └─ j1: rhx route.stone.judge --mechanism reviewed? --stone $stone --route $route --allow-blockers 0 --allow-nitpicks 0
+   │          └─ finished [TIME] ✓
+   │
+   └─ the way continues, run
+      └─ rhx route.drive
+"
+`;
+
+exports[`driver.route.overrule-legacy.acceptance given: [case2] a peer+judge stone with a legacy level-less record still blocks a peer that rejects when: [t0] pass attempted (l1 rejects; legacy record forgives the judge rung only) then: stdout has good vibes 1`] = `
+"🦉 the way speaks for itself
+   │
+   ├─ r1: basic-checker (l1, 1/5)
+   │   ├─ rejected [TIME]
+   │   ├─ 1 blocker 🔴
+   │   ├─ 0 nitpicks ✓
+   │   ├─ given: .reviews/peer/1.feature._.review.i001.cf6439cc5e3e49b582.r001._.given.by_peer.basic-checker.md
+   │   └─ taken: .reviews/peer/1.feature._.review.i001.cf6439cc5e3e49b582.r001._.taken.by_self.basic-checker.md
+   │
+   ├─ r2: premium-checker (l3, 0/5)
+   │   └─ awaits arrival
+   │
+   └─ ✗ judge.1 - blocked [TIME]
+
+🗿 route.stone.set
+   ├─ stone = 1.feature
+   ├─ passage = blocked
+   ├─ reason = blockers exceed threshold (1 > 0)
+   └─ guard
+      ├─ artifacts
+      │   └─ $route/1.feature*.md
+      ├─ reviews
+      │   ├─ r1: basic-checker (l1, 1/5)
+      │   │   ├─ rejected [TIME]
+      │   │   ├─ 1 blocker 🔴
+      │   │   ├─ 0 nitpicks ✓
+      │   │   ├─ given: .reviews/peer/1.feature._.review.i001.cf6439cc5e3e49b582.r001._.given.by_peer.basic-checker.md
+      │   │   └─ taken: .reviews/peer/1.feature._.review.i001.cf6439cc5e3e49b582.r001._.taken.by_self.basic-checker.md
+      │   └─ r2: premium-checker (l3, 0/5)
+      │       └─ awaits l1 terminal
+      └─ judges
+          └─ j1: rhx route.stone.judge --mechanism reviewed? --stone $stone --route $route --allow-blockers 0
+              ├─ finished [TIME] ✗
+              └─ reason: blockers exceed threshold (1 > 0)
+"
+`;

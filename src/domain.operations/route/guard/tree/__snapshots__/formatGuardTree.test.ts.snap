@@ -336,9 +336,8 @@ exports[`formatGuardTree given: [case18] constraint passage — offers overrule 
       │   └─ 1.feature.md
       └─ reviews
           └─ r1: basic-checker (l1, 1/∞)
-              ├─ constraint 0.0s
-              ├─ 0 blockers ✓
-              ├─ 0 nitpicks ✓
+              ├─ constraint ✋
+              ├─ terminal — does not block higher levels
               └─ given: .route/1.feature.guard.review.i1.abc123.r1.md"
 `;
 

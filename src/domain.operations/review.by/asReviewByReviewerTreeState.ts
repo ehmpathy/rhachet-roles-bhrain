@@ -26,6 +26,9 @@ export const asReviewByReviewerTreeState = (input: {
     index: input.index,
     slug: input.slug,
     ...meterPlaceholder,
+    // a review.by row is a flat per-role review, never a route-ladder level, so it is
+    // never overrule-scoped — an overrule forgives a route peer level, which review.by has none of
+    overruled: false,
   };
 
   // a malfunction renders the shared malfunction row (💥 + given path), never a fake 0/0

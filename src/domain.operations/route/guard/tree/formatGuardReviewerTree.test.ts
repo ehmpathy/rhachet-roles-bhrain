@@ -15,6 +15,7 @@ describe('formatGuardReviewerTree', () => {
       level: 1,
       rounds: 1,
       budget: Infinity,
+      overruled: false,
       state: {
         type: 'finished',
         verdict: 'approved',
@@ -49,6 +50,7 @@ describe('formatGuardReviewerTree', () => {
       level: 1,
       rounds: 1,
       budget: Infinity,
+      overruled: false,
       state: {
         type: 'finished',
         verdict: 'approved',
@@ -76,6 +78,7 @@ describe('formatGuardReviewerTree', () => {
       level: 1,
       rounds: 1,
       budget: Infinity,
+      overruled: false,
       state: {
         type: 'finished',
         verdict: 'rejected',
@@ -103,6 +106,7 @@ describe('formatGuardReviewerTree', () => {
       level: 1,
       rounds: 2,
       budget: 2,
+      overruled: false,
       state: {
         type: 'finished',
         verdict: 'exhausted',
@@ -130,6 +134,7 @@ describe('formatGuardReviewerTree', () => {
       level: 1,
       rounds: 0,
       budget: Infinity,
+      overruled: false,
       state: {
         type: 'inflight',
         durationSec: 4.2,
@@ -151,6 +156,7 @@ describe('formatGuardReviewerTree', () => {
       level: 2,
       rounds: 0,
       budget: 1,
+      overruled: false,
       state: {
         type: 'awaits',
         level: 1,
@@ -172,6 +178,7 @@ describe('formatGuardReviewerTree', () => {
       level: 1,
       rounds: 0,
       budget: Infinity,
+      overruled: false,
       state: {
         type: 'queued',
       },
@@ -192,6 +199,7 @@ describe('formatGuardReviewerTree', () => {
       level: 1,
       rounds: 1,
       budget: Infinity,
+      overruled: false,
       state: {
         type: 'finished',
         verdict: 'approved',
@@ -219,6 +227,7 @@ describe('formatGuardReviewerTree', () => {
       level: 1,
       rounds: 0,
       budget: Infinity,
+      overruled: false,
       state: {
         type: 'malfunction',
         path: '.route/5.1.execution.guard.review.i1.abc123.r1.md',
@@ -251,6 +260,7 @@ describe('formatGuardReviewerTree', () => {
       level: 1,
       rounds: 0,
       budget: Infinity,
+      overruled: false,
       state: {
         type: 'constraint',
         path: '.route/5.1.execution.guard.review.i1.abc123.r1.md',
@@ -283,6 +293,7 @@ describe('formatGuardReviewerTree', () => {
       level: 1,
       rounds: 1,
       budget: 3,
+      overruled: false,
       state: {
         type: 'finished',
         verdict: 'rejected',
@@ -313,6 +324,7 @@ describe('formatGuardReviewerTree', () => {
       level: 1,
       rounds: 1,
       budget: 3,
+      overruled: false,
       state: {
         type: 'finished',
         verdict: 'rejected',
@@ -350,6 +362,7 @@ describe('formatGuardReviewerTree', () => {
       level: 1,
       rounds: 1,
       budget: Infinity,
+      overruled: false,
       state: {
         type: 'finished',
         verdict: 'approved',
@@ -386,6 +399,7 @@ describe('formatGuardReviewerTree', () => {
         level: 1,
         rounds: 0,
         budget: 3,
+        overruled: false,
         state: {
           type: 'malfunction',
           path: pathGiven,
@@ -414,6 +428,7 @@ describe('formatGuardReviewerTree', () => {
       level: 1,
       rounds: 1,
       budget: Infinity,
+      overruled: false,
       state: {
         type: 'finished',
         verdict: 'approved',
@@ -448,6 +463,7 @@ describe('formatGuardReviewerTree', () => {
       level: 1,
       rounds: 1,
       budget: Infinity,
+      overruled: false,
       state: {
         type: 'finished',
         verdict: 'approved',
@@ -497,6 +513,7 @@ describe('formatGuardReviewerTree', () => {
       level: 1,
       rounds: 1,
       budget: Infinity,
+      overruled: false,
       state: {
         type: 'finished',
         verdict: 'approved',
@@ -530,6 +547,7 @@ describe('formatGuardReviewerTree', () => {
               level: 1,
               rounds: 1,
               budget: Infinity,
+              overruled: false,
               state: {
                 type: 'finished',
                 verdict: 'approved',
@@ -553,6 +571,51 @@ describe('formatGuardReviewerTree', () => {
             );
           },
         );
+      });
+    },
+  );
+
+  given(
+    '[case16] an OVERRULED reviewer whose raw verdict is still rejected',
+    () => {
+      const reviewer: ReviewerTreeState = {
+        index: 1,
+        slug: 'peer/basic-checker',
+        level: 1,
+        rounds: 1,
+        budget: 3,
+        overruled: true,
+        state: {
+          type: 'finished',
+          verdict: 'rejected',
+          durationSec: 4.1,
+          blockers: 3,
+          nitpicks: 0,
+          path: '.route/1.plan.guard.review.i1.abc123.r1.md',
+          cached: false,
+          tallier: 'deterministic',
+        },
+      };
+
+      when('[t0] formatted', () => {
+        const lines = formatGuardReviewerTree({ reviewer, isLast: true });
+        const output = lines.join('\n');
+
+        then('shows the raw rejected verdict AND the forgiven marker', () => {
+          expect(output).toContain('rejected');
+          expect(output).toContain('overruled ✓ — forgiven by human');
+        });
+
+        then(
+          'still shows the blocker count (forgiveness is not erasure)',
+          () => {
+            expect(output).toContain('3 blockers 🔴');
+          },
+        );
+
+        then('matches snapshot', () => {
+          expect(lines).toMatchSnapshot();
+        });
       });
     },
   );

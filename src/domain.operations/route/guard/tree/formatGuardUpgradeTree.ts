@@ -77,6 +77,8 @@ const renderGuardNode = (input: {
       : [];
   const hasDiff = diffBody.length > 0;
 
+  // .note = deliberate local line-builder, scoped to this formatter — the escape hatch in
+  //         rule.require.immutable-vars permits a scoped emit builder; no array crosses a boundary.
   const childLines: string[] = [];
 
   // simple children: each is the last child only when no diff bucket follows

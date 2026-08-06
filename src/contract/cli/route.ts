@@ -17,16 +17,16 @@ import {
 } from '@src/domain.operations/route/genReviewBrainSupply';
 import { genContextCliEmit } from '@src/domain.operations/route/guard/genContextCliEmit';
 import { getRepoRootWithFallback } from '@src/domain.operations/route/guard/getRepoRootWithFallback';
+import { getStoneGuardExhaustedApprovalBypass } from '@src/domain.operations/route/guard/judge/getStoneGuardExhaustedApprovalBypass';
 import { computeReviewThresholdVerdict } from '@src/domain.operations/route/guard/review/computeReviewThresholdVerdict';
 import { computeReviewTotalsFromFiles } from '@src/domain.operations/route/guard/review/computeReviewTotalsFromFiles';
 import { computeStoneReviewInputHash } from '@src/domain.operations/route/guard/review/computeStoneReviewInputHash';
 import { enumRouteGuardReviewPeerFiles } from '@src/domain.operations/route/guard/review/peer/enumRouteGuardReviewPeerFiles';
 import { getLatestReviewFilesPerIndex } from '@src/domain.operations/route/guard/review/peer/getLatestReviewFilesPerIndex';
-import { getAllReviewPeerMeterStatuses } from '@src/domain.operations/route/guard/review/peer/meter/getAllReviewPeerMeterStatuses';
-import {
-  isReviewPeerVerdictExhausted,
-  isReviewPeerVerdictTerminal,
-} from '@src/domain.operations/route/guard/review/peer/meter/isReviewPeerLevelTerminal';
+import { getNonOverruledReviewFiles } from '@src/domain.operations/route/guard/review/peer/getNonOverruledReviewFiles';
+import { getStoneGuardLevelClearance } from '@src/domain.operations/route/guard/review/peer/meter/getStoneGuardLevelClearance';
+import { getUnrunUnlockedLevels } from '@src/domain.operations/route/guard/review/peer/meter/getUnrunUnlockedLevels';
+import { JUDGE_LEVEL } from '@src/domain.operations/route/guard/review/peer/meter/JUDGE_LEVEL';
 import { formatGuardUpgradeTree } from '@src/domain.operations/route/guard/tree/formatGuardUpgradeTree';
 import { setRouteGuardsFromProvenance } from '@src/domain.operations/route/guard/upgrade/setRouteGuardsFromProvenance';
 import { getOneStoneGuardApproval } from '@src/domain.operations/route/judges/getOneStoneGuardApproval';
@@ -1272,19 +1272,19 @@ const judgeReviewed = async (input: {
   // load human overrules, scoped per review level
   // .why = overrule is level-scoped: an overrule at level N forgives only the
   //        reviewers at level N, so higher levels still gate passage
-  const { levels: overruledLevels, all: overruledAll } =
-    await getStoneGuardOverruledLevels({
-      stone: stoneMatched,
-      route: input.route,
-    });
+  const overruledLevels = await getStoneGuardOverruledLevels({
+    stone: stoneMatched,
+    route: input.route,
+  });
 
-  // a legacy (level-less) overrule bypasses all review checks
-  // .note = preserves pre-level-scope behavior for stones overruled stone-wide
-  if (overruledAll) {
-    console.log('passed: true');
-    console.log('reason: human overruled');
-    return;
-  }
+  // .note = a judge-rung overrule (JUDGE_LEVEL) forgives this reviewed? judge ONLY when there are
+  //         no peer review files to tally (a judges-only stone, or a stone with no peer reviews) —
+  //         that check lives inside the `reviewFiles.length === 0` branch below. it is NOT applied
+  //         when peer review files DO exist: a real peer-blocker breach must still block, because a
+  //         judge-rung overrule (placed to forgive a broken co-judge) is not a key past real peer
+  //         blockers — the exact skeleton-key defect this behavior exists to close, one tier up
+  //         (define.review.human-forgiveness.md). peer blockers are forgiven at the peer level, the
+  //         judge rung forgives only the judge.
 
   // compute artifact hash to find reviews for current content
   const hash = await computeStoneReviewInputHash({
@@ -1300,32 +1300,29 @@ const judgeReviewed = async (input: {
   });
 
   if (reviewFiles.length === 0) {
-    // check if all peer reviewers are exhausted with human approval
-    const peerStatuses = await getAllReviewPeerMeterStatuses({
+    // if every level is terminal with an exhausted reviewer and a human approved, pass
+    const { bypass } = await getStoneGuardExhaustedApprovalBypass({
       stone: stoneMatched,
       hash,
       route: input.route,
+      overruledLevels,
     });
+    if (bypass) {
+      console.log('passed: true');
+      console.log('reason: human approval overrides exhausted reviewers');
+      return;
+    }
 
-    // check if all are in terminal state (exhausted or approved) with at least one exhausted
-    const allTerminal =
-      peerStatuses.length > 0 &&
-      peerStatuses.every((s) => isReviewPeerVerdictTerminal(s.verdict));
-    const anyExhausted = peerStatuses.some((s) =>
-      isReviewPeerVerdictExhausted(s.verdict),
-    );
-
-    // if all exhausted/approved and at least one exhausted, check for human approval
-    if (allTerminal && anyExhausted) {
-      const approval = await getOneStoneGuardApproval({
-        stone: stoneMatched,
-        route: input.route,
-      });
-      if (approval) {
-        console.log('passed: true');
-        console.log('reason: human approval overrides exhausted reviewers');
-        return;
-      }
+    // the judge is the top rung: a human overrule of JUDGE_LEVEL forgives the judge itself.
+    // .why = with no peer review files there are NO peer blockers to mask, so to forgive the judge
+    //        rung here is safe — it clears exactly this reviewed? judge (a judges-only one-rung
+    //        ladder, or a stone whose reviewed? blocks on absent reviews), never a peer level (there
+    //        are none). the real-peer-blocker path lives past this branch and is untouched, so a
+    //        judge-rung overrule can never key past real peer blockers (see .note above).
+    if (overruledLevels.has(JUDGE_LEVEL)) {
+      console.log('passed: true');
+      console.log('reason: human overruled the judge rung');
+      return;
     }
 
     console.log('passed: false');
@@ -1336,30 +1333,49 @@ const judgeReviewed = async (input: {
   // get latest review per index (later iterations supersede earlier)
   const latestReviewFiles = getLatestReviewFilesPerIndex({ reviewFiles });
 
-  // check for exhausted reviewers with human approval override
+  // check for exhausted reviewers with human approval override (single-sourced op)
   // .why = per wish: "once they approve for either, they approve for both"
   //        if reviewer is exhausted AND stone is approved, bypass blocker check
-  const peerStatuses = await getAllReviewPeerMeterStatuses({
+  const { peerStatuses, bypass } = await getStoneGuardExhaustedApprovalBypass({
     stone: stoneMatched,
     hash,
     route: input.route,
+    overruledLevels,
   });
-  const allTerminal =
-    peerStatuses.length > 0 &&
-    peerStatuses.every((s) => isReviewPeerVerdictTerminal(s.verdict));
-  const anyExhausted = peerStatuses.some((s) =>
-    isReviewPeerVerdictExhausted(s.verdict),
-  );
-  if (allTerminal && anyExhausted) {
-    const approval = await getOneStoneGuardApproval({
-      stone: stoneMatched,
-      route: input.route,
-    });
-    if (approval) {
-      console.log('passed: true');
-      console.log('reason: human approval overrides exhausted reviewers');
-      return;
-    }
+  if (bypass) {
+    console.log('passed: true');
+    console.log('reason: human approval overrides exhausted reviewers');
+    return;
+  }
+
+  // close the ready-higher-level hole: block if a level is UNLOCKED (every lower level is
+  // clear-for-unlock — e.g. a lower level was overruled) yet still has an unrun (queued)
+  // reviewer. a queued reviewer produces no review file, so the file tally below cannot see it —
+  // exactly what let an unlocked-but-unrun higher level slip past this judge when invoked on its
+  // own (define.invariant.review.peer.passage: pass ⟺ every peer guard terminal).
+  // .why unlocked-only = a level queued BEHIND a still-live lower level is normal ladder order,
+  //      not the hole — that lower level's own review file already blocks the tally, and its
+  //      rejection is the true reason (so C4's "l1 blocks" must not be masked as "l3 queued").
+  // .why not the tally = the file tally keeps the pass/fail decision; its SUM-of-blockers
+  //      semantics differ from a per-reviewer check for allow>0 guards, so this only detects the
+  //      unrun gap. this judge IS the guard's `reviewed?` command (runStoneGuardJudges shells out to
+  //      `rhx route.stone.judge`), so the check is real defense-in-depth on EVERY path — not dead
+  //      code: the normal --as passed flow runs every unlocked level first (so it rarely fires
+  //      there), and the standalone `route.stone.judge` path relies on it. do NOT delete it.
+  const levelClearance = getStoneGuardLevelClearance({
+    reviewers: peerStatuses.map((s) => ({
+      level: s.level,
+      verdict: s.verdict,
+    })),
+    overruledLevels,
+  });
+  const unrunUnlockedLevels = getUnrunUnlockedLevels({ levelClearance });
+  if (unrunUnlockedLevels.length > 0) {
+    console.log('passed: false');
+    console.log(
+      `reason: review level ${unrunUnlockedLevels.join(', ')} not yet run (still queued) — run \`rhx route.stone.set --stone ${stoneMatched.name} --as arrived\` to run it`,
+    );
+    process.exit(2);
   }
 
   // forgive reviews at overruled levels: their blockers do not gate passage
@@ -1367,15 +1383,10 @@ const judgeReviewed = async (input: {
   const peerReviews = stoneMatched.guard
     ? getGuardPeerReviews(stoneMatched.guard)
     : [];
-  const levelByReviewIndex = new Map<number, number>();
-  peerReviews.forEach((review, i) =>
-    levelByReviewIndex.set(i + 1, review.level ?? 1),
-  );
-  const reviewFilesToCount = latestReviewFiles.filter((filePath) => {
-    const indexMatch = path.basename(filePath).match(/\.r(\d+)\./);
-    const reviewIndex = indexMatch?.[1] ? parseInt(indexMatch[1], 10) : 0;
-    const reviewLevel = levelByReviewIndex.get(reviewIndex) ?? 1;
-    return !overruledLevels.has(reviewLevel);
+  const reviewFilesToCount = getNonOverruledReviewFiles({
+    reviewFiles: latestReviewFiles,
+    peerReviews,
+    overruledLevels,
   });
 
   // compute total blockers and nitpicks from non-overruled reviews

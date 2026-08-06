@@ -1,0 +1,5 @@
+artifacts:
+  - $route/1.check*.md
+
+judges:
+  - rhx route.stone.judge --mechanism reviewed? --stone $stone --route $route --allow-blockers 0 --allow-nitpicks 0

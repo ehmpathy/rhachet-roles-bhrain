@@ -9,6 +9,7 @@ import type { ContextCliEmit } from '@src/domain.objects/Driver/ContextCliEmit';
 import type { RouteStone } from '@src/domain.objects/Driver/RouteStone';
 import type { RouteStoneGuard } from '@src/domain.objects/Driver/RouteStoneGuard';
 import { RouteStoneGuardJudgeArtifact } from '@src/domain.objects/Driver/RouteStoneGuardJudgeArtifact';
+import { asExitCodeFromArtifactContent } from '@src/domain.operations/route/guard/asExitCodeFromArtifactContent';
 import { getExitCodeClass } from '@src/domain.operations/route/guard/getExitCodeClass';
 import { isENOENT } from '@src/domain.operations/route/guard/isENOENT';
 import {
@@ -267,10 +268,20 @@ export const runStoneGuardJudges = async (
         outcome: {
           path: prior.path,
           review: null,
-          judge: {
-            decision: prior.passed ? 'allowed' : 'blocked',
-            reason: prior.reason,
-          },
+          // mirror the fresh-run emit: a malfunctioned judge carries the
+          // malfunction variant, never a bare decision. a cached malfunction
+          // that emits `decision: 'blocked'` would render the live tree as a
+          // hard `✗ blocked` even after a human forgives it — the exact
+          // contradiction the persisted tree's `overruled ✓` was meant to end.
+          judge:
+            prior.exitClass === 'malfunction'
+              ? {
+                  malfunction: `judge command failed with exit code ${prior.exitCode}`,
+                }
+              : {
+                  decision: prior.passed ? 'allowed' : 'blocked',
+                  reason: prior.reason,
+                },
         },
       });
       judges.push(prior);
@@ -460,9 +471,9 @@ const parseReason = (
   }
 
   // from file: extract exit code from "exit code N" or "exit code: N" format
-  const exitCodeMatch = content.match(/exit code:?\s*(\d+)/i);
-  if (exitCodeMatch?.[1] && exitCodeMatch[1] !== '0') {
-    return `command exited ${exitCodeMatch[1]}; see judge artifact for details`;
+  const exitCodeFromFile = asExitCodeFromArtifactContent({ content });
+  if (exitCodeFromFile !== 0) {
+    return `command exited ${exitCodeFromFile}; see judge artifact for details`;
   }
 
   return null;
@@ -496,8 +507,7 @@ const parseTreeBucketContent = (
       .join('\n') ?? '';
 
   // extract exit code from passage blocked footer
-  const exitCodeMatch = content.match(/exit code:\s*(\d+)/);
-  const exitCode = exitCodeMatch?.[1] ? parseInt(exitCodeMatch[1], 10) : 0;
+  const exitCode = asExitCodeFromArtifactContent({ content });
 
   return { stdout: stdoutLines.trim(), stderr: stderrLines.trim(), exitCode };
 };
