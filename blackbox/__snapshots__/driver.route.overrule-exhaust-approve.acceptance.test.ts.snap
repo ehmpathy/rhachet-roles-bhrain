@@ -13,7 +13,7 @@ exports[`driver.route.overrule-exhaust-approve.acceptance given: [case1] B5 — 
    ├─ r2: premium-checker (l3, 1/1)
    │   ├─ exhausted 🌙, cached
    │   ├─ terminal — does not block higher levels
-   │   ├─ 3 blockers 🔴
+   │   ├─ 1 blocker 🔴
    │   ├─ 0 nitpicks ✓
    │   ├─ given: .reviews/peer/1.feature._.review.i002.d6ef1aa3fad755e23c.r002._.given.by_peer.premium-checker.md
    │   └─ taken: .reviews/peer/1.feature._.review.i002.d6ef1aa3fad755e23c.r002._.taken.by_self.premium-checker.md
@@ -43,7 +43,7 @@ exports[`driver.route.overrule-exhaust-approve.acceptance given: [case1] B5 — 
           └─ r2: premium-checker (l3, 1/1)
               ├─ exhausted 🌙, cached
               ├─ terminal — does not block higher levels
-              ├─ 3 blockers 🔴
+              ├─ 1 blocker 🔴
               ├─ 0 nitpicks ✓
               ├─ given: .reviews/peer/1.feature._.review.i002.d6ef1aa3fad755e23c.r002._.given.by_peer.premium-checker.md
               └─ taken: .reviews/peer/1.feature._.review.i002.d6ef1aa3fad755e23c.r002._.taken.by_self.premium-checker.md
@@ -62,7 +62,7 @@ exports[`driver.route.overrule-exhaust-approve.acceptance given: [case1] B5 — 
    │
    ├─ r2: premium-checker (l3, 1/1)
    │   ├─ rejected [TIME]
-   │   ├─ 3 blockers 🔴
+   │   ├─ 1 blocker 🔴
    │   ├─ 0 nitpicks ✓
    │   ├─ given: .reviews/peer/1.feature._.review.i002.d6ef1aa3fad755e23c.r002._.given.by_peer.premium-checker.md
    │   └─ taken: .reviews/peer/1.feature._.review.i002.d6ef1aa3fad755e23c.r002._.taken.by_self.premium-checker.md
@@ -72,7 +72,7 @@ exports[`driver.route.overrule-exhaust-approve.acceptance given: [case1] B5 — 
 🗿 route.stone.set
    ├─ stone = 1.feature
    ├─ passage = blocked
-   ├─ reason = blockers exceed threshold (3 > 0)
+   ├─ reason = blockers exceed threshold (1 > 0)
    └─ guard
       ├─ artifacts
       │   └─ $route/1.feature*.md
@@ -86,14 +86,14 @@ exports[`driver.route.overrule-exhaust-approve.acceptance given: [case1] B5 — 
       │   │   └─ taken: .reviews/peer/1.feature._.review.i001.d6ef1aa3fad755e23c.r001._.taken.by_self.basic-checker.md
       │   └─ r2: premium-checker (l3, 1/1)
       │       ├─ rejected [TIME]
-      │       ├─ 3 blockers 🔴
+      │       ├─ 1 blocker 🔴
       │       ├─ 0 nitpicks ✓
       │       ├─ given: .reviews/peer/1.feature._.review.i002.d6ef1aa3fad755e23c.r002._.given.by_peer.premium-checker.md
       │       └─ taken: .reviews/peer/1.feature._.review.i002.d6ef1aa3fad755e23c.r002._.taken.by_self.premium-checker.md
       └─ judges
           └─ j1: rhx route.stone.judge --mechanism reviewed? --stone $stone --route $route --allow-blockers 0
               ├─ finished [TIME] ✗
-              └─ reason: blockers exceed threshold (3 > 0)
+              └─ reason: blockers exceed threshold (1 > 0)
 
 🪷 the path continues
    ├─ l1 is terminal (overruled ✓) — it no longer blocks you
@@ -125,7 +125,7 @@ exports[`driver.route.overrule-exhaust-approve.acceptance given: [case1] B5 — 
    ├─ r2: premium-checker (l3, 1/1)
    │   ├─ exhausted 🌙, cached
    │   ├─ terminal — does not block higher levels
-   │   ├─ 3 blockers 🔴
+   │   ├─ 1 blocker 🔴
    │   ├─ 0 nitpicks ✓
    │   ├─ given: .reviews/peer/1.feature._.review.i002.d6ef1aa3fad755e23c.r002._.given.by_peer.premium-checker.md
    │   └─ taken: .reviews/peer/1.feature._.review.i002.d6ef1aa3fad755e23c.r002._.taken.by_self.premium-checker.md
@@ -149,7 +149,7 @@ exports[`driver.route.overrule-exhaust-approve.acceptance given: [case1] B5 — 
    │  │   └─ r2: premium-checker (l3, 1/1)
    │  │       ├─ exhausted 🌙, cached
    │  │       ├─ terminal — does not block higher levels
-   │  │       ├─ 3 blockers 🔴
+   │  │       ├─ 1 blocker 🔴
    │  │       ├─ 0 nitpicks ✓
    │  │       ├─ given: .reviews/peer/1.feature._.review.i002.d6ef1aa3fad755e23c.r002._.given.by_peer.premium-checker.md
    │  │       └─ taken: .reviews/peer/1.feature._.review.i002.d6ef1aa3fad755e23c.r002._.taken.by_self.premium-checker.md

@@ -12,7 +12,7 @@ exports[`driver.route.overrule-skip.acceptance given: [case1] A2 — l1 rejected
    │
    ├─ r2: premium-checker (l3, 1/5)
    │   ├─ rejected [TIME]
-   │   ├─ 3 blockers 🔴
+   │   ├─ 1 blocker 🔴
    │   ├─ 0 nitpicks ✓
    │   ├─ given: .reviews/peer/1.feature._.review.i002.d6ef1aa3fad755e23c.r002._.given.by_peer.premium-checker.md
    │   └─ taken: .reviews/peer/1.feature._.review.i002.d6ef1aa3fad755e23c.r002._.taken.by_self.premium-checker.md
@@ -22,7 +22,7 @@ exports[`driver.route.overrule-skip.acceptance given: [case1] A2 — l1 rejected
 🗿 route.stone.set
    ├─ stone = 1.feature
    ├─ passage = blocked
-   ├─ reason = blockers exceed threshold (3 > 0)
+   ├─ reason = blockers exceed threshold (1 > 0)
    └─ guard
       ├─ artifacts
       │   └─ $route/1.feature*.md
@@ -36,14 +36,14 @@ exports[`driver.route.overrule-skip.acceptance given: [case1] A2 — l1 rejected
       │   │   └─ taken: .reviews/peer/1.feature._.review.i001.d6ef1aa3fad755e23c.r001._.taken.by_self.basic-checker.md
       │   └─ r2: premium-checker (l3, 1/5)
       │       ├─ rejected [TIME]
-      │       ├─ 3 blockers 🔴
+      │       ├─ 1 blocker 🔴
       │       ├─ 0 nitpicks ✓
       │       ├─ given: .reviews/peer/1.feature._.review.i002.d6ef1aa3fad755e23c.r002._.given.by_peer.premium-checker.md
       │       └─ taken: .reviews/peer/1.feature._.review.i002.d6ef1aa3fad755e23c.r002._.taken.by_self.premium-checker.md
       └─ judges
           └─ j1: rhx route.stone.judge --mechanism reviewed? --stone $stone --route $route --allow-blockers 0
               ├─ finished [TIME] ✗
-              └─ reason: blockers exceed threshold (3 > 0)
+              └─ reason: blockers exceed threshold (1 > 0)
 
 🪷 the path continues
    ├─ l1 is terminal (overruled ✓) — it no longer blocks you
@@ -65,7 +65,7 @@ exports[`driver.route.overrule-skip.acceptance given: [case2] A1 — l1 overrule
    │
    ├─ r2: premium-checker (l3, 1/5)
    │   ├─ rejected [TIME]
-   │   ├─ 3 blockers 🔴
+   │   ├─ 1 blocker 🔴
    │   ├─ 0 nitpicks ✓
    │   ├─ given: .reviews/peer/1.feature._.review.i001.d6ef1aa3fad755e23c.r002._.given.by_peer.premium-checker.md
    │   └─ taken: .reviews/peer/1.feature._.review.i001.d6ef1aa3fad755e23c.r002._.taken.by_self.premium-checker.md
@@ -75,7 +75,7 @@ exports[`driver.route.overrule-skip.acceptance given: [case2] A1 — l1 overrule
 🗿 route.stone.set
    ├─ stone = 1.feature
    ├─ passage = blocked
-   ├─ reason = blockers exceed threshold (3 > 0)
+   ├─ reason = blockers exceed threshold (1 > 0)
    └─ guard
       ├─ artifacts
       │   └─ $route/1.feature*.md
@@ -89,14 +89,14 @@ exports[`driver.route.overrule-skip.acceptance given: [case2] A1 — l1 overrule
       │   │   └─ taken: .reviews/peer/1.feature._.review.i001.d6ef1aa3fad755e23c.r001._.taken.by_self.basic-checker.md
       │   └─ r2: premium-checker (l3, 1/5)
       │       ├─ rejected [TIME]
-      │       ├─ 3 blockers 🔴
+      │       ├─ 1 blocker 🔴
       │       ├─ 0 nitpicks ✓
       │       ├─ given: .reviews/peer/1.feature._.review.i001.d6ef1aa3fad755e23c.r002._.given.by_peer.premium-checker.md
       │       └─ taken: .reviews/peer/1.feature._.review.i001.d6ef1aa3fad755e23c.r002._.taken.by_self.premium-checker.md
       └─ judges
           └─ j1: rhx route.stone.judge --mechanism reviewed? --stone $stone --route $route --allow-blockers 0
               ├─ finished [TIME] ✗
-              └─ reason: blockers exceed threshold (3 > 0)
+              └─ reason: blockers exceed threshold (1 > 0)
 
 🪷 the path continues
    ├─ l1 is terminal (overruled ✓) — it no longer blocks you
@@ -166,7 +166,7 @@ exports[`driver.route.overrule-skip.acceptance given: [case4] C2 — l1 overrule
    │
    ├─ r2: premium-checker (l3, 1/5)
    │   ├─ rejected, cached
-   │   ├─ 3 blockers 🔴
+   │   ├─ 1 blocker 🔴
    │   ├─ 0 nitpicks ✓
    │   ├─ given: .reviews/peer/1.feature._.review.i002.d6ef1aa3fad755e23c.r002._.given.by_peer.premium-checker.md
    │   └─ taken: .reviews/peer/1.feature._.review.i002.d6ef1aa3fad755e23c.r002._.taken.by_self.premium-checker.md
@@ -190,7 +190,7 @@ exports[`driver.route.overrule-skip.acceptance given: [case4] C2 — l1 overrule
    │  │   └─ r2: premium-checker (l3, 1/5)
    │  │       ├─ rejected, cached
    │  │       ├─ overruled ✓ — forgiven by human
-   │  │       ├─ 3 blockers 🔴
+   │  │       ├─ 1 blocker 🔴
    │  │       ├─ 0 nitpicks ✓
    │  │       ├─ given: .reviews/peer/1.feature._.review.i002.d6ef1aa3fad755e23c.r002._.given.by_peer.premium-checker.md
    │  │       └─ taken: .reviews/peer/1.feature._.review.i002.d6ef1aa3fad755e23c.r002._.taken.by_self.premium-checker.md
@@ -215,7 +215,7 @@ exports[`driver.route.overrule-skip.acceptance given: [case5] A2-hash — l1 ove
    │
    ├─ r2: premium-checker (l3, 2/5)
    │   ├─ rejected [TIME]
-   │   ├─ 3 blockers 🔴
+   │   ├─ 1 blocker 🔴
    │   ├─ 0 nitpicks ✓
    │   ├─ given: .reviews/peer/1.feature._.review.i003.47afac0aa56824623f.r002._.given.by_peer.premium-checker.md
    │   └─ taken: .reviews/peer/1.feature._.review.i003.47afac0aa56824623f.r002._.taken.by_self.premium-checker.md
@@ -225,7 +225,7 @@ exports[`driver.route.overrule-skip.acceptance given: [case5] A2-hash — l1 ove
 🗿 route.stone.set
    ├─ stone = 1.feature
    ├─ passage = blocked
-   ├─ reason = blockers exceed threshold (3 > 0)
+   ├─ reason = blockers exceed threshold (1 > 0)
    └─ guard
       ├─ artifacts
       │   └─ $route/1.feature*.md
@@ -239,14 +239,14 @@ exports[`driver.route.overrule-skip.acceptance given: [case5] A2-hash — l1 ove
       │   │   └─ taken: .reviews/peer/1.feature._.review.i003.47afac0aa56824623f.r001._.taken.by_self.basic-checker.md
       │   └─ r2: premium-checker (l3, 2/5)
       │       ├─ rejected [TIME]
-      │       ├─ 3 blockers 🔴
+      │       ├─ 1 blocker 🔴
       │       ├─ 0 nitpicks ✓
       │       ├─ given: .reviews/peer/1.feature._.review.i003.47afac0aa56824623f.r002._.given.by_peer.premium-checker.md
       │       └─ taken: .reviews/peer/1.feature._.review.i003.47afac0aa56824623f.r002._.taken.by_self.premium-checker.md
       └─ judges
           └─ j1: rhx route.stone.judge --mechanism reviewed? --stone $stone --route $route --allow-blockers 0
               ├─ finished [TIME] ✗
-              └─ reason: blockers exceed threshold (3 > 0)
+              └─ reason: blockers exceed threshold (1 > 0)
 
 🪷 the path continues
    ├─ l1 is terminal (overruled ✓) — it no longer blocks you
@@ -306,7 +306,7 @@ exports[`driver.route.overrule-skip.acceptance given: [case7] C1 — overrule l1
    │
    ├─ r2: premium-checker (l3, 1/5)
    │   ├─ rejected [TIME]
-   │   ├─ 3 blockers 🔴
+   │   ├─ 1 blocker 🔴
    │   ├─ 0 nitpicks ✓
    │   ├─ given: .reviews/peer/1.feature._.review.i002.d6ef1aa3fad755e23c.r002._.given.by_peer.premium-checker.md
    │   └─ taken: .reviews/peer/1.feature._.review.i002.d6ef1aa3fad755e23c.r002._.taken.by_self.premium-checker.md
@@ -316,7 +316,7 @@ exports[`driver.route.overrule-skip.acceptance given: [case7] C1 — overrule l1
 🗿 route.stone.set
    ├─ stone = 1.feature
    ├─ passage = blocked
-   ├─ reason = blockers exceed threshold (3 > 0)
+   ├─ reason = blockers exceed threshold (1 > 0)
    └─ guard
       ├─ artifacts
       │   └─ $route/1.feature*.md
@@ -330,14 +330,14 @@ exports[`driver.route.overrule-skip.acceptance given: [case7] C1 — overrule l1
       │   │   └─ taken: .reviews/peer/1.feature._.review.i001.d6ef1aa3fad755e23c.r001._.taken.by_self.basic-checker.md
       │   └─ r2: premium-checker (l3, 1/5)
       │       ├─ rejected [TIME]
-      │       ├─ 3 blockers 🔴
+      │       ├─ 1 blocker 🔴
       │       ├─ 0 nitpicks ✓
       │       ├─ given: .reviews/peer/1.feature._.review.i002.d6ef1aa3fad755e23c.r002._.given.by_peer.premium-checker.md
       │       └─ taken: .reviews/peer/1.feature._.review.i002.d6ef1aa3fad755e23c.r002._.taken.by_self.premium-checker.md
       └─ judges
           └─ j1: rhx route.stone.judge --mechanism reviewed? --stone $stone --route $route --allow-blockers 0
               ├─ finished [TIME] ✗
-              └─ reason: blockers exceed threshold (3 > 0)
+              └─ reason: blockers exceed threshold (1 > 0)
 
 🪷 the path continues
    ├─ l1 is terminal (overruled ✓) — it no longer blocks you

@@ -12,7 +12,7 @@ exports[`driver.route.overrule-contemplation-discriminate.acceptance given: [cas
    │
    ├─ r2: premium-checker (l3, 1/5)
    │   ├─ approved [TIME]
-   │   ├─ 3 blockers 🔴
+   │   ├─ 1 blocker 🔴
    │   ├─ 0 nitpicks ✓
    │   ├─ given: .reviews/peer/1.feature._.review.i001.d6ef1aa3fad755e23c.r002._.given.by_peer.premium-checker.md
    │   └─ taken: .reviews/peer/1.feature._.review.i001.d6ef1aa3fad755e23c.r002._.taken.by_self.premium-checker.md
@@ -25,7 +25,7 @@ exports[`driver.route.overrule-contemplation-discriminate.acceptance given: [cas
    │
    ├─ review.peer 1/1
    │  ├─ slug = premium-checker
-   │  ├─ verdict = 3 blockers, 0 nitpicks
+   │  ├─ verdict = 1 blocker, 0 nitpicks
    │  ├─ contemplate from
    │  │  └─ [TEMP]/.reviews/peer/1.feature._.review.i001.d6ef1aa3fad755e23c.r002._.given.by_peer.premium-checker.md
    │  └─ articulate into
@@ -56,7 +56,7 @@ exports[`driver.route.overrule-contemplation-discriminate.acceptance given: [cas
    │
    ├─ r2: premium-checker (l3, 1/5)
    │   ├─ approved, cached
-   │   ├─ 3 blockers 🔴
+   │   ├─ 1 blocker 🔴
    │   ├─ 0 nitpicks ✓
    │   ├─ given: .reviews/peer/1.feature._.review.i001.d6ef1aa3fad755e23c.r002._.given.by_peer.premium-checker.md
    │   └─ taken: .reviews/peer/1.feature._.review.i001.d6ef1aa3fad755e23c.r002._.taken.by_self.premium-checker.md
@@ -79,7 +79,7 @@ exports[`driver.route.overrule-contemplation-discriminate.acceptance given: [cas
    │  │   │   └─ taken: .reviews/peer/1.feature._.review.i001.d6ef1aa3fad755e23c.r001._.taken.by_self.basic-checker.md
    │  │   └─ r2: premium-checker (l3, 1/5)
    │  │       ├─ approved, cached
-   │  │       ├─ 3 blockers 🔴
+   │  │       ├─ 1 blocker 🔴
    │  │       ├─ 0 nitpicks ✓
    │  │       ├─ given: .reviews/peer/1.feature._.review.i001.d6ef1aa3fad755e23c.r002._.given.by_peer.premium-checker.md
    │  │       └─ taken: .reviews/peer/1.feature._.review.i001.d6ef1aa3fad755e23c.r002._.taken.by_self.premium-checker.md
