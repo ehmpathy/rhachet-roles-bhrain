@@ -41,6 +41,31 @@ becomes a logbook, and its readers scroll past dated arrears to reach the mechan
 | **`say`** and **`ref`** — the two `boot.yml` tiers | 🔴 **open.** declared keys in a contract this repo publishes, so `rule.require.domain-term-itemization` binds them. their boundary is `boot`, which is **also undeclared**, so the chain wants settlement from the root down rather than one term at a time |
 | the five **document kinds** — `whento` · `howto` · `howdoes` · `hazard` · `rule` | 🔴 **open.** each is a declared filename prefix, and the set is stated to be open (`rule.require.classify-the-yields-document-kind`, researcher) |
 | `bhrowser` · `dark` · `lane` · `judge` · `task` | 🔴 **open.** each is spoken in a booted brief with no cluster behind it |
+| 🔴 **`flake`** — an OVERLOAD, not merely an absence | 🔴 **open, and the sharpest of these.** `rule.always.diagnose-reviewer-malfunctions` offers *"flake rather than defect"* as a binary, and a **third** cause fits neither: a degraded upstream. see below |
+
+### 🔴 `flake` is one word across two concepts, and the second one misroutes the driver
+
+**measured 2026-08-31**, in this repo, twice in one release:
+
+| the cause | random? | ours? | what `flake` implies you do |
+|---|---|---|---|
+| genuine nondeterminism — a race, an order dependence | ✅ yes | ✅ yes | **retry**, and it may pass |
+| a **degraded upstream** — a provider that refuses, then hangs | ❌ **no** | ❌ **no** | retry ⇒ 🔴 **a coin flip on someone else's weather** |
+
+⇒ the two are indistinguishable at the moment of the read, and **only the first is the concept
+`flake` names**. the second is a `constraint` whose owner sits outside the repo — not a flake that
+happens to be slow, but a separate concept under a borrowed word.
+
+⚠️ **the cost is a misrouted diagnosis, never a misnamed file.** *"it is flake"* closes the
+investigation and prescribes a retry. *"the upstream is degraded"* opens a different one — is the
+job timeout too tight? is there a fallback brain? should a preflight name it? **the word chosen
+decides which question gets asked**, which is the harm `rule.forbid.domain-term-ambiguity` names:
+*the overload hides an ABSENT DISTINCTION.*
+
+⇒ the repair is a **second word for the upstream case**, then a cluster for each — never a widened
+`flake`. it is **not paved yet**: two instances from one repo on one day is too thin a sample for
+`rule.require.enumerate-before-you-name` to bite. the evidence sits in
+`.behavior/v2026_08_12.feat-adopt-seeded-briefs/refs/diagnosis.cicd-release-2026-08-31.md`.
 
 ⚠️ **`malfunction` is settled and under watch.** `term=route.guard.review.malfunction` declares it
 *a process that rendered no verdict at all*, and `getExitCodeClass.ts` grades an overflowed lane
