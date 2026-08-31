@@ -312,6 +312,55 @@ when a driver most wants the log.
 
 ---
 
+## 🔴 the through-line — four errors, one shape, and it is NOT "check your evidence"
+
+**every observable I read this round was read correctly.** the numbers were the numbers, the job
+name was on the page, the cron list was real. what failed, four times, is **which subject the
+observable was bound to**:
+
+| # | the observable, read correctly | I took it to be OF | it was OF |
+|---|---|---|---|
+| 1 | `34s`, uniform across 4 jobs | the **test's** duration | the **job's** setup prefix |
+| 2 | `casePriorRules.gr…` passed | the **fireworks** shard | the **grok** shard |
+| 3 | ⇒ the retraction built on #2 | — | — |
+| 4 | `CronList` → `15739e63` | the loop **the human holds** | a **session-only** cron in MY session |
+
+⚠️ **#4 is the sharpest, because the correct answer was of a different KIND entirely.** the prompt
+that re-fires is a **Stop hook**, declared in this repo at `.claude/settings.json:274-277` as
+`rhx learn.domain.terms --when hook.onStop`. **`CronDelete` cannot reach a hook.** so a literal read
+of my handoff would have deleted the only cron the human did hold — the fleet-wide babysit sweep —
+and blinded every repo, to fix a recurrence in none.
+
+⇒ **that cost profile is what makes this pattern worth a rule.** each error was a confident,
+well-evidenced instruction; the fourth would have caused unrelated harm at fleet scope. **an
+accurate read attached to the wrong referent does not fail loud** — it fails as competence.
+
+### .the cue — the question I did not ask, four times
+
+> 🔴 **"of WHAT is this a measurement?"** — asked BEFORE you act, never *"is this true?"*
+
+it is true every time. that is the trap.
+
+| when… | then… |
+|---|---|
+| a value agrees across parallel jobs | ask what the jobs **share** before you infer a shared cause |
+| a name is **truncated** in any output | 🔴 widen the column. two shards can differ in the elided characters |
+| you read an id, a path, or a handle from **your own** context and hand it to another | ask whether that namespace **crosses** the boundary. a session-only id does not |
+| you identify a mechanism from **the one you know** | 🔴 audit the **artifact that declares** mechanisms — here, `settings.json` — never your memory of the family |
+| a retraction rests on **one** observation | re-read the observation before you rewrite the conclusion |
+
+### ⚠️ .the partial audit is the generator
+
+three of the four came from a **complete read of an incomplete subject**. I ran `CronList` and read
+it correctly — and never asked whether a *cron* was the mechanism at all. the full audit was one
+grep of `settings.json` away and I did not reach for it, because the mechanism I had used
+(`/loop` → `CronCreate`) supplied a plausible answer first.
+
+⇒ **the mechanism you most recently used is the one that volunteers itself.** that availability is
+not evidence, and it is what a partial audit mistakes for one.
+
+---
+
 ## .noise, explicitly not a failure
 
 every job logs a Node 20 deprecation notice for `cache/restore`, `checkout`, `setup-node`, and
