@@ -1,0 +1,22 @@
+# rule.always.externalize.tactics.into_skills
+
+## 🔴 this is the PARENT — go to a specialization
+
+⚠️ **named for the genus.** the act you are about to perform is one of `externalize`'s members, and each member's rule carries a when-then cue table this one does not — the sharper shape by a wide margin (a cue scores **d = 0.65**, a bare principle **d = 0.05**).
+
+| you are about to | reach for |
+|---|---|
+| write a repeated **sequence** down as a runnable artifact | `rule.always.enskill-the-tactics-you-discover` — DISCOVER |
+| notice a skill you called and **still finished by hand** | `rule.always.entool-the-skills-you-touch` — UPGRADE |
+| lay a sequence of **judgments** rather than commands | 🗿 a **route**, per the enskill rule |
+
+⇒ **a loop, never alternatives:** discover a repeat → ENSKILL → notice the leftover brain work → ENTOOL.
+
+## the general claim it still carries
+
+when an action takes multiple steps, encode it as a skill — **idempotent**, safe to run twice, in `.agent/repo=.this/role=*/skills/`. do NOT wait.
+
+cues: multiple steps · hard to discover · you chained commands · you will do it again.
+test: **"would i want a button for this?"**
+
+blocker: a tactic repeated and not externalized.

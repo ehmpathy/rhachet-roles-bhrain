@@ -1,0 +1,25 @@
+# rule.forbid.domain-term-ambiguity
+
+**one word, one concept.** a term that is **overloaded** — the same word used for two or more distinct senses — is ambiguous, and an ambiguous term in a contract is forbidden.
+
+a **contract** = a dobj/dop name, an internal contract (shapes, signatures), and above all the external interfaces we publish (api, sdk, cli).
+
+## .why
+
+- it is the **twin hazard of the synonym**: a synonym is many words for one concept; an overload is one word for many. both break the vocabulary the glossary keeps
+- an overloaded term forces every reader to disambiguate by context — friction on every read
+- 🔴 **the overload hides an ABSENT DISTINCTION.** two concepts wear one name because the second was never granted its own word. the ambiguity is the symptom; the unnamed concept is the defect
+
+test: **"does this word name exactly ONE concept, everywhere it appears?"** one sense → adhere · two or more → the word is overloaded.
+
+## .how
+
+1. **name the senses** — enumerate the distinct concepts the one word carries
+2. keep the word for its **primary** sense; coin a distinct term for each other sense
+3. itemize the new term (`rule.require.domain-term-itemization`) and record the split
+
+⚠️ where the two senses differ by **context** rather than by concept, the repair is a **boundary**, never a second word — `rule.require.boundary-qualified-terms`. the flat namespace has one slot per word; a qualified one has as many as the domain does.
+
+> one word, one sense — no term does double duty 📜
+
+blocker: a domain term overloaded across two or more distinct concepts in a contract.

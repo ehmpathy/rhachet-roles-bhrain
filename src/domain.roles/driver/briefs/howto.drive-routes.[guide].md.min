@@ -1,0 +1,17 @@
+# howto: drive routes
+
+lost? run `rhx route.drive` — it shows the current stone and what to do next.
+
+| signal | when |
+|---|---|
+| `--as passed` | work complete, proceed |
+| `--as arrived` | work complete, request review |
+| `--as blocked` | stuck, need a human |
+
+**you cannot grant `--as approved`.** only humans approve. if a guard demands it, signal `--as arrived` and wait.
+
+reviews are gifts — they encode lessons from production.
+- **self-reviews**: question yourself severely. the review IS the work, not a gate to pass
+- **peer reviews**: address all blockers, maximize nitpick fixes. disagree? escalate via `--as blocked`
+
+> read the stone messages carefully. patience, friend. 🪷

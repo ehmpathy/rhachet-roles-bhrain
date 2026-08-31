@@ -3,7 +3,7 @@
 exports[`achiever.goal.onTalk.journey given: [case1] onTalk accumulates asks then triage shows them when: [t0] before any asks then: stdout matches snapshot 1`] = `
 "🦉 to forget an ask is to break a promise. remember.
 
-🔮 goal.triage.infer --scope repo
+💎 goal.triage.infer --scope repo
    │
    ├─ stats
    │  ├─ asks = 0
@@ -20,7 +20,7 @@ exports[`achiever.goal.onTalk.journey given: [case1] onTalk accumulates asks the
 exports[`achiever.goal.onTalk.journey given: [case1] onTalk accumulates asks then triage shows them when: [t2] triage.infer shows uncovered asks then: stdout matches snapshot 1`] = `
 "🦉 to forget an ask is to break a promise. remember.
 
-🔮 goal.triage.infer --scope repo
+💎 goal.triage.infer --scope repo
    │
    ├─ stats
    │  ├─ asks = 3
@@ -62,7 +62,7 @@ exports[`achiever.goal.onTalk.journey given: [case1] onTalk accumulates asks the
 exports[`achiever.goal.onTalk.journey given: [case1] onTalk accumulates asks then triage shows them when: [t4] triage shows partial coverage then: stdout matches snapshot 1`] = `
 "🦉 to forget an ask is to break a promise. remember.
 
-🔮 goal.triage.infer --scope repo
+💎 goal.triage.infer --scope repo
    │
    ├─ stats
    │  ├─ asks = 3
@@ -101,7 +101,7 @@ exports[`achiever.goal.onTalk.journey given: [case1] onTalk accumulates asks the
 exports[`achiever.goal.onTalk.journey given: [case1] onTalk accumulates asks then triage shows them when: [t5] all asks covered by goals then: stdout matches snapshot 1`] = `
 "🦉 to forget an ask is to break a promise. remember.
 
-🔮 goal.triage.infer --scope repo
+💎 goal.triage.infer --scope repo
    │
    ├─ stats
    │  ├─ asks = 3

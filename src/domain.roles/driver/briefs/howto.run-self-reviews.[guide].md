@@ -8,6 +8,10 @@ self reviews are not a gate to rush past. they are the work itself. travelers of
 misunderstand them — they guess the file path, skim the guide, or treat the promise as a
 checkbox. this brief paves the path so the next traveler walks it true.
 
+⇒ **this guide is the HOW. the MANDATE is `rule.always.bear-every-self-review`** — a self
+review cannot be overridden, there is no lever to ask for, and the count is the work rather
+than a budget. read it before you reach for a shortcut this guide does not describe.
+
 ---
 
 ## take them seriously 🪷

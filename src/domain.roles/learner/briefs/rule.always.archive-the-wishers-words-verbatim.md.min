@@ -1,0 +1,35 @@
+# rule.always.archive-the-wishers-words-verbatim
+
+when the wisher says a word that **changes the work**, catch it verbatim before you distill it.
+
+```
+$route/.seeds/inventory.of=seeds._.md                # the SUMMARY — the axis, the counts, the gaps
+$route/.seeds/inventory.of=seeds.case=S$n-$slug.md   # one ENTRY per utterance
+```
+
+both are owed, every time. the distillate is what the next traveler reads; **the seed is what they check it against.**
+
+| when the wisher… | then |
+|---|---|
+| settles a question | archive it — future rounds inherit the settlement |
+| 🔴 **corrects you** | the highest-value quote there is: it records the wrong path AND the right one |
+| coins a word or a convention | the coinage's source is its etymology |
+| specifies a contract verbatim — a path, a flag, a format | a specification paraphrased is a specification changed |
+| 🔴 **asks a question** whose answer changes the work | the cheapest kind to lose — in hindsight it reads as though YOU found the gap |
+| — or you are about to write *"the wisher asked for…"* | that citation needs a source. archive first |
+
+a seed holds `.said` · `.settled` · `.landed`.
+
+⚠️ **`.said` is verbatim — do not clean it up.** typos, lowercase, mid-thought corrections and all. a tidied quote is already a paraphrase.
+
+## 🔴 a seed is the seed of a CONCEPT, never a chronicle of the round
+
+`.settled` states what now HOLDS. strip every reference to this route, its tools, its fulcrums, and its errors — **does the concept still stand?** what survives is the seed; the rest is archaeology, and git already holds it.
+
+⚠️ the tell: a `.landed` list longer than the concept, whose rows carry a REASON rather than a path.
+
+## 🔴 the ENVIRONMENT is not a seed
+
+a channel's switch state, a credential's health, a tool broken that day — real, and a directive for the session, never a concept a future traveler inherits. **strip the machinery; if naught is left, drop it.**
+
+blocker: an utterance that changed the work with no seed · a `"the wisher asked for X"` with no source · an edited `.said` · entries with no summary · a bare-ordinal `case=` · a body that narrates the round · a `.landed` row that carries a reason · a durable concept with no brief behind it.

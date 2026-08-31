@@ -1,0 +1,62 @@
+# rule.always.reuse-pavement-before-improvise
+
+**before you improvise an approach, look for the paved one — and when it exists, reuse it.**
+
+**pavement** = any artifact a past traveler left so the next need not re-derive: a brief, a howto, a template, a skill, a route, a term cluster, a resolved dispute, a rule.
+
+this is the **WITHDRAWAL** half of externalization. the learner had four DEPOSIT rules and none for withdrawal — and every deposit rule is justified by a read that no rule required. ⇒ **a lesson externalized and never consulted is lost at HIGHER cost than one never written.**
+
+## .the two arguments, and they are peers
+
+1. **it is faster, and it avoids re-derived mistakes** — the paved path carries the incidents that bought it
+2. 🔴 **only a reader can improve the pavement — so a skipped read FREEZES it.** an unread brief cannot be corrected, so it does not merely fail to help; it stops to improve, and drifts. the improviser fixes their own run and leaves the hole open for all who follow
+
+## .where to look — cheapest first, stop at the first hit
+
+1. this repo's briefs — `rhx grepsafe --pattern '<concept>' --path src --glob '*.md'`
+2. `domain.terms/` — is the word settled? is a dispute resolved?
+3. skills, templates, routes — `rhx globsafe --pattern '.agent/**/skills/*'`
+4. the org — `rhx git.repo.get lines --repos 'ehmpathy/*' --words '<concept>'`
+
+🔴 **`grepsafe --glob` matches the BASENAME.** a `/` in it matches no file, and reports that as a clean `0 matches`, exit 0 — indistinguishable from a genuine absence. **scope with `--path`.** ⇒ `globsafe` does not share this; its `--pattern` takes a full path, so row 3 is right as written.
+
+| when… | then… |
+|---|---|
+| you would write a **step-by-step** for a task this repo has done | 🔴 **grep, do not type** |
+| you would say *"the way to do this is…"* | that sentence is a claim the repo may already own |
+| you **name** a new artifact, dir, or convention | check what the repo already names |
+| you reach for a **workaround** because a paved path is inconvenient | that is the braid. mend the tread instead |
+| you would **cite** a brief as a parent claim | glob for it first — a `.see also` is a promise |
+| a peer repo has a convention | look, then **test it**. precedent is a reason to look, never to conform |
+
+test: **"has this repo solved this already, and where would it have put the answer?"** — you can name the likely path → look there. you genuinely cannot → improvise, and **leave a route behind**.
+
+## .when improvisation IS right
+
+no pavement exists (owes a route) · the pavement is measurably **wrong** (then **fix it**, do not walk beside it) · it is for a different bounded context (say so, and why).
+
+## ⚠️ .do not let this stall
+
+**"look first", not "read it all."** bounded = a grep, a glob of the obvious dir, one likely brief. two empty searches discharge the rule.
+
+blocker: a conclusion re-derived that the repo had settled, with no look · a second artifact laid beside a serviceable one · a brief cited with no file behind it (the **phantom path**) · a paved path judged wrong and **worked around** rather than fixed. nitpick: an unbounded survey that stalls the work.
+
+## .the anti-patterns
+
+**the braided trail** — a second path beside a serviceable one · **the rut** — a found convention adopted with no test that it works (the mirror failure: you *did* look, and conformed anyway) · **the phantom path** — a cited parent claim that was never written.
+
+## 🔴 a phantom path is not merely an unresolvable name — mark the FOREIGN one
+
+the phantom has a twin that greps identically and is **no defect**: a name that belongs to another repo.
+
+| the citation | what it is | the repair |
+|---|---|---|
+| a **parent claim** with no file | 🔴 **a phantom.** the argument rests on a premise nobody wrote | write it, or drop the claim |
+| a **prescribed artifact** — a path the rule tells you to create | ✅ not a citation. it names a future file | state the full path |
+| a **foreign artifact** — in a peer repo | ✅ legitimate, and only if MARKED | say it is foreign, in the same breath |
+
+⚠️ **the unmarked foreign one costs the READER, not the author** — it carries a local pointer's full authority, so they glob, find naught, and cannot tell a lost file from a distant one.
+
+⇒ test, of every backticked name: **"does my argument REST on this, or merely REPORT it?"** rests → it must exist here · reports → say where it lives, in the same sentence.
+
+⇒ `philosophy.pavement-saves-nature` is the why. `rule.always.enskill-the-tactics-you-discover` is what you owe when no pavement was found.

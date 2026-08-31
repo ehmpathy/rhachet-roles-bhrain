@@ -211,7 +211,7 @@ const emitDistillMoves = (
     '   │  │     └─ or cite it — point to the extant declaration you reused',
   );
   emit(
-    '   │  └─ 4. articulate progress.md — REQUIRED, the last step every round:',
+    "   │  └─ 4. articulate TODAY's progress file — REQUIRED, the last step every round:",
   );
   emit(
     '   │        ├─ what you conformed, disputed, and paved this round — and why',
@@ -221,6 +221,9 @@ const emitDistillMoves = (
   );
   emit(
     '   │        ├─ defer ONLY a term you truly cannot finish (needs discovery, dispute still open)',
+  );
+  emit(
+    '   │        ├─ ⚠️ ONE FILE PER DAY — append within today, never across days',
   );
   emit(`   │        └─ sentinel = ${input.progressPath}`);
   emit('   │');
@@ -422,9 +425,12 @@ export const learnDomainTerms = async (): Promise<void> => {
     // fresh, articulated distillation → let the session rest
     if (!stale) return;
 
-    // stale → hold the stop open with a gentle nudge (never blocks a write)
+    // stale → hold the stop open with a gentle nudge (never blocks a write).
+    // display the PATTERN, never the resolved path: the instruction teaches the
+    // per-day convention, and a resolved date in emitted text would churn the
+    // acceptance snapshot every midnight (rule.forbid.time-assumptions)
     emitStaleNudge({
-      progressPath: paths.progressPath,
+      progressPath: paths.progressPathPattern,
       glossaryReadmePath: paths.readmePath,
     });
     process.exit(2);
@@ -436,6 +442,6 @@ export const learnDomainTerms = async (): Promise<void> => {
     glossaryDir: scaffold.glossaryDir,
     glossaryReadmePath: paths.readmePath,
     created: scaffold.created,
-    progressPath: paths.progressPath,
+    progressPath: paths.progressPathPattern,
   });
 };

@@ -1,0 +1,32 @@
+# rule.require.domain-term-itemization
+
+every **domain term** — a noun, verb, or adj that composes this repo's declared **domain objects** and **domain operations** — is itemized into `.agent/repo=.this/role=any/briefs/domain.terms/`.
+
+**one entry per word, REUSED** across every object/operation that uses it: the noun `stone` serves `Stone`, `getStone`, `genStone` alike; the verb `gen` serves every `gen*`. the declared dobjs/dops are the **anchor** — they are what *"born here"* means; the **term is the word** they are built from.
+
+| counts | does NOT count |
+|---|---|
+| a `DomainEntity` / `DomainLiteral` class name → its nouns/adjs | generic english that is no domain concept (`file`, `run`, `data`) |
+| a `domain.operation` name → its verb + nouns/adjs (`getStone` → `get` + `stone`) | vocab **imported** from a dependency (`DomainEntity`, `Role` are the tool's terms) |
+| | a plain local variable that names no domain concept |
+
+## .why
+
+- code that speaks one canonical vocabulary is legible to every traveler, human or robot
+- a term discovered and not itemized is a lesson lost — the next traveler re-derives it, or **invents a synonym**
+- the glossary compounds: each itemized word makes the next dobj/dop easier to name
+- itemized early, the vocabulary composes; invented at the keyboard under deadline, it drifts
+
+## .how — a `choice._.` cluster per term
+
+- `term=<x>._.choice._.md` — **say**: chosen word, kind, forbidden synonyms, refs, `.what`
+- `term=<x>._.choice.reason.md` — **ref**: etymology, disputes, evidence — **required**
+- `term=<x>._.choice.example=<abc>.md` — ref, one per notable example — optional
+
+⇒ the shape is `template.domain-term`; the boundary rule is `rule.require.boundary-qualified-terms`.
+
+test: **"is this word part of a domain object or operation THIS repo declares?"** yes → itemize once, reuse everywhere · no → out of scope.
+
+> the words we build with deserve a glossary 📜
+
+blocker: a dobj/dop declared here whose constituent terms are not itemized into `domain.terms/`.

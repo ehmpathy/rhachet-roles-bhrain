@@ -31,7 +31,7 @@ source "$SCRIPT_DIR/route.foreground.guard.output.sh"
 # a silent bypass here would let backgrounded route.stone.set slip through
 # undetected, so we halt (exit 2) rather than allow-by-default.
 if ! command -v jq >/dev/null 2>&1; then
-  echo "🦉 route.foreground guard: jq is required but not available — cannot parse tool input" >&2
+  echo "🗿 route.foreground guard: jq is required but not available — cannot parse tool input" >&2
   exit 2
 fi
 
@@ -51,7 +51,7 @@ fi
 # note: `// empty` yields "" for a legitimately absent field (fail-open, intended);
 # a jq parse failure (malformed json) is a real fault, so we fail loud rather than swallow it.
 TOOL_NAME=$(echo "$STDIN_INPUT" | jq -r '.tool_name // empty') || {
-  echo "🦉 route.foreground guard: failed to parse tool_name from tool input json" >&2
+  echo "🗿 route.foreground guard: failed to parse tool_name from tool input json" >&2
   exit 1
 }
 
@@ -62,7 +62,7 @@ fi
 
 # extract run_in_background flag (parse fault fails loud; absent field defaults to false)
 RUN_IN_BACKGROUND=$(echo "$STDIN_INPUT" | jq -r '.tool_input.run_in_background // false') || {
-  echo "🦉 route.foreground guard: failed to parse run_in_background from tool input json" >&2
+  echo "🗿 route.foreground guard: failed to parse run_in_background from tool input json" >&2
   exit 1
 }
 
@@ -73,7 +73,7 @@ fi
 
 # extract command (parse fault fails loud; absent field defaults to empty)
 COMMAND=$(echo "$STDIN_INPUT" | jq -r '.tool_input.command // empty') || {
-  echo "🦉 route.foreground guard: failed to parse command from tool input json" >&2
+  echo "🗿 route.foreground guard: failed to parse command from tool input json" >&2
   exit 1
 }
 

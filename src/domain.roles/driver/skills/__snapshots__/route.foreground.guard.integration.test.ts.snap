@@ -143,13 +143,13 @@ exports[`route.foreground.guard given: [case5] boundary edges (fail-open) when: 
 `;
 
 exports[`route.foreground.guard given: [case6] infrastructure failure paths (fail loud, not silent) when: [t0] jq is not available on PATH then: stderr matches snapshot 1`] = `
-"🦉 route.foreground guard: jq is required but not available — cannot parse tool input
+"🗿 route.foreground guard: jq is required but not available — cannot parse tool input
 "
 `;
 
 exports[`route.foreground.guard given: [case6] infrastructure failure paths (fail loud, not silent) when: [t1] stdin is malformed json then: stderr matches snapshot 1`] = `
 "jq: parse error: Invalid literal at line 1, column 5
-🦉 route.foreground guard: failed to parse tool_name from tool input json
+🗿 route.foreground guard: failed to parse tool_name from tool input json
 "
 `;
 

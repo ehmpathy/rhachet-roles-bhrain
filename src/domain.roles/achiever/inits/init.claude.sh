@@ -24,7 +24,7 @@ SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 GITROOT="$(git rev-parse --show-toplevel)"
 SETTINGS_FILE="$GITROOT/.claude/settings.json"
 
-echo "🔮 init claude config for achiever role..."
+echo "💎 init claude config for achiever role..."
 echo ""
 
 # backup extant settings before changes

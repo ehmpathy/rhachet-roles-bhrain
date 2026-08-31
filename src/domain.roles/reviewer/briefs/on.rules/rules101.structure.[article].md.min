@@ -1,0 +1,70 @@
+# rules structure
+
+rule files follow `rule.$directive.$topic.md` — `rule` literal · `$directive` = severity + action · `$topic` = snake_case.
+
+```
+rule.forbid.positional_args.md   rule.require.tests.md   rule.always.drive-autonomously.md
+rule.avoid.gerunds.md            rule.prefer.early_returns.md
+```
+
+## the directive taxonomy
+
+| directive | action | severity |
+|---|---|---|
+| `forbid` | must not do | **blocker** |
+| `require` | must do | **blocker** |
+| `always` | must do, each time the moment comes | **blocker** |
+| `avoid` | discouraged | nitpick |
+| `prefer` | encouraged | nitpick |
+
+## 🔴 `always` vs `require` — the SUBJECT differs, the severity does not
+
+both grade at **blocker**. a reach for `always` never softens a rule and never hardens one. what changes is **what the reviewer reads to check it**:
+
+| directive | the claim | the check |
+|---|---|---|
+| `require` / `forbid` | the artifact must **be** X | read the **artifact**. is the state there? |
+| `always` | you must **do** X, each time the moment comes | read the **trail**. was the act performed at the moment? |
+
+### the test — is the topic a NOUN PHRASE or a VERB PHRASE?
+
+it is that mechanical, and it holds across every rule here:
+
+```
+rule.require.$state    # a noun phrase or clause — "timeless lessons", "catalog is an index"
+rule.always.$act       # a verb phrase, imperative — "catch dreams", "reuse pavement"
+```
+
+reads *"the artifact must **be** …"* → **`require`** / **`forbid`** · reads *"you must **do** … every time"* → **`always`**.
+
+### why it earns a directive rather than a synonym
+
+⚠️ **an `always` rule is often unfalsifiable from the diff alone**, and that is the whole reason it is a separate word. *"did you check the pavement before you improvised?"* leaves no trace in a file. so `always` rules routinely grade **WHEN** a record was written rather than **WHETHER** — several state outright that a record swept together at the end is a violation even though the record is present.
+
+⇒ 🔴 **a reviewer who treats an `always` rule as a state check will PASS work that violated it.** the directive is the signal to read the trail instead.
+
+## ⚠️ the known gaps in this taxonomy
+
+stated rather than papered over, so the next author does not re-derive them:
+
+| gap | what it means |
+|---|---|
+| **no conduct directive at nitpick severity** | an act you should usually perform, at nitpick, has no slot. it is filed under `prefer`, which reads as a state claim |
+| **`forbid` spans both subjects** | a forbidden *state* (`forbid.brackets-in-filenames`) and a forbidden *act* (`forbid.websearch-and-webfetch`). whether a conduct-negative twin of `always` is owed is unsettled |
+| **`avoid` has zero instances here** | declared, unused. it may be dead, or the nitpick slot nobody reached for |
+
+## .note
+
+`always` is this repo's **most-used** directive — 22 of its 47 rules — and it went undeclared until 2026-08-31. a prefix in that much use with no declared severity is one a reviewer has to guess at.
+
+⚠️ **five extant `rule.require.*` files are verb-phrase conduct rules** and are rename candidates by the test above. **left in place until disturbed** — a sweep is forbidden, and a partial rename is worse than a consistent extant set (`rule.forbid.domain-term-synonyms`'s own no-mass-rewrite clause).
+
+## practices directories
+
+rules group by domain concern; the domains vary by project and role, with no prescribed set. typical patterns: by artifact type · by quality dimension · by lifecycle stage.
+
+```
+practices/$domain/$subdomain/rule.$directive.$topic.md
+```
+
+⇒ the structure makes rules discoverable by concern rather than alphabetically.

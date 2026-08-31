@@ -16,7 +16,7 @@ export const invokeResearchSkill = async (input: {
   code: number;
 }> => {
   const skillPath =
-    '.agent/repo=bhrain/role=librarian/skills/init.research.sh';
+    '.agent/repo=bhrain/role=researcher/skills/init.research.sh';
   const cmd = `bash "${skillPath}" ${input.args}`;
 
   try {

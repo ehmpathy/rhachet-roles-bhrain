@@ -1,0 +1,68 @@
+# rule.require.inventory-for-enumerable-concepts
+
+when a concept's entries are **enumerable** — its dimensions nameable, each dimension's positions closed — its documents are curated as an **inventory**: one file per cell, addressed by coordinates, with every cell accounted for.
+
+a prose list, a grouped section, or a partial catalog over an enumerable concept is a **defect**, not a style choice.
+
+## .why
+
+- 🔴 **absence becomes visible.** an inventory generates its cells from the axes *before* entries are collected, so an empty cell is a gap. **a list can never report absence** — in a list, *"not there"* and *"nobody looked"* are indistinguishable
+- **lookup becomes an address.** know the coordinates, compute the path — no grep, no ranked candidates, no judgment
+- **it scales without bound.** an inventory is **ref-only** — one address per entry, no preview — so it grows to any size at a fixed cost. that is what earns it the `ref` tier
+
+⇒ the cost is one walk of the axes; the benefit is paid on every future read and every future gap.
+
+| when… | then… |
+|---|---|
+| a doc **enumerates** members of one concept | ask: are the dimensions closed? |
+| you have a **grouped list** whose groups are a dimension | the groups ARE an axis — it wants to be an inventory |
+| you add the **Nth entry** to a doc that lists N-1 | 🔴 an accretion path. stop and ask if the space is generable |
+| a reader must **grep** to find one member | coordinates would remove the search |
+| you say *"the possible values are …"* | you just declared a closed dimension |
+| sections read `## $x` where every `$x` is one position | those headers are coordinates in prose form |
+
+## .the test — forced articulation, on the page
+
+> **1. "what are the dimensions, and what are the positions on each?"**
+
+cannot list them → **not inventoriable.** build a catalog or an `example=` set; this rule does not apply.
+
+> **2. "how many cells does that generate, and how many are occupied?"**
+
+equal → say so. different → **the difference is the gap list, and it is the most valuable output of the exercise.** a doc that cannot answer 2 is a list in an inventory's clothes.
+
+⚠️ answer 2 **in the root's index**, not in your head — an unwritten gap list decays to zero within a round.
+
+## .what it requires
+
+1. **declare the axes** and their closed positions in `inventory.of=$concept._.md`
+2. **one file per cell**, per `rule.forbid.itemization-without-coordinates`
+3. **classify every cell** — occupied, forbidden (an invariant), or empty (a gap). never omit one
+4. **keep the summary an index** — axes, counts, gaps; no per-entry narrative
+5. **re-walk on a new position** — a dimension that grows adds a slice
+
+⚠️ **1 and 2 are both owed, always.**
+
+## .the boundary
+
+| the concept | the artifact |
+|---|---|
+| closed + an address suffices per entry | **inventory** — refs only, scales without bound |
+| closed + the reader needs each member's shape at once | **catalog** — an inventory **plus a preview per entry** |
+| dimensions open-ended | **catalog** of what is known — a census is not deliverable |
+| **occurrences on a declared axis** | **inventory** over that axis |
+| occurrences sampled, no axis declared | **`example=$id` files** |
+
+### ⚠️ "enumerable" does not mean "enumerable in advance"
+
+the misread costs a real artifact: *"my entries arise one at a time and I could not have predicted them, so this does not apply."* **it applies.** an occurrence dimension — `case`, an incident id, a review round — is a real axis whose positions the summary **declares as they arise**.
+
+⇒ **an inventory does not require its axes be enumerable in advance. it requires its entries be ADDRESSABLE and its gaps CHECKABLE.** both hold: `case=$id` computes to one path, and the census is a `Glob`.
+
+⚠️ **the failure this prevents is a coined synonym.** a reader who concludes *"this cannot be an inventory"* calls it a `register`, a `log`, a `fulcrums.md` — one concept under a second word, which `rule.forbid.domain-term-synonyms` forbids outright.
+
+⚠️ **inventory and catalog are not partial-vs-complete.** both enumerate fully; they differ in **what each entry carries**. the choice is a budget call, never a rigor one: an inventory with previews is a catalog that has not admitted it (and will grow past its budget while still filed as cheap); a catalog with no previews is an inventory with extra ceremony.
+
+blocker: an enumerable concept as prose or a grouped list · a root that declares no axes · a silently omitted cell (the omission voids the census claim) · open positions (that is a catalog) · an **occurrence** set under a coined name because its axis was not enumerable in advance · per-entry narrative in the root · an inventory whose entries carry **previews** (a catalog filed as an inventory — its budget claim is false).
+
+⇒ see also: `kno601.inventories._.kind=article` (the why) · `howto.curate-an-inventory` (the moves) · `rule.forbid.itemization-without-coordinates` (the name) · `rule.require.catalog-is-an-index`.

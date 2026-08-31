@@ -16,6 +16,29 @@ surface knowledge gaps across the research:
 
 ---
 
+## then classify — one document kind per brief the research implies
+
+for each brief this research will yield, ask: what is the reader about to DO?
+
+| kind | the reader is about to |
+|---|---|
+| `whento` | judge fit — under which conditions does this apply? |
+| `howto` | act — what should I do, and how? (includes selection) |
+| `howdoes` | reason — how does the machine actually work? |
+| `hazard` | recognize — what trap will bite me, and what is its fingerprint? |
+| `rule` | obey — what is enforceable, and at what severity? |
+
+⚠️ classify HERE, not after the drafts are written. a kind picked at authorship classifies what
+you wrote; a kind picked now reveals what you did NOT research.
+
+- a `howto` for a mechanism → the `howdoes` is owed too, and it is often the more valuable
+- a kind with no brief planned for it → that is a GAP. add a probe for it, above
+- a kind you need that does not exist yet → name the prefix; the set is open
+
+see rule.require.classify-the-yields-document-kind._.md
+
+---
+
 ## output
 
 emit to $RESEARCH_DIR_REL/3.3.absorb.gaps.yield.md

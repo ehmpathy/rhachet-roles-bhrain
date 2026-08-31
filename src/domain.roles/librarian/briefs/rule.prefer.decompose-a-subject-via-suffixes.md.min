@@ -1,0 +1,62 @@
+# rule.prefer.decompose-a-subject-via-suffixes
+
+> **when a subject grows a distinct sub-claim, EJECT it into a suffixed peer. do not accrete it inline.**
+
+```
+$subject._.md            # the root — the whole subject, and an index of its zoom-ins
+$subject.$zoom.md        # one zoom-in per sub-claim, a PEER of the root
+```
+
+the root then carries a **pointer**, never the zoom's body. `rule.require.summary-at-the-cluster-root` governs the **name** once a split has happened; this governs **whether** to split, and its answer is: prefer the split.
+
+## .why — a zoom-in that lives inline is COSTED UPFRONT, forever
+
+a booted brief is inlined into every session that loads its role. so **every line of a zoom-in inside its root is a token charged to every reader, on every boot, whether or not they were the one reader that day who needed it.**
+
+| the zoom-in is | what a reader pays |
+|---|---|
+| **inline in the root** | its full body, **every boot** |
+| **a suffixed peer at `ref`** | one path — its body **only when dereferenced** |
+
+⇒ that is the dereference benefit applied to a brief rather than a filetree, and it is the repo's own stated say/ref policy: *say holds a fixed, small footprint; depth lives under ref, so it grows without bound while every boot stays a fixed size.* **with no split, the only options are carry the depth at `say` or drop it entirely.**
+
+## .the second why — accretion is what a root does when it cannot eject
+
+each addition is locally correct, so no single edit is the defect. the root grows every round; the answer it exists to state does not. eventually a reader cannot find the answer under the material about the answer.
+
+| when… | then… |
+|---|---|
+| you would add a **`##` section** to a booted brief for a claim that stands on its own | 🔴 eject it and leave a pointer |
+| a section has grown its **own** subsections, examples, enforcement | it is a brief. give it a filename |
+| a reader would want it **once**, not on every boot | the dereference case exactly |
+| a section explains **WHY** where the root states **WHAT** | the why is a zoom-in; the what is the root |
+| you reach for a **new top-level name** for a sub-claim | 🔴 a peer name hides the parent. a suffix declares it |
+| a subject genuinely has one claim | leave it. the rule fires on the **split**, never before |
+
+## .the suffix names the ZOOM, not the ordinal
+
+```
+👎  philosophy.entoolment-is-the-pinnacle.2.md          # 2 of WHAT?
+👎  philosophy.entoolment-is-the-pinnacle.more.md       # names no zoom
+👍  philosophy.entoolment-is-the-pinnacle.via-routes.md # legible from a directory read
+```
+
+⇒ **a suffix is an address; an ordinal is a counter.**
+
+## ⚠️ .a zoom-in is not a fork — it must not restate its root
+
+a peer forks two ways: it **restates** the parent's claim, or it sits **unlinked** from it. either way two files hold one claim, they drift, and the reader must reconcile them.
+
+⇒ **the pointer is owed in BOTH directions.** the root names the zoom by path and says when to reach for it; the zoom names its root and says it is a zoom of it.
+
+| the root holds | the zoom-in holds |
+|---|---|
+| the claim, shortest form that stands alone | one facet, in depth |
+| an index line per zoom-in | the worked cases, the counter-argument, that facet's enforcement |
+| the WHAT | the WHY, or the HOW, for one part |
+
+blocker: a sub-claim given a **new top-level name** rather than a suffix (the relation is unrecoverable from the filename) · a zoom-in with **no pointer** from its root or no back-pointer to it · a zoom-in that **restates** its root · a suffix that is an ordinal or a non-name.
+nitpick: a self-contained sub-claim accreted inline where a suffixed peer would serve.
+false positive: a single-claim brief left whole.
+
+⇒ see also: `rule.require.summary-at-the-cluster-root` (the NAME to this WHETHER) · `rule.require.rules-are-clusters` · `rule.require.catalog-is-an-index` · `rule.forbid.itemization-without-coordinates` · `rule.always.yield-the-output-not-the-archaeology` (driver).

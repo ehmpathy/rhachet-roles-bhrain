@@ -790,7 +790,7 @@ const extractPromptFromStdin = (): string | null => {
 const emitOnTalkReminder = (content: string): void => {
   console.error(OWL_WISDOM);
   console.error('');
-  console.error('🔮 goal.triage.infer --from peer --when hook.onTalk');
+  console.error('💎 goal.triage.infer --from peer --when hook.onTalk');
   console.error('   ├─ from = peer:human');
   console.error('   ├─ ask');
   console.error('   │  ├─');
@@ -916,7 +916,7 @@ export const goalMemorySet = async (): Promise<void> => {
 
     // emit treestruct output with full goal display
     emitOwlHeader();
-    console.log(`🔮 goal.memory.set --slug ${slug} --status ${status}`);
+    console.log(`💎 goal.memory.set --slug ${slug} --status ${status}`);
     if (updatedGoal) {
       emitGoalFull(updatedGoal);
       console.log(`   │`);
@@ -978,7 +978,7 @@ export const goalMemorySet = async (): Promise<void> => {
 
       // emit treestruct output with full goal display
       emitOwlHeader();
-      console.log(`🔮 goal.memory.set --scope ${scope}`);
+      console.log(`💎 goal.memory.set --scope ${scope}`);
       if (updatedGoal) {
         emitGoalFull(updatedGoal);
         console.log(`   │`);
@@ -1006,7 +1006,7 @@ export const goalMemorySet = async (): Promise<void> => {
 
     // emit treestruct output with full goal display
     emitOwlHeader();
-    console.log(`🔮 goal.memory.set --scope ${scope}`);
+    console.log(`💎 goal.memory.set --scope ${scope}`);
     emitGoalFull(goal);
     console.log(`   │`);
     console.log(`   ├─ path = ${result.path}`);
@@ -1043,7 +1043,7 @@ export const goalMemorySet = async (): Promise<void> => {
 
       // emit treestruct output with full goal display
       emitOwlHeader();
-      console.log(`🔮 goal.memory.set --scope ${scope}`);
+      console.log(`💎 goal.memory.set --scope ${scope}`);
       if (updatedGoal) {
         emitGoalFull(updatedGoal);
         console.log(`   │`);
@@ -1071,7 +1071,7 @@ export const goalMemorySet = async (): Promise<void> => {
 
     // emit treestruct output with full goal display
     emitOwlHeader();
-    console.log(`🔮 goal.memory.set --scope ${scope}`);
+    console.log(`💎 goal.memory.set --scope ${scope}`);
     emitGoalFull(goal);
     console.log(`   │`);
     console.log(`   ├─ path = ${result.path}`);
@@ -1226,7 +1226,7 @@ export const goalMemorySet = async (): Promise<void> => {
 
   // emit treestruct output with full goal display
   emitOwlHeader();
-  console.log(`🔮 goal.memory.set --scope ${scope}`);
+  console.log(`💎 goal.memory.set --scope ${scope}`);
   if (updatedGoal) {
     emitGoalFull(updatedGoal);
     console.log(`   │`);
@@ -1266,7 +1266,7 @@ export const goalMemoryGet = async (): Promise<void> => {
     : slug
       ? `goal.memory.get --scope ${scope} --slug ${slug}`
       : `goal.memory.get --scope ${scope}`;
-  console.log(`🔮 ${argsDisplay}`);
+  console.log(`💎 ${argsDisplay}`);
 
   if (result.goals.length === 0) {
     console.log('   └─ goals = (none)');
@@ -1398,7 +1398,7 @@ export const goalTriageInfer = async (): Promise<void> => {
     if (hasUncovered || hasIncomplete) {
       console.error('🦉 to forget an ask is to break a promise. remember.');
       console.error('');
-      console.error('🔮 goal.triage.infer --when hook.onStop');
+      console.error('💎 goal.triage.infer --when hook.onStop');
 
       if (hasUncovered) {
         console.error(`   ├─ uncovered asks = ${state.asksUncovered.length}`);
@@ -1434,7 +1434,7 @@ export const goalTriageInfer = async (): Promise<void> => {
 
   // triage mode: show full state with treestruct vibes
   emitOwlHeader();
-  console.log(`🔮 goal.triage.infer --scope ${scope}`);
+  console.log(`💎 goal.triage.infer --scope ${scope}`);
 
   // stats section (counts only)
   console.log(`   │`);
@@ -1550,7 +1550,7 @@ export const goalGuard = async (): Promise<void> => {
   // blocked: emit treestruct to stderr
   console.error(OWL_WISDOM_GUARD);
   console.error('');
-  console.error('🔮 goal.guard');
+  console.error('💎 goal.guard');
   console.error('   ├─ ✋ blocked: direct access to .goals/ is forbidden');
   console.error('   │');
   console.error('   └─ use skills instead');
@@ -1661,7 +1661,7 @@ export const goalTriageNext = async (): Promise<void> => {
   // emit treestruct to stderr (for visibility on exit 2)
   console.error(escalateMessageByCount(blockerState.count));
   console.error('');
-  console.error(`🔮 goal.triage.next --when ${when}`);
+  console.error(`💎 goal.triage.next --when ${when}`);
 
   // show inflight if any (priority)
   if (inflightGoals.goals.length > 0) {

@@ -1,0 +1,18 @@
+# rule.always.converge-with-reviewers
+
+a peer review is a conversation, not a verdict. settle it yourself through the contemplation loop; escalate only at a real wall.
+
+| the review is | you must |
+|---|---|
+| a real defect | fix it, then articulate HOW in `.taken` |
+| a reviewer misfire | hold ground, articulate WHY with cited evidence |
+| a matter of taste | take their preference unless it regresses a guarantee |
+| partly right | fix the valid half, articulate the boundary you kept |
+
+the loop: read each `.given.by_peer` → fix, or marshal the evidence → write `.taken.by_self` → `--as contemplated --that <slug>` → re-submit. the reviewer re-reads with your articulation AND your diff in context.
+
+persuade with a cited rule, path, or line. a bare *"i disagree"* converges no one.
+
+escalate only for: a foreman-only key · a wisher scope decision · two reviewers that demand opposites.
+
+⇒ zoom-in: `…via-a-taken-per-point` — every open point owes a `.taken`, every round.

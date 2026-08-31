@@ -5,16 +5,142 @@ always:
       - briefs/im_an.obsessive_learner.md
       - briefs/im_an.obsessive_learner.for.domain.terms.md
       - briefs/im_an.obsessive_learner.for.domain.invariants.md
+      # the third capture kind, beside terms and invariants: a glyph is a contract on
+      # a surface a reader parses at a glance, so it obeys the same one-concept-one-
+      # symbol law a term does. say-level because a claimed glyph spreads across every
+      # surface it prefixes — the repair grows with each snapshot that captures it
+      - briefs/im_an.obsessive_learner.for.domain.glyphs.md
 
       # rules
       - briefs/rule.always.externalize.lessons.into_briefs.md
       - briefs/rule.always.externalize.tactics.into_skills.md
+      # the WITHDRAWAL half of the two rules above. say-level because it must fire
+      # BEFORE the work starts — a rule that arrives after an approach was improvised
+      # meets a traveler who already re-derived what the repo had settled
+      - briefs/rule.always.reuse-pavement-before-improvise.md
+      # the DISCOVER + UPGRADE pair that sharpens the tactics rule above.
+      # enskill fires on a repeated sequence (rung 0 → rung 2); entool fires on the
+      # leftover brain work after a skill call (rung 2 → rung 4). both are say-level
+      # because both must fire AT the moment of use — a rule that arrives after the
+      # sequence was re-run by hand, or after the glue was applied, has missed its cue
+      - briefs/rule.always.enskill-the-tactics-you-discover.md
+      - briefs/rule.always.entool-the-skills-you-touch.md
+      # the two lesson-durability rules. say-level because each fires at the moment a
+      # lesson is written, never after: a session-bound phrase and a misplaced home are
+      # both cheap to avoid up front and expensive to find later
+      - briefs/rule.require.timeless-lessons.md
+      - briefs/rule.always.scope-onetime-lessons-to-the-behavior.md
+      # the SOURCE half of the two lesson-durability rules above — the wisher's own
+      # words, on record before any distillation touches them. it lives here because
+      # the act is capture-before-context-fades, which is this role's whole subject,
+      # and because ANY role enrolled with the wisher can be corrected: filed under
+      # the driver, it was reachable only by a driver-enrolled clone. the driver
+      # borrows it back by symlink, since that is where it fires most often
+      - briefs/rule.always.archive-the-wishers-words-verbatim.md
+      # what a followup owes when it is NOT done in this round. say-level because it
+      # fires at the moment of deferral — a followup merely spoken is gone with the
+      # round, and by then the context that made the fix cheap is gone too
+      - briefs/rule.always.catch-dreams-for-followups.md
+      # where a lesson must NOT land. say-level because it fires at the instant the
+      # instinct to persist strikes — a rule that arrives after the write reached
+      # ~/.claude has missed it, and that store is invisible to git and to every
+      # other machine
+      - briefs/rule.forbid.native-memory.md
+      # how a rule is shaped so its readers retrieve it. say-level because it fires
+      # while a rule is written, and the repair after the fact is a split, not an edit
+      - briefs/rule.require.specialize-a-rule-its-readers-look-past._.md
       # the two domain-term rules — the learner authors + tends them, so it always
       # boots them directly. they ALSO boot org-wide via role=any/boot.yml (they govern
-      # every role's contracts, not just the learner's); listed in both spots on purpose
+      # every role's contracts, not just the learner's), so they are listed in both spots
       - briefs/rule.require.domain-term-itemization.md
       - briefs/rule.forbid.domain-term-synonyms.md
+      # the other two thirds of the same law. synonyms forbids many-words-one-concept
+      # AFTER a canon exists; ambiguity forbids one-word-many-concepts; inconsistency
+      # forbids a codebase that disagrees with itself BEFORE any canon exists. all three
+      # fire at the same moment — authorship — so to boot one third is to boot a rule
+      # whose two siblings the reader never learns
+      - briefs/rule.forbid.domain-term-ambiguity.md
+      - briefs/rule.forbid.domain-term-inconsistency.md
+      # the name form those two imply. say-level because it fires at authorship —
+      # a boundary declared up front costs one word; a collision found later costs a
+      # rename plus every citation of the term
+      - briefs/rule.require.boundary-qualified-terms.md
+      # the move that PRECEDES both term rules above: enumerate the instances, then
+      # pick the word. say-level for the same reason boundary-qualified is — it fires
+      # at authorship, where the repair is a table; after a citation exists the repair
+      # is a rename plus every reference to it
+      - briefs/rule.require.enumerate-before-you-name.md
 
       # domain-term templates + guides (learner tools for HOW to distill)
       - briefs/template.domain-term.md
       - briefs/howto.domain-term-disputes.[guide].md
+
+      # 🔴 the WHY under every rule above. say-level, and it is not a hedge on the
+      # fixed-footprint policy — it is what that policy is FOR.
+      #
+      # the reason, stated once so no later reader re-litigates it: a rule tells a
+      # reader WHAT to do, and a rule alone cannot tell them what to do in a case it
+      # does not enumerate. no rule enumerates every case. so a reader who carries the
+      # rules and not the why can follow them exactly and still be wrong at the first
+      # edge — and cannot know it, because the rule they followed said naught about
+      # the edge.
+      #
+      # ⚠️ the tell that this tier is right: `research.selfreview-effectiveness` grades
+      # a philosophical frame ALONE at d=0.05 and a when-then cue at d=0.65. that is
+      # an argument to PAIR them, never to demote the frame — the 0.05 is measured for
+      # a frame with NO rule beside it, which is not this arrangement. each philosophy
+      # below sits beside the rules it grounds, in the same tier.
+      #
+      # they are affordable here because each ships a `.md.min` — the say/ref split
+      # applied WITHIN one artifact, so the min fires unprompted and the full source
+      # is dereferenced. that is the mechanism that lets depth stay say-level while
+      # the fixed footprint stays fixed
+      #
+      # the parent claim first — pavement is reusable prethought, and to re-derive it
+      # re-spends energy already spent
+      - briefs/philosophy.pavement-saves-nature.md
+      # its child: a tool amortizes the execution too, so it saves more per reuse
+      # than a brief can. this is the why under enskill AND entool, which are the two
+      # rules a reader is most apt to read as tidiness rather than as conservation
+      - briefs/philosophy.entoolment-is-the-pinnacle._.md
+      # the split the whole ladder rests on: a brief confers prethought CONCEPTS, a
+      # skill confers prethought CAPACITY. say-level beside its root because it
+      # carries the enforcement a reader needs at authorship — `knowledge` is the
+      # genus both halves share, so it can name neither
+      - briefs/philosophy.entoolment-is-the-pinnacle.concepts-vs-capacity.md
+      # the zoom-in onto rung 3, where a route lives — what to pave when the brain
+      # cost cannot fall to zero. say-level because its cue fires inside enskill's:
+      # the moment the leftover work proves to be judgment at several points
+      - briefs/philosophy.entoolment-is-the-pinnacle.via-routes.md
+
+    # the ref tier — surfaced on demand, never inlined at boot.
+    # the same policy role=any/boot.yml states for the glossary: `say` holds a fixed,
+    # small footprint of what must fire unprompted; depth lives here so it can grow
+    # without a cost on every boot.
+    #
+    # ⚠️ philosophy USED to be the archetype for this tier, on the reasoning that a
+    # why is wanted once rather than on every boot. that was overturned 2026-08-31 —
+    # the why is what a reader needs at the edge case no rule enumerates, and the edge
+    # arrives unannounced. so a why held one dereference away is a why they do not
+    # have at the moment they need it. the four philosophies now boot at say, and the
+    # `.md.min` sidecar is what makes that affordable
+    ref:
+      # the glossary dir's own orientation doc. ref because it is read once, on a
+      # first visit to domain.terms/ — never on every boot
+      - briefs/readme.domain-terms.md
+      # the ejected occurrence behind rule.require.specialize-…'s honest bound.
+      # ref because a demo is read once, to check the claim — never on every boot
+      - briefs/rule.require.specialize-a-rule-its-readers-look-past.example=grove-ssh-after-the-split.md
+      # the index over the en- family this role owns — enbrief · enskill · entool,
+      # plus pave and learn. it lives here rather than under .agent/repo=.this/
+      # because philosophy.entoolment-is-the-pinnacle PUBLISHES and teaches those
+      # verbs by name; an index that does not ship with them is a phantom path for
+      # every consumer. the .agent/ copy is a symlink to this file
+      - briefs/catalog.of=externalization._.md
+      # the cited evidence UNDER every rule this role writes: a when-then cue scores
+      # d=0.65, forced articulation d=0.55, a philosophical frame alone d=0.05. it
+      # moved here from .agent/repo=.this/ on 2026-08-31 because three PUBLISHED
+      # learner briefs cite it and it did not ship — a phantom path for every
+      # consumer (hazard.published-brief-cannot-cite-the-repo-glossary). the
+      # .agent/ copy is now a symlink to this file, so this repo's boot is unchanged
+      - briefs/research.selfreview-effectiveness.md

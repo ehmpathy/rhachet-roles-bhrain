@@ -40,6 +40,19 @@ always:
       - briefs/domain.terms/term=*._.choice.reason.md
       - briefs/domain.terms/term=*._.choice.example=*.md
 
+      # the externalization catalog — the index over the en- family (enbrief ·
+      # enskill · entool) plus pave + learn. ref for the same reason the glossary
+      # is: it is read ONCE, at the moment a traveler asks which verb to reach for.
+      # it exists because that index had been parked inside term=enbrief's reason
+      # file, where the SET was reachable only by a reader who knew a MEMBER
+      - briefs/domain.terms/catalog.of=externalization._.md
+
+      # the glyph catalog — ref, not say, for the same reason the glossary is: the
+      # index is read ONCE, at the moment a glyph is claimed, and it grows as axes
+      # are added. define.bhrain-repo-mascot rides say-level and points here
+      - briefs/domain.glyphs/catalog.of=glyph._.md
+      - briefs/domain.glyphs/catalog.of=glyph.axis=*.md
+
       # lessons - load on demand
       - briefs/howto.acceptance-test-flow.[lesson].md
       - briefs/howto.acceptance-test-setup.[lesson].md
@@ -52,6 +65,23 @@ always:
       - briefs/howto.journey-tests-reveal-cache-bugs.[lesson].md
       - briefs/howto.rhachet.integration.[lesson].md
       - briefs/howto.test-skills-yourself.[lesson].md
+
+      # hazards - load on demand. a hazard is a diagnosis, reached for when its
+      # symptom shows; it does not need to fire before the mistake, because the
+      # hook that catches the mistake already does
+      - briefs/hazard.injected-date-disagrees-with-wallclock.md
+      # ⚠️ this one differs from the hazard above: no hook catches it, and its
+      # failure is silent and delayed (a build reverts the edit later). it stays
+      # at ref anyway, per the say-tier policy — its cue table is what a reader
+      # reaches for on the symptom "my change did not stick". the mechanism that
+      # would fire BEFORE the edit is a preToolUse hook, caught in .dream/
+      - briefs/hazard.agent-brief-may-be-a-dist-symlink.md
+      # ⚠️ the peer of the one above — same src/ -> dist/ chain, opposite
+      # direction. that one asks "is this .agent/ file safe to edit?"; this one
+      # asks "does this citation ship?". its failure is invisible from inside
+      # this repo, since every term path resolves on our disk and on no
+      # consumer's, so no reviewer here can catch it by a read
+      - briefs/hazard.published-brief-cannot-cite-the-repo-glossary.md
 
       # research - load on demand
       - briefs/research.selfreview-effectiveness.md

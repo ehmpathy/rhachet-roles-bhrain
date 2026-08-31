@@ -24,11 +24,12 @@ exports[`learnDomainTerms (integration) given: [case1] the clone face — reflec
    │  │     │     ├─ term=<x>._.choice.reason.md         (ref: etymology, disputes, evidence — required)
    │  │     │     └─ term=<x>._.choice.example=<abc>.md  (ref: one per notable example — optional)
    │  │     └─ or cite it — point to the extant declaration you reused
-   │  └─ 4. articulate progress.md — REQUIRED, the last step every round:
+   │  └─ 4. articulate TODAY's progress file — REQUIRED, the last step every round:
    │        ├─ what you conformed, disputed, and paved this round — and why
    │        ├─ a term the round SETTLED (declared dobj/dop, judged synonym) → capture it NOW
    │        ├─ defer ONLY a term you truly cannot finish (needs discovery, dispute still open)
-   │        └─ sentinel = .agent/.cache/repo=bhrain/role=learner/skill=learn.domain.terms/progress.md
+   │        ├─ ⚠️ ONE FILE PER DAY — append within today, never across days
+   │        └─ sentinel = .agent/.cache/repo=bhrain/role=learner/skill=learn.domain.terms/progress.$date.md
    │
    ├─ the canon — what a term is + why it is kept
    │  ├─ why  · im_an.obsessive_learner.for.domain.terms.md (the trait)
@@ -60,11 +61,12 @@ exports[`learnDomainTerms (integration) given: [case1] the clone face — reflec
    │  │     │     ├─ term=<x>._.choice.reason.md         (ref: etymology, disputes, evidence — required)
    │  │     │     └─ term=<x>._.choice.example=<abc>.md  (ref: one per notable example — optional)
    │  │     └─ or cite it — point to the extant declaration you reused
-   │  └─ 4. articulate progress.md — REQUIRED, the last step every round:
+   │  └─ 4. articulate TODAY's progress file — REQUIRED, the last step every round:
    │        ├─ what you conformed, disputed, and paved this round — and why
    │        ├─ a term the round SETTLED (declared dobj/dop, judged synonym) → capture it NOW
    │        ├─ defer ONLY a term you truly cannot finish (needs discovery, dispute still open)
-   │        └─ sentinel = .agent/.cache/repo=bhrain/role=learner/skill=learn.domain.terms/progress.md
+   │        ├─ ⚠️ ONE FILE PER DAY — append within today, never across days
+   │        └─ sentinel = .agent/.cache/repo=bhrain/role=learner/skill=learn.domain.terms/progress.$date.md
    │
    ├─ the canon — what a term is + why it is kept
    │  ├─ why  · im_an.obsessive_learner.for.domain.terms.md (the trait)
@@ -104,11 +106,12 @@ exports[`learnDomainTerms (integration) given: [case2] the onStop hook face — 
    │  │     │     ├─ term=<x>._.choice.reason.md         (ref: etymology, disputes, evidence — required)
    │  │     │     └─ term=<x>._.choice.example=<abc>.md  (ref: one per notable example — optional)
    │  │     └─ or cite it — point to the extant declaration you reused
-   │  └─ 4. articulate progress.md — REQUIRED, the last step every round:
+   │  └─ 4. articulate TODAY's progress file — REQUIRED, the last step every round:
    │        ├─ what you conformed, disputed, and paved this round — and why
    │        ├─ a term the round SETTLED (declared dobj/dop, judged synonym) → capture it NOW
    │        ├─ defer ONLY a term you truly cannot finish (needs discovery, dispute still open)
-   │        └─ sentinel = .agent/.cache/repo=bhrain/role=learner/skill=learn.domain.terms/progress.md
+   │        ├─ ⚠️ ONE FILE PER DAY — append within today, never across days
+   │        └─ sentinel = .agent/.cache/repo=bhrain/role=learner/skill=learn.domain.terms/progress.$date.md
    │
    ├─ the canon — what a term is + why it is kept
    │  ├─ why  · im_an.obsessive_learner.for.domain.terms.md (the trait)

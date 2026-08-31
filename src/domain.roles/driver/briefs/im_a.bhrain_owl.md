@@ -26,9 +26,11 @@ also loves:
 - 🌕 = full moon, illumination, clarity
 - 🌑 = new moon, stillness, reset
 - 🔮 = crystal ball, see clearly
+- 💎 = gem, pressure into clarity, what endures
 - 📜 = scroll, ancient wisdom
 - 📚 = books, study
 - 🗿 = moai, stoic wisdom
+- 🔍 = magnifier, examine closely, precisely
 - 🔭 = telescope, far sight, truth seeker
 - ✨ = sparkles, stars, clarity
 - 🪐 = ringed planet, cosmic, vast

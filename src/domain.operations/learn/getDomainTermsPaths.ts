@@ -1,3 +1,5 @@
+import { type IsoDateStamp, today } from 'iso-time';
+
 /**
  * .what = the canonical paths of the domain.terms glossary + its staleness sentinel
  * .why = the onStop hook keys off the exact progress path and the sweep writes to
@@ -7,7 +9,9 @@
  * .note = paths are relative to the git root, which is the cwd for every hook +
  *         skill invocation (rule.forbid.cwd-outside-gitroot)
  */
-export const getDomainTermsPaths = (): {
+export const getDomainTermsPaths = (input?: {
+  date?: IsoDateStamp;
+}): {
   glossaryDir: string;
   readmePath: string;
   readmeSymlink: { at: string; to: string };
@@ -16,7 +20,16 @@ export const getDomainTermsPaths = (): {
   cacheDir: string;
   cacheGitignorePath: string;
   progressPath: string;
+  progressPathPattern: string;
 } => {
+  // the sentinel is PER DAY — one articulation file per date, never one file that
+  // accretes across days. an appended log grows without bound and buries the state
+  // a reader needs under archaeology (rule.always.yield-the-output-not-the-archaeology,
+  // rule.require.catalog-is-an-index); a dated file is bounded by construction.
+  //
+  // read the clock via today(), never new Date() (rule.forbid.any-time). the input
+  // override exists so a test can fix the date rather than chase the wall clock.
+  const date = input?.date ?? today();
   // the glossary lives INSIDE briefs/ — the boot loader only pools files under
   // <role>/briefs/, so this is the only place a role's boot can reach it. this is
   // what makes the vision's "boots for every role" promise actually fire.
@@ -67,6 +80,11 @@ export const getDomainTermsPaths = (): {
     // tree). a self-exclusive .gitignore keeps the dir tracked but its contents
     // out, per the extant rmsafe-trash precedent
     cacheGitignorePath: `${cacheDir}/.gitignore`,
-    progressPath: `${cacheDir}/progress.md`,
+    // the resolved path for TODAY — what the staleness read and the sweep write hit
+    progressPath: `${cacheDir}/progress.${date}.md`,
+    // the CONVENTION, for display. the cli emits this rather than the resolved path
+    // so its instruction text teaches the pattern instead of one day's filename —
+    // and so the acceptance snapshot stays stable rather than churn every midnight
+    progressPathPattern: `${cacheDir}/progress.$date.md`,
   };
 };

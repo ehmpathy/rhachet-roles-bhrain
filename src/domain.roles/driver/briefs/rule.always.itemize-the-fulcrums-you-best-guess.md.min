@@ -1,0 +1,24 @@
+# rule.always.itemize-the-fulcrums-you-best-guess
+
+when you best-guess a fork mid-drive, itemize it **at that moment** — never at the end, never only in yield prose.
+
+```
+$route/.fulcrums/inventory.of=fulcrums._.md               # the SUMMARY
+$route/.fulcrums/inventory.of=fulcrums.case=F$n-$slug.md  # one ENTRY per fulcrum
+```
+
+both are owed, every time. ⚠️ **append at the moment, never in a sweep** — a sweep loses the fork you rejected, the reason as it stood, and the live clean/dirty judgment. those are the parts a reviewer needs.
+
+## 🔴 a fork is not the only trigger — a call under 93% confidence is one too
+
+> if you would not defend the call at 93%, it earns a fulcrum, even where you weighed no alternative.
+
+cues: an n=1 generalization · a premise you did not fetch · a short wisher clause and a long artifact · an invented taxonomy or axis set · an act against a stated bound · the words *"i think this is right"*.
+
+## the summary's columns
+
+`case` · `title` · **`rework`** (clean/dirty — what the council sorts on) · `status` · `confidence` (a percentage, never a flag)
+
+the entry adds: the fork stated fairly · taken, and why **at the time** · rework, and why · **confidence, and why it is low** · where · the verdict once ruled.
+
+blocker: a fulcrum never itemized · a row with no entry or an entry with no row · a record swept at the end · an absent `rework` column · a prose filename · an unrecorded verdict · a sub-93% call with no row · a percentage with no reason.

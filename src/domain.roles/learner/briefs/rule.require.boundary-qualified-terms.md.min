@@ -1,0 +1,12 @@
+# rule.require.boundary-qualified-terms
+
+a term carries its FULL boundary ancestry in its filename, always — never only where it collides.
+
+✅ `term=route.guard.rung._.choice._.md`
+👎 `term=rung` · `term=guard.rung` (cut short) · a leading `repo` (universal)
+
+test: **"$word, of WHAT?"** — one word = the boundary · a sentence = undiscovered, record the gap · two answers = two senses, two clusters
+
+boundary = SUBDOMAIN (`review.rung`), never ROLE (`driver.rung`).
+
+blocker: absent `term.boundary` · a flat or truncated filename · a boundary naming no declared term · a bulk find-and-replace

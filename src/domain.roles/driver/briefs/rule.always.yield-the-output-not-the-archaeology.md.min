@@ -1,0 +1,29 @@
+# rule.always.yield-the-output-not-the-archaeology
+
+> a yield is the output, never the archaeology.
+
+state the answer. if the path to it is worth a record, it goes in a peer dir and the yield cites it by path.
+
+| dir | holds |
+|---|---|
+| `$route/appendix/` | the evidence under a decision that IS in the yield |
+| `$route/archive/` | ideas considered and **rejected** |
+
+| in the yield | not in the yield |
+|---|---|
+| the contract / the outcome | the drafts that preceded it |
+| the decision | the reversals en route |
+| one line of reason per decision | the full argument (→ `appendix/`) |
+| a fulcrum row: what was settled, by whom | the blow-by-blow (→ `archive/`) |
+| a caveat a reader must act on | commentary on the review process |
+
+**declare each claim exactly once.** a claim that belongs in two sections means one of the two is redundant.
+
+before you write: *"is this the answer, or the story of the answer?"*
+after you write: grep each decision's central term — more than two or three hits and you retell rather than declare.
+
+the reviewer's tells: table rows that are drafts rather than options · *"an earlier draft"* · a section on why a previous version of the same doc was wrong · one fulcrum cited four times · **a yield that grew on a round where no decision changed**.
+
+caveats: a reversal a reader must ACT on stays · terse is not thin · `archive/` is not deletion · an appendix must be cited.
+
+⇒ parent: `rule.forbid.chronological-accretion` (ehmpathy/mechanic). what this adds is the two peer dirs.

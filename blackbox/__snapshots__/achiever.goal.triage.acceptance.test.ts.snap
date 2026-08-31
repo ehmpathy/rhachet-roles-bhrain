@@ -3,7 +3,7 @@
 exports[`achiever.goal.triage.acceptance given: [case1] multi-part request triage flow when: [t0] first ask is created as a goal then: stdout has good vibes 1`] = `
 "🦉 to forget an ask is to break a promise. remember.
 
-🔮 goal.memory.set --scope repo
+💎 goal.memory.set --scope repo
    ├─ goal
    │  ├─ slug = fix-auth-test
    │  ├─ why
@@ -63,7 +63,7 @@ exports[`achiever.goal.triage.acceptance given: [case1] multi-part request triag
 exports[`achiever.goal.triage.acceptance given: [case1] multi-part request triage flow when: [t1] second ask is created as a goal then: stdout has good vibes 1`] = `
 "🦉 to forget an ask is to break a promise. remember.
 
-🔮 goal.memory.set --scope repo
+💎 goal.memory.set --scope repo
    ├─ goal
    │  ├─ slug = update-readme-env
    │  ├─ why
@@ -123,7 +123,7 @@ exports[`achiever.goal.triage.acceptance given: [case1] multi-part request triag
 exports[`achiever.goal.triage.acceptance given: [case1] multi-part request triage flow when: [t2] third ask is created as a goal then: stdout has good vibes 1`] = `
 "🦉 to forget an ask is to break a promise. remember.
 
-🔮 goal.memory.set --scope repo
+💎 goal.memory.set --scope repo
    ├─ goal
    │  ├─ slug = notify-slack-done
    │  ├─ why
@@ -183,7 +183,7 @@ exports[`achiever.goal.triage.acceptance given: [case1] multi-part request triag
 exports[`achiever.goal.triage.acceptance given: [case1] multi-part request triage flow when: [t3] all goals are listed then: stdout has good vibes 1`] = `
 "🦉 to forget an ask is to break a promise. remember.
 
-🔮 goal.memory.get --scope repo
+💎 goal.memory.get --scope repo
    └─ goals (3)
       ├─ (1)
       │  ├─ slug = fix-auth-test
@@ -239,7 +239,7 @@ exports[`achiever.goal.triage.acceptance given: [case1] multi-part request triag
 exports[`achiever.goal.triage.acceptance given: [case1] multi-part request triage flow when: [t4] goals are filtered by status then: filter stdout has good vibes 1`] = `
 "🦉 to forget an ask is to break a promise. remember.
 
-🔮 goal.memory.get --scope repo
+💎 goal.memory.get --scope repo
    └─ goals (2)
       ├─ (1)
       │  ├─ slug = update-readme-env
@@ -280,7 +280,7 @@ exports[`achiever.goal.triage.acceptance given: [case1] multi-part request triag
 exports[`achiever.goal.triage.acceptance given: [case2] triage of asks with goal coverage when: [t0] goal created with coverage hash then: stdout has good vibes 1`] = `
 "🦉 to forget an ask is to break a promise. remember.
 
-🔮 goal.memory.set --scope repo
+💎 goal.memory.set --scope repo
    ├─ goal
    │  ├─ slug = complete-task
    │  ├─ why
@@ -342,7 +342,7 @@ exports[`achiever.goal.triage.acceptance given: [case2] triage of asks with goal
 exports[`achiever.goal.triage.acceptance given: [case3] goal status transitions through full lifecycle when: [t0] goal transitions to blocked then: stdout has good vibes 1`] = `
 "🦉 to forget an ask is to break a promise. remember.
 
-🔮 goal.memory.set --slug lifecycle-goal --status blocked
+💎 goal.memory.set --slug lifecycle-goal --status blocked
    ├─ goal
    │  ├─ slug = lifecycle-goal
    │  ├─ why
@@ -402,7 +402,7 @@ exports[`achiever.goal.triage.acceptance given: [case3] goal status transitions 
 exports[`achiever.goal.triage.acceptance given: [case3] goal status transitions through full lifecycle when: [t1] goal transitions to inflight then: stdout has good vibes 1`] = `
 "🦉 to forget an ask is to break a promise. remember.
 
-🔮 goal.memory.set --slug lifecycle-goal --status inflight
+💎 goal.memory.set --slug lifecycle-goal --status inflight
    ├─ goal
    │  ├─ slug = lifecycle-goal
    │  ├─ why
@@ -462,7 +462,7 @@ exports[`achiever.goal.triage.acceptance given: [case3] goal status transitions 
 exports[`achiever.goal.triage.acceptance given: [case3] goal status transitions through full lifecycle when: [t2] goal transitions to fulfilled then: stdout has good vibes 1`] = `
 "🦉 to forget an ask is to break a promise. remember.
 
-🔮 goal.memory.set --slug lifecycle-goal --status fulfilled
+💎 goal.memory.set --slug lifecycle-goal --status fulfilled
    ├─ goal
    │  ├─ slug = lifecycle-goal
    │  ├─ why
@@ -522,7 +522,7 @@ exports[`achiever.goal.triage.acceptance given: [case3] goal status transitions 
 exports[`achiever.goal.triage.acceptance given: [case4] partial goals via CLI flags when: [t0] partial goal with slug and one field flag then: stdout has good vibes 1`] = `
 "🦉 to forget an ask is to break a promise. remember.
 
-🔮 goal.memory.set --scope repo
+💎 goal.memory.set --scope repo
    ├─ goal
    │  ├─ slug = quick-capture-test
    │  ├─ why
@@ -557,7 +557,7 @@ exports[`achiever.goal.triage.acceptance given: [case4] partial goals via CLI fl
 exports[`achiever.goal.triage.acceptance given: [case4] partial goals via CLI flags when: [t1] partial goal with slug only (minimal capture) then: stdout has good vibes 1`] = `
 "🦉 to forget an ask is to break a promise. remember.
 
-🔮 goal.memory.set --scope repo
+💎 goal.memory.set --scope repo
    ├─ goal
    │  ├─ slug = minimal-capture-test
    │  ├─ why
@@ -587,7 +587,7 @@ exports[`achiever.goal.triage.acceptance given: [case4] partial goals via CLI fl
 exports[`achiever.goal.triage.acceptance given: [case4] partial goals via CLI flags when: [t2] partial goal with multiple field flags then: stdout has good vibes 1`] = `
 "🦉 to forget an ask is to break a promise. remember.
 
-🔮 goal.memory.set --scope repo
+💎 goal.memory.set --scope repo
    ├─ goal
    │  ├─ slug = multi-field-test
    │  ├─ why
@@ -632,7 +632,7 @@ exports[`achiever.goal.triage.acceptance given: [case4] partial goals via CLI fl
 exports[`achiever.goal.triage.acceptance given: [case4] partial goals via CLI flags when: [t3] update partial goal with additional fields then: stdout has good vibes 1`] = `
 "🦉 to forget an ask is to break a promise. remember.
 
-🔮 goal.memory.set --scope repo
+💎 goal.memory.set --scope repo
    ├─ goal
    │  ├─ slug = quick-capture-test
    │  ├─ why
@@ -677,7 +677,7 @@ exports[`achiever.goal.triage.acceptance given: [case4] partial goals via CLI fl
 exports[`achiever.goal.triage.acceptance given: [case4] partial goals via CLI flags when: [t4] complete a partial goal with all rest fields then: stdout has good vibes 1`] = `
 "🦉 to forget an ask is to break a promise. remember.
 
-🔮 goal.memory.set --scope repo
+💎 goal.memory.set --scope repo
    ├─ goal
    │  ├─ slug = quick-capture-test
    │  ├─ why
@@ -737,7 +737,7 @@ exports[`achiever.goal.triage.acceptance given: [case4] partial goals via CLI fl
 exports[`achiever.goal.triage.acceptance given: [case6] goal.triage.infer shows incomplete goals separately when: [t0] goal.triage.infer is invoked then: stdout has good vibes 1`] = `
 "🦉 to forget an ask is to break a promise. remember.
 
-🔮 goal.triage.infer --scope repo
+💎 goal.triage.infer --scope repo
    │
    ├─ stats
    │  ├─ asks = 0
@@ -763,7 +763,7 @@ exports[`achiever.goal.triage.acceptance given: [case6] goal.triage.infer shows 
 exports[`achiever.goal.triage.acceptance given: [case6] goal.triage.infer shows incomplete goals separately when: [t1] all goals are complete then: stdout has good vibes 1`] = `
 "🦉 to forget an ask is to break a promise. remember.
 
-🔮 goal.triage.infer --scope repo
+💎 goal.triage.infer --scope repo
    │
    ├─ stats
    │  ├─ asks = 0
@@ -784,7 +784,7 @@ exports[`achiever.goal.triage.acceptance given: [case6] goal.triage.infer shows 
 exports[`achiever.goal.triage.acceptance given: [case8] route scope goal persistence when: [t0] goal.memory.set with --scope route within a route then: stdout has good vibes 1`] = `
 "🦉 to forget an ask is to break a promise. remember.
 
-🔮 goal.memory.set --scope route
+💎 goal.memory.set --scope route
    ├─ goal
    │  ├─ slug = route-scoped-goal
    │  ├─ why
@@ -844,7 +844,7 @@ exports[`achiever.goal.triage.acceptance given: [case8] route scope goal persist
 exports[`achiever.goal.triage.acceptance given: [case8] route scope goal persistence when: [t1] goal.memory.get with --scope route retrieves route goals then: stdout has good vibes 1`] = `
 "🦉 to forget an ask is to break a promise. remember.
 
-🔮 goal.memory.get --scope route
+💎 goal.memory.get --scope route
    └─ goals (1)
       ├─ slug = route-scoped-goal
       ├─ why
@@ -869,7 +869,7 @@ exports[`achiever.goal.triage.acceptance given: [case8] route scope goal persist
 exports[`achiever.goal.triage.acceptance given: [case8] route scope goal persistence when: [t2] goal.triage.infer with --scope route shows route state then: stdout has good vibes 1`] = `
 "🦉 to forget an ask is to break a promise. remember.
 
-🔮 goal.triage.infer --scope route
+💎 goal.triage.infer --scope route
    │
    ├─ stats
    │  ├─ asks = 0
@@ -889,7 +889,7 @@ exports[`achiever.goal.triage.acceptance given: [case8] route scope goal persist
 exports[`achiever.goal.triage.acceptance given: [case9] partial goal blocks onStop until complete (journey) when: [t0] partial goal is created then: stdout has good vibes 1`] = `
 "🦉 to forget an ask is to break a promise. remember.
 
-🔮 goal.memory.set --scope repo
+💎 goal.memory.set --scope repo
    ├─ goal
    │  ├─ slug = incomplete-blocks-session
    │  ├─ why
@@ -924,7 +924,7 @@ exports[`achiever.goal.triage.acceptance given: [case9] partial goal blocks onSt
 exports[`achiever.goal.triage.acceptance given: [case9] partial goal blocks onStop until complete (journey) when: [t1] hook.onStop fires with incomplete goal then: stderr has good vibes 1`] = `
 "🦉 to forget an ask is to break a promise. remember.
 
-🔮 goal.triage.infer --when hook.onStop
+💎 goal.triage.infer --when hook.onStop
    ├─ incomplete goals = 1
    │  └─ incomplete-blocks-session
    │     ├─ absent: why.purpose, why.benefit, what.outcome, how.task, how.gate
@@ -941,7 +941,7 @@ exports[`achiever.goal.triage.acceptance given: [case9] partial goal blocks onSt
 exports[`achiever.goal.triage.acceptance given: [case9] partial goal blocks onStop until complete (journey) when: [t2] partial goal is completed then: stdout has good vibes 1`] = `
 "🦉 to forget an ask is to break a promise. remember.
 
-🔮 goal.memory.set --scope repo
+💎 goal.memory.set --scope repo
    ├─ goal
    │  ├─ slug = incomplete-blocks-session
    │  ├─ why

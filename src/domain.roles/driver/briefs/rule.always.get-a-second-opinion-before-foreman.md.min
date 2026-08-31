@@ -1,0 +1,28 @@
+# rule.always.get-a-second-opinion-before-foreman
+
+> do not knock on the foreman's door until you have phoned a friend.
+
+the human's attention is the scarcest resource in the loop, and **a peer's is not**. one peer opinion is owed before any escalation.
+
+| you are about to | you must first |
+|---|---|
+| run `--as blocked` | get a peer read on whether it is truly a wall |
+| ask *"which do you prefer?"* | ask a peer — a fork is what a second opinion settles |
+| report a defect you cannot diagnose | ask the role that owns that surface |
+| call two reviewers irreconcilable | ask a third which of the two holds |
+
+**phone the RIGHT friend** — an untargeted ask gets an untargeted answer:
+
+| the question is about | phone the |
+|---|---|
+| implementation, readability, failure modes | **mechanic** |
+| boundaries, decomposition, the choice of a word | **architect** |
+| a surface a human touches — cli, api, errors, output | **ergonomist** |
+| where a lesson or a term belongs | **learner** / **librarian** |
+| a testable behavior, a criterion, a scope bound | **behaver** |
+
+use the extant enroll-review-parse flow (`rhx enroll --roles <role>`, then that role's `review`), never a hand-rolled path — a substitute yields an opinion no tool can read.
+
+the carve-outs are narrow: the peer is genuinely unreachable · the wall is unambiguously foreman-only, a credential or a grant · a wisher scope decision. *"i was fairly sure"* is not one.
+
+blocker: an escalation with no peer sought and no reason recorded · a peer opinion obtained and then not cited in the escalation · a hand-rolled review path.

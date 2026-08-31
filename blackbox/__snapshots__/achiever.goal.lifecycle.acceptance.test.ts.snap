@@ -3,7 +3,7 @@
 exports[`achiever.goal.lifecycle.acceptance given: [case1] goal status transitions via CLI when: [t0] goal.memory.set creates new goal then: stdout has good vibes 1`] = `
 "🦉 to forget an ask is to break a promise. remember.
 
-🔮 goal.memory.set --scope repo
+💎 goal.memory.set --scope repo
    ├─ goal
    │  ├─ slug = fix-auth-test
    │  ├─ why
@@ -63,7 +63,7 @@ exports[`achiever.goal.lifecycle.acceptance given: [case1] goal status transitio
 exports[`achiever.goal.lifecycle.acceptance given: [case1] goal status transitions via CLI when: [t1] goal.memory.get retrieves the goal then: stdout has good vibes 1`] = `
 "🦉 to forget an ask is to break a promise. remember.
 
-🔮 goal.memory.get --scope repo
+💎 goal.memory.get --scope repo
    └─ goals (1)
       ├─ slug = fix-auth-test
       ├─ why
@@ -88,7 +88,7 @@ exports[`achiever.goal.lifecycle.acceptance given: [case1] goal status transitio
 exports[`achiever.goal.lifecycle.acceptance given: [case1] goal status transitions via CLI when: [t2] goal.memory.set updates status to inflight then: stdout has good vibes 1`] = `
 "🦉 to forget an ask is to break a promise. remember.
 
-🔮 goal.memory.set --slug fix-auth-test --status inflight
+💎 goal.memory.set --slug fix-auth-test --status inflight
    ├─ goal
    │  ├─ slug = fix-auth-test
    │  ├─ why
@@ -148,7 +148,7 @@ exports[`achiever.goal.lifecycle.acceptance given: [case1] goal status transitio
 exports[`achiever.goal.lifecycle.acceptance given: [case1] goal status transitions via CLI when: [t3] goal.memory.get shows updated status then: stdout has good vibes 1`] = `
 "🦉 to forget an ask is to break a promise. remember.
 
-🔮 goal.memory.get --scope repo
+💎 goal.memory.get --scope repo
    └─ goals (1)
       ├─ slug = fix-auth-test
       ├─ why
@@ -173,7 +173,7 @@ exports[`achiever.goal.lifecycle.acceptance given: [case1] goal status transitio
 exports[`achiever.goal.lifecycle.acceptance given: [case1] goal status transitions via CLI when: [t4] goal.memory.set updates status to fulfilled then: stdout has good vibes 1`] = `
 "🦉 to forget an ask is to break a promise. remember.
 
-🔮 goal.memory.set --slug fix-auth-test --status fulfilled
+💎 goal.memory.set --slug fix-auth-test --status fulfilled
    ├─ goal
    │  ├─ slug = fix-auth-test
    │  ├─ why
@@ -233,7 +233,7 @@ exports[`achiever.goal.lifecycle.acceptance given: [case1] goal status transitio
 exports[`achiever.goal.lifecycle.acceptance given: [case1] goal status transitions via CLI when: [t5] goal.memory.get filter by status works then: filter stdout has good vibes 1`] = `
 "🦉 to forget an ask is to break a promise. remember.
 
-🔮 goal.memory.get --scope repo
+💎 goal.memory.get --scope repo
    └─ goals (1)
       ├─ slug = update-readme
       ├─ why
@@ -258,7 +258,7 @@ exports[`achiever.goal.lifecycle.acceptance given: [case1] goal status transitio
 exports[`achiever.goal.lifecycle.acceptance given: [case3] negative: goal.memory.get on empty goals dir when: [t0] no goals exist then: stdout has good vibes 1`] = `
 "🦉 to forget an ask is to break a promise. remember.
 
-🔮 goal.memory.get --scope repo
+💎 goal.memory.get --scope repo
    └─ goals = (none)
 "
 `;
@@ -266,7 +266,7 @@ exports[`achiever.goal.lifecycle.acceptance given: [case3] negative: goal.memory
 exports[`achiever.goal.lifecycle.acceptance given: [case7] goal.memory.get display modes: list, --slug, --with asks when: [t0] goal.memory.get list mode shows coverage counts then: stdout has good vibes 1`] = `
 "🦉 to forget an ask is to break a promise. remember.
 
-🔮 goal.memory.get --scope repo
+💎 goal.memory.get --scope repo
    └─ goals (2)
       ├─ (1)
       │  ├─ slug = display-test-goal-1
@@ -308,7 +308,7 @@ exports[`achiever.goal.lifecycle.acceptance given: [case7] goal.memory.get displ
 exports[`achiever.goal.lifecycle.acceptance given: [case7] goal.memory.get display modes: list, --slug, --with asks when: [t1] goal.memory.get --slug shows truncated ask previews then: stdout has good vibes 1`] = `
 "🦉 to forget an ask is to break a promise. remember.
 
-🔮 goal.memory.get --scope repo --slug display-test-goal-1
+💎 goal.memory.get --scope repo --slug display-test-goal-1
    ├─ slug = display-test-goal-1
    ├─ why
    │  ├─ ask = test display modes
@@ -336,7 +336,7 @@ exports[`achiever.goal.lifecycle.acceptance given: [case7] goal.memory.get displ
 exports[`achiever.goal.lifecycle.acceptance given: [case7] goal.memory.get display modes: list, --slug, --with asks when: [t2] goal.memory.get --slug --with asks shows full content then: stdout has good vibes 1`] = `
 "🦉 to forget an ask is to break a promise. remember.
 
-🔮 goal.memory.get --scope repo --slug display-test-goal-1 --with asks
+💎 goal.memory.get --scope repo --slug display-test-goal-1 --with asks
    ├─ slug = display-test-goal-1
    ├─ why
    │  ├─ ask = test display modes

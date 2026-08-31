@@ -1,0 +1,14 @@
+# rule.always.converge-to-terminal
+
+work every reviewer to a terminal verdict before a human is pulled. a level is terminal when every reviewer at it is `approved`, `exhausted`, `malfunction`, or `constraint`.
+
+| the level did | you must |
+|---|---|
+| approve | continue — the next level is already live |
+| exhaust (earned) | continue — exhaustion is terminal |
+| reject, budget left | converge: fix, or articulate why it holds, then re-arrive |
+| every level terminal | now, and only now, a human may overrule |
+
+**exhaustion is earned, never casual.** budget burned without genuine engagement is a coast and a defect. an exhausted level owes a record in `.taken.by_self`: what you tried each round, and what would fix that reviewer for the next traveler. an exhausted level with no record is indistinguishable from a coast.
+
+⚠️ re-arrival is cheap — the guard reuses any lane that returned 0 blockers, keyed on the artifact hash. read `howdoes.the-guard-caches-a-clean-lane-by-artifact-hash` before you judge an iteration too costly to spend.

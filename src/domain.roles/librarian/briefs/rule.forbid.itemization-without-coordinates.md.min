@@ -1,0 +1,67 @@
+# rule.forbid.itemization-without-coordinates
+
+> **whenever you itemize an enumerable concept, the artifact is named by its coordinates.**
+
+every segment is a `$key=$value` pair. a bare word is a violation.
+
+```
+$kind.of=$concept._.md                      # the SUMMARY — the axes, the counts, the gaps
+$kind.of=$concept.$dimension=$position.md   # one ENTRY per member — always, never optional
+```
+
+⚠️ **the artifact KIND does not change the convention.** an inventory and a catalog are both itemizations, and **both take this one name.** the kind decides what each entry *carries*; the coordinates decide where each entry *sits*:
+
+```
+inventory.of=fulcrums._.md              catalog.of=archetype._.md
+inventory.of=fulcrums.case=F14-slug.md  catalog.of=archetype.kind=article.md
+```
+
+**both files are owed, always.** a summary with no entries is a list under a manifest's name; entries with no summary have no place to declare their axes, counts, or gaps.
+
+⇒ it composes two extant conventions rather than a third coinage: `._.md` from `rule.require.summary-at-the-cluster-root`, and `$dimension=$position` from here. ⚠️ **`example=$id` is the same form**, already in use by `term=$x._.choice.example=$id` — one discipline, never three that rhyme.
+
+## .why — the coordinates ARE the dereference mechanism
+
+- **the path is computable.** know the coordinates, know the filename, with no search. a prose name turns a constant-cost lookup into a linear hunt
+- **the dimension names itself.** `status=QUEUED.md` says which axis `QUEUED` sits on; `queued.md` does not
+- **completeness becomes checkable** — expected filenames generate from the declared axes. **the gap check is a `Glob`, not a read**
+- **slices are globbable.** `*.from=QUEUED.*` returns a row
+
+⇒ prose names do not merely read worse — they **delete all four properties** an itemization exists to provide.
+
+## .the case dimension — occurrences
+
+when members are occurrences rather than product cells — a fulcrum, an incident, a review round — the dimension is `case`. ⚠️ **an ordinal is not an id:**
+
+```
+👎  case=F14                                        # F14 of WHAT?
+👍  case=F14-entoolment-ladder-is-fluid-rigid-solid
+```
+
+the **ordinal** keeps the sequence (what makes an append-only record auditable); the **slug** says what it IS (so a reader need not open every file). a bare ordinal is the `1.`/`2.`/`3.` defect under a `case=` prefix.
+
+⚠️ **join them with a hyphen, never a dot** — a dot is the segment separator, so `case=F14.slug` parses as a bare position.
+
+## .the test
+
+> **"am i about to itemize an enumerable concept?"** — yes → **the name is coordinates, and both files are owed.**
+
+⚠️ **the trap: the KIND question feels like the NAME question, and is not.** a reader who settles *"inventory or catalog?"* feels finished and reaches for a name freely — which is how `register.md` and `fulcrums.md` get written. **the name is coordinates in every branch**, so it can be settled before the kind is.
+
+| when… | then… |
+|---|---|
+| you name an entry after **what it is about** | 🔴 name it after **where it sits** |
+| a filename holds a value with no `$dimension=` | the axis is implied; make it explicit |
+| you write a summary and stop | 🔴 the entries are owed too |
+| you write entries and stop | 🔴 the summary is owed too |
+| you reach for `1.`, `2.`, `3.` to order entries | ordinals are not coordinates — order belongs in the summary |
+| two entries list dimensions in **different order** | the path stops to be computable — fix one order |
+| a cell **cannot exist** | it is forbidden, and it **still gets its file**, which holds the invariant |
+
+## .the precedent
+
+`repo=`/`role=` · `term=` · `review/self/for.1.vision._.r4.$slug` — and that last is the sharpest: **the guard rejects a file written to the wrong coordinates**, because it looks at the computed path.
+
+blocker: an entry not entirely `$dimension=$position` segments · a bare position · a summary with no entries · entries with no summary · inconsistent dimension order · ordinal prefixes · a **bare-ordinal** `case=` with no slug · a forbidden cell with no file · an itemization under a prose name (`catalog.md`, `register.md`, `fulcrums.md`) · an ejected member named by aught but a coordinate.
+
+⇒ see also: `rule.require.summary-at-the-cluster-root` · `rule.require.inventory-for-enumerable-concepts` · `rule.require.catalog-is-an-index` · `howto.curate-an-inventory` · `kno601.inventories._.kind=article`.

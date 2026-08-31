@@ -3,7 +3,7 @@
 exports[`achiever.goal.guard.acceptance given: [case1] Read tool with .goals/ path when: [t0] path is .goals/branch/file.yaml then: stderr matches snapshot 1`] = `
 "🦉 patience, friend.
 
-🔮 goal.guard
+💎 goal.guard
    ├─ ✋ blocked: direct access to .goals/ is forbidden
    │
    └─ use skills instead

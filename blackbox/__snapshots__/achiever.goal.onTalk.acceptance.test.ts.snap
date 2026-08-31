@@ -3,7 +3,7 @@
 exports[`achiever.goal.onTalk.integration given: [case1] normal message via stdin when: [t0] hook.onTalk is invoked with prompt then: stderr matches snapshot 1`] = `
 "🦉 to forget an ask is to break a promise. remember.
 
-🔮 goal.triage.infer --from peer --when hook.onTalk
+💎 goal.triage.infer --from peer --when hook.onTalk
    ├─ from = peer:human
    ├─ ask
    │  ├─
@@ -27,7 +27,7 @@ exports[`achiever.goal.onTalk.integration given: [case2] empty message via stdin
 exports[`achiever.goal.onTalk.integration given: [case3] multiple messages in sequence when: [t0] three messages are sent in sequence then: stderr of message 1 matches snapshot 1`] = `
 "🦉 to forget an ask is to break a promise. remember.
 
-🔮 goal.triage.infer --from peer --when hook.onTalk
+💎 goal.triage.infer --from peer --when hook.onTalk
    ├─ from = peer:human
    ├─ ask
    │  ├─
@@ -45,7 +45,7 @@ exports[`achiever.goal.onTalk.integration given: [case3] multiple messages in se
 exports[`achiever.goal.onTalk.integration given: [case3] multiple messages in sequence when: [t0] three messages are sent in sequence then: stderr of message 2 matches snapshot 1`] = `
 "🦉 to forget an ask is to break a promise. remember.
 
-🔮 goal.triage.infer --from peer --when hook.onTalk
+💎 goal.triage.infer --from peer --when hook.onTalk
    ├─ from = peer:human
    ├─ ask
    │  ├─
@@ -63,7 +63,7 @@ exports[`achiever.goal.onTalk.integration given: [case3] multiple messages in se
 exports[`achiever.goal.onTalk.integration given: [case3] multiple messages in sequence when: [t0] three messages are sent in sequence then: stderr of message 3 matches snapshot 1`] = `
 "🦉 to forget an ask is to break a promise. remember.
 
-🔮 goal.triage.infer --from peer --when hook.onTalk
+💎 goal.triage.infer --from peer --when hook.onTalk
    ├─ from = peer:human
    ├─ ask
    │  ├─
@@ -87,7 +87,7 @@ exports[`achiever.goal.onTalk.integration given: [case3] multiple messages in se
 exports[`achiever.goal.onTalk.integration given: [case4] duplicate message when: [t0] same message is sent twice then: stderr of invocation 1 matches snapshot 1`] = `
 "🦉 to forget an ask is to break a promise. remember.
 
-🔮 goal.triage.infer --from peer --when hook.onTalk
+💎 goal.triage.infer --from peer --when hook.onTalk
    ├─ from = peer:human
    ├─ ask
    │  ├─
@@ -105,7 +105,7 @@ exports[`achiever.goal.onTalk.integration given: [case4] duplicate message when:
 exports[`achiever.goal.onTalk.integration given: [case4] duplicate message when: [t0] same message is sent twice then: stderr of invocation 2 matches snapshot 1`] = `
 "🦉 to forget an ask is to break a promise. remember.
 
-🔮 goal.triage.infer --from peer --when hook.onTalk
+💎 goal.triage.infer --from peer --when hook.onTalk
    ├─ from = peer:human
    ├─ ask
    │  ├─
@@ -131,7 +131,7 @@ exports[`achiever.goal.onTalk.integration given: [case5] malformed JSON stdin wh
 exports[`achiever.goal.onTalk.integration given: [case6] output format matches vision when: [t0] hook.onTalk is invoked then: stderr matches snapshot 1`] = `
 "🦉 to forget an ask is to break a promise. remember.
 
-🔮 goal.triage.infer --from peer --when hook.onTalk
+💎 goal.triage.infer --from peer --when hook.onTalk
    ├─ from = peer:human
    ├─ ask
    │  ├─
@@ -151,7 +151,7 @@ exports[`achiever.goal.onTalk.integration given: [case6] output format matches v
 exports[`achiever.goal.onTalk.integration given: [case7] special chars and emoji when: [t0] message contains emoji and special chars then: stderr matches snapshot 1`] = `
 "🦉 to forget an ask is to break a promise. remember.
 
-🔮 goal.triage.infer --from peer --when hook.onTalk
+💎 goal.triage.infer --from peer --when hook.onTalk
    ├─ from = peer:human
    ├─ ask
    │  ├─
@@ -171,7 +171,7 @@ exports[`achiever.goal.onTalk.integration given: [case7] special chars and emoji
 exports[`achiever.goal.onTalk.integration given: [case8] multiline message when: [t0] message contains newlines then: multiline stderr matches snapshot 1`] = `
 "🦉 to forget an ask is to break a promise. remember.
 
-🔮 goal.triage.infer --from peer --when hook.onTalk
+💎 goal.triage.infer --from peer --when hook.onTalk
    ├─ from = peer:human
    ├─ ask
    │  ├─
@@ -208,7 +208,7 @@ exports[`achiever.goal.onTalk.integration given: [case10] --help flag (edge case
 exports[`achiever.goal.onTalk.integration given: [case10] --help flag (edge case) when: [t0] --help is invoked then: stdout matches snapshot 1`] = `
 "🦉 to forget an ask is to break a promise. remember.
 
-🔮 goal.triage.infer --scope repo
+💎 goal.triage.infer --scope repo
    │
    ├─ stats
    │  ├─ asks = 0
@@ -243,7 +243,7 @@ exports[`achiever.goal.onTalk.integration given: [case15] unrecognized --when ar
 exports[`achiever.goal.onTalk.integration given: [case15] unrecognized --when argument (edge case) when: [t0] --when has unrecognized value then: stdout matches snapshot 1`] = `
 "🦉 to forget an ask is to break a promise. remember.
 
-🔮 goal.triage.infer --scope repo
+💎 goal.triage.infer --scope repo
    │
    ├─ stats
    │  ├─ asks = 0

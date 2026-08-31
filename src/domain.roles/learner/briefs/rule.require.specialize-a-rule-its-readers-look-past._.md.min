@@ -1,0 +1,47 @@
+# rule.require.specialize-a-rule-its-readers-look-past
+
+> **a rule whose every example draws from one domain will be read as a rule ABOUT that domain.**
+
+when a reader violates a general rule in a **second** domain, the repair is **not** a louder `.what`. it is a **named specialization** — a peer rule, in the domain the reader occupied, that states the same claim in that domain's own words and cites the general rule as its parent.
+
+## .why — it is a failure of RETRIEVAL, not of attention
+
+a reader does not consult a rule index before each keystroke. they pattern-match on what the rule **looks like**, and the examples are what it looks like.
+
+so a general rule illustrated only with `aws` reads as *"the aws rule"*. a reader who has read it, believed it, and agreed with it types `ssh grove-1` **with no flicker of recognition** — the rule was in context and did not fire, because the cue it carried did not match the situation.
+
+⇒ and the repair a conscientious author reaches for first — bold the `.what`, widen the words, add a warn line — is the **weakest** move available. it addresses a reader who is already engaged. the reader who looked past never engaged at all.
+
+**the evidence:** `rule.require.wrap-cli-in-skills` carried the general claim, illustrated end to end with `aws`. its own `.see also` records the split — *"every example here is `aws`, and a reader looked straight past it while they typed `ssh grove-1`."*
+
+## ⚠️ .the honest bound
+
+a specialization is a **better cue**, never a gate. where the pull toward the un-paved path is a keystroke's worth of convenience, a brief alone is outscored by a **mechanism** — a hook, a guard. per this repo's cited research, a when-then cue scores far above a principle, and a mechanism above both.
+
+⇒ a split is the **first** move, never the last. a rule looked past **after** it was specialized has earned a mechanism, and the specialization is what tells you which situation the mechanism must fire in.
+
+| when… | then… |
+|---|---|
+| you write a general rule and **every example is from one domain** | 🔴 the split is owed **at authorship**, not after the first violation |
+| a reader violates it **in a domain it does not illustrate** | specialize into **their** domain; do not bold the parent |
+| you would **bold, widen, or warn** after a miss | ask first whether the reader ever recognized the rule applied |
+| a rule reaches a second domain and you add a **second example** | cheaper and weaker. weigh a named peer instead |
+| you name a specialization | name it in the **reader's** vocabulary, never the parent's |
+
+test: **"in what situation would a reader who AGREES with this rule fail to notice it applies?"** — you can name one → that situation is the specialization, and it is owed.
+
+## .what a specialization owes
+
+the **specialization**: the claim in the reader's own domain vocabulary, its own concrete examples, and a `.see also` pointer **up**. the **parent**: a pointer **down**, plus one line on **why** the split happened — the dated miss.
+
+## ⚠️ .NOT a license to fork a rule per domain
+
+| the situation | the move |
+|---|---|
+| a reader **looked past** it in a second domain — evidenced | **specialize** |
+| a reader **read** it and disagreed | argue the rule; a peer changes no mind |
+| you **anticipate** a second domain, no reader, no miss | add an example. wait for the evidence |
+
+⇒ **the trigger is a real reader who looked past it.**
+
+blocker: a general rule single-domain-illustrated, after a reader violated it in a second · a repair by **emphasis** where a reader never recognized it applied · a specialization with no pointer to its parent · a rule forked per domain with no evidenced miss. nitpick: a parent with no note of **why** it was split.

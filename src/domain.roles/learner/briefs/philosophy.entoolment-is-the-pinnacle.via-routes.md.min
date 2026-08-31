@@ -1,0 +1,58 @@
+# philosophy.entoolment-is-the-pinnacle.via-routes
+
+> **a route IS a 🔩 rigid skill.** not *"like one"* — it satisfies rhachet's definition exactly: *"deterministic entrypoint, mixed operations + orchestration."*
+
+⚠️ **it is the most GENERAL shape at rung 3, never the rung itself.** a one-stone route is the compute-then-ask skill; an all-deterministic route is the wrapper. any rung-3 shape can be expressed as a route; the reverse does not hold.
+
+the parent ranks artifacts by brain cost per use. this answers the question that rank raises: **what do you pave when the brain cost cannot fall to zero?**
+
+## .why the answer is a rung and not an exception
+
+| the route's part | its determinism |
+|---|---|
+| the stones, their order, their guards | 🪨 **deterministic** — the guard refuses identically, every time |
+| the work performed at each stone | 💧 **probabilistic** — a brain judges |
+
+⇒ that blend is the definition of 🔩 rigid. **rung 3 is a destination, never a shortfall.**
+
+## ⚙️ .the deterministic half DRIVES the probabilistic half
+
+stronger than *"there is some determinism somewhere"* — **the brain does not choose to advance; a mechanism advances it, or refuses to:**
+
+| the mechanism | what it deterministically does to the brain |
+|---|---|
+| the **guard** | refuses passage until its conditions hold — the brain cannot proceed by decision |
+| the **stone order** | computes what comes next, so the brain never recalls it |
+| the **stophook** / `route.drive` | re-emits the current stone unprompted — the brain is *pulled back* to the road it drifted from |
+| the **passage ledger** | holds state on disk, so progress survives a brain that forgot it |
+| the **review ladder** + judge | tallies verdicts by rule, so *"is this done?"* is computed, never argued |
+
+⇒ **a route is a deterministic transport with probabilistic cargo.** the rails are solid; the passenger thinks.
+
+## .what a route removes — variance, not cost
+
+a 🪨 solid skill's benefit is that the work costs **zero**. a route's is that it costs **the same every time**: what comes next → the stone says · did i skip a step → the guard refuses to let you · how did we do this last time → **the route IS last time**.
+
+⇒ **a solid skill removes the brain. a route removes the brain's overhead** — the recall, the order, the second-guess, the rediscovery of a path somebody already walked.
+
+three properties follow, and none is cost reduction: **fewer trips** (the guard catches the misstep before it compounds) · **less rediscovery** (the order of operations is the artifact, not tribal memory) · **a floor under quality** (the worst run of a paved route beats the worst improvisation, because the stones carry every prior traveler's lessons).
+
+## .the choice — what to pave, given what is left over
+
+| the leftover work is… | pave it as… |
+|---|---|
+| a step — same every time | 💪🪨 a **solid skill** (rung 4) |
+| a sequence of commands | 💪💧 or 💪🔩 a **fluid or rigid skill** (rung 2–3) |
+| judgment, at several points, in an order that matters | 💪🔩 a **route** (rung 3) |
+
+⚠️ **do not route what could be entooled.** a route around deterministic work is ceremony that charges imagine cost at every stone.
+
+## 🗿 .offroad work earns its keep by what it paves
+
+sometimes there is no route and a brain must go **offroad** — legitimate, often necessary, and the most expensive mode there is, paid **per traveler**.
+
+> **an offroad brain is at its best when it leaves a route behind.**
+
+the exploration happens either way. to end it with a paved route rather than a finished task converts a one-time cost into a permanent asset.
+
+⇒ **`declapract.upgrade` is the worked example.** an improvised upgrade is now `init` plus stones: invoke, detect hazards, repair test defects, reflect, repair cicd defects, reflect. **the brain still performs every repair** — it no longer has to recall that a reflection follows each one, or that hazards are detected before any repair begins.

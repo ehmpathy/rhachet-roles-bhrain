@@ -47,18 +47,6 @@ used to review artifacts against declared rules. designed to be composed into re
 
 ---
 
-## 🔬 architect
-
-used to document and compare architectures of replic brains (LLMs behind REPLs).
-
----
-
-## 🧠 brain
-
-a brain.repl available for agentic tooluse
-
----
-
 ## 🗿 driver
 
 used to navigate thought routes via stone milestones. enables robots to autonomously progress through structured journeys with optional guard validation.
@@ -319,9 +307,15 @@ this repo houses roles for owls 🦉 — wise navigators of concept space, who c
 
 they wield:
 
-- 🪐 planet — for thinkers — to navigate through concept space, thoroughly
-- 📚 books — for librarians — to curate knowledge and context, efficiently
-- 🔍 magnifier — for reviewers — to examine artifacts against declared rules, precisely
-- 🔬 microscope — for architects — to document and compare brain architectures, deeply
-- 🧠 brain — for brains — to complete agentic tasks via tooluse, autonomously
 - 🗿 stone — for drivers — to navigate thought routes via stone milestones, methodically
+- 💎 gem — for achievers — to hold a goal under pressure until it crystallizes, durably
+- 📜 scroll — for learners — to externalize a lesson so it outlives the round, permanently
+- 📚 books — for librarians — to curate knowledge and context, efficiently
+- 🔭 telescope — for researchers — to discover what is not yet held, exhaustively
+- 🔍 magnifier — for reviewers — to examine artifacts against declared rules, precisely
+- 🔮 crystal ball — for telepaths — to transfer a concept whole, at the fewest words
+- 🪐 planet — for thinkers — to navigate through concept space, thoroughly
+- 🌕 full moon — for reflectors — to shine back what an experience already held, plainly
+
+every glyph above is drawn from the owl's own palette, and each names what its role does. the
+register and the rule behind it live in `define.bhrain-repo-mascot`.

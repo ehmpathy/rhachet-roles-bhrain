@@ -5,7 +5,9 @@ import { ROLE_DRIVER } from '@src/domain.roles/driver/getDriverRole';
 import { ROLE_LEARNER } from '@src/domain.roles/learner/getLearnerRole';
 import { ROLE_LIBRARIAN } from '@src/domain.roles/librarian/getLibrarianRole';
 import { ROLE_REFLECTOR } from '@src/domain.roles/reflector/getReflectorRole';
+import { ROLE_RESEARCHER } from '@src/domain.roles/researcher/getResearcherRole';
 import { ROLE_REVIEWER } from '@src/domain.roles/reviewer/getReviewerRole';
+import { ROLE_TELEPATH } from '@src/domain.roles/telepath/getTelepathRole';
 import { ROLE_THINKER } from '@src/domain.roles/thinker/getThinkerRole';
 
 /**
@@ -24,7 +26,9 @@ export const getRoleRegistry = (): RoleRegistry =>
       ROLE_LEARNER,
       ROLE_LIBRARIAN,
       ROLE_REFLECTOR,
+      ROLE_RESEARCHER,
       ROLE_REVIEWER,
+      ROLE_TELEPATH,
       ROLE_THINKER,
     ],
   });

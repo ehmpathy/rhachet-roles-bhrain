@@ -35,8 +35,8 @@ const genResearchTestDir = (input: { slug: string }): string => {
     ),
   );
 
-  // link librarian role (sync since genTempDir returns sync)
-  require('child_process').execSync('npx rhachet roles link --role librarian', {
+  // link researcher role (sync since genTempDir returns sync)
+  require('child_process').execSync('npx rhachet roles link --role researcher', {
     cwd: tempDir,
     stdio: 'pipe',
   });

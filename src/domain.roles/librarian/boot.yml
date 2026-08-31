@@ -15,7 +15,40 @@ always:
       - briefs/knowledge/kno301.doc.enbrief.2.articulate.[article].md
       - briefs/knowledge/kno301.doc.enbrief.2.catalogize.[article].md
       - briefs/knowledge/kno301.doc.enbrief.2.demonstrate.[article].md
+      # 601 inventories — the census discipline for concepts whose entries are
+      # enumerable. say-level for the two rules: they must fire BEFORE a doc lands,
+      # since the repair for a prose list over an enumerable concept is a rewrite,
+      # never an edit. the article + guide sit at ref, per the say/ref policy
+      - briefs/rule.require.inventory-for-enumerable-concepts.md
+      # the coordinate contract binds EVERY itemization — inventory, catalog, and the
+      # ejected example alike — so it is named for the act, never for one artifact kind
+      - briefs/rule.forbid.itemization-without-coordinates.md
+      # the `._.md` half of that name, on its own: whenever a subject splits into
+      # subscopes, the summary is the cluster root. say-level for the same reason the
+      # bracket rule is — it must fire AT the moment a second file is named, since the
+      # repair after the split is a rename plus every reference to the old name
+      - briefs/rule.require.summary-at-the-cluster-root.md
+      # the WHETHER to that rule's NAME: prefer to eject a sub-claim into a suffixed
+      # peer rather than accrete it inline. say-level because it fires WHILE a brief is
+      # written — a zoom-in caught at authorship is a new file, where the same zoom-in
+      # caught later is an ejection plus every pointer that has to be rewritten
+      - briefs/rule.prefer.decompose-a-subject-via-suffixes.md
+      # say-level because it must fire AT the moment a file is named. a rule that
+      # arrives after the name is chosen meets a librarian who must rename rather
+      # than name — and every ref to the old name has already spread
+      - briefs/rule.forbid.brackets-in-filenames.md
+      # the cluster discipline — one grain per artifact. say-level for the same reason
+      # the inventory rules are: the repair for an accreted catalog is an ejection, and
+      # a rule that arrives after fifty good edits meets an artifact nobody can use
+      - briefs/rule.require.catalog-is-an-index.md
+      - briefs/rule.require.rules-are-clusters.md
     ref:
+      # the demo the catalog rule ejected — one occurrence, dated and measured.
+      # ref because a reader wants it once, never on every boot
+      - briefs/rule.require.catalog-is-an-index.example=declastruct-aws-security-catalog.md
+      # 601 inventories — the why + the moves, on demand
+      - briefs/knowledge/kno601.inventories._.kind=article.md
+      - briefs/howto.curate-an-inventory.md
       # 201 document types
       - briefs/knowledge/kno201.documents._.[article].md
       - briefs/knowledge/kno201.documents.articles.[article].md
@@ -24,6 +57,3 @@ always:
       - briefs/knowledge/kno201.documents.lessons.[article].md
       # 301 compression
       - briefs/knowledge/kno301.doc.compression._.[article].md
-  skills:
-    say:
-      - skills/init.research.sh

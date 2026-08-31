@@ -1,0 +1,25 @@
+always:
+  briefs:
+    say:
+      # all three fire INSIDE the route, at a specific moment, and the repair after
+      # the fact is not an edit — so each must be in context before that moment
+      # passes. depth · fidelity · shape
+      #
+      # depth: fires at 2.probes.emit, when a tool is reached for. a probe already run
+      # on search cannot be re-graded later; only re-run
+      - briefs/rule.always.reach-for-bhrowser.md
+      # fidelity: the negative peer of the depth rule, and a DIFFERENT failure — search
+      # returns a summary in a source's shape, so a citation built on it is a paraphrase
+      # that reads as a quote. say-level because it fires at the moment a line is cited,
+      # and a citation is unfalsifiable once its provenance is gone
+      - briefs/rule.forbid.websearch-and-webfetch.md
+      # shape: fires at 3.3.probes.absorb.gaps, while the gap list forms. a kind picked
+      # after the draft classifies the writeup — the gap it would have surfaced is gone
+      - briefs/rule.require.classify-the-yields-document-kind._.md
+    # the ejected occurrence behind the classify rule's claim. ref because a demo is
+    # read once, to check the claim — never on every boot
+    ref:
+      - briefs/rule.require.classify-the-yields-document-kind.example=howdoes-gap.md
+  skills:
+    say:
+      - skills/init.research.sh

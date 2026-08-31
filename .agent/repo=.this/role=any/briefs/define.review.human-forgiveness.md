@@ -119,6 +119,6 @@ the asymmetry is the feature: early-pay **unlocks**, late-pay **batches**.
   operates within).
 - `define.invariant.review.peer.exhausted.md` — exhausted ⟺ the review was skipped (the late-moment
   terminal state).
-- `domain.terms/term=forgive._.choice._.md` — the canonical verb for what an overrule does.
-- `domain.terms/term=terminal._.choice._.md` — terminal-for-unlock vs clear-for-passage.
+- `domain.terms/term=route.guard.review.forgive._.choice._.md` — the canonical verb for what an overrule does.
+- `domain.terms/term=route.guard.review.terminal._.choice._.md` — terminal-for-unlock vs clear-for-passage.
 - `define.passage-statuses.md` — only `passed` constitutes valid passage.
