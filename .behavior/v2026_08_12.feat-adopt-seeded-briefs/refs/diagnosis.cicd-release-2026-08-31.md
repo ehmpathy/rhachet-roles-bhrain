@@ -325,11 +325,20 @@ observable was bound to**:
 | 3 | ⇒ the retraction built on #2 | — | — |
 | 4 | `CronList` → `15739e63` | the loop **the human holds** | a **session-only** cron in MY session |
 
-⚠️ **#4 is the sharpest, because the correct answer was of a different KIND entirely.** the prompt
-that re-fires is a **Stop hook**, declared in this repo at `.claude/settings.json:274-277` as
-`rhx learn.domain.terms --when hook.onStop`. **`CronDelete` cannot reach a hook.** so a literal read
-of my handoff would have deleted the only cron the human did hold — the fleet-wide babysit sweep —
-and blinded every repo, to fix a recurrence in none.
+⚠️ **#4 is the sharpest, because the id did not cross the boundary I handed it across.** `15739e63`
+is **session-only** — in the human's `CronList` that slot holds the fleet-wide babysit sweep. so a
+literal read of my handoff would have deleted the only cron they did hold and blinded every repo, to
+fix a recurrence in none.
+
+✅ **the audit, completed after the fact** — `.claude/settings.json:265-283` declares two `Stop`
+hooks: `rhx route.drive` (271) and `rhx learn.domain.terms` (277). **the learner nudge is a hook,
+and `CronDelete` cannot reach a hook.** the `"until all done…"` text is a separate mechanism — a
+session-only cron — so **two recurrences were in play and I had audited neither.**
+
+⇒ 🔴 **that is worse than the original error, and it is the durable part.** I did not merely name
+the wrong mechanism; I never established **how many** there were. **a single-mechanism answer to a
+multi-mechanism question is wrong even when its one claim is true** — and it reads as complete,
+because one true mechanism is exhibited.
 
 ⇒ **that cost profile is what makes this pattern worth a rule.** each error was a confident,
 well-evidenced instruction; the fourth would have caused unrelated harm at fleet scope. **an
