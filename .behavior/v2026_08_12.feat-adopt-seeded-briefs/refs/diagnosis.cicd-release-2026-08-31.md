@@ -48,7 +48,15 @@ past setup.
 
 ---
 
-## 🔴 wave 2 — DIAGNOSED: `FIREWORKS_API_KEY` is rejected by fireworks (401)
+## ⚠️ READ WAVE 3 FIRST — wave 2's conclusion is SUPERSEDED
+
+wave 2 concluded *"`FIREWORKS_API_KEY` is stale in CI; rotate it."* **the next run refuted that, and
+no secret was touched between the two.** the evidence below remains an accurate record of what run
+`33383053039` showed; the **conclusion** drawn from it was wrong. read wave 3 for why.
+
+---
+
+## 🔴 wave 2 — the 401, as measured (conclusion superseded)
 
 **run id:** `33383053039`
 
@@ -190,6 +198,51 @@ of unknown age, and the same blindness the peer repo reported.
    overrides it — and every repeatable LLM test in this repo depends on the answer
 2. **`useThen`'s proxy masks the error that broke it.** the throw site is unreadable from the log,
    so a real defect and a flake present identically. that is `rule.forbid.failhide` in the harness
+
+---
+
+## 🔴 wave 3 — the same branch, one commit later, an INVERTED failure set
+
+**run id:** `33384940624` · the diff between the runs is **three markdown files**. no secret was
+rotated. no config changed.
+
+| shard family | run `33383053039` | run `33384940624` |
+|---|---|---|
+| `stepReflect` integration (fireworks, grok, claude) | 🔴 **401 at 0s** | ✅ **pass, 38–50s** |
+| `stepReview` integration | ✅ pass | ✅ pass |
+| **acceptance** (9 jobs + `test-integration` + `test-acceptance-locally`) | 1 job failed at 34s | 🔴 **ALL failed at `10m 3s`** |
+
+### ✅ what this refutes
+
+**the 401 was transient.** the identical fireworks shard now passes with the identical secret. so
+`gh secret set` was **never** the fix, and had it been run it would have "worked" — the next run
+passes either way — and cemented a false cause in the record forever.
+
+⇒ 🔴 **that is the sharpest lesson in this whole file.** the local run (175s, 15/15) proved the key
+was valid *locally*; I read it as proof CI's copy differed. **it was equally consistent with a
+provider that was briefly unhealthy** — and I never enumerated that second reading. a single
+observation that fits two causes is not evidence for either.
+
+### ⚠️ what the new shape says
+
+**`10m 3s`, uniform across 11 jobs of three different kinds, is a job timeout** — the run hit a wall
+rather than a verdict. paired with wave 2's instant 401, both runs point one direction:
+
+> **the upstream LLM provider is degraded, not dead.** run 1 it refused instantly; run 2 it hung
+> until the runner gave up. a credential does neither of those things intermittently.
+
+⚠️ **and this time the uniform duration IS strong evidence**, for exactly the reason wave 2's was
+not: it spans `test-shards-acceptance`, `test-integration`, and `test-acceptance-locally` — **three
+job kinds with different setup paths**. a shared setup cannot explain it; a shared upstream can.
+
+### .the next moves, revised
+
+1. **do not rotate the secret.** it is not the cause; the shard that 401'd now passes on it
+2. `rhx git.release --retry` — the paved move for provider flake, and the cheapest test of it
+3. if acceptance still times out at `10m 3s` on a retry, the wall is the **job timeout vs. a slow
+   provider**, and the question becomes whether the bound is too tight rather than whether a key is
+   dead
+4. **carry both runs forward.** either alone tells a clean, wrong story
 
 ---
 
