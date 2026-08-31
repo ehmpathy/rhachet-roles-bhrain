@@ -48,11 +48,11 @@ past setup.
 
 ---
 
-## ⚠️ READ WAVE 3 FIRST — wave 2's conclusion is SUPERSEDED
+## ✅ WAVE 2 WAS RIGHT — and wave 3's retraction of it was the actual error
 
-wave 2 concluded *"`FIREWORKS_API_KEY` is stale in CI; rotate it."* **the next run refuted that, and
-no secret was touched between the two.** the evidence below remains an accurate record of what run
-`33383053039` showed; the **conclusion** drawn from it was wrong. read wave 3 for why.
+**`FIREWORKS_API_KEY` is stale in CI. rotate it.** wave 3 below retracted that conclusion, and the
+retraction rested on **a misread of a truncated job name**. the correction sits at the end of wave
+3 — read it before you act on a word wave 3 says.
 
 ---
 
@@ -243,6 +243,72 @@ job kinds with different setup paths**. a shared setup cannot explain it; a shar
    provider**, and the question becomes whether the bound is too tight rather than whether a key is
    dead
 4. **carry both runs forward.** either alone tells a clean, wrong story
+
+---
+
+## 🔴 wave 3 IS RETRACTED — the acceptance log settles it, 2026-08-31
+
+**job `99470306425`, read through `gh api …/actions/jobs/<id>/logs`** — which works while
+`gh run view --log-failed` still refuses, because the latter demands the WHOLE run be complete and
+one job stayed queued:
+
+```
+🦉 let's review
+   ├─ brain: fireworks/deepseek/v4-flash
+…
+code: 'UNAUTHORIZED'
+```
+
+⇒ **the acceptance suite drives `review` on fireworks, and fireworks refuses it.** same cause as
+wave 2, in a different suite. one cause, not three.
+
+### 🔴 what the retraction actually rested on — a truncated job name
+
+wave 3's whole case was *"the fireworks shard now passes."* it does not. the job that passed was:
+
+```
+test-shards-integration (explicit, 2, …/stepReflect.casePriorRules.gr…   ← grok
+test-shards-integration (explicit, 1, …/stepReflect.casePriorRules.de…   ← the fireworks default
+```
+
+**I read `casePriorRules.gr…` as the shard that had failed.** it is the **grok** variant. the
+fireworks variant never passed in any run.
+
+⇒ **once the brain is the axis, every observation lines up with no exception:**
+
+| brain | every run |
+|---|---|
+| grok · claude · brainChoice | ✅ pass |
+| **fireworks** — the default for acceptance AND `casePriorRules.default` | 🔴 **UNAUTHORIZED, every time** |
+
+and the varying durations that seemed so significant — 34s, 1m 42s, 2m 30s, 10m 3s — are **job
+scheduling noise**, not the failure. the test itself ran `8.322 s`.
+
+### ⚠️ the lesson, and it is not the one wave 3 drew
+
+wave 3 concluded *"one observation that fits two causes is not evidence for either"* — true, and
+**it was not the operative error**. the operative error was cruder: **I treated a truncated
+identifier as if it were the full one.** `casePriorRules.gr…` and `casePriorRules.de…` differ in
+two characters that the terminal elided, and I never widened the column.
+
+🔴 **and the correct move was cheap and available the whole time.** the local run had ALREADY given
+the decisive fact — the same suite passed on the same key locally. *local passes, CI fails, same
+code* is a **CI-environment** finding, and a stale secret is the plainest member of that class. I
+had that on the first pass and talked myself out of it with a misread.
+
+⇒ **when a retraction rests on one observation, re-read the observation before you rewrite the
+conclusion.** a retraction feels like rigor, which is exactly what makes an unchecked one expensive.
+
+### ✅ the fix, restored
+
+```sh
+gh secret set FIREWORKS_API_KEY --repo ehmpathy/rhachet-roles-bhrain
+rhx git.release --retry
+```
+
+⚠️ **and `gh api …/actions/jobs/<id>/logs` is the paved read** when a run holds a queued job —
+`gh run view --log-failed` will refuse for as long as any one job is unfinished, which is precisely
+when a driver most wants the log.
 
 ---
 
