@@ -23,6 +23,7 @@ const asResult = (input: {
   outputPath: `.reviews/${input.slug}.md`,
   durationMs: null,
   stdout: '',
+  stderr: '',
 });
 
 describe('genReviewByStdout', () => {

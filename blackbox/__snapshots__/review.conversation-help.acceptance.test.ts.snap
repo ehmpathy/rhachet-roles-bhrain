@@ -29,7 +29,6 @@ options:
    ├── ↻ openai/codex
    ├── ○ openai/gpt/4o
    ├── ○ fireworks/glm/5.2
-   ├── ○ fireworks/glm/5.1
    ├── ○ fireworks/kimi/k2.6
    ├── ○ fireworks/minimax/m3
    ├── ○ anthropic/claude/opus

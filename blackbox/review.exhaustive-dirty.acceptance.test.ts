@@ -13,6 +13,16 @@ import {
 const ASSETS_DIR = path.join(__dirname, '.test/assets/codebase-mechanic');
 
 /**
+ * .what = raises the per-test budget for this LLM-backed acceptance case
+ * .why = jest.acceptance.env sets a 90s default, which fits a deterministic cli case and NOT a real
+ *        `--goal exhaustive` review — the exhaustive goal is the SLOWEST review this repo drives, so
+ *        it outlasts the default and failed on the clock rather than on the contract. peer
+ *        LLM-backed blackbox files carry the same kind of override (review.by.learner = 240s).
+ */
+// eslint-disable-next-line no-undef
+jest.setTimeout(240000);
+
+/**
  * .what = config for probabilistic tests that invoke LLM brains
  * .why = LLM responses can timeout or vary; retry ensures CI stability
  *

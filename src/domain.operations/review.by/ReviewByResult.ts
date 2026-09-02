@@ -33,6 +33,12 @@ export interface ReviewRubricResult {
   //        a clean drop-in for a route guard peer slot. the aggregate (no --for) run ignores it
   //        and renders the summary tree instead.
   stdout: string;
+  // the raw stderr the base `rhx review` printed, plus any malfunction reason the runner appended.
+  // .why = a malfunctioned rubric's stdout is often EMPTY — the child review faulted before it
+  //        printed a verdict — so the disintermediated stdout carries no diagnosis and the caller
+  //        sees only a bare nonzero exit. the child's stderr is the ONLY place its cause lives, so
+  //        it rides here for the cli to surface (rule.forbid.failhide, rule.require.errors-name-the-fix).
+  stderr: string;
 }
 
 /**

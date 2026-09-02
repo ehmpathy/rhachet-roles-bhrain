@@ -308,11 +308,25 @@ export const reviewBy = async (): Promise<void> => {
 
     // exit by worst outcome: 2 when any rubric found blockers (constraint), else 1 when any
     // rubric malfunctioned (server-side failure surfaced, never a fake 0/0 pass), else 0
-    const anyMalfunction = result.results.some(
+    const malfunctioned = result.results.filter(
       (rubric) => rubric.verdict.outcome === 'malfunctioned',
     );
     if (result.blockersTotal > 0) process.exit(2);
-    if (anyMalfunction) process.exit(1);
+
+    // a malfunctioned rubric's stdout is often EMPTY — the child review faulted before it printed
+    // a verdict — so the disintermediated body above is empty too, and the caller (a human, or a
+    // route guard capturing this run) is left with a bare nonzero exit. echo each fault's reason
+    // plus the child's own stderr, so the cause travels with the failure instead of a silent
+    // "it broke" (rule.forbid.failhide, rule.require.errors-name-the-fix). to stderr, not stdout,
+    // because it precedes a nonzero exit (rule.forbid.stdout-on-exit-errors).
+    if (malfunctioned.length > 0) {
+      for (const rubric of malfunctioned) {
+        console.error(`\n💥 rubric malfunctioned: ${rubric.slug}`);
+        if (rubric.verdict.reason) console.error(`   ${rubric.verdict.reason}`);
+        if (rubric.stderr.trim() !== '') console.error(rubric.stderr.trim());
+      }
+      process.exit(1);
+    }
     process.exit(0);
   } catch (error) {
     // only the caller-fixable config/validation errors are handled here (role/yml absent,

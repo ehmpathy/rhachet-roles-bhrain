@@ -82,7 +82,26 @@ const sanitizeCapturedPeerForSnapshot = (artifact: string): string => {
   // `🦉 <verdict>`, so the next 🦉 after any telemetry header is the verdict where retention resumes.
   const kept: string[] = [];
   let skipTelemetry = false;
+  let skipStderr = false;
   for (const line of lines) {
+    // collapse the child's raw stderr, which a MALFUNCTIONED rubric now carries so its cause
+    // travels (rule.forbid.failhide). that dump is a node crash trace: absolute repo paths, stack
+    // frames, and the live `🔭 available brains` catalog — all machine- or upstream-volatile (the
+    // catalog already drifted glm 5.1 -> 5.2). the deterministic part is the `💥 rubric
+    // malfunctioned: <slug>` header, so keep that and mark the dump. the CAUSE itself is clamped
+    // by a direct assertion in the malfunction case, not by this snapshot.
+    if (/💥 rubric malfunctioned:/.test(line)) {
+      kept.push(line);
+      kept.push('[STDERR]');
+      skipStderr = true;
+      continue;
+    }
+    // the dump lives inside the captured-stdout body (`│  │ …`); the first line that closes that
+    // body ends it, and retention resumes with the guard's own footer
+    if (skipStderr) {
+      if (/│\s+│/.test(line)) continue;
+      skipStderr = false;
+    }
     if (/(🔭 metrics|🪵 logs|✨ metrics)/.test(line)) {
       skipTelemetry = true;
       continue;
@@ -402,6 +421,16 @@ describe('review.by.guard-peer.acceptance', () => {
         const artifact = res.artifact ?? '';
         expect(artifact).not.toContain('review.by --role');
         expect(artifact).not.toMatch(/[├└]─ rubrics\b/);
+      });
+
+      then('the captured artifact names WHY the peer faulted', () => {
+        // the clamp on the failhide repair: review.by echoes the faulted rubric AND the child
+        // review's own stderr, so a guard that captures this run sees the cause rather than a bare
+        // `💥 failed with an error` (rule.forbid.failhide, rule.require.errors-name-the-fix).
+        // asserted here rather than in the snapshot — the dump carries volatile absolute paths.
+        const artifact = res.artifact ?? '';
+        expect(artifact).toContain('💥 rubric malfunctioned: term-aggregation');
+        expect(artifact).toContain('brain not found: nonexistent/broken/brain');
       });
 
       then('the guard-tree stdout is stable (full snapshot)', () => {
