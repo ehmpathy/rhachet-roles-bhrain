@@ -107,6 +107,9 @@ export const stepReviewBy = async (
       // keep the base review's raw stdout so the cli can disintermediate a single-scope
       // (`--for`) run — print this verbatim rather than the review.by tree
       stdout: run.stdout,
+      // keep its stderr too: a malfunctioned rubric's stdout is often empty, so this is the only
+      // carrier of WHY it faulted (rule.forbid.failhide)
+      stderr: run.stderr,
     });
 
     // report the resolved verdict the moment the rubric finishes, with all the cli needs to

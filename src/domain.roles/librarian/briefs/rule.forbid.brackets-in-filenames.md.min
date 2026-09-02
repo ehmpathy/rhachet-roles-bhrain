@@ -1,0 +1,66 @@
+# rule.forbid.brackets-in-filenames
+
+no filename may carry `[` or `]`. a document kind is marked with the **coordinate form**:
+
+```
+👍  kno601.inventories._.kind=article.md
+👎  kno601.inventories._.[article].md
+```
+
+⚠️ **this binds new and renamed files in this repo.** an extant bracketed name in a dependency's published briefs is left in place until disturbed, and re-seeded to the repo that owns it.
+
+## .why — the marker made the file hard to reference, which is a filename's one job
+
+`[` and `]` are **glob metacharacters**. `[article]` does not read as the literal text; it reads as *"any one character from `a,r,t,i,c,l,e`"*. so the name a reader sees and the name a tool matches are **different strings**:
+
+| the tool | what brackets cost it |
+|---|---|
+| `Glob` / `fast-glob` / `globby` | a bracketed name is **unmatched** — the pattern silently returns fewer files than the disk holds |
+| `boot.yml` glob entries | a `ref:` glob cannot address a bracketed brief |
+| shell | needs `\[` escapes; unescaped it expands to garbage |
+| `mvsafe` / `cpsafe` / `rmsafe` | this repo's own wrappers carry a `--literal` flag **that exists solely for this** |
+| a markdown link | `[text](url)` is link syntax, so `[article]` inside one renders wrong |
+
+⇒ **the worst failure is the SILENT one.** an escape error is loud and gets fixed. a glob that returns 9 files where 10 sit on disk looks like a correct answer, and the tenth is absent for everyone downstream.
+
+**measured here:** a `Glob` for `dist/**/kno601*` returned no match while `kno601.inventories._.[article].md` sat on disk. the brief was correct, wired, built — and invisible to the tool built to find it.
+
+## .why `kind=` and not a bare suffix
+
+it is the coordinate form this repo already dereferences by everywhere (`repo=`, `role=`, `term=`, `of=`), so `kind=article` inherits all three properties the bracket form destroyed:
+
+- **computable** — know the archetype, know the text to search for
+- **globbable** — `*.kind=article.md` returns the archetype; `*.[article].md` returns none
+- **self-declared** — `kind=` names the axis, where bare `.article.` reads as prose
+
+a **bare** suffix (`kno601.inventories.article.md`) was rejected: filenames here are dot-segmented prose, so a bare `article` segment is indistinguishable from a topic word.
+
+| when… | then… |
+|---|---|
+| you name a **new** document with an archetype | write `kind=$archetype` |
+| you **rename** or move a bracketed file you own | take the coordinate form on the way through |
+| you copy a filename shape from a **dependency** | 🔴 that tree's convention is not this tree's |
+| you must pass `--literal` or `\[` to touch a file | the escape is the smell; the name is the defect |
+| a glob returns **fewer** files than expected | check for brackets before you doubt the glob |
+
+## 🔴 .drop the marker when the lead segment already carries it
+
+```
+👍  philosophy.entoolment-is-the-pinnacle._.md   # not …kind=philosophy.md
+👍  howto.curate-an-inventory.md                 # not …kind=guide.md
+```
+
+a name that **opens** with its archetype does not repeat it. **so the repair for `howto.$topic.[guide].md` is to DROP the marker, never to convert it.**
+
+⇒ the `._.` cluster root stays — that marks a **split subject**, a different axis.
+
+⚠️ **a bulk rename cannot fix these safely.** a find-and-replace cannot part a **citation** of a bad name from an **instance** of one, so any sweep would rewrite the citations too. the repair is **file-first and by hand** — one more cost the bracket form imposes, and it lands on the cleanup.
+
+## .the boundary
+
+it governs **filenames**. brackets in **prose** are untouched — a markdown link, a table cell, a code block, a citation of another repo's bracketed path. **the defect is a bracket a tool must parse as a path.**
+
+blocker: a new or renamed filename with `[` or `]` · a bracketed name copied from a dependency (re-seed the convention instead).
+not a violation: an extant bracketed name in a dependency's briefs · a bracket in prose, a link, or a code block.
+
+⇒ see also: `rule.forbid.itemization-without-coordinates` (the contract this reuses) · `rule.always.enskill-the-tactics-you-discover` (learner) — check the pavement, **and check it is not a rut**.

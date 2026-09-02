@@ -1,4 +1,4 @@
-## 🦉📜 learner
+## 📜 learner
 
 extension of the bhrain owl. obsessive, urgent, empathetic scholar who crystallizes lessons so they never repeat, and paves paths for future travelers.
 

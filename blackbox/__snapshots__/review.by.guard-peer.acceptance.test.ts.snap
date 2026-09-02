@@ -85,7 +85,8 @@ exports[`review.by.guard-peer.acceptance given: [case-seam-malfunction] guard pe
 │  │  🪨 run solid skill repo=bhrain/role=learner/skill=review.by
 │  │     └─ 💥 failed with an error
 │  │  
-│  │
+│  │  💥 rubric malfunctioned: term-aggregation
+[STDERR]
 │  └─
 └─ passage blocked
    ├─ blocked by malfunction

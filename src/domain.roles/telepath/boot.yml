@@ -1,0 +1,17 @@
+always:
+  briefs:
+    say:
+      # the seam FIRST — it governs how every other telepath rule may be written,
+      # so a reader who boots the rules below without it may cross the seam while
+      # they obey them. it is the one rule about the other rules
+      - briefs/rule.require.generic-governs-structure-never-voice.md
+
+      # the INPUT half. say-level because it fires before the work starts — a rule
+      # that arrives after a misread answer was already given has missed its cue,
+      # and a terse wrong answer is the most expensive artifact this role makes
+      - briefs/rule.require.answer-what-they-meant.md
+
+      # the OUTPUT half, structure grain. say-level because it fires at the moment
+      # a passage is typed: the repair afterward is a move plus a re-read of both
+      # neighbours, where the up-front cost is one question about its subject
+      - briefs/rule.require.place-a-passage-by-its-subject.md

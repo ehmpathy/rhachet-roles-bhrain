@@ -64,6 +64,6 @@ higher level be skipped.
 
 ## .see also
 
-- `domain.terms/term=terminal._.choice._.md` — the term this invariant is built on.
+- `domain.terms/term=route.guard.review.terminal._.choice._.md` — the term this invariant is built on.
 - `define.invariant.review.peer.exhausted.md` — the companion per-verdict invariant (exhausted ⟺ skipped).
 - `define.passage-statuses.md` — only `passed` constitutes valid passage.

@@ -13,6 +13,20 @@ import {
 const ASSETS_DIR = path.join(__dirname, '.test/assets/codebase-mechanic');
 
 /**
+ * .what = raises the per-test budget for this LLM-backed acceptance case
+ * .why = jest.acceptance.env sets a 90s default, which fits a deterministic cli case and NOT a real
+ *        review — the case drives the shipped review.sh end to end, so a brain call rides inside it
+ *        and routinely outlasts the default. it then fails on the clock rather than on the crash
+ *        vector it exists to prove. peer LLM-backed blackbox files carry the same override.
+ * .note = 300s, not the 240s a lighter peer uses, because this case pays its fixture setup INSIDE
+ *         the timed block — a temp-dir clone plus `rhachet roles link` per role, before the review
+ *         even starts. it measured 279s wall locally, so a 240s budget would sit under the observed
+ *         cost on a slower cicd runner.
+ */
+// eslint-disable-next-line no-undef
+jest.setTimeout(300000);
+
+/**
  * .what = acceptance coverage for the gitignore crash vector via the real skill
  * .why = the original defect was an EACCES crash when review enumerated a
  *        gitignored directory with restricted (mode 000) permissions; this

@@ -1,0 +1,52 @@
+# rule.always.entool-the-skills-you-touch
+
+**when you use a skill and a brain still has to do part of the job, that leftover brain work is a defect in the TOOL, not a duty of the caller.** name it, and upsert the skill one rung closer to a single deterministic call.
+
+this is the WATCH half. `rule.always.externalize.tactics.into_skills` says *write the skill*; this says *the written skill is 💧 fluid — rung 2 of 4*, and it is the learner's permanent job to notice which rung each skill it touches actually sits on.
+
+0 🧠 tribal → 1 📚 brief → 2 💪💧 fluid → 3 💪🔩 rigid → 4 💪🪨 solid. **all five are tools**; they differ only in brain cost per use.
+
+## .why
+
+a **brief** amortizes the derivation; a brain still applies it every time. a **tool** amortizes the execution too — **one call, no brain.** imagine cost is time + tokens, and **a probabilistic step can be wrong** — the third cost, often the largest.
+
+⇒ every rung climbed is paid once and saved without bound. and the leftover glue is the cheapest place to find the next rung, because **you already hold the evidence** — you just did the work by hand.
+
+| when… | then… |
+|---|---|
+| you call a skill, **then** run a command to finish what it started | the follow-up belongs **inside** the skill |
+| you call a skill and **read its output to decide** the next call | that decision is a candidate branch inside the tool |
+| you call the same two skills in the same order, twice | the pair wants **one** call |
+| you must **read a skill's instructions** to know what to run | it is rung 2. ask what 🔩 rigid looks like |
+| its output must be **reshaped** before the next step | fix the seam, not the caller |
+| you write a **new** skill | write it at the highest rung you can defend today |
+| a skill **fails** and you work around it by hand | 🔴 the strongest signal there is — never leave it unnamed |
+
+## .the test — answer BOTH
+
+> **1. "what did I still have to figure out myself, after that one call?"**
+
+naught → rung 4 🪨, leave it. one or more steps → each is an unclimbed rung.
+
+⚠️ **name the WORK, not a count of turns.** two turns can differ by orders of magnitude in time, tokens, and risk.
+
+> **2. "is that leftover step a JUDGMENT, or a STEP?"**
+
+- a **judgment** — weighs an ambiguous case, reads intent, decides a tradeoff → **leave it with the brain.** never fake determinism over judgment
+- a **step** — the same every time, and you could write down exactly what you did → **it is owed a tool**
+
+⚠️ the first test alone drives toward a tool that lies; the second alone never notices the gap.
+
+## .what to do with what you found
+
+small and entoolable now → **do it now** · real work → write it where the next traveler finds it (a seed, or a catch in `.dream/`) · a judgment → say so explicitly; a documented *"this stays with the brain, because X"* is a real artifact that stops a fake-tool attempt.
+
+**a skill owned by another repo is re-seeded, never entooled here.**
+
+## .anti-patterns
+
+**the silent glue** — you do the leftover step by hand every time and never name it; invisible precisely because you are good at the close · **the fake tool** — determinism asserted over a fluid process; worse than the brain it replaced, because a brain hesitates and a bad tool does not · **💧 fluid forever** · **the workaround that outlives its defect**.
+
+blocker: a manual workaround for a broken skill, unrecorded · a tool that asserts determinism over a genuine judgment. ⇒ `philosophy.entoolment-is-the-pinnacle` is the why.
+
+> if you finished the job by hand, the tool is not finished. 🦉🔧

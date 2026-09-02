@@ -23,13 +23,14 @@ each cluster has two levels:
 
 ---
 
-## the say-level template — `term=stone._.choice._.md`
+## the say-level template — `term=route.stone._.choice._.md`
 
 ```md
 # domain.term: stone
 
 term.chosen   = stone
 term.kind     = noun                 # noun | verb | adj — the part of speech, reused across objects & operations
+term.boundary = route                # the subdomain the word holds its sense within — required (rule.require.boundary-qualified-terms)
 term.synonyms.forbidden:
 - checkpoint
 - milestone-marker
@@ -46,8 +47,8 @@ where the term is declared / used, plus notable examples (a term is reused acros
 
 ## .reason
 see the ref-level cluster beside this choice:
-- `term=stone._.choice.reason.md` — etymology, disputes, evidence
-- `term=stone._.choice.example=<abc>.md` — one file per usage example
+- `term=route.stone._.choice.reason.md` — etymology, disputes, evidence
+- `term=route.stone._.choice.example=<abc>.md` — one file per usage example
 ```
 
 > the say file carries **data only** — no `.forbid` prose. the rule
@@ -56,7 +57,7 @@ see the ref-level cluster beside this choice:
 
 ---
 
-## the ref-level template — `term=stone._.choice.reason.md`
+## the ref-level template — `term=route.stone._.choice.reason.md`
 
 ```md
 # domain.term.choice.reason: stone
@@ -82,7 +83,7 @@ chosen over `checkpoint` (implies a gate/validation — that is the `guard`'s jo
 
 ---
 
-## the example-level template — `term=stone._.choice.example=trail-marker.md`
+## the example-level template — `term=route.stone._.choice.example=trail-marker.md`
 
 ```md
 # domain.term.choice.example: stone — trail-marker

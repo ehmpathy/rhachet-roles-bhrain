@@ -1,0 +1,58 @@
+# rule.require.enumerate-before-you-name
+
+> **list every instance the word must cover. THEN pick the word.**
+
+not the reverse. a word chosen against the one instance in front of you has been tested exactly once, and a sample of one can neither confirm it nor refute it.
+
+## .why — one instance hides BOTH failure modes, and they are opposite
+
+| failure | what it looks like | why one instance cannot catch it |
+|---|---|---|
+| **too narrow** | fits the case you looked at, breaks on a case you never listed | you never listed it |
+| **too wide** | fits every case — so it discriminates none of them | with one case, *"it fits"* reads as success |
+
+⇒ that symmetry is the whole argument. **too narrow feels like precision** and **too wide feels like generality**, so both feel *right* at the moment of choice. only a list parts them: a narrow word leaves a row uncovered; a wide word covers every row identically.
+
+## .the test — forced articulation, before the word
+
+> **1. "what are ALL the instances this word must cover?"**
+> **2. "does the candidate cover every one — and does it EXCLUDE its neighbours?"**
+
+- a row it does not cover → **too narrow.** widen, or split into two words
+- covers every row **and** every adjacent concept → **too wide.** it is the genus; you need the differentia
+- covers every row and excludes the neighbours → the word holds
+
+⚠️ **step 1 is the one that gets skipped**, because the instance in hand feels like the category. it is not; it is one member of it.
+
+## .the worked case — `degenerate` vs `specialized`
+
+the candidate was `degenerate` — a real term of art, and it fit the first instance perfectly. then the instances were listed:
+
+| the rung-3 shape | `degenerate`? | a `specialization`? |
+|---|---|---|
+| a skill that computes its setup, then hands one probabilistic step to a brain | ✅ a route reduced to **one stone** | ✅ |
+| a wrapper that batches the deterministic half | 🔴 **no** — an all-deterministic route is complete, not reduced | ✅ |
+
+⇒ **`degenerate` broke on row 2, and row 2 was invisible until it was written down.** the table took one minute; the wrong word would have shipped in a published brief cited from three others.
+
+## .the peer cases — the same test, the opposite failure
+
+| the word | the list showed |
+|---|---|
+| `knowledge`, to contrast a **brief** | covers **both** — a skill carries knowledge too. it is the genus; `concepts` / `capacity` are the differentia |
+| `tool`, to contrast a **brief** | covers **all four** rungs, so it cannot also name a proper subset. `skill` is the contrast word |
+| `rung`, unqualified | **one word, two senses** — a review gate and a determinism position. the flat namespace has one slot; the list needs two |
+
+⇒ in every one, the list is what made the defect visible, and in every one the word **read fine** against whichever instance was in hand.
+
+| when… | then… |
+|---|---|
+| you name a **relation** between two concepts | 🔴 list every pair the word must hold over, first |
+| a word fits the example you have in view | that is a sample of one. what is the second? |
+| you reach for a **term of art** because it is precise | precision is what makes it narrow. check the rows it excludes |
+| a candidate covers **every** instance you listed | 🔴 check the **adjacent concepts** too — a word that covers them all is the genus |
+| you cannot list a second instance | the concept may not be general enough to earn a word yet |
+
+⇒ this **precedes** the glossary rules: `rule.forbid.domain-term-synonyms` asks *"one concept or two?"*, which is this enumeration applied to senses; `rule.require.boundary-qualified-terms` catches the `rung` case **after** two senses exist. this is where both are cheapest — at authorship, with a table, before a citation exists.
+
+blocker: a term proposed with **one** instance cited · an enumeration that shows an uncovered row · a term that covers every row **and** its neighbours. false positive: a concept that genuinely has one instance — say so, and why a second is unavailable.

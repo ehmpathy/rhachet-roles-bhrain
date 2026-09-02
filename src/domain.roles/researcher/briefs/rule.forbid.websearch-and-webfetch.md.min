@@ -1,0 +1,84 @@
+# rule.forbid.websearch-and-webfetch
+
+> **`websearch` and `webfetch` do not return a source. they return a MODEL'S SUMMARY of a source —
+> and they return it in the shape a source would take.**
+
+so their output may be used as a **pointer** and never as **evidence**:
+
+| the use | verdict |
+|---|---|
+| find a URL, a name, a lead — then fetch it with `bhrowser` | ⚠️ **tolerated, never the default** |
+| quote it, cite it, or draw a conclusion from it | 🔴 **forbidden** |
+| assert what a source says, on their output alone | 🔴 **forbidden** |
+| assert what **no** source says, on their output alone | 🔴 **forbidden** |
+
+`rule.always.reach-for-bhrowser` says *which tool to reach for*. this says *what their output may be
+trusted to be*, once you reached for the wrong one anyway.
+
+## 🔴 .the SEARCH goes through `bhrowser` too
+
+> *"even here, searches should also be done with bhrowser too"* — the wisher, 2026-08-31
+
+`bhrowser` does not merely fetch a page you already hold. **it searches.** so the pointer row is not
+a sanctioned parallel lane — it is what remains when the browser genuinely cannot reach the query.
+
+| you need | reach for |
+|---|---|
+| a lead, a URL, a name, a term to look up | 🔴 **`bhrowser`.** it runs the search AND returns the real page |
+| the words on a page | `bhrowser`, always |
+| a lead where `bhrowser` is unavailable or refused | `websearch` — **labelled as such**, and the fetch still goes through `bhrowser` |
+
+⇒ **the reason is the same one that governs the evidence half.** an index's snippet is a window cut
+for relevance to your query, so **the set of leads it returns is already filtered by a ranker you
+cannot inspect** — and a search that surfaces the wrong three sources produces a flawless yield
+about the wrong three sources, with no bound reported.
+
+## .why — a paraphrase, returned in a quote's clothes
+
+| tool | what it hands back | what it drops, silently |
+|---|---|---|
+| `websearch` | the **index's own snippet** — a window cut for relevance to your query | each passage outside that window, plus any rephrase the index applied |
+| `webfetch` | a **model's answer to your prompt**, computed over the page | any detail the summarizer judged irrelevant — and it **adds** any detail it inferred |
+
+⇒ **a summary that omits and a summary that invents are indistinguishable from a faithful read**,
+because all three arrive in the same shape. that is `rule.forbid.failhide` at the evidence layer.
+
+⚠️ **and it compounds downstream, which is what earns a blocker.** a citation is a promise the next
+reader inherits without a re-check. a paraphrase cited as a quote is therefore not one defect — it
+is **one defect per future reader, forever**, and no one of them can see it.
+
+## .the measured case — and it was a HUMAN paraphrase
+
+**2026-08-30 · this repo.** a paraphrase of `ehmpathy/rhachet`'s determinism spectrum sat inside a
+**blockquote**, attributed to a named upstream file. it propagated to **four briefs** before anyone
+fetched the source. it had deleted one word — `mixed` — and that word carried the whole
+crystallization model.
+
+⇒ that was **one** paraphrase, made **once**, by an author who believed they quoted. **these tools
+manufacture that artifact on every call**, and their output carries no tell at all.
+
+| when… | then… |
+|---|---|
+| a `webfetch` returns a clean, well-organized answer to your exact question | 🔴 that shape is the summarizer's, not the page's. the tidiness is the tell |
+| you would **quote** a line that arrived from either tool | fetch the page with `bhrowser` and quote what sits on it |
+| you would write *"per `<source>`, X"* | did you read `<source>`, or a summary of it? only the first licenses that sentence |
+| a search snippet **answers your question exactly** | 🔴 the index cut that window **for your query**. it is the excerpt most apt to deceive |
+| you need a **URL, a package name, a term** | 🔴 `bhrowser` searches too. a `websearch` here needs a reason on the page |
+| you cite a passage in a **blockquote** | 🔴 a blockquote claims verbatim. **fetch** the words |
+
+## .the test
+
+> **"did I read the page, or did I read an account of the page?"**
+
+the page → cite it · an account → 🔴 **fetch the page.** the account may be right, and you cannot
+tell · you cannot answer → you already lost the provenance. re-fetch
+
+⚠️ answerable **at the moment of the call**, and near-unanswerable an hour later — which is why it
+is a cue rather than a review item.
+
+blocker: a quotation, a blockquote, or a `"per <source>"` claim built on their output · a conclusion
+drawn from a `webfetch` summary with no `bhrowser` fetch · a probe yield that cites a source it
+reached only through search.
+nitpick: either tool used for a **pointer** where `bhrowser` was available and unattempted.
+not a violation: a pointer **with a stated reason** `bhrowser` could not serve the query · an
+existence check, labelled.

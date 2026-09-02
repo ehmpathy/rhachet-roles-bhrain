@@ -1,0 +1,16 @@
+# rule.always.converge-with-reviewers.via-a-taken-per-point
+
+for EVERY `.given.by_peer` point you MUST author the paired `.taken.by_self` before you re-arrive. no exceptions, every round.
+
+the reviewer drops a point that carries a response and **re-raises one that does not** — so a code fix with no `.taken` reads to it as no fix at all.
+
+| shape | the claim | must carry |
+|---|---|---|
+| `[REPAIR]` | *"i fixed it"* | a quote of the **current** file |
+| `[REFUTE]` | *"it does not hold"* | cited evidence — out of scope, a false positive, a deliberate tradeoff |
+
+then, per point: `rhx route.stone.set --stone <stone> --as contemplated --that <slug>` — and only then re-arrive.
+
+⚠️ **a blocker that returns after you fixed it is a driver error, never a reviewer defect.** check whether you ever told the reviewer, before you diagnose one.
+
+blocker: an open point with no `.taken` · a `[REPAIR]` with no current-file quote · a `[REFUTE]` with no evidence · a malfunction graded for a re-raise you never answered.

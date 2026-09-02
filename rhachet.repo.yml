@@ -39,6 +39,13 @@ roles:
       dirs: []
     skills:
       dirs: dist/domain.roles/reflector/skills
+  - slug: researcher
+    readme: dist/domain.roles/researcher/readme.md
+    briefs:
+      dirs: dist/domain.roles/researcher/briefs
+    skills:
+      dirs: dist/domain.roles/researcher/skills
+    boot: dist/domain.roles/researcher/boot.yml
   - slug: reviewer
     readme: dist/domain.roles/reviewer/readme.md
     briefs:
@@ -47,6 +54,13 @@ roles:
       dirs: dist/domain.roles/reviewer/skills
     boot: dist/domain.roles/reviewer/boot.yml
     keyrack: dist/domain.roles/reviewer/keyrack.yml
+  - slug: telepath
+    readme: dist/domain.roles/telepath/readme.md
+    briefs:
+      dirs: dist/domain.roles/telepath/briefs
+    skills:
+      dirs: []
+    boot: dist/domain.roles/telepath/boot.yml
   - slug: thinker
     readme: dist/domain.roles/thinker/readme.md
     briefs:

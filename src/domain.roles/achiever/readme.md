@@ -1,4 +1,4 @@
-## 🔮 achiever
+## 💎 achiever
 
 the achiever role enables goal detection, persistence, and triage — so no ask is forgotten.
 

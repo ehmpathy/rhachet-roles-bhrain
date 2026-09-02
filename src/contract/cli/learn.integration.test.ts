@@ -93,7 +93,16 @@ describe('learnDomainTerms (integration)', () => {
 
       then('it guides the reflection + names the progress sentinel', () => {
         expect(result.stdout).toContain('tend the terms');
-        expect(result.stdout).toContain(paths.progressPath);
+        // the guide names the CONVENTION, never one day's resolved filename. two
+        // reasons, both decisive:
+        //   1. the text teaches the shape — a clone that reads `progress.$date.md`
+        //      beside "ONE FILE PER DAY" knows the rule; one fixed date teaches it
+        //      only today's answer, and is wrong for it after midnight
+        //   2. the snapshot below stays deterministic instead of a daily churn
+        expect(result.stdout).toContain(paths.progressPathPattern);
+        // and assert the resolved path is ABSENT, so a future switch back to it
+        // fails loud here rather than silently as a daily snapshot churn
+        expect(result.stdout).not.toContain(paths.progressPath);
         // the clone face renders the SAME shared how + canon body the onStop nudge
         // does (emitDistillMoves) — assert its markers so a future divergence between
         // the two faces fails loud (rule.require.single-source-of-truth-for-render)

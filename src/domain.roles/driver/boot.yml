@@ -2,15 +2,76 @@ always:
   briefs:
     ref:
       - briefs/im_a.bhrain_owl.md
-      - briefs/define.routes-are-gardened.[philosophy].md
-      - briefs/research.importance-of-focus.[philosophy].md
       - briefs/howto.create-routes.[ref].md
+      # offroad-first, template-later — `rule.prefer.wet-over-dry` at the route grain.
+      # ref beside the mechanics it governs: it fires only when a route is BORN, which
+      # is rare, and howto.create-routes is where a driver already looks at that moment
+      - briefs/rule.prefer.walk-a-route-before-you-template-it.md
+      # DEREFERENCED from a say-level rule that names it by path, so the `say` tier
+      # stays a fixed, small footprint while the depth grows beside it
+      # (role=any/boot.yml's stated policy; rule.prefer.decompose-a-subject-via-suffixes)
+      #
+      # how much a re-arrival actually costs. ref because it answers a question a driver
+      # ASKS ("is re-arrival expensive?"), which is the dereference case exactly
+      - briefs/howdoes.the-guard-caches-a-clean-lane-by-artifact-hash.md
     say:
+      # 🔴 the WHY under every rule below, promoted from ref on 2026-08-31.
+      # a rule tells a driver WHAT to do, and cannot tell them what to do in a case
+      # it does not enumerate — no rule enumerates every case. so a why held one
+      # dereference away is a why they do not have at the edge, and the edge arrives
+      # unannounced. each ships a `.md.min`, which is what makes the tier affordable
+      #
+      # why a route is walked one stone at a time rather than raced — the ground under
+      # drive-autonomously and converge-to-terminal alike
+      - briefs/research.importance-of-focus.[philosophy].md
+      # why a route is grown rather than specified up front — the ground under
+      # defer-fulcrums-to-last and the walk-before-you-template rule
+      - briefs/define.routes-are-gardened.[philosophy].md
       - briefs/rule.always.drive-autonomously.md
-      - briefs/rule.always.converge-with-reviewers.md
+      - briefs/rule.always.converge-with-reviewers._.md
+      # the zoom-in: the mechanical obligation the loop above imposes. say-level
+      # because it fires at each re-arrival, and its absence reads to the reviewer
+      # as no fix at all — which a driver then mis-diagnoses as a reviewer defect
+      - briefs/rule.always.converge-with-reviewers.via-a-taken-per-point.md
       - briefs/rule.always.converge-to-terminal.md
       - briefs/rule.always.defer-fulcrums-to-last.md
+      # the RECORD half of the rule above. say-level because it fires at each decision:
+      # a record swept together at the end has already lost the rejected fork and the
+      # reason as it stood at the time, which is the half a reviewer needs
+      - briefs/rule.always.itemize-the-fulcrums-you-best-guess.md
+      # say-level because it must fire WHILE the yield is written. a rule that arrives
+      # after the yield is done meets a driver who must cut two thirds of a finished
+      # document — a teardown, where the same rule read early is free
+      - briefs/rule.always.yield-the-output-not-the-archaeology.md
+      # it carries the overflowed-lane recipe as one of its driver-fixable causes.
+      # that recipe had a peer brief of its own until 2026-08-31, written to teach a
+      # driver around a MISCLASSIFICATION — an overflowed lane exits 2 and so grades
+      # `constraint` where the taxonomy says `malfunction`. most of what that brief
+      # taught dies with the fix, and what survives is one cause row, so it was
+      # absorbed here rather than kept beside this rule
       - briefs/rule.always.diagnose-reviewer-malfunctions.md
+      # the escalation family. it names the driver role in its own text, so it
+      # boots here rather than under role=any
+      - briefs/rule.always.spend-own-levers-before-escalation.md
+      # the last rung of that same ladder — the step immediately before the foreman.
+      # a driver rule, not a reviewer one: the reviewer is the peer PHONED, never the
+      # one who phones. say-level because it must fire AT the moment an escalation is
+      # reached for; a discipline that arrives after the human was pulled has already
+      # spent the one resource it exists to conserve
+      - briefs/rule.always.get-a-second-opinion-before-foreman.md
+      # the ladder that has NO lever. say-level because it fires exactly when a driver
+      # is tempted to reach for one — and by the time an override is asked for, the
+      # human's attention is already spent on what they cannot grant
+      - briefs/rule.always.bear-every-self-review.md
+      # BORROWED — the file here is a symlink into the learner, which owns it. the act
+      # is capture-before-context-fades, which is the learner's whole subject; the
+      # driver is merely the role most often in the room when the wisher speaks. the
+      # symlink is what lets a driver-only enrollment keep it
+      # (same shape as achiever/briefs/im_a.bhrain_owl.md).
+      # say-level because it must fire AT the moment the wisher speaks — a rule that
+      # arrives after the round has ended meets a driver who must reconstruct the
+      # quote from memory, which is the exact failure it exists to prevent
+      - briefs/rule.always.archive-the-wishers-words-verbatim.md
       - briefs/howto.drive-routes.[guide].md
       - briefs/howto.run-self-reviews.[guide].md
       - briefs/howto.navigate-fulcrum-choices.[guide].md

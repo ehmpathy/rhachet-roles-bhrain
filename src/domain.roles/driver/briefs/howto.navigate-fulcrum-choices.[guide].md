@@ -38,9 +38,9 @@ teardown — a rename, a swapped default, a re-scoped boundary that does not rip
 most fulcrums are like this. your best guess plus a clean-rework offer keeps the road
 moving and costs the human no attention until the end.
 
-### 3. halt with a blocker only when the rework is not clean
+### 3. halt with a blocker only when the rework is dirty
 
-sometimes the choice is not clean to reverse — the wrong guess would force a teardown, or
+sometimes the choice is **dirty** to reverse — the wrong guess would force a teardown, or
 poison work built on top. only then may you halt with `--as blocked`. and even then:
 
 - halt **last**, after every other question is addressed
@@ -62,8 +62,8 @@ reach for the highest rung the choice allows:
 | rung | when | what you do |
 |------|------|-------------|
 | converge | the reviewer or wish implies a right answer | take it; no fulcrum at all |
-| best-guess + offer rework | the rework would be clean | choose, note why, flag for the end |
-| block (rare) | no defensible guess AND rework is not clean | halt last, name the conflict |
+| best-guess + offer rework | the rework is **clean** | choose, note why, flag for the end |
+| block (rare) | no defensible guess AND the rework is **dirty** | halt last, name the conflict |
 
 almost every fulcrum sits on the middle rung. the block is the exception you earn only when
 the top two are truly closed.

@@ -1,0 +1,74 @@
+# template.domain-term
+
+the shape of a `choice._.` cluster under `.agent/repo=.this/role=any/briefs/domain.terms/`. one cluster per term (one word), reused across every dobj/dop that word composes.
+
+```
+term=<boundary…>.<x>._.choice._.md          # SAY — lean, always booted: the data only
+term=<boundary…>.<x>._.choice.reason.md     # REF — REQUIRED: etymology, disputes, evidence
+term=<boundary…>.<x>._.choice.example=<abc>.md   # REF — optional, one per notable example
+```
+
+`term=<x>._` is a **cluster root**, so later facets can sit beside `choice` (e.g. `._.usage.*`). the say/ref split keeps the always-booted footprint lean while the full record lives on demand.
+
+## .the say file — data only, no prose about the forbid
+
+```md
+# domain.term: stone
+
+term.chosen   = stone
+term.kind     = noun          # noun | verb | adj
+term.boundary = route         # the subdomain the word holds its sense within — REQUIRED
+term.synonyms.forbidden:
+- checkpoint
+- waypoint
+
+## .what
+a single milestone on a route.
+
+## .refs
+- src/domain.objects/Stone.ts
+- src/domain.operations/route/getStone.ts
+
+## .reason
+- `term=route.stone._.choice.reason.md`
+- `term=route.stone._.choice.example=<abc>.md`
+```
+
+⚠️ **the say file carries no `.forbid` prose.** `rule.forbid.domain-term-synonyms` governs the forbid once, for all terms; the file merely lists which words are forbidden.
+
+## .the reason file — required
+
+```md
+# domain.term.choice.reason: stone
+
+## .etymology
+why `stone`: a route is a *path* of markers; a stone is a marker you pass on a trail.
+chosen over `checkpoint` (implies a gate — that is the `guard`'s job) and `waypoint`
+(navigation jargon, not the trail metaphor).
+
+## .disputes
+### dispute: checkpoint — raised YYYY-MM-DD — status: RESOLVED (keep `stone`)
+- raised.by  = <traveler>
+- claim      = "checkpoint" reads clearer to newcomers
+- counter    = "checkpoint" implies a gate that VALIDATES; that concept is already
+               `guard`. a `stone` merely MARKS progress. to merge them overloads one
+               word onto two distinct concepts
+- resolution = keep `stone`; record `checkpoint` as a forbidden synonym
+
+## .evidence
+- discovery: <dimensional decomposition / scenario narrative / citation>
+- invariants: <forbidden combinations / states / refs, if a dobj>
+```
+
+## .the example file — optional, one per occurrence
+
+```md
+# domain.term.choice.example: stone — trail-marker
+
+a route is walked one stone at a time, as a hiker passes one trail-marker at a time.
+each stone marks *how far along* — it does not gate passage (that is the `guard`).
+```
+
+⇒ the rules that rule the dir are named in `domain.terms/.readme.md`. the dispute pattern is `howto.domain-term-disputes`.
+
+> one word, one cluster — say lean, reason deep 📜

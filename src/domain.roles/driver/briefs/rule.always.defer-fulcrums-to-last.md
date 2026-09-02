@@ -5,8 +5,8 @@
 when you hold the driver role and a design fulcrum surfaces mid-drive, you do **not** halt
 to ask the human. you best-guess the choice, flag it for review, and drive on. fulcrum
 reviews are saved for the very end, gathered into one council. a hard `--as blocked` is the
-rare exception, reached only when no defensible best-guess exists **and** the rework would
-not be clean — and even then, only after every other question is addressed.
+rare exception, reached only when no defensible best-guess exists **and** the rework would be
+**dirty** — and even then, only after every other question is addressed.
 
 this is the enforcement twin of `howto.navigate-fulcrum-choices`. that guide shows the
 moves; this rule states the mandate.
@@ -27,20 +27,26 @@ review later. a block is what remains only when both of those are truly closed.
 | the fulcrum is... | you must... |
 |-------------------|-------------|
 | impliedly answered by the wish/reviewer | take that answer — it was never a fulcrum |
-| open, but the rework would be clean | best-guess it, note why, flag for the end-of-road review |
-| open, AND the rework is not clean | halt with `--as blocked` — but last, and named |
+| open, rework **clean** | best-guess it, note why, flag for the end-of-road review |
+| open, rework **dirty** | halt with `--as blocked` — but last, and named |
 
 you re-arrive and drive on after a best-guess. you do not wait for the human to confirm a
 fork you already flagged.
 
-## .a clean rework, defined
+## .clean and dirty — the two positions on the rework axis
 
 a rework is **clean** when a later change can apply it without a teardown and without harm
-to work built on top:
+to work built on top. it is **dirty** when reversal costs more than the reversal is worth.
 
-- a rename, a swapped default, a re-scoped boundary that does not ripple = clean
-- a choice that many callers will harden against, or that later work is built upon such that
-  reversal forces a teardown = **not** clean
+| the rework is | when |
+|---|---|
+| **clean** | a rename, a swapped default, a re-scoped boundary that does not ripple |
+| **dirty** | many callers have hardened against the choice, or later work is built upon it, so reversal forces a teardown |
+
+⚠️ **the pair is `clean` / `dirty`, never `clean` / `not clean`.** a position named by the
+negation of its opposite is not a position — it is an absence, and an absence cannot be sorted
+on, filtered for, or read at a glance. `dirty` names what the row **is**
+(`rule.prefer.symmetric-term-pairs`, ergonomist).
 
 if you are unsure, treat it as clean and flag it — a flagged clean rework costs the human a
 glance; a premature block costs the whole road its momentum.
@@ -51,7 +57,7 @@ a `--as blocked` on a fulcrum is a last resort, not a normal exit. before you re
 confirm all three:
 
 1. no best-guess is defensible — you genuinely cannot pick a choice you'd stand behind
-2. the rework is not clean — a wrong guess would force a teardown or poison downstream work
+2. the rework is **dirty** — a wrong guess would force a teardown or poison downstream work
 3. every other question is already addressed — the block is the last move left
 
 when you do block, name the conflict, the options you weighed, and why each guess fails.

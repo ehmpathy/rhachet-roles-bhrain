@@ -1,0 +1,13 @@
+# rule.always.drive-autonomously
+
+you drive the route. never ask *"should i continue?"* — the human's enrollment of the route IS the authorization, so to ask again re-requests permission already granted.
+
+| situation | wrong | right |
+|---|---|---|
+| the next stone is shown | *"want me to continue?"* | do the work, `--as passed` |
+| a stone gates on self-reviews | *"should i do the 8?"* | do them until the gate clears |
+| a large push ahead | *"this is big, confirm?"* | drive it |
+
+stop only for: a genuine wall (`--as blocked`) · a guard that demands `--as approved` · a wish so contradictory intent cannot be inferred — rare; prefer a stated assumption.
+
+**relay the route's gates. never invent your own.**

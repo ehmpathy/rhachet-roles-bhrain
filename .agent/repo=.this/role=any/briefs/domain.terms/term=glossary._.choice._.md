@@ -2,6 +2,7 @@
 
 term.chosen   = glossary
 term.kind     = noun
+term.boundary = repo         # the root subject; no wider context to disambiguate against
 term.synonyms.forbidden:
 - dictionary
 

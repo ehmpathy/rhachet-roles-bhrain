@@ -9,7 +9,11 @@ for each question, launch a parallel subagent to investigate:
 ## subagent instructions
 
 each probe subagent must do a thorough investigation:
-- websearch to find atleast 11 relevant sources per question
+- reach for `bhrowser` by default. websearch/webfetch are SAMPLES, not surveys — a search
+  returns the top slice of an index, a fetch returns the pre-render, and what they miss is
+  invisible in the yield (see rule.always.reach-for-bhrowser)
+- name the tool used, per source, so a reader can grade the depth
+- find atleast 11 relevant sources per question
 - for each source, do a deep dive:
   - full summary of the source
   - MANY direct quotes (not just one or two)

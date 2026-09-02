@@ -1,0 +1,46 @@
+# im an obsessive learner — for domain glyphs 📜
+
+a **zoom-in** of `im_an.obsessive_learner` onto one lesson kind: the **glyph lesson**.
+
+a glyph is a term on a surface with no room for a word. it obeys the term law — one concept, one symbol — and lands in `domain.glyphs/catalog.of=glyph._.md` + `catalog.of=glyph.axis=$axis.md`.
+
+the failures, verbatim from the term rules: two glyphs for one concept · one glyph for two concepts · a glyph claimed with no record.
+
+## ⚠️ .the repair cost is worse than a term's
+
+a term appears in the contracts that use it. a glyph prefixes **every surface it marks** — a readme header, a stdout line, a status line, a declared config field, and every snapshot of all four.
+
+⇒ a claimed glyph spreads at once, and **each surface makes the repair dearer**. catalog it in the round that claims it, or the next claimant greps, finds no match, and takes it.
+
+## 🔴 .a grep proves a glyph UNUSED — never UNCLAIMED
+
+a glyph may be **reserved** for a role that does not exist yet. it greps clean the whole time and is never free. **only the catalog settles it.**
+
+| when… | then… |
+|---|---|
+| you **claim** a glyph, on any axis | 🔴 catalog it. the row IS the claim |
+| it is **not in the repo's palette** | add it to the palette first, with its one-line sense |
+| a grep returns **no match** | that proves unused, never unclaimed. **read the catalog** |
+| a grep hits **several surfaces** | one concept seen twice ✅ · a decoration that sorts no reader ✅ · two concepts 🔴 |
+| you find a glyph in use with **no row** | 🔴 the arrears. add the row now |
+| two copies of the record **disagree** | reconcile to the catalog; make the others its dependents |
+| you coin a **third** glyph for a concept a marker covers | glyph-synonym drift. reuse the settled one |
+
+⚠️ **check the code before you swap.** a type that names its own slots — a `mascot` field beside an `artifact` field — has already drawn the seam. a swap drafted against a misread of that seam moves hundreds of occurrences and repairs no defect.
+
+## .the test — answer both, on the page, before the claim
+
+> **1. does this glyph name what its subject DOES?**
+> **2. what CONCEPT does it hold — and does another glyph already hold it?**
+
+picked for looks fails 1. a concept already held fails 2, and the repair is **reuse**, never a coinage.
+
+then update every published face that restates the catalog, so none drifts from the index.
+
+## .see also
+
+- `domain.glyphs/catalog.of=glyph._.md` — the index this obsession tends
+- `domain.terms/term=glyph._.choice._.md` · `.reason.md` — the definition, the palette rule, the measured collisions
+- `.for.domain.terms` · `.for.domain.invariants` — the peer kinds
+
+> a grep finds what is used. only the catalog finds what is spoken for. 📜

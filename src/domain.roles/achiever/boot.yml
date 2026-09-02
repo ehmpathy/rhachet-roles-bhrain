@@ -2,9 +2,29 @@ always:
   briefs:
     ref:
       - briefs/im_a.bhrain_owl.md
+      # the ejected occurrence behind the itemize rule's cost claim. ref because a
+      # demo is read once, to check the claim — never on every boot
+      - briefs/rule.always.itemize-a-peers-asks-into-tasks.example=the-seventh-ask.md
     say:
       - briefs/define.goals-are-promises.[philosophy].md
       - briefs/howto.triage-goals.[guide].md
+      # say-level because it is vocabulary — a human may use the alias in their first
+      # sentence, and an achiever that must look it up has already lost the turn
+      - briefs/define.lucky-charms.md
+      # say-level because it must fire AT the moment a peer speaks. an itemization that
+      # arrives after the work is a report, and a report does not prevent the misread
+      # this rule exists to catch
+      - briefs/rule.always.itemize-a-peers-asks-into-tasks._.md
+      # the second beat: the list BINDS, and every task is worked to a terminal state.
+      # say-level beside its root because it fires at two moments the root does not
+      # cover — when a NEW ask interrupts an open list, and when a round is about to
+      # be reported done. both are moments, so a rule reached for afterward has
+      # missed them
+      - briefs/rule.always.itemize-a-peers-asks-into-tasks.via-systematic-execution.md
+      # say-level because it fires at the moment a fix is SEEN. a deferral is cheap to
+      # make and expensive to reverse: the comprehension that made the fix small is
+      # spent in that turn and gone by the next one
+      - briefs/rule.always.fix-forward-under-scouts-honor.md
   skills:
     say:
       - skills/goal.memory.set.sh

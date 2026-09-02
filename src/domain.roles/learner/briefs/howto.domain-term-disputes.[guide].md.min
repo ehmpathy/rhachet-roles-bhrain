@@ -1,0 +1,47 @@
+# howto.domain-term-disputes
+
+a **dispute** is how you challenge a term choice — a synonym you believe is right, or a word you believe names a genuinely **distinct** concept. rather than silently drift a contract to your preferred word, you open a dated, resolvable entry in the term's `choice.reason.md`.
+
+⇒ *"adhere or dispute"* — the escape valve is **first-class**, which is what keeps the forbid a guide rather than a scold.
+
+## .why
+
+a synonym is not always wrong — sometimes it names a **distinct concept** the glossary has not yet split out. a dispute turns a private disagreement into a durable, auditable record, so the next traveler sees the argument was had and settled, and does not re-litigate it.
+
+## .when to open one
+
+you find, or are tempted toward, a synonym in a **contract**, AND you believe:
+
+- the synonym reads clearer or truer than the canonical term, **or**
+- the word you reached for names a **different** concept that deserves its own term
+
+⇒ if you simply used a synonym by habit, do **not** dispute — just adhere.
+
+## .the shape — one dated entry under `## .disputes`
+
+```md
+### dispute: <the-word>  —  raised <YYYY-MM-DD>  —  status: OPEN | RESOLVED (<outcome>)
+- raised.by  = <traveler>
+- claim      = <the case for the disputed word>
+- counter    = <the case against it, or for the canonical term>
+- resolution = <the settled outcome, once closed>
+```
+
+**OPEN** while the argument is live — **contracts keep the canonical term meanwhile**. **RESOLVED** once settled; the outcome names the word that prevailed and what becomes of the loser (usually: a forbidden synonym).
+
+## .the worked example — `foamboard` ↔ `foamie`
+
+> claim: *"foamie"* is what surfers actually say — friendlier than the stiff *"foamboard"*
+> counter: the board-type set is `longboard`, `shortboard`, `foamboard` — **one shape, read at a glance**. *"foamie"* is informal slang that breaks that symmetry and blurs the board with a nickname
+> resolution: keep `foamboard`; record `foamie` as a forbidden synonym
+
+⇒ the outcome lands in `term=foamboard._.choice._.md` under `term.synonyms.forbidden`, and **this entry preserves why**.
+
+## .the two outcomes
+
+| outcome | what happens |
+|---|---|
+| the canonical term holds | the disputed word becomes a forbidden synonym; entry RESOLVED |
+| the disputed word prevails | it **replaces** the canonical term, **or** it becomes a **new term** of its own (a distinct concept) — a fresh cluster, itemized |
+
+> do not drift the word — dispute it, then let the record settle it 📜

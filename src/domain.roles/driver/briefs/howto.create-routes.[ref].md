@@ -6,6 +6,14 @@ guide for create new thought routes: directories, stones, guards, and bind comma
 ## .why
 enable self-serve route creation without reverse-engineer extant routes.
 
+## 🔴 .before you stamp a template — walk the route first
+this guide is the **mechanics**. it does not say whether to hand-author the stones or stamp them
+from a template, and the answer is not symmetric: a route kind whose shape has run **once** is
+hand-authored, and the template waits until two cases confirm it.
+
+⇒ **`rule.prefer.walk-a-route-before-you-template-it`** — `rule.prefer.wet-over-dry` at the route
+grain. read it before you reach for a stamp.
+
 ---
 
 ## concepts

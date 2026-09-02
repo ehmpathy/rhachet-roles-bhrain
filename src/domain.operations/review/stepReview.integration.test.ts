@@ -22,6 +22,16 @@ import { logOutputHead } from '@src/.test/logOutputHead';
 import { stepReview } from './stepReview';
 
 /**
+ * .what = raises the per-test budget for the LLM-backed cases in this file
+ * .why = jest.integration.env sets a 90s default, which fits a deterministic case and NOT a real
+ *        review — the brain call alone routinely outlasts it. every peer stepReview.caseBrain.*
+ *        file already carries this same 180s budget; this file drives the same subprocess and
+ *        lacked it, so its LLM cases failed on the clock rather than on the contract.
+ */
+// eslint-disable-next-line no-undef
+jest.setTimeout(180000);
+
+/**
  * .what = git identity env for commits
  * .why = avoids requiring global git config on cicd machines
  */

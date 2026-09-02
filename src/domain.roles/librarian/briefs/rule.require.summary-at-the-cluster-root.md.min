@@ -1,0 +1,64 @@
+# rule.require.summary-at-the-cluster-root
+
+> **when one subject splits into many subscopes, the summary is `$subject._.md` and each subscope is `$subject.$more.md`.**
+
+`._.` marks a **cluster root**: the file that stands for the whole, as a peer of its own parts.
+
+## .why — the root must sort first, and it must be addressable
+
+it answers *"what is this, and what are its pieces?"* — and that file has a hard requirement most names cannot meet: **it must be findable without a read of every peer.**
+
+| property | how `._.` gives it |
+|---|---|
+| **it sorts first** | `_` precedes every letter, so the root heads its cluster in any directory read |
+| **it is computable** | know the subject, know the path — `$subject._.md`, no search |
+| **it is globbable** | `*._.md` returns every cluster root; `$subject.*` returns the whole cluster |
+
+⇒ the alternatives each fail one. `$subject.readme.md` and `$subject.overview.md` sort into the middle of their own parts and read as one more part. a `.readme.md` in a directory works only when the cluster **has** a directory — most do not.
+
+## ⚠️ .the summary is a PEER of its parts, never a parent
+
+this is what makes it work in a **flat** tree, and the property most often lost:
+
+```
+👍  term=route.stone._.choice._.md          # the root, a peer
+    term=route.stone._.choice.reason.md
+    term=route.stone._.choice.example=x.md
+
+👎  term=stone/_.md                         # a directory, when none was needed
+```
+
+a directory is a real cost: it hides the cluster from a flat glob of its neighbors, and forces a `mkdir` before the second file can exist. **reach for one only when the cluster's parts crowd their neighbors out of a directory read.**
+
+## .where it is already the convention
+
+`term=route.stone._.choice._.md` · `kno601.inventories._.kind=article.md` · `inventory.of=fulcrums._.md` · `review/self/for.1.vision._.r4.$slug.md` — and the guard computes that last path exactly.
+
+| when… | then… |
+|---|---|
+| a subject grows a **second** file | 🔴 that is the split. the first becomes `$subject._.md` |
+| you write `$subject.readme.md` or `.overview.md` | rename it — the root has a name, and it sorts first |
+| you write `$subject.md` beside `$subject.$zoom.md` | the bare name reads as one more zoom. mark the root |
+| you reach for a **directory** for two files | do not — a flat cluster costs less and globs better |
+| you write an **itemization** | the summary is its cluster root |
+
+## .the test
+
+> **"if a reader knew only the subject, could they compute the path to its summary?"** — no, they would read the directory and judge → the root is unmarked.
+
+## .what the summary carries
+
+the **whole**, plus an index of the parts. it does **not** narrate any one of them:
+
+- what the subject is, shortest form that stands alone
+- the axes along which it splits, when it splits along axes
+- one line per part, with the fact that sets that part apart
+- **the gaps** — the parts that are owed and absent
+
+⇒ that last line is why a summary earns its own file. **a set of parts cannot report its own absences.** only a root that declares the axes can say which cells are empty.
+
+blocker: a subject split into parts with no `._.md` root (the whole has no address) · a root named `$subject.readme.md`, `.overview.md`, or bare `$subject.md` beside its own parts · a `._.md` root that narrates one part (eject it).
+nitpick: a directory created for a cluster of two or three files.
+false positive: a single file with no parts — the convention fires on the split, never before.
+
+⇒ see also: `rule.prefer.decompose-a-subject-via-suffixes` (the WHETHER to this NAME) · `rule.forbid.itemization-without-coordinates` · `rule.require.catalog-is-an-index` · `rule.require.rules-are-clusters` · `template.domain-term` (learner).

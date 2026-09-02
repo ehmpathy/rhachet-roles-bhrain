@@ -1,0 +1,61 @@
+# rule.require.timeless-lessons
+
+> **a brief distills a CONCEPT. the chronicle that led to it is a DEMO of that concept, and it belongs in a file of its own.**
+
+```
+$brief.md                  # the concept — fundamental, focused, free of episode
+$brief.example=$slug.md    # one demo — the dated, sourced episode that shows it
+```
+
+a concept is timeless by nature; a demo is dated by nature. **the rule is not "delete the history" — it is "do not mix the two in one file."**
+
+## .why the MIX is the defect, not the history
+
+the librarian's ontology already draws the line: a **demo** is the archetype whose job is *"how this instance exemplifies the concept."* so a brief that carries its own episode inline is **two archetypes in one file**, and each degrades the other:
+
+| the harm | how it lands |
+|---|---|
+| the **concept loses focus** | a reader who wants the pattern sifts the episode out of it, on every read |
+| the **demo loses its citation** | an episode buried in prose has no date, no repo, no path — it stops being checkable |
+| the file **grows without bound** | each round adds an episode; the concept does not get longer |
+
+⇒ **eject the demo and both improve.**
+
+## .the test — strip and re-read
+
+> **strip every temporal and session-bound word. does the claim still stand as a statement of what IS and why?**
+
+- yes → the **concept**. it stays
+- no → a **demo**. eject to `example=$slug.md`, dated and sourced
+- it was neither — it merely gestured at a conversation → 🔴 not a demo either. a demo has a date, a repo, a path; a gesture has none, so there is naught to eject
+
+## .the smells — each is a demo trapped inside a concept
+
+| smell | what it is |
+|---|---|
+| *"recently"* · *"this time"* · *"we just"* · *"as we saw above"* | an episode with its citation stripped |
+| *"we decided"* · *"we deliberately"* · *"we chose not to"* | a deliberation the reader did not attend |
+| *"as discussed"* · *"per the conversation"* | a source that cannot be dereferenced |
+| 🔴 *"an earlier draft of this brief said…"* | the document's own version history — **not even a demo. delete it** |
+| *"yet"* · *"for now"* · *"not … yet"* | a schedule, and the schedule expires |
+| a term named **only** to say we do NOT adopt it, with no durable reason | the rejection outlives the reason |
+
+## .what an ejected demo owes
+
+the **date**, the **repo**, the **path or branch** · what happened, shortest form that stands alone · the **cost** — what it actually spent, which is what makes it evidence rather than anecdote · a pointer up to the concept.
+
+## ⚠️ .a `.reason` file IS an ejection target — do not eject from it again
+
+a term cluster already splits along this line: `._.choice._.md` is the **concept** (bound in full), `.reason.md` is the **decision record** — dated by contract, and its dated evidence is **mandatory**. so a dated entry under `.disputes` or `.evidence` is the archetype at work, **never a smell**.
+
+⚠️ what a `.reason` still may not hold is its **own draft history**. amend in place, or answer with a **new dated dispute**.
+
+⚠️ **a verbatim wisher quote is a SEED, not a demo.** `.said` is verbatim by contract — never tidy a quote to satisfy this rule. its home is `$route/.seeds/`; a brief cites it by path.
+
+## .enforcement
+
+blocker: a brief that fuses an episode into its concept · a lesson that fails strip-and-re-read · a *"yet"* / *"for now"* / *"we decided"* in a body · a brief that narrates its **own prior drafts** (no ejection — delete it) · an ejected demo with no date, repo, or path.
+nitpick: a demo with no pointer up.
+false positive: a dated, sourced incident **inside** the concept where it is the shortest form of the claim · a verbatim `.said` · a dated `.disputes` / `.evidence` entry in a term `.reason`.
+
+⇒ the parent is `rule.forbid.chronological-accretion` (ehmpathy/mechanic). the peer for a route yield is `rule.always.yield-the-output-not-the-archaeology`.

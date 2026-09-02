@@ -1,3 +1,4 @@
+import { asIsoDateStamp } from 'iso-time';
 import * as path from 'path';
 import { given, then, when } from 'test-fns';
 
@@ -32,11 +33,36 @@ describe('getDomainTermsPaths', () => {
         );
       });
 
-      then('the progress sentinel is the exact hook-keyed path', () => {
-        // path conformance is critical — the hook nudges only on this exact path
-        expect(paths.progressPath).toEqual(
-          '.agent/.cache/repo=bhrain/role=learner/skill=learn.domain.terms/progress.md',
+      then('the progress sentinel is dated — one file per day', () => {
+        // path conformance is critical — the hook nudges only on this exact path.
+        // the date is injected so this asserts the SHAPE without a clock chase
+        const dated = getDomainTermsPaths({
+          date: asIsoDateStamp('2026-08-14'),
+        });
+        expect(dated.progressPath).toEqual(
+          '.agent/.cache/repo=bhrain/role=learner/skill=learn.domain.terms/progress.2026-08-14.md',
         );
+      });
+
+      then('the displayed pattern carries no date, so it cannot churn', () => {
+        // the cli emits the PATTERN; a resolved date in emitted text would break
+        // the acceptance snapshot every midnight (rule.forbid.time-assumptions)
+        expect(paths.progressPathPattern).toEqual(
+          '.agent/.cache/repo=bhrain/role=learner/skill=learn.domain.terms/progress.$date.md',
+        );
+        expect(paths.progressPathPattern).not.toMatch(/\d{4}-\d{2}-\d{2}/);
+      });
+
+      then('the resolved path defaults to today when no date is given', () => {
+        // the default is the live clock, so the sweep writes today's file
+        expect(paths.progressPath).toMatch(
+          /\/progress\.\d{4}-\d{2}-\d{2}\.md$/,
+        );
+      });
+
+      then('the sentinel sits in the cache dir, never in git', () => {
+        // a dated sentinel is still ephemeral — the .gitignore guard still applies
+        expect(paths.progressPath.startsWith(paths.cacheDir)).toEqual(true);
       });
 
       then('each rule symlink sits in the glossary dir', () => {

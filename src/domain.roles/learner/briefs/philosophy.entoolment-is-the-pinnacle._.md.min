@@ -1,0 +1,83 @@
+# philosophy: entoolment is the pinnacle 🦉🔧
+
+**tool** is the umbrella over all of them — 📚 a brief, 💧 a fluid skill, 🔩 a rigid skill, 🪨 a solid skill. all are pavement a future traveler uses instead of re-derives. what separates them is **how much imagine cost each still charges per use** — time, tokens, and the risk a probabilistic step lands wrong.
+
+⇒ so **`skill` is the word a brief is contrasted against, never `tool`.** the rungs are named by their **determinism**, never by an artifact that sits on one.
+
+**entoolment** names a **direction on a ladder**, never a binary. so *"is it entooled yet?"* is the wrong question; *"which rung is it on, and can it climb one?"* is the right one.
+
+## .the ladder — every rung is a tool
+
+| rung | the artifact | imagine cost per use |
+|---|---|---|
+| 0 | 🧠 **tribal** — never written, lives in one brain | full derivation, every time |
+| 1 | 📚 a **brief** — prethought concepts, in any shape at all | read + interpret + apply |
+| 2 | 💪💧 a **fluid skill** — the steps are written, a brain walks them | follow the steps |
+| 3 | 💪🔩 a **rigid skill** — some branches crystallized, some probabilistic | the probabilistic branches only |
+| 4 | 💪🪨 a **solid skill** — one call, one contract | **none** |
+
+**a brief removes the re-thought. a skill removes the thought.** a brief pays its derivation once and its **application forever**; a skill pays both once.
+
+**rung 1 holds knowledge, not a procedure in prose** — a lesson, a rule, a catalog, a philosophy, a define. the ladder ranks **brain cost per reuse**, never how close an artifact sits to a procedure.
+
+rungs 2–4 are **rhachet's determinism spectrum**, adopted rather than coined: 🪨 solid = deterministic throughout · 🔩 rigid = deterministic entrypoint, mixed operations + orchestration · 💧 fluid = probabilistic throughout. the glyphs are rhachet's and they compose: 💪🔩 = *a skill, and here is how deterministic it is*.
+
+⚠️ **`harden` is rhachet's verb for that climb and `entool` is not its synonym.** harden moves across the three 💪 rungs; **entool spans all five**, and covers the 🧠 → 📚 step rhachet declares no concept of. one word is a proper subset of the other.
+
+## .why brainless is the prize, not a nicety
+
+| property | why only a 🪨 solid skill has it |
+|---|---|
+| **deterministic** | same input, same output. a brain is probabilistic by construction |
+| **testable** | you can assert its contract, never a brain's next paragraph |
+| **verifiable** | correctness is a property of the code — checked once, true thereafter |
+| **free** | no tokens, no latency, no variance |
+
+a 💧 fluid skill can be *good*. only a 🪨 solid one can be *guaranteed*.
+
+## .the three costs a brain pays
+
+- **tokens → money → resources → nature.** every token is power drawn, hardware amortized, heat rejected. a deterministic operation does not cost less — it costs **none**
+- **time → latency → people wait.** a brain deliberates in seconds; a solid call returns in milliseconds. the person on the other end is helped **sooner**
+- 🔴 **probability → risk → the answer can be WRONG.** the cost money and time do not carry, and often the largest. a probabilistic step **varies**, so its output must be checked, and a skipped check is a defect that ships
+
+⇒ all three are `philosophy.pavement-saves-nature`'s asymmetry at its most extreme: **paid once, saved without bound.**
+
+🔴 **a count of "brain-turns" was tried as a unit and is forbidden** — turns vary by orders of magnitude, so a count tells you neither the time nor the tokens, which are the two quantities you must know to shorten a call. name the root cost directly.
+
+## .a brief often UNLOCKS a skill rather than stands in for one
+
+the brief carries **that the skill exists and when to reach for it**, the judgment the skill cannot make, and why the paved path is right. the skill carries the execution.
+
+⇒ **a skill nobody knows to reach for is unreachable pavement.**
+
+## ⚠️ .a higher rung does not retire the rungs below it
+
+**the climb is a crystallization, never a migration.** a fluid operation's branches are enrouted and hardened **one at a time**; the operation stays and comes to *compose* the solid subskills it grew. that is precisely what 🔩 rigid names — *mixed* is the crystallization mid-flight.
+
+⇒ and the brief stays for a sharper reason than *"it is the foundation."* **it carries the judgment and the reach-for-it knowledge no crystallized branch holds.** a solid skill with no brief behind it is a black box: correct until the day it is wrong, and unarguable when it is.
+
+⚠️ so *"we entooled it, delete the brief"* is a defect. **the rung tells you what a use costs, never what may be thrown away.**
+
+⇒ move any artifact **one rung**. rung 4 is the aim; rung 3 from rung 2 is a real win and often the honest limit — some work has an irreducible judgment floor, which is why the rung is named `rigid`, for what it IS rather than what it lacks.
+
+## 🗿 .the most general rigid skill is a route
+
+rung 3 holds many shapes, and **a route is the general form; the others are its specializations.** a route is an ordered set of stones with guards, so a one-stone route is the compute-then-ask skill, and an all-deterministic route is the wrapper that batches. any rung-3 shape can be expressed as a route; the reverse does not hold.
+
+## .why it is hard, and why that is the point
+
+to remove a brain you must see the whole system, find the invariant that holds across every case, and decide what the tool **refuses** to handle and fail loud there.
+
+⇒ **if you cannot entool it, you do not understand it.** a fluid skill is often an honest admission of that, and the right artifact until the comprehension arrives.
+
+## ⚠️ .the limit
+
+**this is not a claim that thought is waste.** judgment and novel synthesis are brain work by nature. the claim is narrower: **thought already done once should not be paid for again.** entoolment retires the *repeat*, never the *first*.
+
+the failure mode: **a tool that pretends determinism over a genuinely fluid process.** it will be confidently wrong, silently, at scale — worse than the brain it replaced, because a brain hesitates and a bad tool does not.
+
+> a 📚 brief saves the next traveler the thought. **a 🪨 solid skill saves them the trip.**
+> **a 🔩 rigid skill saves them the wrong turns — a route most of all.** 🦉🔧🗿
+
+⇒ zoom-ins: `.via-routes` (rung 3, where a route lives) · `.concepts-vs-capacity` (the split the ladder rests on).

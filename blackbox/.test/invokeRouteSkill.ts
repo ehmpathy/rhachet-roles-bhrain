@@ -36,6 +36,24 @@ export const genTempDirForRhachet = (input: {
       // symlink .pnpm for pnpm-generated wrapper scripts that use relative paths
       // .why = rhx wrapper does $basedir/../.pnpm/... which needs .pnpm to exist
       { at: 'node_modules/.pnpm', to: 'node_modules/.pnpm' },
+      // symlink brain packages for brain discovery
+      // .why = discoverBrainPackages reads the fixture's package.json, then imports each brain
+      //        package BY NAME resolved from the fixture root. node's lookup walks the fixture's
+      //        own node_modules and its parents under /tmp — it never reaches the repo's — so an
+      //        absent symlink makes every brain unloadable and any review the fixture drives
+      //        malfunctions. mirrors invokeReviewSkill's symlink set.
+      {
+        at: 'node_modules/rhachet-brains-fireworksai',
+        to: 'node_modules/rhachet-brains-fireworksai',
+      },
+      {
+        at: 'node_modules/rhachet-brains-anthropic',
+        to: 'node_modules/rhachet-brains-anthropic',
+      },
+      {
+        at: 'node_modules/rhachet-brains-openai',
+        to: 'node_modules/rhachet-brains-openai',
+      },
     ],
   });
 };

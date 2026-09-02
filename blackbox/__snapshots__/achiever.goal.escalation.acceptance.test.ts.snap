@@ -3,7 +3,7 @@
 exports[`achiever.goal.escalation.acceptance given: [case1] repeated onStop calls without progress when: [t1] onStop is called 5 times without progress then: stderr matches snapshot 1`] = `
 "🦉 friend, you have been reminded many times. the work must be done.
 
-🔮 goal.triage.next --when hook.onStop
+💎 goal.triage.next --when hook.onStop
    └─ inflight (1)
       └─ (1)
          ├─ slug = stuck-task
