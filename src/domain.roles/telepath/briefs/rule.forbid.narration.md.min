@@ -1,0 +1,65 @@
+# rule.forbid.narration
+
+> **no narration. unless a human asked for a narrative, the passage must be bulletized.**
+
+the clamp on `rule.require.bulletize` — that rule names the target, this one names the smell.
+
+**narration** = prose that carries an argument in sequence where a tree was owed: a paragraph of claims chained by connectives, a walkthrough of how you got there, a story told in place of a structure.
+
+## .why — a narrative hides the shape of its own argument
+
+- prose serializes a tree and deletes the edges
+  - the reader rebuilds them from *"however"*, *"which means"*, *"in that case"*
+  - each rebuild is a place to guess wrong, and the author never sees the guess
+- a narrative cannot be skipped
+  - a reader who wants one claim must read every claim ahead of it to find it
+- a narrative absorbs surplus silently
+  - a bullet refuses a passage that fits no concept; a paragraph accepts it
+  - ⇒ narration is the container in which accretion grows
+
+🟡 **it is the shape every other defect hides in.** a truism needs a clause broad enough to cover every case; a hedge stack needs four qualifiers; chronological accretion needs a sequence to accrete along. bulletize the passage and not one survives the split.
+
+## .the smells
+
+| smell | what it is | the repair |
+|---|---|---|
+| the chained paragraph — *"X, so Y, though Z, which means W"* | an outline serialized; the connectives are its edges | nest them |
+| the walkthrough — *"first we tried A, then B, and landed on C"* | also `rule.forbid.chronological-accretion` | one bullet, plus the ground |
+| the bulleted paragraph — a `-` on 47 words | the character is present, the form is absent | decompose it |
+| the preamble — a paragraph before the claim it introduces | the claim is the bullet; the preamble is its parent | promote the claim |
+| the buried list — *"there are three reasons: …"* prose-joined | the three are bullets, and the count is then self-evident | split at the commas |
+| the run-on child — a bullet with a second sentence | two concepts on one line | split, or nest the second |
+
+## .the test
+
+> **would this passage survive a split into one-sentence bullets?**
+
+- yes → it was an outline all along. render it as one
+- no, a piece belongs to no concept → that piece is surplus. cut it
+- no, a concept has no branch → the tree is wrong. add the branch
+- no, it is a sequence a human asked for → prose is correct
+
+🟡 **the second and third answers are the value.** the split does not merely reformat the passage — it audits it, before a reviewer is spent.
+
+## .the boundary — the four licences are declared by `rule.require.bulletize`
+
+this is its clamp, so it fires wherever that rule does not: a human asked · a verbatim quote · a narrative in a `.demo=` artifact · a single claim. the reasons are there, and only the first is general.
+
+🟡 **an implied ask is not an ask.** *"explain this to me"* asks for a clear transfer, and an outline is the clearer one. the licence needs the word — a narrative, a story, a walkthrough, a worked sequence.
+
+## .the axis
+
+🟡 **a peer of `rule.forbid.chronological-accretion`, never its replacement:**
+
+| rule | its subject |
+|---|---|
+| `forbid.narration` | prose where a tree was owed — a shape defect |
+| `forbid.chronological-accretion` | prose ordered by **time** — a content defect |
+
+⇒ a walkthrough trips both. a chained paragraph of timeless claims trips only this one.
+
+blocker: a paragraph of three or more claims where an outline was owed · a walkthrough offered with no ask · a bulleted paragraph · a bullet that holds two concepts.
+nitpick: a preamble that delays its own claim by a paragraph.
+false positive: a narrative a human asked for · a verbatim quote · a narrative in a `.demo=` artifact · a table · a single claim with its ground.
+
+⇒ see also: `rule.require.bulletize` (the positive peer) · `define.bulletize` (the form and the demos) · `rule.forbid.chronological-accretion` · `rule.forbid.subversive-prose`.

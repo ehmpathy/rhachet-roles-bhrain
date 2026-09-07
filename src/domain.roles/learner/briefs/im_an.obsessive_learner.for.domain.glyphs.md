@@ -20,7 +20,7 @@ one layer down.
 the term failures, verbatim: two glyphs for one concept · one glyph for two concepts · a glyph
 claimed with no record.
 
-⚠️ **but the repair cost is worse than a term's.** a term appears in the contracts that use it. a
+🟡 **but the repair cost is worse than a term's.** a term appears in the contracts that use it. a
 glyph prefixes **every surface it marks** — a readme header, a stdout line, a status line, a
 declared config field, and every snapshot of all four.
 
@@ -42,12 +42,12 @@ catalog must be a written artifact rather than a search you trust the next claim
 | you **claim** a glyph, on any axis | 🔴 catalog it. the row is the claim |
 | the glyph is **not in the repo's palette** | add it to the palette first, with its one-line sense. then claim it |
 | a grep returns **no match** | that proves unused, never unclaimed. **read the catalog** |
-| a grep returns matches on **several surfaces** | three cases: one concept seen twice ✅ · a decoration that sorts no reader ✅ · two concepts 🔴. only the third blocks |
+| a grep returns matches on **several surfaces** | three cases: one concept seen twice · a decoration that sorts no reader · two concepts. **only the third blocks** |
 | you find a glyph in use with **no catalog row** | 🔴 the arrears. add the row now |
 | two copies of the record **disagree** | reconcile to the catalog; make the others its dependents |
 | you coin a **third** glyph for a concept a marker already covers | glyph-synonym drift. reuse the settled one |
 
-⚠️ **check the code before you swap.** a type that names its own slots — a `mascot` field beside
+🟡 **check the code before you swap.** a type that names its own slots — a `mascot` field beside
 an `artifact` field — has already drawn the seam. a swap drafted against a misread of that seam
 moves hundreds of occurrences and repairs no defect.
 

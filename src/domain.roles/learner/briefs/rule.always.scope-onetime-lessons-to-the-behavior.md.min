@@ -22,7 +22,7 @@ a lesson born inside a behavior has **two homes**, and most real incidents need 
 2. **always attempt to generalize** — *"what is the durable, repo-agnostic kernel here?"* if there is one, distill it. the durable home may be **this** repo's briefs, or **another** repo's, via a radio task
 3. **link back — both directions.** the durable brief: *"first seen in `<repo>/$behavior/<slug>`"*. the behavior doc: a pointer up
 
-⚠️ **a lesson whose home is another repo is re-seeded there, never adopted here.** a tree adopts only what is scoped to itself.
+🟡 **a lesson whose home is another repo is re-seeded there, never adopted here.** a tree adopts only what is scoped to itself.
 
 ## .the test
 

@@ -10,18 +10,20 @@ term.synonyms.forbidden:
 - list
 
 ## .what
-an **inventory** is the exhaustive enumeration of a concept's entries, **by reference only** — one
+an `inventory` is **the exhaustive enumeration of a concept's entries, by reference only** — one
 address per entry, no preview.
 
 ```
 inventory.of=$concept/$dimension=$position[.$dimension=$position]*.md
 ```
 
-it is what **itemize** produces. `inventory` is the noun; `itemize` is the verb.
+it is what `itemize` produces. `inventory` is the noun; `itemize` is the verb.
 
-⚠️ **`catalog` is NOT a forbidden synonym** — it is the near neighbor one axis away. a catalog is
-an inventory **plus a preview of each entry**. see the reason file for the line, which is a real
-distinction and not a hierarchy of quality.
+🟡 `catalog` is not a forbidden synonym — it is the near neighbor one axis away.
+
+- a catalog is an inventory plus a preview of each entry
+- the line is drawn in the reason file
+  - ⇒ a real distinction, never a hierarchy of quality
 
 ## .the pairs
 

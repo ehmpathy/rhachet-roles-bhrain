@@ -7,7 +7,7 @@ $route/.fulcrums/inventory.of=fulcrums._.md               # the SUMMARY
 $route/.fulcrums/inventory.of=fulcrums.case=F$n-$slug.md  # one ENTRY per fulcrum
 ```
 
-both are owed, every time. ⚠️ **append at the moment, never in a sweep** — a sweep loses the fork you rejected, the reason as it stood, and the live clean/dirty judgment. those are the parts a reviewer needs.
+both are owed, every time. 🟡 **append at the moment, never in a sweep** — a sweep loses the fork you rejected, the reason as it stood, and the live clean/dirty judgment. those are the parts a reviewer needs.
 
 ## 🔴 a fork is not the only trigger — a call under 93% confidence is one too
 

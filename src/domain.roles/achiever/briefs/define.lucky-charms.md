@@ -6,8 +6,8 @@
 
 | charm | the outcome |
 |---|---|
-| **charm 1** | **goal-achievement** — the desired outcome actually lands |
-| **charm 2** | **risk-elimination** — the hazard that could block that outcome is removed |
+| **charm 1** | goal-achievement — the desired outcome actually lands |
+| **charm 2** | risk-elimination — the hazard that could block that outcome is removed |
 
 so when a human asks *"how do they get our lucky charms?"* or *"are the lucky charms in the
 bowl?"*, read it as: **"how do we land the goal AND prove the hazard is gone?"** — never as a
@@ -25,9 +25,9 @@ literal question about cereal.
 
 | phrase | means |
 |---|---|
-| **lucky charms** | the paired objective: goal-achievement **+** risk-elimination |
+| **lucky charms** | the paired objective: goal-achievement plus risk-elimination |
 | **"get the lucky charms"** | land the goal, and prove the risk is gone |
-| **"charm in the bowl"** | **one** of the two secured — the goal landed, or the risk eliminated |
+| **"charm in the bowl"** | one of the two secured — the goal landed, or the risk eliminated |
 | **"charms unclaimed"** | closed on paper, unproven and unshipped |
 
 ## .how to apply
@@ -37,24 +37,24 @@ when the achiever reports status, frame it as **the two charms, separately**:
 - **charm 1** — is the goal actually achieved (**proven**, not merely designed)?
 - **charm 2** — is the risk actually eliminated (**tested**, not merely argued)?
 
-⚠️ **a report that names only one charm is half a report.** the whole value of the alias is that
+🟡 **a report that names only one charm is half a report.** the whole value of the alias is that
 it makes the omission visible: a human who asked for *the charms* and receives one can see the
 gap without a follow-up turn.
 
-## ⚠️ .reachable is NOT claimed
+## 🟡 .reachable is NOT claimed
 
 **this is the distinction the alias exists to carry.** a charm is not *gotten* when a plan says it
 will be — it is gotten when it is **verified and delivered**.
 
 | state | what it means | charm claimed? |
 |---|---|---|
-| **reachable** / designed | closed on paper — a plan exists, the argument holds | ❌ **no** |
-| **claimed** | proven and shipped — verified, tested, delivered | ✅ **yes** |
+| **reachable** / designed | closed on paper — a plan exists, the argument holds | ❌ no |
+| **claimed** | proven and shipped — verified, tested, delivered | ✅ yes |
 
 ⇒ *"we know how to do it"* is a claim about **reachability**. it is not a charm in the bowl, and a
 report that conflates the two tells the human a delivery landed when only a design did.
 
-## ⚠️ .the trap — a subroute can claim its own charms while the ROOT charms go unclaimed
+## 🟡 .the trap — a subroute can claim its own charms while the ROOT charms go unclaimed
 
 the achiever holds the **root** goal. a driver that descends into a subroute holds a **local** one.
 

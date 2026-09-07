@@ -9,7 +9,7 @@ $kind.of=$concept._.md                      # the SUMMARY — the axes, the coun
 $kind.of=$concept.$dimension=$position.md   # one ENTRY per member — always, never optional
 ```
 
-⚠️ **the artifact KIND does not change the convention.** an inventory and a catalog are both itemizations, and **both take this one name.** the kind decides what each entry *carries*; the coordinates decide where each entry *sits*:
+🟡 **the artifact KIND does not change the convention.** an inventory and a catalog are both itemizations, and **both take this one name.** the kind decides what each entry *carries*; the coordinates decide where each entry *sits*:
 
 ```
 inventory.of=fulcrums._.md              catalog.of=archetype._.md
@@ -18,7 +18,7 @@ inventory.of=fulcrums.case=F14-slug.md  catalog.of=archetype.kind=article.md
 
 **both files are owed, always.** a summary with no entries is a list under a manifest's name; entries with no summary have no place to declare their axes, counts, or gaps.
 
-⇒ it composes two extant conventions rather than a third coinage: `._.md` from `rule.require.summary-at-the-cluster-root`, and `$dimension=$position` from here. ⚠️ **`example=$id` is the same form**, already in use by `term=$x._.choice.example=$id` — one discipline, never three that rhyme.
+⇒ it composes two extant conventions rather than a third coinage: `._.md` from `rule.require.summary-at-the-cluster-root`, and `$dimension=$position` from here. 🟡 **`example=$id` is the same form**, already in use by `term=$x._.choice.example=$id` — one discipline, never three that rhyme.
 
 ## .why — the coordinates ARE the dereference mechanism
 
@@ -31,7 +31,7 @@ inventory.of=fulcrums.case=F14-slug.md  catalog.of=archetype.kind=article.md
 
 ## .the case dimension — occurrences
 
-when members are occurrences rather than product cells — a fulcrum, an incident, a review round — the dimension is `case`. ⚠️ **an ordinal is not an id:**
+when members are occurrences rather than product cells — a fulcrum, an incident, a review round — the dimension is `case`. 🟡 **an ordinal is not an id:**
 
 ```
 👎  case=F14                                        # F14 of WHAT?
@@ -40,13 +40,13 @@ when members are occurrences rather than product cells — a fulcrum, an inciden
 
 the **ordinal** keeps the sequence (what makes an append-only record auditable); the **slug** says what it IS (so a reader need not open every file). a bare ordinal is the `1.`/`2.`/`3.` defect under a `case=` prefix.
 
-⚠️ **join them with a hyphen, never a dot** — a dot is the segment separator, so `case=F14.slug` parses as a bare position.
+🟡 **join them with a hyphen, never a dot** — a dot is the segment separator, so `case=F14.slug` parses as a bare position.
 
 ## .the test
 
 > **"am i about to itemize an enumerable concept?"** — yes → **the name is coordinates, and both files are owed.**
 
-⚠️ **the trap: the KIND question feels like the NAME question, and is not.** a reader who settles *"inventory or catalog?"* feels finished and reaches for a name freely — which is how `register.md` and `fulcrums.md` get written. **the name is coordinates in every branch**, so it can be settled before the kind is.
+🟡 **the trap: the KIND question feels like the NAME question, and is not.** a reader who settles *"inventory or catalog?"* feels finished and reaches for a name freely — which is how `register.md` and `fulcrums.md` get written. **the name is coordinates in every branch**, so it can be settled before the kind is.
 
 | when… | then… |
 |---|---|

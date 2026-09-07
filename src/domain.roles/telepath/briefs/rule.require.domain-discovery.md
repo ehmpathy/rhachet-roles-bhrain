@@ -1,0 +1,99 @@
+# rule.require.domain-discovery
+
+> **before you distill, discover. in whatever domain you find yourself, ask constantly: what is
+> the fundamental truth here, rather than the surface distraction?**
+
+`rule.require.distillation` drills one claim to its root. this finds what the roots ARE.
+
+⇒ the order is the whole claim:
+
+```
+discover  →  distill  →  elucidate
+```
+
+## .why a drill with no map bottoms out on a surface
+
+`require.distillation` says *"break the concept into the fundamentals it rests on"* — and that
+presumes you know what this domain's fundamentals are.
+
+- the drill's floor is *"the answer that stops to shift"*
+- an answer stops to shift the moment you run out of things you KNOW to ask about
+  - so an undiscovered domain has a shallow floor, and the drill halts at it
+  - ⇒ **and it halts cleanly.** the author feels finished, because the drill did terminate
+- the two acts fail differently, which is what earns them two rules
+  - a bad distillation stops one layer short of a root you could name
+  - a bad discovery never learns the layer was there
+
+## .the seam — the SUBJECT differs
+
+| act | its subject | its question |
+|---|---|---|
+| **discovery** | the DOMAIN | *what is the fundamental truth here?* |
+| **distillation** | one CLAIM in it | *what does this claim stand on?* |
+
+⇒ discovery maps the territory; distillation drills one point in it.
+
+## .the test
+
+> **what is the fundamental truth here, rather than the surface distraction?**
+
+- you can name it → drill to it
+- you cannot → **that is the work.** you hold a surface and have mistaken it for the floor
+- you did not ask → this defect, and the artifact will read finished
+
+🟡 **constant, never a phase.** the failure is not a wrong answer; it is a question never put.
+
+| when… | then… |
+|---|---|
+| you enter a domain you have not worked in | the strongest cue. ask before the first claim |
+| a drill terminates on the first or second *why* | suspicious. a shallow floor is the signature |
+| you would explain a concept in the words it arrived in | those words are the surface. what do they rest on? |
+| the domain has a jargon you adopted without a check | jargon names a mechanism. name the mechanism |
+| you can state WHAT happens and not WHY it must | you found behavior, never a fundamental |
+| two facts in the domain seem unrelated | a fundamental usually sits under both. look for it |
+| you feel fluent after one pass | fluency in the surface vocabulary is what this rule fires on |
+
+## .it is a specialization, and the parent is the architect's
+
+`ehmpathy/role=architect` declares the act — `def.domain-discovery` and `howto.domain-discovery`,
+whose moves this rule reuses rather than re-derives: listen to how folks talk · name from the
+motive · **ask the five whys** · decompose dimensionally · narrate, then distill to a bdd timeline.
+
+> *"the operative word = discover, not invent. the truth is already there, buried under surface
+> mechanism/jargon/tool-shape."*
+
+| role | it discovers in order to… |
+|---|---|
+| architect | **NAME** — a dobj, a dop, a term cluster, one canonical word |
+| telepath | **SPEAK** — a concept you never discovered cannot be transferred |
+
+🟡 the split is owed rather than convenient: every example in the architect's brief is a schema, a
+dao, a db row. **a reader who writes prose looks straight past it**, which is
+`rule.require.specialize-a-rule-its-readers-look-past`'s exact trigger.
+
+## .the boundary
+
+| a violation | not a violation |
+|---|---|
+| a claim written in a domain whose fundamentals you never asked after | a domain whose fundamentals you asked after and could not reach — say so |
+| jargon adopted as an explanation | jargon used after its mechanism is named |
+| a drill halted at a surface a question would have gone under | a drill halted at a genuine floor |
+| the surface reported as the truth | the surface reported AS the surface |
+
+**the line that parts them: did you ASK?** an honest *"I could not find the layer beneath"* is a
+discovery that ran and reported its bound. a fluent artifact with no question behind it is not.
+
+## .the axis
+
+a structure rule, so telepath owns it (`rule.require.generic-governs-structure-never-voice`).
+
+blocker: a claim made in a domain whose fundamental truth was never sought · jargon offered as an
+explanation of itself · a drill halted at a surface where a question would have reached under it.
+nitpick: a discovery that ran and whose bound is unstated.
+false positive: a domain drilled to a floor that is genuinely the floor · a bound stated honestly
+· a surface named as a surface · a literal a reader must type.
+
+⇒ see also: `rule.require.distillation` (the act it precedes) · `rule.forbid.surface-speak` (the
+clamp, one grain down — it catches a CLAIM at its surface where this catches a DOMAIN never
+drilled) · `rule.require.elucidation` (the root both serve) · `howto.domain-discovery`
+(`ehmpathy/role=architect` — the parent, and the moves) · `rule.require.enumerate-before-you-name`.

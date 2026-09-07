@@ -12,7 +12,7 @@
 | a human may overrule it | no one may |
 | more rounds cost the human's attention | more reviews cost only yours |
 
-⚠️ **the guard's liveness hatch is not a permission.** three attempts on one hash pass without the timer, so a driver is never hard-stuck. **to aim for it is the shortcut.** what the guard permits and what you owe are two different quantities.
+🟡 **the guard's liveness hatch is not a permission.** three attempts on one hash pass without the timer, so a driver is never hard-stuck. **to aim for it is the shortcut.** what the guard permits and what you owe are two different quantities.
 
 | when… | then… |
 |---|---|

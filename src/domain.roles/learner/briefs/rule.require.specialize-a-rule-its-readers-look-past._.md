@@ -29,7 +29,7 @@ the reader who looked past is the one who never engaged at all.
 **2026-07-28.** `rule.require.wrap-cli-in-skills` carried the general claim, illustrated end to
 end with `aws`. its own `.see also` records the outcome:
 
-⚠️ **that rule and its specialization are FOREIGN — do not glob for them here.** both live in the
+🟡 **that rule and its specialization are FOREIGN — do not glob for them here.** both live in the
 org role set this repo depends on, never in this tree; the ask to author them was re-seeded to the
 repo that owns that namespace, per *a tree adopts only what is scoped to its own repo*. what is
 cited below is **testimony from that repo's record**, and it is the evidence for this rule rather
@@ -39,7 +39,7 @@ than a parent claim of it.
 > 2026-07-28 because every example here is `aws`, and a reader looked straight past it while they
 > typed `ssh grove-1`.**"*
 
-## ⚠️ .the honest bound — a specialization raises retrieval, it does not guarantee it
+## 🟡 .the honest bound — a specialization raises retrieval, it does not guarantee it
 
 a specialization is a **better cue**, never a gate. where the pull toward the un-paved path is a
 keystroke's worth of convenience, a brief on its own is still outscored by a **mechanism** — a
@@ -67,7 +67,7 @@ mechanism must fire in.
 - you can name one → **that situation is the specialization**, and it is owed
 - you genuinely cannot → the rule's examples already span its domain
 
-⚠️ this test is answerable **before** any violation. the 2026-07-28 split was made after the
+🟡 this test is answerable **before** any violation. the 2026-07-28 split was made after the
 miss; it could have been made when the second domain was first reached.
 
 ## .what a specialization owes
@@ -80,7 +80,7 @@ miss; it could have been made when the second domain was first reached.
 ⇒ the pair is the point. a specialization with no parent link duplicates a claim and drifts from
 it; a parent with no note of the split loses the evidence that the general form was insufficient.
 
-## ⚠️ .this is NOT a license to fork a rule per domain
+## 🟡 .this is NOT a license to fork a rule per domain
 
 a rule split into six near-identical peers is `rule.forbid.domain-term-synonyms`'s failure in a
 new form: six statements of one claim, which drift apart and then disagree.

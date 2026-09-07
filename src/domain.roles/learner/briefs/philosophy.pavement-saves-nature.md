@@ -61,7 +61,7 @@ sense and the literal sense are one claim, not two.
 the ratio improves **without bound** the more a path is walked. ten walkers repay the original
 cost 10×; ten thousand repay it 10,000×. **no other move in the whole practice has that shape.**
 
-⚠️ **the same formula at zero walkers is the sharp end: an unwalked path is the WORST case.** it
+🟡 **the same formula at zero walkers is the sharp end: an unwalked path is the WORST case.** it
 was paid for, and amortized over nobody. pavement that goes unread is not neutral — it is the one
 outcome where the energy was genuinely wasted.
 
@@ -94,7 +94,7 @@ $ rhx catch.dream --help
 BadRequestError: no skill "catch.dream" found in any linked role
 ```
 
-⚠️ **the sharp part is not that the instruction was wrong. it is that the failure was LOUD and the
+🟡 **the sharp part is not that the instruction was wrong. it is that the failure was LOUD and the
 defect survived anyway.** an absent skill errors on the first invocation — there is no more
 detectable defect available. it persisted because **nobody invoked it.**
 
@@ -107,7 +107,7 @@ absent one. it carries the authority of pavement and none of the traffic that wo
 
 ---
 
-## 5. ⚠️ the braided trail — the failure this philosophy names
+## 5. 🟡 the braided trail — the failure this philosophy names
 
 when hikers step off a muddy trail to keep their boots clean, each detour becomes a faint new
 path. the next hiker takes the widest one. within a season the single tread has become a
@@ -122,7 +122,7 @@ fact, none authoritative**, and a reader who cannot tell which is current.
 ⇒ the repair is the same in both places: **do not widen the braid — mend the tread.** if the paved
 path is genuinely bad, **fix the pavement.** do not walk beside it.
 
-### ⚠️ and the mirror failure: the rut
+### 🟡 and the mirror failure: the rut
 
 the braid is one error. its opposite is the **rut** — a path so deep that travelers follow it
 without ever a test of whether it still leads anywhere good.
@@ -165,7 +165,7 @@ beneath it is literally true.
 
 ---
 
-## ⚠️ .what this is NOT
+## 🟡 .what this is NOT
 
 **this is not a scold about compute budgets.** the claim is about **re-spend**, never about spend.
 

@@ -1,0 +1,58 @@
+# rule.require.distillation
+
+> **decompose the concept to its fundamentals, condense each one, and speak in THOSE terms — never in the surface the concept happens to wear today.**
+
+two moves, in order:
+
+- decompose — break the concept into the fundamentals it rests on
+  - ask *"what does this stand on?"* until the answer stops to shift
+- condense — state each fundamental in the fewest words that keep it whole
+  - a fundamental that needs a paragraph was two fundamentals
+  - ⇒ the condense step is what PROVES the decompose step finished
+
+⇒ the whys, the demos, the method, and the boundary: `define.distillation` (ref).
+
+## .the output is a TREE, and `bulletize` is what draws it
+
+distillation produces the tree; `rule.require.bulletize` renders it. the two are one pipeline.
+
+🟡 **an author who bulletizes an undrilled concept renders a tree of surfaces** — correct shape, wrong nodes. so the drill is no nicety beside the outline; it is what makes the outline true.
+
+## .the subject is the CONTENT drill only
+
+| drill | the question | owned by |
+|---|---|---|
+| the content drill | *what root truth does this claim stand on?* | **this rule** |
+| the **passage** drill | *why must this be said at all?* | `rule.require.purpose-first` |
+
+🟡 **both are owed on every passage.** the content drill alone yields a profound passage nobody needed; the passage drill alone yields a needed passage pitched at the surface.
+
+## .the test
+
+> **ask "why?" until the answer stops to shift. that answer is what you write.**
+
+then: can you state it in the fewest words that keep it whole? no → the decomposition did not finish; drill again.
+
+🟡 **the drill has a floor — the answer that stops to shift.** to ask past it yields philosophy where a fact was owed.
+
+| when… | then… |
+|---|---|
+| you name what happened and stop | the strongest cue. a reader gains a fact and no way to price it |
+| you reach for an adjective — *robust*, *clean*, *scalable* | name what it stood for. no brevity rule fires on these |
+| you report the mechanism an actor asked for | drill to the motive. the deliverable may change |
+| a fundamental needs a paragraph | it was two fundamentals. split it |
+| you bulletize a concept you never drilled | a tree of surfaces — correct shape, wrong nodes |
+| the subject is a mechanism — a filename rule, an exit code | the surface IS the fundamental. state it flat |
+
+## .the drill changes what you CONCLUDE, not merely how you say it
+
+the root is often a different claim from the one you opened with.
+
+⇒ **that is what parts this from every other rule in the canon.** the rest grade a passage; this grades the thought behind it, and its repair is a new claim rather than a rewrite.
+
+
+blocker: a claim stated at its surface where a root was reachable · an adjective offered in place of the mechanism it stood for · a mechanism reported as the request, with no drill to the motive · a fundamental that needs a paragraph, left unsplit · an outline built on undrilled nodes.
+nitpick: a drill taken one why past the answer that stopped to shift.
+false positive: a literal the reader must type · a verbatim quote · a measurement · a subject whose mechanism **is** what the reader came for. ⇒ each with its reason: `define.distillation`.
+
+⇒ see also: `define.distillation` · `rule.require.bulletize` · `rule.require.purpose-first` · `rule.forbid.subversive-prose` · `howto.domain-discovery` (architect).

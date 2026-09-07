@@ -9,7 +9,7 @@ so their output may be used as a **pointer** and never as **evidence**:
 
 | the use | verdict |
 |---|---|
-| find a URL, a name, a lead — then fetch it with `bhrowser` | ⚠️ **tolerated, never the default** — see below |
+| find a URL, a name, a lead — then fetch it with `bhrowser` | 🟡 **tolerated, never the default** — see below |
 | quote it, cite it, or draw a conclusion from it | 🔴 **forbidden** |
 | assert what a source says, on their output alone | 🔴 **forbidden** |
 | assert what **no** source says, on their output alone | 🔴 **forbidden** |
@@ -37,7 +37,7 @@ for relevance to your query, so **the set of leads it returns is already filtere
 cannot inspect.** a search that surfaces the wrong three sources produces a flawless yield about
 the wrong three sources — and the yield reports no such bound.
 
-⚠️ **the one honest use that remains** is a query `bhrowser` cannot serve. say so on the page, and
+🟡 **the one honest use that remains** is a query `bhrowser` cannot serve. say so on the page, and
 say what you tried.
 
 ## .why — a paraphrase, returned in a quote's clothes
@@ -53,7 +53,7 @@ each tool interposes a lossy layer between you and the page, and **neither annou
 because all three arrive in the same shape. that is `rule.forbid.failhide` at the evidence layer:
 an absence that reads as a completed check.
 
-⚠️ **and the failure compounds downstream, which is what makes it worth a blocker.** a citation is
+🟡 **and the failure compounds downstream, which is what makes it worth a blocker.** a citation is
 a promise the next reader inherits without a re-check
 (`rule.always.reuse-pavement-before-improvise`). a paraphrase cited as a quote is therefore not one
 defect — it is one defect per future reader, forever, and no one of them can see it.
@@ -89,10 +89,10 @@ tell at all.
 > **"did I read the page, or did I read an account of the page?"**
 
 - you read the page → cite it
-- you read an account → 🔴 **fetch the page.** the account may be right, and you cannot tell
+- you read an account → **fetch the page.** the account may be right, and you cannot tell
 - you cannot answer → you have already lost the provenance. re-fetch
 
-⚠️ the question is answerable **at the moment of the call**, and near-unanswerable an hour later —
+🟡 the question is answerable **at the moment of the call**, and near-unanswerable an hour later —
 which is why it belongs on the cue list rather than in a review rubric.
 
 ## .the seam with its peer — two DIFFERENT failures

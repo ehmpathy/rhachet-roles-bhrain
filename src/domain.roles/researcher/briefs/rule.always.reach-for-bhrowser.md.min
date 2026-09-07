@@ -20,11 +20,11 @@ skills at all**:
 family: `browser.start` · `browser.describe` · `browser.snapshot` · `browser.action` ·
 `browser.session` · `browser.stop`.
 
-⚠️ **those commands are supplied separately from the role package**, so a probe that enrolls
+🟡 **those commands are supplied separately from the role package**, so a probe that enrolls
 `playwright` and finds no `browser.*` executable has hit a supply gap, never a rule violation —
 diagnose it as such.
 
-⚠️ **and its mascot is the chameleon 🦎**, not the owl. a `bhrowser` surface speaks in its own voice;
+🟡 **and its mascot is the chameleon 🦎**, not the owl. a `bhrowser` surface speaks in its own voice;
 `define.bhrain-repo-mascot` binds this repo's speech, never a dependency's.
 
 ## .why — the failure is SILENT
@@ -53,7 +53,7 @@ it is a sample:
 a default, not an absolute. search is right when you need a **pointer** rather than an answer (a
 probe's aim phase, where breadth of leads beats depth), or to confirm a term **exists**.
 
-⚠️ in each, the yield still names the tool. a defensible shallow pass is fine; an unlabelled one is
+🟡 in each, the yield still names the tool. a defensible shallow pass is fine; an unlabelled one is
 not.
 
 ## 🔴 .and a known URL is NOT one of them

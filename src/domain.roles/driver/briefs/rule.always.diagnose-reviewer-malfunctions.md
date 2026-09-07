@@ -52,28 +52,28 @@ these are yours to fix. do not escalate them:
   you can regenerate or point at
 - a **malformed rubric path** or a review arg you can correct
 - an **artifact the reviewer could not parse** because of a shape you can repair
-- a **context overflow** — the lane's prompt exceeded the window, so it reviewed naught. see
+- a **context overflow** — the reviewer's prompt exceeded the window, so it reviewed naught. see
   below; it is the one cause with a recipe rather than a repair
 
 fix it, re-arrive, and let the reviewer run clean.
 
-### 🔴 the overflowed lane — re-run the rubric scoped
+### 🔴 the overflowed reviewer — re-run the rubric scoped
 
-a lane that blew its context window rendered **no verdict**, so by the definitions above it is a
+a reviewer that blew its context window rendered **no verdict**, so by the definitions above it is a
 malfunction and it is yours. the repair is not a fix to a supply — it is a **narrower invocation**:
 the guard hardcodes `--diffs since-main`, and `rhx review` is not so bound.
 
 ```sh
-rhx review --rules '<the lane rubric path>' \
+rhx review --rules '<the reviewer rubric path>' \
            --paths-with 'src/<subsystem>/**/*.ts' --paths-wout '**/*.test.ts' \
-           --output '.review/<iter>.<lane>.scoped.<slug>.md' --goal exhaustive
+           --output '.review/<iter>.<reviewer>.scoped.<slug>.md' --goal exhaustive
 ```
 
 then report the **verdict**, never the overflow alone.
 
-⚠️ **the temptation this cause carries is unique to it.** every other malfunction announces itself
-as broken. an overflowed lane returns terminal and unlocks the next level, so it reads on the
-ladder much like a lane that ran — and a driver who merely files the overflow removes a lens from
+🟡 **the temptation this cause carries is unique to it.** every other malfunction announces itself
+as broken. an overflowed reviewer returns terminal and unlocks the next level, so it reads on the
+ladder much like a reviewer that ran — and a driver who merely files the overflow removes a lens from
 the drive, then leaves a record that only proves someone noticed.
 
 ✅ **the inherited `--diffs since-main` scope is already correct — do NOT re-derive it.**
@@ -106,14 +106,14 @@ symptom, the logs read, and your best read of the cause. a named unknown beats a
 
 - a malfunction escalated with a bare symptom and no diagnosis = **blocker**
 - a driver-fixable cause handed to a human = **blocker**
-- an overflowed lane reported upward with no scoped re-run attempt = **blocker**
+- an overflowed reviewer reported upward with no scoped re-run attempt = **blocker**
 
 ## .see also
 
-- `howdoes.the-guard-caches-a-clean-lane-by-artifact-hash` — the other half of re-arrival cost:
-  what happens to the lanes that DID return a verdict
+- `howdoes.the-guard-caches-a-clean-reviewer-by-artifact-hash` — the other half of re-arrival cost:
+  what happens to the reviewers that DID return a verdict
 - `rule.always.spend-own-levers-before-escalation` — the owner-sort this rule is one instance of
-- `rule.always.converge-to-terminal` — why a dark lane must not be coasted past
+- `rule.always.converge-to-terminal` — why a dark reviewer must not be coasted past
 - `rule.require.errors-name-the-fix` — the shape every escalation from here must take
 
 ## .the owl's wisdom 🦉

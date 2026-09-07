@@ -11,6 +11,6 @@ the reviewer drops a point that carries a response and **re-raises one that does
 
 then, per point: `rhx route.stone.set --stone <stone> --as contemplated --that <slug>` — and only then re-arrive.
 
-⚠️ **a blocker that returns after you fixed it is a driver error, never a reviewer defect.** check whether you ever told the reviewer, before you diagnose one.
+🟡 **a blocker that returns after you fixed it is a driver error, never a reviewer defect.** check whether you ever told the reviewer, before you diagnose one.
 
 blocker: an open point with no `.taken` · a `[REPAIR]` with no current-file quote · a `[REFUTE]` with no evidence · a malfunction graded for a re-raise you never answered.

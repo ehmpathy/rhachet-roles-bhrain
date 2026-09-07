@@ -16,7 +16,7 @@ it answers *"what is this, and what are its pieces?"* — and that file has a ha
 
 ⇒ the alternatives each fail one. `$subject.readme.md` and `$subject.overview.md` sort into the middle of their own parts and read as one more part. a `.readme.md` in a directory works only when the cluster **has** a directory — most do not.
 
-## ⚠️ .the summary is a PEER of its parts, never a parent
+## 🟡 .the summary is a PEER of its parts, never a parent
 
 this is what makes it work in a **flat** tree, and the property most often lost:
 

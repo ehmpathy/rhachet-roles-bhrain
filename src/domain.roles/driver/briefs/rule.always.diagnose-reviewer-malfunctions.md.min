@@ -2,31 +2,31 @@
 
 a `malfunction` is a broken process, not a verdict — the review could not run, or could not be read. diagnose the cause and name the fix; never hand a human a bare *"it broke."*
 
-⚠️ terminal-for-unlock, **and it still blocks passage**. a broken reviewer at l1 does not hold l3 from a run, and the stone cannot pass while it is broken.
+🟡 terminal-for-unlock, **and it still blocks passage**. a broken reviewer at l1 does not hold l3 from a run, and the stone cannot pass while it is broken.
 
 | the cause | you |
 |---|---|
-| **driver-fixable** — a bad glob, an absent supply file, a malformed rubric path, an artifact it could not parse | fix it, re-arrive |
-| 🔴 **a context overflow** — the lane's prompt blew the window, so it reviewed naught | re-run the rubric **scoped** — see below |
-| **human-fixable** — an absent credential, a permission gate, a foreman-only grant | surface the **exact command**, never the symptom |
+| driver-fixable — a bad glob, an absent supply file, a malformed rubric path, an artifact it could not parse | fix it, re-arrive |
+| 🔴 a context overflow — the reviewer's prompt blew the window, so it reviewed naught | re-run the rubric scoped — see below |
+| human-fixable — an absent credential, a permission gate, a foreman-only grant | surface the exact command, never the symptom |
 | unclear | read its stderr and logs, classify, then route |
 
-## 🔴 the overflowed lane — a task, never a verdict
+## 🔴 the overflowed reviewer — a task, never a verdict
 
 the guard hardcodes `--diffs since-main`; `rhx review` is not so bound, so the same rubric runs narrowed:
 
 ```sh
-rhx review --rules '<the lane rubric path>' \
+rhx review --rules '<the reviewer rubric path>' \
            --paths-with 'src/<subsystem>/**/*.ts' --paths-wout '**/*.test.ts' \
-           --output '.review/<iter>.<lane>.scoped.<slug>.md' --goal exhaustive
+           --output '.review/<iter>.<reviewer>.scoped.<slug>.md' --goal exhaustive
 ```
 
-⚠️ **its temptation is unique.** every other malfunction announces itself as broken; an overflowed lane returns terminal and unlocks the next level, so it reads much like a lane that ran. a driver who merely files the overflow removes a lens from the drive.
+🟡 **its temptation is unique.** every other malfunction announces itself as broken; an overflowed reviewer returns terminal and unlocks the next level, so it reads much like a reviewer that ran. a driver who merely files the overflow removes a lens from the drive.
 
-✅ **the inherited `--diffs since-main` scope is already correct — do NOT re-derive it.** `getAllFileDiffsFromRange.ts` prefers `origin/main` (line 43) and takes `git merge-base` (line 70), so a commit main is ahead on cannot enter the diff. an item the scoped run raises is yours.
+✅ the inherited `--diffs since-main` scope is already correct — do NOT re-derive it. `getAllFileDiffsFromRange.ts` prefers `origin/main` (line 43) and takes `git merge-base` (line 70), so a commit main is ahead on cannot enter the diff. an item the scoped run raises is yours.
 
 one honest diagnosis pass, never a debug spiral: read the logs → classify → act.
 
-if it resists one pass, escalate **with what you found** — the symptom, the logs read, your best read of the cause. a named unknown beats a bare break.
+if it resists one pass, escalate with what you found — the symptom, the logs read, your best read of the cause. a named unknown beats a bare break.
 
-blocker: a malfunction escalated with a bare symptom · a driver-fixable cause handed to a human · an overflowed lane reported upward with no scoped re-run.
+blocker: a malfunction escalated with a bare symptom · a driver-fixable cause handed to a human · an overflowed reviewer reported upward with no scoped re-run.

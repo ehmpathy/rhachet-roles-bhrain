@@ -13,7 +13,7 @@ always:
       #
       # how much a re-arrival actually costs. ref because it answers a question a driver
       # ASKS ("is re-arrival expensive?"), which is the dereference case exactly
-      - briefs/howdoes.the-guard-caches-a-clean-lane-by-artifact-hash.md
+      - briefs/howdoes.the-guard-caches-a-clean-reviewer-by-artifact-hash.md
     say:
       # 🔴 the WHY under every rule below, promoted from ref on 2026-08-31.
       # a rule tells a driver WHAT to do, and cannot tell them what to do in a case
@@ -43,13 +43,28 @@ always:
       # after the yield is done meets a driver who must cut two thirds of a finished
       # document — a teardown, where the same rule read early is free
       - briefs/rule.always.yield-the-output-not-the-archaeology.md
-      # it carries the overflowed-lane recipe as one of its driver-fixable causes.
+      # it carries the overflowed-reviewer recipe as one of its driver-fixable causes.
       # that recipe had a peer brief of its own until 2026-08-31, written to teach a
-      # driver around a MISCLASSIFICATION — an overflowed lane exits 2 and so grades
+      # driver around a MISCLASSIFICATION — an overflowed reviewer exits 2 and so grades
       # `constraint` where the taxonomy says `malfunction`. most of what that brief
       # taught dies with the fix, and what survives is one cause row, so it was
       # absorbed here rather than kept beside this rule
       - briefs/rule.always.diagnose-reviewer-malfunctions.md
+      # the repair/defer pair, and the driver OWNS both. it sat split until 2026-09-07
+      # — the repair half in the achiever, the catch half in the learner — so a driver
+      # booted the CATCH half alone and read the dream as the primary move rather than
+      # the fallback both files declare it to be. the act is a route act: a defect
+      # found mid-drive, priced against the diff already open. the achiever and the
+      # learner keep it by symlink, so neither loses it
+      #
+      # the REPAIR half. say-level because it fires at the moment a fix is SEEN: a
+      # deferral is cheap to make and expensive to reverse, since the comprehension
+      # that made the fix small is spent in that turn and gone by the next
+      - briefs/rule.always.fix-forward-under-scouts-honor.md
+      # the CATCH half — what a followup owes when the two questions send it to a
+      # deferral. say-level beside its pair because a followup merely spoken is gone
+      # with the round, and by then the context that made the fix cheap is gone too
+      - briefs/rule.always.catch-dreams-for-followups.md
       # the escalation family. it names the driver role in its own text, so it
       # boots here rather than under role=any
       - briefs/rule.always.spend-own-levers-before-escalation.md

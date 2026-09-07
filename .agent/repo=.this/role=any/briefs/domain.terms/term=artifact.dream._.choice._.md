@@ -20,10 +20,10 @@ it is a two-file contract, and both files are owed:
 $route/dreams/v$date.$kind.$slug.md     # a SYMLINK back — so the route shows what it deferred
 ```
 
-⚠️ **the dream file is the original; the route holds the link.** never the reverse — a dream that
+🟡 **the dream file is the original; the route holds the link.** never the reverse — a dream that
 lives inside one route dies with it, and the queue is what makes it findable at all.
 
-the `$kind` names what the followup **is**, so the queue sorts by work type:
+the `$kind` names what the followup is, so the queue sorts by work type:
 
 | kind | the followup is |
 |---|---|
@@ -32,7 +32,7 @@ the `$kind` names what the followup **is**, so the queue sorts by work type:
 | `reseed` | work whose home is another repo |
 | `amend` | a change to an artifact that already exists |
 
-## ⚠️ .a dream is CAUGHT locally; it is DISPATCHED separately
+## 🟡 .a dream is CAUGHT locally; it is DISPATCHED separately
 
 `.dream/` is the local queue; the radio is the transmission. **`caught` and `dispatched` are two
 states, not one** — a `reseed` dream is dispatched only when a push actually lands.

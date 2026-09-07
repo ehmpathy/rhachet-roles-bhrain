@@ -9,14 +9,17 @@ term.synonyms.forbidden:
 - checkpoint
 
 ## .what
-a **guard.rung** is a single gate-position in a guarded stone's one ordered ladder. the ladder holds
-every gate in climb-order: peer-review level 1 → peer-review level 3 → … → the judge. a peer level
-is a rung; the judge is the top rung. a stone passes only once every rung reaches terminal.
 
-## ⚠️ .rung is overloaded — this cluster is the GUARD sense
+a **guard.rung** is a single gate-position in a guarded stone's one ordered ladder.
+
+- the ladder holds every gate in climb-order — peer-review level 1 → peer-review level 3 → … → the judge
+- a peer level is a rung; the judge is the top rung
+- ⇒ a stone passes only once every rung reaches terminal
+
+## 🟡 .rung is overloaded — this cluster is the GUARD sense
 
 **`rung` names a position on a ladder, and this repo has two ladders.** both are real, neither is a
-synonym of the other, so the word is **boundary-qualified rather than renamed**:
+synonym of the other, so the word is boundary-qualified rather than renamed:
 
 | boundary | the ladder | a rung is |
 |---|---|---|
@@ -27,23 +30,27 @@ synonym of the other, so the word is **boundary-qualified rather than renamed**:
 say which ladder, so the reader must open a file to find out
 (`rule.require.boundary-qualified-terms`).
 
-⚠️ the `entoolment` sense is **undeclared** — it lives in
+🟡 the `entoolment` sense is undeclared — it lives in
 `philosophy.entoolment-is-the-pinnacle` prose and composes no declared dobj/dop, which is the bar
 `rule.require.domain-term-itemization` sets for a cluster.
 
-`rung` is the metaphor term that **unifies peers and the judge into one ladder**. the judge is not
-a gate outside the peer levels; it is the highest rung of the same ladder, so overrule, unlock,
-and passage treat it with no special-case branch.
+## .the metaphor unifies peers and the judge into ONE ladder
+
+- the judge is not a gate outside the peer levels — it is the highest rung of the same ladder
+- ⇒ so overrule, unlock, and passage treat it with no special-case branch
 
 ## .rung is not level
 
 a rung and its `level` are distinct concepts, not synonyms:
 
-- **rung** = the gate-position itself (an entity you climb).
-- **level** = the rung's numeric coordinate on the ladder (1, 3, or `JUDGE_LEVEL`).
+- **rung** = the gate-position itself, an entity you climb
+- **level** = the rung's numeric coordinate on that ladder — `1`, `3`, or `JUDGE_LEVEL`
+- ⇒ a rung *has* a level, the way a step has a height
 
-a rung *has* a level, the way a step has a height. `isJudgeRungHeld` asks about the judge *rung*
-(the position); `JUDGE_LEVEL` is that rung's *level* (its coordinate). do not collapse the two.
+the two must not be collapsed, and the code names both:
+
+- `isJudgeRungHeld` asks about the judge **rung** — the position
+- `JUDGE_LEVEL` is that rung's **level** — its coordinate
 
 ## .refs
 where the term composes declared operations:

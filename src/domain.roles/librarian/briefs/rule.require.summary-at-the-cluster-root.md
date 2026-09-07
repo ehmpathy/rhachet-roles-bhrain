@@ -30,7 +30,7 @@ without a read of every peer.**
 `$subject.overview.md` sort into the middle of their own parts and read as one more part.
 `.readme.md` in a directory works only when the cluster **has** a directory — which most do not.
 
-## ⚠️ .the summary is a peer of its parts, never a parent of them
+## 🟡 .the summary is a peer of its parts, never a parent of them
 
 this is the property that makes the convention work in a **flat** tree, and it is the one most
 often lost:

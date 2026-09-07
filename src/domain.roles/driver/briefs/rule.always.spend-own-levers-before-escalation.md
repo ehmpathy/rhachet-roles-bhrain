@@ -52,7 +52,7 @@ owner, act on your half.
 budget exists so the contemplation loop can run to convergence — to hoard it is to end the
 conversation early, which is the exact coast `rule.always.converge-to-terminal` forbids.
 
-⚠️ **and exhaustion is often not what it looks like.** a reviewer spends a round to *raise* a
+🟡 **and exhaustion is often not what it looks like.** a reviewer spends a round to *raise* a
 blocker and has none left to *confirm* the fix — so a reviewer whose findings you fixed in that
 same round shows `exhausted 🌙` with its blockers still listed, though every one is closed. that
 is precisely the case more budget settles, and precisely the case a human cannot settle at all.

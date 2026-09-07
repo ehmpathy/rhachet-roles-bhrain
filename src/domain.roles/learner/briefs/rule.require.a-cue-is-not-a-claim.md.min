@@ -1,0 +1,69 @@
+# rule.require.a-cue-is-not-a-claim
+
+> **`declare-once` binds a CLAIM. it does not bind a CUE.** a costly defect earns as many cues as it takes — from as many angles as you can find.
+
+a claim asserts a fact the reader may act on. a cue is a detector: a when-row, a smell, a symptom, a rule aimed at one defect from one angle.
+
+🟡 the two look identical on the page — each is one line of prose in a rule file — which is why a careful author applies the wrong law to one of them.
+
+## .the failure modes INVERT, and that is the whole rule
+
+| the artifact | what a second copy does | so the law is |
+|---|---|---|
+| a claim | drifts from the first, silently — and the summary is what goes stale | declare it once, cite it thereafter |
+| a cue | fires where the first one missed | as many as it takes |
+
+- a claim can be wrong, so two copies can disagree
+- a cue cannot be wrong — it fires or it does not
+  - ⇒ so two cues can only both miss, or one catch
+- ⇒ **a redundant cue carries no drift risk at all** — a property of what a cue is, never a tolerance granted to it
+
+⇒ and the costs are not comparable: a redundant cue costs a line; a missed one costs whatever the defect costs. an overlapped detector is a second chance, never a duplicate.
+
+## .the test
+
+> **could these two passages DISAGREE with each other?**
+
+- yes → claims — declare one, cite it from the other
+- no → cues — keep both, and look for a third
+
+🟡 it is mechanical, and it does not ask you to judge redundancy — *"a paragraph of three claims"* and *"a passage with no line you can point at"* cannot contradict each other, so they are two nets over one defect.
+
+| when… | then… |
+|---|---|
+| you would cut a when-row because a peer row already covers it | the strongest cue. could the two disagree? no → keep both |
+| you author a second rule on a defect a first rule names | correct where it grades a different property. name the seam |
+| you author a third | still correct. the count is set by the defect's cost, never by tidiness |
+| you would restate a measurement or a count in a summary | that is a claim. cite it, or enumerate by id |
+| a cue cites a fact — a number, a file, an incident | the cue is exempt; the **fact inside it** obeys `declare-once` |
+| you cannot say what angle a new cue adds | the one case to cut it — an angle no reader occupies detects nobody |
+
+## .the worked case — three rules on one defect
+
+telepath grades subversive speech three times over: `forbid.subversive-prose` on falsifiability, `forbid.diffusion` on findability, `forbid.obfuscation` on selection. the grain of each is declared in `rule.forbid.obfuscation`, which is the rule the contrast defines.
+
+the case to cut the third — that it collides with the first — was argued and refused by the wisher, and the settlement is the demo: the three overlap heavily, no two can disagree, and a passage can pass two and fail the third — which is what the third exists to catch.
+
+> verbatim: *"the more the better here. as many angles as it takes to forbid this nasty speech pattern"*
+
+## 🟡 .the boundary — a cue that carries a fact carries a claim inside it
+
+| a violation | not a violation |
+|---|---|
+| a summary that restates a count its source owns | two when-rows that detect one defect from two angles |
+| a measurement repeated in a second file | a measurement stated once and cited from the second |
+| a cue whose angle you cannot name | a third rule on a defect, where its property is named |
+| two rules that give contradictory repairs | two rules whose repairs compose |
+
+**the line that parts them: could a future edit make these two passages disagree?** yes → one is a claim, and one of the two must become a citation. no → detectors, and the second costs one line.
+
+## .why it is a rule of its own
+
+`declare-once` is real and well-evidenced — its instance table sits in the `v2026_09_04.feat-telepath-role` vision yield, and every row is a summary that drifted from its source. **so an author who learns it will apply it to a rule's when-table and delete the cue that would have fired** — a correct law, applied to the wrong artifact, at a cost paid later and invisibly.
+
+🟡 that line cites the yield's table rather than its count, per the table above: cite the source, never copy its arithmetic.
+
+blocker: a cue cut on `declare-once` grounds where the two could not have disagreed · a claim — a count, a measurement, a verdict — restated where a citation would serve (that is `declare-once`, and this does not weaken it).
+nitpick: a new rule on an extant defect with no named angle.
+
+⇒ see also: `rule.require.specialize-a-rule-its-readers-look-past` (a second rule in a second domain is a second cue, never a fork) · `rule.require.enumerate-before-you-name` · `research.selfreview-effectiveness` (why a cue outscores a principle).

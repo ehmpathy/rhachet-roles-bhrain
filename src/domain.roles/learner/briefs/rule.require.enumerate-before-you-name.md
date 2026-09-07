@@ -33,7 +33,7 @@ answer both, on the page, in this order:
   need the differentia
 - it covers every row and excludes the adjacent concepts → the word holds
 
-⚠️ **step 1 is the one that gets skipped**, because the instance in hand feels like the category.
+🟡 **step 1 is the one that gets skipped**, because the instance in hand feels like the category.
 it is not; it is one member of it.
 
 ## .the worked case — `degenerate` vs `specialized`
@@ -49,8 +49,8 @@ then the instances were listed:
 | a skill that computes its setup, then hands one probabilistic step to a brain | ✅ yes — a route reduced to **one stone** | ✅ yes |
 | a wrapper that batches the deterministic half | 🔴 **no** — an all-deterministic route is complete, not reduced | ✅ yes |
 
-⇒ **`degenerate` broke on row 2**, and row 2 was invisible until it was written down. `specialized`
-covers both, so it is the word.
+⇒ **`degenerate` broke on the wrapper**, and that shape was invisible until it was written down.
+`specialized` covers both, so it is the word.
 
 **the enumeration took one table.** the wrong word would have shipped in a published brief and
 been cited from three others.

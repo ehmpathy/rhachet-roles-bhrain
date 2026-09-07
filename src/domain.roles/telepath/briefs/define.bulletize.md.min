@@ -1,0 +1,98 @@
+# define.bulletize
+
+to bulletize is to render a passage as a nested outline of single terse sentences, where the nest
+declares each concept's relation to its parent.
+
+```md
+- $concept — one terse sentence
+  - $subconcept — one terse sentence
+    - $subsubconcept — one terse sentence
+```
+
+three parts, and they are the whole form:
+
+- **one sentence per bullet** — a bullet that needs two held two concepts
+- **the nest IS the relation** — a child elaborates its parent; a sibling is a peer
+- **the depth IS the decomposition** — main, sub, subsub, as deep as the concept genuinely goes
+
+🟡 **it is a rendering of an argument, never a decoration on prose.** to prefix a paragraph with a
+`-` bulletizes naught.
+
+⇒ the four benefits are declared once in `rule.require.bulletize`; the instinct in
+`trait.bulletize-reflexively`. neither is restated here.
+
+## .the demos
+
+### 👎 a paragraph — four concepts, every edge implied
+
+> the reviewer grades prose, so its scope must drop `src/`, though it must keep `.behavior/` because the
+> convergence loop reads the `.taken` files, which means the narrow-scope fix that #423 warns
+> against is a different fix than this one — theirs omits `.behavior/`, ours omits `src/`.
+
+59 words, and every relation is a connective — *"so"*, *"though"*, *"because"*, *"which means"*.
+four edges, decoded in order, with no chance to skip.
+
+### 👍 the same four concepts, as a tree
+
+> **the reviewer's scope is prose-only**
+> - drops `src/` — it grades prose, never the code fix
+> - keeps `.behavior/` — the convergence loop reads the `.taken` files
+> - 🟡 not the fix #423 warns against
+>   - #423's trap omits `.behavior/`
+>   - this omits `src/`
+
+⇒ 44 words, and the tree is on the page. a reader who trusts the scope jumps to the warn line; one
+who doubts it reads two bullets and holds the ground.
+
+---
+
+### 👎 a bulleted paragraph, which is no outline at all
+
+> - The reviewer needs a narrow scope because it grades prose and not code, and if it inherited
+>   the default diff range it would pull in every TypeScript file changed since main, which is what
+>   made four reviewers overflow their context gate on the prior route.
+
+**one bullet, 47 words, three concepts.** the `-` character is present and the form is absent.
+
+### 👍 the same content, decomposed
+
+> - the reviewer wants a **narrow scope**
+>   - it grades prose, never code
+>   - the default `--diffs since-main` pulls in every changed `.ts` file
+>     - ⇒ measured: four reviewers overflowed their context gate on the prior route
+
+---
+
+### 👎 an outline where the concepts share one axis
+
+> - **fresh** — computed this round, full cost
+> - **cached** — reused from a prior round, zero cost
+
+### 👍 one axis is a table, never a nest
+
+> | attempt | when | cost |
+> |---|---|---|
+> | **fresh** | computed this round | full |
+> | **cached** | reused from a prior round | zero |
+
+⇒ **an outline nests; a table aligns.** if every child answers the same question about a different
+subject, that is a column, not a depth.
+
+## .the boundary — what stays prose
+
+**the licences are declared by `rule.require.bulletize`, and this file cites them rather than
+restates them** — a second copy drifts, and a reader who holds only the copy is short a licence with
+no way to know it.
+
+## .the seam with `itemize`
+
+| verb | the unit it addresses | its artifact |
+|---|---|---|
+| **itemize** | one entry, its own file, at its coordinates | an inventory — a filetree |
+| **bulletize** | one concept, its own line, at its depth | a passage |
+
+⇒ they share a shape and part on the artifact: **itemize demands a dereferenceable address;
+bulletize demands only a position in a tree.**
+
+⇒ see also: `rule.require.bulletize` · `trait.bulletize-reflexively` · `rule.forbid.narration` ·
+`rule.require.place-a-passage-by-its-subject`.

@@ -7,7 +7,7 @@ functionally-equivalent form. the suffix `.min.js` is the precedent every reader
 and `.md.min` inverts the segment order only so the file still reads as markdown to a tool that
 sorts on extension.
 
-⚠️ **the borrowed word carries one thing it should not.** a minified bundle is *mechanically*
+🟡 **the borrowed word carries one thing it should not.** a minified bundle is *mechanically*
 derived and reversible-in-spirit; a min is **hand-written and lossy by design**. we keep the word
 because the shape it names — *"the same artifact, small enough to carry everywhere"* — is exactly
 right, and we forbid `compressed` (below) to fence off the reversibility the analogy invites.
@@ -16,12 +16,12 @@ right, and we forbid `compressed` (below) to fence off the reversibility the ana
 
 | word | why it loses |
 |---|---|
-| **summary** | 🔴 **already claimed.** `rule.require.summary-at-the-cluster-root` declares a summary to be an itemization's `._.` root, whose whole job is to **index its members**. a min indexes no member — it restates one artifact. one word, two concepts, which `rule.forbid.domain-term-ambiguity` grades a blocker |
-| **condensed** | an adjective, and it names the **act** rather than the artifact. the act already has a word (`condense`), so this would be a second word for a settled concept |
-| **digest** | implies a lossy roll-up of **many** sources. a min has exactly one, and the one-to-one relation is the property that makes the sidecar addressable |
-| **tldr** | a section **header** inside a rule (`rules101.content` prescribes it), never a file. to reuse it here overloads a declared structural marker |
-| **abridged** | names what was **removed**. `min` names what the file **is**, which is the noun a filename wants |
-| **compressed** | implies reversibility. a min drops argument permanently; no operation restores the source from it |
+| summary | 🔴 already claimed. `rule.require.summary-at-the-cluster-root` declares a summary to be an itemization's `._.` root, whose whole job is to index its members. a min indexes no member — it restates one artifact. one word, two concepts, which `rule.forbid.domain-term-ambiguity` grades a blocker |
+| condensed | an adjective, and it names the act over the artifact. the act already has a word (`condense`), so this would be a second word for a settled concept |
+| digest | implies a lossy roll-up of many sources. a min has exactly one, and the one-to-one relation is the property that makes the sidecar addressable |
+| tldr | a section header inside a rule (`rules101.content` prescribes it), never a file. to reuse it here overloads a declared structural marker |
+| abridged | names what was removed. `min` names what the file IS, which is the noun a filename wants |
+| compressed | implies reversibility. a min drops argument permanently; no operation restores the source from it |
 
 ## .the evidence
 
@@ -47,42 +47,45 @@ five philosophy mins were paved the same day, and they compress far worse than e
 
 | archetype | measured ratio |
 |---|---|
-| a **rule** — `define.passage-statuses`, `rule.forbid.*`, `rule.require.*` | 17–38% |
-| a **research brief** — `research.importance-of-focus` | 30% |
-| a **philosophy** — `pavement-saves-nature`, `entoolment-is-the-pinnacle.*` | **43–60%** |
+| a rule — `define.passage-statuses`, `rule.forbid.*`, `rule.require.*` | 17–38% |
+| a research brief — `research.importance-of-focus` | 30% |
+| a philosophy — `pavement-saves-nature`, `entoolment-is-the-pinnacle.*` | **43–60%** |
 
-⚠️ **that spread is not a defect in the philosophy mins. it is the invariant at work.** *a min may
-drop an ARGUMENT; it may never drop a CLAIM* — and the two archetypes hold argument and claim in
-opposite proportions:
+🟡 that spread is the invariant at work, over a defect in the philosophy mins. *a min may drop an
+ARGUMENT; it may never drop a CLAIM* — and the two archetypes hold argument and claim in opposite
+proportions:
 
-- a **rule** is mostly claim. its bulk is worked examples, enforcement rows, and see-alsos, each an
-  argument for a claim stated in one line. so a min keeps the line and drops the bulk
-- a **philosophy** is mostly argument **by construction** — its whole subject is *why*, and its
-  claim is one sentence that means naught without the reasoning under it. drop the argument and
-  what remains is a slogan
+- a rule is mostly claim — its bulk is worked examples, enforcement rows, and see-alsos, each an
+  argument for a claim stated in one line
+  - ⇒ so a min keeps the line and drops the bulk
+- a philosophy is mostly argument by construction — its whole subject is *why*, and its claim is
+  one sentence that means naught without the reasons under it
+  - ⇒ drop the argument and what remains is a slogan
 
-⇒ **a philosophy that mins to 20% has been gutted, not condensed.** the ratio a min achieves is
-evidence of its **source's shape**, never of the author's discipline — so a target ratio must not
-be applied across archetypes.
+⇒ **a philosophy that mins to 20% has been gutted, over condensed.** the ratio a min achieves is
+evidence of its source's shape, never of the author's discipline — so a target ratio must not be
+applied across archetypes.
 
-⚠️ **the sources section is the one part a philosophy min always drops whole.**
-`research.importance-of-focus` reaches 30% chiefly because 40 lines of citation URLs go. a citation
-is already a **dereference**, so its removal from a sidecar costs a reader naught: they open the
-source, which is the arrangement the sidecar exists to create.
+### the sources section is the one part a philosophy min always drops whole
 
-**the boot preference, verified.** `role=any/boot.yml:10` names
-`briefs/define.passage-statuses.md`, and this session's boot loaded
-`briefs/define.passage-statuses.md.min`. so the sidecar is not an alternate a reader may choose —
-it **supersedes** its source wherever it exists, which is what makes the invariant in
-`._.choice._.md` load-bearing rather than stylistic.
+- `research.importance-of-focus` reaches 30% chiefly because 40 lines of citation URLs go
+- a citation is already a dereference, so its removal from a sidecar costs a reader naught — they
+  open the source, which is the arrangement the sidecar exists to create
+
+### the boot preference, verified
+
+- `role=any/boot.yml:10` names `briefs/define.passage-statuses.md`
+- this session's boot loaded `briefs/define.passage-statuses.md.min`
+- ⇒ so the sidecar is **not an alternate a reader may choose — it supersedes its source** wherever
+  it exists, which is what makes the invariant in `._.choice._.md` load-bearing over stylistic
 
 ## 🔴 .a recorded gap — `say` and `ref` are undeclared
 
-this term's whole `.what` leans on two words the glossary does not hold: **`say`** and **`ref`**,
-the two tiers of every `boot.yml`. they are declared **keys in a contract this repo publishes**,
+this term's whole `.what` leans on two words the glossary does not hold: `say` and `ref`,
+the two tiers of every `boot.yml`. they are declared keys in a contract this repo publishes,
 and `rule.require.domain-term-itemization` binds every word that composes a declared contract.
 
-⚠️ **they are not this round's arrears.** both predate it by many months, and neither was coined,
+🟡 **they are not this round's arrears.** both predate it by many months, and neither was coined,
 disputed, or drifted here. recorded so the next sweep finds the gap already named rather than
 re-derives it — per `rule.require.boundary-qualified-terms`, which grades an unrecorded gap a
 blocker and a recorded one a legitimate close.

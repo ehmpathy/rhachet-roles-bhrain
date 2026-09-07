@@ -24,15 +24,16 @@ declared in `src/domain.operations/route/statusLine/asStatusLine.ts`, `asHaltPar
 🗿 5.1.execution.from_vision, review.peer, l3@i002, malfunction 💥
 ```
 
-## ⚠️ .👋 marks two halt-words on purpose
+## 🟡 .👋 marks two halt-words on purpose
 
-`approved?` and `exhausted` share 👋 because the human's move is the same **kind** of move — a
-grant. one grants approval, the other grants budget. ✋ and 💥 are reserved for the two halts that
-are **not** grants: a wall, and a break.
+`approved?` and `exhausted` share 👋 because the human's move is the same **kind** of move — a grant.
+
+- one grants approval, the other grants budget
+- ✋ and 💥 are reserved for the two halts that are no grant at all: a wall, and a break
 
 ⇒ the glyph triages *what kind of help*; the word says *which*.
 
-## ⚠️ .a `constraint` is not a malfunction
+## 🟡 .a `constraint` is not a malfunction
 
 a rejected credential, a set circuit breaker, an absent supply — these are **legitimate holds the
 process chose to report**, and they carry their own fix. 💥 is reserved for a process that could

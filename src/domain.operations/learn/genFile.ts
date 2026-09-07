@@ -1,6 +1,6 @@
 import * as fs from 'fs/promises';
 
-import { getFsErrorCode } from './getFsErrorCode';
+import { getFsErrorCode } from '../getFsErrorCode';
 
 /**
  * .what = gen a file at `at` with `content`; idempotent + race-safe. the `idem` option

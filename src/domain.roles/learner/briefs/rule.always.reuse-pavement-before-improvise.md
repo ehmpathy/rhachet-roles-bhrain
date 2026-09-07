@@ -40,7 +40,7 @@ most readers stop at the first. **the second is the one that belongs to the lear
 the paved path already carries the incidents that bought it. a re-derivation starts from zero and
 will rediscover the same traps by paying for them again.
 
-### 2. ⚠️ only a reader can improve the pavement — so a skipped read FREEZES it
+### 2. 🟡 only a reader can improve the pavement — so a skipped read FREEZES it
 
 this is the argument that makes the rule the learner's rather than merely an efficiency tip.
 
@@ -62,30 +62,49 @@ a **bounded** look, in this order. stop at the first hit:
 | 3 | this repo's skills, templates, routes | `rhx globsafe --pattern '.agent/**/skills/*'` |
 | 4 | the role's own briefs, then the org's | `rhx git.repo.get lines --repos 'ehmpathy/*' --words '<concept>'` |
 
-### 🔴 ⚠️ scope with `--path`, never with a slash in `--glob`
+### 🟡 scope with `--path`, never with a slash in `--glob`
 
-**`grepsafe --glob` matches the file's BASENAME.** so a glob that carries a `/` matches no file at
+`grepsafe --glob` matches the file's BASENAME. so a glob that carries a `/` matches no file at
 all — and it reports that as a clean, cheerful zero:
 
 | the invocation | what it returns |
 |---|---|
-| `--glob 'src/**/*.md'` | 🔴 **0 matches**, exit 0, `🐢 crickets...` |
-| `--glob '*.md'` | ✅ every `.md`, at any depth |
-| `--path src --glob '*.md'` | ✅ every `.md` under `src/` — **the scoped form** |
+| `--glob 'src/**/*.md'` | 0 matches, exit 0, `🐢 crickets...` |
+| `--glob '*.md'` | every `.md`, at any depth |
+| `--path src --glob '*.md'` | every `.md` under `src/` — the scoped form |
 
-⚠️ **that zero is indistinguishable from a genuine absence**, which makes it the exact failure this
-rule exists to prevent: a traveler looks for pavement, is told there is none, and improvises. **the
-tool reports the braided trail's precondition as a completed check.**
+🟡 **that zero is indistinguishable from a genuine absence**, which makes it the exact failure this
+rule exists to prevent: a traveler looks for pavement, is told there is none, and improvises. the
+tool reports the braided trail's precondition as a completed check.
 
-⇒ and `globsafe` does NOT share the defect — its `--pattern` takes a full path, so
-`.agent/**/skills/*` at row 3 is correct as written. **two adjacent tools, two different contracts** —
-which is why the rows above spell each one out rather than assume they rhyme.
+⇒ and `globsafe` does NOT share the defect — its `--pattern` takes a full path, so the
+`.agent/**/skills/*` line in the look-list above is correct as written. two adjacent tools, two
+different contracts — which is why the rows above spell each one out rather than assume they rhyme.
+
+### 🟡 and a `grepsafe` sweep does not read a DOT-PREFIXED file, at any scope
+
+the same silence, from a second cause, and no `--glob` or `--path` form repairs it.
+
+| the fixture, measured 2026-09-06 | reported |
+|---|---|
+| `plain.md` — one marker | yes |
+| `.dotfile.md` — the same marker | **no** |
+
+🟡 **91 dot-prefixed markdown files in this repo are invisible to it**, and two of them are the ones
+a pavement check most wants: `domain.terms/.readme.md`, this repo's glossary census, and
+`.dream/.readme.md`, the dream queue's own contract.
+
+⇒ so a `grepsafe` result is a **lower bound**, never a census. where the answer must be complete,
+settle it with a `Glob` or a `Read` — the move
+`rule.forbid.itemization-without-coordinates` already prescribes for a gap check. the tool fix is
+caught at `.dream/v2026_09_06.reseed.grepsafe-skips-every-dot-prefixed-file-and-reports-a-clean-sweep.md`,
+deferred because `grepsafe` belongs to `ehmpathy/rhachet-roles-ehmpathy`.
 
 ## .the cues — when → then
 
 | when… | then… |
 |---|---|
-| you are about to write a **step-by-step approach** for a task the repo has plainly done before | 🔴 the strongest cue. **grep, do not type** |
+| you are about to write a **step-by-step approach** for a task the repo has plainly done before | the strongest cue. **grep, do not type** |
 | you catch yourself about to say *"the way to do this is…"* | that sentence is a claim the repo may already own |
 | you are about to **name** a new artifact, dir, or convention | check what the repo already names. this rule's own repo got that wrong twice in one hour |
 | you reach for a **workaround** because a paved path seems inconvenient | that is the braid. mend the tread instead |
@@ -112,7 +131,7 @@ the rule is not "never improvise." three cases where it is the correct move:
 3. **the paved path is for a different bounded context** and would mislead — say so, and say why,
    so the next reader is not caught by the same near-miss
 
-## ⚠️ .do not let this become a stall
+## 🟡 .do not let this become a stall
 
 **the rule is "look first", not "read everything."** an unbounded search is its own failure mode,
 and it would earn this rule a reputation as friction — which is how a rule gets deferred.
@@ -134,7 +153,7 @@ and it would earn this rule a reputation as friction — which is how a rule get
   written. it reads as authoritative and dereferences to no match
 - **the unbounded look** — a survey that never converges, which discredits the rule itself
 
-## 🔴 .a phantom path is not merely an unresolvable name — mark the FOREIGN one
+## .a phantom path is not merely an unresolvable name — mark the FOREIGN one
 
 the phantom path above has a twin that reads identically to a grep and is **not a defect**: a name
 that belongs to another repo. the two demand opposite treatment, so a sweep that cannot part them
@@ -142,11 +161,11 @@ either deletes real evidence or leaves real phantoms.
 
 | the citation | what it is | the repair |
 |---|---|---|
-| a **parent claim** — *"per `rule.x`, therefore…"* — with no file | 🔴 **a phantom path.** the argument rests on a premise nobody wrote | write it, or drop the claim |
-| a **prescribed artifact** — a path the rule tells you to create | ✅ not a citation at all. it names a future file | state the full path, so the reader knows where |
-| a **foreign artifact** — a brief, playbook, or skill in a peer repo | ✅ legitimate, and only if it is MARKED | say it is foreign, in the same breath |
+| a **parent claim** — *"per `rule.x`, therefore…"* — with no file | **a phantom path.** the argument rests on a premise nobody wrote | write it, or drop the claim |
+| a **prescribed artifact** — a path the rule tells you to create | not a citation at all. it names a future file | state the full path, so the reader knows where |
+| a **foreign artifact** — a brief, playbook, or skill in a peer repo | legitimate, and only if it is MARKED | say it is foreign, in the same breath |
 
-⚠️ **an unmarked foreign citation is the expensive one, because it costs the READER rather than the
+🟡 **an unmarked foreign citation is the expensive one, because it costs the READER rather than the
 author.** it carries the full authority of a local pointer, so a reader globs, finds no match, and
 must then decide whether the repo lost a file or the author cited elsewhere — a judgment they have
 no evidence to make.
@@ -160,7 +179,7 @@ the same sentence.
 
 ## .the evidence — one session, both directions
 
-⚠️ **the two artifacts named below are FOREIGN to this tree** — `howto.add-a-new-grove.md` and
+🟡 **the two artifacts named below are FOREIGN to this tree** — `howto.add-a-new-grove.md` and
 `.agent/playbooks/.readme.md` belong to the repo where that session ran. a glob for either here
 returns no match, and that is correct: this section is **testimony about a measured session**,
 never a set of parent claims this rule leans on. the claims it leans on are stated above it.
@@ -176,7 +195,7 @@ each trap cost a real incident to learn. the read cost about ninety seconds.
 that moment. it was skipped; a check was improvised from memory; the improvised check looked for
 one shape where two existed, and a dangling reference shipped.
 
-⚠️ **and the paved check would have missed it too** — it named the same single shape. so the
+🟡 **and the paved check would have missed it too** — it named the same single shape. so the
 honest lesson is not *"the pavement was right and I ignored it."* it is sharper:
 
 > **to READ the pavement is also the only way to IMPROVE it.** both checks had the same blind

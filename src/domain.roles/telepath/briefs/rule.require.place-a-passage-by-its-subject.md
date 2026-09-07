@@ -31,7 +31,7 @@ of the first half.
 about *concepts vs capacity* filed inside a paragraph about *the ladder* is retrievable only by
 someone who already knows where it is — which is no one but the author.
 
-⚠️ **and an intro is the worst possible landing site.** a `.what` or an opening paragraph is the
+🟡 **and an intro is the worst possible landing site.** a `.what` or an opening paragraph is the
 highest-traffic real estate in any document; a passage inserted there displaces the claim every
 reader came for, and it pays the severance cost at the exact point where the reader has the least
 context to recover from it.
@@ -40,18 +40,18 @@ context to recover from it.
 
 | when… | then… |
 |---|---|
-| you produce a thought **while mid-edit on something else** | 🔴 the strongest cue there is. do not type it where you are — name its subject first |
-| you are about to add a **pointer to another document** | its home is the end of the section whose subject it zooms, plus a `.see also` line |
-| you insert a passage into an **intro** or a `.what` | ask whether the intro is genuinely about that, or merely where you were |
+| you produce a thought while mid-edit on something else | the strongest cue there is. do not type it where you are — name its subject first |
+| you are about to add a pointer to another document | its home is the end of the section whose subject it zooms, plus a `.see also` line |
+| you insert a passage into an intro or a `.what` | ask whether the intro is genuinely about that, or merely where you were |
 | you find yourself with a sentence that begins *"also"*, *"and note that"*, *"relatedly"* | those words are what a passage reaches for when it has no home in its surroundings |
-| a section grows a passage on a **second** subject | that is `rule.prefer.decompose-a-subject-via-suffixes` — eject it, do not accrete it |
+| a section grows a passage on a second subject | that is `rule.prefer.decompose-a-subject-via-suffixes` — eject it, do not accrete it |
 
 ## .the two tests
 
 > **1. the severance test — delete the passage. do the two passages around it now read as one
 > continuous thought?**
 
-- yes → 🔴 you severed something. move the passage out
+- yes → you severed something. move the passage out
 - no → they were already separate; the placement did no harm on this axis
 
 > **2. the subject test — what is this passage ABOUT? is the section it sits in about that?**
@@ -73,6 +73,48 @@ concepts-vs-capacity argument would never look for it under *"what the ladder is
 the section whose subject it zooms, with a `.see also` line beside it. the correct placement was
 one scroll away, in the same document, in the author's own prior hand
 (`rule.always.reuse-pavement-before-improvise`, learner).
+
+### 👎 bad — the pointer lands at the cursor
+
+```md
+**tool** is the umbrella over all of them — 📚 a brief, 💧 a fluid skill, 🔩 a rigid skill,
+🪨 a solid skill.
+
+⇒ zoom-in: `.concepts-vs-capacity` — what a brief confers vs what a skill confers.
+
+what separates them is **how much imagine cost each still charges per use**.
+```
+
+🟡 **read the first and third paragraphs with the pointer deleted.** they are one sentence, split.
+that is the severance test, and it fires: *"tool is the umbrella over all of them … what separates
+them is how much imagine cost each charges"* was a single continuous claim, and the pointer now
+sits between its subject and its predicate.
+
+⇒ the second cost is invisible here and larger: a reader who wants the concepts-vs-capacity
+argument searches under **concepts**, and finds it filed under **the ladder**.
+
+### 👍 good — the pointer lands under its own subject
+
+```md
+**tool** is the umbrella over all of them — 📚 a brief, 💧 a fluid skill, 🔩 a rigid skill,
+🪨 a solid skill. what separates them is **how much imagine cost each still charges per use**.
+
+…
+
+## .a brief confers concepts; a skill confers capacity
+
+[the section whose subject the zoom-in zooms]
+
+⇒ zoom-in: `.concepts-vs-capacity` — the full argument.
+```
+
+⇒ **the claim is whole, and the pointer is where a reader would look for it.** the repair cost one
+cut and one paste; the defect cost every future reader a severed lead claim and an unfindable
+argument.
+
+🟡 **note what did not change: the pointer's words.** this rule grades **position**, never content —
+which is why no rule about brevity, rambles, or assertion can catch it. the sentence is correct in
+both renderings.
 
 ## .why this is telepath's and not the librarian's
 

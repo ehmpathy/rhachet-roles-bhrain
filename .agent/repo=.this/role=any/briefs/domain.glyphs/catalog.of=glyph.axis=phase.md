@@ -20,7 +20,7 @@ declared in `src/domain.operations/route/statusLine/asStatusLine.ts`, `asCalmGly
 🗿 5.3.verification, judge 🔍
 ```
 
-## ⚠️ .the axis is CALM by construction
+## 🟡 .the axis is CALM by construction
 
 a phase glyph appears only on a `push` disposition. the moment the route halts, the phase glyph is
 replaced by a **halt** glyph plus the word that names why (`catalog.of=glyph.axis=halt.md`).
@@ -30,8 +30,8 @@ glyph alone: 🌾 or 🔍 means read no further; any other glyph means you are n
 
 ## .why 🔍 is also the reviewer's marker
 
-it is the same concept. the review phase IS the reviewer at labor, so the glyph that marks the
-phase is the glyph that marks the role — not a second claimant
+**it is the same concept, so it is one claim on 🔍 rather than two.** the review phase IS the
+reviewer at labor, so the glyph that marks the phase is the glyph that marks the role
 (`catalog.of=glyph._.md`, *.the two-axis entries are NOT collisions*).
 
 ## .see also

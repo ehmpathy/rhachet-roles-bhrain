@@ -47,20 +47,20 @@ word covers all four.
 `rule.require.enumerate-before-you-name` grades a candidate on two axes, and a word can fail in
 either direction:
 
-**too narrow?** no. every row above is covered, including rows 2 and 10 — a skill is no document
-and a `.stone` is no record, so the two candidates that read most naturally (`document`, `record`)
-each break on a row the list contains.
+**too narrow?** no. every row above is covered, the skill and the stone among them — a skill is no
+document and a `.stone` is no record, so the two candidates that read most naturally (`document`,
+`record`) each break on a row the list contains.
 
 **too wide?** no, and this is the axis that needed the harder check. `artifact` **excludes** three
 adjacent concepts the librarian's ontology already declares:
 
 | the neighbour | why `artifact` excludes it |
 |---|---|
-| an **act** — a drive, a sweep, a review round | an act *produces* artifacts. row 3 is the yield, never the drive |
+| an **act** — a drive, a sweep, a review round | an act *produces* artifacts. the artifact is the yield, never the drive |
 | a **concept** (`kno101.primitives.5`) | a pattern in reality. it outlives every artifact of it, and it sits on no disk |
 | an **instance** (`kno101.primitives.3`) | a raw atom of data or experience, concept-neutral until arranged |
 
-⇒ so it discriminates. it is the genus over rows 1–10 and it is **not** the genus over everything.
+⇒ so it discriminates. it is the genus over the ten kinds above and it is **not** the genus over all.
 
 ## .the rejected synonyms
 
@@ -70,7 +70,7 @@ adjacent concepts the librarian's ontology already declares:
 | `document` | 🔴 **the librarian already declares it** (`kno201.documents._.[catalog]`) as a materialization of a concept — an article, a catalog, a demo, a lesson. to borrow it here would overload a declared word onto a second concept (`rule.forbid.domain-term-ambiguity`), and a skill is an artifact that is no document |
 | `output` | names the **relation to a producer**. an artifact outlives its producer, which is the property that earns the word |
 | `deliverable` | implies a recipient who asked for it. most artifacts here are volunteered — a dream no one requested, a fulcrum no one asked to be told |
-| `record` | narrower. a record **attests**; an artifact may also **do work**. rows 2 and 10 are no records |
+| `record` | narrower. a record **attests**; an artifact may also **do work**. a skill and a guard are no records |
 | `asset` | finance register, and it implies a valuation this repo does not assign |
 
 ## .the three boundaries it closes

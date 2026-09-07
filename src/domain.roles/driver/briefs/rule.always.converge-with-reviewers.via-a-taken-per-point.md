@@ -50,7 +50,7 @@ rhx route.stone.set --stone <stone> --as contemplated --that <slug>
 | the **same blocker returns** after you fixed it | check whether you ever told the reviewer, **before** you diagnose the reviewer |
 | you judge a point out of scope | that is a `[REFUTE]`, not a skip. a skip reads as an unaddressed point |
 
-## ⚠️ .the incident, and the mis-diagnosis that followed
+## 🟡 .the incident, and the mis-diagnosis that followed
 
 on `ehmpathy/declastruct-aws` branch `vlad/ses-emails`, a driver fixed reviewer blockers **in the
 code** and re-arrived the stone with **no `.taken`**. the reviewer had no `[REPAIR]` to weigh, so

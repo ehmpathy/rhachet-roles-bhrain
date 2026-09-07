@@ -31,19 +31,23 @@ rhachet declares the measure:
 ⇒ **that is the axis, and it needs no second vocabulary.** time and tokens are the root cost; a
 unit layered on top of them is indirection that hides which of the two a call actually spent.
 
-⚠️ **and there is a third axis the cost words do not carry: RISK.** a probabilistic step can be
-*wrong*, not merely slow. so a climb up this ladder buys two things at once — less imagine cost,
-and less variance in the outcome. the second is often the larger win.
+🟡 **and there is a third axis the cost words do not carry: RISK.**
 
-## ⚠️ .📚 is also the librarian's marker
+- a probabilistic step can be *wrong*, never merely slow
+- ⇒ so a climb up this ladder buys two things at once — less imagine cost, and less variance in the
+  outcome
+  - the second is often the larger win
+
+## 🟡 .📚 is also the librarian's marker
 
 same concept: a brief is the librarian's own artifact. not a second claimant
 (`catalog.of=glyph._.md`, *.the two-axis entries are NOT collisions*).
 
-## ⚠️ .🧠 is no longer a role marker
+## 🟡 .🧠 is no longer a role marker
 
-the root `readme.md#mascots` once listed `🧠 brain — for brains`. that entry was superseded by
-`rhachet-brains-bhrain` and pruned on 2026-08-30. 🧠 now marks rung 0 only.
+- the root `readme.md#mascots` once listed `🧠 brain — for brains`
+- that entry was superseded by `rhachet-brains-bhrain` and pruned on 2026-08-30
+- ⇒ 🧠 now marks rung 0 only
 
 ## .see also
 

@@ -10,26 +10,26 @@ term.synonyms.forbidden:
 - codify
 
 ## .what
-to **enskill** is to capture a repeated sequence of operations as a runnable artifact — the step
-off rung 0 (🧠 tribal knowledge) onto rung 2 (💪💧 a written skill).
+to enskill is to capture a repeated sequence of operations as a runnable artifact — the step off
+rung 0 (🧠 tribal knowledge) onto rung 2 (💪💧 a written skill).
 
-⚠️ **humans name the product many ways, and none of them is a rival term:**
+🟡 **humans name the product many ways, and none of them is a rival term:**
 
 | the human word | the frame it carries |
 |---|---|
-| a **standard operational procedure** (`SOP`) | the org's word — a procedure that is the standard |
-| a **tactic** | the practitioner's word — a move that works |
-| a **guide** | the reader's word — a path someone can follow |
-| **instructions** | the plainest word — do this, then this |
+| a standard operational procedure (`SOP`) | the org's word — a procedure that is the standard |
+| a tactic | the practitioner's word — a move that works |
+| a guide | the reader's word — a path someone can follow |
+| instructions | the plainest word — do this, then this |
 
-all four name **one artifact**: the enskilled sequence. no one of them is the canonical human word,
-so cite whichever fits the reader — and never treat any of them as a rival domain term.
+- all four name one artifact: the enskilled sequence
+- no one of them is the canonical human word, so cite whichever fits the reader — and treat none of
+  them as a rival domain term
 
-its pair is **entool** (rung 2 → 4, the UPGRADE half). enskill is the DISCOVER half.
+its pair is entool (rung 2 → 4, the UPGRADE half). enskill is the DISCOVER half.
 
-⚠️ rung 2 is 💧 **fluid** in rhachet's determinism terms. where the work needs judgment at several
-points, the artifact enskill produces is a **route** — 🔩 rigid, rung 3 — rather than a linear
-skill.
+🟡 rung 2 is 💧 fluid in rhachet's determinism terms. where the work needs judgment at several
+points, the artifact enskill produces is a route — 🔩 rigid, rung 3 — over a linear skill.
 
 ## .refs
 where the term composes declared contracts:

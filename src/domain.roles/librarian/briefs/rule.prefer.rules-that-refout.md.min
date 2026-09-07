@@ -1,0 +1,83 @@
+# rule.prefer.rules-that-refout
+
+> **a rule carries its CUE and refs out its ARGUMENT. the cue boots; the case for the cue does not.**
+
+```
+rule.$directive.$topic.md               # the CUE — say tier, resident
+define.$concept.md                      # the ARGUMENT + the demos — ref tier, fetched
+rule.$directive.$topic.example=$id.md   # ONE occurrence — ref (rule.require.rules-are-clusters)
+```
+
+⇒ a third axis beside `rules-are-clusters`. that splits the **class** from **one occurrence**; this splits the **cue** from the **case for the cue**, and it decides the boot tier.
+
+## .why — two readers, and they arrive at different moments
+
+| | the cue | the argument |
+|---|---|---|
+| who | an author, mid-sentence | a reader who disputes the rule, or first learns it |
+| how often | every turn | once |
+| a late arrival costs | the prose was already written | naught — they were not mid-sentence |
+
+⇒ **a cue that must be fetched has already lost the round**, and an argument that boots taxes a reader who did not ask. so it is a **placement** decision: a short argument still refs out, a long cue still stays.
+
+## .the test
+
+> **does this fire BEFORE the prose exists, or AFTER a reader disputes it?**
+
+before → the rule, say · after → the define, ref · you cannot say → argument, so it refs. the burden sits on residence.
+
+## .what each half holds
+
+| the rule — say | the define — ref |
+|---|---|
+| the claim, one line | the etymology, and the rejected peers |
+| the test that fires it | the worked pair — 👎 beside 👍, at length |
+| the cue table — `when… / then…` | the measured case, dated |
+| the shapes table — one line per detector | the counter-argument, stated fairly |
+| `blocker:` / `nitpick:` / `false positive:` | the boundary, argued |
+
+🟡 **the enforcement block stays with the rule, always** — a reviewer grades in the pass they read, so a fetched exemption list is one nobody consults.
+
+## .the cues
+
+| when… | then… |
+|---|---|
+| you reach for *"the reason this holds is…"* | 🔴 that sentence opens the define |
+| a rule runs past its siblings' median | measure its argument share first. the excess is usually the case for the rule |
+| a `define.$x` no rule cites | an orphan. either a rule is owed, or the define is not |
+| a rule has no define and its argument grows each round | the define is owed |
+| a define sits at **say** | read the exception. it is argued, never assumed |
+| a rule sits at **ref** | 🔴 the inversion. a cue must be resident or it does not fire |
+| you would cut a cue to reach a size target | forbidden — `rule.require.a-cue-is-not-a-claim`. move the argument |
+| a demo renders as a blockquote | it is still a **cue**. do not sort by markup |
+
+## 🟡 .the one exception — a FORM rendered reflexively
+
+a define whose subject is the shape every passage takes stays resident: you cannot reflexively render a form you must go fetch. the test is whether the reader must PRODUCE the subject or merely UNDERSTAND it — a form is produced, an etymology is understood.
+
+⇒ measured: `define.bulletize` (bhrain/role=telepath), **62% demo pairs**, which are cue-shaped.
+
+## .the failure modes
+
+| shape | what it costs |
+|---|---|
+| the **orphan rule** — no define | the argument accretes, and every boot pays |
+| the **orphan define** — no rule cites it | never fetched. written for nobody |
+| the **inverted pair** — define say, rule ref | the case boots and the cue is fetched |
+| the **mixed rule** — both in one resident file | 🟡 the one you actually have, and invisible until measured |
+
+## .the measurement
+
+sort each resident brief's lines: **cue** = a table row · a blockquote · a bullet · a `👎`/`👍` header · an enforcement line. **argument** = each other line.
+
+⇒ walked 2026-09-07, `bhrain/role=telepath`, 26 resident briefs: **108,701 chars, 46% argument.**
+
+🟡 a first pass returned 58% and was wrong — it counted demo pairs as argument. **verify the instrument before its output is a claim.**
+
+**the line that parts every case: would an author mid-sentence use this?** yes → a cue, resident however long · no, it is why they should → it refs out, however short.
+
+nitpick: an argument paragraph left in a resident brief · a define at say with no argued exception · a rule at ref · a define no rule cites · a rule whose argument grows each round with no define · an enforcement block moved to a define.
+blocker: a cue cut to reach a size target — `rule.require.a-cue-is-not-a-claim`'s, never this rule's.
+false positive: a define at say for a **form**, exception argued · a one-line ground beside a claim · a demo rendered as a blockquote.
+
+⇒ see also: `rule.require.rules-are-clusters` · `rule.require.catalog-is-an-index` · `rule.prefer.decompose-a-subject-via-suffixes` · `rule.require.a-cue-is-not-a-claim` (bhrain/role=learner).

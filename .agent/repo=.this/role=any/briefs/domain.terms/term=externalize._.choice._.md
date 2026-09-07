@@ -24,18 +24,18 @@ it is the **root of a family of verbs**, each of which externalizes at a differe
 
 | the verb | what it produces | the rung |
 |---|---|---|
-| `externalize.enbrief` | a brief — prethought **concepts** | 1 📚 |
-| `externalize.enskill` | a skill — prethought **capacity** | 2 💪💧 |
+| `externalize.enbrief` | a brief — prethought concepts | 1 📚 |
+| `externalize.enskill` | a skill — prethought capacity | 2 💪💧 |
 | `externalize.entool` | a tool — capacity at **no brain cost per use** | 3–4 🔩🪨 |
-| `externalize.pave` | a reusable **path**, for a traveler who never had the lesson | any |
-| `externalize.learn` | **durable retention**, so a lesson is not re-derived | any |
+| `externalize.pave` | a reusable path, for a traveler who never had the lesson | any |
+| `externalize.learn` | durable retention, so a lesson is not re-derived | any |
 
 ## .why it is the BOUNDARY of that family
 
 the family is a family of **acts**. so its boundary must name an act, and `externalize` is the act
 every member is a specialization of.
 
-⚠️ the rejected alternative was `knowledge.` — *what the artifact holds*. **it names the substance
+🟡 the rejected alternative was `knowledge.` — *what the artifact holds*. **it names the substance
 an act operates on, never the act**, so it is the boundary of the artifacts these verbs produce and
 not of the verbs themselves.
 

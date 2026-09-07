@@ -49,7 +49,7 @@ knowledge; **enskill is the step off rung 0.**
 > **"could the next traveler run this without me in the room?"**
 
 - **yes, from what is written** → it is enskilled
-- **yes, but they would need to ask me one question** → 🔴 **that question is the whole point.** it
+- **yes, but they would need to ask me one question** → **that question is the whole point.** it
   marks the undiscoverable step, which is precisely what the skill exists to carry
 - **no, it needs judgment at one point** → it is judgment, not a tactic. leave it with the brain and say so
 - **no, it needs judgment at SEVERAL points, in an order that matters** → 🗿 **a route.** the
@@ -79,7 +79,7 @@ every stone; what the route retires is the overhead around it:
 ⇒ **a skill paves a sequence of commands. a route paves a sequence of judgments.** both are
 enskilled work; they differ in what walks them.
 
-⚠️ **and a route IS a 🔩 rigid skill — rung 3, not a category beside the ladder.** its stones,
+🟡 **and a route IS a 🔩 rigid skill — rung 3, not a category beside the ladder.** its stones,
 order, and guards are deterministic and they *drive* the brain through the probabilistic work: the
 guard refuses, the prefix computes what is next, the stophook re-emits the current stone. a
 deterministic transport with probabilistic cargo (`philosophy.entoolment-is-the-pinnacle`).
@@ -105,7 +105,7 @@ the most expensive mode there is, and its cost is paid **per traveler**.
 the exploration happened anyway. to end it with a paved route rather than only a finished task is
 what turns a one-time cost into a permanent asset.
 
-⚠️ **do not route what could be entooled.** a route around deterministic work is ceremony that
+🟡 **do not route what could be entooled.** a route around deterministic work is ceremony that
 charges imagine cost at every stone. reach for a route only where the judgment is real.
 
 ## .what a skill owes on arrival

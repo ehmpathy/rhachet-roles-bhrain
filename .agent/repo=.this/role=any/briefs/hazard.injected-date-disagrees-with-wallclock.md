@@ -25,39 +25,41 @@ this is the whole diagnostic, and it is mechanical rather than clever:
 > **a hook that re-fires immediately after a fresh write reports a real gap at an address you did
 > not write to.**
 
-⚠️ **do not read it as a flaky hook and do not redo the work.** the content was correct; the
+🟡 **do not read it as a flaky hook and do not redo the work.** the content was correct; the
 *address* was wrong. one `globsafe --long` separates the two, and the mtime of the file you just
 wrote is the authoritative clock — that write is the one event whose time is known.
 
 ## .why it happens
 
-the session context carries a `currentDate`. it is a **summary of the world**, produced once, and
-it can be days behind the machine. a hook does not read it — a hook calls the clock.
-
-⇒ so two actors compute the same fact from different sources, and only one of them decides where
-a file must sit.
+- the session context carries a `currentDate` — a **summary of the world**, produced once
+  - it can be days behind the machine
+- a hook does not read it. a hook calls the clock
+- ⇒ so two actors compute the same fact from different sources, and only one of them decides where
+  a file must sit
 
 ## .the measured case
 
-**2026-08-30.** session context read `Today's date is 2026-08-28`. four learner articulations were
-appended to `progress.2026-08-28.md`. the sweephook looked for `progress.2026-08-30.md`, found
-none, and graded the distillation **stale** — correctly. it re-fired within seconds of each write.
+**2026-08-30.** session context read `Today's date is 2026-08-28`.
 
-⇒ **four correct articulations, written to an address no reader visits.** that is the same defect
-class as a brief wired into a role with no `boot.yml`: the content is right and it reaches no one.
+- four learner articulations were appended to `progress.2026-08-28.md`
+- the sweephook looked for `progress.2026-08-30.md`, found none, and graded the distillation
+  **stale** — correctly. it re-fired within seconds of each write
+- ⇒ **four correct articulations, written to an address no reader visits** — the same defect class
+  as a brief wired into a role with no `boot.yml`: the content is right and it reaches no one
 
-⚠️ and the record could not be fully repaired. **one mtime cannot date four appends**, so the true
-day of each is unknown, and the file now says so rather than a guess. a fabricated timeline is
-worse than an absent one.
+🟡 and the record could not be fully repaired:
+
+- **one mtime cannot date four appends**, so the true day of each is unknown
+- the file now says so rather than a guess — a fabricated timeline is worse than an absent one
 
 ## .the cues — when → then
 
 | when… | then… |
 |---|---|
-| you are about to write a **`$date`-named** file | derive the date from a fresh mtime, never from context |
-| a hook **re-fires seconds** after you satisfied it | 🔴 check the address before you redo the work |
+| you are about to write a `$date`-named file | derive the date from a fresh mtime, never from context |
+| a hook re-fires seconds after you satisfied it | 🔴 check the address before you redo the work |
 | you are about to append to a `progress.$date.md` | confirm `$date` is today's, by the filesystem |
-| you must reconstruct **when** several past writes happened | you cannot — one mtime dates one event. say unknown |
+| you must reconstruct when several past writes happened | you cannot — one mtime dates one event. say unknown |
 
 ## .the parent claim
 

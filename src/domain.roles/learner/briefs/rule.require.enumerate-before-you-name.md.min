@@ -22,7 +22,7 @@ not the reverse. a word chosen against the one instance in front of you has been
 - covers every row **and** every adjacent concept → **too wide.** it is the genus; you need the differentia
 - covers every row and excludes the neighbours → the word holds
 
-⚠️ **step 1 is the one that gets skipped**, because the instance in hand feels like the category. it is not; it is one member of it.
+🟡 **step 1 is the one that gets skipped**, because the instance in hand feels like the category. it is not; it is one member of it.
 
 ## .the worked case — `degenerate` vs `specialized`
 
@@ -33,7 +33,7 @@ the candidate was `degenerate` — a real term of art, and it fit the first inst
 | a skill that computes its setup, then hands one probabilistic step to a brain | ✅ a route reduced to **one stone** | ✅ |
 | a wrapper that batches the deterministic half | 🔴 **no** — an all-deterministic route is complete, not reduced | ✅ |
 
-⇒ **`degenerate` broke on row 2, and row 2 was invisible until it was written down.** the table took one minute; the wrong word would have shipped in a published brief cited from three others.
+⇒ **`degenerate` broke on the wrapper, and that shape was invisible until it was written down.** the table took one minute; the wrong word would have shipped in a published brief cited from three others.
 
 ## .the peer cases — the same test, the opposite failure
 

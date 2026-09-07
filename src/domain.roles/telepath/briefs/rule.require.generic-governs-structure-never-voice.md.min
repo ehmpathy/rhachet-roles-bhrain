@@ -18,7 +18,7 @@ corporate style guide alike. so the rule is written once and adopted everywhere.
 
 **a voice rule is repo-specific by nature.** 🦉 belongs to this repo and 🐢 to `ehmpathy`; lowercase
 is a house style, not a transfer property. the moment a generic carries one, a repo that wants the
-structure must take the foreign voice with it **or fork the rule — and a forked rule drifts** on the
+structure must take the foreign voice with it or fork the rule — and a forked rule drifts on the
 structural half, which is the half that was worth a shared home.
 
 ⇒ **the seam is what makes the role reusable.** cross it and telepath becomes a second persona
@@ -26,42 +26,58 @@ brief, which every repo already has.
 
 | when… | then… |
 |---|---|
-| you reach for an **emoji** in a telepath prescription | 🔴 that is voice. state the structural property; let the adopter's mascot supply the glyph |
+| you reach for an emoji in a telepath prescription | that is voice. state the structural property; let the adopter's mascot supply the glyph |
 | you write *"say it in lowercase"* or *"open with the mascot"* | voice — it belongs in `im_a.<mascot>` |
 | you write *"lead with the point, then the detail"* | structure — it is telepath's |
-| an **example** needs a concrete message to show the shape | ✅ use this repo's voice — an example illustrates, it does not prescribe |
+| an example needs a concrete message to show the shape | use this repo's voice — an example illustrates, it does not prescribe |
 | a repo adopts a rule and its output looks wrong | check which axis broke. wrong order = telepath's defect. wrong glyph = the mascot's |
 
 ## .the test
 
 > **would this rule read the same if the reader's mascot were a seaturtle instead of an owl?**
 
-yes → **structure.** it is telepath's · no → **voice.** it belongs to whichever repo adopts it
+yes → structure. it is telepath's · no → voice. it belongs to whichever repo adopts it
 
-## .examples
+## .examples — one rule, written three ways
 
-👍 **structure stated, voice left open** — *"lead with the answer. the reader's first line is the one
-they came for; the reason follows it."* an owl obeys in lowercase with a 🦉; a seaturtle with a 🐢.
-the rule did not say.
+| the specimen | the prescription | what an adopter can do with it |
+|---|---|---|
+| 👍 the bare rule | *"lead with the answer; the reason follows it"* | an owl obeys in lowercase with a 🦉, a seaturtle with a 🐢. the rule did not say, so both adopt it unchanged |
+| 👎 the leaked rule | *"lead with the answer, in lowercase, prefixed with 🦉"* | `ehmpathy` cannot take it and keep its own mascot, so it forks — and the two copies drift on the structural half |
+| 👍 the demoed rule | *"an error names the fix, not merely the symptom"*, demoed as `🦉 bummer — no route bound. bind one with: rhx route.bind.set --route <path>` | the rule wears no voice and travels; only its example does |
 
-👎 **voice smuggled in** — *"lead with the answer, in lowercase, prefixed with 🦉."* now `ehmpathy`
-cannot adopt it and leave this repo's mascot behind, so it forks — and the two copies drift on the
-structural half.
+⇒ **the demoed rule is the one to hold.** the bare and the leaked part a good rule from a bad one;
+the demoed one shows that a concrete example is not a leak — an example illustrates, and only a
+prescription binds.
 
-👍 **voice in the EXAMPLE, structure in the rule** — the rule reads *"an error names the fix, not
-merely the symptom"*; its example reads `🦉 bummer — no route bound. bind one with: rhx
-route.bind.set --route <path>`. the example must be concrete; the rule above it wears no voice, so
-it travels.
+## 🟡 .the owed migration
 
-## ⚠️ .the owed migration
+> **the output-half generics are not here yet. their move is owed and not yet done.**
 
-the output-half generics live in `ehmpathy`'s mechanic + architect roles under `lang.prose/` — where
-they sit beside `lang.tones/`, that repo's **voice** cluster. that co-location is exactly this seam,
-already observed in practice by another repo. **their migration here is owed and not yet done**;
-when it happens, `lang.prose/` moves and `lang.tones/` stays.
+they live in `ehmpathy`'s mechanic + architect roles under `lang.prose/` — beside `lang.tones/`,
+that repo's voice cluster.
 
-blocker: a telepath rule that prescribes an emoji, a capitalization, a persona, or a mascot line —
-it is voice, and it makes the rule unadoptable · a mascot brief that prescribes message order,
-length, or passage placement — it is structure, and it will drift from the generic that owns it.
-false positive: a telepath **example** written in the adopter's voice — an example must be concrete
-to illustrate at all.
+⇒ that co-location is this seam, drawn independently by another repo. when the move happens,
+`lang.prose/` comes and `lang.tones/` stays.
+
+## 🟡 .the voice row is declared in ONE cell — cite it, never copy it
+
+a peer rule that restates the members will drift from them, and the drift is silent: no reader ever
+holds two copies at once, so a copy that is short one member reads as complete.
+
+⇒ **so every rule in this canon points at the table above rather than re-lists it.**
+
+measured 2026-09-07, across telepath's briefs: **18** source files restated the four members in
+`.the axis`, and **2** had already drifted — `forbid.absolutes` wrote `glyph` where the row says
+`emoji`; `forbid.emphasis-noise` wrote `glyph, case, or persona`, two members renamed and
+`mascot line` dropped, so a copy short one member read as complete. no `.md.min` restated it.
+
+⇒ **each copy was authored by someone who had just read the row, and two drifted anyway.** a copy
+must be re-checked on every edit; a reference cannot go stale.
+
+blocker: a telepath rule that prescribes a member of the **voice** row — it makes the rule
+unadoptable · a mascot brief that prescribes message order, length, or passage placement — it is
+structure, and it will drift from the generic that owns it · a peer rule that restates the voice row
+rather than cites it.
+false positive: a telepath example written in the adopter's voice — an example must be concrete to
+illustrate at all.

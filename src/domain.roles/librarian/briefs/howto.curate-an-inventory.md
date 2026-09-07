@@ -1,12 +1,13 @@
-# howto: curate an inventory 📚🗂️
+# howto: curate an inventory 📚
 
 ## .what
 the moves that take a concept from "we know some of its entries" to an addressable census.
 
 ## .why
-an inventory's value is its **completeness** and its **addressability**. both are properties of
-how it is built, not of how carefully it is written — so the moves matter.
-see `kno601.inventories._.kind=article` for the full why.
+
+- an inventory's value is its **completeness** and its addressability
+- both are properties of how it is BUILT, never of how carefully it is written
+- ⇒ so the moves matter, and `kno601.inventories._.kind=article` carries the full why
 
 ---
 
@@ -19,18 +20,20 @@ see `kno601.inventories._.kind=article` for the full why.
 - **closed** — `status` ∈ {QUEUED, CLAIMED, DELIVERED}. every position is known
 - **open** — `topic` ∈ {…whatever anyone writes about}. not inventoriable
 
-⛔ if any dimension is open, **stop**. build a catalog of what is known, or an `example=` set. a
-census claimed over an open dimension reports gaps that may not exist.
+⛔ if any dimension is open, **stop**:
+
+- build a catalog of what is known, or an `example=` set
+- ⇒ a census claimed over an open dimension reports gaps that may not exist
 
 ### 1b. then pick the archetype — inventory or catalog
 
 > **does a reader need a preview of each entry, or only its address?**
 
-- **an address suffices** → **inventory**. ref-only, so it scales without bound at the `ref` tier
-- **they need each member's shape at once** → **catalog**. a catalog is an inventory **plus a
-  preview per entry**; the previews cost more and buy a dereference saved
+- an address suffices → **inventory**. ref-only, so it scales without bound at the `ref` tier
+- they need each member's shape at once → **catalog**. a catalog is an inventory plus a preview
+  per entry; the previews cost more and buy a dereference saved
 
-⚠️ this is a **budget** call, not a rigor call — both enumerate fully. and it is the axis that
+🟡 this is a **budget** call, not a rigor call — both enumerate fully. and it is the axis that
 separates the two archetypes, so decide it here rather than let previews accrete later.
 
 ### 2. name the dimensions, not the entries
@@ -57,7 +60,7 @@ write the cell list from the product of the axes. for each cell, one of three ou
 | **forbidden** | the combination cannot exist | an invariant — record it, do not skip it |
 | **empty** | it could exist and does not | 🔴 **a gap** — the inventory's most valuable output |
 
-⚠️ **the empty cells are the point.** a grouped list would never have surfaced them. do not
+🟡 **the empty cells are the point.** a grouped list would never have surfaced them. do not
 quietly omit a cell because you found no entry — an omitted cell reverts the inventory to a
 catalog, and its census claim silently becomes false.
 
@@ -73,7 +76,7 @@ inventory.of=radio-task-transition.from=QUEUED.into=DELIVERED.md     # forbidden
 inventory.of=radio-task-transition.from=CLAIMED.into=DELIVERED.md    # occupied
 ```
 
-⚠️ **a flat cluster, never a directory.** the summary takes `._.` and its entries are its peers
+🟡 **a flat cluster, never a directory.** the summary takes `._.` and its entries are its peers
 (`rule.require.summary-at-the-cluster-root`) — which is what lets a reader compute the summary's
 path from the concept alone.
 

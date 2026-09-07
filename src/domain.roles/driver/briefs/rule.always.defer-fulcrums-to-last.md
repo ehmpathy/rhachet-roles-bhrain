@@ -43,7 +43,7 @@ to work built on top. it is **dirty** when reversal costs more than the reversal
 | **clean** | a rename, a swapped default, a re-scoped boundary that does not ripple |
 | **dirty** | many callers have hardened against the choice, or later work is built upon it, so reversal forces a teardown |
 
-⚠️ **the pair is `clean` / `dirty`, never `clean` / `not clean`.** a position named by the
+🟡 **the pair is `clean` / `dirty`, never `clean` / `not clean`.** a position named by the
 negation of its opposite is not a position — it is an absence, and an absence cannot be sorted
 on, filtered for, or read at a glance. `dirty` names what the row **is**
 (`rule.prefer.symmetric-term-pairs`, ergonomist).

@@ -7,7 +7,7 @@ so their output may be used as a **pointer** and never as **evidence**:
 
 | the use | verdict |
 |---|---|
-| find a URL, a name, a lead — then fetch it with `bhrowser` | ⚠️ **tolerated, never the default** |
+| find a URL, a name, a lead — then fetch it with `bhrowser` | 🟡 **tolerated, never the default** |
 | quote it, cite it, or draw a conclusion from it | 🔴 **forbidden** |
 | assert what a source says, on their output alone | 🔴 **forbidden** |
 | assert what **no** source says, on their output alone | 🔴 **forbidden** |
@@ -43,7 +43,7 @@ about the wrong three sources, with no bound reported.
 ⇒ **a summary that omits and a summary that invents are indistinguishable from a faithful read**,
 because all three arrive in the same shape. that is `rule.forbid.failhide` at the evidence layer.
 
-⚠️ **and it compounds downstream, which is what earns a blocker.** a citation is a promise the next
+🟡 **and it compounds downstream, which is what earns a blocker.** a citation is a promise the next
 reader inherits without a re-check. a paraphrase cited as a quote is therefore not one defect — it
 is **one defect per future reader, forever**, and no one of them can see it.
 
@@ -70,10 +70,10 @@ manufacture that artifact on every call**, and their output carries no tell at a
 
 > **"did I read the page, or did I read an account of the page?"**
 
-the page → cite it · an account → 🔴 **fetch the page.** the account may be right, and you cannot
+the page → cite it · an account → **fetch the page.** the account may be right, and you cannot
 tell · you cannot answer → you already lost the provenance. re-fetch
 
-⚠️ answerable **at the moment of the call**, and near-unanswerable an hour later — which is why it
+🟡 answerable **at the moment of the call**, and near-unanswerable an hour later — which is why it
 is a cue rather than a review item.
 
 blocker: a quotation, a blockquote, or a `"per <source>"` claim built on their output · a conclusion

@@ -41,10 +41,10 @@ no → move on
 
 lesson learned but not externalized = violation of learner purpose
 
-## 🔴 .this is the PARENT — three zoom-ins sharpen it by lesson KIND
+## .this is the PARENT — three zoom-ins sharpen it by lesson KIND
 
-⚠️ **this rule is named for the genus.** `externalize` is the family
-(`term=externalize._.choice._.md`) and the act it governs is **`enbrief`** — one member of it. so a
+🟡 **this rule is named for the genus.** `externalize` is the family
+(`term=externalize._.choice._.md`) and the act it governs is `enbrief` — one member of it. so a
 reader who arrives here holds the general claim and not the cue that fires on their case.
 
 | the lesson you hold is about | reach for |
@@ -58,7 +58,7 @@ reader who arrives here holds the general claim and not the cue that fires on th
 needs its nature/nurture label and its counter-argument; a term needs its `.reason` cluster; a
 glyph needs its catalog row. the general claim *"write it down"* names not one of them.
 
-⚠️ **and capture the ARGUMENT, never merely the conclusion.** a conclusion with no argument
+🟡 **and capture the ARGUMENT, never merely the conclusion.** a conclusion with no argument
 attached gets re-litigated — or quietly reversed by a reader who only ever saw the conclusion.
 
 ## .see also

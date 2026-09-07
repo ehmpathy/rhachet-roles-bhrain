@@ -1,0 +1,62 @@
+# rule.require.purpose-first
+
+> **establish why it needs to be said at all. THEN measure the prose against how directly it fulfills that.**
+
+two acts, in order. the first is a habit most authors half-hold; the second is one no other rule performs.
+
+⇒ the four grades, the demos, and the boundary: `define.purpose-first` (ref).
+
+## .the two acts
+
+| # | the act | when | the question |
+|---|---|---|---|
+| 1 | establish | before any prose exists | *why does this need to be said at all?* |
+| 2 | measure | after it exists | *how directly does this prose fulfill that?* |
+
+🟡 **the purpose is a yardstick, not a prompt.** a prompt is consumed once; a yardstick is applied to every line. that is what parts this rule from *"think before you write"*.
+
+## .the `displaced` grade is where good authors lose
+
+| grade | the passage | the repair |
+|---|---|---|
+| direct | goes straight at the purpose | leave it |
+| a lap | reaches it the long way | cut to the line that carries it |
+| displaced | serves a *different* purpose, and serves it well | move it to the passage whose purpose it serves |
+| none | serves no purpose you can name | cut it |
+
+🟡 **a `displaced` passage is invisible without step 1:**
+
+- it is true, tight, and well-made
+- ⇒ so every rule that grades a property of the *words* passes it
+- only a stated purpose reveals it is aimed elsewhere
+
+⇒ that is this rule's whole claim: **every other rule grades the words; this grades whether they are aimed at the target.**
+
+## .the test
+
+> **1. state the purpose in one line — as the READER'S decision, never the passage's subject.**
+> **2. then, per passage: which of the four grades?**
+
+*"to explain the reviewer"* is a subject and it grades naught. *"so an adopter can decide whether to wire it"* is a purpose, and it grades every line.
+
+| when… | then… |
+|---|---|
+| a **template** names a section | the strongest cue. state its purpose, or write `none` and drop it |
+| you cannot state the purpose in one line | you hold a subject, not a purpose. drill again |
+| a passage is true, tight, and you cannot cut it | check grade 3 — it may serve a *different* purpose well |
+| you state the purpose *after* the prose | that justifies rather than measures. establish it first |
+| you would call a passage *"too long"* | long compared to *what?* the purpose is the baseline |
+| the concept sharpens mid-draft | revise the purpose, then re-measure. it is a yardstick, not a vow |
+
+## .why it fires first
+
+it supplies `rule.forbid.subversive-prose` its baseline: **elongation and encirclation are defined relative to a purpose.** a canon that never establishes one cannot call a passage long.
+
+⇒ so its position is no preference — every later rule measures against what this one named. the full order is declared once, in the role's `readme.md`.
+
+
+blocker: a section that exists because a template named it · a passage whose purpose you cannot state · a displaced passage left in a home whose purpose it does not serve · a purpose stated as a subject rather than as a reader's decision.
+nitpick: a purpose stated after the draft rather than before it.
+false positive: a purpose revised mid-draft as the concept sharpens · a passage that serves its purpose in more words because the purpose genuinely demands them.
+
+⇒ see also: `define.purpose-first` · `rule.require.elucidation` · `rule.require.distillation` · `rule.forbid.subversive-prose` · `rule.require.place-a-passage-by-its-subject`.

@@ -36,11 +36,11 @@ reads.
 ⇒ **a seed is unrefined source; a dream is deferred work.** to merge them would forbid the one
 property each has that the other must not: a seed may never be edited, and a dream must be.
 
-⚠️ **they meet at exactly one point.** a `reseed` dream is a dream *whose eventual form is a seed
+🟡 **they meet at exactly one point.** a `reseed` dream is a dream *whose eventual form is a seed
 in another repo* — caught here as work, transmitted there as input. the kind marker names that
 move, which is why `reseed` is a kind of dream rather than a kind of seed.
 
-## ⚠️ .caught vs dispatched — two states, and the split is decisive
+## 🟡 .caught vs dispatched — two states, and the split is decisive
 
 | state | what holds |
 |---|---|
@@ -50,7 +50,7 @@ move, which is why `reseed` is a kind of dream rather than a kind of seed.
 a `reseed` dream that reads as dispatched, when it was only caught, asserts a delivery no peer repo
 has received. that is the same defect class as a close with no claim behind it.
 
-⚠️ **a blocked push is a `constraint`, never a malfunction** — a legitimate hold with a named fix,
+🟡 **a blocked push is a `constraint`, never a malfunction** — a legitimate hold with a named fix,
 per `term=route.guard.review.malfunction` and `rule.require.exit-code-semantics`. read the error's
 class before you diagnose a broken tool, and read the policy (`rhx radio.uses get`) before you
 read the error at all.
@@ -67,12 +67,12 @@ here per `rule.require.boundary-qualified-terms`, and closed once `term=artifact
 | root (dropped) | `dream` is a repo-wide primitive, like `seed` | reads as an evasion unless argued | 🔴 rejected |
 | `artifact.` | a dream is a durable file the repo keeps, exactly as a brief or a fulcrum is | it was not a declared term | ✅ **taken — the term was paved** |
 
-⇒ the `route.` candidate reads best at first and is the weakest: it names **where the dream was
-noticed**, and a boundary must name **where the word means what it means**. a dream outlives its
+⇒ the `route.` candidate reads best at first and is the weakest: it names where the dream was
+noticed, and a boundary must name where the word means what it means. a dream outlives its
 route by design — which is precisely why the ancestor had to be wider than a route.
 
-⚠️ **the settlement was not this cluster's alone.** `term=artifact.withdraw` carried the identical
-gap and named the identical candidate. **two clusters blocked on one absent ancestor** is what
+🟡 **the settlement was not this cluster's alone.** `term=artifact.withdraw` carried the identical
+gap and named the identical candidate. two clusters blocked on one absent ancestor is what
 made `artifact` a term the glossary owed rather than a guess
 (`term=artifact._.choice.reason.md`).
 

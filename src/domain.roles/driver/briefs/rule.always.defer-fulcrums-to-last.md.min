@@ -10,7 +10,7 @@ a design fulcrum surfaces mid-drive: best-guess it, flag it, drive on. fulcrum r
 
 **clean** = a rename, a swapped default, a re-scoped boundary that does not ripple.
 **dirty** = callers hardened against it, or later work built upon it, so reversal is a teardown.
-⚠️ the pair is `clean`/`dirty`, never `clean`/`not clean`.
+🟡 the pair is `clean`/`dirty`, never `clean`/`not clean`.
 
 unsure → treat it as clean and flag it. a flagged clean rework costs a glance; a premature block costs the road its momentum.
 

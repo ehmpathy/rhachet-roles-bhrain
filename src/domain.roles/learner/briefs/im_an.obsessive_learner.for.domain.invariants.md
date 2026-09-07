@@ -35,7 +35,7 @@ guarantees. examples already declared:
 same obsession, same durable-retention drive — just a structured subtype with its own home. where
 a **term** answers "what do we call this?", an **invariant** answers "what must always be true?".
 
-## ⚠️ .the frame — every invariant is ordained by NATURE or by NURTURE
+## 🟡 .the frame — every invariant is ordained by NATURE or by NURTURE
 
 **label the kind. it is the first field, and it governs every future argument about the rule.**
 
@@ -86,14 +86,14 @@ each invariant is a `define.invariant.<scope>.md` brief that holds:
 2. **.kind** — `nature` or `nurture`, plus one sentence on why that kind
 3. **.invariant** — the rule stated formally (a biconditional `A ⟺ B`, or a constraint)
 4. **.why** — why the domain depends on it; often a past incident or a stated intent
-5. **.scope** — 🔴 **what the invariant does NOT cover**
+5. **.scope** — what the invariant does **NOT** cover
 6. **.the litigation** — who argued what, against what, and what settled it. quote the human
    **verbatim** where they closed it; the exact words carry the reason
 7. **.the counter-argument** — the strongest case against it, stated fairly
 8. **.what would overturn it** — the admissible argument, per the nature/nurture table above
 9. **.enforcement** — what a violation is, so a reviewer can check it
 
-### ⚠️ fields 5, 7, and 8 are the ones a conclusion-only rule always omits
+### 🟡 fields 5, 7, and 8 are the ones a conclusion-only rule always omits
 
 and they are exactly the three a re-litigation needs. a rule that states only its conclusion will
 be re-argued — and **the second argument will not have the evidence the first one had.**

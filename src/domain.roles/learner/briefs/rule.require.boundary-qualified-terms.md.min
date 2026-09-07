@@ -1,12 +1,41 @@
 # rule.require.boundary-qualified-terms
 
-a term carries its FULL boundary ancestry in its filename, always — never only where it collides.
+> **a term carries its FULL boundary ancestry in its filename, always — never only where it collides.**
 
 ✅ `term=route.guard.rung._.choice._.md`
-👎 `term=rung` · `term=guard.rung` (cut short) · a leading `repo` (universal)
+👎 `term=rung` · `term=guard.rung` (cut short) · `repo` at the head (universal)
 
-test: **"$word, of WHAT?"** — one word = the boundary · a sentence = undiscovered, record the gap · two answers = two senses, two clusters
+boundary = **SUBDOMAIN** (`review.rung`), never ROLE (`driver.rung`) — a role fails on the very case the rule exists for, a word two roles share.
 
-boundary = SUBDOMAIN (`review.rung`), never ROLE (`driver.rung`).
+## .the test
 
-blocker: absent `term.boundary` · a flat or truncated filename · a boundary naming no declared term · a bulk find-and-replace
+> **"$word, of WHAT?"**
+
+one word → that is the boundary; write it into `term.boundary` · only a sentence → undiscovered, so record the gap in the `.reason` with its candidates · two answers → two senses, one cluster each.
+
+🟡 **answerable at authorship, which is the whole point.** a collision found later costs a rename plus every citation; a boundary named up front costs one word.
+
+## .the cues
+
+| when… | then… |
+|---|---|
+| you **pave a new term** | 🔴 name its boundary first, then the word. it is not a suffix you add later |
+| you cannot name the boundary in one word | 🔴 the strongest signal there is — a discovery gap, not a name gap |
+| two candidate boundaries both fit | the term does two jobs. split it, one per boundary |
+| you **touch** a flat term's cluster for any reason | fix it forward — rename on the way through, files first |
+| you cite a term in a `.refs` or `.see also` | cite the qualified form; an unqualified citation relocates the ambiguity |
+| a term's boundary is *this repo itself* | it still gets one. `repo` is a boundary; *"it is obvious"* is not |
+| you would rename several clusters at once | 🔴 a sweep cannot part a citation of a flat term from an instance of one |
+
+## 🔴 .a FAMILY is settled once, never one term at a time
+
+terms that share one ladder and one verb-shape share one boundary decision. a per-term guess fractures a family that is coherent today, and the fracture is invisible until a reader slices on the prefix and gets half the set.
+
+## 🔴 .answer from the term's own `.what`, never from the family it sits near
+
+**a gap claimed from adjacency is a gap that was never checked.** `body` reads as the `en-` family's subject and declares *"the body of a captured skill stdout"* — boundary `stdout`, in one word.
+
+blocker: a cluster header with no `term.boundary` · a flat filename on a settled term · one segment where the ancestry is deeper · a `repo` segment at the head · a segment that reaches no declared root · a role as a boundary · a boundary answered only in a sentence with no gap recorded · an unqualified citation · a bulk find-and-replace.
+false positive: a deep path whose every segment is a real ancestor · a genuinely UNSETTLED boundary left flat with the gap recorded · an untouched extant term.
+
+⇒ see also: `rule.forbid.domain-term-synonyms` (the peer — it bans one word for two concepts; this makes both senses expressible) · `rule.forbid.domain-term-ambiguity` · `rule.require.domain-term-itemization` · `template.domain-term`.

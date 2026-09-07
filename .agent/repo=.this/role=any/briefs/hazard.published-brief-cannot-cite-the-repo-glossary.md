@@ -2,19 +2,19 @@
 
 ## .what
 
-a brief under `src/domain.roles/<role>/briefs/` **publishes**. a term cluster under
-`.agent/repo=.this/role=any/briefs/domain.terms/` **does not**.
+a brief under `src/domain.roles/<role>/briefs/` publishes. a term cluster under
+`.agent/repo=.this/role=any/briefs/domain.terms/` does not.
 
-so a citation that crosses that line resolves for us and dereferences to no match for every
-external consumer of the package.
+⇒ **so a citation that crosses that line resolves for us and dereferences to no match for every
+external consumer of the package.**
 
 | tree | publishes? | why |
 |---|---|---|
 | `src/domain.roles/<role>/briefs/` | ✅ yes | `npm run build` rsyncs `src/` → `dist/`, and `dist/` is what ships |
-| `.agent/repo=.this/role=any/briefs/` | 🔴 **never** | it sits **outside `src/`**, so no rsync reaches it |
+| `.agent/repo=.this/role=any/briefs/` | 🔴 never | it sits outside `src/`, so no rsync reaches it |
 
-⚠️ **verified, not assumed.** a glob for `dist/**/term=*` returns exactly one file — an unrelated
-thinker brief. **zero `term=*._.choice.*` cluster files reach `dist/`.**
+🟡 verified, over assumed: a glob for `dist/**/term=*` returns exactly one file — an unrelated
+thinker brief. zero `term=*._.choice.*` cluster files reach `dist/`.
 
 ## .why it bites
 
@@ -40,29 +40,31 @@ it exists and they cannot reach it.
 ⇒ **for a term whose home is correct, the fix is (a) or (b).** a citation that dereferences to no
 match is the defect this brief names, and both moves close it today.
 
-⚠️ **but not every term's home IS correct** — see below. where the word itself belongs in the
+🟡 **but not every term's home IS correct** — see below. where the word itself belongs in the
 published tree, (a) and (b) treat a symptom.
 
 ## 🔴 .the glossary splits two ways, and only one half is correctly unpublished
 
 | the term | who it serves | unpublished is |
 |---|---|---|
-| `term=route.stone`, `term=route.guard.*`, `term=glossary.sweep.*` | **this repo's own machinery** — a stone, a guard, a sweep are bhrain concepts | ✅ correct |
-| `term=artifact.tool`, `term=artifact.tool.skill`, `term=enbrief` / `enskill` / `entool`, `term=pave` | **org-wide practice vocabulary** — the words a PUBLISHED brief teaches | 🔴 **wrong** |
+| `term=route.stone`, `term=route.guard.*`, `term=glossary.sweep.*` | this repo's own machinery — a stone, a guard, a sweep are bhrain concepts | ✅ correct |
+| `term=artifact.tool`, `term=artifact.tool.skill`, `term=enbrief` / `enskill` / `entool`, `term=pave` | org-wide practice vocabulary — the words a PUBLISHED brief teaches | 🔴 **wrong** |
 
-⇒ **the second row is the one that bites.** `philosophy.entoolment-is-the-pinnacle` ships to every
-consumer and teaches `entool`, `enskill`, and the tool/skill split — and **the clusters that
-declare those words do not ship with it.** so a consumer is taught a vocabulary and handed no
-glossary for it. that is not a citation defect; it is a **home** defect, and moves (a) and (b)
-cannot reach it.
+⇒ **the second row is the one that bites:**
 
-**the axis is mechanical, not a taxonomy judgment:** does a published brief teach the word? then
-the word must publish. a `Grep`, never an opinion.
+- `philosophy.entoolment-is-the-pinnacle` ships to every consumer and teaches `entool`, `enskill`,
+  and the tool/skill split
+- and the clusters that declare those words do not ship with it
+- ⇒ so a consumer is taught a vocabulary and handed no glossary for it
+  - that is a **home** defect, never a citation one, and moves (a) and (b) cannot reach it
+
+the axis is mechanical, over a taxonomy judgment: **does a published brief teach the word? then the
+word must publish.** a `Grep`, never an opinion.
 
 ### the third move, for a home defect
 
-a brief can live in `src/` (so it publishes) **and** be symlinked into `.agent/` (so it boots
-here). **seven files already do this** — censused from
+a brief can live in `src/` (so it publishes) *and* be symlinked into `.agent/` (so it boots here).
+seven files already do this — censused from
 `git ls-files -s '.agent/repo=.this/role=any/briefs'`, every `120000` row:
 
 | the link | its source role |
@@ -78,11 +80,11 @@ here). **seven files already do this** — censused from
 ⇒ **both term RULES are on that list. only the term CLUSTERS are left behind** — which is the
 shape of the defect: the discipline ships and the vocabulary it governs does not.
 
-⇒ so the third move is **already in use for this exact directory's rules.** what stops a sweep is
-cost, never possibility: the split touches the `boot.yml` globs, `domainTermsBootReachability`, and
+⇒ so the third move is already in use for this exact directory's rules. what stops a sweep is cost,
+never possibility: the split touches the `boot.yml` globs, `domainTermsBootReachability`, and
 `genDomainTermsScaffold`.
 
-⚠️ **safe, and not clean** — caught as `.dream/v2026_08_31.enbrief.org-wide-terms-do-not-publish.md`.
+🟡 safe, and not clean — caught as `.dream/v2026_08_31.enbrief.org-wide-terms-do-not-publish.md`.
 
 ## .what is NOT a violation
 
@@ -102,7 +104,7 @@ the violation is a reference the reader is told to **go read**: `` (`term=skill`
 rhx grepsafe --pattern 'term=[a-z]' --path src/domain.roles --glob '*.md'
 ```
 
-⚠️ **scope with `--path`, never with a slash in `--glob`.** `grepsafe --glob` matches the
+🟡 **scope with `--path`, never with a slash in `--glob`.** `grepsafe --glob` matches the
 BASENAME, so `'src/domain.roles/**/*.md'` matches no file and reports a clean `0 matches`,
 exit 0 — a check that renders as passed and ran over naught.
 
@@ -111,7 +113,7 @@ then, per hit, one question:
 > **"do i declare the SHAPE, or point at a FILE?"**
 
 - the shape → lawful, leave it
-- a file → 🔴 restate it inline, or move the claim to a published brief
+- a file → restate it inline, or move the claim to a published brief
 
 ## .the cues — when → then
 
@@ -124,14 +126,16 @@ then, per hit, one question:
 
 ## .the measured state
 
-**9 unreachable citations across 6 published briefs**, as of 2026-08-30. two of them are broken
-twice — `rule.prefer.decompose-a-subject-via-suffixes` and
-`rule.require.inventory-for-enumerable-concepts` both cite `term=inventory`, and the declared
-cluster is `term=itemization.inventory`. **so the name is stale AND the path is unreachable**,
-and neither defect was catchable from inside this repo.
+**9 unreachable citations across 6 published briefs**, as of 2026-08-30.
 
-⚠️ **the repair of those 9 is a separate pass.** this brief exists so the count stops growth; it
-does not claim the arrears are paid.
+- two of them are broken twice — `rule.prefer.decompose-a-subject-via-suffixes` and
+  `rule.require.inventory-for-enumerable-concepts` both cite `term=inventory`, where the declared
+  cluster is `term=itemization.inventory`
+- ⇒ so the name is stale AND the path is unreachable, and neither defect was catchable from inside
+  this repo
+
+🟡 **the repair of those 9 is a separate pass.** this brief exists so the count stops its growth; it
+claims no arrears are paid.
 
 ## .enforcement
 
@@ -147,7 +151,7 @@ does not claim the arrears are paid.
   chain, from the other direction: which `.agent/` files are safe to edit
 - `rule.always.reuse-pavement-before-improvise` (learner) — the phantom-path anti-pattern this is
   one mechanical cause of
-- `rule.require.domain-term-itemization` — why the glossary exists. ⚠️ it does **not** say the
+- `rule.require.domain-term-itemization` — why the glossary exists. 🟡 it does **not** say the
   glossary must stay unpublished; that clause was this brief's own over-reach, corrected above
 - `.dream/v2026_08_31.enbrief.org-wide-terms-do-not-publish.md` — the home defect the correction
   above names, caught rather than swept

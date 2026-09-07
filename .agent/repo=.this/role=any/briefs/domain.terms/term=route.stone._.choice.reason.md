@@ -2,12 +2,13 @@
 
 ## .etymology
 
-**stone** — the trail marker. the route domain is a *path*, and a stone is what a walker passes on
-a trail: set by those who went before, it tells you where you are without telling you what to do.
+**stone** — the trail marker.
 
-the metaphor is load-bearing rather than decorative. a cairn on a ridge does not stop a hiker; it
-confirms the way. that is precisely a stone's job, and the reason the gate is a **separate**
-concept.
+- the route domain is a *path*, and a stone is what a walker passes on a trail
+  - set by those who went before, it tells you where you are without telling you what to do
+- **the metaphor is load-bearing rather than decorative** — a cairn on a ridge does not stop a
+  hiker; it confirms the way
+  - ⇒ that is precisely a stone's job, and the reason the gate is a separate concept
 
 ## .the line — stone vs guard
 
@@ -16,9 +17,11 @@ concept.
 | **stone** | a marker of progress | records that a milestone was reached |
 | **guard** | an optional gate on a stone | refuses passage until its conditions hold |
 
-**the decisive case:** a stone with no guard is entirely ordinary — it marks progress and lets the
-traveler drive on. a gate that validates no condition would be pointless. so the two cannot be one
-concept: one is meaningful without the other, and not the reverse.
+**the decisive case:**
+
+- a stone with no guard is entirely ordinary — it marks progress and lets the traveler drive on
+- a gate that validates no condition would be pointless
+- ⇒ so the two cannot be one concept: one is meaningful without the other, and not the reverse
 
 ## .why not the rejected synonyms
 
@@ -52,7 +55,7 @@ concept: one is meaningful without the other, and not the reverse.
   states that *approval = permission, passage = action*, and only an explicit `--as passed`
   constitutes passage. a guard grants clearance; the stone records the passage. two concepts, two
   mechanisms
-- ⚠️ **the blind-spot instance.** `template.domain-term.md` — the repo's own template for how to
+- 🟡 **the blind-spot instance.** `template.domain-term.md` — the repo's own template for how to
   itemize a term — **uses `term=stone` as its worked example throughout**, and no `term=stone`
   cluster existed until 2026-08-13. the glossary's instruction manual demonstrated the pattern on
   a term the glossary did not contain. the resolved `checkpoint` dispute above was preserved in

@@ -5,7 +5,7 @@
 - **lessons** → briefs in `.agent/repo=.this/role=any/briefs/`
 - **tactics** → skills in `.agent/repo=.this/role=any/skills/`
 
-⇒ **the instinct to persist is GOOD — keep it. only the destination is wrong.**
+⇒ the instinct to persist is *good* — keep it. only the destination is wrong.
 
 ## .why
 
@@ -22,7 +22,7 @@ durable capture in `.agent/` is the opposite: git-visible, reviewed in PRs, boot
 
 a PreToolUse hook (`memory.guard`) halts writes to native memory and prints this redirect — so you need not recall the rule mid-flow.
 
-## ⚠️ .the exception — GENERALIZE machine-local paths and secrets
+## 🟡 .the exception — GENERALIZE machine-local paths and secrets
 
 some notes carry literals that must not enter a shared repo verbatim: local absolute paths · secrets and secret-hints · per-clone scratch. **the lesson is still worth capture — the literal is the only problem.**
 
@@ -35,7 +35,7 @@ for a **true secret** (a credential value, token, key), do not even generalize t
 
 `~/.claude/settings.json` and other **config** (not memory) · `CLAUDE.md` (already durable + git-visible) · **reads** of native memory — only *writes* are halted.
 
-⚠️ **the guard is a safety net, not a seal.** it cannot catch every path, so do not read its silence as approval. the discipline is yours.
+🟡 **the guard is a safety net, not a seal.** it cannot catch every path, so do not read its silence as approval. the discipline is yours.
 
 blocker: a write to `~/.claude/**/memory/**` or `~/.claude/**/MEMORY.md`.
 

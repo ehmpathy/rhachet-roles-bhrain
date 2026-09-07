@@ -1,25 +1,42 @@
 # rule.forbid.domain-term-ambiguity
 
-**one word, one concept.** a term that is **overloaded** — the same word used for two or more distinct senses — is ambiguous, and an ambiguous term in a contract is forbidden.
+one word, one concept. a term that is overloaded — the same word used for two or more distinct senses — is ambiguous, and an ambiguous term in a contract is forbidden.
 
 a **contract** = a dobj/dop name, an internal contract (shapes, signatures), and above all the external interfaces we publish (api, sdk, cli).
 
 ## .why
 
-- it is the **twin hazard of the synonym**: a synonym is many words for one concept; an overload is one word for many. both break the vocabulary the glossary keeps
+- it is the twin hazard of the synonym: a synonym is many words for one concept; an overload is one word for many. both break the vocabulary the glossary keeps
 - an overloaded term forces every reader to disambiguate by context — friction on every read
 - 🔴 **the overload hides an ABSENT DISTINCTION.** two concepts wear one name because the second was never granted its own word. the ambiguity is the symptom; the unnamed concept is the defect
 
-test: **"does this word name exactly ONE concept, everywhere it appears?"** one sense → adhere · two or more → the word is overloaded.
+## .the test
 
-## .how
+**"does this word name exactly ONE concept, everywhere it appears?"** one sense → adhere · two or more → the word is overloaded, and one of two repairs is owed.
 
-1. **name the senses** — enumerate the distinct concepts the one word carries
-2. keep the word for its **primary** sense; coin a distinct term for each other sense
-3. itemize the new term (`rule.require.domain-term-itemization`) and record the split
+| the senses differ by… | the repair |
+|---|---|
+| **concept** — two different things | **split.** keep the word for its primary sense; coin a term for each other sense, itemize it, record the split |
+| **context** — one concept, two boundaries | **qualify** — `rule.require.boundary-qualified-terms`. a filename segment, no coinage, no dispute |
 
-⚠️ where the two senses differ by **context** rather than by concept, the repair is a **boundary**, never a second word — `rule.require.boundary-qualified-terms`. the flat namespace has one slot per word; a qualified one has as many as the domain does.
+⇒ the flat namespace has one slot per word; a qualified one has as many as the domain does. so a split where a boundary was owed coins a synonym the glossary must then forbid.
+
+🟡 the sort is the boundary rule's own question — *"$word, of WHAT?"* two answers → qualify · one answer, two referents → split.
+
+## 🔴 .an INCONSISTENCY repair can forbid this rule's cure
+
+`rule.forbid.domain-term-inconsistency` settles one concept named two ways onto one word. this rule grants a second word to a word that carries two concepts.
+
+⇒ the two look adjacent, and their repairs do not compose.
+
+measured: `lane` and `reviewer` named one concept, so `lane` became a forbidden synonym.
+
+- but `reviewer` was *also* overloaded — the role · one run of one rubric on one guard — and `lane` was its one candidate word
+- ⇒ the settlement closed the inconsistency and removed the ambiguity's only cure in the same edit
+
+🟡 **so enumerate the senses of the word you keep BEFORE the inconsistency settles.** afterward, the word you would have reached for is forbidden.
 
 > one word, one sense — no term does double duty 📜
 
-blocker: a domain term overloaded across two or more distinct concepts in a contract.
+blocker: a domain term overloaded across two or more distinct concepts in a contract · an inconsistency settled with no check of whether the word kept was also overloaded.
+false positive: a boundary-qualified pair — `route.guard.rung` and `tool.skill.rung` are two terms, not one overloaded · generic english that composes no domain concept · a synonym, which is `rule.forbid.domain-term-synonyms`' subject.

@@ -33,10 +33,10 @@ brief, which every repo already has.
 
 | when… | then… |
 |---|---|
-| you write a telepath rule and reach for an **emoji** in its prescription | 🔴 that is voice. state the structural property instead, and let the adopter's mascot supply the glyph |
+| you write a telepath rule and reach for an **emoji** in its prescription | that is voice. state the structural property instead, and let the adopter's mascot supply the glyph |
 | you write *"say it in lowercase"* or *"open with the mascot"* | voice. it belongs in `im_a.<mascot>` |
 | you write *"lead with the point, then the detail"* | structure. it is telepath's |
-| a telepath example needs a concrete message to show the shape | ✅ **use this repo's voice in the EXAMPLE** — an example illustrates, it does not prescribe |
+| a telepath example needs a concrete message to show the shape | **use this repo's voice in the EXAMPLE** — an example illustrates, it does not prescribe |
 | a repo adopts a telepath rule and its output looks wrong | check which axis broke. wrong order = telepath's defect. wrong glyph = the mascot's |
 
 ## .the test
@@ -70,7 +70,34 @@ copies drift on the structural half, which is the half that was worth a shared h
 the example wears this repo's voice because an example must be concrete. the **rule** above it
 wears none, so it travels.
 
-## ⚠️ .the owed migration
+## 🟡 .the voice row is declared in ONE cell — cite it, never copy it
+
+a peer rule that restates the members will drift from them, and the drift is silent: no reader ever
+holds two copies at once, so a copy that is short one member reads as complete.
+
+⇒ **so every rule in this canon points at the table above rather than re-lists it.**
+
+### the measured case — this canon drifted from its own row
+
+walked 2026-09-07, across telepath's briefs:
+
+| what the walk found | count |
+|---|---|
+| source files that **restated** the four members in `.the axis` | 18 |
+| of those, copies that had **already drifted** | 2 |
+| `.md.min` files that restated it | none found |
+
+- `rule.forbid.absolutes` wrote `glyph` where the row says `emoji`
+- `rule.forbid.emphasis-noise` wrote `glyph, case, or persona` — two members renamed, and
+  `mascot line` dropped, so a copy short one member read as complete
+
+⇒ **each copy was authored by someone who had just read the row, and two drifted anyway.** that is
+the argument in one line: a copy must be re-checked on every edit; a reference cannot go stale.
+
+🟡 and the mins cited correctly throughout, so the defect was invisible to a reader who boots the
+role — it sat only in the source a human opens.
+
+## 🟡 .the owed migration
 
 the output-half generics were drafted in the `v2026_08_14.fix-standarized-speech` behavior and
 currently live in `ehmpathy`'s mechanic + architect roles under `lang.prose/` — where they sit
@@ -82,10 +109,12 @@ repo. **their migration here is owed and not yet done**; when it happens, `lang.
 
 ## .enforcement
 
-- a telepath rule that prescribes an emoji, a capitalization, a persona, or a mascot line =
-  **blocker** — it is voice, and it makes the rule unadoptable
+- a telepath rule that prescribes a member of the **voice** row = **blocker** — it is voice, and it
+  makes the rule unadoptable
 - a mascot brief that prescribes message order, length, or passage placement = **blocker** — it is
   structure, and it will drift from the generic that owns it
+- a peer rule that **restates** the voice row rather than cites it = **blocker** — measured above, and
+  two of eighteen copies had already drifted
 - a telepath **example** written in the adopter's voice = **false positive** — an example must be
   concrete to illustrate at all
 
@@ -96,4 +125,4 @@ repo. **their migration here is owed and not yet done**; when it happens, `lang.
 - `rule.require.place-a-passage-by-its-subject` — a structural rule, and a worked demonstration
   that the seam holds: it prescribes position and says not one word about how the passage sounds
 - `define.simplified-technical-english` (ehmpathy/mechanic) — the extant output-half overlay, which
-  states this same lane split in its own `.exemptions`
+  states this same reviewer split in its own `.exemptions`

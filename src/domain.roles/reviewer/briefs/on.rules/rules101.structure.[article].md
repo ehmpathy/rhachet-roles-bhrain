@@ -45,7 +45,7 @@ directives indicate what action to take and at what severity:
 | blocker   | forbid, require, always    | must be settled before merge |
 | nitpick   | avoid, prefer              | optional to settle           |
 
-## 🔴 `always` vs `require` — the subject differs, the severity does not
+## `always` vs `require` — the subject differs, the severity does not
 
 both grade at **blocker**. reaching for `always` never softens a rule, and it never hardens one.
 what changes is **what the reviewer reads to check it**:
@@ -57,6 +57,8 @@ what changes is **what the reviewer reads to check it**:
 
 ### the test — is the topic a NOUN PHRASE or a VERB PHRASE?
 
+> **the topic's grammar settles the directive. no other test is owed.**
+
 it is that mechanical, and it holds across every rule in this repo:
 
 ```
@@ -64,12 +66,12 @@ rule.require.$state       # a noun phrase or a clause — "timeless lessons", "c
 rule.always.$act          # a verb phrase in the imperative — "catch dreams", "reuse pavement"
 ```
 
-- reads as *"the artifact must **be** …"* → **`require`** / **`forbid`**
-- reads as *"you must **do** … every time"* → **`always`**
+- reads as *"the artifact must **be** …"* → `require` / `forbid`
+- reads as *"you must **do** … every time"* → `always`
 
 ### why the distinction earns a directive rather than a synonym
 
-⚠️ **an `always` rule is often unfalsifiable from the diff alone**, and that is the whole reason it
+🟡 **an `always` rule is often unfalsifiable from the diff alone**, and that is the whole reason it
 is a separate word. *"did you check the pavement before you improvised?"* leaves no trace in a
 file. so `always` rules routinely grade **when** something was written rather than **whether** —
 several state outright that a record swept together at the end is a violation even though the
@@ -78,7 +80,7 @@ record is present.
 ⇒ a reviewer who treats an `always` rule as a state check will pass work that violated it. the
 directive is the signal to read the trail instead.
 
-## ⚠️ the known gaps in this taxonomy
+## 🟡 the known gaps in this taxonomy
 
 stated rather than papered over, so the next author does not re-derive them:
 
@@ -94,7 +96,7 @@ stated rather than papered over, so the next author does not re-derive them:
 until 2026-08-31. a prefix in that much use with no declared severity is one a reviewer has to
 guess at, which is the defect this section closes.
 
-⚠️ **five extant `rule.require.*` files are verb-phrase conduct rules** and are candidates for a
+🟡 **five extant `rule.require.*` files are verb-phrase conduct rules** and are candidates for a
 rename to `always` by the test above. they are left in place until disturbed — a sweep is
 forbidden, and a partial rename is worse than a consistent extant set
 (`rule.forbid.domain-term-synonyms`'s own no-mass-rewrite clause).

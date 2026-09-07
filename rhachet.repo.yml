@@ -59,7 +59,7 @@ roles:
     briefs:
       dirs: dist/domain.roles/telepath/briefs
     skills:
-      dirs: []
+      dirs: dist/domain.roles/telepath/skills
     boot: dist/domain.roles/telepath/boot.yml
   - slug: thinker
     readme: dist/domain.roles/thinker/readme.md

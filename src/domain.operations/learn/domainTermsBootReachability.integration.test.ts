@@ -48,7 +48,9 @@ describe('domain.terms boot reachability (integration)', () => {
           // the vision's central promise: a fresh traveler boots and already
           // speaks the language — the glossary readme is surfaced
           expect(result.stdout).toContain('# domain.terms');
-          expect(result.stdout).toContain("the repo's **glossary**");
+          // the brief is PUBLISHED, so it speaks of "a repo", never "this repo" —
+          // a consumer boots the same words and they must be true there too
+          expect(result.stdout).toContain("a repo's **glossary**");
         });
 
         then('both governance rules reach booted context by content', () => {
@@ -271,7 +273,7 @@ describe('domain.terms boot reachability (integration)', () => {
             // a read through the live link proves the whole chain holds end-to-end:
             // .readme.md → install-managed briefs → dist → the source brief content
             expect(result.content).toContain('# domain.terms');
-            expect(result.content).toContain("the repo's **glossary**");
+            expect(result.content).toContain("a repo's **glossary**");
           },
         );
       });

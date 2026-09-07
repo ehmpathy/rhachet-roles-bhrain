@@ -43,7 +43,7 @@ each addition is locally correct, so no single edit is the defect. the root grow
 
 ⇒ **a suffix is an address; an ordinal is a counter.**
 
-## ⚠️ .a zoom-in is not a fork — it must not restate its root
+## 🟡 .a zoom-in is not a fork — it must not restate its root
 
 a peer forks two ways: it **restates** the parent's claim, or it sits **unlinked** from it. either way two files hold one claim, they drift, and the reader must reconcile them.
 

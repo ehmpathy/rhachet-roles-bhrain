@@ -157,8 +157,8 @@ importers:
         specifier: 0.1.0
         version: 0.1.0(rhachet@1.47.3(zod@4.3.4))
       rhachet-roles-bhuild:
-        specifier: 0.21.35
-        version: 0.21.35(@huggingface/transformers@3.8.1)(@tensorflow/tfjs@4.22.0(seedrandom@3.0.5))(rhachet-brains-fireworksai@0.1.6(rhachet@1.47.3(zod@4.3.4)))(rhachet-brains-xai@0.3.3(rhachet@1.47.3(zod@4.3.4)))(rhachet-roles-bhrain@)(rhachet@1.47.3(zod@4.3.4))
+        specifier: 0.21.36
+        version: 0.21.36(@huggingface/transformers@3.8.1)(@tensorflow/tfjs@4.22.0(seedrandom@3.0.5))(rhachet-brains-fireworksai@0.1.6(rhachet@1.47.3(zod@4.3.4)))(rhachet-brains-xai@0.3.3(rhachet@1.47.3(zod@4.3.4)))(rhachet-roles-bhrain@)(rhachet@1.47.3(zod@4.3.4))
       rhachet-roles-ehmpathy:
         specifier: 1.38.12
         version: 1.38.12(@huggingface/transformers@3.8.1)(@tensorflow/tfjs@4.22.0(seedrandom@3.0.5))
@@ -1894,10 +1894,6 @@ packages:
 
   '@smithy/shared-ini-file-loader@4.4.9':
     resolution: {integrity: sha512-495/V2I15SHgedSJoDPD23JuSfKAp726ZI1V0wtjB07Wh7q/0tri/0e0DLefZCHgxZonrGKt/OCTpAtP1wE1kQ==}
-    engines: {node: '>=18.0.0'}
-
-  '@smithy/signature-v4@5.5.2':
-    resolution: {integrity: sha512-7xHpmPY4rt0IOmeAA8EfjgEH8isT+587TCdy9H6a7d4OMi5CQ0oEHhWllunvPu4j4Cq0vTFwdxXN/kABWPjdyA==}
     engines: {node: '>=18.0.0'}
 
   '@smithy/signature-v4@5.6.2':
@@ -4425,8 +4421,8 @@ packages:
     resolution: {integrity: sha512-nIMR3dQZhYw0/mHdZ6V5Rb6HVinyy/WcggeLZU1g0p/eckLY8n8vxMRVzjxcuzafu9mZmuBBErT5jIZDMZYNbg==}
     engines: {node: '>=8.0.0'}
 
-  rhachet-roles-bhuild@0.21.35:
-    resolution: {integrity: sha512-UQJES0xkiAeKlLqPbq6fTXj17qSOklcI23L5s8JxRX/Ov1DrmvoqdM+kMDgBpXdkfCdGX3R39t/FgEKg2XZKTw==}
+  rhachet-roles-bhuild@0.21.36:
+    resolution: {integrity: sha512-fVucqkXvqDTKJqwLWJJK4EgYEoQ+6Anp66142Ch0eU2cIzIuaOhROwa6NgzLgfoX/eTd4Tg9fa03ZrtKHLR2cA==}
     engines: {node: '>=18.0.0'}
     peerDependencies:
       rhachet: '>=1.43.1'
@@ -5297,7 +5293,7 @@ snapshots:
       '@smithy/node-config-provider': 4.3.14
       '@smithy/property-provider': 4.2.14
       '@smithy/protocol-http': 5.3.14
-      '@smithy/signature-v4': 5.5.2
+      '@smithy/signature-v4': 5.6.2
       '@smithy/smithy-client': 4.12.13
       '@smithy/types': 4.15.1
       '@smithy/util-base64': 4.3.2
@@ -5519,7 +5515,7 @@ snapshots:
       '@smithy/core': 3.29.1
       '@smithy/node-config-provider': 4.3.14
       '@smithy/protocol-http': 5.3.14
-      '@smithy/signature-v4': 5.5.2
+      '@smithy/signature-v4': 5.6.2
       '@smithy/smithy-client': 4.12.13
       '@smithy/types': 4.15.1
       '@smithy/util-config-provider': 4.3.0
@@ -5630,7 +5626,7 @@ snapshots:
       '@aws-sdk/middleware-sdk-s3': 3.946.0
       '@aws-sdk/types': 3.936.0
       '@smithy/protocol-http': 5.3.14
-      '@smithy/signature-v4': 5.5.2
+      '@smithy/signature-v4': 5.6.2
       '@smithy/types': 4.15.1
       tslib: 2.8.1
 
@@ -7312,12 +7308,6 @@ snapshots:
 
   '@smithy/shared-ini-file-loader@4.4.9':
     dependencies:
-      '@smithy/types': 4.15.1
-      tslib: 2.8.1
-
-  '@smithy/signature-v4@5.5.2':
-    dependencies:
-      '@smithy/core': 3.29.1
       '@smithy/types': 4.15.1
       tslib: 2.8.1
 
@@ -10260,7 +10250,7 @@ snapshots:
       - rhachet
       - ws
 
-  rhachet-roles-bhuild@0.21.35(@huggingface/transformers@3.8.1)(@tensorflow/tfjs@4.22.0(seedrandom@3.0.5))(rhachet-brains-fireworksai@0.1.6(rhachet@1.47.3(zod@4.3.4)))(rhachet-brains-xai@0.3.3(rhachet@1.47.3(zod@4.3.4)))(rhachet-roles-bhrain@)(rhachet@1.47.3(zod@4.3.4)):
+  rhachet-roles-bhuild@0.21.36(@huggingface/transformers@3.8.1)(@tensorflow/tfjs@4.22.0(seedrandom@3.0.5))(rhachet-brains-fireworksai@0.1.6(rhachet@1.47.3(zod@4.3.4)))(rhachet-brains-xai@0.3.3(rhachet@1.47.3(zod@4.3.4)))(rhachet-roles-bhrain@)(rhachet@1.47.3(zod@4.3.4)):
     dependencies:
       domain-objects: 0.31.9
       emoji-space-shim: 0.0.0
@@ -10811,7 +10801,7 @@ snapshots:
   type-fns@1.21.2:
     dependencies:
       domain-objects: 0.31.10
-      helpful-errors: 1.7.3
+      helpful-errors: 1.7.5
 
   type-fns@1.21.3:
     dependencies:

@@ -34,7 +34,7 @@ a single milestone on a route.
 - `term=route.stone._.choice.example=<abc>.md`
 ```
 
-⚠️ **the say file carries no `.forbid` prose.** `rule.forbid.domain-term-synonyms` governs the forbid once, for all terms; the file merely lists which words are forbidden.
+🟡 **the say file carries no `.forbid` prose.** `rule.forbid.domain-term-synonyms` governs the forbid once, for all terms; the file merely lists which words are forbidden.
 
 ## .the reason file — required
 

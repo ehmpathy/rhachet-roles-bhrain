@@ -20,7 +20,7 @@ invocation path.
 - **write-an-sop** — SOP is **one** of several human aliases for the product (beside *tactic*,
   *guide*, *instructions*), and the say file records all four. but as a verb form it fails twice:
   it is a phrase rather than a word, and it carries corporate-process baggage (sign-offs, revision
-  tables) that this act does not. ⚠️ **it is also the narrowest of the four** — to name the verb
+  tables) that this act does not. 🟡 **it is also the narrowest of the four** — to name the verb
   after one alias would imply that alias is canonical, which is exactly the over-privilege the say
   file corrects
 - **proceduralize** — reads as bureaucratic, and names the *formalization* rather than the
@@ -39,10 +39,12 @@ enskilled and never entooled; an unenskilled tactic has no rung to raise.
 
 ## .the trigger is the SECOND run, not the first
 
-worth the record because it is the part most likely to drift. the rule fires on a **repeat**, not
-on a premonition — `rule.prefer.wet-over-dry` applies directly: a sequence run once, enskilled
-from a guess about the future, is a premature abstraction. the second run is **evidence**, and
-evidence is what the trigger waits for.
+worth the record because it is the part most likely to drift.
+
+- the rule fires on a **repeat**, never on a premonition
+- `rule.prefer.wet-over-dry` applies directly — a sequence run once, enskilled from a guess about
+  the future, is a premature abstraction
+- ⇒ the second run is **evidence**, and evidence is what the trigger waits for
 
 ## .disputes
 

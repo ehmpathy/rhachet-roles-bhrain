@@ -14,7 +14,7 @@ so a general rule illustrated only with `aws` reads as *"the aws rule"*. a reade
 
 **the evidence:** `rule.require.wrap-cli-in-skills` carried the general claim, illustrated end to end with `aws`. its own `.see also` records the split — *"every example here is `aws`, and a reader looked straight past it while they typed `ssh grove-1`."*
 
-## ⚠️ .the honest bound
+## 🟡 .the honest bound
 
 a specialization is a **better cue**, never a gate. where the pull toward the un-paved path is a keystroke's worth of convenience, a brief alone is outscored by a **mechanism** — a hook, a guard. per this repo's cited research, a when-then cue scores far above a principle, and a mechanism above both.
 
@@ -34,7 +34,7 @@ test: **"in what situation would a reader who AGREES with this rule fail to noti
 
 the **specialization**: the claim in the reader's own domain vocabulary, its own concrete examples, and a `.see also` pointer **up**. the **parent**: a pointer **down**, plus one line on **why** the split happened — the dated miss.
 
-## ⚠️ .NOT a license to fork a rule per domain
+## 🟡 .NOT a license to fork a rule per domain
 
 | the situation | the move |
 |---|---|

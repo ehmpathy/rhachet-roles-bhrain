@@ -51,7 +51,7 @@ after any skill call, answer one question out loud:
 - **naught** — rung 4, 🪨 solid. leave it alone
 - **one or more steps** — name each one. each is an unclimbed rung
 
-⚠️ **name the WORK, not a count of turns.** a turn is an indirection: two of them can differ by
+🟡 **name the WORK, not a count of turns.** a turn is an indirection: two of them can differ by
 orders of magnitude in time, tokens, and risk, so a count tells you none of the three. the named
 step is what you can actually entool; the count is not.
 
@@ -64,7 +64,7 @@ then answer the second, which is the one that stops over-reach:
 - a **step** — it is the same every time, and you could write down exactly what you did →
   **that is entoolable.** it is owed a tool
 
-⚠️ you must answer BOTH. the first alone drives toward a tool that lies; the second alone never
+🟡 you must answer BOTH. the first alone drives toward a tool that lies; the second alone never
 notices there was a gap.
 
 ## .what to do with what you found

@@ -4,14 +4,19 @@
 
 `rung` is the crossbar of a ladder — the one place your foot rests before the next. the guard
 domain already spoke in ladder terms: peer-review *levels* sort low-to-high, a lower level unlocks
-the next, and the driver ascends until the top. what the vocabulary lacked was a word for **one
-gate-position in that ladder, of any kind** — peer *or* judge. `rung` fills exactly that hole.
+the next, and the driver ascends until the top.
 
-the word was coined this round to carry the JUDGE_LEVEL redesign. the judge had been a gate
-*beside* the peer levels, with its own bespoke overrule/unlock/passage branches. the redesign
-folds it into the same ladder as its highest crossbar, so one predicate set governs every gate.
-`rung` is the noun that makes that unification legible: "the judge is the top rung", not "the judge
-is a separate thing that also gets forgiven."
+what the vocabulary lacked was a word for **one gate-position in that ladder, of any kind** —
+peer *or* judge. `rung` fills exactly that hole.
+
+the word was coined this round to carry the JUDGE_LEVEL redesign:
+
+- the judge had been a gate *beside* the peer levels
+  - with its own bespoke overrule/unlock/passage branches
+- the redesign folds it into the same ladder, as its highest crossbar
+  - ⇒ so one predicate set governs every gate
+- `rung` is the noun that makes that legible
+  - *"the judge is the top rung"*, never *"the judge is a separate gate that also gets forgiven"*
 
 ## .why rung, not the rejected synonyms
 
@@ -29,20 +34,23 @@ to climb, neutral about how you clear it (approve, overrule, exhaust).
 
 this is the sharp edge, because the two are easy to conflate:
 
-- **level** is a *coordinate* — an integer that fixes where a rung sits (peer `1`, peer `3`,
-  `JUDGE_LEVEL`). it answers "how high?".
-- **rung** is the *position itself* — the gate you stand on at that coordinate. it answers "which
-  gate?".
+- `level` — a *coordinate*: an integer that fixes where a rung sits (peer `1`, peer `3`,
+  `JUDGE_LEVEL`). it answers "how high?"
+- `rung` — the *position itself*: the gate you stand on at that coordinate. it answers "which
+  gate?"
 
-a rung *has* a level the way a stair-step has a height: the height names the step, but the step is
-the plank you stand on. `JUDGE_LEVEL` is a level (a number); the judge rung is a rung (a gate whose
-level happens to be that number). `isJudgeRungHeld` reasons over the judge *rung*'s verdicts;
-`JUDGE_LEVEL` is merely the coordinate that lets the ladder sort the judge last.
+a rung *has* a level the way a stair-step has a height — the height names the step, and the step is
+the plank you stand on:
 
-to hold the two apart prevents the drift that caused the very regression this behavior fixes —
-where a *level* fact (a prior level terminal-for-unlock) was wrongly read as a *rung* fact (a later
-rung clear-for-passage). one word for the coordinate, one for the gate; neither does the other's
-job.
+- `JUDGE_LEVEL` is a *level* — a number
+- the judge rung is a *rung* — a gate whose level happens to be that number
+- ⇒ `isJudgeRungHeld` reasons over the judge *rung*'s verdicts; `JUDGE_LEVEL` is merely the coordinate that sorts the judge last
+
+to hold the two apart prevents the drift that caused the regression this behavior fixes:
+
+- a *level* fact — a prior level terminal-for-unlock
+- was wrongly read as a *rung* fact — a later rung clear-for-passage
+- ⇒ one word for the coordinate, one for the gate; neither does the other's job
 
 ## .disputes
 
@@ -51,42 +59,44 @@ job.
 - claim      = `rung` is a synonym of the well-established `level`; a new word risks the synonym
                drift the glossary exists to prevent, and `isJudgeRungHeld` could read
                `isJudgeLevelHeld`.
-- counter    = they name different concepts. `level` is the numeric coordinate (`JUDGE_LEVEL` is a
-               number); `rung` is the gate-position at that coordinate. the code already carries
-               both senses: a rung *has* a level. to merge them forces one word to mean both "the
-               number" and "the gate", the exact overload `rule.forbid.ambiguous-labels` forbids.
+- counter    = they name different concepts
+  - `level` is the numeric coordinate — `JUDGE_LEVEL` is a number
+  - `rung` is the gate-position at that coordinate
+  - the code already carries both senses: a rung *has* a level
+  - ⇒ to merge them forces one word to mean both *"the number"* and *"the gate"* — the overload `rule.forbid.ambiguous-labels` forbids
 - resolution = keep both, distinct. `level` = coordinate; `rung` = position. `rung`'s forbidden
-               synonyms are `step`/`stage`/`checkpoint`; `level` is NOT a forbidden synonym but a
+               synonyms are `step`/`stage`/`checkpoint`; `level` is not a forbidden synonym but a
                kin concept. dispute closed.
 
 ### dispute: the entoolment ladder's `rung`  —  raised 2026-08-14  —  status: RESOLVED (qualify both, rename neither)
 
 - raised.by  = learner (self, at the onStop sweep)
 - claim      = `philosophy.entoolment-is-the-pinnacle` uses `rung` for a position on the
-               **determinism** ladder (🧠 tribal → 📚 brief → 💪💧 fluid → 💪🔩 rigid → 💪🪨 solid).
+               determinism ladder (🧠 tribal → 📚 brief → 💪💧 fluid → 💪🔩 rigid → 💪🪨 solid).
                that is a second sense of a declared term, entered in the same round the philosophy
-               was rewritten — a textbook silent **drift**, and
+               was rewritten — a textbook silent drift, and
                `rule.forbid.domain-term-synonyms` demands *adhere or dispute, never drift*
 - counter    = the two are not synonyms and neither is wrong. both name *a discrete ordered
-               position on a ladder you climb*; they differ only in **which ladder**. to rename
+               position on a ladder you climb*; they differ only in which ladder. to rename
                either would forfeit an accurate metaphor — and the entoolment sense is not even
                this repo's to rename, since rungs 2–4 adopt rhachet's published determinism
                spectrum
-- ⚠️ why the extant rules could not settle it = `rule.forbid.domain-term-synonyms` bans *two words
+- 🟡 why the extant rules could not settle it = `rule.forbid.domain-term-synonyms` bans *two words
                for one concept* and *one word for two concepts*. this is the second shape, but its
-               prescribed repair — rename one — is **wrong here**, because both senses are correct
+               prescribed repair — rename one — is wrong here, because both senses are correct
                and the metaphor is the point. the flat namespace has exactly one slot per word, so
                it forced a false choice between two true senses
-- resolution = **boundary-qualify both, rename neither.** this cluster is `term=route.guard.rung`
-               — the term's own evidence says *"the top rung of every **guard's** level ladder"*,
-               and a guard sits on a route, so the full ancestry is `route` → `guard` → `rung`.
-               the other sense is `entoolment.rung`, 🔴 **owed** rather than declared: its boundary
-               `entoolment` ← `entool` sits in the unsettled `en-` family and so reaches no root.
-               the generalization is now a rule — `rule.require.boundary-qualified-terms` (learner)
-               — and **this overload is the evidence that motivated it.** dispute closed
+- resolution = **boundary-qualify both, rename neither**
+  - this cluster is `term=route.guard.rung`
+    - the term's own evidence says *"the top rung of every guard's level ladder"*, and a guard sits on a route
+    - ⇒ so the full ancestry is `route` → `guard` → `rung`
+  - the other sense is `entoolment.rung`, owed rather than declared
+    - its boundary `entoolment` ← `entool` sits in the unsettled `en-` family, so it reaches no root
+  - the generalization is now a rule — `rule.require.boundary-qualified-terms` (learner)
+    - ⇒ this overload is the evidence that motivated it. dispute closed
 - the cost avoided = a bare `rung` in a `.refs` line or a signature does not say which ladder. the
                reader must open a file to learn which, and `rule.forbid.domain-term-synonyms` binds
-               a term across **every contract** — so a term that reads two ways binds ambiguously,
+               a term across every contract — so a term that reads two ways binds ambiguously,
                which is the exact defect the glossary exists to retire
 
 ## .evidence

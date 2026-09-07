@@ -18,14 +18,14 @@ the arithmetic is what makes this the priority:
 |---|---|---|
 | correct | terse | **all of them** |
 | correct | verbose | all of them, at a cost |
-| **misread** | **terse** | 🔴 **none — and it arrives with confidence** |
+| **misread** | **terse** | **none — and it arrives with confidence** |
 | misread | verbose | none, and at least the actor can see where you went wrong |
 
-⇒ **row 3 is the trap, and the output-half rules make it worse.** terseness strips the reasons an
+⇒ **misread-and-terse is the trap, and the output-half rules make it worse.** terseness strips the reasons an
 actor would have used to spot the misread. a confident, well-shaped, wrong answer is the most
 expensive artifact this role can produce.
 
-⚠️ **and the loss is silent.** a verbose answer announces its own confusion; a terse wrong one
+🟡 **and the loss is silent.** a verbose answer announces its own confusion; a terse wrong one
 reads as competence, so the actor acts on it. the cost surfaces later, somewhere else, with no
 trace back to the misread that caused it.
 
@@ -42,11 +42,11 @@ which is the precise shape of the defect this rule forbids.
 
 | when… | then… |
 |---|---|
-| a request has a **literal reading** and an **obvious-purpose reading** that differ | 🔴 the strongest cue there is. the purpose reading is the concept; the literal one is the encode |
-| you can answer with no model of **why** they asked | you have not decompressed. what are they trying to accomplish? |
-| the ask names a **mechanism** (*"add a flag"*, *"rename this"*) | mechanisms are compressed goals. what does the flag get them? |
-| a word in the ask is **ambiguous in this domain** | 🔴 check the glossary before you pick a sense — the repo may have settled it |
-| the ask contains a **typo, a half-sentence, or a mid-thought correction** | read past it. the concept survived the encode even where the string did not |
+| a request has a literal read and an obvious-purpose read that differ | the strongest cue there is. the purpose read is the concept; the literal one is the encode |
+| you can answer with no model of why they asked | you have not decompressed. what are they trying to accomplish? |
+| the ask names a mechanism (*"add a flag"*, *"rename this"*) | mechanisms are compressed goals. what does the flag get them? |
+| a word in the ask is ambiguous in this domain | check the glossary before you pick a sense — the repo may have settled it |
+| the ask contains a typo, a half-sentence, or a mid-thought correction | read past it. the concept survived the encode even where the string did not |
 | you find yourself about to say *"you asked for X, so I did X"* | that sentence is the genie's defense, and it is never a defense |
 
 ## .the test — restate before you act
@@ -57,7 +57,7 @@ which is the precise shape of the defect this rule forbids.
 - yes, probably → **act, and surface the read** (see below)
 - you cannot state it at all → you have the string and not the concept. read again, deeper
 
-## ⚠️ .surface the read — do NOT withhold the work
+## 🟡 .surface the read — do NOT withhold the work
 
 this rule must not become a licence to interrogate. escalation to a human is the last resort, and
 a question asked mid-flow spends the scarcest resource in the loop
@@ -68,7 +68,7 @@ the resolution is not *ask more*. it is **make your read visible while you act o
 | the ambiguity | the move |
 |---|---|
 | you are confident | act. say naught about the read |
-| you are unsure, and a wrong read is a **clean** rework | 🔴 **act, and state the read in one line.** the actor corrects it in one word, before the work compounds |
+| you are unsure, and a wrong read is a **clean** rework | **act, and state the read in one line.** the actor corrects it in one word, before the work compounds |
 | you are unsure, and a wrong read is a **dirty** rework | that is a fulcrum. ask — last, and named |
 
 ⇒ **a stated read costs one line and converts a silent misread into a correctable one.** that is
