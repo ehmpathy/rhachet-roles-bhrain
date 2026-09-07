@@ -7,22 +7,9 @@
 | **structure** | 🔮 telepath | what the message says, in what order, in how many words, where each passage sits |
 | **voice** | the adopter's mascot + the role that speaks | capitalization, emoji, persona, vibe phrases, mascot lines |
 
-the two **compose**. a telepath rule fires inside an owl's voice here, a seaturtle's in `ehmpathy`,
-and any voice a future repo adopts — unchanged.
+the two compose. a telepath rule fires inside an owl's voice here, a seaturtle's in `ehmpathy`, and any voice a future repo adopts — unchanged.
 
-## .why — a generic that carries a voice cannot BE generic
-
-**a structural rule is repo-agnostic by nature.** *"lead with the point"*, *"a passage sits where
-its subject sits"*, *"answer what they meant"* hold for an owl, a seaturtle, a beaver, and a
-corporate style guide alike. so the rule is written once and adopted everywhere.
-
-**a voice rule is repo-specific by nature.** 🦉 belongs to this repo and 🐢 to `ehmpathy`; lowercase
-is a house style, not a transfer property. the moment a generic carries one, a repo that wants the
-structure must take the foreign voice with it or fork the rule — and a forked rule drifts on the
-structural half, which is the half that was worth a shared home.
-
-⇒ **the seam is what makes the role reusable.** cross it and telepath becomes a second persona
-brief, which every repo already has.
+⇒ a structural rule is repo-agnostic by nature; a voice rule is repo-specific by nature. so **the seam is what makes the role reusable** — cross it, and a repo that wants the structure must take the foreign voice or fork the rule, and a fork drifts on the structural half.
 
 | when… | then… |
 |---|---|
@@ -43,41 +30,26 @@ yes → structure. it is telepath's · no → voice. it belongs to whichever rep
 | the specimen | the prescription | what an adopter can do with it |
 |---|---|---|
 | 👍 the bare rule | *"lead with the answer; the reason follows it"* | an owl obeys in lowercase with a 🦉, a seaturtle with a 🐢. the rule did not say, so both adopt it unchanged |
-| 👎 the leaked rule | *"lead with the answer, in lowercase, prefixed with 🦉"* | `ehmpathy` cannot take it and keep its own mascot, so it forks — and the two copies drift on the structural half |
+| 👎 the leaked rule | *"lead with the answer, in lowercase, prefixed with 🦉"* | `ehmpathy` cannot take it and keep its own mascot, so it forks |
 | 👍 the demoed rule | *"an error names the fix, not merely the symptom"*, demoed as `🦉 bummer — no route bound. bind one with: rhx route.bind.set --route <path>` | the rule wears no voice and travels; only its example does |
 
-⇒ **the demoed rule is the one to hold.** the bare and the leaked part a good rule from a bad one;
-the demoed one shows that a concrete example is not a leak — an example illustrates, and only a
-prescription binds.
-
-## 🟡 .the owed migration
-
-> **the output-half generics are not here yet. their move is owed and not yet done.**
-
-they live in `ehmpathy`'s mechanic + architect roles under `lang.prose/` — beside `lang.tones/`,
-that repo's voice cluster.
-
-⇒ that co-location is this seam, drawn independently by another repo. when the move happens,
-`lang.prose/` comes and `lang.tones/` stays.
+⇒ **the demoed rule is the one to hold** — a concrete example is not a leak. an example illustrates, and only a prescription binds.
 
 ## 🟡 .the voice row is declared in ONE cell — cite it, never copy it
 
-a peer rule that restates the members will drift from them, and the drift is silent: no reader ever
-holds two copies at once, so a copy that is short one member reads as complete.
+- a peer rule that restates the members will drift from them
+  - the drift is silent — no reader ever holds two copies at once
+  - ⇒ so a copy short one member reads as complete
 
-⇒ **so every rule in this canon points at the table above rather than re-lists it.**
+⇒ **so every rule in this canon points at the table above rather than re-lists it.** measured, and two of the copies had already drifted — the full carries the walk.
 
-measured 2026-09-07, across telepath's briefs: **18** source files restated the four members in
-`.the axis`, and **2** had already drifted — `forbid.absolutes` wrote `glyph` where the row says
-`emoji`; `forbid.emphasis-noise` wrote `glyph, case, or persona`, two members renamed and
-`mascot line` dropped, so a copy short one member read as complete. no `.md.min` restated it.
+## 🟡 .the owed migration
 
-⇒ **each copy was authored by someone who had just read the row, and two drifted anyway.** a copy
-must be re-checked on every edit; a reference cannot go stale.
+the output-half generics still live in `ehmpathy`'s mechanic + architect roles under `lang.prose/`, beside `lang.tones/`, that repo's voice cluster.
 
-blocker: a telepath rule that prescribes a member of the **voice** row — it makes the rule
-unadoptable · a mascot brief that prescribes message order, length, or passage placement — it is
-structure, and it will drift from the generic that owns it · a peer rule that restates the voice row
-rather than cites it.
-false positive: a telepath example written in the adopter's voice — an example must be concrete to
-illustrate at all.
+⇒ that co-location is this seam, drawn independently by another repo. when the move happens, `lang.prose/` comes and `lang.tones/` stays.
+
+blocker: a telepath rule that prescribes a member of the voice row — it makes the rule unadoptable · a mascot brief that prescribes message order, length, or passage placement — it is structure, and it will drift from the generic that owns it · a peer rule that restates the voice row rather than cites it.
+false positive: a telepath example written in the adopter's voice — an example must be concrete to illustrate at all.
+
+⇒ see also: `define.bhrain-repo-mascot` (repo=.this) · `rule.require.place-a-passage-by-its-subject` (a structural rule that says not one word about sound) · `define.simplified-technical-english` (ehmpathy/mechanic).

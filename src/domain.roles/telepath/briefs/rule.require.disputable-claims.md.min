@@ -2,11 +2,9 @@
 
 > **every passage must give the reader a place to say *"no, and here is why"*. state the claim, and state what would settle it.**
 
-the positive peer of `rule.forbid.subversive-prose` — that rule names ten shapes no observation settles, and sorts each as shallow or squishy; this names the target all ten fall short of.
+the positive peer of `rule.forbid.subversive-prose` — that rule names ten shapes no observation settles and sorts each as shallow or squishy; this names the target all ten fall short of.
 
-⇒ the ten shapes, the worked 70-word demo, and the accretion-vs-compression measurement live there. **this file carries the target, and the two moves that reach it.**
-
-🟡 a forbid list is a detector, and a detector tells an author what to delete, never what to write in its place — so an author who learns the ten cuts ten sentences and ships a shorter passage that still asserts none. the clamp pair is asymmetric on purpose: `rule.require.disputable-claims.md`.
+⇒ the ten shapes, the worked demo, and why a forbid list alone leaves an author with naught to write in place of the cut: `rule.require.disputable-claims.md` (the clamp pair is asymmetric on purpose).
 
 ## .the two moves
 
@@ -25,14 +23,12 @@ a claim is disputable when it carries both. either alone is half a claim:
 
 one you can name, over a stated position → a claim · a position with no observation → an opinion; name the check · an observation with no position → a procedure; state what you expect it to show · neither → cut it, or convert it.
 
-🟡 **not *"could a reader disagree with it?"*** — that grades taste, and a metaphor passes it.
+two questions it is NOT, and each lets a defect through:
 
-⇒ two readers may disagree forever over *"it took the cheaper of two doors"* and no observation on earth settles them. the question names the check; disagreement alone does not.
-
-🟡 and not *"is it confident?"* — a stated uncertainty is a claim.
-
-- *"70%, and one read of `getExitCodeClass.ts` settles it"* names a position, a bound, and an observation
-- *"this should probably mostly work"* names none of the three, and reads more assured
+- 🟡 not *"could a reader disagree?"* — that grades taste, and the metaphor row below passes it
+- not *"is it confident?"* — a stated uncertainty is a claim
+  - *"70%, and one read of `getExitCodeClass.ts` settles it"* names a position, a bound, and an observation
+  - *"this should probably mostly work"* names none of the three, and reads more assured
 
 | the specimen | prose | a position? | what settles it? |
 |---|---|---|---|
@@ -40,9 +36,7 @@ one you can name, over a stated position → a claim · a position with no obser
 | the metaphor | *"it took the cheaper of two doors that both looked legitimate"* | yes | **none** |
 | the mechanism | *"`runStoneGuardReviews` never calls `getStone…Unforgiven`, so the check runs at passage"* | yes | open the file |
 
-⇒ the metaphor is the expensive instance, because it reads as insight and a disagreement test passes it. `forbid.subversive-prose` sorts it as squishy — repaired by the mechanism it stood in front of, never by a cut — and the hedge as shallow.
-
-🟡 the three specimens are SHARED with that rule and graded on a different axis there, which is `rule.require.a-cue-is-not-a-claim`'s exempt shape rather than a `declare-once` defect.
+⇒ the metaphor is the expensive instance — it reads as insight, and a disagreement test passes it. `forbid.subversive-prose` sorts it as squishy, repaired by the mechanism it stood in front of rather than by a cut.
 
 ## .when it fires
 
@@ -57,10 +51,7 @@ one you can name, over a stated position → a claim · a position with no obser
 
 ## .the caveat — a disputable claim may be WRONG, and that is the point
 
-this rule raises the odds you are publicly incorrect. that is its function, not its cost: a wrong disputable claim is refuted in one round, where a wrong indisputable one is never refuted and every reader inherits the error.
-
-⇒ **an artifact cannot be corrected on a claim it never made.** a canon that only forbids subversion, and never demands assertion, produces prose that is safe and useless.
-
+⇒ **an artifact cannot be corrected on a claim it never made.** a wrong disputable claim is refuted in one round; a wrong indisputable one is never refuted, and every reader inherits the error.
 
 blocker: a passage that asserts no position a reader could reject · a position with no named observation that would settle it, where one exists · a truism that survives a swap of its subject · a hedge stack offered in place of a stated bound.
 nitpick: a settler named where a stronger one was available.
