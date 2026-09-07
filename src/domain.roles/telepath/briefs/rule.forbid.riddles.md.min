@@ -1,0 +1,73 @@
+# rule.forbid.riddles
+
+> **a riddle spends the reader's time for the author's pleasure. it is rude.**
+
+a **riddle** is any prose whose sense must be **deciphered** to be understood — encoded, implied, or carried by an image, over stated.
+
+⇒ a species of `rule.forbid.decode-friction`, over a peer. that rule counts the mental steps between the words and the claim; this grades the steps an author **chose** to add.
+
+## 🟡 .why it is rude, and rude is the accurate word
+
+the author enjoys the craft once and pays zero to decipher — they hold the answer. **every reader pays in full, on every read, and every reviewer pays again.** that is `philosophy.pavement-saves-nature` run backwards: paid once by one author, charged forever to all who follow.
+
+the cost is metered, over a matter of taste — tokens to parse, attention to understand, a review round that cannot grade in one pass. and the reader cannot opt out: they came for the subject, and must solve the puzzle before they learn whether the artifact even concerns them.
+
+## .the bound — a riddle is misplaced, over wrong
+
+> **riddles are fun if you have the time for them.**
+
+came for the puzzle → it is the point · came for the subject → it is theft of their attention.
+
+⇒ so this is no objection to wit. it objects to wit **charged to someone who came for a fact**.
+
+## .the test — a COUNT, over a verdict
+
+> **how many mental steps from these words to the subject?**
+
+zero → it states its subject · one or more → a riddle, and each step is nameable. an author cannot answer *"is this clear?"* honestly, because **for them the count is always zero**.
+
+⇒ the worked count — a real `.dream/` filename at seven steps, and the intermediate repair that was still wrong: `rule.forbid.riddles.md`.
+
+## .the shapes — each row is a cue
+
+| shape | 👎 as written | 👍 stated |
+|---|---|---|
+| the observation title — a remark *about* the content | `the-canons-author-is-the-only-role-that-obeys-it` | `conform-seven-roles-to-the-telepath-canon` |
+| the metaphor as claim | *"the cure catches the disease"* | *"the reviewer's subject grows with the defect it detects"* |
+| the aphorism — a limitation converted into a philosophy | *"the engine guarantees it happens; the reviewer judges if it was real"* | *"the engine does not check whether the review was read. that gap is unfixed"* |
+| the epigram — a blockquote that restates its section | *"the one reader who cannot be surprised by it"* | delete it. it adds no claim the section lacks |
+| the teaser header — names an emotion, over a fact | `## .the aha` | `## .the constraint the design turns on` |
+| the withheld referent — names a kind and hides which | `## .the fix that looks like the one we were warned against` | `## .the reviewer's scope drops src/, keeps .behavior/` |
+| the coy lead — announces a claim it declines to make | *"there is one call this does not settle"* | *"it does not settle whether a `case=N` narrative is exempt"* |
+| the mislabeled header | `## .the fulcrum`, with an aphorism under it | `## .the fulcrum`, with the call and its rework grade |
+
+⇒ **every repair is the same move: state the subject.** not one is a cut, and four of the eight are shorter after the repair.
+
+## .the three cues the table cannot carry — they read the AUTHOR, not the page
+
+| when… | then… |
+|---|---|
+| a phrase reads well aloud | the alarm, over the goal. a good label is *findable*, and often dull |
+| you would defend a phrase as *"more apt"* | aptness is not a property prose is graded on here |
+| you feel pleased with a sentence | 🟡 count the steps. the pleasure and the step count are correlated |
+
+## 🟡 .a LABEL is the sharpest instance, because it is the retrieval surface
+
+a riddle in a body costs a reader who already opened the file. a riddle in a **filename, a title, or a header** costs every reader who scans and never opens — and it defeats the index outright: a `.dream/` queue of observations must be opened entry by entry to learn which holds the work, so the queue becomes a pile.
+
+## .why an author will not cut their own
+
+| decode-friction's species | how its own author reads it |
+|---|---|
+| a **fetch** | an **oversight** — so an author who finds one cuts it without argument |
+| a **riddle** | **the good part** — the sentence they were pleased with, so a friction sweep passes straight over it |
+
+⇒ that is `rule.require.specialize-a-rule-its-readers-look-past`'s exact trigger and its exact repair: a rule aimed at the surface the reader occupied. **it is why the species needs a rule the genus cannot supply.**
+
+**the line that parts every case: did the reader ask for the decipher?** yes → it is what they came for · no → a riddle, however apt the phrase.
+
+blocker: a filename, title, or header that is an observation about its content over the content · a metaphor or aphorism that carries a claim with no mechanism stated beside it · a header that promises one kind and carries another · an epigram that restates the section it sits in.
+nitpick: a coy lead that defers its claim by one sentence.
+false positive: a dull label that names its subject · a metaphor beside a stated mechanism · a verbatim quote · a declared artifact-kind header (`## .the cue that fired`) whose contract fixes its content · a riddle in an artifact whose declared subject IS the puzzle.
+
+⇒ see also: `rule.forbid.decode-friction` (the genus, and the step count) · `rule.forbid.subversive-prose` (the aphorism shape, in a body) · `philosophy.pavement-saves-nature` · `rule.require.elucidation` · `rule.require.specialize-a-rule-its-readers-look-past`.

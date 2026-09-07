@@ -1,6 +1,6 @@
 import * as fs from 'fs/promises';
 
-import { getFsErrorCode } from './getFsErrorCode';
+import { getFsErrorCode } from '../getFsErrorCode';
 
 /**
  * .what = gen a symlink at `at` that targets `to`; idempotent + race-safe. the `idem`

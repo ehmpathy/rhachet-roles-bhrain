@@ -44,7 +44,7 @@ have surfaced all four at a glance.
 the human a hunt.** the resource the entire escalation ladder conserves is the human's attention,
 and a scattered map spends it at the last step, after every other rule spent none.
 
-## ⚠️ .append at the moment, never in a sweep
+## 🟡 .append at the moment, never in a sweep
 
 **a fulcrum is itemized the instant it is best-guessed** — not batched at the end of the stone,
 not reconstructed from memory at the council.
@@ -70,7 +70,7 @@ the wisher's threshold, set 2026-08-30:
 > *"briefs that are less than 93% confident on, we should capture as fulcrums for human to review
 > as separate fulcrum files"*
 
-⚠️ **and it catches a class the fork trigger structurally cannot.** a fork is a moment you noticed —
+🟡 **and it catches a class the fork trigger structurally cannot.** a fork is a moment you noticed —
 two options in view, one taken. a **low-confidence call has no such moment**: you wrote the claim,
 it read fine, and the shakiness stayed a background feel that never became a decision.
 
@@ -97,7 +97,7 @@ it read fine, and the shakiness stayed a background feel that never became a dec
 `confidence` is a **percentage** column in the summary, so the council can sort on it. a row at 40%
 and a row at 88% want different amounts of attention, and a boolean hides that.
 
-⚠️ **the grade is self-assessed, and that is its known weakness.** a call you are confident in and
+🟡 **the grade is self-assessed, and that is its known weakness.** a call you are confident in and
 wrong about scores 100% and earns no row. so the floor is a **net, never a proof** — it catches the
 doubt you can feel, and `rule.always.get-a-second-opinion-before-foreman` stays the only move that
 catches the rest.
@@ -115,7 +115,7 @@ one row per fulcrum, and no narrative about any one of them
 | **status** | `best-guessed` → `wisher-ruled` (with the verdict) |
 | **confidence** | a percentage. a call under **93%** earns a row, fork or not |
 
-⚠️ **`rework` is the column the council actually sorts on.** a human scans the `dirty` rows first,
+🟡 **`rework` is the column the council actually sorts on.** a human scans the `dirty` rows first,
 because those are the only ones where a late reversal costs more than a rename. a summary without
 it is a list of decisions with no priority.
 
@@ -132,7 +132,7 @@ the full record, ejected so the summary stays a summary:
 | **where** | a back-ref: the stone, or the yield line the decision lives in |
 | **the verdict** | once the wisher rules, what they ruled and in what words |
 
-⚠️ **`confidence, and why it is low` is the field that does the work.** a bare percentage tells the
+🟡 **`confidence, and why it is low` is the field that does the work.** a bare percentage tells the
 council to look and not what to look at; the *why* is what makes the entry actionable in one read.
 close it with **what would settle it** — the check, the second case, or the one sentence you need.
 
@@ -162,7 +162,7 @@ best-guesses — that ladder stays exactly as `rule.always.defer-fulcrums-to-las
 | open, rework **clean** | best-guess it, **itemize it**, drive on |
 | open, rework **dirty** | halt with `--as blocked` — last, and named. **itemize it too** |
 
-⚠️ a blocked fulcrum still gets its row and its entry. the block is the escalation; the record is
+🟡 a blocked fulcrum still gets its row and its entry. the block is the escalation; the record is
 the record, and the human reads both.
 
 ## .enforcement

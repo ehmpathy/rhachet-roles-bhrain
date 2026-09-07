@@ -19,19 +19,15 @@ the glyph names what the role does.
 | 🌕 | reflector | illumination — shine back what was already there |
 | 🔭 | researcher | far sight, truth seeker — what is not yet held |
 
-## ⚠️ .📚 and 🔭 are one practice, split on one question
+## 🟡 .📚 and 🔭 are one practice, split on one question
 
-the pair is the closest in this register, so the seam is stated rather than implied:
+the pair is the closest in this register, so the seam matters here — and it is declared in
+`src/domain.roles/researcher/readme.md` under `.the seam with the librarian`, not restated here.
 
-| glyph | role | operates on | asks |
-|---|---|---|---|
-| 📚 | librarian | what the repo **already holds** | *"where does this belong, and how is it found?"* |
-| 🔭 | researcher | what the repo does **not yet hold** | *"what do we not know, and how do we find out?"* |
+⇒ what this register adds: a librarian **curates**, a researcher **acquires**, and the two glyphs
+part on that verb. the handoff is the research route's last phase, `briefs.curate`.
 
-⇒ a librarian **curates**; a researcher **acquires**. the handoff is the research route's last
-phase, `briefs.curate`.
-
-⚠️ **a marker may be reserved long before its role exists.** `🔭` sat in the owl's palette while
+🟡 **a marker may be reserved long before its role exists.** `🔭` sat in the owl's palette while
 `init.research` still lived under the librarian — so a grep for it returned no match and it was
 still not free to claim. **a grep proves a glyph is unused; only this register proves it is
 unclaimed.**
@@ -48,11 +44,11 @@ unclaimed.**
 ⇒ all four are one marker. `ReviewVibe` names the split outright: `mascot` is the repo's voice,
 `artifact` is the role's marker.
 
-## ⚠️ .the marker never carries the mascot
+## 🟡 .the marker never carries the mascot
 
-the owl is already the voice on every surface, so `🦉📜 learner` claims a mascot every other role
-holds equally — and it breaks the one-glyph-per-role shape a reader scans by. the marker stands
-alone: `📜`.
+**the marker stands alone: `📜`.** the owl is already the voice on every surface, so `🦉📜 learner`
+claims a mascot every other role holds equally — and it breaks the one-glyph-per-role shape a
+reader scans by.
 
 ## .see also
 

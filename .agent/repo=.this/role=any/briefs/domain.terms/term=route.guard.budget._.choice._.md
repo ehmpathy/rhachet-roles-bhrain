@@ -15,13 +15,16 @@ term.synonyms.forbidden:
 a **route.guard.budget** is the count of review **rounds** one peer reviewer may spend on a stone
 before it exhausts. it is a **count of rounds, never a span of time.**
 
-each round a reviewer renders a verdict, one unit is spent. a reviewer with a spent budget reaches
-`exhausted`, which is terminal for the unlock ladder — the next rung may run — while the stone
-still cannot pass on it. `rhx route.guard.budget --for review --add N --stone <stone>` extends
-every reviewer on that stone at once, which is why the driver holds it as its own lever rather than
-a human's (`rule.always.spend-own-levers-before-escalation`).
+- each round a reviewer renders a verdict, one unit is spent
+- a reviewer with a spent budget reaches `exhausted`
+  - terminal for the unlock ladder — the next rung may run
+  - and the stone still cannot pass on it
+- `rhx route.guard.budget --for review --add N --stone <stone>` extends every reviewer on that
+  stone at once
+  - ⇒ which is why the driver holds it as its own lever rather than a human's
+    (`rule.always.spend-own-levers-before-escalation`)
 
-## ⚠️ .a duration ceiling is NOT a budget
+## 🟡 .a duration ceiling is NOT a budget
 
 the word invites a second sense — *"an allowance you may spend"* reads just as naturally over
 seconds as over rounds — and that second sense is a **different concept**, not a shade of this one:
@@ -37,15 +40,19 @@ seconds as over rounds — and that second sense is a **different concept**, not
 ladder acts on into a clock that acts by itself, which is the ABSENT DISTINCTION
 `rule.forbid.domain-term-ambiguity` names.
 
-✅ **`timeout` needs no coinage — this repo already declares it.** it is a `*.guard` key
-(`review.timeout`), typed `IsoDuration`, with `DEFAULT_REVIEW_TIMEOUT = 'PT21M'` in both
-`runStoneGuardReviews.ts` and `stepReviewBy.ts`. the pavement was already there
-(`rule.always.reuse-pavement-before-improvise`).
+`timeout` needs no coinage — this repo already declares it:
 
-⚠️ **a live hazard, not a hypothetical.** `.dream/v2026_09_02.fix.llm-suites-inherit-a-90s-default-silently.md`
-proposes a shared const for the per-test duration allowance. **it must not be named `*_BUDGET`** —
-that would ship the overload into a contract, where `rule.forbid.domain-term-synonyms` bites
-hardest. it takes `*_TIMEOUT`.
+- a `*.guard` key (`review.timeout`), typed `IsoDuration`
+- `DEFAULT_REVIEW_TIMEOUT = 'PT21M'` in both `runStoneGuardReviews.ts` and `stepReviewBy.ts`
+- ⇒ the pavement was already there (`rule.always.reuse-pavement-before-improvise`)
+
+a live hazard, never a hypothetical:
+
+- `.dream/v2026_09_02.fix.llm-suites-inherit-a-90s-default-silently.md` proposes a shared const for
+  the per-test duration allowance
+- it must not be named `*_BUDGET` — that would ship the overload into a contract, where
+  `rule.forbid.domain-term-synonyms` bites hardest
+- ⇒ it takes `*_TIMEOUT`
 
 ## .refs
 

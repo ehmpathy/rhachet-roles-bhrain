@@ -1,0 +1,92 @@
+# rule.require.archaeology-in-notes
+
+> **a passage states its result. the road to it goes to `.agent/.notes/`, and the passage refs out.**
+
+**archaeology** = the chain of thought behind a claim — the readings, the measurements, the tools
+built, the paths tried, the reversals. it is real work and often the expensive half. it is **not**
+the answer, and it must not sit inside one.
+
+## .why a THIRD move is owed beside cut and keep
+
+`rule.require.reflexive-condensation` grades each line at the 95% bar and offers two verdicts. that
+is one verdict short, and the absent one is where archaeology lives:
+
+| the material | its rank | the move |
+|---|---|---|
+| surplus — no reader wants it | below the bar | cut |
+| the answer — every reader wants it | above the bar | keep |
+| **archaeology — one reader, one day, will want it** | **above the bar for THEM, below it HERE** | move, and ref |
+
+⇒ **a two-verdict rule forces this material into the wrong bucket, whichever one it picks.** cut it
+and the cut is *lossy* — the evidence a claim rests on is gone, and `S11` forbids that. keep it and
+every reader pays for a paragraph that serves one of them.
+
+**the ref is what makes the third verdict possible**: the material stays reachable at its full depth,
+and the passage pays one line.
+
+## .the test
+
+> **who needs this, and WHEN?**
+
+every reader, here → keep · no reader, ever → cut · **a reader who disputes the claim, later** →
+archaeology. move it, and ref it.
+
+🟡 **the middle answer is the one that gets mis-sorted.** an author who cannot picture a reader for
+a paragraph concludes it is surplus. often it is evidence — wanted by exactly one reader, the one
+who does not believe you.
+
+| when… | then… |
+|---|---|
+| you would write *"we first tried X, then Y"* | the strongest cue. the result is the artifact; the trail is a note |
+| a measurement runs past one line | keep the number, ref the method |
+| you built a tool to reach a conclusion | the conclusion is the passage; the tool is a note, and it is worth its own file |
+| you would cut evidence to hit a length | do not. that cut is lossy — move it |
+| a reversal changed what you concluded | the current claim stays; the reversal is a note. 🟡 **unless a reader must ACT on it** |
+| a section would carry *"for the curious"* or *"further detail"* | it just named itself a note |
+| a `.taken` or a review round grew the passage | the round is archaeology by definition |
+
+## .the ref is not optional, and an uncited note is a deletion
+
+| the shape | what a reader gets |
+|---|---|
+| a note, cited by path from the claim | the claim, plus a road to check it |
+| a note with no citation | **an orphan.** the claim now rests on evidence nobody can find |
+| a citation with no note | a **phantom path** — worse, since it carries a pointer's authority |
+
+⇒ the citation is the whole mechanism. **archaeology in a note that nobody is pointed at has been
+deleted at the cost of the time it took to write.**
+
+## .the boundary — what must NOT be moved
+
+| a violation | not a violation |
+|---|---|
+| the trail of how a claim was reached, inline | the claim, and one line of ground |
+| a tool's full source pasted into a yield | the tool's path, and what it does |
+| a review round narrated in the artifact | a caveat a reader must **act** on — that stays, always |
+| a measurement's full method, inline | the measurement itself — a number is its own settler |
+
+**the line that parts them: would a reader ACT differently if this were absent?** yes → it stays,
+however long. no, but a disputer would want it → a note, cited. no, and nobody would → cut it.
+
+## .the axis
+
+a **structure** rule, so telepath owns it (`rule.require.generic-governs-structure-never-voice`) —
+it grades where a passage sits, so it prescribes no member of that rule's voice row.
+
+🟡 **it is the generic under two extant specializations, and it must not restate either**:
+`rule.forbid.chronological-accretion` (ehmpathy/mechanic) forbids the time-ordered log;
+`rule.always.yield-the-output-not-the-archaeology` (bhrain/driver) adds a route's two peer dirs,
+`appendix/` and `archive/`. **what this adds is the third verdict** — the move that neither a forbid
+nor a route convention names.
+
+blocker: a trail of how a claim was reached, left inline · evidence **cut** to hit a length (a lossy
+cut) · a note with no citation from the claim it supports · a citation to a note that does not exist
+· a caveat a reader must act on, moved to a note.
+nitpick: a note whose one-line citation does not say what makes it worth an open.
+false positive: a caveat that changes what a reader does · a measurement stated inline · a `.demo=`
+artifact whose declared subject IS the sequence.
+
+⇒ see also: `rule.require.reflexive-condensation` (the two-verdict rule this completes) ·
+`rule.forbid.purposeless-passages` (the displaced-passage move, at the section grain) ·
+`rule.require.place-a-passage-by-its-subject` · `rule.forbid.chronological-accretion` (the parent
+forbid, in `ehmpathy/mechanic`).

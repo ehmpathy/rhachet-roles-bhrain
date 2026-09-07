@@ -51,7 +51,7 @@ if there is one, distill it into a durable brief. the durable home may be either
 - **another repo's** briefs, dispatched via a **radio task** — if the durable home is a shared
   role or tool repo (a fixer bug belongs in the fixer's repo; an sdk gap in that sdk's)
 
-⚠️ **a lesson whose home is another repo is re-seeded there, never adopted here.** a tree adopts
+🟡 **a lesson whose home is another repo is re-seeded there, never adopted here.** a tree adopts
 only what is scoped to itself.
 
 ### 3. link back — both directions

@@ -17,29 +17,31 @@ it)"*, and neither had been settled for eighteen days.
 
 | candidate | what it names | verdict |
 |---|---|---|
-| `knowledge` | the **substance** — concepts, capacity, a path | 🔴 loses |
-| `externalize` | the **act** — the transfer out of a head into a durable artifact | ✅ holds |
+| `knowledge` | the substance — concepts, capacity, a path | 🔴 loses |
+| `externalize` | the act — the transfer out of a head into a durable artifact | ✅ holds |
 
-**the decisive test is the kind of the members.** `enbrief`, `enskill`, `entool`, `pave`, and
-`learn` are all **verbs**. a boundary names the context in which a word means what it means, and the
-context of a verb is the act it specializes — never the noun it operates on.
+**the decisive test is the kind of the members.**
 
-⇒ `knowledge` is not wrong about the domain; it is the boundary of a **different** family. the
-artifacts these verbs produce — a brief, a skill, a tool, a route — may well take `knowledge.` or
-`artifact.` as their own ancestor. that is a separate settlement, and this one does not prejudge it.
+- `enbrief` · `enskill` · `entool` · `pave` · `learn` are all **verbs**
+- a boundary names the context in which a word means what it means, and the context of a verb is
+  the act it specializes — never the noun it operates on
+- ⇒ so `knowledge` is not wrong about the domain; it is the boundary of a **different** family
+  - the artifacts these verbs produce — a brief, a skill, a tool, a route — may well take
+    `knowledge.` or `artifact.` as their own ancestor
+  - that is a separate settlement, and this one does not prejudge it
 
 ## 🔴 .the row was wrong about its own membership
 
-the gap row listed **six** terms: `enbrief` `enskill` `entool` `pave` `learn` `seed`.
+the gap row listed six terms: `enbrief` `enskill` `entool` `pave` `learn` `seed`.
 
-`seed` does not belong. it is a **noun**, and it was already settled as `term=artifact.seed` — its
-own `.what` declares *the wisher's words, verbatim, before distillation*, which has no relation to
-the act of externalization at all.
-
-⚠️ **it was filed there by adjacency, not by a read of its own declared sense** — the precise error
-`rule.require.boundary-qualified-terms` names in *"answer the test from the term's own `.what`,
-never from the family it sits near."* the same section already catches `body` and `sweep`, which
-were rescued the same way; `seed` was a third instance nobody had checked.
+- `seed` does not belong — it is a noun, and it was already settled as `term=artifact.seed`
+  - its own `.what` declares *the wisher's words, verbatim, before distillation*, which has no
+    relation to the act of externalization at all
+- 🟡 it was filed there by adjacency, over a read of its own declared sense — the precise error
+  `rule.require.boundary-qualified-terms` names in *"answer the test from the term's own `.what`,
+  never from the family it sits near."*
+  - the same section already catches `body` and `sweep`, rescued the same way; `seed` was a third
+    instance nobody had checked
 
 ⇒ **worth a keep as a cue: a gap ROW inherits the adjacency error as readily as a term does.** a
 census is not exempt from the test it records.
@@ -59,11 +61,11 @@ sub-practice of a larger declared domain here — it is one of the two things th
 
 | word | why it loses |
 |---|---|
-| **document** | names one **output shape** — prose. externalize spans a brief, a skill, a route, and a tool alike, and three of those four are not documents |
-| **capture** | names the moment of **notice**, never the transfer. a lesson can be captured in a head and remain unexternalized — which is the exact failure the family exists to prevent |
-| **record** | the passive twin of capture; the same defect |
-| **publish** | implies an audience beyond this tree. externalize holds whether or not the artifact ever leaves the repo |
-| **persist** | a storage word. it says where an artifact went, never that a future traveler can reach it |
+| `document` | names one output shape — prose. externalize spans a brief, a skill, a route, and a tool alike, and three of those four are not documents |
+| `capture` | names the moment of notice, never the transfer. a lesson can be captured in a head and remain unexternalized — **which is the exact failure the family exists to prevent** |
+| `record` | the passive twin of capture; the same defect |
+| `publish` | implies an audience beyond this tree. externalize holds whether or not the artifact ever leaves the repo |
+| `persist` | a storage word. it says where an artifact went, never that a future traveler can reach it |
 
 ## .the evidence
 
@@ -86,10 +88,10 @@ row, and it excludes `seed` — the one row that was wrongly on the list.
 ### dispute: knowledge — raised 2026-08-13 — status: RESOLVED (choose `externalize`)
 
 - raised.by  = the glossary's own gap row, carried unsettled for eighteen days
-- claim      = `knowledge.` names what the family is **about**, and reads naturally as an ancestor
+- claim      = `knowledge.` names what the family is about, and reads naturally as an ancestor
 - counter    = the members are **verbs**. a boundary names the context a word means what it means in,
                and a verb's context is the act it specializes. `knowledge` names the substance the
-               act operates on — the boundary of a **different** family, the artifacts produced
+               act operates on — the boundary of a different family, the artifacts produced
 - resolution = the wisher settled it, 2026-08-31: *"externalize is the root"*. `knowledge` is
                recorded as a forbidden boundary for this family, and left available for the
                artifact family it may yet serve

@@ -7,7 +7,7 @@ how to run the self reviews a guard asks for before peer reviews run.
 and the count is the work rather than a budget.
 
 ## take them seriously
-the review IS the work — not a gate, not a checkbox. question yourself severely. these
+**the review IS the work** — not a gate, not a checkbox. question yourself severely. these
 reviews encode lessons from production. a promise without a true review is a daydream; the
 guard checks the file holds real findings.
 - found issue → articulate how fixed
@@ -15,7 +15,7 @@ guard checks the file holds real findings.
 - can articulate neither → you have not reviewed
 
 ## flow
-self reviews gate peer reviews. promise every one before peers run.
+**self reviews gate peer reviews.** promise every one before peers run.
 
 1. `--as passed` → guard halts: `review.self N/M — slug = <slug>` + guide + `articulate into` path
 2. read guide + artifact slowly
@@ -23,7 +23,7 @@ self reviews gate peer reviews. promise every one before peers run.
 4. `--as promised --that <slug>`
 5. repeat until all M/M promised → peers run
 
-## the level pitfall ⚠️
+## the level pitfall 🟡
 filename carries a **level** = the `rN` prefix:
 ```
 review/self/for.<stone>._.r2.has-questioned-assumptions.md

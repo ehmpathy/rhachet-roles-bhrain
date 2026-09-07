@@ -11,7 +11,7 @@ $kind.of=$concept._.md                   # the SUMMARY — the axes, the counts,
 $kind.of=$concept.$dimension=$position.md   # one ENTRY per member — always, never optional
 ```
 
-⚠️ **the artifact KIND does not change the convention.** an inventory and a catalog are both
+🟡 **the artifact KIND does not change the convention.** an inventory and a catalog are both
 itemizations of an enumerable concept, and **both take this one name.** the kind decides what each
 entry *carries*; the coordinates decide where each entry *sits*:
 
@@ -40,7 +40,7 @@ entry set with no summary has no place to declare its axes, its counts, or its g
 a prose filename, a numbered filename, or a filename that carries only the position without its
 dimension = **defect**.
 
-⚠️ **`example=$id` is the same coordinate form**, already in use by `term=$x._.choice.example=$id`
+🟡 **`example=$id` is the same coordinate form**, already in use by `term=$x._.choice.example=$id`
 and prescribed by `rule.require.rules-are-clusters`. it is one discipline across every itemization
 this repo keeps, never three conventions that happen to rhyme.
 
@@ -52,7 +52,7 @@ this repo keeps, never three conventions that happen to rhyme.
   `rule.require.inventory-for-enumerable-concepts`, then name it per the block above
 - no — this is prose, a lesson, a philosophy → the convention does not apply
 
-⚠️ **the trap is that the kind question feels like the name question, and it is not.** a reader who
+🟡 **the trap is that the kind question feels like the name question, and it is not.** a reader who
 settles *"inventory or catalog?"* feels finished and reaches for a name freely — which is how
 `register.md` and `fulcrums.md` get written. **the kind was never the name decision.** the name is
 coordinates in every branch, so it can be settled before the kind is.
@@ -89,7 +89,7 @@ inventory.of=fulcrums.case=F15.md
 `case=` names the axis explicitly, so the id is an address rather than a bare label. `*.case=*.md`
 returns every occurrence.
 
-### ⚠️ an ordinal is not an id — it needs a slug beside it
+### 🟡 an ordinal is not an id — it needs a slug beside it
 
 ```
 👎  case=F14                                        # F14 of WHAT?
@@ -107,7 +107,7 @@ the two halves do different jobs, and to drop either costs a real property:
 of the coordinate form and delivers none of what the form is for: the path is computable only if
 you already know which number you want, which is the search the address was meant to retire.
 
-⚠️ **join the two with a hyphen, never a dot.** a dot is the segment separator, so
+🟡 **join the two with a hyphen, never a dot.** a dot is the segment separator, so
 `case=F14.entoolment-ladder` parses as a second coordinate with no dimension — a bare position,
 which this rule forbids outright.
 

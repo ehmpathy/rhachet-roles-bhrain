@@ -9,7 +9,7 @@ reaches for most.**
 > rhachet's definition of rigid exactly: *"deterministic entrypoint, mixed operations +
 > orchestration."*
 
-⚠️ **it is the most GENERAL shape at rung 3, never the rung itself.** rung 3 also holds a skill
+🟡 **it is the most GENERAL shape at rung 3, never the rung itself.** rung 3 also holds a skill
 that computes its setup then hands one probabilistic step to a brain, and a wrapper that batches
 the deterministic half — and **both are specializations of a route**: a route is an ordered set of
 stones with guards, so a one-stone route is the first and an all-deterministic route is the second.
@@ -37,7 +37,7 @@ destination on the same ladder, and the reason is mechanical:
 ⇒ that blend is the definition of 🔩 rigid. **the route has a rung, it is a tool, and rung 3 is a
 destination rather than a shortfall.**
 
-## ⚙️ .the deterministic half DRIVES the probabilistic half
+## .the deterministic half DRIVES the probabilistic half
 
 this is the property that earns the rung, and it is stronger than *"there is some determinism
 somewhere."* **the deterministic mechanisms push the brain through.** the brain does not choose to
@@ -99,7 +99,7 @@ that order is the part a route removes and the others do not.
 | a sequence of commands | 💪💧 or 💪🔩 a **fluid or rigid skill** (rung 2–3) |
 | judgment, at several points, in an order that matters | 💪🔩 a **route** (rung 3) |
 
-⚠️ **do not route what could be entooled.** a route around deterministic work is ceremony that
+🟡 **do not route what could be entooled.** a route around deterministic work is ceremony that
 charges imagine cost at every stone. reach for a route when the judgment is real.
 
 ## 🗿 .offroad work earns its keep by what it paves

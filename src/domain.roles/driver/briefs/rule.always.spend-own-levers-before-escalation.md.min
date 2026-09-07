@@ -8,7 +8,7 @@ a halt is a diagnosis to make, not a message to relay. the guard prints what *wo
 | a diagnosed reviewer malfunction — absent credential, bad glob, stale supply | **driver** |
 | `--as approved` · `--as overruled` · the commit quota · release auth | human |
 
-⚠️ **the trap is adjacency.** the guard renders *increase budget* and *approve as-is* as two peer branches, which invites the read *"two human remedies."* only the second is one.
+🟡 **the trap is adjacency.** the guard renders *increase budget* and *approve as-is* as two peer branches, which invites the read *"two human remedies."* only the second is one.
 
 **budget is not scarce, and to treat it as scarce is the error.** `--add N` extends every reviewer on the stone at once. and exhaustion is often not what it looks like: a reviewer that spent its round to RAISE a blocker has none left to CONFIRM your fix, so it shows `exhausted 🌙` with blockers listed that are already closed. more budget settles that; a human cannot.
 

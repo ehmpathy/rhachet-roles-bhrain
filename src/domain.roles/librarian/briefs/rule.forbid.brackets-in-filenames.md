@@ -14,7 +14,7 @@ not the bracket form:
 $topic.[$archetype].md             # 👎 kno601.inventories._.[article].md
 ```
 
-⚠️ **this binds new and renamed files in this repo.** an extant bracketed name elsewhere — the
+🟡 **this binds new and renamed files in this repo.** an extant bracketed name elsewhere — the
 `[article]` / `[catalog]` / `[demo]` / `[lesson]` family in a dependency's published briefs — is
 left in place until disturbed, and re-seeded to the repo that owns it.
 
@@ -90,7 +90,7 @@ define.routes-are-gardened.[philosophy].md
 
 `rhx globsafe --pattern '**/*.[article].md'` returns no match. so does `Glob`.
 
-⚠️ **and a bulk rename cannot fix them safely.** a find-and-replace cannot tell a **citation** of
+🟡 **and a bulk rename cannot fix them safely.** a find-and-replace cannot tell a **citation** of
 a bad name from an **instance** of one — the three lines above are citations, and any sweep that
 repaired real filenames would rewrite them too. so the repair is **file-first and by hand**: that
 is one more cost the bracket form imposes, and it lands on the cleanup.
@@ -139,7 +139,7 @@ the defect is a bracket a **tool must parse as a path**, never a bracket a human
 ## .see also
 
 - `rule.forbid.itemization-without-coordinates` — the `$dimension=$position` contract this reuses
-- `kno201.documents._.[catalog]` — the archetypes this marks. ⚠️ **cited under its extant
+- `kno201.documents._.[catalog]` — the archetypes this marks. 🟡 **cited under its extant
   bracketed name on purpose** — it is an undisturbed file, and a citation of a name that does not
   exist yet resolves to no match, which is the very defect this rule is about
 - `rule.always.enskill-the-tactics-you-discover` (learner) — check the pavement before you lay

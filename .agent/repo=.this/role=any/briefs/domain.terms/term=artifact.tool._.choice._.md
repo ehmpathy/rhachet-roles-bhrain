@@ -5,7 +5,7 @@ term.kind     = noun
 term.boundary = artifact     # SETTLED 2026-08-31 — `artifact` was paved. a tool is the subset a
                              # future traveler REUSES; a route yield is an artifact and is no tool
 term.synonyms.forbidden:
-- artifact       # 🔴 broader, and now this term's DECLARED ANCESTOR — a route yield is an
+- artifact       # broader, and now this term's DECLARED ANCESTOR — a route yield is an
                  # artifact and is not a tool. see `term=artifact._.choice._.md`
 - mechanism
 - automation     # names rung 4 alone; a brief is a tool and is not automated
@@ -23,10 +23,10 @@ rung of the entoolment ladder** — a 📚 brief, a 💧 fluid skill, a 🔩 rig
 | **skill** | the mechanized rungs, 2 through 4 |
 | **brief** | rung 1 — prethought knowledge, applied by a brain every time |
 
-⚠️ **`tool` is never the contrast against a brief.** a brief IS a tool, so *"a brief and a tool"*
+🟡 **`tool` is never the contrast against a brief.** a brief IS a tool, so *"a brief and a tool"*
 reads as *"a brief and a brief"*. the word that contrasts with a brief is **skill**.
 
-## ⚠️ .the rungs differ by IMAGINE COST — never by a coined unit
+## 🟡 .the rungs differ by IMAGINE COST — never by a coined unit
 
 the ladder ranks its rungs by rhachet's own measure: **imagine cost = time + tokens**, plus the
 **risk** a probabilistic step lands wrong. name those directly.

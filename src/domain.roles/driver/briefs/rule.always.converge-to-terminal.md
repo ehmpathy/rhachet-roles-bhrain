@@ -88,10 +88,10 @@ your cited record is what earns that trust. honor it, and the ladder carries you
 ## .the ladder is cheaper to walk than it looks
 
 a driver who fears the cost of a re-arrival coasts toward exhaustion instead of convergence. that
-fear is usually wrong: the guard reuses any lane that returned **0 blockers**, keyed on the stone
-artifact's content hash, so a re-arrival after a `src/` fix re-runs only the lanes that blocked.
+fear is usually wrong: the guard reuses any reviewer that returned **0 blockers**, keyed on the stone
+artifact's content hash, so a re-arrival after a `src/` fix re-runs only the reviewers that blocked.
 
-⇒ **the mechanism is `howdoes.the-guard-caches-a-clean-lane-by-artifact-hash`** — read it before
+⇒ **the mechanism is `howdoes.the-guard-caches-a-clean-reviewer-by-artifact-hash`** — read it before
 you judge an iteration too expensive to spend.
 
 ## .converge, do not coast

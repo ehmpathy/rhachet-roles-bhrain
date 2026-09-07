@@ -29,7 +29,7 @@ the parent's enforcement lines grade **emission** and **marking**:
 them.** tasks 2–4 sit `pending`, honestly marked, forever. the receipt is accurate; the work is
 abandoned; every check is green.
 
-⚠️ **and the peer is worse off than with no list at all.** an accurate `pending` reads as *queued
+🟡 **and the peer is worse off than with no list at all.** an accurate `pending` reads as *queued
 and coming*, so the peer waits instead of asks. the receipt converted a silence they would have
 challenged into a promise they trust.
 
@@ -41,7 +41,7 @@ challenged into a promise they trust.
 | **the absorbed remainder** | *"the rest are covered by the work I did"* — asserted, never checked | the parent permits absorption, and asks only that you say **which** task |
 | **the new-ground jump** | a fresh ask arrives, gets itemized, gets worked — over an open list | the new receipt is impeccable |
 
-⇒ the third is the most common, because a new ask is **louder** than an open task. the interrupt
+⇒ the new-ground jump is the most common, because a new ask is **louder** than an open task. the interrupt
 carries urgency; the `pending` row carries none.
 
 ## .the rule — one at a time, to terminal
@@ -54,10 +54,10 @@ three terminal states, and only these:
 | terminal | means | owed to the peer |
 |---|---|---|
 | **completed** | the ask is satisfied | the marker, at the moment it lands |
-| **declined** | you will not do it | the **reason**, so the peer can argue it |
-| **deferred** | you will do it later | the **when**, and it stays open |
+| **declined** | you will not do it | the reason, so the peer can argue it |
+| **deferred** | you will do it later | the when, and it stays open |
 
-⚠️ **`pending` is not terminal, and neither is "probably covered."** an absorbed ask is
+🟡 **`pending` is not terminal, and neither is "probably covered."** an absorbed ask is
 `completed` **only** after you have checked that the absorbing work actually satisfies it — and
 the check is a read, never an assumption.
 
@@ -73,12 +73,12 @@ is.
 
 | when… | then… |
 |---|---|
-| a **new ask arrives** while your list has open tasks | 🔴 the sharpest cue. itemize it, and **finish the open one first** — unless the peer says otherwise |
-| you finish a task and feel the round is done | 🔴 **read the list before you believe that.** the feeling of doneness tracks the last thing you did, never the list |
-| you are about to write *"the rest are covered"* | that is the absorbed remainder. **check** it, then mark each — or say plainly which is uncovered |
-| a task is blocked by something outside your reach | that is **deferred**, and it owes a *when*. it never owes silence |
+| a **new ask arrives** while your list has open tasks | 🔴 the sharpest cue. itemize it, and finish the open one first — unless the peer says otherwise |
+| you finish a task and feel the round is done | read the list before you believe that. the feeling of doneness tracks the last thing you did, never the list |
+| you are about to write *"the rest are covered"* | that is the absorbed remainder. check it, then mark each — or say plainly which is uncovered |
+| a task is blocked by something outside your reach | that is deferred, and it owes a *when*. it never owes silence |
 | you catch two tasks `in_progress` at once | serialize them. one is about to become the tail |
-| the round ends with open tasks | 🔴 **say so, itemized**, in the same breath as what you delivered |
+| the round ends with open tasks | say so, itemized, in the same breath as what you delivered |
 
 ## .the test — read the list, not your memory
 
@@ -106,13 +106,12 @@ leaves the list without the peer ever seeing it leave.
 
 ## .enforcement
 
-- a round reported done with a non-terminal task on the list = **blocker** — the report is false
-- a new ask worked over an open task, with no note of the order change = **blocker**
-- an ask marked `completed` by absorption, with no check that the absorbing work satisfies it =
-  **blocker**
-- a task `deferred` with no *when* = **blocker** — that is a drop wearing a marker
-- two or more tasks `in_progress` at once = **nitpick** — it is the abandoned tail as it forms
-- a peer who re-orders or cancels the list = **false positive** — the order is theirs
+blocker: a round reported done with a non-terminal task on the list — the report is false · a new
+ask worked over an open task, with no note of the order change · an ask marked `completed` by
+absorption, with no check that the absorbing work satisfies it · a task `deferred` with no *when*
+— that is a drop under a marker.
+nitpick: two or more tasks `in_progress` at once — it is the abandoned tail as it forms.
+false positive: a peer who re-orders or cancels the list — the order is theirs.
 
 ## .see also
 

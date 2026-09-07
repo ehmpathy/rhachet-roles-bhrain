@@ -5,7 +5,7 @@
 **every glyph this repo CLAIMS, and which axis it sits on.** the index a traveler greps before
 they claim a glyph, so a new marker never lands on one that is already spoken for.
 
-## ⚠️ .the bound — a claimed glyph, never every glyph on a surface
+## 🟡 .the bound — a claimed glyph, never every glyph on a surface
 
 this register covers glyphs that **mark a concept a reader triages on**. it does not cover
 **decorative stdout prefixes** — 🌊 on a header, ✨ on a success, ⛈️ on an error — which
@@ -15,23 +15,23 @@ this register covers glyphs that **mark a concept a reader triages on**. it does
 🔭 marks the researcher here *and* prefixes a metrics block in several skills' stdout; the second
 use claims no axis and sorts no reader, so it is out of this register's scope.
 
-⚠️ **the test for which one you have: could a reader sort on it?** a marker answers *"which role
+🟡 **the test for which one you have: could a reader sort on it?** a marker answers *"which role
 / phase / rung is this?"*; a decoration answers no question at all.
 
 ## .why — a glyph is a contract, and the register was tribal
 
-a glyph prefixes a surface a reader parses at a glance, so it is a **contract on that surface**.
-two failures follow from an unregistered set, and both have already happened here:
+a glyph prefixes a surface a reader parses at a glance, so it is a contract on that surface. two
+failures follow from an unregistered set, and both have already happened here:
 
-- **the taken glyph.** `🔮` was claimed for the telepath while the achiever already held it. only
-  a grep caught it, and the repair moved **68 occurrences across 10 files**
-- **the drifted register.** three partial registers existed at once — the root `readme.md#mascots`
+- **the taken glyph** — `🔮` was claimed for the telepath while the achiever already held it. only
+  a grep caught it, and the repair moved 68 occurrences across 10 files
+- **the drifted register** — three partial registers existed at once: the root `readme.md#mascots`
   (6 entries, 2 of them stale), `define.bhrain-repo-mascot` (1 entry), and the palette in
   `im_a.bhrain_owl.md`. they disagreed on membership, so no one of them could be trusted
 
-⇒ **this catalog is the index; each axis file carries its members.** it is a catalog rather than
-an inventory because a reader's whole use is a **one-glance scan** — they need each member's sense
-present, not merely its address (`rule.require.inventory-for-enumerable-concepts`).
+⇒ **this catalog is the index; each axis file carries its members.** it is a catalog over an
+inventory because a reader's whole use is a one-glance scan — they need each member's sense
+present, never merely its address (`rule.require.inventory-for-enumerable-concepts`).
 
 ## .the axes
 
@@ -51,8 +51,8 @@ present, not merely its address (`rule.require.inventory-for-enumerable-concepts
 | 🗿 | `role` | driver |
 | 💎 | `role` | achiever |
 | 📜 | `role` | learner |
-| 📚 | `role` · `rung` | librarian · **and** rung 1, a brief |
-| 🔍 | `role` · `phase` | reviewer · **and** the review·judge phase |
+| 📚 | `role` · `rung` | librarian · *and* rung 1, a brief |
+| 🔍 | `role` · `phase` | reviewer · *and* the review·judge phase |
 | 🔮 | `role` | telepath |
 | 🪐 | `role` | thinker |
 | 🌕 | `role` | reflector |
@@ -67,9 +67,10 @@ present, not merely its address (`rule.require.inventory-for-enumerable-concepts
 | 💥 | `halt` | malfunction — a break to fix |
 | 🌙 | `halt` | skipped — a review that never ran |
 | 🪷 ✨ 🍵 | `vibe` | flourishes — they carry tone, never a concept, so none is reusable as a marker |
-| 🌴🤙 | `vibe` | 🔴 a route complete — **an imported `ehmpathy` vibe**, off the owl's palette. swap owed |
+| 🌴🤙 | `vibe` | 🔴 a route complete — an imported `ehmpathy` vibe, off the owl's palette. swap owed |
+| ⚠️ | — | 🔴 **FORBIDDEN — never claim it.** it computes to 1 cell where every other palette glyph computes to 2, so it desyncs the cursor and kinks every column under it. and it is a second symbol for `🟡`'s one concept. reach for `🟡` — `rule.forbid.width-ambiguous-glyphs` (telepath) |
 
-## ⚠️ .the two-axis entries are NOT collisions
+## 🟡 .the two-axis entries are NOT collisions
 
 `📚` and `🔍` each appear on two axes, and both are **one concept seen twice**:
 
@@ -82,7 +83,7 @@ present, not merely its address (`rule.require.inventory-for-enumerable-concepts
 **unrelated** concepts is the collision; a glyph whose one concept surfaces on two axes is the
 register as intended.
 
-⚠️ **so a grep is necessary and not sufficient.** it tells you a glyph is used; only this catalog
+🟡 **so a grep is necessary and not sufficient.** it tells you a glyph is used; only this catalog
 tells you whether the use is the same concept as yours.
 
 ## .how to claim a glyph

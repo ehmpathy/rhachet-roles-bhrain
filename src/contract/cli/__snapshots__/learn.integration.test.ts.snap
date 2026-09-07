@@ -28,7 +28,7 @@ exports[`learnDomainTerms (integration) given: [case1] the clone face — reflec
    │        ├─ what you conformed, disputed, and paved this round — and why
    │        ├─ a term the round SETTLED (declared dobj/dop, judged synonym) → capture it NOW
    │        ├─ defer ONLY a term you truly cannot finish (needs discovery, dispute still open)
-   │        ├─ ⚠️ ONE FILE PER DAY — append within today, never across days
+   │        ├─ 🟡 ONE FILE PER DAY — append within today, never across days
    │        └─ sentinel = .agent/.cache/repo=bhrain/role=learner/skill=learn.domain.terms/progress.$date.md
    │
    ├─ the canon — what a term is + why it is kept
@@ -65,7 +65,7 @@ exports[`learnDomainTerms (integration) given: [case1] the clone face — reflec
    │        ├─ what you conformed, disputed, and paved this round — and why
    │        ├─ a term the round SETTLED (declared dobj/dop, judged synonym) → capture it NOW
    │        ├─ defer ONLY a term you truly cannot finish (needs discovery, dispute still open)
-   │        ├─ ⚠️ ONE FILE PER DAY — append within today, never across days
+   │        ├─ 🟡 ONE FILE PER DAY — append within today, never across days
    │        └─ sentinel = .agent/.cache/repo=bhrain/role=learner/skill=learn.domain.terms/progress.$date.md
    │
    ├─ the canon — what a term is + why it is kept
@@ -110,7 +110,7 @@ exports[`learnDomainTerms (integration) given: [case2] the onStop hook face — 
    │        ├─ what you conformed, disputed, and paved this round — and why
    │        ├─ a term the round SETTLED (declared dobj/dop, judged synonym) → capture it NOW
    │        ├─ defer ONLY a term you truly cannot finish (needs discovery, dispute still open)
-   │        ├─ ⚠️ ONE FILE PER DAY — append within today, never across days
+   │        ├─ 🟡 ONE FILE PER DAY — append within today, never across days
    │        └─ sentinel = .agent/.cache/repo=bhrain/role=learner/skill=learn.domain.terms/progress.$date.md
    │
    ├─ the canon — what a term is + why it is kept

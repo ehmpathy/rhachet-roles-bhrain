@@ -8,32 +8,35 @@ term.synonyms.forbidden:
 - script         # names rung 4's shape alone, and `rule.forbid.term-script` bans it outright
 - command
 - procedure
-- tool           # 🔴 the UMBRELLA over every rung, a brief among them — and now this term's
+- tool           # the UMBRELLA over every rung, a brief among them — and now this term's
                  # declared ANCESTOR. see `term=artifact.tool._.choice._.md`
 
 ## .what
 
-**prethought capacity** — prethought whose **execution is partly or wholly mechanized** — rungs 2
-through 4 of the entoolment ladder. **the half a 📚 brief is contrasted against**: a skill confers
-the **power to act**; a brief confers the **concepts** a brain acts with.
+**prethought capacity** — prethought whose execution is partly or wholly mechanized, rungs 2
+through 4 of the entoolment ladder.
 
-| rung | the skill | brain cost per use |
-|---|---|---|
-| 2 | 💪💧 a **fluid skill** — the steps are written, a brain walks them | follow the steps |
-| 3 | 💪🔩 a **rigid skill** — some branches crystallized, some still probabilistic | the probabilistic branches only |
-| 4 | 💪🪨 a **solid skill** — one call, one contract | **none** |
+- it is the half a 📚 brief is contrasted against
+  - a skill confers the power to act; a brief confers the concepts a brain acts with
 
-rungs 2–4 and the glyphs are **rhachet's determinism spectrum**, adopted rather than coined — its
-words for rung 3, unedited: *"deterministic entrypoint, mixed operations + orchestration."*
+- the three it spans are **2 💪💧 fluid · 3 💪🔩 rigid · 4 🪨 solid**
+  - what each costs a brain per use is the ladder's own column — see
+    `philosophy.entoolment-is-the-pinnacle._.md` (learner), which declares all five rungs
+- rungs 2–4 and the glyphs are rhachet's determinism spectrum, adopted over coined — its words for
+  rung 3, unedited: *"deterministic entrypoint, mixed operations + orchestration."*
 
-⚠️ **a skill is a kind of tool, never the opposite of one.** every rung is a tool
-(`term=artifact.tool`); `skill` names only the mechanized ones. so *"a brief and a **skill** amortize
-different things"* is the sentence — a brief amortizes the derivation, a skill amortizes the
-execution too.
+### a skill is a KIND of tool, never the opposite of one
 
-⚠️ **a route is not a rung.** it is the most **general** artifact *at* rung 3, whose name is
-**rigid skill** — every other rung-3 shape is a specialization of it. to name a rung after its
-best-known instance is the same defect as a term that takes the scope of whatever filled it first.
+- every rung is a tool (`term=artifact.tool`); `skill` names only the mechanized ones
+- ⇒ so the sentence is *"a brief and a skill amortize different things"* — a brief amortizes the
+  derivation, a skill amortizes the execution too
+
+### a route is not a rung
+
+- it is the most general artifact *at* rung 3, whose name is **rigid skill**
+- every other rung-3 shape is a specialization of it
+- ⇒ to name a rung after its best-known instance is the same defect as a term that takes the scope
+  of whatever filled it first
 
 ## .refs
 

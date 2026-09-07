@@ -1,0 +1,59 @@
+# rule.forbid.emphasis-noise
+
+> **emphasis is a scarce signal. spend it on every line and you have marked none of them.**
+
+a glyph, a bold, a caps, a `🟡` — each claims *"this outranks its neighbours"*. that claim is relative, so repetition destroys it.
+
+## .the bar — one emphasized line per section, at most
+
+a second means the section is two sections, or the first was misplaced.
+
+🟡 it bounds **emphasis**, never structure. a table, a nest, a header, a fence are shape.
+
+## .the test
+
+> **can a reader find the ONE line that matters most?**
+
+yes, and emphasis points at it → correct · yes, unmarked → cut it · **no, several are marked** → this defect · no, none marked and the point is buried → `rule.forbid.diffusion`.
+
+## .the forms — and the first is the sharpest
+
+- **a stack** — two or more forms on one line
+  - it announces the author did not trust the words
+  - ⇒ a blocker, where the other four are the same defect at lower dose
+- a glyph on many lines of one section
+- every clause bolded, so the sentence has no stress left to place
+- CAPS where the sentence already carries the stress
+- a glyph on every table row — that marks the column, never the row
+
+## .the question that sorts it — RANK or CLASSIFY
+
+> **does this mark rank a line against its neighbours, or classify it?**
+
+rank is bounded here. classify is exempt. two properties settle which, and neither is the character:
+
+| property | it CLASSIFIES when… | it RANKS when… |
+|---|---|---|
+| position | at a line's LEAD — `🟡` a caveat, `⇒` a conclusion, `>` a quote | mid-line, or on some table rows and not others |
+| extent | it spans its WHOLE container — `\| **diffusion** \|` | it spans PART of one — `the claim.** then its ground` |
+
+⇒ so `🟡 **the claim.** then its ground` is one of each and passes; `a **bold** and a 🔴 **bold** in one clause` is two ranks on one target and does not.
+
+🟡 a **mention** is exempt — a glyph named as the subject of a sentence ranks no line, and this rule could not be written without one.
+
+## .the seam with `forbid.diffusion` — opposite failures of one act
+
+| | the failure | the repair |
+|---|---|---|
+| `forbid.diffusion` | the needle is buried — no line elevated | elevate one line |
+| this rule | every line elevated — so no needle exists | cut back to one |
+
+⇒ a passage can fail both: many emphasized lines, and the real needle unmarked among them.
+
+🟡 the head noun is `emphasis`, never `marker` — `marker` is declared for the ROLE slot (`term=glyph`), and that sense **classifies** where this one **ranks**. the full carries the property table that parts them.
+
+blocker: a section with more than one emphasized line · a stack of two or more forms on one line · a glyph on every table row where it ranks rather than classifies.
+nitpick: a bold over a whole sentence rather than its stress.
+false positive: a state glyph (`✅` `💥` `🌙`) · a declared role or phase marker · a provenance mark cited on its row · a mention · a single emphasis on the one point that matters.
+
+⇒ see also: `rule.forbid.diffusion` (the opposite failure) · `rule.require.reflexive-condensation` (emphasis often stands in for a cut that was owed) · `term=glyph._.choice._.md` · `domain.glyphs/catalog.of=glyph._.md`.

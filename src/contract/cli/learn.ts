@@ -223,7 +223,7 @@ const emitDistillMoves = (
     '   │        ├─ defer ONLY a term you truly cannot finish (needs discovery, dispute still open)',
   );
   emit(
-    '   │        ├─ ⚠️ ONE FILE PER DAY — append within today, never across days',
+    '   │        ├─ 🟡 ONE FILE PER DAY — append within today, never across days',
   );
   emit(`   │        └─ sentinel = ${input.progressPath}`);
   emit('   │');

@@ -1,0 +1,103 @@
+{"stone":"1.vision","status":"arrived","reason":"entered guard reviews"}
+{"stone":"1.vision","status":"blocked","blocker":"review.self","reason":"review.self required: has-grounded-in-reality"}
+{"stone":"1.vision","status":"promised","reason":"promised review.self: has-grounded-in-reality"}
+{"stone":"1.vision","status":"promised","reason":"promised review.self: has-experience-coverage"}
+{"stone":"1.vision","status":"promised","reason":"promised review.self: has-questioned-requirements"}
+{"stone":"1.vision","status":"promised","reason":"promised review.self: has-questioned-assumptions"}
+{"stone":"1.vision","status":"promised","reason":"promised review.self: has-questioned-questions"}
+{"stone":"1.vision","status":"arrived","reason":"entered guard reviews"}
+{"stone":"1.vision","status":"blocked","blocker":"review.peer","reason":"blockers exceed threshold (2 > 0); wait for human approval"}
+{"stone":"1.vision","status":"contemplated","reason":"contemplated review.peer: dimensional-decomposition"}
+{"stone":"1.vision","status":"contemplated","reason":"contemplated review.peer: experience-coverage"}
+{"stone":"1.vision","status":"arrived","reason":"entered guard reviews"}
+{"stone":"1.vision","status":"blocked","blocker":"review.peer","reason":"blockers exceed threshold (2 > 0); wait for human approval"}
+{"stone":"1.vision","status":"contemplated","reason":"contemplated review.peer: dimensional-decomposition"}
+{"stone":"1.vision","status":"contemplated","reason":"contemplated review.peer: experience-coverage"}
+{"stone":"1.vision","status":"arrived","reason":"entered guard reviews"}
+{"stone":"1.vision","status":"blocked","blocker":"review.peer","reason":"blockers exceed threshold (1 > 0); wait for human approval"}
+{"stone":"1.vision","status":"contemplated","reason":"contemplated review.peer: dimensional-decomposition"}
+{"stone":"1.vision","status":"contemplated","reason":"contemplated review.peer: experience-coverage"}
+{"stone":"1.vision","status":"arrived","reason":"entered guard reviews"}
+{"stone":"1.vision","status":"blocked","blocker":"approval","reason":"wait for human approval"}
+{"stone":"1.vision","status":"arrived","reason":"entered guard reviews"}
+{"stone":"1.vision","status":"blocked","blocker":"review.peer","reason":"nitpicks exceed threshold (10 > 7); wait for human approval"}
+{"stone":"1.vision","status":"contemplated","reason":"contemplated review.peer: dimensional-decomposition"}
+{"stone":"1.vision","status":"contemplated","reason":"contemplated review.peer: experience-coverage"}
+{"stone":"1.vision","status":"arrived","reason":"entered guard reviews"}
+{"stone":"1.vision","status":"blocked","blocker":"review.peer","reason":"no review files found for hash 18fdd884; wait for human approval"}
+{"stone":"1.vision","status":"arrived","reason":"entered guard reviews"}
+{"stone":"1.vision","status":"blocked","blocker":"approval","reason":"wait for human approval"}
+{"stone":"1.vision","status":"contemplated","reason":"contemplated review.peer: dimensional-decomposition"}
+{"stone":"1.vision","status":"contemplated","reason":"contemplated review.peer: experience-coverage"}
+{"stone":"1.vision","status":"arrived","reason":"entered guard reviews"}
+{"stone":"1.vision","status":"blocked","blocker":"review.peer","reason":"blockers exceed threshold (1 > 0); wait for human approval"}
+{"stone":"1.vision","status":"contemplated","reason":"contemplated review.peer: dimensional-decomposition"}
+{"stone":"1.vision","status":"contemplated","reason":"contemplated review.peer: experience-coverage"}
+{"stone":"1.vision","status":"arrived","reason":"entered guard reviews"}
+{"stone":"1.vision","status":"blocked","blocker":"review.peer","reason":"blockers exceed threshold (1 > 0); wait for human approval"}
+{"stone":"1.vision","status":"contemplated","reason":"contemplated review.peer: dimensional-decomposition"}
+{"stone":"1.vision","status":"contemplated","reason":"contemplated review.peer: experience-coverage"}
+{"stone":"1.vision","status":"arrived","reason":"entered guard reviews"}
+{"stone":"1.vision","status":"blocked","blocker":"approval","reason":"wait for human approval"}
+{"stone":"1.vision","status":"contemplated","reason":"contemplated review.peer: dimensional-decomposition"}
+{"stone":"1.vision","status":"contemplated","reason":"contemplated review.peer: experience-coverage"}
+{"stone":"1.vision","status":"arrived","reason":"entered guard reviews"}
+{"stone":"1.vision","status":"blocked","blocker":"approval","reason":"wait for human approval"}
+{"stone":"1.vision","status":"contemplated","reason":"contemplated review.peer: dimensional-decomposition"}
+{"stone":"1.vision","status":"contemplated","reason":"contemplated review.peer: experience-coverage"}
+{"stone":"1.vision","status":"arrived","reason":"entered guard reviews"}
+{"stone":"1.vision","status":"blocked","blocker":"review.peer","reason":"blockers exceed threshold (3 > 0); wait for human approval"}
+{"stone":"1.vision","status":"contemplated","reason":"contemplated review.peer: dimensional-decomposition"}
+{"stone":"1.vision","status":"contemplated","reason":"contemplated review.peer: experience-coverage"}
+{"stone":"1.vision","status":"arrived","reason":"entered guard reviews"}
+{"stone":"1.vision","status":"blocked","blocker":"approval","reason":"wait for human approval"}
+{"stone":"1.vision","status":"contemplated","reason":"contemplated review.peer: dimensional-decomposition"}
+{"stone":"1.vision","status":"contemplated","reason":"contemplated review.peer: experience-coverage"}
+{"stone":"1.vision","status":"arrived","reason":"entered guard reviews"}
+{"stone":"1.vision","status":"blocked","blocker":"approval","reason":"wait for human approval"}
+{"stone":"1.vision","status":"contemplated","reason":"contemplated review.peer: dimensional-decomposition"}
+{"stone":"1.vision","status":"contemplated","reason":"contemplated review.peer: experience-coverage"}
+{"stone":"1.vision","status":"arrived","reason":"entered guard reviews"}
+{"stone":"1.vision","status":"blocked","blocker":"approval","reason":"wait for human approval"}
+{"stone":"1.vision","status":"contemplated","reason":"contemplated review.peer: dimensional-decomposition"}
+{"stone":"1.vision","status":"contemplated","reason":"contemplated review.peer: experience-coverage"}
+{"stone":"1.vision","status":"arrived","reason":"entered guard reviews"}
+{"stone":"1.vision","status":"blocked","blocker":"approval","reason":"wait for human approval"}
+{"stone":"1.vision","status":"contemplated","reason":"contemplated review.peer: dimensional-decomposition"}
+{"stone":"1.vision","status":"contemplated","reason":"contemplated review.peer: experience-coverage"}
+{"stone":"1.vision","status":"arrived","reason":"entered guard reviews"}
+{"stone":"1.vision","status":"blocked","blocker":"approval","reason":"wait for human approval"}
+{"stone":"1.vision","status":"contemplated","reason":"contemplated review.peer: dimensional-decomposition"}
+{"stone":"1.vision","status":"contemplated","reason":"contemplated review.peer: experience-coverage"}
+{"stone":"1.vision","status":"arrived","reason":"entered guard reviews"}
+{"stone":"1.vision","status":"blocked","blocker":"approval","reason":"wait for human approval"}
+{"stone":"1.vision","status":"contemplated","reason":"contemplated review.peer: dimensional-decomposition"}
+{"stone":"1.vision","status":"contemplated","reason":"contemplated review.peer: experience-coverage"}
+{"stone":"1.vision","status":"arrived","reason":"entered guard reviews"}
+{"stone":"1.vision","status":"blocked","blocker":"approval","reason":"wait for human approval"}
+{"stone":"1.vision","status":"contemplated","reason":"contemplated review.peer: dimensional-decomposition"}
+{"stone":"1.vision","status":"contemplated","reason":"contemplated review.peer: experience-coverage"}
+{"stone":"1.vision","status":"arrived","reason":"entered guard reviews"}
+{"stone":"1.vision","status":"blocked","blocker":"approval","reason":"wait for human approval"}
+{"stone":"1.vision","status":"contemplated","reason":"contemplated review.peer: experience-coverage"}
+{"stone":"1.vision","status":"arrived","reason":"entered guard reviews"}
+{"stone":"1.vision","status":"blocked","blocker":"approval","reason":"wait for human approval"}
+{"stone":"1.vision","status":"contemplated","reason":"contemplated review.peer: dimensional-decomposition"}
+{"stone":"1.vision","status":"arrived","reason":"entered guard reviews"}
+{"stone":"1.vision","status":"blocked","blocker":"approval","reason":"wait for human approval"}
+{"stone":"1.vision","status":"contemplated","reason":"contemplated review.peer: dimensional-decomposition"}
+{"stone":"1.vision","status":"contemplated","reason":"contemplated review.peer: experience-coverage"}
+{"stone":"1.vision","status":"arrived","reason":"entered guard reviews"}
+{"stone":"1.vision","status":"blocked","blocker":"approval","reason":"wait for human approval"}
+{"stone":"1.vision","status":"contemplated","reason":"contemplated review.peer: experience-coverage"}
+{"stone":"1.vision","status":"contemplated","reason":"contemplated review.peer: dimensional-decomposition"}
+{"stone":"1.vision","status":"arrived","reason":"entered guard reviews"}
+{"stone":"1.vision","status":"blocked","blocker":"approval","reason":"wait for human approval"}
+{"stone":"1.vision","status":"contemplated","reason":"contemplated review.peer: dimensional-decomposition"}
+{"stone":"1.vision","status":"contemplated","reason":"contemplated review.peer: experience-coverage"}
+{"stone":"1.vision","status":"arrived","reason":"entered guard reviews"}
+{"stone":"1.vision","status":"blocked","blocker":"approval","reason":"wait for human approval"}
+{"stone":"1.vision","status":"contemplated","reason":"contemplated review.peer: dimensional-decomposition"}
+{"stone":"1.vision","status":"contemplated","reason":"contemplated review.peer: experience-coverage"}
+{"stone":"1.vision","status":"arrived","reason":"entered guard reviews"}
+{"stone":"1.vision","status":"blocked","blocker":"approval","reason":"wait for human approval"}

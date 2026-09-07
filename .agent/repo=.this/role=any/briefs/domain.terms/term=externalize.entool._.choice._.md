@@ -10,25 +10,27 @@ term.synonyms.forbidden:
 - productionize
 
 ## .what
-to **entool** is to raise an artifact toward a single deterministic call — one invocation, no
-brain required. it names a **direction on a ladder**, not a binary state:
+to entool is to raise an artifact toward a single deterministic call — one invocation, no brain
+required. it names a direction on a ladder, never a binary state:
 
 | rung | the artifact |
 |---|---|
 | 0 | 🧠 tribal knowledge — lives in one brain |
-| 1 | 📚 a **brief** |
-| 2 | 💪💧 a **fluid skill** |
-| 3 | 💪🔩 a **rigid skill** — a **route** lives here |
-| 4 | 💪🪨 a **solid skill** |
+| 1 | 📚 a brief |
+| 2 | 💪💧 a fluid skill |
+| 3 | 💪🔩 a rigid skill — a route lives here |
+| 4 | 💪🪨 a solid skill |
 
-rungs 2–4 are **rhachet's determinism spectrum**, adopted rather than coined — as are the glyphs
+rungs 2–4 are rhachet's determinism spectrum, adopted over coined — as are the glyphs
 (🧠 brain · 📚 brief · 💪 skill, qualified by 💧 fluid / 🔩 rigid / 🪨 solid).
 
-⚠️ **every rung is a tool.** a brief, a route, and a solid skill are all pavement a future traveler
-uses instead of re-derives; they differ only in **imagine cost per use**. so *"is it entooled?"* is
-the wrong question — `entool` names the **climb**, never the destination.
+🟡 **every rung is a tool.**
 
-its pair is **enskill** (rung 0 → 2, the DISCOVER half). entool is the UPGRADE half.
+- a brief, a route, and a solid skill are all pavement a future traveler uses instead of
+  re-derives; they differ only in imagine cost per use
+- ⇒ so *"is it entooled?"* is the wrong question — `entool` names the climb, never the destination
+
+its pair is enskill (rung 0 → 2, the DISCOVER half). entool is the UPGRADE half.
 
 ## .refs
 where the term composes declared contracts:

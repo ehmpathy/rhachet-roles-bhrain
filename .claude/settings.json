@@ -84,12 +84,6 @@
           },
           {
             "type": "command",
-            "command": "./node_modules/.bin/rhachet roles boot --role researcher",
-            "timeout": 30,
-            "author": "repo=bhrain/role=researcher"
-          },
-          {
-            "type": "command",
             "command": "./node_modules/.bin/rhachet roles boot --role telepath",
             "timeout": 30,
             "author": "repo=bhrain/role=telepath"
@@ -277,6 +271,12 @@
             "command": "./node_modules/.bin/rhx learn.domain.terms --when hook.onStop",
             "timeout": 5,
             "author": "repo=bhrain/role=learner"
+          },
+          {
+            "type": "command",
+            "command": "./node_modules/.bin/rhx elucidate.summary --when hook.onStop",
+            "timeout": 5,
+            "author": "repo=bhrain/role=telepath"
           }
         ]
       }

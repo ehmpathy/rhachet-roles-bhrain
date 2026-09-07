@@ -12,7 +12,7 @@ that stdout must contain.
 
 the guard cannot pass a stone on a review it cannot read. if the guard finds no numeric count,
 it can NOT assume zero — a silent "0 blockers, 0 nitpicks" would look like a clean approval when
-in truth no verdict was seen. so an unreadable review is treated as a **`💥 malfunction`** for
+in truth no verdict was seen. so an unreadable review is treated as a `💥 malfunction` for
 that reviewer, and the stone blocks. see `rule.forbid.failhide`.
 
 ## .the contract

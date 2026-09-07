@@ -8,7 +8,7 @@ a demo of `rule.require.specialize-a-rule-its-readers-look-past`, and specifical
 **2026-07-29** · `ehmpathy/rhachet-roles-bhrain` · seed
 [#372](https://github.com/ehmpathy/rhachet-roles-bhrain/issues/372), filed 2026-08-12
 
-⚠️ **the two rules named below are FOREIGN to this tree — a glob for them here returns no match.**
+🟡 **the two rules named below are FOREIGN to this tree — a glob for them here returns no match.**
 they belong to the org role set this repo depends on; the ask to author them was re-seeded to the
 repo that owns that namespace. they are named because the episode is theirs, not because this repo
 holds them.
@@ -40,7 +40,7 @@ it could not do is fire at the keystroke.
 beside it — a hook, a guard, a gate. seed #372 states this directly: the crystallization *"must
 not stop at a brief"*.
 
-⚠️ **and this is not an argument against the split.** the specialization is what tells a
+🟡 **and this is not an argument against the split.** the specialization is what tells a
 mechanism **which situation to fire in**. an unwritten rule has no cue to hook.
 
 ## .the concept

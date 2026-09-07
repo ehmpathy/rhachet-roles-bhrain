@@ -41,11 +41,11 @@ count that rises is **more work discovered**, never a defect to diagnose.
 | a human may overrule it | no one may |
 | more rounds cost the human's attention | more reviews cost only yours |
 
-⚠️ **that last row is why the two are governed differently.** a peer round spends a scarce shared
+🟡 **that last row is why the two are governed differently.** a peer round spends a scarce shared
 resource, so a ceiling on it is prudent. **a self review spends only the driver's own effort**, so
 a ceiling on it would protect nobody and would cost the artifact everything.
 
-## ⚠️ .the guard has a liveness hatch. it is NOT a permission
+## 🟡 .the guard has a liveness hatch. it is NOT a permission
 
 `getSelfReviewChallengeDecision.ts:98` allows a promise once attempts reach three on the same
 artifact hash, with no further timer. it exists so a driver is never **hard-stuck** by a clock.
@@ -81,9 +81,9 @@ for **each** review, before you promise it, answer on the page:
 
 - a defect found → state how it was repaired
 - a non-issue examined → state **why** it holds, with evidence
-- **neither** → 🔴 you did not review. begin again — and this is the whole rule in one line
+- **neither** → **you did not review. begin again** — and this is the whole rule in one line
 
-⚠️ **the third branch is the one that must not be softened.** *"i read it and it seemed fine"* is
+🟡 **the third branch is the one that must not be softened.** *"i read it and it seemed fine"* is
 the answer of an author, never of a reviewer. a self review is the one moment a driver stops as the
 artifact's defender and reads as its severest critic.
 

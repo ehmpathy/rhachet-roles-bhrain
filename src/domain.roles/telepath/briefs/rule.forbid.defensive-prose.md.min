@@ -1,0 +1,80 @@
+# rule.forbid.defensive-prose
+
+> **write so the reader can USE it. prose written so the reader will ACCEPT it is a defense, and a defense is charged to every reader who raised no objection.**
+
+**defensive prose** is any passage aimed at a reader modeled as a JUDGE — one who might reject the author's choice — over a reader modeled as an ACTOR, one who needs to act on it.
+
+## .it names the GENERATOR, never a shape
+
+every other grader here reads a property of the words. this reads the author's model of the reader, and that model emits several shapes at once.
+
+⇒ so an author who cuts seven shapes and keeps the model emits seven more next round.
+
+⇒ measured on this canon's own author — a 12-line comment on a one-line change, 3 lines of mechanism against 9 of defense: `rule.forbid.defensive-prose.md`.
+
+## .the test — a COUNT, per line
+
+> **does a reader who wants to USE this need the line?**
+
+count them. `informs` against `defends`, and state the ratio.
+
+🟡 **a per-line JUSTIFICATION test cannot catch this.** every defensive line is true, short, and defensible on its own merits — which is what carries it through a careful cut. only the USE question parts them, and an author asks it of themselves last.
+
+## .the shapes
+
+| shape | what it defends against | 👎 as written | 👍 |
+|---|---|---|---|
+| the pre-justification | *"you might think this was arbitrary"* | *"a good argument cites its peers"* | delete. nobody charged it |
+| the shown work | *"you might think I did not check"* | the measurement trail, inline | the result. the trail refs out |
+| the principle | *"you might think this is a hack"* | *"an audit is evidence about its instrument"* | the mechanism, stated flat |
+| the pre-emptive concession | *"you might object to X"* | *"it does not buy sincerity"* | delete. let the reviewer strike first |
+| the absolution | *"you might think it was broken"* | *"the transport was never broken"* | delete. no reader charged it |
+| the emphasis plea | *"you might not agree"* | caps, glyphs, a bold on every clause | one mark, on the needle |
+| the completeness display | *"you might think I missed a case"* | seven cases, where two carry the claim | the two |
+
+⇒ **four of the seven are already named by a peer rule as a SHAPE.** what this adds is why they arrive together: one intent produces all seven, so a sweep that cuts them one at a time leaves the source live.
+
+## .when it fires
+
+| when… | then… |
+|---|---|
+| you are unsupervised, with a review ahead | the strongest cue. the reviewer is modeled as a judge, and that model emits the shapes |
+| you were corrected in the last round | 🟡 the sharpest, and counter-intuitive: a correction raises the defense, and the defense is the defect |
+| you change what you were not asked to change | the pull is to justify the change. state what it does |
+| the change is one line and the explanation is twelve | that ratio IS the measurement |
+| you would write *"a good X does Y"* as a premise | a premise nobody disputed, offered to earn agreement |
+| you would state the measurement that led you here | the result informs; the road defends |
+| you would close with a principle | it makes a small fix sound settled. state the mechanism |
+| you sense the reader might not accept it | that sense IS the substitution. ask what they need to DO |
+
+## .the boundary — a RATIONALE informs; a DEFENSE persuades
+
+| a violation | not a violation |
+|---|---|
+| a premise offered so the reader agrees | a warn a future editor needs to not re-break it |
+| the road to the result, inline | the result, and one line of ground |
+| a principle that settles a small choice | a caveat the reader must act on |
+| every case enumerated, where two carry the claim | a dispute record, whose subject IS the argument |
+
+**the line that parts them: does the reader need it to ACT, or to AGREE?** act → a rationale, and it stays however long it runs · agree → a defense, and it is cut.
+
+🟡 **the WARN is the shape a coarse rule fails** — it justifies a choice AND the reader needs it to avoid an action, so it reads as a defense and passes. ⇒ the three worked specimens: `rule.forbid.defensive-prose.md`.
+
+## .the seam with `forbid.subversive-prose`
+
+| rule | what it reads |
+|---|---|
+| `forbid.subversive-prose` | the SENTENCE — could an observation settle it? |
+| this rule | the passage's AIM — is the reader modeled as an actor or a judge? |
+
+⇒ they part both ways: a careless aphorism written because it read well is subversive and not defensive · a passage whose every sentence is settleable, and nine of twelve exist to prove the author was careful, is defensive and not subversive.
+
+## .the axis
+
+🟡 **it is the closest rule here to the root.** `rule.require.elucidation` asks *can the peer USE it now?*; this names the one substitution that replaces that with *will the peer ACCEPT this?*
+
+blocker: a passage whose lines mostly serve agreement over action · a premise offered against an objection nobody made · the road to a result left inline · a principle that converts a small choice into a settled one · every case enumerated where two carry the claim.
+nitpick: emphasis raised past the bar to urge agreement.
+false positive: a warn a future editor needs to avoid an action · a caveat the reader must act on · a dispute record or a `.reason` file · a decision record.
+
+⇒ see also: `rule.require.elucidation` (the root) · `rule.forbid.subversive-prose` (the sentence grain) · `rule.require.archaeology-in-notes` · `rule.require.reflexive-condensation` (the RANK test this needs) · `rule.forbid.purposeless-passages`.

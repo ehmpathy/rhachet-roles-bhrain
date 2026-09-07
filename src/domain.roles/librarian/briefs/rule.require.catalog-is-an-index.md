@@ -38,7 +38,7 @@ and the table a reviewer actually walks ends up buried beneath it.
 | the **rule** | the **CLASS** | the mechanism, the detect question, ONE worked case, the fix, the enforcement |
 | the **example** (`.example=$id.md`) | **ONE OCCURRENCE** | the date, the id, the sweep table, the results, the residual |
 
-⚠️ **an occurrence spans two of those grains and belongs to exactly one:** its own example file.
+🟡 **an occurrence spans two of those grains and belongs to exactly one:** its own example file.
 that ambiguity is why it drifts into the catalog by default — the row it amends is real, so the
 record feels at home beside it.
 

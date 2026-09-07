@@ -13,7 +13,7 @@ term.synonyms.forbidden:
 
 ## .what
 
-to **withdraw** an artifact is **to retract its claim while the record of the claim stays.**
+to withdraw an artifact is **to retract its claim while the record of the claim stays.**
 
 it is the act you perform when an artifact you produced turns out to rest on a premise that does
 not hold — a dream for a defect already fixed, a brief that teaches a fiction, a fulcrum whose
@@ -39,7 +39,7 @@ three things, and each one is checkable:
 3. **a durable home for both** — a seed (`.said` / `.settled`), a fulcrum entry, or a `status` flip
    on the record it overturns
 
-⚠️ **the file may go; the reason may not.** the hazard brief withdrawn on 2026-08-31 was deleted
+🟡 **the file may go; the reason may not.** the hazard brief withdrawn on 2026-08-31 was deleted
 from disk and its full account survives in `S19` and `F27`.
 
 ## .the lifecycle it sits on

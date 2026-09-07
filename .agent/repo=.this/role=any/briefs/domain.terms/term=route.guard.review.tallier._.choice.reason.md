@@ -1,11 +1,15 @@
 # domain.term.choice.reason: tallier
 
 ## .etymology
-**tallier** = the agent that tallies. the concept is "which role produced the count", so the
-contract field is named for the ROLE (noun-agent form: tally → tallier), which also matches the
-render vocabulary `tallied by reviewer@$brain`. chosen over `counter` (overloaded — a counter is
-also a cumulative total), `method` (buzzword-vague), and `decider` (the field records who
-tallied, not who decided a verdict).
+**tallier** = the agent that tallies.
+
+- the concept is *"which role produced the count"*, so the contract field is named for the ROLE
+  - noun-agent form: tally → tallier
+  - it matches the render vocabulary `tallied by reviewer@$brain`
+- chosen over three candidates
+  - `counter` — overloaded; a counter is also a cumulative total
+  - `method` — buzzword-vague
+  - `decider` — the field records who tallied, never who decided a verdict
 
 ## .the two-layer distinction: `tactic` (internal) vs `tallier` (contract)
 one concept is named at two layers on purpose:
@@ -22,7 +26,7 @@ the boundary cast is explicit and repeated across the guard: `tallier: tactic`
 it chose; on this persisted contract the field is named for the ROLE that produced the tally
 (`tallier`)."
 
-so `tactic` is NOT a forbidden synonym of `tallier` — it is the deliberate internal twin. the two
+so `tactic` is not a forbidden synonym of `tallier` — it is the deliberate internal twin. the two
 enum shapes coincide (`'deterministic' | 'probabilistic'`) because they name the same base fact
 from two vantage points: internal approach vs published role.
 
@@ -38,10 +42,11 @@ from two vantage points: internal approach vs published role.
                shared shape" and permits "leave them until disturbed (no forced mass-rewrite)."
                the disintermediation wish did not disturb the two words; the new code conformed to
                the declared contract word `tallier` and read the declared internal word `tactic`.
-- resolution = keep the two-layer distinction; itemize `tallier` (contract) with `tactic` recorded
-               as its deliberate internal twin (not a forbidden synonym). a future wish MAY unify
-               to one word as a clean rename with no behavior change — deferred, not owed here. the
-               learner peer approved this articulation on the second round (0 blockers, 0 nitpicks).
+- resolution =
+  - keep the two-layer distinction
+  - itemize `tallier` (contract), with `tactic` recorded as its deliberate internal twin — never a forbidden synonym
+  - a future wish MAY unify to one word as a clean rename with no behavior change — deferred, not owed here
+  - the learner peer approved this articulation on the second round (0 blockers, 0 nitpicks)
 
 ## .evidence
 - discovery: the term already composed declared contracts (RouteStoneGuardReviewArtifact,

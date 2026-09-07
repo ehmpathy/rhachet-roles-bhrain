@@ -10,32 +10,34 @@ term.synonyms.forbidden:
 - distill
 
 ## .what
-to **enbrief** is to materialize a concept as a 📚 **brief** — the step off rung 0 (🧠 tribal
-knowledge) onto rung 1.
+to enbrief is to materialize a concept as a 📚 brief — the step off rung 0 (🧠 tribal knowledge)
+onto rung 1.
 
-a brief holds **prethought concepts**, in whatever shape the thought wants — a lesson, a rule, a
-howto, a definition, a philosophy, a catalog, whatever a librarian may collect. the artifact kind
-is fixed; its contents are not.
+- a brief holds prethought concepts, in whatever shape the thought wants — a lesson, a rule, a
+  howto, a definition, a philosophy, a catalog, whatever a librarian may collect
+- the artifact kind is fixed; its contents are not
 
-⚠️ **so the `en-` family splits by RUNG, never by content.** `enbrief` is not the verb for
-*lessons* and `enskill` the verb for *procedures* — a procedure written as prose is still an
-enbrief, and it still costs a brain a read, an interpretation, and a translation into commands.
+🟡 **so the `en-` family splits by RUNG, never by content.**
 
-it is the **eldest of the `en-` family**, this org's three externalization verbs. each names a
-**climb on the entoolment ladder**, and each retires a different cost for the next traveler:
+- `enbrief` is not the verb for *lessons* and `enskill` the verb for *procedures*
+- a procedure written as prose is still an enbrief, and it still costs a brain a read, an
+  interpretation, and a translation into commands
+
+it is the eldest of the `en-` family, this org's three externalization verbs. each names a climb on
+the entoolment ladder, and each retires a different cost for the next traveler:
 
 | verb | the climb | what it retires |
 |---|---|---|
-| **enbrief** | 0 → 1 · 🧠 → 📚 | the **derivation** — they need not re-think it |
-| **enskill** | 0 → 2 · 🧠 → 💪💧 | the **sequence** — they need not re-assemble it |
-| **entool** | 2 → 4 · 💪💧 → 💪🪨 | the **execution** — they need not run it by hand |
+| **enbrief** | 0 → 1 · 🧠 → 📚 | the derivation — they need not re-think it |
+| **enskill** | 0 → 2 · 🧠 → 💪💧 | the sequence — they need not re-assemble it |
+| **entool** | 2 → 4 · 💪💧 → 💪🪨 | the execution — they need not run it by hand |
 
-⚠️ **the ladder is not a staircase away from briefs.** two misreads follow from that picture, and
+🟡 **the ladder is not a staircase away from briefs.** two misreads follow from that picture, and
 both are wrong:
 
 | the misread | why it fails |
 |---|---|
-| *"the climb targets a tool"* | every rung **is** a tool — a brief, a route, and a solid skill are all pavement a traveler uses instead of re-derives, and they differ only in imagine cost per use (`term=entool`) |
+| *"the climb targets a tool"* | every rung **is** a tool, and `term=externalize.entool._.choice._.md` declares which — so `enbrief` is an entoolment, never a step before one |
 | *"a higher rung retires the ones below"* | many solid skills rest on extensive briefs, or on a prior less-deterministic skill — so `enbrief` carries load at every rung |
 
 ## 🔑 .an enbrief often UNLOCKS a skill

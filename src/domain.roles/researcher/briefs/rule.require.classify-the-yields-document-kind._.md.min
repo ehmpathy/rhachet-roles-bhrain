@@ -31,7 +31,7 @@ a howto says *"reach for X"*. only a howdoes says **why X works and what it does
 ⇒ **a repo with howtos and no howdoes teaches people to follow steps they cannot reason about.**
 outside the decision tree they have no ground, and no tree enumerates every case.
 
-## ⚠️ .`hazard` vs `rule` — each can wear the other's prefix
+## 🟡 .`hazard` vs `rule` — each can wear the other's prefix
 
 | kind | carries | the tell it is mis-prefixed |
 |---|---|---|
@@ -56,7 +56,7 @@ already has the symptom and needs to name it.
 > **"what is the reader about to DO — judge fit, act, reason, recognize, or obey?"**
 
 one answer → that is the kind · **two** → it is two briefs; split it · **an answer with no brief
-planned for it** → 🔴 that is the gap. **probe for it while the research is still open**
+planned for it** → that is the gap. **probe for it while the research is still open**
 
 ## .why this is TAUGHT, not guarded
 
@@ -64,7 +64,7 @@ a guard fires **at yield time**, after the probes closed. it can catch an unclas
 can never catch the **missed** one — which is the whole value. so it is taught at
 `3.3.probes.absorb.gaps`, where the gap list forms.
 
-## ⚠️ .the set is open
+## 🟡 .the set is open
 
 `define` and `ref` are live prefixes elsewhere in this org and are not among the five. *"the kind I
 need is absent"* is a **legitimate discovery** — name the prefix, say what question it answers, add

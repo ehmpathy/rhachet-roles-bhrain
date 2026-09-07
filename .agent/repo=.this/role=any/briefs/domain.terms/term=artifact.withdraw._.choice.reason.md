@@ -13,9 +13,9 @@ log keeps it.
 
 | word | why not |
 |---|---|
-| `undo` | 🔴 **the wisher's own word** — *"so we undo this?"*. it names a return to the prior state, which is exactly what must NOT happen: the record of the claim stays. rejected on the sense, not the register |
+| `undo` | 🔴 the wisher's own word — *"so we undo this?"*. it names a return to the prior state, which is exactly what must NOT happen: the record of the claim stays. rejected on the sense, not the register |
 | `revert` | git's word for a commit that reverses another. borrowed here it would collide with a dependency's vocabulary (`rule.require.domain-term-itemization`'s import clause) |
-| `retract` | the closest rival, and it is used in this cluster's own prose as a **gloss**. rejected as the term because `withdraw` reads plainer and because `retract` invites the noun `retraction`, a second word for one act |
+| `retract` | the closest rival, and it is used in this cluster's own prose as a gloss. rejected as the term because `withdraw` reads plainer and because `retract` invites the noun `retraction`, a second word for one act |
 | `rescind` | legal register; it implies an authority that annuls, where most withdrawals here are the author's own |
 | `cancel` | names a stop before completion. a withdrawn artifact was completed and published |
 
@@ -39,7 +39,7 @@ excludes `delete`, which is the neighbour it must exclude.
 ## ✅ .the boundary — SETTLED 2026-08-31, by the word this section had already named
 
 `rule.require.boundary-qualified-terms` asks *"withdraw, of WHAT?"* — and the enumeration above
-answers **three ways**: a dream, a brief, a fulcrum.
+answers three ways: a dream, a brief, a fulcrum.
 
 two candidates were weighed:
 
@@ -53,19 +53,21 @@ boundary rule's own carve-out — *"an unnameable boundary cannot be carried, an
 worse"* — and named `artifact` as the settlement owed. `term=artifact` was then paved on the same
 day, so the chain now reads `artifact.withdraw` → `repo`.
 
-⚠️ **and it settled `dream` in the same move.** `term=artifact.dream` carried the identical gap,
+🟡 **and it settled `dream` in the same move.** `term=artifact.dream` carried the identical gap,
 which is what made `artifact` worth a term rather than a guess: **two clusters blocked on one
 absent ancestor** (`term=artifact._.choice.reason.md`, `.why it was paved`).
 
 ## 🔴 .a withdrawal sweeps the POINTERS too — measured, 2026-08-31
 
-the three dream rows above were withdrawn correctly: each body was removed and each refutation was
-recorded here and in `S19`. **and each left a broken symlink at `$route/dreams/`** — a pointer to a
-file that no longer exists, discovered a day later by a `file` walk.
-
-⇒ the asymmetry is in the extant rules and it is easy to miss. `rule.always.catch-dreams-for-followups`
-mandates the route symlink **at catch time** and says naught about the withdraw. so the catch has a
-stated obligation and its inverse has none, which is exactly the shape a residue accretes in.
+- the three dream rows above were withdrawn correctly — each body removed, each refutation recorded
+  here and in `S19`
+- and each left a broken symlink at `$route/dreams/` — a pointer to a file that no longer
+  exists, discovered a day later by a `file` walk
+- ⇒ the asymmetry is in the extant rules and it is easy to miss
+  - `rule.always.catch-dreams-for-followups` mandates the route symlink at catch time and says
+    naught about the withdraw
+  - so the catch has a stated obligation and its inverse has none, which is exactly the shape a
+    residue accretes in
 
 **what a broken pointer costs, over a clean absence:**
 
@@ -73,11 +75,13 @@ stated obligation and its inverse has none, which is exactly the shape a residue
 |---|---|
 | no symlink | the round deferred no such item |
 | a symlink to a live dream | the round deferred it, and here is the record |
-| 🔴 **a symlink to naught** | the round deferred it, and **the record was lost** — which is a false report of a defect in the archive |
+| 🔴 a symlink to naught | the round deferred it, and the record was lost — which is a false report of a defect in the archive |
 
-⚠️ **it is legible only to a tool.** a directory read renders a broken link identically to a live
-one; only `file`, or an open that fails, tells them apart. so it survives every review that reads
-the tree rather than walks it.
+🟡 it is legible only to a tool:
+
+- a directory read renders a broken link identically to a live one
+- only `file`, or an open that fails, tells them apart
+- ⇒ so it survives every review that reads the tree over walks it
 
 ⇒ **the rule: a withdrawal removes the artifact AND every pointer that named it.** the durable
 record is the refutation, never the husk of the link.

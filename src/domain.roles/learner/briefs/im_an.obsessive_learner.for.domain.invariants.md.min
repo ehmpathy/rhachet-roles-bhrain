@@ -2,18 +2,20 @@
 
 a **zoom-in** of `im_an.obsessive_learner` onto one lesson kind: *what must always hold true in this domain*.
 
-an invariant is a must-hold rule — a biconditional or constraint the domain guarantees. it lands in its own `define.invariant.<scope>.md` brief. peer of `.for.domain.terms`: that captures the **words**, this captures the **rules**.
+- an invariant is a must-hold rule — a biconditional or constraint the domain guarantees
+- it lands in its own `define.invariant.<scope>.md` brief
+- ⇒ peer of `.for.domain.terms`: that captures the words, this captures the rules
 
 extant: `define.invariant.review.peer.passage` (`PASS ⟺ every peer guard is terminal`) · `define.invariant.review.peer.exhausted`.
 
-## ⚠️ .label the KIND — nature or nurture. it is the first field
+## 🟡 .label the KIND — nature or nurture. it is the first field
 
 | kind | it holds because | to overturn it, show | NOT admissible |
 |---|---|---|---|
-| **nature** | of what the domain **is**; no decision could have gone otherwise | the domain was **misread** | *"this is inconvenient"* |
-| **nurture** | we **chose** it, usually paid for in incidents, and choose it still | the incidents no longer apply, or the cost changed | *"i would have chosen differently"* |
+| **nature** | of what the domain is; no decision could have gone otherwise | the domain was misread | *"this is inconvenient"* |
+| **nurture** | we chose it, usually paid for in incidents, and choose it still | the incidents no longer apply, or the cost changed | *"i would have chosen differently"* |
 
-nature: *a machine is never blank* — every box ships a shell, a PATH, dotfiles, so no run ever puts an environment on an empty machine; it always raises an extant one. that is why `upgrade` is accurate and `install` misleads. **a fact about machines, not a preference.**
+nature: *a machine is never blank* — every box ships a shell, a PATH, dotfiles, so no run ever puts an environment on an empty machine; it always raises an extant one. that is why `upgrade` is accurate and `install` misleads. a fact about machines, not a preference.
 
 nurture: *one entrypoint* — nature permits many; four incidents taught us they drift.
 
@@ -25,22 +27,30 @@ nurture: *one entrypoint* — nature permits many; four incidents taught us they
 2. **.kind** — `nature` or `nurture`, plus one sentence on why
 3. **.invariant** — stated formally (`A ⟺ B`, or a constraint)
 4. **.why** — why the domain depends on it; often a past incident
-5. 🔴 **.scope** — what it does **NOT** cover
-6. **.the litigation** — who argued what, and what settled it. quote the human **verbatim**
-7. 🔴 **.the counter-argument** — the strongest case against, stated fairly
-8. 🔴 **.what would overturn it** — per the nature/nurture table
+5. **.scope** — what it does NOT cover
+6. **.the litigation** — who argued what, and what settled it. quote the human verbatim
+7. **.the counter-argument** — the strongest case against, stated fairly
+8. **.what would overturn it** — per the nature/nurture table
 9. **.enforcement** — what a violation is
 
-⚠️ **fields 5, 7, 8 are the three a conclusion-only rule always omits**, and the three a re-litigation needs. **the second argument will not have the evidence the first one had.**
+🟡 **fields 5, 7, 8 are the three a conclusion-only rule always omits, and the three a re-litigation needs** — and the second argument will not have the evidence the first one had.
 
-**the case that proves `.scope` carries weight.** a robot read *"two implementations drift"* (true, hard-won over four incidents) and applied it to a transport pair that carried one payload two ways. the human stopped it: *"wait. is rsync the main usecase though? if so, i get the fallback. just document it clearly why we need both, so we dont relitigate."* **the rule was right and the application was wrong, because the rule's SCOPE had never been written down.**
+the case that proves `.scope` carries weight:
 
-⇒ *"so we dont relitigate"* is the requirement. a conclusion with no argument attached will be re-argued — or quietly reversed by someone who only ever saw the conclusion.
+- a robot read *"two implementations drift"* — true, hard-won over four incidents
+- it applied that to a transport pair that carried one payload two ways
+- the human stopped it: *"wait. is rsync the main usecase though? if so, i get the fallback. just document it clearly why we need both, so we dont relitigate."*
+- ⇒ the rule was right and the application was wrong, because the rule's SCOPE had never been written down
+
+⇒ *"so we dont relitigate"* is the requirement — a conclusion with no argument attached will be re-argued, or quietly reversed by someone who only ever saw the conclusion.
 
 ## 🔴 .a settled invariant is NOT deferrable
 
-did this round **settle** a must-hold rule? → it gets its brief **this round**. deferral is valid only for a rule still under dispute or one that needs deeper discovery — **never** for one already settled.
+did this round settle a must-hold rule? → **it gets its brief this round**
 
-📜 a **litigated** invariant is the highest-value kind: the argument is worth more than the conclusion, and **the argument fades faster**.
+- deferral is valid for a rule still under dispute, or one that needs deeper discovery
+- ⇒ never for one already settled
+
+📜 a litigated invariant is the highest-value kind: the argument is worth more than the conclusion, and the argument fades faster.
 
 > a regression is an invariant that was never declared. declare it while the round is warm. 🦉📜💎

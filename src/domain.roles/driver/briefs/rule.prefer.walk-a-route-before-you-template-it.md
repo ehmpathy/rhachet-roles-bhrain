@@ -27,10 +27,10 @@ and the route grain makes the stakes worse, not merely different:
 | a premature **code** abstraction | a premature **route** template |
 |---|---|
 | binds the callers who reach for it | binds **every traveler the route drives**, at every stone |
-| a wrong shape shows up as an awkward call site | a wrong shape shows up as a stone nobody can satisfy, **after** they have walked to it |
+| a wrong shape shows up as an awkward call site | a wrong shape shows up as a stone nobody can satisfy, after they have walked to it |
 | refactorable by one author | each stamped instance is a route someone is mid-drive on |
 
-⚠️ **a route stamps JUDGMENT, not execution.** a linear skill that is shaped wrong wastes a call;
+🟡 **a route stamps JUDGMENT, not execution.** a linear skill that is shaped wrong wastes a call;
 a route that is shaped wrong sends a brain down an order of stones that does not match the work.
 
 ## .the third argument — the demonstration IS the design doc
@@ -50,11 +50,11 @@ encodes**, and a template written without one encodes a guess.
 
 | when… | then… |
 |---|---|
-| you are about to **stamp a template** for a route kind that has run **once** | 🔴 stop. one case is a demonstration, not a pattern. hand-author the second |
-| you find yourself with a template **parameter** for a stone that varies per case | that variance is the shape still in discovery. walk another case first |
-| a stone in your stamped route is one **nobody can satisfy** | the template hardened a shape the walk would have refuted |
-| you hand-author a route and move on | 🔴 **record the intent to formalize** — see below. an unrecorded offroad route is drift |
-| a route kind has run **twice** with the same stones and guards | the shape is confirmed. the template pays off from the third |
+| you are about to stamp a template for a route kind that has run once | 🔴 stop. one case is a demonstration, not a pattern. hand-author the second |
+| you find yourself with a template parameter for a stone that varies per case | that variance is the shape still in discovery. walk another case first |
+| a stone in your stamped route is one nobody can satisfy | the template hardened a shape the walk would have refuted |
+| you hand-author a route and move on | record the intent to formalize — see below. an unrecorded offroad route is drift |
+| a route kind has run twice with the same stones and guards | the shape is confirmed. the template pays off from the third |
 | you copy a stone list from another route by hand, a second time | that copy IS the template, unnamed. name it |
 
 ## 🔴 .record the intent, or offroad becomes drift
@@ -69,18 +69,21 @@ $route/todos.offroad-route-templatize.md
 it names the route kind, the cases walked so far, and what a template would have to carry — the
 stones, the guards, and the number/name contract.
 
-⚠️ **no bracket marker on that name, and the reason is mechanical.** `[` and `]` are glob
-metacharacters, so a marker like `[todo]` reads to every path tool as *"one character from
-`t,o,d`"*, and the file comes back unmatched by the very tools built to find it
-(`rule.forbid.brackets-in-filenames`, librarian). the lead segment `todos.` already declares the
-kind, so a marker here is redundant as well as harmful — **drop it, never convert it.**
-
 ⇒ **that record is what makes the offroad state deliberate.** without it, the second traveler
 hand-copies the stones and neither of them notices that two cases have now confirmed the shape.
 
-⚠️ this is the same discipline `rule.always.enskill-the-tactics-you-discover` (learner) states for
+🟡 this is the same discipline `rule.always.enskill-the-tactics-you-discover` (learner) states for
 a tactic: *an offroad brain is at its best when it leaves a route behind.* one rung up, the same
-claim holds — **an offroad route is at its best when it leaves a template behind.**
+claim holds — an offroad route is at its best when it leaves a template behind.
+
+### 🟡 no bracket marker on that name, and the reason is mechanical
+
+`[` and `]` are glob metacharacters, so a marker like `[todo]` reads to every path tool as *"one
+character from `t,o,d`"*, and the file comes back unmatched by the very tools built to find it
+(`rule.forbid.brackets-in-filenames`, librarian).
+
+⇒ the lead segment `todos.` already declares the kind, so a marker here is redundant as well as
+harmful — **drop it, never convert it.**
 
 ## .what the demonstration must carry forward
 
@@ -102,7 +105,7 @@ when the template is finally extracted, it inherits what the walk proved:
 0.seed → 1.intake → 2.1.differential.enumerate → 2.2.{1..5} disentangle → 3.assay → 4.triage → 5.diagnosis
 ```
 
-⚠️ **the `2.2.*` substones revealed a loop** — craft → gather → itemize → compute, with a rewind
+🟡 **the `2.2.*` substones revealed a loop** — craft → gather → itemize → compute, with a rewind
 when the sample is thin, then attribute — that would not have surfaced without a real case to
 stress it. peer-review guards were landed by hand on the highest-consequence stones, and the intent
 to templatize was recorded in a `todos` brief.
@@ -112,11 +115,14 @@ condition; a walk hits it.
 
 ## .provenance
 
-⚠️ **one route, one walk.** the demonstration above is a single case, and this rule generalizes
-from it. it earns its place because the **parent** claim is well-established — the rule of three is
-not this rule's invention — and this file only carries it to a grain where its examples had stopped
-to fire. a second offroad route that finds the walk wasteful would sharpen the threshold, not
-overturn the claim.
+🟡 **one route, one walk** — the demonstration above is a single case, and this rule generalizes
+from it.
+
+- it earns its place because the **parent** claim is well-established
+  - the rule of three is not this rule's invention
+  - ⇒ this file only carries it to a grain where its examples had stopped to fire
+- a second offroad route that finds the walk wasteful would sharpen the threshold, never overturn
+  the claim
 
 ## .enforcement
 
@@ -130,7 +136,7 @@ overturn the claim.
 
 ## .see also
 
-- `rule.prefer.wet-over-dry` (ehmpathy/architect) — 🔴 **the parent claim.** this file is that rule
+- `rule.prefer.wet-over-dry` (ehmpathy/architect) — **the parent claim.** this file is that rule
   at the route grain; the stakes table above is what it adds
 - `howto.create-routes.[ref]` — the route/stone/guard/bind mechanics a walk uses
 - `define.routes-are-gardened.[philosophy]` — why a route is grown rather than designed

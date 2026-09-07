@@ -45,21 +45,21 @@ computes a path from. a word in that slot binds as tightly as a type name does.
 
 ### dispute: fork  —  raised 2026-08-30  —  status: RESOLVED (both stand; they name different concepts)
 - raised.by  = the driver, mid-drive
-- claim      = the driver rule opens *"when you best-guess a design **fork** mid-drive"*, and each
+- claim      = the driver rule opens *"when you best-guess a design fork mid-drive"*, and each
                entry carries a field literally named *"the fork"*. two words for one concept is
                what `rule.forbid.domain-term-synonyms` forbids, so one should go
-- counter    = they are not one concept. a **fork** is two options in view with one taken; a
-               **fulcrum** is a call the council should see. the 93%-confidence trigger, settled
-               the same day, produces fulcrums with **no fork at all** — the entry's own field
-               instructs the author to *"state what you would have weighed had one been in view"*,
-               which is only sensible where no fork existed
-- resolution = both stand. `fork` names a **part** of a fulcrum entry, never the whole. it is
-               therefore **not** recorded as a forbidden synonym, and a brief may use it for the
-               two-option shape. dispute closed
+- counter    = they are not one concept. a fork is two options in view with one taken; a fulcrum is
+               a call the council should see. the 93%-confidence trigger, settled the same day,
+               produces fulcrums with no fork at all — the entry's own field instructs the author to
+               *"state what you would have weighed had one been in view"*, which is only sensible
+               where no fork existed
+- resolution = both stand. **`fork` names a PART of a fulcrum entry, never the whole.** so it is not
+               recorded as a forbidden synonym, and a brief may use it for the two-option shape.
+               dispute closed
 
-⚠️ **the confidence floor is what settled this**, and it did so the same day the word was paved.
-before the floor, every fulcrum had a fork, and the two words were indistinguishable in practice —
-which is precisely how a synonym pair survives unnoticed.
+🟡 the confidence floor is what settled this, and it did so the same day the word was paved. before
+the floor, every fulcrum had a fork, and the two words were indistinguishable in practice — which
+is precisely how a synonym pair survives unnoticed.
 
 ## .evidence
 

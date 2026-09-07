@@ -1,7 +1,7 @@
 import * as fs from 'fs/promises';
 import { HelpfulError } from 'helpful-errors';
 
-import { getFsErrorCode } from './getFsErrorCode';
+import { getFsErrorCode } from '../getFsErrorCode';
 
 /**
  * .what = read the sweep progress sentinel's mtime + content, or nulls if absent

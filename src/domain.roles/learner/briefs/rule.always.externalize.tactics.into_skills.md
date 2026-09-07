@@ -43,7 +43,7 @@ tactic repeated but not externalized = violation of learner purpose
 
 ## 🔴 .this is the PARENT — reach for a specialization first
 
-⚠️ **this rule is named for the genus.** `externalize` is the family
+🟡 **this rule is named for the genus.** `externalize` is the family
 (`term=externalize._.choice._.md`); the act you are about to perform is one of its members. so a
 reader who arrives here is nearly always one dereference short of the rule that fires on their
 actual cue.

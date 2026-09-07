@@ -2,18 +2,22 @@
 
 the exact stdout contract every reviewer MUST satisfy so the route guard can read its verdict. the guard parses **stdout** to learn how many blockers and nitpicks were found.
 
-## 🔴 .why it is strict
+## .why it is strict
 
-the guard cannot pass a stone on a review it cannot read — and if it finds no numeric count it can **NOT** assume zero. a silent `0/0` would look like a clean approval when in truth **no verdict was seen**. so an unreadable review is a **`💥 malfunction`** for that reviewer, and the stone blocks (`rule.forbid.failhide`).
+- the guard cannot pass a stone on a review it cannot read
+- and where it finds no numeric count it can NOT assume zero
+  - a silent `0/0` would read as a clean approval where in truth **no verdict was seen**
+- ⇒ so an unreadable review is a `💥 malfunction` for that reviewer, and the stone blocks (`rule.forbid.failhide`)
 
 ## .the contract
 
-stdout MUST hold a **numeric** count for **both** dimensions:
+> **stdout MUST hold a numeric count for BOTH dimensions.** one alone is unreadable, and an
+> unreadable review is a `💥 malfunction`.
 
 - `N blockers` — or `blockers: N` — integer `>= 0`
 - `N nitpicks` — or `nitpicks: N` — integer `>= 0`
 
-to declare a clean review, **state the zeros explicitly**:
+⇒ a clean review states its zeros explicitly. the guard cannot infer one:
 
 ```
 0 blockers
@@ -27,11 +31,11 @@ every issue is EXACTLY one of two — there is no third bucket:
 - **blocker** = must-fix / would-block / unresolved / high-severity
 - **nitpick** = optional / advisory / a suggestion / low-severity
 
-section headers like `## maintenance hazards` are fine as **prose** structure, but each item under them still resolves to **blocker OR nitpick**, and the two numeric lines tally EVERY item by its severity.
+section headers like `## maintenance hazards` are fine as prose structure, but each item under them still resolves to blocker OR nitpick, and the two numeric lines tally EVERY item by its severity.
 
-⚠️ **do NOT emit a count for any other category.** a `## hazards: 2` line is not a severity the guard reads, and it will not save a review whose two required lines are absent.
+🟡 **do NOT emit a count for any other category.** a `## hazards: 2` line is not a severity the guard reads, and it will not save a review whose two required lines are absent.
 
-🔴 **read each item's severity from HOW YOU WROTE IT, never from the header it sits under:**
+**read each item's severity from HOW YOU WROTE IT, never from the header it sits under:**
 
 | the same header, framed as… | resolves to |
 |---|---|
@@ -65,16 +69,24 @@ one form to emit, one to parse. words invite drift and incidental-match traps (*
 
 ## .the skip variant (`--optional rules`)
 
-when the rules glob matches zero files there is no rubric, so `rhx review` **skips** — and the skip still honors this contract: a distinct `🌙 skipped` header for humans, plus the two required numeric lines, exit `0`:
+when the rules glob matches zero files there is no rubric, so `rhx review` skips — and the skip still honors this contract: a distinct `🌙 skipped` header for humans, plus the two required numeric lines, exit `0`:
 
 ```
 🌙 skipped — no rules found (--optional rules)
+   ├─ review: .reviews/peer/report.md
    └─ summary
       ├─ 0 blockers
       └─ 0 nitpicks
 ```
 
-(no `logs:` line — a skip writes no artifacts.) the header is prose the regex harmlessly ignores, so the guard tallies `0/0` as **approved** — no guard, verdict, or contract change. **the counts are real, never a faked abstain**, which keeps `rule.forbid.failhide` honored.
+> **the `logs:` line is the one discriminator. a skip writes no LOG artifacts, so it advertises no log dir.**
+
+🟡 the `review:` artifact IS written on a skip, so its presence proves naught. reach for the absent
+`logs:` line, never for the output file.
+
+⇒ the `🌙` header is prose the regex harmlessly ignores, so the guard tallies `0/0` as approved — no
+guard, verdict, or contract change. the counts are real, never a faked abstain, which keeps
+`rule.forbid.failhide` honored.
 
 ## .what the guard does with it
 

@@ -27,7 +27,7 @@ the librarian's ontology already draws the line: a **demo** is the archetype who
 
 - yes → the **concept**. it stays
 - no → a **demo**. eject to `example=$slug.md`, dated and sourced
-- it was neither — it merely gestured at a conversation → 🔴 not a demo either. a demo has a date, a repo, a path; a gesture has none, so there is naught to eject
+- it was neither — it merely gestured at a conversation → **not a demo either.** a demo has a date, a repo, a path; a gesture has none, so there is naught to eject
 
 ## .the smells — each is a demo trapped inside a concept
 
@@ -44,13 +44,13 @@ the librarian's ontology already draws the line: a **demo** is the archetype who
 
 the **date**, the **repo**, the **path or branch** · what happened, shortest form that stands alone · the **cost** — what it actually spent, which is what makes it evidence rather than anecdote · a pointer up to the concept.
 
-## ⚠️ .a `.reason` file IS an ejection target — do not eject from it again
+## 🟡 .a `.reason` file IS an ejection target — do not eject from it again
 
 a term cluster already splits along this line: `._.choice._.md` is the **concept** (bound in full), `.reason.md` is the **decision record** — dated by contract, and its dated evidence is **mandatory**. so a dated entry under `.disputes` or `.evidence` is the archetype at work, **never a smell**.
 
-⚠️ what a `.reason` still may not hold is its **own draft history**. amend in place, or answer with a **new dated dispute**.
+🟡 what a `.reason` still may not hold is its **own draft history**. amend in place, or answer with a **new dated dispute**.
 
-⚠️ **a verbatim wisher quote is a SEED, not a demo.** `.said` is verbatim by contract — never tidy a quote to satisfy this rule. its home is `$route/.seeds/`; a brief cites it by path.
+🟡 **a verbatim wisher quote is a SEED, not a demo.** `.said` is verbatim by contract — never tidy a quote to satisfy this rule. its home is `$route/.seeds/`; a brief cites it by path.
 
 ## .enforcement
 

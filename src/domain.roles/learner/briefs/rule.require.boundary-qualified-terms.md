@@ -41,7 +41,7 @@ is to **say which ladder you mean.**
 ⇒ **a flat namespace has exactly one slot per word, so it forces a false choice** between two true
 senses. a qualified namespace has one slot per *(boundary, word)* pair, and both fit.
 
-⚠️ **the second sense is the sharper half of the example**, because its boundary would be
+🟡 **the second sense is the sharper half of the example**, because its boundary would be
 `entoolment`, whose own chain reaches no root. so the collision is real, one side is declared, and
 the other waits on a family settlement — **that is what an owed boundary looks like in practice.**
 
@@ -104,7 +104,7 @@ real cost loses; a universal one wins.
 ⇒ the wisher settled this directly — see
 `$route/.seeds/inventory.of=seeds.case=S16-a-term-carries-its-full-boundary-path.md`.
 
-## ⚠️ .this exposes a prerequisite — the boundary taxonomy must reach a ROOT
+## 🟡 .this exposes a prerequisite — the boundary taxonomy must reach a ROOT
 
 a full path is computable only if **every boundary name itself reaches a root**. that holds today
 for some chains and not others:
@@ -121,7 +121,7 @@ for some chains and not others:
 checkable gap class, and it is invisible under a header-only rule — a header accepts any word,
 where a path demands the word have a recorded place.
 
-⚠️ **a boundary may still be a subdomain name rather than a term** (see below); what it may not be
+🟡 **a boundary may still be a subdomain name rather than a term** (see below); what it may not be
 is a name whose own place is unrecorded. the fix is to declare it, or to re-settle the child's
 boundary onto one that does reach a root.
 
@@ -139,7 +139,7 @@ it climbs review rungs and it reads entoolment rungs. so `driver.rung` disambigu
 the collision survives the rename.
 
 ⇒ a role names **who tends the word**. a subdomain names **where the word means what it means.**
-only the second one disambiguates, because ambiguity is a property of context, never of ownership.
+only the subdomain disambiguates, because ambiguity is a property of context, never of ownership.
 
 ## .the cues — when → then
 
@@ -163,10 +163,10 @@ before the cluster lands, answer on the page:
   `.reason`, and say what the candidates are** — an unnamed boundary is a discovery gap, and a
   recorded gap is what lets the next reader close it
   (`rule.require.domain-discovery-for-term-proposals`, architect)
-- you can answer **two** ways → 🔴 the term holds two senses. **carry the boundary in the filename**,
+- you can answer **two** ways → the term holds two senses. **carry the boundary in the filename**,
   one cluster per sense
 
-⚠️ this test is answerable at **authorship**, which is the whole point. a collision found later
+🟡 this test is answerable at **authorship**, which is the whole point. a collision found later
 costs a rename plus every citation; a boundary named up front costs one word.
 
 ## 🔴 .a FAMILY is settled once, never one term at a time
@@ -191,11 +191,11 @@ two terms in this glossary sit one row from the `en-` family and answer in one w
 | `body` | the `en-` family's subject matter | *"the body of a captured skill **stdout**"* — no relation to externalization at all | `stdout` |
 | `sweep` | *"the learner's pass over WHAT?"* reads open-ended | *"over the **domain terms** a round touched"* — the glossary, in one word | `glossary` |
 
-⚠️ **this is the actor-over-subject error, one level down.** a brief's home is its actor, not its
+🟡 **this is the actor-over-subject error, one level down.** a brief's home is its actor, not its
 topic (`rule.require.specialize-a-rule-its-readers-look-past`, and the S13 seed); a term's
 boundary is its **declared sense**, not the family it sits near.
 
-⚠️ **and `malfunction` is a watch, not a gap.** its boundary is `review`, and it holds one sense
+🟡 **and `malfunction` is a watch, not a gap.** its boundary is `review`, and it holds one sense
 there — but the word also grades a skill's exit code. that becomes a second sense the day the
 exit-code use is declared, and then the boundary is carried.
 
@@ -212,7 +212,7 @@ is the chain, from the root down:
 context that contains it.** the first answers *"which one?"*; the chain answers *"where does it
 sit?"* — and only the chain makes `term=route.*` a slice.
 
-⚠️ **the root itself is dropped.** `repo` is the universal ancestor of every term in this glossary,
+🟡 **the root itself is dropped.** `repo` is the universal ancestor of every term in this glossary,
 so it adds one segment to all 27 paths and distinguishes none of them. a segment that appears
 everywhere carries no signal — the same claim `rule.forbid.brackets-in-filenames` makes about a
 repeated archetype marker.
@@ -226,7 +226,7 @@ repeated archetype marker.
 a deep path is a fact about the domain, never a smell. **the shorter path is available only by a
 drop of a real ancestor**, and a dropped ancestor is the slice that stops working.
 
-⚠️ **the one thing to check at depth: is each segment a real ancestor, or did you name a topic?**
+🟡 **the one thing to check at depth: is each segment a real ancestor, or did you name a topic?**
 `articulation` sits inside `progress` inside `sweep` because each is declared so in the header
 above it — the chain is read, never composed by feel. that is the same defect the adjacency test
 above catches, one level up.

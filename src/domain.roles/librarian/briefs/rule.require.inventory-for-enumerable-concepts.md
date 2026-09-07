@@ -51,7 +51,7 @@ if those two numbers are equal, say so. if they differ, **the difference is the 
 is the most valuable output of the exercise.** a doc that cannot answer question 2 is a list in an
 inventory's clothes.
 
-⚠️ answer 2 **in the root's index**, not in your head. an unwritten gap list decays to zero within
+🟡 answer 2 **in the root's index**, not in your head. an unwritten gap list decays to zero within
 a round.
 
 ## .what it requires
@@ -62,7 +62,7 @@ a round.
 4. **keep the summary an index** — the axes, the counts, the gaps. no per-entry narrative
 5. **re-walk on a new position** — a dimension that grows adds a slice; walk it
 
-⚠️ **1 and 2 are both owed, always.** a summary with no per-cell files indexes a set that has no
+🟡 **1 and 2 are both owed, always.** a summary with no per-cell files indexes a set that has no
 addresses; cells with no summary have no place to declare their axes or their gaps.
 
 ## .the boundary — where this rule stops
@@ -75,7 +75,7 @@ addresses; cells with no summary have no place to declare their axes or their ga
 | **occurrences on a declared axis** | **inventory** over that axis | see *the occurrence axis*, below |
 | occurrences sampled, no axis declared | **`example=$id` files** | samples accrue against no dimension, so there is no set to take a census of |
 
-### ⚠️ the occurrence axis — "enumerable" does not mean "enumerable in advance"
+### 🟡 the occurrence axis — "enumerable" does not mean "enumerable in advance"
 
 this rule's name invites a misread, and the misread costs a real artifact: *"my entries arise one
 at a time and I could not have predicted them, so my concept is not enumerable, so this rule does
@@ -90,12 +90,12 @@ entries be ADDRESSABLE and its gaps be CHECKABLE** (`term=inventory`). both hold
 axis: `case=$id` computes to one path, and the census is a `Glob` — every position the summary
 declares has a file, and every file is in the summary.
 
-⚠️ **the failure this prevents is a coined synonym.** a reader who concludes *"this cannot be an
+🟡 **the failure this prevents is a coined synonym.** a reader who concludes *"this cannot be an
 inventory"* names their artifact by some other word — a `register`, a `log`, a `fulcrums.md` —
 and that is one concept under a second word, which `rule.forbid.domain-term-synonyms` forbids
 outright.
 
-⚠️ **inventory and catalog are not partial-vs-complete.** both enumerate fully; they differ in
+🟡 **inventory and catalog are not partial-vs-complete.** both enumerate fully; they differ in
 **what each entry carries** (`kno601.inventories._.kind=article`). the choice between them is a
 budget call, not a rigor call:
 
@@ -103,7 +103,7 @@ budget call, not a rigor call:
   budget while still filed as cheap
 - **a catalog with no previews** is an inventory with extra ceremony
 
-⚠️ **and do not force either onto an open concept.** a census claimed over an open dimension
+🟡 **and do not force either onto an open concept.** a census claimed over an open dimension
 reports gaps that may not exist.
 
 ## .enforcement

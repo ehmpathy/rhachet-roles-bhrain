@@ -21,6 +21,12 @@ always:
       # be reported done. both are moments, so a rule reached for afterward has
       # missed them
       - briefs/rule.always.itemize-a-peers-asks-into-tasks.via-systematic-execution.md
+      # BORROWED — the file here is a symlink into the driver, which owns it since
+      # 2026-09-07. it had lived here while its PAIR, catch-dreams-for-followups, lived
+      # in the learner, so the driver booted the catch half alone and read a dream as
+      # the primary move rather than the fallback. the act is a route act: a defect
+      # found mid-drive, priced against the diff already open
+      # (same shape as achiever/briefs/im_a.bhrain_owl.md).
       # say-level because it fires at the moment a fix is SEEN. a deferral is cheap to
       # make and expensive to reverse: the comprehension that made the fix small is
       # spent in that turn and gone by the next one

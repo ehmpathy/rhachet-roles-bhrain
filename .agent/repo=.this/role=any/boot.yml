@@ -47,6 +47,14 @@ always:
       # file, where the SET was reachable only by a reader who knew a MEMBER
       - briefs/domain.terms/catalog.of=externalization._.md
 
+      # the gap census — the words THIS repo's glossary owes and does not hold.
+      # ref, because it is a backlog read at the moment a word is coined, and it
+      # is bhrain's alone: at say it would charge every role's boot for a list
+      # only a term-author reads. the .readme.md above declares the convention
+      # and points here
+      - briefs/domain.terms/inventory.of=gaps._.md
+      - briefs/domain.terms/gap=*.md
+
       # the glyph catalog — ref, not say, for the same reason the glossary is: the
       # index is read ONCE, at the moment a glyph is claimed, and it grows as axes
       # are added. define.bhrain-repo-mascot rides say-level and points here
@@ -70,13 +78,13 @@ always:
       # symptom shows; it does not need to fire before the mistake, because the
       # hook that catches the mistake already does
       - briefs/hazard.injected-date-disagrees-with-wallclock.md
-      # ⚠️ this one differs from the hazard above: no hook catches it, and its
+      # 🟡 this one differs from the hazard above: no hook catches it, and its
       # failure is silent and delayed (a build reverts the edit later). it stays
       # at ref anyway, per the say-tier policy — its cue table is what a reader
       # reaches for on the symptom "my change did not stick". the mechanism that
       # would fire BEFORE the edit is a preToolUse hook, caught in .dream/
       - briefs/hazard.agent-brief-may-be-a-dist-symlink.md
-      # ⚠️ the peer of the one above — same src/ -> dist/ chain, opposite
+      # 🟡 the peer of the one above — same src/ -> dist/ chain, opposite
       # direction. that one asks "is this .agent/ file safe to edit?"; this one
       # asks "does this citation ship?". its failure is invisible from inside
       # this repo, since every term path resolves on our disk and on no

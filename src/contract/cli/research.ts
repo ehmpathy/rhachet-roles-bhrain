@@ -96,7 +96,7 @@ examples:
       openerUsed = openEditor;
     } catch {
       console.log('');
-      console.log(`⚠️  failed to open ${wishPathRel} in ${openEditor}`);
+      console.log(`🟡  failed to open ${wishPathRel} in ${openEditor}`);
     }
   }
 

@@ -1,0 +1,81 @@
+# rule.forbid.subversive-prose
+
+> **a passage must inform the reader, never work them. if no observation would settle a sentence, it said naught and spent their time to do so.**
+
+subversive prose is any elongation or encirclation of the purpose of speech — subterfuge, and the word is exact. it tires the reader into submission where honest prose elucidates: one ends unable to object, the other able to judge.
+
+## .it is TWO defects, and they take opposite repairs
+
+| shape | reads as | what is absent | the repair |
+|---|---|---|---|
+| **shallow** | insubstantial | the sentence asserts none | cut it |
+| **squishy** | unjustifiable | it conforms to whatever the reader wants | replace it with the mechanism it stood in front of |
+
+⇒ so a flag is one notch too coarse. it must SORT — told only *"this is subversive"*, a reader cannot know whether to delete the line or to write a different one.
+
+## .the test — an OBSERVATION question, never a taste question
+
+> **what observation would settle this sentence?**
+
+one you can name → a claim, and that is what earns it the words · none, yet it asserts a position → squishy · none, because it asserts naught → shallow.
+
+| the specimen | prose | a claim? | what settles it? |
+|---|---|---|---|
+| the hedge | *"the review flow has some issues worth a look"* | no — shallow | — |
+| the metaphor | *"it took the cheaper of two doors that both looked legitimate"* | yes — squishy | **none** |
+| the mechanism | *"`runStoneGuardReviews` never calls `getStone…Unforgiven`"* | yes | open the file |
+
+🟡 *not "could a reader disagree?"* — that grades taste, and the metaphor row passes it. that row is the expensive instance, and a coarse test lets it through.
+
+## .squishy is the dangerous shape
+
+- shallow prose reads as filler, so a reviewer cuts it on sight
+- **squishy prose reads as INSIGHT** — so nobody cuts it
+  - the author writes it and feels lucid
+  - the reader nods
+  - the mechanism it stood in front of is never stated
+  - ⇒ it takes the slot a settleable claim was owed
+
+### the sub-test for squishy
+
+> **substitute the sentence for the mechanism it describes. if the reader can no longer act on it, the sentence displaced rather than explained.**
+
+### the bound
+
+- the defect is **ambiguity**, never a rhetorical register
+- a metaphor that *accompanies* a stated mechanism is fine; one that *replaces* it is not
+- terse is not thin — a settleable claim stays, however long it runs
+
+## .the shapes — each row is a demo, 👎 beside 👍
+
+🟡 the repair is never *"add a qualifier"* and never *"cut a word"*. in every row it is: **name what would settle it.**
+
+| shape | sorts as | 👎 as written | 👍 the settleable form |
+|---|---|---|---|
+| hedge stack — each qualifier removes a way to be wrong | shallow | *"should probably mostly work in most cases"* | *"70%. one read of `getExitCodeClass.ts` settles it"* |
+| truism — true of all cases, so it discriminates naught | shallow | *"the right approach depends on context"* | *"prose-only scope, because `--diffs since-main` pulls `src/` in"* |
+| invented metaphor — the reader assents to an image in place of the mechanism | **squishy** | *"it took the cheaper of two doors"* | *"`runStoneGuardReviews` never calls `getStoneGuardReviewPeerUncontemplatedUnforgiven`"* |
+| absolution — answers a charge nobody made, which plants it as settled | shallow | *"the transport was never broken"* | delete it. no reader charged it |
+| pre-emptive concession — a shield raised before the reviewer can strike | shallow | *"it does not buy sincerity"* | delete it. let the reviewer strike, then answer |
+| aphorism — converts a limitation into a philosophy, so a gap reads as design | **squishy** | *"the engine guarantees it happens; the reviewer judges if it was real"* | *"the engine does not check whether the review was read. that gap is unfixed"* |
+| self-issued verdict — the glyph decides what the reviewer is there to decide | shallow | `✅ one change, four consumers` | `one change, four consumers` — the glyph alone is what goes |
+| read-order directive — steers the reader to the author's strongest exhibit | shallow | *"read `case=8` first"* | delete it. the reader orders their own read |
+| humility as advocacy — the modest frame is what makes the call hard to challenge | **squishy** | *"I judged it sufficient and took it"* | *"I took it at 70%. the counter is X, and it is real"* |
+| retreat clause — the sentence's second half revokes its first | **squishy** | *"the scope holds — though it may not in every case"* | *"the scope holds where the reviewer reads `.behavior/` only. outside that, unverified"* |
+
+## .why a cut EXPOSES it rather than creates it
+
+every shape above needs words to hide in — a hedge stack needs four qualifiers, a truism a clause broad enough to cover every case, a retreat clause a second half. accretion hides rhetoric among words; compression concentrates it.
+
+⇒ measured: de-subversion of one artifact ran 155 → 163 lines, and at its sharpest the rhetorical form was 12 words against the mechanism's 13. ⇒ the pair, the three passage-only shapes: `define.subversive-prose`.
+
+🟡 **lossless compression cannot add ambiguity, by construction** — it removes words that carried no distinction. so a cut that dropped one was *lossy*, a defect of the cut and never a property of density.
+
+## .why it is a rule of its own
+
+a passage can be brief, correctly placed, ref'd out, and free of narrative — **and still be built so no reader can judge it.** every other rule here grades a property of the words; this grades what the words are *for*.
+
+blocker: a sentence no observation settles · a metaphor that carries a diagnosis in place of its mechanism · a verdict glyph on the author's own call · an aphorism that converts a limitation into a design · a directive about what to read first · a retreat clause that withdraws its own claim · **a report that flags and does not SORT** — the two shapes take opposite repairs, so a bare flag leaves the reader unable to act.
+false positive: a stated uncertainty with a bound and an observation · a metaphor beside a stated mechanism · a `✅` that marks cited provenance, which is a self-report and no self-grade · a settleable claim that runs long — terse is not thin.
+
+⇒ see also: `define.subversive-prose` (the worked pair) · `rule.require.disputable-claims` (the positive peer) · `rule.require.place-a-passage-by-its-subject` · `rule.require.answer-what-they-meant` (the stated read, which this must not eat).

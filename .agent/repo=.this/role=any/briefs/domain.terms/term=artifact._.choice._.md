@@ -2,7 +2,7 @@
 
 term.chosen   = artifact
 term.kind     = noun
-term.boundary = repo         # the root subject; no wider context to disambiguate against
+term.boundary = ROOT         # `repo` is universal and is dropped; artifact takes no other
 term.synonyms.forbidden:
 - file           # names the STORAGE unit, not the deliverable. a term cluster is three files
                  # and one artifact
@@ -27,16 +27,16 @@ each *of*.
 | **tool** | the artifacts a future traveler *reuses* — every rung of the entoolment ladder |
 | **skill** | the mechanized rungs, 2 through 4 |
 
-⚠️ **an artifact is not always a tool.** a route yield is an artifact and is not one — nobody
+🟡 **an artifact is not always a tool.** a route yield is an artifact and is not one — nobody
 reuses it, they read it once. that is the exact distinction `term=artifact.tool` records when it forbids
 `artifact` as its synonym.
 
 ## .what it EXCLUDES
 
-- an **act** — a drive, a review round, a sweep. an act produces artifacts and is not one
-- a **concept** — the pattern a brief materializes
+- an act — a drive, a review round, a sweep. an act produces artifacts and is not one
+- a concept — the pattern a brief materializes
   (`kno101.primitives.5.concepts`, librarian). the concept outlives every artifact of it
-- an **instance** — a raw atom of data or experience (`kno101.primitives.3.instances`)
+- an instance — a raw atom of data or experience (`kno101.primitives.3.instances`)
 
 ## .refs
 

@@ -1,6 +1,7 @@
 *.bak.*
 *.local.json
 *.log
+.agent/.notes
 .claude/*.lock
 *.tsbuildinfo
 .artifact

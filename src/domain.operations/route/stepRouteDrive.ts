@@ -451,7 +451,7 @@ const formatRouteDriveExhausted = (input: {
   lines.push(`   │  ├─ route = ${asRouteDisplayPath({ route: input.route })}`);
   lines.push(`   │  └─ stone = ${input.stone}`);
   lines.push(`   │`);
-  lines.push(`   └─ ⚠️ stuck! blocked ${input.count}x (max: ${input.max})`);
+  lines.push(`   └─ 🟡 stuck! blocked ${input.count}x (max: ${input.max})`);
   lines.push(`      └─ please tell a human what you saw and where`);
   return lines.join('\n');
 };
@@ -586,7 +586,7 @@ const formatRouteDrive = (input: {
     lines.push(`   │  └─ blocked and need help?`);
     lines.push(`   │     └─ ${blockedCmd}`);
     lines.push(`   │`);
-    lines.push(`   └─ ⚠️ to refuse is not an option.`);
+    lines.push(`   └─ 🟡 to refuse is not an option.`);
     lines.push(`      work on the stone, or mark your status.`);
     lines.push('');
   }

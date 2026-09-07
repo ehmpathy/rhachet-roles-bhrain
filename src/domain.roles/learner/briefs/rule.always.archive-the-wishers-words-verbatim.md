@@ -51,7 +51,7 @@ question is none of those, and it changes the work just as much.
 between them produced a catalog, two caught dreams, and a glossary gap
 (`.seeds/inventory.of=seeds.case=S22-two-questions-found-two-gaps.md`).
 
-⚠️ **and it is the kind that vanishes with no trace.** a correction announces itself in the
+🟡 **and it is the kind that vanishes with no trace.** a correction announces itself in the
 record; a question that found a gap reads, in hindsight, **as though the driver found the gap.**
 the archive is the only artifact that says otherwise.
 
@@ -75,7 +75,7 @@ what changed because of them
 the paths the settlement was written into
 ```
 
-⚠️ **`.said` is verbatim — do not clean it up.** typos, lowercase, mid-thought corrections, and
+🟡 **`.said` is verbatim — do not clean it up.** typos, lowercase, mid-thought corrections, and
 all. the value is that it is unedited; a tidied quote is already a paraphrase.
 
 ## 🔴 .a seed is the seed of a CONCEPT — never a chronicle of the round
@@ -96,7 +96,7 @@ stands with no knowledge of this route, this round's tools, or this round's own 
 the exact peer of `rule.always.yield-the-output-not-the-archaeology` (driver), which makes the same
 specialization for a yield. neither is a new claim; both name where the general rule bites.
 
-⚠️ **and a seed gets no `appendix/`.** a yield may eject its history to a peer dir; a seed may not.
+🟡 **and a seed gets no `appendix/`.** a yield may eject its history to a peer dir; a seed may not.
 the route's yield and `git log` already hold the trail, so a seed that carries it holds a **third**
 copy that will drift from both.
 
@@ -108,7 +108,7 @@ copy that will drift from both.
 - yes → it is a seed
 - no → what survives is the seed; the rest is archaeology, and it goes
 
-### ⚠️ the tell: a `.landed` list longer than the concept
+### 🟡 the tell: a `.landed` list longer than the concept
 
 `.landed` names where the concept was written, in one line each. the moment it grows a **reason**
 per row — *"corrected, because it had wrongly claimed X"* — it has become a changelog of the round,
@@ -138,7 +138,7 @@ fulcrums are, so it takes the itemization contract every occurrence set takes:
 feedback template lives there too — so the set has no axis to declare and no census to take. its
 own directory is what makes the axis nameable and the gaps checkable.
 
-⚠️ **`.seeds/` sits beside `.fulcrums/`, and the symmetry is the point.** one convention, learned
+🟡 **`.seeds/` sits beside `.fulcrums/`, and the symmetry is the point.** one convention, learned
 once, applied to every occurrence set a route accumulates.
 
 ## .the anti-patterns
@@ -172,7 +172,7 @@ once, applied to every occurrence set a route accumulates.
 - a seed whose concept generalizes past the round, with no durable brief behind it = **blocker**
   (`rule.always.scope-onetime-lessons-to-the-behavior`)
 
-## ⚠️ .whose rule this is — the learner's, borrowed by the driver
+## 🟡 .whose rule this is — the learner's, borrowed by the driver
 
 the act is **capture before the context fades**, which is this role's whole subject
 (`im_an.obsessive_learner`, `.the tension`). so the file lives here, and
@@ -183,7 +183,7 @@ driver-enrolled clone — and **any** role enrolled with the wisher can be settl
 asked. a learner alone, a reviewer alone, an achiever alone. the driver borrows it back because
 that is where it fires most often, never because it owns the act.
 
-⚠️ **do not read `$route/.seeds/` as evidence of a driver home.** that is where the artifact
+🟡 **do not read `$route/.seeds/` as evidence of a driver home.** that is where the artifact
 LANDS, never who acts — the same distinction `term=artifact.seed` draws when it settles its own
 boundary as `artifact` rather than `route`.
 

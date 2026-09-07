@@ -6,12 +6,323 @@ always:
       # they obey them. it is the one rule about the other rules
       - briefs/rule.require.generic-governs-structure-never-voice.md
 
+      # the ROOT, second — every rule below is one surface of it, so a reader who
+      # holds this can derive most of them and can judge a case none of them name.
+      #
+      # say-level because it carries the half authors drop by default: a QUESTION
+      # is an act of elucidation, not an admission of failure. a rule that arrives
+      # after the guess already shipped has missed its cue.
+      - briefs/rule.require.elucidation.md
+
       # the INPUT half. say-level because it fires before the work starts — a rule
       # that arrives after a misread answer was already given has missed its cue,
       # and a terse wrong answer is the most expensive artifact this role makes
+      #
+      # its clamp boots with it, and it is the ONLY clamp here on the input face.
+      # say-level for a reason no other forbid carries: the require states a DUTY
+      # (decompress the concept), and a duty is checkable only by an author who
+      # already suspects they failed it. a genie never suspects — it executed the
+      # request exactly and can cite the request to prove it. so the shapes are
+      # what makes the defect findable at all.
       - briefs/rule.require.answer-what-they-meant.md
+      - briefs/rule.forbid.genie-answers.md
 
-      # the OUTPUT half, structure grain. say-level because it fires at the moment
-      # a passage is typed: the repair afterward is a move plus a re-read of both
-      # neighbours, where the up-front cost is one question about its subject
+      # ── the pipeline, in the order it fires. the order itself is declared once,
+      #    in readme.md; each rule below states only its own position.
+
+      # 1 · the TARGET grain. say-level because it fires before a word exists, and
+      # it is the only rule that can shrink an artifact before it is typed. its
+      # third grade — a passage that serves a DIFFERENT purpose, and serves it
+      # well — is invisible to every rule that grades a property of the words.
+      #
+      # the clamp boots with it: the require names the target, the forbid names
+      # the smell, and per the canon the forbid is the half a reader recognizes.
+      # say-level for a reason of its own — its repair is `write none and DROP
+      # the section`, so found late the whole section was already written. it is
+      # the only rule here that grades a CONTAINER the author was handed rather
+      # than prose the author chose.
+      - briefs/rule.require.purpose-first.md
+      - briefs/rule.forbid.purposeless-passages.md
+
+      # 2 · the DOMAIN grain, and it precedes the concept grain below rather than
+      # sits beside it: distillation drills one claim to a root, and this finds
+      # what the roots ARE. a drill over an undiscovered domain has a shallow
+      # floor and halts at it — CLEANLY, so the author feels finished.
+      #
+      # say-level because its repair is the largest in the canon: found late, the
+      # domain was misread, so every claim built on it is re-derived. and it has
+      # no shape a reader recognizes on the page — the failure is a question
+      # never put, so only a booted cue reaches it.
+      #
+      # 🟡 no clamp of its own. `forbid.surface-speak` below is the clamp for
+      # BOTH: it catches a claim pitched at its surface, which is what an
+      # undiscovered domain produces.
+      - briefs/rule.require.domain-discovery.md
+
+      # 3 · the CONCEPT grain. say-level because its repair is a new CLAIM, never
+      # a rewrite of a sentence: the drill changes what you conclude. found late,
+      # the repair is the whole passage plus each passage that leaned on it.
+      #
+      # its clamp inherits that cost exactly — an adjective offered in place of a
+      # mechanism is repaired by a re-drill, never by a word swap. it boots beside
+      # its require because the smell is the half that fires at the keyboard:
+      # `robust`, `clean`, `scalable` are recognizable where `you did not drill`
+      # is not.
+      - briefs/rule.require.distillation.md
+      - briefs/rule.forbid.surface-speak.md
+
+      # 3 · the CONTAINER grain — the require/forbid pair that sets the default
+      # form of every passage a telepath emits.
+      #
+      # say-level for a reason the other rules do not carry: this one governs the
+      # CONTAINER, and the container is chosen before a word is typed. a rule that
+      # arrives after a paragraph exists asks for a rewrite; the same rule known
+      # up front costs one decision and then makes terseness automatic — a bullet
+      # has room for one sentence, so the form holds the discipline the author
+      # would otherwise hold by hand on every line.
+      #
+      # NOTE `rule.require.archaeology-in-notes` boots below, beside act 4 — it
+      # completes that act's verdict set rather than this one's form choice.
+      #
+      # they are a pair, so they boot together: the require names the target, the
+      # forbid names the smell. either alone leaves half the cue.
+      - briefs/rule.require.bulletize.md
+      - briefs/rule.forbid.narration.md
+
+      # the ENTRAITMENT, and the whole cluster sits at say for one reason: a rule
+      # you must recall has already lost the round. the container is chosen before
+      # the first word, so a rule fetched after a paragraph exists asks for a
+      # rewrite of prose that should never have been written. an instinct fires
+      # with no decision, and an instinct cannot be dereferenced.
+      #
+      # it carries the one benefit no other file here owns — the READER picks
+      # their own depth. one artifact serves a skimmer and a deep reader at once,
+      # which is the closest prose gets to this role's namesake.
+      - briefs/trait.bulletize-reflexively.md
+
+      # 🟡 the ONE define at say tier, and the exception is deliberate. every
+      # other define is ref because depth is free there — a reader fetches a
+      # worked pair when they want one. this form is different: it is the shape
+      # every passage is rendered in, so the demos must be PRESENT rather than
+      # fetchable. you cannot reflexively render a form you must go get.
+      #
+      # its `.md.min` is what makes that affordable — the full runs 133 lines;
+      # the min keeps the form, three demo pairs, the boundary, and the seam.
+      - briefs/define.bulletize.md
+
+      # 4 · the DRAFT grain, and the only rule here that runs on prose which
+      # already exists. say-level despite that, because its cue is a HABIT the
+      # author must hold at emit time: a first draft shipped is a pass that never
+      # ran, and no later reader can tell a condensed draft from a lucky one.
+      #
+      # it grades at a bar and offers TWO verdicts — cut, or keep. the rule
+      # beside it supplies the third, and the pair must boot together or the
+      # third is unreachable: material that ranks above the bar for a LATER
+      # reader and below it HERE. a two-verdict rule forces that into the wrong
+      # bucket whichever it picks — cut it and the cut is lossy (`S11` forbids
+      # that outright), keep it and every reader pays for one reader's paragraph.
+      #
+      # say-level for its own reason: the mis-sort happens at emit time, and it
+      # is silent. an author who cannot picture a reader for a paragraph calls it
+      # surplus — where often it is EVIDENCE, wanted by exactly one reader, the
+      # one who does not believe the claim.
+      - briefs/rule.require.reflexive-condensation.md
+      - briefs/rule.require.archaeology-in-notes.md
+
+      # ── the graders. readme.md states they fire in ANY order, so the sequence
+      #    below is a file layout and never a second declaration of one. it pairs
+      #    them by GRAIN: two that grade the content, two that grade the gradient.
+
+      # the PLACEMENT grain. say-level because it fires at the moment a passage is
+      # typed: the repair afterward is a move plus a re-read of both neighbours,
+      # where the up-front cost is one question about its subject
       - briefs/rule.require.place-a-passage-by-its-subject.md
+
+      # the ASSERTION grain — and the ONLY rule here whose defect the author is
+      # structurally blind to. every other rule grades a property a re-read can
+      # catch; this one grades whether a passage asserts a disputable claim at
+      # all, and an author re-reads their own INTENT, which fills the seam.
+      #
+      # say-level for that reason rather than the usual one: the repair is not a
+      # move or a cut, it is a rewrite of the argument, and it cannot be self-found.
+      # a reviewer finds it a round later, at the cost of a round.
+      #
+      # it is also the one rule here that is D5-agnostic — it grades a chat reply
+      # and a yield alike, because its defect is a property of the sentence and
+      # not of the artifact the sentence lives in.
+      #
+      # its clamp is the asymmetric half of the pair, and it boots for a reason
+      # the forbid alone cannot serve: a forbid list is a DETECTOR, so it tells
+      # an author what to delete and never what to write in its place. an author
+      # who learns the ten shapes cuts ten sentences and ships a shorter passage
+      # that still asserts none. the require names the target they aim at once
+      # the cuts stop — assert a position, and name what would settle it.
+      - briefs/rule.forbid.subversive-prose.md
+      - briefs/rule.require.disputable-claims.md
+
+      # the SELECTION grain — its peer on content, and the sharper of the two.
+      # every rule above grades what is ON the page; this one grades what the
+      # author left OFF it, which is why its repair is an ADDITION where every
+      # other repair here is a cut, a move, or a rewrite.
+      #
+      # say-level because a re-read cannot find it AT ALL. a re-read shows the
+      # author only what they wrote, and an omission has no line to land on. and
+      # by its own account the two clean rules pass this prose, so a reader who
+      # booted `subversive-prose` and `diffusion` and applied both carefully
+      # still ships it — the one defect here that survives a careful review.
+      - briefs/rule.forbid.obfuscation.md
+
+      # the RANK grain — how many lines a passage may elevate. say-level for the
+      # same reason as the rule above, and the evidence for it is this repo's own:
+      # a session authored 44 marked lines in a 474-line file WHILE at work on this
+      # canon, and did not see it; the reader saw it in one glance and asked "why
+      # so many". the author reads their own intent onto each mark, so the density
+      # is legible at a distance and invisible at the keyboard.
+      #
+      # it also fires at emit time in a way a grader normally does not: emphasis
+      # is typed line by line, so a rule known up front costs one decision per
+      # section, where the same rule found later costs a sweep of every mark.
+      #
+      # NOTE the head noun is `emphasis`, never `marker` — `marker` is declared
+      # for the ROLE slot (term=glyph), and that sense CLASSIFIES where this one
+      # RANKS. the rule carries the property table that parts them.
+      - briefs/rule.forbid.emphasis-noise.md
+
+      # its POLE PAIR, and the reason both must boot or neither should: they are
+      # two failures of ONE act. emphasis-noise says `you elevated every line, so
+      # you ranked none`; this says `you elevated no line, so the needle cannot
+      # be found`. a reader who holds one pole alone has a repair that walks them
+      # into the other — a sweep of every mark lands on diffusion, and a fix for
+      # a buried point lands on noise. only the pair names the target between.
+      #
+      # measured on this route: a sweep of ~950 rank glyphs was ordered, and the
+      # SAME sentence that ordered it named diffusion — because the wisher knew
+      # the cut alone would land on the far pole.
+      #
+      # say-level because it fires at emit time exactly as its pole does, and
+      # because the author is blind to it for a reason of its own: they know
+      # where their point is, so every passage reads as though it were elevated.
+      - briefs/rule.forbid.diffusion.md
+
+      # its NEIGHBOUR on the mark, and the one grain emphasis-noise cannot reach:
+      # that rule grades HOW MANY marks a section carries, and this grades whether
+      # a mark RENDERS at the width the terminal reserved. so a single `⚠️` at the
+      # bar of one passes emphasis-noise whole and still kinks every column under
+      # it — measured 2026-09-07, 25 of 26 palette glyphs compute to 2 cells and
+      # this one computes to 1.
+      #
+      # NOTE it is STRUCTURE, against the read it invites. the seam's own test
+      # settles it: 🐢 is U+1F422, Wide, and satisfies the rule unchanged — so the
+      # rule prescribes no glyph at all, only a rendered property every palette
+      # must hold.
+      #
+      # say-level because the author is the one reader who cannot see the defect:
+      # it is a property of the READER's terminal and font, so a glyph that renders
+      # clean in the editor that typed it corrupts a terminal two machines away.
+      # a rule found afterward costs a sweep of every surface the glyph prefixes.
+      - briefs/rule.forbid.width-ambiguous-glyphs.md
+
+      # the assembly grain — the order and the reference, over the word count.
+      # `require.brevity` and `forbid.rambles` PASS a decode-friction sentence
+      # whole, because no word in it is surplus.
+      #
+      # say-level because the repair ripples: a term declared late must be
+      # declared in the file that introduces it and in each file that already
+      # used it undeclared.
+      #
+      # note the term is adopted, over coined. `rule.forbid.inline-decode-friction`
+      # (ehmpathy/mechanic) owns it for code; this is its prose half.
+      - briefs/rule.forbid.decode-friction.md
+
+      # its species. a fetch reads as an oversight, so an author cuts it; a
+      # riddle reads as the good part, so the same sweep passes over it — the
+      # genus alone catches half of what it names.
+      #
+      # say-level because its sharpest instance is a LABEL — a filename, a
+      # title, a header — and a label is chosen before the file exists. found
+      # after, the repair is a rename plus every citation.
+      - briefs/rule.forbid.riddles.md
+
+      # the quantifier grain, and the one termsmell here — the word is the TELL
+      # that a claim was made over a set nobody walked. same shape as
+      # `rule.forbid.gerunds` (ehmpathy/mechanic).
+      #
+      # say-level because the cue must arrive at the keyboard, where the word is
+      # reached for. a bounded claim costs a measurement; the absolute costs one
+      # word, and both render identically to the reader.
+      #
+      # note it forbids the absolute, over the word. `structure, never voice`
+      # excludes one named alternative in a stated binary, so it quantifies over
+      # naught. the rule carries the test that parts the two.
+      - briefs/rule.forbid.absolutes.md
+
+      # the aim grain — it reads the author's model of the reader, over a
+      # property of the words.
+      #
+      # say-level because it is a GENERATOR, over a shape: an author who cuts
+      # the shapes and keeps the model emits new ones next round, so a ref
+      # fetched after a sweep repairs one round and none after it.
+      - briefs/rule.forbid.defensive-prose.md
+
+    ref:
+      # the demos, and the depth behind each say-tier rule. ref-level because
+      # depth here is free — a reader dereferences one when they want a worked
+      # pair, and every boot stays a fixed size. the say-tier rules above carry
+      # the claim and the cue; these carry the 👎/👍 renderings that teach by
+      # demonstration, the etymologies, and the boundaries.
+      - briefs/define.elucidation.md
+      - briefs/define.purpose-first.md
+      - briefs/define.distillation.md
+      - briefs/define.reflexive-condensation.md
+      # the demos for the one forbid that had carried them inline. its rule file
+      # ran 8.7k chars — twice the say-tier median — and the excess was a paired
+      # passage the sentence table cannot hold. moved here so the forbid matches
+      # its five siblings: the rule states the shapes, the define renders them.
+      - briefs/define.subversive-prose.md
+
+      # the one RULE at ref tier, and the exception is argued rather than assumed.
+      # it is act 4's DEGREE peer: `require.reflexive-condensation` grades whether
+      # the pass RAN (binary); this grades how dense the result IS (a degree).
+      # an artifact can fail one and pass the other. both are blockers.
+      #
+      # ref-level because the say tier already carries a cue for it — the 95% bar
+      # sits in `reflexive-condensation`, which boots. what this file adds is the
+      # exemption list a driver refutes FROM, and that is consulted at one moment:
+      # when a density flag arrives. a flag names its rule by path, so the
+      # dereference is available exactly when it is wanted.
+      #
+      # 🟡 the exemption list carries the weight, and more so at blocker grade. a
+      # density flag with no legal refutation is a deletion mandate at ANY
+      # severity, and the first cut a driver makes under a red gate is the
+      # EVIDENCE — the longest part, and the part a reader who disputes the claim
+      # needs. so the exemptions, never the severity, are what make the gate safe.
+      #
+      # 🟡 OPEN: the booted cue is line-grain (the 95% bar) and this rule is
+      # passage-grain, so an author never meets the passage question before they
+      # write. a promotion to say is a live call, unsettled.
+      - briefs/rule.require.dense-prose.md
+
+      # the one HOWTO here, and ref-level on this test: does the repair cost more
+      # than the boot? no — because the say tier ALREADY SHIPS the razors. every
+      # rule above carries its own under `.the test`, so a reader who never opens
+      # this file still gets the instrument on every rule they boot.
+      #
+      # 🟡 what this file teaches is how to FORGE a new one, which is authorship
+      # work: read once per author, not once per turn. that is the ref shape.
+      - briefs/howto.razor-a-thought.md
+
+      # the one HOWDOES here, and ref-level for a reason of its own: its reader
+      # arrives with the nudge already on their screen, so the cue has fired and
+      # the question is `why did that happen`. that question is asked once per
+      # adopter, never per turn — the exact shape a ref tier is for.
+      #
+      # 🟡 it must NOT restate the nudge. the four moves and the six canon paths
+      # are IN the nudge; the brief carries only what the nudge cannot fit — why
+      # a Stop hook, why it grades naught, and where it structurally cannot reach.
+      - briefs/howdoes.the-stophook-nudges-a-summary.md
+
+      # the one define behind a FORBID rather than a require, and it earns the
+      # tier for the usual reason: `rule.forbid.diffusion` carries the claim and
+      # the cue, and the worked gradients — a flat passage beside its elevated
+      # repair — are what a reader wants once, on the round they first miss it.
+      - briefs/define.diffusion.md

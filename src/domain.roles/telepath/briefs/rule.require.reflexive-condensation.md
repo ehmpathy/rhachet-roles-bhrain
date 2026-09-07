@@ -1,0 +1,82 @@
+# rule.require.reflexive-condensation
+
+> **reflectively condense every draft. per line: if it is not 95%+ important to mention, do not
+> mention it.**
+
+**reflexive** — a second pass over prose that already exists, run every time. it is not a discipline
+held while the words appear.
+
+⇒ the demos, the boundary, and the measured lossy cut: `define.reflexive-condensation` (ref).
+
+## .what it cuts that no extant rule cuts
+
+| rule | its subject |
+|---|---|
+| `require.brevity` | surplus words inside a line |
+| `forbid.rambles` | a line that runs past its own point |
+| **this rule** | a line that is true, tight, and merely useful |
+
+⇒ **a merely-useful line is invisible to `brevity` and `rambles` alike.** it can be short, active, and correct — and be
+the 70th-most-important sentence in a passage that needed twelve. **no word is surplus and the line
+still costs the reader.**
+
+## .the bar inverts the burden of proof
+
+| the default read | who carries the burden |
+|---|---|
+| *"why should I cut this?"* | the **cut** — and a past self already argued for the line |
+| *"is this 95%+ important?"* | the **line** — it must out-rank what stays |
+
+**that is why a NUMBER was named.** an author cannot answer *"is this concise?"* honestly — they
+always say yes. **a number forces a RANK instead of a verdict**, and a rank is what a second reader
+can check.
+
+## .the test
+
+> **re-read the draft as a SET. per line: does this out-rank what stays?**
+
+no → cut it · yes → keep it · **you have not re-read it as a set** → the pass did not run.
+
+**careful is not condensed.** a line judged at the moment it was typed was ranked against the
+sentence before it, never against the passage's final set. **a rank needs the whole set to exist.**
+
+| when… | then… |
+|---|---|
+| a line is true, tight, and you cannot cut it | the strongest cue. ask the rank, never the length |
+| you would ship a first draft | the pass has not run. it cannot run inside the draft |
+| a passage lists five reasons | rank them. two usually carry the claim; three support it |
+| a line gives background the claim does not need | it ranks below the bar |
+| you cite the bar to drop a word that carried a distinction | forbidden — that cut is **lossy**, a defect of the cut |
+| a caveat a reader must act on ranks low to you | it is not yours to rank. it stays |
+| the draft is bulletized | the pass is cheap — read down the outline and strike rows |
+
+## .the bar grades IMPORTANCE, never LENGTH
+
+**lossless compression cannot add ambiguity, by construction** — it removes words that carried no
+distinction. so a word that carried one was never surplus, and a cut that drops it was **lossy**.
+
+⇒ **a defect of the cut, never a property of density.** the repair for a lossy cut is a **shorter,
+more precise** cut, not a restored paragraph.
+
+## .where it sits in the canon
+
+**it fires last**, and it is the only rule in the pipeline that runs on prose that already exists.
+
+⇒ the full order is declared once, in the role's `readme.md`.
+
+## .the axis
+
+a **structure** rule, so telepath owns it (`rule.require.generic-governs-structure-never-voice`). a
+line below the bar is below it in every register, so it prescribes no member of that rule's voice row.
+
+blocker: a true, tight line that ranks below the bar · a first draft shipped with no pass · a
+distinction dropped and defended by this rule (a lossy cut) · a caveat a reader must act on, cut as
+low-rank.
+nitpick: an unranked list where two rows carry the claim and three support it.
+false positive: a passage the **purpose** genuinely demands at length · a stated read beside an
+uncertain answer · a caveat retained.
+
+⇒ see also: `define.reflexive-condensation` (the demos and the boundary) ·
+`rule.require.bulletize` (the container that makes the pass cheap) · `rule.require.purpose-first`
+(the yardstick the rank measures against) · `rule.forbid.subversive-prose` (the shapes a below-bar
+line most often wears).

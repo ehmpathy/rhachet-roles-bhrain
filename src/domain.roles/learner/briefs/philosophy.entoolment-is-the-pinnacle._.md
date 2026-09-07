@@ -97,7 +97,7 @@ probabilistic one does not merely cost less. it costs **none**.
 milliseconds. multiply by every future invocation. the person on the other end is helped
 **sooner**, and that is the whole reason the speed matters — not throughput for its own sake.
 
-**probability → risk → the answer can be WRONG.** 🔴 this is the cost that money and time do not
+**probability → risk → the answer can be WRONG.** this is the cost that money and time do not
 carry, and it is often the largest. a probabilistic step does not merely cost more; it **varies**,
 so its output must be checked, and a check that is skipped is a defect that ships. a deterministic
 operation is correct by construction — the `.the four properties` table above is exactly this cost
@@ -141,12 +141,12 @@ unedited:
 **the glyphs are rhachet's too**, and they compose: 🧠 brain · 📚 brief · 💪 skill, qualified by its
 determinism. so a rigid skill is 💪🔩 — *a skill, and here is how deterministic it is.*
 
-⚠️ **`harden` is rhachet's verb for that climb, and `entool` is not its synonym.** harden moves a
+🟡 **`harden` is rhachet's verb for that climb, and `entool` is not its synonym.** harden moves a
 thought route across the three 💪 rungs. **`entool` spans all five** — it covers the 🧠 → 📚 step
 rhachet declares no concept of. so every harden is an entoolment and the reverse does not hold:
 one word is a proper subset of the other, never a second name for it.
 
-⚠️ **the measure is rhachet's too, and this ladder must not coin a rival unit for it.** `imagine
+🟡 **the measure is rhachet's too, and this ladder must not coin a rival unit for it.** `imagine
 cost` = time + tokens, stated in `.the three costs a brain pays` above. that is the axis the
 column below ranks by, in rhachet's own words.
 
@@ -177,11 +177,11 @@ does.
 brief is that prethought materialized; the 💪 rungs are the same prethought with progressively more
 of its execution mechanized.
 
-### ⚠️ a higher rung does not retire the rungs below it
+### 🟡 a higher rung does not retire the rungs below it
 
-**the climb is a crystallization, never a migration.** a 💪🪨 solid skill is not a replacement cut
-fresh from a 💧 fluid one. the fluid operation's **branches are enrouted and hardened one at a
-time**, and the operation comes to *compose* the solid subskills it grew. same operation, more of
+🟡 **the climb is a crystallization, never a migration.** a 💪🪨 solid skill is not a replacement cut
+fresh from a 💧 fluid one. the fluid operation's branches are enrouted and hardened one at a
+time, and the operation comes to *compose* the solid subskills it grew. same operation, more of
 it deterministic.
 
 | what happens | what remains |
@@ -198,13 +198,13 @@ carries the judgment and the reach-for-it knowledge that no crystallized branch 
 skill with no brief behind it is a black box: correct until the day it is wrong, and unarguable
 when it is, because the reason it was shaped that way lives nowhere.
 
-⚠️ so *"we entooled it, delete the brief"* is a defect. the rung tells you **what a use costs**,
+🟡 so *"we entooled it, delete the brief"* is a defect. the rung tells you **what a use costs**,
 never **what may now be thrown away.**
 
 ⇒ move any artifact **one rung**. rung 4 is the aim; rung 3 from rung 2 is a real win and often
 the honest limit.
 
-⚠️ **the ladder measures brain cost, and some work has an irreducible floor above zero.** where
+🟡 **the ladder measures brain cost, and some work has an irreducible floor above zero.** where
 judgment is genuinely required at several points, rung 4 is unreachable and **rung 3 is the
 destination** — which is why the rung is named `rigid`, for what it IS, rather than for the
 determinism it lacks.
@@ -223,7 +223,7 @@ be expressed as a route; the reverse does not hold.
 ⇒ **the zoom-in is `philosophy.entoolment-is-the-pinnacle.via-routes.md`** — what a route removes,
 why it earns the rung, and when to reach for one over a 🪨 solid skill.
 
-## ⚠️ .the limit — what entoolment must never become
+## 🟡 .the limit — what entoolment must never become
 
 **this is not a claim that thought is waste.** judgment, novel synthesis, the read of an
 ambiguous situation — these are brain work by nature, and no tool substitutes for them. a

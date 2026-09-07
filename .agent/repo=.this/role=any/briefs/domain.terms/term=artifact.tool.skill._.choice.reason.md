@@ -19,21 +19,12 @@ rejected alternatives:
 
 ### dispute: tool-as-the-word-for-rungs-2-to-4  —  raised 2026-08-30  —  status: RESOLVED (use `skill`)
 
-- raised.by  = the wisher
-- claim      = `philosophy.entoolment-is-the-pinnacle` wrote *"a brief and a **tool** amortize
-               different things"*, which uses `tool` for exactly the set this term names. the
-               wisher rejected it:
+🟡 **one utterance settled both words at once, and its record lives at the parent** —
+`term=artifact.tool._.choice.reason.md`, `.disputes`, where the wisher's words are held verbatim.
 
-  > *"is this supposed to say 'a brief and a skill amortize different things'? … caus a brief _is_
-  > a tool - as we established aerlier"*
-
-  ⚠️ verbatim, unedited.
-
-- counter    = `tool` reads more naturally in that sentence than `skill` does, and the contrast
-               it draws is real — a brief genuinely does amortize less than a mechanized artifact
-- resolution = the contrast is real and **`skill` is its word.** `tool` is the umbrella over all
-               five rungs (`term=artifact.tool`), so it cannot also name a proper subset of them without
-               one word carrying two concepts
+what it settled for **this** term: the contrast a brief is drawn against is real, and **`skill` is
+its word**. `tool` is the umbrella over all five rungs, so it cannot also name a proper subset of
+them without one word that carries two concepts.
 
 ### dispute: knowledge-as-the-gloss-for-a-brief  —  raised 2026-08-30  —  status: RESOLVED (use `concepts`)
 
@@ -44,7 +35,7 @@ rejected alternatives:
   > *"should this be 'prethought concepts' to better distinguish against 'prethought capacity' =
   > skill?"*
 
-  ⚠️ verbatim, unedited.
+  🟡 verbatim, unedited.
 
 - counter    = `knowledge` reads plainly and is what a brief obviously holds
 - resolution = `concepts` / `capacity`. `knowledge` is the **genus, not the differentia** — a skill
@@ -61,10 +52,10 @@ rejected alternatives:
 
   | product | what it amortizes | what each reuse still costs |
   |---|---|---|
-  | 📚 a **brief** | the derivation | a brain reads, interprets, applies — every time |
-  | 💪💧 a **fluid skill** | derivation + sequence | a brain still follows the steps |
-  | 💪🔩 a **rigid skill** | + the deterministic half | a brain judges at the seams only |
-  | 💪🪨 a **solid skill** | + execution | one call. **no brain at all** |
+  | 📚 a brief | the derivation | a brain reads, interprets, applies — every time |
+  | 💪💧 a fluid skill | derivation + sequence | a brain still follows the steps |
+  | 💪🔩 a rigid skill | + the deterministic half | a brain judges at the seams only |
+  | 💪🪨 a solid skill | + execution | one call. **no brain at all** |
 
 - **`route` is an instance, never the rung.** a route sits at rung 3, and rung 3's name is
   `rigid skill`. the philosophy briefly named the rung `route` after its best-known artifact —
@@ -73,13 +64,10 @@ rejected alternatives:
   by its shortfall, and a rung whose name implies failure is a rung nobody aims at — though rung 3
   is usually the destination, since some work has an irreducible judgment floor above zero
 
-## .the boundary gap
+## .the boundary — `tool`, and the verb's is a separate settlement
 
-`skill` composes `enskill`, so it inherits the externalization family's one unsettled boundary:
-`knowledge.` (what the artifact holds) vs `externalize.` (the act that produces it).
+`skill` is a noun, so its boundary answers *"a skill of what?"* → `tool`, since a skill is the
+mechanized subset of the rungs.
 
-⚠️ **the family must be settled ONCE, for all of `enbrief` `enskill` `entool` `pave` `learn` `seed`
-`tool` `skill`** — they share one ladder and one verb-shape, so a per-term guess would fracture a
-family that is coherent today (`rule.require.boundary-qualified-terms`, `.the open gaps`).
-
-⇒ left flat, with the gap on record. a guessed boundary is worse than an absent one.
+⇒ the verb it composes, `enskill`, answers a different question and roots at `externalize` — see
+`term=artifact.tool._.choice.reason.md`, `.the boundary`, which states the noun/verb split once.

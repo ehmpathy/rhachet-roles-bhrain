@@ -40,7 +40,7 @@ be, and the episode becomes evidence a reader can verify.
 
 - yes → it is the **concept**. it stays
 - no → it is a **demo**. eject it to `example=$slug.md`, dated and sourced
-- it was neither — it merely gestured at a conversation → 🔴 it is not a demo either. a demo has a
+- it was neither — it merely gestured at a conversation → **not a demo either.** a demo has a
   date, a repo, and a path; a gesture has none, so there is naught to eject
 
 ## .the smells — each is a demo trapped inside a concept
@@ -54,8 +54,8 @@ be, and the episode becomes evidence a reader can verify.
 | *"yet"*, *"for now"*, *"not … yet"* | a schedule, and the schedule expires |
 | a term named **only** to say we do NOT adopt it, with no durable reason | the rejection outlives the reason for it |
 
-⚠️ **row 4 is the one with no ejection.** a brief's account of its own prior drafts is
-archaeology, and archaeology has no `example=` home — it goes to git history
+🟡 **the *"an earlier draft"* smell is the one with no ejection.** a brief's account of its own prior
+drafts is archaeology, and archaeology has no `example=` home — it goes to git history
 (`rule.forbid.chronological-accretion`, ehmpathy/mechanic).
 
 ## .what a demo owes, once ejected
@@ -70,7 +70,7 @@ a demo is only worth its file if it is **checkable**. it carries:
 ⇒ that is `rule.require.persist-domain-term-evidence` (architect), applied to a brief rather than
 a term.
 
-## ⚠️ .a `.reason` file IS an ejection target — do not eject from it again
+## 🟡 .a `.reason` file IS an ejection target — do not eject from it again
 
 a term cluster splits along exactly this line already:
 
@@ -89,7 +89,8 @@ it is the same carve-out `rule.forbid.chronological-accretion` grants a changelo
 purpose IS the chronology. to eject it to an `example=` file would move the record out of the
 place two rules put it.
 
-⚠️ **what a `.reason` still may not hold is row 4** — the file's own draft history. *"this entry
+🟡 **what a `.reason` still may not hold is the *"an earlier draft"* smell** — the file's own draft
+history. *"this entry
 first closed with X, and that half is superseded"* is archaeology wherever it sits; the
 `.disputes` shape (`raised` / `claim` / `counter` / `resolution`) is how a reversal is recorded,
 and a superseded entry is amended in place or answered by a **new dated dispute**, never annotated
@@ -125,7 +126,7 @@ rule.forbid.stamped-purpose.example=moneytype-recoupling.md
 
 dated, sourced, and it costs the concept file zero lines.
 
-## ⚠️ .a verbatim wisher quote is a SEED, not a demo
+## 🟡 .a verbatim wisher quote is a SEED, not a demo
 
 a `.said` block is verbatim by contract, and its temporal words are part of the record. **never
 tidy a quote to satisfy this rule.**

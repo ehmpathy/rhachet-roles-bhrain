@@ -40,7 +40,7 @@ const emitRedirectNudge = (input: { path: string }): void => {
     '   │  └─ tactic → .agent/repo=.this/role=any/skills/<name>.sh',
   );
   console.error('   │');
-  console.error('   ├─ ⚠️ machine-local secrets or paths?');
+  console.error('   ├─ 🟡 machine-local secrets or paths?');
   console.error(
     '   │  └─ generalize them — keep the raw secret or path out of durable memory',
   );

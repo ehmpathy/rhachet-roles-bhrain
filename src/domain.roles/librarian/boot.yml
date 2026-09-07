@@ -42,6 +42,18 @@ always:
       # a rule that arrives after fifty good edits meets an artifact nobody can use
       - briefs/rule.require.catalog-is-an-index.md
       - briefs/rule.require.rules-are-clusters.md
+      # the THIRD axis of that cluster discipline, and the one that decides the boot
+      # tier: `rules-are-clusters` splits the class from one occurrence; this splits
+      # the CUE from the case for the cue.
+      #
+      # say-level for the reason it itself states — a cue that must be fetched has
+      # already lost the round. it fires WHILE a rule is written, and the repair
+      # afterward is an ejection plus a tier change plus every pointer between.
+      #
+      # 🟡 nitpick severity, and the grade is honest: it is a PLACEMENT call, so a
+      # misplacement costs tokens on every boot rather than correctness on any one.
+      # the single blocker it names is `rule.require.a-cue-is-not-a-claim`'s, cited.
+      - briefs/rule.prefer.rules-that-refout.md
     ref:
       # the demo the catalog rule ejected — one occurrence, dated and measured.
       # ref because a reader wants it once, never on every boot

@@ -54,7 +54,7 @@ here; `knowledge` was the drift off it.
 | a step they no longer perform — the sequence is written, or run | 💪 a **skill** — rungs 2–4 |
 | **both** | 🔴 the common case. write both, and pair them |
 
-⚠️ **the third row is not a fence-sit.** it is what most real work produces, and the pair is the
+🟡 **the third row is not a fence-sit.** it is what most real work produces, and the pair is the
 strongest artifact the practice makes — see below.
 
 ## .capacity without concepts is a black box; concepts without capacity is a lecture

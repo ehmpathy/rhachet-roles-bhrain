@@ -14,7 +14,7 @@ in the yield.
 
 the yield **cites them by path.** it does not inline them.
 
-⚠️ note `$route/.route/.archive/` is a different, machine-written directory — it holds yields
+🟡 note `$route/.route/.archive/` is a different, machine-written directory — it holds yields
 moved aside on a `--yield drop` rewind. `$route/archive/` is yours; `.route/.archive/` is the
 tool's.
 
@@ -36,7 +36,7 @@ obeys it deletes evidence a council will want. **the `appendix/` and `archive/` 
 what this rule adds.** the rest is the parent's, cited rather than re-derived
 (`rule.always.reuse-pavement-before-improvise`).
 
-⚠️ it lives in a **separate package**, so it cannot be symlinked or extended from here — only
+🟡 it lives in a **separate package**, so it cannot be symlinked or extended from here — only
 adapted and cited, exactly as `rule.require.timeless-lessons` adapts `rule.require.timeless-comments`.
 
 ## .why — measured, on one stone
@@ -102,14 +102,14 @@ this is the one cue with measured evidence, and it names the exact mechanism a s
 surfaces, at 50–120s and under five cents total. against that, **six prior rounds in which the
 author re-read their own work caught none of it**, and the human caught three by hand.
 
-⚠️ **one result settles why the author cannot be the checker.** a pass flagged text the author was
+🟡 **one result settles why the author cannot be the checker.** a pass flagged text the author was
 certain they had already fixed — the fix had been applied through a `.agent/` symlink into `dist/`
 and silently reverted by the next build. **only a reader with no memory of the edit could surface
 it.**
 
-⇒ so the discipline below is necessary and not sufficient. the enforcement half is a **review
-lane**, never a hook: a hook holds one edit, and every append that accretes is locally correct —
-the violation is the relation *between* paragraphs. that lane is dispatched as seed **#394**,
+⇒ so the discipline below is necessary and not sufficient. the enforcement half is a
+**reviewer**, never a hook: a hook holds one edit, and every append that accretes is locally correct —
+the violation is the relation *between* paragraphs. that reviewer is dispatched as seed **#394**,
 against the telepath role that owns the generic prose rules (#386).
 
 ## .the test — for the driver
@@ -131,7 +131,7 @@ rhx grepsafe --pattern '<the-fulcrum-id-or-term>' --path "$route" --glob '*.yiel
 
 more than two or three hits and you retell rather than declare.
 
-🔴 ⚠️ **scope with `--path`, never with a slash in `--glob`.** `grepsafe --glob` matches the
+🔴 🟡 **scope with `--path`, never with a slash in `--glob`.** `grepsafe --glob` matches the
 BASENAME, so `'$route/*.yield.md'` matches no file and returns a clean `0 matches`, exit 0.
 
 **a false zero is uniquely dangerous for THIS check**, because zero is the shape of a pass here:
@@ -170,7 +170,7 @@ the tells:
 
 ## .provenance
 
-⚠️ **one route, one stone.** the measurement above is a single case, and this rule generalizes from
+🟡 **one route, one stone.** the measurement above is a single case, and this rule generalizes from
 it. it earns its say-level place because the mechanism it names — history accretes, answers do not
 — is structural rather than incidental. a second counter-case should sharpen it, not surprise it.
 

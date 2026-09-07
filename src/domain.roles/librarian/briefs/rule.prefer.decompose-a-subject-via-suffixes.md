@@ -79,7 +79,7 @@ clustered artifact**, and the suffix is the mechanism that lets a root obey it.
 keeps a sequence and carries no sense, so the path is computable only by someone who already knows
 the answer. **a suffix is an address; an ordinal is a counter.**
 
-## ⚠️ .a zoom-in is not a fork — it must not restate its root
+## 🟡 .a zoom-in is not a fork — it must not restate its root
 
 a peer **forks** two ways: it **restates** the parent's claim in its own words, or it sits
 **unlinked** from the parent. either way two files hold one claim, they drift, and the reader must
@@ -117,7 +117,7 @@ rule.always.converge-with-reviewers.via-a-taken-per-point.md # the obligation ea
 
 ### 👎 bad — the zoom accreted inline
 
-a 129-line rule that grows a 44-line `## 🔴 .the hard clause` with its own two subsections and its
+a 129-line rule that grows a 44-line `## .the hard clause` with its own two subsections and its
 own worked incident. every reader of the parent claim now boots the incident too.
 
 ## .enforcement

@@ -30,11 +30,11 @@ browser.session  get|set --session <name> --into|--from <path>
 browser.stop     --session <name>
 ```
 
-⚠️ **those commands are supplied separately from the role package**, so a probe that enrolls
+🟡 **those commands are supplied separately from the role package**, so a probe that enrolls
 `playwright` and finds no `browser.*` executable has hit a supply gap, never a rule violation —
 diagnose it as such (`rule.always.diagnose-reviewer-malfunctions`, driver).
 
-⚠️ **and its mascot is the chameleon 🦎**, not the owl. a `bhrowser` surface speaks in its own
+🟡 **and its mascot is the chameleon 🦎**, not the owl. a `bhrowser` surface speaks in its own
 voice; `define.bhrain-repo-mascot`'s claim binds this repo's speech, never a dependency's.
 
 ## .why — the failure is SILENT
@@ -67,7 +67,7 @@ the rule is a default, not an absolute. search is the right reach when:
 - you need a **pointer**, not an answer — a probe's aim phase, where breadth of leads beats depth
 - you want to confirm a term **exists**, rather than to survey its field
 
-⚠️ in each of those, the yield still names the tool. a defensible shallow pass is fine; an
+🟡 in each of those, the yield still names the tool. a defensible shallow pass is fine; an
 unlabelled one is not.
 
 ## 🔴 .and a known URL is NOT one of them

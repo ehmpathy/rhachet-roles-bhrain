@@ -1,0 +1,70 @@
+# rule.require.dense-prose
+
+> **say it in fewer lines. where N lines say what M would, the difference is a cost every reader pays and no reader asked for.**
+
+## .why blocker, and why a degree does not soften it
+
+the nearest precedent is a blocker: `require.brevity` grades *"does this carry surplus words"* — a degree, at the line grain — and `forbid.rambles` grades a line that runs past its point. this grades that same property one grain coarser, over a **passage**.
+
+🟡 **the deletion-mandate worry is real, and the severity does not answer it — the exemptions do.**
+
+- a density flag with no legal refutation IS a deletion mandate, at any severity
+  - a nitpick a driver cannot refute is still a nitpick they clear by a cut
+  - ⇒ so nitpick buys no protection. it only makes the flag skippable
+- the ground a driver refutes FROM is the table below, and it is what makes the gate safe
+  - `rule.always.converge-with-reviewers.via-a-taken-per-point` requires a `[REFUTE]` to cite evidence
+  - the exemptions are that citation
+
+⇒ so the choice is not *blocker* against *safe*. it is **a gate a driver can refute** against **a flag they can skip** — and this role exists because the skippable one did not hold: a 4.5k wish grew 155.8k of yields, and four reviewers rendered no verdict at all.
+
+## .the seam with `require.reflexive-condensation`
+
+both are about length and they grade different properties. **an artifact can fail one and pass the other.**
+
+| | `require.reflexive-condensation` | this rule |
+|---|---|---|
+| grades | whether **the pass RAN** | how **dense the result IS** |
+| the question | *"did you re-read the draft as a set?"* | *"do these N lines say what M would?"* |
+| shape | binary — it ran or it did not | a degree |
+| the failure | a first draft, shipped | a second draft that is merely long |
+
+⇒ a passage can clear the 95% bar line by line and still be twice the size a reader needed — the bar ranks each line against its neighbours, and this measures the whole.
+
+## .the test
+
+> **rewrite the passage's claim in one line. what did the original hold that the line does not?**
+
+- naught → the original was N lines where 1 would serve. cut it
+- a bound, a caveat, a settler, an exemption → those earn their lines. keep them
+- evidence a disputer would want → **do not cut it. rehome it** (`rule.require.archaeology-in-notes`)
+
+| when… | then… |
+|---|---|
+| a section restates its own header | the strongest cue. one of the two goes |
+| three sentences each state the claim a different way | that is one claim and two echoes |
+| a passage grew on a round where no decision changed | growth with no new claim is the signature |
+| you would cut a dated record to hit a number | 🔴 stop. that is an exemption below, and the cut is the defect |
+| a claim is long because its ground is long | not this defect. ground is what makes a claim disputable |
+| you are about to `[REFUTE]` a density flag | do it with a citation — the list below is what you cite |
+
+## 🔴 .the exemptions — the ground a driver refutes FROM
+
+**a density flag with no legal refutation is a deletion mandate at any severity.** the convergence loop supplies the mechanism — `rule.always.converge-with-reviewers.via-a-taken-per-point` requires a `[REFUTE]` to cite evidence — but a driver needs a ground to cite. these are it:
+
+| exempt | declared by |
+|---|---|
+| a dated dispute record — a `.reason` file's `.disputes` or `.evidence` entry | `rule.require.timeless-lessons`, by name |
+| a reversal a reader must ACT on | `rule.forbid.chronological-accretion`'s own caveat |
+| a catalog row — one line per entry, however many entries | `rule.require.catalog-is-an-index` |
+| a verbatim quote — a `.said`, a cited passage | `rule.always.archive-the-wishers-words-verbatim` |
+| evidence a disputer would want | `rule.require.archaeology-in-notes` — the repair is a move, never a cut |
+
+🟡 the last row is the one a density reviewer gets wrong most, and at blocker grade it is the one that would do real damage. **evidence reads as bulk to everyone but the one reader who does not believe you** — and that reader is the one a disputable claim exists for.
+
+⇒ so the honest verdict on a long evidence block is *"rehome it"*, never *"cut it"*. a cut that drops a distinction is *lossy*, and a lossy cut is a defect of the cut.
+
+
+blocker: a passage whose claim one line would carry · a section that restates its own header · a claim stated three ways · an artifact that grew on a round where no decision changed.
+false positive: a dated dispute record · a reversal a reader must act on · a catalog row · a verbatim quote · evidence a disputer would want (the repair is a rehome) · a claim whose ground is genuinely long.
+
+⇒ see also: `rule.require.reflexive-condensation` (the act-peer) · `rule.require.archaeology-in-notes` (where the cut evidence goes) · `rule.forbid.diffusion` · `rule.require.disputable-claims`.

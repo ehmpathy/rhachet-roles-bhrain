@@ -7,7 +7,7 @@ no filename may carry `[` or `]`. a document kind is marked with the **coordinat
 👎  kno601.inventories._.[article].md
 ```
 
-⚠️ **this binds new and renamed files in this repo.** an extant bracketed name in a dependency's published briefs is left in place until disturbed, and re-seeded to the repo that owns it.
+🟡 **this binds new and renamed files in this repo.** an extant bracketed name in a dependency's published briefs is left in place until disturbed, and re-seeded to the repo that owns it.
 
 ## .why — the marker made the file hard to reference, which is a filename's one job
 
@@ -54,7 +54,7 @@ a name that **opens** with its archetype does not repeat it. **so the repair for
 
 ⇒ the `._.` cluster root stays — that marks a **split subject**, a different axis.
 
-⚠️ **a bulk rename cannot fix these safely.** a find-and-replace cannot part a **citation** of a bad name from an **instance** of one, so any sweep would rewrite the citations too. the repair is **file-first and by hand** — one more cost the bracket form imposes, and it lands on the cleanup.
+🟡 **a bulk rename cannot fix these safely.** a find-and-replace cannot part a **citation** of a bad name from an **instance** of one, so any sweep would rewrite the citations too. the repair is **file-first and by hand** — one more cost the bracket form imposes, and it lands on the cleanup.
 
 ## .the boundary
 

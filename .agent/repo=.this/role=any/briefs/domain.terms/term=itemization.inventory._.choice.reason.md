@@ -9,7 +9,7 @@ exhaustive.** a shop's inventory that omits a shelf is not a partial inventory �
 it enumerates **what** is held and **where** it sits. it does not describe each item, and that
 restraint is the term's whole character.
 
-## ⚠️ .inventory vs catalog — the line
+## 🟡 .inventory vs catalog — the line
 
 `catalog` is a **declared archetype** in the librarian's taxonomy
 (`kno201.documents._.[catalog]`), so a new near-neighbor must earn its separation. it does, on one
@@ -20,44 +20,32 @@ axis: **what each entry carries.**
 | **inventory** | every entry | **a reference only** | the address. dereference to learn more |
 | **catalog** | every entry | a reference **+ a preview** | a feel for each concept **without** a dereference |
 
-⇒ **a catalog is an inventory plus minor demos.** the preview is a small materialization — one
-line, one visual, one *what it is* — that lets a reader grasp the shape of each member from the
-index alone.
+> **a catalog is an inventory plus minor demos.** the preview is a small materialization — one
+> line, one visual, one *what it is*
+> — quoted from `kno601.inventories._.kind=article`, which declares the archetype; amend it there
 
-### ⚠️ the trap — a reader will draw the line at COMPLETENESS, and be wrong
+### 🟡 the trap — a reader will draw the line at COMPLETENESS, and be wrong
 
 the available line is *"a catalog indexes what was found; an inventory claims a census"*. it is
 intuitive and it does not hold:
 
 - **completeness is common to both.** the periodic table and *Systema Naturae* — the librarian's
   own catalog exemplars — are exhaustive by intent. a catalog is not a partial inventory
-- **completeness is a claim about the world**; per-entry content is a **property of the document**.
+- completeness is a claim about the world; per-entry content is a property of the document.
   a reviewer can check the second with a read, and can never fully check the first
 - ⇒ a line verifiable by a read beats a line verifiable only by a survey
   (`rule.forbid.ambiguous-labels`: a label must read exactly one way)
 
-### the cost each pays
+### the cost each pays, and the two failure modes
 
-the axis has a direct consequence for boot economics, which is why it is load-bearing here:
+⇒ both are declared in `kno601.inventories._.kind=article` under `.the cost each pays` and
+`.the two failure modes`, and are not restated here.
 
-- an **inventory** is cheap and scales without bound — refs only, so it can grow to any size at a
-  fixed cost. this is why it fits the **`ref` tier**
-- a **catalog** costs more per member, because each preview is inlined. it buys a dereference
-  saved, which is worth the spend when a reader must know the *whole shape* at once
+what this cluster adds: that cost table **is** the say/ref policy `role=any/boot.yml:22-30`
+already states, applied to document archetypes rather than to boot lists. so the word carries a
+tier with it — reach for `inventory` and you have chosen `ref`.
 
-⇒ this is exactly the say/ref policy `role=any/boot.yml:22-30` states, applied to document
-archetypes rather than to boot lists. and it explains the librarian's own boot: the
-`[catalog]` sits at **say** (its previews teach at boot), while the per-archetype articles sit at
-**ref**.
-
-### the failure modes, one per direction
-
-- **an inventory with previews** is a catalog that has not admitted it — it will grow past its
-  budget while it is still filed as cheap
-- **a catalog with no previews** is an inventory with extra ceremony — it costs a reader a
-  dereference per member and pretends to have saved them one
-
-## ⚠️ .an axis need not be enumerable IN ADVANCE — the occurrence axis
+## 🟡 .an axis need not be enumerable IN ADVANCE — the occurrence axis
 
 the strongest available objection to the term runs:
 
@@ -80,28 +68,31 @@ both properties survive an occurrence axis, and both are what the term is for:
 | **addressable** | `case=$id` computes to exactly one path; `*.case=*.md` returns the whole set |
 | **checkable** | a `Glob`: every position the summary declares has a file, and every file is in the summary |
 
-⚠️ **and this is precisely why `registry` remains a forbidden synonym here** — see below. an
+🟡 **and this is precisely why `registry` remains a forbidden synonym here** — see below. an
 occurrence axis is the case where `registry` reads most plausible, and it is still wrong: the
 entries are **addressed by a declared dimension**, never merely appended by whoever arrived.
 
 ## .the verb it pairs with
 
-**`itemize` → `inventory`**, exactly as **`catalogize` → `catalog`**. the verb was already
-declared here (`rule.require.domain-term-itemization`); the noun for its output was the gap this
-cluster fills. see `term=itemization.itemize._.choice.reason.md`.
+**`itemize` → `inventory`**, exactly as `catalogize` → `catalog`.
+
+- the verb was already declared here — `rule.require.domain-term-itemization`
+- the noun for its output was the gap this cluster fills
+- ⇒ see `term=itemization.itemize._.choice.reason.md`
 
 ## .why not the other rejected synonyms
 
-- **registry** — names an **append**: an actor puts an entry in, and the entry's place is the
-  order it arrived. an inventory's entries sit at a **coordinate on a declared dimension**, so
-  their place is computed rather than granted.
-  ⚠️ **this is the sharpest near-miss the cluster has**, and it fires hardest on an occurrence
-  axis, where entries genuinely do arrive one at a time. it is still wrong there: the summary
-  declares `case` as a dimension, so an entry is addressed (`*.case=$id.md`) and the set's gaps
-  are checkable. a registry offers neither, and it is forbidden in every branch
-- **manifest** — already taken in this org's tools (`rhachet.repo.yml` is a generated manifest;
-  `keyrack.yml` a credential manifest). one concept, one word — reuse here would overload
-- **enumeration** — names the *act*, not the artifact, and reads as a code construct (an enum).
+- **registry** — 🟡 the sharpest near-miss the cluster has
+  - it names an **append**: an actor puts an entry in, and its place is the order it arrived
+  - an inventory's entries sit at a **coordinate on a declared dimension**, so their place is
+    computed rather than granted
+  - it fires hardest on an occurrence axis, where entries genuinely do arrive one at a time — and
+    it is still wrong there: the summary declares `case` as a dimension, so an entry is addressed
+    (`*.case=$id.md`) and the set's gaps are checkable
+  - ⇒ a registry offers neither, and it is forbidden in every branch
+- **manifest** — already taken in this org's tools: `rhachet.repo.yml` is a generated manifest,
+  `keyrack.yml` a credential manifest. one concept, one word, so reuse here would overload
+- **enumeration** — names the *act*, never the artifact, and reads as a code construct (an enum).
   the positions on a dimension may be an enum; the inventory is the document set over their product
 - **list** — silent on both exhaustiveness and address. every rejected word above is at least
   specific; `list` is the generic that would erase the whole cluster
@@ -129,11 +120,11 @@ cluster fills. see `term=itemization.itemize._.choice.reason.md`.
 - **the path contract was specified by the wisher**, not derived:
   `inventory.of=$concept/$dimension=$position[.$dimension=$position]?+.md` — hence
   `rule.forbid.itemization-without-coordinates` as a peer of the require rule. that rule is named
-  for the **act**, not the artifact: the same `$key=$value` contract binds `catalog.of=$concept.md`
+  for the act, not the artifact: the same `$key=$value` contract binds `catalog.of=$concept.md`
   and `…example=$id.md`, so one name covers every itemization rather than one kind of it
 - **precedent in this repo:** `domain.terms/` is itself an inventory — `term=` is the dimension,
   its positions are closed (the itemization rule defines which words qualify), and
-  `rule.require.domain-term-itemization` is precisely a **gap check** over it. note it is
+  `rule.require.domain-term-itemization` is precisely a gap check over it. note it is
   ref-only in shape: the cluster root carries the data, and the depth lives in `.reason`
 - **ancestry:** an inventory is a zwicky **morphological box** materialized as a filetree —
   dimensions on the axes, one cell per combination, forbidden combinations named as invariants.

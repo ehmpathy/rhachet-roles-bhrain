@@ -8,7 +8,7 @@ before any escalation to the human — a `--as blocked`, a halt, a "which do you
 one **peer opinion** from another role. escalation to the foreman is the last resort; a second
 opinion is the step immediately before it.
 
-⚠️ **this is a driver rule, though its subject is review.** the reviewer is the peer **phoned**,
+🟡 **this is a driver rule, though its subject is review.** the reviewer is the peer **phoned**,
 never the one who phones — a rule about when to place the call belongs with the caller. it is the
 last rung of the same ladder `rule.always.spend-own-levers-before-escalation` sorts.
 
@@ -71,7 +71,7 @@ whatever delivers that, delivers the rule:
   enroll-review-parse flow a route guard's `reviews.peer` already runs
 - a route's own peer-review ladder, when the work is inside a bound route
 
-⚠️ **do not invent a parallel review path.** the enroll-review-parse flow already exists and
+🟡 **do not invent a parallel review path.** the enroll-review-parse flow already exists and
 already produces a contract-conformant verdict (`contract.reviewer-output`); a hand-rolled
 substitute yields an opinion no tool can read.
 
@@ -84,7 +84,7 @@ the rule is a floor, never a stall:
   the human holds. a peer cannot mint a key, and to ask one is ceremony
 - **a wisher decision above the blueprint's authority** — a scope question, not a technical one
 
-⚠️ these are **narrow**. *"i was fairly sure"* is not one of them, and neither is *"it would have
+🟡 these are **narrow**. *"i was fairly sure"* is not one of them, and neither is *"it would have
 taken a few minutes."* the few minutes are the point.
 
 ## .enforcement

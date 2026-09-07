@@ -1,0 +1,57 @@
+# rule.forbid.decode-friction
+
+> **count the mental steps between the words and the claim. more than zero is decode friction.**
+
+any prose that charges the reader an operation before its claim arrives — a lookup, a count, a look-back, an inversion, or a decipher.
+
+⇒ the term is adopted: `rule.forbid.inline-decode-friction` (ehmpathy/mechanic) owns it for **code**, and the test transfers unchanged.
+
+## .the test is a COUNT, and that is what makes it work
+
+> **how many mental steps from these words to the claim?**
+
+zero → it reads · one or more → each step is the defect, and each is nameable.
+
+an author cannot answer *"is this clear?"* honestly — **for them the count is always zero.** so a count forces a rank where a verdict grades nobody, and a rank is what a second reader can check.
+
+## .the two species
+
+| species | the reader must | why an author writes it |
+|---|---|---|
+| a **FETCH** — the sense is stated; assembly costs work | look up, count, look back, carry a qualifier | an oversight. the author held it, so they did not spare it |
+| a **RIDDLE** — the sense is encoded | guess what was meant | authored. the encode felt like craft |
+
+🟡 **the riddle earns its own rule** — a fetch reads as an oversight and gets cut; a riddle reads as the good part, so a friction sweep passes over it. ⇒ `rule.forbid.riddles`.
+
+## .the shapes — the FETCH species, and each row is a cue
+
+| when you… | steps | 👎 | 👍 |
+|---|---|---|---|
+| use a term this repo has not declared | 1 lookup | *"the lane catches what a re-read cannot"* | *"the peer reviewer catches what a re-read cannot"* |
+| refer by position — *"row 2"*, *"the above"* | 1 count | *"row 2 is the expensive instance"* | *"the metaphor row is the expensive instance"* |
+| leave a pronoun's subject a sentence back | 1 look-back | *"it does not, and that is the whole reason"* | *"the guard does not read the review, and that is the whole reason"* |
+| put a qualifier in a header or a column | 1 fetch | *"unfixed"*, its scope two cells away | *"unfixed **at the vision**"* |
+| write two `not`s in one sentence | 1 inversion | *"it is not the case that no reviewer reaches it"* | *"one reviewer reaches it"* |
+| run a condition 20 words before its consequence | 1 hold | *"where the rubric matches zero files and the flag is absent, it throws"* | *"it throws — when the rubric matches zero files and the flag is absent"* |
+| use a glyph whose sense you never declared | 1 guess | — | declare it, or drop it |
+| fuse two claims with *"because"* or *"and"* | 1 split | *"prose-only because it grades prose and would otherwise overflow"* | two sentences, or a bullet and a child |
+
+⇒ not one repair adds a word for its own sake, and four are shorter. **the fix is to state the referent, over to explain around it.**
+
+## .why it is a rule of its own
+
+it survives every density rule. a decode-friction sentence can be short, active, bulletized, disputable, and correctly placed — no word in it is surplus, and the defect is the **ORDER** and the **REFERENCE**.
+
+⇒ so the density rules grade how much was written; this grades whether what was written can be taken in the order it appears.
+
+## 🟡 .an INDEX is computed; an ID is read — and only the first is a defect
+
+*"row 2"* over an unnumbered table makes the reader count · *"`case=F11`"* over a table that prints `F11` makes them read. **an id is a name that happens to be short**, and the two render alike, so a careless sweep cuts both — which would delete the one technique `declare-once` asks for.
+
+**the line that parts every case: does the reader hold what they need at the moment they read it?** yes → it reads, however dense · no → decode friction, however short.
+
+blocker: an undeclared term used as though declared · a reference by index where a name would serve · a qualifier placed away from the claim it bounds · a compound claim fused so neither half can be disputed · a glyph used with no declared sense.
+nitpick: a pronoun whose subject is more than one sentence back · a condition that precedes its consequence by more than a clause.
+false positive: a declared domain term in its declared sense · a dense sentence whose terms the reader holds · a deliberate double negative that names a logical shape · a verbatim quote · a reference by a printed id (`case=F11`, `S39`) · a reference into a binary just named.
+
+⇒ see also: `rule.forbid.riddles` (the second species) · `rule.forbid.inline-decode-friction` (ehmpathy/mechanic) · `rule.require.elucidation` · `rule.forbid.subversive-prose`.

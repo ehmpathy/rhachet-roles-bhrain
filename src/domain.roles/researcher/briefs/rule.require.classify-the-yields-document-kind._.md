@@ -36,7 +36,7 @@ a howto says *"reach for X"*. only a howdoes says **why X works and what it does
 ⇒ **a repo with howtos and no howdoes teaches people to follow steps they cannot reason about.**
 outside the decision tree they have no ground. no tree enumerates every case.
 
-## ⚠️ .`hazard` vs `rule` — each can wear the other's prefix
+## 🟡 .`hazard` vs `rule` — each can wear the other's prefix
 
 | kind | carries | the tell it is mis-prefixed |
 |---|---|---|
@@ -66,7 +66,7 @@ for each brief the blueprint plans, answer on the page:
 
 - one answer → that is the kind
 - **two answers** → it is two briefs. split it
-- **an answer with no brief planned for it** → 🔴 that is the gap. **probe for it while the
+- **an answer with no brief planned for it** → that is the gap. **probe for it while the
   research is still open**
 
 ## .why this is TAUGHT, not guarded
@@ -77,7 +77,7 @@ brief and it can never catch the **missed** one — which is the whole value.
 ⇒ so the rule is taught at `3.3.probes.absorb.gaps`, where the gap list forms. a guard would grade
 the classification's presence, never its correctness.
 
-## ⚠️ .the set is open
+## 🟡 .the set is open
 
 `define` and `ref` are live prefixes elsewhere in this org and are not among the five. a sixth kind
 may be owed.

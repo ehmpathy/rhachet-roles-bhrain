@@ -51,7 +51,7 @@ have given for free.
 ⇒ so the price of a skipped receipt is **the one resource the loop cannot make more of**, and it
 is charged to the peer rather than to the supervisor who skipped it.
 
-⚠️ **the failure is emission, never comprehension.** a supervisor that heard every ask and
+🟡 **the failure is emission, never comprehension.** a supervisor that heard every ask and
 surfaced none is indistinguishable, from outside, from one that heard none.
 
 ⇒ the worked case is
@@ -70,13 +70,16 @@ exists to remove.
 | one ask with two separable deliverables | two tasks, or one that names both |
 | four asks that are one restated four ways | one task, **and say so** |
 
-## ⚠️ .a stale receipt is worse than an absent one
+## 🟡 .a stale receipt is worse than an absent one
 
 a receipt that reports progress which is untrue is not a partial success — it is a **false
 signal**, and a peer acts on it.
 
-⇒ mark each task **as it moves**, not in a sweep at the end. `in_progress` when you start,
-`completed` the moment it is done. an unmarked done task is a peer who thinks you are still busy.
+⇒ mark each task **as it moves**, never in a sweep at the end:
+
+- `in_progress` when you start
+- `completed` the moment it is done
+- ⇒ an unmarked done task is a peer who thinks you are still busy
 
 ## .what counts as an ask — the three questions, settled
 
@@ -97,7 +100,7 @@ peer.
 | an observation with no implied change | ❌ no |
 | encouragement — *"nice"* | ❌ no |
 
-⚠️ **an over-eager itemization is its own noise.** a list where every remark became a task is a
+🟡 **an over-eager itemization is its own noise.** a list where every remark became a task is a
 list a peer stops to skim past, which costs the same turn the rule exists to save.
 
 ### 2. does a trivial ask earn a task?
@@ -105,7 +108,7 @@ list a peer stops to skim past, which costs the same turn the rule exists to sav
 **the line: does the task cost less than the ambiguity it removes?**
 
 - a one-line reply that fully closes the ask → **just reply.** the reply IS the receipt
-- an ask you will act on **later**, or **in parallel with** other work → **task it**, however
+- an ask you will act on later, or in parallel with other work → **task it**, however
   small. the whole risk is that it gets lost behind other work
 
 ⇒ the factor that decides is **latency, not size.** a tiny ask you will not answer for ten minutes
@@ -118,9 +121,9 @@ coat — the peer is back to *"did it hear me?"*
 
 | outcome | what the peer must see |
 |---|---|
-| deferred | the task, still open, plus **when** you will reach it |
-| declined | the task, plus **why** — a decline the peer never saw is a decline they never got to argue |
-| absorbed into another task | say **which one**, so the ask is traceable |
+| deferred | the task, still open, plus when you will reach it |
+| declined | the task, plus why — a decline the peer never saw is a decline they never got to argue |
+| absorbed into another task | say which one, so the ask is traceable |
 
 ## .the mechanism is yours
 
@@ -143,13 +146,11 @@ the three drops that pass every check here, and the terminal states each task ow
 
 ## .enforcement
 
-- a peer's batch of asks worked without an itemization = **blocker**
-- an itemization emitted **after** the work rather than before = **blocker** — that is a report,
-  and it does not prevent the misread
-- several distinct asks collapsed into one task, with no note that they were one thing = **blocker**
-- a task list left stale while work moved = **blocker** — a false signal is worse than silence
-- an ask declined or deferred and dropped from the list = **blocker**
-- every stray remark turned into a task = **nitpick** — the noise costs the turn back
+blocker: a peer's batch of asks worked with no itemization · an itemization emitted after the work
+rather than before — that is a report, and it does not prevent the misread · several distinct asks
+collapsed into one task, with no note that they were one · a task list left stale while work
+moved — a false signal is worse than silence · an ask declined or deferred and dropped from the list.
+nitpick: every stray remark turned into a task — the noise costs the turn back.
 
 ## .see also
 

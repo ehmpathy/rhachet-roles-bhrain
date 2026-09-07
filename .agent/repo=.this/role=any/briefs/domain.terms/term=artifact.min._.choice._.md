@@ -16,15 +16,15 @@ term.synonyms.forbidden:
 
 ## .what
 
-a **min** is a hand-written sidecar that carries an artifact's FIRING content at a fraction of its
-size — and which **boot loads in place of its source**.
+a min is a hand-written sidecar that carries an artifact's FIRING content at a fraction of its
+size — and which boot loads in place of its source.
 
 ```
 $brief.md        # the source — the claim, its argument, its evidence, its worked cases
 $brief.md.min    # the min — the cue, the test, the enforcement. this is what boots
 ```
 
-⚠️ **the `.min` suffix is not a variant marker, it is a PREFERENCE.** boot prefers the sidecar even
+🟡 **the `.min` suffix is not a variant marker, it is a PREFERENCE.** boot prefers the sidecar even
 though `boot.yml` names the `.md` path, so wherever a min exists it is the copy a reader gets.
 
 ## .the split it draws

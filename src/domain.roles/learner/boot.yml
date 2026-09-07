@@ -37,9 +37,14 @@ always:
       # the driver, it was reachable only by a driver-enrolled clone. the driver
       # borrows it back by symlink, since that is where it fires most often
       - briefs/rule.always.archive-the-wishers-words-verbatim.md
-      # what a followup owes when it is NOT done in this round. say-level because it
-      # fires at the moment of deferral — a followup merely spoken is gone with the
-      # round, and by then the context that made the fix cheap is gone too
+      # BORROWED — the file here is a symlink into the driver, which owns it since
+      # 2026-09-07. it had lived here while its PAIR, fix-forward-under-scouts-honor,
+      # lived in the achiever, so a driver booted this half alone and read a dream as
+      # the primary move rather than the fallback both files declare it to be. a dream
+      # is a deferred TASK rather than a retained lesson, so the act is the driver's
+      # (the mirror of the archive-the-wishers-words-verbatim borrow, above).
+      # say-level because it fires at the moment of deferral — a followup merely spoken
+      # is gone with the round, and by then the context that made the fix cheap is too
       - briefs/rule.always.catch-dreams-for-followups.md
       # where a lesson must NOT land. say-level because it fires at the instant the
       # instinct to persist strikes — a rule that arrives after the write reached
@@ -49,6 +54,12 @@ always:
       # how a rule is shaped so its readers retrieve it. say-level because it fires
       # while a rule is written, and the repair after the fact is a split, not an edit
       - briefs/rule.require.specialize-a-rule-its-readers-look-past._.md
+      # its peer, one grain down: that rule adds a second RULE; this one governs how
+      # many CUES a single rule may carry. say-level because it fires as a defense —
+      # an author who has learned `declare-once` will reach it for a rule's when-table
+      # and cut the cue that would have fired. the repair is not an edit; the cue is
+      # gone, and its absence is invisible until the defect it would have caught ships
+      - briefs/rule.require.a-cue-is-not-a-claim.md
       # the two domain-term rules — the learner authors + tends them, so it always
       # boots them directly. they ALSO boot org-wide via role=any/boot.yml (they govern
       # every role's contracts, not just the learner's), so they are listed in both spots
@@ -85,7 +96,7 @@ always:
       # edge — and cannot know it, because the rule they followed said naught about
       # the edge.
       #
-      # ⚠️ the tell that this tier is right: `research.selfreview-effectiveness` grades
+      # 🟡 the tell that this tier is right: `research.selfreview-effectiveness` grades
       # a philosophical frame ALONE at d=0.05 and a when-then cue at d=0.65. that is
       # an argument to PAIR them, never to demote the frame — the 0.05 is measured for
       # a frame with NO rule beside it, which is not this arrangement. each philosophy
@@ -118,7 +129,7 @@ always:
     # small footprint of what must fire unprompted; depth lives here so it can grow
     # without a cost on every boot.
     #
-    # ⚠️ philosophy USED to be the archetype for this tier, on the reasoning that a
+    # 🟡 philosophy USED to be the archetype for this tier, on the reasoning that a
     # why is wanted once rather than on every boot. that was overturned 2026-08-31 —
     # the why is what a reader needs at the edge case no rule enumerates, and the edge
     # arrives unannounced. so a why held one dereference away is a why they do not

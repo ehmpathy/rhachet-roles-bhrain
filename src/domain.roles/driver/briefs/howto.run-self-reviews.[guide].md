@@ -58,7 +58,7 @@ t4  repeat until all N/N promised → peer reviews finally run
 
 ---
 
-## the level pitfall ⚠️
+## the level pitfall 🟡
 
 the self review filename carries a **level** marker — the `rN` prefix:
 
