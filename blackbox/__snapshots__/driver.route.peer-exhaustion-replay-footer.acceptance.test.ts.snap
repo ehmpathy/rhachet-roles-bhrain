@@ -14,14 +14,14 @@ exports[`driver.route.peer-exhaustion-replay-footer.acceptance given: [journey] 
       │   ├─ terminal — does not block higher levels
       │   ├─ 1 blocker 🔴
       │   ├─ 0 nitpicks ✓
-      │   ├─ given: [TEMP]/.reviews/peer/1.execute._.review.i001.8739656801d5e77f22.r001._.given.by_peer.l1-reviewer.md
-      │   └─ taken: [TEMP]/.reviews/peer/1.execute._.review.i001.8739656801d5e77f22.r001._.taken.by_self.l1-reviewer.md
+      │   ├─ given: .reviews/peer/1.execute._.review.i001.8739656801d5e77f22.r001._.given.by_peer.l1-reviewer.md
+      │   └─ taken: .reviews/peer/1.execute._.review.i001.8739656801d5e77f22.r001._.taken.by_self.l1-reviewer.md
       └─ r2: l3-reviewer (l3, 1/3)
           ├─ rejected
           ├─ 1 blocker 🔴
           ├─ 0 nitpicks ✓
-          ├─ given: [TEMP]/.reviews/peer/1.execute._.review.i002.dfc5faff83ea2fcb55.r002._.given.by_peer.l3-reviewer.md
-          └─ taken: [TEMP]/.reviews/peer/1.execute._.review.i002.dfc5faff83ea2fcb55.r002._.taken.by_self.l3-reviewer.md
+          ├─ given: .reviews/peer/1.execute._.review.i002.dfc5faff83ea2fcb55.r002._.given.by_peer.l3-reviewer.md
+          └─ taken: .reviews/peer/1.execute._.review.i002.dfc5faff83ea2fcb55.r002._.taken.by_self.l3-reviewer.md
 
 🪷 the path continues
    ├─ l1 is terminal (exhausted 🌙) — it no longer blocks you

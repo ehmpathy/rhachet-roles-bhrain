@@ -10,9 +10,10 @@ import { ROLE_LEARNER } from './getLearnerRole';
  *        fires hooks from the committed .claude/settings.json — a separate file no boot step
  *        writes. a role can declare an onStop/onTool command that is ABSENT from settings.json,
  *        and the whole hook silently never fires (exactly the gap that shipped the inert
- *        sweephook). this asserts every learner-authored hook command the role declares is
- *        actually present in the committed settings.json, so the declaration + the settings
- *        entry can never drift apart unnoticed (rule.forbid.failhide)
+ *        sweephook). the drift runs both ways: a settings entry can also outlive the role
+ *        declaration that authored it, and then fires with no role behind it. this asserts
+ *        the two sides agree — declared commands are registered, withdrawn ones are gone —
+ *        so neither direction can drift unnoticed (rule.forbid.failhide)
  */
 const REPO_ROOT = process.cwd();
 const SETTINGS_PATH = path.join(REPO_ROOT, '.claude/settings.json');
@@ -45,13 +46,18 @@ describe('getLearnerRole hook registration (integration)', () => {
         ),
       }));
 
-      then('the declared onStop sweephook command is registered', () => {
-        // the domain-term sweephook only fires if Claude Code sees it in settings.json;
-        // this pins the declaration (getLearnerRole) to the committed settings entry
+      then('the withdrawn onStop sweephook is absent from both sides', () => {
+        // the domain-term sweephook was withdrawn. the drift hazard runs BOTH ways:
+        // a declared-but-unregistered hook never fires, and an undeclared-but-still-
+        // registered hook fires with no role behind it. so the withdrawal is only
+        // real when the declaration AND the settings entry are gone together
         const onStop = ROLE_LEARNER.hooks?.onBrain?.onStop ?? [];
-        expect(onStop.length).toBeGreaterThan(0);
-        for (const hook of onStop)
-          expect(result.commands).toContain(hook.command);
+        expect(onStop).toHaveLength(0);
+        expect(
+          result.commands.filter((command) =>
+            command.includes('learn.domain.terms'),
+          ),
+        ).toEqual([]);
       });
 
       then('the declared onTool guard command is registered', () => {

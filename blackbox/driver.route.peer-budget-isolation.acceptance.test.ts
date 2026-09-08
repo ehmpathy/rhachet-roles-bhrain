@@ -2,6 +2,7 @@ import * as fs from 'fs/promises';
 import * as path from 'path';
 import { given, then, useBeforeAll, useThen, when } from 'test-fns';
 
+import { answerEveryPeerGiven } from './.test/answerEveryPeerGiven';
 import {
   execAsync,
   genTempDirForRhachet,
@@ -47,6 +48,11 @@ describe('driver.route.peer-budget-isolation.acceptance', () => {
           'export const alpha = () => "v1";',
         );
 
+        // answer whatever the prior round left owed, before this one is entered.
+        // a no-op on the first arrival; on every later one it is what the entrance
+        // gate now requires — an edit alone no longer buys re-entry
+        await answerEveryPeerGiven({ cwd: scene.tempDir, stone: '1.alpha' });
+
         return invokeRouteSkill({
           skill: 'route.stone.set',
           args: { stone: '1.alpha', route: '.', as: 'passed' },
@@ -61,6 +67,10 @@ describe('driver.route.peer-budget-isolation.acceptance', () => {
       then('budget shows 1/2', () => {
         expect(result.stdout).toContain('1/2');
       });
+
+      then('the alpha tree is pinned — the shared reviewer rejected at 1 of 2 on alpha', () => {
+        expect(sanitizeTimeForSnapshot(result.stdout)).toMatchSnapshot();
+      });
     });
 
     when('[t1] second alpha attempt exhausts budget', () => {
@@ -69,6 +79,11 @@ describe('driver.route.peer-budget-isolation.acceptance', () => {
           path.join(scene.tempDir, 'alpha', 'feature.ts'),
           'export const alpha = () => "v2";',
         );
+
+        // answer whatever the prior round left owed, before this one is entered.
+        // a no-op on the first arrival; on every later one it is what the entrance
+        // gate now requires — an edit alone no longer buys re-entry
+        await answerEveryPeerGiven({ cwd: scene.tempDir, stone: '1.alpha' });
 
         return invokeRouteSkill({
           skill: 'route.stone.set',
@@ -106,6 +121,11 @@ describe('driver.route.peer-budget-isolation.acceptance', () => {
           'export const alpha = () => "v3";',
         );
 
+        // answer whatever the prior round left owed, before this one is entered.
+        // a no-op on the first arrival; on every later one it is what the entrance
+        // gate now requires — an edit alone no longer buys re-entry
+        await answerEveryPeerGiven({ cwd: scene.tempDir, stone: '1.alpha' });
+
         return invokeRouteSkill({
           skill: 'route.stone.set',
           args: { stone: '1.alpha', route: '.', as: 'passed' },
@@ -141,6 +161,11 @@ describe('driver.route.peer-budget-isolation.acceptance', () => {
           cwd: scene.tempDir,
         });
 
+        // answer whatever the prior round left owed, before this one is entered.
+        // a no-op on the first arrival; on every later one it is what the entrance
+        // gate now requires — an edit alone no longer buys re-entry
+        await answerEveryPeerGiven({ cwd: scene.tempDir, stone: '1.alpha' });
+
         return invokeRouteSkill({
           skill: 'route.stone.set',
           args: { stone: '1.alpha', route: '.', as: 'passed' },
@@ -155,6 +180,10 @@ describe('driver.route.peer-budget-isolation.acceptance', () => {
       then('passage allowed', () => {
         expect(result.stdout).toContain('passage = allowed');
       });
+
+      then('the alpha-passage tree is pinned — the shared reviewer exhausted at 2 of 2, judge allowed', () => {
+        expect(sanitizeTimeForSnapshot(result.stdout)).toMatchSnapshot();
+      });
     });
 
     // =========================================================================
@@ -168,6 +197,11 @@ describe('driver.route.peer-budget-isolation.acceptance', () => {
           path.join(scene.tempDir, 'beta', 'module.ts'),
           'export const beta = () => "v1";',
         );
+
+        // answer whatever the prior round left owed, before this one is entered.
+        // a no-op on the first arrival; on every later one it is what the entrance
+        // gate now requires — an edit alone no longer buys re-entry
+        await answerEveryPeerGiven({ cwd: scene.tempDir, stone: '2.beta' });
 
         return invokeRouteSkill({
           skill: 'route.stone.set',
@@ -211,6 +245,11 @@ describe('driver.route.peer-budget-isolation.acceptance', () => {
           path.join(scene.tempDir, 'beta', 'module.ts'),
           'export const beta = () => "v2-fixed";',
         );
+
+        // answer whatever the prior round left owed, before this one is entered.
+        // a no-op on the first arrival; on every later one it is what the entrance
+        // gate now requires — an edit alone no longer buys re-entry
+        await answerEveryPeerGiven({ cwd: scene.tempDir, stone: '2.beta' });
 
         return invokeRouteSkill({
           skill: 'route.stone.set',

@@ -1,7 +1,5 @@
 import * as fs from 'fs/promises';
 import { BadRequestError } from 'helpful-errors';
-import * as path from 'path';
-import { getGitRepoRoot } from 'rhachet-artifact-git';
 
 import type { ContextCliEmit } from '@src/domain.objects/Driver/ContextCliEmit';
 import type { GuardProgressEvent } from '@src/domain.objects/Driver/GuardProgressEvent';
@@ -22,9 +20,10 @@ import { delStoneGuardBlockerReport } from '../drive/delStoneGuardBlockerReport'
 import { formatRouteStoneEmit } from '../formatRouteStoneEmit';
 import { getAllStoneGuardArtifactsByHash } from '../guard/artifact/getAllStoneGuardArtifactsByHash';
 import { getMaxStoneGuardIteration } from '../guard/artifact/getMaxStoneGuardIteration';
+import { asGuardDisplayPath } from '../guard/asGuardDisplayPath';
+import { getRepoRootWithFallback } from '../guard/getRepoRootWithFallback';
 import { computeStoneReviewInputHash } from '../guard/review/computeStoneReviewInputHash';
 import { asRouteGuardReviewPeerSlugList } from '../guard/review/peer/asRouteGuardReviewPeerSlugList';
-import { getRouteGuardReviewPeerContemplationStatus } from '../guard/review/peer/getRouteGuardReviewPeerContemplationStatus';
 import { getStoneGuardReviewPeerUncontemplatedUnforgiven } from '../guard/review/peer/getStoneGuardReviewPeerUncontemplatedUnforgiven';
 import { getAllReviewPeerMeterStatuses } from '../guard/review/peer/meter/getAllReviewPeerMeterStatuses';
 import { getExhaustedReviewerSlugs } from '../guard/review/peer/meter/getExhaustedReviewerSlugs';
@@ -125,12 +124,15 @@ export const setStoneAsPassed = async (
 
   // lookup git root for path relativization
   // .why = paths in output should be relative to git root (e.g., .behavior/v.../...), not route
-  let gitRoot: string;
-  try {
-    gitRoot = await getGitRepoRoot({ from: input.route });
-  } catch {
-    gitRoot = process.cwd();
-  }
+  //
+  // 🔴 this reaches for the SHARED resolver rather than a local try/catch. it held one
+  //    until i003, and that copy caught bare — so a permissions error, an absent git
+  //    binary, or a corrupt .git each read as "not a repo" and silently relativized
+  //    against the cwd instead (`rule.forbid.failhide`). the shared operation catches
+  //    only "Not inside a Git" and rethrows the rest, which is the whole reason its own
+  //    .why says it exists "so the two guard call sites cannot drift apart" — this was
+  //    the third site, and it had drifted (r7 nitpick.1)
+  const gitRoot = await getRepoRootWithFallback({ from: input.route });
 
   // check artifact found
   const artifactFiles = await getAllStoneArtifacts({
@@ -293,6 +295,64 @@ export const setStoneAsPassed = async (
     throw new BadRequestError('guard has reviews but no judges', {
       stone: stoneMatched.name,
       guard: stoneMatched.guard.path,
+    });
+  }
+
+  // 🔴 THE ENTRANCE GATE — a driver may not enter a review round while it owes an
+  // answer to a prior blocker.
+  //
+  // .why = the exit gate below (inside allJudgesPassed) fires at PASSAGE, and a
+  //        re-run is not passage. so a driver blocked by a critique had two exits
+  //        and the cheaper one was silent: edit the artifact, re-roll, and let the
+  //        reviewer either forget the point or not re-raise it.
+  //
+  //        the mechanism is what justifies this gate, and it is checkable right
+  //        here: computeStoneReviewInputHash covers the WHOLE artifact set, so one
+  //        edited line anywhere moves the hash that a hash-keyed debt was filed
+  //        against (0.wish.md defect D1).
+  //
+  // .note = a drive REPORTED as 32 iterations / ~9 days / 300+ givens / zero answers
+  //         is what prompted the work. treat it as motivation, never as premise —
+  //         the branch it was read from is unreachable, so the counts cannot be
+  //         re-checked. the provenance is stated in full at
+  //         src/domain.roles/driver/briefs/
+  //           rule.forbid.unanswered-exits-from-a-blocker.example=the-28-iteration-stall.md
+  //
+  // .note = it sits HERE, between the zero-reviewer auto-pass above and the
+  //         stampGuardReport helper below, and each part of that seam is deliberate:
+  //         - AFTER the auto-pass, so a stone with no peer reviewers is untouched
+  //         - BEFORE stampGuardReport is in scope, so this halt CANNOT stamp a guard
+  //           report for reviews that never ran (the review.self gate above returns a
+  //           raw emit for exactly the same reason)
+  //         - BEFORE computeStoneReviewInputHash + getMaxStoneGuardIteration, so a
+  //           halt costs a directory read rather than a hash + a round of subprocesses
+  //
+  // .note = it needs NO hash. under P2 the debt is keyed to the reviewer, so
+  //         readiness does not depend on the current generation at all.
+  const unforgivenAtEntrance =
+    await getStoneGuardReviewPeerUncontemplatedUnforgiven({
+      stone: stoneMatched,
+      route: input.route,
+    });
+  if (unforgivenAtEntrance.length > 0) {
+    // .note = refs are empty by construction — no review and no judge ran this call.
+    //         that is the point: the halt precedes the work it would have cost.
+    return genStoneGuardBlockedEmit({
+      stone: stoneMatched.name,
+      route: input.route,
+      blocker: 'review.peer.uncontemplated',
+      reason: `peer review awaits contemplation: ${asRouteGuardReviewPeerSlugList(
+        { reviewers: unforgivenAtEntrance },
+      )}`,
+      refs: { reviews: [], judges: [] },
+      emit: {
+        stdout: formatRouteGuardReviewPeerContemplatePrompt({
+          case: 'reply-prompt',
+          stone: stoneMatched.name,
+          root: gitRoot,
+          reviewers: unforgivenAtEntrance,
+        }),
+      },
     });
   }
 
@@ -814,13 +874,13 @@ export const setStoneAsPassed = async (
   if (allJudgesPassed) {
     // gate: peer reviews must be contemplated before passage
     // .why = a driver may not progress until it has written a .taken response to
-    //        every current-iteration peer critique that carries blockers (the wish)
+    //        every live peer critique that carries blockers (the wish)
     // .note = slots BETWEEN allJudgesPassed and setStonePassage so it runs only
     //         when judges would pass, and BEFORE the report is cleared below
-    const contemplation = await getRouteGuardReviewPeerContemplationStatus({
-      route: input.route,
-      stone: stoneMatched,
-    });
+    // .note = 🔴 BOTH gates stay. the entrance gate above catches debt carried INTO
+    //         a round; this one catches debt created BY it. remove this and a driver
+    //         passes on the very critique it just received — the entrance gate cannot
+    //         see a given that did not exist when it ran
 
     // forgive contemplation for reviewers at an overruled level
     // .why = an admin escape (--as overruled / --as forced) must not be re-gated
@@ -832,16 +892,14 @@ export const setStoneAsPassed = async (
     // getStoneGuardOverruleTarget) read — so the passage gate cannot drift from them on which
     // reviewers a waved level forgives. this is the exact seam the whole behavior exists to close:
     // the forgiveness rule lives in one place, not hand-rolled here and there.
-    const unforgiven = await getStoneGuardReviewPeerUncontemplatedUnforgiven({
-      stone: stoneMatched,
-      route: input.route,
-    });
-    const unforgivenSlugs = new Set(
-      unforgiven.map((reviewer) => reviewer.slug),
-    );
-    const uncontemplatedToBlock = contemplation.uncontemplated.filter(
-      (reviewer) => unforgivenSlugs.has(reviewer.slug),
-    );
+    // .note = it carries the FULL record, so the reply-prompt renders straight from it.
+    //         both gates name their reviewers from this ONE read — there is no second
+    //         narrow for them to drift on.
+    const uncontemplatedToBlock =
+      await getStoneGuardReviewPeerUncontemplatedUnforgiven({
+        stone: stoneMatched,
+        route: input.route,
+      });
 
     if (uncontemplatedToBlock.length > 0) {
       // .note = no onGuardHalted here — the contemplation gate runs only inside
@@ -865,6 +923,7 @@ export const setStoneAsPassed = async (
           stdout: formatRouteGuardReviewPeerContemplatePrompt({
             case: 'reply-prompt',
             stone: stoneMatched.name,
+            root: gitRoot,
             reviewers: uncontemplatedToBlock,
           }),
         }),
@@ -1044,7 +1103,7 @@ const computeGuardData = (input: {
         blockers: r.blockers,
         nitpicks: r.nitpicks,
         tallier: r.tallier,
-        path: path.relative(input.gitRoot, r.path),
+        path: asGuardDisplayPath({ pathAbsolute: r.path, root: input.gitRoot }),
         exitClass: r.exitClass,
         peer,
       };
@@ -1069,7 +1128,20 @@ const computeGuardData = (input: {
         durationSec,
         passed: j.passed,
         reason: j.reason,
-        path: path.relative(input.route, j.path),
+        // 🔴 the SAME root as the review branch above, and as
+        //    `getAllReviewPeerMeterStatuses`. it used to be `input.route`, so one
+        //    `computeGuardData` return carried two path-forms for one kind of artifact,
+        //    keyed on which array a path happened to land in.
+        //
+        // ⚠️ the note that stood here argued the asymmetry was safe because the guard tree
+        //    prints no judge path today — a claim about the CURRENT surface, never about the
+        //    data. `rule.require.single-source-of-truth-for-render` is about the data: a
+        //    later surface that printed both, or a snapshot that captured both, would show
+        //    one artifact under two shapes with no signal which is right. the shared cast
+        //    exists so a reader cannot re-derive the root per site; to reach it with two
+        //    roots from one function kept exactly the knob it was extracted to remove
+        //    (probe review of the bounded i016 scope, nitpick.1).
+        path: asGuardDisplayPath({ pathAbsolute: j.path, root: input.gitRoot }),
         overruled,
       };
     }),

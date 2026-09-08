@@ -18,6 +18,34 @@ use claims no axis and sorts no reader, so it is out of this register's scope.
 🟡 **the test for which one you have: could a reader sort on it?** a marker answers *"which role
 / phase / rung is this?"*; a decoration answers no question at all.
 
+## 🔴 .the bound above binds a REMOVAL too — and that is the direction it gets read past
+
+the section above answers *"which rule governs this glyph?"* for a traveler about to **place** one.
+the same answer binds a traveler about to **strip** one, and that direction has its own failure:
+
+> ⛔ **`rule.prefer.chill-nature-emojis` holds NO jurisdiction over a glyph in this register.**
+> its density cap governs decoration. a claimed marker is a **contract on a surface**, and a
+> contract is not trimmed for density.
+
+### ⚠️ a stated bound does not survive a sweep — the cue must sit at the sweep
+
+a sweep does not ask *"which rule governs this?"* per site; it applies **one** rule to a **pattern**.
+so a bound stated here is consulted at claim time and never again, and **a glyph's register
+membership is invisible at the edit site** — a claimed marker and a bare decoration look identical
+in a diff.
+
+| when… | then… |
+|---|---|
+| you sweep, lint, or bulk-edit **any** glyph | 🔴 grep this index **first**, and exclude every row it holds |
+| a claimed glyph looks like an outlier beside bare peers | 🔴 the **bare peers** are the defect. do not level down |
+| you would strip a glyph to make a surface consistent | consistency is owed **upward** — give the peers their markers |
+| a rule about emoji density names your edit | ask if the glyph is in this index. if it is, that rule does not reach it |
+
+🔴 **the "lone outlier" read is the trap, and it inverts the repair.** three bare halt headers beside
+one marked header reads as *one site to strip*; it is in truth *three sites owed a marker*. **a
+register makes absence the defect, never presence** — which is the opposite of what a majority-count
+suggests, and the reason the count is the wrong instrument.
+
 ## .why — a glyph is a contract, and the register was tribal
 
 a glyph prefixes a surface a reader parses at a glance, so it is a contract on that surface. two

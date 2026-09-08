@@ -39,10 +39,10 @@ entry**. the new entry supersedes the stale halt, and the disposition recomputes
 | **promised** | **yes (promised)** — a self-review sub-step | **yes** |
 | **contemplated** | **yes (contemplated)** — a peer-review sub-step | **yes** |
 
-`promised` and `contemplated` are the two sub-step verbs. they were the exception that
-broke the rule — they used to write only an artifact (a promise file, a `.taken`), no
-passage entry — so a stale escalation lingered through them. they now write a passage
-entry like every other forward verb, so the rule holds with no exception.
+`promised` and `contemplated` are the two sub-step verbs, and they are the pair whose passage
+entry is easiest to drop: each already writes an artifact (a promise file, a `.taken`), so the
+entry reads as redundant right up until a stale escalation lingers through it. **an artifact is
+not a passage entry**, and only the entry moves the disposition.
 
 `promised` and `contemplated` carry a **push** disposition (they are the machine's own
 review work, not a human-wait), so the superseded halt resolves to a state the route

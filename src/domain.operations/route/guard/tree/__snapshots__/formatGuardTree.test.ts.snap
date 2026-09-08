@@ -309,7 +309,7 @@ exports[`formatGuardTree given: [case17] malfunction passage — offers overrule
    ├─ passage = malfunction
    ├─ reason = reviewer or judge malfunctioned
    ├─ options
-   │  ├─ overrule the malfunction
+   │  ├─ overrule the malfunction — a human must grant
    │  │  └─ rhx route.stone.set --stone 1.feature --as overruled
    │  └─ or fix the reviewer, then retry
    └─ guard
@@ -328,7 +328,7 @@ exports[`formatGuardTree given: [case18] constraint passage — offers overrule 
    ├─ passage = blocked
    ├─ reason = reviewer constraint
    ├─ options
-   │  ├─ overrule the constraint
+   │  ├─ overrule the constraint — a human must grant
    │  │  └─ rhx route.stone.set --stone 1.feature --as overruled
    │  └─ or fix the reviewer, then retry
    └─ guard
@@ -347,7 +347,7 @@ exports[`formatGuardTree given: [case19] malfunction passage, no guard — offer
    ├─ passage = malfunction
    ├─ reason = reviewer or judge malfunctioned
    └─ options
-      ├─ overrule the malfunction
+      ├─ overrule the malfunction — a human must grant
       │  └─ rhx route.stone.set --stone 1.feature --as overruled
       └─ or fix the reviewer, then retry"
 `;

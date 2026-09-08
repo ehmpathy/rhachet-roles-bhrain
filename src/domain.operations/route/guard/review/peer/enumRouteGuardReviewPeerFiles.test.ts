@@ -5,6 +5,24 @@ import { given, then, useBeforeAll, when } from 'test-fns';
 
 import { enumRouteGuardReviewPeerFiles } from './enumRouteGuardReviewPeerFiles';
 
+/**
+ * 🔴 .note = this suite is MISCLASSIFIED. it is named `.test.ts` (unit) and it crosses
+ *         the filesystem boundary in every case, which `rule.forbid.unit.remote-boundaries`
+ *         grades a blocker. the misclassification predates this file's current cases —
+ *         `[case1]` on origin/main already calls `fs.mkdtemp` — and ~44 unit suites in
+ *         this repo share it.
+ *
+ *         it is NOT repaired here, and the reason is an ORDER, never a preference: a
+ *         rename to `.integration.test.ts` moves this suite behind
+ *         `jest.integration.env.ts:96`, which demands five brain keys of every
+ *         integration suite. this suite calls no brain, so the rename would trade a
+ *         correct label for a suite nobody can run — measured on the peer file
+ *         `setStoneAsContemplated.integration.test.ts`, which is unrunnable locally today
+ *         for exactly that reason.
+ *
+ *         ⇒ fix the harness first, then reclassify in one sweep:
+ *         `.dream/v2026_09_04.fix.unit-suite-crosses-the-fs-boundary-repo-wide.md`
+ */
 describe('enumRouteGuardReviewPeerFiles', () => {
   given('[case1] route with no .reviews/peer/ directory', () => {
     const scene = useBeforeAll(async () => {
@@ -284,6 +302,73 @@ describe('enumRouteGuardReviewPeerFiles', () => {
         expect(files).toHaveLength(2);
         expect(files.every((f) => f.includes('_.given.by_peer.'))).toBe(true);
       });
+    });
+  });
+
+  given('[case8] the shape of the paths that come back', () => {
+    // every other case here asserts with .toContain / .includes, which pass whether
+    // the path is absolute or route-relative. so the one contract BOTH consumers
+    // lean on has never been stated: getAllRouteGuardReviewPeerGivens reads each
+    // path bare, and answerEveryPeerGiven writes each derived path. one of those
+    // is wrong unless the shape is pinned. globby is called with `absolute: true`
+    // (enumFilesFromGlob:15) — this says so out loud, and proves it by USE.
+    const scene = useBeforeAll(async () => {
+      const route = await fs.mkdtemp(path.join(os.tmpdir(), 'route-test-'));
+      const reviewsDir = path.join(route, '.reviews', 'peer');
+      await fs.mkdir(reviewsDir, { recursive: true });
+      await fs.writeFile(
+        path.join(
+          reviewsDir,
+          '1.vision._.review.i001.abc123.r001._.given.by_peer.arch.md',
+        ),
+        'blockers: 1',
+      );
+      return { route };
+    });
+
+    when('[t0] a file is found', () => {
+      then('its path is absolute, never route-relative', async () => {
+        const files = await enumRouteGuardReviewPeerFiles({
+          route: scene.route,
+          stone: '1.vision',
+        });
+        expect(files).toHaveLength(1);
+        expect(path.isAbsolute(files[0]!)).toBe(true);
+      });
+    });
+
+    when('[t1] a consumer reads that path with no join', () => {
+      then('the read succeeds — a join would be a defect', async () => {
+        const files = await enumRouteGuardReviewPeerFiles({
+          route: scene.route,
+          stone: '1.vision',
+        });
+        // the read getAllRouteGuardReviewPeerGivens performs, verbatim
+        expect(await fs.readFile(files[0]!, 'utf-8')).toEqual('blockers: 1');
+      });
+    });
+
+    when('[t2] a consumer joins the route onto that path', () => {
+      then(
+        'the join corrupts it, so a consumer must read the path bare',
+        async () => {
+          // 🔴 asserted against the REAL enumerated path, never a fabricated one.
+          //    an earlier form joined a hardcoded '/a/b.md' and so pinned node's
+          //    path.join contract — true, and it could never go red on a defect in
+          //    this repo. keyed to the enumerator's own output it bites: were the
+          //    enumerator to start returning route-relative paths, the join below
+          //    would point at a real file and the read would succeed
+          //    (r4 nitpick.2, i002)
+          const files = await enumRouteGuardReviewPeerFiles({
+            route: scene.route,
+            stone: '1.vision',
+          });
+          const joined = path.join(scene.route, files[0]!);
+
+          expect(joined).not.toEqual(files[0]!);
+          await expect(fs.readFile(joined, 'utf-8')).rejects.toThrow();
+        },
+      );
     });
   });
 

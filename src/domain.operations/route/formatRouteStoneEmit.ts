@@ -3,6 +3,10 @@ import type { RouteStoneGuardReviewSelf } from '@src/domain.objects/Driver/Route
 import { asRungLabel } from './guard/review/peer/meter/asRungLabel';
 import { getReviewPeerLadderStatus } from './guard/review/peer/meter/getReviewPeerLadderStatus';
 import { getSelfReviewArticulationPath } from './guard/review/self/getSelfReviewArticulationPath';
+import {
+  computeBlockRemedyGroups,
+  formatBlockRemedyGroups,
+} from './guard/tree/formatBlockRemedyGroups';
 import { formatGuardReviewLadderFooter } from './guard/tree/formatGuardReviewLadderFooter';
 import {
   formatGuardTree,
@@ -459,27 +463,24 @@ export const formatRouteStoneEmit = (input: FormatInput): string => {
         lines.push(`   ${reasonConnector} reason = ${input.reason}`);
 
         if (isBudgetExhausted) {
-          // extract exhausted slugs from reason (format: "peer reviewer budget exhausted: slug1, slug2")
-          const exhaustedSlugs: string[] = [];
-          const match = input.reason.match(/budget exhausted:\s*(.+)$/);
-          if (match?.[1]) {
-            exhaustedSlugs.push(...match[1].split(',').map((s) => s.trim()));
-          }
-
-          // if single slug, include --peer; if multiple, omit (affects all)
-          const peerArg =
-            exhaustedSlugs.length === 1 ? ` --peer ${exhaustedSlugs[0]}` : '';
-
           // add options as separate block with did you know header
           lines.push('');
           lines.push('✨ did you know?');
-          lines.push(`   ├─ increase budget`);
+          // 🔴 the labels, the commands, the `budget exhausted:` parse and the single-slug
+          //    `--peer` rule all come from ONE shared operation now. this surface used to
+          //    carry its own copy of each, under a comment that promised it stayed "in
+          //    lockstep" with formatGuardTree — a manual-discipline contract, which is what
+          //    `rule.forbid.duplicate-format-tree-operations` forbids outright (r1 blocker.1,
+          //    i016). the shared builder makes the lockstep structural rather than promised.
           lines.push(
-            `   │  └─ rhx route.guard.budget --for review --add N${peerArg} --stone ${input.stone}`,
-          );
-          lines.push(`   └─ approve as-is`);
-          lines.push(
-            `      └─ rhx route.stone.set --stone ${input.stone} --as approved`,
+            ...formatBlockRemedyGroups({
+              groups: computeBlockRemedyGroups({
+                stone: input.stone,
+                passage: input.passage,
+                reason: input.reason,
+              }),
+              baseIndent: '   ',
+            }),
           );
         }
       }

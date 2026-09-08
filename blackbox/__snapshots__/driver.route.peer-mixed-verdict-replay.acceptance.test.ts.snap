@@ -9,29 +9,28 @@ exports[`driver.route.peer-mixed-verdict-replay.acceptance given: [journey] a mi
    │  └─ stone = 1.execute
    │
    └─ halted, reviewer or judge malfunctioned; peer reviewer budget exhausted: l1-reviewer
-      │
       ├─ reviews
       │   ├─ r1: l1-reviewer (l1, 2/2)
       │   │   ├─ exhausted 🌙
       │   │   ├─ terminal — does not block higher levels
       │   │   ├─ 1 blocker 🔴
       │   │   ├─ 0 nitpicks ✓
-      │   │   ├─ given: [TEMP]/.reviews/peer/1.execute._.review.i002.dfc5faff83ea2fcb55.r001._.given.by_peer.l1-reviewer.md
-      │   │   └─ taken: [TEMP]/.reviews/peer/1.execute._.review.i002.dfc5faff83ea2fcb55.r001._.taken.by_self.l1-reviewer.md
+      │   │   ├─ given: .reviews/peer/1.execute._.review.i002.dfc5faff83ea2fcb55.r001._.given.by_peer.l1-reviewer.md
+      │   │   └─ taken: .reviews/peer/1.execute._.review.i002.dfc5faff83ea2fcb55.r001._.taken.by_self.l1-reviewer.md
       │   └─ r2: l3-reviewer (l3, 0/5)
       │       ├─ malfunction 💥
       │       ├─ terminal — does not block higher levels
-      │       ├─ given: [TEMP]/.reviews/peer/1.execute._.review.i003.457fd5ef46e053a35e.r002._.given.by_peer.l3-reviewer.md
-      │       └─ taken: [TEMP]/.reviews/peer/1.execute._.review.i003.457fd5ef46e053a35e.r002._.taken.by_self.l3-reviewer.md
+      │       ├─ given: .reviews/peer/1.execute._.review.i003.457fd5ef46e053a35e.r002._.given.by_peer.l3-reviewer.md
+      │       └─ taken: .reviews/peer/1.execute._.review.i003.457fd5ef46e053a35e.r002._.taken.by_self.l3-reviewer.md
       │
-      └─ please ask a human to either
-         ├─ overrule the malfunction
-         │  └─ rhx route.stone.set --stone 1.execute --as overruled
-         │
-         ├─ increase budget (then rerun)
+      └─ spend your own lever first, then ask a human
+         ├─ increase budget — yours to spend
          │  └─ rhx route.guard.budget --for review --add N --peer l1-reviewer --stone 1.execute
          │
-         └─ approve as-is
+         ├─ overrule the malfunction — a human must grant
+         │  └─ rhx route.stone.set --stone 1.execute --as overruled
+         │
+         └─ approve as-is — a human must grant
             └─ rhx route.stone.set --stone 1.execute --as approved
 "
 `;
@@ -45,29 +44,28 @@ exports[`driver.route.peer-mixed-verdict-replay.acceptance given: [journey] a mi
    │  └─ stone = 1.execute
    │
    └─ halted, reviewer or judge malfunctioned; peer reviewer budget exhausted: l1-reviewer
-      │
       ├─ reviews
       │   ├─ r1: l1-reviewer (l1, 2/2)
       │   │   ├─ exhausted 🌙
       │   │   ├─ terminal — does not block higher levels
       │   │   ├─ 1 blocker 🔴
       │   │   ├─ 0 nitpicks ✓
-      │   │   ├─ given: [TEMP]/.reviews/peer/1.execute._.review.i002.dfc5faff83ea2fcb55.r001._.given.by_peer.l1-reviewer.md
-      │   │   └─ taken: [TEMP]/.reviews/peer/1.execute._.review.i002.dfc5faff83ea2fcb55.r001._.taken.by_self.l1-reviewer.md
+      │   │   ├─ given: .reviews/peer/1.execute._.review.i002.dfc5faff83ea2fcb55.r001._.given.by_peer.l1-reviewer.md
+      │   │   └─ taken: .reviews/peer/1.execute._.review.i002.dfc5faff83ea2fcb55.r001._.taken.by_self.l1-reviewer.md
       │   └─ r2: l3-reviewer (l3, 0/5)
       │       ├─ malfunction 💥
       │       ├─ terminal — does not block higher levels
-      │       ├─ given: [TEMP]/.reviews/peer/1.execute._.review.i003.457fd5ef46e053a35e.r002._.given.by_peer.l3-reviewer.md
-      │       └─ taken: [TEMP]/.reviews/peer/1.execute._.review.i003.457fd5ef46e053a35e.r002._.taken.by_self.l3-reviewer.md
+      │       ├─ given: .reviews/peer/1.execute._.review.i003.457fd5ef46e053a35e.r002._.given.by_peer.l3-reviewer.md
+      │       └─ taken: .reviews/peer/1.execute._.review.i003.457fd5ef46e053a35e.r002._.taken.by_self.l3-reviewer.md
       │
-      └─ please ask a human to either
-         ├─ overrule the malfunction
-         │  └─ rhx route.stone.set --stone 1.execute --as overruled
-         │
-         ├─ increase budget (then rerun)
+      └─ spend your own lever first, then ask a human
+         ├─ increase budget — yours to spend
          │  └─ rhx route.guard.budget --for review --add N --peer l1-reviewer --stone 1.execute
          │
-         └─ approve as-is
+         ├─ overrule the malfunction — a human must grant
+         │  └─ rhx route.stone.set --stone 1.execute --as overruled
+         │
+         └─ approve as-is — a human must grant
             └─ rhx route.stone.set --stone 1.execute --as approved
 "
 `;

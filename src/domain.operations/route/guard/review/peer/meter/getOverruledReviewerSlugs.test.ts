@@ -51,4 +51,27 @@ describe('getOverruledReviewerSlugs', () => {
       });
     });
   });
+
+  given('[case4] a LEGACY slug that holds a path separator', () => {
+    // this is not a hypothetical shape. the legacy flat guard format derives a slug from
+    // the review command itself (parseStoneGuard.ts:412-413), and standardizePeerReviewSlugs
+    // only dedupes collisions — it never strips separators. so `.test/mock-review.sh` is a
+    // real, live, fully-configured reviewer.
+    //
+    // 🔴 the set this returns is compared against slugs parsed OFF DISK, and a disk slug is
+    //    always sanitized (the write side swaps separators into the .given filename). raw,
+    //    the two could never match: the human's overrule would silently fail to forgive the
+    //    reviewer, and the same mismatch marked it `retired` in the halt prompt
+    //    (r11 blocker.1, i005).
+    when('[t0] its level is overruled', () => {
+      const result = getOverruledReviewerSlugs({
+        peerReviews: [review('.test/mock-review.sh', 1)],
+        overruledLevels: new Set([1]),
+      });
+
+      then('the slug comes back SANITIZED, so it can match a disk slug', () => {
+        expect(result).toEqual(['.test-mock-review.sh']);
+      });
+    });
+  });
 });

@@ -100,11 +100,11 @@ exports[`driver.route.peer-mixed-verdict-halt.acceptance given: [journey] exhaus
    ├─ passage = malfunction
    ├─ reason = reviewer or judge malfunctioned; peer reviewer budget exhausted: l1-reviewer
    ├─ options
-   │  ├─ overrule the malfunction
-   │  │  └─ rhx route.stone.set --stone 1.execute --as overruled
-   │  ├─ increase budget
+   │  ├─ increase budget — yours to spend
    │  │  └─ rhx route.guard.budget --for review --add N --peer l1-reviewer --stone 1.execute
-   │  └─ approve as-is
+   │  ├─ overrule the malfunction — a human must grant
+   │  │  └─ rhx route.stone.set --stone 1.execute --as overruled
+   │  └─ approve as-is — a human must grant
    │     └─ rhx route.stone.set --stone 1.execute --as approved
    └─ guard
       ├─ artifacts

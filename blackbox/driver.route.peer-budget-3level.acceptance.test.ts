@@ -2,6 +2,7 @@ import * as fs from 'fs/promises';
 import * as path from 'path';
 import { given, then, useBeforeAll, useThen, when } from 'test-fns';
 
+import { answerEveryPeerGiven } from './.test/answerEveryPeerGiven';
 import {
   execAsync,
   genTempDirForRhachet,
@@ -92,6 +93,13 @@ describe('driver.route.peer-budget-3level.acceptance', () => {
           'export const feature = () => "v2";',
         );
 
+        // 🔴 answer [t0]'s blocker before the second round is entered.
+        //    basic-checker rejected at [t0] with 1 blocker, so an articulation is
+        //    owed — and the entrance gate now refuses a new round while one is.
+        //    without this the arrival halts at the door with `the reviewers await
+        //    your reply`, which is CORRECT: an edit alone no longer buys re-entry.
+        await answerEveryPeerGiven({ cwd: scene.tempDir, stone: '1.vision' });
+
         return invokeRouteSkill({
           skill: 'route.stone.set',
           args: { stone: '1.vision', route: '.', as: 'passed' },
@@ -136,6 +144,9 @@ describe('driver.route.peer-budget-3level.acceptance', () => {
           'export const feature = () => "v3";',
         );
 
+        // answer the round just received, before the next one is entered
+        await answerEveryPeerGiven({ cwd: scene.tempDir, stone: '1.vision' });
+
         return invokeRouteSkill({
           skill: 'route.stone.set',
           args: { stone: '1.vision', route: '.', as: 'passed' },
@@ -176,6 +187,9 @@ describe('driver.route.peer-budget-3level.acceptance', () => {
           path.join(scene.tempDir, 'src', 'feature.ts'),
           'export const feature = () => "v4-final";',
         );
+
+        // answer the round just received, before the next one is entered
+        await answerEveryPeerGiven({ cwd: scene.tempDir, stone: '1.vision' });
 
         return invokeRouteSkill({
           skill: 'route.stone.set',

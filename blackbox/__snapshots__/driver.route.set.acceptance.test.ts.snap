@@ -76,17 +76,13 @@ exports[`driver.route.set.acceptance given: [case3] route.stone.set --as passed 
 exports[`driver.route.set.acceptance given: [case4] route.stone.set --as passed with guard (blocked) when: [t0] guarded stone with review + judge that fail then: stderr matches snapshot 1`] = `
 "
 🪶 judge 1
-   ├─ stdout
-   │  ├─
-   │  │
-   │  │  passed: false
-   │  │  reason: blockers exceed threshold (3 > 0)
-   │  │
-   │  └─
-   ├─ stderr
-   │  ├─
-   │  │
-   │  └─
+   └─ stdout
+      ├─
+      │
+      │  passed: false
+      │  reason: blockers exceed threshold (3 > 0)
+      │
+      └─
 "
 `;
 

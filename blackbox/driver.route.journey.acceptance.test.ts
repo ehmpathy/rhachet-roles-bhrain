@@ -3,6 +3,7 @@ import * as path from 'path';
 import { given, then, useBeforeAll, useThen, when } from 'test-fns';
 
 import { getSelfReviewArticulationPath } from '../src/domain.operations/route/guard/review/self/getSelfReviewArticulationPath';
+import { answerEveryPeerGiven } from './.test/answerEveryPeerGiven';
 import {
   createHookStdin,
   execAsync,
@@ -103,6 +104,11 @@ describe('driver.route.journey.acceptance', () => {
           path.join(scene.tempDir, '1.vision.md'),
           '# Vision\n\nWeather emoji api with temp and description.',
         );
+        // answer whatever the prior round left owed, before this one is entered.
+        // a no-op on the first arrival; on every later one it is what the entrance
+        // gate now requires — an edit alone no longer buys re-entry
+        await answerEveryPeerGiven({ cwd: scene.tempDir, stone: '1.vision' });
+
         return invokeRouteSkill({
           skill: 'route.stone.set',
           args: { stone: '1.vision', route: '.', as: 'passed' },
@@ -153,13 +159,18 @@ describe('driver.route.journey.acceptance', () => {
     });
 
     when('[t3] 1.vision pass is reattempted after approval', () => {
-      const result = useThen('pass succeeds', async () =>
-        invokeRouteSkill({
+      const result = useThen('pass succeeds', async () => {
+        // answer whatever the prior round left owed, before this one is entered.
+        // a no-op on the first arrival; on every later one it is what the entrance
+        // gate now requires — an edit alone no longer buys re-entry
+        await answerEveryPeerGiven({ cwd: scene.tempDir, stone: '1.vision' });
+
+        return invokeRouteSkill({
           skill: 'route.stone.set',
           args: { stone: '1.vision', route: '.', as: 'passed' },
           cwd: scene.tempDir,
-        }),
-      );
+        });
+      });
 
       then('exit code is 0', () => {
         expect(result.code).toEqual(0);
@@ -214,13 +225,18 @@ describe('driver.route.journey.acceptance', () => {
     });
 
     when('[t5] 2.research pass attempted without artifact', () => {
-      const result = useThen('pass fails', async () =>
-        invokeRouteSkill({
+      const result = useThen('pass fails', async () => {
+        // answer whatever the prior round left owed, before this one is entered.
+        // a no-op on the first arrival; on every later one it is what the entrance
+        // gate now requires — an edit alone no longer buys re-entry
+        await answerEveryPeerGiven({ cwd: scene.tempDir, stone: '2.research' });
+
+        return invokeRouteSkill({
           skill: 'route.stone.set',
           args: { stone: '2.research', route: '.', as: 'passed' },
           cwd: scene.tempDir,
-        }),
-      );
+        });
+      });
 
       then('exit code is non-zero', () => {
         expect(result.code).not.toEqual(0);
@@ -242,6 +258,11 @@ describe('driver.route.journey.acceptance', () => {
           path.join(scene.tempDir, '2.research.md'),
           '# Research\n\nPrior art reviewed. Vision is sound.',
         );
+        // answer whatever the prior round left owed, before this one is entered.
+        // a no-op on the first arrival; on every later one it is what the entrance
+        // gate now requires — an edit alone no longer buys re-entry
+        await answerEveryPeerGiven({ cwd: scene.tempDir, stone: '2.research' });
+
         return invokeRouteSkill({
           skill: 'route.stone.set',
           args: { stone: '2.research', route: '.', as: 'passed' },
@@ -358,6 +379,11 @@ describe('driver.route.journey.acceptance', () => {
           path.join(scene.tempDir, '3.blueprint.md'),
           '# Blueprint\n\n## API\n\nGET /weather',
         );
+        // answer whatever the prior round left owed, before this one is entered.
+        // a no-op on the first arrival; on every later one it is what the entrance
+        // gate now requires — an edit alone no longer buys re-entry
+        await answerEveryPeerGiven({ cwd: scene.tempDir, stone: '3.blueprint' });
+
         return invokeRouteSkill({
           skill: 'route.stone.set',
           args: { stone: '3.blueprint', route: '.', as: 'passed' },
@@ -421,13 +447,18 @@ describe('driver.route.journey.acceptance', () => {
     });
 
     when('[t9] 3.blueprint pass reattempted after promise', () => {
-      const result = useThen('blocked by peer review (review.self satisfied)', async () =>
-        invokeRouteSkill({
+      const result = useThen('blocked by peer review (review.self satisfied)', async () => {
+        // answer whatever the prior round left owed, before this one is entered.
+        // a no-op on the first arrival; on every later one it is what the entrance
+        // gate now requires — an edit alone no longer buys re-entry
+        await answerEveryPeerGiven({ cwd: scene.tempDir, stone: '3.blueprint' });
+
+        return invokeRouteSkill({
           skill: 'route.stone.set',
           args: { stone: '3.blueprint', route: '.', as: 'passed' },
           cwd: scene.tempDir,
-        }),
-      );
+        });
+      });
 
       then('exit code is non-zero', () => {
         expect(result.code).not.toEqual(0);
@@ -454,6 +485,11 @@ describe('driver.route.journey.acceptance', () => {
           '# Blueprint\n\nFixed API design.',
         );
 
+        // answer whatever the prior round left owed, before this one is entered.
+        // a no-op on the first arrival; on every later one it is what the entrance
+        // gate now requires — an edit alone no longer buys re-entry
+        await answerEveryPeerGiven({ cwd: scene.tempDir, stone: '3.blueprint' });
+
         // trigger review.self for new hash (artifact changed)
         await invokeRouteSkill({
           skill: 'route.stone.set',
@@ -474,6 +510,11 @@ describe('driver.route.journey.acceptance', () => {
           args: { stone: '3.blueprint', route: '.', as: 'promised', that: 'design-complete' },
           cwd: scene.tempDir,
         });
+
+        // answer whatever the prior round left owed, before this one is entered.
+        // a no-op on the first arrival; on every later one it is what the entrance
+        // gate now requires — an edit alone no longer buys re-entry
+        await answerEveryPeerGiven({ cwd: scene.tempDir, stone: '3.blueprint' });
 
         // try to pass (will fail on approval)
         return invokeRouteSkill({
@@ -540,6 +581,11 @@ describe('driver.route.journey.acceptance', () => {
           cwd: scene.tempDir,
         });
 
+        // answer whatever the prior round left owed, before this one is entered.
+        // a no-op on the first arrival; on every later one it is what the entrance
+        // gate now requires — an edit alone no longer buys re-entry
+        await answerEveryPeerGiven({ cwd: scene.tempDir, stone: '3.blueprint' });
+
         // now pass the stone (all guards satisfied)
         return invokeRouteSkill({
           skill: 'route.stone.set',
@@ -589,6 +635,26 @@ describe('driver.route.journey.acceptance', () => {
         expect(srcProtection).toBeDefined();
         expect(srcProtection.passed).toBe(true);
       });
+
+      // 🔴 the SILENCE is the contract here, so it is titled as the contract.
+      //
+      //    an allowed bounce prints no byte on either stream — a bouncer that announced
+      //    every permitted write would bury the one denial that matters. so `""` is the
+      //    right value; what was wrong was the title. `stdout has good vibes` over an
+      //    empty string asserts no claim a reader of the corpus can check, and it reads as
+      //    an omission rather than a pinned guarantee (r5 nitpick.1, i016).
+      //
+      // ⚠️ BOTH streams are pinned, not merely stdout. with stdout alone, a regression
+      //    that moved the allow-path chatter onto stderr would keep this step green and
+      //    the journey would still read silent from the snapshots
+      //    (rule.require.contract-snapshot-exhaustiveness names "stdout/stderr for cli").
+      then('an allowed bounce is silent on stdout — snapshot pins the silence', () => {
+        expect(sanitizeTimeForSnapshot(result.stdout)).toMatchSnapshot();
+      });
+
+      then('an allowed bounce is silent on stderr — snapshot pins the silence', () => {
+        expect(sanitizeTimeForSnapshot(result.stderr)).toMatchSnapshot();
+      });
     });
 
     // =========================================================================
@@ -624,6 +690,11 @@ describe('driver.route.journey.acceptance', () => {
           path.join(scene.tempDir, 'src', 'weather.ts'),
           'export const getWeather = () => ({ emoji: "☀️", temp: 22 });',
         );
+        // answer whatever the prior round left owed, before this one is entered.
+        // a no-op on the first arrival; on every later one it is what the entrance
+        // gate now requires — an edit alone no longer buys re-entry
+        await answerEveryPeerGiven({ cwd: scene.tempDir, stone: '5.execute' });
+
         return invokeRouteSkill({
           skill: 'route.stone.set',
           args: { stone: '5.execute', route: '.', as: 'passed' },

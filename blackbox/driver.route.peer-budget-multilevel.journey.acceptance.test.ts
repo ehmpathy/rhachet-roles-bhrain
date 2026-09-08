@@ -2,6 +2,7 @@ import * as fs from 'fs/promises';
 import * as path from 'path';
 import { given, then, useBeforeAll, useThen, when } from 'test-fns';
 
+import { answerEveryPeerGiven } from './.test/answerEveryPeerGiven';
 import {
   execAsync,
   genTempDirForRhachet,
@@ -56,6 +57,11 @@ describe('driver.route.peer-budget-multilevel.journey.acceptance', () => {
           'export const feature = () => "v1";',
         );
 
+        // answer whatever the prior round left owed, before this one is entered.
+        // a no-op on the first arrival; on every later one it is what the entrance
+        // gate now requires — an edit alone no longer buys re-entry
+        await answerEveryPeerGiven({ cwd: scene.tempDir, stone: '1.vision' });
+
         return invokeRouteSkill({
           skill: 'route.stone.set',
           args: { stone: '1.vision', route: '.', as: 'passed' },
@@ -92,6 +98,11 @@ describe('driver.route.peer-budget-multilevel.journey.acceptance', () => {
           'export const feature = () => "v2";',
         );
 
+        // answer whatever the prior round left owed, before this one is entered.
+        // a no-op on the first arrival; on every later one it is what the entrance
+        // gate now requires — an edit alone no longer buys re-entry
+        await answerEveryPeerGiven({ cwd: scene.tempDir, stone: '1.vision' });
+
         return invokeRouteSkill({
           skill: 'route.stone.set',
           args: { stone: '1.vision', route: '.', as: 'passed' },
@@ -121,6 +132,11 @@ describe('driver.route.peer-budget-multilevel.journey.acceptance', () => {
 
         // make spellcheck pass
         await fs.writeFile(path.join(scene.tempDir, '.test', 'spellcheck-should-pass'), '');
+
+        // answer whatever the prior round left owed, before this one is entered.
+        // a no-op on the first arrival; on every later one it is what the entrance
+        // gate now requires — an edit alone no longer buys re-entry
+        await answerEveryPeerGiven({ cwd: scene.tempDir, stone: '1.vision' });
 
         return invokeRouteSkill({
           skill: 'route.stone.set',
@@ -170,6 +186,11 @@ describe('driver.route.peer-budget-multilevel.journey.acceptance', () => {
           'export const feature = () => "v4";',
         );
 
+        // answer whatever the prior round left owed, before this one is entered.
+        // a no-op on the first arrival; on every later one it is what the entrance
+        // gate now requires — an edit alone no longer buys re-entry
+        await answerEveryPeerGiven({ cwd: scene.tempDir, stone: '1.vision' });
+
         return invokeRouteSkill({
           skill: 'route.stone.set',
           args: { stone: '1.vision', route: '.', as: 'passed' },
@@ -202,6 +223,11 @@ describe('driver.route.peer-budget-multilevel.journey.acceptance', () => {
           path.join(scene.tempDir, 'src', 'feature.ts'),
           'export const feature = () => "v4.5";',
         );
+
+        // answer whatever the prior round left owed, before this one is entered.
+        // a no-op on the first arrival; on every later one it is what the entrance
+        // gate now requires — an edit alone no longer buys re-entry
+        await answerEveryPeerGiven({ cwd: scene.tempDir, stone: '1.vision' });
 
         return invokeRouteSkill({
           skill: 'route.stone.set',
@@ -289,15 +315,24 @@ describe('driver.route.peer-budget-multilevel.journey.acceptance', () => {
       });
 
       then('architect NOT in exhausted reason (budget was extended)', () => {
-        // after budget extension, architect should not be listed in exhausted reason
-        // the reason format is "peer reviewer budget exhausted: slug1, slug2"
-        const reasonMatch = result.stdout.match(
-          /peer reviewer budget exhausted:\s*([^\n]+)/i,
-        );
-        if (reasonMatch) {
-          expect(reasonMatch[1]).not.toContain('architect');
-        }
-        // alternatively: architect might not appear at all if not exhausted
+        // after the budget extension, architect must not be named as exhausted.
+        // the reason format is "peer reviewer budget exhausted: slug1, slug2",
+        // and the whole line is absent when nobody is exhausted.
+        //
+        // 🔴 assert UNCONDITIONALLY. an `if (reasonMatch)` guard around the only
+        //    expect makes this step pass green when the line is absent — so it
+        //    would verify naught on the regression that DELETED it, which is the
+        //    exact state this journey exists to part from exhaustion
+        //    (`rule.forbid.failhide`, code.test).
+        //
+        // ⇒ default the absent match to '' so one assertion grades both shapes:
+        //   line absent ⇒ '' names no architect ✅ · line names architect ⇒ 🔴.
+        //   and the [t6] snapshot below clamps the line's own disappearance.
+        const reasonExhausted =
+          result.stdout.match(
+            /peer reviewer budget exhausted:\s*([^\n]+)/i,
+          )?.[1] ?? '';
+        expect(reasonExhausted).not.toContain('architect');
       });
 
       then('snapshot [t6]: architect can continue', () => {
@@ -318,6 +353,11 @@ describe('driver.route.peer-budget-multilevel.journey.acceptance', () => {
 
         // make architect pass
         await fs.writeFile(path.join(scene.tempDir, '.test', 'architect-should-pass'), '');
+
+        // answer whatever the prior round left owed, before this one is entered.
+        // a no-op on the first arrival; on every later one it is what the entrance
+        // gate now requires — an edit alone no longer buys re-entry
+        await answerEveryPeerGiven({ cwd: scene.tempDir, stone: '1.vision' });
 
         return invokeRouteSkill({
           skill: 'route.stone.set',

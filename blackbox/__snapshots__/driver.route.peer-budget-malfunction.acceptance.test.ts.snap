@@ -16,7 +16,7 @@ exports[`driver.route.peer-budget-malfunction.acceptance given: [journey] review
    ├─ passage = malfunction
    ├─ reason = reviewer or judge malfunctioned
    ├─ options
-   │  ├─ overrule the malfunction
+   │  ├─ overrule the malfunction — a human must grant
    │  │  └─ rhx route.stone.set --stone 1.execute --as overruled
    │  └─ or fix the reviewer, then retry
    └─ guard
@@ -118,9 +118,9 @@ exports[`driver.route.peer-budget-malfunction.acceptance given: [journey] review
    ├─ passage = blocked
    ├─ reason = peer reviewer budget exhausted: flaky-reviewer
    ├─ options
-   │  ├─ increase budget
+   │  ├─ increase budget — yours to spend
    │  │  └─ rhx route.guard.budget --for review --add N --peer flaky-reviewer --stone 1.execute
-   │  └─ approve as-is
+   │  └─ approve as-is — a human must grant
    │     └─ rhx route.stone.set --stone 1.execute --as approved
    └─ guard
       ├─ artifacts
@@ -152,7 +152,7 @@ exports[`driver.route.peer-budget-malfunction.acceptance given: [journey] review
    ├─ passage = malfunction
    ├─ reason = reviewer or judge malfunctioned
    ├─ options
-   │  ├─ overrule the malfunction
+   │  ├─ overrule the malfunction — a human must grant
    │  │  └─ rhx route.stone.set --stone 1.execute --as overruled
    │  └─ or fix the reviewer, then retry
    └─ guard

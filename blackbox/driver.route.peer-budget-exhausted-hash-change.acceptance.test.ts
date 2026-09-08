@@ -2,6 +2,7 @@ import * as fs from 'fs/promises';
 import * as path from 'path';
 import { given, then, useBeforeAll, useThen, when } from 'test-fns';
 
+import { answerEveryPeerGiven } from './.test/answerEveryPeerGiven';
 import {
   execAsync,
   genTempDirForRhachet,
@@ -51,6 +52,11 @@ describe('driver.route.peer-budget-exhausted-hash-change.acceptance', () => {
           'export const feature = () => "hash-A-v1";',
         );
 
+        // answer whatever the prior round left owed, before this one is entered.
+        // a no-op on the first arrival; on every later one it is what the entrance
+        // gate now requires — an edit alone no longer buys re-entry
+        await answerEveryPeerGiven({ cwd: scene.tempDir, stone: '1.execute' });
+
         return invokeRouteSkill({
           skill: 'route.stone.set',
           args: { stone: '1.execute', route: '.', as: 'passed' },
@@ -62,6 +68,10 @@ describe('driver.route.peer-budget-exhausted-hash-change.acceptance', () => {
         expect(result.code).not.toEqual(0);
         expect(result.stdout).toContain('1/2');
       });
+
+      then('the hash-A tree is pinned — the reviewer rejected at 1 of 2, budget still live', () => {
+        expect(sanitizeTimeForSnapshot(result.stdout)).toMatchSnapshot();
+      });
     });
 
     when('[t1] second attempt exhausts budget (hash A variant)', () => {
@@ -71,6 +81,11 @@ describe('driver.route.peer-budget-exhausted-hash-change.acceptance', () => {
           path.join(scene.tempDir, 'src', 'feature.ts'),
           'export const feature = () => "hash-A-v2";',
         );
+
+        // answer whatever the prior round left owed, before this one is entered.
+        // a no-op on the first arrival; on every later one it is what the entrance
+        // gate now requires — an edit alone no longer buys re-entry
+        await answerEveryPeerGiven({ cwd: scene.tempDir, stone: '1.execute' });
 
         return invokeRouteSkill({
           skill: 'route.stone.set',
@@ -99,6 +114,11 @@ describe('driver.route.peer-budget-exhausted-hash-change.acceptance', () => {
           path.join(scene.tempDir, 'src', 'feature.ts'),
           'export const feature = () => "hash-A-v3";',
         );
+
+        // answer whatever the prior round left owed, before this one is entered.
+        // a no-op on the first arrival; on every later one it is what the entrance
+        // gate now requires — an edit alone no longer buys re-entry
+        await answerEveryPeerGiven({ cwd: scene.tempDir, stone: '1.execute' });
 
         return invokeRouteSkill({
           skill: 'route.stone.set',
@@ -130,6 +150,11 @@ describe('driver.route.peer-budget-exhausted-hash-change.acceptance', () => {
           path.join(scene.tempDir, 'src', 'feature.ts'),
           'export const feature = () => "hash-B-different-content";',
         );
+
+        // answer whatever the prior round left owed, before this one is entered.
+        // a no-op on the first arrival; on every later one it is what the entrance
+        // gate now requires — an edit alone no longer buys re-entry
+        await answerEveryPeerGiven({ cwd: scene.tempDir, stone: '1.execute' });
 
         return invokeRouteSkill({
           skill: 'route.stone.set',
@@ -170,6 +195,11 @@ describe('driver.route.peer-budget-exhausted-hash-change.acceptance', () => {
           path.join(scene.tempDir, 'src', 'feature.ts'),
           'export const feature = () => "hash-C-yet-another-version";',
         );
+
+        // answer whatever the prior round left owed, before this one is entered.
+        // a no-op on the first arrival; on every later one it is what the entrance
+        // gate now requires — an edit alone no longer buys re-entry
+        await answerEveryPeerGiven({ cwd: scene.tempDir, stone: '1.execute' });
 
         return invokeRouteSkill({
           skill: 'route.stone.set',

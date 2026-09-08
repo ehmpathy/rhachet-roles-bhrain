@@ -112,6 +112,33 @@ const sanitizeCapturedPeerForSnapshot = (artifact: string): string => {
     if (/├─ logs:/.test(line)) continue;
     kept.push(line);
   }
+
+  // 🔴 NO empty-stderr carve-out here, and none is owed — the ENGINE normalizes it now.
+  //
+  // an earlier round dropped a bare-bodied `stderr` section from the snapshot body,
+  // because a clean child may write no byte at all to stderr (no section renders) or
+  // a bare newline (the section renders, with an empty body). which one you get is the
+  // child process's business, never the contract under test, so the artifact varied run
+  // to run.
+  //
+  // ⚠️ that variance no longer reaches this test. `runStoneGuardReviews.ts:189` builds
+  //    the captured artifact through `formatArtifactStreamBuckets`, which emits a
+  //    `stderr` bucket only when `stderr.trim() !== ''` — so BOTH variants collapse to
+  //    one output at the source. it is pinned at unit grain, not inferred:
+  //      `formatArtifactStreamBuckets.test.ts` [case5] — `stderr: '\n  \n'` ⇒ no bucket
+  //      `formatArtifactStreamBuckets.test.ts` [case6] — `stderr: ''`      ⇒ no bucket
+  //
+  // ⇒ so the section that survives to here always held REAL output, and it is snapped
+  //   live and whole. a reviewer asked for a stable `<empty>` MARKER in place of the
+  //   drop (r2 blocker.1, i016) — this is that ask carried further: a mask is the right
+  //   answer to variance that reaches the snapshot, and NO mask is the right answer to
+  //   variance the engine already removed. one fewer transform stands between the live
+  //   bytes and the baseline, which is what `rule.require.contract-snapshot-exhaustiveness`
+  //   is after.
+  //
+  // ⚠️ a MALFUNCTION's stderr is a separate case and is NOT touched by this: it carries
+  //    the cause, so the loop above keeps its `💥 rubric malfunctioned:` header and
+  //    collapses only the volatile crash dump to the `[STDERR]` marker.
   return kept.join('\n').trim();
 };
 

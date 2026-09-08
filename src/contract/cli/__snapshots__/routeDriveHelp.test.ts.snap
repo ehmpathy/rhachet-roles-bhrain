@@ -1,0 +1,32 @@
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
+
+exports[`route.drive --help given: [case1] the help names the budget-halt remedies when: [t0] help is printed then: the whole help surface is pinned, as a driver reads it 1`] = `
+"route.drive - echo current stone and pass command for bound route
+
+usage:
+  route.drive [options]
+
+options:
+  --route <path>     path to route directory (uses bound route if absent)
+  --when <context>   hook context: hook.onBoot or hook.onStop
+                     onBoot: show guidance, exit 0 (don't block session start)
+                     onStop: show guidance, exit 2 (block premature stop)
+  --help             show this help message
+
+output:
+  when the stone can self-drive, route.drive echoes the current stone + guidance.
+  when it has halted, it switches to a halt message that names who owns each remedy:
+    ✋ halted, stone marked blocked            a driver wall (--as blocked) — clear it
+    👋 halted, peer reviewer budget exhausted  two levers, sorted by owner:
+                                                increase budget — yours to spend
+                                                approve as-is — a human must grant
+    💥 halted, guard malfunction               a reviewer or judge broke — a human must fix
+  onStop honors the same halt: exit 2 keeps the route in motion, exit 0 allows a
+  clean stop, exit 1 escalates a malfunction (per rule.require.exit-code-semantics).
+  onBoot always exits 0 (it never blocks session start).
+
+examples:
+  route.drive                        # echo current stone
+  route.drive --when hook.onBoot     # show stone, exit 0 (for onBoot hooks)
+  route.drive --when hook.onStop     # show stone, exit 2 if unpassed (for onStop hooks)"
+`;

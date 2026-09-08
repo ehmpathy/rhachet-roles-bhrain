@@ -61,7 +61,7 @@ exports[`driver.route.peer-budget-all-terminal-halt.acceptance given: [case1] le
 🗿 route.stone.set
    ├─ stone = 1.vision
    ├─ passage = blocked
-   ├─ reason = blockers exceed threshold (1 > 0)
+   ├─ reason = blockers exceed threshold (2 > 0)
    └─ guard
       ├─ artifacts
       │   └─ src/**/*.ts
@@ -82,7 +82,7 @@ exports[`driver.route.peer-budget-all-terminal-halt.acceptance given: [case1] le
       └─ judges
           └─ j1: rhx route.stone.judge --mechanism reviewed? --stone $stone --route $route --allow-blockers 0 --allow-nitpicks 1
               ├─ finished [TIME] ✗
-              └─ reason: blockers exceed threshold (1 > 0)
+              └─ reason: blockers exceed threshold (2 > 0)
 
 🪷 the path continues
    ├─ l1 is terminal (exhausted 🌙) — it no longer blocks you
@@ -118,9 +118,9 @@ exports[`driver.route.peer-budget-all-terminal-halt.acceptance given: [case1] le
    ├─ passage = blocked
    ├─ reason = peer reviewer budget exhausted: quick-fail, thorough
    ├─ options
-   │  ├─ increase budget
+   │  ├─ increase budget — yours to spend
    │  │  └─ rhx route.guard.budget --for review --add N --stone 1.vision
-   │  └─ approve as-is
+   │  └─ approve as-is — a human must grant
    │     └─ rhx route.stone.set --stone 1.vision --as approved
    └─ guard
       ├─ artifacts
@@ -166,7 +166,7 @@ exports[`driver.route.peer-budget-all-terminal-halt.acceptance given: [case1] le
 🗿 route.stone.set
    ├─ stone = 1.vision
    ├─ passage = blocked
-   ├─ reason = blockers exceed threshold (1 > 0)
+   ├─ reason = blockers exceed threshold (2 > 0)
    └─ guard
       ├─ artifacts
       │   └─ src/**/*.ts
@@ -187,7 +187,7 @@ exports[`driver.route.peer-budget-all-terminal-halt.acceptance given: [case1] le
       └─ judges
           └─ j1: rhx route.stone.judge --mechanism reviewed? --stone $stone --route $route --allow-blockers 0 --allow-nitpicks 1
               ├─ finished [TIME] ✗
-              └─ reason: blockers exceed threshold (1 > 0)
+              └─ reason: blockers exceed threshold (2 > 0)
 
 🪷 the path continues
    ├─ l1 is terminal (exhausted 🌙) — it no longer blocks you

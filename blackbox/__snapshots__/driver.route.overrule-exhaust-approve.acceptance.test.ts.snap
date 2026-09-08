@@ -25,9 +25,9 @@ exports[`driver.route.overrule-exhaust-approve.acceptance given: [case1] B5 — 
    ├─ passage = blocked
    ├─ reason = peer reviewer budget exhausted: premium-checker
    ├─ options
-   │  ├─ increase budget
+   │  ├─ increase budget — yours to spend
    │  │  └─ rhx route.guard.budget --for review --add N --peer premium-checker --stone 1.feature
-   │  └─ approve as-is
+   │  └─ approve as-is — a human must grant
    │     └─ rhx route.stone.set --stone 1.feature --as approved
    └─ guard
       ├─ artifacts

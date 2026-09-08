@@ -16,7 +16,7 @@ exports[`driver.route.peer-contemplation-malfunction.acceptance given: [case1] a
    ├─ passage = malfunction
    ├─ reason = reviewer or judge malfunctioned
    ├─ options
-   │  ├─ overrule the malfunction
+   │  ├─ overrule the malfunction — a human must grant
    │  │  └─ rhx route.stone.set --stone 1.execute --as overruled
    │  └─ or fix the reviewer, then retry
    └─ guard

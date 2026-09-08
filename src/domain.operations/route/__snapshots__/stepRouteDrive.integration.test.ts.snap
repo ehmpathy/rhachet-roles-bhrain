@@ -143,16 +143,14 @@ exports[`stepRouteDrive.integration given: [case9] a stone with an exhausted pee
    └─ halted, peer reviewer budget exhausted
       ├─ reason: peer reviewer budget exhausted
       │
-      ├─ reviews
-      │
-      ├─ please ask a human to either
-      │  ├─ approve as-is
-      │  │  └─ rhx route.stone.set --stone 1 --as approved
+      ├─ spend your own lever first, then ask a human
+      │  ├─ increase budget — yours to spend
+      │  │  └─ rhx route.guard.budget --for review --add N --stone 1
       │  │
-      │  └─ extend budget (then rerun)
-      │     └─ rhx route.guard.budget --for review --add N --stone 1
+      │  └─ approve as-is — a human must grant
+      │     └─ rhx route.stone.set --stone 1 --as approved
       │
-      └─ once they approve, run
+      └─ once a human grants the approval, run
          └─ rhx route.stone.set --stone 1 --as passed"
 `;
 

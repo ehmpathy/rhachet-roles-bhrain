@@ -5,10 +5,17 @@ a halt is a diagnosis to make, not a message to relay. the guard prints what *wo
 | lever | owner |
 |---|---|
 | `rhx route.guard.budget --for review --add N --stone <stone>` | **driver** |
+| 🔴 `rhx route.mutate.guard` — the stone's own `--paths-with`, `--conversation`, `level`, `budget` | **driver** |
 | a diagnosed reviewer malfunction — absent credential, bad glob, stale supply | **driver** |
-| `--as approved` · `--as overruled` · the commit quota · release auth | human |
+| `--as approved` · `--as overruled` · the commit quota · a **credential** the keyrack reports `absent` · release auth | human |
 
-🟡 **the trap is adjacency.** the guard renders *increase budget* and *approve as-is* as two peer branches, which invites the read *"two human remedies."* only the second is one.
+🔴 **the guard row was absent for a full release, and the omission had a measured price.** a driver filed an overflowed-lane repair as a **fulcrum** — a call reserved for the wisher — and collected six rounds of evidence about it while the remedy sat unused. the wisher closed it in seven words: *"you have the abiltiy to edit the guards."*
+
+⇒ **an absent row does not read as absent. it reads as "not mine."** a lever this table omits fares worse than one it lists as human-owned, since a human-owned lever at least gets surfaced.
+
+⛔ **a hand-run `rhx review` is NOT on this table, deliberately.** it draws no budget, so it is no lever at all — it is an escape from the meter the ladder runs on (`rule.forbid.hand-run-reviews`). ⇒ **the guard row above is what a driver who reaches for it actually wants**, and it repairs the lane *inside* the system rather than around it.
+
+⚠️ **adjacency is the trap** — two remedies side by side with no owner column read as two human remedies. the budget halt names its owners: `increase budget — yours to spend` above `approve as-is — a human must grant`. 🔴 **that label covers ONE halt kind.** a malfunction, a self-review gate, and a judge threshold each print a remedy list with no owner column, so the sort stays yours to perform.
 
 **budget is not scarce, and to treat it as scarce is the error.** `--add N` extends every reviewer on the stone at once. and exhaustion is often not what it looks like: a reviewer that spent its round to RAISE a blocker has none left to CONFIRM your fix, so it shows `exhausted 🌙` with blockers listed that are already closed. more budget settles that; a human cannot.
 

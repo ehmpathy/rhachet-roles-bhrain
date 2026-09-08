@@ -84,9 +84,9 @@ exports[`driver.route.peer-budget.acceptance given: [journey] peer review budget
    ├─ passage = blocked
    ├─ reason = peer reviewer budget exhausted: mock-reviewer
    ├─ options
-   │  ├─ increase budget
+   │  ├─ increase budget — yours to spend
    │  │  └─ rhx route.guard.budget --for review --add N --peer mock-reviewer --stone 1.execute
-   │  └─ approve as-is
+   │  └─ approve as-is — a human must grant
    │     └─ rhx route.stone.set --stone 1.execute --as approved
    └─ guard
       ├─ artifacts

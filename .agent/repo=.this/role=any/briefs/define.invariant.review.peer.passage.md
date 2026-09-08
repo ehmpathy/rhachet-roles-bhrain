@@ -41,6 +41,12 @@ consequence still applies — and `approved` is the **only** verdict a driver ca
 so every non-`approved` terminal demands a deliberate, attributable human act before the stone
 moves.
 
+⚠️ **and a second condition sits BEFORE the ladder entirely.** a stone cannot pass — nor even start
+a fresh round — while any reviewer's **latest** given carries an unanswered blocker. that debt is
+keyed to the reviewer rather than to the code generation, so it survives an edit to the artifact
+and outlives a spent budget. ⇒ `exhausted` and `malfunction` are terminal in the table above **and
+can still owe a `.taken`** (`rule.forbid.unanswered-exits-from-a-blocker`).
+
 ## .the trap this guards
 
 `terminal` reads at two scopes — **terminal-for-unlock** (lets the next level run) vs

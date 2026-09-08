@@ -37,16 +37,14 @@ exports[`driver.route.halt.acceptance given: [case3] an exhausted-budget stone (
    └─ halted, peer reviewer budget exhausted
       ├─ reason: peer reviewer budget exhausted
       │
-      ├─ reviews
-      │
-      ├─ please ask a human to either
-      │  ├─ approve as-is
-      │  │  └─ rhx route.stone.set --stone 1.feature --as approved
+      ├─ spend your own lever first, then ask a human
+      │  ├─ increase budget — yours to spend
+      │  │  └─ rhx route.guard.budget --for review --add N --stone 1.feature
       │  │
-      │  └─ extend budget (then rerun)
-      │     └─ rhx route.guard.budget --for review --add N --stone 1.feature
+      │  └─ approve as-is — a human must grant
+      │     └─ rhx route.stone.set --stone 1.feature --as approved
       │
-      └─ once they approve, run
+      └─ once a human grants the approval, run
          └─ rhx route.stone.set --stone 1.feature --as passed
 "
 `;
@@ -62,16 +60,14 @@ exports[`driver.route.halt.acceptance given: [case4] an exhausted-budget stone, 
    └─ halted, peer reviewer budget exhausted
       ├─ reason: peer reviewer budget exhausted
       │
-      ├─ reviews
-      │
-      ├─ please ask a human to either
-      │  ├─ approve as-is
-      │  │  └─ rhx route.stone.set --stone 1.feature --as approved
+      ├─ spend your own lever first, then ask a human
+      │  ├─ increase budget — yours to spend
+      │  │  └─ rhx route.guard.budget --for review --add N --stone 1.feature
       │  │
-      │  └─ extend budget (then rerun)
-      │     └─ rhx route.guard.budget --for review --add N --stone 1.feature
+      │  └─ approve as-is — a human must grant
+      │     └─ rhx route.stone.set --stone 1.feature --as approved
       │
-      └─ once they approve, run
+      └─ once a human grants the approval, run
          └─ rhx route.stone.set --stone 1.feature --as passed
 "
 `;
@@ -100,16 +96,14 @@ exports[`driver.route.halt.acceptance given: [case6] an exhausted-budget stone, 
    └─ halted, peer reviewer budget exhausted
       ├─ reason: peer reviewer budget exhausted
       │
-      ├─ reviews
-      │
-      ├─ please ask a human to either
-      │  ├─ approve as-is
-      │  │  └─ rhx route.stone.set --stone 1.feature --as approved
+      ├─ spend your own lever first, then ask a human
+      │  ├─ increase budget — yours to spend
+      │  │  └─ rhx route.guard.budget --for review --add N --stone 1.feature
       │  │
-      │  └─ extend budget (then rerun)
-      │     └─ rhx route.guard.budget --for review --add N --stone 1.feature
+      │  └─ approve as-is — a human must grant
+      │     └─ rhx route.stone.set --stone 1.feature --as approved
       │
-      └─ once they approve, run
+      └─ once a human grants the approval, run
          └─ rhx route.stone.set --stone 1.feature --as passed
 "
 `;

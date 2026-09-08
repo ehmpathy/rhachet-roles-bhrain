@@ -32,17 +32,39 @@ when a level `exhausts`, it is terminal, so the next level runs in that same pas
 not stop. you do not knock on the human's door. you drive on down the ladder until every
 reviewer you could possibly work with has gone terminal.
 
+⚠️ **that is the LEVEL's unlock, never a discharge of what the exhausted reviewer raised.** the
+two come apart, and the section below parts them.
+
 ## .the rule
 
 | the level did... | you must... |
 |------------------|-------------|
 | approve | continue — the next level is already live |
-| exhaust (earned) | continue — exhaustion is terminal; the next level runs now |
+| exhaust (earned) | continue — the next level runs now. ⚠️ **and answer any blocker it left** — see below |
 | reject (has budget) | converge — fix the code, or articulate why it holds, and re-arrive |
 | all levels terminal | now — and only now — the human may be pulled to overrule |
 
 you re-arrive (`--as arrived`) after each round of work. the ladder advances itself. the
 same command drives the whole way down.
+
+## 🔴 .exhaustion unlocks the LEVEL. it does not discharge the DEBT
+
+the two are separate, and to conflate them is the coast this rule forbids, worn as a rule it
+permits:
+
+| exhaustion does | exhaustion does NOT |
+|---|---|
+| make the level terminal, so the next runs in that same pass | close a blocker the reviewer raised before its budget ran out |
+| free you from further rounds *with that reviewer* | free you from the `.taken` you owe it |
+
+a reviewer's last given outlives its budget — **the debt is keyed to the reviewer, never to the
+generation of the code it read**. so an exhausted reviewer with a blocker outstanding holds the
+stone until you answer it, and the entrance gate refuses the next round meanwhile.
+
+⇒ that is deliberate: it is what gives the manufactured exhaustion named below a real price. your
+levers are two — **answer it**, plus a **budget top-up** if the answer needs the reviewer to
+re-read and confirm it (`rule.always.spend-own-levers-before-escalation`). a **human overrule** is
+the third, and the only one that needs a human.
 
 ## .exhaustion is earned, never casual
 
@@ -80,8 +102,11 @@ advance on your word.
 the reason it is safe to let the next level run the moment a level exhausts is that we
 **trust you already did all that was possible** to satisfy it. exhaustion is not "the level
 was skipped" — it is "the level was worked to the end and could not be satisfied." given
-that, the next level should proceed; no further move remains for you at the exhausted
-level, so a wait would only stall the road and pull the human early.
+that, the next level should proceed; a wait would only stall the road and pull the human
+early.
+
+⚠️ **it proceeds ALONGSIDE the answer you still owe, never in place of it.** the unlock frees the
+*ladder*, and an unanswered blocker still holds the *stone* — whatever the levels below it do.
 
 your cited record is what earns that trust. honor it, and the ladder carries you.
 

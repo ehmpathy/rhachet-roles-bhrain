@@ -1,0 +1,13 @@
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
+
+exports[`routeStoneJudge.tally.acceptance given: [case1] one reviewer, budget 1 — it hands back a clean verdict, then exhausts when: [t0] the artifact is edited after the round, then the judge is asked then: the whole judge stdout matches its baseline 1`] = `
+"passed: true
+reason: reviews pass (blockers: 0/0, nitpicks: 0/0)
+"
+`;
+
+exports[`routeStoneJudge.tally.acceptance given: [case2] two reviewers — a noisy one with budget 1, a quiet one with budget 5 when: [t0] the artifact is edited between two rounds, then the judge is asked then: the whole judge stdout matches its baseline 1`] = `
+"passed: false
+reason: nitpicks exceed threshold (5 > 3)
+"
+`;

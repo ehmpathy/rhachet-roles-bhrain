@@ -1,0 +1,50 @@
+# rule.forbid.thorough-test-runs
+
+> **never pass `--thorough`. only the tests your change impacts are ever relevant, and the default already computes exactly that set.**
+
+`rhx git.repo.test` without the flag adds `--changedSince <trunk tip>`; jest diffs against the **merge-base**, so the selected set is *this branch's own changes* and no more. `--thorough` deletes that bound.
+
+⇒ **it is a subtraction dressed as an addition** — it removes the one piece of knowledge the run had about your work.
+
+## 🔴 .why — a wider run is not a stronger one
+
+| what it adds | what it is worth |
+|---|---|
+| suites your branch never touched | 🔴 **anti-signal.** a red suite you did not touch is a fact about `main`, not about you |
+| wall-clock, serially, on one machine | the sharded cicd gate runs the same assertions, in parallel |
+| the sense of a complete check | 🔴 **the whole harm.** breadth substituted for *which test covers this change?* |
+
+**row 3 costs a diagnosis.** 100 suites and one red is a haystack; 3 suites and one red is the defect. **the narrower run is the more informative one** — which is why this is a forbid, never a budget plea.
+
+⚠️ same defect as an **unbounded** scoped review: `112` targets against a delta of `21` files, and every item it raised named code that predates the branch (`rule.always.diagnose-reviewer-malfunctions`). **a scope flag that drops its bound returns plausible observations about work that is not yours.** `--thorough` drops it on purpose.
+
+## 🔴 .the trap — the tool recommends it, for the wrong diagnosis
+
+on zero selected, `git.repo.test` prints *"use `--scope` and `--thorough` to target tests directly"*.
+
+⇒ **half right.** zero-selected means the change detection missed your file. `--scope 'path://<file>'` **names** it, so the run reports which. `--thorough` runs all of them and never reports it — the symptom buried under a green wall. ⚠️ **the tool's own tip is not a warrant** (dreamed upstream: `.dream/v2026_09_07.reseed.the-zero-selected-tip-recommends-thorough.md`).
+
+## .the test
+
+> **"which test does this change impact?"**
+
+name it → `--scope 'path://<file>'` · name a dir → `--scope 'path://<dir>'` · 🔴 cannot name one → you do not yet know what you changed. read the diff — `--thorough` will not tell you either.
+
+| you want | reach for |
+|---|---|
+| the tests my change touched | **the default** — no flag |
+| one file · one case | `--scope 'path://<file>'` · `+ --scope 'name://<case>'` |
+| the whole suite, as a gate | **push.** cicd shards it |
+| a suite the detection missed | `--scope 'path://<missed file>'`, never `--thorough` |
+
+⚠️ **the bound: this forbids the FLAG, never the coverage.** the full sharded suite still runs on every push and is the real gate. *"I want to be sure"* is answered by the push.
+
+blocker: `--thorough` passed in any invocation · a brief, readme, skill, or comment that **recommends** it (the recommendation is how the flag survives) · a zero-selected run answered with `--thorough` rather than a named `--scope`.
+
+## ⚠️ .this copy is a MIRROR — the durable home is the mechanic
+
+`git.repo.test` is `ehmpathy/rhachet-roles-ehmpathy`'s, `role=mechanic`. **a forbid that lives away from the surface it governs is one its readers never boot** — every other repo that enrolls the mechanic still reads `howto.run-tests.[lesson].md:19`, which lists `--thorough` as a first-class command with no caution beside it.
+
+⇒ re-seeded as `ehmpathy/rhachet-roles-ehmpathy#663` — three coupled asks: adopt this rule, repair that lesson, drop the flag from the zero-selected tip. **this copy binds THIS repo until that lands, and is not this repo's to evolve.**
+
+⇒ see also: `rule.prefer.scoped-tests-locally` (the positive pair — `path://` vs `name://`, and the `--resnap` snapshot-prune footgun) · `rule.forbid.hand-run-reviews` (driver) — the twin forbid.

@@ -1,0 +1,52 @@
+# rule.forbid.hand-run-reviews
+
+> **a driver never runs `rhx review` by hand. a review is summoned by the guard, or it does not happen.**
+
+no scoped re-run, no diagnostic sweep, no "second opinion", no probe. **the invocation is the violation** — the flags and the motive do not enter into it.
+
+## 🔴 .why — it defeats the budget system, which is the whole scarcity the ladder runs on
+
+`route.guard.budget` bounds each reviewer's rounds. that bound is what makes a round **cost**, and the cost is what forces convergence rather than an endless re-roll.
+
+> **a hand-run review draws no budget.** free, unlimited, invisible to the meter.
+
+⇒ a driver with this habit has an **uncapped** review supply beside a capped one, and every argument the ladder makes about scarcity is void.
+
+## 🔴 .the second harm — the party under review picks its own reviewer
+
+| the guard's lane | a hand-run review |
+|---|---|
+| rubric, bind, brain, focus — declared in the `.guard` | **all chosen at the prompt, by the driver** |
+| costs a budget round | costs zero |
+| mints a `.given` the judge tallies | mints no artifact the engine reads |
+| its verdict gates the stone | its verdict gates naught |
+
+⇒ **the identical defect `rule.forbid.commits-the-route-did-not-ask-for` names**, one step further: a commit changes *what the reviewers see*; a hand-run review changes *who reviews and under what terms*. **no reviewer consented to either.** ⚠️ and a favourable read is one flag away — narrow the bind, swap the brain, drop the `--goal`, and the same rubric returns `0/0`.
+
+## 🔴 .the third harm — its verdict discharges no debt, so it is not even useful
+
+no `.given` is written, so it cannot be answered by a `.taken`, the judge cannot tally it, and the contemplation gate cannot see it. ⇒ **a clean hand-run verdict moves the stone not at all** — a document that reads like evidence and functions as none, which is worse than an absent one.
+
+## .what to do instead — the lever is the GUARD
+
+| the situation | the sanctioned move |
+|---|---|
+| a lane **overflowed** its window | 🔴 `rhx route.mutate.guard` — narrow its `--paths-with`, or trim its `--conversation`. **then let the guard run it** |
+| a lane's bind is **wrong** | the same. the bind is a guard field, and the guard is yours |
+| a lane is **out of budget** | `rhx route.guard.budget --for review --add N` |
+| a rubric wants a **different** corpus | that is a new lane. add it to the guard |
+| you want a **second opinion** | `rule.always.get-a-second-opinion-before-foreman` — enroll a peer ROLE, never a hand-run lane |
+
+⇒ **every real need behind a hand-run review is served by a guard edit**, and a guard edit keeps the result inside the budget system where it counts, gates, and can be answered.
+
+test: **"am I about to invoke `rhx review`?"** — yes → 🔴 **stop.** the answer is a guard edit. there is no second question.
+
+## ⚠️ .the prior guidance this REVERSES
+
+`rule.always.diagnose-reviewer-malfunctions` carried a recipe for exactly this, and it was followed at scale on `rhachet-roles-bhrain` @ `beav/fix-contemplation-gate-on-entrance`: a **nine-lane hand-run sweep** that yielded nine verdicts the engine never read.
+
+**the argument for it was not silly** — an overflowed lane returns terminal and unlocks the next level, so a driver who merely files the overflow removes a lens from the drive. 🔴 **the recipe answered a real harm with an instrument outside the system**, and the same harm has a remedy inside it.
+
+⇒ **the recipe existed because the guard-edit lever was absent from the owner table.** a driver who believes the bind is not theirs reaches for the only tool left. fix the ownership, and the hand-run loses its motive.
+
+blocker: a `rhx review` invoked by a driver, for any reason · a scoped re-run cited as a spent lever · a hand-run verdict cited as evidence a lane is clean · an overflowed lane left unrepaired because the guard edit was believed to be the wisher's.

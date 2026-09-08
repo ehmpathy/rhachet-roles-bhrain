@@ -32,6 +32,35 @@ with no condition would be pointless.
 - **barrier** — passive and permanent. a barrier blocks; a guard **decides**, and most of the time
   it lets you through
 
+## 🔴 .the boundary of the forbid — the NOUN, never the verb
+
+`gate` is forbidden as a **rival name for the concept**. it is not forbidden as the **verb that says
+what the concept does** — and this file's own `.the line` section uses it that way:
+
+> *"the stone marks progress; the guard **gates** it."*
+
+so a reader who greps the forbidden-synonym list and then greps the corpus finds this cluster at the
+top of their own hit list. **that is correct, and a sweep would get it wrong.**
+
+| the use | verdict |
+|---|---|
+| `gate` as a **noun**, in a contract — a dobj/dop name, a field, a flag, a path | 🔴 the violation |
+| `gate` as a **verb** — *"the guard gates passage"* | ✅ canonical, and used here |
+| `gate` as a **noun**, in prose — a comment, a review, a yield | ✅ permitted by `rule.forbid.domain-term-synonyms`, which scopes the forbid to contracts |
+
+## ⚠️ .a route slug is a contract, and the forbid's cheapest moment is at authorship
+
+measured 2026-09-06. the behavior `.behavior/v2026_09_03.fix-contemplation-**gate**-on-entrance`
+carries the forbidden noun in its slug — and a slug is no comment: it names the branch, the worktree,
+the bind flag, and every artifact path beneath it.
+
+it is **left in place**. a rename would move hundreds of references and repair no behavior, and
+`rule.forbid.domain-term-synonyms` says an extant synonym may be left until disturbed. what the case
+records is **when** a synonym forbid can actually bite:
+
+⇒ **at the moment a contract is coined, and at no cheap moment after.** the wish was named before the
+forbid was consulted, so the forbid never reached the one edit where it would have cost a keystroke.
+
 ## .disputes
 
 none. the noun predates this capture, and `checkpoint` was already forbidden as a synonym of

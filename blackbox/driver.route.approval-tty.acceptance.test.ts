@@ -93,17 +93,25 @@ describe('driver.route.approval-tty', () => {
     });
   });
 
-  given('[case2] human session (TTY)', () => {
-    // note: we cannot truly simulate TTY in acceptance tests
-    // but unit tests cover this path with isTTY: true
-    // this test documents the expected behavior
-    when('[t0] human runs --as approved', () => {
-      then('acceptance skipped - unit tests cover this path', () => {
-        // human TTY behavior verified in setStoneAsApproved.test.ts [case1]
-        expect(true).toBe(true);
-      });
-    });
-  });
+  // 🔴 .note = there is NO [case2] here, and its absence is deliberate.
+  //
+  // this file once carried a `[case2] human session (TTY)` whose only body was
+  // `expect(true).toBe(true)`, under a `then` named "acceptance skipped - unit tests
+  // cover this path". that is `rule.forbid.failhide` verbatim — an assertion that
+  // always passes, which reports coverage where none is exercised. a green tick on a
+  // vacuous case is worse than an absent case: it tells a reviewer the TTY path is
+  // covered AT THIS GRAIN, and it is not.
+  //
+  // ✅ the coverage it claimed is real, and it is at the OPERATION grain:
+  //    setStoneAsApproved.test.ts [case1] drives `{ isTTY: true }` (:35, :44, :52 —
+  //    return value, snapshot, and the passage.jsonl append), and [case3]/[case4]
+  //    drive `{ isTTY: false }`. so no coverage was lost with the case; only the
+  //    false claim of ACCEPTANCE-grain coverage was.
+  //
+  // ⚠️ the residual gap is real and is tracked, not hidden: no acceptance test drives
+  //    a true TTY, because `execAsync` spawns a non-tty subprocess. a real one needs a
+  //    pty, which is out of this behavior's bounds — see
+  //    .dream/v2026_09_07.fix.no-acceptance-test-drives-a-real-tty.md
 
   given('[case3] hook guidance format', () => {
     const tempDir = path.join(

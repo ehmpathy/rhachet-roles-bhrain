@@ -10,9 +10,9 @@ home: `.agent/repo=.this/role=any/briefs/domain.terms/`
 
 whenever a term is **discovered or debated** — a dobj/dop named, a synonym argued, a canonical word settled — crystallize it into the glossary, for durable retention org-wide.
 
-an onStop sweephook nudges when the distillation goes stale (> 1 hour). the nudge holds the *stop*, never a *write* — **the learner decides** what the round was worth.
+⚠️ **the itch is the learner's, and no gate carries it.** a `--when hook.onStop` staleness check once held the stop until the distillation was fresh; **withdrawn 2026-09-07**, because a gate that fires on a clock charges every session for a distillation most sessions do not owe. ⇒ the obligation is unchanged — only its enforcement is gone. run `rhx learn.domain.terms` when the cues fire.
 
-## .when nudged
+## .the moves
 
 1. recall the dobjs/dops you declared or engaged
 2. split their names into constituent terms (`getStone` → verb `get` + noun `stone`)

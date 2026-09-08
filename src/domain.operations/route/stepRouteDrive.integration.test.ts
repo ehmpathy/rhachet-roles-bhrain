@@ -448,9 +448,31 @@ describe('stepRouteDrive.integration', () => {
         expect(result.emit?.stderr).toBeUndefined();
       });
 
-      then('stdout prompts the human to approve or extend the budget', () => {
-        expect(result.emit?.stdout).toContain('budget');
-      });
+      // 🔴 this block used to be titled "prompts the human to approve or extend the
+      //    budget" and asserted only `toContain('budget')` — so it passed while the
+      //    surface filed the budget top-up under `please ask a human to either`, which
+      //    told a driver to stall on a foreman for a command they own. the word `budget`
+      //    appears in both the right render and the wrong one, so the assertion could
+      //    not tell them apart. it now names the OWNER of each lever, which is the
+      //    property `rule.always.spend-own-levers-before-escalation` actually cares
+      //    about, and the negative assertion is what makes the regression catchable
+      then(
+        'stdout sorts the remedies by owner, the drivers lever first',
+        () => {
+          expect(result.emit?.stdout).toContain(
+            'spend your own lever first, then ask a human',
+          );
+          expect(result.emit?.stdout).toContain(
+            'increase budget — yours to spend',
+          );
+          expect(result.emit?.stdout).toContain(
+            'approve as-is — a human must grant',
+          );
+          expect(result.emit?.stdout).not.toContain(
+            'please ask a human to either',
+          );
+        },
+      );
 
       then('t0 stdout matches the exhausted-halt snapshot', () => {
         expect(asStableDriveStdout(result.emit?.stdout)).toMatchSnapshot(

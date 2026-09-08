@@ -1,4 +1,8 @@
 import {
+  computeBlockRemedyGroups,
+  formatBlockRemedyGroups,
+} from '../guard/tree/formatBlockRemedyGroups';
+import {
   formatReviewsMeterLines,
   type GuardPeerMeterStatus,
 } from '../guard/tree/formatGuardTree';
@@ -24,22 +28,22 @@ export const formatRouteDriveMixedHalt = (input: {
   reason: string;
   meters: GuardPeerMeterStatus[];
 }): string => {
-  const overruleCmd = `rhx route.stone.set --stone ${input.stone} --as overruled`;
-  const approveCmd = `rhx route.stone.set --stone ${input.stone} --as approved`;
-
-  // extract the exhausted reviewer slugs from the combined reason (exhaustion is last)
-  const exhaustedMatch = input.reason.match(/budget exhausted:\s*(.+)/);
-  const exhaustedSlugs = exhaustedMatch?.[1]
-    ? exhaustedMatch[1].split(',').map((s) => s.trim())
-    : [];
-  const peerArg =
-    exhaustedSlugs.length === 1 ? ` --peer ${exhaustedSlugs[0]}` : '';
-  const budgetCmd = `rhx route.guard.budget --for review --add N${peerArg} --stone ${input.stone}`;
-
-  // malfunction outranks constraint for the overrule noun
-  const overruleNoun = input.reason.includes('malfunction')
-    ? 'malfunction'
-    : 'constraint';
+  // 🔴 every label, command, and the `budget exhausted:` parse come from ONE shared operation.
+  //    this file used to derive its own — its own copy of the regex, the single-slug `--peer`
+  //    rule, and all three labels — under a docblock that promised they stayed "byte-identical
+  //    to formatGuardTree's … change one, change both". that promise had ALREADY broken on
+  //    ORDER (this surface rendered budget → overrule → approve, formatGuardTree rendered
+  //    overrule → budget → approve), which is exactly why
+  //    `rule.forbid.duplicate-format-tree-operations` asks for a shared function rather than a
+  //    comment (r1 blocker.1, i016). the owner-sort this file already had is the one that won.
+  //
+  // ⚠️ `passage` is 'malfunction' when the reason names one, so the shared builder derives the
+  //    same overrule noun this file derived by hand — malfunction outranks constraint.
+  const remedyGroups = computeBlockRemedyGroups({
+    stone: input.stone,
+    passage: input.reason.includes('malfunction') ? 'malfunction' : 'blocked',
+    reason: input.reason,
+  });
 
   const lines: string[] = [];
   lines.push(`🦉 where were we?`);
@@ -50,7 +54,13 @@ export const formatRouteDriveMixedHalt = (input: {
   lines.push(`   │  └─ stone = ${input.stone}`);
   lines.push(`   │`);
   lines.push(`   └─ halted, ${input.reason}`);
-  lines.push(`      │`);
+  // ⛔ no spacer under the `halted,` header. every OTHER halt renderer in the repo flushes
+  //    its header straight to its first child — `formatRouteDriveBudgetExhausted:88-90`
+  //    (`halted, …` → `├─ reason: …`) and `getRouteDriveBlockerMessage:143-144`
+  //    (`halted, …` → `├─ please ask a human to`). this surface alone pushed a `│` there,
+  //    so a driver who met a mixed halt read a tree shaped unlike every halt they had seen
+  //    before, on the one occasion two gates fired at once
+  //    (r6 ergo-snapshot-visual-blemishes, nitpick.1, i018).
 
   // peer reviewer meters section via the shared formatter
   const meterLines = formatReviewsMeterLines({
@@ -61,18 +71,29 @@ export const formatRouteDriveMixedHalt = (input: {
     headerPrefix: '├─',
   });
   lines.push(...meterLines);
-  lines.push(`      │`);
+  // ⚠️ this spacer belongs to the reviews section, and parts it from the remedy block below
+  //    — see the twin note in `formatRouteDriveBudgetExhausted`. an empty meter set drops
+  //    the section entirely, so an unconditional push here would strand a bare connector
+  //    between the `halted,` header and its only child.
+  if (meterLines.length > 0) lines.push(`      │`);
 
-  // every remedy, one per concurrent gate, in precedence order
-  lines.push(`      └─ please ask a human to either`);
-  lines.push(`         ├─ overrule the ${overruleNoun}`);
-  lines.push(`         │  └─ ${overruleCmd}`);
-  lines.push(`         │`);
-  lines.push(`         ├─ increase budget (then rerun)`);
-  lines.push(`         │  └─ ${budgetCmd}`);
-  lines.push(`         │`);
-  lines.push(`         └─ approve as-is`);
-  lines.push(`            └─ ${approveCmd}`);
+  // every remedy, one per concurrent gate, sorted BY OWNER — the driver's own lever
+  // first, the human's after.
+  //
+  // 🔴 this surface carried the sharper form of the defect its peers carried. it listed
+  //    `increase budget` beneath `please ask a human to either` — so it did not merely
+  //    invite the read that budget is a human remedy, it ASSERTED it. a driver who obeyed
+  //    the line would stall on a foreman for a command they can run themselves, which is
+  //    the precise failure `rule.always.spend-own-levers-before-escalation` exists to
+  //    prevent: "sort by owner and spend yours first."
+  lines.push(`      └─ spend your own lever first, then ask a human`);
+  lines.push(
+    ...formatBlockRemedyGroups({
+      groups: remedyGroups,
+      baseIndent: '         ',
+      spacers: true,
+    }),
+  );
 
   return lines.join('\n');
 };

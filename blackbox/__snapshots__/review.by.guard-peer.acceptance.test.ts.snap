@@ -30,9 +30,9 @@ exports[`review.by.guard-peer.acceptance given: [case-seam-findings] guard peer 
 │  │  
 │  │
 │  └─
-└─ passage blocked
-   ├─ blocked by constraints
-   └─ exit code: 2 ✋
+├─ passage blocked
+│  ├─ blocked by constraints
+│  └─ exit code: 2 ✋
 └─ tallied
    ├─ 1 blocker
    └─ 0 nitpicks"
@@ -109,7 +109,7 @@ exports[`review.by.guard-peer.acceptance given: [case-seam-malfunction] guard pe
    ├─ passage = malfunction
    ├─ reason = reviewer or judge malfunctioned
    ├─ options
-   │  ├─ overrule the malfunction
+   │  ├─ overrule the malfunction — a human must grant
    │  │  └─ rhx route.stone.set --stone 1.execute --as overruled
    │  └─ or fix the reviewer, then retry
    └─ guard
@@ -147,10 +147,6 @@ exports[`review.by.guard-peer.acceptance given: [case-seam-pass-aggregation] gua
 │  │        ├─ 0 blockers
 │  │        ├─ 0 nitpicks
 │  │        └─ all good 👍
-│  │
-│  └─
-├─ stderr
-│  ├─
 │  │
 │  └─
 └─ tallied
@@ -212,10 +208,6 @@ exports[`review.by.guard-peer.acceptance given: [case-seam-pass-application] gua
 │  │        ├─ 0 blockers
 │  │        ├─ 0 nitpicks
 │  │        └─ all good 👍
-│  │
-│  └─
-├─ stderr
-│  ├─
 │  │
 │  └─
 └─ tallied

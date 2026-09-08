@@ -3,6 +3,7 @@ import * as os from 'os';
 import * as path from 'path';
 import { given, then, useBeforeAll, useThen, when } from 'test-fns';
 
+import { answerEveryPeerGiven } from '../../__test_assets__/answerEveryPeerGiven';
 import { genContextReviewBrainSupplyDemo } from '../../__test_assets__/genContextReviewBrainSupplyDemo';
 import { setStoneAsPassed } from '../../stones/setStoneAsPassed';
 import { isENOENT } from '../isENOENT';
@@ -388,14 +389,28 @@ describe('setStoneGuardStamp.integration', () => {
       await fs.rm(scene.tempDir, { recursive: true, force: true });
     });
 
-    when('[t0] budget is consumed then exhausted across runs', () => {
-      const result = useThen('exhaustion is reached', async () => {
+    when('[t0] the budget is spent, then the artifact is EDITED', () => {
+      // 🔴 this `when` used to be the whole case, and its fixture was built on the
+      //    very defect this behavior removes. its own comment read:
+      //
+      //      "change artifact to force a fresh hash → run 2 skips (exhausted)"
+      //
+      //    that edit IS the forbidden exit (`rule.forbid.unanswered-exits-from-a-blocker`).
+      //    run 1 raised a blocker nobody answered; under the old `(slug, hash)` key the
+      //    edit retired that debt, so run 2 sailed to the exhaustion check. under P1+P2
+      //    the debt is keyed to the reviewer, so it survives the edit and the entrance
+      //    gate halts before exhaustion is ever consulted.
+      //
+      // ⇒ the case is SPLIT rather than rewritten. the original intent — an exhausted
+      //   reviewer blocks the stone, and a stamp is written — is preserved verbatim at
+      //   [t1], where it is now reachable. this [t0] pins why it moved.
+      const result = useThen('the re-entry completes', async () => {
         // run 1: review runs (budget 1/1), finds blocker
         await setStoneAsPassed(
           { stone: '1.test', route: scene.tempDir },
           noopContext,
         );
-        // change artifact to force a fresh hash → run 2 skips (exhausted)
+        // the edit that used to buy re-entry
         await fs.writeFile(
           path.join(scene.tempDir, '1.test.md'),
           '# Test artifact\n\nmodified',
@@ -406,7 +421,34 @@ describe('setStoneGuardStamp.integration', () => {
         );
       });
 
+      then('the halt is the entrance gate, never exhaustion', () => {
+        expect(result.passed).toBe(false);
+        expect(result.emit!.stdout).toContain('await your reply');
+        expect(result.emit!.stdout).toContain('limited');
+        // 🔴 the teeth: the edit did NOT carry the driver past the door, so the
+        //    exhaustion notice cannot be what they read
+        expect(result.emit!.stdout).not.toContain('exhausted');
+      });
+    });
+
+    when('[t1] the driver answers, then re-enters', () => {
+      const result = useThen('the re-entry completes', async () => {
+        const pathsTaken = await answerEveryPeerGiven({
+          route: scene.tempDir,
+          stone: '1.test',
+        });
+        // .note = not decoration — were the glob to break, the helper would write
+        //         zero files and the assertions below would pass for the wrong
+        //         reason (`rule.forbid.failhide`)
+        expect(pathsTaken).toHaveLength(1);
+        return setStoneAsPassed(
+          { stone: '1.test', route: scene.tempDir },
+          noopContext,
+        );
+      });
+
       then('the stone is blocked by exhaustion', () => {
+        // the ORIGINAL assertion, unchanged — only its reachable state moved
         expect(result.passed).toBe(false);
         expect(result.emit!.stdout).toContain('exhausted');
       });

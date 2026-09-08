@@ -36,10 +36,16 @@ count that rises is **more work discovered**, never a defect to diagnose.
 
 | the peer ladder | the self ladder |
 |---|---|
-| a budget, spent down | a debt, paid off |
+| a budget, spent down — **and a debt per blocker beside it** | a debt only |
 | exhaustion is terminal and honorable | there is no exhaustion — only an unpaid remainder |
 | a human may overrule it | no one may |
 | more rounds cost the human's attention | more reviews cost only yours |
+
+⚠️ **row 1 is narrower than it used to read: the peer ladder carries a debt too.** an unanswered
+blocker is a `.taken` owed, keyed to the reviewer and untouched by its budget
+(`rule.always.converge-to-terminal`). so what parts the two is **not** budget-versus-debt — it is
+rows 2 and 3: the peer debt sits beside a budget and under a human overrule; the self debt has
+neither.
 
 🟡 **that last row is why the two are governed differently.** a peer round spends a scarce shared
 resource, so a ceiling on it is prudent. **a self review spends only the driver's own effort**, so
@@ -47,8 +53,8 @@ a ceiling on it would protect nobody and would cost the artifact everything.
 
 ## 🟡 .the guard has a liveness hatch. it is NOT a permission
 
-`getSelfReviewChallengeDecision.ts:98` allows a promise once attempts reach three on the same
-artifact hash, with no further timer. it exists so a driver is never **hard-stuck** by a clock.
+`getSelfReviewChallengeDecision.ts`'s `attempts >= plowthroughThreshold` branch allows a promise once
+attempts reach three on the same artifact hash, with no further timer. it exists so a driver is never **hard-stuck** by a clock.
 
 🔴 **to aim for it is the shortcut this rule forbids.** three rapid promises will pass the guard and
 will not have reviewed the artifact, and the guard cannot tell the difference — which is precisely

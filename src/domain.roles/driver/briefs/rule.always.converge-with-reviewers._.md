@@ -60,6 +60,17 @@ with no `.taken` reads to it as no fix at all.
 `.taken` shapes, the cues, and the incident where a driver read the re-raise as a reviewer defect
 and dead-ended the stone.
 
+## 🔴 .and there is NO other door out of a blocker
+
+this rule and its zoom-in say what to write. **`rule.forbid.unanswered-exits-from-a-blocker` says you
+may not go around them** — an edit-and-re-roll, an empty `.taken`, a spent budget, or a `--as blocked`
+are each an exit, and each is cheaper than an answer.
+
+⇒ **the conversation is not overhead on convergence; it IS the convergence.** the worked case that
+establishes it — a stall measured in iterations, and the three rounds that ended it once the takens
+landed — lives with the rule that owns it:
+`rule.forbid.unanswered-exits-from-a-blocker.example=the-28-iteration-stall.md`
+
 ## .the contemplation loop
 
 1. a peer review blocks the stone (budget shows N/3)
@@ -69,6 +80,11 @@ and dead-ended the stone.
 5. run `rhx route.stone.set --stone <stone> --as contemplated --that <slug>`
 6. re-submit; the reviewer re-reads with your articulation + code changes in context
 7. converge, or iterate again within budget
+
+⚠️ **step 5 is enforced, never merely asked.** the entrance gate refuses step 6 while any reviewer
+still owes a `.taken` — so a halt that names slugs at re-submission is this step skipped, never a
+guard defect. and step 3's code fix does **not** stand in for step 4: the debt is keyed to the
+reviewer, so an edit alone leaves it open.
 
 ## .when you may escalate
 

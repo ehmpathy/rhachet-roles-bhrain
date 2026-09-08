@@ -22,6 +22,7 @@ import {
 import { findsertReviewPeerGitignore } from '../../gitignore/findsertReviewPeerGitignore';
 import { getStoneGuardOverruledLevels } from '../../judges/getStoneGuardOverruledLevels';
 import { getAllStoneGuardArtifactsByHash } from '../artifact/getAllStoneGuardArtifactsByHash';
+import { asGuardDisplayPath } from '../asGuardDisplayPath';
 import { asStoneGuardCounter } from '../asStoneGuardCounter';
 import { getExitCodeClass } from '../getExitCodeClass';
 import { getRepoRootWithFallback } from '../getRepoRootWithFallback';
@@ -30,10 +31,12 @@ import {
   RUNTIME_GUARD_VAR_NAMES,
   type RuntimeGuardVarName,
 } from '../RUNTIME_GUARD_VAR_NAMES';
-import { formatTreeBucket } from '../tree/formatTreeBucket';
-import { TALLIED_FOOTER_PREFIX } from './getReviewTacticFromContent';
+import { formatArtifactFooters } from '../tree/formatArtifactFooters';
+import { formatArtifactStreamBuckets } from '../tree/formatArtifactStreamBuckets';
+import { asSanitizedPeerReviewSlug } from './peer/asSanitizedPeerReviewSlug';
 import { enumRouteGuardReviewPeerConversationFiles } from './peer/enumRouteGuardReviewPeerConversationFiles';
-import { getLatestReviewArtifactForIndex } from './peer/getLatestReviewArtifactForIndex';
+import { getCacheSafePeerReviewArtifact } from './peer/getCacheSafePeerReviewArtifact';
+import { getLatestReviewArtifactForSlug } from './peer/getLatestReviewArtifactForSlug';
 import { getRouteGuardReviewPeerPathTaken } from './peer/getRouteGuardReviewPeerPathTaken';
 import { computeReviewPeerVerdict } from './peer/meter/computeReviewPeerVerdict';
 import { getAllRouteStoneGuardReviewPeerMeters } from './peer/meter/getAllRouteStoneGuardReviewPeerMeters';
@@ -113,7 +116,10 @@ export const runOneStoneGuardReview = async (
   // sanitize slug for filename
   // .why = legacy peer reviews use command as slug (e.g., ".test/mock-review.sh")
   //        path separators would create nested directories
-  const sanitizedSlug = input.slug.replace(/[/\\]/g, '-');
+  // .note = this is the WRITE side of a grammar the READ side must match exactly
+  //         (setStoneAsContemplated validates `--that <slug>` against these names),
+  //         so the rule lives in one transformer rather than two inline copies
+  const sanitizedSlug = asSanitizedPeerReviewSlug({ slug: input.slug });
 
   // generate stdout path (what guard writes) and report path (what review skill writes)
   // .note = symmetric names: stdout is .md, report is .report.md
@@ -176,47 +182,59 @@ export const runOneStoneGuardReview = async (
   // classify exit code (after possible malfunction promotion)
   const exitClass = getExitCodeClass({ code: exitCode });
 
-  // format artifact content with tree buckets
-  const artifactLines: string[] = [];
-  artifactLines.push(formatTreeBucket({ label: 'stdout', content: stdout }));
-  artifactLines.push(formatTreeBucket({ label: 'stderr', content: stderr }));
+  // format artifact content with tree buckets; an empty stream earns no box.
+  // TWO footers can follow here — the passage footer below (non-zero exit) and the
+  // tally footer further down (a detected verdict) — and either one means the last
+  // stream bucket is NOT the artifact's final child.
+  const artifactLines: string[] = [
+    ...formatArtifactStreamBuckets({
+      stdout,
+      stderr,
+      hasFooter: exitCode !== 0 || run.detected,
+    }),
+  ];
 
-  // add passage footer for non-zero exit
-  if (exitCode !== 0) {
-    const blockReason =
-      exitClass === 'constraint'
-        ? 'blocked by constraints'
-        : 'blocked by malfunction';
-    const exitEmoji = exitClass === 'constraint' ? '✋' : '💥';
-    artifactLines.push('└─ passage blocked');
-    artifactLines.push(`   ├─ ${blockReason}`);
-    artifactLines.push(`   └─ exit code: ${exitCode} ${exitEmoji}`);
-  }
-
-  // persist the resolved tally as a footer so a cache re-read recovers the SAME counts (and
-  // the tactic) with NO brain call. the footer is the LAST numeric declaration, so
-  // getReviewCountsViaRegex's last-match recovers it; the `tallied by reviewer@` line marks a
-  // sub-brain tally so getReviewTacticFromContent can recover the tactic. this is one segment
-  // of the single authored write (an upsert that replaces the file wholesale) — a rerun
-  // re-authors the same content and cannot stack footers. only written for a detected verdict
-  // (a malfunction carries no trustworthy tally; its passage footer already signals the block).
-  if (run.detected) {
-    const blockerWord = blockers === 1 ? 'blocker' : 'blockers';
-    const nitpickWord = nitpicks === 1 ? 'nitpick' : 'nitpicks';
-
-    // a probabilistic tally appends a `tallied by reviewer@$brain` line, so the nitpicks row
-    // becomes a mid-branch (├─); a deterministic tally ends on nitpicks (└─).
-    const isProbabilistic = tallier === 'probabilistic';
-    const nitpicksBranch = isProbabilistic ? '├─' : '└─';
-
-    artifactLines.push('└─ tallied');
-    artifactLines.push(`   ├─ ${blockers} ${blockerWord}`);
-    artifactLines.push(`   ${nitpicksBranch} ${nitpicks} ${nitpickWord}`);
-    if (isProbabilistic)
-      artifactLines.push(
-        `   └─ ${TALLIED_FOOTER_PREFIX}${FIXED_FALLBACK_BRAIN}`,
-      );
-  }
+  // both footers, composed together so exactly ONE of them carries the terminal marker.
+  //
+  // 🔴 they used to be pushed by two independent blocks, each of which hardcoded `└─`
+  //    because each was authored as though it were last. when BOTH fired — a non-zero exit
+  //    whose verdict was still readable — the artifact rendered two terminal branches at one
+  //    level, which no other artifact in the corpus does
+  //    (r6 ergo-snapshot-visual-blemishes, blocker.1, i019).
+  //
+  // ⚠️ the comment above already knew two footers could follow; what it missed is that the
+  //    footers collide with EACH OTHER, not merely with the stream buckets. so the marker is
+  //    now derived in one place, exactly as `formatArtifactStreamBuckets` derives its own.
+  //
+  // .note = the tally is persisted so a cache re-read recovers the SAME counts (and the
+  //         tactic) with NO brain call. it is the LAST numeric declaration, so
+  //         getReviewCountsViaRegex's last-match recovers it, and the `tallied by reviewer@`
+  //         line lets getReviewTacticFromContent recover the tactic. this is one segment of a
+  //         single authored write (an upsert that replaces the file wholesale), so a rerun
+  //         re-authors the same content and cannot stack footers.
+  artifactLines.push(
+    ...formatArtifactFooters({
+      passage:
+        exitCode !== 0
+          ? {
+              blockReason:
+                exitClass === 'constraint'
+                  ? 'blocked by constraints'
+                  : 'blocked by malfunction',
+              exitCode,
+              exitEmoji: exitClass === 'constraint' ? '✋' : '💥',
+            }
+          : null,
+      tally: run.detected
+        ? {
+            blockers,
+            nitpicks,
+            talliedBy:
+              tallier === 'probabilistic' ? FIXED_FALLBACK_BRAIN : null,
+          }
+        : null,
+    }),
+  );
 
   const artifactContent = artifactLines.join('\n');
 
@@ -359,8 +377,16 @@ export const runStoneGuardReviews = async (
       const meter = meterBySlug.get(pr.slug);
       const rounds = meter?.rounds ?? 0;
       // check fresh reviews first (this run), then cached reviews (prior runs)
+      // .note = `reviews` is minted by the CURRENT guard list, so its index is sound.
+      //         only the cached side can cross a config change, so only it is guarded
+      // 🔴 this verdict drives LEVEL UNLOCK, so a cache from a retired tenant would
+      //    unlock a level on a verdict its current reviewer never gave
       const freshReview = reviews.find((r) => r.index === pr.index);
-      const cachedReview = cachedReviews.find((r) => r.index === pr.index);
+      const cachedReview = getCacheSafePeerReviewArtifact({
+        cachedReviews,
+        index: pr.index,
+        slug: pr.slug,
+      });
       const review = freshReview ?? cachedReview;
       const blockers = review?.blockers ?? Infinity;
       // wasExhausted = no review for this hash AND budget exhausted
@@ -387,7 +413,12 @@ export const runStoneGuardReviews = async (
 
   // execute each peer review in level order
   for (const pr of peerReviewsWithIndex) {
-    const cachedReview = cachedReviews.find((r) => r.index === pr.index);
+    // 🔴 the cache is keyed by POSITION; a rung whose tenant changed must not reuse it
+    const cachedReview = getCacheSafePeerReviewArtifact({
+      cachedReviews,
+      index: pr.index,
+      slug: pr.slug,
+    });
 
     // lookup meter state for this reviewer (needed for rounds display and verdict)
     const meter = meterBySlug.get(pr.slug);
@@ -409,7 +440,10 @@ export const runStoneGuardReviews = async (
         },
         inflight: null,
         outcome: {
-          path: path.relative(gitRoot, cachedReview.path),
+          path: asGuardDisplayPath({
+            pathAbsolute: cachedReview.path,
+            root: gitRoot,
+          }),
           review: {
             blockers: cachedReview.blockers,
             nitpicks: cachedReview.nitpicks,
@@ -437,15 +471,18 @@ export const runStoneGuardReviews = async (
 
     // skip if exhausted
     // .note = still add latest review for display purposes (shows blockers/nitpicks/path)
-    //         when hash changed, cachedReview may be null, so lookup latest by index
+    //         when hash changed, cachedReview may be null, so lookup the latest by slug
     if (isReviewPeerVerdictExhausted(verdict)) {
-      // use cached review if available; otherwise lookup latest review for this index
+      // use cached review if available; otherwise lookup this reviewer's latest review
       // .why = hash may have changed since exhaustion, but we still need prior review data
+      // ⚠️ keyed by SLUG, never by index — this reach crosses hashes, so it can straddle a
+      //    config change in which a retired reviewer's rung was reused by its successor
       const reviewForDisplay =
         cachedReview ??
-        (await getLatestReviewArtifactForIndex({
+        (await getLatestReviewArtifactForSlug({
           stone: input.stone,
           index: pr.index,
+          slug: pr.slug,
           route: input.route,
         }));
 
@@ -465,7 +502,10 @@ export const runStoneGuardReviews = async (
         inflight: null,
         outcome: {
           path: reviewForDisplay
-            ? path.relative(gitRoot, reviewForDisplay.path)
+            ? asGuardDisplayPath({
+                pathAbsolute: reviewForDisplay.path,
+                root: gitRoot,
+              })
             : null,
           review: {
             exhausted: true,
@@ -511,7 +551,10 @@ export const runStoneGuardReviews = async (
           },
           inflight: null,
           outcome: {
-            path: path.relative(gitRoot, cachedReview.path),
+            path: asGuardDisplayPath({
+              pathAbsolute: cachedReview.path,
+              root: gitRoot,
+            }),
             review: {
               blockers: cachedReview.blockers,
               nitpicks: cachedReview.nitpicks,
@@ -654,7 +697,16 @@ export const runStoneGuardReviews = async (
       },
       inflight: { beganAt, endedAt: new Date().toISOString() },
       outcome: {
-        path: review.path,
+        // 🔴 this emit handed `review.path` RAW until i003, so a fresh round
+        //    printed an absolute path in the progress tree while the guard
+        //    report fifteen lines below printed the same artifact repo-relative
+        //    (r7 nitpick.1). the three peer emits above always relativized;
+        //    only this one — the hot path, the one a driver sees every round —
+        //    did not
+        path: asGuardDisplayPath({
+          pathAbsolute: review.path,
+          root: gitRoot,
+        }),
         review: reviewOutcome,
         judge: null,
       },
