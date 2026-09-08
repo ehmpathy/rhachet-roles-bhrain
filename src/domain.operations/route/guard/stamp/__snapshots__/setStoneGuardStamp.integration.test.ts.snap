@@ -49,15 +49,11 @@ exports[`setStoneGuardStamp.integration given: [case2] guard with a peer review 
 ────────────────────────────────────────────────────────────────
 
 🪶 judge 1
-   ├─ stdout
-   │  ├─
-   │  │
-   │  │  passed: false
-   │  │  reason: blockers found
-   │  │
-   │  └─
-   ├─ stderr
-   │  ├─
-   │  │
-   │  └─"
+   └─ stdout
+      ├─
+      │
+      │  passed: false
+      │  reason: blockers found
+      │
+      └─"
 `;

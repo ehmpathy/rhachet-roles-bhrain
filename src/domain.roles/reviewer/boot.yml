@@ -2,11 +2,13 @@ always:
   briefs:
     say:
       - briefs/contract.reviewer-output.md
+      - briefs/rule.forbid.overzealous-blockers.md
       - briefs/review.tactics.md
       - briefs/on.rules/rules101.[article].md
       - briefs/on.rules/rules101.structure.[article].md
       - briefs/on.rules/rules101.content.[article].md
     ref:
+      - briefs/rule.forbid.overzealous-blockers.example=the-tidiness-blocker-and-the-false-green.md
       - briefs/on.rules/rules101.citations.[article].md
       - briefs/on.rules/rules101.collocated.[article].md
       - briefs/on.rules/rules101.content.[demo].forbid.failhide.md

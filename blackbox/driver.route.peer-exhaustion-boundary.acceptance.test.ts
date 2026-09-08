@@ -2,6 +2,7 @@ import * as fs from 'fs/promises';
 import * as path from 'path';
 import { given, then, useBeforeAll, useThen, when } from 'test-fns';
 
+import { answerEveryPeerGiven } from './.test/answerEveryPeerGiven';
 import {
   execAsync,
   genTempDirForRhachet,
@@ -52,13 +53,19 @@ describe('driver.route.peer-exhaustion-boundary.acceptance', () => {
       return { tempDir };
     });
 
-    // helper: write a fresh artifact to trigger a re-review, then arrive the stone
+    // helper: write a fresh artifact, answer what the prior round left owed, then arrive
+    //
+    // the answer belongs in the helper rather than at each call site: every arrival in
+    // this journey routes through here, so one insertion covers all four and no later
+    // phase can be added that skips it. a no-op on the first arrival; on every later one
+    // it is what the entrance gate now requires — an edit alone no longer buys re-entry
     const arriveWith = async (input: { version: string }) => {
       await fs.mkdir(path.join(scene.tempDir, 'src'), { recursive: true });
       await fs.writeFile(
         path.join(scene.tempDir, 'src', 'feature.ts'),
         `export const feature = () => "${input.version}";`,
       );
+      await answerEveryPeerGiven({ cwd: scene.tempDir, stone: '1.execute' });
       return invokeRouteSkill({
         skill: 'route.stone.set',
         args: { stone: '1.execute', route: '.', as: 'passed' },

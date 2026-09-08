@@ -24,7 +24,7 @@ exports[`driver.route.judge-overrule-peer.acceptance given: [case1] peers pass, 
    ├─ passage = malfunction
    ├─ reason = reviewer or judge malfunctioned
    ├─ options
-   │  ├─ overrule the malfunction
+   │  ├─ overrule the malfunction — a human must grant
    │  │  └─ rhx route.stone.set --stone 1.feature --as overruled
    │  └─ or fix the reviewer, then retry
    └─ guard

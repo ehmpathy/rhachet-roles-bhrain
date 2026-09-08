@@ -64,6 +64,16 @@ and finally marked the stone **blocked**. a total dead end.
 ⇒ **a re-arrival with any open point that has no `.taken` is a driver error, never a reviewer
 defect.**
 
+## ⚠️ .the gate counts REVIEWERS. this rule counts POINTS
+
+the entrance gate refuses a round while any reviewer still owes a `.taken`. it cannot check that
+the one `.taken` you wrote answered all six points that reviewer raised — **one file discharges the
+slug, however many points sit behind it.**
+
+⇒ **so the gate enforces the parent rule and not this one.** a round that passes the door can still
+violate every line above, and the reviewer — which *does* count points — re-raises each one you
+skipped. the door is a floor; this rule is the work.
+
 ## .enforcement
 
 - a re-arrival with any open `.given.by_peer` point that has no paired `.taken.by_self` =
@@ -76,6 +86,10 @@ defect.**
 ## .see also
 
 - `rule.always.converge-with-reviewers._.md` — the parent: converge rather than escalate
+- 🔴 `rule.forbid.unanswered-exits-from-a-blocker` — **the forbid twin.** this rule says every point
+  owes a `.taken`; that one says the other doors out of a blocker are shut. its worked case is a
+  **reported** 32-iteration stall with 300+ givens and zero takens — reported, never measured
+  first-hand, and its `example=` file states why
 - `rule.always.converge-to-terminal` — the whole-ladder discipline this feeds
 - `rule.always.diagnose-reviewer-malfunctions` — what a **real** reviewer break looks like, so an
   unanswered point is never mistaken for one

@@ -13,6 +13,7 @@ import { enumRouteGuardJudgeFiles } from '../judge/enumRouteGuardJudgeFiles';
 import { getReviewCountsViaRegex } from '../review/getReviewCountsViaRegex';
 import { getReviewTacticFromContent } from '../review/getReviewTacticFromContent';
 import { enumRouteGuardReviewPeerFiles } from '../review/peer/enumRouteGuardReviewPeerFiles';
+import { asArtifactStreamContent } from '../tree/asArtifactStreamContent';
 
 /**
  * .what = retrieves prior guard artifacts for a specific hash
@@ -257,25 +258,13 @@ const parseJudgeMetadata = (
 const parseTreeBuckets = (
   content: string,
 ): { stdout: string; stderr: string } => {
-  // extract stdout from tree bucket (between "├─ stdout" and next "├─" or "└─")
-  const stdoutMatch = content.match(
-    /├─ stdout[\s\S]*?│ {2}│\n([\s\S]*?)│ {2}│\n│ {2}└─/,
-  );
-  const stdoutLines =
-    stdoutMatch?.[1]
-      ?.split('\n')
-      .map((line) => line.replace(/^│ {2}│ {2}/, ''))
-      .join('\n') ?? '';
-
-  // extract stderr from tree bucket
-  const stderrMatch = content.match(
-    /├─ stderr[\s\S]*?│ {2}│\n([\s\S]*?)│ {2}│\n│ {2}└─/,
-  );
-  const stderrLines =
-    stderrMatch?.[1]
-      ?.split('\n')
-      .map((line) => line.replace(/^│ {2}│ {2}/, ''))
-      .join('\n') ?? '';
-
-  return { stdout: stdoutLines.trim(), stderr: stderrLines.trim() };
+  // 🔴 this was the THIRD copy of one grammar — `formatTreeBucket` writes it, and two
+  //    cache readers each carried their own regex for it. all three drifted the moment
+  //    the writer learned to close an artifact with `└─ label` and a 3-space column:
+  //    both readers matched only the middle-child form, so a cached review's stdout
+  //    and stderr silently read as empty (rule.require.single-source-of-truth-for-render)
+  return {
+    stdout: asArtifactStreamContent({ content, label: 'stdout' }),
+    stderr: asArtifactStreamContent({ content, label: 'stderr' }),
+  };
 };

@@ -1,0 +1,11 @@
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
+
+exports[`formatArtifactStreamBuckets given: [case6] snapshot verification when: [t0] a zero-exit judge with no stderr then: matches snapshot — no empty box, no marker with an absent peer: judge artifact - zero exit, stdout only 1`] = `
+"└─ stdout
+   ├─
+   │
+   │  passed: true
+   │  reason: all clear
+   │
+   └─"
+`;

@@ -11,8 +11,14 @@ a peer review is a conversation, not a verdict. settle it yourself through the c
 
 the loop: read each `.given.by_peer` → fix, or marshal the evidence → write `.taken.by_self` → `--as contemplated --that <slug>` → re-submit. the reviewer re-reads with your articulation AND your diff in context.
 
+⚠️ **the `--as contemplated` step is enforced, never merely asked.** the entrance gate refuses the re-submit while any reviewer still owes a `.taken` — so a halt that names slugs at re-submission is that step skipped, never a guard defect. and **the code fix does not stand in for the articulation**: the debt is keyed to the reviewer, so an edit alone leaves it open.
+
 persuade with a cited rule, path, or line. a bare *"i disagree"* converges no one.
 
 escalate only for: a foreman-only key · a wisher scope decision · two reviewers that demand opposites.
 
-⇒ zoom-in: `…via-a-taken-per-point` — every open point owes a `.taken`, every round.
+## 🔴 there is NO other door out of a blocker
+
+⇒ **the conversation is not overhead on convergence; it IS the convergence.** the worked case that establishes it lives with the rule that owns it: `rule.forbid.unanswered-exits-from-a-blocker.example=the-28-iteration-stall.md`.
+
+⇒ zoom-ins: `…via-a-taken-per-point` — every open point owes a `.taken`, every round · `rule.forbid.unanswered-exits-from-a-blocker` — the forbid twin: an edit-and-re-roll, an empty `.taken`, a spent budget, and `--as blocked` are each an exit, and each is cheaper than an answer.

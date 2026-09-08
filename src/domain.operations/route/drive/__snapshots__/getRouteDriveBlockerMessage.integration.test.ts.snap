@@ -1,0 +1,28 @@
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
+
+exports[`getRouteDriveBlockerMessage given: [case3] uncontemplated with an absent taken when: [t0] the dispatcher runs with the uncontemplated blocker then: matches snapshot — the held stop, as a driver reads it: stophook - held stop, reply owed 1`] = `
+"🦉 the reviewers await your reply
+
+🌕 lets respond
+   │
+   ├─ review.peer 1/1
+   │  ├─ slug = arch
+   │  ├─ status = retired from the guard config
+   │  ├─ verdict = 2 blockers, 1 nitpick
+   │  ├─ contemplate from
+   │  │  └─ .reviews/peer/1.vision._.review.i001.<hash>.r001._.given.by_peer.arch.md
+   │  └─ articulate into
+   │     └─ .reviews/peer/1.vision._.review.i001.<hash>.r001._.taken.by_self.arch.md
+   │
+   ├─ why a retired reviewer still awaits
+   │  └─ it spoke, and was then removed from the guard config. what it said
+   │     was never answered, and a debt is keyed to the reviewer rather than
+   │     to the artifact, so no edit to the artifact can clear it.
+   │
+   ├─ what to do — answer the retired reviewer
+   │  └─ answer it as you would any other — write the .taken above. it will
+   │     not speak again, so your answer is what discharges it.
+   │
+   └─ when you've contemplated this reviewer, run
+      └─ rhx route.stone.set --stone 1.vision --as contemplated --that arch"
+`;

@@ -2,6 +2,7 @@ import * as fs from 'fs/promises';
 import * as path from 'path';
 import { given, then, useBeforeAll, useThen, when } from 'test-fns';
 
+import { answerEveryPeerGiven } from './.test/answerEveryPeerGiven';
 import {
   execAsync,
   genTempDirForRhachet,
@@ -56,6 +57,14 @@ describe('driver.route.peer-mixed-verdict-replay.acceptance', () => {
           path.join(tempDir, 'src', 'feature.ts'),
           `export const feature = () => "${version}";`,
         );
+
+        // 🔴 the reply belongs INSIDE the loop, and the whole journey rests on it.
+        //    without it, v2 and v3 halt at the entrance gate on the debt v1 left, so
+        //    no review round runs, l1 never spends its budget, and l3 never unlocks to
+        //    malfunction. the mixed-verdict halt this suite replays would then never
+        //    occur — and [t0]/[t1] would assert against a bare, unrelated halt
+        await answerEveryPeerGiven({ cwd: tempDir, stone: '1.execute' });
+
         await invokeRouteSkill({
           skill: 'route.stone.set',
           args: { stone: '1.execute', route: '.', as: 'passed' },

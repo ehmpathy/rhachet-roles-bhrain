@@ -41,7 +41,20 @@ the key is the **artifact**, never your diff. so the cost of a re-arrival invert
 | **the artifact** — one line of the yield | changed | 🔴 **every reviewer**, clean ones included |
 
 ⇒ **a one-word fix to a yield costs more reviewer time than a subsystem rewrite in `src/`.** that
-is the fact worth carrying, and no discipline substitutes for it.
+is the fact to carry, and no discipline substitutes for it.
+
+## ⚠️ .this hash is the CACHE key. it is not the contemplation debt key
+
+two things could be keyed to the artifact hash, and only one is:
+
+| keyed to the artifact hash? | |
+|---|---|
+| ✅ **a clean reviewer's cached verdict** | this brief. an artifact edit kills it |
+| ⛔ **an unanswered blocker's `.taken` debt** | keyed to the **reviewer**. an artifact edit does **not** kill it |
+
+⇒ so an edit buys you a fresh ladder and **no discharge at all**. a driver who reads this brief as
+*"an edit resets the state"* has the cache right and the debt exactly backwards —
+`rule.forbid.unanswered-exits-from-a-blocker` is the door that shuts on it.
 
 ## .the measured case
 
@@ -55,11 +68,11 @@ carried blockers, so no cache applied to them at any hash.
 
 | the situation | the move |
 |---|---|
-| you fixed a blocker in `src/` and hesitate to re-arrive | **re-arrive.** the clean reviewers cost naught |
+| you fixed a blocker in `src/` and hesitate to re-arrive | **re-arrive.** the clean reviewers cost naught. ⚠️ **write the `.taken` first** — the entrance gate refuses a round while you owe one, and the fix alone does not discharge it |
 | the yield is **wrong** and you hesitate to touch it | 🔴 **fix it.** see below — this brief must never be the reason a yield stays wrong |
 | you hold several **cosmetic** yield edits | batch them into one touch. one ladder, not four |
 | a reviewer is exhausted but clean | it still passes; the cache precedes the exhaustion check |
-| a reviewer is exhausted **with** blockers | no cache. add budget (`rule.always.spend-own-levers-before-escalation`) |
+| a reviewer is exhausted **with** blockers | no cache, **and its blocker still owes a `.taken`** — the debt outlives the budget. answer it, then add budget if the reviewer must re-read to confirm (`rule.always.spend-own-levers-before-escalation`) |
 
 ## 🔴 .this must NOT discourage a yield edit — correctness outranks the cache
 

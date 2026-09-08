@@ -3,6 +3,8 @@ import { BadRequestError } from 'helpful-errors';
 import { PassageReport } from '@src/domain.objects/Driver/PassageReport';
 import { getGuardPeerReviews } from '@src/domain.objects/Driver/RouteStoneGuard';
 
+import { getRepoRootWithFallback } from '../guard/getRepoRootWithFallback';
+import { asSanitizedPeerReviewSlug } from '../guard/review/peer/asSanitizedPeerReviewSlug';
 import {
   getRouteGuardReviewPeerContemplationStatus,
   type RouteGuardReviewPeerUncontemplated,
@@ -21,13 +23,6 @@ import { getAllStones } from './getAllStones';
 const getOneScopedUncontemplated = (input: {
   uncontemplated: RouteGuardReviewPeerUncontemplated[];
 }): RouteGuardReviewPeerUncontemplated => input.uncontemplated[0]!;
-
-/**
- * .what = sanitizes a peer slug the same way the guard does for filenames
- * .why = --that names the sanitized slug the driver saw in the reply-prompt;
- *        valid-slug validation must compare against that same sanitized form
- */
-const asSanitizedSlug = (slug: string): string => slug.replace(/[/\\]/g, '-');
 
 /**
  * .what = acknowledges one reviewer's contemplation, or guides the driver to it
@@ -52,23 +47,49 @@ export const setStoneAsContemplated = async (input: {
   if (!stoneMatched)
     throw new BadRequestError('stone not found', { stone: input.stone });
 
-  // validate --that names a real peer reviewer (compare sanitized slugs)
-  const peerReviews = stoneMatched.guard
-    ? getGuardPeerReviews(stoneMatched.guard)
-    : [];
-  const validSlugs = peerReviews.map((r) => asSanitizedSlug(r.slug));
-  if (!validSlugs.includes(input.slug))
-    throw new BadRequestError(
-      `invalid peer reviewer slug: "${input.slug}". valid options: ${validSlugs.join(', ')}`,
-      { stone: input.stone, slug: input.slug, validSlugs },
-    );
-
-  // the shared readiness computation, scoped to this one reviewer (B2)
+  // the shared readiness computation, scoped to this one reviewer (B2). it also reports
+  // every slug that has SPOKEN on this stone, which the validity check below reads
   const status = await getRouteGuardReviewPeerContemplationStatus({
     route: input.route,
     stone: stoneMatched,
     scope: { slug: input.slug },
   });
+
+  // validate --that names a real peer reviewer (compare sanitized slugs)
+  //
+  // 🔴 the valid set is the live config UNION every reviewer that has actually spoken —
+  //    never the config alone. a RETIRED reviewer is absent from the config by definition
+  //    (that is what `retired` MEANS), and the halt prompt names it and prints this exact
+  //    command for it. a config-only check therefore rejects the one move the prompt just
+  //    instructed, with `invalid peer reviewer slug` — so the guard refuses its own
+  //    guidance, on the reviewer whose copy exists to make it legible (r10 blocker.1, i004).
+  //
+  // ⚠️ the union does NOT weaken the typo guard, which is what this check is for: a
+  //    mistyped slug names no configured reviewer AND has authored no given, so it still
+  //    throws, and the listed options now name every slug the driver could legitimately
+  //    pass rather than only the subset that still runs.
+  //
+  // .note = this runs AFTER the status rather than before, so the spoken half comes from
+  //         the read the status already did — one full corpus read per invocation rather
+  //         than two (r11 nitpick.1, i005). the throw still precedes every USE of the
+  //         status, so an invalid slug is rejected exactly as before; the only difference
+  //         is one wasted read on the typo path, which is the rare one
+  const peerReviews = stoneMatched.guard
+    ? getGuardPeerReviews(stoneMatched.guard)
+    : [];
+  // .note = the sanitize is the WRITE side's grammar, so it is reached for, never
+  //         re-typed — `--that <slug>` names the sanitized form the prompt printed
+  const slugsConfigured = peerReviews.map((r) =>
+    asSanitizedPeerReviewSlug({ slug: r.slug }),
+  );
+  const validSlugs = [
+    ...new Set([...slugsConfigured, ...status.slugsSpoken]),
+  ].sort();
+  if (!validSlugs.includes(input.slug))
+    throw new BadRequestError(
+      `invalid peer reviewer slug: "${input.slug}". valid options: ${validSlugs.join(', ')}`,
+      { stone: input.stone, slug: input.slug, validSlugs },
+    );
 
   // ready = the .taken is present, or the reviewer raised no blockers (clean /
   // nitpick-only). the ack must tell the truth about WHICH: the status reports
@@ -106,12 +127,19 @@ export const setStoneAsContemplated = async (input: {
   const reviewer = getOneScopedUncontemplated({
     uncontemplated: status.uncontemplated,
   });
+
+  // .note = read HERE rather than at the top, so the ready path — the common one —
+  //         pays no git subprocess. only a halt prints a path, so only a halt needs
+  //         the root to print it against
+  const root = await getRepoRootWithFallback({ from: input.route });
+
   return {
     contemplated: false,
     emit: {
       stdout: formatRouteGuardReviewPeerContemplatePrompt({
         case: reviewer.tag,
         stone: stoneMatched.name,
+        root,
         reviewer,
       }),
     },

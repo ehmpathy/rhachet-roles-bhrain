@@ -2,6 +2,7 @@ import * as fs from 'fs/promises';
 import * as path from 'path';
 import { given, then, useBeforeAll, useThen, when } from 'test-fns';
 
+import { answerEveryPeerGiven } from './.test/answerEveryPeerGiven';
 import {
   execAsync,
   genTempDirForRhachet,
@@ -77,13 +78,18 @@ describe('driver.route.review-blocks-approval.acceptance', () => {
     });
 
     when('[t2] pass attempted with approval but reviews still fail', () => {
-      const result = useThen('pass fails despite approval', async () =>
-        invokeRouteSkill({
+      const result = useThen('pass fails despite approval', async () => {
+        // answer whatever the prior round left owed, before this one is entered.
+        // a no-op on the first arrival; on every later one it is what the entrance
+        // gate now requires — an edit alone no longer buys re-entry
+        await answerEveryPeerGiven({ cwd: scene.tempDir, stone: '1.plan' });
+
+        return invokeRouteSkill({
           skill: 'route.stone.set',
           args: { stone: '1.plan', route: '.', as: 'passed' },
           cwd: scene.tempDir,
-        }),
-      );
+        });
+      });
 
       then('exit code is non-zero', () => {
         expect(result.code).not.toEqual(0);
@@ -120,13 +126,18 @@ describe('driver.route.review-blocks-approval.acceptance', () => {
     });
 
     when('[t4] pass reattempted after fix', () => {
-      const result = useThen('pass succeeds (both judges pass)', async () =>
-        invokeRouteSkill({
+      const result = useThen('pass succeeds (both judges pass)', async () => {
+        // answer whatever the prior round left owed, before this one is entered.
+        // a no-op on the first arrival; on every later one it is what the entrance
+        // gate now requires — an edit alone no longer buys re-entry
+        await answerEveryPeerGiven({ cwd: scene.tempDir, stone: '1.plan' });
+
+        return invokeRouteSkill({
           skill: 'route.stone.set',
           args: { stone: '1.plan', route: '.', as: 'passed' },
           cwd: scene.tempDir,
-        }),
-      );
+        });
+      });
 
       then('exit code is 0', () => {
         expect(result.code).toEqual(0);

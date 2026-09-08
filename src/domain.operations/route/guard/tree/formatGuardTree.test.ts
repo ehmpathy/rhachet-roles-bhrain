@@ -1,6 +1,6 @@
 import { given, then, when } from 'test-fns';
 
-import { formatGuardTree } from './formatGuardTree';
+import { formatGuardTree, formatReviewsMeterLines } from './formatGuardTree';
 
 describe('formatGuardTree', () => {
   given(
@@ -1103,6 +1103,69 @@ describe('formatReviewsMeterLines', () => {
         );
       },
     );
+  });
+
+  given('[case2] an empty meter set — no reviewers to announce', () => {
+    // .why = the exhausted-status drive halt reaches this formatter on a stone that
+    //        declares NO guard, so the meter set is legitimately empty. before this fix
+    //        the formatter still emitted its `├─ reviews` header, and the halt rendered a
+    //        connector that promised reviewer rows and delivered none — a driver could not
+    //        tell an absent reviewer set from a dropped render
+    //        (rule.forbid.snapshot-visual-blemishes · r7 nitpick.1, i016).
+    //
+    // 🔴 this clamp BITES: revert the `meters.length === 0` guard in formatGuardTree and
+    //    [t0] goes red on `toEqual([])` — it would return the one header line instead. it
+    //    is the only unit that exercises the branch.
+    when('[t0] the header is requested but no meter exists', () => {
+      then('the whole section is omitted, header included', () => {
+        const lines = formatReviewsMeterLines({
+          meters: [],
+          baseIndent: '      ',
+          sectionIndent: '│  ',
+          includeHeader: true,
+          headerPrefix: '├─',
+        });
+
+        // 🔴 assert the EMPTY ARRAY, never merely `not.toContain('reviews')`. a negative
+        //    assertion passes for any output that happens to omit the word — a bare `├─ `
+        //    stub among them. the array identity is what pins "no section at all".
+        expect(lines).toEqual([]);
+      });
+    });
+
+    when('[t1] a meter exists alongside the same call shape', () => {
+      then(
+        'the header and its row both render — the guard is not over-broad',
+        () => {
+          const lines = formatReviewsMeterLines({
+            meters: [
+              {
+                slug: 'limited',
+                level: 1,
+                rounds: 2,
+                budget: 2,
+                verdict: 'exhausted',
+                awaits: false,
+                overruled: false,
+                blockers: 1,
+                nitpicks: 0,
+                path: '.reviews/peer/r1.md',
+              },
+            ],
+            baseIndent: '      ',
+            sectionIndent: '│  ',
+            includeHeader: true,
+            headerPrefix: '├─',
+          });
+
+          // the positive half of the pair: the guard must fire ONLY on the empty set, so a
+          // single meter still yields its header and at least one row beneath it
+          expect(lines[0]).toEqual('      ├─ reviews');
+          expect(lines.length).toBeGreaterThan(1);
+          expect(lines.join('\n')).toContain('limited');
+        },
+      );
+    });
   });
 
   given(

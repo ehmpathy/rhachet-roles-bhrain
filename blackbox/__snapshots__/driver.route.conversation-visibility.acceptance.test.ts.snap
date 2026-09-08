@@ -16,13 +16,9 @@ exports[`driver.route.conversation-visibility.acceptance given: [case1] a prior 
 │  │  ## conversation seen (0 files)
 │  │
 │  └─
-├─ stderr
-│  ├─
-│  │
-│  └─
-└─ passage blocked
-   ├─ blocked by malfunction
-   └─ exit code: 1 💥
+├─ passage blocked
+│  ├─ blocked by malfunction
+│  └─ exit code: 1 💥
 └─ tallied
    ├─ 1 blocker
    └─ 0 nitpicks"
@@ -43,10 +39,6 @@ exports[`driver.route.conversation-visibility.acceptance given: [case1] a prior 
 │  │  - 1.execute._.review.i001.00000000.r001._.taken.by_self.seer.md
 │  │  - 1.execute._.review.i001.00000000.r002._.given.by_peer.blind.md
 │  │  - 1.execute._.review.i001.00000000.r002._.taken.by_self.blind.md
-│  │
-│  └─
-├─ stderr
-│  ├─
 │  │
 │  └─
 └─ tallied
@@ -76,7 +68,7 @@ exports[`driver.route.conversation-visibility.acceptance given: [case2] a first 
    ├─ passage = malfunction
    ├─ reason = reviewer or judge malfunctioned
    ├─ options
-   │  ├─ overrule the malfunction
+   │  ├─ overrule the malfunction — a human must grant
    │  │  └─ rhx route.stone.set --stone 1.execute --as overruled
    │  └─ or fix the reviewer, then retry
    └─ guard

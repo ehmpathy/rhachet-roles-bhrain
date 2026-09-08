@@ -1,10 +1,9 @@
 import type { RouteStone } from '@src/domain.objects/Driver/RouteStone';
 
-import { computeStoneReviewInputHash } from '../computeStoneReviewInputHash';
 import {
-  getAllRouteGuardReviewPeerGivensAtHash,
+  getAllRouteGuardReviewPeerGivens,
   type RouteGuardReviewPeerGiven,
-} from './getAllRouteGuardReviewPeerGivensAtHash';
+} from './getAllRouteGuardReviewPeerGivens';
 import { getAllRouteGuardReviewPeersUncontemplated } from './getAllRouteGuardReviewPeersUncontemplated';
 import { getAllRouteGuardReviewPeerTakenMetas } from './getAllRouteGuardReviewPeerTakenMetas';
 import { getRouteGuardReviewPeerPathTaken } from './getRouteGuardReviewPeerPathTaken';
@@ -18,6 +17,8 @@ export interface RouteGuardReviewPeerUncontemplated {
   tag: 'absent' | 'stale';
   blockers: number;
   nitpicks: number;
+  /** true when the counts are fabricated because no verdict could be read */
+  unreadable: boolean;
   pathGiven: string;
   pathTaken: string;
 }
@@ -37,6 +38,7 @@ const asUncontemplatedReviewer = (input: {
     tag: input.entry.tag,
     blockers: given.blockers,
     nitpicks: given.nitpicks,
+    unreadable: given.unreadable,
     pathGiven: given.pathGiven,
     pathTaken: getRouteGuardReviewPeerPathTaken({ pathGiven: given.pathGiven }),
   };
@@ -77,11 +79,27 @@ const asScopedReadyReason = (input: {
  * .what = THE shared readiness computation for the peer-review contemplation gate
  * .why = both the single-slug (--as contemplated --that <slug>) and the all-slug
  *        (passed/arrived/stophook) paths flow through ONE computation, so the
- *        hash-scope + stale-iteration logic cannot drift between the two (B2)
+ *        latest-per-slug read and the given↔taken match cannot drift between the
+ *        two. readiness has no hash scope at all.
  *
- * givens are filtered to the CURRENT iteration hash so a stale prior-iteration
- * given can never block forever; a taken pairs a given by (slug, hash). an
- * optional slug scope narrows the readiness to one reviewer (--as contemplated).
+ * givens are the LATEST per reviewer across every hash. a taken answers the given
+ * whose path DERIVES it. an optional slug scope narrows readiness to one reviewer
+ * (--as contemplated --that <slug>).
+ *
+ * 🔴 a debt is keyed to the REVIEWER, never to the artifact hash. so an edit to the
+ * code under review does not discharge it, and the cheapest exit from a blocker is
+ * an answer rather than a one-line change.
+ *
+ * exactly TWO paths discharge a debt, and both require an actor:
+ *   1. the driver answers — a .taken at the path that given derives
+ *   2. a human overrules the level (getStoneGuardReviewPeerUncontemplatedUnforgiven)
+ *
+ * ⚠️ no path clears a debt on its own. a reviewer that speaks again with 0 blockers
+ * supersedes its own prior blocker, but only after 1 or 2 unlocked the round: the
+ * entrance gate in setStoneAsPassed is stone-level and returns BEFORE any reviewer
+ * runs, so while a debt stands no reviewer speaks.
+ *
+ * ⇒ a stale given cannot be waited out. it is answered, or it is overruled.
  */
 export const getRouteGuardReviewPeerContemplationStatus = async (input: {
   route: string;
@@ -91,18 +109,25 @@ export const getRouteGuardReviewPeerContemplationStatus = async (input: {
   ready: boolean;
   readyReason?: 'responded' | 'no-blockers';
   uncontemplated: RouteGuardReviewPeerUncontemplated[];
+  /**
+   * 🔴 every reviewer slug that has authored a given on this stone — reported BEFORE the
+   * scope narrows, so it is the whole corpus rather than the scoped view.
+   *
+   * .why = `--as contemplated --that <slug>` must accept a RETIRED reviewer (absent from the
+   *        live config by definition) while it still refuses a typo. that valid set is
+   *        (configured ∪ spoken), and `spoken` is exactly what this operation already read.
+   *        reported here so the caller derives it from the same read rather than a second
+   *        full corpus scan of its own (r11 blocker.1 i004 for the single source; r11
+   *        nitpick.1 i005 for the duplicated read).
+   */
+  slugsSpoken: string[];
 }> => {
-  // the current-iteration hash — the generation the driver must contemplate
-  const hashCurrent = await computeStoneReviewInputHash({
-    stone: input.stone,
-    route: input.route,
-  });
-
   // read both sides of the conversation via their communicators
-  const givens = await getAllRouteGuardReviewPeerGivensAtHash({
+  // .note = no hash is computed here. the debt is keyed to the reviewer, so the
+  //         current hash is not an input to readiness at all
+  const givens = await getAllRouteGuardReviewPeerGivens({
     route: input.route,
     stone: input.stone.name,
-    hashCurrent,
   });
   const takens = await getAllRouteGuardReviewPeerTakenMetas({
     route: input.route,
@@ -114,7 +139,6 @@ export const getRouteGuardReviewPeerContemplationStatus = async (input: {
 
   // the pure diff yields the uncontemplated slugs + their absent/stale tag
   const uncontemplatedRaw = getAllRouteGuardReviewPeersUncontemplated({
-    hashCurrent,
     givens: givensScoped,
     takens,
   });
@@ -134,5 +158,10 @@ export const getRouteGuardReviewPeerContemplationStatus = async (input: {
       ? asScopedReadyReason({ slug: input.scope.slug, givens: givensScoped })
       : undefined;
 
-  return { ready, readyReason, uncontemplated };
+  // the whole-corpus slug set, taken from the UNSCOPED givens — sorted + deduped so the
+  // "valid options" a caller lists are stable per machine rather than in glob order, which
+  // is the filesystem's (rule.forbid.order-dependence)
+  const slugsSpoken = [...new Set(givens.map((given) => given.slug))].sort();
+
+  return { ready, readyReason, uncontemplated, slugsSpoken };
 };

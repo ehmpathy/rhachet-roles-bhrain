@@ -75,11 +75,11 @@ exports[`driver.route.peer-contemplation-stale.acceptance given: [case1] a conte
    │  ├─ slug = architect
    │  ├─ verdict = 1 blocker, 0 nitpicks
    │  ├─ contemplate from
-   │  │  └─ [TEMP]/.reviews/peer/1.execute._.review.i002.93f1080dbfbccf8751.r001._.given.by_peer.architect.md
+   │  │  └─ .reviews/peer/1.execute._.review.i002.93f1080dbfbccf8751.r001._.given.by_peer.architect.md
    │  └─ articulate into
-   │     └─ [TEMP]/.reviews/peer/1.execute._.review.i002.93f1080dbfbccf8751.r001._.taken.by_self.architect.md
+   │     └─ .reviews/peer/1.execute._.review.i002.93f1080dbfbccf8751.r001._.taken.by_self.architect.md
    │
-   └─ when you've contemplated each reviewer, run
+   └─ when you've contemplated this reviewer, run
       └─ rhx route.stone.set --stone 1.execute --as contemplated --that architect
 "
 `;

@@ -3,6 +3,7 @@ import * as path from 'path';
 import { given, then, useBeforeAll, useThen, when } from 'test-fns';
 
 import { getSelfReviewArticulationPath } from '../src/domain.operations/route/guard/review/self/getSelfReviewArticulationPath';
+import { answerEveryPeerGiven } from './.test/answerEveryPeerGiven';
 import {
   execAsync,
   genTempDirForRhachet,
@@ -106,13 +107,18 @@ describe('driver.route.drive.blocker.acceptance', () => {
     });
 
     when('[t1] agent attempts to pass stone (blocked on approval)', () => {
-      const result = useThen('route.stone.set fails on approval', async () =>
-        invokeRouteSkill({
+      const result = useThen('route.stone.set fails on approval', async () => {
+        // answer whatever the prior round left owed, before this one is entered.
+        // a no-op on the first arrival; on every later one it is what the entrance
+        // gate now requires — an edit alone no longer buys re-entry
+        await answerEveryPeerGiven({ cwd: scene.tempDir, stone: '1.vision' });
+
+        return invokeRouteSkill({
           skill: 'route.stone.set',
           args: { stone: '1.vision', as: 'passed' },
           cwd: scene.tempDir,
-        }),
-      );
+        });
+      });
 
       then('exit code is non-zero (blocked)', () => {
         expect(result.code).not.toEqual(0);
@@ -191,13 +197,18 @@ describe('driver.route.drive.blocker.acceptance', () => {
     });
 
     when('[t4] agent passes stone after approval', () => {
-      const result = useThen('stone passes', async () =>
-        invokeRouteSkill({
+      const result = useThen('stone passes', async () => {
+        // answer whatever the prior round left owed, before this one is entered.
+        // a no-op on the first arrival; on every later one it is what the entrance
+        // gate now requires — an edit alone no longer buys re-entry
+        await answerEveryPeerGiven({ cwd: scene.tempDir, stone: '1.vision' });
+
+        return invokeRouteSkill({
           skill: 'route.stone.set',
           args: { stone: '1.vision', as: 'passed' },
           cwd: scene.tempDir,
-        }),
-      );
+        });
+      });
 
       then('exit code is 0', () => {
         expect(result.code).toEqual(0);
@@ -261,6 +272,11 @@ describe('driver.route.drive.blocker.acceptance', () => {
         console.error('SETUP FAILED: approve 1.vision', approveResult);
         throw new Error('setup failed: approve 1.vision');
       }
+      // answer whatever the prior round left owed, before this one is entered.
+      // a no-op on the first arrival; on every later one it is what the entrance
+      // gate now requires — an edit alone no longer buys re-entry
+      await answerEveryPeerGiven({ cwd: tempDir, stone: '1.vision' });
+
       const pass1Result = await invokeRouteSkill({
         skill: 'route.stone.set',
         args: { stone: '1.vision', as: 'passed' },
@@ -276,6 +292,11 @@ describe('driver.route.drive.blocker.acceptance', () => {
         path.join(tempDir, '2.research.md'),
         '# Research\n\nResearch done.',
       );
+      // answer whatever the prior round left owed, before this one is entered.
+      // a no-op on the first arrival; on every later one it is what the entrance
+      // gate now requires — an edit alone no longer buys re-entry
+      await answerEveryPeerGiven({ cwd: tempDir, stone: '2.research' });
+
       const pass2Result = await invokeRouteSkill({
         skill: 'route.stone.set',
         args: { stone: '2.research', as: 'passed' },
@@ -296,13 +317,18 @@ describe('driver.route.drive.blocker.acceptance', () => {
     });
 
     when('[t0] agent attempts pass without review.self promise', () => {
-      const result = useThen('blocked on review.self', async () =>
-        invokeRouteSkill({
+      const result = useThen('blocked on review.self', async () => {
+        // answer whatever the prior round left owed, before this one is entered.
+        // a no-op on the first arrival; on every later one it is what the entrance
+        // gate now requires — an edit alone no longer buys re-entry
+        await answerEveryPeerGiven({ cwd: scene.tempDir, stone: '3.blueprint' });
+
+        return invokeRouteSkill({
           skill: 'route.stone.set',
           args: { stone: '3.blueprint', as: 'passed' },
           cwd: scene.tempDir,
-        }),
-      );
+        });
+      });
 
       then('exit code is non-zero', () => {
         expect(result.code).not.toEqual(0);
@@ -385,6 +411,11 @@ describe('driver.route.drive.blocker.acceptance', () => {
           cwd: scene.tempDir,
         });
 
+        // answer whatever the prior round left owed, before this one is entered.
+        // a no-op on the first arrival; on every later one it is what the entrance
+        // gate now requires — an edit alone no longer buys re-entry
+        await answerEveryPeerGiven({ cwd: scene.tempDir, stone: '3.blueprint' });
+
         // try to pass (will fail on peer review)
         return invokeRouteSkill({
           skill: 'route.stone.set',
@@ -460,6 +491,11 @@ describe('driver.route.drive.blocker.acceptance', () => {
           '# Blueprint\n\nFixed API design.',
         );
 
+        // answer whatever the prior round left owed, before this one is entered.
+        // a no-op on the first arrival; on every later one it is what the entrance
+        // gate now requires — an edit alone no longer buys re-entry
+        await answerEveryPeerGiven({ cwd: scene.tempDir, stone: '3.blueprint' });
+
         // trigger review.self for new hash (artifact changed)
         await invokeRouteSkill({
           skill: 'route.stone.set',
@@ -480,6 +516,11 @@ describe('driver.route.drive.blocker.acceptance', () => {
           args: { stone: '3.blueprint', as: 'promised', that: 'design-complete' },
           cwd: scene.tempDir,
         });
+
+        // answer whatever the prior round left owed, before this one is entered.
+        // a no-op on the first arrival; on every later one it is what the entrance
+        // gate now requires — an edit alone no longer buys re-entry
+        await answerEveryPeerGiven({ cwd: scene.tempDir, stone: '3.blueprint' });
 
         // try to pass (will fail on approval)
         return invokeRouteSkill({

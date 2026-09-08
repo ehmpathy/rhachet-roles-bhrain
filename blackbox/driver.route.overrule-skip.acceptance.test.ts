@@ -2,6 +2,7 @@ import * as fs from 'fs/promises';
 import * as path from 'path';
 import { given, then, useBeforeAll, useThen, useWhen, when } from 'test-fns';
 
+import { answerEveryPeerGiven } from './.test/answerEveryPeerGiven';
 import {
   execAsync,
   genTempDirForRhachet,
@@ -41,15 +42,23 @@ describe('driver.route.overrule-skip.acceptance', () => {
     return tempDir;
   };
 
-  const setStone = (input: {
+  const setStone = async (input: {
     tempDir: string;
     as: 'passed' | 'overruled' | 'arrived';
-  }) =>
-    invokeRouteSkill({
+  }) => {
+    // answer whatever the prior round left owed, before this one is entered.
+    // a no-op on the first arrival; on every later one it is what the entrance
+    // gate now requires — an edit alone no longer buys re-entry
+    // (only arrivals pass the gate; an overrule is a human wave, never an arrival)
+    if (input.as === 'passed' || input.as === 'arrived')
+      await answerEveryPeerGiven({ cwd: input.tempDir, stone: '1.feature' });
+
+    return invokeRouteSkill({
       skill: 'route.stone.set',
       args: { stone: '1.feature', route: '.', as: input.as },
       cwd: input.tempDir,
     });
+  };
 
   // ===========================================================================
   // A2 — the wish's canonical scenario: pass → overrule l1 (ONCE) → pass.

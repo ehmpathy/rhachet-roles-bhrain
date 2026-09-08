@@ -139,6 +139,10 @@ always:
       # the glossary dir's own orientation doc. ref because it is read once, on a
       # first visit to domain.terms/ — never on every boot
       - briefs/readme.domain-terms.md
+      # the ejected argument behind ONE row of that readme's gap census. a census is
+      # an index, so a narrative about one member gets its own file — the readme was
+      # a logbook until this came out of it (rule.require.catalog-is-an-index)
+      - briefs/readme.domain-terms.example=flake-is-an-overload.md
       # the ejected occurrence behind rule.require.specialize-…'s honest bound.
       # ref because a demo is read once, to check the claim — never on every boot
       - briefs/rule.require.specialize-a-rule-its-readers-look-past.example=grove-ssh-after-the-split.md

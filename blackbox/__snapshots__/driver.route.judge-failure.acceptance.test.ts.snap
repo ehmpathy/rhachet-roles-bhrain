@@ -9,10 +9,6 @@ exports[`driver.route.judge-failure.acceptance given: [case1] judge command fail
    │  │  error: evaluation crashed unexpectedly
    │  │
    │  └─
-   ├─ stderr
-   │  ├─
-   │  │
-   │  └─
    └─ passage blocked
       ├─ blocked by malfunction
       └─ exit code: 1 💥
@@ -29,7 +25,7 @@ exports[`driver.route.judge-failure.acceptance given: [case1] judge command fail
    ├─ passage = malfunction
    ├─ reason = reviewer or judge malfunctioned
    ├─ options
-   │  ├─ overrule the malfunction
+   │  ├─ overrule the malfunction — a human must grant
    │  │  └─ rhx route.stone.set --stone 1 --as overruled
    │  └─ or fix the reviewer, then retry
    └─ guard
@@ -51,10 +47,6 @@ exports[`driver.route.judge-failure.acceptance given: [case1] judge command fail
    │  │  error: evaluation crashed unexpectedly
    │  │
    │  └─
-   ├─ stderr
-   │  ├─
-   │  │
-   │  └─
    └─ passage blocked
       ├─ blocked by malfunction
       └─ exit code: 1 💥
@@ -71,7 +63,7 @@ exports[`driver.route.judge-failure.acceptance given: [case1] judge command fail
    ├─ passage = malfunction
    ├─ reason = reviewer or judge malfunctioned
    ├─ options
-   │  ├─ overrule the malfunction
+   │  ├─ overrule the malfunction — a human must grant
    │  │  └─ rhx route.stone.set --stone 1 --as overruled
    │  └─ or fix the reviewer, then retry
    └─ guard

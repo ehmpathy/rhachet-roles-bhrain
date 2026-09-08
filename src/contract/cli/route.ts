@@ -22,7 +22,7 @@ import { computeReviewThresholdVerdict } from '@src/domain.operations/route/guar
 import { computeReviewTotalsFromFiles } from '@src/domain.operations/route/guard/review/computeReviewTotalsFromFiles';
 import { computeStoneReviewInputHash } from '@src/domain.operations/route/guard/review/computeStoneReviewInputHash';
 import { enumRouteGuardReviewPeerFiles } from '@src/domain.operations/route/guard/review/peer/enumRouteGuardReviewPeerFiles';
-import { getLatestReviewFilesPerIndex } from '@src/domain.operations/route/guard/review/peer/getLatestReviewFilesPerIndex';
+import { getLatestReviewFilesPerSlug } from '@src/domain.operations/route/guard/review/peer/getLatestReviewFilesPerSlug';
 import { getNonOverruledReviewFiles } from '@src/domain.operations/route/guard/review/peer/getNonOverruledReviewFiles';
 import { getStoneGuardLevelClearance } from '@src/domain.operations/route/guard/review/peer/meter/getStoneGuardLevelClearance';
 import { getUnrunUnlockedLevels } from '@src/domain.operations/route/guard/review/peer/meter/getUnrunUnlockedLevels';
@@ -472,10 +472,12 @@ options:
 
 output:
   when the stone can self-drive, route.drive echoes the current stone + guidance.
-  when it has halted and needs a human, it switches to a halt message instead:
-    ✋ halted, stone marked blocked         a driver wall (--as blocked) — clear it
-    👋 halted, peer reviewer budget exhausted   approve as-is, or extend the budget
-    💥 halted, guard malfunction            a reviewer or judge broke — a human must fix
+  when it has halted, it switches to a halt message that names who owns each remedy:
+    ✋ halted, stone marked blocked            a driver wall (--as blocked) — clear it
+    👋 halted, peer reviewer budget exhausted  two levers, sorted by owner:
+                                                increase budget — yours to spend
+                                                approve as-is — a human must grant
+    💥 halted, guard malfunction               a reviewer or judge broke — a human must fix
   onStop honors the same halt: exit 2 keeps the route in motion, exit 0 allows a
   clean stop, exit 1 escalates a malfunction (per rule.require.exit-code-semantics).
   onBoot always exits 0 (it never blocks session start).
@@ -1292,11 +1294,18 @@ const judgeReviewed = async (input: {
     route: input.route,
   });
 
-  // find review files for this stone and hash
+  // find review files for this stone, across EVERY hash
+  // 🔴 .why not scoped to `hash` = the meter (the tree a human reads) crosses hashes keyed by
+  //    slug; this judge read the current hash alone. so once a reviewer exhausted, an edit moved
+  //    the hash and that reviewer's verdict left the tally while the tree still printed it. the
+  //    two readers disagreed, and it failed in BOTH directions: every reviewer exhausted tallies
+  //    EMPTY (a false block, `no review files found for hash …`), one reviewer exhausted
+  //    UNDERCOUNTS (a false pass, which discharges a verdict no one addressed — the same exit
+  //    this behavior exists to shut). the latest-per-slug pick below restores the one reach
+  //    (routeStoneJudgeTally.acceptance.test.ts)
   const reviewFiles = await enumRouteGuardReviewPeerFiles({
     route: input.route,
     stone: input.stone,
-    hash,
   });
 
   if (reviewFiles.length === 0) {
@@ -1330,8 +1339,10 @@ const judgeReviewed = async (input: {
     process.exit(2);
   }
 
-  // get latest review per index (later iterations supersede earlier)
-  const latestReviewFiles = getLatestReviewFilesPerIndex({ reviewFiles });
+  // get the latest review per SLUG (later iterations supersede earlier, across every hash)
+  // .why slug, not index = "latest" is a property of the REVIEWER. an index is a position in the
+  //      guard's declaration order, so it cannot carry a verdict across the hash move above
+  const latestReviewFiles = getLatestReviewFilesPerSlug({ reviewFiles });
 
   // check for exhausted reviewers with human approval override (single-sourced op)
   // .why = per wish: "once they approve for either, they approve for both"

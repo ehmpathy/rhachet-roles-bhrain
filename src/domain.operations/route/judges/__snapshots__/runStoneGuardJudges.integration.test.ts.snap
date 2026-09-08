@@ -1,17 +1,13 @@
 // Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
 
 exports[`runStoneGuardJudges given: [case1] guard with echo judge command that passes when: [t0] judges are executed then: artifact snapshot matches 1`] = `
-"├─ stdout
-│  ├─
-│  │
-│  │  passed: true
-│  │  reason: all checks passed
-│  │
-│  └─
-├─ stderr
-│  ├─
-│  │
-│  └─"
+"└─ stdout
+   ├─
+   │
+   │  passed: true
+   │  reason: all checks passed
+   │
+   └─"
 `;
 
 exports[`runStoneGuardJudges given: [case1] guard with echo judge command that passes when: [t0] judges are executed then: return value snapshot matches 1`] = `
@@ -37,17 +33,13 @@ reason: all checks passed
 `;
 
 exports[`runStoneGuardJudges given: [case2] guard with judge command that fails when: [t0] judges are executed then: artifact snapshot matches 1`] = `
-"├─ stdout
-│  ├─
-│  │
-│  │  passed: false
-│  │  reason: blockers found
-│  │
-│  └─
-├─ stderr
-│  ├─
-│  │
-│  └─"
+"└─ stdout
+   ├─
+   │
+   │  passed: false
+   │  reason: blockers found
+   │
+   └─"
 `;
 
 exports[`runStoneGuardJudges given: [case2] guard with judge command that fails when: [t0] judges are executed then: return value snapshot matches 1`] = `
@@ -73,31 +65,23 @@ reason: blockers found
 `;
 
 exports[`runStoneGuardJudges given: [case3] guard with multiple judge commands when: [t0] judges are executed then: artifact snapshots match 1`] = `
-"├─ stdout
-│  ├─
-│  │
-│  │  passed: true
-│  │  reason: review passed
-│  │
-│  └─
-├─ stderr
-│  ├─
-│  │
-│  └─"
+"└─ stdout
+   ├─
+   │
+   │  passed: true
+   │  reason: review passed
+   │
+   └─"
 `;
 
 exports[`runStoneGuardJudges given: [case3] guard with multiple judge commands when: [t0] judges are executed then: artifact snapshots match 2`] = `
-"├─ stdout
-│  ├─
-│  │
-│  │  passed: false
-│  │  reason: approval required
-│  │
-│  └─
-├─ stderr
-│  ├─
-│  │
-│  └─"
+"└─ stdout
+   ├─
+   │
+   │  passed: false
+   │  reason: approval required
+   │
+   └─"
 `;
 
 exports[`runStoneGuardJudges given: [case3] guard with multiple judge commands when: [t0] judges are executed then: return value snapshot matches 1`] = `
@@ -140,17 +124,13 @@ reason: approval required
 `;
 
 exports[`runStoneGuardJudges given: [case4] guard with $route variable in judge command when: [t0] judges are executed with $route substitution then: artifact snapshot matches 1`] = `
-"├─ stdout
-│  ├─
-│  │
-│  │  passed: true
-│  │  reason: marker found at <route-path>
-│  │
-│  └─
-├─ stderr
-│  ├─
-│  │
-│  └─"
+"└─ stdout
+   ├─
+   │
+   │  passed: true
+   │  reason: marker found at <route-path>
+   │
+   └─"
 `;
 
 exports[`runStoneGuardJudges given: [case4] guard with $route variable in judge command when: [t0] judges are executed with $route substitution then: return value snapshot matches 1`] = `
@@ -176,17 +156,13 @@ reason: marker found at <route-path>
 `;
 
 exports[`runStoneGuardJudges given: [case5] passed judge is cached on retry when: [t0] judge passes on first attempt then: artifact snapshot matches 1`] = `
-"├─ stdout
-│  ├─
-│  │
-│  │  passed: true
-│  │  reason: all checks passed
-│  │
-│  └─
-├─ stderr
-│  ├─
-│  │
-│  └─"
+"└─ stdout
+   ├─
+   │
+   │  passed: true
+   │  reason: all checks passed
+   │
+   └─"
 `;
 
 exports[`runStoneGuardJudges given: [case5] passed judge is cached on retry when: [t0] judge passes on first attempt then: return value snapshot matches 1`] = `
@@ -212,17 +188,13 @@ reason: all checks passed
 `;
 
 exports[`runStoneGuardJudges given: [case6] failed judge is NOT cached (retries fresh) when: [t0] judge fails on first attempt then: artifact snapshot matches 1`] = `
-"├─ stdout
-│  ├─
-│  │
-│  │  passed: false
-│  │  reason: blockers found
-│  │
-│  └─
-├─ stderr
-│  ├─
-│  │
-│  └─"
+"└─ stdout
+   ├─
+   │
+   │  passed: false
+   │  reason: blockers found
+   │
+   └─"
 `;
 
 exports[`runStoneGuardJudges given: [case6] failed judge is NOT cached (retries fresh) when: [t0] judge fails on first attempt then: return value snapshot matches 1`] = `
@@ -248,17 +220,13 @@ reason: blockers found
 `;
 
 exports[`runStoneGuardJudges given: [case7] judge exits with code 0 (passed) when: [t0] judge exits 0 then: artifact snapshot matches 1`] = `
-"├─ stdout
-│  ├─
-│  │
-│  │  passed: true
-│  │  reason: judge passed
-│  │
-│  └─
-├─ stderr
-│  ├─
-│  │
-│  └─"
+"└─ stdout
+   ├─
+   │
+   │  passed: true
+   │  reason: judge passed
+   │
+   └─"
 `;
 
 exports[`runStoneGuardJudges given: [case7] judge exits with code 0 (passed) when: [t0] judge exits 0 then: return value snapshot matches 1`] = `
@@ -289,10 +257,6 @@ exports[`runStoneGuardJudges given: [case8] judge exits with code 2 (constraint)
 │  │
 │  │  passed: false
 │  │  reason: approval required
-│  │
-│  └─
-├─ stderr
-│  ├─
 │  │
 │  └─
 └─ passage blocked
@@ -370,10 +334,6 @@ exports[`runStoneGuardJudges given: [case10] blocked judge (exit 2) is NOT cache
 │  │  reason: approval required
 │  │
 │  └─
-├─ stderr
-│  ├─
-│  │
-│  └─
 └─ passage blocked
    ├─ blocked by constraints
    └─ exit code: 2 ✋"
@@ -402,17 +362,13 @@ reason: approval required
 `;
 
 exports[`runStoneGuardJudges given: [case11] guard with $rhx variable in judge command when: [t0] judge uses $rhx variable then: artifact snapshot matches 1`] = `
-"├─ stdout
-│  ├─
-│  │
-│  │  passed: true
-│  │  reason: rhx=<repo-root>/node_modules/.bin/rhx
-│  │
-│  └─
-├─ stderr
-│  ├─
-│  │
-│  └─"
+"└─ stdout
+   ├─
+   │
+   │  passed: true
+   │  reason: rhx=<repo-root>/node_modules/.bin/rhx
+   │
+   └─"
 `;
 
 exports[`runStoneGuardJudges given: [case11] guard with $rhx variable in judge command when: [t0] judge uses $rhx variable then: return value snapshot matches 1`] = `
@@ -438,17 +394,13 @@ reason: rhx=<repo-root>/node_modules/.bin/rhx
 `;
 
 exports[`runStoneGuardJudges given: [case12] guard with $rhachet variable in judge command when: [t0] judge uses $rhachet variable then: artifact snapshot matches 1`] = `
-"├─ stdout
-│  ├─
-│  │
-│  │  passed: true
-│  │  reason: rhachet=<repo-root>/node_modules/.bin/rhachet
-│  │
-│  └─
-├─ stderr
-│  ├─
-│  │
-│  └─"
+"└─ stdout
+   ├─
+   │
+   │  passed: true
+   │  reason: rhachet=<repo-root>/node_modules/.bin/rhachet
+   │
+   └─"
 `;
 
 exports[`runStoneGuardJudges given: [case12] guard with $rhachet variable in judge command when: [t0] judge uses $rhachet variable then: return value snapshot matches 1`] = `

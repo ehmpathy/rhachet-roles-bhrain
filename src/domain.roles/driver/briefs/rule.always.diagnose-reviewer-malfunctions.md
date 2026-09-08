@@ -35,12 +35,26 @@ diagnose first, then route by who can fix it:
 
 | the cause is... | you must... |
 |-----------------|-------------|
-| driver-fixable | fix it yourself, then re-arrive |
+| driver-fixable | fix it yourself, **answer its given**, then re-arrive — see below |
 | human-fixable | surface the exact fix command / step for the human |
 | unclear | read the reviewer's stderr + logs, classify, then route |
 
 in every case, the escalation — when needed — names the **cause and the fix**, never just
 the symptom (see `rule.require.errors-name-the-fix`).
+
+## 🔴 .a malfunctioned reviewer still owes you a `.taken`
+
+an unreadable verdict is not a clean one. `asPeerGivenVerdict` scores an undetected count as **one
+blocker**, because `contract.reviewer-output` is flat about it: *"if it finds no numeric count it
+can NOT assume zero."* so its given **gates**, exactly as a readable rejection does.
+
+⚠️ **a repair alone does not re-open the door.** the fix changes the code; the debt is keyed to the
+reviewer, so it stands until you answer it. the halt prompt names the `.taken` path — a malfunction
+is dischargeable, never a deadlock.
+
+⇒ **the reviewer is the party that malfunctioned; you are still the party that must say so.** the
+`.taken` is where you name the cause and the fix — the same content this rule already demands of an
+escalation, written one step earlier.
 
 ## .driver-fixable causes
 
@@ -55,31 +69,40 @@ these are yours to fix. do not escalate them:
 - a **context overflow** — the reviewer's prompt exceeded the window, so it reviewed naught. see
   below; it is the one cause with a recipe rather than a repair
 
-fix it, re-arrive, and let the reviewer run clean.
+fix it, **answer its given**, re-arrive, and let the reviewer run clean.
 
-### 🔴 the overflowed reviewer — re-run the rubric scoped
+### 🔴 the overflowed reviewer — narrow it in the GUARD
 
 a reviewer that blew its context window rendered **no verdict**, so by the definitions above it is a
-malfunction and it is yours. the repair is not a fix to a supply — it is a **narrower invocation**:
-the guard hardcodes `--diffs since-main`, and `rhx review` is not so bound.
+malfunction and it is yours. **the repair is a guard edit** — the reviewer is too wide, so make it fit:
 
 ```sh
-rhx review --rules '<the reviewer rubric path>' \
-           --paths-with 'src/<subsystem>/**/*.ts' --paths-wout '**/*.test.ts' \
-           --output '.review/<iter>.<reviewer>.scoped.<slug>.md' --goal exhaustive
+rhx route.mutate.guard --stone <stone> --route <route>
+# narrow that reviewer's `--paths-with` to the subsystem its rubric actually grades,
+# and/or trim its `--conversation` depth. then re-arrive and let the GUARD run it.
 ```
 
-then report the **verdict**, never the overflow alone.
-
-🟡 **the temptation this cause carries is unique to it.** every other malfunction announces itself
+⚠️ **the temptation this cause carries is unique to it.** every other malfunction announces itself
 as broken. an overflowed reviewer returns terminal and unlocks the next level, so it reads on the
-ladder much like a reviewer that ran — and a driver who merely files the overflow removes a lens from
-the drive, then leaves a record that only proves someone noticed.
+ladder much like a reviewer that ran — and a driver who merely records the overflow removes a lens
+from the drive, then leaves a note that only proves someone noticed.
 
-✅ **the inherited `--diffs since-main` scope is already correct — do NOT re-derive it.**
+⛔ **a hand-run `rhx review` is NOT the remedy, however well it would read the reviewer** —
+`rule.forbid.hand-run-reviews` forbids it outright. it draws no budget, mints no `.given`, and
+gates naught, ⇒ **the lens is not restored, only simulated.** a guard edit makes the reviewer fit so
+the **guard** can run it, and that one property is the whole difference.
+
+### the bind arithmetic — what a guard edit needs
+
 `getAllFileDiffsFromRange.ts` prefers `origin/main` over a stale local `main` (line 43) and takes
-`git merge-base` (line 70), so a commit `main` is ahead on cannot enter the diff. an item the
-scoped run raises is yours.
+`git merge-base` (line 70), so a commit `main` is ahead on cannot enter the diff. ⇒ **an item a
+correctly-bound lane raises is yours**, and the bind does not want re-derivation.
+
+⚠️ **a `--paths-with` glob with a brace in the EXTENSION slot is silently dropped**
+(`'**/*.{ts,md}'` → the bind never applies, and the lane runs unbounded). a brace in the
+**directory** slot works (`'{src,blackbox}/**'`). and a **repeated** `--paths-with` keeps only the
+LAST. ⇒ both are parser defects in `parseReviewArgs`; a guard bind must be written around them
+until they are repaired: `.dream/v2026_09_04.fix.review-multi-glob-flags-do-not-comma-split.md`.
 
 ## .human-fixable causes
 
@@ -97,7 +120,7 @@ one honest diagnosis pass, not a debug spiral:
 
 1. read the reviewer's stderr and log artifacts
 2. classify the cause: driver-fixable or human-fixable
-3. act — fix and re-arrive, or surface the named fix
+3. act — fix, answer its given, and re-arrive; or surface the named fix
 
 if the cause resists one honest pass, escalate — but escalate with what you found: the
 symptom, the logs read, and your best read of the cause. a named unknown beats a bare break.
@@ -106,7 +129,11 @@ symptom, the logs read, and your best read of the cause. a named unknown beats a
 
 - a malfunction escalated with a bare symptom and no diagnosis = **blocker**
 - a driver-fixable cause handed to a human = **blocker**
-- an overflowed reviewer reported upward with no scoped re-run attempt = **blocker**
+- an overflowed reviewer reported upward with no **guard edit** attempted = **blocker**
+- 🔴 an overflowed reviewer answered with a **hand-run `rhx review`** = **blocker**
+  (`rule.forbid.hand-run-reviews` — it draws no budget and its verdict gates naught)
+- a malfunction repaired in code and re-arrived with **no `.taken`** = **blocker** — the given
+  still gates, and the round will halt at the door
 
 ## .see also
 

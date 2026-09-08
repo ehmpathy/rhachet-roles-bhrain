@@ -5,9 +5,18 @@ work every reviewer to a terminal verdict before a human is pulled. a level is t
 | the level did | you must |
 |---|---|
 | approve | continue — the next level is already live |
-| exhaust (earned) | continue — exhaustion is terminal |
+| exhaust (earned) | continue — the next level runs. ⚠️ **and answer any blocker it left** |
 | reject, budget left | converge: fix, or articulate why it holds, then re-arrive |
 | every level terminal | now, and only now, a human may overrule |
+
+## 🔴 exhaustion unlocks the LEVEL. it does not discharge the DEBT
+
+| exhaustion does | exhaustion does NOT |
+|---|---|
+| make the level terminal, so the next runs | close a blocker it raised before its budget ran out |
+| free you from further rounds *with that reviewer* | free you from the `.taken` you owe it |
+
+**the debt is keyed to the reviewer, never to the generation of the code it read.** so an exhausted reviewer whose blocker you never answered holds the **stone** — the unlock frees the *ladder* — and the entrance gate refuses the next round meanwhile. ⇒ that is what gives a manufactured exhaustion a real price. your levers: **answer it**, plus a **budget top-up** if the reviewer must re-read to confirm. a human overrule is the third, and the only one that needs a human.
 
 **exhaustion is earned, never casual.**
 

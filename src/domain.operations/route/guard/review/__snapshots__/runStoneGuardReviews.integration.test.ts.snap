@@ -9,10 +9,6 @@ exports[`runStoneGuardReviews given: [case1] guard with echo review command when
 │  │  review output
 │  │
 │  └─
-├─ stderr
-│  ├─
-│  │
-│  └─
 └─ tallied
    ├─ 0 blockers
    └─ 1 nitpick"
@@ -51,10 +47,6 @@ exports[`runStoneGuardReviews given: [case2] guard with multiple review commands
 │  │  nitpicks: 0
 │  │
 │  └─
-├─ stderr
-│  ├─
-│  │
-│  └─
 └─ tallied
    ├─ 1 blocker
    └─ 0 nitpicks"
@@ -66,10 +58,6 @@ exports[`runStoneGuardReviews given: [case2] guard with multiple review commands
 │  │
 │  │  blockers: 0
 │  │  nitpicks: 2
-│  │
-│  └─
-├─ stderr
-│  ├─
 │  │
 │  └─
 └─ tallied
@@ -129,10 +117,6 @@ exports[`runStoneGuardReviews given: [case3] review exits with code 0 (passed) w
 │  │  review passed
 │  │
 │  └─
-├─ stderr
-│  ├─
-│  │
-│  └─
 └─ tallied
    ├─ 0 blockers
    └─ 0 nitpicks"
@@ -169,10 +153,6 @@ exports[`runStoneGuardReviews given: [case4] review exits with code 2 (constrain
 │  │
 │  │  blockers: 1
 │  │  constraint failure
-│  │
-│  └─
-├─ stderr
-│  ├─
 │  │
 │  └─
 └─ passage blocked
@@ -255,10 +235,6 @@ exports[`runStoneGuardReviews given: [case6] guard with $route variable in revie
 │  │  marker found at <route-path>
 │  │
 │  └─
-├─ stderr
-│  ├─
-│  │
-│  └─
 └─ tallied
    ├─ 0 blockers
    └─ 0 nitpicks"
@@ -298,10 +274,6 @@ exports[`runStoneGuardReviews given: [case7] guard with $rhx variable in review 
 │  │  rhx=<repo-root>/node_modules/.bin/rhx
 │  │
 │  └─
-├─ stderr
-│  ├─
-│  │
-│  └─
 └─ tallied
    ├─ 0 blockers
    └─ 0 nitpicks"
@@ -339,10 +311,6 @@ exports[`runStoneGuardReviews given: [case8] guard with $rhachet variable in rev
 │  │  blockers: 0
 │  │  nitpicks: 0
 │  │  rhachet=<repo-root>/node_modules/.bin/rhachet
-│  │
-│  └─
-├─ stderr
-│  ├─
 │  │
 │  └─
 └─ tallied

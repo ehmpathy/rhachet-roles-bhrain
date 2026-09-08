@@ -11,11 +11,28 @@ the split, for the driver role:
 | lever | owner |
 |-------|-------|
 | `rhx route.guard.budget --for review --add N --stone <stone>` | **driver** |
+| 🔴 `rhx route.mutate.guard` — the stone's own `--paths-with`, `--conversation`, `level`, `budget` | **driver** |
 | a diagnosed reviewer malfunction (absent credential, bad glob, stale supply) | **driver** |
 | `--as approved` | human |
 | `--as overruled` | human |
 | commit quota (`rhx git.commit.uses`) | human |
+| a **credential** the keyrack reports `absent` (`rhx keyrack set`) | human |
 | release authorization | human |
+
+🔴 **the guard row is the one this table omitted for a full release, and the omission had a
+measured price.** a driver on `rhx-roles-bhrain` filed an overflowed-lane repair as a **fulcrum**
+— a decision reserved for the wisher — and collected six rounds of evidence about it while the
+remedy sat unused. the wisher closed it in seven words: *"you have the abiltiy to edit the
+guards."*
+
+⇒ **an absent row does not read as absent. it reads as "not mine."** a lever this table omits is
+worse off than one it lists as human-owned, because a human-owned lever at least gets surfaced.
+
+⛔ **a hand-run `rhx review` is NOT on this table, and its absence is deliberate.** it draws no
+budget, so it is not a lever at all — it is an escape from the meter the ladder runs on
+(`rule.forbid.hand-run-reviews`). ⇒ **the guard row above is what a driver who reaches for it
+actually wants**, and it is the correct one: it repairs the lane *inside* the system rather than
+around it.
 
 ## .why
 
@@ -23,17 +40,14 @@ escalation to a human is the last resort, and their attention is the scarcest re
 loop. to hand a human a top-up you could have run yourself spends that resource for no gain —
 and worse, it reads as a wall when it was a step.
 
-**the specific trap:** the guard renders its two remedies as adjacent branches —
+**adjacency is the trap.** two remedies rendered side by side with no owner column read as two
+human remedies, and the driver's own lever is the one that gets surfaced upward.
 
-```
-├─ increase budget
-│  └─ rhx route.guard.budget --for review --add N --stone <stone>
-└─ approve as-is
-   └─ rhx route.stone.set --stone <stone> --as approved
-```
-
-adjacency invites the read *"two human remedies"*. only the second is. the first is the driver's,
-and it is the one that lets the road continue.
+⚠️ **an owner label on the surface covers ONE halt kind, and is a courtesy rather than a
+guarantee.** the budget halt names its owners — `increase budget — yours to spend` above
+`approve as-is — a human must grant`, with the driver's lever sorted first. a reviewer
+malfunction, a self-review gate, and a judge threshold each print a remedy list with no owner
+column at all. **the sort is yours to perform.**
 
 ## .the rule
 

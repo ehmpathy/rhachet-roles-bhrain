@@ -1,12 +1,22 @@
+import { execSync } from 'child_process';
 import * as fs from 'fs/promises';
 import * as os from 'os';
 import * as path from 'path';
 import { given, then, useBeforeAll, useThen, when } from 'test-fns';
 
+import { answerEveryPeerGiven } from '../__test_assets__/answerEveryPeerGiven';
+import { asStableGuardEmit } from '../__test_assets__/asStableGuardEmit';
 import { genContextReviewBrainSupplyDemo } from '../__test_assets__/genContextReviewBrainSupplyDemo';
 import { setStoneAsPassed } from './setStoneAsPassed';
 
 const ASSETS_DIR = path.join(__dirname, '../.test/assets');
+
+/**
+ * .what = the shared run-token normalizer, aliased for the reads below
+ * .why = the bound it keeps — swap the run tokens and no other byte — is stated once,
+ *        in `asStableGuardEmit`, so a snapshot cannot drift its own mask
+ */
+const asStableEmit = asStableGuardEmit;
 
 const noopContext = genContextReviewBrainSupplyDemo();
 
@@ -330,6 +340,12 @@ describe('setStoneAsPassed.integration', () => {
         );
         await fs.mkdir(tempDir, { recursive: true });
 
+        // its own git root, so a printed review path relativizes to a bare
+        // `.reviews/peer/…` that no stabilizer swap can mask — without it the
+        // relativized and un-relativized forms snapshot to identical bytes
+        // (r10 blocker, i005)
+        execSync('git init', { cwd: tempDir, stdio: 'ignore' });
+
         // create stone file
         await fs.writeFile(path.join(tempDir, '1.test.stone'), '# Test stone');
 
@@ -373,20 +389,66 @@ describe('setStoneAsPassed.integration', () => {
           // first attempt consumes budget but returns blockers, so judge fails
           expect(result.emit?.stdout).toContain('blocked');
         });
+
+        // 🔴 a lone `.toContain('blocked')` leaves every other byte of this step free
+        //    to regress. `rule.require.snapshot-every-journey-step` asks that a
+        //    reviewer follow the whole journey from the snapshots alone, and this
+        //    2-step journey carried none (r1 blocker.1, i006)
+        then(
+          'matches snapshot — step 1, the round that spent the budget',
+          () => {
+            expect(
+              asStableEmit({ emit: result.emit?.stdout, route: scene.tempDir }),
+            ).toMatchSnapshot('budget journey - [t0] first attempt, blocked');
+          },
+        );
       });
 
       when('[t1] second attempt hits exhausted budget', () => {
-        const result = useThen('second attempt completes', async () =>
-          setStoneAsPassed(
-            { stone: '1.test', route: scene.tempDir },
-            noopContext,
-          ),
+        // 🔴 the eighth instance, and the one my own i011 sweep missed. i swept the two
+        //    suites the reviewer had named and never widened to this third file — so the
+        //    fix landed where it was pointed out rather than where the defect was. four
+        //    reviewers found the remainder (r1 · r4 · r9.2 · r10)
+        //    (rule.forbid.order-dependence; i012)
+        const result = useThen(
+          'the driver answers the critique, and the second attempt completes',
+          async () => {
+            // .note = round 1 handed back a blocker. the entrance gate refuses a second
+            //         round while that critique is unanswered, so the answer is owed
+            //         before the budget question can even be reached
+            const pathsTaken = await answerEveryPeerGiven({
+              route: scene.tempDir,
+              stone: '1.test',
+            });
+            // .note = the failhide guard the other seven carry and this one lacked. were
+            //         the glob to break, zero files would be written and the exhaustion
+            //         assertions below would go green off the UNANSWERED debt — exactly
+            //         what the entrance gate exists to refuse (rule.forbid.failhide)
+            expect(pathsTaken).toHaveLength(1);
+            return setStoneAsPassed(
+              { stone: '1.test', route: scene.tempDir },
+              noopContext,
+            );
+          },
         );
 
         then('is blocked by review.peer.exhausted', async () => {
           expect(result.passed).toBe(false);
           expect(result.emit?.stdout).toContain('exhausted');
         });
+
+        // the terminal step, and the one a driver most needs to read: it carries the
+        // budget-exhausted options tree that names their levers
+        then(
+          'matches snapshot — step 2, exhaustion and its options tree',
+          () => {
+            expect(
+              asStableEmit({ emit: result.emit?.stdout, route: scene.tempDir }),
+            ).toMatchSnapshot(
+              'budget journey - [t1] second attempt, exhausted',
+            );
+          },
+        );
 
         then('records an exhausted status in passage.jsonl', async () => {
           const passagePath = path.join(

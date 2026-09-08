@@ -1,6 +1,8 @@
 # rule.prefer.scoped-tests-locally
 
-run scoped tests locally for fast feedback; let cicd shard the blast-radius suite.
+run scoped tests locally for fast feedback; let cicd shard the whole suite.
+
+⛔ **`--thorough` is forbidden outright**, local or otherwise — `rule.forbid.thorough-test-runs`. this rule says **how to scope**; that one says the widest run is never yours to make.
 
 ## .why
 acceptance/integration tests are real-brain, no-mock — cost is LLM latency, not logic. a whole suite runs serially in tens of minutes locally; cicd shards it across runners.
@@ -11,7 +13,8 @@ acceptance/integration tests are real-brain, no-mock — cost is LLM latency, no
 
 ## .how
 - local: always `--scope 'path://…'`; stack `name://` to narrow. start narrow, widen only as needed.
-- cicd: let the unscoped/`--thorough` sharded suite run — it is the gate.
+- ⚠️ **the bare invocation is already scoped** — with no `--scope` at all it adds `--changedSince <trunk tip>`, so it selects the tests your branch's own changes touch. `--scope` narrows *within* that; it is not what creates the bound.
+- cicd: the full sharded suite runs on every push — that is the gate. ⛔ never reach for `--thorough` to reproduce it locally.
 
 ## .the trap
 a loose scope falls through to "all" (e.g. hyphenated `path://peer-measurement` matches 90 files). confirm the `matched: N files` line before you wait.
@@ -20,6 +23,7 @@ a loose scope falls through to "all" (e.g. hyphenated `path://peer-measurement` 
 `--resnap` (`jest --updateSnapshot`) prunes obsolete snapshots in EVERY loaded suite. paired with `name://` (loads all ~100 files), it deletes snapshots across suites you never touched — a silent coverage regression (real incident: 471 cases pruned from 3 unrelated `driver.route.*` suites). never pair `--resnap` with `name://` — always resnap under `path://`, then `git diff --stat __snapshots__/` to confirm only intended files changed. to restore a pruned snapshot, rewrite it to its index bytes (a resnap will not restore pruned cases).
 
 ## .enforcement
-- unscoped/`--thorough` whole-suite run locally while you iterate = **nitpick**
+- a local run left unscoped where you could have named the file = **nitpick** (the bare run is already `--changedSince`-bound; `--scope 'path://…'` is tighter still)
 - push that skips the full sharded cicd suite = **nitpick**
 - `--resnap` under `name://` or unscoped = **blocker** (prunes obsolete snapshots across every loaded suite)
+- ⛔ `--thorough`, in any invocation = **blocker** — `rule.forbid.thorough-test-runs`

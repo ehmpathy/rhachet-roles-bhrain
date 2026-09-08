@@ -2,7 +2,7 @@ import * as fs from 'fs/promises';
 import * as os from 'os';
 import * as path from 'path';
 import type { BrainChoice, ContextBrain } from 'rhachet';
-import { given, then, useThen, when } from 'test-fns';
+import { genTempDir, given, then, useBeforeAll, useThen, when } from 'test-fns';
 
 import { RouteStone } from '@src/domain.objects/Driver/RouteStone';
 import { RouteStoneGuard } from '@src/domain.objects/Driver/RouteStoneGuard';
@@ -60,51 +60,47 @@ describe('runStoneGuardReviews', () => {
     });
 
     when('[t0] reviews are executed', () => {
-      then('creates review artifact file', async () => {
-        const result = await runStoneGuardReviews(
-          {
-            stone,
-            guard,
-            hash: 'testhash',
-            iteration: 1,
-            route: tempDir,
-          },
-          noopContext,
-        );
-        expect(result.artifacts).toHaveLength(1);
-        expect(result.artifacts[0]?.path).toContain(
+      // the three assertions below read ONE run. they previously drove the guard
+      // three times on the identical `hash: 'testhash'`, which is the shape
+      // `rule.forbid.redundant-expensive-operations` names — same operation, same
+      // input, adjacent `then` blocks.
+      //
+      // ⚠️ the `fs.stat` lives INSIDE this callback deliberately. `afterEach` rms
+      //    `tempDir` after every `then`, so a disk read left in a later block would
+      //    stat a directory that no longer exists. only the in-memory result crosses
+      //    the boundary.
+      const scene = useThen(
+        'the guard runs once and its artifact lands on disk',
+        async () => {
+          const result = await runStoneGuardReviews(
+            {
+              stone,
+              guard,
+              hash: 'testhash',
+              iteration: 1,
+              route: tempDir,
+            },
+            noopContext,
+          );
+          const stat = await fs.stat(result.artifacts[0]?.path ?? '');
+          return { result, isFile: stat.isFile() };
+        },
+      );
+
+      then('creates review artifact file', () => {
+        expect(scene.result.artifacts).toHaveLength(1);
+        expect(scene.result.artifacts[0]?.path).toContain(
           '.reviews/peer/1.test._.review.i001.testhash.r001._.given.by_peer.echo.md',
         );
-        const stat = await fs.stat(result.artifacts[0]?.path ?? '');
-        expect(stat.isFile()).toBe(true);
+        expect(scene.isFile).toBe(true);
       });
 
-      then('parses blockers from output', async () => {
-        const result = await runStoneGuardReviews(
-          {
-            stone,
-            guard,
-            hash: 'testhash',
-            iteration: 1,
-            route: tempDir,
-          },
-          noopContext,
-        );
-        expect(result.artifacts[0]?.blockers).toEqual(0);
+      then('parses blockers from output', () => {
+        expect(scene.result.artifacts[0]?.blockers).toEqual(0);
       });
 
-      then('parses nitpicks from output', async () => {
-        const result = await runStoneGuardReviews(
-          {
-            stone,
-            guard,
-            hash: 'testhash',
-            iteration: 1,
-            route: tempDir,
-          },
-          noopContext,
-        );
-        expect(result.artifacts[0]?.nitpicks).toEqual(1);
+      then('parses nitpicks from output', () => {
+        expect(scene.result.artifacts[0]?.nitpicks).toEqual(1);
       });
 
       then('artifact snapshot matches', async () => {
@@ -2862,6 +2858,94 @@ describe('runStoneGuardReviews', () => {
             expect(review?.nitpicks).toEqual(1);
           },
         );
+      });
+    },
+  );
+
+  given(
+    '[case31] a route that IS its own git root, so a repo-relative path is visibly shorter',
+    () => {
+      // 🔴 the git root is what makes this case bite. every other suite here puts the
+      //    route under a plain tmpdir, which is no repo — so `getRepoRootWithFallback`
+      //    returns the cwd, and BOTH the raw absolute path and the relativized one come
+      //    out long and absolute-looking. the two forms are indistinguishable, which is
+      //    exactly why the defect survived every extant test.
+      //
+      //    with `git: true` the root IS the route, so a relativized path reads
+      //    `.reviews/peer/...` and a raw one reads `/tmp/.../.reviews/peer/...`.
+      //    the difference is now a single `path.isAbsolute` away (r7 nitpick.1, i003)
+      const scene = useBeforeAll(async () => {
+        const tempDir = genTempDir({
+          slug: 'guard-display-path',
+          git: true,
+        });
+
+        const stoneCase = new RouteStone({
+          name: '1.test',
+          path: path.join(tempDir, '1.test.stone'),
+          guard: null,
+        });
+        const guardCase = new RouteStoneGuard({
+          path: path.join(tempDir, '1.test.guard'),
+          artifacts: ['1.test*.md'],
+          reviews: {
+            self: [],
+            peer: [asPeerReview('echo "blockers: 0\\nnitpicks: 0"', 0)],
+          },
+          judges: [],
+          protect: [],
+        });
+
+        await fs.writeFile(path.join(tempDir, '1.test.md'), '# artifact\n');
+
+        return { tempDir, stoneCase, guardCase };
+      });
+
+      when('[t0] a FRESH round runs — no cache, no exhaustion', () => {
+        const captured = useThen('the round completes', async () => {
+          const paths: (string | null)[] = [];
+          await runStoneGuardReviews(
+            {
+              stone: scene.stoneCase,
+              guard: scene.guardCase,
+              hash: 'displaypath',
+              iteration: 1,
+              route: scene.tempDir,
+            },
+            genContextReviewBrainSupplyDemo({
+              onGuardProgress: (event) => {
+                if (event.outcome) paths.push(event.outcome.path);
+              },
+            }),
+          );
+          return { paths };
+        });
+
+        then(
+          'every emitted artifact path is repo-relative, never absolute',
+          () => {
+            // 🔴 THE clamp. the fresh-run emit handed `review.path` raw while its three
+            //    peers relativized, so one stone run printed the same artifact two ways
+            //    fifteen lines apart. revert `asGuardDisplayPath` to `review.path` at
+            //    that site and this goes red (`rule.require.clamp-edge-cases`)
+            const emitted = captured.paths.filter(
+              (p): p is string => typeof p === 'string',
+            );
+            expect(emitted.length).toBeGreaterThan(0);
+            emitted.forEach((p) => expect(path.isAbsolute(p)).toEqual(false));
+          },
+        );
+
+        then('and it addresses the artifact from the route root', () => {
+          // .note = not decoration. `path.isAbsolute` alone would pass on a `../../..`
+          //         traversal, which is what a MISMATCHED root produces — the second
+          //         failure mode this critique named, and the one a bare absolute-check
+          //         cannot see
+          const emitted = captured.paths.filter(
+            (p): p is string => typeof p === 'string',
+          );
+          emitted.forEach((p) => expect(p.startsWith('..')).toEqual(false));
+        });
       });
     },
   );

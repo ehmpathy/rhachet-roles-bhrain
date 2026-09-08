@@ -99,7 +99,7 @@ exports[`driver.route.peer-budget-exhaustion-unlocks-level.acceptance given: [jo
 🗿 route.stone.set
    ├─ stone = 1.execute
    ├─ passage = blocked
-   ├─ reason = blockers exceed threshold (1 > 0)
+   ├─ reason = blockers exceed threshold (2 > 0)
    └─ guard
       ├─ artifacts
       │   └─ src/**/*.ts
@@ -120,7 +120,7 @@ exports[`driver.route.peer-budget-exhaustion-unlocks-level.acceptance given: [jo
       └─ judges
           └─ j1: rhx route.stone.judge --mechanism reviewed? --stone $stone --route $route --allow-blockers 0 --allow-nitpicks 1
               ├─ finished [TIME] ✗
-              └─ reason: blockers exceed threshold (1 > 0)
+              └─ reason: blockers exceed threshold (2 > 0)
 
 🪷 the path continues
    ├─ l1 is terminal (exhausted 🌙) — it no longer blocks you
@@ -153,7 +153,7 @@ exports[`driver.route.peer-budget-exhaustion-unlocks-level.acceptance given: [jo
 🗿 route.stone.set
    ├─ stone = 1.execute
    ├─ passage = blocked
-   ├─ reason = blockers exceed threshold (1 > 0)
+   ├─ reason = blockers exceed threshold (2 > 0)
    └─ guard
       ├─ artifacts
       │   └─ src/**/*.ts
@@ -174,7 +174,7 @@ exports[`driver.route.peer-budget-exhaustion-unlocks-level.acceptance given: [jo
       └─ judges
           └─ j1: rhx route.stone.judge --mechanism reviewed? --stone $stone --route $route --allow-blockers 0 --allow-nitpicks 1
               ├─ finished [TIME] ✗
-              └─ reason: blockers exceed threshold (1 > 0)
+              └─ reason: blockers exceed threshold (2 > 0)
 
 🪷 the path continues
    ├─ l1 is terminal (exhausted 🌙) — it no longer blocks you

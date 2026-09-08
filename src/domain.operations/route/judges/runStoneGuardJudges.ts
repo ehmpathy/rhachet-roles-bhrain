@@ -16,7 +16,9 @@ import {
   RUNTIME_GUARD_VAR_NAMES,
   type RuntimeGuardVarName,
 } from '@src/domain.operations/route/guard/RUNTIME_GUARD_VAR_NAMES';
-import { formatTreeBucket } from '@src/domain.operations/route/guard/tree/formatTreeBucket';
+import { asArtifactStreamContent } from '@src/domain.operations/route/guard/tree/asArtifactStreamContent';
+import { formatArtifactFooters } from '@src/domain.operations/route/guard/tree/formatArtifactFooters';
+import { formatArtifactStreamBuckets } from '@src/domain.operations/route/guard/tree/formatArtifactStreamBuckets';
 import { enumFilesFromGlob } from '@src/utils/enumFilesFromGlob';
 
 import { computeStoneJudgeInputHash } from './computeStoneJudgeInputHash';
@@ -115,22 +117,44 @@ export const runOneStoneGuardJudge = async (input: {
   // classify exit code
   const exitClass = getExitCodeClass({ code: exitCode });
 
-  // format artifact content with tree buckets
-  const artifactLines: string[] = [];
-  artifactLines.push(formatTreeBucket({ label: 'stdout', content: stdout }));
-  artifactLines.push(formatTreeBucket({ label: 'stderr', content: stderr }));
+  // format artifact content with tree buckets; an empty stream earns no box
+  const artifactLines: string[] = [
+    ...formatArtifactStreamBuckets({
+      stdout,
+      stderr,
+      hasFooter: exitCode !== 0,
+    }),
+  ];
 
-  // add passage footer for non-zero exit
-  if (exitCode !== 0) {
-    const blockReason =
-      exitClass === 'constraint'
-        ? 'blocked by constraints'
-        : 'blocked by malfunction';
-    const exitEmoji = exitClass === 'constraint' ? '✋' : '💥';
-    artifactLines.push('└─ passage blocked');
-    artifactLines.push(`   ├─ ${blockReason}`);
-    artifactLines.push(`   └─ exit code: ${exitCode} ${exitEmoji}`);
-  }
+  // the passage footer, through the one operation that owns it.
+  //
+  // 🔴 a judge renders no tally — it has no blocker/nitpick count of its own — so `tally` is
+  //    always null here, and the shared operation then gives the passage footer the terminal
+  //    marker. that is byte-identical to the three lines this block used to push by hand,
+  //    which is exactly why the duplicate was easy to leave in place
+  //    (r1 repo-rules, blocker.1, i020).
+  //
+  // ⚠️ the duplicate was CREATED by the i019 extraction, never inherited: before it, both
+  //    call sites were inline and symmetric. one was lifted into a shared operation and this
+  //    one was not, which is the half-done consolidation
+  //    `rule.forbid.duplicate-format-tree-operations` names — two renderers for one footer,
+  //    and the shared one already derives its marker where this one hardcoded `└─`.
+  artifactLines.push(
+    ...formatArtifactFooters({
+      passage:
+        exitCode !== 0
+          ? {
+              blockReason:
+                exitClass === 'constraint'
+                  ? 'blocked by constraints'
+                  : 'blocked by malfunction',
+              exitCode,
+              exitEmoji: exitClass === 'constraint' ? '✋' : '💥',
+            }
+          : null,
+      tally: null,
+    }),
+  );
 
   const artifactContent = artifactLines.join('\n');
 
@@ -486,30 +510,19 @@ const parseReason = (
 const parseTreeBucketContent = (
   content: string,
 ): { stdout: string; stderr: string; exitCode: number } => {
-  // extract stdout from tree bucket (between "│  │" lines after "├─ stdout")
-  const stdoutMatch = content.match(
-    /├─ stdout[\s\S]*?│ {2}├─\n│ {2}│\n([\s\S]*?)│ {2}│\n│ {2}└─/,
-  );
-  const stdoutLines =
-    stdoutMatch?.[1]
-      ?.split('\n')
-      .map((line) => line.replace(/^│ {2}│ {2}/, ''))
-      .join('\n') ?? '';
-
-  // extract stderr from tree bucket
-  const stderrMatch = content.match(
-    /├─ stderr[\s\S]*?│ {2}├─\n│ {2}│\n([\s\S]*?)│ {2}│\n│ {2}└─/,
-  );
-  const stderrLines =
-    stderrMatch?.[1]
-      ?.split('\n')
-      .map((line) => line.replace(/^│ {2}│ {2}/, ''))
-      .join('\n') ?? '';
+  // 🔴 the read grammar is `asArtifactStreamContent`, which sits BESIDE the writer
+  //    (`formatArtifactStreamBuckets`) with a round-trip test over the pair. it used
+  //    to be two regexes inlined here, and they matched only a MIDDLE-child bucket —
+  //    so the day the writer learned to close an artifact with `└─ label` and a
+  //    3-space column, every read handed back '' and a cached judge silently lost
+  //    its `passed` and its `reason` (rule.require.single-source-of-truth-for-render)
+  const stdout = asArtifactStreamContent({ content, label: 'stdout' });
+  const stderr = asArtifactStreamContent({ content, label: 'stderr' });
 
   // extract exit code from passage blocked footer
   const exitCode = asExitCodeFromArtifactContent({ content });
 
-  return { stdout: stdoutLines.trim(), stderr: stderrLines.trim(), exitCode };
+  return { stdout, stderr, exitCode };
 };
 
 /**

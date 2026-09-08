@@ -49,7 +49,7 @@ exports[`driver.route.peer-review-exit-codes.acceptance given: [journey] exit co
    ├─ passage = blocked
    ├─ reason = reviewer constraint
    ├─ options
-   │  ├─ overrule the constraint
+   │  ├─ overrule the constraint — a human must grant
    │  │  └─ rhx route.stone.set --stone 1.execute --as overruled
    │  └─ or fix the reviewer, then retry
    └─ guard
@@ -83,7 +83,7 @@ exports[`driver.route.peer-review-exit-codes.acceptance given: [journey] exit co
    ├─ passage = malfunction
    ├─ reason = reviewer or judge malfunctioned
    ├─ options
-   │  ├─ overrule the malfunction
+   │  ├─ overrule the malfunction — a human must grant
    │  │  └─ rhx route.stone.set --stone 1.execute --as overruled
    │  └─ or fix the reviewer, then retry
    └─ guard

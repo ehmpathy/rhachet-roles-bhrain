@@ -290,6 +290,10 @@ exports[`driver.route.journey.acceptance given: [journey] weather api route when
 "
 `;
 
+exports[`driver.route.journey.acceptance given: [journey] weather api route when: [t10.5] bouncer allows write after stone passes then: an allowed bounce is silent on stderr — snapshot pins the silence 1`] = `""`;
+
+exports[`driver.route.journey.acceptance given: [journey] weather api route when: [t10.5] bouncer allows write after stone passes then: an allowed bounce is silent on stdout — snapshot pins the silence 1`] = `""`;
+
 exports[`driver.route.journey.acceptance given: [journey] weather api route when: [t10] 3.blueprint approved and self-review completed then: stdout has good vibes 1`] = `
 "🦉 the way speaks for itself
    │

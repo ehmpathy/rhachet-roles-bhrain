@@ -14,6 +14,11 @@ always:
       # how much a re-arrival actually costs. ref because it answers a question a driver
       # ASKS ("is re-arrival expensive?"), which is the dereference case exactly
       - briefs/howdoes.the-guard-caches-a-clean-reviewer-by-artifact-hash.md
+      # the worked case behind rule.forbid.unanswered-exits-from-a-blocker: a reported
+      # 32 iterations, ~9 days, 300+ givens, zero takens. ref because the rule carries the
+      # counts it needs; the full walk is what a reader fetches when they doubt it — and
+      # this file is where the provenance lives, since the source branch is unreachable
+      - briefs/rule.forbid.unanswered-exits-from-a-blocker.example=the-28-iteration-stall.md
     say:
       # 🔴 the WHY under every rule below, promoted from ref on 2026-08-31.
       # a rule tells a driver WHAT to do, and cannot tell them what to do in a case
@@ -33,6 +38,20 @@ always:
       # because it fires at each re-arrival, and its absence reads to the reviewer
       # as no fix at all — which a driver then mis-diagnoses as a reviewer defect
       - briefs/rule.always.converge-with-reviewers.via-a-taken-per-point.md
+      # the FORBID twin of the two rules above — they say what to write and that every
+      # point owes one; this says a blocker may not be left by any other door. say-level
+      # because every forbidden exit is CHEAPER than the answer, so the cheap door is
+      # taken by default and no driver who takes it feels dishonest. a rule that arrives
+      # after the re-roll meets a driver who already believes the critique was withdrawn
+      - briefs/rule.forbid.unanswered-exits-from-a-blocker.md
+      # the COMPLEMENT of the rule above, and it must boot beside it or the pair
+      # misleads. that rule forbids `--as blocked` for a critique you have NOT
+      # answered; this one requires it for a critique you HAVE answered and cannot
+      # close. read alone, the forbid leaves a driver no word for the second state,
+      # so they re-arrive — measured at five rounds with budget at 45/107. say-level
+      # because the recognition test must fire AT the decision to re-arrive; a rule
+      # that arrives after the fifth round meets a driver who already spent them
+      - briefs/rule.always.raise-a-blocker-a-taken-cannot-close.md
       - briefs/rule.always.converge-to-terminal.md
       - briefs/rule.always.defer-fulcrums-to-last.md
       # the RECORD half of the rule above. say-level because it fires at each decision:
@@ -74,6 +93,22 @@ always:
       # reached for; a discipline that arrives after the human was pulled has already
       # spent the one resource it exists to conserve
       - briefs/rule.always.get-a-second-opinion-before-foreman.md
+      # the counterweight to that ladder's FIRST rung. spend-own-levers sorts remedies by
+      # owner and says spend yours first; this names the one remedy a driver must not spend
+      # even once the human has granted it. say-level because the moment it must fire is
+      # exactly the moment a commit looks like the fix — `--diffs since-main` unions the
+      # whole uncommitted branch, so an overflowed lane makes the commit both effective and
+      # attractive. a rule that arrives after it meets a driver who already changed what the
+      # reviewers can see, and no reviewer consented to that cut
+      - briefs/rule.forbid.commits-the-route-did-not-ask-for.md
+      # the SECOND remedy a driver must not spend, and it sits beside the commit for a
+      # reason: both are a review-scope change made by the party under review. a commit
+      # changes what the reviewers can SEE; a hand-run `rhx review` changes WHO reviews
+      # and under what terms — and it draws no budget, so it voids the scarcity the whole
+      # ladder runs on. say-level because the moment it must fire is the moment a lane
+      # overflows, when a hand-run read is both effective and free. a rule that arrives
+      # after it meets a driver who already holds verdicts the engine never read
+      - briefs/rule.forbid.hand-run-reviews.md
       # the ladder that has NO lever. say-level because it fires exactly when a driver
       # is tempted to reach for one — and by the time an override is asked for, the
       # human's attention is already spent on what they cannot grant

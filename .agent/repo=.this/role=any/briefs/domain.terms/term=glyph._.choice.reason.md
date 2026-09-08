@@ -94,5 +94,11 @@ none open.
   `🔍` was off-palette until 2026-08-30 and was added rather than renamed
 - a reserved glyph — `🔭` grepped clean for months while reserved for a researcher role; the
   role was declared 2026-08-30 and the glyph was never free
+- a claimed marker swept as decoration, measured — 2026-09-06, an emphasis-density sweep ran
+  **87 sites** for `rule.prefer.chill-nature-emojis` and took `💥 halted, guard malfunction` with
+  it, off a halt surface a driver reads. the sweep was **right about `🔴`** (unclaimed prose
+  emphasis) and **wrong about `💥`** (a claimed halt marker); the wisher reverted it —
+  *"those were critical visual signals."* ⇒ the register's bound was already written and was
+  crossed regardless, since a sweep matches a **pattern** rather than a **row**
 - invariant: a glyph is claimed on **one axis, for one concept**, and it is drawn from the
   repo's palette. an off-palette glyph is repaired at the palette, never at the role

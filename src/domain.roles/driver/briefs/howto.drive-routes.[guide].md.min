@@ -6,12 +6,15 @@ lost? run `rhx route.drive` — it shows the current stone and what to do next.
 |---|---|
 | `--as passed` | work complete, proceed |
 | `--as arrived` | work complete, request review |
-| `--as blocked` | stuck, need a human |
+| `--as contemplated --that <slug>` | you answered a peer reviewer — **required before you re-arrive** |
+| `--as blocked` | a genuine wall — and only after you answered what you could |
 
 **you cannot grant `--as approved`.** only humans approve. if a guard demands it, signal `--as arrived` and wait.
 
 reviews are gifts — they encode lessons from production.
 - **self-reviews**: question yourself severely. the review IS the work, not a gate to pass
-- **peer reviews**: address all blockers, maximize nitpick fixes. disagree? escalate via `--as blocked`
+- **peer reviews**: address all blockers, maximize nitpick fixes
+
+🔴 **disagree? that is a `[REFUTE]` in your `.taken`, never a halt.** write the argument with cited evidence, run `--as contemplated --that <slug>`, re-arrive. a critique you have not answered is not a wall, and the entrance gate refuses a fresh round while any reviewer is owed an answer. ⚠️ **a code fix is not an answer either** — the debt is keyed to the reviewer, so it survives your edit and the reviewer re-raises what you never wrote down (`rule.forbid.unanswered-exits-from-a-blocker`).
 
 > read the stone messages carefully. patience, friend. 🪷

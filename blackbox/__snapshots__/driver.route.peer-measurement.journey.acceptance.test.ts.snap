@@ -81,10 +81,6 @@ exports[`driver.route.peer-measurement.journey.acceptance given: [journey] a sto
 │  │  2 nitpicks
 │  │
 │  └─
-├─ stderr
-│  ├─
-│  │
-│  └─
 └─ tallied
    ├─ 0 blockers
    └─ 2 nitpicks"
@@ -106,7 +102,7 @@ exports[`driver.route.peer-measurement.journey.acceptance given: [journey] a sto
    ├─ passage = malfunction
    ├─ reason = reviewer or judge malfunctioned
    ├─ options
-   │  ├─ overrule the malfunction
+   │  ├─ overrule the malfunction — a human must grant
    │  │  └─ rhx route.stone.set --stone 2.crash --as overruled
    │  └─ or fix the reviewer, then retry
    └─ guard

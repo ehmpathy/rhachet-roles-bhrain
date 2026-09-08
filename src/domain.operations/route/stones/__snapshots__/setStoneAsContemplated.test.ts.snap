@@ -1,0 +1,54 @@
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
+
+exports[`setStoneAsContemplated given: [case1] the .taken is absent when: [t0] --as contemplated --that architect then: matches snapshot — the GUIDANCE variant of the ack 1`] = `
+"✋ contemplation absent for reviewer architect
+
+   ├─ the guard looked for your response here, and did not find it
+   │  └─ .reviews/peer/1.vision._.review.i001.<hash>.r001._.taken.by_self.architect.md
+   │
+   ├─ why
+   │  └─ --as contemplated is a promise that you engaged each
+   │     critique. the .taken file IS that engagement — absent
+   │     it, there is no ground to stand on.
+   │
+   └─ what to do
+      ├─ contemplate from
+      │  └─ .reviews/peer/1.vision._.review.i001.<hash>.r001._.given.by_peer.architect.md
+      └─ articulate into
+         └─ .reviews/peer/1.vision._.review.i001.<hash>.r001._.taken.by_self.architect.md"
+`;
+
+exports[`setStoneAsContemplated given: [case2] the .taken is present at the current hash when: [t0] --as contemplated --that architect then: matches snapshot — the RESPONDED ack, rendered in full 1`] = `
+"🦉 contemplated: architect
+   └─ your response is recorded — the reviewer will see it next round"
+`;
+
+exports[`setStoneAsContemplated given: [case3] an invalid --that slug when: [t0] --as contemplated --that ghost then: matches snapshot — the rendered error, as a driver reads it 1`] = `
+"BadRequestError: invalid peer reviewer slug: "ghost". valid options: architect
+
+{
+  "stone": "1.vision",
+  "slug": "ghost",
+  "validSlugs": [
+    "architect"
+  ]
+}"
+`;
+
+exports[`setStoneAsContemplated given: [case4] a clean reviewer (0 blockers) with no .taken when: [t0] --as contemplated --that architect then: matches snapshot — the NO-BLOCKERS ack, rendered in full 1`] = `
+"🦉 contemplated: architect
+   └─ this reviewer raised no blockers — no critique to answer, no response needed"
+`;
+
+exports[`setStoneAsContemplated given: [case5] a RETIRED reviewer — it spoke, the config no longer names it when: [t2] the driver reads the options the error lists then: matches snapshot — the retired-UNION error, a distinct variant 1`] = `
+"BadRequestError: invalid peer reviewer slug: "mechanik". valid options: architect, mechanic
+
+{
+  "stone": "1.vision",
+  "slug": "mechanik",
+  "validSlugs": [
+    "architect",
+    "mechanic"
+  ]
+}"
+`;

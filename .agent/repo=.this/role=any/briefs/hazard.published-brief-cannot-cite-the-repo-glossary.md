@@ -63,28 +63,44 @@ word must publish.** a `Grep`, never an opinion.
 
 ### the third move, for a home defect
 
-a brief can live in `src/` (so it publishes) *and* be symlinked into `.agent/` (so it boots here).
-seven files already do this — censused from
-`git ls-files -s '.agent/repo=.this/role=any/briefs'`, every `120000` row:
+a brief can live in `src/` (so it publishes) **and** be symlinked into `.agent/` (so it boots
+here). **ten links already exist** — every `120000` row of
+`git ls-files -s '.agent/repo=.this/role=any/briefs'`. 🟡 **they are not all the same
+arrangement**, and the difference decides which of them is a precedent for this move:
 
-| the link | its source role |
-|---|---|
-| `im_a.bhrain_owl.md` | driver |
-| `im_an.obsessive_learner.md` | learner |
-| `research.selfreview-effectiveness.md` | learner |
-| `rule.require.review-by-wrapper-pattern.md` | reviewer |
-| `domain.terms/.readme.md` | learner |
-| `domain.terms/rule.forbid.domain-term-synonyms.md` | learner |
-| `domain.terms/rule.require.domain-term-itemization.md` | learner |
+| the link | resolves into | role |
+|---|---|---|
+| `im_a.bhrain_owl.md` | ✅ `src/` | driver |
+| `im_an.obsessive_learner.md` | ✅ `src/` | learner |
+| `research.selfreview-effectiveness.md` | ✅ `src/` | learner |
+| `rule.require.review-by-wrapper-pattern.md` | ✅ `src/` | reviewer |
+| `domain.terms/catalog.of=externalization._.md` | ✅ `src/` | learner |
+| `domain.terms/.readme.md` | ⚠️ `dist/`, via a second hop through `.agent/repo=bhrain/` | learner |
+| `domain.terms/rule.forbid.domain-term-synonyms.md` | ⚠️ `dist/`, same second hop | learner |
+| `domain.terms/rule.require.domain-term-itemization.md` | ⚠️ `dist/`, same second hop | learner |
+| `domain.terms/rule.forbid.domain-term-synonyms.md.min` | ⚠️ `dist/` directly | learner |
+| `domain.terms/rule.require.domain-term-itemization.md.min` | ⚠️ `dist/` directly | learner |
 
-⇒ **both term RULES are on that list. only the term CLUSTERS are left behind** — which is the
-shape of the defect: the discipline ships and the vocabulary it governs does not.
+⇒ **only the five `src/` rows are precedent for the move above.** the five `dist/` rows are the
+*other* hazard — a link into a build artifact, which resolves only after a build
+(`hazard.agent-brief-may-be-a-dist-symlink`). both arrangements publish, since `dist/` is what
+ships; they differ in what breaks on a clean checkout.
 
-⇒ so the third move is already in use for this exact directory's rules. what stops a sweep is cost,
+⇒ **both term RULES are on the list, and one `domain.terms/` file is src-rooted
+(`catalog.of=externalization._.md`). only the term CLUSTERS are left behind** — which is the shape
+of the defect: the discipline ships and the vocabulary it governs does not.
+
+⇒ so the third move is **already in use for this exact directory.** what stops a sweep is cost,
 never possibility: the split touches the `boot.yml` globs, `domainTermsBootReachability`, and
 `genDomainTermsScaffold`.
 
-🟡 safe, and not clean — caught as `.dream/v2026_08_31.enbrief.org-wide-terms-do-not-publish.md`.
+⚠️ **this census read `seven` from 2026-08-30 to 2026-09-08**, and the three it missed are the
+three that arrived after it was written. **it was derived once, by the command printed above it,
+then maintained by hand.** ⇒ a census with its own derivation command one line up is the cheapest
+artifact in the repo to re-derive, and it still went stale — so **re-run the command; do not read
+the table and trust it.**
+
+🟡 **safe, and not clean** — caught as `.dream/v2026_08_31.enbrief.org-wide-terms-do-not-publish.md`.
 
 ## .what is NOT a violation
 

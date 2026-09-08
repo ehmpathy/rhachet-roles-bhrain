@@ -1,0 +1,53 @@
+# rule.forbid.commits-the-route-did-not-ask-for
+
+> **a driver commits when the route ASKS for a commit, or when the route is FINISHED. every other commit is forbidden — even the ones that look like hygiene.**
+
+the route's unit of settlement is the **stone**: it settles when its guard clears and you run `--as passed`. a commit before that records a state **no guard accepted**.
+
+## 🔴 .why — the commit is a REAL lever, and that is exactly the hazard
+
+a rule written against impatience will not bind, because the driver who reaches for a commit has a true and urgent reason:
+
+> `rhx review` binds `--diffs since-main`. with **zero commits on the branch**, that range unions the entire staged **and** untracked set — so the reviewers read the whole branch, every round.
+
+**measured on this branch:** ~293 files in scope, **9 of 11 lanes overflowed** and returned no verdict. a commit collapses that range at a stroke — the single most effective move a driver has against an overflowed lane.
+
+⇒ 🔴 **and that is the whole problem. it changes WHAT THE REVIEWERS CAN SEE, mid-review, by the hand of the party under review.** it does not feel like an evasion — the code is real, the message is honest, the lanes stop to overflow. but the artifact set the next round grades is one **you** chose, and no reviewer consented to the cut.
+
+| the sanctioned answer to an overflowed lane | the unsanctioned ones |
+|---|---|
+| a **guard edit** — narrow that lane's `--paths-with` so it fits, then let the GUARD run it | a **commit** — narrow the diff itself · a **hand-run `rhx review`** — narrow the whole invocation (`rule.forbid.hand-run-reviews`) |
+| the lane still runs on the guard's terms, costs its budget round, and mints a `.given` that gates | the engine never sees it: no budget drawn, no artifact read, no verdict that gates |
+
+⇒ 🔴 **the two unsanctioned moves are the same defect at two scales.** a commit changes *what the reviewers can see*; a hand-run review changes *who reviews and under what terms*. **both are a review-scope change made by the party under review**, and both are attractive for the identical reason — they work, they are free, and they feel like diligence.
+
+**second, smaller:** *done* is a verdict the **guard** renders. a commit is your own record that the work is settled, and to write it first inverts the order the route exists to impose.
+
+## .the two sanctioned commits
+
+| # | the warrant | the check |
+|---|---|---|
+| **1** | the route **asks** — a stone or guard names a commit as a deliverable | read the `.stone` / `.guard`. **name the stone**, or you have no warrant |
+| **2** | the route is **finished** — every stone passed, last one approved | `rhx route.drive` reports no next stone |
+
+⚠️ **quota is not a warrant.** `rule.always.spend-own-levers-before-escalation` files the commit quota under **human**; this adds the half it does not carry — **even with quota in hand, the route must ask.** *"they allowed one once"* is not a permanent permission.
+
+🔴 **and one booted rule said the opposite until 2026-09-07.** `rule.always.raise-a-blocker-a-taken-cannot-close` closed its overflow section with *"that quota is a legitimate `--as blocked`."* a driver read it, halted on the quota, and the wisher struck the ask — **the incident this rule was written from.** that section now points here.
+
+⇒ its **arithmetic was never wrong** — a commit really is the only move that collapses `since-main`. it got wrong that *human-gated* implies *worth a human's grant*. ⚠️ **the check is not *"who owns this lever?"* but *"and once they hand it over, may I use it here?"***
+
+## .the reasons that FEEL like warrants — each true, none a warrant
+
+| the reason | why not |
+|---|---|
+| 🔴 *"the diff overflows; a commit collapses it"* | sharpest, because **correct**. a review-scope change by the reviewed party |
+| *"the work is done, I merely record it"* | **done** is the guard's word, not yours |
+| *"a checkpoint, so it is not lost"* | the worktree **is** the checkpoint |
+| *"CI needs a push"* | a release act — after approval, never before |
+| *"the tree is noisy"* | tidiness is not a stone's deliverable |
+
+test: **"which stone asked me to commit?"** — name it → commit, and cite it in the message · route finished → commit · 🔴 you reach for a row above → **that is this rule at work.** do not commit.
+
+⚠️ **the bound:** this governs the **driver on a route**. a mechanic asked by a human to land a change works under a different contract (`rule.require.git-release-confidence`, ehmpathy/mechanic).
+
+blocker: a commit no stone asked for and no approval finished · a commit reached for to collapse an overflowed `since-main` · a commit on a prior quota with no stone that asks.

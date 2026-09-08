@@ -51,6 +51,10 @@ here would ship its own backlog to every consumer.
 argument — an overload with measured evidence, a dispute with two sides — earns its own file beside
 the term it concerns, and the row cites it by path.
 
+⚠️ **and a census can only report the gaps someone looked for.** a word can sit undeclared through
+many sweeps of the list and never appear on it, because every sweep re-walked what was already
+named. ⇒ **an absent row is not evidence of an absent gap.**
+
 ## .who tends it
 
 the learner keeps the glossary current — it captures a term the moment one is coined or debated. see

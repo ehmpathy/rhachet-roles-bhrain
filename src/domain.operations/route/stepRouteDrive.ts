@@ -484,6 +484,15 @@ const formatRouteDriveMalfunction = (input: {
   lines.push(`   │  ├─ route = ${asRouteDisplayPath({ route: input.route })}`);
   lines.push(`   │  └─ stone = ${input.stone}`);
   lines.push(`   │`);
+  // 💥 is a CLAIMED REGISTER GLYPH, never decoration. `catalog.of=glyph.axis=halt.md`
+  // declares it for `malfunction`, against ✋ `blocked` and 👋 `exhausted` — it answers
+  // "which halt is this?" before the words parse, which is the one test the register
+  // applies (`term=glyph._.choice._.md`).
+  //
+  // ⛔ do NOT strip it to match the bare halt headers beside it.
+  //    `rule.prefer.chill-nature-emojis` caps UNCLAIMED prose emphasis and holds no
+  //    jurisdiction over a claimed marker. the bare peers are the defect — they are owed
+  //    ✋ and 👋 — so consistency here is repaid upward, never by a strip.
   lines.push(`   └─ 💥 halted, guard malfunction`);
   lines.push(
     `      └─ please tell a human this needs to be fixed before you can continue`,

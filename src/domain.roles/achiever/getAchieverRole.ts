@@ -43,20 +43,6 @@ export const ROLE_ACHIEVER: Role = Role.build({
           },
         },
       ],
-      // onStop: enforce goal triage before session ends
-      // halts until all asks are covered by goals
-      onStop: [
-        {
-          command:
-            './node_modules/.bin/rhx goal.triage.infer --when hook.onStop',
-          timeout: 'PT10S',
-        },
-        {
-          command:
-            './node_modules/.bin/rhx goal.triage.next --when hook.onStop',
-          timeout: 'PT10S',
-        },
-      ],
       // onTalk: accumulate asks as they arrive
       onTalk: [
         {

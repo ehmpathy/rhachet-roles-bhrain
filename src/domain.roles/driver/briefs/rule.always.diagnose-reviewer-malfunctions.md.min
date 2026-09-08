@@ -6,27 +6,37 @@ a `malfunction` is a broken process, not a verdict — the review could not run,
 
 | the cause | you |
 |---|---|
-| driver-fixable — a bad glob, an absent supply file, a malformed rubric path, an artifact it could not parse | fix it, re-arrive |
-| 🔴 a context overflow — the reviewer's prompt blew the window, so it reviewed naught | re-run the rubric scoped — see below |
-| human-fixable — an absent credential, a permission gate, a foreman-only grant | surface the exact command, never the symptom |
+| **driver-fixable** — a bad glob, an absent supply file, a malformed rubric path, an artifact it could not parse | fix it, **answer its given**, re-arrive |
+| 🔴 **a context overflow** — the reviewer's prompt blew the window, so it reviewed naught | narrow the REVIEWER, in the guard — see below |
+| **human-fixable** — an absent credential, a permission gate, a foreman-only grant | surface the **exact command**, never the symptom |
 | unclear | read its stderr and logs, classify, then route |
 
-## 🔴 the overflowed reviewer — a task, never a verdict
+## 🔴 a malfunctioned reviewer still owes you a `.taken`
 
-the guard hardcodes `--diffs since-main`; `rhx review` is not so bound, so the same rubric runs narrowed:
+an unreadable verdict is not a clean one — `asPeerGivenVerdict` scores an undetected count as **one blocker** (*"if it finds no numeric count it can NOT assume zero"*, `contract.reviewer-output`). so its given **gates**, exactly as a readable rejection does.
+
+⚠️ **a repair alone does not re-open the door.** the fix changes the code; the debt is keyed to the reviewer, so it stands until you answer it. the halt prompt names the `.taken` path — a malfunction is dischargeable, never a deadlock. ⇒ **the reviewer malfunctioned; you are still the party that must say so.**
+
+## 🔴 the overflowed reviewer — narrow it in the GUARD
 
 ```sh
-rhx review --rules '<the reviewer rubric path>' \
-           --paths-with 'src/<subsystem>/**/*.ts' --paths-wout '**/*.test.ts' \
-           --output '.review/<iter>.<reviewer>.scoped.<slug>.md' --goal exhaustive
+rhx route.mutate.guard --stone <stone> --route <route>
+# narrow that reviewer's `--paths-with` to the subsystem its rubric grades, and/or trim its
+# `--conversation` depth. then re-arrive and let the GUARD run it.
 ```
 
-🟡 **its temptation is unique.** every other malfunction announces itself as broken; an overflowed reviewer returns terminal and unlocks the next level, so it reads much like a reviewer that ran. a driver who merely files the overflow removes a lens from the drive.
+⚠️ **its temptation is unique.** every other malfunction announces itself as broken; an overflowed reviewer returns terminal and unlocks the next level, so it reads much like a reviewer that ran. a driver who merely records the overflow removes a lens from the drive.
 
-✅ the inherited `--diffs since-main` scope is already correct — do NOT re-derive it. `getAllFileDiffsFromRange.ts` prefers `origin/main` (line 43) and takes `git merge-base` (line 70), so a commit main is ahead on cannot enter the diff. an item the scoped run raises is yours.
+⛔ **a hand-run `rhx review` is NOT the remedy** — `rule.forbid.hand-run-reviews` forbids it outright. it draws no budget, mints no `.given`, and gates naught, ⇒ **the lens is not restored, only simulated.** a guard edit makes the reviewer fit so the **guard** can run it, and that one property is the whole difference.
+
+## the bind arithmetic — what a GUARD bind needs
+
+✅ **the inherited scope is correct — do NOT re-derive it.** `getAllFileDiffsFromRange.ts` prefers `origin/main` (line 43) and takes `git merge-base` (line 70), so a commit main is ahead on cannot enter the diff. **an item a correctly-bound reviewer raises is yours.**
+
+🟡 **a `--paths-with` glob with a brace in the EXTENSION slot is silently dropped** (`'**/*.{ts,md}'` → the bind never applies and the reviewer runs unbounded); a brace in the **directory** slot works (`'{src,blackbox}/**'`); and a **repeated** `--paths-with` keeps only the LAST. ⇒ parser defects in `parseReviewArgs` — write the guard bind around them: `.dream/v2026_09_04.fix.review-multi-glob-flags-do-not-comma-split.md`.
 
 one honest diagnosis pass, never a debug spiral: read the logs → classify → act.
 
 if it resists one pass, escalate with what you found — the symptom, the logs read, your best read of the cause. a named unknown beats a bare break.
 
-blocker: a malfunction escalated with a bare symptom · a driver-fixable cause handed to a human · an overflowed reviewer reported upward with no scoped re-run.
+blocker: a malfunction escalated with a bare symptom · a driver-fixable cause handed to a human · an overflowed reviewer reported upward with no **guard edit** attempted · 🔴 an overflowed reviewer answered with a **hand-run `rhx review`** (`rule.forbid.hand-run-reviews`) · a malfunction repaired in code and re-arrived with **no `.taken`** (the given still gates; the round halts at the door).

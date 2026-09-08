@@ -1,7 +1,8 @@
 import type { RouteStone } from '@src/domain.objects/Driver/RouteStone';
 import type { RouteStoneGuardBlockerReport } from '@src/domain.objects/Driver/RouteStoneGuardBlockerReport';
 
-import { getRouteGuardReviewPeerContemplationStatus } from '../guard/review/peer/getRouteGuardReviewPeerContemplationStatus';
+import { getRepoRootWithFallback } from '../guard/getRepoRootWithFallback';
+import { getStoneGuardReviewPeerUncontemplatedUnforgiven } from '../guard/review/peer/getStoneGuardReviewPeerUncontemplatedUnforgiven';
 import { formatRouteGuardReviewPeerContemplatePrompt } from '../guard/tree/formatRouteGuardReviewPeerContemplatePrompt';
 import { getOneStoneGuardApproval } from '../judges/getOneStoneGuardApproval';
 import { asRouteDisplayPath } from './asRouteDisplayPath';
@@ -96,15 +97,28 @@ const computeContemplationReplyPrompt = async (input: {
   stone: RouteStone;
   route: string;
 }): Promise<string | null> => {
-  const status = await getRouteGuardReviewPeerContemplationStatus({
+  // .note = reads through getStoneGuardReviewPeerUncontemplatedUnforgiven, the same operation
+  //         the two passage gates use, rather than the raw contemplation status. that operation
+  //         declares itself the ONE answer to "whom does the prompt name"; a raw read here was a
+  //         second one, and it differed — it skipped the overrule filter (so the hook could name
+  //         a reviewer a human had already forgiven) and it carried no level or retired flag
+  const unforgiven = await getStoneGuardReviewPeerUncontemplatedUnforgiven({
     route: input.route,
     stone: input.stone,
   });
-  if (status.ready) return null;
+
+  // nobody is owed — either the driver just answered, or an overrule forgave the rest
+  if (unforgiven.length === 0) return null;
+
+  // .note = read AFTER the early return, so a stophook with no reviewer to name pays
+  //         no git subprocess on every fire
+  const root = await getRepoRootWithFallback({ from: input.route });
+
   return formatRouteGuardReviewPeerContemplatePrompt({
     case: 'reply-prompt',
     stone: input.stone.name,
-    reviewers: status.uncontemplated,
+    root,
+    reviewers: unforgiven,
   });
 };
 

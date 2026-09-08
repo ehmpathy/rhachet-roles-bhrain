@@ -29,18 +29,21 @@ every `gen*`. one entry per word, reused across every dobj/dop that uses it.
 
 same obsession, same durable-retention drive — just a structured subtype with its own home.
 
-## .the itch, made explicit
+## .the itch, and why it is the learner's own
 
-this obsession is proactively nudged. much like a human pauses every so often — say, once an
-hour — to reflect on what they have been through, note the lessons worth a record, and so raise
-the floor for everyone around them: an onStop sweephook nudges the learner to distill its
-domain-term lessons when the distillation has gone stale (> 1 hour, walltime). where a human's
-itch is subconscious, here it is **explicit** — surfaced as the stophook's reminder, and
-articulated openly in `progress.md`. the nudge holds the *stop*, never a *write*.
+much like a human pauses every so often — say, once an hour — to reflect on what they have
+been through, note the lessons worth a record, and so raise the floor for everyone around
+them: the learner pauses to distill its domain-term lessons before the round's context fades.
 
-## .what the learner does when nudged
+⚠️ **the itch is the learner's, and no gate carries it.** a `--when hook.onStop` staleness
+check once held the stop until the distillation was fresh; it was **withdrawn 2026-09-07**,
+because a gate that fires on a clock charges every session for a distillation most sessions
+do not owe. ⇒ the obligation is unchanged — only its enforcement is gone. run
+`rhx learn.domain.terms` when the cues below fire.
 
-the nudge does no work on its own — **the learner decides** what the round was worth. it:
+## .what the learner does
+
+**the learner decides** what the round was worth. it:
 
 1. reflects on the domain objects & operations it declared/engaged this round
 2. splits their names into constituent terms (`getStone` → verb `get` + noun `stone`)

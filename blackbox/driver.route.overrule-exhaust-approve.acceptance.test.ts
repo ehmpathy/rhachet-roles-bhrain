@@ -2,6 +2,7 @@ import * as fs from 'fs/promises';
 import * as path from 'path';
 import { given, then, useBeforeAll, useThen, useWhen, when } from 'test-fns';
 
+import { answerEveryPeerGiven } from './.test/answerEveryPeerGiven';
 import {
   execAsync,
   genTempDirForRhachet,
@@ -58,6 +59,22 @@ describe('driver.route.overrule-exhaust-approve.acceptance', () => {
       cwd: input.tempDir,
     });
 
+  // answer whatever the prior round left owed, then arrive the stone.
+  //
+  // 🔴 the answer rides with the ARRIVAL, never with `setStone` — `setStone` also serves
+  //    `overruled` and `approved`, two HUMAN acts whose whole purpose is to wave a
+  //    critique the driver did not answer. to reply on their behalf would erase the
+  //    distinction this suite exists to clamp.
+  //
+  // it matters most at [t1]: that is the last arrival at which l3 still has a voice.
+  // reply there and its blocker is discharged for good, so [t3] passes on the honest
+  // B5 combination. skip it and l3's [t0] blocker outlives its own exhaustion — which
+  // is the point of the fix, since exhaustion must not be a free exit from a critique
+  const arrive = async (input: { tempDir: string }) => {
+    await answerEveryPeerGiven({ cwd: input.tempDir, stone: '1.feature' });
+    return setStone({ tempDir: input.tempDir, as: 'passed' });
+  };
+
   // bump the artifact so the review input hash changes → l3 re-evaluates (or is skipped
   // when exhausted). without a hash change the cached verdict is reused and budget stalls.
   const bumpArtifact = (input: { tempDir: string; note: string }) =>
@@ -69,7 +86,7 @@ describe('driver.route.overrule-exhaust-approve.acceptance', () => {
   given('[case1] B5 — l1 overruled, l3 exhausts, human approves → passage allowed', () => {
     const scene = useBeforeAll(async () => {
       const tempDir = await genScene({ slug: 'overrule-exhaust-approve-b5' });
-      await setStone({ tempDir, as: 'passed' }); // l1 rejects (1/5), l3 locked
+      await arrive({ tempDir }); // l1 rejects (1/5), l3 locked
       await setStone({ tempDir, as: 'overruled' }); // wave l1 → l3 becomes the live gate
       return { tempDir };
     });
@@ -77,7 +94,7 @@ describe('driver.route.overrule-exhaust-approve.acceptance', () => {
     // step 1: l3 runs its one round (1/1) and rejects → passage BLOCKED (l3 not terminal).
     const ranResult = useWhen('[t0] l3 runs its single round and rejects', () => {
       const result = useThen('l3 blocks the pass', async () =>
-        setStone({ tempDir: scene.tempDir, as: 'passed' }),
+        arrive({ tempDir: scene.tempDir }),
       );
 
       then('CLAMP: passage BLOCKED — l3 ran (1/1) and rejects, not yet terminal', () => {
@@ -100,7 +117,7 @@ describe('driver.route.overrule-exhaust-approve.acceptance', () => {
     const exhaustedResult = useWhen('[t1] l3 exhausts (skipped) → halts for approval', () => {
       const result = useThen('l3 exhausted, all levels terminal', async () => {
         await bumpArtifact({ tempDir: scene.tempDir, note: 'v2 so l3 re-checks' });
-        return setStone({ tempDir: scene.tempDir, as: 'passed' });
+        return arrive({ tempDir: scene.tempDir });
       });
 
       then('the prior step truly ran+blocked (sequence precondition)', () => {
@@ -153,7 +170,7 @@ describe('driver.route.overrule-exhaust-approve.acceptance', () => {
     // step 4: THE CLAMP — with l1 overruled AND l3 exhausted+approved, passage is ALLOWED.
     when('[t3] pass after approval → passage allowed (B5)', () => {
       const result = useThen('the honest B5 pass', async () =>
-        setStone({ tempDir: scene.tempDir, as: 'passed' }),
+        arrive({ tempDir: scene.tempDir }),
       );
 
       then('CLAMP: exit code is 0 — every level is terminal (overruled + exhausted+approved)', () => {

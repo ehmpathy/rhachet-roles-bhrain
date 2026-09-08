@@ -9,17 +9,27 @@ term.synonyms.forbidden:
 - respond
 - reflect-on
 - acknowledge
+- debt          # for the noun `uncontemplated` — prose-only, never a contract term
 
 ## .what
-what a **driver** owes a blocker-bearing peer critique before a stone may pass: it writes
-a `.taken` response to each current-iteration `.given.by_peer` critique that holds
-blockers. the contemplation **gate** holds passage until every such critique is answered —
-unless the reviewer's level was **forgiven** by an overrule (then its critique needs no
-`.taken`).
+what a **driver** owes a peer critique that holds blockers, before a stone may pass: it
+writes a `.taken` response to that reviewer's **latest** `.given.by_peer` critique. the
+contemplation **gate** holds passage until every such critique is answered — unless the
+reviewer's level was **forgiven** by an overrule (then its critique needs no `.taken`).
 
-the adjective **uncontemplated** names a critique that holds blockers and has no paired
-current-hash `.taken` yet (e.g. `getStoneGuardReviewPeerUncontemplatedUnforgiven` = the
-reviewers still owed a contemplation AND not forgiven by an overrule).
+the adjective **uncontemplated** names a critique that holds blockers and has no `.taken`
+at the path that critique **derives** (e.g. `getStoneGuardReviewPeerUncontemplatedUnforgiven`
+= the reviewers still owed a contemplation AND not forgiven by an overrule).
+
+🔴 **the debt is keyed to the REVIEWER, never to the artifact.** an edit to the code under
+review does not discharge it, and an answer stays an answer however many times the artifact
+changes after it. a critique is discharged by exactly three things: the driver answers it, a
+human overrules its level, or the reviewer speaks again with no blockers.
+
+⚠️ **and a `.taken` answers ONE critique, never a reviewer in general.** two critiques from
+one reviewer can carry the same artifact hash — a `.taken` write does not move that hash — so
+the pair is matched on the **derived path**, which carries the iteration. a reviewer that
+re-runs and refuses your answer is owed a fresh `.taken` at its new iteration.
 
 ## .refs
 where the term is declared / used, plus notable examples:

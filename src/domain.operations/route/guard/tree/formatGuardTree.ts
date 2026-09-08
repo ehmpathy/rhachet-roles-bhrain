@@ -5,6 +5,10 @@ import {
   type ReviewPeerVerdict,
 } from '../review/peer/meter/computeReviewPeerVerdict';
 import {
+  computeBlockRemedyGroups,
+  formatBlockRemedyGroups,
+} from './formatBlockRemedyGroups';
+import {
   formatGuardReviewerTree,
   OVERRULED_NARRATIVE,
   type ReviewerTreeState,
@@ -140,6 +144,24 @@ export const formatReviewsMeterLines = (input: {
   const lines: string[] = [];
   const baseIndent = input.baseIndent ?? '';
   const sectionIndent = input.sectionIndent ?? '   ';
+
+  // 🔴 no meters ⇒ no section at all, header included. a `├─ reviews` connector with no
+  //    rows beneath it is a promise the tree does not keep: the driver reads a branch that
+  //    announces reviewer rows and delivers none, then has to decide whether the reviewers
+  //    are absent or the render dropped them (rule.forbid.snapshot-visual-blemishes).
+  //
+  //    it is the same empty-branch family this round already closed twice elsewhere — the
+  //    empty `stderr` boxes now dropped by `formatArtifactStreamBuckets`, and the orphan
+  //    `│` removed from the absent/stale halts. this was the third member, reachable from
+  //    the exhausted-status drive halt, where the stone declares no guard at all so the
+  //    meter set is legitimately empty (r7 nitpick.1, i016).
+  //
+  // ⚠️ the guard is HERE rather than at each caller because this operation is the single
+  //    render source the four call sites share, and a per-caller guard is the duplication
+  //    `rule.forbid.duplicate-format-tree-operations` names. `formatGuardTree:532` already
+  //    gates its own section on `hasReviews || hasPeerMeters`, so this is a no-op there and
+  //    changes only the two drive-halt surfaces that had no such gate.
+  if (input.meters.length === 0) return [];
 
   if (input.includeHeader !== false) {
     const headerPrefix = input.headerPrefix ?? '├─';
@@ -289,75 +311,6 @@ const asReviewerTreeStateFromMeter = (input: {
 };
 
 /**
- * .what = detects a terminal reviewer failure (malfunction or constraint)
- * .why = these states should offer overrule guidance, like exhausted offers
- *        budget options — a broken reviewer must not permablock the driver
- */
-const isTerminalReviewerFailure = (
-  passage: 'allowed' | 'overruled' | 'blocked' | 'malfunction',
-  reason: string,
-): boolean => {
-  if (passage === 'malfunction') return true;
-  if (passage === 'blocked' && reason.includes('constraint')) return true;
-  return false;
-};
-
-/**
- * .what = the ordered remedy groups a halt's "options" block offers, from its reason
- * .why = a stone can be blocked by SEVERAL gates in one pass (e.g. a malfunctioned higher
- *        level beside an exhausted lower level); each gate carries a different remedy, so the
- *        human must be offered EVERY one, in precedence order (overrule first, then budget +
- *        approve). the prior code rendered them either/or, so a mixed halt hid one remedy —
- *        this collapses to one additive list. label + order live here once; each caller applies
- *        only its own box-draw indentation (rule.require.single-source-of-truth-for-render).
- * .note = the "or fix the reviewer" tail rides ONLY on an overrule-only halt; when an
- *         exhaustion also concurs, budget + approve carry the guidance instead.
- */
-const computeBlockRemedyGroups = (input: {
-  stone: string;
-  passage: 'allowed' | 'overruled' | 'blocked' | 'malfunction';
-  reason: string;
-}): Array<{ label: string; cmd: string | null }> => {
-  const hasBudget = input.reason.includes('budget exhausted');
-  const hasOverrule = isTerminalReviewerFailure(input.passage, input.reason);
-  if (!hasBudget && !hasOverrule) return [];
-
-  const groups: Array<{ label: string; cmd: string | null }> = [];
-
-  // overrule the malfunction/constraint (highest precedence)
-  if (hasOverrule) {
-    const noun = input.passage === 'malfunction' ? 'malfunction' : 'constraint';
-    groups.push({
-      label: `overrule the ${noun}`,
-      cmd: `rhx route.stone.set --stone ${input.stone} --as overruled`,
-    });
-  }
-
-  // an exhausted reviewer → offer budget + approve
-  if (hasBudget) {
-    const exhaustedMatch = input.reason.match(/budget exhausted:\s*(.+)/);
-    const exhaustedSlugs = exhaustedMatch
-      ? exhaustedMatch[1]!.split(',').map((s) => s.trim())
-      : [];
-    const peerArg =
-      exhaustedSlugs.length === 1 ? ` --peer ${exhaustedSlugs[0]}` : '';
-    groups.push({
-      label: `increase budget`,
-      cmd: `rhx route.guard.budget --for review --add N${peerArg} --stone ${input.stone}`,
-    });
-    groups.push({
-      label: `approve as-is`,
-      cmd: `rhx route.stone.set --stone ${input.stone} --as approved`,
-    });
-  } else if (hasOverrule) {
-    // overrule-only → the prose tail; no budget remedy applies
-    groups.push({ label: `or fix the reviewer, then retry`, cmd: null });
-  }
-
-  return groups;
-};
-
-/**
  * .what = formats guard results as a tree string with box-draw characters
  * .why = enables human-readable cli output for guard execution results
  */
@@ -438,15 +391,12 @@ export const formatGuardTree = (input: {
       if (hasOptions) {
         // options is the LAST block here (no guard follows) → children indent at 6 spaces
         lines.push(`   └─ options`);
-        remedyGroups.forEach((group, i) => {
-          const isLast = i === remedyGroups.length - 1;
-          const connector = isLast ? '└─' : '├─';
-          lines.push(`      ${connector} ${group.label}`);
-          if (group.cmd !== null) {
-            const cmdIndent = isLast ? '   ' : '│  ';
-            lines.push(`      ${cmdIndent}└─ ${group.cmd}`);
-          }
-        });
+        lines.push(
+          ...formatBlockRemedyGroups({
+            groups: remedyGroups,
+            baseIndent: '      ',
+          }),
+        );
       }
     } else {
       lines.push(`   └─ passage = ${passageLabel}`);
@@ -477,15 +427,12 @@ export const formatGuardTree = (input: {
     });
     if (remedyGroups.length > 0) {
       lines.push(`   ├─ options`);
-      remedyGroups.forEach((group, i) => {
-        const isLast = i === remedyGroups.length - 1;
-        const connector = isLast ? '└─' : '├─';
-        lines.push(`   │  ${connector} ${group.label}`);
-        if (group.cmd !== null) {
-          const cmdIndent = isLast ? '   ' : '│  ';
-          lines.push(`   │  ${cmdIndent}└─ ${group.cmd}`);
-        }
-      });
+      lines.push(
+        ...formatBlockRemedyGroups({
+          groups: remedyGroups,
+          baseIndent: '   │  ',
+        }),
+      );
     }
   }
 

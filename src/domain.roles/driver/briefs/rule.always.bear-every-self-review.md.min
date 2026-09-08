@@ -8,9 +8,11 @@
 
 | the peer ladder | the self ladder |
 |---|---|
-| a budget, spent down · exhaustion is terminal | a debt, paid off · no exhaustion, only an unpaid remainder |
+| a budget, spent down · exhaustion is terminal · **and a debt per blocker beside it** | a debt only · no exhaustion, only an unpaid remainder |
 | a human may overrule it | no one may |
 | more rounds cost the human's attention | more reviews cost only yours |
+
+⚠️ **row 1 is narrower than it reads: the peer ladder carries a debt too** — an unanswered blocker is a `.taken` owed, keyed to the reviewer and untouched by its budget. so what parts the two is **not** budget-versus-debt; it is rows 2 and 3 — the peer debt sits beside a budget and under a human overrule, the self debt has neither.
 
 🟡 **the guard's liveness hatch is not a permission.** three attempts on one hash pass without the timer, so a driver is never hard-stuck. **to aim for it is the shortcut.** what the guard permits and what you owe are two different quantities.
 

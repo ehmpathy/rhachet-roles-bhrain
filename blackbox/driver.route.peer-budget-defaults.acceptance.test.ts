@@ -2,6 +2,7 @@ import * as fs from 'fs/promises';
 import * as path from 'path';
 import { given, then, useBeforeAll, useThen, when } from 'test-fns';
 
+import { answerEveryPeerGiven } from './.test/answerEveryPeerGiven';
 import {
   execAsync,
   genTempDirForRhachet,
@@ -49,6 +50,11 @@ describe('driver.route.peer-budget-defaults.acceptance', () => {
           'export const feature = () => "v1";',
         );
 
+        // answer whatever the prior round left owed, before this one is entered.
+        // a no-op on the first arrival; on every later one it is what the entrance
+        // gate now requires — an edit alone no longer buys re-entry
+        await answerEveryPeerGiven({ cwd: scene.tempDir, stone: '1.execute' });
+
         return invokeRouteSkill({
           skill: 'route.stone.set',
           args: { stone: '1.execute', route: '.', as: 'passed' },
@@ -81,11 +87,19 @@ describe('driver.route.peer-budget-defaults.acceptance', () => {
     when('[t1] multiple review iterations without exhaustion', () => {
       const result = useThen('still active after 5 iterations', async () => {
         // run 5 iterations - with finite budget this would exhaust
+        //
+        // 🔴 the answer belongs INSIDE the loop, and it is the whole point of the
+        //    loop. without it each pass halts at the entrance gate on the debt the
+        //    prior pass left, so no review round runs and the reviewer's counter
+        //    never advances — `not.toContain('exhaust')` would then pass VACUOUSLY,
+        //    on a journey that never reached a second round. caught by a snapshot
+        //    vibecheck: the counter read `2/∞` where the loop claims five passes
         for (let i = 2; i <= 5; i++) {
           await fs.writeFile(
             path.join(scene.tempDir, 'src', 'feature.ts'),
             `export const feature = () => "v${i}";`,
           );
+          await answerEveryPeerGiven({ cwd: scene.tempDir, stone: '1.execute' });
           await invokeRouteSkill({
             skill: 'route.stone.set',
             args: { stone: '1.execute', route: '.', as: 'passed' },
@@ -98,6 +112,11 @@ describe('driver.route.peer-budget-defaults.acceptance', () => {
           path.join(scene.tempDir, 'src', 'feature.ts'),
           'export const feature = () => "v6";',
         );
+
+        // answer whatever the prior round left owed, before this one is entered.
+        // a no-op on the first arrival; on every later one it is what the entrance
+        // gate now requires — an edit alone no longer buys re-entry
+        await answerEveryPeerGiven({ cwd: scene.tempDir, stone: '1.execute' });
 
         return invokeRouteSkill({
           skill: 'route.stone.set',
@@ -131,6 +150,11 @@ describe('driver.route.peer-budget-defaults.acceptance', () => {
           path.join(scene.tempDir, 'src', 'feature.ts'),
           'export const feature = () => "v-final";',
         );
+
+        // answer whatever the prior round left owed, before this one is entered.
+        // a no-op on the first arrival; on every later one it is what the entrance
+        // gate now requires — an edit alone no longer buys re-entry
+        await answerEveryPeerGiven({ cwd: scene.tempDir, stone: '1.execute' });
 
         return invokeRouteSkill({
           skill: 'route.stone.set',
