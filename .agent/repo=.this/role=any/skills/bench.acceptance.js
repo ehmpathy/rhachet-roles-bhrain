@@ -295,6 +295,62 @@ if (cmd === 'gate') {
   process.exit(0);
 }
 
+// -- cicd-report ---------------------------------------------------------------
+// .why = the cicd slow-test report reads a jest payload with jq. it has now failed
+//        BOTH ways: the original filtered a key jest 30 never emits (silently zero
+//        rows), and my replacement divided by a null `add` on an empty shard (exit 5,
+//        which `set -eu` turned into a failed job). both shipped because the jq was
+//        never run against a real payload AND an empty one before the push.
+//        ⇒ this runs the exact workflow expressions against both.
+if (cmd === 'cicd-report') {
+  const label = flag('label', 'after16');
+  const real = path.join(OUT_DIR, `${label}.jest.json`);
+  const empty = path.join(OUT_DIR, '.verify.empty.jest.json');
+  fs.mkdirSync(OUT_DIR, { recursive: true });
+  fs.writeFileSync(empty, JSON.stringify({ testResults: [] }));
+
+  const TABLE = `[ .testResults[] | { name, ms: ((.endTime // 0) - (.startTime // 0)) } ] | sort_by(-.ms) | .[:5][] | "| \\((.ms/1000) | floor)s | \\(.name | sub("^.*/"; "")) |"`;
+  const TOTAL = `[ .testResults[] | ((.endTime // 0) - (.startTime // 0)) ] | (add // 0) / 1000 | floor | "summed: \\(.)s"`;
+  const COUNT = `.testResults | length`;
+
+  const runJq = (filter, file) => {
+    const r = spawnSync('jq', ['-r', filter, file]);
+    return {
+      code: r.status,
+      out: (r.stdout ?? '').toString().trim(),
+      err: (r.stderr ?? '').toString().trim(),
+    };
+  };
+
+  let bad = 0;
+  for (const [name, file] of [
+    ['real payload', real],
+    ['EMPTY shard', empty],
+  ]) {
+    if (!fs.existsSync(file)) continue;
+    console.log(`\n🦉 cicd-report — ${name}`);
+    for (const [what, filter] of [
+      ['count', COUNT],
+      ['table', TABLE],
+      ['total', TOTAL],
+    ]) {
+      const r = runJq(filter, file);
+      const ok = r.code === 0;
+      if (!ok) bad++;
+      console.log(`   ${ok ? '✅' : '⛈️ '} ${what.padEnd(6)} exit=${r.code}`);
+      for (const line of (ok ? r.out : r.err).split('\n').filter(Boolean).slice(0, 6))
+        console.log(`      │ ${line}`);
+    }
+  }
+  fs.rmSync(empty, { force: true });
+  console.log(
+    bad === 0
+      ? '\n   ✅ every workflow expression exits 0 on BOTH a real and an empty shard\n'
+      : `\n   ⛈️  ${bad} expression(s) fault — the cicd step would fail the job\n`,
+  );
+  process.exit(bad === 0 ? 0 : 2);
+}
+
 // -- probe ---------------------------------------------------------------------
 // .why = the levers left are estimates until each is priced. a lever with a guessed
 //        size gets chosen by how easy it is to fix, never by what it costs.
