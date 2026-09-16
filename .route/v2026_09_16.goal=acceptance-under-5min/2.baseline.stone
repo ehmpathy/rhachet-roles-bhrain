@@ -1,0 +1,14 @@
+# 2.baseline
+
+measure the clean baseline: build vs jest split, per-file cost, per-case verdicts.
+
+.why-this-order = every later stone is judged against this number. a baseline taken
+  after a change is not a baseline.
+
+.guard = .log/bench.acceptance/before.json exists, holds a wallMs, and holds a case
+  map with a verdict per case.
+
+.hardwon = FREEZE THE TREE. jest lazy-loads each test file as it reaches it, so an
+  edit to the harness mid-run is picked up by files not yet loaded. the first attempt
+  was corrupted this way and had to be killed and redone. the measurement is an
+  experiment; protect it like one.

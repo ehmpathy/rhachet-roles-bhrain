@@ -20,7 +20,15 @@ export const ROLE_DRIVER: Role = Role.build({
   },
   inits: {
     dirs: [{ uri: __dirname + '/inits' }],
-    exec: [{ cmd: __dirname + '/inits/init.claude.status-line.sh' }],
+    exec: [
+      { cmd: __dirname + '/inits/init.claude.status-line.sh' },
+      // .why = a clone that boots with `.route/**` denied cannot add a stone, emit a
+      //        yield, or archive a seed — the driver is locked out of the one directory
+      //        it exists to tend. this heals that on init, and leaves the real
+      //        protection to route.mutate.guard, which can tell a passed stone from an
+      //        unpassed one where a path glob cannot.
+      { cmd: __dirname + '/inits/init.claude.permissions.route.sh' },
+    ],
   },
   hooks: {
     onBrain: {

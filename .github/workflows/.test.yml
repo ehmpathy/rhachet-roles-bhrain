@@ -250,18 +250,70 @@ jobs:
             THOROUGH=true npm run test:integration -- --shard=${{ matrix.shard.shard }}/${{ matrix.shard.total }} --json --outputFile=jest-results.json
           fi
 
+      # .what = rank every test file by wall clock, into annotations AND the job summary
+      # .why  = this report read `.perfStats.runtime`, which jest 30 does NOT emit —
+      #         its --json testResults carry only assertionResults, endTime, message,
+      #         name, startTime, status, summary. so the `select(...!= null)` matched
+      #         zero rows and the step emitted no output at all, silently, on every run.
+      #         a dead instrument reads exactly like a fast suite, which is why the
+      #         longest pole here (one 5m32s file) went unseen for so long.
+      #
+      #         endTime-startTime is the only per-file duration jest 30 offers. the
+      #         summary table is added because annotations alone cannot be ranked — a
+      #         diagnosis needs the order, not a scatter of notices.
       - name: report slow tests
         if: always() && hashFiles('jest-results.json') != ''
         run: |
           set -eu
-          jq -r '.testResults[] | select(.perfStats.runtime != null) | "\(.name):\(.perfStats.runtime)"' jest-results.json | while IFS=: read -r name runtime; do
-            seconds=$((runtime / 1000))
-            if [[ $seconds -ge 30 ]]; then
-              echo "::warning file=${name}::slow test: ${seconds}s"
-            elif [[ $seconds -ge 10 ]]; then
-              echo "::notice file=${name}::test duration: ${seconds}s"
+
+          # annotations: per-file, for inline visibility on the PR
+          jq -r '.testResults[] | "\(.name):\((.endTime // 0) - (.startTime // 0))"' jest-results.json \
+          | while IFS=: read -r name ms; do
+              seconds=$((ms / 1000))
+              if [[ $seconds -ge 30 ]]; then
+                echo "::warning file=${name}::slow test: ${seconds}s"
+              elif [[ $seconds -ge 10 ]]; then
+                echo "::notice file=${name}::test duration: ${seconds}s"
+              fi
+            done
+
+          # job summary: the ranked table, which is what a diagnosis actually reads
+          #
+          # .note = a shard CAN legitimately hold zero testResults (a --testPathPatterns
+          #         shard that matched no file, under --passWithNoTests). `add` returns
+          #         null on an empty array, and `null / 1000` is a jq FAULT — which under
+          #         `set -eu` fails the step and takes the whole job with it. guard it
+          #         with `add // 0`, and say the empty case out loud rather than render
+          #         an empty table that reads like a fast shard.
+          COUNT=$(jq -r '.testResults | length' jest-results.json)
+          {
+            echo "### 🐢 slow tests — ${{ github.job }}"
+            echo ""
+            if [[ "$COUNT" -eq 0 ]]; then
+              echo "_no test files ran in this shard — the duration report has no rows to show._"
+              echo ""
+              echo "> this is an explicit EMPTY state, never a silent one. a report that"
+              echo "> prints an empty table reads exactly like a fast suite."
+            else
+              echo "| wall | file |"
+              echo "|---:|---|"
+              jq -r '
+                [ .testResults[] | { name, ms: ((.endTime // 0) - (.startTime // 0)) } ]
+                | sort_by(-.ms) | .[:25][]
+                | "| \((.ms/1000) | floor)s | \(.name | sub("^.*/"; "")) |"
+              ' jest-results.json
+              echo ""
+              jq -r '
+                [ .testResults[] | ((.endTime // 0) - (.startTime // 0)) ]
+                | (add // 0) / 1000 | floor
+                | "**summed file time:** \(.)s across all files in this shard"
+              ' jest-results.json
+              echo ""
+              echo "> the wall clock can never fall below the LONGEST SINGLE FILE — jest"
+              echo "> parallelizes across files, never within one. if the top row here"
+              echo "> exceeds the target, split that file; no worker count will fix it."
             fi
-          done
+          } >> "$GITHUB_STEP_SUMMARY"
 
   test-shards-acceptance:
     runs-on: ubuntu-24.04
@@ -334,18 +386,70 @@ jobs:
             THOROUGH=true npm run test:acceptance -- --shard=${{ matrix.shard.shard }}/${{ matrix.shard.total }} --json --outputFile=jest-results.json
           fi
 
+      # .what = rank every test file by wall clock, into annotations AND the job summary
+      # .why  = this report read `.perfStats.runtime`, which jest 30 does NOT emit —
+      #         its --json testResults carry only assertionResults, endTime, message,
+      #         name, startTime, status, summary. so the `select(...!= null)` matched
+      #         zero rows and the step emitted no output at all, silently, on every run.
+      #         a dead instrument reads exactly like a fast suite, which is why the
+      #         longest pole here (one 5m32s file) went unseen for so long.
+      #
+      #         endTime-startTime is the only per-file duration jest 30 offers. the
+      #         summary table is added because annotations alone cannot be ranked — a
+      #         diagnosis needs the order, not a scatter of notices.
       - name: report slow tests
         if: always() && hashFiles('jest-results.json') != ''
         run: |
           set -eu
-          jq -r '.testResults[] | select(.perfStats.runtime != null) | "\(.name):\(.perfStats.runtime)"' jest-results.json | while IFS=: read -r name runtime; do
-            seconds=$((runtime / 1000))
-            if [[ $seconds -ge 30 ]]; then
-              echo "::warning file=${name}::slow test: ${seconds}s"
-            elif [[ $seconds -ge 10 ]]; then
-              echo "::notice file=${name}::test duration: ${seconds}s"
+
+          # annotations: per-file, for inline visibility on the PR
+          jq -r '.testResults[] | "\(.name):\((.endTime // 0) - (.startTime // 0))"' jest-results.json \
+          | while IFS=: read -r name ms; do
+              seconds=$((ms / 1000))
+              if [[ $seconds -ge 30 ]]; then
+                echo "::warning file=${name}::slow test: ${seconds}s"
+              elif [[ $seconds -ge 10 ]]; then
+                echo "::notice file=${name}::test duration: ${seconds}s"
+              fi
+            done
+
+          # job summary: the ranked table, which is what a diagnosis actually reads
+          #
+          # .note = a shard CAN legitimately hold zero testResults (a --testPathPatterns
+          #         shard that matched no file, under --passWithNoTests). `add` returns
+          #         null on an empty array, and `null / 1000` is a jq FAULT — which under
+          #         `set -eu` fails the step and takes the whole job with it. guard it
+          #         with `add // 0`, and say the empty case out loud rather than render
+          #         an empty table that reads like a fast shard.
+          COUNT=$(jq -r '.testResults | length' jest-results.json)
+          {
+            echo "### 🐢 slow tests — ${{ github.job }}"
+            echo ""
+            if [[ "$COUNT" -eq 0 ]]; then
+              echo "_no test files ran in this shard — the duration report has no rows to show._"
+              echo ""
+              echo "> this is an explicit EMPTY state, never a silent one. a report that"
+              echo "> prints an empty table reads exactly like a fast suite."
+            else
+              echo "| wall | file |"
+              echo "|---:|---|"
+              jq -r '
+                [ .testResults[] | { name, ms: ((.endTime // 0) - (.startTime // 0)) } ]
+                | sort_by(-.ms) | .[:25][]
+                | "| \((.ms/1000) | floor)s | \(.name | sub("^.*/"; "")) |"
+              ' jest-results.json
+              echo ""
+              jq -r '
+                [ .testResults[] | ((.endTime // 0) - (.startTime // 0)) ]
+                | (add // 0) / 1000 | floor
+                | "**summed file time:** \(.)s across all files in this shard"
+              ' jest-results.json
+              echo ""
+              echo "> the wall clock can never fall below the LONGEST SINGLE FILE — jest"
+              echo "> parallelizes across files, never within one. if the top row here"
+              echo "> exceeds the target, split that file; no worker count will fix it."
             fi
-          done
+          } >> "$GITHUB_STEP_SUMMARY"
 
   # union job: aggregates shard results into single status for pr merge constraints
   test-integration:

@@ -18,6 +18,7 @@ the glyph names what the role does.
 | 🪐 | thinker | cosmic, vast — the whole space of a problem |
 | 🌕 | reflector | illumination — shine back what was already there |
 | 🔭 | researcher | far sight, truth seeker — what is not yet held |
+| 🧭 | navigator | a course set where no trail is cut — the path planned before it is walked |
 
 ## 🟡 .📚 and 🔭 are one practice, split on one question
 

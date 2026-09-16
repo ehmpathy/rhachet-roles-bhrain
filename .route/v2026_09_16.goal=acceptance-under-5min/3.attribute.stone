@@ -1,0 +1,14 @@
+# 3.attribute
+
+name where the wall clock goes, with a number per cause. no hunches.
+
+.why-this-order = the fix is chosen by the attribution. reversed, you tune what is
+  easy to tune rather than what is costly.
+
+.guard = each named cause carries a measured number, and the causes sum to within a
+  few percent of the total.
+
+.hardwon = read CICD, not just the laptop. the shard job times settled it here: the 8
+  files CI isolates as "longest poles" (real LLM calls) each ran ~50-75s, while the 3
+  dynamic shards of "fast validation" files ran 5m36s to 9m52s. the slow half was the
+  fast-labelled half. a label written once and never re-measured is a rut.

@@ -1,0 +1,26 @@
+# 5.restore-parallelism
+
+diagnose why the suite runs serial, fix the CAUSE, raise the worker count.
+
+.guard = the full suite runs green at the raised worker count, and compare reports
+  zero lost cases. a red run here is a cause to find, never a retry to spend.
+
+.hardwon = CHECK THE PROVENANCE of a constraint — and then TEST it anyway. the config
+  carried `maxWorkers: 1` with the note "symlink race conditions in temp dir setup".
+  `git log -S maxWorkers` put it in the repos FIRST import commit: inherited lore,
+  never diagnosed here. I concluded it was a rut and raised it to 8.
+  595 cases failed. the constraint was REAL. provenance told me the note was
+  undiagnosed; it did not tell me the note was wrong.
+
+.hardwon = the note named the wrong mechanism, which is why it read as lore. the true
+  cause is resource exhaustion, not a logic race: fs.existsSync returns FALSE on any
+  error, EMFILE included. under 8 workers on 4 cores, each case spawning bash -> rhx ->
+  bun, the existsSync(dist) check inside test-fns createSymlinks fails spuriously and
+  reports "symlink target not found: <gitroot>/dist". dist was there the whole time.
+
+.hardwon = a failure that only appears at FULL SCALE will not reproduce in a scoped
+  run. 4 files at 8 workers: 263/263 green. 117 files at 8 workers: 595 red. scope down
+  to debug, but never conclude from a scoped green.
+
+.hardwon = worker count is set by how many WAITS can be in flight, bounded by fds and
+  memory — not by core count alone.

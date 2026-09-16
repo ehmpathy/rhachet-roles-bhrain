@@ -1,0 +1,24 @@
+# 6.verify
+
+verify the bar on the PAVED command, and prove zero coverage loss.
+
+guard: bench.acceptance gate under 5m00s AND compare exit 0.
+
+hardwon: 🔴 THE BAR HAS A HARD FLOOR NO PARALLELISM CAN CROSS. jest spreads work
+  across files, never within one, so the wall clock can never fall below the longest
+  single file. measured at 8 workers:
+    review.join-intersect.acceptance.test.ts = 5m32s
+    the bar                                  = 5m00s
+  that ONE file misses the bar by itself. with infinite workers and a free build, the
+  suite still misses. the long poles must be SPLIT.
+
+hardwon: the aggregate says parallelism is healthy, not saturated. 93m55s of summed
+  file time compressed into 11m50s = 7.9x on 8 workers. the suite is WAIT-bound. I had
+  concluded the opposite from a polluted run, where fast-failed cases made a worse
+  config look quicker.
+
+hardwon: 🔴 THE LEVER I REFUSED, recorded so it is recognized rather than rediscovered
+  as a clever idea. when.repeatably uses criteria CI ? SOME : EVERY. locally every LLM
+  case runs 3 attempts and ALL must pass; CI=true collapses that to "any one passes"
+  and would cut minutes instantly. that is a weakening of what the suite proves.
+  a faster suite that proves less is a regression, not a win.

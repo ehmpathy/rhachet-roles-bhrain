@@ -1,12 +1,11 @@
-import { exec } from 'child_process';
 import * as fs from 'fs';
 import * as os from 'os';
 import * as path from 'path';
-import { promisify } from 'util';
 
 import { genTempDir } from 'test-fns';
 
-export const execAsync = promisify(exec);
+export { execAsync } from './execAsync';
+import { execAsync } from './execAsync';
 
 /**
  * .what = creates a temp directory ready for reflector role tests
