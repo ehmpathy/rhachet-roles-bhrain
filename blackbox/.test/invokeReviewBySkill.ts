@@ -1,11 +1,10 @@
-import { exec } from 'child_process';
 import * as fs from 'fs/promises';
 import * as path from 'path';
-import { promisify } from 'util';
 
 import { genTempDirForRhachet } from './invokeReviewSkill';
 
-export const execAsync = promisify(exec);
+export { execAsync } from './execAsync';
+import { execAsync } from './execAsync';
 
 /**
  * .what = the demo target role slug review.by runs its rubrics for

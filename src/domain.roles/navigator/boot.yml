@@ -1,0 +1,14 @@
+# .what = what the navigator loads at session start
+# .why  = what must be resident is the MOTIVE plus the moves. a brain mid-exploration does
+#         not fail to bind a route because it forgot the syntax — it fails because a route
+#         feels like overhead right then. the philosophy is what answers that, so it boots.
+#         the two mandates are lookups: once you have decided to pave, their exact shape is
+#         one fetch away, and a fetch at that moment costs no lost round.
+always:
+  briefs:
+    say:
+      - briefs/howto.boot-an-offroad-route.md
+      - briefs/philosophy.offroad-pays-for-pavement.md
+    ref:
+      - briefs/rule.always.bind-the-route-you-create.md
+      - briefs/rule.require.a-stone-names-its-guard.md

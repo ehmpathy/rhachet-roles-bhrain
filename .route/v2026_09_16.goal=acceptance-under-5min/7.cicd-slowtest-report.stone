@@ -1,0 +1,25 @@
+# 7.cicd-slowtest-report
+
+make the cicd slow-test report actually report, so the next diagnosis starts from data.
+
+.guard = a cicd run surfaces a RANKED per-file duration table, and the top row is
+  legible as the wall-clock floor.
+
+.hardwon = 🔴 THE REPORT WAS DEAD, SILENTLY, ON EVERY RUN. it filtered
+  `select(.perfStats.runtime != null)`. jest 30 emits NO perfStats key at all — its
+  --json testResults carry only assertionResults, endTime, message, name, startTime,
+  status, summary. so the filter matched zero rows and the step printed no output.
+  a dead instrument reads exactly like a fast suite. this is why the longest pole in
+  the suite went unseen.
+
+.hardwon = the same absent key silently broke MY instrument too — every per-file cost
+  read 0.0s for hours and I skimmed past it, because 0.0s next to a real total looks
+  like a rounding artifact rather than a dead read. ⇒ when a metric reads zero, prove
+  it is zero before you accept it.
+
+.hardwon = annotations alone cannot be RANKED. a diagnosis needs the order, so the fix
+  writes a sorted table to GITHUB_STEP_SUMMARY beside the per-file annotations.
+
+.hardwon = re-derive a report from the RAW payload, never from a summary saved at run
+  time. once `report` re-read the raw jest json, one parse fix made every past run
+  re-readable — instead of one re-run per bug, at 12 minutes each.

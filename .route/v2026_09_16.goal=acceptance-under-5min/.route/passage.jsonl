@@ -1,0 +1,6 @@
+{"stone":"1.instrument","status":"passed"}
+{"stone":"2.baseline","status":"passed"}
+{"stone":"3.attribute","status":"passed"}
+{"stone":"4.cut-fixture-cost","status":"passed"}
+{"stone":"5.restore-parallelism","status":"passed"}
+{"stone":"6.verify","status":"passed"}

@@ -1,0 +1,10 @@
+# 1.instrument
+
+build the measurement instrument BEFORE any change.
+
+it must answer two questions at once:
+- where does the wall clock go? -> phases + per-file cost
+- did every case that passed before pass now? -> per-case verdict set
+
+.guard = the tool prints a MEASURED wall clock and a per-case verdict set, and its
+         compare mode exits non-zero on a lost case.

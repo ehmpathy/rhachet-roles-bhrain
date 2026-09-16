@@ -1,0 +1,30 @@
+// .what = the permission entries the driver owns for its own route workspace
+// .why  = `.route/` is the driver's workspace. a blanket deny on it bans the driver
+//         from the one directory it exists to tend — a stone cannot be added, a yield
+//         cannot be emitted, a seed cannot be archived.
+//
+//         route protection is real, but it is a JUDGMENT, not a path match: a write to
+//         an unpassed stone is legitimate, a rewrite of a passed one is not. that
+//         judgment already lives in `rhx route.mutate.guard --mode hook`, wired on
+//         Read|Write|Edit|Bash. a deny glob cannot make it, and only removes the
+//         driver's hands.
+//
+// .note = `deny` here names entries to STRIP, never entries to add. a deny beats an
+//         allow in the harness, so both in place at once bans the dir while it reads
+//         as permitted — the exact state this init heals.
+{
+  "permissions": {
+    "allow": [
+      "Write(.route/**)",
+      "Edit(.route/**)"
+    ],
+    "deny": [
+      "Write(.route/**)",
+      "Edit(.route/**)",
+      "Write(**/.route/**)",
+      "Edit(**/.route/**)",
+      "Write(*/**/.route/**)",
+      "Edit(*/**/.route/**)"
+    ]
+  }
+}

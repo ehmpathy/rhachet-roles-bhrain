@@ -1,0 +1,19 @@
+# 4.cut-fixture-cost
+
+cut the repeated identical fixture work, with no change to what any test proves.
+
+.why-this-order = parallelism multiplies whatever per-file cost remains. cut the cost
+  first and the multiplier lands on a smaller number.
+
+.guard = the per-file cost falls in the bench report, and compare reports zero lost
+  cases.
+
+.hardwon = intercept at ONE seam, not at 322 call sites. the fixtures call
+  `npx rhachet roles link` 322 times for byte-identical output; rhachet routes that
+  subcommand to run.jit, NOT to the compiled bun binary that roles boot|cost gets.
+  a change at 322 call sites is 322 chances to alter what a test proves. the harness
+  exports one shared execAsync — that is the seam.
+
+.hardwon = keep the ORIGINAL path reachable behind an env switch
+  (ACCEPTANCE_LINK_CACHE=off). a before/after measured on a tree that no longer exists
+  is a claim nobody can re-check.

@@ -18,6 +18,7 @@ roles:
       dirs: dist/domain.roles/driver/inits
       exec:
         - dist/domain.roles/driver/inits/init.claude.status-line.sh
+        - dist/domain.roles/driver/inits/init.claude.permissions.route.sh
     boot: dist/domain.roles/driver/boot.yml
   - slug: learner
     readme: dist/domain.roles/learner/readme.md
@@ -33,6 +34,13 @@ roles:
     skills:
       dirs: dist/domain.roles/librarian/skills
     boot: dist/domain.roles/librarian/boot.yml
+  - slug: navigator
+    readme: dist/domain.roles/navigator/readme.md
+    briefs:
+      dirs: dist/domain.roles/navigator/briefs
+    skills:
+      dirs: []
+    boot: dist/domain.roles/navigator/boot.yml
   - slug: reflector
     readme: dist/domain.roles/reflector/readme.md
     briefs:
