@@ -11,7 +11,8 @@ import { Role } from 'rhachet';
 export const ROLE_NAVIGATOR: Role = Role.build({
   slug: 'navigator',
   name: 'Navigator',
-  purpose: 'boot and bind offroad routes, so exploration leaves pavement behind',
+  purpose:
+    'boot and bind offroad routes, so exploration leaves pavement behind',
   readme: { uri: __dirname + '/readme.md' },
   boot: { uri: __dirname + '/boot.yml' },
   traits: [],
