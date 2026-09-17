@@ -481,7 +481,7 @@ exports[`driver.route.peer-concurrency.acceptance given: [journey] a level of fo
    │   ├─ given: .reviews/peer/1.vision._.review.i003.457fd5ef46e053a35e.r007._.given.by_peer.l3-c.md
    │   └─ taken: .reviews/peer/1.vision._.review.i003.457fd5ef46e053a35e.r007._.taken.by_self.l3-c.md
    │
-   └─ ✗ judge.1 - blocked [TIME]
+   └─ ✓ judge.1 - allowed [TIME]
 
 🗿 route.stone.set
    ├─ stone = 1.vision
@@ -537,8 +537,7 @@ exports[`driver.route.peer-concurrency.acceptance given: [journey] a level of fo
       │       └─ taken: .reviews/peer/1.vision._.review.i003.457fd5ef46e053a35e.r007._.taken.by_self.l3-c.md
       └─ judges
           └─ j1: rhx route.stone.judge --mechanism reviewed? --stone $stone --route $route --allow-blockers 0 --allow-nitpicks 1
-              ├─ finished [TIME] ✗
-              └─ reason: blockers exceed threshold (3 > 0)
+              └─ finished [TIME] ✓
 "
 `;
 
@@ -670,7 +669,7 @@ exports[`driver.route.peer-concurrency.acceptance given: [journey] a level of fo
       └─ judges
           └─ j1: rhx route.stone.judge --mechanism reviewed? --stone $stone --route $route --allow-blockers 0 --allow-nitpicks 1
               ├─ finished [TIME] ✗
-              └─ reason: blockers exceed threshold (4 > 0)
+              └─ reason: blockers exceed threshold (1 > 0)
 "
 `;
 

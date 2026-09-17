@@ -1,7 +1,9 @@
 // Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
 
 exports[`routeStoneSet.feedbackAbsorption.acceptance given: [case1] a bound route whose one peer reviewer always hands back a blocker when: [t0] the first \`--as passed\`, with no debt owed then: matches snapshot — the judge evidence, as a driver reads it: route.stone.set - judge stderr, refusal evidence 1`] = `
-"
+"🦉 l1 pours 1 lane
+   └─ r1:counter
+
 🪶 judge 1
    └─ stdout
       ├─
@@ -596,10 +598,29 @@ exports[`routeStoneSet.feedbackAbsorption.acceptance given: [case7] a reviewer r
 "
 `;
 
+exports[`routeStoneSet.feedbackAbsorption.acceptance given: [case7] a reviewer retired from the config after it spoke when: [t4] the driver MISTYPES a slug while the union is two-wide then: matches snapshot — the retired-UNION refusal, both streams: route.stone.set - retired-union invalid slug, stderr 1`] = `
+"error: BadRequestError: invalid peer reviewer slug: "mechanik". valid options: departed, successor
+
+{
+  "stone": "1.test",
+  "slug": "mechanik",
+  "validSlugs": [
+    "departed",
+    "successor"
+  ]
+}
+"
+`;
+
+exports[`routeStoneSet.feedbackAbsorption.acceptance given: [case7] a reviewer retired from the config after it spoke when: [t4] the driver MISTYPES a slug while the union is two-wide then: matches snapshot — the retired-UNION refusal, both streams: route.stone.set - retired-union invalid slug, stdout 1`] = `
+"🦉 the way speaks for itself
+"
+`;
+
 exports[`routeStoneSet.feedbackAbsorption.acceptance given: [case8] a reviewer whose given carries no numeric count when: [t0] the round runs, and the driver knocks again then: matches snapshot — the round that ran, reviewer promoted to malfunction: route.stone.set - round ran, unreadable verdict promoted to malfunction 1`] = `
 "🦉 the way speaks for itself
    │
-   ├─ r1: mumbles (l1, 1/5)
+   ├─ r1: mumbles (l1, 0/5)
    │   ├─ malfunction 💥
    │   ├─ terminal — does not block higher levels
    │   ├─ given: .reviews/peer/1.test._.review.i001.<hash>.r001._.given.by_peer.mumbles.md
@@ -632,7 +653,9 @@ exports[`routeStoneSet.feedbackAbsorption.acceptance given: [case8] a reviewer w
 `;
 
 exports[`routeStoneSet.feedbackAbsorption.acceptance given: [case8] a reviewer whose given carries no numeric count when: [t0] the round runs, and the driver knocks again then: matches snapshot — the round that ran, stderr carries the judge refusal: route.stone.set - round ran, unreadable verdict, stderr 1`] = `
-"
+"🦉 l1 pours 1 lane
+   └─ r1:mumbles
+
 🔎 review 1
    ├─ stdout
    │  ├─

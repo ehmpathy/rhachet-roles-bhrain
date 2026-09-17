@@ -1681,7 +1681,7 @@ describe('routeStoneSet.feedbackAbsorption.acceptance', () => {
       //    the two-entry render — the comma, the sort, the retiree's presence —
       //    had no CLI-grain oracle anywhere, and the test that noticed said so
       //    in its own note: "no CLI-grain oracle for the retired-UNION variant
-      //    exists yet" (`setStoneAsContemplated.integration.test.ts` [case5]).
+      //    exists yet" (`setStoneAsFeedbackAbsorbed.test.ts` [case5]).
       //    raised i020/r5+r6+r7 — three lanes, one gap.
       //
       // 🔴 .what this oracle bought, in TWO rounds = at i020 it disproved a note
@@ -1695,20 +1695,44 @@ describe('routeStoneSet.feedbackAbsorption.acceptance', () => {
       //    from a comment rather than from the code, and no test could
       //    contradict it because this grain had no oracle.
       //
-      // 🔴 then at i022 the same snapshot bought the FIX. with the dump in a
+      // 🔴 then at i022 the same snapshot bought a FIX. with the dump in a
       //    committed byte-oracle, r7 could set it beside the eight clean
       //    `peer-concurrency-refusals` snapshots and name the difference: those
       //    throw sites pass no metadata bag; this one passed
-      //    `{ stone, slug, validSlugs }`. ⇒ the repair was one bag dropped at
-      //    the throw, so the snapshot below now renders one clean sentence.
+      //    `{ stone, slug, validSlugs }`. the repair was one bag dropped at the
+      //    throw, in `setStoneAsContemplated.ts`.
+      //
+      // ⚠️ THAT REPAIR IS GONE, and the snapshot below renders the dump again.
+      //    upstream #511 re-homed this throw into the shared
+      //    `assertValidPeerReviewSlug`, whose own `.note` preserves the message
+      //    AND the bag on purpose — so its pinned snapshots pass untouched,
+      //    which is that extraction's proof that it moved no surface a driver
+      //    reads. to drop the bag now would break that proof, so the instance
+      //    is left to the class.
       //
       // ⇒ the lesson the pair carries: a claim about a surface is settled by an
       //    oracle AT that surface. four rounds of prose review read this note
-      //    and missed both the false claim and the fixable dump beneath it.
+      //    and missed both the false claim and the fixable dump beneath it —
+      //    and the snapshot is what caught the claim going stale a second time,
+      //    across a rebase, when the repair it described was carried away.
       //
-      // 🌙 the repo-wide render defect stays open — any OTHER throw site that
-      //    carries a bag still dumps. see `.dream/v2026_09_10.fix.every-cli
-      //    -error-appends-a-raw-json-context-dump.md` and fulcrum F11.
+      // 🌙 the render defect is open repo-wide — every throw site that carries a
+      //    bag dumps, this one among them again. see `.dream/v2026_09_10.fix
+      //    .every-cli-error-appends-a-raw-json-context-dump.md` and fulcrum F11.
+      // 🔴 the tally BEFORE the act, so the clamp below reads a DELTA
+      // .why = it once asserted the absolute `2`, which restated a count `[t3]`
+      //        owns. the claim it means is "this step adds no run of its own",
+      //        and an absolute cannot say that — it re-states a neighbour's
+      //        fact and then drifts when the neighbour moves. it did: upstream
+      //        #511 put a stance gate in front of `--as absorbed`, `[t3]` spent
+      //        one round rather than two, and the constant failed while the
+      //        behavior it guards was untouched
+      // .note = wrapped in an object because `useBeforeAll` hands back a proxy,
+      //         and a proxy cannot stand in for a primitive at an `expect`
+      const tally = useBeforeAll(async () => ({
+        before: countReviewerRuns({ route: scene.tempDir }),
+      }));
+
       const out = useBeforeAll(async () =>
         runStoneSet({
           cwd: scene.tempDir,
@@ -1718,7 +1742,7 @@ describe('routeStoneSet.feedbackAbsorption.acceptance', () => {
             '--route',
             scene.tempDir,
             '--as',
-            'contemplated',
+            'absorbed',
             '--that',
             'mechanik',
           ],
@@ -1748,9 +1772,11 @@ describe('routeStoneSet.feedbackAbsorption.acceptance', () => {
       });
 
       then('no round was spawned by the rejected ack', () => {
-        // the tally holds where [t3] left it: a validation refusal never reaches
-        // the review runner, so this step adds no run of its own
-        expect(countReviewerRuns({ route: scene.tempDir })).toEqual(2);
+        // a validation refusal never reaches the review runner, so this step adds
+        // no run of its own — the DELTA is the claim, never the absolute
+        expect(countReviewerRuns({ route: scene.tempDir })).toEqual(
+          tally.before,
+        );
       });
 
       then('matches snapshot — the retired-UNION refusal, both streams', () => {
