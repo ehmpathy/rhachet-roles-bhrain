@@ -38,6 +38,13 @@ exports[`driver.route.peer-budget-exhaustion-unlocks-level.acceptance given: [jo
 "
 `;
 
+exports[`driver.route.peer-budget-exhaustion-unlocks-level.acceptance given: [journey] exhaustion unlocks higher level when: [t0] round 1/2: l1 rejected, l3 awaits then: the pour announce has good vibes 1`] = `
+[
+  "🦉 l1 pours 1 lane",
+  "   └─ r1:l1-reviewer",
+]
+`;
+
 exports[`driver.route.peer-budget-exhaustion-unlocks-level.acceptance given: [journey] exhaustion unlocks higher level when: [t1] round 2/2: l1 rejected, l3 awaits then: stdout has good vibes 1`] = `
 "🦉 the way speaks for itself
    │
@@ -74,6 +81,13 @@ exports[`driver.route.peer-budget-exhaustion-unlocks-level.acceptance given: [jo
               ├─ finished [TIME] ✗
               └─ reason: blockers exceed threshold (1 > 0)
 "
+`;
+
+exports[`driver.route.peer-budget-exhaustion-unlocks-level.acceptance given: [journey] exhaustion unlocks higher level when: [t1] round 2/2: l1 rejected, l3 awaits then: the pour announce has good vibes 1`] = `
+[
+  "🦉 l1 pours 1 lane",
+  "   └─ r1:l1-reviewer",
+]
 `;
 
 exports[`driver.route.peer-budget-exhaustion-unlocks-level.acceptance given: [journey] exhaustion unlocks higher level when: [t2] round 3/2: l1 exhausted, l3 unlocks then: stdout has good vibes 1`] = `
@@ -130,6 +144,13 @@ exports[`driver.route.peer-budget-exhaustion-unlocks-level.acceptance given: [jo
 "
 `;
 
+exports[`driver.route.peer-budget-exhaustion-unlocks-level.acceptance given: [journey] exhaustion unlocks higher level when: [t2] round 3/2: l1 exhausted, l3 unlocks then: the pour announce has good vibes 1`] = `
+[
+  "🦉 l3 pours 1 lane",
+  "   └─ r2:l3-reviewer",
+]
+`;
+
 exports[`driver.route.peer-budget-exhaustion-unlocks-level.acceptance given: [journey] exhaustion unlocks higher level when: [t3] exhausted state persists across hash changes then: stdout has good vibes 1`] = `
 "🦉 the way speaks for itself
    │
@@ -182,4 +203,72 @@ exports[`driver.route.peer-budget-exhaustion-unlocks-level.acceptance given: [jo
    │  └─ rhx route.stone.set --stone 1.execute --as arrived
    └─ a human is only needed once every level is terminal
 "
+`;
+
+exports[`driver.route.peer-budget-exhaustion-unlocks-level.acceptance given: [journey] exhaustion unlocks higher level when: [t3] exhausted state persists across hash changes then: the pour announce has good vibes 1`] = `
+[
+  "🦉 l3 pours 1 lane",
+  "   └─ r2:l3-reviewer",
+]
+`;
+
+exports[`driver.route.peer-budget-exhaustion-unlocks-level.acceptance given: [journey] exhaustion unlocks higher level when: [t4] same hash: l1 exhausted at the SAME artifact hash, l3 still runs then: stdout has good vibes 1`] = `
+"🦉 the way speaks for itself
+   │
+   ├─ r1: l1-reviewer (l1, 2/2)
+   │   ├─ exhausted 🌙, cached
+   │   ├─ terminal — does not block higher levels
+   │   ├─ 1 blocker 🔴
+   │   ├─ 0 nitpicks ✓
+   │   ├─ given: .reviews/peer/1.execute._.review.i002.dfc5faff83ea2fcb55.r001._.given.by_peer.l1-reviewer.md
+   │   └─ taken: .reviews/peer/1.execute._.review.i002.dfc5faff83ea2fcb55.r001._.taken.by_self.l1-reviewer.md
+   │
+   ├─ r2: l3-reviewer (l3, 3/5)
+   │   ├─ rejected [TIME]
+   │   ├─ 1 blocker 🔴
+   │   ├─ 0 nitpicks ✓
+   │   ├─ given: .reviews/peer/1.execute._.review.i005.06fcb8d2e60f371042.r002._.given.by_peer.l3-reviewer.md
+   │   └─ taken: .reviews/peer/1.execute._.review.i005.06fcb8d2e60f371042.r002._.taken.by_self.l3-reviewer.md
+   │
+   └─ ✗ judge.1 - blocked [TIME]
+
+🗿 route.stone.set
+   ├─ stone = 1.execute
+   ├─ passage = blocked
+   ├─ reason = blockers exceed threshold (2 > 0)
+   └─ guard
+      ├─ artifacts
+      │   └─ src/**/*.ts
+      ├─ reviews
+      │   ├─ r1: l1-reviewer (l1, 2/2)
+      │   │   ├─ exhausted 🌙, cached
+      │   │   ├─ terminal — does not block higher levels
+      │   │   ├─ 1 blocker 🔴
+      │   │   ├─ 0 nitpicks ✓
+      │   │   ├─ given: .reviews/peer/1.execute._.review.i002.dfc5faff83ea2fcb55.r001._.given.by_peer.l1-reviewer.md
+      │   │   └─ taken: .reviews/peer/1.execute._.review.i002.dfc5faff83ea2fcb55.r001._.taken.by_self.l1-reviewer.md
+      │   └─ r2: l3-reviewer (l3, 3/5)
+      │       ├─ rejected [TIME]
+      │       ├─ 1 blocker 🔴
+      │       ├─ 0 nitpicks ✓
+      │       ├─ given: .reviews/peer/1.execute._.review.i005.06fcb8d2e60f371042.r002._.given.by_peer.l3-reviewer.md
+      │       └─ taken: .reviews/peer/1.execute._.review.i005.06fcb8d2e60f371042.r002._.taken.by_self.l3-reviewer.md
+      └─ judges
+          └─ j1: rhx route.stone.judge --mechanism reviewed? --stone $stone --route $route --allow-blockers 0 --allow-nitpicks 1
+              ├─ finished [TIME] ✗
+              └─ reason: blockers exceed threshold (2 > 0)
+
+🪷 the path continues
+   ├─ l1 is terminal (exhausted 🌙) — it no longer blocks you
+   ├─ l3 has engaged — address its blockers, then:
+   │  └─ rhx route.stone.set --stone 1.execute --as arrived
+   └─ a human is only needed once every level is terminal
+"
+`;
+
+exports[`driver.route.peer-budget-exhaustion-unlocks-level.acceptance given: [journey] exhaustion unlocks higher level when: [t4] same hash: l1 exhausted at the SAME artifact hash, l3 still runs then: the pour announce has good vibes 1`] = `
+[
+  "🦉 l3 pours 1 lane",
+  "   └─ r2:l3-reviewer",
+]
 `;

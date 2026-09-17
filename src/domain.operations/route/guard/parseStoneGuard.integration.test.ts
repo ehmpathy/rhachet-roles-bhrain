@@ -80,6 +80,75 @@ judges:
     });
   });
 
+  given('[case19] an `@path` say-ref that cannot be read', () => {
+    // 🔴 .why = this refusal existed and was UNCLAMPED — the happy path in
+    //           `[t1]` above proves an @path expands, and no case proved what a
+    //           driver reads when it cannot. so its message could regress to a
+    //           bare symptom and every test would stay green
+    //
+    // 🔴 .the defect it now pins = the catch discarded `error` outright, so an
+    //     absent file, a directory, and a permissions fault produced ONE
+    //     sentence. a driver told "failed to expand @path reference: x.md"
+    //     cannot tell which fix to apply (`rule.require.errors-name-the-fix`).
+    //     raised as a blocker by TWO independent lanes at i032 (r6, r10)
+    //
+    // 🔴 .why it sits HERE and not in `parseStoneGuard.test.ts` = the ENOENT is
+    //     real. it exists only because a real `fs.readFile` was attempted, which
+    //     is the filesystem boundary `rule.forbid.unit.remote-boundaries`
+    //     classifies as remote. it was authored into the unit file and moved at
+    //     i020/r9, which caught it
+    //
+    // ✅ .teeth = MEASURED 2026-09-16. revert the message to its bare form and
+    //     both then-blocks go red — `/ENOENT/` in `[t0]` and the directory
+    //     clause in `[t1]` — while `[t0]`'s FIRST assertion still passes.
+    //     ⇒ that split IS the defect: the refusal still fires, it merely stops
+    //     to say why. the loud half was always fine, which is why four rounds
+    //     of review could name it and no test could catch it
+
+    const content = `reviews:
+  self:
+    - slug: has-questioned-assumptions
+      say: "@brief-that-does-not-exist.md"
+`;
+
+    /** .what = a real, empty dir — so the absent ref is absent on real disk */
+    const genGuardPath = async (): Promise<string> => {
+      const dir = await fs.mkdtemp(
+        path.join(os.tmpdir(), 'test-guard-atpath-enoent-'),
+      );
+      return path.join(dir, '1.vision.guard');
+    };
+
+    when('[t0] the ref points at no file', () => {
+      then('the parse refuses, and the refusal names the CAUSE', async () => {
+        const guardPath = await genGuardPath();
+
+        await expect(
+          parseStoneGuard({ content, path: guardPath }),
+        ).rejects.toThrow(/failed to expand @path reference/);
+
+        // 🔴 the fs code is what parts an absent file from a permissions fault
+        await expect(
+          parseStoneGuard({ content, path: guardPath }),
+        ).rejects.toThrow(/ENOENT/);
+      });
+    });
+
+    when('[t1] the driver reads it to find the fix', () => {
+      then('the refusal names where the ref resolves FROM', async () => {
+        // .why = a ref written from the repo root rather than from the guard's
+        //        own directory is the most common way to earn this ENOENT, and
+        //        the bare message named neither directory
+        const guardPath = await genGuardPath();
+        const guardDir = path.dirname(guardPath);
+
+        await expect(
+          parseStoneGuard({ content, path: guardPath }),
+        ).rejects.toThrow(`guard's own directory (${guardDir})`);
+      });
+    });
+  });
+
   given('[case-dup-slugs] flat reviews with duplicate slugs', () => {
     when('[t0] multiple peer reviews derive same slug from cmd', () => {
       then('slugs are standardized to be unique via .N suffix', async () => {

@@ -10,6 +10,9 @@ const asMeter = (input: {
   level: number;
   verdict?: ReviewPeerVerdict;
 }): GuardPeerMeterStatus => ({
+  // .why a constant is honest here = `index` is the reviewer's declared identity key,
+  //      and this transformer reads slug + level only (see the builder's note above)
+  index: 1,
   slug: input.slug,
   level: input.level,
   verdict: input.verdict ?? 'rejected',

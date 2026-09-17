@@ -102,7 +102,7 @@ exports[`driver.route.overrule.acceptance given: [case6] robot attempts force wh
 exports[`driver.route.overrule.acceptance given: [case9] overrule bypasses reviewer malfunction (exit 1) when: [t1] pass attempted after overrule (malfunction bypassed) then: snapshot matches 1`] = `
 "🦉 the way speaks for itself
    │
-   ├─ r1: bash (l1, 1/∞)
+   ├─ r1: bash (l1, 0/∞)
    │   ├─ malfunction 💥
    │   ├─ terminal — does not block higher levels
    │   ├─ given: .reviews/peer/1.feature._.review.i002.d6ef1aa3fad755e23c.r001._.given.by_peer.bash.md
@@ -135,7 +135,7 @@ exports[`driver.route.overrule.acceptance given: [case9] overrule bypasses revie
 exports[`driver.route.overrule.acceptance given: [case10] overrule bypasses reviewer constraint (exit 2) when: [t1] pass attempted after overrule (constraint bypassed) then: snapshot matches 1`] = `
 "🦉 the way speaks for itself
    │
-   ├─ r1: bash (l1, 1/∞)
+   ├─ r1: bash (l1, 0/∞)
    │   ├─ constraint ✋
    │   ├─ terminal — does not block higher levels
    │   ├─ given: .reviews/peer/1.feature._.review.i002.d6ef1aa3fad755e23c.r001._.given.by_peer.bash.md
@@ -168,7 +168,7 @@ exports[`driver.route.overrule.acceptance given: [case10] overrule bypasses revi
 exports[`driver.route.overrule.acceptance given: [case11] forced bypasses reviewer malfunction when: [t1] pass attempted after force (malfunction bypassed) then: snapshot matches 1`] = `
 "🦉 the way speaks for itself
    │
-   ├─ r1: bash (l1, 1/∞)
+   ├─ r1: bash (l1, 0/∞)
    │   ├─ malfunction 💥
    │   ├─ terminal — does not block higher levels
    │   ├─ given: .reviews/peer/1.feature._.review.i001.d6ef1aa3fad755e23c.r001._.given.by_peer.bash.md
@@ -201,7 +201,7 @@ exports[`driver.route.overrule.acceptance given: [case11] forced bypasses review
 exports[`driver.route.overrule.acceptance given: [case12] forced bypasses reviewer constraint when: [t1] pass attempted after force (constraint bypassed) then: snapshot matches 1`] = `
 "🦉 the way speaks for itself
    │
-   ├─ r1: bash (l1, 1/∞)
+   ├─ r1: bash (l1, 0/∞)
    │   ├─ constraint ✋
    │   ├─ terminal — does not block higher levels
    │   ├─ given: .reviews/peer/1.feature._.review.i001.d6ef1aa3fad755e23c.r001._.given.by_peer.bash.md
@@ -234,7 +234,7 @@ exports[`driver.route.overrule.acceptance given: [case12] forced bypasses review
 exports[`driver.route.overrule.acceptance given: [case13] tier escalation: L1 malfunctions, L3 runs, overrule succeeds when: [t0] initial pass attempted (L1 malfunctions, L3 passes) then: snapshot shows blocked state with L1 malfunction and L3 passed 1`] = `
 "🦉 the way speaks for itself
    │
-   ├─ r1: basic-checker (l1, 1/5)
+   ├─ r1: basic-checker (l1, 0/5)
    │   ├─ malfunction 💥
    │   ├─ terminal — does not block higher levels
    │   ├─ given: .reviews/peer/1.feature._.review.i001.bf3993d1d36b238918.r001._.given.by_peer.basic-checker.md
@@ -292,7 +292,7 @@ exports[`driver.route.overrule.acceptance given: [case13] tier escalation: L1 ma
 exports[`driver.route.overrule.acceptance given: [case13] tier escalation: L1 malfunctions, L3 runs, overrule succeeds when: [t2] pass attempted after overrule then: snapshot matches 1`] = `
 "🦉 the way speaks for itself
    │
-   ├─ r1: basic-checker (l1, 1/5)
+   ├─ r1: basic-checker (l1, 0/5)
    │   ├─ malfunction 💥
    │   ├─ terminal — does not block higher levels
    │   ├─ given: .reviews/peer/1.feature._.review.i002.bf3993d1d36b238918.r001._.given.by_peer.basic-checker.md
@@ -338,7 +338,7 @@ exports[`driver.route.overrule.acceptance given: [case13] tier escalation: L1 ma
 exports[`driver.route.overrule.acceptance given: [case14] tier escalation: L1 constraint, L3 runs, overrule succeeds when: [t0] initial pass attempted (L1 constraint, L3 passes) then: snapshot shows blocked state with L1 constraint and L3 passed 1`] = `
 "🦉 the way speaks for itself
    │
-   ├─ r1: basic-checker (l1, 1/5)
+   ├─ r1: basic-checker (l1, 0/5)
    │   ├─ constraint ✋
    │   ├─ terminal — does not block higher levels
    │   ├─ given: .reviews/peer/1.feature._.review.i001.bf3993d1d36b238918.r001._.given.by_peer.basic-checker.md
@@ -396,7 +396,7 @@ exports[`driver.route.overrule.acceptance given: [case14] tier escalation: L1 co
 exports[`driver.route.overrule.acceptance given: [case14] tier escalation: L1 constraint, L3 runs, overrule succeeds when: [t2] pass attempted after overrule then: snapshot matches 1`] = `
 "🦉 the way speaks for itself
    │
-   ├─ r1: basic-checker (l1, 1/5)
+   ├─ r1: basic-checker (l1, 0/5)
    │   ├─ constraint ✋
    │   ├─ terminal — does not block higher levels
    │   ├─ given: .reviews/peer/1.feature._.review.i002.bf3993d1d36b238918.r001._.given.by_peer.basic-checker.md

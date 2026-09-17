@@ -1,0 +1,51 @@
+artifacts:
+  - src/**/*.ts
+
+reviews:
+  peer:
+    # level 1 — four reviewers, no group, so no bound binds them
+    - slug: l1-a
+      run: bash $route/.test/mock-window.sh l1-a
+      budget: 5
+      level: 1
+
+    - slug: l1-b
+      run: bash $route/.test/mock-window.sh l1-b
+      budget: 5
+      level: 1
+
+    - slug: l1-c
+      run: bash $route/.test/mock-window.sh l1-c
+      budget: 5
+      level: 1
+
+    - slug: l1-d
+      run: bash $route/.test/mock-window.sh l1-d
+      budget: 5
+      level: 1
+
+    # level 3 — three reviewers behind a bound of one, the rate-limit case
+    - slug: l3-a
+      run: bash $route/.test/mock-window.sh l3-a
+      budget: 5
+      level: 3
+      group: serial
+
+    - slug: l3-b
+      run: bash $route/.test/mock-window.sh l3-b
+      budget: 5
+      level: 3
+      group: serial
+
+    - slug: l3-c
+      run: bash $route/.test/mock-window.sh l3-c
+      budget: 5
+      level: 3
+      group: serial
+
+  groups:
+    serial:
+      concurrency: 1
+
+judges:
+  - rhx route.stone.judge --mechanism reviewed? --stone $stone --route $route --allow-blockers 0 --allow-nitpicks 1

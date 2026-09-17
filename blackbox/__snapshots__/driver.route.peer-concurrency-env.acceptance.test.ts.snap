@@ -1,0 +1,207 @@
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
+
+exports[`driver.route.peer-concurrency-env.acceptance given: [journey] a level of twelve, with the env override set to two when: [t0] the stone arrives under RHACHET_LEVEL_CONCURRENCY=2 then: stdout has good vibes 1`] = `
+"🦉 the way speaks for itself
+   │
+   ├─ r1: wide-a (l1, 1/5)
+   │   ├─ rejected [TIME]
+   │   ├─ 1 blocker 🔴
+   │   ├─ 0 nitpicks ✓
+   │   ├─ given: .reviews/peer/1.vision._.review.i001.8739656801d5e77f22.r001._.given.by_peer.wide-a.md
+   │   └─ taken: .reviews/peer/1.vision._.review.i001.8739656801d5e77f22.r001._.taken.by_self.wide-a.md
+   │
+   ├─ r2: wide-b (l1, 1/5)
+   │   ├─ rejected [TIME]
+   │   ├─ 1 blocker 🔴
+   │   ├─ 0 nitpicks ✓
+   │   ├─ given: .reviews/peer/1.vision._.review.i001.8739656801d5e77f22.r002._.given.by_peer.wide-b.md
+   │   └─ taken: .reviews/peer/1.vision._.review.i001.8739656801d5e77f22.r002._.taken.by_self.wide-b.md
+   │
+   ├─ r3: wide-c (l1, 1/5)
+   │   ├─ rejected [TIME]
+   │   ├─ 1 blocker 🔴
+   │   ├─ 0 nitpicks ✓
+   │   ├─ given: .reviews/peer/1.vision._.review.i001.8739656801d5e77f22.r003._.given.by_peer.wide-c.md
+   │   └─ taken: .reviews/peer/1.vision._.review.i001.8739656801d5e77f22.r003._.taken.by_self.wide-c.md
+   │
+   ├─ r4: wide-d (l1, 1/5)
+   │   ├─ rejected [TIME]
+   │   ├─ 1 blocker 🔴
+   │   ├─ 0 nitpicks ✓
+   │   ├─ given: .reviews/peer/1.vision._.review.i001.8739656801d5e77f22.r004._.given.by_peer.wide-d.md
+   │   └─ taken: .reviews/peer/1.vision._.review.i001.8739656801d5e77f22.r004._.taken.by_self.wide-d.md
+   │
+   ├─ r5: wide-e (l1, 1/5)
+   │   ├─ rejected [TIME]
+   │   ├─ 1 blocker 🔴
+   │   ├─ 0 nitpicks ✓
+   │   ├─ given: .reviews/peer/1.vision._.review.i001.8739656801d5e77f22.r005._.given.by_peer.wide-e.md
+   │   └─ taken: .reviews/peer/1.vision._.review.i001.8739656801d5e77f22.r005._.taken.by_self.wide-e.md
+   │
+   ├─ r6: wide-f (l1, 1/5)
+   │   ├─ rejected [TIME]
+   │   ├─ 1 blocker 🔴
+   │   ├─ 0 nitpicks ✓
+   │   ├─ given: .reviews/peer/1.vision._.review.i001.8739656801d5e77f22.r006._.given.by_peer.wide-f.md
+   │   └─ taken: .reviews/peer/1.vision._.review.i001.8739656801d5e77f22.r006._.taken.by_self.wide-f.md
+   │
+   ├─ r7: wide-g (l1, 1/5)
+   │   ├─ rejected [TIME]
+   │   ├─ 1 blocker 🔴
+   │   ├─ 0 nitpicks ✓
+   │   ├─ given: .reviews/peer/1.vision._.review.i001.8739656801d5e77f22.r007._.given.by_peer.wide-g.md
+   │   └─ taken: .reviews/peer/1.vision._.review.i001.8739656801d5e77f22.r007._.taken.by_self.wide-g.md
+   │
+   ├─ r8: wide-h (l1, 1/5)
+   │   ├─ rejected [TIME]
+   │   ├─ 1 blocker 🔴
+   │   ├─ 0 nitpicks ✓
+   │   ├─ given: .reviews/peer/1.vision._.review.i001.8739656801d5e77f22.r008._.given.by_peer.wide-h.md
+   │   └─ taken: .reviews/peer/1.vision._.review.i001.8739656801d5e77f22.r008._.taken.by_self.wide-h.md
+   │
+   ├─ r9: wide-i (l1, 1/5)
+   │   ├─ rejected [TIME]
+   │   ├─ 1 blocker 🔴
+   │   ├─ 0 nitpicks ✓
+   │   ├─ given: .reviews/peer/1.vision._.review.i001.8739656801d5e77f22.r009._.given.by_peer.wide-i.md
+   │   └─ taken: .reviews/peer/1.vision._.review.i001.8739656801d5e77f22.r009._.taken.by_self.wide-i.md
+   │
+   ├─ r10: wide-j (l1, 1/5)
+   │   ├─ rejected [TIME]
+   │   ├─ 1 blocker 🔴
+   │   ├─ 0 nitpicks ✓
+   │   ├─ given: .reviews/peer/1.vision._.review.i001.8739656801d5e77f22.r010._.given.by_peer.wide-j.md
+   │   └─ taken: .reviews/peer/1.vision._.review.i001.8739656801d5e77f22.r010._.taken.by_self.wide-j.md
+   │
+   ├─ r11: wide-k (l1, 1/5)
+   │   ├─ rejected [TIME]
+   │   ├─ 1 blocker 🔴
+   │   ├─ 0 nitpicks ✓
+   │   ├─ given: .reviews/peer/1.vision._.review.i001.8739656801d5e77f22.r011._.given.by_peer.wide-k.md
+   │   └─ taken: .reviews/peer/1.vision._.review.i001.8739656801d5e77f22.r011._.taken.by_self.wide-k.md
+   │
+   ├─ r12: wide-l (l1, 1/5)
+   │   ├─ rejected [TIME]
+   │   ├─ 1 blocker 🔴
+   │   ├─ 0 nitpicks ✓
+   │   ├─ given: .reviews/peer/1.vision._.review.i001.8739656801d5e77f22.r012._.given.by_peer.wide-l.md
+   │   └─ taken: .reviews/peer/1.vision._.review.i001.8739656801d5e77f22.r012._.taken.by_self.wide-l.md
+   │
+   └─ ✗ judge.1 - blocked [TIME]
+
+🗿 route.stone.set
+   ├─ stone = 1.vision
+   ├─ passage = blocked
+   ├─ reason = blockers exceed threshold (12 > 0)
+   └─ guard
+      ├─ artifacts
+      │   └─ src/**/*.ts
+      ├─ reviews
+      │   ├─ r1: wide-a (l1, 1/5)
+      │   │   ├─ rejected [TIME]
+      │   │   ├─ 1 blocker 🔴
+      │   │   ├─ 0 nitpicks ✓
+      │   │   ├─ given: .reviews/peer/1.vision._.review.i001.8739656801d5e77f22.r001._.given.by_peer.wide-a.md
+      │   │   └─ taken: .reviews/peer/1.vision._.review.i001.8739656801d5e77f22.r001._.taken.by_self.wide-a.md
+      │   ├─ r2: wide-b (l1, 1/5)
+      │   │   ├─ rejected [TIME]
+      │   │   ├─ 1 blocker 🔴
+      │   │   ├─ 0 nitpicks ✓
+      │   │   ├─ given: .reviews/peer/1.vision._.review.i001.8739656801d5e77f22.r002._.given.by_peer.wide-b.md
+      │   │   └─ taken: .reviews/peer/1.vision._.review.i001.8739656801d5e77f22.r002._.taken.by_self.wide-b.md
+      │   ├─ r3: wide-c (l1, 1/5)
+      │   │   ├─ rejected [TIME]
+      │   │   ├─ 1 blocker 🔴
+      │   │   ├─ 0 nitpicks ✓
+      │   │   ├─ given: .reviews/peer/1.vision._.review.i001.8739656801d5e77f22.r003._.given.by_peer.wide-c.md
+      │   │   └─ taken: .reviews/peer/1.vision._.review.i001.8739656801d5e77f22.r003._.taken.by_self.wide-c.md
+      │   ├─ r4: wide-d (l1, 1/5)
+      │   │   ├─ rejected [TIME]
+      │   │   ├─ 1 blocker 🔴
+      │   │   ├─ 0 nitpicks ✓
+      │   │   ├─ given: .reviews/peer/1.vision._.review.i001.8739656801d5e77f22.r004._.given.by_peer.wide-d.md
+      │   │   └─ taken: .reviews/peer/1.vision._.review.i001.8739656801d5e77f22.r004._.taken.by_self.wide-d.md
+      │   ├─ r5: wide-e (l1, 1/5)
+      │   │   ├─ rejected [TIME]
+      │   │   ├─ 1 blocker 🔴
+      │   │   ├─ 0 nitpicks ✓
+      │   │   ├─ given: .reviews/peer/1.vision._.review.i001.8739656801d5e77f22.r005._.given.by_peer.wide-e.md
+      │   │   └─ taken: .reviews/peer/1.vision._.review.i001.8739656801d5e77f22.r005._.taken.by_self.wide-e.md
+      │   ├─ r6: wide-f (l1, 1/5)
+      │   │   ├─ rejected [TIME]
+      │   │   ├─ 1 blocker 🔴
+      │   │   ├─ 0 nitpicks ✓
+      │   │   ├─ given: .reviews/peer/1.vision._.review.i001.8739656801d5e77f22.r006._.given.by_peer.wide-f.md
+      │   │   └─ taken: .reviews/peer/1.vision._.review.i001.8739656801d5e77f22.r006._.taken.by_self.wide-f.md
+      │   ├─ r7: wide-g (l1, 1/5)
+      │   │   ├─ rejected [TIME]
+      │   │   ├─ 1 blocker 🔴
+      │   │   ├─ 0 nitpicks ✓
+      │   │   ├─ given: .reviews/peer/1.vision._.review.i001.8739656801d5e77f22.r007._.given.by_peer.wide-g.md
+      │   │   └─ taken: .reviews/peer/1.vision._.review.i001.8739656801d5e77f22.r007._.taken.by_self.wide-g.md
+      │   ├─ r8: wide-h (l1, 1/5)
+      │   │   ├─ rejected [TIME]
+      │   │   ├─ 1 blocker 🔴
+      │   │   ├─ 0 nitpicks ✓
+      │   │   ├─ given: .reviews/peer/1.vision._.review.i001.8739656801d5e77f22.r008._.given.by_peer.wide-h.md
+      │   │   └─ taken: .reviews/peer/1.vision._.review.i001.8739656801d5e77f22.r008._.taken.by_self.wide-h.md
+      │   ├─ r9: wide-i (l1, 1/5)
+      │   │   ├─ rejected [TIME]
+      │   │   ├─ 1 blocker 🔴
+      │   │   ├─ 0 nitpicks ✓
+      │   │   ├─ given: .reviews/peer/1.vision._.review.i001.8739656801d5e77f22.r009._.given.by_peer.wide-i.md
+      │   │   └─ taken: .reviews/peer/1.vision._.review.i001.8739656801d5e77f22.r009._.taken.by_self.wide-i.md
+      │   ├─ r10: wide-j (l1, 1/5)
+      │   │   ├─ rejected [TIME]
+      │   │   ├─ 1 blocker 🔴
+      │   │   ├─ 0 nitpicks ✓
+      │   │   ├─ given: .reviews/peer/1.vision._.review.i001.8739656801d5e77f22.r010._.given.by_peer.wide-j.md
+      │   │   └─ taken: .reviews/peer/1.vision._.review.i001.8739656801d5e77f22.r010._.taken.by_self.wide-j.md
+      │   ├─ r11: wide-k (l1, 1/5)
+      │   │   ├─ rejected [TIME]
+      │   │   ├─ 1 blocker 🔴
+      │   │   ├─ 0 nitpicks ✓
+      │   │   ├─ given: .reviews/peer/1.vision._.review.i001.8739656801d5e77f22.r011._.given.by_peer.wide-k.md
+      │   │   └─ taken: .reviews/peer/1.vision._.review.i001.8739656801d5e77f22.r011._.taken.by_self.wide-k.md
+      │   └─ r12: wide-l (l1, 1/5)
+      │       ├─ rejected [TIME]
+      │       ├─ 1 blocker 🔴
+      │       ├─ 0 nitpicks ✓
+      │       ├─ given: .reviews/peer/1.vision._.review.i001.8739656801d5e77f22.r012._.given.by_peer.wide-l.md
+      │       └─ taken: .reviews/peer/1.vision._.review.i001.8739656801d5e77f22.r012._.taken.by_self.wide-l.md
+      └─ judges
+          └─ j1: rhx route.stone.judge --mechanism reviewed? --stone $stone --route $route --allow-blockers 0 --allow-nitpicks 1
+              ├─ finished [TIME] ✗
+              └─ reason: blockers exceed threshold (12 > 0)
+"
+`;
+
+exports[`driver.route.peer-concurrency-env.acceptance given: [journey] a level of twelve, with the env override set to two when: [t0] the stone arrives under RHACHET_LEVEL_CONCURRENCY=2 then: the pour announce reads as declared 1`] = `
+[
+  "🦉 l1 pours 12 lanes · ≤2 at a time",
+  "   ├─ r1:wide-a",
+  "   ├─ r2:wide-b",
+  "   ├─ r3:wide-c",
+  "   ├─ r4:wide-d",
+  "   ├─ r5:wide-e",
+  "   ├─ r6:wide-f",
+  "   ├─ r7:wide-g",
+  "   ├─ r8:wide-h",
+  "   ├─ r9:wide-i",
+  "   ├─ r10:wide-j",
+  "   ├─ r11:wide-k",
+  "   └─ r12:wide-l",
+]
+`;
+
+exports[`driver.route.peer-concurrency-env.acceptance given: [malformed] the operator override is not a positive integer when: [t0] the stone arrives under RHACHET_LEVEL_CONCURRENCY=abc then: the refusal reads as an error, never a stack trace 1`] = `
+"🦉 the way speaks for itself
+error: BadRequestError: concurrency must be a positive integer: env RHACHET_LEVEL_CONCURRENCY declares "abc". write a whole number of 1 or more, or drop the key to take its default.
+"
+`;
+
+exports[`driver.route.peer-concurrency-env.acceptance given: [malformed] the operator override is not a positive integer when: [t1] the stone arrives under RHACHET_LEVEL_CONCURRENCY= (empty) then: the refusal renders \`declares ""\` — distinct from the abc variant 1`] = `
+"🦉 the way speaks for itself
+error: BadRequestError: concurrency must be a positive integer: env RHACHET_LEVEL_CONCURRENCY declares "". write a whole number of 1 or more, or drop the key to take its default.
+"
+`;

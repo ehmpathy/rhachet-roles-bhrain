@@ -221,7 +221,7 @@ exports[`formatGuardTree given: [case12] cached review on src/**/* artifacts —
                  └─ on src/**/*"
 `;
 
-exports[`formatGuardTree given: [case13] peerMeters — rNum uses meter order, not artifact order when: [t0] l2 reviewer ran but l1 reviewers did not then: rNum reflects declared position (r3 not r1) 1`] = `
+exports[`formatGuardTree given: [case13] peerMeters — rNum uses declared index, not meter array position when: [t0] l2 reviewer ran but l1 reviewers did not then: rNum reflects declared index (r3 not r1) 1`] = `
 "🗿 route.stone.set
    ├─ stone = 5.5.playtest
    ├─ passage = blocked
@@ -296,7 +296,7 @@ exports[`formatGuardTree given: [case16] peerMeters — unique slugs via standar
           │   ├─ 0 blockers ✓
           │   ├─ 0 nitpicks ✓
           │   └─ given: .route/5.3.verification.guard.review.i3.abc123.r2.md
-          └─ r3: $rhx.3 (l1, 18/∞)
+          └─ r6: $rhx.3 (l1, 18/∞)
               ├─ approved 14.9s
               ├─ 0 blockers ✓
               ├─ 0 nitpicks ✓
@@ -383,7 +383,7 @@ exports[`formatReviewsMeterLines given: [case1] unique slugs via standardization
   "    │   ├─ 0 blockers ✓",
   "    │   ├─ 0 nitpicks ✓",
   "    │   └─ given: .route/r2.md",
-  "    └─ r3: $rhx.3 (l1, 18/∞)",
+  "    └─ r6: $rhx.3 (l1, 18/∞)",
   "        ├─ approved 14.9s",
   "        ├─ 0 blockers ✓",
   "        ├─ 0 nitpicks ✓",

@@ -10,6 +10,7 @@ const asMeter = (input: {
   level: number;
   verdict: ReviewPeerVerdict;
 }): GuardPeerMeterStatus => ({
+  index: 1,
   slug: input.slug,
   level: input.level,
   verdict: input.verdict,

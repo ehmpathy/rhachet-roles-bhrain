@@ -119,8 +119,12 @@ exports[`driver.route.peer-budget-bulk.acceptance given: [case1] a bulk add land
    │   ├─ given: .reviews/peer/1.vision._.review.i006.deec084a9ead287f47.r002._.given.by_peer.spellcheck.md
    │   └─ taken: .reviews/peer/1.vision._.review.i006.deec084a9ead287f47.r002._.taken.by_self.spellcheck.md
    │
-   ├─ r3: architect (l2, 2/4)
-   │   └─ awaits arrival
+   ├─ r3: architect (l2, 3/4)
+   │   ├─ rejected [TIME]
+   │   ├─ 1 blocker 🔴
+   │   ├─ 0 nitpicks ✓
+   │   ├─ given: .reviews/peer/1.vision._.review.i006.deec084a9ead287f47.r003._.given.by_peer.architect.md
+   │   └─ taken: .reviews/peer/1.vision._.review.i006.deec084a9ead287f47.r003._.taken.by_self.architect.md
    │
    └─ ✗ judge.1 - blocked [TIME]
 
@@ -144,8 +148,12 @@ exports[`driver.route.peer-budget-bulk.acceptance given: [case1] a bulk add land
       │   │   ├─ 0 nitpicks ✓
       │   │   ├─ given: .reviews/peer/1.vision._.review.i006.deec084a9ead287f47.r002._.given.by_peer.spellcheck.md
       │   │   └─ taken: .reviews/peer/1.vision._.review.i006.deec084a9ead287f47.r002._.taken.by_self.spellcheck.md
-      │   └─ r3: architect (l2, 2/4)
-      │       └─ awaits l1 terminal
+      │   └─ r3: architect (l2, 3/4)
+      │       ├─ rejected [TIME]
+      │       ├─ 1 blocker 🔴
+      │       ├─ 0 nitpicks ✓
+      │       ├─ given: .reviews/peer/1.vision._.review.i006.deec084a9ead287f47.r003._.given.by_peer.architect.md
+      │       └─ taken: .reviews/peer/1.vision._.review.i006.deec084a9ead287f47.r003._.taken.by_self.architect.md
       └─ judges
           └─ j1: rhx route.stone.judge --mechanism reviewed? --stone $stone --route $route --allow-blockers 0 --allow-nitpicks 1
               ├─ finished [TIME] ✗

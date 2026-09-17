@@ -80,6 +80,38 @@ const runShell = async (
 const asSingleQuoteSafe = (raw: string): string => raw.replace(/'/g, `'\\''`);
 
 /**
+ * 🔴 .what = strips the host `jq`'s own `jq: ` prefix from a borrowed stderr line
+ *
+ * .why = the hook pipes stdin to the SYSTEM `jq` (`/usr/bin/jq`, never a pinned
+ *        dependency), and a malformed payload makes jq write its parse error
+ *        straight through. jq DROPPED that prefix between major versions, so a
+ *        snapshot that records it verbatim asserts a fact about the machine
+ *        rather than about this repo:
+ *
+ *        ```
+ *        - jq: parse error: Invalid literal at line 1, column 5   (older jq)
+ *        + parse error: Invalid literal at line 1, column 5       (newer jq)
+ *        ```
+ *
+ * 🔴 .why a `--resnap` is the WRONG repair = it does not remove the host
+ *     dependency; it merely moves WHICH host is correct. the suite would then go
+ *     red for anyone on the other version, and for CI if its image differs
+ *     (`rule.forbid.bare-host-deps`).
+ *
+ * ⚠️ .why MASK rather than carve out = `rule.require.contract-snapshot-exhaustiveness`
+ *     is explicit that a non-deterministic field is MASKED and snapped, never
+ *     dropped. so only the BORROWED half is normalized — the hook's own line
+ *     (`🗿 route.foreground guard: failed to parse tool_name …`) is this repo's
+ *     text and stays pinned byte for byte, which is the half under test.
+ *
+ * .note = it is the same discipline `sanitizeTimeForSnapshot` applies to the clock
+ *         in the blackbox suites. caught as
+ *         `.dream/v2026_09_09.fix.a-snapshot-pins-the-host-jqs-error-prefix.md`
+ */
+const sanitizeJqPrefixForSnapshot = (raw: string): string =>
+  raw.replace(/^jq: /gm, '');
+
+/**
  * .what = invoke the route.foreground.guard.sh hook with a stdin payload
  * .why = layer (a) of the two-layer acceptance check — exercise the hook's
  *        decision logic deterministically via synthetic stdin. layer (b), the
@@ -442,7 +474,12 @@ describe('route.foreground.guard', () => {
       });
 
       then('stderr matches snapshot', () => {
-        expect(result.stderr).toMatchSnapshot();
+        // 🔴 .why the sanitizer = this is the ONE case whose stderr carries a
+        //    passthrough of the host `jq`'s own text, and jq dropped its `jq: `
+        //    prefix between major versions. the mask keeps the oracle portable
+        //    while the hook's own line stays pinned verbatim — see the
+        //    `sanitizeJqPrefixForSnapshot` docblock for why a resnap is worse
+        expect(sanitizeJqPrefixForSnapshot(result.stderr)).toMatchSnapshot();
       });
     });
 

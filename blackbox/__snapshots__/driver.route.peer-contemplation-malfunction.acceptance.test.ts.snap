@@ -3,7 +3,7 @@
 exports[`driver.route.peer-contemplation-malfunction.acceptance given: [case1] a stone gated on a reviewer that emits no numeric counts when: [t0] driver attempts --as passed then: stdout matches snapshot 1`] = `
 "🦉 the way speaks for itself
    │
-   ├─ r1: architect (l1, 1/3)
+   ├─ r1: architect (l1, 0/3)
    │   ├─ malfunction 💥
    │   ├─ terminal — does not block higher levels
    │   ├─ given: .reviews/peer/1.execute._.review.i001.df6243be244b1651df.r001._.given.by_peer.architect.md

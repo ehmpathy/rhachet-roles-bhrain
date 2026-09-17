@@ -10,6 +10,9 @@ const asMeter = (input: {
   verdict: ReviewPeerVerdict;
   skippedByDispute?: boolean;
 }): GuardPeerMeterStatus => ({
+  // .why a constant is honest here = `index` is the reviewer's declared identity key,
+  //      and this transformer reads slug + verdict + skippedByDispute only
+  index: 1,
   slug: input.slug,
   level: input.level,
   verdict: input.verdict,

@@ -45,6 +45,7 @@ import { JUDGE_LEVEL } from '@src/domain.operations/route/guard/review/peer/mete
 import { formatGuardUpgradeTree } from '@src/domain.operations/route/guard/tree/formatGuardUpgradeTree';
 import { setRouteGuardsFromProvenance } from '@src/domain.operations/route/guard/upgrade/setRouteGuardsFromProvenance';
 import { getOneStoneGuardApproval } from '@src/domain.operations/route/judges/getOneStoneGuardApproval';
+import { getStoneGuardLevelsPoured } from '@src/domain.operations/route/judges/getStoneGuardLevelsPoured';
 import { getStoneGuardOverruledLevels } from '@src/domain.operations/route/judges/getStoneGuardOverruledLevels';
 import { stepRouteDrive } from '@src/domain.operations/route/stepRouteDrive';
 import { stepRouteReview } from '@src/domain.operations/route/stepRouteReview';
@@ -1433,7 +1434,19 @@ const judgeReviewed = async (input: {
     })),
     overruledLevels,
   });
-  const unrunUnlockedLevels = getUnrunUnlockedLevels({ levelClearance });
+  // the level-unlock LATCH — a level that has already poured stays unlocked, so a
+  // reviewer queued at it is a real gap the tally cannot see
+  // .why = the runner reads the same predicate with the same input; to omit it here
+  //        would let the two disagree exactly where the latch applies
+  //        (define.invariant.review.peer.level-unlock-is-a-latch)
+  const levelsPoured = await getStoneGuardLevelsPoured({
+    stone: stoneMatched,
+    route: input.route,
+  });
+  const unrunUnlockedLevels = getUnrunUnlockedLevels({
+    levelClearance,
+    levelsPoured,
+  });
   if (unrunUnlockedLevels.length > 0) {
     console.log('passed: false');
     console.log(

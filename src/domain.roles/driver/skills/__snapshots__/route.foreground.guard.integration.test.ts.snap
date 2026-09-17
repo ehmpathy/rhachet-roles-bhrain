@@ -148,7 +148,7 @@ exports[`route.foreground.guard given: [case6] infrastructure failure paths (fai
 `;
 
 exports[`route.foreground.guard given: [case6] infrastructure failure paths (fail loud, not silent) when: [t1] stdin is malformed json then: stderr matches snapshot 1`] = `
-"jq: parse error: Invalid literal at line 1, column 5
+"parse error: Invalid literal at line 1, column 5
 🗿 route.foreground guard: failed to parse tool_name from tool input json
 "
 `;

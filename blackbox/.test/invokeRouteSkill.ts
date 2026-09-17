@@ -99,7 +99,17 @@ export const sanitizeTimeForSnapshot = (output: string): string => {
     // constraint verdict duration — the absent verb that flaked driver.route.overrule
     // case14 (constraint 0.0s vs 0.1s); a sub-second mock-reviewer duration must be masked
     // like every other verdict verb (rule.forbid.snapshot-visual-blemishes)
-    .replace(/constraint \d+\.\d+s/g, 'constraint [TIME]');
+    .replace(/constraint \d+\.\d+s/g, 'constraint [TIME]')
+    // mask the volatile log-dir segment produced by genLogDirName():
+    //   <iso>.pid<pid>.<uuid>  (timestamp + process pid + uuid-fns)
+    // .why = the three components all change per invocation; only the stable
+    //        suffix after the segment is oracle-worthy
+    // e.g. .log/bhrain/review/2026-09-15T02-16-44-056Z.pid2845521.1d01c21c-.../
+    //   -> .log/bhrain/review/<logdir>/
+    .replace(
+      /\.log\/bhrain\/review\/[^/]+\//g,
+      '.log/bhrain/review/<logdir>/',
+    );
 };
 
 
@@ -143,6 +153,40 @@ export const invokeRouteMutateGuard = async (input: {
   }
 };
 
+/**
+ * .what = the ONE child-env builder every blackbox suite spawns a subprocess through
+ *
+ * 🔴 .why it is exported rather than inlined = its `undefined` semantics are LOAD-BEARING
+ *    and easy to re-implement subtly differently. a value of `undefined` DELETES the key
+ *    from the child env, rather than sets it to the string `"undefined"` — the hermetic
+ *    unset a suite needs to prove a DEFAULT against a leaked operator override. the
+ *    `-default` concurrency suite depends on it to show the default path rather than a
+ *    stray `RHACHET_LEVEL_CONCURRENCY`.
+ *
+ *    ⚠️ it was hand-rolled in THREE files at once (this one, plus the two env-refusal
+ *      suites), all added by one diff — raised as blocker.1 by
+ *      `ergo-acceptance-journey-coverage` at i019. a later change to the unset sentinel
+ *      would land in one copy and not the others, and the refusal suites would then
+ *      assert against an env spliced differently from the harness the rest of the corpus
+ *      reads through: *"a clamp goes green for the wrong reason"* (rule.forbid.failhide).
+ *
+ * ⇒ one rule, one site. every consumer takes this.
+ */
+export const asChildEnv = (input: {
+  overrides?: Record<string, string | undefined>;
+}): NodeJS.ProcessEnv => {
+  const childEnv: Record<string, string | undefined> = {
+    ...process.env,
+    ...input.overrides,
+  };
+
+  // a key whose override is `undefined` is DELETED, never stringified
+  for (const [key, value] of Object.entries(input.overrides ?? {}))
+    if (value === undefined) delete childEnv[key];
+
+  return childEnv as NodeJS.ProcessEnv;
+};
+
 export const invokeRouteSkill = async (input: {
   skill:
     | 'route.bind.set'
@@ -161,7 +205,13 @@ export const invokeRouteSkill = async (input: {
     | 'route.stone.judge';
   args: Record<string, string | boolean | string[] | undefined>;
   cwd: string;
-  env?: Record<string, string>;
+  // .why = a value of `undefined` DELETES the key from the child env, rather than
+  //        sets it to the string "undefined". this is the hermetic unset a suite
+  //        needs to prove a DEFAULT against a leaked operator override — e.g.
+  //        `env: { RHACHET_LEVEL_CONCURRENCY: undefined }` guarantees the child
+  //        sees no override, so the default path is the one under test
+  //        (rule.forbid.failhide — a clamp must not go green for the wrong reason).
+  env?: Record<string, string | undefined>;
   stdin?: string;
 }): Promise<{ stdout: string; stderr: string; code: number }> => {
   // map skill name to shell command filename
@@ -171,6 +221,9 @@ export const invokeRouteSkill = async (input: {
     '.agent/repo=bhrain/role=driver/skills',
     skillFile,
   );
+
+  // build the child env through the ONE canonical builder (see `asChildEnv`)
+  const childEnv = asChildEnv({ overrides: input.env });
 
   // build args array; arrays expand to repeated flags
   const argsArray = Object.entries(input.args)
@@ -186,7 +239,7 @@ export const invokeRouteSkill = async (input: {
     return new Promise((done) => {
       const child = spawn('bash', [skillPath, ...argsArray], {
         cwd: input.cwd,
-        env: { ...process.env, ...input.env },
+        env: childEnv,
         stdio: ['pipe', 'pipe', 'pipe'], // explicitly set stdin to pipe
       });
 
@@ -221,7 +274,7 @@ export const invokeRouteSkill = async (input: {
   try {
     const result = await execAsync(cmd, {
       cwd: input.cwd,
-      env: { ...process.env, ...input.env },
+      env: childEnv,
     });
     return { ...result, code: 0 };
   } catch (error) {

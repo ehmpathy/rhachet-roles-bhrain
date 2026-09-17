@@ -1,0 +1,77 @@
+artifacts:
+  - src/**/*.ts
+
+# twelve reviewers at ONE level, none in a group
+# .why = the level default is the only bound that can govern them, and twelve is
+#        the smallest count that can tell it apart from an absent bound. every
+#        other fixture in this suite has a level of four, where a bound of ten
+#        and no bound at all pour identically
+#
+# .note = the 2.5s hold is not decoration. every admitted lane must still be held
+#         when the last one begins, or a slow host depresses the observed peak
+#         and a bound-absent arm reads as bounded — a clamp that greens on the
+#         defect it exists to catch
+reviews:
+  peer:
+    - slug: wide-a
+      run: bash $route/.test/mock-window.sh wide-a 2.5
+      budget: 5
+      level: 1
+
+    - slug: wide-b
+      run: bash $route/.test/mock-window.sh wide-b 2.5
+      budget: 5
+      level: 1
+
+    - slug: wide-c
+      run: bash $route/.test/mock-window.sh wide-c 2.5
+      budget: 5
+      level: 1
+
+    - slug: wide-d
+      run: bash $route/.test/mock-window.sh wide-d 2.5
+      budget: 5
+      level: 1
+
+    - slug: wide-e
+      run: bash $route/.test/mock-window.sh wide-e 2.5
+      budget: 5
+      level: 1
+
+    - slug: wide-f
+      run: bash $route/.test/mock-window.sh wide-f 2.5
+      budget: 5
+      level: 1
+
+    - slug: wide-g
+      run: bash $route/.test/mock-window.sh wide-g 2.5
+      budget: 5
+      level: 1
+
+    - slug: wide-h
+      run: bash $route/.test/mock-window.sh wide-h 2.5
+      budget: 5
+      level: 1
+
+    - slug: wide-i
+      run: bash $route/.test/mock-window.sh wide-i 2.5
+      budget: 5
+      level: 1
+
+    - slug: wide-j
+      run: bash $route/.test/mock-window.sh wide-j 2.5
+      budget: 5
+      level: 1
+
+    - slug: wide-k
+      run: bash $route/.test/mock-window.sh wide-k 2.5
+      budget: 5
+      level: 1
+
+    - slug: wide-l
+      run: bash $route/.test/mock-window.sh wide-l 2.5
+      budget: 5
+      level: 1
+
+judges:
+  - rhx route.stone.judge --mechanism reviewed? --stone $stone --route $route --allow-blockers 0 --allow-nitpicks 1

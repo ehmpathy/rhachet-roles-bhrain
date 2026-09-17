@@ -99,6 +99,7 @@
     "serde-fns": "1.2.0",
     "simple-in-memory-cache": "0.4.0",
     "type-fns": "1.21.0",
+    "with-bottleneck": "0.1.2",
     "with-simple-caching": "0.14.2",
     "wrapper-fns": "1.1.0",
     "zod": "4.3.4"

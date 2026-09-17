@@ -1,15 +1,6 @@
+import { getAllReviewLevelsAsc } from '../../getAllReviewLevelsAsc';
 import type { ReviewPeerVerdict } from './computeReviewPeerVerdict';
 import { getStoneGuardLevelClearance } from './getStoneGuardLevelClearance';
-
-/**
- * .what = lists the distinct review levels present, sorted low-to-high
- * .why = level math (active, terminal) needs the ordered set of levels
- */
-const getDistinctLevels = (reviewers: Array<{ level: number }>): number[] => {
-  const levels = new Set<number>();
-  for (const reviewer of reviewers) levels.add(reviewer.level);
-  return [...levels].sort((a, b) => a - b);
-};
 
 /**
  * .what = the highest review level present among the reviewers
@@ -20,7 +11,7 @@ const getDistinctLevels = (reviewers: Array<{ level: number }>): number[] => {
 export const computeReviewTerminalLevel = (
   reviewers: Array<{ level: number }>,
 ): number | null => {
-  const levels = getDistinctLevels(reviewers);
+  const levels = getAllReviewLevelsAsc({ peers: reviewers });
   return levels.length === 0 ? null : levels[levels.length - 1]!;
 };
 

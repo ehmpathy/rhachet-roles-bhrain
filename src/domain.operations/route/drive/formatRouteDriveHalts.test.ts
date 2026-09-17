@@ -32,6 +32,7 @@ import { formatRouteDriveMixedHalt } from './formatRouteDriveMixedHalt';
  */
 
 const meterExhausted: GuardPeerMeterStatus = {
+  index: 1,
   slug: 'mech-rules',
   level: 1,
   rounds: 3,
@@ -319,14 +320,19 @@ describe('formatRouteDriveBudgetExhausted', () => {
             // ⚠️ `rejected` is what makes l2 the LIVE gate. a terminal verdict here (approved /
             //    exhausted / malfunction / constraint) clears every level, so `liveLevel` is null
             //    and there is no unlock to render — the ladder is simply spent.
-            // 🔴 `path` must be overridden with the rest. a spread that carries
-            //    meterExhausted's path renders `r2: ergo-rules` with `by_peer.mech-rules.md`
-            //    beneath it — one reviewer row that quotes another reviewer's artifacts,
-            //    which a driver reads as two names for one identity
-            //    (`rule.forbid.snapshot-visual-blemishes`). the snapshot added to this suite
-            //    is what surfaced it; the structural assertions could not see it.
+            // 🔴 `index` and `path` must BOTH be overridden with the rest. every field this
+            //    spread carries over is one ergo-rules never declared, and the two IDENTITY
+            //    fields are the ones that reach the render:
+            //      - a carried `path` renders `r2: ergo-rules` with `by_peer.mech-rules.md`
+            //        beneath it — one row that quotes another reviewer's artifacts
+            //      - a carried `index` renders `r1: ergo-rules` — mech-rules' own rung, so
+            //        two reviewers claim one identity
+            //    either way a driver reads two names for one identity
+            //    (`rule.forbid.snapshot-visual-blemishes`). the snapshot on this suite is
+            //    what surfaced both; the structural assertions could see neither.
             {
               ...meterExhausted,
+              index: 2,
               slug: 'ergo-rules',
               level: 2,
               rounds: 1,

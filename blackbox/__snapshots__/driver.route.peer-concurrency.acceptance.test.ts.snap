@@ -1,0 +1,844 @@
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
+
+exports[`driver.route.peer-concurrency.acceptance given: [case10] a leaking level 3 that the gate never opens when: [t0] the first arrival, with every l1 reviewer set to reject then: stdout has good vibes 1`] = `
+"🦉 the way speaks for itself
+   │
+   ├─ r1: l1-a (l1, 1/5)
+   │   ├─ rejected [TIME]
+   │   ├─ 1 blocker 🔴
+   │   ├─ 0 nitpicks ✓
+   │   ├─ given: .reviews/peer/1.vision._.review.i001.8739656801d5e77f22.r001._.given.by_peer.l1-a.md
+   │   └─ taken: .reviews/peer/1.vision._.review.i001.8739656801d5e77f22.r001._.taken.by_self.l1-a.md
+   │
+   ├─ r2: l1-b (l1, 1/5)
+   │   ├─ rejected [TIME]
+   │   ├─ 1 blocker 🔴
+   │   ├─ 0 nitpicks ✓
+   │   ├─ given: .reviews/peer/1.vision._.review.i001.8739656801d5e77f22.r002._.given.by_peer.l1-b.md
+   │   └─ taken: .reviews/peer/1.vision._.review.i001.8739656801d5e77f22.r002._.taken.by_self.l1-b.md
+   │
+   ├─ r3: l1-c (l1, 1/5)
+   │   ├─ rejected [TIME]
+   │   ├─ 1 blocker 🔴
+   │   ├─ 0 nitpicks ✓
+   │   ├─ given: .reviews/peer/1.vision._.review.i001.8739656801d5e77f22.r003._.given.by_peer.l1-c.md
+   │   └─ taken: .reviews/peer/1.vision._.review.i001.8739656801d5e77f22.r003._.taken.by_self.l1-c.md
+   │
+   ├─ r4: l1-d (l1, 1/5)
+   │   ├─ rejected [TIME]
+   │   ├─ 1 blocker 🔴
+   │   ├─ 0 nitpicks ✓
+   │   ├─ given: .reviews/peer/1.vision._.review.i001.8739656801d5e77f22.r004._.given.by_peer.l1-d.md
+   │   └─ taken: .reviews/peer/1.vision._.review.i001.8739656801d5e77f22.r004._.taken.by_self.l1-d.md
+   │
+   ├─ r5: l3-a (l3, 0/5)
+   │   └─ awaits arrival
+   │
+   ├─ r6: l3-b (l3, 0/5)
+   │   └─ awaits arrival
+   │
+   ├─ r7: l3-c (l3, 0/5)
+   │   └─ awaits arrival
+   │
+   ├─ r8: l3-x (l3, 0/5)
+   │   └─ awaits arrival
+   │
+   └─ ✗ judge.1 - blocked [TIME]
+
+🗿 route.stone.set
+   ├─ stone = 1.vision
+   ├─ passage = blocked
+   ├─ reason = blockers exceed threshold (4 > 0)
+   └─ guard
+      ├─ artifacts
+      │   └─ src/**/*.ts
+      ├─ reviews
+      │   ├─ r1: l1-a (l1, 1/5)
+      │   │   ├─ rejected [TIME]
+      │   │   ├─ 1 blocker 🔴
+      │   │   ├─ 0 nitpicks ✓
+      │   │   ├─ given: .reviews/peer/1.vision._.review.i001.8739656801d5e77f22.r001._.given.by_peer.l1-a.md
+      │   │   └─ taken: .reviews/peer/1.vision._.review.i001.8739656801d5e77f22.r001._.taken.by_self.l1-a.md
+      │   ├─ r2: l1-b (l1, 1/5)
+      │   │   ├─ rejected [TIME]
+      │   │   ├─ 1 blocker 🔴
+      │   │   ├─ 0 nitpicks ✓
+      │   │   ├─ given: .reviews/peer/1.vision._.review.i001.8739656801d5e77f22.r002._.given.by_peer.l1-b.md
+      │   │   └─ taken: .reviews/peer/1.vision._.review.i001.8739656801d5e77f22.r002._.taken.by_self.l1-b.md
+      │   ├─ r3: l1-c (l1, 1/5)
+      │   │   ├─ rejected [TIME]
+      │   │   ├─ 1 blocker 🔴
+      │   │   ├─ 0 nitpicks ✓
+      │   │   ├─ given: .reviews/peer/1.vision._.review.i001.8739656801d5e77f22.r003._.given.by_peer.l1-c.md
+      │   │   └─ taken: .reviews/peer/1.vision._.review.i001.8739656801d5e77f22.r003._.taken.by_self.l1-c.md
+      │   ├─ r4: l1-d (l1, 1/5)
+      │   │   ├─ rejected [TIME]
+      │   │   ├─ 1 blocker 🔴
+      │   │   ├─ 0 nitpicks ✓
+      │   │   ├─ given: .reviews/peer/1.vision._.review.i001.8739656801d5e77f22.r004._.given.by_peer.l1-d.md
+      │   │   └─ taken: .reviews/peer/1.vision._.review.i001.8739656801d5e77f22.r004._.taken.by_self.l1-d.md
+      │   ├─ r5: l3-a (l3, 0/5)
+      │   │   └─ awaits l1 terminal
+      │   ├─ r6: l3-b (l3, 0/5)
+      │   │   └─ awaits l1 terminal
+      │   ├─ r7: l3-c (l3, 0/5)
+      │   │   └─ awaits l1 terminal
+      │   └─ r8: l3-x (l3, 0/5)
+      │       └─ awaits l1 terminal
+      └─ judges
+          └─ j1: rhx route.stone.judge --mechanism reviewed? --stone $stone --route $route --allow-blockers 0 --allow-nitpicks 1
+              ├─ finished [TIME] ✗
+              └─ reason: blockers exceed threshold (4 > 0)
+"
+`;
+
+exports[`driver.route.peer-concurrency.acceptance given: [journey] a level of four, and a level of three bounded at one when: [t0] the first arrival, with every l1 reviewer set to reject then: stdout has good vibes 1`] = `
+"🦉 the way speaks for itself
+   │
+   ├─ r1: l1-a (l1, 1/5)
+   │   ├─ rejected [TIME]
+   │   ├─ 1 blocker 🔴
+   │   ├─ 0 nitpicks ✓
+   │   ├─ given: .reviews/peer/1.vision._.review.i001.8739656801d5e77f22.r001._.given.by_peer.l1-a.md
+   │   └─ taken: .reviews/peer/1.vision._.review.i001.8739656801d5e77f22.r001._.taken.by_self.l1-a.md
+   │
+   ├─ r2: l1-b (l1, 1/5)
+   │   ├─ rejected [TIME]
+   │   ├─ 1 blocker 🔴
+   │   ├─ 0 nitpicks ✓
+   │   ├─ given: .reviews/peer/1.vision._.review.i001.8739656801d5e77f22.r002._.given.by_peer.l1-b.md
+   │   └─ taken: .reviews/peer/1.vision._.review.i001.8739656801d5e77f22.r002._.taken.by_self.l1-b.md
+   │
+   ├─ r3: l1-c (l1, 1/5)
+   │   ├─ rejected [TIME]
+   │   ├─ 1 blocker 🔴
+   │   ├─ 0 nitpicks ✓
+   │   ├─ given: .reviews/peer/1.vision._.review.i001.8739656801d5e77f22.r003._.given.by_peer.l1-c.md
+   │   └─ taken: .reviews/peer/1.vision._.review.i001.8739656801d5e77f22.r003._.taken.by_self.l1-c.md
+   │
+   ├─ r4: l1-d (l1, 1/5)
+   │   ├─ rejected [TIME]
+   │   ├─ 1 blocker 🔴
+   │   ├─ 0 nitpicks ✓
+   │   ├─ given: .reviews/peer/1.vision._.review.i001.8739656801d5e77f22.r004._.given.by_peer.l1-d.md
+   │   └─ taken: .reviews/peer/1.vision._.review.i001.8739656801d5e77f22.r004._.taken.by_self.l1-d.md
+   │
+   ├─ r5: l3-a (l3, 0/5)
+   │   └─ awaits arrival
+   │
+   ├─ r6: l3-b (l3, 0/5)
+   │   └─ awaits arrival
+   │
+   ├─ r7: l3-c (l3, 0/5)
+   │   └─ awaits arrival
+   │
+   └─ ✗ judge.1 - blocked [TIME]
+
+🗿 route.stone.set
+   ├─ stone = 1.vision
+   ├─ passage = blocked
+   ├─ reason = blockers exceed threshold (4 > 0)
+   └─ guard
+      ├─ artifacts
+      │   └─ src/**/*.ts
+      ├─ reviews
+      │   ├─ r1: l1-a (l1, 1/5)
+      │   │   ├─ rejected [TIME]
+      │   │   ├─ 1 blocker 🔴
+      │   │   ├─ 0 nitpicks ✓
+      │   │   ├─ given: .reviews/peer/1.vision._.review.i001.8739656801d5e77f22.r001._.given.by_peer.l1-a.md
+      │   │   └─ taken: .reviews/peer/1.vision._.review.i001.8739656801d5e77f22.r001._.taken.by_self.l1-a.md
+      │   ├─ r2: l1-b (l1, 1/5)
+      │   │   ├─ rejected [TIME]
+      │   │   ├─ 1 blocker 🔴
+      │   │   ├─ 0 nitpicks ✓
+      │   │   ├─ given: .reviews/peer/1.vision._.review.i001.8739656801d5e77f22.r002._.given.by_peer.l1-b.md
+      │   │   └─ taken: .reviews/peer/1.vision._.review.i001.8739656801d5e77f22.r002._.taken.by_self.l1-b.md
+      │   ├─ r3: l1-c (l1, 1/5)
+      │   │   ├─ rejected [TIME]
+      │   │   ├─ 1 blocker 🔴
+      │   │   ├─ 0 nitpicks ✓
+      │   │   ├─ given: .reviews/peer/1.vision._.review.i001.8739656801d5e77f22.r003._.given.by_peer.l1-c.md
+      │   │   └─ taken: .reviews/peer/1.vision._.review.i001.8739656801d5e77f22.r003._.taken.by_self.l1-c.md
+      │   ├─ r4: l1-d (l1, 1/5)
+      │   │   ├─ rejected [TIME]
+      │   │   ├─ 1 blocker 🔴
+      │   │   ├─ 0 nitpicks ✓
+      │   │   ├─ given: .reviews/peer/1.vision._.review.i001.8739656801d5e77f22.r004._.given.by_peer.l1-d.md
+      │   │   └─ taken: .reviews/peer/1.vision._.review.i001.8739656801d5e77f22.r004._.taken.by_self.l1-d.md
+      │   ├─ r5: l3-a (l3, 0/5)
+      │   │   └─ awaits l1 terminal
+      │   ├─ r6: l3-b (l3, 0/5)
+      │   │   └─ awaits l1 terminal
+      │   └─ r7: l3-c (l3, 0/5)
+      │       └─ awaits l1 terminal
+      └─ judges
+          └─ j1: rhx route.stone.judge --mechanism reviewed? --stone $stone --route $route --allow-blockers 0 --allow-nitpicks 1
+              ├─ finished [TIME] ✗
+              └─ reason: blockers exceed threshold (4 > 0)
+"
+`;
+
+exports[`driver.route.peer-concurrency.acceptance given: [journey] a level of four, and a level of three bounded at one when: [t0] the first arrival, with every l1 reviewer set to reject then: the pour announce reads as declared 1`] = `
+[
+  "🦉 l1 pours 4 lanes",
+  "   ├─ r1:l1-a",
+  "   ├─ r2:l1-b",
+  "   ├─ r3:l1-c",
+  "   └─ r4:l1-d",
+]
+`;
+
+exports[`driver.route.peer-concurrency.acceptance given: [journey] a level of four, and a level of three bounded at one when: [t1] every l1 reviewer approves, so l3 opens then: stdout has good vibes 1`] = `
+"🦉 the way speaks for itself
+   │
+   ├─ r1: l1-a (l1, 2/5)
+   │   ├─ approved [TIME]
+   │   ├─ 0 blockers ✓
+   │   ├─ 0 nitpicks ✓
+   │   ├─ given: .reviews/peer/1.vision._.review.i002.dfc5faff83ea2fcb55.r001._.given.by_peer.l1-a.md
+   │   └─ taken: .reviews/peer/1.vision._.review.i002.dfc5faff83ea2fcb55.r001._.taken.by_self.l1-a.md
+   │
+   ├─ r2: l1-b (l1, 2/5)
+   │   ├─ approved [TIME]
+   │   ├─ 0 blockers ✓
+   │   ├─ 0 nitpicks ✓
+   │   ├─ given: .reviews/peer/1.vision._.review.i002.dfc5faff83ea2fcb55.r002._.given.by_peer.l1-b.md
+   │   └─ taken: .reviews/peer/1.vision._.review.i002.dfc5faff83ea2fcb55.r002._.taken.by_self.l1-b.md
+   │
+   ├─ r3: l1-c (l1, 2/5)
+   │   ├─ approved [TIME]
+   │   ├─ 0 blockers ✓
+   │   ├─ 0 nitpicks ✓
+   │   ├─ given: .reviews/peer/1.vision._.review.i002.dfc5faff83ea2fcb55.r003._.given.by_peer.l1-c.md
+   │   └─ taken: .reviews/peer/1.vision._.review.i002.dfc5faff83ea2fcb55.r003._.taken.by_self.l1-c.md
+   │
+   ├─ r4: l1-d (l1, 2/5)
+   │   ├─ approved [TIME]
+   │   ├─ 0 blockers ✓
+   │   ├─ 0 nitpicks ✓
+   │   ├─ given: .reviews/peer/1.vision._.review.i002.dfc5faff83ea2fcb55.r004._.given.by_peer.l1-d.md
+   │   └─ taken: .reviews/peer/1.vision._.review.i002.dfc5faff83ea2fcb55.r004._.taken.by_self.l1-d.md
+   │
+   ├─ r5: l3-a (l3, 1/5)
+   │   ├─ rejected [TIME]
+   │   ├─ 1 blocker 🔴
+   │   ├─ 0 nitpicks ✓
+   │   ├─ given: .reviews/peer/1.vision._.review.i002.dfc5faff83ea2fcb55.r005._.given.by_peer.l3-a.md
+   │   └─ taken: .reviews/peer/1.vision._.review.i002.dfc5faff83ea2fcb55.r005._.taken.by_self.l3-a.md
+   │
+   ├─ r6: l3-b (l3, 1/5)
+   │   ├─ rejected [TIME]
+   │   ├─ 1 blocker 🔴
+   │   ├─ 0 nitpicks ✓
+   │   ├─ given: .reviews/peer/1.vision._.review.i002.dfc5faff83ea2fcb55.r006._.given.by_peer.l3-b.md
+   │   └─ taken: .reviews/peer/1.vision._.review.i002.dfc5faff83ea2fcb55.r006._.taken.by_self.l3-b.md
+   │
+   ├─ r7: l3-c (l3, 1/5)
+   │   ├─ rejected [TIME]
+   │   ├─ 1 blocker 🔴
+   │   ├─ 0 nitpicks ✓
+   │   ├─ given: .reviews/peer/1.vision._.review.i002.dfc5faff83ea2fcb55.r007._.given.by_peer.l3-c.md
+   │   └─ taken: .reviews/peer/1.vision._.review.i002.dfc5faff83ea2fcb55.r007._.taken.by_self.l3-c.md
+   │
+   └─ ✗ judge.1 - blocked [TIME]
+
+🗿 route.stone.set
+   ├─ stone = 1.vision
+   ├─ passage = blocked
+   ├─ reason = blockers exceed threshold (3 > 0)
+   └─ guard
+      ├─ artifacts
+      │   └─ src/**/*.ts
+      ├─ reviews
+      │   ├─ r1: l1-a (l1, 2/5)
+      │   │   ├─ approved [TIME]
+      │   │   ├─ 0 blockers ✓
+      │   │   ├─ 0 nitpicks ✓
+      │   │   ├─ given: .reviews/peer/1.vision._.review.i002.dfc5faff83ea2fcb55.r001._.given.by_peer.l1-a.md
+      │   │   └─ taken: .reviews/peer/1.vision._.review.i002.dfc5faff83ea2fcb55.r001._.taken.by_self.l1-a.md
+      │   ├─ r2: l1-b (l1, 2/5)
+      │   │   ├─ approved [TIME]
+      │   │   ├─ 0 blockers ✓
+      │   │   ├─ 0 nitpicks ✓
+      │   │   ├─ given: .reviews/peer/1.vision._.review.i002.dfc5faff83ea2fcb55.r002._.given.by_peer.l1-b.md
+      │   │   └─ taken: .reviews/peer/1.vision._.review.i002.dfc5faff83ea2fcb55.r002._.taken.by_self.l1-b.md
+      │   ├─ r3: l1-c (l1, 2/5)
+      │   │   ├─ approved [TIME]
+      │   │   ├─ 0 blockers ✓
+      │   │   ├─ 0 nitpicks ✓
+      │   │   ├─ given: .reviews/peer/1.vision._.review.i002.dfc5faff83ea2fcb55.r003._.given.by_peer.l1-c.md
+      │   │   └─ taken: .reviews/peer/1.vision._.review.i002.dfc5faff83ea2fcb55.r003._.taken.by_self.l1-c.md
+      │   ├─ r4: l1-d (l1, 2/5)
+      │   │   ├─ approved [TIME]
+      │   │   ├─ 0 blockers ✓
+      │   │   ├─ 0 nitpicks ✓
+      │   │   ├─ given: .reviews/peer/1.vision._.review.i002.dfc5faff83ea2fcb55.r004._.given.by_peer.l1-d.md
+      │   │   └─ taken: .reviews/peer/1.vision._.review.i002.dfc5faff83ea2fcb55.r004._.taken.by_self.l1-d.md
+      │   ├─ r5: l3-a (l3, 1/5)
+      │   │   ├─ rejected [TIME]
+      │   │   ├─ 1 blocker 🔴
+      │   │   ├─ 0 nitpicks ✓
+      │   │   ├─ given: .reviews/peer/1.vision._.review.i002.dfc5faff83ea2fcb55.r005._.given.by_peer.l3-a.md
+      │   │   └─ taken: .reviews/peer/1.vision._.review.i002.dfc5faff83ea2fcb55.r005._.taken.by_self.l3-a.md
+      │   ├─ r6: l3-b (l3, 1/5)
+      │   │   ├─ rejected [TIME]
+      │   │   ├─ 1 blocker 🔴
+      │   │   ├─ 0 nitpicks ✓
+      │   │   ├─ given: .reviews/peer/1.vision._.review.i002.dfc5faff83ea2fcb55.r006._.given.by_peer.l3-b.md
+      │   │   └─ taken: .reviews/peer/1.vision._.review.i002.dfc5faff83ea2fcb55.r006._.taken.by_self.l3-b.md
+      │   └─ r7: l3-c (l3, 1/5)
+      │       ├─ rejected [TIME]
+      │       ├─ 1 blocker 🔴
+      │       ├─ 0 nitpicks ✓
+      │       ├─ given: .reviews/peer/1.vision._.review.i002.dfc5faff83ea2fcb55.r007._.given.by_peer.l3-c.md
+      │       └─ taken: .reviews/peer/1.vision._.review.i002.dfc5faff83ea2fcb55.r007._.taken.by_self.l3-c.md
+      └─ judges
+          └─ j1: rhx route.stone.judge --mechanism reviewed? --stone $stone --route $route --allow-blockers 0 --allow-nitpicks 1
+              ├─ finished [TIME] ✗
+              └─ reason: blockers exceed threshold (3 > 0)
+
+🪷 the path continues
+   ├─ l1 is terminal (approved) — it no longer blocks you
+   ├─ l3 has engaged — address its blockers, then:
+   │  └─ rhx route.stone.set --stone 1.vision --as arrived
+   └─ a human is only needed once every level is terminal
+"
+`;
+
+exports[`driver.route.peer-concurrency.acceptance given: [journey] a level of four, and a level of three bounded at one when: [t1] every l1 reviewer approves, so l3 opens then: the pour announce reads as declared 1`] = `
+[
+  "🦉 l1 pours 4 lanes",
+  "   ├─ r1:l1-a",
+  "   ├─ r2:l1-b",
+  "   ├─ r3:l1-c",
+  "   └─ r4:l1-d",
+  "🦉 l3 pours 3 lanes · ≤1 at a time",
+  "   ├─ r5:l3-a",
+  "   ├─ r6:l3-b",
+  "   └─ r7:l3-c",
+]
+`;
+
+exports[`driver.route.peer-concurrency.acceptance given: [journey] a level of four, and a level of three bounded at one when: [t2] one l1 co-member fails mid-flight then: stdout has good vibes 1`] = `
+"🦉 the way speaks for itself
+   │
+   ├─ r1: l1-a (l1, 3/5)
+   │   ├─ approved [TIME]
+   │   ├─ 0 blockers ✓
+   │   ├─ 0 nitpicks ✓
+   │   ├─ given: .reviews/peer/1.vision._.review.i003.457fd5ef46e053a35e.r001._.given.by_peer.l1-a.md
+   │   └─ taken: .reviews/peer/1.vision._.review.i003.457fd5ef46e053a35e.r001._.taken.by_self.l1-a.md
+   │
+   ├─ r2: l1-b (l1, 3/5)
+   │   ├─ approved [TIME]
+   │   ├─ 0 blockers ✓
+   │   ├─ 0 nitpicks ✓
+   │   ├─ given: .reviews/peer/1.vision._.review.i003.457fd5ef46e053a35e.r002._.given.by_peer.l1-b.md
+   │   └─ taken: .reviews/peer/1.vision._.review.i003.457fd5ef46e053a35e.r002._.taken.by_self.l1-b.md
+   │
+   ├─ r3: l1-c (l1, 2/5)
+   │   ├─ constraint ✋
+   │   ├─ terminal — does not block higher levels
+   │   ├─ given: .reviews/peer/1.vision._.review.i003.457fd5ef46e053a35e.r003._.given.by_peer.l1-c.md
+   │   └─ taken: .reviews/peer/1.vision._.review.i003.457fd5ef46e053a35e.r003._.taken.by_self.l1-c.md
+   │
+   ├─ r4: l1-d (l1, 2/5)
+   │   ├─ malfunction 💥
+   │   ├─ terminal — does not block higher levels
+   │   ├─ given: .reviews/peer/1.vision._.review.i003.457fd5ef46e053a35e.r004._.given.by_peer.l1-d.md
+   │   └─ taken: .reviews/peer/1.vision._.review.i003.457fd5ef46e053a35e.r004._.taken.by_self.l1-d.md
+   │
+   ├─ r5: l3-a (l3, 2/5)
+   │   ├─ rejected [TIME]
+   │   ├─ 1 blocker 🔴
+   │   ├─ 0 nitpicks ✓
+   │   ├─ given: .reviews/peer/1.vision._.review.i003.457fd5ef46e053a35e.r005._.given.by_peer.l3-a.md
+   │   └─ taken: .reviews/peer/1.vision._.review.i003.457fd5ef46e053a35e.r005._.taken.by_self.l3-a.md
+   │
+   ├─ r6: l3-b (l3, 2/5)
+   │   ├─ rejected [TIME]
+   │   ├─ 1 blocker 🔴
+   │   ├─ 0 nitpicks ✓
+   │   ├─ given: .reviews/peer/1.vision._.review.i003.457fd5ef46e053a35e.r006._.given.by_peer.l3-b.md
+   │   └─ taken: .reviews/peer/1.vision._.review.i003.457fd5ef46e053a35e.r006._.taken.by_self.l3-b.md
+   │
+   ├─ r7: l3-c (l3, 2/5)
+   │   ├─ rejected [TIME]
+   │   ├─ 1 blocker 🔴
+   │   ├─ 0 nitpicks ✓
+   │   ├─ given: .reviews/peer/1.vision._.review.i003.457fd5ef46e053a35e.r007._.given.by_peer.l3-c.md
+   │   └─ taken: .reviews/peer/1.vision._.review.i003.457fd5ef46e053a35e.r007._.taken.by_self.l3-c.md
+   │
+   └─ ✗ judge.1 - blocked [TIME]
+
+🗿 route.stone.set
+   ├─ stone = 1.vision
+   ├─ passage = malfunction
+   ├─ reason = reviewer or judge malfunctioned
+   ├─ options
+   │  ├─ overrule the malfunction — a human must grant
+   │  │  └─ rhx route.stone.set --stone 1.vision --as overruled
+   │  └─ or fix the reviewer, then retry
+   └─ guard
+      ├─ artifacts
+      │   └─ src/**/*.ts
+      ├─ reviews
+      │   ├─ r1: l1-a (l1, 3/5)
+      │   │   ├─ approved [TIME]
+      │   │   ├─ 0 blockers ✓
+      │   │   ├─ 0 nitpicks ✓
+      │   │   ├─ given: .reviews/peer/1.vision._.review.i003.457fd5ef46e053a35e.r001._.given.by_peer.l1-a.md
+      │   │   └─ taken: .reviews/peer/1.vision._.review.i003.457fd5ef46e053a35e.r001._.taken.by_self.l1-a.md
+      │   ├─ r2: l1-b (l1, 3/5)
+      │   │   ├─ approved [TIME]
+      │   │   ├─ 0 blockers ✓
+      │   │   ├─ 0 nitpicks ✓
+      │   │   ├─ given: .reviews/peer/1.vision._.review.i003.457fd5ef46e053a35e.r002._.given.by_peer.l1-b.md
+      │   │   └─ taken: .reviews/peer/1.vision._.review.i003.457fd5ef46e053a35e.r002._.taken.by_self.l1-b.md
+      │   ├─ r3: l1-c (l1, 2/5)
+      │   │   ├─ constraint ✋
+      │   │   ├─ terminal — does not block higher levels
+      │   │   ├─ given: .reviews/peer/1.vision._.review.i003.457fd5ef46e053a35e.r003._.given.by_peer.l1-c.md
+      │   │   └─ taken: .reviews/peer/1.vision._.review.i003.457fd5ef46e053a35e.r003._.taken.by_self.l1-c.md
+      │   ├─ r4: l1-d (l1, 2/5)
+      │   │   ├─ malfunction 💥
+      │   │   ├─ terminal — does not block higher levels
+      │   │   ├─ given: .reviews/peer/1.vision._.review.i003.457fd5ef46e053a35e.r004._.given.by_peer.l1-d.md
+      │   │   └─ taken: .reviews/peer/1.vision._.review.i003.457fd5ef46e053a35e.r004._.taken.by_self.l1-d.md
+      │   ├─ r5: l3-a (l3, 2/5)
+      │   │   ├─ rejected [TIME]
+      │   │   ├─ 1 blocker 🔴
+      │   │   ├─ 0 nitpicks ✓
+      │   │   ├─ given: .reviews/peer/1.vision._.review.i003.457fd5ef46e053a35e.r005._.given.by_peer.l3-a.md
+      │   │   └─ taken: .reviews/peer/1.vision._.review.i003.457fd5ef46e053a35e.r005._.taken.by_self.l3-a.md
+      │   ├─ r6: l3-b (l3, 2/5)
+      │   │   ├─ rejected [TIME]
+      │   │   ├─ 1 blocker 🔴
+      │   │   ├─ 0 nitpicks ✓
+      │   │   ├─ given: .reviews/peer/1.vision._.review.i003.457fd5ef46e053a35e.r006._.given.by_peer.l3-b.md
+      │   │   └─ taken: .reviews/peer/1.vision._.review.i003.457fd5ef46e053a35e.r006._.taken.by_self.l3-b.md
+      │   └─ r7: l3-c (l3, 2/5)
+      │       ├─ rejected [TIME]
+      │       ├─ 1 blocker 🔴
+      │       ├─ 0 nitpicks ✓
+      │       ├─ given: .reviews/peer/1.vision._.review.i003.457fd5ef46e053a35e.r007._.given.by_peer.l3-c.md
+      │       └─ taken: .reviews/peer/1.vision._.review.i003.457fd5ef46e053a35e.r007._.taken.by_self.l3-c.md
+      └─ judges
+          └─ j1: rhx route.stone.judge --mechanism reviewed? --stone $stone --route $route --allow-blockers 0 --allow-nitpicks 1
+              ├─ finished [TIME] ✗
+              └─ reason: blockers exceed threshold (3 > 0)
+"
+`;
+
+exports[`driver.route.peer-concurrency.acceptance given: [journey] a level of four, and a level of three bounded at one when: [t3] the same artifact arrives again, two l1 lanes cached then: stdout has good vibes 1`] = `
+"🦉 the way speaks for itself
+   │
+   ├─ r1: l1-a (l1, 3/5)
+   │   ├─ approved, cached
+   │   ├─ 0 blockers ✓
+   │   ├─ 0 nitpicks ✓
+   │   ├─ given: .reviews/peer/1.vision._.review.i003.457fd5ef46e053a35e.r001._.given.by_peer.l1-a.md
+   │   └─ taken: .reviews/peer/1.vision._.review.i003.457fd5ef46e053a35e.r001._.taken.by_self.l1-a.md
+   │
+   ├─ r2: l1-b (l1, 3/5)
+   │   ├─ approved, cached
+   │   ├─ 0 blockers ✓
+   │   ├─ 0 nitpicks ✓
+   │   ├─ given: .reviews/peer/1.vision._.review.i003.457fd5ef46e053a35e.r002._.given.by_peer.l1-b.md
+   │   └─ taken: .reviews/peer/1.vision._.review.i003.457fd5ef46e053a35e.r002._.taken.by_self.l1-b.md
+   │
+   ├─ r3: l1-c (l1, 2/5)
+   │   ├─ constraint ✋
+   │   ├─ terminal — does not block higher levels
+   │   ├─ given: .reviews/peer/1.vision._.review.i004.457fd5ef46e053a35e.r003._.given.by_peer.l1-c.md
+   │   └─ taken: .reviews/peer/1.vision._.review.i004.457fd5ef46e053a35e.r003._.taken.by_self.l1-c.md
+   │
+   ├─ r4: l1-d (l1, 2/5)
+   │   ├─ malfunction 💥
+   │   ├─ terminal — does not block higher levels
+   │   ├─ given: .reviews/peer/1.vision._.review.i004.457fd5ef46e053a35e.r004._.given.by_peer.l1-d.md
+   │   └─ taken: .reviews/peer/1.vision._.review.i004.457fd5ef46e053a35e.r004._.taken.by_self.l1-d.md
+   │
+   ├─ r5: l3-a (l3, 2/5)
+   │   ├─ rejected, cached
+   │   ├─ 1 blocker 🔴
+   │   ├─ 0 nitpicks ✓
+   │   ├─ given: .reviews/peer/1.vision._.review.i003.457fd5ef46e053a35e.r005._.given.by_peer.l3-a.md
+   │   └─ taken: .reviews/peer/1.vision._.review.i003.457fd5ef46e053a35e.r005._.taken.by_self.l3-a.md
+   │
+   ├─ r6: l3-b (l3, 2/5)
+   │   ├─ rejected, cached
+   │   ├─ 1 blocker 🔴
+   │   ├─ 0 nitpicks ✓
+   │   ├─ given: .reviews/peer/1.vision._.review.i003.457fd5ef46e053a35e.r006._.given.by_peer.l3-b.md
+   │   └─ taken: .reviews/peer/1.vision._.review.i003.457fd5ef46e053a35e.r006._.taken.by_self.l3-b.md
+   │
+   ├─ r7: l3-c (l3, 2/5)
+   │   ├─ rejected, cached
+   │   ├─ 1 blocker 🔴
+   │   ├─ 0 nitpicks ✓
+   │   ├─ given: .reviews/peer/1.vision._.review.i003.457fd5ef46e053a35e.r007._.given.by_peer.l3-c.md
+   │   └─ taken: .reviews/peer/1.vision._.review.i003.457fd5ef46e053a35e.r007._.taken.by_self.l3-c.md
+   │
+   └─ ✗ judge.1 - blocked [TIME]
+
+🗿 route.stone.set
+   ├─ stone = 1.vision
+   ├─ passage = malfunction
+   ├─ reason = reviewer or judge malfunctioned
+   ├─ options
+   │  ├─ overrule the malfunction — a human must grant
+   │  │  └─ rhx route.stone.set --stone 1.vision --as overruled
+   │  └─ or fix the reviewer, then retry
+   └─ guard
+      ├─ artifacts
+      │   └─ src/**/*.ts
+      ├─ reviews
+      │   ├─ r1: l1-a (l1, 3/5)
+      │   │   ├─ approved, cached
+      │   │   ├─ 0 blockers ✓
+      │   │   ├─ 0 nitpicks ✓
+      │   │   ├─ given: .reviews/peer/1.vision._.review.i003.457fd5ef46e053a35e.r001._.given.by_peer.l1-a.md
+      │   │   └─ taken: .reviews/peer/1.vision._.review.i003.457fd5ef46e053a35e.r001._.taken.by_self.l1-a.md
+      │   ├─ r2: l1-b (l1, 3/5)
+      │   │   ├─ approved, cached
+      │   │   ├─ 0 blockers ✓
+      │   │   ├─ 0 nitpicks ✓
+      │   │   ├─ given: .reviews/peer/1.vision._.review.i003.457fd5ef46e053a35e.r002._.given.by_peer.l1-b.md
+      │   │   └─ taken: .reviews/peer/1.vision._.review.i003.457fd5ef46e053a35e.r002._.taken.by_self.l1-b.md
+      │   ├─ r3: l1-c (l1, 2/5)
+      │   │   ├─ constraint ✋
+      │   │   ├─ terminal — does not block higher levels
+      │   │   ├─ given: .reviews/peer/1.vision._.review.i004.457fd5ef46e053a35e.r003._.given.by_peer.l1-c.md
+      │   │   └─ taken: .reviews/peer/1.vision._.review.i004.457fd5ef46e053a35e.r003._.taken.by_self.l1-c.md
+      │   ├─ r4: l1-d (l1, 2/5)
+      │   │   ├─ malfunction 💥
+      │   │   ├─ terminal — does not block higher levels
+      │   │   ├─ given: .reviews/peer/1.vision._.review.i004.457fd5ef46e053a35e.r004._.given.by_peer.l1-d.md
+      │   │   └─ taken: .reviews/peer/1.vision._.review.i004.457fd5ef46e053a35e.r004._.taken.by_self.l1-d.md
+      │   ├─ r5: l3-a (l3, 2/5)
+      │   │   ├─ rejected, cached
+      │   │   ├─ 1 blocker 🔴
+      │   │   ├─ 0 nitpicks ✓
+      │   │   ├─ given: .reviews/peer/1.vision._.review.i003.457fd5ef46e053a35e.r005._.given.by_peer.l3-a.md
+      │   │   └─ taken: .reviews/peer/1.vision._.review.i003.457fd5ef46e053a35e.r005._.taken.by_self.l3-a.md
+      │   ├─ r6: l3-b (l3, 2/5)
+      │   │   ├─ rejected, cached
+      │   │   ├─ 1 blocker 🔴
+      │   │   ├─ 0 nitpicks ✓
+      │   │   ├─ given: .reviews/peer/1.vision._.review.i003.457fd5ef46e053a35e.r006._.given.by_peer.l3-b.md
+      │   │   └─ taken: .reviews/peer/1.vision._.review.i003.457fd5ef46e053a35e.r006._.taken.by_self.l3-b.md
+      │   └─ r7: l3-c (l3, 2/5)
+      │       ├─ rejected, cached
+      │       ├─ 1 blocker 🔴
+      │       ├─ 0 nitpicks ✓
+      │       ├─ given: .reviews/peer/1.vision._.review.i003.457fd5ef46e053a35e.r007._.given.by_peer.l3-c.md
+      │       └─ taken: .reviews/peer/1.vision._.review.i003.457fd5ef46e053a35e.r007._.taken.by_self.l3-c.md
+      └─ judges
+          └─ j1: rhx route.stone.judge --mechanism reviewed? --stone $stone --route $route --allow-blockers 0 --allow-nitpicks 1
+              ├─ finished [TIME] ✗
+              └─ reason: blockers exceed threshold (3 > 0)
+"
+`;
+
+exports[`driver.route.peer-concurrency.acceptance given: [journey] a level of four, and a level of three bounded at one when: [t3] the same artifact arrives again, two l1 lanes cached then: the PARTIAL-POOL pour announce has good vibes 1`] = `
+[
+  "🦉 l1 pours 2 lanes",
+  "   ├─ r3:l1-c",
+  "   └─ r4:l1-d",
+]
+`;
+
+exports[`driver.route.peer-concurrency.acceptance given: [journey] a level of four, and a level of three bounded at one when: [t4] an eighth reviewer is appended to the roster then: stdout has good vibes 1`] = `
+"🦉 the way speaks for itself
+   │
+   ├─ r1: l1-a (l1, 3/5)
+   │   ├─ approved, cached
+   │   ├─ 0 blockers ✓
+   │   ├─ 0 nitpicks ✓
+   │   ├─ given: .reviews/peer/1.vision._.review.i003.457fd5ef46e053a35e.r001._.given.by_peer.l1-a.md
+   │   └─ taken: .reviews/peer/1.vision._.review.i003.457fd5ef46e053a35e.r001._.taken.by_self.l1-a.md
+   │
+   ├─ r2: l1-b (l1, 3/5)
+   │   ├─ approved, cached
+   │   ├─ 0 blockers ✓
+   │   ├─ 0 nitpicks ✓
+   │   ├─ given: .reviews/peer/1.vision._.review.i003.457fd5ef46e053a35e.r002._.given.by_peer.l1-b.md
+   │   └─ taken: .reviews/peer/1.vision._.review.i003.457fd5ef46e053a35e.r002._.taken.by_self.l1-b.md
+   │
+   ├─ r3: l1-c (l1, 2/5)
+   │   ├─ constraint ✋
+   │   ├─ terminal — does not block higher levels
+   │   ├─ given: .reviews/peer/1.vision._.review.i005.457fd5ef46e053a35e.r003._.given.by_peer.l1-c.md
+   │   └─ taken: .reviews/peer/1.vision._.review.i005.457fd5ef46e053a35e.r003._.taken.by_self.l1-c.md
+   │
+   ├─ r4: l1-d (l1, 2/5)
+   │   ├─ malfunction 💥
+   │   ├─ terminal — does not block higher levels
+   │   ├─ given: .reviews/peer/1.vision._.review.i005.457fd5ef46e053a35e.r004._.given.by_peer.l1-d.md
+   │   └─ taken: .reviews/peer/1.vision._.review.i005.457fd5ef46e053a35e.r004._.taken.by_self.l1-d.md
+   │
+   ├─ r8: l1-e (l1, 1/5)
+   │   ├─ rejected [TIME]
+   │   ├─ 1 blocker 🔴
+   │   ├─ 0 nitpicks ✓
+   │   ├─ given: .reviews/peer/1.vision._.review.i005.457fd5ef46e053a35e.r008._.given.by_peer.l1-e.md
+   │   └─ taken: .reviews/peer/1.vision._.review.i005.457fd5ef46e053a35e.r008._.taken.by_self.l1-e.md
+   │
+   ├─ r5: l3-a (l3, 2/5)
+   │   ├─ rejected, cached
+   │   ├─ 1 blocker 🔴
+   │   ├─ 0 nitpicks ✓
+   │   ├─ given: .reviews/peer/1.vision._.review.i003.457fd5ef46e053a35e.r005._.given.by_peer.l3-a.md
+   │   └─ taken: .reviews/peer/1.vision._.review.i003.457fd5ef46e053a35e.r005._.taken.by_self.l3-a.md
+   │
+   ├─ r6: l3-b (l3, 2/5)
+   │   ├─ rejected, cached
+   │   ├─ 1 blocker 🔴
+   │   ├─ 0 nitpicks ✓
+   │   ├─ given: .reviews/peer/1.vision._.review.i003.457fd5ef46e053a35e.r006._.given.by_peer.l3-b.md
+   │   └─ taken: .reviews/peer/1.vision._.review.i003.457fd5ef46e053a35e.r006._.taken.by_self.l3-b.md
+   │
+   ├─ r7: l3-c (l3, 2/5)
+   │   ├─ rejected, cached
+   │   ├─ 1 blocker 🔴
+   │   ├─ 0 nitpicks ✓
+   │   ├─ given: .reviews/peer/1.vision._.review.i003.457fd5ef46e053a35e.r007._.given.by_peer.l3-c.md
+   │   └─ taken: .reviews/peer/1.vision._.review.i003.457fd5ef46e053a35e.r007._.taken.by_self.l3-c.md
+   │
+   └─ ✗ judge.1 - blocked [TIME]
+
+🗿 route.stone.set
+   ├─ stone = 1.vision
+   ├─ passage = malfunction
+   ├─ reason = reviewer or judge malfunctioned
+   ├─ options
+   │  ├─ overrule the malfunction — a human must grant
+   │  │  └─ rhx route.stone.set --stone 1.vision --as overruled
+   │  └─ or fix the reviewer, then retry
+   └─ guard
+      ├─ artifacts
+      │   └─ src/**/*.ts
+      ├─ reviews
+      │   ├─ r1: l1-a (l1, 3/5)
+      │   │   ├─ approved, cached
+      │   │   ├─ 0 blockers ✓
+      │   │   ├─ 0 nitpicks ✓
+      │   │   ├─ given: .reviews/peer/1.vision._.review.i003.457fd5ef46e053a35e.r001._.given.by_peer.l1-a.md
+      │   │   └─ taken: .reviews/peer/1.vision._.review.i003.457fd5ef46e053a35e.r001._.taken.by_self.l1-a.md
+      │   ├─ r2: l1-b (l1, 3/5)
+      │   │   ├─ approved, cached
+      │   │   ├─ 0 blockers ✓
+      │   │   ├─ 0 nitpicks ✓
+      │   │   ├─ given: .reviews/peer/1.vision._.review.i003.457fd5ef46e053a35e.r002._.given.by_peer.l1-b.md
+      │   │   └─ taken: .reviews/peer/1.vision._.review.i003.457fd5ef46e053a35e.r002._.taken.by_self.l1-b.md
+      │   ├─ r3: l1-c (l1, 2/5)
+      │   │   ├─ constraint ✋
+      │   │   ├─ terminal — does not block higher levels
+      │   │   ├─ given: .reviews/peer/1.vision._.review.i005.457fd5ef46e053a35e.r003._.given.by_peer.l1-c.md
+      │   │   └─ taken: .reviews/peer/1.vision._.review.i005.457fd5ef46e053a35e.r003._.taken.by_self.l1-c.md
+      │   ├─ r4: l1-d (l1, 2/5)
+      │   │   ├─ malfunction 💥
+      │   │   ├─ terminal — does not block higher levels
+      │   │   ├─ given: .reviews/peer/1.vision._.review.i005.457fd5ef46e053a35e.r004._.given.by_peer.l1-d.md
+      │   │   └─ taken: .reviews/peer/1.vision._.review.i005.457fd5ef46e053a35e.r004._.taken.by_self.l1-d.md
+      │   ├─ r8: l1-e (l1, 1/5)
+      │   │   ├─ rejected [TIME]
+      │   │   ├─ 1 blocker 🔴
+      │   │   ├─ 0 nitpicks ✓
+      │   │   ├─ given: .reviews/peer/1.vision._.review.i005.457fd5ef46e053a35e.r008._.given.by_peer.l1-e.md
+      │   │   └─ taken: .reviews/peer/1.vision._.review.i005.457fd5ef46e053a35e.r008._.taken.by_self.l1-e.md
+      │   ├─ r5: l3-a (l3, 2/5)
+      │   │   ├─ rejected, cached
+      │   │   ├─ 1 blocker 🔴
+      │   │   ├─ 0 nitpicks ✓
+      │   │   ├─ given: .reviews/peer/1.vision._.review.i003.457fd5ef46e053a35e.r005._.given.by_peer.l3-a.md
+      │   │   └─ taken: .reviews/peer/1.vision._.review.i003.457fd5ef46e053a35e.r005._.taken.by_self.l3-a.md
+      │   ├─ r6: l3-b (l3, 2/5)
+      │   │   ├─ rejected, cached
+      │   │   ├─ 1 blocker 🔴
+      │   │   ├─ 0 nitpicks ✓
+      │   │   ├─ given: .reviews/peer/1.vision._.review.i003.457fd5ef46e053a35e.r006._.given.by_peer.l3-b.md
+      │   │   └─ taken: .reviews/peer/1.vision._.review.i003.457fd5ef46e053a35e.r006._.taken.by_self.l3-b.md
+      │   └─ r7: l3-c (l3, 2/5)
+      │       ├─ rejected, cached
+      │       ├─ 1 blocker 🔴
+      │       ├─ 0 nitpicks ✓
+      │       ├─ given: .reviews/peer/1.vision._.review.i003.457fd5ef46e053a35e.r007._.given.by_peer.l3-c.md
+      │       └─ taken: .reviews/peer/1.vision._.review.i003.457fd5ef46e053a35e.r007._.taken.by_self.l3-c.md
+      └─ judges
+          └─ j1: rhx route.stone.judge --mechanism reviewed? --stone $stone --route $route --allow-blockers 0 --allow-nitpicks 1
+              ├─ finished [TIME] ✗
+              └─ reason: blockers exceed threshold (4 > 0)
+"
+`;
+
+exports[`driver.route.peer-concurrency.acceptance given: [journey] a level of four, and a level of three bounded at one when: [t4] an eighth reviewer is appended to the roster then: the PARTIAL-POOL pour announce has good vibes 1`] = `
+[
+  "🦉 l1 pours 3 lanes",
+  "   ├─ r3:l1-c",
+  "   ├─ r4:l1-d",
+  "   └─ r8:l1-e",
+]
+`;
+
+exports[`driver.route.peer-concurrency.acceptance given: [journey] a level of four, and a level of three bounded at one when: [t5] an UNGROUPED reviewer is appended at level 3 then: stdout has good vibes 1`] = `
+"🦉 the way speaks for itself
+   │
+   ├─ r1: l1-a (l1, 4/5)
+   │   ├─ approved [TIME]
+   │   ├─ 0 blockers ✓
+   │   ├─ 0 nitpicks ✓
+   │   ├─ given: .reviews/peer/1.vision._.review.i006.0997a4c5910ffe05d0.r001._.given.by_peer.l1-a.md
+   │   └─ taken: .reviews/peer/1.vision._.review.i006.0997a4c5910ffe05d0.r001._.taken.by_self.l1-a.md
+   │
+   ├─ r2: l1-b (l1, 4/5)
+   │   ├─ approved [TIME]
+   │   ├─ 0 blockers ✓
+   │   ├─ 0 nitpicks ✓
+   │   ├─ given: .reviews/peer/1.vision._.review.i006.0997a4c5910ffe05d0.r002._.given.by_peer.l1-b.md
+   │   └─ taken: .reviews/peer/1.vision._.review.i006.0997a4c5910ffe05d0.r002._.taken.by_self.l1-b.md
+   │
+   ├─ r3: l1-c (l1, 3/5)
+   │   ├─ approved [TIME]
+   │   ├─ 0 blockers ✓
+   │   ├─ 0 nitpicks ✓
+   │   ├─ given: .reviews/peer/1.vision._.review.i006.0997a4c5910ffe05d0.r003._.given.by_peer.l1-c.md
+   │   └─ taken: .reviews/peer/1.vision._.review.i006.0997a4c5910ffe05d0.r003._.taken.by_self.l1-c.md
+   │
+   ├─ r4: l1-d (l1, 3/5)
+   │   ├─ approved [TIME]
+   │   ├─ 0 blockers ✓
+   │   ├─ 0 nitpicks ✓
+   │   ├─ given: .reviews/peer/1.vision._.review.i006.0997a4c5910ffe05d0.r004._.given.by_peer.l1-d.md
+   │   └─ taken: .reviews/peer/1.vision._.review.i006.0997a4c5910ffe05d0.r004._.taken.by_self.l1-d.md
+   │
+   ├─ r8: l1-e (l1, 2/5)
+   │   ├─ approved [TIME]
+   │   ├─ 0 blockers ✓
+   │   ├─ 0 nitpicks ✓
+   │   ├─ given: .reviews/peer/1.vision._.review.i006.0997a4c5910ffe05d0.r008._.given.by_peer.l1-e.md
+   │   └─ taken: .reviews/peer/1.vision._.review.i006.0997a4c5910ffe05d0.r008._.taken.by_self.l1-e.md
+   │
+   ├─ r5: l3-a (l3, 3/5)
+   │   ├─ approved [TIME]
+   │   ├─ 0 blockers ✓
+   │   ├─ 0 nitpicks ✓
+   │   ├─ given: .reviews/peer/1.vision._.review.i006.0997a4c5910ffe05d0.r005._.given.by_peer.l3-a.md
+   │   └─ taken: .reviews/peer/1.vision._.review.i006.0997a4c5910ffe05d0.r005._.taken.by_self.l3-a.md
+   │
+   ├─ r6: l3-b (l3, 3/5)
+   │   ├─ approved [TIME]
+   │   ├─ 0 blockers ✓
+   │   ├─ 0 nitpicks ✓
+   │   ├─ given: .reviews/peer/1.vision._.review.i006.0997a4c5910ffe05d0.r006._.given.by_peer.l3-b.md
+   │   └─ taken: .reviews/peer/1.vision._.review.i006.0997a4c5910ffe05d0.r006._.taken.by_self.l3-b.md
+   │
+   ├─ r7: l3-c (l3, 3/5)
+   │   ├─ approved [TIME]
+   │   ├─ 0 blockers ✓
+   │   ├─ 0 nitpicks ✓
+   │   ├─ given: .reviews/peer/1.vision._.review.i006.0997a4c5910ffe05d0.r007._.given.by_peer.l3-c.md
+   │   └─ taken: .reviews/peer/1.vision._.review.i006.0997a4c5910ffe05d0.r007._.taken.by_self.l3-c.md
+   │
+   ├─ r9: l3-x (l3, 1/5)
+   │   ├─ approved [TIME]
+   │   ├─ 0 blockers ✓
+   │   ├─ 0 nitpicks ✓
+   │   ├─ given: .reviews/peer/1.vision._.review.i006.0997a4c5910ffe05d0.r009._.given.by_peer.l3-x.md
+   │   └─ taken: .reviews/peer/1.vision._.review.i006.0997a4c5910ffe05d0.r009._.taken.by_self.l3-x.md
+   │
+   └─ ✓ judge.1 - allowed [TIME]
+
+🗿 route.stone.set
+   ├─ stone = 1.vision
+   ├─ passage = allowed
+   ├─ guard
+   │  ├─ artifacts
+   │  │   └─ src/**/*.ts
+   │  ├─ reviews
+   │  │   ├─ r1: l1-a (l1, 4/5)
+   │  │   │   ├─ approved [TIME]
+   │  │   │   ├─ 0 blockers ✓
+   │  │   │   ├─ 0 nitpicks ✓
+   │  │   │   ├─ given: .reviews/peer/1.vision._.review.i006.0997a4c5910ffe05d0.r001._.given.by_peer.l1-a.md
+   │  │   │   └─ taken: .reviews/peer/1.vision._.review.i006.0997a4c5910ffe05d0.r001._.taken.by_self.l1-a.md
+   │  │   ├─ r2: l1-b (l1, 4/5)
+   │  │   │   ├─ approved [TIME]
+   │  │   │   ├─ 0 blockers ✓
+   │  │   │   ├─ 0 nitpicks ✓
+   │  │   │   ├─ given: .reviews/peer/1.vision._.review.i006.0997a4c5910ffe05d0.r002._.given.by_peer.l1-b.md
+   │  │   │   └─ taken: .reviews/peer/1.vision._.review.i006.0997a4c5910ffe05d0.r002._.taken.by_self.l1-b.md
+   │  │   ├─ r3: l1-c (l1, 3/5)
+   │  │   │   ├─ approved [TIME]
+   │  │   │   ├─ 0 blockers ✓
+   │  │   │   ├─ 0 nitpicks ✓
+   │  │   │   ├─ given: .reviews/peer/1.vision._.review.i006.0997a4c5910ffe05d0.r003._.given.by_peer.l1-c.md
+   │  │   │   └─ taken: .reviews/peer/1.vision._.review.i006.0997a4c5910ffe05d0.r003._.taken.by_self.l1-c.md
+   │  │   ├─ r4: l1-d (l1, 3/5)
+   │  │   │   ├─ approved [TIME]
+   │  │   │   ├─ 0 blockers ✓
+   │  │   │   ├─ 0 nitpicks ✓
+   │  │   │   ├─ given: .reviews/peer/1.vision._.review.i006.0997a4c5910ffe05d0.r004._.given.by_peer.l1-d.md
+   │  │   │   └─ taken: .reviews/peer/1.vision._.review.i006.0997a4c5910ffe05d0.r004._.taken.by_self.l1-d.md
+   │  │   ├─ r8: l1-e (l1, 2/5)
+   │  │   │   ├─ approved [TIME]
+   │  │   │   ├─ 0 blockers ✓
+   │  │   │   ├─ 0 nitpicks ✓
+   │  │   │   ├─ given: .reviews/peer/1.vision._.review.i006.0997a4c5910ffe05d0.r008._.given.by_peer.l1-e.md
+   │  │   │   └─ taken: .reviews/peer/1.vision._.review.i006.0997a4c5910ffe05d0.r008._.taken.by_self.l1-e.md
+   │  │   ├─ r5: l3-a (l3, 3/5)
+   │  │   │   ├─ approved [TIME]
+   │  │   │   ├─ 0 blockers ✓
+   │  │   │   ├─ 0 nitpicks ✓
+   │  │   │   ├─ given: .reviews/peer/1.vision._.review.i006.0997a4c5910ffe05d0.r005._.given.by_peer.l3-a.md
+   │  │   │   └─ taken: .reviews/peer/1.vision._.review.i006.0997a4c5910ffe05d0.r005._.taken.by_self.l3-a.md
+   │  │   ├─ r6: l3-b (l3, 3/5)
+   │  │   │   ├─ approved [TIME]
+   │  │   │   ├─ 0 blockers ✓
+   │  │   │   ├─ 0 nitpicks ✓
+   │  │   │   ├─ given: .reviews/peer/1.vision._.review.i006.0997a4c5910ffe05d0.r006._.given.by_peer.l3-b.md
+   │  │   │   └─ taken: .reviews/peer/1.vision._.review.i006.0997a4c5910ffe05d0.r006._.taken.by_self.l3-b.md
+   │  │   ├─ r7: l3-c (l3, 3/5)
+   │  │   │   ├─ approved [TIME]
+   │  │   │   ├─ 0 blockers ✓
+   │  │   │   ├─ 0 nitpicks ✓
+   │  │   │   ├─ given: .reviews/peer/1.vision._.review.i006.0997a4c5910ffe05d0.r007._.given.by_peer.l3-c.md
+   │  │   │   └─ taken: .reviews/peer/1.vision._.review.i006.0997a4c5910ffe05d0.r007._.taken.by_self.l3-c.md
+   │  │   └─ r9: l3-x (l3, 1/5)
+   │  │       ├─ approved [TIME]
+   │  │       ├─ 0 blockers ✓
+   │  │       ├─ 0 nitpicks ✓
+   │  │       ├─ given: .reviews/peer/1.vision._.review.i006.0997a4c5910ffe05d0.r009._.given.by_peer.l3-x.md
+   │  │       └─ taken: .reviews/peer/1.vision._.review.i006.0997a4c5910ffe05d0.r009._.taken.by_self.l3-x.md
+   │  └─ judges
+   │      └─ j1: rhx route.stone.judge --mechanism reviewed? --stone $stone --route $route --allow-blockers 0 --allow-nitpicks 1
+   │          └─ finished [TIME] ✓
+   │
+   └─ the way continues, run
+      └─ rhx route.drive
+"
+`;
+
+exports[`driver.route.peer-concurrency.acceptance given: [journey] a level of four, and a level of three bounded at one when: [t5] an UNGROUPED reviewer is appended at level 3 then: the pour announce and advisory read as declared 1`] = `
+[
+  "🦉 l1 pours 5 lanes",
+  "   ├─ r1:l1-a",
+  "   ├─ r2:l1-b",
+  "   ├─ r3:l1-c",
+  "   ├─ r4:l1-d",
+  "   └─ r8:l1-e",
+  "🟡 level 3 mixes a bounded concurrency group with an unbounded lane",
+  "   ├─ bounded: serial",
+  "   ├─ unbounded: l3-x",
+  "   └─ an unbounded lane pours BESIDE the group, so the group's ratelimit",
+  "      is exceeded even though its own bound is honored. to close it, give",
+  "      each lane above a \`group:\` — or leave it, if the mix is intended",
+  "🦉 l3 pours 4 lanes · ≤2 at a time",
+  "   ├─ r5:l3-a",
+  "   ├─ r6:l3-b",
+  "   ├─ r7:l3-c",
+  "   └─ r9:l3-x",
+]
+`;

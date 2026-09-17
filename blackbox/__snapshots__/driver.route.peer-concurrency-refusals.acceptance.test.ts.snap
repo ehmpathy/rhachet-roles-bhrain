@@ -1,0 +1,49 @@
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
+
+exports[`driver.route.peer-concurrency-refusals.acceptance given: [case1] a reviewer names a group with no bound declared when: [t0] the stone arrives then: the refusal reads as an error, never a stack trace 1`] = `
+"🦉 the way speaks for itself
+error: BadRequestError: reviewer names a concurrency group with no bound declared: l1-a → anthropic. declare it under reviews.groups, or remove the \`group:\` key.
+"
+`;
+
+exports[`driver.route.peer-concurrency-refusals.acceptance given: [case2] a group is declared that no reviewer joined when: [t0] the stone arrives then: the refusal reads as an error, never a stack trace 1`] = `
+"🦉 the way speaks for itself
+error: BadRequestError: concurrency group declared with no members: anthropic. it bounds no reviewer — join it from a reviewer with \`group: anthropic\`, or remove the entry. a \`groups:\` block nested UNDER a reviewer lands here too: it is read at the reviews level, so move it beside \`peer:\`.
+"
+`;
+
+exports[`driver.route.peer-concurrency-refusals.acceptance given: [case3] one group carries two bounds, and the values MATCH when: [t0] the stone arrives then: the refusal reads as an error, never a stack trace 1`] = `
+"🦉 the way speaks for itself
+error: BadRequestError: concurrency group declared twice: "anthropic". a group carries exactly one bound — remove the duplicate, even if the values match.
+"
+`;
+
+exports[`driver.route.peer-concurrency-refusals.acceptance given: [case4] a bound is not a positive integer when: [t0] the stone arrives with concurrency: 0 then: the refusal reads as an error, never a stack trace 1`] = `
+"🦉 the way speaks for itself
+error: BadRequestError: concurrency must be a positive integer: group "anthropic" declares "0". write a whole number of 1 or more, or drop the key to take its default.
+"
+`;
+
+exports[`driver.route.peer-concurrency-refusals.acceptance given: [case5] the bound is written on the REVIEWER, not on the group when: [t0] the stone arrives then: the refusal reads as an error, never a stack trace 1`] = `
+"🦉 the way speaks for itself
+error: BadRequestError: a concurrency bound cannot be declared on a reviewer: concurrency: 2. a bound describes a GROUP, so declare membership here with \`group: <name>\` and the bound under \`reviews.groups\`.
+"
+`;
+
+exports[`driver.route.peer-concurrency-refusals.acceptance given: [case6] a budget is not a positive integer when: [t0] the stone arrives with budget: abc then: the refusal reads as an error, never a stack trace 1`] = `
+"🦉 the way speaks for itself
+error: BadRequestError: budget must be a positive integer: reviewer "l1-a" declares "abc". write a whole number of 1 or more, or drop the key to take its default.
+"
+`;
+
+exports[`driver.route.peer-concurrency-refusals.acceptance given: [case7] a level is not a positive integer when: [t0] the stone arrives with level: 1.5 then: the refusal reads as an error, never a stack trace 1`] = `
+"🦉 the way speaks for itself
+error: BadRequestError: level must be a positive integer: reviewer "l1-a" declares "1.5". write a whole number of 1 or more, or drop the key to take its default.
+"
+`;
+
+exports[`driver.route.peer-concurrency-refusals.acceptance given: [case8] a concurrency bound sits under groups with no group name when: [t0] the stone arrives with a stray concurrency then: the refusal reads as an error, never a stack trace 1`] = `
+"🦉 the way speaks for itself
+error: BadRequestError: a concurrency bound under reviews.groups needs a group name above it: concurrency: 2. name the group first with \`<name>:\`, then \`concurrency: <n>\` indented beneath it.
+"
+`;

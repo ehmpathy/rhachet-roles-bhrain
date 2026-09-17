@@ -2,6 +2,7 @@ import { UnexpectedCodePathError } from 'helpful-errors';
 import { type IsoDuration, toMilliseconds } from 'iso-time';
 import { z } from 'zod';
 
+import { asGuardPositiveInt } from '../../../asGuardPositiveInt';
 import type { ContextReviewBrainSupply } from '../../genReviewBrainSupply';
 import type { ReviewCounts } from './getReviewCountsViaRegex';
 
@@ -42,10 +43,37 @@ export class ReviewTallyTimeoutError extends ReviewTallyError {}
 /**
  * .what = resolves the fallback timeout in ms, with the test env override applied
  * .why = lets a hang test bound the wait to milliseconds instead of the full PT21M default
+ *
+ * 🔴 .why the override reads through `asGuardPositiveInt` = it was the THIRD
+ *     unguarded `parseInt` reader of a timeout env var, and the one the review
+ *     that raised the pattern never named — it names a different var, so a grep
+ *     for the other two does not reach it.
+ *
+ *     ⚠️ and its guard was the LOOSEST of the three: `if (override)` is a
+ *       truthiness test, and `'0'` is a truthy STRING. so a zero bound passed
+ *       straight through to `parseInt` and armed a timer that fires at once —
+ *       against the very rescue path whose own `.why` above warns that a tight
+ *       bound *"would spuriously malfunction the very reviews this fallback
+ *       exists to rescue."*
+ *
+ *     ⇒ three readers, three strictnesses, one transformer now
+ *
+ * 🟡 .note = the guard moved from `if (override)` to `if (override !== undefined)`,
+ *         which is one genuine behavior delta beyond the strictness: an EMPTY
+ *         string used to fall through to the default and now refuses. that is
+ *         the intended direction — `export RHACHET_FALLBACK_BRAIN_TIMEOUT_MS=`
+ *         is a typo, never a request for PT21M — and it matches the shape the
+ *         other two readers already used, so the three no longer disagree on
+ *         what "declared" means
  */
 const getFallbackTimeoutMs = (): number => {
   const override = process.env.RHACHET_FALLBACK_BRAIN_TIMEOUT_MS;
-  if (override) return parseInt(override, 10);
+  if (override !== undefined)
+    return asGuardPositiveInt({
+      raw: override,
+      key: 'timeout',
+      at: 'env RHACHET_FALLBACK_BRAIN_TIMEOUT_MS',
+    });
   return toMilliseconds(FALLBACK_BRAIN_TIMEOUT);
 };
 

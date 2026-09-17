@@ -6,11 +6,13 @@ import * as path from 'path';
 import { type BrainChoice, type ContextBrain, isBrainRepl } from 'rhachet';
 import { z } from 'zod';
 
+import { asGuardPositiveInt } from '@src/domain.operations/asGuardPositiveInt';
 import { compileReviewPrompt } from '@src/domain.operations/review/compileReviewPrompt';
 import { emitReviewSkip } from '@src/domain.operations/review/emitReviewSkip';
 import { enumFilesForReviewSubjects } from '@src/domain.operations/review/enumFilesForReviewSubjects';
 import { enumFilesForReviewSupplies } from '@src/domain.operations/review/enumFilesForReviewSupplies';
 import { formatReviewOutput } from '@src/domain.operations/review/formatReviewOutput';
+import { genLogDirName } from '@src/domain.operations/review/genLogDirName';
 import {
   genReviewHeaderStdout,
   genReviewInputStdout,
@@ -120,21 +122,41 @@ export type StepReviewResult = {
 };
 
 /**
- * .what = generates ISO timestamp for log directory
- * .why = enables unique, sortable log directories
+ * .what = resolves the review timeout in ms — 21 minutes by default
+ * .why = prevents hung LLM calls from a wait with no end
+ * .note = override via RHACHET_REVIEW_TIMEOUT_MS env var for tests
+ *
+ * 🔴 .why it is a lazy getter, never a module-level const = the override reads
+ *     through `asGuardPositiveInt`, which THROWS on a malformed value. read at
+ *     module load, a stray `export RHACHET_REVIEW_TIMEOUT_MS=` in a shell
+ *     profile or CI would throw the moment ANY command imports this module —
+ *     a break in the whole cli/test graph, before it could render an error that
+ *     names the env var. a getter defers the throw to first use, so an invalid
+ *     override fails at the one review that reads it, loud and attributable —
+ *     as do its two siblings (`runOneReview.getReviewTimeoutMs`,
+ *     `getReviewCountsViaBrain.getFallbackTimeoutMs`), already lazy
+ *     (raised i018/r008, i020/r007).
+ *
+ * 🔴 .why the override reads through `asGuardPositiveInt` = it was a bare
+ *     `parseInt`, which answers `NaN` for a typo — and a `NaN` bound is worse
+ *     than a wrong one, because it never compares true. so a typo'd override
+ *     made a review NEVER time out: the exact unbounded wait this getter
+ *     exists to prevent, reinstated by the knob that tunes it.
+ *
+ *     ⚠️ `0` and a negative were admitted too, and a zero bound reads to a
+ *       driver as every reviewer malfunctioned at once.
+ *
+ *     ⇒ it now shares one transformer with `concurrency:`, `budget:`, `level:`,
+ *       and `RHACHET_LEVEL_CONCURRENCY`, so the strictness cannot drift between
+ *       the knobs again (raised i004/r011, re-prioritized i005/r010 + i005/r011)
  */
-const genLogTimestamp = (): string => {
-  return new Date().toISOString().replace(/[:.]/g, '-');
-};
-
-/**
- * .what = 21 minute timeout for review operations
- * .why = prevents hung LLM calls from wait indefinitely
- * .note = override via RHACHET_REVIEW_TIMEOUT_MS env var for testing
- */
-export const REVIEW_TIMEOUT_MS =
+export const getReviewTimeoutMs = (): number =>
   process.env.RHACHET_REVIEW_TIMEOUT_MS !== undefined
-    ? parseInt(process.env.RHACHET_REVIEW_TIMEOUT_MS, 10)
+    ? asGuardPositiveInt({
+        raw: process.env.RHACHET_REVIEW_TIMEOUT_MS,
+        key: 'timeout',
+        at: 'env RHACHET_REVIEW_TIMEOUT_MS',
+      })
     : 21 * 60 * 1000;
 
 /**
@@ -165,7 +187,7 @@ const withSpinner = async <T>(input: {
   operation: () => Promise<T>;
   timeoutMs?: number;
 }): Promise<T> => {
-  const timeoutMs = input.timeoutMs ?? REVIEW_TIMEOUT_MS;
+  const timeoutMs = input.timeoutMs ?? getReviewTimeoutMs();
 
   // create timeout with cleanup handle
   let timeoutId: NodeJS.Timeout | undefined;
@@ -290,10 +312,6 @@ export const stepReview = async (
     : path.join(cwd, outputParent);
   await fs.mkdir(outputParentAbsolute, { recursive: true });
 
-  // create log directory early for debug (even if validation fails)
-  const logDir = path.join(cwd, '.log', 'bhrain', 'review', genLogTimestamp());
-  await fs.mkdir(logDir, { recursive: true });
-
   // enumerate rule files
   const ruleGlobs = Array.isArray(input.rules)
     ? input.rules
@@ -312,6 +330,36 @@ export const stepReview = async (
       output: input.output,
       cwd,
     });
+
+  // validate the timeout env var eagerly — before any output so a malformed var
+  // refuses clean, at the top of the output, rather than after the metrics block
+  // .why = `getReviewTimeoutMs` is lazy by design (module-load safety), but that
+  //        laziness places the throw AFTER `console.log('')` at the spinner call
+  //        site and before the cli's `console.error('\n✋ ...')` handler, which
+  //        produces a doubled blank line when `RHACHET_REVIEW_TIMEOUT_MS` is bad.
+  //        read eagerly here, the throw lands at the top of the output where every
+  //        other `BadRequestError` refusal lands, and the double-blank cannot arise
+  // 🔴 .why BELOW the skip branch = a skip reads no timeout, so a stray
+  //        `RHACHET_REVIEW_TIMEOUT_MS=` in the environment must not defeat a
+  //        zero-cost deterministic skip that would otherwise succeed. no line
+  //        between the branch above and this one writes output, so the throw
+  //        still lands at the top of the OUTPUT — the property the eager read
+  //        exists for is kept, and the skip path no longer pays for it.
+  //        raised i028/r7
+  getReviewTimeoutMs();
+
+  // 🔴 the log dir is minted BELOW both gates, and that placement is the point
+  // .why = it is a real side effect, so it must not precede a refusal. it sat
+  //        above the skip branch, so a malformed `RHACHET_REVIEW_TIMEOUT_MS`
+  //        left one orphan `.log/bhrain/review/<stamp>` behind per attempt —
+  //        a caller or a CI that loops on a mis-set var accrued one per loop,
+  //        and a skip minted one it would never write to. raised i031/r7
+  // .why it is still EARLY = its first read is the scope-debug dump far below,
+  //        and every refusal between here and there is about the review itself
+  //        rather than about its inputs. so the dir exists for every path that
+  //        can produce a debug artifact, and for no path that cannot
+  const logDir = path.join(cwd, '.log', 'bhrain', 'review', genLogDirName());
+  await fs.mkdir(logDir, { recursive: true });
 
   if (ruleGlobs.length > 0 && ruleFiles.length === 0) {
     console.error('');

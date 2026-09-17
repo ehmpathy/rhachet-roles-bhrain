@@ -39,6 +39,20 @@ export interface GuardProgressEvent {
     level: number;
     budget: number;
     rounds: number;
+
+    /**
+     * .what = this reviewer's DECLARED slot within its level, and the level's size
+     * .why = under a concurrent pour two lanes settle in a race, so the emit path
+     *        buffers a settled block and releases it in declared order — which it
+     *        can only do against a roster it was handed. `total` is also what lets
+     *        the tail status line report how many are LEFT
+     * .note = a position within ONE LEVEL. `ContextGuardProgress` is a position
+     *         across the WHOLE GUARD (reviews + judges, for the branch character)
+     *         — two concepts, so two carriers. this one rides the event because
+     *         `setStoneAsPassed` wraps `cliEmit` and supplies the guard-wide
+     *         position itself, which would overwrite a second argument
+     */
+    slot?: { index: number; total: number };
   };
 
   /**

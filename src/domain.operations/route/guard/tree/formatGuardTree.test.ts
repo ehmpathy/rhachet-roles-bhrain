@@ -553,10 +553,10 @@ describe('formatGuardTree', () => {
   );
 
   given(
-    '[case13] peerMeters — rNum uses meter order, not artifact order',
+    '[case13] peerMeters — rNum uses declared index, not meter array position',
     () => {
       when('[t0] l2 reviewer ran but l1 reviewers did not', () => {
-        then('rNum reflects declared position (r3 not r1)', () => {
+        then('rNum reflects declared index (r3 not r1)', () => {
           const result = formatGuardTree({
             stone: '5.5.playtest',
             passage: 'blocked',
@@ -583,6 +583,7 @@ describe('formatGuardTree', () => {
               peerMeters: [
                 // l1 reviewers
                 {
+                  index: 1,
                   slug: 'quick-pass',
                   level: 1,
                   rounds: 1,
@@ -597,6 +598,7 @@ describe('formatGuardTree', () => {
                   path: '.route/5.5.playtest.guard.review.i1.abc123.r1.md',
                 },
                 {
+                  index: 2,
                   slug: 'medium-pass',
                   level: 1,
                   rounds: 0,
@@ -612,6 +614,7 @@ describe('formatGuardTree', () => {
                 },
                 // l2 reviewer
                 {
+                  index: 3,
                   slug: 'slow-fail',
                   level: 2,
                   rounds: 2,
@@ -668,6 +671,7 @@ describe('formatGuardTree', () => {
               judges: [],
               peerMeters: [
                 {
+                  index: 1,
                   slug: 'quick-pass',
                   level: 1,
                   rounds: 1,
@@ -709,6 +713,7 @@ describe('formatGuardTree', () => {
             judges: [],
             peerMeters: [
               {
+                index: 1,
                 slug: 'cheapo',
                 level: 1,
                 rounds: 0,
@@ -723,6 +728,7 @@ describe('formatGuardTree', () => {
                 path: null,
               },
               {
+                index: 2,
                 slug: 'primo',
                 level: 2,
                 rounds: 0,
@@ -822,6 +828,7 @@ describe('formatGuardTree', () => {
                 judges: [],
                 peerMeters: [
                   {
+                    index: 1,
                     slug: '$rhx.1',
                     level: 1,
                     rounds: 13,
@@ -836,6 +843,7 @@ describe('formatGuardTree', () => {
                     path: '.route/5.3.verification.guard.review.i3.abc123.r1.md',
                   },
                   {
+                    index: 2,
                     slug: '$rhx.2',
                     level: 1,
                     rounds: 14,
@@ -850,6 +858,7 @@ describe('formatGuardTree', () => {
                     path: '.route/5.3.verification.guard.review.i3.abc123.r2.md',
                   },
                   {
+                    index: 6,
                     slug: '$rhx.3',
                     level: 1,
                     rounds: 18,
@@ -867,10 +876,10 @@ describe('formatGuardTree', () => {
               },
             });
             // each reviewer shows its own data via unique slug lookup
-            // .note = r labels use position in meters array (1-based)
-            expect(result).toContain('r1: $rhx.1 (l1, 13/∞)'); // r1 has rounds=13
-            expect(result).toContain('r2: $rhx.2 (l1, 14/∞)'); // r2 has rounds=14
-            expect(result).toContain('r3: $rhx.3 (l1, 18/∞)'); // position=3, rounds=18
+            // .note = r labels use the declared index from the meter
+            expect(result).toContain('r1: $rhx.1 (l1, 13/∞)'); // index=1, rounds=13
+            expect(result).toContain('r2: $rhx.2 (l1, 14/∞)'); // index=2, rounds=14
+            expect(result).toContain('r6: $rhx.3 (l1, 18/∞)'); // index=6, rounds=18
             // r1 shows its own blockers and path
             expect(result).toContain('1 blocker'); // r1 has 1 blocker
             expect(result).toContain('r1.md'); // r1 references r1.md
@@ -1003,6 +1012,7 @@ describe('formatReviewsMeterLines', () => {
             const lines = formatReviewsMeterLines({
               meters: [
                 {
+                  index: 1,
                   slug: '$rhx.1',
                   level: 1,
                   rounds: 13,
@@ -1017,6 +1027,7 @@ describe('formatReviewsMeterLines', () => {
                   path: '.route/r1.md',
                 },
                 {
+                  index: 2,
                   slug: '$rhx.2',
                   level: 1,
                   rounds: 14,
@@ -1031,6 +1042,7 @@ describe('formatReviewsMeterLines', () => {
                   path: '.route/r2.md',
                 },
                 {
+                  index: 6,
                   slug: '$rhx.3',
                   level: 1,
                   rounds: 18,
@@ -1164,6 +1176,7 @@ describe('formatReviewsMeterLines', () => {
           const lines = formatReviewsMeterLines({
             meters: [
               {
+                index: 1,
                 slug: 'limited',
                 level: 1,
                 rounds: 2,

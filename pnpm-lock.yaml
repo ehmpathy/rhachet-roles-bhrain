@@ -68,6 +68,9 @@ importers:
       type-fns:
         specifier: 1.21.0
         version: 1.21.0
+      with-bottleneck:
+        specifier: 0.1.2
+        version: 0.1.2
       with-simple-caching:
         specifier: 0.14.2
         version: 0.14.2
@@ -4935,6 +4938,10 @@ packages:
 
   with-bottleneck@0.1.1:
     resolution: {integrity: sha512-5XFMYd79rB1cNJ6uY+VI9whoAZJ/0TkICqvV/xFcU8izR4/AM0bTRgARR4X/1uEEgnBDgfxjFPLB4A4qiMJ90g==}
+    engines: {node: '>=8.0.0'}
+
+  with-bottleneck@0.1.2:
+    resolution: {integrity: sha512-TzZIOm8v224aX7i/Z/Tcwuhm2l/MihqtVt8cbCeFzepQU2jyHy0VG39X8CYL019jwSGOajlzoXGvOMVzfcIaEw==}
     engines: {node: '>=8.0.0'}
 
   with-simple-cache@0.15.1:
@@ -10929,6 +10936,12 @@ snapshots:
   with-bottleneck@0.1.1:
     dependencies:
       domain-objects: 0.31.9
+      helpful-errors: 1.7.3
+      iso-time: 1.11.7
+
+  with-bottleneck@0.1.2:
+    dependencies:
+      domain-objects: 0.31.13
       helpful-errors: 1.7.3
       iso-time: 1.11.7
 
