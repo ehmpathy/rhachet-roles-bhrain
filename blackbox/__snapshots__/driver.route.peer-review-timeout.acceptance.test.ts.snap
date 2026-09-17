@@ -3,7 +3,7 @@
 exports[`driver.route.peer-review-timeout.acceptance given: [journey] review timeout surfaces as malfunction when: [t0] artifact created, review times out then: stdout has good vibes 1`] = `
 "🦉 the way speaks for itself
    │
-   ├─ r1: slow-reviewer (l1, 1/2)
+   ├─ r1: slow-reviewer (l1, 0/2)
    │   ├─ malfunction 💥
    │   ├─ terminal — does not block higher levels
    │   ├─ given: .reviews/peer/1.execute._.review.i001.8739656801d5e77f22.r001._.given.by_peer.slow-reviewer.md

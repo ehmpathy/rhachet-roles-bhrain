@@ -6,6 +6,7 @@ import { pathToFileURL } from 'url';
 
 import { answerEveryPeerGiven } from '../../domain.operations/route/__test_assets__/answerEveryPeerGiven';
 import { asStableGuardEmit } from '../../domain.operations/route/__test_assets__/asStableGuardEmit';
+import { asStderrSansPourAnnounce } from '../../domain.operations/route/__test_assets__/asStderrSansPourAnnounce';
 import { concedeEveryPeerConcern } from '../../domain.operations/route/__test_assets__/concedeEveryPeerConcern';
 import { countReviewerRuns } from '../../domain.operations/route/__test_assets__/countReviewerRuns';
 
@@ -914,31 +915,37 @@ describe('routeStoneSet.feedbackAbsorption.acceptance', () => {
         ).toMatchSnapshot('route.stone.set - passage allowed');
       });
 
-      then('and stderr stays exactly empty on the success path', () => {
+      then('no GUARD RESULT output reaches stderr on the success path', () => {
         // 🔴 THE ENUMERATION behind every `toEqual('')` in this suite, stated once here
-        //    and pointed at from the rest. `route.ts:1026-1028` is the ONLY site that
-        //    writes this command's stderr, and it is guarded — `if (result.emit.stderr)`.
-        //    so stderr is non-empty exactly when `setStoneAsPassed` supplies that key,
-        //    and it supplies it on FOUR branches and no others:
+        //    and pointed at from the rest. `route.ts` writes this command's stderr from
+        //    a guarded site — `if (result.emit.stderr)` — so stderr carries a RESULT
+        //    exactly when `setStoneAsPassed` supplies that key, on FOUR branches:
         //
-        //      | branch            | site   |
-        //      |-------------------|--------|
-        //      | broken reviewers  | `:636` |
-        //      | malfunction       | `:777` |
-        //      | constraint        | `:848` |
-        //      | failed judges     | `:1026`|
+        //      | branch            |
+        //      |-------------------|
+        //      | broken reviewers  |
+        //      | malfunction       |
+        //      | constraint        |
+        //      | failed judges     |
         //
         //    ⇒ a successful pass is none of the four, so the key is absent, the guard is
-        //      falsy, and `console.error` is never reached. the stream is not merely
-        //      quiet — it is untouched (`route.ts:980` routes the PROGRESS emit to
-        //      stdout, so no byte arrives from there either).
+        //      falsy, and `console.error` is never reached for a result.
         //
-        // .why this assertion rather than a snapshot = it closes the named hazard more
-        //    tightly than a baseline would. the hazard is *"a regression moved this output
-        //    onto stderr and every step stayed green"* — `toEqual('')` goes red on the
-        //    FIRST byte, needs no mint, and reads at the call site without a corpus fetch
-        //    (r2 blocker.1, i018).
-        expect(out.stderr).toEqual('');
+        // 🔴 .the FIFTH writer, added with the concurrent pour = the level-pour ANNOUNCE
+        //    (`asReviewLevelPourAnnounce`, written by `runStoneGuardReviews`). it is a
+        //    LIVENESS line, not a result: one line per level, at t≈0, BEFORE any lane
+        //    settles. it exists because the live status line is suppressed under a pipe,
+        //    which left a piped log byte-silent from a level's launch to its settle — a
+        //    reader could not part "this level is slow" from "this level never began".
+        //
+        //    ⚠️ so this assertion can no longer be `toEqual('')`, and the honest repair
+        //      is to keep its TEETH rather than drop it: the hazard it was minted for is
+        //      *"a regression moved the guard's RESULT onto stderr and every step stayed
+        //      green"* (r2 blocker.1, i018), and that hazard is untouched by the announce.
+        //      ⇒ strip the announce, then demand exactly empty — so the first byte of any
+        //        result output still goes red, with no baseline to mint and no corpus
+        //        fetch to read it.
+        expect(asStderrSansPourAnnounce({ stderr: out.stderr })).toEqual('');
       });
     });
   });
@@ -1660,6 +1667,134 @@ describe('routeStoneSet.feedbackAbsorption.acceptance', () => {
           );
         },
       );
+    });
+
+    when('[t4] the driver MISTYPES a slug while the union is two-wide', () => {
+      // 🔴 .why here rather than in [case3] = the refusal's whole payload is the
+      //    LIST beside it, and that list is `validSlugs` — the union of the live
+      //    config with every slug that has spoken. [case3]'s scene has one
+      //    configured reviewer and no retiree, so its list holds ONE entry and
+      //    its snapshot cannot show a separator, an order, or a retired member.
+      //
+      //    this scene is the only one in the repo where the union is genuinely
+      //    two-wide: `successor` from the config, `departed` from the disk. so
+      //    the two-entry render — the comma, the sort, the retiree's presence —
+      //    had no CLI-grain oracle anywhere, and the test that noticed said so
+      //    in its own note: "no CLI-grain oracle for the retired-UNION variant
+      //    exists yet" (`setStoneAsFeedbackAbsorbed.test.ts` [case5]).
+      //    raised i020/r5+r6+r7 — three lanes, one gap.
+      //
+      // 🔴 .what this oracle bought, in TWO rounds = at i020 it disproved a note
+      //    that claimed the CLI strips the `BadRequestError`'s metadata via
+      //    `asHumanMessage`. `route.ts` has no such call on any branch — every
+      //    catch prints `error: ${error.message}` raw — so the first commit of
+      //    this snapshot held a json dump, and the claim died on the spot.
+      //
+      //    ⚠️ that false note carried weight: three lanes at i020 graded the SDK
+      //    snapshot, and one repeated the claim in its own report. it reasoned
+      //    from a comment rather than from the code, and no test could
+      //    contradict it because this grain had no oracle.
+      //
+      // 🔴 then at i022 the same snapshot bought a FIX. with the dump in a
+      //    committed byte-oracle, r7 could set it beside the eight clean
+      //    `peer-concurrency-refusals` snapshots and name the difference: those
+      //    throw sites pass no metadata bag; this one passed
+      //    `{ stone, slug, validSlugs }`. the repair was one bag dropped at the
+      //    throw, in `setStoneAsContemplated.ts`.
+      //
+      // ⚠️ THAT REPAIR IS GONE, and the snapshot below renders the dump again.
+      //    upstream #511 re-homed this throw into the shared
+      //    `assertValidPeerReviewSlug`, whose own `.note` preserves the message
+      //    AND the bag on purpose — so its pinned snapshots pass untouched,
+      //    which is that extraction's proof that it moved no surface a driver
+      //    reads. to drop the bag now would break that proof, so the instance
+      //    is left to the class.
+      //
+      // ⇒ the lesson the pair carries: a claim about a surface is settled by an
+      //    oracle AT that surface. four rounds of prose review read this note
+      //    and missed both the false claim and the fixable dump beneath it —
+      //    and the snapshot is what caught the claim going stale a second time,
+      //    across a rebase, when the repair it described was carried away.
+      //
+      // 🌙 the render defect is open repo-wide — every throw site that carries a
+      //    bag dumps, this one among them again. see `.dream/v2026_09_10.fix
+      //    .every-cli-error-appends-a-raw-json-context-dump.md` and fulcrum F11.
+      // 🔴 the tally BEFORE the act, so the clamp below reads a DELTA
+      // .why = it once asserted the absolute `2`, which restated a count `[t3]`
+      //        owns. the claim it means is "this step adds no run of its own",
+      //        and an absolute cannot say that — it re-states a neighbour's
+      //        fact and then drifts when the neighbour moves. it did: upstream
+      //        #511 put a stance gate in front of `--as absorbed`, `[t3]` spent
+      //        one round rather than two, and the constant failed while the
+      //        behavior it guards was untouched
+      // .note = wrapped in an object because `useBeforeAll` hands back a proxy,
+      //         and a proxy cannot stand in for a primitive at an `expect`
+      const tally = useBeforeAll(async () => ({
+        before: countReviewerRuns({ route: scene.tempDir }),
+      }));
+
+      const out = useBeforeAll(async () =>
+        runStoneSet({
+          cwd: scene.tempDir,
+          args: [
+            '--stone',
+            '1.test',
+            '--route',
+            scene.tempDir,
+            '--as',
+            'absorbed',
+            '--that',
+            'mechanik',
+          ],
+        }),
+      );
+
+      then('the typo is refused — the union widens no door', () => {
+        // ⚠️ the union exists to ACCEPT a retiree, and the risk of any widened
+        //    check is that it accepts too much. `mechanik` names no configured
+        //    reviewer AND has authored no given, so it must still be refused
+        expect(`${out.stdout}${out.stderr}`).toContain(
+          'invalid peer reviewer slug',
+        );
+      });
+
+      then('both union members are listed — the retiree among them', () => {
+        // 🔴 the retiree is the one a config-only list would omit, and that
+        //    omission is precisely the defect [t1] exists to prevent. so the
+        //    refusal must name it, or a driver who mistyped the retired slug is
+        //    told their only valid option is a reviewer they never addressed
+        expect(`${out.stdout}${out.stderr}`).toContain('departed');
+        expect(`${out.stdout}${out.stderr}`).toContain('successor');
+      });
+
+      then('it exits 2 — a caller-must-fix constraint', () => {
+        expect(out.exitCode).toEqual(2);
+      });
+
+      then('no round was spawned by the rejected ack', () => {
+        // a validation refusal never reaches the review runner, so this step adds
+        // no run of its own — the DELTA is the claim, never the absolute
+        expect(countReviewerRuns({ route: scene.tempDir })).toEqual(
+          tally.before,
+        );
+      });
+
+      then('matches snapshot — the retired-UNION refusal, both streams', () => {
+        // 🔴 both streams, and the stdout half is not a formality: it is what
+        //    proves the message went to stderr and NOT here
+        //    (`rule.forbid.stdout-on-exit-errors`). a one-stream snapshot
+        //    could not tell a move between them
+        expect(
+          asStableEmit({ emit: out.stdout, cwd: scene.tempDir }),
+        ).toMatchSnapshot(
+          'route.stone.set - retired-union invalid slug, stdout',
+        );
+        expect(
+          asStableEmit({ emit: out.stderr, cwd: scene.tempDir }),
+        ).toMatchSnapshot(
+          'route.stone.set - retired-union invalid slug, stderr',
+        );
+      });
     });
   });
 

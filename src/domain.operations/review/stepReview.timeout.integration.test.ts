@@ -1,7 +1,7 @@
 import { getError } from 'helpful-errors';
 import { given, then, when } from 'test-fns';
 
-import { REVIEW_TIMEOUT_MS, ReviewTimeoutError } from './stepReview';
+import { getReviewTimeoutMs, ReviewTimeoutError } from './stepReview';
 
 /**
  * .what = helper to test timeout behavior with configurable delay
@@ -29,9 +29,9 @@ const withTimeoutTest = async <T>(input: {
 };
 
 describe('stepReview.timeout', () => {
-  given('[config] REVIEW_TIMEOUT_MS', () => {
-    then('should be 21 minutes', () => {
-      expect(REVIEW_TIMEOUT_MS).toEqual(21 * 60 * 1000);
+  given('[config] getReviewTimeoutMs', () => {
+    then('should be 21 minutes by default', () => {
+      expect(getReviewTimeoutMs()).toEqual(21 * 60 * 1000);
     });
   });
 

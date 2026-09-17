@@ -17,6 +17,15 @@ const ASSETS_DIR = path.join(
 );
 
 /**
+ * .mock = reviewer subprocesses (mock-review-l1.sh, mock-review-l3.sh)
+ * .why = real reviewer subprocesses cost LLM tokens and require API credentials;
+ *        synthetic scripts let this suite control the exact verdict (malfunction vs reject)
+ *        without a live brain call — the concern here is the pipeline unlock + halt logic
+ * .real = the full acceptance suite at `--scope peer-budget` exercises real reviewer
+ *         subprocesses via `rhx review`; that suite is the live boundary contract
+ */
+
+/**
  * .what = acceptance clamp for a lower-level MALFUNCTION unlocking a still-NON-terminal higher level
  * .why = malfunction is terminal-for-unlock (like exhaustion), so an l1 malfunction unlocks l3
  *        in the SAME pass — but unlike the mixed-verdict-halt case (where l3 ALSO went terminal
@@ -106,18 +115,18 @@ describe('driver.route.peer-malfunction-nonterminal-higher.acceptance', () => {
         expect(result.stdout).not.toContain('budget exhausted');
       });
 
-      then('KNOWN LIMITATION: live header over-shows the round for a non-consuming malfunction', () => {
-        // .why = the live stream seals each reviewer header at inflight START with
-        //        rounds + 1 (the optimistic "this round consumes budget" read, true for
-        //        passed/rejected). a malfunction does NOT consume a round, and a streamed
-        //        line cannot be un-written, so the LIVE tree shows l1 at 1/2 while the
-        //        PERSISTED guard tree — rendered from the FINAL meters — shows the
-        //        authoritative 0/2 (the count a driver acts on). this pins that bounded
-        //        divergence so it cannot drift further unnoticed. it is an extant
-        //        stream-emit artifact (genContextCliEmit inflight-seal), out of scope for
-        //        the exhaustion-unlock wish — flagged for the wisher, not fixed here.
-        expect(result.stdout).toContain('r1: l1-reviewer (l1, 1/2)'); // live (optimistic)
-        expect(result.stdout).toContain('r1: l1-reviewer (l1, 0/2)'); // persisted (authoritative)
+      then('CLAMP: the live header agrees with the persisted one when a malfunction spends no round', () => {
+        // .why = the live stream USED to seal each reviewer header at inflight START
+        //        with rounds + 1 — the optimistic read, true for passed/rejected. a
+        //        malfunction spends no round, and a streamed line cannot be un-written,
+        //        so the LIVE tree showed l1 at 1/2 while the PERSISTED guard tree —
+        //        rendered from the FINAL meters — showed the authoritative 0/2.
+        // .note = the concurrent pour closed that gap. a slotted lane seals NO header at
+        //         inflight; its whole block is buffered and released at FINISH, so the
+        //         header is built from the settled round rather than a guess at it.
+        //         this clamps the agreement, so a later emit change cannot re-open it
+        expect(result.stdout).not.toContain('r1: l1-reviewer (l1, 1/2)');
+        expect(result.stdout).toContain('r1: l1-reviewer (l1, 0/2)');
       });
 
       then('stdout has good vibes', () => {

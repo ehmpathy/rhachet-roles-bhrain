@@ -20,6 +20,15 @@ import {
  * .why = displays budget/level/verdict in guard output
  */
 export interface GuardPeerMeterStatus {
+  /**
+   * .what = the reviewer's declared position in the guard file (1-based)
+   * .why = the declared index is the permanent identity key for artifact filenames (r001,
+   *        r002…) and the rN label in the guard detail block. array position (m + 1) breaks
+   *        when reviewers are appended mid-journey, because the level-sorted meters array
+   *        places the late addition at a lower position than its declared slot — so the 🗿
+   *        block shows r5 while the artifact says r008 and the 🦉 tree says r8.
+   */
+  index: number;
   slug: string;
   level: number;
   rounds: number;
@@ -123,6 +132,7 @@ const deriveMetersFromReviews = (
       wasExhausted: false,
     });
     return {
+      index: review.artifact.index,
       slug,
       level,
       rounds,
@@ -221,11 +231,14 @@ export const formatReviewsMeterLines = (input: {
     const review = reviewBySlug.get(meter.slug);
 
     // convert meter + review to ReviewerTreeState
-    // .note = use position in meters array (m + 1) for r labels
+    // .note = use the declared index from the meter, not array position —
+    //         a level-sorted array places late additions at lower positions than
+    //         their declared slots, so m + 1 diverges from the artifact filename
+    //         (r008) and the 🦉 live tree (r8). see GuardPeerMeterStatus.index.
     const state = asReviewerTreeStateFromMeter({
       meter,
       review,
-      index: m + 1,
+      index: meter.index,
     });
 
     // format via shared formatter

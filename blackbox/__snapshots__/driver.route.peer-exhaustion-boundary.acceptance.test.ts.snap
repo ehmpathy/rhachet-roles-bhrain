@@ -30,19 +30,19 @@ exports[`driver.route.peer-exhaustion-boundary.acceptance given: [journey] multi
       ├─ artifacts
       │   └─ src/**/*.ts
       ├─ reviews
-      │   ├─ r1: l1-alpha (l1, 1/1)
+      │   ├─ r2: l1-alpha (l1, 1/1)
       │   │   ├─ rejected [TIME]
       │   │   ├─ 1 blocker 🔴
       │   │   ├─ 0 nitpicks ✓
       │   │   ├─ given: .reviews/peer/1.execute._.review.i001.8739656801d5e77f22.r002._.given.by_peer.l1-alpha.md
       │   │   └─ taken: .reviews/peer/1.execute._.review.i001.8739656801d5e77f22.r002._.taken.by_self.l1-alpha.md
-      │   ├─ r2: l1-beta (l1, 1/2)
+      │   ├─ r3: l1-beta (l1, 1/2)
       │   │   ├─ rejected [TIME]
       │   │   ├─ 1 blocker 🔴
       │   │   ├─ 0 nitpicks ✓
       │   │   ├─ given: .reviews/peer/1.execute._.review.i001.8739656801d5e77f22.r003._.given.by_peer.l1-beta.md
       │   │   └─ taken: .reviews/peer/1.execute._.review.i001.8739656801d5e77f22.r003._.taken.by_self.l1-beta.md
-      │   └─ r3: l3-reviewer (l3, 0/1)
+      │   └─ r1: l3-reviewer (l3, 0/1)
       │       └─ awaits l1 terminal
       └─ judges
           └─ j1: rhx route.stone.judge --mechanism reviewed? --stone $stone --route $route --allow-blockers 0 --allow-nitpicks 1
@@ -82,20 +82,20 @@ exports[`driver.route.peer-exhaustion-boundary.acceptance given: [journey] multi
       ├─ artifacts
       │   └─ src/**/*.ts
       ├─ reviews
-      │   ├─ r1: l1-alpha (l1, 1/1)
+      │   ├─ r2: l1-alpha (l1, 1/1)
       │   │   ├─ exhausted 🌙, cached
       │   │   ├─ terminal — does not block higher levels
       │   │   ├─ 1 blocker 🔴
       │   │   ├─ 0 nitpicks ✓
       │   │   ├─ given: .reviews/peer/1.execute._.review.i001.8739656801d5e77f22.r002._.given.by_peer.l1-alpha.md
       │   │   └─ taken: .reviews/peer/1.execute._.review.i001.8739656801d5e77f22.r002._.taken.by_self.l1-alpha.md
-      │   ├─ r2: l1-beta (l1, 2/2)
+      │   ├─ r3: l1-beta (l1, 2/2)
       │   │   ├─ rejected [TIME]
       │   │   ├─ 1 blocker 🔴
       │   │   ├─ 0 nitpicks ✓
       │   │   ├─ given: .reviews/peer/1.execute._.review.i002.dfc5faff83ea2fcb55.r003._.given.by_peer.l1-beta.md
       │   │   └─ taken: .reviews/peer/1.execute._.review.i002.dfc5faff83ea2fcb55.r003._.taken.by_self.l1-beta.md
-      │   └─ r3: l3-reviewer (l3, 0/1)
+      │   └─ r1: l3-reviewer (l3, 0/1)
       │       └─ awaits l1 terminal
       └─ judges
           └─ j1: rhx route.stone.judge --mechanism reviewed? --stone $stone --route $route --allow-blockers 0 --allow-nitpicks 1
@@ -140,21 +140,21 @@ exports[`driver.route.peer-exhaustion-boundary.acceptance given: [journey] multi
       ├─ artifacts
       │   └─ src/**/*.ts
       ├─ reviews
-      │   ├─ r1: l1-alpha (l1, 1/1)
+      │   ├─ r2: l1-alpha (l1, 1/1)
       │   │   ├─ exhausted 🌙, cached
       │   │   ├─ terminal — does not block higher levels
       │   │   ├─ 1 blocker 🔴
       │   │   ├─ 0 nitpicks ✓
       │   │   ├─ given: .reviews/peer/1.execute._.review.i001.8739656801d5e77f22.r002._.given.by_peer.l1-alpha.md
       │   │   └─ taken: .reviews/peer/1.execute._.review.i001.8739656801d5e77f22.r002._.taken.by_self.l1-alpha.md
-      │   ├─ r2: l1-beta (l1, 2/2)
+      │   ├─ r3: l1-beta (l1, 2/2)
       │   │   ├─ exhausted 🌙, cached
       │   │   ├─ terminal — does not block higher levels
       │   │   ├─ 1 blocker 🔴
       │   │   ├─ 0 nitpicks ✓
       │   │   ├─ given: .reviews/peer/1.execute._.review.i002.dfc5faff83ea2fcb55.r003._.given.by_peer.l1-beta.md
       │   │   └─ taken: .reviews/peer/1.execute._.review.i002.dfc5faff83ea2fcb55.r003._.taken.by_self.l1-beta.md
-      │   └─ r3: l3-reviewer (l3, 1/1)
+      │   └─ r1: l3-reviewer (l3, 1/1)
       │       ├─ rejected [TIME]
       │       ├─ 1 blocker 🔴
       │       ├─ 0 nitpicks ✓
@@ -216,21 +216,21 @@ exports[`driver.route.peer-exhaustion-boundary.acceptance given: [journey] multi
       ├─ artifacts
       │   └─ src/**/*.ts
       └─ reviews
-          ├─ r1: l1-alpha (l1, 1/1)
+          ├─ r2: l1-alpha (l1, 1/1)
           │   ├─ exhausted 🌙, cached
           │   ├─ terminal — does not block higher levels
           │   ├─ 1 blocker 🔴
           │   ├─ 0 nitpicks ✓
           │   ├─ given: .reviews/peer/1.execute._.review.i001.8739656801d5e77f22.r002._.given.by_peer.l1-alpha.md
           │   └─ taken: .reviews/peer/1.execute._.review.i001.8739656801d5e77f22.r002._.taken.by_self.l1-alpha.md
-          ├─ r2: l1-beta (l1, 2/2)
+          ├─ r3: l1-beta (l1, 2/2)
           │   ├─ exhausted 🌙, cached
           │   ├─ terminal — does not block higher levels
           │   ├─ 1 blocker 🔴
           │   ├─ 0 nitpicks ✓
           │   ├─ given: .reviews/peer/1.execute._.review.i002.dfc5faff83ea2fcb55.r003._.given.by_peer.l1-beta.md
           │   └─ taken: .reviews/peer/1.execute._.review.i002.dfc5faff83ea2fcb55.r003._.taken.by_self.l1-beta.md
-          └─ r3: l3-reviewer (l3, 1/1)
+          └─ r1: l3-reviewer (l3, 1/1)
               ├─ exhausted 🌙, cached
               ├─ terminal — does not block higher levels
               ├─ 1 blocker 🔴

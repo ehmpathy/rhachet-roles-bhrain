@@ -19,6 +19,12 @@ import type { RouteStoneGuardBlockerType } from './RouteStoneGuardBlockerReport'
  * - 'overruled': human bypassed the review threshold for one review level
  * - 'disputed': driver declared ONE concern fine to continue; it leaves the judge's tally
  * - 'conceded': driver declared ONE concern correct and owes a fix; the hold stands
+ * - 'poured': one review level has BEGUN to run — a latch, so it never re-gates
+ *
+ * .note = 'poured' is sticky per (stone, level), exactly as 'overruled' is, and it
+ *         is cleared by the same and only lever: 'rewound'. it is NOT passage — it
+ *         records that a level departed, so a later regression at a LOWER level can
+ *         never shut it again (define.invariant.review.peer.level-unlock-is-a-latch).
  *
  * .note = 'arrived', 'promised', and 'absorbed' are review-flow markers. they
  *         record forward motion so that a prior blocker clears (latest-entry-wins) —
@@ -48,7 +54,8 @@ export interface PassageReport {
     | 'malfunction'
     | 'overruled'
     | 'disputed'
-    | 'conceded';
+    | 'conceded'
+    | 'poured';
 
   /**
    * what blocks passage (only for status='blocked')
@@ -56,12 +63,16 @@ export interface PassageReport {
   blocker?: RouteStoneGuardBlockerType;
 
   /**
-   * the review level this report scopes to (only for status='overruled')
+   * the review level this report scopes to (only for status='overruled' | 'poured')
    *
-   * .why = overrule is level-scoped: an overrule with level=N forgives the
-   *        blockers of reviewers at level N only, so higher levels still run.
+   * .why = both are level-scoped. an overrule with level=N forgives the blockers of
+   *        reviewers at level N only, so higher levels still run. a pour with
+   *        level=N latches level N open, so a later regression below it cannot
+   *        shut that level again.
    * .note = absent on legacy overrule rows (pre-level-scope); absent treated
    *         as "all levels" for backward compatibility.
+   * .note = a 'poured' row ALWAYS carries a level — it is minted by the pour itself,
+   *         which knows its level by construction, so there is no legacy shape.
    */
   level?: number;
 

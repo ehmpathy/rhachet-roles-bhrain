@@ -14,6 +14,7 @@ const aMeter = (input: {
   verdict: ReviewPeerVerdict;
   overruled?: boolean;
 }): GuardPeerMeterStatus => ({
+  index: 1,
   slug: input.slug,
   level: input.level,
   rounds: 1,

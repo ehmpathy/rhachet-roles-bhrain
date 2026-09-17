@@ -3,6 +3,7 @@ import * as path from 'path';
 import { given, then, useBeforeAll, useThen, when } from 'test-fns';
 
 import { answerEveryPeerGiven } from './.test/answerEveryPeerGiven';
+import { getAllPourAnnounceLines } from './.test/getAllPourAnnounceLines';
 import {
   execAsync,
   genTempDirForRhachet,
@@ -14,6 +15,21 @@ const ASSETS_DIR = path.join(
   __dirname,
   '.test/assets/route-peer-budget-exhaustion-unlocks-level',
 );
+
+/**
+ * .mock = the peer reviewer subprocesses (`mock-review-l1.sh`, `mock-review-l3.sh`)
+ * .why = a real reviewer costs LLM tokens and needs credentials; this journey must drive
+ *        an EXACT budget sequence (reject → reject → skip) across four arrivals, which a
+ *        real reviewer cannot be made to reproduce deterministically. the subject here is
+ *        the ladder's budget/terminal arithmetic, never the reviewer's judgment.
+ * .real = the `--scope peer-budget` acceptance suites drive real reviewer subprocesses
+ *         through `rhx review`; that path is the live boundary contract.
+ *
+ * ⚠️ .note = raised as blocker.1 by `mech-test-scope-purity` at i018. the annotation was
+ *    added to every peer suite across i009–i011 and this file was missed by each sweep —
+ *    so a reader could not part a deliberately-mocked boundary from one the feature
+ *    forgot to document (`rule.forbid.acceptance.mocks`).
+ */
 
 /**
  * .what = acceptance test for exhaustion to unlock higher levels
@@ -30,6 +46,18 @@ const ASSETS_DIR = path.join(
  *   - 'exhausted' only when review was SKIPPED, never when it ran
  *   - round 2/2 runs → shows 'rejected'
  *   - round 3/2 skipped → shows 'exhausted'
+ *
+ * 🔴 .why each round pins the POUR ANNOUNCE as well as stdout = the announce is a
+ *    deterministic stderr contract a driver reads, and its byte string carries the roster
+ *    SLUG — `└─ r1:l1-reviewer` is a distinct string from the solo suite's `└─ r1:solo`,
+ *    so a 1-wide format pinned elsewhere does not pin this variant.
+ *
+ * 🔴 .why it earns a snapshot on THIS journey in particular = the announce is composed
+ *    from the roster a level is about to pour, so the rounds that SKIP a level emit a
+ *    different set of announces than the rounds that run it. that makes the announce
+ *    sequence a second, independent witness to the same unlock arithmetic the stdout
+ *    oracle asserts — and one that would ship red if a skip ever announced a pour it
+ *    did not perform. raised i023/r002 blocker.1
  */
 describe('driver.route.peer-budget-exhaustion-unlocks-level.acceptance', () => {
   given('[journey] exhaustion unlocks higher level', () => {
@@ -82,6 +110,11 @@ describe('driver.route.peer-budget-exhaustion-unlocks-level.acceptance', () => {
 
       then('l3 awaits l1 (not terminal yet)', () => {
         expect(result.stdout).toMatch(/l3-reviewer.*awaits/s);
+      });
+
+      // 🔴 the announce a SKIP suppresses — see the docblock for what each round pins
+      then('the pour announce has good vibes', () => {
+        expect(getAllPourAnnounceLines(result.stderr)).toMatchSnapshot();
       });
 
       then('stdout has good vibes', () => {
@@ -139,6 +172,11 @@ describe('driver.route.peer-budget-exhaustion-unlocks-level.acceptance', () => {
         expect(result.stdout).toContain('judge.1');
         expect(result.stdout).toContain('blocked');
         expect(result.stdout).not.toContain('halted');
+      });
+
+      // 🔴 the announce a SKIP suppresses — see the docblock for what each round pins
+      then('the pour announce has good vibes', () => {
+        expect(getAllPourAnnounceLines(result.stderr)).toMatchSnapshot();
       });
 
       then('stdout has good vibes', () => {
@@ -227,6 +265,11 @@ describe('driver.route.peer-budget-exhaustion-unlocks-level.acceptance', () => {
         );
       });
 
+      // 🔴 the announce a SKIP suppresses — see the docblock for what each round pins
+      then('the pour announce has good vibes', () => {
+        expect(getAllPourAnnounceLines(result.stderr)).toMatchSnapshot();
+      });
+
       then('stdout has good vibes', () => {
         expect(sanitizeTimeForSnapshot(result.stdout)).toMatchSnapshot();
       });
@@ -278,6 +321,83 @@ describe('driver.route.peer-budget-exhaustion-unlocks-level.acceptance', () => {
         expect(result.stdout).toMatch(/l1-reviewer.*exhausted/s);
         expect(result.stdout).not.toMatch(/l3-reviewer.*awaits/s);
         expect(result.stdout).not.toContain('budget exhausted');
+      });
+
+      // 🔴 the announce a SKIP suppresses — see the docblock for what each round pins
+      then('the pour announce has good vibes', () => {
+        expect(getAllPourAnnounceLines(result.stderr)).toMatchSnapshot();
+      });
+
+      then('stdout has good vibes', () => {
+        expect(sanitizeTimeForSnapshot(result.stdout)).toMatchSnapshot();
+      });
+    });
+
+    // =========================================================================
+    // PHASE 5: same-hash arrival — l1 exhausted, l3 still runs
+    // =========================================================================
+
+    when('[t4] same hash: l1 exhausted at the SAME artifact hash, l3 still runs', () => {
+      const result = useThen(
+        'l1 exhausted same hash, l3 runs',
+        async () => {
+          // 🔴 NO artifact change — the hash is identical to [t3].
+          // .why = proves l3 unlocks even when the exhausted l1 reviewer's
+          //        cached verdict matches the current hash. without the fix,
+          //        `computeVerdicts` reads the cached rejected review as
+          //        `hasReviewForHash = true` and `wasExhausted = false`, so
+          //        the verdict is `rejected` (non-terminal) and l3 never runs
+
+          await answerEveryPeerGiven({ cwd: scene.tempDir, stone: '1.execute' });
+
+          return invokeRouteSkill({
+            skill: 'route.stone.set',
+            args: { stone: '1.execute', route: '.', as: 'passed' },
+            cwd: scene.tempDir,
+          });
+        },
+      );
+
+      then('l1 is exhausted (same hash, no fresh run)', () => {
+        expect(result.stdout).toContain('l1-reviewer');
+        expect(result.stdout).toMatch(/exhausted/i);
+      });
+
+      then('CLAMP: l3 runs — same hash does NOT block level unlock', () => {
+        // 🔴 .why = the defect this clamps: l1's own stale rejection happened to sit
+        //    at the CURRENT hash (no artifact moved since [t3]), so a hash-only test
+        //    read the skipped reviewer as one that ran — verdict `rejected`,
+        //    non-terminal, and l3 pinned at `awaits` forever. the driver could not
+        //    break the deadlock either, because the only work left was at the level
+        //    that would not open.
+        //    the fix reads the authoritative `exhaustedReviewerSlugs` set first
+        //    (define.invariant.review.peer.level-unlock-on-budget-exhaustion).
+        expect(result.stdout).toContain('l3-reviewer');
+        expect(result.stdout).not.toMatch(/l3-reviewer.*awaits/s);
+      });
+
+      then('CLAMP: l3 genuinely RAN — its round count advanced', () => {
+        // 🔴 .why = `not awaits` alone is too weak: a level that reads as unlocked
+        //    and still pours no lane would satisfy it. [t3] left l3 at 2/5, so a
+        //    real pour here reads 3/5 — the round count is the proof of execution,
+        //    and it is what parts "unlocked" from "unlocked AND poured".
+        expect(result.stdout).toContain('l3, 3/5');
+        expect(result.stdout).toMatch(/l3-reviewer.*rejected/s);
+      });
+
+      then('CLAMP: l1 stays exhausted — the invariant is not inverted', () => {
+        // ⚠️ .why = the opposite error is equally available and much quieter: relax
+        //    the test to a bare `rounds >= budget` and a reviewer reads `exhausted`
+        //    on the very pass it RAN (define.invariant.review.peer.exhausted).
+        //    here l1 truly was skipped, so `exhausted` is correct — and the judge
+        //    must agree with the tree, never report a level as unlocked-but-unrun.
+        expect(result.stdout).toMatch(/l1-reviewer.*exhausted/s);
+        expect(result.stdout).not.toContain('not yet run (still queued)');
+      });
+
+      // 🔴 the announce a SKIP suppresses — see the docblock for what each round pins
+      then('the pour announce has good vibes', () => {
+        expect(getAllPourAnnounceLines(result.stderr)).toMatchSnapshot();
       });
 
       then('stdout has good vibes', () => {

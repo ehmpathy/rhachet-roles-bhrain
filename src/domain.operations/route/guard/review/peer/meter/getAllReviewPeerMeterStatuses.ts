@@ -1,6 +1,7 @@
 import type { RouteStone } from '@src/domain.objects/Driver/RouteStone';
 import { getGuardPeerReviews } from '@src/domain.objects/Driver/RouteStoneGuard';
 
+import { getStoneGuardLevelsPoured } from '../../../../judges/getStoneGuardLevelsPoured';
 import { getAllStoneGuardArtifactsByHash } from '../../../artifact/getAllStoneGuardArtifactsByHash';
 import { asGuardDisplayPath } from '../../../asGuardDisplayPath';
 import { getRepoRootWithFallback } from '../../../getRepoRootWithFallback';
@@ -162,7 +163,16 @@ export const getAllReviewPeerMeterStatuses = async (input: {
       // wasExhausted = reviewer was skipped in THIS iteration due to exhaustion
       // .why = a non-null exhaustedReviewerSlugs is authoritative (from runStoneGuardReviews); a
       //        null one means fall back to the heuristic: no review for hash AND rounds >= budget
-      // .invariant = a review can only be 'exhausted' if it was SKIPPED (see define.invariant.review.peer.exhausted)
+      // .invariant = a review can only be 'exhausted' if it was SKIPPED (see
+      //        define.invariant.review.peer.exhausted). `hasReviewForCurrentHash` is what carries
+      //        the SKIPPED half here — the judge runs as its own process with no authoritative
+      //        list, so a fresh run and a cached one are told apart by the hash alone.
+      // 🔴 do NOT relax this to a bare `rounds >= budget`. that reads a reviewer that ran and
+      //    spent its last round as `exhausted` on the very pass it ran, which inverts the
+      //    invariant above and unlocks the level above it a full pass early. the level-unlock
+      //    case this looks like it would fix is already fixed at its true site — the
+      //    `exhaustedReviewerSlugs` branch above, fed by runStoneGuardReviews
+      //    (define.invariant.review.peer.level-unlock-on-budget-exhaustion).
       const wasExhausted =
         input.exhaustedReviewerSlugs !== null
           ? exhaustedSet.has(reviewer.slug)
@@ -208,6 +218,19 @@ export const getAllReviewPeerMeterStatuses = async (input: {
     stone: input.stone.name,
   });
 
+  // the level-unlock LATCH, read HERE rather than taken as an input
+  // .why = this operation has four callers (setStoneAsPassed, getCurrentExhaustedSlugs,
+  //        getStoneGuardLevelState, getStoneGuardExhaustedApprovalBypass). an input
+  //        would be four chances to forget it, and the one that forgot would render an
+  //        `awaits` the runner disagrees with — the exact drift measured 2026-09-16.
+  //        it needs only `stone` and `route`, both already in hand, so the read is
+  //        cheap and the render cannot drift from the gate by construction
+  //        (define.invariant.review.peer.level-unlock-is-a-latch)
+  const levelsPoured = await getStoneGuardLevelsPoured({
+    stone: input.stone,
+    route: input.route,
+  });
+
   // the root every printed artifact path is rendered against.
   //
   // .note = read once, ahead of the map, rather than per reviewer — it shells out to git, and
@@ -223,12 +246,20 @@ export const getAllReviewPeerMeterStatuses = async (input: {
 
       // this reviewer awaits the FIRST lower level not yet clear-for-unlock (a level with no
       // reviewers is clear — none to await); undefined = no lower level blocks
+      //
+      // 🔴 a level that has already POURED never awaits, whatever the ladder now says
+      //    (define.invariant.review.peer.level-unlock-is-a-latch). the RUNNER reads the
+      //    latch to decide whether to pour; this render must read the same fact, or the
+      //    two disagree inside ONE stdout — measured 2026-09-16, where the 🦉 tree showed
+      //    `l3-reviewer rejected` (it ran) while the 🗿 guard block beneath it showed
+      //    `awaits l1 terminal` for the same reviewer, on the same pass
+      //    (rule.require.single-source-of-truth-for-render)
       const awaitedLevel =
-        reviewer.level > 1
-          ? Array.from({ length: reviewer.level - 1 }, (_, i) => i + 1).find(
+        levelsPoured.has(reviewer.level) || reviewer.level <= 1
+          ? undefined
+          : Array.from({ length: reviewer.level - 1 }, (_, i) => i + 1).find(
               (level) => !(clearanceByLevel.get(level)?.clearForUnlock ?? true),
-            )
-          : undefined;
+            );
       const awaits: { level: number } | false =
         awaitedLevel !== undefined ? { level: awaitedLevel } : false;
 
@@ -251,6 +282,7 @@ export const getAllReviewPeerMeterStatuses = async (input: {
       });
 
       return {
+        index: reviewer.index,
         slug: reviewer.slug,
         level: reviewer.level,
         rounds: derived.rounds,

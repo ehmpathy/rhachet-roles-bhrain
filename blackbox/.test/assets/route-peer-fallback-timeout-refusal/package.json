@@ -1,0 +1,8 @@
+{
+  "name": "route-peer-fallback-timeout-refusal-test",
+  "private": true,
+  "description": "fixture for the RHACHET_FALLBACK_BRAIN_TIMEOUT_MS refusal acceptance test",
+  "dependencies": {
+    "rhachet-roles-bhrain": "link:."
+  }
+}

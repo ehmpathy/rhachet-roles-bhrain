@@ -8,7 +8,9 @@
 .env
 .review
 /.reviews
+/review
 .rhachet
+.route/.bouncer.cache.json
 .serverless
 .temp
 .terraform

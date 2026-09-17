@@ -1,0 +1,23 @@
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
+
+exports[`genContextCliEmit given: [case9] tty mode — the tail status line under a slotted pour when: [t0] two lanes announce, then one settles out of declared order then: the status reports inflight, done, and left at every tick: tail status — both lanes inflight 1`] = `
+[
+  "
+   └─ ⠋ 2 inflight · 0 done · 2 left · 0.1s",
+  "
+   └─ ⠙ 2 inflight · 0 done · 2 left · 0.2s",
+  "
+   └─ ⠹ 2 inflight · 0 done · 2 left · 0.2s",
+]
+`;
+
+exports[`genContextCliEmit given: [case9] tty mode — the tail status line under a slotted pour when: [t0] two lanes announce, then one settles out of declared order then: the status reports inflight, done, and left at every tick: tail status — one settled, one aloft 1`] = `
+[
+  "
+   └─ ⠋ 1 inflight · 1 done · 1 left · 0.3s",
+  "
+   └─ ⠙ 1 inflight · 1 done · 1 left · 0.4s",
+  "
+   └─ ⠹ 1 inflight · 1 done · 1 left · 0.5s",
+]
+`;

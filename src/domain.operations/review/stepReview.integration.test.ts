@@ -4,6 +4,7 @@ import { getError } from 'helpful-errors';
 import * as os from 'os';
 import * as path from 'path';
 import {
+  genTempDir,
   given,
   then,
   useBeforeAll,
@@ -82,6 +83,37 @@ const setupGitRepo = async (): Promise<{ repoDir: string }> => {
   return { repoDir };
 };
 
+/**
+ * 🔴 .mock = NONE. this suite calls the REAL external LLM provider.
+ *
+ * ⚠️ .why that is stated outright = this docblock read `.mock = brain context
+ *    (genTestBrainContext)` until i018, and it was factually wrong. it cost a peer
+ *    reviewer a blocker (`mech-external-contracts`), which concluded from this very
+ *    annotation that *"the external contract is verified exclusively through a mock"* —
+ *    a correct inference drawn from an incorrect label.
+ *
+ * 🔴 .the real boundary, checkable from the source = `genTestBrainContext` builds a
+ *    genuine `ContextBrain` and mocks naught:
+ *
+ *      genContextBrain({
+ *        brains: { atoms, repls },   // real packages: anthropic, openai, fireworks
+ *        choice: input.brain,        // DEFAULT_TEST_BRAIN = fireworks/deepseek/v4-flash
+ *        creds: { keyrack: { owner: 'ehmpath', env: 'test' } },  // real credentials
+ *      })
+ *
+ *    ⇒ the integration suite cannot even start without `keyrack: unlocked ehmpath/test`,
+ *      and the 180s budget above exists precisely because *"the brain call alone
+ *      routinely outlasts"* the 90s default. a mock would need neither.
+ *
+ * .why a CHEAP real brain rather than a premium one = `fireworks/deepseek/v4-flash` is
+ *        fast and low-cost, so the external contract is exercised on EVERY ci run rather
+ *        than from behind a cost gate — which is what
+ *        `rule.require.external-contract-integration-tests` asks for.
+ *
+ * .note = `stepReview.caseBrain.claude-sonnet.integration.test.ts` is a SECOND, pricier
+ *         suite pinned to one premium model, and it IS `.skip`'d on cost. it is a
+ *         model-specific extra, never this contract's only real coverage.
+ */
 describe('stepReview', () => {
   // brain context for integration tests - created once for efficiency
   const scene = useBeforeAll(async () => ({
@@ -132,6 +164,48 @@ describe('stepReview', () => {
 
         expect(error).toBeDefined();
         expect(error.message).toContain('--rules glob was ineffective');
+      });
+    });
+  });
+
+  given('[case2b] several reviews are poured at once from one process', () => {
+    /**
+     * .why = under a concurrent pour the guard spawns N lanes in a tight loop, so N
+     *        reviews reach the log-dir mkdir within the same millisecond. the dir name
+     *        used to be a bare millisecond timestamp, with no other discriminator, so
+     *        those lanes SHARED one directory and overwrote each other's scope, metrics,
+     *        and output artifacts — and the failure hint then sent a driver to inspect
+     *        reviewer A and handed them reviewer B's evidence.
+     * .note = each lane fails at the ineffective-glob check, which sits AFTER the mkdir.
+     *         so every lane creates its directory and no lane calls a brain.
+     */
+    const lanes = useBeforeAll(async () => {
+      const cwd = genTempDir({ slug: 'review-logdir-concurrent', git: true });
+
+      await Promise.allSettled(
+        Array.from({ length: 8 }).map(() =>
+          stepReview(
+            {
+              rules: 'nonexistent/**/*.md',
+              paths: 'src/*.ts',
+              output: path.join(cwd, 'review.md'),
+              focus: 'push',
+              goal: 'representative',
+              cwd,
+            },
+            { brain: scene.brain },
+          ),
+        ),
+      );
+
+      const dirs = await fs.readdir(path.join(cwd, '.log', 'bhrain', 'review'));
+      return { dirs };
+    });
+
+    when('[t0] all eight lanes have settled', () => {
+      then('CLAMP: each lane holds its own log directory', () => {
+        expect(lanes.dirs).toHaveLength(8);
+        expect(new Set(lanes.dirs).size).toEqual(8);
       });
     });
   });

@@ -79,7 +79,9 @@ exports[`driver.route.set.acceptance given: [case3] route.stone.set --as passed 
 `;
 
 exports[`driver.route.set.acceptance given: [case4] route.stone.set --as passed with guard (blocked) when: [t0] guarded stone with review + judge that fail then: stderr matches snapshot 1`] = `
-"
+"🦉 l1 pours 1 lane
+   └─ r1:echo
+
 🪶 judge 1
    └─ stdout
       ├─
@@ -122,6 +124,13 @@ exports[`driver.route.set.acceptance given: [case4] route.stone.set --as passed 
               ├─ finished [TIME] ✗
               └─ reason: blockers exceed threshold (3 > 0)
 "
+`;
+
+exports[`driver.route.set.acceptance given: [case4] route.stone.set --as passed with guard (blocked) when: [t0] guarded stone with review + judge that fail then: the single-member pour announce has good vibes 1`] = `
+[
+  "🦉 l1 pours 1 lane",
+  "   └─ r1:echo",
+]
 `;
 
 exports[`driver.route.set.acceptance given: [case5] route.stone.set with flexible pattern lookup when: [t0] partial pattern matches single stone then: stdout matches snapshot 1`] = `

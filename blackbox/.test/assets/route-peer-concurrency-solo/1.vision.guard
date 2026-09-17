@@ -1,0 +1,17 @@
+artifacts:
+  - src/**/*.ts
+
+# one reviewer at level 1, no group, no declared bound
+# .why = the announce was built for this case: the slotted emit path seals no
+#        header at inflight, and under a pipe drawStatus is a no-op. so without
+#        the announce a single-member level is byte-silent from launch to settle.
+#        this guard is the one witness that proves the wire, not merely the leaf
+reviews:
+  peer:
+    - slug: solo
+      run: bash $route/.test/mock-window.sh solo
+      budget: 5
+      level: 1
+
+judges:
+  - rhx route.stone.judge --mechanism reviewed? --stone $stone --route $route --allow-blockers 0 --allow-nitpicks 1

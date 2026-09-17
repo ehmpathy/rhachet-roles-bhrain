@@ -3,6 +3,7 @@ import * as path from 'path';
 import { given, then, useThen, when } from 'test-fns';
 
 import { answerEveryPeerGiven } from './.test/answerEveryPeerGiven';
+import { getAllPourAnnounceLines } from './.test/getAllPourAnnounceLines';
 import {
   execAsync,
   genTempDirForRhachet,
@@ -361,6 +362,28 @@ describe('driver.route.set.acceptance', () => {
 
       then('does not create passage marker', () => {
         expect(res.passageExists).toBe(false);
+      });
+
+      /**
+       * 🔴 .why = THE representative single-member announce, and it is the one
+       *           the reviewer asked for by name (i023/r002 nitpick.1).
+       *
+       *           every pour now emits `🦉 l1 pours 1 lane` + a roster, so the
+       *           ~12 suites re-baselined around single-member levels each emit
+       *           a deterministic stderr line no snapshot pinned. the FORMAT is
+       *           already clamped by `peer-concurrency-solo`; what was unpinned
+       *           is that a NON-concurrency suite — one that never heard of this
+       *           feature — emits it at all.
+       *
+       * .note = one representative, never twelve. the twelve differ only in
+       *         their roster SLUG (`r1:echo` vs `r1:l1-reviewer`), which is data
+       *         the fixture supplies rather than format the renderer decides —
+       *         so twelve snapshots would pin one format twelve times and churn
+       *         together on every render edit. this suite is the pick because
+       *         its guard is the plainest in the corpus: one reviewer, `r1:echo`
+       */
+      then('the single-member pour announce has good vibes', () => {
+        expect(getAllPourAnnounceLines(res.cli.stderr)).toMatchSnapshot();
       });
 
       then('stdout matches snapshot', () => {

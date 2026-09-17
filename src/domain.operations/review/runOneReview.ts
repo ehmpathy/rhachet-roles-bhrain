@@ -3,6 +3,7 @@ import { type IsoDuration, toMilliseconds } from 'iso-time';
 import * as path from 'path';
 import { promisify } from 'util';
 
+import { asGuardPositiveInt } from '../asGuardPositiveInt';
 import type { ContextReviewBrainSupply } from '../route/genReviewBrainSupply';
 import { getDurationMsFromContent } from '../route/guard/getDurationMsFromContent';
 import { getReviewCounts } from '../route/guard/review/getReviewCounts';
@@ -42,10 +43,25 @@ const isReviewTallyTimeout = (input: { error: unknown }): boolean => {
  * .what = converts IsoDuration to milliseconds
  * .why = enables per-review timeout configuration
  * .note = override via RHACHET_REVIEW_TIMEOUT_MS env var for tests
+ *
+ * 🔴 .why the override reads through `asGuardPositiveInt` = it was a bare
+ *     `parseInt`, and this is the SECOND of three readers of one env var that
+ *     had drifted to three different strictnesses. a `NaN` here makes the
+ *     subprocess bound never compare true, so a hung reviewer runs unbounded —
+ *     and the timeout is its only bound.
+ *
+ *     ⇒ the duplication is what made the drift invisible: a reader who
+ *       hardened one site would not learn the other two existed. all three now
+ *       read through one transformer (raised i004/r011, re-prioritized
+ *       i005/r010 + i005/r011)
  */
 const getReviewTimeoutMs = (input: { timeout: IsoDuration }): number =>
   process.env.RHACHET_REVIEW_TIMEOUT_MS !== undefined
-    ? parseInt(process.env.RHACHET_REVIEW_TIMEOUT_MS, 10)
+    ? asGuardPositiveInt({
+        raw: process.env.RHACHET_REVIEW_TIMEOUT_MS,
+        key: 'timeout',
+        at: 'env RHACHET_REVIEW_TIMEOUT_MS',
+      })
     : toMilliseconds(input.timeout);
 
 /**

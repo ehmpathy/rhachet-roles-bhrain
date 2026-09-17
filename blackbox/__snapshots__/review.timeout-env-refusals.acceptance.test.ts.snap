@@ -1,0 +1,13 @@
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
+
+exports[`review.timeout-env-refusals.acceptance given: [case1] RHACHET_REVIEW_TIMEOUT_MS is set to a non-integer when: [t0] the stone arrives with RHACHET_REVIEW_TIMEOUT_MS=abc then: the refusal renders as an error, never a stack trace 1`] = `
+"
+✋ BadRequestError: timeout must be a positive integer: env RHACHET_REVIEW_TIMEOUT_MS declares "abc". write a whole number of 1 or more, or drop the key to take its default.
+"
+`;
+
+exports[`review.timeout-env-refusals.acceptance given: [case2] RHACHET_REVIEW_TIMEOUT_MS is set to empty when: [t0] the stone arrives with RHACHET_REVIEW_TIMEOUT_MS= (empty) then: the refusal renders \`declares ""\` — distinct from the abc variant 1`] = `
+"
+✋ BadRequestError: timeout must be a positive integer: env RHACHET_REVIEW_TIMEOUT_MS declares "". write a whole number of 1 or more, or drop the key to take its default.
+"
+`;

@@ -31,9 +31,23 @@ const ASSETS_DIR = path.join(
  *     DRIVER's own (S12) — a budget top-up, the driver's lever, no human
  *
  * ladder (see 1.execute.guard):
- *   - l1-alpha (level 1, budget 1)  — exhausts one pass before beta
- *   - l1-beta  (level 1, budget 2)  — the LAST l1 to turn terminal
- *   - l3-reviewer (level 3, budget 1) — declared first, runs last
+ *   - l3-reviewer (level 3, budget 1) — declared FIRST, so `r1`. runs last
+ *   - l1-alpha (level 1, budget 1)  — declared second, so `r2`. exhausts one pass before beta
+ *   - l1-beta  (level 1, budget 2)  — declared third, so `r3`. the LAST l1 to turn terminal
+ *
+ * 🔴 .note = this fixture's tree renders `r2 → r3 → r1`, and that descent is CORRECT.
+ *    `r$index` is the reviewer's DECLARED array position, assigned pre-sort, and the guard
+ *    then runs low-level-first — so a fixture that declares a high level first renders its
+ *    indices out of numeric order by construction. the vision settles why the index may
+ *    not be re-derived: it is written into the review artifact's filename and is the cache
+ *    key, so a display-ordered index would silently credit one reviewer's cached review to
+ *    another (`1.vision.yield.md`, `.the reviewer index is a durable identity key`).
+ *
+ * ⚠️ .note = it is still a readability wrinkle, and it is the SECOND instance of one family
+ *    the vision already names under `.what is awkward` — a durable identity number that
+ *    reads like a display position, beside `level`/`concurrency` which read alike and mean
+ *    opposite kinds of quantity. no harm lands: every row names its own reviewer, so a
+ *    misread self-corrects on the same line. raised i022/r011 nitpick.1
  */
 describe('driver.route.peer-exhaustion-boundary.acceptance', () => {
   given('[journey] multi-reviewer exhaustion unlocks only on last-terminal', () => {

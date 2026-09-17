@@ -353,7 +353,9 @@ exports[`driver.route.drive.blocker.acceptance given: [case2] stone with review 
 exports[`driver.route.drive.blocker.acceptance given: [case2] stone with review + approval (3.blueprint) when: [t2] agent promises review.self and attempts pass then: [t2] output matches snapshot 1`] = `
 {
   "code": 2,
-  "stderr": "
+  "stderr": "🦉 l1 pours 1 lane
+   └─ r1:bash
+
 🪶 judge 1
    ├─ stdout
    │  ├─

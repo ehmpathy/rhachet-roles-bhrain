@@ -96,7 +96,7 @@ exports[`review.by.guard-peer.acceptance given: [case-seam-malfunction] guard pe
 exports[`review.by.guard-peer.acceptance given: [case-seam-malfunction] guard peer runs review.by --for with an unknown brain when: [t0] the stone is passed → the peer review faults, the guard blocks on a malfunction then: the guard-tree stdout is stable (full snapshot) 1`] = `
 "🦉 the way speaks for itself
    │
-   ├─ r1: term-aggregation (l1, 1/3)
+   ├─ r1: term-aggregation (l1, 0/3)
    │   ├─ malfunction 💥
    │   ├─ terminal — does not block higher levels
    │   ├─ given: .reviews/peer/1.execute._.review.i[N].[HASH].r[N]._.given.by_peer.term-aggregation.md

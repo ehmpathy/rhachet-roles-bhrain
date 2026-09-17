@@ -1,3 +1,4 @@
+import { getAllReviewLevelsAsc } from '../../getAllReviewLevelsAsc';
 import type { ReviewPeerVerdict } from './computeReviewPeerVerdict';
 import { isLevelOverruled } from './isLevelOverruled';
 import { isReviewPeerVerdictTerminal } from './isReviewPeerVerdictTerminal';
@@ -61,9 +62,7 @@ export const getStoneGuardLevelClearance = (input: {
     });
 
   // distinct levels, low-to-high — the ladder rungs in order
-  const levels = [...new Set(input.reviewers.map((r) => r.level))].sort(
-    (a, b) => a - b,
-  );
+  const levels = getAllReviewLevelsAsc({ peers: input.reviewers });
 
   return levels.map((level) => {
     const atLevel = input.reviewers.filter((r) => r.level === level);

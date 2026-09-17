@@ -1,0 +1,15 @@
+artifacts:
+  - src/**/*.ts
+
+reviews:
+  peer:
+    # a reviewer whose stdout carries NO numeric count, so the guard must fall
+    # back to the sub-brain tally — which is the only path that reads
+    # RHACHET_FALLBACK_BRAIN_TIMEOUT_MS
+    - slug: prose-reviewer
+      run: bash $route/.test/mock-review-prose.sh
+      budget: 2
+      level: 1
+
+judges:
+  - rhx route.stone.judge --mechanism reviewed? --stone $stone --route $route --allow-blockers 0 --allow-nitpicks 1
