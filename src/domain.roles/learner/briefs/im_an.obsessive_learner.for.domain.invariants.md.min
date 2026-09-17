@@ -28,7 +28,7 @@ nurture: *one entrypoint* — nature permits many; four incidents taught us they
 3. **.invariant** — stated formally (`A ⟺ B`, or a constraint)
 4. **.why** — why the domain depends on it; often a past incident
 5. **.scope** — what it does NOT cover
-6. **.the litigation** — who argued what, and what settled it. quote the human verbatim
+6. **.the litigation** — what was argued, against what, and what settled it, **in your own words**. 🔴 never quote the wisher here, and never cite their seed by path (`rule.forbid.verbatim-quotes-outside-seeds`) — an invariant is a law, not a transcript with a footnote
 7. **.the counter-argument** — the strongest case against, stated fairly
 8. **.what would overturn it** — per the nature/nurture table
 9. **.enforcement** — what a violation is
@@ -39,10 +39,10 @@ the case that proves `.scope` carries weight:
 
 - a robot read *"two implementations drift"* — true, hard-won over four incidents
 - it applied that to a transport pair that carried one payload two ways
-- the human stopped it: *"wait. is rsync the main usecase though? if so, i get the fallback. just document it clearly why we need both, so we dont relitigate."*
+- the human stopped it: the fallback was legitimate, and what the pair owed was a written statement of **why both carriers exist — so it would not be re-litigated**
 - ⇒ the rule was right and the application was wrong, because the rule's SCOPE had never been written down
 
-⇒ *"so we dont relitigate"* is the requirement — a conclusion with no argument attached will be re-argued, or quietly reversed by someone who only ever saw the conclusion.
+⇒ **"so it is not re-litigated" is the requirement** — a conclusion with no argument attached will be re-argued, or quietly reversed by someone who only ever saw the conclusion.
 
 ## 🔴 .a settled invariant is NOT deferrable
 

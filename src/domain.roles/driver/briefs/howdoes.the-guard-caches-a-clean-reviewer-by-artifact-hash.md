@@ -43,7 +43,7 @@ the key is the **artifact**, never your diff. so the cost of a re-arrival invert
 ⇒ **a one-word fix to a yield costs more reviewer time than a subsystem rewrite in `src/`.** that
 is the fact to carry, and no discipline substitutes for it.
 
-## ⚠️ .this hash is the CACHE key. it is not the contemplation debt key
+## ⚠️ .this hash is the CACHE key. it is not the absorption debt key
 
 two things could be keyed to the artifact hash, and only one is:
 

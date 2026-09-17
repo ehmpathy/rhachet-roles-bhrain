@@ -2,6 +2,7 @@ import * as fs from 'fs/promises';
 import * as path from 'path';
 import { given, then, useThen, when } from 'test-fns';
 
+import { answerEveryPeerGiven } from './.test/answerEveryPeerGiven';
 import {
   execAsync,
   genTempDirForRhachet,
@@ -521,6 +522,12 @@ describe('driver.route.set.acceptance', () => {
 
           // note: with passage.jsonl, we don't "remove" entries (append-only)
           // the second run will still re-evaluate guards and use cached reviews
+
+          // the fresh run left a nitpick rejected, so the stance gate now owes a
+          // declaration before re-entry. concede it at the default `better` — the judge
+          // sheds a `better` concession stone-wide, so the cached re-run passes (S16). an
+          // edit alone no longer buys re-entry past the stance gate.
+          await answerEveryPeerGiven({ cwd: tempDir, stone: '1.test' });
 
           // second invocation — should use cached reviews
           const cli = await invokeRouteSkill({

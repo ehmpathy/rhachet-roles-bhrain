@@ -54,7 +54,8 @@ exports[`driver.route.peer-budget-approval-unification.acceptance given: [usecas
 🗿 route.stone.set
    ├─ stone = 1.execute
    ├─ passage = blocked
-   ├─ reason = peer reviewer budget exhausted: strict-checker
+   ├─ reason = you conceded — the round to confirm your fix needs more budget
+   │  └─ 🟡 an urgent concession stands — its harm ships if unfixed, so this round is owed a human's grant
    ├─ options
    │  ├─ increase budget — yours to spend
    │  │  └─ rhx route.guard.budget --for review --add N --peer strict-checker --stone 1.execute
@@ -121,7 +122,8 @@ exports[`driver.route.peer-budget-approval-unification.acceptance given: [usecas
    │  └─ stone = 1.execute
    │
    └─ halted, peer reviewer budget exhausted
-      ├─ reason: peer reviewer budget exhausted
+      ├─ reason: you conceded — the round to confirm your fix needs more budget
+      │  └─ 🟡 an urgent concession stands — its harm ships if unfixed, so this round is owed a human's grant
       │
       ├─ reviews
       │   └─ r1: strict-checker (l1, 2/2)

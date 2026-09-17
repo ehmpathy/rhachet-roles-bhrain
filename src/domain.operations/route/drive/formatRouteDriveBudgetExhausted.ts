@@ -1,3 +1,5 @@
+import { asConcessionReasonDisplay } from '../guard/review/peer/asConcessionReasonDisplay';
+import { isRouteGuardConcessionExhaustion } from '../guard/review/peer/genRouteGuardExhaustedReason';
 import { getReviewPeerLadderStatus } from '../guard/review/peer/meter/getReviewPeerLadderStatus';
 import {
   computeBlockRemedyGroups,
@@ -80,6 +82,37 @@ export const formatRouteDriveBudgetExhausted = (input: {
     reason: input.reason ?? 'peer reviewer budget exhausted',
   });
 
+  // 🔴 a CONCESSION exhaustion is a different halt, and it says so in its first line (S12).
+  //    every skipped lane carries a live concession, so the budget is not spent on a
+  //    disagreement — it is owed to the round that CONFIRMS fixes the driver already
+  //    agreed to make. the wisher's own words: "halted on more budget, to address
+  //    concessions".
+  //
+  // ⚠️ it changes the WORDS and the TAIL only; the meters, the remedies, and the tree
+  //    shape are the same operation. two renders would drift
+  //    (rule.forbid.duplicate-format-tree-operations).
+  const isConcession = isRouteGuardConcessionExhaustion({
+    reason: input.reason,
+  });
+
+  // 🔴 an URGENT concession is a THIRD halt (F028/S14). the driver conceded, but ≥1
+  //    concession ships nameable harm — security · safety · monetary · reputation ·
+  //    behavioral — so the maintenance floor is not enough: it earns a human's glance and
+  //    a round. so it renders as the human wait (unlike a `better` concession, which is
+  //    the driver's own), PLUS a warn line that tells the human why the round is owed
+  //    (`define.invariant.review.peer.budget.urgent-earns-budget`).
+  // 🔴 the REASON LINE and the WARN come from the ONE shared decoder, never from a second
+  //    inline decode. this file used to re-derive them and keyed its reason on `isConcession`
+  //    (better-only), so an URGENT halt printed `reason: peer reviewer budget exhausted` here
+  //    while `formatRouteStoneEmit` — routed through the decoder — printed the concession words
+  //    for the SAME persisted reason. two surfaces a driver meets consecutively, one halt, two
+  //    contradictory statements (r1 b2; rule.require.single-source-of-truth-for-render).
+  //
+  // ⚠️ the DISPOSITION branches below still key on `isConcession` (better-only), and that is
+  //    the design: a better concession is the driver's own push, an urgent one is a human wait.
+  //    what the decoder settles is the WORDS, never the layout.
+  const display = asConcessionReasonDisplay({ reason: input.reason });
+
   const lines: string[] = [];
   lines.push(`🦉 where were we?`);
   lines.push('');
@@ -88,9 +121,25 @@ export const formatRouteDriveBudgetExhausted = (input: {
   lines.push(`   │  ├─ route = ${asRouteDisplayPath({ route: input.route })}`);
   lines.push(`   │  └─ stone = ${input.stone}`);
   lines.push(`   │`);
-  lines.push(`   └─ halted, peer reviewer budget exhausted`);
-  // display reason without slug suffix (slugs shown in reviews section)
-  lines.push(`      ├─ reason: peer reviewer budget exhausted`);
+  lines.push(
+    isConcession
+      ? `   └─ halted on more budget, to address concessions`
+      : `   └─ halted, peer reviewer budget exhausted`,
+  );
+  // the reason line comes from the shared decoder, which sheds the parseable marker for
+  // EITHER severity. a non-concession halt keeps the bare text — the raw reason may carry a
+  // `: <slugs>` suffix, and the slugs are already in the reviews section below
+  lines.push(
+    display.isConcession
+      ? `      ├─ reason: ${display.reasonText}`
+      : `      ├─ reason: peer reviewer budget exhausted`,
+  );
+  // ⚠️ the urgent warn rides on the ordinary human-wait render, never the `better` one —
+  //    an urgent concession sheds none of the human's part; it adds a reason for it.
+  // 🔴 nested under `reason`, never a peer of it — the warn explains WHY that reason line
+  //    is a human wait rather than a driver's own push, so it is a child of the reason, not
+  //    a second top-level fact.
+  if (display.warnText) lines.push(`      │  └─ 🟡 ${display.warnText}`);
   lines.push(`      │`);
 
   // add peer reviewer meters section via shared formatter
@@ -124,7 +173,13 @@ export const formatRouteDriveBudgetExhausted = (input: {
   //    formatGuardTree / formatRouteStoneEmit / formatRouteDriveMixedHalt because all four
   //    now render from one shared operation, so a driver reads them as one story
   //    (rule.require.single-source-of-truth-for-render).
-  lines.push(`      ├─ spend your own lever first, then ask a human`);
+  // 🔴 a concession halt names no human at all, so the "then ask a human" half of this
+  //    header would be false — there is nobody to ask and no second remedy to sort.
+  lines.push(
+    isConcession
+      ? `      ├─ what to do — yours to run, no human needed`
+      : `      ├─ spend your own lever first, then ask a human`,
+  );
   lines.push(
     ...formatBlockRemedyGroups({
       groups: remedyGroups,
@@ -137,7 +192,11 @@ export const formatRouteDriveBudgetExhausted = (input: {
   //    topped up their own budget was told to wait on an approval that was never owed.
   //    the passage command follows a grant, never a top-up — a top-up is followed by a
   //    re-arrival, which the guard prints on its own.
-  lines.push(`      └─ once a human grants the approval, run`);
+  lines.push(
+    isConcession
+      ? `      └─ then re-arrive`
+      : `      └─ once a human grants the approval, run`,
+  );
   lines.push(`         └─ ${passCmd}`);
 
   return lines.join('\n');

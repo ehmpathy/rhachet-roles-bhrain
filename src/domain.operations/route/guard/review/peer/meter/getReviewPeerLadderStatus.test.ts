@@ -21,6 +21,8 @@ const aMeter = (input: {
   verdict: input.verdict,
   awaits: false,
   overruled: input.overruled ?? false,
+  skippedByDispute: false,
+  disputed: { blockers: 0, nitpicks: 0 },
   blockers: 0,
   nitpicks: 0,
   path: null,

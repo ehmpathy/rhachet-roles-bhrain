@@ -18,7 +18,12 @@ exports[`setStoneAsApproved given: [case3] caller is not human when: [t0] isTTY 
    └─ as a driver, you should:
          ├─ \`--as passed\` to signal work complete, proceed
          ├─ \`--as arrived\` to signal work complete, request review
-         └─ \`--as blocked\` to escalate if stuck
+         ├─ \`--as conceded\` to take a reviewer concern and repair it
+         ├─ \`--as disputed\` to escalate ONE concern to the council
+         └─ \`--as blocked\` to escalate a genuine wall
+
+      🟡 a peer's feedback you have not absorbed is not a wall. absorb each
+         concern it raised — concede it, or dispute it.
 
       the human will run \`--as approved\` when ready."
 `;

@@ -22,7 +22,7 @@ const extractReplyPrompt = (stdout: string): string => {
   const start = stdout.indexOf('🦉 the reviewers await your reply');
   if (start === -1) return '<no reply-prompt found>';
   const rest = stdout.slice(start);
-  const endMarker = rest.indexOf('--as contemplated');
+  const endMarker = rest.indexOf('--as absorbed');
   const endOfLine = rest.indexOf('\n', endMarker);
   return endOfLine === -1 ? rest : rest.slice(0, endOfLine);
 };

@@ -1,0 +1,15 @@
+artifacts:
+  - src/**/*.ts
+
+reviews:
+  peer:
+    - slug: lane
+      run: bash $route/.test/mock-review-lane.sh
+      budget: 3
+      level: 1
+
+# the REAL reviewed? judge, at a zero allowance — so the one blocker holds the stone
+# until a dispute sheds it from the tally, and the residual-clear -> pass composition
+# is exercised end to end rather than stubbed
+judges:
+  - rhx route.stone.judge --mechanism reviewed? --stone $stone --route $route --allow-blockers 0 --allow-nitpicks 0

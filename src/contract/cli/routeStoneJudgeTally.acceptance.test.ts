@@ -4,6 +4,10 @@ import * as path from 'path';
 import { genTempDir, given, then, useBeforeAll, when } from 'test-fns';
 import { pathToFileURL } from 'url';
 
+import { answerEveryPeerGiven } from '@src/domain.operations/route/__test_assets__/answerEveryPeerGiven';
+import { concedeEveryPeerConcern } from '@src/domain.operations/route/__test_assets__/concedeEveryPeerConcern';
+import { setStoneAsConcernAbsorbed } from '@src/domain.operations/route/stones/setStoneAsConcernAbsorbed';
+
 /**
  * .what = acceptance clamps on WHICH review files the `reviewed?` judge tallies,
  *         driven through the real cli in a spawned process
@@ -206,6 +210,108 @@ describe('routeStoneJudge.tally.acceptance', () => {
   );
 
   given(
+    '[case3] a `better` concession is SHED by the judge; an `urgent` one is KEPT (S16)',
+    () => {
+      // one reviewer raises 1 nitpick; the allowance is 0, so its verdict is `rejected`
+      // and the driver owes a stance. the judge tally then decides on the severity of that
+      // stance: a `better` concession is hard-capped by the budget and SHED (pass); an
+      // `urgent` one ships harm and is KEPT (block). same fixture, two severities.
+      const writeFixture = (slug: string) => {
+        const tempDir = genTempDir({ slug, git: true });
+        fs.writeFileSync(
+          path.join(tempDir, '1.test.stone'),
+          '# stone: do the task\n',
+        );
+        fs.writeFileSync(path.join(tempDir, '1.test.md'), '# test artifact\n');
+        fs.writeFileSync(
+          path.join(tempDir, '1.test.guard'),
+          [
+            'artifacts:',
+            '  - "$route/1.test*.md"',
+            'reviews:',
+            '  peer:',
+            '    - slug: finicky',
+            '      run: echo "blockers: 0"; echo "nitpicks: 1"',
+            '      budget: 5',
+            '      level: 1',
+            'judges:',
+            '  - echo "passed: true\\nreason: ok"',
+            '',
+          ].join('\n'),
+        );
+        return tempDir;
+      };
+
+      when('[t0] the driver concedes the nitpick as `better`', () => {
+        const out = useBeforeAll(async () => {
+          const tempDir = writeFixture('judge-tally-better-shed');
+          driveGuardRound({ tempDir });
+          // answer the given (R1), then concede the one nitpick as `better`
+          await answerEveryPeerGiven({ route: tempDir, stone: '1.test' });
+          await setStoneAsConcernAbsorbed({
+            stone: '1.test',
+            route: tempDir,
+            as: 'conceded',
+            with: 'finicky',
+            about: 'nitpick.1',
+            severity: 'better',
+          });
+          return {
+            // allowance 0 — the lone nitpick fails it UNLESS the judge sheds the `better`
+            judge: runJudge({ tempDir, allowNitpicks: 0 }),
+          };
+        });
+
+        then(
+          'the judge PASSES — the `better` concession is shed from the tally',
+          () => {
+            expect(out.judge.stdout).toContain('passed: true');
+            expect(out.judge.exitCode).toEqual(0);
+          },
+        );
+      });
+
+      when('[t1] the driver concedes the SAME nitpick as `urgent`', () => {
+        const out = useBeforeAll(async () => {
+          const tempDir = writeFixture('judge-tally-urgent-kept');
+          driveGuardRound({ tempDir });
+          await answerEveryPeerGiven({ route: tempDir, stone: '1.test' });
+          await setStoneAsConcernAbsorbed({
+            stone: '1.test',
+            route: tempDir,
+            as: 'conceded',
+            with: 'finicky',
+            about: 'nitpick.1',
+            severity: 'urgent',
+          });
+          return {
+            judge: runJudge({ tempDir, allowNitpicks: 0 }),
+          };
+        });
+
+        then('the judge BLOCKS — an `urgent` concession is NOT shed', () => {
+          expect(out.judge.stdout).toContain('passed: false');
+          expect(out.judge.exitCode).toEqual(2);
+        });
+
+        // 🔴 the sharpest driver-visible remedy in the feature — it names the human's
+        //    lever and the follow-on passage command — pinned WHOLE, never by a
+        //    `toContain` fragment (r009 i011 blocker.1). a reword or a dropped branch
+        //    of this block must fail the clamp, not slip past it
+        then(
+          'stderr names the human ask, the budget command, and the passage command — whole-body pinned',
+          () => {
+            expect(out.judge.stderr).toContain(
+              '✋ halted, an urgent concession stands — finicky',
+            );
+            expect(out.judge.stderr).toMatchSnapshot();
+          },
+        );
+      });
+    },
+  );
+
+  given(
     '[case2] two reviewers — a noisy one with budget 1, a quiet one with budget 5',
     () => {
       const scene = useBeforeAll(async () => {
@@ -252,6 +358,17 @@ describe('routeStoneJudge.tally.acceptance', () => {
         () => {
           const out = useBeforeAll(async () => {
             driveGuardRound({ tempDir: scene.tempDir });
+
+            // 🔴 `noisy` is rejected (5 nitpicks > 0), so it owes a stance — the entrance
+            //    gate would refuse the second round until it is declared. concede it
+            //    `urgent` so the concern is KEPT in the tally (an `urgent` concession is not
+            //    shed, S16): the driver commits to fix it, and the tally judge below still
+            //    counts its 5 and blocks. this is the cross-hash undercount this case pins.
+            await concedeEveryPeerConcern({
+              route: scene.tempDir,
+              stone: '1.test',
+              severity: 'urgent',
+            });
 
             fs.writeFileSync(
               path.join(scene.tempDir, '1.test.md'),

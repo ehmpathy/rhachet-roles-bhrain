@@ -5,10 +5,13 @@ term.kind     = noun                 # noun | verb | adj — reused across objec
 term.boundary = review
 term.synonyms.forbidden:
 - critique
-- feedback
 - comment
 - issue
 - report          # `.report.md` is a DIFFERENT artifact beside the given — never a synonym
+
+⇒ `feedback` is no longer on this list — it names a DISTINCT concept (the given+taken pair, as a
+  unit), never a synonym of `given` alone. see `term=route.guard.review.feedback._.choice._.md`
+  and this term's `.reason.md` § `.disputes` for the settlement.
 
 ## .what
 
@@ -43,7 +46,7 @@ boundary segment `review` is what parts them, and it is why the term is
 - `src/domain.operations/route/guard/review/peer/getLatestPeerGivensPerSlug.ts`
 - `src/domain.operations/route/guard/review/peer/enumRouteGuardReviewPeerFiles.ts`
 - `src/domain.operations/route/guard/review/peer/enumRouteGuardReviewPeerConversationFiles.ts`
-- `src/domain.operations/route/guard/review/peer/getRouteGuardReviewPeerContemplationStatus.ts`
+- `src/domain.operations/route/guard/review/peer/getRouteGuardReviewPeerFeedbackAbsorptionStatus.ts`
 
 ## .reason
 

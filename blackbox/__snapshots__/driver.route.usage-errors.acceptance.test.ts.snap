@@ -25,16 +25,22 @@ exports[`driver.route.usage-errors.acceptance given: [case3] route.guard.budget 
 route.guard.budget - extend peer reviewer budget
 
 usage:
-  rhx route.guard.budget --for review --add 2 --stone 1.vision            # extend all peers
-  rhx route.guard.budget --for review --add 2 --peer primo --stone 1.vision  # extend specific peer
+  rhx route.guard.budget --for review --add 2 --stone 1.vision              # extend the LATEST level
+  rhx route.guard.budget --for review --add 2 --peer primo --stone 1.vision # extend one named lane
+  rhx route.guard.budget --for review --add 2 --level 1 --stone 1.vision    # extend one named level
   rhx route.guard.budget --for review --add 2 --stone 1.vision --route .behavior/my-feature
 
 options:
   --for     resource type: "review" (required)
   --add     number of budget rounds to add (required)
   --stone   stone name with guard to update (required)
-  --peer    peer reviewer slug to extend (default: all peers)
+  --peer    peer reviewer slug to extend (default: the latest level in play)
+  --level   review level to extend — reach a LOWER level only when you name it (F022)
   --route   path to route directory (default: auto-detect from branch)
+
+.note = a bare add lands on the LATEST level alone. a lower level stays exhausted unless it is
+        explicitly named with --level or --peer — a top-up is a deliberate, targeted act, never a
+        blanket sweep that silently heals a level the route author bounded on purpose.
 
 "
 `;

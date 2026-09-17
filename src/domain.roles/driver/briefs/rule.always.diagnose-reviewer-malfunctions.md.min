@@ -33,7 +33,15 @@ rhx route.mutate.guard --stone <stone> --route <route>
 
 ✅ **the inherited scope is correct — do NOT re-derive it.** `getAllFileDiffsFromRange.ts` prefers `origin/main` (line 43) and takes `git merge-base` (line 70), so a commit main is ahead on cannot enter the diff. **an item a correctly-bound reviewer raises is yours.**
 
-🟡 **a `--paths-with` glob with a brace in the EXTENSION slot is silently dropped** (`'**/*.{ts,md}'` → the bind never applies and the reviewer runs unbounded); a brace in the **directory** slot works (`'{src,blackbox}/**'`); and a **repeated** `--paths-with` keeps only the LAST. ⇒ parser defects in `parseReviewArgs` — write the guard bind around them: `.dream/v2026_09_04.fix.review-multi-glob-flags-do-not-comma-split.md`.
+`--paths-with <glob>` includes, `--paths-wout <glob>` excludes (alias `--paths-without`); **both repeat**, so a wide lane narrows by exclusion — the commonest cut is the test corpus a production rubric does not grade:
+
+```
+--paths-with 'src/**/*' --paths-wout '**/*.test.ts' --paths-wout '**/__snapshots__/**'
+```
+
+🟡 **a `--paths-with` glob with a brace in the EXTENSION slot is silently dropped** (`'**/*.{ts,md}'` → the bind never applies and the reviewer runs unbounded); a brace in the **directory** slot works (`'{src,blackbox}/**'`). ⇒ a parser defect in `parseReviewArgs` — write the bind around it: `.dream/v2026_09_04.fix.review-multi-glob-flags-do-not-comma-split.md`.
+
+an UNKNOWN flag is dropped in silence — no error, no warn. so a misspelled bind reads as applied and the lane runs unbounded. ⇒ **a narrowed lane that overflows at the SAME file count as before is a flag-name defect, never a glob one** — the given prints the count, so one read tells them apart.
 
 one honest diagnosis pass, never a debug spiral: read the logs → classify → act.
 

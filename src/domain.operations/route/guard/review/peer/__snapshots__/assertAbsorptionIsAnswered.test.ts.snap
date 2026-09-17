@@ -1,0 +1,70 @@
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
+
+exports[`assertAbsorptionIsAnswered given: [case4] the rendered refusals, whole when: [t0] several blockers stand unanswered then: the bytes a driver reads are pinned 1`] = `
+"BadRequestError: answer mech before you absorb it
+
+3 blockers stand with no .taken.by_self.mech
+
+answer first, then dispose each concern, then absorb:
+  1. write .reviews/peer/.taken.by_self.mech.md
+     └─ one [REPAIR] or [REFUTE] per point
+  2. once per concern — 3 blockers:
+     ├─ rhx route.stone.set --stone test-stone \\
+     │    --as conceded --with mech --about <concern> --severity better|urgent
+     └─ rhx route.stone.set --stone test-stone \\
+          --as disputed --with mech --about <concern> --why <fulcrum-path>
+  3. rhx route.stone.set --stone test-stone --as absorbed --that mech
+
+{
+  "stone": "test-stone",
+  "slug": "mech",
+  "blockers": 3,
+  "pathTaken": ".reviews/peer/.taken.by_self.mech.md"
+}"
+`;
+
+exports[`assertAbsorptionIsAnswered given: [case4] the rendered refusals, whole when: [t1] exactly one blocker stands unanswered then: the bytes a driver reads are pinned 1`] = `
+"BadRequestError: answer mech before you absorb it
+
+1 blocker stands with no .taken.by_self.mech
+
+answer first, then dispose each concern, then absorb:
+  1. write .reviews/peer/.taken.by_self.mech.md
+     └─ one [REPAIR] or [REFUTE] per point
+  2. once per concern — 1 blocker:
+     ├─ rhx route.stone.set --stone test-stone \\
+     │    --as conceded --with mech --about <concern> --severity better|urgent
+     └─ rhx route.stone.set --stone test-stone \\
+          --as disputed --with mech --about <concern> --why <fulcrum-path>
+  3. rhx route.stone.set --stone test-stone --as absorbed --that mech
+
+{
+  "stone": "test-stone",
+  "slug": "mech",
+  "blockers": 1,
+  "pathTaken": ".reviews/peer/.taken.by_self.mech.md"
+}"
+`;
+
+exports[`assertAbsorptionIsAnswered given: [case4] the rendered refusals, whole when: [t2] the verdict was unreadable then: the bytes a driver reads are pinned 1`] = `
+"BadRequestError: answer mech before you absorb it
+
+an unreadable verdict (counted as 1 blocker) stands with no .taken.by_self.mech
+
+answer first, then dispose each concern, then absorb:
+  1. write .reviews/peer/.taken.by_self.mech.md
+     └─ one [REPAIR] or [REFUTE] per point
+  2. once per concern — an unreadable verdict (counted as 1 blocker):
+     ├─ rhx route.stone.set --stone test-stone \\
+     │    --as conceded --with mech --about <concern> --severity better|urgent
+     └─ rhx route.stone.set --stone test-stone \\
+          --as disputed --with mech --about <concern> --why <fulcrum-path>
+  3. rhx route.stone.set --stone test-stone --as absorbed --that mech
+
+{
+  "stone": "test-stone",
+  "slug": "mech",
+  "blockers": 1,
+  "pathTaken": ".reviews/peer/.taken.by_self.mech.md"
+}"
+`;

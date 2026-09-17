@@ -1,5 +1,14 @@
 # domain.term: contemplate
 
+## 🔴 .SUPERSEDED 2026-09-15 — `contemplate` → `absorb the feedback` (`S19` · `S20` · `F038`)
+
+the reviewer-grain act this term names — the `.taken` response to a peer's given — is renamed
+**`absorb the feedback`**, verb `absorbed` (CLI `--as absorbed`, op `setStoneAsFeedbackAbsorbed`,
+status `absorbed`). `contemplate`/`contemplated`/`uncontemplated` are now **forbidden synonyms** of
+the absorb family. this cluster is retained for the etymology and the dispute record; the live term
+is `absorb`. the composition — *absorb the feedback is gated on the absorption of each concern within
+it* — is `define.invariant.review.peer.absorb`.
+
 term.chosen   = contemplate
 term.kind     = verb                 # noun | verb | adj — reused across objects & operations
 term.boundary = review
@@ -33,10 +42,11 @@ re-runs and refuses your answer is owed a fresh `.taken` at its new iteration.
 
 ## .refs
 where the term is declared / used, plus notable examples:
-- src/domain.operations/route/guard/review/peer/getRouteGuardReviewPeerContemplationStatus.ts   # reads the gate
-- src/domain.operations/route/guard/review/peer/getAllRouteGuardReviewPeersUncontemplated.ts     # the pure diff
-- src/domain.operations/route/guard/review/peer/getStoneGuardReviewPeerUncontemplatedUnforgiven.ts  # owed AND un-forgiven
-- src/domain.operations/route/stones/setStoneAsPassed.ts          # the contemplation gate that holds passage
+- src/domain.operations/route/guard/review/peer/getRouteGuardReviewPeerFeedbackAbsorptionStatus.ts   # reads the gate
+- src/domain.operations/route/guard/review/peer/getAllRouteGuardReviewPeersFeedbackUnabsorbed.ts     # the pure diff
+- src/domain.operations/route/guard/review/peer/getStoneGuardReviewPeerFeedbackUnabsorbedUnforgiven.ts  # owed AND un-forgiven
+- src/domain.operations/route/stones/setStoneAsFeedbackAbsorbed.ts   # the absorb op
+- src/domain.operations/route/stones/setStoneAsPassed.ts          # the absorb gate that holds passage
 
 ## .reason
 see the ref-level cluster beside this choice:

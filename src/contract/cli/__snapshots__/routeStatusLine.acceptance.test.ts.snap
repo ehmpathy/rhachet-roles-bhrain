@@ -86,7 +86,7 @@ exports[`routeStatusLine.acceptance given: [case11] a bound route with an exhaus
 "
 `;
 
-exports[`routeStatusLine.acceptance given: [case12] a bound route blocked on uncontemplated peer review when: [t0] the renderer runs with that cwd then: its output matches the uncontemplated snapshot: route.status.line - peer.uncontemplated 1`] = `
+exports[`routeStatusLine.acceptance given: [case12] a bound route blocked on feedbackUnabsorbed peer review when: [t0] the renderer runs with that cwd then: its output matches the feedbackUnabsorbed snapshot: route.status.line - peer.feedbackUnabsorbed 1`] = `
 "🗿 1.vision, review.peer, l1@i002 🔍
 "
 `;

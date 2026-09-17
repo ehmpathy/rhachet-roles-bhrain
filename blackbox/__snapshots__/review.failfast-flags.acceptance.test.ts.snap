@@ -1,0 +1,19 @@
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
+
+exports[`review.failfast-flags.acceptance given: [case1] an unrecognized flag is passed when: [t0] review skill invoked with a flag it does not know then: the full stderr body is pinned 1`] = `
+"error: unrecognized flag(s): --bogus-flag
+run with --help for the full flag list
+"
+`;
+
+exports[`review.failfast-flags.acceptance given: [case2] --paths-with is given with no glob when: [t0] review skill invoked with a bare --paths-with then: the full stderr body is pinned 1`] = `
+"error: --paths-with requires a glob pattern
+run with --help for usage
+"
+`;
+
+exports[`review.failfast-flags.acceptance given: [case3] --paths-wout is given with no glob when: [t0] review skill invoked with a bare --paths-wout then: the full stderr body is pinned 1`] = `
+"error: --paths-wout requires a glob pattern
+run with --help for usage
+"
+`;

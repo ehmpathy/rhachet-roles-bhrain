@@ -37,7 +37,7 @@ describe('computeStoneGuardOverruleTarget', () => {
   });
 
   given(
-    '[case3] a leveled stone, no active level, an owed contemplation',
+    '[case3] a leveled stone, no active level, an owed feedbackAbsorption',
     () => {
       when('[t0] activeLevel null, owedLevels [3]', () => {
         const result = computeStoneGuardOverruleTarget({
@@ -45,9 +45,12 @@ describe('computeStoneGuardOverruleTarget', () => {
           owedLevels: [3],
         });
 
-        then('hasTarget is true (the owed contemplation is the target)', () => {
-          expect(result.hasTarget).toEqual(true);
-        });
+        then(
+          'hasTarget is true (the owed feedbackAbsorption is the target)',
+          () => {
+            expect(result.hasTarget).toEqual(true);
+          },
+        );
         then('levelToOverrule is the owed level', () => {
           expect(result.levelToOverrule).toEqual(3);
         });
@@ -72,7 +75,7 @@ describe('computeStoneGuardOverruleTarget', () => {
   );
 
   given('[case5] a merit-clear leveled stone (no target left)', () => {
-    when('[t0] activeLevel null, no owed contemplation', () => {
+    when('[t0] activeLevel null, no owed feedbackAbsorption', () => {
       const result = computeStoneGuardOverruleTarget({
         activeLevel: null,
         owedLevels: [],

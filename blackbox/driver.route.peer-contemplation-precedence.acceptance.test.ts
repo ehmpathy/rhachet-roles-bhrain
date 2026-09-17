@@ -14,7 +14,7 @@ const ASSETS_DIR = path.join(__dirname, '.test/assets/route-peer-precedence');
 /**
  * .what = acceptance test for concurrent multi-blocker precedence (usecase 13)
  * .why = a stone can be BOTH malfunctioned (a reviewer's verdict is
- *        unreadable) AND uncontemplated (a reviewer holds an unanswered
+ *        unreadable) AND givenUnabsorbed (a reviewer holds an unanswered
  *        blocker) at once. the persisted blocker holds ONE value, so the
  *        gate ORDER decides which the driver sees. the malfunction halt
  *        must outrank the contemplation prompt — a driver cannot
@@ -26,7 +26,7 @@ const ASSETS_DIR = path.join(__dirname, '.test/assets/route-peer-precedence');
  *   - two L1 reviewers, each at budget 3
  *   - "malfunctioner" emits no numeric counts → its verdict is unreadable
  *     → malfunction (the guard cannot infer zero)
- *   - "uncontemplated" holds 1 blocker → a live, unanswered blocker
+ *   - "givenUnabsorbed" holds 1 blocker → a live, unanswered blocker
  *   - the malfunction gate fires unconditionally before the contemplation
  *     gate, so the contemplation prompt is suppressed
  */

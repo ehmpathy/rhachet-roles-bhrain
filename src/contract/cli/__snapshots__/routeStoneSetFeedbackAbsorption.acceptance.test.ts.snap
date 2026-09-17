@@ -1,0 +1,747 @@
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
+
+exports[`routeStoneSet.feedbackAbsorption.acceptance given: [case1] a bound route whose one peer reviewer always hands back a blocker when: [t0] the first \`--as passed\`, with no debt owed then: matches snapshot — the judge evidence, as a driver reads it: route.stone.set - judge stderr, refusal evidence 1`] = `
+"
+🪶 judge 1
+   └─ stdout
+      ├─
+      │
+      │  passed: false
+      │  reason: blockers found
+      │
+      └─
+"
+`;
+
+exports[`routeStoneSet.feedbackAbsorption.acceptance given: [case1] a bound route whose one peer reviewer always hands back a blocker when: [t0] the first \`--as passed\`, with no debt owed then: matches snapshot — the round that was allowed to run: route.stone.set - round ran, judge refused 1`] = `
+"🦉 the way speaks for itself
+   │
+   ├─ r1: counter (l1, 1/5)
+   │   ├─ rejected <elapsed>
+   │   ├─ 1 blocker 🔴
+   │   ├─ 0 nitpicks ✓
+   │   ├─ given: .reviews/peer/1.test._.review.i001.<hash>.r001._.given.by_peer.counter.md
+   │   └─ taken: .reviews/peer/1.test._.review.i001.<hash>.r001._.taken.by_self.counter.md
+   │
+   └─ ✗ judge.1 - blocked <elapsed>
+
+🗿 route.stone.set
+   ├─ stone = 1.test
+   ├─ passage = blocked
+   ├─ reason = blockers found
+   └─ guard
+      ├─ artifacts
+      │   └─ $route/1.test*.md
+      ├─ reviews
+      │   └─ r1: counter (l1, 1/5)
+      │       ├─ rejected <elapsed>
+      │       ├─ 1 blocker 🔴
+      │       ├─ 0 nitpicks ✓
+      │       ├─ given: .reviews/peer/1.test._.review.i001.<hash>.r001._.given.by_peer.counter.md
+      │       └─ taken: .reviews/peer/1.test._.review.i001.<hash>.r001._.taken.by_self.counter.md
+      └─ judges
+          └─ j1: echo "passed: false\\nreason: blockers found"
+              ├─ finished <elapsed> ✗
+              └─ reason: blockers found
+"
+`;
+
+exports[`routeStoneSet.feedbackAbsorption.acceptance given: [case1] a bound route whose one peer reviewer always hands back a blocker when: [t1] the driver edits the artifact and re-runs, with no answer written then: matches snapshot — the carried-unanswered halt, as a driver reads it: route.stone.set - entrance halt, debt carried 1`] = `
+"🦉 the way speaks for itself
+
+🦉 the reviewers await your reply
+
+🌕 lets respond
+   │
+   ├─ review.peer 1/1
+   │  ├─ slug = counter
+   │  ├─ verdict = 1 blocker, 0 nitpicks
+   │  ├─ absorb from
+   │  │  └─ .reviews/peer/1.test._.review.i001.<hash>.r001._.given.by_peer.counter.md
+   │  └─ articulate into
+   │     └─ .reviews/peer/1.test._.review.i001.<hash>.r001._.taken.by_self.counter.md
+   │
+   └─ when you've absorbed this reviewer, run
+      └─ rhx route.stone.set --stone 1.test --as absorbed --that counter
+"
+`;
+
+exports[`routeStoneSet.feedbackAbsorption.acceptance given: [case1] a bound route whose one peer reviewer always hands back a blocker when: [t1] the driver edits the artifact and re-runs, with no answer written then: matches snapshot — the halt leaves stderr empty: route.stone.set - entrance halt, debt carried, stderr 1`] = `""`;
+
+exports[`routeStoneSet.feedbackAbsorption.acceptance given: [case1] a bound route whose one peer reviewer always hands back a blocker when: [t2] the driver runs \`--as absorbed\` with no \`.taken\` written then: matches snapshot — the absent-guidance halt at the cli grain: route.stone.set - absorbed refused, taken absent 1`] = `
+"🦉 the way speaks for itself
+
+✋ feedbackAbsorption absent for reviewer counter
+   ├─ the guard looked for your response here, and did not find it
+   │  └─ .reviews/peer/1.test._.review.i001.<hash>.r001._.taken.by_self.counter.md
+   │
+   ├─ why
+   │  └─ --as absorbed is a promise that you engaged each
+   │     concern. the .taken file IS that engagement — absent
+   │     it, there is no ground to stand on.
+   │
+   └─ what to do
+      ├─ absorb from
+      │  └─ .reviews/peer/1.test._.review.i001.<hash>.r001._.given.by_peer.counter.md
+      └─ articulate into
+         └─ .reviews/peer/1.test._.review.i001.<hash>.r001._.taken.by_self.counter.md
+"
+`;
+
+exports[`routeStoneSet.feedbackAbsorption.acceptance given: [case1] a bound route whose one peer reviewer always hands back a blocker when: [t3] the driver answers, then re-runs — and meets the STANCE gate then: matches snapshot — the composition-gate refusal: route.stone.set - composition gate refusal 1`] = `
+"error: BadRequestError: absorb each concern before you absorb counter's feedback
+
+1 concern of counter stand un-absorbed:
+  - blocker.1
+
+absorb each, THEN absorb the feedback:
+  1. per concern — concede it (the default), or dispute it:
+     rhx route.stone.set --stone 1.test \\
+       --as conceded --with counter --about <concern> --severity better|urgent
+     rhx route.stone.set --stone 1.test \\
+       --as disputed --with counter --about <concern> --why <fulcrum-path>
+  2. then absorb the feedback:
+     rhx route.stone.set --stone 1.test --as absorbed --that counter
+
+{
+  "stone": "1.test",
+  "slug": "counter",
+  "undeclared": [
+    "blocker.1"
+  ]
+}
+"
+`;
+
+exports[`routeStoneSet.feedbackAbsorption.acceptance given: [case1] a bound route whose one peer reviewer always hands back a blocker when: [t3] the driver answers, then re-runs — and meets the STANCE gate then: matches snapshot — the stance-gate halt, as a driver reads it: route.stone.set - stance gate, concern undeclared 1`] = `
+"🦉 the way speaks for itself
+
+🦉 each concern awaits your absorption
+
+🌕 lets declare
+   │
+   ├─ review.peer 1/1
+   │  ├─ slug = counter
+   │  └─ undeclared
+   │     └─ blocker.1
+   │
+   ├─ why
+   │  └─ a budget ends a disagreement when it runs out, not by a verdict on
+   │     who is right. a stance is that verdict: you own each concern — fix
+   │     it, or hold that it is fine to continue — and it goes on record
+   │     where a council can rule on it.
+   │
+   ├─ what to do — concede, by default
+   │  └─ the reviewer is right and you will fix it. that is the ordinary
+   │     answer, and the sequence is: concede → fix → budget → re-arrive.
+   │
+   │     rhx route.stone.set --stone 1.test \\
+   │       --as conceded --with <slug> --about <concern> \\
+   │       --severity better|urgent
+   │
+   └─ what to do — dispute, to escalate
+      └─ this ONE concern is fine to continue, and you want a human council
+         to rule on it at the close. it costs a fulcrum entry you author and
+         a human's attention, so reach for it where the concern is severe or
+         recurs — never as the default.
+
+         rhx route.stone.set --stone 1.test \\
+           --as disputed --with <slug> --about <concern> \\
+           --why .fulcrums/inventory.of=fulcrums.case=F00N-<slug>.md
+
+         1 concern stands undeclared — one command each.
+"
+`;
+
+exports[`routeStoneSet.feedbackAbsorption.acceptance given: [case1] a bound route whose one peer reviewer always hands back a blocker when: [t3b] the driver concedes the blocker, then re-runs then: matches snapshot — the round that ran once the stance was declared: route.stone.set - stance declared, round ran 1`] = `
+"🦉 the way speaks for itself
+   │
+   ├─ r1: counter (l1, 2/5)
+   │   ├─ rejected <elapsed>
+   │   ├─ 1 blocker 🔴
+   │   ├─ 0 nitpicks ✓
+   │   ├─ given: .reviews/peer/1.test._.review.i002.<hash>.r001._.given.by_peer.counter.md
+   │   └─ taken: .reviews/peer/1.test._.review.i002.<hash>.r001._.taken.by_self.counter.md
+   │
+   └─ ✗ judge.1 - blocked <elapsed>
+
+🗿 route.stone.set
+   ├─ stone = 1.test
+   ├─ passage = blocked
+   ├─ reason = blockers found
+   └─ guard
+      ├─ artifacts
+      │   └─ $route/1.test*.md
+      ├─ reviews
+      │   └─ r1: counter (l1, 2/5)
+      │       ├─ rejected <elapsed>
+      │       ├─ 1 blocker 🔴
+      │       ├─ 0 nitpicks ✓
+      │       ├─ given: .reviews/peer/1.test._.review.i002.<hash>.r001._.given.by_peer.counter.md
+      │       └─ taken: .reviews/peer/1.test._.review.i002.<hash>.r001._.taken.by_self.counter.md
+      └─ judges
+          └─ j1: echo "passed: false\\nreason: blockers found"
+              ├─ finished <elapsed> ✗
+              └─ reason: blockers found
+"
+`;
+
+exports[`routeStoneSet.feedbackAbsorption.acceptance given: [case1] a bound route whose one peer reviewer always hands back a blocker when: [t4] the driver acks again, but the reviewer has since spoken anew then: matches snapshot — the stale-guidance halt at the cli grain: route.stone.set - absorbed refused, taken stale 1`] = `
+"🦉 the way speaks for itself
+
+✋ feedbackAbsorption stale for reviewer counter
+
+   ├─ your response answers an earlier round of feedback from this reviewer
+   │
+   ├─ why
+   │  └─ the reviewer has spoken again. your prior response still
+   │     stands for what it answered — this is NEW feedback.
+   │
+   └─ what to do — absorb the feedback that is live
+      ├─ absorb from
+      │  └─ .reviews/peer/1.test._.review.i002.<hash>.r001._.given.by_peer.counter.md
+      └─ articulate into
+         └─ .reviews/peer/1.test._.review.i002.<hash>.r001._.taken.by_self.counter.md
+"
+`;
+
+exports[`routeStoneSet.feedbackAbsorption.acceptance given: [case2] a bound route whose one peer reviewer raises no blockers when: [t0] a round runs, then \`--as absorbed --that cleanly\` then: matches snapshot — the no-blockers ack at the cli grain: route.stone.set - absorbed ack, no blockers 1`] = `
+"🦉 the way speaks for itself
+
+🦉 absorbed: cleanly
+   └─ this reviewer raised no blockers — no concern to absorb, no response needed
+"
+`;
+
+exports[`routeStoneSet.feedbackAbsorption.acceptance given: [case2] a bound route whose one peer reviewer raises no blockers when: [t0] a round runs, then \`--as absorbed --that cleanly\` then: matches snapshot — the round that ran, nitpick-only reviewer: route.stone.set - round ran, nitpick-only reviewer approved 1`] = `
+"🦉 the way speaks for itself
+   │
+   ├─ r1: cleanly (l1, 1/5)
+   │   ├─ rejected <elapsed>
+   │   ├─ 0 blockers ✓
+   │   ├─ 1 nitpick 🟠
+   │   ├─ given: .reviews/peer/1.test._.review.i001.<hash>.r001._.given.by_peer.cleanly.md
+   │   └─ taken: .reviews/peer/1.test._.review.i001.<hash>.r001._.taken.by_self.cleanly.md
+   │
+   └─ ✗ judge.1 - blocked <elapsed>
+
+🗿 route.stone.set
+   ├─ stone = 1.test
+   ├─ passage = blocked
+   ├─ reason = a nitpick stands unresolved
+   └─ guard
+      ├─ artifacts
+      │   └─ $route/1.test*.md
+      ├─ reviews
+      │   └─ r1: cleanly (l1, 1/5)
+      │       ├─ rejected <elapsed>
+      │       ├─ 0 blockers ✓
+      │       ├─ 1 nitpick 🟠
+      │       ├─ given: .reviews/peer/1.test._.review.i001.<hash>.r001._.given.by_peer.cleanly.md
+      │       └─ taken: .reviews/peer/1.test._.review.i001.<hash>.r001._.taken.by_self.cleanly.md
+      └─ judges
+          └─ j1: echo "passed: false\\nreason: a nitpick stands unresolved"
+              ├─ finished <elapsed> ✗
+              └─ reason: a nitpick stands unresolved
+"
+`;
+
+exports[`routeStoneSet.feedbackAbsorption.acceptance given: [case3] a \`--that\` slug that names no reviewer when: [t0] \`--as absorbed --that ghost\` then: matches snapshot — the invalid-slug refusal, both streams: route.stone.set - invalid slug, stderr 1`] = `
+"error: BadRequestError: invalid peer reviewer slug: "ghost". valid options: counter
+
+{
+  "stone": "1.test",
+  "slug": "ghost",
+  "validSlugs": [
+    "counter"
+  ]
+}
+"
+`;
+
+exports[`routeStoneSet.feedbackAbsorption.acceptance given: [case3] a \`--that\` slug that names no reviewer when: [t0] \`--as absorbed --that ghost\` then: matches snapshot — the invalid-slug refusal, both streams: route.stone.set - invalid slug, stdout 1`] = `
+"🦉 the way speaks for itself
+"
+`;
+
+exports[`routeStoneSet.feedbackAbsorption.acceptance given: [case4] a reviewer with no critique and a judge that passes when: [t0] \`--as passed\` with every gate satisfied then: matches snapshot — the success output a driver reads: route.stone.set - passage allowed 1`] = `
+"🦉 the way speaks for itself
+   │
+   ├─ r1: cleanly (l1, 1/5)
+   │   ├─ approved <elapsed>
+   │   ├─ 0 blockers ✓
+   │   ├─ 0 nitpicks ✓
+   │   ├─ given: .reviews/peer/1.test._.review.i001.<hash>.r001._.given.by_peer.cleanly.md
+   │   └─ taken: .reviews/peer/1.test._.review.i001.<hash>.r001._.taken.by_self.cleanly.md
+   │
+   └─ ✓ judge.1 - allowed <elapsed>
+
+🗿 route.stone.set
+   ├─ stone = 1.test
+   ├─ passage = allowed
+   ├─ guard
+   │  ├─ artifacts
+   │  │   └─ $route/1.test*.md
+   │  ├─ reviews
+   │  │   └─ r1: cleanly (l1, 1/5)
+   │  │       ├─ approved <elapsed>
+   │  │       ├─ 0 blockers ✓
+   │  │       ├─ 0 nitpicks ✓
+   │  │       ├─ given: .reviews/peer/1.test._.review.i001.<hash>.r001._.given.by_peer.cleanly.md
+   │  │       └─ taken: .reviews/peer/1.test._.review.i001.<hash>.r001._.taken.by_self.cleanly.md
+   │  └─ judges
+   │      └─ j1: echo "passed: true\\nreason: no blockers found"
+   │          └─ finished <elapsed> ✓
+   │
+   └─ the way continues, run
+      └─ rhx route.drive
+"
+`;
+
+exports[`routeStoneSet.feedbackAbsorption.acceptance given: [case5] the same gate, reached by the \`--as arrived\` spelling when: [t0] the first \`--as arrived\`, with no debt owed then: matches snapshot — step 1, the round with no debt owed: route.stone.set - arrived alias, gate open, no debt owed 1`] = `
+"🦉 the way speaks for itself
+   │
+   ├─ r1: counter (l1, 1/5)
+   │   ├─ rejected <elapsed>
+   │   ├─ 1 blocker 🔴
+   │   ├─ 0 nitpicks ✓
+   │   ├─ given: .reviews/peer/1.test._.review.i001.<hash>.r001._.given.by_peer.counter.md
+   │   └─ taken: .reviews/peer/1.test._.review.i001.<hash>.r001._.taken.by_self.counter.md
+   │
+   └─ ✗ judge.1 - blocked <elapsed>
+
+🗿 route.stone.set
+   ├─ stone = 1.test
+   ├─ passage = blocked
+   ├─ reason = blockers found
+   └─ guard
+      ├─ artifacts
+      │   └─ $route/1.test*.md
+      ├─ reviews
+      │   └─ r1: counter (l1, 1/5)
+      │       ├─ rejected <elapsed>
+      │       ├─ 1 blocker 🔴
+      │       ├─ 0 nitpicks ✓
+      │       ├─ given: .reviews/peer/1.test._.review.i001.<hash>.r001._.given.by_peer.counter.md
+      │       └─ taken: .reviews/peer/1.test._.review.i001.<hash>.r001._.taken.by_self.counter.md
+      └─ judges
+          └─ j1: echo "passed: false\\nreason: blockers found"
+              ├─ finished <elapsed> ✗
+              └─ reason: blockers found
+"
+`;
+
+exports[`routeStoneSet.feedbackAbsorption.acceptance given: [case5] the same gate, reached by the \`--as arrived\` spelling when: [t1] a second \`--as arrived\`, with the critique unanswered then: matches snapshot — the entrance halt under the \`arrived\` spelling: route.stone.set - entrance halt, via arrived 1`] = `
+"🦉 the way speaks for itself
+
+🦉 the reviewers await your reply
+
+🌕 lets respond
+   │
+   ├─ review.peer 1/1
+   │  ├─ slug = counter
+   │  ├─ verdict = 1 blocker, 0 nitpicks
+   │  ├─ absorb from
+   │  │  └─ .reviews/peer/1.test._.review.i001.<hash>.r001._.given.by_peer.counter.md
+   │  └─ articulate into
+   │     └─ .reviews/peer/1.test._.review.i001.<hash>.r001._.taken.by_self.counter.md
+   │
+   └─ when you've absorbed this reviewer, run
+      └─ rhx route.stone.set --stone 1.test --as absorbed --that counter
+"
+`;
+
+exports[`routeStoneSet.feedbackAbsorption.acceptance given: [case6] a reviewer whose budget runs out with a blocker owed when: [t0] the one round the budget affords then: matches snapshot — step 1, the one round the budget affords: route.stone.set - budget 1, the single round, rejected not exhausted 1`] = `
+"🦉 the way speaks for itself
+   │
+   ├─ r1: limited (l1, 1/1)
+   │   ├─ rejected <elapsed>
+   │   ├─ 1 blocker 🔴
+   │   ├─ 0 nitpicks ✓
+   │   ├─ given: .reviews/peer/1.test._.review.i001.<hash>.r001._.given.by_peer.limited.md
+   │   └─ taken: .reviews/peer/1.test._.review.i001.<hash>.r001._.taken.by_self.limited.md
+   │
+   └─ ✗ judge.1 - blocked <elapsed>
+
+🗿 route.stone.set
+   ├─ stone = 1.test
+   ├─ passage = blocked
+   ├─ reason = blockers found
+   └─ guard
+      ├─ artifacts
+      │   └─ $route/1.test*.md
+      ├─ reviews
+      │   └─ r1: limited (l1, 1/1)
+      │       ├─ rejected <elapsed>
+      │       ├─ 1 blocker 🔴
+      │       ├─ 0 nitpicks ✓
+      │       ├─ given: .reviews/peer/1.test._.review.i001.<hash>.r001._.given.by_peer.limited.md
+      │       └─ taken: .reviews/peer/1.test._.review.i001.<hash>.r001._.taken.by_self.limited.md
+      └─ judges
+          └─ j1: echo "passed: false\\nreason: blockers found"
+              ├─ finished <elapsed> ✗
+              └─ reason: blockers found
+"
+`;
+
+exports[`routeStoneSet.feedbackAbsorption.acceptance given: [case6] a reviewer whose budget runs out with a blocker owed when: [t1] the artifact moves while the blocker sits unanswered then: matches snapshot — the halt that outlived the reviewer, at cli grain: route.stone.set - entrance halt, debt outlives exhaustion 1`] = `
+"🦉 the way speaks for itself
+
+🦉 the reviewers await your reply
+
+🌕 lets respond
+   │
+   ├─ review.peer 1/1
+   │  ├─ slug = limited
+   │  ├─ verdict = 1 blocker, 0 nitpicks
+   │  ├─ absorb from
+   │  │  └─ .reviews/peer/1.test._.review.i001.<hash>.r001._.given.by_peer.limited.md
+   │  └─ articulate into
+   │     └─ .reviews/peer/1.test._.review.i001.<hash>.r001._.taken.by_self.limited.md
+   │
+   └─ when you've absorbed this reviewer, run
+      └─ rhx route.stone.set --stone 1.test --as absorbed --that limited
+"
+`;
+
+exports[`routeStoneSet.feedbackAbsorption.acceptance given: [case6] a reviewer whose budget runs out with a blocker owed when: [t2] the driver answers, and now meets the STANCE gate then: matches snapshot — the stance gate, met even at a spent budget: route.stone.set - stance gate at spent budget 1`] = `
+"🦉 the way speaks for itself
+
+🦉 each concern awaits your absorption
+
+🌕 lets declare
+   │
+   ├─ review.peer 1/1
+   │  ├─ slug = limited
+   │  └─ undeclared
+   │     └─ blocker.1
+   │
+   ├─ why
+   │  └─ a budget ends a disagreement when it runs out, not by a verdict on
+   │     who is right. a stance is that verdict: you own each concern — fix
+   │     it, or hold that it is fine to continue — and it goes on record
+   │     where a council can rule on it.
+   │
+   ├─ what to do — concede, by default
+   │  └─ the reviewer is right and you will fix it. that is the ordinary
+   │     answer, and the sequence is: concede → fix → budget → re-arrive.
+   │
+   │     rhx route.stone.set --stone 1.test \\
+   │       --as conceded --with <slug> --about <concern> \\
+   │       --severity better|urgent
+   │
+   └─ what to do — dispute, to escalate
+      └─ this ONE concern is fine to continue, and you want a human council
+         to rule on it at the close. it costs a fulcrum entry you author and
+         a human's attention, so reach for it where the concern is severe or
+         recurs — never as the default.
+
+         rhx route.stone.set --stone 1.test \\
+           --as disputed --with <slug> --about <concern> \\
+           --why .fulcrums/inventory.of=fulcrums.case=F00N-<slug>.md
+
+         1 concern stands undeclared — one command each.
+"
+`;
+
+exports[`routeStoneSet.feedbackAbsorption.acceptance given: [case6] a reviewer whose budget runs out with a blocker owed when: [t2b] the driver concedes URGENT, and now meets the spent budget then: matches snapshot — the exhaustion tree and the levers it names: route.stone.set - exhausted, options tree 1`] = `
+"🦉 the way speaks for itself
+   │
+   ├─ r1: limited (l1, 1/1)
+   │   ├─ exhausted 🌙, cached
+   │   ├─ terminal — does not block higher levels
+   │   ├─ 1 blocker 🔴
+   │   ├─ 0 nitpicks ✓
+   │   ├─ given: .reviews/peer/1.test._.review.i001.<hash>.r001._.given.by_peer.limited.md
+   │   └─ taken: .reviews/peer/1.test._.review.i001.<hash>.r001._.taken.by_self.limited.md
+   │
+   └─ halted: peer reviewer budget exhausted
+
+🗿 route.stone.set
+   ├─ stone = 1.test
+   ├─ passage = blocked
+   ├─ reason = you conceded — the round to confirm your fix needs more budget
+   │  └─ 🟡 an urgent concession stands — its harm ships if unfixed, so this round is owed a human's grant
+   ├─ options
+   │  ├─ increase budget — yours to spend
+   │  │  └─ rhx route.guard.budget --for review --add N --peer limited --stone 1.test
+   │  └─ approve as-is — a human must grant
+   │     └─ rhx route.stone.set --stone 1.test --as approved
+   └─ guard
+      ├─ artifacts
+      │   └─ $route/1.test*.md
+      └─ reviews
+          └─ r1: limited (l1, 1/1)
+              ├─ exhausted 🌙, cached
+              ├─ terminal — does not block higher levels
+              ├─ 1 blocker 🔴
+              ├─ 0 nitpicks ✓
+              ├─ given: .reviews/peer/1.test._.review.i001.<hash>.r001._.given.by_peer.limited.md
+              └─ taken: .reviews/peer/1.test._.review.i001.<hash>.r001._.taken.by_self.limited.md
+"
+`;
+
+exports[`routeStoneSet.feedbackAbsorption.acceptance given: [case7] a reviewer retired from the config after it spoke when: [t0] \`departed\` speaks, then is removed from the guard then: matches snapshot — the retired-reviewer halt, at the cli grain: route.stone.set - entrance halt, reviewer retired 1`] = `
+"🦉 the way speaks for itself
+
+🦉 the reviewers await your reply
+
+🌕 lets respond
+   │
+   ├─ review.peer 1/1
+   │  ├─ slug = departed
+   │  ├─ status = retired from the guard config
+   │  ├─ verdict = 1 blocker, 0 nitpicks
+   │  ├─ absorb from
+   │  │  └─ .reviews/peer/1.test._.review.i001.<hash>.r001._.given.by_peer.departed.md
+   │  └─ articulate into
+   │     └─ .reviews/peer/1.test._.review.i001.<hash>.r001._.taken.by_self.departed.md
+   │
+   ├─ why a retired reviewer still awaits
+   │  └─ it spoke, and was then removed from the guard config. what it said
+   │     was never answered, and a debt is keyed to the reviewer rather than
+   │     to the artifact, so no edit to the artifact can clear it.
+   │
+   ├─ what to do — answer the retired reviewer
+   │  └─ answer it as you would any other — write the .taken above. it will
+   │     not speak again, so your answer is what discharges it.
+   │
+   └─ when you've absorbed this reviewer, run
+      └─ rhx route.stone.set --stone 1.test --as absorbed --that departed
+"
+`;
+
+exports[`routeStoneSet.feedbackAbsorption.acceptance given: [case7] a reviewer retired from the config after it spoke when: [t1] the driver types the command the guard just printed then: matches snapshot — the retired-slug guidance, at the cli grain: route.stone.set - absorbed guidance, reviewer retired 1`] = `
+"🦉 the way speaks for itself
+
+✋ feedbackAbsorption absent for reviewer departed
+   ├─ the guard looked for your response here, and did not find it
+   │  └─ .reviews/peer/1.test._.review.i001.<hash>.r001._.taken.by_self.departed.md
+   │
+   ├─ why
+   │  └─ --as absorbed is a promise that you engaged each
+   │     concern. the .taken file IS that engagement — absent
+   │     it, there is no ground to stand on.
+   │
+   └─ what to do
+      ├─ absorb from
+      │  └─ .reviews/peer/1.test._.review.i001.<hash>.r001._.given.by_peer.departed.md
+      └─ articulate into
+         └─ .reviews/peer/1.test._.review.i001.<hash>.r001._.taken.by_self.departed.md
+"
+`;
+
+exports[`routeStoneSet.feedbackAbsorption.acceptance given: [case7] a reviewer retired from the config after it spoke when: [t2] the driver answers the reviewer that left then: matches snapshot — the composition-gate refusal, reviewer retired: route.stone.set - composition gate refusal, reviewer retired 1`] = `
+"error: BadRequestError: absorb each concern before you absorb departed's feedback
+
+1 concern of departed stand un-absorbed:
+  - blocker.1
+
+absorb each, THEN absorb the feedback:
+  1. per concern — concede it (the default), or dispute it:
+     rhx route.stone.set --stone 1.test \\
+       --as conceded --with departed --about <concern> --severity better|urgent
+     rhx route.stone.set --stone 1.test \\
+       --as disputed --with departed --about <concern> --why <fulcrum-path>
+  2. then absorb the feedback:
+     rhx route.stone.set --stone 1.test --as absorbed --that departed
+
+{
+  "stone": "1.test",
+  "slug": "departed",
+  "undeclared": [
+    "blocker.1"
+  ]
+}
+"
+`;
+
+exports[`routeStoneSet.feedbackAbsorption.acceptance given: [case7] a reviewer retired from the config after it spoke when: [t3] the answered debt no longer holds the door then: but the STANCE gate now halts on the retired reviewer’s undeclared concern: route.stone.set - after retired ack, the stance gate halts on the undeclared concern 1`] = `
+"🦉 the way speaks for itself
+
+🦉 each concern awaits your absorption
+
+🌕 lets declare
+   │
+   ├─ review.peer 1/1
+   │  ├─ slug = departed
+   │  └─ undeclared
+   │     └─ blocker.1
+   │
+   ├─ why
+   │  └─ a budget ends a disagreement when it runs out, not by a verdict on
+   │     who is right. a stance is that verdict: you own each concern — fix
+   │     it, or hold that it is fine to continue — and it goes on record
+   │     where a council can rule on it.
+   │
+   ├─ what to do — concede, by default
+   │  └─ the reviewer is right and you will fix it. that is the ordinary
+   │     answer, and the sequence is: concede → fix → budget → re-arrive.
+   │
+   │     rhx route.stone.set --stone 1.test \\
+   │       --as conceded --with <slug> --about <concern> \\
+   │       --severity better|urgent
+   │
+   └─ what to do — dispute, to escalate
+      └─ this ONE concern is fine to continue, and you want a human council
+         to rule on it at the close. it costs a fulcrum entry you author and
+         a human's attention, so reach for it where the concern is severe or
+         recurs — never as the default.
+
+         rhx route.stone.set --stone 1.test \\
+           --as disputed --with <slug> --about <concern> \\
+           --why .fulcrums/inventory.of=fulcrums.case=F00N-<slug>.md
+
+         1 concern stands undeclared — one command each.
+"
+`;
+
+exports[`routeStoneSet.feedbackAbsorption.acceptance given: [case8] a reviewer whose given carries no numeric count when: [t0] the round runs, and the driver knocks again then: matches snapshot — the round that ran, reviewer promoted to malfunction: route.stone.set - round ran, unreadable verdict promoted to malfunction 1`] = `
+"🦉 the way speaks for itself
+   │
+   ├─ r1: mumbles (l1, 1/5)
+   │   ├─ malfunction 💥
+   │   ├─ terminal — does not block higher levels
+   │   ├─ given: .reviews/peer/1.test._.review.i001.<hash>.r001._.given.by_peer.mumbles.md
+   │   └─ taken: .reviews/peer/1.test._.review.i001.<hash>.r001._.taken.by_self.mumbles.md
+   │
+   └─ ✗ judge.1 - blocked <elapsed>
+
+🗿 route.stone.set
+   ├─ stone = 1.test
+   ├─ passage = malfunction
+   ├─ reason = reviewer or judge malfunctioned
+   ├─ options
+   │  ├─ overrule the malfunction — a human must grant
+   │  │  └─ rhx route.stone.set --stone 1.test --as overruled
+   │  └─ or fix the reviewer, then retry
+   └─ guard
+      ├─ artifacts
+      │   └─ $route/1.test*.md
+      ├─ reviews
+      │   └─ r1: mumbles (l1, 0/5)
+      │       ├─ malfunction 💥
+      │       ├─ terminal — does not block higher levels
+      │       ├─ given: .reviews/peer/1.test._.review.i001.<hash>.r001._.given.by_peer.mumbles.md
+      │       └─ taken: .reviews/peer/1.test._.review.i001.<hash>.r001._.taken.by_self.mumbles.md
+      └─ judges
+          └─ j1: echo "passed: false\\nreason: blockers found"
+              ├─ finished <elapsed> ✗
+              └─ reason: blockers found
+"
+`;
+
+exports[`routeStoneSet.feedbackAbsorption.acceptance given: [case8] a reviewer whose given carries no numeric count when: [t0] the round runs, and the driver knocks again then: matches snapshot — the round that ran, stderr carries the judge refusal: route.stone.set - round ran, unreadable verdict, stderr 1`] = `
+"
+🔎 review 1
+   ├─ stdout
+   │  ├─
+   │  │
+   │  │  looks solid to me, ship it
+   │  │
+   │  └─
+   └─ passage blocked
+      ├─ blocked by malfunction
+      └─ exit code: 3 💥
+"
+`;
+
+exports[`routeStoneSet.feedbackAbsorption.acceptance given: [case8] a reviewer whose given carries no numeric count when: [t0] the round runs, and the driver knocks again then: matches snapshot — the unreadable halt, at the cli grain: route.stone.set - entrance halt, given unreadable 1`] = `
+"🦉 the way speaks for itself
+
+🦉 the reviewers await your reply
+
+🌕 lets respond
+   │
+   ├─ review.peer 1/1
+   │  ├─ slug = mumbles
+   │  ├─ verdict = unreadable — no numeric count found
+   │  ├─ absorb from
+   │  │  └─ .reviews/peer/1.test._.review.i001.<hash>.r001._.given.by_peer.mumbles.md
+   │  └─ articulate into
+   │     └─ .reviews/peer/1.test._.review.i001.<hash>.r001._.taken.by_self.mumbles.md
+   │
+   ├─ why an unreadable reviewer gates
+   │  └─ its output carried no numeric blocker or nitpick count, so no
+   │     verdict was ever seen. an absent verdict is not a clean one — to
+   │     score it 0/0 would read as an approval nobody granted, so it gates
+   │     instead.
+   │
+   ├─ what to do — name the malfunction
+   │  └─ read its .given above — the reviewer malfunctioned, and the .taken
+   │     is where you say so. do not hunt for a blocker in it; there is none
+   │     to find.
+   │
+   └─ when you've absorbed this reviewer, run
+      └─ rhx route.stone.set --stone 1.test --as absorbed --that mumbles
+"
+`;
+
+exports[`routeStoneSet.feedbackAbsorption.acceptance given: [case8] a reviewer whose given carries no numeric count when: [t1] the driver types the command the guard just printed then: matches snapshot — the unreadable-slug guidance, at the cli grain: route.stone.set - absorbed guidance, given unreadable 1`] = `
+"🦉 the way speaks for itself
+
+✋ feedbackAbsorption absent for reviewer mumbles
+   ├─ the guard looked for your response here, and did not find it
+   │  └─ .reviews/peer/1.test._.review.i001.<hash>.r001._.taken.by_self.mumbles.md
+   │
+   ├─ why
+   │  └─ --as absorbed is a promise that you engaged each
+   │     concern. the .taken file IS that engagement — absent
+   │     it, there is no ground to stand on.
+   │
+   └─ what to do
+      ├─ absorb from
+      │  └─ .reviews/peer/1.test._.review.i001.<hash>.r001._.given.by_peer.mumbles.md
+      └─ articulate into
+         └─ .reviews/peer/1.test._.review.i001.<hash>.r001._.taken.by_self.mumbles.md
+"
+`;
+
+exports[`routeStoneSet.feedbackAbsorption.acceptance given: [case8] a reviewer whose given carries no numeric count when: [t2] the same reviewer is then retired from the config then: matches snapshot — the stacked retired + unreadable halt, at the cli grain: route.stone.set - entrance halt, reviewer retired and given unreadable 1`] = `
+"🦉 the way speaks for itself
+
+🦉 the reviewers await your reply
+
+🌕 lets respond
+   │
+   ├─ review.peer 1/1
+   │  ├─ slug = mumbles
+   │  ├─ status = retired from the guard config
+   │  ├─ verdict = unreadable — no numeric count found
+   │  ├─ absorb from
+   │  │  └─ .reviews/peer/1.test._.review.i001.<hash>.r001._.given.by_peer.mumbles.md
+   │  └─ articulate into
+   │     └─ .reviews/peer/1.test._.review.i001.<hash>.r001._.taken.by_self.mumbles.md
+   │
+   ├─ why a retired reviewer still awaits
+   │  └─ it spoke, and was then removed from the guard config. what it said
+   │     was never answered, and a debt is keyed to the reviewer rather than
+   │     to the artifact, so no edit to the artifact can clear it.
+   │
+   ├─ what to do — answer the retired reviewer
+   │  └─ answer it as you would any other — write the .taken above. it will
+   │     not speak again, so your answer is what discharges it.
+   │
+   ├─ why an unreadable reviewer gates
+   │  └─ its output carried no numeric blocker or nitpick count, so no
+   │     verdict was ever seen. an absent verdict is not a clean one — to
+   │     score it 0/0 would read as an approval nobody granted, so it gates
+   │     instead.
+   │
+   ├─ what to do — name the malfunction
+   │  └─ read its .given above — the reviewer malfunctioned, and the .taken
+   │     is where you say so. do not hunt for a blocker in it; there is none
+   │     to find.
+   │
+   └─ when you've absorbed this reviewer, run
+      └─ rhx route.stone.set --stone 1.test --as absorbed --that mumbles
+"
+`;
+
+exports[`routeStoneSet.feedbackAbsorption.acceptance given: [case8] a reviewer whose given carries no numeric count when: [t3] the driver answers the reviewer it could not read then: matches snapshot — the unreadable-reviewer ack, at the cli grain: route.stone.set - absorbed ack, given unreadable 1`] = `
+"🦉 the way speaks for itself
+
+🦉 absorbed: mumbles
+   └─ your response is recorded — the reviewer will see it next round
+"
+`;

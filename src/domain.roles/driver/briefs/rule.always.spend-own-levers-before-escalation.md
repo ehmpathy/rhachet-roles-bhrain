@@ -10,6 +10,7 @@ the split, for the driver role:
 
 | lever | owner |
 |-------|-------|
+| 🔴 `rhx route.stone.set --as disputed --with <reviewer> --about <concern> --why <fulcrum>` — a real or repeated defect you DISAGREE with, answered and cited | **driver** |
 | `rhx route.guard.budget --for review --add N --stone <stone>` | **driver** |
 | 🔴 `rhx route.mutate.guard` — the stone's own `--paths-with`, `--conversation`, `level`, `budget` | **driver** |
 | a diagnosed reviewer malfunction (absent credential, bad glob, stale supply) | **driver** |
@@ -63,7 +64,7 @@ owner, act on your half.
 ## .budget is not scarce, and to treat it as scarce is the error
 
 `--add N` extends **every** reviewer on the stone at once (3 → 5 across all 11, in one call).
-budget exists so the contemplation loop can run to convergence — to hoard it is to end the
+budget exists so the absorb loop can run to convergence — to hoard it is to end the
 conversation early, which is the exact coast `rule.always.converge-to-terminal` forbids.
 
 🟡 **and exhaustion is often not what it looks like.** a reviewer spends a round to *raise* a

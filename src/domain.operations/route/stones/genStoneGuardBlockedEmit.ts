@@ -5,7 +5,7 @@ import { setStoneGuardBlockerReport } from '../drive/setStoneGuardBlockerReport'
 /**
  * .what = the shared tail for a setStoneAsPassed blocked return
  * .why = the blocker-report blocked branches (review.self, exhausted,
- *        uncontemplated, judge-fail) all persist a blocker report and then
+ *        feedbackUnabsorbed, judge-fail) all persist a blocker report and then
  *        return the same `{ passed: false, refs, emit }` shape. this centralizes
  *        that persist+return so a new blocked branch cannot drift from the shape.
  *

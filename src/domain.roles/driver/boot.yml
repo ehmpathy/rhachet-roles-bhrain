@@ -19,7 +19,33 @@ always:
       # counts it needs; the full walk is what a reader fetches when they doubt it — and
       # this file is where the provenance lives, since the source branch is unreachable
       - briefs/rule.forbid.unanswered-exits-from-a-blocker.example=the-28-iteration-stall.md
+      # the five words of the review conversation — reviewer · given · concern · stance · taken —
+      # and the cardinalities between them. ref because it answers a question a driver ASKS
+      # ("what is the difference between a stance and a taken?"), which is the dereference case
+      # exactly; the rules that FIRE at each moment already boot at say. it is the map a driver
+      # fetches once, early, and rarely re-opens
+      - briefs/howdoes.a-concern-travels-from-reviewer-to-absorption.md
+      # the INVARIANTS of the review system the driver drives within — the laws the
+      # engine holds true by construction, that the gates-map (say-level, below) and
+      # the always-rules both cite. they live UNDER the driver role (not role=any) so
+      # a driver boot actually holds them: a driver that cannot dereference its own
+      # system laws reads every cite as a phantom path. ref because a driver fetches
+      # one law ON DEMAND when a halt turns on it; the say-level gates-map is the
+      # entry point that names each and points down here
+      - briefs/define.invariant.review.peer.absorb.md
+      - briefs/define.invariant.review.peer.passage.md
+      - briefs/define.invariant.review.peer.exhausted.md
+      - briefs/define.invariant.review.peer.absorption.disputable-regardless-of-verdict.md
+      - briefs/define.invariant.review.peer.budget.urgent-earns-budget.md
+      - briefs/define.invariant.review.peer.judge.urgent-guides-the-budget-ask.md
     say:
+      # the map of the SYSTEM a driver operates within — the review gates in order,
+      # the invariant behind each, and what is required of the driver to clear it.
+      # say-level because a driver must HOLD the shape of the system it drives within,
+      # not fetch it: a driver that does not know the gates exist cannot read a halt,
+      # and the halt arrives unannounced. it names the six define.invariant.review.peer.*
+      # laws (ref, above) and points down into each for the depth
+      - briefs/howdoes.the-review-gates-you-drive-within.md
       # 🔴 the WHY under every rule below, promoted from ref on 2026-08-31.
       # a rule tells a driver WHAT to do, and cannot tell them what to do in a case
       # it does not enumerate — no rule enumerates every case. so a why held one
@@ -38,6 +64,14 @@ always:
       # because it fires at each re-arrival, and its absence reads to the reviewer
       # as no fix at all — which a driver then mis-diagnoses as a reviewer defect
       - briefs/rule.always.converge-with-reviewers.via-a-taken-per-point.md
+      # the ABSORB law — you have not absorbed a reviewer's feedback until you absorb
+      # each concern within it (one disposition per concern, disputed or conceded).
+      # say-level because it fires AT the halt: a driver who reads the response they
+      # already wrote as coverage of a concern they skipped seeks a passage the gate
+      # holds. it grounds define.invariant.review.peer.absorb — feedbackAbsorbed ⟺
+      # every concern absorbed — and merges the old per-reviewer .taken into the
+      # per-concern act, so the argument lives once (a fulcrum for a dispute)
+      - briefs/rule.always.absorb-every-concern.md
       # the FORBID twin of the two rules above — they say what to write and that every
       # point owes one; this says a blocker may not be left by any other door. say-level
       # because every forbidden exit is CHEAPER than the answer, so the cheap door is
@@ -52,6 +86,14 @@ always:
       # because the recognition test must fire AT the decision to re-arrive; a rule
       # that arrives after the fifth round meets a driver who already spent them
       - briefs/rule.always.raise-a-blocker-a-taken-cannot-close.md
+      # the severity a concede carries. say-level because it fires AT the concede:
+      # `better` (the default) never earns budget and evolves after the floor is
+      # spent; `urgent` is the closed harm set (security · safety · monetary ·
+      # reputation · behavioral) and the ONE concession that earns more. a rule
+      # that arrives after the grade meets a driver who already reached for
+      # `urgent` to buy a round with no nameable harm — the mis-grade
+      # rule.forbid.overzealous-blockers forbids, from the driver's seat
+      - briefs/rule.always.concede-with-a-severity.md
       - briefs/rule.always.converge-to-terminal.md
       - briefs/rule.always.defer-fulcrums-to-last.md
       # the RECORD half of the rule above. say-level because it fires at each decision:
@@ -122,6 +164,12 @@ always:
       # arrives after the round has ended meets a driver who must reconstruct the
       # quote from memory, which is the exact failure it exists to prevent
       - briefs/rule.always.archive-the-wishers-words-verbatim.md
+      # BORROWED, same shape and same owner — the clamp on the rule above. a driver
+      # cites the wisher more than any other role (a yield, a fulcrum, an invariant),
+      # so it is the role most apt to paste the words rather than the path. to boot the
+      # archive half alone is to teach that the quote is precious and leave unsaid that
+      # it belongs in exactly one file
+      - briefs/rule.forbid.verbatim-quotes-outside-seeds.md
       - briefs/howto.drive-routes.[guide].md
       - briefs/howto.run-self-reviews.[guide].md
       - briefs/howto.navigate-fulcrum-choices.[guide].md

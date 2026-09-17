@@ -12,7 +12,7 @@ the halt reads *"the reviewers await your reply"*. a reviewer that has produced 
 **spoken**; one that has not, has not.
 
 ⇒ **the word was not coined for this field. it was already in the prose.**
-`getRouteGuardReviewPeerContemplationStatus.ts` documents the union as
+`getRouteGuardReviewPeerFeedbackAbsorptionStatus.ts` documents the union as
 *"(configured ∪ spoken), and `spoken` is exactly what this operation already read"* — the field
 adopts the word its own docblock had reached for, which is
 `rule.always.reuse-pavement-before-improvise` applied to vocabulary.
@@ -39,7 +39,7 @@ describes what the **reviewer did** — and the reviewer's act is what the set i
   exercised through the spawned command, so the exit code and the stream are pinned too. that
   assertion is only makeable at the CLI grain, because the slug under test is by definition absent
   from the live config
-- **the sort**: deduped and sorted at the source (`getRouteGuardReviewPeerContemplationStatus.ts`),
+- **the sort**: deduped and sorted at the source (`getRouteGuardReviewPeerFeedbackAbsorptionStatus.ts`),
   so the valid-options list is stable per machine rather than in glob order
 - **the single-source lineage**: reported from the read this operation already performs, rather
   than a second full corpus scan by the caller (r11 blocker.1 i004; r11 nitpick.1 i005)

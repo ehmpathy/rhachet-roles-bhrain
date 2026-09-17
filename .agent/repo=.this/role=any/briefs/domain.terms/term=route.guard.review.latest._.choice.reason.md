@@ -24,7 +24,7 @@ taste:
 
 - raised.by = driver, on `v2026_09_03.fix-contemplation-gate-on-entrance`
 - claim = the source already says *"current hash"* and `hashCurrent` throughout, and
-  `getRouteGuardReviewPeerContemplationStatus` reads givens *"at `hashCurrent`"*. one word for
+  `getRouteGuardReviewPeerFeedbackAbsorptionStatus` reads givens *"at `hashCurrent`"*. one word for
   "the one that counts now" would be simpler than two.
 - counter = they are **two concepts**, and to merge them is the defect itself. `current` qualifies a
   **hash** — which artifact content is under review right now. `latest` qualifies a **review** —

@@ -1,3 +1,6 @@
+import { formatReviewBudgetTopupCommand } from '../review/peer/formatReviewBudgetTopupCommand';
+import { isRouteGuardConcessionExhaustion } from '../review/peer/genRouteGuardExhaustedReason';
+
 /**
  * .what = one remedy offered by a halt: the label a human reads, and the command that acts on it
  * .why = label and command travel together on every surface, so they are one shape rather than
@@ -63,6 +66,9 @@ export const computeBlockRemedyGroups = (input: {
 }): BlockRemedyGroup[] => {
   const hasBudget = input.reason.includes('budget exhausted');
   const hasOverrule = isTerminalReviewerFailure(input.passage, input.reason);
+  const hasConcession = isRouteGuardConcessionExhaustion({
+    reason: input.reason,
+  });
   if (!hasBudget && !hasOverrule) return [];
 
   const groups: BlockRemedyGroup[] = [];
@@ -80,12 +86,20 @@ export const computeBlockRemedyGroups = (input: {
     const exhaustedSlugs = exhaustedMatch?.[1]
       ? exhaustedMatch[1].split(',').map((s) => s.trim())
       : [];
-    // one slug → name it with --peer; several → omit, since the top-up affects them all
-    const peerArg =
-      exhaustedSlugs.length === 1 ? ` --peer ${exhaustedSlugs[0]}` : '';
+    // 🔴 F022 fork E: a top-up is a deliberate, targeted act, never a blanket sweep.
+    //    one exhausted lane → name it with --peer, so the write reaches that lane at any level.
+    //    several → a bare --peer-less `--add N` now scopes to the LATEST level alone (the
+    //    `targetSlugs` filter in routeGuardBudget), which is the set a concession-exhaustion halt
+    //    computes — every level terminal, the just-conceded lanes at the top. a lane BELOW the
+    //    latest level stays exhausted unless the driver names it (`--peer <slug>` or `--level N`),
+    //    which is the intended state, never a defect the emit should auto-heal.
     groups.push({
       label: `increase budget — yours to spend`,
-      cmd: `rhx route.guard.budget --for review --add N${peerArg} --stone ${input.stone}`,
+      cmd: formatReviewBudgetTopupCommand({
+        add: 'N',
+        peer: exhaustedSlugs.length === 1 ? exhaustedSlugs[0]! : null,
+        stone: input.stone,
+      }),
     });
   }
 
@@ -105,7 +119,18 @@ export const computeBlockRemedyGroups = (input: {
 
   // 3 — the tail. an exhaustion earns `approve as-is`; an overrule-only halt earns the prose
   //     "or fix the reviewer" instead, because no budget remedy applies to it.
-  if (hasBudget) {
+  //
+  // 🔴 a CONCESSION exhaustion earns NEITHER (S12). the driver declared the round
+  //    warranted and fixed what it named, so the top-up is the sanctioned remedy and it
+  //    is theirs — to print `approve as-is — a human must grant` beside it would summon a
+  //    human the stance already made unnecessary. that is the same asymmetry the stance
+  //    ack renders at `--as conceded` (case=6 [t1]); it is repeated here because a driver
+  //    reads the ack once and this halt on every re-arrival.
+  //
+  // ⚠️ an overrule still outranks it: a malfunctioned reviewer needs a human whatever the
+  //    driver conceded, so the concession only suppresses the APPROVAL tail.
+  const suppressApprovalTail = hasBudget && hasConcession && !hasOverrule;
+  if (hasBudget && !suppressApprovalTail) {
     groups.push({
       label: `approve as-is — a human must grant`,
       cmd: `rhx route.stone.set --stone ${input.stone} --as approved`,

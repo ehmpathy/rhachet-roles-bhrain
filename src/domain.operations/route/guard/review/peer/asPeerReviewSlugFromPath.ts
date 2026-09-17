@@ -10,7 +10,7 @@ import * as path from 'path';
  *
  * 🔴 .note = this is the LENIENT twin of getRouteGuardReviewPeerPathMeta, and the
  *         leniency is the whole point. that parser THROWS on a name it cannot read,
- *         which is right for the contemplation gate: a driver hand-writes .taken
+ *         which is right for the feedbackAbsorption gate: a driver hand-writes .taken
  *         filenames, so a typo must halt loudly with the fix named.
  *
  *         the cache guard sits on a different path with the opposite need. it runs on

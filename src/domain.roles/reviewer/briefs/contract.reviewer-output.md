@@ -50,6 +50,60 @@ read each item's severity from HOW YOU WROTE IT, not from the header it sits und
 collapse your own taxonomy up front, then emit the two numeric lines. this keeps the
 deterministic parser happy and means the guard never has to fall back to a sub-brain to read you.
 
+## .the severity label — every concern carries TWO axes
+
+every concern you report MUST be explicitly labeled on **two** axes, never one:
+
+- **kind** — `blocker` | `nitpick` (the extant axis: does it block the stone?)
+- **severity** — `urgent` | `better` (the harm axis: does it ship harm?)
+
+write the pair as TWO adjacent bracketed tokens at the head of each concern — the strict form
+`[blocker|nitpick][urgent|better]`, e.g. `[blocker][urgent]`, `[nitpick][better]`. do NOT leave the
+severity to inference; an unlabeled concern is read as `better`, and a real `urgent` left unlabeled
+is a mis-grade the tallier cannot recover.
+
+🟡 **what this binds, and what it does NOT.** the two NUMERIC lines are the guard-parsed contract —
+the only count today's tallier reads (`getReviewCountsViaBrain` extracts `{ blockers, nitpicks }`,
+never a severity). the severity label is a **forward** contract: it rides beside each concern for the
+**council** and a future severity-aware tallier (deferred, F029 / #499). so:
+
+- a **hand-authored** reviewer that reports concerns MUST carry the label — it is the only record of
+  the harm grade a council can read.
+- the **built-in `rhx review` skill** conforms on the counts today; a severity-aware emit is a
+  forward step tracked with the tallier work, and an absent label is safe — an unlabeled concern
+  defaults to `better`, so no reviewer breaks and no stone mis-passes when a label is absent.
+
+### the harm test decides `urgent` vs `better`
+
+it is the same test `rule.forbid.overzealous-blockers` gives a blocker — **name the harm that
+ships if this is not fixed**:
+
+- **`urgent`** — a defect in the closed set: **security · safety · monetary · reputation ·
+  behavioral**, with a harm you can name (who suffers, and how)
+- **`better`** — code idealism, maintenance, polish: a tidier shape, a clearer name, an absent
+  guard on a case that cannot arise. you cannot name a shipped harm
+
+⚠️ **bias to `better`. never infer `urgent` where the truth is `better`.** most concerns keep a
+codebase workable — a cost the team pays and the user does not. that is `better`, and it evolves
+after the budget. only a nameable shipped harm earns `urgent`. a rule violation is not a harm, and
+correctness is not harm.
+
+### the two axes are orthogonal
+
+`urgent` grades harm; `blocker` grades whether the stone is held. they are separate questions, so
+all four pairs are legal:
+
+| the concern | pair |
+|---|---|
+| a shipped harm that must not pass | `[blocker][urgent]` |
+| a shipped harm the budget already conceded | `[nitpick][urgent]` |
+| a rule-forbidden must-fix that ships no harm — it simply makes the codebase better | `[blocker][better]` |
+| a polish suggestion | `[nitpick][better]` |
+
+⇒ the two numeric summary lines still tally by **kind** (`N blockers` / `N nitpicks`). the
+severity label rides beside each concern for the tallier and the council to read
+(`rule.require.grade-a-concession-by-its-harm`).
+
 ## .numbers only
 
 only a **number** counts. these do NOT satisfy the contract and cause a `💥 malfunction`:

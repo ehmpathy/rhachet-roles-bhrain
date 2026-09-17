@@ -788,6 +788,15 @@ exports[`runStoneGuardReviews given: [case26] a fresh .taken re-runs only its ow
 }
 `;
 
+exports[`runStoneGuardReviews given: [case27] a disputed lane is SKIPPED — the disagreement consumes no budget when: [t0] first run rejects, driver disputes the blocker, second run same hash then: the seam outcome matches snapshot 1`] = `
+{
+  "blockers": 1,
+  "nitpicks": 0,
+  "rounds": 1,
+  "slug": "conv-reviewer",
+}
+`;
+
 exports[`runStoneGuardReviews given: [case27] a stale .taken older than the given does NOT re-run when: [t0] first run rejects, driver posts a stale .taken, second run same hash then: the stale-taken seam outcome matches snapshot 1`] = `
 {
   "blockers": 1,

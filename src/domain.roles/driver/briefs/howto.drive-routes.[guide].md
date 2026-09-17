@@ -31,7 +31,8 @@ run `rhx route.drive` — it shows the current stone and what to do next.
 |---------|-------------|
 | `--as passed` | signal work complete, proceed |
 | `--as arrived` | signal work complete, request review |
-| `--as contemplated --that <slug>` | you answered a peer reviewer — **required before you re-arrive** |
+| `--as disputed\|conceded --with <reviewer> --about <concern>` | absorb ONE concern — dispute it, or concede it |
+| `--as absorbed --that <slug>` | absorb the feedback — record you engaged a reviewer, **after every concern is absorbed** |
 | `--as blocked` | at a genuine wall — and only after you answered what you could |
 
 ### when you face a review
@@ -43,9 +44,9 @@ reviews are gifts. they encode lessons from production, accumulated over decades
 **peer-reviews:** address all blockers. maximize nitpick fixes.
 
 🔴 **if you disagree, that is a `[REFUTE]` in your `.taken` — never a halt.** write the argument
-with cited evidence, run `--as contemplated --that <slug>`, and re-arrive. a critique you have not
-answered is not a wall, and the entrance gate refuses a fresh round while any reviewer is owed an
-answer (`rule.forbid.unanswered-exits-from-a-blocker`).
+with cited evidence, absorb the concern as `--as disputed`, run `--as absorbed --that <slug>`, and
+re-arrive. feedback you have not absorbed is not a wall, and the entrance gate refuses a fresh round
+while any reviewer is owed an answer (`rule.forbid.unanswered-exits-from-a-blocker`).
 
 ⚠️ **and a code fix is not an answer either.** the debt is keyed to the reviewer, so it survives
 your edit — the reviewer never learns of a repair you did not write down, and re-raises it.

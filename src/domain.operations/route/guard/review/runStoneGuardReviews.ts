@@ -38,6 +38,9 @@ import { enumRouteGuardReviewPeerConversationFiles } from './peer/enumRouteGuard
 import { getCacheSafePeerReviewArtifact } from './peer/getCacheSafePeerReviewArtifact';
 import { getLatestReviewArtifactForSlug } from './peer/getLatestReviewArtifactForSlug';
 import { getRouteGuardReviewPeerPathTaken } from './peer/getRouteGuardReviewPeerPathTaken';
+import { computeDisputedConcernCounts } from './peer/getStoneDisputedConcernCounts';
+import { getStoneReviewCorpus } from './peer/getStoneReviewCorpus';
+import { isLaneSkippedByDispute } from './peer/isLaneSkippedByDispute';
 import { computeReviewPeerVerdict } from './peer/meter/computeReviewPeerVerdict';
 import { getAllRouteStoneGuardReviewPeerMeters } from './peer/meter/getAllRouteStoneGuardReviewPeerMeters';
 import { getReviewedJudgeThresholds } from './peer/meter/getReviewedJudgeThresholds';
@@ -117,7 +120,7 @@ export const runOneStoneGuardReview = async (
   // .why = legacy peer reviews use command as slug (e.g., ".test/mock-review.sh")
   //        path separators would create nested directories
   // .note = this is the WRITE side of a grammar the READ side must match exactly
-  //         (setStoneAsContemplated validates `--that <slug>` against these names),
+  //         (setStoneAsFeedbackAbsorbed validates `--that <slug>` against these names),
   //         so the rule lives in one transformer rather than two inline copies
   const sanitizedSlug = asSanitizedPeerReviewSlug({ slug: input.slug });
 
@@ -341,6 +344,13 @@ export const runStoneGuardReviews = async (
     meterBySlug.set(meter.reviewer.slug, meter);
   }
 
+  // the stance corpus, read ONCE for every lane — the per-lane skip below folds over it
+  // .why = one read rather than one per reviewer; the fold is pure and cheap
+  const { absorptions, givens } = await getStoneReviewCorpus({
+    route: input.route,
+    stone: input.stone.name,
+  });
+
   // get peer reviews with indices and sort by level (low-to-high = cheapest first)
   // .why = cheap (low level) runs first, expensive (high level) only after cheap clears
   const peerReviews = getGuardPeerReviews(input.guard);
@@ -453,6 +463,67 @@ export const runStoneGuardReviews = async (
       });
       reviews.push(cachedReview);
       continue;
+    }
+
+    // 🔴 skip a lane whose RESIDUAL verdict clears once its disputed concerns are subtracted
+    // .why = a dispute is a tally exclusion (S07), so a lane that no longer holds the road has
+    //        no reason to spend a round on a point the driver already answered and declared a
+    //        stance on. acceptance #2: the disagreement consumes no budget.
+    //
+    // 🔴 .why gated on `cachedReview` = that is what makes S03's per-generation lapse fall out.
+    //    a cached artifact means this lane already spoke AT THIS HASH; move the artifact and the
+    //    cache misses, so the lane runs again and grades what is NEW — points it has never
+    //    raised among them. the skip covers one generation, never the stone.
+    //
+    // ⚠️ it sits BESIDE the clean-cache skip above, never in place of it. that one keys on raw
+    //    `blockers === 0` and is out of this change's scope; to fold the two would silently move
+    //    a nitpick-only lane's behavior (case=10).
+    if (cachedReview) {
+      const disputed = computeDisputedConcernCounts({
+        absorptions,
+        givens,
+        scope: { slug: pr.slug },
+      });
+
+      if (
+        isLaneSkippedByDispute({
+          cachedReview,
+          disputed,
+          allowBlockers,
+          allowNitpicks,
+        })
+      ) {
+        context.cliEmit.onGuardProgress({
+          stone: input.stone,
+          step: { phase: 'review', index: pr.arrayIndex },
+          reviewer: {
+            index: pr.index,
+            slug: pr.slug,
+            level: pr.level,
+            budget: pr.budget,
+            rounds,
+          },
+          inflight: null,
+          outcome: {
+            path: asGuardDisplayPath({
+              pathAbsolute: cachedReview.path,
+              root: gitRoot,
+            }),
+            // 🔴 the marker, or the skip is invisible. the counts below are the lane's PRIOR
+            //    ones, re-emitted from cache — so with no marker the live tree paints a stale
+            //    rejection as a fresh one, and a driver reads a lane that fell silent as a lane
+            //    that spoke again (`case=4`, and rule.require.status-feedback)
+            review: {
+              disputed: true,
+              blockers: cachedReview.blockers,
+              nitpicks: cachedReview.nitpicks,
+            },
+            judge: null,
+          },
+        });
+        reviews.push(cachedReview);
+        continue;
+      }
     }
 
     // compute verdict (exhaustion check)

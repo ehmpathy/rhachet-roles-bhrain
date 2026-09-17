@@ -1,0 +1,8 @@
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
+
+exports[`asJudgeResidualLines given: [case4] a dispute on BOTH axes when: [t0] rendered then: the bytes a driver reads are pinned 1`] = `
+[
+  "disputed: 2 blockers, 3 nitpicks excluded from the tally",
+  "residual: 1/0 blockers, 4/7 nitpicks",
+]
+`;

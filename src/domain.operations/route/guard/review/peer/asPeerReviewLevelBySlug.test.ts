@@ -3,7 +3,7 @@ import { getError, given, then, when } from 'test-fns';
 import { RouteStoneGuardReviewPeer } from '@src/domain.objects/Driver/RouteStoneGuard';
 
 import { asPeerReviewLevelBySlug } from './asPeerReviewLevelBySlug';
-import { computePeerUncontemplatedUnforgiven } from './computePeerUncontemplatedUnforgiven';
+import { computePeerFeedbackUnabsorbedUnforgiven } from './computePeerFeedbackUnabsorbedUnforgiven';
 
 const review = (slug: string, level: number): RouteStoneGuardReviewPeer =>
   new RouteStoneGuardReviewPeer({ slug, run: 'noop', budget: 3, level });
@@ -63,14 +63,14 @@ describe('asPeerReviewLevelBySlug', () => {
         'the live reviewer is NOT marked retired, and keeps its real level',
         () => {
           // ⚠️ this is the assertion that matters, and [t0] alone does not make it.
-          //    in computePeerUncontemplatedUnforgiven the MISS IS THE RETIRED TEST
+          //    in computePeerFeedbackUnabsorbedUnforgiven the MISS IS THE RETIRED TEST
           //    (`retired: !levelBySlug.has(slug)`), so a raw-keyed map does not merely
           //    lose a level — it declares a fully-configured reviewer retired, and the
           //    halt prompt then prints "it will not speak again" about a reviewer that
           //    will (r11 blocker.1, i005).
-          const result = computePeerUncontemplatedUnforgiven({
+          const result = computePeerFeedbackUnabsorbedUnforgiven({
             // the reviewer as it comes back OFF DISK — sanitized by the write side
-            uncontemplated: [{ slug: '.test-mock-review.sh' }],
+            feedbackUnabsorbed: [{ slug: '.test-mock-review.sh' }],
             overruledSlugs: new Set<string>(),
             levelBySlug: asPeerReviewLevelBySlug({ peerReviews }),
           });

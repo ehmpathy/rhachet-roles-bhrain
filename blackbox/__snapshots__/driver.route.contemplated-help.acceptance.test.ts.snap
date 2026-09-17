@@ -1,7 +1,7 @@
 // Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
 
-exports[`driver.route.contemplated-help.acceptance given: [case1] a linked driver role when: [t0] driver runs route.stone.set --help then: [t0] help output matches snapshot 1`] = `
-"route.stone.set - mark stone as passed, approved, promised, contemplated, blocked, rewound, arrived, overruled, or forced
+exports[`driver.route.absorbed-help.acceptance given: [case1] a linked driver role when: [t0] driver runs route.stone.set --help then: [t0] help output matches snapshot 1`] = `
+"route.stone.set - mark stone as passed, approved, promised, absorbed, disputed, conceded, blocked, rewound, arrived, overruled, or forced
 
 usage:
   route.stone.set [options]
@@ -14,26 +14,47 @@ options:
                        arrived  - work complete, get reviews
                        approved - human approval granted (human only)
                        promised - review.self promise made
-                       contemplated - peer review response articulated
+                       absorbed - peer review response articulated
+                       conceded - the reviewer is right on ONE concern; you will fix it
+                       disputed - ONE concern is fine to continue; a council will rule
                        blocked  - stuck, need help
                        rewound  - clear validation state
                        overruled - bypass review thresholds (human only)
                        forced   - approve AND overrule (human only)
-  --that <slug>      reviewer slug (required for --as promised / --as contemplated)
-                       for --as contemplated, use the slug exactly as shown in the
+  --that <slug>      reviewer slug (required for --as promised / --as absorbed)
+                       for --as absorbed, use the slug exactly as shown in the
                        reviewers-await-reply prompt (path-sanitized: slashes → dashes)
+  --with <slug>      the reviewer an absorption is taken WITH
+                       (required for --as disputed / --as conceded)
+  --about <concern>  the ONE concern an absorption answers, by severity + 1-based ordinal
+                       within that reviewer's latest report: blocker.1, nitpick.4
+                       (required for --as disputed / --as conceded)
+  --why <path>       path to a fulcrum/justification entry
+                       (required for --as disputed — the argument a council reads;
+                        optional for --as conceded — an extant path that records why you conceded)
+  --severity <sev>   the harm grade of a concession: urgent | better
+                       (REQUIRED for --as conceded — no ungraded concede; not for --as disputed)
+                       urgent = a shipped harm (security | safety | monetary |
+                       reputation | behavioral) — earns more budget, warns the human.
+                       better = code idealism / maintenance — the floor, never earns budget
   --help             show this help message
 
 note:
   --as overruled bypasses reviewed? judge thresholds for overzealous reviewers
   --as forced is shorthand for --as approved + --as overruled
+  --as conceded is the DEFAULT absorption of a concern: fix it, then re-arrive.
+    --as disputed is an escalation — it asks a human council to rule at the close.
 
 examples:
   route.stone.set --stone 1.vision --as arrived
   route.stone.set --stone 1.vision --as passed
   route.stone.set --stone 1.vision --as approved
   route.stone.set --stone 1.vision --as promised --that all-done
-  route.stone.set --stone 1.execute --as contemplated --that architect
+  route.stone.set --stone 1.execute --as absorbed --that architect
+  route.stone.set --stone 1.execute --as conceded --with architect --about nitpick.4 --severity better
+  route.stone.set --stone 1.execute --as conceded --with architect --about blocker.2 --severity urgent
+  route.stone.set --stone 1.execute --as disputed --with architect --about blocker.1 \\
+    --why .fulcrums/inventory.of=fulcrums.case=F007-file-placement.md
   route.stone.set --stone 3.blueprint --as blocked
   route.stone.set --stone 3.blueprint --as rewound
   route.stone.set --stone 1.vision --as overruled

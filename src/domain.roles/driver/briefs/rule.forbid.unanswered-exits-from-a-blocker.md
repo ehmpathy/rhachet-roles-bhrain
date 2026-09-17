@@ -1,11 +1,17 @@
 # rule.forbid.unanswered-exits-from-a-blocker
 
-> **a peer blocker is left by ONE door: an answer. every other exit is forbidden.**
+> **a peer blocker is left by an ANSWER — a repair, or a recorded DISPUTE. every other exit is
+> forbidden.**
 
 the answer is a `.taken.by_self` that states the repair or the refutation, then
-`--as contemplated --that <slug>`. the extant rules say **what to write**
+`--as absorbed --that <slug>`. the extant rules say **what to write**
 (`rule.always.converge-with-reviewers`) and **that every point owes one**
 (`…via-a-taken-per-point`). this says **you may not go around them.**
+
+🔴 **a dispute is not a way around the answer — it IS one.** `--as disputed --with <reviewer>
+--about <concern> --why <fulcrum>` still requires the `.taken` first (R1 refuses an absorption
+on an unanswered given); the dispute is the STANCE you take on the argument already put to
+paper, never a substitute for it.
 
 ## 🔴 .why — the forbidden exits are all CHEAPER than the answer
 
@@ -30,10 +36,10 @@ it cannot refuse one that leaves the right trace with the wrong content.**
 | the exit | why it is not an answer | engine |
 |---|---|---|
 | 🔴 **edit the code and re-roll** | the reviewer may not re-raise it. **absence of a re-raise is not agreement** | ✅ **refused** — the debt is keyed to the reviewer, so it outlives the edit, and the entrance gate reads it before a round can start |
-| **an empty or token `.taken`** | the engine tests that the file exists, never what it says. an empty one costs a round and is re-raised | ⛔ **open** — `setStoneAsContemplated` asserts existence, never content |
+| **an empty or token `.taken`** | the engine tests that the file exists, never what it says. an empty one costs a round and is re-raised | ⛔ **open** — `setStoneAsFeedbackAbsorbed` asserts existence, never content |
 | **answer some points, not all** | the reviewer drops a point that carries a response and **re-raises one that does not** | ⚠️ **partly** — the gate counts **reviewers**, never points. one `.taken` discharges a slug however many points it raised |
 | **let the reviewer exhaust** | exhaustion is a budget, not a verdict. to spend it rather than answer is the coast `rule.always.converge-to-terminal` names | ✅ **refused** — an exhausted reviewer writes no fresh given, and the debt it already minted persists |
-| **`--as blocked`** | a wall is a wall; a critique you have not answered is not one. ⚠️ **the converse does NOT follow** — see below | ⛔ **open** — a halt is a legitimate act; only you know whether you answered first |
+| **`--as blocked`** | a wall is a wall; a concern you have not answered is not one. ⚠️ **the converse does NOT follow** — see below | ⛔ **open** — a halt is a legitimate act; only you know whether you answered first |
 | **call the re-raise a reviewer malfunction** | 🔴 **a blocker that returns after you fixed it is a driver error.** check whether you ever told the reviewer | ⛔ **open** — a diagnosis is a judgment, and no gate reads one |
 
 ## 🔴 .the engine refuses two exits. it does not retire this rule
@@ -52,7 +58,7 @@ tells you the answer you wrote was worth the ink. that test is the one at the bo
 
 ## ⚠️ .the `--as blocked` row is about ONE state, and a driver reads it as two
 
-the row forbids the halt for a critique you have **not answered**. it is silent on a critique you
+the row forbids the halt for a concern you have **not answered**. it is silent on a concern you
 **have** answered and cannot close — and that second state is real:
 
 > **a `.taken` converges an ARGUMENT. it cannot converge an ABSENCE.**
@@ -70,17 +76,21 @@ becoming an early-exit license, and the fulcrum-council case live in
 *"is there a change I am PERMITTED to make that would close this point?"* — **yes** → this rule binds,
 `--as blocked` is forbidden, write the `.taken`. **no** → that rule binds, and the halt is correct.
 
-## ✅ .the two sanctioned exits, and neither is silent
+## ✅ .the three sanctioned exits, and none is silent
 
-1. **the answer** — a `.taken`, then `--as contemplated`
-2. **a human overrule** — the human takes responsibility for the passage (case=5). ⚠️ ask only after
+1. **the answer** — a `.taken`, then `--as absorbed`
+2. 🔴 **the dispute** — a `.taken` PLUS `--as disputed --with <reviewer> --about <concern> --why
+   <fulcrum>`. it does not close the point; it declares *"fine to continue"* and defers the
+   verdict to the council, on the record, at a fulcrum you authored
+   (`rule.always.itemize-the-fulcrums-you-best-guess`)
+3. **a human overrule** — the human takes responsibility for the passage (case=5). ⚠️ ask only after
    you have answered what you can; an overrule requested in place of a first answer is exit #5 above
 
 ## .the test
 
 > **"if this blocker never re-appeared, would the reviewer have been PERSUADED — or merely distracted?"**
 
-persuaded → you answered · distracted → you took a forbidden exit, and the critique still stands.
+persuaded → you answered · distracted → you took a forbidden exit, and the concern still stands.
 
 blocker: a re-arrival with an unanswered blocker from the prior round · a `.taken` that names neither
 a repair nor a refutation · a re-raise diagnosed as a reviewer defect with no prior answer on record ·

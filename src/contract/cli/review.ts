@@ -44,8 +44,9 @@ usage:
 options:
   --rules <globs>     glob pattern(s) for rule files (required)
   --paths <globs>     glob pattern(s) for target files (deprecated: use --paths-with)
-  --paths-with <globs>  include files that match these globs
-  --paths-wout <globs>  exclude files that match these globs
+  --paths-with <glob>   include files that match this glob (can repeat)
+  --paths-wout <glob>   exclude files that match this glob (can repeat)
+                        alias: --paths-without
   --diffs <range>     diff range: since-main, since-commit, since-staged (default: since-main)
   --join <mode>       how to join --paths-with and --diffs: intersect or union (default: intersect)
   --refs <globs>      glob pattern(s) for reference files (can repeat)
@@ -55,7 +56,7 @@ options:
   --conversation <files>  comma-separated prior peer-review dialogue files (.given + .taken) to thread as context (opt-in; guard expands $conversation)
   --output <path>     output file path (default: .review/$branch/$isotime.output.md)
   --focus <mode>      review focus: push or pull (default: push)
-  --goal <goal>       review goal: exhaustive or representative (default: representative)
+  --goal <goal>       review goal: exhaustive or representative (default: exhaustive)
   --brain <slug>      brain to use for review (default: ${DEFAULT_BRAIN})
   --open <opener>     open output file with specified program (e.g., nvim, codium, code)
   --help              show this help message
@@ -90,6 +91,83 @@ const isNodeEvalMode = (argv: string[]): boolean => {
 };
 
 /**
+ * .what = the flags that may be given more than once, each occurrence accumulated
+ * .why = a caller who passes several globs must not silently lose all but the last.
+ *        a last-wins path glob is the worst failure shape there is: the bind reads
+ *        as applied, the review runs unbounded, and no error is raised.
+ *
+ * .note = --paths-with and --paths-wout are a symmetric pair, so both repeat. one
+ *         that repeats beside one that does not is a footgun a caller meets once.
+ */
+const FLAGS_REPEATABLE = new Set([
+  'refs',
+  'optional',
+  'paths-with',
+  'paths-wout',
+]);
+
+/**
+ * .what = maps a flag alias onto its canonical name
+ * .why = --paths-wout is canonical (it pairs by shape with --paths-with), and
+ *        --paths-without is the plain english a caller reaches for first. both
+ *        resolve to one key, so no downstream reader knows which was typed.
+ */
+const FLAGS_ALIASED: Record<string, string> = {
+  'paths-without': 'paths-wout',
+};
+
+/**
+ * .what = resolves a flag name to its canonical form
+ * .why = keeps the parse loop narrative: one lookup, no inline alias branch
+ */
+const asCanonicalReviewFlag = (input: { flag: string }): string =>
+  FLAGS_ALIASED[input.flag] ?? input.flag;
+
+/**
+ * .what = every `--key` this parser recognizes, in its CANONICAL form
+ * .why = an unrecognized flag used to land in `options[key]` and simply never be read
+ *        downstream — no error, no warn. a misspelled `--paths-wout` (the incident this
+ *        allowlist exists to close) ran the lane unbounded with no signal at all: the
+ *        overflow that followed read as a lane genuinely too wide, never as a dropped
+ *        bind (r002 blocker.1, i005; `rule.forbid.failhide`).
+ *
+ * .note = `help` is included so `--help` never reads as unknown — `hasHelpFlag` checks
+ *         it separately, but `parseReviewArgs` still walks every arg before that check
+ *         runs, and an unknown flag is recorded there.
+ *
+ * 🔴 `skill`, `repo`, and `mode` are the outer `rhachet run --skill review --repo <x>
+ *    --mode hard` DISPATCHER's own flags — every guard-authored `$rhx review …` call
+ *    across this repo opens with them. `rhachet run` forwards its full argv verbatim
+ *    into `process.argv` rather than removing the flags it already consumed to
+ *    resolve which skill to boot, so `review()` sees them too. they are recognized
+ *    here and read by naught downstream — the allowlist's job is to catch a TYPO in a
+ *    flag `review()` itself acts on, never to re-litigate the dispatcher's own
+ *    contract (the i007 malfunction this note documents: every guard-run reviewer on
+ *    this route refused with "unrecognized flag(s): --skill, --repo, --mode" the
+ *    round this allowlist first shipped without them).
+ */
+const FLAGS_KNOWN = new Set([
+  'rules',
+  'paths',
+  'paths-with',
+  'paths-wout',
+  'diffs',
+  'join',
+  'refs',
+  'optional',
+  'conversation',
+  'output',
+  'focus',
+  'goal',
+  'brain',
+  'open',
+  'help',
+  'skill',
+  'repo',
+  'mode',
+]);
+
+/**
  * .what = parses cli args into options object
  * .why = simple arg parser without external dependencies; exported so the flag
  *        contract (e.g. --conversation comma-split → array) is testable without
@@ -101,8 +179,8 @@ export const parseReviewArgs = (
   rules: string;
   diffs: string | undefined;
   paths: string | undefined;
-  pathsWith: string | undefined;
-  pathsWout: string | undefined;
+  pathsWith: string[] | undefined;
+  pathsWout: string[] | undefined;
   join: 'union' | 'intersect';
   refs: string[] | undefined;
   optional: string[] | undefined;
@@ -112,33 +190,33 @@ export const parseReviewArgs = (
   goal: 'exhaustive' | 'representative';
   brain: string;
   open: string | undefined;
+  unknownFlags: string[];
 } => {
   // skip node binary (always argv[0]) and entrypoint path (only in normal mode)
   const skipCount = isNodeEvalMode(argv) ? 1 : 2;
   const args = argv.slice(skipCount).filter((arg) => arg !== '--');
   const options: Record<string, string | string[]> = {};
+  const unknownFlags: string[] = [];
 
   for (let i = 0; i < args.length; i++) {
     const arg = args[i];
     if (!arg) continue;
 
     if (arg.startsWith('--')) {
-      const key = arg.slice(2);
+      const key = asCanonicalReviewFlag({ flag: arg.slice(2) });
       const value = args[i + 1];
 
-      // handle --refs which can be specified multiple times
-      if (key === 'refs') {
-        if (!options.refs) options.refs = [];
+      // an unrecognized flag is recorded, never dropped in silence — the caller reads
+      // it back from `unknownFlags` and fails loud, the arg itself is what states it
+      if (!FLAGS_KNOWN.has(key)) unknownFlags.push(arg);
+
+      // a repeatable flag accumulates each occurrence. presence is recorded (as [])
+      // even when the value is absent or another flag, so review() can fail loud on
+      // a bare `--optional` (no supply named)
+      if (FLAGS_REPEATABLE.has(key)) {
+        if (!options[key]) options[key] = [];
         if (value && !value.startsWith('--')) {
-          (options.refs as string[]).push(value);
-          i++;
-        }
-      } else if (key === 'optional') {
-        // --optional can repeat; record presence (as []) even when the value is absent or
-        // another flag, so review() can fail loud on a bare `--optional` (no supply named)
-        if (!options.optional) options.optional = [];
-        if (value && !value.startsWith('--')) {
-          (options.optional as string[]).push(value);
+          (options[key] as string[]).push(value);
           i++;
         }
       } else if (value && !value.startsWith('--')) {
@@ -154,8 +232,8 @@ export const parseReviewArgs = (
     rules: options.rules as string,
     diffs: options.diffs as string | undefined,
     paths: options.paths as string | undefined,
-    pathsWith: options['paths-with'] as string | undefined,
-    pathsWout: options['paths-wout'] as string | undefined,
+    pathsWith: options['paths-with'] as string[] | undefined,
+    pathsWout: options['paths-wout'] as string[] | undefined,
     join: (options.join as 'union' | 'intersect') ?? 'intersect',
     refs: options.refs as string[] | undefined,
     optional: options.optional as string[] | undefined,
@@ -164,9 +242,24 @@ export const parseReviewArgs = (
       : undefined,
     output: options.output as string | undefined,
     focus: (options.focus as 'push' | 'pull') ?? 'push',
-    goal: (options.goal as 'exhaustive' | 'representative') ?? 'representative',
+    // .why = exhaustive is the default, for TWO reasons:
+    //
+    //        1. ECONOMY. a review's commonest caller is a route GUARD, where each round costs
+    //           budget. a sample reports 3 of 9 instances, the driver repairs 3, the lane re-runs,
+    //           and the same class returns — three rounds to converge on one class. the same
+    //           corpus reported once converges in one.
+    //
+    //        2. GENERALIZATION. the driver architects the repair from what it sees. 3 of 9 reads
+    //           as three local edits; all 9 reveals the CLASS, and a driver who sees the class
+    //           fixes the cause rather than the instances. a sample hides the shape of the defect.
+    //
+    // .note = it does NOT ask for more blockers. exhaustive is coverage, never severity —
+    //         rule.forbid.overzealous-blockers still grades each point, and the exhaustive prompt
+    //         collects many locations under ONE violation rather than many violations.
+    goal: (options.goal as 'exhaustive' | 'representative') ?? 'exhaustive',
     brain: (options.brain as string) ?? DEFAULT_BRAIN,
     open: options.open as string | undefined,
+    unknownFlags,
   };
 };
 
@@ -184,6 +277,18 @@ export const review = async (): Promise<void> => {
     return;
   }
 
+  // an unrecognized flag used to land in `options[key]` and never be read again —
+  // no error, no warn. the review then ran with the bind never applied, and the
+  // overflow that followed read as a lane genuinely too wide, never as a typo
+  // (rule.forbid.failhide). fail loud, before any brain cost is paid.
+  if (options.unknownFlags.length > 0) {
+    console.error(
+      `error: unrecognized flag(s): ${options.unknownFlags.join(', ')}`,
+    );
+    console.error('run with --help for the full flag list');
+    process.exit(2);
+  }
+
   // validate required args before expensive brain discovery
   const hasRules =
     options.rules &&
@@ -199,6 +304,20 @@ export const review = async (): Promise<void> => {
     console.error(
       'error: must specify at least one of --rules, --diffs, --paths, or --paths-with',
     );
+    console.error('run with --help for usage');
+    process.exit(2);
+  }
+
+  // a bare --paths-with or --paths-wout (present, no glob) must not silently apply as
+  // "no exclusion" — the exact accepted-but-ignored-flag class the FLAGS_KNOWN allowlist
+  // exists to close. mirrors the --optional bare-flag check below (rule.forbid.failhide)
+  if (options.pathsWith?.length === 0) {
+    console.error('error: --paths-with requires a glob pattern');
+    console.error('run with --help for usage');
+    process.exit(2);
+  }
+  if (options.pathsWout?.length === 0) {
+    console.error('error: --paths-wout requires a glob pattern');
     console.error('run with --help for usage');
     process.exit(2);
   }

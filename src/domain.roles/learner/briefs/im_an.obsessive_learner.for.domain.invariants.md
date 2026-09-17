@@ -87,8 +87,11 @@ each invariant is a `define.invariant.<scope>.md` brief that holds:
 3. **.invariant** — the rule stated formally (a biconditional `A ⟺ B`, or a constraint)
 4. **.why** — why the domain depends on it; often a past incident or a stated intent
 5. **.scope** — what the invariant does **NOT** cover
-6. **.the litigation** — who argued what, against what, and what settled it. quote the human
-   **verbatim** where they closed it; the exact words carry the reason
+6. **.the litigation** — what was argued, against what, and what settled it, **in your own words**.
+   🔴 do NOT quote the wisher here, and do NOT cite their seed by path
+   (`rule.forbid.verbatim-quotes-outside-seeds`). an invariant is a law, never a transcript with a
+   footnote: it binds because it is true, never because someone said it. the seed is the route's
+   record and the route indexes it; a brief that points at one starts a second index no census keeps
 7. **.the counter-argument** — the strongest case against it, stated fairly
 8. **.what would overturn it** — the admissible argument, per the nature/nurture table above
 9. **.enforcement** — what a violation is, so a reviewer can check it
@@ -100,16 +103,14 @@ be re-argued — and **the second argument will not have the evidence the first 
 
 **the case that proves `.scope` carries weight.** a robot read *"two implementations drift"*
 (true, and hard-won over four incidents) and applied it to a transport pair that carried one
-payload two ways. the human stopped it:
-
-> *"wait. is rsync the main usecase though? if so, i get the fallback. just document it clearly
-> why we need both, so we dont relitigate."*
+payload two ways. the human stopped it: the fallback was legitimate, and what the pair actually owed
+was a written statement of **why both carriers exist — so it would not be re-litigated.**
 
 **the rule was right and the application was wrong, because the rule's SCOPE had never been
 written down.** two lists of *knowledge* drift; two *carriers* of one payload do not. that
 distinction lived only in one person's head.
 
-⇒ ***"so we dont relitigate"* is the requirement.** a conclusion with no argument attached is a
+⇒ **"so it is not re-litigated" is the requirement.** a conclusion with no argument attached is a
 conclusion that will be re-argued — or, worse, quietly reversed by someone who only ever saw the
 conclusion.
 

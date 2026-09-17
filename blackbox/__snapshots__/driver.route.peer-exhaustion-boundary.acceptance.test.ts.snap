@@ -173,7 +173,7 @@ exports[`driver.route.peer-exhaustion-boundary.acceptance given: [journey] multi
 "
 `;
 
-exports[`driver.route.peer-exhaustion-boundary.acceptance given: [journey] multi-reviewer exhaustion unlocks only on last-terminal when: [t3] l3 exhausts, all levels terminal, the human halt is the only halt then: stdout has good vibes 1`] = `
+exports[`driver.route.peer-exhaustion-boundary.acceptance given: [journey] multi-reviewer exhaustion unlocks only on last-terminal when: [t3] l3 exhausts, all levels terminal, the driver concession halt is the only halt then: stdout has good vibes 1`] = `
 "🦉 the way speaks for itself
    │
    ├─ r2: l1-alpha (l1, 1/1)
@@ -205,7 +205,8 @@ exports[`driver.route.peer-exhaustion-boundary.acceptance given: [journey] multi
 🗿 route.stone.set
    ├─ stone = 1.execute
    ├─ passage = blocked
-   ├─ reason = peer reviewer budget exhausted: l1-alpha, l1-beta, l3-reviewer
+   ├─ reason = you conceded — the round to confirm your fix needs more budget
+   │  └─ 🟡 an urgent concession stands — its harm ships if unfixed, so this round is owed a human's grant
    ├─ options
    │  ├─ increase budget — yours to spend
    │  │  └─ rhx route.guard.budget --for review --add N --stone 1.execute

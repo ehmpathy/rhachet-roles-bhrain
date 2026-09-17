@@ -18,9 +18,9 @@ const ASSETS_DIR = path.join(
  * .what = R6 end-to-end — a preemptively-overruled LOWER level must not forgive a
  *         DIFFERENT (higher) level's contemplation, AND the block is proven to
  *         come from the CONTEMPLATION gate, not the reviewed? judge.
- * .why = the pure filter is unit-proven (computePeerUncontemplatedUnforgiven
+ * .why = the pure filter is unit-proven (computePeerGivenUnabsorbedUnforgiven
  *        case3), but no acceptance journey exercised the composed CLI path where
- *        an l1 overrule leaves an uncontemplated l3 that still owes a reply. this
+ *        an l1 overrule leaves an unabsorbed l3 that still owes a reply. this
  *        suite discriminates the two hold-points that overrule-skip case1 (A2)
  *        conflated:
  *          - overrule-skip A2: judge budget 0, so the reviewed? JUDGE blocks l3
@@ -52,7 +52,7 @@ describe('driver.route.overrule-contemplation-discriminate.acceptance', () => {
 
   const setStone = (input: {
     tempDir: string;
-    as: 'passed' | 'overruled' | 'contemplated';
+    as: 'passed' | 'overruled' | 'absorbed';
     that?: string;
   }) =>
     invokeRouteSkill({
@@ -113,7 +113,7 @@ describe('driver.route.overrule-contemplation-discriminate.acceptance', () => {
       });
     });
 
-    when('[t1] driver writes l3\'s .taken then signals --as contemplated', () => {
+    when('[t1] driver writes l3\'s .taken then signals --as absorbed', () => {
       const result = useThen('the contemplation is acknowledged', async () => {
         // find premium-checker's current given, derive + write its paired taken
         const reviewsDir = path.join(scene.tempDir, '.reviews', 'peer');
@@ -133,7 +133,7 @@ describe('driver.route.overrule-contemplation-discriminate.acceptance', () => {
         );
         return setStone({
           tempDir: scene.tempDir,
-          as: 'contemplated',
+          as: 'absorbed',
           that: 'premium-checker',
         });
       });
@@ -143,7 +143,7 @@ describe('driver.route.overrule-contemplation-discriminate.acceptance', () => {
       });
 
       then('confirms l3\'s contemplation was recorded', () => {
-        expect(result.stdout).toContain('contemplated: premium-checker');
+        expect(result.stdout).toContain('absorbed: premium-checker');
       });
 
       then('stdout has good vibes', () => {
@@ -152,7 +152,7 @@ describe('driver.route.overrule-contemplation-discriminate.acceptance', () => {
     });
 
     when('[t2] driver passes with l3 answered (judge tolerates the blockers)', () => {
-      const result = useThen('the stone passes once l3 is contemplated', async () =>
+      const result = useThen('the stone passes once l3 is absorbed', async () =>
         setStone({ tempDir: scene.tempDir, as: 'passed' }),
       );
 

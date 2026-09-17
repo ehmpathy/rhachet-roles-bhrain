@@ -1,5 +1,6 @@
 import type { RouteStoneGuardReviewSelf } from '@src/domain.objects/Driver/RouteStoneGuard';
 
+import { asConcessionReasonDisplay } from './guard/review/peer/asConcessionReasonDisplay';
 import { asRungLabel } from './guard/review/peer/meter/asRungLabel';
 import { getReviewPeerLadderStatus } from './guard/review/peer/meter/getReviewPeerLadderStatus';
 import { getSelfReviewArticulationPath } from './guard/review/self/getSelfReviewArticulationPath';
@@ -460,7 +461,26 @@ export const formatRouteStoneEmit = (input: FormatInput): string => {
         // detect budget exhaustion to add options hint
         const isBudgetExhausted = input.reason.includes('budget exhausted');
         const reasonConnector = isBudgetExhausted ? '├─' : '└─';
-        lines.push(`   ${reasonConnector} reason = ${input.reason}`);
+
+        // 🔴 a CONCESSION exhaustion carries a parseable marker in its reason, meant to be
+        //    decoded rather than shown raw. this surface is the direct, synchronous CLI
+        //    response to `--as passed` — the FIRST surface a driver meets — so a raw marker
+        //    here is the one place the urgent warn most needs to land and, before this, did
+        //    not (r011 blocker.1). the decode is ONE shared transformer every surface calls
+        //    (rule.require.single-source-of-truth-for-render).
+        const { reasonText, warnText } = asConcessionReasonDisplay({
+          reason: input.reason,
+        });
+        lines.push(`   ${reasonConnector} reason = ${reasonText}`);
+        // 🟡 the urgent warn tells the human a grant is owed this PR
+        //    (define.invariant.review.peer.budget.urgent-earns-budget). it must reach EVERY
+        //    halt a driver sees, and this synchronous emit is the primary one.
+        // 🔴 nested under `reason`, never a peer of it — the warn explains WHY that reason
+        //    is a human wait, so it is the reason's child, not a second top-level fact.
+        //    `warnText` is only ever set for an urgent concession, which always carries the
+        //    `budget exhausted` marker, so `reasonConnector` is always `├─` here — the `│`
+        //    continuation below is the one this nest relies on.
+        if (warnText) lines.push(`   │  └─ 🟡 ${warnText}`);
 
         if (isBudgetExhausted) {
           // add options as separate block with did you know header

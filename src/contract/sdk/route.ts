@@ -20,5 +20,5 @@ export { stepRouteStoneSet } from '@src/domain.operations/route/stepRouteStoneSe
 export { getAllStones } from '@src/domain.operations/route/stones/getAllStones';
 export { setStoneAsApproved } from '@src/domain.operations/route/stones/setStoneAsApproved';
 // stone operations
-export { setStoneAsContemplated } from '@src/domain.operations/route/stones/setStoneAsContemplated';
+export { setStoneAsFeedbackAbsorbed } from '@src/domain.operations/route/stones/setStoneAsFeedbackAbsorbed';
 export { setStoneAsPassed } from '@src/domain.operations/route/stones/setStoneAsPassed';

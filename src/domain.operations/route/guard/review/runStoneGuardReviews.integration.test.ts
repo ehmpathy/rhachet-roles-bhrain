@@ -9,6 +9,7 @@ import { RouteStoneGuard } from '@src/domain.objects/Driver/RouteStoneGuard';
 
 import { genContextReviewBrainSupplyDemo } from '../../__test_assets__/genContextReviewBrainSupplyDemo';
 import { FIXED_FALLBACK_BRAIN } from '../../genReviewBrainSupply';
+import { setPassageReport } from '../../passage/setPassageReport';
 import { getAllStoneGuardArtifactsByHash } from '../artifact/getAllStoneGuardArtifactsByHash';
 import { TALLIED_FOOTER_PREFIX } from './getReviewTacticFromContent';
 import { getAllRouteStoneGuardReviewPeerMeters } from './peer/meter/getAllRouteStoneGuardReviewPeerMeters';
@@ -2947,6 +2948,154 @@ describe('runStoneGuardReviews', () => {
           emitted.forEach((p) => expect(p.startsWith('..')).toEqual(false));
         });
       });
+    },
+  );
+
+  given(
+    '[case27] a disputed lane is SKIPPED — the disagreement consumes no budget',
+    () => {
+      // .why = the integration half of the isLaneSkippedByDispute clamp (behavior-intent
+      //        r008 blocker.1). the unit test pins the PREDICATE across its edges (F024
+      //        among them); this pins the WIRING — that runStoneGuardReviews actually
+      //        folds the stance corpus and honors the skip. acceptance #2: "the
+      //        disagreement consumes no budget."
+      //
+      // 🔴 the teeth ride on case24's exact harness on purpose. a conversation reviewer
+      //    with a fresh .taken WOULD re-run (case24 proves it — rounds becomes 2). the
+      //    ONLY lever that holds rounds at 1 here is the dispute skip at
+      //    runStoneGuardReviews.ts:485-531. delete that branch and this lane re-runs, so
+      //    the assertion goes red (rule.require.clamp-edge-cases). a blind-reviewer
+      //    harness would NOT bite — case25 shows it reuses cache at rounds 1 regardless.
+      const tempDir = path.join(
+        os.tmpdir(),
+        `test-reviews-dispute-skip-${Date.now()}`,
+      );
+      const stone = new RouteStone({
+        name: '1.test',
+        path: path.join(tempDir, '1.test.stone'),
+        guard: null,
+      });
+      const guard = new RouteStoneGuard({
+        path: path.join(tempDir, '1.test.guard'),
+        artifacts: ['1.test*.md'],
+        reviews: {
+          self: [],
+          peer: [
+            {
+              slug: 'conv-reviewer',
+              budget: 3,
+              run: 'echo "blockers: 1"; echo "nitpicks: 0"; echo "conv=$conversation"',
+              level: 1,
+            },
+          ],
+        },
+        // no reviewed? judge ⇒ allow (0, 0), so one blocker holds the road and a
+        // dispute of that one concern clears the residual to 0 (case3 of the predicate)
+        judges: [],
+        protect: [],
+      });
+
+      beforeAll(async () => {
+        await fs.mkdir(tempDir, { recursive: true });
+      });
+
+      afterAll(async () => {
+        await fs.rm(tempDir, { recursive: true, force: true });
+      });
+
+      when(
+        '[t0] first run rejects, driver disputes the blocker, second run same hash',
+        () => {
+          const first = useThen('first review runs (has 1 blocker)', async () =>
+            runStoneGuardReviews(
+              {
+                stone,
+                guard,
+                hash: 'disputeskip',
+                iteration: 1,
+                route: tempDir,
+              },
+              noopContext,
+            ),
+          );
+
+          const second = useThen(
+            'driver posts a fresh .taken AND a dispute that keys to it, then second run',
+            async () => {
+              // pair the .taken to the given the reviewer just wrote — this is what
+              // would otherwise TRIGGER a re-run (the case24 path)
+              const pathGiven = first.artifacts[0]!.path!;
+              const pathTaken = pathGiven.replace(
+                '._.given.by_peer.',
+                '._.taken.by_self.',
+              );
+              await fs.writeFile(pathTaken, 'blocker refuted: X holds\n');
+              const ahead = new Date(Date.now() + 10_000);
+              await fs.utimes(pathTaken, ahead, ahead);
+
+              // 🔴 the dispute: keyed to the slug's LATEST given (the one just written),
+              //    so getLiveReviewAbsorptions counts it and the residual clears
+              await setPassageReport({
+                route: tempDir,
+                report: {
+                  stone: '1.test',
+                  status: 'disputed',
+                  reviewer: 'conv-reviewer',
+                  about: 'blocker.1',
+                  given: pathGiven,
+                  fulcrum: '.fulcrums/inventory.of=fulcrums.case=F001-x.md',
+                },
+              });
+
+              return runStoneGuardReviews(
+                {
+                  stone,
+                  guard,
+                  hash: 'disputeskip',
+                  iteration: 2,
+                  route: tempDir,
+                },
+                noopContext,
+              );
+            },
+          );
+
+          then(
+            'the lane is skipped — budget consumed once (rounds stays 1)',
+            async () => {
+              expect(second.artifacts).toHaveLength(1);
+              const meters = await getAllRouteStoneGuardReviewPeerMeters({
+                route: tempDir,
+                stone: '1.test',
+              });
+              // case24's identical harness WITHOUT a dispute lands rounds at 2; the
+              // dispute skip is the only difference, so this 1 is the whole proof
+              expect(meters[0]?.rounds).toEqual(1);
+            },
+          );
+
+          then('the skipped lane re-emits its PRIOR counts from cache', () => {
+            // the skip pushes the cached review unchanged — its blocker still stands
+            // in the artifact (a dispute is a TALLY exclusion, never an edit to the
+            // review). the judge subtracts it downstream; the review itself is untouched
+            expect(second.artifacts[0]?.blockers).toEqual(1);
+            expect(second.artifacts[0]?.nitpicks).toEqual(0);
+          });
+
+          then('the seam outcome matches snapshot', async () => {
+            const meters = await getAllRouteStoneGuardReviewPeerMeters({
+              route: tempDir,
+              stone: '1.test',
+            });
+            expect({
+              slug: meters[0]?.reviewer.slug,
+              rounds: meters[0]?.rounds,
+              blockers: second.artifacts[0]?.blockers,
+              nitpicks: second.artifacts[0]?.nitpicks,
+            }).toMatchSnapshot();
+          });
+        },
+      );
     },
   );
 });

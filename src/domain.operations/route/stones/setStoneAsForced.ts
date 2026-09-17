@@ -8,6 +8,7 @@ import { asRungLabel } from '../guard/review/peer/meter/asRungLabel';
 import { setStoneGuardApproval } from '../judges/setStoneGuardApproval';
 import { setStoneGuardOverrule } from '../judges/setStoneGuardOverrule';
 import { findOneStoneByPattern } from './asStoneGlob';
+import { formatGuidanceForHumanOnlyCommand } from './formatGuidanceForHumanOnlyCommand';
 import { getAllStones } from './getAllStones';
 
 /**
@@ -47,14 +48,7 @@ export const setStoneAsForced = async (
           stone: stoneMatched.name,
           action: 'blocked',
           reason: 'only humans can force',
-          guidance: [
-            'as a driver, you should:',
-            '   ├─ `--as passed` to signal work complete, proceed',
-            '   ├─ `--as arrived` to signal work complete, request review',
-            '   └─ `--as blocked` to escalate if stuck',
-            '',
-            'the human will run `--as forced` when ready.',
-          ].join('\n'),
+          guidance: formatGuidanceForHumanOnlyCommand({ humanGrant: 'forced' }),
         }),
       },
     };
@@ -70,7 +64,7 @@ export const setStoneAsForced = async (
   });
 
   // derive the overrule target via the shared single source — force overrules a blocked
-  // active level OR an owed contemplation gate (an un-overruled in-tolerance blocker that
+  // active level OR an owed feedbackAbsorption gate (an un-overruled in-tolerance blocker that
   // awaits a .taken, design-note B6); a merit-clear stone has no target, so force skips the
   // overrule and grants only its approval below (the false-provenance guard).
   const { hasTarget, levelToOverrule } = await getStoneGuardOverruleTarget({

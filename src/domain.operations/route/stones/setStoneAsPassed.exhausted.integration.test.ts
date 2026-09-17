@@ -5,6 +5,7 @@ import { given, then, useThen, when } from 'test-fns';
 
 import { answerEveryPeerGiven } from '../__test_assets__/answerEveryPeerGiven';
 import { asStableGuardEmit } from '../__test_assets__/asStableGuardEmit';
+import { concedeEveryPeerConcern } from '../__test_assets__/concedeEveryPeerConcern';
 import { countReviewerRuns } from '../__test_assets__/countReviewerRuns';
 import { genContextReviewBrainSupplyDemo } from '../__test_assets__/genContextReviewBrainSupplyDemo';
 import { setStoneAsPassed } from './setStoneAsPassed';
@@ -108,6 +109,13 @@ describe('setStoneAsPassed.exhausted', () => {
           //         refuses a new round while a given that holds blockers is unanswered,
           //         so an edit alone can no longer buy re-entry
           await answerEveryPeerGiven({ route: tempDir, stone: '1.test' });
+          // concede the carried concern — the default stance — so the entrance gate
+          // clears and the next round runs, exactly as it did before the gate existed
+          await concedeEveryPeerConcern({
+            route: tempDir,
+            stone: '1.test',
+            severity: 'urgent',
+          });
 
           // repair the artifact, which moves the hash
           await fs.writeFile(
@@ -150,6 +158,13 @@ describe('setStoneAsPassed.exhausted', () => {
         async () => {
           // round 2 raised its own critique; it is owed its own answer
           await answerEveryPeerGiven({ route: tempDir, stone: '1.test' });
+          // and its own stance — a concede keeps the concern in the tally, so the
+          // exhaustion this step asserts still holds the road
+          await concedeEveryPeerConcern({
+            route: tempDir,
+            stone: '1.test',
+            severity: 'urgent',
+          });
 
           await fs.writeFile(
             path.join(tempDir, '1.test.md'),
@@ -264,7 +279,7 @@ describe('setStoneAsPassed.exhausted', () => {
         setStoneAsPassed({ stone: '1.test', route: tempDir }, noopContext),
       );
 
-      then('it is blocked by the review, never by contemplation', () => {
+      then('it is blocked by the review, never by feedbackAbsorption', () => {
         expect(result.passed).toBe(false);
         // no prior debt existed, so the entrance gate had none to hold
         expect(result.emit?.stdout).not.toContain('await your reply');
@@ -284,7 +299,7 @@ describe('setStoneAsPassed.exhausted', () => {
 
       then('the entrance gate holds it on the unanswered fresh debt', () => {
         // the given from [t0] sits at the hash that is STILL current — no edit moved it.
-        // P1 must halt here, and it must halt for contemplation rather than exhaustion
+        // P1 must halt here, and it must halt for feedbackAbsorption rather than exhaustion
         expect(result.passed).toBe(false);
         expect(result.emit?.stdout).toContain('await your reply');
       });
@@ -292,7 +307,7 @@ describe('setStoneAsPassed.exhausted', () => {
       then(
         'matches snapshot — the FRESH-debt halt, distinct from the carried one',
         () => {
-          // the neighbour cell to the contemplation journey's [t1]: there the debt was
+          // the neighbour cell to the feedbackAbsorption journey's [t1]: there the debt was
           // carried across a hash move; here it sits at the hash that is still current.
           // the halt copy must read the same either way — a driver who is told "the
           // reviewer awaits" should not have to know which of the two they are in
@@ -317,6 +332,13 @@ describe('setStoneAsPassed.exhausted', () => {
           //         make `the debt is discharged` below pass for the wrong reason
           //         (rule.forbid.failhide)
           expect(pathsTaken).toHaveLength(1);
+          // concede the fresh concern so the entrance gate clears; the concern stays
+          // in the tally, so the reviewer reports exhausted with the hold intact
+          await concedeEveryPeerConcern({
+            route: tempDir,
+            stone: '1.test',
+            severity: 'urgent',
+          });
           return setStoneAsPassed(
             { stone: '1.test', route: tempDir },
             noopContext,
@@ -324,11 +346,14 @@ describe('setStoneAsPassed.exhausted', () => {
         },
       );
 
-      then('the debt is discharged — the contemplation halt is gone', () => {
-        // this is the whole point of the cell: the answer alone cleared it, with no
-        // artifact edit and no budget left for the reviewer to confirm anything
-        expect(result.emit?.stdout).not.toContain('await your reply');
-      });
+      then(
+        'the debt is discharged — the feedbackAbsorption halt is gone',
+        () => {
+          // this is the whole point of the cell: the answer alone cleared it, with no
+          // artifact edit and no budget left for the reviewer to confirm anything
+          expect(result.emit?.stdout).not.toContain('await your reply');
+        },
+      );
 
       then('and the reviewer is now reported exhausted, not owed', () => {
         expect(result.emit?.stdout).toContain('exhausted');
@@ -517,7 +542,7 @@ describe('setStoneAsPassed.exhausted', () => {
               // ⚠️ the anti-deadlock half. the taken path is derived from the given path, so a
               //    guide that named a CURRENT-hash file would send the driver to write one the
               //    matcher then refuses — a debt with no discharge
-              expect(result.emit?.stdout).toContain('contemplate from');
+              expect(result.emit?.stdout).toContain('absorb from');
               expect(result.emit?.stdout).toContain('articulate into');
               expect(result.emit?.stdout).toContain('limited');
             },
@@ -605,6 +630,13 @@ describe('setStoneAsPassed.exhausted', () => {
             // guard against a broken glob writes zero files, which would make the
             // discharge below pass for the wrong reason (`rule.forbid.failhide`)
             expect(pathsTaken).toHaveLength(1);
+            // concede the carried concern so the gate clears; it stays in the tally,
+            // so the stone still holds after the answer discharges the debt
+            await concedeEveryPeerConcern({
+              route: tempDir,
+              stone: '1.test',
+              severity: 'urgent',
+            });
             return setStoneAsPassed(
               { stone: '1.test', route: tempDir },
               noopContext,
@@ -612,11 +644,14 @@ describe('setStoneAsPassed.exhausted', () => {
           },
         );
 
-        then('the contemplation halt is gone — the ANSWER cleared it', () => {
-          // the pair to [t1]: the edit did not discharge the debt, and the answer did.
-          // that asymmetry is the contract, and it is what makes the answer the one door
-          expect(result.emit?.stdout).not.toContain('await your reply');
-        });
+        then(
+          'the feedbackAbsorption halt is gone — the ANSWER cleared it',
+          () => {
+            // the pair to [t1]: the edit did not discharge the debt, and the answer did.
+            // that asymmetry is the contract, and it is what makes the answer the one door
+            expect(result.emit?.stdout).not.toContain('await your reply');
+          },
+        );
 
         then('the stone still holds — a human or a top-up is owed', () => {
           expect(result.passed).toBe(false);
@@ -824,6 +859,15 @@ describe('setStoneAsPassed.exhausted', () => {
               //         worse, a later refactor could make it pass for the wrong one
               //         (rule.forbid.failhide)
               expect(pathsTaken).toHaveLength(1);
+              // concede the carried concern so the gate clears; the topped-up budget
+              // then buys the confirmation round this step asserts.
+              // 🔴 urgent — an all-`better` exhaustion is SHED by the judge and passes (S16),
+              //    so this exhaustion-halt test concedes urgent to KEEP the hold at exhaustion.
+              await concedeEveryPeerConcern({
+                route: tempDir,
+                stone: '1.test',
+                severity: 'urgent',
+              });
               return setStoneAsPassed(
                 { stone: '1.test', route: tempDir },
                 noopContext,

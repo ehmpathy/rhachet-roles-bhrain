@@ -3,6 +3,17 @@ always:
     say:
       - briefs/contract.reviewer-output.md
       - briefs/rule.forbid.overzealous-blockers.md
+      # the same harm test, applied to a CONCESSION's severity: `urgent` is a
+      # nameable shipped harm, `better` is every point that is not. say-level
+      # beside overzealous-blockers because it reuses that rule's one test — so a
+      # driver and a reviewer cannot reach opposite grades on one point, and the
+      # budget hit's needs-a-human verdict rests on a grade both seats agree on
+      - briefs/rule.require.grade-a-concession-by-its-harm.md
+      # every concern the reviewer raises carries a strict [blocker|nitpick][urgent|better]
+      # label — the harm axis beside the kind axis. the tallier reads the explicit label and
+      # never infers urgent where the truth is better. say-level: it fires AT the moment a
+      # concern is written, so it must be resident, not fetched
+      - briefs/rule.require.label-each-concern-with-severity.md
       - briefs/review.tactics.md
       - briefs/on.rules/rules101.[article].md
       - briefs/on.rules/rules101.structure.[article].md

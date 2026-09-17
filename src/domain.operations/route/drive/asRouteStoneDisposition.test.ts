@@ -14,6 +14,7 @@ const TEST_CASES: {
   given: {
     status: PassageReport['status'] | null;
     blocker: RouteStoneGuardBlockerType | null;
+    reason?: string | null;
   };
   expect: RouteStoneDisposition;
 }[] = [
@@ -27,6 +28,46 @@ const TEST_CASES: {
     description: 'exhausted status → halt(exhausted)',
     given: { status: 'exhausted', blocker: null },
     expect: { of: 'halt', why: 'exhausted' },
+  },
+  {
+    // S12 — the reason is the only channel; an ordinary exhausted reason must not flip it
+    description: 'exhausted + an ordinary budget reason → halt(exhausted)',
+    given: {
+      status: 'exhausted',
+      blocker: null,
+      reason: 'peer reviewer budget exhausted: mech',
+    },
+    expect: { of: 'halt', why: 'exhausted' },
+  },
+  {
+    // absence is not a claim — a caller that omits the reason gets the safe default
+    description: 'exhausted + a null reason → halt(exhausted)',
+    given: { status: 'exhausted', blocker: null, reason: null },
+    expect: { of: 'halt', why: 'exhausted' },
+  },
+  {
+    // 🔴 S12 — every skipped lane conceded, so the top-up is the driver's own lever and
+    //    no human is owed. this op's axis is "does a HUMAN need to act?", so `push`
+    description:
+      'exhausted + a CONCESSION reason → push (the driver owns the remedy)',
+    given: {
+      status: 'exhausted',
+      blocker: null,
+      reason:
+        'concessions await the round that confirms them; peer reviewer budget exhausted: mech',
+    },
+    expect: { of: 'push' },
+  },
+  {
+    // a malfunction outranks a concession — a broken reviewer needs a human regardless
+    description: 'malfunction + a CONCESSION reason → halt(malfunction)',
+    given: {
+      status: 'malfunction',
+      blocker: null,
+      reason:
+        'reviewer or judge malfunctioned; concessions await the round that confirms them; peer reviewer budget exhausted: mech',
+    },
+    expect: { of: 'halt', why: 'malfunction' },
   },
   {
     description: 'blocked + no blocker (driver wall) → halt(blocked)',
@@ -56,8 +97,8 @@ const TEST_CASES: {
     expect: { of: 'push' },
   },
   {
-    description: 'blocked + review.peer.uncontemplated → push',
-    given: { status: 'blocked', blocker: 'review.peer.uncontemplated' },
+    description: 'blocked + review.peer.unabsorbed → push',
+    given: { status: 'blocked', blocker: 'review.peer.unabsorbed' },
     expect: { of: 'push' },
   },
   {
@@ -81,9 +122,8 @@ const TEST_CASES: {
     expect: { of: 'push' },
   },
   {
-    description:
-      'contemplated → push (forward motion clears any prior blocker)',
-    given: { status: 'contemplated', blocker: null },
+    description: 'absorbed → push (forward motion clears any prior blocker)',
+    given: { status: 'absorbed', blocker: null },
     expect: { of: 'push' },
   },
   {
@@ -115,6 +155,9 @@ describe('asRouteStoneDisposition', () => {
       const disposition = asRouteStoneDisposition({
         status: thisCase.given.status,
         blocker: thisCase.given.blocker,
+        // the fixture omits `reason` where the case does not turn on it; the op's input
+        // is REQUIRED, so the absence is made explicit here rather than inferred there
+        reason: thisCase.given.reason ?? null,
       });
       expect(disposition).toEqual(thisCase.expect);
     }),

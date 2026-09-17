@@ -48,7 +48,7 @@ is `.dream/v2026_09_07.fix.contemplate-is-superseded-by-converse-across-the-cont
 
 ## .refs
 where the term is declared / used, plus notable examples:
-- src/domain.operations/route/guard/review/peer/getRouteGuardReviewPeerContemplationStatus.ts   # reads the gate
+- src/domain.operations/route/guard/review/peer/getRouteGuardReviewPeerFeedbackAbsorptionStatus.ts   # reads the gate
 - src/domain.operations/route/guard/review/peer/getAllRouteGuardReviewPeersUncontemplated.ts     # the pure diff
 - src/domain.operations/route/guard/review/peer/getStoneGuardReviewPeerUncontemplatedUnforgiven.ts  # owed AND un-forgiven
 - src/domain.operations/route/stones/setStoneAsPassed.ts          # the gate that holds passage

@@ -61,7 +61,7 @@ describe('driver.route.peer-budget-exhaustion-unlocks-level.acceptance', () => {
         // answer whatever the prior round left owed, before this one is entered.
         // a no-op on the first arrival; on every later one it is what the entrance
         // gate now requires — an edit alone no longer buys re-entry
-        await answerEveryPeerGiven({ cwd: scene.tempDir, stone: '1.execute' });
+        await answerEveryPeerGiven({ cwd: scene.tempDir, stone: '1.execute', severity: 'urgent' });
 
         return invokeRouteSkill({
           skill: 'route.stone.set',
@@ -104,7 +104,7 @@ describe('driver.route.peer-budget-exhaustion-unlocks-level.acceptance', () => {
         // answer whatever the prior round left owed, before this one is entered.
         // a no-op on the first arrival; on every later one it is what the entrance
         // gate now requires — an edit alone no longer buys re-entry
-        await answerEveryPeerGiven({ cwd: scene.tempDir, stone: '1.execute' });
+        await answerEveryPeerGiven({ cwd: scene.tempDir, stone: '1.execute', severity: 'urgent' });
 
         return invokeRouteSkill({
           skill: 'route.stone.set',
@@ -161,7 +161,7 @@ describe('driver.route.peer-budget-exhaustion-unlocks-level.acceptance', () => {
         // answer whatever the prior round left owed, before this one is entered.
         // a no-op on the first arrival; on every later one it is what the entrance
         // gate now requires — an edit alone no longer buys re-entry
-        await answerEveryPeerGiven({ cwd: scene.tempDir, stone: '1.execute' });
+        await answerEveryPeerGiven({ cwd: scene.tempDir, stone: '1.execute', severity: 'urgent' });
 
         return invokeRouteSkill({
           skill: 'route.stone.set',
@@ -247,7 +247,7 @@ describe('driver.route.peer-budget-exhaustion-unlocks-level.acceptance', () => {
         // answer whatever the prior round left owed, before this one is entered.
         // a no-op on the first arrival; on every later one it is what the entrance
         // gate now requires — an edit alone no longer buys re-entry
-        await answerEveryPeerGiven({ cwd: scene.tempDir, stone: '1.execute' });
+        await answerEveryPeerGiven({ cwd: scene.tempDir, stone: '1.execute', severity: 'urgent' });
 
         return invokeRouteSkill({
           skill: 'route.stone.set',

@@ -22,7 +22,7 @@ it is the counterpart of **configured**. the two sets answer different questions
 | `slugsConfigured` | who may run **now**? | the live guard config |
 | `slugsSpoken` | who has ever spoken **here**? | the givens on disk |
 
-🔴 **their UNION is what `--as contemplated --that <slug>` validates against**, and the union is
+🔴 **their UNION is what `--as absorbed --that <slug>` validates against**, and the union is
 not an optimization — it is required. a **retired** reviewer is absent from the config by
 definition, so a config-only check would reject the very slug the guard's own halt just printed,
 and the driver could never answer the debt they were told to answer.
@@ -35,8 +35,8 @@ machine rather than in glob order, which is the filesystem's (`rule.forbid.order
 
 ## .refs
 where the term composes declared operations:
-- src/domain.operations/route/guard/review/peer/getRouteGuardReviewPeerContemplationStatus.ts   # the `slugsSpoken: string[]` field, read from the UNSCOPED givens
-- src/domain.operations/route/stones/setStoneAsContemplated.ts                                   # `validSlugs = configured ∪ spoken`
+- src/domain.operations/route/guard/review/peer/getRouteGuardReviewPeerFeedbackAbsorptionStatus.ts   # the `slugsSpoken: string[]` field, read from the UNSCOPED givens
+- src/domain.operations/route/stones/setStoneAsFeedbackAbsorbed.ts                                   # `validSlugs = configured ∪ spoken`
 
 ## .reason
 see the ref-level cluster beside this choice:

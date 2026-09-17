@@ -14,6 +14,7 @@ import { asRouteStoneDisposition } from './drive/asRouteStoneDisposition';
 import { getAllRouteStoneGuardReviewPeerMeters } from './guard/review/peer/meter/getAllRouteStoneGuardReviewPeerMeters';
 import { computePromisedReviewCount } from './guard/review/self/computePromisedReviewCount';
 import { getStonePromises } from './guard/review/self/getStonePromises';
+import { isExpectedFsReadFault } from './isExpectedFsReadFault';
 import { getLatestPassageForStone } from './passage/getLatestPassageForStone';
 import { asStatusLine, type StatusLinePhase } from './statusLine/asStatusLine';
 import { computeNextStones } from './stones/computeNextStones';
@@ -98,9 +99,17 @@ const getRouteStatusLineState = async (input: {
   });
 
   // disposition (push | halt): the one value the onStop hook also reads
+  //
+  // .note = the reason rides along so a CONCESSION exhaustion reads as `push` here too.
+  //         without it the statusline would pin 👋 (a human is needed) while the onStop
+  //         hook blocks the stop and tells the driver to top up their own budget — two
+  //         opposite reads of one state, which is the drift
+  //         `rule.require.single-source-of-truth-for-render` exists to close. it costs
+  //         no extra read: `latest` is already in hand.
   const disposition = asRouteStoneDisposition({
     status: latest?.status ?? null,
     blocker: latest?.blocker ?? null,
+    reason: latest?.reason ?? null,
   });
 
   // phase (where the work is): best-effort — a benign read fault degrades to the plain stone
@@ -147,27 +156,12 @@ const getStonePhaseBestEffort = async (input: {
 };
 
 /**
- * .what = the specific filesystem error codes that count as a benign route-state read fault
- * .why = the allowlist must be EXACT — any error that merely holds a string `code` (a custom
- *        domain error with `code: 'BAD_STATE'`, a library error) must NOT pass, or a real
- *        defect would masquerade as a benign fault and be swallowed (rule.forbid.failhide)
- */
-const FS_READ_FAULT_CODES: ReadonlySet<string> = new Set([
-  'ENOENT', // no such file or directory
-  'EACCES', // permission denied
-  'EISDIR', // a directory where a file was expected
-  'ENOTDIR', // a file where a directory was expected
-  'ELOOP', // too many symlink hops
-  'ENAMETOOLONG', // the path is too long
-]);
-
-/**
  * .what = whether an error is a benign route-state read fault (corrupt jsonl / unreadable file)
  * .why = the phase degrade covers ONLY unreadable route state; a genuine bug must rethrow so it
  *        surfaces loud (rule.forbid.failhide: allowlist the expected, surface the rest)
  *
  * .note = the two expected classes: a malformed jsonl line makes `JSON.parse` throw a
- *         `SyntaxError`; a filesystem read fault holds a KNOWN fs `code` (in FS_READ_FAULT_CODES).
+ *         `SyntaxError`; a filesystem read fault holds a KNOWN fs `code` (isExpectedFsReadFault).
  *         any other error — a custom `code`, a type error, a null deref, a domain bug — is
  *         unexpected and rethrown, so a real defect never hides behind a benign degrade.
  */
@@ -176,15 +170,7 @@ const isExpectedRouteStateFault = (error: unknown): boolean => {
   if (error instanceof SyntaxError) return true;
 
   // a filesystem read fault → an Error that holds one of the KNOWN fs codes (not any code)
-  // .note = `'code' in error` narrows error to hold a `code` key, so `.code` reads with
-  //         no cast; its value is still `unknown`, guarded by the typeof + allowlist below
-  if (error instanceof Error && 'code' in error) {
-    const code: unknown = error.code;
-    if (typeof code === 'string' && FS_READ_FAULT_CODES.has(code)) return true;
-  }
-
-  // otherwise unexpected → the caller must rethrow (fail loud)
-  return false;
+  return isExpectedFsReadFault(error);
 };
 
 /**
@@ -226,11 +212,17 @@ const getPhaseFromBlocker = async (input: {
   // self-review blocker → the self-review phase with its r{done}/{total} counter
   if (input.blocker === 'review.self') return await getSelfPhase(input);
 
-  // any peer-review blocker (active, exhausted, uncontemplated) → the peer depth l{level}@i{rounds}
+  // any peer-review blocker (active, exhausted, feedbackUnabsorbed, undeclared) → the peer
+  // depth l{level}@i{rounds}
+  //
+  // .note = 'review.peer.undeclared' belongs here rather than in the judge fallthrough
+  //         below: the stance gate fires BEFORE the hash and before any judge runs, so
+  //         a judge phase would name a place the work never reached
   if (
     input.blocker === 'review.peer' ||
     input.blocker === 'review.peer.exhausted' ||
-    input.blocker === 'review.peer.uncontemplated'
+    input.blocker === 'review.peer.unabsorbed' ||
+    input.blocker === 'review.peer.undeclared'
   )
     return await getPeerPhase(input);
 

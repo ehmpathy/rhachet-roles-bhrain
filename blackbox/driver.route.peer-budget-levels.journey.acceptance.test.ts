@@ -66,7 +66,7 @@ describe('driver.route.peer-budget-levels.journey.acceptance', () => {
         // answer whatever the prior round left owed, before this one is entered.
         // a no-op on the first arrival; on every later one it is what the entrance
         // gate now requires — an edit alone no longer buys re-entry
-        await answerEveryPeerGiven({ cwd: scene.tempDir, stone: '1.execute' });
+        await answerEveryPeerGiven({ cwd: scene.tempDir, stone: '1.execute', severity: 'urgent' });
 
         return invokeRouteSkill({
           skill: 'route.stone.set',
@@ -105,7 +105,7 @@ describe('driver.route.peer-budget-levels.journey.acceptance', () => {
         // answer whatever the prior round left owed, before this one is entered.
         // a no-op on the first arrival; on every later one it is what the entrance
         // gate now requires — an edit alone no longer buys re-entry
-        await answerEveryPeerGiven({ cwd: scene.tempDir, stone: '1.execute' });
+        await answerEveryPeerGiven({ cwd: scene.tempDir, stone: '1.execute', severity: 'urgent' });
 
         return invokeRouteSkill({
           skill: 'route.stone.set',
@@ -133,7 +133,7 @@ describe('driver.route.peer-budget-levels.journey.acceptance', () => {
         // answer whatever the prior round left owed, before this one is entered.
         // a no-op on the first arrival; on every later one it is what the entrance
         // gate now requires — an edit alone no longer buys re-entry
-        await answerEveryPeerGiven({ cwd: scene.tempDir, stone: '1.execute' });
+        await answerEveryPeerGiven({ cwd: scene.tempDir, stone: '1.execute', severity: 'urgent' });
 
         return invokeRouteSkill({
           skill: 'route.stone.set',
@@ -175,7 +175,7 @@ describe('driver.route.peer-budget-levels.journey.acceptance', () => {
         // answer whatever the prior round left owed, before this one is entered.
         // a no-op on the first arrival; on every later one it is what the entrance
         // gate now requires — an edit alone no longer buys re-entry
-        await answerEveryPeerGiven({ cwd: scene.tempDir, stone: '1.execute' });
+        await answerEveryPeerGiven({ cwd: scene.tempDir, stone: '1.execute', severity: 'urgent' });
 
         return invokeRouteSkill({
           skill: 'route.stone.set',
@@ -207,7 +207,7 @@ describe('driver.route.peer-budget-levels.journey.acceptance', () => {
         // answer whatever the prior round left owed, before this one is entered.
         // a no-op on the first arrival; on every later one it is what the entrance
         // gate now requires — an edit alone no longer buys re-entry
-        await answerEveryPeerGiven({ cwd: scene.tempDir, stone: '1.execute' });
+        await answerEveryPeerGiven({ cwd: scene.tempDir, stone: '1.execute', severity: 'urgent' });
 
         return invokeRouteSkill({
           skill: 'route.stone.set',
@@ -225,9 +225,22 @@ describe('driver.route.peer-budget-levels.journey.acceptance', () => {
         expect(output).toContain('exhaust');
       });
 
-      then('requires human approval', () => {
-        const output = result.stdout.toLowerCase() + result.stderr.toLowerCase();
-        expect(output).toMatch(/approv|human/);
+      then('the exhaustion halts on an URGENT concession — the budget lever AND a human grant are both owed (S16)', () => {
+        // the journey concedes each round as `urgent` (a shipped harm), so at exhaustion
+        // every skipped lane carries a LIVE urgent concession — its stance is against its
+        // latest given, since an exhausted lane mints no newer one. under S16 an urgent
+        // concession is NOT shed by the judge: its harm ships if unfixed, so the round is
+        // owed a human's grant (define.invariant.review.peer.budget.urgent-earns-budget).
+        // the halt names the concession, offers the driver's own budget lever, AND warns
+        // that a human must grant — the human-approval BYPASS the journey exercises at [t5].
+        // (a `better`-only exhaustion would instead be SHED and PASS, no halt — S16.)
+        const output = result.stdout.toLowerCase();
+        expect(output).toContain(
+          'you conceded — the round to confirm your fix needs more budget',
+        );
+        expect(output).toContain('an urgent concession stands');
+        expect(output).toContain('increase budget');
+        expect(output).toMatch(/approve as-is|a human must grant/);
       });
 
       then('stdout has good vibes', () => {

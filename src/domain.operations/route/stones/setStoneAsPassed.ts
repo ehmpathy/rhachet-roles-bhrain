@@ -24,9 +24,13 @@ import { asGuardDisplayPath } from '../guard/asGuardDisplayPath';
 import { getRepoRootWithFallback } from '../guard/getRepoRootWithFallback';
 import { computeStoneReviewInputHash } from '../guard/review/computeStoneReviewInputHash';
 import { asRouteGuardReviewPeerSlugList } from '../guard/review/peer/asRouteGuardReviewPeerSlugList';
-import { getStoneGuardReviewPeerUncontemplatedUnforgiven } from '../guard/review/peer/getStoneGuardReviewPeerUncontemplatedUnforgiven';
+import { computeTotalUndeclaredConcerns } from '../guard/review/peer/computeTotalUndeclaredConcerns';
+import { genRouteGuardExhaustedReason } from '../guard/review/peer/genRouteGuardExhaustedReason';
+import { getStoneConcessionExhaustionKind } from '../guard/review/peer/getStoneConcededLaneSlugs';
+import { getStoneGuardReviewPeerFeedbackUnabsorbedUnforgiven } from '../guard/review/peer/getStoneGuardReviewPeerFeedbackUnabsorbedUnforgiven';
+import { getStoneUndeclaredConcerns } from '../guard/review/peer/getStoneUndeclaredConcerns';
 import { getAllReviewPeerMeterStatuses } from '../guard/review/peer/meter/getAllReviewPeerMeterStatuses';
-import { getExhaustedReviewerSlugs } from '../guard/review/peer/meter/getExhaustedReviewerSlugs';
+import { getExhaustionHaltReviewerSlugs } from '../guard/review/peer/meter/getExhaustionHaltReviewerSlugs';
 import { getReviewLevelByIndex } from '../guard/review/peer/meter/getReviewLevelByIndex';
 import { isEveryReviewLevelTerminal } from '../guard/review/peer/meter/isEveryReviewLevelTerminal';
 import { isLevelOverruled } from '../guard/review/peer/meter/isLevelOverruled';
@@ -36,7 +40,9 @@ import { getStonePromises } from '../guard/review/self/getStonePromises';
 import { setSelfReviewTriggeredReport } from '../guard/review/self/setSelfReviewTriggeredReport';
 import { setStoneGuardStamp } from '../guard/stamp/setStoneGuardStamp';
 import type { GuardPeerMeterStatus } from '../guard/tree/formatGuardTree';
-import { formatRouteGuardReviewPeerContemplatePrompt } from '../guard/tree/formatRouteGuardReviewPeerContemplatePrompt';
+import { formatRouteGuardReviewPeerAbsorptionPrompt } from '../guard/tree/formatRouteGuardReviewPeerAbsorptionPrompt';
+import { formatRouteGuardReviewPeerFeedbackAbsorbPrompt } from '../guard/tree/formatRouteGuardReviewPeerFeedbackAbsorbPrompt';
+import { isExpectedFsReadFault } from '../isExpectedFsReadFault';
 import { getStoneGuardOverruledLevels } from '../judges/getStoneGuardOverruledLevels';
 import { runStoneGuardJudges } from '../judges/runStoneGuardJudges';
 import { getOnePassageReport } from '../passage/getOnePassageReport';
@@ -72,11 +78,11 @@ const formatArtifactStderrBlock = async (input: {
     const content = await fs.readFile(input.path, 'utf-8');
     return [header, ...content.split('\n').map((line) => `   ${line}`)];
   } catch (error) {
-    // graceful fallback for display: file may not exist or be unreadable
-    const isExpected =
-      error instanceof Error &&
-      (error.message.includes('ENOENT') || error.message.includes('EACCES'));
-    if (!isExpected) throw error;
+    // graceful fallback for display: file may not exist or be unreadable.
+    // keyed on error.code (not error.message) so a real error whose message merely quotes a
+    // path that holds the text 'ENOENT' surfaces loud instead of a silent degrade
+    // (rule.forbid.failhide)
+    if (!isExpectedFsReadFault(error)) throw error;
     return input.fallback !== null
       ? [header, `   └─ ${input.fallback}`]
       : [header];
@@ -330,7 +336,7 @@ export const setStoneAsPassed = async (
   // .note = it needs NO hash. under P2 the debt is keyed to the reviewer, so
   //         readiness does not depend on the current generation at all.
   const unforgivenAtEntrance =
-    await getStoneGuardReviewPeerUncontemplatedUnforgiven({
+    await getStoneGuardReviewPeerFeedbackUnabsorbedUnforgiven({
       stone: stoneMatched,
       route: input.route,
     });
@@ -340,17 +346,63 @@ export const setStoneAsPassed = async (
     return genStoneGuardBlockedEmit({
       stone: stoneMatched.name,
       route: input.route,
-      blocker: 'review.peer.uncontemplated',
-      reason: `peer review awaits contemplation: ${asRouteGuardReviewPeerSlugList(
+      blocker: 'review.peer.unabsorbed',
+      reason: `peer review awaits feedbackAbsorption: ${asRouteGuardReviewPeerSlugList(
         { reviewers: unforgivenAtEntrance },
       )}`,
       refs: { reviews: [], judges: [] },
       emit: {
-        stdout: formatRouteGuardReviewPeerContemplatePrompt({
+        stdout: formatRouteGuardReviewPeerFeedbackAbsorbPrompt({
           case: 'reply-prompt',
           stone: stoneMatched.name,
           root: gitRoot,
           reviewers: unforgivenAtEntrance,
+        }),
+      },
+    });
+  }
+
+  // 🔴 THE STANCE GATE — a driver may not enter a review round while a concern that
+  // holds the road stands with no stance declared on it.
+  //
+  // .why = acceptance #1. a review budget ends a disagreement by exhaustion rather
+  //        than by judgment, so the cheapest exit from a real defect and the cheapest
+  //        exit from a bad critique are the same exit. a stance says WHICH it is, and
+  //        records that judgment where a council can rule on it.
+  //
+  // 🔴 it sits AFTER the feedbackAbsorption gate, and that order is the design (invariant
+  //    2). a stance declared before the driver answered the critique is a verdict on
+  //    an argument they never engaged — so the answer is owed first, and this gate
+  //    never fires while a `.taken` stands unwritten.
+  //
+  // 🔴 it asks per CONCERN, never per lane (S07). a lane at 3 blockers owes 3
+  //    declarations, and a driver may concede one and dispute two — which a
+  //    lane-grain gate cannot express (rule.forbid.suppression-of-undeclared-concerns).
+  //
+  // .note = it inherits the entrance gate's seam above in all three clauses: after
+  //         the zero-reviewer auto-pass, before stampGuardReport is in scope, and
+  //         before the hash — so this halt costs a directory read, never a round of
+  //         subprocesses.
+  const undeclaredAtEntrance = await getStoneUndeclaredConcerns({
+    stone: stoneMatched,
+    route: input.route,
+  });
+  if (undeclaredAtEntrance.length > 0) {
+    const concernsTotal = computeTotalUndeclaredConcerns({
+      lanes: undeclaredAtEntrance,
+    });
+    return genStoneGuardBlockedEmit({
+      stone: stoneMatched.name,
+      route: input.route,
+      blocker: 'review.peer.undeclared',
+      reason: `peer review awaits absorption: ${concernsTotal} concern${
+        concernsTotal === 1 ? '' : 's'
+      } unabsorbed`,
+      refs: { reviews: [], judges: [] },
+      emit: {
+        stdout: formatRouteGuardReviewPeerAbsorptionPrompt({
+          stone: stoneMatched.name,
+          lanes: undeclaredAtEntrance,
         }),
       },
     });
@@ -505,7 +557,12 @@ export const setStoneAsPassed = async (
   // get slugs of reviews that were SKIPPED (not ran) due to exhaustion
   // .note = verdict 'exhausted' is only set when wasExhausted = true (see define.invariant.review.peer.exhausted)
   // .note = exhausted reviewers at overruled levels are excluded — they are forgiven
-  const skippedSlugs = getExhaustedReviewerSlugs({
+  //
+  // 🔴 a DISPUTED lane drives on this generation, so its exhaustion does not halt the road. the
+  //    exhaustion-halt set excludes both dispute-skipped lanes (S15 — the driver's judgment that the
+  //    lane is fine to continue) and overruled levels (a human's forgive), so a fully-disputed,
+  //    exhausted lane does not block passage the dispute was meant to grant.
+  const skippedSlugs = getExhaustionHaltReviewerSlugs({
     meters: peerMeters,
     overruledLevels,
   });
@@ -523,10 +580,24 @@ export const setStoneAsPassed = async (
     allTerminal,
     skippedSlugs,
   };
+
+  // 🔴 whose halt is this? (S12/S16). the three-way kind is computed HERE, before the halt
+  //    condition, because a `better`-only exhaustion is NOT a halt at all — it falls through to
+  //    the judge, which subtracts the `better` concessions and passes. `better` is hard-capped
+  //    by the budget by design: what remains at exhaustion is tech debt, so it earns NO budget
+  //    increase and NO human (`define.invariant.review.peer.budget.urgent-earns-budget`, S16).
+  //    only `none` (a lane never conceded → human wait) and `urgent` (ships harm → budget + a
+  //    human warn) halt here.
+  const concession = await getStoneConcessionExhaustionKind({
+    route: input.route,
+    stone: stoneMatched.name,
+    slugs: exhaustionCheck.skippedSlugs,
+  });
   if (
     exhaustionCheck.anySkippedDueToExhaustion &&
     exhaustionCheck.allTerminal &&
-    !approvalPrior
+    !approvalPrior &&
+    concession !== 'better'
   ) {
     // build guard data for output
     const guardData = computeGuardData({
@@ -554,7 +625,28 @@ export const setStoneAsPassed = async (
     //        (latest-entry-wins), so a stale exhausted never lingers.
     // .note = writes the status directly (like malfunction/constraint), not via
     //         genStoneGuardBlockedEmit, which persists a 'blocked' status + blocker.
-    const exhaustedReason = `peer reviewer budget exhausted: ${exhaustionCheck.skippedSlugs.join(', ')}`;
+    // 🔴 whose halt is this? (S12). the condition is a CONJUNCTION of three clauses, and
+    //    the first two are already above: every level terminal (`allTerminal`), and a lane
+    //    skipped for exhaustion. the third is asked here — does a live concession stand
+    //    against the current generation?
+    //
+    //    ⚠️ it asks for EVERY skipped lane, never any. one lane the driver never conceded
+    //       still awaits a human, so a concession-worded halt would name the wrong owner
+    //       and a driver who obeyed it would top up a budget and re-arrive into the same
+    //       wall — which is worse than the human wait it replaced.
+    //
+    //    .why = a driver that conceded, exhausted, and reached allTerminal is handed a
+    //           human halt whose remedy is its OWN lever. that is the adjacency
+    //           `rule.always.spend-own-levers-before-escalation` measures: "two remedies
+    //           rendered side by side with no owner column read as two human remedies,
+    //           and the driver's own lever is the one that gets surfaced upward."
+    //    🔴 the verdict is THREE-WAY, never two (F028/S14/S16). a `better` set never reaches
+    //       here (it fell through to the judge above). so at this point `concession` is either
+    //       `none` (an ordinary human wait) or `urgent` (needs a budget increase + a human warn).
+    const exhaustedReason = genRouteGuardExhaustedReason({
+      slugs: exhaustionCheck.skippedSlugs,
+      concession,
+    });
 
     // detect a malfunction/constraint that UNLOCKED and broke in this SAME pass — a higher
     // level that ran the instant the exhausted lower level went terminal.
@@ -872,7 +964,7 @@ export const setStoneAsPassed = async (
   );
 
   if (allJudgesPassed) {
-    // gate: peer reviews must be contemplated before passage
+    // gate: peer reviews must be absorbed before passage
     // .why = a driver may not progress until it has written a .taken response to
     //        every live peer critique that carries blockers (the wish)
     // .note = slots BETWEEN allJudgesPassed and setStonePassage so it runs only
@@ -882,12 +974,12 @@ export const setStoneAsPassed = async (
     //         passes on the very critique it just received — the entrance gate cannot
     //         see a given that did not exist when it ran
 
-    // forgive contemplation for reviewers at an overruled level
+    // forgive feedbackAbsorption for reviewers at an overruled level
     // .why = an admin escape (--as overruled / --as forced) must not be re-gated
     //        by a requirement a driver must satisfy; the human took responsibility
     //        for the passage, so a waved-through level's critique needs no .taken
     //        (design-note B6; mirrors the malfunction/constraint per-level forgiveness)
-    // read the ONE source of truth for "uncontemplated AND not forgiven by an overrule" — the
+    // read the ONE source of truth for "feedbackUnabsorbed AND not forgiven by an overrule" — the
     // same primitive the overrule short-circuits (setStoneAsOverruled / setStoneAsForced via
     // getStoneGuardOverruleTarget) read — so the passage gate cannot drift from them on which
     // reviewers a waved level forgives. this is the exact seam the whole behavior exists to close:
@@ -895,36 +987,36 @@ export const setStoneAsPassed = async (
     // .note = it carries the FULL record, so the reply-prompt renders straight from it.
     //         both gates name their reviewers from this ONE read — there is no second
     //         narrow for them to drift on.
-    const uncontemplatedToBlock =
-      await getStoneGuardReviewPeerUncontemplatedUnforgiven({
+    const feedbackUnabsorbedToBlock =
+      await getStoneGuardReviewPeerFeedbackUnabsorbedUnforgiven({
         stone: stoneMatched,
         route: input.route,
       });
 
-    if (uncontemplatedToBlock.length > 0) {
-      // .note = no onGuardHalted here — the contemplation gate runs only inside
+    if (feedbackUnabsorbedToBlock.length > 0) {
+      // .note = no onGuardHalted here — the feedbackAbsorption gate runs only inside
       //         allJudgesPassed, so the judge event already closed the tree; the
       //         reply-prompt below states the halt reason. a redundant onGuardHalted
       //         would append a second └─ terminator after the judge.
 
-      // blocked on absent peer contemplation — persist + return via the shared tail
+      // blocked on absent peer feedbackAbsorption — persist + return via the shared tail
       return genStoneGuardBlockedEmit({
         stone: stoneMatched.name,
         route: input.route,
-        blocker: 'review.peer.uncontemplated',
-        reason: `peer review awaits contemplation: ${asRouteGuardReviewPeerSlugList(
-          { reviewers: uncontemplatedToBlock },
+        blocker: 'review.peer.unabsorbed',
+        reason: `peer review awaits feedbackAbsorption: ${asRouteGuardReviewPeerSlugList(
+          { reviewers: feedbackUnabsorbedToBlock },
         )}`,
         refs: {
           reviews: reviewArtifacts.map((r) => r.path),
           judges: judgeArtifacts.map((j) => j.path),
         },
         emit: await stampGuardReport({
-          stdout: formatRouteGuardReviewPeerContemplatePrompt({
+          stdout: formatRouteGuardReviewPeerFeedbackAbsorbPrompt({
             case: 'reply-prompt',
             stone: stoneMatched.name,
             root: gitRoot,
-            reviewers: uncontemplatedToBlock,
+            reviewers: feedbackUnabsorbedToBlock,
           }),
         }),
       });

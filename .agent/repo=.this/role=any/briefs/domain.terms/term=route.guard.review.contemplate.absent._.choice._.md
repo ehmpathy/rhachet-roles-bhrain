@@ -32,7 +32,7 @@ has spoken; it is the driver who has not.
 ## .refs
 
 - `src/domain.operations/route/guard/review/peer/getAllRouteGuardReviewPeersUncontemplated.ts` — where the tag is computed
-- `src/domain.operations/route/guard/review/peer/getRouteGuardReviewPeerContemplationStatus.ts:32` — `tag: 'absent' | 'stale'`
+- `src/domain.operations/route/guard/review/peer/getRouteGuardReviewPeerFeedbackAbsorptionStatus.ts:32` — `tag: 'absent' | 'stale'`
 - `src/domain.operations/route/guard/tree/formatRouteGuardReviewPeerContemplatePrompt.ts` — the copy a driver reads
 
 ## .reason

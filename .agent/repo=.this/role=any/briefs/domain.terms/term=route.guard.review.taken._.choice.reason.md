@@ -52,7 +52,7 @@ that records a taken (`--as contemplated`). to also call the artifact a *contemp
 word across a verb and its own object, which `rule.forbid.domain-term-ambiguity` names outright:
 *the overload hides an ABSENT DISTINCTION*. the distinction here is real and worth a word each — you
 **write** a taken, then you **contemplate** to record it, and the engine treats those as two steps
-(`setStoneAsContemplated` refuses when the file is absent).
+(`setStoneAsFeedbackAbsorbed` refuses when the file is absent).
 
 ## .evidence — measured 2026-09-04
 

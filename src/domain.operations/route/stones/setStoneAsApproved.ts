@@ -6,7 +6,7 @@ import { getOneStoneGuardApproval } from '../judges/getOneStoneGuardApproval';
 import { setStoneGuardApproval } from '../judges/setStoneGuardApproval';
 import { findOneStoneByPattern } from './asStoneGlob';
 import { formatGuidanceForAlreadyApproved } from './formatGuidanceForAlreadyApproved';
-import { formatGuidanceForOnlyHumansCanApprove } from './formatGuidanceForOnlyHumansCanApprove';
+import { formatGuidanceForHumanOnlyCommand } from './formatGuidanceForHumanOnlyCommand';
 import { getAllStones } from './getAllStones';
 
 /**
@@ -100,7 +100,9 @@ export const setStoneAsApproved = async (
         stone: stoneMatched.name,
         action: 'blocked',
         reason: 'only humans can approve',
-        guidance: formatGuidanceForOnlyHumansCanApprove(),
+        guidance: formatGuidanceForHumanOnlyCommand({
+          humanGrant: 'approved',
+        }),
       }),
     },
   };

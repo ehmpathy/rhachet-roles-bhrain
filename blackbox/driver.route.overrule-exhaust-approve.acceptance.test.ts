@@ -71,7 +71,7 @@ describe('driver.route.overrule-exhaust-approve.acceptance', () => {
   // B5 combination. skip it and l3's [t0] blocker outlives its own exhaustion — which
   // is the point of the fix, since exhaustion must not be a free exit from a critique
   const arrive = async (input: { tempDir: string }) => {
-    await answerEveryPeerGiven({ cwd: input.tempDir, stone: '1.feature' });
+    await answerEveryPeerGiven({ cwd: input.tempDir, stone: '1.feature', severity: 'urgent' });
     return setStone({ tempDir: input.tempDir, as: 'passed' });
   };
 

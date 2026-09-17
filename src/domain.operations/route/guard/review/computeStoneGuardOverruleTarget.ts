@@ -1,6 +1,6 @@
 /**
  * .what = the pure decision at the heart of getStoneGuardOverruleTarget: given a stone's active
- *         level and the levels that owe an un-forgiven contemplation, decide whether an
+ *         level and the levels that owe an un-forgiven feedbackAbsorption, decide whether an
  *         overrule/force has a target at all, and which level it forgives.
  * .why = the branch matrix (activeLevel null/non-null × owed empty/multi × Math.min selection) is
  *        the part that drifted twice in this behavior's history. kept pure so its whole matrix is
@@ -19,7 +19,7 @@ export const computeStoneGuardOverruleTarget = (input: {
   hasTarget: boolean;
   levelToOverrule: number | undefined;
 } => {
-  // a target exists when: a blocked active level, OR an owed contemplation
+  // a target exists when: a blocked active level, OR an owed feedbackAbsorption
   const hasTarget = input.activeLevel !== null || input.owedLevels.length > 0;
 
   // scope: the blocked active level, or the LOWEST level that owes a .taken

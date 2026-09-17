@@ -8,7 +8,7 @@ exports[`driver.route.peer-mixed-verdict-replay.acceptance given: [journey] a mi
    │  ├─ route = .
    │  └─ stone = 1.execute
    │
-   └─ halted, reviewer or judge malfunctioned; peer reviewer budget exhausted: l1-reviewer
+   └─ halted, reviewer or judge malfunctioned; an urgent concession earned a round; peer reviewer budget exhausted: l1-reviewer
       ├─ reviews
       │   ├─ r1: l1-reviewer (l1, 2/2)
       │   │   ├─ exhausted 🌙
@@ -43,7 +43,7 @@ exports[`driver.route.peer-mixed-verdict-replay.acceptance given: [journey] a mi
    │  ├─ route = .
    │  └─ stone = 1.execute
    │
-   └─ halted, reviewer or judge malfunctioned; peer reviewer budget exhausted: l1-reviewer
+   └─ halted, reviewer or judge malfunctioned; an urgent concession earned a round; peer reviewer budget exhausted: l1-reviewer
       ├─ reviews
       │   ├─ r1: l1-reviewer (l1, 2/2)
       │   │   ├─ exhausted 🌙

@@ -16,6 +16,11 @@ constrained reviewer does not hold the ladder — but the driver's response to t
 governed by `rule.always.diagnose-reviewer-malfunctions` (D4), not by convergence. all four
 unlock the next level; see the vision's "exhausted (or otherwise terminal)".
 
+🔴 **a level every one of whose rejected concerns you have disputed is terminal too** —
+distinctly from the four `ReviewPeerVerdict` values above. a stance is DECLARED, never
+computed from counts, so its terminality rides a flag beside the verdict (the same shape
+`overruled` already takes), never a fifth member of that closed union.
+
 this is the exhaustion facet of convergence. its companion `rule.always.converge-with-reviewers`
 governs how you settle a single dispute; this rule governs the whole ladder: press on,
 level after level, until no reviewer is left to drive.
@@ -42,6 +47,7 @@ two come apart, and the section below parts them.
 | approve | continue — the next level is already live |
 | exhaust (earned) | continue — the next level runs now. ⚠️ **and answer any blocker it left** — see below |
 | reject (has budget) | converge — fix the code, or articulate why it holds, and re-arrive |
+| 🔴 disputed — every rejected concern disputed | continue — a disputed level is terminal too. the debt is answered AND its verdict is deferred to the council; naught further holds it |
 | all levels terminal | now — and only now — the human may be pulled to overrule |
 
 you re-arrive (`--as arrived`) after each round of work. the ladder advances itself. the
@@ -83,7 +89,7 @@ is the rare, accountable tail — not the norm you aim for.
 ## .earned exhaustion demands a cited record
 
 when you exhaust a reviewer, you owe a record — write it into your `.taken.by_self`
-contemplation artifacts, so the human who reads the trail sees the truth of it:
+absorption artifacts, so the human who reads the trail sees the truth of it:
 
 1. **your attempts to reason** — what you tried each round to converge: the fixes you
    applied, the arguments you articulated. this proves genuine effort was spent, not
@@ -122,8 +128,8 @@ you judge an iteration too expensive to spend.
 ## .converge, do not coast
 
 for almost every blocker there is a path to converge — you can converse with reviewers.
-the contemplation loop (`.given.by_peer` / `.taken.by_self`, threaded back via
-`--as contemplated`) means you are never stuck with a bare verdict: either **fix the
+the absorb loop (`.given.by_peer` / `.taken.by_self`, threaded back via
+`--as absorbed`) means you are never stuck with a bare verdict: either **fix the
 code**, or **articulate why it holds** with concrete evidence and persuade the reviewer to
 drop it. because that conversation exists, exhaustion is almost always avoidable.
 

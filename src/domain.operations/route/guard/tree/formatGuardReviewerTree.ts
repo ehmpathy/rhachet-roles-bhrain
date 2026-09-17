@@ -1,4 +1,5 @@
 import { FIXED_FALLBACK_BRAIN } from '../../genReviewBrainSupply';
+import { asMeterCountDisplay } from '../asMeterCountDisplay';
 import { TALLIED_FOOTER_PREFIX } from '../review/getReviewTacticFromContent';
 import {
   getRouteGuardReviewPeerPathTaken,
@@ -14,6 +15,32 @@ import {
 const asTakenDetailLine = (pathGiven: string): string | null => {
   if (!isRouteGuardReviewPeerGivenPath({ pathGiven })) return null;
   return `taken: ${getRouteGuardReviewPeerPathTaken({ pathGiven })}`;
+};
+
+/**
+ * .what = the one detail line for a concern count — reused for blockers AND nitpicks, so the
+ *         two render identically but for their noun and glyph
+ * .why = a raw count rendered alone reads as "the road still holds here", even at the exact
+ *        moment a dispute above it already sheds it — a reader had to hold the disputed
+ *        narrative line and this one in mind and do the subtraction themselves. the arithmetic
+ *        now renders inline, only where a dispute has actually shed something — the common
+ *        case (no dispute) is byte-identical to the extant render.
+ */
+const asConcernCountLine = (input: {
+  count: { disputed: number; reported: number };
+  noun: string;
+  glyph: string;
+}): string => {
+  const { disputed, reported } = input.count;
+  const plural = reported === 1 ? input.noun : `${input.noun}s`;
+
+  if (disputed === 0)
+    return reported > 0
+      ? `${reported} ${plural} ${input.glyph}`
+      : `0 ${plural} ✓`;
+
+  const tallied = Math.max(0, reported - disputed);
+  return `${reported} ${plural}, ${disputed} disputed → ${tallied} tallied ${tallied > 0 ? input.glyph : '✓'}`;
 };
 
 /**
@@ -33,6 +60,26 @@ const TERMINAL_UNLOCK_NARRATIVE = 'terminal — does not block higher levels';
  *        glyph matches the overrule confirmation emit (formatRouteStoneEmit).
  */
 export const OVERRULED_NARRATIVE = 'overruled ✓ — forgiven by human';
+
+/**
+ * .what = the one line a lane carries when a DISPUTE took it out of this generation's round
+ * .why = the skip is otherwise invisible. the lane's cached artifact is re-emitted verbatim, so
+ *        its verdict, counts, and `given:` all render exactly as a lane that ran — and a driver
+ *        reads a stale rejection as a fresh one. `rule.require.status-feedback`: a mutation that
+ *        does not report what changed is a blocker, and a lane that fell silent is a change.
+ *
+ * 🔴 it says `disputed`, never `exhausted`. the two look identical on the meter — a lane that did
+ *    not run — and differ in every respect that matters: an exhaustion is the METER's verdict and
+ *    a top-up reverses it; a dispute is the DRIVER's and no budget touches it (`case=4`, *"a
+ *    distinct word"*). ⇒ to share a word here would sell a top-up that buys this lane naught.
+ *
+ * .note = the 🌙 is NOT a new claim. the glyph register already holds it for *"skipped — a review
+ *         that never ran"* (`catalog.of=glyph.axis=halt`), which is this concept exactly — the
+ *         same sense `exhausted` borrows it for at `:200`. one glyph, one concept; the WORD is
+ *         what case=4 requires be distinct.
+ */
+export const DISPUTED_NARRATIVE =
+  'disputed 🌙 — skipped this generation, no round spent';
 
 /**
  * .what = reviewer state for tree format
@@ -57,6 +104,20 @@ export interface ReviewerTreeState {
    *        un-forgiven rejection. matches the `✓ overruled` glyph of the overrule confirmation.
    */
   overruled: boolean;
+  /**
+   * whether a DISPUTE took this lane out of this generation's round.
+   *
+   * .why = a flag beside `overruled`, never a seventh `ReviewPeerVerdict` — and the parallel is
+   *        exact rather than convenient. both are DECLARED (a human overrules, a driver disputes)
+   *        where every verdict is COMPUTED from counts and budget; both leave the raw verdict
+   *        intact; and `case=4` `[t3]` has them compose — a forgive does not undo a skip, so a
+   *        lane can carry both flags at once. a union member could not express that pair.
+   *
+   * 🔴 it means SKIPPED, never merely "has a dispute on record". a lane whose residual tally still
+   *    clears the threshold RUNS with its disputes standing, and to render it as quiet would claim
+   *    a skip that never happened (`runStoneGuardReviews:498-501` — the `holdsRoad` fork).
+   */
+  skippedByDispute: boolean;
   /** current state */
   state:
     | { type: 'inflight'; durationSec: number }
@@ -66,8 +127,21 @@ export interface ReviewerTreeState {
         type: 'finished';
         verdict: 'approved' | 'rejected' | 'exhausted';
         durationSec: number | null;
-        blockers: number;
-        nitpicks: number;
+        /**
+         * a TREESTRUCTURED count — `disputed` beside `reported`, never a flat
+         * `blockers` + `disputedBlockers` pair.
+         *
+         * .why = a flat pair reads as two unrelated numbers; a driver must already know
+         *        "disputedBlockers is a SUBSET of blockers" to make sense of them side by
+         *        side. nesting states the relation in the shape itself, and it makes the
+         *        symmetry with `nitpicks` below visible at a glance — same two children,
+         *        same order, on both. `reported` is the raw count this reviewer raised;
+         *        `disputed` is how much of it this lane's own disputes have shed. defaults
+         *        to `{ disputed: 0, reported: N }` at every producer with no stance corpus
+         *        (review.by, a live-progress event, a derived-from-review fallback).
+         */
+        blockers: { disputed: number; reported: number };
+        nitpicks: { disputed: number; reported: number };
         path: string;
         cached: boolean;
         /**
@@ -126,7 +200,7 @@ export const formatGuardReviewerTree = (input: {
   // format header: r${index}: slug (l${level}, ${rounds}/${budget}) — meter suffix optional
   const prefix = isLast ? '└─' : '├─';
   const indent = isLast ? '   ' : '│  ';
-  const displayBudget = reviewer.budget === Infinity ? '∞' : reviewer.budget;
+  const displayBudget = asMeterCountDisplay(reviewer.budget);
   const meterSuffix = input.hideMeter
     ? ''
     : ` (l${reviewer.level}, ${reviewer.rounds}/${displayBudget})`;
@@ -159,6 +233,7 @@ export const formatGuardReviewerTree = (input: {
     // ladder is halted here". same reassurance line as exhausted, for the same invariant. (D5)
     const detailLines = [
       'malfunction 💥',
+      ...(reviewer.skippedByDispute ? [DISPUTED_NARRATIVE] : []),
       ...(reviewer.overruled ? [OVERRULED_NARRATIVE] : []),
       TERMINAL_UNLOCK_NARRATIVE,
       `given: ${state.path}`,
@@ -178,6 +253,7 @@ export const formatGuardReviewerTree = (input: {
     // whole ladder is halted here". same reassurance line as exhausted, same invariant. (D5)
     const detailLines = [
       'constraint ✋',
+      ...(reviewer.skippedByDispute ? [DISPUTED_NARRATIVE] : []),
       ...(reviewer.overruled ? [OVERRULED_NARRATIVE] : []),
       TERMINAL_UNLOCK_NARRATIVE,
       `given: ${state.path}`,
@@ -200,13 +276,26 @@ export const formatGuardReviewerTree = (input: {
     const verdictGlyph = state.verdict === 'exhausted' ? ' 🌙' : '';
 
     // status line: verdict [duration] OR verdict, cached
+    // 🔴 a disputed lane's verdict is its PRIOR one, re-emitted from cache — so the glance line
+    //    names the dispute inline (r9 n3). without it a glide reads `rejected, cached` above
+    //    `disputed 🌙 — skipped` as one lane that is both rejected AND disputed; the tail ties
+    //    the two, so the reconciliation no longer waits on the narrative line beneath it.
     if (state.cached) {
-      detailLines.push(`${state.verdict}${verdictGlyph}, cached`);
+      const disputeTail = reviewer.skippedByDispute
+        ? ' — set aside by dispute'
+        : '';
+      detailLines.push(`${state.verdict}${verdictGlyph}, cached${disputeTail}`);
     } else {
       const dur =
         state.durationSec !== null ? ` ${state.durationSec.toFixed(1)}s` : '';
       detailLines.push(`${state.verdict}${verdictGlyph}${dur}`);
     }
+
+    // quiet marker: a dispute took this lane out of the round, so the verdict above it is the
+    // lane's PRIOR one, re-emitted from cache. it sits above the overrule line because it
+    // explains why the verdict is STALE — and a reader must hold that before the forgiveness of
+    // that verdict can mean aught.
+    if (reviewer.skippedByDispute) detailLines.push(DISPUTED_NARRATIVE);
 
     // forgiven marker: the human overruled this level, so its raw verdict (often 'rejected') is
     // forgiven. the line sits right under the verdict so a reader never mistakes an overruled
@@ -226,21 +315,22 @@ export const formatGuardReviewerTree = (input: {
       detailLines.push(TERMINAL_UNLOCK_NARRATIVE);
     }
 
-    // blockers line: always show
-    const blockersLabel = state.blockers === 1 ? 'blocker' : 'blockers';
-    if (state.blockers > 0) {
-      detailLines.push(`${state.blockers} ${blockersLabel} 🔴`);
-    } else {
-      detailLines.push(`0 ${blockersLabel} ✓`);
-    }
-
-    // nitpicks line: always show
-    const nitpicksLabel = state.nitpicks === 1 ? 'nitpick' : 'nitpicks';
-    if (state.nitpicks > 0) {
-      detailLines.push(`${state.nitpicks} ${nitpicksLabel} 🟠`);
-    } else {
-      detailLines.push(`0 ${nitpicksLabel} ✓`);
-    }
+    // blockers + nitpicks lines: one shared render, called twice — the symmetry between the
+    // two counts is now visible in the CALL SITE, not just in the shape each one carries
+    detailLines.push(
+      asConcernCountLine({
+        count: state.blockers,
+        noun: 'blocker',
+        glyph: '🔴',
+      }),
+    );
+    detailLines.push(
+      asConcernCountLine({
+        count: state.nitpicks,
+        noun: 'nitpick',
+        glyph: '🟠',
+      }),
+    );
 
     // tallied-by line: ONLY when a sub-brain tallied the prose (probabilistic fallback).
     // .why = the deterministic path shows no branch (the silent common case), so the branch's

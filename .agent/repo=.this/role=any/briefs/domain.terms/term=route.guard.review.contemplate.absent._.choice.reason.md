@@ -17,7 +17,7 @@ chosen over:
 | rejected | why |
 |---|---|
 | `unanswered` | describes the **critique**, never the file. and it is the prose word for the whole uncontemplated state, which would collide with the tag |
-| `empty` | an empty `.taken` **does** exist — it is a real and distinct failure the engine cannot detect (`setStoneAsContemplated.ts:77` tests existence, never content). to name the no-file case `empty` would fuse the two |
+| `empty` | an empty `.taken` **does** exist — it is a real and distinct failure the engine cannot detect (`setStoneAsFeedbackAbsorbed.ts:77` tests existence, never content). to name the no-file case `empty` would fuse the two |
 | `none` / `null` | machine words. the tag is read by a human in a halt tree |
 
 ## 🔴 .why the `empty` rejection is the load-bearing one
@@ -54,8 +54,8 @@ reason file rather than duplicated here:
 
 ## .evidence
 
-- the contract value, read from source: `getRouteGuardReviewPeerContemplationStatus.ts:32`
-- the untagged third state: `setStoneAsContemplated.ts:77`
+- the contract value, read from source: `getRouteGuardReviewPeerFeedbackAbsorptionStatus.ts:32`
+- the untagged third state: `setStoneAsFeedbackAbsorbed.ts:77`
 - the stated limit: `1.vision.yield.md`, § *"the contract"*
 
 ## .see also

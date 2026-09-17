@@ -43,7 +43,7 @@ export interface RouteGuardReviewPeerGiven {
 /**
  * .what = reads every peer .given across all hashes, keeps the latest per slug,
  *         and parses each into a record
- * .why = the i/o boundary for the contemplation gate — enumerate the givens, read
+ * .why = the i/o boundary for the feedbackAbsorption gate — enumerate the givens, read
  *        each, parse its verdict counts + slug + hash. keeps fs.readFile out of the
  *        orchestrator (grain separation)
  *

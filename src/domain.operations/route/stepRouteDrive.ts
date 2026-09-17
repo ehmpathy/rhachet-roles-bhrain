@@ -89,6 +89,7 @@ export const stepRouteDrive = async (input: {
       disposition: asRouteStoneDisposition({
         status: report.status,
         blocker: report.blocker ?? null,
+        reason: report.reason ?? null,
       }),
     }));
 
@@ -216,20 +217,20 @@ export const stepRouteDrive = async (input: {
     });
     if (blockerMessage) return { emit: { stdout: blockerMessage.stdout } };
 
-    // exhausted status → show the approve-or-extend prompt at boot too
-    // .why = an exhausted status is a halt (a human must approve or extend the peer
-    //        budget); surface that prompt rather than generic guidance. derive the halt
-    //        reason through the SAME asRouteStoneDisposition op onStop + the statusline read,
-    //        so onBoot never diverges from the one disposition truth
+    // exhausted status → show the approve-or-extend / concession prompt at boot too.
+    // .why = an exhausted status is a halt of any kind — ordinary/urgent (a human must
+    //        approve or extend the peer budget) or a `better` concession (the driver's own
+    //        `--add N --peer`). all render the same prompt, and onBoot blocks no stop, so it
+    //        consumes only the message. the ONE live read inside getRouteDriveExhaustedMessage
+    //        classifies the halt (S12), so onBoot never re-decodes the concession mark here
     //        (rule.require.single-source-of-truth-for-render).
     const latestForStoneBoot = getLatestForStone(stone.name);
-    const dispositionBoot = asRouteStoneDisposition({
-      status: latestForStoneBoot?.status ?? null,
-      blocker: latestForStoneBoot?.blocker ?? null,
-    });
-    if (dispositionBoot.of === 'halt' && dispositionBoot.why === 'exhausted')
+    if (latestForStoneBoot?.status === 'exhausted')
       return {
-        emit: { stdout: await getRouteDriveExhaustedMessage({ stone, route }) },
+        emit: {
+          stdout: (await getRouteDriveExhaustedMessage({ stone, route }))
+            .stdout,
+        },
       };
 
     // otherwise, show generic stone guidance
@@ -256,7 +257,7 @@ export const stepRouteDrive = async (input: {
 
     // if a live blocker message applies, honor its stop disposition
     // .why = approval / exhausted (not-approved) ALLOW the stop (agent waits for
-    //        a human); uncontemplated BLOCKS it (agent can act now: write .taken).
+    //        a human); feedbackUnabsorbed BLOCKS it (agent can act now: write .taken).
     //        a null message means the blocker is stale or resolved — fall through
     //        to the block-stop logic below (e.g. approval was granted → proceed).
     const blockerMessage = await getRouteDriveBlockerMessage({
@@ -275,20 +276,30 @@ export const stepRouteDrive = async (input: {
       return { emit: { stdout: blockerMessage.stdout } };
     }
 
-    // no live blocker message → derive the disposition (the single push/halt truth
-    // the statusline also reads) from the latest passage. driver-wall blocked and
-    // malfunction already returned above; a stale volatile blocker keeps status
-    // 'blocked' and so pushes forward here. the one halt left is an exhausted
-    // status: a human must approve or extend the peer budget → allow the stop.
+    // no live blocker message → the one halt left is an exhausted status. driver-wall
+    // blocked and malfunction already returned above; a stale volatile blocker keeps
+    // status 'blocked' and so pushes forward here.
+    //
+    // 🔴 the message AND the stop disposition come from ONE live read (B1 fix). a `better`
+    //    concession BLOCKS the stop (stderr code 2) — no human is owed, so to allow the stop
+    //    would end the session over a command the driver holds (`--add N --peer`), and a
+    //    human would have to restart it. every other exhaustion — ordinary, `urgent` (a
+    //    grant a HUMAN must make, r008.b1), or a stale halt — ALLOWS the stop. the decision
+    //    can no longer disagree with the rendered message, because both read the same live
+    //    concession kind inside getRouteDriveExhaustedMessage (S12).
+    //
+    // .note = the block emits stderr code 2, the same shape the feedbackUnabsorbed and undeclared
+    //         gates use for "the driver can act NOW".
     const latestForStone = getLatestForStone(stone.name);
-    const disposition = asRouteStoneDisposition({
-      status: latestForStone?.status ?? null,
-      blocker: latestForStone?.blocker ?? null,
-    });
-    if (disposition.of === 'halt' && latestForStone?.status === 'exhausted')
-      return {
-        emit: { stdout: await getRouteDriveExhaustedMessage({ stone, route }) },
-      };
+    if (latestForStone?.status === 'exhausted') {
+      const { stdout, blocksStop } = await getRouteDriveExhaustedMessage({
+        stone,
+        route,
+      });
+      if (blocksStop)
+        return { emit: { stdout, stderr: { reason: stdout, code: 2 } } };
+      return { emit: { stdout } };
+    }
 
     // push → the route self-drives: track this block attempt and block the stop
     // .note = state.count tracks hooks without passage attempt; used for nudge threshold
@@ -361,6 +372,7 @@ export const stepRouteDrive = async (input: {
     ? asRouteStoneDisposition({
         status: latestForStoneDirect.status,
         blocker: latestForStoneDirect.blocker ?? null,
+        reason: latestForStoneDirect.reason ?? null,
       })
     : null;
 
@@ -373,10 +385,16 @@ export const stepRouteDrive = async (input: {
       },
     };
 
-  // exhausted halt → show the approve-or-extend prompt (its own halt, no blocker)
-  if (dispositionDirect?.of === 'halt' && dispositionDirect.why === 'exhausted')
+  // exhausted status → show the approve-or-extend / concession prompt (its own halt, no
+  // blocker). every exhaustion kind — ordinary/urgent or a `better` concession — renders
+  // the same prompt; direct mode has no stop to block, so it consumes only the message. the
+  // ONE live read inside getRouteDriveExhaustedMessage classifies the halt (S12), so direct
+  // mode never re-decodes the concession mark here.
+  if (latestForStoneDirect?.status === 'exhausted')
     return {
-      emit: { stdout: await getRouteDriveExhaustedMessage({ stone, route }) },
+      emit: {
+        stdout: (await getRouteDriveExhaustedMessage({ stone, route })).stdout,
+      },
     };
 
   // no blocker or already approved, show generic stone guidance

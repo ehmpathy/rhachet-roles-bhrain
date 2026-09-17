@@ -340,6 +340,16 @@ describe('driver.route.drive.acceptance', () => {
         cwd: tempDir,
       });
 
+      // capture the blocker state now — AFTER the blocks, BEFORE any --as.
+      // any --as wipes the state (the driver marked their status), so this is
+      // the only point the accumulated count can be observed.
+      const blockerStateBeforeAs = JSON.parse(
+        await fs.readFile(
+          path.join(tempDir, '.route', '.drive.blockers.latest.json'),
+          'utf-8',
+        ),
+      );
+
       // create artifact for stone 1 so it can pass
       await fs.writeFile(
         path.join(tempDir, '1.stone.i1.md'),
@@ -406,19 +416,12 @@ describe('driver.route.drive.acceptance', () => {
         '',
       );
 
-      return { tempDir };
+      return { tempDir, blockerCountBeforeAs: blockerStateBeforeAs.count };
     });
 
-    when('[t0] before stone passes', () => {
-      then('blocker state has count > 0', async () => {
-        const statePath = path.join(
-          scene.tempDir,
-          '.route',
-          '.drive.blockers.latest.json',
-        );
-        const content = await fs.readFile(statePath, 'utf-8');
-        const state = JSON.parse(content);
-        expect(state.count).toBeGreaterThan(0);
+    when('[t0] after the blocks, before any --as', () => {
+      then('blocker state has count > 0', () => {
+        expect(scene.blockerCountBeforeAs).toBeGreaterThan(0);
       });
     });
 
