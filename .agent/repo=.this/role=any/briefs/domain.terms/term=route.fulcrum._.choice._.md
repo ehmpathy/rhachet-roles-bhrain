@@ -54,6 +54,9 @@ where the term composes declared contracts:
 - src/domain.roles/driver/briefs/rule.always.defer-fulcrums-to-last.md                # the WHEN
 - src/domain.roles/driver/briefs/howto.navigate-fulcrum-choices.[guide].md             # the ladder
 - .behavior/*/.fulcrums/inventory.of=fulcrums.case=*.md                               # the artifacts
+- src/domain.objects/Driver/PassageReport.ts                                          # the `fulcrum?` field a dispute stores
+- src/domain.operations/route/stones/setStoneAsConcernAbsorbed.ts                             # `--why` names a fulcrum a dispute cites
+- src/domain.operations/route/guard/review/peer/assertFulcrumPathExists.ts            # resolves that path, and refuses when it points at naught
 
 ## .reason
 see the ref-level cluster beside this choice:

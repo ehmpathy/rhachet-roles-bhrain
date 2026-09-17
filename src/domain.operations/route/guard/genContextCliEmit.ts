@@ -4,6 +4,7 @@ import type {
 } from '@src/domain.objects/Driver/ContextCliEmit';
 import type { GuardProgressEvent } from '@src/domain.objects/Driver/GuardProgressEvent';
 
+import { asMeterCountDisplay } from './asMeterCountDisplay';
 import { computeReviewPeerVerdict } from './review/peer/meter/computeReviewPeerVerdict';
 import { getReviewedJudgeThresholds } from './review/peer/meter/getReviewedJudgeThresholds';
 import {
@@ -210,8 +211,7 @@ export const genContextCliEmit = (input: {
 
       // seal header line (permanent) - completed will skip header and emit details only
       // .note = show rounds + 1 because this round will consume the budget
-      const displayBudget =
-        reviewer.budget === Infinity ? '∞' : reviewer.budget;
+      const displayBudget = asMeterCountDisplay(reviewer.budget);
       const roundsAfter = reviewer.rounds + 1;
       const header = `r${reviewer.index}: ${reviewer.slug} (l${reviewer.level}, ${roundsAfter}/${displayBudget})`;
       seal(`   ├─ ${header}`);
@@ -362,6 +362,14 @@ const asReviewerTreeState = (
   durationSec: string | null,
   thresholds: { allowBlockers: number; allowNitpicks: number },
 ): ReviewerTreeState => {
+  // 🔴 read ONCE, above every branch — never inside one.
+  // .why = a `{ disputed, blockers, nitpicks }` outcome structurally satisfies the
+  //        `'blockers' in review` branch below, so when that member was added the compiler
+  //        flagged NOTHING and the flag was dropped on the one path that carries it. that is the
+  //        same silent absorption `RouteStoneGuardBlockerType` suffered — a cascade with a
+  //        default tail closes over no union. one read at the top leaves no branch to forget it.
+  const skippedByDispute = !!review && 'disputed' in review;
+
   // malfunction state
   if (review && 'malfunction' in review) {
     return {
@@ -373,6 +381,7 @@ const asReviewerTreeState = (
       // live-progress events never carry an overrule (a human action on a halted stone),
       // so the inflight tree is always un-forgiven — the persisted tree renders the overrule
       overruled: false,
+      skippedByDispute,
       state: {
         type: 'malfunction',
         path: path ?? '',
@@ -391,6 +400,7 @@ const asReviewerTreeState = (
       // live-progress events never carry an overrule (a human action on a halted stone),
       // so the inflight tree is always un-forgiven — the persisted tree renders the overrule
       overruled: false,
+      skippedByDispute,
       state: {
         type: 'constraint',
         path: path ?? '',
@@ -409,12 +419,16 @@ const asReviewerTreeState = (
       // live-progress events never carry an overrule (a human action on a halted stone),
       // so the inflight tree is always un-forgiven — the persisted tree renders the overrule
       overruled: false,
+      skippedByDispute,
       state: {
         type: 'finished',
         verdict: 'exhausted',
         durationSec: null,
-        blockers: review.blockers,
-        nitpicks: review.nitpicks,
+        // a live-progress event carries no stance corpus of its own — `disputed: 0` here,
+        // never a folded value. the persisted tree (asReviewerTreeStateFromMeter) is the one
+        // that reads the meter's live disputed count
+        blockers: { disputed: 0, reported: review.blockers },
+        nitpicks: { disputed: 0, reported: review.nitpicks },
         path: path ?? '',
         cached: false,
         tallier: DEFAULT_TALLIER_FOR_INFLIGHT,
@@ -433,6 +447,7 @@ const asReviewerTreeState = (
       // live-progress events never carry an overrule (a human action on a halted stone),
       // so the inflight tree is always un-forgiven — the persisted tree renders the overrule
       overruled: false,
+      skippedByDispute,
       state: { type: 'queued' },
     };
   }
@@ -467,12 +482,15 @@ const asReviewerTreeState = (
       // live-progress events never carry an overrule (a human action on a halted stone),
       // so the inflight tree is always un-forgiven — the persisted tree renders the overrule
       overruled: false,
+      skippedByDispute,
       state: {
         type: 'finished',
         verdict,
         durationSec: durationSec !== null ? parseFloat(durationSec) : null,
-        blockers: review.blockers,
-        nitpicks: review.nitpicks,
+        // a live-progress event carries no stance corpus of its own — see the exhausted
+        // branch above
+        blockers: { disputed: 0, reported: review.blockers },
+        nitpicks: { disputed: 0, reported: review.nitpicks },
         path: path ?? '',
         cached: false,
         tallier: DEFAULT_TALLIER_FOR_INFLIGHT,
@@ -489,12 +507,13 @@ const asReviewerTreeState = (
     budget: reviewer.budget,
     // live-progress events never carry an overrule (a human action on a halted stone)
     overruled: false,
+    skippedByDispute,
     state: {
       type: 'finished',
       verdict: 'approved',
       durationSec: durationSec !== null ? parseFloat(durationSec) : null,
-      blockers: 0,
-      nitpicks: 0,
+      blockers: { disputed: 0, reported: 0 },
+      nitpicks: { disputed: 0, reported: 0 },
       path: path ?? '',
       cached: false,
       tallier: DEFAULT_TALLIER_FOR_INFLIGHT,

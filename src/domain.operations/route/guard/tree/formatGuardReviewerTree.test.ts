@@ -16,12 +16,13 @@ describe('formatGuardReviewerTree', () => {
       rounds: 1,
       budget: Infinity,
       overruled: false,
+      skippedByDispute: false,
       state: {
         type: 'finished',
         verdict: 'approved',
         durationSec: 8.2,
-        blockers: 0,
-        nitpicks: 0,
+        blockers: { disputed: 0, reported: 0 },
+        nitpicks: { disputed: 0, reported: 0 },
         path: '.route/5.1.execution.guard.review.i1.abc123.r1.md',
         cached: false,
         tallier: 'deterministic',
@@ -51,12 +52,13 @@ describe('formatGuardReviewerTree', () => {
       rounds: 1,
       budget: Infinity,
       overruled: false,
+      skippedByDispute: false,
       state: {
         type: 'finished',
         verdict: 'approved',
         durationSec: 8.2,
-        blockers: 0,
-        nitpicks: 2,
+        blockers: { disputed: 0, reported: 0 },
+        nitpicks: { disputed: 0, reported: 2 },
         path: '.route/5.1.execution.guard.review.i1.abc123.r1.md',
         cached: false,
         tallier: 'deterministic',
@@ -79,12 +81,13 @@ describe('formatGuardReviewerTree', () => {
       rounds: 1,
       budget: Infinity,
       overruled: false,
+      skippedByDispute: false,
       state: {
         type: 'finished',
         verdict: 'rejected',
         durationSec: 5.1,
-        blockers: 3,
-        nitpicks: 1,
+        blockers: { disputed: 0, reported: 3 },
+        nitpicks: { disputed: 0, reported: 1 },
         path: '.route/5.1.execution.guard.review.i1.abc123.r1.md',
         cached: false,
         tallier: 'deterministic',
@@ -107,12 +110,13 @@ describe('formatGuardReviewerTree', () => {
       rounds: 2,
       budget: 2,
       overruled: false,
+      skippedByDispute: false,
       state: {
         type: 'finished',
         verdict: 'exhausted',
         durationSec: null,
-        blockers: 1,
-        nitpicks: 0,
+        blockers: { disputed: 0, reported: 1 },
+        nitpicks: { disputed: 0, reported: 0 },
         path: '.route/5.1.execution.guard.review.i1.abc123.r1.md',
         cached: false,
         tallier: 'deterministic',
@@ -135,6 +139,7 @@ describe('formatGuardReviewerTree', () => {
       rounds: 0,
       budget: Infinity,
       overruled: false,
+      skippedByDispute: false,
       state: {
         type: 'inflight',
         durationSec: 4.2,
@@ -157,6 +162,7 @@ describe('formatGuardReviewerTree', () => {
       rounds: 0,
       budget: 1,
       overruled: false,
+      skippedByDispute: false,
       state: {
         type: 'awaits',
         level: 1,
@@ -179,6 +185,7 @@ describe('formatGuardReviewerTree', () => {
       rounds: 0,
       budget: Infinity,
       overruled: false,
+      skippedByDispute: false,
       state: {
         type: 'queued',
       },
@@ -200,12 +207,13 @@ describe('formatGuardReviewerTree', () => {
       rounds: 1,
       budget: Infinity,
       overruled: false,
+      skippedByDispute: false,
       state: {
         type: 'finished',
         verdict: 'approved',
         durationSec: null,
-        blockers: 0,
-        nitpicks: 0,
+        blockers: { disputed: 0, reported: 0 },
+        nitpicks: { disputed: 0, reported: 0 },
         path: '.route/5.1.execution.guard.review.i1.abc123.r1.md',
         cached: true,
         tallier: 'deterministic',
@@ -228,6 +236,7 @@ describe('formatGuardReviewerTree', () => {
       rounds: 0,
       budget: Infinity,
       overruled: false,
+      skippedByDispute: false,
       state: {
         type: 'malfunction',
         path: '.route/5.1.execution.guard.review.i1.abc123.r1.md',
@@ -261,6 +270,7 @@ describe('formatGuardReviewerTree', () => {
       rounds: 0,
       budget: Infinity,
       overruled: false,
+      skippedByDispute: false,
       state: {
         type: 'constraint',
         path: '.route/5.1.execution.guard.review.i1.abc123.r1.md',
@@ -294,12 +304,13 @@ describe('formatGuardReviewerTree', () => {
       rounds: 1,
       budget: 3,
       overruled: false,
+      skippedByDispute: false,
       state: {
         type: 'finished',
         verdict: 'rejected',
         durationSec: 5.0,
-        blockers: 2,
-        nitpicks: 0,
+        blockers: { disputed: 0, reported: 2 },
+        nitpicks: { disputed: 0, reported: 0 },
         path: '.route/5.1.execution.guard.review.i1.abc123.r2.md',
         cached: false,
         tallier: 'deterministic',
@@ -325,12 +336,13 @@ describe('formatGuardReviewerTree', () => {
       rounds: 1,
       budget: 3,
       overruled: false,
+      skippedByDispute: false,
       state: {
         type: 'finished',
         verdict: 'rejected',
         durationSec: 5.0,
-        blockers: 2,
-        nitpicks: 1,
+        blockers: { disputed: 0, reported: 2 },
+        nitpicks: { disputed: 0, reported: 1 },
         path: pathGiven,
         cached: false,
         tallier: 'deterministic',
@@ -363,12 +375,13 @@ describe('formatGuardReviewerTree', () => {
       rounds: 1,
       budget: Infinity,
       overruled: false,
+      skippedByDispute: false,
       state: {
         type: 'finished',
         verdict: 'approved',
         durationSec: 8.2,
-        blockers: 0,
-        nitpicks: 0,
+        blockers: { disputed: 0, reported: 0 },
+        nitpicks: { disputed: 0, reported: 0 },
         path: '.route/5.1.execution.guard.review.i1.abc123.r1.md',
         cached: false,
         tallier: 'deterministic',
@@ -400,6 +413,7 @@ describe('formatGuardReviewerTree', () => {
         rounds: 0,
         budget: 3,
         overruled: false,
+        skippedByDispute: false,
         state: {
           type: 'malfunction',
           path: pathGiven,
@@ -429,12 +443,13 @@ describe('formatGuardReviewerTree', () => {
       rounds: 1,
       budget: Infinity,
       overruled: false,
+      skippedByDispute: false,
       state: {
         type: 'finished',
         verdict: 'approved',
         durationSec: 8.2,
-        blockers: 0,
-        nitpicks: 0,
+        blockers: { disputed: 0, reported: 0 },
+        nitpicks: { disputed: 0, reported: 0 },
         path: '.route/5.1.execution.guard.review.i1.abc123.r1.md',
         cached: false,
         tallier: 'deterministic',
@@ -464,12 +479,13 @@ describe('formatGuardReviewerTree', () => {
       rounds: 1,
       budget: Infinity,
       overruled: false,
+      skippedByDispute: false,
       state: {
         type: 'finished',
         verdict: 'approved',
         durationSec: 9.1,
-        blockers: 0,
-        nitpicks: 1,
+        blockers: { disputed: 0, reported: 0 },
+        nitpicks: { disputed: 0, reported: 1 },
         path: '.route/5.1.execution.guard.review.i1.abc123.r1.md',
         cached: false,
         tallier: 'probabilistic',
@@ -514,12 +530,13 @@ describe('formatGuardReviewerTree', () => {
       rounds: 1,
       budget: Infinity,
       overruled: false,
+      skippedByDispute: false,
       state: {
         type: 'finished',
         verdict: 'approved',
         durationSec: 12.4,
-        blockers: 0,
-        nitpicks: 2,
+        blockers: { disputed: 0, reported: 0 },
+        nitpicks: { disputed: 0, reported: 2 },
         path: '.route/5.1.execution.guard.review.i1.abc123.r1.md',
         cached: false,
         tallier: 'deterministic',
@@ -548,12 +565,13 @@ describe('formatGuardReviewerTree', () => {
               rounds: 1,
               budget: Infinity,
               overruled: false,
+              skippedByDispute: false,
               state: {
                 type: 'finished',
                 verdict: 'approved',
                 durationSec: 9.1,
-                blockers: 0,
-                nitpicks: 0,
+                blockers: { disputed: 0, reported: 0 },
+                nitpicks: { disputed: 0, reported: 0 },
                 path: '.route/x.md',
                 cached: false,
                 tallier: 'probabilistic',
@@ -585,12 +603,13 @@ describe('formatGuardReviewerTree', () => {
         rounds: 1,
         budget: 3,
         overruled: true,
+        skippedByDispute: false,
         state: {
           type: 'finished',
           verdict: 'rejected',
           durationSec: 4.1,
-          blockers: 3,
-          nitpicks: 0,
+          blockers: { disputed: 0, reported: 3 },
+          nitpicks: { disputed: 0, reported: 0 },
           path: '.route/1.plan.guard.review.i1.abc123.r1.md',
           cached: false,
           tallier: 'deterministic',
@@ -619,4 +638,170 @@ describe('formatGuardReviewerTree', () => {
       });
     },
   );
+
+  /**
+   * .what = the lane a DISPUTE took out of this generation's round
+   * .why = the skip is otherwise invisible. the row is built from the lane's CACHED artifact, so
+   *        its verdict, counts, and `given:` render exactly as a lane that ran — and a driver
+   *        reads a stale rejection as a fresh one (`case=4`, *"the lane that goes quiet"*).
+   */
+  given('[case17] a lane QUIETED by a dispute', () => {
+    // typed to the FINISHED variant alone, so [t2]/[t3] below can override `blockers`
+    // by spread with no TS fallback to the full state union (every other variant —
+    // inflight/awaits/queued/malfunction/constraint — carries no `blockers` at all)
+    const finishedState: Extract<
+      ReviewerTreeState['state'],
+      { type: 'finished' }
+    > = {
+      type: 'finished',
+      verdict: 'rejected',
+      durationSec: null,
+      // this lane's one blocker IS what was disputed — the case that motivated the
+      // arithmetic render below: a bare `1 blocker 🔴` beside `disputed 🌙` read as
+      // "the road still holds here", though the driver's dispute already shed it
+      blockers: { disputed: 1, reported: 1 },
+      nitpicks: { disputed: 0, reported: 0 },
+      path: '.reviews/peer/given.5.1.execution.r2.architect.md',
+      cached: true,
+      tallier: 'deterministic',
+    };
+    const reviewer: ReviewerTreeState = {
+      index: 1,
+      slug: 'architect',
+      level: 1,
+      rounds: 2,
+      budget: 4,
+      overruled: false,
+      skippedByDispute: true,
+      state: finishedState,
+    };
+
+    when('[t0] formatted', () => {
+      const output = formatGuardReviewerTree({ reviewer, isLast: true }).join(
+        '\n',
+      );
+
+      then('the skip is NAMED — a silent absence would be the defect', () => {
+        expect(output).toContain('disputed');
+        expect(output).toContain('skipped this generation');
+      });
+
+      // the reported/disputed/tallied arithmetic renders inline, so a reader never has to
+      // hold the narrative line above and the raw count in mind and do the subtraction
+      then('the blocker count shows the arithmetic, tallied to zero', () => {
+        expect(output).toContain('1 blocker, 1 disputed → 0 tallied ✓');
+      });
+
+      then(
+        'a clean count still renders plainly — no arithmetic to show',
+        () => {
+          expect(output).toContain('0 nitpicks ✓');
+          expect(output).not.toContain('nitpicks, 0 disputed');
+        },
+      );
+
+      // 🔴 `case=4`: "`disputed` and `exhausted` must not share a rendered word". they look
+      //    identical on the meter — a lane that did not run — and differ in the one respect a
+      //    driver acts on: a top-up reverses an exhaustion and buys a disputed lane naught
+      then(
+        'it NEVER says exhausted — the word is the whole distinction',
+        () => {
+          expect(output).not.toContain('exhausted');
+        },
+      );
+
+      // acceptance #2 — "the disagreement consumes no budget". the meter is the proof, so it
+      // must still read the rounds the lane spent BEFORE the stance, never one more
+      then('the meter shows no round spent on the skip', () => {
+        expect(output).toContain('architect (l1, 2/4)');
+        expect(output).toContain('no round spent');
+      });
+
+      // forgiveness is not erasure, and neither is a stance. the prior given still sits on
+      // disk and the council reads it beside the driver's argument
+      then('the prior verdict and its tally still render', () => {
+        expect(output).toContain('rejected');
+        expect(output).toContain('1 blocker, 1 disputed → 0 tallied ✓');
+        expect(output).toContain(
+          'given: .reviews/peer/given.5.1.execution.r2.architect.md',
+        );
+      });
+
+      then('the bytes a driver reads are pinned', () => {
+        expect(output).toMatchSnapshot();
+      });
+    });
+
+    // 🔴 `case=4` `[t3]` — a forgive is the HUMAN's word and a dispute is the DRIVER's. they are
+    //    independent, they compose, and neither undoes the other. a union member could not hold
+    //    the pair; two flags can, which is the whole argument for the shape
+    when('[t1] a human ALSO overrules the level', () => {
+      const output = formatGuardReviewerTree({
+        reviewer: { ...reviewer, overruled: true },
+        isLast: true,
+      }).join('\n');
+
+      then('both markers render — the skip survives the forgive', () => {
+        expect(output).toContain('skipped this generation');
+        expect(output).toContain('overruled ✓ — forgiven by human');
+      });
+
+      // the skip explains why the verdict above it is STALE, and a reader must hold that
+      // before the forgiveness of that verdict can mean aught
+      then('the skip is named BEFORE the forgive', () => {
+        expect(output.indexOf('skipped this generation')).toBeLessThan(
+          output.indexOf('overruled ✓'),
+        );
+      });
+    });
+
+    // ⚠️ the flag means SKIPPED, never "has a dispute on record". a lane whose residual tally
+    //    still clears the threshold RUNS with its disputes unresolved, and to claim a skip
+    //    there would be a `rule.forbid.surprises` blocker
+    when('[t2] the lane is NOT quieted, and carries no dispute at all', () => {
+      const output = formatGuardReviewerTree({
+        reviewer: {
+          ...reviewer,
+          skippedByDispute: false,
+          state: {
+            ...finishedState,
+            blockers: { disputed: 0, reported: 1 },
+          },
+        },
+        isLast: true,
+      }).join('\n');
+
+      then('no skip is claimed, and the count renders plainly', () => {
+        expect(output).not.toContain('disputed');
+        expect(output).not.toContain('skipped this generation');
+        expect(output).toContain('1 blocker 🔴');
+      });
+    });
+
+    // 🔴 case=4's F024: a PARTIAL dispute — the lane's residual still holds the road, so it
+    //    RUNS (skippedByDispute: false) even though a real dispute stands against one of its
+    //    concerns. this is the exact combination the arithmetic render exists for: the driver
+    //    disputed one concern, the lane still speaks, and the count must say both are true
+    when('[t3] the lane RUNS with a partial, un-cleared dispute', () => {
+      const output = formatGuardReviewerTree({
+        reviewer: {
+          ...reviewer,
+          skippedByDispute: false,
+          state: {
+            ...finishedState,
+            blockers: { disputed: 1, reported: 3 },
+          },
+        },
+        isLast: true,
+      }).join('\n');
+
+      then('no SKIP narrative renders — the lane ran this round', () => {
+        expect(output).not.toContain('skipped this generation');
+      });
+
+      then('the arithmetic still shows what the dispute shed', () => {
+        expect(output).toContain('3 blockers, 1 disputed → 2 tallied 🔴');
+      });
+    });
+  });
 });

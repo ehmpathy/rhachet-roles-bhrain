@@ -21,9 +21,24 @@ import { getStoneGuardExhaustedApprovalBypass } from '@src/domain.operations/rou
 import { computeReviewThresholdVerdict } from '@src/domain.operations/route/guard/review/computeReviewThresholdVerdict';
 import { computeReviewTotalsFromFiles } from '@src/domain.operations/route/guard/review/computeReviewTotalsFromFiles';
 import { computeStoneReviewInputHash } from '@src/domain.operations/route/guard/review/computeStoneReviewInputHash';
+import { asConcedeSeverity } from '@src/domain.operations/route/guard/review/peer/asConcedeSeverity';
+import { asJudgeResidualLines } from '@src/domain.operations/route/guard/review/peer/asJudgeResidualLines';
+import { computeResidualConcernCounts } from '@src/domain.operations/route/guard/review/peer/computeResidualConcernCounts';
 import { enumRouteGuardReviewPeerFiles } from '@src/domain.operations/route/guard/review/peer/enumRouteGuardReviewPeerFiles';
+import {
+  formatReviewBudgetTopupCommand,
+  ROUNDS_OFFERED_ON_TOPUP,
+} from '@src/domain.operations/route/guard/review/peer/formatReviewBudgetTopupCommand';
 import { getLatestReviewFilesPerSlug } from '@src/domain.operations/route/guard/review/peer/getLatestReviewFilesPerSlug';
 import { getNonOverruledReviewFiles } from '@src/domain.operations/route/guard/review/peer/getNonOverruledReviewFiles';
+import { getStoneConcededBetterConcernCounts } from '@src/domain.operations/route/guard/review/peer/getStoneConcededBetterConcernCounts';
+import { getStoneDisputedConcernCounts } from '@src/domain.operations/route/guard/review/peer/getStoneDisputedConcernCounts';
+import { getStoneLiveUrgentConcessionSlugs } from '@src/domain.operations/route/guard/review/peer/getStoneLiveUrgentConcessionSlugs';
+import { asGuardBudgetUpdateLines } from '@src/domain.operations/route/guard/review/peer/meter/asGuardBudgetUpdateLines';
+import { computeBudgetTargetSlugs } from '@src/domain.operations/route/guard/review/peer/meter/computeBudgetTargetSlugs';
+import { computeLevelsInPlay } from '@src/domain.operations/route/guard/review/peer/meter/computeLevelsInPlay';
+import { getCurrentPeerMetersForStones } from '@src/domain.operations/route/guard/review/peer/meter/getCurrentPeerMetersForStones';
+import { getDisputeSkippedReviewerSlugs } from '@src/domain.operations/route/guard/review/peer/meter/getDisputeSkippedReviewerSlugs';
 import { getStoneGuardLevelClearance } from '@src/domain.operations/route/guard/review/peer/meter/getStoneGuardLevelClearance';
 import { getUnrunUnlockedLevels } from '@src/domain.operations/route/guard/review/peer/meter/getUnrunUnlockedLevels';
 import { JUDGE_LEVEL } from '@src/domain.operations/route/guard/review/peer/meter/JUDGE_LEVEL';
@@ -137,12 +152,14 @@ const VALID_STONE_PASSAGE_ACTIONS = new Set([
   'passed',
   'approved',
   'promised',
-  'contemplated',
+  'absorbed',
   'blocked',
   'rewound',
   'arrived',
   'overruled',
   'forced',
+  'disputed',
+  'conceded',
 ]);
 
 /**
@@ -282,7 +299,7 @@ options:
 const printSetHelp = (): void => {
   console.log(
     `
-route.stone.set - mark stone as passed, approved, promised, contemplated, blocked, rewound, arrived, overruled, or forced
+route.stone.set - mark stone as passed, approved, promised, absorbed, disputed, conceded, blocked, rewound, arrived, overruled, or forced
 
 usage:
   route.stone.set [options]
@@ -295,26 +312,47 @@ options:
                        arrived  - work complete, get reviews
                        approved - human approval granted (human only)
                        promised - review.self promise made
-                       contemplated - peer review response articulated
+                       absorbed - peer review response articulated
+                       conceded - the reviewer is right on ONE concern; you will fix it
+                       disputed - ONE concern is fine to continue; a council will rule
                        blocked  - stuck, need help
                        rewound  - clear validation state
                        overruled - bypass review thresholds (human only)
                        forced   - approve AND overrule (human only)
-  --that <slug>      reviewer slug (required for --as promised / --as contemplated)
-                       for --as contemplated, use the slug exactly as shown in the
+  --that <slug>      reviewer slug (required for --as promised / --as absorbed)
+                       for --as absorbed, use the slug exactly as shown in the
                        reviewers-await-reply prompt (path-sanitized: slashes → dashes)
+  --with <slug>      the reviewer an absorption is taken WITH
+                       (required for --as disputed / --as conceded)
+  --about <concern>  the ONE concern an absorption answers, by severity + 1-based ordinal
+                       within that reviewer's latest report: blocker.1, nitpick.4
+                       (required for --as disputed / --as conceded)
+  --why <path>       path to a fulcrum/justification entry
+                       (required for --as disputed — the argument a council reads;
+                        optional for --as conceded — an extant path that records why you conceded)
+  --severity <sev>   the harm grade of a concession: urgent | better
+                       (REQUIRED for --as conceded — no ungraded concede; not for --as disputed)
+                       urgent = a shipped harm (security | safety | monetary |
+                       reputation | behavioral) — earns more budget, warns the human.
+                       better = code idealism / maintenance — the floor, never earns budget
   --help             show this help message
 
 note:
   --as overruled bypasses reviewed? judge thresholds for overzealous reviewers
   --as forced is shorthand for --as approved + --as overruled
+  --as conceded is the DEFAULT absorption of a concern: fix it, then re-arrive.
+    --as disputed is an escalation — it asks a human council to rule at the close.
 
 examples:
   route.stone.set --stone 1.vision --as arrived
   route.stone.set --stone 1.vision --as passed
   route.stone.set --stone 1.vision --as approved
   route.stone.set --stone 1.vision --as promised --that all-done
-  route.stone.set --stone 1.execute --as contemplated --that architect
+  route.stone.set --stone 1.execute --as absorbed --that architect
+  route.stone.set --stone 1.execute --as conceded --with architect --about nitpick.4 --severity better
+  route.stone.set --stone 1.execute --as conceded --with architect --about blocker.2 --severity urgent
+  route.stone.set --stone 1.execute --as disputed --with architect --about blocker.1 \\
+    --why .fulcrums/inventory.of=fulcrums.case=F007-file-placement.md
   route.stone.set --stone 3.blueprint --as blocked
   route.stone.set --stone 3.blueprint --as rewound
   route.stone.set --stone 1.vision --as overruled
@@ -908,6 +946,12 @@ const asStdoutWithoutOwlHeader = (input: {
 /**
  * .what = determines if guard requires exit with code 2
  * .why = encapsulates exit decision logic for guard block or approval states
+ *
+ * 🔴 a CONCEDE exits 2, a DISPUTE exits 0 (r2 n2). the two diverge on the HOLD: a concede
+ *    keeps it — the driver owes a fix and a re-arrive, so exit 0 would tell a hook the stone
+ *    is clear when it is not (rule.forbid.failhide). exit 2 is the constraint code: the driver
+ *    must act. a dispute sheds its concern from the tally and the road may advance, so the
+ *    command itself succeeded and forces no exit — the driver's next act is `--as passed`.
  */
 const isGuardExitRequired = (input: {
   passed: boolean | undefined;
@@ -915,7 +959,8 @@ const isGuardExitRequired = (input: {
   approved: boolean | undefined;
   overruled: boolean | undefined;
   forced: boolean | undefined;
-  contemplated: boolean | undefined;
+  absorbed: boolean | undefined;
+  conceded: boolean | undefined;
 }): boolean => {
   return (
     input.passed === false ||
@@ -923,7 +968,8 @@ const isGuardExitRequired = (input: {
     input.approved === false ||
     input.overruled === false ||
     input.forced === false ||
-    input.contemplated === false
+    input.absorbed === false ||
+    input.conceded === true
   );
 };
 
@@ -951,7 +997,7 @@ export const routeStoneSet = async (): Promise<void> => {
   // validate --as required and valid
   if (!isValidStonePassageAction({ action: options.as })) {
     throw new BadRequestError(
-      '--as must be "passed", "approved", "promised", "contemplated", "blocked", "rewound", "arrived", "overruled", or "forced"',
+      '--as must be "passed", "approved", "promised", "absorbed", "conceded", "disputed", "blocked", "rewound", "arrived", "overruled", or "forced"',
       { hint: '--help for usage' },
     );
   }
@@ -1002,13 +1048,19 @@ export const routeStoneSet = async (): Promise<void> => {
           | 'passed'
           | 'approved'
           | 'promised'
-          | 'contemplated'
+          | 'absorbed'
           | 'blocked'
           | 'rewound'
           | 'arrived'
           | 'overruled'
-          | 'forced',
+          | 'forced'
+          | 'disputed'
+          | 'conceded',
         that: options.that,
+        with: options.with,
+        about: options.about,
+        why: options.why,
+        severity: asConcedeSeverity({ raw: options.severity }),
         yield: yieldMode,
       },
       { ...progress.context, ...reviewBrainSupply, isTTY },
@@ -1037,7 +1089,8 @@ export const routeStoneSet = async (): Promise<void> => {
         approved: result.approved,
         overruled: result.overruled,
         forced: result.forced,
-        contemplated: result.contemplated,
+        absorbed: result.absorbed,
+        conceded: result.conceded,
       })
     ) {
       process.exit(2);
@@ -1405,10 +1458,41 @@ const judgeReviewed = async (input: {
     reviewFiles: reviewFilesToCount,
   });
 
-  // check thresholds
-  const verdict = computeReviewThresholdVerdict({
+  // subtract the concerns the driver SHED from the tally against the current generation.
+  // .why = two absorptions shed a concern from the judge's count, and both are at the grain of ONE
+  //        concern (S07): the review still ran, its file still stands, only its count is dropped.
+  //   - DISPUTED — the driver holds the concern is fine to continue; a council rules later.
+  //   - CONCEDED `better` — hard-capped by the budget (S16). the judge only runs at terminality,
+  //     so a `better` concession that survives to here is one the driver could not fix within
+  //     budget: the maintenance floor was met, and it passes as tech debt with NO budget increase
+  //     and NO human (`define.invariant.review.peer.budget.urgent-earns-budget`).
+  // 🔴 an `urgent` concession is NOT shed — it ships nameable harm, so it KEEPS the hold and
+  //    earns a human's glance and a round.
+  // 🔴 .why per-concern = a lane-grain exclusion would shed every concern that lane raised, the
+  //    driver's OWN concessions among them (rule.forbid.suppression-of-undeclared-concerns)
+  const [disputed, concededBetter] = await Promise.all([
+    getStoneDisputedConcernCounts({
+      route: input.route,
+      stone: stoneMatched.name,
+    }),
+    getStoneConcededBetterConcernCounts({
+      route: input.route,
+      stone: stoneMatched.name,
+    }),
+  ]);
+
+  // clamped at zero: a stale absorption must never manufacture headroom the tally did not have
+  const residual = computeResidualConcernCounts({
     totalBlockers,
     totalNitpicks,
+    shedBlockers: disputed.blockers + concededBetter.blockers,
+    shedNitpicks: disputed.nitpicks + concededBetter.nitpicks,
+  });
+
+  // check thresholds
+  const verdict = computeReviewThresholdVerdict({
+    totalBlockers: residual.blockers,
+    totalNitpicks: residual.nitpicks,
     allowBlockers: input.allowBlockers,
     allowNitpicks: input.allowNitpicks,
   });
@@ -1416,7 +1500,58 @@ const judgeReviewed = async (input: {
   // output verdict
   console.log(`passed: ${verdict.passed}`);
   console.log(`reason: ${verdict.reason}`);
+
+  // 🔴 the arithmetic lines, rendered ONLY where a dispute moved the sum
+  // .note = these are human diagnostics, never the guard-parsed verdict — the guard
+  //         reads `passed:`/`reason:` on stdout above. on a fail this block reaches
+  //         exit(2), so the diagnostics route to stderr with the urgent prose below, never
+  //         to stdout before a non-zero exit (rule.forbid.stdout-on-exit-errors)
+  for (const line of asJudgeResidualLines({
+    disputed,
+    residual,
+    allowBlockers: input.allowBlockers,
+    allowNitpicks: input.allowNitpicks,
+  }))
+    console.error(line);
+
   if (!verdict.passed) {
+    // 🔴 when a LIVE URGENT concession holds the stone, the judge names the human whose budget
+    //    grant is the remedy — the same shape the `approved?` judge uses for absent approval
+    //    (define.invariant.review.peer.judge.urgent-guides-the-budget-ask). a `better`/none hold
+    //    names no human: its remedy is the driver's own top-up.
+    const urgentSlugs = await getStoneLiveUrgentConcessionSlugs({
+      route: input.route,
+      stone: stoneMatched.name,
+    });
+    if (urgentSlugs.length > 0) {
+      // the ONE canonical top-up builder, at the shared round count — the judge and the concede
+      // ack once drifted (`--add 1` here, `2` there), so both read the same const now
+      // (r001.n3 / r004.n1 / r006.n2 / r009.n1)
+      const budgetCmd = formatReviewBudgetTopupCommand({
+        add: ROUNDS_OFFERED_ON_TOPUP,
+        peer: null,
+        stone: stoneMatched.name,
+      });
+      const passCmd = `rhx route.stone.set --stone ${stoneMatched.name} --as passed`;
+      // the halt prose is an ERROR surfaced before exit(2), so it goes to stderr — the verdict
+      // lines above stay on stdout, which the guard parses on a pass too
+      // (rule.forbid.stdout-on-exit-errors)
+      console.error('');
+      console.error(
+        `✋ halted, an urgent concession stands — ${urgentSlugs.join(', ')}`,
+      );
+      // 🔴 this clause matches WARN_TEXT_CONCESSION_URGENT's words exactly (r009 i012
+      //    nitpick.3) — every other concession surface renders that shared constant, and
+      //    a driver who meets this halt then route.drive's must read one fact once
+      console.error(
+        "   ├─ its harm ships if unfixed, so this round is owed a human's grant",
+      );
+      console.error('   ├─ please ask your human to');
+      console.error(`   │  └─ ${budgetCmd}`);
+      console.error('   │');
+      console.error('   └─ after the grant, address the concession, then run');
+      console.error(`      └─ ${passCmd}`);
+    }
     process.exit(2);
   }
 };
@@ -1778,6 +1913,51 @@ options:
 };
 
 /**
+ * .what = decides whether the budget line for ONE peer slug is in scope for this add
+ * .why = named transformer, extracted from the YAML-string loop's two inline `continue`
+ *        checks (raised 3× — arch-opport-decomposition, mech-decode-friction) so the loop
+ *        reads as narrative rather than decode-friction (`rule.forbid.inline-decode-friction`)
+ *
+ * 🔴 .the two filters are ANDed, and they come from two sources (F022 / S09).
+ *    `peerSlug` names ONE lane by hand; `targetSlugs` is the level SCOPE the orchestrator
+ *    computed from the live meters. a null `targetSlugs` means "no level scope" — the caller
+ *    already narrowed by `--peer`, so no second filter is owed. an empty set means "a level
+ *    scope was computed and it holds no lane", so NAUGHT is touched — the whole point of the
+ *    S09 verdict: "unless a level is explicitly rewound or budgetted, it should stay|become
+ *    exhausted." a bulk add no longer sprays every level; it lands on the latest one alone.
+ */
+/**
+ * .what = the guard file paths that belong to one stone
+ * .why = named transformer, extracted from `routeGuardBudget`'s inline `startsWith` filter
+ *        (raised — mech-decode-friction) so the orchestrator reads as narrative. mirrors the
+ *        same boundary-match semantics `getCurrentPeerMetersForStones` already names
+ */
+const getTargetGuardPathsForStone = (input: {
+  guardFiles: string[];
+  stoneName: string | null;
+}): string[] =>
+  input.stoneName
+    ? input.guardFiles.filter((f) =>
+        path.basename(f).startsWith(input.stoneName as string),
+      )
+    : input.guardFiles;
+
+const isPeerBudgetLineInScope = (input: {
+  currentPeerSlug: string | null;
+  peerSlug: string | null;
+  targetSlugs: Set<string> | null;
+}): boolean => {
+  if (input.peerSlug && input.currentPeerSlug !== input.peerSlug) return false;
+  if (
+    input.targetSlugs &&
+    (input.currentPeerSlug === null ||
+      !input.targetSlugs.has(input.currentPeerSlug))
+  )
+    return false;
+  return true;
+};
+
+/**
  * .what = extract and update budget values from guard file content
  * .why = named transformer to isolate YAML structure navigation from orchestrator
  */
@@ -1785,6 +1965,7 @@ const updateGuardPeerBudgets = (input: {
   content: string;
   addAmount: number;
   peerSlug: string | null;
+  targetSlugs: Set<string> | null;
   guardName: string;
 }): {
   content: string;
@@ -1849,8 +2030,14 @@ const updateGuardPeerBudgets = (input: {
 
     // find and update budget line
     if (inPeerSection && trimmed.startsWith('budget:')) {
-      // skip if filter targets specific peer and this is not it
-      if (input.peerSlug && currentPeerSlug !== input.peerSlug) {
+      // skip a peer slug outside the --peer target and level scope (F022 / S09)
+      if (
+        !isPeerBudgetLineInScope({
+          currentPeerSlug,
+          peerSlug: input.peerSlug,
+          targetSlugs: input.targetSlugs,
+        })
+      ) {
         continue;
       }
 
@@ -1890,26 +2077,6 @@ const asPositiveIntegerOrNull = (input: { value: string }): number | null => {
 };
 
 /**
- * .what = formats budget update entries as tree structure lines
- * .why = encapsulates treestruct output format for guard budget updates
- */
-const asGuardBudgetUpdateLines = (input: {
-  updates: Array<{
-    peer: string;
-    budgetBefore: number;
-    budgetAfter: number;
-  }>;
-}): string[] => {
-  // display ∞ for infinite budget
-  const fmt = (n: number) => (n === Infinity ? '∞' : String(n));
-  return input.updates.map((u, i) => {
-    const isLast = i === input.updates.length - 1;
-    const prefix = isLast ? '      └─' : '      ├─';
-    return `${prefix} ${u.peer}: ${fmt(u.budgetBefore)} → ${fmt(u.budgetAfter)}`;
-  });
-};
-
-/**
  * .what = processes guard files and updates peer budgets
  * .why = encapsulates file I/O loop for guard budget updates
  */
@@ -1917,6 +2084,7 @@ const processGuardFileBudgets = async (input: {
   guardPaths: string[];
   addAmount: number;
   peerSlug: string | null;
+  targetSlugs: Set<string> | null;
 }): Promise<
   Array<{
     guard: string;
@@ -1938,6 +2106,7 @@ const processGuardFileBudgets = async (input: {
       content,
       addAmount: input.addAmount,
       peerSlug: input.peerSlug,
+      targetSlugs: input.targetSlugs,
       guardName: path.basename(guardPath),
     });
 
@@ -1981,16 +2150,22 @@ export const routeGuardBudget = async (): Promise<void> => {
 route.guard.budget - extend peer reviewer budget
 
 usage:
-  rhx route.guard.budget --for review --add 2 --stone 1.vision            # extend all peers
-  rhx route.guard.budget --for review --add 2 --peer primo --stone 1.vision  # extend specific peer
+  rhx route.guard.budget --for review --add 2 --stone 1.vision              # extend the LATEST level
+  rhx route.guard.budget --for review --add 2 --peer primo --stone 1.vision # extend one named lane
+  rhx route.guard.budget --for review --add 2 --level 1 --stone 1.vision    # extend one named level
   rhx route.guard.budget --for review --add 2 --stone 1.vision --route .behavior/my-feature
 
 options:
   --for     resource type: "review" (required)
   --add     number of budget rounds to add (required)
   --stone   stone name with guard to update (required)
-  --peer    peer reviewer slug to extend (default: all peers)
+  --peer    peer reviewer slug to extend (default: the latest level in play)
+  --level   review level to extend — reach a LOWER level only when you name it (F022)
   --route   path to route directory (default: auto-detect from branch)
+
+.note = a bare add lands on the LATEST level alone. a lower level stays exhausted unless it is
+        explicitly named with --level or --peer — a top-up is a deliberate, targeted act, never a
+        blanket sweep that silently heals a level the route author bounded on purpose.
 `);
     // exit 2 = constraint: the caller omitted a required flag and must fix the invocation
     // (rule.require.exit-code-semantics: 0 ok, 1 malfunction, 2 constraint)
@@ -2007,6 +2182,33 @@ options:
 
   const peerSlug = options.peer;
   const stoneName = options.stone;
+
+  // parse --level (optional): the level a bulk add targets, per F022 fork E. a bare add lands on
+  // the LATEST level alone; a lower level is reached ONLY when named here. a malformed value is a
+  // caller fault → exit 2 (rule.require.exit-code-semantics).
+  const levelStr = options.level;
+  const levelFlag =
+    levelStr === undefined
+      ? null
+      : asPositiveIntegerOrNull({ value: levelStr });
+  if (levelStr !== undefined && levelFlag === null) {
+    console.error('error: --level must be a positive integer');
+    process.exit(2);
+  }
+
+  // --peer and --level both scope a top-up, and they scope it two DIFFERENT ways — a peer names
+  // ONE lane, a level names EVERY lane at a rung. to pass both asks for two scopes at once, and
+  // the peer silently wins (computeBudgetTargetSlugs returns null on a peer). reject the pair loud
+  // rather than drop one (r001.n2, rule.require.errors-name-the-fix).
+  if (peerSlug !== undefined && levelFlag !== null) {
+    console.error('error: --peer and --level cannot be combined');
+    console.error('');
+    console.error(
+      '   --peer scopes to ONE lane; --level scopes to EVERY lane at a rung.',
+    );
+    console.error('   name one, never both.');
+    process.exit(2);
+  }
 
   // require --stone to prevent accidental blast radius across all guards
   if (!stoneName) {
@@ -2046,12 +2248,51 @@ options:
     }
 
     // filter to specific stone if provided
-    const targetGuards = stoneName
-      ? guardFiles.filter((f) => path.basename(f).startsWith(stoneName))
-      : guardFiles;
+    const targetGuards = getTargetGuardPathsForStone({ guardFiles, stoneName });
 
     if (targetGuards.length === 0) {
       console.error(`error: no guard file found for stone ${stoneName}`);
+      process.exit(2);
+    }
+
+    // 🔴 the lanes a DISPUTE has quieted, read BEFORE the write.
+    //
+    // .why = the annotation is advisory and the write is not, so the order decides what a failure
+    //        costs. read first and a malformed route fails fast with the budget untouched; read
+    //        after and the same failure leaves a changed guard file with no emit to explain it
+    //        (rule.require.failfast). the read is a status read, so it is safe to repeat.
+    //
+    // .note = stones are filtered by the SAME `startsWith` the guard filter above uses, so the two
+    //         sets agree by construction — a guard basename starts with the stone name for every
+    //         variant (`<name>.guard`, `<name>.src.guard`, `<name>.stone.guard`), so a stone whose
+    //         name matches is exactly a stone whose guard matched.
+    const stones = await getAllStones({ route: routePath });
+    const meters = await getCurrentPeerMetersForStones({
+      stones,
+      stoneName,
+      route: routePath,
+    });
+    const disputeSkippedSlugs = getDisputeSkippedReviewerSlugs({ meters });
+
+    // the peers a bulk add may touch, per F022 fork E. null = no level scope (a --peer already
+    // scopes, or no lane has run); a Set names the latest level (default) or the --level named.
+    const targetSlugs = computeBudgetTargetSlugs({
+      meters,
+      levelFlag,
+      peerSlug: peerSlug ?? null,
+    });
+
+    // a --level that names a level no lane sits at is a caller fault: the scope would touch naught,
+    // so fail fast with the levels that ARE in play (rule.require.errors-name-the-fix).
+    if (levelFlag !== null && targetSlugs !== null && targetSlugs.size === 0) {
+      const levelsInPlay = computeLevelsInPlay({ meters });
+      console.error(
+        `error: no reviewer at level ${levelFlag}. levels in play: ${
+          levelsInPlay.length > 0
+            ? levelsInPlay.join(', ')
+            : '(none — no lane has run)'
+        }`,
+      );
       process.exit(2);
     }
 
@@ -2059,6 +2300,7 @@ options:
       guardPaths: targetGuards,
       addAmount,
       peerSlug: peerSlug ?? null,
+      targetSlugs,
     });
 
     // validate peer was found if specific peer requested
@@ -2077,8 +2319,14 @@ options:
     if (peerSlug) {
       console.log(`   ├─ peer = ${peerSlug}`);
     }
+    if (levelFlag !== null) {
+      console.log(`   ├─ level = ${levelFlag}`);
+    }
     console.log('   └─ updates');
-    const updateLines = asGuardBudgetUpdateLines({ updates });
+    const updateLines = asGuardBudgetUpdateLines({
+      updates,
+      disputeSkippedSlugs,
+    });
     updateLines.forEach((line) => console.log(line));
     console.log('');
   } catch (error) {

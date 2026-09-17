@@ -1,0 +1,73 @@
+# rule.forbid.verbatim-quotes-outside-seeds
+
+> **a wisher's verbatim words live in ONE artifact: their seed. every other artifact states the claim in its own words — and does not quote it, and does not cite it.**
+
+the clamp on `rule.always.archive-the-wishers-words-verbatim` — that rule says where the words MUST go; this says where they must NOT, which is everywhere else: a brief, a rule, an invariant, a yield, a fulcrum, a term's `.reason`, a commit body, a PR description.
+
+🔴 **the ban covers the CITATION, not merely the quote.**
+
+## .why — a copied quote is a SECOND original, and only one of the two is governed
+
+- it can be **trimmed, reflowed, or reworded** silently. 🔴 the drift is undetectable from either side, because **no reader ever holds both copies at once**
+- it carries the wisher's authority **with no record behind it** — an invented quote reads exactly as strong as a real one
+- it goes **stale when the settlement moves**, and a copy has no supersession channel. the seed set does
+- it is **archaeology inlined where a ref was owed** — the exact words serve the one reader who disputes the claim; every other reader pays on every read
+
+⇒ **what the artifact needs is the CLAIM**, and the claim reads sharper in the author's own words than in a mid-thought utterance never written to be read.
+
+## 🔴 .why the PATH goes too
+
+a citation reads as the cautious middle. it is not:
+
+| the defect | what it costs |
+|---|---|
+| **a phantom path where it matters most** | a brief PUBLISHES; `$route/.seeds/…` resolves in no other repo. the reader who most needs provenance cannot follow it |
+| **it rots faster than the claim** | a route archived, a seed renumbered, a slug reworded — a dead link beside a live claim reads as though the claim died too |
+| **it re-frames the claim as a REPORT** | *"the wisher said X, see …"* makes the brief an account of an utterance. **a rule is a law, not a transcript with a footnote** — it binds because it is true, never because someone said it |
+
+⇒ the provenance is not lost by the cut: **git holds it, and the route holds it** — the seed sits in its own inventory, where a reader who wants archaeology already goes.
+
+🟡 **a brief is not the seed's index. the seed inventory is.** to cite one seed from a brief starts a second index no census maintains.
+
+## .the repair — state the claim, and STOP
+
+```md
+👎  > *"only urgent concessions qualify for 'needs increased budget'."* — the wisher (seed S14)
+👎  the wisher set the line at shipped harm. ⇒ the words: `$route/.seeds/…case=S14-<slug>.md`
+👍  the line sits at shipped harm: only an `urgent` concession earns more budget, and a `better`
+    one never does — it is maintenance, and maintenance must not weigh the work down.
+```
+
+🔴 **the third form does not name the wisher either.** a law carries why it holds, never who spoke it.
+
+| when… | then… |
+|---|---|
+| you would paste `> *"…"*` attributed to the wisher | 🔴 the strongest cue. state the claim, and stop |
+| you would soften that to a **seed path** | 🔴 it feels careful. the path is the same defect, one hop out |
+| you write *"the wisher said"* / *"verbatim"* / *"their words"* | cut the attribution. the claim binds on its own |
+| a `.the litigation` section asks who argued what | it asks for the **argument and what settled it**, never a transcript nor a link to one |
+| a rule or invariant would quote to prove it was ordained | 🔴 a law does not prove itself by who spoke it |
+| the quote is *"sharper than any restatement"* | 🟡 that sharpness is the SEED's job. write the sharper restatement |
+| you cannot find the seed at all | 🔴 never archived — the parent rule fires first. archive it. then still do not cite it |
+| the artifact is **published** | 🔴 there the path resolves to naught. the claim must have stood alone all along |
+
+## .the boundary — a WISHER utterance, never all quotation
+
+| a violation | not a violation |
+|---|---|
+| a wisher utterance reproduced in a brief, rule, invariant, yield, fulcrum, or `.reason` | the `.said` block of the seed itself |
+| a **seed path** cited from a brief, rule, invariant, or philosophy | a seed cited from **within the route that wrote it** — a fulcrum, a yield, the inventory |
+| a wisher paraphrase dressed as a verbatim quote | a **published external source** quoted with its citation |
+| a wisher quote in a commit body or PR description | a **reviewer's** concern quoted in a `.taken` |
+| a wisher quote carried into a `.min` from its source | a tool's stdout, a code line, a file's content |
+
+**the two lines that part every case:** 1. does the quoted party have a SEED as their record? yes → restate, never copy · 2. is the artifact INSIDE the route that archived it? yes → cite freely. no → the path turns phantom the moment it publishes.
+
+## .the extant set — fix forward, no sweep
+
+extant copies stay until disturbed; repair on the way through. **a bulk find-and-replace is forbidden** — it cannot part a copied quote from a cited one, and it would rewrite the seeds themselves.
+
+blocker: a wisher utterance reproduced verbatim outside its seed · a **seed path cited from a brief, rule, invariant, or philosophy** · a *"the wisher said X"* attribution offered as the claim's ground · a claim the reader cannot read unless they open the quote it cites · a bulk rewrite of quotes across files.
+false positive: the seed's own `.said` · a seed cited from within its own route · a published external source with its citation · a reviewer concern in a `.taken` · a quote in an artifact whose declared subject IS the transcript.
+
+⇒ see also: `rule.always.archive-the-wishers-words-verbatim` (the positive peer, and the typo/profanity repair its `.said` carries) · `rule.require.archaeology-in-notes` · `hazard.published-brief-cannot-cite-the-repo-glossary` · `im_an.obsessive_learner.for.domain.invariants`.

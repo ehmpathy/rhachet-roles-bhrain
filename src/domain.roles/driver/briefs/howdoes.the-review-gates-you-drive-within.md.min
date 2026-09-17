@@ -1,0 +1,44 @@
+# howdoes: the review gates you drive within
+
+**the map of the system you operate within.** a guarded stone runs its reviewers, then holds a
+sequence of gates. you pass once you clear them in order. each gate is an **invariant** the engine
+holds true by construction — its formal law is `define.invariant.review.peer.*`, beside this brief.
+
+```
+run reviewers ─▶ 1. ABSORB gate ─▶ 2. .taken (feedback) gate ─▶ 3. threshold gate ─▶ PASS
+                    (per concern)      (per reviewer)              (stone-wide tally)
+```
+
+all three gates are conditions of ONE root law, `passage`: `PASS ⟺ every guard terminal ∧ every
+counted concern absorbed ∧ residual tally under allowance`.
+
+| # | gate | what it demands of you | law (a `passage` condition) |
+|---|---|---|---|
+| 1 | **absorb** | a disposition — `disputed` or `conceded` — on EACH concern a rejected reviewer raised | `absorb` (b) |
+| 2 | **the `.taken`** | your argument to the reviewer, per reviewer — accepted only once #1 is done | `absorb`, added gate (b) |
+| 3 | **threshold** | the stone-wide tally of residual concerns falls under its allowance | `budget.urgent-earns-budget` (c) |
+
+## the five laws — what each requires of you
+
+- 🔴 **ABSORB** — `feedbackAbsorbed(given) ⟺ every concern within it absorbed`. to absorb the feedback
+  is the `.taken`, and it is REFUSED until each concern within it carries a disposition. a fix is not
+  an absorption — the debt keys to the concern, so declare on it. one `--as disputed|conceded` per
+  concern, THEN the `.taken`.
+- **PASSAGE** — `PASS ⟺ every peer guard terminal`. a `rejected` lane is NOT terminal; it holds the
+  road. approval is permission; passage is your explicit `--as passed`. work every reviewer to
+  terminal before a human is pulled.
+- **DISPUTABLE** — a concern that COUNTS toward the tally is yours to dispute, approved lane or
+  rejected lane alike (the tally sums stone-wide). OWED ≠ PERMITTED: you are FORCED to absorb only a
+  rejected lane's concerns; you MAY dispute any that counts — an approved lane's nitpick among them.
+- **EXHAUSTED** — exhaustion unlocks the LEVEL; it does not discharge the DEBT. answer an exhausted
+  reviewer's blocker even though it can never re-run. levers: a `.taken`, a budget top-up, or a human.
+- **BUDGET** — a budget hit needs a human ⟺ a live `urgent` concession stands. grade every concession
+  (`--severity better|urgent`) by the harm test: name the harm that ships if unfixed → `urgent`;
+  else `better` (never earns budget).
+
+> **absorb each concern, answer each reviewer, hold the tally under the floor — and only a human
+> grants what only a human can.** the gates are the system; the invariants are why they hold.
+
+⇒ see also: `define.invariant.review.peer.absorb` · `.passage` · `.exhausted` ·
+`.absorption.disputable-regardless-of-verdict` · `.budget.urgent-earns-budget` ·
+`howdoes.a-concern-travels-from-reviewer-to-absorption` · `rule.always.absorb-every-concern`.

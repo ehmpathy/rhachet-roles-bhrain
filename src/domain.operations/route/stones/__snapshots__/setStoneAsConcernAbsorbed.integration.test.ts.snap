@@ -1,0 +1,72 @@
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
+
+exports[`setStoneAsConcernAbsorbed.integration given: [case1] a rejected lane, answered, ready for a stance when: [t5] a stance names an --about ordinal past what the lane raised then: it throws — the ordinal is bounded by the given, so blocker.9 addresses no concern 1`] = `
+"BadRequestError: --about blocker.9 is out of range
+
+the reviewer limited raised 1 blocker in its latest given, so the ordinal must be 1..1.
+
+{
+  "stone": "1.test",
+  "about": "blocker.9",
+  "raised": 1
+}"
+`;
+
+exports[`setStoneAsConcernAbsorbed.integration given: [case2] the flag-shape refusals — each fails before any i/o when: [t0] a dispute with NO --why then: the error names --why as required for a dispute 1`] = `
+"BadRequestError: --why is required for --as disputed
+
+a dispute is a guarantee to the council, so it must cite the argument they will read.
+write the entry first, then point at it:
+  .fulcrums/inventory.of=fulcrums.case=F00N-<slug>.md
+
+{
+  "stone": "1.test"
+}"
+`;
+
+exports[`setStoneAsConcernAbsorbed.integration given: [case2] the flag-shape refusals — each fails before any i/o when: [t1] a concede with NO --severity then: the error names --severity as required for a concede 1`] = `
+"BadRequestError: --severity is required for --as conceded
+
+every concession is graded by its harm — there is no ungraded concede.
+  --severity urgent  — a shipped harm (security | safety | monetary | reputation |
+                       behavioral); earns budget, warns the human
+  --severity better  — code idealism / maintenance; the floor, never earns budget
+
+{
+  "stone": "1.test"
+}"
+`;
+
+exports[`setStoneAsConcernAbsorbed.integration given: [case2] the flag-shape refusals — each fails before any i/o when: [t2] a dispute WITH a --severity then: the error names --severity as unaccepted for a dispute 1`] = `
+"BadRequestError: --severity is not accepted for --as disputed
+
+a severity grades a CONCESSION's harm — a dispute concedes naught, so it has none.
+grade the harm only when you concede: --as conceded --severity better|urgent
+
+{
+  "stone": "1.test"
+}"
+`;
+
+exports[`setStoneAsConcernAbsorbed.integration given: [case2] the flag-shape refusals — each fails before any i/o when: [t3] a dispute whose --why points at a file that does not exist then: the error names the absent fulcrum path 1`] = `
+"BadRequestError: no fulcrum entry at ".fulcrums/inventory.of=fulcrums.case=F999-absent.md"
+
+a relative --why is checked two ways, and neither resolved:
+   route-relative     = <tempDir>/.fulcrums/inventory.of=fulcrums.case=F999-absent.md
+   repo-root-relative = <tempDir>/.fulcrums/inventory.of=fulcrums.case=F999-absent.md
+
+a dispute cites an argument the council will read, so the entry must exist first.
+write it there, then re-run this command:
+  <tempDir>/.fulcrums/inventory.of=fulcrums.case=F00N-<slug>.md
+
+and pass either the ROUTE-relative path (canonical), or the repo-root-relative one:
+  --why .fulcrums/inventory.of=fulcrums.case=F00N-<slug>.md
+  --why <tempDir>/.fulcrums/inventory.of=fulcrums.case=F00N-<slug>.md
+
+{
+  "why": ".fulcrums/inventory.of=fulcrums.case=F999-absent.md",
+  "route": "<tempDir>",
+  "asRouteRelative": "<tempDir>/.fulcrums/inventory.of=fulcrums.case=F999-absent.md",
+  "asRepoRootRelative": "<tempDir>/.fulcrums/inventory.of=fulcrums.case=F999-absent.md"
+}"
+`;

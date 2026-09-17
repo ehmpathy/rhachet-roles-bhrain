@@ -7,7 +7,7 @@
  *
  * 🔴 that is one grammar rule which must hold across two call sites, and it lived as two
  *    independent inline copies of the same regex — `runStoneGuardReviews` (write) and
- *    `setStoneAsContemplated` (read). they agreed by coincidence, not by construction: a
+ *    `setStoneAsFeedbackAbsorbed` (read). they agreed by coincidence, not by construction: a
  *    change to either would have silently made a slug the prompt prints un-matchable by
  *    the gate that validates it (r11 nitpick.1, i004).
  *

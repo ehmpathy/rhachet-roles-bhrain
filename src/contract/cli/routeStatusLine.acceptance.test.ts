@@ -87,7 +87,7 @@ const asStableFaultStderr = (input: { stderr: string }): string => {
 
 /**
  * .what = a peer-review guard for stone 1.vision (one reviewer, level 1, budget 3)
- * .why = the peer/blocked/exhausted/uncontemplated/fault cases all need the same guard shape
+ * .why = the peer/blocked/exhausted/feedbackUnabsorbed/fault cases all need the same guard shape
  */
 const PEER_GUARD = [
   'artifacts:',
@@ -589,43 +589,48 @@ describe('routeStatusLine.acceptance', () => {
     });
   });
 
-  given('[case12] a bound route blocked on uncontemplated peer review', () => {
-    const scene = useBeforeAll(async () => ({
-      tempDir: genBoundRouteRepo({
-        slug: 'statusline-cli-case12',
-        guard: PEER_GUARD,
-        meters: [
-          { stone: '1.vision', reviewer: { slug: 'reviewer-a' }, rounds: 2 },
-        ],
-        passage: [
-          {
-            stone: '1.vision',
-            status: 'blocked',
-            blocker: 'review.peer.uncontemplated',
-          },
-        ],
-      }),
-    }));
+  given(
+    '[case12] a bound route blocked on feedbackUnabsorbed peer review',
+    () => {
+      const scene = useBeforeAll(async () => ({
+        tempDir: genBoundRouteRepo({
+          slug: 'statusline-cli-case12',
+          guard: PEER_GUARD,
+          meters: [
+            { stone: '1.vision', reviewer: { slug: 'reviewer-a' }, rounds: 2 },
+          ],
+          passage: [
+            {
+              stone: '1.vision',
+              status: 'blocked',
+              blocker: 'review.peer.unabsorbed',
+            },
+          ],
+        }),
+      }));
 
-    when('[t0] the renderer runs with that cwd', () => {
-      const out = useBeforeAll(async () => runRenderer({ cwd: scene.tempDir }));
-
-      then('it emits the peer-review phase (agent replies)', () => {
-        const lines = out.stdout.split('\n').filter((l) => l.trim() !== '');
-        expect(lines[0]).toEqual('🗿 1.vision, review.peer, l1@i002 🔍');
-      });
-
-      then('its output matches the uncontemplated snapshot', () => {
-        expect(out.stdout).toMatchSnapshot(
-          'route.status.line - peer.uncontemplated',
+      when('[t0] the renderer runs with that cwd', () => {
+        const out = useBeforeAll(async () =>
+          runRenderer({ cwd: scene.tempDir }),
         );
-      });
 
-      then('it exits 0', () => {
-        expect(out.exitCode).toEqual(0);
+        then('it emits the peer-review phase (agent replies)', () => {
+          const lines = out.stdout.split('\n').filter((l) => l.trim() !== '');
+          expect(lines[0]).toEqual('🗿 1.vision, review.peer, l1@i002 🔍');
+        });
+
+        then('its output matches the feedbackUnabsorbed snapshot', () => {
+          expect(out.stdout).toMatchSnapshot(
+            'route.status.line - peer.feedbackUnabsorbed',
+          );
+        });
+
+        then('it exits 0', () => {
+          expect(out.exitCode).toEqual(0);
+        });
       });
-    });
-  });
+    },
+  );
 
   given(
     '[case13] a bound route whose phase derivation faults (degrade)',

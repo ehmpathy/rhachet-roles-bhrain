@@ -5,7 +5,7 @@ import { getRouteGuardReviewPeerPathTaken } from '../guard/review/peer/getRouteG
 
 /**
  * .what = writes a .taken.by_self beside every .given.by_peer on a stone,
- *         as a driver does with `--as contemplated`
+ *         as a driver does with `--as absorbed`
  * .why = the entrance gate refuses a new review round while an articulation is
  *        owed, so any test that drives more than one round must converse between
  *        them. without this a multi-round test halts at the door, and the halt

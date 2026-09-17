@@ -26,7 +26,7 @@ its peer on the same axis is `absent` — no `.taken` exists at all. the axis is
 ## .refs
 
 - `src/domain.operations/route/guard/review/peer/getAllRouteGuardReviewPeersUncontemplated.ts` — where the tag is computed
-- `src/domain.operations/route/guard/review/peer/getRouteGuardReviewPeerContemplationStatus.ts:32` — `tag: 'absent' | 'stale'`
+- `src/domain.operations/route/guard/review/peer/getRouteGuardReviewPeerFeedbackAbsorptionStatus.ts:32` — `tag: 'absent' | 'stale'`
 - `src/domain.operations/route/guard/tree/formatRouteGuardReviewPeerContemplatePrompt.ts:243-245` — the copy a driver reads
 
 ## .reason

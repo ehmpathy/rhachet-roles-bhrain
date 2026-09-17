@@ -13,8 +13,8 @@ describe('genStoneGuardBlockedEmit', () => {
       const result = await genStoneGuardBlockedEmit({
         stone: '1.vision',
         route,
-        blocker: 'review.peer.uncontemplated',
-        reason: 'peer review awaits contemplation: arch',
+        blocker: 'review.peer.unabsorbed',
+        reason: 'peer review awaits feedbackAbsorption: arch',
         refs: { reviews: ['a.md'], judges: ['b.md'] },
         emit: { stdout: 'the reply prompt', stderr: 'some detail' },
       });
@@ -40,8 +40,10 @@ describe('genStoneGuardBlockedEmit', () => {
           route: scene.route,
         });
         expect(report).not.toBeNull();
-        expect(report!.blocker).toBe('review.peer.uncontemplated');
-        expect(report!.reason).toBe('peer review awaits contemplation: arch');
+        expect(report!.blocker).toBe('review.peer.unabsorbed');
+        expect(report!.reason).toBe(
+          'peer review awaits feedbackAbsorption: arch',
+        );
       });
     });
   });

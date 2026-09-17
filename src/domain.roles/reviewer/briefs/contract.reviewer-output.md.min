@@ -44,6 +44,26 @@ section headers like `## maintenance hazards` are fine as prose structure, but e
 
 ⇒ collapse your own taxonomy up front, then emit the two numeric lines. the deterministic parser then never has to fall back to a sub-brain to read you.
 
+## .the severity label — every concern carries TWO axes
+
+label every concern explicitly on **two** axes, at its head — never one:
+
+- **kind** — `blocker` | `nitpick` (does it block the stone?)
+- **severity** — `urgent` | `better` (does it ship harm?)
+
+write the pair as TWO adjacent bracketed tokens — the strict form `[blocker|nitpick][urgent|better]`, e.g. `[blocker][urgent]`, `[nitpick][better]`. an unlabeled concern is read as `better`; a real `urgent` left unlabeled is a mis-grade the tallier cannot recover.
+
+the harm test — the same one `rule.forbid.overzealous-blockers` gives a blocker — decides severity:
+
+| severity | the concern | the harm test |
+|---|---|---|
+| **`urgent`** | a defect in the closed set — security · safety · monetary · reputation · behavioral | you can name who suffers, and how |
+| **`better`** | code idealism, maintenance, polish | you cannot name a shipped harm |
+
+⚠️ **bias to `better`; never infer `urgent` where the truth is `better`.** a rule violation is not a harm, correctness is not harm. only a nameable shipped harm earns `urgent`.
+
+⇒ the axes are orthogonal, so all four pairs are legal (`[nitpick][urgent]`, `[blocker][better]`, …). `[blocker][better]` is a rule-forbidden must-fix that ships no harm — it simply makes the codebase better. the two numeric lines still tally by **kind**; the severity rides beside each concern for the tallier + council (`rule.require.grade-a-concession-by-its-harm`).
+
 ## .numbers only
 
 only a **number** counts. these cause a `💥 malfunction`:

@@ -37,7 +37,7 @@ export const parseStoneGuard = async (
   const parsed = await parseSimpleYaml(content, guardDir);
 
   // enforce GLOBAL slug uniqueness across self + peer reviewers
-  // .why = --that dispatches per-verb (--as promised for self, --as contemplated
+  // .why = --that dispatches per-verb (--as promised for self, --as absorbed
   //        for peer); a slug shared by a self AND a peer reviewer makes --that
   //        ambiguous. a loud throw at parse makes the ambiguity structurally
   //        impossible rather than settled by convention (i8-B5)
@@ -55,7 +55,7 @@ export const parseStoneGuard = async (
 
 /**
  * .what = throws if any slug is shared between a self and a peer reviewer
- * .why = --as promised (self) and --as contemplated (peer) both take --that; a
+ * .why = --as promised (self) and --as absorbed (peer) both take --that; a
  *        slug used by both roles makes --that ambiguous, so forbid it at parse
  */
 const assertReviewSlugsGloballyUnique = (input: {

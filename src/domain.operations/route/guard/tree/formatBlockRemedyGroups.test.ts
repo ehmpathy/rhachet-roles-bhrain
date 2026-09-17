@@ -199,6 +199,71 @@ describe('computeBlockRemedyGroups', () => {
       });
     });
   });
+
+  given('[case6] a CONCESSION exhaustion — every skipped lane conceded', () => {
+    when('[t0] the remedies are computed', () => {
+      const groups = computeBlockRemedyGroups({
+        stone: '5.1.execution',
+        passage: 'blocked',
+        reason:
+          'concessions await the round that confirms them; peer reviewer budget exhausted: mech-rules',
+      });
+
+      // 🔴 S12 — the driver declared the round warranted and fixed what it named, so the
+      //    top-up is the sanctioned remedy and it is theirs. to print `approve as-is` here
+      //    would summon a human the stance already made unnecessary
+      then('the top-up is the ONLY remedy — no human is summoned', () => {
+        expect(groups.map((group) => group.label)).toEqual([
+          'increase budget — yours to spend',
+        ]);
+      });
+
+      then('and the top-up is scoped to the conceded lane', () => {
+        expect(groups[0]!.cmd).toContain('--peer mech-rules');
+      });
+    });
+
+    when('[t1] a malfunction stands beside the concession', () => {
+      const groups = computeBlockRemedyGroups({
+        stone: '5.1.execution',
+        passage: 'malfunction',
+        reason:
+          'reviewer or judge malfunctioned; concessions await the round that confirms them; peer reviewer budget exhausted: mech-rules',
+      });
+
+      // a broken reviewer needs a human whatever the driver conceded — the concession
+      // suppresses the APPROVAL tail only, never an overrule
+      then('every remedy is offered, approve tail included', () => {
+        expect(groups.map((group) => group.label)).toEqual([
+          'increase budget — yours to spend',
+          'overrule the malfunction — a human must grant',
+          'approve as-is — a human must grant',
+        ]);
+      });
+    });
+  });
+
+  given(
+    '[case7] a PARTIAL concession — one skipped lane never conceded',
+    () => {
+      when('[t0] the halt was built without the mark', () => {
+        // the builder omits the mark unless EVERY skipped lane conceded, so this surface
+        // sees an ordinary exhaustion — and must render the human remedy it always did
+        const groups = computeBlockRemedyGroups({
+          stone: '5.1.execution',
+          passage: 'blocked',
+          reason: 'peer reviewer budget exhausted: mech-rules, arch-bounds',
+        });
+
+        then('the approve tail stands — a human is still owed', () => {
+          expect(groups.map((group) => group.label)).toEqual([
+            'increase budget — yours to spend',
+            'approve as-is — a human must grant',
+          ]);
+        });
+      });
+    },
+  );
 });
 
 describe('formatBlockRemedyGroups', () => {

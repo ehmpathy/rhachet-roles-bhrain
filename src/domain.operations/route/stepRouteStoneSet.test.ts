@@ -345,4 +345,114 @@ describe('stepRouteStoneSet', () => {
       });
     });
   });
+
+  // 🔴 the clamp for r10.n5 — a stance-only flag on a non-stance --as was DROPPED with no
+  //    word before the guard. now it is refused loud, so a mistyped verb never eats a grade.
+  //    fires before any fs access, so the bogus route is never read.
+  given('[case6] a stance-only flag on a non-stance --as', () => {
+    when('[t0] --as passed --severity urgent', () => {
+      then('refuses, and names the stray flag', async () => {
+        const error = await getError(
+          stepRouteStoneSet(
+            {
+              stone: '1.vision',
+              route: '/nonexistent/route',
+              as: 'passed',
+              severity: 'urgent',
+            },
+            noopContext,
+          ),
+        );
+        expect(error).toBeInstanceOf(Error);
+        expect(error.message).toContain('--severity is only accepted for');
+        // 🔴 r009 i011 nitpick.2 — pinned whole; a mistyped-verb driver reads this
+        //    message in full, and the taught commands inside it must stay correct
+        expect(error.message).toMatchSnapshot();
+      });
+    });
+
+    when('[t1] --as passed --why some/path', () => {
+      then('refuses, and names --why', async () => {
+        const error = await getError(
+          stepRouteStoneSet(
+            {
+              stone: '1.vision',
+              route: '/nonexistent/route',
+              as: 'passed',
+              why: '.fulcrums/inventory.of=fulcrums.case=F001.md',
+            },
+            noopContext,
+          ),
+        );
+        expect(error).toBeInstanceOf(Error);
+        expect(error.message).toContain('--why is only accepted for');
+        expect(error.message).toMatchSnapshot();
+      });
+    });
+
+    when('[t2] --as approved --with architect', () => {
+      then('refuses, and names --with', async () => {
+        const error = await getError(
+          stepRouteStoneSet(
+            {
+              stone: '1.vision',
+              route: '/nonexistent/route',
+              as: 'approved',
+              with: 'architect',
+            },
+            noopContext,
+          ),
+        );
+        expect(error).toBeInstanceOf(Error);
+        expect(error.message).toContain('--with is only accepted for');
+        expect(error.message).toMatchSnapshot();
+      });
+    });
+  });
+
+  // 🔴 r009 i012 nitpick.1 — a stance names a PARTY and a SUBJECT; both refusals below
+  //    teach a driver what to add. naught in the target drove them before this clamp
+  given('[case7] a stance with an absent --with or --about', () => {
+    when('[t0] --as disputed with no --with', () => {
+      then('refuses, and names --with — pinned whole', async () => {
+        const error = await getError(
+          stepRouteStoneSet(
+            {
+              stone: '1.vision',
+              route: '/nonexistent/route',
+              as: 'disputed',
+              about: 'blocker.1',
+              why: '.fulcrums/inventory.of=fulcrums.case=F001.md',
+            },
+            noopContext,
+          ),
+        );
+        expect(error).toBeInstanceOf(Error);
+        expect(error.message).toContain('--with is required for --as disputed');
+        expect(error.message).toMatchSnapshot();
+      });
+    });
+
+    when('[t1] --as conceded with no --about', () => {
+      then('refuses, and names --about — pinned whole', async () => {
+        const error = await getError(
+          stepRouteStoneSet(
+            {
+              stone: '1.vision',
+              route: '/nonexistent/route',
+              as: 'conceded',
+              with: 'architect',
+              severity: 'better',
+            },
+            noopContext,
+          ),
+        );
+        expect(error).toBeInstanceOf(Error);
+        expect(error.message).toContain(
+          '--about is required for --as conceded',
+        );
+        expect(error.message).toMatchSnapshot();
+      });
+    });
+  });
 });

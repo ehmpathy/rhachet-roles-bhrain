@@ -52,7 +52,8 @@ exports[`setStoneAsPassed.exhausted given: [case1] peer reviewer exhaustion writ
 🗿 route.stone.set
    ├─ stone = 1.test
    ├─ passage = blocked
-   ├─ reason = peer reviewer budget exhausted: limited
+   ├─ reason = you conceded — the round to confirm your fix needs more budget
+   │  └─ 🟡 an urgent concession stands — its harm ships if unfixed, so this round is owed a human's grant
    ├─ options
    │  ├─ increase budget — yours to spend
    │  │  └─ rhx route.guard.budget --for review --add N --peer limited --stone 1.test
@@ -102,13 +103,13 @@ exports[`setStoneAsPassed.exhausted given: [case2] a FRESH blocker answered afte
    ├─ review.peer 1/1
    │  ├─ slug = limited
    │  ├─ verdict = 1 blocker, 0 nitpicks
-   │  ├─ contemplate from
+   │  ├─ absorb from
    │  │  └─ .reviews/peer/1.test._.review.i001.<hash>.r001._.given.by_peer.limited.md
    │  └─ articulate into
    │     └─ .reviews/peer/1.test._.review.i001.<hash>.r001._.taken.by_self.limited.md
    │
-   └─ when you've contemplated this reviewer, run
-      └─ rhx route.stone.set --stone 1.test --as contemplated --that limited"
+   └─ when you've absorbed this reviewer, run
+      └─ rhx route.stone.set --stone 1.test --as absorbed --that limited"
 `;
 
 exports[`setStoneAsPassed.exhausted given: [case2] a FRESH blocker answered after the reviewer exhausted when: [t2] the driver answers, still with NO artifact edit then: matches snapshot — an answered blocker beside an exhausted reviewer 1`] = `
@@ -117,7 +118,8 @@ exports[`setStoneAsPassed.exhausted given: [case2] a FRESH blocker answered afte
 🗿 route.stone.set
    ├─ stone = 1.test
    ├─ passage = blocked
-   ├─ reason = peer reviewer budget exhausted: limited
+   ├─ reason = you conceded — the round to confirm your fix needs more budget
+   │  └─ 🟡 an urgent concession stands — its harm ships if unfixed, so this round is owed a human's grant
    ├─ options
    │  ├─ increase budget — yours to spend
    │  │  └─ rhx route.guard.budget --for review --add N --peer limited --stone 1.test
@@ -167,13 +169,13 @@ exports[`setStoneAsPassed.exhausted given: [case3] a budget top-up does NOT disc
    ├─ review.peer 1/1
    │  ├─ slug = limited
    │  ├─ verdict = 1 blocker, 0 nitpicks
-   │  ├─ contemplate from
+   │  ├─ absorb from
    │  │  └─ .reviews/peer/1.test._.review.i001.<hash>.r001._.given.by_peer.limited.md
    │  └─ articulate into
    │     └─ .reviews/peer/1.test._.review.i001.<hash>.r001._.taken.by_self.limited.md
    │
-   └─ when you've contemplated this reviewer, run
-      └─ rhx route.stone.set --stone 1.test --as contemplated --that limited"
+   └─ when you've absorbed this reviewer, run
+      └─ rhx route.stone.set --stone 1.test --as absorbed --that limited"
 `;
 
 exports[`setStoneAsPassed.exhausted given: [case3] a budget top-up does NOT discharge a debt — it only buys a confirmation round when: [t2] the driver answers and repairs, then re-enters on the topped-up budget then: matches snapshot — the confirmation round the ordered levers bought 1`] = `
@@ -230,13 +232,13 @@ exports[`setStoneAsPassed.exhausted given: [case4] the artifact is EDITED while 
    ├─ review.peer 1/1
    │  ├─ slug = limited
    │  ├─ verdict = 1 blocker, 0 nitpicks
-   │  ├─ contemplate from
+   │  ├─ absorb from
    │  │  └─ .reviews/peer/1.test._.review.i001.<hash>.r001._.given.by_peer.limited.md
    │  └─ articulate into
    │     └─ .reviews/peer/1.test._.review.i001.<hash>.r001._.taken.by_self.limited.md
    │
-   └─ when you've contemplated this reviewer, run
-      └─ rhx route.stone.set --stone 1.test --as contemplated --that limited"
+   └─ when you've absorbed this reviewer, run
+      └─ rhx route.stone.set --stone 1.test --as absorbed --that limited"
 `;
 
 exports[`setStoneAsPassed.exhausted given: [case4] the artifact is EDITED while an exhausted reviewer holds an unanswered blocker when: [t2] the driver EDITS A SECOND TIME, over an ALREADY-CARRIED debt then: matches snapshot — the halt after a SECOND hash move: edit-escape journey - [t2] debt survives two edits 1`] = `
@@ -247,13 +249,13 @@ exports[`setStoneAsPassed.exhausted given: [case4] the artifact is EDITED while 
    ├─ review.peer 1/1
    │  ├─ slug = limited
    │  ├─ verdict = 1 blocker, 0 nitpicks
-   │  ├─ contemplate from
+   │  ├─ absorb from
    │  │  └─ .reviews/peer/1.test._.review.i001.<hash>.r001._.given.by_peer.limited.md
    │  └─ articulate into
    │     └─ .reviews/peer/1.test._.review.i001.<hash>.r001._.taken.by_self.limited.md
    │
-   └─ when you've contemplated this reviewer, run
-      └─ rhx route.stone.set --stone 1.test --as contemplated --that limited"
+   └─ when you've absorbed this reviewer, run
+      └─ rhx route.stone.set --stone 1.test --as absorbed --that limited"
 `;
 
 exports[`setStoneAsPassed.exhausted given: [case4] the artifact is EDITED while an exhausted reviewer holds an unanswered blocker when: [t3] the driver answers the carried debt then: matches snapshot — the answer cleared the halt: edit-escape journey - [t3] answer discharges the debt 1`] = `
@@ -262,7 +264,8 @@ exports[`setStoneAsPassed.exhausted given: [case4] the artifact is EDITED while 
 🗿 route.stone.set
    ├─ stone = 1.test
    ├─ passage = blocked
-   ├─ reason = peer reviewer budget exhausted: limited
+   ├─ reason = you conceded — the round to confirm your fix needs more budget
+   │  └─ 🟡 an urgent concession stands — its harm ships if unfixed, so this round is owed a human's grant
    ├─ options
    │  ├─ increase budget — yours to spend
    │  │  └─ rhx route.guard.budget --for review --add N --peer limited --stone 1.test

@@ -63,7 +63,7 @@ describe('driver.route.peer-mixed-verdict-replay.acceptance', () => {
         //    no review round runs, l1 never spends its budget, and l3 never unlocks to
         //    malfunction. the mixed-verdict halt this suite replays would then never
         //    occur — and [t0]/[t1] would assert against a bare, unrelated halt
-        await answerEveryPeerGiven({ cwd: tempDir, stone: '1.execute' });
+        await answerEveryPeerGiven({ cwd: tempDir, stone: '1.execute', severity: 'urgent' });
 
         await invokeRouteSkill({
           skill: 'route.stone.set',

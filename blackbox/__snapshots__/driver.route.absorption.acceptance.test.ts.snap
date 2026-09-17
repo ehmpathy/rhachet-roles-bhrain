@@ -1,0 +1,79 @@
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
+
+exports[`driver.route.stance.acceptance given: [case1] --as disputed with no --with when: [t0] the party flag is omitted then: stderr matches snapshot: disputed no --with 1`] = `
+"error: BadRequestError: --with is required for --as disputed
+
+{
+  "stone": "1.vision"
+}
+"
+`;
+
+exports[`driver.route.stance.acceptance given: [case2] --as disputed with a party but no --about when: [t0] the concern flag is omitted then: stderr matches snapshot: disputed no --about 1`] = `
+"error: BadRequestError: --about is required for --as disputed
+
+a stance answers ONE concern, so it must name which:
+  --about blocker.1   --about nitpick.4
+
+{
+  "stone": "1.vision"
+}
+"
+`;
+
+exports[`driver.route.stance.acceptance given: [case3] --as disputed with no --why when: [t0] the fulcrum reference is omitted then: stderr matches snapshot: disputed no --why 1`] = `
+"error: BadRequestError: --why is required for --as disputed
+
+a dispute is a guarantee to the council, so it must cite the argument they will read.
+write the entry first, then point at it:
+  .fulcrums/inventory.of=fulcrums.case=F00N-<slug>.md
+
+{
+  "stone": "1.vision"
+}
+"
+`;
+
+exports[`driver.route.stance.acceptance given: [case4] --as conceded with NO --severity when: [t0] a concession omits its harm grade then: stderr matches snapshot: conceded no --severity 1`] = `
+"error: BadRequestError: --severity is required for --as conceded
+
+every concession is graded by its harm — there is no ungraded concede.
+  --severity urgent  — a shipped harm (security | safety | monetary | reputation |
+                       behavioral); earns budget, warns the human
+  --severity better  — code idealism / maintenance; the floor, never earns budget
+
+{
+  "stone": "1.vision"
+}
+"
+`;
+
+exports[`driver.route.stance.acceptance given: [case5] --as disputed WITH a --severity when: [t0] a dispute grades a harm it has none of then: stderr matches snapshot: disputed with --severity 1`] = `
+"error: BadRequestError: --severity is not accepted for --as disputed
+
+a severity grades a CONCESSION's harm — a dispute concedes naught, so it has none.
+grade the harm only when you concede: --as conceded --severity better|urgent
+
+{
+  "stone": "1.vision"
+}
+"
+`;
+
+exports[`driver.route.stance.acceptance given: [case6] --as conceded with a malformed --about when: [t0] the concern does not name <severity>.<ordinal> then: stderr matches snapshot: conceded malformed --about 1`] = `
+"error: BadRequestError: invalid --about: "bogus". expected <kind>.<ordinal>, where kind is blocker or nitpick — e.g. "blocker.1", "nitpick.4"
+
+{
+  "about": "bogus"
+}
+"
+`;
+
+exports[`driver.route.stance.acceptance given: [case7] --as conceded with an out-of-set --severity value when: [t0] the grade is neither better nor urgent then: stderr matches snapshot: conceded bad --severity value 1`] = `
+"error: BadRequestError: invalid --severity: "urgentt". expected one of: better, urgent
+
+{
+  "severity": "urgentt"
+}
+"
+`;

@@ -116,7 +116,8 @@ exports[`driver.route.peer-budget-malfunction.acceptance given: [journey] review
 🗿 route.stone.set
    ├─ stone = 1.execute
    ├─ passage = blocked
-   ├─ reason = peer reviewer budget exhausted: flaky-reviewer
+   ├─ reason = you conceded — the round to confirm your fix needs more budget
+   │  └─ 🟡 an urgent concession stands — its harm ships if unfixed, so this round is owed a human's grant
    ├─ options
    │  ├─ increase budget — yours to spend
    │  │  └─ rhx route.guard.budget --for review --add N --peer flaky-reviewer --stone 1.execute

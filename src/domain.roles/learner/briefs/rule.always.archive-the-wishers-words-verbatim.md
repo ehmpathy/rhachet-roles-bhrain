@@ -75,8 +75,23 @@ what changed because of them
 the paths the settlement was written into
 ```
 
-🟡 **`.said` is verbatim — do not clean it up.** typos, lowercase, mid-thought corrections, and
-all. the value is that it is unedited; a tidied quote is already a paraphrase.
+🟡 **`.said` is verbatim in SUBSTANCE — repair the surface.** the value is that the words, their
+order, their emphasis, and their mid-thought corrections are unedited. the value is not in a typo.
+
+| repair it | never touch it |
+|---|---|
+| a **typo** — a transposed letter, a dropped one, a doubled word | a word choice, however informal |
+| **profanity** — cut it, or soften it in place | the order the points arrive in |
+| a mangled path, flag, or identifier, where the intent is plain | a mid-thought correction — that IS the record |
+| broken markdown that renders wrong | lowercase, terseness, an absent article |
+
+🔴 **a repair that changes what was MEANT is a forgery, and the two are easy to confuse.** the test:
+would the speaker, shown both, say *"that is what I typed, spelled right"*? yes → a repair. a change
+past that is a rewrite, and a rewrite belongs in `.settled`, where it is yours to make.
+
+⇒ the why is that a seed is a **published artifact of this repo**, read by every future traveler and
+carried into reviews. a typo in it is noise on every read, and profanity is a cost the reader never
+agreed to pay. neither carries a scrap of the concept.
 
 ## 🔴 .a seed is the seed of a CONCEPT — never a chronicle of the round
 
@@ -158,7 +173,9 @@ once, applied to every occurrence set a route accumulates.
 
 - a wisher utterance that changed the work, with no seed = **blocker**
 - a `"the wisher asked for X"` citation with no seed to source it = **blocker**
-- a `.said` block that has been edited, tidied, or paraphrased = **blocker**
+- a `.said` block whose **sense** was edited — reworded, reordered, or paraphrased = **blocker**
+- a `.said` block that ships a **typo** or **profanity** = **blocker**; a seed is published, and the
+  surface repair costs the record naught
 - a seed filed outside `$route/.seeds/` = **blocker**
 - seed entries with no `inventory.of=seeds._.md` summary beside them = **blocker** — the census
   claim is what makes this an inventory

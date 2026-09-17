@@ -45,6 +45,34 @@ describe('setStoneAsBlocked', () => {
 
         await fs.rm(tempDir, { recursive: true });
       });
+
+      // 🔴 the escalate block enumerates the levers a driver holds, and a stance is one of
+      //    them (rule.always.spend-own-levers-before-escalation). this is the LAST emit
+      //    before the driver takes the exit rule.forbid.unanswered-exits-from-a-blocker
+      //    forbids, so it must name both words rather than merely gesture at the block.
+      then(
+        'its escalate check names the stance as a lever the driver holds',
+        async () => {
+          const tempDir = await fs.mkdtemp(
+            path.join(os.tmpdir(), 'blocked-test-'),
+          );
+          await fs.writeFile(
+            path.join(tempDir, '3.blueprint.stone'),
+            '# blueprint\n',
+          );
+
+          const result = await setStoneAsBlocked({
+            stone: '3.blueprint',
+            route: tempDir,
+          });
+
+          expect(result.emit.stdout).toContain('before you escalate');
+          expect(result.emit.stdout).toContain('concede or dispute it');
+          expect(result.emit.stdout).toContain('a concern is not a wall');
+
+          await fs.rm(tempDir, { recursive: true });
+        },
+      );
     });
   });
 

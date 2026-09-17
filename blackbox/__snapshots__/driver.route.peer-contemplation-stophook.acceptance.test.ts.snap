@@ -8,11 +8,11 @@ exports[`driver.route.peer-contemplation-stophook.acceptance given: [case1] a st
    ├─ review.peer 1/1
    │  ├─ slug = architect
    │  ├─ verdict = 1 blocker, 0 nitpicks
-   │  ├─ contemplate from
+   │  ├─ absorb from
    │  │  └─ .reviews/peer/1.execute._.review.i001.df6243be244b1651df.r001._.given.by_peer.architect.md
    │  └─ articulate into
    │     └─ .reviews/peer/1.execute._.review.i001.df6243be244b1651df.r001._.taken.by_self.architect.md
    │
-   └─ when you've contemplated this reviewer, run
-      └─ rhx route.stone.set --stone 1.execute --as contemplated --that architect"
+   └─ when you've absorbed this reviewer, run
+      └─ rhx route.stone.set --stone 1.execute --as absorbed --that architect"
 `;

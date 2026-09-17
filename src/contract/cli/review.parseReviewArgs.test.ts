@@ -126,4 +126,108 @@ describe('parseReviewArgs', () => {
       );
     });
   });
+
+  given('[case9] a repeated --paths-wout flag', () => {
+    when('[t0] parsed', () => {
+      then('accumulates every glob, never keeps only the last', () => {
+        const options = parseReviewArgs(
+          asArgv([
+            '--rules',
+            'r.md',
+            '--paths-wout',
+            '*test.ts*',
+            '--paths-wout',
+            '**/__mocks__/**',
+          ]),
+        );
+        expect(options.pathsWout).toEqual(['*test.ts*', '**/__mocks__/**']);
+      });
+    });
+  });
+
+  given('[case10] a repeated --paths-with flag', () => {
+    when('[t0] parsed', () => {
+      then('accumulates every glob — symmetric with --paths-wout', () => {
+        const options = parseReviewArgs(
+          asArgv([
+            '--rules',
+            'r.md',
+            '--paths-with',
+            'src/**/*',
+            '--paths-with',
+            'blackbox/**/*',
+          ]),
+        );
+        expect(options.pathsWith).toEqual(['src/**/*', 'blackbox/**/*']);
+      });
+    });
+  });
+
+  given('[case11] the --paths-without alias', () => {
+    when('[t0] parsed alone', () => {
+      then('resolves onto the canonical pathsWout key', () => {
+        const options = parseReviewArgs(
+          asArgv(['--rules', 'r.md', '--paths-without', '*test.ts*']),
+        );
+        expect(options.pathsWout).toEqual(['*test.ts*']);
+      });
+    });
+
+    when('[t1] parsed beside the canonical form', () => {
+      then('both accumulate into one array, in order', () => {
+        const options = parseReviewArgs(
+          asArgv([
+            '--rules',
+            'r.md',
+            '--paths-wout',
+            '*test.ts*',
+            '--paths-without',
+            '**/__mocks__/**',
+          ]),
+        );
+        expect(options.pathsWout).toEqual(['*test.ts*', '**/__mocks__/**']);
+      });
+    });
+  });
+
+  given('[case12] no path globs at all', () => {
+    when('[t0] parsed', () => {
+      then('both are undefined, never an empty array', () => {
+        const options = parseReviewArgs(asArgv(['--rules', 'r.md']));
+        expect(options.pathsWith).toBeUndefined();
+        expect(options.pathsWout).toBeUndefined();
+      });
+    });
+  });
+
+  given(
+    '[case13] the real invocation every guard opens with — --skill, --repo, --mode',
+    () => {
+      when('[t0] parsed', () => {
+        then(
+          'the dispatcher flags are tolerated, never collected as unknown',
+          () => {
+            // clamps the i007 malfunction: every guard-run reviewer on this
+            // route refused with "unrecognized flag(s): --skill, --repo,
+            // --mode" the round FLAGS_KNOWN first shipped without them — a
+            // regression from `rule.require.clamp-edge-cases`'s own repair
+            const options = parseReviewArgs(
+              asArgv([
+                '--skill',
+                'review',
+                '--repo',
+                'bhrain',
+                '--mode',
+                'hard',
+                '--rules',
+                'r.md',
+              ]),
+            );
+            expect(options.unknownFlags).toEqual([]);
+            expect(options.rules).toEqual('r.md');
+          },
+        );
+      });
+    },
+  );
 });

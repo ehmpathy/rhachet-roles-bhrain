@@ -6,6 +6,7 @@ import { getStoneGuardLevelState } from '../guard/review/getStoneGuardLevelState
 import { getStoneGuardOverruleTarget } from '../guard/review/getStoneGuardOverruleTarget';
 import { setStoneGuardOverrule } from '../judges/setStoneGuardOverrule';
 import { findOneStoneByPattern } from './asStoneGlob';
+import { formatGuidanceForHumanOnlyCommand } from './formatGuidanceForHumanOnlyCommand';
 import { getAllStones } from './getAllStones';
 
 /**
@@ -45,14 +46,9 @@ export const setStoneAsOverruled = async (
           stone: stoneMatched.name,
           action: 'blocked',
           reason: 'only humans can overrule',
-          guidance: [
-            'as a driver, you should:',
-            '   ├─ `--as passed` to signal work complete, proceed',
-            '   ├─ `--as arrived` to signal work complete, request review',
-            '   └─ `--as blocked` to escalate if stuck',
-            '',
-            'the human will run `--as overruled` when ready.',
-          ].join('\n'),
+          guidance: formatGuidanceForHumanOnlyCommand({
+            humanGrant: 'overruled',
+          }),
         }),
       },
     };
@@ -67,7 +63,7 @@ export const setStoneAsOverruled = async (
   });
 
   // derive the overrule target via the shared single source — is there a level (or an
-  // owed contemplation gate) left to forgive, and if so, which level?
+  // owed feedbackAbsorption gate) left to forgive, and if so, which level?
   const { hasTarget, levelToOverrule } = await getStoneGuardOverruleTarget({
     stone: stoneMatched,
     route: input.route,
@@ -103,7 +99,7 @@ export const setStoneAsOverruled = async (
   }
 
   // narrow: hasTarget guarantees a concrete level (a blocked active rung, or the lowest
-  // owed contemplation level) — the pure target core never returns hasTarget with no level
+  // owed feedbackAbsorption level) — the pure target core never returns hasTarget with no level
   if (levelToOverrule === undefined) {
     throw new UnexpectedCodePathError(
       'overrule has a target but no level to forgive',

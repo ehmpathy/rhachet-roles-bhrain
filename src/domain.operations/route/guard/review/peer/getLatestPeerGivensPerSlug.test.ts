@@ -194,7 +194,7 @@ describe('getLatestPeerGivensPerSlug', () => {
 
   given('[case8] the given that wins carries an UNREADABLE verdict', () => {
     // the pick sits mid-chain between the parse (asPeerGivenVerdict, which raises the
-    // flag) and the render (the contemplate prompt, which must print it INSTEAD of a
+    // flag) and the render (the absorb prompt, which must print it INSTEAD of a
     // count). a pick that carried the counts and dropped the flag would restore the
     // exact failhide both ends were built to close — and it would do so silently,
     // because blockers:1 still gates, so every OTHER case here would stay green.

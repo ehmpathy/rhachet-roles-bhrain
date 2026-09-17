@@ -3,7 +3,7 @@ import * as path from 'path';
 
 /**
  * .what = parses the {slug, iteration} pair out of a peer-review file path
- * .why = the contemplation gate picks the LATEST given per slug by iteration, and both
+ * .why = the feedbackAbsorption gate picks the LATEST given per slug by iteration, and both
  *        facts live only in the filename grammar, so one parser reads them
  *
  * 🔴 .note = the hash segment is MATCHED and VALIDATED below, and deliberately NOT
@@ -51,7 +51,7 @@ export const getRouteGuardReviewPeerPathMeta = (input: {
   if (!stampMatch?.[1] || !stampMatch?.[2] || !slugMatch?.[1])
     UnexpectedCodePathError.throw(
       [
-        'could not parse a peer-review filename, so the contemplation gate cannot run.',
+        'could not parse a peer-review filename, so the feedbackAbsorption gate cannot run.',
         '',
         `  file: ${input.path}`,
         '',

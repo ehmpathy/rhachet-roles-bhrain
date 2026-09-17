@@ -1,0 +1,24 @@
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
+
+exports[`assertFulcrumPathExists given: [case2] a --why that names no entry when: [t0] asserted then: the bytes a driver reads are pinned 1`] = `
+"BadRequestError: no fulcrum entry at ".fulcrums/inventory.of=fulcrums.case=F404-absent.md"
+
+a relative --why is checked two ways, and neither resolved:
+   route-relative     = <repoRoot>/.behavior/v2026_01_01.demo/.fulcrums/inventory.of=fulcrums.case=F404-absent.md
+   repo-root-relative = <repoRoot>/.fulcrums/inventory.of=fulcrums.case=F404-absent.md
+
+a dispute cites an argument the council will read, so the entry must exist first.
+write it there, then re-run this command:
+  .behavior/v2026_01_01.demo/.fulcrums/inventory.of=fulcrums.case=F00N-<slug>.md
+
+and pass either the ROUTE-relative path (canonical), or the repo-root-relative one:
+  --why .fulcrums/inventory.of=fulcrums.case=F00N-<slug>.md
+  --why .behavior/v2026_01_01.demo/.fulcrums/inventory.of=fulcrums.case=F00N-<slug>.md
+
+{
+  "why": ".fulcrums/inventory.of=fulcrums.case=F404-absent.md",
+  "route": ".behavior/v2026_01_01.demo",
+  "asRouteRelative": "<repoRoot>/.behavior/v2026_01_01.demo/.fulcrums/inventory.of=fulcrums.case=F404-absent.md",
+  "asRepoRootRelative": "<repoRoot>/.fulcrums/inventory.of=fulcrums.case=F404-absent.md"
+}"
+`;

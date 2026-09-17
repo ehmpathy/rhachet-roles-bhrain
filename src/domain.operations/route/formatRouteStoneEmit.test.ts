@@ -3,6 +3,7 @@ import { given, then, when } from 'test-fns';
 import { formatRouteStoneEmit } from './formatRouteStoneEmit';
 import { JUDGE_LEVEL } from './guard/review/peer/meter/JUDGE_LEVEL';
 import { getSelfReviewArticulationPath } from './guard/review/self/getSelfReviewArticulationPath';
+import { formatGuidanceForHumanOnlyCommand } from './stones/formatGuidanceForHumanOnlyCommand';
 
 describe('formatRouteStoneEmit', () => {
   given('[case1] challenge:absent action', () => {
@@ -266,14 +267,10 @@ describe('formatRouteStoneEmit', () => {
         stone: '1.vision',
         action: 'blocked',
         reason: 'only humans can approve',
-        guidance: [
-          'as a driver, you should:',
-          '   ├─ `--as passed` to signal work complete, proceed',
-          '   ├─ `--as arrived` to signal work complete, request review',
-          '   └─ `--as blocked` to escalate if stuck',
-          '',
-          'the human will run `--as approved` when ready.',
-        ].join('\n'),
+        // 🔴 the REAL guidance, never a fixture copy of it — an inline copy here was a
+        //    fourth twin of one list, and it would read as a pin on content it no longer
+        //    matched (rule.require.single-source-of-truth-for-render)
+        guidance: formatGuidanceForHumanOnlyCommand({ humanGrant: 'approved' }),
       });
 
       then('output contains owl header', () => {
@@ -284,11 +281,23 @@ describe('formatRouteStoneEmit', () => {
         expect(output).toContain('as a driver, you should:');
       });
 
-      then('output contains all three alternatives', () => {
+      then('output names every signal a driver can send', () => {
         expect(output).toContain('--as passed');
         expect(output).toContain('--as arrived');
+        expect(output).toContain('--as conceded');
+        expect(output).toContain('--as disputed');
         expect(output).toContain('--as blocked');
       });
+
+      then(
+        'and it qualifies the wall, so no unanswered exit is offered',
+        () => {
+          // rule.forbid.unanswered-exits-from-a-blocker: the bare `to escalate if stuck`
+          // this replaced pointed a driver at the one exit that rule forbids
+          expect(output).toContain('not a wall');
+          expect(output).not.toContain('to escalate if stuck');
+        },
+      );
 
       then('output contains human note', () => {
         expect(output).toContain(

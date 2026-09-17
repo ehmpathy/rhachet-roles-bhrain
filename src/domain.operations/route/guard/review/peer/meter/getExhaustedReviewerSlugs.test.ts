@@ -17,6 +17,8 @@ const asMeter = (input: {
   budget: 3,
   awaits: false,
   overruled: false,
+  skippedByDispute: false,
+  disputed: { blockers: 0, nitpicks: 0 },
   blockers: 0,
   nitpicks: 0,
   path: null,

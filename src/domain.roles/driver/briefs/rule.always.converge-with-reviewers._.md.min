@@ -1,6 +1,6 @@
 # rule.always.converge-with-reviewers
 
-a peer review is a conversation, not a verdict. settle it yourself through the contemplation loop; escalate only at a real wall.
+a peer review is a conversation, not a verdict. settle it yourself through the absorb loop; escalate only at a real wall.
 
 | the review is | you must |
 |---|---|
@@ -9,9 +9,9 @@ a peer review is a conversation, not a verdict. settle it yourself through the c
 | a matter of taste | take their preference unless it regresses a guarantee |
 | partly right | fix the valid half, articulate the boundary you kept |
 
-the loop: read each `.given.by_peer` → fix, or marshal the evidence → write `.taken.by_self` → `--as contemplated --that <slug>` → re-submit. the reviewer re-reads with your articulation AND your diff in context.
+the loop: read each `.given.by_peer` → fix, or marshal the evidence → write `.taken.by_self` → `--as absorbed --that <slug>` → re-submit. the reviewer re-reads with your articulation AND your diff in context.
 
-⚠️ **the `--as contemplated` step is enforced, never merely asked.** the entrance gate refuses the re-submit while any reviewer still owes a `.taken` — so a halt that names slugs at re-submission is that step skipped, never a guard defect. and **the code fix does not stand in for the articulation**: the debt is keyed to the reviewer, so an edit alone leaves it open.
+⚠️ **the `--as absorbed` step is enforced, never merely asked.** the entrance gate refuses the re-submit while any reviewer still owes a `.taken` — so a halt that names slugs at re-submission is that step skipped, never a guard defect. and **the code fix does not stand in for the articulation**: the debt is keyed to the reviewer, so an edit alone leaves it open.
 
 persuade with a cited rule, path, or line. a bare *"i disagree"* converges no one.
 

@@ -60,7 +60,31 @@ so a reviewer re-reads its prior round and the driver's answer, never its own wo
 
 ## .disputes
 
-none raised.
+### dispute: feedback — raised 2026-09-16 — status: RESOLVED (feedback becomes its own term)
+
+- raised.by  = the wisher, mid-review of `setStoneAsFeedbackAbsorbed` (the driver's `.taken`-
+  confirmation operation)
+- claim      = `given` is not specific enough to name what that operation absorbs. `given` is,
+  by this file's own `.what`, only the reviewer's HALF of the exchange — *"its counterpart is
+  the taken, which the driver authors."* the confirmation operation checks BOTH halves (that a
+  taken exists which answers the given), so its subject is the PAIR, never the given alone.
+  `feedback` was the word for that — the whole round's critique-and-response, the file that
+  "gets given and taken" — and it was rejected here as a synonym of `given` rather than held
+  as a term for a different, broader concept
+- counter    = the row above (`.why not the obvious alternatives`) rejected `feedback` on a
+  real ground — it names the CONTENT, so it has no complement, and a driver-side file called
+  `critique-response` would be an ugly compound. but that argument shows `feedback` is the
+  wrong word for one HALF of the pair (which given/taken already name, symmetrically) — it
+  says naught about whether `feedback` is the right word for the PAIR taken as a whole, which
+  is a third, distinct concept the given/taken pair does not by itself name
+- resolution = `feedback` is un-forbidden here and minted as its OWN term,
+  `term=route.guard.review.feedback`, for the given+taken pair — one reviewer's whole round of
+  critique, whether or not the driver has yet answered it. `given` keeps its narrow sense (the
+  reviewer's half alone), unchanged. every operation whose subject IS the pair
+  (`setStoneAsFeedbackAbsorbed` and its dependent operations) renamed `Given` → `Feedback`; every
+  operation whose subject is the given artifact alone (`getAllRouteGuardReviewPeerGivens`,
+  `getLatestPeerGivensPerSlug`, `asPeerGivenVerdict`) stayed as it was, since its subject was
+  always the given, never the pair
 
 ## .see also
 

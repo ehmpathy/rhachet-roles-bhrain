@@ -5,12 +5,12 @@ import type { RouteGuardReviewPeerGiven } from './getAllRouteGuardReviewPeerGive
  * .what = of every peer .given across all hashes, keeps the LATEST per slug, by iteration
  * .why = a reviewer speaks once per round; only its most recent word is live. an earlier given
  *        from the same reviewer was already superseded BY that reviewer, so it can neither gate
- *        nor be answered. this is the P2a half of the contemplation fix — the read that makes the
+ *        nor be answered. this is the P2a half of the feedbackAbsorption fix — the read that makes the
  *        debt survive an edit to the artifact under review (0.wish.md defect D2).
  *
  * .note = kept pure, and in its own file, so the pick is unit-checkable without a route on disk —
  *         the fs reads live in the async caller (rule.require.orchestrators-as-narrative). its
- *         neighbour computePeerUncontemplatedUnforgiven is split out for the same reason.
+ *         neighbour computePeerFeedbackUnabsorbedUnforgiven is split out for the same reason.
  *
  * .note = 🔴 the winner is a MAX over a TOTAL order, never a first-or-last of the input, and the
  *         TOTALITY is the guarantee rather than the max. enumFilesFromGlob returns raw globby

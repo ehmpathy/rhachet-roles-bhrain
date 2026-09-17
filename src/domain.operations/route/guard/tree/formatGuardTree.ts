@@ -1,5 +1,6 @@
 import type { RouteStoneGuardReviewPeerArtifact } from '@src/domain.objects/Driver/RouteStoneGuardReviewArtifact';
 
+import { asConcessionReasonDisplay } from '../review/peer/asConcessionReasonDisplay';
 import {
   computeReviewPeerVerdict,
   type ReviewPeerVerdict,
@@ -36,6 +37,29 @@ export interface GuardPeerMeterStatus {
    *        see rule.require.single-source-of-truth-for-render.
    */
   overruled: boolean;
+  /**
+   * whether a DISPUTE took this lane out of this generation's round.
+   * .why = the peer of `overruled`, and required for the same reason: it is the single source
+   *        every display consumer reads, so a skipped lane cannot render as one that ran on one
+   *        surface and quiet on another (rule.require.single-source-of-truth-for-render).
+   *
+   * 🔴 required rather than optional, on the phase-5 lesson: `RouteStoneGuardBlockerType` promised
+   *    the compiler would flag every consumer of a new member and three absorbed it silently,
+   *    because each read it through a default tail. a required field has no tail to fall through.
+   */
+  skippedByDispute: boolean;
+  /**
+   * this LANE's own disputed concern counts — what the driver's disputes have shed from its
+   * own raised total, never the stone-wide residual (the judge's `residual:` line, a sum
+   * across every lane).
+   *
+   * .why = a lane's raw `blockers`/`nitpicks` rendered alone reads as "the road still holds
+   *        here", even at the exact moment a dispute above it already sheds the count — the
+   *        render forced a reader to hold two lines in their head and do the subtraction
+   *        themselves. required, not optional, on the same phase-5 lesson `skippedByDispute`
+   *        cites: an optional field has a default tail every consumer can silently fall through.
+   */
+  disputed: { blockers: number; nitpicks: number };
   /** path to review artifact file */
   path: string | null;
 }
@@ -106,6 +130,14 @@ const deriveMetersFromReviews = (
       verdict,
       awaits: false,
       overruled: false,
+      // a derived meter has no stance corpus to fold — it is built from review ARTIFACTS alone,
+      // and a skip is a fact about the ledger. the authoritative meter
+      // (`getAllReviewPeerMeterStatuses`) computes it; this fallback states the safe default
+      // rather than guess, exactly as it does for `overruled`
+      skippedByDispute: false,
+      // a derived meter has no stance corpus to fold, on the same ground as `skippedByDispute`
+      // above — there is naught to dispute against
+      disputed: { blockers: 0, nitpicks: 0 },
       blockers: review.artifact.blockers,
       nitpicks: review.artifact.nitpicks,
       path: review.artifact.path,
@@ -228,6 +260,7 @@ const asReviewerTreeStateFromMeter = (input: {
       rounds: meter.rounds,
       budget: meter.budget,
       overruled: meter.overruled,
+      skippedByDispute: meter.skippedByDispute,
       state: { type: 'awaits', level: meter.awaits.level },
     };
   }
@@ -241,6 +274,7 @@ const asReviewerTreeStateFromMeter = (input: {
       rounds: meter.rounds,
       budget: meter.budget,
       overruled: meter.overruled,
+      skippedByDispute: meter.skippedByDispute,
       state: { type: 'queued' },
     };
   }
@@ -255,6 +289,7 @@ const asReviewerTreeStateFromMeter = (input: {
       rounds: meter.rounds,
       budget: meter.budget,
       overruled: meter.overruled,
+      skippedByDispute: meter.skippedByDispute,
       state: { type: 'malfunction', path },
     };
   }
@@ -271,6 +306,7 @@ const asReviewerTreeStateFromMeter = (input: {
       rounds: meter.rounds,
       budget: meter.budget,
       overruled: meter.overruled,
+      skippedByDispute: meter.skippedByDispute,
       state: { type: 'constraint', path: constraintPath },
     };
   }
@@ -297,12 +333,16 @@ const asReviewerTreeStateFromMeter = (input: {
     rounds: meter.rounds,
     budget: meter.budget,
     overruled: meter.overruled,
+    skippedByDispute: meter.skippedByDispute,
     state: {
       type: 'finished',
       verdict: meter.verdict,
       durationSec,
-      blockers,
-      nitpicks,
+      // 🔴 `disputed` reads from the METER, never a fresh artifact — a dispute is declared
+      //    against a GIVEN, and `meter.disputed` already keys to the slug's latest one (S03's
+      //    lapse). a fresh round's artifact carries no stance corpus of its own to fold.
+      blockers: { disputed: meter.disputed.blockers, reported: blockers },
+      nitpicks: { disputed: meter.disputed.nitpicks, reported: nitpicks },
       path,
       cached,
       tallier,
@@ -385,8 +425,21 @@ export const formatGuardTree = (input: {
         reason: input.reason,
       });
       const hasOptions = remedyGroups.length > 0;
+      // 🔴 decode a concession marker to its human line, and surface the urgent warn — via
+      //    the ONE shared transformer every reason surface calls
+      //    (rule.require.single-source-of-truth-for-render). before this, both guard-tree
+      //    renders showed the raw marker (r011 blocker.1). the warn NESTS under reason —
+      //    it explains why that reason is a human wait, so it is reason's child, never a
+      //    peer of it. reason's own connector depends only on whether options follow.
+      const { reasonText, warnText } = asConcessionReasonDisplay({
+        reason: input.reason,
+      });
       const reasonConnector = hasOptions ? '├─' : '└─';
-      lines.push(`   ${reasonConnector} reason = ${input.reason}`);
+      lines.push(`   ${reasonConnector} reason = ${reasonText}`);
+      if (warnText) {
+        const warnPrefix = hasOptions ? '│  ' : '   ';
+        lines.push(`   ${warnPrefix}└─ 🟡 ${warnText}`);
+      }
 
       if (hasOptions) {
         // options is the LAST block here (no guard follows) → children indent at 6 spaces
@@ -412,7 +465,16 @@ export const formatGuardTree = (input: {
     (input.passage === 'blocked' || input.passage === 'malfunction') &&
     input.reason
   ) {
-    lines.push(`   ├─ reason = ${input.reason}`);
+    // 🔴 decode a concession marker to its human line + urgent warn via the ONE shared
+    //    transformer (rule.require.single-source-of-truth-for-render). a guard section always
+    //    follows reason here, so reason takes ├─. the warn NESTS under reason — it explains
+    //    why that reason is a human wait, so it is reason's child, never a peer of it.
+    //    before this the raw marker shipped (r011 blocker.1).
+    const { reasonText, warnText } = asConcessionReasonDisplay({
+      reason: input.reason,
+    });
+    lines.push(`   ├─ reason = ${reasonText}`);
+    if (warnText) lines.push(`   │  └─ 🟡 ${warnText}`);
 
     // add the remedy options block — one additive list across every gate that fired this
     // pass (overrule for a malfunction/constraint, budget + approve for an exhaustion), so a

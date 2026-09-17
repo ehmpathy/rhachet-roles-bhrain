@@ -7,6 +7,9 @@ import { getRepoRootWithFallback } from '../../../getRepoRootWithFallback';
 import type { GuardPeerMeterStatus } from '../../../tree/formatGuardTree';
 import { getCacheSafePeerReviewArtifact } from '../getCacheSafePeerReviewArtifact';
 import { getLatestReviewArtifactForSlug } from '../getLatestReviewArtifactForSlug';
+import { computeDisputedConcernCounts } from '../getStoneDisputedConcernCounts';
+import { getStoneReviewCorpus } from '../getStoneReviewCorpus';
+import { isLaneSkippedByDispute } from '../isLaneSkippedByDispute';
 import { computeReviewPeerVerdict } from './computeReviewPeerVerdict';
 import { getAllRouteStoneGuardReviewPeerMeters } from './getAllRouteStoneGuardReviewPeerMeters';
 import { getReviewedJudgeThresholds } from './getReviewedJudgeThresholds';
@@ -194,6 +197,17 @@ export const getAllReviewPeerMeterStatuses = async (input: {
     }).map((c) => [c.level, c]),
   );
 
+  // the stance corpus, read ONCE for every lane — the per-lane fold below is pure and cheap.
+  // .why = the same read `runStoneGuardReviews` makes for the live path, through the same
+  //        `getStoneReviewCorpus` communicator. this is the PERSISTED path (a halt tree, a
+  //        `route.drive` render), and it must reach the same answer, so it folds the same
+  //        corpus rather than a second predicate that could drift
+  //        (rule.require.single-source-of-truth-for-render; r007 blocker.1, i006).
+  const { absorptions, givens } = await getStoneReviewCorpus({
+    route: input.route,
+    stone: input.stone.name,
+  });
+
   // the root every printed artifact path is rendered against.
   //
   // .note = read once, ahead of the map, rather than per reviewer — it shells out to git, and
@@ -218,6 +232,24 @@ export const getAllReviewPeerMeterStatuses = async (input: {
       const awaits: { level: number } | false =
         awaitedLevel !== undefined ? { level: awaitedLevel } : false;
 
+      // 🔴 the SAME two-part predicate the skip itself runs (`runStoneGuardReviews:484-501`):
+      //    a lane goes quiet only when its residual tally clears AND a dispute stands. a
+      //    `disputed > 0` shortcut would paint a skip on a lane that ran — at 3 blockers with 1
+      //    disputed the residual still holds the road, so the lane speaks (`case=4`'s F024).
+      // ⚠️ and it reads the CACHED counts, so a lane that never spoke carries none and cannot
+      //    be quiet — which is right: there is no prior verdict for a stance to answer.
+      const disputed = computeDisputedConcernCounts({
+        absorptions,
+        givens,
+        scope: { slug: reviewer.slug },
+      });
+      const skippedByDispute = isLaneSkippedByDispute({
+        cachedReview: cachedReview ?? null,
+        disputed,
+        allowBlockers,
+        allowNitpicks,
+      });
+
       return {
         slug: reviewer.slug,
         level: reviewer.level,
@@ -226,6 +258,11 @@ export const getAllReviewPeerMeterStatuses = async (input: {
         verdict: derived.verdict,
         awaits,
         overruled: isOverruled(reviewer.level),
+        skippedByDispute,
+        // already computed above for the skip predicate — carried through so the tree render
+        // can show it beside the raw count, rather than force a reader to hold the disputed
+        // narrative line and the raw blocker count in mind at once (r1 b2's per-lane sibling)
+        disputed,
         blockers: cachedReview?.blockers ?? 0,
         nitpicks: cachedReview?.nitpicks ?? 0,
         // 🔴 a meter's `path` is DISPLAY state — `GuardPeerMeterStatus` is consumed only by

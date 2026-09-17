@@ -4,6 +4,7 @@ import * as path from 'path';
 import { given, then, useBeforeAll, useThen, when } from 'test-fns';
 
 import { answerEveryPeerGiven } from '../../__test_assets__/answerEveryPeerGiven';
+import { concedeEveryPeerConcern } from '../../__test_assets__/concedeEveryPeerConcern';
 import { genContextReviewBrainSupplyDemo } from '../../__test_assets__/genContextReviewBrainSupplyDemo';
 import { setStoneAsPassed } from '../../stones/setStoneAsPassed';
 import { isENOENT } from '../isENOENT';
@@ -441,6 +442,12 @@ describe('setStoneGuardStamp.integration', () => {
         //         zero files and the assertions below would pass for the wrong
         //         reason (`rule.forbid.failhide`)
         expect(pathsTaken).toHaveLength(1);
+        // concede the carried concern so the entrance gate clears; a concede keeps
+        // the concern in the tally, so the exhaustion this step asserts still holds
+        await concedeEveryPeerConcern({
+          route: scene.tempDir,
+          stone: '1.test',
+        });
         return setStoneAsPassed(
           { stone: '1.test', route: scene.tempDir },
           noopContext,

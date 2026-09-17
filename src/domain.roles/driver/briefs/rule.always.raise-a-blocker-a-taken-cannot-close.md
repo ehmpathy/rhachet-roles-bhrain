@@ -34,8 +34,11 @@ the bottom buys a debt rather than a discharge.
 
 | the answer | you |
 |---|---|
-| **yes** | `--as contemplated`, then re-arrive. the ordinary loop |
-| 🔴 **no** | `--as blocked`, **with the ask stated as a command the human can run** |
+| **yes** | `--as absorbed`, then re-arrive. the ordinary loop |
+| 🔴 **no, and you AGREE with the objection** | fix it — that is the ordinary loop, not a wall |
+| 🔴 **no, and you DISAGREE, on a real defect or one that keeps returning** | `--as disputed --with <reviewer> --about <concern> --why <fulcrum>`. the escalation exit, never the default (`rule.always.converge-with-reviewers._`) |
+| 🔴 **no, and the artifact was RESTRUCTURED** — every verdict on it is stale | `--as rewound`. neither a dispute nor a concede fits prose that no longer exists |
+| 🔴 **no, for any other reason** | `--as blocked`, **with the ask stated as a command the human can run** |
 
 ⚠️ *permitted* is the load-bearing word, and it is narrower than *possible*. a test you could write
 but cannot run without a key you do not hold is **not permitted**. nor is an artifact whose
@@ -48,11 +51,11 @@ they are not — they govern **different states**, and the test above is precise
 
 | the state | the rule |
 |---|---|
-| a critique you have **not answered** | 🔴 `rule.forbid.unanswered-exits-from-a-blocker`. **`--as blocked` is forbidden.** write the `.taken` |
-| a critique you **have answered** and cannot close, because the close is not yours to make | ✅ **this rule.** `--as blocked` is the correct exit |
+| a concern you have **not answered** | 🔴 `rule.forbid.unanswered-exits-from-a-blocker`. **`--as blocked` is forbidden.** write the `.taken` |
+| a concern you **have answered** and cannot close, because the close is not yours to make | ✅ **this rule.** `--as blocked` is the correct exit |
 
-⇒ *"a wall is a wall; a critique you have not answered is not one"* is unchanged. **what this rule
-adds is that a critique you HAVE answered can still be a wall** — and the forbid rule, read alone,
+⇒ *"a wall is a wall; a concern you have not answered is not one"* is unchanged. **what this rule
+adds is that a concern you HAVE answered can still be a wall** — and the forbid rule, read alone,
 leaves a driver with no word for that case, so they re-arrive.
 
 ## 🔴 .the test is an OR over points, never a SUM — and a `.taken` does not lift a halt
@@ -76,7 +79,7 @@ was never written down:**
 
 > 🔴 **a `.taken` does not lift the halt.**
 
-`--as contemplated` discharges a **debt to a reviewer**; `--as blocked` reports an **absent grant**.
+`--as absorbed` discharges a **debt to a reviewer**; `--as blocked` reports an **absent grant**.
 neither is the other's inverse, so a driver may — and should — answer points while halted. **what
 they may not do is read that progress as permission to re-arrive.**
 
@@ -142,7 +145,7 @@ carries an independent reader who disagrees.
 
 ⚠️ **the question that parts the two cases is not "is it structural?"** — it is *"does an itemized
 fulcrum already reserve this call?"* a structural objection with no fulcrum behind it is an ordinary
-critique, and it is yours to answer.
+concern, and it is yours to answer.
 
 ## 🔴 .the loop this closes — the work that clears a reviewer is the work that blinds the next one
 

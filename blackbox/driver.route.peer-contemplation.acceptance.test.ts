@@ -41,7 +41,7 @@ const answerArchitectsLatestGiven = async (input: {
     args: {
       stone: '1.execute',
       route: '.',
-      as: 'contemplated',
+      as: 'absorbed',
       that: 'architect',
     },
     cwd: input.tempDir,
@@ -106,14 +106,14 @@ describe('driver.route.peer-contemplation.acceptance', () => {
       });
     });
 
-    when('[t1] driver signals --as contemplated before the .taken exists', () => {
+    when('[t1] driver signals --as absorbed before the .taken exists', () => {
       const result = useThen('guard blocks with absent guidance', async () =>
         invokeRouteSkill({
           skill: 'route.stone.set',
           args: {
             stone: '1.execute',
             route: '.',
-            as: 'contemplated',
+            as: 'absorbed',
             that: 'architect',
           },
           cwd: scene.tempDir,
@@ -126,7 +126,7 @@ describe('driver.route.peer-contemplation.acceptance', () => {
 
       then('names the exact absent .taken path and why', () => {
         expect(result.stdout).toContain(
-          'contemplation absent for reviewer architect',
+          'feedbackAbsorption absent for reviewer architect',
         );
         expect(result.stdout).toContain('_.taken.by_self.architect.md');
         expect(result.stdout).toContain('the .taken file IS that engagement');
@@ -137,7 +137,7 @@ describe('driver.route.peer-contemplation.acceptance', () => {
       });
     });
 
-    when('[t2] driver writes the .taken then signals --as contemplated', () => {
+    when('[t2] driver writes the .taken then signals --as absorbed', () => {
       const result = useThen('guard acknowledges the contemplation', async () => {
         // find architect's given, derive + write its paired taken
         const reviewsDir = path.join(scene.tempDir, '.reviews', 'peer');
@@ -161,7 +161,7 @@ describe('driver.route.peer-contemplation.acceptance', () => {
           args: {
             stone: '1.execute',
             route: '.',
-            as: 'contemplated',
+            as: 'absorbed',
             that: 'architect',
           },
           cwd: scene.tempDir,
@@ -173,7 +173,7 @@ describe('driver.route.peer-contemplation.acceptance', () => {
       });
 
       then('confirms the contemplation was recorded', () => {
-        expect(result.stdout).toContain('contemplated: architect');
+        expect(result.stdout).toContain('absorbed: architect');
       });
 
       then('stdout matches snapshot', () => {
@@ -319,7 +319,7 @@ describe('driver.route.peer-contemplation.acceptance', () => {
         //    the halt below look like a gate defect when it was a bad ack
         //    (`rule.forbid.failhide`, code.test)
         expect(outcome.acked.code).toEqual(0);
-        expect(outcome.acked.stdout).toContain('contemplated: architect');
+        expect(outcome.acked.stdout).toContain('absorbed: architect');
       });
 
       then('🔴 still blocked (exit 2) — but for a NEW reason', () => {

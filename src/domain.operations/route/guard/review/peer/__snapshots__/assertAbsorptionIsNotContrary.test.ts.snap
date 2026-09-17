@@ -1,0 +1,73 @@
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
+
+exports[`assertAbsorptionIsNotContrary given: [case6] the same concede, RE-GRADED on an unchanged given when: [t0] the driver re-declares it as urgent then: the refusal is pinned whole 1`] = `
+"BadRequestError: mech's blocker.1 is already conceded as better
+
+declared against r3.mech.md
+  ├─ on record  = --severity better
+  └─ you passed = --severity urgent
+
+a stance is final for its given — its GRADE and its ARGUMENT included. that given is
+unchanged, so the stance stands:
+  ├─ change the artifact and re-arrive, then take a stance on the new given
+  └─ or ask a human to void it now
+     └─ rhx route.stone.set --stone 5.1 --as rewound
+
+{
+  "reviewer": "mech",
+  "about": "blocker.1",
+  "given": "r3.mech.md",
+  "extant": "conceded",
+  "intent": "conceded",
+  "severityExtant": "better",
+  "severityIntent": "urgent"
+}"
+`;
+
+exports[`assertAbsorptionIsNotContrary given: [case7] the same dispute, RE-CITED on a different fulcrum when: [t0] the driver re-declares it with a new fulcrum then: the refusal is pinned whole 1`] = `
+"BadRequestError: mech's blocker.1 is already disputed, with a different --why
+
+declared against r3.mech.md
+  ├─ on record  = --why .fulcrums/inventory.of=fulcrums.case=F001-first.md
+  └─ you passed = --why .fulcrums/inventory.of=fulcrums.case=F002-second.md
+
+a stance is final for its given — its GRADE and its ARGUMENT included. that given is
+unchanged, so the stance stands:
+  ├─ change the artifact and re-arrive, then take a stance on the new given
+  └─ or ask a human to void it now
+     └─ rhx route.stone.set --stone 5.1 --as rewound
+
+{
+  "reviewer": "mech",
+  "about": "blocker.1",
+  "given": "r3.mech.md",
+  "extant": "disputed",
+  "intent": "disputed",
+  "fulcrumExtant": ".fulcrums/inventory.of=fulcrums.case=F001-first.md",
+  "fulcrumIntent": ".fulcrums/inventory.of=fulcrums.case=F002-second.md"
+}"
+`;
+
+exports[`assertAbsorptionIsNotContrary given: [case8] the same concede, RE-CITED with a changed --why when: [t0] the driver re-declares it with revised --why text then: the refusal is pinned whole 1`] = `
+"BadRequestError: mech's blocker.1 is already conceded, with a different --why
+
+declared against r3.mech.md
+  ├─ on record  = --why first justification
+  └─ you passed = --why revised justification
+
+a stance is final for its given — its GRADE and its ARGUMENT included. that given is
+unchanged, so the stance stands:
+  ├─ change the artifact and re-arrive, then take a stance on the new given
+  └─ or ask a human to void it now
+     └─ rhx route.stone.set --stone 5.1 --as rewound
+
+{
+  "reviewer": "mech",
+  "about": "blocker.1",
+  "given": "r3.mech.md",
+  "extant": "conceded",
+  "intent": "conceded",
+  "fulcrumExtant": "first justification",
+  "fulcrumIntent": "revised justification"
+}"
+`;

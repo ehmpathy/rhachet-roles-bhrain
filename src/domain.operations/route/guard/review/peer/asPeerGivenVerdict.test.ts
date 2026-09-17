@@ -35,7 +35,7 @@ describe('asPeerGivenVerdict', () => {
     when('[t0] cast', () => {
       then('it GATES — an absent verdict is never a clean one', () => {
         // .note = `blockers > 0` is not an arbitrary shape to assert; it is verbatim
-        //         the gate predicate — computePeerUncontemplatedUnforgiven keeps a
+        //         the gate predicate — computePeerFeedbackUnabsorbedUnforgiven keeps a
         //         reviewer only while it holds. so this one assertion IS the claim
         //         "the stone is held", and a second test that re-states it as a
         //         boolean adds no coverage (r4 nitpick.1, i002)

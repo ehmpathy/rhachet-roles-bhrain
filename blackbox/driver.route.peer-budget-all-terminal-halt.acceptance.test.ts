@@ -66,10 +66,18 @@ describe('driver.route.peer-budget-all-terminal-halt.acceptance', () => {
           'export const feature = () => "v1";',
         );
 
-        // answer whatever the prior round left owed, before this one is entered.
-        // a no-op on the first arrival; on every later one it is what the entrance
-        // gate now requires — an edit alone no longer buys re-entry
-        await answerEveryPeerGiven({ cwd: scene.tempDir, stone: '1.vision' });
+        // answer whatever the prior round left owed, before this one is entered, and
+        // declare a stance on each concern the stance gate now demands. this journey tests
+        // the exhaustion HALT, so the concern must HOLD the road to exhaustion — an
+        // `urgent` concession keeps it in the tally (a `better` one would be shed and pass,
+        // S16). the concede rides INSIDE answerEveryPeerGiven, so severity is threaded there
+        // rather than a second standalone concede — a second concede lands first at the
+        // default `better` and idempotency drops the urgent one. a no-op on the first arrival.
+        await answerEveryPeerGiven({
+          cwd: scene.tempDir,
+          stone: '1.vision',
+          severity: 'urgent',
+        });
 
         return invokeRouteSkill({
           skill: 'route.stone.set',
@@ -119,10 +127,18 @@ describe('driver.route.peer-budget-all-terminal-halt.acceptance', () => {
           'export const feature = () => "v2";',
         );
 
-        // answer whatever the prior round left owed, before this one is entered.
-        // a no-op on the first arrival; on every later one it is what the entrance
-        // gate now requires — an edit alone no longer buys re-entry
-        await answerEveryPeerGiven({ cwd: scene.tempDir, stone: '1.vision' });
+        // answer whatever the prior round left owed, before this one is entered, and
+        // declare a stance on each concern the stance gate now demands. this journey tests
+        // the exhaustion HALT, so the concern must HOLD the road to exhaustion — an
+        // `urgent` concession keeps it in the tally (a `better` one would be shed and pass,
+        // S16). the concede rides INSIDE answerEveryPeerGiven, so severity is threaded there
+        // rather than a second standalone concede — a second concede lands first at the
+        // default `better` and idempotency drops the urgent one. a no-op on the first arrival.
+        await answerEveryPeerGiven({
+          cwd: scene.tempDir,
+          stone: '1.vision',
+          severity: 'urgent',
+        });
 
         return invokeRouteSkill({
           skill: 'route.stone.set',
@@ -164,10 +180,18 @@ describe('driver.route.peer-budget-all-terminal-halt.acceptance', () => {
           'export const feature = () => "v3";',
         );
 
-        // answer whatever the prior round left owed, before this one is entered.
-        // a no-op on the first arrival; on every later one it is what the entrance
-        // gate now requires — an edit alone no longer buys re-entry
-        await answerEveryPeerGiven({ cwd: scene.tempDir, stone: '1.vision' });
+        // answer whatever the prior round left owed, before this one is entered, and
+        // declare a stance on each concern the stance gate now demands. this journey tests
+        // the exhaustion HALT, so the concern must HOLD the road to exhaustion — an
+        // `urgent` concession keeps it in the tally (a `better` one would be shed and pass,
+        // S16). the concede rides INSIDE answerEveryPeerGiven, so severity is threaded there
+        // rather than a second standalone concede — a second concede lands first at the
+        // default `better` and idempotency drops the urgent one. a no-op on the first arrival.
+        await answerEveryPeerGiven({
+          cwd: scene.tempDir,
+          stone: '1.vision',
+          severity: 'urgent',
+        });
 
         return invokeRouteSkill({
           skill: 'route.stone.set',
@@ -208,10 +232,18 @@ describe('driver.route.peer-budget-all-terminal-halt.acceptance', () => {
           'export const feature = () => "v4";',
         );
 
-        // answer whatever the prior round left owed, before this one is entered.
-        // a no-op on the first arrival; on every later one it is what the entrance
-        // gate now requires — an edit alone no longer buys re-entry
-        await answerEveryPeerGiven({ cwd: scene.tempDir, stone: '1.vision' });
+        // answer whatever the prior round left owed, before this one is entered, and
+        // declare a stance on each concern the stance gate now demands. this journey tests
+        // the exhaustion HALT, so the concern must HOLD the road to exhaustion — an
+        // `urgent` concession keeps it in the tally (a `better` one would be shed and pass,
+        // S16). the concede rides INSIDE answerEveryPeerGiven, so severity is threaded there
+        // rather than a second standalone concede — a second concede lands first at the
+        // default `better` and idempotency drops the urgent one. a no-op on the first arrival.
+        await answerEveryPeerGiven({
+          cwd: scene.tempDir,
+          stone: '1.vision',
+          severity: 'urgent',
+        });
 
         return invokeRouteSkill({
           skill: 'route.stone.set',

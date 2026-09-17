@@ -1,0 +1,9 @@
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
+
+exports[`asConcedeSeverity given: [case3] an INVALID --severity was passed — the typo path when: [t0] raw is "urgnt" (a typo) then: the message names the bad value and the valid set — pinned whole 1`] = `
+"BadRequestError: invalid --severity: "urgnt". expected one of: better, urgent
+
+{
+  "severity": "urgnt"
+}"
+`;

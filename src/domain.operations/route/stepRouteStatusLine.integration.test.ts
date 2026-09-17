@@ -476,7 +476,7 @@ describe('stepRouteStatusLine.integration', () => {
   );
 
   given(
-    '[case13] a stone blocked on uncontemplated peer review (agent replies)',
+    '[case13] a stone blocked on feedbackUnabsorbed peer review (agent replies)',
     () => {
       const scene = useBeforeAll(async () => {
         const tempDir = genTempDir({
@@ -515,7 +515,7 @@ describe('stepRouteStatusLine.integration', () => {
           JSON.stringify({
             stone: '1.test',
             status: 'blocked',
-            blocker: 'review.peer.uncontemplated',
+            blocker: 'review.peer.unabsorbed',
           }) + '\n',
         );
 

@@ -29,6 +29,9 @@ export const asReviewByReviewerTreeState = (input: {
     // a review.by row is a flat per-role review, never a route-ladder level, so it is
     // never overrule-scoped — an overrule forgives a route peer level, which review.by has none of
     overruled: false,
+    // and for the same reason it is never stance-scoped: a dispute answers a route peer's given,
+    // and review.by mints none. a rubric here always runs
+    skippedByDispute: false,
   };
 
   // a malfunction renders the shared malfunction row (💥 + given path), never a fake 0/0
@@ -47,8 +50,9 @@ export const asReviewByReviewerTreeState = (input: {
       type: 'finished',
       verdict: input.verdict.outcome === 'rejected' ? 'rejected' : 'approved',
       durationSec,
-      blockers: input.verdict.blockers,
-      nitpicks: input.verdict.nitpicks,
+      // a review.by row mints no given a dispute could answer, so no stance corpus exists
+      blockers: { disputed: 0, reported: input.verdict.blockers },
+      nitpicks: { disputed: 0, reported: input.verdict.nitpicks },
       path: input.outputPath,
       cached: false,
       // a null tallier only occurs on a malfunction (handled above); a detected verdict always

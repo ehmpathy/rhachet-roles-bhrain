@@ -75,7 +75,7 @@ would be tested once.
 
 ## .evidence
 
-- the contract value, read from source: `getRouteGuardReviewPeerContemplationStatus.ts:32`
+- the contract value, read from source: `getRouteGuardReviewPeerFeedbackAbsorptionStatus.ts:32`
 - the trigger swap: `1.vision.yield.md`, § *"F7 comes with the swap"*
 - the re-score: `.fulcrums/inventory.of=fulcrums.case=F7-the-stale-tag-keeps-its-copy-changes-its-trigger.md`
 - the overload's second sense, worked at length:

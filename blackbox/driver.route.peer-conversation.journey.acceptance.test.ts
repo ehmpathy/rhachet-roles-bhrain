@@ -125,14 +125,14 @@ describe('driver.route.peer-conversation.journey.acceptance', () => {
       });
     });
 
-    when('[t2] driver signals --as contemplated before the .taken exists', () => {
+    when('[t2] driver signals --as absorbed before the .taken exists', () => {
       const result = useThen('the guard blocks with absent guidance', async () =>
         invokeRouteSkill({
           skill: 'route.stone.set',
           args: {
             stone: '1.execute',
             route: '.',
-            as: 'contemplated',
+            as: 'absorbed',
             that: 'architect',
           },
           cwd: scene.tempDir,
@@ -145,7 +145,7 @@ describe('driver.route.peer-conversation.journey.acceptance', () => {
 
       then('names the exact absent .taken path and why it is required', () => {
         expect(result.stdout).toContain(
-          'contemplation absent for reviewer architect',
+          'feedbackAbsorption absent for reviewer architect',
         );
         expect(result.stdout).toContain('_.taken.by_self.architect.md');
         expect(result.stdout).toContain('the .taken file IS that engagement');
@@ -178,7 +178,7 @@ describe('driver.route.peer-conversation.journey.acceptance', () => {
           args: {
             stone: '1.execute',
             route: '.',
-            as: 'contemplated',
+            as: 'absorbed',
             that: 'architect',
           },
           cwd: scene.tempDir,
@@ -190,7 +190,7 @@ describe('driver.route.peer-conversation.journey.acceptance', () => {
       });
 
       then('confirms the contemplation was recorded', () => {
-        expect(result.stdout).toContain('contemplated: architect');
+        expect(result.stdout).toContain('absorbed: architect');
       });
 
       then('[t3] stdout matches snapshot', () => {

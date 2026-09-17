@@ -6,6 +6,7 @@ import { given, then, useBeforeAll, useThen, when } from 'test-fns';
 
 import { answerEveryPeerGiven } from '../__test_assets__/answerEveryPeerGiven';
 import { asStableGuardEmit } from '../__test_assets__/asStableGuardEmit';
+import { concedeEveryPeerConcern } from '../__test_assets__/concedeEveryPeerConcern';
 import { genContextReviewBrainSupplyDemo } from '../__test_assets__/genContextReviewBrainSupplyDemo';
 import { setStoneAsPassed } from './setStoneAsPassed';
 
@@ -425,6 +426,15 @@ describe('setStoneAsPassed.integration', () => {
             //         assertions below would go green off the UNANSWERED debt — exactly
             //         what the entrance gate exists to refuse (rule.forbid.failhide)
             expect(pathsTaken).toHaveLength(1);
+            // concede the concern so the gate clears — as `urgent`, because this step
+            // asserts the exhaustion HALT. an urgent concession keeps its hold, so the
+            // budget runs out and the exhaustion halts (records an `exhausted` status). a
+            // `better` concession would be SHED by the judge and pass, with no halt (S16).
+            await concedeEveryPeerConcern({
+              route: scene.tempDir,
+              stone: '1.test',
+              severity: 'urgent',
+            });
             return setStoneAsPassed(
               { stone: '1.test', route: scene.tempDir },
               noopContext,

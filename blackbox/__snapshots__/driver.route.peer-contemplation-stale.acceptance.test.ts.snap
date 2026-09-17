@@ -1,6 +1,6 @@
 // Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
 
-exports[`driver.route.peer-contemplation-stale.acceptance given: [case1] a contemplated stone whose artifact then changes when: [t0] round 1: driver contemplates architect, stone passes then: stdout matches snapshot 1`] = `
+exports[`driver.route.peer-contemplation-stale.acceptance given: [case1] an absorbed stone whose artifact then changes when: [t0] round 1: driver contemplates architect, stone passes then: stdout matches snapshot 1`] = `
 "🦉 the way speaks for itself
    │
    ├─ r1: architect (l1, 1/3)
@@ -48,7 +48,7 @@ exports[`driver.route.peer-contemplation-stale.acceptance given: [case1] a conte
 "
 `;
 
-exports[`driver.route.peer-contemplation-stale.acceptance given: [case1] a contemplated stone whose artifact then changes when: [t1] the artifact changes (new content hash) then: stdout matches snapshot 1`] = `
+exports[`driver.route.peer-contemplation-stale.acceptance given: [case1] an absorbed stone whose artifact then changes when: [t1] the artifact changes (new content hash) then: stdout matches snapshot 1`] = `
 "🦉 the way speaks for itself
    │
    ├─ r1: architect (l1, 2/3)
@@ -74,17 +74,17 @@ exports[`driver.route.peer-contemplation-stale.acceptance given: [case1] a conte
    ├─ review.peer 1/1
    │  ├─ slug = architect
    │  ├─ verdict = 1 blocker, 0 nitpicks
-   │  ├─ contemplate from
+   │  ├─ absorb from
    │  │  └─ .reviews/peer/1.execute._.review.i002.93f1080dbfbccf8751.r001._.given.by_peer.architect.md
    │  └─ articulate into
    │     └─ .reviews/peer/1.execute._.review.i002.93f1080dbfbccf8751.r001._.taken.by_self.architect.md
    │
-   └─ when you've contemplated this reviewer, run
-      └─ rhx route.stone.set --stone 1.execute --as contemplated --that architect
+   └─ when you've absorbed this reviewer, run
+      └─ rhx route.stone.set --stone 1.execute --as absorbed --that architect
 "
 `;
 
-exports[`driver.route.peer-contemplation-stale.acceptance given: [case1] a contemplated stone whose artifact then changes when: [t2] driver writes a FRESH .taken for the new hash then: stdout matches snapshot 1`] = `
+exports[`driver.route.peer-contemplation-stale.acceptance given: [case1] an absorbed stone whose artifact then changes when: [t2] driver writes a FRESH .taken for the new hash then: stdout matches snapshot 1`] = `
 "🦉 the way speaks for itself
    │
    ├─ r1: architect (l1, 2/3)

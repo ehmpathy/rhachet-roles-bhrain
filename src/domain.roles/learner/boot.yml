@@ -37,6 +37,13 @@ always:
       # the driver, it was reachable only by a driver-enrolled clone. the driver
       # borrows it back by symlink, since that is where it fires most often
       - briefs/rule.always.archive-the-wishers-words-verbatim.md
+      # its CLAMP — the archive rule says where the words must go; this says where they
+      # must not, which is everywhere else. say-level, and beside its parent rather than
+      # a dereference away: the two fire at opposite moments of one act, and a reader who
+      # boots the archive half alone learns that a quote is precious and nothing about
+      # where a second copy of it may sit. the copy is the defect that cannot be seen
+      # from either side — no reader ever holds both at once
+      - briefs/rule.forbid.verbatim-quotes-outside-seeds.md
       # BORROWED — the file here is a symlink into the driver, which owns it since
       # 2026-09-07. it had lived here while its PAIR, fix-forward-under-scouts-honor,
       # lived in the achiever, so a driver booted this half alone and read a dream as

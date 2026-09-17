@@ -11,15 +11,15 @@ import {
 const ASSETS_DIR = path.join(__dirname, '.test/assets/route-peer-contemplation');
 
 /**
- * .what = acceptance test for the discoverability of the new contemplated status
+ * .what = acceptance test for the discoverability of the new absorbed status
  * .why = a driver learns the verb from `route.stone.set --help`; the new
  *        status and its --that flag must appear there (rule.forbid.friction-hazards)
  */
-describe('driver.route.contemplated-help.acceptance', () => {
+describe('driver.route.absorbed-help.acceptance', () => {
   given('[case1] a linked driver role', () => {
     const scene = useBeforeAll(async () => {
       const tempDir = genTempDirForRhachet({
-        slug: 'contemplated-help',
+        slug: 'absorbed-help',
         clone: ASSETS_DIR,
       });
       await execAsync('npx rhachet roles link --role driver', { cwd: tempDir });
@@ -35,21 +35,21 @@ describe('driver.route.contemplated-help.acceptance', () => {
         }),
       );
 
-      then('the help lists the contemplated status', () => {
-        expect(result.stdout).toContain('contemplated');
+      then('the help lists the absorbed status', () => {
+        expect(result.stdout).toContain('absorbed');
       });
 
-      then('the help explains contemplated is a peer-review response', () => {
+      then('the help explains absorbed is a peer-review response', () => {
         expect(result.stdout).toContain('peer review response articulated');
       });
 
-      then('the help shows the --as contemplated --that example', () => {
-        expect(result.stdout).toContain('--as contemplated --that');
+      then('the help shows the --as absorbed --that example', () => {
+        expect(result.stdout).toContain('--as absorbed --that');
       });
 
       then('[t0] help output matches snapshot', () => {
         // .why = the --help text is a user-visible contract surface; snapshot it so
-        //        drift in the contemplated-status docs is visible in the pr diff
+        //        drift in the absorbed-status docs is visible in the pr diff
         //        (rule.require.snapshots + blueprint test-tree)
         expect(sanitizeTimeForSnapshot(result.stdout)).toMatchSnapshot();
       });

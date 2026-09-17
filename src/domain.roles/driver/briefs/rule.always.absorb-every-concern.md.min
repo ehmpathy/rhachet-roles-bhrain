@@ -1,0 +1,62 @@
+# rule.always.absorb-every-concern
+
+> **you have not absorbed a reviewer's feedback until you absorb EACH concern within it. one
+> disposition per concern — disputed or conceded — or the road does not pass.**
+
+a **concern** = one blocker or one nitpick a reviewer enumerated. to **absorb** it = render its
+disposition with its argument: `disputed` (fine to continue — cite a fulcrum) or `conceded` (the
+reviewer is right — commit to fix). absorb the feedback = absorb every concern within it.
+
+⇒ the law: `define.invariant.review.peer.absorb` — `feedbackAbsorbed(given) ⟺ ∀ concern : absorbed(concern)`.
+
+## .why — a per-reviewer acknowledgement hides an un-absorbed concern
+
+engage the lane, argue three concerns, never touch the fourth, and a *"did you respond?"* gate passes
+you — the response exists, the fourth concern was ignored under cover of it. **the feedback IS its
+concerns**; the atom of the answer is the concern, never the reviewer.
+
+## 🔴 .two grains, one verb — the coarse gated on the fine
+
+| act | grain | what it is |
+|---|---|---|
+| absorb a concern | one concern | a disposition (dispute\|concede) + argument |
+| absorb the feedback | the given | the `.taken` — the reviewer as a whole |
+
+🔴 **the added gate: the `.taken` is REFUSED until each concern within it is absorbed.** absorb-the-feedback
+is COMPOSED of absorb-each-concern — the `.taken` is not retired, it gains a precondition.
+
+| disposition | commits you to | argument lives in |
+|---|---|---|
+| `conceded` — the default | fix it, run again | an optional `--why`, or the fix |
+| `disputed` — the escalation | shed from the tally; council rules | the fulcrum `--why` names — **required** |
+
+⚠️ concede-and-fix is the default; dispute is an escalation (severe or recurs) — never to skip the fix.
+
+```
+rhx route.stone.set --stone <s> --as conceded --with <reviewer> --about <concern> --severity better|urgent
+rhx route.stone.set --stone <s> --as disputed  --with <reviewer> --about <concern> --why <fulcrum-path>
+```
+
+`--about` names ONE concern by ordinal (`blocker.3`); no `--about all` — *a driver who types all has
+not read all* (`S08`). ordinals renumber each generation; re-absorb what the given now says.
+
+| when… | then… |
+|---|---|
+| a given rejects | every concern it enumerates owes an absorption before the round passes |
+| you would write the `.taken` for the reviewer "as a whole" | absorb each concern FIRST — the `.taken` is refused until you do. the whole is gated on its parts |
+| you fix the code and re-arrive | 🔴 a fix is not an absorption. the debt keys to the concern — declare on it, or the gate holds |
+| an approved lane's nitpick pushes the stone over the floor | you MAY absorb it — the judge tallies stone-wide |
+| the halt names concerns un-absorbed | those are the atoms owed. one command each |
+
+test: **for every concern enumerated, did you render a disposition on THAT concern?** every one → the
+feedback is absorbed · one un-absorbed → the road holds and the halt names it.
+
+boundary: a concern with no hold owes none — a forgiven level, a lane that never spoke, an unreadable
+given (a malfunction → re-run, never an absorption; `F030`).
+
+blocker: a passage sought while any enumerated concern of a given that counts is un-absorbed · a code
+fix re-arrived as though it discharged a concern · a disposition on the reviewer as a whole rather
+than per concern · a dispute with no fulcrum `--why`.
+
+⇒ see also: `define.invariant.review.peer.absorb` · `rule.always.concede-with-a-severity` ·
+`rule.forbid.suppression-of-undeclared-concerns` · `rule.always.converge-with-reviewers._`.

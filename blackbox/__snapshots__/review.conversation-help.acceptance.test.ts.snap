@@ -9,8 +9,9 @@ usage:
 options:
   --rules <globs>     glob pattern(s) for rule files (required)
   --paths <globs>     glob pattern(s) for target files (deprecated: use --paths-with)
-  --paths-with <globs>  include files that match these globs
-  --paths-wout <globs>  exclude files that match these globs
+  --paths-with <glob>   include files that match this glob (can repeat)
+  --paths-wout <glob>   exclude files that match this glob (can repeat)
+                        alias: --paths-without
   --diffs <range>     diff range: since-main, since-commit, since-staged (default: since-main)
   --join <mode>       how to join --paths-with and --diffs: intersect or union (default: intersect)
   --refs <globs>      glob pattern(s) for reference files (can repeat)
@@ -20,7 +21,7 @@ options:
   --conversation <files>  comma-separated prior peer-review dialogue files (.given + .taken) to thread as context (opt-in; guard expands $conversation)
   --output <path>     output file path (default: .review/$branch/$isotime.output.md)
   --focus <mode>      review focus: push or pull (default: push)
-  --goal <goal>       review goal: exhaustive or representative (default: representative)
+  --goal <goal>       review goal: exhaustive or representative (default: exhaustive)
   --brain <slug>      brain to use for review (default: fireworks/deepseek/v4-flash)
   --open <opener>     open output file with specified program (e.g., nvim, codium, code)
   --help              show this help message

@@ -3,7 +3,7 @@
 ## .what
 
 a **zoom-in** of `rule.always.converge-with-reviewers._.md` onto the one mechanical obligation the
-contemplation loop imposes:
+absorb loop imposes:
 
 > **for EVERY `.given.by_peer` point, you MUST author the paired `.taken.by_self` before you
 > re-arrive. no exceptions, every round.**
@@ -31,12 +31,12 @@ reviewer cannot see your diff's intent; it sees the points and the responses.
 | shape | the claim | what it must carry |
 |---|---|---|
 | `[REPAIR]` | *"i fixed it"* | a quote of the **current** `target.file`, as proof the fix is present now |
-| `[REFUTE]` | *"the critique does not hold"* | a reasoned, evidence-cited argument — extant code out of scope, a false positive, a deliberate tradeoff |
+| `[REFUTE]` | *"the concern does not hold"* | a reasoned, evidence-cited argument — extant code out of scope, a false positive, a deliberate tradeoff |
 
 then, per point:
 
 ```sh
-rhx route.stone.set --stone <stone> --as contemplated --that <slug>
+rhx route.stone.set --stone <stone> --as absorbed --that <slug>
 ```
 
 **and only then re-arrive.**

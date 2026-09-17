@@ -34,15 +34,15 @@ each open point in a taken carries one of two shapes (`rule.always.converge-with
 | `[REPAIR]` | *"i fixed it"* | a quote of the **current** file |
 | `[REFUTE]` | *"it does not hold"* | cited evidence — out of scope, a false positive, a deliberate tradeoff |
 
-⚠️ **a taken's existence is what the gate checks, never its content** (`setStoneAsContemplated.ts:77`).
+⚠️ **a taken's existence is what the gate checks, never its content** (`setStoneAsFeedbackAbsorbed.ts:77`).
 an empty one passes the engine and fails the reviewer, which re-raises the point next round.
 
 ## .refs
 
 - `src/domain.operations/route/guard/review/peer/getRouteGuardReviewPeerPathTaken.ts`
 - `src/domain.operations/route/guard/review/peer/getAllRouteGuardReviewPeerTakenMetas.ts`
-- `src/domain.operations/route/guard/review/peer/getRouteGuardReviewPeerContemplationStatus.ts`
-- `src/domain.operations/route/stones/setStoneAsContemplated.ts`
+- `src/domain.operations/route/guard/review/peer/getRouteGuardReviewPeerFeedbackAbsorptionStatus.ts`
+- `src/domain.operations/route/stones/setStoneAsFeedbackAbsorbed.ts`
 
 ## .reason
 

@@ -39,7 +39,7 @@ a peer round wrote 9 givens at hash `402b9a0ecc4e3a471a`; **5 carried blockers**
 repaired the code those reviewers asked it to repair, which moved the artifact hash. then:
 
 ```
-$ rhx route.stone.set --stone 5.1.execution.from_vision --as contemplated --that repo-rules
+$ rhx route.stone.set --stone 5.1.execution.from_vision --as absorbed --that repo-rules
 🦉 contemplated: repo-rules
    └─ this reviewer raised no blockers — no critique to answer, no response needed
 ```

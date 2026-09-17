@@ -122,3 +122,12 @@ exports[`formatGuardReviewerTree given: [case16] an OVERRULED reviewer whose raw
   "    └─ given: .route/1.plan.guard.review.i1.abc123.r1.md",
 ]
 `;
+
+exports[`formatGuardReviewerTree given: [case17] a lane QUIETED by a dispute when: [t0] formatted then: the bytes a driver reads are pinned 1`] = `
+"└─ r1: architect (l1, 2/4)
+    ├─ rejected, cached — set aside by dispute
+    ├─ disputed 🌙 — skipped this generation, no round spent
+    ├─ 1 blocker, 1 disputed → 0 tallied ✓
+    ├─ 0 nitpicks ✓
+    └─ given: .reviews/peer/given.5.1.execution.r2.architect.md"
+`;

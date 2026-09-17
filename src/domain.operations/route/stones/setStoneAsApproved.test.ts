@@ -165,6 +165,8 @@ describe('setStoneAsApproved', () => {
         expect(result.emit?.stdout).toContain('as a driver, you should:');
         expect(result.emit?.stdout).toContain('--as passed');
         expect(result.emit?.stdout).toContain('--as arrived');
+        expect(result.emit?.stdout).toContain('--as conceded');
+        expect(result.emit?.stdout).toContain('--as disputed');
         expect(result.emit?.stdout).toContain('--as blocked');
       });
 

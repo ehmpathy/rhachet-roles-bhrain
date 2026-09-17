@@ -74,6 +74,11 @@ const schemaOfBrainTally = z.object({
  *        #2 explicitly license "no verdict" (detected=false) so an over-confident model abstains;
  *        #3 quote the verdict text counted (evidence), so a fabricated tally has no quote;
  *        #4 read each item's severity from HOW it is written, not from its section title.
+ * .note = the KIND axis (blocker/nitpick) is what this tally counts. the SEVERITY axis
+ *         (urgent/better) is a SEPARATE label the reviewer writes beside each concern
+ *         (contract.reviewer-output § the severity label). the tallier READS the reviewer's
+ *         explicit [urgent|better] label; it never INFERS urgent where the label says better,
+ *         and an unlabeled concern is read as better (the maintenance floor, F028/S14).
  */
 const genPromptForTally = (input: { content: string }): string =>
   [
@@ -88,6 +93,13 @@ const genPromptForTally = (input: { content: string }): string =>
     'written and its severity marks (🔴 / 🟠 / 🟡, "[confirmed, unresolved]", "must",',
     '"consider"); the section title (Blockers, Maintenance hazards, Scope leaks, Worth-surfaced,',
     "etc.) is a hint, never a decree. do not require the literal words 'blocker' or 'nitpick'.",
+    '',
+    'a concern may also carry a HARM label — urgent or better — beside its kind, as two',
+    'adjacent bracketed tokens, e.g. "[blocker][urgent]" or "[nitpick][better]". that harm',
+    'label does NOT change the blocker/nitpick count you return; count by kind only. but',
+    "respect the label as WRITTEN: read the reviewer's explicit urgent|better, never upgrade",
+    'a concern to urgent where the reviewer wrote better, and treat an unlabeled concern as',
+    'better.',
     '',
     'always fill all four fields. if the review reports a clean pass with no issues, return',
     'detected=true with blockers=0 and nitpicks=0.',

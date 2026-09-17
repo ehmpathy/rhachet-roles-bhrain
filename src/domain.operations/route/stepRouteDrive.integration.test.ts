@@ -761,4 +761,109 @@ describe('stepRouteDrive.integration', () => {
       });
     });
   });
+
+  given(
+    '[case14] 🔴 an undeclared concern, on a driver already past the tea-pause threshold',
+    () => {
+      // .why = the vision names the tea-pause menu the SHARPEST vocabulary surface: it prints
+      //        a closed three-way over --as arrived | passed | blocked, asserts "you must
+      //        choose one", and closes "to refuse is not an option". a five-member menu was
+      //        the obvious repair — and it is the wrong one. the blocker dispatcher runs
+      //        BEFORE the drive emit on all three surfaces, so a stance PRE-EMPTS the menu
+      //        and the menu never needs a stance member.
+      //
+      // 🔴 this case is what makes that a checked claim rather than a read of the code. the
+      //    drive-blocker count is seeded past 5 on purpose, so the menu is what WOULD render
+      //    — an unseeded count renders no menu at all, and the absence assertions below would
+      //    then pass under a dispatcher that had been moved or deleted.
+      const scene = useBeforeAll(async () => {
+        const tempDir = genTempDir({ slug: 'drive-int-case14', git: true });
+        await fs.writeFile(
+          path.join(tempDir, '0.wish.md'),
+          '# wish\n\nbuild it.',
+        );
+        await fs.writeFile(
+          path.join(tempDir, '1.stone'),
+          '# stone: implement\n\ndone when:\n- it works',
+        );
+        await fs.writeFile(path.join(tempDir, '1.i1.md'), '# artifact');
+
+        // the architect's critique: 1 blocker, and on default thresholds that holds the road
+        await fs.mkdir(path.join(tempDir, '.reviews', 'peer'), {
+          recursive: true,
+        });
+        await fs.writeFile(
+          path.join(
+            tempDir,
+            '.reviews',
+            'peer',
+            '1._.review.i001.abc0123.r001._.given.by_peer.architect.md',
+          ),
+          '# review\n\n1 blockers\n0 nitpicks\n',
+        );
+
+        await fs.mkdir(path.join(tempDir, '.route'), { recursive: true });
+        await fs.writeFile(
+          path.join(tempDir, '.route', 'passage.jsonl'),
+          JSON.stringify({
+            stone: '1',
+            status: 'blocked',
+            blocker: 'review.peer.undeclared',
+          }) + '\n',
+        );
+
+        // seed the stuck-driver count: the next hook increments to 10, so suggestBlocked
+        // (count > 5) is TRUE and the tea-pause menu is live but for the pre-emption
+        await fs.writeFile(
+          path.join(tempDir, '.route', '.drive.blockers.latest.json'),
+          JSON.stringify({ count: 9, stone: '1' }, null, 2),
+        );
+
+        return { tempDir };
+      });
+
+      when('[t0] stepRouteDrive is called with when=hook.onStop', () => {
+        const result = useThen('returns a halt', async () =>
+          stepRouteDrive({ route: scene.tempDir, when: 'hook.onStop' }),
+        );
+
+        then('the stance prompt is what renders', () => {
+          expect(result.emit?.stdout).toContain(
+            'each concern awaits your absorption',
+          );
+        });
+
+        then('it teaches BOTH words, so neither is met only in a rule', () => {
+          expect(result.emit?.stdout).toContain('--as conceded');
+          expect(result.emit?.stdout).toContain('--as disputed');
+        });
+
+        then('the tea-pause menu does NOT render — it is pre-empted', () => {
+          // the claim the no-edit decision rests on. a dispatcher moved below the drive
+          // emit, or a stance branch that returned null, puts this string back
+          expect(result.emit?.stdout).not.toContain('you must choose one');
+        });
+
+        then(
+          'and --as blocked is NOT offered beside an unanswered critique',
+          () => {
+            // rule.forbid.unanswered-exits-from-a-blocker: a halt is no door out of a
+            // critique you have not answered, so the menu's stuck-path must not be
+            // reachable from a state where a concern stands undeclared
+            expect(result.emit?.stdout).not.toContain('--as blocked');
+          },
+        );
+
+        then('the stop is BLOCKED — the driver can act now', () => {
+          expect(result.emit?.stderr?.code).toEqual(2);
+        });
+
+        then('t0 stdout matches the pre-empted-menu snapshot', () => {
+          expect(asStableDriveStdout(result.emit?.stdout)).toMatchSnapshot(
+            'case14.t0.stance-preempts-the-menu',
+          );
+        });
+      });
+    },
+  );
 });

@@ -5,7 +5,7 @@ import { isLevelOverruled } from './isLevelOverruled';
 
 /**
  * .what = the SANITIZED slugs of the peer reviewers whose level was overruled
- * .why = an overruled level's reviewers are forgiven — their critique needs no contemplation
+ * .why = an overruled level's reviewers are forgiven — their critique needs no feedbackAbsorption
  *        .taken and their blockers do not gate passage; callers read this slug set to skip them.
  *
  * 🔴 .note = the slugs are sanitized because this set is compared against slugs parsed OFF DISK,

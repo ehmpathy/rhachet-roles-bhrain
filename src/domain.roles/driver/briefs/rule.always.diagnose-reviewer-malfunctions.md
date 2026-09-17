@@ -98,11 +98,30 @@ the **guard** can run it, and that one property is the whole difference.
 `git merge-base` (line 70), so a commit `main` is ahead on cannot enter the diff. ⇒ **an item a
 correctly-bound lane raises is yours**, and the bind does not want re-derivation.
 
+the flags a bind is written with:
+
+| flag | what it does | repeats? |
+|---|---|---|
+| `--paths-with <glob>` | include files that match | ✅ yes — every occurrence accumulates |
+| `--paths-wout <glob>` | exclude files that match. alias: `--paths-without` | ✅ yes |
+
+⇒ so a wide lane narrows by **exclusion** as readily as by inclusion, and the commonest cut is the
+test corpus a production rubric does not grade:
+
+```
+--paths-with 'src/**/*' --paths-wout '**/*.test.ts' --paths-wout '**/__snapshots__/**'
+```
+
 ⚠️ **a `--paths-with` glob with a brace in the EXTENSION slot is silently dropped**
 (`'**/*.{ts,md}'` → the bind never applies, and the lane runs unbounded). a brace in the
-**directory** slot works (`'{src,blackbox}/**'`). and a **repeated** `--paths-with` keeps only the
-LAST. ⇒ both are parser defects in `parseReviewArgs`; a guard bind must be written around them
-until they are repaired: `.dream/v2026_09_04.fix.review-multi-glob-flags-do-not-comma-split.md`.
+**directory** slot works (`'{src,blackbox}/**'`). ⇒ a parser defect in `parseReviewArgs`; a guard
+bind must be written around it: `.dream/v2026_09_04.fix.review-multi-glob-flags-do-not-comma-split.md`.
+
+and a flag the parser does not know is dropped in SILENCE — no error, no warn. so a misspelled bind
+reads as applied, the lane runs unbounded, and the overflow that follows looks like a lane that is
+genuinely too wide. ⇒ **when a narrowed lane overflows at the SAME file count as before, suspect the
+flag name before you suspect the glob** — the given prints the count, so the two cases are one read
+apart.
 
 ## .human-fixable causes
 

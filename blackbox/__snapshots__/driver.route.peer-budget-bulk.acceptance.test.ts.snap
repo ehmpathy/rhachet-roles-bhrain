@@ -1,6 +1,6 @@
 // Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
 
-exports[`driver.route.peer-budget-bulk.acceptance given: [case1] bulk budget extension affects all peers when: [t0] artifact created, exhaust level 1 budgets then: the pre-extension tree is pinned — both l1 reviewers exhausted at their own budgets 1`] = `
+exports[`driver.route.peer-budget-bulk.acceptance given: [case1] a bulk add lands on the latest level, not every level when: [t0] artifact created, exhaust level 1 budgets then: the pre-extension tree is pinned — both l1 reviewers exhausted at their own budgets 1`] = `
 "🦉 the way speaks for itself
    │
    ├─ r1: linter (l1, 2/2)
@@ -69,7 +69,7 @@ exports[`driver.route.peer-budget-bulk.acceptance given: [case1] bulk budget ext
 "
 `;
 
-exports[`driver.route.peer-budget-bulk.acceptance given: [case1] bulk budget extension affects all peers when: [t1] bulk budget extension (without --peer) then: stdout has good vibes 1`] = `
+exports[`driver.route.peer-budget-bulk.acceptance given: [case1] a bulk add lands on the latest level, not every level when: [t1] bulk budget extension (bare — no --peer, no --level) then: stdout has good vibes 1`] = `
 "
 🦉 budget extended
 
@@ -77,14 +77,32 @@ exports[`driver.route.peer-budget-bulk.acceptance given: [case1] bulk budget ext
    ├─ route = .
    ├─ add = 2
    └─ updates
-      ├─ linter: 2 → 4
-      ├─ spellcheck: 3 → 5
       └─ architect: 2 → 4
 
 "
 `;
 
-exports[`driver.route.peer-budget-bulk.acceptance given: [case1] bulk budget extension affects all peers when: [t2] reviewers run again after bulk extension then: stdout has good vibes 1`] = `
+exports[`driver.route.peer-budget-bulk.acceptance given: [case1] a bulk add lands on the latest level, not every level when: [t1b] an explicit --level 1 reaches the lower level on purpose then: stdout has good vibes 1`] = `
+"
+🦉 budget extended
+
+🗿 route.guard.budget
+   ├─ route = .
+   ├─ add = 2
+   ├─ level = 1
+   └─ updates
+      ├─ linter: 2 → 4
+      └─ spellcheck: 3 → 5
+
+"
+`;
+
+exports[`driver.route.peer-budget-bulk.acceptance given: [case1] a bulk add lands on the latest level, not every level when: [t1c] an explicit --level names a level no lane sits at then: the full error body is pinned 1`] = `
+"error: no reviewer at level 9. levels in play: 1, 2
+"
+`;
+
+exports[`driver.route.peer-budget-bulk.acceptance given: [case1] a bulk add lands on the latest level, not every level when: [t2] reviewers run again after bulk extension then: stdout has good vibes 1`] = `
 "🦉 the way speaks for itself
    │
    ├─ r1: linter (l1, 3/4)

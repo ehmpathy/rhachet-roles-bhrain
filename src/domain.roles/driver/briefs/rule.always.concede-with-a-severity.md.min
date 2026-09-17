@@ -1,0 +1,42 @@
+# rule.always.concede-with-a-severity
+
+> **when you concede a concern, grade it: `better` or `urgent`. `--severity` is REQUIRED — there
+> is no ungraded concede (a mandatory invariant). `better` never earns budget; `urgent` is the
+> closed harm set, and the only concession that earns more.**
+
+```sh
+rhx route.stone.set --stone <stone> --as conceded --with <reviewer> --about <concern> --severity better|urgent
+```
+
+⚠️ a concede with NO `--severity` is refused. `better` is the common grade, but you name it
+explicitly, so the harm test is made on every concession.
+
+the call-site half of `philosophy.a-review-budget-balances-perfection-with-pragmatism` +
+`define.invariant.review.peer.budget.urgent-earns-budget`.
+
+## .the closed urgent set
+
+> **urgent = security · safety · monetary · reputation · behavioral. code idealism is never urgent.**
+
+## .the test — name the harm
+
+> **name the harm that ships if this is not fixed now.** can → `urgent` · cannot → `better`, it
+> evolves. (the reviewer's `rule.forbid.overzealous-blockers` test, from the driver's seat.)
+
+| when… | then… |
+|---|---|
+| you concede a point you will fix | 🔴 grade it — required. `better` for maintenance; `urgent` only if a shipped harm has a name |
+| you concede with no `--severity` | refused — there is no ungraded concede (mandatory invariant) |
+| you reach for `urgent` to buy a round | name the harm first. no nameable harm → `better`, and it evolves |
+| a `better` concession tempts a budget ask | forbidden — `better` never earns budget. spend the floor and evolve |
+| a concern is correct but cosmetic | `better`. correctness is not harm |
+| the budget is hit and every concession is `better` | good enough — proceed, no human |
+| an urgent concession sat on the last round | the human is warned this PR; they grant more |
+
+blocker: a `better` concession that earns budget · an `urgent` grade with no nameable harm (the
+mis-grade `rule.forbid.overzealous-blockers` forbids) · a budget hit with no urgent concession that
+summons a human.
+
+⇒ see also: `philosophy.a-review-budget-balances-perfection-with-pragmatism` ·
+`define.invariant.review.peer.budget.urgent-earns-budget` · `rule.forbid.overzealous-blockers`
+(reviewer) · `rule.require.grade-a-concession-by-its-harm` (reviewer).

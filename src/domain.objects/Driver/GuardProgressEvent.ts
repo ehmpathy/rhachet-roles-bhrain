@@ -64,6 +64,14 @@ export interface GuardProgressEvent {
       | { malfunction: string }
       | { constraint: string }
       | { exhausted: true; blockers: number; nitpicks: number }
+      /**
+       * a DISPUTE took this lane out of this generation's round.
+       * .why = it carries counts for the same reason `exhausted` does — the lane has a real prior
+       *        artifact, and the tree renders its verdict, its tally, and its `given:` exactly as
+       *        a lane that ran. the marker is what parts the two, so the live tree must receive
+       *        it here or the skip is invisible on the one surface a driver watches in real time.
+       */
+      | { disputed: true; blockers: number; nitpicks: number }
       | { queued: true }
       | null;
     judge:

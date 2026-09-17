@@ -25,8 +25,10 @@ const ASSETS_DIR = path.join(
  *     and it unlocks that SAME pass (not the next)
  *   - order independence: l3 is declared FIRST in the guard, yet runs only after l1
  *     (the guard sorts reviewers low-level-first before it runs them)
- *   - the human halt is the ONLY halt: "budget exhausted" appears exactly once, at the
- *     very end, when every level is terminal — never mid-ladder
+ *   - the halt is the ONLY halt: "budget exhausted" appears exactly once, at the very
+ *     end, when every level is terminal — never mid-ladder. under the default concede
+ *     norm every exhausted lane carries a live concession, so that one halt is the
+ *     DRIVER's own (S12) — a budget top-up, the driver's lever, no human
  *
  * ladder (see 1.execute.guard):
  *   - l1-alpha (level 1, budget 1)  — exhausts one pass before beta
@@ -65,7 +67,7 @@ describe('driver.route.peer-exhaustion-boundary.acceptance', () => {
         path.join(scene.tempDir, 'src', 'feature.ts'),
         `export const feature = () => "${input.version}";`,
       );
-      await answerEveryPeerGiven({ cwd: scene.tempDir, stone: '1.execute' });
+      await answerEveryPeerGiven({ cwd: scene.tempDir, stone: '1.execute', severity: 'urgent' });
       return invokeRouteSkill({
         skill: 'route.stone.set',
         args: { stone: '1.execute', route: '.', as: 'passed' },
@@ -189,12 +191,18 @@ describe('driver.route.peer-exhaustion-boundary.acceptance', () => {
     });
 
     // =========================================================================
-    // PHASE 4: l3 exhausts — EVERY level terminal, none approved — the human halt
-    //          fires. this is the FIRST and ONLY time a halt appears.
+    // PHASE 4: l3 exhausts — EVERY level terminal, none approved — the FIRST and
+    //          ONLY halt appears. because `arriveWith` concedes each round, every
+    //          exhausted lane carries a LIVE concession, so the halt names the
+    //          concessions and leads with the driver's own budget lever (S12).
+    //          🔴 these concessions are graded `urgent`, so the halt ALSO warns that
+    //          a human must grant the round (S16) — an urgent concession ships harm
+    //          if unfixed. a `better`-only exhaustion is instead SHED and PASSES,
+    //          with no halt and no human at all.
     // =========================================================================
 
-    when('[t3] l3 exhausts, all levels terminal, the human halt is the only halt', () => {
-      const result = useThen('all terminal, halt for human', async () =>
+    when('[t3] l3 exhausts, all levels terminal, the driver concession halt is the only halt', () => {
+      const result = useThen('all terminal, halt for driver', async () =>
         arriveWith({ version: 'v4' }),
       );
 
@@ -204,12 +212,22 @@ describe('driver.route.peer-exhaustion-boundary.acceptance', () => {
         expect(result.stdout).toMatch(/l3-reviewer.*exhausted/s);
       });
 
-      then('CLAMP: the human halt appears now — and only now, at the true end', () => {
-        // .why = the halt is the single human-touch point, reached ONLY when every level
-        //        is terminal and none approved. phases t0-t2 asserted its absence; here it
-        //        must be present, with the overrule/budget options for the human.
+      then('CLAMP: the halt appears now — and only now, at the true end (S16 urgent concession halt)', () => {
+        // .why = the halt is the single touch point, reached ONLY when every level is
+        //        terminal and none approved. phases t0-t2 asserted its absence; here it
+        //        must be present. every lane was conceded `urgent` and every concession is
+        //        LIVE at exhaustion, so the halt names the concessions and offers the
+        //        driver's own budget lever — AND, because an urgent concession ships harm
+        //        if unfixed, warns that a human must grant the round (S16,
+        //        define.invariant.review.peer.budget.urgent-earns-budget). a `better`-only
+        //        exhaustion would instead be SHED and PASS, with no halt at all.
         expect(result.stdout).toContain('budget exhausted');
-        expect(result.stdout).toContain('approve');
+        expect(result.stdout).toContain(
+          'you conceded — the round to confirm your fix needs more budget',
+        );
+        expect(result.stdout).toContain('an urgent concession stands');
+        expect(result.stdout).toContain('increase budget');
+        expect(result.stdout).toMatch(/approve as-is|a human must grant/);
       });
 
       then('stdout has good vibes', () => {

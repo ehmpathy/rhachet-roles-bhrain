@@ -13,7 +13,11 @@ import { DomainLiteral } from 'domain-objects';
  *   exhausted peer budget is now recorded as its OWN passage status ('exhausted'), not a
  *   blocker (see setStoneAsPassed). the member survives only so readers can interpret old
  *   passage.jsonl rows written before the status split; do NOT write it on a new path.
- * - 'review.peer.uncontemplated': peer reviews await a driver's .taken response (agent can fix)
+ * - 'review.peer.unabsorbed': peer reviews await a driver's .taken response (agent can fix)
+ * - 'review.peer.undeclared': a concern that holds the road awaits a driver's stance —
+ *   `--as disputed` or `--as conceded` (agent can fix). it fires only AFTER
+ *   'review.peer.unabsorbed' clears, so a stance is never asked for on a critique
+ *   the driver has not yet answered
  * - 'judge': non-approval judges failed (agent can fix)
  * - 'approval': only approval judge blocks (agent must wait for human)
  */
@@ -21,7 +25,8 @@ export type RouteStoneGuardBlockerType =
   | 'review.self'
   | 'review.peer'
   | 'review.peer.exhausted'
-  | 'review.peer.uncontemplated'
+  | 'review.peer.unabsorbed'
+  | 'review.peer.undeclared'
   | 'judge'
   | 'approval';
 

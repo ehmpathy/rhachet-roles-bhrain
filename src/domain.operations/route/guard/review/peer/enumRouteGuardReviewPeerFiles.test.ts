@@ -17,7 +17,7 @@ import { enumRouteGuardReviewPeerFiles } from './enumRouteGuardReviewPeerFiles';
  *         `jest.integration.env.ts:96`, which demands five brain keys of every
  *         integration suite. this suite calls no brain, so the rename would trade a
  *         correct label for a suite nobody can run — measured on the peer file
- *         `setStoneAsContemplated.integration.test.ts`, which is unrunnable locally today
+ *         `setStoneAsFeedbackAbsorbed.integration.test.ts`, which is unrunnable locally today
  *         for exactly that reason.
  *
  *         ⇒ fix the harness first, then reclassify in one sweep:

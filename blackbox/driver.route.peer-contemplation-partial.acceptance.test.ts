@@ -14,7 +14,7 @@ const ASSETS_DIR = path.join(__dirname, '.test/assets/route-peer-partial');
 /**
  * .what = acceptance test for partial contemplation (usecase 4)
  * .why = with several reviewers that each hold a blocker, the gate blocks until
- *        EVERY one is answered; when some are contemplated and one is not, the
+ *        EVERY one is answered; when some are absorbed and one is not, the
  *        driver must see precisely which reviewer remains absent
  *
  * scenario:
@@ -69,7 +69,7 @@ describe('driver.route.peer-contemplation-partial.acceptance', () => {
         expect(result.code).toEqual(2);
       });
 
-      then('the reply-prompt names BOTH uncontemplated reviewers', () => {
+      then('the reply-prompt names BOTH givenUnabsorbed reviewers', () => {
         expect(result.stdout).toContain('architect');
         expect(result.stdout).toContain('builder');
       });
@@ -87,7 +87,7 @@ describe('driver.route.peer-contemplation-partial.acceptance', () => {
           args: {
             stone: '1.execute',
             route: '.',
-            as: 'contemplated',
+            as: 'absorbed',
             that: 'architect',
           },
           cwd: scene.tempDir,
@@ -125,7 +125,7 @@ describe('driver.route.peer-contemplation-partial.acceptance', () => {
           args: {
             stone: '1.execute',
             route: '.',
-            as: 'contemplated',
+            as: 'absorbed',
             that: 'builder',
           },
           cwd: scene.tempDir,

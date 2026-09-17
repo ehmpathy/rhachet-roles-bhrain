@@ -18,7 +18,7 @@ const ASSETS_DIR = path.join(__dirname, '.test/assets/route-peer-contemplation')
  *        override is never re-gated by a driver requirement (design-note B6)
  */
 describe('driver.route.peer-contemplation-override.acceptance', () => {
-  given('[case1] a stone with an uncontemplated architect blocker', () => {
+  given('[case1] a stone with an unabsorbed architect blocker', () => {
     const scene = useBeforeAll(async () => {
       const tempDir = genTempDirForRhachet({
         slug: 'peer-contemplation-override',
@@ -31,7 +31,7 @@ describe('driver.route.peer-contemplation-override.acceptance', () => {
         path.join(tempDir, '1.execute.md'),
         '# execute\n\nthe work under review.\n',
       );
-      // trigger the reviews so an uncontemplated .given exists
+      // trigger the reviews so an unabsorbed .given exists
       await invokeRouteSkill({
         skill: 'route.stone.set',
         args: { stone: '1.execute', route: '.', as: 'passed' },

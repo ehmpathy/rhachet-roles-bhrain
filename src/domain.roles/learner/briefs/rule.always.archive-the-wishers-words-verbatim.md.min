@@ -20,7 +20,15 @@ both are owed, every time. the distillate is what the next traveler reads; **the
 
 a seed holds `.said` · `.settled` · `.landed`.
 
-🟡 **`.said` is verbatim — do not clean it up.** typos, lowercase, mid-thought corrections and all. a tidied quote is already a paraphrase.
+🟡 **`.said` is verbatim in SUBSTANCE — repair the surface.** the words, their order, their emphasis, and their mid-thought corrections stay unedited; **typos and profanity are repaired**, since a seed is a published artifact of this repo and neither carries a scrap of the concept.
+
+| repair it | never touch it |
+|---|---|
+| a **typo** — a transposed letter, a dropped one, a doubled word | a word choice, however informal |
+| **profanity** — cut it, or soften it in place | the order the points arrive in |
+| a mangled path, flag, or identifier, where the intent is plain | a mid-thought correction — that IS the record |
+
+🔴 the test: would the speaker, shown both, say *"that is what I typed, spelled right"*? yes → a repair. a change past that is a rewrite, and a rewrite belongs in `.settled`.
 
 ## 🔴 a seed is the seed of a CONCEPT, never a chronicle of the round
 
@@ -32,4 +40,4 @@ a seed holds `.said` · `.settled` · `.landed`.
 
 a channel's switch state, a credential's health, a tool broken that day — real, and a directive for the session, never a concept a future traveler inherits. **strip the machinery; if naught is left, drop it.**
 
-blocker: an utterance that changed the work with no seed · a `"the wisher asked for X"` with no source · an edited `.said` · entries with no summary · a bare-ordinal `case=` · a body that narrates the round · a `.landed` row that carries a reason · a durable concept with no brief behind it.
+blocker: an utterance that changed the work with no seed · a `"the wisher asked for X"` with no source · a `.said` whose SENSE was edited · a `.said` that ships a typo or profanity · entries with no summary · a bare-ordinal `case=` · a body that narrates the round · a `.landed` row that carries a reason · a durable concept with no brief behind it.

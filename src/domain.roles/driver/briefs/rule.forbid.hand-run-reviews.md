@@ -44,7 +44,7 @@ a hand-run review writes no `.given`. so:
 
 - it **cannot** be answered by a `.taken` — there is no given to answer
 - the judge **cannot** tally it — `getAllRouteGuardReviewPeerGivens` reads the `.reviews/peer/` tree
-- the contemplation gate **cannot** see it
+- the absorb gate **cannot** see it
 
 ⇒ **a clean hand-run verdict moves the stone's state not at all.** it produces a document that reads
 like evidence and functions as none — worse than an absent document, because a later reader (or a

@@ -6,7 +6,7 @@ import { asSanitizedPeerReviewSlug } from './asSanitizedPeerReviewSlug';
 
 /**
  * .what = the configured peer reviewers indexed by their SANITIZED slug → level
- * .why = the contemplation gate looks a reviewer's level up by a slug parsed OFF DISK, and asks
+ * .why = the feedbackAbsorption gate looks a reviewer's level up by a slug parsed OFF DISK, and asks
  *        the same map whether the reviewer is still configured at all. so the map's keys must be
  *        in the disk vocabulary, never the config vocabulary.
  *
@@ -15,7 +15,7 @@ import { asSanitizedPeerReviewSlug } from './asSanitizedPeerReviewSlug';
  *    derives its slug from the review command itself (parseStoneGuard.ts:412-413), so
  *    `.test/mock-review.sh` is a real, live, fully-configured reviewer.
  *
- * ⚠️ keyed raw, every lookup for such a reviewer missed — and in computePeerUncontemplatedUnforgiven
+ * ⚠️ keyed raw, every lookup for such a reviewer missed — and in computePeerFeedbackUnabsorbedUnforgiven
  *    the MISS IS THE RETIRED TEST (`retired: !levelBySlug.has(slug)`). so a fully-configured
  *    reviewer rendered as `retired from the guard config`, with the "it will not speak again" copy,
  *    and its human overrule could never match it either (r11 blocker.1, i005).

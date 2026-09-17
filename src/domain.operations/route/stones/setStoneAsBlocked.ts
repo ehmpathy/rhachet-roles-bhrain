@@ -102,6 +102,22 @@ export const setStoneAsBlocked = async (input: {
 /**
  * .what = formats blocked nudge stdout with owl vibe
  * .why = guides robot to articulate what blocks them before escalation
+ *
+ * 🔴 .note = the `before you escalate` block enumerates the levers a driver holds, and
+ *        `rule.always.spend-own-levers-before-escalation` files a stance under the driver — so
+ *        a lever list that omits concede and dispute asks "have you spent your own levers?"
+ *        while it hides two of them. this is the LAST emit a driver reads before they take the
+ *        exit `rule.forbid.unanswered-exits-from-a-blocker` forbids outright.
+ *
+ * 🔴 .note = it gains the two words where the tea-pause menu in `stepRouteDrive` does NOT, and
+ *        the reason is dispatch, never taste. a stance halt PRE-EMPTS that menu — the blocker
+ *        dispatcher runs before `formatRouteDrive` on all three drive surfaces — so a member
+ *        there would name a command the driver cannot use. nothing dispatches ahead of THIS
+ *        emit: the driver typed `--as blocked` and this is the reply.
+ *
+ * ⚠️ .note = the lines are QUESTIONS, matched to their three siblings, never a command menu.
+ *        this nudge is static — it does not read the route, so it cannot know whether a concern
+ *        actually stands. a question is honest under both states; an imperative would not be.
  */
 const formatBlockedNudge = (input: {
   stone: string;
@@ -132,6 +148,10 @@ const formatBlockedNudge = (input: {
   lines.push('   │  ├─');
   lines.push('   │  │');
   lines.push('   │  │  have you tried --as passed first?');
+  lines.push('   │  │  does a peer concern stand unabsorbed?');
+  lines.push(
+    '   │  │  a concern is not a wall — absorb it: concede or dispute it.',
+  );
   lines.push('   │  │  have you tried to figure it out on your own?');
   lines.push('   │  │  have you been true to the way? skipped no steps?');
   lines.push('   │  │');

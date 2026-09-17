@@ -1,0 +1,34 @@
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
+
+exports[`assertAbsorptionHasSubject given: [case6] the rendered refusals, whole when: [t0] the level is forgiven then: the bytes a driver reads are pinned 1`] = `
+"BadRequestError: architect's level is already forgiven; there is no verdict to dispute
+
+a human lifted that gate, so its concerns no longer count toward the tally.
+
+{
+  "slug": "architect",
+  "reason": "forgiven"
+}"
+`;
+
+exports[`assertAbsorptionHasSubject given: [case6] the rendered refusals, whole when: [t1] the reviewer has not spoken then: the bytes a driver reads are pinned 1`] = `
+"BadRequestError: architect has not spoken on this stone, so there is no concern to take a stance on
+
+{
+  "slug": "architect",
+  "reason": "no-given"
+}"
+`;
+
+exports[`assertAbsorptionHasSubject given: [case6] the rendered refusals, whole when: [t2] the given is unreadable — a malfunction then: the bytes a driver reads are pinned 1`] = `
+"BadRequestError: architect malfunctioned; there is no verdict to take a stance on
+
+no numeric count was readable, so this is a broken PROCESS, never a rejection.
+diagnose why the reviewer could not render, fix it, then re-arrive so it re-runs.
+a stance skips or claims a verdict that does not exist.
+
+{
+  "slug": "architect",
+  "reason": "unreadable"
+}"
+`;

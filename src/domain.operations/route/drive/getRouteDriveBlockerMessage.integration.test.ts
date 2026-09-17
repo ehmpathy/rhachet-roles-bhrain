@@ -13,7 +13,7 @@ import { getRouteDriveBlockerMessage } from './getRouteDriveBlockerMessage';
 
 /**
  * .what = builds a temp route with a stone artifact + peer given/taken files
- * .why = the uncontemplated dispatch recomputes the hash live, so we learn the
+ * .why = the feedbackUnabsorbed dispatch recomputes the hash live, so we learn the
  *        hash first, then write files keyed to it so they pair
  */
 const genRouteScene = async (input: {
@@ -102,7 +102,7 @@ describe('getRouteDriveBlockerMessage', () => {
     });
   });
 
-  given('[case3] uncontemplated with an absent taken', () => {
+  given('[case3] feedbackUnabsorbed with an absent taken', () => {
     const scene = useBeforeAll(async () =>
       genRouteScene({
         givens: [{ slug: 'arch', blockers: 2, nitpicks: 1 }],
@@ -110,7 +110,7 @@ describe('getRouteDriveBlockerMessage', () => {
       }),
     );
 
-    when('[t0] the dispatcher runs with the uncontemplated blocker', () => {
+    when('[t0] the dispatcher runs with the feedbackUnabsorbed blocker', () => {
       // .note = wrapped in an object because `useBeforeAll` holds a `Record`, and the
       //         dispatch returns a nullable. the null case is a real outcome here —
       //         [case1], [case2], and [case4] each expect it — so the nullability is
@@ -119,7 +119,7 @@ describe('getRouteDriveBlockerMessage', () => {
         message: await getRouteDriveBlockerMessage({
           blockerReport: new RouteStoneGuardBlockerReport({
             stone: '1.vision',
-            blocker: 'review.peer.uncontemplated',
+            blocker: 'review.peer.unabsorbed',
             reason: null,
           }),
           stone: scene.stone,
@@ -145,7 +145,7 @@ describe('getRouteDriveBlockerMessage', () => {
         // .note = what this pins that the shared formatter's own snapshot cannot is
         //         the ASSEMBLY — that this dispatch reaches the `reply-prompt` case
         //         at all, with the repo root it resolved and the reviewer set that
-        //         `getStoneGuardReviewPeerUncontemplatedUnforgiven` handed back
+        //         `getStoneGuardReviewPeerFeedbackUnabsorbedUnforgiven` handed back
         expect(
           asStableGuardEmit({
             emit: dispatch.message!.stdout,
@@ -157,7 +157,7 @@ describe('getRouteDriveBlockerMessage', () => {
   });
 
   given(
-    '[case4] uncontemplated but the driver has since written the taken',
+    '[case4] feedbackUnabsorbed but the driver has since written the taken',
     () => {
       const scene = useBeforeAll(async () =>
         genRouteScene({
@@ -171,7 +171,7 @@ describe('getRouteDriveBlockerMessage', () => {
           const message = await getRouteDriveBlockerMessage({
             blockerReport: new RouteStoneGuardBlockerReport({
               stone: '1.vision',
-              blocker: 'review.peer.uncontemplated',
+              blocker: 'review.peer.unabsorbed',
               reason: null,
             }),
             stone: scene.stone,

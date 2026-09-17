@@ -24,7 +24,7 @@ const ASSETS_DIR = path.join(__dirname, '.test/assets/route-peer-contemplation')
  *   - the old .taken is stale → the stone blocks again for a fresh contemplation
  */
 describe('driver.route.peer-contemplation-stale.acceptance', () => {
-  given('[case1] a contemplated stone whose artifact then changes', () => {
+  given('[case1] an absorbed stone whose artifact then changes', () => {
     const scene = useBeforeAll(async () => {
       const tempDir = genTempDirForRhachet({
         slug: 'peer-contemplation-stale',
@@ -79,7 +79,7 @@ describe('driver.route.peer-contemplation-stale.acceptance', () => {
           args: {
             stone: '1.execute',
             route: '.',
-            as: 'contemplated',
+            as: 'absorbed',
             that: 'architect',
           },
           cwd: scene.tempDir,
@@ -119,7 +119,7 @@ describe('driver.route.peer-contemplation-stale.acceptance', () => {
         expect(result.code).toEqual(2);
       });
 
-      then('architect must be re-contemplated for the new iteration', () => {
+      then('architect must be re-absorbed for the new iteration', () => {
         expect(result.stdout).toContain('the reviewers await your reply');
         expect(result.stdout).toContain('architect');
       });
@@ -137,7 +137,7 @@ describe('driver.route.peer-contemplation-stale.acceptance', () => {
           args: {
             stone: '1.execute',
             route: '.',
-            as: 'contemplated',
+            as: 'absorbed',
             that: 'architect',
           },
           cwd: scene.tempDir,

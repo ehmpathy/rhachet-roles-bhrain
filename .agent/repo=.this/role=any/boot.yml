@@ -18,6 +18,13 @@ always:
       - briefs/rule.require.explicit-stdin-flags.md
       - briefs/rule.require.isolated-cli-subpath-exports.md
       - briefs/rule.require.repeatable-for-llm-tests.md
+      # say-level because it fires at DESIGN time, on any gate that takes a target —
+      # and the target's grain is chosen once, early, in a line that looks innocuous.
+      # measured 2026-09-10 over `PassageReport.status`: 6 of 9 declarations obey it,
+      # and the 3 that do not are the 3 that name a FILE rather than a party. a rule
+      # that arrives after the seam is chosen meets an author who already reused a
+      # human lever's breadth for a robot's move
+      - briefs/rule.forbid.suppression-of-undeclared-concerns.md
 
       # domain.terms - the repo's glossary intro + its org-wide governance, nested
       # under briefs/ so the boot loader pools it (it only pools files under
@@ -93,3 +100,10 @@ always:
 
       # research - load on demand
       - briefs/research.selfreview-effectiveness.md
+
+      # philosophy - load on demand. the WHY under the severity-tiered concede:
+      # a budget balances perfection with pragmatism, so it is the maintenance
+      # floor rather than a limit. ref, not say, because it is the argument the
+      # two role rules (driver + reviewer) cite; those rules ride say in their
+      # own roles, and the argument is read once, when a severity is chosen
+      - briefs/philosophy.a-review-budget-balances-perfection-with-pragmatism.md

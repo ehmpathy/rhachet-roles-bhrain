@@ -1,0 +1,1 @@
+../../learner/briefs/rule.forbid.verbatim-quotes-outside-seeds.md

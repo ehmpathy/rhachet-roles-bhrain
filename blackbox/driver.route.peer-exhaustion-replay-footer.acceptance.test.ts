@@ -58,7 +58,7 @@ describe('driver.route.peer-exhaustion-replay-footer.acceptance', () => {
         // answer whatever the prior round left owed, before this one is entered.
         // a no-op on the first arrival; on every later one it is what the entrance
         // gate now requires — an edit alone no longer buys re-entry
-        await answerEveryPeerGiven({ cwd: tempDir, stone: '1.execute' });
+        await answerEveryPeerGiven({ cwd: tempDir, stone: '1.execute', severity: 'urgent' });
 
         await invokeRouteSkill({
           skill: 'route.stone.set',

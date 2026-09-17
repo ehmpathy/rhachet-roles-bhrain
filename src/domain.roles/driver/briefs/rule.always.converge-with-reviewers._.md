@@ -3,25 +3,25 @@
 ## .what
 
 when you hold the driver role and a peer review blocks your stone, you do not escalate
-to the human. you **converge with the reviewer** through the contemplation mechanism —
+to the human. you **converge with the reviewer** through the feedback-absorption mechanism —
 the paired `.given` / `.taken` articulations that the guard threads back into the
 reviewer's next pass. you settle the dispute yourself, in the conversation, and only
 escalate when a wall is truly foreman-only.
 
 ## .why
 
-peer review is a **conversation**, not a verdict. the guard pairs each blocking review
-with a contemplation slot so you can answer it:
+peer review is a **conversation**, not a verdict. the guard pairs each review that holds
+the road with a `.taken` slot so you can absorb it:
 
-- `…given.by_peer.<slug>.md` — the reviewer's critique
-- `…taken.by_self.<slug>.md` — your contemplation response
+- `…given.by_peer.<slug>.md` — the reviewer's concern
+- `…taken.by_self.<slug>.md` — your absorption response
 
-when you write your `.taken` and run `--as contemplated --that <slug>`, the guard hands
+when you write your `.taken` and run `--as absorbed --that <slug>`, the guard hands
 the reviewer your articulation **plus** whatever code you changed, and the reviewer
 re-reads with that context. a well-reasoned articulation converges the reviewer — they
 drop the blocker because you either fixed it or showed why it holds.
 
-this is the whole point of the contemplation loop. to escalate a dispute the human never
+this is the whole point of the absorb loop. to escalate a dispute the human never
 needed to see is to abandon the loop the route built for you. the minutes you spend on
 articulation are minutes the human does not.
 
@@ -71,13 +71,13 @@ establishes it — a stall measured in iterations, and the three rounds that end
 landed — lives with the rule that owns it:
 `rule.forbid.unanswered-exits-from-a-blocker.example=the-28-iteration-stall.md`
 
-## .the contemplation loop
+## .the absorb loop
 
-1. a peer review blocks the stone (budget shows N/3)
+1. a peer review holds the stone (budget shows N/3)
 2. read each `.given.by_peer.<slug>.md` slowly
 3. for each: fix the code OR marshal the evidence that it holds
 4. write your `.taken.by_self.<slug>.md` — the articulation
-5. run `rhx route.stone.set --stone <stone> --as contemplated --that <slug>`
+5. run `rhx route.stone.set --stone <stone> --as absorbed --that <slug>`
 6. re-submit; the reviewer re-reads with your articulation + code changes in context
 7. converge, or iterate again within budget
 
@@ -85,6 +85,23 @@ landed — lives with the rule that owns it:
 still owes a `.taken` — so a halt that names slugs at re-submission is this step skipped, never a
 guard defect. and step 3's code fix does **not** stand in for step 4: the debt is keyed to the
 reviewer, so an edit alone leaves it open.
+
+## 🔴 .a third move sits BEFORE escalation — dispute, never a default
+
+concede-and-fix is the default (row 1 above); a dispute is an **escalation lever short of a
+human** — reach for it only when the defect is severe or keeps recurring, and you want the
+council to rule on it at the close:
+
+```sh
+rhx route.stone.set --stone <stone> --as disputed --with <reviewer> --about <concern> \
+  --why <fulcrum-path>
+```
+
+it still owes the `.taken` first (row 2 of `.the rule` above) — a dispute is your STANCE on the
+argument you already put to paper, never a way to skip it. what it buys: the lane goes quiet
+for this generation (`rule.always.converge-to-terminal`), no further rounds re-argue the same
+point, and the call is deferred to the human at the fulcrum council
+(`rule.always.defer-fulcrums-to-last`) — never decided by the driver alone.
 
 ## .when you may escalate
 

@@ -2,7 +2,7 @@
 
 > **a peer blocker is left by ONE door: an answer. every other exit is forbidden.**
 
-the answer is a `.taken.by_self` that states the repair or the refutation, then `--as contemplated --that <slug>`. the extant rules say **what to write** (`converge-with-reviewers`) and **that every point owes one** (`…via-a-taken-per-point`). this says **you may not go around them.**
+the answer is a `.taken.by_self` that states the repair or the refutation, then `--as absorbed --that <slug>`. the extant rules say **what to write** (`converge-with-reviewers`) and **that every point owes one** (`…via-a-taken-per-point`). this says **you may not go around them.**
 
 ## 🔴 .why — every forbidden exit is CHEAPER than the answer
 
@@ -24,7 +24,7 @@ an edit is one keystroke; an answer is a written argument. so the cheap door is 
 | an empty or token `.taken` | the engine tests that the file exists, never what it says | ⛔ **open** — existence is asserted, never content |
 | answer some points, not all | the reviewer drops a point that carries a response and **re-raises one that does not** | ⚠️ **partly** — the gate counts **reviewers**, never points |
 | let the reviewer exhaust | exhaustion is a budget, not a verdict. to spend it rather than answer is a coast | ✅ **refused** — the debt it already minted outlives its exhaustion |
-| `--as blocked` | a wall is a wall; a critique you have not answered is not one. ⚠️ **the converse does NOT follow** — see below | ⛔ **open** — a halt is legitimate; only you know if you answered first |
+| `--as blocked` | a wall is a wall; a concern you have not answered is not one. ⚠️ **the converse does NOT follow** — see below | ⛔ **open** — a halt is legitimate; only you know if you answered first |
 | call the re-raise a malfunction | 🔴 **a blocker that returns after you fixed it is a driver error.** check whether you ever told the reviewer | ⛔ **open** — a diagnosis is a judgment, and no gate reads one |
 
 ## 🔴 the engine refuses two exits. it does not retire this rule
@@ -35,7 +35,7 @@ the two ✅ rows are the cheapest exits. **four remain open by construction** �
 
 ## ⚠️ the `--as blocked` row is about ONE state, and a driver reads it as two
 
-it forbids the halt for a critique you have **not answered**, and is silent on one you **have** answered and cannot close. that second state is real: **a `.taken` converges an ARGUMENT, never an ABSENCE.** a rejection for absent coverage is closed only by the coverage — and if that needs a grant you cannot make (a credential, a commit quota, a scope call), **no number of rounds converges it, and the budget will not tell you so.**
+it forbids the halt for a concern you have **not answered**, and is silent on one you **have** answered and cannot close. that second state is real: **a `.taken` converges an ARGUMENT, never an ABSENCE.** a rejection for absent coverage is closed only by the coverage — and if that needs a grant you cannot make (a credential, a commit quota, a scope call), **no number of rounds converges it, and the budget will not tell you so.**
 
 ⇒ 🔴 **read alone, this row sends such a driver back to re-arrive** — measured at five rounds, budget 45/107, no convergence. the recognition test and its counter-bound live in `rule.always.raise-a-blocker-a-taken-cannot-close`.
 
@@ -43,10 +43,10 @@ it forbids the halt for a critique you have **not answered**, and is silent on o
 
 ## ✅ .the two sanctioned exits, and neither is silent
 
-1. **the answer** — a `.taken`, then `--as contemplated`
+1. **the answer** — a `.taken`, then `--as absorbed`
 2. **a human overrule** — they take responsibility for the passage. ⚠️ ask only after you have answered what you can; an overrule sought in place of a first answer is a forbidden exit
 
-test: **"if this blocker never re-appeared, would the reviewer have been PERSUADED — or merely distracted?"** persuaded → you answered · distracted → the critique still stands.
+test: **"if this blocker never re-appeared, would the reviewer have been PERSUADED — or merely distracted?"** persuaded → you answered · distracted → the concern still stands.
 
 blocker: a re-arrival with an unanswered blocker from the prior round · a `.taken` that names neither a repair nor a refutation · a re-raise diagnosed as a reviewer defect with no prior answer on record · an overrule sought before any answer was written.
 

@@ -1,0 +1,110 @@
+# provenance = self-referential source template; enables `rhx route.guard.upgrade` idempotency
+provenance:
+  uri: node_modules/rhachet-roles-bhuild/dist/domain.operations/behavior/init/templates/5.1.execution.from_vision.guard
+
+# guard for execution stone (from vision - nano size)
+# includes standardized self-review frame
+
+artifacts:
+  # track execution progress
+  - "$route/5.1.execution.from_vision.yield.md"
+  # track actual implementation in src/
+  - "src/**/*"
+
+reviews:
+  peer:
+    # --- level 1: cheap reviewers (run first, in parallel) ---
+
+    - slug: repo-rules
+      run: $rhx review --repo bhrain --mode hard --rules '.agent/repo=.this/**/rule.*.md' --optional rules --diffs since-main --paths-with 'src/**/*' --paths-wout '**/*.test.ts' --paths-wout '**/__snapshots__/**' --join intersect --conversation $conversation --output "$output"
+      budget: 5
+      level: 1
+
+    - slug: mech-failhides
+      run: $rhx review --repo bhrain --mode hard --rules '.agent/repo=ehmpathy/role=mechanic/briefs/practices/code.{prod,test}/pitofsuccess.errors/rule.*.md' --diffs since-main --paths-with 'src/**/*' --paths-wout '**/*.test.ts' --paths-wout '**/__snapshots__/**' --join intersect --conversation $conversation --output "$output"
+      budget: 5
+      level: 1
+
+    - slug: mech-decode-friction
+      run: $rhx review --repo bhrain --mode hard --rules '.agent/repo=ehmpathy/role=architect/briefs/practices/domain.operations/rule.{forbid.decode-friction-in-orchestrators,require.orchestrators-as-narrative}.md' --rules '.agent/repo=ehmpathy/role=mechanic/briefs/practices/code.prod/readable.narrative/rule.{forbid.inline-decode-friction,require.named-transformers}.md' --refs '.agent/repo=ehmpathy/role=architect/briefs/practices/domain.operations/{define.domain-operation-grains,philosophy.transformer-orchestrator-separation.[philosophy]}.md' --diffs since-main --paths-with 'src/**/*' --paths-wout '**/*.test.ts' --paths-wout '**/__snapshots__/**' --join intersect --conversation $conversation --output "$output"
+      budget: 5
+      level: 1
+
+    # --- architect reviews (level 1) ---
+
+    - slug: arch-opport-decomposition
+      run: $rhx review --repo bhrain --mode hard --rules '.agent/repo=bhuild/role=behaver/briefs/practices/behavior.execution/architect/rule.prefer.decomposable-architecture.md' --refs '.agent/repo=ehmpathy/role=architect/briefs/practices/*.md' --refs '.agent/repo=ehmpathy/role=mechanic/briefs/practices/code.prod/evolvable.architecture/*.md.min' --refs '.agent/repo=ehmpathy/role=mechanic/briefs/practices/code.prod/evolvable.procedures/*.md.min' --refs '.agent/repo=ehmpathy/role=mechanic/briefs/practices/code.prod/evolvable.domain.operations/*.md.min' --diffs since-main --paths-with 'src/**/*' --paths-wout '**/*.test.ts' --paths-wout '**/__snapshots__/**' --join intersect --conversation $conversation --output "$output"
+      budget: 3
+      level: 1
+
+    - slug: arch-smell-scopeleaks
+      run: $rhx review --repo bhrain --mode hard --rules '.agent/repo=bhuild/role=behaver/briefs/practices/behavior.execution/architect/rule.forbid.scope-leaks.md' --refs '.agent/repo=ehmpathy/role=architect/briefs/practices/*.md' --refs '.agent/repo=ehmpathy/role=mechanic/briefs/practices/code.prod/evolvable.architecture/*.md.min' --refs '.agent/repo=ehmpathy/role=mechanic/briefs/practices/code.prod/evolvable.procedures/*.md.min' --refs '.agent/repo=ehmpathy/role=mechanic/briefs/practices/code.prod/evolvable.domain.operations/*.md.min' --diffs since-main --paths-with 'src/**/*' --paths-wout '**/*.test.ts' --paths-wout '**/__snapshots__/**' --join intersect --conversation $conversation --output "$output"
+      budget: 3
+      level: 1
+
+    - slug: arch-hazards-maintenance
+      run: $rhx review --repo bhrain --mode hard --rules '.agent/repo=bhuild/role=behaver/briefs/practices/behavior.execution/architect/rule.forbid.maintenance-hazards.md' --refs '.agent/repo=ehmpathy/role=architect/briefs/practices/rule.require.solve-at-cause.md' --refs '.agent/repo=ehmpathy/role=mechanic/briefs/practices/code.prod/pitofsuccess.errors/*.md.min' --refs '.agent/repo=ehmpathy/role=mechanic/briefs/practices/code.prod/pitofsuccess.procedures/*.md.min' --refs '.agent/repo=ehmpathy/role=mechanic/briefs/practices/code.prod/pitofsuccess.typedefs/*.md.min' --refs '.agent/repo=ehmpathy/role=mechanic/briefs/practices/code.prod/readable.narrative/*.md.min' --refs '.agent/repo=ehmpathy/role=mechanic/briefs/practices/code.prod/readable.comments/*.md.min' --diffs since-main --paths-with 'src/**/*' --paths-wout '**/*.test.ts' --paths-wout '**/__snapshots__/**' --join intersect --conversation $conversation --output "$output"
+      budget: 3
+      level: 1
+
+    - slug: arch-hazards-behavior
+      run: $rhx review --repo bhrain --mode hard --rules '.agent/repo=bhuild/role=behaver/briefs/practices/behavior.execution/architect/rule.forbid.behavior-hazards.md' --refs '.agent/repo=ehmpathy/role=mechanic/briefs/practices/code.prod/pitofsuccess.procedures/*.md.min' --refs '.agent/repo=ehmpathy/role=mechanic/briefs/practices/code.prod/evolvable.procedures/*.md.min' --diffs since-main --paths-with 'src/**/*' --paths-wout '**/*.test.ts' --paths-wout '**/__snapshots__/**' --join intersect --conversation $conversation --output "$output"
+      budget: 3
+      level: 1
+
+    # 🔴 this lane KEEPS the test corpus — it grades whether behavior intent is covered BY
+    #    tests, so a `*.test.ts` exclusion would blind it to what it reads. only the generated
+    #    snapshots are dropped: a coverage rubric reads `toMatchSnapshot()` in the test FILE,
+    #    so the .snap bytes are derived artifacts rather than assertions it grades.
+    #    `domain.roles/` goes too — those are booted BRIEFS, prose a behavior-coverage rubric
+    #    does not grade for test coverage. the behavior under review lives in operations + cli
+    #
+    # 🔴 narrowed after i003/i005's malfunctions: with zero commits on this branch,
+    #    --diffs since-main unions the whole staged+untracked set, and a push of full
+    #    content overflowed the 1M-token window twice (75.8%, then 75.8% again). `--focus
+    #    pull` is NOT available here — this lane's brain (fireworks/deepseek/v4-flash) is a
+    #    BrainAtom with no tool use, so pull mode throws outright. a commit to collapse the
+    #    range is forbidden (rule.forbid.commits-the-route-did-not-ask-for). so the lever is
+    #    `--paths-with`, narrowed to the three roots this behavior actually lives in — route
+    #    orchestration, its cli entrypoints, and the one domain object it touches. this drops
+    #    `domain.operations/review.by/**` and `domain.operations/review/**`, which this
+    #    behavior never touches. every test file under the three roots stays in scope —
+    #    the rubric still grades what it exists to grade
+    #    (rule.always.diagnose-reviewer-malfunctions: "narrow that lane's --paths-with").
+    # 🔴 i010's overflow (75.7%, ~757k of 1M): a third malfunction on this exact lane. the
+    #    `guard/` subtree alone held 52.1% of the file corpus, and its `review/peer/meter/**`
+    #    leaf (internal budget/round arithmetic — never a behavior-coverage subject) held 4.4%
+    #    on its own. dropped that one leaf, over the whole test corpus this lane's own comment
+    #    above says to keep (rule.always.diagnose-reviewer-malfunctions).
+    - slug: behavior-intent-coverage
+      run: $rhx review --repo bhrain --mode hard --rules '.agent/repo=bhuild/role=behaver/briefs/practices/behavior.execution/architect/rule.require.behavior-intent-coverage.md' --refs '$route/0.wish.md' --refs '$route/1.vision.yield.md' --refs '.agent/repo=bhuild/role=behaver/briefs/practices/behavior.verification/*.md' --refs '.agent/repo=bhuild/role=behaver/briefs/practices/behavior.criteria/*.md' --refs '.agent/repo=ehmpathy/role=mechanic/briefs/practices/code.test/scope.coverage/*.md' --diffs since-main --paths-with 'src/domain.operations/route/**' --paths-with 'src/contract/**' --paths-with 'src/domain.objects/**' --paths-wout '**/__snapshots__/**' --paths-wout 'src/domain.operations/route/guard/review/peer/meter/**' --join intersect --conversation $conversation --output "$output"
+      budget: 5
+      level: 1
+
+    # 🔴 this lane KEEPS the test corpus too — it grades whether friction hazards are covered
+    #    by acceptance tests and snaps, so a `*.test.ts` exclusion would remove its subject.
+    #    narrowed after i006's malfunction, the same repair as behavior-intent-coverage above:
+    #    with zero commits on this branch, --diffs since-main unions the whole staged+untracked
+    #    set, and this lane overflowed the 1M-token window at 76.6%. `--paths-with` narrowed to
+    #    the three roots this behavior lives in — it no longer reaches
+    #    `domain.operations/review.by/**` and `domain.operations/review/**`
+    #    (rule.always.diagnose-reviewer-malfunctions).
+    - slug: ergo-friction-hazards
+      run: $rhx review --repo bhrain --mode hard --rules '.agent/repo=bhuild/role=behaver/briefs/practices/behavior.execution/architect/rule.forbid.friction-hazards.md' --refs '.agent/repo=ehmpathy/role=ergonomist/briefs/*.md' --refs '.agent/repo=ehmpathy/role=mechanic/briefs/practices/lang.tones/*.md.min' --refs '.agent/repo=bhuild/role=behaver/briefs/practices/behavior.verification/*.md' --diffs since-main --paths-with 'src/domain.operations/route/**' --paths-with 'src/contract/**' --paths-with 'src/domain.objects/**' --paths-wout '**/__snapshots__/**' --join intersect --conversation $conversation --output "$output"
+      budget: 7
+      level: 1
+
+    # --- level 3: expensive reviewers (run after level 1 is terminal) ---
+
+    - slug: enroll-impl-behavior-intent
+      run: $rhx enroll claude --model 'claude-sonnet-5[1m]' --roles reviewer,behaver,architect,mechanic -p 'review the current implementation for omissions or divergences from the wished and envisioned behavioral intent. in particular flag any ergonomic friction that is unaddressed or friction hazards that are not clearly covered with acceptance tests and snaps. read the prior peer-review conversation at $conversation to catch up on context.'
+      budget: 3
+      level: 3
+
+    - slug: enroll-impl-arch-defects
+      run: $rhx enroll claude --model 'claude-sonnet-5[1m]' --roles reviewer,behaver,architect,mechanic -p 'review the PRODUCTION code under src/ (exclude *.test.ts and __snapshots__) for architectural defects and omissions; opports to decompose for recompose, prevent scope leaks, and eliminate maintenance and behavior hazards structurally. read the prior peer-review conversation at $conversation to catch up on context. report within 15 minutes — if the survey is incomplete by then, report what you found rather than continue.'
+      budget: 3
+      level: 3
+
+judges:
+  - $rhachet run --repo bhrain --skill route.stone.judge --mechanism reviewed? --stone $stone --route $route --allow-blockers 0 --allow-nitpicks 7

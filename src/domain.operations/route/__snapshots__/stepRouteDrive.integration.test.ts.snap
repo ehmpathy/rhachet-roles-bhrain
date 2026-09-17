@@ -281,3 +281,40 @@ exports[`stepRouteDrive.integration given: [case13] a driver wall (--as blocked)
    └─ halted, stone marked blocked
       └─ reason: .temp/genTempDir.symlink/<ts>.drive-int-case13.<hash>/blocker/1.md"
 `;
+
+exports[`stepRouteDrive.integration given: [case14] 🔴 an undeclared concern, on a driver already past the tea-pause threshold when: [t0] stepRouteDrive is called with when=hook.onStop then: t0 stdout matches the pre-empted-menu snapshot: case14.t0.stance-preempts-the-menu 1`] = `
+"🦉 each concern awaits your absorption
+
+🌕 lets declare
+   │
+   ├─ review.peer 1/1
+   │  ├─ slug = architect
+   │  └─ undeclared
+   │     └─ blocker.1
+   │
+   ├─ why
+   │  └─ a budget ends a disagreement when it runs out, not by a verdict on
+   │     who is right. a stance is that verdict: you own each concern — fix
+   │     it, or hold that it is fine to continue — and it goes on record
+   │     where a council can rule on it.
+   │
+   ├─ what to do — concede, by default
+   │  └─ the reviewer is right and you will fix it. that is the ordinary
+   │     answer, and the sequence is: concede → fix → budget → re-arrive.
+   │
+   │     rhx route.stone.set --stone 1 \\
+   │       --as conceded --with <slug> --about <concern> \\
+   │       --severity better|urgent
+   │
+   └─ what to do — dispute, to escalate
+      └─ this ONE concern is fine to continue, and you want a human council
+         to rule on it at the close. it costs a fulcrum entry you author and
+         a human's attention, so reach for it where the concern is severe or
+         recurs — never as the default.
+
+         rhx route.stone.set --stone 1 \\
+           --as disputed --with <slug> --about <concern> \\
+           --why .fulcrums/inventory.of=fulcrums.case=F00N-<slug>.md
+
+         1 concern stands undeclared — one command each."
+`;

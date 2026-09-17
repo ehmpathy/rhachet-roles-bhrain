@@ -1,0 +1,14 @@
+artifacts:
+  - src/**/*.ts
+
+reviews:
+  peer:
+    - slug: lane
+      run: bash $route/.test/mock-review-lane.sh
+      budget: 1
+      level: 1
+
+# the REAL reviewed? judge, at a zero allowance — so budget exhaustion is what decides
+# this stone's fate, never a code fix (the lane blocks on every run, by construction)
+judges:
+  - rhx route.stone.judge --mechanism reviewed? --stone $stone --route $route --allow-blockers 0 --allow-nitpicks 0
