@@ -50,7 +50,7 @@ exports[`driver.route.peer-budget-isolation.acceptance given: [journey] per-ston
    ├─ stone = 1.alpha
    ├─ passage = blocked
    ├─ reason = you conceded — the round to confirm your fix needs more budget
-   │  └─ 🟡 an urgent concession stands — its harm ships if unfixed, so this round is owed a human's grant
+   │  └─ 🟡 an urgent concession stands — its harm ships if unfixed, so this stone earns more budget
    ├─ options
    │  ├─ increase budget — yours to spend
    │  │  └─ rhx route.guard.budget --for review --add N --peer shared-reviewer --stone 1.alpha

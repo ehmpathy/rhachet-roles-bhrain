@@ -76,28 +76,44 @@ describe('formatRouteDriveBudgetExhausted', () => {
       );
 
       then("the driver's own lever leads, and is labelled as theirs", () => {
-        const indexBudget = output.indexOf('increase budget — yours to spend');
+        const indexOwn = output.indexOf(
+          'converge with the reviewer — yours to run',
+        );
         const indexApprove = output.indexOf(
           'approve as-is — a human must grant',
         );
-        expect(indexBudget).toBeGreaterThan(-1);
-        expect(indexApprove).toBeGreaterThan(indexBudget);
+        expect(indexOwn).toBeGreaterThan(-1);
+        expect(indexApprove).toBeGreaterThan(indexOwn);
       });
 
-      then('the lone exhausted slug is named on the top-up command', () => {
+      // 🔴 this reason carries no concession mark, so no warrant stands and the gate would
+      //    refuse a grant. the halt used to hand the driver that very command
+      then('no top-up is offered — the grant would be refused', () => {
+        expect(output).not.toContain('increase budget');
+        expect(output).not.toContain('rhx route.guard.budget');
+      });
+
+      then('the lone exhausted slug is named on the converge command', () => {
         expect(output).toContain(
-          'rhx route.guard.budget --for review --add N --peer mech-rules --stone 1.vision',
+          'rhx route.stone.set --stone 1.vision --as absorbed --that mech-rules',
         );
       });
 
       // ⚠️ `once they approve` presumed the human branch for BOTH remedies, so a driver who
       //    topped up their own budget was told to wait on an approval never owed.
-      then('the passage line follows a GRANT, never a top-up', () => {
-        expect(output).toContain('once a human grants the approval, run');
-        expect(output).toContain(
-          'rhx route.stone.set --stone 1.vision --as passed',
-        );
-      });
+      // 🔴 and its repair named the HUMAN branch alone, so the driver-owned lever sorted first
+      //    was left with no stated next step (i001/r009 n2). the tail names either remedy now,
+      //    because both end at the same command.
+      then(
+        'the passage line completes EITHER remedy, not just the human one',
+        () => {
+          expect(output).toContain('once either remedy lands, run');
+          expect(output).not.toContain('once a human grants the approval');
+          expect(output).toContain(
+            'rhx route.stone.set --stone 1.vision --as passed',
+          );
+        },
+      );
 
       then('the term is `increase budget`, never a second word for it', () => {
         expect(output).not.toContain('extend budget');
@@ -119,10 +135,11 @@ describe('formatRouteDriveBudgetExhausted', () => {
       // the surface is BY DEFINITION the budget-exhausted halt, so a null reason falls back to
       // the bare halt text — the shared builder still keys off it and the remedies stay on the
       // page, with no `--peer` since no slug was parsed.
-      then('the remedies still render, with no --peer', () => {
-        expect(output).toContain('increase budget — yours to spend');
+      then('the remedies still render, with no named lane', () => {
+        expect(output).toContain('converge with the reviewer — yours to run');
         expect(output).toContain('approve as-is — a human must grant');
         expect(output).not.toContain('--peer');
+        expect(output).toContain('--that <reviewer>');
       });
 
       then('the whole replay is pinned, byte for byte', () => {
@@ -145,7 +162,7 @@ describe('formatRouteDriveBudgetExhausted', () => {
       });
 
       then('the remedies survive the empty meter set', () => {
-        expect(output).toContain('increase budget — yours to spend');
+        expect(output).toContain('converge with the reviewer — yours to run');
       });
 
       then('the whole replay is pinned, byte for byte', () => {
@@ -164,43 +181,57 @@ describe('formatRouteDriveBudgetExhausted', () => {
         meters: [meterExhausted],
       });
 
-      // 🔴 the wisher's own words (S12). the halt names the CONCESSIONS as the reason and
-      //    the top-up as the remedy — it is not the spent-ladder halt under a friendlier
-      //    label, it is a different halt with a different owner
+      // 🔴 S12. the halt names the CONCESSIONS as the reason — it is not the spent-ladder halt
+      //    under a friendlier label, it is a different halt with a different owner.
+      // 🔴 what MOVED is the remedy it names: the header read `halted on more budget`, and a
+      //    `better` grade earns no more budget past the meter (F04). the concession half of
+      //    S12 stands; the budget half was the part the bound removed
       then('the halt names the concessions, never a bare exhaustion', () => {
-        expect(output).toContain(
-          'halted on more budget, to address concessions',
-        );
+        expect(output).toContain('halted on your concessions, to be fixed');
         expect(output).not.toContain('halted, peer reviewer budget exhausted');
+      });
+
+      then('and it promises no budget it cannot deliver', () => {
+        expect(output).not.toContain('more budget');
+        expect(output).not.toContain('rhx route.guard.budget');
       });
 
       // 🔴 the gap S12 closes. a driver that conceded, exhausted, and reached allTerminal
       //    was handed a human halt whose remedy is its OWN lever
+      // ⚠️ the absent string must be the one the code can EMIT. it read
+      //    `once a human grants the approval`, which no branch prints since i001/r009 n2 — so the
+      //    assertion held whatever this halt rendered (`rule.forbid.failhide`)
       then('no human is summoned — the approve tail is gone', () => {
         expect(output).not.toContain('a human must grant');
-        expect(output).not.toContain('once a human grants the approval');
+        expect(output).not.toContain('once either remedy lands, run');
       });
 
       then('the header does not promise a human to ask', () => {
-        expect(output).toContain('what to do — yours to run, no human needed');
+        expect(output).toContain('what to do — no human needed');
         expect(output).not.toContain(
           'spend your own lever first, then ask a human',
         );
       });
 
-      then('the top-up is the one remedy, scoped to the conceded lane', () => {
-        expect(output).toContain(
-          'rhx route.guard.budget --for review --add N --peer mech-rules --stone 5.1.execution',
-        );
+      // ⚠️ the owner rides the remedy LABEL, so the header no longer repeats it — `yours to
+      //    run` twice, one line apart, is one claim a driver reads as two
+      then('the owner is named once, on the remedy itself', () => {
+        expect(output).toContain('fix what you conceded — yours to run');
+        expect(output.split('yours to run').length - 1).toEqual(1);
       });
 
-      // S11 fixes the order at concede → fix → budget → re-arrive, so the passage command
-      // follows the top-up with no grant between them
-      then('the tail is a re-arrival, never a wait', () => {
-        expect(output).toContain('then re-arrive');
-        expect(output).toContain(
-          'rhx route.stone.set --stone 5.1.execution --as passed',
-        );
+      // 🔴 the remedy IS the passage command now, so the halt's own tail would print it a
+      //    second connector down. the block becomes the last branch and the tail is dropped
+      then('the passage command appears exactly once', () => {
+        const passCmd = 'rhx route.stone.set --stone 5.1.execution --as passed';
+        expect(output).toContain(passCmd);
+        expect(output.split(passCmd).length - 1).toEqual(1);
+      });
+
+      // S11 fixes the order at concede → fix → re-arrive, and the re-arrival is what the one
+      // remedy names — no grant, and no wait, stands between them
+      then('the re-arrival is the whole of what follows the fix', () => {
+        expect(output).not.toContain('once either remedy lands, run');
       });
 
       then('the whole replay is pinned, byte for byte', () => {
@@ -283,9 +314,8 @@ describe('formatRouteDriveBudgetExhausted', () => {
         });
 
         then('the driver-own tail is rendered, never the human wait', () => {
-          expect(output).toContain(
-            'what to do — yours to run, no human needed',
-          );
+          expect(output).toContain('what to do — no human needed');
+          expect(output).not.toContain('a human must grant');
         });
       });
 
@@ -384,8 +414,11 @@ describe('formatRouteDriveMixedHalt', () => {
         // 🔴 the whole point of the surface: collapse it to the bare "guard malfunction, tell a
         //    human" escalation and the also-present exhaustion's remedies vanish, so the human
         //    walks a path that hits a SECOND, unwarned block.
+        // ⇒ the driver's slot holds CONVERGE here: this reason carries no concession mark, so
+        //   no warrant stands and the gate would refuse a grant. the SLOT is what this case
+        //   pins — that a mixed halt hides no gate's remedy — and the slot is unchanged
         then('every remedy is offered at once', () => {
-          expect(output).toContain('increase budget — yours to spend');
+          expect(output).toContain('converge with the reviewer — yours to run');
           expect(output).toContain(
             'overrule the malfunction — a human must grant',
           );
@@ -395,11 +428,11 @@ describe('formatRouteDriveMixedHalt', () => {
         then(
           "the order is BY OWNER — the driver's lever before either human one",
           () => {
-            const indexBudget = output.indexOf('increase budget');
+            const indexOwn = output.indexOf('converge with the reviewer');
             const indexOverrule = output.indexOf('overrule the malfunction');
             const indexApprove = output.indexOf('approve as-is');
-            expect(indexBudget).toBeGreaterThan(-1);
-            expect(indexOverrule).toBeGreaterThan(indexBudget);
+            expect(indexOwn).toBeGreaterThan(-1);
+            expect(indexOverrule).toBeGreaterThan(indexOwn);
             expect(indexApprove).toBeGreaterThan(indexOverrule);
           },
         );

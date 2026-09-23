@@ -40,8 +40,9 @@ export const REASON_MARK_CONCESSION_URGENT =
  *        - `none`   — a lane the driver never conceded still awaits a human. the ordinary wait.
  *        - `better` — EVERY skipped lane carries a live `better` concession. the driver's own:
  *          the maintenance floor was met, so the stone proceeds with no human.
- *        - `urgent` — every lane conceded and ≥1 is `urgent`. needs increased budget, and a
- *          human is warned this PR (`define.invariant.review.peer.budget.urgent-earns-budget`).
+ *        - `urgent` — every lane conceded and ≥1 is `urgent`. needs increased budget, and the
+ *          driver owes its human a written why this stone bought it
+ *          (`define.invariant.review.peer.budget.urgent-earns-budget`).
  */
 export const genRouteGuardExhaustedReason = (input: {
   slugs: string[];
@@ -78,20 +79,49 @@ export const isRouteGuardUrgentConcessionExhaustion = (input: {
 }): boolean => (input.reason ?? '').includes(REASON_MARK_CONCESSION_URGENT);
 
 /**
- * .what = the reason line a CONCESSION exhaustion halt shows a driver, in place of the raw mark
+ * .what = the reason line a BETTER concession exhaustion halt shows a driver
  * .why = the raw reason carries the parseable `REASON_MARK_CONCESSION` phrase — a decode channel,
  *        not prose. every surface that renders a concession halt shows this human line instead, so
  *        the synchronous `--as passed` emit and the route.drive halt read as one story
  *        (rule.require.single-source-of-truth-for-render). one literal, shared.
+ *
+ * 🔴 it names the FIX, never a round. a `better` grade earns no budget past the meter (F04), so
+ *    the extant text — "the round to confirm your fix needs more budget" — described a round the
+ *    gate now refuses, above a remedy block that no longer offers one. a halt must not report a
+ *    remedy it cannot hand over; that is the same defect as an advertised refusal, in prose.
+ * ⚠️ and the severity split is the WHOLE reason this is two literals rather than one: the extant
+ *    text is still exactly true of an URGENT concession, which does earn its round.
  */
-export const REASON_TEXT_CONCESSION =
+export const REASON_TEXT_CONCESSION_BETTER =
+  'you conceded — fix what you named, then re-arrive';
+
+/**
+ * .what = the reason line an URGENT concession exhaustion halt shows a driver
+ * .why = an urgent concession ships nameable harm, so it is the one exhaustion that still earns a
+ *        round — the text is unchanged from when it served both severities, because for THIS one
+ *        it was always accurate (`define.invariant.review.peer.budget.urgent-earns-budget`).
+ */
+export const REASON_TEXT_CONCESSION_URGENT =
   'you conceded — the round to confirm your fix needs more budget';
 
 /**
- * .what = the warn line an URGENT concession halt adds — the human's cue that a grant is owed
+ * .what = the warn line an URGENT concession halt adds — what the grade earns, and for what scope
  * .why = `severity: urgent` exists so a shipped-harm concession is never missed. the warn is the
  *        surface that makes the invariant real, so it must reach EVERY halt a driver sees — the
  *        synchronous emit as much as the route.drive halt, or the primary CLI path drops it
  *        (define.invariant.review.peer.budget.urgent-earns-budget). one literal, shared.
+ *
+ * 🔴 it names the STONE as what earns, never a round as what a human hands over. the extant text —
+ *    "so this round is owed a human's grant" — sat one row above the options block's
+ *    `increase budget — yours to spend`, so one screen named two owners for one lever. a driver
+ *    reads top-down, takes the warn, and escalates for a top-up already theirs to spend — the
+ *    precise escalation `rule.always.spend-own-levers-before-escalation` exists to prevent, and
+ *    its own named trap: two adjacent remedies with no owner column read as two human remedies.
+ * ⚠️ the urgent grade IS the warrant that makes the top-up driver-owned, so this line states what
+ *    the grade earned and lets the options block below state who spends it.
+ *
+ * 🟡 the obligation to tell a human rides the two surfaces that ASK for it — the concede ack, at
+ *    the moment of the grade, and the grant warrant, at the moment of the spend. a third ask on a
+ *    halt that hands over no budget would dilute both.
  */
-export const WARN_TEXT_CONCESSION_URGENT = `an urgent concession stands — its harm ships if unfixed, so this round is owed a human's grant`;
+export const WARN_TEXT_CONCESSION_URGENT = `an urgent concession stands — its harm ships if unfixed, so this stone earns more budget`;

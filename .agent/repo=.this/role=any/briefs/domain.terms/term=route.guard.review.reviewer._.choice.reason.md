@@ -53,6 +53,22 @@ the two rules prescribe opposite moves on the same pair, and only one could run:
 
 🟡 **`lane` is no longer a candidate for it.** the verdict makes the word a forbidden synonym, so the run-sense needs a word this repo has not yet reached for. that is recorded as a gap rather than left as a dispute, because a resolved dispute stops to be read.
 
+#### the gap is LOAD-CARRYING, and a second design walked into it — 2026-09-18
+
+`.behavior/v2026_09_17.fix-budget-grant-needs-urgent-concession` gates `route.guard.budget` on three conjuncts, and **every one of them is a property of a RUN rather than of the role** — *has this reviewer run dry?*, *did it speak this generation?*, *how many rounds has it spent?*
+
+⇒ so the design reached for `lane` on its own, in a fresh subsystem, twelve days after the conform ran. it named a type `BudgetGrantLane`, a predicate `hasLaneRunDry`, and — the part that matters — **it shipped `lane` into published cli copy**, where `rule.forbid.domain-term-synonyms` binds hardest. the vision that authored it asserted the opposite, on the page: *"the refusal copy is published cli, so it is contract-tier and must use `reviewer`, and does."* it did not.
+
+| what this adds to the gap's case | |
+|---|---|
+| it is **not inherited** | no booted brief taught it. the author reached for the word because the concept had none |
+| it reached a **contract** | the 2026-09 census found `lane` mostly in prose. this put it in rendered cli |
+| the author **knew the rule** and cited it | ⇒ knowledge of the forbid does not prevent the reach. only a word for the run-sense would |
+
+the repair took the extant word for the shape — **`meter`**, already this repo's word for `{slug, level, rounds, budget}` (`GuardPeerMeterStatus`, `reviewPeerMeters.jsonl`, the `peer/meter/` directory). that works where the subject IS the meter, and it does **not** close the gap: `hasReviewerRunDry` still has to say `reviewer` for a question about one run.
+
+🟡 **so the gap's cost is now measured rather than predicted: one contract-tier violation per design that needs the run-sense.**
+
 ## .the census, measured against disk 2026-09-06
 
 🟡 the fulcrum estimated **~312** occurrences. a walk of the tree found **1211** across 179 files —
@@ -76,4 +92,4 @@ lanes, and falsified the peer reports under `.reviews/peer/`.
 
 - **discovery** — a live falsification. the wisher stopped on the word in a deliverable-priority table; no decomposition or citation was needed to surface it
 - **the boundary** — `route.guard.review`, taken from the eight extant peers rather than coined. the test *"a reviewer, of WHAT?"* answers *"of a review"*, and a review runs under a guard, on a route
-- the residual gap this cluster does not close — **`review` itself is still undeclared**, and it is the boundary segment of nine terms now. `rule.require.boundary-qualified-terms` grades *"a boundary that names no declared term"* a blocker. ⇒ owed, and recorded here so the next traveler finds it rather than re-derives it
+- ✅ the residual gap this cluster did not close — **`review` itself was undeclared**, and it was the boundary segment of nine terms then, twenty-five by the time it was closed. `rule.require.boundary-qualified-terms` grades *"a boundary that names no declared term"* a blocker. ⇒ **CLOSED** at `term=route.guard.review._.choice._.md` (raised i002/r001 n1, on a diff that shipped `computeReviewCompleted`). 🟡 the record is kept rather than struck: a gap declared and then closed is evidence the census works, and the nine-to-twenty-five growth is the cost of the delay stated as a number

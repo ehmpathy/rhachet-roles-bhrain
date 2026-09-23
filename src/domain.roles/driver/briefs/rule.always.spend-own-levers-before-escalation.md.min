@@ -4,9 +4,10 @@ a halt is a diagnosis to make, not a message to relay. the guard prints what *wo
 
 | lever | owner |
 |---|---|
-| `rhx route.guard.budget --for review --add N --stone <stone>` | **driver** |
+| `rhx route.stone.set --as absorbed --that <reviewer>` — converge; a spent meter discharges no debt | **driver** |
 | 🔴 `rhx route.mutate.guard` — the stone's own `--paths-with`, `--conversation`, `level`, `budget` | **driver** |
 | a diagnosed reviewer malfunction — absent credential, bad glob, stale supply | **driver** |
+| 🔴 `rhx route.guard.budget --for review --add N --stone <stone>` | **driver, ONLY with a warrant** — see below |
 | `--as approved` · `--as overruled` · the commit quota · a **credential** the keyrack reports `absent` · release auth | human |
 
 🔴 **the guard row was absent for a full release, and the omission had a measured price.** a driver filed an overflowed-lane repair as a **fulcrum** — a call reserved for the wisher — and collected six rounds of evidence about it while the remedy sat unused. the wisher closed it in seven words: *"you have the abiltiy to edit the guards."*
@@ -15,9 +16,34 @@ a halt is a diagnosis to make, not a message to relay. the guard prints what *wo
 
 ⛔ **a hand-run `rhx review` is NOT on this table, deliberately.** it draws no budget, so it is no lever at all — it is an escape from the meter the ladder runs on (`rule.forbid.hand-run-reviews`). ⇒ **the guard row above is what a driver who reaches for it actually wants**, and it repairs the lane *inside* the system rather than around it.
 
-⚠️ **adjacency is the trap** — two remedies side by side with no owner column read as two human remedies. the budget halt names its owners: `increase budget — yours to spend` above `approve as-is — a human must grant`. 🔴 **that label covers ONE halt kind.** a malfunction, a self-review gate, and a judge threshold each print a remedy list with no owner column, so the sort stays yours to perform.
+⚠️ **adjacency is the trap** — two remedies side by side with no owner column read as two human remedies. the budget halt names its owners and sorts the driver's first, but **which** lever that is turns on what the last round conceded: `increase budget — yours to spend` on an urgent concession, `fix what you conceded — yours to run` on a better one, `converge with the reviewer — yours to run` where naught was conceded. 🔴 **and that label covers ONE halt kind.** a malfunction, a self-review gate, and a judge threshold each print a remedy list with no owner column, so the sort stays yours to perform.
 
-**budget is not scarce, and to treat it as scarce is the error.** `--add N` extends every reviewer on the stone at once. and exhaustion is often not what it looks like: a reviewer that spent its round to RAISE a blocker has none left to CONFIRM your fix, so it shows `exhausted 🌙` with blockers listed that are already closed. more budget settles that; a human cannot.
+## 🔴 budget is the ALLOWANCE, and it is scarce past its bound
+
+**the grant is refused by default**, so a top-up is yours **only with a warrant**.
+
+> **inside the meter, taste counts. past the meter, only harm does.**
+
+the route author set `budget: N` with the whole rubric in view, and those N rounds ARE the allowance for `better` churn — argue taste inside them freely. past them the question changes from *"do I want another round?"* to *"what harm ships if this is not fixed?"*, and only the second buys one. all three conjuncts are owed:
+
+| the conjunct | what it refuses |
+|---|---|
+| a **live urgent concession** on the stone | a round bought on a wish to continue |
+| a **target reviewer that has run dry** | a pad taken before the bound bites |
+| a `--stone` that named **one** stone | one warrant spent across a prefix's worth of stones |
+
+```sh
+rhx route.stone.set --stone <s> --as conceded --with <reviewer> --about <concern> --severity urgent
+rhx route.guard.budget --for review --add N --peer <reviewer> --stone <s>
+```
+
+⚠️ **grade by the harm test, never by what you want the meter to say.** `urgent` is the closed set — security · safety · monetary · reputation · behavioral, with a harm you can name. all else is `better`, and `better` earns no round past the meter (`rule.always.concede-with-a-severity`).
+
+🔴 **and `--add N` does NOT extend every reviewer on the stone.** a bare add lands on the **latest level alone**; a lower level stays exhausted unless `--level` or `--peer` names it (F022 fork E).
+
+🟡 **exhaustion is still often not what it looks like** — a reviewer that spent its round to RAISE a blocker has none left to CONFIRM your fix, so it shows `exhausted 🌙` with blockers listed that are already closed. **where that blocker named a real harm, grade it `urgent` and the round is yours.** where it named taste, the fix IS the whole remedy.
+
+⚠️ **the reversal did not move the lever to the human.** it put a **bar** in front of it, and the bar is a sentence you write about your own work. a human may grant regardless — and to reach for that before you have tried to converge is the very escalation this rule forbids.
 
 the test: **"is there a command i could run right now that would move this stone?"**
 yes → run it. no → surface it, with the exact command the human must run.

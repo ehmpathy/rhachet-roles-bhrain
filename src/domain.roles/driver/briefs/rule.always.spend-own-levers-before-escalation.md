@@ -11,9 +11,10 @@ the split, for the driver role:
 | lever | owner |
 |-------|-------|
 | 🔴 `rhx route.stone.set --as disputed --with <reviewer> --about <concern> --why <fulcrum>` — a real or repeated defect you DISAGREE with, answered and cited | **driver** |
-| `rhx route.guard.budget --for review --add N --stone <stone>` | **driver** |
+| `rhx route.stone.set --as absorbed --that <reviewer>` — converge; the answer a spent meter does not discharge | **driver** |
 | 🔴 `rhx route.mutate.guard` — the stone's own `--paths-with`, `--conversation`, `level`, `budget` | **driver** |
 | a diagnosed reviewer malfunction (absent credential, bad glob, stale supply) | **driver** |
+| 🔴 `rhx route.guard.budget --for review --add N --stone <stone>` | **driver, ONLY with a warrant** — see below |
 | `--as approved` | human |
 | `--as overruled` | human |
 | commit quota (`rhx git.commit.uses`) | human |
@@ -45,32 +46,65 @@ and worse, it reads as a wall when it was a step.
 human remedies, and the driver's own lever is the one that gets surfaced upward.
 
 ⚠️ **an owner label on the surface covers ONE halt kind, and is a courtesy rather than a
-guarantee.** the budget halt names its owners — `increase budget — yours to spend` above
-`approve as-is — a human must grant`, with the driver's lever sorted first. a reviewer
-malfunction, a self-review gate, and a judge threshold each print a remedy list with no owner
-column at all. **the sort is yours to perform.**
+guarantee.** the budget halt names its owners, and the driver's lever is sorted first — but
+**which** lever that is depends on what the last round conceded: `increase budget — yours to
+spend` on an urgent concession, `fix what you conceded — yours to run` on a better one, and
+`converge with the reviewer — yours to run` where naught was conceded. a reviewer malfunction, a
+self-review gate, and a judge threshold each print a remedy list with no owner column at all.
+**the sort is yours to perform.**
 
 ## .the rule
 
 | the stone halted on... | you must... |
 |------------------------|-------------|
-| peer reviewer budget exhausted | **add budget yourself**, re-arrive, drive on |
+| peer reviewer budget exhausted | **answer it yourself** — converge, or fix what you conceded, then re-arrive. a top-up only where an urgent concession earned the round |
 | a reviewer malfunction | **diagnose it** (`rule.always.diagnose-reviewer-malfunctions`); fix what is yours |
 | a genuine human-only gate | surface it — with the exact command, never a bare symptom |
 
 a halt is **a diagnosis to make, not a message to relay**. read the block reason, sort it by
 owner, act on your half.
 
-## .budget is not scarce, and to treat it as scarce is the error
+## 🔴 .budget is the ALLOWANCE, and it is scarce past its bound
 
-`--add N` extends **every** reviewer on the stone at once (3 → 5 across all 11, in one call).
-budget exists so the absorb loop can run to convergence — to hoard it is to end the
-conversation early, which is the exact coast `rule.always.converge-to-terminal` forbids.
+**the grant is refused by default**, so a top-up is a lever you hold **only with a warrant**.
 
-🟡 **and exhaustion is often not what it looks like.** a reviewer spends a round to *raise* a
+> **inside the meter, taste counts. past the meter, only harm does.**
+
+the route author set `budget: N` with the whole rubric in view, and those N rounds ARE the
+allowance for `better` churn — argue taste inside them freely. past them the question changes from
+*"do I want another round?"* to *"what harm ships if this is not fixed?"*, and only the second
+buys one.
+
+⇒ so the round is earned rather than requested, and it needs all three of:
+
+| the conjunct | what it refuses |
+|---|---|
+| a **live urgent concession** on the stone | a round bought on a wish to continue |
+| a **target reviewer that has run dry** | a pad taken before the bound bites |
+| a `--stone` that named **one** stone | one warrant spent across a prefix's worth of stones |
+
+```sh
+# the warrant, then the grant
+rhx route.stone.set --stone <s> --as conceded --with <reviewer> --about <concern> --severity urgent
+rhx route.guard.budget --for review --add N --peer <reviewer> --stone <s>
+```
+
+⚠️ **grade by the harm test, never by what you want the meter to say.** `urgent` is the closed set
+— security · safety · monetary · reputation · behavioral, with a harm you can name. every other
+concern is `better`, and `better` earns no round past the meter
+(`rule.always.concede-with-a-severity`).
+
+🔴 **and `--add N` does NOT extend every reviewer on the stone.** a bare add lands on the **latest
+level alone**; a lower level stays exhausted unless `--level` or `--peer` names it. a top-up is a
+deliberate, targeted act, never a blanket sweep that heals a level the route author bounded on
+purpose (F022 fork E).
+
+🟡 **exhaustion is still often not what it looks like.** a reviewer spends a round to *raise* a
 blocker and has none left to *confirm* the fix — so a reviewer whose findings you fixed in that
-same round shows `exhausted 🌙` with its blockers still listed, though every one is closed. that
-is precisely the case more budget settles, and precisely the case a human cannot settle at all.
+same round shows `exhausted 🌙` with its blockers listed, though every one is closed. **where that
+blocker named a real harm, grade it `urgent` and the round is yours.** where it named taste, the
+fix IS the whole remedy — the reviewer will not re-read it, and that is the design rather than a loss
+to route around.
 
 ## .the test
 
@@ -99,11 +133,12 @@ it does not fold into `rule.always.converge-to-terminal`.
 - `rule.always.diagnose-reviewer-malfunctions` — the same sort-by-owner move, for a broken reviewer
 - `rule.always.drive-autonomously` — relay the route's gates; never invent your own
 
-## .citations
+## ⚠️ .the bar is not a human gate
 
-> "review budget is YOUR lever — `rhx route.guard.budget --for review --add N` — never a human
-> gate. only `--as approved`, `--as overruled`, the commit quota, and release auth belong to the
-> human."
->
-> — the wisher, 2026-08-04, on the `v2026_07_31.feat-keyrack-unlock-scope` drive, after i had
-> surfaced a budget halt as though it were a human decision
+the refusal did not move the lever to the human. it put a **bar** in front of it, and the bar is a
+sentence the driver writes about its own work — a human may grant regardless.
+
+⇒ so this rule's core is untouched by it: **the answer to most budget halts is convergence, and
+convergence is yours.** a driver that reaches for a human's grant before it has tried to converge
+has surfaced a halt it could have answered itself, which is the exact spend of a human's attention
+this rule exists to prevent.

@@ -3,13 +3,15 @@
 # .what = shell entrypoint for route.mutate skill
 #
 # .why = manages route protection privileges
-#        - grant allow: enables driver to access protected paths
-#        - grant block: revokes driver access to protected paths
-#        - grant get: checks current privilege state
+#        - grant allow: HUMAN ONLY — the flag it writes lifts EVERY protected write on
+#          the route at once, a guard's `budget:` line among them. a non-human caller is
+#          refused with exit 2, and that is enforced rather than asked
+#        - grant block: revokes the privilege — ungated, since a revoke only narrows
+#        - grant get: checks current privilege state — ungated, a status read
 #        - guard: pretooluse hook (shell-only, handled by route.mutate.guard.sh)
 #
 # usage:
-#   ./route.mutate.sh grant allow   # grant access privilege
+#   ./route.mutate.sh grant allow   # grant access privilege (human only)
 #   ./route.mutate.sh grant block   # revoke access privilege
 #   ./route.mutate.sh grant get     # check privilege state
 #   ./route.mutate.sh guard --mode hook  # pretooluse hook (shell-only)
@@ -17,7 +19,7 @@
 # exit codes:
 #   0 = success
 #   1 = error
-#   2 = blocked (guard mode only)
+#   2 = blocked (guard mode) or refused (grant allow, non-human caller)
 ######################################################################
 set -euo pipefail
 

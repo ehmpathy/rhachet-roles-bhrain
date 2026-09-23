@@ -38,8 +38,8 @@ exports[`driver.route.stance.acceptance given: [case4] --as conceded with NO --s
 "error: BadRequestError: --severity is required for --as conceded
 
 every concession is graded by its harm — there is no ungraded concede.
-  --severity urgent  — a shipped harm (security | safety | monetary | reputation |
-                       behavioral); earns budget, warns the human
+  --severity urgent  — a shipped harm; earns budget, warns the human
+                       (security | safety | monetary | reputation | behavioral)
   --severity better  — code idealism / maintenance; the floor, never earns budget
 
 {

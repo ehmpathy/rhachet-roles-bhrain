@@ -463,7 +463,7 @@ describe('stepRouteDrive.integration', () => {
             'spend your own lever first, then ask a human',
           );
           expect(result.emit?.stdout).toContain(
-            'increase budget — yours to spend',
+            'converge with the reviewer — yours to run',
           );
           expect(result.emit?.stdout).toContain(
             'approve as-is — a human must grant',
@@ -473,6 +473,14 @@ describe('stepRouteDrive.integration', () => {
           );
         },
       );
+
+      // 🔴 and the driver's lever is CONVERGE, never the top-up. this passage row carries no
+      //    concession mark, so no warrant stands and `route.guard.budget` would refuse the
+      //    grant — an end-to-end pin that the halt hands over no command the gate rejects
+      then('no top-up is advertised — the grant would be refused', () => {
+        expect(result.emit?.stdout).not.toContain('increase budget');
+        expect(result.emit?.stdout).not.toContain('rhx route.guard.budget');
+      });
 
       then('t0 stdout matches the exhausted-halt snapshot', () => {
         expect(asStableDriveStdout(result.emit?.stdout)).toMatchSnapshot(

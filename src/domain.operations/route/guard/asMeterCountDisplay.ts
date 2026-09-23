@@ -6,7 +6,7 @@
  *        (rule.forbid.duplicate-format-tree-operations, rule.prefer.wet-over-dry at 4 usages).
  *
  * .note = the paired guard on the stance ack's tail (formatRouteGuardReviewPeerAbsorptionAck's
- *         asMeterLine) tests `!Number.isFinite(count)`, which covers `Infinity` PLUS
+ *         asReviewerMeterLine) tests `!Number.isFinite(count)`, which covers `Infinity` PLUS
  *         `-Infinity` and `NaN`. an `=== Infinity` check here left those two extreme values to
  *         fall through to `String(count)` — so one line could read '∞ rounds left' from the tail
  *         and 'NaN' from the count cell for the same value (r009 nitpick.2, i005). `!isFinite`

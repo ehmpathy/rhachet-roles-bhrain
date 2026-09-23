@@ -1,0 +1,15 @@
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
+
+exports[`setRoutePrivilegeAsGranted.integration given: [case1] a human caller — isTTY true when: [t0] the grant is invoked then: the granted render matches snapshot 1`] = `
+[
+  "",
+  "🦉 privilege granted",
+  "",
+  "🗿 route.mutate grant allow",
+  "   ├─ route = <temp>",
+  "   └─ flag = .route/.privilege.mutate.flag created",
+  "",
+  "✨ route mutation now allowed until revoked",
+  "",
+]
+`;

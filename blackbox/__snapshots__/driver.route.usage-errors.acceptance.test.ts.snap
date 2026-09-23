@@ -10,37 +10,225 @@ exports[`driver.route.usage-errors.acceptance given: [case2] route.mutate grant 
 route.mutate grant - manage route protection privilege
 
 usage:
-  rhx route.mutate grant allow   # grant privilege (human only)
+  rhx route.mutate grant allow   # grant privilege (human only — refused without a tty)
   rhx route.mutate grant block   # revoke privilege
   rhx route.mutate grant get     # check privilege state
 
 options:
   --route <path>    route path (default: auto-detect from branch)
+  --help            show this help message
+
+.note = the flag \`allow\` writes lifts EVERY protected write on the route at once — a guard's
+        \`budget:\` line among them. so it is human only, and that is enforced rather than asked.
 
 "
 `;
 
 exports[`driver.route.usage-errors.acceptance given: [case3] route.guard.budget with an absent --add when: [t0] the required --add flag is omitted then: stderr matches snapshot: budget --add absent 1`] = `
-"
+"error: --add is required
+
 route.guard.budget - extend peer reviewer budget
 
 usage:
   rhx route.guard.budget --for review --add 2 --stone 1.vision              # extend the LATEST level
-  rhx route.guard.budget --for review --add 2 --peer primo --stone 1.vision # extend one named lane
+  rhx route.guard.budget --for review --add 2 --peer primo --stone 1.vision # extend one reviewer
   rhx route.guard.budget --for review --add 2 --level 1 --stone 1.vision    # extend one named level
   rhx route.guard.budget --for review --add 2 --stone 1.vision --route .behavior/my-feature
 
 options:
   --for     resource type: "review" (required)
   --add     number of budget rounds to add (required)
-  --stone   stone name with guard to update (required)
+  --stone   stone name with guard to update (required) — must name exactly ONE stone
   --peer    peer reviewer slug to extend (default: the latest level in play)
-  --level   review level to extend — reach a LOWER level only when you name it (F022)
+  --level   review level to extend — reach a LOWER level only when you name it
   --route   path to route directory (default: auto-detect from branch)
+  --help    show this help message
+
+.note = the grant is REFUSED by default. the budget is the allowance the route author set with the
+        whole rubric in view, so a top-up past it needs a warrant — all three of:
+          a live URGENT concession on the stone   a driver names the harm that ships if unfixed
+          a target reviewer that has run dry      a pad before the bound bites removes the bound
+          a --stone that named one stone          a prefix names many, and one warrant buys one
+        where it refuses, it names what to run instead.
+
+.note = this command checks no actor, so a human is refused here exactly as a driver is. the human
+        path is a DIFFERENT command: rhx route.mutate grant allow, which mints the privilege flag a
+        guard edit needs. ⇒ a human who wants to raise a bound past its warrant grants the
+        privilege, then edits the guard's budget field itself.
 
 .note = a bare add lands on the LATEST level alone. a lower level stays exhausted unless it is
         explicitly named with --level or --peer — a top-up is a deliberate, targeted act, never a
         blanket sweep that silently heals a level the route author bounded on purpose.
 
+"
+`;
+
+exports[`driver.route.usage-errors.acceptance given: [case3b] route.guard.budget with an absent --for when: [t0] the required --for flag is omitted then: stderr matches snapshot: budget --for absent 1`] = `
+"error: --for is required
+
+route.guard.budget - extend peer reviewer budget
+
+usage:
+  rhx route.guard.budget --for review --add 2 --stone 1.vision              # extend the LATEST level
+  rhx route.guard.budget --for review --add 2 --peer primo --stone 1.vision # extend one reviewer
+  rhx route.guard.budget --for review --add 2 --level 1 --stone 1.vision    # extend one named level
+  rhx route.guard.budget --for review --add 2 --stone 1.vision --route .behavior/my-feature
+
+options:
+  --for     resource type: "review" (required)
+  --add     number of budget rounds to add (required)
+  --stone   stone name with guard to update (required) — must name exactly ONE stone
+  --peer    peer reviewer slug to extend (default: the latest level in play)
+  --level   review level to extend — reach a LOWER level only when you name it
+  --route   path to route directory (default: auto-detect from branch)
+  --help    show this help message
+
+.note = the grant is REFUSED by default. the budget is the allowance the route author set with the
+        whole rubric in view, so a top-up past it needs a warrant — all three of:
+          a live URGENT concession on the stone   a driver names the harm that ships if unfixed
+          a target reviewer that has run dry      a pad before the bound bites removes the bound
+          a --stone that named one stone          a prefix names many, and one warrant buys one
+        where it refuses, it names what to run instead.
+
+.note = this command checks no actor, so a human is refused here exactly as a driver is. the human
+        path is a DIFFERENT command: rhx route.mutate grant allow, which mints the privilege flag a
+        guard edit needs. ⇒ a human who wants to raise a bound past its warrant grants the
+        privilege, then edits the guard's budget field itself.
+
+.note = a bare add lands on the LATEST level alone. a lower level stays exhausted unless it is
+        explicitly named with --level or --peer — a top-up is a deliberate, targeted act, never a
+        blanket sweep that silently heals a level the route author bounded on purpose.
+
+"
+`;
+
+exports[`driver.route.usage-errors.acceptance given: [case3c] route.guard.budget with an absent --stone when: [t0] the required --stone flag is omitted then: stderr matches snapshot: budget --stone absent 1`] = `
+"error: --stone is required
+
+route.guard.budget - extend peer reviewer budget
+
+usage:
+  rhx route.guard.budget --for review --add 2 --stone 1.vision              # extend the LATEST level
+  rhx route.guard.budget --for review --add 2 --peer primo --stone 1.vision # extend one reviewer
+  rhx route.guard.budget --for review --add 2 --level 1 --stone 1.vision    # extend one named level
+  rhx route.guard.budget --for review --add 2 --stone 1.vision --route .behavior/my-feature
+
+options:
+  --for     resource type: "review" (required)
+  --add     number of budget rounds to add (required)
+  --stone   stone name with guard to update (required) — must name exactly ONE stone
+  --peer    peer reviewer slug to extend (default: the latest level in play)
+  --level   review level to extend — reach a LOWER level only when you name it
+  --route   path to route directory (default: auto-detect from branch)
+  --help    show this help message
+
+.note = the grant is REFUSED by default. the budget is the allowance the route author set with the
+        whole rubric in view, so a top-up past it needs a warrant — all three of:
+          a live URGENT concession on the stone   a driver names the harm that ships if unfixed
+          a target reviewer that has run dry      a pad before the bound bites removes the bound
+          a --stone that named one stone          a prefix names many, and one warrant buys one
+        where it refuses, it names what to run instead.
+
+.note = this command checks no actor, so a human is refused here exactly as a driver is. the human
+        path is a DIFFERENT command: rhx route.mutate grant allow, which mints the privilege flag a
+        guard edit needs. ⇒ a human who wants to raise a bound past its warrant grants the
+        privilege, then edits the guard's budget field itself.
+
+.note = a bare add lands on the LATEST level alone. a lower level stays exhausted unless it is
+        explicitly named with --level or --peer — a top-up is a deliberate, targeted act, never a
+        blanket sweep that silently heals a level the route author bounded on purpose.
+
+"
+`;
+
+exports[`driver.route.usage-errors.acceptance given: [case3d] route.guard.budget with a wrong-value --for when: [t0] --for carries a value the flag does not accept then: stderr matches snapshot: budget --for wrong value 1`] = `
+"error: --for must be "review", got "reveiw"
+
+route.guard.budget - extend peer reviewer budget
+
+usage:
+  rhx route.guard.budget --for review --add 2 --stone 1.vision              # extend the LATEST level
+  rhx route.guard.budget --for review --add 2 --peer primo --stone 1.vision # extend one reviewer
+  rhx route.guard.budget --for review --add 2 --level 1 --stone 1.vision    # extend one named level
+  rhx route.guard.budget --for review --add 2 --stone 1.vision --route .behavior/my-feature
+
+options:
+  --for     resource type: "review" (required)
+  --add     number of budget rounds to add (required)
+  --stone   stone name with guard to update (required) — must name exactly ONE stone
+  --peer    peer reviewer slug to extend (default: the latest level in play)
+  --level   review level to extend — reach a LOWER level only when you name it
+  --route   path to route directory (default: auto-detect from branch)
+  --help    show this help message
+
+.note = the grant is REFUSED by default. the budget is the allowance the route author set with the
+        whole rubric in view, so a top-up past it needs a warrant — all three of:
+          a live URGENT concession on the stone   a driver names the harm that ships if unfixed
+          a target reviewer that has run dry      a pad before the bound bites removes the bound
+          a --stone that named one stone          a prefix names many, and one warrant buys one
+        where it refuses, it names what to run instead.
+
+.note = this command checks no actor, so a human is refused here exactly as a driver is. the human
+        path is a DIFFERENT command: rhx route.mutate grant allow, which mints the privilege flag a
+        guard edit needs. ⇒ a human who wants to raise a bound past its warrant grants the
+        privilege, then edits the guard's budget field itself.
+
+.note = a bare add lands on the LATEST level alone. a lower level stays exhausted unless it is
+        explicitly named with --level or --peer — a top-up is a deliberate, targeted act, never a
+        blanket sweep that silently heals a level the route author bounded on purpose.
+
+"
+`;
+
+exports[`driver.route.usage-errors.acceptance given: [case4] route.guard.budget --help when: [t0] --help is asked for, with no other flag then: stdout matches snapshot: budget --help 1`] = `
+"route.guard.budget - extend peer reviewer budget
+
+usage:
+  rhx route.guard.budget --for review --add 2 --stone 1.vision              # extend the LATEST level
+  rhx route.guard.budget --for review --add 2 --peer primo --stone 1.vision # extend one reviewer
+  rhx route.guard.budget --for review --add 2 --level 1 --stone 1.vision    # extend one named level
+  rhx route.guard.budget --for review --add 2 --stone 1.vision --route .behavior/my-feature
+
+options:
+  --for     resource type: "review" (required)
+  --add     number of budget rounds to add (required)
+  --stone   stone name with guard to update (required) — must name exactly ONE stone
+  --peer    peer reviewer slug to extend (default: the latest level in play)
+  --level   review level to extend — reach a LOWER level only when you name it
+  --route   path to route directory (default: auto-detect from branch)
+  --help    show this help message
+
+.note = the grant is REFUSED by default. the budget is the allowance the route author set with the
+        whole rubric in view, so a top-up past it needs a warrant — all three of:
+          a live URGENT concession on the stone   a driver names the harm that ships if unfixed
+          a target reviewer that has run dry      a pad before the bound bites removes the bound
+          a --stone that named one stone          a prefix names many, and one warrant buys one
+        where it refuses, it names what to run instead.
+
+.note = this command checks no actor, so a human is refused here exactly as a driver is. the human
+        path is a DIFFERENT command: rhx route.mutate grant allow, which mints the privilege flag a
+        guard edit needs. ⇒ a human who wants to raise a bound past its warrant grants the
+        privilege, then edits the guard's budget field itself.
+
+.note = a bare add lands on the LATEST level alone. a lower level stays exhausted unless it is
+        explicitly named with --level or --peer — a top-up is a deliberate, targeted act, never a
+        blanket sweep that silently heals a level the route author bounded on purpose.
+"
+`;
+
+exports[`driver.route.usage-errors.acceptance given: [case5] route.mutate grant --help when: [t0] --help rides an action the command would reject then: stdout matches snapshot: mutate grant --help 1`] = `
+"route.mutate grant - manage route protection privilege
+
+usage:
+  rhx route.mutate grant allow   # grant privilege (human only — refused without a tty)
+  rhx route.mutate grant block   # revoke privilege
+  rhx route.mutate grant get     # check privilege state
+
+options:
+  --route <path>    route path (default: auto-detect from branch)
+  --help            show this help message
+
+.note = the flag \`allow\` writes lifts EVERY protected write on the route at once — a guard's
+        \`budget:\` line among them. so it is human only, and that is enforced rather than asked.
 "
 `;

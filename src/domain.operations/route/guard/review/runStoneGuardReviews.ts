@@ -41,6 +41,7 @@ import { formatArtifactStreamBuckets } from '../tree/formatArtifactStreamBuckets
 import { asConcurrencyGroupLeakAdvisory } from './asConcurrencyGroupLeakAdvisory';
 import { asReviewLevelPourAnnounce } from './asReviewLevelPourAnnounce';
 import { asReviewProgressOutcome } from './asReviewProgressOutcome';
+import { computeReviewCompleted } from './computeReviewCompleted';
 import { getAllConcurrencyGroupLeaks } from './getAllConcurrencyGroupLeaks';
 import { getAllReviewLevelsAsc } from './getAllReviewLevelsAsc';
 import { getOneReviewLevelPourBound } from './getOneReviewLevelPourBound';
@@ -648,12 +649,13 @@ export const runStoneGuardReviews = async (
         context,
       );
 
-      // determine if review actually completed (vs constraint/malfunction)
-      // .note = exit 2 with blockers = review worked, found issues
-      // .note = exit 2 without blockers = genuine constraint (e.g., absent API key)
-      const reviewCompleted =
-        review.exitClass === 'passed' ||
-        (review.exitClass === 'constraint' && review.blockers > 0);
+      // did the reviewer get its turn? — the meter charges on that one question, and the rule
+      // lives in `computeReviewCompleted` (with its unit clamp, and the note on why an
+      // unreadable review counts 0 here and 1 at the passage gate)
+      const reviewCompleted = computeReviewCompleted({
+        exitClass: review.exitClass,
+        blockers: review.blockers,
+      });
 
       // increment meter only when review actually completed
       // .note = the write is an APPEND whose read takes last-per-slug, so two

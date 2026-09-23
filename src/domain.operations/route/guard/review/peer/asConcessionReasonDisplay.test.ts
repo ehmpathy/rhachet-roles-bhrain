@@ -3,7 +3,8 @@ import { given, then, when } from 'test-fns';
 import { asConcessionReasonDisplay } from './asConcessionReasonDisplay';
 import {
   genRouteGuardExhaustedReason,
-  REASON_TEXT_CONCESSION,
+  REASON_TEXT_CONCESSION_BETTER,
+  REASON_TEXT_CONCESSION_URGENT,
   WARN_TEXT_CONCESSION_URGENT,
 } from './genRouteGuardExhaustedReason';
 
@@ -37,8 +38,14 @@ describe('asConcessionReasonDisplay', () => {
       const result = asConcessionReasonDisplay({ reason });
 
       then('the raw marker is replaced by the human concession line', () => {
-        expect(result.reasonText).toEqual(REASON_TEXT_CONCESSION);
+        expect(result.reasonText).toEqual(REASON_TEXT_CONCESSION_BETTER);
         expect(result.reasonText).not.toContain('budget exhausted');
+      });
+
+      // 🔴 the line names the FIX and no round at all. a `better` grade earns none past the
+      //    meter (F04), so a reason that promised one would report a remedy the gate refuses
+      then('it promises no budget — the fix is the whole remedy', () => {
+        expect(result.reasonText).not.toContain('budget');
       });
 
       then(
@@ -60,15 +67,23 @@ describe('asConcessionReasonDisplay', () => {
       const result = asConcessionReasonDisplay({ reason });
 
       then('the raw marker is replaced by the human concession line', () => {
-        expect(result.reasonText).toEqual(REASON_TEXT_CONCESSION);
+        expect(result.reasonText).toEqual(REASON_TEXT_CONCESSION_URGENT);
       });
 
+      // ⚠️ the two severities take DIFFERENT lines, and this is the clamp on that split. the
+      //    urgent one still names the round, because urgent is the one grade that earns it —
+      //    so a merge back to one literal would put a false promise on every better halt
       then(
-        'the urgent warn is surfaced — a human grant is owed this PR',
+        'and it is NOT the better line — the two say different things',
         () => {
-          expect(result.warnText).toEqual(WARN_TEXT_CONCESSION_URGENT);
+          expect(result.reasonText).not.toEqual(REASON_TEXT_CONCESSION_BETTER);
+          expect(result.reasonText).toContain('budget');
         },
       );
+
+      then('the urgent warn is surfaced — the stone owes more budget', () => {
+        expect(result.warnText).toEqual(WARN_TEXT_CONCESSION_URGENT);
+      });
     });
   });
 

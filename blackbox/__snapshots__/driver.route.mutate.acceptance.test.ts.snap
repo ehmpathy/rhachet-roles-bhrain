@@ -191,15 +191,17 @@ exports[`driver.route.mutate.acceptance given: [case4] privilege management when
 "
 `;
 
-exports[`driver.route.mutate.acceptance given: [case4] privilege management when: [t1] grant allow creates flag then: output matches snapshot: grant allow 1`] = `
+exports[`driver.route.mutate.acceptance given: [case4] privilege management when: [t1] grant allow is REFUSED for a non-human caller then: stderr matches snapshot: grant allow - refused 1`] = `
 "
-🦉 privilege granted
+🦉 privilege refused
 
 🗿 route.mutate grant allow
    ├─ route = .behavior/example
-   └─ flag = .route/.privilege.mutate.flag created
-
-✨ route mutation now allowed until revoked
+   ├─ refused — this grant is human only
+   │  └─ the flag it writes lifts every protected write on the route at once
+   │
+   └─ what to do
+      └─ ask a human to run it from a terminal, or drive the route as it stands
 
 "
 `;
@@ -222,6 +224,15 @@ exports[`driver.route.mutate.acceptance given: [case4] privilege management when
    └─ flag = .route/.privilege.mutate.flag removed
 
 🔒 route mutation now blocked
+
+"
+`;
+
+exports[`driver.route.mutate.acceptance given: [case4] privilege management when: [t4] grant get shows blocked again then: stdout matches snapshot: grant get - blocked again 1`] = `
+"
+🗿 route.mutate grant get
+   ├─ route = .behavior/example
+   └─ status = blocked (no privilege flag)
 
 "
 `;
@@ -271,15 +282,17 @@ exports[`driver.route.mutate.acceptance given: [case6] journey: blocked -> grant
 "
 `;
 
-exports[`driver.route.mutate.acceptance given: [case6] journey: blocked -> grant -> allowed -> revoke -> blocked when: [t0] journey executes sequentially then: completes full privilege cycle with snapshots: phase 2: grant allow 1`] = `
+exports[`driver.route.mutate.acceptance given: [case6] journey: blocked -> grant -> allowed -> revoke -> blocked when: [t0] journey executes sequentially then: completes full privilege cycle with snapshots: phase 2a: grant allow refused 1`] = `
 "
-🦉 privilege granted
+🦉 privilege refused
 
 🗿 route.mutate grant allow
    ├─ route = .behavior/example
-   └─ flag = .route/.privilege.mutate.flag created
-
-✨ route mutation now allowed until revoked
+   ├─ refused — this grant is human only
+   │  └─ the flag it writes lifts every protected write on the route at once
+   │
+   └─ what to do
+      └─ ask a human to run it from a terminal, or drive the route as it stands
 
 "
 `;

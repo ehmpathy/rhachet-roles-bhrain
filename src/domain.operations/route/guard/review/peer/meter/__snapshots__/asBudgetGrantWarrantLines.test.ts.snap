@@ -1,0 +1,21 @@
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
+
+exports[`asBudgetGrantWarrantLines given: [case1] one reviewer held the warrant when: [t0] the rows are built then: the bytes a driver reads are pinned 1`] = `
+"   │
+   ├─ granted — earned by a live urgent concession
+   │  └─ mech-rules · conceded urgent
+   │
+   ├─ 🟡 tell your human why this stone bought budget
+   │"
+`;
+
+exports[`asBudgetGrantWarrantLines given: [case2] several reviewers held the warrant when: [t0] the rows are built then: the bytes a driver reads are pinned 1`] = `
+"   │
+   ├─ granted — earned by a live urgent concession
+   │  ├─ linter · conceded urgent
+   │  ├─ spellcheck · conceded urgent
+   │  └─ mech-rules · conceded urgent
+   │
+   ├─ 🟡 tell your human why this stone bought budget
+   │"
+`;

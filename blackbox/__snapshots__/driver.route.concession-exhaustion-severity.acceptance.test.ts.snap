@@ -119,7 +119,7 @@ exports[`driver.route.concession-exhaustion-severity.acceptance given: [case2] e
    ├─ stone = 1.vision
    ├─ passage = blocked
    ├─ reason = you conceded — the round to confirm your fix needs more budget
-   │  └─ 🟡 an urgent concession stands — its harm ships if unfixed, so this round is owed a human's grant
+   │  └─ 🟡 an urgent concession stands — its harm ships if unfixed, so this stone earns more budget
    ├─ options
    │  ├─ increase budget — yours to spend
    │  │  └─ rhx route.guard.budget --for review --add N --peer lane --stone 1.vision

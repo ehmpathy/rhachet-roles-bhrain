@@ -29,7 +29,7 @@ import { setStoneAsConcernAbsorbed } from '../stones/setStoneAsConcernAbsorbed';
  *         — the maintenance floor, hard-capped by the budget: an all-`better` exhaustion
  *         is SHED by the judge and PASSES with no budget increase. pass `urgent` where a
  *         test needs the exhaustion to HOLD the road (an urgent concession keeps its hold,
- *         so the exhaustion halts and warns a human).
+ *         so the exhaustion halts and warns that the stone earns more budget).
  */
 export const concedeEveryPeerConcern = async (input: {
   route: string;

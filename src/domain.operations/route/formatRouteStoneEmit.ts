@@ -472,9 +472,14 @@ export const formatRouteStoneEmit = (input: FormatInput): string => {
           reason: input.reason,
         });
         lines.push(`   ${reasonConnector} reason = ${reasonText}`);
-        // 🟡 the urgent warn tells the human a grant is owed this PR
+        // 🟡 the urgent warn names what the grade earns — more budget, for this stone
         //    (define.invariant.review.peer.budget.urgent-earns-budget). it must reach EVERY
         //    halt a driver sees, and this synchronous emit is the primary one.
+        // 🔴 it states the EARNING and never the owner, because the two surfaces that render
+        //    it disagree on who spends: the exhaustion gate's options block says `yours to
+        //    spend` (the urgent grade is the driver's own warrant), while the judge halt says
+        //    `ask your human` (`…judge.urgent-guides-the-budget-ask`). a warn that picked one
+        //    owner would contradict whichever block it sat above — and it sits above both.
         // 🔴 nested under `reason`, never a peer of it — the warn explains WHY that reason
         //    is a human wait, so it is the reason's child, not a second top-level fact.
         //    `warnText` is only ever set for an urgent concession, which always carries the

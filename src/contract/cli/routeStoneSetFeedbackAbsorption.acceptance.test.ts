@@ -1313,8 +1313,8 @@ describe('routeStoneSet.feedbackAbsorption.acceptance', () => {
           // 🔴 the concede is URGENT (S16): a `better` concession is hard-capped by the
           //    budget and SHED by the judge — it PASSES with no budget increase, so it names
           //    no budget lever. an `urgent` concession ships harm, so it KEEPS the hold and
-          //    the exhaustion halt names the driver's own budget top-up AND warns a human a
-          //    grant is owed. the concede is SETUP; the spawned `--as passed` is the subject,
+          //    the exhaustion halt names the driver's own budget top-up AND warns that the
+          //    stone earns more budget. the concede is SETUP; the spawned `--as passed` is the subject,
           //    and it must clear the stance gate and land on the urgent exhaustion surface.
           await concedeEveryPeerConcern({
             route: scene.tempDir,

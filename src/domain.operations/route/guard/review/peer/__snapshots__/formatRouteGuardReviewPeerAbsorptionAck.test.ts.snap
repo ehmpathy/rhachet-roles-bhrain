@@ -1,15 +1,28 @@
 // Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
 
-exports[`formatRouteGuardReviewPeerAbsorptionAck given: [case4] the rendered body, whole when: [t0] a concede lands on a spent lane then: the bytes a driver reads are pinned 1`] = `
+exports[`formatRouteGuardReviewPeerAbsorptionAck given: [case4] the rendered body, whole when: [t0] an URGENT concede lands on a spent lane then: the bytes a driver reads are pinned 1`] = `
 "🦉 so it is
 
-🗿 route.stone.set --as conceded
+🗿 route.stone.set --as conceded --severity urgent
+   ├─ stone = 5.1.execution
+   ├─ with  = ergonomist (l1), 4 rounds, 4 budget — budget spent
+   ├─ about = blocker.1 — the last concern this lane owed
+   ├─ warn  = ships harm — tell your human why this stone bought budget
+   │
+   └─ fix the blocker, buy the round, then re-arrive
+      ├─ rhx route.guard.budget --for review --add 2 --peer ergonomist --stone 5.1.execution
+      └─ rhx route.stone.set --stone 5.1.execution --as passed"
+`;
+
+exports[`formatRouteGuardReviewPeerAbsorptionAck given: [case4] the rendered body, whole when: [t0b] a BETTER concede lands on a spent lane then: the bytes a driver reads are pinned 1`] = `
+"🦉 so it is
+
+🗿 route.stone.set --as conceded --severity better
    ├─ stone = 5.1.execution
    ├─ with  = ergonomist (l1), 4 rounds, 4 budget — budget spent
    ├─ about = blocker.1 — the last concern this lane owed
    │
-   └─ fix the blocker, buy the round, then re-arrive
-      ├─ rhx route.guard.budget --for review --add 2 --peer ergonomist --stone 5.1.execution
+   └─ fix the blocker, then re-arrive
       └─ rhx route.stone.set --stone 5.1.execution --as passed"
 `;
 

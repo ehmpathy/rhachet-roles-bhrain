@@ -5,9 +5,9 @@ import * as path from 'path';
 import { enumFilesFromGlob } from '@src/utils/enumFilesFromGlob';
 
 import { getGuardFilesByStone } from '../getGuardFilesByStone';
+import { getGuardStoneNames } from '../getGuardStoneNames';
 import { isENOENT } from '../isENOENT';
 import type { GuardUpgradeResult } from './GuardUpgradeResult';
-import { getGuardStoneNames } from './getGuardStoneNames';
 import { getStoneGuardUpgradePlan } from './getStoneGuardUpgradePlan';
 
 /**

@@ -37,9 +37,13 @@ describe('computeBlockRemedyGroups', () => {
         //    (human, driver, human), and `formatRouteDriveMixedHalt` rendered budget first. one
         //    list, two orders. `rule.always.spend-own-levers-before-escalation` settles it:
         //    "sort by owner and spend yours first."
+        // 🔴 slot 1 holds CONVERGE, not the top-up. this reason carries no concession mark, so
+        //    no warrant stands and `route.guard.budget` would refuse the grant — a halt that
+        //    printed the command anyway would advertise a refusal. the driver's lever at an
+        //    un-conceded exhaustion is the answer itself (`rule.always.converge-to-terminal`)
         then("the order is BY OWNER — the driver's own lever leads", () => {
           expect(groups.map((group) => group.label)).toEqual([
-            'increase budget — yours to spend',
+            'converge with the reviewer — yours to run',
             'overrule the malfunction — a human must grant',
             'approve as-is — a human must grant',
           ]);
@@ -48,23 +52,58 @@ describe('computeBlockRemedyGroups', () => {
         then(
           'each label names its owner, so no remedy reads as the wrong kind',
           () => {
-            expect(groups[0]!.label).toContain('yours to spend');
+            expect(groups[0]!.label).toContain('yours to run');
             expect(groups[1]!.label).toContain('a human must grant');
             expect(groups[2]!.label).toContain('a human must grant');
           },
         );
+
+        then('the converge command names the exhausted lane', () => {
+          expect(groups[0]!.cmd).toEqual(
+            'rhx route.stone.set --stone 1.vision --as absorbed --that mech-rules',
+          );
+        });
+      });
+
+      // the ORDER claim above is the one this case exists for, so it is pinned on both halt
+      // kinds — a driver-owned slot that holds a different command must still hold the same slot
+      when('[t1] the same mixed halt carries an URGENT concession', () => {
+        const groups = computeBlockRemedyGroups({
+          stone: '1.vision',
+          passage: 'malfunction',
+          reason:
+            'reviewer or judge malfunctioned; an urgent concession earned a round; peer reviewer budget exhausted: mech-rules',
+        });
+
+        then('the order is unchanged, and slot 1 is the top-up', () => {
+          expect(groups.map((group) => group.label)).toEqual([
+            'increase budget — yours to spend',
+            'overrule the malfunction — a human must grant',
+            'approve as-is — a human must grant',
+          ]);
+        });
       });
     },
   );
 
-  given('[case2] a budget-only halt', () => {
+  /**
+   * .what = the budget-only halt that STILL earns a top-up
+   * .why = the top-up's shape — its `--peer` rule, its multi-slug rule, its null-reason fallback —
+   *        is unchanged, and it is pinned here on the one halt kind that still offers it. the
+   *        urgent mark is now part of each fixture rather than an added case, because the shape
+   *        and the warrant are inseparable: there is no halt where a top-up renders without one.
+   */
+  given('[case2] a budget-only halt with an URGENT concession', () => {
     when('[t0] one reviewer is named as exhausted', () => {
       const groups = computeBlockRemedyGroups({
         stone: '5.3.verification',
         passage: 'blocked',
-        reason: 'peer reviewer budget exhausted: mech-given-when-then',
+        reason:
+          'an urgent concession earned a round; peer reviewer budget exhausted: mech-given-when-then',
       });
 
+      // 🔴 the approve tail STANDS beside the top-up, and that is the severity split: an urgent
+      //    concession ships nameable harm, so it earns a human's glance as well as the round
       then(
         'the branch is unchanged by the extraction — budget, then approve',
         () => {
@@ -92,7 +131,8 @@ describe('computeBlockRemedyGroups', () => {
       const groups = computeBlockRemedyGroups({
         stone: '5.3.verification',
         passage: 'blocked',
-        reason: 'peer reviewer budget exhausted: r-one, r-two, r-three',
+        reason:
+          'an urgent concession earned a round; peer reviewer budget exhausted: r-one, r-two, r-three',
       });
 
       // a top-up with no --peer extends every reviewer on the stone at once, which is what a
@@ -108,11 +148,12 @@ describe('computeBlockRemedyGroups', () => {
       const groups = computeBlockRemedyGroups({
         stone: '5.3.verification',
         passage: 'blocked',
-        reason: 'peer reviewer budget exhausted',
+        reason:
+          'an urgent concession earned a round; peer reviewer budget exhausted',
       });
 
       // ⚠️ this is the shape `formatRouteDriveBudgetExhausted` falls back to when its caller
-      //    passes `reason: null`. the parse yields no slug, so --peer is omitted — matching what
+      //    passes `reason: null`. the parse yields no slug, so --peer is omitted, which is what
       //    the hand-rolled code did with a null reason.
       then('the remedies still render, with no --peer', () => {
         expect(groups.map((group) => group.label)).toEqual([
@@ -120,6 +161,74 @@ describe('computeBlockRemedyGroups', () => {
           'approve as-is — a human must grant',
         ]);
         expect(groups[0]!.cmd).not.toContain('--peer');
+      });
+    });
+  });
+
+  /**
+   * .what = the ordinary exhaustion — the driver conceded naught
+   * .why = 🔴 the halt kind a driver meets most often, and the one that carried the defect. it
+   *        printed `increase budget — yours to spend` while the gate would refuse the grant: no
+   *        concession stands, so no warrant does. a halt must not hand over a command that fails.
+   */
+  given('[case2b] a budget-only halt with NO concession', () => {
+    when('[t0] one reviewer is named as exhausted', () => {
+      const groups = computeBlockRemedyGroups({
+        stone: '5.3.verification',
+        passage: 'blocked',
+        reason: 'peer reviewer budget exhausted: mech-given-when-then',
+      });
+
+      then('the top-up is NOT offered — no warrant stands', () => {
+        expect(groups.map((group) => group.label).join('\n')).not.toContain(
+          'increase budget',
+        );
+        expect(groups.map((group) => group.cmd).join('\n')).not.toContain(
+          'route.guard.budget',
+        );
+      });
+
+      // the debt outlives the meter, so the answer is the lever that stands
+      then('converge leads, and the human tail follows it', () => {
+        expect(groups.map((group) => group.label)).toEqual([
+          'converge with the reviewer — yours to run',
+          'approve as-is — a human must grant',
+        ]);
+      });
+
+      then('a lone slug is named with --that', () => {
+        expect(groups[0]!.cmd).toEqual(
+          'rhx route.stone.set --stone 5.3.verification --as absorbed --that mech-given-when-then',
+        );
+      });
+    });
+
+    when('[t1] SEVERAL reviewers are named as exhausted', () => {
+      const groups = computeBlockRemedyGroups({
+        stone: '5.3.verification',
+        passage: 'blocked',
+        reason: 'peer reviewer budget exhausted: r-one, r-two, r-three',
+      });
+
+      // ⚠️ `--as absorbed --that` takes ONE slug and there is no sweep form, so a multi-slug
+      //    halt cannot name a lane — it names the shape instead, and the driver picks from the
+      //    reviews section above. a guessed slug would be worse than a placeholder
+      then('a placeholder stands in — no slug is guessed', () => {
+        expect(groups[0]!.cmd).toEqual(
+          'rhx route.stone.set --stone 5.3.verification --as absorbed --that <reviewer>',
+        );
+      });
+    });
+
+    when('[t2] NO slug suffix follows the halt text', () => {
+      const groups = computeBlockRemedyGroups({
+        stone: '5.3.verification',
+        passage: 'blocked',
+        reason: 'peer reviewer budget exhausted',
+      });
+
+      then('the placeholder stands here too', () => {
+        expect(groups[0]!.cmd).toContain('--that <reviewer>');
       });
     });
   });
@@ -133,11 +242,13 @@ describe('computeBlockRemedyGroups', () => {
       });
 
       then(
-        'the branch is unchanged by the extraction — overrule, then the prose tail',
+        'the DRIVER leads — its own lever, then the human overrule, then two prose lines',
         () => {
           expect(groups.map((group) => group.label)).toEqual([
+            'converge with the reviewer — yours to run, and the levels above stay unlocked',
             'overrule the malfunction — a human must grant',
             'or fix the reviewer, then retry',
+            'a broken level never halts the drive — converge the level above it',
           ]);
         },
       );
@@ -148,8 +259,28 @@ describe('computeBlockRemedyGroups', () => {
         );
       });
 
+      // 🔴 the regression clamp for S05.
+      //    this branch used to open on `overrule … a human must grant`, so a malfunction-only halt
+      //    offered the driver no lever at all and read as a wall — measured on this route at i004,
+      //    where the driver halted while a poured level sat unconverged. slot 0 must be a lever the
+      //    driver can run, with a command it can copy.
+      then(
+        'slot 0 is the DRIVER lever, and it carries a runnable command',
+        () => {
+          expect(groups[0]!.label).toContain('yours to run');
+          expect(groups[0]!.cmd).toContain('--as absorbed');
+        },
+      );
+
+      // ⚠️ the block's LAST word is a push rather than a permission: an overrule sat last, so the
+      //    remedy list closed on an escalation. the latch says the drive goes on regardless.
+      then('the last line pushes the drive on, and names no one act', () => {
+        expect(groups.at(-1)!.label).toContain('never halts the drive');
+        expect(groups.at(-1)!.cmd).toEqual(null);
+      });
+
       then('the prose tail carries no command — it names no one act', () => {
-        expect(groups[1]!.cmd).toEqual(null);
+        expect(groups[2]!.cmd).toEqual(null);
       });
     });
 
@@ -163,11 +294,17 @@ describe('computeBlockRemedyGroups', () => {
       then(
         'the noun follows the passage — constraint, never malfunction',
         () => {
-          expect(groups[0]!.label).toEqual(
+          expect(groups[1]!.label).toEqual(
             'overrule the constraint — a human must grant',
           );
         },
       );
+
+      // the driver lever is verdict-blind: a constraint is terminal-for-unlock exactly as a
+      // malfunction is, so it earns the same lead rather than a second label to keep in step.
+      then('the constraint earns the same driver lead', () => {
+        expect(groups[0]!.label).toContain('yours to run');
+      });
     });
   });
 
@@ -209,17 +346,24 @@ describe('computeBlockRemedyGroups', () => {
           'concessions await the round that confirms them; peer reviewer budget exhausted: mech-rules',
       });
 
-      // 🔴 S12 — the driver declared the round warranted and fixed what it named, so the
-      //    top-up is the sanctioned remedy and it is theirs. to print `approve as-is` here
-      //    would summon a human the stance already made unnecessary
-      then('the top-up is the ONLY remedy — no human is summoned', () => {
-        expect(groups.map((group) => group.label)).toEqual([
-          'increase budget — yours to spend',
-        ]);
+      // 🔴 S12 — the driver declared the round warranted and fixed what it named, so the remedy
+      //    is theirs. to print `approve as-is` here would summon a human the stance already made
+      //    unnecessary. that half is unchanged
+      then('one remedy only — no human is summoned', () => {
+        expect(groups).toHaveLength(1);
+        expect(groups[0]!.label).toContain('yours to run');
       });
 
-      then('and the top-up is scoped to the conceded lane', () => {
-        expect(groups[0]!.cmd).toContain('--peer mech-rules');
+      // 🔴 and the remedy is the FIX, never the top-up (F04). a `better` grade earns no round
+      //    past the meter, so the lane will not re-read the fix — which is the design rather
+      //    than a loss to route around. the halt that offered a top-up here offered a refusal
+      then('the remedy is the fix, and the top-up is gone', () => {
+        expect(groups[0]!.label).toEqual(
+          'fix what you conceded — yours to run',
+        );
+        expect(groups[0]!.cmd).toEqual(
+          'rhx route.stone.set --stone 5.1.execution --as passed',
+        );
       });
     });
 
@@ -235,7 +379,7 @@ describe('computeBlockRemedyGroups', () => {
       // suppresses the APPROVAL tail only, never an overrule
       then('every remedy is offered, approve tail included', () => {
         expect(groups.map((group) => group.label)).toEqual([
-          'increase budget — yours to spend',
+          'fix what you conceded — yours to run',
           'overrule the malfunction — a human must grant',
           'approve as-is — a human must grant',
         ]);
@@ -255,9 +399,12 @@ describe('computeBlockRemedyGroups', () => {
           reason: 'peer reviewer budget exhausted: mech-rules, arch-bounds',
         });
 
+        // ⇒ and the driver's slot holds CONVERGE, since an absent mark is an absent warrant.
+        //   the two facts travel together by construction: the mark that suppresses the human
+        //   tail is the same mark the gate reads, so a halt cannot offer a top-up it would refuse
         then('the approve tail stands — a human is still owed', () => {
           expect(groups.map((group) => group.label)).toEqual([
-            'increase budget — yours to spend',
+            'converge with the reviewer — yours to run',
             'approve as-is — a human must grant',
           ]);
         });

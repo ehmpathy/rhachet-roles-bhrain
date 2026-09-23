@@ -59,8 +59,8 @@ the `reviewed?` judge sums the residual concerns **stone-wide** (across every no
 after disputes shed their concerns) and compares to one allowance. over the allowance holds the stone.
 
 - ⇒ sub-law: **`define.invariant.review.peer.budget.urgent-earns-budget`** — only a live `urgent`
-  concession earns an increased budget and warns a human; an all-`better` (or no-urgent) hit is good
-  enough and proceeds with no human.
+  concession earns an increased budget, and the driver owes its human a written why the stone bought
+  it; an all-`better` (or no-urgent) hit is good enough and proceeds with no human.
 - ⇒ sub-law: **`define.invariant.review.peer.judge.urgent-guides-the-budget-ask`** — when the judge
   holds on a live urgent concession, it GUIDES the driver to the human budget-ask, the way `approved?`
   guides to the approval-ask.

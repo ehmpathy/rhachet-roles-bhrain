@@ -3,6 +3,7 @@ import { BadRequestError } from 'helpful-errors';
 import { PassageReport } from '@src/domain.objects/Driver/PassageReport';
 import { getGuardPeerReviews } from '@src/domain.objects/Driver/RouteStoneGuard';
 
+import { asUrgentHarmSet } from '../asUrgentHarmSet';
 import { getRepoRootWithFallback } from '../guard/getRepoRootWithFallback';
 import { asConfiguredReviewerBySanitizedSlug } from '../guard/review/peer/asConfiguredReviewerBySanitizedSlug';
 import { asPeerReviewLevelBySlug } from '../guard/review/peer/asPeerReviewLevelBySlug';
@@ -105,8 +106,8 @@ export const setStoneAsConcernAbsorbed = async (input: {
         `--severity is required for --as conceded`,
         ``,
         `every concession is graded by its harm — there is no ungraded concede.`,
-        `  --severity urgent  — a shipped harm (security | safety | monetary | reputation |`,
-        `                       behavioral); earns budget, warns the human`,
+        `  --severity urgent  — a shipped harm; earns budget, warns the human`,
+        `                       (${asUrgentHarmSet({ separator: ' | ' })})`,
         `  --severity better  — code idealism / maintenance; the floor, never earns budget`,
       ].join('\n'),
       { stone: input.stone },

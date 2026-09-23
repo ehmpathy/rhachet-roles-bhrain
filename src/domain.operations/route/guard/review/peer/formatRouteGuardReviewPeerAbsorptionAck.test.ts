@@ -80,14 +80,17 @@ describe('formatRouteGuardReviewPeerAbsorptionAck', () => {
   });
 
   given('[case2] a CONCEDE on a lane whose budget is spent', () => {
-    when('[t0] the ack is rendered', () => {
+    // 🔴 the grade is part of the fixture, and it carries weight: past a spent meter only a
+    //    nameable harm buys a round, so the buy sequence these [t0] assertions pin lives on the
+    //    URGENT branch alone. an ungraded fixture would render a branch that has no buy at all.
+    when('[t0] the ack is rendered, on an URGENT grade', () => {
       const stdout = formatRouteGuardReviewPeerAbsorptionAck({
         absorption: 'conceded',
         stone: '5.1.execution',
         slug: 'ergonomist',
         concern: { kind: 'blocker', ordinal: 1 },
         why: null,
-        severity: null,
+        severity: 'urgent',
         meter: { level: 1, rounds: 4, budget: 4 },
         concernsLeft: 0,
         concernsElsewhere: 0,
@@ -161,6 +164,60 @@ describe('formatRouteGuardReviewPeerAbsorptionAck', () => {
           expect(stdout).not.toContain('fix the blocker');
         },
       );
+    });
+
+    // 🔴 the MEASURED defect, clamped. twice observed and twice declined by hand: an approved
+    //    lane with one `better` nitpick, and a peer driver's seven `better` concessions rendered
+    //    the buy three times in one halt. the budget IS the allowance for taste, so past it a
+    //    `better` grade earns no round — and the command must not appear in the sequence at all.
+    when('[t2] the grade is BETTER and the budget is spent', () => {
+      const stdout = formatRouteGuardReviewPeerAbsorptionAck({
+        absorption: 'conceded',
+        stone: '1.vision',
+        slug: 'experience-coverage',
+        concern: { kind: 'nitpick', ordinal: 1 },
+        why: null,
+        severity: 'better',
+        meter: { level: 1, rounds: 3, budget: 3 },
+        concernsLeft: 0,
+        concernsElsewhere: 0,
+      });
+
+      then('NO top-up is offered — the grade earned no round', () => {
+        expect(stdout).not.toContain('route.guard.budget');
+        expect(stdout).not.toContain('buy the round');
+      });
+
+      then(
+        'the fix and the re-arrival stand — only the purchase is gone',
+        () => {
+          expect(stdout).toContain('fix the nitpick, then re-arrive');
+          expect(stdout).toContain(
+            'rhx route.stone.set --stone 1.vision --as passed',
+          );
+        },
+      );
+    });
+
+    // an UNgraded stance is a row written before the severity field existed. it falls to the
+    // `better` branch, which is the safe direction: an unearned round is refused rather than
+    // sold. a `!== 'better'` form reads as the same intent and would fail OPEN on every legacy row
+    when('[t3] the grade is ABSENT and the budget is spent', () => {
+      const stdout = formatRouteGuardReviewPeerAbsorptionAck({
+        absorption: 'conceded',
+        stone: '1.vision',
+        slug: 'experience-coverage',
+        concern: { kind: 'nitpick', ordinal: 1 },
+        why: null,
+        severity: null,
+        meter: { level: 1, rounds: 3, budget: 3 },
+        concernsLeft: 0,
+        concernsElsewhere: 0,
+      });
+
+      then('it fails closed — no top-up', () => {
+        expect(stdout).not.toContain('route.guard.budget');
+      });
     });
   });
 
@@ -286,18 +343,106 @@ describe('formatRouteGuardReviewPeerAbsorptionAck', () => {
     });
   });
 
+  // 🔴 every `[tn]` here pins the whole body AND asserts the shape that body must carry.
+  //    the snapshot alone was the forbidden `toMatchSnapshot()`-with-no-assertions shape: a
+  //    refactor that deleted a branch would be greeted by a `--ci` mismatch a resnap silences,
+  //    and the structural claim would never have been written down
+  //    (`rule.forbid.failhide` · `rule.require.snapshots`, raised i001/r002 n1).
   given('[case4] the rendered body, whole', () => {
-    when('[t0] a concede lands on a spent lane', () => {
+    when('[t0] an URGENT concede lands on a spent lane', () => {
       const stdout = formatRouteGuardReviewPeerAbsorptionAck({
         absorption: 'conceded',
         stone: '5.1.execution',
         slug: 'ergonomist',
         concern: { kind: 'blocker', ordinal: 1 },
         why: null,
-        severity: null,
+        severity: 'urgent',
         meter: { level: 1, rounds: 4, budget: 4 },
         concernsLeft: 0,
         concernsElsewhere: 0,
+      });
+
+      then('the grade rides the header, beside the stance it grades', () => {
+        expect(stdout).toContain(
+          '🗿 route.stone.set --as conceded --severity urgent',
+        );
+      });
+
+      // 🔴 the header says what was declared; this row says what it obliges. the two carry
+      //    different facts, so the row does not restate the word `urgent` the header holds
+      then('the warn names the obligation, never the grade again', () => {
+        expect(stdout).toContain('ships harm');
+        expect(stdout).not.toContain('warn  = urgent');
+      });
+
+      // 🔴 the verb is imperative and the actor is the driver. no mechanism mails a human, so a
+      //    passive `your human is warned` would read as a notice already sent — and a driver
+      //    that trusts it writes naught (`rule.avoid.passive-voice`)
+      //
+      // 🟡 and the scope named is the stone, never a pull — budget is granted per stone, so a
+      //    pull may hold many stones, or none of this one's rounds
+      then(
+        'the row asks the driver to write the why, never reports a send',
+        () => {
+          expect(stdout).toContain(
+            'tell your human why this stone bought budget',
+          );
+          expect(stdout).not.toContain('is warned');
+        },
+      );
+
+      // the whole of what parts [t0] from [t0b]: an urgent grade mints the warrant, so the
+      // sequence the ack prints is fix → buy → re-arrive
+      then('the top-up is sequenced, scoped to the one spent lane', () => {
+        expect(stdout).toContain(
+          'fix the blocker, buy the round, then re-arrive',
+        );
+        expect(stdout).toContain(
+          'rhx route.guard.budget --for review --add 2 --peer ergonomist --stone 5.1.execution',
+        );
+      });
+
+      then('the bytes a driver reads are pinned', () => {
+        expect(stdout).toMatchSnapshot();
+      });
+    });
+
+    // the peer of [t0], and the one a driver meets far more often — the grade a concession
+    // takes in nearly every round. pinned whole so the elision is visible in a diff rather
+    // than asserted by absence
+    when('[t0b] a BETTER concede lands on a spent lane', () => {
+      const stdout = formatRouteGuardReviewPeerAbsorptionAck({
+        absorption: 'conceded',
+        stone: '5.1.execution',
+        slug: 'ergonomist',
+        concern: { kind: 'blocker', ordinal: 1 },
+        why: null,
+        severity: 'better',
+        meter: { level: 1, rounds: 4, budget: 4 },
+        concernsLeft: 0,
+        concernsElsewhere: 0,
+      });
+
+      // 🔴 the whole repair, asserted rather than left to a byte diff: a `better` grade past a
+      //    spent meter earns no round, so the purchase must not appear in the sequence at all
+      then('the top-up is absent — a better grade earns no round', () => {
+        expect(stdout).toContain('fix the blocker, then re-arrive');
+        expect(stdout).not.toContain('buy the round');
+        expect(stdout).not.toContain('rhx route.guard.budget');
+      });
+
+      // 🔴 a `better` grade is VISIBLE, and it was not before. the ack rendered naught at all
+      //    for the grade a driver picks in nearly every round, so the one field the command
+      //    REQUIRES came back unechoed — the driver could not read its own declaration
+      then('the better grade rides the header, same as urgent', () => {
+        expect(stdout).toContain(
+          '🗿 route.stone.set --as conceded --severity better',
+        );
+      });
+
+      then('no warn is printed where the grade ships no harm', () => {
+        expect(stdout).not.toContain('warn  =');
+        expect(stdout).not.toContain('ships harm');
       });
 
       then('the bytes a driver reads are pinned', () => {
@@ -316,6 +461,25 @@ describe('formatRouteGuardReviewPeerAbsorptionAck', () => {
         meter: { level: 1, rounds: 2, budget: 4 },
         concernsLeft: 2,
         concernsElsewhere: 0,
+      });
+
+      // a dispute concedes naught, so it mints no warrant and carries no grade — the fulcrum it
+      // cites is the argument, and the council is who reads it
+      then('the fulcrum is cited and the council is named', () => {
+        expect(stdout).toContain(
+          'why   = .fulcrums/inventory.of=fulcrums.case=F007-file-placement.md',
+        );
+        expect(stdout).toContain('the council will read it');
+      });
+
+      // 🔴 and the header carries NO `--severity` term either. the flag is refused outright on a
+      //    dispute (`--severity is not accepted for --as disputed`), so an echo of one would
+      //    render an invocation the command would have rejected
+      then('no grade and no top-up ride on a dispute', () => {
+        expect(stdout).toContain('🗿 route.stone.set --as disputed\n');
+        expect(stdout).not.toContain('--severity');
+        expect(stdout).not.toContain('warn  =');
+        expect(stdout).not.toContain('rhx route.guard.budget');
       });
 
       then('the bytes a driver reads are pinned', () => {
@@ -412,9 +576,19 @@ describe('formatRouteGuardReviewPeerAbsorptionAck', () => {
     });
   });
 
-  // 🔴 S14 — a concede carries a graded harm. only an URGENT one warns a human, and the warn is
-  //    the ONLY visible difference between the two grades. it is a lone line in a string, so it
-  //    is pinned here or it drifts unseen (rule.require.clamp-edge-cases).
+  // 🔴 S14 — a concede carries a graded harm, and the ack renders it on TWO rows that answer two
+  //    different questions. both are lone lines in a string, so each is pinned here or it drifts
+  //    unseen (rule.require.clamp-edge-cases).
+  //
+  //    | the row | answers | renders on |
+  //    |---|---|---|
+  //    | the header's `--severity` term | *what did i declare?* | EVERY concede, both grades |
+  //    | the `warns` row | *what does it cost?* | an URGENT concede alone |
+  //
+  // ⚠️ .the header term is the half a driver meets most and the half that carried NOTHING.
+  //    the warn alone was the whole render, so a `better` concede — the grade of nearly every
+  //    round — got no echo of the one field the command REQUIRES. these clamp both halves, so a
+  //    future edit cannot collapse them back into one.
   given('[case6] a concede carries a severity grade', () => {
     when('[t0] the grade is URGENT', () => {
       const stdout = formatRouteGuardReviewPeerAbsorptionAck({
@@ -429,9 +603,15 @@ describe('formatRouteGuardReviewPeerAbsorptionAck', () => {
         concernsElsewhere: 0,
       });
 
-      then('the ack warns a human owes a round at the close', () => {
+      then('the header echoes the grade the driver declared', () => {
         expect(stdout).toContain(
-          'grade = urgent — ships harm; a human is warned to grant a round at the close',
+          '🗿 route.stone.set --as conceded --severity urgent',
+        );
+      });
+
+      then('the ack asks the driver to explain the spend to its human', () => {
+        expect(stdout).toContain(
+          'warn  = ships harm — tell your human why this stone bought budget',
         );
       });
     });
@@ -449,11 +629,20 @@ describe('formatRouteGuardReviewPeerAbsorptionAck', () => {
         concernsElsewhere: 0,
       });
 
+      // 🔴 the halves move INDEPENDENTLY, and this is the case that proves it: a `better` concede
+      //    echoes its grade in full and warns no human at all
+      then('the header echoes the grade the driver declared', () => {
+        expect(stdout).toContain(
+          '🗿 route.stone.set --as conceded --severity better',
+        );
+      });
+
       // 🔴 a better concession must NEVER earn a round — S14: "shouldnt weight us down". so the
       //    urgent warn is withheld, and no human is named on a better concede
       then('no urgent warn appears — a better concede adds no weight', () => {
-        expect(stdout).not.toContain('grade = urgent');
-        expect(stdout).not.toContain('a human is warned');
+        expect(stdout).not.toContain('--severity urgent');
+        expect(stdout).not.toContain('warn  =');
+        expect(stdout).not.toContain('tell your human');
       });
     });
 
@@ -470,10 +659,15 @@ describe('formatRouteGuardReviewPeerAbsorptionAck', () => {
         concernsElsewhere: 0,
       });
 
+      // 🔴 NEITHER half renders. a dispute grades naught, and `--severity` is refused outright on
+      //    one (`--severity is not accepted for --as disputed`) — so a header that echoed a term
+      //    here would print an invocation the command itself would have rejected
       then(
-        'no grade line appears — severity is the concede taxonomy alone',
+        'no grade rides either half — severity is the concede taxonomy alone',
         () => {
-          expect(stdout).not.toContain('grade =');
+          expect(stdout).toContain('🗿 route.stone.set --as disputed\n');
+          expect(stdout).not.toContain('--severity');
+          expect(stdout).not.toContain('warn  =');
         },
       );
     });

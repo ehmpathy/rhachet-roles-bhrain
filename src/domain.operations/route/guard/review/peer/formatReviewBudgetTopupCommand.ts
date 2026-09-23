@@ -1,6 +1,6 @@
 /**
  * .what = how many rounds a top-up offers by default
- * .why = the concede ack and the `reviewed?` judge's urgent-concession halt each grant a round,
+ * .why = the concede ack and the `reviewed?` judge's urgent-concession halt each grant budget,
  *        and they had drifted — the ack offered `2`, the judge hard-coded `--add 1`. one shared
  *        const, so the amount a driver reads for the same lever is stable across surfaces
  *        (rule.require.runtime-guard-vars-in-shared-const, rule.forbid.friction-hazards). 2 is

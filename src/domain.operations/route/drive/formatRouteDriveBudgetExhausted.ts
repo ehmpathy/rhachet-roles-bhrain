@@ -121,9 +121,12 @@ export const formatRouteDriveBudgetExhausted = (input: {
   lines.push(`   │  ├─ route = ${asRouteDisplayPath({ route: input.route })}`);
   lines.push(`   │  └─ stone = ${input.stone}`);
   lines.push(`   │`);
+  // 🔴 `halted on more budget` named the remedy, and the remedy moved. a `better` concession earns
+  //    no round past the meter (F04), so there is no more budget to halt on — what the halt now
+  //    waits for is the fix the driver already named. the header says that instead.
   lines.push(
     isConcession
-      ? `   └─ halted on more budget, to address concessions`
+      ? `   └─ halted on your concessions, to be fixed`
       : `   └─ halted, peer reviewer budget exhausted`,
   );
   // the reason line comes from the shared decoder, which sheds the parseable marker for
@@ -175,27 +178,56 @@ export const formatRouteDriveBudgetExhausted = (input: {
   //    (rule.require.single-source-of-truth-for-render).
   // 🔴 a concession halt names no human at all, so the "then ask a human" half of this
   //    header would be false — there is nobody to ask and no second remedy to sort.
+  //
+  // 🔴 and a BETTER concession now holds ITS WHOLE ANSWER in that one remedy. the budget became
+  //    a bound, so a `better` grade earns no round past the meter (F04) and the shared builder
+  //    swapped its top-up for the fix — `--as passed`, which is the very command the tail below
+  //    used to print. so the tail would render the same line twice, one connector apart.
+  //    ⇒ the remedy block becomes the last branch, and the tail is dropped rather than repeated.
+  // ⚠️ an URGENT concession keeps both: its remedy is the top-up, so its tail still names the
+  //    re-arrival that follows the round it buys.
+  const isSoloRemedy = isConcession && remedyGroups.length === 1;
+  // 🟡 the connector is HOISTED, never nested inside the header ternary. a ternary within a
+  //    ternary's branch reads as one decision and is two — here, *which header* and *is this the
+  //    last branch*, which are unrelated questions (`rule.avoid.unnecessary-ifs`, raised
+  //    i001/r006 n1). named apart, each reads on its own line.
+  const headerConnector = isSoloRemedy ? '└─' : '├─';
   lines.push(
     isConcession
-      ? `      ├─ what to do — yours to run, no human needed`
+      ? // the owner rides the REMEDY LABEL here, so the header says only what the block is —
+        // "yours to run" on both lines is one claim, read twice
+        `      ${headerConnector} what to do — no human needed`
       : `      ├─ spend your own lever first, then ask a human`,
   );
   lines.push(
     ...formatBlockRemedyGroups({
       groups: remedyGroups,
-      baseIndent: '      │  ',
+      baseIndent: isSoloRemedy ? '         ' : '      │  ',
       spacers: true,
     }),
   );
+  if (isSoloRemedy) return lines.join('\n');
+
   lines.push(`      │`);
   // 🔴 `once they approve` presumed the human branch for BOTH remedies, so a driver who
   //    topped up their own budget was told to wait on an approval that was never owed.
   //    the passage command follows a grant, never a top-up — a top-up is followed by a
   //    re-arrival, which the guard prints on its own.
+  //
+  // 🔴 .the tail names EITHER remedy, because both end at the same command.
+  //    it read `once a human grants the approval, run`, which completed the HUMAN branch alone —
+  //    so a driver who took the lever sorted FIRST, `--as absorbed`, was never told that a
+  //    re-arrival follows it. that is the most-taken branch left implicit while the rarer one
+  //    spelled itself out, and the asymmetry lands hardest on a driver who meets the halt for the
+  //    first time (`rule.require.discoverability`, raised i001/r009 n2).
+  //
+  // ⚠️ the OWNER of each remedy is not lost by the merge — it rides each remedy's own label
+  //    (`— yours to run` / `— a human must grant`), which is where
+  //    `rule.always.spend-own-levers-before-escalation` asks for it.
   lines.push(
     isConcession
       ? `      └─ then re-arrive`
-      : `      └─ once a human grants the approval, run`,
+      : `      └─ once either remedy lands, run`,
   );
   lines.push(`         └─ ${passCmd}`);
 

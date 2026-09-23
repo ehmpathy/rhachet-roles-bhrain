@@ -202,7 +202,7 @@ exports[`driver.route.peer-budget-multilevel.journey.acceptance given: [journey 
    ├─ stone = 1.vision
    ├─ passage = blocked
    ├─ reason = you conceded — the round to confirm your fix needs more budget
-   │  └─ 🟡 an urgent concession stands — its harm ships if unfixed, so this round is owed a human's grant
+   │  └─ 🟡 an urgent concession stands — its harm ships if unfixed, so this stone earns more budget
    ├─ options
    │  ├─ increase budget — yours to spend
    │  │  └─ rhx route.guard.budget --for review --add N --stone 1.vision
@@ -313,7 +313,7 @@ exports[`driver.route.peer-budget-multilevel.journey.acceptance given: [journey 
    │
    └─ halted, peer reviewer budget exhausted
       ├─ reason: you conceded — the round to confirm your fix needs more budget
-      │  └─ 🟡 an urgent concession stands — its harm ships if unfixed, so this round is owed a human's grant
+      │  └─ 🟡 an urgent concession stands — its harm ships if unfixed, so this stone earns more budget
       │
       ├─ reviews
       │   ├─ r1: linter (l1, 2/2)
@@ -344,7 +344,7 @@ exports[`driver.route.peer-budget-multilevel.journey.acceptance given: [journey 
       │  └─ approve as-is — a human must grant
       │     └─ rhx route.stone.set --stone 1.vision --as approved
       │
-      └─ once a human grants the approval, run
+      └─ once either remedy lands, run
          └─ rhx route.stone.set --stone 1.vision --as passed
 "
 `;
@@ -357,6 +357,13 @@ exports[`driver.route.peer-budget-multilevel.journey.acceptance given: [journey 
    ├─ route = .
    ├─ add = 2
    ├─ peer = architect
+   │
+   ├─ granted — earned by a live urgent concession
+   │  ├─ linter · conceded urgent
+   │  └─ architect · conceded urgent
+   │
+   ├─ 🟡 tell your human why this stone bought budget
+   │
    └─ updates
       └─ architect: 2 → 4
 
@@ -432,7 +439,7 @@ exports[`driver.route.peer-budget-multilevel.journey.acceptance given: [journey 
    ├─ stone = 1.vision
    ├─ passage = blocked
    ├─ reason = you conceded — the round to confirm your fix needs more budget
-   │  └─ 🟡 an urgent concession stands — its harm ships if unfixed, so this round is owed a human's grant
+   │  └─ 🟡 an urgent concession stands — its harm ships if unfixed, so this stone earns more budget
    ├─ options
    │  ├─ increase budget — yours to spend
    │  │  └─ rhx route.guard.budget --for review --add N --peer linter --stone 1.vision
@@ -474,7 +481,7 @@ exports[`driver.route.peer-budget-multilevel.journey.acceptance given: [journey 
    │
    └─ halted, peer reviewer budget exhausted
       ├─ reason: you conceded — the round to confirm your fix needs more budget
-      │  └─ 🟡 an urgent concession stands — its harm ships if unfixed, so this round is owed a human's grant
+      │  └─ 🟡 an urgent concession stands — its harm ships if unfixed, so this stone earns more budget
       │
       ├─ reviews
       │   ├─ r1: linter (l1, 2/2)
@@ -504,7 +511,7 @@ exports[`driver.route.peer-budget-multilevel.journey.acceptance given: [journey 
       │  └─ approve as-is — a human must grant
       │     └─ rhx route.stone.set --stone 1.vision --as approved
       │
-      └─ once a human grants the approval, run
+      └─ once either remedy lands, run
          └─ rhx route.stone.set --stone 1.vision --as passed
 "
 `;
