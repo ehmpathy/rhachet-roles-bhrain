@@ -340,6 +340,15 @@ export const runOneReview = async (
       };
     }
   })();
+  // 🔴 an UNDETECTED count reads as 0 here, and that is the METER's seat: paired with the
+  //    promotion below, both unreadable paths reach `computeReviewCompleted` as not-completed,
+  //    so a broken lane drains no round.
+  //
+  // ⚠️ `asPeerGivenVerdict` reads the identical case the OPPOSITE way — it fabricates
+  //    `blockers: 1`, so the PASSAGE gate cannot read a clean bill off a verdict nobody read.
+  //    the two answer different questions and both answer NO, so the 0/1 split is the
+  //    agreement rather than a drift. do not "unify" them: a 1 here charges a round for a
+  //    review that never ran.
   const blockers = counts.detected ? counts.blockers : 0;
   const nitpicks = counts.detected ? counts.nitpicks : 0;
   // internal→contract boundary: the orchestrator's chosen `tactic` becomes the public `tallier`

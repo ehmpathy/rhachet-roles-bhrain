@@ -1,7 +1,8 @@
 import {
   isRouteGuardConcessionExhaustion,
   isRouteGuardUrgentConcessionExhaustion,
-  REASON_TEXT_CONCESSION,
+  REASON_TEXT_CONCESSION_BETTER,
+  REASON_TEXT_CONCESSION_URGENT,
   WARN_TEXT_CONCESSION_URGENT,
 } from './genRouteGuardExhaustedReason';
 
@@ -20,8 +21,8 @@ import {
  *   - `reasonText` — the human line to show in place of the raw reason. for a concession this is
  *     the friendly `REASON_TEXT_CONCESSION`; for any other halt it is the reason unchanged, so a
  *     caller may render `reasonText` unconditionally.
- *   - `warnText` — the urgent warn line, or null. present ONLY for an urgent concession, where a
- *     human's grant is owed this PR (`define.invariant.review.peer.budget.urgent-earns-budget`).
+ *   - `warnText` — the urgent warn line, or null. present only for an urgent concession, where the
+ *     stone owes more budget (`define.invariant.review.peer.budget.urgent-earns-budget`).
  *   - `isConcession` — true for EITHER severity. a caller that must branch its own layout on
  *     "did a concession cause this halt?" reads this rather than re-derives it from the marks.
  *     🔴 it is NOT the disposition: a `better` concession is the driver's own push while an
@@ -50,8 +51,22 @@ export const asConcessionReasonDisplay = (input: {
   });
   const isConcession =
     isRouteGuardConcessionExhaustion({ reason: input.reason }) || isUrgent;
+  // 🔴 and the human line now SPLITS on that same severity, where the marker does not. the budget
+  //    became a bound, so only an urgent concession earns the round its text names — a `better`
+  //    halt that kept it would report a remedy the gate refuses, one line above a remedy block
+  //    that correctly offers the fix instead (F04).
+  //
+  // 🟡 the three-way is an IIFE with early returns, never a chained ternary. `warnText` beside it
+  //    stays a ternary because it is two-way, and a two-way ternary reads at a glance — a chained
+  //    one does not, and `rule.forbid.else-branches` names the chained form as the hazard. the
+  //    IIFE is the paved shape this repo already uses where a branch must produce a value.
+  const reasonText = ((): string | null => {
+    if (isUrgent) return REASON_TEXT_CONCESSION_URGENT;
+    if (isConcession) return REASON_TEXT_CONCESSION_BETTER;
+    return input.reason;
+  })();
   return {
-    reasonText: isConcession ? REASON_TEXT_CONCESSION : input.reason,
+    reasonText,
     warnText: isUrgent ? WARN_TEXT_CONCESSION_URGENT : null,
     isConcession,
   };

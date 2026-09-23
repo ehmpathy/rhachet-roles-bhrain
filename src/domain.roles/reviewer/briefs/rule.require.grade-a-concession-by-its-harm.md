@@ -24,7 +24,12 @@ the budget is the maintenance floor (`philosophy.a-review-budget-balances-perfec
 a concession's severity decides whether the budget hit needs a human:
 
 - **all `better`, or none** → good enough, no human, the stone proceeds
-- **≥1 `urgent`** → needs increased budget, the human is warned this PR
+- **≥1 `urgent`** → needs increased budget, and the driver owes its human a written why the stone
+  bought it
+
+🟡 **that warn is a sentence the driver writes, never a notice the engine sends.** no mechanism
+mails anyone — the render asks, and a driver that reads *"the human is warned"* as already-done
+writes naught, so the human meets the spend as an unexplained diff.
 
 so a mis-graded concession is as expensive as a mis-graded blocker, in the opposite direction:
 

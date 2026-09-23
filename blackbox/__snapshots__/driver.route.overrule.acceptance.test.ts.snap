@@ -254,9 +254,12 @@ exports[`driver.route.overrule.acceptance given: [case13] tier escalation: L1 ma
    ├─ passage = malfunction
    ├─ reason = reviewer or judge malfunctioned
    ├─ options
+   │  ├─ converge with the reviewer — yours to run, and the levels above stay unlocked
+   │  │  └─ rhx route.stone.set --stone 1.feature --as absorbed --that <reviewer>
    │  ├─ overrule the malfunction — a human must grant
    │  │  └─ rhx route.stone.set --stone 1.feature --as overruled
-   │  └─ or fix the reviewer, then retry
+   │  ├─ or fix the reviewer, then retry
+   │  └─ a broken level never halts the drive — converge the level above it
    └─ guard
       ├─ artifacts
       │   └─ $route/1.feature*.md
@@ -358,9 +361,12 @@ exports[`driver.route.overrule.acceptance given: [case14] tier escalation: L1 co
    ├─ passage = blocked
    ├─ reason = reviewer constraint
    ├─ options
+   │  ├─ converge with the reviewer — yours to run, and the levels above stay unlocked
+   │  │  └─ rhx route.stone.set --stone 1.feature --as absorbed --that <reviewer>
    │  ├─ overrule the constraint — a human must grant
    │  │  └─ rhx route.stone.set --stone 1.feature --as overruled
-   │  └─ or fix the reviewer, then retry
+   │  ├─ or fix the reviewer, then retry
+   │  └─ a broken level never halts the drive — converge the level above it
    └─ guard
       ├─ artifacts
       │   └─ $route/1.feature*.md

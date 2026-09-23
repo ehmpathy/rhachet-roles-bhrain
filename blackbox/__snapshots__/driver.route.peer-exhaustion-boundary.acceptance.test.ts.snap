@@ -206,7 +206,7 @@ exports[`driver.route.peer-exhaustion-boundary.acceptance given: [journey] multi
    ├─ stone = 1.execute
    ├─ passage = blocked
    ├─ reason = you conceded — the round to confirm your fix needs more budget
-   │  └─ 🟡 an urgent concession stands — its harm ships if unfixed, so this round is owed a human's grant
+   │  └─ 🟡 an urgent concession stands — its harm ships if unfixed, so this stone earns more budget
    ├─ options
    │  ├─ increase budget — yours to spend
    │  │  └─ rhx route.guard.budget --for review --add N --stone 1.execute

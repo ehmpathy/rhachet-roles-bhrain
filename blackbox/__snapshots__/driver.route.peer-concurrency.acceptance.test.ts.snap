@@ -377,9 +377,12 @@ exports[`driver.route.peer-concurrency.acceptance given: [journey] a level of fo
    ├─ passage = malfunction
    ├─ reason = reviewer or judge malfunctioned
    ├─ options
+   │  ├─ converge with the reviewer — yours to run, and the levels above stay unlocked
+   │  │  └─ rhx route.stone.set --stone 1.vision --as absorbed --that <reviewer>
    │  ├─ overrule the malfunction — a human must grant
    │  │  └─ rhx route.stone.set --stone 1.vision --as overruled
-   │  └─ or fix the reviewer, then retry
+   │  ├─ or fix the reviewer, then retry
+   │  └─ a broken level never halts the drive — converge the level above it
    └─ guard
       ├─ artifacts
       │   └─ src/**/*.ts
@@ -488,9 +491,12 @@ exports[`driver.route.peer-concurrency.acceptance given: [journey] a level of fo
    ├─ passage = malfunction
    ├─ reason = reviewer or judge malfunctioned
    ├─ options
+   │  ├─ converge with the reviewer — yours to run, and the levels above stay unlocked
+   │  │  └─ rhx route.stone.set --stone 1.vision --as absorbed --that <reviewer>
    │  ├─ overrule the malfunction — a human must grant
    │  │  └─ rhx route.stone.set --stone 1.vision --as overruled
-   │  └─ or fix the reviewer, then retry
+   │  ├─ or fix the reviewer, then retry
+   │  └─ a broken level never halts the drive — converge the level above it
    └─ guard
       ├─ artifacts
       │   └─ src/**/*.ts
@@ -613,9 +619,12 @@ exports[`driver.route.peer-concurrency.acceptance given: [journey] a level of fo
    ├─ passage = malfunction
    ├─ reason = reviewer or judge malfunctioned
    ├─ options
+   │  ├─ converge with the reviewer — yours to run, and the levels above stay unlocked
+   │  │  └─ rhx route.stone.set --stone 1.vision --as absorbed --that <reviewer>
    │  ├─ overrule the malfunction — a human must grant
    │  │  └─ rhx route.stone.set --stone 1.vision --as overruled
-   │  └─ or fix the reviewer, then retry
+   │  ├─ or fix the reviewer, then retry
+   │  └─ a broken level never halts the drive — converge the level above it
    └─ guard
       ├─ artifacts
       │   └─ src/**/*.ts

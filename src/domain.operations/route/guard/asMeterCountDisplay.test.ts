@@ -30,7 +30,7 @@ describe('asMeterCountDisplay', () => {
   });
 
   // 🔴 the clamp for r009 nitpick.2 — the paired guard on the stance ack's tail
-  //    (asMeterLine) tests `!Number.isFinite(count)`, so -Infinity and NaN must read '∞'
+  //    (asReviewerMeterLine) tests `!Number.isFinite(count)`, so -Infinity and NaN must read '∞'
   //    here too, or the cell and the tail disagree on the same value. pre-fix, these fell
   //    through to `String(count)` ('-Infinity' / 'NaN').
   given('a non-finite count that is not positive Infinity', () => {

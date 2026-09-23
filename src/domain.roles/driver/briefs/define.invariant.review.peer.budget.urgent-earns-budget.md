@@ -19,8 +19,18 @@ concession.severity = urgent  ⟺  concession may earn an increased budget
 concession.severity = better  ⟹  concession never earns an increased budget
 
 budget hit ∧ no live urgent concession  ⟹  good enough — proceed, no human
-budget hit ∧ ≥1 live urgent concession  ⟹  needs increased budget — warn the human this PR
+budget hit ∧ ≥1 live urgent concession  ⟹  needs increased budget — the driver tells its human
+                                            why THIS STONE bought it
 ```
+
+🔴 **the second line states an act, and it names its actor on purpose.** it read *"warn the human
+this PR"* until 2026-09-21, and both halves of that were wrong in a way that shipped:
+
+- **`warn the human`** named no actor, so it read as a notice some mechanism sends. **none does.**
+  every warn surface merely ASKS; the sentence is prose the driver writes. a driver that read the
+  passive as already-done wrote naught, and the human met the spend as an unexplained diff
+- **`this PR`** named the wrong unit. budget is granted per **stone** (`route.guard.budget --stone`),
+  so a pull may hold many stones, or none of the rounds this one bought
 
 ## .why
 
@@ -31,7 +41,7 @@ verdict is a defect that ships real harm:
 | the live concessions at the budget hit | the verdict | the human |
 |---|---|---|
 | all `better`, or none | **good enough** — the stone proceeds | not summoned |
-| ≥1 `urgent` | **needs increased budget** — the human grants more | warned, this PR |
+| ≥1 `urgent` | **needs increased budget** — the human grants more | the driver writes them why the stone bought it |
 
 ⇒ to let a `better` concession earn budget would weigh the team down with polish that was already
 good enough. to summon a human for a no-urgent hit would spend the scarcest resource in the loop on

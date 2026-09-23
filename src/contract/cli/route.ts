@@ -5,6 +5,7 @@ import * as path from 'path';
 
 import { getGuardPeerReviews } from '@src/domain.objects/Driver/RouteStoneGuard';
 import { getInvocationArgs } from '@src/domain.operations/cli/getInvocationArgs';
+import { asUrgentHarmSet } from '@src/domain.operations/route/asUrgentHarmSet';
 import { delRouteBind } from '@src/domain.operations/route/bind/delRouteBind';
 import { getRouteBind } from '@src/domain.operations/route/bind/getRouteBind';
 import { getRouteBindByBranch } from '@src/domain.operations/route/bind/getRouteBindByBranch';
@@ -17,6 +18,7 @@ import {
 } from '@src/domain.operations/route/genReviewBrainSupply';
 import { genContextCliEmit } from '@src/domain.operations/route/guard/genContextCliEmit';
 import { getRepoRootWithFallback } from '@src/domain.operations/route/guard/getRepoRootWithFallback';
+import { isStoneMatchedByName } from '@src/domain.operations/route/guard/isStoneMatchedByName';
 import { getStoneGuardExhaustedApprovalBypass } from '@src/domain.operations/route/guard/judge/getStoneGuardExhaustedApprovalBypass';
 import { computeReviewThresholdVerdict } from '@src/domain.operations/route/guard/review/computeReviewThresholdVerdict';
 import { computeReviewTotalsFromFiles } from '@src/domain.operations/route/guard/review/computeReviewTotalsFromFiles';
@@ -34,19 +36,25 @@ import { getNonOverruledReviewFiles } from '@src/domain.operations/route/guard/r
 import { getStoneConcededBetterConcernCounts } from '@src/domain.operations/route/guard/review/peer/getStoneConcededBetterConcernCounts';
 import { getStoneDisputedConcernCounts } from '@src/domain.operations/route/guard/review/peer/getStoneDisputedConcernCounts';
 import { getStoneLiveUrgentConcessionSlugs } from '@src/domain.operations/route/guard/review/peer/getStoneLiveUrgentConcessionSlugs';
+import { asBudgetGrantWarrantLines } from '@src/domain.operations/route/guard/review/peer/meter/asBudgetGrantWarrantLines';
+import { asGuardBudgetHeadLines } from '@src/domain.operations/route/guard/review/peer/meter/asGuardBudgetHeadLines';
 import { asGuardBudgetUpdateLines } from '@src/domain.operations/route/guard/review/peer/meter/asGuardBudgetUpdateLines';
+import { computeBudgetGrantRefusal } from '@src/domain.operations/route/guard/review/peer/meter/computeBudgetGrantRefusal';
 import { computeBudgetTargetSlugs } from '@src/domain.operations/route/guard/review/peer/meter/computeBudgetTargetSlugs';
 import { computeLevelsInPlay } from '@src/domain.operations/route/guard/review/peer/meter/computeLevelsInPlay';
+import { formatBudgetGrantRefusalLines } from '@src/domain.operations/route/guard/review/peer/meter/formatBudgetGrantRefusalLines';
 import { getCurrentPeerMetersForStones } from '@src/domain.operations/route/guard/review/peer/meter/getCurrentPeerMetersForStones';
 import { getDisputeSkippedReviewerSlugs } from '@src/domain.operations/route/guard/review/peer/meter/getDisputeSkippedReviewerSlugs';
 import { getStoneGuardLevelClearance } from '@src/domain.operations/route/guard/review/peer/meter/getStoneGuardLevelClearance';
 import { getUnrunUnlockedLevels } from '@src/domain.operations/route/guard/review/peer/meter/getUnrunUnlockedLevels';
 import { JUDGE_LEVEL } from '@src/domain.operations/route/guard/review/peer/meter/JUDGE_LEVEL';
+import type { GuardPeerMeterStatus } from '@src/domain.operations/route/guard/tree/formatGuardTree';
 import { formatGuardUpgradeTree } from '@src/domain.operations/route/guard/tree/formatGuardUpgradeTree';
 import { setRouteGuardsFromProvenance } from '@src/domain.operations/route/guard/upgrade/setRouteGuardsFromProvenance';
 import { getOneStoneGuardApproval } from '@src/domain.operations/route/judges/getOneStoneGuardApproval';
 import { getStoneGuardLevelsPoured } from '@src/domain.operations/route/judges/getStoneGuardLevelsPoured';
 import { getStoneGuardOverruledLevels } from '@src/domain.operations/route/judges/getStoneGuardOverruledLevels';
+import { setRoutePrivilegeAsGranted } from '@src/domain.operations/route/setRoutePrivilegeAsGranted';
 import { stepRouteDrive } from '@src/domain.operations/route/stepRouteDrive';
 import { stepRouteReview } from '@src/domain.operations/route/stepRouteReview';
 import { stepRouteStatusLine } from '@src/domain.operations/route/stepRouteStatusLine';
@@ -333,8 +341,8 @@ options:
                         optional for --as conceded — an extant path that records why you conceded)
   --severity <sev>   the harm grade of a concession: urgent | better
                        (REQUIRED for --as conceded — no ungraded concede; not for --as disputed)
-                       urgent = a shipped harm (security | safety | monetary |
-                       reputation | behavioral) — earns more budget, warns the human.
+                       urgent = a shipped harm — earns more budget, warns the human
+                       (${asUrgentHarmSet({ separator: ' | ' })})
                        better = code idealism / maintenance — the floor, never earns budget
   --help             show this help message
 
@@ -514,8 +522,12 @@ output:
   when it has halted, it switches to a halt message that names who owns each remedy:
     ✋ halted, stone marked blocked            a driver wall (--as blocked) — clear it
     👋 halted, peer reviewer budget exhausted  two levers, sorted by owner:
-                                                increase budget — yours to spend
+                                                converge with the reviewer — yours to run
                                                 approve as-is — a human must grant
+                                                the top-up takes the first slot ONLY where
+                                                an urgent concession earned the round: the
+                                                budget is a bound, so a grant needs a
+                                                warrant on record
     💥 halted, guard malfunction               a reviewer or judge broke — a human must fix
   onStop honors the same halt: exit 2 keeps the route in motion, exit 0 allows a
   clean stop, exit 1 escalates a malfunction (per rule.require.exit-code-semantics).
@@ -1557,7 +1569,7 @@ const judgeReviewed = async (input: {
       //    nitpick.3) — every other concession surface renders that shared constant, and
       //    a driver who meets this halt then route.drive's must read one fact once
       console.error(
-        "   ├─ its harm ships if unfixed, so this round is owed a human's grant",
+        '   ├─ its harm ships if unfixed, so this stone earns more budget',
       );
       console.error('   ├─ please ask your human to');
       console.error(`   │  └─ ${budgetCmd}`);
@@ -1823,11 +1835,41 @@ const routeBounceList = async (): Promise<void> => {
 };
 
 /**
+ * .what = the help text for route.mutate grant, as one string
+ * .why = read by a `--help` caller on stdout at exit 0 and by a caller with a bad action on stderr
+ *        at exit 2. one source, so the two cannot drift
+ *        (rule.require.single-source-of-truth-for-render, rule.require.help-on-demand).
+ */
+const getRouteMutateGrantHelpText = (): string =>
+  `
+route.mutate grant - manage route protection privilege
+
+usage:
+  rhx route.mutate grant allow   # grant privilege (human only — refused without a tty)
+  rhx route.mutate grant block   # revoke privilege
+  rhx route.mutate grant get     # check privilege state
+
+options:
+  --route <path>    route path (default: auto-detect from branch)
+  --help            show this help message
+
+.note = the flag \`allow\` writes lifts EVERY protected write on the route at once — a guard's
+        \`budget:\` line among them. so it is human only, and that is enforced rather than asked.
+`.trim();
+
+/**
  * .what = cli entrypoint for route.mutate grant commands
  * .why = manages privilege flags for route protection bypass
  */
 export const routeMutateGrant = async (): Promise<void> => {
   const options = parseArgs(process.argv);
+
+  // --help is an ASK, never a fault: stdout, exit 0, and judged BEFORE the action — below this
+  // line it would fall into the invalid-action branch and exit 2 (rule.require.help-on-demand).
+  if (options.help) {
+    console.log(getRouteMutateGrantHelpText());
+    return;
+  }
 
   // extract action from positional args or named option
   const action = getGrantActionFromArgs({
@@ -1838,17 +1880,11 @@ export const routeMutateGrant = async (): Promise<void> => {
   if (!action || !['allow', 'block', 'get'].includes(action)) {
     // usage on an invalid/absent action is an error path → stderr, not stdout
     // (rule.forbid.stdout-on-exit-errors: stdout may be hidden on non-zero exit)
-    console.error(`
-route.mutate grant - manage route protection privilege
-
-usage:
-  rhx route.mutate grant allow   # grant privilege (human only)
-  rhx route.mutate grant block   # revoke privilege
-  rhx route.mutate grant get     # check privilege state
-
-options:
-  --route <path>    route path (default: auto-detect from branch)
-`);
+    // .note = the blank lines are explicit because the shared text is trimmed; see the twin note
+    //         in `routeGuardBudget`. the extant bytes on this path are unchanged.
+    console.error('');
+    console.error(getRouteMutateGrantHelpText());
+    console.error('');
     // exit 2 = constraint: the caller gave a bad action and must fix the invocation
     // (rule.require.exit-code-semantics: 0 ok, 1 malfunction, 2 constraint)
     process.exit(2);
@@ -1873,20 +1909,54 @@ options:
     );
 
     if (action === 'allow') {
-      // ensure .route dir exists
-      await fs.mkdir(path.dirname(privilegeFlagPath), { recursive: true });
-      // create flag file
-      await fs.writeFile(privilegeFlagPath, '');
+      // 🔴 the ACTOR check — the grant's help has said "human only" since it shipped, and this is
+      //    what makes that a gate rather than a claim.
+      //
+      // .why = the flag it writes lifts EVERY protected write on the route at once — a `budget:`
+      //        edit in a `.guard`, an appended `rounds: 0` line in the append-only meter. so a
+      //        grant any caller may mint is a bound any caller may raise, and the gate on
+      //        route.guard.budget would sit beside an open door rather than on the road.
+      //
+      // .note = `block` and `get` are UNgated on purpose. a revoke narrows what is permitted and a
+      //         status read changes naught, so neither is a lever the bound needs held.
+      //
+      // 🔴 the ACTOR is INJECTED, as it is for the three human-only stone levers — `--as approved`,
+      //    `--as overruled`, `--as forced`. the check itself was already shared; its INPUT was not,
+      //    so the granted wire (`isTTY === true ⇒ the flag is written`) could be driven by no test
+      //    at all — every spawn is a pipe, and a pipe is refused by construction. the leaf now
+      //    takes `context: { isTTY }`, so a test drives both verdicts (raised i002/r002).
+      //
+      // 🔴 .and the LIVE wire below is clamped too, by the refusal cases rather than by a pty.
+      //    a spawned skill has a pipe on stdin, so `process.stdin.isTTY` is `undefined` — and the
+      //    acceptance corpus asserts that invocation exits 2 and leaves NO flag on disk
+      //    (`driver.route.mutate.acceptance.test.ts` `[case4][t1]`, and `[case6]` phase 2a).
+      //
+      //    | the regression | what a pipe then reads | caught? |
+      //    |---|---|---|
+      //    | the read is dropped for a constant `true` | `true` ⇒ GRANTS | ✅ both cases go red |
+      //    | the probe is inverted (`!== true`) | `undefined !== true` ⇒ GRANTS | ✅ both cases go red |
+      //    | the read is dropped for a constant `false` | `false` ⇒ refuses | 🔴 **ships green** |
+      //
+      //    ⇒ the two a reviewer named are held; the third is not, and it is recorded rather than
+      //      claimed away (raised i003/r004 n1). it fails CLOSED — a human's grant stops to work,
+      //      which is loud the first time one is attempted — where the other two fail OPEN and
+      //      silently re-open the door this gate exists to shut. only a pty-backed case closes it.
+      const { granted, emit } = await setRoutePrivilegeAsGranted(
+        { route: routePath },
+        { isTTY: process.stdin.isTTY === true },
+      );
 
-      console.log('');
-      console.log('🦉 privilege granted');
-      console.log('');
-      console.log('🗿 route.mutate grant allow');
-      console.log(`   ├─ route = ${routePath}`);
-      console.log('   └─ flag = .route/.privilege.mutate.flag created');
-      console.log('');
-      console.log('✨ route mutation now allowed until revoked');
-      console.log('');
+      if (!granted) {
+        // 🔴 stderr, never stdout: a refusal is a constraint the caller must fix, and stdout may be
+        //    hidden on a non-zero exit (`rule.forbid.stdout-on-exit-errors`).
+        emit.lines.forEach((line) => console.error(line));
+        // exit 2 = constraint: the caller must change who invokes it, never how
+        // (rule.require.exit-code-semantics: 0 ok, 1 malfunction, 2 constraint)
+        process.exit(2);
+      }
+
+      // a grant is a success and exits 0, so its lines go to stdout
+      emit.lines.forEach((line) => console.log(line));
     } else if (action === 'block') {
       // remove flag file (idempotent)
       await fs.rm(privilegeFlagPath, { force: true });
@@ -1940,10 +2010,22 @@ options:
  *    exhausted." a bulk add no longer sprays every level; it lands on the latest one alone.
  */
 /**
- * .what = the guard file paths that belong to one stone
+ * .what = the guard file paths whose stone is named by `--stone` — exactly, or as a `.` descendant
  * .why = named transformer, extracted from `routeGuardBudget`'s inline `startsWith` filter
- *        (raised — mech-decode-friction) so the orchestrator reads as narrative. mirrors the
- *        same boundary-match semantics `getCurrentPeerMetersForStones` already names
+ *        (raised — mech-decode-friction) so the orchestrator reads as narrative. it mirrors
+ *        `getCurrentPeerMetersForStones.ts:25`, and its `.why` states why they must:
+ *        *"the meter set and the guard set agree by construction."* ⇒ a change here is a change
+ *        there, and a filter applied at one site alone would break that agreement.
+ *
+ * 🔴 .the match is DELIMITER-AWARE, via the shared `isStoneMatchedByName`, never a bare prefix.
+ *    a bare form matches a peer whose name merely opens the same way — `--stone 1.execute` reaches
+ *    `1.execute-b` — which makes the budget gate's own scope remedy un-runnable: it prints *"name
+ *    the one stone you meant, in full"* and the full name re-matches both. the predicate carries
+ *    the full argument and the safe-direction proof.
+ *
+ * .note = the basename is stripped of its `.guard` extension before the test, so a stone's guard
+ *         VARIANTS still match it — `<name>.src.guard` reduces to `<name>.src`, a `.` descendant
+ *         of `<name>`. that is the property the extant comment below relies on.
  */
 const getTargetGuardPathsForStone = (input: {
   guardFiles: string[];
@@ -1951,7 +2033,10 @@ const getTargetGuardPathsForStone = (input: {
 }): string[] =>
   input.stoneName
     ? input.guardFiles.filter((f) =>
-        path.basename(f).startsWith(input.stoneName as string),
+        isStoneMatchedByName({
+          stone: path.basename(f).replace(/\.guard$/, ''),
+          named: input.stoneName as string,
+        }),
       )
     : input.guardFiles;
 
@@ -1968,6 +2053,55 @@ const isPeerBudgetLineInScope = (input: {
   )
     return false;
   return true;
+};
+
+/**
+ * .what = the peer meters a `--peer` / `--level` scope selects — the set the gate judges
+ * .why = the orchestrator needs the in-scope meters, and it had said so with a `meters.filter(...)`
+ *        whose predicate is a leaf but whose *"select the meters in this scope"* intent sat inline.
+ *        a reader had to simulate the shape before the set landed
+ *        (`rule.forbid.inline-decode-friction`, raised i002/r004 n1). one named read, so the
+ *        orchestrator states WHAT it needs and this holds HOW the scope is applied.
+ *
+ * 🔴 .it wraps the SAME `isPeerBudgetLineInScope` the write uses, deliberately.
+ *    the set the gate judges and the set the write touches agree by construction. derived a second
+ *    way, a reviewer could be judged dry here and written as another there.
+ */
+const getMetersInScope = (input: {
+  meters: GuardPeerMeterStatus[];
+  peerSlug: string | null;
+  targetSlugs: Set<string> | null;
+}): GuardPeerMeterStatus[] =>
+  input.meters.filter((meter) =>
+    isPeerBudgetLineInScope({
+      currentPeerSlug: meter.slug,
+      peerSlug: input.peerSlug,
+      targetSlugs: input.targetSlugs,
+    }),
+  );
+
+/**
+ * .what = the live urgent concession slugs that warrant a grant — empty where no ONE stone is named
+ * .why = the ledger is keyed to a stone, so a `--stone` prefix that matched SEVERAL stones names no
+ *        one ledger to read. the orchestrator had carried that condition inline as a ternary around
+ *        an `await`, so a reader held *when the ledger is readable* together with the read itself
+ *        (`rule.forbid.inline-decode-friction`, raised i002/r004 n1).
+ *
+ * ⚠️ .an empty result here is NEVER the reason a grant is refused on a multi-match.
+ *    `computeBudgetGrantRefusal` judges scope FIRST, so an ambiguous invocation is refused on its
+ *    own terms and this value is never reached as a warrant verdict. were the order reversed, a
+ *    driver would be told to concede on a stone the invocation never singled out.
+ */
+const getLiveUrgentWarrantSlugs = async (input: {
+  route: string;
+  stone: string;
+  matchedGuardCount: number;
+}): Promise<string[]> => {
+  if (input.matchedGuardCount !== 1) return [];
+  return getStoneLiveUrgentConcessionSlugs({
+    route: input.route,
+    stone: input.stone,
+  });
 };
 
 /**
@@ -2090,6 +2224,47 @@ const asPositiveIntegerOrNull = (input: { value: string }): number | null => {
 };
 
 /**
+ * .what = the peer budget lines the target guards configure, read without a write
+ * .why = a `--peer` that names no configured reviewer is a CALLER fault, and it is diagnosed
+ *        BEFORE the gate — so the command needs the set of peers in scope while it still holds
+ *        the right to refuse. this returns that set and touches no disk.
+ *
+ * 🔴 .it calls the SAME `updateGuardPeerBudgets` the write does, so the two cannot disagree about
+ *    which peers a guard configures. that operation is pure — it returns new content rather than
+ *    a write of it — so a caller that discards `.content` mutates naught, and `addAmount: 0` is
+ *    discarded with it. a second parser here would be a set that drifts from the writer's.
+ *
+ * ⚠️ .the reads run CONCURRENTLY, where `processGuardFileBudgets` reads serially. that is the one
+ *    real difference between the two, and it is safe here for the reason above: no write happens
+ *    on this path, so no two reads can race one. the writer stays serial deliberately.
+ */
+const getAllScopedPeerBudgetUpdates = async (input: {
+  guardPaths: string[];
+  peerSlug: string | null;
+  targetSlugs: Set<string> | null;
+}): Promise<
+  Array<{
+    guard: string;
+    peer: string;
+    budgetBefore: number;
+    budgetAfter: number;
+  }>
+> => {
+  const probes = await Promise.all(
+    input.guardPaths.map(async (guardPath) =>
+      updateGuardPeerBudgets({
+        content: await fs.readFile(guardPath, 'utf-8'),
+        addAmount: 0,
+        peerSlug: input.peerSlug,
+        targetSlugs: input.targetSlugs,
+        guardName: path.basename(guardPath),
+      }),
+    ),
+  );
+  return probes.flatMap((probe) => probe.updates);
+};
+
+/**
  * .what = processes guard files and updates peer budgets
  * .why = encapsulates file I/O loop for guard budget updates
  */
@@ -2134,23 +2309,145 @@ const processGuardFileBudgets = async (input: {
 };
 
 /**
+ * .what = the help text for route.guard.budget, as one string
+ * .why = the text has TWO readers on two streams — a `--help` caller reads it on stdout at exit 0,
+ *        and a caller who omitted `--add` reads it on stderr at exit 2. one source, so the
+ *        guidance a driver discovers cannot drift from the guidance a driver is corrected with
+ *        (rule.require.single-source-of-truth-for-render).
+ *
+ * 🔴 .before this was hoisted, the text was reachable ONLY from the error path — so
+ *    `rhx route.guard.budget --help` fell through to `--for is required`, printed a two-line usage,
+ *    and exited 2. a driver who typed `--help` to discover the new warrant requirements was told
+ *    there was an error instead (`rule.require.help-on-demand`, raised i001/r009 n1).
+ */
+const getRouteGuardBudgetHelpText = (): string =>
+  `
+route.guard.budget - extend peer reviewer budget
+
+usage:
+  rhx route.guard.budget --for review --add 2 --stone 1.vision              # extend the LATEST level
+  rhx route.guard.budget --for review --add 2 --peer primo --stone 1.vision # extend one reviewer
+  rhx route.guard.budget --for review --add 2 --level 1 --stone 1.vision    # extend one named level
+  rhx route.guard.budget --for review --add 2 --stone 1.vision --route .behavior/my-feature
+
+options:
+  --for     resource type: "review" (required)
+  --add     number of budget rounds to add (required)
+  --stone   stone name with guard to update (required) — must name exactly ONE stone
+  --peer    peer reviewer slug to extend (default: the latest level in play)
+  --level   review level to extend — reach a LOWER level only when you name it
+  --route   path to route directory (default: auto-detect from branch)
+  --help    show this help message
+
+.note = the grant is REFUSED by default. the budget is the allowance the route author set with the
+        whole rubric in view, so a top-up past it needs a warrant — all three of:
+          a live URGENT concession on the stone   a driver names the harm that ships if unfixed
+          a target reviewer that has run dry      a pad before the bound bites removes the bound
+          a --stone that named one stone          a prefix names many, and one warrant buys one
+        where it refuses, it names what to run instead.
+
+.note = this command checks no actor, so a human is refused here exactly as a driver is. the human
+        path is a DIFFERENT command: rhx route.mutate grant allow, which mints the privilege flag a
+        guard edit needs. ⇒ a human who wants to raise a bound past its warrant grants the
+        privilege, then edits the guard's budget field itself.
+
+.note = a bare add lands on the LATEST level alone. a lower level stays exhausted unless it is
+        explicitly named with --level or --peer — a top-up is a deliberate, targeted act, never a
+        blanket sweep that silently heals a level the route author bounded on purpose.
+`.trim();
+
+/**
+ * .what = what a driver reads when it omits a required flag of `route.guard.budget` — the flag it
+ *         left out, then the command's full guidance
+ * .why = the command has THREE required-flag paths, and they rendered three different amounts of
+ *        guidance: `--add` got the hoisted text, while `--for` and `--stone` each got a truncated
+ *        two-line usage that taught none of the warrant rules this behavior authored. so a driver
+ *        who forgot `--for` learned scarcely a word about the new gate, and a driver who forgot
+ *        `--add` learned all of it — a discoverability inconsistency, and two more sites that could
+ *        drift from the hoisted source (`rule.forbid.friction-hazards`, raised i003/r009 n1).
+ *
+ * 🔴 .the flag is NAMED, on all three, and that half is new to the `--add` path.
+ *    the hoisted text alone says what the command wants and not what THIS invocation lacked, so a
+ *    driver had to diff its own command against the usage block to find the omission.
+ *    `rule.require.errors-name-the-fix` asks for what, why, and the fix: the flag name is the what,
+ *    and the guidance beneath it is the fix. ⇒ the two sibling paths already had the diagnosis and
+ *    lacked the guidance; `--add` had the guidance and lacked the diagnosis. one shape, all three.
+ *
+ * .note = the blank lines are EXPLICIT because the shared text is trimmed — the `--help` path wants
+ *         it flush on stdout (every `print*Help` in this file trims), and an error path wants it set
+ *         apart from whatever preceded it. one text, two framings.
+ */
+const asGuardBudgetErrorLines = (input: { diagnosis: string }): string[] => [
+  input.diagnosis,
+  ``,
+  getRouteGuardBudgetHelpText(),
+  ``,
+];
+
+const asGuardBudgetRequiredFlagLines = (input: { flag: string }): string[] =>
+  asGuardBudgetErrorLines({ diagnosis: `error: ${input.flag} is required` });
+
+/**
+ * .what = what a driver reads when it gives a required flag of `route.guard.budget` a value the
+ *         flag does not accept — the value it gave, the value the flag wants, then the full guidance
+ * .why = the hoist above upgraded the three ABSENT-flag paths and left the one WRONG-VALUE path
+ *        beside them untouched, so `route.guard.budget` shipped a four-way split on one command: a
+ *        driver who omits `--for` read the whole warrant education, and a driver who typo'd it
+ *        (`--for reveiw`) read a bare one-liner that named no valid value and no `--help`. that is
+ *        the same discoverability friction the hoist existed to close, re-created one branch over
+ *        rather than inherited — raised at i005 by r009 `ergo-friction-hazards` and corroborated
+ *        independently by r010 (`rule.forbid.friction-hazards`).
+ *
+ * 🔴 .the ALLOWED value is named, which the bare form never did.
+ *    `rule.require.errors-name-the-fix` asks for what, why, and the fix. the old line carried the
+ *    what (`got "reveiw"`) and left the fix to a guess — a driver had to already know the one legal
+ *    value to repair the call. ⇒ the diagnosis names it, and the guidance beneath teaches the gate.
+ */
+const asGuardBudgetWrongValueLines = (input: {
+  flag: string;
+  allowed: string;
+  got: string;
+}): string[] =>
+  asGuardBudgetErrorLines({
+    diagnosis: `error: ${input.flag} must be "${input.allowed}", got "${input.got}"`,
+  });
+
+/**
  * .what = cli entrypoint for route.guard.budget skill
  * .why = extends peer reviewer budgets when exhausted
  */
 export const routeGuardBudget = async (): Promise<void> => {
   const options = parseArgs(process.argv);
 
+  // --help is an ASK, never a fault: stdout, exit 0. it is answered before every flag check, so a
+  // driver who wants the guidance never has to satisfy a required flag to read it
+  // (rule.require.help-on-demand).
+  if (options.help) {
+    console.log(getRouteGuardBudgetHelpText());
+    return;
+  }
+
   // validate --for option (required, must be "review")
   if (!options.for) {
-    console.error('error: --for is required');
-    console.error('');
-    console.error(
-      'usage: rhx route.guard.budget --for review --add N --stone <stone>',
+    // the hoisted guidance, same as the two sibling required-flag paths (raised i003/r009 n1).
+    // stderr, never stdout — stdout may be hidden on a non-zero exit
+    // (rule.forbid.stdout-on-exit-errors).
+    asGuardBudgetRequiredFlagLines({ flag: '--for' }).forEach((line) =>
+      console.error(line),
     );
+    // exit 2 = constraint: the caller omitted a required flag and must fix the invocation
+    // (rule.require.exit-code-semantics: 0 ok, 1 malfunction, 2 constraint)
     process.exit(2);
   }
   if (options.for !== 'review') {
-    console.error(`error: --for must be "review", got "${options.for}"`);
+    // the same guidance its three peer flag paths render — a wrong value is as much a fault of
+    // discoverability as an absent one, and it was the last bare one-liner left on this command
+    // (raised i005/r009 n1). stderr, never stdout (rule.forbid.stdout-on-exit-errors).
+    asGuardBudgetWrongValueLines({
+      flag: '--for',
+      allowed: 'review',
+      got: options.for,
+    }).forEach((line) => console.error(line));
     process.exit(2);
   }
 
@@ -2159,27 +2456,13 @@ export const routeGuardBudget = async (): Promise<void> => {
   if (!addStr) {
     // usage on an absent required flag is an error path → stderr, not stdout
     // (rule.forbid.stdout-on-exit-errors: stdout may be hidden on non-zero exit)
-    console.error(`
-route.guard.budget - extend peer reviewer budget
-
-usage:
-  rhx route.guard.budget --for review --add 2 --stone 1.vision              # extend the LATEST level
-  rhx route.guard.budget --for review --add 2 --peer primo --stone 1.vision # extend one named lane
-  rhx route.guard.budget --for review --add 2 --level 1 --stone 1.vision    # extend one named level
-  rhx route.guard.budget --for review --add 2 --stone 1.vision --route .behavior/my-feature
-
-options:
-  --for     resource type: "review" (required)
-  --add     number of budget rounds to add (required)
-  --stone   stone name with guard to update (required)
-  --peer    peer reviewer slug to extend (default: the latest level in play)
-  --level   review level to extend — reach a LOWER level only when you name it (F022)
-  --route   path to route directory (default: auto-detect from branch)
-
-.note = a bare add lands on the LATEST level alone. a lower level stays exhausted unless it is
-        explicitly named with --level or --peer — a top-up is a deliberate, targeted act, never a
-        blanket sweep that silently heals a level the route author bounded on purpose.
-`);
+    //
+    // 🟡 this path GAINED the `error: --add is required` diagnosis when the three were unified.
+    //    it rendered the guidance alone, so a driver was told what the command wants and not what
+    //    its own invocation lacked (raised i003/r009 n1, on the two sibling paths).
+    asGuardBudgetRequiredFlagLines({ flag: '--add' }).forEach((line) =>
+      console.error(line),
+    );
     // exit 2 = constraint: the caller omitted a required flag and must fix the invocation
     // (rule.require.exit-code-semantics: 0 ok, 1 malfunction, 2 constraint)
     process.exit(2);
@@ -2225,15 +2508,17 @@ options:
 
   // require --stone to prevent accidental blast radius across all guards
   if (!stoneName) {
-    console.error('error: --stone is required');
-    console.error('');
-    console.error(
-      'usage: rhx route.guard.budget --for review --add N --stone <stone>',
+    // the hoisted guidance, same as the two sibling required-flag paths (raised i003/r009 n1).
+    //
+    // 🟡 the `.why = prevents accidental budget changes across unrelated stones` line that sat here
+    //    is not lost — the hoisted text states the scope rule in full, including the refusal a
+    //    multi-match `--stone` earns. a one-line gloss beside the whole rule is the drift this
+    //    unification closes.
+    asGuardBudgetRequiredFlagLines({ flag: '--stone' }).forEach((line) =>
+      console.error(line),
     );
-    console.error('');
-    console.error(
-      '.why = prevents accidental budget changes across unrelated stones',
-    );
+    // exit 2 = constraint: the caller omitted a required flag and must fix the invocation
+    // (rule.require.exit-code-semantics: 0 ok, 1 malfunction, 2 constraint)
     process.exit(2);
   }
 
@@ -2275,10 +2560,11 @@ options:
     //        after and the same failure leaves a changed guard file with no emit to explain it
     //        (rule.require.failfast). the read is a status read, so it is safe to repeat.
     //
-    // .note = stones are filtered by the SAME `startsWith` the guard filter above uses, so the two
-    //         sets agree by construction — a guard basename starts with the stone name for every
-    //         variant (`<name>.guard`, `<name>.src.guard`, `<name>.stone.guard`), so a stone whose
-    //         name matches is exactly a stone whose guard matched.
+    // .note = stones are filtered by the SAME `isStoneMatchedByName` the guard filter above uses,
+    //         so the two sets agree by construction — a guard basename reduces to the stone name
+    //         for every variant (`<name>.guard`, `<name>.src.guard`, `<name>.stone.guard`), and the
+    //         predicate then holds over both. ⇒ the shared predicate is what keeps that agreement
+    //         true through the delimiter cut; a change at one site alone would break it.
     const stones = await getAllStones({ route: routePath });
     const meters = await getCurrentPeerMetersForStones({
       stones,
@@ -2309,6 +2595,87 @@ options:
       process.exit(2);
     }
 
+    // 🔴 a --peer that names no configured reviewer is a CALLER fault, and it is diagnosed BEFORE
+    //    the gate.
+    //
+    // .why = the gate judges the ROUTE'S STATE — was a round earned? — and that question presumes
+    //        the invocation named a real lane. ask it first and a typo'd slug is answered with
+    //        *"no live urgent concession stands"*, whose fix is to concede on a reviewer that does
+    //        not exist. ⇒ the gate would name a fix the caller cannot run
+    //        (rule.require.errors-name-the-fix). the invocation is checked first, so the diagnosis
+    //        the caller can act on is the one they get.
+    //
+    // 🟡 .the read is a named leaf, never an inline map+flatMap over raw `fs` — the orchestrator
+    //    states WHAT it needs (the peers in scope) and the leaf holds HOW it is read
+    //    (`rule.forbid.inline-decode-friction`, raised i001/r003 b1 + r004 n1). its docblock
+    //    carries why the probe reuses the writer's own parser.
+    const probedUpdates = await getAllScopedPeerBudgetUpdates({
+      guardPaths: targetGuards,
+      peerSlug: peerSlug ?? null,
+      targetSlugs,
+    });
+    if (peerSlug && probedUpdates.length === 0) {
+      console.error(`error: peer reviewer not found: ${peerSlug}`);
+      process.exit(2);
+    }
+
+    // 🔴 the GATE — the budget stops to be a free lever, and it is read BEFORE the write.
+    //
+    // .why = the budget IS the allowance for `better` churn. inside the meter taste counts; past
+    //        the meter only a nameable harm buys a round. so a grant past a spent meter is refused
+    //        unless three conjuncts hold — a live urgent concession (the warrant), a reviewer that
+    //        has run dry (the moment), and exactly one stone (the scope).
+    //
+    // .note = it sits here for the same reason the dispute read above it does: read first and a
+    //         refusal leaves the budget untouched; read after and the same refusal leaves a changed
+    //         guard file with no emit to explain it (rule.require.failfast).
+    //
+    // 🟡 .both inputs are NAMED LEAVES — the orchestrator states what the gate judges, and each
+    //    leaf holds how it is read. their docblocks carry the two properties that used to sit here
+    //    as inline comments: the scope shares the write's own predicate, and the ledger read is
+    //    skipped where no ONE stone was named (`rule.prefer.decomposable-architecture`, raised
+    //    i002/r004 n1).
+    const targetMeters = getMetersInScope({
+      meters,
+      peerSlug: peerSlug ?? null,
+      targetSlugs,
+    });
+
+    const liveUrgentSlugs = await getLiveUrgentWarrantSlugs({
+      route: routePath,
+      stone: stoneName,
+      matchedGuardCount: targetGuards.length,
+    });
+
+    const refusal = computeBudgetGrantRefusal({
+      targetGuards,
+      liveUrgentSlugs,
+      targetMeters,
+    });
+    if (refusal) {
+      formatBudgetGrantRefusalLines({
+        refusal,
+        route: routePath,
+        stone: stoneName,
+        add: addAmount,
+        peer: peerSlug ?? null,
+        level: levelFlag,
+        meters: targetMeters,
+      }).forEach((line) => console.error(line));
+      // exit 2 = constraint: the caller must converge, grade, or re-scope — a retry as-is refuses
+      // again (rule.require.exit-code-semantics). stderr, never stdout, since stdout may be hidden
+      // on a non-zero exit (rule.forbid.stdout-on-exit-errors).
+      //
+      // 🔴 .this line is CLAMPED LIVE, and the clamp was proven to bite.
+      //    `blackbox/driver.route.peer-budget-refusal.acceptance.test.ts` drives all three
+      //    refusals through the real cli. dropped, the suite goes red in FIVE places at once:
+      //    three exit-code clamps read 0, and two guard-byte-identical clamps find a mutated
+      //    guard — because the fall-through reaches the write below. ⇒ the ORDER of this gate
+      //    against that write is a pinned property, never a comment
+      //    (`rule.require.clamp-edge-cases`).
+      process.exit(2);
+    }
+
     const updates = await processGuardFileBudgets({
       guardPaths: targetGuards,
       addAmount,
@@ -2316,25 +2683,32 @@ options:
       targetSlugs,
     });
 
-    // validate peer was found if specific peer requested
-    if (peerSlug && updates.length === 0) {
-      console.error(`error: peer reviewer not found: ${peerSlug}`);
-      process.exit(2);
-    }
+    // .note = the `peer reviewer not found` check that once sat here has moved ABOVE the gate, and
+    //         it is not duplicated below it. the probe and this write share one parser and one set
+    //         of inputs, so an empty `updates` here implies an empty `probedUpdates` there — a
+    //         second check would be unreachable, and unreachable code reads as a live guarantee.
 
     // emit output
-    console.log('');
-    console.log('🦉 budget extended');
-    console.log('');
-    console.log('🗿 route.guard.budget');
-    console.log(`   ├─ route = ${routePath}`);
-    console.log(`   ├─ add = ${addAmount}`);
-    if (peerSlug) {
-      console.log(`   ├─ peer = ${peerSlug}`);
-    }
-    if (levelFlag !== null) {
-      console.log(`   ├─ level = ${levelFlag}`);
-    }
+    //
+    // 🔴 the head rows come from `asGuardBudgetHeadLines`, which the REFUSAL renderer also calls.
+    //    the same four fields were rendered here inline and there inline, on a docblock promise
+    //    that the two matched "byte for byte" — two render sites for one fact, so a new field or a
+    //    reordered row had to land in both or the surfaces drift
+    //    (`rule.require.single-source-of-truth-for-render`, raised i003/r001 n1).
+    asGuardBudgetHeadLines({
+      status: 'extended',
+      route: routePath,
+      add: addAmount,
+      peer: peerSlug ?? null,
+      level: levelFlag,
+    }).forEach((line) => console.log(line));
+    // 🔴 the grant NAMES its warrant, so req 3 is satisfied twice: the gate read a fact on disk,
+    //    and this records which fact it read. a bare counter bump left the trade in the ledger
+    //    alone (raised i002/r008 n1). the block is unconditional — the gate refuses on an empty
+    //    warrant, so this line is unreachable without one.
+    asBudgetGrantWarrantLines({ warrantSlugs: liveUrgentSlugs }).forEach(
+      (line) => console.log(line),
+    );
     console.log('   └─ updates');
     const updateLines = asGuardBudgetUpdateLines({
       updates,

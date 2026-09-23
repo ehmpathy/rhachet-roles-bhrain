@@ -15,22 +15,24 @@ const ASSETS_DIR = path.join(__dirname, '.test/assets/route-guard-review-by');
 /**
  * .what = raise the per-test budget — a full guard run drives a real LLM review as its peer
  * .why = the guard execs `rhx review.by --role learner --for <rubric>`, which runs a real review
- *        subprocess (~1 min). when.repeatably re-drives the whole guard on variance, so the per-test
- *        budget must cover several serial guard+review runs. scoped to THIS file.
+ *        subprocess (~1 min). driveGuardUntilVerdict re-drives the whole guard on variance, up to
+ *        VERDICT_ATTEMPTS times, so the per-test budget must cover several serial guard+review
+ *        runs. scoped to THIS file.
+ *
+ *        ⚠️ this `.why` credited `when.repeatably` with that re-drive until 2026-09-20, and the run
+ *           log refuted it — see driveGuardUntilVerdict's `.why` for the measurement.
  */
 // eslint-disable-next-line no-undef
 jest.setTimeout(420000);
 
 /**
- * .what = config for probabilistic cases that invoke LLM review subprocesses
- * .why = LLM responses vary; retry keeps CI green while it still proves the contract. criteria SOME
- *        skips the remaining attempts once one passes — an LLM verdict is inherently probabilistic,
- *        so one green attempt proves the shape (rule.require.repeatable-for-llm-tests).
+ * .what = how many REAL guard drives a probabilistic case may spend to reach its declared verdict
+ * .why = an LLM verdict varies run to run, and one green drive proves the shape
+ *        (rule.require.repeatable-for-llm-tests). three matches the `attempts: 3` this file
+ *        declared while these cases were wrapped in `when.repeatably`, so the tolerance is
+ *        unchanged in QUANTITY — what changed is that it now re-drives. see driveGuardUntilVerdict.
  */
-const REPEATABLE_CONFIG = {
-  attempts: 3,
-  criteria: 'SOME',
-} as const;
+const VERDICT_ATTEMPTS = 3;
 
 /**
  * .what = a fixed brain for the LLM-backed seam cases
@@ -40,18 +42,55 @@ const REPEATABLE_CONFIG = {
 const BRAIN = 'fireworks/deepseek/v4-flash';
 
 /**
+ * .what = replaces a NONZERO blocker/nitpick count with `[N]`, and leaves a zero count alone
+ * .why = a concern count is the BRAIN's verdict, never the guard's render. the same rubric on the
+ *        same fixture returned `1 blocker` on one run and `2 blockers` on the next, which failed a
+ *        snapshot that had pinned the magnitude (measured 2026-09-19, `[case-seam-findings]`, both
+ *        snapshot assertions). so the magnitude is masked and every deterministic neighbour is kept:
+ *
+ *          - a ZERO count survives verbatim, because `0 blockers` is what makes a verdict APPROVED.
+ *            a pass case whose brain raises a concern still fails its snapshot, as it must
+ *          - the verdict word (`approved` / `rejected`), the 🔴 / ✓ glyph, the judge outcome, and the
+ *            threshold it was judged against (`> 0`) all survive, so the verdict CLASS stays pinned
+ *          - the singular/plural noun collapses with the digit, since `1 blocker` and `2 blockers`
+ *            differ in both
+ *
+ *        ⇒ what is dropped is the ONE field a probabilistic reviewer owns. that a parseable count
+ *          reached the guard at all is clamped by a direct `toMatch(/\d+\s*blockers?/i)` assertion
+ *          in each case, not by this snapshot — so no coverage moves, only the baseline's claim
+ *          about what is stable (rule.forbid.test-intent-violations: the intent was the SEAM).
+ */
+const maskConcernMagnitudes = (text: string): string =>
+  text
+    .replace(/\b(?!0\b)\d+ (blocker|nitpick)s?\b/g, '[N] $1s')
+    .replace(
+      /\b(blockers|nitpicks) exceed threshold \((?!0\b)\d+ > (\d+)\)/g,
+      '$1 exceed threshold ([N] > $2)',
+    );
+
+/**
  * .what = sanitizes a route.stone.set guard-tree stdout so it snapshots stably
- * .why = the guard tree carries two volatile dimensions: verdict durations (`rejected 109.5s`) and
- *        the hash+iteration segment of each peer-artifact path (`.i001.<hash>.r001.`). the shared
- *        sanitizeTimeForSnapshot masks every duration verb + the temp-dir prefix; we add the
- *        hash-scrub so the `given:`/`taken:` artifact references stay stable. what remains is the
- *        DETERMINISTIC seam structure: the `r{n}: <slug> (l1, N/3)` reviewer row, the verdict word,
- *        the blocker/nitpick counts, and the judge outcomes — the guard EXPERIENCE a human reads.
+ * .why = the guard tree carries THREE volatile dimensions: verdict durations (`rejected 109.5s`),
+ *        the hash+iteration segment of each peer-artifact path (`.i001.<hash>.r001.`), and the
+ *        nonzero concern counts a probabilistic reviewer chose. the shared sanitizeTimeForSnapshot
+ *        masks every duration verb + the temp-dir prefix; we add the hash-scrub so the
+ *        `given:`/`taken:` artifact references stay stable, and maskConcernMagnitudes so a
+ *        `1 blocker` → `2 blockers` drift cannot fail a seam that never graded the magnitude.
+ *
+ *        ⚠️ this `.why` named the blocker/nitpick counts as DETERMINISTIC until 2026-09-19, and the
+ *           corpus refuted it — `[case-seam-findings]` went red on a count the brain picked. a
+ *           sanitizer's docblock is a CLAIM about what varies, and a claim about variance is
+ *           checkable against the run log.
+ *
+ *        what remains is deterministic: the `r{n}: <slug> (l1, N/3)` reviewer row, the verdict word,
+ *        a zero count where one is owed, and the judge outcomes — the guard EXPERIENCE a human reads.
  */
 const sanitizeGuardTreeForSnapshot = (stdout: string): string =>
-  sanitizeTimeForSnapshot(stdout).replace(
-    /\.i\d+\.[0-9a-f]+\.r\d+\./g,
-    '.i[N].[HASH].r[N].',
+  maskConcernMagnitudes(
+    sanitizeTimeForSnapshot(stdout).replace(
+      /\.i\d+\.[0-9a-f]+\.r\d+\./g,
+      '.i[N].[HASH].r[N].',
+    ),
   );
 
 /**
@@ -61,6 +100,11 @@ const sanitizeGuardTreeForSnapshot = (stdout: string): string =>
  *        review's volatile telemetry — the `🔭 metrics.expected`, `🪵 logs`, and `✨ metrics.realized`
  *        subtrees (token counts, cost, latency, timestamped log paths) — plus a `logs:` line under
  *        the verdict header. a byte-exact snapshot would fight rule.require.repeatable-for-llm-tests.
+ *
+ *        ⚠️ and its `summary` block + the guard's `└─ tallied` footer BOTH restate the brain's own
+ *           concern counts, so maskConcernMagnitudes runs over the result — see its `.why`. a zero
+ *           survives; only a nonzero magnitude collapses to `[N]`.
+ *
  *        so we drop those volatile regions and keep the DETERMINISTIC structure that proves
  *        disintermediation flows through the guard: the two `🪨 run solid skill` banners (review.by
  *        wrapper → base review), the `🦉 let's review` scope block, the verdict header, the `review:`
@@ -139,7 +183,7 @@ const sanitizeCapturedPeerForSnapshot = (artifact: string): string => {
   // ⚠️ a MALFUNCTION's stderr is a separate case and is NOT touched by this: it carries
   //    the cause, so the loop above keeps its `💥 rubric malfunctioned:` header and
   //    collapses only the volatile crash dump to the `[STDERR]` marker.
-  return kept.join('\n').trim();
+  return maskConcernMagnitudes(kept.join('\n').trim());
 };
 
 /**
@@ -205,6 +249,77 @@ const driveGuardWithReviewByPeer = async (input: {
     : null;
 
   return { cli, artifact };
+};
+
+/**
+ * .what = drives the guard up to `attempts` times and returns the FIRST drive that reached the
+ *         passage class its case declares. if none does, it returns the LAST drive — so every
+ *         assertion below still runs against real bytes, and fails loudly.
+ *
+ * .why = the peer is a real LLM, so its verdict varies run to run. that variance is what
+ *        `rule.require.repeatable-for-llm-tests` exists to absorb, and the `when.repeatably`
+ *        wrapper CANNOT absorb it here. measured on this very file, 2026-09-19 → 2026-09-20:
+ *
+ *          - the brain graded SRC_CLEAN_GENERIC dirty, so the guard tree flipped
+ *            `approved → rejected`, `0 blockers ✓ → [N] blockers 🔴`, `judge.1 allowed → blocked`
+ *          - attempt 1 went red. attempts 2 and 3 then ran in 48ms and 2ms — no subprocess time at
+ *            all — and both reported green
+ *          - `git diff` after that run shows NO `attempt 2` snapshot key was ever written, so
+ *            attempt 2 never reached its snapshot assertion. it was SKIPPED
+ *
+ *        ⇒ a red attempt did not merely go un-retried: the block was marked as passed and every
+ *          attempt after it was skipped. so `criteria: 'SOME'` bought exactly ONE real drive, and
+ *          one red drive was the suite's red.
+ *
+ *        ⚠️ and the attempt ordinal rides in the snapshot KEY, so only attempt 1 can ever hold a
+ *           baseline. under `--ci` (`package.json` → `test:acceptance`) jest refuses to write a new
+ *           snapshot, so a later attempt would hard-fail on an absent key even where it did run.
+ *
+ *        ⇒ the retry therefore lives HERE, around a real re-drive: fresh temp dir, fresh guard,
+ *          fresh review subprocess, per attempt. `SOME` semantics, at the layer they work.
+ *
+ * .note = `rule.require.repeatable-for-llm-tests` asks an LLM case to use `when.repeatably`. these
+ *         three cases DIVERGE from its letter to serve its intent, because the wrapper is measured
+ *         inert on a `toMatchSnapshot` case. the root defect is caught upstream — see
+ *         `.dream/v2026_09_19.fix.the-repeatable-retry-is-decorative-…`. the `[case-seam-malfunction]`
+ *         case below already used a plain `when`, so a bare `when` is not new to this file.
+ *
+ * .note = this is NOT a drive-until-green loop. the predicate is the case's OWN declared passage
+ *         class, which each case now also asserts explicitly. a fixture that is genuinely wrong
+ *         spends all `attempts` drives, returns the last, and fails BOTH that assertion and its
+ *         snapshot — louder than before, never quieter (rule.forbid.failhide).
+ *
+ * ⚠️ .note = the `passage` INPUT and the case's `toContain('passage = …')` assertion are two
+ *            separate strings, and they MUST name the same class. if they drift, the loop retries
+ *            toward one verdict while the case asserts the other, so a green drive reads as a
+ *            failure with no hint as to why. measured while this loop's clamp was proven:
+ *            `passage: 'blocked'` against an `allowed` assertion failed at attempt 1 with the
+ *            retry never engaged. ⇒ change both, or neither.
+ */
+const driveGuardUntilVerdict = async (input: {
+  slug: string;
+  rubric: 'term-application' | 'term-aggregation';
+  brain: string;
+  srcContent: string;
+  passage: 'allowed' | 'blocked';
+  attempts: number;
+}): Promise<{
+  cli: { stdout: string };
+  artifact: string | null;
+  attemptsSpent: number;
+}> => {
+  const reached = (result: { cli: { stdout: string } }): boolean =>
+    result.cli.stdout.includes(`passage = ${input.passage}`);
+
+  let latest = await driveGuardWithReviewByPeer(input);
+  let spent = 1;
+
+  while (!reached(latest) && spent < input.attempts) {
+    latest = await driveGuardWithReviewByPeer(input);
+    spent += 1;
+  }
+
+  return { ...latest, attemptsSpent: spent };
 };
 
 // a clean, non-domain util — declares NO domain object or operation, so term-aggregation
@@ -274,17 +389,27 @@ describe('review.by.guard-peer.acceptance', () => {
   // ───────────────────────────────────────────────────────────────────────────
 
   given('[case-seam-pass-aggregation] guard peer runs review.by --for term-aggregation, code is clean', () => {
-    when.repeatably(REPEATABLE_CONFIG)(
+    when(
       '[t0] the stone is passed → the guard approves off a raw base review',
       () => {
         const res = useThen('the guard runs the term-aggregation peer and approves', async () =>
-          driveGuardWithReviewByPeer({
+          driveGuardUntilVerdict({
             slug: 'route-guard-review-by-pass-aggregation',
             rubric: 'term-aggregation',
             brain: BRAIN,
             srcContent: SRC_CLEAN_GENERIC,
+            passage: 'allowed',
+            attempts: VERDICT_ATTEMPTS,
           }),
         );
+
+        then('the guard APPROVED — the verdict class this case declares', () => {
+          // .why = the ONLY assertion here that read the verdict used to be the snapshot below, so
+          //        a brain flip surfaced as a "snapshot drift" rather than as what it is. this
+          //        states the case's premise directly, and it is the predicate the re-drive uses.
+          expect(res.cli.stdout).toContain('passage = allowed');
+          expect(res.attemptsSpent).toBeLessThanOrEqual(VERDICT_ATTEMPTS);
+        });
 
         then('the guard ran the term-aggregation peer (its reviewer row shows the slug)', () => {
           expect(res.cli.stdout).toContain('term-aggregation');
@@ -319,17 +444,24 @@ describe('review.by.guard-peer.acceptance', () => {
   // ───────────────────────────────────────────────────────────────────────────
 
   given('[case-seam-pass-application] guard peer runs review.by --for term-application, code is clean', () => {
-    when.repeatably(REPEATABLE_CONFIG)(
+    when(
       '[t0] the stone is passed → the guard approves off a raw base review',
       () => {
         const res = useThen('the guard runs the term-application peer and approves', async () =>
-          driveGuardWithReviewByPeer({
+          driveGuardUntilVerdict({
             slug: 'route-guard-review-by-pass-application',
             rubric: 'term-application',
             brain: BRAIN,
             srcContent: SRC_CLEAN_TERMS,
+            passage: 'allowed',
+            attempts: VERDICT_ATTEMPTS,
           }),
         );
+
+        then('the guard APPROVED — the verdict class this case declares', () => {
+          expect(res.cli.stdout).toContain('passage = allowed');
+          expect(res.attemptsSpent).toBeLessThanOrEqual(VERDICT_ATTEMPTS);
+        });
 
         then('the guard ran the term-application peer (its reviewer row shows the slug)', () => {
           expect(res.cli.stdout).toContain('term-application');
@@ -370,17 +502,24 @@ describe('review.by.guard-peer.acceptance', () => {
   // ───────────────────────────────────────────────────────────────────────────
 
   given('[case-seam-findings] guard peer runs review.by --for term-application, code is term-dirty', () => {
-    when.repeatably(REPEATABLE_CONFIG)(
+    when(
       '[t0] the stone is passed → the peer bites, the guard rejects off a raw base review',
       () => {
         const res = useThen('the guard runs the peer, it finds blockers, the guard rejects', async () =>
-          driveGuardWithReviewByPeer({
+          driveGuardUntilVerdict({
             slug: 'route-guard-review-by-findings',
             rubric: 'term-application',
             brain: BRAIN,
             srcContent: SRC_DIRTY_TERMS,
+            passage: 'blocked',
+            attempts: VERDICT_ATTEMPTS,
           }),
         );
+
+        then('the guard BLOCKED — the verdict class this case declares', () => {
+          expect(res.cli.stdout).toContain('passage = blocked');
+          expect(res.attemptsSpent).toBeLessThanOrEqual(VERDICT_ATTEMPTS);
+        });
 
         then('the guard rejected — its reviewer row carries a blocker count', () => {
           // the dirty fixture names one concept three ways + overloads a word, so term-application

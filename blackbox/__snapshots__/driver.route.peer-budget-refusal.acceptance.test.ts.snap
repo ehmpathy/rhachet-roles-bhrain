@@ -1,0 +1,119 @@
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
+
+exports[`driver.route.peer-budget-refusal.acceptance given: [case1] a grant sought with no live urgent concession when: [t0] the budget command is invoked then: stderr has good vibes: refusal — no warrant 1`] = `
+"
+🦉 budget refused
+
+🗿 route.guard.budget
+   ├─ route = .
+   ├─ add = 2
+   ├─ peer = mock-reviewer
+   ├─ refused — a grant needs a live urgent concession on the last round
+   │  ├─ mock-reviewer = 0/2 rounds spent — 2 left
+   │  ├─ no live urgent concession stands on 1.execute
+   │  └─ the route author set 2, with the whole rubric in view
+   │     those 2 were the allowance for taste. past them, only harm buys a round
+   │
+   └─ what to do — yours to run, no human needed
+      ├─ converge — a .taken per open .given, then re-arrive
+      │  └─ rhx route.stone.set --stone 1.execute --as absorbed --that mock-reviewer
+      └─ or grade a concern urgent, where one ships nameable harm
+         ├─ urgent = security · safety · monetary · reputation · behavioral
+         ├─ better = every other concern, and it earns no round
+         ├─ and spend the rounds in hand first — a grant needs a reviewer that has run dry
+         └─ rhx route.stone.set --stone 1.execute --as conceded \\
+              --with mock-reviewer --about <concern> --severity urgent
+
+"
+`;
+
+exports[`driver.route.peer-budget-refusal.acceptance given: [case2] a --stone prefix that resolves to several stones when: [t0] the budget command is invoked with the prefix then: stderr has good vibes: refusal — stone matched many 1`] = `
+"
+🦉 budget refused
+
+🗿 route.guard.budget
+   ├─ route = .
+   ├─ add = 2
+   ├─ refused — --stone matched 2 stones, and a warrant covers one
+   │  ├─ 1.execute-b
+   │  ├─ 1.execute
+   │  └─ --stone matches a stone and every stone beneath it, so a short name reaches many
+   │
+   └─ what to do — yours to run, no human needed
+      └─ name the one stone you meant, in full
+         ├─ rhx route.guard.budget --for review --add 2 --stone 1.execute-b
+         └─ rhx route.guard.budget --for review --add 2 --stone 1.execute
+
+"
+`;
+
+exports[`driver.route.peer-budget-refusal.acceptance given: [case2] a --stone prefix that resolves to several stones when: [t1] the remedy is obeyed — the one stone, named in full then: stderr has good vibes: the warrant refusal the remedy reached: refusal — the narrowed stone, warrant absent 1`] = `
+"
+🦉 budget refused
+
+🗿 route.guard.budget
+   ├─ route = .
+   ├─ add = 2
+   ├─ refused — a grant needs a live urgent concession on the last round
+   │  ├─ mock-reviewer = 0/2 rounds spent — 2 left
+   │  ├─ no live urgent concession stands on 1.execute
+   │  └─ the route author set 2, with the whole rubric in view
+   │     those 2 were the allowance for taste. past them, only harm buys a round
+   │
+   └─ what to do — yours to run, no human needed
+      ├─ converge — a .taken per open .given, then re-arrive
+      │  └─ rhx route.stone.set --stone 1.execute --as absorbed --that mock-reviewer
+      └─ or grade a concern urgent, where one ships nameable harm
+         ├─ urgent = security · safety · monetary · reputation · behavioral
+         ├─ better = every other concern, and it earns no round
+         ├─ and spend the rounds in hand first — a grant needs a reviewer that has run dry
+         └─ rhx route.stone.set --stone 1.execute --as conceded \\
+              --with mock-reviewer --about <concern> --severity urgent
+
+"
+`;
+
+exports[`driver.route.peer-budget-refusal.acceptance given: [case3] a live urgent concession, and the reviewer still has rounds when: [t0] one round is spent, and its concern is graded urgent then: stderr has good vibes: refusal — rounds remain 1`] = `
+"
+🦉 budget refused
+
+🗿 route.guard.budget
+   ├─ route = .
+   ├─ add = 2
+   ├─ peer = mock-reviewer
+   ├─ refused — rounds remain, and a grant needs a reviewer that has run dry
+   │  ├─ mock-reviewer = 1/2 rounds spent — 1 left
+   │  └─ a pad before the bound bites is the bound removed in advance
+   │
+   └─ what to do — yours to run, no human needed
+      └─ spend the rounds in hand — re-arrive, and ask again once it has run dry
+         └─ rhx route.stone.set --stone 1.execute --as passed
+
+"
+`;
+
+exports[`driver.route.peer-budget-refusal.acceptance given: [case4] every round spent, and every concession graded better when: [t0] the budget is spent down with better concessions alone then: stderr has good vibes: refusal — every round spent, every concession better 1`] = `
+"
+🦉 budget refused
+
+🗿 route.guard.budget
+   ├─ route = .
+   ├─ add = 2
+   ├─ peer = mock-reviewer
+   ├─ refused — a grant needs a live urgent concession on the last round
+   │  ├─ mock-reviewer = 2/2 rounds spent
+   │  ├─ no live urgent concession stands on 1.execute
+   │  └─ the route author set 2, with the whole rubric in view
+   │     those 2 were the allowance for taste. past them, only harm buys a round
+   │
+   └─ what to do — yours to run, no human needed
+      ├─ converge — a .taken per open .given, then re-arrive
+      │  └─ rhx route.stone.set --stone 1.execute --as absorbed --that mock-reviewer
+      └─ or grade a concern urgent, where one ships nameable harm
+         ├─ urgent = security · safety · monetary · reputation · behavioral
+         ├─ better = every other concern, and it earns no round
+         └─ rhx route.stone.set --stone 1.execute --as conceded \\
+              --with mock-reviewer --about <concern> --severity urgent
+
+"
+`;

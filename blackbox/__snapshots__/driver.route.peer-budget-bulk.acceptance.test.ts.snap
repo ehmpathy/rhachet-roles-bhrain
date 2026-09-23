@@ -76,6 +76,13 @@ exports[`driver.route.peer-budget-bulk.acceptance given: [case1] a bulk add land
 🗿 route.guard.budget
    ├─ route = .
    ├─ add = 2
+   │
+   ├─ granted — earned by a live urgent concession
+   │  ├─ linter · conceded urgent
+   │  └─ spellcheck · conceded urgent
+   │
+   ├─ 🟡 tell your human why this stone bought budget
+   │
    └─ updates
       └─ architect: 2 → 4
 
@@ -90,6 +97,13 @@ exports[`driver.route.peer-budget-bulk.acceptance given: [case1] a bulk add land
    ├─ route = .
    ├─ add = 2
    ├─ level = 1
+   │
+   ├─ granted — earned by a live urgent concession
+   │  ├─ linter · conceded urgent
+   │  └─ spellcheck · conceded urgent
+   │
+   ├─ 🟡 tell your human why this stone bought budget
+   │
    └─ updates
       ├─ linter: 2 → 4
       └─ spellcheck: 3 → 5

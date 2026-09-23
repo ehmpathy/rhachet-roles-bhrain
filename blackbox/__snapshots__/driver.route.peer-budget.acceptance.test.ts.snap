@@ -83,7 +83,7 @@ exports[`driver.route.peer-budget.acceptance given: [journey] peer review budget
    ├─ stone = 1.execute
    ├─ passage = blocked
    ├─ reason = you conceded — the round to confirm your fix needs more budget
-   │  └─ 🟡 an urgent concession stands — its harm ships if unfixed, so this round is owed a human's grant
+   │  └─ 🟡 an urgent concession stands — its harm ships if unfixed, so this stone earns more budget
    ├─ options
    │  ├─ increase budget — yours to spend
    │  │  └─ rhx route.guard.budget --for review --add N --peer mock-reviewer --stone 1.execute
@@ -111,6 +111,12 @@ exports[`driver.route.peer-budget.acceptance given: [journey] peer review budget
    ├─ route = .
    ├─ add = 2
    ├─ peer = mock-reviewer
+   │
+   ├─ granted — earned by a live urgent concession
+   │  └─ mock-reviewer · conceded urgent
+   │
+   ├─ 🟡 tell your human why this stone bought budget
+   │
    └─ updates
       └─ mock-reviewer: 2 → 4
 

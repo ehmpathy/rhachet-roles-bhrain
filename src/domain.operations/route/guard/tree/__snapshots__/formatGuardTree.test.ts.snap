@@ -309,9 +309,12 @@ exports[`formatGuardTree given: [case17] malfunction passage — offers overrule
    ├─ passage = malfunction
    ├─ reason = reviewer or judge malfunctioned
    ├─ options
+   │  ├─ converge with the reviewer — yours to run, and the levels above stay unlocked
+   │  │  └─ rhx route.stone.set --stone 1.feature --as absorbed --that <reviewer>
    │  ├─ overrule the malfunction — a human must grant
    │  │  └─ rhx route.stone.set --stone 1.feature --as overruled
-   │  └─ or fix the reviewer, then retry
+   │  ├─ or fix the reviewer, then retry
+   │  └─ a broken level never halts the drive — converge the level above it
    └─ guard
       ├─ artifacts
       │   └─ 1.feature.md
@@ -328,9 +331,12 @@ exports[`formatGuardTree given: [case18] constraint passage — offers overrule 
    ├─ passage = blocked
    ├─ reason = reviewer constraint
    ├─ options
+   │  ├─ converge with the reviewer — yours to run, and the levels above stay unlocked
+   │  │  └─ rhx route.stone.set --stone 1.feature --as absorbed --that <reviewer>
    │  ├─ overrule the constraint — a human must grant
    │  │  └─ rhx route.stone.set --stone 1.feature --as overruled
-   │  └─ or fix the reviewer, then retry
+   │  ├─ or fix the reviewer, then retry
+   │  └─ a broken level never halts the drive — converge the level above it
    └─ guard
       ├─ artifacts
       │   └─ 1.feature.md
@@ -347,9 +353,12 @@ exports[`formatGuardTree given: [case19] malfunction passage, no guard — offer
    ├─ passage = malfunction
    ├─ reason = reviewer or judge malfunctioned
    └─ options
+      ├─ converge with the reviewer — yours to run, and the levels above stay unlocked
+      │  └─ rhx route.stone.set --stone 1.feature --as absorbed --that <reviewer>
       ├─ overrule the malfunction — a human must grant
       │  └─ rhx route.stone.set --stone 1.feature --as overruled
-      └─ or fix the reviewer, then retry"
+      ├─ or fix the reviewer, then retry
+      └─ a broken level never halts the drive — converge the level above it"
 `;
 
 exports[`formatReviewsMeterLines given: [case-tactic] the read-out sources tactic onto the finished state when: [t0] a review carries tactic=probabilistic then: the full guard tree shows the tallied-by branch 1`] = `

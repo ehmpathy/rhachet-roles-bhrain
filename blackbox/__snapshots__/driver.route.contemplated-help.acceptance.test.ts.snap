@@ -34,8 +34,8 @@ options:
                         optional for --as conceded — an extant path that records why you conceded)
   --severity <sev>   the harm grade of a concession: urgent | better
                        (REQUIRED for --as conceded — no ungraded concede; not for --as disputed)
-                       urgent = a shipped harm (security | safety | monetary |
-                       reputation | behavioral) — earns more budget, warns the human.
+                       urgent = a shipped harm — earns more budget, warns the human
+                       (security | safety | monetary | reputation | behavioral)
                        better = code idealism / maintenance — the floor, never earns budget
   --help             show this help message
 

@@ -1,0 +1,134 @@
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
+
+exports[`formatBudgetGrantRefusalLines given: [case1] no warrant stands when: [t0] the refusal is rendered then: the bytes a driver reads are pinned 1`] = `
+"
+🦉 budget refused
+
+🗿 route.guard.budget
+   ├─ route = .behavior/v2026_09_03.example
+   ├─ add = 4
+   ├─ peer = mech-rules
+   ├─ refused — a grant needs a live urgent concession on the last round
+   │  ├─ mech-rules = 18/18 rounds spent
+   │  ├─ no live urgent concession stands on 5.1.execution
+   │  └─ the route author set 18, with the whole rubric in view
+   │     those 18 were the allowance for taste. past them, only harm buys a round
+   │
+   └─ what to do — yours to run, no human needed
+      ├─ converge — a .taken per open .given, then re-arrive
+      │  └─ rhx route.stone.set --stone 5.1.execution --as absorbed --that mech-rules
+      └─ or grade a concern urgent, where one ships nameable harm
+         ├─ urgent = security · safety · monetary · reputation · behavioral
+         ├─ better = every other concern, and it earns no round
+         └─ rhx route.stone.set --stone 5.1.execution --as conceded \\
+              --with mech-rules --about <concern> --severity urgent
+"
+`;
+
+exports[`formatBudgetGrantRefusalLines given: [case1] no warrant stands when: [t4] the warrant is absent AND the meter is still LIVE then: the bytes a driver reads are pinned 1`] = `
+"
+🦉 budget refused
+
+🗿 route.guard.budget
+   ├─ route = .behavior/v2026_09_03.example
+   ├─ add = 4
+   ├─ peer = mech-rules
+   ├─ refused — a grant needs a live urgent concession on the last round
+   │  ├─ mech-rules = 0/3 rounds spent — 3 left
+   │  ├─ no live urgent concession stands on 5.1.execution
+   │  └─ the route author set 3, with the whole rubric in view
+   │     those 3 were the allowance for taste. past them, only harm buys a round
+   │
+   └─ what to do — yours to run, no human needed
+      ├─ converge — a .taken per open .given, then re-arrive
+      │  └─ rhx route.stone.set --stone 5.1.execution --as absorbed --that mech-rules
+      └─ or grade a concern urgent, where one ships nameable harm
+         ├─ urgent = security · safety · monetary · reputation · behavioral
+         ├─ better = every other concern, and it earns no round
+         ├─ and spend the rounds in hand first — a grant needs a reviewer that has run dry
+         └─ rhx route.stone.set --stone 5.1.execution --as conceded \\
+              --with mech-rules --about <concern> --severity urgent
+"
+`;
+
+exports[`formatBudgetGrantRefusalLines given: [case2] rounds remain when: [t0] the refusal is rendered then: the bytes a driver reads are pinned 1`] = `
+"
+🦉 budget refused
+
+🗿 route.guard.budget
+   ├─ route = .behavior/v2026_09_03.example
+   ├─ add = 20
+   ├─ peer = ergonomist
+   ├─ refused — rounds remain, and a grant needs a reviewer that has run dry
+   │  ├─ ergonomist = 3/12 rounds spent — 9 left
+   │  └─ a pad before the bound bites is the bound removed in advance
+   │
+   └─ what to do — yours to run, no human needed
+      └─ spend the rounds in hand — re-arrive, and ask again once it has run dry
+         └─ rhx route.stone.set --stone 5.1.execution --as passed
+"
+`;
+
+exports[`formatBudgetGrantRefusalLines given: [case3] --stone matched several stones when: [t0] the refusal is rendered then: the bytes a driver reads are pinned 1`] = `
+"
+🦉 budget refused
+
+🗿 route.guard.budget
+   ├─ route = .behavior/v2026_09_03.example
+   ├─ add = 2
+   ├─ refused — --stone matched 3 stones, and a warrant covers one
+   │  ├─ 5.1.execution
+   │  ├─ 5.2.review
+   │  ├─ 5.3.ship
+   │  └─ --stone matches a stone and every stone beneath it, so a short name reaches many
+   │
+   └─ what to do — yours to run, no human needed
+      └─ name the one stone you meant, in full
+         ├─ rhx route.guard.budget --for review --add 2 --stone 5.1.execution
+         ├─ rhx route.guard.budget --for review --add 2 --stone 5.2.review
+         └─ rhx route.guard.budget --for review --add 2 --stone 5.3.ship
+"
+`;
+
+exports[`formatBudgetGrantRefusalLines given: [case4] the two demoed cells, at the render grain when: [t0] a disputed stone, every round spent then: the bytes a driver reads are pinned 1`] = `
+"
+🦉 budget refused
+
+🗿 route.guard.budget
+   ├─ route = .behavior/v2026_09_03.example
+   ├─ add = 2
+   ├─ peer = mech-rules
+   ├─ refused — a grant needs a live urgent concession on the last round
+   │  ├─ mech-rules = 3/3 rounds spent
+   │  ├─ no live urgent concession stands on 5.1.execution
+   │  └─ the route author set 3, with the whole rubric in view
+   │     those 3 were the allowance for taste. past them, only harm buys a round
+   │
+   └─ what to do — yours to run, no human needed
+      ├─ converge — a .taken per open .given, then re-arrive
+      │  └─ rhx route.stone.set --stone 5.1.execution --as absorbed --that mech-rules
+      └─ or grade a concern urgent, where one ships nameable harm
+         ├─ urgent = security · safety · monetary · reputation · behavioral
+         ├─ better = every other concern, and it earns no round
+         └─ rhx route.stone.set --stone 5.1.execution --as conceded \\
+              --with mech-rules --about <concern> --severity urgent
+"
+`;
+
+exports[`formatBudgetGrantRefusalLines given: [case4] the two demoed cells, at the render grain when: [t1] a malfunctioned reviewer, below its allowance then: the bytes a driver reads are pinned 1`] = `
+"
+🦉 budget refused
+
+🗿 route.guard.budget
+   ├─ route = .behavior/v2026_09_03.example
+   ├─ add = 2
+   ├─ peer = ergo-coverage
+   ├─ refused — rounds remain, and a grant needs a reviewer that has run dry
+   │  ├─ ergo-coverage = 2/3 rounds spent — 1 left
+   │  └─ a pad before the bound bites is the bound removed in advance
+   │
+   └─ what to do — yours to run, no human needed
+      └─ spend the rounds in hand — re-arrive, and ask again once it has run dry
+         └─ rhx route.stone.set --stone 5.1.execution --as passed
+"
+`;

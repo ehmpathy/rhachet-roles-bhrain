@@ -53,7 +53,7 @@ exports[`setStoneAsPassed.exhausted given: [case1] peer reviewer exhaustion writ
    ├─ stone = 1.test
    ├─ passage = blocked
    ├─ reason = you conceded — the round to confirm your fix needs more budget
-   │  └─ 🟡 an urgent concession stands — its harm ships if unfixed, so this round is owed a human's grant
+   │  └─ 🟡 an urgent concession stands — its harm ships if unfixed, so this stone earns more budget
    ├─ options
    │  ├─ increase budget — yours to spend
    │  │  └─ rhx route.guard.budget --for review --add N --peer limited --stone 1.test
@@ -119,7 +119,7 @@ exports[`setStoneAsPassed.exhausted given: [case2] a FRESH blocker answered afte
    ├─ stone = 1.test
    ├─ passage = blocked
    ├─ reason = you conceded — the round to confirm your fix needs more budget
-   │  └─ 🟡 an urgent concession stands — its harm ships if unfixed, so this round is owed a human's grant
+   │  └─ 🟡 an urgent concession stands — its harm ships if unfixed, so this stone earns more budget
    ├─ options
    │  ├─ increase budget — yours to spend
    │  │  └─ rhx route.guard.budget --for review --add N --peer limited --stone 1.test
@@ -265,7 +265,7 @@ exports[`setStoneAsPassed.exhausted given: [case4] the artifact is EDITED while 
    ├─ stone = 1.test
    ├─ passage = blocked
    ├─ reason = you conceded — the round to confirm your fix needs more budget
-   │  └─ 🟡 an urgent concession stands — its harm ships if unfixed, so this round is owed a human's grant
+   │  └─ 🟡 an urgent concession stands — its harm ships if unfixed, so this stone earns more budget
    ├─ options
    │  ├─ increase budget — yours to spend
    │  │  └─ rhx route.guard.budget --for review --add N --peer limited --stone 1.test

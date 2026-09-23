@@ -29,22 +29,24 @@ options:
 🔭 available brains
    ├── ↻ openai/codex
    ├── ○ openai/gpt/4o
+   ├── ○ fireworks/kimi/k3
+   ├── ○ fireworks/glm/5.3
    ├── ○ fireworks/glm/5.2
    ├── ○ fireworks/kimi/k2.6
    ├── ○ fireworks/minimax/m3
    ├── ○ anthropic/claude/opus
-   ├── ○ fireworks/minimax/2.7
-   ├── ○ fireworks/gpt-oss/20b
    ├── ↻ anthropic/claude/code
    ├── ○ anthropic/claude/haiku
    ├── ○ fireworks/gpt-oss/120b
    ├── ○ anthropic/claude/sonnet
-   ├── ○ fireworks/qwen/3.7-plus
+   ├── ○ fireworks/glm/5.3-flash
    ├── ○ fireworks/kimi/k2.7-code
    ├── ○ fireworks/deepseek/v4-pro
    ├── ↻ anthropic/claude/code/opus
    ├── ○ fireworks/deepseek/v4-flash
    ├── ↻ anthropic/claude/code/haiku
-   └── ↻ anthropic/claude/code/sonnet
+   ├── ↻ anthropic/claude/code/sonnet
+   ├── ○ fireworks/deepseek/v4.1-flash
+   └── ○ fireworks/nemotron/3.5-lightning
 "
 `;

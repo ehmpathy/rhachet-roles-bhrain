@@ -31,7 +31,7 @@ the call-site half of `philosophy.a-review-budget-balances-perfection-with-pragm
 | a `better` concession tempts a budget ask | forbidden — `better` never earns budget. spend the floor and evolve |
 | a concern is correct but cosmetic | `better`. correctness is not harm |
 | the budget is hit and every concession is `better` | good enough — proceed, no human |
-| an urgent concession sat on the last round | the human is warned this PR; they grant more |
+| an urgent concession sat on the last round | 🔴 **you** warn your human — write why this stone bought budget. no engine sends it |
 
 blocker: a `better` concession that earns budget · an `urgent` grade with no nameable harm (the
 mis-grade `rule.forbid.overzealous-blockers` forbids) · a budget hit with no urgent concession that

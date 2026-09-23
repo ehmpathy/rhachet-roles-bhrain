@@ -19,10 +19,32 @@ before it exhausts. it is a **count of rounds, never a span of time.**
 - a reviewer with a spent budget reaches `exhausted`
   - terminal for the unlock ladder — the next rung may run
   - and the stone still cannot pass on it
-- `rhx route.guard.budget --for review --add N --stone <stone>` extends every reviewer on that
-  stone at once
-  - ⇒ which is why the driver holds it as its own lever rather than a human's
-    (`rule.always.spend-own-levers-before-escalation`)
+- `rhx route.guard.budget --for review --add N --stone <stone>` extends the **latest level** of that
+  stone — never every reviewer on it
+  - a lower level stays exhausted unless `--level` or `--peer` names it
+    (`computeBudgetTargetSlugs.ts`, F022 fork E: *"a blanket top-up is forbidden"*)
+
+## 🔴 .a grant is REFUSED by default — the budget is a bound, not a counter
+
+the driver once held the grant as a free lever. it does not (2026-09-18, `.behavior/v2026_09_17.fix-budget-grant-needs-urgent-concession`):
+
+> **the budget IS the allowance for `better` churn. inside the meter, taste counts. past the meter, only `urgent` does.**
+
+⇒ so the route author's `budget: N` is the window they bought with the whole rubric in view, and a grant past it is refused unless the round was **earned**:
+
+```
+permitted  ⟺  a live urgent concession stands       ← the warrant
+            ∧ the target reviewer has run dry       ← the moment
+            ∧ --stone named exactly one stone       ← the scope
+```
+
+🔴 **the human path is a DIFFERENT command, and `route.guard.budget` checks no actor at all.** a
+human who runs it is refused exactly as a driver is. the human lift sits on
+`rhx route.mutate grant allow` — which does check the actor — and it mints the privilege flag a
+direct guard edit needs. ⇒ a disjunct written here as *"∨ the caller is a human"* claimed a carve-out
+this command does not hold (raised i002/r009 n1, on the identical claim in its `--help`).
+
+🟡 **the lever is still the driver's** — `rule.always.spend-own-levers-before-escalation` keeps it in the driver's column, and rightly. what changed is that a **bar** now stands in front of it, and the bar is a harm claim the driver writes about its own work (`--severity urgent`, the closed set). ⇒ it is a bound a driver may pass, never one a driver may raise.
 
 ## 🟡 .a duration ceiling is NOT a budget
 
@@ -59,6 +81,8 @@ a live hazard, never a hypothetical:
 where the term composes declared operations + contracts:
 
 - .agent/repo=bhrain/role=driver/skills/route.guard.budget.sh                        # the published cli
+- src/domain.operations/route/guard/review/peer/meter/computeBudgetGrantRefusal.ts   # the three-conjunct gate on a grant
+- src/domain.operations/route/guard/review/peer/meter/computeBudgetTargetSlugs.ts    # what a bare `--add` scopes to
 - src/domain.operations/route/guard/review/peer/meter/computeReviewPeerVerdict.ts    # spends it, derives exhausted
 - src/domain.operations/route/guard/review/peer/meter/getAllReviewPeerMeterStatuses.ts
 - src/domain.operations/route/guard/review/runStoneGuardReviews.ts                   # reads it per reviewer

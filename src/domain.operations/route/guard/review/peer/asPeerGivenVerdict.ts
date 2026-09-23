@@ -8,6 +8,22 @@ import type { ReviewCounts } from '../getReviewCountsViaRegex';
  *
  * .note = the count is 1 rather than a larger number because the gate reads `blockers > 0` and
  *         never the magnitude — one is the smallest value that carries the full sense
+ *
+ * 🔴 .THE TWIN — `computeReviewCompleted` reads an undetected count the OPPOSITE way, and both
+ *    are correct in their own seat. do NOT unify them:
+ *
+ *    | the seat | the count it takes | so that |
+ *    |---|---|---|
+ *    | here — the PASSAGE gate | 1, fabricated | a stone cannot pass on a verdict nobody read |
+ *    | `computeReviewCompleted` — the METER | 0, via `runOneReview` | a broken lane drains no round |
+ *
+ *    ⇒ the two questions are different: *"may this stone pass?"* and *"did the reviewer get a
+ *    turn?"* an unreadable review must answer NO to both, and the answers point opposite ways —
+ *    so a `1` here and a `0` there is the agreement, never the drift.
+ *
+ * ⚠️ a future edit that made these "consistent" would break whichever gate it did not have in
+ *    view: a 0 here re-hides the malfunction as a clean bill; a 1 there charges a round for a
+ *    review that never ran.
  */
 const VERDICT_UNREADABLE = { blockers: 1, nitpicks: 0, unreadable: true };
 
