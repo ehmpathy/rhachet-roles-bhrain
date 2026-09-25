@@ -5,6 +5,11 @@ import type { RouteStone } from '@src/domain.objects/Driver/RouteStone';
 import { RouteStoneGuardReviewSelfArtifact } from '@src/domain.objects/Driver/RouteStoneGuardReviewSelfArtifact';
 import { enumFilesFromGlob } from '@src/utils/enumFilesFromGlob';
 
+import {
+  asStonePromiseFilenameGlob,
+  asStonePromiseSlug,
+} from './getStonePromisePaths';
+
 /**
  * .what = retrieves promise artifacts for a stone
  * .why = enables check of which self-reviews have been promised
@@ -17,17 +22,26 @@ export const getStonePromises = async (input: {
 }): Promise<RouteStoneGuardReviewSelfArtifact[]> => {
   const routeDir = path.join(input.route, '.route');
 
-  // check if .route dir found
-  try {
-    await fs.access(routeDir);
-  } catch {
-    return [];
-  }
+  // probe for the .route dir. an ENOENT is the real absence — no stone has been driven yet, so
+  // there are no promises. every OTHER error is a fault, and a fault must reach the caller.
+  //
+  // 🔴 .note = a bare `catch { return [] }` sat here until i011, and its blast radius is the
+  //            whole gate: an EACCES or an EIO read as "no promises on record", so the guard
+  //            RE-HANDS every review the driver already promised — the exact silent-drop failure
+  //            the `parsePromiseSlug` note below records, entered from one level up
+  //            (rule.forbid.failhide). found by a peer lane at i011.
+  const routeDirFound = await fs
+    .access(routeDir)
+    .then(() => true)
+    .catch((error: NodeJS.ErrnoException) => {
+      if (error.code === 'ENOENT') return false;
+      throw error;
+    });
+  if (!routeDirFound) return [];
 
   // glob for promises: $stone.guard.promise.$slug.md
-  const promiseGlob = `${input.stone.name}.guard.promise.*.md`;
   const promiseFiles = await enumFilesFromGlob({
-    glob: promiseGlob,
+    glob: asStonePromiseFilenameGlob({ stone: input.stone.name }),
     cwd: routeDir,
   });
 
@@ -36,12 +50,11 @@ export const getStonePromises = async (input: {
   for (const filePath of promiseFiles) {
     const filename = path.basename(filePath);
     // pattern: *.guard.promise.{slug}.md
-    const slug = parsePromiseSlug(filename);
+    const slug = asStonePromiseSlug({ filename });
     if (slug) {
       promises.push(
         new RouteStoneGuardReviewSelfArtifact({
           stone: { path: input.stone.path },
-          hash: 'hashless',
           slug,
           path: filePath,
         }),
@@ -50,14 +63,4 @@ export const getStonePromises = async (input: {
   }
 
   return promises;
-};
-
-/**
- * .what = parses promise slug from filename
- * .why = extracts slug from promise artifact filename pattern
- */
-const parsePromiseSlug = (filename: string): string | null => {
-  // filename pattern: $stone.guard.promise.$slug.md
-  const match = filename.match(/\.guard\.promise\.([^.]+)\.md$/);
-  return match?.[1] ?? null;
 };

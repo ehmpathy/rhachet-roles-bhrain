@@ -17,10 +17,19 @@ export interface RouteStoneGuardReviewSelf {
   say: string;
 
   /**
-   * number of hash changes before promise becomes hashless (default: 3)
+   * @deprecated retired — the trigger report is hashless, so a repair resets no clock
    *
-   * after count > hashbar, the promise becomes a firm checkpoint
-   * that won't invalidate on future hash changes
+   * .what = it declared how many hash changes to tolerate before a promise went hashless
+   * .why it is retired = the trigger report was keyed on the artifact hash, so every repair
+   *      minted a fresh report with the clock at now. `hashbar` was the workaround for
+   *      exactly that, and the defect is now gone at the root: the key is (stone, slug).
+   * .note = it never delivered its documented behavior at ANY value. the persist branch
+   *         measured elapsed against the NEWEST trigger, and a fresh hash mints its marker
+   *         at now — so it was instantly the newest and the branch re-read its own creation.
+   *         ⇒ no caller can depend on a behavior the code did not implement.
+   * .note = the key is still ACCEPTED, and it is read only to say so. a throw would halt a
+   *         route on a key that was correct when it was written; silence would let the author
+   *         carry a dead key into the next guard. one line is the kind path.
    */
   hashbar?: number;
 }

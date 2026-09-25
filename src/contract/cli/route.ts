@@ -190,6 +190,38 @@ const getCleanArgsFromArgv = (input: { argv: string[] }): string[] =>
   getInvocationArgs(input.argv);
 
 /**
+ * .what = the flags that are meaningless without a value, so a bare form is refused loud
+ * .why = `parseArgs` coerces a value-less `--flag` to the string `'true'`, which is TRUTHY. for a
+ *        boolean flag that is the whole point; for a flag that carries a path it fabricates a
+ *        value, so the downstream required-guard never fires and the driver meets a confusing
+ *        downstream verdict instead of the loud one that names what is owed
+ *        (`rule.forbid.unexpected-defaults`).
+ *
+ * 🔴 .why a SET rather than an `if` per flag = the same reason `getStrayFlagRefusal` is a table.
+ *    a flag absent from a set is visible beside its peers; a flag absent from an `if` chain is not,
+ *    so the default for a new flag would be silence.
+ *
+ * 🔴 .why an ALLOWLIST rather than the inverse (declare the booleans, require a value for all
+ *    else) = the inverse is the better shape and it is NOT CLEAN in this diff. it changes the
+ *    default for every flag of every route command at once, and the boolean set must be exactly
+ *    right or a command breaks silently. ⇒ caught as the shape of the fix rather than smuggled in
+ *    (`rule.always.fix-forward-under-scouts-honor`).
+ *
+ * ⚠️ .note = THIS SET IS THE THIRD TABLE, and it is meant to be DELETED rather than grown.
+ *    `parseArgs`'s lookahead guesses arity, `asFlagOwnership` (`getStrayFlagRefusal.ts`) holds
+ *    ownership, and this holds arity for one flag — three tables, and each knows only part of
+ *    what a flag is. ⇒ a future flag that takes a value, whose author threads `parseArgs` and
+ *    `asFlagOwnership` (both of which they must touch) and omits this set (which they have no
+ *    reason to know exists), re-creates the exact defect one flag over.
+ *    the unified `FLAG_SCHEMA` that retires all three is worked out in
+ *    `.dream/v2026_09_20.fix.two-flag-tables-and-neither-knows-arity.md`.
+ *
+ * .found = `arch-hazards-behavior` at i015 nitpick.1; the third-table hazard named independently
+ *          by `enroll-impl-arch-defects` at i015 nitpick.4
+ */
+const FLAGS_THAT_REQUIRE_A_VALUE = new Set(['into']);
+
+/**
  * .what = parses cli args into options object
  * .why = simple arg parser without external dependencies
  */
@@ -209,6 +241,32 @@ const parseArgs = (argv: string[]): Record<string, string | undefined> => {
         options[key] = value;
         i++;
       } else {
+        // refuse a bare form where the flag carries a value — never fabricate one
+        //
+        // .note = the message stays GENERIC on purpose. `parseArgs` is shared by every route
+        //    subcommand and does not know which one was invoked, so a hint that names one
+        //    verb's syntax is decoy guidance for every other caller of the same flag.
+        //
+        // 🔴 it read `to promise a self review: --as promised --that <slug> --into <path>` until
+        //    i016, and `--into` is reachable from `route.stone.get`, `route.guard.budget`,
+        //    `route.bind.*`, and `route.bounce` alike ⇒ a driver on any of those met confident
+        //    instructions for a command they had not run (`rule.forbid.surprises`;
+        //    `enroll-impl-arch-defects` at i016, graded on the harm of a wrong mental model).
+        //
+        // ⇒ the per-verb hint belongs to the verb. `getStrayFlagRefusal`'s `asFlagOwnership`
+        //    table is where a subcommand-specific message is owed, since it knows the verb.
+        if (FLAGS_THAT_REQUIRE_A_VALUE.has(key))
+          throw new BadRequestError(
+            [
+              `--${key} was passed with no value`,
+              ``,
+              `--${key} carries a value, so a bare --${key} says naught.`,
+              ``,
+              `pass the value it asks for, or drop the flag:`,
+              `  --${key} <value>`,
+            ].join('\n'),
+            { flag: `--${key}` },
+          );
         options[key] = 'true';
       }
     }
@@ -344,6 +402,10 @@ options:
                        urgent = a shipped harm — earns more budget, warns the human
                        (${asUrgentHarmSet({ separator: ' | ' })})
                        better = code idealism / maintenance — the floor, never earns budget
+  --into <path>      the path you wrote your articulation to — copy it from the prompt
+                       (REQUIRED for --as promised)
+                       a diff needs both paths: with one, a mismatch reads "absent";
+                       with both, the guard shows the diff and the command that moves it
   --help             show this help message
 
 note:
@@ -356,7 +418,8 @@ examples:
   route.stone.set --stone 1.vision --as arrived
   route.stone.set --stone 1.vision --as passed
   route.stone.set --stone 1.vision --as approved
-  route.stone.set --stone 1.vision --as promised --that all-done
+  route.stone.set --stone 1.vision --as promised --that all-done \\
+    --into .behavior/my-feature/review/self/for.1.vision._.all-done.md
   route.stone.set --stone 1.execute --as absorbed --that architect
   route.stone.set --stone 1.execute --as conceded --with architect --about nitpick.4 --severity better
   route.stone.set --stone 1.execute --as conceded --with architect --about blocker.2 --severity urgent
@@ -612,39 +675,43 @@ examples:
 };
 
 /**
- * .what = cli entrypoint for route.drive skill
- * .why = echoes current stone and pass command as GPS-like guidance
+ * .what = runs one cli entrypoint inside the contract's usage-error boundary
+ * .why = a `BadRequestError` is a USAGE fault, so the human owes the formatted message and
+ *        exit 2 — never a node stack trace. each entrypoint carried its own copy of that
+ *        allowlist, and every copy sat INSIDE the entrypoint, below `parseArgs` and below the
+ *        required-flag checks. ⇒ the most common usage errors of all escaped it.
+ *
+ * 🔴 .note = the symptom, measured before this boundary existed:
+ *
+ *    $ rhx route.stone.get --route .behavior/…        # --stone omitted
+ *    /home/<user>/<worktree>/dist/contract/cli/route.js:894
+ *            throw new helpful_errors_1.BadRequestError('--stone is required', {
+ *    …
+ *    Node.js v22.21.0
+ *
+ *    a stack trace, the author's absolute path, the node version — and **exit 1**, not the
+ *    exit 2 that `rule.require.exit-code-semantics` reserves for a caller-must-fix constraint.
+ *    ⇒ a hook that reads the code read "server fault" where the truth was "you forgot a flag"
+ *    (`repo-rules` blocker.2 at i018; the lane found it at `parseArgs`, and the hole is wider).
+ *
+ * ⚠️ .note = the inner allowlists are LEFT in place. most are now redundant with this
+ *            boundary, and two are not — `routeStatusLine` reframes its guidance, and
+ *            `routeStoneSet` tears down its progress spinner first. ⇒ the retirement is a read
+ *            of thirteen call sites rather than a delete, and it is caught rather than bundled
+ *            into a diff this wide.
+ *
+ * 🔴 .note = THREE entrypoints deliberately do NOT take this boundary, and each for its own
+ *            reason. stated, because a later hand that "finishes the job" would break them:
+ *   - `routeStoneDel` / `routeStoneAdd` already parse INSIDE their own try, so they never had
+ *     the hole. wrapping them would add an outer layer that can never fire
+ *   - 🔴 `routeBounce` is a PreToolUse hook, and its docblock records why it has no catch:
+ *     *"Claude Code treats crashed hooks as 'error but allow' (fail-open semantics)"*. a
+ *     boundary here would turn a crash that FAILS OPEN into an exit 2 that BLOCKS every write
+ *     in the session. ⇒ its missing catch is the contract, not an omission
  */
-export const routeDrive = async (): Promise<void> => {
-  const options = parseArgs(process.argv);
-
-  if (options.help) {
-    printDriveHelp();
-    return;
-  }
-
+const runCliEntrypoint = async (run: () => Promise<void>): Promise<void> => {
   try {
-    // parse --when parameter
-    const when =
-      options.when === 'hook.onBoot' || options.when === 'hook.onStop'
-        ? options.when
-        : undefined;
-
-    const result = await stepRouteDrive({
-      route: options.route,
-      when,
-    });
-
-    if (result.emit?.stdout) {
-      console.log(result.emit.stdout);
-    }
-
-    if (result.emit?.stderr) {
-      if (result.emit.stderr.reason) {
-        console.error(result.emit.stderr.reason);
-      }
-      process.exit(result.emit.stderr.code);
-    }
+    await run();
   } catch (error) {
     // allowlist BadRequestError: format nicely and exit 2
     if (error instanceof BadRequestError) {
@@ -655,6 +722,52 @@ export const routeDrive = async (): Promise<void> => {
     throw error;
   }
 };
+
+/**
+ * .what = cli entrypoint for route.drive skill
+ * .why = echoes current stone and pass command as GPS-like guidance
+ */
+export const routeDrive = async (): Promise<void> =>
+  runCliEntrypoint(async () => {
+    const options = parseArgs(process.argv);
+
+    if (options.help) {
+      printDriveHelp();
+      return;
+    }
+
+    try {
+      // parse --when parameter
+      const when =
+        options.when === 'hook.onBoot' || options.when === 'hook.onStop'
+          ? options.when
+          : undefined;
+
+      const result = await stepRouteDrive({
+        route: options.route,
+        when,
+      });
+
+      if (result.emit?.stdout) {
+        console.log(result.emit.stdout);
+      }
+
+      if (result.emit?.stderr) {
+        if (result.emit.stderr.reason) {
+          console.error(result.emit.stderr.reason);
+        }
+        process.exit(result.emit.stderr.code);
+      }
+    } catch (error) {
+      // allowlist BadRequestError: format nicely and exit 2
+      if (error instanceof BadRequestError) {
+        console.error(`error: ${error.message}`);
+        process.exit(2);
+      }
+      // rethrow unexpected errors (no failhide)
+      throw error;
+    }
+  });
 
 /**
  * .what = maps a renderer fault to operator-facing guidance for stderr
@@ -697,186 +810,191 @@ const asStatusLineFaultGuidance = (input: { error: unknown }): string => {
  *         session, yet the fault is surfaced (rule.forbid.failhide +
  *         rule.require.failloud) rather than silently hidden.
  */
-export const routeStatusLine = async (): Promise<void> => {
-  const options = parseArgs(process.argv);
+export const routeStatusLine = async (): Promise<void> =>
+  runCliEntrypoint(async () => {
+    const options = parseArgs(process.argv);
 
-  if (options.help) {
-    printStatusLineHelp();
-    return;
-  }
+    if (options.help) {
+      printStatusLineHelp();
+      return;
+    }
 
-  try {
-    // compute and emit the status line (empty when unbound or complete)
-    const result = await stepRouteStatusLine({ route: null });
-    console.log(result.line);
-  } catch (error) {
-    // fail loud, not hidden: log the fault to stderr (never stdout, which the
-    // harness renders as the line) and rethrow so the process exits non-zero.
-    // the harness blanks the line on non-zero exit, so the session is safe while
-    // the fault stays observable (not a failhide — the error is rethrown).
-    // reframe the guidance to this entrypoint (see asStatusLineFaultGuidance) so
-    // an operator is not pointed at an unsupported `--route` flag.
-    console.error(
-      `[route.status.line] fault: ${asStatusLineFaultGuidance({ error })}`,
-    );
-    // a multi-bind is a caller-must-fix constraint (unbind the extra route), so
-    // exit 2 per rule.require.exit-code-semantics, as the peer routeDrive does.
-    // any other fault is a genuine server-fix path: rethrow for a non-zero exit.
-    if (error instanceof BadRequestError) process.exit(2);
-    throw error;
-  }
-};
+    try {
+      // compute and emit the status line (empty when unbound or complete)
+      const result = await stepRouteStatusLine({ route: null });
+      console.log(result.line);
+    } catch (error) {
+      // fail loud, not hidden: log the fault to stderr (never stdout, which the
+      // harness renders as the line) and rethrow so the process exits non-zero.
+      // the harness blanks the line on non-zero exit, so the session is safe while
+      // the fault stays observable (not a failhide — the error is rethrown).
+      // reframe the guidance to this entrypoint (see asStatusLineFaultGuidance) so
+      // an operator is not pointed at an unsupported `--route` flag.
+      console.error(
+        `[route.status.line] fault: ${asStatusLineFaultGuidance({ error })}`,
+      );
+      // a multi-bind is a caller-must-fix constraint (unbind the extra route), so
+      // exit 2 per rule.require.exit-code-semantics, as the peer routeDrive does.
+      // any other fault is a genuine server-fix path: rethrow for a non-zero exit.
+      if (error instanceof BadRequestError) process.exit(2);
+      throw error;
+    }
+  });
 
 /**
  * .what = cli entrypoint for route.review skill
  * .why = enables foremen to scan artifacts and review in editor
  */
-export const routeReview = async (): Promise<void> => {
-  const options = parseArgs(process.argv);
+export const routeReview = async (): Promise<void> =>
+  runCliEntrypoint(async () => {
+    const options = parseArgs(process.argv);
 
-  if (options.help) {
-    printReviewHelp();
-    return;
-  }
+    if (options.help) {
+      printReviewHelp();
+      return;
+    }
 
-  // validate opener command exists in PATH
-  if (options.open) {
+    // validate opener command exists in PATH
+    if (options.open) {
+      try {
+        execSync(`command -v ${options.open}`, { stdio: 'pipe' });
+      } catch (error) {
+        // allowlist command-not-found (exit code 1 or 127): format nicely and exit 2
+        if (error && typeof error === 'object' && 'status' in error) {
+          const errorLines = [
+            '🦉 look for the light',
+            '',
+            '🗿 route.review',
+            `   └─ ✗ opener '${options.open}' not found in PATH`,
+          ];
+          console.error(errorLines.join('\n'));
+          process.exit(2);
+        }
+        // rethrow unexpected errors (no failhide)
+        throw error;
+      }
+    }
+
     try {
-      execSync(`command -v ${options.open}`, { stdio: 'pipe' });
+      const result = await stepRouteReview({
+        route: options.route,
+        stone: options.stone,
+        open: options.open,
+      });
+
+      if (result.emit.stdout) {
+        console.log(result.emit.stdout);
+      }
+
+      if (result.emit.stderr) {
+        console.error(result.emit.stderr.reason);
+        process.exit(result.emit.stderr.code);
+      }
     } catch (error) {
-      // allowlist command-not-found (exit code 1 or 127): format nicely and exit 2
-      if (error && typeof error === 'object' && 'status' in error) {
-        const errorLines = [
-          '🦉 look for the light',
-          '',
-          '🗿 route.review',
-          `   └─ ✗ opener '${options.open}' not found in PATH`,
-        ];
-        console.error(errorLines.join('\n'));
+      // allowlist BadRequestError: format nicely and exit 2
+      if (error instanceof BadRequestError) {
+        console.error(`error: ${error.message}`);
         process.exit(2);
       }
       // rethrow unexpected errors (no failhide)
       throw error;
     }
-  }
-
-  try {
-    const result = await stepRouteReview({
-      route: options.route,
-      stone: options.stone,
-      open: options.open,
-    });
-
-    if (result.emit.stdout) {
-      console.log(result.emit.stdout);
-    }
-
-    if (result.emit.stderr) {
-      console.error(result.emit.stderr.reason);
-      process.exit(result.emit.stderr.code);
-    }
-  } catch (error) {
-    // allowlist BadRequestError: format nicely and exit 2
-    if (error instanceof BadRequestError) {
-      console.error(`error: ${error.message}`);
-      process.exit(2);
-    }
-    // rethrow unexpected errors (no failhide)
-    throw error;
-  }
-};
+  });
 
 /**
  * .what = cli entrypoint for route.bind.set skill
  * .why = binds a route to the current branch for auto-lookup
  */
-export const routeBindSet = async (): Promise<void> => {
-  const options = parseArgs(process.argv);
+export const routeBindSet = async (): Promise<void> =>
+  runCliEntrypoint(async () => {
+    const options = parseArgs(process.argv);
 
-  if (options.help) {
-    printBindSetHelp();
-    return;
-  }
-
-  if (!options.route) {
-    console.error('error: --route is required');
-    console.error('run with --help for usage');
-    process.exit(2);
-  }
-
-  try {
-    const result = await setRouteBind({ route: options.route });
-    console.log(`bound route: ${result.route}`);
-  } catch (error) {
-    // allowlist BadRequestError: format nicely and exit 2
-    if (error instanceof BadRequestError) {
-      console.error(`error: ${error.message}`);
-      process.exit(2);
+    if (options.help) {
+      printBindSetHelp();
+      return;
     }
-    // rethrow unexpected errors (no failhide)
-    throw error;
-  }
-};
+
+    if (!options.route) {
+      throw new BadRequestError('--route is required', {
+        hint: '--help for usage',
+      });
+    }
+
+    try {
+      const result = await setRouteBind({ route: options.route });
+      console.log(`bound route: ${result.route}`);
+    } catch (error) {
+      // allowlist BadRequestError: format nicely and exit 2
+      if (error instanceof BadRequestError) {
+        console.error(`error: ${error.message}`);
+        process.exit(2);
+      }
+      // rethrow unexpected errors (no failhide)
+      throw error;
+    }
+  });
 
 /**
  * .what = cli entrypoint for route.bind.get skill
  * .why = queries the route bound to the current branch
  */
-export const routeBindGet = async (): Promise<void> => {
-  const options = parseArgs(process.argv);
+export const routeBindGet = async (): Promise<void> =>
+  runCliEntrypoint(async () => {
+    const options = parseArgs(process.argv);
 
-  if (options.help) {
-    printBindGetHelp();
-    return;
-  }
+    if (options.help) {
+      printBindGetHelp();
+      return;
+    }
 
-  try {
-    const result = await getRouteBind();
-    if (result) {
-      console.log(`bound to: ${result.route}`);
-    } else {
-      console.log('not bound');
+    try {
+      const result = await getRouteBind();
+      if (result) {
+        console.log(`bound to: ${result.route}`);
+      } else {
+        console.log('not bound');
+      }
+    } catch (error) {
+      // allowlist BadRequestError: format nicely and exit 2
+      if (error instanceof BadRequestError) {
+        console.error(`error: ${error.message}`);
+        process.exit(2);
+      }
+      // rethrow unexpected errors (no failhide)
+      throw error;
     }
-  } catch (error) {
-    // allowlist BadRequestError: format nicely and exit 2
-    if (error instanceof BadRequestError) {
-      console.error(`error: ${error.message}`);
-      process.exit(2);
-    }
-    // rethrow unexpected errors (no failhide)
-    throw error;
-  }
-};
+  });
 
 /**
  * .what = cli entrypoint for route.bind.del skill
  * .why = removes the route bind for the current branch
  */
-export const routeBindDel = async (): Promise<void> => {
-  const options = parseArgs(process.argv);
+export const routeBindDel = async (): Promise<void> =>
+  runCliEntrypoint(async () => {
+    const options = parseArgs(process.argv);
 
-  if (options.help) {
-    printBindDelHelp();
-    return;
-  }
+    if (options.help) {
+      printBindDelHelp();
+      return;
+    }
 
-  try {
-    const result = await delRouteBind();
-    if (result.deleted) {
-      console.log('unbound route');
-    } else {
-      console.log('not bound (no bind to remove)');
+    try {
+      const result = await delRouteBind();
+      if (result.deleted) {
+        console.log('unbound route');
+      } else {
+        console.log('not bound (no bind to remove)');
+      }
+    } catch (error) {
+      // allowlist BadRequestError: format nicely and exit 2
+      if (error instanceof BadRequestError) {
+        console.error(`error: ${error.message}`);
+        process.exit(2);
+      }
+      // rethrow unexpected errors (no failhide)
+      throw error;
     }
-  } catch (error) {
-    // allowlist BadRequestError: format nicely and exit 2
-    if (error instanceof BadRequestError) {
-      console.error(`error: ${error.message}`);
-      process.exit(2);
-    }
-    // rethrow unexpected errors (no failhide)
-    throw error;
-  }
-};
+  });
 
 /**
  * .what = looks up route from bind
@@ -907,43 +1025,44 @@ const getRouteOrThrow = async (input: {
  * .what = cli entrypoint for route.stone.get skill
  * .why = enables shell invocation via package-level import
  */
-export const routeStoneGet = async (): Promise<void> => {
-  const options = parseArgs(process.argv);
+export const routeStoneGet = async (): Promise<void> =>
+  runCliEntrypoint(async () => {
+    const options = parseArgs(process.argv);
 
-  if (options.help) {
-    printGetHelp();
-    return;
-  }
-
-  if (!options.stone) {
-    throw new BadRequestError('--stone is required', {
-      hint: '--help for usage',
-    });
-  }
-  const route = await getRouteOrThrow({ route: options.route });
-
-  try {
-    const result = await stepRouteStoneGet({
-      stone: options.stone as '@next-one' | '@next-all' | string,
-      route,
-      say: options.say === 'true',
-    });
-
-    if (result.emit) {
-      console.log(result.emit.stdout);
-    } else if (result.stones.length > 0) {
-      console.log(result.stones.map((s) => s.name).join('\n'));
+    if (options.help) {
+      printGetHelp();
+      return;
     }
-  } catch (error) {
-    // allowlist BadRequestError: format nicely and exit 2
-    if (error instanceof BadRequestError) {
-      console.error(`error: ${error.message}`);
-      process.exit(2);
+
+    if (!options.stone) {
+      throw new BadRequestError('--stone is required', {
+        hint: '--help for usage',
+      });
     }
-    // rethrow unexpected errors (no failhide)
-    throw error;
-  }
-};
+    const route = await getRouteOrThrow({ route: options.route });
+
+    try {
+      const result = await stepRouteStoneGet({
+        stone: options.stone as '@next-one' | '@next-all' | string,
+        route,
+        say: options.say === 'true',
+      });
+
+      if (result.emit) {
+        console.log(result.emit.stdout);
+      } else if (result.stones.length > 0) {
+        console.log(result.stones.map((s) => s.name).join('\n'));
+      }
+    } catch (error) {
+      // allowlist BadRequestError: format nicely and exit 2
+      if (error instanceof BadRequestError) {
+        console.error(`error: ${error.message}`);
+        process.exit(2);
+      }
+      // rethrow unexpected errors (no failhide)
+      throw error;
+    }
+  });
 
 /**
  * .what = strips owl header and trims lead newlines from stdout
@@ -990,135 +1109,137 @@ const isGuardExitRequired = (input: {
  * .what = cli entrypoint for route.stone.set skill
  * .why = enables shell invocation via package-level import
  */
-export const routeStoneSet = async (): Promise<void> => {
-  const options = parseArgs(process.argv);
+export const routeStoneSet = async (): Promise<void> =>
+  runCliEntrypoint(async () => {
+    const options = parseArgs(process.argv);
 
-  if (options.help) {
-    printSetHelp();
-    return;
-  }
+    if (options.help) {
+      printSetHelp();
+      return;
+    }
 
-  // validate --stone required
-  if (!options.stone)
-    throw new BadRequestError('--stone is required', {
-      hint: '--help for usage',
-    });
-
-  // validate --route required (or get from bind)
-  const route = await getRouteOrThrow({ route: options.route });
-
-  // validate --as required and valid
-  if (!isValidStonePassageAction({ action: options.as })) {
-    throw new BadRequestError(
-      '--as must be "passed", "approved", "promised", "absorbed", "conceded", "disputed", "blocked", "rewound", "arrived", "overruled", or "forced"',
-      { hint: '--help for usage' },
-    );
-  }
-
-  // validate --that required for promised
-  if (isPromisedActionSlugAbsent({ action: options.as, slug: options.that }))
-    throw new BadRequestError('--that is required when --as is "promised"', {
-      hint: '--help for usage',
-    });
-
-  // validate and derive yield mode (only for rewound)
-  const yieldMode = asYieldModeForRewound({
-    asAction: options.as,
-    hard: options.hard,
-    soft: options.soft,
-    yield: options.yield,
-  });
-
-  // detect TTY for human vs agent
-  // allow approval in test/CI environments (Jest sets NODE_ENV=test, CI runners set CI=true)
-  const isTestEnv =
-    process.env.NODE_ENV === 'test' || process.env.CI === 'true';
-  const isTTY = isTestEnv || (process.stdout.isTTY ?? false);
-
-  // construct progress context (stdout so it appears with tree)
-  const progress = genContextCliEmit({ stderr: process.stdout });
-
-  // build a LAZY memoize-on-success supplier of the review-tally sub-brain
-  // .why = the guard's fallback tactic (getReviewCountsViaBrain) needs a brain ONLY when a
-  //        reviewer phrased its verdict in prose. the supplier defers the build to that first
-  //        fallback, so a numeric-only stone-pass never constructs a brain (zero cost).
-  // .note = env: 'prep' mirrors review.ts; keyrack auto-unlocks locked keys on first fetch
-  const reviewBrainSupply = genReviewBrainSupply({
-    choice: FIXED_FALLBACK_BRAIN,
-    creds: { keyrack: { owner: 'ehmpath', env: 'prep' } },
-  });
-
-  // print owl header early so progress appears below it
-  const owlHeader = `🦉 the way speaks for itself`;
-  console.log(owlHeader);
-
-  try {
-    const result = await stepRouteStoneSet(
-      {
-        stone: options.stone,
-        route,
-        as: options.as as
-          | 'passed'
-          | 'approved'
-          | 'promised'
-          | 'absorbed'
-          | 'blocked'
-          | 'rewound'
-          | 'arrived'
-          | 'overruled'
-          | 'forced'
-          | 'disputed'
-          | 'conceded',
-        that: options.that,
-        with: options.with,
-        about: options.about,
-        why: options.why,
-        severity: asConcedeSeverity({ raw: options.severity }),
-        yield: yieldMode,
-      },
-      { ...progress.context, ...reviewBrainSupply, isTTY },
-    );
-
-    progress.done();
-
-    if (result.emit) {
-      const stdoutWithoutOwl = asStdoutWithoutOwlHeader({
-        stdout: result.emit.stdout,
-        owlHeader,
+    // validate --stone required
+    if (!options.stone)
+      throw new BadRequestError('--stone is required', {
+        hint: '--help for usage',
       });
-      console.log(''); // blank line after progress, before tree
-      console.log(stdoutWithoutOwl);
-      if (result.emit.stderr) {
-        console.error('');
-        console.error(result.emit.stderr);
-      }
+
+    // validate --route required (or get from bind)
+    const route = await getRouteOrThrow({ route: options.route });
+
+    // validate --as required and valid
+    if (!isValidStonePassageAction({ action: options.as })) {
+      throw new BadRequestError(
+        '--as must be "passed", "approved", "promised", "absorbed", "conceded", "disputed", "blocked", "rewound", "arrived", "overruled", or "forced"',
+        { hint: '--help for usage' },
+      );
     }
 
-    // exit with code 2 for intentional guard block or approval/overrule/force blocked
-    if (
-      isGuardExitRequired({
-        passed: result.passed,
-        challenged: result.challenged,
-        approved: result.approved,
-        overruled: result.overruled,
-        forced: result.forced,
-        absorbed: result.absorbed,
-        conceded: result.conceded,
-      })
-    ) {
-      process.exit(2);
+    // validate --that required for promised
+    if (isPromisedActionSlugAbsent({ action: options.as, slug: options.that }))
+      throw new BadRequestError('--that is required when --as is "promised"', {
+        hint: '--help for usage',
+      });
+
+    // validate and derive yield mode (only for rewound)
+    const yieldMode = asYieldModeForRewound({
+      asAction: options.as,
+      hard: options.hard,
+      soft: options.soft,
+      yield: options.yield,
+    });
+
+    // detect TTY for human vs agent
+    // allow approval in test/CI environments (Jest sets NODE_ENV=test, CI runners set CI=true)
+    const isTestEnv =
+      process.env.NODE_ENV === 'test' || process.env.CI === 'true';
+    const isTTY = isTestEnv || (process.stdout.isTTY ?? false);
+
+    // construct progress context (stdout so it appears with tree)
+    const progress = genContextCliEmit({ stderr: process.stdout });
+
+    // build a LAZY memoize-on-success supplier of the review-tally sub-brain
+    // .why = the guard's fallback tactic (getReviewCountsViaBrain) needs a brain ONLY when a
+    //        reviewer phrased its verdict in prose. the supplier defers the build to that first
+    //        fallback, so a numeric-only stone-pass never constructs a brain (zero cost).
+    // .note = env: 'prep' mirrors review.ts; keyrack auto-unlocks locked keys on first fetch
+    const reviewBrainSupply = genReviewBrainSupply({
+      choice: FIXED_FALLBACK_BRAIN,
+      creds: { keyrack: { owner: 'ehmpath', env: 'prep' } },
+    });
+
+    // print owl header early so progress appears below it
+    const owlHeader = `🦉 the way speaks for itself`;
+    console.log(owlHeader);
+
+    try {
+      const result = await stepRouteStoneSet(
+        {
+          stone: options.stone,
+          route,
+          as: options.as as
+            | 'passed'
+            | 'approved'
+            | 'promised'
+            | 'absorbed'
+            | 'blocked'
+            | 'rewound'
+            | 'arrived'
+            | 'overruled'
+            | 'forced'
+            | 'disputed'
+            | 'conceded',
+          that: options.that,
+          with: options.with,
+          about: options.about,
+          why: options.why,
+          severity: asConcedeSeverity({ raw: options.severity }),
+          into: options.into,
+          yield: yieldMode,
+        },
+        { ...progress.context, ...reviewBrainSupply, isTTY },
+      );
+
+      progress.done();
+
+      if (result.emit) {
+        const stdoutWithoutOwl = asStdoutWithoutOwlHeader({
+          stdout: result.emit.stdout,
+          owlHeader,
+        });
+        console.log(''); // blank line after progress, before tree
+        console.log(stdoutWithoutOwl);
+        if (result.emit.stderr) {
+          console.error('');
+          console.error(result.emit.stderr);
+        }
+      }
+
+      // exit with code 2 for intentional guard block or approval/overrule/force blocked
+      if (
+        isGuardExitRequired({
+          passed: result.passed,
+          challenged: result.challenged,
+          approved: result.approved,
+          overruled: result.overruled,
+          forced: result.forced,
+          absorbed: result.absorbed,
+          conceded: result.conceded,
+        })
+      ) {
+        process.exit(2);
+      }
+    } catch (error) {
+      progress.done();
+      // allowlist BadRequestError: format nicely and exit 2
+      if (error instanceof BadRequestError) {
+        console.error(`error: ${error.message}`);
+        process.exit(2);
+      }
+      // rethrow unexpected errors (no failhide)
+      throw error;
     }
-  } catch (error) {
-    progress.done();
-    // allowlist BadRequestError: format nicely and exit 2
-    if (error instanceof BadRequestError) {
-      console.error(`error: ${error.message}`);
-      process.exit(2);
-    }
-    // rethrow unexpected errors (no failhide)
-    throw error;
-  }
-};
+  });
 
 /**
  * .what = cli entrypoint for route.stone.del skill
@@ -1228,53 +1349,54 @@ export const routeStoneAdd = async (): Promise<void> => {
  * .what = cli entrypoint for route.stone.judge skill
  * .why = enables deterministic judge mechanisms for guard validation
  */
-export const routeStoneJudge = async (): Promise<void> => {
-  const options = parseArgs(process.argv);
+export const routeStoneJudge = async (): Promise<void> =>
+  runCliEntrypoint(async () => {
+    const options = parseArgs(process.argv);
 
-  if (options.help) {
-    printJudgeHelp();
-    return;
-  }
+    if (options.help) {
+      printJudgeHelp();
+      return;
+    }
 
-  if (!options.mechanism) {
-    throw new BadRequestError('--mechanism is required', {
-      hint: '--help for usage',
-    });
-  }
-  if (!options.stone) {
-    throw new BadRequestError('--stone is required', {
-      hint: '--help for usage',
-    });
-  }
-  const route = await getRouteOrThrow({ route: options.route });
-
-  try {
-    if (options.mechanism === 'approved?') {
-      await judgeApproved({ stone: options.stone, route });
-    } else if (options.mechanism === 'reviewed?') {
-      const allowBlockers = parseInt(options['allow-blockers'] ?? '0', 10);
-      const allowNitpicks = parseInt(options['allow-nitpicks'] ?? '0', 10);
-      await judgeReviewed({
-        stone: options.stone,
-        route,
-        allowBlockers,
-        allowNitpicks,
-      });
-    } else {
-      throw new BadRequestError(`unknown mechanism "${options.mechanism}"`, {
+    if (!options.mechanism) {
+      throw new BadRequestError('--mechanism is required', {
         hint: '--help for usage',
       });
     }
-  } catch (error) {
-    // allowlist BadRequestError: format nicely and exit 2
-    if (error instanceof BadRequestError) {
-      console.error(`error: ${error.message}`);
-      process.exit(2);
+    if (!options.stone) {
+      throw new BadRequestError('--stone is required', {
+        hint: '--help for usage',
+      });
     }
-    // rethrow unexpected errors (no failhide)
-    throw error;
-  }
-};
+    const route = await getRouteOrThrow({ route: options.route });
+
+    try {
+      if (options.mechanism === 'approved?') {
+        await judgeApproved({ stone: options.stone, route });
+      } else if (options.mechanism === 'reviewed?') {
+        const allowBlockers = parseInt(options['allow-blockers'] ?? '0', 10);
+        const allowNitpicks = parseInt(options['allow-nitpicks'] ?? '0', 10);
+        await judgeReviewed({
+          stone: options.stone,
+          route,
+          allowBlockers,
+          allowNitpicks,
+        });
+      } else {
+        throw new BadRequestError(`unknown mechanism "${options.mechanism}"`, {
+          hint: '--help for usage',
+        });
+      }
+    } catch (error) {
+      // allowlist BadRequestError: format nicely and exit 2
+      if (error instanceof BadRequestError) {
+        console.error(`error: ${error.message}`);
+        process.exit(2);
+      }
+      // rethrow unexpected errors (no failhide)
+      throw error;
+    }
+  });
 
 /**
  * .what = judge mechanism for human approval check
@@ -1861,139 +1983,140 @@ options:
  * .what = cli entrypoint for route.mutate grant commands
  * .why = manages privilege flags for route protection bypass
  */
-export const routeMutateGrant = async (): Promise<void> => {
-  const options = parseArgs(process.argv);
+export const routeMutateGrant = async (): Promise<void> =>
+  runCliEntrypoint(async () => {
+    const options = parseArgs(process.argv);
 
-  // --help is an ASK, never a fault: stdout, exit 0, and judged BEFORE the action — below this
-  // line it would fall into the invalid-action branch and exit 2 (rule.require.help-on-demand).
-  if (options.help) {
-    console.log(getRouteMutateGrantHelpText());
-    return;
-  }
-
-  // extract action from positional args or named option
-  const action = getGrantActionFromArgs({
-    argv: process.argv,
-    grantOption: options.grant,
-  });
-
-  if (!action || !['allow', 'block', 'get'].includes(action)) {
-    // usage on an invalid/absent action is an error path → stderr, not stdout
-    // (rule.forbid.stdout-on-exit-errors: stdout may be hidden on non-zero exit)
-    // .note = the blank lines are explicit because the shared text is trimmed; see the twin note
-    //         in `routeGuardBudget`. the extant bytes on this path are unchanged.
-    console.error('');
-    console.error(getRouteMutateGrantHelpText());
-    console.error('');
-    // exit 2 = constraint: the caller gave a bad action and must fix the invocation
-    // (rule.require.exit-code-semantics: 0 ok, 1 malfunction, 2 constraint)
-    process.exit(2);
-  }
-
-  try {
-    // get route from option or auto-detect
-    let routePath = options.route;
-    if (!routePath) {
-      const bind = await getRouteBindByBranch({ branch: null });
-      if (!bind) {
-        console.error('error: no bound route found. use --route to specify.');
-        process.exit(2);
-      }
-      routePath = bind.route;
+    // --help is an ASK, never a fault: stdout, exit 0, and judged BEFORE the action — below this
+    // line it would fall into the invalid-action branch and exit 2 (rule.require.help-on-demand).
+    if (options.help) {
+      console.log(getRouteMutateGrantHelpText());
+      return;
     }
 
-    const privilegeFlagPath = path.join(
-      routePath,
-      '.route',
-      '.privilege.mutate.flag',
-    );
+    // extract action from positional args or named option
+    const action = getGrantActionFromArgs({
+      argv: process.argv,
+      grantOption: options.grant,
+    });
 
-    if (action === 'allow') {
-      // 🔴 the ACTOR check — the grant's help has said "human only" since it shipped, and this is
-      //    what makes that a gate rather than a claim.
-      //
-      // .why = the flag it writes lifts EVERY protected write on the route at once — a `budget:`
-      //        edit in a `.guard`, an appended `rounds: 0` line in the append-only meter. so a
-      //        grant any caller may mint is a bound any caller may raise, and the gate on
-      //        route.guard.budget would sit beside an open door rather than on the road.
-      //
-      // .note = `block` and `get` are UNgated on purpose. a revoke narrows what is permitted and a
-      //         status read changes naught, so neither is a lever the bound needs held.
-      //
-      // 🔴 the ACTOR is INJECTED, as it is for the three human-only stone levers — `--as approved`,
-      //    `--as overruled`, `--as forced`. the check itself was already shared; its INPUT was not,
-      //    so the granted wire (`isTTY === true ⇒ the flag is written`) could be driven by no test
-      //    at all — every spawn is a pipe, and a pipe is refused by construction. the leaf now
-      //    takes `context: { isTTY }`, so a test drives both verdicts (raised i002/r002).
-      //
-      // 🔴 .and the LIVE wire below is clamped too, by the refusal cases rather than by a pty.
-      //    a spawned skill has a pipe on stdin, so `process.stdin.isTTY` is `undefined` — and the
-      //    acceptance corpus asserts that invocation exits 2 and leaves NO flag on disk
-      //    (`driver.route.mutate.acceptance.test.ts` `[case4][t1]`, and `[case6]` phase 2a).
-      //
-      //    | the regression | what a pipe then reads | caught? |
-      //    |---|---|---|
-      //    | the read is dropped for a constant `true` | `true` ⇒ GRANTS | ✅ both cases go red |
-      //    | the probe is inverted (`!== true`) | `undefined !== true` ⇒ GRANTS | ✅ both cases go red |
-      //    | the read is dropped for a constant `false` | `false` ⇒ refuses | 🔴 **ships green** |
-      //
-      //    ⇒ the two a reviewer named are held; the third is not, and it is recorded rather than
-      //      claimed away (raised i003/r004 n1). it fails CLOSED — a human's grant stops to work,
-      //      which is loud the first time one is attempted — where the other two fail OPEN and
-      //      silently re-open the door this gate exists to shut. only a pty-backed case closes it.
-      const { granted, emit } = await setRoutePrivilegeAsGranted(
-        { route: routePath },
-        { isTTY: process.stdin.isTTY === true },
-      );
-
-      if (!granted) {
-        // 🔴 stderr, never stdout: a refusal is a constraint the caller must fix, and stdout may be
-        //    hidden on a non-zero exit (`rule.forbid.stdout-on-exit-errors`).
-        emit.lines.forEach((line) => console.error(line));
-        // exit 2 = constraint: the caller must change who invokes it, never how
-        // (rule.require.exit-code-semantics: 0 ok, 1 malfunction, 2 constraint)
-        process.exit(2);
-      }
-
-      // a grant is a success and exits 0, so its lines go to stdout
-      emit.lines.forEach((line) => console.log(line));
-    } else if (action === 'block') {
-      // remove flag file (idempotent)
-      await fs.rm(privilegeFlagPath, { force: true });
-
-      console.log('');
-      console.log('🦉 privilege revoked');
-      console.log('');
-      console.log('🗿 route.mutate grant block');
-      console.log(`   ├─ route = ${routePath}`);
-      console.log('   └─ flag = .route/.privilege.mutate.flag removed');
-      console.log('');
-      console.log('🔒 route mutation now blocked');
-      console.log('');
-    } else if (action === 'get') {
-      // check flag existence
-      const hasPrivilege = await fs
-        .access(privilegeFlagPath)
-        .then(() => true)
-        .catch(() => false);
-
-      console.log('');
-      console.log('🗿 route.mutate grant get');
-      console.log(`   ├─ route = ${routePath}`);
-      console.log(
-        `   └─ status = ${hasPrivilege ? 'allowed' : 'blocked (no privilege flag)'}`,
-      );
-      console.log('');
-    }
-  } catch (error) {
-    // allowlist BadRequestError: format nicely and exit 2
-    if (error instanceof BadRequestError) {
-      console.error(`error: ${error.message}`);
+    if (!action || !['allow', 'block', 'get'].includes(action)) {
+      // usage on an invalid/absent action is an error path → stderr, not stdout
+      // (rule.forbid.stdout-on-exit-errors: stdout may be hidden on non-zero exit)
+      // .note = the blank lines are explicit because the shared text is trimmed; see the twin note
+      //         in `routeGuardBudget`. the extant bytes on this path are unchanged.
+      console.error('');
+      console.error(getRouteMutateGrantHelpText());
+      console.error('');
+      // exit 2 = constraint: the caller gave a bad action and must fix the invocation
+      // (rule.require.exit-code-semantics: 0 ok, 1 malfunction, 2 constraint)
       process.exit(2);
     }
-    throw error;
-  }
-};
+
+    try {
+      // get route from option or auto-detect
+      let routePath = options.route;
+      if (!routePath) {
+        const bind = await getRouteBindByBranch({ branch: null });
+        if (!bind) {
+          console.error('error: no bound route found. use --route to specify.');
+          process.exit(2);
+        }
+        routePath = bind.route;
+      }
+
+      const privilegeFlagPath = path.join(
+        routePath,
+        '.route',
+        '.privilege.mutate.flag',
+      );
+
+      if (action === 'allow') {
+        // 🔴 the ACTOR check — the grant's help has said "human only" since it shipped, and this is
+        //    what makes that a gate rather than a claim.
+        //
+        // .why = the flag it writes lifts EVERY protected write on the route at once — a `budget:`
+        //        edit in a `.guard`, an appended `rounds: 0` line in the append-only meter. so a
+        //        grant any caller may mint is a bound any caller may raise, and the gate on
+        //        route.guard.budget would sit beside an open door rather than on the road.
+        //
+        // .note = `block` and `get` are UNgated on purpose. a revoke narrows what is permitted and a
+        //         status read changes naught, so neither is a lever the bound needs held.
+        //
+        // 🔴 the ACTOR is INJECTED, as it is for the three human-only stone levers — `--as approved`,
+        //    `--as overruled`, `--as forced`. the check itself was already shared; its INPUT was not,
+        //    so the granted wire (`isTTY === true ⇒ the flag is written`) could be driven by no test
+        //    at all — every spawn is a pipe, and a pipe is refused by construction. the leaf now
+        //    takes `context: { isTTY }`, so a test drives both verdicts (raised i002/r002).
+        //
+        // 🔴 .and the LIVE wire below is clamped too, by the refusal cases rather than by a pty.
+        //    a spawned skill has a pipe on stdin, so `process.stdin.isTTY` is `undefined` — and the
+        //    acceptance corpus asserts that invocation exits 2 and leaves NO flag on disk
+        //    (`driver.route.mutate.acceptance.test.ts` `[case4][t1]`, and `[case6]` phase 2a).
+        //
+        //    | the regression | what a pipe then reads | caught? |
+        //    |---|---|---|
+        //    | the read is dropped for a constant `true` | `true` ⇒ GRANTS | ✅ both cases go red |
+        //    | the probe is inverted (`!== true`) | `undefined !== true` ⇒ GRANTS | ✅ both cases go red |
+        //    | the read is dropped for a constant `false` | `false` ⇒ refuses | 🔴 **ships green** |
+        //
+        //    ⇒ the two a reviewer named are held; the third is not, and it is recorded rather than
+        //      claimed away (raised i003/r004 n1). it fails CLOSED — a human's grant stops to work,
+        //      which is loud the first time one is attempted — where the other two fail OPEN and
+        //      silently re-open the door this gate exists to shut. only a pty-backed case closes it.
+        const { granted, emit } = await setRoutePrivilegeAsGranted(
+          { route: routePath },
+          { isTTY: process.stdin.isTTY === true },
+        );
+
+        if (!granted) {
+          // 🔴 stderr, never stdout: a refusal is a constraint the caller must fix, and stdout may be
+          //    hidden on a non-zero exit (`rule.forbid.stdout-on-exit-errors`).
+          emit.lines.forEach((line) => console.error(line));
+          // exit 2 = constraint: the caller must change who invokes it, never how
+          // (rule.require.exit-code-semantics: 0 ok, 1 malfunction, 2 constraint)
+          process.exit(2);
+        }
+
+        // a grant is a success and exits 0, so its lines go to stdout
+        emit.lines.forEach((line) => console.log(line));
+      } else if (action === 'block') {
+        // remove flag file (idempotent)
+        await fs.rm(privilegeFlagPath, { force: true });
+
+        console.log('');
+        console.log('🦉 privilege revoked');
+        console.log('');
+        console.log('🗿 route.mutate grant block');
+        console.log(`   ├─ route = ${routePath}`);
+        console.log('   └─ flag = .route/.privilege.mutate.flag removed');
+        console.log('');
+        console.log('🔒 route mutation now blocked');
+        console.log('');
+      } else if (action === 'get') {
+        // check flag existence
+        const hasPrivilege = await fs
+          .access(privilegeFlagPath)
+          .then(() => true)
+          .catch(() => false);
+
+        console.log('');
+        console.log('🗿 route.mutate grant get');
+        console.log(`   ├─ route = ${routePath}`);
+        console.log(
+          `   └─ status = ${hasPrivilege ? 'allowed' : 'blocked (no privilege flag)'}`,
+        );
+        console.log('');
+      }
+    } catch (error) {
+      // allowlist BadRequestError: format nicely and exit 2
+      if (error instanceof BadRequestError) {
+        console.error(`error: ${error.message}`);
+        process.exit(2);
+      }
+      throw error;
+    }
+  });
 
 /**
  * .what = decides whether the budget line for ONE peer slug is in scope for this add
@@ -2416,315 +2539,323 @@ const asGuardBudgetWrongValueLines = (input: {
  * .what = cli entrypoint for route.guard.budget skill
  * .why = extends peer reviewer budgets when exhausted
  */
-export const routeGuardBudget = async (): Promise<void> => {
-  const options = parseArgs(process.argv);
+export const routeGuardBudget = async (): Promise<void> =>
+  runCliEntrypoint(async () => {
+    const options = parseArgs(process.argv);
 
-  // --help is an ASK, never a fault: stdout, exit 0. it is answered before every flag check, so a
-  // driver who wants the guidance never has to satisfy a required flag to read it
-  // (rule.require.help-on-demand).
-  if (options.help) {
-    console.log(getRouteGuardBudgetHelpText());
-    return;
-  }
+    // --help is an ASK, never a fault: stdout, exit 0. it is answered before every flag check, so a
+    // driver who wants the guidance never has to satisfy a required flag to read it
+    // (rule.require.help-on-demand).
+    if (options.help) {
+      console.log(getRouteGuardBudgetHelpText());
+      return;
+    }
 
-  // validate --for option (required, must be "review")
-  if (!options.for) {
-    // the hoisted guidance, same as the two sibling required-flag paths (raised i003/r009 n1).
-    // stderr, never stdout — stdout may be hidden on a non-zero exit
-    // (rule.forbid.stdout-on-exit-errors).
-    asGuardBudgetRequiredFlagLines({ flag: '--for' }).forEach((line) =>
-      console.error(line),
-    );
-    // exit 2 = constraint: the caller omitted a required flag and must fix the invocation
-    // (rule.require.exit-code-semantics: 0 ok, 1 malfunction, 2 constraint)
-    process.exit(2);
-  }
-  if (options.for !== 'review') {
-    // the same guidance its three peer flag paths render — a wrong value is as much a fault of
-    // discoverability as an absent one, and it was the last bare one-liner left on this command
-    // (raised i005/r009 n1). stderr, never stdout (rule.forbid.stdout-on-exit-errors).
-    asGuardBudgetWrongValueLines({
-      flag: '--for',
-      allowed: 'review',
-      got: options.for,
-    }).forEach((line) => console.error(line));
-    process.exit(2);
-  }
+    // validate --for option (required, must be "review")
+    if (!options.for) {
+      // the hoisted guidance, same as the two sibling required-flag paths (raised i003/r009 n1).
+      // stderr, never stdout — stdout may be hidden on a non-zero exit
+      // (rule.forbid.stdout-on-exit-errors).
+      asGuardBudgetRequiredFlagLines({ flag: '--for' }).forEach((line) =>
+        console.error(line),
+      );
+      // exit 2 = constraint: the caller omitted a required flag and must fix the invocation
+      // (rule.require.exit-code-semantics: 0 ok, 1 malfunction, 2 constraint)
+      process.exit(2);
+    }
+    if (options.for !== 'review') {
+      // the same guidance its three peer flag paths render — a wrong value is as much a fault of
+      // discoverability as an absent one, and it was the last bare one-liner left on this command
+      // (raised i005/r009 n1). stderr, never stdout (rule.forbid.stdout-on-exit-errors).
+      asGuardBudgetWrongValueLines({
+        flag: '--for',
+        allowed: 'review',
+        got: options.for,
+      }).forEach((line) => console.error(line));
+      process.exit(2);
+    }
 
-  // validate --add option
-  const addStr = options.add;
-  if (!addStr) {
-    // usage on an absent required flag is an error path → stderr, not stdout
-    // (rule.forbid.stdout-on-exit-errors: stdout may be hidden on non-zero exit)
-    //
-    // 🟡 this path GAINED the `error: --add is required` diagnosis when the three were unified.
-    //    it rendered the guidance alone, so a driver was told what the command wants and not what
-    //    its own invocation lacked (raised i003/r009 n1, on the two sibling paths).
-    asGuardBudgetRequiredFlagLines({ flag: '--add' }).forEach((line) =>
-      console.error(line),
-    );
-    // exit 2 = constraint: the caller omitted a required flag and must fix the invocation
-    // (rule.require.exit-code-semantics: 0 ok, 1 malfunction, 2 constraint)
-    process.exit(2);
-  }
+    // validate --add option
+    const addStr = options.add;
+    if (!addStr) {
+      // usage on an absent required flag is an error path → stderr, not stdout
+      // (rule.forbid.stdout-on-exit-errors: stdout may be hidden on non-zero exit)
+      //
+      // 🟡 this path GAINED the `error: --add is required` diagnosis when the three were unified.
+      //    it rendered the guidance alone, so a driver was told what the command wants and not what
+      //    its own invocation lacked (raised i003/r009 n1, on the two sibling paths).
+      asGuardBudgetRequiredFlagLines({ flag: '--add' }).forEach((line) =>
+        console.error(line),
+      );
+      // exit 2 = constraint: the caller omitted a required flag and must fix the invocation
+      // (rule.require.exit-code-semantics: 0 ok, 1 malfunction, 2 constraint)
+      process.exit(2);
+    }
 
-  const addAmount = asPositiveIntegerOrNull({ value: addStr });
-  if (addAmount === null) {
-    console.error('error: --add must be a positive integer');
-    // exit 2 = constraint: the caller passed a malformed value and must fix the
-    // invocation (rule.require.exit-code-semantics: 0 ok, 1 malfunction, 2 constraint)
-    process.exit(2);
-  }
+    const addAmount = asPositiveIntegerOrNull({ value: addStr });
+    if (addAmount === null) {
+      console.error('error: --add must be a positive integer');
+      // exit 2 = constraint: the caller passed a malformed value and must fix the
+      // invocation (rule.require.exit-code-semantics: 0 ok, 1 malfunction, 2 constraint)
+      process.exit(2);
+    }
 
-  const peerSlug = options.peer;
-  const stoneName = options.stone;
+    const peerSlug = options.peer;
+    const stoneName = options.stone;
 
-  // parse --level (optional): the level a bulk add targets, per F022 fork E. a bare add lands on
-  // the LATEST level alone; a lower level is reached ONLY when named here. a malformed value is a
-  // caller fault → exit 2 (rule.require.exit-code-semantics).
-  const levelStr = options.level;
-  const levelFlag =
-    levelStr === undefined
-      ? null
-      : asPositiveIntegerOrNull({ value: levelStr });
-  if (levelStr !== undefined && levelFlag === null) {
-    console.error('error: --level must be a positive integer');
-    process.exit(2);
-  }
+    // parse --level (optional): the level a bulk add targets, per F022 fork E. a bare add lands on
+    // the LATEST level alone; a lower level is reached ONLY when named here. a malformed value is a
+    // caller fault → exit 2 (rule.require.exit-code-semantics).
+    const levelStr = options.level;
+    const levelFlag =
+      levelStr === undefined
+        ? null
+        : asPositiveIntegerOrNull({ value: levelStr });
+    if (levelStr !== undefined && levelFlag === null) {
+      console.error('error: --level must be a positive integer');
+      process.exit(2);
+    }
 
-  // --peer and --level both scope a top-up, and they scope it two DIFFERENT ways — a peer names
-  // ONE lane, a level names EVERY lane at a rung. to pass both asks for two scopes at once, and
-  // the peer silently wins (computeBudgetTargetSlugs returns null on a peer). reject the pair loud
-  // rather than drop one (r001.n2, rule.require.errors-name-the-fix).
-  if (peerSlug !== undefined && levelFlag !== null) {
-    console.error('error: --peer and --level cannot be combined');
-    console.error('');
-    console.error(
-      '   --peer scopes to ONE lane; --level scopes to EVERY lane at a rung.',
-    );
-    console.error('   name one, never both.');
-    process.exit(2);
-  }
+    // --peer and --level both scope a top-up, and they scope it two DIFFERENT ways — a peer names
+    // ONE lane, a level names EVERY lane at a rung. to pass both asks for two scopes at once, and
+    // the peer silently wins (computeBudgetTargetSlugs returns null on a peer). reject the pair loud
+    // rather than drop one (r001.n2, rule.require.errors-name-the-fix).
+    if (peerSlug !== undefined && levelFlag !== null) {
+      console.error('error: --peer and --level cannot be combined');
+      console.error('');
+      console.error(
+        '   --peer scopes to ONE lane; --level scopes to EVERY lane at a rung.',
+      );
+      console.error('   name one, never both.');
+      process.exit(2);
+    }
 
-  // require --stone to prevent accidental blast radius across all guards
-  if (!stoneName) {
-    // the hoisted guidance, same as the two sibling required-flag paths (raised i003/r009 n1).
-    //
-    // 🟡 the `.why = prevents accidental budget changes across unrelated stones` line that sat here
-    //    is not lost — the hoisted text states the scope rule in full, including the refusal a
-    //    multi-match `--stone` earns. a one-line gloss beside the whole rule is the drift this
-    //    unification closes.
-    asGuardBudgetRequiredFlagLines({ flag: '--stone' }).forEach((line) =>
-      console.error(line),
-    );
-    // exit 2 = constraint: the caller omitted a required flag and must fix the invocation
-    // (rule.require.exit-code-semantics: 0 ok, 1 malfunction, 2 constraint)
-    process.exit(2);
-  }
+    // require --stone to prevent accidental blast radius across all guards
+    if (!stoneName) {
+      // the hoisted guidance, same as the two sibling required-flag paths (raised i003/r009 n1).
+      //
+      // 🟡 the `.why = prevents accidental budget changes across unrelated stones` line that sat here
+      //    is not lost — the hoisted text states the scope rule in full, including the refusal a
+      //    multi-match `--stone` earns. a one-line gloss beside the whole rule is the drift this
+      //    unification closes.
+      asGuardBudgetRequiredFlagLines({ flag: '--stone' }).forEach((line) =>
+        console.error(line),
+      );
+      // exit 2 = constraint: the caller omitted a required flag and must fix the invocation
+      // (rule.require.exit-code-semantics: 0 ok, 1 malfunction, 2 constraint)
+      process.exit(2);
+    }
 
-  try {
-    // get route from option or auto-detect
-    let routePath = options.route;
-    if (!routePath) {
-      const bind = await getRouteBindByBranch({ branch: null });
-      if (!bind) {
-        console.error('error: no bound route found. use --route to specify.');
+    try {
+      // get route from option or auto-detect
+      let routePath = options.route;
+      if (!routePath) {
+        const bind = await getRouteBindByBranch({ branch: null });
+        if (!bind) {
+          console.error('error: no bound route found. use --route to specify.');
+          process.exit(2);
+        }
+        routePath = bind.route;
+      }
+
+      // find guard files in the route
+      const guardFiles = await enumFilesFromGlob({
+        glob: '*.guard',
+        cwd: routePath,
+      });
+
+      if (guardFiles.length === 0) {
+        console.error(`error: no guard files found in ${routePath}`);
         process.exit(2);
       }
-      routePath = bind.route;
-    }
 
-    // find guard files in the route
-    const guardFiles = await enumFilesFromGlob({
-      glob: '*.guard',
-      cwd: routePath,
-    });
+      // filter to specific stone if provided
+      const targetGuards = getTargetGuardPathsForStone({
+        guardFiles,
+        stoneName,
+      });
 
-    if (guardFiles.length === 0) {
-      console.error(`error: no guard files found in ${routePath}`);
-      process.exit(2);
-    }
+      if (targetGuards.length === 0) {
+        console.error(`error: no guard file found for stone ${stoneName}`);
+        process.exit(2);
+      }
 
-    // filter to specific stone if provided
-    const targetGuards = getTargetGuardPathsForStone({ guardFiles, stoneName });
+      // 🔴 the lanes a DISPUTE has quieted, read BEFORE the write.
+      //
+      // .why = the annotation is advisory and the write is not, so the order decides what a failure
+      //        costs. read first and a malformed route fails fast with the budget untouched; read
+      //        after and the same failure leaves a changed guard file with no emit to explain it
+      //        (rule.require.failfast). the read is a status read, so it is safe to repeat.
+      //
+      // .note = stones are filtered by the SAME `isStoneMatchedByName` the guard filter above uses,
+      //         so the two sets agree by construction — a guard basename reduces to the stone name
+      //         for every variant (`<name>.guard`, `<name>.src.guard`, `<name>.stone.guard`), and the
+      //         predicate then holds over both. ⇒ the shared predicate is what keeps that agreement
+      //         true through the delimiter cut; a change at one site alone would break it.
+      const stones = await getAllStones({ route: routePath });
+      const meters = await getCurrentPeerMetersForStones({
+        stones,
+        stoneName,
+        route: routePath,
+      });
+      const disputeSkippedSlugs = getDisputeSkippedReviewerSlugs({ meters });
 
-    if (targetGuards.length === 0) {
-      console.error(`error: no guard file found for stone ${stoneName}`);
-      process.exit(2);
-    }
+      // the peers a bulk add may touch, per F022 fork E. null = no level scope (a --peer already
+      // scopes, or no lane has run); a Set names the latest level (default) or the --level named.
+      const targetSlugs = computeBudgetTargetSlugs({
+        meters,
+        levelFlag,
+        peerSlug: peerSlug ?? null,
+      });
 
-    // 🔴 the lanes a DISPUTE has quieted, read BEFORE the write.
-    //
-    // .why = the annotation is advisory and the write is not, so the order decides what a failure
-    //        costs. read first and a malformed route fails fast with the budget untouched; read
-    //        after and the same failure leaves a changed guard file with no emit to explain it
-    //        (rule.require.failfast). the read is a status read, so it is safe to repeat.
-    //
-    // .note = stones are filtered by the SAME `isStoneMatchedByName` the guard filter above uses,
-    //         so the two sets agree by construction — a guard basename reduces to the stone name
-    //         for every variant (`<name>.guard`, `<name>.src.guard`, `<name>.stone.guard`), and the
-    //         predicate then holds over both. ⇒ the shared predicate is what keeps that agreement
-    //         true through the delimiter cut; a change at one site alone would break it.
-    const stones = await getAllStones({ route: routePath });
-    const meters = await getCurrentPeerMetersForStones({
-      stones,
-      stoneName,
-      route: routePath,
-    });
-    const disputeSkippedSlugs = getDisputeSkippedReviewerSlugs({ meters });
+      // a --level that names a level no lane sits at is a caller fault: the scope would touch naught,
+      // so fail fast with the levels that ARE in play (rule.require.errors-name-the-fix).
+      if (
+        levelFlag !== null &&
+        targetSlugs !== null &&
+        targetSlugs.size === 0
+      ) {
+        const levelsInPlay = computeLevelsInPlay({ meters });
+        console.error(
+          `error: no reviewer at level ${levelFlag}. levels in play: ${
+            levelsInPlay.length > 0
+              ? levelsInPlay.join(', ')
+              : '(none — no lane has run)'
+          }`,
+        );
+        process.exit(2);
+      }
 
-    // the peers a bulk add may touch, per F022 fork E. null = no level scope (a --peer already
-    // scopes, or no lane has run); a Set names the latest level (default) or the --level named.
-    const targetSlugs = computeBudgetTargetSlugs({
-      meters,
-      levelFlag,
-      peerSlug: peerSlug ?? null,
-    });
+      // 🔴 a --peer that names no configured reviewer is a CALLER fault, and it is diagnosed BEFORE
+      //    the gate.
+      //
+      // .why = the gate judges the ROUTE'S STATE — was a round earned? — and that question presumes
+      //        the invocation named a real lane. ask it first and a typo'd slug is answered with
+      //        *"no live urgent concession stands"*, whose fix is to concede on a reviewer that does
+      //        not exist. ⇒ the gate would name a fix the caller cannot run
+      //        (rule.require.errors-name-the-fix). the invocation is checked first, so the diagnosis
+      //        the caller can act on is the one they get.
+      //
+      // 🟡 .the read is a named leaf, never an inline map+flatMap over raw `fs` — the orchestrator
+      //    states WHAT it needs (the peers in scope) and the leaf holds HOW it is read
+      //    (`rule.forbid.inline-decode-friction`, raised i001/r003 b1 + r004 n1). its docblock
+      //    carries why the probe reuses the writer's own parser.
+      const probedUpdates = await getAllScopedPeerBudgetUpdates({
+        guardPaths: targetGuards,
+        peerSlug: peerSlug ?? null,
+        targetSlugs,
+      });
+      if (peerSlug && probedUpdates.length === 0) {
+        console.error(`error: peer reviewer not found: ${peerSlug}`);
+        process.exit(2);
+      }
 
-    // a --level that names a level no lane sits at is a caller fault: the scope would touch naught,
-    // so fail fast with the levels that ARE in play (rule.require.errors-name-the-fix).
-    if (levelFlag !== null && targetSlugs !== null && targetSlugs.size === 0) {
-      const levelsInPlay = computeLevelsInPlay({ meters });
-      console.error(
-        `error: no reviewer at level ${levelFlag}. levels in play: ${
-          levelsInPlay.length > 0
-            ? levelsInPlay.join(', ')
-            : '(none — no lane has run)'
-        }`,
-      );
-      process.exit(2);
-    }
+      // 🔴 the GATE — the budget stops to be a free lever, and it is read BEFORE the write.
+      //
+      // .why = the budget IS the allowance for `better` churn. inside the meter taste counts; past
+      //        the meter only a nameable harm buys a round. so a grant past a spent meter is refused
+      //        unless three conjuncts hold — a live urgent concession (the warrant), a reviewer that
+      //        has run dry (the moment), and exactly one stone (the scope).
+      //
+      // .note = it sits here for the same reason the dispute read above it does: read first and a
+      //         refusal leaves the budget untouched; read after and the same refusal leaves a changed
+      //         guard file with no emit to explain it (rule.require.failfast).
+      //
+      // 🟡 .both inputs are NAMED LEAVES — the orchestrator states what the gate judges, and each
+      //    leaf holds how it is read. their docblocks carry the two properties that used to sit here
+      //    as inline comments: the scope shares the write's own predicate, and the ledger read is
+      //    skipped where no ONE stone was named (`rule.prefer.decomposable-architecture`, raised
+      //    i002/r004 n1).
+      const targetMeters = getMetersInScope({
+        meters,
+        peerSlug: peerSlug ?? null,
+        targetSlugs,
+      });
 
-    // 🔴 a --peer that names no configured reviewer is a CALLER fault, and it is diagnosed BEFORE
-    //    the gate.
-    //
-    // .why = the gate judges the ROUTE'S STATE — was a round earned? — and that question presumes
-    //        the invocation named a real lane. ask it first and a typo'd slug is answered with
-    //        *"no live urgent concession stands"*, whose fix is to concede on a reviewer that does
-    //        not exist. ⇒ the gate would name a fix the caller cannot run
-    //        (rule.require.errors-name-the-fix). the invocation is checked first, so the diagnosis
-    //        the caller can act on is the one they get.
-    //
-    // 🟡 .the read is a named leaf, never an inline map+flatMap over raw `fs` — the orchestrator
-    //    states WHAT it needs (the peers in scope) and the leaf holds HOW it is read
-    //    (`rule.forbid.inline-decode-friction`, raised i001/r003 b1 + r004 n1). its docblock
-    //    carries why the probe reuses the writer's own parser.
-    const probedUpdates = await getAllScopedPeerBudgetUpdates({
-      guardPaths: targetGuards,
-      peerSlug: peerSlug ?? null,
-      targetSlugs,
-    });
-    if (peerSlug && probedUpdates.length === 0) {
-      console.error(`error: peer reviewer not found: ${peerSlug}`);
-      process.exit(2);
-    }
-
-    // 🔴 the GATE — the budget stops to be a free lever, and it is read BEFORE the write.
-    //
-    // .why = the budget IS the allowance for `better` churn. inside the meter taste counts; past
-    //        the meter only a nameable harm buys a round. so a grant past a spent meter is refused
-    //        unless three conjuncts hold — a live urgent concession (the warrant), a reviewer that
-    //        has run dry (the moment), and exactly one stone (the scope).
-    //
-    // .note = it sits here for the same reason the dispute read above it does: read first and a
-    //         refusal leaves the budget untouched; read after and the same refusal leaves a changed
-    //         guard file with no emit to explain it (rule.require.failfast).
-    //
-    // 🟡 .both inputs are NAMED LEAVES — the orchestrator states what the gate judges, and each
-    //    leaf holds how it is read. their docblocks carry the two properties that used to sit here
-    //    as inline comments: the scope shares the write's own predicate, and the ledger read is
-    //    skipped where no ONE stone was named (`rule.prefer.decomposable-architecture`, raised
-    //    i002/r004 n1).
-    const targetMeters = getMetersInScope({
-      meters,
-      peerSlug: peerSlug ?? null,
-      targetSlugs,
-    });
-
-    const liveUrgentSlugs = await getLiveUrgentWarrantSlugs({
-      route: routePath,
-      stone: stoneName,
-      matchedGuardCount: targetGuards.length,
-    });
-
-    const refusal = computeBudgetGrantRefusal({
-      targetGuards,
-      liveUrgentSlugs,
-      targetMeters,
-    });
-    if (refusal) {
-      formatBudgetGrantRefusalLines({
-        refusal,
+      const liveUrgentSlugs = await getLiveUrgentWarrantSlugs({
         route: routePath,
         stone: stoneName,
+        matchedGuardCount: targetGuards.length,
+      });
+
+      const refusal = computeBudgetGrantRefusal({
+        targetGuards,
+        liveUrgentSlugs,
+        targetMeters,
+      });
+      if (refusal) {
+        formatBudgetGrantRefusalLines({
+          refusal,
+          route: routePath,
+          stone: stoneName,
+          add: addAmount,
+          peer: peerSlug ?? null,
+          level: levelFlag,
+          meters: targetMeters,
+        }).forEach((line) => console.error(line));
+        // exit 2 = constraint: the caller must converge, grade, or re-scope — a retry as-is refuses
+        // again (rule.require.exit-code-semantics). stderr, never stdout, since stdout may be hidden
+        // on a non-zero exit (rule.forbid.stdout-on-exit-errors).
+        //
+        // 🔴 .this line is CLAMPED LIVE, and the clamp was proven to bite.
+        //    `blackbox/driver.route.peer-budget-refusal.acceptance.test.ts` drives all three
+        //    refusals through the real cli. dropped, the suite goes red in FIVE places at once:
+        //    three exit-code clamps read 0, and two guard-byte-identical clamps find a mutated
+        //    guard — because the fall-through reaches the write below. ⇒ the ORDER of this gate
+        //    against that write is a pinned property, never a comment
+        //    (`rule.require.clamp-edge-cases`).
+        process.exit(2);
+      }
+
+      const updates = await processGuardFileBudgets({
+        guardPaths: targetGuards,
+        addAmount,
+        peerSlug: peerSlug ?? null,
+        targetSlugs,
+      });
+
+      // .note = the `peer reviewer not found` check that once sat here has moved ABOVE the gate, and
+      //         it is not duplicated below it. the probe and this write share one parser and one set
+      //         of inputs, so an empty `updates` here implies an empty `probedUpdates` there — a
+      //         second check would be unreachable, and unreachable code reads as a live guarantee.
+
+      // emit output
+      //
+      // 🔴 the head rows come from `asGuardBudgetHeadLines`, which the REFUSAL renderer also calls.
+      //    the same four fields were rendered here inline and there inline, on a docblock promise
+      //    that the two matched "byte for byte" — two render sites for one fact, so a new field or a
+      //    reordered row had to land in both or the surfaces drift
+      //    (`rule.require.single-source-of-truth-for-render`, raised i003/r001 n1).
+      asGuardBudgetHeadLines({
+        status: 'extended',
+        route: routePath,
         add: addAmount,
         peer: peerSlug ?? null,
         level: levelFlag,
-        meters: targetMeters,
-      }).forEach((line) => console.error(line));
-      // exit 2 = constraint: the caller must converge, grade, or re-scope — a retry as-is refuses
-      // again (rule.require.exit-code-semantics). stderr, never stdout, since stdout may be hidden
-      // on a non-zero exit (rule.forbid.stdout-on-exit-errors).
-      //
-      // 🔴 .this line is CLAMPED LIVE, and the clamp was proven to bite.
-      //    `blackbox/driver.route.peer-budget-refusal.acceptance.test.ts` drives all three
-      //    refusals through the real cli. dropped, the suite goes red in FIVE places at once:
-      //    three exit-code clamps read 0, and two guard-byte-identical clamps find a mutated
-      //    guard — because the fall-through reaches the write below. ⇒ the ORDER of this gate
-      //    against that write is a pinned property, never a comment
-      //    (`rule.require.clamp-edge-cases`).
-      process.exit(2);
+      }).forEach((line) => console.log(line));
+      // 🔴 the grant NAMES its warrant, so req 3 is satisfied twice: the gate read a fact on disk,
+      //    and this records which fact it read. a bare counter bump left the trade in the ledger
+      //    alone (raised i002/r008 n1). the block is unconditional — the gate refuses on an empty
+      //    warrant, so this line is unreachable without one.
+      asBudgetGrantWarrantLines({ warrantSlugs: liveUrgentSlugs }).forEach(
+        (line) => console.log(line),
+      );
+      console.log('   └─ updates');
+      const updateLines = asGuardBudgetUpdateLines({
+        updates,
+        disputeSkippedSlugs,
+      });
+      updateLines.forEach((line) => console.log(line));
+      console.log('');
+    } catch (error) {
+      // allowlist BadRequestError: format nicely and exit 2
+      if (error instanceof BadRequestError) {
+        console.error(`error: ${error.message}`);
+        process.exit(2);
+      }
+      throw error;
     }
-
-    const updates = await processGuardFileBudgets({
-      guardPaths: targetGuards,
-      addAmount,
-      peerSlug: peerSlug ?? null,
-      targetSlugs,
-    });
-
-    // .note = the `peer reviewer not found` check that once sat here has moved ABOVE the gate, and
-    //         it is not duplicated below it. the probe and this write share one parser and one set
-    //         of inputs, so an empty `updates` here implies an empty `probedUpdates` there — a
-    //         second check would be unreachable, and unreachable code reads as a live guarantee.
-
-    // emit output
-    //
-    // 🔴 the head rows come from `asGuardBudgetHeadLines`, which the REFUSAL renderer also calls.
-    //    the same four fields were rendered here inline and there inline, on a docblock promise
-    //    that the two matched "byte for byte" — two render sites for one fact, so a new field or a
-    //    reordered row had to land in both or the surfaces drift
-    //    (`rule.require.single-source-of-truth-for-render`, raised i003/r001 n1).
-    asGuardBudgetHeadLines({
-      status: 'extended',
-      route: routePath,
-      add: addAmount,
-      peer: peerSlug ?? null,
-      level: levelFlag,
-    }).forEach((line) => console.log(line));
-    // 🔴 the grant NAMES its warrant, so req 3 is satisfied twice: the gate read a fact on disk,
-    //    and this records which fact it read. a bare counter bump left the trade in the ledger
-    //    alone (raised i002/r008 n1). the block is unconditional — the gate refuses on an empty
-    //    warrant, so this line is unreachable without one.
-    asBudgetGrantWarrantLines({ warrantSlugs: liveUrgentSlugs }).forEach(
-      (line) => console.log(line),
-    );
-    console.log('   └─ updates');
-    const updateLines = asGuardBudgetUpdateLines({
-      updates,
-      disputeSkippedSlugs,
-    });
-    updateLines.forEach((line) => console.log(line));
-    console.log('');
-  } catch (error) {
-    // allowlist BadRequestError: format nicely and exit 2
-    if (error instanceof BadRequestError) {
-      console.error(`error: ${error.message}`);
-      process.exit(2);
-    }
-    throw error;
-  }
-};
+  });
 
 /**
  * .what = re-syncs a route's guards from their provenance source templates (D6)
@@ -2735,15 +2866,16 @@ export const routeGuardBudget = async (): Promise<void> => {
  *   NO emit-context (this verb emits no progress events). BadRequestError → exit 2
  *   (constraint); a write-time throw propagates uncaught → exit 1 (malfunction).
  */
-export const routeGuardUpgrade = async (): Promise<void> => {
-  const options = parseArgs(process.argv);
+export const routeGuardUpgrade = async (): Promise<void> =>
+  runCliEntrypoint(async () => {
+    const options = parseArgs(process.argv);
 
-  // --help prints usage, with the --stone BOUNDARY-match semantics called out.
-  // .trim() so there are no stray blank lines at the start or end — matches the
-  // peer `route.stone.set --help` convention (console.log adds its own newline)
-  if (options.help) {
-    console.log(
-      `
+    // --help prints usage, with the --stone BOUNDARY-match semantics called out.
+    // .trim() so there are no stray blank lines at the start or end — matches the
+    // peer `route.stone.set --help` convention (console.log adds its own newline)
+    if (options.help) {
+      console.log(
+        `
 route.guard.upgrade - re-sync a route's guards from their source templates
 
 usage:
@@ -2759,52 +2891,52 @@ options:
   --route <path>   path to route directory (default: auto-detect from branch)
   --mode <mode>    plan | apply (default: plan)
 `.trim(),
-    );
-    process.exit(0);
-  }
-
-  // validate --mode (default plan; only plan|apply allowed)
-  const mode = options.mode ?? 'plan';
-  if (mode !== 'plan' && mode !== 'apply') {
-    console.error(`error: --mode must be "plan" or "apply", got "${mode}"`);
-    process.exit(2);
-  }
-
-  try {
-    // get route from option or auto-detect from the bound branch
-    let routePath = options.route;
-    if (!routePath) {
-      const bind = await getRouteBindByBranch({ branch: null });
-      if (!bind) {
-        console.error('error: no bound route found. use --route to specify.');
-        process.exit(2);
-      }
-      routePath = bind.route;
+      );
+      process.exit(0);
     }
 
-    // the provenance.uri is read relative to the repo root (gitroot)
-    const repoRoot = await getRepoRootWithFallback({ from: process.cwd() });
-
-    // decide (+ write, on apply) — the orchestrator is the sole writer
-    const results = await setRouteGuardsFromProvenance({
-      route: routePath,
-      stone: options.stone ?? null,
-      mode,
-      repoRoot,
-    });
-
-    // render the owl tree to stdout; the formatter owns its final newline, so
-    // write verbatim (process.stdout.write) rather than console.log (which would
-    // append a second newline)
-    process.stdout.write(
-      formatGuardUpgradeTree({ results, route: routePath, mode }),
-    );
-  } catch (error) {
-    // allowlist BadRequestError: format nicely and exit 2 (constraint)
-    if (error instanceof BadRequestError) {
-      console.error(`error: ${error.message}`);
+    // validate --mode (default plan; only plan|apply allowed)
+    const mode = options.mode ?? 'plan';
+    if (mode !== 'plan' && mode !== 'apply') {
+      console.error(`error: --mode must be "plan" or "apply", got "${mode}"`);
       process.exit(2);
     }
-    throw error;
-  }
-};
+
+    try {
+      // get route from option or auto-detect from the bound branch
+      let routePath = options.route;
+      if (!routePath) {
+        const bind = await getRouteBindByBranch({ branch: null });
+        if (!bind) {
+          console.error('error: no bound route found. use --route to specify.');
+          process.exit(2);
+        }
+        routePath = bind.route;
+      }
+
+      // the provenance.uri is read relative to the repo root (gitroot)
+      const repoRoot = await getRepoRootWithFallback({ from: process.cwd() });
+
+      // decide (+ write, on apply) — the orchestrator is the sole writer
+      const results = await setRouteGuardsFromProvenance({
+        route: routePath,
+        stone: options.stone ?? null,
+        mode,
+        repoRoot,
+      });
+
+      // render the owl tree to stdout; the formatter owns its final newline, so
+      // write verbatim (process.stdout.write) rather than console.log (which would
+      // append a second newline)
+      process.stdout.write(
+        formatGuardUpgradeTree({ results, route: routePath, mode }),
+      );
+    } catch (error) {
+      // allowlist BadRequestError: format nicely and exit 2 (constraint)
+      if (error instanceof BadRequestError) {
+        console.error(`error: ${error.message}`);
+        process.exit(2);
+      }
+      throw error;
+    }
+  });

@@ -8,7 +8,6 @@ describe('formatWhatHaveYouSeen', () => {
     const articulationPath = getSelfReviewArticulationPath({
       route: '.behavior/v2026_03_08.feature',
       stone: '3.1.blueprint',
-      index: 1,
       slug: 'design',
     });
 

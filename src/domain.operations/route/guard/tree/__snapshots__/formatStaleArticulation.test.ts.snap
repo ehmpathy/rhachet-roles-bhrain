@@ -1,0 +1,32 @@
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
+
+exports[`formatStaleArticulation given: [case1] the file is plainly older than the ask when: [t0] format is called then: snapshot matches vision 1`] = `
+"🍂 that review predates the ask
+   │
+   ├─ a file is at the owed path, and it is older than the question
+   │  ├─ path     = .behavior/v2026_03_08.feature/review/self/for.1._.design.md
+   │  ├─ written  = [STAMP]
+   │  └─ asked at = [STAMP]
+   │
+   ├─ so it reviewed an artifact that has since moved on
+   │  └─ read what is there now, and write what you find
+   │
+   └─ then promise again 🍵"
+`;
+
+exports[`formatStaleArticulation given: [case2] the file was written just before the ask when: [t0] format is called then: snapshot matches vision 1`] = `
+"🍂 that review predates the ask
+   │
+   ├─ a file is at the owed path, and it is older than the question
+   │  ├─ path     = .behavior/v2026_03_08.feature/review/self/for.1._.design.md
+   │  ├─ written  = [STAMP]
+   │  └─ asked at = [STAMP]
+   │
+   ├─ the two read alike, so the gap is under a second
+   │  └─ you wrote it just before the guard asked for it
+   │
+   ├─ the words are probably fine — the guard cannot tell them
+   │  apart from a leftover, so it asks you to claim them
+   │
+   └─ re-save the file, then promise again 🍵"
+`;

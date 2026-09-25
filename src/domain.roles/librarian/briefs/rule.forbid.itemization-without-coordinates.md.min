@@ -60,7 +60,9 @@ the **ordinal** keeps the sequence (what makes an append-only record auditable);
 
 ## .the precedent
 
-`repo=`/`role=` · `term=` · `review/self/for.1.vision._.r4.$slug` — and that last is the sharpest: **the guard rejects a file written to the wrong coordinates**, because it looks at the computed path.
+`repo=`/`role=` · `term=` · `review/self/for.1.vision._.$slug` — and that last is the sharpest: **the guard rejects a file written to the wrong coordinates**, because it looks at the computed path.
+
+🔴 **it carried an `r4` ordinal until 2026-09-17 — this rule's own blocker, made flesh.** an ordinal is not a coordinate: the driver cannot compute it, so three call sites derived it three ways (a zero-based index, a one-based position, a count) and two emits named two different files for one owed review. **the repair was to DELETE the ordinal, never to reconcile the derivations.**
 
 blocker: an entry not entirely `$dimension=$position` segments · a bare position · a summary with no entries · entries with no summary · inconsistent dimension order · ordinal prefixes · a **bare-ordinal** `case=` with no slug · a forbidden cell with no file · an itemization under a prose name (`catalog.md`, `register.md`, `fulcrums.md`) · an ejected member named by aught but a coordinate.
 

@@ -1,125 +1,95 @@
 # howdoes.the-guard-caches-a-clean-reviewer-by-artifact-hash
 
-## .what it answers
+> **"if i re-arrive, does the whole ladder run again?"** — no, and the rule is narrower than most
+> drivers assume.
 
-> **"if i re-arrive, does the whole ladder run again?"**
+## .the mechanism
 
-no. and the rule that decides is narrower than most drivers assume, so this brief states the
-mechanism rather than a discipline — a driver who knows it **reasons** about the cost of a
-re-arrival instead of fearing one.
-
-## .the mechanism, from the source
-
-`runStoneGuardReviews.ts` does two lookups before it runs a single reviewer:
-
-```ts
-// reviews are cached by hash: same artifact content = reuse prior review
-const priorArtifacts = await getAllStoneGuardArtifactsByHash({ stone, route, ... });
-
-// skip if already approved (cached with no blockers)
-if (cachedReview && cachedReview.blockers === 0) { /* reuse, spend no budget */ }
-```
-
-two facts do all the work:
+`runStoneGuardReviews.ts` does two lookups before it runs a reviewer, and two facts do all the work:
 
 | fact | consequence |
 |---|---|
 | the cache key is the **stone artifact's content hash** | a re-arrival that leaves the artifact byte-identical hits the cache for every reviewer |
 | a reviewer is reused only when `blockers === 0` | a reviewer that raised a blocker **always** re-runs, cache or not |
 
-🟡 **the cache check runs BEFORE the exhaustion check**, by design — the source comment cites the
-wisher: *"if that review has said all good already, then its already cached and budget wont be
-used."* so a clean reviewer costs no budget even when its budget is spent.
+🟡 **the cache check precedes the exhaustion check**, by design — a clean reviewer costs no budget
+even when its budget is spent.
 
-## 🔴 .the counter-intuitive half — a SRC edit is cheap, an ARTIFACT edit is not
+## 🔴 .a SRC edit is cheap; an ARTIFACT edit is not
 
-the key is the **artifact**, never your diff. so the cost of a re-arrival inverts the naive guess:
+the key is the **artifact**, never your diff, so the cost of a re-arrival inverts the naive guess:
 
 | you changed | the hash | what re-runs |
 |---|---|---|
-| **src only** — the stone's artifact untouched | unchanged | only the reviewers that had blockers |
+| **src only** — the artifact untouched | unchanged | only the reviewers that had blockers |
 | **the artifact** — one line of the yield | changed | 🔴 **every reviewer**, clean ones included |
 
-⇒ **a one-word fix to a yield costs more reviewer time than a subsystem rewrite in `src/`.** that
-is the fact to carry, and no discipline substitutes for it.
+⇒ **a one-word fix to a yield costs more reviewer time than a subsystem rewrite in `src/`.**
 
-## ⚠️ .this hash is the CACHE key. it is not the absorption debt key
+**measured** on `beav/feat-keyrack-unlock-scope`: a re-arrival after a narrow src change re-ran the
+three l3 reviewers and **not one** l1 — ~815s rather than a full ladder. the l1 lanes were clean and
+the artifact untouched; the l3 lanes carried blockers, so no cache applied at any hash.
 
-two things could be keyed to the artifact hash, and only one is:
+## ⚠️ .this hash is the CACHE key, and it is NOT the debt key
 
 | keyed to the artifact hash? | |
 |---|---|
-| ✅ **a clean reviewer's cached verdict** | this brief. an artifact edit kills it |
-| ⛔ **an unanswered blocker's `.taken` debt** | keyed to the **reviewer**. an artifact edit does **not** kill it |
+| ✅ a clean reviewer's **cached verdict** | this brief. an artifact edit kills it |
+| ⛔ an unanswered blocker's **`.taken` debt** | keyed to the **reviewer**. an edit does not kill it |
+| ⛔ a self review's **trigger** | keyed `(stone, slug)`. an edit does not re-trigger it |
 
-⇒ so an edit buys you a fresh ladder and **no discharge at all**. a driver who reads this brief as
-*"an edit resets the state"* has the cache right and the debt exactly backwards —
-`rule.forbid.unanswered-exits-from-a-blocker` is the door that shuts on it.
+⇒ **an edit buys a fresh ladder and no discharge at all.** a driver who reads this as *"an edit
+resets the state"* has the cache right and the other two exactly backwards.
 
-## .the measured case
+🔴 **row 3 was hash-keyed until 2026-09-17.** a driver who repaired the artifact mid-review reset
+their own self-review clock, once per repair — so the gate charged the thorough driver and waved the
+hasty one through. the promise it gates was already hashless, and that asymmetry was the defect.
+⇒ the trigger now matches the promise, and a repair costs naught.
 
-on `beav/feat-keyrack-unlock-scope`, a re-arrival after a narrow src change re-ran the **three l3**
-reviewers and **not one** l1 reviewer — **~815s** of reviewer time rather than a full ladder.
-
-the l1 reviewers were clean and the artifact was untouched, so all of them hit the cache. the l3 reviewers
-carried blockers, so no cache applied to them at any hash.
-
-## .what a driver does with this
+## .what a driver does with it
 
 | the situation | the move |
 |---|---|
-| you fixed a blocker in `src/` and hesitate to re-arrive | **re-arrive.** the clean reviewers cost naught. ⚠️ **write the `.taken` first** — the entrance gate refuses a round while you owe one, and the fix alone does not discharge it |
-| the yield is **wrong** and you hesitate to touch it | 🔴 **fix it.** see below — this brief must never be the reason a yield stays wrong |
-| you hold several **cosmetic** yield edits | batch them into one touch. one ladder, not four |
+| you fixed a blocker in `src/` and hesitate to re-arrive | **re-arrive** — clean reviewers cost naught. ⚠️ **write the `.taken` first**; the entrance gate refuses a round while you owe one, and the fix alone does not discharge it |
+| the yield is **wrong** and you hesitate to touch it | 🔴 **fix it** — see below |
+| you hold several **cosmetic** yield edits | batch them. one ladder, not four |
 | a reviewer is exhausted but clean | it still passes; the cache precedes the exhaustion check |
-| a reviewer is exhausted **with** blockers | no cache, **and its blocker still owes a `.taken`** — the debt outlives the budget. answer it, then add budget if the reviewer must re-read to confirm (`rule.always.spend-own-levers-before-escalation`) |
+| a reviewer is exhausted **with** blockers | no cache, and its blocker still owes a `.taken` — the debt outlives the budget |
 
-## 🔴 .this must NOT discourage a yield edit — correctness outranks the cache
+## 🔴 .correctness outranks the cache
 
-a driver who learns that an artifact edit re-runs the ladder can draw exactly the wrong conclusion:
-*"then i should not touch the yield."* that inference is a defect, and it is the costlier one.
+a driver who learns that an artifact edit re-runs the ladder can draw the wrong conclusion: *"then i
+should not touch the yield."* **the yield is the deliverable; the ladder is the check on it** — to
+leave a deliverable wrong so its check runs once fewer inverts the guard. and the economy is
+imaginary: a yield left wrong fails its next review anyway, so the ladder runs regardless, against a
+worse artifact.
 
-| what you spare | what it costs |
-|---|---|
-| one ladder — minutes of reviewer time, cents of spend | a yield that misstates the outcome, read by every downstream traveler, forever |
-
-⇒ **the yield is the deliverable; the ladder is the check on it.** to leave a deliverable wrong so
-its check runs once fewer inverts the whole point of the guard.
-
-so the rule this mechanism licenses is narrow, and it governs when to batch rather than whether to
-correct:
+⇒ so the rule this licenses governs **when to batch**, never whether to correct:
 
 | the edit | the move |
 |---|---|
-| cosmetic — a reword, a table alignment, a typo | hold it, and land them together |
-| a correction — a wrong claim, an absent caveat, a contradiction, a stale section | land it the moment you find it, whatever the ladder costs |
+| cosmetic — a reword, a typo, a table alignment | hold it; land them together |
+| a correction — a wrong claim, an absent caveat, a stale section | land it the moment you find it |
 
-⇒ a yield left wrong to spare a re-run will fail its next review anyway, so the economy is
-imaginary — the ladder runs, and it runs against a worse artifact.
+## 🟡 .what it does NOT say
 
-## 🟡 .what this does NOT say
-
-it does not say a re-arrival is free, and it does not license a coast. every reviewer that raised a
-blocker re-runs and spends budget, so `rule.always.converge-with-reviewers` still governs what you
-owe each one — a `.taken` per open point, every round.
+a re-arrival is not free and this licenses no coast. every reviewer that raised a blocker re-runs and
+spends budget, so `rule.always.converge-with-reviewers` still governs what you owe each one — a
+`.taken` per open point, every round.
 
 ## .provenance
 
-the mechanism is read from `src/domain.operations/route/guard/review/runStoneGuardReviews.ts`
-(the hash lookup and the `blockers === 0` reuse branch), never inferred from behavior. the ~815s
-measurement is reported in seed **#369**.
+read from `runStoneGuardReviews.ts` (the hash lookup, the `blockers === 0` reuse branch), never
+inferred from behavior. the ~815s measurement is seed **#369**.
 
-🟡 **that seed describes the mechanism as *"re-run only the reviewers a narrow src change could have
-darkened"*, which is a consequence and not the rule.** the guard keys on the artifact hash and
-knows naught about which src files you touched — and the difference is exactly what makes the
-artifact-edit case above expensive.
+🟡 that seed calls it *"re-run only the reviewers a narrow src change could have darkened"* — a
+consequence, not the rule. the guard keys on the artifact hash and knows naught about which src
+files you touched, and that difference is what makes the artifact-edit case expensive.
 
 ## .see also
 
-- `rule.always.diagnose-reviewer-malfunctions` — what to do with a reviewer that returned **no**
-  verdict, overflow included; this brief covers the reviewers that returned a clean one
-- `rule.always.converge-to-terminal` — why a cheap re-arrival is the point: the ladder is meant to
-  be walked to its end, not hoarded against
-- `rule.always.spend-own-levers-before-escalation` — budget is the driver's lever, and this
-  mechanism is why it stretches further than it looks
+- `rule.always.diagnose-reviewer-malfunctions` — a reviewer that returned **no** verdict; this brief
+  covers the ones that returned a clean one
+- `rule.always.converge-to-terminal` — why a cheap re-arrival is the point
+- `rule.always.spend-own-levers-before-escalation` — why budget stretches further than it looks
 - `rule.always.converge-with-reviewers` — a cheap re-arrival still owes a `.taken` per open point

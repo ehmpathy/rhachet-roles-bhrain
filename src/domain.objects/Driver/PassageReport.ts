@@ -9,7 +9,12 @@ import type { RouteStoneGuardBlockerType } from './RouteStoneGuardBlockerReport'
  * status values:
  * - 'passed': stone has passed all guards
  * - 'approved': stone has been approved
- * - 'blocked': stone is blocked from passage by a hard driver wall (--as blocked)
+ * - 'blocked': stone is blocked from passage. TWO distinct causes share this one word:
+ *              a GUARD condition, where `blocker` names which of the seven
+ *              (review.self, review.peer, …, judge, approval); or a hard DRIVER wall
+ *              (--as blocked), which carries no `blocker` — the driver wall is not a
+ *              member of RouteStoneGuardBlockerType at all. read `blocker` to tell
+ *              them apart: present = the guard held the road, absent = the driver did
  * - 'exhausted': peer-review budget is spent; a human must approve or extend
  * - 'arrived': driver entered the guard's reviews — in flight (push)
  * - 'promised': driver promised a self-review — forward motion (push)

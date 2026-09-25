@@ -1,5 +1,13 @@
 // Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
 
+exports[`stepRouteStoneSet given: [case4] set stone as promised when: [t3] --as promised without --that then: the refusal a driver reads is stable (full snapshot): the refusal when --that is absent on --as promised 1`] = `
+"BadRequestError: --that is required for --as promised
+
+{
+  "stone": "1.vision"
+}"
+`;
+
 exports[`stepRouteStoneSet given: [case6] a stance-only flag on a non-stance --as when: [t0] --as passed --severity urgent then: refuses, and names the stray flag 1`] = `
 "BadRequestError: --severity is only accepted for --as disputed | conceded
 
@@ -45,6 +53,21 @@ to absorb a concern:
   "stone": "1.vision",
   "as": "approved",
   "flag": "--with"
+}"
+`;
+
+exports[`stepRouteStoneSet given: [case6b] --into on a verb that does not own it when: [t0] --as passed --into some/path then: refuses, and names --into 1`] = `
+"BadRequestError: --into is only accepted for --as promised
+
+you passed --as passed, which takes no --into.
+
+to promise a self review:
+  --as promised --that <slug> --into <path-you-wrote-to>
+
+{
+  "stone": "1.vision",
+  "as": "passed",
+  "flag": "--into"
 }"
 `;
 

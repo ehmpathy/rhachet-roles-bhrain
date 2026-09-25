@@ -1,0 +1,14 @@
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
+
+exports[`formatWrongPath given: [case1] the driver named a path that is not the owed one when: [t0] format is called then: snapshot matches vision 1`] = `
+"🍃 not quite there
+   │
+   ├─ the path you named is not the path that is owed
+   │  ├─ you named  = .behavior/v2026_03_08.feature/review/self/for.1._.r1.design.md
+   │  └─ it is owed = .behavior/v2026_03_08.feature/review/self/for.1._.design.md
+   │
+   ├─ if the file is where you named it, move it
+   │  └─ rhx mvsafe --from .behavior/v2026_03_08.feature/review/self/for.1._.r1.design.md --into .behavior/v2026_03_08.feature/review/self/for.1._.design.md
+   │
+   └─ then promise again, with --into set to the owed path 🍵"
+`;

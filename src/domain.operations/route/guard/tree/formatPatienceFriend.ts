@@ -1,14 +1,19 @@
+import { formatPromiseCommand } from './formatPromiseCommand';
 import { formatWalkTheWay } from './formatWalkTheWay';
 
 /**
  * .what = formats "patience, friend" challenge for self-review
  * .why = prompts clones to slow down, adopt reviewer role, and articulate findings
+ *
+ * .note = this paragraph is a CUE, never a GATE. it renders when a promise lands inside the
+ *         window of the ask, and it demands NO wait — the driver's next command clears.
+ *         its two measured levers are the identity reframe and the four when-then cues;
+ *         neither of them is a clock.
  */
 export const formatPatienceFriend = (input: {
   stone: string;
   slug: string;
   route: string;
-  index: number;
 }): string => {
   const lines: string[] = [];
 
@@ -59,10 +64,7 @@ export const formatPatienceFriend = (input: {
   lines.push(`   │`);
 
   // final instruction
-  lines.push(`   └─ when you've truly reflected, run`);
-  lines.push(
-    `      └─ rhx route.stone.set --stone ${input.stone} --as promised --that ${input.slug}`,
-  );
+  lines.push(...formatPromiseCommand(input));
 
   return lines.join('\n');
 };

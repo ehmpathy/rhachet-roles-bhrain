@@ -14,17 +14,17 @@
 
 ⚠️ **row 1 is narrower than it reads: the peer ladder carries a debt too** — an unanswered blocker is a `.taken` owed, keyed to the reviewer and untouched by its budget. so what parts the two is **not** budget-versus-debt; it is rows 2 and 3 — the peer debt sits beside a budget and under a human overrule, the self debt has neither.
 
-🟡 **the guard's liveness hatch is not a permission.** three attempts on one hash pass without the timer, so a driver is never hard-stuck. **to aim for it is the shortcut.** what the guard permits and what you owe are two different quantities.
+🔴 **the guard holds you for NO duration, and that is not a permission.** 🌙 the liveness hatch is retired, and so is the clock that made it necessary — the one confrontation left is a **cue, not a gate**: promise inside 30s of the ask, on your first attempt, and `patience, friend` renders and lets you through. ⇒ **the shortcut got cheaper, not harder.** what the guard permits and what you owe are two different quantities, and the gap between them just widened.
 
 | when… | then… |
 |---|---|
 | the count **grows** | more work found, not a defect. carry it — do NOT diagnose the guard |
 | you would ask a human to **waive** one | there is no lever to grant it |
-| you promise one **slug** a third time, fast | 🔴 you are at the hatch. did you review at all? |
-| the 30s timer irks you | the timer is not the cost. the read is |
-| it re-triggers after you changed the artifact | correct — review the artifact that now exists |
+| `patience, friend` renders and you promise again at once | 🔴 it cost naught to ignore — which is why it tests you, never the guard. read the four cues |
+| the promise cleared on the **first** try | the design, never a signal you reviewed enough. the clock went because it charged the thorough driver, not because the bar fell |
+| you **repair the artifact** mid-review | 🔴 do it. the trigger is keyed `(stone, slug)` — no repair re-triggers a review or restarts a clock |
 | `--as blocked` because the ladder feels long | length is not a wall. the only lever here is your attention |
 
 test, per review: **"what did I find, and what did I settle?"** — a repair, or a reasoned hold with evidence. **neither → you did not review. begin again.**
 
-blocker: a promise with no honest articulation · an articulation that names neither a repair nor a hold · a promise made to reach the hatch · an ask to waive or override · a count that grows, reported as a malfunction.
+blocker: a promise with no honest articulation · an articulation that names neither a repair nor a hold · a promise made because the guard would let it through · an ask to waive or override · a count that grows, reported as a malfunction · a self review **batched**, every repair held until the promise clears (the clock that made that rational is gone).

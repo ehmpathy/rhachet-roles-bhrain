@@ -110,7 +110,7 @@ exports[`driver.route.peer-budget-rewound.acceptance given: [journey] rewound re
    ├─ stone = 1.execute
    ├─ cascade
    │  └─ 1.execute
-   │     ├─ deleted: 2 reviews, 2 judges, 0 promises, 0 triggers
+   │     ├─ cleared: 2 reviews, 2 judges, 0 promises, 0 triggers
    │     └─ passage: rewound
    └─ done
 "

@@ -1,3 +1,5 @@
+import { asTreeBranchMarkers } from './asTreeBranchMarkers';
+
 /**
  * .what = formats content into a tree bucket structure
  * .why = provides visual containment for stdout/stderr in artifacts
@@ -23,13 +25,13 @@ export const formatTreeBucket = (input: {
 }): string => {
   const lines: string[] = [];
 
-  // the label marker is `└─` when this bucket is its parent's last child, else `├─`
-  const labelMarker = input.isLast ? '└─' : '├─';
-  // the continuation column beneath the label: a space when last (no peer bar), else `│`
-  const cont = input.isLast ? '   ' : '│  ';
+  // the elbow marks this bucket's branch; the stem is the column beneath it
+  const { elbow, stem: cont } = asTreeBranchMarkers({
+    isLast: input.isLast ?? false,
+  });
 
   // label line
-  lines.push(`${labelMarker} ${input.label}`);
+  lines.push(`${elbow} ${input.label}`);
 
   // bucket open
   lines.push(`${cont}├─`);

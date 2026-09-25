@@ -78,7 +78,6 @@ describe('formatLetsReflect', () => {
           getSelfReviewArticulationPath({
             route: '.behavior/v2026_03_05.behavior-example',
             stone: '1.vision',
-            index: 1,
             slug: 'all-done',
           }),
         );

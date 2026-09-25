@@ -167,12 +167,19 @@ this is the repo's own established idiom, generalized — not a new convention:
 ```
 .agent/repo=bhrain/role=learner/     # repo= and role= are coordinates
 domain.terms/term=<x>._.choice.*     # term= is a coordinate, and ._. is the cluster root
-review/self/for.1.vision._.r4.$slug  # the guard computes this path, and demands it exactly
+review/self/for.1.vision._.$slug     # the guard computes this path, and demands it exactly
 ```
 
 ⇒ the review-artifact path is the sharpest precedent: **the guard rejects a file written to the
 wrong coordinates**, because it looks precisely at the computed path. that is the dereference
 contract enforced by a tool — and it is what this rule protects for the librarian's itemizations.
+
+🔴 **and it carried an `r4` ordinal until 2026-09-17, which is this rule's own blocker made
+flesh.** an ordinal is not a coordinate: the driver cannot compute it, so it has to be derived —
+and three call sites derived it three ways (a zero-based index, a one-based position, a count).
+two emits then named two different files for one owed review. **the repair was to delete the
+ordinal, never to reconcile the three derivations**, and the path is now keyed on `(stone, slug)`
+— operands the driver already holds.
 
 ## .enforcement
 

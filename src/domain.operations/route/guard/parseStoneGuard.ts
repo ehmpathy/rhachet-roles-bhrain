@@ -464,6 +464,16 @@ const parseSimpleYaml = async (
     if (currentSubKey === 'self' && currentSelfReview) {
       if (trimmed.startsWith('slug:')) {
         currentSelfReview.slug = trimmed.slice(5).trim();
+      } else if (trimmed.startsWith('hashbar:')) {
+        // 🔴 the key is RETIRED, and it is read precisely so the emit can say so.
+        //    dropped here, `asHashbarDeclaredReviews` saw an undefined field on every
+        //    guard in the wild, so the retirement notice could never fire from a real
+        //    file — the formatter was correct, the emit called it, and the parser fed
+        //    it an empty set. measured: a `.guard` with `hashbar: 0` printed no notice
+        // .note = NaN is retained rather than rejected. the value is never read as a
+        //         number by any gate; `!== undefined` is the whole test, and a throw
+        //         would halt a route on the one key the notice asks the author to delete
+        currentSelfReview.hashbar = Number(trimmed.slice(8).trim());
       } else if (trimmed.startsWith('say:')) {
         const sayValue = trimmed.slice(4).trim();
         if (sayValue === '|') {

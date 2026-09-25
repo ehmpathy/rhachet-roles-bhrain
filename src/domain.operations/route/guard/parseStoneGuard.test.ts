@@ -1004,4 +1004,69 @@ reviews:
       });
     });
   });
+
+  given(
+    '[case21] a self review that still declares the retired `hashbar:`',
+    () => {
+      // 🔴 .why = the key is read for ONE purpose — so the emit can tell the author it
+      //           is dead. the parser dropped it silently, so `asHashbarDeclaredReviews`
+      //           saw an undefined field on every guard in the wild and the notice could
+      //           never fire from a real file. the formatter was correct and unreachable
+      //
+      // ⚠️ .why `0` = it was the commonest value set in the wild — a bug report written
+      //     in yaml — and it is the one value a truthiness test reads as absent
+
+      const content = `reviews:
+  self:
+    - slug: all-done
+      hashbar: 0
+      say: |
+        did you complete all that was requested?
+
+    - slug: tests-pass
+      say: |
+        do all tests pass?
+`;
+
+      when('[t0] the guard is parsed', () => {
+        then('the key is ACCEPTED — the parse does not throw', async () => {
+          // .why = an author's guard was correct when it was written. a throw halts
+          //        their route over a key the notice merely asks them to delete
+          const result = await parseStoneGuard({
+            content,
+            path: '/synthetic/1.vision.guard',
+          });
+          expect(getGuardSelfReviews(result)).toHaveLength(2);
+        });
+
+        then(
+          'the declared value survives to the review it sits on',
+          async () => {
+            const result = await parseStoneGuard({
+              content,
+              path: '/synthetic/1.vision.guard',
+            });
+            const [allDone, testsPass] = getGuardSelfReviews(result);
+            expect(allDone?.hashbar).toEqual(0);
+
+            // the review that omits the key keeps it undefined, so the notice names
+            // only the review that actually carries it
+            expect(testsPass?.hashbar).toBeUndefined();
+          },
+        );
+
+        then('the `say` that follows the key is still read', async () => {
+          // .why = the key sits BETWEEN `slug:` and `say:`, so a parse branch that
+          //        consumed the line wrongly would strand the review unpushed
+          const result = await parseStoneGuard({
+            content,
+            path: '/synthetic/1.vision.guard',
+          });
+          expect(getGuardSelfReviews(result)[0]?.say).toContain(
+            'did you complete all that was requested?',
+          );
+        });
+      });
+    },
+  );
 });

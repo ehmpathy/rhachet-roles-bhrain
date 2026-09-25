@@ -2,10 +2,11 @@ import { execSync } from 'child_process';
 import * as fs from 'fs/promises';
 import * as os from 'os';
 import * as path from 'path';
-import { getError, given, then, when } from 'test-fns';
+import { getError, given, then, useThen, when } from 'test-fns';
 
 import { genContextReviewBrainSupplyDemo } from './__test_assets__/genContextReviewBrainSupplyDemo';
 import { getSelfReviewArticulationPath } from './guard/review/self/getSelfReviewArticulationPath';
+import { getSelfReviewTriggeredReport } from './guard/review/self/getSelfReviewTriggeredReport';
 import { stepRouteStoneSet } from './stepRouteStoneSet';
 
 const ASSETS_DIR = path.join(__dirname, '.test/assets');
@@ -152,16 +153,40 @@ describe('stepRouteStoneSet', () => {
     );
 
     /**
-     * .what = backdate triggered.since mtime to bypass time enforcement
-     * .why = tests need to verify promise flow without 90 second wait
-     * .note = only .since is backdated; .uptil stays current (simulates proper wait)
+     * .what = the path the guard computes, and the one a promise must declare via --into
+     * .why = the path is keyed (stone, slug). the rN level was removed, because one
+     *        quantity derived at three call sites named three different files.
+     */
+    const owedPath = getSelfReviewArticulationPath({
+      route: tempDir,
+      stone: '1.vision',
+      slug: 'all-done',
+    });
+
+    /**
+     * .what = back-date the triggered .since mtime, so the ask reads as older than the cue window
+     * .why = the clock is a CUE now, never a gate — it decides whether the encouragement
+     *        renders. a back-dated ask is how a test reaches the un-confronted branch
+     *        without real elapsed time.
+     * .note = only .since is back-dated; .uptil stays current
      */
     const backdateTriggeredReport = async (input: {
       stone: string;
       slug: string;
     }): Promise<void> => {
       const routeDir = path.join(tempDir, '.route');
-      const files = await fs.readdir(routeDir).catch(() => []);
+
+      // 🔴 ENOENT only. this read FEEDS A MUTATION — a bare `.catch(() => [])` turns an
+      // EACCES, EISDIR, or EMFILE into an empty list, so the back-date becomes a silent
+      // no-op and every case downstream runs against a FRESH ask where it wanted an elapsed
+      // one. the suite then grades the wrong branch and goes green
+      // (`rule.forbid.failhide`; `mech-failhides` blocker.1 at i017)
+      const files = await fs
+        .readdir(routeDir)
+        .catch((error: NodeJS.ErrnoException) => {
+          if (error.code === 'ENOENT') return [] as string[];
+          throw error;
+        });
       const sinceFile = files.find(
         (f) =>
           f.includes(`${input.stone}.guard.selfreview.${input.slug}`) &&
@@ -182,43 +207,145 @@ describe('stepRouteStoneSet', () => {
       execSync('git init', { cwd: tempDir, stdio: 'ignore' });
       // create artifact for 1.vision
       await fs.writeFile(path.join(tempDir, '1.vision.md'), '# Vision');
-      // create articulation file for 1.vision.r1.all-done (required by file presence check)
-      // format: {route}/review/self/{stone}.r{index}.{slug}.md
-      const articulationPath = getSelfReviewArticulationPath({
-        route: tempDir,
-        stone: '1.vision',
-        index: 1,
-        slug: 'all-done',
-      });
-      await fs.mkdir(path.dirname(articulationPath), { recursive: true });
-      await fs.writeFile(articulationPath, '# self-review\n');
+      // create the articulation at the owed path (the guard reads exactly here)
+      await fs.mkdir(path.dirname(owedPath), { recursive: true });
+      await fs.writeFile(owedPath, '# self-review\n');
     });
 
     afterEach(async () => {
       await fs.rm(tempDir, { recursive: true, force: true });
     });
 
+    /**
+     * 🔴 .note = this case has been re-aimed TWICE, and both moves are recorded because a
+     *            reader who meets only the latest would read the current claim as the
+     *            original one.
+     *            1. it once asserted `challenged === true` for a CLOCK reason — no trigger
+     *               had aged 90 seconds. the clock is a cue now, so that reason died.
+     *            2. it then asserted `promised === true` — and that was the LAUNDERED ASK.
+     *               the promise cleared on two gates that could not run: the freshness bar
+     *               was skipped (`report && …`) and the haste cue read a null `askedAt`,
+     *               while the adjudication quietly minted a `.since` dated now.
+     * 🔴 .what it asserts now = the refusal is REAL, and its reason is the absent ask —
+     *            never a clock. both halves carry weight: drop the first and the laundered
+     *            ask returns; drop the second and requirement 1 is violated.
+     */
     when('[t0] --as promised without prior trigger', () => {
-      then('blocks with challenged status', async () => {
-        // promise without first call to --as passed (no trigger)
-        const result = await stepRouteStoneSet(
-          {
+      /**
+       * 🟡 .why one act, three assertions = the act wraps a full `stepRouteStoneSet` — an
+       *    `fs.cp` of a whole fixture route, a `git init`, and the entire guard pipeline.
+       *    to re-run it per `then` is `rule.forbid.redundant-expensive-operations`, and
+       *    it also parts the three assertions from each other: each would grade a
+       *    DIFFERENT run, so the "no ask is minted" claim would be about a third mint
+       *    rather than about the one whose refusal the first two graded.
+       */
+      const outcome = useThen(
+        'the promise is adjudicated without any prior ask',
+        async () => {
+          // promise without first call to --as passed (no trigger)
+          const result = await stepRouteStoneSet(
+            {
+              stone: '1.vision',
+              route: tempDir,
+              as: 'promised',
+              that: 'all-done',
+              into: owedPath,
+            },
+            noopContext,
+          );
+          // read the marker AFTER that one adjudication — never after a second
+          const report = await getSelfReviewTriggeredReport({
             stone: '1.vision',
+            slug: 'all-done',
             route: tempDir,
-            as: 'promised',
-            that: 'all-done',
-          },
-          noopContext,
+          });
+          return { result, report };
+        },
+      );
+
+      then('the promise is refused — there is no ask to answer', () => {
+        expect(outcome.result.challenged).toBe(true);
+        // 🔴 .why exact = `undefined` is the contract for a refused promise, and its
+        //    peer in stepRouteStoneSet.integration.test.ts pins the same value. a
+        //    `toBeFalsy` would stay green on `null`, `false`, or `0`
+        expect(outcome.result.promised).toBeUndefined();
+      });
+
+      /**
+       * 🔴 the operand that parts this refusal from the one requirement 1 forbids: the
+       *    reason must be the absent ask, never elapsed time. a haste message here would
+       *    be a clock refusal under a new verdict's name
+       */
+      then('the reason is the absent ask, never a clock', () => {
+        expect(outcome.result.emit?.stdout).toContain('no ask on record');
+        expect(outcome.result.emit?.stdout).not.toContain(
+          'pond barely rippled',
         );
-        // time enforcement: challenged because no prior trigger
-        expect(result.challenged).toBe(true);
-        expect(result.promised).toBeUndefined();
-        expect(result.emit?.stdout).toContain('patience');
+        expect(outcome.result.emit?.stdout).toContain('--as passed');
+      });
+
+      /**
+       * 🔴 the operand that clamps the LAUNDERED ask: the adjudication minted a `.since`
+       *    dated now until i005, so a pre-rewind articulation read as fresh against a
+       *    timestamp that postdates it. an ask on disk after this refusal is that mint
+       */
+      then('no ask is minted by the refusal', () => {
+        expect(outcome.report).toBeNull();
       });
     });
 
-    when('[t1] --as promised after trigger and backdate', () => {
-      then('records promise and returns promised true', async () => {
+    when('[t1] --as promised with no --into', () => {
+      then('throws, and burns no attempt', async () => {
+        // the ask, so a trigger is on record to be burned
+        await stepRouteStoneSet(
+          { stone: '1.vision', route: tempDir, as: 'passed' },
+          noopContext,
+        );
+
+        const error = await getError(
+          stepRouteStoneSet(
+            {
+              stone: '1.vision',
+              route: tempDir,
+              as: 'promised',
+              that: 'all-done',
+            },
+            noopContext,
+          ),
+        );
+        expect(error.message).toContain('--into is required');
+
+        // .why = the error must name the FIX, never the symptom alone. only `.message`
+        //        reaches the driver — the cli prints it and drops the metadata bag — so an
+        //        owed path that lives only in metadata is a path the driver never sees
+        //        (rule.require.errors-name-the-fix). move it back and this goes red
+        expect(error.message).toContain(
+          `--into ${tempDir}/review/self/for.1.vision._.all-done.md`,
+        );
+
+        // .why = the attempt count is half the haste cue's condition. a usage error that
+        //        burned one would retire this driver's confrontation with no read behind it
+        const report = await getSelfReviewTriggeredReport({
+          stone: '1.vision',
+          slug: 'all-done',
+          route: tempDir,
+        });
+        expect(report?.attempts).toEqual(0);
+      });
+    });
+
+    when('[t2] --as promised after trigger and backdate', () => {
+      /**
+       * .what = the act, declared ONCE — and it captures the on-disk read with it.
+       * .why  = each `then` used to re-run this whole 3-step cli sequence, so one case paid
+       *         for two full flows and wore the side effects twice
+       *         (`rule.forbid.redundant-expensive-operations`).
+       * 🟡 .why the readdir sits INSIDE the act rather than in its own `then`: this case's
+       *         `afterEach` wipes `tempDir` after every test, so a peer `then` would find
+       *         no tree at all. the act reads the dir while it still stands and hands the
+       *         names forward — one expensive flow, and one concern per `then`.
+       */
+      const outcome = useThen('the promise is recorded', async () => {
         // first trigger via --as passed
         await stepRouteStoneSet(
           {
@@ -228,7 +355,7 @@ describe('stepRouteStoneSet', () => {
           },
           noopContext,
         );
-        // backdate the triggered report to bypass 90s wait
+        // back-date the ask, so the promise lands outside the cue window
         await backdateTriggeredReport({ stone: '1.vision', slug: 'all-done' });
 
         const result = await stepRouteStoneSet(
@@ -237,49 +364,37 @@ describe('stepRouteStoneSet', () => {
             route: tempDir,
             as: 'promised',
             that: 'all-done',
+            into: owedPath,
           },
           noopContext,
         );
-        expect(result.promised).toBe(true);
+
+        const files = await fs.readdir(path.join(tempDir, '.route'));
+        return {
+          result,
+          promiseFiles: files.filter((f) => f.includes('.promise.')),
+        };
+      });
+
+      then('returns promised true', () => {
+        expect(outcome.result.promised).toBe(true);
         // per blueprint: shows "passage = progressed" not "promise = recorded"
-        expect(result.emit?.stdout).toContain('passage = progressed');
-        expect(result.emit?.stdout).toContain('review.self 1/2 promised');
+        expect(outcome.result.emit?.stdout).toContain('passage = progressed');
+        expect(outcome.result.emit?.stdout).toContain(
+          'review.self 1/2 promised',
+        );
         // per blueprint: shows next unpromised review (tests-pass)
-        expect(result.emit?.stdout).toContain('tests-pass');
+        expect(outcome.result.emit?.stdout).toContain('tests-pass');
       });
 
-      then('creates promise artifact file', async () => {
-        // first trigger via --as passed
-        await stepRouteStoneSet(
-          {
-            stone: '1.vision',
-            route: tempDir,
-            as: 'passed',
-          },
-          noopContext,
-        );
-        // backdate the triggered report
-        await backdateTriggeredReport({ stone: '1.vision', slug: 'all-done' });
-
-        await stepRouteStoneSet(
-          {
-            stone: '1.vision',
-            route: tempDir,
-            as: 'promised',
-            that: 'all-done',
-          },
-          noopContext,
-        );
-        const routeDir = path.join(tempDir, '.route');
-        const files = await fs.readdir(routeDir);
-        const promiseFiles = files.filter((f) => f.includes('.promise.'));
-        expect(promiseFiles.length).toBeGreaterThan(0);
-        expect(promiseFiles[0]).toContain('all-done');
+      then('creates promise artifact file', () => {
+        expect(outcome.promiseFiles.length).toBeGreaterThan(0);
+        expect(outcome.promiseFiles[0]).toContain('all-done');
       });
     });
 
-    when('[t2] --as promised without --that', () => {
-      then('throws bad request error', async () => {
+    when('[t3] --as promised without --that', () => {
+      const outcome = useThen('throws bad request error', async () => {
         const error = await getError(
           stepRouteStoneSet(
             {
@@ -292,6 +407,18 @@ describe('stepRouteStoneSet', () => {
         );
         expect(error).toBeInstanceOf(Error);
         expect(error.message).toContain('--that is required');
+        return { error };
+      });
+
+      then('the refusal a driver reads is stable (full snapshot)', () => {
+        // 🔴 .why this pin = the peer refusal on this same flag pair — the
+        //    `--into is required` message — is snapped in full, and this one held a
+        //    lone `toContain` of four words. so a regression that dropped the guidance
+        //    beneath the first line would keep the bar green while the driver lost the
+        //    move (`rule.require.contract-snapshot-exhaustiveness`)
+        expect(outcome.error.message).toMatchSnapshot(
+          'the refusal when --that is absent on --as promised',
+        );
       });
     });
   });
@@ -406,6 +533,89 @@ describe('stepRouteStoneSet', () => {
         expect(error).toBeInstanceOf(Error);
         expect(error.message).toContain('--with is only accepted for');
         expect(error.message).toMatchSnapshot();
+      });
+    });
+  });
+
+  /**
+   * 🔴 .what = the clamp for i013's nitpick, raised INDEPENDENTLY by two lanes (r007 + r011).
+   *
+   * .why = `--into` is REQUIRED on `--as promised`, and it was the one verb-specific flag never
+   *        added to the stray-flag refusals. so `--as passed --into <path>` discarded the
+   *        argument in silence — the exact failure mode the `--that` refusal had been built to
+   *        kill one round earlier, re-committed on the round's own new flag.
+   *
+   * 🔴 .what it really clamps = the TABLE, never this one flag. the `if`-per-flag shape shipped
+   *        three times and the fourth flag was never added to it, because that shape makes each
+   *        new flag opt IN to validation ⇒ the default for a new flag is silence. `[t1]` below
+   *        asserts a SIBLING flag through the same table, so a repair that special-cased
+   *        `--into` back into its own `if` would satisfy `[t0]` and leave the class open.
+   */
+  given('[case6b] --into on a verb that does not own it', () => {
+    when('[t0] --as passed --into some/path', () => {
+      then('refuses, and names --into', async () => {
+        const error = await getError(
+          stepRouteStoneSet(
+            {
+              stone: '1.vision',
+              route: '/nonexistent/route',
+              as: 'passed',
+              into: 'review/self/for.1.vision._.all-done.md',
+            },
+            noopContext,
+          ),
+        );
+        expect(error).toBeInstanceOf(Error);
+        expect(error.message).toContain('--into is only accepted for');
+        expect(error.message).toMatchSnapshot();
+      });
+    });
+
+    /**
+     * 🔴 .why = `--absorbed` owns `--that` and does NOT own `--into`. it is the sharpest verb to
+     *           assert, because a driver who absorbs a lane has just typed a `--that` command and
+     *           is one flag away from this mistype.
+     */
+    when('[t1] --as absorbed --into some/path', () => {
+      then('refuses too — the verb owns --that, never --into', async () => {
+        const error = await getError(
+          stepRouteStoneSet(
+            {
+              stone: '1.vision',
+              route: '/nonexistent/route',
+              as: 'absorbed',
+              that: 'architect',
+              into: 'review/self/for.1.vision._.all-done.md',
+            },
+            noopContext,
+          ),
+        );
+        expect(error).toBeInstanceOf(Error);
+        expect(error.message).toContain('--into is only accepted for');
+      });
+    });
+
+    /**
+     * 🔴 .why = the refusal must not fire on the verb that DOES own the flag. a check that
+     *           refused every `--into` would pass `[t0]` and `[t1]` while it broke the required
+     *           flag outright — which is the one outcome worse than the silence it repairs.
+     */
+    when('[t2] --as promised --into some/path', () => {
+      then('is NOT refused by the stray-flag table', async () => {
+        const error = await getError(
+          stepRouteStoneSet(
+            {
+              stone: '1.vision',
+              route: '/nonexistent/route',
+              as: 'promised',
+              that: 'has-grounded-in-reality',
+              into: 'review/self/for.1.vision._.has-grounded-in-reality.md',
+            },
+            noopContext,
+          ),
+        );
+        // it still fails — the route does not exist — but never for the stray-flag reason
+        expect(error.message).not.toContain('--into is only accepted for');
       });
     });
   });

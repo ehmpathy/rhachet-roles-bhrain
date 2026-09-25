@@ -58,7 +58,7 @@ term=route.stone._.choice._.md                     # the term-choice cluster roo
 kno601.inventories._.kind=article.md         # the article's root, beside its facets
 kno201.documents._.kind=catalog.md
 inventory.of=fulcrums._.md                   # the itemization summary
-review/self/for.1.vision._.r4.$slug.md       # the guard computes this exact path
+review/self/for.1.vision._.$slug.md          # the guard computes this exact path
 ```
 
 ## .the cues — when → then

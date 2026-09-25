@@ -1,0 +1,7 @@
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
+
+exports[`formatPromiseCommand given: [case1] a stone, a slug, and a route when: [t0] formatPromiseCommand called then: output matches snapshot (vibecheck) 1`] = `
+"   └─ when you've truly reflected, run
+      └─ rhx route.stone.set --stone 1.vision --as promised --that all-done \\
+         --into .behavior/v2026_03_05.behavior-example/review/self/for.1.vision._.all-done.md"
+`;

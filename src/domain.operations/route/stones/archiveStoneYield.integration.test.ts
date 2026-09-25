@@ -5,6 +5,23 @@ import { given, then, useThen, when } from 'test-fns';
 
 import { archiveStoneYield } from './archiveStoneYield';
 
+/**
+ * .what = probes whether a path is on disk, and allowlists ONLY a real absence
+ * .why = a bare `.catch(() => false)` reads an EACCES, an EIO, or an ENOTDIR as "the file
+ *        is not there". this suite asserts `exists` in BOTH directions, so that swallow is
+ *        a false green on the `toBe(false)` arm and a legible failure on the `toBe(true)`
+ *        arm — a defect that hides itself in exactly half the assertions
+ *        (`rule.forbid.failhide`)
+ */
+const isPathFound = (at: string): Promise<boolean> =>
+  fs
+    .access(at)
+    .then(() => true)
+    .catch((error: NodeJS.ErrnoException) => {
+      if (error.code === 'ENOENT') return false;
+      throw error;
+    });
+
 describe('archiveStoneYield.integration', () => {
   given('[case1] single .yield.md file', () => {
     const tempDir = path.join(
@@ -38,19 +55,13 @@ describe('archiveStoneYield.integration', () => {
           '.archive',
           '1.test.yield.md',
         );
-        const exists = await fs
-          .access(archivePath)
-          .then(() => true)
-          .catch(() => false);
+        const exists = await isPathFound(archivePath);
         expect(exists).toBe(true);
       });
 
       then('original file is removed', async () => {
         const originalPath = path.join(tempDir, '1.test.yield.md');
-        const exists = await fs
-          .access(originalPath)
-          .then(() => true)
-          .catch(() => false);
+        const exists = await isPathFound(originalPath);
         expect(exists).toBe(false);
       });
     });
@@ -88,10 +99,7 @@ describe('archiveStoneYield.integration', () => {
           '.archive',
           '1.test.yield',
         );
-        const exists = await fs
-          .access(archivePath)
-          .then(() => true)
-          .catch(() => false);
+        const exists = await isPathFound(archivePath);
         expect(exists).toBe(true);
       });
     });
@@ -167,10 +175,7 @@ describe('archiveStoneYield.integration', () => {
 
       then('no archive dir created', async () => {
         const archiveDir = path.join(tempDir, '.route', '.archive');
-        const exists = await fs
-          .access(archiveDir)
-          .then(() => true)
-          .catch(() => false);
+        const exists = await isPathFound(archiveDir);
         expect(exists).toBe(false);
       });
     });
@@ -199,10 +204,7 @@ describe('archiveStoneYield.integration', () => {
 
       then('creates archive dir', async () => {
         const archiveDir = path.join(tempDir, '.route', '.archive');
-        const exists = await fs
-          .access(archiveDir)
-          .then(() => true)
-          .catch(() => false);
+        const exists = await isPathFound(archiveDir);
         expect(exists).toBe(true);
       });
 
@@ -255,7 +257,7 @@ describe('archiveStoneYield.integration', () => {
         expect(priorContent).toContain('Prior archive');
       });
 
-      then('new archive has timestamp suffix', async () => {
+      then('new archive has an ordinal suffix', async () => {
         const archiveDir = path.join(tempDir, '.route', '.archive');
         const files = await fs.readdir(archiveDir);
         const timestampFile = files.find(
