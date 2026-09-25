@@ -11,7 +11,6 @@ describe('formatPatienceFriend', () => {
           stone: '1.vision',
           slug: 'all-done',
           route: '.behavior/v2026_03_05.behavior-example',
-          index: 1,
         });
 
         expect(output).toMatchSnapshot();
@@ -22,7 +21,6 @@ describe('formatPatienceFriend', () => {
           stone: '1.vision',
           slug: 'all-done',
           route: '.behavior/v2026_03_05.behavior-example',
-          index: 1,
         });
 
         expect(output).toContain('🗿 patience, friend');
@@ -33,7 +31,6 @@ describe('formatPatienceFriend', () => {
           stone: '1.vision',
           slug: 'all-done',
           route: '.behavior/v2026_03_05.behavior-example',
-          index: 1,
         });
 
         expect(output).toContain('the pond barely rippled');
@@ -51,7 +48,6 @@ describe('formatPatienceFriend', () => {
             stone: '1.vision',
             slug: 'all-done',
             route: '.behavior/v2026_03_05.behavior-example',
-            index: 1,
           });
 
           expect(output).toContain(
@@ -65,7 +61,6 @@ describe('formatPatienceFriend', () => {
           stone: '1.vision',
           slug: 'all-done',
           route: '.behavior/v2026_03_05.behavior-example',
-          index: 1,
         });
 
         expect(output).toContain('walk the way 🪷');
@@ -74,7 +69,6 @@ describe('formatPatienceFriend', () => {
           getSelfReviewArticulationPath({
             route: '.behavior/v2026_03_05.behavior-example',
             stone: '1.vision',
-            index: 1,
             slug: 'all-done',
           }),
         );
@@ -87,12 +81,32 @@ describe('formatPatienceFriend', () => {
           stone: '1.vision',
           slug: 'all-done',
           route: '.behavior/v2026_03_05.behavior-example',
-          index: 1,
         });
 
         expect(output).toContain("when you've truly reflected, run");
         expect(output).toContain(
           'rhx route.stone.set --stone 1.vision --as promised --that all-done',
+        );
+      });
+
+      /**
+       * .note = `--into` is required on a promise now. the driver must never have to
+       *         compose it themselves — the paragraph that asks for the review is the
+       *         one place they are told the exact path to declare.
+       */
+      then('the run command carries --into, at the owed path', () => {
+        const output = formatPatienceFriend({
+          stone: '1.vision',
+          slug: 'all-done',
+          route: '.behavior/v2026_03_05.behavior-example',
+        });
+
+        expect(output).toContain(
+          `--into ${getSelfReviewArticulationPath({
+            route: '.behavior/v2026_03_05.behavior-example',
+            stone: '1.vision',
+            slug: 'all-done',
+          })}`,
         );
       });
     });

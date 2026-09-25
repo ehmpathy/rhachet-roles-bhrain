@@ -13,9 +13,20 @@ describe('formatRouteStoneEmit', () => {
     const articulationPath = getSelfReviewArticulationPath({
       route,
       stone,
-      index: 1,
       slug,
     });
+
+    /**
+     * .what = the guide the real call site always supplies
+     * .why = every self-review confrontation closes with the guide, the owed path, and the
+     *        run command. a fixture that omits it snapshots an output no driver ever sees —
+     *        a refusal that names no fix — so a reviewer reads a regression that is not there.
+     */
+    const selfReview = {
+      reviewSelf: { slug, say: 'have you grounded the design in reality?' },
+      index: 1,
+      total: 3,
+    };
 
     when('[t0] formatRouteStoneEmit called with challenge:absent', () => {
       then('output contains what have you seen header', () => {
@@ -26,6 +37,7 @@ describe('formatRouteStoneEmit', () => {
           slug,
           route,
           articulationPath,
+          selfReview,
         });
         expect(output).toContain('🍂 what have you seen?');
       });
@@ -38,11 +50,18 @@ describe('formatRouteStoneEmit', () => {
           slug,
           route,
           articulationPath,
+          selfReview,
         });
         expect(output).toContain(articulationPath);
       });
 
-      then('output contains patience friend message', () => {
+      /**
+       * .note = this case once asserted `🗿 patience, friend` — the absent verdict used to
+       *         append the haste reproach ("the pond barely rippled") to a driver whose
+       *         file was simply not there. only `challenge:rushed` carries a haste message
+       *         now. the case is re-aimed at the D5 invariant rather than deleted.
+       */
+      then('output does NOT reproach the driver for haste', () => {
         const output = formatRouteStoneEmit({
           operation: 'route.stone.set',
           stone,
@@ -50,8 +69,26 @@ describe('formatRouteStoneEmit', () => {
           slug,
           route,
           articulationPath,
+          selfReview,
         });
-        expect(output).toContain('🗿 patience, friend');
+        expect(output).not.toContain('🗿 patience, friend');
+        expect(output).not.toContain('what is the rush');
+        expect(output).not.toContain('pond barely rippled');
+      });
+
+      then('output still names the fix — the owed path and the command', () => {
+        const output = formatRouteStoneEmit({
+          operation: 'route.stone.set',
+          stone,
+          action: 'challenge:absent',
+          slug,
+          route,
+          articulationPath,
+          selfReview,
+        });
+        expect(output).toContain('articulate into');
+        expect(output).toContain(`--as promised --that ${slug}`);
+        expect(output).toContain(`--into ${articulationPath}`);
       });
 
       then('snapshot matches vision', () => {
@@ -62,8 +99,64 @@ describe('formatRouteStoneEmit', () => {
           slug,
           route,
           articulationPath,
+          selfReview,
         });
         expect(output).toMatchSnapshot();
+      });
+    });
+
+    /**
+     * 🔴 .what = the precondition verdict — a promise with no ask on record
+     * .why = it is the one self-review verdict that takes NO guide. the guide names the owed
+     *        path and the promise command, and a driver with no ask must not promise again —
+     *        they must ask. so a guide here would hand them the move that just failed.
+     */
+    when('[t1] formatRouteStoneEmit called with challenge:unasked', () => {
+      const asUnaskedEmit = (): string =>
+        formatRouteStoneEmit({
+          operation: 'route.stone.set',
+          stone,
+          action: 'challenge:unasked',
+          slug,
+          route,
+          articulationPath,
+          selfReview,
+        });
+
+      then('output names the absent ask and both its operands', () => {
+        const output = asUnaskedEmit();
+        expect(output).toContain('no ask on record');
+        expect(output).toContain(`stone = ${stone}`);
+        expect(output).toContain(`slug  = ${slug}`);
+      });
+
+      /**
+       * 🔴 the operand that a per-formatter test cannot reach: the WIRE. a verdict added to
+       *    the union but left out of this dispatch falls through to the generic tail, and
+       *    the driver reads a message about a path when their defect is an absent ask.
+       */
+      then('output takes NO self-review guide', () => {
+        const output = asUnaskedEmit();
+        expect(output).not.toContain('articulate into');
+        expect(output).not.toContain(`--as promised --that ${slug}`);
+      });
+
+      then('output names the ask command instead', () => {
+        const output = asUnaskedEmit();
+        expect(output).toContain(
+          `rhx route.stone.set --stone ${stone} --as passed`,
+        );
+      });
+
+      then('output reproaches no haste and names no wrong path', () => {
+        const output = asUnaskedEmit();
+        expect(output).not.toContain('🗿 patience, friend');
+        expect(output).not.toContain('pond barely rippled');
+        expect(output).not.toContain('it is owed at');
+      });
+
+      then('snapshot matches vision', () => {
+        expect(asUnaskedEmit()).toMatchSnapshot();
       });
     });
   });
@@ -482,4 +575,140 @@ describe('formatRouteStoneEmit', () => {
       });
     },
   );
+
+  /**
+   * 🔴 .why = `formatHashbarRetired` shipped written, tested, and with NO production caller —
+   *           dead code that a reviewer reads as a delivered feature. its own unit tests could
+   *           not catch that: they prove the message RENDERS, never that it is REACHABLE.
+   * .note = so this case asserts the WIRE, and it belongs here rather than beside the
+   *         formatter. the seam between a correct operation and an emit that never calls it
+   *         is the one a per-operation test cannot see.
+   */
+  given(
+    '[case-hashbar] a guard whose review.self still sets the retired key',
+    () => {
+      const selfReview = {
+        reviewSelf: {
+          slug: 'all-done',
+          say: 'have you grounded it?',
+          hashbar: 0,
+        },
+        route: '.behavior/v2026_03_08.feature',
+        index: 1,
+        total: 1,
+      };
+
+      when('[t0] the ask is emitted and the key is present', () => {
+        const output = formatRouteStoneEmit({
+          operation: 'route.stone.set',
+          stone: '1.vision',
+          action: 'passed',
+          passage: 'blocked',
+          selfReview,
+          hashbarFound: [{ stone: '1.vision', slug: 'all-done' }],
+        });
+
+        then('the retirement notice reaches the author', () => {
+          expect(output).toContain('hashbar is retired');
+          expect(output).toContain('found in 1.vision → review.self.all-done');
+          expect(output).toContain('safe to delete the key');
+        });
+
+        /**
+         * .why = the notice is a rider, never a replacement. an author who still gets the key
+         *        wrong must not also lose the ask they came for.
+         */
+        then('the ask it rides is intact', () => {
+          expect(output).toContain('lets reflect');
+          expect(output).toContain('--as promised --that all-done');
+        });
+      });
+
+      when('[t1] the key is absent — every guard in this repo', () => {
+        const output = formatRouteStoneEmit({
+          operation: 'route.stone.set',
+          stone: '1.vision',
+          action: 'passed',
+          passage: 'blocked',
+          selfReview: {
+            ...selfReview,
+            reviewSelf: { slug: 'all-done', say: 'x' },
+          },
+        });
+
+        then('no retirement line is rendered, so it costs naught', () => {
+          expect(output).not.toContain('hashbar');
+        });
+      });
+    },
+  );
+
+  /**
+   * 🔴 .why = the SERIAL CONTRACT, clamped at the one surface that could break it. the route
+   *           is sealed — a driver cannot read the `.guard` file — so this emit is the only
+   *           place the other slugs could ever be named. ⇒ while it names exactly one, slug
+   *           N+1 is reachable only once slug N is promised, and the contract holds BY
+   *           CONSTRUCTION rather than by a refusal branch somebody must remember to write.
+   *
+   * 🟡 .why it is a clamp and not a comment = this emit carried a roster of every other
+   *           unpromised slug until the fork was withdrawn. that roster invited a fork the
+   *           guide layer could not serve: a forked lane got a slug and a path and no GUIDE,
+   *           because the guide renders only for the slug in hand and no read-only retrieval
+   *           command exists. ⇒ a re-add would look like a feature and would restore the
+   *           defect, so the absence is asserted rather than assumed.
+   */
+  given('[case-serial] a stone with several unpromised self reviews', () => {
+    const selfReview = {
+      reviewSelf: { slug: 'has-pruned-yagni', say: 'any extras?' },
+      route: '.behavior/v2026_03_08.feature',
+      index: 1,
+      total: 3,
+    };
+
+    when('[t0] the ask is emitted while two other reviews remain', () => {
+      const output = formatRouteStoneEmit({
+        operation: 'route.stone.set',
+        stone: '5.1.execute',
+        action: 'passed',
+        passage: 'blocked',
+        selfReview,
+      });
+
+      /**
+       * 🔴 .why the NEGATIVE bar holds the weight = the positive bars below would all still
+       *        pass with a roster beside them. only this one goes red on a re-add.
+       */
+      then(
+        'no other slug is named, so the hand-out stays one at a time',
+        () => {
+          expect(output).not.toContain('has-questioned-assumptions');
+          expect(output).not.toContain('has-verified-claims');
+          expect(output).not.toContain('the other lanes');
+          expect(output).not.toContain('you may fork');
+        },
+      );
+
+      then('the one review in hand is named, with its guide', () => {
+        expect(output).toContain('lets reflect');
+        expect(output).toContain('has-pruned-yagni');
+        expect(output).toContain('any extras?');
+      });
+
+      /**
+       * .why = the count still says THREE. the driver is told how many they owe; they are
+       *        not told the names, and those are different facts. a serial hand-out that hid
+       *        the total would leave them unable to tell a long ladder from a short one.
+       */
+      then(
+        'the total is still disclosed, so the ladder is not a surprise',
+        () => {
+          expect(output).toContain('1/3');
+        },
+      );
+
+      then('the promise command names that one slug', () => {
+        expect(output).toContain('--as promised --that has-pruned-yagni');
+      });
+    });
+  });
 });

@@ -32,7 +32,7 @@ a directory is a real cost: it hides the cluster from a flat glob of its neighbo
 
 ## .where it is already the convention
 
-`term=route.stone._.choice._.md` · `kno601.inventories._.kind=article.md` · `inventory.of=fulcrums._.md` · `review/self/for.1.vision._.r4.$slug.md` — and the guard computes that last path exactly.
+`term=route.stone._.choice._.md` · `kno601.inventories._.kind=article.md` · `inventory.of=fulcrums._.md` · `review/self/for.1.vision._.$slug.md` — and the guard computes that last path exactly.
 
 | when… | then… |
 |---|---|

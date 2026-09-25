@@ -51,21 +51,26 @@ neither.
 resource, so a ceiling on it is prudent. **a self review spends only the driver's own effort**, so
 a ceiling on it would protect nobody and would cost the artifact everything.
 
-## 🟡 .the guard has a liveness hatch. it is NOT a permission
+## 🔴 .the guard holds you for NO duration. that is not a permission
 
-`getSelfReviewChallengeDecision.ts`'s `attempts >= plowthroughThreshold` branch allows a promise once
-attempts reach three on the same artifact hash, with no further timer. it exists so a driver is never **hard-stuck** by a clock.
+🌙 **the liveness hatch is retired, and so is the clock that made it necessary.** the guard once
+refused a promise for 30 seconds and offered a `attempts >= 3` escape from the refusal. neither
+exists: the clock decides whether a **paragraph renders**, never whether a promise passes.
 
-🔴 **to aim for it is the shortcut this rule forbids.** three rapid promises will pass the guard and
-will not have reviewed the artifact, and the guard cannot tell the difference — which is precisely
-why the mandate binds the driver's conduct rather than the machinery's verdict.
+⇒ so the shortcut this rule forbids got **cheaper**, not harder. a promise that reviewed naught now
+clears on the **first** command.
 
 > **what the guard permits and what you owe are two different quantities. only one of them is your
-> business.**
+> business.** the gap between them just widened, and the whole of it is yours to hold.
 
-the same holds one rung down: the guard checks that the articulation **file** is present and holds
-real findings. a file that satisfies that check and reviewed naught satisfies the guard and
-violates this rule.
+🔴 **the one confrontation left is a CUE, not a gate.** promise inside 30 seconds of the ask, on
+your first attempt, and the guard renders `patience, friend` — the identity reframe and the four
+when-then cues. **it holds you for no time at all.** read it and answer it honestly, or ignore it
+and pass. that choice is the rule.
+
+the same holds one rung down: the guard checks that the articulation **file** sits at the owed path
+and is newer than the ask. a file that satisfies both checks and reviewed naught satisfies the
+guard and violates this rule.
 
 ## .the cues — when → then
 
@@ -73,10 +78,10 @@ violates this rule.
 |---|---|
 | the self-review count **rises** rather than falls | 🔴 that is more work found, not a defect. carry it. do NOT diagnose the guard |
 | you are about to ask a human to **waive** a self review | there is no lever to grant it. the ask spends their attention on what they cannot give |
-| you promise the **same slug** a third time in quick succession | 🔴 you are about to hit the liveness hatch. stop and ask whether you reviewed at all |
+| the guard renders `patience, friend` and you promise again at once | 🔴 it cost you naught to ignore, which is exactly why it is a test of you rather than of the guard. read the four cues and answer them |
 | you write an articulation you could not defend to a peer | it is not an articulation. begin again |
-| you catch yourself impatient with the 30-second timer | the timer is not the cost. the read is, and you have not paid it |
-| a self review re-triggers after you **changed the artifact** | correct — the artifact you reviewed no longer exists. review the one that does |
+| you notice the promise cleared on the **first** try | that is the design, never a signal you reviewed enough. the clock was removed because it charged the thorough driver, not because the bar fell |
+| you **repair the artifact** mid-review | 🔴 do it. a repair costs you naught now — the trigger is keyed `(stone, slug)`, so no repair re-triggers a review or re-starts a clock |
 | you reach for `--as blocked` because the ladder feels long | 🔴 length is not a wall (`rule.always.spend-own-levers-before-escalation`). the only lever here is your own attention |
 
 ## .the test — forced articulation, per review
@@ -111,18 +116,19 @@ peer, and never reaches a human.
 - a self review promised with no honest articulation behind it = **blocker**
 - an articulation that names neither a repair nor a reasoned hold = **blocker** — it is a file, not
   a review
-- a promise made to reach the liveness hatch rather than to report a review = **blocker**
+- a promise made because the guard would let it through, rather than to report a review = **blocker**
 - an ask to a human to waive, skip, or override a self review = **blocker** — there is no lever,
   and the ask spends their attention on what they cannot grant
-- a rising self-review count reported as a **guard malfunction** = **blocker**
+- a self-review count that grew, reported as a **guard malfunction** = **blocker**
   (`rule.always.diagnose-reviewer-malfunctions` governs a broken reviewer; more work owed is not one)
-- a self review that re-triggers after the artifact changed = **false positive** — that is the
-  ladder at work
+- a self review **batched** — every repair held back until after the promise clears — = **blocker**.
+  it was the rational adaptation to a clock that reset on each repair; that clock is gone, so the
+  habit now costs the artifact and buys naught
 
 ## .see also
 
-- `howto.run-self-reviews.[guide]` — the HOW: the flow, the exact path, the level pitfall. this
-  rule is the MANDATE that guide serves
+- `howto.run-self-reviews.[guide]` — the HOW: the flow, the computable path, `--into`, the
+  freshness bar. this rule is the MANDATE that guide serves
 - `rule.always.converge-to-terminal` — the peer ladder, which **does** have a budget and an
   honorable exhaustion. the contrast is the point
 - `rule.always.spend-own-levers-before-escalation` — the same owner-sort: a self review is your

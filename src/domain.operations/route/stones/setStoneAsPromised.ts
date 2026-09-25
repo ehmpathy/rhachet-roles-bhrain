@@ -5,6 +5,7 @@ import { PassageReport } from '@src/domain.objects/Driver/PassageReport';
 import type { RouteStone } from '@src/domain.objects/Driver/RouteStone';
 import { RouteStoneGuardReviewSelfArtifact } from '@src/domain.objects/Driver/RouteStoneGuardReviewSelfArtifact';
 
+import { getStonePromisePaths } from '../guard/review/self/getStonePromisePaths';
 import { setPassageReport } from '../passage/setPassageReport';
 
 /**
@@ -25,10 +26,11 @@ export const setStoneAsPromised = async (input: {
   await fs.mkdir(routeDir, { recursive: true });
 
   // compute promise artifact path (hashless — no hash in filename)
-  const promisePath = path.join(
-    routeDir,
-    `${input.stone.name}.guard.promise.${input.slug}.md`,
-  );
+  const { promisePath } = getStonePromisePaths({
+    stone: input.stone.name,
+    slug: input.slug,
+    route: input.route,
+  });
 
   // write promise content
   const content = `# promise: ${input.slug}
@@ -59,7 +61,6 @@ i promise i have completed the review.self for "${input.slug}".
   return {
     promise: new RouteStoneGuardReviewSelfArtifact({
       stone: { path: input.stone.path },
-      hash: 'hashless',
       slug: input.slug,
       path: promisePath,
     }),

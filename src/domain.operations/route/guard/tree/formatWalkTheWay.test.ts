@@ -11,7 +11,6 @@ describe('formatWalkTheWay', () => {
           stone: '1.vision',
           slug: 'all-done',
           route: '.behavior/v2026_03_05.behavior-example',
-          index: 1,
         });
 
         expect(output.join('\n')).toMatchSnapshot();
@@ -22,7 +21,6 @@ describe('formatWalkTheWay', () => {
           stone: '1.vision',
           slug: 'all-done',
           route: '.behavior/v2026_03_05.behavior-example',
-          index: 1,
         });
 
         expect(output.join('\n')).toContain('walk the way 🪷');
@@ -33,7 +31,6 @@ describe('formatWalkTheWay', () => {
           stone: '1.vision',
           slug: 'all-done',
           route: '.behavior/v2026_03_05.behavior-example',
-          index: 1,
         });
 
         expect(output.join('\n')).toContain('articulate into');
@@ -41,7 +38,6 @@ describe('formatWalkTheWay', () => {
           getSelfReviewArticulationPath({
             route: '.behavior/v2026_03_05.behavior-example',
             stone: '1.vision',
-            index: 1,
             slug: 'all-done',
           }),
         );
@@ -54,7 +50,6 @@ describe('formatWalkTheWay', () => {
             stone: '1.vision',
             slug: 'all-done',
             route: '.behavior/v2026_03_05.behavior-example',
-            index: 1,
           });
 
           expect(output.join('\n')).toContain(
@@ -68,7 +63,6 @@ describe('formatWalkTheWay', () => {
           stone: '1.vision',
           slug: 'all-done',
           route: '.behavior/v2026_03_05.behavior-example',
-          index: 1,
         });
 
         expect(output.join('\n')).toContain('for each found issue 🪘');
@@ -81,7 +75,6 @@ describe('formatWalkTheWay', () => {
           stone: '1.vision',
           slug: 'all-done',
           route: '.behavior/v2026_03_05.behavior-example',
-          index: 1,
         });
 
         expect(output.join('\n')).toContain('for each non issue 🪘');

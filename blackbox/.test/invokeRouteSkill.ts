@@ -109,7 +109,14 @@ export const sanitizeTimeForSnapshot = (output: string): string => {
     .replace(
       /\.log\/bhrain\/review\/[^/]+\//g,
       '.log/bhrain/review/<logdir>/',
-    );
+    )
+    // mask an absolute iso stamp rendered into output a human reads
+    // .why = the stale-articulation verdict prints two of them — `written` and
+    //        `asked at` — and both are wall-clock, so a snapshot that captured
+    //        them would go red on its next run rather than on a real change.
+    //        every duration verb above is masked for this reason; an absolute
+    //        stamp is the same hazard at a different grain
+    .replace(/\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}Z/g, '[STAMP]');
 };
 
 

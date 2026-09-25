@@ -1,6 +1,11 @@
 import type { RouteStone } from '@src/domain.objects/Driver/RouteStone';
 import { enumFilesFromGlob } from '@src/utils/enumFilesFromGlob';
 
+import {
+  getStoneYieldGlob,
+  getStoneYieldGlobLegacy,
+} from './getStoneYieldGlob';
+
 /**
  * .what = retrieves artifact files for a specific stone
  * .why = enables artifact presence to be verified before passage
@@ -12,14 +17,16 @@ export const getAllStoneArtifacts = async (input: {
   route: string;
 }): Promise<string[]> => {
   // determine glob pattern from guard or default
-  // default globs: .yield* (new pattern) + *.md (legacy pattern)
+  // 🔴 the two default globs are owned by `getStoneYieldGlob`, never hand-typed here. this
+  //    reader is what the round's own hash key reads, so a drift between it and the writers
+  //    would re-key every open lane's trigger report for work no lane did
   const hasCustomArtifacts =
     input.stone.guard?.artifacts && input.stone.guard.artifacts.length > 0;
   const globs = hasCustomArtifacts
     ? input.stone.guard!.artifacts
     : [
-        `${input.route}/${input.stone.name}.yield*`, // new: .yield, .yield.md, .yield.json
-        `${input.route}/${input.stone.name}*.md`, // legacy: .v1.i1.md, .i1.md
+        `${input.route}/${getStoneYieldGlob({ stone: input.stone.name })}`,
+        `${input.route}/${getStoneYieldGlobLegacy({ stone: input.stone.name })}`,
       ];
 
   // enumerate all matches across all globs

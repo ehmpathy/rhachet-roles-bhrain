@@ -83,6 +83,44 @@ exports[`driver.route.journey.acceptance given: [journey] weather api route when
 "
 `;
 
+exports[`driver.route.journey.acceptance given: [journey] weather api route when: [t7.5] bouncer cache is computed via route.drive then: stderr has good vibes 1`] = `""`;
+
+exports[`driver.route.journey.acceptance given: [journey] weather api route when: [t7.5] bouncer cache is computed via route.drive then: stdout has good vibes 1`] = `
+"🦉 where were we?
+
+🗿 route.drive
+   ├─ where do we go?
+   │  ├─ route = .
+   │  └─ stone = 3.blueprint
+   │
+   ├─ are you here?
+   │  ├─ when ready for review, run:
+   │  │  └─ rhx route.stone.set --stone 3.blueprint --as arrived
+   │  └─ when ready to continue, run:
+   │     └─ rhx route.stone.set --stone 3.blueprint --as passed
+   │
+   ├─ here's the stone
+   │  ├─
+   │  │
+   │  │  # 3.blueprint
+   │  │  
+   │  │  create a technical blueprint for the weather api.
+   │  │  
+   │  │  define:
+   │  │  - the api endpoint structure
+   │  │  - the data sources
+   │  │  - the implementation approach
+   │  │  
+   │  └─
+   │
+   └─ are you here?
+      ├─ when ready for review, run:
+      │  └─ rhx route.stone.set --stone 3.blueprint --as arrived
+      └─ when ready to continue, run:
+         └─ rhx route.stone.set --stone 3.blueprint --as passed
+"
+`;
+
 exports[`driver.route.journey.acceptance given: [journey] weather api route when: [t7.6] bouncer blocks write to protected artifact then: stderr has good vibes 1`] = `
 "🦉 patience, friend
 
@@ -190,7 +228,7 @@ exports[`driver.route.journey.acceptance given: [journey] weather api route when
    ├─ walk the way 🪷
    │  │
    │  ├─ articulate into
-   │  │  ├─ /review/self/for.3.blueprint._.r1.design-complete.md
+   │  │  ├─ ./review/self/for.3.blueprint._.design-complete.md
    │  │  └─ the guard looks precisely here, write exactly to this path
    │  │
    │  ├─ for each found issue 🪘
@@ -210,7 +248,8 @@ exports[`driver.route.journey.acceptance given: [journey] weather api route when
    │     └─
    │
    └─ when you've truly reflected, run
-      └─ rhx route.stone.set --stone 3.blueprint --as promised --that design-complete
+      └─ rhx route.stone.set --stone 3.blueprint --as promised --that design-complete \\
+         --into ./review/self/for.3.blueprint._.design-complete.md
 "
 `;
 

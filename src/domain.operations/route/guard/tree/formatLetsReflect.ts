@@ -1,5 +1,6 @@
 import type { RouteStoneGuardReviewSelf } from '@src/domain.objects/Driver/RouteStoneGuard';
 
+import { formatPromiseCommand } from './formatPromiseCommand';
 import { formatWalkTheWay } from './formatWalkTheWay';
 
 /**
@@ -101,10 +102,7 @@ export const formatLetsReflect = (input: {
   lines.push(`   │`);
 
   // final instruction
-  lines.push(`   └─ when you've truly reflected, run`);
-  lines.push(
-    `      └─ rhx route.stone.set --stone ${input.stone} --as promised --that ${input.slug}`,
-  );
+  lines.push(...formatPromiseCommand(input));
 
   return lines.join('\n');
 };

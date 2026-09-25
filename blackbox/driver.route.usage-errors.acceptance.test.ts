@@ -399,4 +399,388 @@ describe('driver.route.usage-errors.acceptance', () => {
       });
     });
   });
+
+  /**
+   * 🔴 .what = the MEASURED symptom `runCliEntrypoint` was built to close, pinned.
+   *
+   * 🔴 .why = before the boundary existed, this exact invocation printed a node stack
+   *           trace, the author's absolute path, the node version — and exit **1**, the
+   *           code `rule.require.exit-code-semantics` reserves for a server malfunction.
+   *           ⇒ a hook that read the code read "server fault" where the truth was "you
+   *           forgot a flag". the entrypoint's own allowlist could not catch it: every
+   *           copy sat BELOW `parseArgs` and below the required-flag checks.
+   *
+   * ⚠️ .note = the boundary is a behavior change made in THIS round, and its most common
+   *            caller-variant was pinned by naught (`ergo-contract-snapshots` blocker.1
+   *            at i002). a regression that re-crashes this command would have stayed
+   *            green under the suite as it stood.
+   */
+  given('[case6] route.stone.get with --stone omitted', () => {
+    const scene = useBeforeAll(async () => {
+      const tempDir = genTempDirForRhachet({
+        slug: 'usage-stone-get-nostone',
+        clone: ASSETS_DIR,
+      });
+      await execAsync('npx rhachet roles link --role driver', { cwd: tempDir });
+      await execAsync('git checkout -b vlad/test-usage-stone-get', {
+        cwd: tempDir,
+      });
+      return { tempDir };
+    });
+
+    when('[t0] --route is passed and --stone is not', () => {
+      const result = useThen('the get command refuses the invocation', async () =>
+        invokeRouteSkill({
+          skill: 'route.stone.get',
+          args: { route: '.' },
+          cwd: scene.tempDir,
+        }),
+      );
+
+      then('exit code is 2 (constraint — the caller forgot a flag)', () => {
+        // 🔴 the whole point. it was **1** before the boundary, and a 1 tells a hook
+        //    the server broke — the opposite of the truth
+        expect(result.code).toEqual(2);
+      });
+
+      then('the refusal is on stderr, not stdout, and classed caller-fault', () => {
+        // 🔴 .why the class is pinned beside the message = `error: <Class>: <message>` is
+        //    this repo's failloud render, and the class names WHO must fix it —
+        //    `BadRequestError` says the caller, `MalfunctionError` says the server
+        //    (`rule.require.failloud`). a bare message assertion would stay green through
+        //    a re-class, so the driver would be told the opposite of the truth about
+        //    whose fault it is while the suite reported no change
+        expect(result.stderr).toContain(
+          'error: BadRequestError: --stone is required',
+        );
+        expect(result.stdout).not.toContain('--stone is required');
+      });
+
+      then('no stack trace, no absolute path, no node version', () => {
+        // 🔴 the three artifacts of the crash this boundary replaced. each is asserted
+        //    by name rather than left to the snapshot, so a reader of the assertions
+        //    alone can see what the boundary guarantees
+        expect(result.stderr).not.toContain('at Object.');
+        expect(result.stderr).not.toContain('throw new');
+        expect(result.stderr).not.toContain('Node.js v');
+      });
+
+      then('stderr matches snapshot', () => {
+        expect(result.stderr).toMatchSnapshot('stone.get --stone absent');
+      });
+    });
+  });
+
+  given('[case7] route.stone.judge with --mechanism omitted', () => {
+    const scene = useBeforeAll(async () => {
+      const tempDir = genTempDirForRhachet({
+        slug: 'usage-stone-judge-nomech',
+        clone: ASSETS_DIR,
+      });
+      await execAsync('npx rhachet roles link --role driver', { cwd: tempDir });
+      await execAsync('git checkout -b vlad/test-usage-stone-judge', {
+        cwd: tempDir,
+      });
+      return { tempDir };
+    });
+
+    when('[t0] the judge is invoked with no mechanism', () => {
+      const result = useThen('the judge refuses the invocation', async () =>
+        invokeRouteSkill({
+          skill: 'route.stone.judge',
+          args: { stone: '1.feature', route: '.' },
+          cwd: scene.tempDir,
+        }),
+      );
+
+      then('exit code is 2 (constraint — the caller forgot a flag)', () => {
+        expect(result.code).toEqual(2);
+      });
+
+      then('the refusal names the flag, on stderr, classed caller-fault', () => {
+        // .why the class rides along = see the peer note in [case6]; the class is the
+        //    half that says whose fault it is, and it is the half a bare message
+        //    assertion cannot hold
+        expect(result.stderr).toContain(
+          'error: BadRequestError: --mechanism is required',
+        );
+        expect(result.stdout).not.toContain('--mechanism is required');
+      });
+
+      then('stderr matches snapshot', () => {
+        expect(result.stderr).toMatchSnapshot('stone.judge --mechanism absent');
+      });
+    });
+
+    // 🔴 .why the next two when-blocks = `routeStoneJudge` throws THREE distinct
+    //    `BadRequestError`s and only one was pinned above. the other two sit on the
+    //    same re-wrapped boundary, so a re-class or a stream move would reach them
+    //    identically and no bar would go red
+    //    (`rule.require.contract-snapshot-exhaustiveness`)
+    when('[t1] the mechanism is named and the stone is not', () => {
+      const result = useThen('the judge refuses the invocation', async () =>
+        invokeRouteSkill({
+          skill: 'route.stone.judge',
+          args: { mechanism: 'reviewed?', route: '.' },
+          cwd: scene.tempDir,
+        }),
+      );
+
+      then('exit code is 2 (constraint — the caller forgot a flag)', () => {
+        expect(result.code).toEqual(2);
+      });
+
+      then('the refusal names the flag, on stderr, classed caller-fault', () => {
+        expect(result.stderr).toContain(
+          'error: BadRequestError: --stone is required',
+        );
+        expect(result.stdout).not.toContain('--stone is required');
+      });
+
+      then('stderr matches snapshot', () => {
+        expect(result.stderr).toMatchSnapshot('stone.judge --stone absent');
+      });
+    });
+
+    when('[t2] the mechanism names a value the contract does not hold', () => {
+      const result = useThen('the judge refuses the mechanism', async () =>
+        invokeRouteSkill({
+          skill: 'route.stone.judge',
+          args: { stone: '1.feature', route: '.', mechanism: 'bogus?' },
+          cwd: scene.tempDir,
+        }),
+      );
+
+      then('exit code is 2 (constraint — the caller named a bad value)', () => {
+        expect(result.code).toEqual(2);
+      });
+
+      then('the refusal quotes the value back, on stderr', () => {
+        // .why the value is quoted back = the caller typed it, so the echo is what
+        //    lets them spot a typo without a re-read of their own command
+        expect(result.stderr).toContain(
+          'error: BadRequestError: unknown mechanism "bogus?"',
+        );
+        expect(result.stdout).not.toContain('unknown mechanism');
+      });
+
+      then('stderr matches snapshot', () => {
+        expect(result.stderr).toMatchSnapshot('stone.judge unknown mechanism');
+      });
+    });
+  });
+
+  given('[case8] route.stone.set with an --as the contract does not name', () => {
+    const scene = useBeforeAll(async () => {
+      const tempDir = genTempDirForRhachet({
+        slug: 'usage-stone-set-badas',
+        clone: ASSETS_DIR,
+      });
+      await execAsync('npx rhachet roles link --role driver', { cwd: tempDir });
+      await execAsync('git checkout -b vlad/test-usage-stone-set', {
+        cwd: tempDir,
+      });
+      return { tempDir };
+    });
+
+    when('[t0] --as carries a value outside the allowed set', () => {
+      const result = useThen('the set command refuses the action', async () =>
+        invokeRouteSkill({
+          skill: 'route.stone.set',
+          args: { stone: '1.feature', route: '.', as: 'bogus' },
+          cwd: scene.tempDir,
+        }),
+      );
+
+      then('exit code is 2 (constraint — the caller must fix the value)', () => {
+        expect(result.code).toEqual(2);
+      });
+
+      then('the refusal enumerates the allowed actions, on stderr', () => {
+        // 🔴 .why enumerated = `rule.require.errors-name-the-fix`. a bare "invalid --as"
+        //    tells the driver naught about what to type instead, and this message is the
+        //    one place the full passage vocabulary is rendered to a human
+        expect(result.stderr).toContain('--as must be');
+        expect(result.stderr).toContain('"promised"');
+        expect(result.stdout).not.toContain('--as must be');
+      });
+
+      then('stderr matches snapshot', () => {
+        expect(result.stderr).toMatchSnapshot('stone.set --as invalid');
+      });
+    });
+  });
+
+  given('[case9] route.bind.set with --route omitted', () => {
+    const scene = useBeforeAll(async () => {
+      const tempDir = genTempDirForRhachet({
+        slug: 'usage-bind-set-noroute',
+        clone: ASSETS_DIR,
+      });
+      await execAsync('npx rhachet roles link --role driver', { cwd: tempDir });
+      await execAsync('git checkout -b vlad/test-usage-bind-set', {
+        cwd: tempDir,
+      });
+      return { tempDir };
+    });
+
+    when('[t0] the bind is invoked with no route', () => {
+      const result = useThen('the bind refuses the invocation', async () =>
+        invokeRouteSkill({
+          skill: 'route.bind.set',
+          args: {},
+          cwd: scene.tempDir,
+        }),
+      );
+
+      then('exit code is 2 (constraint — the caller forgot a flag)', () => {
+        expect(result.code).toEqual(2);
+      });
+
+      then('the refusal names the flag and points at --help, on stderr', () => {
+        // 🔴 .why = the intent is unchanged — the refusal names the flag, points at --help,
+        //    and sits on stderr. what changed is the SHAPE it arrives in: this one entrypoint
+        //    hand-rolled a bare `console.error` while its eight peers in this same file throw
+        //    a `BadRequestError` and let the boundary render it. the bare form was the lone
+        //    divergence in the file, so the outlier moved, never the house shape
+        //    (`ergo-snapshot-visual-blemishes` blocker.1 at i004)
+        expect(result.stderr).toContain(
+          'error: BadRequestError: --route is required',
+        );
+        expect(result.stderr).toContain('--help');
+        expect(result.stdout).not.toContain('--route is required');
+      });
+
+      then('the refusal carries the same hint payload as its peers', () => {
+        // .why = uniformity is what the blocker graded, so it earns an assertion rather than
+        //        a snapshot alone — a snapshot re-take would absorb a drift here in silence
+        expect(result.stderr).toContain('"hint": "--help for usage"');
+      });
+
+      then('stderr matches snapshot', () => {
+        expect(result.stderr).toMatchSnapshot('bind.set --route absent');
+      });
+    });
+  });
+
+  /**
+   * 🔴 .what = the boundary is ONE mechanism, proven across four subcommands that share
+   *            it — never eleven copies that happen to agree today.
+   *
+   * 🔴 .why = `parseArgs` sits ABOVE every entrypoint's own `try`, so a fault it raises
+   *           can be caught by the outer boundary alone. that makes a bare `--into` the
+   *           one refusal reachable from EVERY re-wrapped subcommand, and therefore the
+   *           sharpest probe of the claim "the boundary is uniform". the extant pins for
+   *           this message all ride on `route.stone.set`, which is exactly the verb whose
+   *           own read of `--into` could mask it.
+   *
+   * ⚠️ .note = `route.stone.set` is deliberately ABSENT from this table. its `--into` is
+   *            a real flag with its own refusals elsewhere in the corpus, so a pin here
+   *            would grade that verb rather than the shared boundary.
+   */
+  given('[case10] a bare --into on subcommands that do not own the flag', () => {
+    const scene = useBeforeAll(async () => {
+      const tempDir = genTempDirForRhachet({
+        slug: 'usage-bare-into',
+        clone: ASSETS_DIR,
+      });
+      await execAsync('npx rhachet roles link --role driver', { cwd: tempDir });
+      await execAsync('git checkout -b vlad/test-usage-bare-into', {
+        cwd: tempDir,
+      });
+      return { tempDir };
+    });
+
+    const SUBCOMMANDS = [
+      'route.stone.get',
+      'route.drive',
+      'route.bind.get',
+      'route.guard.upgrade',
+    ] as const;
+
+    for (const skill of SUBCOMMANDS) {
+      when(`[t0] ${skill} is invoked with a bare --into`, () => {
+        const result = useThen(`${skill} refuses the bare flag`, async () =>
+          invokeRouteSkill({
+            skill,
+            args: { into: true },
+            cwd: scene.tempDir,
+          }),
+        );
+
+        then('exit code is 2 (constraint — the caller must fix the flag)', () => {
+          expect(result.code).toEqual(2);
+        });
+
+        then('the refusal is the shared one, on stderr', () => {
+          // 🔴 the same three lines on every verb — that sameness IS the claim. a
+          //    per-verb hint here would be decoy guidance for a command the driver
+          //    never ran, which is why `parseArgs` keeps its message generic
+          expect(result.stderr).toContain('--into was passed with no value');
+          expect(result.stderr).toContain('--into carries a value');
+          expect(result.stdout).not.toContain('--into was passed with no value');
+        });
+
+        then('no stack trace, no node version', () => {
+          expect(result.stderr).not.toContain('at Object.');
+          expect(result.stderr).not.toContain('Node.js v');
+        });
+
+        then('stderr matches snapshot', () => {
+          expect(result.stderr).toMatchSnapshot(`${skill} bare --into`);
+        });
+      });
+    }
+  });
+
+  given('[case11] route.review with an --open the host does not hold', () => {
+    const scene = useBeforeAll(async () => {
+      const tempDir = genTempDirForRhachet({
+        slug: 'usage-review-badopener',
+        clone: ASSETS_DIR,
+      });
+      await execAsync('npx rhachet roles link --role driver', { cwd: tempDir });
+      await execAsync('git checkout -b vlad/test-usage-review-open', {
+        cwd: tempDir,
+      });
+      return { tempDir };
+    });
+
+    when('[t0] the named opener is absent from PATH', () => {
+      const result = useThen('route.review refuses the opener', async () =>
+        invokeRouteSkill({
+          skill: 'route.review',
+          args: {
+            route: '.',
+            open: 'no-such-opener-abcxyz',
+          },
+          cwd: scene.tempDir,
+        }),
+      );
+
+      then('exit code is 2 (constraint — the caller must fix the opener)', () => {
+        expect(result.code).toEqual(2);
+      });
+
+      then('the refusal quotes the opener back, on stderr', () => {
+        // 🔴 .why this is its own case = this branch refuses BEFORE the inner try, so
+        //    it renders a tree of its own rather than the `error: <Class>: <message>`
+        //    shape every other refusal on this boundary carries. a shape that singular
+        //    is a shape a regression can move with no peer to disagree with it
+        expect(result.stderr).toContain(
+          "opener 'no-such-opener-abcxyz' not found in PATH",
+        );
+        expect(result.stdout).not.toContain('not found in PATH');
+      });
+
+      then('no stack trace, no node version', () => {
+        expect(result.stderr).not.toContain('at Object.');
+        expect(result.stderr).not.toContain('Node.js v');
+      });
+
+      then('stderr matches snapshot', () => {
+        expect(result.stderr).toMatchSnapshot('route.review absent opener');
+      });
+    });
+  });
 });

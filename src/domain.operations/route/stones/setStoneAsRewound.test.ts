@@ -5,6 +5,8 @@ import { given, then, when } from 'test-fns';
 
 import type { ContextCliEmit } from '@src/domain.objects/Driver/ContextCliEmit';
 
+import { setSelfReviewTriggeredReport } from '../guard/review/self/setSelfReviewTriggeredReport';
+import { isPathFound } from '../isPathFound';
 import { setStoneAsRewound } from './setStoneAsRewound';
 
 const mockContext: ContextCliEmit = {
@@ -162,6 +164,27 @@ describe('setStoneAsRewound', () => {
           0,
         );
       });
+
+      /**
+       * 🔴 .what = the cascade label reads `cleared:`, never `deleted:`
+       * .why = the triggers inside that count are ARCHIVED under `.archive/`, never removed
+       *        (`archiveStoneSelfReviewTriggers`). so `deleted:` told a route author their
+       *        ask was gone when it was recoverable — one word, and it reported the wrong
+       *        outcome for every rewind that touched a live trigger.
+       * .note = asserted rather than left to the snapshot alone. a snapshot re-snaps on a
+       *         `--resnap` and would carry the regression back in silence.
+       */
+      then(
+        'the cascade label names what was CLEARED, never deleted',
+        async () => {
+          const result = await setStoneAsRewound(
+            { stone: '1.vision', route: tempDir },
+            mockContext,
+          );
+          expect(result.emit.stdout).toContain('├─ cleared:');
+          expect(result.emit.stdout).not.toContain('├─ deleted:');
+        },
+      );
 
       then('stdout matches snapshot', async () => {
         const result = await setStoneAsRewound(
@@ -408,19 +431,13 @@ describe('setStoneAsRewound', () => {
           '.archive',
           '1.vision.yield.md',
         );
-        const exists = await fs
-          .access(archivePath)
-          .then(() => true)
-          .catch(() => false);
+        const exists = await isPathFound(archivePath);
         expect(exists).toBe(true);
       });
 
       then('original yield file removed', async () => {
         const originalPath = path.join(tempDir, '1.vision.yield.md');
-        const exists = await fs
-          .access(originalPath)
-          .then(() => true)
-          .catch(() => false);
+        const exists = await isPathFound(originalPath);
         expect(exists).toBe(false);
       });
     });
@@ -474,14 +491,8 @@ describe('setStoneAsRewound', () => {
           '.archive',
           '3.blueprint.yield.md',
         );
-        const exists2 = await fs
-          .access(archivePath2)
-          .then(() => true)
-          .catch(() => false);
-        const exists3 = await fs
-          .access(archivePath3)
-          .then(() => true)
-          .catch(() => false);
+        const exists2 = await isPathFound(archivePath2);
+        const exists3 = await isPathFound(archivePath3);
         expect(exists2).toBe(true);
         expect(exists3).toBe(true);
       });
@@ -515,10 +526,7 @@ describe('setStoneAsRewound', () => {
 
       then('yield file still exists', async () => {
         const originalPath = path.join(tempDir, '1.vision.yield.md');
-        const exists = await fs
-          .access(originalPath)
-          .then(() => true)
-          .catch(() => false);
+        const exists = await isPathFound(originalPath);
         expect(exists).toBe(true);
       });
     });
@@ -551,10 +559,7 @@ describe('setStoneAsRewound', () => {
 
       then('yield file still exists (default keep)', async () => {
         const yieldPath = path.join(tempDir, '1.vision.yield.md');
-        const exists = await fs
-          .access(yieldPath)
-          .then(() => true)
-          .catch(() => false);
+        const exists = await isPathFound(yieldPath);
         expect(exists).toBe(true);
       });
     });
@@ -592,10 +597,7 @@ describe('setStoneAsRewound', () => {
           '.archive',
           '1.vision.yield.md',
         );
-        const exists = await fs
-          .access(archivePath)
-          .then(() => true)
-          .catch(() => false);
+        const exists = await isPathFound(archivePath);
         expect(exists).toBe(false);
       });
     });
@@ -653,6 +655,83 @@ describe('setStoneAsRewound', () => {
           mockContext,
         );
         expect(result.emit.stdout).toMatchSnapshot();
+      });
+    });
+  });
+
+  /**
+   * 🔴 .what = the trigger count renders NON-ZERO, against triggers the guard itself minted
+   * .why = `F10`'s whole deliverable is "the rewind archives the trigger, AND SAYS SO", and
+   *        until i010 the second half was unwitnessed: all 11 rows of this file's snapshot read
+   *        `0 triggers`, and the acceptance snapshot held the word `triggers` not at all. so
+   *        every clamp on that line was green whether the count worked or was hard-coded `0`.
+   *        ⇒ this is the round's own repeat failure, found a third time: a VALUE assertion
+   *          that only ever saw one value proves naught about the path that produces the others.
+   *
+   * 🔴 .note = the triggers are minted by `setSelfReviewTriggeredReport` rather than hand-written
+   *            to the path. a hand-written fixture clamps this test's idea of the filename; a
+   *            minted one clamps the guard's — so if the two ever fall out of agreement, this
+   *            goes red rather than green on a name no production code uses.
+   */
+  given('[case16] a stone with LIVE self-review triggers', () => {
+    const tempDir = path.join(
+      os.tmpdir(),
+      `test-set-rewound-triggers-${Date.now()}`,
+    );
+
+    beforeEach(async () => {
+      await fs.mkdir(path.join(tempDir, '.route'), { recursive: true });
+      await fs.writeFile(path.join(tempDir, '1.vision.stone'), 'stone content');
+
+      // mint two asks through the guard's own operation, so the paths are the guard's
+      for (const slug of ['has-grounded-in-reality', 'has-questioned-scope'])
+        await setSelfReviewTriggeredReport(
+          { stone: '1.vision', slug, route: tempDir },
+          { sinceOnly: true },
+        );
+    });
+
+    afterEach(async () => {
+      await fs.rm(tempDir, { recursive: true, force: true });
+    });
+
+    when('[t0] setStoneAsRewound is called', () => {
+      /**
+       * ⚠️ the number is asserted EXACTLY, never as `> 0`. a `> 0` clamp passes on a count that
+       *    reports one trigger for two, which is the defect a route author would actually meet
+       */
+      then('the cleared line reports both triggers', async () => {
+        const result = await setStoneAsRewound(
+          { stone: '1.vision', route: tempDir },
+          mockContext,
+        );
+
+        expect(result.emit.stdout).toContain('2 triggers');
+      });
+
+      then('stdout matches snapshot', async () => {
+        const result = await setStoneAsRewound(
+          { stone: '1.vision', route: tempDir },
+          mockContext,
+        );
+
+        expect(result.emit.stdout).toMatchSnapshot();
+      });
+
+      /**
+       * 🔴 the count is a CLAIM about the disk, so it is checked against the disk. a count that
+       *    renders `2` while the markers remain is the exact lie `cleared:` was renamed to avoid
+       */
+      then('and the markers it counted are off the .route dir', async () => {
+        await setStoneAsRewound(
+          { stone: '1.vision', route: tempDir },
+          mockContext,
+        );
+
+        const routeFiles = await fs.readdir(path.join(tempDir, '.route'));
+        expect(
+          routeFiles.filter((f) => f.includes('.triggered.')),
+        ).toHaveLength(0);
       });
     });
   });

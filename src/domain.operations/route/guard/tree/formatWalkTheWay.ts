@@ -8,7 +8,6 @@ export const formatWalkTheWay = (input: {
   route: string;
   stone: string;
   slug: string;
-  index: number;
 }): string[] => {
   const articulationPath = getSelfReviewArticulationPath(input);
   const lines: string[] = [];
@@ -17,9 +16,9 @@ export const formatWalkTheWay = (input: {
   lines.push(`   ├─ walk the way 🪷`);
   lines.push(`   │  │`);
 
-  // articulate into (nested) + a calm note sub-branch on the round
-  // .why = the r-number is guard-assigned and varies between attempts; a driver
-  //        who computes it lands on the wrong path (the self-review round pitfall)
+  // articulate into (nested) + the declaration the driver owes back
+  // .why = the path is keyed (stone, slug) — both operands the driver already holds.
+  //        `--into` echoes it back, so a mismatch renders as a diff rather than an absence
   lines.push(`   │  ├─ articulate into`);
   lines.push(`   │  │  ├─ ${articulationPath}`);
   lines.push(

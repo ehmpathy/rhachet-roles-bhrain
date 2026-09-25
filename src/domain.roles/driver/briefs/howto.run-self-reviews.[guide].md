@@ -37,53 +37,93 @@ self reviews gate peer reviews. you must promise every self review before any pe
 reviewer runs.
 
 ```
-t0  --as passed              → guard halts: "review.self 1/4 — slug = <slug>"
+t0  --as passed              → guard halts, and hands you ONE self review
 t1  read the guide + artifact, review slowly
-t2  write findings into the EXACT path the guard printed
-t3  --as promised --that <slug>   → guard halts: "review.self 2/4 ..."
-t4  repeat until all N/N promised → peer reviews finally run
+t2  write findings into the path the guard printed
+t3  --as promised --that <slug> --into <path>   → guard adjudicates that one slug
+t4  --as passed again        → the guard hands you the NEXT one
+t5  repeat until all N/N promised → peer reviews finally run
 ```
 
 ### step by step
 
-1. **run `--as passed`.** if the stone has self reviews, the guard halts and shows the
-   next one: a counter (`review.self 2/4`), a `slug`, a guide, and an `articulate into`
-   path.
+1. **run `--as passed`.** if the stone has self reviews, the guard halts and shows **one**
+   of them: a counter (`review.self 2/4`), its `slug`, its guide, and its
+   `articulate into` path.
 2. **read the guide and the artifact slowly.** clear your mind. this is dedicated review
    time. look as if for the first time.
-3. **write your findings into the exact path the guard printed.** see the level pitfall
-   below — do not guess the path.
-4. **promise it:** `rhx route.stone.set --stone <stone> --as promised --that <slug>`.
+3. **write your findings into the path the guard printed.** the path is computable —
+   see below — so a mismatch is a typo rather than a mystery.
+4. **promise it:** `rhx route.stone.set --stone <stone> --as promised --that <slug> --into <path>`.
 5. **repeat** until every self review (`N/N`) is promised. only then do peer reviews run.
+
+## 🔴 one at a time — the ladder is serial
+
+**the guard hands out ONE review per ask, and the next only once this one is promised.**
+you are told the total (`2/4`), so the ladder's length is no surprise; you are not told the
+other slugs, and there is no way to look them up.
+
+| when… | then… |
+|---|---|
+| you want to work several reviews at once | 🔴 you cannot. ask, review, promise, ask again |
+| you know a later slug's name from a prior round | promise it and the guard answers `challenge:unasked` — that slug has no ask on record |
+| you want to see what is still owed | the counter. `2/4` means two more after this one |
+
+🟡 **it handed out all N at once until 2026-09-24, and the fork it invited was never
+usable.** a forked lane got a slug and a path and **no guide** — the guide renders only for
+the review in hand, and the route is sealed, so a lane could not read the `.guard` to find
+its own. its one move was to promise blind to provoke a refusal and read the guide off
+that — which `rule.always.bear-every-self-review` forbids outright.
+
+⇒ **the withdrawal repaired a second defect the fork had concealed.** the ask's timestamp is
+what the haste cue measures against. with all N minted at the first ask, review 4's ask was
+stamped when review 1 was asked — so by the time you met review 4 its clock read forty
+minutes and `patience, friend` could never reach you. **one mint per ask fixes that**: each
+review's clock starts when you are actually asked for it.
 
 ---
 
-## the level pitfall 🟡
+## the path 🟡
 
-the self review filename carries a **level** marker — the `rN` prefix:
+the articulation path is keyed on `(stone, slug)` — two operands you already hold, so you
+can compute it by hand:
 
 ```
-.behavior/<route>/review/self/for.<stone>._.r2.has-questioned-assumptions.md
-                                            └┬┘ └──────────┬──────────┘
-                                          level             slug
+.behavior/<route>/review/self/for.<stone>._.has-questioned-assumptions.md
+                                  └──┬──┘    └──────────┬──────────┘
+                                   stone                slug
 ```
 
-**the guard assigns the level. you do not.** the `rN` does *not* simply count 1, 2, 3 in
-order of your reviews — it tracks the review iteration, and it can repeat or jump (e.g.,
-`r1` then `r2` then `r2` again across different slugs).
+🌙 **it carried an `rN` level until 2026-09-17, and the level is retired.** if you meet an
+older guide, a stale path, or your own memory of one: there is no `rN` any more. the level
+was a derived ordinal, three call sites derived it three ways, and two emits then named two
+different files for one owed review. **it was deleted rather than reconciled.**
 
-> ⛔ do not compute the level yourself. do not increment it by hand.
-> ✅ copy the `articulate into` path the guard prints, character for character.
+### `--into` is required, and it is why a mismatch reads as a diff
 
-if you write to the wrong level (e.g., `r1` when the guard asked for `r2`), the guard
-reports "the articulation is absent" and refuses your promise — because it looks for the
-file at *its* path, not yours.
+`--as promised` takes `--into <path>` — the path you actually wrote to. it is a second
+operand, so the guard can show you a **difference** rather than merely report a failure:
+
+```
+you named  = …/review/self/for.1.vision._.r1.design.md
+it is owed = …/review/self/for.1.vision._.design.md
+   └─ rhx mvsafe --from <yours> --into <owed>, then promise again
+```
+
+⇒ with one operand the guard could only say *"the articulation is absent"*, which names
+where it looked and leaves you to guess what it read instead.
+
+### the freshness bar
+
+the guard also checks the file is **newer than the ask**. a leftover articulation from a
+prior round is refused, and both stamps are named. if you wrote the file moments *before*
+the guard asked, re-save it and promise again.
 
 ---
 
 ## the owl's wisdom 🌙
 
-> the guard names the path. you walk to it, not past it.
-> read the level it prints. write where it points.
+> the guard names the path — and you can compute it yourself.
+> write where it points, then name where you wrote.
 > question yourself severely — the review is the gift.
 > patience, friend. tea first. 🍵

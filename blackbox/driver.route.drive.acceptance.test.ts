@@ -3,6 +3,8 @@ import * as path from 'path';
 import { given, then, useBeforeAll, useThen, when } from 'test-fns';
 
 import { getSelfReviewArticulationPath } from '../src/domain.operations/route/guard/review/self/getSelfReviewArticulationPath';
+import { isPathFound } from '../src/domain.operations/route/isPathFound';
+import { getRouteDirFiles } from './.test/getRouteDirFiles';
 import {
   execAsync,
   genTempDirForRhachet,
@@ -24,7 +26,10 @@ const backdateTriggeredReport = async (input: {
   slug: string;
 }): Promise<void> => {
   const routeDir = path.join(input.tempDir, '.route');
-  const files = await fs.readdir(routeDir).catch(() => []);
+  // 🔴 the shared reader, never a bare `.catch(() => [])`. this read FEEDS A MUTATION,
+  //    so a swallowed EACCES makes the back-date loop a no-op and every case downstream
+  //    runs against the wrong precondition — a wrong verdict, not a fault
+  const files = await getRouteDirFiles(routeDir);
   const triggeredFiles = files.filter(
     (f) =>
       f.includes(`${input.stone}.guard.selfreview.${input.slug}`) &&
@@ -35,6 +40,24 @@ const backdateTriggeredReport = async (input: {
     const filepath = path.join(routeDir, triggeredFile);
     await fs.utimes(filepath, mtimePast, mtimePast);
   }
+};
+
+/**
+ * .what = reads the accumulated blocker count from the route's blocker state
+ * .why = the count lives on disk, never in the emit — so a test that asserts the
+ *        count advanced must read the state rather than diff two renders
+ *
+ * .note = any `--as` wipes this state (the driver declared their status), so the
+ *         read is only meaningful BEFORE an `--as` lands
+ */
+const getBlockerCount = async (tempDir: string): Promise<number> => {
+  const state = JSON.parse(
+    await fs.readFile(
+      path.join(tempDir, '.route', '.drive.blockers.latest.json'),
+      'utf-8',
+    ),
+  );
+  return state.count;
 };
 
 /**
@@ -270,37 +293,74 @@ describe('driver.route.drive.acceptance', () => {
     });
 
     when('[t1] route.drive invoked twice in hook mode', () => {
-      const result = useThen('second call has higher count', async () => {
-        // first call
-        await invokeRouteSkill({
-          skill: 'route.drive',
-          args: { when: 'hook.onStop' },
-          cwd: scene.tempDir,
-        });
-        // second call
-        return invokeRouteSkill({
-          skill: 'route.drive',
-          args: { when: 'hook.onStop' },
-          cwd: scene.tempDir,
-        });
-      });
+      const observed = useThen(
+        'the second call runs, and the count behind it is read',
+        async () => {
+          // first call
+          await invokeRouteSkill({
+            skill: 'route.drive',
+            args: { when: 'hook.onStop' },
+            cwd: scene.tempDir,
+          });
+          const countAfterFirst = await getBlockerCount(scene.tempDir);
+          // second call
+          const result = await invokeRouteSkill({
+            skill: 'route.drive',
+            args: { when: 'hook.onStop' },
+            cwd: scene.tempDir,
+          });
+          const countAfterSecond = await getBlockerCount(scene.tempDir);
+          return { result, countAfterFirst, countAfterSecond };
+        },
+      );
 
       then('stderr has same content as stdout', () => {
-        expect(result.stderr).toContain('where were we?');
+        expect(observed.result.stderr).toContain('where were we?');
+      });
+
+      /**
+       * 🔴 .why this assertion exists = the block is named "second call has higher count",
+       *    and until i002 no assertion here read a count at all. the claim rested on a
+       *    snapshot, and the snapshot cannot carry it — see below
+       */
+      then('the count behind the block really does advance', () => {
+        expect(observed.countAfterSecond).toBeGreaterThan(
+          observed.countAfterFirst,
+        );
+      });
+
+      then('stderr has good vibes', () => {
+        // 🔴 .why = the emit is IDENTICAL to [t0]'s, byte for byte, and that is the property
+        //    this pin actually carries: the driver meets the same guidance on the retry, with
+        //    no escalation leaked into the render. a regression that started to escalate the
+        //    message — a count, a scold, a truncated hint — goes red here.
+        //
+        // ⚠️ .note = an earlier `.why` claimed this snapshot made "the escalation a driver
+        //    meets on the retry" readable. it does not, and it never could: the count lives
+        //    in `.route/.drive.blockers.latest.json`, never in the emit, so the two exports
+        //    are byte-identical by design. the claim was corrected rather than the snapshot
+        //    deleted — the pin is real, and it was the CLAIM that overreached. the count now
+        //    has the assertion above, which reads the state the emit does not carry
+        expect(sanitizeTimeForSnapshot(observed.result.stderr)).toMatchSnapshot();
       });
     });
 
     when('[t2] blocker state file exists', () => {
+      /**
+       * ⚠️ .note = NO snapshot here, and deliberately so. this step runs no command — it
+       *            probes the state the two blocks above left on disk, so there is no user
+       *            experience to pin. `rule.require.snapshot-every-journey-step` asks for a
+       *            snapshot of every step that PRODUCES output; a state probe produces none.
+       *            stated rather than implied, since an absent snapshot and an owed one read
+       *            identically to a reviewer.
+       */
       then('.route/.drive.blockers.latest.json exists', async () => {
         const statePath = path.join(
           scene.tempDir,
           '.route',
           '.drive.blockers.latest.json',
         );
-        const exists = await fs
-          .access(statePath)
-          .then(() => true)
-          .catch(() => false);
+        const exists = await isPathFound(statePath);
         expect(exists).toBe(true);
       });
 
@@ -343,12 +403,7 @@ describe('driver.route.drive.acceptance', () => {
       // capture the blocker state now — AFTER the blocks, BEFORE any --as.
       // any --as wipes the state (the driver marked their status), so this is
       // the only point the accumulated count can be observed.
-      const blockerStateBeforeAs = JSON.parse(
-        await fs.readFile(
-          path.join(tempDir, '.route', '.drive.blockers.latest.json'),
-          'utf-8',
-        ),
-      );
+      const blockerCountBeforeAs = await getBlockerCount(tempDir);
 
       // create artifact for stone 1 so it can pass
       await fs.writeFile(
@@ -373,16 +428,26 @@ describe('driver.route.drive.acceptance', () => {
       const articulationPath1 = getSelfReviewArticulationPath({
         route: tempDir,
         stone: '1',
-        index: 1,
         slug: 'all-done',
       });
       await fs.mkdir(path.dirname(articulationPath1), { recursive: true });
       await fs.writeFile(articulationPath1, '# self-review\n\nall done.');
 
       // promise first review.self
+      // .note = --into names the path the guard computes. the route is bound to '.',
+      //         so that is the route segment the guard uses, never the temp dir
       await invokeRouteSkill({
         skill: 'route.stone.set',
-        args: { stone: '1', as: 'promised', that: 'all-done' },
+        args: {
+          stone: '1',
+          as: 'promised',
+          that: 'all-done',
+          into: getSelfReviewArticulationPath({
+            route: '.',
+            stone: '1',
+            slug: 'all-done',
+          }),
+        },
         cwd: tempDir,
       });
 
@@ -398,7 +463,6 @@ describe('driver.route.drive.acceptance', () => {
       const articulationPath2 = getSelfReviewArticulationPath({
         route: tempDir,
         stone: '1',
-        index: 2,
         slug: 'tests-pass',
       });
       await fs.writeFile(articulationPath2, '# self-review\n\ntests pass.');
@@ -406,7 +470,16 @@ describe('driver.route.drive.acceptance', () => {
       // promise second review.self
       await invokeRouteSkill({
         skill: 'route.stone.set',
-        args: { stone: '1', as: 'promised', that: 'tests-pass' },
+        args: {
+          stone: '1',
+          as: 'promised',
+          that: 'tests-pass',
+          into: getSelfReviewArticulationPath({
+            route: '.',
+            stone: '1',
+            slug: 'tests-pass',
+          }),
+        },
         cwd: tempDir,
       });
 
@@ -416,10 +489,23 @@ describe('driver.route.drive.acceptance', () => {
         '',
       );
 
-      return { tempDir, blockerCountBeforeAs: blockerStateBeforeAs.count };
+      return { tempDir, blockerCountBeforeAs };
     });
 
+    /**
+     * 🔴 .note = this case's three steps carried NO snapshot at all until i018, and it is the
+     *            arc a reviewer most needs to read: blocked → passed → driven again. the only
+     *            assertions were booleans and one `toContain`, so the guard-tree output a
+     *            driver meets at `[t1]` and the RESET count at `[t2]` were both invisible in
+     *            the diff (`repo-rules` blocker.1 at i018).
+     */
     when('[t0] after the blocks, before any --as', () => {
+      /**
+       * ⚠️ .note = NO snapshot. this step runs no command — it reads a count captured in the
+       *            scene before any `--as`, because any `--as` wipes the state. there is no
+       *            output to pin, and the statement is what parts a deliberate absence from an
+       *            owed one.
+       */
       then('blocker state has count > 0', () => {
         expect(scene.blockerCountBeforeAs).toBeGreaterThan(0);
       });
@@ -444,16 +530,30 @@ describe('driver.route.drive.acceptance', () => {
           '.route',
           '.drive.blockers.latest.json',
         );
-        const exists = await fs
-          .access(statePath)
-          .then(() => true)
-          .catch(() => false);
+        const exists = await isPathFound(statePath);
         expect(exists).toBe(false);
+      });
+
+      then('stdout has good vibes', () => {
+        // .why = this is a real guard-tree pass with two promised self-reviews behind it —
+        //        the densest human-read output in the case, and it was unpinned
+        expect(sanitizeTimeForSnapshot(result.stdout)).toMatchSnapshot();
+      });
+
+      then('stderr has good vibes', () => {
+        // 🔴 .why = the pass path emits progress events through a cli emit context, so
+        //    stderr is a real caller-faced stream on this variant and not a dead one.
+        //    it was pinned by neither a snapshot nor an assertion, so a regression that
+        //    moved pass-path chatter onto stderr — or that left a progress teardown
+        //    half-written — would keep this step green while the driver's experience
+        //    changed (`ergo-contract-snapshots` nitpick.3 at i002). every sibling suite
+        //    pins both streams; this one pinned one
+        expect(sanitizeTimeForSnapshot(result.stderr)).toMatchSnapshot();
       });
     });
 
     when('[t2] route.drive invoked after pass', () => {
-      const result = useThen('block count resets to 1', async () =>
+      const result = useThen('the drive advances to the next stone', async () =>
         invokeRouteSkill({
           skill: 'route.drive',
           args: { when: 'hook.onStop' },
@@ -464,10 +564,21 @@ describe('driver.route.drive.acceptance', () => {
       then('stderr has stone content (same as stdout)', () => {
         expect(result.stderr).toContain('where were we?');
       });
+
+      then('stderr has good vibes', () => {
+        // 🔴 .why = the snapshot is what corrected this step's own NAME. its label read
+        //    "block count resets to 1" until i018, and the pinned output shows the drive on
+        //    `stone = 2` with no count in it at all — the case never read a count and never
+        //    could. ⇒ the label claimed a subject the assertions did not touch, which is the
+        //    same defect as a test whose title and assertion disagree. the snapshot is what
+        //    made it visible, and it is the argument for the rule that asked for it
+        //    (`rule.require.snapshot-every-journey-step`, `repo-rules` blocker.1 at i018)
+        expect(sanitizeTimeForSnapshot(result.stderr)).toMatchSnapshot();
+      });
     });
   });
 
-given('[case6] hook mode allows stop when blocked on approval', () => {
+  given('[case6] hook mode allows stop when blocked on approval', () => {
     const JOURNEY_ASSETS_DIR = path.join(__dirname, '.test/assets/route-journey');
 
     const scene = useBeforeAll(async () => {
@@ -515,6 +626,18 @@ given('[case6] hook mode allows stop when blocked on approval', () => {
       then('stderr has stone content (same as stdout)', () => {
         expect(result.stderr).toContain('where were we?');
       });
+
+      then('stdout has good vibes', () => {
+        // 🔴 .why = this journey drives five real cli steps and pinned none of them, so a
+        //    regression that re-worded the halt, moved it between streams, or dropped the
+        //    approve command from the tree would keep every `toContain` green
+        //    (`ergo-contract-snapshots` blocker.1 at i004)
+        expect(sanitizeTimeForSnapshot(result.stdout)).toMatchSnapshot();
+      });
+
+      then('stderr has good vibes', () => {
+        expect(sanitizeTimeForSnapshot(result.stderr)).toMatchSnapshot();
+      });
     });
 
     when('[t1] agent attempts to pass stone', () => {
@@ -528,6 +651,16 @@ given('[case6] hook mode allows stop when blocked on approval', () => {
 
       then('exit code is non-zero (blocked)', () => {
         expect(result.code).not.toEqual(0);
+      });
+
+      then('stdout has good vibes', () => {
+        // .why = the approval judge's refusal is the caller-faced negative path of
+        //        `route.stone.set`, and an exit-code boolean says naught about what it read
+        expect(sanitizeTimeForSnapshot(result.stdout)).toMatchSnapshot();
+      });
+
+      then('stderr has good vibes', () => {
+        expect(sanitizeTimeForSnapshot(result.stderr)).toMatchSnapshot();
       });
     });
 
@@ -552,6 +685,20 @@ given('[case6] hook mode allows stop when blocked on approval', () => {
         expect(result.stdout).toContain('route.stone.set');
         expect(result.stdout).toContain('--as approved');
       });
+
+      then('stdout has good vibes', () => {
+        // 🔴 .why = the densest step of the journey — the halt, its reason, and the exact
+        //    command that lifts it. three `toContain` phrases graded a whole tree
+        expect(sanitizeTimeForSnapshot(result.stdout)).toMatchSnapshot();
+      });
+
+      then('stderr has good vibes', () => {
+        // 🔴 .note = this pin is EMPTY, and the empty is the claim. the allow-stop render is
+        //    a stdout-only variant, so `""` asserts stderr stays silent here — a regression
+        //    that split the halt across both streams goes red. ⇒ an empty PIN is not an
+        //    absent pin; it is the one shape that can catch a stream move
+        expect(sanitizeTimeForSnapshot(result.stderr)).toMatchSnapshot();
+      });
     });
 
     when('[t3] human grants approval', () => {
@@ -565,6 +712,18 @@ given('[case6] hook mode allows stop when blocked on approval', () => {
 
       then('exit code is 0', () => {
         expect(result.code).toEqual(0);
+      });
+
+      then('stdout has good vibes', () => {
+        // .why = the approval grant is a human-faced mutation, and it was graded by an
+        //        exit code alone
+        expect(sanitizeTimeForSnapshot(result.stdout)).toMatchSnapshot();
+      });
+
+      then('stderr has good vibes', () => {
+        // .note = EMPTY by design — the approve path draws no progress spinner, so `""`
+        //         asserts stderr stays clean on a grant that succeeds
+        expect(sanitizeTimeForSnapshot(result.stderr)).toMatchSnapshot();
       });
     });
 
@@ -585,6 +744,16 @@ given('[case6] hook mode allows stop when blocked on approval', () => {
 
       then('stderr has stone content (same as stdout)', () => {
         expect(result.stderr).toContain('where were we?');
+      });
+
+      then('stdout has good vibes', () => {
+        // .why = the post-approval render is what tells the driver the road is open again;
+        //        a `toContain` of four words cannot see it go empty
+        expect(sanitizeTimeForSnapshot(result.stdout)).toMatchSnapshot();
+      });
+
+      then('stderr has good vibes', () => {
+        expect(sanitizeTimeForSnapshot(result.stderr)).toMatchSnapshot();
       });
     });
   });
@@ -618,6 +787,20 @@ given('[case6] hook mode allows stop when blocked on approval', () => {
       then('stdout shows unbound message', () => {
         expect(result.stdout).toContain('where were we?');
         expect(result.stdout).toContain('dunno, route not bound');
+      });
+
+      then('stdout has good vibes', () => {
+        // 🔴 .why = the not-bound render is a caller-faced negative path of `route.drive`,
+        //    and the help + bound-route variants in this same file are pinned while this one
+        //    was graded by two `toContain` phrases (`ergo-contract-snapshots` blocker.2 at
+        //    i004). a re-word, a re-order, or a move onto stderr would stay green
+        expect(sanitizeTimeForSnapshot(result.stdout)).toMatchSnapshot();
+      });
+
+      then('stderr has good vibes', () => {
+        // .note = EMPTY by design — the not-bound render is stdout-only, so `""` is what
+        //         catches a later hand that routes the guidance onto stderr
+        expect(sanitizeTimeForSnapshot(result.stderr)).toMatchSnapshot();
       });
     });
   });

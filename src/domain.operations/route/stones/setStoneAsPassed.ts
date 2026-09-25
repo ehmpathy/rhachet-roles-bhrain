@@ -36,7 +36,11 @@ import { isEveryReviewLevelTerminal } from '../guard/review/peer/meter/isEveryRe
 import { isLevelOverruled } from '../guard/review/peer/meter/isLevelOverruled';
 import { JUDGE_LEVEL } from '../guard/review/peer/meter/JUDGE_LEVEL';
 import { runStoneGuardReviews } from '../guard/review/runStoneGuardReviews';
+import { asHashbarDeclaredReviews } from '../guard/review/self/asHashbarDeclaredReviews';
+import { findNextUnpromisedReview } from '../guard/review/self/findNextUnpromisedReview';
+import { getPromisedSlugsSet } from '../guard/review/self/getPromisedSlugsSet';
 import { getStonePromises } from '../guard/review/self/getStonePromises';
+import { isSelfReviewPromised } from '../guard/review/self/isSelfReviewPromised';
 import { setSelfReviewTriggeredReport } from '../guard/review/self/setSelfReviewTriggeredReport';
 import { setStoneGuardStamp } from '../guard/stamp/setStoneGuardStamp';
 import type { GuardPeerMeterStatus } from '../guard/tree/formatGuardTree';
@@ -203,34 +207,61 @@ export const setStoneAsPassed = async (
   // check for review.selfs (must be promised before peer reviews)
   const selfReviews = getGuardSelfReviews(stoneMatched.guard);
   if (selfReviews.length > 0) {
-    // compute hash for triggered report
-    const promiseHash = await computeStoneReviewInputHash({
-      stone: stoneMatched,
-      route: input.route,
-    });
-
     // get all promises (hashless — firm checkpoints)
     const promises = await getStonePromises({
       stone: stoneMatched,
       route: input.route,
     });
-    const promisedSlugs = new Set(promises.map((p) => p.slug));
+    // 🔴 the named operation, never a second hand-typed scan. `getPromisedSlugsSet` owns
+    //    this quantity and `stepRouteStoneSet.ts` already reads it through the name; a
+    //    second inline derivation here was correct by coincidence rather than by
+    //    construction — the exact shape whose three instances this round has already
+    //    repaired (the ordinal that printed two files, the regex that dropped dotted
+    //    slugs, the glob that matched zero of 13 markers). found by a peer lane at i011
+    const promisedSlugs = getPromisedSlugsSet({ promises });
 
-    // find first unpromised review.self
-    const unpromised = selfReviews.filter((r) => !promisedSlugs.has(r.slug));
+    // find every unpromised review.self
+    // .note = the predicate is the shared one — the `findNextUnpromisedReview` call below
+    //         reads the same source, so its non-null holds by construction rather than by
+    //         a comment that asserts two hand-typed scans agree
+    const unpromised = selfReviews.filter(
+      (review) => !isSelfReviewPromised({ review, promisedSlugs }),
+    );
     if (unpromised.length > 0) {
-      const nextReview = unpromised[0]!;
-      const nextIndex = selfReviews.findIndex(
-        (r) => r.slug === nextReview.slug,
-      );
+      // the emit names the first of them, so the driver has one concrete place to start.
+      // 🔴 the ordinal comes from the named finder, never a second derivation here: this
+      // quantity had THREE derivations at three call sites and they disagreed — measured
+      // first-party this round, where two emits named two different files for one owed review.
+      // .note = non-null is sound BY CONSTRUCTION: this branch is guarded by
+      //         `unpromised.length > 0`, and the finder reads the very predicate the filter
+      //         above read (isSelfReviewPromised), so the two cannot select from different
+      //         sets. it rested on a comment that asserted two hand-typed scans agree until
+      //         2026-09-20 — an agreement no type held, and the exact trust the neighbour
+      //         call on the next line argues against
+      const next = findNextUnpromisedReview({ selfReviews, promisedSlugs })!;
+      const nextReview = next.reviewSelf;
 
-      // record that self-review was triggered (for time enforcement only)
-      // note: sinceOnly prevents .uptil creation, which would trigger rush on first promise
+      // 🔴 mint a trigger for THIS review alone, never for every unpromised one.
+      // .why = `.since` is the ASK, and the haste cue reads elapsed-since-the-ask. a mint of
+      //        all N stamps slug N's ask at the moment slug 1 was asked, so by the time the
+      //        driver is told about slug N its `.since` is forty minutes old and
+      //        `elapsed < window` can never hold ⇒ the cue would fire on the first review of
+      //        a stone and be dead for every other one.
+      // 🟡 .why it was all-N until the fork was withdrawn = under a true fork the stamp was
+      //        correct, because every lane really was asked at once. the fork premise held
+      //        weight HERE too, one call away from the roster that advertised it — so the
+      //        withdrawal turns a correct mint into a wrong one
+      // 🔴 .what it also buys = the serial contract gains a TOOTH. a promise for a slug that
+      //        was never asked finds no report and meets `challenge:unasked`, which refuses
+      //        rather than mints (a mint there would launder the ask). so out-of-order is not
+      //        merely undiscoverable now, it is refused
+      // .note = sinceOnly leaves .uptil absent, which would otherwise read as a prior attempt
+      // .note = idempotent — a re-ask of a slug already asked is a no-op, so the ask that
+      //         re-emits this stone does not restamp a clock the driver is already inside
       await setSelfReviewTriggeredReport(
         {
           stone: stoneMatched.name,
           slug: nextReview.slug,
-          hash: promiseHash,
           route: input.route,
         },
         { sinceOnly: true },
@@ -253,9 +284,22 @@ export const setStoneAsPassed = async (
             note: 'review.self required',
             selfReview: {
               reviewSelf: nextReview,
-              index: nextIndex + 1,
-              total: selfReviews.length,
+              // .note = the route is REQUIRED here. omitted, this emit printed
+              //         `/review/self/…` while the guard read `$route/review/self/…`,
+              //         so a driver who obeyed was refused at the path they were told
+              route: input.route,
+              index: next.index,
+              total: next.total,
             },
+            // 🔴 .note = ONE review is named, and the others are deliberately withheld. this
+            //    carried a roster of every other unpromised slug until the fork was
+            //    withdrawn — see `formatRouteStoneEmit`'s note at the ask branch for why.
+            //    the short form: the roster invited a fork the guide layer could not serve
+            // the retired `hashbar:` key, if this stone's guard still declares it
+            hashbarFound: asHashbarDeclaredReviews({
+              stone: stoneMatched.name,
+              selfReviews,
+            }),
           }),
         },
       });

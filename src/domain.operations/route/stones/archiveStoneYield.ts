@@ -1,14 +1,15 @@
-import * as fs from 'fs/promises';
-import * as path from 'path';
-
 import { enumFilesFromGlob } from '@src/utils/enumFilesFromGlob';
+
+import { archiveRouteFiles } from './archiveRouteFiles';
+import { getStoneYieldGlob } from './getStoneYieldGlob';
 
 /**
  * .what = archive all yield files for a stone to .route/.archive/
  * .why = enables --yield drop to move yields out of the way on rewind
  *
- * .note = uses same glob pattern as getAllStoneArtifacts: ${stone}.yield*
- *         this matches .yield, .yield.md, .yield.json (all variations)
+ * .note = the glob is owned by `getStoneYieldGlob`, never hand-typed here. it was one of four
+ *         independent derivations until i012; the shared owner is what binds this reader to
+ *         `rewindAffectedStones`'s `'keep'` branch, which asks the same question of the same files
  */
 export const archiveStoneYield = async (input: {
   stone: string;
@@ -17,39 +18,13 @@ export const archiveStoneYield = async (input: {
   outcome: 'archived' | 'absent';
   count: number;
 }> => {
-  // enumerate all yield files via extant pattern from getAllStoneArtifacts
-  const yieldGlob = `${input.stone}.yield*`;
+  // enumerate all yield files, through the one operation that owns the convention
+  const yieldGlob = getStoneYieldGlob({ stone: input.stone });
   const yieldFiles = await enumFilesFromGlob({
     glob: yieldGlob,
     cwd: input.route,
   });
 
-  // if no yield files, return absent
-  if (yieldFiles.length === 0) return { outcome: 'absent', count: 0 };
-
-  // ensure archive dir exists
-  const archiveDir = path.join(input.route, '.route', '.archive');
-  await fs.mkdir(archiveDir, { recursive: true });
-
-  // archive each yield file
-  for (const yieldFile of yieldFiles) {
-    // yieldFile is absolute path from enumFilesFromGlob
-    const baseName = path.basename(yieldFile);
-
-    // compute archive path (collision check + timestamp suffix)
-    let archivePath = path.join(archiveDir, baseName);
-    const archiveExists = await fs
-      .access(archivePath)
-      .then(() => true)
-      .catch(() => false);
-    if (archiveExists) {
-      const timestamp = new Date().toJSON().replace(/[:.]/g, '-');
-      archivePath = path.join(archiveDir, `${baseName}.${timestamp}`);
-    }
-
-    // move file to archive
-    await fs.rename(yieldFile, archivePath);
-  }
-
-  return { outcome: 'archived', count: yieldFiles.length };
+  // the move, and the collision shape it carries, are owned by archiveRouteFiles
+  return archiveRouteFiles({ route: input.route, files: yieldFiles });
 };

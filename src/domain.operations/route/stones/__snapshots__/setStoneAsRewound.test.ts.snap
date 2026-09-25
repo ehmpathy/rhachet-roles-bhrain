@@ -7,7 +7,7 @@ exports[`setStoneAsRewound given: [case1] a route with a single stone when: [t0]
    ├─ stone = 1.vision
    ├─ cascade
    │  └─ 1.vision
-   │     ├─ deleted: 0 reviews, 0 judges, 0 promises, 0 triggers
+   │     ├─ cleared: 0 reviews, 0 judges, 0 promises, 0 triggers
    │     └─ passage: rewound
    └─ done"
 `;
@@ -19,7 +19,7 @@ exports[`setStoneAsRewound given: [case3] a stone with guard artifacts when: [t0
    ├─ stone = 1.vision
    ├─ cascade
    │  └─ 1.vision
-   │     ├─ deleted: 1 reviews, 1 judges, 0 promises, 0 triggers
+   │     ├─ cleared: 1 reviews, 1 judges, 0 promises, 0 triggers
    │     └─ passage: rewound
    └─ done"
 `;
@@ -31,7 +31,7 @@ exports[`setStoneAsRewound given: [case6] idempotent rewind when: [t0] setStoneA
    ├─ stone = 1.vision
    ├─ cascade
    │  └─ 1.vision
-   │     ├─ deleted: 0 reviews, 0 judges, 0 promises, 0 triggers
+   │     ├─ cleared: 0 reviews, 0 judges, 0 promises, 0 triggers
    │     └─ passage: rewound
    └─ done"
 `;
@@ -43,10 +43,10 @@ exports[`setStoneAsRewound given: [case7] stdout snapshot for cascade rewind whe
    ├─ stone = 2.criteria
    ├─ cascade
    │  ├─ 2.criteria
-   │  │  ├─ deleted: 1 reviews, 1 judges, 0 promises, 0 triggers
+   │  │  ├─ cleared: 1 reviews, 1 judges, 0 promises, 0 triggers
    │  │  └─ passage: rewound
    │  └─ 3.blueprint
-   │     ├─ deleted: 0 reviews, 0 judges, 1 promises, 0 triggers
+   │     ├─ cleared: 0 reviews, 0 judges, 1 promises, 0 triggers
    │     └─ passage: rewound
    └─ done"
 `;
@@ -58,10 +58,10 @@ exports[`setStoneAsRewound given: [case8] nested stone prefixes (3.1 vs 3.2) whe
    ├─ stone = 3.2.research.patterns
    ├─ cascade
    │  ├─ 3.2.research.patterns
-   │  │  ├─ deleted: 0 reviews, 0 judges, 0 promises, 0 triggers
+   │  │  ├─ cleared: 0 reviews, 0 judges, 0 promises, 0 triggers
    │  │  └─ passage: rewound
    │  └─ 3.3.blueprint
-   │     ├─ deleted: 0 reviews, 0 judges, 0 promises, 0 triggers
+   │     ├─ cleared: 0 reviews, 0 judges, 0 promises, 0 triggers
    │     └─ passage: rewound
    └─ done"
 `;
@@ -73,10 +73,10 @@ exports[`setStoneAsRewound given: [case14] stdout snapshot yield drop when: [t0]
    ├─ stone = 2.criteria
    ├─ cascade
    │  ├─ 2.criteria
-   │  │  ├─ deleted: 0 reviews, 0 judges, 0 promises, 0 triggers, 1 yield
+   │  │  ├─ cleared: 0 reviews, 0 judges, 0 promises, 0 triggers, 1 yield
    │  │  └─ passage: rewound
    │  └─ 3.blueprint
-   │     ├─ deleted: 0 reviews, 0 judges, 0 promises, 0 triggers
+   │     ├─ cleared: 0 reviews, 0 judges, 0 promises, 0 triggers
    │     └─ passage: rewound
    └─ done"
 `;
@@ -88,10 +88,22 @@ exports[`setStoneAsRewound given: [case15] stdout snapshot yield keep when: [t0]
    ├─ stone = 2.criteria
    ├─ cascade
    │  ├─ 2.criteria
-   │  │  ├─ deleted: 0 reviews, 0 judges, 0 promises, 0 triggers
+   │  │  ├─ cleared: 0 reviews, 0 judges, 0 promises, 0 triggers
    │  │  └─ passage: rewound
    │  └─ 3.blueprint
-   │     ├─ deleted: 0 reviews, 0 judges, 0 promises, 0 triggers
+   │     ├─ cleared: 0 reviews, 0 judges, 0 promises, 0 triggers
+   │     └─ passage: rewound
+   └─ done"
+`;
+
+exports[`setStoneAsRewound given: [case16] a stone with LIVE self-review triggers when: [t0] setStoneAsRewound is called then: stdout matches snapshot 1`] = `
+"🦉 the way speaks for itself
+
+🗿 route.stone.set
+   ├─ stone = 1.vision
+   ├─ cascade
+   │  └─ 1.vision
+   │     ├─ cleared: 0 reviews, 0 judges, 0 promises, 2 triggers
    │     └─ passage: rewound
    └─ done"
 `;

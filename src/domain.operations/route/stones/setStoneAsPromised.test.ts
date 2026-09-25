@@ -5,6 +5,7 @@ import { given, then, when } from 'test-fns';
 
 import { RouteStone } from '@src/domain.objects/Driver/RouteStone';
 
+import { isPathFound } from '../isPathFound';
 import { setStoneAsPromised } from './setStoneAsPromised';
 
 describe('setStoneAsPromised', () => {
@@ -27,20 +28,13 @@ describe('setStoneAsPromised', () => {
           route: tempDir,
         });
 
-        // verify .route dir created
+        // verify .route dir created — via the shared probe, so a non-ENOENT fault raises
+        // rather than reads as absence (`rule.forbid.failhide`)
         const routeDir = path.join(tempDir, '.route');
-        const routeExists = await fs
-          .access(routeDir)
-          .then(() => true)
-          .catch(() => false);
-        expect(routeExists).toBe(true);
+        expect(await isPathFound(routeDir)).toBe(true);
 
         // verify promise file created
-        const promiseExists = await fs
-          .access(result.promise.path)
-          .then(() => true)
-          .catch(() => false);
-        expect(promiseExists).toBe(true);
+        expect(await isPathFound(result.promise.path)).toBe(true);
 
         // cleanup
         await fs.rm(tempDir, { recursive: true, force: true });
@@ -59,7 +53,6 @@ describe('setStoneAsPromised', () => {
         });
 
         expect(result.promise.slug).toEqual('all-done');
-        expect(result.promise.hash).toEqual('hashless');
         expect(result.promise.stone.path).toEqual('1.vision.stone');
         expect(result.promise.path).toContain(
           '1.vision.guard.promise.all-done.md',
@@ -129,11 +122,7 @@ describe('setStoneAsPromised', () => {
         );
 
         // verify file is created
-        const promiseFileFound = await fs
-          .access(result.promise.path)
-          .then(() => true)
-          .catch(() => false);
-        expect(promiseFileFound).toBe(true);
+        expect(await isPathFound(result.promise.path)).toBe(true);
 
         // cleanup
         await fs.rm(tempDir, { recursive: true, force: true });

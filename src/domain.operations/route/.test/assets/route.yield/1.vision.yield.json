@@ -1,0 +1,4 @@
+{
+  "_.what": "a yield whose extension is NOT .md, so it is matched by the `.yield*` glob alone",
+  "_.why": "the legacy glob `$stone*.md` masks the `.yield*` glob in every other fixture — both patterns match a `1.vision.yield.md`, so a break in either one still returns a file. this fixture is the only artifact that isolates the `.yield*` half, and it is what makes that half falsifiable."
+}

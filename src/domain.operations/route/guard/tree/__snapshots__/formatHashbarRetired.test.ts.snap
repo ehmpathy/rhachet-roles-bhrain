@@ -1,0 +1,14 @@
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
+
+exports[`formatHashbarRetired given: [case2] one guard still carries the key when: [t0] format is called then: snapshot matches vision 1`] = `
+"🗿 hashbar is retired
+   │
+   ├─ found in 1.vision → review.self.all-done
+   │
+   ├─ the trigger report is hashless now, so a repair never resets the clock
+   │  ├─ hashbar was the workaround for exactly that
+   │  └─ it never fired — the persist branch read the NEWEST trigger, so a
+   │     new hash reset it anyway. the defect it aimed at is gone at the root
+   │
+   └─ safe to delete the key 🍵"
+`;

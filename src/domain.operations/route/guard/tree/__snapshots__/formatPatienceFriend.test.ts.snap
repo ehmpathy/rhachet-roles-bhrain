@@ -38,7 +38,7 @@ exports[`formatPatienceFriend given: [case1] challenged review.self when: [t0] f
    ├─ walk the way 🪷
    │  │
    │  ├─ articulate into
-   │  │  ├─ .behavior/v2026_03_05.behavior-example/review/self/for.1.vision._.r1.all-done.md
+   │  │  ├─ .behavior/v2026_03_05.behavior-example/review/self/for.1.vision._.all-done.md
    │  │  └─ the guard looks precisely here, write exactly to this path
    │  │
    │  ├─ for each found issue 🪘
@@ -58,5 +58,6 @@ exports[`formatPatienceFriend given: [case1] challenged review.self when: [t0] f
    │     └─
    │
    └─ when you've truly reflected, run
-      └─ rhx route.stone.set --stone 1.vision --as promised --that all-done"
+      └─ rhx route.stone.set --stone 1.vision --as promised --that all-done \\
+         --into .behavior/v2026_03_05.behavior-example/review/self/for.1.vision._.all-done.md"
 `;

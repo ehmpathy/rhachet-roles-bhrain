@@ -123,13 +123,13 @@ exports[`driver.route.rewind-drive.acceptance given: [case3] gitignored guard ar
    ├─ stone = 1.vision
    ├─ cascade
    │  ├─ 1.vision
-   │  │  ├─ deleted: 1 reviews, 1 judges, 0 promises, 0 triggers
+   │  │  ├─ cleared: 1 reviews, 1 judges, 0 promises, 0 triggers
    │  │  └─ passage: rewound
    │  ├─ 2.criteria
-   │  │  ├─ deleted: 0 reviews, 0 judges, 0 promises, 0 triggers
+   │  │  ├─ cleared: 0 reviews, 0 judges, 0 promises, 0 triggers
    │  │  └─ passage: rewound
    │  └─ 3.plan
-   │     ├─ deleted: 0 reviews, 0 judges, 0 promises, 0 triggers
+   │     ├─ cleared: 0 reviews, 0 judges, 0 promises, 0 triggers
    │     └─ passage: rewound
    └─ done
 "
@@ -154,13 +154,13 @@ exports[`driver.route.rewind-drive.acceptance given: [case4] re-pass after rewin
    ├─ stone = 1.vision
    ├─ cascade
    │  ├─ 1.vision
-   │  │  ├─ deleted: 0 reviews, 0 judges, 0 promises, 0 triggers
+   │  │  ├─ cleared: 0 reviews, 0 judges, 0 promises, 0 triggers
    │  │  └─ passage: rewound
    │  ├─ 2.criteria
-   │  │  ├─ deleted: 0 reviews, 0 judges, 0 promises, 0 triggers
+   │  │  ├─ cleared: 0 reviews, 0 judges, 0 promises, 0 triggers
    │  │  └─ passage: rewound
    │  └─ 3.plan
-   │     ├─ deleted: 0 reviews, 0 judges, 0 promises, 0 triggers
+   │     ├─ cleared: 0 reviews, 0 judges, 0 promises, 0 triggers
    │     └─ passage: rewound
    └─ done
 "

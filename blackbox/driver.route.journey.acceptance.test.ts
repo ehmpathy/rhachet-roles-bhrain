@@ -4,6 +4,7 @@ import { given, then, useBeforeAll, useThen, when } from 'test-fns';
 
 import { getSelfReviewArticulationPath } from '../src/domain.operations/route/guard/review/self/getSelfReviewArticulationPath';
 import { answerEveryPeerGiven } from './.test/answerEveryPeerGiven';
+import { getRouteDirFiles } from './.test/getRouteDirFiles';
 import {
   createHookStdin,
   execAsync,
@@ -26,7 +27,10 @@ const backdateTriggeredReport = async (input: {
   slug: string;
 }): Promise<void> => {
   const routeDir = path.join(input.tempDir, '.route');
-  const files = await fs.readdir(routeDir).catch(() => []);
+  // 🔴 the shared reader, never a bare `.catch(() => [])`. this read FEEDS A MUTATION,
+  //    so a swallowed EACCES makes the back-date loop a no-op and every case downstream
+  //    runs against the wrong precondition — a wrong verdict, not a fault
+  const files = await getRouteDirFiles(routeDir);
   const triggeredFiles = files.filter(
     (f) =>
       f.includes(`${input.stone}.guard.selfreview.${input.slug}`) &&
@@ -340,6 +344,18 @@ describe('driver.route.journey.acceptance', () => {
         expect(srcProtection).toBeDefined();
         expect(srcProtection.passed).toBe(false);
       });
+
+      then('stdout has good vibes', () => {
+        // .why = this leg drives the real `route.drive` cli and graded only the cache json it
+        //        left on disk, so an empty render — or one moved onto stderr — would stay
+        //        green on a journey whose every other leg is pinned
+        //        (`ergo-contract-snapshots` nitpick.1 at i004)
+        expect(sanitizeTimeForSnapshot(result.stdout)).toMatchSnapshot();
+      });
+
+      then('stderr has good vibes', () => {
+        expect(sanitizeTimeForSnapshot(result.stderr)).toMatchSnapshot();
+      });
     });
 
     when('[t7.6] bouncer blocks write to protected artifact', () => {
@@ -414,7 +430,6 @@ describe('driver.route.journey.acceptance', () => {
         const articulationPath = getSelfReviewArticulationPath({
           route: scene.tempDir,
           stone: '3.blueprint',
-          index: 1,
           slug: 'design-complete',
         });
         await fs.mkdir(path.dirname(articulationPath), { recursive: true });
@@ -428,7 +443,17 @@ describe('driver.route.journey.acceptance', () => {
         });
         return invokeRouteSkill({
           skill: 'route.stone.set',
-          args: { stone: '3.blueprint', route: '.', as: 'promised', that: 'design-complete' },
+          args: {
+            stone: '3.blueprint',
+            route: '.',
+            as: 'promised',
+            that: 'design-complete',
+            into: getSelfReviewArticulationPath({
+              route: '.',
+              stone: '3.blueprint',
+              slug: 'design-complete',
+            }),
+          },
           cwd: scene.tempDir,
         });
       });
@@ -507,7 +532,17 @@ describe('driver.route.journey.acceptance', () => {
         // re-promise review.self for new hash
         await invokeRouteSkill({
           skill: 'route.stone.set',
-          args: { stone: '3.blueprint', route: '.', as: 'promised', that: 'design-complete' },
+          args: {
+            stone: '3.blueprint',
+            route: '.',
+            as: 'promised',
+            that: 'design-complete',
+            into: getSelfReviewArticulationPath({
+              route: '.',
+              stone: '3.blueprint',
+              slug: 'design-complete',
+            }),
+          },
           cwd: scene.tempDir,
         });
 
@@ -550,7 +585,17 @@ describe('driver.route.journey.acceptance', () => {
         // start self-review promise (triggers challenge:first)
         await invokeRouteSkill({
           skill: 'route.stone.set',
-          args: { stone: '3.blueprint', route: '.', as: 'promised', that: 'design-complete' },
+          args: {
+            stone: '3.blueprint',
+            route: '.',
+            as: 'promised',
+            that: 'design-complete',
+            into: getSelfReviewArticulationPath({
+              route: '.',
+              stone: '3.blueprint',
+              slug: 'design-complete',
+            }),
+          },
           cwd: scene.tempDir,
         });
 
@@ -565,7 +610,6 @@ describe('driver.route.journey.acceptance', () => {
         const articulationPath = getSelfReviewArticulationPath({
           route: scene.tempDir,
           stone: '3.blueprint',
-          index: 1,
           slug: 'design-complete',
         });
         await fs.mkdir(path.dirname(articulationPath), { recursive: true });
@@ -577,7 +621,17 @@ describe('driver.route.journey.acceptance', () => {
         // fulfill promise (articulation file now exists)
         await invokeRouteSkill({
           skill: 'route.stone.set',
-          args: { stone: '3.blueprint', route: '.', as: 'promised', that: 'design-complete' },
+          args: {
+            stone: '3.blueprint',
+            route: '.',
+            as: 'promised',
+            that: 'design-complete',
+            into: getSelfReviewArticulationPath({
+              route: '.',
+              stone: '3.blueprint',
+              slug: 'design-complete',
+            }),
+          },
           cwd: scene.tempDir,
         });
 

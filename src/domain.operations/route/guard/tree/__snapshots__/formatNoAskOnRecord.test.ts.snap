@@ -1,0 +1,17 @@
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
+
+exports[`formatNoAskOnRecord given: [case1] a promise arrived with no ask on record when: [t0] format is called then: snapshot matches vision 1`] = `
+"🍃 no ask on record
+   │
+   ├─ this review was never asked for, or its ask was rewound
+   │  ├─ stone = 1.vision
+   │  └─ slug  = all-done
+   │
+   ├─ a promise answers an ask. with no ask, two gates cannot run —
+   │  the freshness bar has no date to measure, and the haste cue has no start
+   │
+   ├─ ask for it, and the guard hands you the path
+   │  └─ rhx route.stone.set --stone 1.vision --as passed
+   │
+   └─ then promise again 🍵"
+`;

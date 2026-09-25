@@ -2,6 +2,7 @@ import * as fs from 'fs/promises';
 import * as path from 'path';
 import { given, then, useThen, when } from 'test-fns';
 
+import { isPathFound } from '../src/domain.operations/route/isPathFound';
 import {
   execAsync,
   genTempDirForRhachet,
@@ -41,17 +42,13 @@ describe('driver.route.set.yield.acceptance', () => {
         console.log('--- end [case1] cli ---\n');
 
         // check yield file is gone from root
-        const yieldExists = await fs
-          .access(path.join(tempDir, '1.vision.yield.md'))
-          .then(() => true)
-          .catch(() => false);
+        const yieldExists = await isPathFound(
+          path.join(tempDir, '1.vision.yield.md'),
+        );
 
         // check yield file is in archive
         const archiveDir = path.join(tempDir, '.route', '.archive');
-        const archiveExists = await fs
-          .access(archiveDir)
-          .then(() => true)
-          .catch(() => false);
+        const archiveExists = await isPathFound(archiveDir);
         let archivedFiles: string[] = [];
         if (archiveExists) {
           archivedFiles = await fs.readdir(archiveDir);
@@ -64,7 +61,7 @@ describe('driver.route.set.yield.acceptance', () => {
         expect(res.cli.code).toEqual(0);
       });
 
-      then('stdout shows yield in deleted line', () => {
+      then('stdout shows yield in cleared line', () => {
         expect(res.cli.stdout).toContain('1 yield');
       });
 
@@ -106,9 +103,18 @@ describe('driver.route.set.yield.acceptance', () => {
         expect(res.cli.code).toEqual(0);
       });
 
-      then('stdout shows no yield in deleted line', () => {
-        // when no yield file, deleted line does not include "yield"
+      then('stdout shows no yield in cleared line', () => {
+        // when no yield file, cleared line does not include "yield"
         expect(res.cli.stdout).not.toContain('1 yield');
+      });
+
+      then('stdout matches snapshot', () => {
+        // 🔴 .why = `[t0]` was snapped and `[t1]` was not, so a two-step journey pinned only
+        //    the half where a yield EXISTS. a `not.toContain` proves one phrase is absent and
+        //    says naught about what a driver actually reads on the empty case — which is the
+        //    whole subject of this step (`repo-rules` blocker.1 at i018,
+        //    `rule.require.snapshot-every-journey-step`)
+        expect(res.cli.stdout).toMatchSnapshot();
       });
     });
   });
@@ -143,10 +149,9 @@ describe('driver.route.set.yield.acceptance', () => {
         console.log('--- end [case2] cli ---\n');
 
         // check yield file still exists
-        const yieldExists = await fs
-          .access(path.join(tempDir, '1.vision.yield.md'))
-          .then(() => true)
-          .catch(() => false);
+        const yieldExists = await isPathFound(
+          path.join(tempDir, '1.vision.yield.md'),
+        );
 
         return { cli, tempDir, yieldExists };
       });
@@ -155,8 +160,8 @@ describe('driver.route.set.yield.acceptance', () => {
         expect(res.cli.code).toEqual(0);
       });
 
-      then('stdout shows no yield in deleted line (yield preserved)', () => {
-        // when yield is preserved, deleted line does not include "yield"
+      then('stdout shows no yield in cleared line (yield preserved)', () => {
+        // when yield is preserved, cleared line does not include "yield"
         expect(res.cli.stdout).not.toContain('1 yield');
       });
 
@@ -194,10 +199,9 @@ describe('driver.route.set.yield.acceptance', () => {
         });
 
         // check yield file still exists
-        const yieldExists = await fs
-          .access(path.join(tempDir, '1.vision.yield.md'))
-          .then(() => true)
-          .catch(() => false);
+        const yieldExists = await isPathFound(
+          path.join(tempDir, '1.vision.yield.md'),
+        );
 
         return { cli, tempDir, yieldExists };
       });
@@ -210,9 +214,19 @@ describe('driver.route.set.yield.acceptance', () => {
         expect(res.yieldExists).toBe(true);
       });
 
-      then('stdout shows no yield in deleted line (default is keep)', () => {
-        // default is keep, so no yield shown in deleted line
+      then('stdout shows no yield in cleared line (default is keep)', () => {
+        // default is keep, so no yield shown in cleared line
         expect(res.cli.stdout).not.toContain('1 yield');
+      });
+
+      then('stdout matches snapshot', () => {
+        // 🔴 .why this pin = this is the DEFAULT rewind path — the one a driver meets
+        //    with no flag at all — and it held only a `not.toContain`. a negative bar
+        //    pins the absence of one phrase and no word of the tree around it, so the
+        //    round's own `deleted:` → `cleared:` word change would have shipped
+        //    unpinned on the most-walked variant
+        //    (`rule.require.acceptance-journey-coverage`)
+        expect(res.cli.stdout).toMatchSnapshot();
       });
     });
   });
@@ -241,17 +255,13 @@ describe('driver.route.set.yield.acceptance', () => {
         });
 
         // check yield file is gone from root
-        const yieldExists = await fs
-          .access(path.join(tempDir, '1.vision.yield.md'))
-          .then(() => true)
-          .catch(() => false);
+        const yieldExists = await isPathFound(
+          path.join(tempDir, '1.vision.yield.md'),
+        );
 
         // check yield file is in archive
         const archiveDir = path.join(tempDir, '.route', '.archive');
-        const archiveExists = await fs
-          .access(archiveDir)
-          .then(() => true)
-          .catch(() => false);
+        const archiveExists = await isPathFound(archiveDir);
         let archivedFiles: string[] = [];
         if (archiveExists) {
           archivedFiles = await fs.readdir(archiveDir);
@@ -264,13 +274,20 @@ describe('driver.route.set.yield.acceptance', () => {
         expect(res.cli.code).toEqual(0);
       });
 
-      then('stdout shows yield in deleted line', () => {
+      then('stdout shows yield in cleared line', () => {
         expect(res.cli.stdout).toContain('1 yield');
       });
 
       then('yield file is archived', () => {
         expect(res.yieldExists).toBe(false);
         expect(res.archivedFiles).toContain('1.vision.yield.md');
+      });
+
+      then('stdout matches snapshot', () => {
+        // .why the alias gets its own pin = `--hard` and `--yield drop` are two doors
+        //    onto one outcome, and a driver reads whichever they typed. a pin on the
+        //    canonical flag alone proves naught about what the alias renders
+        expect(res.cli.stdout).toMatchSnapshot();
       });
     });
   });
@@ -299,10 +316,9 @@ describe('driver.route.set.yield.acceptance', () => {
         });
 
         // check yield file still exists
-        const yieldExists = await fs
-          .access(path.join(tempDir, '1.vision.yield.md'))
-          .then(() => true)
-          .catch(() => false);
+        const yieldExists = await isPathFound(
+          path.join(tempDir, '1.vision.yield.md'),
+        );
 
         return { cli, tempDir, yieldExists };
       });
@@ -311,12 +327,18 @@ describe('driver.route.set.yield.acceptance', () => {
         expect(res.cli.code).toEqual(0);
       });
 
-      then('stdout shows no yield in deleted line', () => {
+      then('stdout shows no yield in cleared line', () => {
         expect(res.cli.stdout).not.toContain('1 yield');
       });
 
       then('yield file is preserved', () => {
         expect(res.yieldExists).toBe(true);
+      });
+
+      then('stdout matches snapshot', () => {
+        // .why the alias gets its own pin = see the peer note in [case4]; `--soft` and
+        //    `--yield keep` are two doors onto one outcome
+        expect(res.cli.stdout).toMatchSnapshot();
       });
     });
   });
@@ -350,26 +372,20 @@ describe('driver.route.set.yield.acceptance', () => {
         console.log('--- end [case6] cli ---\n');
 
         // check which yield files remain
-        const yield1Exists = await fs
-          .access(path.join(tempDir, '1.vision.yield.md'))
-          .then(() => true)
-          .catch(() => false);
-        const yield2Exists = await fs
-          .access(path.join(tempDir, '2.criteria.yield.md'))
-          .then(() => true)
-          .catch(() => false);
-        const yield3Exists = await fs
-          .access(path.join(tempDir, '3.plan.yield.md'))
-          .then(() => true)
-          .catch(() => false);
+        const yield1Exists = await isPathFound(
+          path.join(tempDir, '1.vision.yield.md'),
+        );
+        const yield2Exists = await isPathFound(
+          path.join(tempDir, '2.criteria.yield.md'),
+        );
+        const yield3Exists = await isPathFound(
+          path.join(tempDir, '3.plan.yield.md'),
+        );
 
         // check archive
         const archiveDir = path.join(tempDir, '.route', '.archive');
         let archivedFiles: string[] = [];
-        const archiveExists = await fs
-          .access(archiveDir)
-          .then(() => true)
-          .catch(() => false);
+        const archiveExists = await isPathFound(archiveDir);
         if (archiveExists) {
           archivedFiles = await fs.readdir(archiveDir);
         }
@@ -402,10 +418,10 @@ describe('driver.route.set.yield.acceptance', () => {
         expect(res.archivedFiles).toContain('3.plan.yield.md');
       });
 
-      then('stdout shows yield in deleted lines for cascade stones', () => {
+      then('stdout shows yield in cleared lines for cascade stones', () => {
         expect(res.cli.stdout).toContain('2.criteria');
         expect(res.cli.stdout).toContain('3.plan');
-        // both should show yield in deleted line
+        // both should show yield in cleared line
         const lines = res.cli.stdout.split('\n');
         const yieldLines = lines.filter((l: string) => l.includes('1 yield'));
         expect(yieldLines.length).toBeGreaterThanOrEqual(2);
@@ -444,6 +460,16 @@ describe('driver.route.set.yield.acceptance', () => {
       then('error mentions mutual exclusivity', () => {
         expect(res.cli.stderr).toContain('mutually exclusive');
       });
+
+      then('stderr matches snapshot', () => {
+        // 🔴 .why the four refusals of [case7] each get a pin = each holds a lone
+        //    `toContain` of ONE word, and three of the four pin the same word
+        //    (`conflicts`). so one message could take another's text and every bar
+        //    would stay green while the driver was told about the wrong flag pair
+        //    (`rule.require.acceptance-journey-coverage` — the negative path of the
+        //    contract is a journey variant too)
+        expect(res.cli.stderr).toMatchSnapshot();
+      });
     });
 
     when('[t1] --hard and --yield keep together', () => {
@@ -471,6 +497,12 @@ describe('driver.route.set.yield.acceptance', () => {
 
       then('error mentions conflict', () => {
         expect(res.cli.stderr).toContain('conflicts');
+      });
+
+      then('stderr matches snapshot', () => {
+        // .why = see the peer note in [t0]; `conflicts` alone cannot part this
+        //    refusal from [t2]'s
+        expect(res.cli.stderr).toMatchSnapshot();
       });
     });
 
@@ -500,6 +532,12 @@ describe('driver.route.set.yield.acceptance', () => {
       then('error mentions conflict', () => {
         expect(res.cli.stderr).toContain('conflicts');
       });
+
+      then('stderr matches snapshot', () => {
+        // .why = see the peer note in [t0]; `conflicts` alone cannot part this
+        //    refusal from [t1]'s
+        expect(res.cli.stderr).toMatchSnapshot();
+      });
     });
 
     when('[t3] yield flags on non-rewound action', () => {
@@ -527,6 +565,12 @@ describe('driver.route.set.yield.acceptance', () => {
 
       then('error mentions yield only valid with rewound', () => {
         expect(res.cli.stderr).toContain('rewound');
+      });
+
+      then('stderr matches snapshot', () => {
+        // .why = `rewound` is a word this message and its three peers all carry, so
+        //    the lone bar above cannot tell this refusal from any of them
+        expect(res.cli.stderr).toMatchSnapshot();
       });
     });
   });
@@ -557,26 +601,20 @@ describe('driver.route.set.yield.acceptance', () => {
         });
 
         // check all yield files are gone
-        const yieldPlainExists = await fs
-          .access(path.join(tempDir, '1.vision.yield'))
-          .then(() => true)
-          .catch(() => false);
-        const yieldMdExists = await fs
-          .access(path.join(tempDir, '1.vision.yield.md'))
-          .then(() => true)
-          .catch(() => false);
-        const yieldJsonExists = await fs
-          .access(path.join(tempDir, '1.vision.yield.json'))
-          .then(() => true)
-          .catch(() => false);
+        const yieldPlainExists = await isPathFound(
+          path.join(tempDir, '1.vision.yield'),
+        );
+        const yieldMdExists = await isPathFound(
+          path.join(tempDir, '1.vision.yield.md'),
+        );
+        const yieldJsonExists = await isPathFound(
+          path.join(tempDir, '1.vision.yield.json'),
+        );
 
         // check archive
         const archiveDir = path.join(tempDir, '.route', '.archive');
         let archivedFiles: string[] = [];
-        const archiveExists = await fs
-          .access(archiveDir)
-          .then(() => true)
-          .catch(() => false);
+        const archiveExists = await isPathFound(archiveDir);
         if (archiveExists) {
           archivedFiles = await fs.readdir(archiveDir);
         }
@@ -605,6 +643,37 @@ describe('driver.route.set.yield.acceptance', () => {
         expect(res.archivedFiles).toContain('1.vision.yield');
         expect(res.archivedFiles).toContain('1.vision.yield.md');
         expect(res.archivedFiles).toContain('1.vision.yield.json');
+      });
+
+      then('the emit reports ONE yield, though THREE files were archived', () => {
+        // 🔴 .why = this is the conjunction the pin below exists for, and a snapshot alone
+        //    cannot state it — a re-take would absorb a drift to `3 yields` in silence and
+        //    the tree would still look right. the cascade carries a per-stone STATUS, so
+        //    the singular is the contract rather than a lost count
+        expect(res.cli.stdout).toContain(
+          'cleared: 0 reviews, 0 judges, 0 promises, 0 triggers, 1 yield',
+        );
+        expect(res.cli.stdout).not.toContain('yields');
+      });
+
+      then('stdout matches snapshot', () => {
+        // 🔴 .why this pin = the bars above read the DISK; none reads what the driver
+        //    was told. this variant archives THREE physical yield files — `.yield`,
+        //    `.yield.md`, `.yield.json`, each asserted above — and the emit still reports
+        //    `1 yield`, because the cascade carries a per-stone STATUS, never a file count
+        //    (`formatRouteStoneEmit.ts:499` renders a literal `', 1 yield'` off the
+        //    `'archived' | 'preserved' | 'absent'` enum). ⇒ so the pin is what proves the
+        //    singular is CORRECT rather than a lost count, and it is the one place a
+        //    regression that started to count files — or that pluralized the word — would
+        //    show, since every bar above it reads the filesystem instead of the render
+        //
+        // 🔴 .note = this comment read `a plural count (3 yields)` until i005, which was
+        //    false in both halves: the snapshot has always said `1 yield`, and there is no
+        //    count in the code to regress. ⇒ a `.why` that misstates its own evidence is
+        //    worse than an absent one — a reader checks the tree for `3 yields`, does not
+        //    find it, and cannot tell whether the render or the comment is at fault without
+        //    a re-derivation of the emit (`enroll-verif-snapshot-coverage` blocker.1)
+        expect(res.cli.stdout).toMatchSnapshot();
       });
     });
   });

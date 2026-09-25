@@ -6,11 +6,12 @@ import { getGuardSelfReviews } from '@src/domain.objects/Driver/RouteStoneGuard'
 import { delDriveBlockerState } from './drive/delDriveBlockerState';
 import { formatRouteStoneEmit } from './formatRouteStoneEmit';
 import type { ContextReviewBrainSupply } from './genReviewBrainSupply';
-import { computeStoneReviewInputHash } from './guard/review/computeStoneReviewInputHash';
+import { getStrayFlagRefusal } from './getStrayFlagRefusal';
 import { computePromisedReviewCount } from './guard/review/self/computePromisedReviewCount';
 import { findNextUnpromisedReview } from './guard/review/self/findNextUnpromisedReview';
 import { findSelfReviewBySlug } from './guard/review/self/findSelfReviewBySlug';
 import { getPromisedSlugsSet } from './guard/review/self/getPromisedSlugsSet';
+import { getSelfReviewArticulationPath } from './guard/review/self/getSelfReviewArticulationPath';
 import { getSelfReviewChallengeDecision } from './guard/review/self/getSelfReviewChallengeDecision';
 import { getSelfReviewIndex } from './guard/review/self/getSelfReviewIndex';
 import { getSelfReviewSlugs } from './guard/review/self/getSelfReviewSlugs';
@@ -81,6 +82,16 @@ export const stepRouteStoneSet = async (
      *         one). forbidden for --as disputed — a dispute concedes naught, so it grades naught.
      */
     severity?: 'better' | 'urgent';
+    /**
+     * the path the driver declares they wrote their articulation to (only for --as promised)
+     *
+     * .why = a check with one operand reports a failure; it takes two to report a DIFFERENCE.
+     *        before it, a wrong path surfaced as `the articulation is absent`, which names
+     *        only where the guard looked and leaves the driver to guess what it read instead.
+     * .note = REQUIRED on --as promised. it is the round's one added friction, and it buys
+     *         the emit its second operand.
+     */
+    into?: string;
     yield?: 'keep' | 'drop';
   },
   context: ContextCliEmit & ContextReviewBrainSupply & { isTTY: boolean },
@@ -105,55 +116,25 @@ export const stepRouteStoneSet = async (
       ? { ...inputRaw, as: 'passed' as const }
       : inputRaw;
 
-  // stance-only flags belong to --as disputed | conceded alone. on any other --as they would
-  // be dropped with no word, so refuse them loud — a driver who mistyped the verb learns at
-  // once rather than watch a grade vanish (r10.n5, rule.forbid.failhide).
-  if (input.as !== 'disputed' && input.as !== 'conceded') {
-    const strayAbsorptionFlag =
-      input.with !== undefined
-        ? '--with'
-        : input.about !== undefined
-          ? '--about'
-          : input.why !== undefined
-            ? '--why'
-            : input.severity !== undefined
-              ? '--severity'
-              : null;
-    if (strayAbsorptionFlag)
-      throw new BadRequestError(
-        [
-          `${strayAbsorptionFlag} is only accepted for --as disputed | conceded`,
-          ``,
-          `you passed --as ${input.as}, which takes no absorption flags.`,
-          ``,
-          // each taught command carries its REQUIRED flag — --severity on a concede,
-          // --why on a dispute. a hint that hands back a command the boundary refuses is
-          // the friction hazard `rule.forbid.friction-hazards` names (r9 b1)
-          `to absorb a concern:`,
-          `  --as conceded --with <reviewer> --about <concern> --severity better|urgent`,
-          `  --as disputed --with <reviewer> --about <concern> --why <fulcrum-path>`,
-        ].join('\n'),
-        { stone: input.stone, as: input.as, flag: strayAbsorptionFlag },
-      );
-  }
-
-  // --that belongs to --as promised | absorbed alone. on any other --as it was
-  // dropped with no word — a `--as passed --that architect` silently read the passed
-  // branch, and a `--as disputed --that architect` silently read only with/about/why/
-  // severity. so a mistyped verb on the --that side never told the driver (r002
-  // nitpick.1, i005; rule.forbid.failhide) — refuse it loud, the same shape as the
-  // stance-only flags above.
-  if (input.as !== 'promised' && input.as !== 'absorbed') {
-    if (input.that !== undefined)
-      throw new BadRequestError(
-        [
-          `--that is only accepted for --as promised | absorbed`,
-          ``,
-          `you passed --as ${input.as}, which takes no --that.`,
-        ].join('\n'),
-        { stone: input.stone, as: input.as, flag: '--that' },
-      );
-  }
+  // refuse a verb-specific flag passed to a verb that does not own it — loud, never dropped.
+  // the ownership table and its reason live in `getStrayFlagRefusal`
+  const strayFlag = getStrayFlagRefusal({
+    as: input.as,
+    flags: {
+      with: input.with,
+      about: input.about,
+      why: input.why,
+      severity: input.severity,
+      that: input.that,
+      into: input.into,
+    },
+  });
+  if (strayFlag)
+    throw new BadRequestError(strayFlag.message, {
+      stone: input.stone,
+      as: input.as,
+      flag: strayFlag.flag,
+    });
 
   // a --as that MOVES the stone clears the drive-blocker streak — the "stuck Nx" count
   // that the stophook increments each time the driver stops WITHOUT a passage attempt
@@ -248,25 +229,59 @@ export const stepRouteStoneSet = async (
       );
     }
 
-    // compute hash for promise
-    const hash = await computeStoneReviewInputHash({
-      stone: stoneMatched,
-      route: input.route,
-    });
+    // --into is REQUIRED, and it is checked BEFORE the decision runs.
+    // ⚠️ the decision ADJUDICATES — it increments the attempt count, and that count is half
+    //    the haste cue's condition. a usage error that burned one would retire this driver's
+    //    confrontation with no read behind it, so it must never reach the decision.
+    if (!input.into) {
+      // .note = the owed path goes in the MESSAGE, never in the metadata alone. the driver
+      //         reads a message; a metadata bag is for the log. an error that withholds a
+      //         path it already computed names the symptom and not the fix
+      //         (rule.require.errors-name-the-fix)
+      const owed = getSelfReviewArticulationPath({
+        route: input.route,
+        stone: stoneMatched.name,
+        slug: input.that,
+      });
+      // 🟡 .why the shape = its two peers in this same family — the bare `--into` and the
+      //    `--into` on a verb that does not own it (`getStrayFlagRefusal`) — each render as
+      //    headline, blank, reason, blank, the fix on its own indented line. this one was a
+      //    single run-on sentence, so one of three promise refusals read as a wall of text
+      //    beside two that break cleanly (`rule.forbid.snapshot-visual-blemishes`, the
+      //    consistency check). the words are unchanged; only the breaks are new
+      throw new BadRequestError(
+        [
+          `--into is required on --as promised`,
+          ``,
+          `name the path you wrote your articulation to, so the guard can show you`,
+          `the difference rather than a bare absence.`,
+          ``,
+          `the guard reads:`,
+          `  ${owed}`,
+          ``,
+          `add:`,
+          `  --into ${owed}`,
+        ].join('\n'),
+        { stone: input.stone, slug: input.that, owed },
+      );
+    }
 
-    // check time enforcement and hashbar threshold for self-review
+    // adjudicate the promise: path, then freshness, then the haste cue
     const reviewSelf = findSelfReviewBySlug({ selfReviews, slug: input.that });
     const reviewIndex = getSelfReviewIndex({ selfReviews, slug: input.that });
     const challengeDecision = await getSelfReviewChallengeDecision({
       stone: stoneMatched.name,
       slug: input.that,
-      hash,
       route: input.route,
-      index: reviewIndex, // 1-based (computed by getSelfReviewIndex)
-      hashbar: reviewSelf?.hashbar,
+      into: input.into,
     });
 
-    // if challenged, return early with patience message (and optionally absent or rush confrontation)
+    // if confronted, return early with the verdict's own message.
+    // .note = the haste cue is one of five verdicts, and the LAST. a driver whose real
+    //         defect is a path meets the path emit and is never told to slow down
+    // .note = this branch is verdict-agnostic BY DESIGN — it tests only `!== 'allowed'`, so a
+    //         new verdict (`challenge:unasked` was the fifth) needs no edit here. what it must
+    //         carry instead is the wider union on the emit's `action` field
     if (challengeDecision.decision !== 'allowed') {
       return {
         challenged: true,
@@ -278,6 +293,9 @@ export const stepRouteStoneSet = async (
             slug: input.that,
             route: input.route,
             articulationPath: challengeDecision.articulationPath,
+            declaredPath: challengeDecision.declaredPath,
+            articulationMtime: challengeDecision.articulationMtime,
+            askedAt: challengeDecision.askedAt,
             selfReview: reviewSelf
               ? {
                   reviewSelf,

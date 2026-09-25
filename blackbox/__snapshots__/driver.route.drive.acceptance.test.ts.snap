@@ -78,6 +78,352 @@ exports[`driver.route.drive.acceptance given: [case4] hook mode blocks stop when
 "
 `;
 
+exports[`driver.route.drive.acceptance given: [case4] hook mode blocks stop when stones remain when: [t1] route.drive invoked twice in hook mode then: stderr has good vibes 1`] = `
+"🦉 where were we?
+
+🗿 route.drive
+   ├─ where do we go?
+   │  ├─ route = .
+   │  └─ stone = 1
+   │
+   ├─ are you here?
+   │  ├─ when ready for review, run:
+   │  │  └─ rhx route.stone.set --stone 1 --as arrived
+   │  └─ when ready to continue, run:
+   │     └─ rhx route.stone.set --stone 1 --as passed
+   │
+   ├─ here's the stone
+   │  ├─
+   │  │
+   │  │  # stone: implement the feature
+   │  │  
+   │  │  implement the feature described in the wish.
+   │  │  
+   │  │  done when:
+   │  │  - feature is implemented
+   │  │  - tests pass
+   │  │  
+   │  └─
+   │
+   └─ are you here?
+      ├─ when ready for review, run:
+      │  └─ rhx route.stone.set --stone 1 --as arrived
+      └─ when ready to continue, run:
+         └─ rhx route.stone.set --stone 1 --as passed
+"
+`;
+
+exports[`driver.route.drive.acceptance given: [case5] passed stone clears blocker state when: [t1] route.stone.set --as passed succeeds then: stderr has good vibes 1`] = `
+"🦉 l1 pours 1 lane
+   └─ r1:.test/mock-review.sh
+"
+`;
+
+exports[`driver.route.drive.acceptance given: [case5] passed stone clears blocker state when: [t1] route.stone.set --as passed succeeds then: stdout has good vibes 1`] = `
+"🦉 the way speaks for itself
+   │
+   ├─ r1: .test/mock-review.sh (l1, 1/∞)
+   │   ├─ approved [TIME]
+   │   ├─ 0 blockers ✓
+   │   ├─ 0 nitpicks ✓
+   │   ├─ given: .reviews/peer/1._.review.i001.50e6ac4cf73cc344a2.r001._.given.by_peer..test-mock-review.sh.md
+   │   └─ taken: .reviews/peer/1._.review.i001.50e6ac4cf73cc344a2.r001._.taken.by_self..test-mock-review.sh.md
+   │
+   └─ ✓ judge.1 - allowed [TIME]
+
+🗿 route.stone.set
+   ├─ stone = 1
+   ├─ passage = allowed
+   ├─ guard
+   │  ├─ artifacts
+   │  │   └─ $route/1.stone*.md
+   │  ├─ reviews
+   │  │   └─ r1: .test/mock-review.sh (l1, 1/∞)
+   │  │       ├─ approved [TIME]
+   │  │       ├─ 0 blockers ✓
+   │  │       ├─ 0 nitpicks ✓
+   │  │       ├─ given: .reviews/peer/1._.review.i001.50e6ac4cf73cc344a2.r001._.given.by_peer..test-mock-review.sh.md
+   │  │       └─ taken: .reviews/peer/1._.review.i001.50e6ac4cf73cc344a2.r001._.taken.by_self..test-mock-review.sh.md
+   │  └─ judges
+   │      └─ j1: rhx route.stone.judge --mechanism reviewed? --stone $stone --route $route --allow-blockers 0
+   │          └─ finished [TIME] ✓
+   │
+   └─ the way continues, run
+      └─ rhx route.drive
+"
+`;
+
+exports[`driver.route.drive.acceptance given: [case5] passed stone clears blocker state when: [t2] route.drive invoked after pass then: stderr has good vibes 1`] = `
+"🦉 where were we?
+
+🗿 route.drive
+   ├─ where do we go?
+   │  ├─ route = .
+   │  └─ stone = 2
+   │
+   ├─ are you here?
+   │  ├─ when ready for review, run:
+   │  │  └─ rhx route.stone.set --stone 2 --as arrived
+   │  └─ when ready to continue, run:
+   │     └─ rhx route.stone.set --stone 2 --as passed
+   │
+   ├─ here's the stone
+   │  ├─
+   │  │
+   │  │  # stone: document the feature
+   │  │  
+   │  │  document how to use the feature.
+   │  │  
+   │  │  done when:
+   │  │  - docs are written
+   │  │  
+   │  └─
+   │
+   └─ are you here?
+      ├─ when ready for review, run:
+      │  └─ rhx route.stone.set --stone 2 --as arrived
+      └─ when ready to continue, run:
+         └─ rhx route.stone.set --stone 2 --as passed
+"
+`;
+
+exports[`driver.route.drive.acceptance given: [case6] hook mode allows stop when blocked on approval when: [t0] route.drive hook.onStop mode before pass attempt then: stderr has good vibes 1`] = `
+"🦉 where were we?
+
+🗿 route.drive
+   ├─ where do we go?
+   │  ├─ route = .
+   │  └─ stone = 1.vision
+   │
+   ├─ are you here?
+   │  ├─ when ready for review, run:
+   │  │  └─ rhx route.stone.set --stone 1.vision --as arrived
+   │  └─ when ready to continue, run:
+   │     └─ rhx route.stone.set --stone 1.vision --as passed
+   │
+   ├─ here's the stone
+   │  ├─
+   │  │
+   │  │  # 1.vision
+   │  │  
+   │  │  illustrate the vision implied in the wish.
+   │  │  
+   │  │  describe:
+   │  │  - the user experience
+   │  │  - the key interactions
+   │  │  - the expected outcomes
+   │  │  
+   │  └─
+   │
+   └─ are you here?
+      ├─ when ready for review, run:
+      │  └─ rhx route.stone.set --stone 1.vision --as arrived
+      └─ when ready to continue, run:
+         └─ rhx route.stone.set --stone 1.vision --as passed
+"
+`;
+
+exports[`driver.route.drive.acceptance given: [case6] hook mode allows stop when blocked on approval when: [t0] route.drive hook.onStop mode before pass attempt then: stdout has good vibes 1`] = `
+"🦉 where were we?
+
+🗿 route.drive
+   ├─ where do we go?
+   │  ├─ route = .
+   │  └─ stone = 1.vision
+   │
+   ├─ are you here?
+   │  ├─ when ready for review, run:
+   │  │  └─ rhx route.stone.set --stone 1.vision --as arrived
+   │  └─ when ready to continue, run:
+   │     └─ rhx route.stone.set --stone 1.vision --as passed
+   │
+   ├─ here's the stone
+   │  ├─
+   │  │
+   │  │  # 1.vision
+   │  │  
+   │  │  illustrate the vision implied in the wish.
+   │  │  
+   │  │  describe:
+   │  │  - the user experience
+   │  │  - the key interactions
+   │  │  - the expected outcomes
+   │  │  
+   │  └─
+   │
+   └─ are you here?
+      ├─ when ready for review, run:
+      │  └─ rhx route.stone.set --stone 1.vision --as arrived
+      └─ when ready to continue, run:
+         └─ rhx route.stone.set --stone 1.vision --as passed
+"
+`;
+
+exports[`driver.route.drive.acceptance given: [case6] hook mode allows stop when blocked on approval when: [t1] agent attempts to pass stone then: stderr has good vibes 1`] = `
+"
+🪶 judge 1
+   ├─ stdout
+   │  ├─
+   │  │
+   │  │  🪨 run solid skill repo=bhrain/role=driver/skill=route.stone.judge
+   │  │  
+   │  │  passed: false
+   │  │  reason: wait for human approval
+   │  │  
+   │  │  ✋ halted, human approval required
+   │  │     ├─ please ask your human to
+   │  │     │  └─ rhx route.stone.set --stone 1.vision --as approved
+   │  │     │
+   │  │     └─ after human approves, run
+   │  │        └─ rhx route.stone.set --stone 1.vision --as passed
+   │  │
+   │  └─
+   ├─ stderr
+   │  ├─
+   │  │
+   │  │  
+   │  │  🪨 run solid skill repo=bhrain/role=driver/skill=route.stone.judge
+   │  │     └─ ✋ blocked by constraints
+   │  │  
+   │  │
+   │  └─
+   └─ passage blocked
+      ├─ blocked by constraints
+      └─ exit code: 2 ✋
+"
+`;
+
+exports[`driver.route.drive.acceptance given: [case6] hook mode allows stop when blocked on approval when: [t1] agent attempts to pass stone then: stdout has good vibes 1`] = `
+"🦉 the way speaks for itself
+   │
+   └─ ✗ judge.1 - blocked [TIME]
+
+🗿 route.stone.set
+   ├─ stone = 1.vision
+   ├─ passage = blocked
+   ├─ reason = wait for human approval
+   └─ guard
+      ├─ artifacts
+      │   └─ $route/1.vision*.md
+      └─ judges
+          └─ j1: rhx route.stone.judge --mechanism approved? --stone $stone --route $route
+              ├─ finished [TIME] ✗
+              └─ reason: wait for human approval
+"
+`;
+
+exports[`driver.route.drive.acceptance given: [case6] hook mode allows stop when blocked on approval when: [t2] route.drive hook.onStop mode after blocked on approval then: stderr has good vibes 1`] = `""`;
+
+exports[`driver.route.drive.acceptance given: [case6] hook mode allows stop when blocked on approval when: [t2] route.drive hook.onStop mode after blocked on approval then: stdout has good vibes 1`] = `
+"🦉 where were we?
+
+🗿 route.drive
+   ├─ where do we go?
+   │  ├─ route = .
+   │  └─ stone = 1.vision
+   │
+   └─ halted, human approval required
+      ├─ please ask a human to
+      │  └─ rhx route.stone.set --stone 1.vision --as approved
+      │
+      └─ once they do, run
+         └─ rhx route.stone.set --stone 1.vision --as passed
+"
+`;
+
+exports[`driver.route.drive.acceptance given: [case6] hook mode allows stop when blocked on approval when: [t3] human grants approval then: stderr has good vibes 1`] = `""`;
+
+exports[`driver.route.drive.acceptance given: [case6] hook mode allows stop when blocked on approval when: [t3] human grants approval then: stdout has good vibes 1`] = `
+"🦉 the way speaks for itself
+
+🗿 route.stone.set
+   ├─ stone = 1.vision
+   └─ ✓ approved
+"
+`;
+
+exports[`driver.route.drive.acceptance given: [case6] hook mode allows stop when blocked on approval when: [t4] route.drive hook.onStop invoked after approval then: stderr has good vibes 1`] = `
+"🦉 where were we?
+
+🗿 route.drive
+   ├─ where do we go?
+   │  ├─ route = .
+   │  └─ stone = 1.vision
+   │
+   ├─ are you here?
+   │  ├─ when ready for review, run:
+   │  │  └─ rhx route.stone.set --stone 1.vision --as arrived
+   │  └─ when ready to continue, run:
+   │     └─ rhx route.stone.set --stone 1.vision --as passed
+   │
+   ├─ here's the stone
+   │  ├─
+   │  │
+   │  │  # 1.vision
+   │  │  
+   │  │  illustrate the vision implied in the wish.
+   │  │  
+   │  │  describe:
+   │  │  - the user experience
+   │  │  - the key interactions
+   │  │  - the expected outcomes
+   │  │  
+   │  └─
+   │
+   └─ are you here?
+      ├─ when ready for review, run:
+      │  └─ rhx route.stone.set --stone 1.vision --as arrived
+      └─ when ready to continue, run:
+         └─ rhx route.stone.set --stone 1.vision --as passed
+"
+`;
+
+exports[`driver.route.drive.acceptance given: [case6] hook mode allows stop when blocked on approval when: [t4] route.drive hook.onStop invoked after approval then: stdout has good vibes 1`] = `
+"🦉 where were we?
+
+🗿 route.drive
+   ├─ where do we go?
+   │  ├─ route = .
+   │  └─ stone = 1.vision
+   │
+   ├─ are you here?
+   │  ├─ when ready for review, run:
+   │  │  └─ rhx route.stone.set --stone 1.vision --as arrived
+   │  └─ when ready to continue, run:
+   │     └─ rhx route.stone.set --stone 1.vision --as passed
+   │
+   ├─ here's the stone
+   │  ├─
+   │  │
+   │  │  # 1.vision
+   │  │  
+   │  │  illustrate the vision implied in the wish.
+   │  │  
+   │  │  describe:
+   │  │  - the user experience
+   │  │  - the key interactions
+   │  │  - the expected outcomes
+   │  │  
+   │  └─
+   │
+   └─ are you here?
+      ├─ when ready for review, run:
+      │  └─ rhx route.stone.set --stone 1.vision --as arrived
+      └─ when ready to continue, run:
+         └─ rhx route.stone.set --stone 1.vision --as passed
+"
+`;
+
+exports[`driver.route.drive.acceptance given: [case7] no route bound when: [t0] route.drive is invoked then: stderr has good vibes 1`] = `""`;
+
+exports[`driver.route.drive.acceptance given: [case7] no route bound when: [t0] route.drive is invoked then: stdout has good vibes 1`] = `
+"🦉 where were we?
+
+🗿 route.drive
+   └─ dunno, route not bound
+"
+`;
+
 exports[`driver.route.drive.acceptance given: [case8] the --help flag when: [t0] route.drive is invoked with --help then: stdout matches snapshot 1`] = `
 "route.drive - echo current stone and pass command for bound route
 

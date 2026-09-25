@@ -232,3 +232,121 @@ options:
         \`budget:\` line among them. so it is human only, and that is enforced rather than asked.
 "
 `;
+
+exports[`driver.route.usage-errors.acceptance given: [case6] route.stone.get with --stone omitted when: [t0] --route is passed and --stone is not then: stderr matches snapshot: stone.get --stone absent 1`] = `
+"error: BadRequestError: --stone is required
+
+{
+  "hint": "--help for usage"
+}
+"
+`;
+
+exports[`driver.route.usage-errors.acceptance given: [case7] route.stone.judge with --mechanism omitted when: [t0] the judge is invoked with no mechanism then: stderr matches snapshot: stone.judge --mechanism absent 1`] = `
+"error: BadRequestError: --mechanism is required
+
+{
+  "hint": "--help for usage"
+}
+"
+`;
+
+exports[`driver.route.usage-errors.acceptance given: [case7] route.stone.judge with --mechanism omitted when: [t1] the mechanism is named and the stone is not then: stderr matches snapshot: stone.judge --stone absent 1`] = `
+"error: BadRequestError: --stone is required
+
+{
+  "hint": "--help for usage"
+}
+"
+`;
+
+exports[`driver.route.usage-errors.acceptance given: [case7] route.stone.judge with --mechanism omitted when: [t2] the mechanism names a value the contract does not hold then: stderr matches snapshot: stone.judge unknown mechanism 1`] = `
+"error: BadRequestError: unknown mechanism "bogus?"
+
+{
+  "hint": "--help for usage"
+}
+"
+`;
+
+exports[`driver.route.usage-errors.acceptance given: [case8] route.stone.set with an --as the contract does not name when: [t0] --as carries a value outside the allowed set then: stderr matches snapshot: stone.set --as invalid 1`] = `
+"error: BadRequestError: --as must be "passed", "approved", "promised", "absorbed", "conceded", "disputed", "blocked", "rewound", "arrived", "overruled", or "forced"
+
+{
+  "hint": "--help for usage"
+}
+"
+`;
+
+exports[`driver.route.usage-errors.acceptance given: [case9] route.bind.set with --route omitted when: [t0] the bind is invoked with no route then: stderr matches snapshot: bind.set --route absent 1`] = `
+"error: BadRequestError: --route is required
+
+{
+  "hint": "--help for usage"
+}
+"
+`;
+
+exports[`driver.route.usage-errors.acceptance given: [case10] a bare --into on subcommands that do not own the flag when: [t0] route.bind.get is invoked with a bare --into then: stderr matches snapshot: route.bind.get bare --into 1`] = `
+"error: BadRequestError: --into was passed with no value
+
+--into carries a value, so a bare --into says naught.
+
+pass the value it asks for, or drop the flag:
+  --into <value>
+
+{
+  "flag": "--into"
+}
+"
+`;
+
+exports[`driver.route.usage-errors.acceptance given: [case10] a bare --into on subcommands that do not own the flag when: [t0] route.drive is invoked with a bare --into then: stderr matches snapshot: route.drive bare --into 1`] = `
+"error: BadRequestError: --into was passed with no value
+
+--into carries a value, so a bare --into says naught.
+
+pass the value it asks for, or drop the flag:
+  --into <value>
+
+{
+  "flag": "--into"
+}
+"
+`;
+
+exports[`driver.route.usage-errors.acceptance given: [case10] a bare --into on subcommands that do not own the flag when: [t0] route.guard.upgrade is invoked with a bare --into then: stderr matches snapshot: route.guard.upgrade bare --into 1`] = `
+"error: BadRequestError: --into was passed with no value
+
+--into carries a value, so a bare --into says naught.
+
+pass the value it asks for, or drop the flag:
+  --into <value>
+
+{
+  "flag": "--into"
+}
+"
+`;
+
+exports[`driver.route.usage-errors.acceptance given: [case10] a bare --into on subcommands that do not own the flag when: [t0] route.stone.get is invoked with a bare --into then: stderr matches snapshot: route.stone.get bare --into 1`] = `
+"error: BadRequestError: --into was passed with no value
+
+--into carries a value, so a bare --into says naught.
+
+pass the value it asks for, or drop the flag:
+  --into <value>
+
+{
+  "flag": "--into"
+}
+"
+`;
+
+exports[`driver.route.usage-errors.acceptance given: [case11] route.review with an --open the host does not hold when: [t0] the named opener is absent from PATH then: stderr matches snapshot: route.review absent opener 1`] = `
+"🦉 look for the light
+
+🗿 route.review
+   └─ ✗ opener 'no-such-opener-abcxyz' not found in PATH
+"
+`;

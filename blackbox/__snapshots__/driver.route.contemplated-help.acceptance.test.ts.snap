@@ -37,6 +37,10 @@ options:
                        urgent = a shipped harm — earns more budget, warns the human
                        (security | safety | monetary | reputation | behavioral)
                        better = code idealism / maintenance — the floor, never earns budget
+  --into <path>      the path you wrote your articulation to — copy it from the prompt
+                       (REQUIRED for --as promised)
+                       a diff needs both paths: with one, a mismatch reads "absent";
+                       with both, the guard shows the diff and the command that moves it
   --help             show this help message
 
 note:
@@ -49,7 +53,8 @@ examples:
   route.stone.set --stone 1.vision --as arrived
   route.stone.set --stone 1.vision --as passed
   route.stone.set --stone 1.vision --as approved
-  route.stone.set --stone 1.vision --as promised --that all-done
+  route.stone.set --stone 1.vision --as promised --that all-done \\
+    --into .behavior/my-feature/review/self/for.1.vision._.all-done.md
   route.stone.set --stone 1.execute --as absorbed --that architect
   route.stone.set --stone 1.execute --as conceded --with architect --about nitpick.4 --severity better
   route.stone.set --stone 1.execute --as conceded --with architect --about blocker.2 --severity urgent

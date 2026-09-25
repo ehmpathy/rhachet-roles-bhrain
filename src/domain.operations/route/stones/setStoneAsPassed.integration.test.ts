@@ -221,6 +221,20 @@ describe('setStoneAsPassed.integration', () => {
         expect(sinceFiles[0]).toContain('all-done');
       });
 
+      /**
+       * .note = this once asserted `hash:` in the body. the key is `(stone, slug)` now, so the
+       *         report carries no hash at all — that field is what reset the clock on every
+       *         repair. the case is re-aimed at the ABSENCE of it, never deleted: the assertion
+       *         that used to prove the field is present now proves it is gone.
+       *
+       * 🔴 .note = and it once asserted `attempts: 0` in the SAME body, which is the second
+       *            field this case has had to re-aim. the tally moved to its own `.attempts`
+       *            marker at i013, so `.since` carries the slug and naught else. the assertion
+       *            is re-aimed rather than deleted, by the same discipline: the line that used
+       *            to prove the tally is IN the ask marker now proves it is OUT of it.
+       *            ⇒ the unit grain pins where the tally went (`setSelfReviewTriggeredReport`
+       *              `[case6]`); this grain pins that the ASK writes one file and one line.
+       */
       then('trigger marker file has correct content', async () => {
         const routeDir = path.join(scene.tempDir, '.route');
         const files = await fs.readdir(routeDir);
@@ -231,7 +245,42 @@ describe('setStoneAsPassed.integration', () => {
           'utf-8',
         );
         expect(content).toContain('slug: all-done');
-        expect(content).toContain('hash:');
+        expect(content).not.toContain('hash:');
+
+        // 🔴 the ask writes the slug and naught else. a tally line back in this file would
+        // mean the tally write rewrote the gate operand again, which is the i013 blocker
+        expect(content).not.toContain('attempts:');
+      });
+
+      /**
+       * 🔴 .what = the ask mints `.since` ALONE — no `.attempts` beside it.
+       *
+       * 🔴 .why = the tally counts ADJUDICATED promises, and an ask adjudicates naught. a
+       *           `.attempts` file present here would mean the ask burned an attempt before
+       *           the driver ever promised, and a burned attempt is a leaked review — the
+       *           haste cue reads `attempts == 0` as half its gate condition.
+       *           ⇒ so this clamps the SEPARATION at the grain where both files are real,
+       *             which the unit grain cannot: it proves the ask touches one marker.
+       */
+      then('the ask mints no tally marker at all', async () => {
+        const routeDir = path.join(scene.tempDir, '.route');
+        const files = await fs.readdir(routeDir);
+
+        expect(files.filter((f) => f.endsWith('.triggered.attempts'))).toEqual(
+          [],
+        );
+      });
+
+      then('the marker name carries no hash either', async () => {
+        const routeDir = path.join(scene.tempDir, '.route');
+        const files = await fs.readdir(routeDir);
+        const sinceFile = files.find((f) => f.endsWith('.triggered.since'));
+
+        // .why = the hash lived in the FILENAME, so a repair changed the file the guard
+        //        looked for. an exact-name check is what proves it cannot come back
+        expect(sinceFile).toEqual(
+          '1.vision.guard.selfreview.all-done.triggered.since',
+        );
       });
     });
   });
