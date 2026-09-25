@@ -15,9 +15,13 @@ import { getRouteDriveExhaustedMessage } from './drive/getRouteDriveExhaustedMes
 import { getStoneGuardBlockerReport } from './drive/getStoneGuardBlockerReport';
 import { setDriveBlockerState } from './drive/setDriveBlockerState';
 import { getAllLatestPassageByStone } from './passage/getAllLatestPassageByStone';
-import { computeNextStones } from './stones/computeNextStones';
-import { getAllStoneDriveArtifacts } from './stones/getAllStoneDriveArtifacts';
-import { getAllStones } from './stones/getAllStones';
+import { getAllPassageReportsRaw } from './passage/getAllPassageReportsRaw';
+import { getLatestPassageFromReports } from './passage/getLatestPassageFromReports';
+import { RouteReminderOrphanError } from './reminder/RouteReminderOrphanError';
+import { spawnRouteReminderDaemon } from './reminder/spawnRouteReminderDaemon';
+import { surfaceRouteReminderFault } from './reminder/surfaceRouteReminderFault';
+import { syncRouteReminderForDrive } from './reminder/syncRouteReminderForDrive';
+import { getRouteDriveFrontier } from './stones/getRouteDriveFrontier';
 
 /**
  * .what = echoes current stone and pass command for bound route
@@ -27,10 +31,20 @@ import { getAllStones } from './stones/getAllStones';
  *         - hook.onBoot: show stone, exit 0 (don't block session start)
  *         - hook.onStop: show stone, exit 2 (block premature stop)
  */
-export const stepRouteDrive = async (input: {
-  route?: string;
-  when?: 'hook.onBoot' | 'hook.onStop';
-}): Promise<{
+export const stepRouteDrive = async (
+  input: {
+    route?: string;
+    when?: 'hook.onBoot' | 'hook.onStop';
+  },
+  context?: {
+    spawnDaemon?: (input: {
+      route: string;
+      cloneAddr: string;
+      intervalMs: number;
+      sayTimeoutMs: number;
+    }) => Promise<{ pid: number }>;
+  },
+): Promise<{
   emit: {
     stdout?: string;
     stderr?: { reason: string; code: number };
@@ -58,15 +72,74 @@ export const stepRouteDrive = async (input: {
   });
   await setRouteBouncerCache({ cache: bouncerCache, route });
 
-  // read the latest passage entry per stone EXACTLY ONCE, up front, and thread that one
-  // snapshot through every branch below (hook pre-check, onBoot, onStop, direct mode).
-  // .why = passage.jsonl is append-only; a second read could observe a concurrent append
-  //        and yield a disposition that disagrees with the first read (a TOCTOU race →
-  //        the hook could allow a stop it should block, or vice versa). one read = one
-  //        consistent view, so the push/halt decision is atomic per invocation
-  //        (rule.forbid.behavior-hazards). getLatestForStone(name) reads from this
-  //        snapshot rather than a second read of the file.
-  const passageLatestByStone = await getAllLatestPassageByStone({ route });
+  // read the stone frontier (every stone + its artifacts + the next-one frontier) EXACTLY ONCE, up
+  // front, and thread that one snapshot through every branch below — the reminder auto-wire's
+  // completion gate, the malfunction halt's stone lookup, and this drive's own next-stone pick.
+  // .why = a second, independent frontier read could observe a concurrent artifact/passage write and
+  //        yield a frontier that disagrees with the first (a TOCTOU split: the reminder's "is the
+  //        drive complete?" verdict and this drive's "is there a next stone?" verdict diverge). one
+  //        read = one consistent view, and it halves the frontier I/O on every hook call — the SAME
+  //        single-read-threaded discipline this file already applies to passageLatestByStone
+  //        (rule.forbid.behavior-hazards, rule.prefer.most-common-denominator).
+  const frontier = await getRouteDriveFrontier({ route });
+
+  // read passage.jsonl EXACTLY ONCE here, then derive every view below from this ONE snapshot:
+  // the true-latest entry (threaded to the reminder auto-wire's liveness gate) AND the
+  // latest-per-stone reduction (the hook pre-check / onStop / direct-mode reads). the reminder used
+  // to do its OWN independent full-file read, so two reads of an append-only file could observe a
+  // concurrent write and disagree (a TOCTOU split between the reminder's "is the drive live?" and
+  // this drive's "is there a next stone / a halt?"). one read = one consistent view — the SAME
+  // read-once discipline this file already applies to frontier (rule.forbid.behavior-hazards).
+  const passageReportsRaw = await getAllPassageReportsRaw({ route });
+  const passageLatest = getLatestPassageFromReports({
+    reports: passageReportsRaw,
+  });
+
+  // keep this driver session's RouteReminder in sync with the route's live state (auto start/stop)
+  // .why = the wish's headline: "the route system upserts the reminder into cron as needed… halt it
+  //        when the route is blocked". route.drive runs as a hook inside the driver clone on every
+  //        boot/stop, so it is the pulse that findserts the reminder while the route is a live drive
+  //        and reaps it when dead — no human runs `route.reminder.gen` by hand (vision Q9, in-scope).
+  // .why the fault-guard splits by "is a daemon LOOSE?", keyed on a DEDICATED type:
+  //   - a RouteReminderOrphanError (a daemon spawned but un-reapable — loose, unaddressable by
+  //     get/del) CANNOT self-correct, so it PROPAGATES: the hook fails loud, a human acts on the
+  //     named pid + `kill -9` recovery. it is a dedicated subtype, NOT the base
+  //     UnexpectedCodePathError — so a MALFORMED pid handle or a TORN passage line (which also throw
+  //     UnexpectedCodePathError but leave NO process loose) do NOT brick route.drive on every
+  //     boot/stop (rule.forbid.behavior-hazards — the reminder's failure stays scoped to itself).
+  //   - every OTHER reminder fault leaves no process loose → surfaceRouteReminderFault writes it to
+  //     the WATCHED per-session reminder log (not the hook's unwatched stderr) and the drive
+  //     proceeds; the next drive re-findserts (rule.forbid.failhide — surfaced, never hidden).
+  //   a non-enrolled session skips entirely (getRouteDriverCloneAddr → null inside the sync).
+  // .why an orphan propagates even at hook.onBoot — a DELIBERATE exception to the boot contract
+  //   ("onBoot: show stone, exit 0, don't block session start"): a loose daemon nudges a session
+  //   forever with no handle to stop it (the wish's forbidden infiniloop), so a blocked boot that
+  //   forces a human to `kill -9` the named pid is the LESSER harm than a session that boots clean
+  //   while an unaddressable drone nudges on. this is the ONE fault allowed to break boot; every
+  //   other reminder fault honors exit-0. both branches are clamped in stepRouteDrive.integration
+  //   (case15 benign-surfaces-and-proceeds, case16 orphan-propagates-under-onBoot).
+  await syncRouteReminderForDrive(
+    { route, frontier, latest: passageLatest },
+    {
+      spawnDaemon: context?.spawnDaemon ?? ((i) => spawnRouteReminderDaemon(i)),
+    },
+  ).catch(async (reminderError: unknown) => {
+    // a loose daemon is the ONE un-proceedable fault → propagate, the hook fails loud
+    if (reminderError instanceof RouteReminderOrphanError) throw reminderError;
+
+    // every other fault leaves no process loose → surface to the watched channel, drive proceeds
+    await surfaceRouteReminderFault({ route, error: reminderError });
+  });
+
+  // the latest passage entry per stone, threaded through every branch below (hook pre-check,
+  // onBoot, onStop, direct mode). derived from the SAME `passageReportsRaw` read above — NOT a
+  // second read — so the reminder's liveness gate and this drive's push/halt decision share one
+  // consistent view of an append-only file (rule.forbid.behavior-hazards). getLatestForStone(name)
+  // reads from this snapshot rather than a second read of the file.
+  const passageLatestByStone = await getAllLatestPassageByStone({
+    route,
+    reports: passageReportsRaw,
+  });
   const getLatestForStone = (name: string): PassageReport | null =>
     passageLatestByStone.find((report) => report.stone === name) ?? null;
 
@@ -109,8 +182,7 @@ export const stepRouteDrive = async (input: {
       // escalation — so the replay matches the live pass (no dropped exhaustion guidance).
       const malfunctionReason = malfunction.report.reason ?? '';
       if (malfunctionReason.includes('budget exhausted')) {
-        const stonesForHalt = await getAllStones({ route });
-        const stoneForHalt = stonesForHalt.find(
+        const stoneForHalt = frontier.stones.find(
           (s) => s.name === malfunction.report.stone,
         );
         if (stoneForHalt) {
@@ -174,16 +246,9 @@ export const stepRouteDrive = async (input: {
     }
   }
 
-  // get all stones and artifacts
-  const stones = await getAllStones({ route });
-  const artifacts = await getAllStoneDriveArtifacts({ route });
-
-  // compute next stone(s)
-  const nextStones = computeNextStones({
-    stones,
-    artifacts,
-    query: '@next-one',
-  });
+  // the next stone(s) come from the ONE frontier snapshot read up front (shared with the reminder
+  // auto-wire's completion gate) — never a second read (rule.forbid.behavior-hazards)
+  const nextStones = frontier.nextStones;
 
   // no next stones → route complete, ok to stop
   if (nextStones.length === 0) {

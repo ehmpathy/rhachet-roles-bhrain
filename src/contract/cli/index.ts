@@ -19,6 +19,12 @@ import {
   routeStoneJudge,
   routeStoneSet,
 } from './route';
+import {
+  routeReminderDaemon,
+  routeReminderDel,
+  routeReminderGen,
+  routeReminderGet,
+} from './route.reminder';
 
 export const cli = {
   review,
@@ -38,6 +44,12 @@ export const cli = {
       set: routeStoneSet,
       del: routeStoneDel,
       judge: routeStoneJudge,
+    },
+    reminder: {
+      gen: routeReminderGen,
+      get: routeReminderGet,
+      del: routeReminderDel,
+      daemon: routeReminderDaemon,
     },
   },
   research: {
