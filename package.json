@@ -18,6 +18,7 @@
     "./sdk/route": "./dist/contract/sdk/route.js",
     "./cli": "./dist/contract/cli/index.js",
     "./cli/route": "./dist/contract/cli/route.js",
+    "./cli/route.reminder": "./dist/contract/cli/route.reminder.js",
     "./cli/review": "./dist/contract/cli/review.js",
     "./cli/review.by": "./dist/contract/cli/review.by.js",
     "./cli/reflect": "./dist/contract/cli/reflect.js",

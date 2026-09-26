@@ -4,7 +4,10 @@
 .agent/.notes
 .claude/*.lock
 *.tsbuildinfo
+.agent/.cache/
+.cache/
 .artifact
+.claude/scheduled_tasks.lock
 .env
 .review
 /.reviews
@@ -17,6 +20,7 @@
 .terraform.lock
 .vscode
 .yalc
+/.reviews
 coverage
 dist
 node_modules

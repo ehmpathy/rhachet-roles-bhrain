@@ -1,0 +1,3 @@
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
+
+exports[`REMINDER_NUDGE_PROSE the injected nudge text is stable and review-visible 1`] = `"🗿 you can do it! drive on, fulcrum, and converge"`;
