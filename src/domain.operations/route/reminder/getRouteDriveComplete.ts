@@ -10,13 +10,23 @@ import {
  *        from a mid-route pause: BOTH write the same `passed` tail. the stone frontier is the
  *        discriminator — no next stone ⇒ the drive is done. this mirrors stepRouteDrive's own
  *        completion test (`nextStones.length === 0 → route complete`), read through the SAME
- *        getRouteDriveFrontier snapshot so the two never disagree.
+ *        getRouteDriveFrontier snapshot AND by the same rule, so the two can never disagree.
  *
- * .why the stones-exist guard = the frontier is empty for TWO shapes: a truly-complete route (all
- *        stones passed) AND a route with NO stones enumerable (a passage-only fixture, or a route
- *        mid-scaffold). only the FIRST is a completion; the second is indeterminate. so completion
- *        is confirmed ONLY when stones exist AND the frontier is empty — an empty frontier with no
- *        stones is NOT a completion, so the reminder stays gated on status alone.
+ * .why the frontier ALONE decides (no stones-exist guard) = an empty frontier arises for two shapes:
+ *        a truly-complete route (every stone passed) AND a route with no stones enumerable (a
+ *        passage-only route, one whose stones were pruned/renamed after the drive finished, one
+ *        mid-scaffold). it is tempting to read only the FIRST as a completion and call the second
+ *        indeterminate — but stepRouteDrive, the authority on "is there a next stone to drive?",
+ *        does NOT make that distinction: it answers `nextStones.length === 0 → route complete! 🌴🤙`
+ *        on the frontier alone (stepRouteDrive.test case3, "no stones = all done"). so a
+ *        stones-exist guard here does not add caution — it SPLITS the two verdicts: the drive would
+ *        answer "complete, stop" while the reminder answered "active, nudge on", and the daemon
+ *        would nudge a session whose every drive replies `complete`. that unbounded nudge is
+ *        precisely the wish's forbidden infiniloop, and it evades BOTH other exit doors (a terminal
+ *        `passed` tail reads LIVE by status, and the clone is still reachable). one read, one
+ *        verdict: no next stone ⇒ no drive to advance ⇒ the reminder reaps
+ *        (rule.require.clamp-edge-cases — clamped on the CLASS in stepRouteReminderTick.integration
+ *        case8 and getRouteReminderDriveActivity.integration case4).
  *
  * .why the optional pre-read = stepRouteDrive already reads the frontier once for its own next-stone
  *        pick, so it threads that ONE snapshot down through here (via getRouteReminderDriveActivity)
@@ -39,8 +49,6 @@ export const getRouteDriveComplete = async (input: {
   const frontier =
     input.frontier ?? (await getRouteDriveFrontier({ route: input.route }));
 
-  // confirmed completion ⟺ stones exist AND the frontier is empty (all passed)
-  return {
-    complete: frontier.stones.length > 0 && frontier.nextStones.length === 0,
-  };
+  // completion ⟺ no next stone — the SAME rule stepRouteDrive applies to the SAME snapshot
+  return { complete: frontier.nextStones.length === 0 };
 };

@@ -76,16 +76,18 @@ describe('syncRouteReminderForDrive.integration', () => {
   };
 
   given('[case1] an enrolled session on a live drive (tail = passed)', () => {
-    const scene = useBeforeAll(async () => {
-      const { route } = await genRouteWithPassage({
+    const scene = useBeforeAll(async () =>
+      genRouteWithPassage({
         lines: [
           { stone: '1.vision', status: 'blocked' },
           { stone: '1.vision', status: 'approved' },
           { stone: '1.vision', status: 'passed' },
         ],
-      });
-      return { route };
-    });
+        // a still-open stone keeps this a MID-ROUTE pause, not a completed route: the `passed` tail
+        // reads LIVE by status, and the frontier stays non-empty so the drive has more to go
+        stonesOpen: ['5.1.execution'],
+      }),
+    );
 
     when('[t0] the drive syncs the reminder', () => {
       then(
@@ -213,6 +215,9 @@ describe('syncRouteReminderForDrive.integration', () => {
             { stone: '5.1.execution', status: 'arrived' },
             { stone: '5.1.execution', status: 'passed' },
           ],
+          // a still-open stone keeps this a MID-ROUTE pause, not a completed route: the `passed`
+          // tail reads LIVE by status, and the frontier stays non-empty so the drive has more to go
+          stonesOpen: ['5.3.verification'],
         });
         return { route };
       });
@@ -280,6 +285,9 @@ describe('syncRouteReminderForDrive.integration', () => {
             { stone: '5.1.execution', status: 'arrived' },
             { stone: '5.1.execution', status: 'passed' },
           ],
+          // a still-open stone keeps this a MID-ROUTE pause, not a completed route: the `passed`
+          // tail reads LIVE by status, and the frontier stays non-empty so the drive has more to go
+          stonesOpen: ['5.3.verification'],
         });
         return { route };
       });
@@ -335,6 +343,9 @@ describe('syncRouteReminderForDrive.integration', () => {
             { stone: '5.1.execution', status: 'arrived' },
             { stone: '5.1.execution', status: 'passed' },
           ],
+          // a still-open stone keeps this a MID-ROUTE pause, not a completed route: the `passed`
+          // tail reads LIVE by status, and the frontier stays non-empty so the drive has more to go
+          stonesOpen: ['5.3.verification'],
         });
         return { route };
       });
@@ -404,6 +415,9 @@ describe('syncRouteReminderForDrive.integration', () => {
             { stone: '5.1.execution', status: 'arrived' },
             { stone: '5.1.execution', status: 'passed' },
           ],
+          // a still-open stone keeps this a MID-ROUTE pause, not a completed route: the `passed`
+          // tail reads LIVE by status, and the frontier stays non-empty so the drive has more to go
+          stonesOpen: ['5.3.verification'],
         });
         return { route };
       });

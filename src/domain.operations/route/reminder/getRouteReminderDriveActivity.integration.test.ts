@@ -1,5 +1,3 @@
-import * as fs from 'fs/promises';
-import * as path from 'path';
 import { given, then, useBeforeAll, when } from 'test-fns';
 
 import { genRouteWithPassage } from '../.test/genRouteWithPassage';
@@ -57,15 +55,13 @@ describe('getRouteReminderDriveActivity.integration', () => {
 
   given('[case3] a COMPLETED drive (tail = passed, every stone passed)', () => {
     // the completion discriminator: a completed route writes the SAME `passed` tail as a mid-route
-    // pause, so the status alone reads LIVE. a REAL stone whose passage is `passed` makes the stone
-    // frontier empty AND stones exist ⇒ getRouteDriveComplete confirms completion ⇒ inactive.
-    const scene = useBeforeAll(async () => {
-      const { route } = await genRouteWithPassage({
+    // pause, so the status alone reads LIVE. the fixture seeds `1.vision.stone` per its passage
+    // entry, and that stone's passage is `passed` ⇒ the frontier comes back empty ⇒ inactive.
+    const scene = useBeforeAll(async () =>
+      genRouteWithPassage({
         lines: [{ stone: '1.vision', status: 'passed' }],
-      });
-      await fs.writeFile(path.join(route, '1.vision.stone'), 'the vision\n');
-      return { route };
-    });
+      }),
+    );
 
     when('[t0] the activity is read', () => {
       then('it is inactive with reason route-complete', async () => {
@@ -81,29 +77,40 @@ describe('getRouteReminderDriveActivity.integration', () => {
     });
   });
 
-  given(
-    '[case4] a passage-only fixture (a live status, no enumerable stones)',
-    () => {
-      const scene = useBeforeAll(async () => {
-        const { route } = await genRouteWithPassage({
-          lines: [{ stone: '1.vision', status: 'passed' }],
-        });
-        // a passage-only fixture with NO stone files: the frontier is empty BUT no stones exist, so
-        // getRouteDriveComplete does NOT read it as complete — completion stays gated on status alone
-        return { route };
+  given('[case4] a live status with NO enumerable stones', () => {
+    // the drive/reminder AGREEMENT clamp, at the composite grain. stepRouteDrive decides completion
+    // on the frontier ALONE — `nextStones.length === 0 → route complete! 🌴🤙` — with no
+    // stones-exist guard (stepRouteDrive.test case3, "no stones = all done"). this composite once
+    // layered such a guard on top, so a route with no enumerable stones split the two verdicts:
+    // the drive answered "complete, stop" while this answered "active, nudge on". that is an
+    // unbounded nudge into a session whose every drive replies `complete` — the wish's forbidden
+    // infiniloop — and it evades both other exit doors (a terminal `passed` reads LIVE by status,
+    // and the clone stays reachable). so the two must read completion by ONE rule, whatever the
+    // stone count. RED while the guard stood (active: true), GREEN once the rules aligned.
+    const scene = useBeforeAll(async () => {
+      const { route } = await genRouteWithPassage({
+        lines: [{ stone: '1.vision', status: 'passed' }],
+        // NO stone file — the real shape when a finished route's stones are pruned or renamed.
+        // the frontier is empty exactly as in case3; only the stone COUNT differs.
+        stones: 'none',
       });
+      return { route };
+    });
 
-      when('[t0] the activity is read for a passage-only fixture', () => {
-        then(
-          'a live status with no enumerable stones is active (not a false completion)',
-          async () => {
-            const activity = await getRouteReminderDriveActivity({
-              route: scene.route,
-            });
-            expect(activity).toEqual({ active: true, status: 'passed' });
-          },
-        );
-      });
-    },
-  );
+    when('[t0] the activity is read', () => {
+      then(
+        'it is inactive with reason route-complete — the same verdict the drive gives',
+        async () => {
+          const activity = await getRouteReminderDriveActivity({
+            route: scene.route,
+          });
+          expect(activity).toEqual({
+            active: false,
+            reason: 'route-complete',
+            status: 'passed',
+          });
+        },
+      );
+    });
+  });
 });
