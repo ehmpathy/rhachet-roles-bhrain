@@ -106,7 +106,7 @@
     "zod": "4.3.4"
   },
   "devDependencies": {
-    "@anthropic-ai/claude-code": "2.1.87",
+    "@anthropic-ai/claude-code": "2.1.283",
     "@biomejs/biome": "2.3.8",
     "@commitlint/cli": "19.5.0",
     "@commitlint/config-conventional": "19.5.0",
