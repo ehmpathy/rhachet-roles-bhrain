@@ -24,6 +24,7 @@ import {
   type FileDiff,
   getAllFileDiffsFromRange,
 } from '@src/domain.operations/review/getAllFileDiffsFromRange';
+import { getAllTargetFilesExceptDirs } from '@src/domain.operations/review/getAllTargetFilesExceptDirs';
 import { getReviewDisplayPath } from '@src/domain.operations/review/getReviewDisplayPath';
 import { isReviewRulesSkip } from '@src/domain.operations/review/getReviewOptionalSkipDecision';
 import {
@@ -463,14 +464,17 @@ export const stepReview = async (
     if (!hasPaths) return targetFilesFromDiffs;
     return [...new Set([...targetFilesFromDiffs, ...targetFilesFromPaths])];
   })();
-  const targetFiles = targetFilesJoined
-    .filter(
-      (file) =>
-        !negativePathGlobs.some((glob) =>
-          isPathMatchedByGlob({ path: file, glob }),
-        ),
-    )
-    .sort();
+  const targetFiles = (
+    await getAllTargetFilesExceptDirs({
+      files: targetFilesJoined.filter(
+        (file) =>
+          !negativePathGlobs.some((glob) =>
+            isPathMatchedByGlob({ path: file, glob }),
+          ),
+      ),
+      cwd,
+    })
+  ).sort();
 
   // write scope debug file before validation (enables debug even on failure)
   const logDirRelative = path.relative(cwd, logDir);

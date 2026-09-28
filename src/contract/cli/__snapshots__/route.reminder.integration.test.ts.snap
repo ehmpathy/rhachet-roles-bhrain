@@ -1,0 +1,31 @@
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
+
+exports[`route.reminder.cli.integration given: [case1] a blocked route (the daemon must self-exit at once) when: [t0] the daemon entrypoint runs against the blocked route then: it logs its exit reason — route-not-live, tick 1 (observability) 1`] = `"route.reminder.daemon exited: reason=route-not-live ticks=1 route=<route> clone=@:driver-1"`;
+
+exports[`route.reminder.cli.integration given: [case2] a route with no reminder set when: [t0] detect runs for an unset session then: it reports NOT live AND names the never-registered case 1`] = `"reminder is not live — no daemon was ever registered for this session; register one with route.reminder.gen (or it auto-registers on the next route.drive while the route is a live drive)"`;
+
+exports[`route.reminder.cli.integration given: [case3] a detect call that lacks --clone-addr, outside an enrolled session when: [t0] detect runs with --route but no --clone-addr then: it fails loud with an error that names the fix 1`] = `
+"BadRequestError: --clone-addr is required
+
+{
+  "hint": "e.g. --clone-addr @:driver-1 (auto-resolves inside an enrolled clone)"
+}"
+`;
+
+exports[`route.reminder.cli.integration given: [case5] a fresh route + a fake spawn whose daemon is a REAL live pid when: [t0] gen registers the reminder then: it reports the daemon spawned and live, with the pid 1`] = `"reminder registered — daemon spawned and live (pid <pid>)"`;
+
+exports[`route.reminder.cli.integration given: [case6] a fresh route + a fake spawn whose daemon is DEAD on arrival when: [t0] gen registers onto a daemon that exited at once then: it reports the dead-on-arrival truth, never a phantom "spawned" success 1`] = `"reminder daemon spawned (pid <pid>) but exited on arrival — the spawn crashed before its first tick; daemon log: <route>/.route/daemon.of=reminder-driveon.session=~40~3adriver-1.log"`;
+
+exports[`route.reminder.cli.integration given: [case6] a fresh route + a fake spawn whose daemon is DEAD on arrival when: [t1] the dead-on-arrival handle was reconciled then: a later get reports NOT live AND the went-quiet case 1`] = `"reminder is not live — a daemon was registered but has gone quiet (self-exited or crashed); read why: <route>/.route/daemon.of=reminder-driveon.session=~40~3adriver-1.log"`;
+
+exports[`route.reminder.cli.integration given: [case7] a fresh route with no reminder set when: [t0] del runs for an unset session (idempotent no-op) then: it reports the reminder was not live 1`] = `"reminder was not live (no live daemon to stop)"`;
+
+exports[`route.reminder.cli.integration given: [case8] a session whose handle already names a live daemon when: [t0] gen runs against the already-live session (findsert hit) then: it reports the daemon already live and spawns no duplicate 1`] = `"reminder already live — daemon pid <pid> (no duplicate spawned)"`;
+
+exports[`route.reminder.cli.integration given: [case9] a session whose handle names a genuinely live daemon when: [t0] del runs against the live daemon then: it stops the live daemon, clears the handle, and reaps the pid 1`] = `"reminder deregistered — live daemon stopped, handle cleared"`;
+
+exports[`route.reminder.cli.integration given: [case10] a session whose handle names a genuinely live daemon when: [t0] get runs against the live session then: it reports the reminder is live, with the pid 1`] = `"reminder is live — daemon pid <pid>"`;
+
+exports[`route.reminder.cli.integration given: [case11] gen on a blocked (not-active) route when: [t0] gen registers onto the blocked route then: it reports the honest not-a-live-drive reason, never a phantom live 1`] = `"reminder daemon spawned (pid <pid>) but the route is not a live drive (route-not-live) — it self-exits on arrival; daemon log: <route>/.route/daemon.of=reminder-driveon.session=~40~3adriver-1.log"`;
+
+exports[`route.reminder.cli.integration given: [case13] a session whose auto-respawn breaker has tripped when: [t0] get runs against the circuit-broken session then: it reports the circuit-broken state and names the re-arm fix 1`] = `"reminder is not live — auto-respawn is CIRCUIT-BROKEN after 6 consecutive crash-on-arrivals (the spawn keeps dying on boot); the drive will NOT re-spawn it until you re-arm. fix: repair the spawn, then run route.reminder.gen. crash history: <route>/.route/daemon.of=reminder-driveon.session=~40~3adriver-1.log"`;

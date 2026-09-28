@@ -1,9 +1,19 @@
 import * as fs from 'fs/promises';
 import * as path from 'path';
-import { genTempDir, given, then, useBeforeAll, useThen, when } from 'test-fns';
+import {
+  genTempDir,
+  getError,
+  given,
+  then,
+  useBeforeAll,
+  useThen,
+  when,
+} from 'test-fns';
 
 import { RouteStone } from '@src/domain.objects/Driver/RouteStone';
 
+import { getRouteReminderLogPath } from './reminder/getRouteReminderLogPath';
+import { RouteReminderOrphanError } from './reminder/RouteReminderOrphanError';
 import { stepRouteDrive } from './stepRouteDrive';
 import { setStoneAsPromised } from './stones/setStoneAsPromised';
 
@@ -27,8 +37,27 @@ const asStableDriveStdout = (stdout: string | undefined): string | undefined =>
  *
  * .note = tests pass route param directly to avoid bind conflicts
  *         (all tests run in same git repo context)
+ *
+ * .mock = the RouteReminder auto-wire cases below (case14+) inject `spawnDaemon` via
+ *         stepRouteDrive's OWN declared `context` seam (rule.require.dependency-injection) —
+ *         never a `jest.mock`/`jest.spyOn` of a global, so this is not the mock class
+ *         rule.forbid.integration.mocks forbids. it returns a REAL pid (`process.pid`), so any
+ *         downstream liveness probe still reads a true OS process.
+ * .why mock = a real detached-spawn chain is proven once, exhaustively, in
+ *         blackbox/driver.route.reminder.acceptance.test.ts (case4/case5) — these cases prove
+ *         stepRouteDrive's own auto-wire call (find-or-spawn and reap sequencing), which needs
+ *         only a real pid.
  */
 describe('stepRouteDrive.integration', () => {
+  // the auto-wire reminder-sync keys on process.env.RHACHET_CLONE_SERIAL; guard it so a stray
+  // value can neither leak into the non-enrolled cases (which must skip the reminder) nor persist
+  // past the one enrolled case that sets it.
+  const priorSerial = process.env.RHACHET_CLONE_SERIAL;
+  afterEach(() => {
+    if (priorSerial === undefined) delete process.env.RHACHET_CLONE_SERIAL;
+    else process.env.RHACHET_CLONE_SERIAL = priorSerial;
+  });
+
   given('[case1] route with unpassed stones', () => {
     const scene = useBeforeAll(async () => {
       const tempDir = genTempDir({ slug: 'drive-int-case1', git: true });
@@ -872,6 +901,214 @@ describe('stepRouteDrive.integration', () => {
           );
         });
       });
+    },
+  );
+
+  // .why = the auto-wire's ACTIVE branch, exercised where it actually runs (in stepRouteDrive, not
+  //        genRouteReminder in isolation): a live, unfinished drive must register exactly one
+  //        reminder daemon for the enrolled session.
+  given(
+    '[case15] an enrolled driver session on a live, unfinished drive',
+    () => {
+      // two stones: stone 1 passed (passage tail = live), stone 2 still open → NOT complete, so
+      // the drive returns stone-2 guidance AND the auto-wire registers the reminder for the session
+      const scene = useBeforeAll(async () => {
+        const tempDir = genTempDir({ slug: 'drive-int-case15', git: true });
+        await fs.writeFile(
+          path.join(tempDir, '0.wish.md'),
+          '# wish\n\nbuild a feature.',
+        );
+        await fs.writeFile(
+          path.join(tempDir, '1.stone'),
+          '# stone: first\n\ndone when:\n- first works',
+        );
+        await fs.writeFile(
+          path.join(tempDir, '1.i1.md'),
+          '# implementation\n\nfirst done.',
+        );
+        await fs.writeFile(
+          path.join(tempDir, '2.stone'),
+          '# stone: second\n\ndone when:\n- second works',
+        );
+        await fs.mkdir(path.join(tempDir, '.route'), { recursive: true });
+        await fs.writeFile(
+          path.join(tempDir, '.route', 'passage.jsonl'),
+          JSON.stringify({ stone: '1', status: 'passed' }) + '\n',
+        );
+        return { tempDir };
+      });
+
+      when(
+        '[t0] stepRouteDrive is called with a fake spawn + enrolled env',
+        () => {
+          // record spawns; return this process's own (live) pid so the handle reads live and the
+          // happy path never signals it (the jest worker is safe)
+          const spawns: { route: string; cloneAddr: string }[] = [];
+          const result = useThen('returns stone guidance', async () => {
+            process.env.RHACHET_CLONE_SERIAL = 'clone-case15';
+            return stepRouteDrive(
+              { route: scene.tempDir },
+              {
+                spawnDaemon: async (i) => {
+                  spawns.push({ route: i.route, cloneAddr: i.cloneAddr });
+                  return { pid: process.pid };
+                },
+              },
+            );
+          });
+
+          then('the drive still surfaces the next (unfinished) stone', () => {
+            expect(result.emit).not.toBeNull();
+            expect(result.emit?.stdout).toContain('2');
+          });
+
+          then(
+            'the auto-wire spawned exactly one reminder daemon for the session',
+            () => {
+              expect(spawns).toEqual([
+                // getRouteDriverCloneAddr auto-prefixes the raw env serial with '@:'
+                { route: scene.tempDir, cloneAddr: '@:clone-case15' },
+              ]);
+            },
+          );
+        },
+      );
+    },
+  );
+
+  // .why = the fault-guard's BENIGN branch, exercised where it actually runs (in stepRouteDrive,
+  //        not genRouteReminder in isolation): a non-orphan reminder fault must NOT break the drive,
+  //        and must land in the WATCHED per-session log — not the hook's unwatched stderr.
+  given(
+    '[case16] an enrolled session whose reminder sync throws a BENIGN (non-orphan) fault',
+    () => {
+      // same live, unfinished drive as case15 → the auto-wire reaches the active-branch spawn
+      const scene = useBeforeAll(async () => {
+        const tempDir = genTempDir({ slug: 'drive-int-case16', git: true });
+        await fs.writeFile(
+          path.join(tempDir, '0.wish.md'),
+          '# wish\n\nbuild a feature.',
+        );
+        await fs.writeFile(
+          path.join(tempDir, '1.stone'),
+          '# stone: first\n\ndone when:\n- first works',
+        );
+        await fs.writeFile(
+          path.join(tempDir, '1.i1.md'),
+          '# implementation\n\nfirst done.',
+        );
+        await fs.writeFile(
+          path.join(tempDir, '2.stone'),
+          '# stone: second\n\ndone when:\n- second works',
+        );
+        await fs.mkdir(path.join(tempDir, '.route'), { recursive: true });
+        await fs.writeFile(
+          path.join(tempDir, '.route', 'passage.jsonl'),
+          JSON.stringify({ stone: '1', status: 'passed' }) + '\n',
+        );
+        return { tempDir };
+      });
+
+      when(
+        '[t0] stepRouteDrive is called and the spawn boundary faults',
+        () => {
+          const result = useThen(
+            'the drive resolves (does NOT throw)',
+            async () => {
+              process.env.RHACHET_CLONE_SERIAL = 'clone-case16';
+              return stepRouteDrive(
+                { route: scene.tempDir },
+                {
+                  spawnDaemon: async () => {
+                    throw new Error('spawn boom (benign)');
+                  },
+                },
+              );
+            },
+          );
+
+          then('the drive still surfaces the next (unfinished) stone', () => {
+            expect(result.emit).not.toBeNull();
+            expect(result.emit?.stdout).toContain('2');
+          });
+
+          then(
+            'the benign fault lands in the WATCHED per-session reminder log',
+            async () => {
+              const logPath = getRouteReminderLogPath({
+                route: scene.tempDir,
+                // getRouteDriverCloneAddr auto-prefixes the raw env serial with '@:'
+                cloneAddr: '@:clone-case16',
+              });
+              const logText = await fs.readFile(logPath, 'utf-8');
+              expect(logText).toContain('RouteReminder auto-sync fault');
+              expect(logText).toContain('spawn boom (benign)');
+            },
+          );
+        },
+      );
+    },
+  );
+
+  // .why = the fault-guard's ORPHAN branch, exercised where it actually runs. a RouteReminderOrphanError
+  //        raised anywhere in the reminder sync must PROPAGATE out of stepRouteDrive — even at
+  //        hook.onBoot, the DELIBERATE exception to the exit-0 boot contract (a loose daemon is worse
+  //        than a blocked boot). this proves the guard's discrimination logic actually wires up, not
+  //        just that genRouteReminder throws the right type in isolation.
+  given(
+    '[case17] an enrolled session whose reminder sync throws a RouteReminderOrphanError',
+    () => {
+      const scene = useBeforeAll(async () => {
+        const tempDir = genTempDir({ slug: 'drive-int-case17', git: true });
+        await fs.writeFile(
+          path.join(tempDir, '0.wish.md'),
+          '# wish\n\nbuild a feature.',
+        );
+        await fs.writeFile(
+          path.join(tempDir, '1.stone'),
+          '# stone: first\n\ndone when:\n- first works',
+        );
+        await fs.writeFile(
+          path.join(tempDir, '1.i1.md'),
+          '# implementation\n\nfirst done.',
+        );
+        await fs.writeFile(
+          path.join(tempDir, '2.stone'),
+          '# stone: second\n\ndone when:\n- second works',
+        );
+        await fs.mkdir(path.join(tempDir, '.route'), { recursive: true });
+        await fs.writeFile(
+          path.join(tempDir, '.route', 'passage.jsonl'),
+          JSON.stringify({ stone: '1', status: 'passed' }) + '\n',
+        );
+        return { tempDir };
+      });
+
+      when(
+        '[t0] stepRouteDrive runs as hook.onBoot and the sync orphans',
+        () => {
+          then(
+            'the orphan REJECTS the drive (does not honor exit-0 boot) — it propagates out',
+            async () => {
+              process.env.RHACHET_CLONE_SERIAL = 'clone-case17';
+              const error = await getError(
+                stepRouteDrive(
+                  { route: scene.tempDir, when: 'hook.onBoot' },
+                  {
+                    spawnDaemon: async () => {
+                      throw new RouteReminderOrphanError(
+                        'a daemon may be orphaned and still alive; kill it manually: kill -9 4242',
+                        { pid: 4242, route: scene.tempDir },
+                      );
+                    },
+                  },
+                ),
+              );
+              expect(error).toBeInstanceOf(RouteReminderOrphanError);
+            },
+          );
+        },
+      );
     },
   );
 });

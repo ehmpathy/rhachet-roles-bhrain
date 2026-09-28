@@ -55,6 +55,19 @@ your edit — the reviewer never learns of a repair you did not write down, and 
 
 `--as approved` — only humans grant approval. if you need approval, signal `--as arrived` and wait.
 
+### keep the drive alive on a long road
+
+on a long, autonomous drive that may span api outages or idle stretches, a **RouteReminder**
+keeps the session in motion — a scheduled nudge that pokes it back into motion, and self-exits the
+moment the route blocks, halts, or the session dies (no infiniloops).
+
+you do **not** turn it on by hand: `route.drive` findserts the reminder automatically on every
+drive while the route is live, and reaps it when the route is dead. an enrolled drive is covered
+with no action from you.
+
+the full runbook — the auto path, the manual inspect/override skills, and what it does NOT cover —
+is in `howto.route-reminder.[guide].md`.
+
 ---
 
 ## the owl's wisdom 🌙

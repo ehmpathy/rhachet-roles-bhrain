@@ -42,27 +42,25 @@ const VERDICT_ATTEMPTS = 3;
 const BRAIN = 'fireworks/deepseek/v4-flash';
 
 /**
- * .what = replaces a NONZERO blocker/nitpick count with `[N]`, and leaves a zero count alone
- * .why = a concern count is the BRAIN's verdict, never the guard's render. the same rubric on the
- *        same fixture returned `1 blocker` on one run and `2 blockers` on the next, which failed a
- *        snapshot that had pinned the magnitude (measured 2026-09-19, `[case-seam-findings]`, both
- *        snapshot assertions). so the magnitude is masked and every deterministic neighbour is kept:
+ * .what = masks the concern counts a probabilistic reviewer chooses
+ * .why = a concern count is the BRAIN's verdict, never the guard's render; one rubric on one
+ *        fixture varies run to run. the seam under test is the guard, so only what the guard
+ *        decides stays pinned:
  *
- *          - a ZERO count survives verbatim, because `0 blockers` is what makes a verdict APPROVED.
- *            a pass case whose brain raises a concern still fails its snapshot, as it must
- *          - the verdict word (`approved` / `rejected`), the 🔴 / ✓ glyph, the judge outcome, and the
- *            threshold it was judged against (`> 0`) all survive, so the verdict CLASS stays pinned
- *          - the singular/plural noun collapses with the digit, since `1 blocker` and `2 blockers`
- *            differ in both
+ *          - blockers: a NONZERO count masks to `[N]`; a ZERO survives, since `0 blockers` is
+ *            what makes a verdict APPROVED — a pass case whose brain raises a blocker still fails
+ *          - nitpicks: EVERY count masks, zero included, with its ✓ / 🟠 glyph. the judge allows
+ *            nitpicks up to its threshold, so no verdict here turns on their count
+ *          - the verdict word, the 🔴 glyph, the judge outcome, and its threshold survive, so the
+ *            verdict CLASS stays pinned
  *
- *        ⇒ what is dropped is the ONE field a probabilistic reviewer owns. that a parseable count
- *          reached the guard at all is clamped by a direct `toMatch(/\d+\s*blockers?/i)` assertion
- *          in each case, not by this snapshot — so no coverage moves, only the baseline's claim
- *          about what is stable (rule.forbid.test-intent-violations: the intent was the SEAM).
+ *        ⇒ a direct `toMatch(/\d+\s*blockers?/i)` assertion per case clamps that a parseable
+ *          count reached the guard; this snapshot pins the seam's shape, not the brain's tally.
  */
 const maskConcernMagnitudes = (text: string): string =>
   text
-    .replace(/\b(?!0\b)\d+ (blocker|nitpick)s?\b/g, '[N] $1s')
+    .replace(/\b(?!0\b)\d+ blockers?\b/g, '[N] blockers')
+    .replace(/\b\d+ nitpicks?\b(?: ✓| 🟠)?/g, '[N] nitpicks')
     .replace(
       /\b(blockers|nitpicks) exceed threshold \((?!0\b)\d+ > (\d+)\)/g,
       '$1 exceed threshold ([N] > $2)',
@@ -70,20 +68,15 @@ const maskConcernMagnitudes = (text: string): string =>
 
 /**
  * .what = sanitizes a route.stone.set guard-tree stdout so it snapshots stably
- * .why = the guard tree carries THREE volatile dimensions: verdict durations (`rejected 109.5s`),
+ * .why = the guard tree carries three volatile dimensions: verdict durations (`rejected 109.5s`),
  *        the hash+iteration segment of each peer-artifact path (`.i001.<hash>.r001.`), and the
- *        nonzero concern counts a probabilistic reviewer chose. the shared sanitizeTimeForSnapshot
- *        masks every duration verb + the temp-dir prefix; we add the hash-scrub so the
- *        `given:`/`taken:` artifact references stay stable, and maskConcernMagnitudes so a
- *        `1 blocker` → `2 blockers` drift cannot fail a seam that never graded the magnitude.
- *
- *        ⚠️ this `.why` named the blocker/nitpick counts as DETERMINISTIC until 2026-09-19, and the
- *           corpus refuted it — `[case-seam-findings]` went red on a count the brain picked. a
- *           sanitizer's docblock is a CLAIM about what varies, and a claim about variance is
- *           checkable against the run log.
+ *        concern counts a probabilistic reviewer chose. sanitizeTimeForSnapshot masks durations
+ *        and the temp-dir prefix; the hash-scrub keeps `given:`/`taken:` references stable; and
+ *        maskConcernMagnitudes masks the counts (see its `.why`).
  *
  *        what remains is deterministic: the `r{n}: <slug> (l1, N/3)` reviewer row, the verdict word,
- *        a zero count where one is owed, and the judge outcomes — the guard EXPERIENCE a human reads.
+ *        a zero blocker count where one is owed, and the judge outcomes — the guard EXPERIENCE a
+ *        human reads.
  */
 const sanitizeGuardTreeForSnapshot = (stdout: string): string =>
   maskConcernMagnitudes(
@@ -101,9 +94,8 @@ const sanitizeGuardTreeForSnapshot = (stdout: string): string =>
  *        subtrees (token counts, cost, latency, timestamped log paths) — plus a `logs:` line under
  *        the verdict header. a byte-exact snapshot would fight rule.require.repeatable-for-llm-tests.
  *
- *        ⚠️ and its `summary` block + the guard's `└─ tallied` footer BOTH restate the brain's own
- *           concern counts, so maskConcernMagnitudes runs over the result — see its `.why`. a zero
- *           survives; only a nonzero magnitude collapses to `[N]`.
+ *        its `summary` block and the guard's `└─ tallied` footer both restate the brain's concern
+ *        counts, so maskConcernMagnitudes runs over the result (see its `.why`).
  *
  *        so we drop those volatile regions and keep the DETERMINISTIC structure that proves
  *        disintermediation flows through the guard: the two `🪨 run solid skill` banners (review.by

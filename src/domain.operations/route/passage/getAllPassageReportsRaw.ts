@@ -1,7 +1,10 @@
 import * as fs from 'fs/promises';
+import { UnexpectedCodePathError } from 'helpful-errors';
 import * as path from 'path';
 
 import { PassageReport } from '@src/domain.objects/Driver/PassageReport';
+
+import { withEnoentAsNull } from '../withEnoentAsNull';
 
 /**
  * .what = every passage entry from passage.jsonl, in raw append (file) order
@@ -22,17 +25,41 @@ export const getAllPassageReportsRaw = async (input: {
 }): Promise<PassageReport[]> => {
   const passagePath = path.join(input.route, '.route', 'passage.jsonl');
 
-  // no file → no passage yet
-  const fileFound = await fs
-    .access(passagePath)
-    .then(() => true)
-    .catch(() => false);
-  if (!fileFound) return [];
+  // read the log; ALLOWLIST only ENOENT (no passage.jsonl yet → no passage) and rethrow every
+  // other fault. a blanket catch here would collapse a real EACCES/EPERM into "route not live",
+  // and the daemon would self-exit `route-not-live` with no trace — the exact failhide the torn-line
+  // failloud below guards against (rule.forbid.failhide — allowlist the expected code, rethrow rest).
+  const content = await withEnoentAsNull(() =>
+    fs.readFile(passagePath, 'utf-8'),
+  );
+  if (content === null) return []; // no file → no passage yet
 
-  // parse every entry in raw append order (last line = most recent write)
-  const content = await fs.readFile(passagePath, 'utf-8');
+  // parse every entry in raw append order (last line = most recent write). a torn line (a
+  // partial/interleaved append — plausible on an append-only log the daemon reads every ~20min)
+  // must fail LOUD with the torn line + a fix hint (rule.require.failloud), never a cryptic
+  // bare `SyntaxError: Unexpected token`. a torn line stays fatal (crash-loud is U3-safe: the
+  // daemon dies rather than misread a route's status), but now names what to fix.
+  // tag each line with its PHYSICAL file line number BEFORE the blank-line filter — else a torn
+  // line's reported lineNumber would be its post-filter index, off by every blank line above it, and
+  // misdirect whoever repairs the file (rule.require.failloud — the fix hint must name the real line).
   return content
     .split('\n')
-    .filter(Boolean)
-    .map((line) => new PassageReport(JSON.parse(line)));
+    .map((line, index) => ({ line, lineNumber: index + 1 }))
+    .filter((entry) => entry.line.length > 0)
+    .map((entry) => {
+      try {
+        return new PassageReport(JSON.parse(entry.line));
+      } catch (error) {
+        throw new UnexpectedCodePathError(
+          'passage.jsonl has a torn/unparseable line — cannot read route status',
+          {
+            passagePath,
+            lineNumber: entry.lineNumber,
+            line: entry.line,
+            hint: 'the append-only passage.jsonl holds one JSON object per line; a partial/torn line must be repaired or removed',
+            parseError: error instanceof Error ? error.message : String(error),
+          },
+        );
+      }
+    });
 };

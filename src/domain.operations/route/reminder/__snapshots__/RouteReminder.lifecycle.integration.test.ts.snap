@@ -1,0 +1,58 @@
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
+
+exports[`RouteReminder.lifecycle.integration given: [case1] a route with no reminder set when: [t0] the reminder is detected before any register then: the journey step matches its snapshot 1`] = `
+{
+  "reminder": null,
+  "step": "t0.detect-before-register",
+}
+`;
+
+exports[`RouteReminder.lifecycle.integration given: [case1] a route with no reminder set when: [t1] the reminder is registered then: the journey step matches its snapshot 1`] = `
+{
+  "created": true,
+  "detectedPid": "<live-pid>",
+  "handleName": "daemon.of=reminder-driveon.session=~40~3adriver-1.pid",
+  "registeredPid": "<live-pid>",
+  "step": "t1.register",
+}
+`;
+
+exports[`RouteReminder.lifecycle.integration given: [case1] a route with no reminder set when: [t2] the reminder is registered again (findsert) then: the journey step matches its snapshot 1`] = `
+{
+  "created": false,
+  "reusedExtantPid": true,
+  "step": "t2.findsert",
+}
+`;
+
+exports[`RouteReminder.lifecycle.integration given: [case1] a route with no reminder set when: [t3] the reminder is deregistered then: the journey step matches its snapshot 1`] = `
+{
+  "handleExists": false,
+  "reminderAfter": null,
+  "step": "t3.deregister",
+  "stopped": true,
+}
+`;
+
+exports[`RouteReminder.lifecycle.integration given: [case1] a route with no reminder set when: [t4] deregister runs again on the absent reminder then: the journey step matches its snapshot 1`] = `
+{
+  "step": "t4.deregister-again",
+  "stopped": false,
+}
+`;
+
+exports[`RouteReminder.lifecycle.integration given: [case2] a stale pid file left by a crashed daemon when: [t0] detect reads the stale handle then: the journey step matches its snapshot 1`] = `
+{
+  "reminder": null,
+  "step": "t0.detect-stale",
+}
+`;
+
+exports[`RouteReminder.lifecycle.integration given: [case2] a stale pid file left by a crashed daemon when: [t1] register runs over the stale handle then: the journey step matches its snapshot 1`] = `
+{
+  "created": true,
+  "differsFromDeadPid": true,
+  "pid": "<live-pid>",
+  "step": "t1.register-over-stale",
+}
+`;

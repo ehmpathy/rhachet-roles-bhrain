@@ -1,0 +1,27 @@
+# 8.dogfood.reminder
+
+## .what
+
+prove the RouteReminder daemon delivers its nudge end to end, against rhachet 1.47.6 —
+whose `clone say` now reports a mid-turn message as `enqueued` (a SUCCESS verdict) rather
+than a false `MalfunctionError`.
+
+## .why
+
+the prior dogfood stone (`7.dogfood`) proved the daemon's own crash-loud self-exit design
+held up correctly under an UPSTREAM `clone say` defect, reported as `ehmpathy/rhachet#527`.
+that defect is fixed upstream in rhachet 1.47.6 (PR #548), which gave `clone say` a screen
+read channel over the input triple and six verdicts — `enqueued` among them, as a success.
+
+so the one path `7.dogfood` could NOT prove — a CLEAN tick delivery into a live session —
+is provable now. this stone proves it, and closes the loop on the reported defect.
+
+## .done when
+
+- a daemon is registered for this session via `route.reminder.gen`, on auto-derived flags
+- `route.reminder.get` reports the reminder live, with a real pid that answers `kill -0`
+- a tick delivers the nudge into THIS session, observed as a real injected input
+- that tick writes NO crash log — the delivery is clean, not a tolerated fault
+- `route.reminder.del` deregisters it cleanly, with no orphan pid left on the host
+- the `sayToClone` exit-code contract is re-read against the new six-verdict CLI, and any
+  mismatch is either fixed or recorded as a named follow-up

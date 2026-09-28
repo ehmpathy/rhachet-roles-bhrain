@@ -38,6 +38,12 @@ always:
       - briefs/define.invariant.review.peer.absorption.disputable-regardless-of-verdict.md
       - briefs/define.invariant.review.peer.budget.urgent-earns-budget.md
       - briefs/define.invariant.review.peer.judge.urgent-guides-the-budget-ask.md
+      # the RouteReminder runbook — the auto-wire path, the manual inspect/override skills,
+      # and what the nudge does NOT cover. ref because a driver never turns the reminder on:
+      # route.drive findserts it and reaps it, so an enrolled drive is covered with no action.
+      # howto.drive-routes (say, below) names this path for the rare case a driver must
+      # inspect or override by hand — the dereference case exactly
+      - briefs/howto.route-reminder.[guide].md
     say:
       # the map of the SYSTEM a driver operates within — the review gates in order,
       # the invariant behind each, and what is required of the driver to clear it.

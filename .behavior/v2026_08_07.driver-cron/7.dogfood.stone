@@ -1,0 +1,20 @@
+# stone: 7.dogfood
+
+.what = dogfood the RouteReminder daemon live, end to end, against THIS route + this real driver session
+
+.why = the vision demands the daemon survive an idle/outage stall by inject of a real nudge via
+`rhx clone say`. every prior proof is a fake sayToClone or a bogus clone addr. this stone proves
+the REAL path: a real enrolled clone, a real spawned daemon, a real injected nudge that reaches this
+session pty input, observed firsthand.
+
+done when:
+- confirm this session is an enrolled clone (rhx clone whoami) and capture its `@:`-prefixed addr
+- register a real RouteReminder daemon for THIS route + THIS session (route.reminder.gen), with a
+  short --interval-ms so the tick fires quickly
+- observe the daemon is live (route.reminder.get) and its pid answers kill -0
+- wait for a real tick to fire and confirm - via the daemon log AND/OR a visible nudge that reaches
+  this session - that `rhx clone say` actually delivered the prose successfully this time (not the
+  "did NOT leave its input buffer" fault seen in the earlier dogfood)
+- deregister the daemon (route.reminder.del) and confirm the handle is cleared, no orphan pid left
+- articulate the proof in the yield: what was observed, the daemon log excerpt, and whether the
+  earlier reach-fault reproduces or was a one-off

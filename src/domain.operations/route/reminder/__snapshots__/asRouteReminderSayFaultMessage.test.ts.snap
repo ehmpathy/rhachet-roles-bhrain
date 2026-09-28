@@ -1,0 +1,7 @@
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
+
+exports[`asRouteReminderSayFaultMessage rhx absent on PATH (ENOENT) → names install/PATH remedy 1`] = `"rhx clone say failed: rhx not found on PATH — install rhx or fix PATH"`;
+
+exports[`asRouteReminderSayFaultMessage timeout kills the child (killed) → names the wedge + duration 1`] = `"rhx clone say timed out after 30000ms — the clone or rhx is wedged"`;
+
+exports[`asRouteReminderSayFaultMessage unexpected non-2 exit code → names the exit + points at stderr 1`] = `"rhx clone say failed unexpectedly (exit 7) — see stderr"`;

@@ -15,12 +15,19 @@ import { getAllPassageReportsRaw } from './getAllPassageReportsRaw';
  *         BOTH an `approved` row and a `malfunction` row — a scan would see a false
  *         malfunction halt after the human already approved. raw last-wins per stone avoids
  *         that by construction.
+ *
+ * .note = an optional pre-read `reports` lets a caller thread a raw-report snapshot it already
+ *         read (stepRouteDrive reads passage.jsonl once per hook, then derives BOTH the true-latest
+ *         entry — for the reminder — AND this per-stone reduction from that ONE read). supplied, no
+ *         second file read happens here; omitted, this reads the file itself (its other callers).
  */
 export const getAllLatestPassageByStone = async (input: {
   route: string;
+  reports?: PassageReport[];
 }): Promise<PassageReport[]> => {
-  // read every entry in raw append order via the one shared parser
-  const allReports = await getAllPassageReportsRaw({ route: input.route });
+  // read every entry in raw append order via the one shared parser — or reuse the threaded snapshot
+  const allReports =
+    input.reports ?? (await getAllPassageReportsRaw({ route: input.route }));
 
   // last-wins per stone, in raw file order (NO sticky re-bucket)
   const latestByStone = new Map<string, PassageReport>();
