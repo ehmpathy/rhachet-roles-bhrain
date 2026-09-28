@@ -147,5 +147,10 @@
       "path": "./node_modules/cz-conventional-changelog"
     }
   },
+  "pnpm": {
+    "onlyBuiltDependencies": [
+      "@anthropic-ai/claude-code"
+    ]
+  },
   "packageManager": "pnpm@10.24.0"
 }
