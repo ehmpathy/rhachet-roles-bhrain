@@ -22,7 +22,8 @@ jobs:
           NODE_VERSION=$(cat .nvmrc | tr -d '[:space:]');
           echo "NODE_VERSION=$NODE_VERSION"
           echo "node-version=$NODE_VERSION" >> "$GITHUB_OUTPUT"
-          PACKAGE_DEPS_HASH=$(md5sum pnpm-lock.yaml | awk '{print $1}');
+          # hash the lockfile + pnpm settings; a build-allowlist change alters node_modules but not the lockfile
+          PACKAGE_DEPS_HASH=$( (cat pnpm-lock.yaml; jq -c '.pnpm // {}' package.json) | md5sum | awk '{print $1}');
           echo "PACKAGE_DEPS_HASH=$PACKAGE_DEPS_HASH"
           echo "package-deps-hash=$PACKAGE_DEPS_HASH" >> "$GITHUB_OUTPUT"
 
