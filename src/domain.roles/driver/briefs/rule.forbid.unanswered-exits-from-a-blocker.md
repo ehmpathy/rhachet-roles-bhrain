@@ -18,7 +18,7 @@ paper, never a substitute for it.
 an edit is one keystroke. an answer is a written argument. so the cheap door is taken by default,
 and **no driver who takes it feels dishonest** — the artifact did change, the reviewer did re-run.
 
-⚠️ **the worked case: one stone, 28 rounds of review, ZERO takens — and a blocker count that never
+🟡 **the worked case: one stone, 28 rounds of review, ZERO takens — and a blocker count that never
 descended.** takens landed, and it converged in three.
 
 🔴 **reported, never measured here**, so do not cite it as premise; it says why anyone looked. ⇒
@@ -37,9 +37,9 @@ it cannot refuse one that leaves the right trace with the wrong content.**
 |---|---|---|
 | 🔴 **edit the code and re-roll** | the reviewer may not re-raise it. **absence of a re-raise is not agreement** | ✅ **refused** — the debt is keyed to the reviewer, so it outlives the edit, and the entrance gate reads it before a round can start |
 | **an empty or token `.taken`** | the engine tests that the file exists, never what it says. an empty one costs a round and is re-raised | ⛔ **open** — `setStoneAsFeedbackAbsorbed` asserts existence, never content |
-| **answer some points, not all** | the reviewer drops a point that carries a response and **re-raises one that does not** | ⚠️ **partly** — the gate counts **reviewers**, never points. one `.taken` discharges a slug however many points it raised |
+| **answer some points, not all** | the reviewer drops a point that carries a response and **re-raises one that does not** | 🟡 **partly** — the gate counts **reviewers**, never points. one `.taken` discharges a slug however many points it raised |
 | **let the reviewer exhaust** | exhaustion is a budget, not a verdict. to spend it rather than answer is the coast `rule.always.converge-to-terminal` names | ✅ **refused** — an exhausted reviewer writes no fresh given, and the debt it already minted persists |
-| **`--as blocked`** | a wall is a wall; a concern you have not answered is not one. ⚠️ **the converse does NOT follow** — see below | ⛔ **open** — a halt is a legitimate act; only you know whether you answered first |
+| **`--as blocked`** | a wall is a wall; a concern you have not answered is not one. 🟡 **the converse does NOT follow** — see below | ⛔ **open** — a halt is a legitimate act; only you know whether you answered first |
 | **call the re-raise a reviewer malfunction** | 🔴 **a blocker that returns after you fixed it is a driver error.** check whether you ever told the reviewer | ⛔ **open** — a diagnosis is a judgment, and no gate reads one |
 
 ## 🔴 .the engine refuses two exits. it does not retire this rule
@@ -53,10 +53,10 @@ judgment rather than a state.
 *"the gate has it covered"* has taken exit #2 with extra steps — it will let an empty `.taken`
 through, cost a round, and re-raise.
 
-⚠️ **and the gate is a floor, never a cap.** it refuses a round you should not start; it never
+🟡 **and the gate is a floor, never a cap.** it refuses a round you should not start; it never
 tells you the answer you wrote was worth the ink. that test is the one at the bottom of this brief.
 
-## ⚠️ .the `--as blocked` row is about ONE state, and a driver reads it as two
+## 🟡 .the `--as blocked` row is about ONE state, and a driver reads it as two
 
 the row forbids the halt for a concern you have **not answered**. it is silent on a concern you
 **have** answered and cannot close — and that second state is real:
@@ -72,7 +72,7 @@ with budget at 45/107 and no convergence. the recognition test, the counter-boun
 becoming an early-exit license, and the fulcrum-council case live in
 `rule.always.raise-a-blocker-a-taken-cannot-close`.
 
-⚠️ **the two rules do not overlap and do not conflict.** one question sorts every case:
+🟡 **the two rules do not overlap and do not conflict.** one question sorts every case:
 *"is there a change I am PERMITTED to make that would close this point?"* — **yes** → this rule binds,
 `--as blocked` is forbidden, write the `.taken`. **no** → that rule binds, and the halt is correct.
 
@@ -83,7 +83,7 @@ becoming an early-exit license, and the fulcrum-council case live in
    <fulcrum>`. it does not close the point; it declares *"fine to continue"* and defers the
    verdict to the council, on the record, at a fulcrum you authored
    (`rule.always.itemize-the-fulcrums-you-best-guess`)
-3. **a human overrule** — the human takes responsibility for the passage (case=5). ⚠️ ask only after
+3. **a human overrule** — the human takes responsibility for the passage (case=5). 🟡 ask only after
    you have answered what you can; an overrule requested in place of a first answer is exit #5 above
 
 ## .the test

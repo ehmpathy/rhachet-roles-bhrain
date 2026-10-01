@@ -391,27 +391,21 @@ describe('setStoneGuardStamp.integration', () => {
     });
 
     when('[t0] the budget is spent, then the artifact is EDITED', () => {
-      // 🔴 this `when` used to be the whole case, and its fixture was built on the
-      //    very defect this behavior removes. its own comment read:
+      // 🔴 an edit to the artifact does NOT retire an unanswered blocker — the debt is
+      //    keyed to the REVIEWER, so it survives the edit, and the entrance gate halts
+      //    before the exhaustion check is ever consulted. a `(slug, hash)` key would let
+      //    this edit retire the debt and let run 2 sail to exhaustion instead
+      //    (`rule.forbid.unanswered-exits-from-a-blocker`).
       //
-      //      "change artifact to force a fresh hash → run 2 skips (exhausted)"
-      //
-      //    that edit IS the forbidden exit (`rule.forbid.unanswered-exits-from-a-blocker`).
-      //    run 1 raised a blocker nobody answered; under the old `(slug, hash)` key the
-      //    edit retired that debt, so run 2 sailed to the exhaustion check. under P1+P2
-      //    the debt is keyed to the reviewer, so it survives the edit and the entrance
-      //    gate halts before exhaustion is ever consulted.
-      //
-      // ⇒ the case is SPLIT rather than rewritten. the original intent — an exhausted
-      //   reviewer blocks the stone, and a stamp is written — is preserved verbatim at
-      //   [t1], where it is now reachable. this [t0] pins why it moved.
+      // ⇒ the exhausted-reviewer case — a stamp is written when a reviewer blocks the
+      //   stone — is pinned separately at [t1]. this [t0] pins the entrance-gate halt.
       const result = useThen('the re-entry completes', async () => {
         // run 1: review runs (budget 1/1), finds blocker
         await setStoneAsPassed(
           { stone: '1.test', route: scene.tempDir },
           noopContext,
         );
-        // the edit that used to buy re-entry
+        // an artifact edit — does not retire the reviewer's debt
         await fs.writeFile(
           path.join(scene.tempDir, '1.test.md'),
           '# Test artifact\n\nmodified',

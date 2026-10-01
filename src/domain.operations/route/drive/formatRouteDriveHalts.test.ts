@@ -20,15 +20,13 @@ import { formatRouteDriveMixedHalt } from './formatRouteDriveMixedHalt';
  *         `rule.require.snapshots` asks for both and says why — the assertions verify function,
  *         the snapshot gives a reviewer a visual spotcheck of the exact bytes a driver reads.
  *
- * 🔴 .why the snapshot is here and not left to acceptance = an earlier draft of this suite
- *    declined a full-body pin, on the ground that it would duplicate the blackbox acceptance
- *    baselines. that ground was wrong in the one way that matters: those baselines sit behind
- *    `jest.acceptance.env.ts`, which sources the keyrack in STRICT mode and demands five brain
- *    keys. so on any machine without them, a reword of this copy — the exact text a driver reads
- *    when their ladder is spent or a reviewer broke — ships green with no diff to see.
- *    ⇒ two pins of one render at two grains do not go stale against each other. if they diverge,
- *      one of them is stale, and that divergence is the signal, never the noise. this is the pin
- *      that runs everywhere.
+ * 🔴 .why the snapshot is here and not left to acceptance = the blackbox acceptance
+ *    baselines sit behind `jest.acceptance.env.ts`, which sources the keyrack in STRICT
+ *    mode and demands five brain keys. on a machine without them, a reword of this copy —
+ *    the exact text a driver reads when their ladder is spent or a reviewer broke — ships
+ *    green with no diff to see.
+ *    ⇒ two pins of one render at two grains do not drift against each other; a divergence
+ *      is the signal. this is the pin that runs everywhere.
  */
 
 const meterExhausted: GuardPeerMeterStatus = {
@@ -53,6 +51,8 @@ describe('formatRouteDriveBudgetExhausted', () => {
       const output = formatRouteDriveBudgetExhausted({
         route: '.behavior/v2026_09_03.example',
         stone: '1.vision',
+        brain: null,
+        effort: null,
         reason: 'peer reviewer budget exhausted: mech-rules',
         meters: [meterExhausted],
       });
@@ -99,7 +99,7 @@ describe('formatRouteDriveBudgetExhausted', () => {
         );
       });
 
-      // ⚠️ `once they approve` presumed the human branch for BOTH remedies, so a driver who
+      // 🟡 `once they approve` presumed the human branch for BOTH remedies, so a driver who
       //    topped up their own budget was told to wait on an approval never owed.
       // 🔴 and its repair named the HUMAN branch alone, so the driver-owned lever sorted first
       //    was left with no stated next step (i001/r009 n2). the tail names either remedy now,
@@ -128,6 +128,8 @@ describe('formatRouteDriveBudgetExhausted', () => {
       const output = formatRouteDriveBudgetExhausted({
         route: '.behavior/v2026_09_03.example',
         stone: '1.vision',
+        brain: null,
+        effort: null,
         reason: null,
         meters: [meterExhausted],
       });
@@ -151,11 +153,13 @@ describe('formatRouteDriveBudgetExhausted', () => {
       const output = formatRouteDriveBudgetExhausted({
         route: '.behavior/v2026_09_03.example',
         stone: '1.vision',
+        brain: null,
+        effort: null,
         reason: 'peer reviewer budget exhausted',
         meters: [],
       });
 
-      // ⚠️ the spacer belongs to the reviews section, so it goes when the section goes — two
+      // 🟡 the spacer belongs to the reviews section, so it goes when the section goes — two
       //    blank connectors in a row is the blemish this pins against.
       then('no doubled blank connector is left behind', () => {
         expect(output).not.toContain('      │\n      │');
@@ -344,10 +348,12 @@ describe('formatRouteDriveBudgetExhausted', () => {
         const output = formatRouteDriveBudgetExhausted({
           route: '.behavior/v2026_09_03.example',
           stone: '1.vision',
+          brain: null,
+          effort: null,
           reason: 'peer reviewer budget exhausted: mech-rules',
           meters: [
             meterExhausted,
-            // ⚠️ `rejected` is what makes l2 the LIVE gate. a terminal verdict here (approved /
+            // 🟡 `rejected` is what makes l2 the LIVE gate. a terminal verdict here (approved /
             //    exhausted / malfunction / constraint) clears every level, so `liveLevel` is null
             //    and there is no unlock to render — the ladder is simply spent.
             // 🔴 `index` and `path` must BOTH be overridden with the rest. every field this
@@ -401,6 +407,8 @@ describe('formatRouteDriveMixedHalt', () => {
         const output = formatRouteDriveMixedHalt({
           route: '.behavior/v2026_09_03.example',
           stone: '1.vision',
+          brain: null,
+          effort: null,
           reason:
             'reviewer or judge malfunctioned; peer reviewer budget exhausted: mech-rules',
           meters: [meterExhausted],
@@ -458,6 +466,8 @@ describe('formatRouteDriveMixedHalt', () => {
           const output = formatRouteDriveMixedHalt({
             route: '.behavior/v2026_09_03.example',
             stone: '1.vision',
+            brain: null,
+            effort: null,
             reason:
               'a reviewer hit a constraint; peer reviewer budget exhausted: mech-rules',
             meters: [meterExhausted],
@@ -480,6 +490,8 @@ describe('formatRouteDriveMixedHalt', () => {
         const output = formatRouteDriveMixedHalt({
           route: '.behavior/v2026_09_03.example',
           stone: '1.vision',
+          brain: null,
+          effort: null,
           reason:
             'reviewer or judge malfunctioned; peer reviewer budget exhausted',
           meters: [],

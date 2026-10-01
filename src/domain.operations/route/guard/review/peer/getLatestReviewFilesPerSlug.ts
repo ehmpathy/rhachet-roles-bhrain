@@ -24,7 +24,7 @@ import { getRouteGuardReviewPeerPathMeta } from './getRouteGuardReviewPeerPathMe
  *         order, so it can be reused by a different reviewer when that order changes, and it
  *         cannot carry a verdict across the hash move that is the whole point here.
  *
- * .note = 🔴 the winner is a MAX over a TOTAL order, and the TOTALITY is the guarantee rather
+ * .note = the winner is a MAX over a TOTAL order, and the TOTALITY is the guarantee rather
  *         than the max. enumRouteGuardReviewPeerFiles returns raw globby output and no caller
  *         sorts it, so any pick that leans on array order is filesystem-dependent — right on one
  *         machine, wrong on another (rule.forbid.order-dependence). a max over iteration ALONE

@@ -5,8 +5,8 @@
 - **branch** = `beav/fix-contemplation-gate-on-entrance`, stone `5.3.verification`, round `i029`
 - **rule** = `rule.forbid.overzealous-blockers`
 
-two points landed in one review round, from the same rubric family. both were graded **blocker**. one
-grade was wrong and one was right. the contrast is what the rule distils.
+two points landed in one review round, from the same rubric family, both graded **blocker** — one
+grade wrong, one right. the contrast is what the rule distils.
 
 ## .the mis-graded one
 

@@ -29,7 +29,7 @@ import { getCurrentExhaustedSlugs } from './getCurrentExhaustedSlugs';
  *    (S12, and the same live-recompute contract `getRouteDriveBlockerMessage` states for
  *    every volatile blocker).
  *
- * ⚠️ the concession is asked of EVERY currently-exhausted lane, never any. one lane the
+ * 🟡 the concession is asked of EVERY currently-exhausted lane, never any. one lane the
  *    driver never conceded still awaits a human, so the concession words must not fire.
  *
  * .note = `blocksStop` is true ONLY for a `better` concession — the driver's own lever
@@ -40,6 +40,20 @@ import { getCurrentExhaustedSlugs } from './getCurrentExhaustedSlugs';
 export const getRouteDriveExhaustedMessage = async (input: {
   stone: RouteStone;
   route: string;
+  /**
+   * .what = the brain slug that prices this stone, or null where none does
+   * .why = this halt opens with the same `where do we go?` bucket the drive does, so it
+   *        owes the same three lines. it rides IN rather than gets derived here — the
+   *        caller already applied the brain, and a second apply would send a second
+   *        `/model` into the live clone
+   */
+  brain: string | null;
+  /**
+   * .what = the effort level that prices this stone's brain, or null where none was declared
+   * .why = effort nests UNDER the brain in that same bucket, so a halt handed one and not
+   *        the other reports half a prescription
+   */
+  effort: string | null;
 }): Promise<{ stdout: string; blocksStop: boolean }> => {
   // recompute the currently exhausted reviewer slugs + meters for the tree
   const { exhaustedSlugs, meters } = await getCurrentExhaustedSlugs({
@@ -54,6 +68,8 @@ export const getRouteDriveExhaustedMessage = async (input: {
       stdout: formatRouteDriveBudgetExhausted({
         route: input.route,
         stone: input.stone.name,
+        brain: input.brain,
+        effort: input.effort,
         reason: null,
         meters,
       }),
@@ -70,6 +86,8 @@ export const getRouteDriveExhaustedMessage = async (input: {
     stdout: formatRouteDriveBudgetExhausted({
       route: input.route,
       stone: input.stone.name,
+      brain: input.brain,
+      effort: input.effort,
       reason: genRouteGuardExhaustedReason({
         slugs: exhaustedSlugs,
         concession,

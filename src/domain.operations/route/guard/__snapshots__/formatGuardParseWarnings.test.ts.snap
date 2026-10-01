@@ -1,0 +1,93 @@
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
+
+exports[`formatGuardParseWarnings given: [case2] a KNOWN key declared with no value when: [t0] the advisory is rendered then: the exact bytes a driver reads 1`] = `
+"🗿 guard
+   └─ \`brain:\` is declared with NO value, so it was IGNORED
+      ├─ at: 5.3.verification.guard:12
+      ├─ fix: give it the argument your brain-cli's \`/model\` takes
+      │  └─ brain: claude-sonnet-5[1m]
+      ├─ note: that value is an EXAMPLE — pasted as-is, the next entry to this stone dispatches \`/model claude-sonnet-5[1m]\`
+      └─ or: remove the \`brain:\` line, and inherit the brain deliberately
+
+"
+`;
+
+exports[`formatGuardParseWarnings given: [case3] a KNOWN alias of a key the parser applies when: [t0] the advisory is rendered then: the exact bytes a driver reads 1`] = `
+"🗿 guard
+   └─ \`model:\` reads as an alias of \`brain:\`, but its value was IGNORED
+      ├─ at: 5.3.verification.guard:12
+      ├─ fix: rename it to \`brain:\` for the switch to take effect
+      │  └─ brain: claude-opus-5[1m]
+      └─ note: \`model:\` is recognized, but ONLY \`brain:\` is applied — its value did not take
+
+"
+`;
+
+exports[`formatGuardParseWarnings given: [case4] an UNKNOWN key, one or two edits from a known one when: [t0] the advisory is rendered then: the exact bytes a driver reads 1`] = `
+"🗿 guard
+   └─ \`brian:\` is not a key i know, and it was IGNORED
+      ├─ at: 5.3.verification.guard:12
+      ├─ did you mean: \`brain:\`?
+      ├─ fix: rename \`brian:\` to \`brain:\` if that was the intent
+      └─ or: if \`brian:\` is deliberate, this warn is safe to ignore
+
+"
+`;
+
+exports[`formatGuardParseWarnings given: [case5] two dropped keys in one guard when: [t0] the advisories are rendered together then: the exact bytes a driver reads 1`] = `
+"🗿 guard
+   ├─ \`brain:\` is declared with NO value, so it was IGNORED
+   │  ├─ at: 5.3.verification.guard:12
+   │  ├─ fix: give it the argument your brain-cli's \`/model\` takes
+   │  │  └─ brain: claude-sonnet-5[1m]
+   │  ├─ note: that value is an EXAMPLE — pasted as-is, the next entry to this stone dispatches \`/model claude-sonnet-5[1m]\`
+   │  └─ or: remove the \`brain:\` line, and inherit the brain deliberately
+   │
+   └─ \`brian:\` is not a key i know, and it was IGNORED
+      ├─ at: 5.3.verification.guard:14
+      ├─ did you mean: \`brain:\`?
+      ├─ fix: rename \`brian:\` to \`brain:\` if that was the intent
+      └─ or: if \`brian:\` is deliberate, this warn is safe to ignore
+
+"
+`;
+
+exports[`formatGuardParseWarnings given: [case6] a KNOWN key whose value is not a readable literal when: [t0] one stray character sits in an otherwise-valid slug then: the exact bytes a driver reads 1`] = `
+"🗿 guard
+   └─ \`brain:\` has a value i cannot read as a literal, so it was IGNORED
+      ├─ at: 5.3.verification.guard:12
+      ├─ read: \`gpt-4o@latest\`
+      ├─ refused: \`@\` — the set is letters, digits, and \`. _ / : # [ ] -\`
+      ├─ fix: your value, with the refused character removed
+      │  └─ brain: gpt-4olatest
+      ├─ note: check that is the slug you meant before you paste it
+      └─ why: an unclosed quote, a substitution, or a space lands here — NO switch was dispatched, so the stone kept its inherited brain
+
+"
+`;
+
+exports[`formatGuardParseWarnings given: [case6] a KNOWN key whose value is not a readable literal when: [t1] the value carries a SPACE then: the exact bytes a driver reads 1`] = `
+"🗿 guard
+   └─ \`brain:\` has a value i cannot read as a literal, so it was IGNORED
+      ├─ at: 5.3.verification.guard:12
+      ├─ read: \`gpt 4o\`
+      ├─ refused: U+0020 (a space) — the set is letters, digits, and \`. _ / : # [ ] -\`
+      ├─ fix: \`/model\` takes ONE argument, so pick the one you meant
+      │  └─ brain: gpt
+      └─ why: an unclosed quote, a substitution, or a space lands here — NO switch was dispatched, so the stone kept its inherited brain
+
+"
+`;
+
+exports[`formatGuardParseWarnings given: [case6] a KNOWN key whose value is not a readable literal when: [t2] no part of the value survives the set then: the exact bytes a driver reads 1`] = `
+"🗿 guard
+   └─ \`brain:\` has a value i cannot read as a literal, so it was IGNORED
+      ├─ at: 5.3.verification.guard:12
+      ├─ read: \`@@%%\`
+      ├─ refused: \`@\` \`%\` — the set is letters, digits, and \`. _ / : # [ ] -\`
+      ├─ fix: a plain literal — no part of your value survives the set
+      │  └─ brain: claude-sonnet-5[1m]
+      └─ why: an unclosed quote, a substitution, or a space lands here — NO switch was dispatched, so the stone kept its inherited brain
+
+"
+`;

@@ -37,9 +37,9 @@ describe('asSanitizedPeerReviewSlug', () => {
     // this is the whole reason the transformer exists. the write side builds the
     // .given filename from a sanitized slug; the read side validates `--that <slug>`
     // against that filename. the two were independent inline copies of one regex, so
-    // they agreed by coincidence rather than by construction (r11 nitpick.1, i004).
+    // they agreed by coincidence rather than by construction.
     //
-    // ⚠️ this case does NOT re-assert what the swap produces — [case2] does that. it
+    // 🟡 this case does NOT re-assert what the swap produces — [case2] does that. it
     //    asserts the property the duplication threatened: that one call site cannot
     //    disagree with another.
     const slugRaw = '.test/mock-review.sh';

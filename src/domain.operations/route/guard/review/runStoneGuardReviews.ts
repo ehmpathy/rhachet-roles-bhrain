@@ -269,15 +269,12 @@ export const runOneStoneGuardReview = async (
 
   // both footers, composed together so exactly ONE of them carries the terminal marker.
   //
-  // 🔴 they used to be pushed by two independent blocks, each of which hardcoded `└─`
-  //    because each was authored as though it were last. when BOTH fired — a non-zero exit
-  //    whose verdict was still readable — the artifact rendered two terminal branches at one
-  //    level, which no other artifact in the corpus does
-  //    (r6 ergo-snapshot-visual-blemishes, blocker.1, i019).
-  //
-  // ⚠️ the comment above already knew two footers could follow; what it missed is that the
-  //    footers collide with EACH OTHER, not merely with the stream buckets. so the marker is
-  //    now derived in one place, exactly as `formatArtifactStreamBuckets` derives its own.
+  // 🔴 a non-zero exit with a still-readable verdict fires BOTH footers, and two
+  //    independently hardcoded `└─` markers would render two terminal branches at one
+  //    level, a shape no other artifact in the corpus produces
+  //    (rule.forbid.snapshot-visual-blemishes). the footers collide with EACH OTHER, not
+  //    merely with the stream buckets, so the marker is derived in one place — exactly as
+  //    `formatArtifactStreamBuckets` derives its own.
   //
   // .note = the tally is persisted so a cache re-read recovers the SAME counts (and the
   //         tactic) with NO brain call. it is the LAST numeric declaration, so

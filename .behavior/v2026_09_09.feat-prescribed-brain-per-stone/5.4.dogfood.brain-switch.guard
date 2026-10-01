@@ -1,0 +1,11 @@
+# the brain the driver runs under while it works this stone
+# .why = a live, first-party dogfood of the just-shipped `brain:` field — this repo's own
+#        driver hook should dispatch `/model claude-opus-4-8[1m]` into this very clone on entry
+brain: claude-opus-4-8[1m]
+
+artifacts:
+  - "$route/5.4.dogfood.brain-switch.yield.md"
+
+reviews: []
+
+judges: []

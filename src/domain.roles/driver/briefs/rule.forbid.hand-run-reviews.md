@@ -34,7 +34,7 @@ further along: a commit changes *what the reviewers can see*; a hand-run review 
 and under what terms*. both are a review-scope change made by the party under review, and **no
 reviewer consented to either.**
 
-⚠️ **and a favourable read is one flag away.** narrow the bind, swap the brain, drop the `--goal`
+🟡 **and a favourable read is one flag away.** narrow the bind, swap the brain, drop the `--goal`
 — the same rubric returns `0/0`. a driver need not intend to shop for that to be what the artifact
 is worth.
 
@@ -69,7 +69,7 @@ result inside the budget system where it counts, gates, and can be answered.
 
 there is no second question. the rule carries no carve-out for a diagnosis, a probe, or a sweep.
 
-## ⚠️ .the prior guidance this REVERSES, and why it read as reasonable
+## 🟡 .the prior guidance this REVERSES, and why it read as reasonable
 
 `rule.always.diagnose-reviewer-malfunctions` carried a recipe for exactly this — a scoped
 `rhx review` as the remedy for an overflowed lane — and it was followed on

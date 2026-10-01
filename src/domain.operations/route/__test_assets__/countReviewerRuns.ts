@@ -17,7 +17,7 @@ import * as path from 'path';
  * .note = sync by design. two suites had drifted a sync and an async copy of this, and
  *         the EACCES-vs-ENOENT distinction above had to be restated in both. no async
  *         caller awaits any state this read depends on, so one sync form serves all three
- *         (rule.require.single-source-of-truth-for-render; r1 nitpick.5, i006/i007/i010/i011)
+ *         (rule.require.single-source-of-truth-for-render)
  */
 export const countReviewerRuns = (input: { route: string }): number => {
   const tally = path.join(input.route, 'runs.txt');

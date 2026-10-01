@@ -1,0 +1,31 @@
+dogfood the just-shipped `brain:` guard feature — live, in this session
+
+---
+
+## .what
+
+this stone's own `.guard` declares `brain: claude-opus-4-8[1m]`. entry into this stone should
+trigger the driver-role hook (`applyStoneBrainOnEntry`) to dispatch `/model claude-opus-4-8[1m]`
+into this very clone, via `rhx clone say @:<self>`.
+
+this is a live self-test of the feature this route just built and verified in isolation.
+
+## .how
+
+1. before you do aught else, capture your own address and reach state:
+   `rhx clone whoami --output json`
+2. emit to `.behavior/v2026_09_09.feat-prescribed-brain-per-stone/5.4.dogfood.brain-switch.yield.md`:
+   - the `whoami` output from step 1
+   - what you observe next — did a `/model claude-opus-4-8[1m]` line appear in your own input?
+     (per `hazard.a-hook-cannot-say-into-its-own-clone.md`, the dispatch is fire-and-hand-off; it
+     does not block this turn)
+   - on your NEXT turn (after this one), read `rhx clone get @:<self> --output json` to see
+     whether the brain-cli accepted or refused the `/model` switch
+   - state plainly: did the switch happen? what is the proof?
+3. `--as passed` once the yield names what was observed, whether the switch landed or was
+   refused
+
+## .why
+
+the vision's own cost claim rests on this mechanism actually running. a live, first-party
+observation is worth more than every unit test that mocks the dispatch.

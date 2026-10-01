@@ -9,8 +9,8 @@ import { getStoneUndeclaredConcerns } from '../guard/review/peer/getStoneUndecla
 import { formatRouteGuardReviewPeerAbsorptionPrompt } from '../guard/tree/formatRouteGuardReviewPeerAbsorptionPrompt';
 import { formatRouteGuardReviewPeerFeedbackAbsorbPrompt } from '../guard/tree/formatRouteGuardReviewPeerFeedbackAbsorbPrompt';
 import { getOneStoneGuardApproval } from '../judges/getOneStoneGuardApproval';
-import { asRouteDisplayPath } from './asRouteDisplayPath';
 import { formatRouteDriveBudgetExhausted } from './formatRouteDriveBudgetExhausted';
+import { formatRouteDriveHeader } from './formatRouteDriveHeader';
 import { getCurrentExhaustedSlugs } from './getCurrentExhaustedSlugs';
 
 /**
@@ -40,8 +40,23 @@ export const getRouteDriveBlockerMessage = async (input: {
   blockerReport: RouteStoneGuardBlockerReport | null;
   stone: RouteStone;
   route: string;
+  /**
+   * .what = the brain slug that prices this stone, or null where none does
+   * .why = every halt this operation renders opens with the `where do we go?` bucket,
+   *        and a halt that omits the brain reads as a different stone than the drive
+   *        beside it. it rides IN rather than gets derived here: the caller already
+   *        applied the brain, and a second apply would dispatch a second `/model`
+   */
+  brain: string | null;
+  /**
+   * .what = the effort level that prices this stone's brain, or null where none was declared
+   * .why = effort is model-scoped, so it renders BENEATH the brain in the same bucket. it
+   *        rides in beside `brain` for the same reason `brain` does — the caller applied
+   *        both, and this surface reports what was applied rather than re-derives it
+   */
+  effort: string | null;
 }): Promise<{ stdout: string; blocksStop: boolean } | null> => {
-  const { blockerReport, stone, route } = input;
+  const { blockerReport, stone, route, brain, effort } = input;
 
   // blocked on human approval → show approval-needed message (unless already granted)
   if (blockerReport?.blocker === 'approval') {
@@ -49,7 +64,12 @@ export const getRouteDriveBlockerMessage = async (input: {
     // approval granted → no message; caller falls through (generic guidance / block-stop)
     if (approvalArtifact) return null;
     return {
-      stdout: formatRouteDriveNeedsApproval({ route, stone: stone.name }),
+      stdout: formatRouteDriveNeedsApproval({
+        route,
+        stone: stone.name,
+        brain,
+        effort,
+      }),
       blocksStop: false,
     };
   }
@@ -87,6 +107,8 @@ export const getRouteDriveBlockerMessage = async (input: {
       stdout: formatRouteDriveBudgetExhausted({
         route,
         stone: stone.name,
+        brain,
+        effort,
         // 🔴 the ONE builder owns this contract string (rule.require.single-source-of-truth-for-render).
         reason: genRouteGuardExhaustedReason({
           slugs: exhaustedSlugs,
@@ -189,17 +211,12 @@ const computeFeedbackAbsorptionReplyPrompt = async (input: {
 const formatRouteDriveNeedsApproval = (input: {
   route: string;
   stone: string;
+  brain: string | null;
+  effort: string | null;
 }): string => {
   const approveCmd = `rhx route.stone.set --stone ${input.stone} --as approved`;
   const passCmd = `rhx route.stone.set --stone ${input.stone} --as passed`;
-  const lines: string[] = [];
-  lines.push(`🦉 where were we?`);
-  lines.push('');
-  lines.push(`🗿 route.drive`);
-  lines.push(`   ├─ where do we go?`);
-  lines.push(`   │  ├─ route = ${asRouteDisplayPath({ route: input.route })}`);
-  lines.push(`   │  └─ stone = ${input.stone}`);
-  lines.push(`   │`);
+  const lines: string[] = [...formatRouteDriveHeader(input)];
   lines.push(`   └─ halted, human approval required`);
   lines.push(`      ├─ please ask a human to`);
   lines.push(`      │  └─ ${approveCmd}`);

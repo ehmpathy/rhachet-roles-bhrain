@@ -1,0 +1,77 @@
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
+
+exports[`formatStoneBrainOutcome given: [case3] a stone whose brain was never dispatched when: [t0] the outcome is rendered on a work surface then: the exact composed bytes of the REPLACE path are pinned 1`] = `
+"🦉 where were we?
+
+🗿 route.drive
+   ├─ where do we go?
+   │  ├─ route = .behavior/v1
+   │  ├─ stone = 5.3.verification
+   │  └─ brain = claude-opus-5[1m]
+   │
+   └─ ✋ halted, brain switch could not land
+      ├─ this driver runs = unknown — no clone address was confirmed
+      │
+      ├─ why
+      │  ├─ this driver is not an enrolled clone, so \`clone say\` has naught to address
+      │  └─ the usual cause is a driver launched directly rather than by \`rhx enroll\`
+      │
+      ├─ fix: re-enroll the driver with a slug, then re-enter the stone
+      │  └─ rhx enroll claude --as @:driver --roles driver
+      │
+      └─ or: remove \`brain:\` from the stone's guard, and inherit the brain deliberately
+         └─ .behavior/v1/5.3.verification.guard"
+`;
+
+exports[`formatStoneBrainOutcome given: [case3] a stone whose brain was never dispatched when: [t1] the caller splices the halt into a route halt then: the exact composed bytes of the SPLICE path are pinned 1`] = `
+"🦉 where were we?
+
+🗿 route.drive
+   ├─ where do we go?
+   │  ├─ route = .behavior/v1
+   │  ├─ stone = 5.3.verification
+   │  └─ brain = claude-opus-5[1m]
+   │
+   ├─ ✋ halted, brain switch could not land
+   │  ├─ this driver runs = unknown — no clone address was confirmed
+   │  │
+   │  ├─ why
+   │  │  ├─ this driver is not an enrolled clone, so \`clone say\` has naught to address
+   │  │  └─ the usual cause is a driver launched directly rather than by \`rhx enroll\`
+   │  │
+   │  ├─ fix: re-enroll the driver with a slug, then re-enter the stone
+   │  │  └─ rhx enroll claude --as @:driver --roles driver
+   │  │
+   │  └─ or: remove \`brain:\` from the stone's guard, and inherit the brain deliberately
+   │     └─ .behavior/v1/5.3.verification.guard
+   │
+   └─ here is the stone"
+`;
+
+exports[`formatStoneBrainOutcome given: [case6] a halt whose guard declared a choice AND an effort when: [t0] the outcome is rendered then: the exact bytes are pinned 1`] = `
+"🦉 where were we?
+
+🗿 route.drive
+   ├─ where do we go?
+   │  ├─ route = .behavior/v1
+   │  ├─ stone = 5.3.verification
+   │  └─ brain
+   │     ├─ choice = claude-opus-5[1m]
+   │     └─ effort = high
+   │
+   └─ ✋ halted, brain switch could not land
+      ├─ this driver runs = unknown — the clone probe did not answer in time
+      │
+      ├─ why
+      │  ├─ \`clone whoami\` was still alive at the 10s cap, and was killed
+      │  └─ the cap names no cause — the probe may have been about to report any of them
+      │
+      ├─ fix: run the probe by hand, unhurried, and read what it reports
+      │  └─ rhx clone whoami --output json
+      │
+      ├─ and: if it reports an unenrolled driver — the most common cause — re-enroll
+      │  └─ rhx enroll claude --as @:driver --roles driver
+      │
+      └─ or: remove \`brain:\` from the stone's guard, and inherit the brain deliberately
+         └─ .behavior/v1/5.3.verification.guard"
+`;

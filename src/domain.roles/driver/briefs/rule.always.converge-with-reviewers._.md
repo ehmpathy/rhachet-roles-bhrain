@@ -81,7 +81,7 @@ landed — lives with the rule that owns it:
 6. re-submit; the reviewer re-reads with your articulation + code changes in context
 7. converge, or iterate again within budget
 
-⚠️ **step 5 is enforced, never merely asked.** the entrance gate refuses step 6 while any reviewer
+🟡 **step 5 is enforced, never merely asked.** the entrance gate refuses step 6 while any reviewer
 still owes a `.taken` — so a halt that names slugs at re-submission is this step skipped, never a
 guard defect. and step 3's code fix does **not** stand in for step 4: the debt is keyed to the
 reviewer, so an edit alone leaves it open.

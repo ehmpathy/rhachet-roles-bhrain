@@ -21,19 +21,19 @@ import { asSanitizedPeerReviewSlug } from './asSanitizedPeerReviewSlug';
  *         overflowed lane's bind, re-run. a `.guard` file is not in the hashed artifact
  *         set, so that edit does not move the artifact hash and every cache stays live.
  *
- * ⚠️ an INSERT is worse than a swap and far easier to do unnoticed, because you remove
+ * 🟡 an INSERT is worse than a swap and far easier to do unnoticed, because you remove
  *    no one — it shifts every later lane by one at once.
  *
- * ⚠️ it fails safe by construction. a discarded cache costs one budget round, which is
+ * 🟡 it fails safe by construction. a discarded cache costs one budget round, which is
  *    the correct price for a rung whose tenant changed. a reused wrong one cannot be
  *    detected downstream at all.
  *
- * 🔴 TODO: fix structurally with option A — key the cache on the slug itself, rather than
+ * TODO: fix structurally with option A — key the cache on the slug itself, rather than
  *    a reconciliation at each read. that needs a `slug` field on the artifact, a writer
  *    change, a reader change with back-compat, and a stamp-format migration, since the
  *    rendered report IS the cache's storage format. tracked as
  *    `.dream/v2026_09_05.fix.guard-review-cache-is-keyed-by-index-not-slug.md`.
- *    ⚠️ this guard closes the FALSE GREEN and leaves the key wrong — a mismatch still
+ *    🟡 this guard closes the FALSE GREEN and leaves the key wrong — a mismatch still
  *    costs a needless re-run, where the right key would have found the real cache.
  */
 export const getCacheSafePeerReviewArtifact = (input: {

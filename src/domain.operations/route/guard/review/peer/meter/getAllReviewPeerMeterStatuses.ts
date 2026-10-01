@@ -110,9 +110,9 @@ export const getAllReviewPeerMeterStatuses = async (input: {
         // 🔴 the cache is keyed by POSITION, so a rung whose tenant changed must not reuse it.
         //    the guard confirms the slug and returns null on a mismatch, which drops this
         //    reviewer to the slug-keyed fallback below — or to "never spoke", when rounds = 0.
-        //    ⚠️ this feeds `getStoneGuardLevelClearance`, so an unguarded read here would
+        //    🟡 this feeds `getStoneGuardLevelClearance`, so an unguarded read here would
         //    unlock a level on a verdict the current reviewer never gave.
-        // 🔴 TODO: fix structurally with option A — key the cache on the slug itself, so the
+        // TODO: fix structurally with option A — key the cache on the slug itself, so the
         //    guard is unnecessary and the defect is unexpressible. that is a domain-entity
         //    identity change (`unique = ['stone','hash','index']`) and is tracked as
         //    .dream/v2026_09_05.fix.guard-review-cache-is-keyed-by-index-not-slug.md
@@ -124,7 +124,7 @@ export const getAllReviewPeerMeterStatuses = async (input: {
 
         // reviewer has rounds but no review for current hash = likely exhausted;
         // find their latest review regardless of hash
-        // ⚠️ keyed by SLUG, never by index — this reach crosses hashes, so it can straddle a
+        // 🟡 keyed by SLUG, never by index — this reach crosses hashes, so it can straddle a
         //    config change in which a retired reviewer's rung was reused by its successor
         const fallbackReview =
           !reviewForCurrentHash && rounds > 0
@@ -308,10 +308,9 @@ export const getAllReviewPeerMeterStatuses = async (input: {
         //    way out (six `asGuardDisplayPath` calls across `setStoneAsPassed` and
         //    `runStoneGuardReviews`); the drive path had none. so a driver read the same
         //    artifact two ways, per the command that printed it — a bare `.reviews/peer/…`
-        //    from `route.stone.set`, a `/tmp/…`-length absolute from a `route.drive` halt
-        //    (r7 nitpick.1, i013).
+        //    from `route.stone.set`, a `/tmp/…`-length absolute from a `route.drive` halt.
         //
-        // ⚠️ this is the SEVENTH site of the convention `asGuardDisplayPath` was extracted to
+        // 🟡 this is the SEVENTH site of the convention `asGuardDisplayPath` was extracted to
         //    hold, and the first that is a whole surface rather than one line. that operation's
         //    own docblock records the convention already dropped once among five call sites;
         //    the drive path was a sixth it never reached

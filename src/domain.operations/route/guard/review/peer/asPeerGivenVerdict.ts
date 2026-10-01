@@ -52,7 +52,7 @@ export const asPeerGivenVerdict = (input: {
     // 🔴 the flag rides WITH the count, never beside it. the count for an unreadable
     //    given is FABRICATED — the gate needs a number and no number was read — so a
     //    surface that prints it as though it were the reviewer's words re-hides the
-    //    malfunction the union exists to surface (r9 nitpick.1, i003)
+    //    malfunction the union exists to surface
     unreadable: false,
   };
 };

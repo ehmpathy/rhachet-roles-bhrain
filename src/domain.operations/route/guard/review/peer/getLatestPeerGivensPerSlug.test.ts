@@ -16,7 +16,7 @@ const asGiven = (input: {
   unreadable: input.unreadable ?? false,
   // .note = `hash` is an input to the PATH only — the record carries no hash field, by
   //         design (see RouteGuardReviewPeerGiven). so these cases assert on pathGiven,
-  //         which is where a hash legitimately lives (r11 blocker.1, i003).
+  //         which is where a hash legitimately lives.
   iteration: input.iteration,
   pathGiven: `1.x._.review.i${String(input.iteration).padStart(3, '0')}.${
     input.hash

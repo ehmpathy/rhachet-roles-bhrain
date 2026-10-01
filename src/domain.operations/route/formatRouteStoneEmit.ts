@@ -3,6 +3,7 @@ import type { IsoTimeStamp } from 'iso-time';
 import type { RouteStoneGuardReviewSelf } from '@src/domain.objects/Driver/RouteStoneGuard';
 
 import { asConcessionReasonDisplay } from './guard/review/peer/asConcessionReasonDisplay';
+import { asGuidanceBranches } from './asGuidanceBranches';
 import { asRungLabel } from './guard/review/peer/meter/asRungLabel';
 import { getReviewPeerLadderStatus } from './guard/review/peer/meter/getReviewPeerLadderStatus';
 import { getSelfReviewArticulationPath } from './guard/review/self/getSelfReviewArticulationPath';
@@ -432,17 +433,7 @@ export const formatRouteStoneEmit = (input: FormatInput): string => {
       lines.push(`   ├─ stone = ${input.stone}`);
       lines.push(`   ├─ ✗ ${input.reason}`);
       lines.push(`   │`);
-      const guidanceLines = input.guidance.split('\n');
-      guidanceLines.forEach((line, i) => {
-        // .note = empty guidance lines emit a bare blank line (no prefix), so
-        //         no whitespace tail leaks into the snapshot
-        if (line === '') {
-          lines.push('');
-          return;
-        }
-        const prefix = i === 0 ? '   └─ ' : '      ';
-        lines.push(`${prefix}${line}`);
-      });
+      lines.push(...asGuidanceBranches({ guidance: input.guidance }));
       return lines.join('\n');
     }
 
@@ -564,12 +555,10 @@ export const formatRouteStoneEmit = (input: FormatInput): string => {
           // add options as separate block with did you know header
           lines.push('');
           lines.push('✨ did you know?');
-          // 🔴 the labels, the commands, the `budget exhausted:` parse and the single-slug
-          //    `--peer` rule all come from ONE shared operation now. this surface used to
-          //    carry its own copy of each, under a comment that promised it stayed "in
-          //    lockstep" with formatGuardTree — a manual-discipline contract, which is what
-          //    `rule.forbid.duplicate-format-tree-operations` forbids outright (r1 blocker.1,
-          //    i016). the shared builder makes the lockstep structural rather than promised.
+          // 🔴 the labels, the commands, the `budget exhausted:` parse, and the single-slug
+          //    `--peer` rule all come from ONE shared operation, never a duplicated local
+          //    copy — `rule.forbid.duplicate-format-tree-operations` forbids exactly that.
+          //    the shared builder makes the lockstep structural rather than promised.
           lines.push(
             ...formatBlockRemedyGroups({
               groups: computeBlockRemedyGroups({

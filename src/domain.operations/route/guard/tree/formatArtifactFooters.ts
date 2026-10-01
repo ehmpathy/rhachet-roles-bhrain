@@ -7,8 +7,7 @@ import { TALLIED_FOOTER_PREFIX } from '../review/getReviewTacticFromContent';
  *        as though it were last, so each hardcoded `└─`, and the pair rendered two terminal
  *        branches at the root of one tree. a treestruct admits exactly one `└─` per level
  *        (`rule.require.treestruct-output`), so a driver who met a dual-outcome artifact read
- *        a shape no other artifact in the corpus produces
- *        (r6 ergo-snapshot-visual-blemishes, blocker.1, i019 — scoped re-run).
+ *        a shape no other artifact in the corpus produces.
  *
  * .note = this is the twin of `formatArtifactStreamBuckets`, and for the identical reason:
  *         which footer lands LAST is one decision, so it lives in one operation rather than

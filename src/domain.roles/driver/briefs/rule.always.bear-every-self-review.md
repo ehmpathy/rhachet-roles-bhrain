@@ -41,7 +41,7 @@ count that rises is **more work discovered**, never a defect to diagnose.
 | a human may overrule it | no one may |
 | more rounds cost the human's attention | more reviews cost only yours |
 
-⚠️ **row 1 is narrower than it used to read: the peer ladder carries a debt too.** an unanswered
+🟡 **row 1 is narrower than it used to read: the peer ladder carries a debt too.** an unanswered
 blocker is a `.taken` owed, keyed to the reviewer and untouched by its budget
 (`rule.always.converge-to-terminal`). so what parts the two is **not** budget-versus-debt — it is
 rows 2 and 3: the peer debt sits beside a budget and under a human overrule; the self debt has

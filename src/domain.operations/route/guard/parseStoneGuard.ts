@@ -4,6 +4,7 @@ import { type IsoDuration, toMilliseconds } from 'iso-time';
 import * as path from 'path';
 
 import type {
+  RouteStoneGuardBrain,
   RouteStoneGuardReviewPeer,
   RouteStoneGuardReviewSelf,
   RouteStoneGuardReviewsStructured,
@@ -13,6 +14,11 @@ import { RouteStoneGuard } from '@src/domain.objects/Driver/RouteStoneGuard';
 import { asGuardPositiveInt } from '../../asGuardPositiveInt';
 import { asErrorCause } from './asErrorCause';
 import { asErrorCauseClause } from './asErrorCauseClause';
+import { asBrainSubKey } from './asBrainSubKey';
+import { asDeclaredGuardKey } from './asDeclaredGuardKey';
+import { asGuardKeyValue } from './asGuardKeyValue';
+import { KEY_ALIASED, PATTERN_INLINE } from './GUARD_KEYS';
+import { isGuardValueLiteral } from './isGuardValueLiteral';
 
 /**
  * .what = parses a guard file into a RouteStoneGuard object
@@ -60,6 +66,7 @@ export const parseStoneGuard = async (
     reviews: parsed.reviews ?? { self: [], peer: [] },
     judges: parsed.judges ?? [],
     protect: parsed.protect ?? [],
+    brain: parsed.brain,
   });
 };
 
@@ -213,12 +220,14 @@ const parseSimpleYaml = async (
   reviews?: RouteStoneGuardReviewsStructured;
   judges?: string[];
   protect?: string[];
+  brain?: RouteStoneGuardBrain;
 }> => {
   const result: {
     artifacts?: string[];
     reviews?: RouteStoneGuardReviewsStructured;
     judges?: string[];
     protect?: string[];
+    brain?: RouteStoneGuardBrain;
   } = {};
 
   const lines = content.split('\n');
@@ -226,9 +235,37 @@ const parseSimpleYaml = async (
   //         cursor of a line-by-line scanner: each holds "where in the document am
   //         i", which by nature changes as the document is walked. the scope is one
   //         function and not one of them escapes it.
-  let currentKey: 'artifacts' | 'reviews' | 'judges' | 'protect' | null = null;
+  let currentKey:
+    | 'artifacts'
+    | 'reviews'
+    | 'judges'
+    | 'protect'
+    | 'brain'
+    | null = null;
   let currentSubKey: 'self' | 'peer' | 'groups' | null = null;
   let currentGroupName: string | null = null;
+
+  /**
+   * .what = the sub-keys read so far beneath a bare `brain:`, or null outside a block
+   * .why = the exploded form spans several lines, so the two values arrive one at a time
+   *        and must accumulate before either can be committed
+   * .note = NULL = no block open; `{}` = a block open that has read naught
+   */
+  let brainExploded: { choice?: string; effort?: string } | null = null;
+
+  /**
+   * .what = commits the exploded block into `result.brain`, if it declared aught
+   * .why = a block with no readable sub-key declares no brain, so `result.brain` stays
+   *        unset rather than hand every reader an empty prescription to check for
+   */
+  const finalizeBrain = () => {
+    if (brainExploded && (brainExploded.choice || brainExploded.effort))
+      result.brain = {
+        choice: brainExploded.choice ?? null,
+        effort: brainExploded.effort ?? null,
+      };
+    brainExploded = null;
+  };
   let structuredReviews: RouteStoneGuardReviewsStructured | null = null;
   let flatReviews: string[] | null = null;
   let currentSelfReview: Partial<RouteStoneGuardReviewSelf> | null = null;
@@ -295,6 +332,10 @@ const parseSimpleYaml = async (
     // skip empty lines and comments
     if (!trimmed || trimmed.startsWith('#')) continue;
 
+    // 🔴 any indent-0 line SHUTS an open brain block — once here, rather than in each of
+    // five top-level branches where one forgotten would leak values into a later block
+    if (indent === 0 && currentKey === 'brain') finalizeBrain();
+
     // check for key declaration
     if (trimmed === 'artifacts:') {
       currentKey = 'artifacts';
@@ -318,6 +359,70 @@ const parseSimpleYaml = async (
       currentSubKey = null;
       result.protect = [];
       continue;
+    }
+
+    // the brain the driver runs under for this stone
+    // .note = the ONLY top-level key with an INLINE value, so it matches by prefix
+    // 🔴 .note = `PATTERN_INLINE` is DERIVED from `GUARD_KEYS`, with the `i` flag and `\s*`
+    //           before the colon, so this parser and `asDeclaredGuardKey` fold case and
+    //           admit space identically — `Brain: opus` and `brain : opus` each once fell
+    //           between the two and dropped with no line anywhere (case=4)
+    if (indent === 0 && PATTERN_INLINE.test(trimmed)) {
+      const rawKey = asDeclaredGuardKey({ line: line ?? '' });
+
+      // `model:` is a KNOWN alias, and its value is DROPPED rather than carried
+      // .why = a contract that accepts a synonym is forbidden, and a key that still
+      //        functions is a key nobody renames (case=4 [t4]-[t6])
+      // .note = the DROP is here; the REPORT is `getGuardParseWarnings`', so this stays a
+      //         pure read+parse
+      if (rawKey === KEY_ALIASED.alias) {
+        currentKey = null;
+        currentSubKey = null;
+        continue;
+      }
+
+      // the inline value, unquoted and trimmed; `asGuardKeyValue` folds every empty
+      // shape (`brain: "  "` among them) onto ''
+      const value = asGuardKeyValue({ line: line ?? '' });
+
+      // 🔴 dispatch on `rawKey`, never unconditionally into `.brain`: a second inline key
+      // would otherwise be misrouted into it. `GUARD_KEYS.integration.test.ts` walks
+      // `KEYS_INLINE` against a per-key field map, so a key with no arm here fails there
+      // and the value must READ as a plain literal, never merely be non-empty
+      // .why = an unclosed quote (`brain: 'opus`) would put a FABRICATED slug on the wire,
+      //        recorded as `requested` and indistinguishable from a healthy switch (F5).
+      //        the REPORT is `getGuardParseWarnings`' `key-unreadable`
+      if (rawKey === 'brain') {
+        // 🔴 an EMPTY value opens the exploded form (`choice:` / `effort:` beneath it);
+        // `finalizeBrain` decides at the next top-level line whether it declared aught
+        if (!value) {
+          currentKey = 'brain';
+          currentSubKey = null;
+          brainExploded = {};
+          continue;
+        }
+        if (isGuardValueLiteral({ value }))
+          result.brain = { choice: value, effort: null };
+      }
+      currentKey = null;
+      currentSubKey = null;
+      continue;
+    }
+
+    // the exploded `brain:` form's sub-keys — `choice:` and `effort:`, beneath the key
+    // .note = each value passes the same two gates as the inline form (non-empty, literal)
+    // .note = an unrecognized sub-key falls through rather than throws — the key set stays
+    //         OPEN (F4), and a nested scope should not be stricter than its parent
+    if (currentKey === 'brain' && brainExploded) {
+      const subKey = asBrainSubKey({ line: line ?? '' });
+      if (subKey) {
+        const subValue = asGuardKeyValue({ line: line ?? '' });
+        if (subValue && isGuardValueLiteral({ value: subValue })) {
+          if (subKey === 'choice') brainExploded.choice = subValue;
+          if (subKey === 'effort') brainExploded.effort = subValue;
+        }
+        continue;
+      }
     }
 
     // check for reviews sub-keys (structured format)
@@ -610,6 +715,9 @@ const parseSimpleYaml = async (
 
   // finalize any pending peer review
   finalizePeerReview();
+
+  // a brain block that runs to the END of the file has no indent-0 line to shut it
+  finalizeBrain();
 
   // handle any final multiline content
   if (inMultilineSay && currentSelfReview) {

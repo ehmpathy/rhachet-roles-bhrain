@@ -34,6 +34,43 @@
   needs a noun rather than a verb
 - **phase** — implies a span of time that contains work, where a stone is the **boundary** of such
   a span. and phases nest and overlap; stones do not
+- 🔴 **stage** — added 2026-09-13. the same defect as `phase`, and it reads more innocent: it names a
+  span that holds work, so it borrows a stone's identity while it denies a stone's shape. ⇒ see the
+  measured case below
+
+## 🔴 .why `stage` slipped past `phase` — the near-synonym a forbid list does not reach
+
+measured 2026-09-13, in `1.vision.yield.md`: `stage` appeared three times as a stone-synonym, and
+survived five self-review rounds in a file whose own author had read this list.
+
+| the word | on the forbid list | caught |
+|---|---|---|
+| `phase` | ✅ since the cluster was written | ✅ never used |
+| `stage` | 🔴 absent | 🔴 used three times |
+
+⇒ **a forbid list is a set of strings, and a reader matches against it by string.** `phase` was
+present so the author never wrote it; `stage` was absent so no match fired — even though the two
+words carry one sense and fail for the identical reason.
+
+🟡 so the general hazard: a forbid list catches the words it lists and licenses their nearest
+synonyms. it reads as a semantic guard and behaves as a lexical one.
+
+⇒ the repair is the one taken here — when you forbid a word, forbid its near-synonyms in the same
+edit. a list that holds `phase` and not `stage` is one round away from wrong.
+
+### 🔴 and the reach for it was a real distinction with a wrong word
+
+the yield wanted to part *the slot in the route template* from *one drive's transit of it*. that
+distinction is genuine, and the glossary already holds both halves:
+
+| the concept | the term |
+|---|---|
+| the slot in the route template | **stone** |
+| one drive's transit of it | **passage** |
+
+⇒ **no third word was owed**, and the third word is what the forbid exists to prevent. 🟡 the tell is
+general: a synonym is often reached for to name a distinction the canon already covers — so the
+first question is *which extant term names this?*, never *what shall I call it?*
 
 ## .disputes
 
@@ -55,8 +92,8 @@
   states that *approval = permission, passage = action*, and only an explicit `--as passed`
   constitutes passage. a guard grants clearance; the stone records the passage. two concepts, two
   mechanisms
-- 🟡 **the blind-spot instance.** `template.domain-term.md` — the repo's own template for how to
-  itemize a term — **uses `term=stone` as its worked example throughout**, and no `term=stone`
+- 🟡 the blind-spot instance. `template.domain-term.md` — the repo's own template for how to
+  itemize a term — uses `term=stone` as its worked example throughout, and no `term=stone`
   cluster existed until 2026-08-13. the glossary's instruction manual demonstrated the pattern on
   a term the glossary did not contain. the resolved `checkpoint` dispute above was preserved in
   that template rather than in a real cluster, which is where it belongs and where it now sits

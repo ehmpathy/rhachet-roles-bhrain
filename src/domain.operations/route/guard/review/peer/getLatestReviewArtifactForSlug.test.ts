@@ -38,7 +38,7 @@ describe('getLatestReviewArtifactForSlug', () => {
       // filename grammar: $stone._.review.i$iter.$hash.r$idx._.given.by_peer.$slug.md
       // (i/r are zero-padded — asStoneGuardCounter)
       //
-      // ⚠️ each reviewer sits at its OWN index and carries its OWN slug, because that is the
+      // 🟡 each reviewer sits at its OWN index and carries its OWN slug, because that is the
       //    only shape a real guard config can produce: a slug appears once, so a
       //    (slug, iteration) pair is unique and "latest" is never a tie.
       const files: { name: string; blockers: number; nitpicks: number }[] = [
@@ -167,9 +167,9 @@ describe('getLatestReviewArtifactForSlug', () => {
    * a reviewer is retired from the guard config after it has already spoken, and a NEW reviewer
    * is enrolled at the rung it vacated. an index-keyed lookup enumerates `r001` and hands the
    * successor its predecessor's verdict — rendered as `r1: successor` with given/taken paths that
-   * both read `by_peer.departed.md` (r006 blocker.2, i025).
+   * both read `by_peer.departed.md`.
    *
-   * ⚠️ this case FAILS under the prior index key and PASSES under the slug key, which is what
+   * 🟡 this case FAILS under the prior index key and PASSES under the slug key, which is what
    *    makes it a clamp rather than a restatement (rule.require.clamp-edge-cases).
    */
   given('[case3] a retired reviewer rung is reused by its successor', () => {
@@ -232,7 +232,7 @@ describe('getLatestReviewArtifactForSlug', () => {
   });
 
   /**
-   * ⚠️ the write side swaps a path separator in a slug for a hyphen
+   * 🟡 the write side swaps a path separator in a slug for a hyphen
    * (asSanitizedPeerReviewSlug), so the read side must compare in that same form. a config slug
    * that carries a separator would otherwise never match its own files.
    */

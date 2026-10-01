@@ -71,7 +71,7 @@ start narrow, then widen scope only as needed
 (`path://feature.case3` → `path://feature` → `name://case3`). reach the full suite only
 by a push to cicd, not by a whole-suite run on your own machine.
 
-⚠️ **the bare invocation is already scoped.** with no `--scope` at all,
+🟡 **the bare invocation is already scoped.** with no `--scope` at all,
 `git.repo.test` adds `--changedSince <trunk tip>` — so it selects the tests your branch's
 own changes touch. `--scope` narrows *within* that; it is not what creates the bound.
 
@@ -113,7 +113,7 @@ bound and missed `routeStoneSetContemplation.acceptance.test.ts`, which holds th
 change was written for. **the two names do not share the fragment**, so the guess under-covered
 the change's own headline scenario.
 
-### ⚠️ why the bare `--changedSince` run does not answer this
+### 🟡 why the bare `--changedSince` run does not answer this
 
 the bare invocation bounds by **file touched**. that is a different question from **behavior
 endangered**, and the gap widens with the depth of the change: one edit to a shared operation
@@ -128,7 +128,7 @@ diff; the signature grep bounds the blast radius.**
 - no → your change has no observable signature, so a snapshot cannot catch it either — reach
   for the unit clamp instead (`rule.require.clamp-edge-cases`, mechanic)
 
-⚠️ **this is not a licence to widen.** the derived set is usually *smaller* than the guess and
+🟡 **this is not a licence to widen.** the derived set is usually *smaller* than the guess and
 always better-founded. where it comes back large, that size measures the change's reach, and is
 worth a look before a push.
 
@@ -139,7 +139,41 @@ a loose scope silently falls through to "all". e.g. a hyphenated
 of the one journey. always confirm the `matched: N files` line narrowed to what you
 intended before you wait on a run.
 
-⚠️ **and the inverse trap is the one above** — a scope that reads as tight and silently
+### 🔴 the sharpest instance — `path://` matches the REPO DIRECTORY too
+
+the fragment is matched against the **full path**, and the full path opens with the worktree's
+own name. so a fragment that appears in the repo name matches **every file in the repo**, and
+the scope is not loose in any way a reader would notice on the page.
+
+measured 2026-09-13, in the worktree `rhachet-roles-bhrain.beav.feat-prescribed-brain-per-stone`:
+
+```
+$ rhx git.repo.test --what integration --mode apply --scope 'path://brain'
+   ├─ scope: path://brain
+   │  └─ matched: 113 files          # ← `brain` sits inside `bhrain`
+```
+
+⇒ **113 files, which is the whole integration suite** — a `rule.forbid.thorough-test-runs`
+violation under a scope that reads as the tightest one available. killed at 510s.
+
+🟡 **the tell is the `matched: N files` line, and it is the ONLY tell.** the command reads
+correct, the scope reads narrow, and the run is green at the end. so read the count before you
+wait, never after.
+
+the repair is a fragment that carries a **directory boundary** the repo name cannot supply:
+
+```sh
+# 👎 a bare noun — matches the repo dir, so it matches every file
+--scope 'path://brain'
+
+# 👍 a path fragment with a separator — the repo name has no `route/brain/` in it
+--scope 'path://route/brain/setStoneBrain'
+```
+
+⇒ this repo is the acute case (`bhrain` holds `brain`), and the mechanism is general: any
+fragment that appears in an org, repo, or worktree name silently widens to the whole tree.
+
+🟡 **and the inverse trap is the one above** — a scope that reads as tight and silently
 **under**-covers. the loose scope wastes time and is loud; the tight-seeming one is cheap,
 fast, and green while it never loaded the file that mattered.
 

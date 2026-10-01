@@ -17,7 +17,7 @@ const noopContext = genContextReviewBrainSupplyDemo();
  * .what = the shared run-token normalizer, aliased for the reads below
  * .why = three suites had drifted three copies of it, and one of those drifts hid a
  *        real cross-machine flake. the bound it keeps — swap the run tokens and no
- *        other byte — is now stated once, in `asStableGuardEmit` (r1 nitpick.1, i002)
+ *        other byte — is now stated once, in `asStableGuardEmit`
  */
 const asStableEmit = asStableGuardEmit;
 
@@ -41,7 +41,7 @@ describe('setStoneAsPassed.feedbackAbsorption', () => {
         //    snapshot passes whether or not the cast runs at all.
         //
         //    with a root, the cast yields a bare `.reviews/peer/…` that no swap touches,
-        //    so the snapshot goes red the moment the cast is removed (r10 blocker, i005)
+        //    so the snapshot goes red the moment the cast is removed
         execSync('git init', { cwd: tempDir, stdio: 'ignore' });
 
         await fs.writeFile(path.join(tempDir, '1.test.stone'), '# Test stone');
@@ -121,7 +121,7 @@ describe('setStoneAsPassed.feedbackAbsorption', () => {
           //    that skips the mutation is all it takes: the re-entry would run against an
           //    UNEDITED artifact, and `[t1]`'s whole claim — that an edit no longer buys
           //    re-entry — would be tested against no edit at all, and pass
-          //    (rule.forbid.order-dependence; r4 nitpick.1, i011)
+          //    (rule.forbid.order-dependence)
           const result = useThen(
             'the artifact is repaired, and the re-entry completes',
             async () => {
@@ -137,8 +137,8 @@ describe('setStoneAsPassed.feedbackAbsorption', () => {
           );
 
           then('the gate refuses at the door', () => {
-            // the edit used to buy re-entry. it no longer does — this is the
-            // whole outcome of the behavior, in one assertion
+            // an edit alone does not buy re-entry — the gate refuses regardless.
+            // this is the whole outcome of the behavior, in one assertion
             expect(result.passed).toBe(false);
             expect(result.emit?.stdout).toContain('await your reply');
             expect(result.emit?.stdout).toContain('counter');
@@ -171,7 +171,7 @@ describe('setStoneAsPassed.feedbackAbsorption', () => {
               // assertions above cover least: they pin two fragments ('await your
               // reply', 'counter') and leave every other byte of the halt free to
               // regress. this pins the tree a driver actually reads
-              // (rule.require.snapshot-every-journey-step; r1 i002)
+              // (rule.require.snapshot-every-journey-step)
               expect(
                 asStableEmit({
                   emit: result.emit?.stdout,
@@ -193,7 +193,7 @@ describe('setStoneAsPassed.feedbackAbsorption', () => {
         //    here the order dependence bites even harder: were the write skipped, the
         //    re-entry would meet an UNANSWERED debt, the gate would hold, and
         //    `the gate opens` below would go red over the standing debt rather than
-        //    over the discharge it claims to test (r4 nitpick.1, i011)
+        //    over the discharge it claims to test
         const result = useThen(
           'the driver answers, and the re-entry completes',
           async () => {

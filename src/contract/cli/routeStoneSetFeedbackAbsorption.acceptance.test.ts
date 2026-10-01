@@ -139,7 +139,7 @@ describe('routeStoneSet.feedbackAbsorption.acceptance', () => {
           // one, and the failed-judge branch is a branch that does — its terminal
           // `stampGuardReport` passes `stderr: joinArtifactStderrBlocks(stderrBlocks)`.
           //
-          // ⚠️ this cited `setStoneAsPassed.ts:1021` and `route.ts:1024-1027` until
+          // 🟡 this cited `setStoneAsPassed.ts:1021` and `route.ts:1024-1027` until
           //    2026-09-08; both had drifted by five lines. the expressions do not
           //    drift, so they are the citation now.
           //
@@ -233,10 +233,9 @@ describe('routeStoneSet.feedbackAbsorption.acceptance', () => {
             //    guard is falsy and the console.error never runs. the two peer
             //    guidance halts do the same — `review.self` and the exit gate.
             //
-            // ⚠️ this cited `route.ts:1024` until 2026-09-08 while three other
-            //    comments in THIS file cited `:1026` for the same guard. `:1024` is
-            //    `console.log('')`. ⇒ two citations of one line, in one file, that
-            //    disagree — so the expression is the citation now.
+            // 🟡 line numbers drift (other comments in this file cite `:1026` for
+            //    the same guard) — the expression is the citation, never a line
+            //    number.
             //
             //    ⇒ the split is guidance-vs-evidence, not success-vs-failure: a tree
             //    the driver must READ goes to stdout; the artifact detail that
@@ -734,7 +733,7 @@ describe('routeStoneSet.feedbackAbsorption.acceptance', () => {
           //    on no branch at all. so `route.ts:1026` is falsy for every ack this command
           //    can render, by construction rather than by case.
           //
-          // ⚠️ the one `--as absorbed` path that DOES reach stderr is the invalid-slug
+          // 🟡 the one `--as absorbed` path that DOES reach stderr is the invalid-slug
           //    throw, and it arrives by a different route entirely: the operation never
           //    returns, so `route.ts`'s BadRequestError catch writes it. [case3] pins that
           //    one on both streams, so the surface is now covered in both polarities
@@ -1232,7 +1231,7 @@ describe('routeStoneSet.feedbackAbsorption.acceptance', () => {
         expect(answered).toHaveLength(1);
         // 🔴 the feedback act is CAPTURED and ASSERTED, not fired and dropped.
         //
-        //    ⚠️ the reason is NOT a race. `runStoneSet` is `spawnSync`-backed and returns
+        //    🟡 the reason is NOT a race. `runStoneSet` is `spawnSync`-backed and returns
         //       a plain `{ stdout, stderr, exitCode }` — the child is reaped before the
         //       next line runs.
         //
@@ -1435,7 +1434,7 @@ describe('routeStoneSet.feedbackAbsorption.acceptance', () => {
         //    `spawnSync`-backed and returns a plain `{ stdout, stderr, exitCode }`, so
         //    the child is reaped before the `writeFileSync` below runs.
         //
-        //    ⚠️ so the risk here was never an interleave; it was a SILENT PRECONDITION.
+        //    🟡 so the risk here was never an interleave; it was a SILENT PRECONDITION.
         //       the round's own result went unread, so a round that failed to run at all
         //       — a bad guard, a crash, a non-zero exit — would leave no given on disk,
         //       and `[t1]`'s halt assertions would then grade an absence rather than the
@@ -1817,7 +1816,7 @@ describe('routeStoneSet.feedbackAbsorption.acceptance', () => {
     //        footer only for a detected verdict — so the given lands on disk with no
     //        numeric count in it, which is precisely the state the gate re-reads.
     //
-    // ⚠️ `malfunction` and `unreadable` are DISTINCT terms and this scene holds both at
+    // 🟡 `malfunction` and `unreadable` are DISTINCT terms and this scene holds both at
     //    once, on purpose. the reviewer malfunctioned (a PROCESS that could not run); the
     //    artifact it left behind is unreadable (an OUTPUT with no verdict in it). the gate
     //    reads files, never exit codes, so what it sees is the second one.
@@ -1858,29 +1857,24 @@ describe('routeStoneSet.feedbackAbsorption.acceptance', () => {
       return { tempDir, genGuard };
     });
 
-    // 🔴 the precondition round is CAPTURED, not fired and dropped. it was dropped.
+    // 🔴 the precondition round is CAPTURED, not fired-and-dropped.
     //
-    //    ⚠️ an earlier note here claimed the two `--as passed` invocations RACED. that
-    //       claim was FALSE, and it is corrected rather than quietly dropped, because a
-    //       wrong mechanism in a comment outlives the round that wrote it
-    //       (`rule.require.timeless-comments`). `runStoneSet` is `spawnSync`-backed and
-    //       returns a plain `{ stdout, stderr, exitCode }` — no promise is produced, so
-    //       no promise can go unawaited, and the child is reaped before the next
-    //       statement runs. the ORDER was never at risk.
+    //    `runStoneSet` is `spawnSync`-backed and returns a plain
+    //    `{ stdout, stderr, exitCode }` — no promise is produced, so none goes
+    //    unawaited, and the child is reaped before the next statement runs. the
+    //    order is not at risk.
     //
-    //    what IS at risk with a dropped result is the PRECONDITION: if this round did
-    //    not run — a bad guard, a crash — it writes no unreadable given, and
+    //    what IS at risk with a dropped result is the PRECONDITION: if this round
+    //    did not run — a bad guard, a crash — it writes no unreadable given, and
     //    `no second round was spawned` below would grade an absence instead of the
-    //    sequence it names. the `round.exitCode` read is what makes that observable
-    //    (r9 nitpick.1, i016, which named the coverage half; the mechanism above is the
-    //    correction, found at i018 when the same claim was re-applied to case6).
+    //    sequence it names. the `round.exitCode` read makes that observable.
     //
-    // 🔴 and its render is a variant no other case in this suite produces. `counter` and
-    //    `cleanly` emit READABLE verdicts, so the "reviewer ran, then was promoted to
-    //    malfunction" tree — a reviewer row plus a judge refusal, at `passage = malfunction`
-    //    — is unique to `mumbles`. to drop it leaves the corpus with the halt and never the
-    //    round the halt departs from, which is the same first-frame gap `[case6][t0]` in
-    //    this file already closed (rule.require.acceptance-journey-coverage).
+    // 🔴 and its render is a variant no other case in this suite produces. `counter`
+    //    and `cleanly` emit READABLE verdicts, so the "reviewer ran, then was
+    //    promoted to malfunction" tree — a reviewer row plus a judge refusal, at
+    //    `passage = malfunction` — is unique to `mumbles`. to drop it leaves the
+    //    corpus with the halt and never the round the halt departs from
+    //    (rule.require.acceptance-journey-coverage).
     when('[t0] the round runs, and the driver knocks again', () => {
       const round = useBeforeAll(async () =>
         runStoneSet({
@@ -1927,7 +1921,7 @@ describe('routeStoneSet.feedbackAbsorption.acceptance', () => {
       then(
         'matches snapshot — the round that ran, stderr carries the judge refusal',
         () => {
-          // ⚠️ stderr is pinned too: it is where the judge-refusal evidence for the
+          // 🟡 stderr is pinned too: it is where the judge-refusal evidence for the
           //    unreadable round lands, so stdout alone leaves half the frame uncaptured
           //    (rule.require.contract-snapshot-exhaustiveness — "stdout/stderr for cli")
           expect(

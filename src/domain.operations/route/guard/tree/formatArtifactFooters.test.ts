@@ -10,7 +10,7 @@ import { formatArtifactFooters } from './formatArtifactFooters';
  *        behind a five-key credential gate. this is that missed grain
  *        (`.dream/v2026_09_04.fix.integration-harness-demands-five-brain-keys-from-every-suite.md`).
  *
- * ⚠️ [case3] is the regression clamp — it goes red under the pre-repair renderer, which
+ * 🟡 [case3] is the regression clamp — it goes red under the pre-repair renderer, which
  *    hardcoded `└─` on both footers (`rule.require.clamp-edge-cases`).
  */
 describe('formatArtifactFooters', () => {

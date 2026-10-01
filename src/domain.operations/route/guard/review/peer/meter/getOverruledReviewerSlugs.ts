@@ -12,12 +12,10 @@ import { isLevelOverruled } from './isLevelOverruled';
  *         and a disk slug is always sanitized — the write side swaps separators before it builds
  *         the .given filename. a config slug legitimately holds a separator: the legacy flat guard
  *         format derives a slug from the command itself (parseStoneGuard.ts:412-413), so
- *         `.test/mock-review.sh` is a real, live, non-retired reviewer.
- *
- * ⚠️ raw, this set could never match such a reviewer, so its human overrule would silently fail to
- *    forgive it — and the same mismatch marked it `retired` in the halt prompt (r11 blocker.1,
- *    i005). the config slug and the disk slug are two vocabularies, and every time one is compared
- *    to the other it goes through asSanitizedPeerReviewSlug.
+ *         `.test/mock-review.sh` is a real, live, non-retired reviewer. raw, this set could never
+ *         match such a reviewer, so its human overrule would silently fail to forgive it. the
+ *         config slug and the disk slug are two vocabularies, and every comparison between them
+ *         goes through asSanitizedPeerReviewSlug.
  *
  * .note = a review's level defaults to 1 when unset, to match the 1-based level convention of
  *         getReviewLevelByIndex and getStoneGuardLevelClearance. the per-level check reads the

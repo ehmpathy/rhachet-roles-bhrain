@@ -16,7 +16,7 @@ per point: **what harm does a user or an on-call engineer suffer if this ships?*
 harm lines look like: *"a caller sees X and concludes Y"* · *"an on-call engineer debugs Z for an
 hour"* · *"a future reader trusts a baseline that lies."*
 
-⚠️ **a rule violation is not a harm.** most rules keep a codebase workable, which is a cost the team
+🟡 **a rule violation is not a harm.** most rules keep a codebase workable, which is a cost the team
 pays and the user does not. a rule's `severity:` header is the author's default for the class
 (`rules101.content`), never a verdict on your instance.
 
@@ -42,7 +42,7 @@ before the fourth raise:
 | the driver **cannot** close it — needs a credential, quota, or scope call | 🔴 re-grade to nitpick, and say why |
 | it is correct and cosmetic | 🔴 re-grade to nitpick |
 
-⚠️ **row 2 is the one that gets missed.** *permitted* is narrower than *possible*
+🟡 **row 2 is the one that gets missed.** *permitted* is narrower than *possible*
 (`rule.always.raise-a-blocker-a-taken-cannot-close`, driver): a test the driver could write but cannot
 run without a key they do not hold is not permitted. to hold the release on it holds it on a **human's**
 inaction while the halt names the driver.
@@ -65,7 +65,7 @@ confidence, nor how strongly the cited rule is worded.
 ⇒ the full record, with the verbatim quotes and the cost it charged:
 `rule.forbid.overzealous-blockers.example=the-tidiness-blocker-and-the-false-green.md`
 
-## ⚠️ .the bound — this is not a licence to soften
+## 🟡 .the bound — this is not a licence to soften
 
 a real blocker stays a blocker under a long round count, a tired driver, and a deadline alike.
 `philosophy.verification-strictness` holds: zero deferrals, zero fake tests, zero skips. **the target

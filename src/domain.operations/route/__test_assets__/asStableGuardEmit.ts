@@ -14,18 +14,18 @@ import * as path from 'path';
  *         normalizer wide enough to hide a reword would re-open the drift these
  *         snapshots exist to catch.
  *
- * 🔴 .note = it lives here, shared, because three suites needed it and each had drifted
+ * .note = it lives here, shared, because three suites needed it and each had drifted
  *         its own copy. that drift shipped two real defects, and the shared home is what
  *         let one edit close both:
  *
  *         1. two copies masked only a PARENTHESIZED duration — `\(\d+…s\)` — while the
  *            guard renders the reviewer and judge lines bare, as `rejected 0.0s`. so the
  *            mask never fired, and a runner slow enough to render `0.1s` would have gone
- *            red on an elapsed-time change no assertion cared about (r4 nitpick.2, i002)
+ *            red on an elapsed-time change no assertion cared about
  *         2. every copy swapped only the ABSOLUTE root, so a path the guard chose to
  *            render relative came out as `../../../../../..<route>/…` beside a plain
  *            `<route>/…` two lines later — one snapshot, two shapes for one kind of path
- *            (r7 blocker.1, i002)
+ *
  */
 export const asStableGuardEmit = (input: {
   /**
@@ -34,7 +34,7 @@ export const asStableGuardEmit = (input: {
    * it was named `stdout` until a caller had to stabilize a stderr block for a snapshot
    * and wrote `{ stdout: out.stderr }`, which reads as a defect at every later glance
    * (`rule.forbid.ambiguous-labels`). the operation was never stdout-specific: it swaps
-   * run-unique tokens, and those tokens appear on both streams (r2 nitpick.1, i003).
+   * run-unique tokens, and those tokens appear on both streams.
    */
   emit: string | undefined;
   route: string;

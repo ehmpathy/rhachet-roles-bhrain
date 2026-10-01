@@ -111,32 +111,20 @@ const getStopPayload = async (): Promise<{
  * .why = stderr, never stdout, per rule.forbid.stdout-on-exit-errors — cli hooks
  *        surface stderr on a non-zero exit
  *
- * 🟡 it asks for SUBSTANCE before DENSITY, and the order is the whole fix.
+ * 🟡 it asks for SUBSTANCE before DENSITY. a density-only ask (condense, elevate,
+ *    star, rehome) grades HOW a summary reads, never WHAT it holds, so a dense
+ *    recap of the last two rounds satisfies it — measured 2026-09-06, over three
+ *    consecutive turns, and the wisher still asks *"what is the total vision and
+ *    where are we?"* (seed S33). substance first closes that gap — the same
+ *    defect `rule.require.enumerate-before-you-name` names, applied to a rule's
+ *    own scope rather than to a word.
  *
- *    the first draft asked only for density — condense, elevate, star, rehome. every
- *    one grades HOW a summary reads and not one grades WHAT it holds, so a dense
- *    recap of the last two rounds satisfied it perfectly.
- *
- *    measured 2026-09-06: it fired on three consecutive turns, each answer got
- *    denser, and the wisher still had to ask *"what is the total vision and where
- *    are we?"*
- *
- * ⇒ a bar the wrong artifact can clear is a bar one notch too coarse — the same
- *   defect `rule.require.enumerate-before-you-name` names, applied to a rule's
- *   own scope rather than to a word
- *
- * 🟡 it must TEACH the shape, and it must not SHOUT it. the two are separable, and
- *    a first repair conflated them — collapsed to 5 lines, which the wisher
- *    rejected at once: *"that makes the hook not do anything."*
- *
- *    the volume was never the length. three cuts took it out and left the teaching:
- *      - ALL-CAPS emphasis → lowercase. `rule.forbid.shouts` already forbade it
- *      - an imperative header → an invitation. *"say it dense"* → *"say where we stand"*
- *      - the 6-line canon path list, dropped. those briefs are BOOTED, so to
- *        re-list them each turn ranks below `reflexive-condensation`'s own bar
- *
- * ⇒ a reminder to be dense that is itself 30 shouted lines has refuted itself; one
- *   that teaches naught has forfeited its reason to fire. the seam is TONE, not SIZE.
+ * 🟡 it teaches the shape and does not shout it: lowercase, not ALL-CAPS
+ *    (`rule.forbid.shouts`) · an invitation, not an imperative ("say where we
+ *    stand", never "say it dense") · no re-listed canon path — those briefs are
+ *    BOOTED, so a repeat each turn ranks below `reflexive-condensation`'s own
+ *    bar. the wisher's own bound: *"that makes the hook not do anything."* the
+ *    seam is TONE, never SIZE.
  */
 const emitReminder = (): void => {
   const emit = (line: string): void => console.error(line);

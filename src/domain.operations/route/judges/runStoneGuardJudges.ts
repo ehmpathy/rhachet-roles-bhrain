@@ -126,19 +126,12 @@ export const runOneStoneGuardJudge = async (input: {
     }),
   ];
 
-  // the passage footer, through the one operation that owns it.
+  // the passage footer, through the one shared operation that owns it.
   //
   // 🔴 a judge renders no tally — it has no blocker/nitpick count of its own — so `tally` is
-  //    always null here, and the shared operation then gives the passage footer the terminal
-  //    marker. that is byte-identical to the three lines this block used to push by hand,
-  //    which is exactly why the duplicate was easy to leave in place
-  //    (r1 repo-rules, blocker.1, i020).
-  //
-  // ⚠️ the duplicate was CREATED by the i019 extraction, never inherited: before it, both
-  //    call sites were inline and symmetric. one was lifted into a shared operation and this
-  //    one was not, which is the half-done consolidation
-  //    `rule.forbid.duplicate-format-tree-operations` names — two renderers for one footer,
-  //    and the shared one already derives its marker where this one hardcoded `└─`.
+  //    always null here, and the shared operation derives the terminal marker from that.
+  //    do not hand-write a second footer renderer at this call site
+  //    (`rule.forbid.duplicate-format-tree-operations`).
   artifactLines.push(
     ...formatArtifactFooters({
       passage:

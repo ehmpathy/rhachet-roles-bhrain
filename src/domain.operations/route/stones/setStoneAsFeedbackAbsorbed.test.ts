@@ -66,7 +66,7 @@ const concedeDefaultConcerns = async (input: {
  * ⇒ the lesson is the one this drive has now met four times: to extract a transformer
  *   does not tell you where it must be reached for. you must enumerate the sites, and
  *   "every suite that snapshots an emit" is that enumeration — never "the suites I
- *   happened to touch" (r2 nitpick.1, i003).
+ *   happened to touch".
  */
 const asStableEmit = asStableGuardEmit;
 
@@ -92,7 +92,7 @@ const genScene = async (input: {
   //    whether or not the cast runs at all.
   //
   //    with a root, the cast yields a bare `.reviews/peer/…` that no swap touches, so
-  //    the snapshot goes red the moment the cast is removed (r10 blocker, i005)
+  //    the snapshot goes red the moment the cast is removed
   execSync('git init', { cwd: route, stdio: 'ignore' });
 
   // stone artifact + stone file + guard with one peer reviewer
@@ -178,7 +178,7 @@ describe('setStoneAsFeedbackAbsorbed', () => {
         // the third of the contract's three stdout shapes. the two acks below are two
         // lines each; this one is a full tree, and it is the shape a driver meets when
         // they run the command too early — the most consequential to keep legible
-        // (rule.require.contract-snapshot-exhaustiveness; r2 i001)
+        // (rule.require.contract-snapshot-exhaustiveness)
         expect(
           asStableEmit({ emit: result.emit?.stdout, route: scene.route }),
         ).toMatchSnapshot();
@@ -215,7 +215,7 @@ describe('setStoneAsFeedbackAbsorbed', () => {
         // 🔴 the two acks are parted by ONE line, and the substring assertions above
         //    pin only a fragment of it. a reword that kept 'your response is recorded'
         //    and changed every other word would pass them and ship unseen — the exact
-        //    drift rule.require.contract-snapshot-exhaustiveness names (r2 i001)
+        //    drift rule.require.contract-snapshot-exhaustiveness names
         expect(
           asStableEmit({ emit: result.emit?.stdout, route: scene.route }),
         ).toMatchSnapshot();
@@ -230,8 +230,8 @@ describe('setStoneAsFeedbackAbsorbed', () => {
       // fix, and prints `--as absorbed --that <slug>` for it. that slug is absent from
       // the live config by definition — so a config-only validity check throws
       // `invalid peer reviewer slug` on the exact command the guard just printed: the guard
-      // refuses its own guidance, on the one reviewer the copy exists to make legible
-      // (r10 blocker.1, i004). the union with slugs-that-have-spoken is what closes it.
+      // refuses its own guidance, on the one reviewer the copy exists to make legible.
+      // the union with slugs-that-have-spoken is what closes it.
       const scene = useBeforeAll(async () =>
         genScene({ taken: 'none', retired: true }),
       );
@@ -296,7 +296,7 @@ describe('setStoneAsFeedbackAbsorbed', () => {
             //    than that — they would pass on a rendering that dropped the separator,
             //    reversed the order, or buried the list in an unreadable sentence. the
             //    ergonomic claim of this case is that a driver can READ the list and
-            //    recover, so the list's shape is the assertion (r2 nitpick.3, i003).
+            //    recover, so the list's shape is the assertion.
             const error = await setStoneAsFeedbackAbsorbed({
               stone: '1.vision',
               route: scene.route,
@@ -380,7 +380,7 @@ describe('setStoneAsFeedbackAbsorbed', () => {
           //    changed every other word — the wording, the order of the options, the
           //    hint — would pass it and ship unseen. the negative path of a user-faced
           //    contract is a variant like any other, so it is snapped rather than
-          //    sampled (rule.require.contract-snapshot-exhaustiveness; r2 nitpick.1, i002)
+          //    sampled (rule.require.contract-snapshot-exhaustiveness)
           const error = await setStoneAsFeedbackAbsorbed({
             stone: '1.vision',
             route: scene.route,
@@ -390,9 +390,9 @@ describe('setStoneAsFeedbackAbsorbed', () => {
           expect(error).toBeInstanceOf(Error);
           expect(
             asStableEmit({
-              // 🔴 an ERROR MESSAGE, handed to a param that was called `stdout` until
-              //    this round. it is this call site, and the stderr one in the
-              //    acceptance suite, that proved the name wrong (r2 nitpick.1, i003)
+              // 🔴 an ERROR MESSAGE, handed to `emit` — never `stdout`. this call
+              //    site, plus the stderr one in the acceptance suite, is why `emit`
+              //    is the correct name
               emit: (error as Error).message,
               route: scene.route,
             }),

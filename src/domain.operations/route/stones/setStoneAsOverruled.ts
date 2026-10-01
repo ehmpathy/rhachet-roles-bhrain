@@ -87,8 +87,7 @@ export const setStoneAsOverruled = async (
           reason:
             'no blocked level to overrule — every review level is already terminal',
           guidance: [
-            'each peer-review level is approved or already overruled.',
-            'there is no blocked level left to forgive.',
+            'each peer-review level is approved or already overruled — none is left to forgive',
             '',
             'the stone is ready — run:',
             `   └─ rhx route.stone.set --stone ${stoneMatched.name} --as passed`,

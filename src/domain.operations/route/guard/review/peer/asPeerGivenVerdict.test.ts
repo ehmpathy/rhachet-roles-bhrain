@@ -38,7 +38,7 @@ describe('asPeerGivenVerdict', () => {
         //         the gate predicate — computePeerFeedbackUnabsorbedUnforgiven keeps a
         //         reviewer only while it holds. so this one assertion IS the claim
         //         "the stone is held", and a second test that re-states it as a
-        //         boolean adds no coverage (r4 nitpick.1, i002)
+        //         boolean adds no coverage
         const verdict = asPeerGivenVerdict({ counts: { detected: false } });
         expect(verdict.blockers).toBeGreaterThan(0);
       });
@@ -51,13 +51,10 @@ describe('asPeerGivenVerdict', () => {
           // [t0] clamps the flag's SIDE EFFECT (it gates). it would NOT go red if the
           // flag were dropped and the count left at 1 — which is exactly the state
           // that let the prompt render `1 blocker` as though the reviewer had
-          // reported it (r9 nitpick.1, i003). so the flag itself is clamped here.
+          // reported it. so the flag itself is clamped here.
           //
-          // .note = this block was labelled `[t2]` until r7 nitpick.2 (i016). r009
-          //         nitpick.1 had folded the original [t1] into [t0] and left the
-          //         label unrenumbered, so the sequence read t0, t2 — a gap a reader
-          //         cannot part from an accidentally deleted step. the counter resets
-          //         per `given` and runs contiguously, so it is [t1]
+          // .note = the [tN] counter resets per `given` and runs contiguously — a gap
+          //         (t0, t2, with no t1) reads as an accidentally deleted step
           expect(asPeerGivenVerdict({ counts: { detected: false } })).toEqual({
             blockers: 1,
             nitpicks: 0,

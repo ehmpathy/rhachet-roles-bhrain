@@ -11,13 +11,12 @@ import * as path from 'path';
  *         pairs them by the DERIVED PATH (getRouteGuardReviewPeerPathTaken). a .taken
  *         write does not move the artifact hash, so one reviewer's successive givens
  *         routinely share a hash; (slug, hash) would hand a fresh critique the prior
- *         iteration's answer (r8 blocker.1, i002).
+ *         iteration's answer.
  *
- * ⚠️ both data objects downstream already refuse a `hash` field, each with a note that the
- *    absence is the guard (RouteGuardReviewPeerGiven, RouteGuardReviewPeerTakenMeta —
- *    r11 blocker.1, i003). this parser is one hop UPSTREAM of both, and to return the
+ * 🟡 both data objects downstream already refuse a `hash` field, each with a note that the
+ *    absence is the guard. this parser is one hop UPSTREAM of both, and to return the
  *    field here left it within reach of the next author who wants a key: the two halves
- *    refuse it, and the source they both parse from offered it (r11 blocker.2, i004).
+ *    refuse it, and the source they both parse from offered it.
  *    the raw hash stays legible from `pathGiven`/`pathTaken` for any reader who genuinely
  *    needs it, so no capability is lost — only the invitation.
  *
@@ -34,7 +33,7 @@ export const getRouteGuardReviewPeerPathMeta = (input: {
   // .note = the iteration is zero-padded on disk (asStoneGuardCounter); parseInt
   //         reads it as a number so callers compare ordinals, never strings
   // .note = group 2 (the hash) is captured so the grammar check below can REQUIRE it.
-  //         it is never returned — see the ⚠️ above
+  //         it is never returned — see the 🟡 above
   const stampMatch = name.match(/\.i(\d+)\.([^.]+)\.r\d+\./);
 
   // slug = the text after the given|taken infix, up to the .md suffix
@@ -47,7 +46,7 @@ export const getRouteGuardReviewPeerPathMeta = (input: {
   //    (i*, r*) admit a stamp this parser then refuses. under P2 the gate reads every
   //    historical file, so one bad name halts the entrance gate, the exit gate, and
   //    the stophook alike — and a bare "could not parse" strands the driver with no
-  //    move (rule.require.errors-name-the-fix; r7 nitpick.1, i002)
+  //    move (rule.require.errors-name-the-fix)
   if (!stampMatch?.[1] || !stampMatch?.[2] || !slugMatch?.[1])
     UnexpectedCodePathError.throw(
       [

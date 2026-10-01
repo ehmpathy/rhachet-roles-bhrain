@@ -15,16 +15,16 @@ import { asSanitizedPeerReviewSlug } from './asSanitizedPeerReviewSlug';
  *    derives its slug from the review command itself (parseStoneGuard.ts:412-413), so
  *    `.test/mock-review.sh` is a real, live, fully-configured reviewer.
  *
- * ⚠️ keyed raw, every lookup for such a reviewer missed — and in computePeerFeedbackUnabsorbedUnforgiven
+ * 🟡 keyed raw, every lookup for such a reviewer missed — and in computePeerFeedbackUnabsorbedUnforgiven
  *    the MISS IS THE RETIRED TEST (`retired: !levelBySlug.has(slug)`). so a fully-configured
  *    reviewer rendered as `retired from the guard config`, with the "it will not speak again" copy,
- *    and its human overrule could never match it either (r11 blocker.1, i005).
+ *    and its human overrule could never match it either.
  *
  * .note = this is a named transformer rather than an inline `.map` at the one call site, for two
  *         reasons: the sanitize is a decision a reader must not re-make by hand, and the orchestrator
  *         that held it does fs i/o — so inline, this rule was reachable only at integration grain.
  *
- * ⚠️ `level` reads OPTIONAL on the type because that type doubles as the CONFIG declaration, where a
+ * 🟡 `level` reads OPTIONAL on the type because that type doubles as the CONFIG declaration, where a
  *    guard author may omit it. it is never optional on a PARSED review: parseStoneGuard defaults it
  *    at every emit site (`:157`, `:273`, `:416`), which is what
  *    `rule.require.review-standardization-at-parse` demands.

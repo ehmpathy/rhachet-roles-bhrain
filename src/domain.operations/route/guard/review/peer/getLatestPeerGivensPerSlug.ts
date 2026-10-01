@@ -27,7 +27,7 @@ import type { RouteGuardReviewPeerGiven } from './getAllRouteGuardReviewPeerGive
  *         undetected-verdict branch of getAllRouteGuardReviewPeerGivens sidesteps. where no
  *         semantic answer exists, a stable answer beats an arbitrary one.
  *
- * .note = 🔴 the OUTPUT is sorted by slug, and that is a second, separate guarantee. a max makes
+ * .note = the OUTPUT is sorted by slug, and that is a second, separate guarantee. a max makes
  *         the winner order-free; it leaves the SEQUENCE at map-insertion order, which is glob
  *         order, which is the filesystem's. that sequence is not private — the filter/map chain
  *         downstream keeps it intact all the way to the halt prompt, so the reviewers a driver is

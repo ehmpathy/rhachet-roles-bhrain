@@ -48,7 +48,7 @@ with cited evidence, absorb the concern as `--as disputed`, run `--as absorbed -
 re-arrive. feedback you have not absorbed is not a wall, and the entrance gate refuses a fresh round
 while any reviewer is owed an answer (`rule.forbid.unanswered-exits-from-a-blocker`).
 
-⚠️ **and a code fix is not an answer either.** the debt is keyed to the reviewer, so it survives
+🟡 **and a code fix is not an answer either.** the debt is keyed to the reviewer, so it survives
 your edit — the reviewer never learns of a repair you did not write down, and re-raises it.
 
 ### what you cannot do

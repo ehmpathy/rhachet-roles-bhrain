@@ -16,12 +16,12 @@ import { getRouteGuardReviewPeerPathTaken } from './getRouteGuardReviewPeerPathT
  * hash; to match against the current hash would demand a file the driver has no way
  * to produce, and that is a deadlock. it is why this operation takes no hash at all.
  *
- * 🔴 and (slug, hash) is NOT a given's identity, because a .taken write does not
+ * and (slug, hash) is NOT a given's identity, because a .taken write does not
  * move the artifact hash — the hash covers the `artifacts:` set only. so a reviewer
  * that re-runs after it was answered writes its fresh given at the SAME hash, one
  * iteration later, and a (slug, hash) key hands that fresh critique the PRIOR
  * iteration's answer. the path carries the iteration verbatim, so it separates the
- * two givens that the hash alone conflates (r8 blocker.1, i002).
+ * two givens that the hash alone conflates.
  */
 export const getAllRouteGuardReviewPeersFeedbackUnabsorbed = (input: {
   givens: { slug: string; blockers: number; pathGiven: string }[];

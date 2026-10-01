@@ -7,11 +7,10 @@ import type { RouteGuardReviewPeerFeedbackUnabsorbed } from '../review/peer/getR
  * .what = one reviewer's identity + verdict + the two conversation paths
  * .why = every render case needs the same per-reviewer facts
  *
- * 🔴 .note = DERIVED from the readiness record, never re-declared beside it. the two are one
- *         concept, and a hand-copied twin drifts: when `unreadable` landed, both copies had to
- *         be edited by hand, and only a required field would have failed the build had one been
- *         missed — an optional field or a stale doc comment would have drifted silently
- *         (rule.require.single-source-of-truth-for-render; r11 nitpick.1, i003).
+ * 🔴 .note = DERIVED from the readiness record, never re-declared beside it. a hand-copied
+ *         twin drifts silently — only a required field forces the build to fail on a miss;
+ *         an optional field or a stale doc comment would not
+ *         (rule.require.single-source-of-truth-for-render).
  *
  * `tag` is omitted because it is the readiness verdict (absent vs stale), which the reply-prompt
  * does not render — it lists every owed reviewer alike.
@@ -42,7 +41,7 @@ type FeedbackAbsorbReviewerOwed = FeedbackAbsorbReviewer & { retired: boolean };
  *         stats that same path on disk. relativize at the read and the derived path
  *         no longer equals the globbed one, so every reviewer reads as unanswered
  *         forever — the deadlock this gate exists to avoid. the display form is a
- *         VIEW of the key, never the key (r11 blocker.1, i004).
+ *         VIEW of the key, never the key.
  */
 const asDisplayPaths = (input: {
   reviewer: FeedbackAbsorbReviewer;
@@ -70,8 +69,8 @@ const asVerdict = (input: {
   // 🔴 never print a fabricated count as though the reviewer had reported it. an
   //    unreadable given carries blockers:1 because the gate needs a number and none
   //    was read — to render that as `1 blocker` tells the driver the guard read a
-  //    specific verdict when it read no verdict at all, and sends them to hunt a
-  //    blocker that was never raised (r9 nitpick.1, i003)
+  //    specific verdict when it read none, and sends them to hunt a blocker that was
+  //    never raised
   if (input.unreadable) return 'unreadable — no numeric count found';
 
   const blockersLabel = input.blockers === 1 ? 'blocker' : 'blockers';
@@ -155,30 +154,18 @@ const formatReplyPrompt = (input: {
 
   // 🔴 one command PER reviewer — `--as absorbed` takes a single slug, so a close
   //    that names only reviewers[0] reads as "run this one and you are done" and the
-  //    driver stops a reviewer short of discharged (r9 nitpick.1, i002)
+  //    driver stops a reviewer short of discharged
   const asFeedbackAbsorbCmd = (slug: string): string =>
     `rhx route.stone.set --stone ${input.stone} --as absorbed --that ${slug}`;
 
-  // 🔴 a why+fix pair is a BRANCH of the tree, never prose appended after it. an earlier
-  //    render closed the tree with `└─ rhx …` and then hung two flat paragraphs beneath
-  //    it, at a second indent scheme (3-space lead, 8-space continuation) the eye cannot
-  //    pattern-match against the `├─`/`└─` depths above. one command, one shape
-  //    (rule.require.treestruct-output; r6 i002)
-  // 🔴 ONE branch-head grammar across every halt this command emits — `why …` and
-  //    `what to do …`. two findings landed on this together and they pull the same way:
-  //
-  //    1. the fix head was the literal `fix` for BOTH branches, so a reviewer that is
-  //       retired AND unreadable rendered two byte-identical `├─ fix` siblings and the
-  //       driver had to read the prose under each to learn which answered which
-  //       (r4 nitpick.1, i003)
-  //    2. the absent + stale halts head their branches `why` / `what to do` while this
-  //       one headed them `why …` / `fix`, so a driver who reads the command's outputs
-  //       could not tell whether `fix` and `what to do` name the same role
-  //       (r7 nitpick.2, i003)
-  //
-  //    ⇒ the role word leads and the SUBJECT is a suffix, present only where siblings
-  //      exist to disambiguate. the absent/stale halts render exactly one why + one
-  //      what-to-do, so their bare heads stay bare and stay correct.
+  // a why+fix pair is a BRANCH of the tree, never prose appended after it — one command,
+  //    one shape, at one indent scheme (rule.require.treestruct-output).
+  // 🔴 one branch-head grammar across every halt this command emits — `why …` / `what to
+  //    do …`, never a bare `fix`. the role word leads and the SUBJECT is a suffix,
+  //    present only where siblings exist to disambiguate: a reviewer that is retired
+  //    AND unreadable renders two why+fix pairs, and a bare `fix` on both leaves the
+  //    driver to trace prose under each to learn which answered which. the absent/stale
+  //    halts render exactly one why + one what-to-do, so their bare heads stay bare.
   const pushWhyFix = (branch: {
     why: { head: string; body: string[] };
     fix: { head: string; body: string[] };
@@ -201,19 +188,14 @@ const formatReplyPrompt = (input: {
     pushWhyFix({
       why: {
         head: `why a retired reviewer still awaits`,
-        // 🔴 state the RULE, never a history. an earlier draft closed with "so it did not
-        //    clear when the artifact changed" — but a reviewer is retired by an edit to the
-        //    guard config, and the artifact need not have moved at all. a driver who changed
-        //    no artifact then reads the halt as a report of someone else's session (r7 i001)
-        //
-        // 🔴 and it must NOT assert a blocker. `retired` and `unreadable` are independent
-        //    axes, so both branches render together — and this line opened `it raised a
-        //    blocker`, which the unreadable branch four lines below then contradicted with
-        //    `there is none to find`. one tree told the driver to hunt a blocker and told
-        //    them there was none to hunt. `spoke` is the declared term for the one fact
-        //    that holds across BOTH verdicts (`term=route.guard.review.spoken`), so it is
-        //    the only opener that stays true when the two stack (found by the stacked cli
-        //    cell at 5.3 i011 — the cell existed in no test until then)
+        // 🔴 a reviewer is retired by an edit to the guard config, never to the artifact —
+        //    so this must not blame an artifact change, or a driver who changed none reads
+        //    the halt as someone else's session. it must also not assert a blocker: `retired`
+        //    and `unreadable` are independent, so both branches can render together, and an
+        //    opener that claims a blocker collides with the unreadable branch's own "there
+        //    is none to find". `spoke` is the declared term for the one fact both verdicts
+        //    share (`term=route.guard.review.spoken`), and the only opener that stays true
+        //    when the two stack.
         body: [
           `it spoke, and was then removed from the guard config. what it said`,
           `was never answered, and a debt is keyed to the reviewer rather than`,
@@ -235,11 +217,9 @@ const formatReplyPrompt = (input: {
     pushWhyFix({
       why: {
         head: `why an unreadable reviewer gates`,
-        // 🔴 do NOT apologize here for a count the render does not print. an earlier draft
-        //    closed with "the count shown for it is not the reviewer's" — a leftover from
-        //    back when `asVerdict` still printed the synthesized `blockers: 1`. once that
-        //    fix landed the sentence disowned a number no longer on screen, and a reader
-        //    who hunts the render for it finds no count at all (r7 i002)
+        // 🔴 do NOT apologize here for a count the render does not print. `asVerdict`
+        //    renders no synthesized count on the unreadable branch, so there is no
+        //    figure on screen for this text to disown
         body: [
           `its output carried no numeric blocker or nitpick count, so no`,
           `verdict was ever seen. an absent verdict is not a clean one — to`,
@@ -337,18 +317,10 @@ const formatAbsent = (input: {
  * .why = a .taken exists, but it answers an earlier given from this reviewer —
  *        the REVIEWER has spoken again, so a fresh response is owed
  *
- * .note = the why-line no longer blames the artifact change (F7). under the
- *         reviewer-keyed debt, an edit to the artifact does NOT stale an answer:
- *         a taken pairs its own given, so it stays paired however many times the
- *         hash moves after it. the one way an answered reviewer becomes owed again
- *         is that the reviewer itself raised a new critique.
- *
- * .note = THREE lines carry that change, not one — the lead line, the why-line, and
- *         the what-to-do line. F7 predicted the copy would need no edit at all and
- *         scored its confidence on that; the prediction was wrong, and the entry is
- *         re-scored 88% -> 70%. only the header line survives verbatim. recorded here
- *         because a reader who greps F7 finds this note first, and a note that names
- *         one of three understates what the fork actually cost.
+ * .note = under the reviewer-keyed debt, an edit to the artifact does NOT stale an
+ *         answer: a taken pairs its own given, so it stays paired however many times
+ *         the hash moves after it. the one way an answered reviewer becomes owed again
+ *         is that the reviewer itself raised a new critique (F7).
  */
 const formatStale = (input: {
   stone: string;

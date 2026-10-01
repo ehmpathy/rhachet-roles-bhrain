@@ -37,7 +37,7 @@ when a level `exhausts`, it is terminal, so the next level runs in that same pas
 not stop. you do not knock on the human's door. you drive on down the ladder until every
 reviewer you could possibly work with has gone terminal.
 
-⚠️ **that is the LEVEL's unlock, never a discharge of what the exhausted reviewer raised.** the
+🟡 **that is the LEVEL's unlock, never a discharge of what the exhausted reviewer raised.** the
 two come apart, and the section below parts them.
 
 ## .the rule
@@ -45,7 +45,7 @@ two come apart, and the section below parts them.
 | the level did... | you must... |
 |------------------|-------------|
 | approve | continue — the next level is already live |
-| exhaust (earned) | continue — the next level runs now. ⚠️ **and answer any blocker it left** — see below |
+| exhaust (earned) | continue — the next level runs now. 🟡 **and answer any blocker it left** — see below |
 | reject (has budget) | converge — fix the code, or articulate why it holds, and re-arrive |
 | 🔴 disputed — every rejected concern disputed | continue — a disputed level is terminal too. the debt is answered AND its verdict is deferred to the council; naught further holds it |
 | all levels terminal | now — and only now — the human may be pulled to overrule |
@@ -111,7 +111,7 @@ was skipped" — it is "the level was worked to the end and could not be satisfi
 that, the next level should proceed; a wait would only stall the road and pull the human
 early.
 
-⚠️ **it proceeds ALONGSIDE the answer you still owe, never in place of it.** the unlock frees the
+🟡 **it proceeds ALONGSIDE the answer you still owe, never in place of it.** the unlock frees the
 *ladder*, and an unanswered blocker still holds the *stone* — whatever the levels below it do.
 
 your cited record is what earns that trust. honor it, and the ladder carries you.

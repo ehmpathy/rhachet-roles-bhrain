@@ -108,7 +108,7 @@ const asScopedReadyReason = (input: {
  *   1. the driver answers — a .taken at the path that given derives
  *   2. a human overrules the level (getStoneGuardReviewPeerFeedbackUnabsorbedUnforgiven)
  *
- * ⚠️ no path clears a debt on its own. a reviewer that speaks again with 0 blockers
+ * 🟡 no path clears a debt on its own. a reviewer that speaks again with 0 blockers
  * supersedes its own prior blocker, but only after 1 or 2 unlocked the round: the
  * entrance gate in setStoneAsPassed is stone-level and returns BEFORE any reviewer
  * runs, so while a debt stands no reviewer speaks.
@@ -131,8 +131,7 @@ export const getRouteGuardReviewPeerFeedbackAbsorptionStatus = async (input: {
    *        live config by definition) while it still refuses a typo. that valid set is
    *        (configured ∪ spoken), and `spoken` is exactly what this operation already read.
    *        reported here so the caller derives it from the same read rather than a second
-   *        full corpus scan of its own (r11 blocker.1 i004 for the single source; r11
-   *        nitpick.1 i005 for the duplicated read).
+   *        full corpus scan of its own.
    */
   slugsSpoken: string[];
 }> => {
