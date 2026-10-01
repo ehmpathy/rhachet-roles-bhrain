@@ -180,6 +180,8 @@ describe('formatRouteDriveBudgetExhausted', () => {
       const output = formatRouteDriveBudgetExhausted({
         route: '.behavior/v2026_09_03.example',
         stone: '5.1.execution',
+        brain: null,
+        effort: null,
         reason:
           'concessions await the round that confirms them; peer reviewer budget exhausted: mech-rules',
         meters: [meterExhausted],
@@ -249,6 +251,8 @@ describe('formatRouteDriveBudgetExhausted', () => {
       const output = formatRouteDriveBudgetExhausted({
         route: '.behavior/v2026_09_03.example',
         stone: '5.1.execution',
+        brain: null,
+        effort: null,
         reason: 'peer reviewer budget exhausted: mech-rules',
         meters: [meterExhausted],
       });
@@ -273,6 +277,8 @@ describe('formatRouteDriveBudgetExhausted', () => {
         const output = formatRouteDriveBudgetExhausted({
           route: '.behavior/v2026_09_03.example',
           stone: '5.1.execution',
+          brain: null,
+          effort: null,
           reason: genRouteGuardExhaustedReason({
             slugs: ['mech-rules'],
             concession: 'urgent',
@@ -304,6 +310,8 @@ describe('formatRouteDriveBudgetExhausted', () => {
         const output = formatRouteDriveBudgetExhausted({
           route: '.behavior/v2026_09_03.example',
           stone: '5.1.execution',
+          brain: null,
+          effort: null,
           reason: genRouteGuardExhaustedReason({
             slugs: ['mech-rules'],
             concession: 'better',
@@ -327,6 +335,8 @@ describe('formatRouteDriveBudgetExhausted', () => {
         const output = formatRouteDriveBudgetExhausted({
           route: '.behavior/v2026_09_03.example',
           stone: '5.1.execution',
+          brain: null,
+          effort: null,
           reason: genRouteGuardExhaustedReason({
             slugs: ['mech-rules'],
             concession: 'none',

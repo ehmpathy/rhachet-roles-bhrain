@@ -53,17 +53,17 @@ exports[`driver.route.overrule.acceptance given: [case2] robot attempts overrule
    ├─ stone = 1.plan
    ├─ ✗ only humans can overrule
    │
-   └─ as a driver, you should:
-         ├─ \`--as passed\` to signal work complete, proceed
-         ├─ \`--as arrived\` to signal work complete, request review
-         ├─ \`--as conceded\` to take a reviewer concern and repair it
-         ├─ \`--as disputed\` to escalate ONE concern to the council
-         └─ \`--as blocked\` to escalate a genuine wall
-
-      🟡 a peer's feedback you have not absorbed is not a wall. absorb each
-         concern it raised — concede it, or dispute it.
-
-      the human will run \`--as overruled\` when ready.
+   ├─ as a driver, you should:
+   │     ├─ \`--as passed\` to signal work complete, proceed
+   │     ├─ \`--as arrived\` to signal work complete, request review
+   │     ├─ \`--as conceded\` to take a reviewer concern and repair it
+   │     ├─ \`--as disputed\` to escalate ONE concern to the council
+   │     └─ \`--as blocked\` to escalate a genuine wall
+   │
+   ├─ 🟡 a peer's feedback you have not absorbed is not a wall. absorb each
+   │     concern it raised — concede it, or dispute it.
+   │
+   └─ the human will run \`--as overruled\` when ready.
 "
 `;
 
@@ -85,17 +85,17 @@ exports[`driver.route.overrule.acceptance given: [case6] robot attempts force wh
    ├─ stone = 1.plan
    ├─ ✗ only humans can force
    │
-   └─ as a driver, you should:
-         ├─ \`--as passed\` to signal work complete, proceed
-         ├─ \`--as arrived\` to signal work complete, request review
-         ├─ \`--as conceded\` to take a reviewer concern and repair it
-         ├─ \`--as disputed\` to escalate ONE concern to the council
-         └─ \`--as blocked\` to escalate a genuine wall
-
-      🟡 a peer's feedback you have not absorbed is not a wall. absorb each
-         concern it raised — concede it, or dispute it.
-
-      the human will run \`--as forced\` when ready.
+   ├─ as a driver, you should:
+   │     ├─ \`--as passed\` to signal work complete, proceed
+   │     ├─ \`--as arrived\` to signal work complete, request review
+   │     ├─ \`--as conceded\` to take a reviewer concern and repair it
+   │     ├─ \`--as disputed\` to escalate ONE concern to the council
+   │     └─ \`--as blocked\` to escalate a genuine wall
+   │
+   ├─ 🟡 a peer's feedback you have not absorbed is not a wall. absorb each
+   │     concern it raised — concede it, or dispute it.
+   │
+   └─ the human will run \`--as forced\` when ready.
 "
 `;
 
@@ -512,10 +512,9 @@ exports[`driver.route.overrule.acceptance given: [case16] redundant overrule aft
    ├─ stone = 1.plan
    ├─ ✗ no blocked level to overrule — every review level is already terminal
    │
-   └─ each peer-review level is approved or already overruled.
-      there is no blocked level left to forgive.
-
-      the stone is ready — run:
+   ├─ each peer-review level is approved or already overruled — none is left to forgive
+   │
+   └─ the stone is ready — run:
          └─ rhx route.stone.set --stone 1.plan --as passed
 "
 `;
@@ -527,10 +526,9 @@ exports[`driver.route.overrule.acceptance given: [case17] overrule an already-cl
    ├─ stone = 1.plan
    ├─ ✗ no blocked level to overrule — every review level is already terminal
    │
-   └─ each peer-review level is approved or already overruled.
-      there is no blocked level left to forgive.
-
-      the stone is ready — run:
+   ├─ each peer-review level is approved or already overruled — none is left to forgive
+   │
+   └─ the stone is ready — run:
          └─ rhx route.stone.set --stone 1.plan --as passed
 "
 `;

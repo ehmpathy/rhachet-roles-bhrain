@@ -2,8 +2,8 @@ import type { IsoTimeStamp } from 'iso-time';
 
 import type { RouteStoneGuardReviewSelf } from '@src/domain.objects/Driver/RouteStoneGuard';
 
-import { asConcessionReasonDisplay } from './guard/review/peer/asConcessionReasonDisplay';
 import { asGuidanceBranches } from './asGuidanceBranches';
+import { asConcessionReasonDisplay } from './guard/review/peer/asConcessionReasonDisplay';
 import { asRungLabel } from './guard/review/peer/meter/asRungLabel';
 import { getReviewPeerLadderStatus } from './guard/review/peer/meter/getReviewPeerLadderStatus';
 import { getSelfReviewArticulationPath } from './guard/review/self/getSelfReviewArticulationPath';

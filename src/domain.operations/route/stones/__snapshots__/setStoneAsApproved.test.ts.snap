@@ -15,17 +15,17 @@ exports[`setStoneAsApproved given: [case3] caller is not human when: [t0] isTTY 
    ├─ stone = 1.vision
    ├─ ✗ only humans can approve
    │
-   └─ as a driver, you should:
-         ├─ \`--as passed\` to signal work complete, proceed
-         ├─ \`--as arrived\` to signal work complete, request review
-         ├─ \`--as conceded\` to take a reviewer concern and repair it
-         ├─ \`--as disputed\` to escalate ONE concern to the council
-         └─ \`--as blocked\` to escalate a genuine wall
-
-      🟡 a peer's feedback you have not absorbed is not a wall. absorb each
-         concern it raised — concede it, or dispute it.
-
-      the human will run \`--as approved\` when ready."
+   ├─ as a driver, you should:
+   │     ├─ \`--as passed\` to signal work complete, proceed
+   │     ├─ \`--as arrived\` to signal work complete, request review
+   │     ├─ \`--as conceded\` to take a reviewer concern and repair it
+   │     ├─ \`--as disputed\` to escalate ONE concern to the council
+   │     └─ \`--as blocked\` to escalate a genuine wall
+   │
+   ├─ 🟡 a peer's feedback you have not absorbed is not a wall. absorb each
+   │     concern it raised — concede it, or dispute it.
+   │
+   └─ the human will run \`--as approved\` when ready."
 `;
 
 exports[`setStoneAsApproved given: [case4] stone already approved when: [t0] human tries to approve already-approved stone (idempotent) then: output matches snapshot 1`] = `

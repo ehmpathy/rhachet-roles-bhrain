@@ -20,13 +20,7 @@
             "type": "command",
             "command": "bash .agent/repo=ehmpathy/role=mechanic/inits/claude.hooks/sessionstart.notify-permissions.sh",
             "timeout": 10,
-            "author": "repo=bhuild/role=dispatcher"
-          },
-          {
-            "type": "command",
-            "command": "./node_modules/.bin/rhachet roles boot --role learner",
-            "timeout": 30,
-            "author": "repo=bhrain/role=learner"
+            "author": "repo=ehmpathy/role=mechanic"
           }
         ]
       },
@@ -194,6 +188,12 @@
             "command": "./node_modules/.bin/rhx route.drive --when hook.onStop",
             "timeout": 25,
             "author": "repo=bhrain/role=driver"
+          },
+          {
+            "type": "command",
+            "command": "./node_modules/.bin/rhx elucidate.summary --when hook.onStop",
+            "timeout": 5,
+            "author": "repo=bhrain/role=telepath"
           }
         ]
       }

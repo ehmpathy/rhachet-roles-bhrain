@@ -254,8 +254,7 @@ export const formatBudgetGrantRefusalLines = (input: {
       : [
           `         ├─ and spend the rounds in hand first — a grant needs a reviewer that has run dry`,
         ]),
-    `         └─ rhx route.stone.set --stone ${input.stone} --as conceded \\`,
-    `              --with ${named} --about <concern> --severity urgent`,
+    `         └─ rhx route.stone.set --stone ${input.stone} --as conceded --with ${named} --about <concern> --severity urgent`,
     ``,
   ];
 };
