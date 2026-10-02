@@ -2,18 +2,29 @@ import * as fs from 'fs/promises';
 import * as path from 'path';
 
 import type { PassageReport } from '@src/domain.objects/Driver/PassageReport';
+import type { RouteStoneGuard } from '@src/domain.objects/Driver/RouteStoneGuard';
 
 import { getRouteBindByBranch } from './bind/getRouteBindByBranch';
 import { computeRouteBouncerCache } from './bouncer/computeRouteBouncerCache';
 import { setRouteBouncerCache } from './bouncer/setRouteBouncerCache';
+import { applyStoneBrainOnEntry } from './brain/applyStoneBrainOnEntry';
+import { asStoneBrainEffort } from './brain/asStoneBrainEffort';
+import { asStoneBrainSlug } from './brain/asStoneBrainSlug';
+import { formatStoneBrainOutcome } from './brain/formatStoneBrainOutcome';
+import { isRouteBrainDeclared } from './brain/isRouteBrainDeclared';
+import type { StoneBrainOutcome } from './brain/setStoneBrain';
 import { asRouteDisplayPath } from './drive/asRouteDisplayPath';
+import { asRouteDispositions } from './drive/asRouteDispositions';
 import { asRouteStoneDisposition } from './drive/asRouteStoneDisposition';
+import { formatRouteDriveHeader } from './drive/formatRouteDriveHeader';
 import { formatRouteDriveMixedHalt } from './drive/formatRouteDriveMixedHalt';
+import { formatRouteDriveWhere } from './drive/formatRouteDriveWhere';
 import { getCurrentExhaustedSlugs } from './drive/getCurrentExhaustedSlugs';
 import { getRouteDriveBlockerMessage } from './drive/getRouteDriveBlockerMessage';
 import { getRouteDriveExhaustedMessage } from './drive/getRouteDriveExhaustedMessage';
 import { getStoneGuardBlockerReport } from './drive/getStoneGuardBlockerReport';
 import { setDriveBlockerState } from './drive/setDriveBlockerState';
+import { getOneStoneByName } from './getOneStoneByName';
 import { getAllLatestPassageByStone } from './passage/getAllLatestPassageByStone';
 import { getAllPassageReportsRaw } from './passage/getAllPassageReportsRaw';
 import { getLatestPassageFromReports } from './passage/getLatestPassageFromReports';
@@ -143,6 +154,35 @@ export const stepRouteDrive = async (
   const getLatestForStone = (name: string): PassageReport | null =>
     passageLatestByStone.find((report) => report.stone === name) ?? null;
 
+  // the route's stones, from the one frontier snapshot — the hard-stop gate below needs a
+  // stone's guard to apply its brain, and it fires before the main flow
+  const stones = frontier.stones;
+
+  // 🔴 the dropped-key advisory does NOT ride the drive
+  // .why = a guard typo is true on every tick until fixed, and a warn seen on every tick
+  //        is a warn no one reads. it belongs to a surface that reads a guard on purpose
+  // 🟡 .note = no such surface calls `formatGuardParseWarnings` yet; it is unwired
+
+  // does ANY stone declare a brain? a per-ROUTE fact, computed once at zero I/O
+  // .why = it parts case=10 from case=7 in `applyStoneBrainOnEntry`: every extant route is
+  //        `false`, so its drive stays byte-identical; an opted-in route may render
+  //        an inherited `brain = <slug>` on its brainless stones
+  const routeDeclaresBrain = isRouteBrainDeclared({ stones });
+
+  // apply a stone's prescribed brain, then mark the entry
+  // .why = onBoot + direct dispatch UNCONDITIONALLY (a resumed session at a marked stone
+  //        must still switch, F7); onStop only on ENTRY (a per-tick spawn is waste)
+  const applyStoneBrain = (stoneApplied: {
+    name: string;
+    guard: RouteStoneGuard | null;
+  }): Promise<StoneBrainOutcome> =>
+    applyStoneBrainOnEntry({
+      stone: stoneApplied,
+      route,
+      dispatchAlways: hookContext !== 'hook.onStop',
+      routeDeclaresBrain,
+    });
+
   // in hook mode, surface a hard-stop halt (malfunction or driver wall) immediately
   // .why = the push/halt classification comes from asRouteStoneDisposition — the SAME single
   //        source the onStop path and the statusline read — so the hook can never disagree
@@ -157,14 +197,42 @@ export const stepRouteDrive = async (
   //         a driver wall = status 'blocked' with NO guard blocker → disposition halt(blocked);
   //         an agent-fixable blocker (review.self/peer/…) → push, so it does not match here.
   if (hookContext) {
-    const dispositions = passageLatestByStone.map((report) => ({
-      report,
-      disposition: asRouteStoneDisposition({
-        status: report.status,
-        blocker: report.blocker ?? null,
-        reason: report.reason ?? null,
-      }),
-    }));
+    const dispositions = asRouteDispositions({ reports: passageLatestByStone });
+
+    // 🔴 apply the HALTED stone's brain, then render the halt with it on the `where do we
+    //    go?` line — a human who comes to fix the halt works at this stone, so its brain
+    //    must be live. a stone with no brain renders byte-identically
+    // .note = the halt body is a BUILDER of the prescription, since the slug is known only
+    //         after the apply; that lets the brain sit inside the halt's own tree
+    // .note = the halted stone is the right one because this gate is TERMINAL: no second
+    //         stone reaches the surface. after a rewind (stone 5 walls, driver rewinds to 3)
+    //         it applies stone 5's brain for one tick; the next onStop sees 5 ≠ 3 and
+    //         dispatches stone 3's (a convergent applier, F14)
+    const composeHaltStdout = async (
+      stoneName: string,
+      // the whole prescription (choice + effort), so no halt renders one fact short
+      buildHalt: (prescribed: {
+        brain: string | null;
+        effort: string | null;
+      }) => string,
+    ): Promise<string> => {
+      const stoneApplied = getOneStoneByName({ stones, name: stoneName });
+      const guard = stoneApplied?.guard ?? null;
+      const outcome = await applyStoneBrain({ name: stoneName, guard });
+      return formatStoneBrainOutcome(
+        {
+          route,
+          stone: stoneName,
+          outcome,
+          drive: buildHalt({
+            brain: asStoneBrainSlug({ outcome }),
+            effort: asStoneBrainEffort({ outcome }),
+          }),
+        },
+        // stack the brain halt ABOVE the route halt; a replace would hide the route halt
+        { whenUndispatched: 'prepend' },
+      );
+    };
 
     // a guard malfunction → surface it. malfunction takes priority over a driver wall.
     // .why = onStop escalates to a human at once (exit 1, the malfunction code per
@@ -190,12 +258,17 @@ export const stepRouteDrive = async (
             stone: stoneForHalt,
             route,
           });
-          const stdoutMixed = formatRouteDriveMixedHalt({
-            route,
-            stone: malfunction.report.stone,
-            reason: malfunctionReason,
-            meters,
-          });
+          const stdoutMixed = await composeHaltStdout(
+            malfunction.report.stone,
+            (prescribed) =>
+              formatRouteDriveMixedHalt({
+                route,
+                stone: malfunction.report.stone,
+                ...prescribed,
+                reason: malfunctionReason,
+                meters,
+              }),
+          );
           if (hookContext === 'hook.onBoot')
             return { emit: { stdout: stdoutMixed } };
           return {
@@ -212,10 +285,15 @@ export const stepRouteDrive = async (
         }
       }
 
-      const stdout = formatRouteDriveMalfunction({
-        route,
-        stone: malfunction.report.stone,
-      });
+      const stdout = await composeHaltStdout(
+        malfunction.report.stone,
+        (prescribed) =>
+          formatRouteDriveMalfunction({
+            route,
+            stone: malfunction.report.stone,
+            ...prescribed,
+          }),
+      );
       if (hookContext === 'hook.onBoot') return { emit: { stdout } };
       return {
         emit: {
@@ -237,10 +315,13 @@ export const stepRouteDrive = async (
     if (wall) {
       return {
         emit: {
-          stdout: formatRouteDriveBlocked({
-            route,
-            stone: wall.report.stone,
-          }),
+          stdout: await composeHaltStdout(wall.report.stone, (prescribed) =>
+            formatRouteDriveBlocked({
+              route,
+              stone: wall.report.stone,
+              ...prescribed,
+            }),
+          ),
         },
       };
     }
@@ -265,9 +346,47 @@ export const stepRouteDrive = async (
   const stone = nextStones[0]!;
   const stoneContent = await fs.readFile(stone.path, 'utf-8');
 
+  // one renderer for the three surfaces (onBoot/onStop/direct)
+  // .note = `kind` parts a HALT body from WORK prose: an undispatched brain STACKS above a
+  //         halt and REPLACES work prose (an unswitched stone never reads as ready, case=8 [t2])
+  const asRenderFor =
+    (outcome: StoneBrainOutcome) =>
+    (drive: string, kind: 'halt' | 'work' = 'work'): string =>
+      formatStoneBrainOutcome(
+        { route, stone: stone.name, outcome, drive },
+        { whenUndispatched: kind === 'halt' ? 'prepend' : 'replace' },
+      );
+
+  // 🔴 apply the current stone's brain ONCE, before every branch of all three surfaces
+  // .why = the hard-stop gate above already returned for any malfunction/wall (with the
+  //        HALTED stone's brain), so this runs once per invocation; `dispatchAlways` in
+  //        `applyStoneBrain` fits whichever surface this is. so every return below — work,
+  //        blocked, exhausted, stuck — carries the switch, never a silent no-op
+  const brainedStone = await applyStoneBrain({
+    name: stone.name,
+    guard: stone.guard ?? null,
+  });
+  const asRendered = asRenderFor(brainedStone);
+
+  // the brain facts the drive renders beside route + stone: the choice, and its effort
+  // .note = null when a stone neither declares nor inherits one, so the line drops and
+  //         every extant route renders byte-identically (case=10)
+  // .note = the two travel TOGETHER, so no surface reports half a prescription
+  const prescribed = {
+    brain: asStoneBrainSlug({ outcome: brainedStone }),
+    effort: asStoneBrainEffort({ outcome: brainedStone }),
+  };
+
   // onBoot: show stone guidance, exit 0 (don't block session start)
   // but if blocked on a guard blocker, show the blocker message
   if (hookContext === 'hook.onBoot') {
+    // onBoot dispatches UNCONDITIONALLY
+    // .why = the entry marker persists on DISK, so a fresh session that boots at an
+    //        already-entered stone would never switch — the most common resume (F7). a
+    //        re-assert is one redundant idempotent `/model` (F14)
+    // the brain was applied once, above — this surface reuses that outcome
+    const asBooted = asRendered;
+
     // check blocker report to see why the stone is blocked, if at all
     const blockerReport = await getStoneGuardBlockerReport({
       stone: stone.name,
@@ -279,8 +398,10 @@ export const stepRouteDrive = async (
       blockerReport,
       stone,
       route,
+      ...prescribed,
     });
-    if (blockerMessage) return { emit: { stdout: blockerMessage.stdout } };
+    if (blockerMessage)
+      return { emit: { stdout: asBooted(blockerMessage.stdout, 'halt') } };
 
     // exhausted status → show the approve-or-extend / concession prompt at boot too.
     // .why = an exhausted status is a halt of any kind — ordinary/urgent (a human must
@@ -293,26 +414,44 @@ export const stepRouteDrive = async (
     if (latestForStoneBoot?.status === 'exhausted')
       return {
         emit: {
-          stdout: (await getRouteDriveExhaustedMessage({ stone, route }))
-            .stdout,
+          stdout: asBooted(
+            (
+              await getRouteDriveExhaustedMessage({
+                stone,
+                route,
+                ...prescribed,
+              })
+            ).stdout,
+            'halt',
+          ),
         },
       };
 
     // otherwise, show generic stone guidance
-    const stdout = formatRouteDrive({
-      route,
-      stone: stone.name,
-      content: stoneContent,
-      count: 0,
-      suggestBlocked: false,
-    });
     return {
-      emit: { stdout },
+      emit: {
+        stdout: asBooted(
+          formatRouteDrive({
+            route,
+            stone: stone.name,
+            ...prescribed,
+            content: stoneContent,
+            count: 0,
+            suggestBlocked: false,
+          }),
+        ),
+      },
     };
   }
 
   // onStop: track and potentially block premature stop
   if (hookContext === 'hook.onStop') {
+    // the brain was applied once, above — this surface reuses that outcome on every
+    // onStop return, blocked and exhausted included
+    // .note = `applyStoneBrainOnEntry` marks the entry, so a stone that halts straight to
+    //         blocked does not re-dispatch per tick; the block count is untouched
+    const asStopped = asRendered;
+
     // check blocker report to see why the stone is blocked, if at all
     // this is set by route.stone.set --as passed when it fails
     const blockerReport = await getStoneGuardBlockerReport({
@@ -329,16 +468,17 @@ export const stepRouteDrive = async (
       blockerReport,
       stone,
       route,
+      ...prescribed,
     });
     if (blockerMessage) {
       if (blockerMessage.blocksStop)
         return {
           emit: {
-            stdout: blockerMessage.stdout,
+            stdout: asStopped(blockerMessage.stdout, 'halt'),
             stderr: { reason: blockerMessage.stdout, code: 2 },
           },
         };
-      return { emit: { stdout: blockerMessage.stdout } };
+      return { emit: { stdout: asStopped(blockerMessage.stdout, 'halt') } };
     }
 
     // no live blocker message → the one halt left is an exhausted status. driver-wall
@@ -357,11 +497,13 @@ export const stepRouteDrive = async (
     //         gates use for "the driver can act NOW".
     const latestForStone = getLatestForStone(stone.name);
     if (latestForStone?.status === 'exhausted') {
-      const { stdout, blocksStop } = await getRouteDriveExhaustedMessage({
+      const exhausted = await getRouteDriveExhaustedMessage({
         stone,
         route,
+        ...prescribed,
       });
-      if (blocksStop)
+      const stdout = asStopped(exhausted.stdout, 'halt');
+      if (exhausted.blocksStop)
         return { emit: { stdout, stderr: { reason: stdout, code: 2 } } };
       return { emit: { stdout } };
     }
@@ -377,14 +519,21 @@ export const stepRouteDrive = async (
       // step in). the guard-malfunction branch uses code 1 too; per
       // rule.require.exit-code-semantics (0 ok, 1 malfunction, 2 constraint) — never a
       // non-standard code 3
+      // a HALT surface too — the route is stuck and a human is escalated, so the brain
+      // that prices the fix must be named here as on every other onStop return
+      const stdoutStuck = asStopped(
+        formatRouteDriveExhausted({
+          route,
+          stone: stone.name,
+          ...prescribed,
+          count: state.count,
+          max: maxBlocks,
+        }),
+        'halt',
+      );
       return {
         emit: {
-          stdout: formatRouteDriveExhausted({
-            route,
-            stone: stone.name,
-            count: state.count,
-            max: maxBlocks,
-          }),
+          stdout: stdoutStuck,
           stderr: {
             reason: formatRouteDriveEscalate({
               route,
@@ -398,22 +547,33 @@ export const stepRouteDrive = async (
     }
 
     // format output with nudge threshold and blocked suggestion
-    const stdout = formatRouteDrive({
+    const stdoutDrive = formatRouteDrive({
       route,
       stone: stone.name,
+      ...prescribed,
       content: stoneContent,
       count: state.count,
       suggestBlocked: state.count > 5,
     });
 
-    // block stop - same content in stdout AND stderr (for visibility), exit code 2 to signal
+    // block stop - exit code 2 signals it, and the two channels carry DIFFERENT cuts
+    // 🔴 .why = `stderr.reason` answers "why am I blocked?", so it carries the RAW drive
+    //    body. the composed render may REPLACE that body with a brain halt (undispatched,
+    //    F-a), which would hide the stop cause — as the `blocksStop` arm above also does
+    // .note = `stdout` stays COMPOSED: a human needs the brain halt, a consumer the cause
+    const stdout = asStopped(stdoutDrive);
     return {
       emit: {
         stdout,
-        stderr: { reason: stdout, code: 2 },
+        stderr: { reason: stdoutDrive, code: 2 },
       },
     };
   }
+
+  // direct mode (`rhx route.drive`) reuses the outcome applied above
+  // .why = it is the command every halt tells a lost driver to run; without the brain halt
+  //        here, an unenrolled driver would read the stone as ready when its guard says not
+  const asDriven = asRendered;
 
   // direct mode: check for blocker status and show appropriate message
   const blockerReport = await getStoneGuardBlockerReport({
@@ -426,8 +586,10 @@ export const stepRouteDrive = async (
     blockerReport,
     stone,
     route,
+    ...prescribed,
   });
-  if (blockerMessage) return { emit: { stdout: blockerMessage.stdout } };
+  if (blockerMessage)
+    return { emit: { stdout: asDriven(blockerMessage.stdout, 'halt') } };
 
   // read the latest passage and derive its disposition through the SAME shared op the
   // onStop branch reads (asRouteStoneDisposition) — so direct mode honors the vision's
@@ -446,7 +608,14 @@ export const stepRouteDrive = async (
   if (dispositionDirect?.of === 'halt' && dispositionDirect.why === 'blocked')
     return {
       emit: {
-        stdout: formatRouteDriveBlocked({ route, stone: stone.name }),
+        stdout: asDriven(
+          formatRouteDriveBlocked({
+            route,
+            stone: stone.name,
+            ...prescribed,
+          }),
+          'halt',
+        ),
       },
     };
 
@@ -458,20 +627,33 @@ export const stepRouteDrive = async (
   if (latestForStoneDirect?.status === 'exhausted')
     return {
       emit: {
-        stdout: (await getRouteDriveExhaustedMessage({ stone, route })).stdout,
+        stdout: asDriven(
+          (
+            await getRouteDriveExhaustedMessage({
+              stone,
+              route,
+              ...prescribed,
+            })
+          ).stdout,
+          'halt',
+        ),
       },
     };
 
   // no blocker or already approved, show generic stone guidance
-  const stdout = formatRouteDrive({
-    route,
-    stone: stone.name,
-    content: stoneContent,
-    count: 0,
-    suggestBlocked: false,
-  });
   return {
-    emit: { stdout },
+    emit: {
+      stdout: asDriven(
+        formatRouteDrive({
+          route,
+          stone: stone.name,
+          ...prescribed,
+          content: stoneContent,
+          count: 0,
+          suggestBlocked: false,
+        }),
+      ),
+    },
   };
 };
 
@@ -523,17 +705,12 @@ const formatRouteDriveBlockReason = (input: {
 const formatRouteDriveExhausted = (input: {
   route: string;
   stone: string;
+  brain: string | null;
+  effort: string | null;
   count: number;
   max: number;
 }): string => {
-  const lines: string[] = [];
-  lines.push(`🦉 where were we?`);
-  lines.push('');
-  lines.push(`🗿 route.drive`);
-  lines.push(`   ├─ where do we go?`);
-  lines.push(`   │  ├─ route = ${asRouteDisplayPath({ route: input.route })}`);
-  lines.push(`   │  └─ stone = ${input.stone}`);
-  lines.push(`   │`);
+  const lines: string[] = [...formatRouteDriveHeader(input)];
   lines.push(`   └─ 🟡 stuck! blocked ${input.count}x (max: ${input.max})`);
   lines.push(`      └─ please tell a human what you saw and where`);
   return lines.join('\n');
@@ -558,15 +735,10 @@ const formatRouteDriveEscalate = (input: {
 const formatRouteDriveMalfunction = (input: {
   route: string;
   stone: string;
+  brain: string | null;
+  effort: string | null;
 }): string => {
-  const lines: string[] = [];
-  lines.push(`🦉 where were we?`);
-  lines.push('');
-  lines.push(`🗿 route.drive`);
-  lines.push(`   ├─ where do we go?`);
-  lines.push(`   │  ├─ route = ${asRouteDisplayPath({ route: input.route })}`);
-  lines.push(`   │  └─ stone = ${input.stone}`);
-  lines.push(`   │`);
+  const lines: string[] = [...formatRouteDriveHeader(input)];
   // 💥 is a CLAIMED REGISTER GLYPH, never decoration. `catalog.of=glyph.axis=halt.md`
   // declares it for `malfunction`, against ✋ `blocked` and 👋 `exhausted` — it answers
   // "which halt is this?" before the words parse, which is the one test the register
@@ -600,6 +772,8 @@ const formatRouteDriveMalfunctionEscalate = (input: {
 const formatRouteDriveBlocked = (input: {
   route: string;
   stone: string;
+  brain: string | null;
+  effort: string | null;
 }): string => {
   // render '.' when the route IS the cwd (else `route = ` shows empty), and build
   // the reason via path.join so it never gains a spurious slash-prefix
@@ -609,14 +783,7 @@ const formatRouteDriveBlocked = (input: {
     'blocker',
     `${input.stone}.md`,
   );
-  const lines: string[] = [];
-  lines.push(`🦉 where were we?`);
-  lines.push('');
-  lines.push(`🗿 route.drive`);
-  lines.push(`   ├─ where do we go?`);
-  lines.push(`   │  ├─ route = ${routeRelative}`);
-  lines.push(`   │  └─ stone = ${input.stone}`);
-  lines.push(`   │`);
+  const lines: string[] = [...formatRouteDriveHeader(input)];
   lines.push(`   └─ halted, stone marked blocked`);
   lines.push(`      └─ reason: ${articulationPath}`);
   return lines.join('\n');
@@ -651,6 +818,8 @@ const formatRouteDriveNudge = (): string[] => {
 const formatRouteDrive = (input: {
   route: string;
   stone: string;
+  brain: string | null;
+  effort: string | null;
   content: string;
   count: number;
   suggestBlocked: boolean;
@@ -685,9 +854,7 @@ const formatRouteDrive = (input: {
 
   // route.drive tree
   lines.push(`🗿 route.drive`);
-  lines.push(`   ├─ where do we go?`);
-  lines.push(`   │  ├─ route = ${asRouteDisplayPath({ route: input.route })}`);
-  lines.push(`   │  └─ stone = ${input.stone}`);
+  lines.push(...formatRouteDriveWhere(input));
   lines.push(`   │`);
 
   // command prompt with both options

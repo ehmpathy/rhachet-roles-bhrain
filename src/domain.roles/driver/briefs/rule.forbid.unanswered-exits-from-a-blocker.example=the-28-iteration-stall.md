@@ -10,7 +10,7 @@
 `0.wish.md` of `v2026_09_03.fix-contemplation-gate-on-entrance`, which a reflector compiled from
 the drive as it ran.
 
-⚠️ **the cited branch is unreachable.** `gh api -X GET repos/ehmpathy/rhachet-brains-anthropic/branches`
+🟡 **the cited branch is unreachable.** `gh api -X GET repos/ehmpathy/rhachet-brains-anthropic/branches`
 returns `main` alone — checked 2026-09-04. so the artifacts these counts came from cannot be
 re-read, and a reader who tries will find a 404 rather than a contradiction.
 
@@ -74,8 +74,11 @@ the driver had two doors and took the cheap one every round: **edit the artifact
 whole-artifact hash moved, every cached clean verdict died, all N reviewers re-ran, and the blocker
 count reset to a fresh sample of whatever they happened to raise.
 
-**no rule was broken visibly.** the artifact changed each round. the reviewers ran each round. the
-driver was not idle — it was busy. what never happened was a **reply**.
+no rule broke visibly:
+- the artifact changed each round
+- the reviewers ran each round
+- the driver was not idle — it was busy
+- what never happened was a **reply**
 
 ## ✅ .the cure, first-party in the same tree
 
@@ -87,7 +90,7 @@ written. `i032 r010` reads:
 **three rounds.** the same reviewers, the same artifact, the same rubrics — and the only variable
 that changed was that the driver started to answer.
 
-⚠️ **a second, first-party observation, and it is weaker evidence than it reads.** on
+🟡 **a second, first-party observation, and it is weaker evidence than it reads.** on
 `rhachet-roles-bhrain` `v2026_09_03` the author saw nitpicks run **11 → 0 across six rounds** once
 `.taken` files started to land. but that route's `passage.jsonl` is sealed behind `route.mutate.guard`
 mid-drive, so the series could not be re-read at the time this was written. it is one drive, by the

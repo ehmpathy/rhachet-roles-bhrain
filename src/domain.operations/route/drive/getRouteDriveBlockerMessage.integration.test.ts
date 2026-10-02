@@ -23,15 +23,13 @@ const genRouteScene = async (input: {
   const route = await fs.mkdtemp(path.join(os.tmpdir(), 'route-blocker-msg-'));
 
   // 🔴 the scene MUST be a git repo, or the snapshot below clamps no property.
-  //    `asGuardDisplayPath` relativizes a printed path against the repo root; with
-  //    no root to find, `getRepoRootWithFallback` falls back to `process.cwd()` and
-  //    emits a `../../../../tmp/…` crawl. `asStableGuardEmit` swaps BOTH that crawl
-  //    and the raw absolute route to the same `<route>` token, so the relativized
-  //    output and the un-relativized output stabilize to identical bytes — the
-  //    snapshot would pass whether or not the cast runs at all.
-  //
-  //    with a root, the cast yields a bare `.reviews/peer/…` that no swap touches,
-  //    so the snapshot goes red the moment the cast is removed (r2 blocker.3, i007)
+  //    `asGuardDisplayPath` relativizes a printed path against the repo root; with no
+  //    root to find, `getRepoRootWithFallback` falls back to `process.cwd()` and emits
+  //    a `../../../../tmp/…` crawl. `asStableGuardEmit` swaps BOTH that crawl and the
+  //    raw absolute route to the same `<route>` token, so a relativized and an
+  //    un-relativized output would stabilize to identical bytes and the snapshot
+  //    would pass either way. with a root, the cast yields a bare `.reviews/peer/…`
+  //    that no swap touches, so the snapshot goes red the moment the cast is removed.
   execSync('git init', { cwd: route, stdio: 'ignore' });
 
   await fs.writeFile(path.join(route, '1.vision.yield.md'), '# vision\n');
@@ -75,6 +73,8 @@ describe('getRouteDriveBlockerMessage', () => {
           blockerReport: null,
           stone: scene.stone,
           route: scene.route,
+          brain: null,
+          effort: null,
         });
         expect(message).toBeNull();
       });
@@ -96,6 +96,8 @@ describe('getRouteDriveBlockerMessage', () => {
           }),
           stone: scene.stone,
           route: scene.route,
+          brain: null,
+          effort: null,
         });
         expect(message).toBeNull();
       });
@@ -124,6 +126,8 @@ describe('getRouteDriveBlockerMessage', () => {
           }),
           stone: scene.stone,
           route: scene.route,
+          brain: null,
+          effort: null,
         }),
       }));
 
@@ -138,9 +142,8 @@ describe('getRouteDriveBlockerMessage', () => {
         //    — and leave every other byte of a DRIVER-FACING surface free to regress.
         //    this is the last output a driver receives before a stop is held, so
         //    `rule.require.contract-snapshot-exhaustiveness` binds it as surely as
-        //    any cli stdout: a reword of the guidance, a dropped branch, or a path
-        //    rendered in the wrong form would all ship unseen behind
-        //    `toContain('arch')` (r2 blocker.3, i007).
+        //    any cli stdout: a reword of the guidance, a dropped branch, or a
+        //    wrong-form path would all ship unseen behind `toContain('arch')`.
         //
         // .note = what this pins that the shared formatter's own snapshot cannot is
         //         the ASSEMBLY — that this dispatch reaches the `reply-prompt` case
@@ -176,6 +179,8 @@ describe('getRouteDriveBlockerMessage', () => {
             }),
             stone: scene.stone,
             route: scene.route,
+            brain: null,
+            effort: null,
           });
           expect(message).toBeNull();
         });

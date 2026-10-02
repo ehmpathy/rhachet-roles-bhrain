@@ -189,20 +189,15 @@ export const formatReviewsMeterLines = (input: {
 
   // 🔴 no meters ⇒ no section at all, header included. a `├─ reviews` connector with no
   //    rows beneath it is a promise the tree does not keep: the driver reads a branch that
-  //    announces reviewer rows and delivers none, then has to decide whether the reviewers
-  //    are absent or the render dropped them (rule.forbid.snapshot-visual-blemishes).
+  //    announces reviewer rows and delivers none, with no way to tell whether the
+  //    reviewers are absent or the render dropped them
+  //    (rule.forbid.snapshot-visual-blemishes). reachable from the exhausted-status drive
+  //    halt, where the stone declares no guard at all so the meter set is legitimately
+  //    empty.
   //
-  //    it is the same empty-branch family this round already closed twice elsewhere — the
-  //    empty `stderr` boxes now dropped by `formatArtifactStreamBuckets`, and the orphan
-  //    `│` removed from the absent/stale halts. this was the third member, reachable from
-  //    the exhausted-status drive halt, where the stone declares no guard at all so the
-  //    meter set is legitimately empty (r7 nitpick.1, i016).
-  //
-  // ⚠️ the guard is HERE rather than at each caller because this operation is the single
-  //    render source the four call sites share, and a per-caller guard is the duplication
-  //    `rule.forbid.duplicate-format-tree-operations` names. `formatGuardTree:532` already
-  //    gates its own section on `hasReviews || hasPeerMeters`, so this is a no-op there and
-  //    changes only the two drive-halt surfaces that had no such gate.
+  // 🟡 the guard is HERE rather than at each caller because this operation is the single
+  //    render source every call site shares, and a per-caller guard is the duplication
+  //    `rule.forbid.duplicate-format-tree-operations` forbids.
   if (input.meters.length === 0) return [];
 
   if (input.includeHeader !== false) {

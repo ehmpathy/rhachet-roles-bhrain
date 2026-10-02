@@ -489,16 +489,11 @@ describe('runStoneGuardJudges', () => {
         );
         const content = await fs.readFile(judges[0]?.path ?? '', 'utf-8');
 
-        // 🔴 the intention is preserved and the glyph literal is not. this line read
-        //    `toContain('├─ stdout')`, which pinned the MIDDLE-child form — a fourth
-        //    hand-written copy of a grammar the writer already owns. a zero-exit judge
-        //    with no stderr now closes its artifact with `└─ stdout`, so the literal
-        //    was false while the behavior it meant to guard was intact.
-        //
-        // ⇒ so it asserts through the real reader instead. that is strictly STRONGER:
-        //    the old form proved a label was printed somewhere in the file; this proves
-        //    the text is recoverable from the bucket, which is what the judge cache
-        //    actually depends on
+        // 🔴 asserts through the real reader, never a hand-written tree-glyph
+        //    literal — the last-child glyph (`└─` vs `├─`) shifts with peer count,
+        //    so a literal pin breaks on that shift alone. `asArtifactStreamContent`
+        //    proves the text is recoverable from the bucket, which is what the
+        //    judge cache actually depends on
         expect(asArtifactStreamContent({ content, label: 'stdout' })).toContain(
           'judge passed',
         );
@@ -566,16 +561,14 @@ describe('runStoneGuardJudges', () => {
         const content = await fs.readFile(judges[0]?.path ?? '', 'utf-8');
 
         // 🔴 the passage footer is rendered by ONE shared operation, so the expectation is
-        //    derived from that operation rather than hand-typed. this line used to read
-        //    `toContain('blocked by constraints')` + `toContain('exit code: 2')` — two
-        //    fragments that prove some text was printed somewhere in the file, and that
-        //    stay green under a footer whose markers or indents have drifted.
+        //    derived from that operation rather than hand-typed. a fragment assertion
+        //    (`toContain('blocked by constraints')`) would stay green under a footer whose
+        //    markers or indents have drifted, since it only proves the text landed somewhere.
         //
         // ⇒ this is not a tautology: every BEHAVIORAL fact is still asserted by hand here —
-        //    the exit code, the constraint phrase, the ✋ emoji. what it no longer pins is
-        //    the tree GRAMMAR, which belongs to the shared writer and is snapshotted in the
-        //    `then` directly below. a fragment that outlives its renderer is the fourth
-        //    hand-written copy the rule forbids (r1 repo-rules, nitpick.1, i020).
+        //    the exit code, the constraint phrase, the ✋ emoji. what it does not pin is the
+        //    tree GRAMMAR, which belongs to the shared writer and is snapshotted in the
+        //    `then` directly below.
         expect(content).toContain(
           formatArtifactFooters({
             passage: {

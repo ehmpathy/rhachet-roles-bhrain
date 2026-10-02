@@ -7,12 +7,11 @@ import {
 
 /**
  * .what = pins the remedy contract four halt surfaces now share
- * .why = the four surfaces used to derive these remedies independently, under comments that
- *        promised they stayed in lockstep. that promise had already broken on ORDER, and no test
- *        at any grain would have caught it — `formatRouteDriveMixedHalt` and
- *        `formatRouteDriveBudgetExhausted` carried zero coverage of their own, and the extant
- *        `formatGuardTree` snapshots pin no mixed halt. so the shared operation is pinned here at
- *        unit grain, where the owner-sort and the two unchanged branches are each checkable
+ * .why = the four surfaces call one shared operation for these remedies, so they cannot drift
+ *        apart on order or content. `formatRouteDriveMixedHalt` and
+ *        `formatRouteDriveBudgetExhausted` carry zero coverage of their own, and the extant
+ *        `formatGuardTree` snapshots pin no mixed halt — so the shared operation is pinned here
+ *        at unit grain, where the owner-sort and the two unchanged branches are each checkable
  *        without a credential (`rule.require.test-coverage-by-grain` — a transformer owes a unit
  *        test).
  */
@@ -152,7 +151,7 @@ describe('computeBlockRemedyGroups', () => {
           'an urgent concession earned a round; peer reviewer budget exhausted',
       });
 
-      // ⚠️ this is the shape `formatRouteDriveBudgetExhausted` falls back to when its caller
+      // 🟡 this is the shape `formatRouteDriveBudgetExhausted` falls back to when its caller
       //    passes `reason: null`. the parse yields no slug, so --peer is omitted, which is what
       //    the hand-rolled code did with a null reason.
       then('the remedies still render, with no --peer', () => {
@@ -495,7 +494,7 @@ describe('formatBlockRemedyGroups', () => {
     when('[t0] rendered', () => {
       const lines = formatBlockRemedyGroups({ groups: [], baseIndent: '   ' });
 
-      // ⚠️ callers push a header line before this and test `groups.length > 0` themselves, so an
+      // 🟡 callers push a header line before this and test `groups.length > 0` themselves, so an
       //    empty render must contribute no line rather than a stray connector.
       then('no line is emitted', () => {
         expect(lines).toEqual([]);

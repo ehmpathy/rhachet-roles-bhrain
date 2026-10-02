@@ -9,6 +9,7 @@ term.synonyms.forbidden:
 - waypoint
 - step
 - phase
+- stage
 
 ## .what
 a **stone** is a single milestone on a **route** — a marker a traveler passes, which records how

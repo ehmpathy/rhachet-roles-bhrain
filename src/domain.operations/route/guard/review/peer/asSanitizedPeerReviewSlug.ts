@@ -9,9 +9,9 @@
  *    independent inline copies of the same regex — `runStoneGuardReviews` (write) and
  *    `setStoneAsFeedbackAbsorbed` (read). they agreed by coincidence, not by construction: a
  *    change to either would have silently made a slug the prompt prints un-matchable by
- *    the gate that validates it (r11 nitpick.1, i004).
+ *    the gate that validates it.
  *
- * ⚠️ this is the same defect class the given↔taken pair already closed by derivation from
+ * 🟡 this is the same defect class the given↔taken pair already closed by derivation from
  *    one source. reach for this transformer rather than a third inline copy.
  */
 export const asSanitizedPeerReviewSlug = (input: { slug: string }): string =>

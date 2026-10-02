@@ -1,34 +1,23 @@
-import * as fs from 'fs/promises';
-import * as path from 'path';
-
 import { DriveBlockerState } from './DriveBlocker';
-import { getDriveBlockerState } from './getDriveBlockerState';
+import { mutateDriveBlockerState } from './mutateDriveBlockerState';
 
 /**
  * .what = increments drive blocker count
  * .why = tracks consecutive stop blocks for safety cutoff
+ *
+ * 🔴 .note = `brain` is CARRIED THROUGH: to drop it would erase the inherited brain case=7
+ *         renders on the first block tick after a switch. its writer is `setDriveEntryStone`
  */
 export const setDriveBlockerState = async (input: {
   route: string;
   stone: string;
-}): Promise<{ state: DriveBlockerState }> => {
-  const routeDir = path.join(input.route, '.route');
-  const statePath = path.join(routeDir, '.drive.blockers.latest.json');
-
-  // ensure .route dir exists
-  await fs.mkdir(routeDir, { recursive: true });
-
-  // read current state
-  const stateBefore = await getDriveBlockerState({ route: input.route });
-
-  // compute new state
-  const stateAfter = new DriveBlockerState({
-    count: stateBefore.count + 1,
-    stone: input.stone,
+}): Promise<{ state: DriveBlockerState }> =>
+  mutateDriveBlockerState({
+    route: input.route,
+    project: (before) =>
+      new DriveBlockerState({
+        count: before.count + 1,
+        stone: input.stone,
+        brain: before.brain,
+      }),
   });
-
-  // write state
-  await fs.writeFile(statePath, JSON.stringify(stateAfter, null, 2));
-
-  return { state: stateAfter };
-};

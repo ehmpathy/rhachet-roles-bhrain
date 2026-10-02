@@ -61,8 +61,7 @@ describe('getOverruledReviewerSlugs', () => {
     // 🔴 the set this returns is compared against slugs parsed OFF DISK, and a disk slug is
     //    always sanitized (the write side swaps separators into the .given filename). raw,
     //    the two could never match: the human's overrule would silently fail to forgive the
-    //    reviewer, and the same mismatch marked it `retired` in the halt prompt
-    //    (r11 blocker.1, i005).
+    //    reviewer, and the same mismatch marked it `retired` in the halt prompt.
     when('[t0] its level is overruled', () => {
       const result = getOverruledReviewerSlugs({
         peerReviews: [review('.test/mock-review.sh', 1)],

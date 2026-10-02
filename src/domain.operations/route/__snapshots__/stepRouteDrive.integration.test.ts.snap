@@ -318,3 +318,888 @@ exports[`stepRouteDrive.integration given: [case14] 🔴 an undeclared concern, 
 
          1 concern stands undeclared — one command each."
 `;
+
+exports[`stepRouteDrive.integration given: [case18] a guard whose top-level key the parser does not know when: [t0] the onStop hook renders the drive then: the exact bytes a driver reads on this surface: case18.t0.hook.onStop 1`] = `
+"🦉 where were we?
+
+🗿 route.drive
+   ├─ where do we go?
+   │  ├─ route = .temp/genTempDir.symlink/<ts>.drive-int-case18.<hash>
+   │  └─ stone = 1
+   │
+   ├─ are you here?
+   │  ├─ when ready for review, run:
+   │  │  └─ rhx route.stone.set --stone 1 --as arrived
+   │  └─ when ready to continue, run:
+   │     └─ rhx route.stone.set --stone 1 --as passed
+   │
+   ├─ here's the stone
+   │  ├─
+   │  │
+   │  │  # stone: implement
+   │  │  
+   │  │  done when:
+   │  │  - it works
+   │  └─
+   │
+   └─ are you here?
+      ├─ when ready for review, run:
+      │  └─ rhx route.stone.set --stone 1 --as arrived
+      └─ when ready to continue, run:
+         └─ rhx route.stone.set --stone 1 --as passed"
+`;
+
+exports[`stepRouteDrive.integration given: [case18] a guard whose top-level key the parser does not know when: [t1] the onBoot hook renders the drive then: the exact bytes a driver reads on this surface: case18.t1.hook.onBoot 1`] = `
+"🦉 where were we?
+
+🗿 route.drive
+   ├─ where do we go?
+   │  ├─ route = .temp/genTempDir.symlink/<ts>.drive-int-case18.<hash>
+   │  └─ stone = 1
+   │
+   ├─ are you here?
+   │  ├─ when ready for review, run:
+   │  │  └─ rhx route.stone.set --stone 1 --as arrived
+   │  └─ when ready to continue, run:
+   │     └─ rhx route.stone.set --stone 1 --as passed
+   │
+   ├─ here's the stone
+   │  ├─
+   │  │
+   │  │  # stone: implement
+   │  │  
+   │  │  done when:
+   │  │  - it works
+   │  └─
+   │
+   └─ are you here?
+      ├─ when ready for review, run:
+      │  └─ rhx route.stone.set --stone 1 --as arrived
+      └─ when ready to continue, run:
+         └─ rhx route.stone.set --stone 1 --as passed"
+`;
+
+exports[`stepRouteDrive.integration given: [case18] a guard whose top-level key the parser does not know when: [t2] direct mode renders the drive then: the exact bytes a driver reads on this surface: case18.t2.direct 1`] = `
+"🦉 where were we?
+
+🗿 route.drive
+   ├─ where do we go?
+   │  ├─ route = .temp/genTempDir.symlink/<ts>.drive-int-case18.<hash>
+   │  └─ stone = 1
+   │
+   ├─ are you here?
+   │  ├─ when ready for review, run:
+   │  │  └─ rhx route.stone.set --stone 1 --as arrived
+   │  └─ when ready to continue, run:
+   │     └─ rhx route.stone.set --stone 1 --as passed
+   │
+   ├─ here's the stone
+   │  ├─
+   │  │
+   │  │  # stone: implement
+   │  │  
+   │  │  done when:
+   │  │  - it works
+   │  └─
+   │
+   └─ are you here?
+      ├─ when ready for review, run:
+      │  └─ rhx route.stone.set --stone 1 --as arrived
+      └─ when ready to continue, run:
+         └─ rhx route.stone.set --stone 1 --as passed"
+`;
+
+exports[`stepRouteDrive.integration given: [case19] a guard with no unknown key at all when: [t0] the onStop hook renders the drive then: the exact bytes a driver reads on this surface: case19.t0.hook.onStop 1`] = `
+"🦉 where were we?
+
+🗿 route.drive
+   ├─ where do we go?
+   │  ├─ route = .temp/genTempDir.symlink/<ts>.drive-int-case19.<hash>
+   │  └─ stone = 1
+   │
+   ├─ are you here?
+   │  ├─ when ready for review, run:
+   │  │  └─ rhx route.stone.set --stone 1 --as arrived
+   │  └─ when ready to continue, run:
+   │     └─ rhx route.stone.set --stone 1 --as passed
+   │
+   ├─ here's the stone
+   │  ├─
+   │  │
+   │  │  # stone: implement
+   │  │  
+   │  │  done when:
+   │  │  - it works
+   │  └─
+   │
+   └─ are you here?
+      ├─ when ready for review, run:
+      │  └─ rhx route.stone.set --stone 1 --as arrived
+      └─ when ready to continue, run:
+         └─ rhx route.stone.set --stone 1 --as passed"
+`;
+
+exports[`stepRouteDrive.integration given: [case19] a guard with no unknown key at all when: [t1] the onBoot hook renders the drive then: the exact bytes a driver reads on this surface: case19.t1.hook.onBoot 1`] = `
+"🦉 where were we?
+
+🗿 route.drive
+   ├─ where do we go?
+   │  ├─ route = .temp/genTempDir.symlink/<ts>.drive-int-case19.<hash>
+   │  └─ stone = 1
+   │
+   ├─ are you here?
+   │  ├─ when ready for review, run:
+   │  │  └─ rhx route.stone.set --stone 1 --as arrived
+   │  └─ when ready to continue, run:
+   │     └─ rhx route.stone.set --stone 1 --as passed
+   │
+   ├─ here's the stone
+   │  ├─
+   │  │
+   │  │  # stone: implement
+   │  │  
+   │  │  done when:
+   │  │  - it works
+   │  └─
+   │
+   └─ are you here?
+      ├─ when ready for review, run:
+      │  └─ rhx route.stone.set --stone 1 --as arrived
+      └─ when ready to continue, run:
+         └─ rhx route.stone.set --stone 1 --as passed"
+`;
+
+exports[`stepRouteDrive.integration given: [case19] a guard with no unknown key at all when: [t2] direct mode renders the drive then: the exact bytes a driver reads on this surface: case19.t2.direct 1`] = `
+"🦉 where were we?
+
+🗿 route.drive
+   ├─ where do we go?
+   │  ├─ route = .temp/genTempDir.symlink/<ts>.drive-int-case19.<hash>
+   │  └─ stone = 1
+   │
+   ├─ are you here?
+   │  ├─ when ready for review, run:
+   │  │  └─ rhx route.stone.set --stone 1 --as arrived
+   │  └─ when ready to continue, run:
+   │     └─ rhx route.stone.set --stone 1 --as passed
+   │
+   ├─ here's the stone
+   │  ├─
+   │  │
+   │  │  # stone: implement
+   │  │  
+   │  │  done when:
+   │  │  - it works
+   │  └─
+   │
+   └─ are you here?
+      ├─ when ready for review, run:
+      │  └─ rhx route.stone.set --stone 1 --as arrived
+      └─ when ready to continue, run:
+         └─ rhx route.stone.set --stone 1 --as passed"
+`;
+
+exports[`stepRouteDrive.integration given: [case20] a guard that DECLARES a brain, outside an enrolled clone when: [t0] the onStop hook renders the drive then: the exact bytes a driver reads on this surface: case20.t0.hook.onStop 1`] = `
+"🦉 where were we?
+
+🗿 route.drive
+   ├─ where do we go?
+   │  ├─ route = .temp/genTempDir.symlink/<ts>.drive-int-case20.<hash>
+   │  ├─ stone = 1
+   │  └─ brain = opus
+   │
+   └─ ✋ halted, brain switch could not land
+      ├─ this driver runs = unknown — the clone probe could not be read
+      │
+      ├─ why
+      │  ├─ \`clone whoami\` did not answer, or failed for a reason this build does not read
+      │  └─ the probe is capped at 10s, well under the driver hook budget
+      │
+      ├─ fix: run the probe by hand and read what it reports
+      │  └─ rhx clone whoami --output json
+      │
+      └─ or: remove \`brain:\` from the stone's guard, and inherit the brain deliberately
+         └─ <repo>/.temp/genTempDir.symlink/<ts>.drive-int-case20.<hash>/1.guard"
+`;
+
+exports[`stepRouteDrive.integration given: [case20] a guard that DECLARES a brain, outside an enrolled clone when: [t1] the onBoot hook renders the drive then: the exact bytes a driver reads on this surface: case20.t1.hook.onBoot 1`] = `
+"🦉 where were we?
+
+🗿 route.drive
+   ├─ where do we go?
+   │  ├─ route = .temp/genTempDir.symlink/<ts>.drive-int-case20.<hash>
+   │  ├─ stone = 1
+   │  └─ brain = opus
+   │
+   └─ ✋ halted, brain switch could not land
+      ├─ this driver runs = unknown — the clone probe could not be read
+      │
+      ├─ why
+      │  ├─ \`clone whoami\` did not answer, or failed for a reason this build does not read
+      │  └─ the probe is capped at 10s, well under the driver hook budget
+      │
+      ├─ fix: run the probe by hand and read what it reports
+      │  └─ rhx clone whoami --output json
+      │
+      └─ or: remove \`brain:\` from the stone's guard, and inherit the brain deliberately
+         └─ <repo>/.temp/genTempDir.symlink/<ts>.drive-int-case20.<hash>/1.guard"
+`;
+
+exports[`stepRouteDrive.integration given: [case20] a guard that DECLARES a brain, outside an enrolled clone when: [t2] direct mode renders the drive then: the exact bytes a driver reads on this surface: case20.t2.direct 1`] = `
+"🦉 where were we?
+
+🗿 route.drive
+   ├─ where do we go?
+   │  ├─ route = .temp/genTempDir.symlink/<ts>.drive-int-case20.<hash>
+   │  ├─ stone = 1
+   │  └─ brain = opus
+   │
+   └─ ✋ halted, brain switch could not land
+      ├─ this driver runs = unknown — the clone probe could not be read
+      │
+      ├─ why
+      │  ├─ \`clone whoami\` did not answer, or failed for a reason this build does not read
+      │  └─ the probe is capped at 10s, well under the driver hook budget
+      │
+      ├─ fix: run the probe by hand and read what it reports
+      │  └─ rhx clone whoami --output json
+      │
+      └─ or: remove \`brain:\` from the stone's guard, and inherit the brain deliberately
+         └─ <repo>/.temp/genTempDir.symlink/<ts>.drive-int-case20.<hash>/1.guard"
+`;
+
+exports[`stepRouteDrive.integration given: [case20b] a guard that DECLARES a brain, with a real rhx that reports UNENROLLED when: [t0] the onStop hook renders the drive then: the exact bytes a driver reads on this surface: case20b.t0.hook.onStop 1`] = `
+"🦉 where were we?
+
+🗿 route.drive
+   ├─ where do we go?
+   │  ├─ route = .temp/genTempDir.symlink/<ts>.drive-int-case20b.<hash>
+   │  ├─ stone = 1
+   │  └─ brain = opus
+   │
+   └─ ✋ halted, brain switch could not land
+      ├─ this driver runs = unknown — no clone address was confirmed
+      │
+      ├─ why
+      │  ├─ this driver is not an enrolled clone, so \`clone say\` has naught to address
+      │  └─ the usual cause is a driver launched directly rather than by \`rhx enroll\`
+      │
+      ├─ fix: re-enroll the driver with a slug, then re-enter the stone
+      │  └─ rhx enroll claude --as @:driver --roles driver
+      │
+      └─ or: remove \`brain:\` from the stone's guard, and inherit the brain deliberately
+         └─ <repo>/.temp/genTempDir.symlink/<ts>.drive-int-case20b.<hash>/1.guard"
+`;
+
+exports[`stepRouteDrive.integration given: [case20b] a guard that DECLARES a brain, with a real rhx that reports UNENROLLED when: [t1] the onBoot hook renders the drive then: the exact bytes a driver reads on this surface: case20b.t1.hook.onBoot 1`] = `
+"🦉 where were we?
+
+🗿 route.drive
+   ├─ where do we go?
+   │  ├─ route = .temp/genTempDir.symlink/<ts>.drive-int-case20b.<hash>
+   │  ├─ stone = 1
+   │  └─ brain = opus
+   │
+   └─ ✋ halted, brain switch could not land
+      ├─ this driver runs = unknown — no clone address was confirmed
+      │
+      ├─ why
+      │  ├─ this driver is not an enrolled clone, so \`clone say\` has naught to address
+      │  └─ the usual cause is a driver launched directly rather than by \`rhx enroll\`
+      │
+      ├─ fix: re-enroll the driver with a slug, then re-enter the stone
+      │  └─ rhx enroll claude --as @:driver --roles driver
+      │
+      └─ or: remove \`brain:\` from the stone's guard, and inherit the brain deliberately
+         └─ <repo>/.temp/genTempDir.symlink/<ts>.drive-int-case20b.<hash>/1.guard"
+`;
+
+exports[`stepRouteDrive.integration given: [case20b] a guard that DECLARES a brain, with a real rhx that reports UNENROLLED when: [t2] direct mode renders the drive then: the exact bytes a driver reads on this surface: case20b.t2.direct 1`] = `
+"🦉 where were we?
+
+🗿 route.drive
+   ├─ where do we go?
+   │  ├─ route = .temp/genTempDir.symlink/<ts>.drive-int-case20b.<hash>
+   │  ├─ stone = 1
+   │  └─ brain = opus
+   │
+   └─ ✋ halted, brain switch could not land
+      ├─ this driver runs = unknown — no clone address was confirmed
+      │
+      ├─ why
+      │  ├─ this driver is not an enrolled clone, so \`clone say\` has naught to address
+      │  └─ the usual cause is a driver launched directly rather than by \`rhx enroll\`
+      │
+      ├─ fix: re-enroll the driver with a slug, then re-enter the stone
+      │  └─ rhx enroll claude --as @:driver --roles driver
+      │
+      └─ or: remove \`brain:\` from the stone's guard, and inherit the brain deliberately
+         └─ <repo>/.temp/genTempDir.symlink/<ts>.drive-int-case20b.<hash>/1.guard"
+`;
+
+exports[`stepRouteDrive.integration given: [case20c] a 3-stone route — sticky brain across stones (F6, case=7) when: [t0] stone 1 passed → the brainless stone 2 is current then: t0 stdout matches the brainless-inherit snapshot: case20c.t0.brainless-inherits 1`] = `
+"🦉 where were we?
+
+🗿 route.drive
+   ├─ where do we go?
+   │  ├─ route = .temp/genTempDir.symlink/<ts>.drive-int-case20c.<hash>
+   │  ├─ stone = 2
+   │  └─ brain = opus
+   │
+   ├─ are you here?
+   │  ├─ when ready for review, run:
+   │  │  └─ rhx route.stone.set --stone 2 --as arrived
+   │  └─ when ready to continue, run:
+   │     └─ rhx route.stone.set --stone 2 --as passed
+   │
+   ├─ here's the stone
+   │  ├─
+   │  │
+   │  │  # stone: two
+   │  └─
+   │
+   └─ are you here?
+      ├─ when ready for review, run:
+      │  └─ rhx route.stone.set --stone 2 --as arrived
+      └─ when ready to continue, run:
+         └─ rhx route.stone.set --stone 2 --as passed"
+`;
+
+exports[`stepRouteDrive.integration given: [case20c] a 3-stone route — sticky brain across stones (F6, case=7) when: [t1] stones 1+2 passed → the sonnet stone 3 is current then: t1 stdout matches the brain-change snapshot: case20c.t1.brain-changes 1`] = `
+"🦉 where were we?
+
+🗿 route.drive
+   ├─ where do we go?
+   │  ├─ route = .temp/genTempDir.symlink/<ts>.drive-int-case20c.<hash>
+   │  ├─ stone = 3
+   │  └─ brain = sonnet
+   │
+   └─ ✋ halted, brain switch could not land
+      ├─ this driver runs = unknown — the clone probe could not be read
+      │
+      ├─ why
+      │  ├─ \`clone whoami\` did not answer, or failed for a reason this build does not read
+      │  └─ the probe is capped at 10s, well under the driver hook budget
+      │
+      ├─ fix: run the probe by hand and read what it reports
+      │  └─ rhx clone whoami --output json
+      │
+      └─ or: remove \`brain:\` from the stone's guard, and inherit the brain deliberately
+         └─ <repo>/.temp/genTempDir.symlink/<ts>.drive-int-case20c.<hash>/3.guard"
+`;
+
+exports[`stepRouteDrive.integration given: [case20d] a route where NO stone declares a brain (case=10) when: [t0] the brainless stone 2 is driven then: t0 stdout matches the untouched-drive snapshot: case20d.t0.no-brain-anywhere 1`] = `
+"🦉 where were we?
+
+🗿 route.drive
+   ├─ where do we go?
+   │  ├─ route = .temp/genTempDir.symlink/<ts>.drive-int-case20d.<hash>
+   │  └─ stone = 2
+   │
+   ├─ are you here?
+   │  ├─ when ready for review, run:
+   │  │  └─ rhx route.stone.set --stone 2 --as arrived
+   │  └─ when ready to continue, run:
+   │     └─ rhx route.stone.set --stone 2 --as passed
+   │
+   ├─ here's the stone
+   │  ├─
+   │  │
+   │  │  # stone: two
+   │  └─
+   │
+   └─ are you here?
+      ├─ when ready for review, run:
+      │  └─ rhx route.stone.set --stone 2 --as arrived
+      └─ when ready to continue, run:
+         └─ rhx route.stone.set --stone 2 --as passed"
+`;
+
+exports[`stepRouteDrive.integration given: [case21] a malfunction stone that DECLARES a brain when: [t0] onStop hits the malfunction gate then: the exact bytes a driver reads: case21.t0.onstop 1`] = `
+"🦉 where were we?
+
+🗿 route.drive
+   ├─ where do we go?
+   │  ├─ route = .temp/genTempDir.symlink/<ts>.drive-int-case21.<hash>
+   │  ├─ stone = 1
+   │  └─ brain = opus
+   │
+   ├─ ✋ halted, brain switch could not land
+   │  ├─ this driver runs = unknown — the clone probe could not be read
+   │  │
+   │  ├─ why
+   │  │  ├─ \`clone whoami\` did not answer, or failed for a reason this build does not read
+   │  │  └─ the probe is capped at 10s, well under the driver hook budget
+   │  │
+   │  ├─ fix: run the probe by hand and read what it reports
+   │  │  └─ rhx clone whoami --output json
+   │  │
+   │  └─ or: remove \`brain:\` from the stone's guard, and inherit the brain deliberately
+   │     └─ <repo>/.temp/genTempDir.symlink/<ts>.drive-int-case21.<hash>/1.guard
+   │
+   └─ 💥 halted, guard malfunction
+      └─ please tell a human this needs to be fixed before you can continue"
+`;
+
+exports[`stepRouteDrive.integration given: [case22] a driver-wall stone that DECLARES a brain when: [t0] onStop hits the driver-wall gate then: the exact bytes a driver reads: case22.t0.onstop 1`] = `
+"🦉 where were we?
+
+🗿 route.drive
+   ├─ where do we go?
+   │  ├─ route = .temp/genTempDir.symlink/<ts>.drive-int-case22.<hash>
+   │  ├─ stone = 1
+   │  └─ brain = opus
+   │
+   ├─ ✋ halted, brain switch could not land
+   │  ├─ this driver runs = unknown — the clone probe could not be read
+   │  │
+   │  ├─ why
+   │  │  ├─ \`clone whoami\` did not answer, or failed for a reason this build does not read
+   │  │  └─ the probe is capped at 10s, well under the driver hook budget
+   │  │
+   │  ├─ fix: run the probe by hand and read what it reports
+   │  │  └─ rhx clone whoami --output json
+   │  │
+   │  └─ or: remove \`brain:\` from the stone's guard, and inherit the brain deliberately
+   │     └─ <repo>/.temp/genTempDir.symlink/<ts>.drive-int-case22.<hash>/1.guard
+   │
+   └─ halted, stone marked blocked
+      └─ reason: .temp/genTempDir.symlink/<ts>.drive-int-case22.<hash>/blocker/1.md"
+`;
+
+exports[`stepRouteDrive.integration given: [case23] an exhausted stone that DECLARES a brain when: [t0] onStop enters the exhausted stone then: the exact bytes a driver reads: case23.t0.onstop 1`] = `
+"🦉 where were we?
+
+🗿 route.drive
+   ├─ where do we go?
+   │  ├─ route = .temp/genTempDir.symlink/<ts>.drive-int-case23.<hash>
+   │  ├─ stone = 1
+   │  └─ brain = opus
+   │
+   ├─ ✋ halted, brain switch could not land
+   │  ├─ this driver runs = unknown — the clone probe could not be read
+   │  │
+   │  ├─ why
+   │  │  ├─ \`clone whoami\` did not answer, or failed for a reason this build does not read
+   │  │  └─ the probe is capped at 10s, well under the driver hook budget
+   │  │
+   │  ├─ fix: run the probe by hand and read what it reports
+   │  │  └─ rhx clone whoami --output json
+   │  │
+   │  └─ or: remove \`brain:\` from the stone's guard, and inherit the brain deliberately
+   │     └─ <repo>/.temp/genTempDir.symlink/<ts>.drive-int-case23.<hash>/1.guard
+   │
+   └─ halted, peer reviewer budget exhausted
+      ├─ reason: peer reviewer budget exhausted
+      │
+      ├─ spend your own lever first, then ask a human
+      │  ├─ converge with the reviewer — yours to run
+      │  │  └─ rhx route.stone.set --stone 1 --as absorbed --that <reviewer>
+      │  │
+      │  └─ approve as-is — a human must grant
+      │     └─ rhx route.stone.set --stone 1 --as approved
+      │
+      └─ once either remedy lands, run
+         └─ rhx route.stone.set --stone 1 --as passed"
+`;
+
+exports[`stepRouteDrive.integration given: [case24] a resumed onBoot at a malfunction stone with the marker set when: [t0] a fresh session boots onto the still-halted stone then: the exact composed bytes a resumed driver reads: case24.t0.onboot 1`] = `
+"🦉 where were we?
+
+🗿 route.drive
+   ├─ where do we go?
+   │  ├─ route = .temp/genTempDir.symlink/<ts>.drive-int-case24.<hash>
+   │  ├─ stone = 1
+   │  └─ brain = opus
+   │
+   ├─ ✋ halted, brain switch could not land
+   │  ├─ this driver runs = unknown — the clone probe could not be read
+   │  │
+   │  ├─ why
+   │  │  ├─ \`clone whoami\` did not answer, or failed for a reason this build does not read
+   │  │  └─ the probe is capped at 10s, well under the driver hook budget
+   │  │
+   │  ├─ fix: run the probe by hand and read what it reports
+   │  │  └─ rhx clone whoami --output json
+   │  │
+   │  └─ or: remove \`brain:\` from the stone's guard, and inherit the brain deliberately
+   │     └─ <repo>/.temp/genTempDir.symlink/<ts>.drive-int-case24.<hash>/1.guard
+   │
+   └─ 💥 halted, guard malfunction
+      └─ please tell a human this needs to be fixed before you can continue"
+`;
+
+exports[`stepRouteDrive.integration given: [case25] a push-forward stone that DECLARES a brain when: [t0] onStop pushes forward with an undispatched brain then: the exact bytes a driver reads: case25.t0.onstop 1`] = `
+"🦉 where were we?
+
+🗿 route.drive
+   ├─ where do we go?
+   │  ├─ route = .temp/genTempDir.symlink/<ts>.drive-int-case25.<hash>
+   │  ├─ stone = 1
+   │  └─ brain = opus
+   │
+   └─ ✋ halted, brain switch could not land
+      ├─ this driver runs = unknown — the clone probe could not be read
+      │
+      ├─ why
+      │  ├─ \`clone whoami\` did not answer, or failed for a reason this build does not read
+      │  └─ the probe is capped at 10s, well under the driver hook budget
+      │
+      ├─ fix: run the probe by hand and read what it reports
+      │  └─ rhx clone whoami --output json
+      │
+      └─ or: remove \`brain:\` from the stone's guard, and inherit the brain deliberately
+         └─ <repo>/.temp/genTempDir.symlink/<ts>.drive-int-case25.<hash>/1.guard"
+`;
+
+exports[`stepRouteDrive.integration given: [case25] a push-forward stone that DECLARES a brain when: [t0] onStop pushes forward with an undispatched brain then: the exact bytes of the code-2 push-block stderr reason: case25.t0.onstop.stderr 1`] = `
+"🦉 where were we?
+
+🗿 route.drive
+   ├─ where do we go?
+   │  ├─ route = .temp/genTempDir.symlink/<ts>.drive-int-case25.<hash>
+   │  ├─ stone = 1
+   │  └─ brain = opus
+   │
+   ├─ are you here?
+   │  ├─ when ready for review, run:
+   │  │  └─ rhx route.stone.set --stone 1 --as arrived
+   │  └─ when ready to continue, run:
+   │     └─ rhx route.stone.set --stone 1 --as passed
+   │
+   ├─ here's the stone
+   │  ├─
+   │  │
+   │  │  # stone: implement
+   │  │  
+   │  │  done when:
+   │  │  - it works
+   │  └─
+   │
+   └─ are you here?
+      ├─ when ready for review, run:
+      │  └─ rhx route.stone.set --stone 1 --as arrived
+      └─ when ready to continue, run:
+         └─ rhx route.stone.set --stone 1 --as passed"
+`;
+
+exports[`stepRouteDrive.integration given: [case26] an approval-blocked stone that DECLARES a brain when: [t0] onStop hits the approval blocker-message path then: the exact bytes a driver reads: case26.t0.onstop 1`] = `
+"🦉 where were we?
+
+🗿 route.drive
+   ├─ where do we go?
+   │  ├─ route = .temp/genTempDir.symlink/<ts>.drive-int-case26.<hash>
+   │  ├─ stone = 1
+   │  └─ brain = opus
+   │
+   ├─ ✋ halted, brain switch could not land
+   │  ├─ this driver runs = unknown — the clone probe could not be read
+   │  │
+   │  ├─ why
+   │  │  ├─ \`clone whoami\` did not answer, or failed for a reason this build does not read
+   │  │  └─ the probe is capped at 10s, well under the driver hook budget
+   │  │
+   │  ├─ fix: run the probe by hand and read what it reports
+   │  │  └─ rhx clone whoami --output json
+   │  │
+   │  └─ or: remove \`brain:\` from the stone's guard, and inherit the brain deliberately
+   │     └─ <repo>/.temp/genTempDir.symlink/<ts>.drive-int-case26.<hash>/1.guard
+   │
+   └─ halted, human approval required
+      ├─ please ask a human to
+      │  └─ rhx route.stone.set --stone 1 --as approved
+      │
+      └─ once they do, run
+         └─ rhx route.stone.set --stone 1 --as passed"
+`;
+
+exports[`stepRouteDrive.integration given: [case27] a stuck-route stone (count>21) that DECLARES a brain when: [t0] onStop hits the stuck-route cutoff then: the exact bytes a driver reads: case27.t0.onstop 1`] = `
+"🦉 where were we?
+
+🗿 route.drive
+   ├─ where do we go?
+   │  ├─ route = .temp/genTempDir.symlink/<ts>.drive-int-case27.<hash>
+   │  ├─ stone = 1
+   │  └─ brain = opus
+   │
+   ├─ ✋ halted, brain switch could not land
+   │  ├─ this driver runs = unknown — the clone probe could not be read
+   │  │
+   │  ├─ why
+   │  │  ├─ \`clone whoami\` did not answer, or failed for a reason this build does not read
+   │  │  └─ the probe is capped at 10s, well under the driver hook budget
+   │  │
+   │  ├─ fix: run the probe by hand and read what it reports
+   │  │  └─ rhx clone whoami --output json
+   │  │
+   │  └─ or: remove \`brain:\` from the stone's guard, and inherit the brain deliberately
+   │     └─ <repo>/.temp/genTempDir.symlink/<ts>.drive-int-case27.<hash>/1.guard
+   │
+   └─ 🟡 stuck! blocked 23x (max: 21)
+      └─ please tell a human what you saw and where"
+`;
+
+exports[`stepRouteDrive.integration given: [case27] a stuck-route stone (count>21) that DECLARES a brain when: [t0] onStop hits the stuck-route cutoff then: the exact bytes of the code-1 stuck escalate stderr reason: case27.t0.onstop.stderr 1`] = `"stuck on stone 1 after 23 attempts. please tell a human what you saw, where you got stuck, and what you tried."`;
+
+exports[`stepRouteDrive.integration given: [case28] a guard with a dropped key ALONGSIDE a brain that fails to dispatch when: [t0] the onStop hook renders the drive then: the exact composed bytes a driver reads on this surface: case28.t0.hook.onStop 1`] = `
+"🦉 where were we?
+
+🗿 route.drive
+   ├─ where do we go?
+   │  ├─ route = .temp/genTempDir.symlink/<ts>.drive-int-case28.<hash>
+   │  ├─ stone = 1
+   │  └─ brain = opus
+   │
+   └─ ✋ halted, brain switch could not land
+      ├─ this driver runs = unknown — the clone probe could not be read
+      │
+      ├─ why
+      │  ├─ \`clone whoami\` did not answer, or failed for a reason this build does not read
+      │  └─ the probe is capped at 10s, well under the driver hook budget
+      │
+      ├─ fix: run the probe by hand and read what it reports
+      │  └─ rhx clone whoami --output json
+      │
+      └─ or: remove \`brain:\` from the stone's guard, and inherit the brain deliberately
+         └─ <repo>/.temp/genTempDir.symlink/<ts>.drive-int-case28.<hash>/1.guard"
+`;
+
+exports[`stepRouteDrive.integration given: [case28] a guard with a dropped key ALONGSIDE a brain that fails to dispatch when: [t1] the onBoot hook renders the drive then: the exact composed bytes a driver reads on this surface: case28.t1.hook.onBoot 1`] = `
+"🦉 where were we?
+
+🗿 route.drive
+   ├─ where do we go?
+   │  ├─ route = .temp/genTempDir.symlink/<ts>.drive-int-case28.<hash>
+   │  ├─ stone = 1
+   │  └─ brain = opus
+   │
+   └─ ✋ halted, brain switch could not land
+      ├─ this driver runs = unknown — the clone probe could not be read
+      │
+      ├─ why
+      │  ├─ \`clone whoami\` did not answer, or failed for a reason this build does not read
+      │  └─ the probe is capped at 10s, well under the driver hook budget
+      │
+      ├─ fix: run the probe by hand and read what it reports
+      │  └─ rhx clone whoami --output json
+      │
+      └─ or: remove \`brain:\` from the stone's guard, and inherit the brain deliberately
+         └─ <repo>/.temp/genTempDir.symlink/<ts>.drive-int-case28.<hash>/1.guard"
+`;
+
+exports[`stepRouteDrive.integration given: [case28] a guard with a dropped key ALONGSIDE a brain that fails to dispatch when: [t2] direct mode renders the drive then: the exact composed bytes a driver reads on this surface: case28.t2.direct 1`] = `
+"🦉 where were we?
+
+🗿 route.drive
+   ├─ where do we go?
+   │  ├─ route = .temp/genTempDir.symlink/<ts>.drive-int-case28.<hash>
+   │  ├─ stone = 1
+   │  └─ brain = opus
+   │
+   └─ ✋ halted, brain switch could not land
+      ├─ this driver runs = unknown — the clone probe could not be read
+      │
+      ├─ why
+      │  ├─ \`clone whoami\` did not answer, or failed for a reason this build does not read
+      │  └─ the probe is capped at 10s, well under the driver hook budget
+      │
+      ├─ fix: run the probe by hand and read what it reports
+      │  └─ rhx clone whoami --output json
+      │
+      └─ or: remove \`brain:\` from the stone's guard, and inherit the brain deliberately
+         └─ <repo>/.temp/genTempDir.symlink/<ts>.drive-int-case28.<hash>/1.guard"
+`;
+
+exports[`stepRouteDrive.integration given: [case29] a MIXED halt (malfunction + budget exhausted) that DECLARES a brain when: [t0] onStop hits the MIXED malfunction gate then: the exact bytes of the code-1 stderr reason: case29.t0.onstop.stderr 1`] = `"reviewer or judge malfunctioned on stone 1. a human must fix the malfunction before the route can proceed."`;
+
+exports[`stepRouteDrive.integration given: [case29] a MIXED halt (malfunction + budget exhausted) that DECLARES a brain when: [t0] onStop hits the MIXED malfunction gate then: the exact composed bytes a driver reads: case29.t0.onstop 1`] = `
+"🦉 where were we?
+
+🗿 route.drive
+   ├─ where do we go?
+   │  ├─ route = .temp/genTempDir.symlink/<ts>.drive-int-case29.<hash>
+   │  ├─ stone = 1
+   │  └─ brain = opus
+   │
+   ├─ ✋ halted, brain switch could not land
+   │  ├─ this driver runs = unknown — the clone probe could not be read
+   │  │
+   │  ├─ why
+   │  │  ├─ \`clone whoami\` did not answer, or failed for a reason this build does not read
+   │  │  └─ the probe is capped at 10s, well under the driver hook budget
+   │  │
+   │  ├─ fix: run the probe by hand and read what it reports
+   │  │  └─ rhx clone whoami --output json
+   │  │
+   │  └─ or: remove \`brain:\` from the stone's guard, and inherit the brain deliberately
+   │     └─ <repo>/.temp/genTempDir.symlink/<ts>.drive-int-case29.<hash>/1.guard
+   │
+   └─ halted, reviewer malfunctioned; peer reviewer budget exhausted: limited
+      └─ spend your own lever first, then ask a human
+         ├─ converge with the reviewer — yours to run
+         │  └─ rhx route.stone.set --stone 1 --as absorbed --that limited
+         │
+         ├─ overrule the malfunction — a human must grant
+         │  └─ rhx route.stone.set --stone 1 --as overruled
+         │
+         └─ approve as-is — a human must grant
+            └─ rhx route.stone.set --stone 1 --as approved"
+`;
+
+exports[`stepRouteDrive.integration given: [case30] an EXHAUSTED stone that DECLARES a brain, at onBoot and direct when: [t0] the onBoot hook renders the exhausted halt then: the exact composed bytes on this surface: case30.t0.onboot 1`] = `
+"🦉 where were we?
+
+🗿 route.drive
+   ├─ where do we go?
+   │  ├─ route = .temp/genTempDir.symlink/<ts>.drive-int-case30.<hash>
+   │  ├─ stone = 1
+   │  └─ brain = opus
+   │
+   ├─ ✋ halted, brain switch could not land
+   │  ├─ this driver runs = unknown — the clone probe could not be read
+   │  │
+   │  ├─ why
+   │  │  ├─ \`clone whoami\` did not answer, or failed for a reason this build does not read
+   │  │  └─ the probe is capped at 10s, well under the driver hook budget
+   │  │
+   │  ├─ fix: run the probe by hand and read what it reports
+   │  │  └─ rhx clone whoami --output json
+   │  │
+   │  └─ or: remove \`brain:\` from the stone's guard, and inherit the brain deliberately
+   │     └─ <repo>/.temp/genTempDir.symlink/<ts>.drive-int-case30.<hash>/1.guard
+   │
+   └─ halted, peer reviewer budget exhausted
+      ├─ reason: peer reviewer budget exhausted
+      │
+      ├─ spend your own lever first, then ask a human
+      │  ├─ converge with the reviewer — yours to run
+      │  │  └─ rhx route.stone.set --stone 1 --as absorbed --that <reviewer>
+      │  │
+      │  └─ approve as-is — a human must grant
+      │     └─ rhx route.stone.set --stone 1 --as approved
+      │
+      └─ once either remedy lands, run
+         └─ rhx route.stone.set --stone 1 --as passed"
+`;
+
+exports[`stepRouteDrive.integration given: [case30] an EXHAUSTED stone that DECLARES a brain, at onBoot and direct when: [t1] direct mode renders the exhausted halt then: the exact composed bytes on this surface: case30.t1.direct 1`] = `
+"🦉 where were we?
+
+🗿 route.drive
+   ├─ where do we go?
+   │  ├─ route = .temp/genTempDir.symlink/<ts>.drive-int-case30.<hash>
+   │  ├─ stone = 1
+   │  └─ brain = opus
+   │
+   ├─ ✋ halted, brain switch could not land
+   │  ├─ this driver runs = unknown — the clone probe could not be read
+   │  │
+   │  ├─ why
+   │  │  ├─ \`clone whoami\` did not answer, or failed for a reason this build does not read
+   │  │  └─ the probe is capped at 10s, well under the driver hook budget
+   │  │
+   │  ├─ fix: run the probe by hand and read what it reports
+   │  │  └─ rhx clone whoami --output json
+   │  │
+   │  └─ or: remove \`brain:\` from the stone's guard, and inherit the brain deliberately
+   │     └─ <repo>/.temp/genTempDir.symlink/<ts>.drive-int-case30.<hash>/1.guard
+   │
+   └─ halted, peer reviewer budget exhausted
+      ├─ reason: peer reviewer budget exhausted
+      │
+      ├─ spend your own lever first, then ask a human
+      │  ├─ converge with the reviewer — yours to run
+      │  │  └─ rhx route.stone.set --stone 1 --as absorbed --that <reviewer>
+      │  │
+      │  └─ approve as-is — a human must grant
+      │     └─ rhx route.stone.set --stone 1 --as approved
+      │
+      └─ once either remedy lands, run
+         └─ rhx route.stone.set --stone 1 --as passed"
+`;
+
+exports[`stepRouteDrive.integration given: [case31] an APPROVAL-blocked stone that DECLARES a brain, at onBoot and direct when: [t0] the onBoot hook renders the approval halt then: the exact composed bytes on this surface: case31.t0.onboot 1`] = `
+"🦉 where were we?
+
+🗿 route.drive
+   ├─ where do we go?
+   │  ├─ route = .temp/genTempDir.symlink/<ts>.drive-int-case31.<hash>
+   │  ├─ stone = 1
+   │  └─ brain = opus
+   │
+   ├─ ✋ halted, brain switch could not land
+   │  ├─ this driver runs = unknown — the clone probe could not be read
+   │  │
+   │  ├─ why
+   │  │  ├─ \`clone whoami\` did not answer, or failed for a reason this build does not read
+   │  │  └─ the probe is capped at 10s, well under the driver hook budget
+   │  │
+   │  ├─ fix: run the probe by hand and read what it reports
+   │  │  └─ rhx clone whoami --output json
+   │  │
+   │  └─ or: remove \`brain:\` from the stone's guard, and inherit the brain deliberately
+   │     └─ <repo>/.temp/genTempDir.symlink/<ts>.drive-int-case31.<hash>/1.guard
+   │
+   └─ halted, human approval required
+      ├─ please ask a human to
+      │  └─ rhx route.stone.set --stone 1 --as approved
+      │
+      └─ once they do, run
+         └─ rhx route.stone.set --stone 1 --as passed"
+`;
+
+exports[`stepRouteDrive.integration given: [case31] an APPROVAL-blocked stone that DECLARES a brain, at onBoot and direct when: [t1] direct mode renders the approval halt then: the exact composed bytes on this surface: case31.t1.direct 1`] = `
+"🦉 where were we?
+
+🗿 route.drive
+   ├─ where do we go?
+   │  ├─ route = .temp/genTempDir.symlink/<ts>.drive-int-case31.<hash>
+   │  ├─ stone = 1
+   │  └─ brain = opus
+   │
+   ├─ ✋ halted, brain switch could not land
+   │  ├─ this driver runs = unknown — the clone probe could not be read
+   │  │
+   │  ├─ why
+   │  │  ├─ \`clone whoami\` did not answer, or failed for a reason this build does not read
+   │  │  └─ the probe is capped at 10s, well under the driver hook budget
+   │  │
+   │  ├─ fix: run the probe by hand and read what it reports
+   │  │  └─ rhx clone whoami --output json
+   │  │
+   │  └─ or: remove \`brain:\` from the stone's guard, and inherit the brain deliberately
+   │     └─ <repo>/.temp/genTempDir.symlink/<ts>.drive-int-case31.<hash>/1.guard
+   │
+   └─ halted, human approval required
+      ├─ please ask a human to
+      │  └─ rhx route.stone.set --stone 1 --as approved
+      │
+      └─ once they do, run
+         └─ rhx route.stone.set --stone 1 --as passed"
+`;
+
+exports[`stepRouteDrive.integration given: [case32] a DRIVER-WALL stone that DECLARES a brain, in direct mode when: [t0] direct mode renders the driver wall then: the exact composed bytes on the direct surface: case32.t0.direct 1`] = `
+"🦉 where were we?
+
+🗿 route.drive
+   ├─ where do we go?
+   │  ├─ route = .temp/genTempDir.symlink/<ts>.drive-int-case32.<hash>
+   │  ├─ stone = 1
+   │  └─ brain = opus
+   │
+   ├─ ✋ halted, brain switch could not land
+   │  ├─ this driver runs = unknown — the clone probe could not be read
+   │  │
+   │  ├─ why
+   │  │  ├─ \`clone whoami\` did not answer, or failed for a reason this build does not read
+   │  │  └─ the probe is capped at 10s, well under the driver hook budget
+   │  │
+   │  ├─ fix: run the probe by hand and read what it reports
+   │  │  └─ rhx clone whoami --output json
+   │  │
+   │  └─ or: remove \`brain:\` from the stone's guard, and inherit the brain deliberately
+   │     └─ <repo>/.temp/genTempDir.symlink/<ts>.drive-int-case32.<hash>/1.guard
+   │
+   └─ halted, stone marked blocked
+      └─ reason: .temp/genTempDir.symlink/<ts>.drive-int-case32.<hash>/blocker/1.md"
+`;

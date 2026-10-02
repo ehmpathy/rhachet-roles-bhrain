@@ -1,0 +1,40 @@
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
+
+exports[`parseStoneGuard.brain given: [case5] a guard that uses the \`model:\` alias when: [t0] it is parsed, and its advisories are read then: the render is a snapshot a reviewer can eyeball 1`] = `
+"🗿 guard
+   └─ \`model:\` reads as an alias of \`brain:\`, but its value was IGNORED
+      ├─ at: x.guard:1
+      ├─ fix: rename it to \`brain:\` for the switch to take effect
+      │  └─ brain: claude-opus-5[1m]
+      └─ note: \`model:\` is recognized, but ONLY \`brain:\` is applied — its value did not take
+
+"
+`;
+
+exports[`parseStoneGuard.brain given: [case6] a guard with a MISSPELLED known key when: [t0] it is parsed, and its advisories are read then: the render is a snapshot a reviewer can eyeball 1`] = `
+"🗿 guard
+   └─ \`brian:\` is not a key i know, and it was IGNORED
+      ├─ at: x.guard:1
+      ├─ did you mean: \`brain:\`?
+      ├─ fix: rename \`brian:\` to \`brain:\` if that was the intent
+      └─ or: if \`brian:\` is deliberate, this warn is safe to ignore
+
+"
+`;
+
+exports[`parseStoneGuard.brain given: [case6c] a guard with several dropped keys at once when: [t0] it is parsed, and its advisories are read then: the render is a snapshot a reviewer can eyeball 1`] = `
+"🗿 guard
+   ├─ \`model:\` reads as an alias of \`brain:\`, but its value was IGNORED
+   │  ├─ at: x.guard:1
+   │  ├─ fix: rename it to \`brain:\` for the switch to take effect
+   │  │  └─ brain: opus
+   │  └─ note: \`model:\` is recognized, but ONLY \`brain:\` is applied — its value did not take
+   │
+   └─ \`brian:\` is not a key i know, and it was IGNORED
+      ├─ at: x.guard:4
+      ├─ did you mean: \`brain:\`?
+      ├─ fix: rename \`brian:\` to \`brain:\` if that was the intent
+      └─ or: if \`brian:\` is deliberate, this warn is safe to ignore
+
+"
+`;

@@ -12,8 +12,7 @@ import * as path from 'path';
  *        siblings — cached, exhausted, and cached-with-blockers — each wrote
  *        `path.relative(gitRoot, ...)` inline. so a single stone run printed
  *        the same artifact two ways, fifteen lines apart: an absolute path in
- *        the progress tree, a repo-relative one in the guard report below it
- *        (r7 nitpick.1, i003).
+ *        the progress tree, a repo-relative one in the guard report below it.
  *
  * ⇒ a convention repeated at five sites is not a guarantee. this is.
  *

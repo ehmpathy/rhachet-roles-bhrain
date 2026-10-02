@@ -61,12 +61,11 @@ describe('runStoneGuardReviews', () => {
     });
 
     when('[t0] reviews are executed', () => {
-      // the three assertions below read ONE run. they previously drove the guard
-      // three times on the identical `hash: 'testhash'`, which is the shape
-      // `rule.forbid.redundant-expensive-operations` names — same operation, same
-      // input, adjacent `then` blocks.
+      // the three assertions below read ONE run, never three separate guard runs on the
+      // identical `hash: 'testhash'` — `rule.forbid.redundant-expensive-operations` forbids
+      // exactly that: same operation, same input, adjacent `then` blocks.
       //
-      // ⚠️ the `fs.stat` lives INSIDE this callback deliberately. `afterEach` rms
+      // 🟡 the `fs.stat` lives INSIDE this callback deliberately. `afterEach` rms
       //    `tempDir` after every `then`, so a disk read left in a later block would
       //    stat a directory that no longer exists. only the in-memory result crosses
       //    the boundary.
@@ -2013,7 +2012,7 @@ describe('runStoneGuardReviews', () => {
       //        readable-apart from the other two causes. this drives ReviewTallyTimeoutError
       //        through runOneStoneGuardReview's catch + isReviewTallyTimeout selection — the
       //        contract seam the low-level getReviewCountsViaBrain.timeout unit test does NOT
-      //        cover. see blueprint "fallback timeout" + r12 obs #4 / r9 i004.
+      //        cover.
       const tempDir = path.join(
         os.tmpdir(),
         `test-reviews-timeout-${Date.now()}`,
@@ -2874,7 +2873,7 @@ describe('runStoneGuardReviews', () => {
       //
       //    with `git: true` the root IS the route, so a relativized path reads
       //    `.reviews/peer/...` and a raw one reads `/tmp/.../.reviews/peer/...`.
-      //    the difference is now a single `path.isAbsolute` away (r7 nitpick.1, i003)
+      //    the difference is now a single `path.isAbsolute` away
       const scene = useBeforeAll(async () => {
         const tempDir = genTempDir({
           slug: 'guard-display-path',

@@ -44,7 +44,7 @@ to impose.
 | **1** | **the route asks** — a stone or its guard names a commit as a deliverable | read the `.stone` / `.guard` files. **name the stone**, or you have no warrant |
 | **2** | **the route is finished** — every stone passed, and the last one approved | `rhx route.drive` reports no next stone |
 
-⚠️ **quota is not a warrant.** `rule.always.spend-own-levers-before-escalation` files the commit quota
+🟡 **quota is not a warrant.** `rule.always.spend-own-levers-before-escalation` files the commit quota
 under **human**; this rule adds the half that rule does not carry — **even with quota in hand, the
 route must ask.** a grant is scoped to what it was granted for, and *"they allowed one once"* is not
 a permanent permission.
@@ -61,7 +61,7 @@ its arithmetic was never wrong.** a commit really is the only move that collapse
 it got wrong was that *human-gated* implies *worth a human's grant* — so it escalated for permission
 to perform an act that stays forbidden once permitted.
 
-⚠️ **a rule that names the right lever can still name the wrong ask.** the check is not *"who owns
+🟡 **a rule that names the right lever can still name the wrong ask.** the check is not *"who owns
 this lever?"* but *"and once they hand it over, may I use it here?"*
 
 ## .the reasons that FEEL like warrants
@@ -84,7 +84,7 @@ each is true, and none is a warrant:
 - the route is **finished** → commit
 - 🔴 you reach for a reason from the table above → **that is this rule at work.** do not commit
 
-## ⚠️ .the bound — this governs the DRIVER on a route
+## 🟡 .the bound — this governs the DRIVER on a route
 
 a mechanic asked by a human to land a change works under a different contract
 (`rule.require.git-release-confidence`, ehmpathy/mechanic). this rule binds the driver **while a route

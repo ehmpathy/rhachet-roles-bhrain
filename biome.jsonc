@@ -14,7 +14,14 @@
       "!**/node_modules",
       "!**/.artifact",
       "!**/.generated",
-      "!**/.test*"
+      "!**/.test*",
+      // a CACHE is never lint scope. `rmsafe` parks deleted files under
+      // `.agent/.cache/**/trash/` and keeps their original path, so a file removed from
+      // `src/` retains a `/src/` segment and `**/src/**/*.ts` above matches it. the nested
+      // `.agent/.cache/.gitignore` does not save it: `vcs.useIgnoreFile` reads the ROOT
+      // ignore file alone. ⇒ deleted code lints as live code, and the gate fails LOCALLY
+      // while CI (a fresh clone, no trash) stays green — the worst shape a gate can take
+      "!**/.agent/.cache"
     ]
   },
   "formatter": {

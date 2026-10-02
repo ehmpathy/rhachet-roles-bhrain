@@ -20,11 +20,11 @@ this is the whole rule, and it is a distinction about what the objection *is*:
 that would close it needs a grant you cannot make yourself — a credential, a commit quota, a scope
 decision — then **more rounds cannot converge it, and the budget will not tell you so.**
 
-⚠️ **budget left is not evidence of a remedy.** a lane rejected for absent coverage re-raises
+🟡 **budget left is not evidence of a remedy.** a lane rejected for absent coverage re-raises
 identically at 45/107 and at 105/107. **exhaustion is terminal; rejection is not** — so a lane can
 block forever with budget to spare, and from the inside that shape reads like progress.
 
-⚠️ **and to run the lane dry is no exit either.** exhaustion ends its *rounds*, never the blocker
+🟡 **and to run the lane dry is no exit either.** exhaustion ends its *rounds*, never the blocker
 it already raised — that debt outlives its budget (`rule.always.converge-to-terminal`). a coast to
 the bottom buys a debt rather than a discharge.
 
@@ -40,11 +40,11 @@ the bottom buys a debt rather than a discharge.
 | 🔴 **no, and the artifact was RESTRUCTURED** — every verdict on it is stale | `--as rewound`. neither a dispute nor a concede fits prose that no longer exists |
 | 🔴 **no, for any other reason** | `--as blocked`, **with the ask stated as a command the human can run** |
 
-⚠️ *permitted* is the load-bearing word, and it is narrower than *possible*. a test you could write
+🟡 *permitted* is the load-bearing word, and it is narrower than *possible*. a test you could write
 but cannot run without a key you do not hold is **not permitted**. nor is an artifact whose
 authorship the wisher fenced.
 
-## ⚠️ .this does NOT loosen `rule.forbid.unanswered-exits-from-a-blocker`
+## 🟡 .this does NOT loosen `rule.forbid.unanswered-exits-from-a-blocker`
 
 that rule lists `--as blocked` among the forbidden exits, and the two are easy to read as opposed.
 they are not — they govern **different states**, and the test above is precisely what parts them:
@@ -72,7 +72,7 @@ different quantities, and a driver who answers the first and acts on the second 
 ⇒ **a halt is retired by its own remedy, never by a neighbour's.** four walls that fall is not the
 wall that falls.
 
-### ⚠️ the two operations are orthogonal, and that is the whole repair
+### 🟡 the two operations are orthogonal, and that is the whole repair
 
 this rule already says *"the halt does not excuse the `.taken`."* **the converse holds equally and
 was never written down:**
@@ -101,7 +101,7 @@ its own sentence. `passage.jsonl` records the shape: `blocked → arrived → bl
 ⇒ 🔴 **the halt was raised twice and abandoned twice.** the failure was never a halt left unraised —
 it was a halt treated as a round to get past rather than a terminal state to wait in.
 
-⚠️ **and the wisher had to supply the correction**, in one question: *"if you need absent
+🟡 **and the wisher had to supply the correction**, in one question: *"if you need absent
 crednetials, shouldn't have you raised a blocker already?"* the rule was **cited on the page it was
 broken on**, so no further read would have found it. a rule a driver can recite is not a rule a
 driver obeys, and the recitation is what makes the gap invisible from the inside.
@@ -123,7 +123,7 @@ spent, in the blocker artifact.
 | you answered a point and the **same** point returns unchanged | ask whether your answer was an argument against an absence |
 | two lanes read one artifact and **diverge permanently** | one grades soundness, the other coverage. a sound deferral is still uncovered |
 | the close needs a **credential, a quota, or a scope call** | not yours. halt with the exact command |
-| ⚠️ the reviewer raises a **structural** question at fulcrum-council time | halt. see below |
+| 🟡 the reviewer raises a **structural** question at fulcrum-council time | halt. see below |
 | the budget still reads healthy | 🔴 **irrelevant.** re-read the test |
 | 🔴 you are **already halted** and a *different* gate clears | **the halt stands.** re-probe the gate that raised it, and no other |
 | you are already halted and write a `.taken` | correct conduct — and it lifts no halt. answer while halted |
@@ -143,7 +143,7 @@ never learns it was asked twice.
 worth far more to the wisher than either alone: the row carries what you chose and why; the objection
 carries an independent reader who disagrees.
 
-⚠️ **the question that parts the two cases is not "is it structural?"** — it is *"does an itemized
+🟡 **the question that parts the two cases is not "is it structural?"** — it is *"does an itemized
 fulcrum already reserve this call?"* a structural objection with no fulcrum behind it is an ordinary
 concern, and it is yours to answer.
 
@@ -162,7 +162,7 @@ a `.taken`, a dream, a term cluster — each is the **correct** response to a re
 the next round harder to review. so the loop is not a driver's carelessness; it is the honest work,
 compounded.
 
-⚠️ **the driver-owned remedy for a dark lane is a GUARD EDIT** — narrow that lane's `--paths-with`,
+🟡 **the driver-owned remedy for a dark lane is a GUARD EDIT** — narrow that lane's `--paths-with`,
 trim its `--conversation`, so it fits and the guard can run it
 (`rule.always.diagnose-reviewer-malfunctions`). ⛔ **never a hand-run `rhx review`**: it draws no
 budget and its verdict gates naught (`rule.forbid.hand-run-reviews`).
@@ -182,10 +182,10 @@ changes what the reviewers can see, mid-review, by the hand of the party under r
 escalate for it is to ask a human to pay for an act that stays forbidden once paid for
 (`rule.forbid.commits-the-route-did-not-ask-for`).
 
-⚠️ **measured** — a driver halted on exactly that ask, and the wisher struck it: *"you do not need
+🟡 **measured** — a driver halted on exactly that ask, and the wisher struck it: *"you do not need
 to commit yet. no one approved your stone."*
 
-⚠️ **so the halt this rule sanctions is narrower than it read.** a dark lane is a wall you must name;
+🟡 **so the halt this rule sanctions is narrower than it read.** a dark lane is a wall you must name;
 the ask that names it is a **guard edit you already made and the blocker you still cannot close** —
 never a commit quota, unless a stone asked for the commit or the route is finished.
 
@@ -235,7 +235,7 @@ both** — which is precisely the measured case above.
 a halt is an **OR** over points, so the blocker line needs **any**, and the false positive needs no
 quantifier at all: a closeable point is closed *while halted*, which is not a re-arrival.
 
-⚠️ 🔴 **an enforcement clause carries a rule's whole weight and gets its fewest re-reads.** a rule
+🔴 **an enforcement clause carries a rule's whole weight and gets its fewest re-reads.** a rule
 whose enforcement contradicts its own test is worse than one with no enforcement, since it reads as
 a check while it licenses the breach.
 

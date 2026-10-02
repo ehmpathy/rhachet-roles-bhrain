@@ -194,6 +194,42 @@ export interface RouteStoneGuardReviewsStructured {
 }
 
 /**
+ * .what = the brain a stone's guard prescribes for the driver while it works that stone
+ * .why  = a guard bounds what a stone may SPEND: `budget` caps review rounds, each peer
+ *         review's `--brain` prices a reviewer, and this prices the driver's turns
+ *
+ * .note = `effort` is a sub-axis of the brain, never a peer key — a level is model-scoped
+ * .note = three declaration forms:
+ *         ```
+ *         brain: opus[1m]              # shorthand — the value IS the choice
+ *
+ *         brain:                       # exploded — the only way to declare an effort
+ *           choice: opus[1m]
+ *           effort: medium
+ *
+ *         brain:                       # effort alone — the driver keeps its brain
+ *           effort: medium
+ *         ```
+ * .note = at least one field is set wherever this object exists; an empty `brain:` is
+ *         dropped at parse
+ */
+export interface RouteStoneGuardBrain {
+  /**
+   * the brain-cli's own `/model` argument, verbatim — never a rhachet brainslug — or null
+   * where only an effort was declared
+   */
+  choice: string | null;
+
+  /**
+   * the brain-cli's own `/effort` argument, verbatim, or null
+   *
+   * .note = its own field, never a suffix on the choice: `/model` and `/effort` are two
+   *         commands. reachable only by an explode, so `brain: <x>` always means a choice
+   */
+  effort: string | null;
+}
+
+/**
  * .what = represents the conditions to pass a guarded stone
  * .why = enables configurable validation before milestone passage
  */
@@ -231,6 +267,18 @@ export interface RouteStoneGuard {
    * writes to matched paths are blocked until this stone passes
    */
   protect: string[];
+
+  /**
+   * the brain the driver-role hook dispatches into the live driver clone on stone entry
+   *
+   * .note = absent → the driver keeps its inherited brain; the hook returns with no output,
+   *         no subprocess, no turn
+   * .note = bounds the DRIVER alone; peer reviews' `--brain` flags are untouched
+   * .note = optional rather than `| null`, against `rule.forbid.undefined-attributes`, to
+   *         match `reviews.self?` / `reviews.peer?` on this object. the whole-object conform
+   *         is deferred (`F17`, `.dream/v2026_09_14.fix.the-guard-object-carries-optional-attributes.md`)
+   */
+  brain?: RouteStoneGuardBrain;
 }
 
 export class RouteStoneGuard

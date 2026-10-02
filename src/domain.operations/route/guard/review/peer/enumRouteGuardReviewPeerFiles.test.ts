@@ -352,13 +352,13 @@ describe('enumRouteGuardReviewPeerFiles', () => {
       then(
         'the join corrupts it, so a consumer must read the path bare',
         async () => {
-          // 🔴 asserted against the REAL enumerated path, never a fabricated one.
-          //    an earlier form joined a hardcoded '/a/b.md' and so pinned node's
-          //    path.join contract — true, and it could never go red on a defect in
-          //    this repo. keyed to the enumerator's own output it bites: were the
-          //    enumerator to start returning route-relative paths, the join below
-          //    would point at a real file and the read would succeed
-          //    (r4 nitpick.2, i002)
+          // 🔴 asserted against the REAL enumerated path, never a fabricated one — a
+          //    hardcoded path like '/a/b.md' would only pin node's path.join contract
+          //    and could never go red on a defect in this repo. keyed to the
+          //    enumerator's own output it bites: were the enumerator to return
+          //    route-relative paths, the join below would point at a real file and
+          //    the read would succeed
+          //
           const files = await enumRouteGuardReviewPeerFiles({
             route: scene.route,
             stone: '1.vision',

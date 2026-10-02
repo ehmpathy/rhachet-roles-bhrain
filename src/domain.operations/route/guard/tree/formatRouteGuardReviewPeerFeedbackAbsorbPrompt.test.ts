@@ -8,9 +8,8 @@ import { formatRouteGuardReviewPeerFeedbackAbsorbPrompt } from './formatRouteGua
  *        carries `│` continuations. an assertion on the SENSE of that sentence must
  *        survive a re-wrap; only the snapshot should pin the exact layout.
  *
- * 🔴 .note = a plain `.toContain('there is none to find')` broke on a pure re-wrap
- *         that changed no words at all (r6 i002). the lesson is the same one r7
- *         taught: clamp the property, never the column the copy happens to land in.
+ * 🔴 .note = a plain `.toContain('there is none to find')` breaks on a pure re-wrap
+ *         that changes no words. clamp the property, never the column the copy lands in.
  */
 const asFlatProse = (out: string): string =>
   out.replace(/[│├└─]/g, ' ').replace(/\s+/g, ' ');
@@ -19,12 +18,10 @@ const asFlatProse = (out: string): string =>
  * 🔴 the fixtures are ABSOLUTE, as the filesystem hands them over, and the
  * expectations are the repo-relative form the driver must read.
  *
- * .why = they were repo-relative before, and that is exactly what let the defect
- *        survive three clean review rounds: a fixture already in display form makes
- *        `toContain(pathGiven)` pass whether or not the formatter relativizes at all,
- *        so the assertion clamped no property. `enumFilesFromGlob` passes
- *        `absolute: true`, so production never supplies the short form — the fixture
- *        was the one place it existed (r11 blocker.1, i004).
+ * .why = a fixture already in display (repo-relative) form makes `toContain(pathGiven)`
+ *        pass whether or not the formatter relativizes at all, so the assertion clamps
+ *        no property. `enumFilesFromGlob` passes `absolute: true`, so production never
+ *        supplies the short form — an absolute fixture is the one honest stand-in.
  *
  * ⇒ the two-sided assertion below is what gives the test teeth: the display form is
  *   present AND the absolute prefix is absent. remove the `root` from the formatter
@@ -86,7 +83,7 @@ describe('formatRouteGuardReviewPeerFeedbackAbsorbPrompt', () => {
       // 🔴 the two-sided clamp — the display form present is only half the claim.
       //    a formatter that printed the raw absolute path would ALSO satisfy the
       //    `toContain` above, because the display form is a suffix of it. only the
-      //    absence of the root proves the cast ran (r11 blocker.1, i004)
+      //    absence of the root proves the cast ran
       then(
         'prints no absolute filesystem prefix for the driver to scroll',
         () => {
@@ -103,7 +100,7 @@ describe('formatRouteGuardReviewPeerFeedbackAbsorbPrompt', () => {
       then('names EVERY owed reviewer in the close, not just the first', () => {
         // 🔴 --as absorbed takes ONE slug, so a close that names only the first
         //    reads as "run this one and you are done" and the driver stops a reviewer
-        //    short of discharged (r9 nitpick.1, i002)
+        //    short of discharged
         expect(out).toContain(
           'rhx route.stone.set --stone 1.execute --as absorbed --that mechanic',
         );
@@ -292,7 +289,7 @@ describe('formatRouteGuardReviewPeerFeedbackAbsorbPrompt', () => {
           //    branch a driver meets most — one owed reviewer is the common case.
           //    every other case here snaps the multi-reviewer shape, so absent
           //    this the single close ships un-vibecheckable
-          //    (rule.require.contract-snapshot-exhaustiveness; r2 i002)
+          //    (rule.require.contract-snapshot-exhaustiveness)
           expect(out).toMatchSnapshot();
         },
       );
@@ -354,14 +351,9 @@ describe('formatRouteGuardReviewPeerFeedbackAbsorbPrompt', () => {
       });
 
       then('the explanation cites NO count, because none is rendered', () => {
-        // an earlier copy closed the why-block with "the count shown for it is not
-        // the reviewer's". that sentence disowned the synthesized `blockers: 1` back
-        // when `asVerdict` still printed it. once the render was fixed to say
-        // `unreadable — no numeric count found`, the sentence disowned a figure
-        // absent from the screen, and a reader who hunted the render for it found
-        // no count at all. so the clamp here is the PROPERTY, never the copy:
-        // whatever the explanation says, it must not cite a count the render omits.
-        // a string equality would have re-broken on the next reword (r7 i002)
+        // the clamp is the PROPERTY, never the copy: whatever the explanation says,
+        // it must not cite a count the render omits. a string equality would
+        // re-break on the next reword
         const whyBlock = out.split('why an unreadable reviewer gates')[1] ?? '';
 
         // 🔴 without this the three negatives below pass trivially on an empty split
@@ -405,7 +397,7 @@ describe('formatRouteGuardReviewPeerFeedbackAbsorbPrompt', () => {
       then('matches snapshot — the clean single-reviewer render', () => {
         // the no-why-block variant: no retired branch, no unreadable branch, so
         // the tree is reviewers + close alone. pinned so a stray branch cannot
-        // leak into the common case unnoticed (r2 i002)
+        // leak into the common case unnoticed
         expect(out).toMatchSnapshot();
       });
     });
@@ -416,11 +408,9 @@ describe('formatRouteGuardReviewPeerFeedbackAbsorbPrompt', () => {
     //    formatter emits a why+fix branch per flag, in sequence. so a reviewer that
     //    left the guard config AND malfunctioned on its last run renders a shape no
     //    other case produces: two why blocks and two fix blocks inside one tree.
-    //
-    //    it was argued "correct by construction" and left unsnapped, which answers
-    //    correctness and never the rule's actual demand — a reviewer cannot vibecheck
-    //    a variant no snapshot records, so drift in the stacked copy ships unseen
-    //    (rule.require.contract-snapshot-exhaustiveness; r2 blocker.1, i002)
+    //    correct-by-construction is not enough — a reviewer cannot vibecheck a
+    //    variant no snapshot records, so drift in the stacked copy ships unseen
+    //    (rule.require.contract-snapshot-exhaustiveness)
     when('[t0] rendered as the only reviewer', () => {
       const out = formatRouteGuardReviewPeerFeedbackAbsorbPrompt({
         case: 'reply-prompt',
@@ -458,14 +448,11 @@ describe('formatRouteGuardReviewPeerFeedbackAbsorbPrompt', () => {
       });
 
       then('no two peer branch heads at the top level read alike', () => {
-        // 🔴 the defect this clamps SHIPPED and was snapped: `pushWhyFix` emitted the
-        //    literal `├─ fix` for both branches, so the stacked render carried two
-        //    byte-identical peers and a driver had to read the prose beneath each to
-        //    learn which answered which (r4 nitpick.1, i003).
-        //
-        //    the snapshot alone did not catch it — a snapshot pins whatever is there,
-        //    a blemish and all. so the shape earns its own assertion: every `├─` head
-        //    at the tree's top level must be unique.
+        // 🔴 a literal `├─ fix` head on both branches would render two byte-identical
+        //    peers, and a driver would have to trace the prose beneath each to learn
+        //    which answered which — a snapshot alone would not catch it, since it
+        //    pins whatever is there, blemish and all. so the shape earns its own
+        //    assertion: every `├─` head at the tree's top level must be unique.
         //
         // .note = scoped to the top level (three-space lead). the per-reviewer block
         //         nests its own `├─` heads at a deeper indent, and those SHOULD repeat
@@ -480,12 +467,11 @@ describe('formatRouteGuardReviewPeerFeedbackAbsorbPrompt', () => {
         // 🔴 two why blocks must NOT imply two takens. the debt is one reviewer's,
         //    so the close names one file — otherwise the driver writes two and the
         //    gate accepts neither
-        // 🔴 `toEqual`, never `toBeGreaterThanOrEqual`. the per-reviewer `articulate
+        // `toEqual`, never `toBeGreaterThanOrEqual`. the per-reviewer `articulate
         //    into` line alone puts the path on screen once, so a lower bound of 1 is
         //    already satisfied before this title's claim is tested at all — and a
         //    second answer path would take the count to 2, which the loose form also
         //    accepts. the EXACT count is the assertion
-        //    (r1 nitpick.4, i006/i007/i010/i011)
         const occurrences = out.split(displayTakenMech).length - 1;
         expect(occurrences).toEqual(1);
       });

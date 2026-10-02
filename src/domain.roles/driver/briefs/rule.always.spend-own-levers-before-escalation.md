@@ -45,7 +45,7 @@ and worse, it reads as a wall when it was a step.
 **adjacency is the trap.** two remedies rendered side by side with no owner column read as two
 human remedies, and the driver's own lever is the one that gets surfaced upward.
 
-⚠️ **an owner label on the surface covers ONE halt kind, and is a courtesy rather than a
+🟡 **an owner label on the surface covers ONE halt kind, and is a courtesy rather than a
 guarantee.** the budget halt names its owners, and the driver's lever is sorted first — but
 **which** lever that is depends on what the last round conceded: `increase budget — yours to
 spend` on an urgent concession, `fix what you conceded — yours to run` on a better one, and

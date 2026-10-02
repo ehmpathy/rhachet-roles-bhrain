@@ -31,11 +31,11 @@ different one — is the job timeout too tight? is there a fallback brain? shoul
 
 a **second word for the upstream case**, then a cluster for each — never a widened `flake`.
 
-⚠️ **two instances from one repo on one day is too thin a sample** for
+🟡 **two instances from one repo on one day is too thin a sample** for
 `rule.require.enumerate-before-you-name` to bite. the evidence sits at
 `.behavior/v2026_08_12.feat-adopt-seeded-briefs/refs/diagnosis.cicd-release-2026-08-31.md`.
 
-## ⚠️ .the adjacent word that is NOT a gap
+## 🟡 .the adjacent word that is NOT a gap
 
 `malfunction` is settled and under watch. `term=route.guard.review.malfunction` declares it *a
 process that rendered no verdict at all*, and `getExitCodeClass.ts` grades an overflowed lane

@@ -16,7 +16,7 @@ const noopContext = genContextReviewBrainSupplyDemo();
  * .what = the shared run-token normalizer, aliased for the reads below
  * .why = three suites had drifted three copies of it, and one of those drifts hid a
  *        real cross-machine flake. the bound it keeps — swap the run tokens and no
- *        other byte — is now stated once, in `asStableGuardEmit` (r1 nitpick.1, i002)
+ *        other byte — is now stated once, in `asStableGuardEmit`
  */
 const asStableEmit = asStableGuardEmit;
 
@@ -41,7 +41,7 @@ describe('setStoneAsPassed.exhausted', () => {
       //    then stabilize to identical bytes, and the snapshot passes either way.
       //
       //    with its own root the cast yields a bare `.reviews/peer/…` that no swap
-      //    touches, so the snapshot goes red if the cast is removed (r10 blocker, i005).
+      //    touches, so the snapshot goes red if the cast is removed.
       //    the `afterAll` below removes the nested `.git` with the rest of the scene
       execSync('git init', { cwd: tempDir, stdio: 'ignore' });
 
@@ -92,7 +92,7 @@ describe('setStoneAsPassed.exhausted', () => {
       //    this step free to regress — a reword of the blocked/rejected branches that
       //    kept those words would ship unseen. `rule.require.snapshot-every-journey-step`
       //    asks that a reviewer follow the whole journey from the snapshots alone, and
-      //    this 3-step budget-depletion journey had none (r1 blocker.1, i006)
+      //    this 3-step budget-depletion journey had none
       then('matches snapshot — step 1, the round that consumed budget', () => {
         expect(
           asStableEmit({ emit: result.emit?.stdout, route: tempDir }),
@@ -101,7 +101,7 @@ describe('setStoneAsPassed.exhausted', () => {
     });
 
     when('[t1] second attempt depletes budget (but review still runs)', () => {
-      // 🔴 setup belongs in the factory, never in a peer `then` (r4 nitpick.1, i011)
+      // 🔴 setup belongs in the factory, never in a peer `then`
       const result = useThen(
         'the driver answers, repairs the artifact, and the attempt completes',
         async () => {
@@ -152,7 +152,7 @@ describe('setStoneAsPassed.exhausted', () => {
     });
 
     when('[t2] third attempt hits exhaustion (review is SKIPPED)', () => {
-      // 🔴 setup belongs in the factory, never in a peer `then` (r4 nitpick.1, i011)
+      // 🔴 setup belongs in the factory, never in a peer `then`
       const result = useThen(
         'the driver answers again, repairs again, and the attempt completes',
         async () => {
@@ -226,7 +226,7 @@ describe('setStoneAsPassed.exhausted', () => {
    *        overrule is the third, and is not the driver's). lose the answer and this cell
    *        DEADLOCKS — the exact failure case=6 exists to prove has a valve.
    *
-   * ⚠️ the `carried` twin is walked by case1 above, where the artifact moves between the
+   * 🟡 the `carried` twin is walked by case1 above, where the artifact moves between the
    *    given and the answer. this is the `fresh` half: the artifact is NEVER touched after
    *    the given is raised, so the given's hash is still the current one. the mechanics are
    *    identical and only the hash differs — which is precisely why it must be asserted
@@ -245,7 +245,7 @@ describe('setStoneAsPassed.exhausted', () => {
       await fs.mkdir(tempDir, { recursive: true });
 
       // its own git root, so a printed path relativizes to a bare `.reviews/peer/…`
-      // that no stabilizer swap can mask — see the note on [case1] (r10 blocker, i005)
+      // that no stabilizer swap can mask — see the note on [case1]
       execSync('git init', { cwd: tempDir, stdio: 'ignore' });
 
       await fs.writeFile(path.join(tempDir, '1.test.stone'), '# Test stone');
@@ -320,7 +320,7 @@ describe('setStoneAsPassed.exhausted', () => {
 
     when('[t2] the driver answers, still with NO artifact edit', () => {
       // 🔴 the answer is setup, so it belongs in the factory — see the same repair in
-      //    `[case3] [t2]` below (r4 nitpick.1, i011)
+      //    `[case3] [t2]` below
       const result = useThen(
         'the given is answered, and the third attempt completes',
         async () => {
@@ -399,18 +399,18 @@ describe('setStoneAsPassed.exhausted', () => {
    *    under it, `[t1]` below passes the entrance gate and the stone proceeds on an
    *    unanswered blocker — `rule.forbid.unanswered-exits-from-a-blocker`, restored through
    *    the door P2 was built to shut.
-   *    ⚠️ **`[case2]` cannot catch this** — its `[t1]` re-enters with the artifact UNTOUCHED,
+   *    🟡 **`[case2]` cannot catch this** — its `[t1]` re-enters with the artifact UNTOUCHED,
    *       so the hash never moves and the old key would hold there too. the edit is the
    *       whole variable, and it is what makes this cell distinct from its neighbour.
    *
-   * 🔴 .the TWO cells this closes, and why one step could not close both:
+   * .the TWO cells this closes, and why one step could not close both:
    *
    *    | step  | cell                                         | the key it refutes          |
    *    |-------|----------------------------------------------|-----------------------------|
    *    | `[t1]`| `edit-code × fresh-unanswered × exhausted`    | `(slug, hashCurrent)`       |
    *    | `[t2]`| `edit-code × carried-unanswered × exhausted`  | `(slug, hashPrevious)`      |
    *
-   *    ⚠️ **one edit cannot discriminate the two keys.** a debt keyed to *the previous
+   *    🟡 **one edit cannot discriminate the two keys.** a debt keyed to *the previous
    *       hash* survives a single move and reads green at `[t1]`; only a SECOND move
    *       puts the given two hops back, where none but a reviewer-anchored key finds it.
    *       so `[t2]` is a distinct critipath rather than a repetition of `[t1]`.
@@ -424,19 +424,19 @@ describe('setStoneAsPassed.exhausted', () => {
    *    context is `noopContext`. the gate is the harness's blanket demand, never this case's
    *    own need (`.dream/v2026_09_04.fix.integration-harness-demands-five-brain-keys-from-every-suite.md`).
    *
-   *    🔴 the distinction that made the mint legitimate: a snapshot is forbidden when it would
+   *    the distinction that made the mint legitimate: a snapshot is forbidden when it would
    *    ASSERT OUTPUT NEVER OBSERVED. it is owed when the output can be observed. because this
    *    case reads no key on any path, output observed with the harness gate relaxed is
    *    byte-identical to output observed with the keys present — so these baselines are a real
    *    observation, never an authored guess.
    *
-   *    ⚠️ **the mint was scoped to this one file, deliberately.** an unscoped run under a
+   *    🟡 **the mint was scoped to this one file, deliberately.** an unscoped run under a
    *       relaxed gate is what poisoned five acceptance baselines twice on this branch, with
    *       `malfunctioned 💥` recorded as `0 blockers / 0 nitpicks`
    *       (`.dream/v2026_09_04.fix.lenient-keyrack-flip-writes-fake-clean-snapshots.md`). that
    *       dream measured a scoped run at **0 files poisoned** and an unscoped one at **5**.
    *
-   *    ⚠️ **an unminted `toMatchSnapshot()` is a RED BUILD, not a harmless gap** — which is why
+   *    🟡 **an unminted `toMatchSnapshot()` is a RED BUILD, not a harmless gap** — which is why
    *       the assertion and its baseline are ATOMIC, and why they land together here.
    *       `package.json:63` appends `--ci` when `CI` is set; jest under `--ci` sets its update
    *       flag to `none`, and `jest-snapshot@30.2.0/build/index.js:401` writes a new snapshot
@@ -452,7 +452,7 @@ describe('setStoneAsPassed.exhausted', () => {
    * .note = authored at 5.3 to close both cells, which the experience catalog carried as its
    *         weakest verification gaps and which no extant journey drove — `[case2] [t2]`
    *         answers with NO edit, `[case3] [t2]` answers FIRST and only then edits, so both
-   *         leave the edit-before-answer path unproven (r5 blocker.1, i018).
+   *         leave the edit-before-answer path unproven.
    */
   given(
     '[case4] the artifact is EDITED while an exhausted reviewer holds an unanswered blocker',
@@ -539,7 +539,7 @@ describe('setStoneAsPassed.exhausted', () => {
           then(
             'the guide names the CARRIED given, so the debt is payable',
             () => {
-              // ⚠️ the anti-deadlock half. the taken path is derived from the given path, so a
+              // 🟡 the anti-deadlock half. the taken path is derived from the given path, so a
               //    guide that named a CURRENT-hash file would send the driver to write one the
               //    matcher then refuses — a debt with no discharge
               expect(result.emit?.stdout).toContain('absorb from');
@@ -586,8 +586,7 @@ describe('setStoneAsPassed.exhausted', () => {
           //    REVIEWER — never to any hash, current or prior — still finds it.
           //    ⇒ the cell is `edit-code × carried-unanswered × exhausted`, and it is a
           //      distinct critipath from [t1]'s `edit-code × fresh-unanswered ×
-          //      exhausted` precisely because one edit cannot discriminate the two keys
-          //      (r5 blocker.1 item 1, i018).
+          //      exhausted` precisely because one edit cannot discriminate the two keys.
           then('the debt survives a SECOND hash move', () => {
             expect(result.emit?.stdout).toContain('await your reply');
             expect(result.passed).toBe(false);
@@ -681,11 +680,11 @@ describe('setStoneAsPassed.exhausted', () => {
    *        DISCHARGE one, and those two readings differ in exactly one observable: whether
    *        a top-up with no answer opens the gate.
    *
-   * 🔴 .the defect this exists to catch = a change that let the top-up clear the debt. under
+   * .the defect this exists to catch = a change that let the top-up clear the debt. under
    *    it, `[t1]` below would open the gate, the reviewer would re-run, and the driver would
    *    have bought their way out of a critique they never answered — `rule.forbid.
    *    unanswered-exits-from-a-blocker`, restored through the one door F1 left open.
-   *    ⚠️ **every other case in this suite passes under that change.** they never top up.
+   *    🟡 **every other case in this suite passes under that change.** they never top up.
    *
    * .note = this case was authored at 5.3 because the yield CLAIMED `[t2b]` was clamped and
    *         no test performed a top-up anywhere — no `route.guard.budget`, no `--add`, no
@@ -699,7 +698,7 @@ describe('setStoneAsPassed.exhausted', () => {
    *        same file. so this rewrite is not an approximation of the command; it is the
    *        command's own effect, produced directly.
    *
-   * 🔴 .the seam this leaves, stated rather than hidden = what this suite does NOT drive is
+   * .the seam this leaves, stated rather than hidden = what this suite does NOT drive is
    *    the command's own parse → locate → write-back → meter-recompute path. that path is a
    *    CLI contract, so it is covered where a CLI contract must be covered — blackbox
    *    acceptance, not here:
@@ -794,7 +793,7 @@ describe('setStoneAsPassed.exhausted', () => {
           //    reviewer would be exhausted, and `the gate STILL holds` below would go
           //    green — off exhaustion rather than off the debt. the assertion this whole
           //    case exists for would then pass while it proved the opposite of its title
-          //    (rule.forbid.order-dependence; r4 nitpick.1, i011)
+          //    (rule.forbid.order-dependence)
           const result = useThen(
             'the budget is topped up to three, and the attempt completes',
             async () => {
@@ -842,7 +841,7 @@ describe('setStoneAsPassed.exhausted', () => {
           //    than in a peer `then`. i first wrote them as a peer block — the exact
           //    shape r4 flagged — inside the fix for r4's own blocker, which is the tell
           //    for how natural the shape feels: it reads as a journey step because it IS
-          //    one, and jest still owes it no order (r4 nitpick.1, i011)
+          //    one, and jest still owes it no order
           const result = useThen(
             'the repair lands, the given is answered, and the attempt completes',
             async () => {

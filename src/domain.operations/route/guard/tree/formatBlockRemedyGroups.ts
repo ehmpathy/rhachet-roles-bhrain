@@ -235,12 +235,12 @@ const asTailRemedyGroups = (input: {
  *    exactly what `rule.forbid.duplicate-format-tree-operations` forbids: it asks for ONE shared
  *    format function parameterized by the context differences, so a change lands in one place.
  *
- *    ⚠️ and the discipline had ALREADY failed, which is how the duplication was caught: the four
+ *    🟡 and the discipline had ALREADY failed, which is how the duplication was caught: the four
  *       surfaces did not agree on ORDER. `formatRouteDriveMixedHalt` rendered
  *       budget → overrule → approve; `formatGuardTree` rendered overrule → budget → approve. one
  *       list, two orders, and a comment on each end that promised they matched.
  *
- * 🔴 .the order is BY OWNER, and that resolves the divergence in the rule's favour
+ * .the order is BY OWNER, and that resolves the divergence in the rule's favour
  *
  *    `rule.always.spend-own-levers-before-escalation` is explicit — "sort by owner and spend yours
  *    first." `increase budget` is the driver's own lever; `overrule` and `approve` both need a
@@ -328,7 +328,7 @@ export const computeBlockRemedyGroups = (input: {
 
     // 2 — the human's levers, after.
     //
-    // ⚠️ the owner suffix rides on the overrule label too, for the reason above:
+    // 🟡 the owner suffix rides on the overrule label too, for the reason above:
     //    `spend-own-levers-before-escalation` lists `--as overruled` in its human column, beside
     //    `--as approved`. a bare `overrule the malfunction` sits at one depth with
     //    `increase budget — yours to spend` and reads as a third lever the driver owns. it is not.

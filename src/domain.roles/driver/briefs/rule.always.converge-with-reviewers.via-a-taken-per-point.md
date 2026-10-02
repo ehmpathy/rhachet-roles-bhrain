@@ -64,7 +64,7 @@ and finally marked the stone **blocked**. a total dead end.
 ⇒ **a re-arrival with any open point that has no `.taken` is a driver error, never a reviewer
 defect.**
 
-## ⚠️ .the gate counts REVIEWERS. this rule counts POINTS
+## 🟡 .the gate counts REVIEWERS. this rule counts POINTS
 
 the entrance gate refuses a round while any reviewer still owes a `.taken`. it cannot check that
 the one `.taken` you wrote answered all six points that reviewer raised — **one file discharges the

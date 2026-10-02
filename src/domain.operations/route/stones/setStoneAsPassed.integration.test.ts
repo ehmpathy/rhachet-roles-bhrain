@@ -393,7 +393,7 @@ describe('setStoneAsPassed.integration', () => {
         // its own git root, so a printed review path relativizes to a bare
         // `.reviews/peer/…` that no stabilizer swap can mask — without it the
         // relativized and un-relativized forms snapshot to identical bytes
-        // (r10 blocker, i005)
+        //
         execSync('git init', { cwd: tempDir, stdio: 'ignore' });
 
         // create stone file
@@ -443,7 +443,7 @@ describe('setStoneAsPassed.integration', () => {
         // 🔴 a lone `.toContain('blocked')` leaves every other byte of this step free
         //    to regress. `rule.require.snapshot-every-journey-step` asks that a
         //    reviewer follow the whole journey from the snapshots alone, and this
-        //    2-step journey carried none (r1 blocker.1, i006)
+        //    2-step journey carried none
         then(
           'matches snapshot — step 1, the round that spent the budget',
           () => {

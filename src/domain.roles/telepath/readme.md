@@ -45,24 +45,22 @@ nowhere else, so a new rule changes one file.
 🟡 the tables below ARE the enumeration, and no count of them is stated — a struck row shows in an
 enumeration and cannot show in an arithmetic.
 
-🟡 **every act carries its inverse clamp**, because a forbid names a shape a reader can recognize
-where a require names a duty they must already suspect they failed.
+🟡 every act carries its inverse clamp, because a forbid names a shape a reader can recognize where
+a require names a duty they must already suspect they failed — a shape a checker reaches too, so
+the clamp is the mechanizable half.
 
-⇒ **and a recognizable shape is what a CHECKER reaches too, so the clamp is the mechanizable half.**
-
-- every shipped checker and every probe lands on a **forbid**, with two exceptions
+- every shipped checker and every probe lands on a forbid, with two exceptions
   - `require.place-a-passage-by-its-subject` and `require.generic-governs-structure-never-voice`
     each name a shape outright, so each is reachable directly
 - ⇒ so a require is verified **through its clamp**, and a require whose clamp is uncovered is a gap
-  - measured 2026-09-07 over the 25 rule files on disk: 4 checked · 11 probed · 3 clamped ·
-    7 unreachable · **0 unaccounted**
-  - the settler is `.agent/.notes/tool.map-rules-to-verification.js`, which **computes** the clamp
+  - measured 2026-09-07 over the 25 rule files on disk: 4 checked, 11 probed, 3 clamped,
+    7 unreachable, 0 unaccounted
+  - the settler is `.agent/.notes/tool.map-rules-to-verification.js`, which computes the clamp
     column rather than asserts it — an uncovered clamp is a promise, never a check
 
-🟡 **the unreachable each carry a reason, and each is the rule's own**: two grade a live message
-(D5), one grades what is **absent**, one is **the root**, one grades whether a **pass ran**, one
-grades a **degree**, and one grades a **question never put**. a regex reaches a shape on the page,
-and no one of those is on the page.
+🟡 the unreachable each carry a reason, and each is the rule's own: two grade a live message (D5),
+one grades what is absent, one is the root, one grades whether a pass ran, one grades a degree, and
+one grades a question never put. a regex reaches a shape on the page, and no one of those is on it.
 
 ### the acts — in order, because each measures what the one before produced
 

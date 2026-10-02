@@ -74,8 +74,7 @@ describe('getRouteGuardReviewPeerPathMeta', () => {
   given('[case7] the hash segment — REQUIRED to parse, never RETURNED', () => {
     // the two halves of the pair each refuse a `hash` field, and each carries a note
     // that the absence is the guard. this parser is one hop upstream of both, so a
-    // `hash` on its return re-offers the exact key those notes exist to withhold
-    // (r11 blocker.2, i004).
+    // `hash` on its return re-offers the exact key those notes exist to withhold.
     //
     // 🔴 the two assertions below are a PAIR, and neither alone is the clamp:
     //    [t0] alone would stay green if the segment were dropped from the regex too,

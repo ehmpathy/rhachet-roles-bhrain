@@ -23,9 +23,9 @@ import { getRouteGuardReviewPeerPathMeta } from './getRouteGuardReviewPeerPathMe
  *    index is a position in that config, not an identity. retire a reviewer and enroll another
  *    at the same rung and the position is reused, so an index lookup hands the successor its
  *    predecessor's verdict: a row rendered `r1: successor` whose given/taken paths both read
- *    `by_peer.departed.md` (r006 blocker.2, i025).
+ *    `by_peer.departed.md`.
  *
- * 🔴 .note = this closes the CROSS-HASH half of that defect. the WITHIN-hash half was open too:
+ * .note = this closes the CROSS-HASH half of that defect. the WITHIN-hash half was open too:
  *    `computeStoneReviewInputHash` hashes the artifact set and the `.guard` file is not in it,
  *    so a reviewer can be retired from the guard config with the hash unmoved — and its files
  *    then sit at the *current* hash for the successor's index lookup to find.
@@ -35,7 +35,7 @@ import { getRouteGuardReviewPeerPathMeta } from './getRouteGuardReviewPeerPathMe
  *    `getAllReviewPeerMeterStatuses`) now route through `getCacheSafePeerReviewArtifact`, which
  *    confirms the slug and returns null on a mismatch.
  *
- * ⚠️ that is a GUARD, never the rekey. `RouteStoneGuardReviewPeerArtifact` still carries no slug:
+ * 🟡 that is a GUARD, never the rekey. `RouteStoneGuardReviewPeerArtifact` still carries no slug:
  *    its declared identity is `unique = ['stone', 'hash', 'index']`, so the index is the
  *    artifact's identity BY CONTRACT. to key it by slug is a domain-entity identity change, and
  *    it stays deferred — tracked as the dream below (F9, re-diagnosed i025, ruled 2026-09-08).
@@ -51,7 +51,7 @@ import { getRouteGuardReviewPeerPathMeta } from './getRouteGuardReviewPeerPathMe
  *         so the slug is read from the filename grammar, via the one parser that owns it
  *         (getRouteGuardReviewPeerPathMeta) rather than a fourth inline regex.
  *
- * ⚠️ the slug is compared in its SANITIZED form, because that is the form the write side puts
+ * 🟡 the slug is compared in its SANITIZED form, because that is the form the write side puts
  *    on disk (asSanitizedPeerReviewSlug). a config slug that carries a path separator would
  *    otherwise never match its own files.
  */

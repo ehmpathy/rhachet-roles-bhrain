@@ -48,7 +48,7 @@ an unreadable verdict is not a clean one. `asPeerGivenVerdict` scores an undetec
 blocker**, because `contract.reviewer-output` is flat about it: *"if it finds no numeric count it
 can NOT assume zero."* so its given **gates**, exactly as a readable rejection does.
 
-⚠️ **a repair alone does not re-open the door.** the fix changes the code; the debt is keyed to the
+🟡 **a repair alone does not re-open the door.** the fix changes the code; the debt is keyed to the
 reviewer, so it stands until you answer it. the halt prompt names the `.taken` path — a malfunction
 is dischargeable, never a deadlock.
 
@@ -82,7 +82,7 @@ rhx route.mutate.guard --stone <stone> --route <route>
 # and/or trim its `--conversation` depth. then re-arrive and let the GUARD run it.
 ```
 
-⚠️ **the temptation this cause carries is unique to it.** every other malfunction announces itself
+🟡 **the temptation this cause carries is unique to it.** every other malfunction announces itself
 as broken. an overflowed reviewer returns terminal and unlocks the next level, so it reads on the
 ladder much like a reviewer that ran — and a driver who merely records the overflow removes a lens
 from the drive, then leaves a note that only proves someone noticed.
@@ -112,7 +112,7 @@ test corpus a production rubric does not grade:
 --paths-with 'src/**/*' --paths-wout '**/*.test.ts' --paths-wout '**/__snapshots__/**'
 ```
 
-⚠️ **a `--paths-with` glob with a brace in the EXTENSION slot is silently dropped**
+🟡 **a `--paths-with` glob with a brace in the EXTENSION slot is silently dropped**
 (`'**/*.{ts,md}'` → the bind never applies, and the lane runs unbounded). a brace in the
 **directory** slot works (`'{src,blackbox}/**'`). ⇒ a parser defect in `parseReviewArgs`; a guard
 bind must be written around it: `.dream/v2026_09_04.fix.review-multi-glob-flags-do-not-comma-split.md`.

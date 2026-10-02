@@ -20,12 +20,12 @@ import * as path from 'path';
  *         authored — the shape .dream/v2026_09_04.fix.unparseable-peer-filename-halts-
  *         the-gate.md already records elsewhere.
  *
- * ⚠️ null means "cannot vouch for this artifact", which the caller treats as a MISMATCH.
+ * 🟡 null means "cannot vouch for this artifact", which the caller treats as a MISMATCH.
  *    that fails safe in the same direction as a real mismatch: the cache is discarded
  *    and the reviewer runs. a discarded cache costs one budget round; a reused wrong
  *    one ships a verdict its reviewer never gave (rule.forbid.failhide).
  *
- * ⚠️ the slug returned is the SANITIZED form, because that is what the filename holds
+ * 🟡 the slug returned is the SANITIZED form, because that is what the filename holds
  *    (asSanitizedPeerReviewSlug). a caller that compares against a config slug must
  *    sanitize its own side too — getLatestReviewArtifactForSlug does exactly that.
  *

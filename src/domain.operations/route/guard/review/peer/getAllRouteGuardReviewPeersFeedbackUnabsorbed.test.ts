@@ -28,14 +28,11 @@ const asPath = (input: {
 };
 
 /**
- * .note = case3 INVERTED under P2, deliberately. it asserted that a taken at a
- *         prior hash tags `stale` — that was the old (slug, hashCurrent) key, and
- *         it is the exact behavior the wish calls defect D2: an edit to the artifact
- *         moved the hash, so the driver's answer went stale and the debt cleared as
- *         a side effect. under P2 a taken pairs its OWN given, so an answer stays an
- *         answer however many times the artifact changes after it.
- *         the `stale` tag survives with a new, sharper sense: the REVIEWER spoke
- *         again (case8, case9), which is the only way an answered reviewer becomes owed.
+ * .note = a taken pairs its OWN given (wish defect D2), so an answer stays an
+ *         answer however many times the artifact changes after it — case3 checks
+ *         this: a taken at a prior hash does not tag `stale`. `stale` now means
+ *         the REVIEWER spoke again (case8, case9), the only way an answered
+ *         reviewer becomes owed.
  */
 describe('getAllRouteGuardReviewPeersFeedbackUnabsorbed', () => {
   given('[case1] every given that holds blockers has a paired taken', () => {
@@ -124,9 +121,9 @@ describe('getAllRouteGuardReviewPeersFeedbackUnabsorbed', () => {
       when('[t0] the feedbackUnabsorbed set is computed', () => {
         then('the answer still counts — no debt (this is P2)', () => {
           // the driver answered the H1 given, then edited the artifact (hash → H2).
-          // the reviewer has NOT spoken since, so its H1 given is still the latest.
-          // under the old (slug, hashCurrent) key this tagged `stale` and the debt
-          // was discharged by the edit — the cheapest exit from a blocker (D2).
+          // the reviewer has NOT spoken since, so its H1 given is still the latest,
+          // and (D2) the debt stays discharged — an edit alone is the cheapest exit
+          // from a blocker, and P2 refuses to grant it.
           const result = getAllRouteGuardReviewPeersFeedbackUnabsorbed({
             givens: [
               {

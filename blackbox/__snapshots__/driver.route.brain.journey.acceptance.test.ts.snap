@@ -1,0 +1,1439 @@
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
+
+exports[`driver.route.brain.journey.acceptance given: [case1] a route whose stones each prescribe a different switch when: [t0] 1.vision declares a CHOICE alone then: stdout has good vibes 1`] = `
+"🦉 where were we?
+
+🗿 route.drive
+   ├─ where do we go?
+   │  ├─ route = .
+   │  ├─ stone = 1.vision
+   │  └─ brain = claude-opus-5[1m]
+   │
+   ├─ are you here?
+   │  ├─ when ready for review, run:
+   │  │  └─ rhx route.stone.set --stone 1.vision --as arrived
+   │  └─ when ready to continue, run:
+   │     └─ rhx route.stone.set --stone 1.vision --as passed
+   │
+   ├─ here's the stone
+   │  ├─
+   │  │
+   │  │  # 1.vision
+   │  │  
+   │  │  describe the vision for this feature
+   │  │  
+   │  │  define:
+   │  │  - the goal
+   │  │  - the outcome
+   │  │  - the success criteria
+   │  │  
+   │  └─
+   │
+   └─ are you here?
+      ├─ when ready for review, run:
+      │  └─ rhx route.stone.set --stone 1.vision --as arrived
+      └─ when ready to continue, run:
+         └─ rhx route.stone.set --stone 1.vision --as passed
+"
+`;
+
+exports[`driver.route.brain.journey.acceptance given: [case1] a route whose stones each prescribe a different switch when: [t1] 2.criteria declares an EFFORT alone then: stdout has good vibes 1`] = `
+"🦉 where were we?
+
+🗿 route.drive
+   ├─ where do we go?
+   │  ├─ route = .
+   │  ├─ stone = 2.criteria
+   │  └─ brain
+   │     └─ effort = high
+   │
+   ├─ are you here?
+   │  ├─ when ready for review, run:
+   │  │  └─ rhx route.stone.set --stone 2.criteria --as arrived
+   │  └─ when ready to continue, run:
+   │     └─ rhx route.stone.set --stone 2.criteria --as passed
+   │
+   ├─ here's the stone
+   │  ├─
+   │  │
+   │  │  # 2.criteria
+   │  │  
+   │  │  define the acceptance criteria
+   │  │  
+   │  │  specify:
+   │  │  - the inputs
+   │  │  - the outputs
+   │  │  - the edge cases
+   │  │  
+   │  └─
+   │
+   └─ are you here?
+      ├─ when ready for review, run:
+      │  └─ rhx route.stone.set --stone 2.criteria --as arrived
+      └─ when ready to continue, run:
+         └─ rhx route.stone.set --stone 2.criteria --as passed
+"
+`;
+
+exports[`driver.route.brain.journey.acceptance given: [case1] a route whose stones each prescribe a different switch when: [t2] 3.plan declares a choice AND an effort then: stdout has good vibes 1`] = `
+"🦉 where were we?
+
+🗿 route.drive
+   ├─ where do we go?
+   │  ├─ route = .
+   │  ├─ stone = 3.plan
+   │  └─ brain
+   │     ├─ choice = claude-sonnet-5[1m]
+   │     └─ effort = low
+   │
+   ├─ are you here?
+   │  ├─ when ready for review, run:
+   │  │  └─ rhx route.stone.set --stone 3.plan --as arrived
+   │  └─ when ready to continue, run:
+   │     └─ rhx route.stone.set --stone 3.plan --as passed
+   │
+   ├─ here's the stone
+   │  ├─
+   │  │
+   │  │  # 3.plan
+   │  │  
+   │  │  create a plan to achieve the vision
+   │  │  
+   │  │  define:
+   │  │  - the implementation steps
+   │  │  - the dependencies
+   │  │  - the milestones
+   │  │  
+   │  └─
+   │
+   └─ are you here?
+      ├─ when ready for review, run:
+      │  └─ rhx route.stone.set --stone 3.plan --as arrived
+      └─ when ready to continue, run:
+         └─ rhx route.stone.set --stone 3.plan --as passed
+"
+`;
+
+exports[`driver.route.brain.journey.acceptance given: [case1] a route whose stones each prescribe a different switch when: [t3] the brainless 4.polish is current then: stdout has good vibes 1`] = `
+"🦉 where were we?
+
+🗿 route.drive
+   ├─ where do we go?
+   │  ├─ route = .
+   │  ├─ stone = 4.polish
+   │  └─ brain
+   │     ├─ choice = claude-sonnet-5[1m]
+   │     └─ effort = low
+   │
+   ├─ are you here?
+   │  ├─ when ready for review, run:
+   │  │  └─ rhx route.stone.set --stone 4.polish --as arrived
+   │  └─ when ready to continue, run:
+   │     └─ rhx route.stone.set --stone 4.polish --as passed
+   │
+   ├─ here's the stone
+   │  ├─
+   │  │
+   │  │  # 4.polish
+   │  │  
+   │  │  work on 4.polish
+   │  │  
+   │  └─
+   │
+   └─ are you here?
+      ├─ when ready for review, run:
+      │  └─ rhx route.stone.set --stone 4.polish --as arrived
+      └─ when ready to continue, run:
+         └─ rhx route.stone.set --stone 4.polish --as passed
+"
+`;
+
+exports[`driver.route.brain.journey.acceptance given: [case1] a route whose stones each prescribe a different switch when: [t4] 5.ship declares both, and the driver is UNENROLLED then: stdout has good vibes, on the direct surface 1`] = `
+"🦉 where were we?
+
+🗿 route.drive
+   ├─ where do we go?
+   │  ├─ route = .
+   │  ├─ stone = 5.ship
+   │  └─ brain
+   │     ├─ choice = claude-haiku-4-5
+   │     └─ effort = medium
+   │
+   └─ ✋ halted, brain switch could not land
+      ├─ this driver runs = unknown — no clone address was confirmed
+      │
+      ├─ why
+      │  ├─ this driver is not an enrolled clone, so \`clone say\` has naught to address
+      │  └─ the usual cause is a driver launched directly rather than by \`rhx enroll\`
+      │
+      ├─ fix: re-enroll the driver with a slug, then re-enter the stone
+      │  └─ rhx enroll claude --as @:driver --roles driver
+      │
+      └─ or: remove \`brain:\` from the stone's guard, and inherit the brain deliberately
+         └─ 5.ship.guard
+"
+`;
+
+exports[`driver.route.brain.journey.acceptance given: [case1] a route whose stones each prescribe a different switch when: [t4] 5.ship declares both, and the driver is UNENROLLED then: stdout has good vibes, on the onBoot surface 1`] = `
+"🦉 where were we?
+
+🗿 route.drive
+   ├─ where do we go?
+   │  ├─ route = .
+   │  ├─ stone = 5.ship
+   │  └─ brain
+   │     ├─ choice = claude-haiku-4-5
+   │     └─ effort = medium
+   │
+   └─ ✋ halted, brain switch could not land
+      ├─ this driver runs = unknown — no clone address was confirmed
+      │
+      ├─ why
+      │  ├─ this driver is not an enrolled clone, so \`clone say\` has naught to address
+      │  └─ the usual cause is a driver launched directly rather than by \`rhx enroll\`
+      │
+      ├─ fix: re-enroll the driver with a slug, then re-enter the stone
+      │  └─ rhx enroll claude --as @:driver --roles driver
+      │
+      └─ or: remove \`brain:\` from the stone's guard, and inherit the brain deliberately
+         └─ 5.ship.guard
+"
+`;
+
+exports[`driver.route.brain.journey.acceptance given: [case2] the carry rules across the two axes when: [t0] 1.vision declares opus and high then: stdout has good vibes 1`] = `
+"🦉 where were we?
+
+🗿 route.drive
+   ├─ where do we go?
+   │  ├─ route = .
+   │  ├─ stone = 1.vision
+   │  └─ brain
+   │     ├─ choice = claude-opus-5[1m]
+   │     └─ effort = high
+   │
+   ├─ are you here?
+   │  ├─ when ready for review, run:
+   │  │  └─ rhx route.stone.set --stone 1.vision --as arrived
+   │  └─ when ready to continue, run:
+   │     └─ rhx route.stone.set --stone 1.vision --as passed
+   │
+   ├─ here's the stone
+   │  ├─
+   │  │
+   │  │  # 1.vision
+   │  │  
+   │  │  describe the vision for this feature
+   │  │  
+   │  │  define:
+   │  │  - the goal
+   │  │  - the outcome
+   │  │  - the success criteria
+   │  │  
+   │  └─
+   │
+   └─ are you here?
+      ├─ when ready for review, run:
+      │  └─ rhx route.stone.set --stone 1.vision --as arrived
+      └─ when ready to continue, run:
+         └─ rhx route.stone.set --stone 1.vision --as passed
+"
+`;
+
+exports[`driver.route.brain.journey.acceptance given: [case2] the carry rules across the two axes when: [t1] the brainless 2.criteria carries BOTH then: stdout has good vibes 1`] = `
+"🦉 where were we?
+
+🗿 route.drive
+   ├─ where do we go?
+   │  ├─ route = .
+   │  ├─ stone = 2.criteria
+   │  └─ brain
+   │     ├─ choice = claude-opus-5[1m]
+   │     └─ effort = high
+   │
+   ├─ are you here?
+   │  ├─ when ready for review, run:
+   │  │  └─ rhx route.stone.set --stone 2.criteria --as arrived
+   │  └─ when ready to continue, run:
+   │     └─ rhx route.stone.set --stone 2.criteria --as passed
+   │
+   ├─ here's the stone
+   │  ├─
+   │  │
+   │  │  # 2.criteria
+   │  │  
+   │  │  define the acceptance criteria
+   │  │  
+   │  │  specify:
+   │  │  - the inputs
+   │  │  - the outputs
+   │  │  - the edge cases
+   │  │  
+   │  └─
+   │
+   └─ are you here?
+      ├─ when ready for review, run:
+      │  └─ rhx route.stone.set --stone 2.criteria --as arrived
+      └─ when ready to continue, run:
+         └─ rhx route.stone.set --stone 2.criteria --as passed
+"
+`;
+
+exports[`driver.route.brain.journey.acceptance given: [case2] the carry rules across the two axes when: [t2] 3.plan declares sonnet ALONE then: stdout has good vibes 1`] = `
+"🦉 where were we?
+
+🗿 route.drive
+   ├─ where do we go?
+   │  ├─ route = .
+   │  ├─ stone = 3.plan
+   │  └─ brain = claude-sonnet-5[1m]
+   │
+   ├─ are you here?
+   │  ├─ when ready for review, run:
+   │  │  └─ rhx route.stone.set --stone 3.plan --as arrived
+   │  └─ when ready to continue, run:
+   │     └─ rhx route.stone.set --stone 3.plan --as passed
+   │
+   ├─ here's the stone
+   │  ├─
+   │  │
+   │  │  # 3.plan
+   │  │  
+   │  │  create a plan to achieve the vision
+   │  │  
+   │  │  define:
+   │  │  - the implementation steps
+   │  │  - the dependencies
+   │  │  - the milestones
+   │  │  
+   │  └─
+   │
+   └─ are you here?
+      ├─ when ready for review, run:
+      │  └─ rhx route.stone.set --stone 3.plan --as arrived
+      └─ when ready to continue, run:
+         └─ rhx route.stone.set --stone 3.plan --as passed
+"
+`;
+
+exports[`driver.route.brain.journey.acceptance given: [case2] the carry rules across the two axes when: [t3] the brainless 4.polish carries sonnet, and NO effort then: stdout has good vibes 1`] = `
+"🦉 where were we?
+
+🗿 route.drive
+   ├─ where do we go?
+   │  ├─ route = .
+   │  ├─ stone = 4.polish
+   │  └─ brain = claude-sonnet-5[1m]
+   │
+   ├─ are you here?
+   │  ├─ when ready for review, run:
+   │  │  └─ rhx route.stone.set --stone 4.polish --as arrived
+   │  └─ when ready to continue, run:
+   │     └─ rhx route.stone.set --stone 4.polish --as passed
+   │
+   ├─ here's the stone
+   │  ├─
+   │  │
+   │  │  # 4.polish
+   │  │  
+   │  │  work on 4.polish
+   │  │  
+   │  └─
+   │
+   └─ are you here?
+      ├─ when ready for review, run:
+      │  └─ rhx route.stone.set --stone 4.polish --as arrived
+      └─ when ready to continue, run:
+         └─ rhx route.stone.set --stone 4.polish --as passed
+"
+`;
+
+exports[`driver.route.brain.journey.acceptance given: [case2] the carry rules across the two axes when: [t4] 5.ship declares low ALONE then: stdout has good vibes 1`] = `
+"🦉 where were we?
+
+🗿 route.drive
+   ├─ where do we go?
+   │  ├─ route = .
+   │  ├─ stone = 5.ship
+   │  └─ brain
+   │     └─ effort = low
+   │
+   ├─ are you here?
+   │  ├─ when ready for review, run:
+   │  │  └─ rhx route.stone.set --stone 5.ship --as arrived
+   │  └─ when ready to continue, run:
+   │     └─ rhx route.stone.set --stone 5.ship --as passed
+   │
+   ├─ here's the stone
+   │  ├─
+   │  │
+   │  │  # 5.ship
+   │  │  
+   │  │  work on 5.ship
+   │  │  
+   │  └─
+   │
+   └─ are you here?
+      ├─ when ready for review, run:
+      │  └─ rhx route.stone.set --stone 5.ship --as arrived
+      └─ when ready to continue, run:
+         └─ rhx route.stone.set --stone 5.ship --as passed
+"
+`;
+
+exports[`driver.route.brain.journey.acceptance given: [case2] the carry rules across the two axes when: [t5] the brainless 6.close carries sonnet AND low then: stdout has good vibes 1`] = `
+"🦉 where were we?
+
+🗿 route.drive
+   ├─ where do we go?
+   │  ├─ route = .
+   │  ├─ stone = 6.close
+   │  └─ brain
+   │     ├─ choice = claude-sonnet-5[1m]
+   │     └─ effort = low
+   │
+   ├─ are you here?
+   │  ├─ when ready for review, run:
+   │  │  └─ rhx route.stone.set --stone 6.close --as arrived
+   │  └─ when ready to continue, run:
+   │     └─ rhx route.stone.set --stone 6.close --as passed
+   │
+   ├─ here's the stone
+   │  ├─
+   │  │
+   │  │  # 6.close
+   │  │  
+   │  │  work on 6.close
+   │  │  
+   │  └─
+   │
+   └─ are you here?
+      ├─ when ready for review, run:
+      │  └─ rhx route.stone.set --stone 6.close --as arrived
+      └─ when ready to continue, run:
+         └─ rhx route.stone.set --stone 6.close --as passed
+"
+`;
+
+exports[`driver.route.brain.journey.acceptance given: [case3] each shape a \`brain:\` declaration can take when: [t0] a QUOTED inline choice then: stdout has good vibes 1`] = `
+"🦉 where were we?
+
+🗿 route.drive
+   ├─ where do we go?
+   │  ├─ route = .
+   │  ├─ stone = 1.vision
+   │  └─ brain = claude-opus-5[1m]
+   │
+   ├─ are you here?
+   │  ├─ when ready for review, run:
+   │  │  └─ rhx route.stone.set --stone 1.vision --as arrived
+   │  └─ when ready to continue, run:
+   │     └─ rhx route.stone.set --stone 1.vision --as passed
+   │
+   ├─ here's the stone
+   │  ├─
+   │  │
+   │  │  # 1.vision
+   │  │  
+   │  │  describe the vision for this feature
+   │  │  
+   │  │  define:
+   │  │  - the goal
+   │  │  - the outcome
+   │  │  - the success criteria
+   │  │  
+   │  └─
+   │
+   └─ are you here?
+      ├─ when ready for review, run:
+      │  └─ rhx route.stone.set --stone 1.vision --as arrived
+      └─ when ready to continue, run:
+         └─ rhx route.stone.set --stone 1.vision --as passed
+"
+`;
+
+exports[`driver.route.brain.journey.acceptance given: [case3] each shape a \`brain:\` declaration can take when: [t1] an UNCLOSED quote — dropped, the prior brain carries then: stdout has good vibes 1`] = `
+"🦉 where were we?
+
+🗿 route.drive
+   ├─ where do we go?
+   │  ├─ route = .
+   │  ├─ stone = 2.criteria
+   │  └─ brain = claude-opus-5[1m]
+   │
+   ├─ are you here?
+   │  ├─ when ready for review, run:
+   │  │  └─ rhx route.stone.set --stone 2.criteria --as arrived
+   │  └─ when ready to continue, run:
+   │     └─ rhx route.stone.set --stone 2.criteria --as passed
+   │
+   ├─ here's the stone
+   │  ├─
+   │  │
+   │  │  # 2.criteria
+   │  │  
+   │  │  define the acceptance criteria
+   │  │  
+   │  │  specify:
+   │  │  - the inputs
+   │  │  - the outputs
+   │  │  - the edge cases
+   │  │  
+   │  └─
+   │
+   └─ are you here?
+      ├─ when ready for review, run:
+      │  └─ rhx route.stone.set --stone 2.criteria --as arrived
+      └─ when ready to continue, run:
+         └─ rhx route.stone.set --stone 2.criteria --as passed
+"
+`;
+
+exports[`driver.route.brain.journey.acceptance given: [case3] each shape a \`brain:\` declaration can take when: [t2] the \`model:\` alias — dropped, the prior brain carries then: stdout has good vibes 1`] = `
+"🦉 where were we?
+
+🗿 route.drive
+   ├─ where do we go?
+   │  ├─ route = .
+   │  ├─ stone = 3.plan
+   │  └─ brain = claude-opus-5[1m]
+   │
+   ├─ are you here?
+   │  ├─ when ready for review, run:
+   │  │  └─ rhx route.stone.set --stone 3.plan --as arrived
+   │  └─ when ready to continue, run:
+   │     └─ rhx route.stone.set --stone 3.plan --as passed
+   │
+   ├─ here's the stone
+   │  ├─
+   │  │
+   │  │  # 3.plan
+   │  │  
+   │  │  create a plan to achieve the vision
+   │  │  
+   │  │  define:
+   │  │  - the implementation steps
+   │  │  - the dependencies
+   │  │  - the milestones
+   │  │  
+   │  └─
+   │
+   └─ are you here?
+      ├─ when ready for review, run:
+      │  └─ rhx route.stone.set --stone 3.plan --as arrived
+      └─ when ready to continue, run:
+         └─ rhx route.stone.set --stone 3.plan --as passed
+"
+`;
+
+exports[`driver.route.brain.journey.acceptance given: [case3] each shape a \`brain:\` declaration can take when: [t3] the \`brian:\` typo — dropped, the prior brain carries then: stdout has good vibes 1`] = `
+"🦉 where were we?
+
+🗿 route.drive
+   ├─ where do we go?
+   │  ├─ route = .
+   │  ├─ stone = 4.polish
+   │  └─ brain = claude-opus-5[1m]
+   │
+   ├─ are you here?
+   │  ├─ when ready for review, run:
+   │  │  └─ rhx route.stone.set --stone 4.polish --as arrived
+   │  └─ when ready to continue, run:
+   │     └─ rhx route.stone.set --stone 4.polish --as passed
+   │
+   ├─ here's the stone
+   │  ├─
+   │  │
+   │  │  # 4.polish
+   │  │  
+   │  │  work on 4.polish
+   │  │  
+   │  └─
+   │
+   └─ are you here?
+      ├─ when ready for review, run:
+      │  └─ rhx route.stone.set --stone 4.polish --as arrived
+      └─ when ready to continue, run:
+         └─ rhx route.stone.set --stone 4.polish --as passed
+"
+`;
+
+exports[`driver.route.brain.journey.acceptance given: [case3] each shape a \`brain:\` declaration can take when: [t4] an EMPTY \`brain:\` — dropped, the prior brain carries then: stdout has good vibes 1`] = `
+"🦉 where were we?
+
+🗿 route.drive
+   ├─ where do we go?
+   │  ├─ route = .
+   │  ├─ stone = 5.ship
+   │  └─ brain = claude-opus-5[1m]
+   │
+   ├─ are you here?
+   │  ├─ when ready for review, run:
+   │  │  └─ rhx route.stone.set --stone 5.ship --as arrived
+   │  └─ when ready to continue, run:
+   │     └─ rhx route.stone.set --stone 5.ship --as passed
+   │
+   ├─ here's the stone
+   │  ├─
+   │  │
+   │  │  # 5.ship
+   │  │  
+   │  │  work on 5.ship
+   │  │  
+   │  └─
+   │
+   └─ are you here?
+      ├─ when ready for review, run:
+      │  └─ rhx route.stone.set --stone 5.ship --as arrived
+      └─ when ready to continue, run:
+         └─ rhx route.stone.set --stone 5.ship --as passed
+"
+`;
+
+exports[`driver.route.brain.journey.acceptance given: [case3] each shape a \`brain:\` declaration can take when: [t5] a sub-key typo beside a choice — the choice alone lands then: stdout has good vibes 1`] = `
+"🦉 where were we?
+
+🗿 route.drive
+   ├─ where do we go?
+   │  ├─ route = .
+   │  ├─ stone = 6.close
+   │  └─ brain = claude-haiku-4-5
+   │
+   ├─ are you here?
+   │  ├─ when ready for review, run:
+   │  │  └─ rhx route.stone.set --stone 6.close --as arrived
+   │  └─ when ready to continue, run:
+   │     └─ rhx route.stone.set --stone 6.close --as passed
+   │
+   ├─ here's the stone
+   │  ├─
+   │  │
+   │  │  # 6.close
+   │  │  
+   │  │  work on 6.close
+   │  │  
+   │  └─
+   │
+   └─ are you here?
+      ├─ when ready for review, run:
+      │  └─ rhx route.stone.set --stone 6.close --as arrived
+      └─ when ready to continue, run:
+         └─ rhx route.stone.set --stone 6.close --as passed
+"
+`;
+
+exports[`driver.route.brain.journey.acceptance given: [case4] a route whose EVERY \`brain:\` declaration is malformed when: [t0] both routes are driven at 1.vision then: stdout has good vibes 1`] = `
+"🦉 where were we?
+
+🗿 route.drive
+   ├─ where do we go?
+   │  ├─ route = .
+   │  └─ stone = 1.vision
+   │
+   ├─ are you here?
+   │  ├─ when ready for review, run:
+   │  │  └─ rhx route.stone.set --stone 1.vision --as arrived
+   │  └─ when ready to continue, run:
+   │     └─ rhx route.stone.set --stone 1.vision --as passed
+   │
+   ├─ here's the stone
+   │  ├─
+   │  │
+   │  │  # 1.vision
+   │  │  
+   │  │  describe the vision for this feature
+   │  │  
+   │  │  define:
+   │  │  - the goal
+   │  │  - the outcome
+   │  │  - the success criteria
+   │  │  
+   │  └─
+   │
+   └─ are you here?
+      ├─ when ready for review, run:
+      │  └─ rhx route.stone.set --stone 1.vision --as arrived
+      └─ when ready to continue, run:
+         └─ rhx route.stone.set --stone 1.vision --as passed
+"
+`;
+
+exports[`driver.route.brain.journey.acceptance given: [case5] every answer the clone can give when: [t0] \`whoami\` exits 2 — the driver is unenrolled then: stdout has good vibes 1`] = `
+"🦉 where were we?
+
+🗿 route.drive
+   ├─ where do we go?
+   │  ├─ route = .
+   │  ├─ stone = 1.vision
+   │  └─ brain
+   │     ├─ choice = claude-haiku-4-5
+   │     └─ effort = medium
+   │
+   └─ ✋ halted, brain switch could not land
+      ├─ this driver runs = unknown — no clone address was confirmed
+      │
+      ├─ why
+      │  ├─ this driver is not an enrolled clone, so \`clone say\` has naught to address
+      │  └─ the usual cause is a driver launched directly rather than by \`rhx enroll\`
+      │
+      ├─ fix: re-enroll the driver with a slug, then re-enter the stone
+      │  └─ rhx enroll claude --as @:driver --roles driver
+      │
+      └─ or: remove \`brain:\` from the stone's guard, and inherit the brain deliberately
+         └─ 1.vision.guard
+"
+`;
+
+exports[`driver.route.brain.journey.acceptance given: [case5] every answer the clone can give when: [t1] \`whoami\` exits 1 — the clone is broken then: stdout has good vibes 1`] = `
+"🦉 where were we?
+
+🗿 route.drive
+   ├─ where do we go?
+   │  ├─ route = .
+   │  ├─ stone = 1.vision
+   │  └─ brain
+   │     ├─ choice = claude-haiku-4-5
+   │     └─ effort = medium
+   │
+   └─ ✋ halted, brain switch could not land
+      ├─ this driver runs = unknown — the clone probe could not be read
+      │
+      ├─ why
+      │  ├─ \`clone whoami\` did not answer, or failed for a reason this build does not read
+      │  └─ the probe is capped at 10s, well under the driver hook budget
+      │
+      ├─ fix: run the probe by hand and read what it reports
+      │  └─ rhx clone whoami --output json
+      │
+      └─ or: remove \`brain:\` from the stone's guard, and inherit the brain deliberately
+         └─ 1.vision.guard
+"
+`;
+
+exports[`driver.route.brain.journey.acceptance given: [case5] every answer the clone can give when: [t2] \`rhx\` is absent — the probe cannot spawn then: stdout has good vibes 1`] = `
+"🦉 where were we?
+
+🗿 route.drive
+   ├─ where do we go?
+   │  ├─ route = .
+   │  ├─ stone = 1.vision
+   │  └─ brain
+   │     ├─ choice = claude-haiku-4-5
+   │     └─ effort = medium
+   │
+   └─ ✋ halted, brain switch could not land
+      ├─ this driver runs = unknown — the clone probe could not be read
+      │
+      ├─ why
+      │  ├─ \`clone whoami\` did not answer, or failed for a reason this build does not read
+      │  └─ the probe is capped at 10s, well under the driver hook budget
+      │
+      ├─ fix: run the probe by hand and read what it reports
+      │  └─ rhx clone whoami --output json
+      │
+      └─ or: remove \`brain:\` from the stone's guard, and inherit the brain deliberately
+         └─ 1.vision.guard
+"
+`;
+
+exports[`driver.route.brain.journey.acceptance given: [case5] every answer the clone can give when: [t3] \`whoami\` writes prose where json was owed then: stdout has good vibes 1`] = `
+"🦉 where were we?
+
+🗿 route.drive
+   ├─ where do we go?
+   │  ├─ route = .
+   │  ├─ stone = 1.vision
+   │  └─ brain
+   │     ├─ choice = claude-haiku-4-5
+   │     └─ effort = medium
+   │
+   └─ ✋ halted, brain switch could not land
+      ├─ this driver runs = unknown — the clone probe wrote no readable json
+      │
+      ├─ why
+      │  ├─ \`clone whoami\` exited 0, and what it wrote is not json at all
+      │  └─ a clean exit beside unreadable output means the INSTRUMENT is broken, not the payload
+      │
+      ├─ fix: read the raw output, and report what it emitted instead of json
+      │  └─ rhx clone whoami --output json
+      │
+      └─ or: remove \`brain:\` from the stone's guard, and inherit the brain deliberately
+         └─ 1.vision.guard
+"
+`;
+
+exports[`driver.route.brain.journey.acceptance given: [case5] every answer the clone can give when: [t4] \`whoami\` answers json with no address then: stdout has good vibes 1`] = `
+"🦉 where were we?
+
+🗿 route.drive
+   ├─ where do we go?
+   │  ├─ route = .
+   │  ├─ stone = 1.vision
+   │  └─ brain
+   │     ├─ choice = claude-haiku-4-5
+   │     └─ effort = medium
+   │
+   └─ ✋ halted, brain switch could not land
+      ├─ this driver runs = unknown — the clone payload carried no address
+      │
+      ├─ why
+      │  ├─ \`clone whoami\` answered cleanly, and its payload held no address this build can use
+      │  └─ the usual cause is a rhachet version whose payload shape this driver does not yet read
+      │
+      ├─ fix: read the payload, then report the shape it carries
+      │  └─ rhx clone whoami --output json
+      │
+      └─ or: remove \`brain:\` from the stone's guard, and inherit the brain deliberately
+         └─ 1.vision.guard
+"
+`;
+
+exports[`driver.route.brain.journey.acceptance given: [case5] every answer the clone can give when: [t5] \`whoami\` dies by a signal then: stdout has good vibes 1`] = `
+"🦉 where were we?
+
+🗿 route.drive
+   ├─ where do we go?
+   │  ├─ route = .
+   │  ├─ stone = 1.vision
+   │  └─ brain
+   │     ├─ choice = claude-haiku-4-5
+   │     └─ effort = medium
+   │
+   └─ ✋ halted, brain switch could not land
+      ├─ this driver runs = unknown — the clone probe was terminated
+      │
+      ├─ why
+      │  ├─ \`clone whoami\` died by a signal rather than an exit code
+      │  ├─ this is NOT the 10s cap — the cap reports \`timed-out\` and settles first
+      │  └─ another party ended the probe: an oom killer, a ci runner cap, or a supervisor
+      │
+      ├─ fix: run the probe by hand, then read what ended the last one
+      │  └─ rhx clone whoami --output json
+      │
+      └─ or: remove \`brain:\` from the stone's guard, and inherit the brain deliberately
+         └─ 1.vision.guard
+"
+`;
+
+exports[`driver.route.brain.journey.acceptance given: [case5] every answer the clone can give when: [t6] \`whoami\` outlives the 10s cap then: stdout has good vibes 1`] = `
+"🦉 where were we?
+
+🗿 route.drive
+   ├─ where do we go?
+   │  ├─ route = .
+   │  ├─ stone = 1.vision
+   │  └─ brain
+   │     ├─ choice = claude-haiku-4-5
+   │     └─ effort = medium
+   │
+   └─ ✋ halted, brain switch could not land
+      ├─ this driver runs = unknown — the clone probe did not answer in time
+      │
+      ├─ why
+      │  ├─ \`clone whoami\` was still alive at the 10s cap, and was killed
+      │  └─ the cap names no cause — the probe may have been about to report any of them
+      │
+      ├─ fix: run the probe by hand, unhurried, and read what it reports
+      │  └─ rhx clone whoami --output json
+      │
+      ├─ and: if it reports an unenrolled driver — the most common cause — re-enroll
+      │  └─ rhx enroll claude --as @:driver --roles driver
+      │
+      └─ or: remove \`brain:\` from the stone's guard, and inherit the brain deliberately
+         └─ 1.vision.guard
+"
+`;
+
+exports[`driver.route.brain.journey.acceptance given: [case5] every answer the clone can give when: [t7] the address is confirmed, and \`clone say\` cannot launch then: stdout has good vibes 1`] = `
+"🦉 where were we?
+
+🗿 route.drive
+   ├─ where do we go?
+   │  ├─ route = .
+   │  ├─ stone = 1.vision
+   │  └─ brain
+   │     ├─ choice = claude-haiku-4-5
+   │     └─ effort = medium
+   │
+   └─ ✋ halted, brain switch could not land
+      ├─ this driver runs = unknown — the switch was never submitted
+      │
+      ├─ why
+      │  ├─ the clone address WAS confirmed, and the \`clone say\` child never launched
+      │  └─ the usual cause is an absent \`node_modules/.bin/rhx\` binary
+      │
+      ├─ fix: restore the local binaries, then re-enter the stone
+      │  └─ npm ci
+      │
+      └─ or: remove \`brain:\` from the stone's guard, and inherit the brain deliberately
+         └─ 1.vision.guard
+"
+`;
+
+exports[`driver.route.brain.journey.acceptance given: [case5] every answer the clone can give when: [t8] each \`clone say\` exits non-zero after it records then: stdout has good vibes 1`] = `
+"🦉 where were we?
+
+🗿 route.drive
+   ├─ where do we go?
+   │  ├─ route = .
+   │  ├─ stone = 1.vision
+   │  └─ brain
+   │     ├─ choice = claude-haiku-4-5
+   │     └─ effort = medium
+   │
+   ├─ are you here?
+   │  ├─ when ready for review, run:
+   │  │  └─ rhx route.stone.set --stone 1.vision --as arrived
+   │  └─ when ready to continue, run:
+   │     └─ rhx route.stone.set --stone 1.vision --as passed
+   │
+   ├─ here's the stone
+   │  ├─
+   │  │
+   │  │  # 1.vision
+   │  │  
+   │  │  describe the vision for this feature
+   │  │  
+   │  │  define:
+   │  │  - the goal
+   │  │  - the outcome
+   │  │  - the success criteria
+   │  │  
+   │  └─
+   │
+   └─ are you here?
+      ├─ when ready for review, run:
+      │  └─ rhx route.stone.set --stone 1.vision --as arrived
+      └─ when ready to continue, run:
+         └─ rhx route.stone.set --stone 1.vision --as passed
+"
+`;
+
+exports[`driver.route.brain.journey.acceptance given: [case5] every answer the clone can give when: [t9] \`whoami\` names the clone by its SERIAL alone then: stdout has good vibes 1`] = `
+"🦉 where were we?
+
+🗿 route.drive
+   ├─ where do we go?
+   │  ├─ route = .
+   │  ├─ stone = 1.vision
+   │  └─ brain
+   │     ├─ choice = claude-haiku-4-5
+   │     └─ effort = medium
+   │
+   ├─ are you here?
+   │  ├─ when ready for review, run:
+   │  │  └─ rhx route.stone.set --stone 1.vision --as arrived
+   │  └─ when ready to continue, run:
+   │     └─ rhx route.stone.set --stone 1.vision --as passed
+   │
+   ├─ here's the stone
+   │  ├─
+   │  │
+   │  │  # 1.vision
+   │  │  
+   │  │  describe the vision for this feature
+   │  │  
+   │  │  define:
+   │  │  - the goal
+   │  │  - the outcome
+   │  │  - the success criteria
+   │  │  
+   │  └─
+   │
+   └─ are you here?
+      ├─ when ready for review, run:
+      │  └─ rhx route.stone.set --stone 1.vision --as arrived
+      └─ when ready to continue, run:
+         └─ rhx route.stone.set --stone 1.vision --as passed
+"
+`;
+
+exports[`driver.route.brain.journey.acceptance given: [case6] the dispatch cadence, per surface when: [t0] onStop, the entry tick then: stdout has good vibes 1`] = `
+"🦉 where were we?
+
+🗿 route.drive
+   ├─ where do we go?
+   │  ├─ route = .
+   │  ├─ stone = 1.vision
+   │  └─ brain
+   │     ├─ choice = claude-opus-5[1m]
+   │     └─ effort = high
+   │
+   ├─ are you here?
+   │  ├─ when ready for review, run:
+   │  │  └─ rhx route.stone.set --stone 1.vision --as arrived
+   │  └─ when ready to continue, run:
+   │     └─ rhx route.stone.set --stone 1.vision --as passed
+   │
+   ├─ here's the stone
+   │  ├─
+   │  │
+   │  │  # 1.vision
+   │  │  
+   │  │  describe the vision for this feature
+   │  │  
+   │  │  define:
+   │  │  - the goal
+   │  │  - the outcome
+   │  │  - the success criteria
+   │  │  
+   │  └─
+   │
+   └─ are you here?
+      ├─ when ready for review, run:
+      │  └─ rhx route.stone.set --stone 1.vision --as arrived
+      └─ when ready to continue, run:
+         └─ rhx route.stone.set --stone 1.vision --as passed
+"
+`;
+
+exports[`driver.route.brain.journey.acceptance given: [case6] the dispatch cadence, per surface when: [t1] onStop, a second tick then: stdout has good vibes 1`] = `
+"🦉 where were we?
+
+🗿 route.drive
+   ├─ where do we go?
+   │  ├─ route = .
+   │  ├─ stone = 1.vision
+   │  └─ brain
+   │     ├─ choice = claude-opus-5[1m]
+   │     └─ effort = high
+   │
+   ├─ are you here?
+   │  ├─ when ready for review, run:
+   │  │  └─ rhx route.stone.set --stone 1.vision --as arrived
+   │  └─ when ready to continue, run:
+   │     └─ rhx route.stone.set --stone 1.vision --as passed
+   │
+   ├─ here's the stone
+   │  ├─
+   │  │
+   │  │  # 1.vision
+   │  │  
+   │  │  describe the vision for this feature
+   │  │  
+   │  │  define:
+   │  │  - the goal
+   │  │  - the outcome
+   │  │  - the success criteria
+   │  │  
+   │  └─
+   │
+   └─ are you here?
+      ├─ when ready for review, run:
+      │  └─ rhx route.stone.set --stone 1.vision --as arrived
+      └─ when ready to continue, run:
+         └─ rhx route.stone.set --stone 1.vision --as passed
+"
+`;
+
+exports[`driver.route.brain.journey.acceptance given: [case6] the dispatch cadence, per surface when: [t2] direct, inside the window then: stdout has good vibes 1`] = `
+"🦉 where were we?
+
+🗿 route.drive
+   ├─ where do we go?
+   │  ├─ route = .
+   │  ├─ stone = 1.vision
+   │  └─ brain
+   │     ├─ choice = claude-opus-5[1m]
+   │     └─ effort = high
+   │
+   ├─ are you here?
+   │  ├─ when ready for review, run:
+   │  │  └─ rhx route.stone.set --stone 1.vision --as arrived
+   │  └─ when ready to continue, run:
+   │     └─ rhx route.stone.set --stone 1.vision --as passed
+   │
+   ├─ here's the stone
+   │  ├─
+   │  │
+   │  │  # 1.vision
+   │  │  
+   │  │  describe the vision for this feature
+   │  │  
+   │  │  define:
+   │  │  - the goal
+   │  │  - the outcome
+   │  │  - the success criteria
+   │  │  
+   │  └─
+   │
+   └─ are you here?
+      ├─ when ready for review, run:
+      │  └─ rhx route.stone.set --stone 1.vision --as arrived
+      └─ when ready to continue, run:
+         └─ rhx route.stone.set --stone 1.vision --as passed
+"
+`;
+
+exports[`driver.route.brain.journey.acceptance given: [case6] the dispatch cadence, per surface when: [t3] onBoot, inside the window then: stdout has good vibes 1`] = `
+"🦉 where were we?
+
+🗿 route.drive
+   ├─ where do we go?
+   │  ├─ route = .
+   │  ├─ stone = 1.vision
+   │  └─ brain
+   │     ├─ choice = claude-opus-5[1m]
+   │     └─ effort = high
+   │
+   ├─ are you here?
+   │  ├─ when ready for review, run:
+   │  │  └─ rhx route.stone.set --stone 1.vision --as arrived
+   │  └─ when ready to continue, run:
+   │     └─ rhx route.stone.set --stone 1.vision --as passed
+   │
+   ├─ here's the stone
+   │  ├─
+   │  │
+   │  │  # 1.vision
+   │  │  
+   │  │  describe the vision for this feature
+   │  │  
+   │  │  define:
+   │  │  - the goal
+   │  │  - the outcome
+   │  │  - the success criteria
+   │  │  
+   │  └─
+   │
+   └─ are you here?
+      ├─ when ready for review, run:
+      │  └─ rhx route.stone.set --stone 1.vision --as arrived
+      └─ when ready to continue, run:
+         └─ rhx route.stone.set --stone 1.vision --as passed
+"
+`;
+
+exports[`driver.route.brain.journey.acceptance given: [case6] the dispatch cadence, per surface when: [t4] onBoot, past the window then: stdout has good vibes 1`] = `
+"🦉 where were we?
+
+🗿 route.drive
+   ├─ where do we go?
+   │  ├─ route = .
+   │  ├─ stone = 1.vision
+   │  └─ brain
+   │     ├─ choice = claude-opus-5[1m]
+   │     └─ effort = high
+   │
+   ├─ are you here?
+   │  ├─ when ready for review, run:
+   │  │  └─ rhx route.stone.set --stone 1.vision --as arrived
+   │  └─ when ready to continue, run:
+   │     └─ rhx route.stone.set --stone 1.vision --as passed
+   │
+   ├─ here's the stone
+   │  ├─
+   │  │
+   │  │  # 1.vision
+   │  │  
+   │  │  describe the vision for this feature
+   │  │  
+   │  │  define:
+   │  │  - the goal
+   │  │  - the outcome
+   │  │  - the success criteria
+   │  │  
+   │  └─
+   │
+   └─ are you here?
+      ├─ when ready for review, run:
+      │  └─ rhx route.stone.set --stone 1.vision --as arrived
+      └─ when ready to continue, run:
+         └─ rhx route.stone.set --stone 1.vision --as passed
+"
+`;
+
+exports[`driver.route.brain.journey.acceptance given: [case6] the dispatch cadence, per surface when: [t5] direct, past the window then: stdout has good vibes 1`] = `
+"🦉 where were we?
+
+🗿 route.drive
+   ├─ where do we go?
+   │  ├─ route = .
+   │  ├─ stone = 1.vision
+   │  └─ brain
+   │     ├─ choice = claude-opus-5[1m]
+   │     └─ effort = high
+   │
+   ├─ are you here?
+   │  ├─ when ready for review, run:
+   │  │  └─ rhx route.stone.set --stone 1.vision --as arrived
+   │  └─ when ready to continue, run:
+   │     └─ rhx route.stone.set --stone 1.vision --as passed
+   │
+   ├─ here's the stone
+   │  ├─
+   │  │
+   │  │  # 1.vision
+   │  │  
+   │  │  describe the vision for this feature
+   │  │  
+   │  │  define:
+   │  │  - the goal
+   │  │  - the outcome
+   │  │  - the success criteria
+   │  │  
+   │  └─
+   │
+   └─ are you here?
+      ├─ when ready for review, run:
+      │  └─ rhx route.stone.set --stone 1.vision --as arrived
+      └─ when ready to continue, run:
+         └─ rhx route.stone.set --stone 1.vision --as passed
+"
+`;
+
+exports[`driver.route.brain.journey.acceptance given: [case6] the dispatch cadence, per surface when: [t6] onStop, past the window then: stdout has good vibes 1`] = `
+"🦉 where were we?
+
+🗿 route.drive
+   ├─ where do we go?
+   │  ├─ route = .
+   │  ├─ stone = 1.vision
+   │  └─ brain
+   │     ├─ choice = claude-opus-5[1m]
+   │     └─ effort = high
+   │
+   ├─ are you here?
+   │  ├─ when ready for review, run:
+   │  │  └─ rhx route.stone.set --stone 1.vision --as arrived
+   │  └─ when ready to continue, run:
+   │     └─ rhx route.stone.set --stone 1.vision --as passed
+   │
+   ├─ here's the stone
+   │  ├─
+   │  │
+   │  │  # 1.vision
+   │  │  
+   │  │  describe the vision for this feature
+   │  │  
+   │  │  define:
+   │  │  - the goal
+   │  │  - the outcome
+   │  │  - the success criteria
+   │  │  
+   │  └─
+   │
+   └─ are you here?
+      ├─ when ready for review, run:
+      │  └─ rhx route.stone.set --stone 1.vision --as arrived
+      └─ when ready to continue, run:
+         └─ rhx route.stone.set --stone 1.vision --as passed
+"
+`;
+
+exports[`driver.route.brain.journey.acceptance given: [case7] an unenrolled driver, on consecutive onStop ticks when: [t0] the first tick then: stdout has good vibes 1`] = `
+"🦉 where were we?
+
+🗿 route.drive
+   ├─ where do we go?
+   │  ├─ route = .
+   │  ├─ stone = 1.vision
+   │  └─ brain
+   │     ├─ choice = claude-opus-5[1m]
+   │     └─ effort = high
+   │
+   └─ ✋ halted, brain switch could not land
+      ├─ this driver runs = unknown — no clone address was confirmed
+      │
+      ├─ why
+      │  ├─ this driver is not an enrolled clone, so \`clone say\` has naught to address
+      │  └─ the usual cause is a driver launched directly rather than by \`rhx enroll\`
+      │
+      ├─ fix: re-enroll the driver with a slug, then re-enter the stone
+      │  └─ rhx enroll claude --as @:driver --roles driver
+      │
+      └─ or: remove \`brain:\` from the stone's guard, and inherit the brain deliberately
+         └─ 1.vision.guard
+"
+`;
+
+exports[`driver.route.brain.journey.acceptance given: [case7] an unenrolled driver, on consecutive onStop ticks when: [t1] the second tick then: stdout has good vibes 1`] = `
+"🦉 where were we?
+
+🗿 route.drive
+   ├─ where do we go?
+   │  ├─ route = .
+   │  ├─ stone = 1.vision
+   │  └─ brain
+   │     ├─ choice = claude-opus-5[1m]
+   │     └─ effort = high
+   │
+   └─ ✋ halted, brain switch could not land
+      ├─ this driver runs = unknown — no clone address was confirmed
+      │
+      ├─ why
+      │  ├─ this driver is not an enrolled clone, so \`clone say\` has naught to address
+      │  └─ the usual cause is a driver launched directly rather than by \`rhx enroll\`
+      │
+      ├─ fix: re-enroll the driver with a slug, then re-enter the stone
+      │  └─ rhx enroll claude --as @:driver --roles driver
+      │
+      └─ or: remove \`brain:\` from the stone's guard, and inherit the brain deliberately
+         └─ 1.vision.guard
+"
+`;
+
+exports[`driver.route.brain.journey.acceptance given: [case7] an unenrolled driver, on consecutive onStop ticks when: [t2] the third tick then: stdout has good vibes 1`] = `
+"🦉 where were we?
+
+🗿 route.drive
+   ├─ where do we go?
+   │  ├─ route = .
+   │  ├─ stone = 1.vision
+   │  └─ brain
+   │     ├─ choice = claude-opus-5[1m]
+   │     └─ effort = high
+   │
+   └─ ✋ halted, brain switch could not land
+      ├─ this driver runs = unknown — no clone address was confirmed
+      │
+      ├─ why
+      │  ├─ this driver is not an enrolled clone, so \`clone say\` has naught to address
+      │  └─ the usual cause is a driver launched directly rather than by \`rhx enroll\`
+      │
+      ├─ fix: re-enroll the driver with a slug, then re-enter the stone
+      │  └─ rhx enroll claude --as @:driver --roles driver
+      │
+      └─ or: remove \`brain:\` from the stone's guard, and inherit the brain deliberately
+         └─ 1.vision.guard
+"
+`;
+
+exports[`driver.route.brain.journey.acceptance given: [case7] an unenrolled driver, on consecutive onStop ticks when: [t3] the driver enrolls, and the next tick runs then: stdout has good vibes 1`] = `
+"🦉 where were we?
+
+🗿 route.drive
+   ├─ where do we go?
+   │  ├─ route = .
+   │  ├─ stone = 1.vision
+   │  └─ brain
+   │     ├─ choice = claude-opus-5[1m]
+   │     └─ effort = high
+   │
+   ├─ are you here?
+   │  ├─ when ready for review, run:
+   │  │  └─ rhx route.stone.set --stone 1.vision --as arrived
+   │  └─ when ready to continue, run:
+   │     └─ rhx route.stone.set --stone 1.vision --as passed
+   │
+   ├─ here's the stone
+   │  ├─
+   │  │
+   │  │  # 1.vision
+   │  │  
+   │  │  describe the vision for this feature
+   │  │  
+   │  │  define:
+   │  │  - the goal
+   │  │  - the outcome
+   │  │  - the success criteria
+   │  │  
+   │  └─
+   │
+   └─ are you here?
+      ├─ when ready for review, run:
+      │  └─ rhx route.stone.set --stone 1.vision --as arrived
+      └─ when ready to continue, run:
+         └─ rhx route.stone.set --stone 1.vision --as passed
+"
+`;
+
+exports[`driver.route.brain.journey.acceptance given: [case8] brainless stones with naught to inherit when: [t0] the brainless FIRST stone, before any switch then: stdout has good vibes 1`] = `
+"🦉 where were we?
+
+🗿 route.drive
+   ├─ where do we go?
+   │  ├─ route = .
+   │  └─ stone = 1.vision
+   │
+   ├─ are you here?
+   │  ├─ when ready for review, run:
+   │  │  └─ rhx route.stone.set --stone 1.vision --as arrived
+   │  └─ when ready to continue, run:
+   │     └─ rhx route.stone.set --stone 1.vision --as passed
+   │
+   ├─ here's the stone
+   │  ├─
+   │  │
+   │  │  # 1.vision
+   │  │  
+   │  │  describe the vision for this feature
+   │  │  
+   │  │  define:
+   │  │  - the goal
+   │  │  - the outcome
+   │  │  - the success criteria
+   │  │  
+   │  └─
+   │
+   └─ are you here?
+      ├─ when ready for review, run:
+      │  └─ rhx route.stone.set --stone 1.vision --as arrived
+      └─ when ready to continue, run:
+         └─ rhx route.stone.set --stone 1.vision --as passed
+"
+`;
+
+exports[`driver.route.brain.journey.acceptance given: [case8] brainless stones with naught to inherit when: [t2] the brainless stone AFTER the halted one then: stdout has good vibes 1`] = `
+"🦉 where were we?
+
+🗿 route.drive
+   ├─ where do we go?
+   │  ├─ route = .
+   │  └─ stone = 3.plan
+   │
+   ├─ are you here?
+   │  ├─ when ready for review, run:
+   │  │  └─ rhx route.stone.set --stone 3.plan --as arrived
+   │  └─ when ready to continue, run:
+   │     └─ rhx route.stone.set --stone 3.plan --as passed
+   │
+   ├─ here's the stone
+   │  ├─
+   │  │
+   │  │  # 3.plan
+   │  │  
+   │  │  create a plan to achieve the vision
+   │  │  
+   │  │  define:
+   │  │  - the implementation steps
+   │  │  - the dependencies
+   │  │  - the milestones
+   │  │  
+   │  └─
+   │
+   └─ are you here?
+      ├─ when ready for review, run:
+      │  └─ rhx route.stone.set --stone 3.plan --as arrived
+      └─ when ready to continue, run:
+         └─ rhx route.stone.set --stone 3.plan --as passed
+"
+`;
+
+exports[`driver.route.brain.journey.acceptance given: [case9] a brain halt above a route halt when: [t0] the hook runs, on both surfaces then: stdout has good vibes 1`] = `
+"🦉 where were we?
+
+🗿 route.drive
+   ├─ where do we go?
+   │  ├─ route = .
+   │  ├─ stone = 1.vision
+   │  └─ brain
+   │     ├─ choice = claude-opus-5[1m]
+   │     └─ effort = high
+   │
+   ├─ ✋ halted, brain switch could not land
+   │  ├─ this driver runs = unknown — no clone address was confirmed
+   │  │
+   │  ├─ why
+   │  │  ├─ this driver is not an enrolled clone, so \`clone say\` has naught to address
+   │  │  └─ the usual cause is a driver launched directly rather than by \`rhx enroll\`
+   │  │
+   │  ├─ fix: re-enroll the driver with a slug, then re-enter the stone
+   │  │  └─ rhx enroll claude --as @:driver --roles driver
+   │  │
+   │  └─ or: remove \`brain:\` from the stone's guard, and inherit the brain deliberately
+   │     └─ 1.vision.guard
+   │
+   └─ halted, stone marked blocked
+      └─ reason: blocker/1.vision.md
+"
+`;

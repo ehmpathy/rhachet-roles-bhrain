@@ -16,13 +16,13 @@ import { getRouteGuardReviewPeerPathMeta } from './getRouteGuardReviewPeerPathMe
  *         a field that is parsed and stored reads as load-bearing — and the one load it
  *         must never carry is the given↔taken match. a `.taken` write does not move the
  *         artifact hash, so one reviewer's successive givens routinely share a hash; a
- *         matcher keyed on it hands a fresh critique the prior iteration's answer
- *         (r8 blocker.1, i002). the pair matches on the DERIVED PATH, and `pathGiven`
+ *         matcher keyed on it hands a fresh critique the prior iteration's answer.
+ *         the pair matches on the DERIVED PATH, and `pathGiven`
  *         below is the whole of that identity.
  *
- * ⚠️ do not restore it "for completeness". both halves of the pair now refuse it, and the
+ * 🟡 do not restore it "for completeness". both halves of the pair now refuse it, and the
  *    symmetry is the guard: a hash present on one side and absent on the other is what
- *    invites the next author to wire the two together again (r11 blocker.1, i003).
+ *    invites the next author to wire the two together again.
  */
 export interface RouteGuardReviewPeerGiven {
   slug: string;

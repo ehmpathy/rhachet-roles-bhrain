@@ -25,6 +25,7 @@ always:
       # that arrives after the seam is chosen meets an author who already reused a
       # human lever's breadth for a robot's move
       - briefs/rule.forbid.suppression-of-undeclared-concerns.md
+      - briefs/rule.require.stdout-is-treestruct.md
 
       # domain.terms - the repo's glossary intro + its org-wide governance, nested
       # under briefs/ so the boot loader pools it (it only pools files under

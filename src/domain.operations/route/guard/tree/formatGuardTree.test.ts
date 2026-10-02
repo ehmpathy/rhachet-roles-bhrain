@@ -1143,11 +1143,10 @@ describe('formatReviewsMeterLines', () => {
 
   given('[case2] an empty meter set — no reviewers to announce', () => {
     // .why = the exhausted-status drive halt reaches this formatter on a stone that
-    //        declares NO guard, so the meter set is legitimately empty. before this fix
-    //        the formatter still emitted its `├─ reviews` header, and the halt rendered a
-    //        connector that promised reviewer rows and delivered none — a driver could not
-    //        tell an absent reviewer set from a dropped render
-    //        (rule.forbid.snapshot-visual-blemishes · r7 nitpick.1, i016).
+    //        declares NO guard, so the meter set is legitimately empty. an emitted
+    //        `├─ reviews` header with no rows beneath it promises reviewer rows and
+    //        delivers none, so a driver cannot tell an absent reviewer set from a
+    //        dropped render (rule.forbid.snapshot-visual-blemishes).
     //
     // 🔴 this clamp BITES: revert the `meters.length === 0` guard in formatGuardTree and
     //    [t0] goes red on `toEqual([])` — it would return the one header line instead. it

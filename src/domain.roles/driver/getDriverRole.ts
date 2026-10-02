@@ -37,9 +37,11 @@ export const ROLE_DRIVER: Role = Role.build({
           command: './node_modules/.bin/rhachet roles boot --role driver',
           timeout: 'PT30S',
         },
+        // .why PT25S = this hook may probe `clone whoami` (cap 10s, p50 5.5s) and take the
+        //      drive-state lock twice; `getCloneAddress.integration.test.ts [case8]` clamps it
         {
           command: './node_modules/.bin/rhx route.drive --when hook.onBoot',
-          timeout: 'PT5S',
+          timeout: 'PT25S',
         },
       ],
       onTool: [
@@ -69,9 +71,10 @@ export const ROLE_DRIVER: Role = Role.build({
         },
       ],
       onStop: [
+        // .why PT25S = the same probe as onBoot's; see the note there
         {
           command: './node_modules/.bin/rhx route.drive --when hook.onStop',
-          timeout: 'PT5S',
+          timeout: 'PT25S',
         },
       ],
     },

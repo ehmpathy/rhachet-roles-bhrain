@@ -135,13 +135,11 @@ export const setStoneAsPassed = async (
   // lookup git root for path relativization
   // .why = paths in output should be relative to git root (e.g., .behavior/v.../...), not route
   //
-  // 🔴 this reaches for the SHARED resolver rather than a local try/catch. it held one
-  //    until i003, and that copy caught bare — so a permissions error, an absent git
-  //    binary, or a corrupt .git each read as "not a repo" and silently relativized
-  //    against the cwd instead (`rule.forbid.failhide`). the shared operation catches
-  //    only "Not inside a Git" and rethrows the rest, which is the whole reason its own
-  //    .why says it exists "so the two guard call sites cannot drift apart" — this was
-  //    the third site, and it had drifted (r7 nitpick.1)
+  // 🔴 uses the SHARED resolver, never a local try/catch — a bare catch reads a
+  //    permissions error, an absent git binary, or a corrupt .git as "not a repo" and
+  //    silently relativizes against cwd instead (`rule.forbid.failhide`). the shared
+  //    operation catches only "Not inside a Git" and rethrows the rest, so every guard
+  //    call site stays on one path
   const gitRoot = await getRepoRootWithFallback({ from: input.route });
 
   // check artifact found
@@ -1265,18 +1263,15 @@ const computeGuardData = (input: {
         passed: j.passed,
         reason: j.reason,
         // 🔴 the SAME root as the review branch above, and as
-        //    `getAllReviewPeerMeterStatuses`. it used to be `input.route`, so one
-        //    `computeGuardData` return carried two path-forms for one kind of artifact,
+        //    `getAllReviewPeerMeterStatuses` — a diverged root here would let one
+        //    `computeGuardData` return carry two path-forms for one kind of artifact,
         //    keyed on which array a path happened to land in.
         //
-        // ⚠️ the note that stood here argued the asymmetry was safe because the guard tree
-        //    prints no judge path today — a claim about the CURRENT surface, never about the
-        //    data. `rule.require.single-source-of-truth-for-render` is about the data: a
-        //    later surface that printed both, or a snapshot that captured both, would show
-        //    one artifact under two shapes with no signal which is right. the shared cast
-        //    exists so a reader cannot re-derive the root per site; to reach it with two
-        //    roots from one function kept exactly the knob it was extracted to remove
-        //    (probe review of the bounded i016 scope, nitpick.1).
+        //    `rule.require.single-source-of-truth-for-render` governs the DATA, not
+        //    merely today's surface: a later renderer or snapshot that printed both forms
+        //    would show one artifact under two shapes with no signal which is right. the
+        //    shared cast exists so no call site re-derives the root; two roots from one
+        //    function reopens exactly the knob it was extracted to remove.
         path: asGuardDisplayPath({ pathAbsolute: j.path, root: input.gitRoot }),
         overruled,
       };
