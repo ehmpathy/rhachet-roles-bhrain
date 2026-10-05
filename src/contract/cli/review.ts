@@ -1,12 +1,13 @@
 import { execSync } from 'child_process';
-import { BadRequestError } from 'helpful-errors';
 import * as path from 'path';
 import {
+  BrainChoiceNotFoundError,
   genContextBrain,
   getAvailableBrains,
   getAvailableBrainsInWords,
 } from 'rhachet/brains';
 
+import { DEFAULT_REVIEW_BRAIN } from '@src/domain.operations/review/DEFAULT_REVIEW_BRAIN';
 import { emitReviewSkip } from '@src/domain.operations/review/emitReviewSkip';
 import { genDefaultReviewOutputPath } from '@src/domain.operations/review/genDefaultReviewOutputPath';
 import { getReviewOptionalSkipDecision } from '@src/domain.operations/review/getReviewOptionalSkipDecision';
@@ -15,12 +16,15 @@ import {
   SUPPLIES_OPTIONAL_SUPPORTED,
 } from '@src/domain.operations/review/getSuppliesOptionalSupported';
 import { stepReview } from '@src/domain.operations/review/stepReview';
+import { asConstraintRefusalText } from '@src/utils/asConstraintRefusalText';
+import { isCallerConstraintError } from '@src/utils/isCallerConstraintError';
 
 /**
  * .what = default brain for review skill
- * .why = fireworks/deepseek/v4-flash is better, cheaper, and faster for code review
+ * .why = openrouter/deepseek/flash is cheap, fast, and effective for code review. the slug is
+ *        declared once, in DEFAULT_REVIEW_BRAIN, so every default moves together
  */
-const DEFAULT_BRAIN = 'fireworks/deepseek/v4-flash';
+const DEFAULT_BRAIN = DEFAULT_REVIEW_BRAIN;
 
 /**
  * .what = prints help message with available brains
@@ -369,17 +373,18 @@ export const review = async (): Promise<void> => {
     process.exit(0);
   }
 
-  // create brain context via discovery with credentials
-  // .note = uses env: 'prep' because review is used to prepare code, not test it
-  // .note = keyrack auto-unlocks locked keys internally when the brain fetches its
-  //         own creds (rhachet >=1.43 get-or-unlock), so no upfront unlock is needed
-  const brain = await genContextBrain({
-    choice: options.brain,
-    creds: { keyrack: { owner: 'ehmpath', env: 'prep' } },
-  });
-
   // invoke stepReview with validation error handler
   try {
+    // create brain context via discovery with credentials
+    // .note = uses env: 'prep' because review is used to prepare code, not test it
+    // .note = keyrack auto-unlocks locked keys internally when the brain fetches its
+    //         own creds (rhachet >=1.43 get-or-unlock), so no upfront unlock is needed
+    // .note = inside the try, so an unknown --brain refuses as one ✋ block, not a stack trace
+    const brain = await genContextBrain({
+      choice: options.brain,
+      creds: { keyrack: { owner: 'ehmpath', env: 'prep' } },
+    });
+
     await stepReview(
       {
         rules: options.rules,
@@ -417,8 +422,15 @@ export const review = async (): Promise<void> => {
       }
     }
   } catch (error) {
-    if (error instanceof BadRequestError) {
-      console.error(`\n✋ ${error.message}`);
+    // a caller-fixable refusal renders as one ✋ block, never a stack trace — also one thrown
+    // from a dependency's helpful-errors copy (e.g. keyrack's absent-key refusal)
+    // .note = an unknown --brain is caller-fixable too: rhachet throws it as a plain HelpfulError,
+    //         and its message already lists the available brains
+    if (
+      isCallerConstraintError(error) ||
+      error instanceof BrainChoiceNotFoundError
+    ) {
+      console.error(`\n${asConstraintRefusalText({ message: error.message })}`);
       process.exit(2);
     }
     throw error;

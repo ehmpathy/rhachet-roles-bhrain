@@ -9,17 +9,21 @@ import {
   getBrainAtomsByAnthropic,
   getBrainReplsByAnthropic,
 } from 'rhachet-brains-anthropic';
-import { getBrainAtomsByFireworksAI } from 'rhachet-brains-fireworksai';
 import {
   getBrainAtomsByOpenAI,
   getBrainReplsByOpenAI,
 } from 'rhachet-brains-openai';
+import { getBrainAtomsByOpenRouter } from 'rhachet-brains-openrouter';
+
+import { DEFAULT_REVIEW_BRAIN } from '@src/domain.operations/review/DEFAULT_REVIEW_BRAIN';
 
 /**
  * .what = default brain for tests
- * .why = fireworks/deepseek/v4-flash is fast, cheap, and effective for agentic code tasks
+ * .why = the tests exercise the brain the product defaults to, so they read the same constant
+ * .note = a tier slug, not a pinned model — see DEFAULT_REVIEW_BRAIN's .note. a test that
+ *         drifts with no diff here may owe its cause to a new model behind the tier
  */
-export const DEFAULT_TEST_BRAIN = 'fireworks/deepseek/v4-flash';
+export const DEFAULT_TEST_BRAIN = DEFAULT_REVIEW_BRAIN;
 
 /**
  * .what = loads all available brain atoms from installed packages
@@ -29,7 +33,7 @@ const loadAllAtoms = (): BrainAtom[] => {
   return [
     ...getBrainAtomsByAnthropic(),
     ...getBrainAtomsByOpenAI(),
-    ...getBrainAtomsByFireworksAI(),
+    ...getBrainAtomsByOpenRouter(),
   ];
 };
 
@@ -46,7 +50,7 @@ const loadAllRepls = (): BrainRepl[] => {
  * .why = enables integration tests to invoke brain-dependent operations
  *
  * .note = this is a TEST UTILITY only; prod code should receive brain context via DI
- * .note = uses keyrack shorthand to fetch credentials for fireworks/anthropic/openai brains
+ * .note = uses keyrack shorthand to fetch credentials for openrouter/anthropic/openai brains
  */
 export const genTestBrainContext = (input: {
   brain: string;

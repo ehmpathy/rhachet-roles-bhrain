@@ -373,7 +373,7 @@ exports[`formatReviewsMeterLines given: [case-tactic] the read-out sources tacti
       │       ├─ rejected 9.1s
       │       ├─ 0 blockers ✓
       │       ├─ 1 nitpick 🟠
-      │       ├─ tallied by reviewer@fireworks/deepseek/v4-flash
+      │       ├─ tallied by reviewer@openrouter/deepseek/flash
       │       └─ given: .route/1.vision.guard.review.i1.abc123.r1.md
       └─ judges
           └─ j1: reviewed?

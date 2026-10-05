@@ -1,0 +1,57 @@
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
+
+exports[`review.by.key-absent.acceptance given: [case1] OPENROUTER_API_KEY is absent from env and keyrack when: [t0] a guard runs review.by --for one rubric then: the rendered refusal is pinned 1`] = `
+"💥 rubric malfunctioned: demo-arrow-only
+   
+
+🪨 run solid skill repo=bhrain/role=reviewer/skill=review
+   └─ ✋ blocked by constraints
+
+✋ ConstraintError: 
+🔐 keyrack
+   └─ ehmpath.prep.OPENROUTER_API_KEY
+      ├─ status: absent 🫧
+      └─ tip: rhx keyrack set --owner ehmpath --key OPENROUTER_API_KEY --env prep
+
+
+{
+  "attempts": [
+    {
+      "key": "OPENROUTER_API_KEY",
+      "status": "absent",
+      "fix": "rhx keyrack set --owner ehmpath --key OPENROUTER_API_KEY --env prep"
+    }
+  ],
+  "env": "prep",
+  "owner": "ehmpath"
+}
+"
+`;
+
+exports[`review.by.key-absent.acceptance given: [case1] OPENROUTER_API_KEY is absent from env and keyrack when: [t1] review.by runs every rubric of the role then: the rendered refusal is pinned 1`] = `
+"💥 rubric malfunctioned: demo-arrow-only
+   
+
+🪨 run solid skill repo=bhrain/role=reviewer/skill=review
+   └─ ✋ blocked by constraints
+
+✋ ConstraintError: 
+🔐 keyrack
+   └─ ehmpath.prep.OPENROUTER_API_KEY
+      ├─ status: absent 🫧
+      └─ tip: rhx keyrack set --owner ehmpath --key OPENROUTER_API_KEY --env prep
+
+
+{
+  "attempts": [
+    {
+      "key": "OPENROUTER_API_KEY",
+      "status": "absent",
+      "fix": "rhx keyrack set --owner ehmpath --key OPENROUTER_API_KEY --env prep"
+    }
+  ],
+  "env": "prep",
+  "owner": "ehmpath"
+}
+"
+`;

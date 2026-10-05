@@ -22,32 +22,25 @@ options:
   --output <path>     output file path (default: .review/$branch/$isotime.output.md)
   --focus <mode>      review focus: push or pull (default: push)
   --goal <goal>       review goal: exhaustive or representative (default: exhaustive)
-  --brain <slug>      brain to use for review (default: fireworks/deepseek/v4-flash)
+  --brain <slug>      brain to use for review (default: openrouter/deepseek/flash)
   --open <opener>     open output file with specified program (e.g., nvim, codium, code)
   --help              show this help message
 
 🔭 available brains
    ├── ↻ openai/codex
    ├── ○ openai/gpt/4o
-   ├── ○ fireworks/glm/pro
-   ├── ○ fireworks/kimi/k3
-   ├── ○ fireworks/glm/5.3
-   ├── ○ fireworks/glm/5.2
-   ├── ○ fireworks/kimi/pro
-   ├── ○ fireworks/glm/flash
-   ├── ○ fireworks/kimi/k2.6
-   ├── ○ fireworks/minimax/m3
+   ├── ○ openrouter/z-ai/pro
    ├── ○ anthropic/claude/opus
-   ├── ○ fireworks/kimi/pro/k3
-   ├── ○ fireworks/glm/pro/5.3
-   ├── ○ fireworks/glm/pro/5.2
+   ├── ○ openrouter/z-ai/flash
    ├── ↻ anthropic/claude/code
    ├── ○ anthropic/claude/haiku
-   ├── ○ fireworks/deepseek/pro
-   ├── ○ fireworks/gpt-oss/120b
    ├── ○ anthropic/claude/sonnet
-   ├── ○ fireworks/kimi/pro/k2.6
-   ├── ○ fireworks/glm/flash/5.3
-   └── (and 28 more)
+   ├── ○ openrouter/deepseek/pro
+   ├── ○ openrouter/deepseek/flash
+   ├── ○ openrouter/moonshotai/pro
+   ├── ↻ anthropic/claude/code/opus
+   ├── ↻ anthropic/claude/code/haiku
+   ├── ↻ anthropic/claude/code/sonnet
+   └── ○ openrouter/deepseek/flash/floor&speed=min50tps&privacy=full
 "
 `;

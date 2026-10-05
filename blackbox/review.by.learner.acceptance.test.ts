@@ -60,7 +60,7 @@ describe('review.by.learner.acceptance', () => {
           const cli = await invokeReviewByRoleViaRhx({
             role: 'learner',
             paths: 'src/clean.ts',
-            brain: 'fireworks/deepseek/v4-flash',
+            brain: 'openrouter/deepseek/flash',
             cwd,
           });
           return { cli };
@@ -100,7 +100,7 @@ describe('review.by.learner.acceptance', () => {
           const cli = await invokeReviewBySkill({
             role: 'learner',
             paths: 'src/clean.ts',
-            brain: 'fireworks/deepseek/v4-flash',
+            brain: 'openrouter/deepseek/flash',
             cwd,
           });
           return { cli };
@@ -156,7 +156,7 @@ describe('review.by.learner.acceptance', () => {
             role: 'learner',
             for: 'term-application',
             paths: 'src/clean.ts',
-            brain: 'fireworks/deepseek/v4-flash',
+            brain: 'openrouter/deepseek/flash',
             cwd,
           });
           return { cli };
@@ -195,7 +195,7 @@ describe('review.by.learner.acceptance', () => {
             role: 'learner',
             for: 'term-aggregation',
             paths: 'src/clean.ts',
-            brain: 'fireworks/deepseek/v4-flash',
+            brain: 'openrouter/deepseek/flash',
             cwd,
           });
           return { cli };
@@ -234,7 +234,7 @@ describe('review.by.learner.acceptance', () => {
             role: 'learner',
             for: 'term-application',
             paths: 'src/dirty.terms.ts',
-            brain: 'fireworks/deepseek/v4-flash',
+            brain: 'openrouter/deepseek/flash',
             cwd,
           });
           return { cli };

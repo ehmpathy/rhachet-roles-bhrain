@@ -42,7 +42,7 @@ const invokeReviewWithEnv = async (input: {
     `--output '/dev/null'`,
     `--focus push`,
     `--goal representative`,
-    `--brain 'fireworks/deepseek/v4-flash'`,
+    `--brain 'openrouter/deepseek/flash'`,
   ].join(' ');
 
   try {

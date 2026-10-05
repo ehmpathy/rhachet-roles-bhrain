@@ -22,7 +22,7 @@ describe('genReviewRubricCmd', () => {
         paths: 'src/**/*.ts',
         diffs: null,
         mode: null,
-        brain: 'fireworks/deepseek/v4-flash',
+        brain: 'openrouter/deepseek/flash',
       });
 
       then('it starts with rhx review', () => {
@@ -38,7 +38,7 @@ describe('genReviewRubricCmd', () => {
       });
 
       then('it forwards --brain', () => {
-        expect(cmd).toContain("--brain 'fireworks/deepseek/v4-flash'");
+        expect(cmd).toContain("--brain 'openrouter/deepseek/flash'");
       });
 
       then('it carries the output path', () => {

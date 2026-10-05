@@ -39,7 +39,7 @@ const VERDICT_ATTEMPTS = 3;
  * .why = pins the base review's `🦉 let's review` brain row so the guard-tree + peer snapshots are
  *        deterministic in that dimension (the verdict itself is what varies, handled by SOME).
  */
-const BRAIN = 'fireworks/deepseek/v4-flash';
+const BRAIN = 'openrouter/deepseek/flash';
 
 /**
  * .what = masks the concern counts a probabilistic reviewer chooses
@@ -589,6 +589,13 @@ describe('review.by.guard-peer.acceptance', () => {
         const artifact = res.artifact ?? '';
         expect(artifact).toContain('💥 rubric malfunctioned: term-aggregation');
         expect(artifact).toContain('brain not found: nonexistent/broken/brain');
+      });
+
+      then('the captured artifact lists the available brains, so the caller can fix the choice', () => {
+        // the F-1 invariant on the path a guard drives: the refusal names the slugs that exist,
+        // the same list the raw `rhx review` path clamps in review.brain-stale
+        const artifact = res.artifact ?? '';
+        expect(artifact).toContain('openrouter/deepseek/flash');
       });
 
       then('the guard-tree stdout is stable (full snapshot)', () => {

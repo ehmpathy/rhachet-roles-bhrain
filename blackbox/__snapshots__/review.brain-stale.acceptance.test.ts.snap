@@ -1,0 +1,48 @@
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
+
+exports[`review.brain-stale.acceptance given: [case1] a guard or human names the removed fireworks brain when: [t0] rhx review runs with --brain fireworks/deepseek/v4-flash then: the rendered refusal is pinned 1`] = `
+"✋ BrainChoiceNotFoundError: brain not found: fireworks/deepseek/v4-flash
+
+🔭 available brains
+   ├── ○ openrouter/deepseek/flash
+   ├── ○ openrouter/deepseek/pro
+   ├── ○ openrouter/z-ai/flash
+   ├── ○ anthropic/claude/opus
+   ├── ○ openai/gpt/4o
+   ├── ○ anthropic/claude/haiku
+   ├── ○ anthropic/claude/sonnet
+   ├── ○ openrouter/z-ai/pro
+   ├── ↻ anthropic/claude/code
+   ├── ↻ anthropic/claude/code/opus
+   ├── ↻ anthropic/claude/code/haiku
+   ├── ↻ openai/codex
+   ├── ○ openrouter/moonshotai/pro
+   ├── ↻ anthropic/claude/code/sonnet
+   └── ○ openrouter/deepseek/flash/floor&speed=min50tps&privacy=full
+
+{
+  "choice": "fireworks/deepseek/v4-flash",
+  "available": {
+    "atoms": [
+      "anthropic/claude/haiku",
+      "anthropic/claude/sonnet",
+      "anthropic/claude/opus",
+      "openrouter/deepseek/pro",
+      "openrouter/deepseek/flash",
+      "openrouter/moonshotai/pro",
+      "openrouter/z-ai/pro",
+      "openrouter/z-ai/flash",
+      "openrouter/deepseek/flash/floor&speed=min50tps&privacy=full",
+      "openai/gpt/4o"
+    ],
+    "repls": [
+      "anthropic/claude/code",
+      "anthropic/claude/code/haiku",
+      "anthropic/claude/code/sonnet",
+      "anthropic/claude/code/opus",
+      "openai/codex"
+    ]
+  }
+}
+"
+`;

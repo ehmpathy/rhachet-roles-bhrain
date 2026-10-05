@@ -67,7 +67,7 @@ describe('review.conversation.acceptance', () => {
           output: path.join(tempDir, 'review.md'),
           focus: 'push',
           goal: 'representative',
-          brain: 'fireworks/deepseek/v4-flash',
+          brain: 'openrouter/deepseek/flash',
           cwd: tempDir,
         });
         const prompt = await readLoggedPrompt(tempDir);
@@ -112,7 +112,7 @@ describe('review.conversation.acceptance', () => {
           output: path.join(tempDir, 'review.md'),
           focus: 'push',
           goal: 'representative',
-          brain: 'fireworks/deepseek/v4-flash',
+          brain: 'openrouter/deepseek/flash',
           cwd: tempDir,
         });
         const prompt = await readLoggedPrompt(tempDir);

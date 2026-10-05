@@ -7,7 +7,7 @@ exports[`review.by.guard-peer.acceptance given: [case-seam-findings] guard peer 
 │  │  🪨 run solid skill repo=bhrain/role=learner/skill=review.by
 │  │  
 │  │  🦉 let's review
-│  │     ├─ brain: fireworks/deepseek/v4-flash
+│  │     ├─ brain: openrouter/deepseek/flash
 │  │     ├─ focus: push
 │  │     └─ scope
 │  │        └─ paths: src/**/*.ts
@@ -137,7 +137,7 @@ exports[`review.by.guard-peer.acceptance given: [case-seam-pass-aggregation] gua
 │  │  🪨 run solid skill repo=bhrain/role=learner/skill=review.by
 │  │  
 │  │  🦉 let's review
-│  │     ├─ brain: fireworks/deepseek/v4-flash
+│  │     ├─ brain: openrouter/deepseek/flash
 │  │     ├─ focus: push
 │  │     └─ scope
 │  │        └─ paths: src/**/*.ts
@@ -198,7 +198,7 @@ exports[`review.by.guard-peer.acceptance given: [case-seam-pass-application] gua
 │  │  🪨 run solid skill repo=bhrain/role=learner/skill=review.by
 │  │  
 │  │  🦉 let's review
-│  │     ├─ brain: fireworks/deepseek/v4-flash
+│  │     ├─ brain: openrouter/deepseek/flash
 │  │     ├─ focus: push
 │  │     └─ scope
 │  │        └─ paths: src/**/*.ts

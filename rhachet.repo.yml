@@ -20,6 +20,7 @@ roles:
         - dist/domain.roles/driver/inits/init.claude.status-line.sh
         - dist/domain.roles/driver/inits/init.claude.permissions.route.sh
     boot: dist/domain.roles/driver/boot.yml
+    keyrack: dist/domain.roles/driver/keyrack.yml
   - slug: learner
     readme: dist/domain.roles/learner/readme.md
     briefs:

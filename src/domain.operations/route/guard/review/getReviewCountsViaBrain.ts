@@ -79,10 +79,11 @@ const getFallbackTimeoutMs = (): number => {
 
 /**
  * .what = the internal (wire) schema the sub-brain answers against
- * .why = a FLAT object, not a discriminated union — the fireworks/deepseek json_schema
- *        validator requires a top-level `type` field, which a union (anyOf) lacks (400
- *        "JSON schema must include a 'type' field"; the complex-schema hazard flagged in
- *        3.1.1.research.external.product.flagged yield [3]). the `evidence` quote (mitigation
+ * .why = a FLAT object, not a discriminated union — some json_schema validators require a
+ *        top-level `type` field, which a union (anyOf) lacks (400 "JSON schema must include a
+ *        'type' field", measured on a deepseek host; the complex-schema hazard flagged in
+ *        3.1.1.research.external.product.flagged yield [3]). the tally brain routes across
+ *        many hosts, so the schema must fit the strictest of them. the `evidence` quote (mitigation
  *        #3) forces the brain to cite the verdict text it counted, so a fabricated 0/0 on
  *        empty input has no quote to supply. this wire shape is INTERNAL — the code maps it
  *        into the honest ReviewCounts union immediately, so the returned contract stays a

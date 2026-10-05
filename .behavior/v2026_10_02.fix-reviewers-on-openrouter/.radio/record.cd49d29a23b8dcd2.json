@@ -1,0 +1,21 @@
+{
+  "key": "cd49d29a23b8dcd2",
+  "kind": "create",
+  "repo": {
+    "owner": "ehmpathy",
+    "name": "rhachet-brains-openrouter"
+  },
+  "exid": null,
+  "title": "feat(slug): a latency filter, applied by default in every tier",
+  "description": "## .what\n\nadd a **latency filter** to the slug filters, and apply it **by default** in every tier slug (for\nexample `openrouter/deepseek/flash`).\n\ntoday a tier resolves to \"floor, >= 50 tps, full privacy\". that bounds throughput, never latency.\na host can clear 50 tps and still take a minute to start a reply.\n\n## .the ask\n\n1. **a latency filter in the slug filter syntax**, beside `speed=min50tps`: a bound that excludes\n   any endpoint slower than the bound, read the same way `speed` is read (from the openrouter\n   endpoints api, the p50 over the last 30m, as `throughput_last_30m` is today). for example\n   `latency=max5s`. say which direction you name it (an upper bound on latency), so a reader never\n   reads it as a floor.\n2. **on by default**: the tier slugs apply a sensible latency bound with no filter written, as they\n   apply `floor`, `speed=min50tps` and `privacy=full` today. the caller can override it in the slug.\n3. **fail loud, name the fix**: when no endpoint meets the bound, the error says so, names the\n   bound, and shows the fastest endpoint seen, so the caller can loosen it knowingly.\n\n## .why\n\nmeasured 2026-10-04 in `ehmpathy/rhachet-roles-bhrain`, on `openrouter/deepseek/flash`:\n\n- a verdict tally on about 2k tokens of input and a tiny json reply took **36s to 180s per ask**\n  (median about 60s). a one-line tally took 2s to 10s.\n- review and reflect asks on the same slug took 4s to 111s and 25s to 253s.\n- the time is spent on the host, not in the caller: the input is small, and the reply is a few\n  dozen tokens.\n- the full integration suite of that repo takes about 25 minutes, mostly from these asks.\n\na latency bound at the tier lets every consumer route around slow hosts at the source.\n\n## .evidence to check first\n\n- confirm the endpoints api exposes a latency figure (for example `latency_last_30m`) the way it\n  exposes `throughput_last_30m`. if it does not, say what the nearest honest signal is before you\n  pick the syntax.\n- confirm which host served the slow asks: the reply carries `provider` and `generationId`\n  (`https://openrouter.ai/activity`).\n\n## .not in scope\n\n- a change to the model a tier maps to.",
+  "status": null,
+  "via": "gh.issues",
+  "auth": "as-human",
+  "idem": null,
+  "heldAt": "2026-10-04",
+  "heldSeq": 1,
+  "recordStatus": "DELIVERED",
+  "reason": null,
+  "settledAt": "2026-10-05",
+  "deliveredExid": "11"
+}

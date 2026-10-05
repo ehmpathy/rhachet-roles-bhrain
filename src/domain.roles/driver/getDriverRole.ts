@@ -18,6 +18,9 @@ export const ROLE_DRIVER: Role = Role.build({
   briefs: {
     dirs: [{ uri: __dirname + '/briefs' }],
   },
+  // .why = a driver's guards run peer reviews and the tally fallback on openrouter, so a repo
+  //        that enrolls only the driver still needs that key declared
+  keyrack: { uri: __dirname + '/keyrack.yml' },
   inits: {
     dirs: [{ uri: __dirname + '/inits' }],
     exec: [

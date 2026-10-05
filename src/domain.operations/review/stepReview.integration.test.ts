@@ -96,8 +96,8 @@ const setupGitRepo = async (): Promise<{ repoDir: string }> => {
  *    genuine `ContextBrain` and mocks naught:
  *
  *      genContextBrain({
- *        brains: { atoms, repls },   // real packages: anthropic, openai, fireworks
- *        choice: input.brain,        // DEFAULT_TEST_BRAIN = fireworks/deepseek/v4-flash
+ *        brains: { atoms, repls },   // real packages: anthropic, openai, openrouter
+ *        choice: input.brain,        // DEFAULT_TEST_BRAIN = openrouter/deepseek/flash
  *        creds: { keyrack: { owner: 'ehmpath', env: 'test' } },  // real credentials
  *      })
  *
@@ -105,7 +105,7 @@ const setupGitRepo = async (): Promise<{ repoDir: string }> => {
  *      and the 180s budget above exists precisely because *"the brain call alone
  *      routinely outlasts"* the 90s default. a mock would need neither.
  *
- * .why a CHEAP real brain rather than a premium one = `fireworks/deepseek/v4-flash` is
+ * .why a CHEAP real brain rather than a premium one = `openrouter/deepseek/flash` is
  *        fast and low-cost, so the external contract is exercised on EVERY ci run rather
  *        than from behind a cost gate — which is what
  *        `rule.require.external-contract-integration-tests` asks for.
