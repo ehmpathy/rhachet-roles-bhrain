@@ -31,7 +31,7 @@ const genSupplyThatThrows = (): ContextReviewBrainSupply => ({
 });
 
 // a real-brain supplier for the probabilistic path
-const genRealSupply = (): ContextReviewBrainSupply => {
+const getOneRealSupply = (): ContextReviewBrainSupply => {
   let cached: ContextBrain<BrainChoice> | null = null;
   return {
     getReviewBrain: async () => {
@@ -101,7 +101,7 @@ the two problems block the change; the suggestion is advisory only.`;
       '[t0] measured with a real brain supplier',
       () => {
         const result = useThen('it succeeds probabilistically', async () =>
-          getReviewCounts({ content, exitCode: 0 }, genRealSupply()),
+          getReviewCounts({ content, exitCode: 0 }, getOneRealSupply()),
         );
 
         then('the tactic is probabilistic', () => {
@@ -126,7 +126,7 @@ the two problems block the change; the suggestion is advisory only.`;
       '[t0] measured with a real brain supplier',
       () => {
         const result = useThen('it succeeds', async () =>
-          getReviewCounts({ content, exitCode: 0 }, genRealSupply()),
+          getReviewCounts({ content, exitCode: 0 }, getOneRealSupply()),
         );
 
         then('it returns detected=false (no fabricated verdict)', () => {

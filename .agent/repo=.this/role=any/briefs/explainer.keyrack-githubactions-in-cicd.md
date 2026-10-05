@@ -10,7 +10,7 @@ into the live test process.
 
 ## .why
 
-- tests must hit real services (FIREWORKS, ANTHROPIC, OPENAI, TAVILY, XAI) — mocks lie
+- tests must hit real services (OPENROUTER, ANTHROPIC, OPENAI, TAVILY, XAI) — mocks lie
 - secrets must never be hardcoded or read from `process.env` by app code
 - keyrack owns credential grant; app code just asks keyrack for creds
 
@@ -33,7 +33,7 @@ rhx keyrack firewall --env test \
    │   • blocks dangerous patterns (ghp_*, AKIA*, …)
    │   • masks + writes each grant to $GITHUB_ENV
    ▼
-env vars available to every later step   # e.g. FIREWORKS_API_KEY=…
+env vars available to every later step   # e.g. OPENROUTER_API_KEY=…
    │
    ▼
 keyrack hoists those env vars into the daemon

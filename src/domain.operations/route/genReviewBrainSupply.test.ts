@@ -18,7 +18,7 @@ import { genReviewBrainSupply } from './genReviewBrainSupply';
 const fakeBrain = { brain: {} } as unknown as ContextBrain<BrainChoice>;
 
 const buildInput = {
-  choice: 'fireworks/deepseek/v4-flash',
+  choice: 'openrouter/deepseek/flash',
   creds: { keyrack: { owner: 'ehmpath', env: 'test' } },
 };
 

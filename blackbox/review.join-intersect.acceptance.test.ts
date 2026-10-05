@@ -57,7 +57,7 @@ describe('review.join.acceptance', () => {
           output: outputPath,
           focus: 'push',
           goal: 'representative',
-          brain: 'fireworks/deepseek/v4-flash',
+          brain: 'openrouter/deepseek/flash',
           cwd: tempDir,
         });
 
@@ -108,7 +108,7 @@ describe('review.join.acceptance', () => {
           output: outputPath,
           focus: 'push',
           goal: 'representative',
-          brain: 'fireworks/deepseek/v4-flash',
+          brain: 'openrouter/deepseek/flash',
           cwd: tempDir,
         });
 
@@ -177,7 +177,7 @@ describe('review.join.acceptance', () => {
           output: outputPath,
           focus: 'push',
           goal: 'representative',
-          brain: 'fireworks/deepseek/v4-flash',
+          brain: 'openrouter/deepseek/flash',
           cwd: tempDir,
         });
 
@@ -237,7 +237,7 @@ describe('review.join.acceptance', () => {
           output: outputPath,
           focus: 'push',
           goal: 'representative',
-          brain: 'fireworks/deepseek/v4-flash',
+          brain: 'openrouter/deepseek/flash',
           cwd: tempDir,
         });
 
@@ -286,7 +286,7 @@ describe('review.join.acceptance', () => {
           output: outputPath,
           focus: 'push',
           goal: 'representative',
-          brain: 'fireworks/deepseek/v4-flash',
+          brain: 'openrouter/deepseek/flash',
           cwd: tempDir,
         });
 

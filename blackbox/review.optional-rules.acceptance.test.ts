@@ -8,6 +8,7 @@ import {
   genTempDirForRhachet,
   invokeReviewSkill,
 } from './.test/invokeReviewSkill';
+import { invokeShellCommand } from './.test/invokeShellCommand';
 
 const ASSETS_DIR = path.join(__dirname, '.test/assets/codebase-mechanic');
 
@@ -65,7 +66,7 @@ describe('review.optional-rules.acceptance', () => {
           output: outputPath,
           focus: 'push',
           goal: 'representative',
-          brain: 'fireworks/deepseek/v4-flash',
+          brain: 'openrouter/deepseek/flash',
           cwd: tempDir,
         });
 
@@ -123,7 +124,7 @@ describe('review.optional-rules.acceptance', () => {
           output: outputPath,
           focus: 'push',
           goal: 'representative',
-          brain: 'fireworks/deepseek/v4-flash',
+          brain: 'openrouter/deepseek/flash',
           cwd: tempDir,
         });
 
@@ -165,7 +166,7 @@ describe('review.optional-rules.acceptance', () => {
           output: outputPath,
           focus: 'push',
           goal: 'representative',
-          brain: 'fireworks/deepseek/v4-flash',
+          brain: 'openrouter/deepseek/flash',
           cwd: tempDir,
         });
 
@@ -208,7 +209,7 @@ describe('review.optional-rules.acceptance', () => {
           output: outputPath,
           focus: 'push',
           goal: 'representative',
-          brain: 'fireworks/deepseek/v4-flash',
+          brain: 'openrouter/deepseek/flash',
           cwd: tempDir,
         });
 
@@ -261,29 +262,15 @@ describe('review.optional-rules.acceptance', () => {
           `--output "${outputPath}"`,
           '--focus push',
           '--goal representative',
-          '--brain "fireworks/deepseek/v4-flash"',
+          '--brain "openrouter/deepseek/flash"',
         ].join(' ');
 
-        const cli = await execAsync(cmd, {
+        // the shared exec wrapper allowlists non-zero exits and rethrows aught else
+        const cli = await invokeShellCommand({
+          cmd,
           cwd: tempDir,
           env: { ...process.env },
-        })
-          .then((result) => ({ ...result, code: 0 }))
-          .catch((error) => {
-            const execError = error as {
-              stdout?: string;
-              stderr?: string;
-              code?: number;
-            };
-            // allowlist non-zero-exit exec errors (they carry a numeric `code`); rethrow
-            // every other error so a real fault surfaces loud, not hidden (rule.forbid.failhide)
-            if (typeof execError.code !== 'number') throw error;
-            return {
-              stdout: execError.stdout ?? '',
-              stderr: execError.stderr ?? '',
-              code: execError.code,
-            };
-          });
+        });
 
         return { cli };
       });
@@ -331,7 +318,7 @@ describe('review.optional-rules.acceptance', () => {
           output: outputPath,
           focus: 'push',
           goal: 'representative',
-          brain: 'fireworks/deepseek/v4-flash',
+          brain: 'openrouter/deepseek/flash',
           cwd: tempDir,
         });
 
@@ -384,7 +371,7 @@ describe('review.optional-rules.acceptance', () => {
           output: outputPath,
           focus: 'push',
           goal: 'representative',
-          brain: 'fireworks/deepseek/v4-flash',
+          brain: 'openrouter/deepseek/flash',
           cwd: tempDir,
         });
 

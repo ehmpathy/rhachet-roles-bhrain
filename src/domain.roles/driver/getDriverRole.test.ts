@@ -77,4 +77,15 @@ describe('getDriverRole', () => {
       });
     });
   });
+
+  given('[case3] the keyrack manifest', () => {
+    when('[t0] the driver role keyrack is inspected', () => {
+      then('it points at the keyrack.yml beside the role', () => {
+        // a driver-only repo learns its peer-review key from this wire
+        expect(ROLE_DRIVER.keyrack?.uri).toEqual(
+          path.join(__dirname, 'keyrack.yml'),
+        );
+      });
+    });
+  });
 });

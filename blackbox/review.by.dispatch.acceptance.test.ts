@@ -109,7 +109,7 @@ describe('review.by.dispatch.acceptance', () => {
           const cli = await invokeReviewByViaRhx({
             targetRole: DEMO_ROLE,
             paths: 'src/clean.ts',
-            brain: 'fireworks/deepseek/v4-flash',
+            brain: 'openrouter/deepseek/flash',
             cwd,
           });
           return { cli };

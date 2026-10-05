@@ -12,7 +12,7 @@ describe('getReviewTacticFromContent', () => {
 └─ tallied
    ├─ 0 blockers
    ├─ 1 nitpick
-   └─ ${TALLIED_FOOTER_PREFIX}fireworks/deepseek/v4-flash`;
+   └─ ${TALLIED_FOOTER_PREFIX}openrouter/deepseek/flash`;
 
     when('[t0] parsed', () => {
       then('recovers probabilistic (a sub-brain tallied it)', () => {

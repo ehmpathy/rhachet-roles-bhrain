@@ -43,7 +43,7 @@ describe('review.acceptance', () => {
           output: outputPath,
           focus: 'push',
           goal: 'representative',
-          brain: 'fireworks/deepseek/v4-flash',
+          brain: 'openrouter/deepseek/flash',
           cwd: tempDir,
         });
 

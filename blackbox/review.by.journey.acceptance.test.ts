@@ -41,7 +41,7 @@ describe('review.by.journey.acceptance', () => {
         const dirty = await invokeReviewBySkill({
           role: DEMO_ROLE,
           paths: 'src/dirty.ts',
-          brain: 'fireworks/deepseek/v4-flash',
+          brain: 'openrouter/deepseek/flash',
           cwd,
         });
 
@@ -55,7 +55,7 @@ describe('review.by.journey.acceptance', () => {
         const clean = await invokeReviewBySkill({
           role: DEMO_ROLE,
           paths: 'src/dirty.ts',
-          brain: 'fireworks/deepseek/v4-flash',
+          brain: 'openrouter/deepseek/flash',
           cwd,
         });
 

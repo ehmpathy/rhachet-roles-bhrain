@@ -25,7 +25,7 @@ exports[`review.by.acceptance given: [case2] valid role, code violates a rubric 
 
 exports[`review.by.acceptance given: [case3] --for a single valid slug, code is clean → DISINTERMEDIATE when: [t0] review.by --for runs, attempt 1 then: the disintermediated raw-review stdout is stable (full snapshot) 1`] = `
 "🦉 let's review
-   ├─ brain: fireworks/deepseek/v4-flash
+   ├─ brain: openrouter/deepseek/flash
    ├─ focus: push
    └─ scope
       └─ paths: src/clean.ts
@@ -42,7 +42,7 @@ exports[`review.by.acceptance given: [case3] --for a single valid slug, code is 
 
 exports[`review.by.acceptance given: [case3neg] --for a single valid slug, code violates it → DISINTERMEDIATE when: [t0] review.by --for on dirty, attempt 1 then: the disintermediated findings-path stdout is stable (full snapshot) 1`] = `
 "🦉 let's review
-   ├─ brain: fireworks/deepseek/v4-flash
+   ├─ brain: openrouter/deepseek/flash
    ├─ focus: push
    └─ scope
       └─ paths: src/dirty.ts
@@ -81,7 +81,7 @@ exports[`review.by.acceptance given: [case13] rubrics.yml declares a vibe overri
 
 exports[`review.by.acceptance given: [case15] --for one slug, code violates it (the guard shape) when: [t0] single rubric with findings, attempt 1 then: the guard-shape captured stdout is stable (full snapshot) 1`] = `
 "🦉 let's review
-   ├─ brain: fireworks/deepseek/v4-flash
+   ├─ brain: openrouter/deepseek/flash
    ├─ focus: push
    └─ scope
       └─ paths: src/dirty.ts

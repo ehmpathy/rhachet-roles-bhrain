@@ -227,7 +227,7 @@ exports[`formatRouteStoneEmit given: [case5b] guarded stone, a review tallied by
    │  │       ├─ rejected 1.5s
    │  │       ├─ 0 blockers ✓
    │  │       ├─ 1 nitpick 🟠
-   │  │       ├─ tallied by reviewer@fireworks/deepseek/v4-flash
+   │  │       ├─ tallied by reviewer@openrouter/deepseek/flash
    │  │       └─ given: review.md
    │  └─ judges
    │      └─ j1: judge cmd

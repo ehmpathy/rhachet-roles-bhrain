@@ -9,16 +9,18 @@ import type { ReviewerReflectManifest } from '@src/domain.objects/Reviewer/Revie
 import { setupSourceRepo, setupTargetDir } from './.test/setup';
 import { stepReflect } from './stepReflect';
 
-describe('stepReflect.casePriorRules.deepseek-v4-flash', () => {
+describe('stepReflect.casePriorRules.deepseek-flash', () => {
   // increase timeout for brain invocations (5 minutes)
   jest.setTimeout(300000);
 
   const brainScene = useBeforeAll(async () => ({
-    brain: genTestBrainContext({ brain: 'fireworks/deepseek/v4-flash' }),
+    brain: genTestBrainContext({ brain: 'openrouter/deepseek/flash' }),
   }));
 
   given('[case1] target with prior rule (explicit brain arg)', () => {
     // track cleanup paths outside useThen to avoid deferred proxy issues
+    // .note = deliberate mutation: the useThen block fills these paths once, so afterAll can
+    //         remove the dirs it made; a useThen proxy cannot be read from afterAll
     const cleanup: { sourceDir?: string; targetDir?: string } = {};
     afterAll(async () => {
       if (cleanup.sourceDir)
@@ -49,7 +51,7 @@ describe('stepReflect.casePriorRules.deepseek-v4-flash', () => {
           'utf-8',
         );
 
-        // run stepReflect with fireworks brain
+        // run stepReflect with openrouter brain
         const result = await stepReflect(
           {
             source: sourceDir,

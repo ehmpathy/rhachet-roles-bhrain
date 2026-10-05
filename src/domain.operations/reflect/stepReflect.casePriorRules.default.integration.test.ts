@@ -20,7 +20,7 @@ describe('stepReflect.casePriorRules.default', () => {
   }));
 
   given(
-    '[case1] target with prior rule (default brain = fireworks/deepseek)',
+    '[case1] target with prior rule (default brain = openrouter/deepseek)',
     () => {
       const scene = useBeforeAll(async () => {
         const { repoDir: sourceDir } =
@@ -35,7 +35,7 @@ describe('stepReflect.casePriorRules.default', () => {
           'utf-8',
         );
 
-        // use default brain (fireworks/deepseek/v4-flash)
+        // use default brain (openrouter/deepseek/flash)
         const result = await stepReflect(
           {
             source: sourceDir,

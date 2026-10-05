@@ -10,7 +10,7 @@ describe('getReviewCountsViaRegex', () => {
 │  │  🪨 run solid skill repo=bhrain/role=reviewer/skill=review
 │  │
 │  │  🦉 let's review
-│  │     ├─ brain: fireworks/deepseek/v4-flash
+│  │     ├─ brain: openrouter/deepseek/flash
 │  │     ├─ focus: push
 │  │     └─ scope
 │  │        ├─ diffs: since-main

@@ -84,7 +84,7 @@ describe('review.by.wrapper.acceptance', () => {
           const cli = await invokeReviewByWrapper({
             role: DEMO_ROLE,
             paths: 'src/clean.ts',
-            brain: 'fireworks/deepseek/v4-flash',
+            brain: 'openrouter/deepseek/flash',
             cwd,
           });
           return { cli };

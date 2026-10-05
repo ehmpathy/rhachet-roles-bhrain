@@ -18,21 +18,21 @@ const ASSETS_PROSE = path.join(
   '.test/assets/example.repo/prose-author',
 );
 
-describe('stepReview.caseBrain.deepseek-v4-flash.case2', () => {
+describe('stepReview.caseBrain.deepseek-flash.case2', () => {
   // increase timeout for brain invocations (3 minutes)
   jest.setTimeout(180000);
 
   const scene = useBeforeAll(async () => ({
-    brain: genTestBrainContext({ brain: 'fireworks/deepseek/v4-flash' }),
+    brain: genTestBrainContext({ brain: 'openrouter/deepseek/flash' }),
   }));
 
-  given('[case1] multiple chapters with fireworks/deepseek/v4-flash', () => {
+  given('[case1] multiple chapters with openrouter/deepseek/flash', () => {
     when.repeatably(REPEATABLY_CONFIG)(
       '[t0] stepReview on all chapters',
       () => {
         const outputPath = path.join(
           os.tmpdir(),
-          'review-deepseek-v4-flash-multi.md',
+          'review-deepseek-flash-multi.md',
         );
         afterAll(async () => fs.rm(outputPath, { force: true }));
 
@@ -52,7 +52,7 @@ describe('stepReview.caseBrain.deepseek-v4-flash.case2', () => {
 
           // log output for observability
           logOutputHead({
-            label: 'deepseek-v4-flash.multi.review',
+            label: 'deepseek-flash.multi.review',
             output: res.review.formatted,
           });
 

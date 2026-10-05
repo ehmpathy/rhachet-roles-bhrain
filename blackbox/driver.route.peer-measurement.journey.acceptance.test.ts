@@ -24,7 +24,7 @@ const ASSETS_DIR = path.join(__dirname, '.test/assets/route-peer-measurement');
  *         acceptance journeys are deterministic (no real-brain non-determinism — see
  *         reflect.journey.acceptance.test.ts). the PROBABILISTIC tactic + its `tallied by
  *         reviewer@$brain` marker are exhaustively covered at the integration level
- *         (getReviewCountsViaBrain.caseBrain.deepseek-v4-flash.integration.test.ts,
+ *         (getReviewCountsViaBrain.caseBrain.deepseek-flash.integration.test.ts,
  *         getReviewCounts.integration.test.ts — real brain, when.repeatably) and the marker's
  *         pass-path render is locked in formatRouteStoneEmit.test.ts. a deterministic reviewer
  *         correctly shows NO marker; the cache re-run proves that recovery stays deterministic.

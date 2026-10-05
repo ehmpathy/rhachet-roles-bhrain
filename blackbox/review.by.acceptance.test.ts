@@ -390,7 +390,7 @@ describe('review.by.acceptance', () => {
           const cli = await invokeReviewBySkill({
             role: DEMO_ROLE,
             paths: 'src/clean.ts',
-            brain: 'fireworks/deepseek/v4-flash',
+            brain: 'openrouter/deepseek/flash',
             cwd,
           });
           return { cli };
@@ -442,7 +442,7 @@ describe('review.by.acceptance', () => {
           const cli = await invokeReviewBySkill({
             role: DEMO_ROLE,
             paths: 'src/dirty.ts',
-            brain: 'fireworks/deepseek/v4-flash',
+            brain: 'openrouter/deepseek/flash',
             cwd,
           });
           return { cli };
@@ -488,7 +488,7 @@ describe('review.by.acceptance', () => {
           role: DEMO_ROLE,
           for: 'demo-arrow-only',
           paths: 'src/clean.ts',
-          brain: 'fireworks/deepseek/v4-flash',
+          brain: 'openrouter/deepseek/flash',
           cwd,
         });
         return { cli };
@@ -532,7 +532,7 @@ describe('review.by.acceptance', () => {
           role: DEMO_ROLE,
           for: 'demo-arrow-only',
           paths: 'src/dirty.ts',
-          brain: 'fireworks/deepseek/v4-flash',
+          brain: 'openrouter/deepseek/flash',
           cwd,
         });
         return { cli };
@@ -595,7 +595,7 @@ describe('review.by.acceptance', () => {
             role: DEMO_ROLE,
             for: 'r-one',
             paths: 'src/clean.ts',
-            brain: 'fireworks/deepseek/v4-flash',
+            brain: 'openrouter/deepseek/flash',
             cwd,
           });
           const outOne = await readRubricOutput({
@@ -636,7 +636,7 @@ describe('review.by.acceptance', () => {
         const cli = await invokeReviewBySkill({
           role: DEMO_ROLE,
           paths: 'src/clean.ts',
-          brain: 'fireworks/deepseek/v4-flash',
+          brain: 'openrouter/deepseek/flash',
           cwd,
         });
         const out = await readRubricOutput({
@@ -687,7 +687,7 @@ describe('review.by.acceptance', () => {
           const cli = await invokeReviewBySkill({
             role: DEMO_ROLE,
             paths: 'src/clean.ts',
-            brain: 'fireworks/deepseek/v4-flash',
+            brain: 'openrouter/deepseek/flash',
             cwd,
           });
           return { cli };
@@ -737,7 +737,7 @@ describe('review.by.acceptance', () => {
           const cli = await invokeReviewBySkill({
             role: DEMO_ROLE,
             paths: 'src/clean.ts',
-            brain: 'fireworks/deepseek/v4-flash',
+            brain: 'openrouter/deepseek/flash',
             cwd,
           });
           return { cli };
@@ -763,7 +763,7 @@ describe('review.by.acceptance', () => {
             role: DEMO_ROLE,
             for: 'demo-arrow-only',
             paths: 'src/dirty.ts',
-            brain: 'fireworks/deepseek/v4-flash',
+            brain: 'openrouter/deepseek/flash',
             cwd,
           });
           return { cli };
@@ -862,7 +862,7 @@ rubrics:
         const cli = await invokeReviewBySkill({
           role: DEMO_ROLE,
           paths: 'src/clean.ts',
-          brain: 'fireworks/deepseek/v4-flash',
+          brain: 'openrouter/deepseek/flash',
           cwd,
         });
         return { cli };
@@ -916,7 +916,7 @@ rubrics:
           const cli = await invokeReviewBySkill({
             role: 'mechanic',
             paths: 'src/clean.ts',
-            brain: 'fireworks/deepseek/v4-flash',
+            brain: 'openrouter/deepseek/flash',
             cwd,
           });
           return { cli };
@@ -970,7 +970,7 @@ rubrics:
           const cli = await invokeReviewBySkill({
             role: 'behaver',
             paths: 'src/clean.ts',
-            brain: 'fireworks/deepseek/v4-flash',
+            brain: 'openrouter/deepseek/flash',
             cwd,
           });
           return { cli };

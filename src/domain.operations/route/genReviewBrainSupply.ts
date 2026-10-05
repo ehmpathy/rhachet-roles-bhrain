@@ -1,13 +1,16 @@
 import type { BrainChoice, ContextBrain } from 'rhachet';
 
+import { DEFAULT_REVIEW_BRAIN } from '@src/domain.operations/review/DEFAULT_REVIEW_BRAIN';
+
 /**
  * .what = the fixed sub-brain used to tally a review whose verdict is not numeric
- * .why = the wish names fireworks/deepseek/v4-flash: cheap, fast, and effective on the tiny
+ * .why = the wish names openrouter/deepseek/flash: cheap, fast, and effective on the tiny
  *        extraction task. it is NOT configurable per route/guard — one default, kept simple.
- *        declared once here so the cli builder, the render, and the persisted footer all
- *        reference the same slug (rule.forbid.magic-values).
+ *        named here so the cli builder, the render, and the persisted footer all reference the
+ *        same slug; its value is the review default, declared once (rule.forbid.magic-values).
+ * .note = a tier slug, not a pinned model — see DEFAULT_REVIEW_BRAIN's .note
  */
-export const FIXED_FALLBACK_BRAIN = 'fireworks/deepseek/v4-flash';
+export const FIXED_FALLBACK_BRAIN = DEFAULT_REVIEW_BRAIN;
 
 /**
  * .what = a lazy supplier of the review-tally sub-brain, threaded through the guard chain

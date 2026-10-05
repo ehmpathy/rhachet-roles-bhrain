@@ -90,7 +90,7 @@ describe('review.gitignore-subjects.acceptance', () => {
             paths: 'src/**/*.ts',
             focus: 'push',
             goal: 'representative',
-            brain: 'fireworks/deepseek/v4-flash',
+            brain: 'openrouter/deepseek/flash',
             cwd: tempDir,
           });
 

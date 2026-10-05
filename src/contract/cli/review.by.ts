@@ -1,5 +1,4 @@
-import { BadRequestError } from 'helpful-errors';
-
+import { DEFAULT_REVIEW_BRAIN } from '@src/domain.operations/review/DEFAULT_REVIEW_BRAIN';
 import { asReviewBodyStdout } from '@src/domain.operations/review.by/asReviewBodyStdout';
 import { genReviewBodyStreamer } from '@src/domain.operations/review.by/genReviewBodyStreamer';
 import { genReviewByRubricStreamer } from '@src/domain.operations/review.by/genReviewByRubricStreamer';
@@ -9,14 +8,8 @@ import {
   FIXED_FALLBACK_BRAIN,
   genReviewBrainSupply,
 } from '@src/domain.operations/route/genReviewBrainSupply';
-
-/**
- * .what = the review.by default brain when --brain is omitted
- * .why = the vision fixes review.by's default to fireworks/deepseek/v4-flash. we apply it
- *        explicitly here so the contract holds even if the review skill's own default ever
- *        changes — the default is honored by review.by, not by coincidence.
- */
-const DEFAULT_REVIEW_BRAIN = 'fireworks/deepseek/v4-flash';
+import { asConstraintRefusalText } from '@src/utils/asConstraintRefusalText';
+import { isCallerConstraintError } from '@src/utils/isCallerConstraintError';
 
 /**
  * .what = detects if node was invoked via `node -e "code"` (eval mode)
@@ -331,10 +324,11 @@ export const reviewBy = async (): Promise<void> => {
   } catch (error) {
     // only the caller-fixable config/validation errors are handled here (role/yml absent,
     // duplicate slug, bad --for, malformed yaml). the blackbox criteria fix every error case
-    // to exit 1, so a BadRequestError prints to stderr + exits 1. any OTHER error is an
+    // to exit 1, so a caller-fixable refusal prints to stderr + exits 1 — also one thrown from a
+    // dependency's helpful-errors copy (e.g. keyrack's absent-key refusal). any OTHER error is an
     // unexpected defect — rethrow it so its full stack surfaces (rule.forbid.failhide).
-    if (error instanceof BadRequestError) {
-      console.error(`\n✋ ${error.message}`);
+    if (isCallerConstraintError(error)) {
+      console.error(`\n${asConstraintRefusalText({ message: error.message })}`);
       process.exit(1);
     }
     throw error;

@@ -1,4 +1,3 @@
-import type { BrainChoice, ContextBrain } from 'rhachet';
 import { given, then, useThen, when } from 'test-fns';
 
 import {
@@ -9,11 +8,14 @@ import { REPEATABLY_CONFIG } from '@src/.test/infra/repeatably';
 
 import { readFileSync } from 'node:fs';
 import { join } from 'node:path';
-import type { ContextReviewBrainSupply } from '../../genReviewBrainSupply';
+import {
+  type ContextReviewBrainSupply,
+  genReviewBrainSupply,
+} from '../../genReviewBrainSupply';
 import { getReviewCountsViaBrain } from './getReviewCountsViaBrain';
 
 /**
- * .what = boundary tests for the probabilistic tactic against the REAL deepseek-v4-flash brain
+ * .what = boundary tests for the probabilistic tactic against the REAL deepseek-flash brain
  * .why = the deterministic parser cannot read a prose verdict; this leaf must. per
  *        rule.forbid.integration.mocks the tests hit the real model (no mocks), and per
  *        rule.require.repeatable-for-llm-tests every real-brain case is wrapped in
@@ -29,17 +31,16 @@ import { getReviewCountsViaBrain } from './getReviewCountsViaBrain';
 // increase timeout for brain invocations (3 minutes)
 jest.setTimeout(180000);
 
-// a real-brain supplier for the probabilistic path (memoize-on-success, like prod)
-const genRealSupply = (): ContextReviewBrainSupply => {
-  let cached: ContextBrain<BrainChoice> | null = null;
-  return {
-    getReviewBrain: async () => {
-      if (cached) return cached;
-      cached = genTestBrainContext({ brain: DEFAULT_TEST_BRAIN });
-      return cached;
+// a real-brain supplier for the probabilistic path — the shipped supplier, so the test rides
+// the same lazy, memoize-on-success code the guard uses; only the builder is the test one
+const getOneRealSupply = (): ContextReviewBrainSupply =>
+  genReviewBrainSupply(
+    {
+      choice: DEFAULT_TEST_BRAIN,
+      creds: { keyrack: { owner: 'ehmpath', env: 'test' } },
     },
-  };
-};
+    { build: async () => genTestBrainContext({ brain: DEFAULT_TEST_BRAIN }) },
+  );
 
 /**
  * .what = extracts the reviewer's raw stdout body from a persisted guard-review artifact
@@ -47,8 +48,8 @@ const genRealSupply = (): ContextReviewBrainSupply => {
  *        stderr carries the `💥 malfunction` note. the sub-brain must tally the review BODY, not
  *        the wrapper's malfunction verdict — so we strip the wrapper and hand over only the prose.
  */
-const extractReviewBody = (raw: string): string => {
-  const lines = raw.split('\n');
+const extractReviewBody = (input: { raw: string }): string => {
+  const lines = input.raw.split('\n');
   const startIdx = lines.findIndex((l) => l.trim() === '├─ stdout');
   const endIdx = lines.findIndex((l) => l.trim() === '├─ stderr');
   return lines
@@ -59,10 +60,13 @@ const extractReviewBody = (raw: string): string => {
     .trim();
 };
 
-const loadFixture = (name: string): string =>
-  extractReviewBody(
-    readFileSync(join(__dirname, '__test_assets__/reviews', name), 'utf-8'),
-  );
+const loadFixture = (input: { name: string }): string =>
+  extractReviewBody({
+    raw: readFileSync(
+      join(__dirname, '__test_assets__/reviews', input.name),
+      'utf-8',
+    ),
+  });
 
 describe('getReviewCountsViaBrain', () => {
   // ── synthetic, unambiguous cases (exact-pinned) ──────────────────────────
@@ -70,7 +74,7 @@ describe('getReviewCountsViaBrain', () => {
   given('[case1] empty content — no verdict at all', () => {
     when.repeatably(REPEATABLY_CONFIG)('[t0] tallied by the real brain', () => {
       const result = useThen('it succeeds', async () =>
-        getReviewCountsViaBrain({ content: '' }, genRealSupply()),
+        getReviewCountsViaBrain({ content: '' }, getOneRealSupply()),
       );
 
       then('it returns detected=false (no fabricated verdict)', () => {
@@ -84,7 +88,7 @@ describe('getReviewCountsViaBrain', () => {
 
     when.repeatably(REPEATABLY_CONFIG)('[t0] tallied by the real brain', () => {
       const result = useThen('it succeeds', async () =>
-        getReviewCountsViaBrain({ content }, genRealSupply()),
+        getReviewCountsViaBrain({ content }, getOneRealSupply()),
       );
 
       then('it returns detected=false', () => {
@@ -102,7 +106,7 @@ describe('getReviewCountsViaBrain', () => {
         '[t0] tallied by the real brain',
         () => {
           const result = useThen('it succeeds', async () =>
-            getReviewCountsViaBrain({ content }, genRealSupply()),
+            getReviewCountsViaBrain({ content }, getOneRealSupply()),
           );
 
           then('it returns a DECLARED clean pass (detected=true, 0/0)', () => {
@@ -124,7 +128,7 @@ describe('getReviewCountsViaBrain', () => {
 
     when.repeatably(REPEATABLY_CONFIG)('[t0] tallied by the real brain', () => {
       const result = useThen('it succeeds', async () =>
-        getReviewCountsViaBrain({ content }, genRealSupply()),
+        getReviewCountsViaBrain({ content }, getOneRealSupply()),
       );
 
       then('it returns detected=true with 0 blockers, 0 nitpicks', () => {
@@ -145,7 +149,7 @@ suggestion is advisory only.`;
 
     when.repeatably(REPEATABLY_CONFIG)('[t0] tallied by the real brain', () => {
       const result = useThen('it succeeds', async () =>
-        getReviewCountsViaBrain({ content }, genRealSupply()),
+        getReviewCountsViaBrain({ content }, getOneRealSupply()),
       );
 
       then('it returns 2 blockers, 1 nitpick from the prose', () => {
@@ -166,7 +170,7 @@ final verdict: no outstanding issues. 0 blockers, 0 nitpicks.`;
 
     when.repeatably(REPEATABLY_CONFIG)('[t0] tallied by the real brain', () => {
       const result = useThen('it succeeds', async () =>
-        getReviewCountsViaBrain({ content }, genRealSupply()),
+        getReviewCountsViaBrain({ content }, getOneRealSupply()),
       );
 
       then(
@@ -195,7 +199,7 @@ could be clearer, and one comment is stale. both are optional.`;
         '[t0] tallied by the real brain',
         () => {
           const result = useThen('it succeeds', async () =>
-            getReviewCountsViaBrain({ content }, genRealSupply()),
+            getReviewCountsViaBrain({ content }, getOneRealSupply()),
           );
 
           then(
@@ -235,7 +239,7 @@ could be clearer, and one comment is stale. both are optional.`;
         '[t0] tallied by the real brain',
         () => {
           const result = useThen('it succeeds', async () =>
-            getReviewCountsViaBrain({ content }, genRealSupply()),
+            getReviewCountsViaBrain({ content }, getOneRealSupply()),
           );
 
           then(
@@ -267,7 +271,7 @@ a rollback path. otherwise clean.`;
         '[t0] tallied by the real brain',
         () => {
           const result = useThen('it succeeds', async () =>
-            getReviewCountsViaBrain({ content }, genRealSupply()),
+            getReviewCountsViaBrain({ content }, getOneRealSupply()),
           );
 
           then('the tally comes from the review text (1 blocker)', () => {
@@ -296,13 +300,13 @@ a rollback path. otherwise clean.`;
     given(
       `[real:${fixture}] a real L3 reviewer that malfunctioned on this stone`,
       () => {
-        const content = loadFixture(fixture);
+        const content = loadFixture({ name: fixture });
 
         when.repeatably(REPEATABLY_CONFIG)(
           '[t0] tallied by the real brain',
           () => {
             const result = useThen('it succeeds', async () =>
-              getReviewCountsViaBrain({ content }, genRealSupply()),
+              getReviewCountsViaBrain({ content }, getOneRealSupply()),
             );
 
             then(
