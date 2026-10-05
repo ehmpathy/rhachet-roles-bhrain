@@ -8,6 +8,20 @@ import { keyrack } from 'rhachet/keyrack';
 // eslint-disable-next-line no-undef
 jest.setTimeout(90000); // since we're calling downstream apis
 
+/**
+ * .what = retries a failed test up to twice, at once, and logs each failure before the retry
+ * .why = a live brain varies run to run, so one slow or off ask reds a suite and blocks a release.
+ *        `when.repeatably(SOME)` cannot rescue it: test-fns reports every failed attempt as a failed
+ *        jest test, so one red attempt reds the file (ehmpathy/test-fns#71). a jest-level retry
+ *        absorbs the flake where the failure is counted, and it also covers a jest timeout, which no
+ *        in-test wrapper can catch. measured 2026-10-05: a retried `useThen` re-runs its operation,
+ *        its dependent `then` blocks read the final result, and a retried snapshot keeps its key.
+ *
+ * .note = a retry is never silent: `logErrorsBeforeRetry` prints each failure above its retry.
+ */
+// eslint-disable-next-line no-undef
+jest.retryTimes(2, { logErrorsBeforeRetry: true, retryImmediately: true });
+
 // set console.log to not truncate nested objects
 util.inspect.defaultOptions.depth = 5;
 
