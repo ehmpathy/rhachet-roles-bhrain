@@ -67,6 +67,29 @@ const maskConcernMagnitudes = (text: string): string =>
     );
 
 /**
+ * .what = merges the two APPROVED outcomes of a base review into one stable render
+ * .why = a base review that approves renders one of two ways, by how many nitpicks the brain chose:
+ *
+ *          - none:      `🦉 not even a vole`, then `all good 👍` closes the summary
+ *          - some:      `🦉 just a few hoots`, and the nitpick row closes the summary
+ *
+ *        both are approved, and the judge allows nitpicks up to its threshold, so no verdict here
+ *        turns on which one the brain drew. a snapshot that pins one of them reds the file on the
+ *        other. measured 2026-10-05: `[case-seam-pass-application]` red on `just a few hoots` against
+ *        a baseline of `not even a vole`, with `0 blockers` and `passage = allowed` both intact.
+ *
+ *        the approved CLASS stays pinned by `0 blockers` and the case's own `passage = allowed`
+ *        assertion. a blocker outcome (`🦉 needs your talons`) is left verbatim, since that is the
+ *        verdict class a dirty case declares.
+ *
+ * .note = runs AFTER maskConcernMagnitudes, which turns `0 nitpicks` into `[N] nitpicks`.
+ */
+const maskApprovedOutcome = (text: string): string =>
+  text
+    .replace(/🦉 (?:not even a vole|just a few hoots)/g, '🦉 [APPROVED]')
+    .replace(/^(.*)├─ \[N\] nitpicks\n\1└─ all good 👍$/gm, '$1└─ [N] nitpicks');
+
+/**
  * .what = sanitizes a route.stone.set guard-tree stdout so it snapshots stably
  * .why = the guard tree carries three volatile dimensions: verdict durations (`rejected 109.5s`),
  *        the hash+iteration segment of each peer-artifact path (`.i001.<hash>.r001.`), and the
@@ -175,7 +198,7 @@ const sanitizeCapturedPeerForSnapshot = (artifact: string): string => {
   // ⚠️ a MALFUNCTION's stderr is a separate case and is NOT touched by this: it carries
   //    the cause, so the loop above keeps its `💥 rubric malfunctioned:` header and
   //    collapses only the volatile crash dump to the `[STDERR]` marker.
-  return maskConcernMagnitudes(kept.join('\n').trim());
+  return maskApprovedOutcome(maskConcernMagnitudes(kept.join('\n').trim()));
 };
 
 /**
@@ -321,9 +344,12 @@ const SRC_CLEAN_GENERIC =
   '  input.a + input.b;\n';
 
 // a clean, well-termed domain op — one unambiguous concept per word, so term-application passes.
+// .note = the op returns what its name says. an earlier fixture named `getSurferName` and returned a
+//         `surferId`, a name-versus-id mismatch a term rubric may fairly flag, so a brain graded the
+//         "clean" case dirty on some drives.
 const SRC_CLEAN_TERMS =
-  'export const getSurferName = (input: { surferId: string }): string =>\n' +
-  '  input.surferId;\n';
+  'export const getSurferName = (input: { surfer: { name: string } }): string =>\n' +
+  '  input.surfer.name;\n';
 
 // deliberately term-dirty: ONE concept (a reserved lesson slot) under THREE words, plus one word
 // overloaded across two concepts — so term-application reliably BITES (inconsistency + ambiguity).

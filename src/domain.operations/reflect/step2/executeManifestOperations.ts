@@ -10,6 +10,19 @@ import { ReviewerReflectManifestOperation } from '@src/domain.objects/Reviewer/R
 import { enumFilesFromGlob } from '@src/domain.operations/review/enumFilesFromGlob';
 
 /**
+ * .what = checks whether a file is present on disk
+ * .why = lets an UPDATE find that its target rule is absent before it reads the path
+ */
+const isFileFound = async (input: { path: string }): Promise<boolean> =>
+  fs
+    .access(input.path)
+    .then(() => true)
+    .catch((error: NodeJS.ErrnoException) => {
+      if (error.code === 'ENOENT') return false;
+      throw error;
+    });
+
+/**
  * .what = extracts rule name from a file path
  * .why = enables matching rules by name across different directory structures
  *
@@ -158,6 +171,18 @@ export const executeManifestOperations = async (input: {
         // merge pure rule with target rule
         const targetRulePath = path.join(input.targetDir, entry.targetPath!);
         const syncPath = path.join(input.syncDir, entry.syncPath!);
+
+        // create the pure rule instead, when the brain names a target the target dir does not hold
+        const targetFound = await isFileFound({ path: targetRulePath });
+        if (!targetFound) {
+          await fs.mkdir(path.dirname(syncPath), { recursive: true });
+          await fs.copyFile(purePath, syncPath);
+          input.log.log(
+            `   └─ CREATE: ${entry.syncPath} (UPDATE target absent: ${entry.targetPath})`,
+          );
+          created++;
+          break;
+        }
 
         // read both files
         const pureContent = await fs.readFile(purePath, 'utf-8');

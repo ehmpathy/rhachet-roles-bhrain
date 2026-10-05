@@ -167,6 +167,49 @@ describe('executeManifestOperations', () => {
       expect(syncContent).toContain('old citation');
       expect(syncContent).toContain('new citation');
     });
+
+    // .what = clamps the edge case where a brain names an UPDATE target the target dir does not hold
+    // .why = a live brain asks to UPDATE a rule that is absent from an empty target dir about 1 run in 12.
+    //        the merge read the absent path unchecked and threw ENOENT. the pure rule is created
+    //        instead, since no target exists to merge into
+    it('should create the pure rule when the target rule is absent', async () => {
+      await fs.writeFile(
+        path.join(pureDir, 'rule.require.arrow-functions.md'),
+        '# pure rule',
+        'utf-8',
+      );
+
+      const manifest = new ReviewerReflectManifest({
+        timestamp: '2025-01-01T00:00:00.000Z',
+        pureRules: [
+          {
+            path: 'rule.require.arrow-functions.md',
+            operation: ReviewerReflectManifestOperation.SET_UPDATE,
+            syncPath: 'practices/rule.require.arrow-functions.md',
+            targetPath: 'practices/rule.require.arrow-functions.md',
+          },
+        ],
+      });
+
+      const result = await executeManifestOperations({
+        manifest,
+        pureDir,
+        syncDir,
+        targetDir,
+        log: mockLog,
+      });
+
+      expect(result.created).toBe(1);
+      expect(result.updated).toBe(0);
+      const syncContent = await fs.readFile(
+        path.join(syncDir, 'practices/rule.require.arrow-functions.md'),
+        'utf-8',
+      );
+      expect(syncContent).toBe('# pure rule');
+      expect(mockLog.log).toHaveBeenCalledWith(
+        expect.stringContaining('target absent'),
+      );
+    });
   });
 
   describe('multiple operations', () => {

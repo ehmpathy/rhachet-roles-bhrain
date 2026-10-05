@@ -142,14 +142,13 @@ exports[`review.by.guard-peer.acceptance given: [case-seam-pass-aggregation] gua
 │  │     └─ scope
 │  │        └─ paths: src/**/*.ts
 │  │  
-│  │  🦉 not even a vole
+│  │  🦉 [APPROVED]
 │  │  
 │  │  🔍 review
 │  │     ├─ review: .reviews/by=learner/rubric=term-aggregation.md
 │  │     └─ summary
 │  │        ├─ 0 blockers
-│  │        ├─ [N] nitpicks
-│  │        └─ all good 👍
+│  │        └─ [N] nitpicks
 │  │
 │  └─
 └─ tallied
@@ -203,14 +202,13 @@ exports[`review.by.guard-peer.acceptance given: [case-seam-pass-application] gua
 │  │     └─ scope
 │  │        └─ paths: src/**/*.ts
 │  │  
-│  │  🦉 not even a vole
+│  │  🦉 [APPROVED]
 │  │  
 │  │  🔍 review
 │  │     ├─ review: .reviews/by=learner/rubric=term-application.md
 │  │     └─ summary
 │  │        ├─ 0 blockers
-│  │        ├─ [N] nitpicks
-│  │        └─ all good 👍
+│  │        └─ [N] nitpicks
 │  │
 │  └─
 └─ tallied
