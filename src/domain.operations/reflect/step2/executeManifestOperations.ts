@@ -81,6 +81,43 @@ const inferMissingTargetPaths = async (
 };
 
 /**
+ * .what = reads the trimmed content of every target rule
+ * .why = lets an OMIT prove it is an exact duplicate, the one case the prompt allows it for
+ */
+const getAllTargetRuleContents = async (input: {
+  targetDir: string;
+}): Promise<Set<string>> => {
+  const allTargetRules = await enumFilesFromGlob({
+    glob: ['**/rule.*.md'],
+    cwd: input.targetDir,
+  });
+  const targetRules = allTargetRules.filter((f) => !f.startsWith('.draft/'));
+  const contents = await Promise.all(
+    targetRules.map((rule) =>
+      fs.readFile(path.join(input.targetDir, rule), 'utf-8'),
+    ),
+  );
+  return new Set(contents.map((content) => content.trim()));
+};
+
+/**
+ * .what = checks whether an OMIT names a pure rule that no target rule duplicates
+ * .why = the prompt allows OMIT only for an exact duplicate. any other OMIT drops a real
+ *        proposal, so it is created instead, per the prompt's own "otherwise → SET_CREATE"
+ *
+ * .note = an OMIT whose pure file is absent stays an OMIT, since there is no content to create
+ */
+const isOmitWithoutDuplicate = async (input: {
+  purePath: string;
+  targetRuleContents: Set<string>;
+}): Promise<boolean> => {
+  const pureFound = await isFileFound({ path: input.purePath });
+  if (!pureFound) return false;
+  const pureContent = await fs.readFile(input.purePath, 'utf-8');
+  return !input.targetRuleContents.has(pureContent.trim());
+};
+
+/**
  * .what = validates manifest entries have required fields per operation type
  * .why = fail-fast on malformed model output before executing operations
  */
@@ -142,6 +179,11 @@ export const executeManifestOperations = async (input: {
   // validate all entries upfront - fail fast on malformed model output
   validateManifestEntries(entriesWithInferredPaths);
 
+  // read target rule contents once, so each OMIT can prove it is an exact duplicate
+  const targetRuleContents = await getAllTargetRuleContents({
+    targetDir: input.targetDir,
+  });
+
   let created = 0;
   let updated = 0;
   let appended = 0;
@@ -152,6 +194,23 @@ export const executeManifestOperations = async (input: {
 
     switch (entry.operation) {
       case ReviewerReflectManifestOperation.OMIT: {
+        // create the pure rule instead, when no target rule duplicates it
+        const omitWithoutDuplicate = await isOmitWithoutDuplicate({
+          purePath,
+          targetRuleContents,
+        });
+        if (omitWithoutDuplicate) {
+          const syncPathRelative = path.join('practices', entry.path);
+          const syncPath = path.join(input.syncDir, syncPathRelative);
+          await fs.mkdir(path.dirname(syncPath), { recursive: true });
+          await fs.copyFile(purePath, syncPath);
+          input.log.log(
+            `   └─ CREATE: ${syncPathRelative} (OMIT without a duplicate: ${entry.reason})`,
+          );
+          created++;
+          break;
+        }
+
         input.log.log(`   └─ OMIT: ${entry.path} (${entry.reason})`);
         omitted++;
         break;

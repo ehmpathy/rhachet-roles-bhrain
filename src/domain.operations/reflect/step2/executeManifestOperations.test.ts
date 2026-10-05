@@ -51,6 +51,82 @@ describe('executeManifestOperations', () => {
       expect(result.created).toBe(0);
       expect(mockLog.log).toHaveBeenCalledWith(expect.stringContaining('OMIT'));
     });
+
+    // .what = clamps the edge case where a brain omits a proposal that no target rule duplicates
+    // .why = the prompt allows OMIT only for an exact duplicate, and that is checkable by comparison.
+    //        a live brain omitted all 7 proposals, with reasons like "create new rule", so reflect
+    //        produced no rule. an OMIT with no identical target rule is created instead
+    it('should create the pure rule when an OMIT has no identical target rule', async () => {
+      await fs.writeFile(
+        path.join(pureDir, 'rule.forbid.jargon.md'),
+        '# forbid jargon',
+        'utf-8',
+      );
+
+      const manifest = new ReviewerReflectManifest({
+        timestamp: '2025-01-01T00:00:00.000Z',
+        pureRules: [
+          {
+            path: 'rule.forbid.jargon.md',
+            operation: ReviewerReflectManifestOperation.OMIT,
+            reason:
+              'distinct topic not covered by any target rule; create new rule',
+          },
+        ],
+      });
+
+      const result = await executeManifestOperations({
+        manifest,
+        pureDir,
+        syncDir,
+        targetDir,
+        log: mockLog,
+      });
+
+      expect(result.created).toBe(1);
+      expect(result.omitted).toBe(0);
+      const syncContent = await fs.readFile(
+        path.join(syncDir, 'practices/rule.forbid.jargon.md'),
+        'utf-8',
+      );
+      expect(syncContent).toBe('# forbid jargon');
+    });
+
+    it('should keep the OMIT when a target rule holds identical content', async () => {
+      await fs.writeFile(
+        path.join(pureDir, 'rule.forbid.jargon.md'),
+        '# forbid jargon',
+        'utf-8',
+      );
+      await fs.mkdir(path.join(targetDir, 'practices'), { recursive: true });
+      await fs.writeFile(
+        path.join(targetDir, 'practices/rule.forbid.jargon.md'),
+        '# forbid jargon\n',
+        'utf-8',
+      );
+
+      const manifest = new ReviewerReflectManifest({
+        timestamp: '2025-01-01T00:00:00.000Z',
+        pureRules: [
+          {
+            path: 'rule.forbid.jargon.md',
+            operation: ReviewerReflectManifestOperation.OMIT,
+            reason: 'exact duplicate',
+          },
+        ],
+      });
+
+      const result = await executeManifestOperations({
+        manifest,
+        pureDir,
+        syncDir,
+        targetDir,
+        log: mockLog,
+      });
+
+      expect(result.omitted).toBe(1);
+      expect(result.created).toBe(0);
+    });
   });
 
   describe('SET_CREATE operation', () => {
