@@ -150,7 +150,10 @@
   "pnpm": {
     "onlyBuiltDependencies": [
       "@anthropic-ai/claude-code"
-    ]
+    ],
+    "patchedDependencies": {
+      "test-fns@1.15.7": "patches/test-fns@1.15.7.patch"
+    }
   },
   "packageManager": "pnpm@10.24.0"
 }

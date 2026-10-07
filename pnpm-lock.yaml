@@ -4,6 +4,11 @@ settings:
   autoInstallPeers: true
   excludeLinksFromLockfile: false
 
+patchedDependencies:
+  test-fns@1.15.7:
+    hash: 091799259f3d50b2f490685757d70addf36a9041c459cc0c7a67fabf637e40d9
+    path: patches/test-fns@1.15.7.patch
+
 importers:
 
   .:
@@ -170,7 +175,7 @@ importers:
         version: 0.1.7(rhachet@1.48.1(zod@4.3.4))
       test-fns:
         specifier: 1.15.7
-        version: 1.15.7
+        version: 1.15.7(patch_hash=091799259f3d50b2f490685757d70addf36a9041c459cc0c7a67fabf637e40d9)
       tsc-alias:
         specifier: 1.8.10
         version: 1.8.10
@@ -8397,7 +8402,7 @@ snapshots:
       expect: 29.4.2
       flat: 5.0.2
       helpful-errors: 1.7.3
-      test-fns: 1.15.7
+      test-fns: 1.15.7(patch_hash=091799259f3d50b2f490685757d70addf36a9041c459cc0c7a67fabf637e40d9)
       yaml: 2.8.2
 
   declapract@0.13.27:
@@ -10820,7 +10825,7 @@ snapshots:
       - declastruct-aws
       - zod
 
-  test-fns@1.15.7:
+  test-fns@1.15.7(patch_hash=091799259f3d50b2f490685757d70addf36a9041c459cc0c7a67fabf637e40d9):
     dependencies:
       domain-objects: 0.31.9
       helpful-errors: 1.5.3

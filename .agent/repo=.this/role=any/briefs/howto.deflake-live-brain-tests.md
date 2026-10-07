@@ -16,19 +16,28 @@ jest.retryTimes(2, { logErrorsBeforeRetry: true, retryImmediately: true });
 a failed test re-runs up to twice. one pass absorbs the earlier failures, and each failure prints above
 its retry, so a rescued flake stays visible.
 
-## .why `when.repeatably(SOME)` is not the lever
+## .the second lever — `when.repeatably(SOME)`, patched
 
-test-fns reports every failed attempt as a failed jest test, so one red attempt reds the file even when
-a later attempt passes. a jest timeout also fires outside any in-test wrapper, so no attempt can catch
-it. measured 2026-10-05, on `openrouter/deepseek/flash`:
+unpatched test-fns@1.15.7 has two holes, and either one reds the file even when a later attempt passes:
 
-| shape | result |
+| hole | why the wrapper misses it |
+|---|---|
+| a `useBeforeAll` setup throws | it runs in a `beforeAll`, so jest fails every test in the attempt |
+| an attempt outlives the jest timeout | the timeout fires outside any try/catch |
+
+measured 2026-10-05, on `openrouter/deepseek/flash`:
+
+| shape | result, unpatched |
 |---|---|
 | `getReviewCountsViaBrain` attempt 1 and 2 timed out at 180s, attempt 3 passed | file red: `2 failed` |
 | `stepReflect.caseProseAuthor` attempt 1 threw `ENOENT`, attempts 2 and 3 passed | file red: `2 failed` |
 
-the mechanism defect is test-fns's, tracked at `ehmpathy/test-fns#71`. a jest-level retry is the
-consumer-side answer until it lands.
+`patches/test-fns@1.15.7.patch` closes both. it races each attempt against the `jest.setTimeout`
+budget less 1s, and a failed setup now fails only its own attempt. the clamp is
+`src/infra/test/repeatablyAbsorbsFailedAttempts.test.ts`: red on the unpatched copy, green on the patch.
+
+🟡 the race needs `jest.setTimeout` to be declared. a config-only `testTimeout` is invisible to it, so
+the attempt runs unraced. drop the patch once `ehmpathy/test-fns#71` ships a fix.
 
 ## .what a retry keeps
 
@@ -52,7 +61,8 @@ measured with a throwaway suite, then removed:
 | a live-brain test reds once and passes on rerun | find which shape it is. a rerun is the symptom, never the repair |
 | a snapshot diff shows a phrase, not a count | mask the phrase in the sanitizer |
 | a `clean` fixture draws a blocker | read the fixture. a `clean` case must be clean on its face |
-| you reach for `attempts` or `criteria` | stop. neither absorbs a failure |
+| you raise `attempts` to beat a flake | it absorbs only with the patch in place, and only within a `jest.setTimeout` budget |
+| you upgrade test-fns | check `ehmpathy/test-fns#71`; a version bump orphans the patch and pnpm install fails loud |
 
 ## .see also
 
