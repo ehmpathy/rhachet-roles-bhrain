@@ -1,19 +1,20 @@
 import * as fs from 'fs/promises';
 import * as path from 'path';
-import { given, then, useBeforeAll, when } from 'test-fns';
+import { given, then, useBeforeAll, useThen, when } from 'test-fns';
 
 import {
   DEFAULT_TEST_BRAIN,
   genTestBrainContext,
 } from '@src/.test/genTestBrainContext';
+import { REPEATABLY_CONFIG } from '@src/.test/infra/repeatably';
 import type { ReviewerReflectManifest } from '@src/domain.objects/Reviewer/ReviewerReflectManifest';
 
 import { setupSourceRepo, setupTargetDir } from './.test/setup';
 import { stepReflect } from './stepReflect';
 
 describe('stepReflect.casePriorRules.default', () => {
-  // increase timeout for brain invocations (3 minutes)
-  jest.setTimeout(180000);
+  // increase timeout for brain invocations (5 minutes)
+  jest.setTimeout(300000);
 
   const brainScene = useBeforeAll(async () => ({
     brain: genTestBrainContext({ brain: DEFAULT_TEST_BRAIN }),
@@ -22,72 +23,92 @@ describe('stepReflect.casePriorRules.default', () => {
   given(
     '[case1] target with prior rule (default brain = openrouter/deepseek)',
     () => {
-      const scene = useBeforeAll(async () => {
-        const { repoDir: sourceDir } =
-          await setupSourceRepo('typescript-quality');
-        const { targetDir } = await setupTargetDir();
-
-        // add prior rule that matches feedback topic (arrow functions mentioned in v1 and v3)
-        await fs.mkdir(path.join(targetDir, 'practices'), { recursive: true });
-        await fs.writeFile(
-          path.join(targetDir, 'practices/rule.require.arrow-functions.md'),
-          '# require arrow functions\n\nuse arrow functions instead of function keyword',
-          'utf-8',
-        );
-
-        // use default brain (openrouter/deepseek/flash)
-        const result = await stepReflect(
-          {
-            source: sourceDir,
-            target: targetDir,
-            mode: 'push',
-          },
-          { brain: brainScene.brain },
-        );
-
-        return { sourceDir, targetDir, result };
-      });
+      // track cleanup paths outside useThen to avoid deferred proxy issues
+      // .note = deliberate mutation: the useThen block fills these paths once, so afterAll can
+      //         remove the dirs it made; a useThen proxy cannot be read from afterAll
+      const cleanup: { sourceDir?: string; targetDir?: string } = {};
       afterAll(async () => {
-        await fs.rm(scene.sourceDir, { recursive: true, force: true });
-        await fs.rm(scene.targetDir, { recursive: true, force: true });
+        if (cleanup.sourceDir)
+          await fs.rm(cleanup.sourceDir, { recursive: true, force: true });
+        if (cleanup.targetDir)
+          await fs.rm(cleanup.targetDir, { recursive: true, force: true });
       });
 
-      when('[t0] stepReflect completes with default brain', () => {
-        then('manifest includes operations for all pure rules', async () => {
-          const manifestPath = path.join(
-            scene.result.draft.dir,
-            'manifest.json',
-          );
-          const manifestContent = await fs.readFile(manifestPath, 'utf-8');
-          const manifest: ReviewerReflectManifest = JSON.parse(manifestContent);
+      when.repeatably(REPEATABLY_CONFIG)(
+        '[t0] stepReflect completes with default brain',
+        () => {
+          // single brain call per attempt, result shared across assertions
+          const scene = useThen('stepReflect succeeds', async () => {
+            // setup source and target
+            const { repoDir: sourceDir } =
+              await setupSourceRepo('typescript-quality');
+            const { targetDir } = await setupTargetDir();
 
-          expect(manifest.pureRules.length).toBeGreaterThan(0);
-        });
+            // track for cleanup
+            cleanup.sourceDir = sourceDir;
+            cleanup.targetDir = targetDir;
 
-        then('produces at least one rule', async () => {
-          const totalRules =
-            scene.result.results.created +
-            scene.result.results.updated +
-            scene.result.results.appended;
-          expect(totalRules).toBeGreaterThanOrEqual(1);
-        });
+            // add prior rule that matches feedback topic (arrow functions mentioned in v1 and v3)
+            await fs.mkdir(path.join(targetDir, 'practices'), {
+              recursive: true,
+            });
+            await fs.writeFile(
+              path.join(targetDir, 'practices/rule.require.arrow-functions.md'),
+              '# require arrow functions\n\nuse arrow functions instead of function keyword',
+              'utf-8',
+            );
 
-        then('total operations equals pure rules count', async () => {
-          const manifestPath = path.join(
-            scene.result.draft.dir,
-            'manifest.json',
-          );
-          const manifestContent = await fs.readFile(manifestPath, 'utf-8');
-          const manifest: ReviewerReflectManifest = JSON.parse(manifestContent);
+            // run stepReflect with the default brain
+            const result = await stepReflect(
+              {
+                source: sourceDir,
+                target: targetDir,
+                mode: 'push',
+              },
+              { brain: brainScene.brain },
+            );
 
-          const totalOps =
-            scene.result.results.created +
-            scene.result.results.updated +
-            scene.result.results.appended +
-            scene.result.results.omitted;
-          expect(totalOps).toEqual(manifest.pureRules.length);
-        });
-      });
+            return { sourceDir, targetDir, result };
+          });
+
+          then('manifest includes operations for all pure rules', async () => {
+            const manifestPath = path.join(
+              scene.result.draft.dir,
+              'manifest.json',
+            );
+            const manifestContent = await fs.readFile(manifestPath, 'utf-8');
+            const manifest: ReviewerReflectManifest =
+              JSON.parse(manifestContent);
+
+            expect(manifest.pureRules.length).toBeGreaterThan(0);
+          });
+
+          then('produces at least one rule', async () => {
+            const totalRules =
+              scene.result.results.created +
+              scene.result.results.updated +
+              scene.result.results.appended;
+            expect(totalRules).toBeGreaterThanOrEqual(1);
+          });
+
+          then('total operations equals pure rules count', async () => {
+            const manifestPath = path.join(
+              scene.result.draft.dir,
+              'manifest.json',
+            );
+            const manifestContent = await fs.readFile(manifestPath, 'utf-8');
+            const manifest: ReviewerReflectManifest =
+              JSON.parse(manifestContent);
+
+            const totalOps =
+              scene.result.results.created +
+              scene.result.results.updated +
+              scene.result.results.appended +
+              scene.result.results.omitted;
+            expect(totalOps).toEqual(manifest.pureRules.length);
+          });
+        },
+      );
     },
   );
 });
