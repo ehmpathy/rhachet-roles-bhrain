@@ -79,6 +79,22 @@ exports[`review.failfast-flags.acceptance given: [case7] --brain names a slug no
 🦉 woah there
 
 ✋ ConstraintError: brain 'ghost/model/tier' is not registered
+   ├─ known
+   │  ├─ anthropic/claude/haiku
+   │  ├─ anthropic/claude/sonnet
+   │  ├─ anthropic/claude/opus
+   │  ├─ openrouter/deepseek/pro
+   │  ├─ openrouter/deepseek/flash
+   │  ├─ openrouter/moonshotai/pro
+   │  ├─ openrouter/z-ai/pro
+   │  ├─ openrouter/z-ai/flash
+   │  ├─ openrouter/deepseek/flash/floor&speed=min50tps&privacy=full
+   │  ├─ openai/gpt/4o
+   │  ├─ anthropic/claude/code
+   │  ├─ anthropic/claude/code/haiku
+   │  ├─ anthropic/claude/code/sonnet
+   │  ├─ anthropic/claude/code/opus
+   │  └─ openai/codex
    └─ fix: a brain registers only when its provider's package is installed and its key is unlocked; unlock the key via \`rhx keyrack unlock --owner ehmpath --env prep\`, or pass \`--brain\` with a provider whose key you hold
 
 ✨ did you know?
@@ -104,6 +120,22 @@ exports[`review.failfast-flags.acceptance given: [case9] a flag form or token th
 🦉 woah there
 
 ✋ ConstraintError: brain 'ghost/model/tier' is not registered
+   ├─ known
+   │  ├─ anthropic/claude/haiku
+   │  ├─ anthropic/claude/sonnet
+   │  ├─ anthropic/claude/opus
+   │  ├─ openrouter/deepseek/pro
+   │  ├─ openrouter/deepseek/flash
+   │  ├─ openrouter/moonshotai/pro
+   │  ├─ openrouter/z-ai/pro
+   │  ├─ openrouter/z-ai/flash
+   │  ├─ openrouter/deepseek/flash/floor&speed=min50tps&privacy=full
+   │  ├─ openai/gpt/4o
+   │  ├─ anthropic/claude/code
+   │  ├─ anthropic/claude/code/haiku
+   │  ├─ anthropic/claude/code/sonnet
+   │  ├─ anthropic/claude/code/opus
+   │  └─ openai/codex
    └─ fix: a brain registers only when its provider's package is installed and its key is unlocked; unlock the key via \`rhx keyrack unlock --owner ehmpath --env prep\`, or pass \`--brain\` with a provider whose key you hold
 
 ✨ did you know?

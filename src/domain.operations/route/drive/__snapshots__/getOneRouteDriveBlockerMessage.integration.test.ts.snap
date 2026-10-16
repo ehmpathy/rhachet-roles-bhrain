@@ -35,7 +35,7 @@ exports[`getOneRouteDriveBlockerMessage given: [case5] malpartitioned, and a cha
       ├─ 1 changed file sits in no partition
       │  └─ src/route/drive/b.ts → route (+ src/route/drive/**)
       └─ repair — run this, then re-arrive
-            rhx route.guard.partition --route .behavior/v2026_01_01.demo --for review --peer @all \\
+         └─ rhx route.guard.partition --route .behavior/v2026_01_01.demo --for review --peer @all \\
               --claim 'src/route/drive/**' --into route \\
               --mode apply
 
