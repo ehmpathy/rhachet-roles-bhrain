@@ -19,6 +19,11 @@ always:
       # counts it needs; the full walk is what a reader fetches when they doubt it — and
       # this file is where the provenance lives, since the source branch is unreachable
       - briefs/rule.forbid.unanswered-exits-from-a-blocker.example=the-28-iteration-stall.md
+      # the worked case behind …via-a-taken-per-point's approved-lane clause: two approved
+      # rounds, five re-raises, zero takens — and the tool's own reply, which said the taken
+      # was unowed. ref because the rule carries the counts; the round-by-round walk and the
+      # verbatim tool reply are what a reader fetches when they doubt the approved-lane hole
+      - briefs/rule.always.converge-with-reviewers.via-a-taken-per-point.example=the-approved-lane-that-re-raised.md
       # the five words of the review conversation — reviewer · given · concern · stance · taken —
       # and the cardinalities between them. ref because it answers a question a driver ASKS
       # ("what is the difference between a stance and a taken?"), which is the dereference case
@@ -52,7 +57,7 @@ always:
       # and the halt arrives unannounced. it names the six define.invariant.review.peer.*
       # laws (ref, above) and points down into each for the depth
       - briefs/howdoes.the-review-gates-you-drive-within.md
-      # 🔴 the WHY under every rule below, promoted from ref on 2026-08-31.
+      # the WHY under every rule below.
       # a rule tells a driver WHAT to do, and cannot tell them what to do in a case
       # it does not enumerate — no rule enumerates every case. so a why held one
       # dereference away is a why they do not have at the edge, and the edge arrives
@@ -65,6 +70,12 @@ always:
       # defer-fulcrums-to-last and the walk-before-you-template rule
       - briefs/define.routes-are-gardened.[philosophy].md
       - briefs/rule.always.drive-autonomously.md
+      # no workarounds — fix every failure at its root cause, and treat any friction in a
+      # tool you build as a critical defect fixed in the round it surfaced. say-level
+      # because it must fire AT the moment a patch to the input looks cheaper than a fix to
+      # the tool; that moment recurs every round, and each patch is locally sane, so a rule
+      # fetched on demand is never fetched — the cost shows only in sum, as hours
+      - briefs/rule.forbid.workarounds.md
       - briefs/rule.always.converge-with-reviewers._.md
       # the zoom-in: the mechanical obligation the loop above imposes. say-level
       # because it fires at each re-arrival, and its absence reads to the reviewer
@@ -110,19 +121,13 @@ always:
       # after the yield is done meets a driver who must cut two thirds of a finished
       # document — a teardown, where the same rule read early is free
       - briefs/rule.always.yield-the-output-not-the-archaeology.md
-      # it carries the overflowed-reviewer recipe as one of its driver-fixable causes.
-      # that recipe had a peer brief of its own until 2026-08-31, written to teach a
-      # driver around a MISCLASSIFICATION — an overflowed reviewer exits 2 and so grades
-      # `constraint` where the taxonomy says `malfunction`. most of what that brief
-      # taught dies with the fix, and what survives is one cause row, so it was
-      # absorbed here rather than kept beside this rule
+      # it carries the overflowed-reviewer recipe as one of its driver-fixable causes:
+      # an overflowed reviewer exits 2 and so grades `constraint` where the taxonomy
+      # says `malfunction` — one cause row here rather than a separate brief
       - briefs/rule.always.diagnose-reviewer-malfunctions.md
-      # the repair/defer pair, and the driver OWNS both. it sat split until 2026-09-07
-      # — the repair half in the achiever, the catch half in the learner — so a driver
-      # booted the CATCH half alone and read the dream as the primary move rather than
-      # the fallback both files declare it to be. the act is a route act: a defect
-      # found mid-drive, priced against the diff already open. the achiever and the
-      # learner keep it by symlink, so neither loses it
+      # the repair/defer pair, and the driver OWNS both. the act is a route act: a
+      # defect found mid-drive, priced against the diff already open. the achiever
+      # and the learner keep it by symlink, so neither loses it
       #
       # the REPAIR half. say-level because it fires at the moment a fix is SEEN: a
       # deferral is cheap to make and expensive to reverse, since the comprehension

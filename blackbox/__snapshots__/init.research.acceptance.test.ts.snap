@@ -15,8 +15,10 @@ exports[`init.research given: [case1] empty directory when: [t0] init.research -
    └─ + 5.2.briefs.curate.execute.stone
 
 🔭 reach for the stars,
-   ├─ .research/v<DATE>.consensus-algorithms/0.wish.md
-   └─ tip: use --open to open the wish automatically
+   └─ .research/v<DATE>.consensus-algorithms/0.wish.md
+
+✨ did you know?
+   └─ add --open <opener> to open the wish automatically
 
 ✨ we'll lay the stage,
    ├─ branch <BRANCH> <-> research v<DATE>.consensus-algorithms
@@ -28,8 +30,10 @@ exports[`init.research given: [case2] research already bound when: [t0] init.res
 "🦉 hooda thunk?
 
 🔭 reach for the stars,
-   ├─ .research/v<DATE>.consensus-algorithms/0.wish.md
-   └─ tip: use --open to open the wish automatically
+   └─ .research/v<DATE>.consensus-algorithms/0.wish.md
+
+✨ did you know?
+   └─ add --open <opener> to open the wish automatically
 
 ✨ we'll lay the stage,
    ├─ branch <BRANCH> <-> research v<DATE>.consensus-algorithms

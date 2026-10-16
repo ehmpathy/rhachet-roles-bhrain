@@ -5,7 +5,7 @@ term.kind     = noun
 term.boundary = review        # the set of files ONE review reads
 term.synonyms.forbidden:
 - selection
-- coverage
+- coverage   # already the census's word for its share of the corpus; a scope is a file set, never a share
 - surface
 - corpus
 
@@ -22,17 +22,17 @@ scope: {
 }
 ```
 
-⚠️ **scope is the INPUT set, never the verdict's reach.** a reviewer may only judge what its scope
+scope is the INPUT set, never the verdict's reach. a reviewer may only judge what its scope
 carried; a file outside it was not examined, and an unexamined file is indistinguishable from a
 clean one.
 
-⇒ the scope is **bounded by flags** (`--diffs`, `--paths-with`, `--paths-wout`, `--join`) and
-**reported by artifact** (`input.scope.json`, `input.scope.debug.json`) plus the stderr scope block.
+the scope is bounded by flags (`--diffs`, `--paths-with`, `--paths-wout`, `--join`) and reported
+by artifact (`input.scope.json`, `input.scope.debug.json`) plus the stderr scope block.
 
 ## .refs
 
 where the term composes declared operations and artifacts:
-- src/domain.operations/review/writeInputArtifacts.ts:20   # the declared shape
+- src/domain.operations/review/setInputArtifacts.ts:20   # the declared shape
 - src/domain.operations/review/genReviewInputStdout.ts      # the stderr scope block
 - .log/bhrain/review/$ts/input.scope.json                   # the emitted record
 - .log/bhrain/review/$ts/input.scope.debug.json             # what each glob matched

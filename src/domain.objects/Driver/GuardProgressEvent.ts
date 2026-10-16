@@ -86,7 +86,13 @@ export interface GuardProgressEvent {
        *        it here or the skip is invisible on the one surface a driver watches in real time.
        */
       | { disputed: true; blockers: number; nitpicks: number }
-      | { queued: true }
+      /**
+       * a lane whose level never opened this pass.
+       * .why = `awaits` names the lowest lower level that holds it, so the live tree says the
+       *        same words the persisted guard tree says for the same lane (`awaits l1 terminal`).
+       *        null where no lower level holds it, which renders as `awaits arrival`
+       */
+      | { queued: true; awaits: { level: number } | null }
       | null;
     judge:
       | { decision: 'allowed' | 'blocked'; reason: string | null }

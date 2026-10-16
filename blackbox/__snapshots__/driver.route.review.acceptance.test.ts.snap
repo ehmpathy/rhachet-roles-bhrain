@@ -51,9 +51,11 @@ exports[`driver.route.review.acceptance given: [case4] explicit route without bi
 `;
 
 exports[`driver.route.review.acceptance given: [case5] opener command not found in PATH when: [t0] route.review is invoked with invalid opener then: stderr matches snapshot 1`] = `
-"🦉 look for the light
+"✋ ConstraintError: opener 'nonexistent-editor-xyz' not found in PATH
+
+🦉 look for the light
 
 🗿 route.review
-   └─ ✗ opener 'nonexistent-editor-xyz' not found in PATH
+   └─ fix: install 'nonexistent-editor-xyz', or pass an opener in PATH via --open (vim, code, nvim)
 "
 `;

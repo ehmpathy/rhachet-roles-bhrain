@@ -5,30 +5,21 @@ import {
   DEFAULT_TEST_BRAIN,
   genTestBrainContext,
 } from '@src/.test/genTestBrainContext';
+import { REPEATABLY_CONFIG } from '@src/.test/infra/repeatably';
 
 import { setupSourceRepo, setupTargetDir } from './.test/setup';
 import { stepReflect } from './stepReflect';
-
-/**
- * .what = config for probabilistic tests that invoke LLM brains
- * .why = LLM responses can timeout or vary; retry ensures CI stability
- *
- * @see .agent/repo=.this/role=any/briefs/rule.require.repeatable-for-llm-tests.md
- */
-const REPEATABLE_CONFIG = {
-  attempts: 3,
-  criteria: process.env.CI ? 'SOME' : 'EVERY',
-} as const;
 
 describe('stepReflect.caseProseAuthor', () => {
   // increase timeout for brain invocations (3 minutes)
   jest.setTimeout(180000);
 
   const brainScene = useBeforeAll(async () => ({
-    brain: genTestBrainContext({ brain: DEFAULT_TEST_BRAIN }),
+    brain: await genTestBrainContext({ brain: DEFAULT_TEST_BRAIN }),
   }));
 
-  given.repeatably(REPEATABLE_CONFIG)(
+  // the brain call lives in this given's setup, so the given repeats, not a when
+  given.repeatably(REPEATABLY_CONFIG)(
     '[case1] prose-author feedback with valid target',
     () => {
       const scene = useBeforeAll(async () => {

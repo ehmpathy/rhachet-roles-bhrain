@@ -13,7 +13,7 @@ import { findsertGitignore } from './findsertGitignore';
  */
 export const findsertRouteGitignore = async (input: {
   route: string;
-}): Promise<{ path: string; action: 'created' | 'unchanged' }> =>
+}): Promise<{ path: string; action: 'created' | 'rewrote' | 'unchanged' }> =>
   findsertGitignore({
     dir: path.join(input.route, '.route'),
     content: `# ignore all except passage.jsonl and .bind flags

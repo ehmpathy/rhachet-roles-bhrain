@@ -1,0 +1,30 @@
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
+
+exports[`setRouteGuardPartitions given: [case3] a declaration file that does not parse when: [t0] the declaration is read then: the whole refusal is pinned, route, cause, and fix 1`] = `
+"✋ ConstraintError: the route partition declaration does not parse; re-declare it with rhx route.guard.partition
+
+{
+  "path": "<cwd>/.behavior/v2026_01_01.demo/.route/partitions.json",
+  "fault": "not the shape the tool writes — expected { all: string[] | null, byPeer: Record<string, string[]> }"
+}"
+`;
+
+exports[`setRouteGuardPartitions given: [case4] a declaration file that is not json when: [t0] the declaration is read then: it refuses loud, and carries the parser cause 1`] = `
+"✋ ConstraintError: the route partition declaration does not parse; re-declare it with rhx route.guard.partition
+
+{
+  "path": "<cwd>/.behavior/v2026_01_01.demo/.route/partitions.json",
+  "fault": "not json — Unexpected end of JSON input"
+}"
+`;
+
+exports[`setRouteGuardPartitions given: [case5] a partition widened by a repeated slug when: [t0] the set is written then: the file on disk matches the snapshot 1`] = `
+"{
+  "all": [
+    "route=src/route/**,.behavior/v2026_01_01.demo/**,blackbox/driver.route.*,blackbox/__snapshots__/driver.route.*",
+    "review=src/review/**,.behavior/v2026_01_01.demo/**"
+  ],
+  "byPeer": {}
+}
+"
+`;

@@ -1,4 +1,4 @@
-import type { ExitCodeClass } from '../getExitCodeClass';
+import type { ExitCodeClass } from '@src/domain.objects/Driver/ExitCodeClass';
 
 /**
  * .what = decides whether the judge rung currently holds passage due to a MALFUNCTION

@@ -8,7 +8,7 @@ import { findsertGitignore } from './findsertGitignore';
  */
 export const findsertReviewSelfGitignore = async (input: {
   route: string;
-}): Promise<{ path: string; action: 'created' | 'unchanged' }> =>
+}): Promise<{ path: string; action: 'created' | 'rewrote' | 'unchanged' }> =>
   findsertGitignore({
     dir: path.join(input.route, 'review', 'self'),
     content: `# ignore all self-review files

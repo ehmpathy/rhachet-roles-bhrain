@@ -1,6 +1,7 @@
 import { given, then, when } from 'test-fns';
 
 import { asLogDirNameParts } from './__test_assets__/asLogDirNameParts';
+import { asLogDirMintedAt } from './asLogDirMintedAt';
 import { genLogDirName } from './genLogDirName';
 
 describe('genLogDirName', () => {
@@ -89,6 +90,143 @@ describe('genLogDirName', () => {
         expect(parts.uuid).toMatch(
           /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/,
         );
+      });
+    });
+  });
+
+  given(
+    '[case3] the order contract `--of run` rests its whole answer on',
+    () => {
+      /**
+       * 🔴 .why = `getOneReviewRunMeterLatest` picks "the run that just ran" by a
+       *           LEXICAL sort of these names, and takes the last. that is correct
+       *           only while the iso stamp leads — a silent time assumption with a
+       *           silent failure: a name that does not sort chronologically is
+       *           reported as the newest run, and the command renders one plausible
+       *           row with no signal at all (rule.forbid.behavior-hazards).
+       *
+       *           `[case2]` already pins that the stamp is sortable IN ISOLATION.
+       *           this pins the property the CONSUMER actually depends on — that a
+       *           lexical sort over whole names is a chronological one — so a future
+       *           move of the stamp off the head goes red HERE rather than silently
+       *           re-defines what "latest" means.
+       *
+       * .note = built from a real minted name, with only the stamp substituted. an
+       *         assertion over two hand-written strings would pass even if the
+       *         grammar changed shape entirely
+       */
+      when('[t0] two names differ only in their stamp', () => {
+        const parts = asLogDirNameParts({ name: genLogDirName() });
+        const asNameWithStamp = (stamp: string): string =>
+          `${stamp}.pid${parts.pid}.${parts.uuid}`;
+
+        const earlier = asNameWithStamp('2026-09-21T10-00-00-000Z');
+        const later = asNameWithStamp('2026-09-21T10-00-00-001Z');
+
+        then('🔴 a lexical sort orders them chronologically', () => {
+          expect([later, earlier].sort()).toEqual([earlier, later]);
+        });
+
+        then('the later one is what a `.sort().pop()` picks as latest', () => {
+          // the exact move `getOneReviewRunMeterLatest` makes, asserted against the
+          // real grammar rather than trusted
+          const dirs = [later, earlier].sort();
+          expect(dirs[dirs.length - 1]).toEqual(later);
+        });
+      });
+
+      when('[t1] the stamps cross a date boundary', () => {
+        // the case a non-iso stamp (say `9/21/2026`) would get wrong, and the reason
+        // the format is asserted rather than merely present: a lexical sort over a
+        // human date string orders `10/01` before `9/21`
+        const parts = asLogDirNameParts({ name: genLogDirName() });
+        const asNameWithStamp = (stamp: string): string =>
+          `${stamp}.pid${parts.pid}.${parts.uuid}`;
+
+        const september = asNameWithStamp('2026-09-30T23-59-59-999Z');
+        const october = asNameWithStamp('2026-10-01T00-00-00-000Z');
+
+        then('the later date still sorts last', () => {
+          expect([october, september].sort()).toEqual([september, october]);
+        });
+      });
+    },
+  );
+
+  given('[case4] a name this very generator minted', () => {
+    /**
+     * 🔴 .why = THE anti-drift clamp for `asLogDirMintedAt`, and it has teeth only
+     *           because the input comes from `genLogDirName()` rather than a hand
+     *           string. an un-escape asserted against a literal stays green after
+     *           the MINT changes its escape — which is the exact silent drift
+     *           `SHAPE_OF_LOG_DIR_NAME` was declared beside the mint to forbid.
+     *
+     * ⚠️ the failure this guards is not a throw. a wrong un-escape yields an
+     *    `Invalid Date`, which compares FALSE against every bound — so every
+     *    reader of the stamp would misplace EVERY run in time, with no signal at all.
+     */
+    when('[t0] the instant it encodes is read back', () => {
+      const at = new Date();
+      const name = genLogDirName();
+
+      then('🔴 it round-trips to a REAL date, never an Invalid Date', () => {
+        expect(Number.isNaN(asLogDirMintedAt({ name }).getTime())).toEqual(
+          false,
+        );
+      });
+
+      then('and to the instant it was minted, within a second', () => {
+        // the mint reads its own clock, so an exact equality would race. a second
+        // is far tighter than the 15m cadence the verdict compares against
+        const drift = Math.abs(
+          asLogDirMintedAt({ name }).getTime() - at.getTime(),
+        );
+        expect(drift).toBeLessThan(1_000);
+      });
+
+      then(
+        '🔴 the epoch fallback can never win a `Math.max` as "latest"',
+        () => {
+          // an unreadable name must sort BEFORE every real run, never after. the
+          // alternative — NaN — compares false both ways and is unorderable
+          const unreadable = asLogDirMintedAt({ name: 'zzz-debug' });
+          expect(unreadable.getTime()).toEqual(0);
+          expect(unreadable.getTime()).toBeLessThan(
+            asLogDirMintedAt({ name }).getTime(),
+          );
+        },
+      );
+    });
+
+    when('[t1] two minted names are compared', () => {
+      then('the un-escape preserves the mint`s chronological order', () => {
+        const parts = asLogDirNameParts({ name: genLogDirName() });
+        const asNameWithStamp = (stamp: string): string =>
+          `${stamp}.pid${parts.pid}.${parts.uuid}`;
+
+        const earlier = asLogDirMintedAt({
+          name: asNameWithStamp('2026-09-30T23-59-59-999Z'),
+        });
+        const later = asLogDirMintedAt({
+          name: asNameWithStamp('2026-10-01T00-00-00-000Z'),
+        });
+        expect(later.getTime()).toBeGreaterThan(earlier.getTime());
+      });
+
+      then('a millisecond apart is a millisecond apart', () => {
+        // the `-000Z` → `.000Z` half of the un-escape. get it wrong and every
+        // stamp within one second reads as the same instant
+        const parts = asLogDirNameParts({ name: genLogDirName() });
+        const asNameWithStamp = (stamp: string): string =>
+          `${stamp}.pid${parts.pid}.${parts.uuid}`;
+
+        const first = asLogDirMintedAt({
+          name: asNameWithStamp('2026-09-21T10-00-00-000Z'),
+        });
+        const second = asLogDirMintedAt({
+          name: asNameWithStamp('2026-09-21T10-00-00-001Z'),
+        });
+        expect(second.getTime() - first.getTime()).toEqual(1);
       });
     });
   });

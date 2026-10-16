@@ -1553,7 +1553,7 @@ judges:
       });
 
       then('names the flag, and that it was passed bare', () => {
-        expect(result.stderr).toContain('--into was passed with no value');
+        expect(result.stderr).toContain('--into given with no value');
       });
 
       then('names the FIX — the shape the flag owes', () => {

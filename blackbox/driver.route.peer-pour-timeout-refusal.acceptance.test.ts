@@ -2,6 +2,7 @@ import * as fs from 'fs/promises';
 import * as path from 'path';
 import { given, then, useBeforeAll, useThen, when } from 'test-fns';
 
+import { asExecResultOrThrow } from './.test/asExecResultOrThrow';
 import {
   asChildEnv,
   execAsync,
@@ -63,16 +64,8 @@ const invokeArriveWithEnv = async (input: {
     });
     return { ...result, code: 0 };
   } catch (error) {
-    const execError = error as {
-      stdout?: string;
-      stderr?: string;
-      code?: number;
-    };
-    return {
-      stdout: execError.stdout ?? '',
-      stderr: execError.stderr ?? '',
-      code: execError.code ?? 1,
-    };
+    // a nonzero exit is a skill result; any other fault rethrows (rule.forbid.failhide)
+    return asExecResultOrThrow({ error });
   }
 };
 
@@ -85,7 +78,7 @@ const invokeArriveWithEnv = async (input: {
  *        | reader | reached by | its oracle |
  *        |---|---|---|
  *        | `stepReview.getReviewTimeoutMs` | `rhx review` | `review.timeout-env-refusals.acceptance.test.ts.snap` |
- *        | `getReviewCountsViaBrain.getFallbackTimeoutMs` | the guard's TALLY phase | `driver.route.peer-fallback-timeout-refusal.acceptance.test.ts.snap` |
+ *        | `getOneReviewCountsViaBrain.getFallbackTimeoutMs` | the guard's TALLY phase | `driver.route.peer-fallback-timeout-refusal.acceptance.test.ts.snap` |
  *        | 🔴 `runOneReview.getReviewTimeoutMs` | the guard's POUR phase | **this file** |
  *
  * ⚠️ .why the third was unpinned = it was asserted only at the unit grain, via

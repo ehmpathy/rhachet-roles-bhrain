@@ -3,25 +3,26 @@ import * as os from 'os';
 import * as path from 'path';
 import { given, then, useBeforeAll, useThen, when } from 'test-fns';
 
+import { isErrorOfAbsence } from '@src/utils/fs/isErrorOfAbsence';
+
 import { answerEveryPeerGiven } from '../../__test_assets__/answerEveryPeerGiven';
 import { concedeEveryPeerConcern } from '../../__test_assets__/concedeEveryPeerConcern';
 import { genContextReviewBrainSupplyDemo } from '../../__test_assets__/genContextReviewBrainSupplyDemo';
 import { setStoneAsPassed } from '../../stones/setStoneAsPassed';
-import { isENOENT } from '../isENOENT';
 
 const noopContext = genContextReviewBrainSupplyDemo();
 
 /**
  * .what = checks whether a file is present at the given path
  * .why = stamp assertions need a present/absent check without a throw
- * .note = only ENOENT means absent; rethrow other errors (failfast, no failhide)
+ * .note = only an error of absence means absent; rethrow others (failfast, no failhide)
  */
 const isFilePresent = async (filePath: string): Promise<boolean> => {
   try {
     await fs.access(filePath);
     return true;
   } catch (error) {
-    if (isENOENT(error)) return false;
+    if (isErrorOfAbsence({ error })) return false;
     throw error;
   }
 };

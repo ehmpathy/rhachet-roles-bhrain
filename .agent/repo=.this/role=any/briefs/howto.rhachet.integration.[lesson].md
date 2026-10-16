@@ -13,28 +13,23 @@ rhachet provides agent roles, briefs, and skills that can be shared across repos
 
 ### `npm run build`
 
-runs three steps:
-1. `build:clean` - removes `dist/`
-2. `build:compile` - compiles typescript via `tsc` + `tsc-alias`
-3. `build:complete` - copies non-ts assets to `dist/` via rsync
+runs three top-level commands, all staged in `dist.next/` so `dist/` is never absent mid-build:
+1. `build:clean` - removes a stale `dist.next/`
+2. `build:compile` - compiles typescript via `tsc` + `tsc-alias` into `dist.next/`
+3. `build:complete` - rsyncs non-ts assets into `dist.next/`, swaps it into `dist/` via rename, then writes `rhachet.repo.yml`
+
+each top-level command calls `:`-suffixed sub-commands (`build:clean` → `build:clean:tsc`,
+`build:complete` → `build:complete:dist` · `:swap` · `:repo`, and so on). the per-sub-command
+table, and which of them touch `dist/`, lives in one place:
+`hazard.a-build-wipes-role-links-and-fails-every-hook-closed`. `package.json` is the source both
+read from.
 
 ### `build:complete` rsync
 
-the rsync command selectively copies assets from `src/` to `dist/`:
+the rsync command (`build:complete:dist`) selectively copies assets from `src/` to the stage `dist.next/` (only the rename swap writes `dist/`). its include/exclude list lives in `package.json` alone; in sum:
 
-**includes:**
-- `**/briefs/**/*.md` - markdown briefs
-- `**/skills/**/*.sh` - shell skills
-- `**/skills/**/*.jsonc` - jsonc skill configs
-- `**/skills/**/*.ts` - typescript skills (source files for dynamic execution)
-- `**/*.template.md` - template files
-
-**excludes:**
-- `**/.route/**` - route scratch directories
-- `**/.scratch/**` - scratch directories
-- `**/.behavior/**` - behavior directories
-- `**/*.test.sh` - shell test files
-- `**/*.test.ts` - typescript test files
+- **includes** — whole `briefs/`, `skills/`, `inits/`, and `templates/` trees, plus each `readme.md`, `boot.yml`, and `keyrack.yml`
+- **excludes** — `.test/`, `.route/`, `.scratch/`, `.behavior/`, and every `*.test.*` file
 
 ---
 
@@ -84,12 +79,12 @@ for `.ts` skills:
 
 ### "cannot find module ... skills/.../review.ts"
 
-cause: `.ts` files not included in `build:complete` rsync
+cause: the skill's `.ts` source never reached `dist/`. the include list already grants the whole
+`skills/` tree (`--include='skills/**'`, per the rsync section above), so the source is absent
+only when `dist/` predates the skill, or when that grant was dropped from `build:complete:dist`.
 
-fix: add to `package.json` `build:complete`:
-```
---include='**/skills/**/*.ts' --include='**/skills/*.ts'
-```
+fix: rebuild with `npm run build`. if the `.ts` is still absent, confirm `package.json`
+`build:complete:dist` still carries `--include='skills/**'`.
 
 ### permission denied on `dist/`
 
@@ -132,7 +127,7 @@ dist/                 <- built output
 ## key takeaways
 
 1. **source `.ts` files must be in `dist/`** - rhachet executes skills from `.agent/` symlinks which point to `dist/`
-2. **rsync controls what goes to `dist/`** - update `build:complete` to include new file types
+2. **rsync controls what reaches `dist/`** - it stages into `dist.next/`, which the rename swap makes `dist/`; update `build:complete` to include new file types
 3. **`.agent/` is generated** - don't edit `.agent/` directly; edit `src/` and rebuild
 4. **briefs go in `src/roles/<role>/briefs/`** - will be symlinked via rhachet
 5. **skills go in `src/roles/<role>/skills/<skill>/`** - entrypoint is `<skill>.ts` or `<skill>.sh`

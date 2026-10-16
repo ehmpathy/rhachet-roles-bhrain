@@ -1,0 +1,14 @@
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
+
+exports[`asReviewPartitionSplitLines given: [case1] one declared partition that holds one narrow target when: [t0] the split is announced then: the lines match the snapshot 1`] = `
+"🔍 the whole scope overflows — split into 1 declared partition, poured at once (no file is common to every partition, so no prime)
+   └─ logic: 1 narrow target + 0 common targets
+"
+`;
+
+exports[`asReviewPartitionSplitLines given: [case2] two partitions that share common targets when: [t0] the split is announced then: the lines match the snapshot 1`] = `
+"🔍 the whole scope overflows — split into 2 declared partitions, primed, then poured at once
+   ├─ review: 2 narrow targets + 1 common target
+   └─ route: 1 narrow target + 1 common target
+"
+`;

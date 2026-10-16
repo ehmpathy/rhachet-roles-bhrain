@@ -2,8 +2,8 @@ import { BadRequestError, UnexpectedCodePathError } from 'helpful-errors';
 
 import { formatRouteStoneEmit } from '../formatRouteStoneEmit';
 import { getDecisionIsCallerHuman } from '../getDecisionIsCallerHuman';
-import { getStoneGuardLevelState } from '../guard/review/getStoneGuardLevelState';
-import { getStoneGuardOverruleTarget } from '../guard/review/getStoneGuardOverruleTarget';
+import { getOneStoneGuardLevelState } from '../guard/review/getOneStoneGuardLevelState';
+import { getOneStoneGuardOverruleTarget } from '../guard/review/getOneStoneGuardOverruleTarget';
 import { asRungLabel } from '../guard/review/peer/meter/asRungLabel';
 import { setStoneGuardApproval } from '../judges/setStoneGuardApproval';
 import { setStoneGuardOverrule } from '../judges/setStoneGuardOverrule';
@@ -34,7 +34,7 @@ export const setStoneAsForced = async (
     pattern: input.stone,
   });
   if (!stoneMatched) {
-    throw new BadRequestError('stone not found', { stone: input.stone });
+    throw new BadRequestError(`stone not found: ${input.stone}`);
   }
 
   // check if caller is human
@@ -58,7 +58,7 @@ export const setStoneAsForced = async (
   // .why = force overrules the active level, but only grants approval once the
   //        active level is the terminal level — approval of unseen levels is
   //        illogical (a later level may dramatically change the design)
-  const levelState = await getStoneGuardLevelState({
+  const levelState = await getOneStoneGuardLevelState({
     stone: stoneMatched,
     route: input.route,
   });
@@ -67,7 +67,7 @@ export const setStoneAsForced = async (
   // active level OR an owed feedbackAbsorption gate (an un-overruled in-tolerance blocker that
   // awaits a .taken, design-note B6); a merit-clear stone has no target, so force skips the
   // overrule and grants only its approval below (the false-provenance guard).
-  const { hasTarget, levelToOverrule } = await getStoneGuardOverruleTarget({
+  const { hasTarget, levelToOverrule } = await getOneStoneGuardOverruleTarget({
     stone: stoneMatched,
     route: input.route,
     levelState,

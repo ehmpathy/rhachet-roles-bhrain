@@ -1,0 +1,17 @@
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
+
+exports[`genReviewByRubricStreamer given: [case1] two rubrics poured at once, the second settles first when: [t0] both run to done then: the stream matches the snapshot 1`] = `
+"   │
+   ├─ r1: alpha
+   │   ├─ approved 1.0s
+   │   ├─ 0 blockers ✓
+   │   ├─ 0 nitpicks ✓
+   │   └─ given: .reviews/by=mechanic/rubric=alpha.md
+   │
+   ├─ r2: beta
+   │   ├─ rejected 2.0s
+   │   ├─ 2 blockers 🔴
+   │   ├─ 1 nitpick 🟠
+   │   └─ given: .reviews/by=mechanic/rubric=beta.md
+"
+`;

@@ -16,7 +16,7 @@ describe('stepReflect.caseTypescriptQuality', () => {
   jest.setTimeout(180000 * REPEATABLY_CONFIG.attempts);
 
   const brainScene = useBeforeAll(async () => ({
-    brain: genTestBrainContext({ brain: DEFAULT_TEST_BRAIN }),
+    brain: await genTestBrainContext({ brain: DEFAULT_TEST_BRAIN }),
   }));
 
   given('[case1] typescript-quality feedback with valid target', () => {

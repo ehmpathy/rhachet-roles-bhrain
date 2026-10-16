@@ -1,0 +1,49 @@
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
+
+exports[`genReviewFileHeader given: [case1] a review that found blockers and nitpicks when: [t0] the header is rendered then: it renders whole 1`] = `
+"🦉 needs your talons
+   ├─ logs: .log/bhrain/review/run-1
+   ├─ review: .reviews/peer/report.md
+   └─ summary
+      ├─ 3 blockers 🔴
+      └─ 2 nitpicks 🟠
+
+---
+"
+`;
+
+exports[`genReviewFileHeader given: [case2] a review that found naught when: [t0] the header is rendered then: it renders whole 1`] = `
+"✨ all clear
+   ├─ logs: .log/bhrain/review/run-1
+   ├─ review: .reviews/peer/report.md
+   └─ summary
+      ├─ 0 blockers
+      └─ 0 nitpicks
+
+---
+"
+`;
+
+exports[`genReviewFileHeader given: [case3] a review with nitpicks but no blocker when: [t0] the header is rendered then: it renders whole 1`] = `
+"🦉 just a few hoots
+   ├─ logs: .log/bhrain/review/run-1
+   ├─ review: .reviews/peer/report.md
+   └─ summary
+      ├─ 0 blockers
+      └─ 4 nitpicks 🟠
+
+---
+"
+`;
+
+exports[`genReviewFileHeader given: [case4] a review that found exactly one of each when: [t0] the header is rendered then: it renders whole 1`] = `
+"🦉 needs your talons
+   ├─ logs: .log/bhrain/review/run-1
+   ├─ review: .reviews/peer/report.md
+   └─ summary
+      ├─ 1 blocker 🔴
+      └─ 1 nitpick 🟠
+
+---
+"
+`;

@@ -1,0 +1,13 @@
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
+
+exports[`computeBlockRemedyGroups given: [case3] an overrule-only halt when: [t2] the refused .given proposed partitions — the lever it chose then: the groups match the snapshot 1`] = `
+"   ├─ declare the partitions its .given proposes — yours to make
+   │  └─ rhx route.guard.partition --for review --peer @all \\
+   │       --partition 'beta=src/beta/**,.behavior/v2027_01_01.demo/**' \\
+   │       --partition 'alpha=src/alpha/**,.behavior/v2027_01_01.demo/**' \\
+   │       --mode apply
+   ├─ or narrow its bind — yours to make
+   │  └─ edit $route/1.vision.guard directly: that lane's --paths-wout / --paths-with
+   └─ overrule the constraint — a human must grant
+      └─ rhx route.stone.set --stone 1.vision --as overruled"
+`;

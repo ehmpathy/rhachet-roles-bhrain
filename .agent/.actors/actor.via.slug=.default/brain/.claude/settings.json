@@ -146,7 +146,7 @@
         ]
       },
       {
-        "matcher": "Write|Edit|Read",
+        "matcher": "Bash",
         "hooks": [
           {
             "type": "command",
@@ -183,6 +183,12 @@
       {
         "matcher": "*",
         "hooks": [
+          {
+            "type": "command",
+            "command": "node -e \"import('rhachet-roles-bhuild').then(m => m.cli.radioTaskHeld())\" -- --when hook.onStop",
+            "timeout": 10,
+            "author": "repo=bhuild/role=dispatcher"
+          },
           {
             "type": "command",
             "command": "./node_modules/.bin/rhx route.drive --when hook.onStop",
@@ -464,6 +470,7 @@
       "Bash(ls:*)",
       "Bash(mkdir:*)",
       "Bash(mv:*)",
+      "Bash(node:*)",
       "Bash(npx biome:*)",
       "Bash(npx jest:*)",
       "Bash(npx rhachet run --skill git.commit.bind -- del:*)",

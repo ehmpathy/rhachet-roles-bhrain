@@ -269,6 +269,13 @@ describe('driver.route.drive.acceptance', () => {
           skill: 'route.drive',
           args: { when: 'hook.onStop' },
           cwd: scene.tempDir,
+          // the DRIVER's own session carries no review mark. both deleted explicitly, so
+          // this block cannot pass merely because the runner's env lacked the keys —
+          // it is the negative half of [t3]
+          env: {
+            RHACHET_GUARD_CONTEXT: undefined,
+            RHACHET_REVIEW_SUBPROCESS: undefined,
+          },
         }),
       );
 
@@ -343,6 +350,12 @@ describe('driver.route.drive.acceptance', () => {
         //    has the assertion above, which reads the state the emit does not carry
         expect(sanitizeTimeForSnapshot(observed.result.stderr)).toMatchSnapshot();
       });
+
+      then('the escalated stdout matches snapshot', () => {
+        expect(
+          sanitizeTimeForSnapshot(observed.result.stdout),
+        ).toMatchSnapshot();
+      });
     });
 
     when('[t2] blocker state file exists', () => {
@@ -366,6 +379,63 @@ describe('driver.route.drive.acceptance', () => {
 
       // note: .drive.blocker.events.jsonl was removed in bonus cleanup (dead code)
     });
+
+    when(
+      '[t3] the hook fires inside a guard-summoned review (RHACHET_REVIEW_SUBPROCESS=1)',
+      () => {
+        /**
+         * .why = an enrolled reviewer clone shares this worktree, so it sees the same
+         *        bound route and the same repo-wide stop hook. were the hook to block
+         *        there, claude code would override it and empty the clone's final
+         *        message — the review is lost and the lane reads as a malfunction —
+         *        and each block would bump the DRIVER's stop counter. the guard marks
+         *        every review subprocess with RHACHET_REVIEW_SUBPROCESS (and, on its
+         *        buffered capture, RHACHET_GUARD_CONTEXT beside it — see `runOneReview`),
+         *        and the clone inherits both, so the hook must stay silent there and
+         *        nowhere else
+         * .note = the env here is the pair a guard child carries. the hook keys on the
+         *         subprocess marker alone (`isReviewSubprocess`); the progress marker
+         *         only hushes a spinner, which `stepRouteDrive.integration` clamps
+         */
+        const run = useThen('route.drive stays silent', async () => {
+          const blockersPath = path.join(
+            scene.tempDir,
+            '.route',
+            '.drive.blockers.latest.json',
+          );
+          const before = await fs.readFile(blockersPath, 'utf-8');
+          const result = await invokeRouteSkill({
+            skill: 'route.drive',
+            args: { when: 'hook.onStop' },
+            cwd: scene.tempDir,
+            env: { RHACHET_GUARD_CONTEXT: '1', RHACHET_REVIEW_SUBPROCESS: '1' },
+          });
+          const after = await fs.readFile(blockersPath, 'utf-8');
+          return { result, before, after };
+        });
+
+        then('🔴 exit code is 0 — the reviewer clone is never blocked', () => {
+          expect(run.result.code).toEqual(0);
+        });
+
+        then('both streams are empty — no stone is re-shown to the clone', () => {
+          expect(run.result.stdout).toEqual('');
+          expect(run.result.stderr).toEqual('');
+        });
+
+        then("🔴 the driver's blocker counter is not bumped", () => {
+          expect(run.after).toEqual(run.before);
+        });
+
+        then('the silent emit matches snapshot', () => {
+          expect({
+            code: run.result.code,
+            stdout: run.result.stdout,
+            stderr: run.result.stderr,
+          }).toMatchSnapshot();
+        });
+      },
+    );
   });
 
   given('[case5] passed stone clears blocker state', () => {
@@ -841,4 +911,230 @@ describe('driver.route.drive.acceptance', () => {
       });
     });
   });
+
+  given('[case9] a driver marks repairs in flight, then the stop hook fires', () => {
+    const scene = useBeforeAll(async () => {
+      const tempDir = genTempDirForRhachet({
+        slug: 'drive-case9-inflight',
+        clone: ASSETS_DIR,
+      });
+      await execAsync('npx rhachet roles link --role driver', { cwd: tempDir });
+      await execAsync('git checkout -b vlad/test-drive-case9', { cwd: tempDir });
+      await invokeRouteSkill({
+        skill: 'route.bind.set',
+        args: { route: '.' },
+        cwd: tempDir,
+      });
+      return { tempDir };
+    });
+
+    when('[t0] route.stone.set --as inflight without --what', () => {
+      const result = useThen('it is refused', async () =>
+        invokeRouteSkill({
+          skill: 'route.stone.set',
+          args: { stone: '1', as: 'inflight' },
+          cwd: scene.tempDir,
+        }),
+      );
+
+      then('exit code is 2 (constraint)', () => {
+        expect(result.code).toEqual(2);
+      });
+
+      then('stderr names the --what flag', () => {
+        expect(result.stderr).toContain('--what is required for --as inflight');
+      });
+
+      // 🔴 clamp. the caller typed --stone 1; a `stone: 1` line beneath the example only
+      // echoes their own argv back and reads as an address it is not
+      then('stderr echoes no argv as a context line', () => {
+        expect(result.stderr).not.toMatch(/^stone: /m);
+      });
+
+      then('stderr matches snapshot', () => {
+        expect(sanitizeTimeForSnapshot(result.stderr)).toMatchSnapshot();
+      });
+    });
+
+    when('[t1] route.stone.set --as inflight --what', () => {
+      const result = useThen('the watermark is written', async () =>
+        invokeRouteSkill({
+          skill: 'route.stone.set',
+          args: {
+            stone: '1',
+            as: 'inflight',
+            what: 'three delegates repair blockers 1-4',
+          },
+          cwd: scene.tempDir,
+        }),
+      );
+
+      then('exit code is 0', () => {
+        expect(result.code).toEqual(0);
+      });
+
+      then('stdout names the wait', () => {
+        expect(result.stdout).toContain('as = inflight');
+        expect(result.stdout).toContain(
+          '— three delegates repair blockers 1-4',
+        );
+      });
+
+      // every caller-visible render is pinned whole (i017 r011 b2)
+      then('stdout matches snapshot', () => {
+        expect(
+          asInflightStableRender({
+            output: sanitizeTimeForSnapshot(result.stdout),
+          }),
+        ).toMatchSnapshot();
+      });
+    });
+
+    when('[t2] route.drive --when hook.onStop fires while the wait stands', () => {
+      const result = useThen('the hook is quiet', async () =>
+        invokeRouteSkill({
+          skill: 'route.drive',
+          args: { when: 'hook.onStop' },
+          cwd: scene.tempDir,
+          env: {
+            RHACHET_GUARD_CONTEXT: undefined,
+            RHACHET_REVIEW_SUBPROCESS: undefined,
+          },
+        }),
+      );
+
+      then('exit code is 0 (the stop is allowed)', () => {
+        expect(result.code).toEqual(0);
+      });
+
+      then('stdout is the one quiet inflight line', () => {
+        expect(result.stdout).toMatch(
+          /⏳ repairs in flight for 1 since \d\d:\d\d — three delegates repair blockers 1-4/,
+        );
+        expect(result.stdout).not.toContain('--as arrived');
+      });
+
+      // every caller-visible render is pinned whole (i017 r011 b2)
+      then('stdout matches snapshot', () => {
+        expect(
+          asInflightStableRender({
+            output: sanitizeTimeForSnapshot(result.stdout),
+          }),
+        ).toMatchSnapshot();
+      });
+    });
+  });
+
+  given('[case10] a guard round rejected, then route.drive re-read', () => {
+    // the guard prints its round tree once, on the stdout of the arrival. this case drops
+    // that stdout on purpose, then asks route.drive what the round said
+    const scene = useBeforeAll(async () => {
+      const tempDir = genTempDirForRhachet({
+        slug: 'drive-case10',
+        clone: ASSETS_DIR,
+      });
+      await execAsync('npx rhachet roles link --role driver', { cwd: tempDir });
+      await execAsync('git checkout -b vlad/test-drive-case10', {
+        cwd: tempDir,
+      });
+      await invokeRouteSkill({
+        skill: 'route.bind.set',
+        args: { route: '.' },
+        cwd: tempDir,
+      });
+
+      // an artifact for stone 1, and the mock peer review made runnable
+      await fs.writeFile(
+        path.join(tempDir, '1.stone.i1.md'),
+        '# Implementation\n\nFeature done.',
+      );
+      await execAsync('chmod +x .test/mock-review.sh', { cwd: tempDir });
+
+      // clear both self reviews, one at a time
+      for (const review of [
+        { index: 1, slug: 'all-done' },
+        { index: 2, slug: 'tests-pass' },
+      ]) {
+        await invokeRouteSkill({
+          skill: 'route.stone.set',
+          args: { stone: '1', as: 'passed' },
+          cwd: tempDir,
+        });
+        await backdateTriggeredReport({
+          tempDir,
+          stone: '1',
+          slug: review.slug,
+        });
+        const articulationPath = getSelfReviewArticulationPath({
+          route: tempDir,
+          stone: '1',
+          slug: review.slug,
+        });
+        await fs.mkdir(path.dirname(articulationPath), { recursive: true });
+        await fs.writeFile(articulationPath, '# self-review\n\nheld.');
+        await invokeRouteSkill({
+          skill: 'route.stone.set',
+          args: {
+            stone: '1',
+            as: 'promised',
+            that: review.slug,
+            into: getSelfReviewArticulationPath({
+              route: '.',
+              stone: '1',
+              slug: review.slug,
+            }),
+          },
+          cwd: tempDir,
+        });
+      }
+
+      // the peer round runs and rejects (no review-should-pass marker); its stdout is dropped
+      await invokeRouteSkill({
+        skill: 'route.stone.set',
+        args: { stone: '1', as: 'passed' },
+        cwd: tempDir,
+      }).catch(() => null);
+
+      return { tempDir };
+    });
+
+    when('[t0] route.drive is read in direct mode', () => {
+      const result = useThen('drive renders', async () =>
+        invokeRouteSkill({
+          skill: 'route.drive',
+          args: {},
+          cwd: scene.tempDir,
+        }),
+      );
+
+      then('stdout names the latest round', () => {
+        expect(result.stdout).toContain('latest round, i001');
+      });
+
+      then('stdout names the rejected lane, its counts, and its given', () => {
+        expect(result.stdout).toMatch(/r1: .+ — rejected, 1 blocker 🔴/);
+        expect(result.stdout).toContain('given: .reviews/peer/1._.review.i001.');
+      });
+
+      then('stdout names the judge verdict of that round', () => {
+        expect(result.stdout).toMatch(/j1: blocked ✗/);
+      });
+
+      then('stdout matches snapshot', () => {
+        expect(
+          sanitizeTimeForSnapshot(result.stdout).replace(
+            /\.review\.i001\.[a-f0-9]+\./g,
+            '.review.i001.<hash>.',
+          ),
+        ).toMatchSnapshot();
+      });
+    });
+  });
 });
+
+/**
+ * .what = masks the wall-clock stamp an inflight watermark renders
+ * .why = `since HH:MM` reads the clock at the mark, so a snapshot of it would drift each run
+ */
+const asInflightStableRender = (input: { output: string }): string =>
+  input.output.replace(/since \d\d:\d\d/g, 'since [HH:MM]');

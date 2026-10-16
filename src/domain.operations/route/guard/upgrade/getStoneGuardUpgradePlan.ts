@@ -1,17 +1,18 @@
-import * as fs from 'fs/promises';
 import { BadRequestError } from 'helpful-errors';
 import * as path from 'path';
 
 import type { RouteStoneGuard } from '@src/domain.objects/Driver/RouteStoneGuard';
+import { getOneGuardProvenance } from '@src/domain.operations/getOneGuardProvenance';
 
-import { isENOENT } from '../isENOENT';
 import { parseStoneGuard } from '../parseStoneGuard';
 import type { GuardUpgradeResult } from './GuardUpgradeResult';
 import { getAllGuardUpgradeWarnings } from './getAllGuardUpgradeWarnings';
 import { getGuardDiff } from './getGuardDiff';
-import { getGuardProvenance } from './getGuardProvenance';
 import { getGuardUpgradeDecision } from './getGuardUpgradeDecision';
 import { getGuardWithCopyTimeVars } from './getGuardWithCopyTimeVars';
+import { getOneGuardContent } from './getOneGuardContent';
+import { getOneGuardTemplateContentOrNull } from './getOneGuardTemplateContentOrNull';
+import { getOneGuardTemplatePathOrNull } from './getOneGuardTemplatePathOrNull';
 import { getUnknownGuardVars } from './getUnknownGuardVars';
 import { isPathWithinRoot } from './isPathWithinRoot';
 
@@ -52,10 +53,10 @@ export const getStoneGuardUpgradePlan = async (input: {
   const guardName = path.basename(input.guardPath);
 
   // read the CURRENT guard (raw, for lineage + diff)
-  const current = await fs.readFile(input.guardPath, 'utf-8');
+  const current = await getOneGuardContent({ path: input.guardPath });
 
   // read lineage via the minimal line-scan (NOT the full parser)
-  const provenance = getGuardProvenance({ content: current });
+  const provenance = getOneGuardProvenance({ content: current });
   if (!provenance)
     return {
       guardName,
@@ -72,17 +73,10 @@ export const getStoneGuardUpgradePlan = async (input: {
   if (!isPathWithinRoot({ pathResolved: joined, repoRoot: input.repoRoot }))
     throw new BadRequestError(
       `provenance.uri escapes the repo root: ${provenance.uri} (guard ${guardName})`,
-      { uri: provenance.uri, guardName },
     );
 
   // harden against a symlink that escapes the repo; ENOENT ⟹ absent source
-  let templatePath: string | null;
-  try {
-    templatePath = await fs.realpath(joined);
-  } catch (error) {
-    if (!isENOENT(error)) throw error; // EACCES/other → server-side, propagate (exit 1)
-    templatePath = null; // ENOENT ⟹ absent source
-  }
+  const templatePath = await getOneGuardTemplatePathOrNull({ path: joined });
   if (templatePath === null)
     return {
       guardName,
@@ -98,26 +92,23 @@ export const getStoneGuardUpgradePlan = async (input: {
   )
     throw new BadRequestError(
       `provenance.uri symlink escapes the repo root: ${provenance.uri} (guard ${guardName})`,
-      { uri: provenance.uri, templatePath, guardName },
+      { templatePath },
     );
 
   // read the source template (ENOENT here = a race delete ⟹ absent; else propagate)
-  let sourceRaw: string;
-  try {
-    sourceRaw = await fs.readFile(templatePath, 'utf-8');
-  } catch (error) {
-    if (isENOENT(error))
-      return {
-        guardName,
-        guardPath: input.guardPath,
-        decision: { decision: 'absent-source' },
-        from: provenance.uri,
-        next: null,
-        diff: [],
-        warnings: [],
-      };
-    throw error; // server-side read error → propagate (exit 1)
-  }
+  const sourceRaw = await getOneGuardTemplateContentOrNull({
+    path: templatePath,
+  });
+  if (sourceRaw === null)
+    return {
+      guardName,
+      guardPath: input.guardPath,
+      decision: { decision: 'absent-source' },
+      from: provenance.uri,
+      next: null,
+      diff: [],
+      warnings: [],
+    };
 
   // replay the sole copy-time var, then validate + scan + diff
   const routeRelDir = path.relative(

@@ -1,8 +1,7 @@
 import * as fs from 'fs/promises';
 
 import { enumFilesFromGlob } from '@src/utils/enumFilesFromGlob';
-
-import { isENOENT } from '../isENOENT';
+import { isErrorOfAbsence } from '@src/utils/fs/isErrorOfAbsence';
 
 /**
  * .what = enumerates files within a route that match a glob pattern
@@ -25,7 +24,7 @@ export const enumRouteFiles = async (input: {
       ignore: input.ignore,
     });
   } catch (error) {
-    if (!isENOENT(error)) throw error;
+    if (!isErrorOfAbsence({ error })) throw error;
     return [];
   }
 };

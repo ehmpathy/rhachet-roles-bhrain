@@ -4,11 +4,13 @@ import * as path from 'path';
 import { given, then, useThen, when } from 'test-fns';
 
 import { logOutputHead } from '@src/.test/logOutputHead';
+import { DEFAULT_TEST_BRAIN_VIA_CLI } from '@src/.test/genTestBrainContext';
 import {
   execAsync,
   genTempDirForRhachet,
   invokeReviewSkill,
 } from './.test/invokeReviewSkill';
+import { asReviewMetricsExpectedBlock } from './.test/invokeReviewBySkill';
 
 const ASSETS_DIR = path.join(__dirname, '.test/assets/codebase-mechanic');
 
@@ -51,7 +53,7 @@ describe('review.refs-single.acceptance', () => {
           output: outputPath,
           focus: 'push',
           goal: 'representative',
-          brain: 'openrouter/deepseek/flash',
+          brain: DEFAULT_TEST_BRAIN_VIA_CLI,
           cwd: tempDir,
         });
 
@@ -75,9 +77,14 @@ describe('review.refs-single.acceptance', () => {
         expect(res.cli.stderr).not.toContain('Error');
       });
 
-      then('cli stdout shows refs count in metrics', async () => {
-        // metrics.expected.files should include refs: 1
-        expect(res.cli.stdout).toContain('refs');
+      then('cli stdout shows refs count = 1 in metrics', async () => {
+        // one --refs file, so the files tree reads `refs: 1`
+        expect(res.cli.stdout).toContain('refs: 1');
+      });
+
+      then('the metrics.expected block matches its snapshot (computed before the brain)', () => {
+        // the scope tree and estimate are deterministic; the verdict summary is the brain's
+        expect(asReviewMetricsExpectedBlock({ stdout: res.cli.stdout })).toMatchSnapshot();
       });
 
       then('review contains no blockers (refs section was accessible)', async () => {

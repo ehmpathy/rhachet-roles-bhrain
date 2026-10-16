@@ -8,7 +8,7 @@ import type { GuardPeerMeterStatus } from '../guard/tree/formatGuardTree';
  * .what = gets the currently exhausted reviewer slugs + their meters for a stone
  * .why = a persisted exhausted blocker/reason may be stale (budget extended since it was
  *        recorded), so the exhausted message + the exhausted-blocker branch both recompute
- *        the LIVE exhausted set from the current meters. shared by getRouteDriveBlockerMessage
+ *        the LIVE exhausted set from the current meters. shared by getOneRouteDriveBlockerMessage
  *        and getRouteDriveExhaustedMessage (rule.prefer.wet-over-dry: 2 call sites, one truth).
  *
  * .note = the three-step live load (hash → overrules → statuses) is `getCurrentPeerMeters`, lifted

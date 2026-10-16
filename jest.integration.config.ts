@@ -31,8 +31,23 @@ const config: Config = {
     '!**/.yalc/**',
     '!**/.scratch/**',
     '!**/.agent/**',
+    '!**/.behavior/**',
   ],
   setupFilesAfterEnv: ['./jest.integration.env.ts'],
+
+  // keep agent caches out of the haste map
+  //
+  // .why = a snapshot that rmsafe moved into `.agent/.cache/.../rmsafe/trash/` reads as an
+  //        obsolete snapshot, which fails the run while every test passes. obsolescence is
+  //        judged over every `.snap` in the haste map, so the cut is here, not in testMatch
+  //        (see jest.unit.config.ts). `.log/`, the gitignored scratch dir, is cut for the
+  //        same reason. `.behavior/` is cut so code a route archived (`$route/archive/`) is
+  //        a record, never a suite.
+  modulePathIgnorePatterns: [
+    '<rootDir>/\\.agent/\\.cache/',
+    '<rootDir>/\\.log/',
+    '<rootDir>/\\.behavior/',
+  ],
 
   // use 50% of threads to leave headroom for other processes
   maxWorkers: '50%', // https://stackoverflow.com/questions/71287710/why-does-jest-run-faster-with-maxworkers-50

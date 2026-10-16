@@ -11,7 +11,7 @@ import {
 
 const ASSETS_DIR = path.join(__dirname, '.test/assets/reflect-snapshot');
 
-describe('reflect.snapshot capture', () => {
+describe('reflect.snapshot.capture', () => {
   given('[case1] repo without claude code project', () => {
     const tempDir = genTempDirForReflector({
       slug: 'reflect-capture-case1',
@@ -32,6 +32,15 @@ describe('reflect.snapshot capture', () => {
           cwd: tempDir,
         }),
       );
+
+      then('🔴 it refuses as a constraint — exit 2, a qualified header, no stack', () => {
+        // the defect this clamps: an absent project crashed with a raw node stack
+        expect(result.code).toEqual(2);
+        expect(result.stderr).toContain('✋ ConstraintError: no claude code project');
+        expect(result.stderr).toContain('fix: run claude code in this repo once');
+        expect(result.stderr).not.toContain('Node.js v');
+        expect(result.stderr).not.toMatch(/^\s+at /m);
+      });
 
       then('exit code is non-zero', () => {
         expect(result.code).not.toEqual(0);

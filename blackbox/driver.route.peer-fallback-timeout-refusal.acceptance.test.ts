@@ -2,6 +2,7 @@ import * as fs from 'fs/promises';
 import * as path from 'path';
 import { given, then, useBeforeAll, useThen, when } from 'test-fns';
 
+import { asExecResultOrThrow } from './.test/asExecResultOrThrow';
 import {
   asChildEnv,
   execAsync,
@@ -52,16 +53,8 @@ const invokeArriveWithEnv = async (input: {
     });
     return { ...result, code: 0 };
   } catch (error) {
-    const execError = error as {
-      stdout?: string;
-      stderr?: string;
-      code?: number;
-    };
-    return {
-      stdout: execError.stdout ?? '',
-      stderr: execError.stderr ?? '',
-      code: execError.code ?? 1,
-    };
+    // a nonzero exit is a skill result; any other fault rethrows (rule.forbid.failhide)
+    return asExecResultOrThrow({ error });
   }
 };
 
@@ -71,7 +64,7 @@ const invokeArriveWithEnv = async (input: {
  * .why = `RHACHET_FALLBACK_BRAIN_TIMEOUT_MS` is the third reader routed through
  *        `asGuardPositiveInt`, and the only one the sibling suite
  *        `review.timeout-env-refusals.acceptance.test.ts` could not reach — it is read
- *        inside `getReviewCountsViaBrain`, at the guard's TALLY phase, never via
+ *        inside `getOneReviewCountsViaBrain`, at the guard's TALLY phase, never via
  *        `rhx review`.
  *
  * ⚠️ .why the carve-out did NOT hold = that sibling's docblock deferred this variant on

@@ -1,0 +1,14 @@
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
+
+exports[`asReviewPartitionDeclarationText given: [case1] a set held from an older brace-form declaration when: [t0] the whole set is rendered then: the text matches the snapshot 1`] = `
+"rhx route.guard.partition --for review --peer @all \\
+  --partition 'route=src/route/**,.behavior/v1/**' \\
+  --partition 'review=src/review/**,.behavior/v1/**' \\
+  --mode apply"
+`;
+
+exports[`asReviewPartitionDeclarationText given: [case2] a glob that carries a brace set of its own when: [t0] it is rendered then: the text matches the snapshot 1`] = `
+"rhx route.guard.partition --for review --peer @all \\
+  --partition 'route=src/route/{stones,judges}/**,.behavior/v1/**' \\
+  --mode apply"
+`;

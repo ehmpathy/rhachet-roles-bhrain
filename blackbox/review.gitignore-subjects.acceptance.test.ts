@@ -3,25 +3,22 @@ import * as fs from 'fs/promises';
 import * as path from 'path';
 
 import { given, then, useThen, when } from 'test-fns';
+import { DEFAULT_TEST_BRAIN_VIA_CLI } from '@src/.test/genTestBrainContext';
 
 import {
   execAsync,
   genTempDirForRhachet,
   invokeReviewSkill,
 } from './.test/invokeReviewSkill';
+import { asReviewMetricsExpectedBlock } from './.test/invokeReviewBySkill';
 
 const ASSETS_DIR = path.join(__dirname, '.test/assets/codebase-mechanic');
 
 /**
  * .what = raises the per-test budget for this LLM-backed acceptance case
- * .why = jest.acceptance.env sets a 90s default, which fits a deterministic cli case and NOT a real
- *        review — the case drives the shipped review.sh end to end, so a brain call rides inside it
- *        and routinely outlasts the default. it then fails on the clock rather than on the crash
- *        vector it exists to prove. peer LLM-backed blackbox files carry the same override.
- * .note = 300s, not the 240s a lighter peer uses, because this case pays its fixture setup INSIDE
- *         the timed block — a temp-dir clone plus `rhachet roles link` per role, before the review
- *         even starts. it measured 279s wall locally, so a 240s budget would sit under the observed
- *         cost on a slower cicd runner.
+ * .why = the default fits a deterministic cli case, not a real review — a brain call rides
+ *        inside this one and outlasts the default. 300s (not the 240s a lighter peer uses)
+ *        because setup (temp-dir clone + role link) runs inside the timed block too.
  */
 // eslint-disable-next-line no-undef
 jest.setTimeout(300000);
@@ -34,6 +31,17 @@ jest.setTimeout(300000);
  *
  * .see = .behavior/v2026_06_23.fix-reviewer-scans/1.vision.yield.md
  */
+/**
+ * .what = config for probabilistic tests that invoke LLM brains
+ * .why = LLM responses can timeout or vary; retry ensures CI stability
+ *
+ * @see .agent/repo=.this/role=any/briefs/rule.require.repeatable-for-llm-tests.md
+ */
+const REPEATABLE_CONFIG = {
+  attempts: 3,
+  criteria: process.env.CI ? 'SOME' : 'EVERY',
+} as const;
+
 describe('review.gitignore-subjects.acceptance', () => {
   // capture the temp dir so afterAll can restore perms for clean auto-prune
   let restrictedDir: string | null = null;
@@ -45,7 +53,7 @@ describe('review.gitignore-subjects.acceptance', () => {
   });
 
   given('[case1] a gitignored restricted directory inside the scan scope', () => {
-    when('[t0] review scans src/**/* with a mode-000 gitignored subdir', () => {
+    when.repeatably(REPEATABLE_CONFIG)('[t0] review scans src/**/* with a mode-000 gitignored subdir', () => {
       const res = useThen(
         'invoke review over a scope that contains the restricted dir',
         async () => {
@@ -90,7 +98,7 @@ describe('review.gitignore-subjects.acceptance', () => {
             paths: 'src/**/*.ts',
             focus: 'push',
             goal: 'representative',
-            brain: 'openrouter/deepseek/flash',
+            brain: DEFAULT_TEST_BRAIN_VIA_CLI,
             cwd: tempDir,
           });
 
@@ -127,6 +135,11 @@ describe('review.gitignore-subjects.acceptance', () => {
 
       then('the review completes successfully', async () => {
         expect(res.cli.code).toBe(0);
+      });
+
+      then('the metrics.expected block matches its snapshot (computed before the brain)', () => {
+        // the scope tree and estimate are deterministic; the verdict summary is the brain's
+        expect(asReviewMetricsExpectedBlock({ stdout: res.cli.stdout })).toMatchSnapshot();
       });
 
       then('the resolved scope excludes the gitignored junk dir', async () => {

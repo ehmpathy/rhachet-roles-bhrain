@@ -1,4 +1,5 @@
-import { compareStrings } from './compareStrings';
+import { compareStrings } from '@src/utils/compareStrings';
+
 import type { RouteGuardReviewPeerGiven } from './getAllRouteGuardReviewPeerGivens';
 
 /**
@@ -32,7 +33,7 @@ import type { RouteGuardReviewPeerGiven } from './getAllRouteGuardReviewPeerGive
  *         order, which is the filesystem's. that sequence is not private — the filter/map chain
  *         downstream keeps it intact all the way to the halt prompt, so the reviewers a driver is
  *         told to answer would be listed in a different order on a different machine. the
- *         neighbour getLatestReviewFilesPerIndex sorts its own output for this same reason. slug
+ *         neighbour getAllLatestReviewFilesPerIndex sorts its own output for this same reason. slug
  *         is a safe key because the map guarantees one entry per slug.
  */
 

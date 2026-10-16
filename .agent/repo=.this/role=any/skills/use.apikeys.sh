@@ -33,7 +33,7 @@ elif [ -f .env.local ]; then
   echo "✓ loaded api keys from .env.local"
 
 else
-  echo "⚠ no api keys file found"
+  echo "🟡 no api keys file found"
   echo ""
   echo "create one of:"
   echo "  ~/.config/rhachet/apikeys.env"
@@ -55,7 +55,7 @@ if [ -f "$APIKEYS_CONFIG" ]; then
   for KEY in $REQUIRED_KEYS; do
     VALUE=$(eval "echo \"\$$KEY\"")
     if [ -z "$VALUE" ]; then
-      echo "⚠ $KEY not set (required by $APIKEYS_CONFIG)"
+      echo "🟡 $KEY not set (required by $APIKEYS_CONFIG)"
       return 1 2>/dev/null || exit 1
     fi
     echo "✓ $KEY set"

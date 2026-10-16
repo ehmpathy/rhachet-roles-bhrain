@@ -1,5 +1,121 @@
 // Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
 
+exports[`formatRouteGuardReviewPeerAbsorptionAck given: [case1] a CONCEDE on a lane with rounds left when: [t0] the last concern on the lane, the stone otherwise clear then: the bytes a driver reads are pinned 1`] = `
+"🦉 so it is
+
+🗿 route.stone.set --as conceded
+   ├─ stone = 5.1.execution
+   ├─ with  = mechanic (l1), 2 rounds, 4 budget — 2 rounds left
+   ├─ about = blocker.1 — the last concern this lane owed
+   │
+   └─ the hold stands. fix, then re-arrive
+      ├─ 1. now absorb mechanic as a whole — each of its concerns carries a stance
+      │  └─ rhx route.stone.set --stone 5.1.execution --as absorbed --that mechanic
+      └─ 2. re-arrive, once the fix is in
+         └─ rhx route.stone.set --stone 5.1.execution --as arrived"
+`;
+
+exports[`formatRouteGuardReviewPeerAbsorptionAck given: [case1] a CONCEDE on a lane with rounds left when: [t1] concerns remain undeclared on the lane then: the bytes a driver reads are pinned 1`] = `
+"🦉 so it is
+
+🗿 route.stone.set --as conceded
+   ├─ stone = 5.1.execution
+   ├─ with  = mechanic (l1), 2 rounds, 4 budget — 2 rounds left
+   ├─ about = nitpick.2 — 3 more on this lane
+   │
+   └─ the hold stands. fix, then re-arrive
+      └─ absorb nitpick.3 — 3 still owed on this lane
+         ├─ rhx route.stone.set --stone 5.1.execution --as conceded --with mechanic --about nitpick.3 --severity better|urgent
+         └─ rhx route.stone.set --stone 5.1.execution --as disputed --with mechanic --about nitpick.3 --why <fulcrum-path>"
+`;
+
+exports[`formatRouteGuardReviewPeerAbsorptionAck given: [case2] a CONCEDE on a lane whose budget is spent when: [t1] the conceded concern is a NITPICK then: the bytes a driver reads are pinned 1`] = `
+"🦉 so it is
+
+🗿 route.stone.set --as conceded
+   ├─ stone = 5.1.execution
+   ├─ with  = ergonomist (l2), 3 rounds, 3 budget — budget spent
+   ├─ about = nitpick.4 — the last concern this lane owed
+   │
+   └─ the hold stands. fix the nitpick, then re-arrive
+      ├─ 1. now absorb ergonomist as a whole — each of its concerns carries a stance
+      │  └─ rhx route.stone.set --stone 5.1.execution --as absorbed --that ergonomist
+      └─ 2. re-arrive, once the fix is in
+         └─ rhx route.stone.set --stone 5.1.execution --as arrived"
+`;
+
+exports[`formatRouteGuardReviewPeerAbsorptionAck given: [case3] a DISPUTE when: [t0] the last owed concern on the stone then: the bytes a driver reads are pinned 1`] = `
+"🦉 so it is
+
+🗿 route.stone.set --as disputed
+   ├─ stone = 5.1.execution
+   ├─ with  = architect (l1), 2 rounds, 4 budget — 2 rounds left
+   ├─ about = blocker.1 — the last concern this lane owed
+   ├─ why   = .fulcrums/inventory.of=fulcrums.case=F007-file-placement.md
+   │
+   └─ the council will read it
+      ├─ 1. now absorb architect as a whole — each of its concerns carries a stance
+      │  └─ rhx route.stone.set --stone 5.1.execution --as absorbed --that architect
+      └─ 2. re-arrive
+         └─ rhx route.stone.set --stone 5.1.execution --as arrived"
+`;
+
+exports[`formatRouteGuardReviewPeerAbsorptionAck given: [case3] a DISPUTE when: [t1] the disputed lane has spent its budget then: the bytes a driver reads are pinned 1`] = `
+"🦉 so it is
+
+🗿 route.stone.set --as disputed
+   ├─ stone = 5.1.execution
+   ├─ with  = architect (l1), 4 rounds, 4 budget — budget spent
+   ├─ about = blocker.1 — the last concern this lane owed
+   ├─ why   = .fulcrums/inventory.of=fulcrums.case=F007-file-placement.md
+   │
+   └─ the council will read it
+      ├─ 1. now absorb architect as a whole — each of its concerns carries a stance
+      │  └─ rhx route.stone.set --stone 5.1.execution --as absorbed --that architect
+      └─ 2. re-arrive
+         └─ rhx route.stone.set --stone 5.1.execution --as arrived"
+`;
+
+exports[`formatRouteGuardReviewPeerAbsorptionAck given: [case3] a DISPUTE when: [t3] this lane is clear but OTHER lanes still owe then: the bytes a driver reads are pinned 1`] = `
+"🦉 so it is
+
+🗿 route.stone.set --as disputed
+   ├─ stone = 5.1.execution
+   ├─ with  = architect (l1), 2 rounds, 4 budget — 2 rounds left
+   ├─ about = blocker.1 — the last concern this lane owed
+   ├─ also  = 3 concerns on other lanes await absorption
+   ├─ why   = .fulcrums/inventory.of=fulcrums.case=F007-file-placement.md
+   │
+   └─ the council will read it
+      ├─ 1. now absorb architect as a whole — each of its concerns carries a stance
+      │  └─ rhx route.stone.set --stone 5.1.execution --as absorbed --that architect
+      ├─ 2. absorb the 3 concerns on other lanes — next, mechanic nitpick.1
+      │  ├─ rhx route.stone.set --stone 5.1.execution --as conceded --with mechanic --about nitpick.1 --severity better|urgent
+      │  └─ rhx route.stone.set --stone 5.1.execution --as disputed --with mechanic --about nitpick.1 --why <fulcrum-path>
+      └─ 3. re-arrive
+         └─ rhx route.stone.set --stone 5.1.execution --as arrived"
+`;
+
+exports[`formatRouteGuardReviewPeerAbsorptionAck given: [case3] a DISPUTE when: [t4] exactly one concern is owed elsewhere then: the bytes a driver reads are pinned 1`] = `
+"🦉 so it is
+
+🗿 route.stone.set --as disputed
+   ├─ stone = 5.1.execution
+   ├─ with  = architect (l1), 2 rounds, 4 budget — 2 rounds left
+   ├─ about = blocker.1 — the last concern this lane owed
+   ├─ also  = 1 concern on other lanes awaits absorption
+   ├─ why   = .fulcrums/inventory.of=fulcrums.case=F007-file-placement.md
+   │
+   └─ the council will read it
+      ├─ 1. now absorb architect as a whole — each of its concerns carries a stance
+      │  └─ rhx route.stone.set --stone 5.1.execution --as absorbed --that architect
+      ├─ 2. absorb the 1 concern on other lanes — next, mechanic blocker.1
+      │  ├─ rhx route.stone.set --stone 5.1.execution --as conceded --with mechanic --about blocker.1 --severity better|urgent
+      │  └─ rhx route.stone.set --stone 5.1.execution --as disputed --with mechanic --about blocker.1 --why <fulcrum-path>
+      └─ 3. re-arrive
+         └─ rhx route.stone.set --stone 5.1.execution --as arrived"
+`;
+
 exports[`formatRouteGuardReviewPeerAbsorptionAck given: [case4] the rendered body, whole when: [t0] an URGENT concede lands on a spent lane then: the bytes a driver reads are pinned 1`] = `
 "🦉 so it is
 
@@ -9,9 +125,13 @@ exports[`formatRouteGuardReviewPeerAbsorptionAck given: [case4] the rendered bod
    ├─ about = blocker.1 — the last concern this lane owed
    ├─ warn  = ships harm — tell your human why this stone bought budget
    │
-   └─ fix the blocker, buy the round, then re-arrive
-      ├─ rhx route.guard.budget --for review --add 2 --peer ergonomist --stone 5.1.execution
-      └─ rhx route.stone.set --stone 5.1.execution --as passed"
+   └─ the hold stands. fix the blocker, buy the round, then re-arrive
+      ├─ 1. now absorb ergonomist as a whole — each of its concerns carries a stance
+      │  └─ rhx route.stone.set --stone 5.1.execution --as absorbed --that ergonomist
+      ├─ 2. buy the round, once the blocker is fixed
+      │  └─ rhx route.guard.budget --for review --add 2 --peer ergonomist --stone 5.1.execution
+      └─ 3. re-arrive, once the fix is in
+         └─ rhx route.stone.set --stone 5.1.execution --as arrived"
 `;
 
 exports[`formatRouteGuardReviewPeerAbsorptionAck given: [case4] the rendered body, whole when: [t0b] a BETTER concede lands on a spent lane then: the bytes a driver reads are pinned 1`] = `
@@ -22,11 +142,14 @@ exports[`formatRouteGuardReviewPeerAbsorptionAck given: [case4] the rendered bod
    ├─ with  = ergonomist (l1), 4 rounds, 4 budget — budget spent
    ├─ about = blocker.1 — the last concern this lane owed
    │
-   └─ fix the blocker, then re-arrive
-      └─ rhx route.stone.set --stone 5.1.execution --as passed"
+   └─ the hold stands. fix the blocker, then re-arrive
+      ├─ 1. now absorb ergonomist as a whole — each of its concerns carries a stance
+      │  └─ rhx route.stone.set --stone 5.1.execution --as absorbed --that ergonomist
+      └─ 2. re-arrive, once the fix is in
+         └─ rhx route.stone.set --stone 5.1.execution --as arrived"
 `;
 
-exports[`formatRouteGuardReviewPeerAbsorptionAck given: [case4] the rendered body, whole when: [t1] a dispute lands then: the bytes a driver reads are pinned 1`] = `
+exports[`formatRouteGuardReviewPeerAbsorptionAck given: [case4] the rendered body, whole when: [t1] a dispute lands with concerns left on its lane then: the bytes a driver reads are pinned 1`] = `
 "🦉 so it is
 
 🗿 route.stone.set --as disputed
@@ -36,5 +159,155 @@ exports[`formatRouteGuardReviewPeerAbsorptionAck given: [case4] the rendered bod
    ├─ why   = .fulcrums/inventory.of=fulcrums.case=F007-file-placement.md
    │
    └─ the council will read it
-      └─ absorb the 2 concerns still owed, then drive on"
+      └─ absorb blocker.2 — 2 still owed on this lane
+         ├─ rhx route.stone.set --stone 5.1.execution --as conceded --with architect --about blocker.2 --severity better|urgent
+         └─ rhx route.stone.set --stone 5.1.execution --as disputed --with architect --about blocker.2 --why <fulcrum-path>"
+`;
+
+exports[`formatRouteGuardReviewPeerAbsorptionAck given: [case4] the rendered body, whole when: [t2] a concede clears its lane while other lanes owe then: the bytes a driver reads are pinned 1`] = `
+"🦉 so it is
+
+🗿 route.stone.set --as conceded --severity better
+   ├─ stone = 5.1.execution
+   ├─ with  = mech-decode-friction (l1), 7 rounds, 9 budget — 2 rounds left
+   ├─ about = nitpick.3 — the last concern this lane owed
+   ├─ also  = 8 concerns on other lanes await absorption
+   │
+   └─ the hold stands. fix, then re-arrive
+      ├─ 1. now absorb mech-decode-friction as a whole — each of its concerns carries a stance
+      │  └─ rhx route.stone.set --stone 5.1.execution --as absorbed --that mech-decode-friction
+      ├─ 2. absorb the 8 concerns on other lanes — next, arch-boundaries blocker.1
+      │  ├─ rhx route.stone.set --stone 5.1.execution --as conceded --with arch-boundaries --about blocker.1 --severity better|urgent
+      │  └─ rhx route.stone.set --stone 5.1.execution --as disputed --with arch-boundaries --about blocker.1 --why <fulcrum-path>
+      └─ 3. re-arrive, once the fix is in
+         └─ rhx route.stone.set --stone 5.1.execution --as arrived"
+`;
+
+exports[`formatRouteGuardReviewPeerAbsorptionAck given: [case4] the rendered body, whole when: [t3] a concede clears the last concern on the stone then: the bytes a driver reads are pinned 1`] = `
+"🦉 so it is
+
+🗿 route.stone.set --as conceded --severity better
+   ├─ stone = 5.1.execution
+   ├─ with  = mechanic (l1), 2 rounds, 4 budget — 2 rounds left
+   ├─ about = blocker.1 — the last concern this lane owed
+   │
+   └─ the hold stands. fix, then re-arrive
+      ├─ 1. now absorb mechanic as a whole — each of its concerns carries a stance
+      │  └─ rhx route.stone.set --stone 5.1.execution --as absorbed --that mechanic
+      └─ 2. re-arrive, once the fix is in
+         └─ rhx route.stone.set --stone 5.1.execution --as arrived"
+`;
+
+exports[`formatRouteGuardReviewPeerAbsorptionAck given: [case5] the lane is clear but the stone is not when: [t0] this lane owes naught, but other lanes do then: the bytes a driver reads are pinned 1`] = `
+"🦉 so it is
+
+🗿 route.stone.set --as conceded
+   ├─ stone = 5.1.execution
+   ├─ with  = mechanic (l1), 2 rounds, 4 budget — 2 rounds left
+   ├─ about = blocker.1 — the last concern this lane owed
+   ├─ also  = 3 concerns on other lanes await absorption
+   │
+   └─ the hold stands. fix, then re-arrive
+      ├─ 1. now absorb mechanic as a whole — each of its concerns carries a stance
+      │  └─ rhx route.stone.set --stone 5.1.execution --as absorbed --that mechanic
+      ├─ 2. absorb the 3 concerns on other lanes — next, architect blocker.2
+      │  ├─ rhx route.stone.set --stone 5.1.execution --as conceded --with architect --about blocker.2 --severity better|urgent
+      │  └─ rhx route.stone.set --stone 5.1.execution --as disputed --with architect --about blocker.2 --why <fulcrum-path>
+      └─ 3. re-arrive, once the fix is in
+         └─ rhx route.stone.set --stone 5.1.execution --as arrived"
+`;
+
+exports[`formatRouteGuardReviewPeerAbsorptionAck given: [case5] the lane is clear but the stone is not when: [t1] exactly one concern remains elsewhere then: the bytes a driver reads are pinned 1`] = `
+"🦉 so it is
+
+🗿 route.stone.set --as conceded
+   ├─ stone = 5.1.execution
+   ├─ with  = mechanic (l1), 2 rounds, 4 budget — 2 rounds left
+   ├─ about = blocker.1 — the last concern this lane owed
+   ├─ also  = 1 concern on other lanes awaits absorption
+   │
+   └─ the hold stands. fix, then re-arrive
+      ├─ 1. now absorb mechanic as a whole — each of its concerns carries a stance
+      │  └─ rhx route.stone.set --stone 5.1.execution --as absorbed --that mechanic
+      ├─ 2. absorb the 1 concern on other lanes — next, architect blocker.2
+      │  ├─ rhx route.stone.set --stone 5.1.execution --as conceded --with architect --about blocker.2 --severity better|urgent
+      │  └─ rhx route.stone.set --stone 5.1.execution --as disputed --with architect --about blocker.2 --why <fulcrum-path>
+      └─ 3. re-arrive, once the fix is in
+         └─ rhx route.stone.set --stone 5.1.execution --as arrived"
+`;
+
+exports[`formatRouteGuardReviewPeerAbsorptionAck given: [case5] the lane is clear but the stone is not when: [t2] THIS lane still owes concerns then: the bytes a driver reads are pinned 1`] = `
+"🦉 so it is
+
+🗿 route.stone.set --as conceded
+   ├─ stone = 5.1.execution
+   ├─ with  = mechanic (l1), 2 rounds, 4 budget — 2 rounds left
+   ├─ about = blocker.1 — 2 more on this lane
+   │
+   └─ the hold stands. fix, then re-arrive
+      └─ absorb blocker.2 — 2 still owed on this lane
+         ├─ rhx route.stone.set --stone 5.1.execution --as conceded --with mechanic --about blocker.2 --severity better|urgent
+         └─ rhx route.stone.set --stone 5.1.execution --as disputed --with mechanic --about blocker.2 --why <fulcrum-path>"
+`;
+
+exports[`formatRouteGuardReviewPeerAbsorptionAck given: [case6] a concede carries a severity grade when: [t0] the grade is URGENT then: the bytes a driver reads are pinned 1`] = `
+"🦉 so it is
+
+🗿 route.stone.set --as conceded --severity urgent
+   ├─ stone = 5.1.execution
+   ├─ with  = mechanic (l1), 2 rounds, 4 budget — 2 rounds left
+   ├─ about = blocker.1 — the last concern this lane owed
+   ├─ warn  = ships harm — tell your human why this stone bought budget
+   │
+   └─ the hold stands. fix, then re-arrive
+      ├─ 1. now absorb mechanic as a whole — each of its concerns carries a stance
+      │  └─ rhx route.stone.set --stone 5.1.execution --as absorbed --that mechanic
+      └─ 2. re-arrive, once the fix is in
+         └─ rhx route.stone.set --stone 5.1.execution --as arrived"
+`;
+
+exports[`formatRouteGuardReviewPeerAbsorptionAck given: [case6] a concede carries a severity grade when: [t1] the grade is BETTER then: the bytes a driver reads are pinned 1`] = `
+"🦉 so it is
+
+🗿 route.stone.set --as conceded --severity better
+   ├─ stone = 5.1.execution
+   ├─ with  = mechanic (l1), 2 rounds, 4 budget — 2 rounds left
+   ├─ about = blocker.1 — the last concern this lane owed
+   │
+   └─ the hold stands. fix, then re-arrive
+      ├─ 1. now absorb mechanic as a whole — each of its concerns carries a stance
+      │  └─ rhx route.stone.set --stone 5.1.execution --as absorbed --that mechanic
+      └─ 2. re-arrive, once the fix is in
+         └─ rhx route.stone.set --stone 5.1.execution --as arrived"
+`;
+
+exports[`formatRouteGuardReviewPeerAbsorptionAck given: [case7] a stance lands on a lane with an UNLIMITED budget when: [t0] a concede on an ∞-budget lane then: the bytes a driver reads are pinned 1`] = `
+"🦉 so it is
+
+🗿 route.stone.set --as conceded
+   ├─ stone = 5.1.execution
+   ├─ with  = mechanic (l1), 2 rounds, ∞ budget — ∞ rounds left
+   ├─ about = blocker.1 — the last concern this lane owed
+   │
+   └─ the hold stands. fix, then re-arrive
+      ├─ 1. now absorb mechanic as a whole — each of its concerns carries a stance
+      │  └─ rhx route.stone.set --stone 5.1.execution --as absorbed --that mechanic
+      └─ 2. re-arrive, once the fix is in
+         └─ rhx route.stone.set --stone 5.1.execution --as arrived"
+`;
+
+exports[`formatRouteGuardReviewPeerAbsorptionAck given: [case7] a stance lands on a lane with an UNLIMITED budget when: [t1] a dispute on an ∞-budget lane then: the bytes a driver reads are pinned 1`] = `
+"🦉 so it is
+
+🗿 route.stone.set --as disputed
+   ├─ stone = 5.1.execution
+   ├─ with  = architect (l1), 2 rounds, ∞ budget — ∞ rounds left
+   ├─ about = blocker.1 — the last concern this lane owed
+   ├─ why   = .fulcrums/inventory.of=fulcrums.case=F007-file-placement.md
+   │
+   └─ the council will read it
+      ├─ 1. now absorb architect as a whole — each of its concerns carries a stance
+      │  └─ rhx route.stone.set --stone 5.1.execution --as absorbed --that architect
+      └─ 2. re-arrive
+         └─ rhx route.stone.set --stone 5.1.execution --as arrived"
 `;

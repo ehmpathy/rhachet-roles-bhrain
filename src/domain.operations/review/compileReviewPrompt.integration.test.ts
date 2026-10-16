@@ -6,11 +6,12 @@ import * as path from 'path';
 import type { BrainSpec } from 'rhachet/brains';
 import { given, then, usePrep, when } from 'test-fns';
 
-import { compileReviewPrompt } from './compileReviewPrompt';
 import {
   type FileDiff,
   getAllFileDiffsFromRange,
-} from './getAllFileDiffsFromRange';
+} from '@src/domain.operations/git/getAllFileDiffsFromRange';
+
+import { compileReviewPrompt } from './compileReviewPrompt';
 
 /**
  * .what = git identity env for commits
@@ -262,26 +263,44 @@ describe('compileReviewPrompt (realistic end-to-end exemplar)', () => {
 
       when('[t0] the prompt is compiled from the real diffs', () => {
         then('captures the full compiled prompt as a snapshot', () => {
+          expect(scene.result.prompt).toContain(
+            '<target.diff path="src/checkout/currency.ts" kind="+">',
+          );
           expect(scene.result.prompt).toMatchSnapshot();
         });
 
+        /**
+         * .note = a new file's body must be carried exactly once, never as
+         *   both file and diff. the edited-file `then` below keeps the diff
+         *   clamp where a diff is a real delta.
+         *
+         * .retired = this case once asserted each new file's `<target.file>` block
+         *   and git's `new file mode 100644` preamble were IN the prompt. retired on
+         *   purpose: that pair sent each new body twice, which the wish's bar 6
+         *   (`F17`) forbids. the edited-file diff clamp it carried is kept below
+         */
         then(
-          'renders a diff + full content tag for each of the 3 new files',
+          '🔴 carries each of the 3 new files ONCE — as an addition, no file tag',
           () => {
+            // a new file is a net-new diff of this branch, so its whole body rides
+            // the diff group labelled `kind="+"` — plain lines, never git's
+            // `+`-prefixed form, and never a second copy as a `<target.file>`.
+            // this is the SENT-side twin of `isTargetDiffSent` — the unit test
+            // grades the decision, this grades the render
             for (const file of [
               'src/checkout/currency.ts',
               'src/checkout/discount.ts',
               'src/checkout/receipt.ts',
             ]) {
               expect(scene.result.prompt).toContain(
-                `<target.diff path="${file}">`,
+                `<target.diff path="${file}" kind="+">`,
               );
-              expect(scene.result.prompt).toContain(
-                `<target.file path="${file}">`,
+              expect(scene.result.prompt).not.toContain(
+                `<target.file path="${file}"`,
               );
             }
-            // new files show git's new-file marker inside the diff
-            expect(scene.result.prompt).toContain('new file mode 100644');
+            // and git's new-file preamble leaves with the diff that carried it
+            expect(scene.result.prompt).not.toContain('new file mode 100644');
           },
         );
 
@@ -294,7 +313,7 @@ describe('compileReviewPrompt (realistic end-to-end exemplar)', () => {
               'src/cart/tax.ts',
             ]) {
               expect(scene.result.prompt).toContain(
-                `<target.diff path="${file}">`,
+                `<target.diff path="${file}" kind="~">`,
               );
               expect(scene.result.prompt).toContain(
                 `<target.file path="${file}">`,
@@ -309,7 +328,7 @@ describe('compileReviewPrompt (realistic end-to-end exemplar)', () => {
         );
 
         then(
-          'renders a lone deleted marker (no diff, no content) for each of the 3 dropped files',
+          'renders a lone deletion void tag (no body, no content) for each of the 3 dropped files',
           () => {
             for (const file of [
               'src/legacy/formatLegacy.ts',
@@ -317,11 +336,11 @@ describe('compileReviewPrompt (realistic end-to-end exemplar)', () => {
               'src/legacy/roundLegacy.ts',
             ]) {
               expect(scene.result.prompt).toContain(
-                `<target.file path="${file}" change="deleted" />`,
+                `<target.diff path="${file}" kind="-" />`,
               );
-              // deleted files carry neither a diff tag nor an open content tag
+              // deleted files carry neither an open diff tag nor a content tag
               expect(scene.result.prompt).not.toContain(
-                `<target.diff path="${file}">`,
+                `<target.diff path="${file}" kind="-">`,
               );
               expect(scene.result.prompt).not.toContain(
                 `<target.file path="${file}">`,

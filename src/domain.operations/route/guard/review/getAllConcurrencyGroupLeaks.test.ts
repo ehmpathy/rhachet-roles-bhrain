@@ -80,14 +80,14 @@ describe('getAllConcurrencyGroupLeaks', () => {
           getAllConcurrencyGroupLeaks({
             peers: [
               { slug: 'l3-a', level: 3, group: 'anthropic' },
-              { slug: 'l3-b', level: 3, group: 'fireworks' },
+              { slug: 'l3-b', level: 3, group: 'openrouter' },
               { slug: 'l3-x', level: 3, group: null },
             ],
           }),
         ).toEqual([
           {
             level: 3,
-            groups: ['anthropic', 'fireworks'],
+            groups: ['anthropic', 'openrouter'],
             ungrouped: ['l3-x'],
           },
         ]);

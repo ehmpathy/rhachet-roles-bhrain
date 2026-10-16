@@ -3,7 +3,11 @@ import * as os from 'os';
 import * as path from 'path';
 import { given, then, useBeforeAll, useThen, when } from 'test-fns';
 
-import { genTestBrainContext } from '@src/.test/genTestBrainContext';
+import {
+  DEFAULT_TEST_BRAIN,
+  genTestBrainContext,
+} from '@src/.test/genTestBrainContext';
+import { BRAIN_CALL_TEST_TIMEOUT_MS } from '@src/.test/infra/brainCallTestTimeout';
 import { REPEATABLY_CONFIG } from '@src/.test/infra/repeatably';
 import { logOutputHead } from '@src/.test/logOutputHead';
 
@@ -20,13 +24,13 @@ const ASSETS_PROSE = path.join(
 
 describe('stepReview.caseBrain.deepseek-flash.case2', () => {
   // increase timeout for brain invocations (3 minutes)
-  jest.setTimeout(180000);
+  jest.setTimeout(BRAIN_CALL_TEST_TIMEOUT_MS);
 
   const scene = useBeforeAll(async () => ({
-    brain: genTestBrainContext({ brain: 'openrouter/deepseek/flash' }),
+    brain: await genTestBrainContext({ brain: DEFAULT_TEST_BRAIN }),
   }));
 
-  given('[case1] multiple chapters with openrouter/deepseek/flash', () => {
+  given('[case1] multiple chapters with the default test brain', () => {
     when.repeatably(REPEATABLY_CONFIG)(
       '[t0] stepReview on all chapters',
       () => {

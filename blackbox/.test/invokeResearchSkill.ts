@@ -1,6 +1,8 @@
 import { exec } from 'child_process';
 import { promisify } from 'util';
 
+import { asExecResultOrThrow } from './asExecResultOrThrow';
+
 const execAsync = promisify(exec);
 
 /**
@@ -30,13 +32,8 @@ export const invokeResearchSkill = async (input: {
       code: 0,
     };
   } catch (error) {
-    // exec throws on non-zero exit
-    const execError = error as { stdout?: string; stderr?: string; code?: number };
-    return {
-      stdout: execError.stdout ?? '',
-      stderr: execError.stderr ?? '',
-      code: execError.code ?? 1,
-    };
+    // a nonzero exit is a skill result; any other fault rethrows (rule.forbid.failhide)
+    return asExecResultOrThrow({ error });
   }
 };
 

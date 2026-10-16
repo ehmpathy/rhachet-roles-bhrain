@@ -1,0 +1,55 @@
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
+
+exports[`emitReviewWarmerSpawn given: [case1] a warmer that spawned when: [t0] a driver reads the review\`s stdout then: it renders the tree a reader can act on 1`] = `
+"
+🦉 warmer: awake — 3 pokes, 15m apart
+   ├─ reviewer: repo-rules
+   ├─ pid: 4242
+   ├─ logs: .agent/.cache/repo=bhrain/role=reviewer/skill=review/warmers/reviewer=repo-rules
+   └─ stop: kill 4242  ·  never spawn: drop --warmer from the guard or command"
+`;
+
+exports[`emitReviewWarmerSpawn given: [case2] a warmer that was already awake when: [t0] a driver reads the review\`s stdout then: it renders distinctly from a fresh spawn 1`] = `
+"
+🦉 warmer: already awake — repo-rules, 3 pokes, 15m apart  ·  stop: kill 4242  ·  never spawn: drop --warmer from the guard or command"
+`;
+
+exports[`emitReviewWarmerSpawn given: [case3] a warmer that refused to spend when: [t0] a driver reads the review\`s stdout then: it says so plainly, with the reason 1`] = `
+"
+🦉 woah there
+
+💥 MalfunctionError: warmer: none — no prompt head at .log/x/input.prompt.head.md — a warmer cannot replay a prompt it cannot read; the review ran unwarmed — re-run to retry, or inspect .log/x
+"
+`;
+
+exports[`emitReviewWarmerSpawn given: [case4] a live warmer whose plan differs from what was asked when: [t0] a driver raised --warmer mid-route then: the whole tree matches the snapshot 1`] = `
+"
+🦉 warmer: already awake — a live warmer already covers this reviewer
+   ├─ reviewer: repo-rules
+   ├─ bound: 3 pokes, 15m apart per review gap
+   ├─ asked: 10 pokes, 5m apart  🟡 NOT applied — a live warmer keeps its own plan
+   ├─ to re-plan: kill 4242, then re-run
+   ├─ pid: 4242
+   ├─ logs: .agent/.cache/repo=bhrain/role=reviewer/skill=review/warmers/reviewer=repo-rules
+   └─ stop: kill 4242  ·  never spawn: drop --warmer from the guard or command"
+`;
+
+exports[`emitReviewWarmerSpawn given: [case6] a live warmer that has not yet recorded its PID when: [t0] a driver reads the review\`s stdout then: it renders the whole tree a reader can act on 1`] = `
+"
+🦉 warmer: already awake — a live warmer already covers this reviewer
+   ├─ reviewer: repo-rules
+   ├─ bound: 3 pokes, 15m apart per review gap
+   ├─ asked: 10 pokes, 5m apart  🟡 NOT applied — a live warmer keeps its own plan
+   ├─ to re-plan: stop the live warmer, then re-run — it has not yet recorded its pid
+   ├─ pid: — (not yet recorded)
+   ├─ logs: .agent/.cache/repo=bhrain/role=reviewer/skill=review/warmers/reviewer=repo-rules
+   └─ stop: pid not yet recorded — once the warmer boots (≤1m), read \`pid\` from .agent/.cache/repo=bhrain/role=reviewer/skill=review/watermarks/warmer-prefix.fc132fa6f236abcc0ef89f3cb19576b3, then kill it  ·  never spawn: drop --warmer from the guard or command"
+`;
+
+exports[`emitReviewWarmerSpawn given: [case7] a warmer this run cannot serve — no fault, no spend when: [t0] a driver reads the review\`s stdout then: the whole tree matches the snapshot 1`] = `
+"
+🦉 heads up, the run goes on
+
+🟡 warn: warmer: none — this run carries no lane identity, so there is no prefix to key a warmer on; the review ran unwarmed and its verdict stands — drop --warmer, since a hand run has no lane to warm
+"
+`;

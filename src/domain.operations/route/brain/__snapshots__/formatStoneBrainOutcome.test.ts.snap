@@ -19,7 +19,7 @@ exports[`formatStoneBrainOutcome given: [case3] a stone whose brain was never di
       ├─ fix: re-enroll the driver with a slug, then re-enter the stone
       │  └─ rhx enroll claude --as @:driver --roles driver
       │
-      └─ or: remove \`brain:\` from the stone's guard, and inherit the brain deliberately
+      └─ or remove \`brain:\` from the stone's guard, and inherit the brain deliberately
          └─ .behavior/v1/5.3.verification.guard"
 `;
 
@@ -42,7 +42,7 @@ exports[`formatStoneBrainOutcome given: [case3] a stone whose brain was never di
    │  ├─ fix: re-enroll the driver with a slug, then re-enter the stone
    │  │  └─ rhx enroll claude --as @:driver --roles driver
    │  │
-   │  └─ or: remove \`brain:\` from the stone's guard, and inherit the brain deliberately
+   │  └─ or remove \`brain:\` from the stone's guard, and inherit the brain deliberately
    │     └─ .behavior/v1/5.3.verification.guard
    │
    └─ here is the stone"
@@ -69,9 +69,9 @@ exports[`formatStoneBrainOutcome given: [case6] a halt whose guard declared a ch
       ├─ fix: run the probe by hand, unhurried, and read what it reports
       │  └─ rhx clone whoami --output json
       │
-      ├─ and: if it reports an unenrolled driver — the most common cause — re-enroll
+      ├─ and if it reports an unenrolled driver — the most common cause — re-enroll
       │  └─ rhx enroll claude --as @:driver --roles driver
       │
-      └─ or: remove \`brain:\` from the stone's guard, and inherit the brain deliberately
+      └─ or remove \`brain:\` from the stone's guard, and inherit the brain deliberately
          └─ .behavior/v1/5.3.verification.guard"
 `;

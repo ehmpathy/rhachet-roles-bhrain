@@ -1,0 +1,15 @@
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
+
+exports[`review.diffs-error.acceptance given: [case1] a --diffs range the skill does not know when: [t0] review skill invoked with --diffs since-yesterday then: the refusal matches its snapshot 1`] = `
+"
+🦉 woah there
+
+✋ ConstraintError: --diffs range not recognized
+   ├─ received: since-yesterday
+   └─ expected: since-main | since-commit | since-staged
+
+✨ did you know?
+   └─ use one of the supported range values
+
+"
+`;

@@ -2,6 +2,7 @@ import * as fs from 'fs/promises';
 import * as path from 'path';
 
 import { given, then, useThen, when } from 'test-fns';
+import { DEFAULT_TEST_BRAIN_VIA_CLI } from '@src/.test/genTestBrainContext';
 
 import {
   DEMO_ROLE,
@@ -19,7 +20,7 @@ const ASSETS_DIR = path.join(__dirname, '.test/assets/codebase-review-by');
  */
 const REPEATABLE_CONFIG = {
   attempts: 3,
-  criteria: 'SOME',
+  criteria: process.env.CI ? 'SOME' : 'EVERY',
 } as const;
 
 /**
@@ -41,7 +42,7 @@ describe('review.by.journey.acceptance', () => {
         const dirty = await invokeReviewBySkill({
           role: DEMO_ROLE,
           paths: 'src/dirty.ts',
-          brain: 'openrouter/deepseek/flash',
+          brain: DEFAULT_TEST_BRAIN_VIA_CLI,
           cwd,
         });
 
@@ -55,7 +56,7 @@ describe('review.by.journey.acceptance', () => {
         const clean = await invokeReviewBySkill({
           role: DEMO_ROLE,
           paths: 'src/dirty.ts',
-          brain: 'openrouter/deepseek/flash',
+          brain: DEFAULT_TEST_BRAIN_VIA_CLI,
           cwd,
         });
 

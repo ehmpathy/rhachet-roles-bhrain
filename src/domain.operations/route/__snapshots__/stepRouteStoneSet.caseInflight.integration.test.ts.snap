@@ -1,0 +1,28 @@
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
+
+exports[`stepRouteStoneSet.caseInflight.integration given: [case1] an unguarded stone the driver delegates repairs for when: [t1] --what on another --as then: it is refused loud, never dropped 1`] = `
+"✋ ConstraintError: --what is only accepted for --as inflight
+
+you passed --as passed, which takes no --what.
+
+to wait on delegated work, run:
+  rhx route.stone.set --stone 1.implement --as inflight --what '<what>'"
+`;
+
+exports[`stepRouteStoneSet.caseInflight.integration given: [case1] an unguarded stone the driver delegates repairs for when: [t2] --as inflight with --what then: the emit matches the snapshot 1`] = `
+"🦉 the way speaks for itself
+
+🗿 route.stone.set
+   ├─ stone = 1.implement
+   ├─ as = inflight
+   └─ ⏳ repairs in flight for 1.implement since [HH:MM] — three delegates repair blockers 1-4
+      ├─ the stop hook stays quiet for this stone for 30m
+      └─ --as arrived, --as passed, or --as blocked clears it"
+`;
+
+exports[`stepRouteStoneSet.caseInflight.integration given: [case2] a guarded stone whose round outlives a foreground call when: [t1] the driver marks the passed stone in flight then: it is refused, and names the rewind 1`] = `
+"✋ ConstraintError: --as inflight is refused: 1.implement has already passed
+
+a passed stone has no repairs to wait on. to reopen it, rewind it first:
+  rhx route.stone.set --stone 1.implement --as rewound"
+`;

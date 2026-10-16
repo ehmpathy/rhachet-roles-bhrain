@@ -18,16 +18,20 @@ output:
   when it has halted, it switches to a halt message that names who owns each remedy:
     ✋ halted, stone marked blocked            a driver wall (--as blocked) — clear it
     👋 halted, peer reviewer budget exhausted  two levers, sorted by owner:
-                                                converge with the reviewer — yours to run
-                                                approve as-is — a human must grant
+                                                · converge with the reviewer — yours to run
+                                                · approve as-is — a human must grant
                                                 the top-up takes the first slot ONLY where
                                                 an urgent concession earned the round: the
                                                 budget is a bound, so a grant needs a
                                                 warrant on record
-    💥 halted, guard malfunction               a reviewer or judge broke — a human must fix
+    💥 halted, guard malfunction               a reviewer or judge broke — still yours to clear:
+                                                · one row per broken part: its cause, its next step
+                                                · then answer a broken lane like a rejected one
   onStop honors the same halt: exit 2 keeps the route in motion, exit 0 allows a
   clean stop, exit 1 escalates a malfunction (per rule.require.exit-code-semantics).
   onBoot always exits 0 (it never blocks session start).
+  onStop is quiet (one ⏳ line, exit 0) while a fresh repairs-in-flight watermark
+  names the stone (route.stone.set --as inflight); past 30m it nudges again.
 
 examples:
   route.drive                        # echo current stone

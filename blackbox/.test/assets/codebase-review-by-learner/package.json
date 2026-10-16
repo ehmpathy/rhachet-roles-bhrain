@@ -1,0 +1,11 @@
+{
+  "name": "codebase-review-by-learner-fixture",
+  "private": true,
+  "description": "fixture for the learner review.by acceptance tests - a target clean under both learner rubrics, with its glossary in scope",
+  "dependencies": {
+    "rhachet-brains-anthropic": "0.3.3",
+    "rhachet-brains-openai": "0.2.1",
+    "rhachet-brains-openrouter": "0.1.1",
+    "rhachet-roles-bhrain": "link:."
+  }
+}

@@ -1,0 +1,25 @@
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
+
+exports[`asPartitionFaultLaneSection given: [case1] every partition refuses on the same overflow when: [t0] the run was driven from a route then: it matches snapshot 1`] = `
+"## lane: every partition refused
+
+✋ ConstraintError: every partition failed before it returned a verdict: prompt exceeds 75% of context window
+
+every partition of this lane refused on this same constraint, so the lane returned
+no verdict at all. a re-run returns the same refusal — it cannot help.
+fix: narrow each partition, or split each in two — the refusal on stderr names
+the locus. declare the new set, then re-arrive: rhx route.guard.partition --for review --peer @all --partition '<slug>=<globs>' --mode apply
+"
+`;
+
+exports[`asPartitionFaultLaneSection given: [case1] every partition refuses on the same overflow when: [t1] the run was a hand run, with no route bound then: it matches snapshot 1`] = `
+"## lane: every partition refused
+
+✋ ConstraintError: every partition failed before it returned a verdict: prompt exceeds 75% of context window
+
+every partition of this lane refused on this same constraint, so the lane returned
+no verdict at all. a re-run returns the same refusal — it cannot help.
+fix: narrow each partition, or split each in two — the refusal on stderr names
+the locus. narrow the --partition declarations on this review line, then run it again.
+"
+`;

@@ -1,6 +1,7 @@
 import * as fs from 'fs/promises';
 import * as path from 'path';
 
+// a sanctioned exposure, declared in src/domain.operations/review/.readme.md
 import { enumFilesFromGlob } from '@src/domain.operations/review/enumFilesFromGlob';
 
 /**
@@ -13,6 +14,10 @@ export const compileReflectStep2Prompt = async (input: {
   pureDir: string;
   mode: 'pull' | 'push';
 }): Promise<{ prompt: string; tokenEstimate: number }> => {
+  // .note = deliberate mutation, and a SCOPED ZONE: `sections` is born in this call and
+  //         never escapes — only its join does, in the return below. each section is
+  //         appended in prompt order, some behind a read of disk
+  //         (rule.require.immutable-vars, scoped zone)
   const sections: string[] = [];
 
   // enumerate prior rules in target (excluding .draft directory which contains pure proposals)

@@ -1,0 +1,5 @@
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
+
+exports[`stepReview — a transient fault its retry swallows given: [case1] the first ask drops its socket mid-stream, then the retry answers when: [t0] the review runs then: the assembled stderr matches the snapshot 1`] = `"💥 MalfunctionError: 1 ask may have been billed with no reported spend (a runaway with no output count, or a fault a retry swallowed); this run's spend is unmeasured, so metrics.realized.json is not written"`;
+
+exports[`stepReview — a transient fault its retry swallows given: [case2] the first ask is refused unbilled, then the retry answers when: [t0] the review runs then: the assembled stderr matches the snapshot 1`] = `""`;

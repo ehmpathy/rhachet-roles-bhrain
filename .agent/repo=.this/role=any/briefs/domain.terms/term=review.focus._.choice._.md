@@ -30,7 +30,7 @@ two positions, and the set is closed:
 
 ```
 ✋ focus 'pull' requires a brain with tool use (BrainRepl).
-   brain 'fireworks/deepseek/v4-flash' is a BrainAtom without tool use.
+   brain 'openrouter/deepseek/flash' is a BrainAtom without tool use.
 ```
 
 **that message names a brain CLASS and says naught about a key.** `rhx review --help` lists 19

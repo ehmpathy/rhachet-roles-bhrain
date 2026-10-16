@@ -12,7 +12,7 @@ import {
 
 const ASSETS_DIR = path.join(__dirname, '.test/assets/reflect-snapshot');
 
-describe('reflect.snapshot annotate', () => {
+describe('reflect.snapshot.annotate', () => {
   given('[case1] valid annotation text', () => {
     const tempDir = genTempDirForReflector({
       slug: 'reflect-annotate-case1',
@@ -71,6 +71,10 @@ describe('reflect.snapshot annotate', () => {
       then('output shows annotated confirmation', () => {
         expect(result.stdout).toContain('annotated');
       });
+
+      then('output matches snapshot', () => {
+        expect(sanitizeReflectOutputForSnapshot(result.stdout)).toMatchSnapshot();
+      });
     });
   });
 
@@ -104,6 +108,20 @@ describe('reflect.snapshot annotate', () => {
         // error message appears in stdout (via console.log in CLI)
         const combined = `${result.stdout} ${result.stderr}`.toLowerCase();
         expect(combined).toMatch(/annotation|text|required/);
+      });
+
+      then('exit code is 2 — absent text is the caller`s to fix', () => {
+        expect(result.code).toEqual(2);
+      });
+
+      then('the error lands on stderr, named as a constraint', () => {
+        expect(result.stderr).toContain(
+          '✋ ConstraintError: annotation text required',
+        );
+      });
+
+      then('the refusal renders whole', () => {
+        expect(sanitizeReflectOutputForSnapshot(result.stderr)).toMatchSnapshot();
       });
     });
   });

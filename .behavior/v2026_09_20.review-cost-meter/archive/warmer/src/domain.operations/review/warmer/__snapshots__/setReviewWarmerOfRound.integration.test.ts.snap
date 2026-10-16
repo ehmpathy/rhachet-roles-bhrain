@@ -1,0 +1,13 @@
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
+
+exports[`setReviewWarmerOfRound given: [case2] an \`--warmer off\` round on the same head as the warmer still awake when: [t0] the round settles then: the aside matches the snapshot 1`] = `
+"
+🦉 heads up, the run goes on
+
+🟡 warn: warmer: off — and a warmer from an earlier round is STILL awake
+   ├─ reviewer: repo-rules
+   ├─ pid: 4242
+   ├─ --warmer off stops the next spawn, never a live warmer
+   └─ stop: kill 4242
+"
+`;

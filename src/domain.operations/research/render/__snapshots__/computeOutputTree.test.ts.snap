@@ -1,0 +1,30 @@
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
+
+exports[`computeOutputTree given: [case1] files were created when: [t0] multiple files created then: renders tree with + symbols 1`] = `
+"🦉 hooda thunk?
+   ├─ + 0.wish.md
+   └─ + 1.probes.aim.stone"
+`;
+
+exports[`computeOutputTree given: [case1] files were created when: [t1] single file created then: renders tree with └─ branch 1`] = `
+"🦉 hooda thunk?
+   └─ + 0.wish.md"
+`;
+
+exports[`computeOutputTree given: [case2] files were kept when: [t0] files already existed then: renders tree with ✓ symbols 1`] = `
+"🦉 hooda thunk?
+   ├─ ✓ 0.wish.md
+   └─ ✓ 1.probes.aim.stone"
+`;
+
+exports[`computeOutputTree given: [case3] files were updated when: [t0] files were refreshed then: renders tree with ↻ symbols 1`] = `
+"🦉 hooda thunk?
+   └─ ↻ 0.wish.md"
+`;
+
+exports[`computeOutputTree given: [case4] mixed actions when: [t0] some created, some kept then: renders tree sorted alphabetically 1`] = `
+"🦉 hooda thunk?
+   ├─ ✓ 0.wish.md
+   ├─ ✓ 1.probes.aim.stone
+   └─ + 2.probes.emit.stone"
+`;

@@ -37,7 +37,6 @@ export const asReviewConcernRef = (input: {
   if (!matched)
     throw new BadRequestError(
       `invalid --about: "${input.about}". expected <kind>.<ordinal>, where kind is blocker or nitpick — e.g. "blocker.1", "nitpick.4"`,
-      { about: input.about },
     );
 
   // the regex fixed kind to exactly these two, so narrow by value rather than an as-cast
@@ -48,7 +47,6 @@ export const asReviewConcernRef = (input: {
   if (ordinal < 1)
     throw new BadRequestError(
       `invalid --about: "${input.about}". the ordinal is 1-based, so it starts at 1`,
-      { about: input.about, ordinal },
     );
 
   return { kind, ordinal };

@@ -1,10 +1,9 @@
-import { FIXED_FALLBACK_BRAIN } from '../../genReviewBrainSupply';
 import { asMeterCountDisplay } from '../asMeterCountDisplay';
-import { TALLIED_FOOTER_PREFIX } from '../review/getReviewTacticFromContent';
 import {
   getRouteGuardReviewPeerPathTaken,
   isRouteGuardReviewPeerGivenPath,
 } from '../review/peer/getRouteGuardReviewPeerPathTaken';
+import { TALLIED_FOOTER_PREFIX } from '../review/TALLIED_FOOTER_PREFIX';
 
 /**
  * .what = derives the paired `taken: <path>` detail line for a peer given path
@@ -82,6 +81,27 @@ export const DISPUTED_NARRATIVE =
   'disputed 🌙 — skipped this generation, no round spent';
 
 /**
+ * .what = the detail body a malfunction or constraint reviewer carries under its header
+ * .why = the two states share every line but the leading state word; one body keeps them in
+ *        lockstep (rule.forbid.duplicate-format-tree-operations)
+ */
+const asTerminalBrokenDetailLines = (input: {
+  stateWord: string;
+  reviewer: { skippedByDispute: boolean; overruled: boolean };
+  path: string;
+}): string[] => {
+  const takenLine = asTakenDetailLine(input.path);
+  return [
+    input.stateWord,
+    ...(input.reviewer.skippedByDispute ? [DISPUTED_NARRATIVE] : []),
+    ...(input.reviewer.overruled ? [OVERRULED_NARRATIVE] : []),
+    TERMINAL_UNLOCK_NARRATIVE,
+    `given: ${input.path}`,
+    ...(takenLine ? [takenLine] : []),
+  ];
+};
+
+/**
  * .what = reviewer state for tree format
  * .why = single shape for both inflight progress and final result contexts
  */
@@ -145,11 +165,12 @@ export interface ReviewerTreeState {
         path: string;
         cached: boolean;
         /**
-         * which tallier produced the tally — drives the `tallied by reviewer@$brain` branch:
-         * 'probabilistic' shows the branch (a sub-brain tallied the prose), 'deterministic'
-         * shows none (counts read verbatim). the branch's presence IS the observability signal.
+         * the PINNED brain that tallied the prose — drives the `tallied by reviewer@$brain`
+         * branch: a slug shows the branch, null shows none (counts read verbatim). the
+         * branch's presence IS the observability signal, and the slug is the pin the given's
+         * footer recorded — never the versionless default, which moves when the pin moves
          */
-        tallier: 'deterministic' | 'probabilistic';
+        talliedBy: string | null;
       }
     | {
         type: 'malfunction';
@@ -160,6 +181,23 @@ export interface ReviewerTreeState {
         path: string;
       };
 }
+
+/**
+ * .what = a reviewer's head — `r${index}: ${slug}`, plus the `(l${level}, ${rounds}/${budget})`
+ *         meter suffix unless the caller hides it
+ * .why = both densities lead with this head, so one render keeps the meter suffix from drift
+ *        between the full and the compact row (rule.forbid.duplicate-format-tree-operations)
+ */
+const asReviewerHead = (input: {
+  reviewer: ReviewerTreeState;
+  hideMeter: boolean | undefined;
+}): string => {
+  const { reviewer } = input;
+  const meterSuffix = input.hideMeter
+    ? ''
+    : ` (l${reviewer.level}, ${reviewer.rounds}/${asMeterCountDisplay(reviewer.budget)})`;
+  return `r${reviewer.index}: ${reviewer.slug}${meterSuffix}`;
+};
 
 /**
  * .what = formats a single reviewer as tree lines
@@ -187,7 +225,22 @@ export const formatGuardReviewerTree = (input: {
    *        not apply. defaults to false, so every extant guard call is unchanged.
    */
   hideMeter?: boolean;
+  /**
+   * `full` (the default) renders the extant detail block — verdict, narratives, both counts,
+   * tallier, given, taken. `compact` folds the verdict and both counts onto the header line,
+   * and keeps one detail line: the `given:` path.
+   *
+   * .why = a summary surface (route.drive's latest-round block) lists every lane at once, where
+   *        the full block costs six lines a lane and the round on a real stone holds a score of
+   *        lanes. the compact row is the SAME state render, folded — so a verdict word, a count
+   *        glyph, or a dispute marker cannot drift between the two surfaces
+   *        (rule.forbid.duplicate-format-tree-operations)
+   */
+  density?: 'full' | 'compact';
 }): string[] => {
+  // compact density: one header line that carries the state, plus the given path beneath it
+  if (input.density === 'compact') return formatGuardReviewerTreeCompact(input);
+
   // .note = deliberate local line-builder. this formatter branches per reviewer-state
   //         (inflight/awaits/queued/malfunction/constraint/finished), each with an early return, and
   //         the shared detail block is now built purely via formatDetailLines (returned + spread).
@@ -200,11 +253,7 @@ export const formatGuardReviewerTree = (input: {
   // format header: r${index}: slug (l${level}, ${rounds}/${budget}) — meter suffix optional
   const prefix = isLast ? '└─' : '├─';
   const indent = isLast ? '   ' : '│  ';
-  const displayBudget = asMeterCountDisplay(reviewer.budget);
-  const meterSuffix = input.hideMeter
-    ? ''
-    : ` (l${reviewer.level}, ${reviewer.rounds}/${displayBudget})`;
-  const header = `r${reviewer.index}: ${reviewer.slug}${meterSuffix}`;
+  const header = asReviewerHead({ reviewer, hideMeter: input.hideMeter });
   lines.push(`${baseIndent}${prefix} ${header}`);
 
   // format state-specific content
@@ -226,48 +275,33 @@ export const formatGuardReviewerTree = (input: {
     return lines;
   }
 
-  if (state.type === 'malfunction') {
-    // terminal narrative: malfunction is TERMINAL-for-unlock (isReviewPeerVerdictTerminal),
-    // so like exhausted it never holds the ladder — higher levels unlock and run. it DOES
-    // block passage (the reviewer broke), but a driver must not misread it as "the whole
-    // ladder is halted here". same reassurance line as exhausted, for the same invariant. (D5)
-    const detailLines = [
-      'malfunction 💥',
-      ...(reviewer.skippedByDispute ? [DISPUTED_NARRATIVE] : []),
-      ...(reviewer.overruled ? [OVERRULED_NARRATIVE] : []),
-      TERMINAL_UNLOCK_NARRATIVE,
-      `given: ${state.path}`,
-    ];
-    const takenLine = asTakenDetailLine(state.path);
-    if (takenLine) detailLines.push(takenLine);
+  // terminal narrative: malfunction (the reviewer broke) and constraint (needs a fix or an
+  // overrule) are TERMINAL-for-unlock (isReviewPeerVerdictTerminal), so like exhausted they
+  // never hold the ladder — higher levels unlock and run. they DO block passage, but a driver
+  // must not misread them as "the whole ladder is halted here". same reassurance line as
+  // exhausted, for the same invariant. (D5)
+  // .note = one shared detail body, keyed by its first state word alone, so a member added
+  //         to it lands on both states at once (rule.forbid.duplicate-format-tree-operations)
+  if (state.type === 'malfunction' || state.type === 'constraint')
     return [
       ...lines,
-      ...formatDetailLines({ baseIndent, indent, detailLines }),
+      ...formatDetailLines({
+        baseIndent,
+        indent,
+        detailLines: asTerminalBrokenDetailLines({
+          stateWord:
+            state.type === 'malfunction' ? 'malfunction 💥' : 'constraint ✋',
+          reviewer,
+          path: state.path,
+        }),
+      }),
     ];
-  }
-
-  if (state.type === 'constraint') {
-    // terminal narrative: constraint is TERMINAL-for-unlock (isReviewPeerVerdictTerminal),
-    // so like exhausted it never holds the ladder — higher levels unlock and run. it DOES
-    // block passage (needs a fix or an overrule), but a driver must not misread it as "the
-    // whole ladder is halted here". same reassurance line as exhausted, same invariant. (D5)
-    const detailLines = [
-      'constraint ✋',
-      ...(reviewer.skippedByDispute ? [DISPUTED_NARRATIVE] : []),
-      ...(reviewer.overruled ? [OVERRULED_NARRATIVE] : []),
-      TERMINAL_UNLOCK_NARRATIVE,
-      `given: ${state.path}`,
-    ];
-    const takenLine = asTakenDetailLine(state.path);
-    if (takenLine) detailLines.push(takenLine);
-    return [
-      ...lines,
-      ...formatDetailLines({ baseIndent, indent, detailLines }),
-    ];
-  }
 
   // finished state: approved, rejected, or exhausted
   if (state.type === 'finished') {
+    // .note = deliberate local line-builder, scoped to this branch — born here, grown by the
+    //         commented pushes below (each one a conditional line with its own why), and only
+    //         spread into the returned array. no array crosses a call boundary
     const detailLines: string[] = [];
 
     // verdict glyph: exhausted carries the 🌙 marker — an earned exhaustion, the level
@@ -335,9 +369,9 @@ export const formatGuardReviewerTree = (input: {
     // tallied-by line: ONLY when a sub-brain tallied the prose (probabilistic fallback).
     // .why = the deterministic path shows no branch (the silent common case), so the branch's
     //        presence is the whole signal — a human sees exactly when a count came from the
-    //        fallback, and which brain tallied it. see rule.forbid.surprises.
-    if (state.tallier === 'probabilistic') {
-      detailLines.push(`${TALLIED_FOOTER_PREFIX}${FIXED_FALLBACK_BRAIN}`);
+    //        fallback, and which PINNED brain tallied it. see rule.forbid.surprises.
+    if (state.talliedBy !== null) {
+      detailLines.push(`${TALLIED_FOOTER_PREFIX}${state.talliedBy}`);
     }
 
     // path line: always show
@@ -355,6 +389,87 @@ export const formatGuardReviewerTree = (input: {
   }
 
   return lines;
+};
+
+/**
+ * .what = the one-phrase state a compact row carries on its header
+ * .why = the compact twin of the full detail block's first lines. each word and glyph is read
+ *        from the same constants and the same count render the full block uses, so the two
+ *        densities cannot name one state two ways
+ */
+const asReviewerStateSummary = (input: {
+  reviewer: ReviewerTreeState;
+}): string => {
+  const { reviewer } = input;
+  const state = reviewer.state;
+
+  // the states that carry no counts name themselves in the words the full block uses
+  if (state.type === 'inflight')
+    return `⠋ inflight ${state.durationSec.toFixed(1)}s`;
+  if (state.type === 'awaits') return `awaits l${state.level} terminal`;
+  if (state.type === 'queued') return 'awaits arrival';
+
+  // the declared markers ride at the tail, in the order the full block stacks them
+  const markers = [
+    ...(reviewer.skippedByDispute ? ['disputed 🌙'] : []),
+    ...(reviewer.overruled ? ['overruled ✓'] : []),
+  ];
+
+  // a broken lane is named by its state word alone; it carries no tally by contract
+  if (state.type === 'malfunction' || state.type === 'constraint')
+    return [
+      state.type === 'malfunction' ? 'malfunction 💥' : 'constraint ✋',
+      ...markers,
+    ].join(', ');
+
+  // a finished lane: its verdict, then both counts through the one count render
+  const verdictGlyph = state.verdict === 'exhausted' ? ' 🌙' : '';
+  return [
+    `${state.verdict}${verdictGlyph}${state.cached ? ', cached' : ''}`,
+    asConcernCountLine({ count: state.blockers, noun: 'blocker', glyph: '🔴' }),
+    asConcernCountLine({ count: state.nitpicks, noun: 'nitpick', glyph: '🟠' }),
+    ...markers,
+  ].join(', ');
+};
+
+/**
+ * .what = the compact density of formatGuardReviewerTree — the state on the header, the given
+ *         path as its one child
+ * .why = see the `density` input. kept beside the full render so a change to either is read
+ *        against the other
+ */
+const formatGuardReviewerTreeCompact = (input: {
+  reviewer: ReviewerTreeState;
+  isLast: boolean;
+  baseIndent?: string;
+  hideMeter?: boolean;
+}): string[] => {
+  const baseIndent = input.baseIndent ?? '';
+  const { reviewer } = input;
+
+  // header: r${index}: slug (meter) — state
+  const prefix = input.isLast ? '└─' : '├─';
+  const indent = input.isLast ? '   ' : '│  ';
+  const summary = asReviewerStateSummary({ reviewer });
+  const header = `${baseIndent}${prefix} ${asReviewerHead({ reviewer, hideMeter: input.hideMeter })} — ${summary}`;
+
+  // the given path, where the lane spoke
+  const state = reviewer.state;
+  const path =
+    state.type === 'finished' ||
+    state.type === 'malfunction' ||
+    state.type === 'constraint'
+      ? state.path
+      : '';
+  if (!path) return [header];
+  return [
+    header,
+    ...formatDetailLines({
+      baseIndent,
+      indent,
+      detailLines: [`given: ${path}`],
+    }),
+  ];
 };
 
 /**

@@ -1,11 +1,11 @@
+import { asGuardReasonHead } from '../guard/asGuardReasonHead';
+import { formatGuardMalfunctionClearLines } from '../guard/formatGuardMalfunctionClearLines';
 import {
   computeBlockRemedyGroups,
   formatBlockRemedyGroups,
 } from '../guard/tree/formatBlockRemedyGroups';
-import {
-  formatReviewsMeterLines,
-  type GuardPeerMeterStatus,
-} from '../guard/tree/formatGuardTree';
+import type { GuardPeerMeterStatus } from '../guard/tree/formatGuardTree';
+import { formatRouteDriveHaltLeverLead } from './formatRouteDriveHaltLeverLead';
 import { formatRouteDriveHeader } from './formatRouteDriveHeader';
 
 /**
@@ -37,34 +37,56 @@ export const formatRouteDriveMixedHalt = (input: {
   //
   // 🟡 `passage` is 'malfunction' when the reason names one, so the shared builder derives the
   //    same overrule noun this file derived by hand — malfunction outranks constraint.
+  const remedyPassage = input.reason.includes('malfunction')
+    ? 'malfunction'
+    : 'blocked';
   const remedyGroups = computeBlockRemedyGroups({
     stone: input.stone,
-    passage: input.reason.includes('malfunction') ? 'malfunction' : 'blocked',
+    passage: remedyPassage,
     reason: input.reason,
+    // the route.drive replay reads the persisted reason only, never a .given
+    lever: null,
   });
 
+  // .note = deliberate local line-builder, scoped to this formatter — the escape hatch in
+  //         rule.require.immutable-vars permits a scoped emit builder; no array crosses a boundary.
   const lines: string[] = [...formatRouteDriveHeader(input)];
-  lines.push(`   └─ halted, ${input.reason}`);
-  // ⛔ no spacer under the `halted,` header. every other halt renderer in the repo flushes
-  //    its header straight to its first child — `formatRouteDriveBudgetExhausted`
-  //    (`halted, …` → `├─ reason: …`) and `getRouteDriveBlockerMessage`
-  //    (`halted, …` → `├─ please ask a human to`). match that shape here too.
+  // the header line shows the reason's head; the clear block below names each broken part
+  lines.push(
+    `   └─ halted, ${asGuardReasonHead({ passage: remedyPassage, reason: input.reason }) ?? input.reason}`,
+  );
+  // ⛔ no spacer under the `halted,` header. every OTHER halt renderer in the repo flushes
+  //    its header straight to its first child — `formatRouteDriveBudgetExhausted:88-90`
+  //    (`halted, …` → `├─ reason: …`) and `getOneRouteDriveBlockerMessage:143-144`
+  //    (`halted, …` → `├─ please ask a human to`). this surface alone pushed a `│` there,
+  //    so a driver who met a mixed halt read a tree shaped unlike every halt they had seen
+  //    before, on the one occasion two gates fired at once
+  //    (r6 ergo-snapshot-visual-blemishes, nitpick.1, i018).
 
-  // peer reviewer meters section via the shared formatter
-  const meterLines = formatReviewsMeterLines({
-    meters: input.meters,
-    baseIndent: '      ',
-    sectionIndent: '│  ',
-    includeHeader: true,
-    headerPrefix: '├─',
-  });
-  lines.push(...meterLines);
-  // 🟡 this spacer belongs to the reviews section, and parts it from the remedy block below
-  //    — see the twin note in `formatRouteDriveBudgetExhausted`. an empty meter set drops
-  //    the section entirely, so an unconditional push here would strand a bare connector
-  //    between the `halted,` header and its only child.
-  if (meterLines.length > 0) lines.push(`      │`);
+  // 🔴 a malfunction stays the DRIVER's to clear, so its own levers lead the halt — the same
+  //    lever list the pure malfunction replay and the guard tree render
+  //    (rule.always.diagnose-reviewer-malfunctions, rule.forbid.duplicate-format-tree-operations).
+  //    a mixed halt once showed only budget / overrule / approve, so a driver whose higher level
+  //    broke in the same pass a lower level spent was taught the human remedies and never that
+  //    the broken lane was theirs to diagnose (r014 nitpick.3, i014). a constraint needs no
+  //    such block: its own levers (partition, narrow) already ride in the remedy groups.
+  //
+  //    the block itself (lead, rows, indent) renders from the one clear-block builder the guard
+  //    tree and the stone.set emit read; it names each broken part off the persisted reason
+  if (remedyPassage === 'malfunction')
+    lines.push(
+      ...formatGuardMalfunctionClearLines({
+        stone: input.stone,
+        reason: input.reason,
+        indent: '      ',
+        branch: '├─',
+      }),
+      `      │`,
+    );
 
+  // the reviews section, its spacer, and the lever head come from the one builder the budget
+  // halt reads too (r003 nitpick.1, i014)
+  //
   // every remedy, one per concurrent gate, sorted BY OWNER — the driver's own lever
   // first, the human's after.
   //
@@ -73,7 +95,13 @@ export const formatRouteDriveMixedHalt = (input: {
   //    who obeys stalls on a foreman for a command they can run themselves, which is
   //    exactly what `rule.always.spend-own-levers-before-escalation` forbids: "sort by
   //    owner and spend yours first."
-  lines.push(`      └─ spend your own lever first, then ask a human`);
+  lines.push(
+    ...formatRouteDriveHaltLeverLead({
+      meters: input.meters,
+      leverHead: 'human',
+      leverBranch: '└─',
+    }),
+  );
   lines.push(
     ...formatBlockRemedyGroups({
       groups: remedyGroups,

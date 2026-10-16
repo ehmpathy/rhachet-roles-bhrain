@@ -21,7 +21,17 @@ exports[`driver.route.peer-level-unlock-latch.acceptance given: [journey] a leve
 🗿 route.stone.set
    ├─ stone = 1.execute
    ├─ passage = malfunction
-   ├─ reason = reviewer or judge malfunctioned
+   ├─ reason = 1 of 2 reviewers malfunctioned; 1 reviewer rejected and awaits your answer
+   ├─ still yours to clear
+   │  ├─ 💥 lane l1-reviewer (r1) broke
+   │  │  └─ cause = exit code 1 (unknown)
+   │  └─ next
+   │     ├─ 1. read each given for its cause, and fix what you can
+   │     ├─ 2. answer each broken lane, like a rejected one
+   │     │  └─ rhx route.stone.set --stone 1.execute --as absorbed --that l1-reviewer
+   │     ├─ 3. re-arrive
+   │     │  └─ rhx route.stone.set --stone 1.execute --as arrived
+   │     └─ ask a human only for a grant you cannot make (an absent credential, a permission, etc)
    ├─ options
    │  ├─ converge with the reviewer — yours to run, and the levels above stay unlocked
    │  │  └─ rhx route.stone.set --stone 1.execute --as absorbed --that <reviewer>
@@ -47,7 +57,7 @@ exports[`driver.route.peer-level-unlock-latch.acceptance given: [journey] a leve
       └─ judges
           └─ j1: rhx route.stone.judge --mechanism reviewed? --stone $stone --route $route --allow-blockers 0 --allow-nitpicks 1
               ├─ finished [TIME] ✗
-              └─ reason: blockers exceed threshold (1 > 0)
+              └─ reason: blockers exceed threshold (2 > 0)
 "
 `;
 
@@ -126,7 +136,7 @@ exports[`driver.route.peer-level-unlock-latch.acceptance given: [journey] a leve
    │   └─ taken: .reviews/peer/1.execute._.review.i001.457fd5ef46e053a35e.r001._.taken.by_self.l1-reviewer.md
    │
    ├─ r2: l3-reviewer (l3, 0/5)
-   │   └─ awaits arrival
+   │   └─ awaits l1 terminal
    │
    └─ ✗ judge.1 - blocked [TIME]
 

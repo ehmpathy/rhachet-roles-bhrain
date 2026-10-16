@@ -12,6 +12,7 @@ const asGiven = (input: {
   blockers: 1,
   nitpicks: 1,
   unreadable: false,
+  constraint: null,
   iteration: 1,
   pathGiven: input.pathGiven,
 });
@@ -32,7 +33,7 @@ const asAbsorption = (input: {
  *        `better`-only exhaustion halted for budget — the exact mis-grade this shed corrects. this
  *        suite goes RED without the subtraction.
  */
-describe('computeConcededBetterConcernCounts', () => {
+describe('getStoneConcededBetterConcernCounts.computeConcededBetterConcernCounts', () => {
   given('[case1] no absorptions at all', () => {
     when('[t0] the counts are computed', () => {
       then('naught is shed', () => {

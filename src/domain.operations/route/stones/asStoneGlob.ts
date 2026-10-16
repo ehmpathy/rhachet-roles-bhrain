@@ -58,11 +58,11 @@ export const findOneStoneByPattern = (input: {
     isStoneInGlob({ name: s.name, glob }),
   );
 
-  // failfast if more than one match
+  // failfast if more than one match; the headline lists the matches the caller picks from,
+  // so a bag would only repeat it
   if (matched.length > 1) {
     throw new BadRequestError(
-      `pattern "${input.pattern}" matched ${matched.length} stones; be more specific`,
-      { pattern: input.pattern, matched: matched.map((s) => s.name) },
+      `pattern "${input.pattern}" matched ${matched.length} stones (${matched.map((s) => s.name).join(', ')}); be more specific`,
     );
   }
 

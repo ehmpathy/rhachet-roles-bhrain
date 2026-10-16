@@ -1,9 +1,9 @@
-import { BadRequestError } from 'helpful-errors';
-
 import type { ContextCliEmit } from '@src/domain.objects/Driver/ContextCliEmit';
 
 import { formatRouteStoneEmit } from '../formatRouteStoneEmit';
+import { setStoneRewindGeneration } from '../guard/round/setStoneRewindGeneration';
 import { findOneStoneByPattern } from './asStoneGlob';
+import { asStoneNotFoundError } from './asStoneNotFoundError';
 import { computeAffectedStonesForRewind } from './computeAffectedStonesForRewind';
 import { getAllStones } from './getAllStones';
 import { rewindAffectedStones } from './rewindAffectedStones';
@@ -32,15 +32,27 @@ export const setStoneAsRewound = async (
   });
 
   // fail fast if stone not found
-  if (!stoneMatched) {
-    throw new BadRequestError('stone not found', { stone: input.stone });
-  }
+  if (!stoneMatched)
+    throw asStoneNotFoundError({
+      act: 'rewound',
+      route: input.route,
+      pattern: input.stone,
+      stones,
+    });
 
   // compute stones affected by this rewind (cascade)
   const affectedStones = computeAffectedStonesForRewind({
     stones,
     fromStone: stoneMatched,
   });
+
+  // bump the rewind generation of every stone this rewind clears, before aught is deleted
+  // .why = a guard round aloft on one of these stones checks the generation before each
+  //        write (setStoneGuardRoundOutput). once bumped, every later write of that round
+  //        is discarded, so the deletes below can never leave a stone with some lanes
+  //        that spoke and some that "have not spoken"
+  for (const stone of affectedStones)
+    await setStoneRewindGeneration({ route: input.route, stone: stone.name });
 
   // rewind each affected stone (delete artifacts, handle yield, set passage)
   const yieldMode = input.yield ?? 'keep';

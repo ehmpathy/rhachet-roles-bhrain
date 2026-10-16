@@ -12,7 +12,7 @@ exports[`driver.route.brain.acceptance given: [case1] the stone declares a brain
    └─ ✋ halted, brain switch could not land
       ├─ <cause-block>
       │
-      └─ or: remove \`brain:\` from the stone's guard, and inherit the brain deliberately
+      └─ or remove \`brain:\` from the stone's guard, and inherit the brain deliberately
          └─ 1.vision.guard
 "
 `;

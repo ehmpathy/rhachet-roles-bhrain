@@ -1,0 +1,129 @@
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
+
+exports[`asPartitionFaultSection given: [case1] a transient fault when: [t0] the section renders then: it matches snapshot 1`] = `
+"# blocker.1 — this partition did not review
+
+💥 MalfunctionError: the partition failed before it returned a verdict: the brain call failed — terminated
+
+an unread verdict cannot be assumed clean, so it counts as one blocker.
+every other partition kept its verdict above and below. the fault is transient, so
+re-arrive to re-run this lane."
+`;
+
+exports[`asPartitionFaultSection given: [case2] one partition of two refuses on an overflow when: [t0] the section renders then: it matches snapshot 1`] = `
+"# blocker.1 — this partition did not review
+
+✋ ConstraintError: the partition failed before it returned a verdict: prompt exceeds 75% of context window
+
+an unread verdict cannot be assumed clean, so it counts as one blocker.
+every other partition kept its verdict above and below. this fault is a constraint,
+so a re-run returns the same refusal — it cannot help.
+fix: narrow this partition, or split it in two — the refusal on stderr names
+the locus. declare the new set, then re-arrive: rhx route.guard.partition --for review --peer @all --partition '<slug>=<globs>' --mode apply"
+`;
+
+exports[`asPartitionFaultSection given: [case3] every partition refuses on the same overflow when: [t0] the section renders then: it matches snapshot 1`] = `
+"# blocker.1 — this partition did not review
+
+✋ ConstraintError: the partition failed before it returned a verdict: prompt exceeds 75% of context window
+
+an unread verdict cannot be assumed clean, so it counts as one blocker.
+this partition refused with the lane — the cause and its fix are stated once, above."
+`;
+
+exports[`asPartitionFaultSection given: [case4] every partition refuses, on two different constraints when: [t0] the section renders then: it matches snapshot 1`] = `
+"# blocker.1 — this partition did not review
+
+✋ ConstraintError: the partition failed before it returned a verdict: absent api key
+
+an unread verdict cannot be assumed clean, so it counts as one blocker.
+every other partition kept its verdict above and below. this fault is a constraint,
+so a re-run returns the same refusal — it cannot help.
+fix: clear what the refusal on stderr names, then re-arrive."
+`;
+
+exports[`asPartitionFaultSection given: [case5] a plain refusal whose message reads like an overflow when: [t0] the section renders then: it matches snapshot 1`] = `
+"# blocker.1 — this partition did not review
+
+✋ ConstraintError: the partition failed before it returned a verdict: prompt exceeds 75% of context window
+
+an unread verdict cannot be assumed clean, so it counts as one blocker.
+every other partition kept its verdict above and below. this fault is a constraint,
+so a re-run returns the same refusal — it cannot help.
+fix: clear what the refusal on stderr names, then re-arrive."
+`;
+
+exports[`asPartitionFaultSection given: [case6] a malfunction of the review itself (a buffer overrun) when: [t0] the section renders then: it matches snapshot 1`] = `
+"# blocker.1 — this partition did not review
+
+💥 MalfunctionError: the partition failed before it returned a verdict: spawnSync /bin/sh ENOBUFS
+
+an unread verdict cannot be assumed clean, so it counts as one blocker.
+every other partition kept its verdict above and below. this fault is a malfunction of
+the review itself, not a transient one, so a re-arrive alone will not fix it.
+fix: repair what raised \`spawnSync /bin/sh ENOBUFS\`, then re-arrive."
+`;
+
+exports[`asPartitionFaultSection given: [case7] a raw dropped socket from the brain when: [t0] the section renders then: it matches snapshot 1`] = `
+"# blocker.1 — this partition did not review
+
+💥 MalfunctionError: the partition failed before it returned a verdict: socket hang up
+
+an unread verdict cannot be assumed clean, so it counts as one blocker.
+every other partition kept its verdict above and below. the fault is transient, so
+re-arrive to re-run this lane."
+`;
+
+exports[`asPartitionFaultSection given: [case8] a brain call that overran its deadline when: [t0] the section renders then: it matches snapshot 1`] = `
+"# blocker.1 — this partition did not review
+
+💥 MalfunctionError: the partition failed before it returned a verdict: review timed out after 1 minute
+
+an unread verdict cannot be assumed clean, so it counts as one blocker.
+every other partition kept its verdict above and below. the fault is transient, so
+re-arrive to re-run this lane."
+`;
+
+exports[`asPartitionFaultSection given: [case9] a hand run, with no route bound when: [t0] a transient fault renders then: it matches snapshot 1`] = `
+"# blocker.1 — this partition did not review
+
+💥 MalfunctionError: the partition failed before it returned a verdict: the brain call failed — terminated
+
+an unread verdict cannot be assumed clean, so it counts as one blocker.
+every other partition kept its verdict above and below. the fault is transient, so
+run the review again."
+`;
+
+exports[`asPartitionFaultSection given: [case9] a hand run, with no route bound when: [t1] one partition refuses on an overflow then: it matches snapshot 1`] = `
+"# blocker.1 — this partition did not review
+
+✋ ConstraintError: the partition failed before it returned a verdict: prompt exceeds 75% of context window
+
+an unread verdict cannot be assumed clean, so it counts as one blocker.
+every other partition kept its verdict above and below. this fault is a constraint,
+so a re-run returns the same refusal — it cannot help.
+fix: narrow this partition, or split it in two — the refusal on stderr names
+the locus. narrow the --partition declarations on this review line, then run it again."
+`;
+
+exports[`asPartitionFaultSection given: [case9] a hand run, with no route bound when: [t2] a malfunction of the review itself renders then: it matches snapshot 1`] = `
+"# blocker.1 — this partition did not review
+
+💥 MalfunctionError: the partition failed before it returned a verdict: spawnSync /bin/sh ENOBUFS
+
+an unread verdict cannot be assumed clean, so it counts as one blocker.
+every other partition kept its verdict above and below. this fault is a malfunction of
+the review itself, not a transient one, so a re-run alone will not fix it.
+fix: repair what raised \`spawnSync /bin/sh ENOBUFS\`, then run the review again."
+`;
+
+exports[`asPartitionFaultSection given: [case9] a hand run, with no route bound when: [t3] a plain constraint renders then: it matches snapshot 1`] = `
+"# blocker.1 — this partition did not review
+
+✋ ConstraintError: the partition failed before it returned a verdict: absent api key
+
+an unread verdict cannot be assumed clean, so it counts as one blocker.
+every other partition kept its verdict above and below. this fault is a constraint,
+so a re-run returns the same refusal — it cannot help.
+fix: clear what the refusal on stderr names, then run the review again."
+`;

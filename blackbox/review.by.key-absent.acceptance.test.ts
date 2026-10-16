@@ -24,8 +24,8 @@ const FRAME_HINT =
  *        reached the refusal cannot pass
  */
 const asFrameBlock = (input: { output: string; hint: string }): string => {
-  // the frame header today is `💥 rubric malfunctioned`; once F5 lands it is `✋`
-  const starts = ['💥 rubric malfunctioned', '✋']
+  // the frame header today is `💥 MalfunctionError: rubric malfunctioned`; once F5 lands it is `✋`
+  const starts = ['💥 MalfunctionError: rubric malfunctioned', '✋']
     .map((header) => input.output.indexOf(header))
     .filter((index) => index !== -1);
   if (!starts.length)
@@ -78,7 +78,7 @@ const invokeReviewByWithKeyAbsent = async (input: {
  *        all-rubrics shape alike
  * .note = it also PINS a known gap, measured rather than hidden: review.by has no `constraint`
  *         verdict, so a caller-fixable refusal in a rubric's child review renders under a
- *         `💥 rubric malfunctioned` header and exits 1. the child's own `✋ ConstraintError` and
+ *         `💥 MalfunctionError: rubric malfunctioned` header and exits 1. the child's own `✋ ConstraintError` and
  *         its fix still render inside it. the repair is a review.by verdict-class change, owed
  *         by fulcrum F5 (dream `v2026_10_03.fix.review-by-constraint-verdict`). when it lands,
  *         flip the exit-1 and 💥 clamps to exit 2 and ✋
@@ -124,7 +124,7 @@ describe('review.by.key-absent.acceptance', () => {
         // .why = pins today's behavior so the gap is visible. flip to exit 2 and ✋ when F5 lands
         expect(result.code).toEqual(1);
         expect(result.stdout + result.stderr).toContain(
-          '💥 rubric malfunctioned: demo-arrow-only',
+          '💥 MalfunctionError: rubric malfunctioned: demo-arrow-only',
         );
       });
 
@@ -158,7 +158,7 @@ describe('review.by.key-absent.acceptance', () => {
       then('GAP (F5): review.by frames it as a malfunction, exit 1', () => {
         expect(result.code).toEqual(1);
         expect(result.stdout + result.stderr).toContain(
-          '💥 rubric malfunctioned: demo-arrow-only',
+          '💥 MalfunctionError: rubric malfunctioned: demo-arrow-only',
         );
       });
 

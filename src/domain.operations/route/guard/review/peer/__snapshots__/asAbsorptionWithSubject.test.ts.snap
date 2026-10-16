@@ -1,0 +1,31 @@
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
+
+exports[`asAbsorptionWithSubject given: [case6] the rendered refusals, whole when: [t0] the level is forgiven then: the bytes a driver reads are pinned 1`] = `
+"✋ ConstraintError: architect's level is already forgiven; there is no verdict to dispute
+
+a human lifted that gate, so its concerns no longer count toward the tally.
+naught is owed here — drive on; no stance is needed."
+`;
+
+exports[`asAbsorptionWithSubject given: [case6] the rendered refusals, whole when: [t1] the reviewer has not spoken then: the bytes a driver reads are pinned 1`] = `
+"✋ ConstraintError: architect has not spoken on this stone, so there is no concern to take a stance on
+
+re-arrive so the reviewer runs, then take a stance on what it raises:
+  rhx route.stone.set --stone <stone> --as arrived"
+`;
+
+exports[`asAbsorptionWithSubject given: [case6] the rendered refusals, whole when: [t2] the given is unreadable — a malfunction then: the bytes a driver reads are pinned 1`] = `
+"✋ ConstraintError: architect malfunctioned; there is no verdict to take a stance on
+
+no numeric count was readable, so this is a broken PROCESS, never a rejection.
+diagnose why the reviewer could not render, fix it, then re-arrive so it re-runs.
+a stance skips or claims a verdict that does not exist."
+`;
+
+exports[`asAbsorptionWithSubject given: [case6] the rendered refusals, whole when: [t3] the given is a refusal — a constraint, never a malfunction then: the bytes a driver reads are pinned 1`] = `
+"✋ ConstraintError: architect refused to run (✋ prompt exceeds 75% of context window); there is no verdict to take a stance on
+
+a refusal is a constraint, never a rejection: it raised no concern to concede or dispute.
+spend the lever its .given names, write its .taken, then absorb it:
+  rhx route.stone.set --stone <stone> --as absorbed --that architect"
+`;

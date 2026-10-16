@@ -27,7 +27,7 @@ export const setStoneAsBlocked = async (input: {
     pattern: input.stone,
   });
   if (!stoneMatched) {
-    throw new BadRequestError('stone not found', { stone: input.stone });
+    throw new BadRequestError(`stone not found: ${input.stone}`);
   }
 
   // check challenge decision

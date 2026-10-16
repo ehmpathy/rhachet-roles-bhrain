@@ -1,18 +1,53 @@
-import { BadRequestError, UnexpectedCodePathError } from 'helpful-errors';
+import { ConstraintError, UnexpectedCodePathError } from 'helpful-errors';
 
 import { PassageReport } from '@src/domain.objects/Driver/PassageReport';
+import { asCountedNoun } from '@src/utils/asCountedNoun';
 
+import { asGuardDisplayPath } from '../guard/asGuardDisplayPath';
 import { getRepoRootWithFallback } from '../guard/getRepoRootWithFallback';
+import { asRouteStoneAbsorbCommand } from '../guard/review/peer/asRouteStoneAbsorbCommand';
+import { asRouteStoneStanceCommand } from '../guard/review/peer/asRouteStoneStanceCommand';
 import { assertValidPeerReviewSlug } from '../guard/review/peer/assertValidPeerReviewSlug';
+import { getAllStoneUndeclaredConcerns } from '../guard/review/peer/getAllStoneUndeclaredConcerns';
 import {
-  getRouteGuardReviewPeerFeedbackAbsorptionStatus,
+  getOneRouteGuardReviewPeerFeedbackAbsorptionStatus,
   type RouteGuardReviewPeerFeedbackUnabsorbed,
-} from '../guard/review/peer/getRouteGuardReviewPeerFeedbackAbsorptionStatus';
-import { getStoneUndeclaredConcerns } from '../guard/review/peer/getStoneUndeclaredConcerns';
+} from '../guard/review/peer/getOneRouteGuardReviewPeerFeedbackAbsorptionStatus';
 import { formatRouteGuardReviewPeerFeedbackAbsorbPrompt } from '../guard/tree/formatRouteGuardReviewPeerFeedbackAbsorbPrompt';
 import { setPassageReport } from '../passage/setPassageReport';
 import { findOneStoneByPattern } from './asStoneGlob';
+import { asStoneNotFoundError } from './asStoneNotFoundError';
 import { getAllStones } from './getAllStones';
+
+/**
+ * .what = the tail lines of an absorb ack, per ready state
+ * .why = the gate holds on blockers alone, so a nitpick-only lane is ready with or without an
+ *        answer — yet its reviewer re-raises each nitpick that no .taken answers. the ack once
+ *        said "no response needed" there, which affirmed the exit
+ *        `rule.always.converge-with-reviewers.via-a-taken-per-point` forbids. so each state
+ *        renders its own truth, and the unanswered one names the path the answer belongs at
+ */
+const asFeedbackAbsorbedTailLines = (input: {
+  reason: 'responded' | 'no-concerns' | 'nitpicks-unanswered';
+  pathTaken: string | null;
+}): string[] => {
+  // an answer sits at the path the latest given derives
+  if (input.reason === 'responded')
+    return [
+      `   └─ your response is recorded — the reviewer will see it next round`,
+    ];
+
+  // the reviewer raised naught, so naught is owed
+  if (input.reason === 'no-concerns')
+    return [`   └─ this reviewer raised no concerns — no response needed`];
+
+  // no gate holds, but the reviewer weighs points and re-raises each unanswered nitpick
+  return [
+    `   └─ no blockers, so no gate holds — but its nitpicks carry no .taken`,
+    `      ├─ the reviewer re-raises each unanswered nitpick next round`,
+    `      └─ answer them at ${input.pathTaken ?? 'the .taken path its given derives'}`,
+  ];
+};
 
 /**
  * .what = the single feedbackUnabsorbed reviewer in a single-slug-scoped status
@@ -60,11 +95,16 @@ export const setStoneAsFeedbackAbsorbed = async (input: {
     pattern: input.stone,
   });
   if (!stoneMatched)
-    throw new BadRequestError('stone not found', { stone: input.stone });
+    throw asStoneNotFoundError({
+      act: 'absorbed',
+      route: input.route,
+      pattern: input.stone,
+      stones,
+    });
 
   // the shared readiness computation, scoped to this one reviewer (B2). it also reports
   // every slug that has SPOKEN on this stone, which the validity check below reads
-  const status = await getRouteGuardReviewPeerFeedbackAbsorptionStatus({
+  const status = await getOneRouteGuardReviewPeerFeedbackAbsorptionStatus({
     route: input.route,
     stone: stoneMatched,
     scope: { slug: input.slug },
@@ -100,45 +140,55 @@ export const setStoneAsFeedbackAbsorbed = async (input: {
     //
     // .note = it fires INSIDE the ready branch, AFTER the answer-first (.taken) check, because
     //         a concern is absorbed via `--as disputed|conceded`, which R1 refuses until the
-    //         `.taken` exists (assertAbsorptionIsAnswered). so the driver cannot absorb a
+    //         `.taken` exists (asAbsorptionIsAnswered). so the driver cannot absorb a
     //         concern before the answer, and the pit-of-success order is .taken → absorb each
     //         concern → absorb the feedback. the absent-.taken guidance stays first, so the
     //         order reads clear rather than a step the driver cannot yet take.
     //
-    // .note = getStoneUndeclaredConcerns already excludes the lanes that OWE naught — approved,
+    // .note = getAllStoneUndeclaredConcerns already excludes the lanes that OWE naught — approved,
     //         unreadable, human-forgiven, and clean (0-concern) lanes all yield no undeclared
     //         concerns — so the gate fires only on a rejected lane that still owes a stance.
-    const undeclared = await getStoneUndeclaredConcerns({
+    const undeclared = await getAllStoneUndeclaredConcerns({
       stone: stoneMatched,
       route: input.route,
     });
     const owedHere = undeclared.find((one) => one.slug === input.slug);
+
+    // the taught stance commands, from the composer that owns their flag grammar
+    const concede = asRouteStoneStanceCommand({
+      stone: stoneMatched.name,
+      as: 'conceded',
+      with: input.slug,
+      about: '<concern>',
+    });
+    const dispute = asRouteStoneStanceCommand({
+      stone: stoneMatched.name,
+      as: 'disputed',
+      with: input.slug,
+      about: '<concern>',
+      why: '<fulcrum-path>',
+    });
     if (owedHere)
-      throw new BadRequestError(
+      throw new ConstraintError(
         [
           `absorb each concern before you absorb ${input.slug}'s feedback`,
           ``,
-          `${owedHere.concerns.length} concern${
-            owedHere.concerns.length === 1 ? '' : 's'
-          } of ${input.slug} stand un-absorbed:`,
+          `${asCountedNoun({ count: owedHere.concerns.length, one: 'concern', many: 'concerns' })} of ${input.slug} ${
+            owedHere.concerns.length === 1 ? 'stands' : 'stand'
+          } un-absorbed:`,
           ...owedHere.concerns.map((label) => `  - ${label}`),
           ``,
           `absorb each, THEN absorb the feedback:`,
           // each taught command carries its REQUIRED flag, so a driver who copies one is not
           // refused at the boundary (r9 b1). concede leads — it is the default (S11)
           `  1. per concern — concede it (the default), or dispute it:`,
-          `     rhx route.stone.set --stone ${stoneMatched.name} \\`,
-          `       --as conceded --with ${input.slug} --about <concern> --severity better|urgent`,
-          `     rhx route.stone.set --stone ${stoneMatched.name} \\`,
-          `       --as disputed --with ${input.slug} --about <concern> --why <fulcrum-path>`,
+          `     ${concede.head} \\`,
+          `       ${concede.flags}`,
+          `     ${dispute.head} \\`,
+          `       ${dispute.flags}`,
           `  2. then absorb the feedback:`,
-          `     rhx route.stone.set --stone ${stoneMatched.name} --as absorbed --that ${input.slug}`,
+          `     ${asRouteStoneAbsorbCommand({ stone: stoneMatched.name, that: input.slug }).command}`,
         ].join('\n'),
-        {
-          stone: stoneMatched.name,
-          slug: input.slug,
-          undeclared: owedHere.concerns,
-        },
       );
 
     // record the forward motion in passage.jsonl so a prior blocker clears
@@ -146,6 +196,11 @@ export const setStoneAsFeedbackAbsorbed = async (input: {
     //        this 'absorbed' status supersedes a stale escalation halt; its
     //        disposition is push (the machine's own peer-review reply), so the route
     //        keeps its own momentum
+    // .note = a status read, then an append, with no lock — deliberately, the same bound
+    //         `setRouteGuardPartitions` states for its own read-modify-write. one driver
+    //         absorbs a reviewer by hand, so two concurrent absorbs of one slug are out of
+    //         scope; and were it to happen, two identical `absorbed` rows read the same as
+    //         one, since passage is latest-entry-wins
     await setPassageReport({
       report: new PassageReport({
         stone: stoneMatched.name,
@@ -155,14 +210,22 @@ export const setStoneAsFeedbackAbsorbed = async (input: {
       route: input.route,
     });
 
-    const tail =
-      status.readyReason === 'responded'
-        ? `   └─ your response is recorded — the reviewer will see it next round`
-        : `   └─ this reviewer raised no blockers — no concern to absorb, no response needed`;
+    // tell the truth about which of the three ready states holds — and where the answer goes
+    // .note = the root is read only for the one case that prints a path
+    const tail = asFeedbackAbsorbedTailLines({
+      reason: status.readyReason ?? 'no-concerns',
+      pathTaken:
+        status.readyReason === 'nitpicks-unanswered' && status.readyPathTaken
+          ? asGuardDisplayPath({
+              pathAbsolute: status.readyPathTaken,
+              root: await getRepoRootWithFallback({ from: input.route }),
+            })
+          : null,
+    });
     return {
       absorbed: true,
       emit: {
-        stdout: [`🦉 absorbed: ${input.slug}`, tail].join('\n'),
+        stdout: [`🦉 absorbed: ${input.slug}`, ...tail].join('\n'),
       },
     };
   }

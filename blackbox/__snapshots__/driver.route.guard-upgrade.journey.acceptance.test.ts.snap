@@ -40,7 +40,7 @@ exports[`driver.route.guard-upgrade.journey.acceptance given: [case1] a bound ro
    │  └─ decision = absent source
    │
    ├─ summary = 2 available, 1 kept, 1 skipped, 1 absent
-   └─ ⚠ 1 guard blocked — a full apply is refused; scope a clean stone with --stone
+   └─ 🟡 1 guard blocked — a full apply is refused; scope a clean stone with --stone
 "
 `;
 
@@ -75,13 +75,9 @@ exports[`driver.route.guard-upgrade.journey.acceptance given: [case1] a bound ro
 `;
 
 exports[`driver.route.guard-upgrade.journey.acceptance given: [case1] a bound route two guards behind its supplier when: [t3] the driver hits the blocked guard (absent source) then: stderr matches snapshot 1`] = `
-"error: BadRequestError: cannot upgrade: 1 guard blocked — 9.broken.guard (absent-source)
+"✋ ConstraintError: cannot upgrade: 1 guard blocked — 9.broken.guard (absent-source)
 
-{
-  "blocked": [
-    "9.broken.guard"
-  ]
-}
+blocked: ["9.broken.guard"]
 "
 `;
 
@@ -118,6 +114,6 @@ exports[`driver.route.guard-upgrade.journey.acceptance given: [case1] a bound ro
    │  └─ decision = absent source
    │
    ├─ summary = 1 available, 2 kept, 1 skipped, 1 absent
-   └─ ⚠ 1 guard blocked — a full apply is refused; scope a clean stone with --stone
+   └─ 🟡 1 guard blocked — a full apply is refused; scope a clean stone with --stone
 "
 `;

@@ -1,6 +1,6 @@
 import { DomainEntity, type RefByUnique } from 'domain-objects';
 
-import type { ExitCodeClass } from '@src/domain.operations/route/guard/getExitCodeClass';
+import type { ExitCodeClass } from '@src/domain.objects/Driver/ExitCodeClass';
 
 import type { RouteStone } from './RouteStone';
 

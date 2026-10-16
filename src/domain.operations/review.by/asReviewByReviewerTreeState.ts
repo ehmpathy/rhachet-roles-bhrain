@@ -1,10 +1,14 @@
+// a sanctioned cross-context contract: `ReviewerTreeState` is the one render shape the
+// route peer row and the review.by row share, so both draw through one formatter
+// (rule.forbid.duplicate-format-tree-operations). a second copy here would drift from it.
+// a sanctioned exposure, declared in src/domain.operations/route/guard/tree/.readme.md
 import type { ReviewerTreeState } from '../route/guard/tree/formatGuardReviewerTree';
 import type { ReviewVerdict } from './ReviewByResult';
 
 /**
  * .what = maps one review.by rubric outcome onto the SHARED ReviewerTreeState that a route peer
  *         reviewer uses, so review.by rows render through the exact same formatGuardReviewerTree
- * .why = the user asked review.by to look like `route.stone.set` peer reviews and to reuse that
+ * .why = the human asked review.by to look like `route.stone.set` peer reviews and to reuse that
  *        formatter verbatim, so the two stay perma-conformed. a rubric has no route meter (level /
  *        rounds / budget), so we pass placeholder values and render with `hideMeter: true`; the
  *        placeholders never reach the output. the `given:` path is the rubric's own review file —
@@ -55,9 +59,8 @@ export const asReviewByReviewerTreeState = (input: {
       nitpicks: { disputed: 0, reported: input.verdict.nitpicks },
       path: input.outputPath,
       cached: false,
-      // a null tallier only occurs on a malfunction (handled above); a detected verdict always
-      // names its tallier. default to deterministic so the type is satisfied for a clean pass.
-      tallier: input.verdict.tallier ?? 'deterministic',
+      // the pinned brain that tallied, as the runner read it — null for a verbatim read
+      talliedBy: input.verdict.talliedBy,
     },
   };
 };

@@ -1,5 +1,16 @@
 // Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
 
+exports[`formatRouteStoneEmit given: [case-inflight] a stone marked inflight when: [t0] format is called with a note and two details then: snapshot matches 1`] = `
+"🦉 the way speaks for itself
+
+🗿 route.stone.set
+   ├─ stone = 5.3.verification
+   ├─ as = inflight
+   └─ ⏳ inflight: three delegates repair blockers 1-4
+      ├─ the first detail
+      └─ the last detail"
+`;
+
 exports[`formatRouteStoneEmit given: [case-overrule-judge] an overrule of the judge rung when: [t0] format is called with level = JUDGE_LEVEL then: snapshot matches 1`] = `
 "🦉 the way speaks for itself
 
@@ -168,6 +179,30 @@ exports[`formatRouteStoneEmit given: [case3] unguarded stone, passage blocked wh
    └─ reason = blockers exceed threshold"
 `;
 
+exports[`formatRouteStoneEmit given: [case3b] unguarded stone, mixed malfunction + exhaustion when: [t0] format is called then: snapshot matches 1`] = `
+"🦉 the way speaks for itself
+
+🗿 route.stone.set
+   ├─ stone = 1.vision
+   ├─ passage = malfunction
+   ├─ reason = reviewer or judge malfunctioned; peer reviewer budget exhausted: mech-rules
+   └─ still yours to clear
+      └─ next
+         ├─ 1. read each given for its cause, and fix what you can
+         ├─ 2. answer each broken lane, like a rejected one
+         ├─ 3. re-arrive
+         │  └─ rhx route.stone.set --stone 1.vision --as arrived
+         └─ ask a human only for a grant you cannot make (an absent credential, a permission, etc)
+
+✨ did you know?
+   ├─ converge with the reviewer — yours to run
+   │  └─ rhx route.stone.set --stone 1.vision --as absorbed --that mech-rules
+   ├─ overrule the malfunction — a human must grant
+   │  └─ rhx route.stone.set --stone 1.vision --as overruled
+   └─ approve as-is — a human must grant
+      └─ rhx route.stone.set --stone 1.vision --as approved"
+`;
+
 exports[`formatRouteStoneEmit given: [case4] guarded stone, passage allowed when: [t0] format is called then: snapshot matches 1`] = `
 "🦉 the way speaks for itself
 
@@ -178,7 +213,7 @@ exports[`formatRouteStoneEmit given: [case4] guarded stone, passage allowed when
    │  ├─ artifacts
    │  │   └─ 3.blueprint.md
    │  ├─ reviews
-   │  │   └─ r1: review (l1, 1/∞)
+   │  │   └─ r1: peer-1 (l1, 1/∞)
    │  │       ├─ approved 1.5s
    │  │       ├─ 0 blockers ✓
    │  │       ├─ 0 nitpicks ✓
@@ -202,7 +237,7 @@ exports[`formatRouteStoneEmit given: [case5] guarded stone, passage blocked when
       ├─ artifacts
       │   └─ 3.blueprint.md
       ├─ reviews
-      │   └─ r1: review (l1, 1/∞)
+      │   └─ r1: peer-1 (l1, 1/∞)
       │       ├─ rejected 1.5s
       │       ├─ 3 blockers 🔴
       │       ├─ 1 nitpick 🟠
@@ -223,11 +258,11 @@ exports[`formatRouteStoneEmit given: [case5b] guarded stone, a review tallied by
    │  ├─ artifacts
    │  │   └─ 3.blueprint.md
    │  ├─ reviews
-   │  │   └─ r1: review (l1, 1/∞)
+   │  │   └─ r1: peer-1 (l1, 1/∞)
    │  │       ├─ rejected 1.5s
    │  │       ├─ 0 blockers ✓
    │  │       ├─ 1 nitpick 🟠
-   │  │       ├─ tallied by reviewer@openrouter/deepseek/flash
+   │  │       ├─ tallied by reviewer@openrouter/deepseek/flash/v4.1
    │  │       └─ given: review.md
    │  └─ judges
    │      └─ j1: judge cmd

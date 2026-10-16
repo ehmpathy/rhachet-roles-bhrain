@@ -80,6 +80,8 @@ const genScene = async (input: {
   nitpicks?: number;
   /** also write a given for a slug ABSENT from the guard config — a retired reviewer */
   retired?: boolean;
+  /** the judge's nitpick allowance — set it to approve a nitpick-only lane */
+  allowNitpicks?: number;
 }): Promise<{ route: string }> => {
   const route = await fs.mkdtemp(path.join(os.tmpdir(), 'route-set-contempl-'));
 
@@ -105,7 +107,11 @@ const genScene = async (input: {
     - slug: architect
       run: rhx review --rules briefs/arch.md
 judges:
-  - rhx judge --mechanism reviewed?
+  - rhx judge --mechanism reviewed?${
+    input.allowNitpicks === undefined
+      ? ''
+      : ` --allow-nitpicks ${input.allowNitpicks}`
+  }
 `,
   );
 
@@ -169,7 +175,7 @@ describe('setStoneAsFeedbackAbsorbed', () => {
       then('blocks with crystal-clear absent guidance', () => {
         expect(result.absorbed).toBe(false);
         expect(result.emit?.stdout).toContain(
-          'feedbackAbsorption absent for reviewer architect',
+          'feedback absorption absent for reviewer architect',
         );
         expect(result.emit?.stdout).toContain('_.taken.by_self.architect.md');
       });
@@ -245,7 +251,7 @@ describe('setStoneAsFeedbackAbsorbed', () => {
           });
           expect(result.absorbed).toBe(false);
           expect(result.emit?.stdout).toContain(
-            'feedbackAbsorption absent for reviewer mechanic',
+            'feedback absorption absent for reviewer mechanic',
           );
         });
       });
@@ -340,7 +346,12 @@ describe('setStoneAsFeedbackAbsorbed', () => {
             expect(result.emit?.stdout).not.toContain(
               'your response is recorded',
             );
-            expect(result.emit?.stdout).toContain('raised no blockers');
+            // .warrant = `raised no blockers` became `raised no concerns`: this lane raised zero
+            //            blockers AND zero nitpicks, and `concern` is the canonical word for
+            //            either (term=route.guard.review.given.concern) — "no blockers" alone
+            //            under-claimed a lane that had nitpicks too
+            expect(result.emit?.stdout).toContain('raised no concerns');
+            expect(result.emit?.stdout).not.toContain('raised no blockers');
           },
         );
 
@@ -351,6 +362,79 @@ describe('setStoneAsFeedbackAbsorbed', () => {
           expect(
             asStableEmit({ emit: result.emit?.stdout, route: scene.route }),
           ).toMatchSnapshot();
+        });
+      });
+    },
+  );
+
+  given(
+    '[case6] an approved lane with nitpicks (0 blockers, 1 nitpick) and no .taken',
+    () => {
+      // the gate holds on blockers alone, so this lane is ready unanswered — but its reviewer
+      // re-raises each nitpick that carries no response. the ack once replied "no response
+      // needed" here, which affirmed the exact exit the driver's converge rule forbids
+      const scene = useBeforeAll(async () =>
+        genScene({ taken: 'none', blockers: 0, nitpicks: 1, allowNitpicks: 1 }),
+      );
+
+      when('[t0] --as absorbed --that architect', () => {
+        const result = useThen('the command completes', async () =>
+          setStoneAsFeedbackAbsorbed({
+            stone: '1.vision',
+            route: scene.route,
+            slug: 'architect',
+          }),
+        );
+
+        then('it absorbs, and warns the nitpicks stand unanswered', () => {
+          expect(result.absorbed).toBe(true);
+          expect(result.emit?.stdout).not.toContain('no response needed');
+          expect(result.emit?.stdout).toContain('its nitpicks carry no .taken');
+        });
+
+        then('it names the exact path the answer belongs at', () => {
+          expect(result.emit?.stdout).toContain(
+            '.reviews/peer/1.vision._.review.i001.',
+          );
+          expect(result.emit?.stdout).toContain('_.taken.by_self.architect.md');
+        });
+
+        then('matches snapshot — the NITPICKS-UNANSWERED ack', () => {
+          expect(
+            asStableEmit({ emit: result.emit?.stdout, route: scene.route }),
+          ).toMatchSnapshot();
+        });
+      });
+    },
+  );
+
+  given(
+    '[case7] an approved lane with nitpicks and a .taken that answers them',
+    () => {
+      const scene = useBeforeAll(async () =>
+        genScene({
+          taken: 'current',
+          blockers: 0,
+          nitpicks: 1,
+          allowNitpicks: 1,
+        }),
+      );
+
+      when('[t0] --as absorbed --that architect', () => {
+        const result = useThen('the command completes', async () =>
+          setStoneAsFeedbackAbsorbed({
+            stone: '1.vision',
+            route: scene.route,
+            slug: 'architect',
+          }),
+        );
+
+        then('it acknowledges the response as recorded', () => {
+          // a .taken sits at the path the given derives, so it IS a response — whatever the
+          // blocker count. the ack once said "no concern to absorb" here, beside the answer
+          expect(result.absorbed).toBe(true);
+          expect(result.emit?.stdout).toContain('your response is recorded');
+          expect(result.emit?.stdout).not.toContain('no response needed');
         });
       });
     },

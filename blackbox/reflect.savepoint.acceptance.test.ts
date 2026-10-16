@@ -138,4 +138,38 @@ describe('reflect.savepoint', () => {
       });
     });
   });
+
+  given('[case2] a savepoint get for a timestamp that does not exist', () => {
+    when('[t0] get is invoked with --at an absent timestamp', () => {
+      const result = useThen('skill invocation fails', async () => {
+        const tempDir = genTempDirForReflector({
+          slug: 'reflect-savepoint-get-absent',
+          clone: ASSETS_DIR,
+        });
+        await execAsync('npx rhachet roles link --role reflector', {
+          cwd: tempDir,
+        });
+        return invokeReflectSkill({
+          skill: 'reflect.savepoint',
+          subcommand: 'get',
+          args: { at: '1999-01-01.000000' },
+          cwd: tempDir,
+        });
+      });
+
+      then('exit code is 2 — a bad --at is the caller`s to fix', () => {
+        expect(result.code).toEqual(2);
+      });
+
+      then('the error lands on stderr, named as a constraint', () => {
+        expect(result.stderr).toContain(
+          '✋ ConstraintError: savepoint not found',
+        );
+      });
+
+      then('the refusal renders whole', () => {
+        expect(sanitizeReflectOutputForSnapshot(result.stderr)).toMatchSnapshot();
+      });
+    });
+  });
 });

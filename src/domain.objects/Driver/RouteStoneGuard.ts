@@ -58,7 +58,8 @@ export interface RouteStoneGuardReviewPeer {
   budget: number;
 
   /**
-   * execution level (default: 1)
+   * execution level — `parseStoneGuard` sets 1 where the guard declares none, so every
+   * parsed reviewer carries one (rule.require.review-standardization-at-parse)
    *
    * LOWER levels run first — cheap before expensive. level N reviewers wait
    * until all level N-1 reviewers are terminal (approved | exhausted |
@@ -67,7 +68,7 @@ export interface RouteStoneGuardReviewPeer {
    * .note = within one level, reviewers run CONCURRENTLY. the bound is per
    *         concurrency group — see `group:` below and `reviews.groups`.
    */
-  level?: number;
+  level: number;
 
   /**
    * timeout for review command execution (default: "PT21M")
@@ -88,26 +89,17 @@ export interface RouteStoneGuardReviewPeer {
    * .why = membership is knowledge only the guard's author holds. no tool can
    *        infer which two reviewers call the same provider.
    *
-   * .note = MEMBERSHIP lives here; the BOUND lives on the group, in
+   * .note = membership lives here; the bound lives on the group, in
    *         `reviews.groups`. two facts, two homes — a bound is a cardinality,
    *         which describes the set, never any one member.
    *
-   * 🔴 .hazard = AN OMISSION HERE IS SILENT, AND IT DEFEATS THE VALVE.
-   *         a reviewer added beside a bounded group, whose author forgot this
-   *         key, joins no group — so it pours at the level's own default and
-   *         runs ALONGSIDE the member the bound held back. a group declared
-   *         `concurrency: 1` then puts two calls on the provider at once.
-   *
-   *         ⚠️ and no tool can catch it. the parser refuses a group nobody
-   *         joined, and a group with no bound, because both are decidable from
-   *         the file alone. this one is not: a level that mixes grouped and
-   *         ungrouped reviewers is LEGITIMATE whenever the ungrouped ones touch
-   *         a different resource, and only the author knows whether they do —
-   *         the same fact that put membership on the reviewer to begin with.
-   *
-   *         ⇒ so the check is the author's, at the moment a reviewer joins a
-   *         level that already carries a group: *does this one share that
-   *         group's resource?* if yes, name the group. raised i003/r011 point A
+   * .hazard = an omission here is silent: a reviewer added beside a bounded
+   *         group, with no `group:` set, joins no group, so it pours at the
+   *         level's own default alongside the member the bound held back. no
+   *         tool can catch it — a level with grouped and ungrouped reviewers is
+   *         legitimate whenever the ungrouped ones touch a different resource,
+   *         and only the author knows whether they do. the check is the
+   *         author's: does a new reviewer share a co-member's group resource?
    */
   group?: string;
 }
@@ -169,26 +161,20 @@ export interface RouteStoneGuardReviewsStructured {
   /**
    * the bound per concurrency group, keyed by group name
    *
-   * ⚠️ membership is declared on the REVIEWER (`group:`); the bound is declared
-   *    here. a reviewer that names no group contends with nobody.
+   * .note = membership is declared on the reviewer (`group:`); the bound is
+   *         declared here. a reviewer that names no group contends with nobody.
+   *         declare membership in place — a `.guard` file is not in the hashed
+   *         artifact set, so an edit here keeps every cached lane live, but a
+   *         reorder of `peer` shifts every later index and discards those
+   *         caches, at one budget round each.
    *
-   * .note = declare membership IN PLACE. a `.guard` file is not in the hashed
-   *         artifact set, so an edit here does not move the artifact hash and
-   *         every cached lane stays live — but a REORDER of `peer` shifts every
-   *         later index and discards those caches, at one budget round each.
-   *
-   * 🔴 .note = a group bound is the SECOND of two bounds a lane passes. every
-   *         lane also passes the LEVEL's own bound, which no `.guard` key sets
-   *         — it defaults to 10 and is overridable per run with
-   *         `RHACHET_LEVEL_CONCURRENCY`. so a group at `concurrency: 20` still
-   *         pours at most 10 at once, and this key can only ever narrow.
-   *
-   *         ⚠️ the level bound is deliberately NOT a `.guard` key: it is an
-   *         operator dial over a review-scope decision, so it moves with no
-   *         code edit and no snapshot re-baseline while fulcrum F2's value is
-   *         open. it is stated here because a guard author who reads only this
-   *         key would take a group bound for the whole story. raised i009/r10,
-   *         table row 4 — *"undocumented outside source/comments"*
+   * .note = a group bound is the second of two bounds a lane passes. every
+   *         lane also passes the level's own bound, which no `.guard` key
+   *         sets — it defaults to 10, overridable per run with
+   *         `RHACHET_LEVEL_CONCURRENCY`. a group at `concurrency: 20` still
+   *         pours at most 10 at once; this key can only narrow. the level
+   *         bound is deliberately not a `.guard` key: it is an operator dial
+   *         over a review-scope decision, so it moves with no code edit.
    */
   groups?: Record<string, RouteStoneGuardReviewGroup>;
 }

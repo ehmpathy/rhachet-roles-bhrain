@@ -1,4 +1,5 @@
-import { compareStrings } from './compareStrings';
+import { compareStrings } from '@src/utils/compareStrings';
+
 import { getRouteGuardReviewPeerPathMeta } from './getRouteGuardReviewPeerPathMeta';
 
 /**
@@ -19,7 +20,7 @@ import { getRouteGuardReviewPeerPathMeta } from './getRouteGuardReviewPeerPathMe
  *
  * 🔴 .note = the key is the SLUG, never the index and never the hash. "latest" is a property of
  *         the REVIEWER — a reviewer speaks once per round, and only its most recent word is live.
- *         its neighbour getLatestReviewFilesPerIndex keys by `rN` within one hash, which reads
+ *         its neighbour getAllLatestReviewFilesPerIndex keys by `rN` within one hash, which reads
  *         like this operation and is not: an index is a position in the guard's declaration
  *         order, so it can be reused by a different reviewer when that order changes, and it
  *         cannot carry a verdict across the hash move that is the whole point here.

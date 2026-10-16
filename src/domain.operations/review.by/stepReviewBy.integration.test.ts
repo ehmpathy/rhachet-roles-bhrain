@@ -36,8 +36,9 @@ const outIdx = args.indexOf('--output');
 const outPath = outIdx >= 0 ? args[outIdx + 1] : '';
 const match = outPath.match(/rubric=([^.]+)\\.md/);
 const slug = match ? match[1] : 'unknown';
-// record call order so the test can assert the serial sequence
-fs.appendFileSync(path.join(process.cwd(), '.stub-order.log'), slug + '\\n');
+// record when each review starts and ends, so the test can see whether two overlapped
+const logPath = path.join(process.cwd(), '.stub-order.log');
+fs.appendFileSync(logPath, 'start:' + slug + '\\n');
 let verdicts = {};
 try {
   verdicts = JSON.parse(
@@ -47,15 +48,19 @@ try {
   verdicts = {};
 }
 const verdict = verdicts[slug] || {};
-if (verdict.malfunction) {
-  // emit a review that exits 0 but states NO numeric count → runOneReview promotes to malfunction
-  process.stdout.write('the review ran but stated no verdict\\n');
-  process.exit(0);
-}
-const blockers = verdict.blockers || 0;
-const nitpicks = verdict.nitpicks || 0;
-process.stdout.write(blockers + ' blockers\\n' + nitpicks + ' nitpicks\\n');
-process.exit(blockers > 0 ? 2 : 0);
+// hold the review open a moment, as a real one would, so a concurrent pour overlaps
+setTimeout(() => {
+  fs.appendFileSync(logPath, 'end:' + slug + '\\n');
+  if (verdict.malfunction) {
+    // emit a review that exits 0 but states NO numeric count → runOneReview promotes to malfunction
+    process.stdout.write('the review ran but stated no verdict\\n');
+    process.exit(0);
+  }
+  const blockers = verdict.blockers || 0;
+  const nitpicks = verdict.nitpicks || 0;
+  process.stdout.write(blockers + ' blockers\\n' + nitpicks + ' nitpicks\\n');
+  process.exit(blockers > 0 ? 2 : 0);
+}, 300);
 `;
 
 /**
@@ -97,15 +102,38 @@ const genTempRoleDir = async (input: {
 };
 
 /**
- * .what = reads the order the stub `rhx` was called in
- * .why = proves stepReviewBy ran the rubrics one at a time, in declared order (serial).
+ * .what = reads the start and end events the stub `rhx` logged, in the order they landed
+ * .why = an overlap between two reviews is visible only in the interleave of these events
  */
-const getStubCallOrder = async (input: { cwd: string }): Promise<string[]> => {
+const getStubEvents = async (input: { cwd: string }): Promise<string[]> => {
   const raw = await fs
     .readFile(path.join(input.cwd, '.stub-order.log'), 'utf8')
     .catch(() => '');
   return raw.split('\n').filter((line) => line !== '');
 };
+
+/**
+ * .what = the slugs the stub reviewed, sorted
+ * .why = a pour starts its reviews in no fixed order; what holds is that each ran once
+ */
+const getStubSlugsReviewed = (input: { events: string[] }): string[] =>
+  input.events
+    .filter((event) => event.startsWith('start:'))
+    .map((event) => event.slice('start:'.length))
+    .sort();
+
+/**
+ * .what = the most reviews the stub held open at one time
+ * .why = proves the rubrics poured: a serial loop never exceeds one
+ */
+const getStubPeakConcurrency = (input: { events: string[] }): number =>
+  input.events.reduce(
+    (acc, event) => {
+      const open = acc.open + (event.startsWith('start:') ? 1 : -1);
+      return { open, peak: Math.max(acc.peak, open) };
+    },
+    { open: 0, peak: 0 },
+  ).peak;
 
 const THREE_RUBRIC_YML = `
 rubrics:
@@ -145,15 +173,30 @@ describe('stepReviewBy', () => {
         ),
       );
 
-      then('it runs the three rubrics one at a time, in order', async () => {
-        expect(await getStubCallOrder({ cwd: scene.cwd })).toEqual([
+      // .retired = this case once asserted `it runs the three rubrics one at a time, in order`
+      //            via an order-preserved call log. serial order is retired on purpose: independent
+      //            rubrics now pour (rule.forbid.serial-reviews-that-could-pour), so the order of
+      //            completion is no longer a contract. coverage moves to "each exactly once" plus
+      //            the concurrency clamp below
+      const stub = useThen('the stub events are read', async () => ({
+        events: await getStubEvents({ cwd: scene.cwd }),
+      }));
+
+      then('it reviews each of the three rubrics exactly once', () => {
+        expect(getStubSlugsReviewed({ events: stub.events })).toEqual([
           'r-alpha',
           'r-beta',
           'r-gamma',
         ]);
       });
 
-      then('it returns a result per rubric', () => {
+      then('🔴 the rubrics pour — more than one review is open at once', () => {
+        expect(getStubPeakConcurrency({ events: stub.events })).toBeGreaterThan(
+          1,
+        );
+      });
+
+      then('it returns a result per rubric, in declared order', () => {
         expect(result.results.map((r) => r.slug)).toEqual([
           'r-alpha',
           'r-beta',
@@ -243,7 +286,11 @@ describe('stepReviewBy', () => {
       );
 
       then('only that one rubric runs', async () => {
-        expect(await getStubCallOrder({ cwd: scene.cwd })).toEqual(['r-beta']);
+        expect(
+          getStubSlugsReviewed({
+            events: await getStubEvents({ cwd: scene.cwd }),
+          }),
+        ).toEqual(['r-beta']);
         expect(result.results.map((r) => r.slug)).toEqual(['r-beta']);
       });
 
@@ -318,15 +365,18 @@ describe('stepReviewBy', () => {
       then('the rubric is marked malfunctioned, not a clean 0/0', () => {
         const gamma = result.results.find((r) => r.slug === 'r-gamma');
         expect(gamma?.verdict.outcome).toEqual('malfunctioned');
-        expect(gamma?.verdict.reason).toContain('malfunction');
+        // the reason still names a malfunction (the prior intent); it now states the cause
+        // the runner wrote, behind its error class header, rather than a generic phrase
+        expect(gamma?.verdict.reason).toMatch(/malfunction/i);
+        expect(gamma?.verdict.reason).toContain('💥 MalfunctionError:');
       });
 
       then('the other rubrics still run', async () => {
-        expect(await getStubCallOrder({ cwd: scene.cwd })).toEqual([
-          'r-alpha',
-          'r-beta',
-          'r-gamma',
-        ]);
+        expect(
+          getStubSlugsReviewed({
+            events: await getStubEvents({ cwd: scene.cwd }),
+          }),
+        ).toEqual(['r-alpha', 'r-beta', 'r-gamma']);
       });
     });
   });

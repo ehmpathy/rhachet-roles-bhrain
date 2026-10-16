@@ -38,9 +38,13 @@ itemize a term when it is a word that composes a **declared** domain object or o
 
 each term is a `choice._.` cluster under `domain.terms/`:
 
-- `term=<x>._.choice._.md` — say-level (chosen word, kind, forbidden synonyms, refs, .what)
-- `term=<x>._.choice.reason.md` — ref-level (etymology, disputes, evidence) — **required**
-- `term=<x>._.choice.example=<abc>.md` — ref-level, one per notable example (optional)
+- `term=<boundary…>.<x>._.choice._.md` — say-level (chosen word, kind, forbidden synonyms, refs, .what)
+- `term=<boundary…>.<x>._.choice.reason.md` — ref-level (etymology, disputes, evidence) — **required**
+- `term=<boundary…>.<x>._.choice.example=<abc>.md` — ref-level, one per notable example (optional)
+
+🟡 the filename carries the term's full boundary ancestry ahead of the word — `term=surf.lesson._.choice._.md`
+for the noun `lesson` within `surf` — per `rule.require.boundary-qualified-terms`. a qualified name is
+still ONE entry for that word; it is never a defect of this rule.
 
 see `template.domain-term.md` for the shape.
 

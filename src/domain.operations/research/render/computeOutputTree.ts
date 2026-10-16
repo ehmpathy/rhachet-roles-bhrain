@@ -1,3 +1,5 @@
+import { compareStrings } from '@src/utils/compareStrings';
+
 /**
  * .what = compute tree-style output for research init file actions
  * .why = vibed, scannable output that shows file actions clearly
@@ -20,7 +22,7 @@ export const computeOutputTree = (input: {
   ];
 
   // sort alphabetically by filename
-  entries.sort((a, b) => a.file.localeCompare(b.file));
+  entries.sort((a, b) => compareStrings(a.file, b.file));
 
   // build header
   const header = '🦉 hooda thunk?';

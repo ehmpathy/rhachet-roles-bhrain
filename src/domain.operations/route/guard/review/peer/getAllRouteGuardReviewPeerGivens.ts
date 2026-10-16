@@ -1,10 +1,7 @@
-import * as fs from 'fs/promises';
-
-import { getReviewCountsViaRegex } from '../getReviewCountsViaRegex';
-import { asPeerGivenVerdict } from './asPeerGivenVerdict';
+import type { RouteGuardReviewPeerGivenConstraint } from './asPeerGivenConstraint';
 import { enumRouteGuardReviewPeerFiles } from './enumRouteGuardReviewPeerFiles';
+import { getAllRouteGuardReviewPeerGivensFromPaths } from './getAllRouteGuardReviewPeerGivensFromPaths';
 import { getLatestPeerGivensPerSlug } from './getLatestPeerGivensPerSlug';
-import { getRouteGuardReviewPeerPathMeta } from './getRouteGuardReviewPeerPathMeta';
 
 /**
  * .what = one peer given — the LATEST for its slug — with its verdict counts and its path
@@ -34,6 +31,24 @@ export interface RouteGuardReviewPeerGiven {
    * the count must say so, or it re-hides the malfunction as an ordinary verdict.
    */
   unreadable: boolean;
+  /**
+   * the refusal an unreadable given names — its cause and its lever — or null where the given
+   * is no refusal (a readable verdict, or a malfunction). a refusal is readable as a REFUSAL,
+   * so the surfaces that halt on it name its lever rather than call it a malfunction
+   *
+   * .note = the legal pairs of `unreadable` × `constraint`, so a caller reads one claim:
+   *
+   *         | unreadable | constraint | the given is…                                   |
+   *         |------------|------------|-------------------------------------------------|
+   *         | false      | null       | a readable verdict — its counts are real         |
+   *         | true       | non-null   | a refusal — read its cause and lever             |
+   *         | true       | null       | a malfunction — no count, no `ConstraintError:`  |
+   *         | false      | non-null   | ⛔ never built — `getOneRouteGuardReviewPeerGiven` parses a constraint only when unreadable |
+   *
+   *         so `given.unreadable && given.constraint` is the refusal test, and
+   *         `given.unreadable && !given.constraint` the malfunction test
+   */
+  constraint: RouteGuardReviewPeerGivenConstraint | null;
   /** the recency key — the only ordinal the latest-per-slug pick reads */
   iteration: number;
   /** 🔴 the given's IDENTITY. no subset of it is, and the taken's path derives from it */
@@ -44,8 +59,8 @@ export interface RouteGuardReviewPeerGiven {
  * .what = reads every peer .given across all hashes, keeps the latest per slug,
  *         and parses each into a record
  * .why = the i/o boundary for the feedbackAbsorption gate — enumerate the givens, read
- *        each, parse its verdict counts + slug + hash. keeps fs.readFile out of the
- *        orchestrator (grain separation)
+ *        each, parse its verdict counts + slug + hash. the per-given read + parse lives in
+ *        getOneRouteGuardReviewPeerGiven, poured by getAllRouteGuardReviewPeerGivensFromPaths
  *
  * .note = the debt is keyed to the REVIEWER, never to (reviewer, hash). an edit to
  *         the artifact under review moves the current hash; under a hash-keyed read
@@ -63,26 +78,10 @@ export const getAllRouteGuardReviewPeerGivens = async (input: {
     kind: 'given',
   });
 
-  // read + parse every given into a record
-  const givens = await Promise.all(
-    givenPaths.map(async (givenPath) => {
-      const content = await fs.readFile(givenPath, 'utf-8');
-      const counts = getReviewCountsViaRegex({ content });
-      const meta = getRouteGuardReviewPeerPathMeta({ path: givenPath });
-      // the cast out of the ReviewCounts union is named + clamped, never a ternary here:
-      // an UNREADABLE given gates rather than scores a silent 0/0 (contract.reviewer-output)
-      const verdict = asPeerGivenVerdict({ counts });
-      return {
-        slug: meta.slug,
-        blockers: verdict.blockers,
-        nitpicks: verdict.nitpicks,
-        unreadable: verdict.unreadable,
-        // .note = meta.hash is read and DROPPED on purpose — see the interface above
-        iteration: meta.iteration,
-        pathGiven: givenPath,
-      };
-    }),
-  );
+  // read + parse every given into a record; a given a rewind deleted reads as none
+  const givens = await getAllRouteGuardReviewPeerGivensFromPaths({
+    paths: givenPaths,
+  });
 
   // hand the parsed records to the pure pick — the latest-per-slug rule lives there, unit-tested
   return getLatestPeerGivensPerSlug({ givens });

@@ -1,0 +1,13 @@
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
+
+exports[`asReviewScopePathLines given: [case1] a lane scoped by --paths-with with a brace in the extension when: [t0] the lines are rendered then: the block matches its snapshot 1`] = `
+"   │  ├─ paths.with: **/*.{ts,sh,md,snap}
+   │  │  └─ files: 5,978
+   │  ├─ paths.wout: **/__snapshots__/**, .behavior/**"
+`;
+
+exports[`asReviewScopePathLines given: [case2] a lane with no path scope at all when: [t0] the lines are rendered then: the whole block matches the snapshot 1`] = `
+"   │  ├─ paths.with: (none)
+   │  │  └─ files: —
+   │  ├─ paths.wout: (none)"
+`;

@@ -50,15 +50,18 @@ describe('asStderrSansPourAnnounce', () => {
   given('[case2] a stderr that carries a GUARD RESULT', () => {
     when('[t0] the result follows the announce', () => {
       then('the result survives, so the clamp goes red', () => {
+        // .warrant = the fixture's `💥 malfunction:` became `💥 MalfunctionError:` to match the
+        //            header every error now prints (rule.require.qualified-error-headers); the
+        //            line is opaque to the consumer, so the intent of the case is unchanged
         const stderr = [
           '🦉 l1 pours 1 lane',
           '   └─ r1:alpha-checker',
           '',
-          '💥 malfunction: review timed out after 21 minutes',
+          '💥 MalfunctionError: review timed out after 21 minutes',
         ].join('\n');
 
         expect(asStderrSansPourAnnounce({ stderr })).toEqual(
-          '💥 malfunction: review timed out after 21 minutes',
+          '💥 MalfunctionError: review timed out after 21 minutes',
         );
       });
     });
@@ -90,8 +93,11 @@ describe('asStderrSansPourAnnounce', () => {
 
     when('[t2] the result precedes any announce', () => {
       then('the prefix consumer stops at once', () => {
+        // .warrant = fixture header moved to `💥 MalfunctionError:` per
+        //            rule.require.qualified-error-headers; the consumer reads it as an
+        //            opaque non-announce line either way, so the case's intent holds
         const stderr = [
-          '💥 malfunction: reviewer exited 127',
+          '💥 MalfunctionError: reviewer exited 127',
           '🦉 l1 pours 1 lane',
           '   └─ r1:alpha-checker',
         ].join('\n');

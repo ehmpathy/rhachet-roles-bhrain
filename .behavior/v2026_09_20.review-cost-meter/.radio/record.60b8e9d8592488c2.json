@@ -1,0 +1,21 @@
+{
+  "key": "60b8e9d8592488c2",
+  "kind": "create",
+  "repo": {
+    "owner": "ehmpathy",
+    "name": "rhachet-roles-ehmpathy"
+  },
+  "exid": null,
+  "title": "fix(mechanic/permissions): the deny template omits node, so node -e escapes every paved skill",
+  "description": "## .what\nthe mechanic .claude/settings.json permission template denies the raw tools the paved skills replace (bash, cd, find, grep, ln, ls, mkdir, mv, sed, tee, npx jest) but omits node. so node -e one-liners run unchecked.\n\nevidence: a driver ran node -e to poll a background task and parse json. no deny named node; pretooluse.check-permissions.sh blocks an unlisted command once, records it in .claude/permission.nudges.local.json, and passes an identical retry. the nudge file held several node -e entries, each a call that went through on its second attempt. the hook allowlist also prints [p]: node from a settings layer above the project.\n\n## .why\n- node -e is the most general escape of all: it reads, writes, and spawns with no repo bound, so it reaches every act the other denies exist to route through a safe skill\n- a deny rule is the only layer a retry cannot pass, and a deny outranks an allow at every layer\n- a local deny on an actor settings symlink is untracked and may be restamped by the next rhachet init\n\n## .shape of the fix\n- add \"Bash(node:*)\" to the mechanic deny template, beside Bash(sed:*)\n- the statusLine entry runs node -e through the harness, never through the Bash tool, so the deny does not touch it\n- optional: a PreToolUse refusal that names the paved alternatives (rhx skills, the Read tool, head/tail), so the block teaches\n\ncaught in ehmpathy/rhachet-roles-bhrain .dream/v2026_10_05.reseed.the-mechanic-deny-list-omits-direct-node-executions.md",
+  "status": null,
+  "via": "gh.issues",
+  "auth": "as-human",
+  "idem": null,
+  "heldAt": "2026-10-15",
+  "heldSeq": 18,
+  "recordStatus": "DELIVERED",
+  "reason": null,
+  "settledAt": "2026-10-16",
+  "deliveredExid": "964"
+}

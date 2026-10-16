@@ -1,0 +1,13 @@
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
+
+exports[`review.gitignore-subjects.acceptance given: [case1] a gitignored restricted directory inside the scan scope when: [t0] review scans src/**/* with a mode-000 gitignored subdir, attempt 1 then: the metrics.expected block matches its snapshot (computed before the brain) 1`] = `
+"🔭 metrics.expected
+   ├─ files
+   │  ├─ rules: 1
+   │  └─ targets: 3
+   ├─ tokens
+   │  ├─ estimate: 2,171
+   │  └─ context: 0.2%
+   └─ cost
+      └─ estimate: $0.001085300"
+`;

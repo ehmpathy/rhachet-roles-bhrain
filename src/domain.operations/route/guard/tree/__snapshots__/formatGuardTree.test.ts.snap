@@ -8,12 +8,12 @@ exports[`formatGuardTree given: [case1] reviews+judges, allowed, all fresh — 2
       ├─ artifacts
       │   └─ 1.vision.v1.md
       ├─ reviews
-      │   ├─ r1: reviewer/reflect (l1, 1/∞)
+      │   ├─ r1: peer-1 (l1, 1/∞)
       │   │   ├─ approved 8.2s
       │   │   ├─ 0 blockers ✓
       │   │   ├─ 0 nitpicks ✓
       │   │   └─ given: .route/1.vision.guard.review.i1.abc123.r1.md
-      │   └─ r2: reviewer/review (l1, 1/∞)
+      │   └─ r2: peer-2 (l1, 1/∞)
       │       ├─ rejected 15.1s
       │       ├─ 3 blockers 🔴
       │       ├─ 1 nitpick 🟠
@@ -32,7 +32,7 @@ exports[`formatGuardTree given: [case2] reviews+judges, blocked, all fresh — 1
       ├─ artifacts
       │   └─ 3.1.research.domain._.v1.md
       ├─ reviews
-      │   └─ r1: reviewer/reflect (l1, 1/∞)
+      │   └─ r1: peer-1 (l1, 1/∞)
       │       ├─ rejected 12.4s
       │       ├─ 1 blocker 🔴
       │       ├─ 0 nitpicks ✓
@@ -51,12 +51,12 @@ exports[`formatGuardTree given: [case3] some cached reviews — 1 cached + 1 fre
       ├─ artifacts
       │   └─ 1.vision.v1.md
       ├─ reviews
-      │   ├─ r1: reviewer/reflect (l1, 1/∞)
+      │   ├─ r1: peer-1 (l1, 1/∞)
       │   │   ├─ approved, cached
       │   │   ├─ 0 blockers ✓
       │   │   ├─ 0 nitpicks ✓
       │   │   └─ given: .route/1.vision.guard.review.i1.abc123.r1.md
-      │   └─ r2: reviewer/review (l1, 1/∞)
+      │   └─ r2: peer-2 (l1, 1/∞)
       │       ├─ rejected 10.3s
       │       ├─ 0 blockers ✓
       │       ├─ 2 nitpicks 🟠
@@ -74,7 +74,7 @@ exports[`formatGuardTree given: [case4] all cached — all reviews + judges cach
       ├─ artifacts
       │   └─ 1.vision.v1.md
       ├─ reviews
-      │   └─ r1: reviewer/reflect (l1, 1/∞)
+      │   └─ r1: peer-1 (l1, 1/∞)
       │       ├─ approved, cached
       │       ├─ 0 blockers ✓
       │       ├─ 0 nitpicks ✓
@@ -110,7 +110,7 @@ exports[`formatGuardTree given: [case7] multiple artifacts — 3 artifact files 
       │   ├─ 3.1.research.domain.terms.v1.md
       │   └─ 3.1.research.domain.refs.v1.md
       ├─ reviews
-      │   └─ r1: reviewer/reflect (l1, 1/∞)
+      │   └─ r1: peer-1 (l1, 1/∞)
       │       ├─ approved 5.0s
       │       ├─ 0 blockers ✓
       │       ├─ 0 nitpicks ✓
@@ -128,7 +128,7 @@ exports[`formatGuardTree given: [case8] review with nitpicks only — 0 blockers
       ├─ artifacts
       │   └─ 1.vision.v1.md
       ├─ reviews
-      │   └─ r1: reviewer/reflect (l1, 1/∞)
+      │   └─ r1: peer-1 (l1, 1/∞)
       │       ├─ rejected 7.0s
       │       ├─ 0 blockers ✓
       │       ├─ 2 nitpicks 🟠
@@ -147,7 +147,7 @@ exports[`formatGuardTree given: [case9] review with both blockers and nitpicks �
       ├─ artifacts
       │   └─ 1.vision.v1.md
       ├─ reviews
-      │   └─ r1: reviewer/reflect (l1, 1/∞)
+      │   └─ r1: peer-1 (l1, 1/∞)
       │       ├─ rejected 12.0s
       │       ├─ 3 blockers 🔴
       │       ├─ 1 nitpick 🟠
@@ -166,7 +166,7 @@ exports[`formatGuardTree given: [case10] cached judge that had failed — shows 
       ├─ artifacts
       │   └─ 1.vision.v1.md
       ├─ reviews
-      │   └─ r1: reviewer/reflect (l1, 1/∞)
+      │   └─ r1: peer-1 (l1, 1/∞)
       │       ├─ approved, cached
       │       ├─ 0 blockers ✓
       │       ├─ 0 nitpicks ✓
@@ -186,7 +186,7 @@ exports[`formatGuardTree given: [case11] passage with reason — blocked + combi
       ├─ artifacts
       │   └─ 1.vision.v1.md
       ├─ reviews
-      │   └─ r1: reviewer/reflect (l1, 1/∞)
+      │   └─ r1: peer-1 (l1, 1/∞)
       │       ├─ rejected 5.0s
       │       ├─ 2 blockers 🔴
       │       ├─ 0 nitpicks ✓
@@ -210,7 +210,7 @@ exports[`formatGuardTree given: [case12] cached review on src/**/* artifacts —
       │   ├─ src/domain/execute.test.ts
       │   └─ src/utils/helper.ts
       ├─ reviews
-      │   └─ r1: reviewer/review (l1, 1/∞)
+      │   └─ r1: peer-1 (l1, 1/∞)
       │       ├─ approved, cached
       │       ├─ 0 blockers ✓
       │       ├─ 0 nitpicks ✓
@@ -308,6 +308,13 @@ exports[`formatGuardTree given: [case17] malfunction passage — offers overrule
    ├─ stone = 1.feature
    ├─ passage = malfunction
    ├─ reason = reviewer or judge malfunctioned
+   ├─ still yours to clear
+   │  └─ next
+   │     ├─ 1. read each given for its cause, and fix what you can
+   │     ├─ 2. answer each broken lane, like a rejected one
+   │     ├─ 3. re-arrive
+   │     │  └─ rhx route.stone.set --stone 1.feature --as arrived
+   │     └─ ask a human only for a grant you cannot make (an absent credential, a permission, etc)
    ├─ options
    │  ├─ converge with the reviewer — yours to run, and the levels above stay unlocked
    │  │  └─ rhx route.stone.set --stone 1.feature --as absorbed --that <reviewer>
@@ -319,7 +326,7 @@ exports[`formatGuardTree given: [case17] malfunction passage — offers overrule
       ├─ artifacts
       │   └─ 1.feature.md
       └─ reviews
-          └─ r1: basic-checker (l1, 1/∞)
+          └─ r1: peer-1 (l1, 1/∞)
               ├─ malfunction 💥
               ├─ terminal — does not block higher levels
               └─ given: .route/1.feature.guard.review.i1.abc123.r1.md"
@@ -331,17 +338,39 @@ exports[`formatGuardTree given: [case18] constraint passage — offers overrule 
    ├─ passage = blocked
    ├─ reason = reviewer constraint
    ├─ options
-   │  ├─ converge with the reviewer — yours to run, and the levels above stay unlocked
-   │  │  └─ rhx route.stone.set --stone 1.feature --as absorbed --that <reviewer>
-   │  ├─ overrule the constraint — a human must grant
-   │  │  └─ rhx route.stone.set --stone 1.feature --as overruled
-   │  ├─ or fix the reviewer, then retry
-   │  └─ a broken level never halts the drive — converge the level above it
+   │  ├─ fix what its .given names, then re-arrive — yours to make
+   │  └─ overrule the constraint — a human must grant
+   │     └─ rhx route.stone.set --stone 1.feature --as overruled
    └─ guard
       ├─ artifacts
       │   └─ 1.feature.md
       └─ reviews
-          └─ r1: basic-checker (l1, 1/∞)
+          └─ r1: peer-1 (l1, 1/∞)
+              ├─ constraint ✋
+              ├─ terminal — does not block higher levels
+              └─ given: .route/1.feature.guard.review.i1.abc123.r1.md"
+`;
+
+exports[`formatGuardTree given: [case18] constraint passage — offers overrule guidance when: [t1] the refused .given proposed partitions then: 🔴 the options lead with the partitions it computed, the bind as \`or\` 1`] = `
+"🗿 route.stone.set
+   ├─ stone = 1.feature
+   ├─ passage = blocked
+   ├─ reason = reviewer constraint
+   ├─ options
+   │  ├─ declare the partitions its .given proposes — yours to make
+   │  │  └─ rhx route.guard.partition --for review --peer @all \\
+   │  │       --partition 'beta=src/beta/**' \\
+   │  │       --partition 'alpha=src/alpha/**' \\
+   │  │       --mode apply
+   │  ├─ or narrow its bind — yours to make
+   │  │  └─ edit $route/1.feature.guard directly: that lane's --paths-wout / --paths-with
+   │  └─ overrule the constraint — a human must grant
+   │     └─ rhx route.stone.set --stone 1.feature --as overruled
+   └─ guard
+      ├─ artifacts
+      │   └─ 1.feature.md
+      └─ reviews
+          └─ r1: peer-1 (l1, 1/∞)
               ├─ constraint ✋
               ├─ terminal — does not block higher levels
               └─ given: .route/1.feature.guard.review.i1.abc123.r1.md"
@@ -352,6 +381,13 @@ exports[`formatGuardTree given: [case19] malfunction passage, no guard — offer
    ├─ stone = 1.feature
    ├─ passage = malfunction
    ├─ reason = reviewer or judge malfunctioned
+   ├─ still yours to clear
+   │  └─ next
+   │     ├─ 1. read each given for its cause, and fix what you can
+   │     ├─ 2. answer each broken lane, like a rejected one
+   │     ├─ 3. re-arrive
+   │     │  └─ rhx route.stone.set --stone 1.feature --as arrived
+   │     └─ ask a human only for a grant you cannot make (an absent credential, a permission, etc)
    └─ options
       ├─ converge with the reviewer — yours to run, and the levels above stay unlocked
       │  └─ rhx route.stone.set --stone 1.feature --as absorbed --that <reviewer>
@@ -359,6 +395,51 @@ exports[`formatGuardTree given: [case19] malfunction passage, no guard — offer
       │  └─ rhx route.stone.set --stone 1.feature --as overruled
       ├─ or fix the reviewer, then retry
       └─ a broken level never halts the drive — converge the level above it"
+`;
+
+exports[`formatGuardTree given: [case20] mixed malfunction + exhaustion — the malfunction levers still lead when: [t0] the tree renders with a guard then: the driver levers lead every remedy 1`] = `
+"🗿 route.stone.set
+   ├─ stone = 1.feature
+   ├─ passage = malfunction
+   ├─ reason = reviewer or judge malfunctioned; peer reviewer budget exhausted: mech-rules
+   ├─ still yours to clear
+   │  └─ next
+   │     ├─ 1. read each given for its cause, and fix what you can
+   │     ├─ 2. answer each broken lane, like a rejected one
+   │     ├─ 3. re-arrive
+   │     │  └─ rhx route.stone.set --stone 1.feature --as arrived
+   │     └─ ask a human only for a grant you cannot make (an absent credential, a permission, etc)
+   ├─ options
+   │  ├─ converge with the reviewer — yours to run
+   │  │  └─ rhx route.stone.set --stone 1.feature --as absorbed --that mech-rules
+   │  ├─ overrule the malfunction — a human must grant
+   │  │  └─ rhx route.stone.set --stone 1.feature --as overruled
+   │  └─ approve as-is — a human must grant
+   │     └─ rhx route.stone.set --stone 1.feature --as approved
+   └─ guard
+      └─ artifacts
+          └─ 1.feature.md"
+`;
+
+exports[`formatGuardTree given: [case20] mixed malfunction + exhaustion — the malfunction levers still lead when: [t1] the tree renders with no guard then: the driver levers lead every remedy 1`] = `
+"🗿 route.stone.set
+   ├─ stone = 1.feature
+   ├─ passage = malfunction
+   ├─ reason = reviewer or judge malfunctioned; peer reviewer budget exhausted: mech-rules
+   ├─ still yours to clear
+   │  └─ next
+   │     ├─ 1. read each given for its cause, and fix what you can
+   │     ├─ 2. answer each broken lane, like a rejected one
+   │     ├─ 3. re-arrive
+   │     │  └─ rhx route.stone.set --stone 1.feature --as arrived
+   │     └─ ask a human only for a grant you cannot make (an absent credential, a permission, etc)
+   └─ options
+      ├─ converge with the reviewer — yours to run
+      │  └─ rhx route.stone.set --stone 1.feature --as absorbed --that mech-rules
+      ├─ overrule the malfunction — a human must grant
+      │  └─ rhx route.stone.set --stone 1.feature --as overruled
+      └─ approve as-is — a human must grant
+         └─ rhx route.stone.set --stone 1.feature --as approved"
 `;
 
 exports[`formatReviewsMeterLines given: [case-tactic] the read-out sources tactic onto the finished state when: [t0] a review carries tactic=probabilistic then: the full guard tree shows the tallied-by branch 1`] = `
@@ -369,11 +450,11 @@ exports[`formatReviewsMeterLines given: [case-tactic] the read-out sources tacti
       ├─ artifacts
       │   └─ 1.vision.v1.md
       ├─ reviews
-      │   └─ r1: reviewer/architect (l1, 1/∞)
+      │   └─ r1: peer-1 (l1, 1/∞)
       │       ├─ rejected 9.1s
       │       ├─ 0 blockers ✓
       │       ├─ 1 nitpick 🟠
-      │       ├─ tallied by reviewer@openrouter/deepseek/flash
+      │       ├─ tallied by reviewer@openrouter/deepseek/flash/v4.1
       │       └─ given: .route/1.vision.guard.review.i1.abc123.r1.md
       └─ judges
           └─ j1: reviewed?

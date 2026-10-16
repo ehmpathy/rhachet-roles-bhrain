@@ -1,0 +1,10 @@
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
+
+exports[`asRulesGlobEmptyRefusalLines given: [case1] two rule globs that matched no file when: [t0] the lines are rendered then: it names every glob as the closed tree, then the hint as its own block 1`] = `
+[
+  "   └─ rules: .agent/**/rule.*.md, briefs/rule.*.md",
+  "",
+  "✨ did you know?",
+  "   └─ verify the glob pattern matches files in your repo",
+]
+`;

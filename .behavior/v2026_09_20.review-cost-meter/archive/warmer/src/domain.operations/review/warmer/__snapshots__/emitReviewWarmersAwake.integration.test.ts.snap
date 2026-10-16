@@ -1,0 +1,12 @@
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
+
+exports[`emitReviewWarmersAwake given: [case1] a tree with two lanes awake and one whose warmer lapsed when: [t0] the tree report closes then: the rendered block matches the snapshot 1`] = `
+"
+🦉 heads up, the run goes on
+
+🟡 warn: 2 warmers still awake in this tree — each pokes until its plan is spent
+   ├─ mech-failhides  ·  stop: pid not yet recorded — once the warmer boots (≤1m), read \`pid\` from .agent/.cache/repo=bhrain/role=reviewer/skill=review/watermarks/warmer-prefix.2b04b22f2114a4cd58f4de12dfe437d9, then kill it
+   ├─ repo-rules  ·  stop: kill 4242
+   └─ each pid is read from its warmer's record — a warmer that crashed reads awake until its next wake (≤ one cadence + 2m), so confirm with \`ps -p <pid>\` before you kill
+"
+`;

@@ -1,0 +1,3 @@
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
+
+exports[`stepReview — the prime meet given: [case2] a lane that joins the meet, where a peer holds a claim it never releases when: [t0] the lane runs under a short bound then: the assembled stderr matches the snapshot 1`] = `"💥 MalfunctionError: the prime of the shared head was not released within <N>ms; this lane pours cold"`;

@@ -1,4 +1,4 @@
-import { TALLIED_FOOTER_PREFIX } from '../review/getReviewTacticFromContent';
+import { TALLIED_FOOTER_PREFIX } from '../review/TALLIED_FOOTER_PREFIX';
 
 /**
  * .what = formats the passage + tally footers of one artifact, with correct peer markers
@@ -30,6 +30,9 @@ export const formatArtifactFooters = (input: {
     talliedBy: null | string;
   };
 }): string[] => {
+  // .note = deliberate local line-builder, scoped to this formatter — the escape hatch in
+  //         rule.require.immutable-vars permits a scoped emit builder; the array is born here
+  //         and returned whole, never shared.
   const lines: string[] = [];
 
   // the passage footer closes the artifact only when no tally follows it

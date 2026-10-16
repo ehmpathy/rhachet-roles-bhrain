@@ -1,0 +1,19 @@
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
+
+exports[`getAllStoneGuardPartitionCoverage given: [case1] an @all set whose rest partition catches a new dir when: [t0] the stone coverage is read then: the rendered coverage matches the snapshot 1`] = `
+"🦉 coverage read — naught written, no review run
+
+🗿 route.guard.partition
+   ├─ route = .behavior/v2026_01_01.demo
+   ├─ stone = 5.1.test
+   ├─ checked against 2 files changed since main
+   └─ scope @all — read by r1, r2
+      ├─ partitions
+      │  ├─ route: 0 narrow targets + 1 common target · ~5 tokens of file bodies, ~5 common
+      │  └─ rest: 1 narrow target + 1 common target · ~10 tokens of file bodies, ~5 common
+      │     └─ src/newdir/b.ts
+      ├─ common: 1 (route spec: 0)
+      │  └─ src/route/a.ts → route, rest
+      ├─ unclaimed: 0
+      └─ verdict: holds — every changed file sits in a partition"
+`;

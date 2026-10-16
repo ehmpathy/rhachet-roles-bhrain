@@ -34,6 +34,7 @@ review output
     "stone": {
       "path": "<route>/1.test.stone",
     },
+    "talliedBy": null,
     "tallier": "deterministic",
   },
 ]
@@ -84,6 +85,7 @@ nitpicks: 0
     "stone": {
       "path": "<route>/1.test.stone",
     },
+    "talliedBy": null,
     "tallier": "deterministic",
   },
   {
@@ -103,6 +105,7 @@ nitpicks: 2
     "stone": {
       "path": "<route>/1.test.stone",
     },
+    "talliedBy": null,
     "tallier": "deterministic",
   },
 ]
@@ -142,6 +145,7 @@ review passed
     "stone": {
       "path": "<route>/1.test.stone",
     },
+    "talliedBy": null,
     "tallier": "deterministic",
   },
 ]
@@ -179,6 +183,7 @@ constraint failure
     "stone": {
       "path": "<route>/1.test.stone",
     },
+    "talliedBy": null,
     "tallier": null,
   },
 ]
@@ -221,6 +226,7 @@ exports[`runStoneGuardReviews given: [case5] review exits with code 1 (malfuncti
     "stone": {
       "path": "<route>/1.test.stone",
     },
+    "talliedBy": null,
     "tallier": null,
   },
 ]
@@ -260,6 +266,7 @@ marker found at <route-path>
     "stone": {
       "path": "<route>/1.test.stone",
     },
+    "talliedBy": null,
     "tallier": "deterministic",
   },
 ]
@@ -299,6 +306,7 @@ rhx=<repo-root>/node_modules/.bin/rhx
     "stone": {
       "path": "<route>/1.test.stone",
     },
+    "talliedBy": null,
     "tallier": "deterministic",
   },
 ]
@@ -338,6 +346,7 @@ rhachet=<repo-root>/node_modules/.bin/rhachet
     "stone": {
       "path": "<route>/1.test.stone",
     },
+    "talliedBy": null,
     "tallier": "deterministic",
   },
 ]
@@ -361,6 +370,7 @@ exports[`runStoneGuardReviews given: [case15] l1 malfunction does not block l3 e
     "stone": {
       "path": "<route>/1.test.stone",
     },
+    "talliedBy": null,
     "tallier": null,
   },
   {
@@ -380,6 +390,7 @@ nitpicks: 0
     "stone": {
       "path": "<route>/1.test.stone",
     },
+    "talliedBy": null,
     "tallier": "deterministic",
   },
 ]
@@ -403,6 +414,7 @@ exports[`runStoneGuardReviews given: [case16] l1 constraint does not block l3 ex
     "stone": {
       "path": "<route>/1.test.stone",
     },
+    "talliedBy": null,
     "tallier": null,
   },
   {
@@ -422,6 +434,7 @@ nitpicks: 0
     "stone": {
       "path": "<route>/1.test.stone",
     },
+    "talliedBy": null,
     "tallier": "deterministic",
   },
 ]
@@ -445,6 +458,7 @@ exports[`runStoneGuardReviews given: [case17] multiple l1 malfunctions do not bl
     "stone": {
       "path": "<route>/1.test.stone",
     },
+    "talliedBy": null,
     "tallier": null,
   },
   {
@@ -463,6 +477,7 @@ exports[`runStoneGuardReviews given: [case17] multiple l1 malfunctions do not bl
     "stone": {
       "path": "<route>/1.test.stone",
     },
+    "talliedBy": null,
     "tallier": null,
   },
   {
@@ -482,6 +497,7 @@ nitpicks: 0
     "stone": {
       "path": "<route>/1.test.stone",
     },
+    "talliedBy": null,
     "tallier": "deterministic",
   },
 ]
@@ -505,6 +521,7 @@ exports[`runStoneGuardReviews given: [case18] mixed l1 terminal states (malfunct
     "stone": {
       "path": "<route>/1.test.stone",
     },
+    "talliedBy": null,
     "tallier": null,
   },
   {
@@ -523,6 +540,7 @@ exports[`runStoneGuardReviews given: [case18] mixed l1 terminal states (malfunct
     "stone": {
       "path": "<route>/1.test.stone",
     },
+    "talliedBy": null,
     "tallier": null,
   },
   {
@@ -542,6 +560,7 @@ nitpicks: 0
     "stone": {
       "path": "<route>/1.test.stone",
     },
+    "talliedBy": null,
     "tallier": "deterministic",
   },
 ]
@@ -566,6 +585,7 @@ nitpicks: 0
     "stone": {
       "path": "<route>/1.test.stone",
     },
+    "talliedBy": null,
     "tallier": "deterministic",
   },
   {
@@ -584,6 +604,7 @@ nitpicks: 0
     "stone": {
       "path": "<route>/1.test.stone",
     },
+    "talliedBy": null,
     "tallier": null,
   },
   {
@@ -603,6 +624,7 @@ nitpicks: 0
     "stone": {
       "path": "<route>/1.test.stone",
     },
+    "talliedBy": null,
     "tallier": "deterministic",
   },
 ]
@@ -626,6 +648,7 @@ exports[`runStoneGuardReviews given: [case20] three-level cascade: l1 malfunctio
     "stone": {
       "path": "<route>/1.test.stone",
     },
+    "talliedBy": null,
     "tallier": null,
   },
   {
@@ -644,6 +667,7 @@ exports[`runStoneGuardReviews given: [case20] three-level cascade: l1 malfunctio
     "stone": {
       "path": "<route>/1.test.stone",
     },
+    "talliedBy": null,
     "tallier": null,
   },
   {
@@ -663,6 +687,7 @@ nitpicks: 0
     "stone": {
       "path": "<route>/1.test.stone",
     },
+    "talliedBy": null,
     "tallier": "deterministic",
   },
 ]
@@ -685,6 +710,7 @@ exports[`runStoneGuardReviews given: [case21] all l1 terminal (malfunction+const
     "stone": {
       "path": "<route>/1.test.stone",
     },
+    "talliedBy": null,
     "tallier": null,
   },
   {
@@ -702,6 +728,7 @@ exports[`runStoneGuardReviews given: [case21] all l1 terminal (malfunction+const
     "stone": {
       "path": "<route>/1.test.stone",
     },
+    "talliedBy": null,
     "tallier": null,
   },
   {
@@ -719,6 +746,7 @@ exports[`runStoneGuardReviews given: [case21] all l1 terminal (malfunction+const
     "stone": {
       "path": "<route>/1.test.stone",
     },
+    "talliedBy": null,
     "tallier": null,
   },
   {
@@ -738,6 +766,7 @@ nitpicks: 0
     "stone": {
       "path": "<route>/1.test.stone",
     },
+    "talliedBy": null,
     "tallier": "deterministic",
   },
 ]
@@ -747,7 +776,7 @@ exports[`runStoneGuardReviews given: [case22] reviewer exits 0 but emits no nume
 {
   "exitClass": "malfunction",
   "exitCode": 1,
-  "stderr": "💥 malfunction: review tally fallback failed (the sub-brain that tallies a prose review could not be reached). see .agent/repo=bhrain/role=reviewer/briefs/contract.reviewer-output.md",
+  "stderr": "💥 MalfunctionError: review tally fallback failed (the sub-brain that tallies a prose review could not be reached). see .agent/repo=bhrain/role=reviewer/briefs/contract.reviewer-output.md",
   "stdout": "looks solid, ship it
 ",
 }
@@ -757,7 +786,7 @@ exports[`runStoneGuardReviews given: [case23] reviewer exits 0 but declares only
 {
   "exitClass": "malfunction",
   "exitCode": 1,
-  "stderr": "💥 malfunction: review tally fallback failed (the sub-brain that tallies a prose review could not be reached). see .agent/repo=bhrain/role=reviewer/briefs/contract.reviewer-output.md",
+  "stderr": "💥 MalfunctionError: review tally fallback failed (the sub-brain that tallies a prose review could not be reached). see .agent/repo=bhrain/role=reviewer/briefs/contract.reviewer-output.md",
   "stdout": "blockers: 0
 ",
 }
@@ -788,15 +817,6 @@ exports[`runStoneGuardReviews given: [case26] a fresh .taken re-runs only its ow
 }
 `;
 
-exports[`runStoneGuardReviews given: [case27] a disputed lane is SKIPPED — the disagreement consumes no budget when: [t0] first run rejects, driver disputes the blocker, second run same hash then: the seam outcome matches snapshot 1`] = `
-{
-  "blockers": 1,
-  "nitpicks": 0,
-  "rounds": 1,
-  "slug": "conv-reviewer",
-}
-`;
-
 exports[`runStoneGuardReviews given: [case27] a stale .taken older than the given does NOT re-run when: [t0] first run rejects, driver posts a stale .taken, second run same hash then: the stale-taken seam outcome matches snapshot 1`] = `
 {
   "blockers": 1,
@@ -810,7 +830,7 @@ exports[`runStoneGuardReviews given: [case29] reviewer exits 0, emits no numeric
 {
   "exitClass": "malfunction",
   "exitCode": 1,
-  "stderr": "💥 malfunction: reviewer output lacks a numeric blocker/nitpick count (expected \`N blockers\` and \`N nitpicks\`; use \`0 blockers\` / \`0 nitpicks\` to declare clean). see .agent/repo=bhrain/role=reviewer/briefs/contract.reviewer-output.md",
+  "stderr": "💥 MalfunctionError: reviewer output lacks a numeric blocker/nitpick count (expected \`N blockers\` and \`N nitpicks\`; use \`0 blockers\` / \`0 nitpicks\` to declare clean). see .agent/repo=bhrain/role=reviewer/briefs/contract.reviewer-output.md",
   "stdout": "some prose that carries no verdict
 ",
 }
@@ -820,8 +840,17 @@ exports[`runStoneGuardReviews given: [case30] reviewer exits 0, emits no numeric
 {
   "exitClass": "malfunction",
   "exitCode": 1,
-  "stderr": "💥 malfunction: review tally fallback timed out (the sub-brain that tallies a prose review did not respond in time). see .agent/repo=bhrain/role=reviewer/briefs/contract.reviewer-output.md",
+  "stderr": "💥 MalfunctionError: review tally fallback timed out (the sub-brain that tallies a prose review did not respond in time). see .agent/repo=bhrain/role=reviewer/briefs/contract.reviewer-output.md",
   "stdout": "prose verdict, no numeric counts here
 ",
+}
+`;
+
+exports[`runStoneGuardReviews given: [case34] a disputed lane is SKIPPED — the disagreement consumes no budget when: [t0] first run rejects, driver disputes the blocker, second run same hash then: the seam outcome matches snapshot 1`] = `
+{
+  "blockers": 1,
+  "nitpicks": 0,
+  "rounds": 1,
+  "slug": "conv-reviewer",
 }
 `;

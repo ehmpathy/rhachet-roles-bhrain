@@ -1,0 +1,21 @@
+{
+  "key": "c27564f5e808a491",
+  "kind": "create",
+  "repo": {
+    "owner": "ehmpathy",
+    "name": "rhachet-roles-ehmpathy"
+  },
+  "exid": null,
+  "title": "fix(git.repo.test): a name:// scope on a journey frame fails for setup reasons and reads as a real break",
+  "description": "## .what\ngit.repo.test --scope name://X maps to jest --testNamePattern, which SKIPS every frame it does not match. in a journey test, frames are ordered and stateful: a later frame [tN] depends on setup an earlier frame left behind. run one later frame alone and it fails for setup reasons, and the output reads as a real break.\n\nevidence (measured): a name-scoped run of one frame in a journey acceptance file reported 0 passed, 10 failed. the whole-file run of the same file reported 48 passed, 1 failed, and the one red was the clamp under test. the filter silently deleted the setup, then reported the consequence as a failure.\n\n## .why\n- a red suite demands action, so this is the wrong answer most likely to be acted on\n- it lands hardest on a teeth proof (revert a fix, watch the clamp go red), whose whole job is to say whether one clamp bites\n- the output is indistinguishable from a true break; nothing tells the caller the setup was skipped\n\n## .shape of the fix\n1. preferred: when a name:// scope resolves to a file that declares a journey (a .journey. filename, or [t0]..[tN] frame labels), warn at the invocation, e.g. \"name:// filters frames out of a JOURNEY. its later frames depend on earlier ones, so a filtered run can fail for setup reasons. drop name:// to read this file honestly.\"\n2. cheaper and weaker: a when/then row in howto.run-tests or rule.prefer.scoped-tests-locally\n3. clamp: a fixture journey whose [t1] depends on [t0], run under --scope name://[t1]; assert the warn is emitted, and assert the naive failure count exceeds the whole-file run\n\ncaught in ehmpathy/rhachet-roles-bhrain .dream/v2026_09_13.fix.a-name-scoped-journey-frame-fails-for-setup-reasons.md",
+  "status": null,
+  "via": "gh.issues",
+  "auth": "as-human",
+  "idem": null,
+  "heldAt": "2026-10-15",
+  "heldSeq": 11,
+  "recordStatus": "DELIVERED",
+  "reason": null,
+  "settledAt": "2026-10-16",
+  "deliveredExid": "960"
+}

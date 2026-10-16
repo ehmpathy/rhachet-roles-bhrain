@@ -10,7 +10,7 @@
 #
 # options:
 #   --stone   glob pattern for stones to delete (required)
-#   --route   path to route directory (required)
+#   --route   path to route directory (uses bound route if absent)
 ######################################################################
 set -euo pipefail
 

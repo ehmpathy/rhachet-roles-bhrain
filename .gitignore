@@ -13,6 +13,7 @@
 /.reviews
 /review
 .rhachet
+/.scratch
 .route/.bouncer.cache.json
 .serverless
 .temp
@@ -23,6 +24,8 @@
 /.reviews
 coverage
 dist
+dist.next
+dist.prev
 node_modules
 !.test*/**/node_modules
 !.test*/**/node_modules/**

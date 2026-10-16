@@ -4,20 +4,33 @@ import * as path from 'path';
 import { given, then, useThen, when } from 'test-fns';
 
 import { logOutputHead } from '@src/.test/logOutputHead';
+import { DEFAULT_TEST_BRAIN_VIA_CLI } from '@src/.test/genTestBrainContext';
 import {
   execAsync,
   genTempDirForRhachet,
   invokeReviewSkill,
 } from './.test/invokeReviewSkill';
+import { asReviewMetricsExpectedBlock } from './.test/invokeReviewBySkill';
 
 const ASSETS_DIR = path.join(__dirname, '.test/assets/codebase-mechanic');
+
+/**
+ * .what = config for probabilistic tests that invoke LLM brains
+ * .why = LLM responses can timeout or vary; retry ensures CI stability
+ *
+ * @see .agent/repo=.this/role=any/briefs/rule.require.repeatable-for-llm-tests.md
+ */
+const REPEATABLE_CONFIG = {
+  attempts: 3,
+  criteria: process.env.CI ? 'SOME' : 'EVERY',
+} as const;
 
 describe('review.refs-glob.acceptance', () => {
   /**
    * usecase.2: pass multiple refs via glob pattern
    */
   given('[case1] glob pattern matches multiple ref files', () => {
-    when('[t0] review skill invoked with --refs set to glob pattern', () => {
+    when.repeatably(REPEATABLE_CONFIG)('[t0] review skill invoked with --refs set to glob pattern', () => {
       const res = useThen('invoke review skill with glob refs', async () => {
         // clone fixture to temp dir
         const tempDir = genTempDirForRhachet({
@@ -40,7 +53,7 @@ describe('review.refs-glob.acceptance', () => {
           output: outputPath,
           focus: 'push',
           goal: 'representative',
-          brain: 'openrouter/deepseek/flash',
+          brain: DEFAULT_TEST_BRAIN_VIA_CLI,
           cwd: tempDir,
         });
 
@@ -64,9 +77,15 @@ describe('review.refs-glob.acceptance', () => {
         expect(res.cli.stderr).not.toContain('Error');
       });
 
-      then('cli stdout shows refs count >= 2 in metrics', async () => {
-        // metrics.expected.files should include refs: 2 (both criteria files)
-        expect(res.cli.stdout).toContain('refs');
+      then('cli stdout shows refs count = 2 in metrics', async () => {
+        // the glob matches both criteria files, so the files tree reads `refs: 2`.
+        // a bare `refs` match would pass on one file, or on the flag echo alone
+        expect(res.cli.stdout).toContain('refs: 2');
+      });
+
+      then('the metrics.expected block matches its snapshot (computed before the brain)', () => {
+        // the scope tree and estimate are deterministic; the verdict summary is the brain's
+        expect(asReviewMetricsExpectedBlock({ stdout: res.cli.stdout })).toMatchSnapshot();
       });
 
       then('review contains no blockers (all refs accessible)', async () => {
@@ -81,7 +100,7 @@ describe('review.refs-glob.acceptance', () => {
    * usecase.7: multiple --refs via repeated flags
    */
   given('[case2] multiple refs via repeated --refs flags', () => {
-    when('[t0] review skill invoked with --refs specified multiple times', () => {
+    when.repeatably(REPEATABLE_CONFIG)('[t0] review skill invoked with --refs specified multiple times', () => {
       const res = useThen(
         'invoke review skill with repeated refs flags',
         async () => {
@@ -108,7 +127,7 @@ describe('review.refs-glob.acceptance', () => {
             output: outputPath,
             focus: 'push',
             goal: 'representative',
-            brain: 'openrouter/deepseek/flash',
+            brain: DEFAULT_TEST_BRAIN_VIA_CLI,
             cwd: tempDir,
           });
 
@@ -134,8 +153,13 @@ describe('review.refs-glob.acceptance', () => {
       });
 
       then('cli stdout shows refs count = 2 in metrics', async () => {
-        // metrics.expected.files should include refs: 2
-        expect(res.cli.stdout).toContain('refs');
+        // two --refs flags, one file each, so the files tree reads `refs: 2`
+        expect(res.cli.stdout).toContain('refs: 2');
+      });
+
+      then('the metrics.expected block matches its snapshot (computed before the brain)', () => {
+        // the scope tree and estimate are deterministic; the verdict summary is the brain's
+        expect(asReviewMetricsExpectedBlock({ stdout: res.cli.stdout })).toMatchSnapshot();
       });
 
       then('review contains no blockers (all refs accessible)', async () => {

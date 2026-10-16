@@ -1,0 +1,27 @@
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
+
+exports[`genReviewHeaderStdout given: [case1] a review with no scope filter named when: [t0] the header renders then: the output matches the snapshot 1`] = `
+"🦉 let's review
+   ├─ brain: openrouter/deepseek/flash
+   ├─ focus: push
+   └─ scope: (none)"
+`;
+
+exports[`genReviewHeaderStdout given: [case2] a review scoped by diffs and paths when: [t0] the header renders then: the output matches the snapshot 1`] = `
+"🦉 let's review
+   ├─ brain: openrouter/deepseek/flash
+   ├─ focus: pull
+   └─ scope
+      ├─ diffs: since-main
+      ├─ paths-with: src/**/*.ts
+      ├─ paths-wout: **/*.test.ts
+      └─ join: intersect"
+`;
+
+exports[`genReviewHeaderStdout given: [case3] a review scoped by includes alone, no excludes when: [t0] the header renders then: the output matches the snapshot 1`] = `
+"🦉 let's review
+   ├─ brain: openrouter/deepseek/flash
+   ├─ focus: push
+   └─ scope
+      └─ paths: src/**"
+`;

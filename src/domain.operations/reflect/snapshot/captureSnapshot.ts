@@ -1,5 +1,6 @@
 import archiver from 'archiver';
 import * as fs from 'fs';
+import { ConstraintError } from 'helpful-errors';
 import * as os from 'os';
 import * as path from 'path';
 
@@ -76,11 +77,15 @@ export const captureSnapshot = async (input: {
 }): Promise<Snapshot> => {
   // get transcript source
   const transcriptSource = getTranscriptSource({ cwd: input.scope.cwd });
-  if (!transcriptSource) {
-    throw new Error(
+  // no transcript to bundle is the caller's to fix, so it refuses as a constraint
+  if (!transcriptSource)
+    throw new ConstraintError(
       `no claude code project found for ${input.scope.cwd}. expected at ~/.claude/projects/`,
+      {
+        cwd: input.scope.cwd,
+        hint: 'run claude code in this repo once, then capture again',
+      },
     );
-  }
 
   // capture a savepoint at snapshot time to preserve current git state
   const freshSavepoint = setSavepoint({ scope: input.scope, mode: 'apply' });

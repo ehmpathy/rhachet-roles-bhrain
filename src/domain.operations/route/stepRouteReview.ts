@@ -1,10 +1,12 @@
-import { execSync } from 'child_process';
+import { execFileSync } from 'child_process';
 import * as path from 'path';
 
 import { getGitDiffStats } from '@src/infra/git/getGitDiffStats';
+import { asPathAbsoluteFromCwd } from '@src/utils/asPathAbsoluteFromCwd';
 import { enumFilesFromGlob } from '@src/utils/enumFilesFromGlob';
 
 import { getRouteBindByBranch } from './bind/getRouteBindByBranch';
+import { getRepoRootWithFallback } from './guard/getRepoRootWithFallback';
 import { computeNextStones } from './stones/computeNextStones';
 import { getAllStoneDriveArtifacts } from './stones/getAllStoneDriveArtifacts';
 import { getAllStones } from './stones/getAllStones';
@@ -26,23 +28,22 @@ export const stepRouteReview = async (input: {
   };
 }> => {
   // derive route from input or bound branch
-  let route = input.route;
+  const bind = input.route
+    ? null
+    : await getRouteBindByBranch({ branch: null });
+  const route = input.route || bind?.route;
   if (!route) {
-    const bind = await getRouteBindByBranch({ branch: null });
-    if (!bind) {
-      return {
-        opened: false,
-        artifacts: [],
-        emit: {
-          stdout: '',
-          stderr: {
-            reason: formatError({ reason: 'no route bound, use --route' }),
-            code: 2,
-          },
+    return {
+      opened: false,
+      artifacts: [],
+      emit: {
+        stdout: '',
+        stderr: {
+          reason: formatError({ reason: 'no route bound, use --route' }),
+          code: 2,
         },
-      };
-    }
-    route = bind.route;
+      },
+    };
   }
 
   // get all stones
@@ -50,23 +51,21 @@ export const stepRouteReview = async (input: {
   const driveArtifacts = await getAllStoneDriveArtifacts({ route });
 
   // derive target stone from input or next stone
-  let stoneName = input.stone;
-  if (!stoneName) {
-    const nextStones = computeNextStones({
+  const stoneName =
+    input.stone ||
+    computeNextStones({
       stones,
       artifacts: driveArtifacts,
       query: '@next-one',
-    });
-    if (nextStones.length === 0) {
-      return {
-        opened: false,
-        artifacts: [],
-        emit: {
-          stdout: formatNoArtifacts({ route, stone: '(none)' }),
-        },
-      };
-    }
-    stoneName = nextStones[0]!.name;
+    })[0]?.name;
+  if (!stoneName) {
+    return {
+      opened: false,
+      artifacts: [],
+      emit: {
+        stdout: formatNoArtifacts({ route, stone: '(none)' }),
+      },
+    };
   }
 
   // validate stone exists
@@ -87,20 +86,33 @@ export const stepRouteReview = async (input: {
     };
   }
 
+  // anchor every subprocess, glob, and fs read at the repo root that holds the route
+  // .note = rule.forbid.cwd-outside-gitroot; the root is found from the route itself, so a
+  //         route in another repo (e.g. an absolute temp route) still finds its own root
+  const routeAbsolute = asPathAbsoluteFromCwd({
+    path: route,
+    cwd: process.cwd(),
+  });
+  const repoRoot = await getRepoRootWithFallback({ from: routeAbsolute });
+  const routeFromRoot = path.relative(repoRoot, routeAbsolute);
+
   // enumerate artifacts for this stone
-  const artifactGlob = `${stoneName}*.md`;
   const allArtifactsAbsolute = await enumFilesFromGlob({
-    glob: artifactGlob,
-    cwd: route,
+    glob: path.join(routeFromRoot, `${stoneName}*.md`),
+    cwd: repoRoot,
   });
 
-  // convert to relative paths for consistent handling
+  // convert to route-relative paths for consistent handling
   const allArtifacts = allArtifactsAbsolute.map((absolutePath) =>
-    path.relative(route, absolutePath),
+    path.relative(path.join(repoRoot, routeFromRoot), absolutePath),
   );
 
   // filter out gitignored files
-  const artifacts = await filterGitignored({ files: allArtifacts, cwd: route });
+  const artifacts = await filterGitignored({
+    files: allArtifacts,
+    routeFromRoot,
+    repoRoot,
+  });
 
   // handle empty state
   if (artifacts.length === 0) {
@@ -115,7 +127,10 @@ export const stepRouteReview = async (input: {
 
   // get diff stats for each artifact
   const artifactStats = artifacts.map((file) => {
-    const stats = getGitDiffStats({ file, cwd: route });
+    const stats = getGitDiffStats({
+      file: path.join(routeFromRoot, file),
+      cwd: repoRoot,
+    });
     return { file, stats };
   });
 
@@ -130,9 +145,13 @@ export const stepRouteReview = async (input: {
   // open artifact if single + opener specified
   let opened = false;
   if (input.open && artifacts.length === 1) {
-    const artifactPath = path.join(route, artifacts[0]!);
+    const artifactPath = path.join(repoRoot, routeFromRoot, artifacts[0]!);
     try {
-      execSync(`${input.open} "${artifactPath}"`, { stdio: 'inherit' });
+      // the opener is the caller's own command; the path rides as argv ($1), never as shell text
+      execFileSync('sh', ['-c', `${input.open} "$1"`, 'sh', artifactPath], {
+        stdio: 'inherit',
+        cwd: repoRoot,
+      });
       opened = true;
     } catch {
       // opener failed, but we still show the output
@@ -152,30 +171,51 @@ export const stepRouteReview = async (input: {
  */
 const filterGitignored = async (input: {
   files: string[];
-  cwd: string;
+  routeFromRoot: string;
+  repoRoot: string;
 }): Promise<string[]> => {
   if (input.files.length === 0) return [];
 
   try {
-    // use git check-ignore to filter
-    const filePaths = input.files.join('\n');
-    const ignoredOutput = execSync(
-      `echo "${filePaths}" | git check-ignore --stdin`,
+    // use git check-ignore from the repo root, over root-relative paths
+    // .note = no shell: the paths ride on stdin, nul-separated (-z), so no byte of a
+    //         file name is ever parsed as shell syntax or as a line break
+    const filePaths = input.files
+      .map((file) => path.join(input.routeFromRoot, file))
+      .join('\0');
+    const ignoredOutput = execFileSync(
+      'git',
+      ['check-ignore', '--stdin', '-z'],
       {
-        cwd: input.cwd,
+        cwd: input.repoRoot,
+        input: filePaths,
         encoding: 'utf-8',
         stdio: ['pipe', 'pipe', 'pipe'],
       },
     );
-    const ignoredSet = new Set(
-      ignoredOutput.trim().split('\n').filter(Boolean),
+    const ignoredSet = new Set(ignoredOutput.split('\0').filter(Boolean));
+    return input.files.filter(
+      (file) => !ignoredSet.has(path.join(input.routeFromRoot, file)),
     );
-    return input.files.filter((f) => !ignoredSet.has(f));
-  } catch {
-    // git check-ignore returns exit 1 if no files are ignored
-    return input.files;
+  } catch (error) {
+    // git check-ignore exits 1 when no file is ignored; every other fault is a defect
+    if (isErrorOfNoFileIgnored({ error })) return input.files;
+    throw error;
   }
 };
+
+/**
+ * .what = tells whether a caught execFileSync error is git check-ignore's "no file ignored" exit
+ * .why = exit 1 is git's answer "none of these paths is ignored", a fact. any other exit
+ *        (128 for a broken or absent repo) or a spawn fault (no status at all) is a defect,
+ *        and must surface loud rather than read as "none ignored" (rule.forbid.failhide)
+ * .note = read by shape, never `instanceof Error`, so a cross-realm error still passes the gate
+ */
+const isErrorOfNoFileIgnored = (input: { error: unknown }): boolean =>
+  typeof input.error === 'object' &&
+  input.error !== null &&
+  'status' in input.error &&
+  input.error.status === 1;
 
 /**
  * .what = format error output with treestruct
@@ -265,7 +305,9 @@ const formatReviewTreestruct = (input: {
 
   lines.push(`   │`);
 
-  // tip for multiple files with opener
+  // an opener with several files opens none, and the tree says so as a status row — a
+  // status is no next move, so it carries no `tip:` label and no hint block
+  // (rule.require.coconut-hints)
   if (input.opener && artifactCount > 1) {
     lines.push(`   ├─ when ready, run`);
     lines.push(
@@ -273,7 +315,7 @@ const formatReviewTreestruct = (input: {
     );
     lines.push(`   │`);
     lines.push(
-      `   └─ tip: --open ${input.opener} ignored, due to multiple files matched`,
+      `   └─ --open ${input.opener} skipped — it opens one file, and ${artifactCount} matched`,
     );
   } else if (artifactCount === 1 && input.opener) {
     const artifactPath = `${input.route}/${input.artifacts[0]!.file}`;

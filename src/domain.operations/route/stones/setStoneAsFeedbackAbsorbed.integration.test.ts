@@ -151,6 +151,17 @@ describe('setStoneAsFeedbackAbsorbed.integration', () => {
             expect(error.message).toContain('blocker.1');
             expect(error.message).toContain('blocker.2');
             expect(error.message).toContain('nitpick.1');
+            // the noun and the verb both agree with the count
+            expect(error.message).toContain(
+              '3 concerns of architect stand un-absorbed:',
+            );
+
+            // the whole refusal body is a caller-visible stderr block, so its bytes are
+            // pinned beside the fragments — a reword or a dropped line goes red here
+            // (rule.require.contract-snapshot-exhaustiveness). the temp route is masked
+            expect(
+              error.message.split(scene.route).join('$ROUTE'),
+            ).toMatchSnapshot();
           });
         },
       );

@@ -1,3 +1,7 @@
+import { asReviewPartitionDeclarationText } from '../../../review/partition/asReviewPartitionDeclarationText';
+import { asGuardBindNarrowLever } from '../asGuardBindNarrowLever';
+import { asRouteGuardPartitionCommand } from '../partition/asRouteGuardPartitionCommand';
+import { asRouteStoneSetCommandHead } from '../review/peer/asRouteStoneSetCommandHead';
 import { formatReviewBudgetTopupCommand } from '../review/peer/formatReviewBudgetTopupCommand';
 import {
   isRouteGuardConcessionExhaustion,
@@ -195,16 +199,18 @@ const asTailRemedyGroups = (input: {
   stone: string;
   hasBudget: boolean;
   hasOverrule: boolean;
+  isConstraint: boolean;
   suppressApprovalTail: boolean;
 }): BlockRemedyGroup[] => {
   if (input.hasBudget && !input.suppressApprovalTail)
     return [
       {
         label: `approve as-is — a human must grant`,
-        cmd: `rhx route.stone.set --stone ${input.stone} --as approved`,
+        cmd: `${asRouteStoneSetCommandHead({ stone: input.stone })} --as approved`,
       },
     ];
-  if (input.hasOverrule)
+  // a constraint's levers already name the fix in slot 1, so the prose tail would only repeat them
+  if (input.hasOverrule && !input.isConstraint)
     return [
       { label: `or fix the reviewer, then retry`, cmd: null },
       // 🔴 the last word a malfunction halt leaves is a PUSH, never a permission.
@@ -218,6 +224,78 @@ const asTailRemedyGroups = (input: {
     ];
   return [];
 };
+
+/**
+ * .what = the levers of an OVERFLOW halt, in the order its .given chose them
+ * .why = only an overflow is cured by a partition or a narrower bind. where the refusal
+ *        proposed partitions it chose the partition lever, so the halt pastes them, ready to
+ *        run, and the bind follows as `or`. where it proposed none it chose the bind (its
+ *        targets were edited mass), so the bind leads and the partition template follows
+ */
+const asOverflowLeverGroups = (input: {
+  stone: string;
+  partitions: string[];
+}): BlockRemedyGroup[] => {
+  // the command composers every surface reads, with the bound route left to the default
+  const partitionCommand = asRouteGuardPartitionCommand({
+    route: null,
+    scope: { kind: 'all' },
+  });
+  const narrow = asGuardBindNarrowLever({ stone: input.stone });
+  const narrowCmd = `${narrow.act}: ${narrow.fields}`;
+
+  // the .given proposed partitions: paste them, ready to run, one `--partition` per line, via
+  // the one declaration render every surface shares; then the bind as `or`
+  if (input.partitions.length > 0)
+    return [
+      {
+        label: `declare the partitions its .given proposes — yours to make`,
+        cmd: asReviewPartitionDeclarationText({
+          partition: input.partitions,
+          command: partitionCommand,
+        }),
+      },
+      { label: `or narrow its bind — yours to make`, cmd: narrowCmd },
+    ];
+
+  // no partitions proposed: the bind was its lever, and the partition template follows
+  return [
+    { label: `narrow its bind — yours to make`, cmd: narrowCmd },
+    {
+      label: `or declare partitions — yours to make`,
+      cmd: [
+        partitionCommand.head,
+        `  --partition '<slug>=<globs>'`,
+        partitionCommand.tail,
+      ].join(' \\\n'),
+    },
+  ];
+};
+
+/**
+ * .what = the driver's OWN levers at a constraint halt
+ * .why = a constraint is a refusal that names its own fix in its .given, and that fix is the
+ *        driver's to spend (rule.always.spend-own-levers-before-escalation). only an OVERFLOW is
+ *        cured by a partition or a narrower bind; an unknown flag, an absent rubric, or a bad glob
+ *        is refused too, and a partition fixes none of them. so the overflow levers render only
+ *        where a read .given proved an overflow; any other refusal, or one the surface did not
+ *        read, is pointed at its .given, which names its own fix
+ */
+const asConstraintDriverRemedyGroups = (input: {
+  stone: string;
+  lever: { overflowed: boolean; partitions: string[] } | null;
+}): BlockRemedyGroup[] =>
+  input.lever?.overflowed
+    ? asOverflowLeverGroups({
+        stone: input.stone,
+        partitions: input.lever.partitions,
+      })
+    : [
+        {
+          label: `fix what its .given names, then re-arrive — yours to make`,
+          cmd: null,
+        },
+      ];
 
 /**
  * .what = the ordered remedy groups a halt offers, derived from its passage + reason
@@ -271,6 +349,11 @@ export const computeBlockRemedyGroups = (input: {
   stone: string;
   passage: 'allowed' | 'overruled' | 'blocked' | 'malfunction';
   reason: string;
+  /**
+   * the lever the refused reviewers' .given named — whether one was an overflow, and the
+   * `--partition` values it proposed; null where the surface did not read the .given
+   */
+  lever: { overflowed: boolean; partitions: string[] } | null;
 }): BlockRemedyGroup[] => {
   const hasBudget = input.reason.includes('budget exhausted');
   const hasOverrule = isTerminalReviewerFailure(input.passage, input.reason);
@@ -291,6 +374,9 @@ export const computeBlockRemedyGroups = (input: {
   // ⚠️ an overrule outranks a BETTER concession: a malfunctioned reviewer needs a human whatever
   //    the driver conceded, so the concession only suppresses the APPROVAL tail.
   const suppressApprovalTail = hasBudget && hasBetterConcession && !hasOverrule;
+
+  // a constraint is a terminal failure whose .given names its own fix
+  const isConstraint = hasOverrule && input.passage === 'blocked';
 
   // 🔴 the result is built by SPREAD, never by `.push` into a mutable accumulator.
   //    the three slots are independent reads of the same inputs, so the array literal states the
@@ -324,7 +410,15 @@ export const computeBlockRemedyGroups = (input: {
             hasBetterConcession,
           }),
         ]
-      : [asTerminalFailureDriverRemedy({ stone: input.stone })]),
+      : isConstraint
+        ? // 1b — a CONSTRAINT's own levers, still the driver's, still before any human. to lead
+          //      with `overrule — a human must grant` summons a human for a lever the driver
+          //      already holds, so the driver's lever leads and the overrule follows
+          asConstraintDriverRemedyGroups({
+            stone: input.stone,
+            lever: input.lever,
+          })
+        : [asTerminalFailureDriverRemedy({ stone: input.stone })]),
 
     // 2 — the human's levers, after.
     //
@@ -338,7 +432,7 @@ export const computeBlockRemedyGroups = (input: {
             label: `overrule the ${asTerminalFailureNoun({
               passage: input.passage,
             })} — a human must grant`,
-            cmd: `rhx route.stone.set --stone ${input.stone} --as overruled`,
+            cmd: `${asRouteStoneSetCommandHead({ stone: input.stone })} --as overruled`,
           },
         ]
       : []),
@@ -348,6 +442,7 @@ export const computeBlockRemedyGroups = (input: {
       stone: input.stone,
       hasBudget,
       hasOverrule,
+      isConstraint,
       suppressApprovalTail,
     }),
   ];
@@ -374,13 +469,25 @@ export const formatBlockRemedyGroups = (input: {
   baseIndent: string;
   spacers?: boolean;
 }): string[] => {
-  const lines: string[] = [];
-  input.groups.forEach((group, index) => {
+  // each group folds to its own lines — a label, its command if any, a spacer if one follows.
+  // no shared accumulator, so no mutation to examine
+  return input.groups.flatMap((group, index) => {
     const isLast = index === input.groups.length - 1;
-    lines.push(`${input.baseIndent}${isLast ? '└─' : '├─'} ${group.label}`);
-    if (group.cmd !== null)
-      lines.push(`${input.baseIndent}${isLast ? '   ' : '│  '}└─ ${group.cmd}`);
-    if (input.spacers && !isLast) lines.push(`${input.baseIndent}│`);
+    const lineLabel = `${input.baseIndent}${isLast ? '└─' : '├─'} ${group.label}`;
+    // a multiline command (one `--partition` per line) hangs its continuations under its first
+    const continuation = `${input.baseIndent}${isLast ? '   ' : '│  '}`;
+    const linesCmd =
+      group.cmd === null
+        ? []
+        : group.cmd
+            .split('\n')
+            .map((line, at) =>
+              at === 0
+                ? `${continuation}└─ ${line}`
+                : `${continuation}   ${line}`,
+            );
+    const linesSpacer =
+      input.spacers && !isLast ? [`${input.baseIndent}│`] : [];
+    return [lineLabel, ...linesCmd, ...linesSpacer];
   });
-  return lines;
 };

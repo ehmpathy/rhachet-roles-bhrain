@@ -1,6 +1,6 @@
 import * as fs from 'fs/promises';
 
-import { isENOENT } from '../guard/isENOENT';
+import { isErrorOfAbsence } from '@src/utils/fs/isErrorOfAbsence';
 
 /**
  * .what = removes a file, and treats an ALREADY-ABSENT file as the job done
@@ -16,7 +16,7 @@ import { isENOENT } from '../guard/isENOENT';
  */
 export const delOneFile = async (input: { path: string }): Promise<void> => {
   await fs.unlink(input.path).catch((error: unknown) => {
-    if (isENOENT(error)) return;
+    if (isErrorOfAbsence({ error })) return;
     throw error;
   });
 };

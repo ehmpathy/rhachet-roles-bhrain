@@ -5,20 +5,20 @@ exports[`review.by.guard-peer.acceptance given: [case-seam-findings] guard peer 
 │  ├─
 │  │
 │  │  🪨 run solid skill repo=bhrain/role=learner/skill=review.by
-│  │  
+│  │
 │  │  🦉 let's review
 │  │     ├─ brain: openrouter/deepseek/flash
 │  │     ├─ focus: push
 │  │     └─ scope
 │  │        └─ paths: src/**/*.ts
-│  │  
+│  │
 │  │  🦉 needs your talons
-│  │  
+│  │
 │  │  🔍 review
 │  │     ├─ review: .reviews/by=learner/rubric=term-application.md
 │  │     └─ summary
-│  │        ├─ [N] blockers 🔴
-│  │        └─ [N] nitpicks
+│  │        ├─ [N] blockers [GLYPH]
+│  │        └─ [N] nitpicks [GLYPH]
 │  │
 │  └─
 ├─ stderr
@@ -34,8 +34,8 @@ exports[`review.by.guard-peer.acceptance given: [case-seam-findings] guard peer 
 │  ├─ blocked by constraints
 │  └─ exit code: 2 ✋
 └─ tallied
-   ├─ [N] blockers
-   └─ [N] nitpicks"
+   ├─ [N] blockers [GLYPH]
+   └─ [N] nitpicks [GLYPH]"
 `;
 
 exports[`review.by.guard-peer.acceptance given: [case-seam-findings] guard peer runs review.by --for term-application, code is term-dirty when: [t0] the stone is passed → the peer bites, the guard rejects off a raw base review then: the guard-tree stdout is stable (full snapshot) 1`] = `
@@ -43,8 +43,8 @@ exports[`review.by.guard-peer.acceptance given: [case-seam-findings] guard peer 
    │
    ├─ r1: term-application (l1, 1/3)
    │   ├─ rejected [TIME]
-   │   ├─ [N] blockers 🔴
-   │   ├─ [N] nitpicks
+   │   ├─ [N] blockers [GLYPH]
+   │   ├─ [N] nitpicks [GLYPH]
    │   ├─ given: .reviews/peer/1.execute._.review.i[N].[HASH].r[N]._.given.by_peer.term-application.md
    │   └─ taken: .reviews/peer/1.execute._.review.i[N].[HASH].r[N]._.taken.by_self.term-application.md
    │
@@ -60,8 +60,8 @@ exports[`review.by.guard-peer.acceptance given: [case-seam-findings] guard peer 
       ├─ reviews
       │   └─ r1: term-application (l1, 1/3)
       │       ├─ rejected [TIME]
-      │       ├─ [N] blockers 🔴
-      │       ├─ [N] nitpicks
+      │       ├─ [N] blockers [GLYPH]
+      │       ├─ [N] nitpicks [GLYPH]
       │       ├─ given: .reviews/peer/1.execute._.review.i[N].[HASH].r[N]._.given.by_peer.term-application.md
       │       └─ taken: .reviews/peer/1.execute._.review.i[N].[HASH].r[N]._.taken.by_self.term-application.md
       └─ judges
@@ -85,8 +85,8 @@ exports[`review.by.guard-peer.acceptance given: [case-seam-malfunction] guard pe
 │  │  🪨 run solid skill repo=bhrain/role=learner/skill=review.by
 │  │     └─ 💥 failed with an error
 │  │  
-│  │  💥 rubric malfunctioned: term-aggregation
-[STDERR]
+│  │  💥 MalfunctionError: rubric malfunctioned: term-aggregation
+│  │  [STDERR]
 │  └─
 └─ passage blocked
    ├─ blocked by malfunction
@@ -102,12 +102,22 @@ exports[`review.by.guard-peer.acceptance given: [case-seam-malfunction] guard pe
    │   ├─ given: .reviews/peer/1.execute._.review.i[N].[HASH].r[N]._.given.by_peer.term-aggregation.md
    │   └─ taken: .reviews/peer/1.execute._.review.i[N].[HASH].r[N]._.taken.by_self.term-aggregation.md
    │
-   └─ ✓ judge.1 - allowed [TIME]
+   └─ ✗ judge.1 - blocked [TIME]
 
 🗿 route.stone.set
    ├─ stone = 1.execute
    ├─ passage = malfunction
-   ├─ reason = reviewer or judge malfunctioned
+   ├─ reason = 1 of 1 reviewer malfunctioned
+   ├─ still yours to clear
+   │  ├─ 💥 lane term-aggregation (r1) broke
+   │  │  └─ cause = rubric malfunctioned: term-aggregation (unknown)
+   │  └─ next
+   │     ├─ 1. read each given for its cause, and fix what you can
+   │     ├─ 2. answer each broken lane, like a rejected one
+   │     │  └─ rhx route.stone.set --stone 1.execute --as absorbed --that term-aggregation
+   │     ├─ 3. re-arrive
+   │     │  └─ rhx route.stone.set --stone 1.execute --as arrived
+   │     └─ ask a human only for a grant you cannot make (an absent credential, a permission, etc)
    ├─ options
    │  ├─ converge with the reviewer — yours to run, and the levels above stay unlocked
    │  │  └─ rhx route.stone.set --stone 1.execute --as absorbed --that <reviewer>
@@ -126,7 +136,8 @@ exports[`review.by.guard-peer.acceptance given: [case-seam-malfunction] guard pe
       │       └─ taken: .reviews/peer/1.execute._.review.i[N].[HASH].r[N]._.taken.by_self.term-aggregation.md
       └─ judges
           └─ j1: $rhachet run --repo bhrain --skill route.stone.judge --mechanism reviewed? --stone $stone --route $route --allow-blockers 0 --allow-nitpicks 3
-              └─ finished [TIME] ✓
+              ├─ finished [TIME] ✗
+              └─ reason: blockers exceed threshold ([N] > 0)
 "
 `;
 
@@ -135,15 +146,15 @@ exports[`review.by.guard-peer.acceptance given: [case-seam-pass-aggregation] gua
 │  ├─
 │  │
 │  │  🪨 run solid skill repo=bhrain/role=learner/skill=review.by
-│  │  
+│  │
 │  │  🦉 let's review
 │  │     ├─ brain: openrouter/deepseek/flash
 │  │     ├─ focus: push
 │  │     └─ scope
 │  │        └─ paths: src/**/*.ts
-│  │  
+│  │
 │  │  🦉 [APPROVED]
-│  │  
+│  │
 │  │  🔍 review
 │  │     ├─ review: .reviews/by=learner/rubric=term-aggregation.md
 │  │     └─ summary
@@ -195,15 +206,15 @@ exports[`review.by.guard-peer.acceptance given: [case-seam-pass-application] gua
 │  ├─
 │  │
 │  │  🪨 run solid skill repo=bhrain/role=learner/skill=review.by
-│  │  
+│  │
 │  │  🦉 let's review
 │  │     ├─ brain: openrouter/deepseek/flash
 │  │     ├─ focus: push
 │  │     └─ scope
 │  │        └─ paths: src/**/*.ts
-│  │  
+│  │
 │  │  🦉 [APPROVED]
-│  │  
+│  │
 │  │  🔍 review
 │  │     ├─ review: .reviews/by=learner/rubric=term-application.md
 │  │     └─ summary

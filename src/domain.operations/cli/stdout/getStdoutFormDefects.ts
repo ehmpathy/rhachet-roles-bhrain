@@ -30,6 +30,17 @@ const isTreeLine = (input: { line: string }): boolean =>
   /^ {3}[ │]*(├─|└─|│)/.test(input.line);
 
 /**
+ * .what = a line of a shell command a driver pastes whole: it ends in ` \`, or the line above did
+ * .why = a multi-line command is one logical line split for the eye. a `│` column inside it would
+ *        break the paste, and beneath a last `└─` leaf no `│` column exists, so its lines carry
+ *        no glyph by necessity. the paste ends at the first line that does not continue
+ */
+const isPasteLine = (input: {
+  line: string;
+  prior: string | undefined;
+}): boolean => / \\$/.test(input.line) || / \\$/.test(input.prior ?? '');
+
+/**
  * .what = finds each line of a stdout that is prose where a tree was owed
  * .why = `S13`: a surface that hand-rolled its layout rendered `at:` / `fix:` / `why:` as flat
  *        lines under a header, and no check caught it. this is that check — pure, so every
@@ -68,6 +79,9 @@ export const getStdoutFormDefects = (input: {
 
       // an unindented line shuts it
       if (!/^ /.test(line)) return { ...state, inBlock: false };
+
+      // a shell command continued by ` \` is one paste, never prose
+      if (isPasteLine({ line, prior: lines[index - 1] })) return state;
 
       // an indented line is graded against whether a root sits above it
       const kind = asStdoutFormDefectKind({ line, inBlock: state.inBlock });

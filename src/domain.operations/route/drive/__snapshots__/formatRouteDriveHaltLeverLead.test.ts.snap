@@ -1,0 +1,14 @@
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
+
+exports[`formatRouteDriveHaltLeverLead given: [case1] a halt with one meter when: [t0] the lever head is the human one then: the block matches the snapshot 1`] = `
+"      ├─ reviews
+      │   └─ r1: mech-rules (l1, 3/3)
+      │       ├─ exhausted 🌙
+      │       ├─ terminal — does not block higher levels
+      │       ├─ 2 blockers 🔴
+      │       ├─ 0 nitpicks ✓
+      │       ├─ given: .reviews/peer/1.vision._.review.i003.abc.r001._.given.by_peer.mech-rules.md
+      │       └─ taken: .reviews/peer/1.vision._.review.i003.abc.r001._.taken.by_self.mech-rules.md
+      │
+      └─ spend your own lever first, then ask a human"
+`;

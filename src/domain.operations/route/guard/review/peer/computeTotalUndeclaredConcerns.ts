@@ -1,4 +1,4 @@
-import type { RouteGuardReviewPeerUndeclared } from './getStoneUndeclaredConcerns';
+import type { RouteGuardReviewPeerUndeclared } from './computeUndeclaredConcerns';
 
 /**
  * .what = the total count of concerns still owed a stance, summed across every lane

@@ -10,6 +10,13 @@ import {
 const ASSETS_DIR = path.join(__dirname, '.test/assets/route-halt');
 
 /**
+ * .what = the owl frame every route.guard.budget refusal opens with, as `emitReviewRefusal` emits it
+ * .why = the budget refusals share one frame with route.guard.partition, so each header sits
+ *        beneath it rather than at byte 0
+ */
+const FRAME_OF_REFUSAL = '\n🦉 woah there\n\n';
+
+/**
  * .what = acceptance coverage for the CLI usage-error paths of route.guard.budget
  *         and route.mutate grant — invalid input exits with a constraint code (2)
  *         and writes its guidance to stderr (not stdout)
@@ -18,8 +25,9 @@ const ASSETS_DIR = path.join(__dirname, '.test/assets/route-halt');
  *        without a contract-boundary test a future change could silently regress
  *        the exit code or leak the error to stdout (hidden on a non-zero exit).
  *
- * .note = each path validates and exits BEFORE any route/branch lookup, so no bound
- *         route is needed — only the linked driver skills.
+ * .note = each path exits BEFORE any guard file is read or written, so no bound route is
+ *         needed — only the linked driver skills. the route-lookup refusals ([case4] unbound
+ *         and guardless, [case5] unguarded stone) read a route and stop there.
  */
 describe('driver.route.usage-errors.acceptance', () => {
   given('[case1] route.guard.budget with a non-numeric --add', () => {
@@ -98,6 +106,31 @@ describe('driver.route.usage-errors.acceptance', () => {
         expect(result.stderr).toMatchSnapshot('mutate grant invalid-action');
       });
     });
+
+    when('[t1] the branch has no bound route and no --route is given', () => {
+      const result = useThen('the grant refuses to guess a route', async () =>
+        invokeRouteSkill({
+          skill: 'route.mutate',
+          args: { grant: 'get' },
+          cwd: scene.tempDir,
+        }),
+      );
+
+      then('exit code is 2 (constraint — the caller must name a route)', () => {
+        expect(result.code).toEqual(2);
+      });
+
+      then('🔴 the refusal opens with the qualified header, never bare `error:`', () => {
+        expect(result.stderr).toContain(
+          '✋ ConstraintError: no bound route found. use --route to specify.',
+        );
+        expect(result.stderr).not.toContain('error: no bound route');
+      });
+
+      then('stderr matches snapshot', () => {
+        expect(result.stderr).toMatchSnapshot('mutate grant route unbound');
+      });
+    });
   });
 
   given('[case3] route.guard.budget with an absent --add', () => {
@@ -136,6 +169,192 @@ describe('driver.route.usage-errors.acceptance', () => {
 
       then('stderr matches snapshot', () => {
         expect(result.stderr).toMatchSnapshot('budget --add absent');
+      });
+    });
+
+    when('[t1] --help is asked with no other flag', () => {
+      const result = useThen('the budget command answers with its usage', async () =>
+        invokeRouteSkill({
+          skill: 'route.guard.budget',
+          args: { help: true },
+          cwd: scene.tempDir,
+        }),
+      );
+
+      then('exit code is 0 (a help request is not a refusal)', () => {
+        expect(result.code).toEqual(0);
+      });
+
+      then('🔴 the usage is on stdout, and no absent --for is blamed', () => {
+        expect(result.stdout).toContain('route.guard.budget - extend peer reviewer budget');
+        expect(result.stdout).toContain('--level');
+        expect(result.stderr).not.toContain('--for is required');
+      });
+
+      then('stdout matches snapshot', () => {
+        expect(result.stdout).toMatchSnapshot('budget --help');
+      });
+    });
+  });
+
+  /**
+   * .what = every other route.guard.budget refusal, one when per refusal
+   * .why = each one opens `✋ ConstraintError:` (rule.require.qualified-error-headers) and exits 2;
+   *        without a snapshot a reword, a dropped usage line, or a changed exit code ships unseen
+   *        (r011 blocker.1). each refusal fires before any guard file is read or written.
+   *
+   * .note = `--route .` keeps every path in the bytes relative, so no temp dir needs a mask
+   */
+  const REFUSALS_WITHOUT_GUARD: Array<{
+    description: string;
+    args: Record<string, string>;
+    header: string;
+    snapshot: string;
+    /**
+     * .what = whether the owl frame leads the header
+     * .why = a refusal raised at argument parse renders header + usage at byte 0
+     *        (pinned in [case3b]–[case3d]); a refusal raised after parse shares the
+     *        owl frame with route.guard.partition
+     */
+    frame: boolean;
+  }> = [
+    {
+      description: '--for is omitted',
+      args: { add: '2', stone: '1.feature' },
+      header: '✋ ConstraintError: --for is required',
+      snapshot: 'budget --for absent',
+      frame: false,
+    },
+    {
+      description: '--for names a resource other than review',
+      args: { for: 'deploy', add: '2', stone: '1.feature' },
+      header: '✋ ConstraintError: --for must be "review", got "deploy"',
+      snapshot: 'budget --for not review',
+      frame: false,
+    },
+    {
+      description: '--level is not a positive integer',
+      args: { for: 'review', add: '2', level: 'abc', stone: '1.feature' },
+      header: '✋ ConstraintError: --level must be a positive integer',
+      snapshot: 'budget --level non-numeric',
+      frame: true,
+    },
+    {
+      description: '--peer and --level are both named',
+      args: {
+        for: 'review',
+        add: '2',
+        peer: 'primo',
+        level: '1',
+        stone: '1.feature',
+      },
+      header: '✋ ConstraintError: --peer and --level cannot be combined',
+      snapshot: 'budget --peer with --level',
+      frame: true,
+    },
+    {
+      description: '--stone is omitted',
+      args: { for: 'review', add: '2' },
+      header: '✋ ConstraintError: --stone is required',
+      snapshot: 'budget --stone absent',
+      frame: false,
+    },
+    {
+      description: 'no --route is given and the branch has no bound route',
+      args: { for: 'review', add: '2', stone: '1.feature' },
+      header:
+        '✋ ConstraintError: no bound route found. use --route to specify.',
+      snapshot: 'budget route unbound',
+      frame: true,
+    },
+    {
+      description: 'the route holds no guard files',
+      args: { for: 'review', add: '2', stone: '1.feature', route: '.' },
+      header: '✋ ConstraintError: no guard files found in .',
+      snapshot: 'budget route guardless',
+      frame: true,
+    },
+  ];
+
+  given('[case12] route.guard.budget refusals on a route with no guard', () => {
+    const scene = useBeforeAll(async () => {
+      const tempDir = genTempDirForRhachet({
+        slug: 'usage-budget-refusals',
+        clone: ASSETS_DIR,
+      });
+      await execAsync('npx rhachet roles link --role driver', { cwd: tempDir });
+      await execAsync('git checkout -b vlad/test-usage-budget-refusals', {
+        cwd: tempDir,
+      });
+      return { tempDir };
+    });
+
+    REFUSALS_WITHOUT_GUARD.map((refusal, index) =>
+      when(`[t${index}] ${refusal.description}`, () => {
+        const result = useThen('the budget command refuses', async () =>
+          invokeRouteSkill({
+            skill: 'route.guard.budget',
+            args: refusal.args,
+            cwd: scene.tempDir,
+          }),
+        );
+
+        then('exit code is 2 (constraint — the caller must fix it)', () => {
+          expect(result.code).toEqual(2);
+        });
+
+        then('stderr opens with the qualified ConstraintError header, framed where owed', () => {
+          const lead = refusal.frame ? FRAME_OF_REFUSAL : '';
+          expect(result.stderr.startsWith(`${lead}${refusal.header}`)).toEqual(
+            true,
+          );
+          expect(result.stdout).not.toContain('ConstraintError');
+        });
+
+        then('stderr matches snapshot', () => {
+          expect(result.stderr).toMatchSnapshot(refusal.snapshot);
+        });
+      }),
+    );
+  });
+
+  given('[case13] route.guard.budget on a route whose guards name other stones', () => {
+    const scene = useBeforeAll(async () => {
+      const tempDir = genTempDirForRhachet({
+        slug: 'usage-budget-stoneless',
+        clone: path.join(__dirname, '.test/assets/route-peer-budget-multilevel'),
+      });
+      await execAsync('npx rhachet roles link --role driver', { cwd: tempDir });
+      await execAsync('git checkout -b vlad/test-usage-budget-stoneless', {
+        cwd: tempDir,
+      });
+      return { tempDir };
+    });
+
+    when('[t0] --stone names a stone with no guard file', () => {
+      const result = useThen('the budget command refuses', async () =>
+        invokeRouteSkill({
+          skill: 'route.guard.budget',
+          args: { for: 'review', add: '2', stone: '9.absent', route: '.' },
+          cwd: scene.tempDir,
+        }),
+      );
+
+      then('exit code is 2 (constraint — the caller must name a guarded stone)', () => {
+        expect(result.code).toEqual(2);
+      });
+
+      then('stderr opens with the owl frame, then the qualified ConstraintError header', () => {
+        expect(
+          result.stderr.startsWith(
+            `${FRAME_OF_REFUSAL}✋ ConstraintError: no guard file found for stone 9.absent`,
+          ),
+        ).toEqual(true);
+        expect(result.stdout).not.toContain('ConstraintError');
+      });
+
+      then('stderr matches snapshot', () => {
+        expect(result.stderr).toMatchSnapshot('budget stone unguarded');
       });
     });
   });
@@ -451,7 +670,7 @@ describe('driver.route.usage-errors.acceptance', () => {
         //    a re-class, so the driver would be told the opposite of the truth about
         //    whose fault it is while the suite reported no change
         expect(result.stderr).toContain(
-          'error: BadRequestError: --stone is required',
+          '✋ ConstraintError: --stone is required',
         );
         expect(result.stdout).not.toContain('--stone is required');
       });
@@ -502,7 +721,7 @@ describe('driver.route.usage-errors.acceptance', () => {
         //    half that says whose fault it is, and it is the half a bare message
         //    assertion cannot hold
         expect(result.stderr).toContain(
-          'error: BadRequestError: --mechanism is required',
+          '✋ ConstraintError: --mechanism is required',
         );
         expect(result.stdout).not.toContain('--mechanism is required');
       });
@@ -532,7 +751,7 @@ describe('driver.route.usage-errors.acceptance', () => {
 
       then('the refusal names the flag, on stderr, classed caller-fault', () => {
         expect(result.stderr).toContain(
-          'error: BadRequestError: --stone is required',
+          '✋ ConstraintError: --stone is required',
         );
         expect(result.stdout).not.toContain('--stone is required');
       });
@@ -559,7 +778,7 @@ describe('driver.route.usage-errors.acceptance', () => {
         // .why the value is quoted back = the caller typed it, so the echo is what
         //    lets them spot a typo without a re-read of their own command
         expect(result.stderr).toContain(
-          'error: BadRequestError: unknown mechanism "bogus?"',
+          '✋ ConstraintError: unknown mechanism "bogus?"',
         );
         expect(result.stdout).not.toContain('unknown mechanism');
       });
@@ -645,7 +864,7 @@ describe('driver.route.usage-errors.acceptance', () => {
         //    divergence in the file, so the outlier moved, never the house shape
         //    (`ergo-snapshot-visual-blemishes` blocker.1 at i004)
         expect(result.stderr).toContain(
-          'error: BadRequestError: --route is required',
+          '✋ ConstraintError: --route is required',
         );
         expect(result.stderr).toContain('--help');
         expect(result.stdout).not.toContain('--route is required');
@@ -654,7 +873,7 @@ describe('driver.route.usage-errors.acceptance', () => {
       then('the refusal carries the same hint payload as its peers', () => {
         // .why = uniformity is what the blocker graded, so it earns an assertion rather than
         //        a snapshot alone — a snapshot re-take would absorb a drift here in silence
-        expect(result.stderr).toContain('"hint": "--help for usage"');
+        expect(result.stderr).toContain('hint: --help for usage');
       });
 
       then('stderr matches snapshot', () => {
@@ -715,10 +934,12 @@ describe('driver.route.usage-errors.acceptance', () => {
         then('the refusal is the shared one, on stderr', () => {
           // 🔴 the same three lines on every verb — that sameness IS the claim. a
           //    per-verb hint here would be decoy guidance for a command the driver
-          //    never ran, which is why `parseArgs` keeps its message generic
-          expect(result.stderr).toContain('--into was passed with no value');
-          expect(result.stderr).toContain('--into carries a value');
-          expect(result.stdout).not.toContain('--into was passed with no value');
+          //    never ran, which is why the boundary keeps its message generic
+          expect(result.stderr).toContain(
+            '✋ ConstraintError: --into given with no value',
+          );
+          expect(result.stderr).toContain('fix: --into <value>, or see --help');
+          expect(result.stdout).not.toContain('--into given with no value');
         });
 
         then('no stack trace, no node version', () => {

@@ -1,0 +1,37 @@
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
+
+exports[`getOneReviewMetricsOfZero given: [case1] a run that called no brain when: [t0] its metrics are read then: the metrics match the snapshot 1`] = `
+{
+  "expected": {
+    "cost": {
+      "estimate": "$0.00",
+    },
+    "tokens": {
+      "contextWindowPercent": 0,
+      "estimate": 0,
+    },
+  },
+  "files": {
+    "conversationCount": 0,
+    "refsCount": 0,
+    "rulesCount": 0,
+    "targetsCount": 0,
+  },
+  "realized": {
+    "cost": {
+      "cacheRead": "$0.00",
+      "cacheWrite": "$0.00",
+      "input": "$0.00",
+      "output": "$0.00",
+      "total": "$0.00",
+    },
+    "time": "PT0S",
+    "tokens": {
+      "input": 0,
+      "inputCacheCreation": 0,
+      "inputCacheRead": 0,
+      "output": 0,
+    },
+  },
+}
+`;

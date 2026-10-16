@@ -32,10 +32,9 @@ import { asSanitizedPeerReviewSlug } from './asSanitizedPeerReviewSlug';
  *         reads and its pinned snapshots pass untouched — which is the PROOF that it does. a
  *         flag name would be a field no consumer reads, bought at the cost of that proof.
  *
- * ⚠️ one metadata field is not identical: `stone` reports the RESOLVED stone name, where the
- *    inline copy reported the driver's raw `--stone` pattern. they coincide unless the driver
- *    passed a glob, in which case the resolved name is the more useful of the two — it says
- *    which stone the check actually ran against.
+ * .note = the error carries no metadata bag: the slug and the valid options already ride in
+ *         the headline, and the stone is the caller's own `--stone`. a bag of those would
+ *         render as lines that only repeat what the caller typed or just read
  */
 export const assertValidPeerReviewSlug = (input: {
   slug: string;
@@ -55,6 +54,5 @@ export const assertValidPeerReviewSlug = (input: {
   if (!validSlugs.includes(input.slug))
     throw new BadRequestError(
       `invalid peer reviewer slug: "${input.slug}". valid options: ${validSlugs.join(', ')}`,
-      { stone: input.stone.name, slug: input.slug, validSlugs },
     );
 };

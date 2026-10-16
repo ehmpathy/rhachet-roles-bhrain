@@ -1,0 +1,17 @@
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
+
+exports[`getOneRouteGuardPartitionsCheck given: [case1] a declaration with no partition at all when: [t0] the check runs under the @all scope then: it refuses, and names the route and the command to run 1`] = `
+"✋ ConstraintError: no partition declared for route .behavior/v2026_01_01.demo: declare the whole set, one --partition '<slug>=<globs>' per partition
+
+  rhx route.guard.partition --route .behavior/v2026_01_01.demo --for review --peer @all \\
+    --partition '<slug>=<globs>' \\
+    --mode apply"
+`;
+
+exports[`getOneRouteGuardPartitionsCheck given: [case1] a declaration with no partition at all when: [t1] the check runs under one reviewer scope then: the command names that reviewer and stone 1`] = `
+"✋ ConstraintError: no partition declared for route .behavior/v2026_01_01.demo: declare the whole set, one --partition '<slug>=<globs>' per partition
+
+  rhx route.guard.partition --route .behavior/v2026_01_01.demo --for review --peer primo --stone 5.1.execution \\
+    --partition '<slug>=<globs>' \\
+    --mode apply"
+`;

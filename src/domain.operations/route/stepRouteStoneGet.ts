@@ -20,11 +20,11 @@ export const stepRouteStoneGet = async (input: {
   stones: RouteStone[];
   emit: { stdout: string } | null;
 }> => {
-  // validate route dir found
+  // validate route dir found; the headline names the route, so a bag would only repeat it
   try {
     await fs.access(input.route);
   } catch {
-    throw new BadRequestError('route not found', { route: input.route });
+    throw new BadRequestError(`route not found: ${input.route}`);
   }
 
   // gather all stones and their artifacts

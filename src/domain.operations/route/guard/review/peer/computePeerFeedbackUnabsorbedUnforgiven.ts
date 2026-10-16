@@ -1,5 +1,7 @@
+import { LEVEL_OF_UNMAPPED_REVIEW } from './meter/getOneReviewLevelByIndex';
+
 /**
- * .what = the pure filter at the heart of getStoneGuardReviewPeerFeedbackUnabsorbedUnforgiven: from
+ * .what = the pure filter at the heart of getAllStoneGuardReviewPeerFeedbackUnabsorbedUnforgiven: from
  *         the reviewers that still owe a .taken, drop the ones an overrule already forgave, and
  *         pair each survivor with its level.
  * .why = design-note B6 — a feedbackUnabsorbed reviewer at an already-overruled level is waved
@@ -26,12 +28,12 @@ export const computePeerFeedbackUnabsorbedUnforgiven = <
     .filter((reviewer) => !input.overruledSlugs.has(reviewer.slug))
     .map((reviewer) => ({
       ...reviewer,
-      level: input.levelBySlug.get(reviewer.slug) ?? 1,
+      level: input.levelBySlug.get(reviewer.slug) ?? LEVEL_OF_UNMAPPED_REVIEW,
       // 🔴 levelBySlug is built from the LIVE guard config, so a slug it does not carry is a
       //    reviewer that was deleted from the config while it still held an unanswered blocker.
       //    under the reviewer-keyed debt that given no longer self-clears on a hash move, so the
       //    driver is named a reviewer it cannot find. the flag is what lets the prompt SAY so —
-      //    absent it, the `?? 1` default renders a retired reviewer as an ordinary level-1 one
+      //    absent it, the unmapped-level default renders a retired reviewer as an ordinary level-1 one
       //    and the halt reads as a mistake rather than as a state (F8)
       retired: !input.levelBySlug.has(reviewer.slug),
     }));

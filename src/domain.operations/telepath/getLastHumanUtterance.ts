@@ -1,7 +1,7 @@
 import * as fs from 'fs/promises';
 import { HelpfulError } from 'helpful-errors';
 
-import { getFsErrorCode } from '../getFsErrorCode';
+import { getFsErrorCode } from '@src/utils/fs/getFsErrorCode';
 
 /**
  * .what = is this transcript entry a REAL human utterance?

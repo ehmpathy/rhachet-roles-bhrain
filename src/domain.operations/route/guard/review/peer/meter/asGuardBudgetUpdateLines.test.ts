@@ -73,6 +73,15 @@ describe('asGuardBudgetUpdateLines', () => {
           expect(stdout).toContain('does not run this generation');
         });
 
+        then(
+          'the line names what lapses the skip — an edit to the artifact',
+          () => {
+            // .why = `this generation` is a term of art. a driver who repairs code and re-arrives
+            //        read it as "will not run next arrival", and the lane ran (dogfood, 2026-10-08)
+            expect(stdout).toContain('an artifact edit re-runs it');
+          },
+        );
+
         then('the rounds are DEFERRED, never reported as lost', () => {
           // .why = under S03 the skip lapses when the artifact next moves, so `wasted` was never
           //        true and `will not run` (unbounded) goes false past the next edit (case=9 §2)
@@ -120,6 +129,7 @@ describe('asGuardBudgetUpdateLines', () => {
           expect(lines[1]).toContain('architect');
           expect(lines[1]).toContain('untouched');
           expect(lines[1]).toContain('does not run this generation');
+          expect(lines[1]).toContain('an artifact edit re-runs it');
           expect(lines[1]).not.toContain('→');
         });
 

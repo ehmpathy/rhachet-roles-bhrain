@@ -58,7 +58,9 @@ const buildLogContent = (input: {
 
   // expected metrics
   sections.push(`## expected (pre-execution)`);
-  sections.push(`- tokens: ${input.metrics.expected.tokens.toLocaleString()}`);
+  sections.push(
+    `- tokens: ${input.metrics.expected.tokens.toLocaleString('en-US')}`,
+  );
   sections.push(
     `- context window: ${input.metrics.expected.contextWindowPercent}%`,
   );
@@ -70,30 +72,30 @@ const buildLogContent = (input: {
   sections.push('');
   sections.push(`### step 1: propose pure rules`);
   sections.push(
-    `- input tokens: ${input.metrics.realized.step1.tokens.input.toLocaleString()}`,
+    `- input tokens: ${input.metrics.realized.step1.tokens.input.toLocaleString('en-US')}`,
   );
   sections.push(
-    `- output tokens: ${input.metrics.realized.step1.tokens.output.toLocaleString()}`,
+    `- output tokens: ${input.metrics.realized.step1.tokens.output.toLocaleString('en-US')}`,
   );
   sections.push(`- cost: ${input.metrics.realized.step1.cost.total}`);
   sections.push(`- time: ${input.metrics.realized.step1.time}`);
   sections.push('');
   sections.push(`### step 2: blend with prior rules`);
   sections.push(
-    `- input tokens: ${input.metrics.realized.step2.tokens.input.toLocaleString()}`,
+    `- input tokens: ${input.metrics.realized.step2.tokens.input.toLocaleString('en-US')}`,
   );
   sections.push(
-    `- output tokens: ${input.metrics.realized.step2.tokens.output.toLocaleString()}`,
+    `- output tokens: ${input.metrics.realized.step2.tokens.output.toLocaleString('en-US')}`,
   );
   sections.push(`- cost: ${input.metrics.realized.step2.cost.total}`);
   sections.push(`- time: ${input.metrics.realized.step2.time}`);
   sections.push('');
   sections.push(`### total`);
   sections.push(
-    `- input tokens: ${input.metrics.realized.total.tokens.input.toLocaleString()}`,
+    `- input tokens: ${input.metrics.realized.total.tokens.input.toLocaleString('en-US')}`,
   );
   sections.push(
-    `- output tokens: ${input.metrics.realized.total.tokens.output.toLocaleString()}`,
+    `- output tokens: ${input.metrics.realized.total.tokens.output.toLocaleString('en-US')}`,
   );
   sections.push(`- total cost: ${input.metrics.realized.total.cost.total}`);
   sections.push(`- total time: ${input.metrics.realized.total.time}`);

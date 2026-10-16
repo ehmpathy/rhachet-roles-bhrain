@@ -4,6 +4,7 @@ import * as path from 'path';
 import { given, then, useBeforeAll, useThen, when } from 'test-fns';
 
 import { genTestBrainContext } from '@src/.test/genTestBrainContext';
+import { BRAIN_CALL_TEST_TIMEOUT_MS } from '@src/.test/infra/brainCallTestTimeout';
 import { REPEATABLY_CONFIG } from '@src/.test/infra/repeatably';
 import { logOutputHead } from '@src/.test/logOutputHead';
 
@@ -20,14 +21,15 @@ const ASSETS_PROSE = path.join(
 
 /**
  * .skip = anthropic api too pricey for ci
- * .note = run manually with THOROUGH=true if needed
+ * .note = to run it by hand, lift the `.skip` locally, then run this one file under a scope:
+ *         rhx git.repo.test --what integration --scope 'path://stepReview.caseBrain.claude-sonnet' --mode apply
  */
 describe.skip('stepReview.caseBrain.claude-sonnet', () => {
-  // increase timeout for brain invocations (3 minutes)
-  jest.setTimeout(180000);
+  // bound brain invocations at the shared real-brain test bound
+  jest.setTimeout(BRAIN_CALL_TEST_TIMEOUT_MS);
 
   const scene = useBeforeAll(async () => ({
-    brain: genTestBrainContext({ brain: 'anthropic/claude/sonnet' }),
+    brain: await genTestBrainContext({ brain: 'anthropic/claude/sonnet' }),
   }));
 
   given('[case1] prose-author example with anthropic/claude/sonnet', () => {

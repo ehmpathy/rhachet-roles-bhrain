@@ -1,0 +1,43 @@
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
+
+exports[`stepReview — a reply that runs to the output limit given: [case1] the brain runs away once, then answers when: [t0] the review runs then: the assembled stderr matches the snapshot 1`] = `"💥 MalfunctionError: the brain's reply ran to its output limit with no verdict (131,072 output tokens billed, provider InferenceNet, generation gen-1); one retry"`;
+
+exports[`stepReview — a reply that runs to the output limit given: [case4] the brain runs away once with no output count, then answers when: [t0] the review runs then: the assembled stdout matches the snapshot 1`] = `
+"🦉 let's review
+   ├─ brain: openrouter/deepseek/flash/floor&speed=min100tps&privacy=full
+   ├─ focus: push
+   └─ scope
+      └─ paths: src/**/*.ts
+
+🔭 metrics.expected
+   ├─ files
+   │  ├─ rules: 1
+   │  └─ targets: 1
+   ├─ tokens
+   │  ├─ estimate: 1,272
+   │  └─ context: 0.1%
+   └─ cost
+      └─ estimate: $0.000635600
+
+🪵 logs
+   ├─ scope: .log/bhrain/review/$STAMP/input.scope.json
+   ├─ metrics: .log/bhrain/review/$STAMP/metrics.expected.json
+   └─ tokens: .log/bhrain/review/$STAMP/tokens.expected.md
+      ├─ rules: rules (14, 100%)
+      └─ targets: src (7, 100%)
+
+🔍 what do we have here then?
+✨ metrics.realized
+   ├─ spend: unmeasured 🟡 the brain reported no usage — unknown, not $0
+   └─ time
+      └─ total: 1s
+
+🦉 just a few hoots
+
+🔍 review
+   ├─ logs: .log/bhrain/review/$STAMP
+   ├─ review: review.md
+   └─ summary
+      ├─ 0 blockers
+      └─ 1 nitpick 🟠"
+`;

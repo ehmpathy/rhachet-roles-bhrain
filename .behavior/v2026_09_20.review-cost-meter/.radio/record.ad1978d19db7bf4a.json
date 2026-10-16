@@ -1,0 +1,21 @@
+{
+  "key": "ad1978d19db7bf4a",
+  "kind": "create",
+  "repo": {
+    "owner": "ehmpathy",
+    "name": "rhachet-roles-ehmpathy"
+  },
+  "exid": null,
+  "title": "feat(git.repo.test): emit a dated, pasteable verification row so a recorded count is a copy, not a recollection",
+  "description": "## .what\n\ngit.repo.test prints a stats block (suites, tests passed, time) that drivers copy by hand into the verification tables of their yields. the copied row carries no date and no command, so it goes stale silently the moment a later round adds cases.\n\nevidence: on one round of one route in ehmpathy/rhachet-roles-bhrain, two rows of a single verification table were stale: a full unit row read 1,640 passed where a re-run measured 586; a scoped row (path://readReviewWindows) read 14 passed where a re-run measured 18. neither was caught by a reviewer, hook, or test; both surfaced by chance re-runs.\n\n## .why\n\n- a specific wrong number reads as stronger evidence than an absent one, so a reader stops at it\n- the drift direction is almost always LOW (rounds add cases), which is the direction nobody audits\n- the root cause is a retype from memory of a figure the tool already held\n\n## .shape of the fix\n\n1. on success, git.repo.test emits a pasteable row beside its stats, e.g.\n   row: | unit, path://readReviewWindows | 18 passed, 2026-09-10 |\n   with the date and the exact scope/command, so the record is a copy rather than a recollection\n2. optionally, a brief (mechanic) that every verification row carries its date and the command that produced it\n3. longer term: a checker that re-runs each recorded command and diffs the count\n\nnote: rung 1 touches stdout that acceptance snapshots capture, so it re-baselines those snaps. pairs with #723 / #771 (a count with no scope); this is a count with no date.\n\ncaught in ehmpathy/rhachet-roles-bhrain .dream/v2026_09_10.fix.a-verification-count-is-a-claim-with-no-expiry.md",
+  "status": null,
+  "via": "gh.issues",
+  "auth": "as-human",
+  "idem": null,
+  "heldAt": "2026-10-15",
+  "heldSeq": 9,
+  "recordStatus": "DELIVERED",
+  "reason": null,
+  "settledAt": "2026-10-16",
+  "deliveredExid": "958"
+}

@@ -46,7 +46,7 @@ describe('asConcurrencyGroupLeakAdvisory', () => {
     () => {
       const leak = {
         level: 2,
-        groups: ['anthropic', 'fireworks'],
+        groups: ['anthropic', 'openrouter'],
         ungrouped: ['local-lint', 'local-types'],
       };
 
@@ -59,7 +59,7 @@ describe('asConcurrencyGroupLeakAdvisory', () => {
           //    only a per-line assertion can tell the two renders apart
           const lines = asConcurrencyGroupLeakAdvisory(leak).split('\n');
           expect(lines).toContain('   ├─ bounded: anthropic');
-          expect(lines).toContain('               fireworks');
+          expect(lines).toContain('               openrouter');
           expect(lines).toContain('   ├─ unbounded: local-lint');
           expect(lines).toContain('                 local-types');
         });
@@ -69,7 +69,7 @@ describe('asConcurrencyGroupLeakAdvisory', () => {
           //    returns to `join(', ')`, which is the shape carried from i008
           //    to i022 and re-raised at every round in between
           const advisory = asConcurrencyGroupLeakAdvisory(leak);
-          expect(advisory).not.toContain('anthropic, fireworks');
+          expect(advisory).not.toContain('anthropic, openrouter');
           expect(advisory).not.toContain('local-lint, local-types');
         });
 

@@ -1,0 +1,13 @@
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
+
+exports[`emitReviewWarmerDisowned given: [case1] a warmer from an earlier round that still beats when: [t1] a reviewer reads the rendered block then: it renders the tree a driver can act on 1`] = `
+"
+🦉 heads up, the run goes on
+
+🟡 warn: warmer: off — and a warmer from an earlier round is STILL awake
+   ├─ reviewer: repo-rules
+   ├─ pid: <pid>
+   ├─ --warmer off stops the next spawn, never a live warmer
+   └─ stop: kill <pid>
+"
+`;

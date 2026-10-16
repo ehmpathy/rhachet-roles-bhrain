@@ -23,7 +23,7 @@ const emitContext: ContextCliEmit = {
  *         the stance keys to"*
  *
  * .why = r10 b6 read this row as the one vision-table row with NO clamp at all.
- *        `assertAbsorptionIsNotContrary.test.ts` only checks the refusal MENTIONS
+ *        `asAbsorptionIsNotContrary.test.ts` only checks the refusal MENTIONS
  *        `--as rewound`; it never exercised a rewind that actually clears a stance.
  *        so the one documented undo for a regretted dispute was a promise, never a check.
  *

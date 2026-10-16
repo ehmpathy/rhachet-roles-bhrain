@@ -1,0 +1,27 @@
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
+
+exports[`emitReviewRefusal given: [case1] a constraint refusal when: [t0] it is emitted then: the caller is named the party to act, and the block renders 1`] = `
+"
+🦉 woah there
+
+✋ ConstraintError: --limit is not a flag "--of tree" takes
+   └─ fix: drop --limit
+"
+`;
+
+exports[`emitReviewRefusal given: [case2] a malfunction refusal when: [t0] it is emitted then: the system is named the party to act, and the block renders 1`] = `
+"
+🦉 woah there
+
+💥 MalfunctionError: prime: the prefix poke could not run — spawn EMFILE
+"
+`;
+
+exports[`emitReviewRefusal given: [case3] a warn notice when: [t0] it is emitted then: no error class is worn, and the run-goes-on header leads 1`] = `
+"
+🦉 heads up, the run goes on
+
+🟡 warn: prime: skipped — the shared prefix is held by one lane
+   └─ reviewer: arch
+"
+`;

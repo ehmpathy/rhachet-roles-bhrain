@@ -1,5 +1,6 @@
 import { given, then, when } from 'test-fns';
 
+import { asReviewOutputTokensOfRealized } from './asReviewOutputTokensOfRealized';
 import { genReviewOutputStdout } from './genReviewOutputStdout';
 
 describe('genReviewOutputStdout', () => {
@@ -277,6 +278,140 @@ describe('genReviewOutputStdout', () => {
       then('formats large numbers with commas', () => {
         expect(stdout).toContain('125,000');
         expect(stdout).toContain('205,000');
+      });
+    });
+  });
+
+  given('[case6] a run whose spend is unmeasured', () => {
+    when('[t0] the run returns no tokens and no cost', () => {
+      const stdout = genReviewOutputStdout({
+        // the tokens a run returns where its spend is unmeasured, cast at the one seam
+        tokens: asReviewOutputTokensOfRealized({ tokens: null }),
+        cost: {
+          total: null,
+        },
+        time: {
+          total: '1s',
+        },
+        paths: {
+          logsRelative: '.log/bhrain/review/2026-01-28T12-00-00-000Z',
+          reviewRelative: 'review.md',
+        },
+        summary: {
+          blockersCount: 0,
+          nitpicksCount: 1,
+        },
+      });
+
+      then('matches snapshot', () => {
+        expect(stdout).toMatchSnapshot();
+      });
+
+      then(
+        '🔴 the tokens and cost branches collapse into one spend row, and the time branch stays',
+        () => {
+          expect(stdout).toContain(
+            '✨ metrics.realized\n   ├─ spend: unmeasured 🟡 the brain reported no usage — unknown, not $0\n   └─ time\n      └─ total: 1s',
+          );
+          expect(stdout).not.toContain('├─ tokens');
+          expect(stdout).not.toContain('├─ cost');
+        },
+      );
+
+      then('🔴 the caveat appears exactly once', () => {
+        expect(stdout.match(/unknown, not \$0/g)?.length).toEqual(1);
+        expect(stdout.match(/🟡/g)?.length).toEqual(1);
+      });
+
+      then('🔴 no spend figure renders as a number or as $0', () => {
+        expect(stdout).not.toMatch(/: \$\d/);
+        expect(stdout).not.toMatch(/(input|cache\.set|cache\.get|output): \d/);
+      });
+    });
+  });
+
+  given('[case7] a run whose spend is PARTLY unmeasured', () => {
+    when('[t0] the input-side counts are measured and the rest are not', () => {
+      const stdout = genReviewOutputStdout({
+        tokens: {
+          input: 1200,
+          cacheSet: 0,
+          cacheGet: 4800,
+          output: null,
+          total: null,
+        },
+        cost: {
+          total: null,
+        },
+        time: {
+          total: '1s',
+        },
+        paths: {
+          logsRelative: '.log/bhrain/review/2026-01-28T12-00-00-000Z',
+          reviewRelative: 'review.md',
+        },
+        summary: {
+          blockersCount: 0,
+          nitpicksCount: 0,
+        },
+      });
+
+      then('matches snapshot', () => {
+        expect(stdout).toMatchSnapshot();
+      });
+
+      then('🔴 each absent figure renders as a bare mark', () => {
+        expect(stdout).toContain('│  ├─ output: —\n');
+        expect(stdout).toContain('│  ├─ total: —\n');
+        expect(stdout).toContain('├─ input: 1,200');
+        expect(stdout).toContain('├─ cache.get: 4,800');
+      });
+
+      then(
+        '🔴 the caveat closes each branch with an absent figure, once per branch, never per row',
+        () => {
+          expect(stdout).toContain(
+            '   ├─ tokens\n   │  ├─ input: 1,200\n   │  ├─ cache.set: 0\n   │  ├─ cache.get: 4,800\n   │  ├─ output: —\n   │  ├─ total: —\n   │  └─ — = unmeasured, not zero\n   ├─ cost\n   │  ├─ total: —\n   │  └─ — = unmeasured, not zero\n   └─ time',
+          );
+          // two branches carry an absent figure, so the key appears twice, once each
+          expect(stdout.match(/— = unmeasured, not zero/g)?.length).toEqual(2);
+        },
+      );
+
+      then('🔴 the absent cost never renders as $0', () => {
+        expect(stdout).not.toMatch(/total: \$/);
+      });
+    });
+
+    when('[t1] every figure is measured', () => {
+      const stdout = genReviewOutputStdout({
+        tokens: {
+          input: 1200,
+          cacheSet: 0,
+          cacheGet: 4800,
+          output: 300,
+          total: 6300,
+        },
+        cost: {
+          total: '$0.0120',
+        },
+        time: {
+          total: '1s',
+        },
+        paths: {
+          logsRelative: '.log/bhrain/review/2026-01-28T12-00-00-000Z',
+          reviewRelative: 'review.md',
+        },
+        summary: {
+          blockersCount: 0,
+          nitpicksCount: 0,
+        },
+      });
+
+      then('no branch carries the key', () => {
+        expect(stdout).not.toContain('unmeasured');
+        expect(stdout).toContain('│  └─ total: 6,300');
+        expect(stdout).toContain('│  └─ total: $0.0120');
       });
     });
   });

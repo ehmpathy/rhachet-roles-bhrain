@@ -1,5 +1,8 @@
-import * as fs from 'fs/promises';
-
+import {
+  asPeerReviewOutputName,
+  SEGMENTS_OF_PEER_REVIEWS_DIR,
+} from '@src/domain.operations/asPeerReviewOutputName';
+import { delAllRouteFiles } from '@src/domain.operations/route/guard/artifact/delAllRouteFiles';
 import { enumRouteFiles } from '@src/domain.operations/route/guard/artifact/enumRouteFiles';
 import { enumRouteGuardJudgeFiles } from '@src/domain.operations/route/guard/judge/enumRouteGuardJudgeFiles';
 import { enumRouteGuardReviewPeerFiles } from '@src/domain.operations/route/guard/review/peer/enumRouteGuardReviewPeerFiles';
@@ -43,6 +46,30 @@ export const delStoneGuardArtifacts = async (input: {
     stone: input.stone,
   });
 
+  // collect each lane's `$targets` list from .reviews/peer/
+  // .note = a `.txt` tail, so the `*.md` review enumerator never sees it — and no
+  //         other lifecycle path does either, so without this glob a list piled up
+  //         one per lane per round, forever. it is a derived input, never a review,
+  //         so it is deleted and left out of the `reviews` count
+  // .note = the glob is composed by the one grammar the guard writes by, with a
+  //         wildcard per varied part, so a rename of the grammar moves this glob too
+  const targetsFiles = await enumRouteFiles({
+    route: input.route,
+    glob: [
+      ...SEGMENTS_OF_PEER_REVIEWS_DIR,
+      asPeerReviewOutputName({
+        parts: {
+          stone: input.stone,
+          iteration: '*',
+          hash: '*',
+          index: '*',
+          slug: '*',
+        },
+        kind: 'targets',
+      }),
+    ].join('/'),
+  });
+
   // collect judge files from .route/
   const judgeFiles = await enumRouteGuardJudgeFiles({
     route: input.route,
@@ -62,15 +89,15 @@ export const delStoneGuardArtifacts = async (input: {
   });
 
   // delete all found files
-  const allFiles = [
-    ...reviewFiles,
-    ...judgeFiles,
-    ...promiseFiles,
-    ...blockedTriggerFiles,
-  ];
-  for (const filePath of allFiles) {
-    await fs.rm(filePath, { force: true });
-  }
+  await delAllRouteFiles({
+    paths: [
+      ...reviewFiles,
+      ...targetsFiles,
+      ...judgeFiles,
+      ...promiseFiles,
+      ...blockedTriggerFiles,
+    ],
+  });
 
   // archive the self-review triggers, rather than delete them.
   // .why = the trigger is invalidated by the REWIND, never by a hash — the key is now

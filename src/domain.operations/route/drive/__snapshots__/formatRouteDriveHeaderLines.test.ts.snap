@@ -1,0 +1,11 @@
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
+
+exports[`formatRouteDriveHeaderLines given: [case1] a halt with no aside when: [t0] the header renders then: the bytes a driver reads are pinned 1`] = `
+"🦉 where were we?
+
+🗿 route.drive
+   ├─ where do we go?
+   │  ├─ route = .behavior/v2026_01_01.demo
+   │  └─ stone = 1.vision
+   │"
+`;

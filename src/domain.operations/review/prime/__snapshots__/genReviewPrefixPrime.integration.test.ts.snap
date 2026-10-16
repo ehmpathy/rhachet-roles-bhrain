@@ -1,0 +1,9 @@
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
+
+exports[`genReviewPrefixPrime given: [case2] two lanes share a head and the prime faults when: [t0] both lanes meet then: the stderr render matches the snapshot 1`] = `"💥 MalfunctionError: the prime of the shared prefix failed (openrouter 503: provider unavailable); its peer lanes pour cold"`;
+
+exports[`genReviewPrefixPrime given: [case9] the meet watermark on disk is torn past valid json when: [t0] a lane meets it then: the stderr render matches the snapshot 1`] = `"💥 MalfunctionError: the prime watermark could not be read or written (the watermark is not valid json: key 'prime.1c914a10cc74eba382a98a0e16794d76' under <cwd>/.agent/.cache/repo=bhrain/role=reviewer/skill=review/watermarks; delete it and the next round rewrites it); this lane pours cold"`;
+
+exports[`genReviewPrefixPrime given: [case13] a peer waits on a claim its holder never releases, with its deadline near when: [t0] the lane meets the wedged claim then: the stderr render matches the snapshot 1`] = `"💥 MalfunctionError: the prime of the shared head was not released within <N>ms; this lane pours cold"`;
+
+exports[`genReviewPrefixPrime given: [case14] a leader whose poke never settles, with the lanes deadline near when: [t0] two lanes meet then: the stderr render matches the snapshot 1`] = `"💥 MalfunctionError: the prime of the shared prefix outlasted the <N>ms this lane's deadline left the meet; its peer lanes pour cold"`;

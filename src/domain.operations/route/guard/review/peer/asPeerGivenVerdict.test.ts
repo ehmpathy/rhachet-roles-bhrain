@@ -63,5 +63,18 @@ describe('asPeerGivenVerdict', () => {
         },
       );
     });
+
+    when('[t2] a caller mutates the verdict it was handed', () => {
+      then('the next caller still receives the pristine verdict', () => {
+        // the unreadable verdict was once a module-level object returned by reference, so
+        // one caller's write would corrupt it for every later reader (r010 nitpick.1, i013)
+        const first = asPeerGivenVerdict({ counts: { detected: false } });
+        first.blockers = 5;
+        first.unreadable = false;
+        const second = asPeerGivenVerdict({ counts: { detected: false } });
+        expect(second).toEqual({ blockers: 1, nitpicks: 0, unreadable: true });
+        expect(second).not.toBe(first);
+      });
+    });
   });
 });

@@ -19,6 +19,7 @@ import type { RouteStoneGuardBlockerType } from './RouteStoneGuardBlockerReport'
  * - 'arrived': driver entered the guard's reviews — in flight (push)
  * - 'promised': driver promised a self-review — forward motion (push)
  * - 'absorbed': driver absorbed a peer review — forward motion (push)
+ * - 'inflight': driver marked repairs in flight (--as inflight) — forward motion (push)
  * - 'rewound': stone validation state has been cleared for fresh evaluation
  * - 'malfunction': reviewer or judge malfunctioned (exit code != 0 and != 2)
  * - 'overruled': human bypassed the review threshold for one review level
@@ -31,7 +32,7 @@ import type { RouteStoneGuardBlockerType } from './RouteStoneGuardBlockerReport'
  *         records that a level departed, so a later regression at a LOWER level can
  *         never shut it again (define.invariant.review.peer.level-unlock-is-a-latch).
  *
- * .note = 'arrived', 'promised', and 'absorbed' are review-flow markers. they
+ * .note = 'arrived', 'promised', 'absorbed', and 'inflight' are review-flow markers. they
  *         record forward motion so that a prior blocker clears (latest-entry-wins) —
  *         see rule.require.forward-motion-clears-blocker. 'arrived' is written on
  *         ENTRY to the guard (before the reviews run) so a stale halt clears at once,
@@ -55,6 +56,7 @@ export interface PassageReport {
     | 'arrived'
     | 'promised'
     | 'absorbed'
+    | 'inflight'
     | 'rewound'
     | 'malfunction'
     | 'overruled'

@@ -17,15 +17,15 @@ that is absent from the output could mean either:
 
 ## .the worked instance — measured 2026-09-07, on this repo
 
-`.agent/keyrack.yml` declares five keys under `env.test`. the two commands disagree about how
-many exist:
+`.agent/keyrack.yml` then declared five keys under `env.test` (one of them a since-retired
+provider's key, shown here as `PROVIDER_API_KEY`). the two commands disagree about how many exist:
 
 ```
 $ rhx keyrack status --owner ehmpath
-   ├─ ehmpathy.test.FIREWORKS_API_KEY   └─ expires in: 492m      ← one row. that is the whole list.
+   ├─ ehmpathy.test.PROVIDER_API_KEY    └─ expires in: 492m      ← one row. that is the whole list.
 
 $ rhx keyrack unlock --owner ehmpath --env test
-   ├─ ehmpathy.test.FIREWORKS_API_KEY   └─ vault: os.secure
+   ├─ ehmpathy.test.PROVIDER_API_KEY    └─ vault: os.secure
    ├─ ehmpathy.test.OPENAI_API_KEY      └─ status: absent 🫧
    ├─ ehmpathy.test.ANTHROPIC_API_KEY   └─ status: absent 🫧
    ├─ ehmpathy.test.TAVILY_API_KEY      └─ status: absent 🫧

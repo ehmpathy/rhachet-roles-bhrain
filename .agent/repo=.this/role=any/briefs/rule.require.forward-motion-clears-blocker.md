@@ -38,21 +38,23 @@ entry**. the new entry supersedes the stale halt, and the disposition recomputes
 | rewound / overruled / forced | yes | yes |
 | **promised** | **yes (promised)** — a self-review sub-step | **yes** |
 | **contemplated** | **yes (contemplated)** — a peer-review sub-step | **yes** |
+| **inflight** | **yes (inflight)** — the driver waits on its own repairs | **yes** — refused on a passed stone, since latest-entry-wins would un-pass it |
 
-`promised` and `contemplated` are the two sub-step verbs, and they are the pair whose passage
-entry is easiest to drop: each already writes an artifact (a promise file, a `.taken`), so the
-entry reads as redundant right up until a stale escalation lingers through it. **an artifact is
-not a passage entry**, and only the entry moves the disposition.
+`promised`, `contemplated`, and `inflight` are the three sub-step verbs, and they are the
+verbs whose passage entry is easiest to drop: each already writes an artifact (a promise file,
+a `.taken`, the `.route/inflight.json` watermark), so the entry reads as redundant right up
+until a stale escalation lingers through it. **an artifact is not a passage entry**, and only
+the entry moves the disposition.
 
-`promised` and `contemplated` carry a **push** disposition (they are the machine's own
-review work, not a human-wait), so the superseded halt resolves to a state the route
-self-drives.
+all three carry a **push** disposition in `asRouteStoneDisposition`: each is the machine's
+own work — a review, or the repairs a driver waits on — never a human-wait. so the superseded
+halt resolves to a state the route self-drives.
 
 ## .enforcement
 
 - a `--as <status>` verb that does not write a passage entry = **blocker** (it leaves a
   stale halt in place, which breaks the rule)
-- a new forward-motion verb must map to a disposition in `asStoneDisposition` (push for
+- a new forward-motion verb must map to a disposition in `asRouteStoneDisposition` (push for
   agent work, halt only for a genuine human-wait)
 
 ## .see also

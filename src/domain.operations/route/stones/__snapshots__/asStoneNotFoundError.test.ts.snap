@@ -1,0 +1,14 @@
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
+
+exports[`asStoneNotFoundError given: [case1] a mistyped stone on --as conceded when: [t0] the refusal is composed then: the bytes a driver reads are pinned 1`] = `
+"✋ ConstraintError: stone not found for --as conceded: 5.1.exec
+
+pass the stone name exactly as stonesAvailable spells it.
+
+{
+  "stonesAvailable": [
+    "1.vision",
+    "5.1.execution"
+  ]
+}"
+`;

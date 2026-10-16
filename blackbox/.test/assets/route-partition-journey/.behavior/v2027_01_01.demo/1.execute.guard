@@ -1,0 +1,15 @@
+artifacts:
+  - src/**/*.ts
+
+reviews:
+  peer:
+    # runs the REAL review skill over the branch's diff. whether it fits or overflows is
+    # set by the mass the test writes under src/, never by this guard — the one lane serves
+    # both arcs of driver.route.partition-journey
+    - slug: xyzzy
+      budget: 9
+      level: 1
+      run: rhx review --repo bhrain --rules 'rules/*.md' --diffs since-main --output $output --brain openrouter/deepseek/flash
+
+judges:
+  - rhx route.stone.judge --mechanism reviewed? --stone $stone --route $route --allow-blockers 0 --allow-nitpicks 99

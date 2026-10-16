@@ -29,7 +29,7 @@ exports[`driver.route.passage-stamp.acceptance given: [block-test] guard with pe
    │  ├─
    │  │
    │  │  🪨 run solid skill repo=bhrain/role=driver/skill=route.stone.judge
-   │  │  
+   │  │
    │  │  passed: false
    │  │  reason: blockers exceed threshold (1 > 0)
    │  │

@@ -1,4 +1,5 @@
 import { asConcessionReasonDisplay } from '../guard/review/peer/asConcessionReasonDisplay';
+import { asRouteStoneSetCommandHead } from '../guard/review/peer/asRouteStoneSetCommandHead';
 import { isRouteGuardConcessionExhaustion } from '../guard/review/peer/genRouteGuardExhaustedReason';
 import { getReviewPeerLadderStatus } from '../guard/review/peer/meter/getReviewPeerLadderStatus';
 import {
@@ -10,12 +11,13 @@ import {
   formatReviewsMeterLines,
   type GuardPeerMeterStatus,
 } from '../guard/tree/formatGuardTree';
+import { formatRouteDriveHaltLeverLead } from './formatRouteDriveHaltLeverLead';
 import { formatRouteDriveHeader } from './formatRouteDriveHeader';
 
 /**
  * .what = formats route.drive output when peer reviewer budget exhausted
  * .why = allows agent to stop gracefully when blocked on budget exhaustion.
- *        shared by getRouteDriveBlockerMessage (the legacy blocker path) and
+ *        shared by getOneRouteDriveBlockerMessage (the legacy blocker path) and
  *        getRouteDriveExhaustedMessage (the exhausted-status path) — one truth,
  *        two call sites (rule.prefer.wet-over-dry).
  */
@@ -31,7 +33,7 @@ export const formatRouteDriveBudgetExhausted = (input: {
   //    `formatBlockRemedyGroups`, the shared builder this file delegates its remedies to —
   //    a second copy here would reopen the two-homes drift hazard
   //    `rule.require.single-source-of-truth-for-render` forbids.
-  const passCmd = `rhx route.stone.set --stone ${input.stone} --as passed`;
+  const passCmd = `${asRouteStoneSetCommandHead({ stone: input.stone })} --as passed`;
 
   // upward unlock — a lower level is exhausted (terminal) but a HIGHER level is live again
   // (status.unlockTransition). this is NOT a spent ladder: the "halted, budget exhausted /
@@ -72,6 +74,8 @@ export const formatRouteDriveBudgetExhausted = (input: {
     stone: input.stone,
     passage: 'blocked',
     reason: input.reason ?? 'peer reviewer budget exhausted',
+    // a budget halt carries no constraint, so no .given partitions apply
+    lever: null,
   });
 
   // 🔴 a CONCESSION exhaustion is a different halt, and it says so in its first line (S12).
@@ -105,6 +109,8 @@ export const formatRouteDriveBudgetExhausted = (input: {
   //    what the decoder settles is the WORDS, never the layout.
   const display = asConcessionReasonDisplay({ reason: input.reason });
 
+  // .note = deliberate local line-builder, scoped to this formatter — the escape hatch in
+  //         rule.require.immutable-vars permits a scoped emit builder; no array crosses a boundary.
   const lines: string[] = [...formatRouteDriveHeader(input)];
   // 🔴 `halted on more budget` named the remedy, and the remedy moved. a `better` concession earns
   //    no round past the meter (F04), so there is no more budget to halt on — what the halt now
@@ -130,20 +136,9 @@ export const formatRouteDriveBudgetExhausted = (input: {
   if (display.warnText) lines.push(`      │  └─ 🟡 ${display.warnText}`);
   lines.push(`      │`);
 
-  // add peer reviewer meters section via shared formatter
-  const meterLines = formatReviewsMeterLines({
-    meters: input.meters,
-    baseIndent: '      ',
-    sectionIndent: '│  ',
-    includeHeader: true,
-    headerPrefix: '├─',
-  });
-  lines.push(...meterLines);
-  // 🟡 the spacer belongs to the reviews section, so it goes when the section goes.
-  //    `formatReviewsMeterLines` returns [] on an empty meter set; an unconditional push
-  //    would leave a `│` connector with no section below it.
-  if (meterLines.length > 0) lines.push(`      │`);
-
+  // the reviews section, its spacer, and the lever head come from the one builder the mixed
+  // halt reads too (r003 nitpick.1, i014)
+  //
   // every remedy, sorted BY OWNER — the driver's own lever first, the human's after.
   //
   // 🔴 sort by owner — the driver's own lever first, the human's after. a budget top-up
@@ -174,11 +169,13 @@ export const formatRouteDriveBudgetExhausted = (input: {
   //    i001/r006 n1). named apart, each reads on its own line.
   const headerConnector = isSoloRemedy ? '└─' : '├─';
   lines.push(
-    isConcession
-      ? // the owner rides the REMEDY LABEL here, so the header says only what the block is —
-        // "yours to run" on both lines is one claim, read twice
-        `      ${headerConnector} what to do — no human needed`
-      : `      ├─ spend your own lever first, then ask a human`,
+    // the owner rides the REMEDY LABEL on a concession halt, so its lever head says only what
+    // the block is — "yours to run" on both lines is one claim, read twice
+    ...formatRouteDriveHaltLeverLead({
+      meters: input.meters,
+      leverHead: isConcession ? 'driver' : 'human',
+      leverBranch: headerConnector,
+    }),
   );
   lines.push(
     ...formatBlockRemedyGroups({
@@ -205,12 +202,17 @@ export const formatRouteDriveBudgetExhausted = (input: {
   // 🟡 the OWNER of each remedy is not lost by the merge — it rides each remedy's own label
   //    (`— yours to run` / `— a human must grant`), which is where
   //    `rule.always.spend-own-levers-before-escalation` asks for it.
+  //
+  // 🔴 so the concession tail names the re-arrival command, `--as arrived`, under the word
+  //    `re-arrive` — the same pair the stance ack prints. a `--as passed` beneath it read as
+  //    two acts (r014 nitpick.1, i015)
+  const arriveCmd = `${asRouteStoneSetCommandHead({ stone: input.stone })} --as arrived`;
   lines.push(
     isConcession
       ? `      └─ then re-arrive`
       : `      └─ once either remedy lands, run`,
   );
-  lines.push(`         └─ ${passCmd}`);
+  lines.push(`         └─ ${isConcession ? arriveCmd : passCmd}`);
 
   return lines.join('\n');
 };

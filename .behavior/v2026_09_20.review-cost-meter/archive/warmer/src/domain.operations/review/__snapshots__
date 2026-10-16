@@ -1,0 +1,111 @@
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
+
+exports[`asWarmerValueLines given: [case2] a loss when: [t3] the whole block is read then: it renders as the human sees it 1`] = `
+"  ├─ verdict:   ⛔ did NOT pay for itself — the settled pokes cost more than the most the cache could have saved
+  ├─ cost:      $0.030000 over 3 pokes, 2 of which HIT
+  ├─ saved:     at most $0, across 1 review that followed a warmed run
+  ├─ net:       -$0.030000, over the settled cost of $0.030000
+  └─ by lane
+     └─ ⛔ net    -$0.030000  settled    $0.030000  saved ≤           $0  r 5.1 · lane-a"
+`;
+
+exports[`asWarmerValueLines given: [case3] no review has followed a warmed run when: [t1c] an unproven lane row is read then: 🔴 its saved column renders absent, never as $0 1`] = `
+"├─ verdict:   🌙 unproven — no warmed run has settled, so there is naught to weigh the cost against
+├─ cost:      $0.030000 over 3 pokes, 2 of which HIT
+├─ saved:     — (unmeasured — no warmed run has settled)
+├─ net:       —
+└─ by lane
+   └─ 🌙 net             —  settled           $0  saved ≤            —  lane-unproven"
+`;
+
+exports[`asWarmerValueLines given: [case3] no review has followed a warmed run when: [t1d] every unweighed run was followed by an UNPRICED review then: the block matches the snapshot 1`] = `
+"├─ verdict:   🌙 unproven — no warmed run has settled, so there is naught to weigh the cost against
+├─ cost:      $0.030000 over 3 pokes, 2 of which HIT
+├─ saved:     — (unmeasured — no warmed run has settled)
+├─ net:       —
+├─ unweighed: $0 over 2 warmed runs — beside the net, never inside it
+├─ unpriced:  2 warmed runs a review DID read, whose amount saved went unrecorded — no settle follows
+└─ by lane: (none — the warmed runs carry no lane identity)"
+`;
+
+exports[`asWarmerValueLines given: [case3] no review has followed a warmed run when: [t1e] exactly one unweighed run was followed by an UNPRICED review then: the block matches the snapshot 1`] = `
+"├─ verdict:   🌙 unproven — no warmed run has settled, so there is naught to weigh the cost against
+├─ cost:      $0.030000 over 3 pokes, 2 of which HIT
+├─ saved:     — (unmeasured — no warmed run has settled)
+├─ net:       —
+├─ unweighed: $0 over 1 warmed run — beside the net, never inside it
+├─ unpriced:  1 warmed run a review DID read, whose amount saved went unrecorded — no settle follows
+└─ by lane: (none — the warmed runs carry no lane identity)"
+`;
+
+exports[`asWarmerValueLines given: [case3] no review has followed a warmed run when: [t2] the whole block is read then: it renders as the human sees it 1`] = `
+"├─ verdict:   🌙 unproven — no warmed run has settled, so there is naught to weigh the cost against
+├─ cost:      $0.030000 over 3 pokes, 2 of which HIT
+├─ saved:     — (unmeasured — no warmed run has settled)
+├─ net:       —
+├─ unweighed: $0 over 2 warmed runs — beside the net, never inside it
+├─ awaited:   2 warmed runs whose 66-minute cache reach is still open — each settles once a review reads it or the reach passes
+└─ by lane: (none — the warmed runs carry no lane identity)"
+`;
+
+exports[`asWarmerValueLines given: [case4] a ledger faulted when: [t0] the spent row is read then: it names the figure a floor, and the fault as its cause 1`] = `
+"├─ verdict:   ⛔ did NOT pay for itself — the settled pokes cost more than the most the cache could have saved
+├─ cost:      $0.030000 over 3 pokes, 2 of which HIT — a FLOOR: 1 poke faulted, each of which may have charged unmeasured
+├─ saved:     at most $0, across 1 review that followed a warmed run
+├─ net:       -$0.030000, over the settled cost of $0.030000
+└─ by lane: (none — the warmed runs carry no lane identity)"
+`;
+
+exports[`asWarmerValueLines given: [case4] a ledger faulted when: [t1] a ledger has no terminator then: it says the warmer is still AWAKE or was STOPPED, as the run breadth does 1`] = `
+"├─ verdict:   ⛔ did NOT pay for itself — the settled pokes cost more than the most the cache could have saved
+├─ cost:      $0.030000 over 3 pokes, 2 of which HIT — a FLOOR: NO terminator on 2 warmer logs — still AWAKE or was STOPPED, so the plan is unspent
+├─ saved:     at most $0, across 1 review that followed a warmed run
+├─ net:       -$0.030000, over the settled cost of $0.030000
+└─ by lane: (none — the warmed runs carry no lane identity)"
+`;
+
+exports[`asWarmerValueLines given: [case5] one poke and one review when: [t0] the counts are read then: each noun is singular 1`] = `
+"├─ verdict:   ⛔ did NOT pay for itself — the settled pokes cost more than the most the cache could have saved
+├─ cost:      $0.030000 over 1 poke, 1 of which HIT
+├─ saved:     at most $0, across 1 review that followed a warmed run
+├─ net:       -$0.030000, over the settled cost of $0.030000
+└─ by lane: (none — the warmed runs carry no lane identity)"
+`;
+
+exports[`asWarmerValueLines given: [case6] the grove breadth, which owns no lane rows when: [t0] the lines are read with lanes off then: it points at the breadth that holds the lanes 1`] = `
+"├─ verdict:   ⛔ did NOT pay for itself — the settled pokes cost more than the most the cache could have saved
+├─ cost:      $0.030000 over 3 pokes, 2 of which HIT
+├─ saved:     at most $0, across 1 review that followed a warmed run
+├─ net:       -$0.030000, over the settled cost of $0.030000
+└─ by lane: see \`--of tree\` in each worktree"
+`;
+
+exports[`asWarmerValueLines given: [case7] a micro-precision poke cost beside a nil saved when: [t0] the lane rows are read then: the lane keys start at one column 1`] = `
+"├─ verdict:   ⛔ did NOT pay for itself — the settled pokes cost more than the most the cache could have saved
+├─ cost:      $0.030000 over 3 pokes, 2 of which HIT
+├─ saved:     at most $0, across 1 review that followed a warmed run
+├─ net:       -$0.030000, over the settled cost of $0.030000
+└─ by lane
+   ├─ ⛔ net    -$0.000429  settled    $0.000429  saved ≤           $0  lane-metered
+   └─ 🟡 net     $1.250000  settled   $12.500000  saved ≤   $13.750000  lane-costly"
+`;
+
+exports[`asWarmerValueLines given: [case8] a settled loss, beside a warmed run still within reach when: [t3] the whole block is read then: it renders as the human sees it 1`] = `
+"├─ verdict:   ⛔ did NOT pay for itself — the settled pokes cost more than the most the cache could have saved
+├─ cost:      $0.100000 over 3 pokes, 2 of which HIT
+├─ saved:     at most $0.020000, across 1 review that followed a warmed run
+├─ net:       -$0.030000, over the settled cost of $0.050000
+├─ unweighed: $0.050000 over 1 warmed run — beside the net, never inside it
+├─ awaited:   1 warmed run whose 66-minute cache reach is still open — each settles once a review reads it or the reach passes
+└─ by lane
+   └─ ⛔ net    -$0.030000  settled    $0.050000  saved ≤    $0.020000  lane-finished @aaaabbb"
+`;
+
+exports[`asWarmerValueLines given: [case9] 🔴 a finished lane: the last warmed run lapsed past the cache reach when: [t2] the whole block is read then: it renders as the human sees it 1`] = `
+"├─ verdict:   ⛔ did NOT pay for itself — the settled pokes cost more than the most the cache could have saved
+├─ cost:      $0.100000 over 3 pokes, 2 of which HIT
+├─ saved:     at most $0.020000, across 1 review that followed a warmed run
+├─ net:       -$0.080000, over the settled cost of $0.100000
+├─ lapsed:    1 warmed run no review read — the lane moved to a new head, or no review came within the 66-minute cache reach — settled at $0 saved
+└─ by lane: see \`--of tree\` in each worktree"
+`;

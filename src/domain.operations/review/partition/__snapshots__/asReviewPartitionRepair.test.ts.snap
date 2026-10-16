@@ -1,0 +1,23 @@
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
+
+exports[`asReviewPartitionRepair given: [case1] an unclaimed route acceptance test beside a meter acceptance test when: [t0] the set is repaired then: the repaired flags match the snapshot 1`] = `"  --partition 'route=blackbox/{,__snapshots__/}driver.route.*'"`;
+
+exports[`asReviewPartitionRepair given: [case2] an unclaimed blackbox file no partition shares a word with when: [t0] the set is repaired then: the repaired command matches the snapshot 1`] = `"  --partition 'meter=blackbox/{,__snapshots__/}keyrack.unlock.*'"`;
+
+exports[`asReviewPartitionRepair given: [case3] unclaimed files under no declared root and no shared word when: [t0] the set is repaired then: the repaired command matches the snapshot 1`] = `"  --partition 'keyrack=blackbox/{,__snapshots__/}keyrack.*,.behavior/v2026_01_01.demo/**'"`;
+
+exports[`asReviewPartitionRepair given: [case4] an unclaimed file in a directory several partitions already split when: [t0] the set is repaired then: the repaired command matches the snapshot 1`] = `"  --partition 'cli=src/contract/cli/{,__snapshots__/}learn.*'"`;
+
+exports[`asReviewPartitionRepair given: [case9] 🔴 a new subdomain dir whose files lean toward two different homes when: [t0] the set is repaired then: the repaired command matches the snapshot 1`] = `
+"rhx route.guard.partition \\
+  --claim 'src/x/poke/**' --into warmer \\
+  --mode apply"
+`;
+
+exports[`asReviewPartitionRepair given: [case10] 🔴 CLAMP. a file whose filename shares a word with a subdir of another domain when: [t0] the set is repaired then: the repaired command matches the snapshot 1`] = `
+"rhx route.guard.partition \\
+  --partition 'route=src/domain.operations/route/*,src/domain.operations/route/guard/{judge,tree}/**,src/domain.operations/getOneGuardProvenance.*,.behavior/v2026_01_01.demo/**' \\
+  --partition 'review=src/domain.operations/review/*,.behavior/v2026_01_01.demo/**' \\
+  --partition 'research=src/domain.operations/research/**,.behavior/v2026_01_01.demo/**' \\
+  --mode apply"
+`;

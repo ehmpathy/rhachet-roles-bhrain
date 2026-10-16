@@ -1,0 +1,6 @@
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
+
+exports[`asReviewPartitionUnmatchedLines given: [case1] one glob that matched no changed file when: [t0] the lines are rendered then: the lines match the snapshot 1`] = `
+"   ├─ 🟡 1 glob that matched no changed file — a typo, or no change there yet
+   │  └─ route: src/rout/**"
+`;
