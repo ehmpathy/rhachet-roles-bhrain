@@ -137,7 +137,7 @@ exports[`review.by.guard-peer.acceptance given: [case-seam-malfunction] guard pe
       └─ judges
           └─ j1: $rhachet run --repo bhrain --skill route.stone.judge --mechanism reviewed? --stone $stone --route $route --allow-blockers 0 --allow-nitpicks 3
               ├─ finished [TIME] ✗
-              └─ reason: blockers exceed threshold (1 > 0)
+              └─ reason: blockers exceed threshold ([N] > 0)
 "
 `;
 
@@ -152,9 +152,9 @@ exports[`review.by.guard-peer.acceptance given: [case-seam-pass-aggregation] gua
 │  │     ├─ focus: push
 │  │     └─ scope
 │  │        └─ paths: src/**/*.ts
-│  │  
+│  │
 │  │  🦉 [APPROVED]
-│  │  
+│  │
 │  │  🔍 review
 │  │     ├─ review: .reviews/by=learner/rubric=term-aggregation.md
 │  │     └─ summary
@@ -212,9 +212,9 @@ exports[`review.by.guard-peer.acceptance given: [case-seam-pass-application] gua
 │  │     ├─ focus: push
 │  │     └─ scope
 │  │        └─ paths: src/**/*.ts
-│  │  
+│  │
 │  │  🦉 [APPROVED]
-│  │  
+│  │
 │  │  🔍 review
 │  │     ├─ review: .reviews/by=learner/rubric=term-application.md
 │  │     └─ summary

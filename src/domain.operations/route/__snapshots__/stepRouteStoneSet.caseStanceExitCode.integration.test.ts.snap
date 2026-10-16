@@ -3,7 +3,7 @@
 exports[`stepRouteStoneSet.caseStanceExitCode given: [case1] a rejected lane with one blocker and one nitpick, answered when: [t0] the driver concedes nitpick.1 — blocker.1 still owed then: the ack matches the snapshot 1`] = `
 "🦉 so it is
 
-🗿 route.stone.set --as conceded
+🗿 route.stone.set --as conceded --severity better
    ├─ stone = 1.test
    ├─ with  = limited (l1), 1 round, 5 budget — 4 rounds left
    ├─ about = nitpick.1 — 1 more on this lane
@@ -17,7 +17,7 @@ exports[`stepRouteStoneSet.caseStanceExitCode given: [case1] a rejected lane wit
 exports[`stepRouteStoneSet.caseStanceExitCode given: [case1] a rejected lane with one blocker and one nitpick, answered when: [t1] the driver concedes blocker.1 — the last on the lane then: the close matches the snapshot 1`] = `
 "🦉 so it is
 
-🗿 route.stone.set --as conceded
+🗿 route.stone.set --as conceded --severity better
    ├─ stone = 1.test
    ├─ with  = limited (l1), 1 round, 5 budget — 4 rounds left
    ├─ about = blocker.1 — the last concern this lane owed

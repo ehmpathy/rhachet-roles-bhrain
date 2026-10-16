@@ -938,7 +938,7 @@ describe('driver.route.usage-errors.acceptance', () => {
           expect(result.stderr).toContain(
             '✋ ConstraintError: --into given with no value',
           );
-          expect(result.stderr).toContain('fix: give each flag its value');
+          expect(result.stderr).toContain('fix: --into <value>, or see --help');
           expect(result.stdout).not.toContain('--into given with no value');
         });
 

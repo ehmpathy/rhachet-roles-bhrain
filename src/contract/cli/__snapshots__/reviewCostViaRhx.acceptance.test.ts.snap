@@ -168,6 +168,30 @@ exports[`reviewCostViaRhx.acceptance given: [case3] the \`--json\` journey the s
         }
       }
     ],
+    "byProvider": [
+      {
+        "key": "(no provider — unreported)",
+        "runs": {
+          "total": 1,
+          "metered": 1,
+          "refused": 0,
+          "unknown": 0,
+          "accounted": 1
+        },
+        "tokens": {
+          "input": 400000,
+          "cacheSet": 0,
+          "cacheGet": 100000,
+          "output": 1000
+        },
+        "cost": "USD 0.250_000",
+        "cacheHitRate": 0.2,
+        "cacheGrade": {
+          "kind": "cold",
+          "cause": "first"
+        }
+      }
+    ],
     "byStone": [
       {
         "key": "(no guard identity — a hand or review.by run)",
@@ -320,6 +344,30 @@ exports[`reviewCostViaRhx.acceptance given: [case3] the \`--json\` journey the s
         "cacheHitRate": 0.2,
         "cost": "USD 0.250_000",
         "key": "(no level — guard unread)",
+        "runs": {
+          "accounted": 1,
+          "metered": 1,
+          "refused": 0,
+          "total": 1,
+          "unknown": 0,
+        },
+        "tokens": {
+          "cacheGet": 100000,
+          "cacheSet": 0,
+          "input": 400000,
+          "output": 1000,
+        },
+      },
+    ],
+    "byProvider": [
+      {
+        "cacheGrade": {
+          "cause": "first",
+          "kind": "cold",
+        },
+        "cacheHitRate": 0.2,
+        "cost": "USD 0.250_000",
+        "key": "(no provider — unreported)",
         "runs": {
           "accounted": 1,
           "metered": 1,

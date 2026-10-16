@@ -14,6 +14,7 @@ export const asReviewByMalfunctionLines = (input: {
     .filter((rubric) => rubric.verdict.outcome === 'malfunctioned')
     .flatMap((rubric) => [
       `💥 MalfunctionError: rubric malfunctioned: ${rubric.slug}`,
-      ...(rubric.verdict.reason ? [`   ${rubric.verdict.reason}`] : []),
+      // the reason hangs off the header as a leaf, so the header reads as its root
+      ...(rubric.verdict.reason ? [`   └─ ${rubric.verdict.reason}`] : []),
       ...(rubric.stderr.trim() !== '' ? [rubric.stderr.trim()] : []),
     ]);

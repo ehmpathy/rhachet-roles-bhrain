@@ -14,8 +14,9 @@ options:
                         alias: --paths-without
   --polluters <mode>  drop or keep the polluters in scope (default: drop)
                       dropped by default: every route artifact except
-                      .fulcrums/**, .seeds/**, and *.yield.md; every caught
-                      dream; every dependency lockfile
+                      .fulcrums/*._.md, .seeds/**, and *.yield.md; every caught
+                      dream; every dependency lockfile. a --paths-with glob that
+                      names only route artifacts keeps what it names
   --diffs <range>     diff range: since-main, since-commit, since-staged (default: since-main)
   --join <mode>       how to join --paths-with and --diffs: intersect or union (default: intersect)
   --refs <globs>      glob pattern(s) for reference files (can repeat)

@@ -80,7 +80,7 @@ exports[`driver.route.guard-partition.acceptance given: [case2] a set that leave
    │  ├─ src/route/getRoute.test.ts → route (+ src/route/**)
    │  └─ src/route/getRoute.ts → route (+ src/route/**)
    └─ repair — run this to declare the repaired set
-         rhx route.guard.partition --route .behavior/v2026_01_01.demo --for review --peer @all \\
+      └─ rhx route.guard.partition --route .behavior/v2026_01_01.demo --for review --peer @all \\
            --partition 'review=src/review/**,.behavior/v2026_01_01.demo/**' \\
            --partition 'route=src/route/**,.behavior/v2026_01_01.demo/**' \\
            --mode apply
@@ -176,7 +176,7 @@ exports[`driver.route.guard-partition.acceptance given: [case3b] an argument the
 🦉 woah there
 
 ✋ ConstraintError: --stone given with no value
-   └─ fix: give each flag its value, or see --help
+   └─ fix: --stone <value>, or see --help
 
 "
 `;
@@ -462,7 +462,7 @@ exports[`driver.route.guard-partition.acceptance given: [case6] a stone whose tw
       │  ├─ src/route/getRoute.test.ts → route (+ src/route/**)
       │  └─ src/route/getRoute.ts → route (+ src/route/**)
       └─ repair — run this, then re-arrive
-            rhx route.guard.partition --route .behavior/v2026_01_01.demo --for review --peer @all \\
+         └─ rhx route.guard.partition --route .behavior/v2026_01_01.demo --for review --peer @all \\
               --partition 'review=src/review/**,.behavior/v2026_01_01.demo/**' \\
               --partition 'extra=src/extra/**,.behavior/v2026_01_01.demo/**' \\
               --partition 'newdir=src/newdir/**,.behavior/v2026_01_01.demo/**' \\
@@ -502,7 +502,7 @@ exports[`driver.route.guard-partition.acceptance given: [case6] a stone whose tw
       │  └─ src/route/getRoute.ts
       ├─ verdict: gap — the entrance gate would halt here
       └─ repair — run this before you arrive
-            rhx route.guard.partition --route .behavior/v2026_01_01.demo --for review --peer @all \\
+         └─ rhx route.guard.partition --route .behavior/v2026_01_01.demo --for review --peer @all \\
               --partition 'review=src/review/**,.behavior/v2026_01_01.demo/**' \\
               --partition 'extra=src/extra/**,.behavior/v2026_01_01.demo/**' \\
               --partition 'newdir=src/newdir/**,.behavior/v2026_01_01.demo/**' \\

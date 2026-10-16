@@ -547,24 +547,30 @@ if (cmd === 'compare') {
 
   if (lost.length === 0 && weaker.length === 0) {
     console.log(
-      `\n   ✅ no regression — all ${passedBefore} cases that passed before still pass\n`,
+      `\n✅ no regression — all ${passedBefore} cases that passed before still pass\n`,
     );
     process.exit(0);
   }
 
-  console.log(`\n   ⛈️  REGRESSION`);
-  if (lost.length) {
-    console.log(`   ├─ ${lost.length} case(s) PASSED before and are now ABSENT:`);
-    for (const n of lost.slice(0, 40)) console.log(`   │  · ${n}`);
-    if (lost.length > 40) console.log(`   │  ... +${lost.length - 40} more`);
-  }
-  if (weaker.length) {
-    console.log(
-      `   └─ ${weaker.length} case(s) PASSED before and no longer pass:`,
+  // the verdict is a root; each group is a branch, each case a leaf, capped at 40 per group
+  const groups = [
+    { label: `${lost.length} case(s) PASSED before and are now ABSENT`, names: lost },
+    { label: `${weaker.length} case(s) PASSED before and no longer pass`, names: weaker },
+  ].filter((group) => group.names.length > 0);
+  console.log(`\n⛈️  REGRESSION`);
+  groups.forEach((group, groupIndex) => {
+    const isLastGroup = groupIndex === groups.length - 1;
+    const stem = isLastGroup ? '      ' : '   │  ';
+    const shown = group.names.slice(0, 40);
+    const rows =
+      group.names.length > 40
+        ? [...shown, `... +${group.names.length - 40} more`]
+        : shown;
+    console.log(`   ${isLastGroup ? '└─' : '├─'} ${group.label}`);
+    rows.forEach((row, rowIndex) =>
+      console.log(`${stem}${rowIndex === rows.length - 1 ? '└─' : '├─'} ${row}`),
     );
-    for (const n of weaker.slice(0, 40)) console.log(`      · ${n}`);
-    if (weaker.length > 40) console.log(`      ... +${weaker.length - 40} more`);
-  }
+  });
   console.log('');
   process.exit(2);
 }

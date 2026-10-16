@@ -3,6 +3,7 @@ import * as path from 'path';
 
 import { given, then, useThen, when } from 'test-fns';
 import { DEFAULT_TEST_BRAIN_VIA_CLI } from '@src/.test/genTestBrainContext';
+import { BRAIN_DEFAULT_OF_REVIEW } from '@src/domain.operations/brain/BRAIN_DEFAULT_OF_REVIEW';
 
 import {
   execAsync,
@@ -722,7 +723,7 @@ describe('review.by.guard-peer.acceptance', () => {
         // the F-1 invariant on the path a guard drives: the refusal names the slugs that exist,
         // the same list the raw `rhx review` path clamps in review.brain-stale
         const artifact = res.artifact ?? '';
-        expect(artifact).toContain('openrouter/deepseek/flash');
+        expect(artifact).toContain(BRAIN_DEFAULT_OF_REVIEW);
       });
 
       then('the guard-tree stdout is stable (full snapshot)', () => {

@@ -2,6 +2,8 @@ import * as fs from 'fs/promises';
 import * as path from 'path';
 import { given, then, useBeforeAll, useThen, when } from 'test-fns';
 
+import { BRAIN_DEFAULT_OF_REVIEW } from '@src/domain.operations/brain/BRAIN_DEFAULT_OF_REVIEW';
+
 import {
   asChildEnv,
   asRefusalBlock,
@@ -92,7 +94,7 @@ describe('review.brain-stale.acceptance', () => {
 
       then('CLAMP: the refusal lists the valid choice', () => {
         const output = result.stdout + result.stderr;
-        expect(output).toContain('openrouter/deepseek/flash');
+        expect(output).toContain(BRAIN_DEFAULT_OF_REVIEW);
       });
 
       then('CLAMP: the refusal renders without a stack trace', () => {

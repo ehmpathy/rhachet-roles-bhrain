@@ -56,10 +56,15 @@ export const asReviewPartitionRepairLines = (input: {
     (item, index) =>
       `${input.indent}│  ${index === input.repair.placed.length - 1 ? '└─' : '├─'} ${item.path} → ${item.slug} (+ ${item.glob})`,
   ),
+  // the paste hangs off one leaf; its ` \` continuations ride beneath, glyph-free, so it pastes whole
   command: [
     `${input.indent}└─ ${input.caption}`,
     ...input.repair.command
       .split('\n')
-      .map((line) => `${input.indent}      ${line}`),
+      .map((line, index) =>
+        index === 0
+          ? `${input.indent}   └─ ${line}`
+          : `${input.indent}      ${line}`,
+      ),
   ],
 });

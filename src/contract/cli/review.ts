@@ -150,7 +150,8 @@ const refuseReviewFlag = (input: {
 };
 
 /**
- * .what = the `known` latest slugs a brain-pin refusal carries, as a tree branch
+ * .what = the `known` slugs a brain refusal carries — the registered brains, or the
+ *         latest pins — as a tree branch
  * .why = the list is the menu a caller picks the fix from, so it survives the drop of
  *        the metadata json — as rows, never as a json array
  */

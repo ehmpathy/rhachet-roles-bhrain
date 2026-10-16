@@ -62,7 +62,7 @@ describe('review.partition.acceptance', () => {
       });
 
       then('the plan names common and narrow as peer branches', () => {
-        expect(res.stdout).toContain('split into 2 partitions (plan)');
+        expect(res.stdout).toContain('review --mode plan — split into 2 partitions');
         expect(res.stdout).toContain('├─ common');
         expect(res.stdout).toContain('├─ narrow');
       });

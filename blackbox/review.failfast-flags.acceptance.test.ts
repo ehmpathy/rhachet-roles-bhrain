@@ -483,8 +483,8 @@ describe('review.failfast-flags.acceptance', () => {
       });
     });
 
-    when('[t1] --warmer is given twice', () => {
-      const res = useThen('invoke review skill with --warmer twice', async () => {
+    when('[t1] --focus is given twice', () => {
+      const res = useThen('invoke review skill with --focus twice', async () => {
         const tempDir = genTempDirForRhachet({
           slug: 'review-failfast-flags-repeated',
           clone: ASSETS_DIR,
@@ -495,7 +495,7 @@ describe('review.failfast-flags.acceptance', () => {
         });
 
         const cli = await invokeReviewSkillRaw({
-          args: '--rules "rules/*.md" --paths "src/dirty.ts" --warmer off --warmer on',
+          args: '--rules "rules/*.md" --paths "src/dirty.ts" --focus push --focus pull',
           cwd: tempDir,
         });
 
@@ -507,7 +507,7 @@ describe('review.failfast-flags.acceptance', () => {
       });
 
       then('stderr names the repeated flag', async () => {
-        expect(res.cli.stderr).toContain('1 flag given more than once: --warmer');
+        expect(res.cli.stderr).toContain('1 flag given more than once: --focus');
       });
 
       then('the hint names every flag the parser lets repeat', async () => {

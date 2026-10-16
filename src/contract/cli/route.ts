@@ -249,11 +249,14 @@ const parseArgsWhole = (
 
   // a value flag typed bare must not run on a default, nor on the word 'true'
   // .note = the message stays generic on purpose: the parse is shared by every route
-  //         subcommand, so a hint that names one verb's syntax is decoy guidance for the rest
+  //         subcommand, so a hint that names one verb's syntax is decoy guidance for the rest.
+  //         the fix names only the shape each typed flag owes, which holds for every verb
   emitReviewRefusal({
     kind: 'constraint',
     headline: `${parsed.valueless.map((key) => `--${key}`).join(', ')} given with no value`,
-    lines: ['   └─ fix: give each flag its value, or see --help'],
+    lines: [
+      `   └─ fix: ${parsed.valueless.map((key) => `--${key} <value>`).join(' ')}, or see --help`,
+    ],
   });
   return process.exit(2);
 };

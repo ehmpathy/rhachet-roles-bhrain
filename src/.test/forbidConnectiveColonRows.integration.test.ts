@@ -22,6 +22,14 @@ const ROOT_OF_REPO = path.join(__dirname, '../..');
 const PATTERN_OF_ROW_FORBIDDEN =
   /[├└]─ (or|and|then|also|tip|note|hint|e\.g\.): /;
 
+/**
+ * .what = rows a dependency renders, which this repo cannot reword
+ * .why = rhachet's keyrack renders `└─ tip: rhx keyrack set …` inside the ConstraintError it
+ *        throws for an absent key; a snapshot of that refusal pins the foreign bytes verbatim.
+ *        the cure is upstream (a reseed dream to rhachet), so the row is named here, narrowly
+ */
+const PATTERNS_OF_ROW_FOREIGN = [/└─ tip: rhx keyrack set /];
+
 /** .what = the trees the ban governs, relative to the repo root */
 const DIRS_OF_SCOPE = ['src', 'blackbox'];
 
@@ -54,6 +62,10 @@ const getAllRowHitsOfText = (input: {
     .split('\n')
     .map((line, index) => ({ line, at: index + 1 }))
     .filter((one) => PATTERN_OF_ROW_FORBIDDEN.test(one.line))
+    .filter(
+      (one) =>
+        !PATTERNS_OF_ROW_FOREIGN.some((pattern) => pattern.test(one.line)),
+    )
     .map((one) => `${input.relative}:${one.at}`);
 
 describe('forbidConnectiveColonRows.integration', () => {
@@ -90,6 +102,17 @@ describe('forbidConnectiveColonRows.integration', () => {
           ].join('\n'),
         });
         expect(hits).toEqual([]);
+      });
+
+      then('it leaves the keyrack tip row alone, and only that tip row', () => {
+        const hits = getAllRowHitsOfText({
+          relative: 'sample',
+          text: [
+            '      └─ tip: rhx keyrack set --owner ehmpath --key X --env prep',
+            '      └─ tip: rhx review --help',
+          ].join('\n'),
+        });
+        expect(hits).toEqual(['sample:2']);
       });
     });
   });

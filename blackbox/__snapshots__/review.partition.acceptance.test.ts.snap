@@ -1,7 +1,7 @@
 // Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
 
 exports[`review.partition.acceptance given: [case1] two partitions that share the behavior spec when: [t0] the split is previewed with --mode plan then: the plan renders as the driver reads it 1`] = `
-"🦉 split into 2 partitions (plan)
+"🦉 review --mode plan — split into 2 partitions
    ├─ common
    │  ├─ globs
    │  │  └─ behavior/**
@@ -36,7 +36,7 @@ exports[`review.partition.acceptance given: [case2] a target that sits in no par
    ├─ unclaimed → where the repair places each
    │  └─ src/dirty.ts → clean (+ src/{,__snapshots__/}dirty.*)
    └─ repair — re-run with these --partition flags beside yours
-           --partition 'clean=src/{,__snapshots__/}dirty.*'
+      └─   --partition 'clean=src/{,__snapshots__/}dirty.*'
 
 ✨ did you know?
    ├─ claim each domain whole, in every layer, and the files you edit next stay covered
@@ -69,8 +69,9 @@ options:
                         alias: --paths-without
   --polluters <mode>  drop or keep the polluters in scope (default: drop)
                       dropped by default: every route artifact except
-                      .fulcrums/**, .seeds/**, and *.yield.md; every caught
-                      dream; every dependency lockfile
+                      .fulcrums/*._.md, .seeds/**, and *.yield.md; every caught
+                      dream; every dependency lockfile. a --paths-with glob that
+                      names only route artifacts keeps what it names
   --diffs <range>     diff range: since-main, since-commit, since-staged (default: since-main)
   --join <mode>       how to join --paths-with and --diffs: intersect or union (default: intersect)
   --refs <globs>      glob pattern(s) for reference files (can repeat)
@@ -110,11 +111,6 @@ options:
   --focus <mode>      review focus: push or pull (default: push)
   --goal <goal>       review goal: exhaustive or representative (default: exhaustive)
   --brain <slug>      brain to use for review (default: openrouter/deepseek/flash)
-  --warmer <plan>     poke this lane's prompt cache between rounds.
-                      off | on | <k>x,<m>m   (default: off; on = 12x,15m)
-                      🔴 every poke costs, so it can lose money. guard lanes only.
-                      \`rhx review._.cost --of tree\` shows whether it paid off, and
-                      the kill for each warmer still awake (\`off\` stops only the next)
   --open <opener>     open output file with specified program (e.g., nvim, codium, code)
   --help              show this help message
 
@@ -144,7 +140,7 @@ exports[`review.partition.acceptance given: [case5] --mode plan with no partitio
 ✋ ConstraintError: --mode plan previews a partition split, and none is declared
 
 ✨ did you know?
-   └─ declare one or more with --partition '<slug>=<globs>' (under a guard: rhx route.guard.partition --for review --peer @all)
+   └─ declare one or more with --partition '<slug>=<globs>' (under a guard, rhx route.guard.partition --for review --peer @all)
 
 "
 `;

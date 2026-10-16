@@ -33,6 +33,33 @@ describe('asBrainLookupFault', () => {
     });
   });
 
+  given('[case3] the lookup carries the registered brains', () => {
+    when('[t0] the fault is cast', () => {
+      // rhachet's error carries the menu in metadata.available, atoms then repls
+      const error = Object.assign(
+        new BrainChoiceNotFoundError('brain not found: nonexistent/brain'),
+        {
+          metadata: {
+            choice: 'nonexistent/brain',
+            available: {
+              atoms: ['openrouter/deepseek/flash', 'openrouter/qwen/coder'],
+              repls: ['anthropic/claude/code'],
+            },
+          },
+        },
+      );
+      const fault = asBrainLookupFault({ error, choice: 'nonexistent/brain' });
+
+      then('the registered slugs ride in known, atoms then repls', () => {
+        expect((fault as ConstraintError).metadata?.known).toEqual([
+          'openrouter/deepseek/flash',
+          'openrouter/qwen/coder',
+          'anthropic/claude/code',
+        ]);
+      });
+    });
+  });
+
   given('[case2] any other fault', () => {
     when('[t0] the fault is cast', () => {
       then('it passes through unchanged', () => {

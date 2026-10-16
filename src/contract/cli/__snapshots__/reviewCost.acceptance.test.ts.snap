@@ -58,6 +58,7 @@ exports[`reviewCost.acceptance given: [case1] a tree whose LATEST run compiled a
     },
     "head": null,
     "brain": null,
+    "provider": null,
     "defect": null,
     "grade": "metered",
     "scope": {
@@ -196,6 +197,9 @@ exports[`reviewCost.acceptance given: [case1] a tree whose LATEST run compiled a
    │  ├─ L1    3 runs ·    1.0M prompt ·  40.0% cached ·    $0.500000  🟡 +1 unknown (cost unrecorded, not zero)
    │  └─ L3    1 run  ·       0 prompt ·      — cached ·           $0
    │
+   ├─ by provider — heaviest prompt first
+   │  └─ (no provider — unreported)    4 runs ·    1.0M prompt ·  40.0% cached ·    $0.500000  🟡 +1 unknown (cost unrecorded, not zero)
+   │
    ├─ by stone — heaviest prompt first
    │  └─ 5.1.execution.from_vision    4 runs ·    1.0M prompt ·  40.0% cached ·    $0.500000  🟡 +1 unknown (cost unrecorded, not zero)
    │
@@ -331,6 +335,29 @@ exports[`reviewCost.acceptance given: [case1] a tree whose LATEST run compiled a
         "cost": "USD 0.00",
         "cacheHitRate": null,
         "cacheGrade": null
+      }
+    ],
+    "byProvider": [
+      {
+        "key": "(no provider — unreported)",
+        "runs": {
+          "total": 4,
+          "metered": 2,
+          "refused": 1,
+          "unknown": 1,
+          "accounted": 3
+        },
+        "tokens": {
+          "input": 600000,
+          "cacheSet": 0,
+          "cacheGet": 400000,
+          "output": 2000
+        },
+        "cost": "USD 0.500_000",
+        "cacheHitRate": 0.4,
+        "cacheGrade": {
+          "kind": "warm"
+        }
       }
     ],
     "byStone": [
@@ -567,6 +594,9 @@ exports[`reviewCost.acceptance given: [case2] a grove whose runs span all three 
       ├─           0 at full rate            $0     1 run   arch-smell-scopeleaks
       └─      absent at full rate        absent     1 run   mech-failhides  +1 unknown
 
+   by provider
+      └─     400,000 at full rate     $0.250000     3 runs  (no provider — unreported)  +1 unknown
+
 "
 `;
 
@@ -734,6 +764,24 @@ exports[`reviewCost.acceptance given: [case2] a grove whose runs span all three 
       "cost": null
     }
   ],
+  "byProvider": [
+    {
+      "key": "(no provider — unreported)",
+      "runs": 3,
+      "census": {
+        "metered": 1,
+        "refused": 1,
+        "unknown": 1
+      },
+      "tokens": {
+        "input": 400000,
+        "cacheSet": 0,
+        "cacheGet": 100000,
+        "output": 1000
+      },
+      "cost": "USD 0.250_000"
+    }
+  ],
   "byDay": [
     {
       "day": "2026-09-18",
@@ -810,6 +858,9 @@ exports[`reviewCost.acceptance given: [case2] a grove whose runs span all three 
    by reviewer
       ├─     400,000 at full rate     $0.250000     1 run   repo-rules
       └─ … and 2 more — raise --limit to list them  +1 unknown
+
+   by provider
+      └─     400,000 at full rate     $0.250000     3 runs  (no provider — unreported)  +1 unknown
 
 "
 `;
@@ -895,6 +946,9 @@ exports[`reviewCost.acceptance given: [case2] a grove whose runs span all three 
       ├─           0 at full rate            $0     1 run   arch-smell-scopeleaks
       └─      absent at full rate        absent     1 run   mech-failhides  +1 unknown
 
+   by provider
+      └─     400,000 at full rate     $0.250000     3 runs  (no provider — unreported)  +1 unknown
+
 "
 `;
 
@@ -925,6 +979,9 @@ exports[`reviewCost.acceptance given: [case2] a grove whose runs span all three 
    ├─ by level — heaviest prompt first
    │  ├─ L1    2 runs ·  500.0k prompt ·  20.0% cached ·    $0.250000  🟡 +1 unknown (cost unrecorded, not zero)
    │  └─ L3    1 run  ·       0 prompt ·      — cached ·           $0
+   │
+   ├─ by provider — heaviest prompt first
+   │  └─ (no provider — unreported)    3 runs ·  500.0k prompt ·  20.0% cached ·    $0.250000  🟡 +1 unknown (cost unrecorded, not zero)
    │
    ├─ by stone — heaviest prompt first
    │  └─ 5.1.execution.from_vision    3 runs ·  500.0k prompt ·  20.0% cached ·    $0.250000  🟡 +1 unknown (cost unrecorded, not zero)
@@ -1395,6 +1452,9 @@ exports[`reviewCost.acceptance given: [case8] a grove whose by-input census can 
       ├─     400,000 at full rate     $0.250000     1 run   repo-rules
       └─     200,000 at full rate     $0.250000     1 run   mech-failhides
 
+   by provider
+      └─     600,000 at full rate     $0.500000     2 runs  (no provider — unreported)
+
 "
 `;
 
@@ -1455,6 +1515,9 @@ exports[`reviewCost.acceptance given: [case8] a grove whose by-input census can 
    by reviewer
       └─     400,000 at full rate     $0.250000     1 run   repo-rules
 
+   by provider
+      └─     400,000 at full rate     $0.250000     1 run   (no provider — unreported)
+
 "
 `;
 
@@ -1492,6 +1555,7 @@ exports[`reviewCost.acceptance given: [case9] a tree whose LATEST run holds a CO
     "identity": null,
     "head": null,
     "brain": null,
+    "provider": null,
     "defect": "review log artifact is present but unparseable: metrics.realized.json\\n\\n{\\n  \\"dir\\": \\"<temp-root>/.log/bhrain/review/2026-09-18T00-00-09-000Z.pid1.zzz\\",\\n  \\"file\\": \\"metrics.realized.json\\",\\n  \\"error\\": \\"SyntaxError: Expected property name or '}' in JSON at position 2 (line 1 column 3)\\"\\n}",
     "grade": "unknown",
     "scope": null,
@@ -1542,6 +1606,9 @@ exports[`reviewCost.acceptance given: [case9] a tree whose LATEST run holds a CO
    │
    ├─ by level — heaviest prompt first
    │  └─ (no level — guard unread)    2 runs ·  500.0k prompt ·  20.0% cached ·    $0.250000  🟡 +1 unknown (cost unrecorded, not zero)
+   │
+   ├─ by provider — heaviest prompt first
+   │  └─ (no provider — unreported)    2 runs ·  500.0k prompt ·  20.0% cached ·    $0.250000  🟡 +1 unknown (cost unrecorded, not zero)
    │
    ├─ by stone — heaviest prompt first
    │  ├─ 5.1.execution.from_vision                        1 run  ·  500.0k prompt ·  20.0% cached ·    $0.250000
@@ -1887,6 +1954,9 @@ exports[`reviewCost.acceptance given: [case14] a tree whose reviews ran over TWO
    ├─ by level — heaviest prompt first
    │  └─ (no level — guard unread)    2 runs ·  800.0k prompt ·  37.5% cached ·    $0.500000
    │
+   ├─ by provider — heaviest prompt first
+   │  └─ (no provider — unreported)    2 runs ·  800.0k prompt ·  37.5% cached ·    $0.500000
+   │
    ├─ by stone — heaviest prompt first
    │  └─ 5.1.execution.from_vision    2 runs ·  800.0k prompt ·  37.5% cached ·    $0.500000
    │
@@ -1967,6 +2037,9 @@ exports[`reviewCost.acceptance given: [case18] a tree whose guard is MALFORMED w
    │
    ├─ by level — heaviest prompt first
    │  └─ (no level — guard unread)    3 runs ·  500.0k prompt ·  20.0% cached ·    $0.250000  🟡 +1 unknown (cost unrecorded, not zero)
+   │
+   ├─ by provider — heaviest prompt first
+   │  └─ (no provider — unreported)    3 runs ·  500.0k prompt ·  20.0% cached ·    $0.250000  🟡 +1 unknown (cost unrecorded, not zero)
    │
    ├─ by stone — heaviest prompt first
    │  └─ 5.1.execution.from_vision    3 runs ·  500.0k prompt ·  20.0% cached ·    $0.250000  🟡 +1 unknown (cost unrecorded, not zero)
@@ -2069,6 +2142,9 @@ exports[`reviewCost.acceptance given: [case22] a run whose prompt was pruned, it
    │  ├─ L1                           2 runs ·  500.0k prompt ·  20.0% cached ·    $0.250000  🟡 +1 unknown (cost unrecorded, not zero)
    │  ├─ L3                           1 run  ·       0 prompt ·      — cached ·           $0
    │  └─ (no level — guard unread)    1 run  ·       — prompt ·      — cached ·            —  🟡 +1 unknown (cost unrecorded, not zero)
+   │
+   ├─ by provider — heaviest prompt first
+   │  └─ (no provider — unreported)    4 runs ·  500.0k prompt ·  20.0% cached ·    $0.250000  🟡 +2 unknown (cost unrecorded, not zero)
    │
    ├─ by stone — heaviest prompt first
    │  └─ 5.1.execution.from_vision    4 runs ·  500.0k prompt ·  20.0% cached ·    $0.250000  🟡 +2 unknown (cost unrecorded, not zero)
@@ -2342,6 +2418,9 @@ exports[`reviewCost.acceptance given: [case25] four reviewers that each ran twic
    ├─ by level — heaviest prompt first
    │  └─ (no level — guard unread)    8 runs ·    9.5k prompt ·  25.6% cached ·    $0.080000
    │
+   ├─ by provider — heaviest prompt first
+   │  └─ (no provider — unreported)    8 runs ·    9.5k prompt ·  25.6% cached ·    $0.080000
+   │
    ├─ by stone — heaviest prompt first
    │  └─ 5.1.execution.from_vision    8 runs ·    9.5k prompt ·  25.6% cached ·    $0.080000
    │
@@ -2411,6 +2490,9 @@ exports[`reviewCost.acceptance given: [case25] four reviewers that each ran twic
       ├─       1,882 at full rate     $0.020000     2 runs  lane-served
       ├─       1,400 at full rate     $0.020000     2 runs  lane-overreach
       └─       1,250 at full rate     $0.020000     2 runs  lane-selfcached
+
+   by provider
+      └─       7,040 at full rate     $0.080000     8 runs  (no provider — unreported)
 
 "
 `;

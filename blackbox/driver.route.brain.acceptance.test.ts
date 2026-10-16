@@ -107,7 +107,7 @@ describe('driver.route.brain.acceptance', () => {
    *        the most common halt can be snapped
    *
    * 🔴 .note = it scrubs a SPAN closed by two literals the render always emits
-   *           (`this driver runs` … `   or:  remove`): if an anchor moves, the replace misses
+   *           (`this driver runs` … `   or remove`): if an anchor moves, the replace misses
    *           and the snapshot goes red rather than quietly pins less
    * .note = the span's body is pinned for all seven causes by `formatStoneBrain.test.ts`
    *         (`formatStoneBrainUndispatched`, `[case3]`)
@@ -116,7 +116,7 @@ describe('driver.route.brain.acceptance', () => {
    */
   const sanitizeHaltCauseForSnapshot = (output: string): string =>
     output.replace(
-      /      ├─ this driver runs[\s\S]*?(?=      └─ or: remove)/,
+      /      ├─ this driver runs[\s\S]*?(?=      └─ or remove)/,
       '      ├─ <cause-block>\n      │\n',
     );
 

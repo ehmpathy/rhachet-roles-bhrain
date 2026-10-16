@@ -60,7 +60,7 @@ describe('asReviewByMalfunctionLines', () => {
       then('the faulted rubric is named, with its reason and stderr', () => {
         expect(lines).toEqual([
           '💥 MalfunctionError: rubric malfunctioned: faulted',
-          '   no count detected',
+          '   └─ no count detected',
           'ReviewBrainCallError: the reply was cut off',
         ]);
       });

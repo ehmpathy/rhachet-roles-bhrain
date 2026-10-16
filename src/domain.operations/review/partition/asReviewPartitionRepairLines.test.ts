@@ -42,7 +42,7 @@ describe('asReviewPartitionRepairLines', () => {
       then('the command closes the branch on its caption, with no tip', () => {
         expect(lines.command).toEqual([
           '   └─ repair — run this, then re-arrive',
-          '         rhx route.guard.partition \\',
+          '      └─ rhx route.guard.partition \\',
           "           --partition 'src=src/**'",
         ]);
       });

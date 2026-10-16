@@ -46,7 +46,7 @@ exports[`bench.acceptance.acceptance given: [case4] two recorded runs where ever
    ├─ after   after  3m20s
    └─ delta   1m40s faster  (1.50x)
 
-   ✅ no regression — all 1 cases that passed before still pass
+✅ no regression — all 1 cases that passed before still pass
 
 "
 `;
@@ -58,11 +58,11 @@ exports[`bench.acceptance.acceptance given: [case5] two recorded runs where a ca
    ├─ after   after  3m20s
    └─ delta   1m40s faster  (1.50x)
 
-   ⛈️  REGRESSION
-   ├─ 1 case(s) PASSED before and are now ABSENT:
-   │  · a > c
-   └─ 1 case(s) PASSED before and no longer pass:
-      · a > b  [failed]
+⛈️  REGRESSION
+   ├─ 1 case(s) PASSED before and are now ABSENT
+   │  └─ a > c
+   └─ 1 case(s) PASSED before and no longer pass
+      └─ a > b  [failed]
 
 "
 `;

@@ -10,10 +10,10 @@ exports[`driver.route.partition-journey.acceptance given: [case1] a guarded ston
       ├─ 1 changed file sits in no partition
       │  └─ src/gamma/getGamma.ts → gamma (+ src/gamma/**)
       └─ repair — run this, then re-arrive
-            rhx route.guard.partition --route .behavior/v2026_01_01.demo --for review --peer @all \\
-              --partition 'alpha=src/alpha/**,.behavior/v2026_01_01.demo/**' \\
-              --partition 'beta=src/beta/**,.behavior/v2026_01_01.demo/**' \\
-              --partition 'gamma=src/gamma/**,.behavior/v2026_01_01.demo/**' \\
+         └─ rhx route.guard.partition --route .behavior/v2027_01_01.demo --for review --peer @all \\
+              --partition 'alpha=src/alpha/**,.behavior/v2027_01_01.demo/**' \\
+              --partition 'beta=src/beta/**,.behavior/v2027_01_01.demo/**' \\
+              --partition 'gamma=src/gamma/**,.behavior/v2027_01_01.demo/**' \\
               --mode apply
 
 ✨ did you know?
@@ -40,8 +40,8 @@ exports[`driver.route.partition-journey.acceptance given: [case1] a guarded ston
    ├─ r1: xyzzy (l1, 0/9)
    │   ├─ constraint ✋
    │   ├─ terminal — does not block higher levels
-   │   ├─ given: .behavior/v2026_01_01.demo/.reviews/peer/1.execute._.review.i[N].[HASH].r001._.given.by_peer.xyzzy.md
-   │   └─ taken: .behavior/v2026_01_01.demo/.reviews/peer/1.execute._.review.i[N].[HASH].r001._.taken.by_self.xyzzy.md
+   │   ├─ given: .behavior/v2027_01_01.demo/.reviews/peer/1.execute._.review.i[N].[HASH].r001._.given.by_peer.xyzzy.md
+   │   └─ taken: .behavior/v2027_01_01.demo/.reviews/peer/1.execute._.review.i[N].[HASH].r001._.taken.by_self.xyzzy.md
    │
    └─ ✗ judge.1 - blocked [TIME]
 
@@ -51,7 +51,10 @@ exports[`driver.route.partition-journey.acceptance given: [case1] a guarded ston
    ├─ reason = reviewer constraint
    ├─ options
    │  ├─ declare the partitions its .given proposes — yours to make
-   │  │  └─ rhx route.guard.partition --for review --peer @all --partition 'beta=src/beta/**,.behavior/v2026_01_01.demo/**' --partition 'alpha=src/alpha/**,.behavior/v2026_01_01.demo/**' --mode apply
+   │  │  └─ rhx route.guard.partition --for review --peer @all \\
+   │  │       --partition 'beta=src/beta/**,.behavior/v2027_01_01.demo/**' \\
+   │  │       --partition 'alpha=src/alpha/**,.behavior/v2027_01_01.demo/**' \\
+   │  │       --mode apply
    │  ├─ or narrow its bind — yours to make
    │  │  └─ edit $route/1.execute.guard directly: that lane's --paths-wout / --paths-with
    │  └─ overrule the constraint — a human must grant
@@ -63,8 +66,8 @@ exports[`driver.route.partition-journey.acceptance given: [case1] a guarded ston
       │   └─ r1: xyzzy (l1, 0/9)
       │       ├─ constraint ✋
       │       ├─ terminal — does not block higher levels
-      │       ├─ given: .behavior/v2026_01_01.demo/.reviews/peer/1.execute._.review.i[N].[HASH].r001._.given.by_peer.xyzzy.md
-      │       └─ taken: .behavior/v2026_01_01.demo/.reviews/peer/1.execute._.review.i[N].[HASH].r001._.taken.by_self.xyzzy.md
+      │       ├─ given: .behavior/v2027_01_01.demo/.reviews/peer/1.execute._.review.i[N].[HASH].r001._.given.by_peer.xyzzy.md
+      │       └─ taken: .behavior/v2027_01_01.demo/.reviews/peer/1.execute._.review.i[N].[HASH].r001._.taken.by_self.xyzzy.md
       └─ judges
           └─ j1: rhx route.stone.judge --mechanism reviewed? --stone $stone --route $route --allow-blockers 0 --allow-nitpicks 99
               ├─ finished [TIME] ✗
@@ -105,32 +108,18 @@ exports[`driver.route.partition-journey.acceptance given: [case1] a guarded ston
 │  │     │  └─ joined via intersect
 │  │     │     ├─ files: 8
 │  │     │     └─ tokens: 873.2k
-│  │     ├─ composition: 3.5M chars (attribution: attributed)
-│  │     │  ├─ instructions           4.0k chars    0.1%  cacheable
-│  │     │  ├─ outputFormat           1.7k chars    0.0%  cacheable
-│  │     │  ├─ scaffold                774 chars    0.0%  cacheable
-│  │     │  ├─ rules                   381 chars    0.0%  cacheable
-│  │     │  ├─ refs                      0 chars    0.0%  cacheable
-│  │     │  ├─ targetFiles               0 chars    0.0%  cacheable
-│  │     │  ├─ targetDiffs            3.5M chars   99.8%
-│  │     │  │  ├─ additions           3.5M chars   99.8%  cacheable
-│  │     │  │  ├─ deletions              0 chars    0.0%  cacheable
-│  │     │  │  └─ mutations              0 chars    0.0%  per round
-│  │     │  └─ conversation              0 chars    0.0%  per round
-│  │     ├─ locus: none sent — targetFiles
-│  │     ├─ locus: 3.5M chars of target mass over 2 directories — targetDiffs.additions
-│  │     │  ├─  50.1%      1.7M chars  4 files   src/beta
-│  │     │  └─  49.9%      1.7M chars  4 files   src/alpha
-│  │     ├─ locus: none sent — targetDiffs.mutations
-│  │     ├─ lever
-│  │     │  ├─ added files carry 100.0% of the target mass — each addition's diff is its whole body
-│  │     │  ├─ if the rubric grades this mass, declare partitions, so each one fits, e.g.:
-│  │     │  │  --partition 'beta=src/beta/**,.behavior/v2026_01_01.demo/**'
-│  │     │  │  --partition 'alpha=src/alpha/**,.behavior/v2026_01_01.demo/**'
-│  │     │  ├─ partition through vertical domains, never through horizontal layers: each partition holds a domain with its own tests (rule.forbid.horizontal-partitions)
-│  │     │  ├─ add to each partition the files it must read to judge its own — shared types, domain objects; the overlap is computed, and a common file is graded once
-│  │     │  ├─ preview the split before you spend: add --mode plan (under a guard: rhx route.guard.partition --for review --peer @all)
-│  │     │  └─ if the rubric does not grade a subtree — a test corpus, a vendored or generated dir — cut it from the targets instead: --paths-wout '<subtree>/**' (a cut hides mass; a partition spreads it)
+│  │     ├─ prompt — 3.5M chars · 3.5M targets (99.8%) · 4.0k instructions · 1.7k outputFormat · 774 scaffold · 381 rules
+│  │     ├─ target mass by directory — 3.5M chars over 2 directories
+│  │     │  ├─  50.1%      1.7M chars  4 files   src/beta   1.7M added
+│  │     │  └─  49.9%      1.7M chars  4 files   src/alpha  1.7M added
+│  │     ├─ lever — partition what the rubric grades, cut what it does not
+│  │     │  ├─ --partition 'beta=src/beta/**,.behavior/v2027_01_01.demo/**'
+│  │     │  ├─ --partition 'alpha=src/alpha/**,.behavior/v2027_01_01.demo/**'
+│  │     │  ├─ one domain per partition, with its own tests (rule.forbid.horizontal-partitions)
+│  │     │  ├─ list the shared context in every partition that reads it too — route yields, briefs, shared types
+│  │     │  │  └─ the overlap is graded once, and it leads each prompt, so every partition reads it from cache
+│  │     │  ├─ preview first with --mode plan (under a guard, rhx route.guard.partition --for review --peer @all)
+│  │     │  └─ or cut a subtree the rubric does not grade — --paths-wout '<subtree>/**'
 │  │     └─ hint
 │  │        ├─ inspect .log/bhrain/review/<TIMESTAMP> to see what was matched
 │  │        └─ inspect .log/bhrain/review/<TIMESTAMP> for token breakdown by file
@@ -154,14 +143,14 @@ exports[`driver.route.partition-journey.acceptance given: [case1] a guarded ston
 🦉 partitions declared
 
 🗿 route.guard.partition --mode apply
-   ├─ route = .behavior/v2026_01_01.demo
+   ├─ route = .behavior/v2027_01_01.demo
    ├─ peer = @all (every reviewer, every stone)
    ├─ checked against 8 files changed since main
    ├─ partitions
    │  ├─ alpha: 4 narrow targets + 0 common targets · ~[N] tokens of file bodies, ~0 common
-   │  │  └─ src/alpha/**, .behavior/v2026_01_01.demo/**
+   │  │  └─ src/alpha/**, .behavior/v2027_01_01.demo/**
    │  └─ beta: 4 narrow targets + 0 common targets · ~[N] tokens of file bodies, ~0 common
-   │     └─ src/beta/**, .behavior/v2026_01_01.demo/**
+   │     └─ src/beta/**, .behavior/v2027_01_01.demo/**
    ├─ common: 0
    ├─ unclaimed: 0
    ├─ replaces: none
@@ -171,10 +160,10 @@ exports[`driver.route.partition-journey.acceptance given: [case1] a guarded ston
 `;
 
 exports[`driver.route.partition-journey.acceptance given: [case1] a guarded stone whose lane overflows (arc A) when: [t3] the driver adds a file in a dir the set does not list then: the branch status matches snapshot 1`] = `
-"?? .behavior/v2026_01_01.demo/.reviews/peer/.gitignore
-?? .behavior/v2026_01_01.demo/.route/.gitignore
-?? .behavior/v2026_01_01.demo/.route/passage.jsonl
-?? .behavior/v2026_01_01.demo/1.execute.stamp
+"?? .behavior/v2027_01_01.demo/.reviews/peer/.gitignore
+?? .behavior/v2027_01_01.demo/.route/.gitignore
+?? .behavior/v2027_01_01.demo/.route/passage.jsonl
+?? .behavior/v2027_01_01.demo/1.execute.stamp
 ?? .log/bhrain/review/<logdir>/input.scope.debug.json
 ?? .log/bhrain/review/<logdir>/input.scope.json
 ?? .log/bhrain/review/<logdir>/tokens.expected.json
@@ -193,7 +182,7 @@ exports[`driver.route.partition-journey.acceptance given: [case1] a guarded ston
 
 exports[`driver.route.partition-journey.acceptance given: [case1] a guarded stone whose lane overflows (arc A) when: [t5] the driver runs the printed command verbatim then: the command and its stdout match snapshot 1`] = `
 {
-  "command": "rhx route.guard.partition --route .behavior/v2026_01_01.demo --for review --peer @all --partition 'alpha=src/alpha/**,.behavior/v2026_01_01.demo/**' --partition 'beta=src/beta/**,.behavior/v2026_01_01.demo/**' --partition 'gamma=src/gamma/**,.behavior/v2026_01_01.demo/**' --mode apply",
+  "command": "rhx route.guard.partition --route .behavior/v2027_01_01.demo --for review --peer @all --partition 'alpha=src/alpha/**,.behavior/v2027_01_01.demo/**' --partition 'beta=src/beta/**,.behavior/v2027_01_01.demo/**' --partition 'gamma=src/gamma/**,.behavior/v2027_01_01.demo/**' --mode apply",
   "stdout": "
 🪨 run solid skill repo=bhrain/role=driver/skill=route.guard.partition
 
@@ -201,16 +190,16 @@ exports[`driver.route.partition-journey.acceptance given: [case1] a guarded ston
 🦉 partitions declared
 
 🗿 route.guard.partition --mode apply
-   ├─ route = .behavior/v2026_01_01.demo
+   ├─ route = .behavior/v2027_01_01.demo
    ├─ peer = @all (every reviewer, every stone)
    ├─ checked against 9 files changed since main
    ├─ partitions
    │  ├─ alpha: 4 narrow targets + 0 common targets · ~[N] tokens of file bodies, ~0 common
-   │  │  └─ src/alpha/**, .behavior/v2026_01_01.demo/**
+   │  │  └─ src/alpha/**, .behavior/v2027_01_01.demo/**
    │  ├─ beta: 4 narrow targets + 0 common targets · ~[N] tokens of file bodies, ~0 common
-   │  │  └─ src/beta/**, .behavior/v2026_01_01.demo/**
+   │  │  └─ src/beta/**, .behavior/v2027_01_01.demo/**
    │  └─ gamma: 1 narrow target + 0 common targets · ~[N] tokens of file bodies, ~0 common
-   │     └─ src/gamma/**, .behavior/v2026_01_01.demo/**
+   │     └─ src/gamma/**, .behavior/v2027_01_01.demo/**
    ├─ common: 0
    ├─ unclaimed: 0
    ├─ replaces: 2 partitions, whole
@@ -251,8 +240,8 @@ exports[`driver.route.partition-journey.acceptance given: [case2] a guarded ston
    │   ├─ approved [TIME]
    │   ├─ [N] blockers ✓
    │   ├─ [N] nitpicks ✓
-   │   ├─ given: .behavior/v2026_01_01.demo/.reviews/peer/1.execute._.review.i[N].[HASH].r001._.given.by_peer.xyzzy.md
-   │   └─ taken: .behavior/v2026_01_01.demo/.reviews/peer/1.execute._.review.i[N].[HASH].r001._.taken.by_self.xyzzy.md
+   │   ├─ given: .behavior/v2027_01_01.demo/.reviews/peer/1.execute._.review.i[N].[HASH].r001._.given.by_peer.xyzzy.md
+   │   └─ taken: .behavior/v2027_01_01.demo/.reviews/peer/1.execute._.review.i[N].[HASH].r001._.taken.by_self.xyzzy.md
    │
    └─ ✓ judge.1 - allowed [TIME]
 
@@ -267,8 +256,8 @@ exports[`driver.route.partition-journey.acceptance given: [case2] a guarded ston
    │  │       ├─ approved [TIME]
    │  │       ├─ [N] blockers ✓
    │  │       ├─ [N] nitpicks ✓
-   │  │       ├─ given: .behavior/v2026_01_01.demo/.reviews/peer/1.execute._.review.i[N].[HASH].r001._.given.by_peer.xyzzy.md
-   │  │       └─ taken: .behavior/v2026_01_01.demo/.reviews/peer/1.execute._.review.i[N].[HASH].r001._.taken.by_self.xyzzy.md
+   │  │       ├─ given: .behavior/v2027_01_01.demo/.reviews/peer/1.execute._.review.i[N].[HASH].r001._.given.by_peer.xyzzy.md
+   │  │       └─ taken: .behavior/v2027_01_01.demo/.reviews/peer/1.execute._.review.i[N].[HASH].r001._.taken.by_self.xyzzy.md
    │  └─ judges
    │      └─ j1: rhx route.stone.judge --mechanism reviewed? --stone $stone --route $route --allow-blockers 0 --allow-nitpicks 99
    │          └─ finished [TIME] ✓
@@ -312,34 +301,18 @@ exports[`driver.route.partition-journey.acceptance given: [case3] a guarded ston
 │  │     │  └─ joined via intersect
 │  │     │     ├─ files: 8
 │  │     │     └─ tokens: 2.6M
-│  │     ├─ composition: 10.6M chars (attribution: attributed)
-│  │     │  ├─ instructions           4.0k chars    0.0%  cacheable
-│  │     │  ├─ outputFormat           1.7k chars    0.0%  cacheable
-│  │     │  ├─ scaffold               1.3k chars    0.0%  cacheable
-│  │     │  ├─ rules                   381 chars    0.0%  cacheable
-│  │     │  ├─ refs                      0 chars    0.0%  cacheable
-│  │     │  ├─ targetFiles            3.5M chars   33.0%  cacheable
-│  │     │  ├─ targetDiffs            7.1M chars   66.9%
-│  │     │  │  ├─ additions              0 chars    0.0%  cacheable
-│  │     │  │  ├─ deletions              0 chars    0.0%  cacheable
-│  │     │  │  └─ mutations           7.1M chars   66.9%  per round
-│  │     │  └─ conversation              0 chars    0.0%  per round
-│  │     ├─ locus: 3.5M chars of target mass over 2 directories — targetFiles
-│  │     │  ├─  50.1%      1.7M chars  4 files   src/beta
-│  │     │  └─  49.9%      1.7M chars  4 files   src/alpha
-│  │     ├─ locus: none sent — targetDiffs.additions
-│  │     ├─ locus: 7.1M chars of target mass over 2 directories — targetDiffs.mutations
-│  │     │  ├─  50.1%      3.5M chars  4 files   src/beta
-│  │     │  └─  49.9%      3.5M chars  4 files   src/alpha
-│  │     ├─ lever
-│  │     │  ├─ edited files carry 100.0% of the target mass — their bodies and hunks
-│  │     │  ├─ if the rubric grades this mass, partition it, so each partition fits, e.g.:
-│  │     │  │  --partition 'beta=src/beta/**,.behavior/v2026_01_01.demo/**'
-│  │     │  │  --partition 'alpha=src/alpha/**,.behavior/v2026_01_01.demo/**'
-│  │     │  ├─ partition through vertical domains, never through horizontal layers: each partition holds a domain with its own tests (rule.forbid.horizontal-partitions)
-│  │     │  ├─ add to each partition the files it must read to judge its own — shared types, domain objects; the overlap is computed, and a common file is graded once
-│  │     │  ├─ preview the split before you spend: add --mode plan (under a guard: rhx route.guard.partition --for review --peer @all)
-│  │     │  └─ if the rubric does not grade a subtree — a test corpus, a vendored or generated dir — cut it from the targets instead: --paths-wout '<subtree>/**' (a cut hides mass; a partition spreads it)
+│  │     ├─ prompt — 10.6M chars · 10.6M targets (99.9%) · 4.0k instructions · 1.7k outputFormat · 1.3k scaffold · 381 rules
+│  │     ├─ target mass by directory — 10.6M chars over 2 directories
+│  │     │  ├─  50.1%      5.3M chars  4 files   src/beta   1.7M bodies · 3.5M edits
+│  │     │  └─  49.9%      5.3M chars  4 files   src/alpha  1.7M bodies · 3.5M edits
+│  │     ├─ lever — partition what the rubric grades, cut what it does not
+│  │     │  ├─ --partition 'beta=src/beta/**,.behavior/v2027_01_01.demo/**'
+│  │     │  ├─ --partition 'alpha=src/alpha/**,.behavior/v2027_01_01.demo/**'
+│  │     │  ├─ one domain per partition, with its own tests (rule.forbid.horizontal-partitions)
+│  │     │  ├─ list the shared context in every partition that reads it too — route yields, briefs, shared types
+│  │     │  │  └─ the overlap is graded once, and it leads each prompt, so every partition reads it from cache
+│  │     │  ├─ preview first with --mode plan (under a guard, rhx route.guard.partition --for review --peer @all)
+│  │     │  └─ or cut a subtree the rubric does not grade — --paths-wout '<subtree>/**'
 │  │     └─ hint
 │  │        ├─ inspect .log/bhrain/review/<TIMESTAMP> to see what was matched
 │  │        └─ inspect .log/bhrain/review/<TIMESTAMP> for token breakdown by file
@@ -373,7 +346,7 @@ exports[`driver.route.partition-journey.acceptance given: [case4] a guarded ston
 │  │     │     ├─ ~[N] tokens   4 files  src/beta
 │  │     │     └─ ~[N] tokens   4 files  src/alpha
 │  │     ├─ fix: narrow that partition, or split it in two — the tool never splits a partition again
-│  │     └─ redeclare the set with narrower --partition flags (under a guard: rhx route.guard.partition --for review --peer @all)
+│  │     └─ redeclare the set with narrower --partition flags (under a guard, rhx route.guard.partition --for review --peer @all)
 │  │
 │  └─
 └─ passage blocked

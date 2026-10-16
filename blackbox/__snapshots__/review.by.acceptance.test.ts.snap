@@ -140,7 +140,7 @@ exports[`review.by.acceptance given: [case15] --for one slug, code violates it (
 
 exports[`review.by.acceptance given: [case16] a rubric whose review subprocess malfunctions when: [t0] review.by runs with an unresolvable brain then: stderr names the malfunctioned rubric and its reason 1`] = `
 "💥 MalfunctionError: rubric malfunctioned: demo-arrow-only
-   ✋ ConstraintError: brain 'nonexistent/broken/brain' is not registered"
+   └─ ✋ ConstraintError: brain 'nonexistent/broken/brain' is not registered"
 `;
 
 exports[`review.by.acceptance given: [case16] a rubric whose review subprocess malfunctions when: [t0] review.by runs with an unresolvable brain then: the malfunction tree matches snapshot, its reason named 1`] = `

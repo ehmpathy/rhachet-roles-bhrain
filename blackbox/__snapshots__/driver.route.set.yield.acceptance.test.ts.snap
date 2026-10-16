@@ -131,38 +131,30 @@ exports[`driver.route.set.yield.acceptance given: [case6] cascade yield drop aff
 `;
 
 exports[`driver.route.set.yield.acceptance given: [case7] validation errors for flag conflicts when: [t0] --hard and --soft together then: stderr matches snapshot 1`] = `
-"error: BadRequestError: --hard and --soft are mutually exclusive
+"✋ ConstraintError: --hard and --soft are mutually exclusive
 
-{
-  "hint": "--help for usage"
-}
+hint: --help for usage
 "
 `;
 
 exports[`driver.route.set.yield.acceptance given: [case7] validation errors for flag conflicts when: [t1] --hard and --yield keep together then: stderr matches snapshot 1`] = `
-"error: BadRequestError: --hard conflicts with --yield keep
+"✋ ConstraintError: --hard conflicts with --yield keep
 
-{
-  "hint": "--help for usage"
-}
+hint: --help for usage
 "
 `;
 
 exports[`driver.route.set.yield.acceptance given: [case7] validation errors for flag conflicts when: [t2] --soft and --yield drop together then: stderr matches snapshot 1`] = `
-"error: BadRequestError: --soft conflicts with --yield drop
+"✋ ConstraintError: --soft conflicts with --yield drop
 
-{
-  "hint": "--help for usage"
-}
+hint: --help for usage
 "
 `;
 
 exports[`driver.route.set.yield.acceptance given: [case7] validation errors for flag conflicts when: [t3] yield flags on non-rewound action then: stderr matches snapshot 1`] = `
-"error: BadRequestError: --yield, --hard, and --soft are only valid with --as rewound
+"✋ ConstraintError: --yield, --hard, and --soft are only valid with --as rewound
 
-{
-  "hint": "--help for usage"
-}
+hint: --help for usage
 "
 `;
 

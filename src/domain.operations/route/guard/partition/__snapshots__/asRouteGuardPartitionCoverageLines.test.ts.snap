@@ -37,7 +37,7 @@ exports[`asRouteGuardPartitionCoverageLines given: [case2] a stone whose overrid
       │  └─ src/route/getRoute.ts
       ├─ verdict: gap — the entrance gate would halt here
       └─ repair — run this before you arrive
-            rhx route.guard.partition --route .behavior/v2026_01_01.demo --for review --peer r2 --stone 5.1.execution \\
+         └─ rhx route.guard.partition --route .behavior/v2026_01_01.demo --for review --peer r2 --stone 5.1.execution \\
               --partition 'review=src/review/**,.behavior/v2026_01_01.demo/**' \\
               --partition 'route=src/route/**,.behavior/v2026_01_01.demo/**' \\
               --mode apply
@@ -125,7 +125,7 @@ exports[`asRouteGuardPartitionCoverageLines given: [case5] a branch with more fi
       │  └─ … +3 more (--full lists every path)
       ├─ verdict: gap — the entrance gate would halt here
       └─ repair — run this before you arrive
-            rhx route.guard.partition --route .behavior/v2026_01_01.demo --for review --peer @all \\
+         └─ rhx route.guard.partition --route .behavior/v2026_01_01.demo --for review --peer @all \\
               --partition 'review=src/review/**,.behavior/v2026_01_01.demo/**' \\
               --partition 'route=src/route/**,src/shared/**,.behavior/v2026_01_01.demo/**' \\
               --partition 'rest=src/**,.behavior/v2026_01_01.demo/**' \\

@@ -112,11 +112,11 @@ exports[`review.failfast-flags.acceptance given: [case9] a flag form or token th
 "
 `;
 
-exports[`review.failfast-flags.acceptance given: [case9] a flag form or token the parser must read or refuse when: [t1] --warmer is given twice then: the full stderr body is pinned 1`] = `
+exports[`review.failfast-flags.acceptance given: [case9] a flag form or token the parser must read or refuse when: [t1] --focus is given twice then: the full stderr body is pinned 1`] = `
 "
 🦉 woah there
 
-✋ ConstraintError: 1 flag given more than once: --warmer
+✋ ConstraintError: 1 flag given more than once: --focus
 
 ✨ did you know?
    └─ keep one value per flag; only --rules, --refs, --optional, --paths-with, --paths-wout, --partition repeat

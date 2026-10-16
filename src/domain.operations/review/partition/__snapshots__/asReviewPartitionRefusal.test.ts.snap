@@ -77,7 +77,7 @@ exports[`asReviewPartitionRefusal given: [case5] a route set that leaves the pri
    │  ├─ src/domain.operations/review/prime/setOnePrime.ts → review-ops (+ src/domain.operations/review/prime/**)
    │  └─ src/domain.operations/review/prime/setOnePrime.test.ts → review-ops (+ src/domain.operations/review/prime/**)
    └─ repair — run this to claim each gap into its partition
-         rhx route.guard.partition --route .behavior/v2026_01_01.demo --for review --peer @all \\
+      └─ rhx route.guard.partition --route .behavior/v2026_01_01.demo --for review --peer @all \\
            --claim 'src/domain.operations/review/prime/**' --into review-ops \\
            --mode apply
 
@@ -91,7 +91,7 @@ exports[`asReviewPartitionRefusal given: [case5] a route set that leaves the pri
    │  ├─ src/domain.operations/review/prime/setOnePrime.ts → review-ops (+ src/domain.operations/review/prime/**)
    │  └─ src/domain.operations/review/prime/setOnePrime.test.ts → review-ops (+ src/domain.operations/review/prime/**)
    └─ repair — re-run with these --partition flags beside yours
-           --partition 'review-ops=src/domain.operations/review/prime/**'
+      └─   --partition 'review-ops=src/domain.operations/review/prime/**'
 
 ✨ did you know?
    ├─ claim each domain whole, in every layer, and the files you edit next stay covered
@@ -103,7 +103,7 @@ exports[`asReviewPartitionRefusal given: [case6] a route set where one partition
    ├─ absent from
    │  └─ b
    └─ repair — run this to claim each gap into its partition
-         rhx route.guard.partition --route .behavior/v2026_01_01.demo --for review --peer @all \\
+      └─ rhx route.guard.partition --route .behavior/v2026_01_01.demo --for review --peer @all \\
            --claim '.behavior/v2026_01_01.demo/**' --into b \\
            --mode apply
 
