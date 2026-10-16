@@ -98,27 +98,3 @@ exports[`review.optional-rules.acceptance given: [case7] --optional rules set, b
    └─ cost
       └─ estimate: $0.000950900"
 `;
-
-exports[`review.optional-rules.acceptance given: [case7] --optional rules set, but the rules glob DOES match files when: [t0] review skill invoked, attempt 2 then: the metrics.expected block matches its snapshot (computed before the brain) 1`] = `
-"🔭 metrics.expected
-   ├─ files
-   │  ├─ rules: 1
-   │  └─ targets: 1
-   ├─ tokens
-   │  ├─ estimate: 1,903
-   │  └─ context: 0.2%
-   └─ cost
-      └─ estimate: $0.000950900"
-`;
-
-exports[`review.optional-rules.acceptance given: [case7] --optional rules set, but the rules glob DOES match files when: [t0] review skill invoked, attempt 3 then: the metrics.expected block matches its snapshot (computed before the brain) 1`] = `
-"🔭 metrics.expected
-   ├─ files
-   │  ├─ rules: 1
-   │  └─ targets: 1
-   ├─ tokens
-   │  ├─ estimate: 1,903
-   │  └─ context: 0.2%
-   └─ cost
-      └─ estimate: $0.000950900"
-`;

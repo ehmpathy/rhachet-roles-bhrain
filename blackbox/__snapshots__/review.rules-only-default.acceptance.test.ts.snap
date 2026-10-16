@@ -12,55 +12,7 @@ exports[`review.rules-only-default.acceptance given: [case1] user specifies only
       └─ estimate: $0.001326200"
 `;
 
-exports[`review.rules-only-default.acceptance given: [case1] user specifies only --rules (default case) when: [t0] review skill invoked with only --rules dirpath, attempt 2 then: the metrics.expected block matches its snapshot (computed before the brain) 1`] = `
-"🔭 metrics.expected
-   ├─ files
-   │  ├─ rules: 3
-   │  └─ targets: 1
-   ├─ tokens
-   │  ├─ estimate: 2,654
-   │  └─ context: 0.3%
-   └─ cost
-      └─ estimate: $0.001326200"
-`;
-
-exports[`review.rules-only-default.acceptance given: [case1] user specifies only --rules (default case) when: [t0] review skill invoked with only --rules dirpath, attempt 3 then: the metrics.expected block matches its snapshot (computed before the brain) 1`] = `
-"🔭 metrics.expected
-   ├─ files
-   │  ├─ rules: 3
-   │  └─ targets: 1
-   ├─ tokens
-   │  ├─ estimate: 2,654
-   │  └─ context: 0.3%
-   └─ cost
-      └─ estimate: $0.001326200"
-`;
-
 exports[`review.rules-only-default.acceptance given: [case2] user excludes .behavior via negation pattern when: [t0] review with --diffs since-main --paths !.behavior/**, attempt 1 then: the metrics.expected block matches its snapshot (computed before the brain) 1`] = `
-"🔭 metrics.expected
-   ├─ files
-   │  ├─ rules: 3
-   │  └─ targets: 7
-   ├─ tokens
-   │  ├─ estimate: 3,129
-   │  └─ context: 0.3%
-   └─ cost
-      └─ estimate: $0.001564700"
-`;
-
-exports[`review.rules-only-default.acceptance given: [case2] user excludes .behavior via negation pattern when: [t0] review with --diffs since-main --paths !.behavior/**, attempt 2 then: the metrics.expected block matches its snapshot (computed before the brain) 1`] = `
-"🔭 metrics.expected
-   ├─ files
-   │  ├─ rules: 3
-   │  └─ targets: 7
-   ├─ tokens
-   │  ├─ estimate: 3,129
-   │  └─ context: 0.3%
-   └─ cost
-      └─ estimate: $0.001564700"
-`;
-
-exports[`review.rules-only-default.acceptance given: [case2] user excludes .behavior via negation pattern when: [t0] review with --diffs since-main --paths !.behavior/**, attempt 3 then: the metrics.expected block matches its snapshot (computed before the brain) 1`] = `
 "🔭 metrics.expected
    ├─ files
    │  ├─ rules: 3

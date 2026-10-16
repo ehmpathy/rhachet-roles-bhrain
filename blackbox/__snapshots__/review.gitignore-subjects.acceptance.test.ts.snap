@@ -11,27 +11,3 @@ exports[`review.gitignore-subjects.acceptance given: [case1] a gitignored restri
    └─ cost
       └─ estimate: $0.001085300"
 `;
-
-exports[`review.gitignore-subjects.acceptance given: [case1] a gitignored restricted directory inside the scan scope when: [t0] review scans src/**/* with a mode-000 gitignored subdir, attempt 2 then: the metrics.expected block matches its snapshot (computed before the brain) 1`] = `
-"🔭 metrics.expected
-   ├─ files
-   │  ├─ rules: 1
-   │  └─ targets: 3
-   ├─ tokens
-   │  ├─ estimate: 2,171
-   │  └─ context: 0.2%
-   └─ cost
-      └─ estimate: $0.001085300"
-`;
-
-exports[`review.gitignore-subjects.acceptance given: [case1] a gitignored restricted directory inside the scan scope when: [t0] review scans src/**/* with a mode-000 gitignored subdir, attempt 3 then: the metrics.expected block matches its snapshot (computed before the brain) 1`] = `
-"🔭 metrics.expected
-   ├─ files
-   │  ├─ rules: 1
-   │  └─ targets: 3
-   ├─ tokens
-   │  ├─ estimate: 2,171
-   │  └─ context: 0.2%
-   └─ cost
-      └─ estimate: $0.001085300"
-`;

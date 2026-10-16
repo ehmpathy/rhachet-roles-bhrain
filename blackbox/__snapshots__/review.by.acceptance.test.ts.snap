@@ -9,43 +9,7 @@ exports[`review.by.acceptance given: [case-multirule] a single rubric that bundl
 "
 `;
 
-exports[`review.by.acceptance given: [case-multirule] a single rubric that bundles TWO rule files when: [t0] review.by runs the two-rule rubric on clean code, attempt 2 then: the two-rule pass tree is stable (full snapshot) 1`] = `
-"🦉 not even a vole
-
-🔍 review.by --role demo
-   └─ rubrics
-      └─ r1 demo-two-rules ✓
-"
-`;
-
-exports[`review.by.acceptance given: [case-multirule] a single rubric that bundles TWO rule files when: [t0] review.by runs the two-rule rubric on clean code, attempt 3 then: the two-rule pass tree is stable (full snapshot) 1`] = `
-"🦉 not even a vole
-
-🔍 review.by --role demo
-   └─ rubrics
-      └─ r1 demo-two-rules ✓
-"
-`;
-
 exports[`review.by.acceptance given: [case1] valid role, no --for, code satisfies every rubric when: [t0] review.by against clean code, attempt 1 then: the positive-path contract stdout is stable (snapshot) 1`] = `
-"🦉 not even a vole
-
-🔍 review.by --role demo
-   └─ rubrics
-      └─ r1 demo-arrow-only ✓
-"
-`;
-
-exports[`review.by.acceptance given: [case1] valid role, no --for, code satisfies every rubric when: [t0] review.by against clean code, attempt 2 then: the positive-path contract stdout is stable (snapshot) 1`] = `
-"🦉 not even a vole
-
-🔍 review.by --role demo
-   └─ rubrics
-      └─ r1 demo-arrow-only ✓
-"
-`;
-
-exports[`review.by.acceptance given: [case1] valid role, no --for, code satisfies every rubric when: [t0] review.by against clean code, attempt 3 then: the positive-path contract stdout is stable (snapshot) 1`] = `
 "🦉 not even a vole
 
 🔍 review.by --role demo
@@ -68,69 +32,7 @@ exports[`review.by.acceptance given: [case2] valid role, code violates a rubric 
 "
 `;
 
-exports[`review.by.acceptance given: [case2] valid role, code violates a rubric when: [t0] review.by against dirty code, attempt 2 then: the negative-path contract stdout is stable (snapshot) 1`] = `
-"🦉 needs your talons
-
-🔍 review.by --role demo
-   ├─ rubrics
-   │  └─ r1 demo-arrow-only ✗
-   │     ├─ 1 blocker 🔴
-   │     └─ review: .reviews/by=demo/rubric=demo-arrow-only.md
-   └─ summary
-      ├─ 1 blocker 🔴
-      └─ 0 nitpicks
-"
-`;
-
-exports[`review.by.acceptance given: [case2] valid role, code violates a rubric when: [t0] review.by against dirty code, attempt 3 then: the negative-path contract stdout is stable (snapshot) 1`] = `
-"🦉 needs your talons
-
-🔍 review.by --role demo
-   ├─ rubrics
-   │  └─ r1 demo-arrow-only ✗
-   │     ├─ 1 blocker 🔴
-   │     └─ review: .reviews/by=demo/rubric=demo-arrow-only.md
-   └─ summary
-      ├─ 1 blocker 🔴
-      └─ 0 nitpicks
-"
-`;
-
 exports[`review.by.acceptance given: [case3] --for a single valid slug, code is clean → DISINTERMEDIATE when: [t0] review.by --for runs, attempt 1 then: the disintermediated raw-review stdout is stable (full snapshot) 1`] = `
-"🦉 let's review
-   ├─ brain: openrouter/deepseek/flash
-   ├─ focus: push
-   └─ scope
-      └─ paths: src/clean.ts
-
-🦉 not even a vole
-
-🔍 review
-   ├─ review: .reviews/by=demo/rubric=demo-arrow-only.md
-   └─ summary
-      ├─ 0 blockers
-      ├─ 0 nitpicks
-      └─ all good 👍"
-`;
-
-exports[`review.by.acceptance given: [case3] --for a single valid slug, code is clean → DISINTERMEDIATE when: [t0] review.by --for runs, attempt 2 then: the disintermediated raw-review stdout is stable (full snapshot) 1`] = `
-"🦉 let's review
-   ├─ brain: openrouter/deepseek/flash
-   ├─ focus: push
-   └─ scope
-      └─ paths: src/clean.ts
-
-🦉 not even a vole
-
-🔍 review
-   ├─ review: .reviews/by=demo/rubric=demo-arrow-only.md
-   └─ summary
-      ├─ 0 blockers
-      ├─ 0 nitpicks
-      └─ all good 👍"
-`;
-
-exports[`review.by.acceptance given: [case3] --for a single valid slug, code is clean → DISINTERMEDIATE when: [t0] review.by --for runs, attempt 3 then: the disintermediated raw-review stdout is stable (full snapshot) 1`] = `
 "🦉 let's review
    ├─ brain: openrouter/deepseek/flash
    ├─ focus: push
@@ -163,38 +65,6 @@ exports[`review.by.acceptance given: [case3neg] --for a single valid slug, code 
       └─ 0 nitpicks"
 `;
 
-exports[`review.by.acceptance given: [case3neg] --for a single valid slug, code violates it → DISINTERMEDIATE when: [t0] review.by --for on dirty, attempt 2 then: the disintermediated findings-path stdout is stable (full snapshot) 1`] = `
-"🦉 let's review
-   ├─ brain: openrouter/deepseek/flash
-   ├─ focus: push
-   └─ scope
-      └─ paths: src/dirty.ts
-
-🦉 needs your talons
-
-🔍 review
-   ├─ review: .reviews/by=demo/rubric=demo-arrow-only.md
-   └─ summary
-      ├─ 1 blocker 🔴
-      └─ 0 nitpicks"
-`;
-
-exports[`review.by.acceptance given: [case3neg] --for a single valid slug, code violates it → DISINTERMEDIATE when: [t0] review.by --for on dirty, attempt 3 then: the disintermediated findings-path stdout is stable (full snapshot) 1`] = `
-"🦉 let's review
-   ├─ brain: openrouter/deepseek/flash
-   ├─ focus: push
-   └─ scope
-      └─ paths: src/dirty.ts
-
-🦉 needs your talons
-
-🔍 review
-   ├─ review: .reviews/by=demo/rubric=demo-arrow-only.md
-   └─ summary
-      ├─ 1 blocker 🔴
-      └─ 0 nitpicks"
-`;
-
 exports[`review.by.acceptance given: [case4] --for one slug on a multi-rubric role when: [t0] only the named rubric runs, attempt 1 then: the isolated raw review is stable (full snapshot) 1`] = `
 "🦉 let's review
    ├─ brain: openrouter/deepseek/flash
@@ -212,59 +82,7 @@ exports[`review.by.acceptance given: [case4] --for one slug on a multi-rubric ro
       └─ all good 👍"
 `;
 
-exports[`review.by.acceptance given: [case4] --for one slug on a multi-rubric role when: [t0] only the named rubric runs, attempt 2 then: the isolated raw review is stable (full snapshot) 1`] = `
-"🦉 let's review
-   ├─ brain: openrouter/deepseek/flash
-   ├─ focus: push
-   └─ scope
-      └─ paths: src/clean.ts
-
-🦉 not even a vole
-
-🔍 review
-   ├─ review: .reviews/by=demo/rubric=r-one.md
-   └─ summary
-      ├─ 0 blockers
-      ├─ 0 nitpicks
-      └─ all good 👍"
-`;
-
-exports[`review.by.acceptance given: [case4] --for one slug on a multi-rubric role when: [t0] only the named rubric runs, attempt 3 then: the isolated raw review is stable (full snapshot) 1`] = `
-"🦉 let's review
-   ├─ brain: openrouter/deepseek/flash
-   ├─ focus: push
-   └─ scope
-      └─ paths: src/clean.ts
-
-🦉 not even a vole
-
-🔍 review
-   ├─ review: .reviews/by=demo/rubric=r-one.md
-   └─ summary
-      ├─ 0 blockers
-      ├─ 0 nitpicks
-      └─ all good 👍"
-`;
-
 exports[`review.by.acceptance given: [case5] --paths + --brain forward to the review engine when: [t0] review.by forwards scope, attempt 1 then: the forwarded-scope tree is stable (full snapshot) 1`] = `
-"🦉 not even a vole
-
-🔍 review.by --role demo
-   └─ rubrics
-      └─ r1 demo-arrow-only ✓
-"
-`;
-
-exports[`review.by.acceptance given: [case5] --paths + --brain forward to the review engine when: [t0] review.by forwards scope, attempt 2 then: the forwarded-scope tree is stable (full snapshot) 1`] = `
-"🦉 not even a vole
-
-🔍 review.by --role demo
-   └─ rubrics
-      └─ r1 demo-arrow-only ✓
-"
-`;
-
-exports[`review.by.acceptance given: [case5] --paths + --brain forward to the review engine when: [t0] review.by forwards scope, attempt 3 then: the forwarded-scope tree is stable (full snapshot) 1`] = `
 "🦉 not even a vole
 
 🔍 review.by --role demo
@@ -296,24 +114,6 @@ exports[`review.by.acceptance given: [case13] rubrics.yml declares a vibe overri
 "
 `;
 
-exports[`review.by.acceptance given: [case13] rubrics.yml declares a vibe override when: [t0] review.by runs, attempt 2 then: the vibe-override contract stdout is stable (snapshot) 1`] = `
-"🐢 not even a vole
-
-🐚 review.by --role demo
-   └─ rubrics
-      └─ r1 demo-arrow-only ✓
-"
-`;
-
-exports[`review.by.acceptance given: [case13] rubrics.yml declares a vibe override when: [t0] review.by runs, attempt 3 then: the vibe-override contract stdout is stable (snapshot) 1`] = `
-"🐢 not even a vole
-
-🐚 review.by --role demo
-   └─ rubrics
-      └─ r1 demo-arrow-only ✓
-"
-`;
-
 exports[`review.by.acceptance given: [case14] a prefer-severity rubric never forces a blocker exit when: [t0] a prefer rubric runs, attempt 1 then: the prefer-rubric contract stdout is stable (masked snapshot) 1`] = `
 "[VIBE]
 
@@ -322,55 +122,7 @@ exports[`review.by.acceptance given: [case14] a prefer-severity rubric never for
    [RAIL]  └─ r1 demo-lowercase [MARK]"
 `;
 
-exports[`review.by.acceptance given: [case14] a prefer-severity rubric never forces a blocker exit when: [t0] a prefer rubric runs, attempt 2 then: the prefer-rubric contract stdout is stable (masked snapshot) 1`] = `
-"[VIBE]
-
-🔍 review.by --role demo
-   [RAIL]─ rubrics
-   [RAIL]  └─ r1 demo-lowercase [MARK]"
-`;
-
-exports[`review.by.acceptance given: [case14] a prefer-severity rubric never forces a blocker exit when: [t0] a prefer rubric runs, attempt 3 then: the prefer-rubric contract stdout is stable (masked snapshot) 1`] = `
-"[VIBE]
-
-🔍 review.by --role demo
-   [RAIL]─ rubrics
-   [RAIL]  └─ r1 demo-lowercase [MARK]"
-`;
-
 exports[`review.by.acceptance given: [case15] --for one slug, code violates it (the guard shape) when: [t0] single rubric with findings, attempt 1 then: the guard-shape captured stdout is stable (full snapshot) 1`] = `
-"🦉 let's review
-   ├─ brain: openrouter/deepseek/flash
-   ├─ focus: push
-   └─ scope
-      └─ paths: src/dirty.ts
-
-🦉 needs your talons
-
-🔍 review
-   ├─ review: .reviews/by=demo/rubric=demo-arrow-only.md
-   └─ summary
-      ├─ 1 blocker 🔴
-      └─ 0 nitpicks"
-`;
-
-exports[`review.by.acceptance given: [case15] --for one slug, code violates it (the guard shape) when: [t0] single rubric with findings, attempt 2 then: the guard-shape captured stdout is stable (full snapshot) 1`] = `
-"🦉 let's review
-   ├─ brain: openrouter/deepseek/flash
-   ├─ focus: push
-   └─ scope
-      └─ paths: src/dirty.ts
-
-🦉 needs your talons
-
-🔍 review
-   ├─ review: .reviews/by=demo/rubric=demo-arrow-only.md
-   └─ summary
-      ├─ 1 blocker 🔴
-      └─ 0 nitpicks"
-`;
-
-exports[`review.by.acceptance given: [case15] --for one slug, code violates it (the guard shape) when: [t0] single rubric with findings, attempt 3 then: the guard-shape captured stdout is stable (full snapshot) 1`] = `
 "🦉 let's review
    ├─ brain: openrouter/deepseek/flash
    ├─ focus: push
@@ -441,43 +193,7 @@ exports[`review.by.acceptance given: [case21] a mechanic role whose rubrics.yml 
 "
 `;
 
-exports[`review.by.acceptance given: [case21] a mechanic role whose rubrics.yml declares the turtle vibe when: [t0] review.by --role mechanic runs, attempt 2 then: the mechanic turtle-vibe contract stdout is stable (snapshot) 1`] = `
-"🐢 not even a vole
-
-🐚 review.by --role mechanic
-   └─ rubrics
-      └─ r1 mech-arrow-only ✓
-"
-`;
-
-exports[`review.by.acceptance given: [case21] a mechanic role whose rubrics.yml declares the turtle vibe when: [t0] review.by --role mechanic runs, attempt 3 then: the mechanic turtle-vibe contract stdout is stable (snapshot) 1`] = `
-"🐢 not even a vole
-
-🐚 review.by --role mechanic
-   └─ rubrics
-      └─ r1 mech-arrow-only ✓
-"
-`;
-
 exports[`review.by.acceptance given: [case22] a behaver role whose rubrics.yml declares the beaver vibe when: [t0] review.by --role behaver runs, attempt 1 then: the behaver beaver-vibe contract stdout is stable (snapshot) 1`] = `
-"🦫 not even a vole
-
-🪵 review.by --role behaver
-   └─ rubrics
-      └─ r1 behaver-arrow-only ✓
-"
-`;
-
-exports[`review.by.acceptance given: [case22] a behaver role whose rubrics.yml declares the beaver vibe when: [t0] review.by --role behaver runs, attempt 2 then: the behaver beaver-vibe contract stdout is stable (snapshot) 1`] = `
-"🦫 not even a vole
-
-🪵 review.by --role behaver
-   └─ rubrics
-      └─ r1 behaver-arrow-only ✓
-"
-`;
-
-exports[`review.by.acceptance given: [case22] a behaver role whose rubrics.yml declares the beaver vibe when: [t0] review.by --role behaver runs, attempt 3 then: the behaver beaver-vibe contract stdout is stable (snapshot) 1`] = `
 "🦫 not even a vole
 
 🪵 review.by --role behaver

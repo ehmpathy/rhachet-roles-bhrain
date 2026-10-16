@@ -13,61 +13,7 @@ exports[`review.conversation.acceptance given: [case1] a prior conversation thre
       └─ estimate: $0.001024400"
 `;
 
-exports[`review.conversation.acceptance given: [case1] a prior conversation threaded via --conversation when: [t0] review runs with --conversation, attempt 2 then: the metrics.expected block matches its snapshot (computed before the brain) 1`] = `
-"🔭 metrics.expected
-   ├─ files
-   │  ├─ rules: 1
-   │  ├─ conversation: 2
-   │  └─ targets: 1
-   ├─ tokens
-   │  ├─ estimate: 2,048
-   │  └─ context: 0.2%
-   └─ cost
-      └─ estimate: $0.001024400"
-`;
-
-exports[`review.conversation.acceptance given: [case1] a prior conversation threaded via --conversation when: [t0] review runs with --conversation, attempt 3 then: the metrics.expected block matches its snapshot (computed before the brain) 1`] = `
-"🔭 metrics.expected
-   ├─ files
-   │  ├─ rules: 1
-   │  ├─ conversation: 2
-   │  └─ targets: 1
-   ├─ tokens
-   │  ├─ estimate: 2,048
-   │  └─ context: 0.2%
-   └─ cost
-      └─ estimate: $0.001024400"
-`;
-
 exports[`review.conversation.acceptance given: [case2] --conversation and --refs supplied together when: [t0] review runs with both flags, attempt 1 then: the metrics.expected block matches its snapshot (computed before the brain) 1`] = `
-"🔭 metrics.expected
-   ├─ files
-   │  ├─ rules: 1
-   │  ├─ refs: 1
-   │  ├─ conversation: 2
-   │  └─ targets: 1
-   ├─ tokens
-   │  ├─ estimate: 2,222
-   │  └─ context: 0.2%
-   └─ cost
-      └─ estimate: $0.001110600"
-`;
-
-exports[`review.conversation.acceptance given: [case2] --conversation and --refs supplied together when: [t0] review runs with both flags, attempt 2 then: the metrics.expected block matches its snapshot (computed before the brain) 1`] = `
-"🔭 metrics.expected
-   ├─ files
-   │  ├─ rules: 1
-   │  ├─ refs: 1
-   │  ├─ conversation: 2
-   │  └─ targets: 1
-   ├─ tokens
-   │  ├─ estimate: 2,222
-   │  └─ context: 0.2%
-   └─ cost
-      └─ estimate: $0.001110600"
-`;
-
-exports[`review.conversation.acceptance given: [case2] --conversation and --refs supplied together when: [t0] review runs with both flags, attempt 3 then: the metrics.expected block matches its snapshot (computed before the brain) 1`] = `
 "🔭 metrics.expected
    ├─ files
    │  ├─ rules: 1

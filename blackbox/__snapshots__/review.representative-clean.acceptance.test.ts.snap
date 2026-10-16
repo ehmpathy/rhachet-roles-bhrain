@@ -11,27 +11,3 @@ exports[`review.representative-clean.acceptance given: [case1] mechanic codebase
    └─ cost
       └─ estimate: $0.001359700"
 `;
-
-exports[`review.representative-clean.acceptance given: [case1] mechanic codebase with clean code when: [t0] review skill on clean.ts with goal=representative, attempt 2 then: the metrics.expected block matches its snapshot (computed before the brain) 1`] = `
-"🔭 metrics.expected
-   ├─ files
-   │  ├─ rules: 3
-   │  └─ targets: 1
-   ├─ tokens
-   │  ├─ estimate: 2,719
-   │  └─ context: 0.3%
-   └─ cost
-      └─ estimate: $0.001359700"
-`;
-
-exports[`review.representative-clean.acceptance given: [case1] mechanic codebase with clean code when: [t0] review skill on clean.ts with goal=representative, attempt 3 then: the metrics.expected block matches its snapshot (computed before the brain) 1`] = `
-"🔭 metrics.expected
-   ├─ files
-   │  ├─ rules: 3
-   │  └─ targets: 1
-   ├─ tokens
-   │  ├─ estimate: 2,719
-   │  └─ context: 0.3%
-   └─ cost
-      └─ estimate: $0.001359700"
-`;
