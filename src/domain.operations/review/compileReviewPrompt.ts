@@ -1,46 +1,20 @@
-import { BadRequestError } from 'helpful-errors';
 import { asIsoPriceHuman, type IsoPriceHuman } from 'iso-price';
 import { type BrainSpec, calcBrainOutputCost } from 'rhachet/brains';
 
+import type { PromptComposition } from '@src/domain.objects/Reviewer/PromptComposition';
+
+import { asGoalInstructions } from './asGoalInstructions';
+import { asPercentHuman } from './asPercentHuman';
+import { asPromptHeadStatic } from './asPromptHeadStatic';
+import { asPromptTailVariable } from './asPromptTailVariable';
+import { asSuppliedFilesSection } from './asSuppliedFilesSection';
+import { asTargetSection } from './asTargetSection';
 import { estimateTokenCount } from './estimateTokenCount';
-
-/**
- * .what = renders one target in push focus: diff first, then full content
- * .why = leads the reviewer with what changed (the delta) and follows with the
- *        full file purely as context, so it focuses on changed lines and does
- *        not churn untouched code
- */
-const renderPushTarget = (input: {
-  target: {
-    path: string;
-    content: string | null;
-    diff?: string | null;
-    changeKind?: 'new' | 'edited' | 'deleted';
-  };
-}): string => {
-  const { target } = input;
-
-  // deleted file: emit a lone void-tag marker only — no removal diff, no content
-  if (target.changeKind === 'deleted') {
-    return `<target.file path="${target.path}" change="deleted" />`;
-  }
-
-  // full content block (context) — content may be null for safety; drop one
-  // final newline so the close tag sits flush on the next line (no blank gap)
-  const fileBody = (target.content ?? '').replace(/\n$/, '');
-  const fileBlock = `<target.file path="${target.path}">\n${fileBody}\n</target.file>`;
-
-  // no diff present (e.g. path-only unchanged file): content only
-  if (target.diff === undefined || target.diff === null) {
-    return fileBlock;
-  }
-
-  // new/edited file with a diff: diff first (focus), then content (context);
-  // drop the diff's last newline for the same flush-close-tag reason
-  const diffBody = target.diff.replace(/\n$/, '');
-  const diffBlock = `<target.diff path="${target.path}">\n${diffBody}\n</target.diff>`;
-  return `${diffBlock}\n\n${fileBlock}`;
-};
+import { getOneEstimatedOutputTokens } from './getOneEstimatedOutputTokens';
+import { getOnePercentOfWindow } from './getOnePercentOfWindow';
+import { getOnePercentRounded } from './getOnePercentRounded';
+import { getOnePromptComposition } from './getOnePromptComposition';
+import { ReviewContextOverflowError } from './ReviewContextOverflowError';
 
 /**
  * .what = compiles the review prompt from rules and target files
@@ -56,6 +30,21 @@ export const compileReviewPrompt = (input: {
     diff?: string | null;
     changeKind?: 'new' | 'edited' | 'deleted';
   }>;
+  /**
+   * the targets a partition run carries as context only — another partition grades them.
+   * absent on a whole run
+   */
+  targetsAsContext?: string[];
+  /**
+   * the targets every partition of a split carries — they render ahead of this run's own,
+   * so the shared prefix the prime wrote reaches past them. absent on a whole run
+   */
+  targetsShared?: string[];
+  /**
+   * the other partitions of a split, by slug and declared globs — where the rest of the lane
+   * sits. absent on a whole run
+   */
+  partitionPeers?: Array<{ name: string; globs: string[] }>;
   focus: 'pull' | 'push';
   goal: 'exhaustive' | 'representative';
   contextWindowSize: number;
@@ -63,202 +52,121 @@ export const compileReviewPrompt = (input: {
   diffRange?: string;
 }): {
   prompt: string;
+  /**
+   * the cacheable head — `prompt` is exactly `promptHeadStatic + promptTailVariable`.
+   *
+   * exposed so the caller can hand it to the brain as the system prompt — the
+   * slot a provider pins a cache replica to, so a shared prefix that lives only
+   * in the user message can earn no cache hit
+   * (rule.require.name-the-shared-prefix-as-the-cache-anchor).
+   */
+  promptHeadStatic: string;
+  /** the round-variable tail — the target, then the conversation */
+  promptTailVariable: string;
+  /**
+   * where this prompt's chars actually went, by section.
+   *
+   * a hit rate says how much cached, never what the uncacheable remainder
+   * was made of. persisted per run so a corpus can be asked where the next
+   * lever sits (rules? diffs? file context?).
+   */
+  composition: PromptComposition;
   tokenEstimate: number;
   contextWindowPercent: number;
   costEstimate: IsoPriceHuman;
   warnings: string[];
 } => {
   const contextWindow = input.contextWindowSize;
-  const warnings: string[] = [];
 
-  // build rules section (always include content for rules)
-  const rulesSection = input.rules
-    .map((rule) => `### ${rule.path}\n\n${rule.content}`)
-    .join('\n\n---\n\n');
+  // the rubric. it coalesces to `''` where the three peers below stay null: the
+  // `<rules>` tag is emitted unconditionally, because `asPromptSectionChars` reads
+  // its presence as the witness that a prompt is a review prompt
+  const rulesSection = asSuppliedFilesSection({ files: input.rules }) ?? '';
 
-  // build refs section (reference documents for context)
-  const refsSection =
-    input.refs.length > 0
-      ? input.refs
-          .map((ref) => `### ${ref.path}\n\n${ref.content}`)
-          .join('\n\n---\n\n')
-      : null;
+  // the reference documents the reviewer judges WITH
+  const refsSection = asSuppliedFilesSection({ files: input.refs });
 
-  // build conversation section (the prior peer-review dialogue for context)
+  // the prior peer-review dialogue.
   // .why = distinct from refs so the reviewer knows it reads a back-and-forth of
   //        its own prior critiques (.given) and the driver's responses (.taken)
   const conversation = input.conversation ?? [];
-  const conversationSection =
-    conversation.length > 0
-      ? conversation
-          .map((file) => `### ${file.path}\n\n${file.content}`)
-          .join('\n\n---\n\n')
-      : null;
+  const conversationSection = asSuppliedFilesSection({ files: conversation });
 
-  // build target section based on mode
-  const targetSection = (() => {
-    if (input.focus === 'pull') {
-      // pull focus: paths only, instruct brain to open files
-      // .why = the brain has tool use — it reads files and runs `git diff`
-      //        itself, so we inject neither diff nor content, just the range
-      const pathList = input.targets.map((t) => `- ${t.path}`).join('\n');
-      const rangeNote = input.diffRange
-        ? `\n\nthe diff range for "this pr" is \`${input.diffRange}\` — run \`git diff\` against that base to see what changed.`
-        : '';
-      return `the following files are in scope for review. please open and read them as needed:\n\n${pathList}${rangeNote}`;
-    }
-
-    // push focus: inject diff (what changed) then content (context) per target
-    return input.targets
-      .map((target) => renderPushTarget({ target }))
-      .join('\n\n---\n\n');
-  })();
+  // the target block — a path list in pull focus, diff + content in push
+  const targetSection = asTargetSection({
+    targets: input.targets,
+    focus: input.focus,
+    diffRange: input.diffRange,
+    shared: input.targetsShared,
+  });
 
   // build goal instructions
-  const goalInstructions = (() => {
-    if (input.goal === 'exhaustive') {
-      return `## goal: exhaustive
+  const goalInstructions = asGoalInstructions({ goal: input.goal });
 
-report all the issues found, exhaustively. do not limit the number of issues. every violation of every rule should be documented. if there are many similar issues, collect their locations under one violation. be thorough and comprehensive.
+  // the static head — every block byte-identical across the rounds of one lane
+  const promptHeadStatic = asPromptHeadStatic({
+    goalInstructions,
+    rulesSection,
+    refsSection,
+  });
 
-FORBIDDEN: do NOT report a sample of a class. if a rule is violated in 9 places, report all 9 locations — never 3 of them. enumerate every instance you can find.
+  // the variable tail — the target, then the conversation
+  const promptTailVariable = asPromptTailVariable({
+    targetSection,
+    targetsAsContext: input.targetsAsContext,
+    partitionPeers: input.partitionPeers,
+    conversationSection,
+  });
 
-why this matters, two reasons:
+  const prompt = `${promptHeadStatic}${promptTailVariable}`;
 
-1. THE FULL PICTURE MAKES BETTER DECISIONS. the driver architects the repair from what you report. 3 of 9 reads as three local edits; all 9 reveals the CLASS — and a driver who sees the class fixes the cause, generalizes the repair, and does not leave the other 6 behind. a sample hides the shape of the defect.
-
-2. ONE ROUND IS CHEAPER AND FASTER. each review round costs the driver budget. a sample sends them to repair 3, re-arrive, and meet the same class again — three rounds to converge where one would do. report the corpus once and it converges once.
-
-a partial report is not a smaller review; it is a review that costs more and teaches less.`;
-    }
-    return `## goal: representative
-
-report the most important or representative issues. limit yourself to up to 10 defects. for each defect, list a sample of the locations where the violation occurs. prioritize impact via severity and coverage over completeness.`;
-  })();
-
-  // build full prompt
-  const prompt = `# review task
-
-you are a reviewer. apply the rules below to the target files.
-
-## CRITICAL INSTRUCTIONS — READ CAREFULLY
-
-1. ONLY review content in the <target> section
-2. NEVER flag anything from the <rules> section — rules contain examples of bad patterns for illustration only
-3. if you see "bad: X" or "good: Y" in a rule, those are examples to learn from, NOT content to flag
-4. the "locations" array must ONLY contain paths from <target>, never from <rules>
-5. if you cannot find the violation in <target>, do not report it${refsSection ? '\n6. <refs> section contains reference documents for context — use them to inform your review but do not flag content from refs' : ''}${conversationSection ? "\n7. <conversation> section is the prior peer-review dialogue — your earlier critiques (.given, with detailed .report) and the driver's responses (.taken). for each prior point the driver answers with a [REPAIR] (a claimed code fix) or a [REFUTE] (a reasoned argument the critique does not hold). weigh each on its merits: (a) [REPAIR] present in <target> → drop the point; (b) [REPAIR] absent from <target> → re-raise it; (c) [REFUTE] that is sound (e.g. extant code out of scope, a false positive, a deliberate tradeoff) → concede and drop it, the driver need not change code to be right; (d) [REFUTE] that is unsound → hold the point and say why the argument fails. the driver is a peer, not a subordinate — a well-argued [REFUTE] is a valid resolution. do NOT flag content from conversation" : ''}
-
-## how to use the diff (FOCUS ON THE DELTA)
-
-each changed target may carry a \`<target.diff path="...">\` block (what changed in this pr) and a \`<target.file path="...">\` block (the full current file, for context). when a diff is present:
-
-- focus your review on the diff — the lines this pr added or changed. do NOT churn unrelated untouched code; fix-forward. BUT DO flag untouched code that this change breaks.
-- line numbers for "locations" come from the diff hunk headers (\`@@ -X,Y +A,B @@\`) — the \`+A\` side is the authoritative anchor for changed lines. use those numbers rather than count content lines by hand.
-- copy "snippet.code" from the clean \`<target.file>\` content, NEVER from the diff's \`+\`/\`-\` prefixed lines.
-- diff \`-\` lines are REMOVED code — this pr deletes them, they no longer exist. NEVER flag a \`-\` line. only \`+\` lines and surrounding context are code that exists and may be flagged.
-- a file shown as \`<target.file path="..." change="deleted" />\` is gone — do not review or flag it.
-
-${goalInstructions}
-
-## rules (FOR REFERENCE ONLY — DO NOT FLAG CONTENT FROM THIS SECTION)
-
-<rules>
-${rulesSection}
-</rules>
-${
-  refsSection
-    ? `
-## refs (REFERENCE DOCUMENTS — USE FOR CONTEXT, DO NOT FLAG)
-
-<refs>
-${refsSection}
-</refs>
-`
-    : ''
-}${
-  conversationSection
-    ? `
-## prior conversation (YOUR PAST CRITIQUES + THE DRIVER'S [REPAIR]/[REFUTE] RESPONSES — WEIGH BOTH ON MERIT, DO NOT FLAG)
-
-<conversation>
-${conversationSection}
-</conversation>
-`
-    : ''
-}
-## target (REVIEW THIS SECTION ONLY)
-
-<target>
-${targetSection}
-</target>
-
-## output format
-
-IMPORTANT: output your review as text directly. do not use any tools to write files. your final response must be the JSON object below, printed as plain text.
-
-note: the "locations" array must contain ONLY paths from the <target> section. never include rule file paths in locations.
-
-\`\`\`json
-{
-  "done": true,
-  "blockers": [
-    {
-      "rule": "path/to/rule.md (which rule was violated)",
-      "title": "short title for the issue",
-      "description": "detailed multiline explanation of the issue.\\ninclude context about why this violates the rule.\\nbe specific about what needs to change.",
-      "locations": ["path/to/target-file.ts:42 (only target files, never rule files)"],
-      "snippet": {
-        "lang": "ts",
-        "code": "// the exact code from the target file that violates the rule\\nconst x = badPattern();"
-      }
-    }
-  ],
-  "nitpicks": [
-    {
-      "rule": "path/to/rule.md (which rule was violated)",
-      "title": "short title for the issue",
-      "description": "detailed multiline explanation of the issue.\\ninclude context about why this violates the rule.\\nbe specific about what needs to change.",
-      "locations": ["path/to/target-file.ts:42 (only target files, never rule files)"],
-      "snippet": {
-        "lang": "ts",
-        "code": "// the exact code from the target file that violates the rule\\nconst x = badPattern();"
-      }
-    }
-  ]
-}
-\`\`\`
-
-IMPORTANT: every violation MUST include a "snippet" with the actual code from the target file that violates the rule. copy the exact code so the reader can identify the violation.
-
-if no issues found, output: \`{"done": true, "blockers": [], "nitpicks": []}\`
-`;
+  // measure what the prompt is made of BEFORE the gate, so a refusal can say which
+  // named input overran the window — not only that one did
+  const composition = getOnePromptComposition({
+    focus: input.focus,
+    rules: input.rules,
+    refs: input.refs,
+    conversation: input.conversation ?? [],
+    targets: input.targets,
+    targetsAsContext: input.targetsAsContext,
+    promptHeadStatic,
+    promptTailVariable,
+  });
 
   // estimate tokens
   const tokenEstimate = estimateTokenCount({ content: prompt });
-  const contextWindowPercent = (tokenEstimate / contextWindow) * 100;
+  const contextWindowPercent = getOnePercentOfWindow({
+    tokens: tokenEstimate,
+    window: contextWindow,
+  });
 
   // check thresholds (only in push mode - pull mode is inherently lighter)
   if (input.focus === 'push') {
     // failfast if >75%
     if (contextWindowPercent > 75) {
-      throw new BadRequestError(
-        `prompt exceeds 75% of context window (${contextWindowPercent.toFixed(1)}% of ${contextWindow} tokens). ` +
-          `reduce scope or use --focus pull to avoid quality degradation.`,
-        { tokenEstimate, contextWindowPercent, contextWindow },
-      );
-    }
-
-    // warn if >60%
-    if (contextWindowPercent > 60) {
-      warnings.push(
-        `potential quality degradation: prompt uses ${contextWindowPercent.toFixed(1)}% of context window`,
+      throw new ReviewContextOverflowError(
+        {
+          percentOfWindow: contextWindowPercent,
+          windowTokens: contextWindow,
+          promptTokens: tokenEstimate,
+        },
+        composition,
       );
     }
   }
 
-  // estimate cost via brain spec rates (assume output is ~10% of input for reviews)
-  const estimatedOutputTokens = Math.round(tokenEstimate * 0.1);
+  // warn if >60% (only in push mode - pull mode is inherently lighter)
+  const warnings: string[] =
+    input.focus === 'push' && contextWindowPercent > 60
+      ? [
+          `potential quality degradation: prompt uses ${asPercentHuman({ of: contextWindowPercent })} of context window`,
+        ]
+      : [];
+
+  // estimate cost via brain spec rates
+  const estimatedOutputTokens = getOneEstimatedOutputTokens({
+    tokens: tokenEstimate,
+  });
   const costResult = calcBrainOutputCost({
     for: {
       tokens: {
@@ -273,8 +181,13 @@ if no issues found, output: \`{"done": true, "blockers": [], "nitpicks": []}\`
 
   return {
     prompt,
+    promptHeadStatic,
+    promptTailVariable,
+    composition,
     tokenEstimate,
-    contextWindowPercent: Math.round(contextWindowPercent * 10) / 10,
+    contextWindowPercent: getOnePercentRounded({
+      percent: contextWindowPercent,
+    }),
     costEstimate,
     warnings,
   };

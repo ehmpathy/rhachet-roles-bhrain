@@ -10,6 +10,7 @@ import { createDraftDirectory } from '@src/domain.operations/reflect/createDraft
 import { computeMetricsExpected } from '@src/domain.operations/reflect/metrics/computeMetricsExpected';
 import { computeMetricsRealized } from '@src/domain.operations/reflect/metrics/computeMetricsRealized';
 import { writeLogArtifact } from '@src/domain.operations/reflect/metrics/writeLogArtifact';
+import { asReflectRuleFileName } from '@src/domain.operations/reflect/step1/asReflectRuleFileName';
 import { compileCitationsMarkdown } from '@src/domain.operations/reflect/step1/compileCitationsMarkdown';
 import { compileReflectStep1Prompt } from '@src/domain.operations/reflect/step1/compileReflectStep1Prompt';
 import { compileReflectStep2Prompt } from '@src/domain.operations/reflect/step2/compileReflectStep2Prompt';
@@ -17,6 +18,7 @@ import { executeManifestOperations } from '@src/domain.operations/reflect/step2/
 import { parseManifestOperations } from '@src/domain.operations/reflect/step2/parseManifestOperations';
 import { validateSourceDirectory } from '@src/domain.operations/reflect/validateSourceDirectory';
 import { validateTargetDirectory } from '@src/domain.operations/reflect/validateTargetDirectory';
+import { withSpinner } from '@src/domain.operations/withSpinner';
 
 /**
  * .what = zod schema for step 1 response
@@ -88,54 +90,6 @@ export type StepReflectResult = {
     omitted: number;
   };
   metrics: ReviewerReflectMetrics;
-};
-
-/**
- * .what = simple spinner for CLI feedback
- * .why = shows progress for long operations
- * .note = suppresses output when RHACHET_GUARD_CONTEXT is set (guard has its own spinner)
- */
-const withSpinner = async <T>(input: {
-  message: string;
-  operation: () => Promise<T>;
-}): Promise<T> => {
-  // suppress spinner when invoked from guard context
-  // .why = guard already displays its own progress spinner
-  if (process.env.RHACHET_GUARD_CONTEXT === '1') {
-    return input.operation();
-  }
-
-  const frames = ['⠋', '⠙', '⠹', '⠸', '⠼', '⠴', '⠦', '⠧', '⠇', '⠏'];
-  const startTime = Date.now();
-  let i = 0;
-
-  // print title once
-  console.log(input.message);
-
-  // render only the elapsed time branch line
-  const render = (frame: string) => {
-    const elapsed = Math.floor((Date.now() - startTime) / 1000);
-    process.stdout.write(`\r   └─ elapsed: ${elapsed}s ${frame}  `);
-  };
-
-  render(frames[0]!);
-  const interval = setInterval(() => {
-    i = (i + 1) % frames.length;
-    render(frames[i]!);
-  }, 100);
-
-  try {
-    const result = await input.operation();
-    clearInterval(interval);
-    const elapsed = Math.floor((Date.now() - startTime) / 1000);
-    process.stdout.write(`\r   └─ elapsed: ${elapsed}s ✓\n\n`);
-    return result;
-  } catch (error) {
-    clearInterval(interval);
-    const elapsed = Math.floor((Date.now() - startTime) / 1000);
-    process.stdout.write(`\r   └─ elapsed: ${elapsed}s ✗\n`);
-    throw error;
-  }
 };
 
 /**
@@ -229,7 +183,7 @@ export const stepReflect = async (
    ├─ files
    │  └─ feedback: ${feedbackFiles.length}
    ├─ tokens
-   │  ├─ estimate: ${expected.tokens.toLocaleString()}
+   │  ├─ estimate: ${expected.tokens.toLocaleString('en-US')}
    │  └─ context: ${expected.contextWindowPercent}%
    └─ cost
       └─ estimate: $${expected.cost.toFixed(4)}
@@ -249,10 +203,10 @@ export const stepReflect = async (
       });
       const response: Step1Response = brainOutput.output;
 
-      // write each rule file to pureDir
+      // write each rule file to pureDir, under a name that holds the `rule.` prefix
       for (const rule of response.rules) {
         await fs.writeFile(
-          path.join(pureDir, rule.name),
+          path.join(pureDir, asReflectRuleFileName({ name: rule.name })),
           rule.content,
           'utf-8',
         );
@@ -345,9 +299,9 @@ export const stepReflect = async (
     `
 ✨ metrics.realized
    ├─ tokens
-   │  ├─ input: ${realized.total.tokens.input.toLocaleString()}
-   │  ├─ output: ${realized.total.tokens.output.toLocaleString()}
-   │  └─ total: ${totalTokens.toLocaleString()}
+   │  ├─ input: ${realized.total.tokens.input.toLocaleString('en-US')}
+   │  ├─ output: ${realized.total.tokens.output.toLocaleString('en-US')}
+   │  └─ total: ${totalTokens.toLocaleString('en-US')}
    ├─ cost
    │  └─ total: ${realized.total.cost.total}
    └─ time

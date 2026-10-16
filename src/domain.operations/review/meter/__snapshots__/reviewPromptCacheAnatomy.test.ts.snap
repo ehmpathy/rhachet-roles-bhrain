@@ -1,0 +1,70 @@
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
+
+exports[`reviewPromptCacheAnatomy given: [case1] the same reviewer, across consecutive rounds of one stone when: [t2] the anatomy is tabulated then: the measured offsets are snapped, so a claim can cite them 1`] = `
+{
+  "prefixSurvival": {
+    "round1 -> round2": {
+      "sharedBytes": 13544,
+      "sharedShare": "79.1%",
+    },
+    "round2 -> round3": {
+      "sharedBytes": 13544,
+      "sharedShare": "70.5%",
+    },
+  },
+  "sectionOffsets": {
+    "conversation": 14642,
+    "outputFormat": 3956,
+    "rules": 5627,
+    "target": 13364,
+    "totalBytes": 17117,
+  },
+}
+`;
+
+exports[`reviewPromptCacheAnatomy given: [case5] a realistic corpus, where few of many targets change per round when: [t2] the two orders are tabulated side by side then: the measured difference is snapped, so a claim can cite it 1`] = `
+{
+  "corpus": {
+    "repairedPerRound": 1,
+    "targets": 12,
+    "totalBytes": 30659,
+  },
+  "prior: conversation then target": {
+    "sharedBytes": 15637,
+    "sharedShare": "51.0%",
+  },
+  "shipped: target then conversation": {
+    "sharedBytes": 23624,
+    "sharedShare": "77.1%",
+  },
+}
+`;
+
+exports[`reviewPromptCacheAnatomy given: [case6] the WITHIN-target layout — every body first, or one body per diff when: [t2] the diff range base moves, as \`since-main\` does then: the margin is snapped, so a claim can cite it 1`] = `
+{
+  "corpus": {
+    "repairedPerRound": 1,
+    "targets": 12,
+  },
+  "scenario A — diff base HELD (the interleave wins)": {
+    "prior: one diff per body": {
+      "sharedBytes": 25217,
+      "sharedShare": "82.2%",
+    },
+    "shipped: bodies then diffs": {
+      "sharedBytes": 23624,
+      "sharedShare": "76.8%",
+    },
+  },
+  "scenario B — diff base MOVED (the shipped order wins)": {
+    "prior: one diff per body": {
+      "sharedBytes": 13529,
+      "sharedShare": "44.1%",
+    },
+    "shipped: bodies then diffs": {
+      "sharedBytes": 23624,
+      "sharedShare": "76.8%",
+    },
+  },
+}
+`;

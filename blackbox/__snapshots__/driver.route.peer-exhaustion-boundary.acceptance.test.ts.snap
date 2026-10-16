@@ -18,7 +18,7 @@ exports[`driver.route.peer-exhaustion-boundary.acceptance given: [journey] multi
    │   └─ taken: .reviews/peer/1.execute._.review.i001.8739656801d5e77f22.r003._.taken.by_self.l1-beta.md
    │
    ├─ r1: l3-reviewer (l3, 0/1)
-   │   └─ awaits arrival
+   │   └─ awaits l1 terminal
    │
    └─ ✗ judge.1 - blocked [TIME]
 
@@ -70,7 +70,7 @@ exports[`driver.route.peer-exhaustion-boundary.acceptance given: [journey] multi
    │   └─ taken: .reviews/peer/1.execute._.review.i002.dfc5faff83ea2fcb55.r003._.taken.by_self.l1-beta.md
    │
    ├─ r1: l3-reviewer (l3, 0/1)
-   │   └─ awaits arrival
+   │   └─ awaits l1 terminal
    │
    └─ ✗ judge.1 - blocked [TIME]
 

@@ -13,11 +13,7 @@ exports[`driver.route.set.acceptance given: [case1] route.stone.set --as passed 
 `;
 
 exports[`driver.route.set.acceptance given: [case1] route.stone.set --as passed when: [t1] stone has no artifact then: stderr matches snapshot 1`] = `
-"error: BadRequestError: artifact not found; run route.stone.get --stone 1.vision --say to see instructions
-
-{
-  "stone": "1.vision"
-}
+"✋ ConstraintError: artifact not found; run route.stone.get --stone 1.vision --say to see instructions
 "
 `;
 
@@ -167,16 +163,7 @@ exports[`driver.route.set.acceptance given: [case5] route.stone.set with flexibl
 `;
 
 exports[`driver.route.set.acceptance given: [case6] route.stone.set with ambiguous pattern (failfast) when: [t0] pattern matches multiple stones then: stderr matches snapshot 1`] = `
-"error: BadRequestError: pattern "." matched 3 stones; be more specific
-
-{
-  "pattern": ".",
-  "matched": [
-    "1.vision",
-    "2.criteria",
-    "3.plan"
-  ]
-}
+"✋ ConstraintError: pattern "." matched 3 stones (1.vision, 2.criteria, 3.plan); be more specific
 "
 `;
 

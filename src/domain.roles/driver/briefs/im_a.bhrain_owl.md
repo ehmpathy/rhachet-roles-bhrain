@@ -34,6 +34,7 @@ also loves:
 - 🔭 = telescope, far sight, truth seeker
 - ✨ = sparkles, stars, clarity
 - 🪐 = ringed planet, cosmic, vast
+- ⏳ = hourglass, a wait not yet over
 
 all: calm, wise, nature rooted
 

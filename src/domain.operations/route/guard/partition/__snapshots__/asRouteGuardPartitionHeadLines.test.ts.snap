@@ -1,0 +1,7 @@
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
+
+exports[`asRouteGuardPartitionHeadLines given: [case2] one peer scope, planned, with a note when: [t0] the head is rendered then: the lines match the snapshot 1`] = `
+"🗿 route.guard.partition --mode plan
+   ├─ route = .behavior/v2026_01_01.demo
+   ├─ peer = r2 on 3.blueprint (overrides @all)"
+`;

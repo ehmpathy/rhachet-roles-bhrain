@@ -255,38 +255,6 @@ describe('parseStoneGuard', () => {
     },
   );
 
-  given(
-    '[case-provenance-tolerated] a guard that declares a top-level provenance key',
-    () => {
-      // characterization (i012.N5): parseSimpleYaml already skips unrecognized
-      // top-level keys, so a `provenance:` block needs no tolerate-branch. this
-      // locks that a provenance-tagged guard parses cleanly today. pure unit —
-      // the { content } variant needs no disk (no @path refs to expand).
-      const content = `provenance:
-  uri: node_modules/rhachet-roles-bhuild/dist/x/5.1.execution.guard
-artifacts:
-  - $route/5.1.execution*.md
-judges:
-  - rhx judge --mechanism reviewed?
-`;
-
-      when('[t0] guard is parsed via the { content } variant', () => {
-        then(
-          'parses WITHOUT a throw (unknown top-level key is skipped)',
-          async () => {
-            const result = await parseStoneGuard({
-              content,
-              path: '/synthetic/5.1.execution.guard',
-            });
-            // the known keys still parse; the provenance key is simply ignored here
-            expect(result.artifacts).toContain('$route/5.1.execution*.md');
-            expect(result.judges).toHaveLength(1);
-          },
-        );
-      });
-    },
-  );
-
   given('[case9] a guard that declares a concurrency group', () => {
     const content = `artifacts:
   - $route/1.vision*.md
@@ -1066,6 +1034,68 @@ reviews:
             'did you complete all that was requested?',
           );
         });
+      });
+    },
+  );
+
+  given('[case22] a structured peer review that declares NO level', () => {
+    // .why = `level` is required on the parsed `RouteStoneGuardReviewPeer`. the default lives
+    //        here, at parse (rule.require.review-standardization-at-parse), and this clamp holds
+    //        it. the level index (`asPeerReviewLevelBySlug` [case3]) asserts the same guarantee
+    //        and fails loud on an object that bypassed this parser
+    const content = `artifacts:
+  - $route/1.vision*.md
+reviews:
+  peer:
+    - slug: levelless-checker
+      run: rhx review --rules a.md
+      budget: 5
+`;
+
+    when('[t0] the guard is parsed', () => {
+      then(
+        'the reviewer lands at level 1, never at an absent level',
+        async () => {
+          const result = await parseStoneGuard({
+            content,
+            path: '/synthetic/1.vision.guard',
+          });
+          const peers = getGuardPeerReviews(result);
+          expect(peers).toHaveLength(1);
+          expect(peers[0]?.level).toEqual(1);
+        },
+      );
+    });
+  });
+
+  given(
+    '[case-provenance-tolerated] a guard that declares a top-level provenance key',
+    () => {
+      // characterization (i012.N5): parseSimpleYaml already skips unrecognized
+      // top-level keys, so a `provenance:` block needs no tolerate-branch. this
+      // locks that a provenance-tagged guard parses cleanly today. pure unit —
+      // the { content } variant needs no disk (no @path refs to expand).
+      const content = `provenance:
+  uri: node_modules/rhachet-roles-bhuild/dist/x/5.1.execution.guard
+artifacts:
+  - $route/5.1.execution*.md
+judges:
+  - rhx judge --mechanism reviewed?
+`;
+
+      when('[t0] guard is parsed via the { content } variant', () => {
+        then(
+          'parses WITHOUT a throw (unknown top-level key is skipped)',
+          async () => {
+            const result = await parseStoneGuard({
+              content,
+              path: '/synthetic/5.1.execution.guard',
+            });
+            // the known keys still parse; the provenance key is simply ignored here
+            expect(result.artifacts).toContain('$route/5.1.execution*.md');
+            expect(result.judges).toHaveLength(1);
+          },
+        );
       });
     },
   );

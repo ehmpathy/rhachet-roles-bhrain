@@ -12,7 +12,7 @@ import { isReviewPeerVerdictExhausted } from '../review/peer/meter/isReviewPeerV
  *        kept pure (decision from already-loaded data) so its branch matrix is unit-testable without
  *        the filesystem — the `getStoneGuardExhaustedApprovalBypass` wrapper does the fs reads, this
  *        core does the decision (the same pure/impure split as
- *        computeStoneGuardOverruleTarget / getStoneGuardOverruleTarget).
+ *        computeStoneGuardOverruleTarget / getOneStoneGuardOverruleTarget).
  */
 export const computeStoneGuardExhaustedApprovalBypass = (input: {
   reviewers: Array<{ level: number; verdict: ReviewPeerVerdict }>;

@@ -1,4 +1,4 @@
-import { UnexpectedCodePathError } from 'helpful-errors';
+import { MalfunctionError } from 'helpful-errors';
 
 import type { RouteStoneGuardReviewPeer } from '@src/domain.objects/Driver/RouteStoneGuard';
 
@@ -24,14 +24,12 @@ import { asSanitizedPeerReviewSlug } from './asSanitizedPeerReviewSlug';
  *         reasons: the sanitize is a decision a reader must not re-make by hand, and the orchestrator
  *         that held it does fs i/o — so inline, this rule was reachable only at integration grain.
  *
- * 🟡 `level` reads OPTIONAL on the type because that type doubles as the CONFIG declaration, where a
- *    guard author may omit it. it is never optional on a PARSED review: parseStoneGuard defaults it
- *    at every emit site (`:157`, `:273`, `:416`), which is what
- *    `rule.require.review-standardization-at-parse` demands.
+ * .note = `level` is required on the parsed reviewer: parseStoneGuard sets 1 where the guard
+ *         declares none (rule.require.review-standardization-at-parse), so no default lives here
  *
- * ⇒ so this asserts that guarantee rather than re-defaults it. a `?? 1` here would read as a second
- *   opinion on a settled question, and would silently paper over a parse regression — the exact
- *   downstream optional-field check that rule grades a blocker.
+ * ⇒ but the value is born at a runtime boundary (guard yaml), so the type alone cannot hold it.
+ *   this asserts the parse guarantee rather than re-defaults it: an object that bypassed the
+ *   parser fails loud here, never as a silent `NaN` level in the unlock gate or the status line
  */
 export const asPeerReviewLevelBySlug = (input: {
   peerReviews: RouteStoneGuardReviewPeer[];
@@ -39,10 +37,11 @@ export const asPeerReviewLevelBySlug = (input: {
   new Map(
     input.peerReviews.map((review) => [
       asSanitizedPeerReviewSlug({ slug: review.slug }),
-      review.level ??
-        UnexpectedCodePathError.throw(
-          'peer review reached the level index with no level. parseStoneGuard must default it',
-          { slug: review.slug },
-        ),
+      Number.isInteger(review.level)
+        ? review.level
+        : MalfunctionError.throw(
+            'peer review reached the level index with no integer level. parseStoneGuard must default it',
+            { slug: review.slug, level: review.level },
+          ),
     ]),
   );

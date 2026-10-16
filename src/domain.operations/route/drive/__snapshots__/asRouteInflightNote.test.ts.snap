@@ -1,0 +1,3 @@
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
+
+exports[`asRouteInflightNote given: [case2] a stale watermark when: [t0] the note is rendered then: it names the watermark, its age, and the bound 1`] = `"⏳ repairs in flight for 5.1.execution since 09:05 — three delegates repair blockers 1-4 (stale: 95m old, past the 30m bound — move the stone, or re-mark --as inflight)"`;

@@ -59,7 +59,7 @@ export const asRouteStoneDisposition = (input: {
 
   // any other status → the route self-drives:
   // - passed / approved / rewound / overruled / none
-  // - arrived / promised / absorbed: forward-motion review markers (the machine's own
+  // - arrived / promised / absorbed / inflight: forward-motion review markers (the machine's own
   //   review work), which supersede a prior halt (rule.require.forward-motion-clears-blocker)
   return { of: 'push' };
 };
@@ -92,5 +92,13 @@ const asBlockedDisposition = (input: {
   //    op's axis is "does a HUMAN need to act?", and a stance is the driver's own
   //    lever: `--as disputed` and `--as conceded` are both theirs to run. so the
   //    route self-drives to the stance halt and the driver clears it.
+  //
+  // 🔴 'review.peer.malpartitioned' belongs here BY DECISION too: the repair is one
+  //    `rhx route.guard.partition` command the refusal prints, and that lever is the
+  //    driver's own (rule.always.spend-own-levers-before-escalation).
+  //
+  // 🔴 'review.peer.constraint' belongs here BY DECISION too: a refusal prints its lever —
+  //    a guard edit or a partition, both the driver's own. a grant only a human can make is
+  //    raised by `--as blocked` with an articulation, which writes the wall this op halts on
   return { of: 'push' };
 };

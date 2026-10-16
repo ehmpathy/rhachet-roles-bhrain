@@ -41,7 +41,7 @@ exports[`driver.route.overrule-legacy.acceptance given: [case2] a peer+judge sto
    │   └─ taken: .reviews/peer/1.feature._.review.i001.cf6439cc5e3e49b582.r001._.taken.by_self.basic-checker.md
    │
    ├─ r2: premium-checker (l3, 0/5)
-   │   └─ awaits arrival
+   │   └─ awaits l1 terminal
    │
    └─ ✗ judge.1 - blocked [TIME]
 

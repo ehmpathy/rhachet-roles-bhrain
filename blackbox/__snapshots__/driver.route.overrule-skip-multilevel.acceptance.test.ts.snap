@@ -18,7 +18,7 @@ exports[`driver.route.overrule-skip-multilevel.acceptance given: [case1] D2 — 
    │   └─ taken: .reviews/peer/1.vision._.review.i002.8739656801d5e77f22.r002._.taken.by_self.advanced-checker.md
    │
    ├─ r3: premium-checker (l3, 0/5)
-   │   └─ awaits arrival
+   │   └─ awaits l2 terminal
    │
    └─ ✗ judge.1 - blocked [TIME]
 

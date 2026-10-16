@@ -12,7 +12,8 @@ the split, for the driver role:
 |-------|-------|
 | 🔴 `rhx route.stone.set --as disputed --with <reviewer> --about <concern> --why <fulcrum>` — a real or repeated defect you DISAGREE with, answered and cited | **driver** |
 | `rhx route.stone.set --as absorbed --that <reviewer>` — converge; the answer a spent meter does not discharge | **driver** |
-| 🔴 `rhx route.mutate.guard` — the stone's own `--paths-with`, `--conversation`, `level`, `budget` | **driver** |
+| 🔴 a direct edit of `$route/<stone>.guard` — that lane's `--paths-wout` / `--paths-with`, its `--conversation` depth, its `level` | **driver**, once the route's mutate grant stands |
+| the route's mutate grant itself — `rhx route.mutate grant allow` (check it with `grant get`) | human, once per route |
 | a diagnosed reviewer malfunction (absent credential, bad glob, stale supply) | **driver** |
 | 🔴 `rhx route.guard.budget --for review --add N --stone <stone>` | **driver, ONLY with a warrant** — see below |
 | `--as approved` | human |
@@ -29,6 +30,12 @@ guards."*
 
 ⇒ **an absent row does not read as absent. it reads as "not mine."** a lever this table omits is
 worse off than one it lists as human-owned, because a human-owned lever at least gets surfaced.
+
+🟡 **no `rhx` command edits a guard.** `route.mutate.guard` is the PreToolUse hook that seals
+`*.stone`, `*.guard`, and `.route/**` — a gate, never an editor, and `--help` on it prints naught.
+the act is a plain edit of the `.guard` file, which the hook permits once
+`$route/.route/.privilege.mutate.flag` exists. run `rhx route.mutate grant get` first: granted →
+the edit is yours now · not granted → ask the human for that one grant, then the edit is yours.
 
 ⛔ **a hand-run `rhx review` is NOT on this table, and its absence is deliberate.** it draws no
 budget, so it is not a lever at all — it is an escape from the meter the ladder runs on

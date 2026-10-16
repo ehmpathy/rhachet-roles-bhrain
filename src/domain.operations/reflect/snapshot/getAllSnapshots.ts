@@ -3,6 +3,8 @@ import * as fs from 'fs';
 import * as os from 'os';
 import * as path from 'path';
 
+import { compareStrings } from '@src/utils/compareStrings';
+
 import type { ReflectScope } from '../scope/getReflectScope';
 
 /**
@@ -124,7 +126,7 @@ export const getAllSnapshots = (input: {
   }
 
   // sort by timestamp (oldest first)
-  snapshots.sort((a, b) => a.timestamp.localeCompare(b.timestamp));
+  snapshots.sort((a, b) => compareStrings(a.timestamp, b.timestamp));
 
   // compute totals
   const totalBytes = snapshots.reduce((sum, s) => sum + s.sizeBytes, 0);

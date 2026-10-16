@@ -9,6 +9,14 @@ exports[`driver.route.peer-mixed-verdict-replay.acceptance given: [journey] a mi
    │  └─ stone = 1.execute
    │
    └─ halted, reviewer or judge malfunctioned; an urgent concession earned a round; peer reviewer budget exhausted: l1-reviewer
+      ├─ still yours to clear
+      │  └─ next
+      │     ├─ 1. read each given for its cause, and fix what you can
+      │     ├─ 2. answer each broken lane, like a rejected one
+      │     ├─ 3. re-arrive
+      │     │  └─ rhx route.stone.set --stone 1.execute --as arrived
+      │     └─ ask a human only for a grant you cannot make (an absent credential, a permission, etc)
+      │
       ├─ reviews
       │   ├─ r1: l1-reviewer (l1, 2/2)
       │   │   ├─ exhausted 🌙
@@ -44,6 +52,14 @@ exports[`driver.route.peer-mixed-verdict-replay.acceptance given: [journey] a mi
    │  └─ stone = 1.execute
    │
    └─ halted, reviewer or judge malfunctioned; an urgent concession earned a round; peer reviewer budget exhausted: l1-reviewer
+      ├─ still yours to clear
+      │  └─ next
+      │     ├─ 1. read each given for its cause, and fix what you can
+      │     ├─ 2. answer each broken lane, like a rejected one
+      │     ├─ 3. re-arrive
+      │     │  └─ rhx route.stone.set --stone 1.execute --as arrived
+      │     └─ ask a human only for a grant you cannot make (an absent credential, a permission, etc)
+      │
       ├─ reviews
       │   ├─ r1: l1-reviewer (l1, 2/2)
       │   │   ├─ exhausted 🌙

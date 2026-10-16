@@ -8,7 +8,7 @@ import { getCurrentExhaustedSlugs } from './getCurrentExhaustedSlugs';
 /**
  * .what = renders the onStop/onBoot/direct message for an exhausted STATUS, AND the stop
  *         disposition that message implies — `{ stdout, blocksStop }`, the sibling shape
- *         of `getRouteDriveBlockerMessage`.
+ *         of `getOneRouteDriveBlockerMessage`.
  * .why = an exhausted status (its own passage status, not a 'review.peer.exhausted'
  *        blocker) still needs the same prompt the legacy blocker showed. onBoot, onStop,
  *        and direct all call this when the latest passage for the current stone is
@@ -26,7 +26,7 @@ import { getCurrentExhaustedSlugs } from './getCurrentExhaustedSlugs';
  *    may have been extended since the halt; a stance is volatile for the same reason —
  *    the driver may have conceded, or the lane may have spoken again and lapsed the
  *    stance — so a replayed mark would render a concession halt that no longer holds
- *    (S12, and the same live-recompute contract `getRouteDriveBlockerMessage` states for
+ *    (S12, and the same live-recompute contract `getOneRouteDriveBlockerMessage` states for
  *    every volatile blocker).
  *
  * 🟡 the concession is asked of EVERY currently-exhausted lane, never any. one lane the

@@ -1,4 +1,4 @@
-import { execFileSync } from 'child_process';
+import { execFileSync, spawnSync } from 'child_process';
 import * as fsSync from 'fs';
 import * as fs from 'fs/promises';
 import * as path from 'path';
@@ -349,4 +349,30 @@ describe('init.claude.status-line.integration', () => {
       });
     },
   );
+
+  given('[case6] a repo whose statusLine the init must change', () => {
+    const scene = useBeforeAll(async () => {
+      const tempDir = genTempDir({ slug: 'statusline-init-case6', git: true });
+      return { tempDir };
+    });
+
+    when('[t0] the init runs, with stderr captured', () => {
+      const out = useBeforeAll(async () => {
+        const result = spawnSync('/bin/bash', [INIT_PATH], {
+          cwd: scene.tempDir,
+          encoding: 'utf-8',
+        });
+        return { stderr: result.stderr, exitCode: result.status };
+      });
+
+      then('it exits 0', () => {
+        expect(out.exitCode).toEqual(0);
+      });
+
+      then('it prints no fault line, since a change is no fault', () => {
+        // the compare exits 1 on every change; an ERR trap read that as a fault
+        expect(out.stderr).not.toContain('failed at line');
+      });
+    });
+  });
 });

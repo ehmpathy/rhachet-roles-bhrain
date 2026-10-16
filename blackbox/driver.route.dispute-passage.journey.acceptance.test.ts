@@ -112,16 +112,24 @@ describe('driver.route.dispute-passage.journey.acceptance', () => {
         expect(result.code).toEqual(0);
       });
 
-      then('the ack names the fulcrum, and clears the road', () => {
+      then('the ack names the fulcrum, and the absorb that comes next', () => {
         expect(result.stdout).toContain(FULCRUM_REL);
         expect(result.stdout).toContain('the council will read it');
-        // the lane's only concern is now absorbed, so the close is a true all-clear
-        expect(result.stdout).toContain('drive on');
+        // the lane's last concern now has a stance, so the next move is to absorb the lane
+        // (the .taken gate opens) and re-arrive — never a bare `--as passed`, which would
+        // send the driver past the absorb that [t2] performs
+        expect(result.stdout).toContain(
+          'rhx route.stone.set --stone 1.vision --as absorbed --that lane',
+        );
+        expect(result.stdout).toContain(
+          'rhx route.stone.set --stone 1.vision --as arrived',
+        );
+        expect(result.stdout).not.toContain('--as passed');
       });
 
       then('the dispute ack is pinned', () => {
         expect(sanitizeTimeForSnapshot(result.stdout)).toMatchSnapshot(
-          'the dispute ack names the fulcrum and clears the road',
+          'the dispute ack names the fulcrum and the absorb that comes next',
         );
       });
     });

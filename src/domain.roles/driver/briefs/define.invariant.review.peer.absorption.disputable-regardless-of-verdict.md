@@ -10,7 +10,7 @@ regardless of the lane's reviewer verdict — approved, rejected, or exhausted a
 **nurture**, grounded in a **nature** fact.
 
 - the nature fact: the `reviewed?` judge tallies blockers and nitpicks **stone-wide**, across every
-  non-overruled lane (`computeReviewTotalsFromFiles`). so an APPROVED lane's nitpicks still count
+  non-overruled lane (`getOneReviewTotalsFromFiles`). so an APPROVED lane's nitpicks still count
   against the threshold. no design decision changes this — it is how the tally sums.
 - the nurture choice: given that fact, a dispute is the driver's per-concern tally-exclusion, and it
   must be available at **every** lane that counts. we chose this so the driver always holds a lever
@@ -46,8 +46,8 @@ two questions, and one check cannot answer both — they key on different things
 
 | question | operation | keys on |
 |---|---|---|
-| which concerns are **OWED** an absorption — demanded before passage | `getStoneUndeclaredConcerns` (the entrance gate) | the verdict — only a **rejected** lane owes one |
-| which concerns are **PERMITTED** an absorption — the driver MAY declare | `assertAbsorptionHasSubject` (the set path) | **any lane that counts** — the verdict aside |
+| which concerns are **OWED** an absorption — demanded before passage | `getAllStoneUndeclaredConcerns` (the entrance gate) | the verdict — only a **rejected** lane owes one |
+| which concerns are **PERMITTED** an absorption — the driver MAY declare | `asAbsorptionWithSubject` (the set path) | **any lane that counts** — the verdict aside |
 
 a driver is never FORCED to declare on an approved lane; but they MAY, and must, to shed its
 nitpicks from a tally they push over the floor.

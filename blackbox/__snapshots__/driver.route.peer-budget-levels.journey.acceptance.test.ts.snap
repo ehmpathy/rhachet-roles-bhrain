@@ -11,7 +11,7 @@ exports[`driver.route.peer-budget-levels.journey.acceptance given: [journey] sto
    │   └─ taken: .reviews/peer/1.execute._.review.i001.8739656801d5e77f22.r001._.taken.by_self.cheapo.md
    │
    ├─ r2: primo (l2, 0/2)
-   │   └─ awaits arrival
+   │   └─ awaits l1 terminal
    │
    └─ ✗ judge.1 - blocked [TIME]
 
@@ -49,7 +49,7 @@ exports[`driver.route.peer-budget-levels.journey.acceptance given: [journey] sto
    │   └─ taken: .reviews/peer/1.execute._.review.i002.dfc5faff83ea2fcb55.r001._.taken.by_self.cheapo.md
    │
    ├─ r2: primo (l2, 0/2)
-   │   └─ awaits arrival
+   │   └─ awaits l1 terminal
    │
    └─ ✗ judge.1 - blocked [TIME]
 

@@ -3,7 +3,7 @@ import { given, then, when } from 'test-fns';
 import type { RouteStoneGuardReviewSelf } from '@src/domain.objects/Driver/RouteStoneGuard';
 
 import { computePromisedReviewCount } from './computePromisedReviewCount';
-import { findNextUnpromisedReview } from './findNextUnpromisedReview';
+import { getOneNextUnpromisedReview } from './getOneNextUnpromisedReview';
 import { isSelfReviewPromised } from './isSelfReviewPromised';
 
 const asReview = (slug: string): RouteStoneGuardReviewSelf =>
@@ -47,7 +47,7 @@ describe('isSelfReviewPromised', () => {
         const owed = selfReviews.filter(
           (review) => !isSelfReviewPromised({ review, promisedSlugs }),
         );
-        const next = findNextUnpromisedReview({ selfReviews, promisedSlugs });
+        const next = getOneNextUnpromisedReview({ selfReviews, promisedSlugs });
 
         // the non-null at setStoneAsPassed rests on exactly this: a non-empty owed
         // set implies the finder returns, and it returns that set's own first member
@@ -67,7 +67,7 @@ describe('isSelfReviewPromised', () => {
 
         expect(owed).toEqual([]);
         expect(
-          findNextUnpromisedReview({
+          getOneNextUnpromisedReview({
             selfReviews,
             promisedSlugs: allPromised,
           }),

@@ -1,3 +1,4 @@
+import { MalfunctionError } from 'helpful-errors';
 import { getError, given, then, when } from 'test-fns';
 
 import { RouteStoneGuardReviewPeer } from '@src/domain.objects/Driver/RouteStoneGuard';
@@ -17,28 +18,6 @@ describe('asPeerReviewLevelBySlug', () => {
         });
         expect(result.get('architect')).toEqual(1);
         expect(result.get('mechanic')).toEqual(3);
-      });
-    });
-  });
-
-  given('[case3] a review that reached the index with NO level', () => {
-    // unreachable via parseStoneGuard, which defaults level at every emit site
-    // (:157, :273, :416). the type still permits it, since it doubles as the
-    // CONFIG declaration — so this clamps the parse guarantee rather than a
-    // caller contract (rule.require.review-standardization-at-parse)
-    const peerReviews = [
-      new RouteStoneGuardReviewPeer({
-        slug: 'architect',
-        run: 'noop',
-        budget: 3,
-      }),
-    ];
-
-    when('[t0] indexed', () => {
-      then('it fails loud rather than a silent re-default to 1', () => {
-        const error = getError(() => asPeerReviewLevelBySlug({ peerReviews }));
-        expect(error.message).toContain('no level');
-        expect(error.message).toContain('parseStoneGuard');
       });
     });
   });
@@ -82,4 +61,27 @@ describe('asPeerReviewLevelBySlug', () => {
       );
     });
   });
+
+  given(
+    '[case3] a review that bypassed the parser and carries no level',
+    () => {
+      // `level` is required on the type, but the value is born in guard yaml at runtime. an
+      // object built from raw json skips parseStoneGuard's default, and the type cannot see it
+      const peerReviews: RouteStoneGuardReviewPeer[] = [
+        JSON.parse('{ "slug": "architect", "run": "noop", "budget": 3 }'),
+      ];
+
+      when('[t0] indexed', () => {
+        then('🔴 it fails loud, never a silent undefined level', () => {
+          const error = getError(() =>
+            asPeerReviewLevelBySlug({ peerReviews }),
+          );
+          expect(error).toBeInstanceOf(MalfunctionError);
+          expect(error.message).toContain('no integer level');
+          // the refusal names the fix — the parser that owes the default
+          expect(error.message).toContain('parseStoneGuard must default it');
+        });
+      });
+    },
+  );
 });

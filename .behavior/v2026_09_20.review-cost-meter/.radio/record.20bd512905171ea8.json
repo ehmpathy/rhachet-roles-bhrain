@@ -1,0 +1,21 @@
+{
+  "key": "20bd512905171ea8",
+  "kind": "create",
+  "repo": {
+    "owner": "ehmpathy",
+    "name": "rhachet-roles-bhuild"
+  },
+  "exid": null,
+  "title": "fix(templates): guard review lanes shed polluters, split pitofsuccess.errors, bound enroll lanes (the --mode hard drop is #418)",
+  "description": "# 🌙 dream: bhuild's guard templates use the reviewers the way this route learned to\n\n- **kind** = `reseed`\n- **owner** = `ehmpathy/rhachet-roles-bhuild` — `src/domain.operations/behavior/init/templates/*.guard`\n- **caught** 2026-09-26, at stone `5.1.execution.from_vision` of `v2026_09_20.review-cost-meter`\n- **status** = PLANNED — surfaced to the wisher before dispatch (seed S22)\n\n## .the cue that fired\n\nthe wisher asked for a dispatch plan so bhuild's reviewer usage takes the repairs this route made.\nevery `5.1` / `5.3` guard bhuild stamps is the template this route's guard was cloned from, so\nevery new route inherits the lanes that overflowed here.\n\n## .the gap, precisely — measured on this route, present verbatim in the templates\n\n| # | what the template does today | what it cost here |\n|---|---|---|\n| 1 | production-rubric lanes bind `--paths-with '**/*.{ts,sh,md,snap}'` with no exclusions | `repo-rules` overflowed at 247 files, 82.3% of a 1M window; six lanes refused at i003 (607.2k tokens). `.behavior/**` alone was 25.5% of one corpus |\n| 2 | `code.{prod,test}/pitofsuccess.errors` rides ONE lane | overflowed twice (76.0% / 77.2%); cured by a SPLIT into a prod lane and a test lane |\n| 3 | level-3 `rhx enroll claude … -p '…'` lanes carry no scope, no read-only bound, no output contract | one timed out at 21 minutes over a ~500-file diff; one clone ran `route.stone.set` and marked the stone it reviewed `blocked` |\n| 4 | every lane passes `--mode hard` | `--mode` is swallowed and ignored by the parser; `--focus push\\|pull` replaced it |\n| 5 | lanes on the default brain inherit whatever `--focus` a copy carries | deepseek flash is an atom brain; `--focus pull` is refused on it |\n\n## .the shape of the fix — the task body to dispatch\n\n1. **production-rubric lanes** add `--paths-without '**/*.test.ts' --paths-without '**/__snapshots__/**' --paths-without '.behavior/**'`\n   - test-rubric lanes keep their `**/*.test.ts` include and shed only `__snapshots__` + `.behavior/**`\n   - `friction-hazards` keeps `.behavior/**` minus `.fulcrums/**` + `.seeds/**` (it grades the route's prose)\n2. **split** `code.{prod,test}/pitofsuccess.errors` into two lanes, prod-bound and test-bound\n3. **enroll prompts** append: scope to `the files listed in $targets` (narrowed by prose to\n   `src/`, `blackbox/` as the lane needs) and derive no scope of their own — `$targets` is a\n   bhrain runtime guard var that holds the engine's since-main list, untracked files included\n   (a diff-only prompt missed most of a mostly-untracked feature); READ-ONLY, never run\n   `route.stone.set` or any `route.*` command; end with an `N blockers` line and an `N nitpicks`\n   line (`contract.reviewer-output`)\n   - 🟡 needs a bhrain release that carries `$targets` before bhuild's templates can name it\n   - 🔴 the prompt alone does NOT stop a clone from `route.stone.set` (measured i003). pair it with\n     the marker + refusal in `.dream/v2026_09_26.fix.an-enrolled-reviewer-clone-sets-…`, and fix\n     the enroll settings' `Write(...)` deny rules, which Claude Code ignores\n4. **drop `--mode hard`** from every lane\n5. no lane on a flash brain passes `--focus pull`; a model pin in an enroll lane\n   (`claude-sonnet-5[1m]`) is reviewed against `rule.require.versionless-brain-defaults`\n6. a template snapshot test that fails when a production lane lacks the three exclusions\n\n## .why it is not done in this round\n\nit belongs to another repo; a tree adopts only what is scoped to itself. the plan waits on the\nwisher's read before `rhx radio.task.push --via gh.issues --into ehmpathy/rhachet-roles-bhuild`.",
+  "status": null,
+  "via": "gh.issues",
+  "auth": "as-human",
+  "idem": "findsert",
+  "heldAt": "2026-10-14",
+  "heldSeq": 7,
+  "recordStatus": "DELIVERED",
+  "reason": null,
+  "settledAt": "2026-10-14",
+  "deliveredExid": "465"
+}

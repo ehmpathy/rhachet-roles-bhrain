@@ -18,6 +18,7 @@ const asResult = (input: {
     nitpicks: input.nitpicks,
     outcome: input.outcome,
     tallier: 'deterministic',
+    talliedBy: null,
     ...(input.reason ? { reason: input.reason } : {}),
   },
   outputPath: `.reviews/${input.slug}.md`,

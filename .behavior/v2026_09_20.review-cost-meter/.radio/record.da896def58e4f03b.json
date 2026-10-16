@@ -1,0 +1,21 @@
+{
+  "key": "da896def58e4f03b",
+  "kind": "create",
+  "repo": {
+    "owner": "ehmpathy",
+    "name": "rhachet"
+  },
+  "exid": null,
+  "title": "fix(run): print the skill banner once, not again from the failure path",
+  "description": "## .what\n\nthe rhx run banner prints twice on any skill that exits nonzero: once from the head of invokeRun (before the skill runs) and again from its catch block, which adds a generic \"✋ blocked by constraints\" frame. both land ahead of the skill own error block, which is the part that names the fix.\n\ncheckable evidence (rhachet v1.47.5, node_modules/rhachet/dist/contract/cli/invokeRun.js): the head emits the banner at lines 53-55, and the catch emits it again at lines 160-161. a mistyped flag yields:\n\n    🪨 run solid skill repo=bhrain/role=reviewer/skill=review._.cost\n\n    🪨 run solid skill repo=bhrain/role=reviewer/skill=review._.cost\n       └─ ✋ blocked by constraints\n\n    🦉 --of \"fleet\" is not a breadth\n       ├─ valid: run | tree | grove\n       └─ fix:   rhx review._.cost --of tree\n\n## .why\n\nsix lines of chrome and a generic verdict frame precede the specific block that names the fix. the generic frame reads as the verdict and the useful block reads as an afterthought. this is separate from #552 (banner on stdout): move the banner to stderr and a refusal still shows it twice, both on stderr.\n\n## .shape of the fix\n\n- let the head be the only banner; drop the re-print from the catch, or have the catch emit only the status line (blocked by constraints / malfunction) with no repeated skill name\n- clamp: a skill that exits 2 with a known stderr block; assert the banner appears exactly once and the skill block follows it\n- best landed together with #552, since both touch the same banner in the same function\n\ncaught in ehmpathy/rhachet-roles-bhrain .dream/v2026_09_23.fix.rhx-prints-its-skill-banner-to-stdout-so-no-json-pipes.md",
+  "status": null,
+  "via": "gh.issues",
+  "auth": "as-human",
+  "idem": null,
+  "heldAt": "2026-10-15",
+  "heldSeq": 15,
+  "recordStatus": "DELIVERED",
+  "reason": null,
+  "settledAt": "2026-10-16",
+  "deliveredExid": "609"
+}

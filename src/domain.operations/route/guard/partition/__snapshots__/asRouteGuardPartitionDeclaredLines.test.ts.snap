@@ -1,0 +1,21 @@
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
+
+exports[`asRouteGuardPartitionDeclaredLines given: [case1] the @all scope holds two partitions when: [t0] the scope is shown then: the lines match the snapshot 1`] = `
+"
+🗿 route.guard.partition
+   ├─ route = .behavior/v2026_01_01.demo
+   ├─ peer = @all (every reviewer, every stone)
+   └─ declared
+      ├─ a=src/a/**
+      └─ b=src/b/**
+"
+`;
+
+exports[`asRouteGuardPartitionDeclaredLines given: [case2] one reviewer scope holds none when: [t0] the scope is shown then: the lines match the snapshot 1`] = `
+"
+🗿 route.guard.partition
+   ├─ route = .behavior/v2026_01_01.demo
+   ├─ peer = r2 on 3.blueprint
+   └─ declared: none
+"
+`;

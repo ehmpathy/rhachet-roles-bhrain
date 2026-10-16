@@ -1,7 +1,16 @@
 import { UnexpectedCodePathError } from 'helpful-errors';
 
+// a sanctioned exposure, declared in src/domain.operations/review/partition/.readme.md
+import { asReviewPartitionDeclarationText } from '@src/domain.operations/review/partition/asReviewPartitionDeclarationText';
+
+import { SEGMENTS_OF_PEER_REVIEWS_DIR } from '../../../asPeerReviewOutputName';
+import { asGuardBindNarrowLever } from '../asGuardBindNarrowLever';
 import { asGuardDisplayPath } from '../asGuardDisplayPath';
-import type { RouteGuardReviewPeerFeedbackUnabsorbed } from '../review/peer/getRouteGuardReviewPeerFeedbackAbsorptionStatus';
+import { asRouteGuardPartitionCommand } from '../partition/asRouteGuardPartitionCommand';
+import { asRouteStoneAbsorbCommand } from '../review/peer/asRouteStoneAbsorbCommand';
+import type { RouteGuardReviewPeerFeedbackUnabsorbed } from '../review/peer/getOneRouteGuardReviewPeerFeedbackAbsorptionStatus';
+import { asBranchBodyLines } from './asBranchBodyLines';
+import { asReviewPeerLaneHeadLines } from './asReviewPeerLaneHeadLines';
 
 /**
  * .what = one reviewer's identity + verdict + the two conversation paths
@@ -65,7 +74,12 @@ const asVerdict = (input: {
   blockers: number;
   nitpicks: number;
   unreadable: boolean;
+  constraint: FeedbackAbsorbReviewer['constraint'];
 }): string => {
+  // 🔴 a refusal is READABLE as a refusal: it names its own cause. to print it as an
+  //    unreadable verdict sends the driver to diagnose a malfunction that never happened
+  if (input.constraint) return `refused — ✋ ${input.constraint.cause}`;
+
   // 🔴 never print a fabricated count as though the reviewer had reported it. an
   //    unreadable given carries blockers:1 because the gate needs a number and none
   //    was read — to render that as `1 blocker` tells the driver the guard read a
@@ -138,8 +152,13 @@ const formatReplyPrompt = (input: {
 
   input.reviewers.forEach((reviewer, i) => {
     const display = asDisplayPaths({ reviewer, root: input.root });
-    lines.push(`   ├─ review.peer ${i + 1}/${total}`);
-    lines.push(`   │  ├─ slug = ${reviewer.slug}`);
+    lines.push(
+      ...asReviewPeerLaneHeadLines({
+        index: i + 1,
+        total,
+        slug: reviewer.slug,
+      }),
+    );
     // a retired reviewer is named here and found nowhere in the config — say so, or the driver
     // reads the halt as a defect and hunts for a reviewer that no longer exists (F8)
     if (reviewer.retired)
@@ -156,7 +175,7 @@ const formatReplyPrompt = (input: {
   //    that names only reviewers[0] reads as "run this one and you are done" and the
   //    driver stops a reviewer short of discharged
   const asFeedbackAbsorbCmd = (slug: string): string =>
-    `rhx route.stone.set --stone ${input.stone} --as absorbed --that ${slug}`;
+    asRouteStoneAbsorbCommand({ stone: input.stone, that: slug }).command;
 
   // a why+fix pair is a BRANCH of the tree, never prose appended after it — one command,
   //    one shape, at one indent scheme (rule.require.treestruct-output).
@@ -171,14 +190,14 @@ const formatReplyPrompt = (input: {
     fix: { head: string; body: string[] };
   }): void => {
     lines.push(`   ├─ ${branch.why.head}`);
-    branch.why.body.forEach((line, i) => {
-      lines.push(`   │  ${i === 0 ? '└─' : '  '} ${line}`);
-    });
+    lines.push(
+      ...asBranchBodyLines({ indent: '   │  ', body: branch.why.body }),
+    );
     lines.push(`   │`);
     lines.push(`   ├─ ${branch.fix.head}`);
-    branch.fix.body.forEach((line, i) => {
-      lines.push(`   │  ${i === 0 ? '└─' : '  '} ${line}`);
-    });
+    lines.push(
+      ...asBranchBodyLines({ indent: '   │  ', body: branch.fix.body }),
+    );
     lines.push(`   │`);
   };
 
@@ -211,9 +230,29 @@ const formatReplyPrompt = (input: {
       },
     });
 
+  // the refused case needs its own why + fix: the reviewer did not malfunction — it refused, and
+  // its .given names the lever that clears the refusal. the driver's move is to spend that lever
+  // (rule.always.spend-own-levers-before-escalation), never to name a malfunction
+  const reviewersRefused = input.reviewers.filter(
+    (reviewer) => reviewer.constraint !== null,
+  );
+  if (reviewersRefused.length > 0)
+    pushWhyFix(
+      asRefusedWhyFix({
+        stone: input.stone,
+        root: input.root,
+        reviewers: reviewersRefused,
+      }),
+    );
+
   // the unreadable case needs its own why + fix too: the driver's instinct is to open the given
-  // and find the blocker, and there is no blocker in it to find — the reviewer never reported one
-  if (input.reviewers.some((reviewer) => reviewer.unreadable))
+  // and find the blocker, and there is no blocker in it to find — the reviewer never reported one.
+  // a refused reviewer is excluded: its given IS readable, as a refusal, and it took its branch above
+  if (
+    input.reviewers.some(
+      (reviewer) => reviewer.unreadable && reviewer.constraint === null,
+    )
+  )
     pushWhyFix({
       why: {
         head: `why an unreadable reviewer gates`,
@@ -268,6 +307,113 @@ const formatReplyPrompt = (input: {
 };
 
 /**
+ * .what = the route dir a peer given sits in, as the driver reads it
+ * .why = a given lives at `$route/.reviews/peer/<file>`, so the route is the text before that
+ *        infix; behind a name, so the lever render reads as "the route of this given"
+ * .note = the infix composes from `SEGMENTS_OF_PEER_REVIEWS_DIR`, the one home of the dir's
+ *         segments, so a relocation of the dir moves this split with it (r003 nitpick.3, i016)
+ */
+const asRouteOfPeerGiven = (input: {
+  pathGiven: string;
+  root: string;
+}): string => {
+  const display = asGuardDisplayPath({
+    pathAbsolute: input.pathGiven,
+    root: input.root,
+  });
+  const [route] = display.split(`/${SEGMENTS_OF_PEER_REVIEWS_DIR.join('/')}/`);
+  return route ?? display;
+};
+
+/**
+ * .what = the why + what-to-do branch for every reviewer that REFUSED — a constraint given
+ * .why = a refusal is no malfunction: it names its cause and the lever that clears it. so the
+ *        branch names that lever as the driver's own move, paste-ready where the refusal
+ *        proposed partitions, and then the .taken + absorb path that discharges the debt
+ *        (rule.require.errors-name-the-fix, rule.always.spend-own-levers-before-escalation)
+ *
+ * .note = the proposal is a first declaration, not a gap repair, so it renders through the one
+ *         whole-set declaration (`asReviewPartitionDeclarationText`) the repair also uses when a
+ *         new domain is owed — one command shape wherever the lever surfaces, in comma lists
+ *         (rule.forbid.duplicate-format-tree-operations)
+ */
+const asRefusedWhyFix = (input: {
+  stone: string;
+  root: string;
+  reviewers: FeedbackAbsorbReviewerOwed[];
+}): {
+  why: { head: string; body: string[] };
+  fix: { head: string; body: string[] };
+} => {
+  // only an overflow is cured by a partition or a narrower bind; any other refusal (an
+  // unknown flag, an absent rubric, a bad glob) names its own fix in its .given
+  const overflows = input.reviewers.flatMap((reviewer) =>
+    reviewer.constraint?.overflowed ? [reviewer.constraint] : [],
+  );
+
+  // the partitions every overflow proposed, once each, in the order they were proposed
+  const partitions = [
+    ...new Set(overflows.flatMap((constraint) => constraint.partitions)),
+  ];
+  const reviewerFirst = input.reviewers[0];
+  if (!reviewerFirst)
+    throw new UnexpectedCodePathError(
+      'the refused branch ran with no refused reviewer',
+      { stone: input.stone },
+    );
+
+  // the lever: declare the partitions an overflow proposed, else narrow the lane's bind;
+  // a refusal that was no overflow is pointed at the fix its .given names
+  const narrow = asGuardBindNarrowLever({ stone: input.stone });
+  const leverLinesOfOther = [
+    `1. fix what its .given names — yours to make. a partition or a narrower`,
+    `   bind cures only an overflow, and this refusal was not one.`,
+  ];
+  const leverLines =
+    overflows.length === 0
+      ? leverLinesOfOther
+      : partitions.length > 0
+        ? [
+            `1. declare the partitions its .given proposes — yours to make:`,
+            ...asReviewPartitionDeclarationText({
+              partition: partitions,
+              command: asRouteGuardPartitionCommand({
+                route: asRouteOfPeerGiven({
+                  pathGiven: reviewerFirst.pathGiven,
+                  root: input.root,
+                }),
+                scope: { kind: 'all' },
+              }),
+            })
+              .split('\n')
+              .map((line) => `   ${line}`),
+          ]
+        : [
+            `1. narrow the lane — yours to make. ${narrow.act}:`,
+            `   ${narrow.fields}, or its --conversation depth`,
+          ];
+  return {
+    why: {
+      head: `why a refused reviewer gates`,
+      body: [
+        `it refused to run — a constraint, not a malfunction. its .given`,
+        `names the cause and the lever that clears it. it reviewed naught, so`,
+        `no verdict was seen, and an absent verdict gates rather than reads clean.`,
+      ],
+    },
+    fix: {
+      head: `what to do — spend the lever its .given names`,
+      body: [
+        ...leverLines,
+        `2. write the .taken above — name the lever you spent — then absorb`,
+        `   it with the command below, and re-arrive. no concern needs a`,
+        `   concede or dispute: a refusal raised none.`,
+      ],
+    },
+  };
+};
+
+/**
  * .what = the crystal-clear absent-file guidance for one reviewer
  * .why = the driver signaled --as absorbed before the .taken existed
  */
@@ -291,7 +437,7 @@ const formatAbsent = (input: {
   //    naught between: a blank in that slot is a gap the reader reads as the block's end
   //    (rule.forbid.snapshot-visual-blemishes; r6 blocker.1, i010)
   lines.push(
-    `✋ feedbackAbsorption absent for reviewer ${input.reviewer.slug}`,
+    `✋ feedback absorption absent for reviewer ${input.reviewer.slug}`,
   );
   lines.push(
     `   ├─ the guard looked for your response here, and did not find it`,
@@ -335,9 +481,11 @@ const formatStale = (input: {
     root: input.root,
   });
 
-  // 🔴 no lead `   │` — same reason as formatAbsent above; the blank parts header from tree
-  lines.push(`✋ feedbackAbsorption stale for reviewer ${input.reviewer.slug}`);
-  lines.push(``);
+  // 🔴 no lead `   │` and no blank under the header — same shape as formatAbsent above, so
+  //    the family renders one way (r6 nitpick, i004)
+  lines.push(
+    `✋ feedback absorption stale for reviewer ${input.reviewer.slug}`,
+  );
   lines.push(
     `   ├─ your response answers an earlier round of feedback from this reviewer`,
   );

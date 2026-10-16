@@ -17,7 +17,7 @@
 # options:
 #   --stone   stone name (BOUNDARY match: "5.1" hits every "5.1.*" guard but NOT "5.10.x").
 #             default: all guards in the route
-#   --route   path to route directory (default: auto-detect from branch)
+#   --route   path to route directory (uses bound route if absent)
 #   --mode    plan | apply (default: plan)
 ######################################################################
 set -euo pipefail

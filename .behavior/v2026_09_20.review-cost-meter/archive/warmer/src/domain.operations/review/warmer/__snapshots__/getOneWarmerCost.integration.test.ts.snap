@@ -1,0 +1,9 @@
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
+
+exports[`getOneWarmerCost given: [case7] a row written by a newer warmer, with an act this reader lacks when: [t0] the cost surface reads the run then: the whole refusal renders as snapped 1`] = `
+"Error: UnexpectedCodePathError: a warmer act carries no spend grade, so its money is unaccounted
+
+{
+  "act": "covered"
+}"
+`;

@@ -196,12 +196,12 @@ exports[`driver.route.peer-concurrency-env.acceptance given: [journey] a level o
 
 exports[`driver.route.peer-concurrency-env.acceptance given: [malformed] the operator override is not a positive integer when: [t0] the stone arrives under RHACHET_LEVEL_CONCURRENCY=abc then: the refusal reads as an error, never a stack trace 1`] = `
 "🦉 the way speaks for itself
-error: BadRequestError: concurrency must be a positive integer: env RHACHET_LEVEL_CONCURRENCY declares "abc". write a whole number of 1 or more, or drop the key to take its default.
+✋ ConstraintError: concurrency must be a positive integer: env RHACHET_LEVEL_CONCURRENCY declares "abc". write a whole number of 1 or more, or drop the key to take its default.
 "
 `;
 
 exports[`driver.route.peer-concurrency-env.acceptance given: [malformed] the operator override is not a positive integer when: [t1] the stone arrives under RHACHET_LEVEL_CONCURRENCY= (empty) then: the refusal renders \`declares ""\` — distinct from the abc variant 1`] = `
 "🦉 the way speaks for itself
-error: BadRequestError: concurrency must be a positive integer: env RHACHET_LEVEL_CONCURRENCY declares "". write a whole number of 1 or more, or drop the key to take its default.
+✋ ConstraintError: concurrency must be a positive integer: env RHACHET_LEVEL_CONCURRENCY declares "". write a whole number of 1 or more, or drop the key to take its default.
 "
 `;

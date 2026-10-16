@@ -21,7 +21,17 @@ exports[`driver.route.peer-contemplation-precedence.acceptance given: [case1] on
 🗿 route.stone.set
    ├─ stone = 1.execute
    ├─ passage = malfunction
-   ├─ reason = reviewer or judge malfunctioned
+   ├─ reason = 1 of 2 reviewers malfunctioned; 1 reviewer rejected and awaits your answer
+   ├─ still yours to clear
+   │  ├─ 💥 lane malfunctioner (r1) broke
+   │  │  └─ cause = review tally fallback failed (the sub-brain that tallies a prose review could not be reached). see .agent/repo=bhrain/role=reviewer/briefs/contract.reviewer-output.md (unknown)
+   │  └─ next
+   │     ├─ 1. read each given for its cause, and fix what you can
+   │     ├─ 2. answer each broken lane, like a rejected one
+   │     │  └─ rhx route.stone.set --stone 1.execute --as absorbed --that malfunctioner
+   │     ├─ 3. re-arrive
+   │     │  └─ rhx route.stone.set --stone 1.execute --as arrived
+   │     └─ ask a human only for a grant you cannot make (an absent credential, a permission, etc)
    ├─ options
    │  ├─ converge with the reviewer — yours to run, and the levels above stay unlocked
    │  │  └─ rhx route.stone.set --stone 1.execute --as absorbed --that <reviewer>

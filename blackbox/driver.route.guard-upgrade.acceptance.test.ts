@@ -217,12 +217,19 @@ describe('driver.route.guard-upgrade.acceptance', () => {
         }),
       );
 
-      then('exit code is non-zero', () => {
-        expect(result.code).not.toBe(0);
+      then('exit code is 2 (constraint)', () => {
+        expect(result.code).toBe(2);
       });
 
       then('the error asks to bind a route or pass --route', () => {
         expect(result.stderr.toLowerCase()).toContain('route');
+      });
+
+      then('🔴 the refusal opens with the qualified header, never bare `error:`', () => {
+        expect(result.stderr).toContain(
+          '✋ ConstraintError: no bound route found. use --route to specify.',
+        );
+        expect(result.stderr).not.toContain('error: no bound route');
       });
 
       then('stderr matches snapshot', () => {
@@ -558,56 +565,6 @@ describe('driver.route.guard-upgrade.acceptance', () => {
     });
   });
 
-  given('[case15] an upgrade whose stone is approved but not passed', () => {
-    const scene = useBeforeAll(async () => {
-      const setup = await setupRoute('guard-upgrade-approved');
-      // seed a passage record that marks the target stone as approved (not passed)
-      await fs.mkdir(path.join(setup.tempDir, 'route', '.route'), {
-        recursive: true,
-      });
-      await fs.writeFile(
-        path.join(setup.tempDir, 'route', '.route', 'passage.jsonl'),
-        `${JSON.stringify({ stone: '5.1.execution', status: 'approved' })}\n`,
-      );
-      return setup;
-    });
-
-    when('[t0] plan --stone 5.1.execution', () => {
-      const result = useThen('the plan succeeds', async () =>
-        invokeRouteSkill({
-          skill: 'route.guard.upgrade',
-          args: { route: 'route', stone: '5.1.execution' },
-          cwd: scene.tempDir,
-        }),
-      );
-
-      then('exit code is 0', () => {
-        expect(result.code).toBe(0);
-      });
-
-      then('the approved-not-passed advisory note is shown', () => {
-        expect(result.stdout).toContain('approved but not yet passed');
-        expect(result.stdout).toContain(
-          'changes the rules its pass will be judged against',
-        );
-      });
-
-      then('the plan leaves passage.jsonl byte-unchanged', async () => {
-        const passage = await fs.readFile(
-          path.join(scene.tempDir, 'route', '.route', 'passage.jsonl'),
-          'utf-8',
-        );
-        expect(passage).toEqual(
-          `${JSON.stringify({ stone: '5.1.execution', status: 'approved' })}\n`,
-        );
-      });
-
-      then('stdout matches snapshot', () => {
-        expect(sanitizeTimeForSnapshot(result.stdout)).toMatchSnapshot();
-      });
-    });
-  });
-
   given('[case13] an upgrade that reverts a peer-budget grant (B4)', () => {
     const scene = useBeforeAll(async () => {
       const setup = await setupRoute('guard-upgrade-budgetgrant');
@@ -709,6 +666,56 @@ describe('driver.route.guard-upgrade.acceptance', () => {
         );
         expect(await readGuard(scene.tempDir, '5.10.other.guard')).toContain(
           'new ten',
+        );
+      });
+
+      then('stdout matches snapshot', () => {
+        expect(sanitizeTimeForSnapshot(result.stdout)).toMatchSnapshot();
+      });
+    });
+  });
+
+  given('[case15] an upgrade whose stone is approved but not passed', () => {
+    const scene = useBeforeAll(async () => {
+      const setup = await setupRoute('guard-upgrade-approved');
+      // seed a passage record that marks the target stone as approved (not passed)
+      await fs.mkdir(path.join(setup.tempDir, 'route', '.route'), {
+        recursive: true,
+      });
+      await fs.writeFile(
+        path.join(setup.tempDir, 'route', '.route', 'passage.jsonl'),
+        `${JSON.stringify({ stone: '5.1.execution', status: 'approved' })}\n`,
+      );
+      return setup;
+    });
+
+    when('[t0] plan --stone 5.1.execution', () => {
+      const result = useThen('the plan succeeds', async () =>
+        invokeRouteSkill({
+          skill: 'route.guard.upgrade',
+          args: { route: 'route', stone: '5.1.execution' },
+          cwd: scene.tempDir,
+        }),
+      );
+
+      then('exit code is 0', () => {
+        expect(result.code).toBe(0);
+      });
+
+      then('the approved-not-passed advisory note is shown', () => {
+        expect(result.stdout).toContain('approved but not yet passed');
+        expect(result.stdout).toContain(
+          'changes the rules its pass will be judged against',
+        );
+      });
+
+      then('the plan leaves passage.jsonl byte-unchanged', async () => {
+        const passage = await fs.readFile(
+          path.join(scene.tempDir, 'route', '.route', 'passage.jsonl'),
+          'utf-8',
+        );
+        expect(passage).toEqual(
+          `${JSON.stringify({ stone: '5.1.execution', status: 'approved' })}\n`,
         );
       });
 

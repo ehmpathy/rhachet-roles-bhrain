@@ -1,6 +1,9 @@
-import { given, then, when } from 'test-fns';
+import { BadRequestError } from 'helpful-errors';
+import { getError, given, then, when } from 'test-fns';
+import { genBottleneck } from 'with-bottleneck';
 
 import { getOneReviewLevelPourBound } from './getOneReviewLevelPourBound';
+import { runWithinConcurrencyBounds } from './runWithinConcurrencyBounds';
 
 /**
  * .what = clamps the bound the pour announce states
@@ -114,20 +117,20 @@ describe('getOneReviewLevelPourBound', () => {
   given('[case5] two groups at one level, each with its own bound', () => {
     when('[t0] the bounds are summed', () => {
       then('each group contributes min(bound, membership)', () => {
-        // anthropic: min(1, 2) = 1 · fireworks: min(2, 3) = 2 ⇒ 3 of 5
+        // anthropic: min(1, 2) = 1 · openrouter: min(2, 3) = 2 ⇒ 3 of 5
         expect(
           getOneReviewLevelPourBound({
             members: [
               { group: 'anthropic' },
               { group: 'anthropic' },
-              { group: 'fireworks' },
-              { group: 'fireworks' },
-              { group: 'fireworks' },
+              { group: 'openrouter' },
+              { group: 'openrouter' },
+              { group: 'openrouter' },
             ],
             levelConcurrency: 10,
             groups: {
               anthropic: { concurrency: 1 },
-              fireworks: { concurrency: 2 },
+              openrouter: { concurrency: 2 },
             },
           }),
         ).toEqual(3);
@@ -179,18 +182,38 @@ describe('getOneReviewLevelPourBound', () => {
   });
 
   given('[case8] a member that names a group with no declared bound', () => {
-    // 🟡 `assertConcurrencyGroupsResolve` refuses this at parse and
-    //    `runWithinConcurrencyBounds` throws on it at the pour, so this reach
-    //    is for a guard built by hand around the parser
+    // 🟡 `assertConcurrencyGroupsResolve` refuses this at parse, so this reach
+    //    is for a guard built by hand around the parser. the pour
+    //    (`runWithinConcurrencyBounds`) throws on it, so the announce must too —
+    //    a count here would announce a cap the pour never reaches
     when('[t0] the bound is computed anyway', () => {
-      then('it errs toward the roster rather than invents a bound', () => {
-        expect(
-          getOneReviewLevelPourBound({
-            members: [{ group: 'ghost' }, { group: 'ghost' }, { group: null }],
-            levelConcurrency: 10,
-            groups: {},
+      then('it throws the same error the pour throws', async () => {
+        const announced = (() => {
+          try {
+            getOneReviewLevelPourBound({
+              members: [
+                { group: 'ghost' },
+                { group: 'ghost' },
+                { group: null },
+              ],
+              levelConcurrency: 10,
+              groups: {},
+            });
+            return null;
+          } catch (error) {
+            return error;
+          }
+        })();
+        const poured = await getError(
+          runWithinConcurrencyBounds({
+            group: 'ghost',
+            level: genBottleneck({ concurrency: 10 }),
+            byGroup: new Map(),
+            run: async () => 'ran',
           }),
-        ).toEqual(null);
+        );
+        expect(announced).toBeInstanceOf(BadRequestError);
+        expect((announced as Error).message).toEqual(poured.message);
       });
     });
   });

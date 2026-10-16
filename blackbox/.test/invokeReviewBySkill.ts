@@ -1,6 +1,7 @@
 import * as fs from 'fs/promises';
 import * as path from 'path';
 
+import { asExecResultOrThrow } from './asExecResultOrThrow';
 import { genTempDirForRhachet } from './invokeReviewSkill';
 
 export { execAsync } from './execAsync';
@@ -8,18 +9,16 @@ import { execAsync } from './execAsync';
 
 /**
  * .what = the demo target role slug review.by runs its rubrics for
- * .why = the acceptance fixtures declare a self-contained role (not a real ehmpathy role) so the
- *        tests never depend on rubrics.yml files shipped elsewhere.
+ * .why = a self-contained fixture role, not a real ehmpathy role, so tests never depend on
+ *        rubrics.yml files shipped elsewhere
  */
 export const DEMO_ROLE = 'demo';
 
 /**
  * .what = writes a rubrics.yml (and its rule files) into a fixture role dir
- * .why = each error/boundary case needs a different rubrics.yml; a helper keeps the setup terse and
- *        colocates the role layout the review.by communicator globs for. the role slug defaults to
- *        the demo role, but a case may name a different one (e.g. mechanic, behaver) to prove the
- *        rubrics.yml → render roundtrip for a NAMED role — the review.by communicator globs
- *        `.agent/repo=*​/role=$role/…`, so any slug the fixture writes here is discoverable.
+ * .why = each case needs a different rubrics.yml; a role slug defaults to the demo role, but a
+ *        case may name another (e.g. mechanic, behaver) to prove the rubrics.yml → render
+ *        roundtrip for a named role — review.by globs `.agent/repo=*​/role=$role/…`
  */
 export const setDemoRoleRubrics = async (input: {
   cwd: string;
@@ -50,11 +49,9 @@ export const setDemoRoleRubrics = async (input: {
 
 /**
  * .what = clones the review-by fixture, links the requested roles, returns the temp cwd
- * .why = every case starts from the same hermetic layout: a git repo with node_modules symlinks and
- *        the reviewer role linked so `rhx review` (dispatched per rubric) finds its skill. some
- *        cases review a REAL shipped role (e.g. learner), whose rubrics.yml points at rule files
- *        under `.agent/repo=bhrain/role=<role>/briefs/…`; those globs only match once that role is
- *        linked too, so the caller may name extra roles to link beside reviewer.
+ * .why = a hermetic git repo with node_modules symlinks and the reviewer role linked, so
+ *        `rhx review` finds its skill. a case reviewing a real shipped role (e.g. learner) needs
+ *        that role linked too, since its rubrics.yml globs `.agent/repo=bhrain/role=<role>/…`
  */
 export const genReviewByFixture = async (input: {
   slug: string;
@@ -70,43 +67,47 @@ export const genReviewByFixture = async (input: {
 };
 
 /**
+ * .what = the error header line of a captured stderr — the human-readable message
+ * .why = a fail-fast error prints `✋ <message>` (or `💥 <message>`), then a metadata block
+ *        carrying the run's non-deterministic tempdir cwd. the header line is deterministic, so
+ *        a drift snapshot captures it and only it.
+ * .note = found by its glyph, never by position — a run dispatched through `rhx` leads stderr
+ *         with rhachet's own banner, so the first non-empty line is not the message. ansi
+ *         escapes are stripped first; a header-less stderr falls back to its first non-empty line.
+ */
+export const asStderrMessageLine = (input: { stderr: string }): string => {
+  const lines = input.stderr
+    // eslint-disable-next-line no-control-regex
+    .replace(/\u001b\[[0-9;]*m/g, '')
+    .split('\n')
+    .filter((line) => line.trim() !== '');
+  const header = lines.find((line) => /^\s*(✋|💥)/u.test(line));
+  return (header ?? lines[0] ?? '').trim();
+};
+
+/**
  * .what = sanitizes review.by stdout so a negative-path / journey snapshot is stable
- * .why = strips only the machine-specific noise — ANSI control bytes and the volatile temp-dir
- *        prefix — so the snapshot captures the legible contract text a human would see. the
- *        blocker/nitpick COUNTS are left intact: the demo fixture drives one unambiguous
- *        violation, so the review verdict is deterministic (1 blocker, 0 nitpicks) and the real
- *        counts belong in the snapshot (rule.forbid.snapshot-visual-blemishes — no placeholder).
- *        when.repeatably(EVERY) locally proves the count holds across attempts. this mirrors the
- *        repo's sanitizeTimeForSnapshot pattern (mask only the non-deterministic noise).
+ * .why = strips only machine-specific noise — ansi bytes, the volatile temp-dir prefix, the
+ *        harness's dispatch banner, and the transient live-stream block — so the snapshot
+ *        captures the contract text a human sees. blocker/nitpick counts stay real
+ *        (rule.forbid.snapshot-visual-blemishes); when.repeatably(EVERY) proves them stable.
  */
 export const sanitizeReviewByOutputForSnapshot = (output: string): string => {
   return (
     output
-      // strip ANSI color/style escape codes (visual blemishes in a snapshot)
+      // strip ANSI color/style escape codes
       // biome-ignore lint/suspicious/noControlCharactersInRegex: the ESC control byte is the intended target
       .replace(/\x1b\[[0-9;]*m/g, '')
-      // strip EVERY `🪨 run solid skill …` rhx dispatch banner line — machine noise the harness
-      // stamps for each `rhx <skill>` dispatch. when review.by is invoked through the REAL rhx
-      // layer (the dispatch + wrapper suites), the parent-process banner interleaves with the
-      // child's stdout non-deterministically: on a cold attempt it can land in a spot the
-      // mascot-strip below does not catch, so a byte snapshot flakes. an explicit global strip
-      // makes the banner's removal deterministic regardless of interleave order. (the aggregate
-      // tree carries no banner of its own — review.by never stamps one — so this only ever removes
-      // the harness's dispatch line.)
+      // strip every `🪨 run solid skill …` rhx dispatch banner line — a real `rhx <skill>` dispatch
+      // interleaves this parent-process banner with the child's stdout non-deterministically, so
+      // an explicit global strip makes its removal deterministic regardless of interleave order
       .replace(/^[ \t]*🪨 run solid skill[^\n]*\n?/gm, '')
-      // strip the transient LIVE-STREAM block that precedes the settled tree. review.by streams
-      // each rubric as an incremental peer-style row (formatGuardReviewerTree) as it runs, then
-      // prints the settled tree below it — the same "progress then settled tree" shape
-      // route.stone.set has. the streamed block is ephemeral status feedback
-      // (rule.require.status-feedback), not the contract payload a snapshot vibechecks, and its
-      // spinner/duration are run-order noise. so drop all lines up to the settled mascot header.
-      // the anchor is GLYPH-AGNOSTIC: it does not name the mascot emoji (which a vibe override can
-      // swap to any glyph — 🦉, 🐢, 🦫, …) but the settled tree's invariant SHAPE — a mascot-phrase
-      // line, a blank, then the `<artifact> review.by --role <role>` line whose next line opens the
-      // `rubrics` bucket. the streamed block's own `review.by --role` line is followed by a bare
-      // pipe, never `rubrics`, so only the settled header matches. an explicit
-      // `.toContain('r1: <slug>')` assertion proves the stream renders peer-style. an error case has
-      // no settled tree, so this no-ops there and the error message is preserved.
+      // strip the transient live-stream block that precedes the settled tree. review.by streams
+      // each rubric as an incremental row as it runs, then prints the settled tree — ephemeral
+      // status feedback, not the contract payload a snapshot vibechecks. the anchor is
+      // glyph-agnostic: it matches the settled tree's shape (a mascot line, a blank, then the
+      // `<artifact> review.by --role <role>` line followed by `rubrics`), never the live block's
+      // own header (followed by a bare pipe). an error case has no settled tree, so this no-ops.
       .replace(
         /^[\s\S]*\n(?=\S[^\n]*\n\n\S[^\n]* review\.by --role [^\n]*\n {3}[└├]─ rubrics)/,
         '',
@@ -117,38 +118,28 @@ export const sanitizeReviewByOutputForSnapshot = (output: string): string => {
 };
 
 /**
- * .what = sanitizes a DISINTERMEDIATED raw base-review stdout so a `--for` snapshot is stable
- * .why = a `--for` run disintermediates to the base `rhx review` stdout (no review.by tree), and
- *        that stdout carries volatile telemetry — token counts, cost, latency, timestamped log
- *        paths, AND (for a human streamed run) the live progress spinner — that a byte-exact snapshot
- *        would fight (rule.require.repeatable-for-llm-tests). the base review emits its telemetry in
- *        blank-line-separated blocks (see genReviewOutputStdout / stepReview), so we drop the volatile
- *        blocks (`🔭 metrics.expected`, `🪵 logs`, `✨ metrics.realized`, and the `elapsed:` spinner
- *        block), the single volatile `logs:` child line, then mask the temp-dir prefix. what remains
- *        is the DETERMINISTIC contract chrome the snapshot vibechecks: the `🦉 let's review` scope
- *        block, the verdict header, the `review:` output path, and the `summary` counts — the exact
- *        shape that proves disintermediation (a plain review, never a review.by tree). the demo
- *        fixture drives one unambiguous verdict, so the counts are stable and belong in the snapshot
- *        (rule.forbid.snapshot-visual-blemishes — real counts, no placeholder); when.repeatably(EVERY)
- *        proves they hold across attempts. mirrors sanitizeReviewByOutputForSnapshot (mask only noise).
- * .note = the spinner block is present ONLY on a streamed human `--for` run (the child review runs
- *         without guard context, so it emits its live `🔍 <phrase>` + `elapsed:` spinner). a buffered
- *         run has no spinner block, so the `elapsed:` filter simply no-ops there. on a real terminal
- *         the spinner's `\r` frames overwrite in place; a buffered test capture holds every frame, so
- *         we drop the whole block rather than snapshot hundreds of volatile ticks.
+ * .what = sanitizes a disintermediated raw base-review stdout so a `--for` snapshot is stable
+ * .why = a `--for` run disintermediates to the base `rhx review` stdout, which carries volatile
+ *        telemetry (token counts, cost, latency, timestamped log paths, and — for a streamed
+ *        human run — a live spinner) a byte-exact snapshot would fight
+ *        (rule.require.repeatable-for-llm-tests). drop the volatile blank-line-separated
+ *        blocks and the `logs:` child line; mask the temp-dir prefix. what remains is the
+ *        deterministic contract chrome that proves disintermediation. counts stay real
+ *        (rule.forbid.snapshot-visual-blemishes); when.repeatably(EVERY) proves them stable.
+ * .note = the spinner block appears only on a streamed human `--for` run (a guardless child
+ *         review emits a live spinner); a buffered run has none, so the filter simply no-ops.
  */
 export const sanitizeRawReviewForSnapshot = (output: string): string => {
   const cleaned = output
-    // strip ANSI color/style escape codes (visual blemishes in a snapshot)
+    // strip ANSI color/style escape codes
     // biome-ignore lint/suspicious/noControlCharactersInRegex: the ESC control byte is the intended target
     .replace(/\x1b\[[0-9;]*m/g, '')
     // collapse the volatile temp-dir prefix; keep the stable suffix
     .replace(/\/tmp\/test-fns\/[^/]+\/\.temp\/[^/]+\//g, '[TEMP]/');
 
-  // drop the volatile telemetry BLOCKS (blank-line separated) — the metrics/logs blocks AND the
-  // live-spinner block (the only block that carries `elapsed:`) — plus the `logs:` child line, keep
-  // the deterministic contract chrome. a review with no findings echoes no body here (the findings
-  // live in the review FILE, not stdout), so what remains is stable across runs.
+  // drop the volatile telemetry blocks (metrics/logs, and the spinner block via `elapsed:`) plus
+  // the `logs:` child line, keep the deterministic contract chrome. a review with no findings
+  // echoes an empty body here (findings live in the review file, not stdout).
   return cleaned
     .split(/\n\s*\n/)
     .filter((block) => !/^\s*(🔭 metrics|🪵 logs|✨ metrics)/.test(block))
@@ -164,12 +155,28 @@ export const sanitizeRawReviewForSnapshot = (output: string): string => {
 };
 
 /**
- * .what = invokes a role's OWN review.by via the clean `rhx review.by --role <role>` form
- * .why = this is the ergonomic, everyday form a human types — rhachet resolves the review.by skill
- *        OWNED BY that role (its wrapper), which then delegates to the base. it proves the wrapper
- *        pattern end to end: the role must ship its own review.by skill, or this fails with
- *        `no skill "review.by" found with --role <role>`. distinct from invokeReviewByViaRhx (which
- *        targets the base directly) and invokeReviewByWrapper (which bashes the wrapper file).
+ * .what = the `🔭 metrics.expected` block of a raw review stdout, alone
+ * .why = that block is computed before the brain is called — from the fixture, the flags, and
+ *        the rate card — so it is deterministic on an llm-run suite whose verdict is not. a
+ *        snapshot of it pins the scope tree (rules, refs, targets) and the estimate a caller
+ *        reads, where `sanitizeRawReviewForSnapshot` drops it as telemetry
+ * .note = ansi bytes are stripped first; an absent block yields '' so the snapshot fails loud
+ */
+export const asReviewMetricsExpectedBlock = (input: { stdout: string }): string =>
+  input.stdout
+    // biome-ignore lint/suspicious/noControlCharactersInRegex: the ESC control byte is the intended target
+    .replace(/\x1b\[[0-9;]*m/g, '')
+    .split(/\n\s*\n/)
+    .find((block) => /^\s*🔭 metrics\.expected/.test(block))
+    ?.trim() ?? '';
+
+/**
+ * .what = invokes a role's own review.by via the clean `rhx review.by --role <role>` form
+ * .why = the everyday human form — rhachet resolves the review.by skill owned by that role,
+ *        which delegates to the base. proves the wrapper pattern end to end: a role must ship
+ *        its own review.by skill, or this fails with `no skill "review.by" found with --role
+ *        <role>`. distinct from invokeReviewByViaRhx (targets the base directly) and
+ *        invokeReviewByWrapper (bashes the wrapper file).
  */
 export const invokeReviewByRoleViaRhx = async (input: {
   role: string;
@@ -197,38 +204,18 @@ export const invokeReviewByRoleViaRhx = async (input: {
     });
     return { ...result, code: 0 };
   } catch (error) {
-    // allowlist the EXPECTED fault: exec rejects a non-zero exit with an ExecException that holds
-    // stdout/stderr/code — the boundary cases (exit 1/2) land here. any error WITHOUT those fields
-    // is an unexpected fault (spawn ENOENT, a bug) and must fail loud (rule.forbid.failhide).
-    if (
-      !error ||
-      typeof error !== 'object' ||
-      !('stdout' in error || 'stderr' in error || 'code' in error)
-    )
-      throw error;
-    // .cast = @types/node does not export ExecException as a narrowable type; the `in` guard above
-    //         proves the shape. removable once @types/node exports ExecException (rule.forbid.as-cast).
-    const execError = error as {
-      stdout?: string;
-      stderr?: string;
-      code?: number;
-    };
-    return {
-      stdout: execError.stdout ?? '',
-      stderr: execError.stderr ?? '',
-      code: execError.code ?? 1,
-    };
+    // a nonzero exit is a skill result; any other fault rethrows (rule.forbid.failhide)
+    return asExecResultOrThrow({ error });
   }
 };
 
 /**
- * .what = invokes the base review.by skill via the REAL `rhx` dispatch layer
- * .why = the shell-entry harness (invokeReviewBySkill) invokes review.by.sh directly, BELOW the
- *        rhachet dispatch — so it never exercises how `rhx review.by --repo bhrain --role reviewer`
- *        forwards --repo/--role/--skill into the skill's argv. that forward is exactly what a real
- *        user (and a role's own review.by wrapper) hits, and it broke the base until the parser
- *        learned to tolerate the dispatch flags. this harness closes that blind spot: it dispatches
- *        through `rhx` so the forwarded flags reach the base's parser for real.
+ * .what = invokes the base review.by skill via the real `rhx` dispatch layer
+ * .why = the shell-entry harness invokes review.by.sh directly, below rhachet dispatch, so it
+ *        never exercises how `rhx review.by --repo bhrain --role reviewer` forwards
+ *        --repo/--role/--skill into the skill's argv — exactly what a real human (and a role's own
+ *        wrapper) hits. this harness dispatches through `rhx` so the forwarded flags reach the
+ *        base's parser for real.
  *
  * the `--` separates rhachet's dispatch args from the skill's own args: rhachet forwards
  * --repo/--role/--skill regardless, and the tokens after `--` are the target-role args the base
@@ -267,46 +254,27 @@ export const invokeReviewByViaRhx = async (input: {
     });
     return { ...result, code: 0 };
   } catch (error) {
-    // allowlist the EXPECTED fault: exec rejects a non-zero exit with an ExecException that holds
-    // stdout/stderr/code — the boundary cases (exit 1/2) land here. any error WITHOUT those fields
-    // is an unexpected fault (spawn ENOENT, a bug) and must fail loud (rule.forbid.failhide).
-    if (
-      !error ||
-      typeof error !== 'object' ||
-      !('stdout' in error || 'stderr' in error || 'code' in error)
-    )
-      throw error;
-    // .cast = @types/node does not export ExecException as a narrowable type; the `in` guard above
-    //         proves the shape. removable once @types/node exports ExecException (rule.forbid.as-cast).
-    const execError = error as {
-      stdout?: string;
-      stderr?: string;
-      code?: number;
-    };
-    return {
-      stdout: execError.stdout ?? '',
-      stderr: execError.stderr ?? '',
-      code: execError.code ?? 1,
-    };
+    // a nonzero exit is a skill result; any other fault rethrows (rule.forbid.failhide)
+    return asExecResultOrThrow({ error });
   }
 };
 
 /**
- * .what = invokes a ROLE's OWN review.by wrapper, which delegates to the bhrain base
- * .why = the real extension usecase: a role ships its own thin review.by that bakes in its role and
- *        calls the base via `rhx review.by --repo bhrain --role reviewer -- --role <role>`. this
- *        harness invokes the demo role's wrapper (a fixture asset) with the SAME forwarded dispatch
- *        flags rhachet injects (--skill/--role), so the whole chain runs for real:
- *        wrapper → base → the demo role's rubrics. it maximally reproduces the real invocation
- *        without a full role-package registration: `rhx` is put on PATH (as a global alias is), and
- *        the wrapper's own nested `rhx review.by ...` resolves the base linked in the fixture.
+ * .what = invokes a role's own review.by wrapper, which delegates to the bhrain base
+ * .why = the real extension usecase: a role ships a thin review.by that loads the base cli
+ *        node-direct — `exec node -e "import('rhachet-roles-bhrain/cli/review.by')…" -- "$@"`,
+ *        the one shape rule.require.review-by-wrapper-pattern prescribes (a second `rhx`
+ *        dispatch would print a doubled banner). this harness invokes the demo role's wrapper
+ *        with the same forwarded dispatch flags rhachet injects (--skill/--role), so the whole
+ *        chain runs for real: wrapper → base cli → the demo role's rubrics. the forwarded
+ *        `--role <role>` is what names the role; the wrapper adds none of its own.
  */
 export const invokeReviewByWrapper = async (input: {
-  /** the role whose wrapper to invoke; its wrapper bakes this in and delegates to the base */
+  /** the role whose wrapper to invoke; it picks the wrapper path, and reaches the base through the forwarded --role, never the wrapper */
   role: string;
   paths?: string;
   brain?: string;
-  /** raw user args (e.g. --for slug) appended after the simulated dispatch flags */
+  /** raw human args (e.g. --for slug) appended after the simulated dispatch flags */
   extraArgs?: string[];
   cwd: string;
 }): Promise<{ stdout: string; stderr: string; code: number }> => {
@@ -336,33 +304,14 @@ export const invokeReviewByWrapper = async (input: {
   try {
     const result = await execAsync(cmd, {
       cwd: input.cwd,
-      // put the fixture's node_modules/.bin on PATH so the wrapper's bare `rhx` resolves, the way a
-      // global rhx alias resolves for a real role author.
+      // put the fixture's node_modules/.bin on PATH, the way a real role author's shell has it.
+      // the node-direct wrapper reaches the base through the fixture's node_modules, not via rhx
       env: { ...process.env, PATH: `${binDir}:${process.env.PATH ?? ''}` },
     });
     return { ...result, code: 0 };
   } catch (error) {
-    // allowlist the EXPECTED fault: exec rejects a non-zero exit with an ExecException that holds
-    // stdout/stderr/code — the boundary cases (exit 1/2) land here. any error WITHOUT those fields
-    // is an unexpected fault (spawn ENOENT, a bug) and must fail loud (rule.forbid.failhide).
-    if (
-      !error ||
-      typeof error !== 'object' ||
-      !('stdout' in error || 'stderr' in error || 'code' in error)
-    )
-      throw error;
-    // .cast = @types/node does not export ExecException as a narrowable type; the `in` guard above
-    //         proves the shape. removable once @types/node exports ExecException (rule.forbid.as-cast).
-    const execError = error as {
-      stdout?: string;
-      stderr?: string;
-      code?: number;
-    };
-    return {
-      stdout: execError.stdout ?? '',
-      stderr: execError.stderr ?? '',
-      code: execError.code ?? 1,
-    };
+    // a nonzero exit is a skill result; any other fault rethrows (rule.forbid.failhide)
+    return asExecResultOrThrow({ error });
   }
 };
 
@@ -410,29 +359,7 @@ export const invokeReviewBySkill = async (input: {
     });
     return { ...result, code: 0 };
   } catch (error) {
-    // allowlist the EXPECTED fault: node's exec rejects a non-zero exit with an ExecException
-    // that carries stdout/stderr/code — the fail-fast boundary cases (exit 1/2) land here. any
-    // error WITHOUT those fields is an unexpected fault (a spawn ENOENT, a bug) and must fail
-    // loud, never masquerade as code:1 (rule.forbid.failhide).
-    if (
-      !error ||
-      typeof error !== 'object' ||
-      !('stdout' in error || 'stderr' in error || 'code' in error)
-    )
-      throw error;
-    // .cast = @types/node does not export ExecException as a narrowable type; the `in` guard
-    //         above proves it is that shape. the `??` fallbacks make each field safe if absent
-    //         (rule.forbid.as-cast: an external-boundary cast, removable once @types/node exports
-    //         ExecException).
-    const execError = error as {
-      stdout?: string;
-      stderr?: string;
-      code?: number;
-    };
-    return {
-      stdout: execError.stdout ?? '',
-      stderr: execError.stderr ?? '',
-      code: execError.code ?? 1,
-    };
+    // a nonzero exit is a skill result; any other fault rethrows (rule.forbid.failhide)
+    return asExecResultOrThrow({ error });
   }
 };

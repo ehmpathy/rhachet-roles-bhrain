@@ -90,7 +90,7 @@ declare on each?"*
 
 ## 🟡 .the tally is a sum ACROSS LANES
 
-`computeReviewTotalsFromFiles` does a `+=` over every review file, so the stone has **one**
+`getOneReviewTotalsFromFiles` does a `+=` over every review file, so the stone has **one**
 `totalBlockers` and **one** `totalNitpicks`, compared to one allowance.
 
 ⇒ **a dispute lifts the hold only if what remains clears the threshold.** two lanes at 5 nitpicks

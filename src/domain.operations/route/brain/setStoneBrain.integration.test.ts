@@ -30,6 +30,7 @@ const genGuard = (input: {
             slug: peer.slug,
             run: peer.run,
             budget: 3,
+            level: 1,
           }),
       ),
     },

@@ -16,16 +16,12 @@ const ASSETS_DIR = path.join(
 
 /**
  * .what = acceptance test for the opt-in --conversation flag
- * .why = proves $conversation is a plain glob any executable consumes:
- *        - a reviewer WITH --conversation sees the prior .given + .taken and
- *          converges (drops a blocker the driver's .taken claims FIXED)
- *        - a reviewer WITHOUT the flag stays blind (re-raises)
- *        - a mock non-review executable proves the wish's "any skill" claim
+ * .why = $conversation is a plain glob any executable consumes: a reviewer with --conversation
+ *        sees the prior .given + .taken and converges; one without stays blind and re-raises.
  *
- * scenario:
- *   - guard has two peer reviewers: seer (--conversation) + blind (no flag)
- *   - a PRIOR generation is seeded: a blocker given + a FIXED taken for each
- *   - the guard re-runs both at the current hash → seer drops, blind holds
+ * scenario: two peer reviewers (seer with --conversation, blind without); a prior generation is
+ * seeded with a blocker given + a FIXED taken for each; the guard re-runs both at the current
+ * hash — seer drops the blocker, blind holds it.
  */
 describe('driver.route.conversation-visibility.acceptance', () => {
   given('[case1] a prior round with a FIXED .taken, two reviewers', () => {
@@ -45,14 +41,12 @@ describe('driver.route.conversation-visibility.acceptance', () => {
         '# execute\n\nthe work under review.\n',
       );
 
-      // seed a PRIOR generation (fake hash 00000000): a blocker given +
-      // a FIXED taken for each reviewer, so the current round's conversation
-      // is non-empty for the opt-in reviewer
+      // seed a prior generation (fake hash 00000000): a blocker given + a FIXED taken for each
+      // reviewer, so the current round's conversation is non-empty for the opt-in reviewer
       const peerDir = path.join(tempDir, '.reviews', 'peer');
       await fs.mkdir(peerDir, { recursive: true });
       const seed = async (slug: string, idx: number) => {
-        // zero-padded i/r grammar (asStoneGuardCounter) — a real prior generation
-        // would be written padded, so the seed must match to stay realistic
+        // zero-padded i/r grammar (asStoneGuardCounter), same as a real prior generation
         const base = `1.execute._.review.i001.00000000.r00${idx}`;
         await fs.writeFile(
           path.join(peerDir, `${base}._.given.by_peer.${slug}.md`),
@@ -77,7 +71,7 @@ describe('driver.route.conversation-visibility.acceptance', () => {
           cwd: scene.tempDir,
         });
 
-        // read the CURRENT-generation givens (exclude the seeded 00000000 hash)
+        // read the current-generation givens (exclude the seeded 00000000 hash)
         const files = await fs.readdir(scene.peerDir);
         const givenOf = async (slug: string) => {
           const name = files.find(
@@ -94,10 +88,22 @@ describe('driver.route.conversation-visibility.acceptance', () => {
         };
       });
 
-      then('the opt-in seer saw the prior conversation (4 files)', () => {
-        expect(result.seer).toContain('## conversation seen (4 files)');
+      // .retired = this case once asserted `conversation seen (4 files)` — the seer read both
+      //            lanes' dialogue. that intent is retired on purpose: `$conversation` is now
+      //            lane-scoped (getAllRouteGuardReviewPeerConversationFiles, `slug`), so the seer
+      //            reads its own given + taken only. the lane-scope clamp below is its forward twin
+      then('the opt-in seer saw its OWN prior dialogue (2 files)', () => {
+        expect(result.seer).toContain('## conversation seen (2 files)');
         expect(result.seer).toContain('_.given.by_peer.seer.md');
         expect(result.seer).toContain('_.taken.by_self.seer.md');
+      });
+
+      then('🔴 and never the other lane — the conversation is lane-scoped', () => {
+        // each lane reads only its own given + the driver's taken to it — unscoped, the
+        // conversation grows lanes × rounds into the uncacheable tail
+        // (getAllRouteGuardReviewPeerConversationFiles, `slug`)
+        expect(result.seer).not.toContain('_.given.by_peer.blind.md');
+        expect(result.seer).not.toContain('_.taken.by_self.blind.md');
       });
 
       then('the opt-in seer converged — dropped the blocker (0)', () => {

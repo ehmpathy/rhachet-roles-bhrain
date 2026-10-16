@@ -15,14 +15,14 @@ const noopContext = genContextReviewBrainSupplyDemo();
  *         passage ledger read back to prove what it recorded.
  *
  * .why = the reviewer read this suite as absent and graded a blocker (r010 blocker.1):
- *        the only stance test hit the GATE function `assertAbsorptionIsNotContrary` in
+ *        the only stance test hit the GATE function `asAbsorptionIsNotContrary` in
  *        isolation, so it never drove the production write path and never inspected
  *        `passage.jsonl`. a clamp that stops before the write cannot catch a defect in
  *        the write — `rule.require.clamp-edge-cases` names that a toothless clamp.
  *
  * 🔴 each `then` below goes RED under a real regression:
  *      - drop the `alreadyOnRecord` guard → [t2] finds two conceded rows, not one
- *      - drop `assertAbsorptionIsNotContrary` → [t3] records a row instead of a throw
+ *      - drop `asAbsorptionIsNotContrary` → [t3] records a row instead of a throw
  *      - drop the `severity ?? 'better'` default → [t1] reads severity undefined
  *      - store `--why` on a concede → [t4] finds a fulcrum on a concede row
  *    so the suite clamps the write, not merely the parse.
@@ -240,7 +240,7 @@ describe('setStoneAsConcernAbsorbed.integration', () => {
       '[t3] the driver tries a CONTRARY dispute on the conceded nitpick.1',
       () => {
         then('it throws — a stance is final for its given', async () => {
-          // 🔴 red without assertAbsorptionIsNotContrary — a flip-flop would record a
+          // 🔴 red without asAbsorptionIsNotContrary — a flip-flop would record a
           //    disputed row over the conceded one (case=8, the flip-flop refused)
           const error = await getError(
             setStoneAsConcernAbsorbed({
@@ -418,8 +418,9 @@ describe('setStoneAsConcernAbsorbed.integration', () => {
         then(
           'the lane approved — no blocker, nitpicks within allowance',
           () => {
-            // an approved lane owes no answer (0 blockers), so a stance needs no prior `.taken`
-            expect(outcome.passed).toBeDefined();
+            // an approved lane owes no answer (0 blockers), so a stance needs no prior `.taken`.
+            // the check is the verdict itself, so a regression that blocks this lane goes red
+            expect(outcome.passed).toBe(true);
           },
         );
       });

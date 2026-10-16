@@ -1,0 +1,165 @@
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
+
+exports[`review.join-intersect.acceptance given: [case1] intersect mode with both diffs and paths when: [t0] only dirty.ts is changed, paths matches both files, attempt 1 then: the metrics.expected block matches its snapshot (computed before the brain) 1`] = `
+"🔭 metrics.expected
+   ├─ files
+   │  ├─ rules: 3
+   │  └─ targets: 1
+   ├─ tokens
+   │  ├─ estimate: 2,747
+   │  └─ context: 0.3%
+   └─ cost
+      └─ estimate: $0.001374100"
+`;
+
+exports[`review.join-intersect.acceptance given: [case1] intersect mode with both diffs and paths when: [t0] only dirty.ts is changed, paths matches both files, attempt 2 then: the metrics.expected block matches its snapshot (computed before the brain) 1`] = `
+"🔭 metrics.expected
+   ├─ files
+   │  ├─ rules: 3
+   │  └─ targets: 1
+   ├─ tokens
+   │  ├─ estimate: 2,747
+   │  └─ context: 0.3%
+   └─ cost
+      └─ estimate: $0.001374100"
+`;
+
+exports[`review.join-intersect.acceptance given: [case1] intersect mode with both diffs and paths when: [t0] only dirty.ts is changed, paths matches both files, attempt 3 then: the metrics.expected block matches its snapshot (computed before the brain) 1`] = `
+"🔭 metrics.expected
+   ├─ files
+   │  ├─ rules: 3
+   │  └─ targets: 1
+   ├─ tokens
+   │  ├─ estimate: 2,747
+   │  └─ context: 0.3%
+   └─ cost
+      └─ estimate: $0.001374100"
+`;
+
+exports[`review.join-intersect.acceptance given: [case2] intersect mode with empty diffs when: [t0] no files changed, paths matches files then: the refusal reads whole, as a driver meets it 1`] = `
+"
+🦉 woah there
+
+✋ ConstraintError: combined scope resolves to zero files
+   └─ targets
+      ├─ diffs: since-main
+      │  └─ files: 6
+      ├─ paths.with: src/*.ts
+      │  └─ files: 2
+      ├─ paths.wout: (none)
+      └─ joined via intersect
+         └─ files: 0
+
+✨ did you know?
+   └─ inspect .log/bhrain/review/<TIMESTAMP> to see what was matched
+
+"
+`;
+
+exports[`review.join-intersect.acceptance given: [case3] union mode with empty diffs when: [t0] no files changed, paths matches files, union mode, attempt 1 then: the metrics.expected block matches its snapshot (computed before the brain) 1`] = `
+"🔭 metrics.expected
+   ├─ files
+   │  ├─ rules: 3
+   │  └─ targets: 8
+   ├─ tokens
+   │  ├─ estimate: 3,429
+   │  └─ context: 0.3%
+   └─ cost
+      └─ estimate: $0.001714700"
+`;
+
+exports[`review.join-intersect.acceptance given: [case3] union mode with empty diffs when: [t0] no files changed, paths matches files, union mode, attempt 2 then: the metrics.expected block matches its snapshot (computed before the brain) 1`] = `
+"🔭 metrics.expected
+   ├─ files
+   │  ├─ rules: 3
+   │  └─ targets: 8
+   ├─ tokens
+   │  ├─ estimate: 3,429
+   │  └─ context: 0.3%
+   └─ cost
+      └─ estimate: $0.001714700"
+`;
+
+exports[`review.join-intersect.acceptance given: [case3] union mode with empty diffs when: [t0] no files changed, paths matches files, union mode, attempt 3 then: the metrics.expected block matches its snapshot (computed before the brain) 1`] = `
+"🔭 metrics.expected
+   ├─ files
+   │  ├─ rules: 3
+   │  └─ targets: 8
+   ├─ tokens
+   │  ├─ estimate: 3,429
+   │  └─ context: 0.3%
+   └─ cost
+      └─ estimate: $0.001714700"
+`;
+
+exports[`review.join-intersect.acceptance given: [case4] default mode is intersect when: [t0] no --join specified, only dirty.ts changed, attempt 1 then: the metrics.expected block matches its snapshot (computed before the brain) 1`] = `
+"🔭 metrics.expected
+   ├─ files
+   │  ├─ rules: 3
+   │  └─ targets: 1
+   ├─ tokens
+   │  ├─ estimate: 2,747
+   │  └─ context: 0.3%
+   └─ cost
+      └─ estimate: $0.001374100"
+`;
+
+exports[`review.join-intersect.acceptance given: [case4] default mode is intersect when: [t0] no --join specified, only dirty.ts changed, attempt 2 then: the metrics.expected block matches its snapshot (computed before the brain) 1`] = `
+"🔭 metrics.expected
+   ├─ files
+   │  ├─ rules: 3
+   │  └─ targets: 1
+   ├─ tokens
+   │  ├─ estimate: 2,747
+   │  └─ context: 0.3%
+   └─ cost
+      └─ estimate: $0.001374100"
+`;
+
+exports[`review.join-intersect.acceptance given: [case4] default mode is intersect when: [t0] no --join specified, only dirty.ts changed, attempt 3 then: the metrics.expected block matches its snapshot (computed before the brain) 1`] = `
+"🔭 metrics.expected
+   ├─ files
+   │  ├─ rules: 3
+   │  └─ targets: 1
+   ├─ tokens
+   │  ├─ estimate: 2,747
+   │  └─ context: 0.3%
+   └─ cost
+      └─ estimate: $0.001374100"
+`;
+
+exports[`review.join-intersect.acceptance given: [case5] only --paths specified (no --diffs) when: [t0] single source, join mode does not apply, attempt 1 then: the metrics.expected block matches its snapshot (computed before the brain) 1`] = `
+"🔭 metrics.expected
+   ├─ files
+   │  ├─ rules: 3
+   │  └─ targets: 2
+   ├─ tokens
+   │  ├─ estimate: 2,956
+   │  └─ context: 0.3%
+   └─ cost
+      └─ estimate: $0.001478800"
+`;
+
+exports[`review.join-intersect.acceptance given: [case5] only --paths specified (no --diffs) when: [t0] single source, join mode does not apply, attempt 2 then: the metrics.expected block matches its snapshot (computed before the brain) 1`] = `
+"🔭 metrics.expected
+   ├─ files
+   │  ├─ rules: 3
+   │  └─ targets: 2
+   ├─ tokens
+   │  ├─ estimate: 2,956
+   │  └─ context: 0.3%
+   └─ cost
+      └─ estimate: $0.001478800"
+`;
+
+exports[`review.join-intersect.acceptance given: [case5] only --paths specified (no --diffs) when: [t0] single source, join mode does not apply, attempt 3 then: the metrics.expected block matches its snapshot (computed before the brain) 1`] = `
+"🔭 metrics.expected
+   ├─ files
+   │  ├─ rules: 3
+   │  └─ targets: 2
+   ├─ tokens
+   │  ├─ estimate: 2,956
+   │  └─ context: 0.3%
+   └─ cost
+      └─ estimate: $0.001478800"
+`;

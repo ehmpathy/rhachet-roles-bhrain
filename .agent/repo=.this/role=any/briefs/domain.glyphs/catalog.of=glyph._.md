@@ -27,7 +27,7 @@ the same answer binds a traveler about to **strip** one, and that direction has 
 > its density cap governs decoration. a claimed marker is a **contract on a surface**, and a
 > contract is not trimmed for density.
 
-### ⚠️ a stated bound does not survive a sweep — the cue must sit at the sweep
+### 🟡 a stated bound does not survive a sweep — the cue must sit at the sweep
 
 a sweep does not ask *"which rule governs this?"* per site; it applies **one** rule to a **pattern**.
 so a bound stated here is consulted at claim time and never again, and **a glyph's register
@@ -94,15 +94,16 @@ present, never merely its address (`rule.require.inventory-for-enumerable-concep
 | ✋ | `halt` | blocked — a wall to clear |
 | 💥 | `halt` | malfunction — a break to fix |
 | 🌙 | `halt` | skipped — a review that never ran |
+| 🟡 | — | the caution mark these briefs open a section with — a claim to weigh before you trust it. off every axis |
 | 🪷 ✨ 🍵 | `vibe` | flourishes — they carry tone, never a concept, so none is reusable as a marker |
 | 🌴🤙 | `vibe` | 🔴 a route complete — an imported `ehmpathy` vibe, off the owl's palette. swap owed |
-| ⚠️ | — | 🔴 **FORBIDDEN — never claim it.** it computes to 1 cell where every other palette glyph computes to 2, so it desyncs the cursor and kinks every column under it. and it is a second symbol for `🟡`'s one concept. reach for `🟡` — `rule.forbid.width-ambiguous-glyphs` (telepath) |
+| ⚠️ | — | 🔴 **FORBIDDEN — never claim it.** it computes to 1 cell where every other palette glyph computes to 2, so it desyncs the cursor and kinks every column under it. and it is a second symbol for `🟡`'s one concept. reach for `🟡` — `rule.forbid.width-ambiguous-glyphs` (telepath). clamp: `src/.test/forbidWidthAmbiguousGlyph.integration.test.ts` guards rendered output: it fails on any `⚠` in a snapshot body under `src/` or `blackbox/`, since a snapshot pins what stdout and stderr print. prose and comments may still name the glyph |
 
 ## 🟡 .the two-axis entries are NOT collisions
 
-`📚` and `🔍` each appear on two axes, and both are **one concept seen twice**:
+`📚` and `🔍` each appear in two senses, and each is **one concept seen twice**:
 
-| glyph | role sense | second sense | why it is one concept |
+| glyph | first sense | second sense | why it is one concept |
 |---|---|---|---|
 | 📚 | the librarian | rung 1, a brief | a brief is the librarian's own artifact |
 | 🔍 | the reviewer | the review·judge phase | the phase IS the reviewer at labor; `ReviewVibe` names the slot `artifact` |

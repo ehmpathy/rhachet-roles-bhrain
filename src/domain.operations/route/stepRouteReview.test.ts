@@ -56,7 +56,7 @@ describe('stepRouteReview', () => {
 
   given('[case4] multiple artifacts with --open specified', () => {
     when('[t0] stepRouteReview is called', () => {
-      then('shows tip message about --open ignored', async () => {
+      then('shows a status row that --open was skipped', async () => {
         const result = await stepRouteReview({
           route: ASSETS_DIR,
           stone: '2.criteria',
@@ -64,8 +64,10 @@ describe('stepRouteReview', () => {
         });
 
         expect(result.opened).toBe(false);
-        expect(result.emit.stdout).toContain('--open vim ignored');
-        expect(result.emit.stdout).toContain('multiple files matched');
+        expect(result.emit.stdout).toMatch(
+          /└─ --open vim skipped — it opens one file, and \d+ matched/,
+        );
+        expect(result.emit.stdout).not.toContain('tip:');
       });
     });
   });

@@ -1,17 +1,50 @@
-import { PassageReport } from '@src/domain.objects/Driver/PassageReport';
 import type { RouteStone } from '@src/domain.objects/Driver/RouteStone';
 import { enumFilesFromGlob } from '@src/utils/enumFilesFromGlob';
 
 import { resetRouteStoneGuardReviewPeerMeters } from '../guard/review/peer/meter/resetRouteStoneGuardReviewPeerMeters';
-import { setPassageReport } from '../passage/setPassageReport';
 import { archiveStoneYield } from './archiveStoneYield';
 import { asClearedTriggerTotal } from './asClearedTriggerTotal';
 import { delStoneGuardArtifacts } from './delStoneGuardArtifacts';
 import { getStoneYieldGlob } from './getStoneYieldGlob';
 
 /**
- * .what = rewinds each affected stone by clear guard artifacts and set passage
+ * .what = applies the rewind's yield mode to one stone, and reports what became of its yield
+ * .why = one early return per mode, so the rewind loop reads one named act rather than a
+ *        `let` reassigned across an if/else (r009 nitpick.4, i013)
+ */
+const setStoneYieldOfRewind = async (input: {
+  stone: string;
+  route: string;
+  yieldMode: 'keep' | 'drop';
+}): Promise<'archived' | 'preserved' | 'absent'> => {
+  // drop → archive the yield, and report what the archive found
+  if (input.yieldMode === 'drop') {
+    const yieldResult = await archiveStoneYield({
+      stone: input.stone,
+      route: input.route,
+    });
+    return yieldResult.outcome;
+  }
+
+  // keep → leave the yield in place; report whether any was there
+  // 🔴 the SAME glob the 'drop' branch above reaches through `archiveStoneYield`, and it is
+  //    the same operation rather than a twin literal. the two branches answer one question —
+  //    which files are this stone's yield? — so a convention that moved in one and not the
+  //    other would make `preserved` and `archived` disagree about their subject
+  const yieldFiles = await enumFilesFromGlob({
+    glob: getStoneYieldGlob({ stone: input.stone }),
+    cwd: input.route,
+  });
+  return yieldFiles.length > 0 ? 'preserved' : 'absent';
+};
+
+/**
+ * .what = rewinds each affected stone: clears its guard artifacts, meters, and yield
  * .why = extracts for-of loop to named operation for narrative flow
+ *
+ * .note = the `rewound` passage row is NOT written here. it is the stone's rewind
+ *         generation, so the caller bumps it first, under the stone's hold, before this
+ *         deletes aught (setStoneRewindGeneration)
  */
 export const rewindAffectedStones = async (input: {
   affectedStones: RouteStone[];
@@ -31,6 +64,9 @@ export const rewindAffectedStones = async (input: {
     passage: 'rewound';
   }>;
 }> => {
+  // .note = deliberate mutation, scoped to this call: the loop below rewinds each stone in
+  //         order (a filesystem act per stone) and records it here; the array is born in this
+  //         call and only the returned report escapes (rule.require.immutable-vars)
   const cascade: Array<{
     stone: string;
     cleared: string;
@@ -52,25 +88,11 @@ export const rewindAffectedStones = async (input: {
     });
 
     // handle yield based on mode
-    let yieldOutcome: 'archived' | 'preserved' | 'absent';
-    if (input.yieldMode === 'drop') {
-      const yieldResult = await archiveStoneYield({
-        stone: stone.name,
-        route: input.route,
-      });
-      yieldOutcome = yieldResult.outcome;
-    } else {
-      // 🔴 the SAME glob the 'drop' branch above reaches through `archiveStoneYield`, and it is
-      //    the same operation rather than a twin literal. the two branches answer one question —
-      //    which files are this stone's yield? — so a convention that moved in one and not the
-      //    other would make `preserved` and `archived` disagree about their subject
-      const yieldGlob = getStoneYieldGlob({ stone: stone.name });
-      const yieldFiles = await enumFilesFromGlob({
-        glob: yieldGlob,
-        cwd: input.route,
-      });
-      yieldOutcome = yieldFiles.length > 0 ? 'preserved' : 'absent';
-    }
+    const yieldOutcome = await setStoneYieldOfRewind({
+      stone: stone.name,
+      route: input.route,
+      yieldMode: input.yieldMode,
+    });
 
     // build cascade item with all info together
     cascade.push({
@@ -83,13 +105,6 @@ export const rewindAffectedStones = async (input: {
       yield: yieldOutcome,
       passage: 'rewound',
     });
-
-    // append passage report with status: 'rewound'
-    const report = new PassageReport({
-      stone: stone.name,
-      status: 'rewound',
-    });
-    await setPassageReport({ report, route: input.route });
   }
 
   return { cascade: cascade };

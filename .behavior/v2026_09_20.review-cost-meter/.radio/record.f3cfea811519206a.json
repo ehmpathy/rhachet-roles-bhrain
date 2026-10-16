@@ -1,0 +1,21 @@
+{
+  "key": "f3cfea811519206a",
+  "kind": "create",
+  "repo": {
+    "owner": "ehmpathy",
+    "name": "rhachet"
+  },
+  "exid": null,
+  "title": "fix(run): forward a skill stderr on exit 0, not only on failure",
+  "description": "## .what\n\nwhen a skill writes to stderr and exits 0, rhx drops those stderr bytes: neither stream carries them to the caller. on a nonzero exit the child output does surface, so the loss is scoped to the exit-0 path.\n\ncheckable evidence, ehmpathy/rhachet-roles-bhrain, 2026-09-23. the skill census.review-prefix writes a refusal to stderr and exits 0 when it finds no log root:\n\n    🦉 no review logs at <path>\n       fix: run a review here first, or point --at at a tree where reviews ran\n\nspawned directly via its .sh, both lines reach stderr (an acceptance case asserts it, green). through the runner:\n\n    $ rhx census.review-prefix --at /tmp/does-not-exist-xyz\n    🪨 run solid skill repo=.this/role=any/skill=census.review-prefix\n\n    EXIT=0\n\nboth lines are gone.\n\n## .why\n\nseveral skills deliberately exit 0 on a soft refusal so they do not gate a pipeline. each one carefully worded fix line reaches no reader, and the silence reads as a clean result. it is invisible to any suite that spawns the skill rather than the runner.\n\n## .shape of the fix\n\n- in the skill exec path, inherit or forward the child stderr on every exit code, not only nonzero. the child already owns fd 2; the runner should not filter it\n- clamp: a fixture skill that writes one line to stderr and exits 0; spawn it through rhachet run --skill and assert the line reaches the caller stderr\n\ncaught in ehmpathy/rhachet-roles-bhrain .dream/v2026_09_23.fix.rhx-swallows-a-skills-stderr-so-every-refusal-that-names-its-fix-is-invisible.md",
+  "status": null,
+  "via": "gh.issues",
+  "auth": "as-human",
+  "idem": null,
+  "heldAt": "2026-10-15",
+  "heldSeq": 16,
+  "recordStatus": "DELIVERED",
+  "reason": null,
+  "settledAt": "2026-10-16",
+  "deliveredExid": "610"
+}

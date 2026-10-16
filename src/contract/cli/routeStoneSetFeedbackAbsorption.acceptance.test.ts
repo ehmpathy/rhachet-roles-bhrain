@@ -17,7 +17,7 @@ import { countReviewerRuns } from '../../domain.operations/route/__test_assets__
  *        the OPERATION; it never proves the COMMAND — the arg parse, the exit code, the
  *        owl-header strip, the progress emit, and the halt tree a driver actually reads
  *        all live in the cli layer and were untested here
- *        (rule.require.acceptance-journey-coverage; r4 i001).
+ *        (rule.require.acceptance-journey-coverage).
  *
  * .how = the peer reviewer in a guard is a `run:` SHELL COMMAND. so a reviewer that
  *        `echo`s a numeric verdict exercises the whole engine with no brain and no
@@ -63,13 +63,13 @@ const runStoneSet = (input: {
  * .why = three suites had drifted three copies of it, and this copy carried the drift
  *        that mattered: it masked only a PARENTHESIZED duration, while the guard renders
  *        `rejected 0.0s` bare — so a slow runner would have gone red on an elapsed-time
- *        change no assertion cared about (r4 nitpick.2, i002). the bound is now stated
+ *        change no assertion cared about. the bound is now stated
  *        once, in `asStableGuardEmit`
  */
 const asStableEmit = (input: { emit: string; cwd: string }): string =>
   asStableGuardEmit({ emit: input.emit, route: input.cwd });
 
-describe('routeStoneSet.feedbackAbsorption.acceptance', () => {
+describe('routeStoneSetFeedbackAbsorption.acceptance', () => {
   given(
     '[case1] a bound route whose one peer reviewer always hands back a blocker',
     () => {
@@ -139,17 +139,14 @@ describe('routeStoneSet.feedbackAbsorption.acceptance', () => {
           // one, and the failed-judge branch is a branch that does — its terminal
           // `stampGuardReport` passes `stderr: joinArtifactStderrBlocks(stderrBlocks)`.
           //
-          // 🟡 this cited `setStoneAsPassed.ts:1021` and `route.ts:1024-1027` until
-          //    2026-09-08; both had drifted by five lines. the expressions do not
-          //    drift, so they are the citation now.
+          // cited by the expressions themselves rather than line numbers, since
+          //    line numbers drift and these do not.
           //
-          // the precise content was MEASURED, not assumed, and the measurement
-          //    corrected a guess: this branch renders the JUDGE artifacts only. an
-          //    earlier form of this assertion looked for the reviewer's own
-          //    `blockers: 1` and went red — that raw verdict reaches stderr on the
-          //    exhaustion / malfunction / constraint branches, never on a plain
-          //    judge refusal. so the honest clamp is the judge block, which is what
-          //    a driver actually receives here.
+          // the precise content was measured, not assumed: this branch renders the
+          //    judge artifacts only. a reviewer's own raw `blockers: 1` verdict
+          //    reaches stderr on the exhaustion / malfunction / constraint
+          //    branches, never on a plain judge refusal — so the honest clamp is
+          //    the judge block, which is what a driver actually receives here.
           expect(out.stderr).not.toEqual('');
           expect(out.stderr).toContain('judge 1');
           expect(out.stderr).toContain('reason: blockers found');
@@ -162,7 +159,7 @@ describe('routeStoneSet.feedbackAbsorption.acceptance', () => {
             //    byte of this block free to regress. stderr is a caller-visible cli
             //    surface like any other — `rule.require.contract-snapshot-exhaustiveness`
             //    names "stdout/stderr for cli" outright — and it was the ONE surface in
-            //    this suite left unpinned (r2 nitpick.1, i003).
+            //    this suite left unpinned.
             //
             // .note = the same stabilizer serves both streams. that is not a convenience:
             //         the run-unique tokens it swaps — the temp root, the 18-hex hash, the
@@ -233,15 +230,15 @@ describe('routeStoneSet.feedbackAbsorption.acceptance', () => {
             //    guard is falsy and the console.error never runs. the two peer
             //    guidance halts do the same — `review.self` and the exit gate.
             //
-            // 🟡 line numbers drift (other comments in this file cite `:1026` for
-            //    the same guard) — the expression is the citation, never a line
-            //    number.
+            // cited by the expression (`if (result.emit.stderr)`) rather than a
+            //    line number, since two other comments in this file cite a
+            //    different line for the same guard.
             //
-            //    ⇒ the split is guidance-vs-evidence, not success-vs-failure: a tree
+            //    the split is guidance-vs-evidence, not success-vs-failure: a tree
             //    the driver must READ goes to stdout; the artifact detail that
             //    justifies a verdict goes to stderr.
             //
-            // 🔴 so this is not a slack assertion — it is the tighter one. were the
+            // so this is not a slack assertion — it is the tighter one. were the
             //    halt tree ever moved to stderr, a driver who runs the command under
             //    a `2>/dev/null` would lose the entire instruction and see only a
             //    bare exit 2, which is the precise failure the tree exists to prevent.
@@ -251,7 +248,6 @@ describe('routeStoneSet.feedbackAbsorption.acceptance', () => {
             // .note = `genContextCliEmit({ stderr: process.stdout })` at `route.ts:978`
             //         routes the PROGRESS emit to stdout as well, so stderr on this
             //         path is genuinely untouched rather than merely quiet
-            //         (r4 nitpick.3, i002)
             expect(out.stderr).toEqual('');
             expect(out.stdout).toContain('await your reply');
           });
@@ -267,7 +263,7 @@ describe('routeStoneSet.feedbackAbsorption.acceptance', () => {
             },
           );
 
-          // 🔴 the EMPTY stderr is snapped too, not merely asserted above.
+          // the EMPTY stderr is snapped too, not merely asserted above.
           //
           //    the assertion proves the stream was empty on this run; the snapshot
           //    puts that emptiness INTO the corpus, so the variant is reconstructable
@@ -331,8 +327,7 @@ describe('routeStoneSet.feedbackAbsorption.acceptance', () => {
               //    never proves the COMMAND — the `--that` parse, the exit code, and
               //    the owl-header strip between the operation and the driver's
               //    terminal were all unpinned, so a change to the arg-parse→stdout
-              //    assembly for this variant went undetected by this suite
-              //    (r2 nitpick.2, i003).
+              //    assembly for this variant went undetected by this suite.
               expect(
                 asStableEmit({ emit: out.stdout, cwd: scene.tempDir }),
               ).toMatchSnapshot(
@@ -352,7 +347,7 @@ describe('routeStoneSet.feedbackAbsorption.acceptance', () => {
             //    would agree with the engine today and drift on the next grammar change,
             //    which is the false-green `rule.require.single-source-of-truth-for-render`
             //    forbids — and the exact hazard `.dream/…peer-review-filename-grammar-is-
-            //    bypassed.md` names as the "build half" (r1 i002)
+            //    bypassed.md` names as the "build half"
             const answered = await answerEveryPeerGiven({
               route: scene.tempDir,
               stone: '1.test',
@@ -378,7 +373,7 @@ describe('routeStoneSet.feedbackAbsorption.acceptance', () => {
           then(
             '`--as absorbed --that counter` meets the composition gate',
             () => {
-              // 🔴 the answer wrote the `.taken`, but the concern is not yet absorbed — so the
+              // the answer wrote the `.taken`, but the concern is not yet absorbed — so the
               //    composition gate (define.invariant.review.peer.absorb) refuses the feedback
               //    act, ahead of the answer-first gate. the driver must dispute or concede the
               //    concern BEFORE `--as absorbed` lands. exit 2, message to stderr.
@@ -421,7 +416,7 @@ describe('routeStoneSet.feedbackAbsorption.acceptance', () => {
           then(
             'but the rejected lane now awaits a STANCE — the new gate',
             () => {
-              // 🔴 the whole behavior at the command grain. an answer discharges the .taken
+              // the whole behavior at the command grain. an answer discharges the .taken
               //    debt; it does NOT declare where the driver STANDS on the concern. the
               //    stance gate sits just past the feedbackAbsorption gate and halts a rejected
               //    lane until each concern carries a dispute or a concede. the driver meets
@@ -443,7 +438,7 @@ describe('routeStoneSet.feedbackAbsorption.acceptance', () => {
           then(
             'no round was spawned — the stance gate precedes the subprocess',
             () => {
-              // 🔴 the teeth. were the gate absent, the answer alone would have reopened the
+              // the teeth. were the gate absent, the answer alone would have reopened the
               //    road and the reviewer would have spoken a SECOND time — the exact free
               //    re-entry this behavior closes. an unmoved tally is the proof it did not
               expect(countReviewerRuns({ route: scene.tempDir })).toEqual(1);
@@ -476,7 +471,7 @@ describe('routeStoneSet.feedbackAbsorption.acceptance', () => {
           //    it is declared the lane re-runs and the round flows exactly as it did
           //    before the stance gate existed. the declaration is SETUP here — the
           //    subject under test remains the spawned `--as passed` — and it goes through
-          //    the same production fold the gate reads (`getStoneUndeclaredConcerns`), so
+          //    the same production fold the gate reads (`getAllStoneUndeclaredConcerns`), so
           //    a concern this helper skips is one the gate would let pass
           await concedeEveryPeerConcern({
             route: scene.tempDir,
@@ -525,7 +520,6 @@ describe('routeStoneSet.feedbackAbsorption.acceptance', () => {
           //        unlocked re-raised, so a second given now stands with no answer
           //        beside it while the first answer sits on disk. that is precisely
           //        `stale` — a taken exists, and none of them pairs the live given
-          //        (r2 blocker.1, i007)
           const out = useBeforeAll(async () =>
             runStoneSet({
               cwd: scene.tempDir,
@@ -547,7 +541,7 @@ describe('routeStoneSet.feedbackAbsorption.acceptance', () => {
           });
 
           then('the guidance blames the REVIEWER, never the artifact', () => {
-            // 🔴 the sharp half, and the reason this variant earns a cli clamp of its
+            // the sharp half, and the reason this variant earns a cli clamp of its
             //    own rather than a formatter one. under the old hash key the honest
             //    cause of a stale tag WAS an artifact edit; under P2 it is that the
             //    reviewer spoke again. those two sentences send a driver to two
@@ -621,7 +615,7 @@ describe('routeStoneSet.feedbackAbsorption.acceptance', () => {
             //    reviewer's own verdict rather than the ack — an earlier copy read
             //    "held for the ack read", which implied the ack's readiness turned on
             //    a judge hold. it does not; `status.ready` is decided by the reviewer's
-            //    blocker count alone (r2 nitpick.1, i007)
+            //    blocker count alone
             '  - echo "passed: false\\nreason: a nitpick stands unresolved"',
             '',
           ].join('\n'),
@@ -631,7 +625,7 @@ describe('routeStoneSet.feedbackAbsorption.acceptance', () => {
       });
 
       when('[t0] a round runs, then `--as absorbed --that cleanly`', () => {
-        // 🔴 the precondition round is CAPTURED, not merely fired.
+        // the precondition round is CAPTURED, not merely fired.
         //
         //    the first `--as passed` is what runs the reviewer and leaves the given
         //    on disk for the ack to read — and its render is a distinct variant of
@@ -639,9 +633,9 @@ describe('routeStoneSet.feedbackAbsorption.acceptance', () => {
         //    refused on `a nitpick stands unresolved`. that pair appears in no
         //    case1 snapshot, where the reviewer raises a blocker instead.
         //
-        // ⇒ to fire it and drop its stdout leaves a gap in the corpus: the case2
+        // to fire it and drop its stdout leaves a gap in the corpus: the case2
         //   sequence could not be reconstructed from the snapshots alone
-        //   (rule.require.snapshot-every-journey-step · r2 nitpick.3, i015).
+        //   (rule.require.snapshot-every-journey-step).
         const round = useBeforeAll(async () =>
           runStoneSet({
             cwd: scene.tempDir,
@@ -660,7 +654,7 @@ describe('routeStoneSet.feedbackAbsorption.acceptance', () => {
           // .note = reads `round` so the ack is ordered AFTER the round above, rather
           //         than merely alongside it — the given must exist on disk first
           expect(round.exitCode).toBeDefined();
-          // 🔴 a nitpick-only lane is rejected under --allow-nitpicks 0, so its nitpicks
+          // a nitpick-only lane is rejected under --allow-nitpicks 0, so its nitpicks
           //    count and owe absorption — the composition gate refuses `--as absorbed`
           //    until they are absorbed. concede needs no `.taken` (R1 fires on blockers only),
           //    so "no `.taken` ever written" still holds.
@@ -713,7 +707,11 @@ describe('routeStoneSet.feedbackAbsorption.acceptance', () => {
           //    collapse the two into one line would claim a response was recorded
           //    when the driver wrote none — a false record of a conversation that
           //    never happened. so the DISTINCTION is what is pinned here
-          expect(ack.stdout).toContain('raised no blockers');
+          // .retired = the prior copy "raised no blockers". the tail now also warns that
+          //   the lane's nitpicks still owe a `.taken`, since an approved lane re-raises
+          //   each unanswered one (rule.always.converge-with-reviewers.via-a-taken-per-point)
+          expect(ack.stdout).toContain('no blockers, so no gate holds');
+          expect(ack.stdout).toContain('its nitpicks carry no .taken');
           expect(ack.stdout).not.toContain('your response is recorded');
         });
 
@@ -727,17 +725,16 @@ describe('routeStoneSet.feedbackAbsorption.acceptance', () => {
         });
 
         then('and the ack writes no byte to stderr', () => {
-          // 🔴 this is a stronger claim than the per-branch one at [case4][t0], and it
+          // this is a stronger claim than the per-branch one at [case4][t0], and it
           //    covers the WHOLE `--as absorbed` surface: `setStoneAsFeedbackAbsorbed.ts`
           //    names `stderr` exactly once, at `:39`, in its return TYPE — and assigns it
           //    on no branch at all. so `route.ts:1026` is falsy for every ack this command
           //    can render, by construction rather than by case.
           //
-          // 🟡 the one `--as absorbed` path that DOES reach stderr is the invalid-slug
+          // the one `--as absorbed` path that DOES reach stderr is the invalid-slug
           //    throw, and it arrives by a different route entirely: the operation never
           //    returns, so `route.ts`'s BadRequestError catch writes it. [case3] pins that
-          //    one on both streams, so the surface is now covered in both polarities
-          //    (r2 blocker.1, i018).
+          //    one on both streams, so the surface is now covered in both polarities.
           expect(ack.stderr).toEqual('');
         });
       });
@@ -749,7 +746,7 @@ describe('routeStoneSet.feedbackAbsorption.acceptance', () => {
     //        reproduced at operation grain only, which pins the thrown error and
     //        leaves the COMMAND's render of it — the stream it lands on, the exit
     //        code, and whether the valid-slug list survives the cli layer at all —
-    //        entirely unpinned (r2 blocker.1, i006)
+    //        entirely unpinned
     const scene = useBeforeAll(async () => {
       const tempDir = genTempDir({
         slug: 'stone-set-feedbackAbsorption-ghost-cli',
@@ -803,7 +800,7 @@ describe('routeStoneSet.feedbackAbsorption.acceptance', () => {
       });
 
       then('the valid slugs survive the cli layer and reach the driver', () => {
-        // 🔴 the sharp half. a bare "invalid slug" would leave the driver to guess,
+        // the sharp half. a bare "invalid slug" would leave the driver to guess,
         //    and the whole value of the error is the list beside it. that list is
         //    assembled in the operation and must cross the cli boundary intact
         expect(`${out.stdout}${out.stderr}`).toContain('counter');
@@ -815,7 +812,7 @@ describe('routeStoneSet.feedbackAbsorption.acceptance', () => {
         //    constraint path in this suite pins `.toEqual(2)` — so the loose form
         //    would have gone green on a drift to exit 1, which reads as a MALFUNCTION
         //    and sends the driver to debug the engine rather than fix their slug
-        //    (rule.require.exit-code-semantics; r10 nitpick.1, i009)
+        //    (rule.require.exit-code-semantics)
         expect(out.exitCode).toEqual(2);
       });
 
@@ -843,7 +840,7 @@ describe('routeStoneSet.feedbackAbsorption.acceptance', () => {
     // .why = the SUCCESS output of `route.stone.set --as passed`. every other fixture
     //        in this suite ends at a refusal, so `passage = allowed` — the variant a
     //        driver sees on the happy path, and the most-read output of the command —
-    //        had no snapshot at any grain (r2 blocker.2, i006)
+    //        had no snapshot at any grain
     const scene = useBeforeAll(async () => {
       const tempDir = genTempDir({
         slug: 'stone-set-passage-allowed-cli',
@@ -895,7 +892,7 @@ describe('routeStoneSet.feedbackAbsorption.acceptance', () => {
       });
 
       then('the round ran — the pass was earned, never skipped', () => {
-        // 🔴 not decoration. a stone with a guard that never ran would also exit 0,
+        // not decoration. a stone with a guard that never ran would also exit 0,
         //    and that green would be indistinguishable from this one. the tally is
         //    what parts an earned pass from a bypassed guard
         expect(countReviewerRuns({ route: scene.tempDir })).toEqual(1);
@@ -915,7 +912,7 @@ describe('routeStoneSet.feedbackAbsorption.acceptance', () => {
       });
 
       then('no GUARD RESULT output reaches stderr on the success path', () => {
-        // 🔴 THE ENUMERATION behind every `toEqual('')` in this suite, stated once here
+        // THE ENUMERATION behind every `toEqual('')` in this suite, stated once here
         //    and pointed at from the rest. `route.ts` writes this command's stderr from
         //    a guarded site — `if (result.emit.stderr)` — so stderr carries a RESULT
         //    exactly when `setStoneAsPassed` supplies that key, on FOUR branches:
@@ -927,23 +924,18 @@ describe('routeStoneSet.feedbackAbsorption.acceptance', () => {
         //      | constraint        |
         //      | failed judges     |
         //
-        //    ⇒ a successful pass is none of the four, so the key is absent, the guard is
+        //    a successful pass is none of the four, so the key is absent, the guard is
         //      falsy, and `console.error` is never reached for a result.
         //
-        // 🔴 .the FIFTH writer, added with the concurrent pour = the level-pour ANNOUNCE
-        //    (`asReviewLevelPourAnnounce`, written by `runStoneGuardReviews`). it is a
-        //    LIVENESS line, not a result: one line per level, at t≈0, BEFORE any lane
-        //    settles. it exists because the live status line is suppressed under a pipe,
-        //    which left a piped log byte-silent from a level's launch to its settle — a
-        //    reader could not part "this level is slow" from "this level never began".
+        // .the FIFTH writer is the level-pour announce (`asReviewLevelPourAnnounce`,
+        //    written by `runStoneGuardReviews`) — a liveness line, not a result: one
+        //    line per level, at t≈0, before any lane settles. it exists because the
+        //    live status line is suppressed under a pipe, which left a piped log
+        //    byte-silent from a level's launch to its settle.
         //
-        //    ⚠️ so this assertion can no longer be `toEqual('')`, and the honest repair
-        //      is to keep its TEETH rather than drop it: the hazard it was minted for is
-        //      *"a regression moved the guard's RESULT onto stderr and every step stayed
-        //      green"* (r2 blocker.1, i018), and that hazard is untouched by the announce.
-        //      ⇒ strip the announce, then demand exactly empty — so the first byte of any
-        //        result output still goes red, with no baseline to mint and no corpus
-        //        fetch to read it.
+        //    so this assertion can no longer be `toEqual('')`. the repair keeps its
+        //      teeth rather than drop it: strip the announce, then demand exactly
+        //      empty, so the first byte of any real result output still goes red.
         expect(asStderrSansPourAnnounce({ stderr: out.stderr })).toEqual('');
       });
     });
@@ -954,7 +946,7 @@ describe('routeStoneSet.feedbackAbsorption.acceptance', () => {
     //        because `stepRouteStoneSet.ts:65-69` aliases before dispatch. every other
     //        entry in this suite types `passed`, so the alias — the spelling a driver
     //        reaches for FIRST on a fresh route — had no clamp at the cli grain, and
-    //        A6 rested on a source read alone (r2 blocker.2, i007)
+    //        A6 rested on a source read alone
     const scene = useBeforeAll(async () => {
       const tempDir = genTempDir({
         slug: 'stone-set-arrived-alias-cli',
@@ -1011,10 +1003,10 @@ describe('routeStoneSet.feedbackAbsorption.acceptance', () => {
         expect(out.stdout).not.toContain('await your reply');
       });
 
-      // 🔴 the OPEN-gate tree is the baseline the [t1] halt is read against. left
+      // the OPEN-gate tree is the baseline the [t1] halt is read against. left
       //    unpinned, a reviewer sees only the halt and cannot tell what the command
       //    rendered before any debt existed — so the journey is unreconstructable from
-      //    the snapshots alone (rule.require.snapshot-every-journey-step; r1 blocker.1, i011)
+      //    the snapshots alone (rule.require.snapshot-every-journey-step)
       then('matches snapshot — step 1, the round with no debt owed', () => {
         expect(
           asStableEmit({ emit: out.stdout, cwd: scene.tempDir }),
@@ -1040,7 +1032,7 @@ describe('routeStoneSet.feedbackAbsorption.acceptance', () => {
       );
 
       then('the entrance gate halts this spelling too', () => {
-        // 🔴 the assumption made checkable. an alias that reached a DIFFERENT dispatch
+        // the assumption made checkable. an alias that reached a DIFFERENT dispatch
         //    would sail past the gate, and the whole behavior would have a second door
         //    left open under the spelling drivers type first
         expect(out.stdout).toContain('await your reply');
@@ -1072,28 +1064,27 @@ describe('routeStoneSet.feedbackAbsorption.acceptance', () => {
         //    (`setStoneAsPassed.ts:345-351`) supplies `stdout` and no `stderr` key, so
         //    `route.ts:1026` is falsy and the stream is untouched.
         //
-        // 🔴 and here the assertion carries more than a stream check. this halt exits 2,
+        // and here the assertion carries more than a stream check. this halt exits 2,
         //    so a driver who runs the command under `2>/dev/null` loses no guidance today
         //    — but the day the tree moves to stderr they would see a bare exit 2 and no
         //    instruction at all, which is the exact failure the tree exists to prevent.
         //    case1's halt already pins this; the alias is a SECOND dispatch path and had
-        //    no such clamp (r2 blocker.1, i018).
+        //    no such clamp.
         expect(out.stderr).toEqual('');
       });
     });
   });
 
   given('[case6] a reviewer whose budget runs out with a blocker owed', () => {
-    // .why = the F1 behavior change — `1.vision.experience.case=5`, "the debt outlives
-    //        exhaustion" — is the single most consequential decision in the wish, and it
+    // .why = the F1 behavior change — `v2026_09_03.fix-contemplation-gate-on-entrance`
+    //        case=5, "the debt outlives exhaustion" — is the single most consequential decision in the wish, and it
     //        was clamped at OPERATION grain alone
     //        (`setStoneAsPassed.exhausted.integration.test.ts`). every other fixture in
     //        this suite runs `budget: 5` precisely so exhaustion stays far away, so the
     //        exhaustion options tree — the surface a driver reads when their budget is
-    //        spent and they must choose a lever — had no clamp at the grain they meet it
-    //        (r10 blocker.1, i009).
+    //        spent and they must choose a lever — had no clamp at the grain they meet it.
     //
-    // 🔴 the sharp step is [t1]. the artifact moves BEFORE the re-run, and the reviewer
+    // the sharp step is [t1]. the artifact moves BEFORE the re-run, and the reviewer
     //    is already out of budget — so under the old `(slug, hash)` key the round would
     //    write no given at the new hash, the debt would vanish with no answer, and the
     //    stone would sail to an exhaustion verdict. that is the free exit F1 closes, and
@@ -1157,10 +1148,10 @@ describe('routeStoneSet.feedbackAbsorption.acceptance', () => {
         expect(out.stdout).not.toContain('exhausted');
       });
 
-      // 🔴 the arc this journey exists to demonstrate is rejected -> halted -> exhausted,
+      // the arc this journey exists to demonstrate is rejected -> halted -> exhausted,
       //    and this is its first frame. with [t1] and [t2] snapped but not [t0], the
       //    snapshot corpus shows the two halts and never the ordinary round they depart
-      //    from (rule.require.snapshot-every-journey-step; r1 blocker.1, i011)
+      //    from (rule.require.snapshot-every-journey-step)
       then(
         'matches snapshot — step 1, the one round the budget affords',
         () => {
@@ -1171,6 +1162,16 @@ describe('routeStoneSet.feedbackAbsorption.acceptance', () => {
           );
         },
       );
+
+      // the second stream of each [case6] frame is pinned too, so a byte the exhaustion
+      //    arc writes to stderr can never ship unseen (rule.require.contract-snapshot-exhaustiveness)
+      then('matches snapshot — step 1, stderr', () => {
+        expect(
+          asStableEmit({ emit: out.stderr, cwd: scene.tempDir }),
+        ).toMatchSnapshot(
+          'route.stone.set - budget 1, the single round, stderr',
+        );
+      });
     });
 
     when('[t1] the artifact moves while the blocker sits unanswered', () => {
@@ -1193,7 +1194,7 @@ describe('routeStoneSet.feedbackAbsorption.acceptance', () => {
       });
 
       then('the debt survives BOTH the edit and the exhaustion', () => {
-        // 🔴 the F1 clamp at the command grain. two discharges that used to be free
+        // the F1 clamp at the command grain. two discharges that used to be free
         //    are refused at once here — the hash move, and the exhausted reviewer that
         //    writes no fresh given to be re-raised by
         expect(out.stdout).toContain('await your reply');
@@ -1218,6 +1219,17 @@ describe('routeStoneSet.feedbackAbsorption.acceptance', () => {
           );
         },
       );
+
+      then(
+        'matches snapshot — the halt that outlived the reviewer, stderr',
+        () => {
+          expect(
+            asStableEmit({ emit: out.stderr, cwd: scene.tempDir }),
+          ).toMatchSnapshot(
+            'route.stone.set - entrance halt, debt outlives exhaustion, stderr',
+          );
+        },
+      );
     });
 
     when('[t2] the driver answers, and now meets the STANCE gate', () => {
@@ -1229,13 +1241,13 @@ describe('routeStoneSet.feedbackAbsorption.acceptance', () => {
         // .note = not decoration — a broken glob would write zero files and the
         //         assertions below would pass against a still-owed debt instead
         expect(answered).toHaveLength(1);
-        // 🔴 the feedback act is CAPTURED and ASSERTED, not fired and dropped.
+        // the feedback act is CAPTURED and ASSERTED, not fired and dropped.
         //
-        //    🟡 the reason is NOT a race. `runStoneSet` is `spawnSync`-backed and returns
+        //    the reason is NOT a race. `runStoneSet` is `spawnSync`-backed and returns
         //       a plain `{ stdout, stderr, exitCode }` — the child is reaped before the
         //       next line runs.
         //
-        // 🔴 under the composition gate (define.invariant.review.peer.absorb), `--as absorbed`
+        // under the composition gate (define.invariant.review.peer.absorb), `--as absorbed`
         //    is REFUSED while any concern stands un-absorbed — so with the blocker answered
         //    but not yet absorbed, the feedback act cannot land. this IS "the stance precedes
         //    the budget" at the earliest grain: the driver must declare where they STAND on
@@ -1278,7 +1290,7 @@ describe('routeStoneSet.feedbackAbsorption.acceptance', () => {
       then(
         'but the rejected lane awaits a STANCE, before any budget talk',
         () => {
-          // 🔴 the stance gate sits BEFORE the exhaustion gate, so even a spent-budget
+          // the stance gate sits BEFORE the exhaustion gate, so even a spent-budget
           //    lane is met by the stance halt first. the driver cannot reach the budget
           //    question until they have declared where they STAND — which is the design:
           //    a top-up bought before a stance buys rounds to re-argue, never to settle
@@ -1303,13 +1315,24 @@ describe('routeStoneSet.feedbackAbsorption.acceptance', () => {
           ).toMatchSnapshot('route.stone.set - stance gate at spent budget');
         },
       );
+
+      then(
+        'matches snapshot — the stance gate at a spent budget, stderr',
+        () => {
+          expect(
+            asStableEmit({ emit: out.stderr, cwd: scene.tempDir }),
+          ).toMatchSnapshot(
+            'route.stone.set - stance gate at spent budget, stderr',
+          );
+        },
+      );
     });
 
     when(
       '[t2b] the driver concedes URGENT, and now meets the spent budget',
       () => {
         const out = useBeforeAll(async () => {
-          // 🔴 the concede is URGENT (S16): a `better` concession is hard-capped by the
+          // the concede is URGENT (S16): a `better` concession is hard-capped by the
           //    budget and SHED by the judge — it PASSES with no budget increase, so it names
           //    no budget lever. an `urgent` concession ships harm, so it KEEPS the hold and
           //    the exhaustion halt names the driver's own budget top-up AND warns that the
@@ -1353,7 +1376,7 @@ describe('routeStoneSet.feedbackAbsorption.acceptance', () => {
         then(
           'the driver-owned budget lever is named — the lever this case exists for',
           () => {
-            // 🔴 the surface this whole case exists for. `rule.always.spend-own-levers-
+            // the surface this whole case exists for. `rule.always.spend-own-levers-
             //    before-escalation`: the budget top-up is the DRIVER's lever, and an URGENT
             //    concession-exhaustion halt names it — alongside a human warn, since an urgent
             //    concession ships harm and earns a grant (S16). the exact tree is pinned by
@@ -1371,6 +1394,14 @@ describe('routeStoneSet.feedbackAbsorption.acceptance', () => {
             ).toMatchSnapshot('route.stone.set - exhausted, options tree');
           },
         );
+
+        then('matches snapshot — the exhaustion halt, stderr', () => {
+          expect(
+            asStableEmit({ emit: out.stderr, cwd: scene.tempDir }),
+          ).toMatchSnapshot(
+            'route.stone.set - exhausted, options tree, stderr',
+          );
+        });
       },
     );
   });
@@ -1381,10 +1412,9 @@ describe('routeStoneSet.feedbackAbsorption.acceptance', () => {
     //        (`formatRouteGuardReviewPeerFeedbackAbsorbPrompt.test.ts [case4]`) and the
     //        operation grain (`setStoneAsFeedbackAbsorbed.test.ts [case5]`). the CLI's own
     //        parse, exit code, and render of the variant were unpinned — the same class
-    //        of gap this suite closed for the retired-union error at i006
-    //        (r10 blocker.2, i009).
+    //        of gap this suite closed for the retired-union error.
     //
-    // 🔴 what makes it sharp is that the slug the guard PRINTS is absent from the live
+    // what makes it sharp is that the slug the guard PRINTS is absent from the live
     //    config by definition. a config-only validity check throws `invalid peer reviewer
     //    slug` on the guard's own guidance — the engine refusing the one command it just
     //    told the driver to type. the union with slugs-that-have-spoken is what closes it,
@@ -1426,7 +1456,7 @@ describe('routeStoneSet.feedbackAbsorption.acceptance', () => {
 
     when('[t0] `departed` speaks, then is removed from the guard', () => {
       const out = useBeforeAll(async () => {
-        // 🔴 the precondition round is CAPTURED and ASSERTED, not fired and dropped.
+        // the precondition round is CAPTURED and ASSERTED, not fired and dropped.
         //
         //    the case grades that a retired reviewer's debt still gates, which requires
         //    `departed` to have written its given to disk before the guard is rewritten
@@ -1434,7 +1464,7 @@ describe('routeStoneSet.feedbackAbsorption.acceptance', () => {
         //    `spawnSync`-backed and returns a plain `{ stdout, stderr, exitCode }`, so
         //    the child is reaped before the `writeFileSync` below runs.
         //
-        //    🟡 so the risk here was never an interleave; it was a SILENT PRECONDITION.
+        //    so the risk here was never an interleave; it was a SILENT PRECONDITION.
         //       the round's own result went unread, so a round that failed to run at all
         //       — a bad guard, a crash, a non-zero exit — would leave no given on disk,
         //       and `[t1]`'s halt assertions would then grade an absence rather than the
@@ -1474,7 +1504,7 @@ describe('routeStoneSet.feedbackAbsorption.acceptance', () => {
       });
 
       then('the retired reviewer still gates the stone', () => {
-        // 🔴 the whole claim of case=11. a debt keyed to the CONFIG would vanish the
+        // the whole claim of case=11. a debt keyed to the CONFIG would vanish the
         //    moment its reviewer left, and the critique it raised would die unanswered
         expect(out.stdout).toContain('await your reply');
         expect(out.stdout).toContain('departed');
@@ -1501,7 +1531,7 @@ describe('routeStoneSet.feedbackAbsorption.acceptance', () => {
         'and stderr stays exactly empty on the retired-reviewer halt',
         () => {
           // the entrance branch again — per the enumeration at [case4][t0], it supplies
-          // `stdout` and no `stderr` key, so `route.ts:1026` never fires (r2 blocker.1, i018)
+          // `stdout` and no `stderr` key, so `route.ts:1026` never fires
           expect(out.stderr).toEqual('');
         },
       );
@@ -1533,13 +1563,12 @@ describe('routeStoneSet.feedbackAbsorption.acceptance', () => {
       });
 
       then('and the retired-slug ack writes no byte to stderr', () => {
-        // 🔴 the union above is deliberately stream-agnostic — it must be, since it
+        // the union above is deliberately stream-agnostic — it must be, since it
         //    grades an ABSENCE across both. but that also means it would read green
         //    whichever stream the ack landed on, so it pins the content and never the
         //    channel. this line pins the channel: `setStoneAsFeedbackAbsorbed.ts` assigns
         //    `stderr` on no branch (see [case2]'s ack), so an ack that ever reached
-        //    stderr would be a regression this suite could not otherwise observe
-        //    (r2 blocker.1, i018).
+        //    stderr would be a regression this suite could not otherwise observe.
         expect(out.stderr).toEqual('');
       });
 
@@ -1582,7 +1611,7 @@ describe('routeStoneSet.feedbackAbsorption.acceptance', () => {
       });
 
       then('`--as absorbed --that departed` meets the composition gate', () => {
-        // 🔴 the answer wrote the retired reviewer's `.taken`, but its concern is not yet
+        // the answer wrote the retired reviewer's `.taken`, but its concern is not yet
         //    absorbed — so the composition gate refuses the feedback act even for a reviewer
         //    that will never re-run. a retired slug is a valid absorption target (the
         //    spoken∪configured union), so the driver's levers are: write the `.taken`, then
@@ -1621,7 +1650,7 @@ describe('routeStoneSet.feedbackAbsorption.acceptance', () => {
       );
 
       then('the CONTEMPLATION debt no longer holds the door', () => {
-        // 🔴 the valve case=11 needs. were the retired debt undischargeable, this stone
+        // the valve case=11 needs. were the retired debt undischargeable, this stone
         //    would deadlock with no lever a driver could reach — the failure the whole
         //    union exists to prevent. `await your reply` is the CONTEMPLATION halt, so its
         //    absence proves the `.taken` answered at [t2] cleared that gate.
@@ -1631,7 +1660,7 @@ describe('routeStoneSet.feedbackAbsorption.acceptance', () => {
       then(
         'but the STANCE gate now halts on the retired reviewer\u2019s undeclared concern',
         () => {
-          // 🔴 the flow changed when the stance gate landed. two gates now stand between an
+          // the flow changed when the stance gate landed. two gates now stand between an
           //    answered retired debt and passage, in order:
           //      1. the feedbackAbsorption gate — the `.taken`, discharged at [t2] above
           //      2. the STANCE gate — a disposition (disputed|conceded) per concern
@@ -1640,18 +1669,15 @@ describe('routeStoneSet.feedbackAbsorption.acceptance', () => {
           //    precedes-the-runner property [t0] proved for the feedbackAbsorption gate now
           //    holds for the stance gate too, even for a reviewer absent from the config.
           //
-          // ⚠️ this scene once asserted "successor does NOT inherit its predecessor's
-          //    verdict" — a cache defect where `successor` rendered `rejected, cached` with
-          //    `departed`'s paths, from a key disagreement in `runStoneGuardReviews`
-          //    (cache keyed on POSITION, meter keyed on SLUG). that defect is CLOSED by
-          //    `getCacheSafePeerReviewArtifact` (fulcrum F9 option D, wisher 2026-09-08),
-          //    and its regression clamp is `getCacheSafePeerReviewArtifact.test.ts` — 3 of
-          //    7 red without the guard. that clamp is where the cache behavior lives now.
-          //    the successor cannot be reached from THIS scene any longer, because the
-          //    stance gate intercepts before any reviewer runs — so what this scene
-          //    honestly proves is the gate order, not the cache.
+          // `getOneCacheSafePeerReviewArtifact` (fulcrum F9 option D) keys the cache
+          //    on slug rather than position, so `successor` cannot inherit
+          //    `departed`'s cached verdict — that behavior is clamped by
+          //    `getOneCacheSafePeerReviewArtifact.test.ts`. the successor cannot be
+          //    reached from THIS scene at all, because the stance gate intercepts
+          //    before any reviewer runs — so what this scene proves is the gate
+          //    order, not the cache.
           //
-          // 🔴 TODO: fix the cache key structurally with option A — key on the slug itself,
+          // TODO: fix the cache key structurally with option A — key on the slug itself,
           //    rather than a reconciliation at each read. tracked as
           //    `.dream/v2026_09_05.fix.guard-review-cache-is-keyed-by-index-not-slug.md`.
           //
@@ -1669,63 +1695,26 @@ describe('routeStoneSet.feedbackAbsorption.acceptance', () => {
     });
 
     when('[t4] the driver MISTYPES a slug while the union is two-wide', () => {
-      // 🔴 .why here rather than in [case3] = the refusal's whole payload is the
-      //    LIST beside it, and that list is `validSlugs` — the union of the live
-      //    config with every slug that has spoken. [case3]'s scene has one
-      //    configured reviewer and no retiree, so its list holds ONE entry and
-      //    its snapshot cannot show a separator, an order, or a retired member.
+      // .why here rather than in [case3] = the refusal's whole payload is the
+      //    list beside it, `validSlugs` — the union of the live config with
+      //    every slug that has spoken. [case3]'s scene has one configured
+      //    reviewer and no retiree, so its list holds one entry and cannot show
+      //    a separator, an order, or a retired member. this scene is the only
+      //    one where the union is genuinely two-wide: `successor` from config,
+      //    `departed` from disk — the comma, the sort, and the retiree's
+      //    presence in the render have no other cli-grain oracle.
       //
-      //    this scene is the only one in the repo where the union is genuinely
-      //    two-wide: `successor` from the config, `departed` from the disk. so
-      //    the two-entry render — the comma, the sort, the retiree's presence —
-      //    had no CLI-grain oracle anywhere, and the test that noticed said so
-      //    in its own note: "no CLI-grain oracle for the retired-UNION variant
-      //    exists yet" (`setStoneAsFeedbackAbsorbed.test.ts` [case5]).
-      //    raised i020/r5+r6+r7 — three lanes, one gap.
+      // .note = the throw lives in the shared `assertValidPeerReviewSlug`,
+      //         whose own `.note` preserves the error message and its
+      //         `{ stone, slug, validSlugs }` metadata bag on purpose. every
+      //         cli error that carries a bag currently dumps it raw to the
+      //         stream, an open render defect, see
+      //         `.dream/v2026_09_10.fix.every-cli-error-appends-a-raw-json
+      //         -context-dump.md` and fulcrum F11
       //
-      // 🔴 .what this oracle bought, in TWO rounds = at i020 it disproved a note
-      //    that claimed the CLI strips the `BadRequestError`'s metadata via
-      //    `asHumanMessage`. `route.ts` has no such call on any branch — every
-      //    catch prints `error: ${error.message}` raw — so the first commit of
-      //    this snapshot held a json dump, and the claim died on the spot.
-      //
-      //    ⚠️ that false note carried weight: three lanes at i020 graded the SDK
-      //    snapshot, and one repeated the claim in its own report. it reasoned
-      //    from a comment rather than from the code, and no test could
-      //    contradict it because this grain had no oracle.
-      //
-      // 🔴 then at i022 the same snapshot bought a FIX. with the dump in a
-      //    committed byte-oracle, r7 could set it beside the eight clean
-      //    `peer-concurrency-refusals` snapshots and name the difference: those
-      //    throw sites pass no metadata bag; this one passed
-      //    `{ stone, slug, validSlugs }`. the repair was one bag dropped at the
-      //    throw, in `setStoneAsContemplated.ts`.
-      //
-      // ⚠️ THAT REPAIR IS GONE, and the snapshot below renders the dump again.
-      //    upstream #511 re-homed this throw into the shared
-      //    `assertValidPeerReviewSlug`, whose own `.note` preserves the message
-      //    AND the bag on purpose — so its pinned snapshots pass untouched,
-      //    which is that extraction's proof that it moved no surface a driver
-      //    reads. to drop the bag now would break that proof, so the instance
-      //    is left to the class.
-      //
-      // ⇒ the lesson the pair carries: a claim about a surface is settled by an
-      //    oracle AT that surface. four rounds of prose review read this note
-      //    and missed both the false claim and the fixable dump beneath it —
-      //    and the snapshot is what caught the claim going stale a second time,
-      //    across a rebase, when the repair it described was carried away.
-      //
-      // 🌙 the render defect is open repo-wide — every throw site that carries a
-      //    bag dumps, this one among them again. see `.dream/v2026_09_10.fix
-      //    .every-cli-error-appends-a-raw-json-context-dump.md` and fulcrum F11.
-      // 🔴 the tally BEFORE the act, so the clamp below reads a DELTA
-      // .why = it once asserted the absolute `2`, which restated a count `[t3]`
-      //        owns. the claim it means is "this step adds no run of its own",
-      //        and an absolute cannot say that — it re-states a neighbour's
-      //        fact and then drifts when the neighbour moves. it did: upstream
-      //        #511 put a stance gate in front of `--as absorbed`, `[t3]` spent
-      //        one round rather than two, and the constant failed while the
-      //        behavior it guards was untouched
+      // the tally is taken BEFORE the act, so the clamp below reads a delta
+      // rather than an absolute — an absolute would re-state a neighbor
+      // step's own count and drift whenever that step's round count changes
       // .note = wrapped in an object because `useBeforeAll` hands back a proxy,
       //         and a proxy cannot stand in for a primitive at an `expect`
       const tally = useBeforeAll(async () => ({
@@ -1749,7 +1738,7 @@ describe('routeStoneSet.feedbackAbsorption.acceptance', () => {
       );
 
       then('the typo is refused — the union widens no door', () => {
-        // ⚠️ the union exists to ACCEPT a retiree, and the risk of any widened
+        // the union exists to ACCEPT a retiree, and the risk of any widened
         //    check is that it accepts too much. `mechanik` names no configured
         //    reviewer AND has authored no given, so it must still be refused
         expect(`${out.stdout}${out.stderr}`).toContain(
@@ -1758,7 +1747,7 @@ describe('routeStoneSet.feedbackAbsorption.acceptance', () => {
       });
 
       then('both union members are listed — the retiree among them', () => {
-        // 🔴 the retiree is the one a config-only list would omit, and that
+        // the retiree is the one a config-only list would omit, and that
         //    omission is precisely the defect [t1] exists to prevent. so the
         //    refusal must name it, or a driver who mistyped the retired slug is
         //    told their only valid option is a reviewer they never addressed
@@ -1779,7 +1768,7 @@ describe('routeStoneSet.feedbackAbsorption.acceptance', () => {
       });
 
       then('matches snapshot — the retired-UNION refusal, both streams', () => {
-        // 🔴 both streams, and the stdout half is not a formality: it is what
+        // both streams, and the stdout half is not a formality: it is what
         //    proves the message went to stderr and NOT here
         //    (`rule.forbid.stdout-on-exit-errors`). a one-stream snapshot
         //    could not tell a move between them
@@ -1802,21 +1791,21 @@ describe('routeStoneSet.feedbackAbsorption.acceptance', () => {
     //        (`formatRouteGuardReviewPeerFeedbackAbsorbPrompt.test.ts [case5]`) and the
     //        verdict grain (`asPeerGivenVerdict.test.ts`). the CLI's own parse, exit
     //        code, and rendered halt for the variant were unpinned — the same class of
-    //        gap `[case7]` closed for the retired variant (r2 blocker.1, i011).
+    //        gap `[case7]` closed for the retired variant.
     //
-    // 🔴 what makes it sharp is that the count the halt reasons over is FABRICATED.
+    // what makes it sharp is that the count the halt reasons over is FABRICATED.
     //    `asPeerGivenVerdict` scores an unreadable given `blockers: 1` because the gate
     //    compares on a number and no number was read. so the render must gate on it and
     //    must NOT print it as `1 blocker` — that would send the driver to hunt a blocker
     //    the reviewer never raised. only a cli-grain snapshot pins both halves at once.
     //
     // .how = the reviewer EXITS NON-ZERO, which is what makes this grain reachable with
-    //        no credential. `getReviewCounts:30` short-circuits before the sub-brain
+    //        no credential. `getOneReviewCounts:30` short-circuits before the sub-brain
     //        fallback on a non-zero exit, and `runStoneGuardReviews:215` writes the tally
     //        footer only for a detected verdict — so the given lands on disk with no
     //        numeric count in it, which is precisely the state the gate re-reads.
     //
-    // 🟡 `malfunction` and `unreadable` are DISTINCT terms and this scene holds both at
+    // `malfunction` and `unreadable` are DISTINCT terms and this scene holds both at
     //    once, on purpose. the reviewer malfunctioned (a PROCESS that could not run); the
     //    artifact it left behind is unreadable (an OUTPUT with no verdict in it). the gate
     //    reads files, never exit codes, so what it sees is the second one.
@@ -1857,24 +1846,23 @@ describe('routeStoneSet.feedbackAbsorption.acceptance', () => {
       return { tempDir, genGuard };
     });
 
-    // 🔴 the precondition round is CAPTURED, not fired-and-dropped.
-    //
-    //    `runStoneSet` is `spawnSync`-backed and returns a plain
-    //    `{ stdout, stderr, exitCode }` — no promise is produced, so none goes
-    //    unawaited, and the child is reaped before the next statement runs. the
-    //    order is not at risk.
+    // the precondition round is captured, not fired and dropped. the two
+    //    `--as passed` invocations do not race: `runStoneSet` is `spawnSync`-backed
+    //    and returns a plain `{ stdout, stderr, exitCode }` — no promise is
+    //    produced, so the child is reaped before the next statement runs, and the
+    //    order is never at risk.
     //
     //    what IS at risk with a dropped result is the PRECONDITION: if this round
     //    did not run — a bad guard, a crash — it writes no unreadable given, and
     //    `no second round was spawned` below would grade an absence instead of the
-    //    sequence it names. the `round.exitCode` read makes that observable.
+    //    sequence it names. the `round.exitCode` read is what makes that observable.
     //
-    // 🔴 and its render is a variant no other case in this suite produces. `counter`
-    //    and `cleanly` emit READABLE verdicts, so the "reviewer ran, then was
-    //    promoted to malfunction" tree — a reviewer row plus a judge refusal, at
-    //    `passage = malfunction` — is unique to `mumbles`. to drop it leaves the
-    //    corpus with the halt and never the round the halt departs from
-    //    (rule.require.acceptance-journey-coverage).
+    // and its render is a variant no other case in this suite produces. `counter` and
+    //    `cleanly` emit READABLE verdicts, so the "reviewer ran, then was promoted to
+    //    malfunction" tree — a reviewer row plus a judge refusal, at `passage = malfunction`
+    //    — is unique to `mumbles`. to drop it leaves the corpus with the halt and never the
+    //    round the halt departs from, which is the same first-frame gap `[case6][t0]` in
+    //    this file already closed (rule.require.acceptance-journey-coverage).
     when('[t0] the round runs, and the driver knocks again', () => {
       const round = useBeforeAll(async () =>
         runStoneSet({
@@ -1921,7 +1909,7 @@ describe('routeStoneSet.feedbackAbsorption.acceptance', () => {
       then(
         'matches snapshot — the round that ran, stderr carries the judge refusal',
         () => {
-          // 🟡 stderr is pinned too: it is where the judge-refusal evidence for the
+          // stderr is pinned too: it is where the judge-refusal evidence for the
           //    unreadable round lands, so stdout alone leaves half the frame uncaptured
           //    (rule.require.contract-snapshot-exhaustiveness — "stdout/stderr for cli")
           expect(
@@ -1933,7 +1921,7 @@ describe('routeStoneSet.feedbackAbsorption.acceptance', () => {
       );
 
       then('the unreadable given gates the stone', () => {
-        // 🔴 the claim `contract.reviewer-output` states flatly: an absent verdict is
+        // the claim `contract.reviewer-output` states flatly: an absent verdict is
         //    NOT a clean verdict. were the gate to score it 0/0 it would read as an
         //    approval nobody gave (rule.forbid.failhide)
         expect(out.stdout).toContain('await your reply');
@@ -1979,7 +1967,7 @@ describe('routeStoneSet.feedbackAbsorption.acceptance', () => {
       });
 
       then('the guidance never cites a count the reviewer did not give', () => {
-        // 🔴 the refusal derives from the same fabricated `blockers: 1`. a driver told
+        // the refusal derives from the same fabricated `blockers: 1`. a driver told
         //    to "answer the 1 blocker" would open the given and find prose — the exact
         //    hunt the `unreadable` phrase exists to prevent
         expect(out.stdout).not.toContain('1 blocker');
@@ -2065,7 +2053,7 @@ describe('routeStoneSet.feedbackAbsorption.acceptance', () => {
       });
 
       then('the unreadable debt is dischargeable by a `.taken`', () => {
-        // 🔴 the valve. an unreadable given that could not be answered would deadlock the
+        // the valve. an unreadable given that could not be answered would deadlock the
         //    stone behind a reviewer that never gave a verdict — the driver would owe a
         //    reply to prose. it is answerable exactly as a readable given is
         //    (`asPeerGivenVerdict` .note)

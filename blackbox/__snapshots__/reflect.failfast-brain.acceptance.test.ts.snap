@@ -1,0 +1,8 @@
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
+
+exports[`reflect.failfast-brain.acceptance given: [case1] --brain names a slug no package registers when: [t0] reflect skill invoked with that brain then: the full stderr body is pinned 1`] = `
+"🌕 reflect
+   ├─ ✋ ConstraintError: brain 'nowhere/glm/flash/v0' is not registered
+   └─ fix: a brain registers only when its provider's package is installed and its key is unlocked; unlock the key via \`rhx keyrack unlock --owner ehmpath --env prep\`, or pass \`--brain\` with a provider whose key you hold
+"
+`;

@@ -12,6 +12,7 @@ import type { RouteStoneGuardReviewPeerMeter } from '@src/domain.objects/Driver/
 import { getRouteBind } from './bind/getRouteBind';
 import { asRouteStoneDisposition } from './drive/asRouteStoneDisposition';
 import { getAllRouteStoneGuardReviewPeerMeters } from './guard/review/peer/meter/getAllRouteStoneGuardReviewPeerMeters';
+import { LEVEL_OF_UNMAPPED_REVIEW } from './guard/review/peer/meter/getOneReviewLevelByIndex';
 import { computePromisedReviewCount } from './guard/review/self/computePromisedReviewCount';
 import { getStonePromises } from './guard/review/self/getStonePromises';
 import { isExpectedFsReadFault } from './isExpectedFsReadFault';
@@ -170,7 +171,7 @@ const isExpectedRouteStateFault = (error: unknown): boolean => {
   if (error instanceof SyntaxError) return true;
 
   // a filesystem read fault → an Error that holds one of the KNOWN fs codes (not any code)
-  return isExpectedFsReadFault(error);
+  return isExpectedFsReadFault({ error });
 };
 
 /**
@@ -222,7 +223,9 @@ const getPhaseFromBlocker = async (input: {
     input.blocker === 'review.peer' ||
     input.blocker === 'review.peer.exhausted' ||
     input.blocker === 'review.peer.unabsorbed' ||
-    input.blocker === 'review.peer.undeclared'
+    input.blocker === 'review.peer.undeclared' ||
+    input.blocker === 'review.peer.malpartitioned' ||
+    input.blocker === 'review.peer.constraint'
   )
     return await getPeerPhase(input);
 
@@ -332,7 +335,7 @@ const asHighestStartedPeerDepth = (input: {
   // the reviewers that have started (consumed at least one round), with their level
   const started = input.peerReviews
     .map((r) => ({
-      level: r.level ?? 1,
+      level: r.level,
       rounds: roundsBySlug.get(r.slug) ?? 0,
     }))
     .filter((r) => r.rounds > 0);
@@ -350,14 +353,17 @@ const asHighestStartedPeerDepth = (input: {
 };
 
 /**
- * .what = the lowest level defined across a stone's peer reviews (default 1)
+ * .what = the lowest level defined across a stone's peer reviews (default: the floor level)
  * .why = the level peer review begins at, before any reviewer has consumed a round
+ *
+ * .note = the default reads `LEVEL_OF_UNMAPPED_REVIEW`, the one home of the floor level, so
+ *         a move of the floor moves here too (rule.require.review-standardization-at-parse)
  */
 const asLowestPeerLevel = (
   peerReviews: RouteStoneGuardReviewPeer[],
 ): number => {
-  if (peerReviews.length === 0) return 1;
-  return Math.min(...peerReviews.map((r) => r.level ?? 1));
+  if (peerReviews.length === 0) return LEVEL_OF_UNMAPPED_REVIEW;
+  return Math.min(...peerReviews.map((r) => r.level));
 };
 
 /**

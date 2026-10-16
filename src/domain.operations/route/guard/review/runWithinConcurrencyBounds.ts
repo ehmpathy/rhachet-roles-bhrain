@@ -1,5 +1,6 @@
-import { BadRequestError } from 'helpful-errors';
 import type { Bottleneck } from 'with-bottleneck';
+
+import { asConcurrencyGroupUnboundError } from './asConcurrencyGroupUnboundError';
 
 /**
  * .what = runs one thunk inside the bounds that govern it — its concurrency
@@ -101,15 +102,9 @@ export const runWithinConcurrencyBounds = async <T>(input: {
   // is a loud throw rather than an unbounded pour
   // .note = `assertConcurrencyGroupsResolve` refuses this at parse, so this
   //         reach fires only for a guard built by hand around the parser
-  // the remedy rides in the MESSAGE, not the metadata — the cli renders the
-  // message as the error a human reads, and appends metadata as a raw json blob
-  // below it. a fix named only in `hint` names the fault to the human and hides
-  // the repair (rule.require.errors-name-the-fix)
+  // the announce throws the identical error, so the two models agree in kind
   const group = input.byGroup.get(input.group);
-  if (!group)
-    throw new BadRequestError(
-      `concurrency group has no bound declared: "${input.group}" — declare it under reviews.groups.${input.group}.concurrency`,
-    );
+  if (!group) throw asConcurrencyGroupUnboundError({ group: input.group });
 
   return await group.schedule(
     async () => await input.level.schedule(input.run),

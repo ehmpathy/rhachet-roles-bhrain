@@ -26,6 +26,7 @@ describe('formatGuardTree', () => {
                   path: '.route/1.vision.guard.review.i1.abc123.r1.md',
                   exitClass: 'passed',
                   tallier: null,
+                  talliedBy: null,
                 },
                 {
                   index: 2,
@@ -37,6 +38,7 @@ describe('formatGuardTree', () => {
                   path: '.route/1.vision.guard.review.i1.abc123.r2.md',
                   exitClass: 'passed',
                   tallier: null,
+                  talliedBy: null,
                 },
               ],
               judges: [
@@ -88,6 +90,7 @@ describe('formatGuardTree', () => {
                   path: '.route/3.1.research.domain.guard.review.i1.abc123.r1.md',
                   exitClass: 'passed',
                   tallier: null,
+                  talliedBy: null,
                 },
               ],
               judges: [
@@ -140,6 +143,7 @@ describe('formatGuardTree', () => {
                   path: '.route/1.vision.guard.review.i1.abc123.r1.md',
                   exitClass: 'passed',
                   tallier: null,
+                  talliedBy: null,
                 },
                 {
                   index: 2,
@@ -151,6 +155,7 @@ describe('formatGuardTree', () => {
                   path: '.route/1.vision.guard.review.i1.abc123.r2.md',
                   exitClass: 'passed',
                   tallier: null,
+                  talliedBy: null,
                 },
               ],
               judges: [
@@ -196,6 +201,7 @@ describe('formatGuardTree', () => {
                 path: '.route/1.vision.guard.review.i1.abc123.r1.md',
                 exitClass: 'passed',
                 tallier: null,
+                talliedBy: null,
               },
             ],
             judges: [
@@ -283,6 +289,7 @@ describe('formatGuardTree', () => {
                 path: '.route/3.1.research.domain.guard.review.i1.abc123.r1.md',
                 exitClass: 'passed',
                 tallier: null,
+                talliedBy: null,
               },
             ],
             judges: [
@@ -327,6 +334,7 @@ describe('formatGuardTree', () => {
                 path: '.route/1.vision.guard.review.i1.abc123.r1.md',
                 exitClass: 'passed',
                 tallier: null,
+                talliedBy: null,
               },
             ],
             judges: [
@@ -372,6 +380,7 @@ describe('formatGuardTree', () => {
                   path: '.route/1.vision.guard.review.i1.abc123.r1.md',
                   exitClass: 'passed',
                   tallier: null,
+                  talliedBy: null,
                 },
               ],
               judges: [
@@ -418,6 +427,7 @@ describe('formatGuardTree', () => {
                   path: '.route/1.vision.guard.review.i1.abc123.r1.md',
                   exitClass: 'passed',
                   tallier: null,
+                  talliedBy: null,
                 },
               ],
               judges: [
@@ -462,6 +472,7 @@ describe('formatGuardTree', () => {
                 path: '.route/1.vision.guard.review.i1.abc123.r1.md',
                 exitClass: 'passed',
                 tallier: null,
+                talliedBy: null,
               },
             ],
             judges: [
@@ -524,6 +535,7 @@ describe('formatGuardTree', () => {
                   path: '.route/5.1.execute.guard.review.i1.abc123.r1.md',
                   exitClass: 'passed',
                   tallier: null,
+                  talliedBy: null,
                 },
               ],
               judges: [
@@ -576,6 +588,7 @@ describe('formatGuardTree', () => {
                   path: '.route/5.5.playtest.guard.review.i1.abc123.r3.md',
                   exitClass: 'passed',
                   tallier: null,
+                  talliedBy: null,
                   peer: { slug: 'slow-fail', level: 2, rounds: 2, budget: 2 },
                 },
               ],
@@ -665,6 +678,7 @@ describe('formatGuardTree', () => {
                   path: '.route/5.5.playtest.guard.review.i1.abc123.r1.md',
                   exitClass: 'passed',
                   tallier: null,
+                  talliedBy: null,
                   peer: { slug: 'quick-pass', level: 1, rounds: 1, budget: 1 },
                 },
               ],
@@ -783,6 +797,7 @@ describe('formatGuardTree', () => {
                     path: '.route/5.3.verification.guard.review.i3.abc123.r1.md',
                     exitClass: 'passed',
                     tallier: null,
+                    talliedBy: null,
                     peer: {
                       slug: '$rhx.1',
                       level: 1,
@@ -800,6 +815,7 @@ describe('formatGuardTree', () => {
                     path: '.route/5.3.verification.guard.review.i3.abc123.r2.md',
                     exitClass: 'passed',
                     tallier: null,
+                    talliedBy: null,
                     peer: {
                       slug: '$rhx.2',
                       level: 1,
@@ -817,6 +833,7 @@ describe('formatGuardTree', () => {
                     path: '.route/5.3.verification.guard.review.i3.abc123.r6.md',
                     exitClass: 'passed',
                     tallier: null,
+                    talliedBy: null,
                     peer: {
                       slug: '$rhx.3',
                       level: 1,
@@ -914,6 +931,7 @@ describe('formatGuardTree', () => {
                 path: '.route/1.feature.guard.review.i1.abc123.r1.md',
                 exitClass: 'malfunction',
                 tallier: null,
+                talliedBy: null,
               },
             ],
             judges: [],
@@ -927,6 +945,12 @@ describe('formatGuardTree', () => {
           'rhx route.stone.set --stone 1.feature --as overruled',
         );
         expect(result).toContain('or fix the reviewer, then retry');
+        // the driver's own levers lead the human's — the same list route.drive renders
+        expect(result).toContain('still yours to clear');
+        expect(result).toContain('--as arrived');
+        expect(result.indexOf('still yours to clear')).toBeLessThan(
+          result.indexOf('overrule the malfunction'),
+        );
         expect(result).toMatchSnapshot();
       });
     });
@@ -953,6 +977,7 @@ describe('formatGuardTree', () => {
                 path: '.route/1.feature.guard.review.i1.abc123.r1.md',
                 exitClass: 'constraint',
                 tallier: null,
+                talliedBy: null,
               },
             ],
             judges: [],
@@ -964,9 +989,69 @@ describe('formatGuardTree', () => {
         expect(result).toContain(
           'rhx route.stone.set --stone 1.feature --as overruled',
         );
-        expect(result).toContain('or fix the reviewer, then retry');
+        // .retired = this case once asserted 'or fix the reviewer, then retry', the malfunction
+        //            tail. a constraint names its own levers (partitions, a narrower bind), so
+        //            the tail left the constraint branch; the negation clamps the retirement
+        expect(result).not.toContain('or fix the reviewer, then retry');
+        // 🔴 no .given was read here, so the halt cannot know the refusal was an overflow,
+        //    and offers no partition on a guess. the driver's lever leads; the overrule is last
+        expect(result).toContain(
+          'fix what its .given names, then re-arrive — yours to make',
+        );
+        expect(result).not.toContain('route.guard.partition');
+        expect(result.indexOf('yours to make')).toBeLessThan(
+          result.indexOf('overrule the constraint'),
+        );
         expect(result).toMatchSnapshot();
       });
+    });
+
+    when('[t1] the refused .given proposed partitions', () => {
+      then(
+        '🔴 the options lead with the partitions it computed, the bind as `or`',
+        () => {
+          const result = formatGuardTree({
+            stone: '1.feature',
+            passage: 'blocked',
+            note: null,
+            reason: 'reviewer constraint',
+            guard: {
+              artifactFiles: ['1.feature.md'],
+              reviews: [
+                {
+                  index: 1,
+                  cmd: 'basic-checker',
+                  cached: false,
+                  durationSec: 0.0,
+                  blockers: 0,
+                  nitpicks: 0,
+                  path: '.route/1.feature.guard.review.i1.abc123.r1.md',
+                  exitClass: 'constraint',
+                  tallier: null,
+                  talliedBy: null,
+                },
+              ],
+              judges: [],
+              constraintLever: {
+                overflowed: true,
+                partitions: ['beta=src/beta/**', 'alpha=src/alpha/**'],
+              },
+            },
+          });
+          expect(result).toContain(
+            'rhx route.guard.partition --for review --peer @all \\',
+          );
+          expect(result).toContain("--partition 'beta=src/beta/**' \\");
+          expect(result).toContain("--partition 'alpha=src/alpha/**' \\");
+          expect(result).toContain('--mode apply');
+          expect(result).not.toContain('<slug>=<globs>');
+          expect(result.indexOf('--partition')).toBeLessThan(
+            result.indexOf('or narrow its bind'),
+          );
+          expect(result).not.toContain('or: narrow');
+          expect(result).toMatchSnapshot();
+        },
+      );
     });
   });
 
@@ -986,6 +1071,57 @@ describe('formatGuardTree', () => {
           expect(result).toContain('overrule the malfunction');
           expect(result).toContain(
             'rhx route.stone.set --stone 1.feature --as overruled',
+          );
+          expect(result).toContain('still yours to clear');
+          expect(result).toMatchSnapshot();
+        });
+      });
+    },
+  );
+
+  // r014 nitpick.3, i014 — a MIXED halt (a lane broke as another spent) once dropped the
+  // malfunction's own levers and taught only budget / overrule / approve
+  given(
+    '[case20] mixed malfunction + exhaustion — the malfunction levers still lead',
+    () => {
+      const reason =
+        'reviewer or judge malfunctioned; peer reviewer budget exhausted: mech-rules';
+      when('[t0] the tree renders with a guard', () => {
+        then('the driver levers lead every remedy', () => {
+          const result = formatGuardTree({
+            stone: '1.feature',
+            passage: 'malfunction',
+            note: null,
+            reason,
+            guard: {
+              artifactFiles: ['1.feature.md'],
+              reviews: [],
+              judges: [],
+            },
+          });
+          expect(result).toContain('still yours to clear');
+          // an exhaustion with no urgent concession earns no top-up — its live lever is the answer
+          expect(result).toContain('converge with the reviewer — yours to run');
+          expect(result).not.toContain('increase budget');
+          expect(result.indexOf('still yours to clear')).toBeLessThan(
+            result.indexOf('converge with the reviewer'),
+          );
+          expect(result).toMatchSnapshot();
+        });
+      });
+
+      when('[t1] the tree renders with no guard', () => {
+        then('the driver levers lead every remedy', () => {
+          const result = formatGuardTree({
+            stone: '1.feature',
+            passage: 'malfunction',
+            note: null,
+            reason,
+            guard: null,
+          });
+          expect(result).toContain('still yours to clear');
+          expect(result.indexOf('still yours to clear')).toBeLessThan(
+            result.indexOf('converge with the reviewer'),
           );
           expect(result).toMatchSnapshot();
         });
@@ -1066,6 +1202,7 @@ describe('formatReviewsMeterLines', () => {
                     nitpicks: 0,
                     exitClass: 'passed',
                     tallier: null,
+                    talliedBy: null,
                   },
                   cmd: '$rhx --rules r1.md',
                   cached: false,
@@ -1085,6 +1222,7 @@ describe('formatReviewsMeterLines', () => {
                     nitpicks: 0,
                     exitClass: 'passed',
                     tallier: null,
+                    talliedBy: null,
                   },
                   cmd: '$rhx --rules r2.md',
                   cached: false,
@@ -1104,6 +1242,7 @@ describe('formatReviewsMeterLines', () => {
                     nitpicks: 0,
                     exitClass: 'passed',
                     tallier: null,
+                    talliedBy: null,
                   },
                   cmd: '$rhx --rules r6.md',
                   cached: false,
@@ -1229,6 +1368,7 @@ describe('formatReviewsMeterLines', () => {
                   path: '.route/1.vision.guard.review.i1.abc123.r1.md',
                   exitClass: 'passed',
                   tallier: 'probabilistic',
+                  talliedBy: 'openrouter/deepseek/flash/v4.1',
                 },
               ],
               judges: [
@@ -1269,6 +1409,7 @@ describe('formatReviewsMeterLines', () => {
                   path: '.route/1.vision.guard.review.i1.abc123.r1.md',
                   exitClass: 'passed',
                   tallier: 'deterministic',
+                  talliedBy: null,
                 },
               ],
               judges: [
@@ -1310,6 +1451,7 @@ describe('formatReviewsMeterLines', () => {
                     path: '.route/1.vision.guard.review.i1.abc123.r1.md',
                     exitClass: 'passed',
                     tallier: null,
+                    talliedBy: null,
                   },
                 ],
                 judges: [

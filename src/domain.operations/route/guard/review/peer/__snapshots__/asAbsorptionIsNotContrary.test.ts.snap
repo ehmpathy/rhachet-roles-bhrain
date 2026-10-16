@@ -1,0 +1,55 @@
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
+
+exports[`asAbsorptionIsNotContrary given: [case3] a contrary stance on the same concern of the same given when: [t0] the contrary stance is declared then: the refusal is pinned whole 1`] = `
+"✋ ConstraintError: mech's blocker.1 is already disputed
+
+declared against r3.mech.md
+  └─ why = .fulcrums/inventory.of=fulcrums.case=F007-x.md
+
+a stance is final for its given. that given is unchanged, so the stance stands:
+  ├─ change the artifact and re-arrive, then take a stance on the new given
+  └─ or, once no guard round is in flight on this stone, ask a human to void it
+     └─ rhx route.stone.set --stone 5.1 --as rewound"
+`;
+
+exports[`asAbsorptionIsNotContrary given: [case6] the same concede, RE-GRADED on an unchanged given when: [t0] the driver re-declares it as urgent then: the refusal is pinned whole 1`] = `
+"✋ ConstraintError: mech's blocker.1 is already conceded as better
+
+declared against r3.mech.md
+  ├─ on record  = --severity better
+  └─ you passed = --severity urgent
+
+a stance is final for its given — its GRADE and its ARGUMENT included. that given is
+unchanged, so the stance stands:
+  ├─ change the artifact and re-arrive, then take a stance on the new given
+  └─ or, once no guard round is in flight on this stone, ask a human to void it
+     └─ rhx route.stone.set --stone 5.1 --as rewound"
+`;
+
+exports[`asAbsorptionIsNotContrary given: [case7] the same dispute, RE-CITED on a different fulcrum when: [t0] the driver re-declares it with a new fulcrum then: the refusal is pinned whole 1`] = `
+"✋ ConstraintError: mech's blocker.1 is already disputed, with a different --why
+
+declared against r3.mech.md
+  ├─ on record  = --why .fulcrums/inventory.of=fulcrums.case=F001-first.md
+  └─ you passed = --why .fulcrums/inventory.of=fulcrums.case=F002-second.md
+
+a stance is final for its given — its GRADE and its ARGUMENT included. that given is
+unchanged, so the stance stands:
+  ├─ change the artifact and re-arrive, then take a stance on the new given
+  └─ or, once no guard round is in flight on this stone, ask a human to void it
+     └─ rhx route.stone.set --stone 5.1 --as rewound"
+`;
+
+exports[`asAbsorptionIsNotContrary given: [case8] the same concede, RE-CITED with a changed --why when: [t0] the driver re-declares it with revised --why text then: the refusal is pinned whole 1`] = `
+"✋ ConstraintError: mech's blocker.1 is already conceded, with a different --why
+
+declared against r3.mech.md
+  ├─ on record  = --why first justification
+  └─ you passed = --why revised justification
+
+a stance is final for its given — its GRADE and its ARGUMENT included. that given is
+unchanged, so the stance stands:
+  ├─ change the artifact and re-arrive, then take a stance on the new given
+  └─ or, once no guard round is in flight on this stone, ask a human to void it
+     └─ rhx route.stone.set --stone 5.1 --as rewound"
+`;

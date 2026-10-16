@@ -248,6 +248,13 @@ describe('driver.route.review.acceptance', () => {
         expect(result.stderr).toContain('not found in PATH');
       });
 
+      then('the tree row names the fix, never the header again', () => {
+        expect(result.stderr).toContain(
+          "└─ fix: install 'nonexistent-editor-xyz', or pass an opener in PATH via --open",
+        );
+        expect(result.stderr.split('not found in PATH').length - 1).toEqual(1);
+      });
+
       then('stderr has treestruct format', () => {
         expect(result.stderr).toContain('🦉 look for the light');
         expect(result.stderr).toContain('🗿 route.review');

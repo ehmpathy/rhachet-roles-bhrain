@@ -9,8 +9,8 @@ exports[`reflect.journey.acceptance given: [journey] full reflect workflow when:
    ├─ branch = [BRANCH]
    │
    ├─ commit = [HASH]
-   ├─ staged.patch = [SIZE]ytes
-   ├─ unstaged.patch = [SIZE]ytes
+   ├─ staged.patch = [SIZE]
+   ├─ unstaged.patch = [SIZE]
    ├─ patches.hash = [HASH]
    │
    └─ artifacts
@@ -31,8 +31,8 @@ exports[`reflect.journey.acceptance given: [journey] full reflect workflow when:
    ├─ branch = [BRANCH]
    │
    ├─ commit = [HASH]
-   ├─ staged.patch = [SIZE]ytes
-   ├─ unstaged.patch = [SIZE]ytes
+   ├─ staged.patch = [SIZE]
+   ├─ unstaged.patch = [SIZE]
    ├─ patches.hash = [HASH]
    │
    └─ artifacts
@@ -53,13 +53,13 @@ exports[`reflect.journey.acceptance given: [journey] full reflect workflow when:
    ├─ branch = [BRANCH]
    │
    ├─ savepoints = 2
-   ├─ size = [SIZE]ytes
+   ├─ size = [SIZE]
    │
    └─ list
-      ├─ [TIMESTAMP] (commit=[HASH], patches=04f1ec0, [SIZE]ytes)
+      ├─ [TIMESTAMP] (commit=[HASH], patches=04f1ec0, [SIZE])
       │  ├─ [TIMESTAMP].staged.patch
       │  └─ [TIMESTAMP].unstaged.patch
-      └─ [TIMESTAMP] (commit=[HASH], patches=8f56415, [SIZE]ytes)
+      └─ [TIMESTAMP] (commit=[HASH], patches=8f56415, [SIZE])
          ├─ [TIMESTAMP].staged.patch
          └─ [TIMESTAMP].unstaged.patch
 
@@ -106,7 +106,7 @@ exports[`reflect.journey.acceptance given: [journey] full reflect workflow when:
    │
    ├─ snapshots = 0
    ├─ annotations = 2
-   └─ size = [SIZE]ytes
+   └─ size = [SIZE]
 
 "
 `;
@@ -123,7 +123,7 @@ exports[`reflect.journey.acceptance given: [journey] full reflect workflow when:
    │  ├─ sessions = 1
    │  └─ files = 1
    │
-   ├─ savepoints = 3 (+1 fresh at [STACK]
+   ├─ savepoints = 3 (+1 fresh at [TIMESTAMP])
    ├─ annotations = 2
    │
    └─ artifacts

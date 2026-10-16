@@ -32,7 +32,7 @@ export const setStoneAsApproved = async (
     pattern: input.stone,
   });
   if (!stoneMatched) {
-    throw new BadRequestError('stone not found', { stone: input.stone });
+    throw new BadRequestError(`stone not found: ${input.stone}`);
   }
 
   // check if already approved by human

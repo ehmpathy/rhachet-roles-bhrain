@@ -42,7 +42,7 @@ const meterExhausted: GuardPeerMeterStatus = {
   overruled: false,
   skippedByDispute: false,
   disputed: { blockers: 0, nitpicks: 0 },
-  path: '.reviews/peer/1.vision._.i003.r001._.given.by_peer.mech-rules.md',
+  path: '.reviews/peer/1.vision._.review.i003.abc.r001._.given.by_peer.mech-rules.md',
 };
 
 describe('formatRouteDriveBudgetExhausted', () => {
@@ -296,9 +296,7 @@ describe('formatRouteDriveBudgetExhausted', () => {
         // wait and adds a reason for it, so the approve tail stays (unlike a `better` concede).
         then('it renders the human wait, never the driver-own tail', () => {
           expect(output).toContain('approve as-is — a human must grant');
-          expect(output).not.toContain(
-            'what to do — yours to run, no human needed',
-          );
+          expect(output).not.toContain('what to do — no human needed');
         });
 
         then('the whole replay is pinned, byte for byte', () => {
@@ -384,7 +382,7 @@ describe('formatRouteDriveBudgetExhausted', () => {
               rounds: 1,
               verdict: 'rejected',
               blockers: 1,
-              path: '.reviews/peer/1.vision._.i003.r002._.given.by_peer.ergo-rules.md',
+              path: '.reviews/peer/1.vision._.review.i003.abc.r002._.given.by_peer.ergo-rules.md',
             },
           ],
         });
@@ -465,6 +463,24 @@ describe('formatRouteDriveMixedHalt', () => {
           },
         );
 
+        // r014 nitpick.3, i014 — the exhaustion's remedies must not crowd out the
+        // malfunction's own: the broken lane is still the driver's to diagnose and answer
+        then(
+          "the malfunction's own driver levers show, ahead of the human remedies",
+          () => {
+            expect(output).toContain('still yours to clear');
+            expect(output).toContain(
+              'answer each broken lane, like a rejected one',
+            );
+            expect(output).toContain(
+              'ask a human only for a grant you cannot make',
+            );
+            expect(output.indexOf('still yours to clear')).toBeLessThan(
+              output.indexOf('overrule the malfunction'),
+            );
+          },
+        );
+
         then('the whole replay is pinned, byte for byte', () => {
           expect(output).toMatchSnapshot();
         });
@@ -488,6 +504,10 @@ describe('formatRouteDriveMixedHalt', () => {
               'overrule the constraint — a human must grant',
             );
             expect(output).not.toContain('overrule the malfunction');
+          });
+
+          then('a constraint shows no malfunction lever block', () => {
+            expect(output).not.toContain('still yours to clear');
           });
 
           then('the whole replay is pinned, byte for byte', () => {

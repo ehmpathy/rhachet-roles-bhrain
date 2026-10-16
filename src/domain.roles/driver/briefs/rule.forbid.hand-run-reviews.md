@@ -54,7 +54,7 @@ later driver) mistakes it for a review that happened.
 
 | the situation | the sanctioned move |
 |---|---|
-| a lane **overflowed** its context window | 🔴 `rhx route.mutate.guard` — narrow that lane's `--paths-with`, or trim its `--conversation`. **then let the guard run it** |
+| a lane **overflowed** its context window | 🔴 edit `$route/<stone>.guard` directly — narrow that lane's `--paths-wout` / `--paths-with`, or trim its `--conversation`. **then let the guard run it**. the edit needs the route's mutate grant (`rhx route.mutate grant get`; a human grants it once with `grant allow`) |
 | a lane's bind is **wrong** | the same. the bind is a guard field, and the guard is the driver's to edit |
 | a lane is **out of budget** | `rhx route.guard.budget --for review --add N` |
 | you want a lane's rubric applied to a **different** corpus | that is a new lane. add it to the guard |
@@ -97,6 +97,8 @@ hand-run loses its motive.
 
 - `rule.forbid.commits-the-route-did-not-ask-for` — the same defect one step earlier: the party
   under review changes what the review sees
-- `rule.always.spend-own-levers-before-escalation` — `route.mutate.guard` is the driver's lever
+- `rule.always.spend-own-levers-before-escalation` — a direct `.guard` edit is the driver's lever,
+  once the route's mutate grant stands (`route.mutate.guard` is the hook that gates it, never an
+  editor)
 - `rule.always.diagnose-reviewer-malfunctions` — the overflow cause, with the guard-edit remedy
 - `rule.always.get-a-second-opinion-before-foreman` — the sanctioned way to get another read

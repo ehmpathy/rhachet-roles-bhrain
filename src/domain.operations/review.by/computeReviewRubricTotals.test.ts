@@ -15,6 +15,7 @@ const asResult = (input: {
     nitpicks: input.nitpicks,
     outcome: input.outcome,
     tallier: 'deterministic',
+    talliedBy: null,
   },
   outputPath: `.reviews/${input.slug}.md`,
   durationMs: null,

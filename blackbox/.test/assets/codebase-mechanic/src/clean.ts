@@ -6,6 +6,7 @@ export const calculateTotal = (input: { items: Array<{ price: number }> }) => {
   // sum all item prices
   const total = input.items.reduce((sum, item) => sum + item.price, 0);
 
+  // return the computed total
   return total;
 };
 
@@ -20,6 +21,7 @@ export const formatPrice = (input: { amount: number; currency: string }) => {
     currency: input.currency,
   }).format(input.amount);
 
+  // return the formatted string
   return formatted;
 };
 
@@ -32,5 +34,6 @@ export const validateEmail = (input: { email: string }) => {
   const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
   const isValid = emailPattern.test(input.email);
 
+  // return the validation result
   return { isValid };
 };

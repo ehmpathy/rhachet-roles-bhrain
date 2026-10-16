@@ -1,0 +1,73 @@
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
+
+exports[`genTokenBreakdownMarkdown given: [case1] rules and targets across nested dirs when: [t0] the markdown is generated then: the whole render matches the snapshot 1`] = `
+"# token breakdown
+
+total: 4.0k tokens
+
+## all
+
+\`\`\`
+├─ src/ (2.8k, 70.3%)
+│  ├─ a/ (2.8k, 69.3%)
+│  │  ├─ two.ts (2.5k, 61.9%)
+│  │  └─ one.ts (300, 7.4%)
+│  └─ b.ts (40, 1.0%)
+└─ briefs/ (1.2k, 29.7%)
+   └─ rule.forbid.x.md (1.2k, 29.7%)
+\`\`\`
+
+## rules
+
+total: 1.2k tokens
+
+\`\`\`
+└─ briefs/ (1.2k, 29.7%)
+   └─ rule.forbid.x.md (1.2k, 29.7%)
+\`\`\`
+
+## targets
+
+total: 2.8k tokens
+
+\`\`\`
+└─ src/ (2.8k, 70.3%)
+   ├─ a/ (2.8k, 69.3%)
+   │  ├─ two.ts (2.5k, 61.9%)
+   │  └─ one.ts (300, 7.4%)
+   └─ b.ts (40, 1.0%)
+\`\`\`
+
+## targetFiles
+
+total: 2.8k tokens
+
+\`\`\`
+└─ src/ (2.8k, 70.3%)
+   ├─ a/ (2.8k, 69.3%)
+   │  ├─ two.ts (2.5k, 61.9%)
+   │  └─ one.ts (300, 7.4%)
+   └─ b.ts (40, 1.0%)
+\`\`\`
+
+## targetDiffs.additions
+
+total: 0 tokens
+
+\`\`\`
+\`\`\`
+
+## targetDiffs.deletions
+
+total: 0 tokens
+
+\`\`\`
+\`\`\`
+
+## targetDiffs.mutations
+
+total: 0 tokens
+
+\`\`\`
+\`\`\`"
+`;

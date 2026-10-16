@@ -1,6 +1,6 @@
 // Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
 
-exports[`routeStoneSet.feedbackAbsorption.acceptance given: [case1] a bound route whose one peer reviewer always hands back a blocker when: [t0] the first \`--as passed\`, with no debt owed then: matches snapshot — the judge evidence, as a driver reads it: route.stone.set - judge stderr, refusal evidence 1`] = `
+exports[`routeStoneSetFeedbackAbsorption.acceptance given: [case1] a bound route whose one peer reviewer always hands back a blocker when: [t0] the first \`--as passed\`, with no debt owed then: matches snapshot — the judge evidence, as a driver reads it: route.stone.set - judge stderr, refusal evidence 1`] = `
 "🦉 l1 pours 1 lane
    └─ r1:counter
 
@@ -15,7 +15,7 @@ exports[`routeStoneSet.feedbackAbsorption.acceptance given: [case1] a bound rout
 "
 `;
 
-exports[`routeStoneSet.feedbackAbsorption.acceptance given: [case1] a bound route whose one peer reviewer always hands back a blocker when: [t0] the first \`--as passed\`, with no debt owed then: matches snapshot — the round that was allowed to run: route.stone.set - round ran, judge refused 1`] = `
+exports[`routeStoneSetFeedbackAbsorption.acceptance given: [case1] a bound route whose one peer reviewer always hands back a blocker when: [t0] the first \`--as passed\`, with no debt owed then: matches snapshot — the round that was allowed to run: route.stone.set - round ran, judge refused 1`] = `
 "🦉 the way speaks for itself
    │
    ├─ r1: counter (l1, 1/5)
@@ -48,7 +48,7 @@ exports[`routeStoneSet.feedbackAbsorption.acceptance given: [case1] a bound rout
 "
 `;
 
-exports[`routeStoneSet.feedbackAbsorption.acceptance given: [case1] a bound route whose one peer reviewer always hands back a blocker when: [t1] the driver edits the artifact and re-runs, with no answer written then: matches snapshot — the carried-unanswered halt, as a driver reads it: route.stone.set - entrance halt, debt carried 1`] = `
+exports[`routeStoneSetFeedbackAbsorption.acceptance given: [case1] a bound route whose one peer reviewer always hands back a blocker when: [t1] the driver edits the artifact and re-runs, with no answer written then: matches snapshot — the carried-unanswered halt, as a driver reads it: route.stone.set - entrance halt, debt carried 1`] = `
 "🦉 the way speaks for itself
 
 🦉 the reviewers await your reply
@@ -68,12 +68,12 @@ exports[`routeStoneSet.feedbackAbsorption.acceptance given: [case1] a bound rout
 "
 `;
 
-exports[`routeStoneSet.feedbackAbsorption.acceptance given: [case1] a bound route whose one peer reviewer always hands back a blocker when: [t1] the driver edits the artifact and re-runs, with no answer written then: matches snapshot — the halt leaves stderr empty: route.stone.set - entrance halt, debt carried, stderr 1`] = `""`;
+exports[`routeStoneSetFeedbackAbsorption.acceptance given: [case1] a bound route whose one peer reviewer always hands back a blocker when: [t1] the driver edits the artifact and re-runs, with no answer written then: matches snapshot — the halt leaves stderr empty: route.stone.set - entrance halt, debt carried, stderr 1`] = `""`;
 
-exports[`routeStoneSet.feedbackAbsorption.acceptance given: [case1] a bound route whose one peer reviewer always hands back a blocker when: [t2] the driver runs \`--as absorbed\` with no \`.taken\` written then: matches snapshot — the absent-guidance halt at the cli grain: route.stone.set - absorbed refused, taken absent 1`] = `
+exports[`routeStoneSetFeedbackAbsorption.acceptance given: [case1] a bound route whose one peer reviewer always hands back a blocker when: [t2] the driver runs \`--as absorbed\` with no \`.taken\` written then: matches snapshot — the absent-guidance halt at the cli grain: route.stone.set - absorbed refused, taken absent 1`] = `
 "🦉 the way speaks for itself
 
-✋ feedbackAbsorption absent for reviewer counter
+✋ feedback absorption absent for reviewer counter
    ├─ the guard looked for your response here, and did not find it
    │  └─ .reviews/peer/1.test._.review.i001.<hash>.r001._.taken.by_self.counter.md
    │
@@ -90,10 +90,10 @@ exports[`routeStoneSet.feedbackAbsorption.acceptance given: [case1] a bound rout
 "
 `;
 
-exports[`routeStoneSet.feedbackAbsorption.acceptance given: [case1] a bound route whose one peer reviewer always hands back a blocker when: [t3] the driver answers, then re-runs — and meets the STANCE gate then: matches snapshot — the composition-gate refusal: route.stone.set - composition gate refusal 1`] = `
-"error: BadRequestError: absorb each concern before you absorb counter's feedback
+exports[`routeStoneSetFeedbackAbsorption.acceptance given: [case1] a bound route whose one peer reviewer always hands back a blocker when: [t3] the driver answers, then re-runs — and meets the STANCE gate then: matches snapshot — the composition-gate refusal: route.stone.set - composition gate refusal 1`] = `
+"✋ ConstraintError: absorb each concern before you absorb counter's feedback
 
-1 concern of counter stand un-absorbed:
+1 concern of counter stands un-absorbed:
   - blocker.1
 
 absorb each, THEN absorb the feedback:
@@ -104,18 +104,10 @@ absorb each, THEN absorb the feedback:
        --as disputed --with counter --about <concern> --why <fulcrum-path>
   2. then absorb the feedback:
      rhx route.stone.set --stone 1.test --as absorbed --that counter
-
-{
-  "stone": "1.test",
-  "slug": "counter",
-  "undeclared": [
-    "blocker.1"
-  ]
-}
 "
 `;
 
-exports[`routeStoneSet.feedbackAbsorption.acceptance given: [case1] a bound route whose one peer reviewer always hands back a blocker when: [t3] the driver answers, then re-runs — and meets the STANCE gate then: matches snapshot — the stance-gate halt, as a driver reads it: route.stone.set - stance gate, concern undeclared 1`] = `
+exports[`routeStoneSetFeedbackAbsorption.acceptance given: [case1] a bound route whose one peer reviewer always hands back a blocker when: [t3] the driver answers, then re-runs — and meets the STANCE gate then: matches snapshot — the stance-gate halt, as a driver reads it: route.stone.set - stance gate, concern undeclared 1`] = `
 "🦉 the way speaks for itself
 
 🦉 each concern awaits your absorption
@@ -155,7 +147,7 @@ exports[`routeStoneSet.feedbackAbsorption.acceptance given: [case1] a bound rout
 "
 `;
 
-exports[`routeStoneSet.feedbackAbsorption.acceptance given: [case1] a bound route whose one peer reviewer always hands back a blocker when: [t3b] the driver concedes the blocker, then re-runs then: matches snapshot — the round that ran once the stance was declared: route.stone.set - stance declared, round ran 1`] = `
+exports[`routeStoneSetFeedbackAbsorption.acceptance given: [case1] a bound route whose one peer reviewer always hands back a blocker when: [t3b] the driver concedes the blocker, then re-runs then: matches snapshot — the round that ran once the stance was declared: route.stone.set - stance declared, round ran 1`] = `
 "🦉 the way speaks for itself
    │
    ├─ r1: counter (l1, 2/5)
@@ -188,11 +180,10 @@ exports[`routeStoneSet.feedbackAbsorption.acceptance given: [case1] a bound rout
 "
 `;
 
-exports[`routeStoneSet.feedbackAbsorption.acceptance given: [case1] a bound route whose one peer reviewer always hands back a blocker when: [t4] the driver acks again, but the reviewer has since spoken anew then: matches snapshot — the stale-guidance halt at the cli grain: route.stone.set - absorbed refused, taken stale 1`] = `
+exports[`routeStoneSetFeedbackAbsorption.acceptance given: [case1] a bound route whose one peer reviewer always hands back a blocker when: [t4] the driver acks again, but the reviewer has since spoken anew then: matches snapshot — the stale-guidance halt at the cli grain: route.stone.set - absorbed refused, taken stale 1`] = `
 "🦉 the way speaks for itself
 
-✋ feedbackAbsorption stale for reviewer counter
-
+✋ feedback absorption stale for reviewer counter
    ├─ your response answers an earlier round of feedback from this reviewer
    │
    ├─ why
@@ -207,15 +198,17 @@ exports[`routeStoneSet.feedbackAbsorption.acceptance given: [case1] a bound rout
 "
 `;
 
-exports[`routeStoneSet.feedbackAbsorption.acceptance given: [case2] a bound route whose one peer reviewer raises no blockers when: [t0] a round runs, then \`--as absorbed --that cleanly\` then: matches snapshot — the no-blockers ack at the cli grain: route.stone.set - absorbed ack, no blockers 1`] = `
+exports[`routeStoneSetFeedbackAbsorption.acceptance given: [case2] a bound route whose one peer reviewer raises no blockers when: [t0] a round runs, then \`--as absorbed --that cleanly\` then: matches snapshot — the no-blockers ack at the cli grain: route.stone.set - absorbed ack, no blockers 1`] = `
 "🦉 the way speaks for itself
 
 🦉 absorbed: cleanly
-   └─ this reviewer raised no blockers — no concern to absorb, no response needed
+   └─ no blockers, so no gate holds — but its nitpicks carry no .taken
+      ├─ the reviewer re-raises each unanswered nitpick next round
+      └─ answer them at .reviews/peer/1.test._.review.i001.<hash>.r001._.taken.by_self.cleanly.md
 "
 `;
 
-exports[`routeStoneSet.feedbackAbsorption.acceptance given: [case2] a bound route whose one peer reviewer raises no blockers when: [t0] a round runs, then \`--as absorbed --that cleanly\` then: matches snapshot — the round that ran, nitpick-only reviewer: route.stone.set - round ran, nitpick-only reviewer approved 1`] = `
+exports[`routeStoneSetFeedbackAbsorption.acceptance given: [case2] a bound route whose one peer reviewer raises no blockers when: [t0] a round runs, then \`--as absorbed --that cleanly\` then: matches snapshot — the round that ran, nitpick-only reviewer: route.stone.set - round ran, nitpick-only reviewer approved 1`] = `
 "🦉 the way speaks for itself
    │
    ├─ r1: cleanly (l1, 1/5)
@@ -248,25 +241,17 @@ exports[`routeStoneSet.feedbackAbsorption.acceptance given: [case2] a bound rout
 "
 `;
 
-exports[`routeStoneSet.feedbackAbsorption.acceptance given: [case3] a \`--that\` slug that names no reviewer when: [t0] \`--as absorbed --that ghost\` then: matches snapshot — the invalid-slug refusal, both streams: route.stone.set - invalid slug, stderr 1`] = `
-"error: BadRequestError: invalid peer reviewer slug: "ghost". valid options: counter
-
-{
-  "stone": "1.test",
-  "slug": "ghost",
-  "validSlugs": [
-    "counter"
-  ]
-}
+exports[`routeStoneSetFeedbackAbsorption.acceptance given: [case3] a \`--that\` slug that names no reviewer when: [t0] \`--as absorbed --that ghost\` then: matches snapshot — the invalid-slug refusal, both streams: route.stone.set - invalid slug, stderr 1`] = `
+"✋ ConstraintError: invalid peer reviewer slug: "ghost". valid options: counter
 "
 `;
 
-exports[`routeStoneSet.feedbackAbsorption.acceptance given: [case3] a \`--that\` slug that names no reviewer when: [t0] \`--as absorbed --that ghost\` then: matches snapshot — the invalid-slug refusal, both streams: route.stone.set - invalid slug, stdout 1`] = `
+exports[`routeStoneSetFeedbackAbsorption.acceptance given: [case3] a \`--that\` slug that names no reviewer when: [t0] \`--as absorbed --that ghost\` then: matches snapshot — the invalid-slug refusal, both streams: route.stone.set - invalid slug, stdout 1`] = `
 "🦉 the way speaks for itself
 "
 `;
 
-exports[`routeStoneSet.feedbackAbsorption.acceptance given: [case4] a reviewer with no critique and a judge that passes when: [t0] \`--as passed\` with every gate satisfied then: matches snapshot — the success output a driver reads: route.stone.set - passage allowed 1`] = `
+exports[`routeStoneSetFeedbackAbsorption.acceptance given: [case4] a reviewer with no critique and a judge that passes when: [t0] \`--as passed\` with every gate satisfied then: matches snapshot — the success output a driver reads: route.stone.set - passage allowed 1`] = `
 "🦉 the way speaks for itself
    │
    ├─ r1: cleanly (l1, 1/5)
@@ -300,7 +285,7 @@ exports[`routeStoneSet.feedbackAbsorption.acceptance given: [case4] a reviewer w
 "
 `;
 
-exports[`routeStoneSet.feedbackAbsorption.acceptance given: [case5] the same gate, reached by the \`--as arrived\` spelling when: [t0] the first \`--as arrived\`, with no debt owed then: matches snapshot — step 1, the round with no debt owed: route.stone.set - arrived alias, gate open, no debt owed 1`] = `
+exports[`routeStoneSetFeedbackAbsorption.acceptance given: [case5] the same gate, reached by the \`--as arrived\` spelling when: [t0] the first \`--as arrived\`, with no debt owed then: matches snapshot — step 1, the round with no debt owed: route.stone.set - arrived alias, gate open, no debt owed 1`] = `
 "🦉 the way speaks for itself
    │
    ├─ r1: counter (l1, 1/5)
@@ -333,7 +318,7 @@ exports[`routeStoneSet.feedbackAbsorption.acceptance given: [case5] the same gat
 "
 `;
 
-exports[`routeStoneSet.feedbackAbsorption.acceptance given: [case5] the same gate, reached by the \`--as arrived\` spelling when: [t1] a second \`--as arrived\`, with the critique unanswered then: matches snapshot — the entrance halt under the \`arrived\` spelling: route.stone.set - entrance halt, via arrived 1`] = `
+exports[`routeStoneSetFeedbackAbsorption.acceptance given: [case5] the same gate, reached by the \`--as arrived\` spelling when: [t1] a second \`--as arrived\`, with the critique unanswered then: matches snapshot — the entrance halt under the \`arrived\` spelling: route.stone.set - entrance halt, via arrived 1`] = `
 "🦉 the way speaks for itself
 
 🦉 the reviewers await your reply
@@ -353,7 +338,22 @@ exports[`routeStoneSet.feedbackAbsorption.acceptance given: [case5] the same gat
 "
 `;
 
-exports[`routeStoneSet.feedbackAbsorption.acceptance given: [case6] a reviewer whose budget runs out with a blocker owed when: [t0] the one round the budget affords then: matches snapshot — step 1, the one round the budget affords: route.stone.set - budget 1, the single round, rejected not exhausted 1`] = `
+exports[`routeStoneSetFeedbackAbsorption.acceptance given: [case6] a reviewer whose budget runs out with a blocker owed when: [t0] the one round the budget affords then: matches snapshot — step 1, stderr: route.stone.set - budget 1, the single round, stderr 1`] = `
+"🦉 l1 pours 1 lane
+   └─ r1:limited
+
+🪶 judge 1
+   └─ stdout
+      ├─
+      │
+      │  passed: false
+      │  reason: blockers found
+      │
+      └─
+"
+`;
+
+exports[`routeStoneSetFeedbackAbsorption.acceptance given: [case6] a reviewer whose budget runs out with a blocker owed when: [t0] the one round the budget affords then: matches snapshot — step 1, the one round the budget affords: route.stone.set - budget 1, the single round, rejected not exhausted 1`] = `
 "🦉 the way speaks for itself
    │
    ├─ r1: limited (l1, 1/1)
@@ -386,7 +386,7 @@ exports[`routeStoneSet.feedbackAbsorption.acceptance given: [case6] a reviewer w
 "
 `;
 
-exports[`routeStoneSet.feedbackAbsorption.acceptance given: [case6] a reviewer whose budget runs out with a blocker owed when: [t1] the artifact moves while the blocker sits unanswered then: matches snapshot — the halt that outlived the reviewer, at cli grain: route.stone.set - entrance halt, debt outlives exhaustion 1`] = `
+exports[`routeStoneSetFeedbackAbsorption.acceptance given: [case6] a reviewer whose budget runs out with a blocker owed when: [t1] the artifact moves while the blocker sits unanswered then: matches snapshot — the halt that outlived the reviewer, at cli grain: route.stone.set - entrance halt, debt outlives exhaustion 1`] = `
 "🦉 the way speaks for itself
 
 🦉 the reviewers await your reply
@@ -406,7 +406,11 @@ exports[`routeStoneSet.feedbackAbsorption.acceptance given: [case6] a reviewer w
 "
 `;
 
-exports[`routeStoneSet.feedbackAbsorption.acceptance given: [case6] a reviewer whose budget runs out with a blocker owed when: [t2] the driver answers, and now meets the STANCE gate then: matches snapshot — the stance gate, met even at a spent budget: route.stone.set - stance gate at spent budget 1`] = `
+exports[`routeStoneSetFeedbackAbsorption.acceptance given: [case6] a reviewer whose budget runs out with a blocker owed when: [t1] the artifact moves while the blocker sits unanswered then: matches snapshot — the halt that outlived the reviewer, stderr: route.stone.set - entrance halt, debt outlives exhaustion, stderr 1`] = `""`;
+
+exports[`routeStoneSetFeedbackAbsorption.acceptance given: [case6] a reviewer whose budget runs out with a blocker owed when: [t2] the driver answers, and now meets the STANCE gate then: matches snapshot — the stance gate at a spent budget, stderr: route.stone.set - stance gate at spent budget, stderr 1`] = `""`;
+
+exports[`routeStoneSetFeedbackAbsorption.acceptance given: [case6] a reviewer whose budget runs out with a blocker owed when: [t2] the driver answers, and now meets the STANCE gate then: matches snapshot — the stance gate, met even at a spent budget: route.stone.set - stance gate at spent budget 1`] = `
 "🦉 the way speaks for itself
 
 🦉 each concern awaits your absorption
@@ -446,7 +450,9 @@ exports[`routeStoneSet.feedbackAbsorption.acceptance given: [case6] a reviewer w
 "
 `;
 
-exports[`routeStoneSet.feedbackAbsorption.acceptance given: [case6] a reviewer whose budget runs out with a blocker owed when: [t2b] the driver concedes URGENT, and now meets the spent budget then: matches snapshot — the exhaustion tree and the levers it names: route.stone.set - exhausted, options tree 1`] = `
+exports[`routeStoneSetFeedbackAbsorption.acceptance given: [case6] a reviewer whose budget runs out with a blocker owed when: [t2b] the driver concedes URGENT, and now meets the spent budget then: matches snapshot — the exhaustion halt, stderr: route.stone.set - exhausted, options tree, stderr 1`] = `""`;
+
+exports[`routeStoneSetFeedbackAbsorption.acceptance given: [case6] a reviewer whose budget runs out with a blocker owed when: [t2b] the driver concedes URGENT, and now meets the spent budget then: matches snapshot — the exhaustion tree and the levers it names: route.stone.set - exhausted, options tree 1`] = `
 "🦉 the way speaks for itself
    │
    ├─ r1: limited (l1, 1/1)
@@ -483,7 +489,7 @@ exports[`routeStoneSet.feedbackAbsorption.acceptance given: [case6] a reviewer w
 "
 `;
 
-exports[`routeStoneSet.feedbackAbsorption.acceptance given: [case7] a reviewer retired from the config after it spoke when: [t0] \`departed\` speaks, then is removed from the guard then: matches snapshot — the retired-reviewer halt, at the cli grain: route.stone.set - entrance halt, reviewer retired 1`] = `
+exports[`routeStoneSetFeedbackAbsorption.acceptance given: [case7] a reviewer retired from the config after it spoke when: [t0] \`departed\` speaks, then is removed from the guard then: matches snapshot — the retired-reviewer halt, at the cli grain: route.stone.set - entrance halt, reviewer retired 1`] = `
 "🦉 the way speaks for itself
 
 🦉 the reviewers await your reply
@@ -513,10 +519,10 @@ exports[`routeStoneSet.feedbackAbsorption.acceptance given: [case7] a reviewer r
 "
 `;
 
-exports[`routeStoneSet.feedbackAbsorption.acceptance given: [case7] a reviewer retired from the config after it spoke when: [t1] the driver types the command the guard just printed then: matches snapshot — the retired-slug guidance, at the cli grain: route.stone.set - absorbed guidance, reviewer retired 1`] = `
+exports[`routeStoneSetFeedbackAbsorption.acceptance given: [case7] a reviewer retired from the config after it spoke when: [t1] the driver types the command the guard just printed then: matches snapshot — the retired-slug guidance, at the cli grain: route.stone.set - absorbed guidance, reviewer retired 1`] = `
 "🦉 the way speaks for itself
 
-✋ feedbackAbsorption absent for reviewer departed
+✋ feedback absorption absent for reviewer departed
    ├─ the guard looked for your response here, and did not find it
    │  └─ .reviews/peer/1.test._.review.i001.<hash>.r001._.taken.by_self.departed.md
    │
@@ -533,10 +539,10 @@ exports[`routeStoneSet.feedbackAbsorption.acceptance given: [case7] a reviewer r
 "
 `;
 
-exports[`routeStoneSet.feedbackAbsorption.acceptance given: [case7] a reviewer retired from the config after it spoke when: [t2] the driver answers the reviewer that left then: matches snapshot — the composition-gate refusal, reviewer retired: route.stone.set - composition gate refusal, reviewer retired 1`] = `
-"error: BadRequestError: absorb each concern before you absorb departed's feedback
+exports[`routeStoneSetFeedbackAbsorption.acceptance given: [case7] a reviewer retired from the config after it spoke when: [t2] the driver answers the reviewer that left then: matches snapshot — the composition-gate refusal, reviewer retired: route.stone.set - composition gate refusal, reviewer retired 1`] = `
+"✋ ConstraintError: absorb each concern before you absorb departed's feedback
 
-1 concern of departed stand un-absorbed:
+1 concern of departed stands un-absorbed:
   - blocker.1
 
 absorb each, THEN absorb the feedback:
@@ -547,18 +553,10 @@ absorb each, THEN absorb the feedback:
        --as disputed --with departed --about <concern> --why <fulcrum-path>
   2. then absorb the feedback:
      rhx route.stone.set --stone 1.test --as absorbed --that departed
-
-{
-  "stone": "1.test",
-  "slug": "departed",
-  "undeclared": [
-    "blocker.1"
-  ]
-}
 "
 `;
 
-exports[`routeStoneSet.feedbackAbsorption.acceptance given: [case7] a reviewer retired from the config after it spoke when: [t3] the answered debt no longer holds the door then: but the STANCE gate now halts on the retired reviewer’s undeclared concern: route.stone.set - after retired ack, the stance gate halts on the undeclared concern 1`] = `
+exports[`routeStoneSetFeedbackAbsorption.acceptance given: [case7] a reviewer retired from the config after it spoke when: [t3] the answered debt no longer holds the door then: but the STANCE gate now halts on the retired reviewer’s undeclared concern: route.stone.set - after retired ack, the stance gate halts on the undeclared concern 1`] = `
 "🦉 the way speaks for itself
 
 🦉 each concern awaits your absorption
@@ -598,26 +596,17 @@ exports[`routeStoneSet.feedbackAbsorption.acceptance given: [case7] a reviewer r
 "
 `;
 
-exports[`routeStoneSet.feedbackAbsorption.acceptance given: [case7] a reviewer retired from the config after it spoke when: [t4] the driver MISTYPES a slug while the union is two-wide then: matches snapshot — the retired-UNION refusal, both streams: route.stone.set - retired-union invalid slug, stderr 1`] = `
-"error: BadRequestError: invalid peer reviewer slug: "mechanik". valid options: departed, successor
-
-{
-  "stone": "1.test",
-  "slug": "mechanik",
-  "validSlugs": [
-    "departed",
-    "successor"
-  ]
-}
+exports[`routeStoneSetFeedbackAbsorption.acceptance given: [case7] a reviewer retired from the config after it spoke when: [t4] the driver MISTYPES a slug while the union is two-wide then: matches snapshot — the retired-UNION refusal, both streams: route.stone.set - retired-union invalid slug, stderr 1`] = `
+"✋ ConstraintError: invalid peer reviewer slug: "mechanik". valid options: departed, successor
 "
 `;
 
-exports[`routeStoneSet.feedbackAbsorption.acceptance given: [case7] a reviewer retired from the config after it spoke when: [t4] the driver MISTYPES a slug while the union is two-wide then: matches snapshot — the retired-UNION refusal, both streams: route.stone.set - retired-union invalid slug, stdout 1`] = `
+exports[`routeStoneSetFeedbackAbsorption.acceptance given: [case7] a reviewer retired from the config after it spoke when: [t4] the driver MISTYPES a slug while the union is two-wide then: matches snapshot — the retired-UNION refusal, both streams: route.stone.set - retired-union invalid slug, stdout 1`] = `
 "🦉 the way speaks for itself
 "
 `;
 
-exports[`routeStoneSet.feedbackAbsorption.acceptance given: [case8] a reviewer whose given carries no numeric count when: [t0] the round runs, and the driver knocks again then: matches snapshot — the round that ran, reviewer promoted to malfunction: route.stone.set - round ran, unreadable verdict promoted to malfunction 1`] = `
+exports[`routeStoneSetFeedbackAbsorption.acceptance given: [case8] a reviewer whose given carries no numeric count when: [t0] the round runs, and the driver knocks again then: matches snapshot — the round that ran, reviewer promoted to malfunction: route.stone.set - round ran, unreadable verdict promoted to malfunction 1`] = `
 "🦉 the way speaks for itself
    │
    ├─ r1: mumbles (l1, 0/5)
@@ -631,7 +620,17 @@ exports[`routeStoneSet.feedbackAbsorption.acceptance given: [case8] a reviewer w
 🗿 route.stone.set
    ├─ stone = 1.test
    ├─ passage = malfunction
-   ├─ reason = reviewer or judge malfunctioned
+   ├─ reason = 1 of 1 reviewer malfunctioned
+   ├─ still yours to clear
+   │  ├─ 💥 lane mumbles (r1) broke
+   │  │  └─ cause = exit code 3 (unknown)
+   │  └─ next
+   │     ├─ 1. read each given for its cause, and fix what you can
+   │     ├─ 2. answer each broken lane, like a rejected one
+   │     │  └─ rhx route.stone.set --stone 1.test --as absorbed --that mumbles
+   │     ├─ 3. re-arrive
+   │     │  └─ rhx route.stone.set --stone 1.test --as arrived
+   │     └─ ask a human only for a grant you cannot make (an absent credential, a permission, etc)
    ├─ options
    │  ├─ converge with the reviewer — yours to run, and the levels above stay unlocked
    │  │  └─ rhx route.stone.set --stone 1.test --as absorbed --that <reviewer>
@@ -655,7 +654,7 @@ exports[`routeStoneSet.feedbackAbsorption.acceptance given: [case8] a reviewer w
 "
 `;
 
-exports[`routeStoneSet.feedbackAbsorption.acceptance given: [case8] a reviewer whose given carries no numeric count when: [t0] the round runs, and the driver knocks again then: matches snapshot — the round that ran, stderr carries the judge refusal: route.stone.set - round ran, unreadable verdict, stderr 1`] = `
+exports[`routeStoneSetFeedbackAbsorption.acceptance given: [case8] a reviewer whose given carries no numeric count when: [t0] the round runs, and the driver knocks again then: matches snapshot — the round that ran, stderr carries the judge refusal: route.stone.set - round ran, unreadable verdict, stderr 1`] = `
 "🦉 l1 pours 1 lane
    └─ r1:mumbles
 
@@ -672,7 +671,7 @@ exports[`routeStoneSet.feedbackAbsorption.acceptance given: [case8] a reviewer w
 "
 `;
 
-exports[`routeStoneSet.feedbackAbsorption.acceptance given: [case8] a reviewer whose given carries no numeric count when: [t0] the round runs, and the driver knocks again then: matches snapshot — the unreadable halt, at the cli grain: route.stone.set - entrance halt, given unreadable 1`] = `
+exports[`routeStoneSetFeedbackAbsorption.acceptance given: [case8] a reviewer whose given carries no numeric count when: [t0] the round runs, and the driver knocks again then: matches snapshot — the unreadable halt, at the cli grain: route.stone.set - entrance halt, given unreadable 1`] = `
 "🦉 the way speaks for itself
 
 🦉 the reviewers await your reply
@@ -703,10 +702,10 @@ exports[`routeStoneSet.feedbackAbsorption.acceptance given: [case8] a reviewer w
 "
 `;
 
-exports[`routeStoneSet.feedbackAbsorption.acceptance given: [case8] a reviewer whose given carries no numeric count when: [t1] the driver types the command the guard just printed then: matches snapshot — the unreadable-slug guidance, at the cli grain: route.stone.set - absorbed guidance, given unreadable 1`] = `
+exports[`routeStoneSetFeedbackAbsorption.acceptance given: [case8] a reviewer whose given carries no numeric count when: [t1] the driver types the command the guard just printed then: matches snapshot — the unreadable-slug guidance, at the cli grain: route.stone.set - absorbed guidance, given unreadable 1`] = `
 "🦉 the way speaks for itself
 
-✋ feedbackAbsorption absent for reviewer mumbles
+✋ feedback absorption absent for reviewer mumbles
    ├─ the guard looked for your response here, and did not find it
    │  └─ .reviews/peer/1.test._.review.i001.<hash>.r001._.taken.by_self.mumbles.md
    │
@@ -723,7 +722,7 @@ exports[`routeStoneSet.feedbackAbsorption.acceptance given: [case8] a reviewer w
 "
 `;
 
-exports[`routeStoneSet.feedbackAbsorption.acceptance given: [case8] a reviewer whose given carries no numeric count when: [t2] the same reviewer is then retired from the config then: matches snapshot — the stacked retired + unreadable halt, at the cli grain: route.stone.set - entrance halt, reviewer retired and given unreadable 1`] = `
+exports[`routeStoneSetFeedbackAbsorption.acceptance given: [case8] a reviewer whose given carries no numeric count when: [t2] the same reviewer is then retired from the config then: matches snapshot — the stacked retired + unreadable halt, at the cli grain: route.stone.set - entrance halt, reviewer retired and given unreadable 1`] = `
 "🦉 the way speaks for itself
 
 🦉 the reviewers await your reply
@@ -764,7 +763,7 @@ exports[`routeStoneSet.feedbackAbsorption.acceptance given: [case8] a reviewer w
 "
 `;
 
-exports[`routeStoneSet.feedbackAbsorption.acceptance given: [case8] a reviewer whose given carries no numeric count when: [t3] the driver answers the reviewer it could not read then: matches snapshot — the unreadable-reviewer ack, at the cli grain: route.stone.set - absorbed ack, given unreadable 1`] = `
+exports[`routeStoneSetFeedbackAbsorption.acceptance given: [case8] a reviewer whose given carries no numeric count when: [t3] the driver answers the reviewer it could not read then: matches snapshot — the unreadable-reviewer ack, at the cli grain: route.stone.set - absorbed ack, given unreadable 1`] = `
 "🦉 the way speaks for itself
 
 🦉 absorbed: mumbles

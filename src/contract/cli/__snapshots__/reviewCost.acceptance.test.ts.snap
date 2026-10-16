@@ -1,0 +1,2416 @@
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
+
+exports[`reviewCost.acceptance given: [case1] a tree whose LATEST run compiled a prompt and recorded its spend when: [t0] the run is priced then: the whole report renders as the human sees it 1`] = `
+"
+🦉 review cost — one run
+   ├─ run: <temp-root>/.log/bhrain/review/2026-09-18T00-00-03-000Z.pid1.ddd
+   │  ├─ identity: repo-rules · 5.1.execution.from_vision · i1
+   │  ├─ grade: metered
+   │  └─ cost: $0.250000
+   │
+   ├─ levers — input DOWN · cache UP (trend: one run is one sample — its rounds are at rhx review._.cost --of tree)
+   │  ├─ input:     500,000 prompt tokens/run
+   │  └─ cache:     60.0% of prompt tokens served from cache
+   │
+   ├─ prefix vs i1: 🟡 over-reach
+   │  ├─ cache.get 300.0k tok · reach 461538.5% of expected
+   │  ├─ expected 65 tok est. (13 chars shared with i1)
+   │  └─ prefix breaks in: whole
+   │
+   ├─ tokens
+   │  ├─ input:     200.0k
+   │  ├─ cache.set: 0  (a MEASURED zero — this run was charged no cache WRITE, and read one anyway)
+   │  ├─ cache.get: 300.0k
+   │  └─ output:    1.0k
+   │
+   ├─ target mass by directory — 49.0k chars over 2 directories
+   │  ├─  85.7%     42.0k chars  2 files   src/domain.operations/invoice
+   │  └─  14.3%      7.0k chars  1 file    blackbox
+   │
+   └─ composition: 100.0k chars over 3 targets (source: compiled, attribution: —)
+      ├─ instructions            600 chars    0.6%  cacheable
+      ├─ outputFormat            300 chars    0.3%  cacheable
+      ├─ scaffold                100 chars    0.1%  cacheable
+      ├─ rules                 20.0k chars   20.0%  cacheable
+      ├─ refs                  10.0k chars   10.0%  cacheable
+      ├─ targetFiles           49.0k chars   49.0%  cacheable
+      ├─ targetDiffs           15.0k chars   15.0%
+      │  ├─ additions              0 chars    0.0%  cacheable
+      │  ├─ deletions              0 chars    0.0%  cacheable
+      │  └─ mutations          15.0k chars   15.0%  per round
+      └─ conversation           5.0k chars    5.0%  per round
+
+"
+`;
+
+exports[`reviewCost.acceptance given: [case1] a tree whose LATEST run compiled a prompt and recorded its spend when: [t1] the same run is asked for as json then: the json payload renders as a consumer receives it 1`] = `
+"{
+  "root": "<temp-root>/.log/bhrain/review",
+  "run": {
+    "dir": "<temp-root>/.log/bhrain/review/2026-09-18T00-00-03-000Z.pid1.ddd",
+    "identity": {
+      "route": ".behavior/v2026_09_18.feat-demo",
+      "stone": "5.1.execution.from_vision",
+      "iteration": 1,
+      "hash": "abc1234",
+      "index": 0,
+      "slug": "repo-rules"
+    },
+    "head": null,
+    "brain": null,
+    "defect": null,
+    "grade": "metered",
+    "scope": {
+      "rulesCount": 1,
+      "refsCount": 0,
+      "targetsCount": 1,
+      "focus": "push"
+    },
+    "tokens": {
+      "input": 200000,
+      "cacheSet": 0,
+      "cacheGet": 300000,
+      "output": 1000
+    },
+    "cost": {
+      "total": "USD 0.250_000",
+      "cacheSaved": null
+    },
+    "prompt": {
+      "chars": 100000,
+      "targets": 3,
+      "attribution": null,
+      "sections": {
+        "instructions": 600,
+        "outputFormat": 300,
+        "rules": 20000,
+        "refs": 10000,
+        "conversation": 5000,
+        "targetFiles": 49000,
+        "targetDiffs.additions": 0,
+        "targetDiffs.deletions": 0,
+        "targetDiffs.mutations": 15000,
+        "scaffold": 100
+      },
+      "source": "compiled",
+      "locus": [
+        {
+          "path": "src/domain.operations/invoice/a.ts",
+          "chars": 30000
+        },
+        {
+          "path": "src/domain.operations/invoice/b.ts",
+          "chars": 12000
+        },
+        {
+          "path": "blackbox/invoice.acceptance.test.ts",
+          "chars": 7000
+        }
+      ]
+    }
+  },
+  "split": null,
+  "prefix": {
+    "reviewer": "repo-rules",
+    "prior": {
+      "dir": "<temp-root>/.log/bhrain/review/2026-09-18T00-00-00-000Z.pid1.aaa",
+      "stone": "5.1.execution.from_vision",
+      "iteration": 1
+    },
+    "round": {
+      "dir": "<temp-root>/.log/bhrain/review/2026-09-18T00-00-03-000Z.pid1.ddd",
+      "stone": "5.1.execution.from_vision",
+      "iteration": 1
+    },
+    "sharedChars": 13,
+    "expectedTokens": 65,
+    "detectedTokens": 300000,
+    "reach": 4615.384615384615,
+    "verdict": "over-reach",
+    "breaksIn": "whole",
+    "headChars": null
+  },
+  "seam": {
+    "instructions": true,
+    "outputFormat": true,
+    "rules": true,
+    "refs": true,
+    "scaffold": true,
+    "targetFiles": true,
+    "targetDiffs.additions": true,
+    "targetDiffs.deletions": true,
+    "targetDiffs.mutations": false,
+    "conversation": false
+  }
+}
+"
+`;
+
+exports[`reviewCost.acceptance given: [case1] a tree whose LATEST run compiled a prompt and recorded its spend when: [t2] the tree is priced over the same corpus then: the whole report renders as the human sees it 1`] = `
+"
+🦉 review cost — this tree
+   ├─ corpus: <temp-root>/.log/bhrain/review
+   │  ├─ runs: 4 (2 metered · 1 refused · 1 unknown 🟡)
+   │  ├─ levers — input DOWN · cache UP
+   │  │  ├─ input:     500,000 prompt tokens/run
+   │  │  ├─ cache:     40.0% of prompt tokens served from cache
+   │  │  └─ prefix:    0 served · 0 missed · 0 self-cached · 🟡 1 over-reach · 0 unshared
+   │  ├─ tokens
+   │  │  ├─ input:     600.0k
+   │  │  ├─ cache.set: 0
+   │  │  ├─ cache.get: 400.0k
+   │  │  └─ output:    2.0k
+   │  └─ cost: $0.500000  🟡 +1 unknown (cost unrecorded, not zero)
+   │
+   ├─ by input — what the prompts were MADE of
+   │  ├─ corpus        1 read · 3 unread · 3 target files
+   │  ├─ source        1 compiled (exact) · 0 parsed from the rendered prompt (coarse)
+   │  ├─ census        0 attributed · 0 unattributed · 1 ungraded (no grade stated)
+   │  │
+   │  ├─ instructions            600 chars    0.6%  cacheable
+   │  ├─ outputFormat            300 chars    0.3%  cacheable
+   │  ├─ scaffold                100 chars    0.1%  cacheable
+   │  ├─ rules                20,000 chars   20.0%  cacheable
+   │  ├─ refs                 10,000 chars   10.0%  cacheable
+   │  ├─ targetFiles          49,000 chars   49.0%  cacheable
+   │  ├─ targetDiffs          15,000 chars   15.0%
+   │  │  ├─ additions              0 chars    0.0%  cacheable
+   │  │  ├─ deletions              0 chars    0.0%  cacheable
+   │  │  └─ mutations         15,000 chars   15.0%  per round
+   │  ├─ conversation          5,000 chars    5.0%  per round
+   │  │
+   │  ├─ total               100,000 chars
+   │  ├─ cacheable            80,000 chars   80.0%  — the most any cache could ever serve
+   │  ├─ per round            20,000 chars   20.0%  — re-paid at full input rate, every round
+   │  │
+   │  └─ target mass by directory — 49,000 chars over 2 directories, from 1 of 1 read run
+   │     ├─  85.7%    42,000 chars  2 files   src/domain.operations/invoice
+   │     └─  14.3%     7,000 chars  1 file    blackbox
+   │
+   ├─ by reviewer — heaviest prompt first
+   │  ├─ repo-rules               2 runs ·    1.0M prompt ·  40.0% cached ·    $0.500000
+   │  ├─ mech-failhides           1 run  ·       — prompt ·      — cached ·            —  🟡 +1 unknown (cost unrecorded, not zero)
+   │  └─ arch-smell-scopeleaks    1 run  ·       0 prompt ·      — cached ·           $0
+   │
+   ├─ by level — heaviest prompt first
+   │  ├─ L1    3 runs ·    1.0M prompt ·  40.0% cached ·    $0.500000  🟡 +1 unknown (cost unrecorded, not zero)
+   │  └─ L3    1 run  ·       0 prompt ·      — cached ·           $0
+   │
+   ├─ by stone — heaviest prompt first
+   │  └─ 5.1.execution.from_vision    4 runs ·    1.0M prompt ·  40.0% cached ·    $0.500000  🟡 +1 unknown (cost unrecorded, not zero)
+   │
+   └─ by round
+      └─ 5.1.execution.from_vision i001    4 runs ·    1.0M prompt ·  40.0% cached ·    $0.500000  🟡 +1 unknown (cost unrecorded, not zero)
+
+"
+`;
+
+exports[`reviewCost.acceptance given: [case1] a tree whose LATEST run compiled a prompt and recorded its spend when: [t3] the same tree is asked for as json then: the json payload renders as a consumer receives it 1`] = `
+"{
+  "root": "<temp-root>/.log/bhrain/review",
+  "report": {
+    "corpus": {
+      "key": "corpus",
+      "runs": {
+        "total": 4,
+        "metered": 2,
+        "refused": 1,
+        "unknown": 1,
+        "accounted": 3
+      },
+      "tokens": {
+        "input": 600000,
+        "cacheSet": 0,
+        "cacheGet": 400000,
+        "output": 2000
+      },
+      "cost": "USD 0.500_000",
+      "cacheHitRate": 0.4,
+      "cacheGrade": {
+        "kind": "warm"
+      }
+    },
+    "byReviewer": [
+      {
+        "key": "repo-rules",
+        "runs": {
+          "total": 2,
+          "metered": 2,
+          "refused": 0,
+          "unknown": 0,
+          "accounted": 2
+        },
+        "tokens": {
+          "input": 600000,
+          "cacheSet": 0,
+          "cacheGet": 400000,
+          "output": 2000
+        },
+        "cost": "USD 0.500_000",
+        "cacheHitRate": 0.4,
+        "cacheGrade": {
+          "kind": "warm"
+        }
+      },
+      {
+        "key": "mech-failhides",
+        "runs": {
+          "total": 1,
+          "metered": 0,
+          "refused": 0,
+          "unknown": 1,
+          "accounted": 0
+        },
+        "tokens": {
+          "input": 0,
+          "cacheSet": 0,
+          "cacheGet": 0,
+          "output": 0
+        },
+        "cost": null,
+        "cacheHitRate": null,
+        "cacheGrade": null
+      },
+      {
+        "key": "arch-smell-scopeleaks",
+        "runs": {
+          "total": 1,
+          "metered": 0,
+          "refused": 1,
+          "unknown": 0,
+          "accounted": 1
+        },
+        "tokens": {
+          "input": 0,
+          "cacheSet": 0,
+          "cacheGet": 0,
+          "output": 0
+        },
+        "cost": "USD 0.00",
+        "cacheHitRate": null,
+        "cacheGrade": null
+      }
+    ],
+    "byLevel": [
+      {
+        "key": "L1",
+        "runs": {
+          "total": 3,
+          "metered": 2,
+          "refused": 0,
+          "unknown": 1,
+          "accounted": 2
+        },
+        "tokens": {
+          "input": 600000,
+          "cacheSet": 0,
+          "cacheGet": 400000,
+          "output": 2000
+        },
+        "cost": "USD 0.500_000",
+        "cacheHitRate": 0.4,
+        "cacheGrade": {
+          "kind": "warm"
+        }
+      },
+      {
+        "key": "L3",
+        "runs": {
+          "total": 1,
+          "metered": 0,
+          "refused": 1,
+          "unknown": 0,
+          "accounted": 1
+        },
+        "tokens": {
+          "input": 0,
+          "cacheSet": 0,
+          "cacheGet": 0,
+          "output": 0
+        },
+        "cost": "USD 0.00",
+        "cacheHitRate": null,
+        "cacheGrade": null
+      }
+    ],
+    "byStone": [
+      {
+        "key": "5.1.execution.from_vision",
+        "runs": {
+          "total": 4,
+          "metered": 2,
+          "refused": 1,
+          "unknown": 1,
+          "accounted": 3
+        },
+        "tokens": {
+          "input": 600000,
+          "cacheSet": 0,
+          "cacheGet": 400000,
+          "output": 2000
+        },
+        "cost": "USD 0.500_000",
+        "cacheHitRate": 0.4,
+        "cacheGrade": {
+          "kind": "warm"
+        }
+      }
+    ],
+    "byRound": [
+      {
+        "key": "5.1.execution.from_vision i001",
+        "runs": {
+          "total": 4,
+          "metered": 2,
+          "refused": 1,
+          "unknown": 1,
+          "accounted": 3
+        },
+        "tokens": {
+          "input": 600000,
+          "cacheSet": 0,
+          "cacheGet": 400000,
+          "output": 2000
+        },
+        "cost": "USD 0.500_000",
+        "cacheHitRate": 0.4,
+        "cacheGrade": {
+          "kind": "warm"
+        }
+      }
+    ],
+    "byRoundAndReviewer": [
+      {
+        "key": "5.1.execution.from_vision i001 · arch-smell-scopeleaks",
+        "runs": {
+          "total": 1,
+          "metered": 0,
+          "refused": 1,
+          "unknown": 0,
+          "accounted": 1
+        },
+        "tokens": {
+          "input": 0,
+          "cacheSet": 0,
+          "cacheGet": 0,
+          "output": 0
+        },
+        "cost": "USD 0.00",
+        "cacheHitRate": null,
+        "cacheGrade": null
+      },
+      {
+        "key": "5.1.execution.from_vision i001 · mech-failhides",
+        "runs": {
+          "total": 1,
+          "metered": 0,
+          "refused": 0,
+          "unknown": 1,
+          "accounted": 0
+        },
+        "tokens": {
+          "input": 0,
+          "cacheSet": 0,
+          "cacheGet": 0,
+          "output": 0
+        },
+        "cost": null,
+        "cacheHitRate": null,
+        "cacheGrade": null
+      },
+      {
+        "key": "5.1.execution.from_vision i001 · repo-rules",
+        "runs": {
+          "total": 2,
+          "metered": 2,
+          "refused": 0,
+          "unknown": 0,
+          "accounted": 2
+        },
+        "tokens": {
+          "input": 600000,
+          "cacheSet": 0,
+          "cacheGet": 400000,
+          "output": 2000
+        },
+        "cost": "USD 0.500_000",
+        "cacheHitRate": 0.4,
+        "cacheGrade": {
+          "kind": "warm"
+        }
+      }
+    ],
+    "inputs": {
+      "read": 1,
+      "compiled": 1,
+      "parsed": 0,
+      "unread": 3,
+      "attributed": 0,
+      "unattributed": 0,
+      "ungraded": 1,
+      "sections": {
+        "instructions": 600,
+        "outputFormat": 300,
+        "rules": 20000,
+        "refs": 10000,
+        "conversation": 5000,
+        "targetFiles": 49000,
+        "targetDiffs.additions": 0,
+        "targetDiffs.deletions": 0,
+        "targetDiffs.mutations": 15000,
+        "scaffold": 100
+      },
+      "chars": 100000,
+      "targets": 3,
+      "locus": {
+        "placed": 1,
+        "targets": [
+          {
+            "path": "src/domain.operations/invoice/a.ts",
+            "chars": 30000
+          },
+          {
+            "path": "src/domain.operations/invoice/b.ts",
+            "chars": 12000
+          },
+          {
+            "path": "blackbox/invoice.acceptance.test.ts",
+            "chars": 7000
+          }
+        ]
+      }
+    }
+  },
+  "prefix": {
+    "verdicts": {
+      "pairs": 1,
+      "served": 0,
+      "missed": 0,
+      "selfCached": 0,
+      "overReach": 1,
+      "unshared": 0,
+      "unmeasured": 0
+    },
+    "pairs": [
+      {
+        "reviewer": "repo-rules",
+        "prior": {
+          "dir": "<temp-root>/.log/bhrain/review/2026-09-18T00-00-00-000Z.pid1.aaa",
+          "stone": "5.1.execution.from_vision",
+          "iteration": 1
+        },
+        "round": {
+          "dir": "<temp-root>/.log/bhrain/review/2026-09-18T00-00-03-000Z.pid1.ddd",
+          "stone": "5.1.execution.from_vision",
+          "iteration": 1
+        },
+        "sharedChars": 13,
+        "expectedTokens": 65,
+        "detectedTokens": 300000,
+        "reach": 4615.384615384615,
+        "verdict": "over-reach",
+        "breaksIn": "whole",
+        "headChars": null
+      }
+    ]
+  },
+  "seam": {
+    "instructions": true,
+    "outputFormat": true,
+    "rules": true,
+    "refs": true,
+    "scaffold": true,
+    "targetFiles": true,
+    "targetDiffs.additions": true,
+    "targetDiffs.deletions": true,
+    "targetDiffs.mutations": false,
+    "conversation": false
+  }
+}
+"
+`;
+
+exports[`reviewCost.acceptance given: [case2] a grove whose runs span all three honesty grades when: [t0] the grove is priced then: the whole report renders as the human sees it 1`] = `
+"
+🦉 review cost — the grove: where this machine's review tokens went
+
+   root: <temp-root>
+   trees: 2 walked · 1 carried review logs · 1 never reviewed
+   runs:  3 found — 1 metered · 1 refused · 1 unknown
+
+   the grove total
+      ├─ input        400,000  (80.0% of read, at full rate)
+      ├─ cache.set          0  (0.0% of read, at full rate, once per seed)
+      ├─ cache.get    100,000  (20.0% of read, 31.4x cheaper)
+      ├─ output         1,000  (not of read, at output rate)
+      └─ cost       $0.250000  (+1 unknown, unrecorded)
+
+   levers — input DOWN · cache UP
+      ├─ input:     500,000 prompt tokens/run
+      ├─ cache:     20.0% of prompt tokens served from cache
+      └─ prefix:    absent  (no reviewer ran twice)
+
+   by input
+      └─ absent (no prompt could be read, 3 unread)
+
+   by tree
+      └─     400,000 at full rate     $0.250000     3 runs  repo.beav.feat-demo  +1 unknown
+
+   by route
+      └─     400,000 at full rate     $0.250000     3 runs  .behavior/v2026_09_18.feat-demo  +1 unknown
+
+   by stone
+      └─     400,000 at full rate     $0.250000     3 runs  5.1.execution.from_vision  +1 unknown
+
+   by reviewer
+      ├─     400,000 at full rate     $0.250000     1 run   repo-rules
+      ├─           0 at full rate            $0     1 run   arch-smell-scopeleaks
+      └─      absent at full rate        absent     1 run   mech-failhides  +1 unknown
+
+"
+`;
+
+exports[`reviewCost.acceptance given: [case2] a grove whose runs span all three honesty grades when: [t1] the grove is priced as json then: the grove json payload renders as a consumer receives it 1`] = `
+"{
+  "root": "<temp-root>",
+  "trees": [
+    {
+      "name": "repo.beav.feat-demo",
+      "dir": "<temp-root>/repo.beav.feat-demo",
+      "root": "<temp-root>/repo.beav.feat-demo/.log/bhrain/review",
+      "present": true
+    },
+    {
+      "name": "repo.beav.feat-quiet",
+      "dir": "<temp-root>/repo.beav.feat-quiet",
+      "root": "<temp-root>/repo.beav.feat-quiet/.log/bhrain/review",
+      "present": false
+    }
+  ],
+  "treesWithLogs": 1,
+  "treesUnreadable": [],
+  "runsFound": 3,
+  "census": {
+    "metered": 1,
+    "refused": 1,
+    "unknown": 1
+  },
+  "tokens": {
+    "input": 400000,
+    "cacheSet": 0,
+    "cacheGet": 100000,
+    "output": 1000
+  },
+  "cost": "USD 0.250_000",
+  "rateOfCacheHit": 0.2,
+  "inputs": {
+    "read": 0,
+    "compiled": 0,
+    "parsed": 0,
+    "unread": 3,
+    "attributed": 0,
+    "unattributed": 0,
+    "ungraded": 0,
+    "sections": {
+      "instructions": 0,
+      "outputFormat": 0,
+      "rules": 0,
+      "refs": 0,
+      "conversation": 0,
+      "targetFiles": 0,
+      "targetDiffs.additions": 0,
+      "targetDiffs.deletions": 0,
+      "targetDiffs.mutations": 0,
+      "scaffold": 0
+    },
+    "chars": 0,
+    "targets": 0,
+    "locus": {
+      "placed": 0,
+      "targets": []
+    }
+  },
+  "byTree": [
+    {
+      "key": "repo.beav.feat-demo",
+      "runs": 3,
+      "census": {
+        "metered": 1,
+        "refused": 1,
+        "unknown": 1
+      },
+      "tokens": {
+        "input": 400000,
+        "cacheSet": 0,
+        "cacheGet": 100000,
+        "output": 1000
+      },
+      "cost": "USD 0.250_000"
+    }
+  ],
+  "byRoute": [
+    {
+      "key": ".behavior/v2026_09_18.feat-demo",
+      "runs": 3,
+      "census": {
+        "metered": 1,
+        "refused": 1,
+        "unknown": 1
+      },
+      "tokens": {
+        "input": 400000,
+        "cacheSet": 0,
+        "cacheGet": 100000,
+        "output": 1000
+      },
+      "cost": "USD 0.250_000"
+    }
+  ],
+  "byStone": [
+    {
+      "key": "5.1.execution.from_vision",
+      "runs": 3,
+      "census": {
+        "metered": 1,
+        "refused": 1,
+        "unknown": 1
+      },
+      "tokens": {
+        "input": 400000,
+        "cacheSet": 0,
+        "cacheGet": 100000,
+        "output": 1000
+      },
+      "cost": "USD 0.250_000"
+    }
+  ],
+  "byReviewer": [
+    {
+      "key": "repo-rules",
+      "runs": 1,
+      "census": {
+        "metered": 1,
+        "refused": 0,
+        "unknown": 0
+      },
+      "tokens": {
+        "input": 400000,
+        "cacheSet": 0,
+        "cacheGet": 100000,
+        "output": 1000
+      },
+      "cost": "USD 0.250_000"
+    },
+    {
+      "key": "arch-smell-scopeleaks",
+      "runs": 1,
+      "census": {
+        "metered": 0,
+        "refused": 1,
+        "unknown": 0
+      },
+      "tokens": {
+        "input": 0,
+        "cacheSet": 0,
+        "cacheGet": 0,
+        "output": 0
+      },
+      "cost": "USD 0.00"
+    },
+    {
+      "key": "mech-failhides",
+      "runs": 1,
+      "census": {
+        "metered": 0,
+        "refused": 0,
+        "unknown": 1
+      },
+      "tokens": {
+        "input": 0,
+        "cacheSet": 0,
+        "cacheGet": 0,
+        "output": 0
+      },
+      "cost": null
+    }
+  ],
+  "byDay": [
+    {
+      "day": "2026-09-18",
+      "runs": 3,
+      "metered": 1,
+      "tokens": {
+        "input": 400000,
+        "cacheSet": 0,
+        "cacheGet": 100000,
+        "output": 1000
+      },
+      "cacheHitRate": 0.2
+    }
+  ],
+  "prefix": {
+    "verdicts": {
+      "pairs": 0,
+      "served": 0,
+      "missed": 0,
+      "selfCached": 0,
+      "overReach": 0,
+      "unshared": 0,
+      "unmeasured": 0
+    },
+    "pairs": []
+  },
+  "seam": {
+    "instructions": true,
+    "outputFormat": true,
+    "rules": true,
+    "refs": true,
+    "scaffold": true,
+    "targetFiles": true,
+    "targetDiffs.additions": true,
+    "targetDiffs.deletions": true,
+    "targetDiffs.mutations": false,
+    "conversation": false
+  }
+}"
+`;
+
+exports[`reviewCost.acceptance given: [case2] a grove whose runs span all three honesty grades when: [t2] the grove is priced with --limit then: the bounded render is snapped as the human sees it 1`] = `
+"
+🦉 review cost — the grove: where this machine's review tokens went
+
+   root: <temp-root>
+   trees: 2 walked · 1 carried review logs · 1 never reviewed
+   runs:  3 found — 1 metered · 1 refused · 1 unknown
+
+   the grove total
+      ├─ input        400,000  (80.0% of read, at full rate)
+      ├─ cache.set          0  (0.0% of read, at full rate, once per seed)
+      ├─ cache.get    100,000  (20.0% of read, 31.4x cheaper)
+      ├─ output         1,000  (not of read, at output rate)
+      └─ cost       $0.250000  (+1 unknown, unrecorded)
+
+   levers — input DOWN · cache UP
+      ├─ input:     500,000 prompt tokens/run
+      ├─ cache:     20.0% of prompt tokens served from cache
+      └─ prefix:    absent  (no reviewer ran twice)
+
+   by input
+      └─ absent (no prompt could be read, 3 unread)
+
+   by tree
+      └─     400,000 at full rate     $0.250000     3 runs  repo.beav.feat-demo  +1 unknown
+
+   by route
+      └─     400,000 at full rate     $0.250000     3 runs  .behavior/v2026_09_18.feat-demo  +1 unknown
+
+   by stone
+      └─     400,000 at full rate     $0.250000     3 runs  5.1.execution.from_vision  +1 unknown
+
+   by reviewer
+      ├─     400,000 at full rate     $0.250000     1 run   repo-rules
+      └─ … and 2 more — raise --limit to list them  +1 unknown
+
+"
+`;
+
+exports[`reviewCost.acceptance given: [case2] a grove whose runs span all three honesty grades when: [t3] the grove is priced with a --limit that is not a count then: the refusal renders whole 1`] = `
+"
+🦉 woah there
+
+✋ ConstraintError: --limit "abc" is not a row count
+   ├─ valid: a whole number, 1 or greater
+   ├─ why:   --limit bounds how many rows each axis RENDERS, so a
+   │         bound below 1 would print an empty grove that is not empty
+   └─ fix:   rhx review._.cost --of grove --limit 25"
+`;
+
+exports[`reviewCost.acceptance given: [case2] a grove whose runs span all three honesty grades when: [t4] the grove is priced with --limit 0 then: the refusal renders whole 1`] = `
+"
+🦉 woah there
+
+✋ ConstraintError: --limit "0" is not a row count
+   ├─ valid: a whole number, 1 or greater
+   ├─ why:   --limit bounds how many rows each axis RENDERS, so a
+   │         bound below 1 would print an empty grove that is not empty
+   └─ fix:   rhx review._.cost --of grove --limit 25"
+`;
+
+exports[`reviewCost.acceptance given: [case2] a grove whose runs span all three honesty grades when: [t4b] the grove is priced with --limit beside --json then: the refusal renders whole 1`] = `
+"
+🦉 woah there
+
+✋ ConstraintError: --limit is not a flag --json takes
+   ├─ why:   --limit bounds how many ROLLUP ROWS the grove renders, and
+   │         --json emits the whole report, every row on every axis
+   ├─ takes: --of grove [--limit N]  or  --of grove --json
+   └─ fix:   rhx review._.cost --of grove --json"
+`;
+
+exports[`reviewCost.acceptance given: [case2] a grove whose runs span all three honesty grades when: [t4c] the tree is priced with --trace beside --json then: the refusal renders whole 1`] = `
+"
+🦉 woah there
+
+✋ ConstraintError: --trace is not a flag --json takes
+   ├─ why:   --trace adds the round × reviewer CROSS-TAB to the tree, and
+   │         --json emits the whole report, cross-tab or not
+   ├─ takes: --of tree [--trace]  or  --of tree --json
+   └─ fix:   rhx review._.cost --of tree --json"
+`;
+
+exports[`reviewCost.acceptance given: [case2] a grove whose runs span all three honesty grades when: [t5] the grove is priced from INSIDE a tree, with no --at then: the whole report renders as the human sees it 1`] = `
+"
+🦉 review cost — the grove: where this machine's review tokens went
+
+   root: <temp-root>
+   trees: 2 walked · 1 carried review logs · 1 never reviewed
+   runs:  3 found — 1 metered · 1 refused · 1 unknown
+
+   the grove total
+      ├─ input        400,000  (80.0% of read, at full rate)
+      ├─ cache.set          0  (0.0% of read, at full rate, once per seed)
+      ├─ cache.get    100,000  (20.0% of read, 31.4x cheaper)
+      ├─ output         1,000  (not of read, at output rate)
+      └─ cost       $0.250000  (+1 unknown, unrecorded)
+
+   levers — input DOWN · cache UP
+      ├─ input:     500,000 prompt tokens/run
+      ├─ cache:     20.0% of prompt tokens served from cache
+      └─ prefix:    absent  (no reviewer ran twice)
+
+   by input
+      └─ absent (no prompt could be read, 3 unread)
+
+   by tree
+      └─     400,000 at full rate     $0.250000     3 runs  repo.beav.feat-demo  +1 unknown
+
+   by route
+      └─     400,000 at full rate     $0.250000     3 runs  .behavior/v2026_09_18.feat-demo  +1 unknown
+
+   by stone
+      └─     400,000 at full rate     $0.250000     3 runs  5.1.execution.from_vision  +1 unknown
+
+   by reviewer
+      ├─     400,000 at full rate     $0.250000     1 run   repo-rules
+      ├─           0 at full rate            $0     1 run   arch-smell-scopeleaks
+      └─      absent at full rate        absent     1 run   mech-failhides  +1 unknown
+
+"
+`;
+
+exports[`reviewCost.acceptance given: [case2] a grove whose runs span all three honesty grades when: [t6] a tree is priced with an explicit --at then: the tree rollup renders as the human sees it 1`] = `
+"
+🦉 review cost — this tree
+   ├─ corpus: <temp-root>/.log/bhrain/review
+   │  ├─ runs: 3 (1 metered · 1 refused · 1 unknown 🟡)
+   │  ├─ levers — input DOWN · cache UP
+   │  │  ├─ input:     500,000 prompt tokens/run
+   │  │  ├─ cache:     20.0% of prompt tokens served from cache
+   │  │  └─ prefix:    —  (no reviewer ran twice)
+   │  ├─ tokens
+   │  │  ├─ input:     400.0k
+   │  │  ├─ cache.set: 0
+   │  │  ├─ cache.get: 100.0k
+   │  │  └─ output:    1.0k
+   │  └─ cost: $0.250000  🟡 +1 unknown (cost unrecorded, not zero)
+   │
+   ├─ by input — what the prompts were MADE of
+   │  └─ — (no prompt could be read, 3 unread)
+   │
+   ├─ by reviewer — heaviest prompt first
+   │  ├─ repo-rules               1 run  ·  500.0k prompt ·  20.0% cached ·    $0.250000
+   │  ├─ mech-failhides           1 run  ·       — prompt ·      — cached ·            —  🟡 +1 unknown (cost unrecorded, not zero)
+   │  └─ arch-smell-scopeleaks    1 run  ·       0 prompt ·      — cached ·           $0
+   │
+   ├─ by level — heaviest prompt first
+   │  ├─ L1    2 runs ·  500.0k prompt ·  20.0% cached ·    $0.250000  🟡 +1 unknown (cost unrecorded, not zero)
+   │  └─ L3    1 run  ·       0 prompt ·      — cached ·           $0
+   │
+   ├─ by stone — heaviest prompt first
+   │  └─ 5.1.execution.from_vision    3 runs ·  500.0k prompt ·  20.0% cached ·    $0.250000  🟡 +1 unknown (cost unrecorded, not zero)
+   │
+   └─ by round
+      └─ 5.1.execution.from_vision i001    3 runs ·  500.0k prompt ·  20.0% cached ·    $0.250000  🟡 +1 unknown (cost unrecorded, not zero)
+
+"
+`;
+
+exports[`reviewCost.acceptance given: [case3] a corpus that has never run a review when: [t0] each breadth is asked of an empty corpus then: the grove refusal renders as the human sees it 1`] = `
+"
+🦉 price every tree under <temp-root>
+   ├─ walked 1 tree · 0 carry review logs
+   └─ folded 0 runs priced
+
+🦉 woah there
+
+✋ ConstraintError: no review logs to price
+   ├─ walked: <temp-root>/*/.log/bhrain/review
+   ├─ trees seen: 1
+   ├─ trees with a log root: 0
+   ├─ why: review logs are git-ignored ephemera, written only where a review RAN
+   └─ fix: point --at at the root whose worktrees drove guarded routes"
+`;
+
+exports[`reviewCost.acceptance given: [case3] a corpus that has never run a review when: [t0] each breadth is asked of an empty corpus then: the run refusal renders as the human sees it 1`] = `
+"
+🦉 woah there
+
+✋ ConstraintError: no review run to price
+   ├─ looked in: <temp-root>/.log/bhrain/review
+   ├─ why: review logs are git-ignored ephemera, local to the machine that ran them
+   └─ fix: run a review here first, or point --at at a tree where reviews ran"
+`;
+
+exports[`reviewCost.acceptance given: [case3] a corpus that has never run a review when: [t0] each breadth is asked of an empty corpus then: the tree refusal renders as the human sees it 1`] = `
+"
+🦉 woah there
+
+✋ ConstraintError: no reviews to price
+   ├─ looked in: <temp-root>/.log/bhrain/review
+   ├─ why: review logs are git-ignored ephemera, local to the machine that ran them
+   └─ fix: run a review here first, or point --at at a tree where reviews ran"
+`;
+
+exports[`reviewCost.acceptance given: [case3] a corpus that has never run a review when: [t1] the log root is PRESENT and holds zero runs then: the emptied-grove refusal renders as the human sees it 1`] = `
+"
+🦉 price every tree under <temp-root>
+   ├─ walked 1 tree · 1 carries review logs
+   ├─ mined 1/1 · repo.beav.feat-swept · 0 runs
+   └─ folded 0 runs priced
+
+🦉 woah there
+
+✋ ConstraintError: no review logs to price
+   ├─ walked: <temp-root>/*/.log/bhrain/review
+   ├─ trees seen: 1
+   ├─ trees with a log root: 1
+   ├─ why: review logs are git-ignored ephemera, written only where a review RAN
+   └─ fix: point --at at the root whose worktrees drove guarded routes"
+`;
+
+exports[`reviewCost.acceptance given: [case3] a corpus that has never run a review when: [t1] the log root is PRESENT and holds zero runs then: the emptied-tree refusal renders as the human sees it 1`] = `
+"
+🦉 woah there
+
+✋ ConstraintError: no reviews to price
+   ├─ looked in: <temp-root>/.log/bhrain/review
+   ├─ why: review logs are git-ignored ephemera, local to the machine that ran them
+   └─ fix: run a review here first, or point --at at a tree where reviews ran"
+`;
+
+exports[`reviewCost.acceptance given: [case4] a human who does not name a breadth when: [t0] --of is absent then: the absent-breadth refusal renders as the human sees it 1`] = `
+"
+🦉 woah there
+
+✋ ConstraintError: --of is required — review cost is asked at a breadth
+   ├─ valid: run | tree | grove
+   ├─ run:   ONE review invocation — its cost AND what its prompt was made of
+   ├─ tree:  this worktree's review history, rolled up by reviewer, level, stone, round
+   ├─ grove: every tree on this machine, rolled up by tree, route, stone, reviewer
+   └─ fix:   rhx review._.cost --of tree"
+`;
+
+exports[`reviewCost.acceptance given: [case4] a human who does not name a breadth when: [t1] --of names a RETIRED surface then: the \`corpus\` refusal renders as the human sees it 1`] = `
+"
+🦉 woah there
+
+✋ ConstraintError: --of "corpus" is not a breadth
+   ├─ was:   deleted — it ESTIMATED a prompt we no longer send. \`--of run\` measures one
+   ├─ valid: run | tree | grove
+   ├─ run:   ONE review invocation — its cost AND what its prompt was made of
+   ├─ tree:  this worktree's review history, rolled up by reviewer, level, stone, round
+   ├─ grove: every tree on this machine, rolled up by tree, route, stone, reviewer
+   └─ fix:   rhx review._.cost --of tree"
+`;
+
+exports[`reviewCost.acceptance given: [case4] a human who does not name a breadth when: [t1] --of names a RETIRED surface then: the \`fleet\` refusal renders as the human sees it 1`] = `
+"
+🦉 woah there
+
+✋ ConstraintError: --of "fleet" is not a breadth
+   ├─ was:   renamed to \`grove\` — a fleet is ships; a grove is what holds trees
+   ├─ valid: run | tree | grove
+   ├─ run:   ONE review invocation — its cost AND what its prompt was made of
+   ├─ tree:  this worktree's review history, rolled up by reviewer, level, stone, round
+   ├─ grove: every tree on this machine, rolled up by tree, route, stone, reviewer
+   └─ fix:   rhx review._.cost --of tree"
+`;
+
+exports[`reviewCost.acceptance given: [case4] a human who does not name a breadth when: [t1] --of names a RETIRED surface then: the \`meter\` refusal renders as the human sees it 1`] = `
+"
+🦉 woah there
+
+✋ ConstraintError: --of "meter" is not a breadth
+   ├─ was:   renamed to \`tree\` — the breadth is now an axis position, not a name
+   ├─ valid: run | tree | grove
+   ├─ run:   ONE review invocation — its cost AND what its prompt was made of
+   ├─ tree:  this worktree's review history, rolled up by reviewer, level, stone, round
+   ├─ grove: every tree on this machine, rolled up by tree, route, stone, reviewer
+   └─ fix:   rhx review._.cost --of tree"
+`;
+
+exports[`reviewCost.acceptance given: [case4] a human who does not name a breadth when: [t2] --of is a plain TYPO, not a retired word then: the typo refusal renders as the human sees it 1`] = `
+"
+🦉 woah there
+
+✋ ConstraintError: --of "treee" is not a breadth
+   ├─ valid: run | tree | grove
+   ├─ run:   ONE review invocation — its cost AND what its prompt was made of
+   ├─ tree:  this worktree's review history, rolled up by reviewer, level, stone, round
+   ├─ grove: every tree on this machine, rolled up by tree, route, stone, reviewer
+   └─ fix:   rhx review._.cost --of tree"
+`;
+
+exports[`reviewCost.acceptance given: [case4] a human who does not name a breadth when: [t3] the refusal is read BESIDE --help then: and the HELP surface renders whole 1`] = `
+"
+🦉 review._.cost — what review cost, at the breadth you ask for
+
+  usage
+    rhx review._.cost --of run       [--at <tree|rundir>] [--json]
+    rhx review._.cost --of tree      [--at <dir>] [--json | --trace]
+    rhx review._.cost --of grove     [--at <dir>] [--json | --limit <n>]
+
+  the axis
+    --of run     ONE review invocation — its cost AND what its prompt was made of
+    --of tree    this worktree's review history, rolled up by reviewer, level, stone, round
+    --of grove   every tree on this machine, rolled up by tree, route, stone, reviewer
+
+  inputs
+    --of <breadth>  required, one of run | tree | grove
+    --at <dir>      where to read — cwd for run and tree, the parent of cwd for grove;
+                    run also takes one run's log dir
+    --limit <n>     rows per axis — grove only, not with --json, default 15
+    --trace         add the round × reviewer cross-tab — tree only, not with --json
+    --json          emit json, not a tree
+    --help, -h      show this and exit
+
+  what it reads
+    .log/bhrain/review/*/
+      ├─ input.args.json        the scope the review was given
+      ├─ metrics.compiled.json  what the prompt was made of, per named input
+      └─ metrics.realized.json  the measured tokens and cost — never an estimate
+
+  each run is graded, at every breadth
+    metered   metrics present; every figure measured
+    refused   died at validation; nil cost is a fact, reads $0
+    unknown   got past validation, metrics absent; reads absent, never $0.00
+
+  a 0.0% cache rate names its cause
+    cold (first round)  no prior prompt to share; no act owed
+    cold (lapsed Nm)    the prefix aged past the 66-minute reach — a real loss;
+                        a shorter pause between rounds holds it
+    warm               a repeat within the reach, yet the cache was not read
+
+  by level
+    read from the guard as it stands now, so a promoted lane re-files its past runs.
+    an unread guard reads "(no level — guard unread)", never L1
+
+  --trace
+    the rollups are marginals and hide a step; --trace shows round × reviewer in
+    key order (<stone> i<NNN> · <slug>), so a lever's effect reads in sequence
+
+  --of run --at
+    a dir whose name leads with an iso stamp is one run; any other dir is a tree,
+    and its latest run is read. --of tree and --of grove refuse a run dir
+
+  cache.set 0
+    measured, not absent — these brains bill no cache write. it stays in every
+    rate's denominator, so a brain that does bill one is not undercounted
+
+  prefix rows — did the cache serve what two rounds shared
+    expected   the longest prefix this round shares with its prior round, in tok est.
+    cache.get  what the cache served; reach = cache.get / expected
+    breaks in  head · tail · whole
+    served       the cache read up to the shared prefix
+    missed       a prefix was shared, the cache served none — the ttl or the pin
+    self-cached  the cache read came from the run's own turns
+    over-reach   the cache read past the shared prefix — the instrument is off
+    unshared     no prefix shared — the prompt layout broke
+    unmeasured   a prompt or a meter is absent
+    --of run shows the pair; tree and grove count verdicts. pairs never cross trees
+
+  which input bought this — answered at all three breadths
+    --of run     per run, exact, plus the directories each target came from
+    --of tree    by input, summed over this tree's runs it could read, unread count beside it
+    --of grove   by input, summed over every tree's runs it could read, unread count beside it
+    the directory rows sum only the runs that recorded where their target mass came from
+
+  examples
+    rhx review._.cost --of run
+    rhx review._.cost --of run --at .log/bhrain/review/2026-09-23T16-00-00-000Z.pid1.abc
+    rhx review._.cost --of tree
+    rhx review._.cost --of tree --trace
+    rhx review._.cost --of grove --limit 25
+    rhx review._.cost --of grove --json
+
+"
+`;
+
+exports[`reviewCost.acceptance given: [case5] a human who asks the command to explain itself when: [t0] --help is passed then: the help text renders as the human sees it 1`] = `
+"
+🦉 review._.cost — what review cost, at the breadth you ask for
+
+  usage
+    rhx review._.cost --of run       [--at <tree|rundir>] [--json]
+    rhx review._.cost --of tree      [--at <dir>] [--json | --trace]
+    rhx review._.cost --of grove     [--at <dir>] [--json | --limit <n>]
+
+  the axis
+    --of run     ONE review invocation — its cost AND what its prompt was made of
+    --of tree    this worktree's review history, rolled up by reviewer, level, stone, round
+    --of grove   every tree on this machine, rolled up by tree, route, stone, reviewer
+
+  inputs
+    --of <breadth>  required, one of run | tree | grove
+    --at <dir>      where to read — cwd for run and tree, the parent of cwd for grove;
+                    run also takes one run's log dir
+    --limit <n>     rows per axis — grove only, not with --json, default 15
+    --trace         add the round × reviewer cross-tab — tree only, not with --json
+    --json          emit json, not a tree
+    --help, -h      show this and exit
+
+  what it reads
+    .log/bhrain/review/*/
+      ├─ input.args.json        the scope the review was given
+      ├─ metrics.compiled.json  what the prompt was made of, per named input
+      └─ metrics.realized.json  the measured tokens and cost — never an estimate
+
+  each run is graded, at every breadth
+    metered   metrics present; every figure measured
+    refused   died at validation; nil cost is a fact, reads $0
+    unknown   got past validation, metrics absent; reads absent, never $0.00
+
+  a 0.0% cache rate names its cause
+    cold (first round)  no prior prompt to share; no act owed
+    cold (lapsed Nm)    the prefix aged past the 66-minute reach — a real loss;
+                        a shorter pause between rounds holds it
+    warm               a repeat within the reach, yet the cache was not read
+
+  by level
+    read from the guard as it stands now, so a promoted lane re-files its past runs.
+    an unread guard reads "(no level — guard unread)", never L1
+
+  --trace
+    the rollups are marginals and hide a step; --trace shows round × reviewer in
+    key order (<stone> i<NNN> · <slug>), so a lever's effect reads in sequence
+
+  --of run --at
+    a dir whose name leads with an iso stamp is one run; any other dir is a tree,
+    and its latest run is read. --of tree and --of grove refuse a run dir
+
+  cache.set 0
+    measured, not absent — these brains bill no cache write. it stays in every
+    rate's denominator, so a brain that does bill one is not undercounted
+
+  prefix rows — did the cache serve what two rounds shared
+    expected   the longest prefix this round shares with its prior round, in tok est.
+    cache.get  what the cache served; reach = cache.get / expected
+    breaks in  head · tail · whole
+    served       the cache read up to the shared prefix
+    missed       a prefix was shared, the cache served none — the ttl or the pin
+    self-cached  the cache read came from the run's own turns
+    over-reach   the cache read past the shared prefix — the instrument is off
+    unshared     no prefix shared — the prompt layout broke
+    unmeasured   a prompt or a meter is absent
+    --of run shows the pair; tree and grove count verdicts. pairs never cross trees
+
+  which input bought this — answered at all three breadths
+    --of run     per run, exact, plus the directories each target came from
+    --of tree    by input, summed over this tree's runs it could read, unread count beside it
+    --of grove   by input, summed over every tree's runs it could read, unread count beside it
+    the directory rows sum only the runs that recorded where their target mass came from
+
+  examples
+    rhx review._.cost --of run
+    rhx review._.cost --of run --at .log/bhrain/review/2026-09-23T16-00-00-000Z.pid1.abc
+    rhx review._.cost --of tree
+    rhx review._.cost --of tree --trace
+    rhx review._.cost --of grove --limit 25
+    rhx review._.cost --of grove --json
+
+"
+`;
+
+exports[`reviewCost.acceptance given: [case6] a human who types a flag and forgets its value when: [t0] --at is typed with no value then: the valueless --at refusal renders as the human sees it 1`] = `
+"
+🦉 woah there
+
+✋ ConstraintError: --at was given with no value
+   ├─ expects: a directory to read from
+   ├─ why:     an omitted flag takes its default; a flag typed with its
+   │           value forgotten is a slip, and must not read as either
+   └─ fix:     rhx review._.cost --of tree --at ../other-worktree"
+`;
+
+exports[`reviewCost.acceptance given: [case6] a human who types a flag and forgets its value when: [t1] --at is typed just before another flag then: the swallowed-neighbour refusal renders as the human sees it 1`] = `
+"
+🦉 woah there
+
+✋ ConstraintError: --at was given with no value
+   ├─ expects: a directory to read from
+   ├─ why:     an omitted flag takes its default; a flag typed with its
+   │           value forgotten is a slip, and must not read as either
+   └─ fix:     rhx review._.cost --of tree --at ../other-worktree"
+`;
+
+exports[`reviewCost.acceptance given: [case6] a human who types a flag and forgets its value when: [t2] --limit is typed with no value then: the valueless --limit refusal renders as the human sees it 1`] = `
+"
+🦉 woah there
+
+✋ ConstraintError: --limit was given with no value
+   ├─ expects: a whole number, 1 or greater
+   ├─ why:     an omitted flag takes its default; a flag typed with its
+   │           value forgotten is a slip, and must not read as either
+   └─ fix:     rhx review._.cost --of grove --limit 25"
+`;
+
+exports[`reviewCost.acceptance given: [case6] a human who types a flag and forgets its value when: [t3] --of is typed with no value then: the valueless --of refusal renders as the human sees it 1`] = `
+"
+🦉 woah there
+
+✋ ConstraintError: --of was given with no value
+   ├─ expects: one of: run | tree | grove
+   ├─ why:     an omitted flag takes its default; a flag typed with its
+   │           value forgotten is a slip, and must not read as either
+   └─ fix:     rhx review._.cost --of tree"
+`;
+
+exports[`reviewCost.acceptance given: [case6] a human who types a flag and forgets its value when: [t4] --limit is carried by a breadth that has no rows then: the limit-not-for-run refusal renders as the human sees it 1`] = `
+"
+🦉 woah there
+
+✋ ConstraintError: --limit is not a flag "--of run" takes
+   ├─ why:   --limit bounds how many ROLLUP ROWS an axis renders, and
+   │         --of run takes no row bound — it reports a single run, so it has no rollup rows to bound
+   ├─ takes: --of grove [--limit N]
+   └─ fix:   rhx review._.cost --of grove --limit 25"
+`;
+
+exports[`reviewCost.acceptance given: [case6] a human who types a flag and forgets its value when: [t4] --limit is carried by a breadth that has no rows then: the limit-not-for-this-breadth refusal renders as the human sees it 1`] = `
+"
+🦉 woah there
+
+✋ ConstraintError: --limit is not a flag "--of tree" takes
+   ├─ why:   --limit bounds how many ROLLUP ROWS an axis renders, and
+   │         --of tree takes no row bound — its rollups render every row, since one tree holds few enough lanes and rounds to read whole
+   ├─ takes: --of grove [--limit N]
+   └─ fix:   rhx review._.cost --of grove --limit 25"
+`;
+
+exports[`reviewCost.acceptance given: [case7] a tree WITH reviews, invoked from a nested subdirectory when: [t1] the same tree is priced from a subdirectory then: the nested-cwd refusal renders as the human sees it 1`] = `
+"
+🦉 woah there
+
+✋ ConstraintError: no reviews to price
+   ├─ looked in: <temp-root>/src/domain.operations/.log/bhrain/review
+   ├─ 🔭 but reviews DID run above: <temp-root>
+   ├─ did you mean: rhx review._.cost --of tree --at <temp-root>
+   ├─ why: review logs are git-ignored ephemera, local to the machine that ran them
+   └─ fix: run a review here first, or point --at at a tree where reviews ran"
+`;
+
+exports[`reviewCost.acceptance given: [case7] a tree WITH reviews, invoked from a nested subdirectory when: [t2] the SAME subdirectory is priced at \`--of run\` then: the run-breadth nested refusal renders as the human sees it 1`] = `
+"
+🦉 woah there
+
+✋ ConstraintError: no review run to price
+   ├─ looked in: <temp-root>/src/domain.operations/.log/bhrain/review
+   ├─ 🔭 but reviews DID run above: <temp-root>
+   ├─ did you mean: rhx review._.cost --of run --at <temp-root>
+   ├─ why: review logs are git-ignored ephemera, local to the machine that ran them
+   └─ fix: run a review here first, or point --at at a tree where reviews ran"
+`;
+
+exports[`reviewCost.acceptance given: [case7] a tree WITH reviews, invoked from a nested subdirectory when: [t3] a tree with NO reviews anywhere above it is priced then: the bare refusal renders as the human sees it 1`] = `
+"
+🦉 woah there
+
+✋ ConstraintError: no reviews to price
+   ├─ looked in: <temp-root>/.log/bhrain/review
+   ├─ why: review logs are git-ignored ephemera, local to the machine that ran them
+   └─ fix: run a review here first, or point --at at a tree where reviews ran"
+`;
+
+exports[`reviewCost.acceptance given: [case8] a grove whose by-input census can vouch for only some of its prompts when: [t0] the grove is priced over the mixed corpus then: the whole report renders as the human sees it 1`] = `
+"
+🦉 review cost — the grove: where this machine's review tokens went
+
+   root: <temp-root>
+   trees: 1 walked · 1 carried review logs · 0 never reviewed
+   runs:  2 found — 2 metered · 0 refused · 0 unknown
+
+   the grove total
+      ├─ input        600,000  (80.0% of read, at full rate)
+      ├─ cache.set          0  (0.0% of read, at full rate, once per seed)
+      ├─ cache.get    150,000  (20.0% of read, 31.4x cheaper)
+      ├─ output         2,000  (not of read, at output rate)
+      └─ cost       $0.500000
+
+   levers — input DOWN · cache UP
+      ├─ input:     375,000 prompt tokens/run
+      ├─ cache:     20.0% of prompt tokens served from cache
+      └─ prefix:    absent  (no reviewer ran twice)
+
+   by input
+      ├─ corpus        2 read · 0 unread · 6 target files
+      ├─ source        2 compiled (exact) · 0 parsed from the rendered prompt (coarse)
+      ├─ census        1 attributed · 1 unattributed · 0 ungraded (no grade stated)
+      │
+      ├─ 🟡 1 of 2 read runs are UNATTRIBUTED — each run's own census
+      │  declined to vouch, so scaffold may hide an input with no row. every
+      │  share below is summed over them ALL, vouched and unvouched alike.
+      │  to tell scaffold from an absent input, read one such run with its
+      │  composition rows: rhx review._.cost --of run --at <rundir>
+      │
+      ├─ instructions          1,200 chars    0.6%  cacheable
+      ├─ outputFormat            600 chars    0.3%  cacheable
+      ├─ scaffold                200 chars    0.1%  cacheable
+      ├─ rules                40,000 chars   20.0%  cacheable
+      ├─ refs                 20,000 chars   10.0%  cacheable
+      ├─ targetFiles          98,000 chars   49.0%  cacheable
+      ├─ targetDiffs          30,000 chars   15.0%
+      │  ├─ additions              0 chars    0.0%  cacheable
+      │  ├─ deletions              0 chars    0.0%  cacheable
+      │  └─ mutations         30,000 chars   15.0%  per round
+      ├─ conversation         10,000 chars    5.0%  per round
+      │
+      ├─ total               200,000 chars
+      ├─ cacheable           160,000 chars   80.0%  — the most any cache could ever serve
+      ├─ per round            40,000 chars   20.0%  — re-paid at full input rate, every round
+      │
+      └─ target mass by directory — 49,000 chars over 2 directories, from 1 of 2 read runs
+         ├─  85.7%    42,000 chars  2 files   src/domain.operations/invoice
+         └─  14.3%     7,000 chars  1 file    blackbox
+
+   by tree
+      └─     600,000 at full rate     $0.500000     2 runs  repo.beav.feat-mixed
+
+   by route
+      └─     600,000 at full rate     $0.500000     2 runs  .behavior/v2026_09_18.feat-demo
+
+   by stone
+      └─     600,000 at full rate     $0.500000     2 runs  5.1.execution.from_vision
+
+   by reviewer
+      ├─     400,000 at full rate     $0.250000     1 run   repo-rules
+      └─     200,000 at full rate     $0.250000     1 run   mech-failhides
+
+"
+`;
+
+exports[`reviewCost.acceptance given: [case8] a grove whose by-input census can vouch for only some of its prompts when: [t1] every prompt in the grove CAN vouch for itself then: the caveat-free report renders whole 1`] = `
+"
+🦉 review cost — the grove: where this machine's review tokens went
+
+   root: <temp-root>
+   trees: 1 walked · 1 carried review logs · 0 never reviewed
+   runs:  1 found — 1 metered · 0 refused · 0 unknown
+
+   the grove total
+      ├─ input        400,000  (80.0% of read, at full rate)
+      ├─ cache.set          0  (0.0% of read, at full rate, once per seed)
+      ├─ cache.get    100,000  (20.0% of read, 31.4x cheaper)
+      ├─ output         1,000  (not of read, at output rate)
+      └─ cost       $0.250000
+
+   levers — input DOWN · cache UP
+      ├─ input:     500,000 prompt tokens/run
+      ├─ cache:     20.0% of prompt tokens served from cache
+      └─ prefix:    absent  (no reviewer ran twice)
+
+   by input
+      ├─ corpus        1 read · 0 unread · 3 target files
+      ├─ source        1 compiled (exact) · 0 parsed from the rendered prompt (coarse)
+      ├─ census        1 attributed · 0 unattributed · 0 ungraded (no grade stated)
+      │
+      ├─ instructions            600 chars    0.6%  cacheable
+      ├─ outputFormat            300 chars    0.3%  cacheable
+      ├─ scaffold                100 chars    0.1%  cacheable
+      ├─ rules                20,000 chars   20.0%  cacheable
+      ├─ refs                 10,000 chars   10.0%  cacheable
+      ├─ targetFiles          49,000 chars   49.0%  cacheable
+      ├─ targetDiffs          15,000 chars   15.0%
+      │  ├─ additions              0 chars    0.0%  cacheable
+      │  ├─ deletions              0 chars    0.0%  cacheable
+      │  └─ mutations         15,000 chars   15.0%  per round
+      ├─ conversation          5,000 chars    5.0%  per round
+      │
+      ├─ total               100,000 chars
+      ├─ cacheable            80,000 chars   80.0%  — the most any cache could ever serve
+      ├─ per round            20,000 chars   20.0%  — re-paid at full input rate, every round
+      │
+      └─ target mass by directory — 49,000 chars over 2 directories, from 1 of 1 read run
+         ├─  85.7%    42,000 chars  2 files   src/domain.operations/invoice
+         └─  14.3%     7,000 chars  1 file    blackbox
+
+   by tree
+      └─     400,000 at full rate     $0.250000     1 run   repo.beav.feat-clean
+
+   by route
+      └─     400,000 at full rate     $0.250000     1 run   .behavior/v2026_09_18.feat-demo
+
+   by stone
+      └─     400,000 at full rate     $0.250000     1 run   5.1.execution.from_vision
+
+   by reviewer
+      └─     400,000 at full rate     $0.250000     1 run   repo-rules
+
+"
+`;
+
+exports[`reviewCost.acceptance given: [case9] a tree whose LATEST run holds a CORRUPT artifact when: [t0] the corrupt run is priced then: the whole report renders as the human sees it 1`] = `
+"
+🦉 review cost — one run
+   ├─ run: <temp-root>/.log/bhrain/review/2026-09-18T00-00-09-000Z.pid1.zzz
+   │  ├─ identity: —  🟡 UNPARSED — see the defect below
+   │  ├─ grade: unknown
+   │  ├─ cost: —  🟡 unknown, not $0 — the brain may have charged
+   │  └─ defect: 💥 MalfunctionError: review log artifact is present but unparseable: metrics.realized.json
+   │     └─ full error: rhx review._.cost --of run --at <temp-root>/.log/bhrain/review/2026-09-18T00-00-09-000Z.pid1.zzz --json
+   │
+   ├─ levers — input DOWN · cache UP (trend: one run is one sample — its rounds are at rhx review._.cost --of tree)
+   │  ├─ input:     —
+   │  ├─ cache:     —
+   │  └─ — = unmeasured, not zero (grade = unknown)
+   │
+   ├─ prefix: —  (no guard identity, so no prior round to pair with)
+   │
+   ├─ tokens
+   │  └─ — (grade = unknown)
+   │
+   └─ composition: —
+      └─ 🟡 UNREAD — see the defect below
+
+"
+`;
+
+exports[`reviewCost.acceptance given: [case9] a tree whose LATEST run holds a CORRUPT artifact when: [t1] the same run is asked for as json then: the json payload renders as a consumer receives it 1`] = `
+"{
+  "root": "<temp-root>/.log/bhrain/review",
+  "run": {
+    "dir": "<temp-root>/.log/bhrain/review/2026-09-18T00-00-09-000Z.pid1.zzz",
+    "identity": null,
+    "head": null,
+    "brain": null,
+    "defect": "review log artifact is present but unparseable: metrics.realized.json\\n\\n{\\n  \\"dir\\": \\"<temp-root>/.log/bhrain/review/2026-09-18T00-00-09-000Z.pid1.zzz\\",\\n  \\"file\\": \\"metrics.realized.json\\",\\n  \\"error\\": \\"SyntaxError: Expected property name or '}' in JSON at position 2 (line 1 column 3)\\"\\n}",
+    "grade": "unknown",
+    "scope": null,
+    "tokens": null,
+    "cost": null,
+    "prompt": null
+  },
+  "split": null,
+  "prefix": null,
+  "seam": {
+    "instructions": true,
+    "outputFormat": true,
+    "rules": true,
+    "refs": true,
+    "scaffold": true,
+    "targetFiles": true,
+    "targetDiffs.additions": true,
+    "targetDiffs.deletions": true,
+    "targetDiffs.mutations": false,
+    "conversation": false
+  }
+}
+"
+`;
+
+exports[`reviewCost.acceptance given: [case9] a tree whose LATEST run holds a CORRUPT artifact when: 🔴 [t2] the SAME mixed corpus is priced at TREE breadth then: the rollup renders as the human sees it 1`] = `
+"
+🦉 review cost — this tree
+   ├─ corpus: <temp-root>/.log/bhrain/review
+   │  ├─ runs: 2 (1 metered · 0 refused · 1 unknown 🟡)
+   │  ├─ levers — input DOWN · cache UP
+   │  │  ├─ input:     500,000 prompt tokens/run
+   │  │  ├─ cache:     20.0% of prompt tokens served from cache
+   │  │  └─ prefix:    —  (no reviewer ran twice)
+   │  ├─ tokens
+   │  │  ├─ input:     400.0k
+   │  │  ├─ cache.set: 0
+   │  │  ├─ cache.get: 100.0k
+   │  │  └─ output:    1.0k
+   │  └─ cost: $0.250000  🟡 +1 unknown (cost unrecorded, not zero)
+   │
+   ├─ by input — what the prompts were MADE of
+   │  └─ — (no prompt could be read, 2 unread)
+   │
+   ├─ by reviewer — heaviest prompt first
+   │  ├─ repo-rules                                       1 run  ·  500.0k prompt ·  20.0% cached ·    $0.250000
+   │  └─ (no guard identity — a hand or review.by run)    1 run  ·       — prompt ·      — cached ·            —  🟡 +1 unknown (cost unrecorded, not zero)
+   │
+   ├─ by level — heaviest prompt first
+   │  └─ (no level — guard unread)    2 runs ·  500.0k prompt ·  20.0% cached ·    $0.250000  🟡 +1 unknown (cost unrecorded, not zero)
+   │
+   ├─ by stone — heaviest prompt first
+   │  ├─ 5.1.execution.from_vision                        1 run  ·  500.0k prompt ·  20.0% cached ·    $0.250000
+   │  └─ (no guard identity — a hand or review.by run)    1 run  ·       — prompt ·      — cached ·            —  🟡 +1 unknown (cost unrecorded, not zero)
+   │
+   └─ by round
+      ├─ (no guard identity — a hand or review.by run)    1 run  ·       — prompt ·      — cached ·            —  🟡 +1 unknown (cost unrecorded, not zero)
+      └─ 5.1.execution.from_vision i001                   1 run  ·  500.0k prompt ·  20.0% cached ·    $0.250000
+
+"
+`;
+
+exports[`reviewCost.acceptance given: [case10] a log root the filesystem BARS when: [t0] the tree breadth reads it then: the refusal renders as the human sees it 1`] = `
+"
+🦉 woah there
+
+✋ ConstraintError: a directory on the read path is barred
+   ├─ os says: Error: EACCES: permission denied, scandir '<temp-root>/tree-one/.log/bhrain/review'
+   ├─ why:     the path IS there and this process may not read it — a
+   │           mode bit or an ownership rule refused, not an absent log
+   └─ fix:     chmod u+rx <that dir>, or run as its owner
+
+"
+`;
+
+exports[`reviewCost.acceptance given: [case10] a log root the filesystem BARS when: [t1] the grove breadth walks into it then: the grove refusal renders as the human sees it 1`] = `
+"
+🦉 price every tree under <temp-root>
+   ├─ walked 1 tree · 1 carries review logs
+   ├─ mined 1/1 · tree-one · ✋ ConstraintError: barred
+
+🦉 woah there
+
+✋ ConstraintError: a directory on the read path is barred
+   ├─ os says: Error: EACCES: permission denied, scandir '<temp-root>/tree-one/.log/bhrain/review'
+   ├─ why:     the path IS there and this process may not read it — a
+   │           mode bit or an ownership rule refused, not an absent log
+   └─ fix:     chmod u+rx <that dir>, or run as its owner"
+`;
+
+exports[`reviewCost.acceptance given: [case10] a log root the filesystem BARS when: [t2] the run breadth reads it then: the run refusal renders as the human sees it 1`] = `
+"
+🦉 woah there
+
+✋ ConstraintError: a directory on the read path is barred
+   ├─ os says: Error: EACCES: permission denied, scandir '<temp-root>/tree-one/.log/bhrain/review'
+   ├─ why:     the path IS there and this process may not read it — a
+   │           mode bit or an ownership rule refused, not an absent log
+   └─ fix:     chmod u+rx <that dir>, or run as its owner
+
+"
+`;
+
+exports[`reviewCost.acceptance given: [case11] an --at pointed at a directory that is NOT there when: [t0] the tree breadth is asked for it then: the tree refusal renders as the human sees it 1`] = `
+"
+🦉 woah there
+
+✋ ConstraintError: no reviews to price
+   ├─ --at names a directory that is not there: <temp-root>/no-such-worktree
+   ├─ looked in: <temp-root>/no-such-worktree/.log/bhrain/review
+   ├─ why: review logs are git-ignored ephemera, local to the machine that ran them
+   └─ fix: check the --at path, then point it at a tree where reviews ran"
+`;
+
+exports[`reviewCost.acceptance given: [case11] an --at pointed at a directory that is NOT there when: [t1] the run breadth is asked for it then: the run refusal renders as the human sees it 1`] = `
+"
+🦉 woah there
+
+✋ ConstraintError: no review run to price
+   ├─ --at names a directory that is not there: <temp-root>/no-such-worktree
+   ├─ looked in: <temp-root>/no-such-worktree/.log/bhrain/review
+   ├─ why: review logs are git-ignored ephemera, local to the machine that ran them
+   └─ fix: check the --at path, then point it at a tree where reviews ran"
+`;
+
+exports[`reviewCost.acceptance given: [case11] an --at pointed at a directory that is NOT there when: [t2] the GROVE breadth is asked for it then: the grove refusal renders as the human sees it 1`] = `
+"
+🦉 woah there
+
+✋ ConstraintError: no review logs to price
+   ├─ --at names a directory that is not there: <temp-root>/no-such-worktree
+   ├─ why: the grove walks the worktrees UNDER a directory, so --at must name one
+   └─ fix: check the --at path, then point it at a tree where reviews ran"
+`;
+
+exports[`reviewCost.acceptance given: [case11] an --at pointed at a directory that is NOT there when: [t3] --at names a FILE, not a directory then: the grove refusal renders as the human sees it 1`] = `
+"
+🦉 woah there
+
+✋ ConstraintError: no review logs to price
+   ├─ --at names a file, not a directory: <temp-root>/a-file.txt
+   ├─ why: the grove walks the worktrees UNDER a directory, so --at must name one
+   └─ fix: point --at at the directory that holds it: <temp-root>"
+`;
+
+exports[`reviewCost.acceptance given: [case11] an --at pointed at a directory that is NOT there when: [t3] --at names a FILE, not a directory then: the run refusal renders as the human sees it 1`] = `
+"
+🦉 woah there
+
+✋ ConstraintError: no review run to price
+   ├─ --at names a file, not a directory: <temp-root>/a-file.txt
+   ├─ looked in: <temp-root>/a-file.txt/.log/bhrain/review
+   ├─ why: review logs are git-ignored ephemera, local to the machine that ran them
+   └─ fix: point --at at the directory that holds it: <temp-root>"
+`;
+
+exports[`reviewCost.acceptance given: [case11] an --at pointed at a directory that is NOT there when: [t3] --at names a FILE, not a directory then: the tree refusal renders as the human sees it 1`] = `
+"
+🦉 woah there
+
+✋ ConstraintError: no reviews to price
+   ├─ --at names a file, not a directory: <temp-root>/a-file.txt
+   ├─ looked in: <temp-root>/a-file.txt/.log/bhrain/review
+   ├─ why: review logs are git-ignored ephemera, local to the machine that ran them
+   └─ fix: point --at at the directory that holds it: <temp-root>"
+`;
+
+exports[`reviewCost.acceptance given: [case12] a tree with runs, priced from ANOTHER cwd via --at when: [t0] --of run is asked from a cwd with no logs of its own then: the report renders as the human sees it 1`] = `
+"
+🦉 review cost — one run
+   ├─ run: <temp-root>/.log/bhrain/review/2026-09-18T00-00-00-000Z.pid1.aaa
+   │  ├─ identity: repo-rules · 5.1.execution.from_vision · i1
+   │  ├─ grade: metered
+   │  └─ cost: $0.250000
+   │
+   ├─ levers — input DOWN · cache UP (trend: one run is one sample — its rounds are at rhx review._.cost --of tree)
+   │  ├─ input:     500,000 prompt tokens/run
+   │  └─ cache:     20.0% of prompt tokens served from cache
+   │
+   ├─ prefix: —  (the first round of repo-rules in this tree)
+   │
+   ├─ tokens
+   │  ├─ input:     400.0k
+   │  ├─ cache.set: 0  (a MEASURED zero — this run was charged no cache WRITE, and read one anyway)
+   │  ├─ cache.get: 100.0k
+   │  └─ output:    1.0k
+   │
+   ├─ target mass by directory — 49.0k chars over 2 directories
+   │  ├─  85.7%     42.0k chars  2 files   src/domain.operations/invoice
+   │  └─  14.3%      7.0k chars  1 file    blackbox
+   │
+   └─ composition: 100.0k chars over 3 targets (source: compiled, attribution: —)
+      ├─ instructions            600 chars    0.6%  cacheable
+      ├─ outputFormat            300 chars    0.3%  cacheable
+      ├─ scaffold                100 chars    0.1%  cacheable
+      ├─ rules                 20.0k chars   20.0%  cacheable
+      ├─ refs                  10.0k chars   10.0%  cacheable
+      ├─ targetFiles           49.0k chars   49.0%  cacheable
+      ├─ targetDiffs           15.0k chars   15.0%
+      │  ├─ additions              0 chars    0.0%  cacheable
+      │  ├─ deletions              0 chars    0.0%  cacheable
+      │  └─ mutations          15.0k chars   15.0%  per round
+      └─ conversation           5.0k chars    5.0%  per round
+
+"
+`;
+
+exports[`reviewCost.acceptance given: [case12] a tree with runs, priced from ANOTHER cwd via --at when: [t1] --of grove is asked from a SUB-DIR of the reviewed tree then: the refusal renders as the human sees it 1`] = `
+"
+🦉 price every tree under <temp-root>
+   ├─ walked 2 trees · 0 carry review logs
+   └─ folded 0 runs priced
+
+🦉 woah there
+
+✋ ConstraintError: no review logs to price
+   ├─ walked: <temp-root>/*/.log/bhrain/review
+   ├─ trees seen: 2
+   ├─ trees with a log root: 0
+   ├─ 🔭 but reviews DID run in a tree at: <temp-root>
+   ├─ did you mean: rhx review._.cost --of grove --at <temp-root>
+   ├─ why: review logs are git-ignored ephemera, written only where a review RAN
+   └─ fix: point --at at the root whose worktrees drove guarded routes"
+`;
+
+exports[`reviewCost.acceptance given: [case13] a tree whose log root holds an OLDER run and a newer one when: [t0] the TREE is named, as it always could be then: the run report renders as the human sees it 1`] = `
+"
+🦉 review cost — one run
+   ├─ run: <temp-root>/.log/bhrain/review/2026-09-19T00-00-00-000Z.pid1.bbb
+   │  ├─ identity: mech-failhides · 5.1.execution.from_vision · i1
+   │  ├─ grade: metered
+   │  └─ cost: $0.250000
+   │
+   ├─ levers — input DOWN · cache UP (trend: one run is one sample — its rounds are at rhx review._.cost --of tree)
+   │  ├─ input:     500,000 prompt tokens/run
+   │  └─ cache:     20.0% of prompt tokens served from cache
+   │
+   ├─ prefix: —  (the first round of mech-failhides in this tree)
+   │
+   ├─ tokens
+   │  ├─ input:     400.0k
+   │  ├─ cache.set: 0  (a MEASURED zero — this run was charged no cache WRITE, and read one anyway)
+   │  ├─ cache.get: 100.0k
+   │  └─ output:    1.0k
+   │
+   ├─ target mass by directory — 49.0k chars over 2 directories
+   │  ├─  85.7%     42.0k chars  2 files   src/domain.operations/invoice
+   │  └─  14.3%      7.0k chars  1 file    blackbox
+   │
+   └─ composition: 100.0k chars over 3 targets (source: compiled, attribution: —)
+      ├─ instructions            600 chars    0.6%  cacheable
+      ├─ outputFormat            300 chars    0.3%  cacheable
+      ├─ scaffold                100 chars    0.1%  cacheable
+      ├─ rules                 20.0k chars   20.0%  cacheable
+      ├─ refs                  10.0k chars   10.0%  cacheable
+      ├─ targetFiles           49.0k chars   49.0%  cacheable
+      ├─ targetDiffs           15.0k chars   15.0%
+      │  ├─ additions              0 chars    0.0%  cacheable
+      │  ├─ deletions              0 chars    0.0%  cacheable
+      │  └─ mutations          15.0k chars   15.0%  per round
+      └─ conversation           5.0k chars    5.0%  per round
+
+"
+`;
+
+exports[`reviewCost.acceptance given: [case13] a tree whose log root holds an OLDER run and a newer one when: [t1] the OLDER run DIR is named at --at then: the report renders as the human sees it 1`] = `
+"
+🦉 review cost — one run
+   ├─ run: <temp-root>/.log/bhrain/review/2026-09-18T00-00-00-000Z.pid1.aaa
+   │  ├─ identity: repo-rules · 5.1.execution.from_vision · i1
+   │  ├─ grade: metered
+   │  └─ cost: $0.250000
+   │
+   ├─ levers — input DOWN · cache UP (trend: one run is one sample — its rounds are at rhx review._.cost --of tree)
+   │  ├─ input:     500,000 prompt tokens/run
+   │  └─ cache:     20.0% of prompt tokens served from cache
+   │
+   ├─ prefix: —  (the first round of repo-rules in this tree)
+   │
+   ├─ tokens
+   │  ├─ input:     400.0k
+   │  ├─ cache.set: 0  (a MEASURED zero — this run was charged no cache WRITE, and read one anyway)
+   │  ├─ cache.get: 100.0k
+   │  └─ output:    1.0k
+   │
+   ├─ target mass by directory — 49.0k chars over 2 directories
+   │  ├─  85.7%     42.0k chars  2 files   src/domain.operations/invoice
+   │  └─  14.3%      7.0k chars  1 file    blackbox
+   │
+   └─ composition: 100.0k chars over 3 targets (source: compiled, attribution: —)
+      ├─ instructions            600 chars    0.6%  cacheable
+      ├─ outputFormat            300 chars    0.3%  cacheable
+      ├─ scaffold                100 chars    0.1%  cacheable
+      ├─ rules                 20.0k chars   20.0%  cacheable
+      ├─ refs                  10.0k chars   10.0%  cacheable
+      ├─ targetFiles           49.0k chars   49.0%  cacheable
+      ├─ targetDiffs           15.0k chars   15.0%
+      │  ├─ additions              0 chars    0.0%  cacheable
+      │  ├─ deletions              0 chars    0.0%  cacheable
+      │  └─ mutations          15.0k chars   15.0%  per round
+      └─ conversation           5.0k chars    5.0%  per round
+
+"
+`;
+
+exports[`reviewCost.acceptance given: [case13] a tree whose log root holds an OLDER run and a newer one when: [t2] a run dir whose NAME matches the mint but is not on disk then: the refusal renders as the human sees it 1`] = `
+"
+🦉 woah there
+
+✋ ConstraintError: that review run is not on disk
+   ├─ looked for: <temp-root>/.log/bhrain/review/2026-09-21T00-00-00-000Z.pid9.zzz
+   ├─ under root: <temp-root>/.log/bhrain/review
+   ├─ why: the path NAMES a review run (its head is an iso stamp), so it was read as one rather than as a tree
+   └─ fix: list the runs that ARE there: ls '<temp-root>/.log/bhrain/review'
+
+"
+`;
+
+exports[`reviewCost.acceptance given: [case13] a tree whose log root holds an OLDER run and a newer one when: [t3] that same run dir is handed to --of tree then: the refusal renders as the human sees it 1`] = `
+"
+🦉 woah there
+
+✋ ConstraintError: --at names one review RUN, and --of tree reads more than one
+   ├─ given: <temp-root>/.log/bhrain/review/2026-09-18T00-00-00-000Z.pid1.aaa
+   ├─ --of tree: this worktree's review history, rolled up by reviewer, level, stone, round
+   ├─ why:   its head is an iso stamp, so it is a log dir this repo minted
+   │         — a single run, never a tree that holds runs
+   ├─ takes: --of run [--at <rundir>]
+   └─ fix:   rhx review._.cost --of run --at <temp-root>/.log/bhrain/review/2026-09-18T00-00-00-000Z.pid1.aaa
+
+"
+`;
+
+exports[`reviewCost.acceptance given: [case13] a tree whose log root holds an OLDER run and a newer one when: [t4] that same run dir is handed to --of grove then: the refusal renders as the human sees it 1`] = `
+"
+🦉 woah there
+
+✋ ConstraintError: --at names one review RUN, and --of grove reads more than one
+   ├─ given: <temp-root>/.log/bhrain/review/2026-09-18T00-00-00-000Z.pid1.aaa
+   ├─ --of grove: every tree on this machine, rolled up by tree, route, stone, reviewer
+   ├─ why:   its head is an iso stamp, so it is a log dir this repo minted
+   │         — a single run, never a tree that holds runs
+   ├─ takes: --of run [--at <rundir>]
+   └─ fix:   rhx review._.cost --of run --at <temp-root>/.log/bhrain/review/2026-09-18T00-00-00-000Z.pid1.aaa
+
+"
+`;
+
+exports[`reviewCost.acceptance given: [case14] a tree whose reviews ran over TWO rounds when: [t0] --trace rides the breadth that HAS two axes then: the traced report renders as the human sees it 1`] = `
+"
+🦉 review cost — this tree
+   ├─ corpus: <temp-root>/.log/bhrain/review
+   │  ├─ runs: 2 (2 metered · 0 refused · 0 unknown)
+   │  ├─ levers — input DOWN · cache UP (trend over 2 rounds of 5.1.execution.from_vision)
+   │  │  ├─ input:     400,000 prompt tokens/run   → flat
+   │  │  ├─ cache:     37.5% of prompt tokens served from cache   ↑ 75.0pp 🎉
+   │  │  └─ prefix:    0 served · 0 missed · 0 self-cached · 🟡 1 over-reach · 0 unshared
+   │  ├─ tokens
+   │  │  ├─ input:     500.0k
+   │  │  ├─ cache.set: 0
+   │  │  ├─ cache.get: 300.0k
+   │  │  └─ output:    2.0k
+   │  └─ cost: $0.500000
+   │
+   ├─ by input — what the prompts were MADE of
+   │  ├─ corpus        2 read · 0 unread · 6 target files
+   │  ├─ source        2 compiled (exact) · 0 parsed from the rendered prompt (coarse)
+   │  ├─ census        0 attributed · 0 unattributed · 2 ungraded (no grade stated)
+   │  │
+   │  ├─ instructions          1,200 chars    0.6%  cacheable
+   │  ├─ outputFormat            600 chars    0.3%  cacheable
+   │  ├─ scaffold                200 chars    0.1%  cacheable
+   │  ├─ rules                40,000 chars   20.0%  cacheable
+   │  ├─ refs                 20,000 chars   10.0%  cacheable
+   │  ├─ targetFiles          98,000 chars   49.0%  cacheable
+   │  ├─ targetDiffs          30,000 chars   15.0%
+   │  │  ├─ additions              0 chars    0.0%  cacheable
+   │  │  ├─ deletions              0 chars    0.0%  cacheable
+   │  │  └─ mutations         30,000 chars   15.0%  per round
+   │  ├─ conversation         10,000 chars    5.0%  per round
+   │  │
+   │  ├─ total               200,000 chars
+   │  ├─ cacheable           160,000 chars   80.0%  — the most any cache could ever serve
+   │  ├─ per round            40,000 chars   20.0%  — re-paid at full input rate, every round
+   │  │
+   │  └─ target mass by directory — 98,000 chars over 2 directories, from 2 of 2 read runs
+   │     ├─  85.7%    84,000 chars  2 files   src/domain.operations/invoice
+   │     └─  14.3%    14,000 chars  1 file    blackbox
+   │
+   ├─ by reviewer — heaviest prompt first
+   │  └─ repo-rules    2 runs ·  800.0k prompt ·  37.5% cached ·    $0.500000
+   │
+   ├─ by level — heaviest prompt first
+   │  └─ (no level — guard unread)    2 runs ·  800.0k prompt ·  37.5% cached ·    $0.500000
+   │
+   ├─ by stone — heaviest prompt first
+   │  └─ 5.1.execution.from_vision    2 runs ·  800.0k prompt ·  37.5% cached ·    $0.500000
+   │
+   ├─ by round
+   │  ├─ 5.1.execution.from_vision i001    1 run  ·  400.0k prompt ·   0.0% cached ·    $0.250000  cold (first round) — no prior prompt of its lane to share a prefix with
+   │  └─ 5.1.execution.from_vision i002    1 run  ·  400.0k prompt ·  75.0% cached ·    $0.250000
+   │
+   └─ by round × reviewer
+      ├─ 5.1.execution.from_vision i001 · repo-rules    1 run  ·  400.0k prompt ·   0.0% cached ·    $0.250000  cold (first round) — no prior prompt of its lane to share a prefix with
+      └─ 5.1.execution.from_vision i002 · repo-rules    1 run  ·  400.0k prompt ·  75.0% cached ·    $0.250000
+
+"
+`;
+
+exports[`reviewCost.acceptance given: [case14] a tree whose reviews ran over TWO rounds when: [t1] --trace is carried by --of run then: the refusal renders as the human sees it 1`] = `
+"
+🦉 woah there
+
+✋ ConstraintError: --trace is not a flag "--of run" takes
+   ├─ why:   --trace renders the round × reviewer CROSS-TAB, and
+   │         --of run crosses no two axes — it reports a single run
+   ├─ takes: --of tree [--trace]
+   └─ fix:   rhx review._.cost --of tree --trace"
+`;
+
+exports[`reviewCost.acceptance given: [case14] a tree whose reviews ran over TWO rounds when: [t2] --trace is carried by --of grove then: the refusal renders as the human sees it 1`] = `
+"
+🦉 woah there
+
+✋ ConstraintError: --trace is not a flag "--of grove" takes
+   ├─ why:   --trace renders the round × reviewer CROSS-TAB, and
+   │         --of grove crosses no two axes — it folds every round together
+   ├─ takes: --of tree [--trace]
+   └─ fix:   rhx review._.cost --of tree --trace"
+`;
+
+exports[`reviewCost.acceptance given: [case17] a human who misspells a flag when: [t0] --jsno is typed where --json was meant then: the refusal renders as the human sees it 1`] = `
+"
+🦉 woah there
+
+✋ ConstraintError: 1 unknown flag: --jsno
+   ├─ known: --of --at --limit --json --trace --help -h
+   └─ fix:   rhx review._.cost --help"
+`;
+
+exports[`reviewCost.acceptance given: [case17] a human who misspells a flag when: [t1] a short flag -j is typed, which this command does not read then: the refusal renders as the human sees it 1`] = `
+"
+🦉 woah there
+
+✋ ConstraintError: 1 unknown flag: -j
+   ├─ known: --of --at --limit --json --trace --help -h
+   └─ fix:   rhx review._.cost --help"
+`;
+
+exports[`reviewCost.acceptance given: [case18] a tree whose guard is MALFORMED when: [t0] the tree is priced then: both streams render as the human sees them 1`] = `
+"
+🦉 review cost — this tree
+   ├─ corpus: <temp-root>/.log/bhrain/review
+   │  ├─ runs: 3 (1 metered · 1 refused · 1 unknown 🟡)
+   │  ├─ levers — input DOWN · cache UP
+   │  │  ├─ input:     500,000 prompt tokens/run
+   │  │  ├─ cache:     20.0% of prompt tokens served from cache
+   │  │  └─ prefix:    —  (no reviewer ran twice)
+   │  ├─ tokens
+   │  │  ├─ input:     400.0k
+   │  │  ├─ cache.set: 0
+   │  │  ├─ cache.get: 100.0k
+   │  │  └─ output:    1.0k
+   │  └─ cost: $0.250000  🟡 +1 unknown (cost unrecorded, not zero)
+   │
+   ├─ by input — what the prompts were MADE of
+   │  └─ — (no prompt could be read, 3 unread)
+   │
+   ├─ by reviewer — heaviest prompt first
+   │  ├─ repo-rules               1 run  ·  500.0k prompt ·  20.0% cached ·    $0.250000
+   │  ├─ mech-failhides           1 run  ·       — prompt ·      — cached ·            —  🟡 +1 unknown (cost unrecorded, not zero)
+   │  └─ arch-smell-scopeleaks    1 run  ·       0 prompt ·      — cached ·           $0
+   │
+   ├─ by level — heaviest prompt first
+   │  └─ (no level — guard unread)    3 runs ·  500.0k prompt ·  20.0% cached ·    $0.250000  🟡 +1 unknown (cost unrecorded, not zero)
+   │
+   ├─ by stone — heaviest prompt first
+   │  └─ 5.1.execution.from_vision    3 runs ·  500.0k prompt ·  20.0% cached ·    $0.250000  🟡 +1 unknown (cost unrecorded, not zero)
+   │
+   └─ by round
+      └─ 5.1.execution.from_vision i001    3 runs ·  500.0k prompt ·  20.0% cached ·    $0.250000  🟡 +1 unknown (cost unrecorded, not zero)
+
+"
+`;
+
+exports[`reviewCost.acceptance given: [case18] a tree whose guard is MALFORMED when: [t0] the tree is priced then: both streams render as the human sees them 2`] = `
+"
+🦉 heads up, the run goes on
+
+🟡 warn: guard unread — <temp-root>/.behavior/v2026_09_18.feat-demo/5.1.execution.from_vision.guard
+   ├─ malformed — level must be a positive integer: reviewer "repo-rules" declares "0". write a whole number of 1 or more, or drop the key to take its default.
+   ├─ fix: repair the guard file as the reason names, then re-run
+   └─ its runs read "(no level — guard unread)" until the guard reads again
+
+"
+`;
+
+exports[`reviewCost.acceptance given: [case19] a human who types a flag in a form it did not read when: [t0] a bare word is typed beside the flags then: the refusal renders as the human sees it 1`] = `
+"
+🦉 woah there
+
+✋ ConstraintError: 1 stray arg: "grove"
+   ├─ why: this command takes no positional — each value rides a flag
+   └─ fix: rhx review._.cost --of tree"
+`;
+
+exports[`reviewCost.acceptance given: [case19] a human who types a flag in a form it did not read when: [t2] --of is typed twice with two values then: the refusal renders as the human sees it 1`] = `
+"
+🦉 woah there
+
+✋ ConstraintError: 1 flag typed more than once: --of
+   ├─ why: each flag takes one value; a second would be dropped in silence
+   └─ fix: keep one of each, e.g. rhx review._.cost --of tree"
+`;
+
+exports[`reviewCost.acceptance given: [case19] a human who types a flag in a form it did not read when: [t3] --at is typed with an EMPTY value then: the refusal renders as the human sees it 1`] = `
+"
+🦉 woah there
+
+✋ ConstraintError: --at was given with no value
+   ├─ expects: a directory to read from
+   ├─ why:     an omitted flag takes its default; a flag typed with its
+   │           value forgotten is a slip, and must not read as either
+   └─ fix:     rhx review._.cost --of tree --at ../other-worktree"
+`;
+
+exports[`reviewCost.acceptance given: [case22] a run whose prompt was pruned, its compiled metrics kept when: [t0] the tree is priced then: and the report renders whole 1`] = `
+"
+🦉 review cost — this tree
+   ├─ corpus: <temp-root>/.log/bhrain/review
+   │  ├─ runs: 4 (1 metered · 1 refused · 2 unknown 🟡)
+   │  ├─ levers — input DOWN · cache UP
+   │  │  ├─ input:     500,000 prompt tokens/run
+   │  │  ├─ cache:     20.0% of prompt tokens served from cache
+   │  │  └─ prefix:    —  (no reviewer ran twice)
+   │  ├─ tokens
+   │  │  ├─ input:     400.0k
+   │  │  ├─ cache.set: 0
+   │  │  ├─ cache.get: 100.0k
+   │  │  └─ output:    1.0k
+   │  └─ cost: $0.250000  🟡 +2 unknown (cost unrecorded, not zero)
+   │
+   ├─ by input — what the prompts were MADE of
+   │  ├─ corpus        1 read · 3 unread · 3 target files
+   │  ├─ source        1 compiled (exact) · 0 parsed from the rendered prompt (coarse)
+   │  ├─ census        0 attributed · 0 unattributed · 1 ungraded (no grade stated)
+   │  │
+   │  ├─ instructions            600 chars    0.6%  cacheable
+   │  ├─ outputFormat            300 chars    0.3%  cacheable
+   │  ├─ scaffold                100 chars    0.1%  cacheable
+   │  ├─ rules                20,000 chars   20.0%  cacheable
+   │  ├─ refs                 10,000 chars   10.0%  cacheable
+   │  ├─ targetFiles          49,000 chars   49.0%  cacheable
+   │  ├─ targetDiffs          15,000 chars   15.0%
+   │  │  ├─ additions              0 chars    0.0%  cacheable
+   │  │  ├─ deletions              0 chars    0.0%  cacheable
+   │  │  └─ mutations         15,000 chars   15.0%  per round
+   │  ├─ conversation          5,000 chars    5.0%  per round
+   │  │
+   │  ├─ total               100,000 chars
+   │  ├─ cacheable            80,000 chars   80.0%  — the most any cache could ever serve
+   │  ├─ per round            20,000 chars   20.0%  — re-paid at full input rate, every round
+   │  │
+   │  └─ target mass by directory — 49,000 chars over 2 directories, from 1 of 1 read run
+   │     ├─  85.7%    42,000 chars  2 files   src/domain.operations/invoice
+   │     └─  14.3%     7,000 chars  1 file    blackbox
+   │
+   ├─ by reviewer — heaviest prompt first
+   │  ├─ repo-rules               1 run  ·  500.0k prompt ·  20.0% cached ·    $0.250000
+   │  ├─ mech-failhides           1 run  ·       — prompt ·      — cached ·            —  🟡 +1 unknown (cost unrecorded, not zero)
+   │  ├─ arch-smell-scopeleaks    1 run  ·       0 prompt ·      — cached ·           $0
+   │  └─ lane-pruned              1 run  ·       — prompt ·      — cached ·            —  🟡 +1 unknown (cost unrecorded, not zero)
+   │
+   ├─ by level — heaviest prompt first
+   │  ├─ L1                           2 runs ·  500.0k prompt ·  20.0% cached ·    $0.250000  🟡 +1 unknown (cost unrecorded, not zero)
+   │  ├─ L3                           1 run  ·       0 prompt ·      — cached ·           $0
+   │  └─ (no level — guard unread)    1 run  ·       — prompt ·      — cached ·            —  🟡 +1 unknown (cost unrecorded, not zero)
+   │
+   ├─ by stone — heaviest prompt first
+   │  └─ 5.1.execution.from_vision    4 runs ·  500.0k prompt ·  20.0% cached ·    $0.250000  🟡 +2 unknown (cost unrecorded, not zero)
+   │
+   └─ by round
+      └─ 5.1.execution.from_vision i001    4 runs ·  500.0k prompt ·  20.0% cached ·    $0.250000  🟡 +2 unknown (cost unrecorded, not zero)
+
+"
+`;
+
+exports[`reviewCost.acceptance given: [case23] a tree whose LATEST run was refused at the overflow gate when: [t0] it is priced with --at omitted, and with --at <rundir> then: the bare form renders whole 1`] = `
+"
+🦉 review cost — one run
+   ├─ run: <temp-root>/.log/bhrain/review/2026-10-08T00-00-00-000Z.pid1.aaa
+   │  ├─ identity: (no guard identity — a hand or review.by run)
+   │  ├─ grade: refused
+   │  └─ cost: $0  (refused at validation — nil cost is a FACT)
+   │
+   ├─ levers — input DOWN · cache UP (trend: one run is one sample — its rounds are at rhx review._.cost --of tree)
+   │  ├─ input:     0  (refused at validation — no prompt was sent)
+   │  └─ cache:     —  (refused — no prompt, so no rate)
+   │
+   ├─ prefix: —  (no guard identity, so no prior round to pair with)
+   │
+   ├─ tokens
+   │  └─ — (grade = refused)
+   │
+   ├─ targets split: 1.2k chars (re-derived from the current worktree)
+   │  ├─ targetFiles: 1.2k chars (100.0%), 1 file — edited file bodies — a narrower bind shrinks it
+   │  ├─ targetDiffs: 0 chars (0.0%)
+   │  │  ├─ additions: 0 chars (0.0%), 0 files — added file bodies — a narrower bind or a partition shrinks it
+   │  │  ├─ deletions: 0 chars (0.0%), 0 files — a path apiece — never the cause of an overflow
+   │  │  └─ mutations: 0 chars (0.0%), 0 files — hunks of edited files — a narrower bind shrinks it
+   │  └─ targets: 1 recorded, 0 gone from disk since the run (not measured)
+   ├─ target mass by directory — 1.2k chars over 1 directory
+   │  └─ 100.0%      1.2k chars  1 file    src  1.2k bodies
+   │
+   └─ composition: —
+      └─ 🟡 UNREAD — the prompt could not be read, so no input can be attributed
+
+"
+`;
+
+exports[`reviewCost.acceptance given: [case25] four reviewers that each ran twice — one per prefix verdict when: [t0] a round that shares a DECLARED prefix with its prior then: the run renders whole 1`] = `
+"
+🦉 review cost — one run
+   ├─ run: <temp-root>/.log/bhrain/review/2026-09-23T10-00-01-000Z.pid1.lane-served
+   │  ├─ identity: lane-served · 5.1.execution.from_vision · i2
+   │  ├─ grade: metered
+   │  └─ cost: $0.010000
+   │
+   ├─ levers — input DOWN · cache UP (trend: one run is one sample — its rounds are at rhx review._.cost --of tree)
+   │  ├─ input:     1,254 prompt tokens/run
+   │  └─ cache:     49.9% of prompt tokens served from cache
+   │
+   ├─ prefix vs i1: served
+   │  ├─ cache.get 626 tok · reach 50.0% of expected
+   │  ├─ expected 1.3k tok est. (5.0k chars shared with i1)
+   │  └─ prefix breaks in: tail
+   │
+   ├─ tokens
+   │  ├─ input:     628
+   │  ├─ cache.set: 0  (a MEASURED zero — this run was charged no cache WRITE, and read one anyway)
+   │  ├─ cache.get: 626
+   │  └─ output:    100
+   │
+   ├─ target mass by directory — not recorded
+   │  └─ 🟡 UNREAD — no directory can be named. metrics.compiled.json carries no
+   │     locus row (the run predates it), and input.prompt.md, the one other
+   │     artifact that names each target's path, could not be read. look for
+   │     both in the \`run:\` dir above — no flag of this command will help
+   │
+   └─ composition: 5.0k chars over 1 target (source: compiled, attribution: —)
+      ├─ instructions              0 chars    0.0%  cacheable
+      ├─ outputFormat              0 chars    0.0%  cacheable
+      ├─ scaffold                  0 chars    0.0%  cacheable
+      ├─ rules                  4.0k chars   79.8%  cacheable
+      ├─ refs                      0 chars    0.0%  cacheable
+      ├─ targetFiles            1.0k chars   20.2%  cacheable
+      ├─ targetDiffs               0 chars    0.0%
+      │  ├─ additions              0 chars    0.0%  cacheable
+      │  ├─ deletions              0 chars    0.0%  cacheable
+      │  └─ mutations              0 chars    0.0%  per round
+      └─ conversation              0 chars    0.0%  per round
+
+"
+`;
+
+exports[`reviewCost.acceptance given: [case25] four reviewers that each ran twice — one per prefix verdict when: [t2] a round whose prefix held and whose cache served none then: the run renders whole 1`] = `
+"
+🦉 review cost — one run
+   ├─ run: <temp-root>/.log/bhrain/review/2026-09-23T10-10-01-000Z.pid1.lane-missed
+   │  ├─ identity: lane-missed · 5.1.execution.from_vision · i2
+   │  ├─ grade: metered
+   │  └─ cost: $0.010000
+   │
+   ├─ levers — input DOWN · cache UP (trend: one run is one sample — its rounds are at rhx review._.cost --of tree)
+   │  ├─ input:     1,254 prompt tokens/run
+   │  └─ cache:     0.0% of prompt tokens served from cache  🟡 a cold first run, a prefix past the 66-minute reach, and a warm miss read alike here — grade it with: rhx review._.cost --of tree --trace
+   │
+   ├─ prefix vs i1: 🔴 missed
+   │  ├─ cache.get 0 tok · reach 0.0% of expected
+   │  ├─ expected 1.3k tok est. (5.0k chars shared with i1)
+   │  └─ prefix breaks in: tail
+   │
+   ├─ tokens
+   │  ├─ input:     1.3k
+   │  ├─ cache.set: 0
+   │  ├─ cache.get: 0
+   │  └─ output:    100
+   │
+   ├─ target mass by directory — not recorded
+   │  └─ 🟡 UNREAD — no directory can be named. metrics.compiled.json carries no
+   │     locus row (the run predates it), and input.prompt.md, the one other
+   │     artifact that names each target's path, could not be read. look for
+   │     both in the \`run:\` dir above — no flag of this command will help
+   │
+   └─ composition: 5.0k chars over 1 target (source: compiled, attribution: —)
+      ├─ instructions              0 chars    0.0%  cacheable
+      ├─ outputFormat              0 chars    0.0%  cacheable
+      ├─ scaffold                  0 chars    0.0%  cacheable
+      ├─ rules                  4.0k chars   79.8%  cacheable
+      ├─ refs                      0 chars    0.0%  cacheable
+      ├─ targetFiles            1.0k chars   20.2%  cacheable
+      ├─ targetDiffs               0 chars    0.0%
+      │  ├─ additions              0 chars    0.0%  cacheable
+      │  ├─ deletions              0 chars    0.0%  cacheable
+      │  └─ mutations              0 chars    0.0%  per round
+      └─ conversation              0 chars    0.0%  per round
+
+"
+`;
+
+exports[`reviewCost.acceptance given: [case25] four reviewers that each ran twice — one per prefix verdict when: [t3] a multi-turn round that read its own turns then: the run renders whole 1`] = `
+"
+🦉 review cost — one run
+   ├─ run: <temp-root>/.log/bhrain/review/2026-09-23T10-20-01-000Z.pid1.lane-selfcached
+   │  ├─ identity: lane-selfcached · 5.1.execution.from_vision · i2
+   │  ├─ grade: metered
+   │  └─ cost: $0.010000
+   │
+   ├─ levers — input DOWN · cache UP (trend: one run is one sample — its rounds are at rhx review._.cost --of tree)
+   │  ├─ input:     1,200 prompt tokens/run
+   │  └─ cache:     100.0% of prompt tokens served from cache
+   │
+   ├─ prefix vs i1: self-cached
+   │  ├─ cache.get 1.2k tok · reach — of expected
+   │  ├─ expected 0 tok est. (0 chars shared with i1)
+   │  └─ prefix breaks in: head
+   │
+   ├─ tokens
+   │  ├─ input:     0
+   │  ├─ cache.set: 0  (a MEASURED zero — this run was charged no cache WRITE, and read one anyway)
+   │  ├─ cache.get: 1.2k
+   │  └─ output:    100
+   │
+   ├─ target mass by directory — not recorded
+   │  └─ 🟡 UNREAD — no directory can be named. metrics.compiled.json carries no
+   │     locus row (the run predates it), and input.prompt.md, the one other
+   │     artifact that names each target's path, could not be read. look for
+   │     both in the \`run:\` dir above — no flag of this command will help
+   │
+   └─ composition: 5.0k chars over 1 target (source: compiled, attribution: —)
+      ├─ instructions              0 chars    0.0%  cacheable
+      ├─ outputFormat              0 chars    0.0%  cacheable
+      ├─ scaffold                  0 chars    0.0%  cacheable
+      ├─ rules                  4.0k chars   80.0%  cacheable
+      ├─ refs                      0 chars    0.0%  cacheable
+      ├─ targetFiles            1.0k chars   20.0%  cacheable
+      ├─ targetDiffs               0 chars    0.0%
+      │  ├─ additions              0 chars    0.0%  cacheable
+      │  ├─ deletions              0 chars    0.0%  cacheable
+      │  └─ mutations              0 chars    0.0%  per round
+      └─ conversation              0 chars    0.0%  per round
+
+"
+`;
+
+exports[`reviewCost.acceptance given: [case25] four reviewers that each ran twice — one per prefix verdict when: [t4] a round whose cache read more than the prefix holds then: the run renders whole 1`] = `
+"
+🦉 review cost — one run
+   ├─ run: <temp-root>/.log/bhrain/review/2026-09-23T10-30-01-000Z.pid1.lane-overreach
+   │  ├─ identity: lane-overreach · 5.1.execution.from_vision · i2
+   │  ├─ grade: metered
+   │  └─ cost: $0.010000
+   │
+   ├─ levers — input DOWN · cache UP (trend: one run is one sample — its rounds are at rhx review._.cost --of tree)
+   │  ├─ input:     1,000 prompt tokens/run
+   │  └─ cache:     60.0% of prompt tokens served from cache
+   │
+   ├─ prefix vs i1: 🟡 over-reach
+   │  ├─ cache.get 600 tok · reach 240.0% of expected
+   │  ├─ expected 250 tok est. (1.0k chars shared with i1)
+   │  └─ prefix breaks in: head
+   │
+   ├─ tokens
+   │  ├─ input:     400
+   │  ├─ cache.set: 0  (a MEASURED zero — this run was charged no cache WRITE, and read one anyway)
+   │  ├─ cache.get: 600
+   │  └─ output:    100
+   │
+   ├─ target mass by directory — not recorded
+   │  └─ 🟡 UNREAD — no directory can be named. metrics.compiled.json carries no
+   │     locus row (the run predates it), and input.prompt.md, the one other
+   │     artifact that names each target's path, could not be read. look for
+   │     both in the \`run:\` dir above — no flag of this command will help
+   │
+   └─ composition: 4.0k chars over 1 target (source: compiled, attribution: —)
+      ├─ instructions              0 chars    0.0%  cacheable
+      ├─ outputFormat              0 chars    0.0%  cacheable
+      ├─ scaffold                  0 chars    0.0%  cacheable
+      ├─ rules                  4.0k chars  100.0%  cacheable
+      ├─ refs                      0 chars    0.0%  cacheable
+      ├─ targetFiles               0 chars    0.0%  cacheable
+      ├─ targetDiffs               0 chars    0.0%
+      │  ├─ additions              0 chars    0.0%  cacheable
+      │  ├─ deletions              0 chars    0.0%  cacheable
+      │  └─ mutations              0 chars    0.0%  per round
+      └─ conversation              0 chars    0.0%  per round
+
+"
+`;
+
+exports[`reviewCost.acceptance given: [case25] four reviewers that each ran twice — one per prefix verdict when: [t6] the tree is priced then: the tree renders whole 1`] = `
+"
+🦉 review cost — this tree
+   ├─ corpus: <temp-root>/.log/bhrain/review
+   │  ├─ runs: 8 (8 metered · 0 refused · 0 unknown)
+   │  ├─ levers — input DOWN · cache UP (trend over 2 rounds of 5.1.execution.from_vision)
+   │  │  ├─ input:     1,183 prompt tokens/run   ↓ 1.1% 🎉
+   │  │  ├─ cache:     25.6% of prompt tokens served from cache   ↑ 51.5pp 🎉
+   │  │  └─ prefix:    1 served · 🔴 1 missed · 1 self-cached · 🟡 1 over-reach · 0 unshared
+   │  ├─ tokens
+   │  │  ├─ input:     7.0k
+   │  │  ├─ cache.set: 0
+   │  │  ├─ cache.get: 2.4k
+   │  │  └─ output:    800
+   │  └─ cost: $0.080000
+   │
+   ├─ by input — what the prompts were MADE of
+   │  ├─ corpus        8 read · 0 unread · 8 target files
+   │  ├─ source        8 compiled (exact) · 0 parsed from the rendered prompt (coarse)
+   │  ├─ census        0 attributed · 0 unattributed · 8 ungraded (no grade stated)
+   │  │
+   │  ├─ instructions              0 chars    0.0%  cacheable
+   │  ├─ outputFormat              0 chars    0.0%  cacheable
+   │  ├─ scaffold                  0 chars    0.0%  cacheable
+   │  ├─ rules                32,000 chars   84.1%  cacheable
+   │  ├─ refs                      0 chars    0.0%  cacheable
+   │  ├─ targetFiles           6,058 chars   15.9%  cacheable
+   │  ├─ targetDiffs               0 chars    0.0%
+   │  │  ├─ additions              0 chars    0.0%  cacheable
+   │  │  ├─ deletions              0 chars    0.0%  cacheable
+   │  │  └─ mutations              0 chars    0.0%  per round
+   │  ├─ conversation              0 chars    0.0%  per round
+   │  │
+   │  ├─ total                38,058 chars
+   │  ├─ cacheable            38,058 chars  100.0%  — the most any cache could ever serve
+   │  ├─ per round                 0 chars    0.0%  — re-paid at full input rate, every round
+   │  │
+   │  └─ target mass by directory — not recorded by any of 8 read runs
+   │     runs compiled before the locus row carry none. to place one such run,
+   │     read it alone: rhx review._.cost --of run --at <rundir>
+   │
+   ├─ by reviewer — heaviest prompt first
+   │  ├─ lane-served        2 runs ·    2.5k prompt ·  25.0% cached ·    $0.020000
+   │  ├─ lane-missed        2 runs ·    2.5k prompt ·   0.0% cached ·    $0.020000  🟡 warm and cached NAUGHT — a prefix broke; \`--of run --at <rundir>\` names the input past the seam
+   │  ├─ lane-selfcached    2 runs ·    2.5k prompt ·  49.0% cached ·    $0.020000
+   │  └─ lane-overreach     2 runs ·    2.0k prompt ·  30.0% cached ·    $0.020000
+   │
+   ├─ by level — heaviest prompt first
+   │  └─ (no level — guard unread)    8 runs ·    9.5k prompt ·  25.6% cached ·    $0.080000
+   │
+   ├─ by stone — heaviest prompt first
+   │  └─ 5.1.execution.from_vision    8 runs ·    9.5k prompt ·  25.6% cached ·    $0.080000
+   │
+   └─ by round
+      ├─ 5.1.execution.from_vision i001    4 runs ·    4.8k prompt ·   0.0% cached ·    $0.040000  cold (first round) — no prior prompt of its lane to share a prefix with
+      └─ 5.1.execution.from_vision i002    4 runs ·    4.7k prompt ·  51.5% cached ·    $0.040000
+
+"
+`;
+
+exports[`reviewCost.acceptance given: [case25] four reviewers that each ran twice — one per prefix verdict when: [t7] the grove is priced then: the grove renders whole 1`] = `
+"
+🦉 review cost — the grove: where this machine's review tokens went
+
+   root: <temp-root>
+   trees: 1 walked · 1 carried review logs · 0 never reviewed
+   runs:  8 found — 8 metered · 0 refused · 0 unknown
+
+   the grove total
+      ├─ input          7,040  (74.4% of read, at full rate)
+      ├─ cache.set          0  (0.0% of read, at full rate, once per seed)
+      ├─ cache.get      2,426  (25.6% of read, 31.4x cheaper)
+      ├─ output           800  (not of read, at output rate)
+      └─ cost       $0.080000
+
+   levers — input DOWN · cache UP
+      ├─ input:     1,183 prompt tokens/run
+      ├─ cache:     25.6% of prompt tokens served from cache
+      └─ prefix:    1 served · 🔴 1 missed · 1 self-cached · 🟡 1 over-reach · 0 unshared
+
+   by input
+      ├─ corpus        8 read · 0 unread · 8 target files
+      ├─ source        8 compiled (exact) · 0 parsed from the rendered prompt (coarse)
+      ├─ census        0 attributed · 0 unattributed · 8 ungraded (no grade stated)
+      │
+      ├─ instructions              0 chars    0.0%  cacheable
+      ├─ outputFormat              0 chars    0.0%  cacheable
+      ├─ scaffold                  0 chars    0.0%  cacheable
+      ├─ rules                32,000 chars   84.1%  cacheable
+      ├─ refs                      0 chars    0.0%  cacheable
+      ├─ targetFiles           6,058 chars   15.9%  cacheable
+      ├─ targetDiffs               0 chars    0.0%
+      │  ├─ additions              0 chars    0.0%  cacheable
+      │  ├─ deletions              0 chars    0.0%  cacheable
+      │  └─ mutations              0 chars    0.0%  per round
+      ├─ conversation              0 chars    0.0%  per round
+      │
+      ├─ total                38,058 chars
+      ├─ cacheable            38,058 chars  100.0%  — the most any cache could ever serve
+      ├─ per round                 0 chars    0.0%  — re-paid at full input rate, every round
+      │
+      └─ target mass by directory — not recorded by any of 8 read runs
+         runs compiled before the locus row carry none. to place one such run,
+         read it alone: rhx review._.cost --of run --at <rundir>
+
+   by tree
+      └─       7,040 at full rate     $0.080000     8 runs  repo.beav.feat-prefix
+
+   by route
+      └─       7,040 at full rate     $0.080000     8 runs  .behavior/v2026_09_18.feat-demo
+
+   by stone
+      └─       7,040 at full rate     $0.080000     8 runs  5.1.execution.from_vision
+
+   by reviewer
+      ├─       2,508 at full rate     $0.020000     2 runs  lane-missed
+      ├─       1,882 at full rate     $0.020000     2 runs  lane-served
+      ├─       1,400 at full rate     $0.020000     2 runs  lane-overreach
+      └─       1,250 at full rate     $0.020000     2 runs  lane-selfcached
+
+"
+`;

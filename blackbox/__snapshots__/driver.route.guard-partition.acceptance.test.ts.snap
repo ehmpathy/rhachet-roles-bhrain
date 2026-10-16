@@ -1,0 +1,595 @@
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
+
+exports[`driver.route.guard-partition.acceptance given: [case1] a set that claims every changed file when: [t0] it is previewed (the default mode) then: stdout matches snapshot: plan @all 1`] = `
+"
+🦉 partitions previewed — naught written
+
+🗿 route.guard.partition --mode plan
+   ├─ route = .behavior/v2026_01_01.demo
+   ├─ peer = @all (every reviewer, every stone)
+   ├─ checked against 4 files changed since main
+   ├─ partitions
+   │  ├─ review: 2 narrow targets + 0 common targets · ~18 tokens of file bodies, ~0 common
+   │  │  └─ src/review/**, .behavior/v2026_01_01.demo/**
+   │  └─ route: 2 narrow targets + 0 common targets · ~17 tokens of file bodies, ~0 common
+   │     └─ src/route/**, .behavior/v2026_01_01.demo/**
+   ├─ common: 0
+   ├─ unclaimed: 0
+   ├─ replaces: none
+   └─ to write it: add --mode apply
+
+"
+`;
+
+exports[`driver.route.guard-partition.acceptance given: [case1] a set that claims every changed file when: [t1] it is applied then: stdout matches snapshot: apply @all 1`] = `
+"
+🦉 partitions declared
+
+🗿 route.guard.partition --mode apply
+   ├─ route = .behavior/v2026_01_01.demo
+   ├─ peer = @all (every reviewer, every stone)
+   ├─ checked against 4 files changed since main
+   ├─ partitions
+   │  ├─ review: 2 narrow targets + 0 common targets · ~18 tokens of file bodies, ~0 common
+   │  │  └─ src/review/**, .behavior/v2026_01_01.demo/**
+   │  └─ route: 2 narrow targets + 0 common targets · ~17 tokens of file bodies, ~0 common
+   │     └─ src/route/**, .behavior/v2026_01_01.demo/**
+   ├─ common: 0
+   ├─ unclaimed: 0
+   ├─ replaces: none
+   └─ every peer review in scope reads it on its next run
+
+"
+`;
+
+exports[`driver.route.guard-partition.acceptance given: [case1] a set that claims every changed file when: [t2] the scope is read with no --partition then: stdout matches snapshot: show @all 1`] = `
+"
+🗿 route.guard.partition
+   ├─ route = .behavior/v2026_01_01.demo
+   ├─ peer = @all (every reviewer, every stone)
+   └─ declared
+      ├─ review={src/review/**,.behavior/v2026_01_01.demo/**}
+      └─ route={src/route/**,.behavior/v2026_01_01.demo/**}
+
+🦉 coverage read — naught written, no review run
+
+🗿 route.guard.partition
+   ├─ route = .behavior/v2026_01_01.demo
+   ├─ checked against 4 files changed since main
+   └─ scope @all
+      ├─ partitions
+      │  ├─ review: 2 narrow targets + 0 common targets · ~18 tokens of file bodies, ~0 common
+      │  │  ├─ src/review/getReview.test.ts
+      │  │  └─ src/review/getReview.ts
+      │  └─ route: 2 narrow targets + 0 common targets · ~17 tokens of file bodies, ~0 common
+      │     ├─ src/route/getRoute.test.ts
+      │     └─ src/route/getRoute.ts
+      ├─ common: 0 (route spec: 0)
+      ├─ unclaimed: 0
+      └─ verdict: holds — every changed file sits in a partition
+
+"
+`;
+
+exports[`driver.route.guard-partition.acceptance given: [case2] a set that leaves a changed file unclaimed when: [t0] it is applied then: stderr matches snapshot: refuse unclaimed 1`] = `
+"
+🦉 woah there
+
+✋ ConstraintError: 2 targets sit in no partition, so a split would leave targets unreviewed
+   ├─ unclaimed → where the repair places each
+   │  ├─ src/route/getRoute.test.ts → route (+ src/route/**)
+   │  └─ src/route/getRoute.ts → route (+ src/route/**)
+   └─ repair — run this to declare the repaired set
+         rhx route.guard.partition --route .behavior/v2026_01_01.demo --for review --peer @all \\
+           --partition 'review=src/review/**,.behavior/v2026_01_01.demo/**' \\
+           --partition 'route=src/route/**,.behavior/v2026_01_01.demo/**' \\
+           --mode apply
+
+✨ did you know?
+   ├─ claim each domain whole, in every layer, and the files you edit next stay covered
+   └─ e.g. src/route/** and blackbox/{,__snapshots__/}driver.route.* in one partition
+
+"
+`;
+
+exports[`driver.route.guard-partition.acceptance given: [case2b] an @all scope cleared with --partition none when: [t0] the clear is applied then: stdout matches snapshot: clear @all 1`] = `
+"
+🦉 partitions cleared
+
+🗿 route.guard.partition --mode apply
+   ├─ route = .behavior/v2026_01_01.demo
+   ├─ peer = @all (every reviewer, every stone)
+   ├─ clears: 2 partitions
+   ├─ after: reviewers with no override run whole
+   └─ every peer review in scope reads it on its next run
+
+"
+`;
+
+exports[`driver.route.guard-partition.acceptance given: [case2b] an @all scope cleared with --partition none when: [t1] none is mixed with a real partition then: the refusal renders whole: refuse none mixed 1`] = `
+"
+🦉 woah there
+
+✋ ConstraintError: --partition none clears the scope, so it takes no other --partition
+
+"
+`;
+
+exports[`driver.route.guard-partition.acceptance given: [case3] a per-peer scope with no --stone when: [t0] it is invoked then: stderr matches snapshot: refuse peer without stone 1`] = `
+"
+🦉 woah there
+
+✋ ConstraintError: --peer r1 overrides one reviewer on one stone, so it needs --stone
+
+"
+`;
+
+exports[`driver.route.guard-partition.acceptance given: [case3b] an argument the command cannot act on when: [t0] for absent then: the refusal renders whole: refuse for absent 1`] = `
+"
+🦉 woah there
+
+✋ ConstraintError: --for review is required (only review is supported)
+
+"
+`;
+
+exports[`driver.route.guard-partition.acceptance given: [case3b] an argument the command cannot act on when: [t1] peer absent then: the refusal renders whole: refuse peer absent 1`] = `
+"
+🦉 woah there
+
+✋ ConstraintError: --peer is required — @all for every reviewer, or <slug> with --stone for one
+
+"
+`;
+
+exports[`driver.route.guard-partition.acceptance given: [case3b] an argument the command cannot act on when: [t2] stone beside all then: the refusal renders whole: refuse stone beside all 1`] = `
+"
+🦉 woah there
+
+✋ ConstraintError: --stone scopes a one-reviewer override, so it needs --peer <slug>, never @all
+   └─ to read the stone's coverage instead, drop --partition, --claim, and --prune:
+      └─ rhx route.guard.partition --for review --peer @all --stone 1.vision
+
+"
+`;
+
+exports[`driver.route.guard-partition.acceptance given: [case3b] an argument the command cannot act on when: [t3] mode unknown then: the refusal renders whole: refuse mode unknown 1`] = `
+"
+🦉 woah there
+
+✋ ConstraintError: --mode must be "plan" or "apply", got "bogus"
+
+"
+`;
+
+exports[`driver.route.guard-partition.acceptance given: [case3b] an argument the command cannot act on when: [t4] no bound route then: the refusal renders whole: refuse no bound route 1`] = `
+"
+🦉 woah there
+
+✋ ConstraintError: no bound route found. use --route to specify.
+
+"
+`;
+
+exports[`driver.route.guard-partition.acceptance given: [case3b] an argument the command cannot act on when: [t5] stone valueless then: the refusal renders whole: refuse stone valueless 1`] = `
+"
+🦉 woah there
+
+✋ ConstraintError: --stone given with no value
+   └─ fix: give each flag its value, or see --help
+
+"
+`;
+
+exports[`driver.route.guard-partition.acceptance given: [case3b] an argument the command cannot act on when: [t6] claim without into then: the refusal renders whole: refuse claim without into 1`] = `
+"
+🦉 woah there
+
+✋ ConstraintError: --claim needs --into <slug>, the held partition it joins
+   └─ e.g. rhx route.guard.partition --for review --peer @all --claim 'src/new/**' --into review
+
+"
+`;
+
+exports[`driver.route.guard-partition.acceptance given: [case3b] an argument the command cannot act on when: [t7] claim into count mismatch then: the refusal renders whole: refuse claim into count mismatch 1`] = `
+"
+🦉 woah there
+
+✋ ConstraintError: 3 --claim beside 2 --into — give one --into for all, or one per --claim
+   └─ e.g. rhx route.guard.partition --for review --peer @all --claim 'src/new/**' --into review
+
+"
+`;
+
+exports[`driver.route.guard-partition.acceptance given: [case3b] an argument the command cannot act on when: [t8] claim beside partition then: the refusal renders whole: refuse claim beside partition 1`] = `
+"
+🦉 woah there
+
+✋ ConstraintError: --partition and --claim are separate edits — --claim grows the held set, --prune shrinks it, --partition replaces it — so give one
+
+"
+`;
+
+exports[`driver.route.guard-partition.acceptance given: [case3b] an argument the command cannot act on when: [t9] into without claim then: the refusal renders whole: refuse into without claim 1`] = `
+"
+🦉 woah there
+
+✋ ConstraintError: --into names the home of a --claim, so it needs a --claim
+
+"
+`;
+
+exports[`driver.route.guard-partition.acceptance given: [case3b] an argument the command cannot act on when: [t10] prune beside claim then: the refusal renders whole: refuse prune beside claim 1`] = `
+"
+🦉 woah there
+
+✋ ConstraintError: --claim and --prune are separate edits — --claim grows the held set, --prune shrinks it, --partition replaces it — so give one
+
+"
+`;
+
+exports[`driver.route.guard-partition.acceptance given: [case3b] an argument the command cannot act on when: [t11] from without prune then: the refusal renders whole: refuse from without prune 1`] = `
+"
+🦉 woah there
+
+✋ ConstraintError: --from names the partition a --prune leaves, so it needs a --prune
+
+"
+`;
+
+exports[`driver.route.guard-partition.acceptance given: [case3b] an argument the command cannot act on when: [t12] prune from count mismatch then: the refusal renders whole: refuse prune from count mismatch 1`] = `
+"
+🦉 woah there
+
+✋ ConstraintError: 3 --prune beside 2 --from — give one --from for all, one per --prune, or none
+   └─ e.g. rhx route.guard.partition --for review --peer @all --prune 'src/gone/**' --from review
+
+"
+`;
+
+exports[`driver.route.guard-partition.acceptance given: [case4] a request for help when: [t0] --help is passed then: stdout matches snapshot: help 1`] = `
+"route.guard.partition - declare how a route's peer reviews split when they overflow
+
+usage:
+  rhx route.guard.partition --for review --peer @all --partition '<slug>=<globs>' ...  # plan; add --mode apply to write
+  rhx route.guard.partition --for review --peer @all [--stone <stone> [--full]]         # show the set, its coverage, its gaps
+  rhx route.guard.partition --for review --peer @all --claim '<globs>' --into <slug>   # grow one held partition
+  rhx route.guard.partition --for review --peer @all --prune '<globs>' [--from <slug>] # drop a stale glob from the held set
+
+options:
+  --for review                  the guard surface (only review is supported)
+  --peer @all|<slug>            @all = every reviewer, every stone; a <slug> overrides @all for one reviewer, with --stone
+  --stone <stone>               the stone of a <slug> override; beside @all alone, a coverage read: the entrance gate's check, no review run, naught written
+  --full                        a coverage read lists every path (default: the first 5, unclaimed 20, then "… +N more")
+  --partition '<slug>=<globs>'  repeatable; together the WHOLE set, which replaces what the scope held
+  --claim <globs>               add a path, glob, or comma list to a held partition, then write the whole set back; repeatable
+  --into <slug>                 the held partition each --claim joins: one for all, or one per --claim, in order
+  --prune <globs>               drop a glob, or a comma list, from the held partitions that list it, then write the whole set back; repeatable
+  --from <slug>                 the one partition each --prune leaves: none for every holder, one for all, or one per --prune
+  --route <path>                the route directory (uses bound route if absent)
+  --mode plan|apply             default plan, which writes naught
+
+notes:
+  - globs: a prefix (src/review), a glob (src/**/*.ts), or a comma list, no outer braces; quote each value; a repeated slug merges into one; a member led by ! subtracts: 'review=src/review/*,!src/review/compile*'
+  - cut vertical domains, never horizontal layers (rule.forbid.horizontal-partitions); a flat test dir claims tests with their snapshots — 'blackbox/{,__snapshots__/}driver.route.*' — never '__snapshots__/**'
+  - --partition none clears the scope: an override is removed, so its reviewer reads @all; @all cleared lets every lane run whole
+  - checked before any write, and on a show (exit 2 on a fault): every file changed since main sits in a partition; every partition holds '<route>/**'
+  - a fault prints the smallest paste-ready repair: a --claim per held partition that fits, else a new partition named for the domain, never a catch-all. a malformed value refuses with the corrected one; a glob that matched no changed file is flagged; an unknown --into refuses and names the held slugs; an override with no set of its own grows from @all
+"
+`;
+
+exports[`driver.route.guard-partition.acceptance given: [case5] a partition widened by a repeated slug, braces free when: [t0] it is previewed, with one glob mistyped then: stdout matches snapshot: plan widened with a typo 1`] = `
+"
+🦉 partitions previewed — naught written
+
+🗿 route.guard.partition --mode plan
+   ├─ route = .behavior/v2026_01_01.demo
+   ├─ peer = @all (every reviewer, every stone)
+   ├─ checked against 4 files changed since main
+   ├─ partitions
+   │  ├─ review: 2 narrow targets + 0 common targets · ~18 tokens of file bodies, ~0 common
+   │  │  └─ src/review/**, .behavior/v2026_01_01.demo/**
+   │  └─ route: 2 narrow targets + 0 common targets · ~17 tokens of file bodies, ~0 common
+   │     └─ src/route/**, .behavior/v2026_01_01.demo/**, src/rout/**
+   ├─ common: 0
+   ├─ unclaimed: 0
+   ├─ 🟡 1 glob that matched no changed file — a typo, or no change there yet
+   │  └─ route: src/rout/**
+   ├─ replaces: none
+   └─ to write it: add --mode apply
+
+"
+`;
+
+exports[`driver.route.guard-partition.acceptance given: [case5] a partition widened by a repeated slug, braces free when: [t1] it is declared with an append form then: stderr matches snapshot: refuse append form 1`] = `
+"
+🦉 woah there
+
+✋ ConstraintError: --partition 'route+=src/route/**' does not parse; there is no '+=' — repeat the slug instead, and its globs merge
+   └─ fix: --partition 'route=src/route/**'
+
+"
+`;
+
+exports[`driver.route.guard-partition.acceptance given: [case5] a partition widened by a repeated slug, braces free when: [t2] it is declared with an unclosed brace then: stderr matches snapshot: refuse unclosed brace 1`] = `
+"
+🦉 woah there
+
+✋ ConstraintError: --partition 'route' has unbalanced braces in '{src/route/**,.behavior/v2026_01_01.demo/**'
+   └─ fix: --partition 'route=src/route/**,.behavior/v2026_01_01.demo/**'
+
+"
+`;
+
+exports[`driver.route.guard-partition.acceptance given: [case5b] a new file claimed into one held partition when: [t0] the claim is previewed (the default mode) then: stdout matches snapshot: plan claim 1`] = `
+"
+🦉 partitions previewed — naught written
+
+🗿 route.guard.partition --mode plan
+   ├─ route = .behavior/v2026_01_01.demo
+   ├─ peer = @all (every reviewer, every stone)
+   ├─ checked against 5 files changed since main
+   ├─ partitions
+   │  ├─ review: 3 narrow targets + 0 common targets · ~24 tokens of file bodies, ~0 common
+   │  │  └─ src/review/**, .behavior/v2026_01_01.demo/**, src/extra/**
+   │  └─ route: 2 narrow targets + 0 common targets · ~17 tokens of file bodies, ~0 common
+   │     └─ src/route/**, .behavior/v2026_01_01.demo/**
+   ├─ common: 0
+   ├─ unclaimed: 0
+   ├─ claims: 1 glob, every other partition kept as held
+   │  └─ src/extra/** → review
+   └─ to write it: add --mode apply
+
+"
+`;
+
+exports[`driver.route.guard-partition.acceptance given: [case5b] a new file claimed into one held partition when: [t1] the claim is applied then: stdout matches snapshot: apply claim 1`] = `
+"
+🦉 partitions declared
+
+🗿 route.guard.partition --mode apply
+   ├─ route = .behavior/v2026_01_01.demo
+   ├─ peer = @all (every reviewer, every stone)
+   ├─ checked against 5 files changed since main
+   ├─ partitions
+   │  ├─ review: 3 narrow targets + 0 common targets · ~24 tokens of file bodies, ~0 common
+   │  │  └─ src/review/**, .behavior/v2026_01_01.demo/**, src/extra/**
+   │  └─ route: 2 narrow targets + 0 common targets · ~17 tokens of file bodies, ~0 common
+   │     └─ src/route/**, .behavior/v2026_01_01.demo/**
+   ├─ common: 0
+   ├─ unclaimed: 0
+   ├─ claims: 1 glob, every other partition kept as held
+   │  └─ src/extra/** → review
+   └─ every peer review in scope reads it on its next run
+
+"
+`;
+
+exports[`driver.route.guard-partition.acceptance given: [case5b] a new file claimed into one held partition when: [t2] the claim names a slug the scope does not hold then: stderr matches snapshot: refuse claim into unknown slug 1`] = `
+"
+🦉 woah there
+
+✋ ConstraintError: --into extras: the scope holds no partition by that name, and a claim never creates one
+   ├─ held partitions
+   │  ├─ review
+   │  └─ route
+   ├─ fix: claim into a held partition — --into <one of the above>
+   └─ or declare the new domain, with the whole set
+      rhx route.guard.partition --route .behavior/v2026_01_01.demo --for review --peer @all \\
+        --partition 'review=src/review/**,.behavior/v2026_01_01.demo/**,src/extra/**' \\
+        --partition 'route=src/route/**,.behavior/v2026_01_01.demo/**' \\
+        --partition 'extras=src/extra/**,.behavior/v2026_01_01.demo/**' \\
+        --mode apply
+
+"
+`;
+
+exports[`driver.route.guard-partition.acceptance given: [case6] a stone whose two reviewers read the @all set when: [t0] the stone coverage is read then: stdout matches snapshot: read stone coverage 1`] = `
+"
+🦉 coverage read — naught written, no review run
+
+🗿 route.guard.partition
+   ├─ route = .behavior/v2026_01_01.demo
+   ├─ stone = 5.1.execution
+   ├─ checked against 11 files changed since main
+   └─ scope @all — read by r1, r2
+      ├─ partitions
+      │  ├─ review: 3 narrow targets + 0 common targets · ~24 tokens of file bodies, ~0 common
+      │  │  ├─ src/extra/notes.ts
+      │  │  ├─ src/review/getReview.test.ts
+      │  │  └─ src/review/getReview.ts
+      │  ├─ route: 2 narrow targets + 0 common targets · ~17 tokens of file bodies, ~0 common
+      │  │  ├─ src/route/getRoute.test.ts
+      │  │  └─ src/route/getRoute.ts
+      │  └─ newdir: 6 narrow targets + 0 common targets · ~36 tokens of file bodies, ~0 common
+      │     ├─ src/newdir/n0.ts
+      │     ├─ src/newdir/n1.ts
+      │     ├─ src/newdir/n2.ts
+      │     ├─ src/newdir/n3.ts
+      │     ├─ src/newdir/n4.ts
+      │     └─ … +1 more (--full lists every path)
+      ├─ common: 0 (route spec: 0)
+      ├─ unclaimed: 0
+      └─ verdict: holds — every changed file sits in a partition
+
+"
+`;
+
+exports[`driver.route.guard-partition.acceptance given: [case6] a stone whose two reviewers read the @all set when: [t0b] the stone coverage is read with --full then: stdout matches snapshot: read stone coverage full 1`] = `
+"
+🦉 coverage read — naught written, no review run
+
+🗿 route.guard.partition
+   ├─ route = .behavior/v2026_01_01.demo
+   ├─ stone = 5.1.execution
+   ├─ checked against 11 files changed since main
+   └─ scope @all — read by r1, r2
+      ├─ partitions
+      │  ├─ review: 3 narrow targets + 0 common targets · ~24 tokens of file bodies, ~0 common
+      │  │  ├─ src/extra/notes.ts
+      │  │  ├─ src/review/getReview.test.ts
+      │  │  └─ src/review/getReview.ts
+      │  ├─ route: 2 narrow targets + 0 common targets · ~17 tokens of file bodies, ~0 common
+      │  │  ├─ src/route/getRoute.test.ts
+      │  │  └─ src/route/getRoute.ts
+      │  └─ newdir: 6 narrow targets + 0 common targets · ~36 tokens of file bodies, ~0 common
+      │     ├─ src/newdir/n0.ts
+      │     ├─ src/newdir/n1.ts
+      │     ├─ src/newdir/n2.ts
+      │     ├─ src/newdir/n3.ts
+      │     ├─ src/newdir/n4.ts
+      │     └─ src/newdir/n5.ts
+      ├─ common: 0 (route spec: 0)
+      ├─ unclaimed: 0
+      └─ verdict: holds — every changed file sits in a partition
+
+"
+`;
+
+exports[`driver.route.guard-partition.acceptance given: [case6] a stone whose two reviewers read the @all set when: [t1] the declared set leaves a changed file unclaimed then: stdout and stderr match snapshots: read stone coverage gap stderr 1`] = `
+"🦉 the partitions would leave changed files unreviewed — no lane runs until they cover them
+
+🗿 route.guard.partition, on stone 5.1.execution
+   └─ scope @all
+      ├─ 9 changed files sit in no partition
+      │  ├─ src/extra/notes.ts → extra (+ src/extra/**)
+      │  ├─ src/newdir/n0.ts → newdir (+ src/newdir/**)
+      │  ├─ src/newdir/n1.ts → newdir (+ src/newdir/**)
+      │  ├─ src/newdir/n2.ts → newdir (+ src/newdir/**)
+      │  ├─ src/newdir/n3.ts → newdir (+ src/newdir/**)
+      │  ├─ src/newdir/n4.ts → newdir (+ src/newdir/**)
+      │  ├─ src/newdir/n5.ts → newdir (+ src/newdir/**)
+      │  ├─ src/route/getRoute.test.ts → route (+ src/route/**)
+      │  └─ src/route/getRoute.ts → route (+ src/route/**)
+      └─ repair — run this, then re-arrive
+            rhx route.guard.partition --route .behavior/v2026_01_01.demo --for review --peer @all \\
+              --partition 'review=src/review/**,.behavior/v2026_01_01.demo/**' \\
+              --partition 'extra=src/extra/**,.behavior/v2026_01_01.demo/**' \\
+              --partition 'newdir=src/newdir/**,.behavior/v2026_01_01.demo/**' \\
+              --partition 'route=src/route/**,.behavior/v2026_01_01.demo/**' \\
+              --mode apply
+
+✨ did you know?
+   ├─ claim each domain whole, in every layer, and the files you edit next stay covered
+   └─ e.g. src/route/** and blackbox/{,__snapshots__/}driver.route.* in one partition
+
+"
+`;
+
+exports[`driver.route.guard-partition.acceptance given: [case6] a stone whose two reviewers read the @all set when: [t1] the declared set leaves a changed file unclaimed then: stdout and stderr match snapshots: read stone coverage gap stdout 1`] = `
+"
+🦉 coverage read — naught written, no review run
+
+🗿 route.guard.partition
+   ├─ route = .behavior/v2026_01_01.demo
+   ├─ stone = 5.1.execution
+   ├─ checked against 11 files changed since main
+   └─ scope @all — read by r1, r2
+      ├─ partitions
+      │  └─ review: 2 narrow targets + 0 common targets · ~18 tokens of file bodies, ~0 common
+      │     ├─ src/review/getReview.test.ts
+      │     └─ src/review/getReview.ts
+      ├─ common: 0 (route spec: 0)
+      ├─ unclaimed: 9
+      │  ├─ src/extra/notes.ts
+      │  ├─ src/newdir/n0.ts
+      │  ├─ src/newdir/n1.ts
+      │  ├─ src/newdir/n2.ts
+      │  ├─ src/newdir/n3.ts
+      │  ├─ src/newdir/n4.ts
+      │  ├─ src/newdir/n5.ts
+      │  ├─ src/route/getRoute.test.ts
+      │  └─ src/route/getRoute.ts
+      ├─ verdict: gap — the entrance gate would halt here
+      └─ repair — run this before you arrive
+            rhx route.guard.partition --route .behavior/v2026_01_01.demo --for review --peer @all \\
+              --partition 'review=src/review/**,.behavior/v2026_01_01.demo/**' \\
+              --partition 'extra=src/extra/**,.behavior/v2026_01_01.demo/**' \\
+              --partition 'newdir=src/newdir/**,.behavior/v2026_01_01.demo/**' \\
+              --partition 'route=src/route/**,.behavior/v2026_01_01.demo/**' \\
+              --mode apply
+
+✨ did you know?
+   ├─ claim each domain whole, in every layer, and the files you edit next stay covered
+   └─ e.g. src/route/** and blackbox/{,__snapshots__/}driver.route.* in one partition
+
+"
+`;
+
+exports[`driver.route.guard-partition.acceptance given: [case6] a stone whose two reviewers read the @all set when: [t2] the stone is not on the route then: the refusal renders whole: refuse stone not found 1`] = `
+"
+🦉 woah there
+
+✋ ConstraintError: stone 9.absent not found on route .behavior/v2026_01_01.demo
+   └─ fix: name a stone of the route, e.g. the one \`rhx route.drive\` shows
+
+"
+`;
+
+exports[`driver.route.guard-partition.acceptance given: [case6] a stone whose two reviewers read the @all set when: [t3] an override names a peer the stone guard does not declare then: stderr matches snapshot: refuse override of unknown peer 1`] = `
+"
+🦉 woah there
+
+✋ ConstraintError: peer r3 is not a reviewer of stone 5.1.execution
+   ├─ held peers: r1, r2
+   └─ fix: name one of its reviewers with --peer, or --peer @all for every one
+
+"
+`;
+
+exports[`driver.route.guard-partition.acceptance given: [case6] a stone whose two reviewers read the @all set when: [t4] an override names a stone the route does not hold then: stderr matches snapshot: refuse override of unknown stone 1`] = `
+"
+🦉 woah there
+
+✋ ConstraintError: stone 5.1.exectuion not found on route .behavior/v2026_01_01.demo
+   ├─ held stones: 5.1.execution
+   └─ fix: name a stone of the route with --stone
+
+"
+`;
+
+exports[`driver.route.guard-partition.acceptance given: [case6] a stone whose two reviewers read the @all set when: [t5] an override for one reviewer is previewed then: stdout matches snapshot: plan override 1`] = `
+"
+🦉 partitions previewed — naught written
+
+🗿 route.guard.partition --mode plan
+   ├─ route = .behavior/v2026_01_01.demo
+   ├─ peer = r1 on 5.1.execution (overrides @all)
+   ├─ checked against 11 files changed since main
+   ├─ partitions
+   │  ├─ review: 3 narrow targets + 0 common targets · ~24 tokens of file bodies, ~0 common
+   │  │  └─ src/review/**, src/extra/**, .behavior/v2026_01_01.demo/**
+   │  ├─ route: 2 narrow targets + 0 common targets · ~17 tokens of file bodies, ~0 common
+   │  │  └─ src/route/**, .behavior/v2026_01_01.demo/**
+   │  └─ newdir: 6 narrow targets + 0 common targets · ~36 tokens of file bodies, ~0 common
+   │     └─ src/newdir/**, .behavior/v2026_01_01.demo/**
+   ├─ common: 0
+   ├─ unclaimed: 0
+   ├─ replaces: none
+   └─ to write it: add --mode apply
+
+"
+`;
+
+exports[`driver.route.guard-partition.acceptance given: [case6] a stone whose two reviewers read the @all set when: [t6] the override is applied then: stdout matches snapshot: apply override 1`] = `
+"
+🦉 partitions declared
+
+🗿 route.guard.partition --mode apply
+   ├─ route = .behavior/v2026_01_01.demo
+   ├─ peer = r1 on 5.1.execution (overrides @all)
+   ├─ checked against 11 files changed since main
+   ├─ partitions
+   │  ├─ review: 3 narrow targets + 0 common targets · ~24 tokens of file bodies, ~0 common
+   │  │  └─ src/review/**, src/extra/**, .behavior/v2026_01_01.demo/**
+   │  ├─ route: 2 narrow targets + 0 common targets · ~17 tokens of file bodies, ~0 common
+   │  │  └─ src/route/**, .behavior/v2026_01_01.demo/**
+   │  └─ newdir: 6 narrow targets + 0 common targets · ~36 tokens of file bodies, ~0 common
+   │     └─ src/newdir/**, .behavior/v2026_01_01.demo/**
+   ├─ common: 0
+   ├─ unclaimed: 0
+   ├─ replaces: none
+   └─ every peer review in scope reads it on its next run
+
+"
+`;

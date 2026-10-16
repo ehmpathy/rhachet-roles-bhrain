@@ -212,7 +212,7 @@ describe('formatGuardUpgradeTree', () => {
           mode: 'plan',
         });
         expect(out).toContain(
-          '⚠ this upgrade reverts a budget grant on 7.budgetgrant',
+          '🟡 this upgrade reverts a budget grant on 7.budgetgrant',
         );
       });
 
@@ -280,7 +280,7 @@ describe('formatGuardUpgradeTree', () => {
           mode: 'plan',
         });
         expect(out).toContain(
-          '⚠ stone 5.1.execution already passed under the prior guard',
+          '🟡 stone 5.1.execution already passed under the prior guard',
         );
       });
 
@@ -291,7 +291,7 @@ describe('formatGuardUpgradeTree', () => {
           mode: 'plan',
         });
         expect(out).toContain(
-          '⚠ stone 5.2.review is approved but not yet passed',
+          '🟡 stone 5.2.review is approved but not yet passed',
         );
       });
 

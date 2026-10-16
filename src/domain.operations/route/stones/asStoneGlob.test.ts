@@ -204,8 +204,9 @@ describe('findOneStoneByPattern', () => {
         expect(error).toBeInstanceOf(BadRequestError);
         expect(error.message).toContain('matched 3 stones');
         expect(error.message).toContain('be more specific');
-        // verify metadata serialized into message
-        expect(error.message).toContain('"pattern": "3."');
+        // the headline names the pattern, so no metadata bag repeats it
+        expect(error.message).toContain('pattern "3." matched');
+        expect(error.message).not.toContain('"pattern":');
         expect(error.message).toContain('3.1.research.v1');
         expect(error.message).toContain('3.2.blueprint.v1');
         expect(error.message).toContain('3.3.execute.v1');
@@ -222,8 +223,8 @@ describe('findOneStoneByPattern', () => {
         );
         expect(error).toBeInstanceOf(BadRequestError);
         expect(error.message).toContain('matched 5 stones');
-        // verify metadata serialized into message
-        expect(error.message).toContain('"pattern": "@all"');
+        // the headline names the pattern, so no metadata bag repeats it
+        expect(error.message).toContain('pattern "@all" matched');
         expect(error.message).toContain('1.vision');
         expect(error.message).toContain('2.criteria');
         expect(error.message).toContain('3.1.research.v1');

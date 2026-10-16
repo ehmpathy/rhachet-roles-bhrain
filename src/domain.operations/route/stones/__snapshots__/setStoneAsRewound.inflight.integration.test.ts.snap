@@ -1,0 +1,8 @@
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
+
+exports[`setStoneAsRewound.inflight given: [case1] a guard round in flight, one lane already spoke when: [t1] the superseded round lands after the rewind then: the refusal a driver reads is pinned whole 1`] = `
+"✋ ConstraintError: a rewind superseded this guard round of stone 1.test; its output was discarded
+
+the rewind cleared what the round had written, and the round wrote naught after it.
+re-run the round: rhx route.stone.set --stone 1.test --as arrived"
+`;

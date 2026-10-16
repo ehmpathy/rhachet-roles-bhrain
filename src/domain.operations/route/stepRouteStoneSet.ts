@@ -1,15 +1,17 @@
-import { BadRequestError, UnexpectedCodePathError } from 'helpful-errors';
+import { ConstraintError, UnexpectedCodePathError } from 'helpful-errors';
 
 import type { ContextCliEmit } from '@src/domain.objects/Driver/ContextCliEmit';
 import { getGuardSelfReviews } from '@src/domain.objects/Driver/RouteStoneGuard';
+import type { ContextReviewBrainSupply } from '@src/domain.operations/brain/genReviewBrainSupply'; // brain/ is a declared shared subdomain (its .readme.md)
 
 import { delDriveBlockerState } from './drive/delDriveBlockerState';
+import { delRouteInflight } from './drive/delRouteInflight';
 import { formatRouteStoneEmit } from './formatRouteStoneEmit';
-import type { ContextReviewBrainSupply } from './genReviewBrainSupply';
 import { getStrayFlagRefusal } from './getStrayFlagRefusal';
+import { asRouteStoneSetCommandHead } from './guard/review/peer/asRouteStoneSetCommandHead';
 import { computePromisedReviewCount } from './guard/review/self/computePromisedReviewCount';
-import { findNextUnpromisedReview } from './guard/review/self/findNextUnpromisedReview';
 import { findSelfReviewBySlug } from './guard/review/self/findSelfReviewBySlug';
+import { getOneNextUnpromisedReview } from './guard/review/self/getOneNextUnpromisedReview';
 import { getPromisedSlugsSet } from './guard/review/self/getPromisedSlugsSet';
 import { getSelfReviewArticulationPath } from './guard/review/self/getSelfReviewArticulationPath';
 import { getSelfReviewChallengeDecision } from './guard/review/self/getSelfReviewChallengeDecision';
@@ -18,12 +20,14 @@ import { getSelfReviewSlugs } from './guard/review/self/getSelfReviewSlugs';
 import { getStonePromises } from './guard/review/self/getStonePromises';
 import { isInvalidSelfReviewSlug } from './guard/review/self/isInvalidSelfReviewSlug';
 import { findOneStoneByPattern } from './stones/asStoneGlob';
+import { asStoneNotFoundError } from './stones/asStoneNotFoundError';
 import { getAllStones } from './stones/getAllStones';
 import { setStoneAsApproved } from './stones/setStoneAsApproved';
 import { setStoneAsBlocked } from './stones/setStoneAsBlocked';
 import { setStoneAsConcernAbsorbed } from './stones/setStoneAsConcernAbsorbed';
 import { setStoneAsFeedbackAbsorbed } from './stones/setStoneAsFeedbackAbsorbed';
 import { setStoneAsForced } from './stones/setStoneAsForced';
+import { setStoneAsInflight } from './stones/setStoneAsInflight';
 import { setStoneAsOverruled } from './stones/setStoneAsOverruled';
 import { setStoneAsPassed } from './stones/setStoneAsPassed';
 import { setStoneAsPromised } from './stones/setStoneAsPromised';
@@ -48,8 +52,15 @@ export const stepRouteStoneSet = async (
       | 'overruled'
       | 'forced'
       | 'disputed'
-      | 'conceded';
+      | 'conceded'
+      | 'inflight';
     that?: string;
+    /**
+     * what the driver waits on (only for --as inflight)
+     *
+     * .why = the stop hook prints it in its quiet note, so the wait names its own work
+     */
+    what?: string;
     /**
      * the peer reviewer a stance is taken WITH (only for --as disputed | conceded)
      *
@@ -107,6 +118,7 @@ export const stepRouteStoneSet = async (
   challenged?: boolean;
   disputed?: boolean;
   conceded?: boolean;
+  inflight?: boolean;
   refs?: { reviews: string[]; judges: string[] };
   emit: { stdout: string; stderr?: string } | null;
 }> => {
@@ -130,11 +142,24 @@ export const stepRouteStoneSet = async (
     },
   });
   if (strayFlag)
-    throw new BadRequestError(strayFlag.message, {
+    throw new ConstraintError(strayFlag.message, {
       stone: input.stone,
       as: input.as,
       flag: strayFlag.flag,
     });
+
+  // --what belongs to --as inflight alone; refuse it loud elsewhere, the same shape as above
+  if (input.as !== 'inflight' && input.what !== undefined)
+    throw new ConstraintError(
+      [
+        `--what is only accepted for --as inflight`,
+        ``,
+        `you passed --as ${input.as}, which takes no --what.`,
+        ``,
+        `to wait on delegated work, run:`,
+        `  ${asRouteStoneSetCommandHead({ stone: input.stone })} --as inflight --what '<what>'`,
+      ].join('\n'),
+    );
 
   // a --as that MOVES the stone clears the drive-blocker streak — the "stuck Nx" count
   // that the stophook increments each time the driver stops WITHOUT a passage attempt
@@ -181,17 +206,30 @@ export const stepRouteStoneSet = async (
   }
 
   if (input.as === 'passed') {
+    // a guard round can outlive a foreground call and move to the background; the
+    // round marks itself in flight, so the stop hook reads it as work, not a refusal
+    await setStoneAsInflight({
+      stone: input.stone,
+      route: input.route,
+      what: 'a guard round runs for this arrival',
+      now: Date.now(),
+      via: 'arrival',
+    });
+
+    // an arrival ends the round of repairs, whatever the guard decides or throws — so the
+    // repairs-in-flight watermark clears either way, and cannot outlive its round
     const result = await setStoneAsPassed(
       {
         stone: input.stone,
         route: input.route,
       },
       context,
-    );
+    ).finally(() => delRouteInflight({ route: input.route }));
 
     // clear ONLY on a real pass — a blocked/rejected attempt is the stuck driver the
     // 21-stop escalation exists to catch, and must be left to accumulate
     if (result.passed) await delDriveBlockerState({ route: input.route });
+
     return {
       passed: result.passed,
       refs: result.refs,
@@ -202,9 +240,7 @@ export const stepRouteStoneSet = async (
   if (input.as === 'promised') {
     // validate --that is provided
     if (!input.that) {
-      throw new BadRequestError('--that is required for --as promised', {
-        stone: input.stone,
-      });
+      throw new ConstraintError('--that is required for --as promised');
     }
 
     // find the stone
@@ -213,9 +249,13 @@ export const stepRouteStoneSet = async (
       stones,
       pattern: input.stone,
     });
-    if (!stoneMatched) {
-      throw new BadRequestError('stone not found', { stone: input.stone });
-    }
+    if (!stoneMatched)
+      throw asStoneNotFoundError({
+        act: 'promised',
+        route: input.route,
+        pattern: input.stone,
+        stones,
+      });
 
     // validate slug exists in stone's review.selfs
     const selfReviews = stoneMatched.guard
@@ -223,9 +263,8 @@ export const stepRouteStoneSet = async (
       : [];
     const validSlugs = getSelfReviewSlugs({ selfReviews });
     if (isInvalidSelfReviewSlug({ slug: input.that, validSlugs })) {
-      throw new BadRequestError(
+      throw new ConstraintError(
         `invalid review.self slug: "${input.that}". valid options: ${validSlugs.join(', ')}`,
-        { stone: input.stone, slug: input.that, validSlugs },
       );
     }
 
@@ -249,7 +288,7 @@ export const stepRouteStoneSet = async (
       //    single run-on sentence, so one of three promise refusals read as a wall of text
       //    beside two that break cleanly (`rule.forbid.snapshot-visual-blemishes`, the
       //    consistency check). the words are unchanged; only the breaks are new
-      throw new BadRequestError(
+      throw new ConstraintError(
         [
           `--into is required on --as promised`,
           ``,
@@ -331,7 +370,7 @@ export const stepRouteStoneSet = async (
 
     // find next unpromised review (if any)
     const nextReview =
-      findNextUnpromisedReview({ selfReviews, promisedSlugs }) ?? undefined;
+      getOneNextUnpromisedReview({ selfReviews, promisedSlugs }) ?? undefined;
 
     // reached only once the promise write above succeeded (a throw earlier never gets
     // here, and the challenged early-return above never reaches this line either)
@@ -355,9 +394,7 @@ export const stepRouteStoneSet = async (
   if (input.as === 'absorbed') {
     // validate --that is provided (which reviewer's critique this absorbs)
     if (!input.that)
-      throw new BadRequestError('--that is required for --as absorbed', {
-        stone: input.stone,
-      });
+      throw new ConstraintError('--that is required for --as absorbed');
 
     const result = await setStoneAsFeedbackAbsorbed({
       stone: input.stone,
@@ -376,18 +413,15 @@ export const stepRouteStoneSet = async (
     // .why = a stance keyed to a party alone sheds every concern that party raised
     //        (rule.forbid.suppression-of-undeclared-concerns)
     if (!input.with)
-      throw new BadRequestError(`--with is required for --as ${input.as}`, {
-        stone: input.stone,
-      });
+      throw new ConstraintError(`--with is required for --as ${input.as}`);
     if (!input.about)
-      throw new BadRequestError(
+      throw new ConstraintError(
         [
           `--about is required for --as ${input.as}`,
           ``,
           `a stance answers ONE concern, so it must name which:`,
           `  --about blocker.1   --about nitpick.4`,
         ].join('\n'),
-        { stone: input.stone },
       );
 
     const result = await setStoneAsConcernAbsorbed({
@@ -418,11 +452,28 @@ export const stepRouteStoneSet = async (
     // --as blocked has its OWN separate triggered-report, so a deliberate block still
     // clears the general stuck streak unconditionally — it never defeats that escalation
     await delDriveBlockerState({ route: input.route });
+
+    // a declared wall ends the wait on delegated repairs; a first-attempt challenge does not
+    if (result.blocked) await delRouteInflight({ route: input.route });
     return {
       blocked: result.blocked,
       challenged: result.challenged,
       emit: result.emit,
     };
+  }
+
+  if (input.as === 'inflight') {
+    // the mark is forward motion: it appends an `inflight` passage entry, so a stale halt
+    // clears (rule.require.forward-motion-clears-blocker). the stuck streak is left as it
+    // stands: a watermark that goes stale resumes the nudge from where it paused
+    const result = await setStoneAsInflight({
+      stone: input.stone,
+      route: input.route,
+      what: input.what,
+      now: Date.now(),
+      via: 'driver',
+    });
+    return { inflight: result.inflight, emit: result.emit };
   }
 
   if (input.as === 'overruled') {

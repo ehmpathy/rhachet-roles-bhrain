@@ -63,7 +63,7 @@ const renderGuardNode = (input: {
     ...(result.from && (decisionName === 'kept' || decisionName === 'upgrade')
       ? [`from = ${result.from}`]
       : []),
-    ...result.warnings.map((warn) => `⚠ ${asWarningText(warn)}`),
+    ...result.warnings.map((warn) => `🟡 ${asWarningText(warn)}`),
   ];
 
   // plan-mode diff body for an available upgrade (changed lines only)
@@ -204,7 +204,7 @@ export const formatGuardUpgradeTree = (input: {
     input.mode === 'plan' && hasUpgrade
       ? blockedCount === 0
         ? 'to apply: rhx route.guard.upgrade --mode apply'
-        : `⚠ ${blockedCount} ${blockedNoun} blocked — a full apply is refused; scope a clean stone with --stone`
+        : `🟡 ${blockedCount} ${blockedNoun} blocked — a full apply is refused; scope a clean stone with --stone`
       : null;
 
   const footer =

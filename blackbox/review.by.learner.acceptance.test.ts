@@ -1,25 +1,52 @@
+import { UnexpectedCodePathError } from 'helpful-errors';
+import * as fs from 'fs';
 import * as path from 'path';
 
 import { given, then, useThen, when } from 'test-fns';
 
+import { DEFAULT_TEST_BRAIN_VIA_CLI } from '@src/.test/genTestBrainContext';
+import { BRAIN_CALL_TEST_TIMEOUT_MS } from '@src/.test/infra/brainCallTestTimeout';
 import {
   genReviewByFixture,
   invokeReviewByRoleViaRhx,
   invokeReviewBySkill,
+  sanitizeRawReviewForSnapshot,
+  sanitizeReviewByOutputForSnapshot,
 } from './.test/invokeReviewBySkill';
+import { maskVerdictCounts } from './.test/maskVerdictCounts';
 
-const ASSETS_DIR = path.join(__dirname, '.test/assets/codebase-review-by');
+const ASSETS_DIR = path.join(
+  __dirname,
+  '.test/assets/codebase-review-by-learner',
+);
+
+/**
+ * .what = the scope every "clean" case reviews — the clean target AND the glossary its terms
+ *         are itemized in
+ * .why = the term-aggregation rubric's one rule makes a declared operation whose terms are not
+ *        itemized a blocker. the shared `codebase-review-by/src/clean.ts` declares two
+ *        operations and its fixture holds no glossary, so a model that rejected it read the rule
+ *        correctly — and a test that pinned `exit 0` on it pinned a coin flip. here the target is
+ *        clean by the rubric's own definition, and the glossary rides in scope so the reviewer
+ *        can see that it is
+ */
+const PATHS_OF_CLEAN =
+  '{src/clean.terms.ts,.agent/repo=.this/role=any/briefs/domain.terms/*.md}';
 
 /**
  * .what = raise the per-test timeout above the 90s shared default (jest.acceptance.env.ts)
- * .why = [case-all] drives BOTH learner rubrics serially in one action — two back-to-back LLM
- *        reviews (~45s each) that sit right at the 90s boundary and time out under any load. a
- *        single test that drives multiple serial reviews legitimately needs ~2× the budget; this
- *        gives headroom for real latency, it does not mask a hang (a genuine stall still fails,
- *        just at 240s). scoped to THIS file so other acceptance suites keep the tighter default.
+ * .why = every case drives a real brain review through the CLI, and [case-all] + [case-wrapper]
+ *        drive BOTH rubrics — two brain calls in series. the CLI selects only the package's
+ *        LISTED slugs, so these cases ride the bare tier (DEFAULT_TEST_BRAIN_VIA_CLI), whose
+ *        default supply can land on a host that serves below its speed floor. measured
+ *        2026-10-05: one-rubric cases ran up to 229s; two-rubric cases ran 105–453s, and one
+ *        crossed 600s on a correct review. tests assert correctness, never latency, so the bound
+ *        is the shared per-call bound × the calls in this file's heaviest case. scoped to THIS
+ *        file so other acceptance suites keep the tighter default.
  */
+const CALLS_IN_HEAVIEST_CASE = 2;
 // eslint-disable-next-line no-undef
-jest.setTimeout(240000);
+jest.setTimeout(BRAIN_CALL_TEST_TIMEOUT_MS * CALLS_IN_HEAVIEST_CASE);
 
 /**
  * .what = config for probabilistic cases that invoke LLM review subprocesses
@@ -28,8 +55,85 @@ jest.setTimeout(240000);
  */
 const REPEATABLE_CONFIG = {
   attempts: 3,
-  criteria: 'SOME',
+  // `'SOME'` locally would let a 2-of-3 defect read green on a developer's machine, the
+  // cheapest place to diagnose it. CI keeps `'SOME'` so a probabilistic lane does not redden
+  // a shared pipeline (rule.require.repeatable-for-llm-tests).
+  criteria: process.env.CI ? 'SOME' : 'EVERY',
 } as const;
+
+/**
+ * .what = reads each review file the cli named in its stdout, from the fixture cwd
+ * .why = a refused review states its blocker only in the review file, and the fixture lives in
+ *        a temp dir that is gone or out of reach once the run ends. without the body, a red
+ *        verdict on a clean fixture cannot be told apart from a flake or a prompt regression
+ */
+const asReviewBodiesFromStdout = (input: {
+  stdout: string;
+  cwd: string;
+}): string => {
+  // collect the distinct review paths the cli printed
+  const paths = [
+    ...new Set(
+      [...input.stdout.matchAll(/(?:review|given): (\.reviews\/\S+\.md)/g)].map(
+        (match) => match[1]!,
+      ),
+    ),
+  ];
+  if (paths.length === 0) return '  (no review path in stdout)';
+
+  // render each body, or say plainly that it is absent
+  return paths
+    .map((one) => {
+      const abs = path.join(input.cwd, one);
+      const body = fs.existsSync(abs)
+        ? fs.readFileSync(abs, 'utf8').trimEnd()
+        : '(absent on disk)';
+      return [`--- ${one} ---`, body].join('\n');
+    })
+    .join('\n\n');
+};
+
+/**
+ * .what = asserts the cli exited with the expected code, and shows its output when it did not
+ * .why = `expect(cli.code).toBe(0)` reports `Expected: 0 / Received: 2` and discards every
+ *        byte the subprocess wrote, so a failure here says a live review refused (or
+ *        rubber-stamped) and never says why. this suite drives a real brain, so its failures
+ *        most need a diagnosis (rule.require.failloud, rule.require.errors-name-the-fix).
+ */
+const assureCliExitedAs = (input: {
+  cli: { code: number; stdout: string; stderr: string };
+  cwd: string;
+  code: number;
+}): void => {
+  if (input.cli.code === input.code) return;
+  throw new UnexpectedCodePathError(
+    [
+      `the review cli exited ${input.cli.code}, expected ${input.code}`,
+      '',
+      'stderr:',
+      input.cli.stderr.trimEnd() || '  (empty)',
+      '',
+      'stdout (tail):',
+      input.cli.stdout.trimEnd().split('\n').slice(-20).join('\n') || '  (empty)',
+      '',
+      'reviews written:',
+      asReviewBodiesFromStdout({ stdout: input.cli.stdout, cwd: input.cwd }),
+    ].join('\n'),
+    {
+      code: input.cli.code,
+      hint: 'read the stderr above: a `✋ ConstraintError:` names a fixture or flag to fix; a `💥 MalfunctionError:` names a brain or credential fault — unlock keyrack via `rhx keyrack unlock --owner ehmpath --env test` and rerun. a timeout or an empty stderr names a slow or hung brain call — rerun this file alone, or raise its per-test budget if it is red only under full-suite load. a clean exit where 2 was expected names a rubber-stamp — read the review body above',
+    },
+  );
+};
+
+/**
+ * .what = asserts the cli exited clean (0)
+ * .why = the common case of assureCliExitedAs, named for what the clean cases claim
+ */
+const assureCliExitedClean = (input: {
+  cli: { code: number; stdout: string; stderr: string };
+  cwd: string;
+}): void => assureCliExitedAs({ ...input, code: 0 });
 
 /**
  * .what = acceptance coverage for review.by against the REAL shipped learner role
@@ -59,25 +163,37 @@ describe('review.by.learner.acceptance', () => {
           });
           const cli = await invokeReviewByRoleViaRhx({
             role: 'learner',
-            paths: 'src/clean.ts',
-            brain: 'openrouter/deepseek/flash',
+            paths: PATHS_OF_CLEAN,
+            brain: DEFAULT_TEST_BRAIN_VIA_CLI,
             cwd,
           });
-          return { cli };
+          return { cli, cwd };
         });
 
         then('exit 0 — the wrapper resolved, no "no skill found" error', () => {
           // this is the crux of the wrapper pattern: `rhx review.by --role learner` MUST find the
           // learner's OWN review.by skill (its wrapper). if the learner shipped no wrapper, rhachet
           // would fail with `no skill "review.by" found with --role learner` and a nonzero exit.
-          expect(res.cli.code).toBe(0);
+          assureCliExitedClean({ cli: res.cli, cwd: res.cwd });
           expect(res.cli.stderr).not.toContain('no skill');
         });
 
         then('both learner rubrics ran via the delegated base', () => {
-          expect(res.cli.stdout).toContain('term-application');
-          expect(res.cli.stdout).toContain('term-aggregation');
-          expect(res.cli.stdout).toContain('✓');
+          // the mark is read PER RUBRIC: a bare `✓` anywhere would also match the
+          // `0 nitpicks ✓` row a REJECTED rubric streams, so it proves naught about both
+          expect(res.cli.stdout).toContain('r1 term-application ✓');
+          expect(res.cli.stdout).toContain('r2 term-aggregation ✓');
+        });
+
+        then('the settled tree matches snapshot', () => {
+          // the verdict is a brain's, and each attempt keys its own snapshot, so the clean
+          // marks assert FIRST: a rejected attempt fails here, loud, before it ever reaches
+          // toMatchSnapshot — else a `--resnap` would pin the rejected tree as truth
+          expect(res.cli.stdout).toContain('r1 term-application ✓');
+          expect(res.cli.stdout).toContain('r2 term-aggregation ✓');
+          expect(
+            sanitizeReviewByOutputForSnapshot(res.cli.stdout),
+          ).toMatchSnapshot();
         });
       },
     );
@@ -91,7 +207,9 @@ describe('review.by.learner.acceptance', () => {
     when.repeatably(REPEATABLE_CONFIG)(
       '[t0] review.by --role learner (no --for) runs both rubrics',
       () => {
-        const res = useThen('both rubrics run and pass', async () => {
+        // the label says what the body proves, and no more: it ran to completion. whether
+        // both rubrics passed is what the `then`s below decide (rule.forbid.failhide).
+        const res = useThen('the cli runs to completion', async () => {
           const cwd = await genReviewByFixture({
             slug: 'review-by-learner-all',
             clone: ASSETS_DIR,
@@ -99,33 +217,39 @@ describe('review.by.learner.acceptance', () => {
           });
           const cli = await invokeReviewBySkill({
             role: 'learner',
-            paths: 'src/clean.ts',
-            brain: 'openrouter/deepseek/flash',
+            paths: PATHS_OF_CLEAN,
+            brain: DEFAULT_TEST_BRAIN_VIA_CLI,
             cwd,
           });
-          return { cli };
+          return { cli, cwd };
         });
 
         then('exit 0', () => {
-          expect(res.cli.code).toBe(0);
+          assureCliExitedClean({ cli: res.cli, cwd: res.cwd });
         });
 
-        then('BOTH rubrics appear in the tree, each with a pass mark', () => {
+        then('BOTH rubrics appear in the tree, EACH with a pass mark', () => {
           // proves review.by enumerated the two-rubric set AND that the 3-rule term-application
           // rubric loaded all its rules (the multi-rule comma-join path) — never a malfunction.
           expect(res.cli.stdout).toContain('term-application');
           expect(res.cli.stdout).toContain('term-aggregation');
-          expect(res.cli.stdout).toContain('✓');
           expect(res.cli.stdout).not.toContain('malfunctioned');
+
+          // a bare `toContain('✓')` cannot tell an approval from a rejection:
+          // `genReviewByStdout` renders a passed rubric `r1 <slug> ✓` and a rejected one
+          // `r1 <slug> ✗` + `N blockers`, but the peer-style row above it carries `0
+          // nitpicks ✓` even on a rejected rubric. so the mark is checked per rubric
+          // (rule.forbid.failhide).
+          expect(res.cli.stdout).toContain('r1 term-application ✓');
+          expect(res.cli.stdout).toContain('r2 term-aggregation ✓');
         });
 
         then('stdout STREAMS each rubric as an incremental peer-style row — no silent wait', () => {
-          // the regression this locks in: review.by used to capture each rubric's subprocess
-          // output silently and print only the final tree, so a human faced a multi-minute silent
-          // terminal (rule.require.status-feedback). the cli now streams each rubric to STDOUT as
-          // the SAME incremental peer-style row route.stone.set renders (formatGuardReviewerTree):
-          // a `r{n}: {slug}` header + a `given:` line per rubric. assert both rubrics stream that
-          // way, so both the feedback AND its peer-review conformance cannot regress.
+          // the cli streams each rubric to stdout as the same incremental peer-style row
+          // route.stone.set renders (formatGuardReviewerTree): a `r{n}: {slug}` header + a
+          // `given:` line per rubric, so a human never sits at a silent terminal
+          // (rule.require.status-feedback). assert both rubrics stream that way, so both the
+          // feedback and its peer-review conformance stay covered.
           expect(res.cli.stdout).toContain('r1: term-application');
           expect(res.cli.stdout).toContain('r2: term-aggregation');
           // the peer-style `given:` line — proof it went through formatGuardReviewerTree, not a
@@ -133,6 +257,16 @@ describe('review.by.learner.acceptance', () => {
           expect(res.cli.stdout).toContain(
             'given: .reviews/by=learner/rubric=term-application.md',
           );
+        });
+
+        then('the settled tree matches snapshot', () => {
+          // the clean marks lead, for the reason [case-wrapper] states: a rejected
+          // attempt must never be the tree a `--resnap` pins
+          expect(res.cli.stdout).toContain('r1 term-application ✓');
+          expect(res.cli.stdout).toContain('r2 term-aggregation ✓');
+          expect(
+            sanitizeReviewByOutputForSnapshot(res.cli.stdout),
+          ).toMatchSnapshot();
         });
       },
     );
@@ -155,15 +289,15 @@ describe('review.by.learner.acceptance', () => {
           const cli = await invokeReviewBySkill({
             role: 'learner',
             for: 'term-application',
-            paths: 'src/clean.ts',
-            brain: 'openrouter/deepseek/flash',
+            paths: PATHS_OF_CLEAN,
+            brain: DEFAULT_TEST_BRAIN_VIA_CLI,
             cwd,
           });
-          return { cli };
+          return { cli, cwd };
         });
 
         then('exit 0', () => {
-          expect(res.cli.code).toBe(0);
+          assureCliExitedClean({ cli: res.cli, cwd: res.cwd });
         });
 
         then('disintermediates to the RAW review; only term-application, aggregation isolated out', () => {
@@ -172,6 +306,13 @@ describe('review.by.learner.acceptance', () => {
           expect(res.cli.stdout).not.toContain('review.by --role'); // no review.by chrome
           expect(res.cli.stdout).toContain('term-application'); // via the base review's `review:` path
           expect(res.cli.stdout).not.toContain('term-aggregation'); // the other rubric never ran
+        });
+
+        then('the raw review chrome matches snapshot', () => {
+          // a clean exit asserts FIRST: a timed-out or rejected run fails here, loud, before it
+          // reaches toMatchSnapshot — else a `--resnap` pins a truncated tree as truth
+          assureCliExitedClean({ cli: res.cli, cwd: res.cwd });
+          expect(sanitizeRawReviewForSnapshot(res.cli.stdout)).toMatchSnapshot();
         });
       },
     );
@@ -194,15 +335,15 @@ describe('review.by.learner.acceptance', () => {
           const cli = await invokeReviewBySkill({
             role: 'learner',
             for: 'term-aggregation',
-            paths: 'src/clean.ts',
-            brain: 'openrouter/deepseek/flash',
+            paths: PATHS_OF_CLEAN,
+            brain: DEFAULT_TEST_BRAIN_VIA_CLI,
             cwd,
           });
-          return { cli };
+          return { cli, cwd };
         });
 
         then('exit 0', () => {
-          expect(res.cli.code).toBe(0);
+          assureCliExitedClean({ cli: res.cli, cwd: res.cwd });
         });
 
         then('disintermediates to the RAW review; only term-aggregation, application isolated out', () => {
@@ -212,6 +353,13 @@ describe('review.by.learner.acceptance', () => {
           expect(res.cli.stdout).toContain('term-aggregation'); // via the base review's `review:` path
           expect(res.cli.stdout).not.toContain('term-application'); // the other rubric never ran
         });
+
+        then('the raw review chrome matches snapshot', () => {
+          // a clean exit asserts FIRST: a timed-out or rejected run fails here, loud, before it
+          // reaches toMatchSnapshot — else a `--resnap` pins a truncated tree as truth
+          assureCliExitedClean({ cli: res.cli, cwd: res.cwd });
+          expect(sanitizeRawReviewForSnapshot(res.cli.stdout)).toMatchSnapshot();
+        });
       },
     );
   });
@@ -219,6 +367,14 @@ describe('review.by.learner.acceptance', () => {
   // ─────────────────────────────────────────────────────────────────────────
   // detection — the application rubric BITES on a term-dirty file
   // ─────────────────────────────────────────────────────────────────────────
+  // the fixture `src/dirty.terms.ts` holds two term defects:
+  // - inconsistency: one concept, a surfer's reserved lesson slot, under three words —
+  //   `Reservation` / `getHold` / `cancelAppointment`
+  // - ambiguity: `session` is a surf lesson (`Session`) AND an auth login (`openSession`)
+  // its `.what` docs state each symbol's domain sense, as production code would, so the defects
+  // are visible from the target alone. they never label the file a test fixture: a target that
+  // calls itself deliberate invites the reviewer to excuse it. and with no docs at all, the
+  // test brain cannot tie the three words to one concept, and answers `no issues found`.
 
   given('[case-detect] --for term-application on a term-dirty file', () => {
     when.repeatably(REPEATABLE_CONFIG)(
@@ -234,23 +390,37 @@ describe('review.by.learner.acceptance', () => {
             role: 'learner',
             for: 'term-application',
             paths: 'src/dirty.terms.ts',
-            brain: 'openrouter/deepseek/flash',
+            brain: DEFAULT_TEST_BRAIN_VIA_CLI,
             cwd,
           });
-          return { cli };
+          return { cli, cwd };
         });
 
         then('exit 2 — the rubric bites, it does not rubber-stamp', () => {
           // dirty.terms.ts names one concept (reserved lesson slot) with three words and overloads
           // 'session' for two concepts. the rubric must find at least one blocker, as proof it truly
           // reviews rather than a pass of all input. (a real detection, not a fake-0/0.)
-          expect(res.cli.code).toBe(2);
+          assureCliExitedAs({ cli: res.cli, cwd: res.cwd, code: 2 });
         });
 
         then('the header shows the blocker-tier owl vibe + a parseable summary', () => {
           expect(res.cli.stdout).toContain('needs your talons');
           expect(res.cli.stdout).toMatch(/\d+\s*blockers?/i);
           expect(res.cli.stdout).toMatch(/\d+\s*nitpicks?/i);
+          // the snapshot below masks the count, so the floor it owes is stated here: NONZERO,
+          // since `\d+` alone would match `0 blockers`, which is a pass, not a detection
+          expect(res.cli.stdout).toMatch(/\b[1-9]\d*\s*blockers?/i);
+        });
+
+        then('the blocker-tier raw review is stable (full snapshot)', () => {
+          // the exit asserts FIRST, so a `--resnap` cannot pin a rubber-stamp as truth. the
+          // counts are a brain's, so they are masked; the tree shape around them is real.
+          // the mask is the one `review.by.guard-peer` uses — `[N] <noun> [GLYPH]`,
+          // glyph masked too, since it keys on whether the count is zero
+          expect(res.cli.code).toBe(2);
+          expect(
+            maskVerdictCounts(sanitizeRawReviewForSnapshot(res.cli.stdout)),
+          ).toMatchSnapshot();
         });
       },
     );

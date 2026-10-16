@@ -65,7 +65,7 @@ the gradient. a passage can be perfectly condensed and perfectly diffuse.
 ### 👎 bad — the diluted claim
 
 > the reviewer inherits `--diffs since-main` from the guard convention. that convention dates to the
-> first guard authored here. `getAllFileDiffsFromRange.ts` prefers `origin/main` and takes a
+> first guard authored here. `getAllFileChangesFromRange.ts` prefers `origin/main` and takes a
 > merge-base. the reviewer grades prose. `src/` holds no prose. the flags are declared per-guard in the
 > `run:` line.
 

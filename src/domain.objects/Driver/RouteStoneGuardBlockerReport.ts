@@ -18,6 +18,13 @@ import { DomainLiteral } from 'domain-objects';
  *   `--as disputed` or `--as conceded` (agent can fix). it fires only AFTER
  *   'review.peer.unabsorbed' clears, so a stance is never asked for on a critique
  *   the driver has not yet answered
+ * - 'review.peer.malpartitioned': the route's partitions leave a changed file unclaimed, or
+ *   lack the route spec — refused once at the entrance, before any lane runs, with the
+ *   one command that repairs the set (agent can fix)
+ * - 'review.peer.constraint': a peer review refused (exit 2 with no verdict) — an overflow,
+ *   a glob that matched naught, an absent credential. the halt prints the lever each refusal
+ *   names; a guard edit or a partition is the driver's own, and a grant the driver cannot
+ *   make is raised by `--as blocked` with an articulation (agent can fix, or escalate)
  * - 'judge': non-approval judges failed (agent can fix)
  * - 'approval': only approval judge blocks (agent must wait for human)
  */
@@ -27,6 +34,8 @@ export type RouteStoneGuardBlockerType =
   | 'review.peer.exhausted'
   | 'review.peer.unabsorbed'
   | 'review.peer.undeclared'
+  | 'review.peer.malpartitioned'
+  | 'review.peer.constraint'
   | 'judge'
   | 'approval';
 

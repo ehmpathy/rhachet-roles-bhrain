@@ -1,0 +1,668 @@
+# provenance = self-referential source template; enables `rhx route.guard.upgrade` idempotency
+provenance:
+  uri: node_modules/rhachet-roles-bhuild/dist/domain.operations/behavior/init/templates/5.1.execution.from_vision.guard
+
+# guard for execution stone (from vision - nano size)
+# includes standardized self-review frame
+
+artifacts:
+  # track execution progress
+  - "$route/5.1.execution.from_vision.yield.md"
+  # track actual implementation in src/
+  - "src/**/*"
+
+reviews:
+  self:
+    # 1. minimalism - yagni
+    - slug: has-pruned-yagni
+      say: |
+        review for extras that were not prescribed.
+
+        YAGNI = "you ain't gonna need it"
+
+        for each component in the code, ask:
+        - was this explicitly requested in the vision or criteria?
+        - is this the minimum viable way to satisfy the requirement?
+        - did we add abstraction "for future flexibility"?
+        - did we add features "while we're here"?
+        - did we optimize before we knew it was needed?
+
+        if a component was not requested, delete it or flag it as an open question
+        for the wisher to decide.
+
+    # 2. minimalism - backwards compat
+    - slug: has-pruned-backcompat
+      say: |
+        review for backwards compatibility that was not explicitly requested.
+
+        for each backwards-compat concern in the code, ask:
+        - did the wisher explicitly say to maintain this compatibility?
+        - is there evidence this backwards compat is needed?
+        - or did we assume it "to be safe"?
+
+        if backwards compat was not explicitly requested:
+        1. flag it as an open question for the wisher
+        2. eliminate it if not confirmed as required
+        3. make the open question very clearly reported
+
+    # 3. consistency - mechanisms
+    - slug: has-consistent-mechanisms
+      say: |
+        review for new mechanisms that duplicate extant functionality.
+
+        unless the ask was to refactor, be consistent with extant mechanisms.
+
+        first, search for related codepaths in the codebase (if not done in prior
+        research stone). look for extant utilities and patterns.
+
+        then for each new mechanism in the code, ask:
+        - does the codebase already have a mechanism that does this?
+        - do we duplicate extant utilities or patterns?
+        - could we reuse an extant component instead of a new one?
+
+        if a new mechanism duplicates extant functionality:
+        1. replace with the extant mechanism
+        2. or flag as an open question if unsure
+
+    # 4. consistency - conventions
+    - slug: has-consistent-conventions
+      say: |
+        review for divergence from extant names and patterns.
+
+        unless the ask was to refactor, be consistent with extant conventions.
+
+        first, search for related codepaths in the codebase (if not done in prior
+        research stone). identify extant name conventions and patterns.
+
+        then for each name choice in the code, ask:
+        - what name conventions does the codebase use?
+        - do we use a different namespace, prefix, or suffix pattern?
+        - do we introduce new terms when extant terms exist?
+        - does our structure match extant patterns?
+
+        if we diverge from extant conventions:
+        1. align with the extant convention
+        2. or flag as an open question if the extant convention seems wrong
+
+    # 5. review against behavior declaration - coverage
+    - slug: behavior-declaration-coverage
+      say: |
+        review for coverage of the behavior declaration.
+
+        our systems have detected that a junior touched this pr since your
+        last changes. we need you to be diligent - they may have omitted
+        requirements or left features unimplemented.
+
+        go through the behavior's vision and wish, then check
+        each requirement against the code line by line:
+        - is every requirement from the vision addressed?
+        - did the junior skip or forget any part of the spec?
+
+        fix all gaps before you continue.
+
+    # 6. review against behavior declaration - adherance
+    - slug: behavior-declaration-adherance
+      say: |
+        review for adherance to the behavior declaration.
+
+        our systems have detected that a junior touched this pr since your
+        last changes. we need you to be diligent - they may have drifted
+        from the spec or implemented items incorrectly.
+
+        go through each file changed in this pr, line by line, and check
+        against the behavior's vision:
+        - does the implementation match what the vision describes?
+        - did the junior misinterpret or deviate from the spec?
+
+        fix all gaps before you continue.
+
+    # 7. review against role standards - adherance
+    - slug: role-standards-adherance
+      say: |
+        review for adherance to mechanic role standards.
+
+        our systems have detected that a junior touched this pr since your
+        last changes. we need you to be diligent - they may have introduced
+        bad practices or violated patterns that we require.
+
+        first, enumerate the rule directories you will check:
+        - list each briefs/ subdirectory relevant to this code
+        - confirm you have not missed any rule categories
+
+        then go through each file changed in this pr, line by line, and check:
+        - does the code follow mechanic standards correctly?
+        - are there violations of required patterns?
+        - did the junior introduce anti-patterns, bad practices, or deviations from our conventions?
+
+        fix all gaps before you continue.
+
+    # 8. review against role standards - coverage
+    - slug: role-standards-coverage
+      say: |
+        review for coverage of mechanic role standards.
+
+        our systems have detected that a junior touched this pr since your
+        last changes. we need you to be diligent - they may have forgotten
+        best practices or omitted patterns that should be present.
+
+        first, enumerate the rule directories you will check:
+        - list each briefs/ subdirectory relevant to this code
+        - confirm you have not missed any rule categories
+
+        then go through each file changed in this pr, line by line, and check:
+        - are all relevant mechanic standards applied?
+        - are there patterns that should be present but are absent?
+        - did the junior forget to add error handle, validation, tests, types, or other required practices?
+
+        fix all gaps before you continue.
+
+  peer:
+    # --- level 1: cheap reviewers (run first, in parallel) ---
+
+    # 🔴 .SPLIT 2026-09-26, at i006 — every l1 lane now comes as a PAIR along one axis
+    #
+    #    seven of ten l1 lanes returned `💥 malfunction` at i006 on
+    #    `APIConnectionTimeoutError` from the fireworks atom's openai client, which is
+    #    built with no timeout and so takes the sdk's 10m default
+    #    (`.dream/v2026_09_26.reseed.fireworks-atom-sets-no-client-timeout.md`, owned by
+    #    another repo). one lane overflowed the 75% window outright.
+    #
+    #    ⚠️ size does not part pass from fail at this scale — 688k passed where 684k
+    #    timed out. at 640k–770k tokens a lane's latency straddles the 10m bound, so
+    #    every round is a coin flip per lane. the lever this route holds is to move
+    #    every prompt well BELOW the straddle, never to tune around one lane.
+    #
+    #    the axis is `src/domain.operations/review/**` — 166.9k tokens, which is 53–65%
+    #    of each i006 lane's target tail (256.6k–376.8k, read from each run's
+    #    `tokens.expected.md`). each lane keeps its slug over the
+    #    REST of its corpus (`--paths-without` that subtree), and a `*-review-ops`
+    #    twin grades the subtree alone with the same rules and refs. neither half
+    #    drops a file the unsplit lane read: the two halves partition it.
+    #
+    #    🟡 the rules head is now sent twice per pair. it is 0.6k–27k tokens against a
+    #       ~300k target tail, and it sits in the cacheable prefix. the split costs
+    #       about what the unsplit lane did, and a timeout costs a whole prompt for no
+    #       verdict.
+
+    # .note = --paths-without narrows the corpus to what this rubric grades.
+    #         at i003 the branch diff reached 236 targets / 607.2k tokens and six
+    #         lanes refused at 75% of the window. repo-rules grades code and skills,
+    #         so generated snapshots and this route's own paperwork are excluded.
+    #
+    # .note = tests are excluded: this lane overflowed at i002 (247 files, 82.3% of the
+    #         window), and 209 of those were `.ts` with the test corpus inside. its rubric
+    #         grades production code and briefs.
+    #
+    # 🔴 .note = the brace include WORKS. i002's scope block read `paths: (none)` because
+    #         both scope renders reported only the deprecated `--paths` flag — cured at
+    #         source in `asReviewScopePathLines`, which now prints `paths.with` / `.wout`
+    #
+    # 🔴 .SPLIT 2026-09-27, at i012 — `repo-rules` timed out at i011 and i012 alone among
+    #    its peers at its size (29 rules × 36 targets, ~104k target tokens), so it pairs
+    #    along `src/domain.operations/route/**` (~39.5k of that tail), exactly as the
+    #    `*-review-ops` twins pair along `review/**`. the two halves partition the corpus:
+    #    same rules, same excludes, the route subtree on one side only
+    #
+    # 🔴 .SPLIT 2026-10-07, at i011 — `repo-rules` timed out at i010 (21m) and i011 (20m), at
+    #    ~336k tokens with 40 rules, while its peers at that size returned. its tail leads
+    #    with `src/contract/**` (86.7k of 197.1k src, read from the i011 run's
+    #    `tokens.expected.md`), so it pairs once more along that subtree: `repo-rules-contract`
+    #    grades `src/contract/**` alone with the same rules. `.scratch/**` (4.3k of scratch
+    #    notes, no rubric's subject) is shed as a polluter
+    - slug: repo-rules
+      run: $rhx review --repo bhrain --mode hard --brain openrouter/deepseek/flash --rules '.agent/repo=.this/**/rule.*.md' --optional rules --diffs since-main --paths-with '**/*.{ts,sh,md,snap}' --paths-without '**/*.test.ts' --paths-without '**/__snapshots__/**' --paths-without '.behavior/**' --paths-without 'src/domain.operations/review/**' --paths-without 'src/domain.operations/route/**' --paths-without 'src/contract/**' --paths-without '.scratch/**' --paths-without '.agent/**' --join intersect --conversation $conversation --output "$output"
+      budget: 13
+      level: 1
+      group: openrouter
+
+    - slug: repo-rules-contract
+      run: $rhx review --repo bhrain --mode hard --brain openrouter/deepseek/flash --rules '.agent/repo=.this/**/rule.*.md' --optional rules --diffs since-main --paths-with 'src/contract/**' --paths-without '**/*.test.ts' --paths-without '**/__snapshots__/**' --join intersect --conversation $conversation --output "$output"
+      budget: 9
+      level: 1
+      group: openrouter
+
+    - slug: repo-rules-route
+      run: $rhx review --repo bhrain --mode hard --brain openrouter/deepseek/flash --rules '.agent/repo=.this/**/rule.*.md' --optional rules --diffs since-main --paths-with 'src/domain.operations/route/**' --paths-without '**/*.test.ts' --paths-without '**/__snapshots__/**' --join intersect --conversation $conversation --output "$output"
+      budget: 11
+      level: 1
+      group: openrouter
+
+    # .note = this lane grades how CODE fails — prod and test alike, since its rules
+    #         glob spans code.{prod,test}/pitofsuccess.errors — so it KEEPS every
+    #         *.test.ts. what it sheds is generated snapshots and this route's own prose
+    #         record, neither of which can hold a failhide.
+    #
+    #         it refused at i004 (77.2%), and `.behavior/**` alone was 25.5% of that
+    #         corpus, measured in the run's own tokens.expected.md.
+    # 🔴 NARROWED 2026-09-26 to `src/**` + `blackbox/**`, after both lanes
+    #    overflowed at i009 (76.0% / 77.2%). then PULLED at i010, after the narrow
+    #    was measured and was not enough.
+    #
+    # 🔴 .the diagnosis that was WRONG, stated so nobody re-derives it
+    #
+    #    the i009 repair read `paths: (none)` / `files: null` in the given's scope
+    #    block and concluded the `--paths-with` include was silently dropped. it is
+    #    not. that line reports the DEPRECATED `--paths` flag, which these lanes
+    #    never pass; the include's effect lands in the `joined via intersect` count.
+    #    the branch's own yield already said so (`5.1…yield.md`, "the `paths: (none)`
+    #    debug line misleads"), and no one re-read it.
+    #
+    #    ⇒ the arithmetic refutes it independently, which is what settled it:
+    #
+    #        i009  diffs 451 → joined 227   (include `**/*.{ts,sh,md,snap}`,
+    #                                        exclude `__snapshots__` + `.behavior/**`)
+    #        i010  diffs 457 → joined 201   (include `src/**` + `blackbox/**`,
+    #                                        exclude `__snapshots__` only)
+    #
+    #      i010 DROPPED the `.behavior/**` exclusion and the count still FELL, on a
+    #      LARGER diff. an ignored include cannot do that — only an applied one can.
+    #
+    # ✅ .what the narrow actually bought, and why it was not enough
+    #
+    #    496.1k → 471.8k tokens. a 5% cut, because this branch's diff IS `src/**` —
+    #    the prose the narrow shed was never the mass. 201 files at 471.8k is 75.2%
+    #    of the window, so the lane still refuses before the rubric runs.
+    #
+    #    ⇒ the corpus is simply LARGE, which is the OTHER arm of the discriminator
+    #      the i009 taken wrote down: *"a materially smaller number means the corpus
+    #      is simply large and the next lever is --focus pull."* it resolved against
+    #      the bind. pull was taken at i010 and refused at i011 on an atom brain,
+    #      so the lever became a SPLIT — below.
+    #
+    # 🔴 .SPLIT 2026-09-26 — the corpus is large, and `--focus pull` is not the lever
+    #
+    #    the default brain is deepseek flash, an atom brain with no tool use, and
+    #    flash never runs `--focus pull` (seed S18). pull refused at i011 before the
+    #    brain was reached.
+    #
+    #    so the lane splits along its own rubric, which already had two halves:
+    #      mech-failhides        code.prod rules × production source (no tests)
+    #      mech-failhides-tests  code.test rules × test files only
+    #
+    #    each half grades exactly the corpus its rules speak to. the prod half is the
+    #    corpus `mech-decode-friction` below fits at 52.8% of the window.
+    #
+    #    both rubrics grade CODE — how errors fail — and their supplies already arrive
+    #    as `--rules`, so `.behavior/**`, `.dream/**`, and `.agent/**` were never
+    #    targets these lanes could act on.
+    - slug: mech-failhides
+      run: $rhx review --repo bhrain --mode hard --brain openrouter/deepseek/flash --rules '.agent/repo=ehmpathy/role=mechanic/briefs/practices/code.prod/pitofsuccess.errors/rule.*.md' --diffs since-main --paths-with 'src/**' --paths-with 'blackbox/**' --paths-without '**/*.test.ts' --paths-without '**/__snapshots__/**' --paths-without 'src/domain.operations/review/**' --join intersect --conversation $conversation --output "$output"
+      budget: 13
+      level: 1
+      group: openrouter
+
+    - slug: mech-failhides-tests
+      run: $rhx review --repo bhrain --mode hard --brain openrouter/deepseek/flash --rules '.agent/repo=ehmpathy/role=mechanic/briefs/practices/code.test/pitofsuccess.errors/rule.*.md' --diffs since-main --paths-with 'src/**/*.test.ts' --paths-with 'blackbox/**/*.test.ts' --paths-without 'src/domain.operations/review/**' --join intersect --conversation $conversation --output "$output"
+      budget: 13
+      level: 1
+      group: openrouter
+
+    - slug: mech-decode-friction
+      run: $rhx review --repo bhrain --mode hard --brain openrouter/deepseek/flash --rules '.agent/repo=ehmpathy/role=architect/briefs/practices/domain.operations/rule.{forbid.decode-friction-in-orchestrators,require.orchestrators-as-narrative}.md' --rules '.agent/repo=ehmpathy/role=mechanic/briefs/practices/code.prod/readable.narrative/rule.{forbid.inline-decode-friction,require.named-transformers}.md' --refs '.agent/repo=ehmpathy/role=architect/briefs/practices/domain.operations/{define.domain-operation-grains,philosophy.transformer-orchestrator-separation.[philosophy]}.md' --diffs since-main --paths-with 'src/**' --paths-with 'blackbox/**' --paths-without '**/*.test.ts' --paths-without '**/__snapshots__/**' --paths-without 'src/domain.operations/review/**' --join intersect --conversation $conversation --output "$output"
+      budget: 15
+      level: 1
+      group: openrouter
+
+    # --- architect reviews (level 1) ---
+
+    # .note = the six lanes below carried `budget: 3` and reached i003 with ONE round
+    #         left each. five of them then refused at i003 on a prompt overflow, which
+    #         spent a round and bought no verdict — and all five have just had their
+    #         binds narrowed, so none has yet run under the corpus it will grade.
+    #
+    #         ⇒ raised to 8. a lane needs at least two rounds it can rely on: one to
+    #         run under its new bind, one to confirm a repair. budget is the driver's
+    #         own lever and is not the scarce resource here
+    #         (rule.always.spend-own-levers-before-escalation).
+
+    # .note = the four arch lanes grade PRODUCTION structure, so tests, generated
+    #         snapshots, and this route's prose records are excluded from their corpus.
+    #
+    # 🔬 .the warmer dogfood (seed S19), from i012 — a TWO-ARM trial, paired lanes
+    #
+    #    the four arch lanes read ONE corpus under near-identical refs, so each pair
+    #    differs in the warmer alone:
+    #
+    #      pair  warmer ON (default)          warmer OFF (control)
+    #      1     arch-opport-decomposition    arch-smell-scopeleaks      — identical refs
+    #      2     arch-hazards-maintenance     arch-hazards-behavior      — same corpus
+    #
+    #    the treatment is the gap between rounds, which runs past the cache ttl on
+    #    its own. the outcome is each lane's cache-read share on its NEXT round, and
+    #    the net is that round's savings against the ON lane's poke spend.
+    #    ⇒ read with `rhx review._.cost --of tree --trace`. remove `--warmer off`
+    #      once the trial is read.
+    - slug: arch-opport-decomposition
+      run: $rhx review --repo bhrain --mode hard --brain openrouter/deepseek/flash --rules '.agent/repo=bhuild/role=behaver/briefs/practices/behavior.execution/architect/rule.prefer.decomposable-architecture.md' --refs '.agent/repo=ehmpathy/role=architect/briefs/practices/*.md' --refs '.agent/repo=ehmpathy/role=mechanic/briefs/practices/code.prod/evolvable.architecture/*.md.min' --refs '.agent/repo=ehmpathy/role=mechanic/briefs/practices/code.prod/evolvable.procedures/*.md.min' --refs '.agent/repo=ehmpathy/role=mechanic/briefs/practices/code.prod/evolvable.domain.operations/*.md.min' --diffs since-main --paths-with '**/*.{ts,sh,md,snap}' --paths-without '**/*.test.ts' --paths-without '**/__snapshots__/**' --paths-without '.behavior/**' --paths-without '.agent/**' --paths-without '.scratch/**' --paths-without 'src/domain.operations/review/**' --join intersect --conversation $conversation --output "$output"
+      budget: 15
+      level: 1
+      group: openrouter
+
+    - slug: arch-smell-scopeleaks
+      run: $rhx review --repo bhrain --mode hard --brain openrouter/deepseek/flash --rules '.agent/repo=bhuild/role=behaver/briefs/practices/behavior.execution/architect/rule.forbid.scope-leaks.md' --refs 'src/domain.operations/**/.readme.md' --refs '.agent/repo=ehmpathy/role=architect/briefs/practices/*.md' --refs '.agent/repo=ehmpathy/role=mechanic/briefs/practices/code.prod/evolvable.architecture/*.md.min' --refs '.agent/repo=ehmpathy/role=mechanic/briefs/practices/code.prod/evolvable.procedures/*.md.min' --refs '.agent/repo=ehmpathy/role=mechanic/briefs/practices/code.prod/evolvable.domain.operations/*.md.min' --diffs since-main --paths-with '**/*.{ts,sh,md,snap}' --paths-without '**/*.test.ts' --paths-without '**/__snapshots__/**' --paths-without '.behavior/**' --paths-without '.agent/**' --paths-without '.scratch/**' --paths-without 'src/domain.operations/review/**' --join intersect --warmer off --conversation $conversation --output "$output"
+      budget: 13
+      level: 1
+      group: openrouter
+
+    - slug: arch-hazards-maintenance
+      run: $rhx review --repo bhrain --mode hard --brain openrouter/deepseek/flash --rules '.agent/repo=bhuild/role=behaver/briefs/practices/behavior.execution/architect/rule.forbid.maintenance-hazards.md' --refs '.agent/repo=ehmpathy/role=architect/briefs/practices/rule.require.solve-at-cause.md' --refs '.agent/repo=ehmpathy/role=mechanic/briefs/practices/code.prod/pitofsuccess.errors/*.md.min' --refs '.agent/repo=ehmpathy/role=mechanic/briefs/practices/code.prod/pitofsuccess.procedures/*.md.min' --refs '.agent/repo=ehmpathy/role=mechanic/briefs/practices/code.prod/pitofsuccess.typedefs/*.md.min' --refs '.agent/repo=ehmpathy/role=mechanic/briefs/practices/code.prod/readable.narrative/*.md.min' --refs '.agent/repo=ehmpathy/role=mechanic/briefs/practices/code.prod/readable.comments/*.md.min' --diffs since-main --paths-with '**/*.{ts,sh,md,snap}' --paths-without '**/*.test.ts' --paths-without '**/__snapshots__/**' --paths-without '.behavior/**' --paths-without '.agent/**' --paths-without '.scratch/**' --paths-without 'src/domain.operations/review/**' --join intersect --conversation $conversation --output "$output"
+      budget: 21
+      level: 1
+      group: openrouter
+
+    - slug: arch-hazards-behavior
+      run: $rhx review --repo bhrain --mode hard --brain openrouter/deepseek/flash --rules '.agent/repo=bhuild/role=behaver/briefs/practices/behavior.execution/architect/rule.forbid.behavior-hazards.md' --refs '.agent/repo=ehmpathy/role=mechanic/briefs/practices/code.prod/pitofsuccess.procedures/*.md.min' --refs '.agent/repo=ehmpathy/role=mechanic/briefs/practices/code.prod/evolvable.procedures/*.md.min' --diffs since-main --paths-with '**/*.{ts,sh,md,snap}' --paths-without '**/*.test.ts' --paths-without '**/__snapshots__/**' --paths-without '.behavior/**' --paths-without '.agent/**' --paths-without '.scratch/**' --paths-without 'src/domain.operations/review/**' --join intersect --warmer off --conversation $conversation --output "$output"
+      budget: 16
+      level: 1
+      group: openrouter
+
+    # .note = this lane grades whether TESTS cover the declared intent, so its corpus
+    #         keeps every *.test.ts. what it sheds is the route's design-fork and
+    #         wisher-quote records — it already receives the wish and vision as refs,
+    #         so those arrived twice.
+    #
+    # .note = 🔴 NARROWED 2026-09-25, after this lane OVERFLOWED at i006 r008.
+    #         measured: 202 files, 554.9k tokens, 76.9% of a 1,048,576-token window
+    #         — a `constraint`, so the lane returned no verdict at all.
+    #
+    #         🔴 the breakdown, read from that run's own `tokens.expected.md` rather
+    #         than reasoned at the prompt:
+    #           src/        388.8k  70.1%   <- the DOMINANT mass
+    #           .behavior/  101.6k  18.3%   <- THREE yield files, no more
+    #           .agent/      37.2k   6.7%   <- briefs this rubric does not grade
+    #           blackbox/    26.0k   4.7%
+    #
+    #         ⇒ the `.md` drop below buys ~139k tokens (~25%), which lands the lane
+    #         near 40% of the window. what it does NOT fix is `src/` at 70.1%: this
+    #         lane keeps every `*.test.ts` BY DESIGN — that corpus is the whole of
+    #         what it grades — so a further growth of the test suite overflows it
+    #         again. that residual is structural, and is named here rather than
+    #         papered over by the headroom this edit buys.
+    #
+    #         🔴 and one of those three files was paid for TWICE: `1.vision.yield.md`
+    #         is already a `--refs` above, so it landed in the cacheable head AND
+    #         again in the uncacheable target tail. the `.md` drop ends that.
+    #
+    #         ⇒ what does NOT leave is the intent itself. `1.vision.experience.case=*.md`
+    #         carries the `[tn]` demos — the declared intent at its finest grain, and
+    #         the one artifact this rubric grades tests AGAINST. it was absent from the
+    #         target corpus outright (the polluter filter sheds it), so it joins
+    #         `--refs`, where its ~18k tokens sit in the shared prefix and are paid
+    #         once per round rather than once per lane.
+    # 🔴 NARROWED 2026-09-26. it overflowed at i009 (75.4%) and was the ONE lane
+    #    that never received the guard-bind repair its twins got at i004 and i006
+    #    — surfaced by `enroll-impl-behavior-intent`, which read the review trail
+    #    as a set rather than one round at a time.
+    #
+    # 🔴 .then PULLED at i010, and the i009 reason was RETRACTED
+    #
+    #    that repair read `paths: (none)` / `files: null` as proof the include was
+    #    dropped. it is not — that line reports the deprecated `--paths` flag, never
+    #    `--paths-with`. ⇒ the full retraction, with the arithmetic that settled it,
+    #    sits on `mech-failhides` above; it is stated ONCE there and cited here
+    #    rather than restated (`rule.always.yield-the-output-not-the-archaeology`).
+    #
+    #    this lane's own numbers, and they agree: 196 → 201 files at i010 while the
+    #    diff grew 451 → 457, and it still refused at 79.1%. the narrow applied and
+    #    the corpus is simply large.
+    #
+    # 🔴 .NARROWED TO TESTS 2026-09-26 — `--focus pull` is not the lever
+    #
+    #    the default brain is deepseek flash, an atom brain, and flash never runs
+    #    `--focus pull` (seed S18). pull refused at i011 before the brain was reached.
+    #
+    #    the rubric asks *"do the TESTS cover the declared intent?"*. the intent
+    #    arrives whole as `--refs` (the wish, the vision yield, every `case=N` demo),
+    #    and the tests are the other side of the comparison. production source is
+    #    the mass that overflowed the window, and the rubric grades none of it
+    #    directly, so the target set is the test files alone.
+    #
+    #    🟡 the cost: a test that names a behavior the code never ships reads as
+    #       coverage here. the arch and mech lanes read the production side.
+    #
+    # 🔴 .SPLIT 2026-10-07, at i010 — this lane and `ergo-friction-hazards` were each
+    #    killed at the 21-minute bound, at 68.3% and 71.7% of the window (682.5k /
+    #    717.4k tokens, read from each run's `metrics.expected.json`). wall time on this
+    #    brain tracks output thought (~44 tps), and a corpus this large draws the longest
+    #    verdicts. so each pairs along `src/domain.operations/route/**`, exactly as
+    #    `repo-rules` / `repo-rules-route` did at i012: same rules, same refs, same
+    #    excludes, the route subtree on one side only. no file leaves the rubric's view.
+    - slug: behavior-intent-coverage
+      run: $rhx review --repo bhrain --mode hard --brain openrouter/deepseek/flash --rules '.agent/repo=bhuild/role=behaver/briefs/practices/behavior.execution/architect/rule.require.behavior-intent-coverage.md' --refs '$route/0.wish.md' --refs '$route/1.vision.yield.md' --refs '$route/1.vision.experience.case=*.md' --refs '.agent/repo=bhuild/role=behaver/briefs/practices/behavior.verification/*.md' --refs '.agent/repo=bhuild/role=behaver/briefs/practices/behavior.criteria/*.md' --refs '.agent/repo=ehmpathy/role=mechanic/briefs/practices/code.test/scope.coverage/*.md' --diffs since-main --paths-with 'src/**/*.test.ts' --paths-with 'blackbox/**/*.test.ts' --paths-without 'src/domain.operations/review/**' --paths-without 'src/domain.operations/route/**' --join intersect --conversation $conversation --output "$output"
+      budget: 31
+      level: 1
+      group: openrouter
+
+    - slug: behavior-intent-coverage-route
+      run: $rhx review --repo bhrain --mode hard --brain openrouter/deepseek/flash --rules '.agent/repo=bhuild/role=behaver/briefs/practices/behavior.execution/architect/rule.require.behavior-intent-coverage.md' --refs '$route/0.wish.md' --refs '$route/1.vision.yield.md' --refs '$route/1.vision.experience.case=*.md' --refs '.agent/repo=bhuild/role=behaver/briefs/practices/behavior.verification/*.md' --refs '.agent/repo=bhuild/role=behaver/briefs/practices/behavior.criteria/*.md' --refs '.agent/repo=ehmpathy/role=mechanic/briefs/practices/code.test/scope.coverage/*.md' --diffs since-main --paths-with 'src/domain.operations/route/**/*.test.ts' --join intersect --conversation $conversation --output "$output"
+      budget: 9
+      level: 1
+      group: openrouter
+
+    # .note = this lane grades the SURFACES a human meets — the cli entrypoints, the
+    #         renderers, the skill wrappers, and the snapshots that pin what they print.
+    #         so it KEEPS every __snapshots__ file (its evidence) and KEEPS the wish,
+    #         vision, and execution yields (where an accepted friction is declared, and
+    #         where this lane's own prior blockers named their remedy).
+    #
+    #         🔴 that last is why `.behavior/**` is NOT shed wholesale here, as it is on
+    #         five peer lanes: this lane's remedy lives in the yield, so a bind that hid
+    #         the yield would make it re-raise the same concern forever.
+    #
+    #         what it sheds: the journey BODIES (*.test.ts — the snapshots beside them
+    #         carry the rendered surface), and the route's design-fork and wisher-quote
+    #         records, which are 11.1% of the corpus and hold no surface a human reads.
+    #
+    #         it also sheds the LATER stones' yields (`5.3.*` and on): at i003 the lane
+    #         overflowed at 76.2% (469k tokens), and `5.3.verification.yield.md` alone was
+    #         33.2k of it — a record this stone does not produce. the 5.1 yield stays.
+    #
+    # 🔴 NARROWED 2026-09-26, after it overflowed at i005 (78.3%, 208 files, 452.2k
+    #    target tokens), read from that run's own `tokens.expected.md`:
+    #      .agent/                          41.7k  9.2%  glossary clusters + briefs
+    #      compileReviewPrompt*.snap        42.2k  9.3%  the prompt sent to the BRAIN
+    #    neither is a surface a human meets at the cli, so both leave (~84k, to ~70%).
+    #    the cli snapshots, renderers, and the 5.1 yield all stay.
+    - slug: ergo-friction-hazards
+      run: $rhx review --repo bhrain --mode hard --brain openrouter/deepseek/flash --rules '.agent/repo=bhuild/role=behaver/briefs/practices/behavior.execution/architect/rule.forbid.friction-hazards.md' --refs '.agent/repo=ehmpathy/role=ergonomist/briefs/*.md' --refs '.agent/repo=ehmpathy/role=mechanic/briefs/practices/lang.tones/*.md.min' --refs '.agent/repo=bhuild/role=behaver/briefs/practices/behavior.verification/*.md' --diffs since-main --paths-with '**/*.{ts,sh,md,snap}' --paths-without '**/*.test.ts' --paths-without '.behavior/**/.fulcrums/**' --paths-without '.behavior/**/.seeds/**' --paths-without '.behavior/**/5.3.*' --paths-without '.agent/**' --paths-without '.scratch/**' --paths-without '**/__snapshots__/compileReviewPrompt.*.snap' --paths-without 'src/domain.operations/review/**' --paths-without 'src/domain.operations/route/**' --join intersect --conversation $conversation --output "$output"
+      budget: 16
+      level: 1
+      group: openrouter
+
+    # .note = the route twin of the lane above (see `.SPLIT 2026-10-07` on
+    #         `behavior-intent-coverage`): the route subtree's renderers and the snapshots
+    #         that pin what they print, under the same rules, refs, and excludes
+    - slug: ergo-friction-hazards-route
+      run: $rhx review --repo bhrain --mode hard --brain openrouter/deepseek/flash --rules '.agent/repo=bhuild/role=behaver/briefs/practices/behavior.execution/architect/rule.forbid.friction-hazards.md' --refs '.agent/repo=ehmpathy/role=ergonomist/briefs/*.md' --refs '.agent/repo=ehmpathy/role=mechanic/briefs/practices/lang.tones/*.md.min' --refs '.agent/repo=bhuild/role=behaver/briefs/practices/behavior.verification/*.md' --diffs since-main --paths-with 'src/domain.operations/route/**' --paths-without '**/*.test.ts' --join intersect --conversation $conversation --output "$output"
+      budget: 9
+      level: 1
+      group: openrouter
+
+    # --- level 1, the `*-review-ops` twins: `src/domain.operations/review/**` alone ---
+    #
+    # .note = each twin carries its base lane's rules, refs, and excludes verbatim; only
+    #         the include changes, to the subtree its base now sheds (see `.SPLIT` above).
+    #         the warmer trial pairs keep their arms: a twin of an OFF lane is OFF too.
+
+    # 🔴 .note = the repo-rules pair timed out on fireworks at i009, both lanes — r001 at
+    #         ~155k tokens, r011 at ~200k. the other twins read the same corpus and
+    #         returned, so the rubric is the load: 29 rules against 151 targets yields
+    #         a long verdict, and the verdict's generation is what passes the client's
+    #         10m bound. ⇒ repo-rules alone splits once more, along a second axis:
+    #         `review/{warmer,meter}/**` (~74k) apart from the rest of `review/**`
+    #         (~99k), and `.agent/**` (~41k) apart from the base lane's code (~87k).
+    #         each pair still partitions its parent; no file leaves the rubric's view.
+    - slug: repo-rules-review-ops
+      run: $rhx review --repo bhrain --mode hard --brain openrouter/deepseek/flash --rules '.agent/repo=.this/**/rule.*.md' --optional rules --diffs since-main --paths-with 'src/domain.operations/review/**' --paths-without '**/*.test.ts' --paths-without '**/__snapshots__/**' --paths-without 'src/domain.operations/review/warmer/**' --paths-without 'src/domain.operations/review/meter/**' --join intersect --conversation $conversation --output "$output"
+      budget: 19
+      level: 1
+      group: openrouter
+
+    - slug: repo-rules-review-ops-meter
+      run: $rhx review --repo bhrain --mode hard --brain openrouter/deepseek/flash --rules '.agent/repo=.this/**/rule.*.md' --optional rules --diffs since-main --paths-with 'src/domain.operations/review/warmer/**' --paths-with 'src/domain.operations/review/meter/**' --paths-without '**/*.test.ts' --paths-without '**/__snapshots__/**' --join intersect --conversation $conversation --output "$output"
+      budget: 9
+      level: 1
+      group: openrouter
+
+    # 🔴 .SPLIT 2026-10-06, at i008 — `repo-rules-briefs` timed out at the 20m cap. its scope
+    #    held steady (~177k tokens in, ~38k think-first tokens out); what moved was provider
+    #    throughput, ~122 tok/s at i006 and ~61 tok/s at i007, under ~32 tok/s at i008. a lane
+    #    whose nominal run sits within 2-4x of the cap times out on a slow host, so it halves:
+    #    `domain.terms/**` (52.9k of 86.1k target tokens) rides `repo-rules-briefs-terms`,
+    #    appended after the last level-1 lane so no extant reviewer ordinal shifts
+    - slug: repo-rules-briefs
+      run: $rhx review --repo bhrain --mode hard --brain openrouter/deepseek/flash --rules '.agent/repo=.this/**/rule.*.md' --optional rules --diffs since-main --paths-with '.agent/**/*.{sh,md}' --paths-without '.agent/repo=.this/role=any/briefs/domain.terms/**' --join intersect --conversation $conversation --output "$output"
+      budget: 17
+      level: 1
+      group: openrouter
+
+    - slug: mech-failhides-review-ops
+      run: $rhx review --repo bhrain --mode hard --brain openrouter/deepseek/flash --rules '.agent/repo=ehmpathy/role=mechanic/briefs/practices/code.prod/pitofsuccess.errors/rule.*.md' --diffs since-main --paths-with 'src/domain.operations/review/**' --paths-without '**/*.test.ts' --paths-without '**/__snapshots__/**' --join intersect --conversation $conversation --output "$output"
+      budget: 10
+      level: 1
+      group: openrouter
+
+    - slug: mech-failhides-tests-review-ops
+      run: $rhx review --repo bhrain --mode hard --brain openrouter/deepseek/flash --rules '.agent/repo=ehmpathy/role=mechanic/briefs/practices/code.test/pitofsuccess.errors/rule.*.md' --diffs since-main --paths-with 'src/domain.operations/review/**/*.test.ts' --join intersect --conversation $conversation --output "$output"
+      budget: 20
+      level: 1
+      group: openrouter
+
+    - slug: mech-decode-friction-review-ops
+      run: $rhx review --repo bhrain --mode hard --brain openrouter/deepseek/flash --rules '.agent/repo=ehmpathy/role=architect/briefs/practices/domain.operations/rule.{forbid.decode-friction-in-orchestrators,require.orchestrators-as-narrative}.md' --rules '.agent/repo=ehmpathy/role=mechanic/briefs/practices/code.prod/readable.narrative/rule.{forbid.inline-decode-friction,require.named-transformers}.md' --refs '.agent/repo=ehmpathy/role=architect/briefs/practices/domain.operations/{define.domain-operation-grains,philosophy.transformer-orchestrator-separation.[philosophy]}.md' --diffs since-main --paths-with 'src/domain.operations/review/**' --paths-without '**/*.test.ts' --paths-without '**/__snapshots__/**' --join intersect --conversation $conversation --output "$output"
+      budget: 11
+      level: 1
+      group: openrouter
+
+    - slug: arch-opport-decomposition-review-ops
+      run: $rhx review --repo bhrain --mode hard --brain openrouter/deepseek/flash --rules '.agent/repo=bhuild/role=behaver/briefs/practices/behavior.execution/architect/rule.prefer.decomposable-architecture.md' --refs '.agent/repo=ehmpathy/role=architect/briefs/practices/*.md' --refs '.agent/repo=ehmpathy/role=mechanic/briefs/practices/code.prod/evolvable.architecture/*.md.min' --refs '.agent/repo=ehmpathy/role=mechanic/briefs/practices/code.prod/evolvable.procedures/*.md.min' --refs '.agent/repo=ehmpathy/role=mechanic/briefs/practices/code.prod/evolvable.domain.operations/*.md.min' --diffs since-main --paths-with 'src/domain.operations/review/**' --paths-without '**/*.test.ts' --paths-without '**/__snapshots__/**' --join intersect --conversation $conversation --output "$output"
+      budget: 9
+      level: 1
+      group: openrouter
+
+    - slug: arch-smell-scopeleaks-review-ops
+      run: $rhx review --repo bhrain --mode hard --brain openrouter/deepseek/flash --rules '.agent/repo=bhuild/role=behaver/briefs/practices/behavior.execution/architect/rule.forbid.scope-leaks.md' --refs 'src/domain.operations/**/.readme.md' --refs '.agent/repo=ehmpathy/role=architect/briefs/practices/*.md' --refs '.agent/repo=ehmpathy/role=mechanic/briefs/practices/code.prod/evolvable.architecture/*.md.min' --refs '.agent/repo=ehmpathy/role=mechanic/briefs/practices/code.prod/evolvable.procedures/*.md.min' --refs '.agent/repo=ehmpathy/role=mechanic/briefs/practices/code.prod/evolvable.domain.operations/*.md.min' --diffs since-main --paths-with 'src/domain.operations/review/**' --paths-without '**/*.test.ts' --paths-without '**/__snapshots__/**' --join intersect --warmer off --conversation $conversation --output "$output"
+      budget: 14
+      level: 1
+      group: openrouter
+
+    - slug: arch-hazards-maintenance-review-ops
+      run: $rhx review --repo bhrain --mode hard --brain openrouter/deepseek/flash --rules '.agent/repo=bhuild/role=behaver/briefs/practices/behavior.execution/architect/rule.forbid.maintenance-hazards.md' --refs '.agent/repo=ehmpathy/role=architect/briefs/practices/rule.require.solve-at-cause.md' --refs '.agent/repo=ehmpathy/role=mechanic/briefs/practices/code.prod/pitofsuccess.errors/*.md.min' --refs '.agent/repo=ehmpathy/role=mechanic/briefs/practices/code.prod/pitofsuccess.procedures/*.md.min' --refs '.agent/repo=ehmpathy/role=mechanic/briefs/practices/code.prod/pitofsuccess.typedefs/*.md.min' --refs '.agent/repo=ehmpathy/role=mechanic/briefs/practices/code.prod/readable.narrative/*.md.min' --refs '.agent/repo=ehmpathy/role=mechanic/briefs/practices/code.prod/readable.comments/*.md.min' --diffs since-main --paths-with 'src/domain.operations/review/**' --paths-without '**/*.test.ts' --paths-without '**/__snapshots__/**' --join intersect --conversation $conversation --output "$output"
+      budget: 21
+      level: 1
+      group: openrouter
+
+    - slug: arch-hazards-behavior-review-ops
+      run: $rhx review --repo bhrain --mode hard --brain openrouter/deepseek/flash --rules '.agent/repo=bhuild/role=behaver/briefs/practices/behavior.execution/architect/rule.forbid.behavior-hazards.md' --refs '.agent/repo=ehmpathy/role=mechanic/briefs/practices/code.prod/pitofsuccess.procedures/*.md.min' --refs '.agent/repo=ehmpathy/role=mechanic/briefs/practices/code.prod/evolvable.procedures/*.md.min' --diffs since-main --paths-with 'src/domain.operations/review/**' --paths-without '**/*.test.ts' --paths-without '**/__snapshots__/**' --join intersect --warmer off --conversation $conversation --output "$output"
+      budget: 12
+      level: 1
+      group: openrouter
+
+    - slug: behavior-intent-coverage-review-ops
+      run: $rhx review --repo bhrain --mode hard --brain openrouter/deepseek/flash --rules '.agent/repo=bhuild/role=behaver/briefs/practices/behavior.execution/architect/rule.require.behavior-intent-coverage.md' --refs '$route/0.wish.md' --refs '$route/1.vision.yield.md' --refs '$route/1.vision.experience.case=*.md' --refs '.agent/repo=bhuild/role=behaver/briefs/practices/behavior.verification/*.md' --refs '.agent/repo=bhuild/role=behaver/briefs/practices/behavior.criteria/*.md' --refs '.agent/repo=ehmpathy/role=mechanic/briefs/practices/code.test/scope.coverage/*.md' --diffs since-main --paths-with 'src/domain.operations/review/**/*.test.ts' --join intersect --conversation $conversation --output "$output"
+      budget: 25
+      level: 1
+      group: openrouter
+
+    - slug: ergo-friction-hazards-review-ops
+      run: $rhx review --repo bhrain --mode hard --brain openrouter/deepseek/flash --rules '.agent/repo=bhuild/role=behaver/briefs/practices/behavior.execution/architect/rule.forbid.friction-hazards.md' --refs '.agent/repo=ehmpathy/role=ergonomist/briefs/*.md' --refs '.agent/repo=ehmpathy/role=mechanic/briefs/practices/lang.tones/*.md.min' --refs '.agent/repo=bhuild/role=behaver/briefs/practices/behavior.verification/*.md' --diffs since-main --paths-with 'src/domain.operations/review/**' --paths-without '**/*.test.ts' --paths-without '**/__snapshots__/compileReviewPrompt.*.snap' --join intersect --conversation $conversation --output "$output"
+      budget: 23
+      level: 1
+      group: openrouter
+
+    # the domain.terms half of `repo-rules-briefs` — see its .SPLIT note above
+    - slug: repo-rules-briefs-terms
+      run: $rhx review --repo bhrain --mode hard --brain openrouter/deepseek/flash --rules '.agent/repo=.this/**/rule.*.md' --optional rules --diffs since-main --paths-with '.agent/repo=.this/role=any/briefs/domain.terms/**' --join intersect --conversation $conversation --output "$output"
+      budget: 14
+      level: 1
+      group: openrouter
+
+    # --- level 3: expensive reviewers (run after level 1 is terminal) ---
+    #
+    # 🔴 .note = an enroll lane takes no path bind, so its SCOPE and its CONTRACT live in the
+    #         prompt. at i002 one lane timed out at 21m over the ~500-file diff, and the other
+    #         tried to edit code, then set this stone's status itself, and emitted no counts
+    #         (`.dream/v2026_09_26.fix.an-enrolled-reviewer-clone-sets-the-status-of-the-stone-it-reviews.md`).
+    #         the prompt now bounds all three until the mechanism lands.
+    #
+    # 🔴 .note = the four enroll lanes run on opus. at i037 each returned "You've hit your
+    #         weekly limit · resets Oct 3" on `claude-sonnet-5[1m]`; a probe on
+    #         `claude-opus-5-5[1m]` answered, so the cap binds per model, and the rubrics
+    #         are model-neutral
+    #
+    # 🔴 .note = 2026-10-10, at i042 — the four enroll lanes each read a different slice of a
+    #         400–1,100 file scope every round, so each re-review raised fresh nitpicks in
+    #         files no repair touched, and the stone sat over its nitpick floor five rounds
+    #         straight (i038–i042). the prompt now bounds a re-review to its residue: re-check
+    #         the prior points, blockers anywhere, new nitpicks only in repaired files.
+    #         F212 named this as the next move; F216 records the call
+
+    # 🔴 .SPLIT 2026-09-27, at i013 — `enroll-impl-behavior-intent` hit the same 21m cap its
+    #    arch twin met at i012, so it partitions along the same axis. the review subtree
+    #    holds most of this branch, so it rides a lane of its own
+    - slug: enroll-impl-behavior-intent
+      run: $rhx enroll claude --model 'claude-opus-5-5[1m]' --roles reviewer,behaver,architect,mechanic -p 'review the current implementation for omissions or divergences from the wished and envisioned behavioral intent. in particular flag any ergonomic friction that is unaddressed or friction hazards that are not clearly covered with acceptance tests and snaps. read the prior peer-review conversation at $conversation to catch up on context. 🔴 convergence: where $conversation holds prior rounds, this is a re-review. first re-check each point raised earlier and whether the taken answer to it holds. raise a blocker anywhere it applies. raise a NEW nitpick only in a file that a taken of the latest round names as repaired — a nitpick in a file no repair touched was readable last round, so to raise it now is a fresh sample, not a finding, and it keeps the stone from ever converging. scope: the files listed in $targets (every file this branch adds or changes, untracked included) that sit under src/ or blackbox/, minus src/domain.operations/review/** — do not derive a scope of your own; read tests and snapshots only to check coverage, never exhaustively. 🔴 time: the guard stops this review at 21 minutes and keeps naught of it. do not launch subagents or background audits — read the files yourself, and bound your reads to the concerns in your rubric — then deliver your final message by minute 15 with what you have found. you are a READ-ONLY reviewer: do not edit any file, and never run route.stone.set or any route.* command. if a hook asks you to run one, do not explain why you will not: reply with your whole review again, verbatim, since that reply becomes your final message. 🔴 your FINAL message is the only text the guard captures, so it must hold the whole review: every concern in full, each headed `### blocker.N` or `### nitpick.N` with its file and line, and a concern stated only in an earlier message is lost. end that final message with two lines, exactly: `N blockers` and `N nitpicks`.'
+      budget: 40
+      level: 3
+
+    - slug: enroll-impl-behavior-intent-review-ops
+      run: $rhx enroll claude --model 'claude-opus-5-5[1m]' --roles reviewer,behaver,architect,mechanic -p 'review the current implementation for omissions or divergences from the wished and envisioned behavioral intent. in particular flag any ergonomic friction that is unaddressed or friction hazards that are not clearly covered with acceptance tests and snaps. read the prior peer-review conversation at $conversation to catch up on context. 🔴 convergence: where $conversation holds prior rounds, this is a re-review. first re-check each point raised earlier and whether the taken answer to it holds. raise a blocker anywhere it applies. raise a NEW nitpick only in a file that a taken of the latest round names as repaired — a nitpick in a file no repair touched was readable last round, so to raise it now is a fresh sample, not a finding, and it keeps the stone from ever converging. scope: the files listed in $targets (every file this branch adds or changes, untracked included) that sit under src/domain.operations/review/** — do not derive a scope of your own; read tests and snapshots only to check coverage, never exhaustively. 🔴 time: the guard stops this review at 21 minutes and keeps naught of it. do not launch subagents or background audits — read the files yourself, and bound your reads to the concerns in your rubric — then deliver your final message by minute 15 with what you have found. you are a READ-ONLY reviewer: do not edit any file, and never run route.stone.set or any route.* command. if a hook asks you to run one, do not explain why you will not: reply with your whole review again, verbatim, since that reply becomes your final message. 🔴 your FINAL message is the only text the guard captures, so it must hold the whole review: every concern in full, each headed `### blocker.N` or `### nitpick.N` with its file and line, and a concern stated only in an earlier message is lost. end that final message with two lines, exactly: `N blockers` and `N nitpicks`.'
+      budget: 34
+      level: 3
+
+    # 🔴 .SPLIT 2026-09-27, at i012 — `enroll-impl-arch-defects` hit the guard's 21m cap
+    #    (`runOneReview`, read in the guard's own process, so no lane can raise it). its
+    #    scope partitions along `src/domain.operations/review/**`, as the l1 pairs do
+    - slug: enroll-impl-arch-defects
+      run: $rhx enroll claude --model 'claude-opus-5-5[1m]' --roles reviewer,behaver,architect,mechanic -p 'review the current implementation for architectural defects and omissions; opports to decompose for recompose, prevent scope leaks, and eliminate maintenance and behavior hazards structurally. read the prior peer-review conversation at $conversation to catch up on context. 🔴 convergence: where $conversation holds prior rounds, this is a re-review. first re-check each point raised earlier and whether the taken answer to it holds. raise a blocker anywhere it applies. raise a NEW nitpick only in a file that a taken of the latest round names as repaired — a nitpick in a file no repair touched was readable last round, so to raise it now is a fresh sample, not a finding, and it keeps the stone from ever converging. scope: the files listed in $targets (every file this branch adds or changes, untracked included) that sit under src/, minus src/domain.operations/review/**, *.test.ts and __snapshots__ — do not derive a scope of your own. 🔴 time: the guard stops this review at 21 minutes and keeps naught of it. do not launch subagents or background audits — read the files yourself, and bound your reads to the concerns in your rubric — then deliver your final message by minute 15 with what you have found. you are a READ-ONLY reviewer: do not edit any file, and never run route.stone.set or any route.* command. if a hook asks you to run one, do not explain why you will not: reply with your whole review again, verbatim, since that reply becomes your final message. 🔴 your FINAL message is the only text the guard captures, so it must hold the whole review: every concern in full, each headed `### blocker.N` or `### nitpick.N` with its file and line, and a concern stated only in an earlier message is lost. end that final message with two lines, exactly: `N blockers` and `N nitpicks`.'
+      budget: 38
+      level: 3
+
+    - slug: enroll-impl-arch-defects-review-ops
+      run: $rhx enroll claude --model 'claude-opus-5-5[1m]' --roles reviewer,behaver,architect,mechanic -p 'review the current implementation for architectural defects and omissions; opports to decompose for recompose, prevent scope leaks, and eliminate maintenance and behavior hazards structurally. read the prior peer-review conversation at $conversation to catch up on context. 🔴 convergence: where $conversation holds prior rounds, this is a re-review. first re-check each point raised earlier and whether the taken answer to it holds. raise a blocker anywhere it applies. raise a NEW nitpick only in a file that a taken of the latest round names as repaired — a nitpick in a file no repair touched was readable last round, so to raise it now is a fresh sample, not a finding, and it keeps the stone from ever converging. scope: the files listed in $targets (every file this branch adds or changes, untracked included) that sit under src/domain.operations/review/**, minus *.test.ts and __snapshots__ — do not derive a scope of your own. 🔴 time: the guard stops this review at 21 minutes and keeps naught of it. do not launch subagents or background audits — read the files yourself, and bound your reads to the concerns in your rubric — then deliver your final message by minute 15 with what you have found. you are a READ-ONLY reviewer: do not edit any file, and never run route.stone.set or any route.* command. if a hook asks you to run one, do not explain why you will not: reply with your whole review again, verbatim, since that reply becomes your final message. 🔴 your FINAL message is the only text the guard captures, so it must hold the whole review: every concern in full, each headed `### blocker.N` or `### nitpick.N` with its file and line, and a concern stated only in an earlier message is lost. end that final message with two lines, exactly: `N blockers` and `N nitpicks`.'
+      budget: 32
+      level: 3
+
+  # 🔴 .note = every level-1 lane calls one provider, fireworks, and they contend for it.
+  #         the level default pours ten at once; at i009, i010 and i011 the heavy lanes of
+  #         that first wave returned `APIConnectionTimeoutError` — five at i011, at 73k to
+  #         173k tokens, while the later lanes of the same round returned clean. the rubric
+  #         split along the target axis (the note above repo-rules-review-ops) did not cure
+  #         it, since `repo-rules-briefs` timed out at 73k. what the failures share is the
+  #         burst, so the burst is what this bound narrows. the wall each call meets is the
+  #         sdk's 10m default (`.dream/v2026_09_26.reseed.fireworks-atom-sets-no-client-timeout.md`)
+  #
+  # 🔴 .note = 5 was measured and is still too wide. at i012 the refill packed five heavy
+  #         lanes into the five slots at once (repo-rules, behavior-intent-coverage,
+  #         ergo-friction-hazards, repo-rules-review-ops, repo-rules-briefs — started
+  #         01:38–01:50) and all five timed out; every lane that started after they died
+  #         returned clean, the slowest at 575s. so the bound is set to 3: two slots fewer
+  #         than the width that failed, which caps the heaviest possible co-run at three
+  #
+  # 🟡 .note = at i013 the bound held at 3 and four lanes still met the 10m wall:
+  #         repo-rules (138k) and repo-rules-route (70k) in the FIRST wave beside a lane
+  #         that passed, then repo-rules-review-ops (149k) and, late, arch-hazards-
+  #         maintenance-review-ops (210k). so the burst is a factor, never the whole
+  #         cause: a think-first model's OUTPUT time meets the sdk default at any width.
+  #         the bound stays at 3 for what it does buy; the cure is the client timeout in
+  #         the reseed dream above, and the lane-level remedy is a re-run
+  #
+  # 🔴 .note = CUTOVER 2026-10-02, at i050 — every lane moved off fireworks onto
+  #         `openrouter/deepseek/flash`, the repo's new default review brain. i049 lost
+  #         two lanes to the same fireworks timeouts; openrouter's `floor` filter routes
+  #         each ask to the cheapest live host and moves on past a throttle or a bad
+  #         reply, at about a tenth of the fireworks rate
+  #
+  # 🔴 .note = WIDENED to 12 at i011, on the measurement the cutover asked for. at i010 the
+  #         bound of 3 poured 24 level-1 lanes in waves of three (05:02, then 05:17–05:19),
+  #         each lane ~15m, so a round ran up to eight waves deep. no lane faulted on
+  #         contention: openrouter answers each ask from its own host, so the fireworks
+  #         burst the bound was set against does not arise. the one lane lost (repo-rules)
+  #         met its own clock on a 44 tps host, a cause width does not touch. 12 pours the
+  #         level in two waves and still bounds the pour (rule.forbid.serial-reviews-that-could-pour)
+  groups:
+    openrouter:
+      concurrency: 12
+
+judges:
+  - $rhachet run --repo bhrain --skill route.stone.judge --mechanism reviewed? --stone $stone --route $route --allow-blockers 0 --allow-nitpicks 7

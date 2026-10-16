@@ -129,7 +129,7 @@ exports[`stepRouteDrive.integration given: [case8] a stone the driver escalated 
    │  └─ stone = 1
    │
    └─ halted, stone marked blocked
-      └─ reason: .temp/genTempDir.symlink/<ts>.drive-int-case8.<hash>/blocker/1.md"
+      └─ reason: no articulation written (no .temp/genTempDir.symlink/<ts>.drive-int-case8.<hash>/blocker/1.md)"
 `;
 
 exports[`stepRouteDrive.integration given: [case9] a stone with an exhausted peer-budget status when: [t0] stepRouteDrive is called with when=hook.onStop then: t0 stdout matches the exhausted-halt snapshot: case9.t0.exhausted-halt 1`] = `
@@ -163,7 +163,7 @@ exports[`stepRouteDrive.integration given: [case10] --as promised clears a prior
    │  └─ stone = 1
    │
    └─ halted, stone marked blocked
-      └─ reason: .temp/genTempDir.symlink/<ts>.drive-int-case10.<hash>/blocker/1.md"
+      └─ reason: no articulation written (no .temp/genTempDir.symlink/<ts>.drive-int-case10.<hash>/blocker/1.md)"
 `;
 
 exports[`stepRouteDrive.integration given: [case10] --as promised clears a prior --as blocked escalation when: [t1] the driver marks --as promised (forward motion) then: t1 promise slug matches the forward-motion snapshot: case10.t1.promise-slug 1`] = `"slug-a"`;
@@ -207,7 +207,13 @@ exports[`stepRouteDrive.integration given: [case11] a malfunction status, then l
    │  └─ stone = 1
    │
    └─ 💥 halted, guard malfunction
-      └─ please tell a human this needs to be fixed before you can continue"
+      └─ still yours to clear
+         └─ next
+            ├─ 1. read each given for its cause, and fix what you can
+            ├─ 2. answer each broken lane, like a rejected one
+            ├─ 3. re-arrive
+            │  └─ rhx route.stone.set --stone 1 --as arrived
+            └─ ask a human only for a grant you cannot make (an absent credential, a permission, etc)"
 `;
 
 exports[`stepRouteDrive.integration given: [case11] a malfunction status, then later forward motion when: [t1] a later --as arrived supersedes the malfunction then: t1 passage matches the forward-motion snapshot: case11.t1.passage-after 1`] = `
@@ -255,7 +261,13 @@ exports[`stepRouteDrive.integration given: [case12] a malfunction status, at onB
    │  └─ stone = 1
    │
    └─ 💥 halted, guard malfunction
-      └─ please tell a human this needs to be fixed before you can continue"
+      └─ still yours to clear
+         └─ next
+            ├─ 1. read each given for its cause, and fix what you can
+            ├─ 2. answer each broken lane, like a rejected one
+            ├─ 3. re-arrive
+            │  └─ rhx route.stone.set --stone 1 --as arrived
+            └─ ask a human only for a grant you cannot make (an absent credential, a permission, etc)"
 `;
 
 exports[`stepRouteDrive.integration given: [case12] a malfunction status, at onBoot vs onStop when: [t1] stepRouteDrive is called at onStop then: t1 onStop stdout matches the escalated-malfunction snapshot: case12.t1.onstop-malfunction 1`] = `
@@ -267,7 +279,13 @@ exports[`stepRouteDrive.integration given: [case12] a malfunction status, at onB
    │  └─ stone = 1
    │
    └─ 💥 halted, guard malfunction
-      └─ please tell a human this needs to be fixed before you can continue"
+      └─ still yours to clear
+         └─ next
+            ├─ 1. read each given for its cause, and fix what you can
+            ├─ 2. answer each broken lane, like a rejected one
+            ├─ 3. re-arrive
+            │  └─ rhx route.stone.set --stone 1 --as arrived
+            └─ ask a human only for a grant you cannot make (an absent credential, a permission, etc)"
 `;
 
 exports[`stepRouteDrive.integration given: [case13] a driver wall (--as blocked), read in direct mode when: [t0] stepRouteDrive is called in direct mode (no --when) then: t0 stdout matches the direct-mode blocked snapshot: case13.t0.direct-blocked 1`] = `
@@ -279,7 +297,7 @@ exports[`stepRouteDrive.integration given: [case13] a driver wall (--as blocked)
    │  └─ stone = 1
    │
    └─ halted, stone marked blocked
-      └─ reason: .temp/genTempDir.symlink/<ts>.drive-int-case13.<hash>/blocker/1.md"
+      └─ reason: no articulation written (no .temp/genTempDir.symlink/<ts>.drive-int-case13.<hash>/blocker/1.md)"
 `;
 
 exports[`stepRouteDrive.integration given: [case14] 🔴 an undeclared concern, on a driver already past the tea-pause threshold when: [t0] stepRouteDrive is called with when=hook.onStop then: t0 stdout matches the pre-empted-menu snapshot: case14.t0.stance-preempts-the-menu 1`] = `
@@ -1202,4 +1220,156 @@ exports[`stepRouteDrive.integration given: [case32] a DRIVER-WALL stone that DEC
    │
    └─ halted, stone marked blocked
       └─ reason: .temp/genTempDir.symlink/<ts>.drive-int-case32.<hash>/blocker/1.md"
+`;
+
+exports[`stepRouteDrive.integration given: [case33] a partial malfunction, with its broken lanes on record when: [t0] onStop while the partial malfunction stands then: t0 stdout matches the partial-malfunction snapshot: case33.t0.partial-malfunction 1`] = `
+"🦉 where were we?
+
+🗿 route.drive
+   ├─ where do we go?
+   │  ├─ route = .temp/genTempDir.symlink/<ts>.drive-int-case33.<hash>
+   │  └─ stone = 1
+   │
+   └─ 💥 halted, guard malfunction
+      ├─ reason = 2 of 23 reviewers malfunctioned; 4 reviewers rejected and await your answer
+      └─ still yours to clear
+         ├─ 💥 lane repo-rules-briefs (r14) broke
+         │  └─ cause = review timed out after 20 minutes (transient)
+         ├─ 💥 lane behavior-intent-coverage-review-ops (r22) broke
+         │  └─ cause = the brain call failed — terminated (transient)
+         └─ next
+            ├─ 1. read each given for its cause, and fix what you can
+            ├─ 2. answer each broken lane, like a rejected one
+            │  ├─ rhx route.stone.set --stone 1 --as absorbed --that repo-rules-briefs
+            │  └─ rhx route.stone.set --stone 1 --as absorbed --that behavior-intent-coverage-review-ops
+            ├─ 3. re-arrive
+            │  └─ rhx route.stone.set --stone 1 --as arrived
+            └─ ask a human only for a grant you cannot make (an absent credential, a permission, etc)"
+`;
+
+exports[`stepRouteDrive.integration given: [case34] a driver waits on delegated repairs (the inflight watermark) when: [t1] the watermark is stale (past the 30m bound) then: t1 stdout matches the stale-watermark snapshot: case34.t1.stale-watermark 1`] = `
+"🦉 where were we?
+
+🗿 route.drive
+   ├─ where do we go?
+   │  ├─ route = .temp/genTempDir.symlink/<ts>.drive-int-case34-t1.<hash>
+   │  └─ stone = 1
+   │
+   ├─ are you here?
+   │  ├─ when ready for review, run:
+   │  │  └─ rhx route.stone.set --stone 1 --as arrived
+   │  └─ when ready to continue, run:
+   │     └─ rhx route.stone.set --stone 1 --as passed
+   │
+   ├─ here's the stone
+   │  ├─
+   │  │
+   │  │  # stone: implement
+   │  │
+   │  │  done when:
+   │  │  - it works
+   │  └─
+   │
+   └─ are you here?
+      ├─ when ready for review, run:
+      │  └─ rhx route.stone.set --stone 1 --as arrived
+      └─ when ready to continue, run:
+         └─ rhx route.stone.set --stone 1 --as passed
+
+⏳ repairs in flight for 1 since <hh:mm> — three delegates repair blockers 1-4 (stale: 90m old, past the 30m bound — move the stone, or re-mark --as inflight)"
+`;
+
+exports[`stepRouteDrive.integration given: [case34] a driver waits on delegated repairs (the inflight watermark) when: [t2] no watermark is present then: t2 stdout matches the absent-watermark snapshot: case34.t2.absent-watermark 1`] = `
+"🦉 where were we?
+
+🗿 route.drive
+   ├─ where do we go?
+   │  ├─ route = .temp/genTempDir.symlink/<ts>.drive-int-case34-t2.<hash>
+   │  └─ stone = 1
+   │
+   ├─ are you here?
+   │  ├─ when ready for review, run:
+   │  │  └─ rhx route.stone.set --stone 1 --as arrived
+   │  └─ when ready to continue, run:
+   │     └─ rhx route.stone.set --stone 1 --as passed
+   │
+   ├─ here's the stone
+   │  ├─
+   │  │
+   │  │  # stone: implement
+   │  │
+   │  │  done when:
+   │  │  - it works
+   │  └─
+   │
+   └─ are you here?
+      ├─ when ready for review, run:
+      │  └─ rhx route.stone.set --stone 1 --as arrived
+      └─ when ready to continue, run:
+         └─ rhx route.stone.set --stone 1 --as passed"
+`;
+
+exports[`stepRouteDrive.integration given: [case34] a driver waits on delegated repairs (the inflight watermark) when: [t3] a fresh watermark names another stone then: t3 stdout matches the other-stone-watermark snapshot: case34.t3.other-stone-watermark 1`] = `
+"🦉 where were we?
+
+🗿 route.drive
+   ├─ where do we go?
+   │  ├─ route = .temp/genTempDir.symlink/<ts>.drive-int-case34-t3.<hash>
+   │  └─ stone = 1
+   │
+   ├─ are you here?
+   │  ├─ when ready for review, run:
+   │  │  └─ rhx route.stone.set --stone 1 --as arrived
+   │  └─ when ready to continue, run:
+   │     └─ rhx route.stone.set --stone 1 --as passed
+   │
+   ├─ here's the stone
+   │  ├─
+   │  │
+   │  │  # stone: implement
+   │  │
+   │  │  done when:
+   │  │  - it works
+   │  └─
+   │
+   └─ are you here?
+      ├─ when ready for review, run:
+      │  └─ rhx route.stone.set --stone 1 --as arrived
+      └─ when ready to continue, run:
+         └─ rhx route.stone.set --stone 1 --as passed"
+`;
+
+exports[`stepRouteDrive.integration given: [case35] a guarded stone with a latest review round on disk when: [t0] route.drive is read in direct mode then: stdout matches the latest-round snapshot: case35.t0.latest-round 1`] = `
+"🦉 where were we?
+
+🗿 route.drive
+   ├─ where do we go?
+   │  ├─ route = .temp/genTempDir.symlink/<ts>.drive-int-case35-t0.<hash>
+   │  └─ stone = 1.test
+   │
+   ├─ latest round, i001
+   │   ├─ r1: arch (l1, 1/3) — rejected, 2 blockers 🔴, 1 nitpick 🟠
+   │   │   └─ given: .reviews/peer/1.test._.review.i001.<hash>.r001._.given.by_peer.arch.md
+   │   ├─ r4: rules (l1, 1/3) — malfunction 💥
+   │   │   └─ given: .reviews/peer/1.test._.review.i001.<hash>.r004._.given.by_peer.rules.md
+   │   ├─ 2 lanes approved, 0 blockers ✓, 0 nitpicks ✓
+   │   └─ j1: blocked ✗ — blockers exceed threshold (2 > 0)
+   │
+   ├─ are you here?
+   │  ├─ when ready for review, run:
+   │  │  └─ rhx route.stone.set --stone 1.test --as arrived
+   │  └─ when ready to continue, run:
+   │     └─ rhx route.stone.set --stone 1.test --as passed
+   │
+   ├─ here's the stone
+   │  ├─
+   │  │
+   │  │  # stone
+   │  └─
+   │
+   └─ are you here?
+      ├─ when ready for review, run:
+      │  └─ rhx route.stone.set --stone 1.test --as arrived
+      └─ when ready to continue, run:
+         └─ rhx route.stone.set --stone 1.test --as passed"
 `;

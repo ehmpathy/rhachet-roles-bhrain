@@ -14,7 +14,7 @@ import { stepReflect } from './stepReflect';
 
 describe('stepReflect', () => {
   const brainScene = useBeforeAll(async () => ({
-    brain: genTestBrainContext({ brain: DEFAULT_TEST_BRAIN }),
+    brain: await genTestBrainContext({ brain: DEFAULT_TEST_BRAIN }),
   }));
 
   given('[case1] source directory does not exist', () => {

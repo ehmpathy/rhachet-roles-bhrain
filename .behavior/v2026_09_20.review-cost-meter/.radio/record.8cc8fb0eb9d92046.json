@@ -1,0 +1,21 @@
+{
+  "key": "8cc8fb0eb9d92046",
+  "kind": "create",
+  "repo": {
+    "owner": "ehmpathy",
+    "name": "rhachet-brains-openrouter"
+  },
+  "exid": null,
+  "title": "fix(floor): a speed floor must not admit a host whose median straddles it",
+  "description": "## .what\n\nthe default supply floor+speed=min50tps+privacy=full admits a host whose median throughput straddles 50 tps, and that host then wins every ask while it is admitted and serves about half of them below the floor the slug names.\n\ncheckable evidence, 2026-10-05, deepseek/deepseek-v4.1-flash, nine identical ~900-token json asks:\n\n| slug | served by | live speed | cache reads on a repeated 58k prefix |\n|---|---|---|---|\n| bare openrouter/deepseek/flash | morph/fp8, every ask | 19 to 64 tps | 0 |\n| the min100tps variant of the floor slug | coreweave/fp8, every ask | 132 to 227 tps | ~58k |\n\nthe gate reads throughput_last_30m (a median, cached 30 min on the machine), and the ask goes to ONE endpoint with allow_fallbacks false; it steps past only on 429 or 404. a slow-but-alive host never trips a step.\n\n## .why\n\nthe slug promises a speed floor and the floor admits hosts that serve below it, which in one consumer turned an integration suite red with timeouts on asks that had run in seconds a week earlier.\n\n## .shape of the fix\n\n1. list the min100tps privacy=full floor variant of deepseek/flash in SLUGS_FILTERED_LISTED, so a CLI consumer can choose it by name (rhachet selects by exact atom.slug)\n2. demand a margin over the median (or gate on a slow-tail figure, if openrouter publishes one), so a host that straddles the floor is not admitted at it\n3. consider a stall bound: no first token within N seconds steps to the next endpoint\n4. clamp: an endpoint list whose median sits at the floor is excluded under the margin\n\nrelated, not repeated here: rank by expected total cost (#16), a latency filter (#11), and a replica affinity key (filed separately).\n\ncaught in ehmpathy/rhachet-roles-bhrain .dream/v2026_10_05.reseed.openrouter-floor-admits-hosts-that-serve-below-the-speed-floor.md",
+  "status": null,
+  "via": "gh.issues",
+  "auth": "as-human",
+  "idem": null,
+  "heldAt": "2026-10-15",
+  "heldSeq": 25,
+  "recordStatus": "DELIVERED",
+  "reason": null,
+  "settledAt": "2026-10-16",
+  "deliveredExid": "19"
+}

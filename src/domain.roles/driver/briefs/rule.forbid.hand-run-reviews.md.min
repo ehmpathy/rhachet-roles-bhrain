@@ -31,7 +31,7 @@ no `.given` is written, so it cannot be answered by a `.taken`, the judge cannot
 
 | the situation | the sanctioned move |
 |---|---|
-| a lane **overflowed** its window | 🔴 `rhx route.mutate.guard` — narrow its `--paths-with`, or trim its `--conversation`. **then let the guard run it** |
+| a lane **overflowed** its window | 🔴 edit `$route/<stone>.guard` directly — narrow its `--paths-wout` / `--paths-with`, or trim its `--conversation`. **then let the guard run it**. needs the route's mutate grant (`rhx route.mutate grant get`; a human grants it once) |
 | a lane's bind is **wrong** | the same. the bind is a guard field, and the guard is yours |
 | a lane is **out of budget** | `rhx route.guard.budget --for review --add N` |
 | a rubric wants a **different** corpus | that is a new lane. add it to the guard |

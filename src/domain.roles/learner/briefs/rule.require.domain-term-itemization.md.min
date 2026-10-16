@@ -19,11 +19,13 @@ every **domain term** — a noun, verb, or adj that composes this repo's declare
 
 ## .how — a `choice._.` cluster per term
 
-- `term=<x>._.choice._.md` — **say**: chosen word, kind, forbidden synonyms, refs, `.what`
-- `term=<x>._.choice.reason.md` — **ref**: etymology, disputes, evidence — **required**
-- `term=<x>._.choice.example=<abc>.md` — ref, one per notable example — optional
+- `term=<boundary…>.<x>._.choice._.md` — **say**: chosen word, kind, forbidden synonyms, refs, `.what`
+- `term=<boundary…>.<x>._.choice.reason.md` — **ref**: etymology, disputes, evidence — **required**
+- `term=<boundary…>.<x>._.choice.example=<abc>.md` — ref, one per notable example — optional
 
-⇒ the shape is `template.domain-term`; the boundary rule is `rule.require.boundary-qualified-terms`.
+🟡 the boundary ancestry leads the word (`term=surf.lesson._.choice._.md` for `lesson` within `surf`), per `rule.require.boundary-qualified-terms`. a qualified name is still ONE entry per word, never a defect of this rule.
+
+⇒ the shape is `template.domain-term`.
 
 test: **"is this word part of a domain object or operation THIS repo declares?"** yes → itemize once, reuse everywhere · no → out of scope.
 

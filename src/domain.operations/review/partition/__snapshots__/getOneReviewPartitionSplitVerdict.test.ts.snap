@@ -1,0 +1,3 @@
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
+
+exports[`getOneReviewPartitionSplitVerdict given: [case3] a target sits in no declared partition when: [t0] the verdict is derived then: the refusal names the unclaimed target 1`] = `"1 target sits in no partition, so a split would leave targets unreviewed"`;

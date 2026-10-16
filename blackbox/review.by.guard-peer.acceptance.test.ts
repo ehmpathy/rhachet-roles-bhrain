@@ -2,6 +2,7 @@ import * as fs from 'fs/promises';
 import * as path from 'path';
 
 import { given, then, useThen, when } from 'test-fns';
+import { DEFAULT_TEST_BRAIN_VIA_CLI } from '@src/.test/genTestBrainContext';
 
 import {
   execAsync,
@@ -9,6 +10,7 @@ import {
   invokeRouteSkill,
   sanitizeTimeForSnapshot,
 } from './.test/invokeRouteSkill';
+import { maskVerdictCounts } from './.test/maskVerdictCounts';
 
 const ASSETS_DIR = path.join(__dirname, '.test/assets/route-guard-review-by');
 
@@ -39,7 +41,7 @@ const VERDICT_ATTEMPTS = 3;
  * .why = pins the base review's `🦉 let's review` brain row so the guard-tree + peer snapshots are
  *        deterministic in that dimension (the verdict itself is what varies, handled by SOME).
  */
-const BRAIN = 'openrouter/deepseek/flash';
+const BRAIN = DEFAULT_TEST_BRAIN_VIA_CLI;
 
 /**
  * .what = masks the concern counts a probabilistic reviewer chooses
@@ -95,19 +97,31 @@ const maskApprovedOutcome = (text: string): string =>
  *        the hash+iteration segment of each peer-artifact path (`.i001.<hash>.r001.`), and the
  *        concern counts a probabilistic reviewer chose. sanitizeTimeForSnapshot masks durations
  *        and the temp-dir prefix; the hash-scrub keeps `given:`/`taken:` references stable; and
- *        maskConcernMagnitudes masks the counts (see its `.why`).
+ *        the count mask keeps a live verdict from a flake of the suite.
  *
  *        what remains is deterministic: the `r{n}: <slug> (l1, N/3)` reviewer row, the verdict word,
  *        a zero blocker count where one is owed, and the judge outcomes — the guard EXPERIENCE a
  *        human reads.
+ *
+ * .note = `maskCounts` is required at every call site rather than defaulted, so each case states
+ *         out loud whether the tally is its contract (rule.forbid.undefined-inputs). a default
+ *         would let a new case inherit a decision nobody made for it:
+ *           - true  (a findings case) → maskVerdictCounts masks every count, zero included
+ *           - false (a pass case)     → maskConcernMagnitudes masks only what the brain chose and
+ *                                       keeps a `0 blockers`, the pass this case claims
  */
-const sanitizeGuardTreeForSnapshot = (stdout: string): string =>
-  maskConcernMagnitudes(
-    sanitizeTimeForSnapshot(stdout).replace(
-      /\.i\d+\.[0-9a-f]+\.r\d+\./g,
-      '.i[N].[HASH].r[N].',
-    ),
+const sanitizeGuardTreeForSnapshot = (input: {
+  stdout: string;
+  maskCounts: boolean;
+}): string => {
+  const sanitized = sanitizeTimeForSnapshot(input.stdout).replace(
+    /\.i\d+\.[0-9a-f]+\.r\d+\./g,
+    '.i[N].[HASH].r[N].',
   );
+  return input.maskCounts
+    ? maskVerdictCounts(sanitized)
+    : maskConcernMagnitudes(sanitized);
+};
 
 /**
  * .what = sanitizes a guard-captured peer artifact so it snapshots stably
@@ -115,20 +129,24 @@ const sanitizeGuardTreeForSnapshot = (stdout: string): string =>
  *        wrapped in its own `├─ stdout` / `└─ tallied` tree. that captured text carries the base
  *        review's volatile telemetry — the `🔭 metrics.expected`, `🪵 logs`, and `✨ metrics.realized`
  *        subtrees (token counts, cost, latency, timestamped log paths) — plus a `logs:` line under
- *        the verdict header. a byte-exact snapshot would fight rule.require.repeatable-for-llm-tests.
- *
- *        its `summary` block and the guard's `└─ tallied` footer both restate the brain's concern
- *        counts, so maskConcernMagnitudes runs over the result (see its `.why`).
- *
- *        so we drop those volatile regions and keep the DETERMINISTIC structure that proves
+ *        the verdict header. a byte-exact snapshot would fight rule.require.repeatable-for-llm-tests,
+ *        so those volatile regions are dropped and the deterministic structure kept that proves
  *        disintermediation flows through the guard: the two `🪨 run solid skill` banners (review.by
  *        wrapper → base review), the `🦉 let's review` scope block, the verdict header, the `review:`
  *        output path, the base review's `summary` block, and the guard's `└─ tallied` footer — with
- *        NO `🔍 review.by` anchor and NO `rubrics` bucket (the review.by tree chrome that
+ *        no `🔍 review.by` anchor and no `rubrics` bucket (the review.by tree chrome that
  *        disintermediation removes).
+ *
+ * .note = `maskCounts` carries the same per-case decision the guard-tree sanitizer does, and a case
+ *         passes the same value to both — the captured artifact's `summary` block and the guard
+ *         tree's reviewer row report one verdict, so to mask one and not the other would leave two
+ *         snapshots of one fact that can disagree. see `maskVerdictCounts` for the table.
  */
-const sanitizeCapturedPeerForSnapshot = (artifact: string): string => {
-  const lines = artifact
+const sanitizeCapturedPeerForSnapshot = (input: {
+  artifact: string;
+  maskCounts: boolean;
+}): string => {
+  const lines = input.artifact
     // strip ANSI color/style escape codes
     // biome-ignore lint/suspicious/noControlCharactersInRegex: the ESC control byte is the intended target
     .replace(/\x1b\[[0-9;]*m/g, '')
@@ -146,12 +164,15 @@ const sanitizeCapturedPeerForSnapshot = (artifact: string): string => {
     // collapse the child's raw stderr, which a MALFUNCTIONED rubric now carries so its cause
     // travels (rule.forbid.failhide). that dump is a node crash trace: absolute repo paths, stack
     // frames, and the live `🔭 available brains` catalog — all machine- or upstream-volatile (the
-    // catalog already drifted glm 5.1 -> 5.2). the deterministic part is the `💥 rubric
-    // malfunctioned: <slug>` header, so keep that and mark the dump. the CAUSE itself is clamped
-    // by a direct assertion in the malfunction case, not by this snapshot.
-    if (/💥 rubric malfunctioned:/.test(line)) {
+    // catalog already drifted glm 5.1 -> 5.2). the deterministic part is the `💥 MalfunctionError:
+    // rubric malfunctioned: <slug>` header, so keep that and mark the dump. the CAUSE itself is
+    // clamped by a direct assertion in the malfunction case, not by this snapshot.
+    if (/💥 MalfunctionError: rubric malfunctioned:/.test(line)) {
       kept.push(line);
-      kept.push('[STDERR]');
+      // the marker inherits the rail prefix of the header, so it sits inside the body
+      kept.push(
+        line.replace(/💥 MalfunctionError: rubric malfunctioned:.*$/, '[STDERR]'),
+      );
       skipStderr = true;
       continue;
     }
@@ -172,33 +193,29 @@ const sanitizeCapturedPeerForSnapshot = (artifact: string): string => {
     kept.push(line);
   }
 
-  // 🔴 NO empty-stderr carve-out here, and none is owed — the ENGINE normalizes it now.
+  // no empty-stderr carve-out here, and none is owed — the engine normalizes it.
+  // `runStoneGuardReviews.ts:189` builds the captured artifact through
+  // `formatArtifactStreamBuckets`, which emits a `stderr` bucket only when
+  // `stderr.trim() !== ''` — so a clean child's bare or empty stderr collapses to one
+  // output at the source (pinned at unit grain: `formatArtifactStreamBuckets.test.ts`
+  // [case5]/[case6]). the section that survives to here always held real output, so it
+  // is snapped live and whole — one fewer transform between the live bytes and the
+  // baseline (rule.require.contract-snapshot-exhaustiveness).
   //
-  // an earlier round dropped a bare-bodied `stderr` section from the snapshot body,
-  // because a clean child may write no byte at all to stderr (no section renders) or
-  // a bare newline (the section renders, with an empty body). which one you get is the
-  // child process's business, never the contract under test, so the artifact varied run
-  // to run.
+  // a malfunction's stderr is a separate case and is not touched by this: it carries
+  // the cause, so the loop above keeps its `💥 MalfunctionError:` header and
+  // collapses only the volatile crash dump to the `[STDERR]` marker.
   //
-  // ⚠️ that variance no longer reaches this test. `runStoneGuardReviews.ts:189` builds
-  //    the captured artifact through `formatArtifactStreamBuckets`, which emits a
-  //    `stderr` bucket only when `stderr.trim() !== ''` — so BOTH variants collapse to
-  //    one output at the source. it is pinned at unit grain, not inferred:
-  //      `formatArtifactStreamBuckets.test.ts` [case5] — `stderr: '\n  \n'` ⇒ no bucket
-  //      `formatArtifactStreamBuckets.test.ts` [case6] — `stderr: ''`      ⇒ no bucket
-  //
-  // ⇒ so the section that survives to here always held REAL output, and it is snapped
-  //   live and whole. a reviewer asked for a stable `<empty>` MARKER in place of the
-  //   drop (r2 blocker.1, i016) — this is that ask carried further: a mask is the right
-  //   answer to variance that reaches the snapshot, and NO mask is the right answer to
-  //   variance the engine already removed. one fewer transform stands between the live
-  //   bytes and the baseline, which is what `rule.require.contract-snapshot-exhaustiveness`
-  //   is after.
-  //
-  // ⚠️ a MALFUNCTION's stderr is a separate case and is NOT touched by this: it carries
-  //    the cause, so the loop above keeps its `💥 rubric malfunctioned:` header and
-  //    collapses only the volatile crash dump to the `[STDERR]` marker.
-  return maskApprovedOutcome(maskConcernMagnitudes(kept.join('\n').trim()));
+  // and the verdict counts are masked on the way out — this artifact carries the base
+  // review's own `summary` block plus the guard's `└─ tallied` footer, so one shifted
+  // brain verdict moves it in two places at once. a findings case masks every count
+  // (maskVerdictCounts); a pass case masks only what the brain chose and keeps its
+  // `0 blockers`, the contract this snapshot proves (maskConcernMagnitudes). either way,
+  // the two approved outcomes merge into one render (maskApprovedOutcome).
+  const body = kept.join('\n').trim();
+  return maskApprovedOutcome(
+    input.maskCounts ? maskVerdictCounts(body) : maskConcernMagnitudes(body),
+  );
 };
 
 /**
@@ -337,44 +354,65 @@ const driveGuardUntilVerdict = async (input: {
   return { ...latest, attemptsSpent: spent };
 };
 
-// a clean, non-domain util — declares NO domain object or operation, so term-aggregation
-// (itemization) has no declared term to require → a deterministic 0/0 pass verdict.
-const SRC_CLEAN_GENERIC =
-  'export const addNumbers = (input: { a: number; b: number }): number =>\n' +
-  '  input.a + input.b;\n';
+// a clean, non-domain constant — declares NO domain object or operation, so term-aggregation
+// (itemization) has no declared term to require → a 0/0 pass verdict.
+// .note = an earlier form exported `addNumbers`, an OPERATION, with no glossary in scope. the
+//         itemization rule reads a declared op with unitemized terms as a blocker, so a live model
+//         rejected it on some attempts (measured 2026-10-05). the model was right; the fixture's
+//         claim to declare no operation was false, so the pass case pinned a coin flip
+const SRC_CLEAN_GENERIC = 'export const MINUTES_PER_HOUR = 60;\n';
 
 // a clean, well-termed domain op — one unambiguous concept per word, so term-application passes.
-// .note = the op returns what its name says. an earlier fixture named `getSurferName` and returned a
-//         `surferId`, a name-versus-id mismatch a term rubric may fairly flag, so a brain graded the
-//         "clean" case dirty on some drives.
+// .note = the op returns the very thing its name says. an earlier form returned `input.surferId`
+//         from `getSurferName` — a name that says NAME over a body that yields an ID — and a live
+//         model flagged it a term-application blocker on some attempts. the model was right; the
+//         fixture was not clean, so the "pass" case pinned a coin flip
 const SRC_CLEAN_TERMS =
   'export const getSurferName = (input: { surfer: { name: string } }): string =>\n' +
   '  input.surfer.name;\n';
 
-// deliberately term-dirty: ONE concept (a reserved lesson slot) under THREE words, plus one word
-// overloaded across two concepts — so term-application reliably BITES (inconsistency + ambiguity).
+// term-dirty: ONE concept (a surfer's reserved lesson slot) under THREE words —
+// `Reservation` / `getHold` / `cancelAppointment` — plus `session` overloaded across a surf lesson
+// and an auth login, so term-application BITES (inconsistency + ambiguity).
+// .note = each `.what` doc states its symbol's domain sense, as production code would, so the
+//         defects are visible from the target alone. the docs never label the file a test
+//         fixture: a target that calls itself deliberate invites the reviewer to excuse it, and
+//         with no docs the test brain cannot tie the three words to one concept and answers
+//         `no issues found` (measured 2026-10-05: bare 0/3 detected, domain docs 3/3). the same
+//         target is the learner suite's `codebase-review-by-learner/src/dirty.terms.ts`
 const SRC_DIRTY_TERMS =
-  '// inconsistency: one concept (a reserved lesson slot) under three words.\n' +
+  '/**\n' +
+  " * .what = a surfer's reserved slot in a surf lesson\n" +
+  ' */\n' +
   'export interface Reservation {\n' +
   '  surfer: string;\n' +
   '  slot: string;\n' +
   '}\n' +
   '\n' +
+  '/**\n' +
+  " * .what = gets a surfer's reserved slot in a surf lesson\n" +
+  ' */\n' +
   'export const getHold = (input: { id: string }): Reservation => {\n' +
   "  return { surfer: 'kai', slot: '9am' };\n" +
   '};\n' +
   '\n' +
-  'export const cancelAppointment = (input: {\n' +
-  '  reservation: Reservation;\n' +
-  '}): void => {\n' +
-  '  // three words, one concept\n' +
+  '/**\n' +
+  " * .what = cancels a surfer's reserved slot in a surf lesson\n" +
+  ' */\n' +
+  'export const cancelAppointment = (input: { reservation: Reservation }): void => {\n' +
+  '  return;\n' +
   '};\n' +
   '\n' +
-  "// ambiguity (overload): 'session' means BOTH a surf lesson AND an auth login.\n" +
+  '/**\n' +
+  ' * .what = a session — one surf lesson, in minutes\n' +
+  ' */\n' +
   'export interface Session {\n' +
   '  lessonMinutes: number;\n' +
   '}\n' +
   '\n' +
+  '/**\n' +
+  ' * .what = opens a session — one auth login, keyed by its token\n' +
+  ' */\n' +
   'export const openSession = (input: { token: string }): { token: string } => {\n' +
   '  return { token: input.token };\n' +
   '};\n';
@@ -433,6 +471,15 @@ describe('review.by.guard-peer.acceptance', () => {
           expect(res.cli.stdout).toContain('term-aggregation');
         });
 
+        then('🔴 the guard APPROVED — the pass this case claims, stated rather than snapped', () => {
+          // the snapshot below is not proof of a pass on its own: a `--resnap` taken while the
+          // live model misjudged the clean fixture mints a REJECTION under this pass-case name,
+          // and every later run then reads that rejection as the stable truth. an explicit
+          // assertion fails that resnap loud instead
+          expect(res.cli.stdout).toContain('passage = allowed');
+          expect(res.cli.stdout).not.toMatch(/[1-9]\d* blockers? 🔴/);
+        });
+
         then('the captured peer artifact IS a raw base review, NOT a review.by tree', () => {
           expect(res.artifact).not.toBeNull();
           const artifact = res.artifact ?? '';
@@ -442,15 +489,23 @@ describe('review.by.guard-peer.acceptance', () => {
         });
 
         then('the guard-tree stdout is stable (full snapshot)', () => {
+          // maskCounts false — a pass case. `0 blockers` is what this case claims, and
+          // the snapshot is its only proof; masked, it could not part a pass from a reject
           expect(
-            sanitizeGuardTreeForSnapshot(res.cli.stdout),
+            sanitizeGuardTreeForSnapshot({
+              stdout: res.cli.stdout,
+              maskCounts: false,
+            }),
           ).toMatchSnapshot();
         });
 
         then('the captured peer artifact is stable (full snapshot)', () => {
           expect(res.artifact).not.toBeNull();
           expect(
-            sanitizeCapturedPeerForSnapshot(res.artifact ?? ''),
+            sanitizeCapturedPeerForSnapshot({
+              artifact: res.artifact ?? '',
+              maskCounts: false,
+            }),
           ).toMatchSnapshot();
         });
       },
@@ -486,9 +541,16 @@ describe('review.by.guard-peer.acceptance', () => {
         });
 
         then('the guard tallied a parseable count off the peer stdout', () => {
-          // the guard parses the disintermediated stdout via getReviewCounts — the SAME path it
+          // the guard parses the disintermediated stdout via getOneReviewCounts — the SAME path it
           // uses for a direct `$rhx review` peer — so the reviewer row carries a blockers count
           expect(res.cli.stdout).toMatch(/\d+\s*blockers?/i);
+        });
+
+        then('🔴 the guard APPROVED — the pass this case claims, stated rather than snapped', () => {
+          // same reason as [case-seam-pass-aggregation]: a resnap amid a live misjudgment
+          // must fail here, never mint a rejection as this case's stable truth
+          expect(res.cli.stdout).toContain('passage = allowed');
+          expect(res.cli.stdout).not.toMatch(/[1-9]\d* blockers? 🔴/);
         });
 
         then('the captured peer artifact IS a raw base review, NOT a review.by tree', () => {
@@ -500,15 +562,23 @@ describe('review.by.guard-peer.acceptance', () => {
         });
 
         then('the guard-tree stdout is stable (full snapshot)', () => {
+          // maskCounts false — a pass case. `0 blockers` is what this case claims; the
+          // explicit approval check above guards the claim, the snapshot guards the shape
           expect(
-            sanitizeGuardTreeForSnapshot(res.cli.stdout),
+            sanitizeGuardTreeForSnapshot({
+              stdout: res.cli.stdout,
+              maskCounts: false,
+            }),
           ).toMatchSnapshot();
         });
 
         then('the captured peer artifact is stable (full snapshot)', () => {
           expect(res.artifact).not.toBeNull();
           expect(
-            sanitizeCapturedPeerForSnapshot(res.artifact ?? ''),
+            sanitizeCapturedPeerForSnapshot({
+              artifact: res.artifact ?? '',
+              maskCounts: false,
+            }),
           ).toMatchSnapshot();
         });
       },
@@ -544,7 +614,9 @@ describe('review.by.guard-peer.acceptance', () => {
           // finds at least one blocker; the guard folds that into the tree and the reviewed? judge
           // blocks (allow-blockers 0). proof the FINDINGS path flows through the seam.
           expect(res.cli.stdout).toContain('term-application');
-          expect(res.cli.stdout).toMatch(/\d+\s*blockers?/i);
+          // a NONZERO count: `\d+` alone would match `0 blockers`, which is a pass, not a reject
+          expect(res.cli.stdout).toMatch(/\b[1-9]\d*\s*blockers?/i);
+          expect(res.cli.stdout).toContain('passage = blocked');
         });
 
         then('the captured peer artifact IS a raw base review with findings, NOT a review.by tree', () => {
@@ -557,16 +629,45 @@ describe('review.by.guard-peer.acceptance', () => {
           expect(artifact).not.toMatch(/[├└]─ rubrics\b/);
         });
 
+        then('every surface reports ONE tally — the base summary, the guard footer, the reviewer row', () => {
+          // .why = the snapshots below mask the counts, since the brain decides them. what the
+          //        brain does NOT decide is that the guard carries its count faithfully: the base
+          //        review's `summary`, the guard's `└─ tallied` footer, and the tree's reviewer row
+          //        must all name the same number. the old exact pin held that as a side effect; this
+          //        holds it on purpose, so a mis-tally still goes red under the mask
+          const asCounts = (text: string, noun: 'blocker' | 'nitpick'): number[] =>
+            [...text.matchAll(new RegExp(`\\b(\\d+) ${noun}s?\\b`, 'g'))].map((match) =>
+              Number(match[1]),
+            );
+          const surfaces = `${res.artifact ?? ''}\n${res.cli.stdout}`;
+          const blockers = asCounts(surfaces, 'blocker');
+          const nitpicks = asCounts(surfaces, 'nitpick');
+          expect(blockers.length).toBeGreaterThanOrEqual(3);
+          expect(new Set(blockers).size).toEqual(1);
+          expect(new Set(nitpicks).size).toEqual(1);
+        });
+
         then('the guard-tree stdout is stable (full snapshot)', () => {
+          // maskCounts = true. this case's contract is "≥1 blocker ⇒ the guard blocks" —
+          // the tally itself is the live brain's, so a shifted modal verdict (1 → 2 blockers)
+          // is a fixture drift, never a defect. what the snapshot still proves: the verdict
+          // word, `blockers exceed threshold ([N] > 0)`, `passage = blocked`, `exit code: 2`.
+          // the count-agnostic floor is asserted above: a nonzero count + `passage = blocked`.
           expect(
-            sanitizeGuardTreeForSnapshot(res.cli.stdout),
+            sanitizeGuardTreeForSnapshot({
+              stdout: res.cli.stdout,
+              maskCounts: true,
+            }),
           ).toMatchSnapshot();
         });
 
         then('the captured peer artifact is stable (full snapshot)', () => {
           expect(res.artifact).not.toBeNull();
           expect(
-            sanitizeCapturedPeerForSnapshot(res.artifact ?? ''),
+            sanitizeCapturedPeerForSnapshot({
+              artifact: res.artifact ?? '',
+              maskCounts: true,
+            }),
           ).toMatchSnapshot();
         });
       },
@@ -613,8 +714,8 @@ describe('review.by.guard-peer.acceptance', () => {
         // `💥 failed with an error` (rule.forbid.failhide, rule.require.errors-name-the-fix).
         // asserted here rather than in the snapshot — the dump carries volatile absolute paths.
         const artifact = res.artifact ?? '';
-        expect(artifact).toContain('💥 rubric malfunctioned: term-aggregation');
-        expect(artifact).toContain('brain not found: nonexistent/broken/brain');
+        expect(artifact).toContain('💥 MalfunctionError: rubric malfunctioned: term-aggregation');
+        expect(artifact).toContain("brain 'nonexistent/broken/brain' is not registered");
       });
 
       then('the captured artifact lists the available brains, so the caller can fix the choice', () => {
@@ -625,13 +726,23 @@ describe('review.by.guard-peer.acceptance', () => {
       });
 
       then('the guard-tree stdout is stable (full snapshot)', () => {
-        expect(sanitizeGuardTreeForSnapshot(res.cli.stdout)).toMatchSnapshot();
+        // maskCounts = false. no LLM call is made here (the brain is not found first), so
+        // every figure in this tree is deterministic — a mask would hide real drift.
+        expect(
+          sanitizeGuardTreeForSnapshot({
+            stdout: res.cli.stdout,
+            maskCounts: false,
+          }),
+        ).toMatchSnapshot();
       });
 
       then('the captured peer artifact is stable (full snapshot)', () => {
         expect(res.artifact).not.toBeNull();
         expect(
-          sanitizeCapturedPeerForSnapshot(res.artifact ?? ''),
+          sanitizeCapturedPeerForSnapshot({
+            artifact: res.artifact ?? '',
+            maskCounts: false,
+          }),
         ).toMatchSnapshot();
       });
     });

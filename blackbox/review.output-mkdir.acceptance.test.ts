@@ -4,18 +4,31 @@ import * as path from 'path';
 import { given, then, useThen, when } from 'test-fns';
 
 import { logOutputHead } from '@src/.test/logOutputHead';
+import { DEFAULT_TEST_BRAIN_VIA_CLI } from '@src/.test/genTestBrainContext';
 
 import {
   execAsync,
   genTempDirForRhachet,
   invokeReviewSkill,
 } from './.test/invokeReviewSkill';
+import { asReviewMetricsExpectedBlock } from './.test/invokeReviewBySkill';
 
 const ASSETS_DIR = path.join(__dirname, '.test/assets/codebase-mechanic');
 
+/**
+ * .what = config for probabilistic tests that invoke LLM brains
+ * .why = LLM responses can timeout or vary; retry ensures CI stability
+ *
+ * @see .agent/repo=.this/role=any/briefs/rule.require.repeatable-for-llm-tests.md
+ */
+const REPEATABLE_CONFIG = {
+  attempts: 3,
+  criteria: process.env.CI ? 'SOME' : 'EVERY',
+} as const;
+
 describe('review.output-mkdir.acceptance', () => {
   given('[case1] mechanic codebase with review skill', () => {
-    when('[t0] review skill invoked with --output to absent parent dir', () => {
+    when.repeatably(REPEATABLE_CONFIG)('[t0] review skill invoked with --output to absent parent dir', () => {
       const res = useThen(
         'invoke review skill with --output to absent parent',
         async () => {
@@ -53,7 +66,7 @@ describe('review.output-mkdir.acceptance', () => {
             output: outputPath,
             focus: 'push',
             goal: 'representative',
-            brain: 'openrouter/deepseek/flash',
+            brain: DEFAULT_TEST_BRAIN_VIA_CLI,
             cwd: tempDir,
           });
 
@@ -92,6 +105,11 @@ describe('review.output-mkdir.acceptance', () => {
 
       then('parent directory did not exist before', () => {
         expect(res.parentExistsBefore).toBe(false);
+      });
+
+      then('the metrics.expected block matches its snapshot (computed before the brain)', () => {
+        // the scope tree and estimate are deterministic; the verdict summary is the brain's
+        expect(asReviewMetricsExpectedBlock({ stdout: res.cli.stdout })).toMatchSnapshot();
       });
 
       then('cli completes successfully', () => {

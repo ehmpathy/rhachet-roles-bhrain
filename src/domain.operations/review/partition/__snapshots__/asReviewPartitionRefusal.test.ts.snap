@@ -1,0 +1,113 @@
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
+
+exports[`asReviewPartitionRefusal given: [case0] more unclaimed targets than a path list can show when: [t0] the refusal is checked then: the lines match the snapshot 1`] = `
+"   ├─ unclaimed, by directory (14 directories)
+   │  ├─   7 files  blackbox
+   │  ├─    1 file  .scratch/d0
+   │  ├─    1 file  .scratch/d1
+   │  ├─    1 file  .scratch/d2
+   │  ├─    1 file  .scratch/d3
+   │  ├─    1 file  .scratch/d4
+   │  ├─    1 file  .scratch/d5
+   │  ├─    1 file  .scratch/d6
+   │  ├─    1 file  .scratch/d7
+   │  ├─    1 file  .scratch/d8
+   │  ├─    1 file  .scratch/d9
+   │  ├─    1 file  .scratch/d10
+   │  ├─    1 file  .scratch/d11
+   │  └─    1 file  .scratch/d12
+   └─ fix: add each to the partition of its domain, or declare one more named for its domain — e.g. --partition 'config=package.json'
+
+✨ did you know?
+   ├─ claim each domain whole, in every layer, and the files you edit next stay covered
+   └─ e.g. src/route/** and blackbox/{,__snapshots__/}driver.route.* in one partition"
+`;
+
+exports[`asReviewPartitionRefusal given: [case0] more unclaimed targets than a path list can show when: [t1] the headline is read then: the headline matches the snapshot 1`] = `"20 targets sit in no partition, so a split would leave targets unreviewed"`;
+
+exports[`asReviewPartitionRefusal given: [case0b] one directory too heavy to be one partition when: [t0] the refusal is checked then: the lines match the snapshot 1`] = `
+"   ├─ unclaimed, by directory (4 directories)
+   │  ├─  45 files  src/ops/route
+   │  ├─  30 files  src/ops/review/meter
+   │  ├─  30 files  src/ops/review/warmer
+   │  └─   3 files  src/ops/route/__snapshots__
+   └─ fix: add each to the partition of its domain, or declare one more named for its domain — e.g. --partition 'config=package.json'
+
+✨ did you know?
+   ├─ claim each domain whole, in every layer, and the files you edit next stay covered
+   └─ e.g. src/route/** and blackbox/{,__snapshots__/}driver.route.* in one partition"
+`;
+
+exports[`asReviewPartitionRefusal given: [case1] a target that sits in no partition when: [t0] the refusal is checked then: the refusal matches the snapshot 1`] = `
+"1 target sits in no partition, so a split would leave targets unreviewed
+   ├─ unclaimed
+   │  └─ blackbox/x.ts
+   └─ fix: add each to the partition of its domain, or declare one more named for its domain — e.g. --partition 'config=package.json'
+
+✨ did you know?
+   ├─ claim each domain whole, in every layer, and the files you edit next stay covered
+   └─ e.g. src/route/** and blackbox/{,__snapshots__/}driver.route.* in one partition"
+`;
+
+exports[`asReviewPartitionRefusal given: [case2] a bound route that one partition omits when: [t0] the refusal is checked then: the refusal matches the snapshot 1`] = `
+"the bound route is absent from 1 partition; each must hold the spec it grades against
+   ├─ route: .behavior/v2026_01_01.demo
+   ├─ absent from
+   │  └─ b
+   └─ fix: add '.behavior/v2026_01_01.demo/**' to each partition's globs
+
+✨ did you know?
+   ├─ claim each domain whole, in every layer, and the files you edit next stay covered
+   └─ e.g. src/route/** and blackbox/{,__snapshots__/}driver.route.* in one partition"
+`;
+
+exports[`asReviewPartitionRefusal given: [case3] a partition that cannot fit alone when: [t0] the refusal is checked then: the refusal matches the snapshot 1`] = `
+"1 partition still overflows alone
+   ├─ b: ~182,000 tokens, 4 files — ~32,000 over the ~150,000 limit
+   │  ├─ common: ~2,000 tokens, 1 file — shared with other partitions, so it rides into every half of a split
+   │  └─ its own, by directory — the seams a split can cut along
+   │     ├─ ~130,000 tokens   2 files  src/b/meter
+   │     └─  ~50,000 tokens    1 file  src/b/cache
+   ├─ fix: narrow that partition, or split it in two — the tool never splits a partition again
+   └─ redeclare the set with narrower --partition flags (under a guard, rhx route.guard.partition --for review --peer @all)"
+`;
+
+exports[`asReviewPartitionRefusal given: [case5] a route set that leaves the prime files unclaimed (the i008 refusal) when: [t0] the refusal is checked with the route set it came from then: the lines match the snapshot 1`] = `
+"   ├─ unclaimed → where the repair places each
+   │  ├─ src/domain.operations/review/prime/setOnePrime.ts → review-ops (+ src/domain.operations/review/prime/**)
+   │  └─ src/domain.operations/review/prime/setOnePrime.test.ts → review-ops (+ src/domain.operations/review/prime/**)
+   └─ repair — run this to claim each gap into its partition
+         rhx route.guard.partition --route .behavior/v2026_01_01.demo --for review --peer @all \\
+           --claim 'src/domain.operations/review/prime/**' --into review-ops \\
+           --mode apply
+
+✨ did you know?
+   ├─ claim each domain whole, in every layer, and the files you edit next stay covered
+   └─ e.g. src/route/** and blackbox/{,__snapshots__/}driver.route.* in one partition"
+`;
+
+exports[`asReviewPartitionRefusal given: [case5] a route set that leaves the prime files unclaimed (the i008 refusal) when: [t1] the refusal is checked with the caller own flags then: the lines match the snapshot 1`] = `
+"   ├─ unclaimed → where the repair places each
+   │  ├─ src/domain.operations/review/prime/setOnePrime.ts → review-ops (+ src/domain.operations/review/prime/**)
+   │  └─ src/domain.operations/review/prime/setOnePrime.test.ts → review-ops (+ src/domain.operations/review/prime/**)
+   └─ repair — re-run with these --partition flags beside yours
+           --partition 'review-ops=src/domain.operations/review/prime/**'
+
+✨ did you know?
+   ├─ claim each domain whole, in every layer, and the files you edit next stay covered
+   └─ e.g. src/route/** and blackbox/{,__snapshots__/}driver.route.* in one partition"
+`;
+
+exports[`asReviewPartitionRefusal given: [case6] a route set where one partition lacks the route spec when: [t0] the refusal is checked with the route set it came from then: 🔴 the command adds the route spec to the partition that lacked it 1`] = `
+"   ├─ route: .behavior/v2026_01_01.demo
+   ├─ absent from
+   │  └─ b
+   └─ repair — run this to claim each gap into its partition
+         rhx route.guard.partition --route .behavior/v2026_01_01.demo --for review --peer @all \\
+           --claim '.behavior/v2026_01_01.demo/**' --into b \\
+           --mode apply
+
+✨ did you know?
+   ├─ claim each domain whole, in every layer, and the files you edit next stay covered
+   └─ e.g. src/route/** and blackbox/{,__snapshots__/}driver.route.* in one partition"
+`;

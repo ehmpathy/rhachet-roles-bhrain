@@ -1,0 +1,37 @@
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
+
+exports[`asReviewScopeEmptyRefusalLines given: [case1] a scope with no polluters dropped when: [t0] the lines are rendered then: it names the diffs count and the join, with no polluter line 1`] = `
+[
+  "   └─ targets",
+  "      ├─ diffs: since-main",
+  "      │  └─ files: 4",
+  "      ├─ paths.with: src/**/*.ts",
+  "      │  └─ files: 0",
+  "      ├─ paths.wout: (none)",
+  "      └─ joined via intersect",
+  "         └─ files: 0",
+  "",
+  "✨ did you know?",
+  "   └─ inspect .log/bhrain/review/x/input.scope.debug.json to see what was matched",
+]
+`;
+
+exports[`asReviewScopeEmptyRefusalLines given: [case2] a scope emptied by dropped polluters, with no --diffs when: [t0] the lines are rendered then: it names the dropped polluters and reads diffs as absent 1`] = `
+[
+  "   ├─ targets",
+  "   │  ├─ diffs: (none)",
+  "   │  │  └─ files: —",
+  "   │  ├─ paths.with: .behavior/**",
+  "   │  │  └─ files: 3",
+  "   │  ├─ paths.wout: (none)",
+  "   │  └─ joined via union",
+  "   │     └─ files: 3",
+  "   └─ polluters: 3 dropped by default",
+  "      └─ kept: .fulcrums/*._.md, .seeds/**, *.yield.md — every other route artifact, dream, and lockfile is dropped where it RODE IN on --diffs",
+  "         ├─ to review SOME: name them in --paths — a glob that matches only paperwork keeps what it named",
+  "         └─ to review ALL: --polluters keep",
+  "",
+  "✨ did you know?",
+  "   └─ inspect .log/bhrain/review/x/input.scope.debug.json to see what was matched",
+]
+`;

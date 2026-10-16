@@ -16,7 +16,7 @@ import { getStoneReviewCorpus } from './getStoneReviewCorpus';
  * ⚠️ a CONCEDE subtracts naught. it declares the reviewer right, so the concern still counts
  *    and the hold it earns is the extant one.
  *
- * .note = `scope` narrows to ONE lane, on the `getRouteGuardReviewPeerFeedbackAbsorptionStatus`
+ * .note = `scope` narrows to ONE lane, on the `getOneRouteGuardReviewPeerFeedbackAbsorptionStatus`
  *         precedent. the judge tallies stone-wide; the per-round skip asks per lane.
  */
 export const computeDisputedConcernCounts = (input: {

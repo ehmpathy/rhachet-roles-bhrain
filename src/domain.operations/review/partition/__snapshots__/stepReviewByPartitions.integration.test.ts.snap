@@ -1,0 +1,169 @@
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
+
+exports[`stepReviewByPartitions given: [case1] an overflowed lane split into two partitions when: [t0] the split runs then: the merged stdout matches the snapshot 1`] = `
+"✨ metrics.realized
+   ├─ tokens
+   │  ├─ input: 300
+   │  ├─ cache.set: 0
+   │  ├─ cache.get: 2,700
+   │  ├─ output: 150
+   │  └─ total: 3,150
+   ├─ cost
+   │  └─ total: $0.093
+   └─ time
+      └─ total: 60s
+
+🦉 needs your talons
+
+🔍 review
+   ├─ logs: .log/whole
+   ├─ review: .behavior/v2026_10_04.feat/.reviews/peer/5.3.verification._.review.i003.ee09cef13102f22c3a.r001._.given.by_peer.repo-rules.report.md
+   └─ summary
+      ├─ 2 blockers 🔴
+      └─ 2 nitpicks 🟠"
+`;
+
+exports[`stepReviewByPartitions given: [case3] a split whose prime meets a provider fault when: [t0] the split runs then: the fault stderr reads as a driver meets it 1`] = `
+"🔍 the whole scope overflows — split into 2 declared partitions, primed, then poured at once
+   ├─ src: 1 narrow target + 1 common target
+   └─ docs: 1 narrow target + 1 common target
+
+💥 MalfunctionError: the prime of the shared prefix failed (the brain call failed — terminated); its peer partitions pour cold
+2 blockers
+0 blockers"
+`;
+
+exports[`stepReviewByPartitions given: [case5] a split whose partition faults on its retry too when: [t0] the split runs then: the merged report matches the snapshot 1`] = `
+"🦉 needs your talons
+   ├─ logs: .log/whole
+   ├─ review: .behavior/v2026_10_04.feat/.reviews/peer/5.3.verification._.review.i003.ee09cef13102f22c3a.r001._.given.by_peer.repo-rules.report.md
+   └─ summary
+      ├─ 3 blockers 🔴
+      └─ 1 nitpick 🟠
+
+---
+## partition: src
+
+- targets: 1 narrow target
+- review: .behavior/v2026_10_04.feat/.reviews/peer/.partition=1.src/5.3.verification._.review.i003.ee09cef13102f22c3a.r001._.given.by_peer.repo-rules.report.md
+
+- blocker in src
+
+## partition: docs
+
+- targets: 1 narrow target
+- review: (none — the partition failed; see below)
+
+# blocker.1 — this partition did not review
+
+💥 MalfunctionError: the partition failed before it returned a verdict: the brain call failed — terminated
+
+an unread verdict cannot be assumed clean, so it counts as one blocker.
+every other partition kept its verdict above and below. the fault is transient, so
+re-arrive to re-run this lane.
+"
+`;
+
+exports[`stepReviewByPartitions given: [case6] a split whose every partition refuses on the same overflow when: [t0] the split runs then: the merged report matches the snapshot 1`] = `
+"🦉 needs your talons
+   ├─ logs: .log/whole
+   ├─ review: .behavior/v2026_10_04.feat/.reviews/peer/5.3.verification._.review.i003.ee09cef13102f22c3a.r001._.given.by_peer.repo-rules.report.md
+   └─ summary
+      ├─ 2 blockers 🔴
+      └─ 0 nitpicks
+
+---
+## lane: every partition refused
+
+✋ ConstraintError: every partition failed before it returned a verdict: prompt exceeds 75% of context window
+
+every partition of this lane refused on this same constraint, so the lane returned
+no verdict at all. a re-run returns the same refusal — it cannot help.
+fix: narrow each partition, or split each in two — the refusal on stderr names
+the locus. declare the new set, then re-arrive: rhx route.guard.partition --for review --peer @all --partition '<slug>=<globs>' --mode apply
+
+## partition: src
+
+- targets: 1 narrow target
+- review: (none — the partition failed; see below)
+
+# blocker.1 — this partition did not review
+
+✋ ConstraintError: the partition failed before it returned a verdict: prompt exceeds 75% of context window
+
+an unread verdict cannot be assumed clean, so it counts as one blocker.
+this partition refused with the lane — the cause and its fix are stated once, above.
+
+## partition: docs
+
+- targets: 1 narrow target
+- review: (none — the partition failed; see below)
+
+# blocker.1 — this partition did not review
+
+✋ ConstraintError: the partition failed before it returned a verdict: prompt exceeds 75% of context window
+
+an unread verdict cannot be assumed clean, so it counts as one blocker.
+this partition refused with the lane — the cause and its fix are stated once, above.
+"
+`;
+
+exports[`stepReviewByPartitions given: [case7] a split whose one partition has an unmeasured spend when: [t0] the split runs then: the merged stdout matches the snapshot 1`] = `
+"✨ metrics.realized
+   ├─ spend: unmeasured 🟡 the brain reported no usage — unknown, not $0
+   └─ time
+      └─ total: 30s
+
+🦉 needs your talons
+
+🔍 review
+   ├─ logs: .log/whole
+   ├─ review: .behavior/v2026_10_04.feat/.reviews/peer/5.3.verification._.review.i003.ee09cef13102f22c3a.r001._.given.by_peer.repo-rules.report.md
+   └─ summary
+      ├─ 2 blockers 🔴
+      └─ 2 nitpicks 🟠"
+`;
+
+exports[`stepReviewByPartitions given: [case8] a hand run whose every partition refuses on the same overflow when: [t0] the split runs then: the merged report matches the snapshot 1`] = `
+"🦉 needs your talons
+   ├─ logs: .log/whole
+   ├─ review: .behavior/v2026_10_04.feat/.reviews/peer/5.3.verification._.review.i003.ee09cef13102f22c3a.r001._.given.by_peer.repo-rules.report.md
+   └─ summary
+      ├─ 2 blockers 🔴
+      └─ 0 nitpicks
+
+---
+## lane: every partition refused
+
+✋ ConstraintError: every partition failed before it returned a verdict: prompt exceeds 75% of context window
+
+every partition of this lane refused on this same constraint, so the lane returned
+no verdict at all. a re-run returns the same refusal — it cannot help.
+fix: narrow each partition, or split each in two — the refusal on stderr names
+the locus. narrow the --partition declarations on this review line, then run it again.
+
+## partition: src
+
+- targets: 1 narrow target
+- review: (none — the partition failed; see below)
+
+# blocker.1 — this partition did not review
+
+✋ ConstraintError: the partition failed before it returned a verdict: prompt exceeds 75% of context window
+
+an unread verdict cannot be assumed clean, so it counts as one blocker.
+this partition refused with the lane — the cause and its fix are stated once, above.
+
+## partition: docs
+
+- targets: 1 narrow target
+- review: (none — the partition failed; see below)
+
+# blocker.1 — this partition did not review
+
+✋ ConstraintError: the partition failed before it returned a verdict: prompt exceeds 75% of context window
+
+an unread verdict cannot be assumed clean, so it counts as one blocker.
+this partition refused with the lane — the cause and its fix are stated once, above.
+"
+`;

@@ -1,27 +1,35 @@
 import { exec } from 'child_process';
-import * as fs from 'fs/promises';
-import { BadRequestError } from 'helpful-errors';
 import * as path from 'path';
 import { getGitRepoRoot } from 'rhachet-artifact-git';
+import { isPresent } from 'type-fns';
 import { promisify } from 'util';
 
 import type { ContextCliEmit } from '@src/domain.objects/Driver/ContextCliEmit';
+import type { ContextStoneGuardRound } from '@src/domain.objects/Driver/ContextStoneGuardRound';
 import type { RouteStone } from '@src/domain.objects/Driver/RouteStone';
 import type { RouteStoneGuard } from '@src/domain.objects/Driver/RouteStoneGuard';
 import { RouteStoneGuardJudgeArtifact } from '@src/domain.objects/Driver/RouteStoneGuardJudgeArtifact';
+import { asGuardArtifactIteration } from '@src/domain.operations/route/guard/artifact/asGuardArtifactIteration';
+import { asGuardJudgeIndex } from '@src/domain.operations/route/guard/artifact/asGuardJudgeIndex';
+import { asCmdWithRuntimeVars } from '@src/domain.operations/route/guard/asCmdWithRuntimeVars';
+import { asExitCodeClass } from '@src/domain.operations/route/guard/asExitCodeClass';
 import { asExitCodeFromArtifactContent } from '@src/domain.operations/route/guard/asExitCodeFromArtifactContent';
-import { getExitCodeClass } from '@src/domain.operations/route/guard/getExitCodeClass';
-import { isENOENT } from '@src/domain.operations/route/guard/isENOENT';
-import {
-  RUNTIME_GUARD_VAR_NAMES,
-  type RuntimeGuardVarName,
-} from '@src/domain.operations/route/guard/RUNTIME_GUARD_VAR_NAMES';
-import { asArtifactStreamContent } from '@src/domain.operations/route/guard/tree/asArtifactStreamContent';
+import { asGuardCmdFreeOfNpx } from '@src/domain.operations/route/guard/asGuardCmdFreeOfNpx';
+import { asRuntimeGuardBinPaths } from '@src/domain.operations/route/guard/asRuntimeGuardBinPaths';
+import type { RuntimeGuardVarName } from '@src/domain.operations/route/guard/RUNTIME_GUARD_VAR_NAMES';
+import { setStoneGuardRoundOutput } from '@src/domain.operations/route/guard/round/setStoneGuardRoundOutput';
+import { asArtifactStreamsFromContent } from '@src/domain.operations/route/guard/tree/asArtifactStreamsFromContent';
 import { formatArtifactFooters } from '@src/domain.operations/route/guard/tree/formatArtifactFooters';
 import { formatArtifactStreamBuckets } from '@src/domain.operations/route/guard/tree/formatArtifactStreamBuckets';
 import { enumFilesFromGlob } from '@src/utils/enumFilesFromGlob';
+import { isErrorOfAbsence } from '@src/utils/fs/isErrorOfAbsence';
+import { getAllResultsInBoundedPool } from '@src/utils/getAllResultsInBoundedPool';
 
-import { computeStoneJudgeInputHash } from './computeStoneJudgeInputHash';
+import { asGuardJudgeVerdictMarks } from './asGuardJudgeVerdictMarks';
+import { genJudgeRouteDir } from './genJudgeRouteDir';
+import { getOneJudgeArtifactContent } from './getOneJudgeArtifactContent';
+import { getOneStoneJudgeInputHash } from './getOneStoneJudgeInputHash';
+import { setJudgeArtifact } from './setJudgeArtifact';
 
 const execAsync = promisify(exec);
 
@@ -38,28 +46,27 @@ export const runOneStoneGuardJudge = async (input: {
   reviewIteration: number;
   judgeIteration: number;
   route: string;
+  /** the stone's rewind generation at the moment the round began */
+  generation: number;
 }): Promise<RouteStoneGuardJudgeArtifact> => {
   // ensure .route directory found or created
-  const routeDir = path.join(input.route, '.route');
-  await fs.mkdir(routeDir, { recursive: true });
+  const { path: routeDir } = await genJudgeRouteDir({ route: input.route });
 
   // lookup repo root for $rhx/$rhachet paths
   // .note = falls back to cwd when not in a git repo (e.g., integration tests)
-  let repoRoot: string;
-  try {
-    repoRoot = await getGitRepoRoot({ from: input.route });
-  } catch (error) {
-    // only catch "not in git repo" error; rethrow any other errors
-    // .note = check error message instead of instanceof due to cross-module class instances
-    const isNotInGitRepoError =
-      error instanceof Error && error.message.includes('Not inside a Git');
-    if (!isNotInGitRepoError) throw error;
-
-    repoRoot = process.cwd();
-  }
+  const repoRoot = await getGitRepoRoot({ from: input.route }).catch(
+    (error: unknown) => {
+      // only catch "not in git repo" error; rethrow any other errors
+      // .note = check error message instead of instanceof due to cross-module class instances
+      const isNotInGitRepoError =
+        error instanceof Error && error.message.includes('Not inside a Git');
+      if (!isNotInGitRepoError) throw error;
+      return process.cwd();
+    },
+  );
 
   // validate no npx patterns before variable substitution
-  validateNoNpx(input.judgeCmd);
+  asGuardCmdFreeOfNpx({ cmd: input.judgeCmd });
 
   // substitute variables in command
   // filename includes both iterations and both hashes for full traceability:
@@ -70,12 +77,15 @@ export const runOneStoneGuardJudge = async (input: {
     routeDir,
     `${input.stone.name}.guard.judge.i${input.reviewIteration}p${input.judgeIteration}.${input.reviewInputHash}.${input.judgeInputHash}.j${input.index}.md`,
   );
-  const cmd = substituteVars(input.judgeCmd, {
-    stone: input.stone.name,
-    route: input.route,
-    hash: input.judgeInputHash,
-    output: outputPath,
-    repoRoot,
+  const cmd = asCmdWithSubstitutedVars({
+    cmd: input.judgeCmd,
+    vars: {
+      stone: input.stone.name,
+      route: input.route,
+      hash: input.judgeInputHash,
+      output: outputPath,
+      repoRoot,
+    },
   });
 
   // execute command with node_modules/.bin in PATH
@@ -115,7 +125,7 @@ export const runOneStoneGuardJudge = async (input: {
   }
 
   // classify exit code
-  const exitClass = getExitCodeClass({ code: exitCode });
+  const exitClass = asExitCodeClass({ code: exitCode });
 
   // format artifact content with tree buckets; an empty stream earns no box
   const artifactLines: string[] = [
@@ -124,15 +134,12 @@ export const runOneStoneGuardJudge = async (input: {
       stderr,
       hasFooter: exitCode !== 0,
     }),
-  ];
 
-  // the passage footer, through the one shared operation that owns it.
-  //
-  // 🔴 a judge renders no tally — it has no blocker/nitpick count of its own — so `tally` is
-  //    always null here, and the shared operation derives the terminal marker from that.
-  //    do not hand-write a second footer renderer at this call site
-  //    (`rule.forbid.duplicate-format-tree-operations`).
-  artifactLines.push(
+    // the passage footer, through the one shared operation that owns it.
+    // 🔴 a judge renders no tally (no blocker/nitpick count of its own), so `tally` is always
+    //    null here, and the shared operation derives the terminal marker from that. do not
+    //    hand-write a second footer renderer at this call site
+    //    (`rule.forbid.duplicate-format-tree-operations`).
     ...formatArtifactFooters({
       passage:
         exitCode !== 0
@@ -147,12 +154,18 @@ export const runOneStoneGuardJudge = async (input: {
           : null,
       tally: null,
     }),
-  );
+  ];
 
   const artifactContent = artifactLines.join('\n');
 
-  // write artifact file
-  await fs.writeFile(outputPath, artifactContent);
+  // write artifact file, only if no rewind superseded the round meanwhile
+  await setStoneGuardRoundOutput({
+    route: input.route,
+    stone: input.stone.name,
+    generation: input.generation,
+    write: () =>
+      setJudgeArtifact({ path: outputPath, content: artifactContent }),
+  });
 
   // parse passed and reason from stdout (where judge tools output)
   const passed = parsePassed(stdout, exitCode);
@@ -190,13 +203,13 @@ export const runStoneGuardJudges = async (
     iteration: number;
     route: string;
   },
-  context: ContextCliEmit,
+  context: ContextCliEmit & ContextStoneGuardRound,
 ): Promise<RouteStoneGuardJudgeArtifact[]> => {
   // compute judge input hash from reviews + approvals
   // this enables proper cache invalidation when:
   // - approval is granted (review input hash unchanged, but judge input hash changes)
   // - reviews are re-run after fix (review content changes, judge input hash changes)
-  const judgeInputHash = await computeStoneJudgeInputHash({
+  const judgeInputHash = await getOneStoneJudgeInputHash({
     stone: input.stone,
     reviewInputHash: input.hash,
     route: input.route,
@@ -214,61 +227,25 @@ export const runStoneGuardJudges = async (
     });
   } catch (error) {
     // .route/ may not exist yet; rethrow any other errors
-    if (!isENOENT(error)) throw error;
+    if (!isErrorOfAbsence({ error })) throw error;
   }
 
-  // parse prior judges to build cache
+  // the cache of prior passed judges, by index — failures retry fresh each attempt
   // note: enumFilesFromGlob returns absolute paths, so use directly
-  // cache only passed judges - failures retry fresh each attempt
-  const priorByIndex = new Map<number, RouteStoneGuardJudgeArtifact>();
-  for (const filePath of priorJudgeFiles) {
-    const content = await fs.readFile(filePath, 'utf-8');
-
-    // extract stdout/stderr from tree buckets
-    const { stdout, stderr, exitCode } = parseTreeBucketContent(content);
-    const exitClass = getExitCodeClass({ code: exitCode });
-    const passed = parsePassed(stdout, exitCode);
-    const reason = parseReason(stdout, exitCode);
-
-    // parse index from filename: $stone.guard.judge.i$rp$j.$reviewHash.$judgeHash.j$index.md
-    const indexMatch = filePath.match(/\.j(\d+)\.md$/);
-    const index = indexMatch?.[1] ? parseInt(indexMatch[1], 10) : 0;
-
-    // parse review iteration from filename (the first number in i$rp$j)
-    const reviewIterMatch = filePath.match(/\.i(\d+)p/);
-    const reviewIteration = reviewIterMatch?.[1]
-      ? parseInt(reviewIterMatch[1], 10)
-      : 0;
-
-    // cache first passed result found for each index (same hash = same result)
-    if (index > 0 && !priorByIndex.has(index) && passed) {
-      priorByIndex.set(
-        index,
-        new RouteStoneGuardJudgeArtifact({
-          stone: { path: input.stone.path },
-          hash: judgeInputHash,
-          iteration: reviewIteration,
-          index,
-          path: filePath,
-          passed,
-          reason,
-          exitCode,
-          exitClass,
-          stdout,
-          stderr,
-        }),
-      );
-    }
-  }
+  const priorByIndex = await getAllPriorPassedJudgesByIndex({
+    files: priorJudgeFiles,
+    stone: input.stone,
+    hash: judgeInputHash,
+  });
 
   // judge iteration: count of prior files + 1 (only increments when new judge runs)
   const judgeIteration = priorJudgeFiles.length + 1;
 
+  // .note = deliberate mutation: judges run one at a time in declared order with an emit before and after each, so the list grows per awaited run; it escapes only via the return
   const judges: RouteStoneGuardJudgeArtifact[] = [];
 
   // execute each judge command, reuse prior results with same judge input hash
-  for (let i = 0; i < input.guard.judges.length; i++) {
-    const judgeCmd = input.guard.judges[i];
+  for (const [i, judgeCmd] of input.guard.judges.entries()) {
     if (!judgeCmd) continue;
     const index = i + 1;
 
@@ -324,6 +301,7 @@ export const runStoneGuardJudges = async (
       reviewIteration: input.iteration,
       judgeIteration,
       route: input.route,
+      generation: context.guardRound.generation,
     });
 
     // emit finished event after judge
@@ -353,46 +331,100 @@ export const runStoneGuardJudges = async (
 };
 
 /**
- * .what = validates command does not use npx rhachet/rhx patterns
- * .why = npx adds 500-2000ms latency and has cross-platform issues
+ * .what = how many prior judge artifact reads may be in flight at one time
+ * .why = prior judge artifacts grow with every judge iteration, so an unbounded fan-out
+ *        opens one descriptor per file. the bound holds the open reads at a fixed count, as
+ *        `getAllStoneGuardJudgeVerdictsFromFiles` does for its reads
  */
-const validateNoNpx = (cmd: string): void => {
-  // reject guards that use npx patterns
-  if (cmd.includes('npx rhachet') || cmd.includes('npx rhx')) {
-    const pattern = cmd.includes('npx rhachet') ? 'npx rhachet' : 'npx rhx';
-    const alias = cmd.includes('npx rhachet') ? '$rhachet' : '$rhx';
-    BadRequestError.throw(
-      `guard uses ${pattern} which causes latency and cross-platform issues. ` +
-        `fix: use ${alias} alias instead (${alias} expands to ./node_modules/.bin/${alias.slice(1)})`,
-      {
-        pattern,
-        alias,
-      },
-    );
-  }
+const BOUND_OF_CONCURRENT_JUDGE_READS = 8;
+
+/**
+ * .what = the prior PASSED judge artifacts for a judge input hash, keyed by judge index
+ * .why = names the cache build, so the orchestrator reads it as one act rather than a
+ *        stateful loop with a compound predicate (rule.forbid.decode-friction-in-orchestrators)
+ *
+ * .note = the first passed artifact found per index wins (same hash = same result). the
+ *         pour answers in enumeration order, and a `Map` built from a list keeps the LAST
+ *         entry per key, so the list is reversed first to keep the first
+ */
+const getAllPriorPassedJudgesByIndex = async (input: {
+  files: string[];
+  stone: RouteStone;
+  hash: string;
+}): Promise<Map<number, RouteStoneGuardJudgeArtifact>> => {
+  const priors = (
+    await getAllResultsInBoundedPool({
+      items: input.files,
+      bound: BOUND_OF_CONCURRENT_JUDGE_READS,
+      map: (filePath) =>
+        getOnePriorPassedJudgeFromFile({
+          path: filePath,
+          stone: input.stone,
+          hash: input.hash,
+        }),
+    })
+  ).filter(isPresent);
+  return new Map(
+    [...priors].reverse().map((prior) => [prior.index, prior] as const),
+  );
+};
+
+/**
+ * .what = one prior judge artifact, read into its artifact — or null where it is not a
+ *         cacheable pass (it vanished, it failed, or its filename carries no index)
+ * .why = a failure must retry fresh each attempt, so only a pass with a real index feeds the
+ *        cache; a prior artifact deleted since enumeration only shrinks the cache
+ */
+const getOnePriorPassedJudgeFromFile = async (input: {
+  path: string;
+  stone: RouteStone;
+  hash: string;
+}): Promise<RouteStoneGuardJudgeArtifact | null> => {
+  // a prior artifact deleted since enumeration is a cache miss; the judge re-runs
+  const content = await getOneJudgeArtifactContent({ path: input.path });
+  if (content === null) return null;
+
+  // extract stdout/stderr from tree buckets
+  const { stdout, stderr, exitCode } = parseTreeBucketContent(content);
+  const passed = parsePassed(stdout, exitCode);
+  if (!passed) return null;
+
+  // parse index + review iteration from filename: $stone.guard.judge.i$rp$j.$reviewHash.$judgeHash.j$index.md
+  const filename = path.basename(input.path);
+  const index = asGuardJudgeIndex({ filename });
+  if (index === null || index < 1) return null;
+
+  return new RouteStoneGuardJudgeArtifact({
+    stone: { path: input.stone.path },
+    hash: input.hash,
+    iteration: asGuardArtifactIteration({ filename }) ?? 0,
+    index,
+    path: input.path,
+    passed,
+    reason: parseReason(stdout, exitCode),
+    exitCode,
+    exitClass: asExitCodeClass({ code: exitCode }),
+    stdout,
+    stderr,
+  });
 };
 
 /**
  * .what = substitutes variables in a command string
  * .why = enables dynamic command templates in guard files
  */
-const substituteVars = (
-  cmd: string,
+const asCmdWithSubstitutedVars = (input: {
+  cmd: string;
   vars: {
     stone: string;
     route: string;
     hash: string;
     output: string;
     repoRoot: string;
-  },
-): string => {
-  const rhxPath = path.join(vars.repoRoot, 'node_modules', '.bin', 'rhx');
-  const rhachetPath = path.join(
-    vars.repoRoot,
-    'node_modules',
-    '.bin',
-    'rhachet',
-  );
+  };
+}): string => {
+  const { cmd, vars } = input;
+  const bins = asRuntimeGuardBinPaths({ repoRoot: vars.repoRoot });
 
   // the name→value map for every runtime var. typed by RuntimeGuardVarName so the
   // COMPILER forbids drift: add a name to RUNTIME_GUARD_VAR_NAMES without a value here,
@@ -402,21 +434,19 @@ const substituteVars = (
     $stone: vars.stone,
     $hash: vars.hash,
     $output: vars.output,
-    $rhx: rhxPath,
-    $rhachet: rhachetPath,
+    $rhx: bins.rhx,
+    $rhachet: bins.rhachet,
     // $conversation is a REVIEW-run var (resolved in runStoneGuardReviews, which owns the
     // peer-review conversation path). a judge command has no conversation context, so the
     // judge leaves it LITERAL via this self-referential passthrough. this satisfies the
     // shared-const drift-guard and leaves judge behavior intact (judge cmds never carry it).
     $conversation: '$conversation',
+    // $targets is a REVIEW-run var too (the computed review scope); left LITERAL here
+    $targets: '$targets',
   };
 
-  // replace each runtime var globally; a var name is `$` + word chars, so `\<name>` is
-  // a valid literal-escaped regex (identical to the prior per-var `/\$stone/g` patterns).
-  return RUNTIME_GUARD_VAR_NAMES.reduce(
-    (out, name) => out.replace(new RegExp('\\' + name, 'g'), valueByName[name]),
-    cmd,
-  );
+  // replace each runtime var, via the one substitution both runs share
+  return asCmdWithRuntimeVars({ cmd, valueByName });
 };
 
 /**
@@ -428,11 +458,9 @@ const substituteVars = (
  * false cache of failures as passes.
  */
 const parsePassed = (content: string, exitCode: number | null): boolean => {
-  // first check explicit passed: true/false in content
-  const passedMatch = content.match(/passed:\s*(true|false)/i);
-  if (passedMatch?.[1]) {
-    return passedMatch[1].toLowerCase() === 'true';
-  }
+  // first check explicit passed: true/false in content, via the one shared reader
+  const { passed: passedMark } = asGuardJudgeVerdictMarks({ content });
+  if (passedMark !== null) return passedMark;
 
   // check for failure indicators in content
   // if file shows error output, treat as failed
@@ -461,11 +489,9 @@ const parseReason = (
   content: string,
   exitCode: number | null,
 ): string | null => {
-  // check for explicit reason: line first
-  const reasonMatch = content.match(/reason:\s*(.+)/i);
-  if (reasonMatch?.[1]) {
-    return reasonMatch[1].trim();
-  }
+  // check for explicit reason: line first, via the one shared reader
+  const { reason: reasonMark } = asGuardJudgeVerdictMarks({ content });
+  if (reasonMark) return reasonMark;
 
   // check for stderr section and extract first meaningful line
   const stderrMatch = content.match(/---stderr---\n(.+)/);
@@ -503,32 +529,14 @@ const parseReason = (
 const parseTreeBucketContent = (
   content: string,
 ): { stdout: string; stderr: string; exitCode: number } => {
-  // 🔴 the read grammar is `asArtifactStreamContent`, which sits BESIDE the writer
-  //    (`formatArtifactStreamBuckets`) with a round-trip test over the pair. it used
-  //    to be two regexes inlined here, and they matched only a MIDDLE-child bucket —
-  //    so the day the writer learned to close an artifact with `└─ label` and a
-  //    3-space column, every read handed back '' and a cached judge silently lost
-  //    its `passed` and its `reason` (rule.require.single-source-of-truth-for-render)
-  const stdout = asArtifactStreamContent({ content, label: 'stdout' });
-  const stderr = asArtifactStreamContent({ content, label: 'stderr' });
+  // the read grammar is `asArtifactStreamsFromContent`, the one splitter every reader
+  // of a persisted artifact shares, kept beside the writer with a round-trip test, so a
+  // cached judge cannot silently lose its `passed`/`reason` to a drifted regex
+  // (rule.require.single-source-of-truth-for-render)
+  const { stdout, stderr } = asArtifactStreamsFromContent({ content });
 
   // extract exit code from passage blocked footer
   const exitCode = asExitCodeFromArtifactContent({ content });
 
   return { stdout, stderr, exitCode };
-};
-
-/**
- * .what = checks if file is present at path
- * .why = enables detection of files written by external commands
- */
-const isFilePresent = async (filePath: string): Promise<boolean> => {
-  try {
-    await fs.access(filePath);
-    return true;
-  } catch (error) {
-    // only catch ENOENT (file not found); rethrow other errors
-    if (isENOENT(error)) return false;
-    throw error;
-  }
 };

@@ -1,0 +1,19 @@
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
+
+exports[`setStoneAsFeedbackAbsorbed.integration given: [case2] the composition gate refuses feedback while a concern is un-absorbed when: [t0] --as absorbed runs with the .taken present but no concern absorbed then: it throws, and lists the un-absorbed concerns 1`] = `
+"✋ ConstraintError: absorb each concern before you absorb architect's feedback
+
+3 concerns of architect stand un-absorbed:
+  - blocker.1
+  - blocker.2
+  - nitpick.1
+
+absorb each, THEN absorb the feedback:
+  1. per concern — concede it (the default), or dispute it:
+     rhx route.stone.set --stone 1.vision \\
+       --as conceded --with architect --about <concern> --severity better|urgent
+     rhx route.stone.set --stone 1.vision \\
+       --as disputed --with architect --about <concern> --why <fulcrum-path>
+  2. then absorb the feedback:
+     rhx route.stone.set --stone 1.vision --as absorbed --that architect"
+`;

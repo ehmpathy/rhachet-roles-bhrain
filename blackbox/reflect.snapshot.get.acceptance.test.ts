@@ -11,7 +11,7 @@ import {
 
 const ASSETS_DIR = path.join(__dirname, '.test/assets/reflect-snapshot');
 
-describe('reflect.snapshot get', () => {
+describe('reflect.snapshot.get', () => {
   given('[case1] repo with no snapshots', () => {
     when('[t0] get is invoked', () => {
       const res = useThen('skill invocation succeeds', async () => {
@@ -71,14 +71,28 @@ describe('reflect.snapshot get', () => {
         return { cli, tempDir };
       });
 
-      then('exit code is non-zero', () => {
-        expect(res.cli.code).not.toEqual(0);
+      // .retired = this case once asserted `exit code is non-zero` and `error mentions not
+      //            found` over stdout + stderr. retired on purpose: a bad --at is a constraint,
+      //            so it exits 2 and lands on stderr alone (rule.require.exit-code-semantics,
+      //            rule.forbid.stdout-on-exit-errors). each new assertion is narrower, never looser
+      then('🔴 exit code is 2 — a bad --at is the caller`s to fix', () => {
+        // exit 1 reads as a malfunction worth a retry; a retry on a typo'd
+        // timestamp loops forever (rule.require.exit-code-semantics)
+        expect(res.cli.code).toEqual(2);
       });
 
-      then('error mentions not found', () => {
-        // error may be in stdout or stderr; check both
-        const combined = `${res.cli.stdout} ${res.cli.stderr}`.toLowerCase();
-        expect(combined).toMatch(/not found|snapshot|timestamp/);
+      then('🔴 the error lands on stderr, named as a constraint', () => {
+        // a hook shows stderr apart from stdout on a non-zero exit, and may hide
+        // stdout outright (rule.forbid.stdout-on-exit-errors)
+        expect(res.cli.stderr).toContain(
+          '✋ ConstraintError: snapshot not found',
+        );
+      });
+
+      then('the refusal renders whole', () => {
+        // the fix line names the command that lists valid --at values; a snapshot
+        // shows a reword or a dropped fix line in the pr diff
+        expect(sanitizeReflectOutputForSnapshot(res.cli.stderr)).toMatchSnapshot();
       });
     });
   });

@@ -1,5 +1,6 @@
 import { execSync } from 'child_process';
 import * as fs from 'fs/promises';
+import { ConstraintError } from 'helpful-errors';
 import * as os from 'os';
 import * as path from 'path';
 import { getError, given, then, when } from 'test-fns';
@@ -7,6 +8,8 @@ import { getError, given, then, when } from 'test-fns';
 import { PassageReport } from '@src/domain.objects/Driver/PassageReport';
 
 import { genContextReviewBrainSupplyDemo } from '../__test_assets__/genContextReviewBrainSupplyDemo';
+import { asRouteStoneDisposition } from '../drive/asRouteStoneDisposition';
+import { getLatestPassageForStone } from '../passage/getLatestPassageForStone';
 import { setPassageReport } from '../passage/setPassageReport';
 import { setStoneAsPassed } from './setStoneAsPassed';
 
@@ -85,8 +88,22 @@ describe('setStoneAsPassed', () => {
             noopContext,
           ),
         );
-        expect(error).toBeInstanceOf(Error);
-        expect(error.message).toContain('stone not found');
+        expect(error).toBeInstanceOf(ConstraintError);
+        expect(error.message).toContain(
+          'stone not found for --as passed: nonexistent',
+        );
+      });
+
+      then('the refusal names the valid stone names', async () => {
+        const error = await getError(
+          setStoneAsPassed(
+            { stone: 'nonexistent', route: tempDir },
+            noopContext,
+          ),
+        );
+        expect(error.message).toContain('stonesAvailable');
+        expect(error.message).toContain('1.vision');
+        expect(error.message).toContain('2.criteria');
       });
     });
   });
@@ -205,6 +222,30 @@ judges:
         expect(result.emit?.stdout).toContain('lets reflect');
         expect(result.emit?.stdout).toContain('review.self 1/2');
         expect(result.emit?.stdout).toContain('slug = all-done');
+      });
+
+      // .note = clamp: the halt once omitted route, so the path printed as `/review/self/...`
+      then('names the articulation path with its route prefix', async () => {
+        const result = await setStoneAsPassed(
+          { stone: '1.test', route: tempDir },
+          noopContext,
+        );
+        expect(result.emit?.stdout).toContain(
+          `${tempDir}/review/self/for.1.test._.all-done.md`,
+        );
+        expect(result.emit?.stdout).not.toMatch(/─ \/review\/self\//);
+      });
+
+      // the whole halt is pinned beside the invariants above, with the temp route masked
+      // (i018 r012 nitpick.1)
+      then('the review.self halt matches the snapshot', async () => {
+        const result = await setStoneAsPassed(
+          { stone: '1.test', route: tempDir },
+          noopContext,
+        );
+        expect(
+          (result.emit?.stdout ?? '').split(tempDir).join('<route>'),
+        ).toMatchSnapshot();
       });
     });
 
@@ -350,6 +391,30 @@ judges:
         expect(result.emit?.stdout).toContain('passage = blocked');
         expect(result.emit?.stdout).toContain('reviewer constraint');
       });
+
+      then(
+        '🔴 the blocked row names its guard blocker, so no drive surface reads it as a driver wall',
+        async () => {
+          await setStoneAsPassed(
+            { stone: '1.test', route: tempDir },
+            noopContext,
+          );
+          const latest = await getLatestPassageForStone({
+            stone: '1.test',
+            route: tempDir,
+          });
+          expect(latest?.status).toEqual('blocked');
+          expect(latest?.blocker).toEqual('review.peer.constraint');
+          // a driver wall is the one row with no blocker, and it halts for an articulation
+          expect(
+            asRouteStoneDisposition({
+              status: latest?.status ?? null,
+              blocker: latest?.blocker ?? null,
+              reason: latest?.reason ?? null,
+            }),
+          ).toEqual({ of: 'push' });
+        },
+      );
     });
 
     when('[t1] overrule marker present', () => {

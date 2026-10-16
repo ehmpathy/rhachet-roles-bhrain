@@ -1,6 +1,6 @@
 // Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
 
-exports[`reflect.snapshot get given: [case1] repo with no snapshots when: [t0] get is invoked then: output matches snapshot 1`] = `
+exports[`reflect.snapshot.get given: [case1] repo with no snapshots when: [t0] get is invoked then: output matches snapshot 1`] = `
 "🦉 know thyself
 
 🌕 reflect.snapshot get
@@ -10,7 +10,15 @@ exports[`reflect.snapshot get given: [case1] repo with no snapshots when: [t0] g
    │
    ├─ snapshots = 0
    ├─ annotations = 0
-   └─ size = [SIZE]ytes
+   └─ size = [SIZE]
 
+"
+`;
+
+exports[`reflect.snapshot.get given: [case1] repo with no snapshots when: [t1] get with --at invalid timestamp then: the refusal renders whole 1`] = `
+"🌕 reflect.snapshot get --at [TIMESTAMP]
+   ├─ ✋ ConstraintError: snapshot not found
+   └─ fix: list the snapshots, then pass one of theirs
+      └─ rhx reflect.snapshot get
 "
 `;

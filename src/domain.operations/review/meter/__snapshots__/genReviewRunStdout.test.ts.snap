@@ -1,0 +1,516 @@
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
+
+exports[`genReviewRunStdout given: [case1] a run the census can vouch for when: [t0] it is rendered for a human then: the whole render is pinned, rails and order included 1`] = `
+"🦉 review cost — one run
+   ├─ run: .log/bhrain/review/2026-09-21T10-00-00-000Z.pid1.abc
+   │  ├─ identity: repo-rules · 5.1.execution.from_vision · i6
+   │  ├─ grade: metered
+   │  └─ cost: $0.040200
+   │
+   ├─ levers — input DOWN · cache UP (trend: one run is one sample — its rounds are at rhx review._.cost --of tree)
+   │  ├─ input:     91,000 prompt tokens/run
+   │  └─ cache:     44.0% of prompt tokens served from cache
+   │
+   ├─ tokens
+   │  ├─ input:     1.0k
+   │  ├─ cache.set: 50.0k
+   │  ├─ cache.get: 40.0k
+   │  └─ output:    500
+   │
+   ├─ target mass by directory — not recorded
+   │  └─ 🟡 UNREAD — no directory can be named. metrics.compiled.json carries no
+   │     locus row (the run predates it), and input.prompt.md, the one other
+   │     artifact that names each target's path, could not be read. look for
+   │     both in the \`run:\` dir above — no flag of this command will help
+   │
+   └─ composition: 100.0k chars over 12 targets (source: compiled, attribution: attributed)
+      ├─ instructions              0 chars    0.0%  cacheable
+      ├─ outputFormat              0 chars    0.0%  cacheable
+      ├─ scaffold              40.0k chars   40.0%  cacheable
+      ├─ rules                 60.0k chars   60.0%  cacheable
+      ├─ refs                      0 chars    0.0%  cacheable
+      ├─ targetFiles               0 chars    0.0%  cacheable
+      ├─ targetDiffs               0 chars    0.0%
+      │  ├─ additions              0 chars    0.0%  cacheable
+      │  ├─ deletions              0 chars    0.0%  cacheable
+      │  └─ mutations              0 chars    0.0%  per round
+      └─ conversation              0 chars    0.0%  per round"
+`;
+
+exports[`genReviewRunStdout given: [case2] a run the census CANNOT vouch for when: [t0] it is rendered for a human then: the whole render is pinned, rails and order included 1`] = `
+"🦉 review cost — one run
+   ├─ run: .log/bhrain/review/2026-09-21T10-00-00-000Z.pid1.abc
+   │  ├─ identity: repo-rules · 5.1.execution.from_vision · i6
+   │  ├─ grade: metered
+   │  └─ cost: $0.040200
+   │
+   ├─ levers — input DOWN · cache UP (trend: one run is one sample — its rounds are at rhx review._.cost --of tree)
+   │  ├─ input:     91,000 prompt tokens/run
+   │  └─ cache:     44.0% of prompt tokens served from cache
+   │
+   ├─ tokens
+   │  ├─ input:     1.0k
+   │  ├─ cache.set: 50.0k
+   │  ├─ cache.get: 40.0k
+   │  └─ output:    500
+   │
+   ├─ target mass by directory — not recorded
+   │  └─ 🟡 UNREAD — no directory can be named. metrics.compiled.json carries no
+   │     locus row (the run predates it), and input.prompt.md, the one other
+   │     artifact that names each target's path, could not be read. look for
+   │     both in the \`run:\` dir above — no flag of this command will help
+   │
+   └─ composition: 100.0k chars over 12 targets (source: compiled, attribution: unattributed)
+      ├─ instructions              0 chars    0.0%  cacheable
+      ├─ outputFormat              0 chars    0.0%  cacheable
+      ├─ scaffold              40.0k chars   40.0%  cacheable
+      ├─ rules                 60.0k chars   60.0%  cacheable
+      ├─ refs                      0 chars    0.0%  cacheable
+      ├─ targetFiles               0 chars    0.0%  cacheable
+      ├─ targetDiffs               0 chars    0.0%
+      │  ├─ additions              0 chars    0.0%  cacheable
+      │  ├─ deletions              0 chars    0.0%  cacheable
+      │  └─ mutations              0 chars    0.0%  per round
+      ├─ conversation              0 chars    0.0%  per round
+      └─ 🟡 UNATTRIBUTED — scaffold may hide an input with no row of its own
+         ├─ check FIRST: many small targets? then it is real tag overhead
+         └─ else: a real input lacks a row — name it in PromptInputName, IS_CACHEABLE, getOnePromptComposition, and SECTION_OF_INPUT"
+`;
+
+exports[`genReviewRunStdout given: [case3] a run whose prompt predates the grade entirely when: [t0] it is rendered for a human then: the whole render is pinned, rails and order included 1`] = `
+"🦉 review cost — one run
+   ├─ run: .log/bhrain/review/2026-09-21T10-00-00-000Z.pid1.abc
+   │  ├─ identity: repo-rules · 5.1.execution.from_vision · i6
+   │  ├─ grade: metered
+   │  └─ cost: $0.040200
+   │
+   ├─ levers — input DOWN · cache UP (trend: one run is one sample — its rounds are at rhx review._.cost --of tree)
+   │  ├─ input:     91,000 prompt tokens/run
+   │  └─ cache:     44.0% of prompt tokens served from cache
+   │
+   ├─ tokens
+   │  ├─ input:     1.0k
+   │  ├─ cache.set: 50.0k
+   │  ├─ cache.get: 40.0k
+   │  └─ output:    500
+   │
+   ├─ target mass by directory — not recorded
+   │  └─ 🟡 UNREAD — no directory can be named. metrics.compiled.json carries no
+   │     locus row (the run predates it), and input.prompt.md, the one other
+   │     artifact that names each target's path, could not be read. look for
+   │     both in the \`run:\` dir above — no flag of this command will help
+   │
+   └─ composition: 100.0k chars over 12 targets (source: compiled, attribution: —)
+      ├─ instructions              0 chars    0.0%  cacheable
+      ├─ outputFormat              0 chars    0.0%  cacheable
+      ├─ scaffold              40.0k chars   40.0%  cacheable
+      ├─ rules                 60.0k chars   60.0%  cacheable
+      ├─ refs                      0 chars    0.0%  cacheable
+      ├─ targetFiles               0 chars    0.0%  cacheable
+      ├─ targetDiffs               0 chars    0.0%
+      │  ├─ additions              0 chars    0.0%  cacheable
+      │  ├─ deletions              0 chars    0.0%  cacheable
+      │  └─ mutations              0 chars    0.0%  per round
+      └─ conversation              0 chars    0.0%  per round"
+`;
+
+exports[`genReviewRunStdout given: [case4] a run that compiled no prompt at all when: [t0] it is rendered for a human then: the whole render is pinned, rails and order included 1`] = `
+"🦉 review cost — one run
+   ├─ run: .log/bhrain/review/2026-09-21T10-00-00-000Z.pid1.abc
+   │  ├─ identity: repo-rules · 5.1.execution.from_vision · i6
+   │  ├─ grade: metered
+   │  └─ cost: $0.040200
+   │
+   ├─ levers — input DOWN · cache UP (trend: one run is one sample — its rounds are at rhx review._.cost --of tree)
+   │  ├─ input:     91,000 prompt tokens/run
+   │  └─ cache:     44.0% of prompt tokens served from cache
+   │
+   ├─ tokens
+   │  ├─ input:     1.0k
+   │  ├─ cache.set: 50.0k
+   │  ├─ cache.get: 40.0k
+   │  └─ output:    500
+   │
+   └─ composition: —
+      └─ 🟡 UNREAD — the prompt could not be read, so no input can be attributed"
+`;
+
+exports[`genReviewRunStdout given: [case5] a run whose artifacts could NOT be parsed when: [t0] it is rendered for a human then: the whole render is pinned, rails and order included 1`] = `
+"🦉 review cost — one run
+   ├─ run: .log/bhrain/review/2026-09-21T10-00-00-000Z.pid1.abc
+   │  ├─ identity: —  🟡 UNPARSED — see the defect below
+   │  ├─ grade: unknown
+   │  ├─ cost: —  🟡 unknown, not $0 — the brain may have charged
+   │  └─ defect: 💥 MalfunctionError: failed to parse metrics.realized.json: Unexpected token h in JSON at position 2
+   │
+   ├─ levers — input DOWN · cache UP (trend: one run is one sample — its rounds are at rhx review._.cost --of tree)
+   │  ├─ input:     —
+   │  ├─ cache:     —
+   │  └─ — = unmeasured, not zero (grade = unknown)
+   │
+   ├─ tokens
+   │  └─ — (grade = unknown)
+   │
+   └─ composition: —
+      └─ 🟡 UNREAD — see the defect below"
+`;
+
+exports[`genReviewRunStdout given: [case5] a run whose artifacts could NOT be parsed when: [t1] a HEALTHY run is rendered beside it then: the whole render is pinned, rails and order included 1`] = `
+"🦉 review cost — one run
+   ├─ run: .log/bhrain/review/2026-09-21T10-00-00-000Z.pid1.abc
+   │  ├─ identity: repo-rules · 5.1.execution.from_vision · i6
+   │  ├─ grade: metered
+   │  └─ cost: $0.040200
+   │
+   ├─ levers — input DOWN · cache UP (trend: one run is one sample — its rounds are at rhx review._.cost --of tree)
+   │  ├─ input:     91,000 prompt tokens/run
+   │  └─ cache:     44.0% of prompt tokens served from cache
+   │
+   ├─ tokens
+   │  ├─ input:     1.0k
+   │  ├─ cache.set: 50.0k
+   │  ├─ cache.get: 40.0k
+   │  └─ output:    500
+   │
+   ├─ target mass by directory — not recorded
+   │  └─ 🟡 UNREAD — no directory can be named. metrics.compiled.json carries no
+   │     locus row (the run predates it), and input.prompt.md, the one other
+   │     artifact that names each target's path, could not be read. look for
+   │     both in the \`run:\` dir above — no flag of this command will help
+   │
+   └─ composition: 100.0k chars over 12 targets (source: compiled, attribution: attributed)
+      ├─ instructions              0 chars    0.0%  cacheable
+      ├─ outputFormat              0 chars    0.0%  cacheable
+      ├─ scaffold              40.0k chars   40.0%  cacheable
+      ├─ rules                 60.0k chars   60.0%  cacheable
+      ├─ refs                      0 chars    0.0%  cacheable
+      ├─ targetFiles               0 chars    0.0%  cacheable
+      ├─ targetDiffs               0 chars    0.0%
+      │  ├─ additions              0 chars    0.0%  cacheable
+      │  ├─ deletions              0 chars    0.0%  cacheable
+      │  └─ mutations              0 chars    0.0%  per round
+      └─ conversation              0 chars    0.0%  per round"
+`;
+
+exports[`genReviewRunStdout given: [case5] a run whose artifacts could NOT be parsed when: [t2] the defect string is MULTI-LINE, as a HelpfulError is then: the whole render is pinned, rails and order included 1`] = `
+"🦉 review cost — one run
+   ├─ run: .log/bhrain/review/2026-09-21T10-00-00-000Z.pid1.abc
+   │  ├─ identity: —  🟡 UNPARSED — see the defect below
+   │  ├─ grade: unknown
+   │  ├─ cost: —  🟡 unknown, not $0 — the brain may have charged
+   │  └─ defect: 💥 MalfunctionError: review log artifact is present but unparseable: metrics.realized.json
+   │     └─ full error: rhx review._.cost --of run --at .log/bhrain/review/2026-09-21T10-00-00-000Z.pid1.abc --json
+   │
+   ├─ levers — input DOWN · cache UP (trend: one run is one sample — its rounds are at rhx review._.cost --of tree)
+   │  ├─ input:     —
+   │  ├─ cache:     —
+   │  └─ — = unmeasured, not zero (grade = unknown)
+   │
+   ├─ tokens
+   │  └─ — (grade = unknown)
+   │
+   └─ composition: —
+      └─ 🟡 UNREAD — see the defect below"
+`;
+
+exports[`genReviewRunStdout given: [case6] a run billed no cache WRITE that read a cache anyway when: [t0] cache.set is 0 and cache.get is not then: the whole render is pinned, rails and order included 1`] = `
+"🦉 review cost — one run
+   ├─ run: .log/bhrain/review/2026-09-21T10-00-00-000Z.pid1.abc
+   │  ├─ identity: repo-rules · 5.1.execution.from_vision · i6
+   │  ├─ grade: metered
+   │  └─ cost: $0.040200
+   │
+   ├─ levers — input DOWN · cache UP (trend: one run is one sample — its rounds are at rhx review._.cost --of tree)
+   │  ├─ input:     41,000 prompt tokens/run
+   │  └─ cache:     97.6% of prompt tokens served from cache
+   │
+   ├─ tokens
+   │  ├─ input:     1.0k
+   │  ├─ cache.set: 0  (a MEASURED zero — this run was charged no cache WRITE, and read one anyway)
+   │  ├─ cache.get: 40.0k
+   │  └─ output:    500
+   │
+   ├─ target mass by directory — not recorded
+   │  └─ 🟡 UNREAD — no directory can be named. metrics.compiled.json carries no
+   │     locus row (the run predates it), and input.prompt.md, the one other
+   │     artifact that names each target's path, could not be read. look for
+   │     both in the \`run:\` dir above — no flag of this command will help
+   │
+   └─ composition: 100.0k chars over 12 targets (source: compiled, attribution: attributed)
+      ├─ instructions              0 chars    0.0%  cacheable
+      ├─ outputFormat              0 chars    0.0%  cacheable
+      ├─ scaffold              40.0k chars   40.0%  cacheable
+      ├─ rules                 60.0k chars   60.0%  cacheable
+      ├─ refs                      0 chars    0.0%  cacheable
+      ├─ targetFiles               0 chars    0.0%  cacheable
+      ├─ targetDiffs               0 chars    0.0%
+      │  ├─ additions              0 chars    0.0%  cacheable
+      │  ├─ deletions              0 chars    0.0%  cacheable
+      │  └─ mutations              0 chars    0.0%  per round
+      └─ conversation              0 chars    0.0%  per round"
+`;
+
+exports[`genReviewRunStdout given: [case6] a run billed no cache WRITE that read a cache anyway when: [t1] BOTH cache figures are 0 — a cold run then: the whole render is pinned, rails and order included 1`] = `
+"🦉 review cost — one run
+   ├─ run: .log/bhrain/review/2026-09-21T10-00-00-000Z.pid1.abc
+   │  ├─ identity: repo-rules · 5.1.execution.from_vision · i6
+   │  ├─ grade: metered
+   │  └─ cost: $0.040200
+   │
+   ├─ levers — input DOWN · cache UP (trend: one run is one sample — its rounds are at rhx review._.cost --of tree)
+   │  ├─ input:     1,000 prompt tokens/run
+   │  └─ cache:     0.0% of prompt tokens served from cache  🟡 a cold first run, a prefix past the 66-minute reach, and a warm miss read alike here — grade it with: rhx review._.cost --of tree --trace
+   │
+   ├─ tokens
+   │  ├─ input:     1.0k
+   │  ├─ cache.set: 0
+   │  ├─ cache.get: 0
+   │  └─ output:    500
+   │
+   ├─ target mass by directory — not recorded
+   │  └─ 🟡 UNREAD — no directory can be named. metrics.compiled.json carries no
+   │     locus row (the run predates it), and input.prompt.md, the one other
+   │     artifact that names each target's path, could not be read. look for
+   │     both in the \`run:\` dir above — no flag of this command will help
+   │
+   └─ composition: 100.0k chars over 12 targets (source: compiled, attribution: attributed)
+      ├─ instructions              0 chars    0.0%  cacheable
+      ├─ outputFormat              0 chars    0.0%  cacheable
+      ├─ scaffold              40.0k chars   40.0%  cacheable
+      ├─ rules                 60.0k chars   60.0%  cacheable
+      ├─ refs                      0 chars    0.0%  cacheable
+      ├─ targetFiles               0 chars    0.0%  cacheable
+      ├─ targetDiffs               0 chars    0.0%
+      │  ├─ additions              0 chars    0.0%  cacheable
+      │  ├─ deletions              0 chars    0.0%  cacheable
+      │  └─ mutations              0 chars    0.0%  per round
+      └─ conversation              0 chars    0.0%  per round"
+`;
+
+exports[`genReviewRunStdout given: [case6] a run billed no cache WRITE that read a cache anyway when: [t2] a cache WRITE was billed then: the whole render is pinned, rails and order included 1`] = `
+"🦉 review cost — one run
+   ├─ run: .log/bhrain/review/2026-09-21T10-00-00-000Z.pid1.abc
+   │  ├─ identity: repo-rules · 5.1.execution.from_vision · i6
+   │  ├─ grade: metered
+   │  └─ cost: $0.040200
+   │
+   ├─ levers — input DOWN · cache UP (trend: one run is one sample — its rounds are at rhx review._.cost --of tree)
+   │  ├─ input:     91,000 prompt tokens/run
+   │  └─ cache:     44.0% of prompt tokens served from cache
+   │
+   ├─ tokens
+   │  ├─ input:     1.0k
+   │  ├─ cache.set: 50.0k
+   │  ├─ cache.get: 40.0k
+   │  └─ output:    500
+   │
+   ├─ target mass by directory — not recorded
+   │  └─ 🟡 UNREAD — no directory can be named. metrics.compiled.json carries no
+   │     locus row (the run predates it), and input.prompt.md, the one other
+   │     artifact that names each target's path, could not be read. look for
+   │     both in the \`run:\` dir above — no flag of this command will help
+   │
+   └─ composition: 100.0k chars over 12 targets (source: compiled, attribution: attributed)
+      ├─ instructions              0 chars    0.0%  cacheable
+      ├─ outputFormat              0 chars    0.0%  cacheable
+      ├─ scaffold              40.0k chars   40.0%  cacheable
+      ├─ rules                 60.0k chars   60.0%  cacheable
+      ├─ refs                      0 chars    0.0%  cacheable
+      ├─ targetFiles               0 chars    0.0%  cacheable
+      ├─ targetDiffs               0 chars    0.0%
+      │  ├─ additions              0 chars    0.0%  cacheable
+      │  ├─ deletions              0 chars    0.0%  cacheable
+      │  └─ mutations              0 chars    0.0%  per round
+      └─ conversation              0 chars    0.0%  per round"
+`;
+
+exports[`genReviewRunStdout given: [case8] the LOCUS — where the target mass actually came from when: [t0] the targets cluster in two directories then: the whole render is pinned, rails and order included 1`] = `
+"🦉 review cost — one run
+   ├─ run: .log/bhrain/review/2026-09-21T10-00-00-000Z.pid1.abc
+   │  ├─ identity: repo-rules · 5.1.execution.from_vision · i6
+   │  ├─ grade: metered
+   │  └─ cost: $0.040200
+   │
+   ├─ levers — input DOWN · cache UP (trend: one run is one sample — its rounds are at rhx review._.cost --of tree)
+   │  ├─ input:     91,000 prompt tokens/run
+   │  └─ cache:     44.0% of prompt tokens served from cache
+   │
+   ├─ tokens
+   │  ├─ input:     1.0k
+   │  ├─ cache.set: 50.0k
+   │  ├─ cache.get: 40.0k
+   │  └─ output:    500
+   │
+   ├─ target mass by directory — 70.0k chars over 2 directories
+   │  ├─  85.7%     60.0k chars  2 files   src/domain.operations/review
+   │  └─  14.3%     10.0k chars  1 file    src/contract/cli
+   │
+   └─ composition: 100.0k chars over 3 targets (source: parsed, attribution: —)
+      ├─ instructions              0 chars    0.0%  cacheable
+      ├─ outputFormat              0 chars    0.0%  cacheable
+      ├─ scaffold              10.0k chars   10.0%  cacheable
+      ├─ rules                 20.0k chars   20.0%  cacheable
+      ├─ refs                      0 chars    0.0%  cacheable
+      ├─ targetFiles           70.0k chars   70.0%  cacheable
+      ├─ targetDiffs               0 chars    0.0%
+      │  ├─ additions              0 chars    0.0%  cacheable
+      │  ├─ deletions              0 chars    0.0%  cacheable
+      │  └─ mutations              0 chars    0.0%  per round
+      └─ conversation              0 chars    0.0%  per round"
+`;
+
+exports[`genReviewRunStdout given: [case8] the LOCUS — where the target mass actually came from when: [t1] the locus could not be read then: the whole render is pinned, rails and order included 1`] = `
+"🦉 review cost — one run
+   ├─ run: .log/bhrain/review/2026-09-21T10-00-00-000Z.pid1.abc
+   │  ├─ identity: repo-rules · 5.1.execution.from_vision · i6
+   │  ├─ grade: metered
+   │  └─ cost: $0.040200
+   │
+   ├─ levers — input DOWN · cache UP (trend: one run is one sample — its rounds are at rhx review._.cost --of tree)
+   │  ├─ input:     91,000 prompt tokens/run
+   │  └─ cache:     44.0% of prompt tokens served from cache
+   │
+   ├─ tokens
+   │  ├─ input:     1.0k
+   │  ├─ cache.set: 50.0k
+   │  ├─ cache.get: 40.0k
+   │  └─ output:    500
+   │
+   ├─ target mass by directory — not recorded
+   │  └─ 🟡 UNREAD — no directory can be named. metrics.compiled.json carries no
+   │     locus row (the run predates it), and input.prompt.md, the one other
+   │     artifact that names each target's path, could not be read. look for
+   │     both in the \`run:\` dir above — no flag of this command will help
+   │
+   └─ composition: 100.0k chars over 12 targets (source: compiled, attribution: attributed)
+      ├─ instructions              0 chars    0.0%  cacheable
+      ├─ outputFormat              0 chars    0.0%  cacheable
+      ├─ scaffold              40.0k chars   40.0%  cacheable
+      ├─ rules                 60.0k chars   60.0%  cacheable
+      ├─ refs                      0 chars    0.0%  cacheable
+      ├─ targetFiles               0 chars    0.0%  cacheable
+      ├─ targetDiffs               0 chars    0.0%
+      │  ├─ additions              0 chars    0.0%  cacheable
+      │  ├─ deletions              0 chars    0.0%  cacheable
+      │  └─ mutations              0 chars    0.0%  per round
+      └─ conversation              0 chars    0.0%  per round"
+`;
+
+exports[`genReviewRunStdout given: [case8] the LOCUS — where the target mass actually came from when: [t2] a pull-focus prompt sent paths and no payload then: the whole render is pinned, rails and order included 1`] = `
+"🦉 review cost — one run
+   ├─ run: .log/bhrain/review/2026-09-21T10-00-00-000Z.pid1.abc
+   │  ├─ identity: repo-rules · 5.1.execution.from_vision · i6
+   │  ├─ grade: metered
+   │  └─ cost: $0.040200
+   │
+   ├─ levers — input DOWN · cache UP (trend: one run is one sample — its rounds are at rhx review._.cost --of tree)
+   │  ├─ input:     91,000 prompt tokens/run
+   │  └─ cache:     44.0% of prompt tokens served from cache
+   │
+   ├─ tokens
+   │  ├─ input:     1.0k
+   │  ├─ cache.set: 50.0k
+   │  ├─ cache.get: 40.0k
+   │  └─ output:    500
+   │
+   ├─ target mass by directory — no per-target mass to place
+   │  └─ this prompt sent a path LIST and no payload (--focus pull), so its
+   │     targets carry no chars of their own to attribute
+   │
+   └─ composition: 100.0k chars over 12 targets (source: parsed, attribution: —)
+      ├─ instructions              0 chars    0.0%  cacheable
+      ├─ outputFormat              0 chars    0.0%  cacheable
+      ├─ scaffold              40.0k chars   40.0%  cacheable
+      ├─ rules                 60.0k chars   60.0%  cacheable
+      ├─ refs                      0 chars    0.0%  cacheable
+      ├─ targetFiles               0 chars    0.0%  cacheable
+      ├─ targetDiffs               0 chars    0.0%
+      │  ├─ additions              0 chars    0.0%  cacheable
+      │  ├─ deletions              0 chars    0.0%  cacheable
+      │  └─ mutations              0 chars    0.0%  per round
+      └─ conversation              0 chars    0.0%  per round"
+`;
+
+exports[`genReviewRunStdout given: [case9] a refused run whose targets are split by named input when: [t0] each input holds at most one file then: the whole render is pinned, rails and order included 1`] = `
+"🦉 review cost — one run
+   ├─ run: .log/bhrain/review/2026-09-21T10-00-00-000Z.pid1.abc
+   │  ├─ identity: repo-rules · 5.1.execution.from_vision · i6
+   │  ├─ grade: metered
+   │  └─ cost: $0.040200
+   │
+   ├─ levers — input DOWN · cache UP (trend: one run is one sample — its rounds are at rhx review._.cost --of tree)
+   │  ├─ input:     91,000 prompt tokens/run
+   │  └─ cache:     44.0% of prompt tokens served from cache
+   │
+   ├─ tokens
+   │  ├─ input:     1.0k
+   │  ├─ cache.set: 50.0k
+   │  ├─ cache.get: 40.0k
+   │  └─ output:    500
+   │
+   ├─ targets split: 14.0k chars (re-derived from the current worktree)
+   │  ├─ targetFiles: 4.0k chars (28.6%), 1 file — edited file bodies — a narrower bind shrinks it
+   │  ├─ targetDiffs: 10.0k chars (71.4%)
+   │  │  ├─ additions: 9.0k chars (64.3%), 1 file — added file bodies — a narrower bind or a partition shrinks it
+   │  │  ├─ deletions: 0 chars (0.0%), 0 files — a path apiece — never the cause of an overflow
+   │  │  └─ mutations: 1.0k chars (7.1%), 1 file — hunks of edited files — a narrower bind shrinks it
+   │  └─ targets: 3 recorded, 0 gone from disk since the run (not measured)
+   ├─ target mass by directory — 14.0k chars over 1 directory
+   │  └─ 100.0%     14.0k chars  2 files   src/logic  4.0k bodies · 9.0k added · 1.0k edits
+   │
+   └─ composition: —
+      └─ 🟡 UNREAD — the prompt could not be read, so no input can be attributed"
+`;
+
+exports[`genReviewRunStdout given: [case11] the two unmetered grades on the lever block when: [t0] a refused run is rendered then: the whole render is pinned, rails and order included 1`] = `
+"🦉 review cost — one run
+   ├─ run: .log/bhrain/review/2026-09-21T10-00-00-000Z.pid1.abc
+   │  ├─ identity: repo-rules · 5.1.execution.from_vision · i6
+   │  ├─ grade: refused
+   │  └─ cost: $0  (refused at validation — nil cost is a FACT)
+   │
+   ├─ levers — input DOWN · cache UP (trend: one run is one sample — its rounds are at rhx review._.cost --of tree)
+   │  ├─ input:     0  (refused at validation — no prompt was sent)
+   │  └─ cache:     —  (refused — no prompt, so no rate)
+   │
+   ├─ tokens
+   │  └─ — (grade = refused)
+   │
+   └─ composition: —
+      └─ 🟡 UNREAD — the prompt could not be read, so no input can be attributed"
+`;
+
+exports[`genReviewRunStdout given: [case11] the two unmetered grades on the lever block when: [t1] an unknown run is rendered then: the whole render is pinned, rails and order included 1`] = `
+"🦉 review cost — one run
+   ├─ run: .log/bhrain/review/2026-09-21T10-00-00-000Z.pid1.abc
+   │  ├─ identity: repo-rules · 5.1.execution.from_vision · i6
+   │  ├─ grade: unknown
+   │  └─ cost: —  🟡 unknown, not $0 — the brain may have charged
+   │
+   ├─ levers — input DOWN · cache UP (trend: one run is one sample — its rounds are at rhx review._.cost --of tree)
+   │  ├─ input:     —
+   │  ├─ cache:     —
+   │  └─ — = unmeasured, not zero (grade = unknown)
+   │
+   ├─ tokens
+   │  └─ — (grade = unknown)
+   │
+   ├─ target mass by directory — not recorded
+   │  └─ 🟡 UNREAD — no directory can be named. metrics.compiled.json carries no
+   │     locus row (the run predates it), and input.prompt.md, the one other
+   │     artifact that names each target's path, could not be read. look for
+   │     both in the \`run:\` dir above — no flag of this command will help
+   │
+   └─ composition: 100.0k chars over 12 targets (source: compiled, attribution: —)
+      ├─ instructions              0 chars    0.0%  cacheable
+      ├─ outputFormat              0 chars    0.0%  cacheable
+      ├─ scaffold              40.0k chars   40.0%  cacheable
+      ├─ rules                 60.0k chars   60.0%  cacheable
+      ├─ refs                      0 chars    0.0%  cacheable
+      ├─ targetFiles               0 chars    0.0%  cacheable
+      ├─ targetDiffs               0 chars    0.0%
+      │  ├─ additions              0 chars    0.0%  cacheable
+      │  ├─ deletions              0 chars    0.0%  cacheable
+      │  └─ mutations              0 chars    0.0%  per round
+      └─ conversation              0 chars    0.0%  per round"
+`;

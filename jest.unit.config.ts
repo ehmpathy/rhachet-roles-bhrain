@@ -33,8 +33,26 @@ const config: Config = {
     '!**/.yalc/**',
     '!**/.scratch/**',
     '!**/.agent/**',
+    '!**/.behavior/**',
   ],
   setupFilesAfterEnv: ['./jest.unit.env.ts'],
+
+  // keep agent caches out of the haste map
+  //
+  // .why = rmsafe moves a deleted file into `.agent/.cache/.../rmsafe/trash/`. a trashed
+  //        `__snapshots__/*.snap` whose test was not trashed beside it reads to jest as an
+  //        obsolete snapshot, and an obsolete snapshot fails the run while every test passes.
+  //        testMatch cannot help: snapshot obsolescence is judged over every `.snap` the haste
+  //        map holds, never over the matched tests. so the cache is cut from the map itself.
+  //        `.log/` is the repo's gitignored scratch dir, and a baseline `.snap` parked there
+  //        fails the run the same way (clamped by src/.test/jestScratchExclusion.test.ts).
+  //        `.behavior/` is cut so code a route archived (`$route/archive/`) is a record,
+  //        never a suite
+  modulePathIgnorePatterns: [
+    '<rootDir>/\\.agent/\\.cache/',
+    '<rootDir>/\\.log/',
+    '<rootDir>/\\.behavior/',
+  ],
 
   // grant every unit test a 30s budget, rather than jest's 5s default
   //

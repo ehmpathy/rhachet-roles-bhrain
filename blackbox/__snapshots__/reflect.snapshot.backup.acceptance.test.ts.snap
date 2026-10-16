@@ -1,0 +1,16 @@
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
+
+exports[`reflect.snapshot.backup given: [case1] backup is invoked with no --into when: [t0] backup is invoked then: the refusal renders whole 1`] = `
+"🌕 reflect.snapshot backup
+   └─ ✋ ConstraintError: --into s3://bucket required
+
+usage: rhx reflect.snapshot.backup --into s3://my-bucket
+"
+`;
+
+exports[`reflect.snapshot.backup given: [case2] backup is invoked with a non-s3 --into when: [t0] backup is invoked then: the refusal renders whole 1`] = `
+"🌕 reflect.snapshot backup
+   ├─ ✋ ConstraintError: s3 uri must start with s3://
+   └─ fix: pass --into s3://<bucket>, with aws credentials set
+"
+`;

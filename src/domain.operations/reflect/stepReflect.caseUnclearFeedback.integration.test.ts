@@ -11,11 +11,11 @@ import { setupSourceRepo, setupTargetDir } from './.test/setup';
 import { stepReflect } from './stepReflect';
 
 describe('stepReflect.caseUnclearFeedback', () => {
-  // increase timeout for brain invocations (5 minutes)
-  jest.setTimeout(300000);
+  // increase timeout for brain invocations (3 minutes per attempt)
+  jest.setTimeout(180000 * REPEATABLY_CONFIG.attempts);
 
   const brainScene = useBeforeAll(async () => ({
-    brain: genTestBrainContext({ brain: DEFAULT_TEST_BRAIN }),
+    brain: await genTestBrainContext({ brain: DEFAULT_TEST_BRAIN }),
   }));
 
   given('[case1] unclear feedback with no extractable rules', () => {

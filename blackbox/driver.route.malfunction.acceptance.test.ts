@@ -180,8 +180,13 @@ describe('driver.route.malfunction.acceptance', () => {
         });
       });
 
-      then('exit code is non-zero (malfunction)', () => {
-        expect(result.code).not.toEqual(0);
+      then('exit code is 2 (malfunction halts the stone)', () => {
+        // .note = this 2 is `route.stone.set`'s halt code — a halted stone exits 2 on
+        //         every halt, whatever halted it — never the reviewer's own class. so it
+        //         reads apart from `asExitCodeClass`, which classes a REVIEWER's exit
+        //         (`2 → constraint`). the reviewer's malfunction lives in its review
+        //         artifact and the halt tree, both asserted below
+        expect(result.code).toEqual(2);
       });
 
       then('output mentions malfunction', () => {
@@ -279,43 +284,22 @@ describe('driver.route.malfunction.acceptance', () => {
       });
 
       then(
-        '⛔ the guard summary still says malfunction 💥 while the round says approved — a DEFECT, snapped as-is',
+        '✅ the guard summary agrees with the round — the fixed reviewer reads approved, never a stale malfunction 💥',
         () => {
-          // 🔴 THIS SNAPSHOT PINS A DEFECT, DELIBERATELY, AND IT IS NOT THE CONTRACT.
+          // the CLAMP for a repaired defect. one emit once carried two verdicts for one
+          // artifact: the round tree read `approved` while the guard summary read the
+          // SAME slug, iteration, and `given:` path as `malfunction 💥`, because the
+          // meter picked a reviewer artifact by index among every artifact at one hash.
           //
-          //    one emit, two verdicts for one artifact. the round tree at the top prints
-          //    `r1: bash … approved · 0 blockers ✓`; the `🗿 route.stone.set` guard summary
-          //    below prints the SAME slug, SAME iteration, SAME `given:` path as
-          //    `malfunction 💥`. a driver who reads the screen cannot tell which holds.
+          // the latest-round-wins read in `getOneCacheSafePeerReviewArtifact` closed it
+          // (`.dream/v2026_09_05.fix.guard-review-cache-is-keyed-by-index-not-slug.md`,
+          // fulcrums F9 + F10). the snapshot now pins the agreed render, and it goes red
+          // the day a stale malfunction paints over a clean re-run again.
           //
-          // 🔴 the seam is INSIDE one row, and it is a two-source read:
-          //      `formatGuardTree.ts:227` — the VERDICT is `meter.verdict`
-          //      `formatGuardTree.ts:228` — the PATH is `review?.artifact.path ?? meter.path`
-          //    so the row prints the LIVE artifact's path under the METER's verdict, with no
-          //    reconciliation between them. that is why the two trees cite one identical path.
-          //
-          //    the meter's verdict is the stale half. `getAllReviewPeerMeterStatuses.ts:105`
-          //    selects the reviewer's artifact with `.find((r) => r.index === reviewer.index)`
-          //    over every artifact at the hash, and `enumRouteGuardReviewPeerFiles` returns
-          //    raw `globby` order with no sort — so when two rounds share ONE hash, `.find`
-          //    can return the earlier one. they share a hash here because the reviewer's
-          //    `.test/` flag file is not in `artifacts:`: the fix that made the reviewer
-          //    pass moved no hashed byte, so i001 (malfunction) and i002 (pass) sit at the
-          //    same hash under the same index.
-          //
-          // ⚠️ it is PRIOR to this branch — the index key predates this behavior, and neither
-          //    P1 nor P2 touches it. the repair is the SAME operation as `[case7][t3]` of
-          //    `routeStoneSetContemplation.acceptance.test.ts`, which pins the identical
-          //    class under the identical label. caught as
-          //    `.dream/v2026_09_05.fix.guard-review-cache-is-keyed-by-index-not-slug.md`,
-          //    itemized as fulcrums F9 (the key) and F10 (this second surface) — ruled as a
-          //    PAIR, never separately.
-          //
-          // ⇒ the snapshot is kept because it is the CLAMP: the day the key is corrected,
-          //   this goes red and hands the fixer the exact before-and-after. what it must
-          //   never do is read as approval — which is what this title exists to prevent
-          //   (r5 blocker.1 + r7 blocker.1, i016: an unlabelled contradictory render of a
-          //   surface a human reads).
+          // .retired = this case once asserted `the guard summary still says malfunction — a
+          //            DEFECT, snapped as-is`. retired on purpose: that pin held a known defect
+          //            in view until the cache-key repair landed; with the repair in, the
+          //            defect render is the one outcome this then forbids
           expect(
             sanitizeTimeForSnapshot(result.passResult.stdout),
           ).toMatchSnapshot();
@@ -378,8 +362,8 @@ describe('driver.route.malfunction.acceptance', () => {
         });
       });
 
-      then('exit code is non-zero (constraint blocks)', () => {
-        expect(result.code).not.toEqual(0);
+      then('exit code is 2 (constraint blocks)', () => {
+        expect(result.code).toEqual(2);
       });
 
       then('review artifact was created', async () => {
@@ -466,27 +450,16 @@ describe('driver.route.malfunction.acceptance', () => {
       });
 
       then(
-        '⛔ the guard summary still says constraint ✋ while the round says approved — a DEFECT, snapped as-is',
+        '✅ the guard summary agrees with the round — the fixed reviewer reads approved, never a stale constraint ✋',
         () => {
-          // 🔴 THIS SNAPSHOT PINS A DEFECT, DELIBERATELY, AND IT IS NOT THE CONTRACT.
+          // the CLAMP for the same repaired defect as `[case2][t1]`, at the other
+          // terminal exit class. the two leave `asReviewerTreeStateFromMeter` by separate
+          // branches (malfunction 💥 and constraint ✋), so one case clamps one branch —
+          // a regression in either goes red here or there, never in silence.
           //
-          //    the same contradiction `[case2][t1]` pins, at the OTHER terminal exit class:
-          //    the round tree prints the reviewer `approved`, the `🗿 route.stone.set` guard
-          //    summary prints the same slug/iteration/path as `constraint ✋`.
-          //
-          // 🔴 why BOTH cases are kept rather than one. the stale read is keyed on an index,
-          //    never on an exit class — so it can serve back either, and the two leave
-          //    `asReviewerTreeStateFromMeter` by SEPARATE branches, each with its own
-          //    `state.type`: `formatGuardTree.ts:227` (malfunction 💥) and `:243`
-          //    (constraint ✋). one case clamps one branch. a repair that corrected the key
-          //    for one class and missed the other would go green there and stay broken here.
-          //
-          // ⚠️ PRIOR to this branch; P1/P2 touch neither. same dream, same fulcrum pair —
-          //    `.dream/v2026_09_05.fix.guard-review-cache-is-keyed-by-index-not-slug.md`,
-          //    F9 (the key) + F10 (this surface), ruled together.
-          //
-          // ⇒ kept as the CLAMP; labelled so it can never read as approval
-          //   (r5 blocker.1 + r7 blocker.1, i016).
+          // .retired = this case once asserted `the guard summary still says constraint — a
+          //            DEFECT, snapped as-is`. retired on purpose, for the same cache-key
+          //            repair as `[case2][t1]`
           expect(
             sanitizeTimeForSnapshot(result.passResult.stdout),
           ).toMatchSnapshot();

@@ -247,12 +247,22 @@ exports[`driver.route.overrule.acceptance given: [case13] tier escalation: L1 ma
    │   ├─ given: .reviews/peer/1.feature._.review.i001.bf3993d1d36b238918.r002._.given.by_peer.premium-checker.md
    │   └─ taken: .reviews/peer/1.feature._.review.i001.bf3993d1d36b238918.r002._.taken.by_self.premium-checker.md
    │
-   └─ ✓ judge.1 - allowed [TIME]
+   └─ ✗ judge.1 - blocked [TIME]
 
 🗿 route.stone.set
    ├─ stone = 1.feature
    ├─ passage = malfunction
-   ├─ reason = reviewer or judge malfunctioned
+   ├─ reason = 1 of 2 reviewers malfunctioned
+   ├─ still yours to clear
+   │  ├─ 💥 lane basic-checker (r1) broke
+   │  │  └─ cause = exit code 1 (unknown)
+   │  └─ next
+   │     ├─ 1. read each given for its cause, and fix what you can
+   │     ├─ 2. answer each broken lane, like a rejected one
+   │     │  └─ rhx route.stone.set --stone 1.feature --as absorbed --that basic-checker
+   │     ├─ 3. re-arrive
+   │     │  └─ rhx route.stone.set --stone 1.feature --as arrived
+   │     └─ ask a human only for a grant you cannot make (an absent credential, a permission, etc)
    ├─ options
    │  ├─ converge with the reviewer — yours to run, and the levels above stay unlocked
    │  │  └─ rhx route.stone.set --stone 1.feature --as absorbed --that <reviewer>
@@ -277,7 +287,8 @@ exports[`driver.route.overrule.acceptance given: [case13] tier escalation: L1 ma
       │       └─ taken: .reviews/peer/1.feature._.review.i001.bf3993d1d36b238918.r002._.taken.by_self.premium-checker.md
       └─ judges
           └─ j1: rhx route.stone.judge --mechanism reviewed? --stone $stone --route $route --allow-blockers 0
-              └─ finished [TIME] ✓
+              ├─ finished [TIME] ✗
+              └─ reason: blockers exceed threshold (1 > 0)
 "
 `;
 
@@ -361,12 +372,9 @@ exports[`driver.route.overrule.acceptance given: [case14] tier escalation: L1 co
    ├─ passage = blocked
    ├─ reason = reviewer constraint
    ├─ options
-   │  ├─ converge with the reviewer — yours to run, and the levels above stay unlocked
-   │  │  └─ rhx route.stone.set --stone 1.feature --as absorbed --that <reviewer>
-   │  ├─ overrule the constraint — a human must grant
-   │  │  └─ rhx route.stone.set --stone 1.feature --as overruled
-   │  ├─ or fix the reviewer, then retry
-   │  └─ a broken level never halts the drive — converge the level above it
+   │  ├─ fix what its .given names, then re-arrive — yours to make
+   │  └─ overrule the constraint — a human must grant
+   │     └─ rhx route.stone.set --stone 1.feature --as overruled
    └─ guard
       ├─ artifacts
       │   └─ $route/1.feature*.md

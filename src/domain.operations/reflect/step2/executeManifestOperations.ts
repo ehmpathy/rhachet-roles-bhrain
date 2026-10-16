@@ -7,7 +7,14 @@ import type {
   ReviewerReflectManifestEntry,
 } from '@src/domain.objects/Reviewer/ReviewerReflectManifest';
 import { ReviewerReflectManifestOperation } from '@src/domain.objects/Reviewer/ReviewerReflectManifestOperation';
+// a sanctioned exposure, declared in src/domain.operations/review/.readme.md
 import { enumFilesFromGlob } from '@src/domain.operations/review/enumFilesFromGlob';
+
+import { asManifestEntriesAndDemotions } from './asManifestEntriesAndDemotions';
+import { asManifestEntryBoundToTarget } from './asManifestEntryBoundToTarget';
+import { asRulePathSet } from './asRulePathSet';
+import { asRulePathsOutsideDraft } from './asRulePathsOutsideDraft';
+import { asRulesByName } from './asRulesByName';
 
 /**
  * .what = checks whether a file is present on disk
@@ -23,61 +30,42 @@ const isFileFound = async (input: { path: string }): Promise<boolean> =>
     });
 
 /**
- * .what = extracts rule name from a file path
- * .why = enables matching rules by name across different directory structures
+ * .what = binds each SET_UPDATE to a target rule that exists, or demotes it to SET_CREATE
+ * .why = an update merges INTO a prior rule. models may omit the targetPath, name a path
+ *        that is not a rule file (a directory, a typo), or propose an update against a
+ *        target that holds no such rule at all. with no prior rule to merge into, the
+ *        proposal is a new rule — so it lands as a create, never as a crash that drops
+ *        every other proposal in the manifest
  *
- * .note = handles paths like "practices/rule.require.arrow-functions.md" and
- *         normalizes underscores to hyphens for fuzzy matching
+ * .note = a stated targetPath wins when it names a real rule file; else the target is
+ *         inferred by rule name (underscores vs hyphens ignored); else demoted
+ * .note = it reports each demotion as data and writes no log; the caller owns the console
  */
-const extractRuleName = (filePath: string): string => {
-  const basename = path.basename(filePath);
-  // normalize underscores to hyphens for matching
-  return basename.replace(/_/g, '-').toLowerCase();
-};
-
-/**
- * .what = infers missing targetPath for SET_UPDATE operations
- * .why = models may identify matching rules but omit the targetPath field
- *
- * .note = matches by normalized rule name (ignoring underscores vs hyphens)
- */
-const inferMissingTargetPaths = async (
-  entries: ReviewerReflectManifestEntry[],
-  targetDir: string,
-): Promise<ReviewerReflectManifestEntry[]> => {
+const getAllEntriesWithUpdateTargets = async (input: {
+  entries: ReviewerReflectManifestEntry[];
+  targetDir: string;
+}): Promise<{
+  entries: ReviewerReflectManifestEntry[];
+  demotions: { path: string; targetPathStated: string | null }[];
+}> => {
   // get all target rules (excluding .draft directory)
   const allTargetRules = await enumFilesFromGlob({
     glob: ['**/rule.*.md'],
-    cwd: targetDir,
+    cwd: input.targetDir,
   });
-  const targetRules = allTargetRules.filter((f) => !f.startsWith('.draft/'));
+  const targetRules = asRulePathsOutsideDraft({ rulePaths: allTargetRules });
 
-  // create normalized lookup map
-  const targetRulesByName = new Map<string, string>();
-  for (const rule of targetRules) {
-    const normalized = extractRuleName(rule);
-    targetRulesByName.set(normalized, rule);
-  }
+  // the two lookups a bind reads: by exact path, and by rule name
+  const targetRulePaths = asRulePathSet({ rulePaths: targetRules });
+  const targetRulesByName = asRulesByName({ rulePaths: targetRules });
 
-  return entries.map((entry) => {
-    // only infer for SET_UPDATE with missing targetPath
-    if (
-      entry.operation !== ReviewerReflectManifestOperation.SET_UPDATE ||
-      entry.targetPath
-    ) {
-      return entry;
-    }
+  // bind each entry; a demotion is recorded beside the entry it demoted, null where none
+  const bound = input.entries.map((entry) =>
+    asManifestEntryBoundToTarget({ entry, targetRulePaths, targetRulesByName }),
+  );
 
-    // try to find a matching target rule by normalized name
-    const pureName = extractRuleName(entry.path);
-    const matchedTarget = targetRulesByName.get(pureName);
-
-    if (matchedTarget) {
-      return { ...entry, targetPath: matchedTarget };
-    }
-
-    return entry;
-  });
+  // split the bound entries from the demotions among them
+  return asManifestEntriesAndDemotions({ bound });
 };
 
 /**
@@ -91,7 +79,7 @@ const getAllTargetRuleContents = async (input: {
     glob: ['**/rule.*.md'],
     cwd: input.targetDir,
   });
-  const targetRules = allTargetRules.filter((f) => !f.startsWith('.draft/'));
+  const targetRules = asRulePathsOutsideDraft({ rulePaths: allTargetRules });
   const contents = await Promise.all(
     targetRules.map((rule) =>
       fs.readFile(path.join(input.targetDir, rule), 'utf-8'),
@@ -122,6 +110,8 @@ const isOmitWithoutDuplicate = async (input: {
  * .why = fail-fast on malformed model output before executing operations
  */
 const validateManifestEntries = (entries: ReviewerReflectManifestEntry[]) => {
+  // .note = deliberate mutation, and a SCOPED ZONE: `errors` is born in this call and only
+  //         escapes as the thrown error's metadata, once the fold is done
   const errors: string[] = [];
 
   for (const entry of entries) {
@@ -170,11 +160,18 @@ export const executeManifestOperations = async (input: {
   appended: number;
   omitted: number;
 }> => {
-  // infer missing targetPath for SET_UPDATE operations before validation
-  const entriesWithInferredPaths = await inferMissingTargetPaths(
-    input.manifest.pureRules,
-    input.targetDir,
-  );
+  // bind each SET_UPDATE to a real target rule, or demote it to SET_CREATE
+  const { entries: entriesWithInferredPaths, demotions } =
+    await getAllEntriesWithUpdateTargets({
+      entries: input.manifest.pureRules,
+      targetDir: input.targetDir,
+    });
+
+  // report each demotion, so a reader sees why an update landed as a create
+  for (const demotion of demotions)
+    input.log.log(
+      `   └─ UPDATE→CREATE: ${demotion.path} (no target rule at '${demotion.targetPathStated ?? '(none)'}')`,
+    );
 
   // validate all entries upfront - fail fast on malformed model output
   validateManifestEntries(entriesWithInferredPaths);
@@ -184,6 +181,10 @@ export const executeManifestOperations = async (input: {
     targetDir: input.targetDir,
   });
 
+  // .note = deliberate mutation, and a SCOPED ZONE: the four tallies are born in this call
+  //         and only their final values escape, in the return below. the loop must run in
+  //         order, one file write per entry, so each tally rises beside its side effect
+  //         (rule.require.immutable-vars, scoped zone)
   let created = 0;
   let updated = 0;
   let appended = 0;

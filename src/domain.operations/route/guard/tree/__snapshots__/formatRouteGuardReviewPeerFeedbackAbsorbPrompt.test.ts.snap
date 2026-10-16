@@ -27,7 +27,7 @@ exports[`formatRouteGuardReviewPeerFeedbackAbsorbPrompt given: [case1] the reply
 `;
 
 exports[`formatRouteGuardReviewPeerFeedbackAbsorbPrompt given: [case2] the absent case for one reviewer when: [t0] rendered then: matches snapshot 1`] = `
-"✋ feedbackAbsorption absent for reviewer architect
+"✋ feedback absorption absent for reviewer architect
    ├─ the guard looked for your response here, and did not find it
    │  └─ .behavior/v2026_01_01.demo/.reviews/peer/1.execute._.review.i001.a1b2c3.r001._.taken.by_self.architect.md
    │
@@ -44,8 +44,7 @@ exports[`formatRouteGuardReviewPeerFeedbackAbsorbPrompt given: [case2] the absen
 `;
 
 exports[`formatRouteGuardReviewPeerFeedbackAbsorbPrompt given: [case3] the stale case for one reviewer when: [t0] rendered then: matches snapshot 1`] = `
-"✋ feedbackAbsorption stale for reviewer architect
-
+"✋ feedback absorption stale for reviewer architect
    ├─ your response answers an earlier round of feedback from this reviewer
    │
    ├─ why
@@ -199,6 +198,67 @@ exports[`formatRouteGuardReviewPeerFeedbackAbsorbPrompt given: [case6] ONE revie
    │  └─ read its .given above — the reviewer malfunctioned, and the .taken
    │     is where you say so. do not hunt for a blocker in it; there is none
    │     to find.
+   │
+   └─ when you've absorbed this reviewer, run
+      └─ rhx route.stone.set --stone 1.execute --as absorbed --that mechanic"
+`;
+
+exports[`formatRouteGuardReviewPeerFeedbackAbsorbPrompt given: [case7] a REFUSED reviewer — a constraint given, never a malfunction when: [t0] the refusal proposes partitions then: matches snapshot 1`] = `
+"🦉 the reviewers await your reply
+
+🌕 lets respond
+   │
+   ├─ review.peer 1/1
+   │  ├─ slug = mechanic
+   │  ├─ verdict = refused — ✋ prompt exceeds 75% of context window
+   │  ├─ absorb from
+   │  │  └─ .behavior/v2026_01_01.demo/.reviews/peer/1.execute._.review.i001.a1b2c3.r002._.given.by_peer.mechanic.md
+   │  └─ articulate into
+   │     └─ .behavior/v2026_01_01.demo/.reviews/peer/1.execute._.review.i001.a1b2c3.r002._.taken.by_self.mechanic.md
+   │
+   ├─ why a refused reviewer gates
+   │  └─ it refused to run — a constraint, not a malfunction. its .given
+   │     names the cause and the lever that clears it. it reviewed naught, so
+   │     no verdict was seen, and an absent verdict gates rather than reads clean.
+   │
+   ├─ what to do — spend the lever its .given names
+   │  └─ 1. declare the partitions its .given proposes — yours to make:
+   │        rhx route.guard.partition --route .behavior/v2026_01_01.demo --for review --peer @all \\
+   │          --partition 'beta=src/beta/**,.behavior/v2026_01_01.demo/**' \\
+   │          --partition 'alpha=src/alpha/**,.behavior/v2026_01_01.demo/**' \\
+   │          --mode apply
+   │     2. write the .taken above — name the lever you spent — then absorb
+   │        it with the command below, and re-arrive. no concern needs a
+   │        concede or dispute: a refusal raised none.
+   │
+   └─ when you've absorbed this reviewer, run
+      └─ rhx route.stone.set --stone 1.execute --as absorbed --that mechanic"
+`;
+
+exports[`formatRouteGuardReviewPeerFeedbackAbsorbPrompt given: [case7] a REFUSED reviewer — a constraint given, never a malfunction when: [t1] the refusal proposes no partitions then: matches snapshot 1`] = `
+"🦉 the reviewers await your reply
+
+🌕 lets respond
+   │
+   ├─ review.peer 1/1
+   │  ├─ slug = mechanic
+   │  ├─ verdict = refused — ✋ prompt exceeds 75% of context window
+   │  ├─ absorb from
+   │  │  └─ .behavior/v2026_01_01.demo/.reviews/peer/1.execute._.review.i001.a1b2c3.r002._.given.by_peer.mechanic.md
+   │  └─ articulate into
+   │     └─ .behavior/v2026_01_01.demo/.reviews/peer/1.execute._.review.i001.a1b2c3.r002._.taken.by_self.mechanic.md
+   │
+   ├─ why a refused reviewer gates
+   │  └─ it refused to run — a constraint, not a malfunction. its .given
+   │     names the cause and the lever that clears it. it reviewed naught, so
+   │     no verdict was seen, and an absent verdict gates rather than reads clean.
+   │
+   ├─ what to do — spend the lever its .given names
+   │  └─ 1. narrow the lane — yours to make. edit $route/1.execute.guard directly:
+   │        that lane's --paths-wout / --paths-with, or its --conversation depth
+   │     2. write the .taken above — name the lever you spent — then absorb
+   │        it with the command below, and re-arrive. no concern needs a
+   │        concede or dispute: a refusal raised none.
    │
    └─ when you've absorbed this reviewer, run
       └─ rhx route.stone.set --stone 1.execute --as absorbed --that mechanic"

@@ -1,3 +1,4 @@
+import { execSync } from 'child_process';
 import * as fs from 'fs/promises';
 import * as os from 'os';
 import * as path from 'path';
@@ -6,16 +7,27 @@ import { genTempDir, given, then, useBeforeAll, useThen, when } from 'test-fns';
 
 import { RouteStone } from '@src/domain.objects/Driver/RouteStone';
 import { RouteStoneGuard } from '@src/domain.objects/Driver/RouteStoneGuard';
+import { FIXED_FALLBACK_BRAIN } from '@src/domain.operations/brain/FIXED_FALLBACK_BRAIN';
 
 import { genContextReviewBrainSupplyDemo } from '../../__test_assets__/genContextReviewBrainSupplyDemo';
-import { FIXED_FALLBACK_BRAIN } from '../../genReviewBrainSupply';
 import { setPassageReport } from '../../passage/setPassageReport';
 import { getAllStoneGuardArtifactsByHash } from '../artifact/getAllStoneGuardArtifactsByHash';
-import { TALLIED_FOOTER_PREFIX } from './getReviewTacticFromContent';
 import { getAllRouteStoneGuardReviewPeerMeters } from './peer/meter/getAllRouteStoneGuardReviewPeerMeters';
 import { runStoneGuardReviews } from './runStoneGuardReviews';
+import { TALLIED_FOOTER_PREFIX } from './TALLIED_FOOTER_PREFIX';
 
-const noopContext = genContextReviewBrainSupplyDemo();
+/**
+ * .what = the demo review brain supply, plus the guard round a write belongs to
+ * .why = a fresh route was never rewound, so its guard round sits at generation 0
+ */
+const genContextGuardRoundDemo = (
+  input?: Parameters<typeof genContextReviewBrainSupplyDemo>[0],
+) => ({
+  ...genContextReviewBrainSupplyDemo(input),
+  guardRound: { generation: 0 },
+});
+
+const noopContext = genContextGuardRoundDemo();
 
 /**
  * .what = helper to create structured peer reviews from command strings
@@ -326,8 +338,8 @@ describe('runStoneGuardReviews', () => {
   //     1. the deterministic tally requires BOTH dimensions; `blockers: 1` alone (no nitpicks
   //        line) is a partial count → detected:false, so no partial value is leaked. under the
   //        pre-union flat parser this case leaked blockers:1; the union deliberately removes that
-  //        fake-partial path (see getReviewCountsViaRegex).
-  //     2. exitCode 2 is non-zero, so getReviewCounts skips the brain rescue and returns
+  //        fake-partial path (see getOneReviewCountsViaRegex).
+  //     2. exitCode 2 is non-zero, so getOneReviewCounts skips the brain rescue and returns
   //        detected:false regardless — a review that did not run cleanly is never count-rescued.
   //   for a constraint review the trustworthy signal is exitClass:'constraint', not the count;
   //   the artifact's stdout still carries the raw `blockers: 1` for a human. this is a conscious
@@ -1850,7 +1862,7 @@ describe('runStoneGuardReviews', () => {
       //        reviewer is promoted to malfunction with a FALLBACK-FAULT reason — a fault the
       //        human can tell apart from a genuine no-verdict. the brain-abstains path (a brain
       //        that resolves detected=false with no throw → the contract-brief reason) is the
-      //        neighbor case24 below, plus the leaf in getReviewCountsViaBrain (garbage case).
+      //        neighbor case24 below, plus the leaf in getOneReviewCountsViaBrain (garbage case).
       //        see rule.forbid.failhide + contract.reviewer-output.
       const tempDir = path.join(
         os.tmpdir(),
@@ -1915,192 +1927,6 @@ describe('runStoneGuardReviews', () => {
     },
   );
 
-  given(
-    '[case29] reviewer exits 0, emits no numeric count, and the sub-brain cleanly abstains',
-    () => {
-      // .why = the OTHER no-verdict path (distinct from case22's THROW): the cascade resolves
-      //        cleanly to { detected: false } — the sub-brain ran and honestly found no verdict,
-      //        it did NOT throw. this must promote to malfunction with the CONTRACT-BRIEF reason
-      //        ("lacks a numeric count"), NOT the fallback-fault reason. locks the default
-      //        no-verdict branch end-to-end through the guard, not just at the leaf.
-      const tempDir = path.join(
-        os.tmpdir(),
-        `test-reviews-abstain-${Date.now()}`,
-      );
-      const stone = new RouteStone({
-        name: '1.test',
-        path: path.join(tempDir, '1.test.stone'),
-        guard: null,
-      });
-      const guard = new RouteStoneGuard({
-        path: path.join(tempDir, '1.test.guard'),
-        artifacts: ['1.test*.md'],
-        reviews: {
-          self: [],
-          peer: [asPeerReview('echo "some prose that carries no verdict"', 0)],
-        },
-        judges: [],
-        protect: [],
-      });
-
-      // a sub-brain that RESOLVES to no-verdict (never throws) — the honest-abstain path.
-      // .note = documented test-double cast: a minimal fake ContextBrain shaped for the one
-      //         field getReviewCountsViaBrain reads (brain.choice.ask -> { output }). not a real
-      //         brain; confined to this abstain-path test, same pattern as the timeout unit test.
-      const abstainContext = genContextReviewBrainSupplyDemo({
-        getReviewBrain: async () =>
-          ({
-            brain: {
-              choice: {
-                ask: async () => ({ output: { detected: false } }),
-              },
-            },
-          }) as unknown as ContextBrain<BrainChoice>,
-      });
-
-      beforeEach(async () => {
-        await fs.mkdir(tempDir, { recursive: true });
-      });
-
-      afterEach(async () => {
-        await fs.rm(tempDir, { recursive: true, force: true });
-      });
-
-      when('[t0] reviews are executed', () => {
-        const reviews = useThen('runs the reviewer', async () =>
-          runStoneGuardReviews(
-            { stone, guard, hash: 'abstain', iteration: 1, route: tempDir },
-            abstainContext,
-          ),
-        );
-
-        then('the reviewer is promoted to malfunction', () => {
-          const artifact = reviews.artifacts[0];
-          expect(artifact?.exitClass).toEqual('malfunction');
-          expect(artifact?.exitCode).toEqual(1);
-        });
-
-        then(
-          'the malfunction reason is the contract-brief no-verdict message, NOT a fallback fault',
-          () => {
-            const stderr = reviews.artifacts[0]?.stderr ?? '';
-            expect(stderr).toContain('lacks a numeric blocker/nitpick count');
-            expect(stderr).not.toContain('review tally fallback failed');
-          },
-        );
-
-        then('the malfunction output matches snapshot', () => {
-          const artifact = reviews.artifacts[0];
-          expect({
-            exitCode: artifact?.exitCode,
-            exitClass: artifact?.exitClass,
-            stdout: artifact?.stdout,
-            stderr: artifact?.stderr,
-          }).toMatchSnapshot();
-        });
-      });
-    },
-  );
-
-  given(
-    '[case30] reviewer exits 0, emits no numeric count, and the sub-brain fallback times out',
-    () => {
-      // .why = the THIRD malfunction cause at this seam, distinct from case22 (fault throw →
-      //        "could not be reached") and case29 (clean abstain → "lacks a numeric count"): a
-      //        sub-brain whose ask() never settles must be time-bounded, promote to malfunction
-      //        with a TIMEOUT-specific reason ("timed out ... did not respond in time"), and stay
-      //        readable-apart from the other two causes. this drives ReviewTallyTimeoutError
-      //        through runOneStoneGuardReview's catch + isReviewTallyTimeout selection — the
-      //        contract seam the low-level getReviewCountsViaBrain.timeout unit test does NOT
-      //        cover.
-      const tempDir = path.join(
-        os.tmpdir(),
-        `test-reviews-timeout-${Date.now()}`,
-      );
-      const stone = new RouteStone({
-        name: '1.test',
-        path: path.join(tempDir, '1.test.stone'),
-        guard: null,
-      });
-      const guard = new RouteStoneGuard({
-        path: path.join(tempDir, '1.test.guard'),
-        artifacts: ['1.test*.md'],
-        reviews: {
-          self: [],
-          peer: [
-            asPeerReview('echo "prose verdict, no numeric counts here"', 0),
-          ],
-        },
-        judges: [],
-        protect: [],
-      });
-
-      // a sub-brain whose choice.ask() never settles — the hung-fallback path.
-      // .note = documented test-double cast: a minimal fake ContextBrain shaped for the one
-      //         field getReviewCountsViaBrain reads (brain.choice.ask). not a real brain; same
-      //         pattern as case29's abstain double and the timeout unit test.
-      const timeoutContext = genContextReviewBrainSupplyDemo({
-        getReviewBrain: async () =>
-          ({
-            brain: {
-              choice: {
-                ask: () => new Promise(() => {}), // never settles — the hung call under test
-              },
-            },
-          }) as unknown as ContextBrain<BrainChoice>,
-      });
-
-      const priorTimeoutEnv = process.env.RHACHET_FALLBACK_BRAIN_TIMEOUT_MS;
-
-      beforeEach(async () => {
-        // bound the wait to 50ms so the hung call fails fast instead of the full default
-        process.env.RHACHET_FALLBACK_BRAIN_TIMEOUT_MS = '50';
-        await fs.mkdir(tempDir, { recursive: true });
-      });
-
-      afterEach(async () => {
-        if (priorTimeoutEnv === undefined)
-          delete process.env.RHACHET_FALLBACK_BRAIN_TIMEOUT_MS;
-        else process.env.RHACHET_FALLBACK_BRAIN_TIMEOUT_MS = priorTimeoutEnv;
-        await fs.rm(tempDir, { recursive: true, force: true });
-      });
-
-      when('[t0] reviews are executed', () => {
-        const reviews = useThen('runs the reviewer', async () =>
-          runStoneGuardReviews(
-            { stone, guard, hash: 'timeout', iteration: 1, route: tempDir },
-            timeoutContext,
-          ),
-        );
-
-        then('the reviewer is promoted to malfunction', () => {
-          const artifact = reviews.artifacts[0];
-          expect(artifact?.exitClass).toEqual('malfunction');
-          expect(artifact?.exitCode).toEqual(1);
-        });
-
-        then(
-          'the malfunction reason is the TIMEOUT message, distinct from the generic fault',
-          () => {
-            const stderr = reviews.artifacts[0]?.stderr ?? '';
-            expect(stderr).toContain('review tally fallback timed out');
-            expect(stderr).not.toContain('could not be reached');
-          },
-        );
-
-        then('the malfunction output matches snapshot', () => {
-          const artifact = reviews.artifacts[0];
-          expect({
-            exitCode: artifact?.exitCode,
-            exitClass: artifact?.exitClass,
-            stdout: artifact?.stdout,
-            stderr: artifact?.stderr,
-          }).toMatchSnapshot();
-        });
-      });
-    },
-  );
-
   given('[case23] reviewer exits 0 but declares only one dimension', () => {
     // .why = both dimensions must carry a numeric count; a half-declared review is
     //        undetectable and must fail as a malfunction, not a partial approval.
@@ -2142,7 +1968,7 @@ describe('runStoneGuardReviews', () => {
       });
 
       then('the malfunction output matches snapshot', () => {
-        // .why = one-dimension output is a distinct user-visible friction path; snap it so
+        // .why = one-dimension output is a distinct human-visible friction path; snap it so
         //        message regressions surface in prs (rule.require.snapshots)
         const artifact = reviews.artifacts[0];
         expect({
@@ -2232,25 +2058,25 @@ describe('runStoneGuardReviews', () => {
             },
           );
 
+          const read = useThen('the meters are read', async () => ({
+            meters: await getAllRouteStoneGuardReviewPeerMeters({
+              route: tempDir,
+              stone: '1.test',
+            }),
+          }));
+
           then(
             'the reviewer re-runs — budget consumed twice (rounds is 2)',
-            async () => {
+            () => {
               expect(second.artifacts).toHaveLength(1);
-              const meters = await getAllRouteStoneGuardReviewPeerMeters({
-                route: tempDir,
-                stone: '1.test',
-              });
-              expect(meters[0]?.rounds).toEqual(2);
+              expect(read.meters[0]?.rounds).toEqual(2);
             },
           );
 
-          then('the seam outcome matches snapshot', async () => {
+          then('the seam outcome matches snapshot', () => {
             // .why = snap the per-slug seam result (rounds + verdict) so a regression
             //        in the re-run trigger surfaces in the pr, not just a silent flip
-            const meters = await getAllRouteStoneGuardReviewPeerMeters({
-              route: tempDir,
-              stone: '1.test',
-            });
+            const meters = read.meters;
             expect({
               slug: meters[0]?.reviewer.slug,
               rounds: meters[0]?.rounds,
@@ -2338,25 +2164,25 @@ describe('runStoneGuardReviews', () => {
           },
         );
 
+        const read = useThen('the meters are read', async () => ({
+          meters: await getAllRouteStoneGuardReviewPeerMeters({
+            route: tempDir,
+            stone: '1.test',
+          }),
+        }));
+
         then(
           'the reviewer reuses the cache — budget consumed once (rounds is 1)',
-          async () => {
+          () => {
             expect(second.artifacts).toHaveLength(1);
-            const meters = await getAllRouteStoneGuardReviewPeerMeters({
-              route: tempDir,
-              stone: '1.test',
-            });
-            expect(meters[0]?.rounds).toEqual(1);
+            expect(read.meters[0]?.rounds).toEqual(1);
           },
         );
 
-        then('the seam outcome matches snapshot', async () => {
+        then('the seam outcome matches snapshot', () => {
           // .why = the blind path is the other edge of the trigger; snap it so a
           //        regression that makes a blind reviewer re-run is visible in the pr
-          const meters = await getAllRouteStoneGuardReviewPeerMeters({
-            route: tempDir,
-            stone: '1.test',
-          });
+          const meters = read.meters;
           expect({
             slug: meters[0]?.reviewer.slug,
             rounds: meters[0]?.rounds,
@@ -2447,26 +2273,25 @@ describe('runStoneGuardReviews', () => {
             },
           );
 
-          then('only conv-b re-runs; conv-a reuses its cache', async () => {
-            expect(second.artifacts).toHaveLength(2);
-            const meters = await getAllRouteStoneGuardReviewPeerMeters({
+          const read = useThen('the meters are read', async () => ({
+            meters: await getAllRouteStoneGuardReviewPeerMeters({
               route: tempDir,
               stone: '1.test',
-            });
+            }),
+          }));
+
+          then('only conv-b re-runs; conv-a reuses its cache', () => {
+            expect(second.artifacts).toHaveLength(2);
             const roundsBySlug = Object.fromEntries(
-              meters.map((m) => [m.reviewer.slug, m.rounds]),
+              read.meters.map((m) => [m.reviewer.slug, m.rounds]),
             );
             expect(roundsBySlug['conv-a']).toEqual(1);
             expect(roundsBySlug['conv-b']).toEqual(2);
           });
 
-          then('the per-slug seam outcome matches snapshot', async () => {
-            const meters = await getAllRouteStoneGuardReviewPeerMeters({
-              route: tempDir,
-              stone: '1.test',
-            });
+          then('the per-slug seam outcome matches snapshot', () => {
             const roundsBySlug = Object.fromEntries(
-              meters.map((m) => [m.reviewer.slug, m.rounds]),
+              read.meters.map((m) => [m.reviewer.slug, m.rounds]),
             );
             expect({
               convA: roundsBySlug['conv-a'],
@@ -2549,23 +2374,23 @@ describe('runStoneGuardReviews', () => {
           },
         );
 
+        const read = useThen('the meters are read', async () => ({
+          meters: await getAllRouteStoneGuardReviewPeerMeters({
+            route: tempDir,
+            stone: '1.test',
+          }),
+        }));
+
         then(
           'the reviewer reuses the cache — budget consumed once (rounds is 1)',
-          async () => {
+          () => {
             expect(second.artifacts).toHaveLength(1);
-            const meters = await getAllRouteStoneGuardReviewPeerMeters({
-              route: tempDir,
-              stone: '1.test',
-            });
-            expect(meters[0]?.rounds).toEqual(1);
+            expect(read.meters[0]?.rounds).toEqual(1);
           },
         );
 
-        then('the stale-taken seam outcome matches snapshot', async () => {
-          const meters = await getAllRouteStoneGuardReviewPeerMeters({
-            route: tempDir,
-            stone: '1.test',
-          });
+        then('the stale-taken seam outcome matches snapshot', () => {
+          const meters = read.meters;
           expect({
             slug: meters[0]?.reviewer.slug,
             rounds: meters[0]?.rounds,
@@ -2576,6 +2401,1028 @@ describe('runStoneGuardReviews', () => {
       },
     );
   });
+
+  given(
+    '[case28] a prose reviewer whose sub-brain fallback SUCCEEDS — the rescue survives a cache re-read',
+    () => {
+      // .why = the one piece of genuinely new logic — runOneStoneGuardReview persists the
+      //        `tallied by reviewer@…` footer for a SUCCESSFUL probabilistic tally, and
+      //        getAllStoneGuardArtifactsByHash recovers `tallier: 'probabilistic'` from it on a
+      //        cache hit — was untested end-to-end. every other fallback case (case22/23/24,
+      //        case-fallback) exercises the FAULT or ABSTAIN path (tallier never becomes
+      //        'probabilistic'). a bug in the footer's placement, its last-match precedence, or
+      //        the cache-recovery parse would pass every other test and only surface on a real
+      //        cache re-read of a rescued reviewer (howto.journey-tests-reveal-cache-bugs).
+      const tempDir = path.join(os.tmpdir(), `test-rescue-${Date.now()}`);
+      const stone = new RouteStone({
+        name: '1.test',
+        path: path.join(tempDir, '1.test.stone'),
+        guard: null,
+      });
+      const guard = new RouteStoneGuard({
+        path: path.join(tempDir, '1.test.guard'),
+        artifacts: ['1.test*.md'],
+        reviews: {
+          self: [],
+          peer: [
+            {
+              // prose only, exit 0 — the deterministic parser misses, so the guard falls back
+              // to the sub-brain. here the sub-brain SUCCEEDS with a detected verdict.
+              slug: 'prose',
+              run: 'echo "two must-fix items and one optional style nitpick"',
+              budget: Infinity,
+              level: 1,
+            },
+          ],
+        },
+        judges: [],
+        protect: [],
+      });
+
+      // a sub-brain that RESOLVES a real verdict (never throws) — the honest-rescue path.
+      // .note = documented test-double cast: a minimal fake ContextBrain shaped for the one
+      //         field getOneReviewCountsViaBrain reads (brain.choice.ask -> { output }). a real
+      //         brain is exercised by the getOneReviewCountsViaBrain caseBrain suite; here a
+      //         controlled double pins EXACT counts so the footer + cache round-trip can be
+      //         asserted deterministically — same pattern as case24's abstain double. the
+      //         `evidence` quote is non-empty so the fabricated-tally guard does not reject it.
+      const rescueContext = genContextGuardRoundDemo({
+        getReviewBrain: async () =>
+          ({
+            brain: {
+              choice: {
+                // the brain that tallied names itself — `talliedBy` reads this slug, so a
+                // double without it writes no footer. an openrouter tier slug is its
+                // own pin (rule.require.versionless-brain-defaults)
+                slug: FIXED_FALLBACK_BRAIN,
+                ask: async () => ({
+                  output: {
+                    detected: true,
+                    blockers: 2,
+                    nitpicks: 1,
+                    evidence:
+                      'two must-fix items and one optional style nitpick',
+                  },
+                }),
+              },
+            },
+          }) as unknown as ContextBrain<BrainChoice>,
+      });
+
+      beforeEach(async () => {
+        await fs.mkdir(tempDir, { recursive: true });
+      });
+
+      afterEach(async () => {
+        await fs.rm(tempDir, { recursive: true, force: true });
+      });
+
+      when('[t0] the guard measures the prose reviewer (fresh run)', () => {
+        // .note = the guard run, the disk read, and the cache recovery all happen in ONE useThen
+        //         so every filesystem touch lands while tempDir exists — the per-then afterEach
+        //         removes tempDir, so later then blocks read the captured values, not disk.
+        const captured = useThen(
+          'runs the guard, reads the persisted file, recovers from cache',
+          async () => {
+            const reviews = await runStoneGuardReviews(
+              { stone, guard, hash: 'rescue', iteration: 1, route: tempDir },
+              rescueContext,
+            );
+            const artifact = reviews.artifacts[0];
+            const persisted = await fs.readFile(artifact?.path ?? '', 'utf-8');
+            const recovered = await getAllStoneGuardArtifactsByHash({
+              stone,
+              hash: 'rescue',
+              route: tempDir,
+            });
+            return { artifact, persisted, recovered };
+          },
+        );
+
+        then('the fresh artifact carries the probabilistic tally', () => {
+          const artifact = captured.artifact;
+          expect(artifact?.exitClass).toEqual('passed');
+          expect(artifact?.blockers).toEqual(2);
+          expect(artifact?.nitpicks).toEqual(1);
+          expect(artifact?.tallier).toEqual('probabilistic');
+        });
+
+        then('the persisted file records the tallied-by footer', () => {
+          // .why = the footer is what a cache re-read recovers; assert it reached disk with the
+          //        shared prefix + the slug of the fallback brain
+          const persisted = captured.persisted;
+          expect(persisted).toContain(
+            `${TALLIED_FOOTER_PREFIX}${FIXED_FALLBACK_BRAIN}`,
+          );
+          expect(persisted).toContain('2 blockers');
+          expect(persisted).toContain('1 nitpick');
+        });
+
+        then(
+          'the cached artifact still carries tallier=probabilistic (no brain call)',
+          () => {
+            // .why = the round-trip: the footer written on the fresh run must let the cache
+            //        parser recover the probabilistic tallier with NO further brain call.
+            const review = captured.recovered.reviews[0];
+            expect(review?.tallier).toEqual('probabilistic');
+            expect(review?.blockers).toEqual(2);
+            expect(review?.nitpicks).toEqual(1);
+          },
+        );
+      });
+    },
+  );
+
+  given(
+    '[case29] reviewer exits 0, emits no numeric count, and the sub-brain cleanly abstains',
+    () => {
+      // .why = the OTHER no-verdict path (distinct from case22's THROW): the cascade resolves
+      //        cleanly to { detected: false } — the sub-brain ran and honestly found no verdict,
+      //        it did NOT throw. this must promote to malfunction with the CONTRACT-BRIEF reason
+      //        ("lacks a numeric count"), NOT the fallback-fault reason. locks the default
+      //        no-verdict branch end-to-end through the guard, not just at the leaf.
+      const tempDir = path.join(
+        os.tmpdir(),
+        `test-reviews-abstain-${Date.now()}`,
+      );
+      const stone = new RouteStone({
+        name: '1.test',
+        path: path.join(tempDir, '1.test.stone'),
+        guard: null,
+      });
+      const guard = new RouteStoneGuard({
+        path: path.join(tempDir, '1.test.guard'),
+        artifacts: ['1.test*.md'],
+        reviews: {
+          self: [],
+          peer: [asPeerReview('echo "some prose that carries no verdict"', 0)],
+        },
+        judges: [],
+        protect: [],
+      });
+
+      // a sub-brain that RESOLVES to no-verdict (never throws) — the honest-abstain path.
+      // .note = documented test-double cast: a minimal fake ContextBrain shaped for the one
+      //         field getOneReviewCountsViaBrain reads (brain.choice.ask -> { output }). not a real
+      //         brain; confined to this abstain-path test, same pattern as the timeout unit test.
+      const abstainContext = genContextGuardRoundDemo({
+        getReviewBrain: async () =>
+          ({
+            brain: {
+              choice: {
+                ask: async () => ({ output: { detected: false } }),
+              },
+            },
+          }) as unknown as ContextBrain<BrainChoice>,
+      });
+
+      beforeEach(async () => {
+        await fs.mkdir(tempDir, { recursive: true });
+      });
+
+      afterEach(async () => {
+        await fs.rm(tempDir, { recursive: true, force: true });
+      });
+
+      when('[t0] reviews are executed', () => {
+        const reviews = useThen('runs the reviewer', async () =>
+          runStoneGuardReviews(
+            { stone, guard, hash: 'abstain', iteration: 1, route: tempDir },
+            abstainContext,
+          ),
+        );
+
+        then('the reviewer is promoted to malfunction', () => {
+          const artifact = reviews.artifacts[0];
+          expect(artifact?.exitClass).toEqual('malfunction');
+          expect(artifact?.exitCode).toEqual(1);
+        });
+
+        then(
+          'the malfunction reason is the contract-brief no-verdict message, NOT a fallback fault',
+          () => {
+            const stderr = reviews.artifacts[0]?.stderr ?? '';
+            expect(stderr).toContain('lacks a numeric blocker/nitpick count');
+            expect(stderr).not.toContain('review tally fallback failed');
+          },
+        );
+
+        then('the malfunction output matches snapshot', () => {
+          const artifact = reviews.artifacts[0];
+          expect({
+            exitCode: artifact?.exitCode,
+            exitClass: artifact?.exitClass,
+            stdout: artifact?.stdout,
+            stderr: artifact?.stderr,
+          }).toMatchSnapshot();
+        });
+      });
+    },
+  );
+
+  given(
+    '[case30] reviewer exits 0, emits no numeric count, and the sub-brain fallback times out',
+    () => {
+      // .why = the THIRD malfunction cause at this seam, distinct from case22 (fault throw →
+      //        "could not be reached") and case29 (clean abstain → "lacks a numeric count"): a
+      //        sub-brain whose ask() never settles must be time-bounded, promote to malfunction
+      //        with a TIMEOUT-specific reason ("timed out ... did not respond in time"), and stay
+      //        readable-apart from the other two causes. this drives ReviewTallyTimeoutError
+      //        through runOneStoneGuardReview's catch + isReviewTallyTimeout selection — the
+      //        contract seam the low-level getOneReviewCountsViaBrain.timeout unit test does NOT
+      //        cover.
+      const tempDir = path.join(
+        os.tmpdir(),
+        `test-reviews-timeout-${Date.now()}`,
+      );
+      const stone = new RouteStone({
+        name: '1.test',
+        path: path.join(tempDir, '1.test.stone'),
+        guard: null,
+      });
+      const guard = new RouteStoneGuard({
+        path: path.join(tempDir, '1.test.guard'),
+        artifacts: ['1.test*.md'],
+        reviews: {
+          self: [],
+          peer: [
+            asPeerReview('echo "prose verdict, no numeric counts here"', 0),
+          ],
+        },
+        judges: [],
+        protect: [],
+      });
+
+      // a sub-brain whose choice.ask() never settles — the hung-fallback path.
+      // .note = documented test-double cast: a minimal fake ContextBrain shaped for the one
+      //         field getOneReviewCountsViaBrain reads (brain.choice.ask). not a real brain; same
+      //         pattern as case29's abstain double and the timeout unit test.
+      const timeoutContext = genContextGuardRoundDemo({
+        getReviewBrain: async () =>
+          ({
+            brain: {
+              choice: {
+                ask: () => new Promise(() => {}), // never settles — the hung call under test
+              },
+            },
+          }) as unknown as ContextBrain<BrainChoice>,
+      });
+
+      const priorTimeoutEnv = process.env.RHACHET_FALLBACK_BRAIN_TIMEOUT_MS;
+
+      beforeEach(async () => {
+        // bound the wait to 50ms so the hung call fails fast instead of the full default
+        process.env.RHACHET_FALLBACK_BRAIN_TIMEOUT_MS = '50';
+        await fs.mkdir(tempDir, { recursive: true });
+      });
+
+      afterEach(async () => {
+        if (priorTimeoutEnv === undefined)
+          delete process.env.RHACHET_FALLBACK_BRAIN_TIMEOUT_MS;
+        else process.env.RHACHET_FALLBACK_BRAIN_TIMEOUT_MS = priorTimeoutEnv;
+        await fs.rm(tempDir, { recursive: true, force: true });
+      });
+
+      when('[t0] reviews are executed', () => {
+        const reviews = useThen('runs the reviewer', async () =>
+          runStoneGuardReviews(
+            { stone, guard, hash: 'timeout', iteration: 1, route: tempDir },
+            timeoutContext,
+          ),
+        );
+
+        then('the reviewer is promoted to malfunction', () => {
+          const artifact = reviews.artifacts[0];
+          expect(artifact?.exitClass).toEqual('malfunction');
+          expect(artifact?.exitCode).toEqual(1);
+        });
+
+        then(
+          'the malfunction reason is the TIMEOUT message, distinct from the generic fault',
+          () => {
+            const stderr = reviews.artifacts[0]?.stderr ?? '';
+            expect(stderr).toContain('review tally fallback timed out');
+            expect(stderr).not.toContain('could not be reached');
+          },
+        );
+
+        then('the malfunction output matches snapshot', () => {
+          const artifact = reviews.artifacts[0];
+          expect({
+            exitCode: artifact?.exitCode,
+            exitClass: artifact?.exitClass,
+            stdout: artifact?.stdout,
+            stderr: artifact?.stderr,
+          }).toMatchSnapshot();
+        });
+      });
+    },
+  );
+
+  given(
+    '[case31] a route that IS its own git root, so a repo-relative path is visibly shorter',
+    () => {
+      // 🔴 the git root is what makes this case bite. every other suite here puts the
+      //    route under a plain tmpdir, which is no repo — so `getRepoRootWithFallback`
+      //    returns the cwd, and BOTH the raw absolute path and the relativized one come
+      //    out long and absolute-looking. the two forms are indistinguishable, which is
+      //    exactly why the defect survived every extant test.
+      //
+      //    with `git: true` the root IS the route, so a relativized path reads
+      //    `.reviews/peer/...` and a raw one reads `/tmp/.../.reviews/peer/...`.
+      //    the difference is now a single `path.isAbsolute` away
+      const scene = useBeforeAll(async () => {
+        const tempDir = genTempDir({
+          slug: 'guard-display-path',
+          git: true,
+        });
+
+        const stoneCase = new RouteStone({
+          name: '1.test',
+          path: path.join(tempDir, '1.test.stone'),
+          guard: null,
+        });
+        const guardCase = new RouteStoneGuard({
+          path: path.join(tempDir, '1.test.guard'),
+          artifacts: ['1.test*.md'],
+          reviews: {
+            self: [],
+            peer: [asPeerReview('echo "blockers: 0\\nnitpicks: 0"', 0)],
+          },
+          judges: [],
+          protect: [],
+        });
+
+        await fs.writeFile(path.join(tempDir, '1.test.md'), '# artifact\n');
+
+        return { tempDir, stoneCase, guardCase };
+      });
+
+      when('[t0] a FRESH round runs — no cache, no exhaustion', () => {
+        const captured = useThen('the round completes', async () => {
+          const paths: (string | null)[] = [];
+          await runStoneGuardReviews(
+            {
+              stone: scene.stoneCase,
+              guard: scene.guardCase,
+              hash: 'displaypath',
+              iteration: 1,
+              route: scene.tempDir,
+            },
+            genContextGuardRoundDemo({
+              onGuardProgress: (event) => {
+                if (event.outcome) paths.push(event.outcome.path);
+              },
+            }),
+          );
+          return { paths };
+        });
+
+        then(
+          'every emitted artifact path is repo-relative, never absolute',
+          () => {
+            // 🔴 THE clamp. the fresh-run emit handed `review.path` raw while its three
+            //    peers relativized, so one stone run printed the same artifact two ways
+            //    fifteen lines apart. revert `asGuardDisplayPath` to `review.path` at
+            //    that site and this goes red (`rule.require.clamp-edge-cases`)
+            const emitted = captured.paths.filter(
+              (p): p is string => typeof p === 'string',
+            );
+            expect(emitted.length).toBeGreaterThan(0);
+            emitted.forEach((p) => expect(path.isAbsolute(p)).toEqual(false));
+          },
+        );
+
+        then('and it addresses the artifact from the route root', () => {
+          // .note = not decoration. `path.isAbsolute` alone would pass on a `../../..`
+          //         traversal, which is what a MISMATCHED root produces — the second
+          //         failure mode this critique named, and the one a bare absolute-check
+          //         cannot see
+          const emitted = captured.paths.filter(
+            (p): p is string => typeof p === 'string',
+          );
+          emitted.forEach((p) => expect(p.startsWith('..')).toEqual(false));
+        });
+      });
+    },
+  );
+
+  given(
+    '[case32] a lane that reads $targets, in a repo with an UNTRACKED new file',
+    () => {
+      // 🔴 the untracked file is the clamp. an enroll prompt that derived its own scope via
+      //    `git diff origin/main --name-only` missed every untracked file, which was most of
+      //    the feature under review. `$targets` hands the lane the engine's list instead
+      const scene = useBeforeAll(async () => {
+        const tempDir = genTempDir({ slug: 'guard-targets-var', git: true });
+
+        const stoneCase = new RouteStone({
+          name: '1.test',
+          path: path.join(tempDir, '1.test.stone'),
+          guard: null,
+        });
+        const guardCase = new RouteStoneGuard({
+          path: path.join(tempDir, '1.test.guard'),
+          artifacts: ['1.test*.md'],
+          reviews: {
+            self: [],
+            peer: [
+              asPeerReview(
+                'echo "blockers: 0"; echo "nitpicks: 0"; echo "targets=$targets"; cat $targets',
+                0,
+              ),
+            ],
+          },
+          judges: [],
+          protect: [],
+        });
+
+        // left untracked on purpose — no commit after these writes
+        await fs.writeFile(path.join(tempDir, '1.test.md'), '# artifact\n');
+        await fs.writeFile(
+          path.join(tempDir, 'fresh.ts'),
+          'export const c = 1;\n',
+        );
+
+        return { tempDir, stoneCase, guardCase };
+      });
+
+      when('[t0] the round runs', () => {
+        const reviews = useThen('the round completes', async () =>
+          runStoneGuardReviews(
+            {
+              stone: scene.stoneCase,
+              guard: scene.guardCase,
+              hash: 'targetsvar',
+              iteration: 1,
+              route: scene.tempDir,
+            },
+            genContextGuardRoundDemo(),
+          ),
+        );
+
+        then(
+          '$targets is substituted with a repo-relative .targets.txt path',
+          () => {
+            const stdout = reviews.artifacts[0]?.stdout ?? '';
+            expect(stdout).toMatch(
+              /targets=\.reviews\/peer\/\S+\.targets\.txt/,
+            );
+            expect(stdout).not.toContain('targets=$targets');
+          },
+        );
+
+        then('the list holds the untracked new file', () => {
+          expect(reviews.artifacts[0]?.stdout).toContain('fresh.ts');
+        });
+
+        then(
+          'the lane still reads as passed — the .txt tail is no given',
+          () => {
+            expect(reviews.artifacts).toHaveLength(1);
+            expect(reviews.artifacts[0]?.exitClass).toEqual('passed');
+          },
+        );
+      });
+    },
+  );
+
+  given(
+    '[case32b] a lane that reads $targets, in a repo with NO main branch',
+    () => {
+      // 🔴 the clamp: the $targets read runs before the shared review runner, so a git
+      //    fault there once escaped the lane and ended the whole pass on a stack trace.
+      //    it must land as THAT lane's malfunction, and its co-member must run on
+      const scene = useBeforeAll(async () => {
+        const tempDir = genTempDir({ slug: 'guard-targets-nomain' });
+        execSync('git init -b trunk', { cwd: tempDir, stdio: 'pipe' });
+
+        const stoneCase = new RouteStone({
+          name: '1.test',
+          path: path.join(tempDir, '1.test.stone'),
+          guard: null,
+        });
+        const guardCase = new RouteStoneGuard({
+          path: path.join(tempDir, '1.test.guard'),
+          artifacts: ['1.test*.md'],
+          reviews: {
+            self: [],
+            peer: [
+              {
+                slug: 'lane-targets',
+                run: 'echo "blockers: 0"; echo "nitpicks: 0"; cat $targets',
+                budget: Infinity,
+                level: 1,
+              },
+              {
+                slug: 'lane-plain',
+                run: 'echo "blockers: 0"; echo "nitpicks: 0"',
+                budget: Infinity,
+                level: 1,
+              },
+            ],
+          },
+          judges: [],
+          protect: [],
+        });
+        await fs.writeFile(path.join(tempDir, '1.test.md'), '# artifact\n');
+        return { tempDir, stoneCase, guardCase };
+      });
+
+      when('[t0] the round runs', () => {
+        const reviews = useThen(
+          'the round completes, with no throw',
+          async () =>
+            runStoneGuardReviews(
+              {
+                stone: scene.stoneCase,
+                guard: scene.guardCase,
+                hash: 'targetsnomain',
+                iteration: 1,
+                route: scene.tempDir,
+              },
+              genContextGuardRoundDemo(),
+            ),
+        );
+
+        then('the $targets lane is a per-lane malfunction', () => {
+          const lane = reviews.artifacts.find((artifact) =>
+            artifact.stderr.includes('$targets list could not be read'),
+          );
+          expect(lane?.exitClass).toEqual('malfunction');
+          expect(lane?.stderr).toContain('💥 MalfunctionError:');
+          expect(lane?.stderr).toContain('main or master branch');
+        });
+
+        then(
+          'its co-member, which never asked for $targets, still passes',
+          () => {
+            expect(reviews.artifacts).toHaveLength(2);
+            expect(
+              reviews.artifacts.filter(
+                (artifact) => artifact.exitClass === 'passed',
+              ),
+            ).toHaveLength(1);
+          },
+        );
+      });
+    },
+  );
+
+  given(
+    '[case32c] a lane that reads $targets, on a branch with NO merge-base with main',
+    () => {
+      // 🔴 the clamp: a main branch exists, so the read passes the BadRequestError
+      //    gate, and then `git merge-base` exits 1 — an orphan branch, or a shallow
+      //    clone. a raw `execSync` threw a plain Error there, which slipped past the
+      //    guard's declared catch and ended the whole pass. every git read in the leaf
+      //    now raises the class the catch names, so it lands as THIS lane's malfunction
+      const scene = useBeforeAll(async () => {
+        const tempDir = genTempDir({ slug: 'guard-targets-nobase' });
+        const env = {
+          ...process.env,
+          GIT_AUTHOR_NAME: 'Test Human',
+          GIT_AUTHOR_EMAIL: 'human@test.com',
+          GIT_COMMITTER_NAME: 'Test Human',
+          GIT_COMMITTER_EMAIL: 'human@test.com',
+        };
+        const git = (cmd: string): void => {
+          execSync(cmd, { cwd: tempDir, stdio: 'pipe', env });
+        };
+        git('git init -b main');
+        git('git commit --allow-empty -m "root of main"');
+        git('git checkout --orphan feature');
+        git('git commit --allow-empty -m "root of an unrelated history"');
+
+        const stoneCase = new RouteStone({
+          name: '1.test',
+          path: path.join(tempDir, '1.test.stone'),
+          guard: null,
+        });
+        const guardCase = new RouteStoneGuard({
+          path: path.join(tempDir, '1.test.guard'),
+          artifacts: ['1.test*.md'],
+          reviews: {
+            self: [],
+            peer: [
+              {
+                slug: 'lane-targets',
+                run: 'echo "blockers: 0"; echo "nitpicks: 0"; cat $targets',
+                budget: Infinity,
+                level: 1,
+              },
+              {
+                slug: 'lane-plain',
+                run: 'echo "blockers: 0"; echo "nitpicks: 0"',
+                budget: Infinity,
+                level: 1,
+              },
+            ],
+          },
+          judges: [],
+          protect: [],
+        });
+        await fs.writeFile(path.join(tempDir, '1.test.md'), '# artifact\n');
+        return { tempDir, stoneCase, guardCase };
+      });
+
+      when('[t0] the round runs', () => {
+        const reviews = useThen(
+          'the round completes, with no throw',
+          async () =>
+            runStoneGuardReviews(
+              {
+                stone: scene.stoneCase,
+                guard: scene.guardCase,
+                hash: 'targetsnobase',
+                iteration: 1,
+                route: scene.tempDir,
+              },
+              genContextGuardRoundDemo(),
+            ),
+        );
+
+        then(
+          'the $targets lane is a per-lane malfunction that names the git read',
+          () => {
+            const lane = reviews.artifacts.find((artifact) =>
+              artifact.stderr.includes('$targets list could not be read'),
+            );
+            expect(lane?.exitClass).toEqual('malfunction');
+            expect(lane?.stderr).toContain('💥 MalfunctionError:');
+            expect(lane?.stderr).toContain('a git read failed');
+          },
+        );
+
+        then(
+          'its co-member, which never asked for $targets, still passes',
+          () => {
+            expect(reviews.artifacts).toHaveLength(2);
+            expect(
+              reviews.artifacts.filter(
+                (artifact) => artifact.exitClass === 'passed',
+              ),
+            ).toHaveLength(1);
+          },
+        );
+      });
+    },
+  );
+
+  given(
+    '[case32d] a lane that reads $conversation, beside a peer review file with no generation infix',
+    () => {
+      // 🔴 the clamp: the $conversation read runs before the shared review runner, as the
+      //    $targets read does. a malformed file under `.reviews/peer/` once threw out of it
+      //    and ended the whole pass on a stack trace. it must land as THAT lane's
+      //    malfunction, and its co-member must run on
+      const scene = useBeforeAll(async () => {
+        const tempDir = genTempDir({ slug: 'guard-conversation-malformed' });
+        const stoneCase = new RouteStone({
+          name: '1.test',
+          path: path.join(tempDir, '1.test.stone'),
+          guard: null,
+        });
+        const guardCase = new RouteStoneGuard({
+          path: path.join(tempDir, '1.test.guard'),
+          artifacts: ['1.test*.md'],
+          reviews: {
+            self: [],
+            peer: [
+              {
+                slug: 'lane-conv',
+                run: 'echo "blockers: 0"; echo "nitpicks: 0"; echo "conv=$conversation"',
+                budget: Infinity,
+                level: 1,
+              },
+              {
+                slug: 'lane-plain',
+                run: 'echo "blockers: 0"; echo "nitpicks: 0"',
+                budget: Infinity,
+                level: 1,
+              },
+            ],
+          },
+          judges: [],
+          protect: [],
+        });
+        await fs.writeFile(path.join(tempDir, '1.test.md'), '# artifact\n');
+
+        // a taken whose `ix` iteration matches the enumerator's glob, yet carries no
+        // `iNNN.hash` generation infix the depth filter can read
+        await fs.mkdir(path.join(tempDir, '.reviews/peer'), {
+          recursive: true,
+        });
+        await fs.writeFile(
+          path.join(
+            tempDir,
+            '.reviews/peer/1.test._.review.ix.h.r001._.taken.by_self.lane-conv.md',
+          ),
+          'answered\n',
+        );
+        return { tempDir, stoneCase, guardCase };
+      });
+
+      when('[t0] the round runs', () => {
+        const reviews = useThen(
+          'the round completes, with no throw',
+          async () =>
+            runStoneGuardReviews(
+              {
+                stone: scene.stoneCase,
+                guard: scene.guardCase,
+                hash: 'convmalformed',
+                iteration: 1,
+                route: scene.tempDir,
+              },
+              genContextGuardRoundDemo(),
+            ),
+        );
+
+        then(
+          'the $conversation lane is a per-lane malfunction that names the file',
+          () => {
+            const lane = reviews.artifacts.find((artifact) =>
+              artifact.stderr.includes('$conversation files could not be read'),
+            );
+            expect(lane?.exitClass).toEqual('malfunction');
+            expect(lane?.stderr).toContain('💥 MalfunctionError:');
+            expect(lane?.stderr).toContain('lacks a generation infix');
+          },
+        );
+
+        then(
+          'its co-member, which never asked for $conversation, still passes',
+          () => {
+            expect(reviews.artifacts).toHaveLength(2);
+            expect(
+              reviews.artifacts.filter(
+                (artifact) => artifact.exitClass === 'passed',
+              ),
+            ).toHaveLength(1);
+          },
+        );
+      });
+    },
+  );
+
+  given(
+    '[case33] two conversation lanes — each reads only its OWN prior dialogue',
+    () => {
+      // .why = $conversation once unioned every lane's dialogue, so a prompt grew as
+      //        lanes × rounds and lanes timed out on dialogue they never needed. each
+      //        lane must read its own given + the driver's taken to it, and naught else
+      const tempDir = path.join(
+        os.tmpdir(),
+        `test-reviews-conv-scoped-${Date.now()}`,
+      );
+      const stone = new RouteStone({
+        name: '1.test',
+        path: path.join(tempDir, '1.test.stone'),
+        guard: null,
+      });
+      const guard = new RouteStoneGuard({
+        path: path.join(tempDir, '1.test.guard'),
+        artifacts: ['1.test*.md'],
+        reviews: {
+          self: [],
+          peer: [
+            {
+              slug: 'lane-a',
+              budget: 3,
+              run: 'echo "blockers: 1"; echo "nitpicks: 0"; echo "conv=$conversation"',
+              level: 1,
+            },
+            {
+              slug: 'lane-a-ops',
+              budget: 3,
+              run: 'echo "blockers: 1"; echo "nitpicks: 0"; echo "conv=$conversation"',
+              level: 1,
+            },
+          ],
+        },
+        judges: [],
+        protect: [],
+      });
+
+      beforeAll(async () => {
+        await fs.mkdir(tempDir, { recursive: true });
+      });
+
+      afterAll(async () => {
+        await fs.rm(tempDir, { recursive: true, force: true });
+      });
+
+      when(
+        '[t0] round 1 rejects both, driver answers both, round 2 runs',
+        () => {
+          const second = useThen('round 2 runs on a new hash', async () => {
+            // round 1: both lanes reject
+            const first = await runStoneGuardReviews(
+              { stone, guard, hash: 'convone', iteration: 1, route: tempDir },
+              noopContext,
+            );
+
+            // driver answers each lane
+            for (const artifact of first.artifacts) {
+              const pathTaken = artifact.path!.replace(
+                '._.given.by_peer.',
+                '._.taken.by_self.',
+              );
+              await fs.writeFile(pathTaken, 'answered\n');
+            }
+
+            // round 2, a new hash, so neither lane reuses its cache
+            return runStoneGuardReviews(
+              { stone, guard, hash: 'convtwo', iteration: 2, route: tempDir },
+              noopContext,
+            );
+          });
+
+          const laneA = useThen('the lane-a given is read', async () => ({
+            content: await fs.readFile(
+              second.artifacts.find((a) =>
+                a.path?.endsWith('._.given.by_peer.lane-a.md'),
+              )!.path!,
+              'utf-8',
+            ),
+          }));
+
+          then('lane-a reads its own given and taken', () => {
+            expect(laneA.content).toContain(
+              '.i001.convone.r001._.given.by_peer.lane-a.md',
+            );
+            expect(laneA.content).toContain(
+              '.i001.convone.r001._.taken.by_self.lane-a.md',
+            );
+          });
+
+          then('lane-a never reads the lane-a-ops dialogue', () => {
+            expect(laneA.content).not.toContain('lane-a-ops');
+          });
+
+          then('lane-a-ops reads its own dialogue, never lane-a', async () => {
+            const pathGiven = second.artifacts.find((a) =>
+              a.path?.endsWith('._.given.by_peer.lane-a-ops.md'),
+            )!.path!;
+            const content = await fs.readFile(pathGiven, 'utf-8');
+            expect(content).toContain('._.taken.by_self.lane-a-ops.md');
+            expect(content).not.toContain('_.given.by_peer.lane-a.md');
+            expect(content).not.toContain('_.taken.by_self.lane-a.md');
+          });
+        },
+      );
+    },
+  );
+
+  given(
+    '[case34] a disputed lane is SKIPPED — the disagreement consumes no budget',
+    () => {
+      // .why = the integration half of the isLaneSkippedByDispute clamp (behavior-intent
+      //        r008 blocker.1). the unit test pins the PREDICATE across its edges (F024
+      //        among them); this pins the WIRING — that runStoneGuardReviews actually
+      //        folds the stance corpus and honors the skip. acceptance #2: "the
+      //        disagreement consumes no budget."
+      //
+      // 🔴 the teeth ride on case24's exact harness on purpose. a conversation reviewer
+      //    with a fresh .taken WOULD re-run (case24 proves it — rounds becomes 2). the
+      //    ONLY lever that holds rounds at 1 here is the dispute skip at
+      //    runStoneGuardReviews.ts:485-531. delete that branch and this lane re-runs, so
+      //    the assertion goes red (rule.require.clamp-edge-cases). a blind-reviewer
+      //    harness would NOT bite — case25 shows it reuses cache at rounds 1 regardless.
+      const tempDir = path.join(
+        os.tmpdir(),
+        `test-reviews-dispute-skip-${Date.now()}`,
+      );
+      const stone = new RouteStone({
+        name: '1.test',
+        path: path.join(tempDir, '1.test.stone'),
+        guard: null,
+      });
+      const guard = new RouteStoneGuard({
+        path: path.join(tempDir, '1.test.guard'),
+        artifacts: ['1.test*.md'],
+        reviews: {
+          self: [],
+          peer: [
+            {
+              slug: 'conv-reviewer',
+              budget: 3,
+              run: 'echo "blockers: 1"; echo "nitpicks: 0"; echo "conv=$conversation"',
+              level: 1,
+            },
+          ],
+        },
+        // no reviewed? judge ⇒ allow (0, 0), so one blocker holds the road and a
+        // dispute of that one concern clears the residual to 0 (case3 of the predicate)
+        judges: [],
+        protect: [],
+      });
+
+      beforeAll(async () => {
+        await fs.mkdir(tempDir, { recursive: true });
+      });
+
+      afterAll(async () => {
+        await fs.rm(tempDir, { recursive: true, force: true });
+      });
+
+      when(
+        '[t0] first run rejects, driver disputes the blocker, second run same hash',
+        () => {
+          const first = useThen('first review runs (has 1 blocker)', async () =>
+            runStoneGuardReviews(
+              {
+                stone,
+                guard,
+                hash: 'disputeskip',
+                iteration: 1,
+                route: tempDir,
+              },
+              noopContext,
+            ),
+          );
+
+          const second = useThen(
+            'driver posts a fresh .taken AND a dispute that keys to it, then second run',
+            async () => {
+              // pair the .taken to the given the reviewer just wrote — this is what
+              // would otherwise TRIGGER a re-run (the case24 path)
+              const pathGiven = first.artifacts[0]!.path!;
+              const pathTaken = pathGiven.replace(
+                '._.given.by_peer.',
+                '._.taken.by_self.',
+              );
+              await fs.writeFile(pathTaken, 'blocker refuted: X holds\n');
+              const ahead = new Date(Date.now() + 10_000);
+              await fs.utimes(pathTaken, ahead, ahead);
+
+              // 🔴 the dispute: keyed to the slug's LATEST given (the one just written),
+              //    so getLiveReviewAbsorptions counts it and the residual clears
+              await setPassageReport({
+                route: tempDir,
+                report: {
+                  stone: '1.test',
+                  status: 'disputed',
+                  reviewer: 'conv-reviewer',
+                  about: 'blocker.1',
+                  given: pathGiven,
+                  fulcrum: '.fulcrums/inventory.of=fulcrums.case=F001-x.md',
+                },
+              });
+
+              return runStoneGuardReviews(
+                {
+                  stone,
+                  guard,
+                  hash: 'disputeskip',
+                  iteration: 2,
+                  route: tempDir,
+                },
+                noopContext,
+              );
+            },
+          );
+
+          const read = useThen('the meters are read', async () => ({
+            meters: await getAllRouteStoneGuardReviewPeerMeters({
+              route: tempDir,
+              stone: '1.test',
+            }),
+          }));
+
+          then(
+            'the lane is skipped — budget consumed once (rounds stays 1)',
+            () => {
+              expect(second.artifacts).toHaveLength(1);
+              // case24's identical harness WITHOUT a dispute lands rounds at 2; the
+              // dispute skip is the only difference, so this 1 is the whole proof
+              expect(read.meters[0]?.rounds).toEqual(1);
+            },
+          );
+
+          then('the skipped lane re-emits its PRIOR counts from cache', () => {
+            // the skip pushes the cached review unchanged — its blocker still stands
+            // in the artifact (a dispute is a TALLY exclusion, never an edit to the
+            // review). the judge subtracts it downstream; the review itself is untouched
+            expect(second.artifacts[0]?.blockers).toEqual(1);
+            expect(second.artifacts[0]?.nitpicks).toEqual(0);
+          });
+
+          then('the seam outcome matches snapshot', () => {
+            const meters = read.meters;
+            expect({
+              slug: meters[0]?.reviewer.slug,
+              rounds: meters[0]?.rounds,
+              blockers: second.artifacts[0]?.blockers,
+              nitpicks: second.artifacts[0]?.nitpicks,
+            }).toMatchSnapshot();
+          });
+        },
+      );
+    },
+  );
+
   given(
     '[case-fallback] a prose reviewer whose sub-brain fallback faults, beside a numeric reviewer',
     () => {
@@ -2732,369 +3579,6 @@ describe('runStoneGuardReviews', () => {
           },
         );
       });
-    },
-  );
-
-  given(
-    '[case28] a prose reviewer whose sub-brain fallback SUCCEEDS — the rescue survives a cache re-read',
-    () => {
-      // .why = the one piece of genuinely new logic — runOneStoneGuardReview persists the
-      //        `tallied by reviewer@…` footer for a SUCCESSFUL probabilistic tally, and
-      //        getAllStoneGuardArtifactsByHash recovers `tallier: 'probabilistic'` from it on a
-      //        cache hit — was untested end-to-end. every other fallback case (case22/23/24,
-      //        case-fallback) exercises the FAULT or ABSTAIN path (tallier never becomes
-      //        'probabilistic'). a bug in the footer's placement, its last-match precedence, or
-      //        the cache-recovery parse would pass every other test and only surface on a real
-      //        cache re-read of a rescued reviewer (howto.journey-tests-reveal-cache-bugs).
-      const tempDir = path.join(os.tmpdir(), `test-rescue-${Date.now()}`);
-      const stone = new RouteStone({
-        name: '1.test',
-        path: path.join(tempDir, '1.test.stone'),
-        guard: null,
-      });
-      const guard = new RouteStoneGuard({
-        path: path.join(tempDir, '1.test.guard'),
-        artifacts: ['1.test*.md'],
-        reviews: {
-          self: [],
-          peer: [
-            {
-              // prose only, exit 0 — the deterministic parser misses, so the guard falls back
-              // to the sub-brain. here the sub-brain SUCCEEDS with a detected verdict.
-              slug: 'prose',
-              run: 'echo "two must-fix items and one optional style nitpick"',
-              budget: Infinity,
-              level: 1,
-            },
-          ],
-        },
-        judges: [],
-        protect: [],
-      });
-
-      // a sub-brain that RESOLVES a real verdict (never throws) — the honest-rescue path.
-      // .note = documented test-double cast: a minimal fake ContextBrain shaped for the one
-      //         field getReviewCountsViaBrain reads (brain.choice.ask -> { output }). a real
-      //         brain is exercised by the getReviewCountsViaBrain caseBrain suite; here a
-      //         controlled double pins EXACT counts so the footer + cache round-trip can be
-      //         asserted deterministically — same pattern as case24's abstain double. the
-      //         `evidence` quote is non-empty so the fabricated-tally guard does not reject it.
-      const rescueContext = genContextReviewBrainSupplyDemo({
-        getReviewBrain: async () =>
-          ({
-            brain: {
-              choice: {
-                ask: async () => ({
-                  output: {
-                    detected: true,
-                    blockers: 2,
-                    nitpicks: 1,
-                    evidence:
-                      'two must-fix items and one optional style nitpick',
-                  },
-                }),
-              },
-            },
-          }) as unknown as ContextBrain<BrainChoice>,
-      });
-
-      beforeEach(async () => {
-        await fs.mkdir(tempDir, { recursive: true });
-      });
-
-      afterEach(async () => {
-        await fs.rm(tempDir, { recursive: true, force: true });
-      });
-
-      when('[t0] the guard measures the prose reviewer (fresh run)', () => {
-        // .note = the guard run, the disk read, and the cache recovery all happen in ONE useThen
-        //         so every filesystem touch lands while tempDir exists — the per-then afterEach
-        //         removes tempDir, so later then blocks read the captured values, not disk.
-        const captured = useThen(
-          'runs the guard, reads the persisted file, recovers from cache',
-          async () => {
-            const reviews = await runStoneGuardReviews(
-              { stone, guard, hash: 'rescue', iteration: 1, route: tempDir },
-              rescueContext,
-            );
-            const artifact = reviews.artifacts[0];
-            const persisted = await fs.readFile(artifact?.path ?? '', 'utf-8');
-            const recovered = await getAllStoneGuardArtifactsByHash({
-              stone,
-              hash: 'rescue',
-              route: tempDir,
-            });
-            return { artifact, persisted, recovered };
-          },
-        );
-
-        then('the fresh artifact carries the probabilistic tally', () => {
-          const artifact = captured.artifact;
-          expect(artifact?.exitClass).toEqual('passed');
-          expect(artifact?.blockers).toEqual(2);
-          expect(artifact?.nitpicks).toEqual(1);
-          expect(artifact?.tallier).toEqual('probabilistic');
-        });
-
-        then('the persisted file records the tallied-by footer', () => {
-          // .why = the footer is what a cache re-read recovers; assert it reached disk with the
-          //        shared prefix + fixed brain slug (drift-guarded by the shared constants).
-          const persisted = captured.persisted;
-          expect(persisted).toContain(
-            `${TALLIED_FOOTER_PREFIX}${FIXED_FALLBACK_BRAIN}`,
-          );
-          expect(persisted).toContain('2 blockers');
-          expect(persisted).toContain('1 nitpick');
-        });
-
-        then(
-          'the cached artifact still carries tallier=probabilistic (no brain call)',
-          () => {
-            // .why = the round-trip: the footer written on the fresh run must let the cache
-            //        parser recover the probabilistic tallier with NO further brain call.
-            const review = captured.recovered.reviews[0];
-            expect(review?.tallier).toEqual('probabilistic');
-            expect(review?.blockers).toEqual(2);
-            expect(review?.nitpicks).toEqual(1);
-          },
-        );
-      });
-    },
-  );
-
-  given(
-    '[case31] a route that IS its own git root, so a repo-relative path is visibly shorter',
-    () => {
-      // 🔴 the git root is what makes this case bite. every other suite here puts the
-      //    route under a plain tmpdir, which is no repo — so `getRepoRootWithFallback`
-      //    returns the cwd, and BOTH the raw absolute path and the relativized one come
-      //    out long and absolute-looking. the two forms are indistinguishable, which is
-      //    exactly why the defect survived every extant test.
-      //
-      //    with `git: true` the root IS the route, so a relativized path reads
-      //    `.reviews/peer/...` and a raw one reads `/tmp/.../.reviews/peer/...`.
-      //    the difference is now a single `path.isAbsolute` away
-      const scene = useBeforeAll(async () => {
-        const tempDir = genTempDir({
-          slug: 'guard-display-path',
-          git: true,
-        });
-
-        const stoneCase = new RouteStone({
-          name: '1.test',
-          path: path.join(tempDir, '1.test.stone'),
-          guard: null,
-        });
-        const guardCase = new RouteStoneGuard({
-          path: path.join(tempDir, '1.test.guard'),
-          artifacts: ['1.test*.md'],
-          reviews: {
-            self: [],
-            peer: [asPeerReview('echo "blockers: 0\\nnitpicks: 0"', 0)],
-          },
-          judges: [],
-          protect: [],
-        });
-
-        await fs.writeFile(path.join(tempDir, '1.test.md'), '# artifact\n');
-
-        return { tempDir, stoneCase, guardCase };
-      });
-
-      when('[t0] a FRESH round runs — no cache, no exhaustion', () => {
-        const captured = useThen('the round completes', async () => {
-          const paths: (string | null)[] = [];
-          await runStoneGuardReviews(
-            {
-              stone: scene.stoneCase,
-              guard: scene.guardCase,
-              hash: 'displaypath',
-              iteration: 1,
-              route: scene.tempDir,
-            },
-            genContextReviewBrainSupplyDemo({
-              onGuardProgress: (event) => {
-                if (event.outcome) paths.push(event.outcome.path);
-              },
-            }),
-          );
-          return { paths };
-        });
-
-        then(
-          'every emitted artifact path is repo-relative, never absolute',
-          () => {
-            // 🔴 THE clamp. the fresh-run emit handed `review.path` raw while its three
-            //    peers relativized, so one stone run printed the same artifact two ways
-            //    fifteen lines apart. revert `asGuardDisplayPath` to `review.path` at
-            //    that site and this goes red (`rule.require.clamp-edge-cases`)
-            const emitted = captured.paths.filter(
-              (p): p is string => typeof p === 'string',
-            );
-            expect(emitted.length).toBeGreaterThan(0);
-            emitted.forEach((p) => expect(path.isAbsolute(p)).toEqual(false));
-          },
-        );
-
-        then('and it addresses the artifact from the route root', () => {
-          // .note = not decoration. `path.isAbsolute` alone would pass on a `../../..`
-          //         traversal, which is what a MISMATCHED root produces — the second
-          //         failure mode this critique named, and the one a bare absolute-check
-          //         cannot see
-          const emitted = captured.paths.filter(
-            (p): p is string => typeof p === 'string',
-          );
-          emitted.forEach((p) => expect(p.startsWith('..')).toEqual(false));
-        });
-      });
-    },
-  );
-
-  given(
-    '[case27] a disputed lane is SKIPPED — the disagreement consumes no budget',
-    () => {
-      // .why = the integration half of the isLaneSkippedByDispute clamp (behavior-intent
-      //        r008 blocker.1). the unit test pins the PREDICATE across its edges (F024
-      //        among them); this pins the WIRING — that runStoneGuardReviews actually
-      //        folds the stance corpus and honors the skip. acceptance #2: "the
-      //        disagreement consumes no budget."
-      //
-      // 🔴 the teeth ride on case24's exact harness on purpose. a conversation reviewer
-      //    with a fresh .taken WOULD re-run (case24 proves it — rounds becomes 2). the
-      //    ONLY lever that holds rounds at 1 here is the dispute skip at
-      //    runStoneGuardReviews.ts:485-531. delete that branch and this lane re-runs, so
-      //    the assertion goes red (rule.require.clamp-edge-cases). a blind-reviewer
-      //    harness would NOT bite — case25 shows it reuses cache at rounds 1 regardless.
-      const tempDir = path.join(
-        os.tmpdir(),
-        `test-reviews-dispute-skip-${Date.now()}`,
-      );
-      const stone = new RouteStone({
-        name: '1.test',
-        path: path.join(tempDir, '1.test.stone'),
-        guard: null,
-      });
-      const guard = new RouteStoneGuard({
-        path: path.join(tempDir, '1.test.guard'),
-        artifacts: ['1.test*.md'],
-        reviews: {
-          self: [],
-          peer: [
-            {
-              slug: 'conv-reviewer',
-              budget: 3,
-              run: 'echo "blockers: 1"; echo "nitpicks: 0"; echo "conv=$conversation"',
-              level: 1,
-            },
-          ],
-        },
-        // no reviewed? judge ⇒ allow (0, 0), so one blocker holds the road and a
-        // dispute of that one concern clears the residual to 0 (case3 of the predicate)
-        judges: [],
-        protect: [],
-      });
-
-      beforeAll(async () => {
-        await fs.mkdir(tempDir, { recursive: true });
-      });
-
-      afterAll(async () => {
-        await fs.rm(tempDir, { recursive: true, force: true });
-      });
-
-      when(
-        '[t0] first run rejects, driver disputes the blocker, second run same hash',
-        () => {
-          const first = useThen('first review runs (has 1 blocker)', async () =>
-            runStoneGuardReviews(
-              {
-                stone,
-                guard,
-                hash: 'disputeskip',
-                iteration: 1,
-                route: tempDir,
-              },
-              noopContext,
-            ),
-          );
-
-          const second = useThen(
-            'driver posts a fresh .taken AND a dispute that keys to it, then second run',
-            async () => {
-              // pair the .taken to the given the reviewer just wrote — this is what
-              // would otherwise TRIGGER a re-run (the case24 path)
-              const pathGiven = first.artifacts[0]!.path!;
-              const pathTaken = pathGiven.replace(
-                '._.given.by_peer.',
-                '._.taken.by_self.',
-              );
-              await fs.writeFile(pathTaken, 'blocker refuted: X holds\n');
-              const ahead = new Date(Date.now() + 10_000);
-              await fs.utimes(pathTaken, ahead, ahead);
-
-              // 🔴 the dispute: keyed to the slug's LATEST given (the one just written),
-              //    so getLiveReviewAbsorptions counts it and the residual clears
-              await setPassageReport({
-                route: tempDir,
-                report: {
-                  stone: '1.test',
-                  status: 'disputed',
-                  reviewer: 'conv-reviewer',
-                  about: 'blocker.1',
-                  given: pathGiven,
-                  fulcrum: '.fulcrums/inventory.of=fulcrums.case=F001-x.md',
-                },
-              });
-
-              return runStoneGuardReviews(
-                {
-                  stone,
-                  guard,
-                  hash: 'disputeskip',
-                  iteration: 2,
-                  route: tempDir,
-                },
-                noopContext,
-              );
-            },
-          );
-
-          then(
-            'the lane is skipped — budget consumed once (rounds stays 1)',
-            async () => {
-              expect(second.artifacts).toHaveLength(1);
-              const meters = await getAllRouteStoneGuardReviewPeerMeters({
-                route: tempDir,
-                stone: '1.test',
-              });
-              // case24's identical harness WITHOUT a dispute lands rounds at 2; the
-              // dispute skip is the only difference, so this 1 is the whole proof
-              expect(meters[0]?.rounds).toEqual(1);
-            },
-          );
-
-          then('the skipped lane re-emits its PRIOR counts from cache', () => {
-            // the skip pushes the cached review unchanged — its blocker still stands
-            // in the artifact (a dispute is a TALLY exclusion, never an edit to the
-            // review). the judge subtracts it downstream; the review itself is untouched
-            expect(second.artifacts[0]?.blockers).toEqual(1);
-            expect(second.artifacts[0]?.nitpicks).toEqual(0);
-          });
-
-          then('the seam outcome matches snapshot', async () => {
-            const meters = await getAllRouteStoneGuardReviewPeerMeters({
-              route: tempDir,
-              stone: '1.test',
-            });
-            expect({
-              slug: meters[0]?.reviewer.slug,
-              rounds: meters[0]?.rounds,
-              blockers: second.artifacts[0]?.blockers,
-              nitpicks: second.artifacts[0]?.nitpicks,
-            }).toMatchSnapshot();
-          });
-        },
-      );
     },
   );
 });

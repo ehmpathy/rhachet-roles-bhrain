@@ -1,10 +1,13 @@
-import { BadRequestError } from 'helpful-errors';
+import { ConstraintError } from 'helpful-errors';
 
 import { PassageReport } from '@src/domain.objects/Driver/PassageReport';
 import { getGuardPeerReviews } from '@src/domain.objects/Driver/RouteStoneGuard';
 
 import { asUrgentHarmSet } from '../asUrgentHarmSet';
 import { getRepoRootWithFallback } from '../guard/getRepoRootWithFallback';
+import { asAbsorptionIsAnswered } from '../guard/review/peer/asAbsorptionIsAnswered';
+import { asAbsorptionIsNotContrary } from '../guard/review/peer/asAbsorptionIsNotContrary';
+import { asAbsorptionWithSubject } from '../guard/review/peer/asAbsorptionWithSubject';
 import { asConfiguredReviewerBySanitizedSlug } from '../guard/review/peer/asConfiguredReviewerBySanitizedSlug';
 import { asPeerReviewLevelBySlug } from '../guard/review/peer/asPeerReviewLevelBySlug';
 import {
@@ -12,24 +15,23 @@ import {
   asReviewConcernRefLabel,
 } from '../guard/review/peer/asReviewConcernRef';
 import { asSanitizedPeerReviewSlug } from '../guard/review/peer/asSanitizedPeerReviewSlug';
-import { assertAbsorptionHasSubject } from '../guard/review/peer/assertAbsorptionHasSubject';
-import { assertAbsorptionIsAnswered } from '../guard/review/peer/assertAbsorptionIsAnswered';
-import { assertAbsorptionIsNotContrary } from '../guard/review/peer/assertAbsorptionIsNotContrary';
 import { assertFulcrumPathExists } from '../guard/review/peer/assertFulcrumPathExists';
 import { assertValidPeerReviewSlug } from '../guard/review/peer/assertValidPeerReviewSlug';
 import { computeConcernsElsewhere } from '../guard/review/peer/computeConcernsElsewhere';
 import { computeUndeclaredConcernLabels } from '../guard/review/peer/computeUndeclaredConcernLabels';
 import { formatRouteGuardReviewPeerAbsorptionAck } from '../guard/review/peer/formatRouteGuardReviewPeerAbsorptionAck';
 import { getLatestPeerGivensPerSlug } from '../guard/review/peer/getLatestPeerGivensPerSlug';
-import { getRouteGuardReviewPeerFeedbackAbsorptionStatus } from '../guard/review/peer/getRouteGuardReviewPeerFeedbackAbsorptionStatus';
+import { getOneRouteGuardReviewPeerFeedbackAbsorptionStatus } from '../guard/review/peer/getOneRouteGuardReviewPeerFeedbackAbsorptionStatus';
 import { getAbsorptionOnConcern } from '../guard/review/peer/getStoneReviewAbsorptions';
 import { getStoneReviewCorpus } from '../guard/review/peer/getStoneReviewCorpus';
+import { LEVEL_OF_UNMAPPED_REVIEW } from '../guard/review/peer/meter/getOneReviewLevelByIndex';
 import { getOneRouteStoneGuardReviewPeerMeter } from '../guard/review/peer/meter/getOneRouteStoneGuardReviewPeerMeter';
 import { getReviewedJudgeThresholds } from '../guard/review/peer/meter/getReviewedJudgeThresholds';
 import { isLevelOverruled } from '../guard/review/peer/meter/isLevelOverruled';
 import { getStoneGuardOverruledLevels } from '../judges/getStoneGuardOverruledLevels';
 import { setPassageReport } from '../passage/setPassageReport';
 import { findOneStoneByPattern } from './asStoneGlob';
+import { asStoneNotFoundError } from './asStoneNotFoundError';
 import { getAllStones } from './getAllStones';
 
 /**
@@ -75,7 +77,7 @@ export const setStoneAsConcernAbsorbed = async (input: {
   // owes no fulcrum — but it MAY carry one to record WHY it conceded, a justification a later reader
   // can weigh. whichever stance carries a --why, the path is validated to point at an extant file.
   if (input.as === 'disputed' && !input.why)
-    throw new BadRequestError(
+    throw new ConstraintError(
       [
         `--why is required for --as disputed`,
         ``,
@@ -83,7 +85,6 @@ export const setStoneAsConcernAbsorbed = async (input: {
         `write the entry first, then point at it:`,
         `  .fulcrums/inventory.of=fulcrums.case=F00N-<slug>.md`,
       ].join('\n'),
-      { stone: input.stone },
     );
 
   // --severity grades a CONCEDE alone, and is REQUIRED there — a mandatory invariant, no default
@@ -91,17 +92,16 @@ export const setStoneAsConcernAbsorbed = async (input: {
   // a concede owes one on EVERY concession, so the harm test is always made rather than skipped by
   // a silent `better` default.
   if (input.as === 'disputed' && input.severity)
-    throw new BadRequestError(
+    throw new ConstraintError(
       [
         `--severity is not accepted for --as disputed`,
         ``,
         `a severity grades a CONCESSION's harm — a dispute concedes naught, so it has none.`,
         `grade the harm only when you concede: --as conceded --severity better|urgent`,
       ].join('\n'),
-      { stone: input.stone },
     );
   if (input.as === 'conceded' && !input.severity)
-    throw new BadRequestError(
+    throw new ConstraintError(
       [
         `--severity is required for --as conceded`,
         ``,
@@ -110,7 +110,6 @@ export const setStoneAsConcernAbsorbed = async (input: {
         `                       (${asUrgentHarmSet({ separator: ' | ' })})`,
         `  --severity better  — code idealism / maintenance; the floor, never earns budget`,
       ].join('\n'),
-      { stone: input.stone },
     );
 
   // the graded severity — the driver's explicit grade on a concede (required above); a dispute
@@ -129,7 +128,12 @@ export const setStoneAsConcernAbsorbed = async (input: {
     pattern: input.stone,
   });
   if (!stoneMatched)
-    throw new BadRequestError('stone not found', { stone: input.stone });
+    throw asStoneNotFoundError({
+      act: input.as,
+      route: input.route,
+      pattern: input.stone,
+      stones,
+    });
 
   // the fulcrum path is checked BEFORE any state moves, so a refusal mutates naught
   if (input.why)
@@ -142,7 +146,7 @@ export const setStoneAsConcernAbsorbed = async (input: {
   // the shared readiness computation, scoped to this one reviewer. it reports every slug
   // that has SPOKEN, which the slug check reads — one corpus read rather than two
   const slug = asSanitizedPeerReviewSlug({ slug: input.with });
-  const status = await getRouteGuardReviewPeerFeedbackAbsorptionStatus({
+  const status = await getOneRouteGuardReviewPeerFeedbackAbsorptionStatus({
     route: input.route,
     stone: stoneMatched,
     scope: { slug },
@@ -155,7 +159,7 @@ export const setStoneAsConcernAbsorbed = async (input: {
   });
 
   // R1 — answer first
-  assertAbsorptionIsAnswered({
+  asAbsorptionIsAnswered({
     stone: stoneMatched.name,
     slug,
     feedbackUnabsorbed: status.feedbackUnabsorbed,
@@ -201,10 +205,11 @@ export const setStoneAsConcernAbsorbed = async (input: {
   //    status, because the judge tallies STONE-WIDE and an approved lane's nitpicks still count.
   //    the entrance gate still DEMANDS a stance only where the verdict rejects; this only PERMITS
   //    one wherever a readable concern counts (a fundamental invariant, 2026-09-15).
-  const given = assertAbsorptionHasSubject(givenFound, {
+  const given = asAbsorptionWithSubject({
+    given: givenFound,
     slug,
     isLevelForgiven: isLevelOverruled({
-      level: reviewConfigured?.level ?? 1,
+      level: reviewConfigured?.level ?? LEVEL_OF_UNMAPPED_REVIEW,
       overruledLevels,
     }),
   });
@@ -215,7 +220,7 @@ export const setStoneAsConcernAbsorbed = async (input: {
   const raisedOfKind =
     concern.kind === 'blocker' ? given.blockers : given.nitpicks;
   if (concern.ordinal > raisedOfKind)
-    throw new BadRequestError(
+    throw new ConstraintError(
       [
         `--about ${about} is out of range`,
         ``,
@@ -223,11 +228,10 @@ export const setStoneAsConcernAbsorbed = async (input: {
           raisedOfKind === 1 ? '' : 's'
         } in its latest given, so the ordinal must be 1..${raisedOfKind}.`,
       ].join('\n'),
-      { stone: stoneMatched.name, about, raised: raisedOfKind },
     );
 
   // R3 — a contrary stance on this concern of this given is refused
-  assertAbsorptionIsNotContrary({
+  asAbsorptionIsNotContrary({
     absorptions,
     reviewer: slug,
     about,
@@ -247,6 +251,13 @@ export const setStoneAsConcernAbsorbed = async (input: {
   //    fulcrum. `rule.require.idempotent-operations`. the ledger is append-only, so an
   //    unconditional re-append would leave two rows a council reads as two acts where one
   //    was declared.
+  // .note = a read-then-append with no lock, deliberately — the same bound
+  //         `setRouteGuardPartitions` states for its own read-modify-write. a stance is one
+  //         driver's hand-run declaration on one concern, so two concurrent runs of the SAME
+  //         stance are out of scope. were it to happen, the worst case is a duplicate row of
+  //         an identical stance: `getStoneReviewAbsorptions` folds the ledger by (reviewer,
+  //         concern, given), last wins, so the tally reads it once and no concern changes
+  //         its disposition
   const alreadyOnRecord = getAbsorptionOnConcern({
     absorptions,
     reviewer: slug,
@@ -283,14 +294,14 @@ export const setStoneAsConcernAbsorbed = async (input: {
   // what this lane still owes, AFTER this declaration — the same question the entrance gate
   // asks, so one operation answers both. `also` carries the row just written, since `absorptions`
   // was read before the write, which spares a second read of the ledger
-  const concernsLeft = computeUndeclaredConcernLabels({
+  const concernsLeftLabels = computeUndeclaredConcernLabels({
     absorptions,
     slug,
     pathGiven: given.pathGiven,
     blockers: given.blockers,
     nitpicks: given.nitpicks,
     also: [about],
-  }).length;
+  });
 
   // what the STONE still owes on OTHER lanes — so a lane cleared here does not read as an
   // all-clear while another lane still owes a stance (r9 n2). the pre-write `absorptions` is
@@ -319,12 +330,14 @@ export const setStoneAsConcernAbsorbed = async (input: {
         why: input.why ?? null,
         severity: severity ?? null,
         meter: {
-          level: reviewConfigured?.level ?? 1,
+          level: reviewConfigured?.level ?? LEVEL_OF_UNMAPPED_REVIEW,
           rounds: meter?.rounds ?? 0,
           budget: reviewConfigured?.budget ?? 0,
         },
-        concernsLeft,
-        concernsElsewhere,
+        concernsLeft: concernsLeftLabels.length,
+        concernNextOnLane: concernsLeftLabels[0] ?? null,
+        concernsElsewhere: concernsElsewhere.count,
+        concernNextElsewhere: concernsElsewhere.next,
       }),
     },
   };

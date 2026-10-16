@@ -69,11 +69,12 @@ jq --argjson owned "$OWNED" '
 # compare before/after — capture jq exit explicitly so a genuine fault is never
 # hidden and never masquerades as "changed"
 # jq -e exit codes: 0 = equal, 1 = not equal, >1 = error
-set +e
+# .note = the `||` holds the capture: an ERR trap fires on a nonzero exit even under
+#         `set +e`, so a bare capture would print a false "failed" on every change
+JQ_COMPARE_EXIT=0
 jq -e --slurpfile before "$SETTINGS_FILE" --slurpfile after "$SETTINGS_TMP" \
-  -n '$before[0].permissions == $after[0].permissions' >/dev/null
-JQ_COMPARE_EXIT=$?
-set -e
+  -n '$before[0].permissions == $after[0].permissions' >/dev/null \
+  || JQ_COMPARE_EXIT=$?
 
 if [[ $JQ_COMPARE_EXIT -gt 1 ]]; then
   rm -f "$SETTINGS_TMP"

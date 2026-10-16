@@ -1,10 +1,13 @@
 import type { RouteStoneGuardReviewPeerArtifact } from '@src/domain.objects/Driver/RouteStoneGuardReviewArtifact';
 
+import { asGuardReasonHead } from '../asGuardReasonHead';
+import { formatGuardMalfunctionClearLines } from '../formatGuardMalfunctionClearLines';
 import { asConcessionReasonDisplay } from '../review/peer/asConcessionReasonDisplay';
 import {
   computeReviewPeerVerdict,
   type ReviewPeerVerdict,
 } from '../review/peer/meter/computeReviewPeerVerdict';
+import { LEVEL_OF_UNMAPPED_REVIEW } from '../review/peer/meter/getOneReviewLevelByIndex';
 import {
   computeBlockRemedyGroups,
   formatBlockRemedyGroups,
@@ -86,7 +89,13 @@ export interface RouteFormatTreeGuardReviewRecord {
   /** from RouteStoneGuardReviewPeerArtifact */
   artifact: Pick<
     RouteStoneGuardReviewPeerArtifact,
-    'index' | 'path' | 'blockers' | 'nitpicks' | 'tallier' | 'exitClass'
+    | 'index'
+    | 'path'
+    | 'blockers'
+    | 'nitpicks'
+    | 'tallier'
+    | 'talliedBy'
+    | 'exitClass'
   >;
   /** command that was run (from guard file) */
   cmd: string;
@@ -104,6 +113,18 @@ export interface RouteFormatTreeGuardReviewRecord {
 }
 
 /**
+ * .what = reads the reviewer slug a review record carries
+ * .why = the slug is minted once at parse (`standardizePeerReviewSlugs`) and rides in on
+ *        `peer.slug`; a re-derivation from `cmd` here would be a second source that a change
+ *        to the parse rule cannot reach (rule.require.review-standardization-at-parse).
+ *        a record with no peer info falls back to the parser's own default for a slug it
+ *        could not mint (`peer-<N>`, 1-based), never to the command
+ */
+const asReviewRecordSlug = (input: {
+  review: RouteFormatTreeGuardReviewRecord;
+}): string => input.review.peer?.slug ?? `peer-${input.review.artifact.index}`;
+
+/**
  * .what = derives peerMeters from reviews when not explicitly provided
  * .why = all reviews are metered - when explicit meters absent, use defaults
  *
@@ -113,12 +134,9 @@ const deriveMetersFromReviews = (
   reviews: RouteFormatTreeGuardReviewRecord[],
 ): GuardPeerMeterStatus[] => {
   return reviews.map((review) => {
-    // use peer info if available, else derive from cmd
-    const slug =
-      review.peer?.slug ??
-      review.cmd.split(/\s+/)[0] ??
-      `r${review.artifact.index}`;
-    const level = review.peer?.level ?? 1;
+    // read the slug minted at parse
+    const slug = asReviewRecordSlug({ review });
+    const level = review.peer?.level ?? LEVEL_OF_UNMAPPED_REVIEW;
     const budget = review.peer?.budget ?? Infinity;
     const rounds = review.peer?.rounds ?? 1;
     // derive verdict from rounds, budget, blockers, nitpicks, exitClass (defaults for thresholds)
@@ -180,11 +198,21 @@ export const formatReviewsMeterLines = (input: {
   headerPrefix?: string;
   /** header text: 'reviews' or '🦉 peer reviewers' */
   headerText?: string;
+  /** row density, passed to formatGuardReviewerTree — `full` by default */
+  density?: 'full' | 'compact';
+  /**
+   * whether the last meter closes its section (`└─`). false where the caller appends peer
+   * rows beneath the meters — the drive round block appends a collapsed-lane count and the
+   * judge rows — so the last meter keeps a `├─` and the tree does not close early.
+   * defaults to true, so every extant call is unchanged
+   */
+  closesSection?: boolean;
 }): string[] => {
   // .note = deliberate local line-builder, scoped to this formatter — the escape hatch in
   //         rule.require.immutable-vars permits a scoped emit builder; no array crosses a boundary.
   const lines: string[] = [];
   const baseIndent = input.baseIndent ?? '';
+  const closesSection = input.closesSection ?? true;
   const sectionIndent = input.sectionIndent ?? '   ';
 
   // 🔴 no meters ⇒ no section at all, header included. a `├─ reviews` connector with no
@@ -209,20 +237,19 @@ export const formatReviewsMeterLines = (input: {
 
   // create lookup of review inputs by slug
   // .note = slugs are guaranteed unique at parse time via standardizePeerReviewSlugs
-  const reviewBySlug = new Map<string, RouteFormatTreeGuardReviewRecord>();
-  if (input.reviews) {
-    for (const review of input.reviews) {
-      reviewBySlug.set(
-        review.peer?.slug ?? review.cmd.split(/\s+/)[0] ?? '',
-        review,
-      );
-    }
-  }
+  // .note = built in one constructor call from the entry list — no in-place `.set`, so no
+  //         mutation to examine
+  const reviewBySlug = new Map<string, RouteFormatTreeGuardReviewRecord>(
+    (input.reviews ?? []).map((review) => [
+      asReviewRecordSlug({ review }),
+      review,
+    ]),
+  );
 
   // convert each meter to ReviewerTreeState and format via shared formatter
   for (let m = 0; m < input.meters.length; m++) {
     const meter = input.meters[m]!;
-    const isLast = m === input.meters.length - 1;
+    const isLast = closesSection && m === input.meters.length - 1;
     const review = reviewBySlug.get(meter.slug);
 
     // convert meter + review to ReviewerTreeState
@@ -241,12 +268,35 @@ export const formatReviewsMeterLines = (input: {
       reviewer: state,
       isLast,
       baseIndent: `${baseIndent}${sectionIndent} `,
+      density: input.density,
     });
     lines.push(...reviewerLines);
   }
 
   return lines;
 };
+
+/**
+ * .what = the identity fields every `ReviewerTreeState` carries, read from a persisted meter
+ * .why = the meter-sourced twin of `asReviewerTreeIdentity` (genContextCliEmit), which reads a
+ *        live event. the two source shapes differ — a meter carries `overruled` and
+ *        `skippedByDispute`, an event carries neither — so each adapter owns one identity read,
+ *        and every branch below spreads it rather than spells it out
+ *        (rule.forbid.duplicate-format-tree-operations)
+ * .note = `index` is the declared slot, passed by the caller (see GuardPeerMeterStatus.index)
+ */
+const asReviewerTreeIdentityFromMeter = (input: {
+  meter: GuardPeerMeterStatus;
+  index: number;
+}): Omit<ReviewerTreeState, 'state'> => ({
+  index: input.index,
+  slug: input.meter.slug,
+  level: input.meter.level,
+  rounds: input.meter.rounds,
+  budget: input.meter.budget,
+  overruled: input.meter.overruled,
+  skippedByDispute: input.meter.skippedByDispute,
+});
 
 /**
  * .what = converts meter + review to ReviewerTreeState
@@ -258,48 +308,25 @@ const asReviewerTreeStateFromMeter = (input: {
   index: number;
 }): ReviewerTreeState => {
   const { meter, review, index } = input;
+  const identity = asReviewerTreeIdentityFromMeter({ meter, index });
 
   // awaits state
   if (meter.awaits) {
     return {
-      index,
-      slug: meter.slug,
-      level: meter.level,
-      rounds: meter.rounds,
-      budget: meter.budget,
-      overruled: meter.overruled,
-      skippedByDispute: meter.skippedByDispute,
+      ...identity,
       state: { type: 'awaits', level: meter.awaits.level },
     };
   }
 
   // queued state
   if (meter.verdict === 'queued') {
-    return {
-      index,
-      slug: meter.slug,
-      level: meter.level,
-      rounds: meter.rounds,
-      budget: meter.budget,
-      overruled: meter.overruled,
-      skippedByDispute: meter.skippedByDispute,
-      state: { type: 'queued' },
-    };
+    return { ...identity, state: { type: 'queued' } };
   }
 
   // malfunction state
   if (meter.verdict === 'malfunction') {
     const path = review?.artifact.path ?? meter.path ?? '';
-    return {
-      index,
-      slug: meter.slug,
-      level: meter.level,
-      rounds: meter.rounds,
-      budget: meter.budget,
-      overruled: meter.overruled,
-      skippedByDispute: meter.skippedByDispute,
-      state: { type: 'malfunction', path },
-    };
+    return { ...identity, state: { type: 'malfunction', path } };
   }
 
   // constraint state (a genuine constraint verdict — exit 2, no blockers — renders its own line,
@@ -308,13 +335,7 @@ const asReviewerTreeStateFromMeter = (input: {
   if (meter.verdict === 'constraint') {
     const constraintPath = review?.artifact.path ?? meter.path ?? '';
     return {
-      index,
-      slug: meter.slug,
-      level: meter.level,
-      rounds: meter.rounds,
-      budget: meter.budget,
-      overruled: meter.overruled,
-      skippedByDispute: meter.skippedByDispute,
+      ...identity,
       state: { type: 'constraint', path: constraintPath },
     };
   }
@@ -327,21 +348,16 @@ const asReviewerTreeStateFromMeter = (input: {
   const cached = review?.cached ? true : false;
   // use durationSec from review (fresh: from event, cached: from artifact stdout)
   const durationSec = review?.durationSec ?? null;
-  // source the tallier from the artifact; default to deterministic when null (pre-fallback
-  // record) or absent (meter-only fallback path) — the marker shows only for probabilistic
-  const tallier =
+  // source the tallier from the artifact: the PIN its footer recorded, so the tree names
+  // the model that ran. null for a verbatim read, a pre-fallback record, or the meter-only
+  // fallback path — the marker shows only where a sub-brain tallied
+  const talliedBy =
     review?.artifact.tallier === 'probabilistic'
-      ? 'probabilistic'
-      : 'deterministic';
+      ? review.artifact.talliedBy
+      : null;
 
   return {
-    index,
-    slug: meter.slug,
-    level: meter.level,
-    rounds: meter.rounds,
-    budget: meter.budget,
-    overruled: meter.overruled,
-    skippedByDispute: meter.skippedByDispute,
+    ...identity,
     state: {
       type: 'finished',
       verdict: meter.verdict,
@@ -353,7 +369,7 @@ const asReviewerTreeStateFromMeter = (input: {
       nitpicks: { disputed: meter.disputed.nitpicks, reported: nitpicks },
       path,
       cached,
-      tallier,
+      talliedBy,
     },
   };
 };
@@ -377,6 +393,8 @@ export const formatGuardTree = (input: {
       blockers: number;
       nitpicks: number;
       tallier: 'deterministic' | 'probabilistic' | null;
+      /** the pinned brain that tallied, as the footer recorded it — null where none did */
+      talliedBy: string | null;
       path: string;
       exitClass: 'passed' | 'constraint' | 'malfunction';
       /** peer info if available: slug, level, rounds/budget */
@@ -399,6 +417,14 @@ export const formatGuardTree = (input: {
       overruled?: boolean;
     }>;
     peerMeters?: GuardPeerMeterStatus[];
+    /**
+     * the lever the refused reviewers' .given named — whether one was an overflow, and the
+     * `--partition` values it proposed — read by the caller that opened the .given; absent
+     * where none did
+     * .why = a constraint halt offers a partition only to an overflow, and pastes the
+     *        partitions the refusal computed, never a template
+     */
+    constraintLever?: { overflowed: boolean; partitions: string[] };
   } | null;
   /**
    * .what = whether guard is the last item in the tree
@@ -406,6 +432,13 @@ export const formatGuardTree = (input: {
    */
   isLast?: boolean;
 }): string => {
+  // a malfunction reason carries its header and one line per broken part; the `reason =` line
+  // and the remedy groups read the header, the clear block reads the whole
+  const reasonHead = asGuardReasonHead({
+    passage: input.passage,
+    reason: input.reason,
+  });
+
   // .note = deliberate local line-builder, scoped to this formatter — the escape hatch in
   //         rule.require.immutable-vars permits a scoped emit builder; no array crosses a boundary.
   const lines: string[] = [];
@@ -422,7 +455,7 @@ export const formatGuardTree = (input: {
   if (!input.guard) {
     if (
       (input.passage === 'blocked' || input.passage === 'malfunction') &&
-      input.reason
+      reasonHead
     ) {
       lines.push(`   ├─ passage = ${passageLabel}`);
 
@@ -430,7 +463,9 @@ export const formatGuardTree = (input: {
       const remedyGroups = computeBlockRemedyGroups({
         stone: input.stone,
         passage: input.passage,
-        reason: input.reason,
+        reason: reasonHead,
+        // no guard data, so no .given was read
+        lever: null,
       });
       const hasOptions = remedyGroups.length > 0;
       // 🔴 decode a concession marker to its human line, and surface the urgent warn — via
@@ -438,16 +473,31 @@ export const formatGuardTree = (input: {
       //    (rule.require.single-source-of-truth-for-render). before this, both guard-tree
       //    renders showed the raw marker (r011 blocker.1). the warn NESTS under reason —
       //    it explains why that reason is a human wait, so it is reason's child, never a
-      //    peer of it. reason's own connector depends only on whether options follow.
+      //    peer of it. reason's own connector depends on whether a block follows it — the
+      //    malfunction clear block or the options.
       const { reasonText, warnText } = asConcessionReasonDisplay({
-        reason: input.reason,
+        reason: reasonHead,
       });
-      const reasonConnector = hasOptions ? '├─' : '└─';
+      const isReasonFollowed = hasOptions || input.passage === 'malfunction';
+      const reasonConnector = isReasonFollowed ? '├─' : '└─';
       lines.push(`   ${reasonConnector} reason = ${reasonText}`);
       if (warnText) {
-        const warnPrefix = hasOptions ? '│  ' : '   ';
+        const warnPrefix = isReasonFollowed ? '│  ' : '   ';
         lines.push(`   ${warnPrefix}└─ 🟡 ${warnText}`);
       }
+
+      // a malfunction stays the driver's to clear, so its levers lead the human's options —
+      // a MIXED halt (a lane broke as another spent) included: the exhaustion adds remedies,
+      // it never retires the malfunction's own (r014 nitpick.3, i014)
+      if (input.passage === 'malfunction')
+        lines.push(
+          ...formatGuardMalfunctionClearLines({
+            stone: input.stone,
+            reason: input.reason,
+            indent: '   ',
+            branch: hasOptions ? '├─' : '└─',
+          }),
+        );
 
       if (hasOptions) {
         // options is the LAST block here (no guard follows) → children indent at 6 spaces
@@ -471,7 +521,7 @@ export const formatGuardTree = (input: {
   // emit reason if blocked or malfunction
   if (
     (input.passage === 'blocked' || input.passage === 'malfunction') &&
-    input.reason
+    reasonHead
   ) {
     // 🔴 decode a concession marker to its human line + urgent warn via the ONE shared
     //    transformer (rule.require.single-source-of-truth-for-render). a guard section always
@@ -479,7 +529,7 @@ export const formatGuardTree = (input: {
     //    why that reason is a human wait, so it is reason's child, never a peer of it.
     //    before this the raw marker shipped (r011 blocker.1).
     const { reasonText, warnText } = asConcessionReasonDisplay({
-      reason: input.reason,
+      reason: reasonHead,
     });
     lines.push(`   ├─ reason = ${reasonText}`);
     if (warnText) lines.push(`   │  └─ 🟡 ${warnText}`);
@@ -493,8 +543,23 @@ export const formatGuardTree = (input: {
     const remedyGroups = computeBlockRemedyGroups({
       stone: input.stone,
       passage: input.passage,
-      reason: input.reason,
+      reason: reasonHead,
+      lever: input.guard?.constraintLever ?? null,
     });
+
+    // a malfunction stays the driver's to clear, so its levers lead the human's options — the
+    // same lever list the route.drive replay renders (rule.forbid.duplicate-format-tree-operations).
+    // a MIXED halt keeps them too — the exhaustion adds remedies, never retires these (r014 n3, i014)
+    if (input.passage === 'malfunction')
+      lines.push(
+        ...formatGuardMalfunctionClearLines({
+          stone: input.stone,
+          reason: input.reason,
+          indent: '   ',
+          branch: '├─',
+        }),
+      );
+
     if (remedyGroups.length > 0) {
       lines.push(`   ├─ options`);
       lines.push(
@@ -521,13 +586,14 @@ export const formatGuardTree = (input: {
 
   // determine which sub-sections are last for correct box-draw
   // note: peerMeters are integrated into reviews section, not separate
+  // the reviews section shows if any peer reviewer (meter) or ran review is present
   const sections: Array<{
     type: 'artifacts' | 'reviews' | 'judges';
-  }> = [];
-  sections.push({ type: 'artifacts' });
-  // show reviews section if we have any peer reviewers (meters) or ran reviews
-  if (hasReviews || hasPeerMeters) sections.push({ type: 'reviews' });
-  if (hasJudges) sections.push({ type: 'judges' });
+  }> = [
+    { type: 'artifacts' },
+    ...(hasReviews || hasPeerMeters ? [{ type: 'reviews' as const }] : []),
+    ...(hasJudges ? [{ type: 'judges' as const }] : []),
+  ];
 
   for (let s = 0; s < sections.length; s++) {
     const section = sections[s]!;
@@ -556,6 +622,7 @@ export const formatGuardTree = (input: {
             blockers: r.blockers,
             nitpicks: r.nitpicks,
             tallier: r.tallier,
+            talliedBy: r.talliedBy,
             exitClass: r.exitClass,
           },
           cmd: r.cmd,

@@ -1,0 +1,21 @@
+{
+  "key": "11aee5d60ba9d2b9",
+  "kind": "create",
+  "repo": {
+    "owner": "ehmpathy",
+    "name": "rhachet-brains-openrouter"
+  },
+  "exid": null,
+  "title": "fix(spec): price cache.get at the catalog's input_cache_read rate, not the full input rate (the 1M context half landed in 0.1.3)",
+  "description": "# 🌙 dream: an openrouter tier atom declares the context its models actually serve\n\n- kind: reseed\n- owner: ehmpathy/rhachet-brains-openrouter\n- caught: 2026-10-02\n\n## .the cue that fired\n\nthe repo cut its default review brain over to `openrouter/deepseek/flash` (rhachet-brains-openrouter\n0.1.1). at guard round i050, every review lane that held more than 96k tokens was refused before a\ncall was sent:\n\n```\n✋ ConstraintError: prompt exceeds 75% of context window\n   ├─ 189.4% of 128000 tokens\n```\n\nthe same lanes ran on `fireworks/*/flash` the round before, against a declared 1,048,576 tokens.\n\n## .the gap, precisely\n\n`dist/domain.operations/atom/BrainAtom.config.js` sets `gain.size.context.tokens: 128000` for both\nthe `pro` and `flash` tier estimates. `AtomSlug.unlisted.js` sets the same for any exact id.\n`rhx review`'s 75% gate reads that figure, so a lane with more than 96k tokens is refused.\n\nthe file's own note says the figure leans low on purpose, and that \"every tier model read on\n2026-10-02 held 1M\". openrouter's live catalog agrees: `deepseek/deepseek-v4-flash` and\n`deepseek/deepseek-v4.1-flash` both list `context_length: 1048576`.\n\nthe cache rate is a second, smaller gap of the same kind. the tier spec prices `cache.get` at the\nfull input rate ($0.30/M), but the catalog lists `input_cache_read` at about a fifth of `prompt`.\nany spec-based estimate therefore models no cache discount at all.\n\n## .the shape of the fix\n\n1. set the tier estimate's context to the floor of what the tier's line serves today: 1,048,576\n   for `deepseek/flash` and `deepseek/pro`, and likewise for each tier whose line holds 1M. the ci\n   check that already compares rates to the cheapest live endpoint gains a twin: the declared\n   context must sit at or below the picked model's `context_length`\n2. better: if rhachet allows an async spec, or a spec refreshed at ask time, derive context and\n   cache rate from the catalog pick, just as the model id is derived\n3. then bump `rhachet-brains-openrouter` here and re-run the 5.1 guard on the openrouter lanes\n\n## .the local stopgap, and when to remove it\n\n`patches/rhachet-brains-openrouter@0.1.1.patch` (a `pnpm patch`) raises both tier estimates to\n1,048,576 in this repo alone. once the upstream fix ships, bump the package and delete the patch\nalong with its `patchedDependencies` entry. pnpm refuses a patch whose version no longer matches,\nso a bump left half done fails loud.\n\n## .why it is not done in this round\n\nit is not clean: the file lives in another repo's published package. a local override of a brain's\ncontext window in this repo would defeat the safety the 75% gate exists for, and would hide the\ndefect from every other consumer.",
+  "status": null,
+  "via": "gh.issues",
+  "auth": "as-human",
+  "idem": "findsert",
+  "heldAt": "2026-10-14",
+  "heldSeq": 6,
+  "recordStatus": "DELIVERED",
+  "reason": null,
+  "settledAt": "2026-10-14",
+  "deliveredExid": "15"
+}

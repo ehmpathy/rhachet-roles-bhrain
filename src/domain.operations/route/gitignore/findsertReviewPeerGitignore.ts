@@ -1,5 +1,7 @@
 import * as path from 'path';
 
+import { SEGMENTS_OF_PEER_REVIEWS_DIR } from '@src/domain.operations/asPeerReviewOutputName';
+
 import { findsertGitignore } from './findsertGitignore';
 
 /**
@@ -8,9 +10,9 @@ import { findsertGitignore } from './findsertGitignore';
  */
 export const findsertReviewPeerGitignore = async (input: {
   route: string;
-}): Promise<{ path: string; action: 'created' | 'unchanged' }> =>
+}): Promise<{ path: string; action: 'created' | 'rewrote' | 'unchanged' }> =>
   findsertGitignore({
-    dir: path.join(input.route, '.reviews', 'peer'),
+    dir: path.join(input.route, ...SEGMENTS_OF_PEER_REVIEWS_DIR),
     content: `# ignore all peer-review files
 *
 !.gitignore

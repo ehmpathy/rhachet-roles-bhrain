@@ -1,0 +1,27 @@
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
+
+exports[`review.failfast-rules.acceptance given: [case1] rules glob matches no files when: [t0] review skill invoked with rules glob that resolves to zero then: the refusal renders whole 1`] = `
+"
+🦉 woah there
+
+✋ ConstraintError: --rules glob found nada
+   └─ rules: rules/nonexistent/*.md
+
+✨ did you know?
+   └─ verify the glob pattern matches files in your repo
+
+"
+`;
+
+exports[`review.failfast-rules.acceptance given: [case2] explicit rules path does not exist when: [t0] review skill invoked with non-existent rules path then: the refusal renders whole 1`] = `
+"
+🦉 woah there
+
+✋ ConstraintError: --rules glob found nada
+   └─ rules: rules/DOES_NOT_EXIST.md
+
+✨ did you know?
+   └─ verify the glob pattern matches files in your repo
+
+"
+`;

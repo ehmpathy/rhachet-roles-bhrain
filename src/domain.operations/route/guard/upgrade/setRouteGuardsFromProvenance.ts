@@ -3,10 +3,10 @@ import { BadRequestError, UnexpectedCodePathError } from 'helpful-errors';
 import * as path from 'path';
 
 import { enumFilesFromGlob } from '@src/utils/enumFilesFromGlob';
+import { isErrorOfAbsence } from '@src/utils/fs/isErrorOfAbsence';
 
 import { getGuardFilesByStone } from '../getGuardFilesByStone';
 import { getGuardStoneNames } from '../getGuardStoneNames';
-import { isENOENT } from '../isENOENT';
 import type { GuardUpgradeResult } from './GuardUpgradeResult';
 import { getStoneGuardUpgradePlan } from './getStoneGuardUpgradePlan';
 
@@ -40,13 +40,15 @@ export const setRouteGuardsFromProvenance = async (input: {
   // silently enumerate zero guards and report a false success (globby returns []
   // for a missing cwd rather than a throw).
   const routeStat = await fs.stat(routeAbs).catch((error: unknown) => {
-    if (isENOENT(error)) return null; // absent dir ⟹ the loud throw below
+    if (isErrorOfAbsence({ error })) return null; // absent dir ⟹ the loud throw below
     throw error; // other stat error ⟹ server-side, propagate (no failhide)
   });
   if (!routeStat || !routeStat.isDirectory())
     throw new BadRequestError(
       `route not found: ${input.route}. did you mistype --route?`,
-      { route: input.route, routeAbs },
+      // the caller typed the route; the absolute path it resolved to is the one address
+      // they cannot see, and it shows which cwd the lookup ran against
+      { routeAbs },
     );
 
   // enumerate with cwd pinned to repoRoot (rule.forbid.cwd-outside-gitroot) and a
@@ -67,7 +69,6 @@ export const setRouteGuardsFromProvenance = async (input: {
       `no guard matched --stone ${input.stone}. available stones: ${getGuardStoneNames(
         { guardPaths: guardFiles },
       ).join(', ')}`,
-      { stone: input.stone, route: input.route },
     );
 
   // phase 1 — decide every targeted guard (never writes)

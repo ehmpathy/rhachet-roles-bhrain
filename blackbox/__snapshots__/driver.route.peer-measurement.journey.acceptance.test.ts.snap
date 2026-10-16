@@ -74,9 +74,9 @@ exports[`driver.route.peer-measurement.journey.acceptance given: [journey] a sto
 │  ├─
 │  │
 │  │  ## review
-│  │  
+│  │
 │  │  the change looks solid. two small style points worth a cleanup.
-│  │  
+│  │
 │  │  0 blockers
 │  │  2 nitpicks
 │  │
@@ -95,12 +95,22 @@ exports[`driver.route.peer-measurement.journey.acceptance given: [journey] a sto
    │   ├─ given: .reviews/peer/2.crash._.review.i001.92354b4bb8ec587fe1.r001._.given.by_peer.crash-reviewer.md
    │   └─ taken: .reviews/peer/2.crash._.review.i001.92354b4bb8ec587fe1.r001._.taken.by_self.crash-reviewer.md
    │
-   └─ ✓ judge.1 - allowed [TIME]
+   └─ ✗ judge.1 - blocked [TIME]
 
 🗿 route.stone.set
    ├─ stone = 2.crash
    ├─ passage = malfunction
-   ├─ reason = reviewer or judge malfunctioned
+   ├─ reason = 1 of 1 reviewer malfunctioned
+   ├─ still yours to clear
+   │  ├─ 💥 lane crash-reviewer (r1) broke
+   │  │  └─ cause = exit code 1 (unknown)
+   │  └─ next
+   │     ├─ 1. read each given for its cause, and fix what you can
+   │     ├─ 2. answer each broken lane, like a rejected one
+   │     │  └─ rhx route.stone.set --stone 2.crash --as absorbed --that crash-reviewer
+   │     ├─ 3. re-arrive
+   │     │  └─ rhx route.stone.set --stone 2.crash --as arrived
+   │     └─ ask a human only for a grant you cannot make (an absent credential, a permission, etc)
    ├─ options
    │  ├─ converge with the reviewer — yours to run, and the levels above stay unlocked
    │  │  └─ rhx route.stone.set --stone 2.crash --as absorbed --that <reviewer>
@@ -119,7 +129,8 @@ exports[`driver.route.peer-measurement.journey.acceptance given: [journey] a sto
       │       └─ taken: .reviews/peer/2.crash._.review.i001.92354b4bb8ec587fe1.r001._.taken.by_self.crash-reviewer.md
       └─ judges
           └─ j1: rhx route.stone.judge --mechanism reviewed? --stone $stone --route $route --allow-blockers 0 --allow-nitpicks 5
-              └─ finished [TIME] ✓
+              ├─ finished [TIME] ✗
+              └─ reason: blockers exceed threshold (1 > 0)
 "
 `;
 

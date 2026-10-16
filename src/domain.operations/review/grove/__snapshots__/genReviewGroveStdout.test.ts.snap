@@ -1,0 +1,1021 @@
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
+
+exports[`genReviewGroveStdout given: [case1] rows that carry OUTPUT tokens beside their full-rate mass when: [t0] the report is rendered then: the render matches snapshot 1`] = `
+"🦉 review cost — the grove: where this machine's review tokens went
+
+   root: /tmp/trees
+   trees: 2 walked · 2 carried review logs · 0 never reviewed
+   runs:  2 found — 2 metered · 0 refused · 0 unknown
+
+   the grove total
+      ├─ input      60,000,000  (100.0% of read, at full rate)
+      ├─ cache.set           0  (0.0% of read, at full rate, once per seed)
+      ├─ cache.get           0  (0.0% of read, 31.4x cheaper)
+      ├─ output            901  (not of read, at output rate)
+      └─ cost        $2.000000
+
+   levers — input DOWN · cache UP
+      ├─ input:     30,000,000 prompt tokens/run
+      ├─ cache:     0.0% of prompt tokens served from cache
+      └─ prefix:    absent  (no reviewer ran twice)
+
+   by input
+      ├─ corpus        2 read · 0 unread · 12 target files
+      ├─ source        2 compiled (exact) · 0 parsed from the rendered prompt (coarse)
+      ├─ census        2 attributed · 0 unattributed · 0 ungraded (no grade stated)
+      │
+      ├─ instructions          1,200 chars    4.3%  cacheable
+      ├─ outputFormat            600 chars    2.1%  cacheable
+      ├─ scaffold                200 chars    0.7%  cacheable
+      ├─ rules                 8,000 chars   28.6%  cacheable
+      ├─ refs                      0 chars    0.0%  cacheable
+      ├─ targetFiles          12,000 chars   42.9%  cacheable
+      ├─ targetDiffs           4,000 chars   14.3%
+      │  ├─ additions          3,000 chars   10.7%  cacheable
+      │  ├─ deletions              0 chars    0.0%  cacheable
+      │  └─ mutations          1,000 chars    3.6%  per round
+      ├─ conversation          2,000 chars    7.1%  per round
+      │
+      ├─ total                28,000 chars
+      ├─ cacheable            25,000 chars   89.3%  — the most any cache could ever serve
+      ├─ per round             3,000 chars   10.7%  — re-paid at full input rate, every round
+      │
+      └─ target mass by directory — 12,000 chars over 2 directories, from 2 of 2 read runs
+         ├─  75.0%     9,000 chars  1 file    src/domain.operations/review
+         └─  25.0%     3,000 chars  1 file    src/contract/cli
+
+   by tree
+      ├─  33,000,000 at full rate     $1.000000     1 run   rich
+      └─  27,000,000 at full rate     $1.000000     1 run   lean
+
+   by route · stone · reviewer · provider: absent — no run carried them"
+`;
+
+exports[`genReviewGroveStdout given: [case2] a report with no rows on an axis when: [t0] the report is rendered then: the render matches snapshot 1`] = `
+"🦉 review cost — the grove: where this machine's review tokens went
+
+   root: /tmp/trees
+   trees: 1 walked · 1 carried review logs · 0 never reviewed
+   runs:  4 found — 4 metered · 0 refused · 0 unknown
+
+   the grove total
+      ├─ input            100  (100.0% of read, at full rate)
+      ├─ cache.set          0  (0.0% of read, at full rate, once per seed)
+      ├─ cache.get          0  (0.0% of read, 31.4x cheaper)
+      ├─ output             0  (not of read, at output rate)
+      └─ cost       $1.000000
+
+   levers — input DOWN · cache UP
+      ├─ input:     25 prompt tokens/run
+      ├─ cache:     0.0% of prompt tokens served from cache
+      └─ prefix:    absent  (no reviewer ran twice)
+
+   by input
+      ├─ corpus        3 read · 1 unread · 12 target files
+      ├─ source        3 compiled (exact) · 0 parsed from the rendered prompt (coarse)
+      ├─ census        3 attributed · 0 unattributed · 0 ungraded (no grade stated)
+      │
+      ├─ instructions          1,200 chars    4.3%  cacheable
+      ├─ outputFormat            600 chars    2.1%  cacheable
+      ├─ scaffold                200 chars    0.7%  cacheable
+      ├─ rules                 8,000 chars   28.6%  cacheable
+      ├─ refs                      0 chars    0.0%  cacheable
+      ├─ targetFiles          12,000 chars   42.9%  cacheable
+      ├─ targetDiffs           4,000 chars   14.3%
+      │  ├─ additions          3,000 chars   10.7%  cacheable
+      │  ├─ deletions              0 chars    0.0%  cacheable
+      │  └─ mutations          1,000 chars    3.6%  per round
+      ├─ conversation          2,000 chars    7.1%  per round
+      │
+      ├─ total                28,000 chars
+      ├─ cacheable            25,000 chars   89.3%  — the most any cache could ever serve
+      ├─ per round             3,000 chars   10.7%  — re-paid at full input rate, every round
+      │
+      └─ target mass by directory — 12,000 chars over 2 directories, from 3 of 3 read runs
+         ├─  75.0%     9,000 chars  1 file    src/domain.operations/review
+         └─  25.0%     3,000 chars  1 file    src/contract/cli
+
+   by tree · route · stone · reviewer · provider: absent — no run carried them"
+`;
+
+exports[`genReviewGroveStdout given: [case3] a grove whose cache rate cannot be computed when: [t0] the report is rendered then: the render matches snapshot 1`] = `
+"🦉 review cost — the grove: where this machine's review tokens went
+
+   root: /tmp/trees
+   trees: 1 walked · 1 carried review logs · 0 never reviewed
+   runs:  4 found — 4 metered · 0 refused · 0 unknown
+
+   the grove total
+      ├─ input            100  (100.0% of read, at full rate)
+      ├─ cache.set          0  (0.0% of read, at full rate, once per seed)
+      ├─ cache.get          0  (0.0% of read, 31.4x cheaper)
+      ├─ output             0  (not of read, at output rate)
+      └─ cost       $1.000000
+
+   levers — input DOWN · cache UP
+      ├─ input:     25 prompt tokens/run
+      ├─ cache:     absent of prompt tokens served from cache
+      └─ prefix:    absent  (no reviewer ran twice)
+
+   by input
+      ├─ corpus        3 read · 1 unread · 12 target files
+      ├─ source        3 compiled (exact) · 0 parsed from the rendered prompt (coarse)
+      ├─ census        3 attributed · 0 unattributed · 0 ungraded (no grade stated)
+      │
+      ├─ instructions          1,200 chars    4.3%  cacheable
+      ├─ outputFormat            600 chars    2.1%  cacheable
+      ├─ scaffold                200 chars    0.7%  cacheable
+      ├─ rules                 8,000 chars   28.6%  cacheable
+      ├─ refs                      0 chars    0.0%  cacheable
+      ├─ targetFiles          12,000 chars   42.9%  cacheable
+      ├─ targetDiffs           4,000 chars   14.3%
+      │  ├─ additions          3,000 chars   10.7%  cacheable
+      │  ├─ deletions              0 chars    0.0%  cacheable
+      │  └─ mutations          1,000 chars    3.6%  per round
+      ├─ conversation          2,000 chars    7.1%  per round
+      │
+      ├─ total                28,000 chars
+      ├─ cacheable            25,000 chars   89.3%  — the most any cache could ever serve
+      ├─ per round             3,000 chars   10.7%  — re-paid at full input rate, every round
+      │
+      └─ target mass by directory — 12,000 chars over 2 directories, from 3 of 3 read runs
+         ├─  75.0%     9,000 chars  1 file    src/domain.operations/review
+         └─  25.0%     3,000 chars  1 file    src/contract/cli
+
+   by tree · route · stone · reviewer · provider: absent — no run carried them"
+`;
+
+exports[`genReviewGroveStdout given: [case5] a route key rendered on the route axis when: [t0] the report is rendered then: the render matches snapshot 1`] = `
+"🦉 review cost — the grove: where this machine's review tokens went
+
+   root: /tmp/trees
+   trees: 1 walked · 1 carried review logs · 0 never reviewed
+   runs:  1 found — 1 metered · 0 refused · 0 unknown
+
+   the grove total
+      ├─ input             10  (100.0% of read, at full rate)
+      ├─ cache.set          0  (0.0% of read, at full rate, once per seed)
+      ├─ cache.get          0  (0.0% of read, 31.4x cheaper)
+      ├─ output             0  (not of read, at output rate)
+      └─ cost       $1.000000
+
+   levers — input DOWN · cache UP
+      ├─ input:     10 prompt tokens/run
+      ├─ cache:     0.0% of prompt tokens served from cache
+      └─ prefix:    absent  (no reviewer ran twice)
+
+   by input
+      ├─ corpus        1 read · 0 unread · 12 target files
+      ├─ source        1 compiled (exact) · 0 parsed from the rendered prompt (coarse)
+      ├─ census        1 attributed · 0 unattributed · 0 ungraded (no grade stated)
+      │
+      ├─ instructions          1,200 chars    4.3%  cacheable
+      ├─ outputFormat            600 chars    2.1%  cacheable
+      ├─ scaffold                200 chars    0.7%  cacheable
+      ├─ rules                 8,000 chars   28.6%  cacheable
+      ├─ refs                      0 chars    0.0%  cacheable
+      ├─ targetFiles          12,000 chars   42.9%  cacheable
+      ├─ targetDiffs           4,000 chars   14.3%
+      │  ├─ additions          3,000 chars   10.7%  cacheable
+      │  ├─ deletions              0 chars    0.0%  cacheable
+      │  └─ mutations          1,000 chars    3.6%  per round
+      ├─ conversation          2,000 chars    7.1%  per round
+      │
+      ├─ total                28,000 chars
+      ├─ cacheable            25,000 chars   89.3%  — the most any cache could ever serve
+      ├─ per round             3,000 chars   10.7%  — re-paid at full input rate, every round
+      │
+      └─ target mass by directory — 12,000 chars over 2 directories, from 1 of 1 read run
+         ├─  75.0%     9,000 chars  1 file    src/domain.operations/review
+         └─  25.0%     3,000 chars  1 file    src/contract/cli
+
+   by route
+      └─          10 at full rate     $1.000000     1 run   .behavior/v2026_09_09.feat-demo
+
+   by tree · stone · reviewer · provider: absent — no run carried them"
+`;
+
+exports[`genReviewGroveStdout given: [case6] a by-input census over prompts that were read when: [t0] the report is rendered then: the render matches snapshot 1`] = `
+"🦉 review cost — the grove: where this machine's review tokens went
+
+   root: /tmp/trees
+   trees: 1 walked · 1 carried review logs · 0 never reviewed
+   runs:  4 found — 4 metered · 0 refused · 0 unknown
+
+   the grove total
+      ├─ input            100  (100.0% of read, at full rate)
+      ├─ cache.set          0  (0.0% of read, at full rate, once per seed)
+      ├─ cache.get          0  (0.0% of read, 31.4x cheaper)
+      ├─ output             0  (not of read, at output rate)
+      └─ cost       $1.000000
+
+   levers — input DOWN · cache UP
+      ├─ input:     25 prompt tokens/run
+      ├─ cache:     0.0% of prompt tokens served from cache
+      └─ prefix:    absent  (no reviewer ran twice)
+
+   by input
+      ├─ corpus        3 read · 1 unread · 12 target files
+      ├─ source        3 compiled (exact) · 0 parsed from the rendered prompt (coarse)
+      ├─ census        3 attributed · 0 unattributed · 0 ungraded (no grade stated)
+      │
+      ├─ instructions          1,200 chars    4.3%  cacheable
+      ├─ outputFormat            600 chars    2.1%  cacheable
+      ├─ scaffold                200 chars    0.7%  cacheable
+      ├─ rules                 8,000 chars   28.6%  cacheable
+      ├─ refs                      0 chars    0.0%  cacheable
+      ├─ targetFiles          12,000 chars   42.9%  cacheable
+      ├─ targetDiffs           4,000 chars   14.3%
+      │  ├─ additions          3,000 chars   10.7%  cacheable
+      │  ├─ deletions              0 chars    0.0%  cacheable
+      │  └─ mutations          1,000 chars    3.6%  per round
+      ├─ conversation          2,000 chars    7.1%  per round
+      │
+      ├─ total                28,000 chars
+      ├─ cacheable            25,000 chars   89.3%  — the most any cache could ever serve
+      ├─ per round             3,000 chars   10.7%  — re-paid at full input rate, every round
+      │
+      └─ target mass by directory — 12,000 chars over 2 directories, from 3 of 3 read runs
+         ├─  75.0%     9,000 chars  1 file    src/domain.operations/review
+         └─  25.0%     3,000 chars  1 file    src/contract/cli
+
+   by tree · route · stone · reviewer · provider: absent — no run carried them"
+`;
+
+exports[`genReviewGroveStdout given: [case7] a corpus where NOT ONE prompt could be read when: [t0] the report is rendered then: the render matches snapshot 1`] = `
+"🦉 review cost — the grove: where this machine's review tokens went
+
+   root: /tmp/trees
+   trees: 1 walked · 1 carried review logs · 0 never reviewed
+   runs:  9 found — 9 metered · 0 refused · 0 unknown
+
+   the grove total
+      ├─ input            100  (100.0% of read, at full rate)
+      ├─ cache.set          0  (0.0% of read, at full rate, once per seed)
+      ├─ cache.get          0  (0.0% of read, 31.4x cheaper)
+      ├─ output             0  (not of read, at output rate)
+      └─ cost       $1.000000
+
+   levers — input DOWN · cache UP
+      ├─ input:     11 prompt tokens/run
+      ├─ cache:     0.0% of prompt tokens served from cache
+      └─ prefix:    absent  (no reviewer ran twice)
+
+   by input
+      └─ absent (no prompt could be read, 9 unread)
+
+   by tree · route · stone · reviewer · provider: absent — no run carried them"
+`;
+
+exports[`genReviewGroveStdout given: [case8] a grove fold over runs that did NOT vouch for themselves when: [t0] two of three read runs declined to vouch then: the render matches snapshot 1`] = `
+"🦉 review cost — the grove: where this machine's review tokens went
+
+   root: /tmp/trees
+   trees: 1 walked · 1 carried review logs · 0 never reviewed
+   runs:  4 found — 4 metered · 0 refused · 0 unknown
+
+   the grove total
+      ├─ input            100  (100.0% of read, at full rate)
+      ├─ cache.set          0  (0.0% of read, at full rate, once per seed)
+      ├─ cache.get          0  (0.0% of read, 31.4x cheaper)
+      ├─ output             0  (not of read, at output rate)
+      └─ cost       $1.000000
+
+   levers — input DOWN · cache UP
+      ├─ input:     25 prompt tokens/run
+      ├─ cache:     0.0% of prompt tokens served from cache
+      └─ prefix:    absent  (no reviewer ran twice)
+
+   by input
+      ├─ corpus        3 read · 1 unread · 12 target files
+      ├─ source        3 compiled (exact) · 0 parsed from the rendered prompt (coarse)
+      ├─ census        1 attributed · 2 unattributed · 0 ungraded (no grade stated)
+      │
+      ├─ 🟡 2 of 3 read runs are UNATTRIBUTED — each run's own census
+      │  declined to vouch, so scaffold may hide an input with no row. every
+      │  share below is summed over them ALL, vouched and unvouched alike.
+      │  to tell scaffold from an absent input, read one such run with its
+      │  composition rows: rhx review._.cost --of run --at <rundir>
+      │
+      ├─ instructions          1,200 chars    4.3%  cacheable
+      ├─ outputFormat            600 chars    2.1%  cacheable
+      ├─ scaffold                200 chars    0.7%  cacheable
+      ├─ rules                 8,000 chars   28.6%  cacheable
+      ├─ refs                      0 chars    0.0%  cacheable
+      ├─ targetFiles          12,000 chars   42.9%  cacheable
+      ├─ targetDiffs           4,000 chars   14.3%
+      │  ├─ additions          3,000 chars   10.7%  cacheable
+      │  ├─ deletions              0 chars    0.0%  cacheable
+      │  └─ mutations          1,000 chars    3.6%  per round
+      ├─ conversation          2,000 chars    7.1%  per round
+      │
+      ├─ total                28,000 chars
+      ├─ cacheable            25,000 chars   89.3%  — the most any cache could ever serve
+      ├─ per round             3,000 chars   10.7%  — re-paid at full input rate, every round
+      │
+      └─ target mass by directory — 12,000 chars over 2 directories, from 3 of 3 read runs
+         ├─  75.0%     9,000 chars  1 file    src/domain.operations/review
+         └─  25.0%     3,000 chars  1 file    src/contract/cli
+
+   by tree · route · stone · reviewer · provider: absent — no run carried them"
+`;
+
+exports[`genReviewGroveStdout given: [case9] a grove fold over runs that predate the grade when: [t0] every read run is ungraded then: the render matches snapshot 1`] = `
+"🦉 review cost — the grove: where this machine's review tokens went
+
+   root: /tmp/trees
+   trees: 1 walked · 1 carried review logs · 0 never reviewed
+   runs:  4 found — 4 metered · 0 refused · 0 unknown
+
+   the grove total
+      ├─ input            100  (100.0% of read, at full rate)
+      ├─ cache.set          0  (0.0% of read, at full rate, once per seed)
+      ├─ cache.get          0  (0.0% of read, 31.4x cheaper)
+      ├─ output             0  (not of read, at output rate)
+      └─ cost       $1.000000
+
+   levers — input DOWN · cache UP
+      ├─ input:     25 prompt tokens/run
+      ├─ cache:     0.0% of prompt tokens served from cache
+      └─ prefix:    absent  (no reviewer ran twice)
+
+   by input
+      ├─ corpus        3 read · 1 unread · 12 target files
+      ├─ source        3 compiled (exact) · 0 parsed from the rendered prompt (coarse)
+      ├─ census        0 attributed · 0 unattributed · 3 ungraded (no grade stated)
+      │
+      ├─ instructions          1,200 chars    4.3%  cacheable
+      ├─ outputFormat            600 chars    2.1%  cacheable
+      ├─ scaffold                200 chars    0.7%  cacheable
+      ├─ rules                 8,000 chars   28.6%  cacheable
+      ├─ refs                      0 chars    0.0%  cacheable
+      ├─ targetFiles          12,000 chars   42.9%  cacheable
+      ├─ targetDiffs           4,000 chars   14.3%
+      │  ├─ additions          3,000 chars   10.7%  cacheable
+      │  ├─ deletions              0 chars    0.0%  cacheable
+      │  └─ mutations          1,000 chars    3.6%  per round
+      ├─ conversation          2,000 chars    7.1%  per round
+      │
+      ├─ total                28,000 chars
+      ├─ cacheable            25,000 chars   89.3%  — the most any cache could ever serve
+      ├─ per round             3,000 chars   10.7%  — re-paid at full input rate, every round
+      │
+      └─ target mass by directory — 12,000 chars over 2 directories, from 3 of 3 read runs
+         ├─  75.0%     9,000 chars  1 file    src/domain.operations/review
+         └─  25.0%     3,000 chars  1 file    src/contract/cli
+
+   by tree · route · stone · reviewer · provider: absent — no run carried them"
+`;
+
+exports[`genReviewGroveStdout given: [case11] a grove where one tree\`s log root could not be read when: [t0] the report is rendered then: the render matches snapshot 1`] = `
+"🦉 review cost — the grove: where this machine's review tokens went
+
+   root: /tmp/trees
+   trees: 1 walked · 1 carried review logs · 0 never reviewed
+   💥 MalfunctionError: 1 tree unreadable — excluded from every figure below:
+      └─ repo.beav.feat-denied: EACCES: permission denied
+   runs:  4 found — 4 metered · 0 refused · 0 unknown
+
+   the grove total
+      ├─ input            100  (100.0% of read, at full rate)
+      ├─ cache.set          0  (0.0% of read, at full rate, once per seed)
+      ├─ cache.get          0  (0.0% of read, 31.4x cheaper)
+      ├─ output             0  (not of read, at output rate)
+      └─ cost       $1.000000
+
+   levers — input DOWN · cache UP
+      ├─ input:     25 prompt tokens/run
+      ├─ cache:     0.0% of prompt tokens served from cache
+      └─ prefix:    absent  (no reviewer ran twice)
+
+   by input
+      ├─ corpus        3 read · 1 unread · 12 target files
+      ├─ source        3 compiled (exact) · 0 parsed from the rendered prompt (coarse)
+      ├─ census        3 attributed · 0 unattributed · 0 ungraded (no grade stated)
+      │
+      ├─ instructions          1,200 chars    4.3%  cacheable
+      ├─ outputFormat            600 chars    2.1%  cacheable
+      ├─ scaffold                200 chars    0.7%  cacheable
+      ├─ rules                 8,000 chars   28.6%  cacheable
+      ├─ refs                      0 chars    0.0%  cacheable
+      ├─ targetFiles          12,000 chars   42.9%  cacheable
+      ├─ targetDiffs           4,000 chars   14.3%
+      │  ├─ additions          3,000 chars   10.7%  cacheable
+      │  ├─ deletions              0 chars    0.0%  cacheable
+      │  └─ mutations          1,000 chars    3.6%  per round
+      ├─ conversation          2,000 chars    7.1%  per round
+      │
+      ├─ total                28,000 chars
+      ├─ cacheable            25,000 chars   89.3%  — the most any cache could ever serve
+      ├─ per round             3,000 chars   10.7%  — re-paid at full input rate, every round
+      │
+      └─ target mass by directory — 12,000 chars over 2 directories, from 3 of 3 read runs
+         ├─  75.0%     9,000 chars  1 file    src/domain.operations/review
+         └─  25.0%     3,000 chars  1 file    src/contract/cli
+
+   by tree · route · stone · reviewer · provider: absent — no run carried them"
+`;
+
+exports[`genReviewGroveStdout given: [case11] a grove where one tree\`s log root could not be read when: [t1] every tree read cleanly then: no unreadable line renders — a no-op costs no line 1`] = `
+"🦉 review cost — the grove: where this machine's review tokens went
+
+   root: /tmp/trees
+   trees: 1 walked · 1 carried review logs · 0 never reviewed
+   runs:  4 found — 4 metered · 0 refused · 0 unknown
+
+   the grove total
+      ├─ input            100  (100.0% of read, at full rate)
+      ├─ cache.set          0  (0.0% of read, at full rate, once per seed)
+      ├─ cache.get          0  (0.0% of read, 31.4x cheaper)
+      ├─ output             0  (not of read, at output rate)
+      └─ cost       $1.000000
+
+   levers — input DOWN · cache UP
+      ├─ input:     25 prompt tokens/run
+      ├─ cache:     0.0% of prompt tokens served from cache
+      └─ prefix:    absent  (no reviewer ran twice)
+
+   by input
+      ├─ corpus        3 read · 1 unread · 12 target files
+      ├─ source        3 compiled (exact) · 0 parsed from the rendered prompt (coarse)
+      ├─ census        3 attributed · 0 unattributed · 0 ungraded (no grade stated)
+      │
+      ├─ instructions          1,200 chars    4.3%  cacheable
+      ├─ outputFormat            600 chars    2.1%  cacheable
+      ├─ scaffold                200 chars    0.7%  cacheable
+      ├─ rules                 8,000 chars   28.6%  cacheable
+      ├─ refs                      0 chars    0.0%  cacheable
+      ├─ targetFiles          12,000 chars   42.9%  cacheable
+      ├─ targetDiffs           4,000 chars   14.3%
+      │  ├─ additions          3,000 chars   10.7%  cacheable
+      │  ├─ deletions              0 chars    0.0%  cacheable
+      │  └─ mutations          1,000 chars    3.6%  per round
+      ├─ conversation          2,000 chars    7.1%  per round
+      │
+      ├─ total                28,000 chars
+      ├─ cacheable            25,000 chars   89.3%  — the most any cache could ever serve
+      ├─ per round             3,000 chars   10.7%  — re-paid at full input rate, every round
+      │
+      └─ target mass by directory — 12,000 chars over 2 directories, from 3 of 3 read runs
+         ├─  75.0%     9,000 chars  1 file    src/domain.operations/review
+         └─  25.0%     3,000 chars  1 file    src/contract/cli
+
+   by tree · route · stone · reviewer · provider: absent — no run carried them"
+`;
+
+exports[`genReviewGroveStdout given: [case12] a grove whose every run is unknown when: [t0] the report is rendered then: the render is stable 1`] = `
+"🦉 review cost — the grove: where this machine's review tokens went
+
+   root: /tmp/trees
+   trees: 1 walked · 1 carried review logs · 0 never reviewed
+   runs:  1 found — 0 metered · 0 refused · 1 unknown
+
+   the grove total
+      ├─ input      absent  (absent of read, at full rate)
+      ├─ cache.set  absent  (absent of read, at full rate, once per seed)
+      ├─ cache.get  absent  (absent of read, 31.4x cheaper)
+      ├─ output     absent  (not of read, at output rate)
+      └─ cost       absent  (+1 unknown, unrecorded)
+
+   levers — input DOWN · cache UP
+      ├─ input:     absent
+      ├─ cache:     absent of prompt tokens served from cache
+      └─ prefix:    absent  (no reviewer ran twice)
+
+   by input
+      ├─ corpus        1 read · 0 unread · 12 target files
+      ├─ source        1 compiled (exact) · 0 parsed from the rendered prompt (coarse)
+      ├─ census        1 attributed · 0 unattributed · 0 ungraded (no grade stated)
+      │
+      ├─ instructions          1,200 chars    4.3%  cacheable
+      ├─ outputFormat            600 chars    2.1%  cacheable
+      ├─ scaffold                200 chars    0.7%  cacheable
+      ├─ rules                 8,000 chars   28.6%  cacheable
+      ├─ refs                      0 chars    0.0%  cacheable
+      ├─ targetFiles          12,000 chars   42.9%  cacheable
+      ├─ targetDiffs           4,000 chars   14.3%
+      │  ├─ additions          3,000 chars   10.7%  cacheable
+      │  ├─ deletions              0 chars    0.0%  cacheable
+      │  └─ mutations          1,000 chars    3.6%  per round
+      ├─ conversation          2,000 chars    7.1%  per round
+      │
+      ├─ total                28,000 chars
+      ├─ cacheable            25,000 chars   89.3%  — the most any cache could ever serve
+      ├─ per round             3,000 chars   10.7%  — re-paid at full input rate, every round
+      │
+      └─ target mass by directory — 12,000 chars over 2 directories, from 1 of 1 read run
+         ├─  75.0%     9,000 chars  1 file    src/domain.operations/review
+         └─  25.0%     3,000 chars  1 file    src/contract/cli
+
+   by tree
+      └─      absent at full rate        absent     1 run   a  +1 unknown
+
+   by route · stone · reviewer · provider: absent — no run carried them"
+`;
+
+exports[`genReviewGroveStdout given: [case13] more rollup rows than the limit when: [t0] the report is rendered with limit 2 then: the render matches snapshot 1`] = `
+"🦉 review cost — the grove: where this machine's review tokens went
+
+   root: /tmp/trees
+   trees: 4 walked · 4 carried review logs · 0 never reviewed
+   runs:  4 found — 4 metered · 0 refused · 0 unknown
+
+   the grove total
+      ├─ input         10,000  (100.0% of read, at full rate)
+      ├─ cache.set          0  (0.0% of read, at full rate, once per seed)
+      ├─ cache.get          0  (0.0% of read, 31.4x cheaper)
+      ├─ output             0  (not of read, at output rate)
+      └─ cost       $4.000000
+
+   levers — input DOWN · cache UP
+      ├─ input:     2,500 prompt tokens/run
+      ├─ cache:     0.0% of prompt tokens served from cache
+      └─ prefix:    absent  (no reviewer ran twice)
+
+   by input
+      ├─ corpus        3 read · 1 unread · 12 target files
+      ├─ source        3 compiled (exact) · 0 parsed from the rendered prompt (coarse)
+      ├─ census        3 attributed · 0 unattributed · 0 ungraded (no grade stated)
+      │
+      ├─ instructions          1,200 chars    4.3%  cacheable
+      ├─ outputFormat            600 chars    2.1%  cacheable
+      ├─ scaffold                200 chars    0.7%  cacheable
+      ├─ rules                 8,000 chars   28.6%  cacheable
+      ├─ refs                      0 chars    0.0%  cacheable
+      ├─ targetFiles          12,000 chars   42.9%  cacheable
+      ├─ targetDiffs           4,000 chars   14.3%
+      │  ├─ additions          3,000 chars   10.7%  cacheable
+      │  ├─ deletions              0 chars    0.0%  cacheable
+      │  └─ mutations          1,000 chars    3.6%  per round
+      ├─ conversation          2,000 chars    7.1%  per round
+      │
+      ├─ total                28,000 chars
+      ├─ cacheable            25,000 chars   89.3%  — the most any cache could ever serve
+      ├─ per round             3,000 chars   10.7%  — re-paid at full input rate, every round
+      │
+      └─ target mass by directory — 12,000 chars over 2 directories, from 3 of 3 read runs
+         ├─  75.0%     9,000 chars  1 file    src/domain.operations/review
+         └─  25.0%     3,000 chars  1 file    src/contract/cli
+
+   by tree
+      ├─       4,000 at full rate     $1.000000     1 run   tree-a
+      ├─       3,000 at full rate     $1.000000     1 run   tree-b
+      └─ … and 2 more — raise --limit to list them
+
+   by route · stone · reviewer · provider: absent — no run carried them"
+`;
+
+exports[`genReviewGroveStdout given: [case13] more rollup rows than the limit when: [t1] the limit covers every row then: the render matches snapshot 1`] = `
+"🦉 review cost — the grove: where this machine's review tokens went
+
+   root: /tmp/trees
+   trees: 4 walked · 4 carried review logs · 0 never reviewed
+   runs:  4 found — 4 metered · 0 refused · 0 unknown
+
+   the grove total
+      ├─ input         10,000  (100.0% of read, at full rate)
+      ├─ cache.set          0  (0.0% of read, at full rate, once per seed)
+      ├─ cache.get          0  (0.0% of read, 31.4x cheaper)
+      ├─ output             0  (not of read, at output rate)
+      └─ cost       $4.000000
+
+   levers — input DOWN · cache UP
+      ├─ input:     2,500 prompt tokens/run
+      ├─ cache:     0.0% of prompt tokens served from cache
+      └─ prefix:    absent  (no reviewer ran twice)
+
+   by input
+      ├─ corpus        3 read · 1 unread · 12 target files
+      ├─ source        3 compiled (exact) · 0 parsed from the rendered prompt (coarse)
+      ├─ census        3 attributed · 0 unattributed · 0 ungraded (no grade stated)
+      │
+      ├─ instructions          1,200 chars    4.3%  cacheable
+      ├─ outputFormat            600 chars    2.1%  cacheable
+      ├─ scaffold                200 chars    0.7%  cacheable
+      ├─ rules                 8,000 chars   28.6%  cacheable
+      ├─ refs                      0 chars    0.0%  cacheable
+      ├─ targetFiles          12,000 chars   42.9%  cacheable
+      ├─ targetDiffs           4,000 chars   14.3%
+      │  ├─ additions          3,000 chars   10.7%  cacheable
+      │  ├─ deletions              0 chars    0.0%  cacheable
+      │  └─ mutations          1,000 chars    3.6%  per round
+      ├─ conversation          2,000 chars    7.1%  per round
+      │
+      ├─ total                28,000 chars
+      ├─ cacheable            25,000 chars   89.3%  — the most any cache could ever serve
+      ├─ per round             3,000 chars   10.7%  — re-paid at full input rate, every round
+      │
+      └─ target mass by directory — 12,000 chars over 2 directories, from 3 of 3 read runs
+         ├─  75.0%     9,000 chars  1 file    src/domain.operations/review
+         └─  25.0%     3,000 chars  1 file    src/contract/cli
+
+   by tree
+      ├─       4,000 at full rate     $1.000000     1 run   tree-a
+      ├─       3,000 at full rate     $1.000000     1 run   tree-b
+      ├─       2,000 at full rate     $1.000000     1 run   tree-c
+      └─       1,000 at full rate     $1.000000     1 run   tree-d
+
+   by route · stone · reviewer · provider: absent — no run carried them"
+`;
+
+exports[`genReviewGroveStdout given: [case14] rows on the stone and reviewer axes when: [t0] the report is rendered then: the render matches snapshot 1`] = `
+"🦉 review cost — the grove: where this machine's review tokens went
+
+   root: /tmp/trees
+   trees: 1 walked · 1 carried review logs · 0 never reviewed
+   runs:  1 found — 1 metered · 0 refused · 0 unknown
+
+   the grove total
+      ├─ input             20  (100.0% of read, at full rate)
+      ├─ cache.set          0  (0.0% of read, at full rate, once per seed)
+      ├─ cache.get          0  (0.0% of read, 31.4x cheaper)
+      ├─ output             0  (not of read, at output rate)
+      └─ cost       $1.000000
+
+   levers — input DOWN · cache UP
+      ├─ input:     20 prompt tokens/run
+      ├─ cache:     0.0% of prompt tokens served from cache
+      └─ prefix:    absent  (no reviewer ran twice)
+
+   by input
+      ├─ corpus        1 read · 0 unread · 12 target files
+      ├─ source        1 compiled (exact) · 0 parsed from the rendered prompt (coarse)
+      ├─ census        1 attributed · 0 unattributed · 0 ungraded (no grade stated)
+      │
+      ├─ instructions          1,200 chars    4.3%  cacheable
+      ├─ outputFormat            600 chars    2.1%  cacheable
+      ├─ scaffold                200 chars    0.7%  cacheable
+      ├─ rules                 8,000 chars   28.6%  cacheable
+      ├─ refs                      0 chars    0.0%  cacheable
+      ├─ targetFiles          12,000 chars   42.9%  cacheable
+      ├─ targetDiffs           4,000 chars   14.3%
+      │  ├─ additions          3,000 chars   10.7%  cacheable
+      │  ├─ deletions              0 chars    0.0%  cacheable
+      │  └─ mutations          1,000 chars    3.6%  per round
+      ├─ conversation          2,000 chars    7.1%  per round
+      │
+      ├─ total                28,000 chars
+      ├─ cacheable            25,000 chars   89.3%  — the most any cache could ever serve
+      ├─ per round             3,000 chars   10.7%  — re-paid at full input rate, every round
+      │
+      └─ target mass by directory — 12,000 chars over 2 directories, from 1 of 1 read run
+         ├─  75.0%     9,000 chars  1 file    src/domain.operations/review
+         └─  25.0%     3,000 chars  1 file    src/contract/cli
+
+   by stone
+      └─          20 at full rate     $1.000000     1 run   5.1.execution
+
+   by reviewer
+      └─          20 at full rate     $1.000000     1 run   repo-rules
+
+   by tree · route · provider: absent — no run carried them"
+`;
+
+exports[`genReviewGroveStdout given: [case15] a sub-cent metered lane beside a refused lane when: [t0] the reviewer axis is rendered then: the aligned rows match snapshot 1`] = `
+"      ├─          30 at full rate     $0.001420     1 run   lane-metered
+      ├─           0 at full rate            $0     1 run   lane-refused
+      └─          20 at full rate   $151.920000     1 run   lane-costly"
+`;
+
+exports[`genReviewGroveStdout given: [case15] a sub-cent metered lane beside a refused lane when: [t0] the reviewer axis is rendered then: the whole render matches snapshot 1`] = `
+"🦉 review cost — the grove: where this machine's review tokens went
+
+   root: /tmp/trees
+   trees: 1 walked · 1 carried review logs · 0 never reviewed
+   runs:  3 found — 2 metered · 1 refused · 0 unknown
+
+   the grove total
+      ├─ input               50  (100.0% of read, at full rate)
+      ├─ cache.set            0  (0.0% of read, at full rate, once per seed)
+      ├─ cache.get            0  (0.0% of read, 31.4x cheaper)
+      ├─ output               0  (not of read, at output rate)
+      └─ cost       $151.921420
+
+   levers — input DOWN · cache UP
+      ├─ input:     25 prompt tokens/run
+      ├─ cache:     0.0% of prompt tokens served from cache
+      └─ prefix:    absent  (no reviewer ran twice)
+
+   by input
+      ├─ corpus        3 read · 0 unread · 12 target files
+      ├─ source        3 compiled (exact) · 0 parsed from the rendered prompt (coarse)
+      ├─ census        3 attributed · 0 unattributed · 0 ungraded (no grade stated)
+      │
+      ├─ instructions          1,200 chars    4.3%  cacheable
+      ├─ outputFormat            600 chars    2.1%  cacheable
+      ├─ scaffold                200 chars    0.7%  cacheable
+      ├─ rules                 8,000 chars   28.6%  cacheable
+      ├─ refs                      0 chars    0.0%  cacheable
+      ├─ targetFiles          12,000 chars   42.9%  cacheable
+      ├─ targetDiffs           4,000 chars   14.3%
+      │  ├─ additions          3,000 chars   10.7%  cacheable
+      │  ├─ deletions              0 chars    0.0%  cacheable
+      │  └─ mutations          1,000 chars    3.6%  per round
+      ├─ conversation          2,000 chars    7.1%  per round
+      │
+      ├─ total                28,000 chars
+      ├─ cacheable            25,000 chars   89.3%  — the most any cache could ever serve
+      ├─ per round             3,000 chars   10.7%  — re-paid at full input rate, every round
+      │
+      └─ target mass by directory — 12,000 chars over 2 directories, from 3 of 3 read runs
+         ├─  75.0%     9,000 chars  1 file    src/domain.operations/review
+         └─  25.0%     3,000 chars  1 file    src/contract/cli
+
+   by reviewer
+      ├─          30 at full rate     $0.001420     1 run   lane-metered
+      ├─           0 at full rate            $0     1 run   lane-refused
+      └─          20 at full rate   $151.920000     1 run   lane-costly
+
+   by tree · route · stone · provider: absent — no run carried them"
+`;
+
+exports[`genReviewGroveStdout given: [case16] a grove whose runs span two days when: [t0] the report is rendered then: the render matches snapshot 1`] = `
+"🦉 review cost — the grove: where this machine's review tokens went
+
+   root: /tmp/trees
+   trees: 1 walked · 1 carried review logs · 0 never reviewed
+   runs:  4 found — 4 metered · 0 refused · 0 unknown
+
+   the grove total
+      ├─ input          1,100  (78.6% of read, at full rate)
+      ├─ cache.set          0  (0.0% of read, at full rate, once per seed)
+      ├─ cache.get        300  (21.4% of read, 31.4x cheaper)
+      ├─ output             0  (not of read, at output rate)
+      └─ cost       $1.000000
+
+   levers — input DOWN · cache UP (trend over 2 days)
+      ├─ input:     350 prompt tokens/run   ↓ 60.0% 🎉
+      ├─ cache:     21.4% of prompt tokens served from cache   ↑ 75.0pp 🎉
+      └─ prefix:    absent  (no reviewer ran twice)
+
+   by input
+      ├─ corpus        3 read · 1 unread · 12 target files
+      ├─ source        3 compiled (exact) · 0 parsed from the rendered prompt (coarse)
+      ├─ census        3 attributed · 0 unattributed · 0 ungraded (no grade stated)
+      │
+      ├─ instructions          1,200 chars    4.3%  cacheable
+      ├─ outputFormat            600 chars    2.1%  cacheable
+      ├─ scaffold                200 chars    0.7%  cacheable
+      ├─ rules                 8,000 chars   28.6%  cacheable
+      ├─ refs                      0 chars    0.0%  cacheable
+      ├─ targetFiles          12,000 chars   42.9%  cacheable
+      ├─ targetDiffs           4,000 chars   14.3%
+      │  ├─ additions          3,000 chars   10.7%  cacheable
+      │  ├─ deletions              0 chars    0.0%  cacheable
+      │  └─ mutations          1,000 chars    3.6%  per round
+      ├─ conversation          2,000 chars    7.1%  per round
+      │
+      ├─ total                28,000 chars
+      ├─ cacheable            25,000 chars   89.3%  — the most any cache could ever serve
+      ├─ per round             3,000 chars   10.7%  — re-paid at full input rate, every round
+      │
+      └─ target mass by directory — 12,000 chars over 2 directories, from 3 of 3 read runs
+         ├─  75.0%     9,000 chars  1 file    src/domain.operations/review
+         └─  25.0%     3,000 chars  1 file    src/contract/cli
+
+   by tree
+      └─       1,100 at full rate     $1.000000     4 runs  a
+
+   by route · stone · reviewer · provider: absent — no run carried them"
+`;
+
+exports[`genReviewGroveStdout given: [case17] the census names WHERE the target mass came from when: [t0] every read run placed its mass then: the render matches snapshot 1`] = `
+"🦉 review cost — the grove: where this machine's review tokens went
+
+   root: /tmp/trees
+   trees: 1 walked · 1 carried review logs · 0 never reviewed
+   runs:  4 found — 4 metered · 0 refused · 0 unknown
+
+   the grove total
+      ├─ input            100  (100.0% of read, at full rate)
+      ├─ cache.set          0  (0.0% of read, at full rate, once per seed)
+      ├─ cache.get          0  (0.0% of read, 31.4x cheaper)
+      ├─ output             0  (not of read, at output rate)
+      └─ cost       $1.000000
+
+   levers — input DOWN · cache UP
+      ├─ input:     25 prompt tokens/run
+      ├─ cache:     0.0% of prompt tokens served from cache
+      └─ prefix:    absent  (no reviewer ran twice)
+
+   by input
+      ├─ corpus        3 read · 1 unread · 12 target files
+      ├─ source        3 compiled (exact) · 0 parsed from the rendered prompt (coarse)
+      ├─ census        3 attributed · 0 unattributed · 0 ungraded (no grade stated)
+      │
+      ├─ instructions          1,200 chars    4.3%  cacheable
+      ├─ outputFormat            600 chars    2.1%  cacheable
+      ├─ scaffold                200 chars    0.7%  cacheable
+      ├─ rules                 8,000 chars   28.6%  cacheable
+      ├─ refs                      0 chars    0.0%  cacheable
+      ├─ targetFiles          12,000 chars   42.9%  cacheable
+      ├─ targetDiffs           4,000 chars   14.3%
+      │  ├─ additions          3,000 chars   10.7%  cacheable
+      │  ├─ deletions              0 chars    0.0%  cacheable
+      │  └─ mutations          1,000 chars    3.6%  per round
+      ├─ conversation          2,000 chars    7.1%  per round
+      │
+      ├─ total                28,000 chars
+      ├─ cacheable            25,000 chars   89.3%  — the most any cache could ever serve
+      ├─ per round             3,000 chars   10.7%  — re-paid at full input rate, every round
+      │
+      └─ target mass by directory — 12,000 chars over 2 directories, from 3 of 3 read runs
+         ├─  75.0%     9,000 chars  1 file    src/domain.operations/review
+         └─  25.0%     3,000 chars  1 file    src/contract/cli
+
+   by tree · route · stone · reviewer · provider: absent — no run carried them"
+`;
+
+exports[`genReviewGroveStdout given: [case17] the census names WHERE the target mass came from when: [t1] NO read run recorded a locus then: the render matches snapshot 1`] = `
+"🦉 review cost — the grove: where this machine's review tokens went
+
+   root: /tmp/trees
+   trees: 1 walked · 1 carried review logs · 0 never reviewed
+   runs:  4 found — 4 metered · 0 refused · 0 unknown
+
+   the grove total
+      ├─ input            100  (100.0% of read, at full rate)
+      ├─ cache.set          0  (0.0% of read, at full rate, once per seed)
+      ├─ cache.get          0  (0.0% of read, 31.4x cheaper)
+      ├─ output             0  (not of read, at output rate)
+      └─ cost       $1.000000
+
+   levers — input DOWN · cache UP
+      ├─ input:     25 prompt tokens/run
+      ├─ cache:     0.0% of prompt tokens served from cache
+      └─ prefix:    absent  (no reviewer ran twice)
+
+   by input
+      ├─ corpus        3 read · 1 unread · 12 target files
+      ├─ source        3 compiled (exact) · 0 parsed from the rendered prompt (coarse)
+      ├─ census        3 attributed · 0 unattributed · 0 ungraded (no grade stated)
+      │
+      ├─ instructions          1,200 chars    4.3%  cacheable
+      ├─ outputFormat            600 chars    2.1%  cacheable
+      ├─ scaffold                200 chars    0.7%  cacheable
+      ├─ rules                 8,000 chars   28.6%  cacheable
+      ├─ refs                      0 chars    0.0%  cacheable
+      ├─ targetFiles          12,000 chars   42.9%  cacheable
+      ├─ targetDiffs           4,000 chars   14.3%
+      │  ├─ additions          3,000 chars   10.7%  cacheable
+      │  ├─ deletions              0 chars    0.0%  cacheable
+      │  └─ mutations          1,000 chars    3.6%  per round
+      ├─ conversation          2,000 chars    7.1%  per round
+      │
+      ├─ total                28,000 chars
+      ├─ cacheable            25,000 chars   89.3%  — the most any cache could ever serve
+      ├─ per round             3,000 chars   10.7%  — re-paid at full input rate, every round
+      │
+      └─ target mass by directory — not recorded by any of 3 read runs
+         runs compiled before the locus row carry none. to place one such run,
+         read it alone: rhx review._.cost --of run --at <rundir>
+
+   by tree · route · stone · reviewer · provider: absent — no run carried them"
+`;
+
+exports[`genReviewGroveStdout given: [case17] the census names WHERE the target mass came from when: [t2] the placed runs carried no per-target mass then: the render matches snapshot 1`] = `
+"🦉 review cost — the grove: where this machine's review tokens went
+
+   root: /tmp/trees
+   trees: 1 walked · 1 carried review logs · 0 never reviewed
+   runs:  4 found — 4 metered · 0 refused · 0 unknown
+
+   the grove total
+      ├─ input            100  (100.0% of read, at full rate)
+      ├─ cache.set          0  (0.0% of read, at full rate, once per seed)
+      ├─ cache.get          0  (0.0% of read, 31.4x cheaper)
+      ├─ output             0  (not of read, at output rate)
+      └─ cost       $1.000000
+
+   levers — input DOWN · cache UP
+      ├─ input:     25 prompt tokens/run
+      ├─ cache:     0.0% of prompt tokens served from cache
+      └─ prefix:    absent  (no reviewer ran twice)
+
+   by input
+      ├─ corpus        3 read · 1 unread · 12 target files
+      ├─ source        3 compiled (exact) · 0 parsed from the rendered prompt (coarse)
+      ├─ census        3 attributed · 0 unattributed · 0 ungraded (no grade stated)
+      │
+      ├─ instructions          1,200 chars    4.3%  cacheable
+      ├─ outputFormat            600 chars    2.1%  cacheable
+      ├─ scaffold                200 chars    0.7%  cacheable
+      ├─ rules                 8,000 chars   28.6%  cacheable
+      ├─ refs                      0 chars    0.0%  cacheable
+      ├─ targetFiles          12,000 chars   42.9%  cacheable
+      ├─ targetDiffs           4,000 chars   14.3%
+      │  ├─ additions          3,000 chars   10.7%  cacheable
+      │  ├─ deletions              0 chars    0.0%  cacheable
+      │  └─ mutations          1,000 chars    3.6%  per round
+      ├─ conversation          2,000 chars    7.1%  per round
+      │
+      ├─ total                28,000 chars
+      ├─ cacheable            25,000 chars   89.3%  — the most any cache could ever serve
+      ├─ per round             3,000 chars   10.7%  — re-paid at full input rate, every round
+      │
+      └─ target mass by directory — no per-target mass to place, from 2 of 3 read runs (a --focus pull render sends paths, no payload)
+
+   by tree · route · stone · reviewer · provider: absent — no run carried them"
+`;
+
+exports[`genReviewGroveStdout given: [case18] a grove whose groups mix metered and unknown runs when: [t0] the report is rendered then: the render is stable 1`] = `
+"🦉 review cost — the grove: where this machine's review tokens went
+
+   root: /tmp/trees
+   trees: 2 walked · 2 carried review logs · 0 never reviewed
+   runs:  6 found — 3 metered · 0 refused · 3 unknown
+
+   the grove total
+      ├─ input             50  (100.0% of read, at full rate)
+      ├─ cache.set          0  (0.0% of read, at full rate, once per seed)
+      ├─ cache.get          0  (0.0% of read, 31.4x cheaper)
+      ├─ output             0  (not of read, at output rate)
+      └─ cost       $0.060000  (+3 unknown, unrecorded)
+
+   levers — input DOWN · cache UP
+      ├─ input:     17 prompt tokens/run
+      ├─ cache:     0.0% of prompt tokens served from cache
+      └─ prefix:    absent  (no reviewer ran twice)
+
+   by input
+      ├─ corpus        6 read · 0 unread · 12 target files
+      ├─ source        6 compiled (exact) · 0 parsed from the rendered prompt (coarse)
+      ├─ census        6 attributed · 0 unattributed · 0 ungraded (no grade stated)
+      │
+      ├─ instructions          1,200 chars    4.3%  cacheable
+      ├─ outputFormat            600 chars    2.1%  cacheable
+      ├─ scaffold                200 chars    0.7%  cacheable
+      ├─ rules                 8,000 chars   28.6%  cacheable
+      ├─ refs                      0 chars    0.0%  cacheable
+      ├─ targetFiles          12,000 chars   42.9%  cacheable
+      ├─ targetDiffs           4,000 chars   14.3%
+      │  ├─ additions          3,000 chars   10.7%  cacheable
+      │  ├─ deletions              0 chars    0.0%  cacheable
+      │  └─ mutations          1,000 chars    3.6%  per round
+      ├─ conversation          2,000 chars    7.1%  per round
+      │
+      ├─ total                28,000 chars
+      ├─ cacheable            25,000 chars   89.3%  — the most any cache could ever serve
+      ├─ per round             3,000 chars   10.7%  — re-paid at full input rate, every round
+      │
+      └─ target mass by directory — 12,000 chars over 2 directories, from 6 of 6 read runs
+         ├─  75.0%     9,000 chars  1 file    src/domain.operations/review
+         └─  25.0%     3,000 chars  1 file    src/contract/cli
+
+   by tree
+      ├─          30 at full rate     $0.040000     5 runs  tree-mixed  +3 unknown
+      └─          20 at full rate     $0.020000     1 run   tree-whole
+
+   by route · stone · reviewer · provider: absent — no run carried them"
+`;
+
+exports[`genReviewGroveStdout given: [case18] a grove whose groups mix metered and unknown runs when: [t1] 🔴 CLAMP. the limit cuts the row that holds the unknown runs then: the hidden row is gone, and the overflow line counts its unknown runs 1`] = `
+"🦉 review cost — the grove: where this machine's review tokens went
+
+   root: /tmp/trees
+   trees: 2 walked · 2 carried review logs · 0 never reviewed
+   runs:  6 found — 3 metered · 0 refused · 3 unknown
+
+   the grove total
+      ├─ input             30  (100.0% of read, at full rate)
+      ├─ cache.set          0  (0.0% of read, at full rate, once per seed)
+      ├─ cache.get          0  (0.0% of read, 31.4x cheaper)
+      ├─ output             0  (not of read, at output rate)
+      └─ cost       $0.060000  (+3 unknown, unrecorded)
+
+   levers — input DOWN · cache UP
+      ├─ input:     10 prompt tokens/run
+      ├─ cache:     0.0% of prompt tokens served from cache
+      └─ prefix:    absent  (no reviewer ran twice)
+
+   by input
+      ├─ corpus        6 read · 0 unread · 12 target files
+      ├─ source        6 compiled (exact) · 0 parsed from the rendered prompt (coarse)
+      ├─ census        6 attributed · 0 unattributed · 0 ungraded (no grade stated)
+      │
+      ├─ instructions          1,200 chars    4.3%  cacheable
+      ├─ outputFormat            600 chars    2.1%  cacheable
+      ├─ scaffold                200 chars    0.7%  cacheable
+      ├─ rules                 8,000 chars   28.6%  cacheable
+      ├─ refs                      0 chars    0.0%  cacheable
+      ├─ targetFiles          12,000 chars   42.9%  cacheable
+      ├─ targetDiffs           4,000 chars   14.3%
+      │  ├─ additions          3,000 chars   10.7%  cacheable
+      │  ├─ deletions              0 chars    0.0%  cacheable
+      │  └─ mutations          1,000 chars    3.6%  per round
+      ├─ conversation          2,000 chars    7.1%  per round
+      │
+      ├─ total                28,000 chars
+      ├─ cacheable            25,000 chars   89.3%  — the most any cache could ever serve
+      ├─ per round             3,000 chars   10.7%  — re-paid at full input rate, every round
+      │
+      └─ target mass by directory — 12,000 chars over 2 directories, from 6 of 6 read runs
+         ├─  75.0%     9,000 chars  1 file    src/domain.operations/review
+         └─  25.0%     3,000 chars  1 file    src/contract/cli
+
+   by tree
+      ├─          20 at full rate     $0.020000     1 run   tree-whole
+      └─ … and 1 more — raise --limit to list them  +3 unknown
+
+   by route · stone · reviewer · provider: absent — no run carried them"
+`;

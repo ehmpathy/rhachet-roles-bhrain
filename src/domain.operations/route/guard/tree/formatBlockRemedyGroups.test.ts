@@ -1,5 +1,6 @@
 import { given, then, when } from 'test-fns';
 
+import { asRouteStoneSetCommandHead } from '../review/peer/asRouteStoneSetCommandHead';
 import {
   computeBlockRemedyGroups,
   formatBlockRemedyGroups,
@@ -25,6 +26,7 @@ describe('computeBlockRemedyGroups', () => {
           passage: 'malfunction',
           reason:
             'reviewer or judge malfunctioned; peer reviewer budget exhausted: mech-rules',
+          lever: null,
         });
 
         then('every gate is offered — neither remedy is hidden', () => {
@@ -62,6 +64,14 @@ describe('computeBlockRemedyGroups', () => {
             'rhx route.stone.set --stone 1.vision --as absorbed --that mech-rules',
           );
         });
+
+        // the `route.stone.set` head has one home; both human remedies compose it, so a change
+        // to the head (a path form, a flag order) lands on these commands too (i014 r003 b1)
+        then('both human remedies compose the one route.stone.set head', () => {
+          const head = asRouteStoneSetCommandHead({ stone: '1.vision' });
+          expect(groups[1]!.cmd).toEqual(`${head} --as overruled`);
+          expect(groups[2]!.cmd).toEqual(`${head} --as approved`);
+        });
       });
 
       // the ORDER claim above is the one this case exists for, so it is pinned on both halt
@@ -72,6 +82,7 @@ describe('computeBlockRemedyGroups', () => {
           passage: 'malfunction',
           reason:
             'reviewer or judge malfunctioned; an urgent concession earned a round; peer reviewer budget exhausted: mech-rules',
+          lever: null,
         });
 
         then('the order is unchanged, and slot 1 is the top-up', () => {
@@ -99,6 +110,7 @@ describe('computeBlockRemedyGroups', () => {
         passage: 'blocked',
         reason:
           'an urgent concession earned a round; peer reviewer budget exhausted: mech-given-when-then',
+        lever: null,
       });
 
       // 🔴 the approve tail STANDS beside the top-up, and that is the severity split: an urgent
@@ -132,6 +144,7 @@ describe('computeBlockRemedyGroups', () => {
         passage: 'blocked',
         reason:
           'an urgent concession earned a round; peer reviewer budget exhausted: r-one, r-two, r-three',
+        lever: null,
       });
 
       // a top-up with no --peer extends every reviewer on the stone at once, which is what a
@@ -149,6 +162,7 @@ describe('computeBlockRemedyGroups', () => {
         passage: 'blocked',
         reason:
           'an urgent concession earned a round; peer reviewer budget exhausted',
+        lever: null,
       });
 
       // 🟡 this is the shape `formatRouteDriveBudgetExhausted` falls back to when its caller
@@ -176,6 +190,7 @@ describe('computeBlockRemedyGroups', () => {
         stone: '5.3.verification',
         passage: 'blocked',
         reason: 'peer reviewer budget exhausted: mech-given-when-then',
+        lever: null,
       });
 
       then('the top-up is NOT offered — no warrant stands', () => {
@@ -207,6 +222,7 @@ describe('computeBlockRemedyGroups', () => {
         stone: '5.3.verification',
         passage: 'blocked',
         reason: 'peer reviewer budget exhausted: r-one, r-two, r-three',
+        lever: null,
       });
 
       // ⚠️ `--as absorbed --that` takes ONE slug and there is no sweep form, so a multi-slug
@@ -224,6 +240,7 @@ describe('computeBlockRemedyGroups', () => {
         stone: '5.3.verification',
         passage: 'blocked',
         reason: 'peer reviewer budget exhausted',
+        lever: null,
       });
 
       then('the placeholder stands here too', () => {
@@ -238,6 +255,7 @@ describe('computeBlockRemedyGroups', () => {
         stone: '1.vision',
         passage: 'malfunction',
         reason: 'reviewer or judge malfunctioned',
+        lever: null,
       });
 
       then(
@@ -288,21 +306,152 @@ describe('computeBlockRemedyGroups', () => {
         stone: '1.vision',
         passage: 'blocked',
         reason: 'a reviewer hit a constraint',
+        lever: null,
       });
 
       then(
         'the noun follows the passage — constraint, never malfunction',
         () => {
-          expect(groups[1]!.label).toEqual(
+          expect(groups.at(-1)!.label).toEqual(
             'overrule the constraint — a human must grant',
           );
         },
       );
 
-      // the driver lever is verdict-blind: a constraint is terminal-for-unlock exactly as a
-      // malfunction is, so it earns the same lead rather than a second label to keep in step.
-      then('the constraint earns the same driver lead', () => {
-        expect(groups[0]!.label).toContain('yours to run');
+      // 🔴 the surface read no .given, so it cannot know the refusal was an overflow. a
+      //    partition cures only an overflow, so it is never offered on a guess — the driver
+      //    is pointed at the .given, which names its own fix, ahead of any human
+      then(
+        '🔴 the driver lever leads and names no partition; the human overrule is last',
+        () => {
+          expect(groups.map((group) => group.label)).toEqual([
+            'fix what its .given names, then re-arrive — yours to make',
+            'overrule the constraint — a human must grant',
+          ]);
+          expect(
+            groups.map((group) => group.cmd ?? '').join('\n'),
+          ).not.toContain('route.guard.partition');
+        },
+      );
+    });
+
+    // 🔴 an unknown flag, an absent rubric, a bad glob — each is refused, and none is cured
+    //    by a partition or a narrower bind. measured: every constraint halt once led with the
+    //    partition template, whatever the refusal was
+    when('[t1b] the refused .given was read, and was no overflow', () => {
+      const groups = computeBlockRemedyGroups({
+        stone: '1.vision',
+        passage: 'blocked',
+        reason: 'reviewer constraint',
+        lever: { overflowed: false, partitions: [] },
+      });
+
+      then('🔴 it offers neither a partition nor a narrower bind', () => {
+        expect(groups.map((group) => group.label)).toEqual([
+          'fix what its .given names, then re-arrive — yours to make',
+          'overrule the constraint — a human must grant',
+        ]);
+      });
+    });
+
+    when(
+      '[t2] the refused .given proposed partitions — the lever it chose',
+      () => {
+        const groups = computeBlockRemedyGroups({
+          stone: '1.vision',
+          passage: 'blocked',
+          reason: 'reviewer constraint',
+          lever: {
+            overflowed: true,
+            partitions: [
+              'beta=src/beta/**,.behavior/v2027_01_01.demo/**',
+              'alpha=src/alpha/**,.behavior/v2027_01_01.demo/**',
+            ],
+          },
+        });
+
+        then(
+          '🔴 the partition lever leads with the partitions the .given computed, never a template',
+          () => {
+            expect(groups[0]!.label).toEqual(
+              'declare the partitions its .given proposes — yours to make',
+            );
+            expect(groups[0]!.cmd).toEqual(
+              [
+                'rhx route.guard.partition --for review --peer @all',
+                "  --partition 'beta=src/beta/**,.behavior/v2027_01_01.demo/**'",
+                "  --partition 'alpha=src/alpha/**,.behavior/v2027_01_01.demo/**'",
+                '  --mode apply',
+              ].join(' \\\n'),
+            );
+            expect(groups[0]!.cmd).not.toContain('<slug>');
+          },
+        );
+
+        then(
+          '🔴 each partition renders on its own line, hung under the command',
+          () => {
+            const lines = formatBlockRemedyGroups({
+              groups,
+              baseIndent: '   ',
+            });
+            const linesOfPartition = lines.filter((line) =>
+              line.includes('--partition'),
+            );
+            expect(linesOfPartition).toHaveLength(2);
+            expect(linesOfPartition[0]).toEqual(
+              "   │       --partition 'beta=src/beta/**,.behavior/v2027_01_01.demo/**' \\",
+            );
+          },
+        );
+
+        then('the other lever follows as `or`, with no colon', () => {
+          expect(groups[1]!.label).toEqual(
+            'or narrow its bind — yours to make',
+          );
+        });
+
+        then('the groups match the snapshot', () => {
+          expect(
+            formatBlockRemedyGroups({ groups, baseIndent: '   ' }).join('\n'),
+          ).toMatchSnapshot();
+        });
+      },
+    );
+
+    when('[t3] the overflow proposed no partition', () => {
+      const groups = computeBlockRemedyGroups({
+        stone: '1.vision',
+        passage: 'blocked',
+        reason: 'reviewer constraint',
+        lever: { overflowed: true, partitions: [] },
+      });
+
+      // an overflow that proposed no partition chose the bind (its mass was edited), so the
+      // bind leads and the partition template follows as `or`
+      then(
+        '🔴 the bind leads, the partition template follows, the overrule is last',
+        () => {
+          expect(groups.map((group) => group.label)).toEqual([
+            'narrow its bind — yours to make',
+            'or declare partitions — yours to make',
+            'overrule the constraint — a human must grant',
+          ]);
+          expect(groups[0]!.cmd).toContain('$route/1.vision.guard');
+          expect(groups[1]!.cmd).toEqual(
+            [
+              'rhx route.guard.partition --for review --peer @all',
+              "  --partition '<slug>=<globs>'",
+              '  --mode apply',
+            ].join(' \\\n'),
+          );
+        },
+      );
+
+      then('no group says to clear the cause and re-arrive', () => {
+        expect(groups.map((group) => group.label).join('\n')).not.toContain(
+          'clear the cause',
+        );
       });
     });
   });
@@ -315,6 +464,7 @@ describe('computeBlockRemedyGroups', () => {
           stone: '1.vision',
           passage: 'blocked',
           reason: 'peer review found blockers',
+          lever: null,
         });
 
         then('no remedy is offered', () => {
@@ -328,6 +478,7 @@ describe('computeBlockRemedyGroups', () => {
         stone: '1.vision',
         passage: 'allowed',
         reason: '',
+        lever: null,
       });
 
       then('no remedy is offered', () => {
@@ -343,6 +494,7 @@ describe('computeBlockRemedyGroups', () => {
         passage: 'blocked',
         reason:
           'concessions await the round that confirms them; peer reviewer budget exhausted: mech-rules',
+        lever: null,
       });
 
       // 🔴 S12 — the driver declared the round warranted and fixed what it named, so the remedy
@@ -372,6 +524,7 @@ describe('computeBlockRemedyGroups', () => {
         passage: 'malfunction',
         reason:
           'reviewer or judge malfunctioned; concessions await the round that confirms them; peer reviewer budget exhausted: mech-rules',
+        lever: null,
       });
 
       // a broken reviewer needs a human whatever the driver conceded — the concession
@@ -396,6 +549,7 @@ describe('computeBlockRemedyGroups', () => {
           stone: '5.1.execution',
           passage: 'blocked',
           reason: 'peer reviewer budget exhausted: mech-rules, arch-bounds',
+          lever: null,
         });
 
         // ⇒ and the driver's slot holds CONVERGE, since an absent mark is an absent warrant.

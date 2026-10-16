@@ -99,4 +99,22 @@ y: $FOO
       });
     },
   );
+
+  given(
+    '[case8] an enroll peer-review run line carries the $targets runtime var',
+    () => {
+      // the enroll lanes read the engine's since-main list via $targets, a REVIEW-run
+      // var (substituted in runStoneGuardReviews), so the upgrade scan must NOT flag it
+      const content = `reviews:
+  peer:
+    - slug: r
+      run: $rhx enroll --roles mechanic --prompt "review these files: $targets" --output "$output"
+`;
+      when('[t0] scanned', () => {
+        then('does not flag $targets', () => {
+          expect(getUnknownGuardVars({ content })).toEqual([]);
+        });
+      });
+    },
+  );
 });

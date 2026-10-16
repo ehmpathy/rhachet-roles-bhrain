@@ -1,6 +1,6 @@
 import { BadRequestError } from 'helpful-errors';
 
-import { getStoneUndeclaredConcerns } from '../../src/domain.operations/route/guard/review/peer/getStoneUndeclaredConcerns';
+import { getAllStoneUndeclaredConcerns } from '../../src/domain.operations/route/guard/review/peer/getAllStoneUndeclaredConcerns';
 import { findOneStoneByPattern } from '../../src/domain.operations/route/stones/asStoneGlob';
 import { getAllStones } from '../../src/domain.operations/route/stones/getAllStones';
 import { invokeRouteSkill } from './invokeRouteSkill';
@@ -21,7 +21,7 @@ import { invokeRouteSkill } from './invokeRouteSkill';
  *         they are deliberately NOT shared: that one mutates in-process, while this one
  *         drives the real cli in a temp dir so the passage ledger records the stance the
  *         way a real driver's would. the READ of the undeclared set goes through the
- *         PRODUCTION operation `getStoneUndeclaredConcerns` — the same fold the entrance
+ *         PRODUCTION operation `getAllStoneUndeclaredConcerns` — the same fold the entrance
  *         gate uses — so the two grade one corpus and a concern this helper skips is one
  *         the gate would let pass. a pure read imported across the boundary is the extant
  *         pattern here (see the twin `answerEveryPeerGiven`); only the state MUTATION goes
@@ -57,7 +57,7 @@ export const concedeEveryPeerConcern = async (input: {
       stonesAvailable: stones.map((one) => one.name),
     });
 
-  const lanes = await getStoneUndeclaredConcerns({ stone: stoneMatched, route });
+  const lanes = await getAllStoneUndeclaredConcerns({ stone: stoneMatched, route });
 
   // one concede per concern, in report order, so the stance ledger reads as a driver wrote it.
   // --severity is a MANDATORY invariant on a concede (no ungraded concede), so the helper ALWAYS

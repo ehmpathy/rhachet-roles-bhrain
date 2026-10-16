@@ -25,7 +25,7 @@ const ASSETS_DIR = path.join(
  * scenario:
  *   - guard has two peer reviewers: architect (--conversation) + mechanic (clean)
  *   - judge allows 1 blocker, so judges pass and the contemplation gate engages
- *   - the driver contemplates architect, the stone passes, then the artifact
+ *   - the driver absorbs architect, the stone passes, then the artifact
  *     changes; architect re-runs WITH --conversation, sees the FIXED .taken, and
  *     drops the blocker — the loop converges without a fresh contemplation
  */
@@ -145,7 +145,7 @@ describe('driver.route.peer-conversation.journey.acceptance', () => {
 
       then('names the exact absent .taken path and why it is required', () => {
         expect(result.stdout).toContain(
-          'feedbackAbsorption absent for reviewer architect',
+          'feedback absorption absent for reviewer architect',
         );
         expect(result.stdout).toContain('_.taken.by_self.architect.md');
         expect(result.stdout).toContain('the .taken file IS that engagement');
@@ -156,7 +156,7 @@ describe('driver.route.peer-conversation.journey.acceptance', () => {
       });
     });
 
-    when('[t3] driver writes the FIXED .taken then contemplates architect', () => {
+    when('[t3] driver writes the FIXED .taken then absorbs architect', () => {
       const result = useThen('the guard records the contemplation', async () => {
         // pair architect's current given → its taken, claim FIXED
         const files = await fs.readdir(peerDir());

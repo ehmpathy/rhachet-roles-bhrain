@@ -102,11 +102,12 @@ BACKUP_FILE="${SETTINGS_FILE%.json}.${TIMESTAMP}.$$.bak.json"
 # compare the statusLine key before/after — capture jq's exit code explicitly so a
 # genuine jq fault is not hidden (no 2>&1) and does not masquerade as "changed" (r2)
 # jq -e exit codes: 0 = equal, 1 = not equal, >1 = error
-set +e
+# .note = the `||` holds the capture: an ERR trap fires on a nonzero exit even under
+#         `set +e`, so a bare capture would print a false "failed" on every change
+JQ_COMPARE_EXIT=0
 jq -e --slurpfile before "$SETTINGS_FILE" --slurpfile after "$SETTINGS_TMP" \
-  -n '$before[0].statusLine == $after[0].statusLine' >/dev/null
-JQ_COMPARE_EXIT=$?
-set -e
+  -n '$before[0].statusLine == $after[0].statusLine' >/dev/null \
+  || JQ_COMPARE_EXIT=$?
 
 # jq error (exit >1) → fail fast and loud, never swallow (no failhide)
 if [[ $JQ_COMPARE_EXIT -gt 1 ]]; then

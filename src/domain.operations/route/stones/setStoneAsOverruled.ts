@@ -2,8 +2,9 @@ import { BadRequestError, UnexpectedCodePathError } from 'helpful-errors';
 
 import { formatRouteStoneEmit } from '../formatRouteStoneEmit';
 import { getDecisionIsCallerHuman } from '../getDecisionIsCallerHuman';
-import { getStoneGuardLevelState } from '../guard/review/getStoneGuardLevelState';
-import { getStoneGuardOverruleTarget } from '../guard/review/getStoneGuardOverruleTarget';
+import { getOneStoneGuardLevelState } from '../guard/review/getOneStoneGuardLevelState';
+import { getOneStoneGuardOverruleTarget } from '../guard/review/getOneStoneGuardOverruleTarget';
+import { asRouteStoneSetCommandHead } from '../guard/review/peer/asRouteStoneSetCommandHead';
 import { setStoneGuardOverrule } from '../judges/setStoneGuardOverrule';
 import { findOneStoneByPattern } from './asStoneGlob';
 import { formatGuidanceForHumanOnlyCommand } from './formatGuidanceForHumanOnlyCommand';
@@ -32,7 +33,7 @@ export const setStoneAsOverruled = async (
     pattern: input.stone,
   });
   if (!stoneMatched) {
-    throw new BadRequestError('stone not found', { stone: input.stone });
+    throw new BadRequestError(`stone not found: ${input.stone}`);
   }
 
   // check if caller is human
@@ -57,14 +58,14 @@ export const setStoneAsOverruled = async (
   // compute the level state to scope the overrule to the active level
   // .why = overrule applies only to the current active level, so higher levels
   //        still run after the human waves the stuck level through
-  const levelState = await getStoneGuardLevelState({
+  const levelState = await getOneStoneGuardLevelState({
     stone: stoneMatched,
     route: input.route,
   });
 
   // derive the overrule target via the shared single source — is there a level (or an
   // owed feedbackAbsorption gate) left to forgive, and if so, which level?
-  const { hasTarget, levelToOverrule } = await getStoneGuardOverruleTarget({
+  const { hasTarget, levelToOverrule } = await getOneStoneGuardOverruleTarget({
     stone: stoneMatched,
     route: input.route,
     levelState,
@@ -90,7 +91,7 @@ export const setStoneAsOverruled = async (
             'each peer-review level is approved or already overruled — none is left to forgive',
             '',
             'the stone is ready — run:',
-            `   └─ rhx route.stone.set --stone ${stoneMatched.name} --as passed`,
+            `   └─ ${asRouteStoneSetCommandHead({ stone: stoneMatched.name })} --as passed`,
           ].join('\n'),
         }),
       },

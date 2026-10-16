@@ -1,11 +1,13 @@
 import { given, then, when } from 'test-fns';
 
-import { FIXED_FALLBACK_BRAIN } from '../../genReviewBrainSupply';
-import { TALLIED_FOOTER_PREFIX } from '../review/getReviewTacticFromContent';
+import { TALLIED_FOOTER_PREFIX } from '../review/TALLIED_FOOTER_PREFIX';
 import {
   formatGuardReviewerTree,
   type ReviewerTreeState,
 } from './formatGuardReviewerTree';
+
+// the pin a footer records — a fixture label, never a default
+const TALLIED_BY_PIN = 'openrouter/deepseek/flash/v4.1';
 
 describe('formatGuardReviewerTree', () => {
   given('[case1] approved reviewer with 0 blockers, 0 nitpicks', () => {
@@ -25,7 +27,7 @@ describe('formatGuardReviewerTree', () => {
         nitpicks: { disputed: 0, reported: 0 },
         path: '.route/5.1.execution.guard.review.i1.abc123.r1.md',
         cached: false,
-        tallier: 'deterministic',
+        talliedBy: null,
       },
     };
 
@@ -61,7 +63,7 @@ describe('formatGuardReviewerTree', () => {
         nitpicks: { disputed: 0, reported: 2 },
         path: '.route/5.1.execution.guard.review.i1.abc123.r1.md',
         cached: false,
-        tallier: 'deterministic',
+        talliedBy: null,
       },
     };
 
@@ -90,7 +92,7 @@ describe('formatGuardReviewerTree', () => {
         nitpicks: { disputed: 0, reported: 1 },
         path: '.route/5.1.execution.guard.review.i1.abc123.r1.md',
         cached: false,
-        tallier: 'deterministic',
+        talliedBy: null,
       },
     };
 
@@ -119,7 +121,7 @@ describe('formatGuardReviewerTree', () => {
         nitpicks: { disputed: 0, reported: 0 },
         path: '.route/5.1.execution.guard.review.i1.abc123.r1.md',
         cached: false,
-        tallier: 'deterministic',
+        talliedBy: null,
       },
     };
 
@@ -216,7 +218,7 @@ describe('formatGuardReviewerTree', () => {
         nitpicks: { disputed: 0, reported: 0 },
         path: '.route/5.1.execution.guard.review.i1.abc123.r1.md',
         cached: true,
-        tallier: 'deterministic',
+        talliedBy: null,
       },
     };
 
@@ -313,7 +315,7 @@ describe('formatGuardReviewerTree', () => {
         nitpicks: { disputed: 0, reported: 0 },
         path: '.route/5.1.execution.guard.review.i1.abc123.r2.md',
         cached: false,
-        tallier: 'deterministic',
+        talliedBy: null,
       },
     };
 
@@ -321,6 +323,42 @@ describe('formatGuardReviewerTree', () => {
       then('output shows rounds/budget correctly', () => {
         const lines = formatGuardReviewerTree({ reviewer, isLast: true });
         expect(lines[0]).toContain('1/3');
+        expect(lines.join('\n')).toMatchSnapshot();
+      });
+    });
+  });
+
+  given('[case12] base indent provided', () => {
+    const reviewer: ReviewerTreeState = {
+      index: 1,
+      slug: 'self/reflect',
+      level: 1,
+      rounds: 1,
+      budget: Infinity,
+      overruled: false,
+      skippedByDispute: false,
+      state: {
+        type: 'finished',
+        verdict: 'approved',
+        durationSec: 8.2,
+        blockers: { disputed: 0, reported: 0 },
+        nitpicks: { disputed: 0, reported: 0 },
+        path: '.route/5.1.execution.guard.review.i1.abc123.r1.md',
+        cached: false,
+        talliedBy: null,
+      },
+    };
+
+    when('[t0] formatted with base indent', () => {
+      then('all lines have base indent', () => {
+        const lines = formatGuardReviewerTree({
+          reviewer,
+          isLast: true,
+          baseIndent: '      ',
+        });
+        for (const line of lines) {
+          expect(line.startsWith('      ')).toBe(true);
+        }
         expect(lines.join('\n')).toMatchSnapshot();
       });
     });
@@ -345,7 +383,7 @@ describe('formatGuardReviewerTree', () => {
         nitpicks: { disputed: 0, reported: 1 },
         path: pathGiven,
         cached: false,
-        tallier: 'deterministic',
+        talliedBy: null,
       },
     };
 
@@ -384,7 +422,7 @@ describe('formatGuardReviewerTree', () => {
         nitpicks: { disputed: 0, reported: 0 },
         path: '.route/5.1.execution.guard.review.i1.abc123.r1.md',
         cached: false,
-        tallier: 'deterministic',
+        talliedBy: null,
       },
     };
 
@@ -435,164 +473,6 @@ describe('formatGuardReviewerTree', () => {
     },
   );
 
-  given('[case12] base indent provided', () => {
-    const reviewer: ReviewerTreeState = {
-      index: 1,
-      slug: 'self/reflect',
-      level: 1,
-      rounds: 1,
-      budget: Infinity,
-      overruled: false,
-      skippedByDispute: false,
-      state: {
-        type: 'finished',
-        verdict: 'approved',
-        durationSec: 8.2,
-        blockers: { disputed: 0, reported: 0 },
-        nitpicks: { disputed: 0, reported: 0 },
-        path: '.route/5.1.execution.guard.review.i1.abc123.r1.md',
-        cached: false,
-        tallier: 'deterministic',
-      },
-    };
-
-    when('[t0] formatted with base indent', () => {
-      then('all lines have base indent', () => {
-        const lines = formatGuardReviewerTree({
-          reviewer,
-          isLast: true,
-          baseIndent: '      ',
-        });
-        for (const line of lines) {
-          expect(line.startsWith('      ')).toBe(true);
-        }
-        expect(lines.join('\n')).toMatchSnapshot();
-      });
-    });
-  });
-
-  given('[case13] probabilistic reviewer shows the tallied-by branch', () => {
-    const reviewer: ReviewerTreeState = {
-      index: 2,
-      slug: 'peer/architect',
-      level: 1,
-      rounds: 1,
-      budget: Infinity,
-      overruled: false,
-      skippedByDispute: false,
-      state: {
-        type: 'finished',
-        verdict: 'approved',
-        durationSec: 9.1,
-        blockers: { disputed: 0, reported: 0 },
-        nitpicks: { disputed: 0, reported: 1 },
-        path: '.route/5.1.execution.guard.review.i1.abc123.r1.md',
-        cached: false,
-        tallier: 'probabilistic',
-      },
-    };
-
-    when('[t0] formatted', () => {
-      then(
-        'output shows a tallied-by branch that names the fallback brain',
-        () => {
-          const lines = formatGuardReviewerTree({ reviewer, isLast: true });
-          const joined = lines.join('\n');
-          expect(joined).toContain(
-            `${TALLIED_FOOTER_PREFIX}${FIXED_FALLBACK_BRAIN}`,
-          );
-          expect(joined).toMatchSnapshot();
-        },
-      );
-
-      then(
-        'the tallied-by branch sits between nitpicks and the path line',
-        () => {
-          const lines = formatGuardReviewerTree({ reviewer, isLast: true });
-          const nitIdx = lines.findIndex((l) => l.includes('nitpick'));
-          const tallyIdx = lines.findIndex((l) =>
-            l.includes(TALLIED_FOOTER_PREFIX),
-          );
-          const pathIdx = lines.findIndex((l) => l.includes('given:'));
-          expect(nitIdx).toBeGreaterThanOrEqual(0);
-          expect(tallyIdx).toBeGreaterThan(nitIdx);
-          expect(pathIdx).toBeGreaterThan(tallyIdx);
-        },
-      );
-    });
-  });
-
-  given('[case14] deterministic reviewer shows NO tallied-by branch', () => {
-    const reviewer: ReviewerTreeState = {
-      index: 1,
-      slug: 'peer/mechanic',
-      level: 1,
-      rounds: 1,
-      budget: Infinity,
-      overruled: false,
-      skippedByDispute: false,
-      state: {
-        type: 'finished',
-        verdict: 'approved',
-        durationSec: 12.4,
-        blockers: { disputed: 0, reported: 0 },
-        nitpicks: { disputed: 0, reported: 2 },
-        path: '.route/5.1.execution.guard.review.i1.abc123.r1.md',
-        cached: false,
-        tallier: 'deterministic',
-      },
-    };
-
-    when('[t0] formatted', () => {
-      then('output shows no tallied-by branch', () => {
-        const lines = formatGuardReviewerTree({ reviewer, isLast: true });
-        expect(lines.join('\n')).not.toContain(TALLIED_FOOTER_PREFIX);
-      });
-    });
-  });
-
-  given(
-    '[case15] tallied-by prefix is the shared drift-guarded constant',
-    () => {
-      when('[t0] the probabilistic branch is rendered', () => {
-        then(
-          'it uses the exact TALLIED_FOOTER_PREFIX constant, not a literal',
-          () => {
-            const reviewer: ReviewerTreeState = {
-              index: 1,
-              slug: 'peer/architect',
-              level: 1,
-              rounds: 1,
-              budget: Infinity,
-              overruled: false,
-              skippedByDispute: false,
-              state: {
-                type: 'finished',
-                verdict: 'approved',
-                durationSec: 9.1,
-                blockers: { disputed: 0, reported: 0 },
-                nitpicks: { disputed: 0, reported: 0 },
-                path: '.route/x.md',
-                cached: false,
-                tallier: 'probabilistic',
-              },
-            };
-            const lines = formatGuardReviewerTree({ reviewer, isLast: true });
-            // the writer (this render) and both cache-recovery parsers all reference
-            // TALLIED_FOOTER_PREFIX; a copy tweak moves the parse contract in lockstep.
-            const tallyLine = lines.find((l) =>
-              l.includes(TALLIED_FOOTER_PREFIX),
-            );
-            expect(tallyLine).toBeDefined();
-            expect(tallyLine).toContain(
-              `${TALLIED_FOOTER_PREFIX}${FIXED_FALLBACK_BRAIN}`,
-            );
-          },
-        );
-      });
-    },
-  );
-
   given(
     '[case16] an OVERRULED reviewer whose raw verdict is still rejected',
     () => {
@@ -612,7 +492,7 @@ describe('formatGuardReviewerTree', () => {
           nitpicks: { disputed: 0, reported: 0 },
           path: '.route/1.plan.guard.review.i1.abc123.r1.md',
           cached: false,
-          tallier: 'deterministic',
+          talliedBy: null,
         },
       };
 
@@ -663,7 +543,7 @@ describe('formatGuardReviewerTree', () => {
       nitpicks: { disputed: 0, reported: 0 },
       path: '.reviews/peer/given.5.1.execution.r2.architect.md',
       cached: true,
-      tallier: 'deterministic',
+      talliedBy: null,
     };
     const reviewer: ReviewerTreeState = {
       index: 1,
@@ -804,4 +684,216 @@ describe('formatGuardReviewerTree', () => {
       });
     });
   });
+
+  given('[case18] probabilistic reviewer shows the tallied-by branch', () => {
+    const reviewer: ReviewerTreeState = {
+      index: 2,
+      slug: 'peer/architect',
+      level: 1,
+      rounds: 1,
+      budget: Infinity,
+      overruled: false,
+      skippedByDispute: false,
+      state: {
+        type: 'finished',
+        verdict: 'approved',
+        durationSec: 9.1,
+        blockers: { disputed: 0, reported: 0 },
+        nitpicks: { disputed: 0, reported: 1 },
+        path: '.route/5.1.execution.guard.review.i1.abc123.r1.md',
+        cached: false,
+        talliedBy: TALLIED_BY_PIN,
+      },
+    };
+
+    when('[t0] formatted', () => {
+      then(
+        'output shows a tallied-by branch that names the fallback brain',
+        () => {
+          const lines = formatGuardReviewerTree({ reviewer, isLast: true });
+          const joined = lines.join('\n');
+          expect(joined).toContain(`${TALLIED_FOOTER_PREFIX}${TALLIED_BY_PIN}`);
+          expect(joined).toMatchSnapshot();
+        },
+      );
+
+      then(
+        'the tallied-by branch sits between nitpicks and the path line',
+        () => {
+          const lines = formatGuardReviewerTree({ reviewer, isLast: true });
+          const nitIdx = lines.findIndex((l) => l.includes('nitpick'));
+          const tallyIdx = lines.findIndex((l) =>
+            l.includes(TALLIED_FOOTER_PREFIX),
+          );
+          const pathIdx = lines.findIndex((l) => l.includes('given:'));
+          expect(nitIdx).toBeGreaterThanOrEqual(0);
+          expect(tallyIdx).toBeGreaterThan(nitIdx);
+          expect(pathIdx).toBeGreaterThan(tallyIdx);
+        },
+      );
+    });
+  });
+
+  given('[case19] deterministic reviewer shows NO tallied-by branch', () => {
+    const reviewer: ReviewerTreeState = {
+      index: 1,
+      slug: 'peer/mechanic',
+      level: 1,
+      rounds: 1,
+      budget: Infinity,
+      overruled: false,
+      skippedByDispute: false,
+      state: {
+        type: 'finished',
+        verdict: 'approved',
+        durationSec: 12.4,
+        blockers: { disputed: 0, reported: 0 },
+        nitpicks: { disputed: 0, reported: 2 },
+        path: '.route/5.1.execution.guard.review.i1.abc123.r1.md',
+        cached: false,
+        talliedBy: null,
+      },
+    };
+
+    when('[t0] formatted', () => {
+      then('output shows no tallied-by branch', () => {
+        const lines = formatGuardReviewerTree({ reviewer, isLast: true });
+        expect(lines.join('\n')).not.toContain(TALLIED_FOOTER_PREFIX);
+      });
+    });
+  });
+
+  given(
+    '[case20] tallied-by prefix is the shared drift-guarded constant',
+    () => {
+      when('[t0] the probabilistic branch is rendered', () => {
+        then(
+          'it uses the exact TALLIED_FOOTER_PREFIX constant, not a literal',
+          () => {
+            const reviewer: ReviewerTreeState = {
+              index: 1,
+              slug: 'peer/architect',
+              level: 1,
+              rounds: 1,
+              budget: Infinity,
+              overruled: false,
+              skippedByDispute: false,
+              state: {
+                type: 'finished',
+                verdict: 'approved',
+                durationSec: 9.1,
+                blockers: { disputed: 0, reported: 0 },
+                nitpicks: { disputed: 0, reported: 0 },
+                path: '.route/x.md',
+                cached: false,
+                talliedBy: TALLIED_BY_PIN,
+              },
+            };
+            const lines = formatGuardReviewerTree({ reviewer, isLast: true });
+            // the writer (this render) and both cache-recovery parsers all reference
+            // TALLIED_FOOTER_PREFIX; a copy tweak moves the parse contract in lockstep.
+            const tallyLine = lines.find((l) =>
+              l.includes(TALLIED_FOOTER_PREFIX),
+            );
+            expect(tallyLine).toBeDefined();
+            expect(tallyLine).toContain(
+              `${TALLIED_FOOTER_PREFIX}${TALLIED_BY_PIN}`,
+            );
+          },
+        );
+      });
+    },
+  );
+
+  given(
+    '[case-compact] the compact density, which a summary surface reads',
+    () => {
+      const identity = {
+        index: 3,
+        slug: 'arch',
+        level: 1,
+        rounds: 2,
+        budget: 5,
+        overruled: false,
+        skippedByDispute: false,
+      };
+
+      when(
+        '[t0] a finished, rejected lane with a dispute on its blockers',
+        () => {
+          const lines = formatGuardReviewerTree({
+            reviewer: {
+              ...identity,
+              skippedByDispute: true,
+              state: {
+                type: 'finished',
+                verdict: 'rejected',
+                durationSec: 4.2,
+                blockers: { disputed: 1, reported: 2 },
+                nitpicks: { disputed: 0, reported: 1 },
+                path: '.reviews/peer/x.given.by_peer.arch.md',
+                cached: true,
+                talliedBy: null,
+              },
+            },
+            isLast: true,
+            density: 'compact',
+          });
+
+          then(
+            'the state folds onto the header, read by the full-block words',
+            () => {
+              expect(lines).toEqual([
+                '└─ r3: arch (l1, 2/5) — rejected, cached, 2 blockers, 1 disputed → 1 tallied 🔴, 1 nitpick 🟠, disputed 🌙',
+                '    └─ given: .reviews/peer/x.given.by_peer.arch.md',
+              ]);
+            },
+          );
+
+          then('the compact render matches snapshot', () => {
+            expect(lines.join('\n')).toMatchSnapshot();
+          });
+        },
+      );
+
+      when('[t1] a malfunctioned lane, not last', () => {
+        const lines = formatGuardReviewerTree({
+          reviewer: {
+            ...identity,
+            overruled: true,
+            state: { type: 'malfunction', path: '.reviews/peer/m.md' },
+          },
+          isLast: false,
+          density: 'compact',
+        });
+
+        then('the state word and the overrule marker ride the header', () => {
+          expect(lines).toEqual([
+            '├─ r3: arch (l1, 2/5) — malfunction 💥, overruled ✓',
+            '│   └─ given: .reviews/peer/m.md',
+          ]);
+        });
+
+        then('the compact render matches snapshot', () => {
+          expect(lines.join('\n')).toMatchSnapshot();
+        });
+      });
+
+      when('[t2] a lane that awaits a lower level', () => {
+        const lines = formatGuardReviewerTree({
+          reviewer: { ...identity, state: { type: 'awaits', level: 1 } },
+          isLast: true,
+          density: 'compact',
+        });
+
+        then('it is one line with no given beneath it', () => {
+          expect(lines).toEqual(['└─ r3: arch (l1, 2/5) — awaits l1 terminal']);
+        });
+
+        then('the compact render matches snapshot', () => {
+          expect(lines.join('\n')).toMatchSnapshot();
+        });
+      });
+    },
+  );
 });

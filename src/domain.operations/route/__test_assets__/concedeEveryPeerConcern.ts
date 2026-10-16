@@ -2,7 +2,7 @@ import { BadRequestError } from 'helpful-errors';
 
 import type { RouteStone } from '@src/domain.objects/Driver/RouteStone';
 
-import { getStoneUndeclaredConcerns } from '../guard/review/peer/getStoneUndeclaredConcerns';
+import { getAllStoneUndeclaredConcerns } from '../guard/review/peer/getAllStoneUndeclaredConcerns';
 import { findOneStoneByPattern } from '../stones/asStoneGlob';
 import { getAllStones } from '../stones/getAllStones';
 import { setStoneAsConcernAbsorbed } from '../stones/setStoneAsConcernAbsorbed';
@@ -21,7 +21,7 @@ import { setStoneAsConcernAbsorbed } from '../stones/setStoneAsConcernAbsorbed';
  *         given and renumbers its concerns, so this must be called each round, right
  *         after answerEveryPeerGiven — which is the same cadence that helper keeps
  *
- * .note = it reads the undeclared set through getStoneUndeclaredConcerns, the same
+ * .note = it reads the undeclared set through getAllStoneUndeclaredConcerns, the same
  *         operation the entrance gate folds through, so the two grade one corpus and
  *         a concern this helper skips is one the gate would let pass
  *
@@ -56,7 +56,7 @@ export const concedeEveryPeerConcern = async (input: {
       },
     );
 
-  const lanes = await getStoneUndeclaredConcerns({
+  const lanes = await getAllStoneUndeclaredConcerns({
     stone: stoneMatched,
     route: input.route,
   });

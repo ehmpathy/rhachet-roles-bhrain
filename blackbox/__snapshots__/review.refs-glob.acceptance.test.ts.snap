@@ -1,0 +1,79 @@
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
+
+exports[`review.refs-glob.acceptance given: [case1] glob pattern matches multiple ref files when: [t0] review skill invoked with --refs set to glob pattern, attempt 1 then: the metrics.expected block matches its snapshot (computed before the brain) 1`] = `
+"🔭 metrics.expected
+   ├─ files
+   │  ├─ rules: 1
+   │  ├─ refs: 2
+   │  └─ targets: 1
+   ├─ tokens
+   │  ├─ estimate: 1,918
+   │  └─ context: 0.2%
+   └─ cost
+      └─ estimate: $0.000959400"
+`;
+
+exports[`review.refs-glob.acceptance given: [case1] glob pattern matches multiple ref files when: [t0] review skill invoked with --refs set to glob pattern, attempt 2 then: the metrics.expected block matches its snapshot (computed before the brain) 1`] = `
+"🔭 metrics.expected
+   ├─ files
+   │  ├─ rules: 1
+   │  ├─ refs: 2
+   │  └─ targets: 1
+   ├─ tokens
+   │  ├─ estimate: 1,918
+   │  └─ context: 0.2%
+   └─ cost
+      └─ estimate: $0.000959400"
+`;
+
+exports[`review.refs-glob.acceptance given: [case1] glob pattern matches multiple ref files when: [t0] review skill invoked with --refs set to glob pattern, attempt 3 then: the metrics.expected block matches its snapshot (computed before the brain) 1`] = `
+"🔭 metrics.expected
+   ├─ files
+   │  ├─ rules: 1
+   │  ├─ refs: 2
+   │  └─ targets: 1
+   ├─ tokens
+   │  ├─ estimate: 1,918
+   │  └─ context: 0.2%
+   └─ cost
+      └─ estimate: $0.000959400"
+`;
+
+exports[`review.refs-glob.acceptance given: [case2] multiple refs via repeated --refs flags when: [t0] review skill invoked with --refs specified multiple times, attempt 1 then: the metrics.expected block matches its snapshot (computed before the brain) 1`] = `
+"🔭 metrics.expected
+   ├─ files
+   │  ├─ rules: 1
+   │  ├─ refs: 2
+   │  └─ targets: 1
+   ├─ tokens
+   │  ├─ estimate: 1,918
+   │  └─ context: 0.2%
+   └─ cost
+      └─ estimate: $0.000959400"
+`;
+
+exports[`review.refs-glob.acceptance given: [case2] multiple refs via repeated --refs flags when: [t0] review skill invoked with --refs specified multiple times, attempt 2 then: the metrics.expected block matches its snapshot (computed before the brain) 1`] = `
+"🔭 metrics.expected
+   ├─ files
+   │  ├─ rules: 1
+   │  ├─ refs: 2
+   │  └─ targets: 1
+   ├─ tokens
+   │  ├─ estimate: 1,918
+   │  └─ context: 0.2%
+   └─ cost
+      └─ estimate: $0.000959400"
+`;
+
+exports[`review.refs-glob.acceptance given: [case2] multiple refs via repeated --refs flags when: [t0] review skill invoked with --refs specified multiple times, attempt 3 then: the metrics.expected block matches its snapshot (computed before the brain) 1`] = `
+"🔭 metrics.expected
+   ├─ files
+   │  ├─ rules: 1
+   │  ├─ refs: 2
+   │  └─ targets: 1
+   ├─ tokens
+   │  ├─ estimate: 1,918
+   │  └─ context: 0.2%
+   └─ cost
+      └─ estimate: $0.000959400"
+`;

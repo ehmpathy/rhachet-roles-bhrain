@@ -1,0 +1,106 @@
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
+
+exports[`reviewWarmerSilence.acceptance given: [case1] a hand review with --warmer on when: [t0] the driver reads the warmer aside, attempt 1 then: and the deterministic stdout renders, diffable in the PR 1`] = `
+"🔭 metrics.expected
+   ├─ files
+   │  ├─ rules: <n>
+   │  └─ targets: <n>
+   ├─ tokens
+   │  ├─ estimate: <n>
+   │  └─ context: <n>%
+   └─ cost
+      └─ estimate: $<n>"
+`;
+
+exports[`reviewWarmerSilence.acceptance given: [case1] a hand review with --warmer on when: [t0] the driver reads the warmer aside, attempt 1 then: and the whole stderr renders, diffable in the PR 1`] = `
+"
+🦉 heads up, the run goes on
+
+🟡 warn: warmer: none — this run carries no lane identity, so there is no prefix to key a warmer on; the review ran unwarmed and its verdict stands — drop --warmer, since a hand run has no lane to warm
+
+"
+`;
+
+exports[`reviewWarmerSilence.acceptance given: [case1] a hand review with --warmer on when: [t0] the driver reads the warmer aside, attempt 2 then: and the deterministic stdout renders, diffable in the PR 1`] = `
+"🔭 metrics.expected
+   ├─ files
+   │  ├─ rules: <n>
+   │  └─ targets: <n>
+   ├─ tokens
+   │  ├─ estimate: <n>
+   │  └─ context: <n>%
+   └─ cost
+      └─ estimate: $<n>"
+`;
+
+exports[`reviewWarmerSilence.acceptance given: [case1] a hand review with --warmer on when: [t0] the driver reads the warmer aside, attempt 2 then: and the whole stderr renders, diffable in the PR 1`] = `
+"
+🦉 heads up, the run goes on
+
+🟡 warn: warmer: none — this run carries no lane identity, so there is no prefix to key a warmer on; the review ran unwarmed and its verdict stands — drop --warmer, since a hand run has no lane to warm
+
+"
+`;
+
+exports[`reviewWarmerSilence.acceptance given: [case1] a hand review with --warmer on when: [t0] the driver reads the warmer aside, attempt 3 then: and the deterministic stdout renders, diffable in the PR 1`] = `
+"🔭 metrics.expected
+   ├─ files
+   │  ├─ rules: <n>
+   │  └─ targets: <n>
+   ├─ tokens
+   │  ├─ estimate: <n>
+   │  └─ context: <n>%
+   └─ cost
+      └─ estimate: $<n>"
+`;
+
+exports[`reviewWarmerSilence.acceptance given: [case1] a hand review with --warmer on when: [t0] the driver reads the warmer aside, attempt 3 then: and the whole stderr renders, diffable in the PR 1`] = `
+"
+🦉 heads up, the run goes on
+
+🟡 warn: warmer: none — this run carries no lane identity, so there is no prefix to key a warmer on; the review ran unwarmed and its verdict stands — drop --warmer, since a hand run has no lane to warm
+
+"
+`;
+
+exports[`reviewWarmerSilence.acceptance given: [case2] a hand review with the warmer left at its default when: [t0] the review runs, attempt 1 then: and the deterministic stdout renders, diffable in the PR 1`] = `
+"🔭 metrics.expected
+   ├─ files
+   │  ├─ rules: <n>
+   │  └─ targets: <n>
+   ├─ tokens
+   │  ├─ estimate: <n>
+   │  └─ context: <n>%
+   └─ cost
+      └─ estimate: $<n>"
+`;
+
+exports[`reviewWarmerSilence.acceptance given: [case2] a hand review with the warmer left at its default when: [t0] the review runs, attempt 1 then: and the whole stderr renders, diffable in the PR 1`] = `""`;
+
+exports[`reviewWarmerSilence.acceptance given: [case2] a hand review with the warmer left at its default when: [t0] the review runs, attempt 2 then: and the deterministic stdout renders, diffable in the PR 1`] = `
+"🔭 metrics.expected
+   ├─ files
+   │  ├─ rules: <n>
+   │  └─ targets: <n>
+   ├─ tokens
+   │  ├─ estimate: <n>
+   │  └─ context: <n>%
+   └─ cost
+      └─ estimate: $<n>"
+`;
+
+exports[`reviewWarmerSilence.acceptance given: [case2] a hand review with the warmer left at its default when: [t0] the review runs, attempt 2 then: and the whole stderr renders, diffable in the PR 1`] = `""`;
+
+exports[`reviewWarmerSilence.acceptance given: [case2] a hand review with the warmer left at its default when: [t0] the review runs, attempt 3 then: and the deterministic stdout renders, diffable in the PR 1`] = `
+"🔭 metrics.expected
+   ├─ files
+   │  ├─ rules: <n>
+   │  └─ targets: <n>
+   ├─ tokens
+   │  ├─ estimate: <n>
+   │  └─ context: <n>%
+   └─ cost
+      └─ estimate: $<n>"
+`;
+
+exports[`reviewWarmerSilence.acceptance given: [case2] a hand review with the warmer left at its default when: [t0] the review runs, attempt 3 then: and the whole stderr renders, diffable in the PR 1`] = `""`;

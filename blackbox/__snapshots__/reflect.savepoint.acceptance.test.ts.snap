@@ -9,8 +9,8 @@ exports[`reflect.savepoint given: [case1] repo with staged and unstaged changes 
    ├─ branch = [BRANCH]
    │
    ├─ commit = [HASH]
-   ├─ staged.patch = [SIZE]ytes
-   ├─ unstaged.patch = [SIZE]ytes
+   ├─ staged.patch = [SIZE]
+   ├─ unstaged.patch = [SIZE]
    ├─ patches.hash = [HASH]
    │
    └─ artifacts
@@ -31,8 +31,8 @@ exports[`reflect.savepoint given: [case1] repo with staged and unstaged changes 
    ├─ branch = [BRANCH]
    │
    ├─ commit = [HASH]
-   ├─ staged.patch = [SIZE]ytes
-   ├─ unstaged.patch = [SIZE]ytes
+   ├─ staged.patch = [SIZE]
+   ├─ unstaged.patch = [SIZE]
    ├─ patches.hash = [HASH]
    │
    └─ artifacts
@@ -53,12 +53,20 @@ exports[`reflect.savepoint given: [case1] repo with staged and unstaged changes 
    ├─ branch = [BRANCH]
    │
    ├─ savepoints = 1
-   ├─ size = [SIZE]ytes
+   ├─ size = [SIZE]
    │
    └─ list
-      └─ [TIMESTAMP] (commit=[HASH], patches=04f1ec0, [SIZE]ytes)
+      └─ [TIMESTAMP] (commit=[HASH], patches=04f1ec0, [SIZE])
          ├─ [TIMESTAMP].staged.patch
          └─ [TIMESTAMP].unstaged.patch
 
+"
+`;
+
+exports[`reflect.savepoint given: [case2] a savepoint get for a timestamp that does not exist when: [t0] get is invoked with --at an absent timestamp then: the refusal renders whole 1`] = `
+"🌕 reflect.savepoint get --at [TIMESTAMP]
+   ├─ ✋ ConstraintError: savepoint not found
+   └─ fix: list the savepoints, then pass one of theirs
+      └─ rhx reflect.savepoint get
 "
 `;

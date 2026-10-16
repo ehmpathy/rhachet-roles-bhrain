@@ -1,0 +1,21 @@
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
+
+exports[`getRouteInflight given: [case2] a watermark whose bytes are not json when: [t0] it is read then: it fails loud and names the fix 1`] = `
+"💥 MalfunctionError: inflight watermark is not valid json; fix: delete <route>/.route/inflight.json, or re-mark the wait: rhx route.stone.set --stone <stone> --as inflight --what '<what>'
+
+{
+  "statePath": "<route>/.route/inflight.json",
+  "error": "<json parse error>"
+}"
+`;
+
+exports[`getRouteInflight given: [case3] a watermark that lacks its stone when: [t0] it is read then: it fails loud and names the fix 1`] = `
+"💥 MalfunctionError: inflight watermark lacks { stone, what }; fix: delete <route>/.route/inflight.json, or re-mark the wait: rhx route.stone.set --stone <stone> --as inflight --what '<what>'
+
+{
+  "statePath": "<route>/.route/inflight.json",
+  "parsed": {
+    "what": "orphan"
+  }
+}"
+`;

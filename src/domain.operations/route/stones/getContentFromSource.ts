@@ -31,9 +31,8 @@ export const getContentFromSource = async (input: {
       const content = await fs.readFile(templatePath, 'utf-8');
       return { content };
     } catch {
-      throw new BadRequestError('template file not found', {
-        path: templatePath,
-      });
+      // the headline names the path, so a bag would only repeat it
+      throw new BadRequestError(`template file not found: ${templatePath}`);
     }
   }
 

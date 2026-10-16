@@ -1,5 +1,6 @@
 import type { RouteStone } from '@src/domain.objects/Driver/RouteStone';
 import type { RouteStoneDriveArtifacts } from '@src/domain.objects/Driver/RouteStoneDriveArtifacts';
+import { compareStrings } from '@src/utils/compareStrings';
 
 import { computeStoneOrderPrefix } from './computeStoneOrderPrefix';
 
@@ -28,7 +29,7 @@ export const computeNextStones = (input: {
   if (incomplete.length === 0) return [];
 
   // sort alphanumerically by name
-  const sorted = [...incomplete].sort((a, b) => a.name.localeCompare(b.name));
+  const sorted = [...incomplete].sort((a, b) => compareStrings(a.name, b.name));
   const stoneFirst = sorted[0];
   if (!stoneFirst) return [];
 

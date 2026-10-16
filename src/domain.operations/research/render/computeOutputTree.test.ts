@@ -12,6 +12,7 @@ describe('computeOutputTree', () => {
           updated: [],
         });
 
+        expect(result).toMatchSnapshot();
         expect(result).toContain('🦉 hooda thunk?');
         expect(result).toContain('├─ + 0.wish.md');
         expect(result).toContain('└─ + 1.probes.aim.stone');
@@ -26,6 +27,7 @@ describe('computeOutputTree', () => {
           updated: [],
         });
 
+        expect(result).toMatchSnapshot();
         expect(result).toContain('└─ + 0.wish.md');
         expect(result).not.toContain('├─');
       });
@@ -41,6 +43,7 @@ describe('computeOutputTree', () => {
           updated: [],
         });
 
+        expect(result).toMatchSnapshot();
         expect(result).toContain('├─ ✓ 0.wish.md');
         expect(result).toContain('└─ ✓ 1.probes.aim.stone');
       });
@@ -56,6 +59,7 @@ describe('computeOutputTree', () => {
           updated: ['0.wish.md'],
         });
 
+        expect(result).toMatchSnapshot();
         expect(result).toContain('└─ ↻ 0.wish.md');
       });
     });
@@ -70,6 +74,7 @@ describe('computeOutputTree', () => {
           updated: [],
         });
 
+        expect(result).toMatchSnapshot();
         const lines = result.split('\n');
         expect(lines[1]).toContain('0.wish.md');
         expect(lines[2]).toContain('1.probes.aim.stone');

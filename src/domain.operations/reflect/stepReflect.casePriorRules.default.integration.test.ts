@@ -12,12 +12,20 @@ import type { ReviewerReflectManifest } from '@src/domain.objects/Reviewer/Revie
 import { setupSourceRepo, setupTargetDir } from './.test/setup';
 import { stepReflect } from './stepReflect';
 
+/**
+ * .what = stepReflect against a target that already holds a rule on the feedback's topic
+ * .why = the prior rule is what invites an UPDATE proposal, so this is the case that drives
+ *        `executeManifestOperations`' merge path with a live model
+ *
+ * .note = the brain is live, so the case runs `when.repeatably` (rule.require.repeatable-for-llm-tests):
+ *         EVERY locally, so an intermittent defect surfaces where it is cheap to diagnose; SOME in CI
+ */
 describe('stepReflect.casePriorRules.default', () => {
   // increase timeout for brain invocations (5 minutes)
   jest.setTimeout(300000);
 
   const brainScene = useBeforeAll(async () => ({
-    brain: genTestBrainContext({ brain: DEFAULT_TEST_BRAIN }),
+    brain: await genTestBrainContext({ brain: DEFAULT_TEST_BRAIN }),
   }));
 
   given(
@@ -26,27 +34,21 @@ describe('stepReflect.casePriorRules.default', () => {
       // track cleanup paths outside useThen to avoid deferred proxy issues
       // .note = deliberate mutation: the useThen block fills these paths once, so afterAll can
       //         remove the dirs it made; a useThen proxy cannot be read from afterAll
-      const cleanup: { sourceDir?: string; targetDir?: string } = {};
+      const cleanup: { dirs: string[] } = { dirs: [] };
       afterAll(async () => {
-        if (cleanup.sourceDir)
-          await fs.rm(cleanup.sourceDir, { recursive: true, force: true });
-        if (cleanup.targetDir)
-          await fs.rm(cleanup.targetDir, { recursive: true, force: true });
+        for (const dir of cleanup.dirs)
+          await fs.rm(dir, { recursive: true, force: true });
       });
 
       when.repeatably(REPEATABLY_CONFIG)(
         '[t0] stepReflect completes with default brain',
         () => {
-          // single brain call per attempt, result shared across assertions
+          // single API call per attempt, result shared across assertions
           const scene = useThen('stepReflect succeeds', async () => {
-            // setup source and target
             const { repoDir: sourceDir } =
               await setupSourceRepo('typescript-quality');
             const { targetDir } = await setupTargetDir();
-
-            // track for cleanup
-            cleanup.sourceDir = sourceDir;
-            cleanup.targetDir = targetDir;
+            cleanup.dirs.push(sourceDir, targetDir);
 
             // add prior rule that matches feedback topic (arrow functions mentioned in v1 and v3)
             await fs.mkdir(path.join(targetDir, 'practices'), {
@@ -58,7 +60,7 @@ describe('stepReflect.casePriorRules.default', () => {
               'utf-8',
             );
 
-            // run stepReflect with the default brain
+            // use the default brain (DEFAULT_TEST_BRAIN)
             const result = await stepReflect(
               {
                 source: sourceDir,

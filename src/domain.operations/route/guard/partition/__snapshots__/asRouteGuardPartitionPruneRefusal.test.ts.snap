@@ -1,0 +1,12 @@
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
+
+exports[`asRouteGuardPartitionPruneRefusal given: [case1] a prune of a typo, with no --from when: [t0] the refusal is rendered then: the refusal matches the snapshot 1`] = `
+"--prune src/alpa/**: no targeted partition holds that glob, so naught would drop
+   ├─ held partitions
+   │  ├─ alpha
+   │  │  ├─ src/alpha/**
+   │  │  └─ .behavior/demo/**
+   │  └─ beta
+   │     └─ src/beta/**
+   └─ fix: prune a glob exactly as held above"
+`;

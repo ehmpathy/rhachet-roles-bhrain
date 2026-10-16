@@ -1,3 +1,5 @@
+import { asConcurrencyGroupUnboundError } from './asConcurrencyGroupUnboundError';
+
 /**
  * .what = the most lanes of one level that can be aloft at once — or null where
  *         no bound binds this roster at all
@@ -34,11 +36,11 @@
  *       its presence informative. `asReviewLevelPourAnnounce` already renders
  *       null as no clause at all, so this needs no new render branch
  *
- * .note = an unknown group name counts its members as unbounded rather than
- *         invents a bound. `assertConcurrencyGroupsResolve` refuses that guard
- *         at parse and `runWithinConcurrencyBounds` throws on it at the pour, so
- *         the reach is for a guard built by hand around the parser — and where
- *         it is reached, the display errs toward the roster it can see
+ * .note = an unknown group name throws `asConcurrencyGroupUnboundError`, the same
+ *         error `runWithinConcurrencyBounds` throws at the pour. a count there
+ *         would announce a cap the pour never reaches. `assertConcurrencyGroupsResolve`
+ *         refuses that guard at parse, so the reach is for a guard built by hand
+ *         around the parser
  *
  * ⚠️ .this arithmetic MIRRORS the nest in `runWithinConcurrencyBounds` — the
  *     group bound inside, the level bound outside, so both yield `min(group,
@@ -72,10 +74,11 @@ export const getOneReviewLevelPourBound = (input: {
   // each group contributes the narrower of its bound and its own membership
   const groupedCapacity = [...countByGroup.entries()].reduce(
     (sum, [name, count]) => {
+      // an unknown group fails as the pour fails, so the two models agree in kind
       const groupBound = input.groups[name]?.concurrency;
-      return (
-        sum + (groupBound === undefined ? count : Math.min(groupBound, count))
-      );
+      if (groupBound === undefined)
+        throw asConcurrencyGroupUnboundError({ group: name });
+      return sum + Math.min(groupBound, count);
     },
     0,
   );

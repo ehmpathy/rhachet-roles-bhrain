@@ -126,7 +126,7 @@ describe('driver.route.peer-contemplation.acceptance', () => {
 
       then('names the exact absent .taken path and why', () => {
         expect(result.stdout).toContain(
-          'feedbackAbsorption absent for reviewer architect',
+          'feedback absorption absent for reviewer architect',
         );
         expect(result.stdout).toContain('_.taken.by_self.architect.md');
         expect(result.stdout).toContain('the .taken file IS that engagement');

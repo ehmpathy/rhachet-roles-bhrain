@@ -1,0 +1,16 @@
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
+
+exports[`asCompiledLocus a list of { path, chars } is the measured locus 1`] = `
+[
+  {
+    "chars": 12,
+    "path": "src/a.ts",
+  },
+]
+`;
+
+exports[`asCompiledLocus a null row reads as null — the walk wrote no answer 1`] = `null`;
+
+exports[`asCompiledLocus an absent row reads as null — unread, never a claim of none 1`] = `null`;
+
+exports[`asCompiledLocus an empty list is a FACT — the walk placed no target 1`] = `[]`;

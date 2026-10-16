@@ -1,0 +1,7 @@
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
+
+exports[`asOutputLimitRetryLine given: [case1] a runaway whose billed count was reported when: [t0] the retry line renders then: the line matches its snapshot 1`] = `"💥 MalfunctionError: the brain's reply ran to its output limit with no verdict (131,072 output tokens billed, provider deepinfra, generation gen-abc123); one retry"`;
+
+exports[`asOutputLimitRetryLine given: [case2] a runaway that billed exactly one output token when: [t0] the retry line renders then: the line matches its snapshot 1`] = `"💥 MalfunctionError: the brain's reply ran to its output limit with no verdict (1 output token billed, provider unknown, generation none); one retry"`;
+
+exports[`asOutputLimitRetryLine given: [case3] a runaway whose billed count was not reported when: [t0] the retry line renders then: the line matches its snapshot 1`] = `"💥 MalfunctionError: the brain's reply ran to its output limit with no verdict (— output tokens billed, provider unknown, generation none); one retry"`;

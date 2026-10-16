@@ -20,6 +20,5 @@ export const asConcedeSeverity = (input: {
   if (input.raw === 'better' || input.raw === 'urgent') return input.raw;
   throw new BadRequestError(
     `invalid --severity: "${input.raw}". expected one of: better, urgent`,
-    { severity: input.raw },
   );
 };

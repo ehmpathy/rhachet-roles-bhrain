@@ -1,0 +1,21 @@
+{
+  "key": "1df94992b1d46612",
+  "kind": "create",
+  "repo": {
+    "owner": "ehmpathy",
+    "name": "rhachet-roles-bhuild"
+  },
+  "exid": null,
+  "title": "fix(deps): drop the banned rhachet-brains-fireworksai peer dependency",
+  "description": "## .what\nrhachet-roles-bhuild declares rhachet-brains-fireworksai as a peer (and dev) dependency. fireworks is a banned brain provider. a consumer that removed fireworks from its own package.json still installs it: pnpm why lists it as a peer of rhachet-roles-bhuild@0.21.37.\n\n## .why\n- every consumer install pulls a banned provider it neither declares nor imports\n- related: #444 (REFLECT_BRAIN_SLUG names a fireworks slug no brains package registers); that is the slug half, this is the dependency half\n\n## .shape of the fix\n- drop rhachet-brains-fireworksai from peer and dev dependencies\n- move any default brain slug that names fireworks to a versionless openrouter tier slug\n- release; consumers then bump bhuild and the transitive edge disappears\n\ncaught in ehmpathy/rhachet-roles-bhrain .dream/v2026_10_13.reseed.rhachet-roles-bhuild-still-peers-the-banned-fireworks-brain.md",
+  "status": null,
+  "via": "gh.issues",
+  "auth": "as-human",
+  "idem": null,
+  "heldAt": "2026-10-15",
+  "heldSeq": 24,
+  "recordStatus": "DELIVERED",
+  "reason": null,
+  "settledAt": "2026-10-16",
+  "deliveredExid": "468"
+}

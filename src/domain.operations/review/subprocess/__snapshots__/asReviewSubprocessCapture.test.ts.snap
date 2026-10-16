@@ -1,0 +1,3 @@
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
+
+exports[`asReviewSubprocessCapture given: [case2] 🔴 a child killed at its bound when: [t0] it had written partial output first then: the stderr line is pinned 1`] = `"💥 MalfunctionError: review timed out after 90 seconds"`;

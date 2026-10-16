@@ -1,0 +1,8 @@
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
+
+exports[`asOpenerFailureNote given: [case1] an opener that is not on the PATH when: [t0] the note is rendered then: the whole note renders, diffable in the PR 1`] = `
+"✋ ConstraintError: the review is written, but the opener 'ghost-opener' did not run
+   ├─ cause: /bin/sh: 1: ghost-opener: not found
+   └─ fix: open it by hand, or pass an --open program on your PATH
+      └─ /repo/.reviews/peer/report.md"
+`;

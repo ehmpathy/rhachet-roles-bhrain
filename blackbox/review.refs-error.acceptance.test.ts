@@ -7,6 +7,8 @@ import {
   genTempDirForRhachet,
   invokeReviewSkill,
 } from './.test/invokeReviewSkill';
+import { asRedactedOutput } from './.test/asRedactedOutput';
+import { DEFAULT_TEST_BRAIN_VIA_CLI } from '@src/.test/genTestBrainContext';
 
 const ASSETS_DIR = path.join(__dirname, '.test/assets/codebase-mechanic');
 
@@ -39,7 +41,7 @@ describe('review.refs-error.acceptance', () => {
             output: outputPath,
             focus: 'push',
             goal: 'representative',
-            brain: 'openrouter/deepseek/flash',
+            brain: DEFAULT_TEST_BRAIN_VIA_CLI,
             cwd: tempDir,
           });
 
@@ -53,6 +55,14 @@ describe('review.refs-error.acceptance', () => {
           return { cli };
         },
       );
+
+      then('cli exits 2, a constraint the caller must fix', () => {
+        expect(res.cli.code).toEqual(2);
+      });
+
+      then('the refusal matches its snapshot', () => {
+        expect(asRedactedOutput(res.cli.stderr)).toMatchSnapshot();
+      });
 
       then('cli fails with clear error message', async () => {
         const output = res.cli.stdout + res.cli.stderr;
@@ -95,7 +105,7 @@ describe('review.refs-error.acceptance', () => {
             output: outputPath,
             focus: 'push',
             goal: 'representative',
-            brain: 'openrouter/deepseek/flash',
+            brain: DEFAULT_TEST_BRAIN_VIA_CLI,
             cwd: tempDir,
           });
 
@@ -109,6 +119,14 @@ describe('review.refs-error.acceptance', () => {
           return { cli };
         },
       );
+
+      then('cli exits 2, a constraint the caller must fix', () => {
+        expect(res.cli.code).toEqual(2);
+      });
+
+      then('the refusal matches its snapshot', () => {
+        expect(asRedactedOutput(res.cli.stderr)).toMatchSnapshot();
+      });
 
       then('cli fails with clear error message', async () => {
         const output = res.cli.stdout + res.cli.stderr;

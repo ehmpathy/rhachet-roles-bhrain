@@ -19,13 +19,25 @@ describe('getGitBlobHashes', () => {
         expect(hash?.length).toEqual(40); // sha1 hex length
       });
 
-      then('hash matches git ls-tree output', () => {
+      // .note = compare against the on-disk blob (git hash-object), never HEAD's —
+      //         a local edit to tsconfig.json must not turn this test red
+      // .retired = the prior oracle was `git ls-tree HEAD tsconfig.json`. the contract of
+      //            getGitBlobHashes is the WORKTREE content hash (its own header: ls-tree for
+      //            committed-unchanged files, hash-object for the rest — the two agree on an
+      //            unchanged file), so hash-object is the one oracle true in both states; the
+      //            HEAD link for an unchanged file is the identity hash-object == ls-tree
+      // .note = the cost of that choice, stated: when tsconfig.json is DIRTY, this oracle
+      //         is the very primitive the code answers from, so the case then proves only
+      //         that the dirty path is wired to hash-object — no independent surface checks
+      //         it. on a clean tree the two commands differ and agree, which is the
+      //         independent check. a fixture repo the suite owns (F231) would restore it
+      //         in both states
+      then('hash matches git hash-object output', () => {
         const result = getGitBlobHashes({ files, cwd });
-        const lsTreeOutput = execSync('git ls-tree HEAD tsconfig.json', {
+        const expectedHash = execSync('git hash-object tsconfig.json', {
           cwd,
           encoding: 'utf-8',
-        });
-        const expectedHash = lsTreeOutput.match(/blob ([a-f0-9]+)/)?.[1];
+        }).trim();
         expect(result['tsconfig.json']).toEqual(expectedHash);
       });
     });

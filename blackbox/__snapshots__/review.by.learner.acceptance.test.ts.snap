@@ -1,0 +1,211 @@
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
+
+exports[`review.by.learner.acceptance given: [case-agg] --for term-aggregation on clean code when: [t0] only the aggregation rubric runs, attempt 1 then: the raw review chrome matches snapshot 1`] = `
+"🦉 let's review
+   ├─ brain: openrouter/deepseek/flash
+   ├─ focus: push
+   └─ scope
+      └─ paths: {src/clean.terms.ts,.agent/repo=.this/role=any/briefs/domain.terms/*.md}
+
+🦉 not even a vole
+
+🔍 review
+   ├─ review: .reviews/by=learner/rubric=term-aggregation.md
+   └─ summary
+      ├─ 0 blockers
+      ├─ 0 nitpicks
+      └─ all good 👍"
+`;
+
+exports[`review.by.learner.acceptance given: [case-agg] --for term-aggregation on clean code when: [t0] only the aggregation rubric runs, attempt 2 then: the raw review chrome matches snapshot 1`] = `
+"🦉 let's review
+   ├─ brain: openrouter/deepseek/flash
+   ├─ focus: push
+   └─ scope
+      └─ paths: {src/clean.terms.ts,.agent/repo=.this/role=any/briefs/domain.terms/*.md}
+
+🦉 not even a vole
+
+🔍 review
+   ├─ review: .reviews/by=learner/rubric=term-aggregation.md
+   └─ summary
+      ├─ 0 blockers
+      ├─ 0 nitpicks
+      └─ all good 👍"
+`;
+
+exports[`review.by.learner.acceptance given: [case-agg] --for term-aggregation on clean code when: [t0] only the aggregation rubric runs, attempt 3 then: the raw review chrome matches snapshot 1`] = `
+"🦉 let's review
+   ├─ brain: openrouter/deepseek/flash
+   ├─ focus: push
+   └─ scope
+      └─ paths: {src/clean.terms.ts,.agent/repo=.this/role=any/briefs/domain.terms/*.md}
+
+🦉 not even a vole
+
+🔍 review
+   ├─ review: .reviews/by=learner/rubric=term-aggregation.md
+   └─ summary
+      ├─ 0 blockers
+      ├─ 0 nitpicks
+      └─ all good 👍"
+`;
+
+exports[`review.by.learner.acceptance given: [case-all] the learner review set on clean code when: [t0] review.by --role learner (no --for) runs both rubrics, attempt 1 then: the settled tree matches snapshot 1`] = `
+"🦉 not even a vole
+
+🔍 review.by --role learner
+   └─ rubrics
+      ├─ r1 term-application ✓
+      └─ r2 term-aggregation ✓
+"
+`;
+
+exports[`review.by.learner.acceptance given: [case-all] the learner review set on clean code when: [t0] review.by --role learner (no --for) runs both rubrics, attempt 2 then: the settled tree matches snapshot 1`] = `
+"🦉 not even a vole
+
+🔍 review.by --role learner
+   └─ rubrics
+      ├─ r1 term-application ✓
+      └─ r2 term-aggregation ✓
+"
+`;
+
+exports[`review.by.learner.acceptance given: [case-all] the learner review set on clean code when: [t0] review.by --role learner (no --for) runs both rubrics, attempt 3 then: the settled tree matches snapshot 1`] = `
+"🦉 not even a vole
+
+🔍 review.by --role learner
+   └─ rubrics
+      ├─ r1 term-application ✓
+      └─ r2 term-aggregation ✓
+"
+`;
+
+exports[`review.by.learner.acceptance given: [case-app] --for term-application on clean code when: [t0] only the application rubric runs, attempt 1 then: the raw review chrome matches snapshot 1`] = `
+"🦉 let's review
+   ├─ brain: openrouter/deepseek/flash
+   ├─ focus: push
+   └─ scope
+      └─ paths: {src/clean.terms.ts,.agent/repo=.this/role=any/briefs/domain.terms/*.md}
+
+🦉 not even a vole
+
+🔍 review
+   ├─ review: .reviews/by=learner/rubric=term-application.md
+   └─ summary
+      ├─ 0 blockers
+      ├─ 0 nitpicks
+      └─ all good 👍"
+`;
+
+exports[`review.by.learner.acceptance given: [case-app] --for term-application on clean code when: [t0] only the application rubric runs, attempt 2 then: the raw review chrome matches snapshot 1`] = `
+"🦉 let's review
+   ├─ brain: openrouter/deepseek/flash
+   ├─ focus: push
+   └─ scope
+      └─ paths: {src/clean.terms.ts,.agent/repo=.this/role=any/briefs/domain.terms/*.md}
+
+🦉 not even a vole
+
+🔍 review
+   ├─ review: .reviews/by=learner/rubric=term-application.md
+   └─ summary
+      ├─ 0 blockers
+      ├─ 0 nitpicks
+      └─ all good 👍"
+`;
+
+exports[`review.by.learner.acceptance given: [case-app] --for term-application on clean code when: [t0] only the application rubric runs, attempt 3 then: the raw review chrome matches snapshot 1`] = `
+"🦉 let's review
+   ├─ brain: openrouter/deepseek/flash
+   ├─ focus: push
+   └─ scope
+      └─ paths: {src/clean.terms.ts,.agent/repo=.this/role=any/briefs/domain.terms/*.md}
+
+🦉 not even a vole
+
+🔍 review
+   ├─ review: .reviews/by=learner/rubric=term-application.md
+   └─ summary
+      ├─ 0 blockers
+      ├─ 0 nitpicks
+      └─ all good 👍"
+`;
+
+exports[`review.by.learner.acceptance given: [case-detect] --for term-application on a term-dirty file when: [t0] the application rubric detects a term violation, attempt 1 then: the blocker-tier raw review is stable (full snapshot) 1`] = `
+"🦉 let's review
+   ├─ brain: openrouter/deepseek/flash
+   ├─ focus: push
+   └─ scope
+      └─ paths: src/dirty.terms.ts
+
+🦉 needs your talons
+
+🔍 review
+   ├─ review: .reviews/by=learner/rubric=term-application.md
+   └─ summary
+      ├─ [N] blockers [GLYPH]
+      └─ [N] nitpicks [GLYPH]"
+`;
+
+exports[`review.by.learner.acceptance given: [case-detect] --for term-application on a term-dirty file when: [t0] the application rubric detects a term violation, attempt 2 then: the blocker-tier raw review is stable (full snapshot) 1`] = `
+"🦉 let's review
+   ├─ brain: openrouter/deepseek/flash
+   ├─ focus: push
+   └─ scope
+      └─ paths: src/dirty.terms.ts
+
+🦉 needs your talons
+
+🔍 review
+   ├─ review: .reviews/by=learner/rubric=term-application.md
+   └─ summary
+      ├─ [N] blockers [GLYPH]
+      └─ [N] nitpicks [GLYPH]"
+`;
+
+exports[`review.by.learner.acceptance given: [case-detect] --for term-application on a term-dirty file when: [t0] the application rubric detects a term violation, attempt 3 then: the blocker-tier raw review is stable (full snapshot) 1`] = `
+"🦉 let's review
+   ├─ brain: openrouter/deepseek/flash
+   ├─ focus: push
+   └─ scope
+      └─ paths: src/dirty.terms.ts
+
+🦉 needs your talons
+
+🔍 review
+   ├─ review: .reviews/by=learner/rubric=term-application.md
+   └─ summary
+      ├─ [N] blockers [GLYPH]
+      └─ [N] nitpicks [GLYPH]"
+`;
+
+exports[`review.by.learner.acceptance given: [case-wrapper] the clean \`rhx review.by --role learner\` form when: [t0] rhx resolves the learner-owned review.by wrapper, attempt 1 then: the settled tree matches snapshot 1`] = `
+"🦉 not even a vole
+
+🔍 review.by --role learner
+   └─ rubrics
+      ├─ r1 term-application ✓
+      └─ r2 term-aggregation ✓
+"
+`;
+
+exports[`review.by.learner.acceptance given: [case-wrapper] the clean \`rhx review.by --role learner\` form when: [t0] rhx resolves the learner-owned review.by wrapper, attempt 2 then: the settled tree matches snapshot 1`] = `
+"🦉 not even a vole
+
+🔍 review.by --role learner
+   └─ rubrics
+      ├─ r1 term-application ✓
+      └─ r2 term-aggregation ✓
+"
+`;
+
+exports[`review.by.learner.acceptance given: [case-wrapper] the clean \`rhx review.by --role learner\` form when: [t0] rhx resolves the learner-owned review.by wrapper, attempt 3 then: the settled tree matches snapshot 1`] = `
+"🦉 not even a vole
+
+🔍 review.by --role learner
+   └─ rubrics
+      ├─ r1 term-application ✓
+      └─ r2 term-aggregation ✓
+"
+`;

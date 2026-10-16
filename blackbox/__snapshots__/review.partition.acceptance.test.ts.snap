@@ -1,0 +1,174 @@
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
+
+exports[`review.partition.acceptance given: [case1] two partitions that share the behavior spec when: [t0] the split is previewed with --mode plan then: the plan renders as the driver reads it 1`] = `
+"🦉 split into 2 partitions (plan)
+   ├─ common
+   │  ├─ globs
+   │  │  └─ behavior/**
+   │  └─ cost
+   │     └─ common:   2 files     238 tokens
+   ├─ narrow
+   │  ├─ clean
+   │  │  ├─ globs
+   │  │  │  ├─ src/clean.ts
+   │  │  │  └─ behavior/**
+   │  │  └─ cost
+   │  │     ├─ narrow:   1 file      295 tokens
+   │  │     ├─ common:   2 files     238 tokens
+   │  │     └─ total:    3 files     890 tokens ✓
+   │  └─ dirty
+   │     ├─ globs
+   │     │  ├─ src/dirty.ts
+   │     │  └─ behavior/**
+   │     └─ cost
+   │        ├─ narrow:   1 file      223 tokens
+   │        ├─ common:   2 files     238 tokens
+   │        └─ total:    3 files     818 tokens ✓
+   └─ unclaimed: 0
+"
+`;
+
+exports[`review.partition.acceptance given: [case2] a target that sits in no partition when: [t0] the review is invoked then: the refusal renders as the driver reads it 1`] = `
+"
+🦉 woah there
+
+✋ ConstraintError: 1 target sits in no partition, so a split would leave targets unreviewed
+   ├─ unclaimed → where the repair places each
+   │  └─ src/dirty.ts → clean (+ src/{,__snapshots__/}dirty.*)
+   └─ repair — re-run with these --partition flags beside yours
+           --partition 'clean=src/{,__snapshots__/}dirty.*'
+
+✨ did you know?
+   ├─ claim each domain whole, in every layer, and the files you edit next stay covered
+   └─ e.g. src/route/** and blackbox/{,__snapshots__/}driver.route.* in one partition
+
+"
+`;
+
+exports[`review.partition.acceptance given: [case3] a declaration that does not parse when: [t0] the review is invoked then: the refusal renders as the driver reads it 1`] = `
+"
+🦉 woah there
+
+✋ ConstraintError: --partition 'src/**' does not parse; it names no slug — the form is '<slug>=<globs>'
+   └─ fix: --partition 'src=src/**'
+
+"
+`;
+
+exports[`review.partition.acceptance given: [case4] a driver reads --help for the lever when: [t0] help is printed then: the help renders whole: help 1`] = `
+"review - code review against rules
+
+usage:
+  review.sh [options]
+
+options:
+  --rules <globs>     glob pattern(s) for rule files (required, can repeat)
+  --paths <globs>     glob pattern(s) for target files (deprecated: use --paths-with)
+  --paths-with <glob>   include files that match this glob (can repeat)
+  --paths-wout <glob>   exclude files that match this glob (can repeat)
+                        alias: --paths-without
+  --polluters <mode>  drop or keep the polluters in scope (default: drop)
+                      dropped by default: every route artifact except
+                      .fulcrums/**, .seeds/**, and *.yield.md; every caught
+                      dream; every dependency lockfile
+  --diffs <range>     diff range: since-main, since-commit, since-staged (default: since-main)
+  --join <mode>       how to join --paths-with and --diffs: intersect or union (default: intersect)
+  --refs <globs>      glob pattern(s) for reference files (can repeat)
+  --optional <supply> mark a supply as optional; when its glob matches zero files, skip the
+                      review (emit 0 blockers / 0 nitpicks, exit 0) instead of a fail-loud error.
+                      supported: rules (can repeat)
+  --partition '<slug>=<globs>'
+                      a set of files this review may be judged by on its own, should the
+                      whole prompt overflow its window (can repeat). the partitions run at
+                      once, and their verdicts merge into one --output with one
+                      blockers/nitpicks tally. a fit never splits.
+                      · globs: a prefix (src/review), a glob (src/**/*.ts), or a comma
+                        list of either: 'review=src/review/**,src/domain.objects/**' — no
+                        braces needed ('review={...}' reads the same). repeat a slug to
+                        widen it; its flags merge into one partition. quote each value
+                      · a member with a ! at its head subtracts what it matches — it
+                        carves a flat dir, which has no subdirectory to cut along:
+                        'review=src/review/*,!src/review/compile*'
+                      · a malformed value refuses with the corrected one; a glob that
+                        matched no target is flagged in --mode plan
+                      · sets may overlap, and should: a file in two or more partitions is
+                        common — it leads each prompt, and is graded once, by the first
+                        partition that lists it
+                      · refuses (exit 2), under --mode plan or when an overflow splits: a
+                        target in no partition · a bound route absent from a partition ·
+                        a partition that still overflows alone. a fit run ignores the set
+                      the refusal of an overflowed review names which lever fits it:
+                      a narrower --paths-wout for edited files, or --partition for
+                      added ones, whose bodies no bind can shrink
+  --mode <mode>       plan, hard, or soft (default: none — the review runs)
+                      · plan: preview the declared --partition split — each partition's
+                        globs and cost — and call no brain
+                      · hard, soft: the rhachet dispatcher's own mode, passed through by
+                        every guard call. review reads neither, so each runs the review
+  --conversation <files>  comma-separated prior peer-review dialogue files (.given + .taken) to thread as context (opt-in; guard expands $conversation)
+  --output <path>     output file path (default: .review/$branch/$isotime.output.md)
+  --focus <mode>      review focus: push or pull (default: push)
+  --goal <goal>       review goal: exhaustive or representative (default: exhaustive)
+  --brain <slug>      brain to use for review (default: openrouter/deepseek/flash)
+  --warmer <plan>     poke this lane's prompt cache between rounds.
+                      off | on | <k>x,<m>m   (default: off; on = 12x,15m)
+                      🔴 every poke costs, so it can lose money. guard lanes only.
+                      \`rhx review._.cost --of tree\` shows whether it paid off, and
+                      the kill for each warmer still awake (\`off\` stops only the next)
+  --open <opener>     open output file with specified program (e.g., nvim, codium, code)
+  --help              show this help message
+
+🔭 available brains
+   ├── ↻ openai/codex
+   ├── ○ openai/gpt/4o
+   ├── ○ openrouter/z-ai/pro
+   ├── ○ anthropic/claude/opus
+   ├── ○ openrouter/z-ai/flash
+   ├── ↻ anthropic/claude/code
+   ├── ○ anthropic/claude/haiku
+   ├── ○ anthropic/claude/sonnet
+   ├── ○ openrouter/deepseek/pro
+   ├── ○ openrouter/deepseek/flash
+   ├── ○ openrouter/moonshotai/pro
+   ├── ↻ anthropic/claude/code/opus
+   ├── ↻ anthropic/claude/code/haiku
+   ├── ↻ anthropic/claude/code/sonnet
+   └── ○ openrouter/deepseek/flash/floor&speed=min50tps&privacy=full
+"
+`;
+
+exports[`review.partition.acceptance given: [case5] --mode plan with no partition declared when: [t0] the review is invoked then: the refusal renders as the driver reads it 1`] = `
+"
+🦉 woah there
+
+✋ ConstraintError: --mode plan previews a partition split, and none is declared
+
+✨ did you know?
+   └─ declare one or more with --partition '<slug>=<globs>' (under a guard: rhx route.guard.partition --for review --peer @all)
+
+"
+`;
+
+exports[`review.partition.acceptance given: [case6] a typo of --mode plan when: [t0] the review is invoked then: the refusal renders as the driver reads it 1`] = `
+"
+🦉 woah there
+
+✋ ConstraintError: --mode must be plan, hard, or soft (received: plna)
+
+✨ did you know?
+   └─ run with --help for --mode
+
+"
+`;
+
+exports[`review.partition.acceptance given: [case7] --mode plan beside a second, paid --mode when: [t0] the review is invoked then: the refusal renders as the driver reads it 1`] = `
+"
+🦉 woah there
+
+✋ ConstraintError: --mode given more than once with different values: plan, hard
+
+✨ did you know?
+   └─ keep one --mode: --mode plan previews for free, any other mode runs a paid review
+
+"
+`;

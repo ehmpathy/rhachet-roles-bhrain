@@ -1,0 +1,24 @@
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
+
+exports[`stepReview — the default scope exclusion given: [case1] a diff range that holds ONLY polluters when: [t0] the review runs then: the assembled refusal matches the snapshot 1`] = `
+"
+🦉 woah there
+
+✋ ConstraintError: combined scope resolves to zero files
+   ├─ targets
+   │  ├─ diffs: since-main
+   │  │  └─ files: 4
+   │  ├─ paths.with: (none)
+   │  │  └─ files: —
+   │  ├─ paths.wout: (none)
+   │  └─ joined via intersect
+   │     └─ files: 4
+   └─ polluters: 4 dropped by default
+      └─ kept: .fulcrums/*._.md, .seeds/**, *.yield.md — every other route artifact, dream, and lockfile is dropped where it RODE IN on --diffs
+         ├─ to review SOME: name them in --paths — a glob that matches only paperwork keeps what it named
+         └─ to review ALL: --polluters keep
+
+✨ did you know?
+   └─ inspect .log/bhrain/review/$STAMP/input.scope.debug.json to see what was matched
+"
+`;

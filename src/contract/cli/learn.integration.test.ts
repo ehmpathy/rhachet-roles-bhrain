@@ -64,7 +64,7 @@ const runSkill = (input: {
   }
 };
 
-describe('learnDomainTerms (integration)', () => {
+describe('learn.integration', () => {
   const paths = getDomainTermsPaths();
 
   given('[case1] the clone face — reflect-and-distill', () => {
@@ -224,7 +224,7 @@ describe('learnDomainTerms (integration)', () => {
       });
 
       then('the silent-run stderr matches snapshot (aesthetic review)', () => {
-        // the fresh-run variant (empty stderr, exit 0) is a distinct user-visible
+        // the fresh-run variant (empty stderr, exit 0) is a distinct human-visible
         // outcome; snapshot it so a stray future stderr write is caught as drift
         // (rule.require.contract-snapshot-exhaustiveness)
         expect(result.stderr).toMatchSnapshot();
@@ -417,6 +417,12 @@ describe('learnDomainTerms (integration)', () => {
         expect(result.stderr).toContain('time again, to tend the terms');
       });
 
+      then('the equals-form nudge matches snapshot', () => {
+        // a caller-visible variant, snapped like its equals-form peers (case10, case12).
+        // deterministic: static strings + the repo-relative constant sentinel path
+        expect(result.stderr).toMatchSnapshot();
+      });
+
       then('it did NOT run the clone face (no scaffold written)', async () => {
         const readmeAbsent = await fs
           .access(path.join(tempDir, paths.readmePath))
@@ -446,6 +452,10 @@ describe('learnDomainTerms (integration)', () => {
 
       then('the clone face runs (the marker did not block it)', () => {
         expect(result.stdout).toContain('tend the terms');
+      });
+
+      then('the guide after the end-of-options marker matches snapshot', () => {
+        expect(result.stdout).toMatchSnapshot();
       });
     });
   });
@@ -614,6 +624,10 @@ describe('learnDomainTerms (integration)', () => {
         expect(result.stdout).toContain('faces:');
       });
 
+      then('the combined-form help matches snapshot', () => {
+        expect(result.stdout).toMatchSnapshot();
+      });
+
       then('it did NOT run the clone face (no scaffold written)', async () => {
         const readmeAbsent = await fs
           .access(path.join(tempDir, paths.readmePath))
@@ -653,6 +667,10 @@ describe('learnDomainTerms (integration)', () => {
           expect(result.stderr).toContain('time again, to tend the terms');
           expect(result.stderr).not.toContain('unexpected arg(s)');
         });
+
+        then('the nudge under injected flags matches snapshot', () => {
+          expect(result.stderr).toMatchSnapshot();
+        });
       });
     },
   );
@@ -679,6 +697,10 @@ describe('learnDomainTerms (integration)', () => {
       then('it runs the clone guide, not an arg error', () => {
         expect(result.stdout).toContain('tend the terms');
         expect(result.stderr).not.toContain('unexpected arg(s)');
+      });
+
+      then('the guide under injected flags matches snapshot', () => {
+        expect(result.stdout).toMatchSnapshot();
       });
     });
   });
@@ -723,6 +745,10 @@ describe('learnDomainTerms (integration)', () => {
               expect(result.stderr).toContain('time again, to tend the terms');
             },
           );
+
+          then('the nudge over a bare-touch sentinel matches snapshot', () => {
+            expect(result.stderr).toMatchSnapshot();
+          });
         },
       );
     },

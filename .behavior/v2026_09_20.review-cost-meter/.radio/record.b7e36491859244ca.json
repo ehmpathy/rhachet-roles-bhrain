@@ -1,0 +1,21 @@
+{
+  "key": "b7e36491859244ca",
+  "kind": "create",
+  "repo": {
+    "owner": "ehmpathy",
+    "name": "iso-price"
+  },
+  "exid": null,
+  "title": "fix(divide): priceDivide throws a RangeError on a zero dividend, and on a dividend finer than the output exponent",
+  "description": "# 🌙 dream: `priceDivide` throws a RangeError when the dividend is zero\n\n- **kind** = `reseed`\n- **owner** = `ehmpathy/iso-price`\n- **caught** 2026-09-26, at stone `5.1.execution.from_vision` of `v2026_09_20.review-cost-meter`\n\n## .the cue that fired\n\nthe first unit test of `asCacheSavedPrice` priced a review with zero cache reads — the common\ncase — and went red with `RangeError: undefined must be positive`.\n\n## .the gap, precisely\n\n`iso-price@1.1.1`:\n\n```ts\npriceDivide({ of: priceMultiply({ of: '$0.131149480', by: 0 }), by: 596_134 })\n// RangeError: undefined must be positive\n//   at dividePrice (src/domain.operations/arithmetic/dividePrice.ts:88:42)\n```\n\n`0 / n` is a well-defined `0`. the auto-scale that widens precision for a large divisor appears to\ntake a log of the dividend's magnitude, which is undefined at zero. the error text names neither\nthe input nor the cause.\n\n## .the shape of the fix\n\nin `dividePrice`, short-circuit a zero amount before the precision auto-scale: return the zero at\nthe input's own exponent. add a clamp case `dividePrice({ of: 'USD 0', by: 1_000_000 })` →\n`'USD 0'`, red before, green after.\n\n## 🔴 .a second throw, same auto-scale (measured 2026-09-27)\n\n`dividePrice` picks its output exponent from the divisor alone and only ever scales UP:\n`scaleDiff = inputExp - outputExp`, then `10n ** BigInt(scaleDiff)`. a dividend finer than the\nchosen output — a micro bill divided by 100–999_999, where the output is milli — makes `scaleDiff`\nnegative, and BigInt `**` throws `RangeError: undefined must be positive`.\n\n```\npriceDivide({ of: 'USD 0.049_200_000', by: 5_000 })   // throws\n```\n\nit killed `rhx review._.cost --of tree` on this repo's own grove. fix: output exponent =\n`min(inputExp, divisorExp)` (never coarser than the input), plus a clamp case for the call above.\n\n## .why it is not done in this round\n\nthe fix belongs to another repo. this repo no longer calls `priceDivide` at the call site\n(`getOneCacheSavedPrice.ts` scales the bill by a token ratio instead), which is safe and clean\nhere; both defects are re-seeded to their owner.",
+  "status": null,
+  "via": "gh.issues",
+  "auth": "as-human",
+  "idem": "findsert",
+  "heldAt": "2026-10-14",
+  "heldSeq": 3,
+  "recordStatus": "DELIVERED",
+  "reason": null,
+  "settledAt": "2026-10-14",
+  "deliveredExid": "14"
+}

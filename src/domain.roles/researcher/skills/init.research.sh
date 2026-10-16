@@ -17,4 +17,6 @@
 ######################################################################
 set -euo pipefail
 
-exec node -e "import('rhachet-roles-bhrain/cli').then(m => m.cli.research.init())" -- "$@"
+# the isolated subpath, never the aggregate `cli` index: the index loads review and
+# reflect, and their brain imports, before init runs (rule.require.isolated-cli-subpath-exports)
+exec node -e "import('rhachet-roles-bhrain/cli/research').then(m => m.researchInit())" -- "$@"

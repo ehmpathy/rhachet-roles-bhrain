@@ -3,6 +3,7 @@ import globby from 'globby';
 import * as path from 'path';
 
 import { RouteStone } from '@src/domain.objects/Driver/RouteStone';
+import { compareStrings } from '@src/utils/compareStrings';
 
 import { parseStoneGuard } from '../guard/parseStoneGuard';
 
@@ -46,7 +47,7 @@ export const getAllStones = async (input: {
   }
 
   // sort alphanumerically by name
-  return stones.sort((a, b) => a.name.localeCompare(b.name));
+  return stones.sort((a, b) => compareStrings(a.name, b.name));
 };
 
 /**

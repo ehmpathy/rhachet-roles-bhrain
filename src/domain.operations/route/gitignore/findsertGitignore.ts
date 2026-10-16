@@ -1,6 +1,8 @@
 import * as fs from 'fs/promises';
 import * as path from 'path';
 
+import { getOneFileTextOrNull } from '@src/utils/fs/getOneFileTextOrNull';
+
 /**
  * .what = findserts a `.gitignore` of fixed content into a directory
  *
@@ -31,23 +33,21 @@ import * as path from 'path';
 export const findsertGitignore = async (input: {
   dir: string;
   content: string;
-}): Promise<{ path: string; action: 'created' | 'unchanged' }> => {
+}): Promise<{ path: string; action: 'created' | 'rewrote' | 'unchanged' }> => {
   const gitignorePath = path.join(input.dir, '.gitignore');
 
   // ensure the target dir found or created
   await fs.mkdir(input.dir, { recursive: true });
 
   // read what is there, if aught
-  const contentFound = await fs
-    .readFile(gitignorePath, 'utf-8')
-    .catch((error: NodeJS.ErrnoException) => {
-      if (error.code === 'ENOENT') return null;
-      throw error;
-    });
+  const contentFound = await getOneFileTextOrNull({ path: gitignorePath });
   if (contentFound === input.content)
     return { path: gitignorePath, action: 'unchanged' };
 
-  // write it
+  // write it; an absent file was created, a drifted one was rewrote
   await fs.writeFile(gitignorePath, input.content);
-  return { path: gitignorePath, action: 'created' };
+  return {
+    path: gitignorePath,
+    action: contentFound === null ? 'created' : 'rewrote',
+  };
 };

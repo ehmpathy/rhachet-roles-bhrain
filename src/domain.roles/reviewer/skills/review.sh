@@ -6,14 +6,14 @@
 #        via location-independent package import
 #
 # usage:
-#   ./review.sh --rules "rules/*.md" --paths "src/*.ts" --output "review.md" --mode hard
+#   ./review.sh --rules "rules/*.md" --paths-with "src/**/*.ts"
+#   ./review.sh --help                # the AUTHORITATIVE flag list
 #
 # options:
-#   --rules   glob pattern(s) for rule files (comma-separated)
-#   --diffs   diff range: since-main, since-commit, since-staged
-#   --paths   glob pattern(s) for target files (comma-separated)
-#   --output  output file path for the review
-#   --mode    review mode: soft (paths only) or hard (full content)
+#   this header lists no flags, deliberately: `--help` states all of them and
+#   sits beside the parser it describes, so a list here would be a third copy
+#   at the greatest distance from the contract. the two copies that remain are
+#   both in `review.ts`.
 ######################################################################
 set -euo pipefail
 

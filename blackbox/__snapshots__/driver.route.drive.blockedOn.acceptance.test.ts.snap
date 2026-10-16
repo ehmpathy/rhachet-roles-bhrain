@@ -81,10 +81,10 @@ exports[`driver.route.drive.blocker.acceptance given: [case1] stone with only ap
    │  ├─
    │  │
    │  │  🪨 run solid skill repo=bhrain/role=driver/skill=route.stone.judge
-   │  │  
+   │  │
    │  │  passed: false
    │  │  reason: wait for human approval
-   │  │  
+   │  │
    │  │  ✋ halted, human approval required
    │  │     ├─ please ask your human to
    │  │     │  └─ rhx route.stone.set --stone 1.vision --as approved
@@ -362,7 +362,7 @@ exports[`driver.route.drive.blocker.acceptance given: [case2] stone with review 
    │  ├─
    │  │
    │  │  🪨 run solid skill repo=bhrain/role=driver/skill=route.stone.judge
-   │  │  
+   │  │
    │  │  passed: false
    │  │  reason: blockers exceed threshold (1 > 0)
    │  │
@@ -385,10 +385,10 @@ exports[`driver.route.drive.blocker.acceptance given: [case2] stone with review 
    │  ├─
    │  │
    │  │  🪨 run solid skill repo=bhrain/role=driver/skill=route.stone.judge
-   │  │  
+   │  │
    │  │  passed: false
    │  │  reason: wait for human approval
-   │  │  
+   │  │
    │  │  ✋ halted, human approval required
    │  │     ├─ please ask your human to
    │  │     │  └─ rhx route.stone.set --stone 3.blueprint --as approved
@@ -458,6 +458,12 @@ exports[`driver.route.drive.blocker.acceptance given: [case2] stone with review 
    │  ├─ route = .
    │  └─ stone = 3.blueprint
    │
+   ├─ latest round, i001
+   │   ├─ r1: bash (l1, 1/∞) — rejected, 1 blocker 🔴, 0 nitpicks ✓
+   │   │   └─ given: .reviews/peer/3.blueprint._.review.i001.dc4ea706d070918331.r001._.given.by_peer.bash.md
+   │   ├─ j1: blocked ✗ — blockers exceed threshold (1 > 0)
+   │   └─ j2: blocked ✗ — wait for human approval
+   │
    ├─ are you here?
    │  ├─ when ready for review, run:
    │  │  └─ rhx route.stone.set --stone 3.blueprint --as arrived
@@ -490,6 +496,12 @@ exports[`driver.route.drive.blocker.acceptance given: [case2] stone with review 
    ├─ where do we go?
    │  ├─ route = .
    │  └─ stone = 3.blueprint
+   │
+   ├─ latest round, i001
+   │   ├─ r1: bash (l1, 1/∞) — rejected, 1 blocker 🔴, 0 nitpicks ✓
+   │   │   └─ given: .reviews/peer/3.blueprint._.review.i001.dc4ea706d070918331.r001._.given.by_peer.bash.md
+   │   ├─ j1: blocked ✗ — blockers exceed threshold (1 > 0)
+   │   └─ j2: blocked ✗ — wait for human approval
    │
    ├─ are you here?
    │  ├─ when ready for review, run:
@@ -529,10 +541,10 @@ exports[`driver.route.drive.blocker.acceptance given: [case2] stone with review 
    │  ├─
    │  │
    │  │  🪨 run solid skill repo=bhrain/role=driver/skill=route.stone.judge
-   │  │  
+   │  │
    │  │  passed: false
    │  │  reason: wait for human approval
-   │  │  
+   │  │
    │  │  ✋ halted, human approval required
    │  │     ├─ please ask your human to
    │  │     │  └─ rhx route.stone.set --stone 3.blueprint --as approved
