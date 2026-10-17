@@ -197,23 +197,28 @@ const getOneCloseOfBlock = (input: {
  * .why = the scan must take blocks in the order they appear, never one kind to
  *        exhaustion — else a later kind could open INSIDE a span already counted
  *
- * .note = deliberate mutation, twice, both bounded to this function
- *         (rule.require.immutable-vars' scoped-zone clause):
- *
- *         1. `best` is a min-by-`at` search with two early `continue`s — a
- *            tag that never opens, and one whose close is absent. a
- *            `reduce` would carry both as `acc` passthroughs, so a loop
- *            reads as a search where a fold would read as a state machine.
- *            the value never escapes: returned by value, read once.
- *
- *         2. `opener.lastIndex = input.from` mutates a RegExp built the line
- *            above, per iteration, so no `lastIndex` state carries across
- *            calls or tags — a hoisted `g` regex would carry its cursor
- *            between calls and silently skip blocks on the second call.
+ * .note = the candidates are tried earliest first, and the first whole block
+ *         wins. an unclosed opener is skipped for the next candidate, so a
+ *         truncated block never swallows the blocks behind it. a close is hunted
+ *         only for the candidate tried, never for every tag that opened.
  */
 const getOneNextBlock = (input: {
   prompt: string;
   from: number;
+  /**
+   * the next opener of each tag, as found by an earlier call of this walk
+   *
+   * .why = without it, every block re-hunts every tag from the cursor. a tag that
+   *        opens once (`<rules>`, `<refs>`, `<conversation>`) is then searched to the
+   *        END of a megabyte prompt once per later block, which makes the parse
+   *        O(blocks × prompt) — measured as most of a grove meter's wall time.
+   *
+   * .note = a remembered opener at or after the cursor is still the leftmost one:
+   *         the hunt that found it started at an earlier cursor and matched no
+   *         opener in between. a remembered `null` stays `null` for the same reason.
+   *         so the memo changes how often the prompt is scanned, never what is found
+   */
+  openers: Map<string, OpenerOfTag | null>;
 }): {
   // narrowed to the DELIMITED rows the scan actually walks, so the locus Record
   // lookup below needs no cast — `scaffold` is a residual and never a block
@@ -224,43 +229,31 @@ const getOneNextBlock = (input: {
   /** the block's `path="…"` attribute, where its tag carries one */
   path: string | null;
 } | null => {
-  let best: {
-    into: DelimitedSection;
-    at: number;
-    body: number;
-    end: number;
-    path: string | null;
-  } | null = null;
+  // each tag's next opener at or after the cursor, earliest first
+  const candidates = TAGS_OF_SCAN.map((tag) =>
+    getOneNextOpenerOfTag({ ...input, tag }),
+  )
+    .filter((found): found is OpenerOfTag => found !== null)
+    .sort((a, b) => a.at - b.at);
 
-  for (const tag of TAGS_OF_SCAN) {
-    const opener = new RegExp(
-      `<${tag.replace(/\./g, '\\.')}(?:\\s[^>]*)?>`,
-      'g',
-    );
-    opener.lastIndex = input.from;
-    const match = opener.exec(input.prompt);
-    if (!match) continue;
-
-    const at = match.index;
-    if (best && at >= best.at) continue;
-    const into = asSectionOfBlock({ tag, opener: match[0] });
+  // the earliest opener whose block is whole wins; an unclosed one is skipped
+  for (const found of candidates) {
+    const into = asSectionOfBlock({ tag: found.tag, opener: found.text });
 
     // a void tag (`<target.file … change="deleted" />`) is a whole block
     // with no body — read as an opener it would hunt forward for a later
     // target's close and absorb every block in between
-    if (match[0].endsWith('/>')) {
-      best = {
+    if (found.text.endsWith('/>'))
+      return {
         into,
-        at,
+        at: found.at,
         body: 0,
-        end: at + match[0].length,
-        path: asPathOfTag({ tag: match[0] }),
+        end: found.at + found.text.length,
+        path: asPathOfTag({ tag: found.text }),
       };
-      continue;
-    }
 
-    const close = `</${tag}>`;
-    const bodyFrom = at + match[0].length;
+    const close = `</${found.tag}>`;
+    const bodyFrom = found.at + found.text.length;
     const bodyUntil = getOneCloseOfBlock({
       prompt: input.prompt,
       close,
@@ -270,16 +263,56 @@ const getOneNextBlock = (input: {
     // end of the file and count a body that was never there
     if (bodyUntil === -1) continue;
 
-    best = {
+    return {
       into,
-      at,
+      at: found.at,
       body: bodyUntil - bodyFrom,
       end: bodyUntil + close.length,
-      path: asPathOfTag({ tag: match[0] }),
+      path: asPathOfTag({ tag: found.text }),
     };
   }
 
-  return best;
+  return null;
+};
+
+/**
+ * .what = one opener tag as found in the prompt — its tag name, offset, and text
+ * .why = the unit the walk remembers per tag, so a later block reuses the hunt
+ */
+type OpenerOfTag = { tag: string; at: number; text: string };
+
+/**
+ * .what = the next opener of one tag at or after the cursor, from the walk's memo
+ *         where it still holds, else from a fresh hunt that refills the memo
+ * .why = see `openers` on `getOneNextBlock` — the memo is what keeps the walk linear
+ *
+ * .note = deliberate mutation of the walk's own memo, owned by one call of
+ *         `asPromptSectionChars` and never observed outside it
+ *         (rule.require.immutable-vars' scoped-zone clause)
+ */
+const getOneNextOpenerOfTag = (input: {
+  prompt: string;
+  from: number;
+  tag: string;
+  openers: Map<string, OpenerOfTag | null>;
+}): OpenerOfTag | null => {
+  // a remembered answer still holds where it lies at or after the cursor
+  const known = input.openers.get(input.tag);
+  if (known === null) return null;
+  if (known !== undefined && known.at >= input.from) return known;
+
+  // otherwise hunt from the cursor, and remember what was found
+  const opener = new RegExp(
+    `<${input.tag.replace(/\./g, '\\.')}(?:\\s[^>]*)?>`,
+    'g',
+  );
+  opener.lastIndex = input.from;
+  const match = opener.exec(input.prompt);
+  const found = match
+    ? { tag: input.tag, at: match.index, text: match[0] }
+    : null;
+  input.openers.set(input.tag, found);
+  return found;
 };
 
 /**
@@ -462,12 +495,18 @@ export const asPromptSectionChars = (input: {
   const sections = { ...SECTIONS_NIL };
   const charsByPath = new Map<string, number>();
   const tagsUnknown: string[] = [];
+  // - `openers` never escapes; it only spares the walk a re-hunt per block
+  const openers = new Map<string, OpenerOfTag | null>();
   let targets = 0;
   let cursor = getOneOffsetOfFirstBlockScan({ prompt: input.prompt });
   let headUntil: number | null = null;
 
   for (;;) {
-    const block = getOneNextBlock({ prompt: input.prompt, from: cursor });
+    const block = getOneNextBlock({
+      prompt: input.prompt,
+      from: cursor,
+      openers,
+    });
     if (block === null) break;
     // the static head ends where the first delimited block opens
     if (headUntil === null) headUntil = block.at;
