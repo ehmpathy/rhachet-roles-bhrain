@@ -27,8 +27,8 @@ import { stepReview } from './stepReview';
  * .note = 🔴 the brain is DEFAULT_TEST_BRAIN_OF_LIVE_CACHE, never the bare default: the floor
  *         ranks hosts by sticker input rate and, on 2026-10-10, sent all nine rounds of three
  *         attempts to a host that never caches (0/3 warm). SOME cannot rescue a host choice
- *         that is wrong on every attempt; the fp8 narrow can. measured the same day: round 2
- *         warm at 99.7% on InferenceNet/fp8, its control cold at 2.2%
+ *         that is wrong on every attempt; a slug with no `floor` hands the pick to openrouter's
+ *         cache-sticky balancer, which can (see DEFAULT_TEST_BRAIN_OF_LIVE_CACHE)
  */
 const REPEATABLY_CONFIG_OF_LIVE_CACHE = {
   ...REPEATABLY_CONFIG,

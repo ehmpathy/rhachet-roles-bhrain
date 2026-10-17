@@ -45,21 +45,24 @@ export const DEFAULT_TEST_BRAIN: BrainAtomSlugOpenRouterFiltered =
   'openrouter/deepseek/flash/floor&speed=min100tps&privacy=full';
 
 /**
- * .what = the test brain for a LIVE cache measurement — the default test brain, narrowed to
- *         fp8 hosts
- * .why = a pin chosen for measurement (rule.require.versionless-brain-defaults false positive).
- *        the floor ranks hosts by sticker input rate alone, so it picks the cheapest host
- *        whether or not that host caches. measured 2026-10-10: every round of three attempts
- *        landed on Wafer (quantization `unknown`, `supports_implicit_caching: false`) and read
- *        `cache.get` of at most one 1k head block — a 0% figure that says naught of the prompt
- *        layout the suite exists to grade. `precision=fp8` excludes the `unknown` hosts and
- *        lands on an fp8 host; CoreWeave/fp8 measured 2026-10-05 served round 2 warm at 99.7%
+ * .what = the test brain for a LIVE cache measurement — the default test brain's promises,
+ *         minus `floor`: openrouter's balancer picks the host among every qualified endpoint
+ * .why = a supply chosen for measurement (rule.require.versionless-brain-defaults false
+ *        positive). the floor ranks hosts by sticker input rate alone, so it lands on the
+ *        cheapest qualified host whether or not that host caches, and a host pin by precision
+ *        only moves the trap. measured: 2026-10-10 the floor sent every round to Wafer, and the
+ *        `precision=fp8` narrow that fixed it then sent every round to Makora/fp8 by 2026-10-17
+ *        (nine of nine rounds, twice, cache read 0 or the 1k static head). each read 0% and says
+ *        naught of the prompt layout the suite exists to grade. with no `floor` the package
+ *        admits the whole qualified set at once, and openrouter's balancer keeps a repeated
+ *        prefix on the host that holds it warm — the steer a cache measurement needs. measured
+ *        2026-10-17: all three attempts green on this slug, where the fp8 floor read 0 of 3
  * .note = still versionless: an openrouter tier names no model version
  * .note = the host rank itself is owed upstream — `.dream/v2026_10_08.reseed.openrouter-floor-
  *         ranks-by-sticker-input-and-picks-a-host-that-never-caches.md` (fulcrum F186)
  */
 export const DEFAULT_TEST_BRAIN_OF_LIVE_CACHE: BrainAtomSlugOpenRouterFiltered =
-  'openrouter/deepseek/flash/floor&speed=min100tps&privacy=full&precision=fp8';
+  'openrouter/deepseek/flash/speed=min100tps&privacy=full';
 
 /**
  * .what = the test brain a CLI-driven (blackbox) test passes as --brain
