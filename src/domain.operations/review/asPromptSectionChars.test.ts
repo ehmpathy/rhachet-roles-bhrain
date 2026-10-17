@@ -774,4 +774,82 @@ describe('asPromptSectionChars', () => {
       });
     },
   );
+
+  given(
+    '[case17] a prompt with many targets behind tags that open only once',
+    () => {
+      // `<rules>`, `<refs>`, `<conversation>` each open once, ahead of 400 targets.
+      // a walk that re-hunts every tag per block searches the rest of the prompt
+      // for those three, once per later block — O(blocks × prompt), which was most
+      // of a grove meter's wall time over legacy runs
+      const count = 400;
+      const prompt = [
+        '## rules (FOR REFERENCE ONLY)',
+        '<rules>',
+        'R',
+        '</rules>',
+        '<refs>',
+        'F',
+        '</refs>',
+        '<conversation>',
+        'C',
+        '</conversation>',
+        '<target>',
+        ...Array.from({ length: count }, (_, at) => [
+          `<target.diff path="f${at}.ts">`,
+          'HUNK',
+          '</target.diff>',
+          `<target.file path="f${at}.ts">`,
+          'BODY',
+          '</target.file>',
+        ]).flat(),
+        '</target>',
+      ].join('\n');
+
+      when(
+        '[t0] the inputs are read, with each opener hunt that found none counted',
+        () => {
+          const scan = useThen('it parses', () => {
+            // an opener regex is `<tag(?:\s[^>]*)?>`; a hunt that answers null has
+            // scanned to the END of the prompt, so the count of those hunts is the
+            // count of full-prompt scans the walk paid for
+            const isOpenerHunt = (regex: RegExp): boolean =>
+              regex.source.startsWith('<') && !regex.source.startsWith('<\\/?');
+            const execOriginal = RegExp.prototype.exec;
+            const spy = jest
+              .spyOn(RegExp.prototype, 'exec')
+              .mockImplementation(function (this: RegExp, text: string) {
+                return execOriginal.call(this, text);
+              });
+            try {
+              const read = asPromptSectionChars({ prompt });
+              const misses = spy.mock.instances
+                .map((regex, at) => ({ regex, result: spy.mock.results[at] }))
+                .filter(
+                  (one) =>
+                    isOpenerHunt(one.regex as unknown as RegExp) && // jest types each instance as the mocked fn's `this`, which is the regex
+                    one.result?.value === null,
+                ).length;
+              return { read, misses };
+            } finally {
+              spy.mockRestore();
+            }
+          });
+
+          then('every target is still read', () => {
+            expect(scan.read?.targets).toEqual(count);
+            expect(asSummed({ read: scan.read })).toEqual(prompt.length);
+          });
+
+          then(
+            '🔴 a tag that found no further opener is never hunted again',
+            () => {
+              // at most one miss per distinct tag, never one per block
+              expect(scan.misses).toBeLessThanOrEqual(5);
+            },
+          );
+        },
+      );
+    },
+  );
 });

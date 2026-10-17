@@ -1,0 +1,21 @@
+{
+  "key": "26e117763d6eba64",
+  "kind": "create",
+  "repo": {
+    "owner": "ehmpathy",
+    "name": "rhachet"
+  },
+  "exid": null,
+  "title": "fix(invoke): rhx drops skill stderr on a successful run",
+  "description": "## .what\n\n`rhx <skill>` drops every byte a skill writes to stderr when the skill exits 0.\n\n## .where\n\n`src/domain.operations/invoke/executeSkill.ts` runs the skill via `spawnSync` with\n`stdio: [process.stdin, process.stdout, 'pipe']` in stream mode. the piped stderr is read only\nto build `SkillExecutionError` on a non-zero exit. on exit 0 it is discarded.\n\n## .why it hurts\n\n- a progress line on stderr never reaches the human. `rhx review._.cost --of grove` writes its\n  per-tree progress to stderr (so `--json` stays pure on stdout), and via `rhx` it ran over ten\n  minutes with zero output: a silent wait a human cannot tell from a hang\n  (rule.require.status-feedback)\n- any caution a skill prints on stderr on a successful run vanishes — a failhide\n- even on a failure, naught streams: stderr is replayed only after the skill exits\n\n## .the shape of the fix\n\n1. in stream mode, inherit stderr: `stdio: [process.stdin, process.stdout, process.stderr]`.\n   the human then sees each stderr byte live, on success and on failure alike\n2. `SkillExecutionError.stderr` becomes null in stream mode (the bytes already reached the\n   terminal), so the error render must not depend on it there. capture mode keeps the pipe\n3. clamp: an integration test with a skill that writes `progress` to stderr and exits 0;\n   assert the bytes reach the parent's stderr. red today, green after\n\n## .found\n\ndogfood of `rhx review._.cost --of grove` in rhachet-roles-bhrain, 2026-10-16.",
+  "status": null,
+  "via": "gh.issues",
+  "auth": "as-human",
+  "idem": null,
+  "heldAt": "2026-10-16",
+  "heldSeq": 29,
+  "recordStatus": "DELIVERED",
+  "reason": null,
+  "settledAt": "2026-10-16",
+  "deliveredExid": "614"
+}
