@@ -4,6 +4,9 @@ import util from 'util';
 
 import { keyrack } from 'rhachet/keyrack';
 
+// every `when.repeatably` attempt checks the attempt-1 snapshot
+import './src/.test/withAttemptAgnosticSnapshots';
+
 /**
  * .what = the default per-test budget for an acceptance test
  * .why = 90s was sized for a plain downstream api call. every acceptance test here is a blackbox

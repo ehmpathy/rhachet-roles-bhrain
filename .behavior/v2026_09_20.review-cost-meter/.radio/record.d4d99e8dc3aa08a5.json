@@ -1,0 +1,21 @@
+{
+  "key": "d4d99e8dc3aa08a5",
+  "kind": "create",
+  "repo": {
+    "owner": "ehmpathy",
+    "name": "rhachet-roles-ehmpathy"
+  },
+  "exid": null,
+  "title": "feat(mechanic,ergonomist): a hillclimb loop skill for performance and defriction",
+  "description": "## .what\n\nteach two roles a hillclimb loop as a skill, one axis each:\n\n1. **mechanic** — hillclimb **performance**: speed up, decost, and depollute a tool by measurement\n2. **ergonomist** — hillclimb **defriction**: remove each friction a dogfood pass hits\n\n## .why\n\nrhachet-roles-bhrain ran this loop by hand over its review system (`/loop` \"defriction and\nenspeed and decost the review system … dogfood and drive\"). each pass found a real, measured\ndefect, and each cure shipped with a clamp. the loop is a repeatable tactic, so it is owed a\nskill rather than a prompt a human retypes.\n\nmeasured examples from that loop:\n\n- the grove cost meter re-parsed every prompt with an O(blocks × prompt) tag hunt; a per-walk\n  opener memo cut a warm run from 248s to 36s, clamped by a test that counts regex misses\n- a live cache suite read 0% because the host rank picked a host that never caches; the\n  billed tokens and served provider, logged per round, named the cause in one read\n- a prefix census showed 622 prefix misses by provider, which surfaced a provider-reroute\n  verdict the meter cannot yet name\n\n## .the loop (the shape a skill should pave)\n\n1. **measure** — run the tool's own meter (never a hand-rolled rollup); name the top cost or\n   the top friction, with its figure\n2. **diagnose** — read the locus to root cause; a symptom patch is a workaround\n3. **cure** — fix at source, with a clamp that goes red on the defect and green on the fix\n4. **re-measure** — the same meter, same breadth; the figure must move\n5. **record** — a dream for each cure too large for this pass, symlinked from the route\n6. **repeat** — self-paced; stop when a pass finds no lever above a declared floor\n\nmechanic grades each pass on wall time, tokens, and dollars. ergonomist grades each pass on\nfrictions hit in a dogfood walk (a question asked, a doc read to run a command, a silent wait,\nan error that names no fix).\n\n## .the shape of the fix\n\n- a skill per role (e.g. `hillclimb.performance`, `hillclimb.defriction`), likely a route\n  (stones + guards), since each step needs judgment in a fixed order\n- each stone owes an artifact: the measured figure before, the cause, the clamp, the figure after\n- the guard refuses a pass that claims a gain with no before/after figure from the paved meter\n\n## .found\n\nrhachet-roles-bhrain @ beav/feat-review-cost-meter, 2026-10-17",
+  "status": null,
+  "via": "gh.issues",
+  "auth": "as-human",
+  "idem": null,
+  "heldAt": "2026-10-17",
+  "heldSeq": 30,
+  "recordStatus": "DELIVERED",
+  "reason": null,
+  "settledAt": "2026-10-17",
+  "deliveredExid": "973"
+}
