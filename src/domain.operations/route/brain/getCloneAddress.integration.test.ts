@@ -6,6 +6,8 @@ import * as path from 'path';
 import { given, then, useBeforeAll, when } from 'test-fns';
 import { promisify } from 'util';
 
+import { getRepoClaudeSettingsPath } from '@src/.test/getRepoClaudeSettingsPath';
+
 import { getRepoRootWithFallback } from '../guard/getRepoRootWithFallback';
 import { asCloneAddress } from './asCloneAddress';
 import { getCloneAddress, WHOAMI_TIMEOUT_MS } from './getCloneAddress';
@@ -274,7 +276,7 @@ describe('getCloneAddress.integration', () => {
         () => {
           const budget = useBeforeAll(async () => {
             const repoRoot = await getRepoRootWithFallback({ from: __dirname });
-            const file = path.join(repoRoot, '.claude', 'settings.json');
+            const file = getRepoClaudeSettingsPath({ repoRoot });
             // .why GUARDED = an absent or malformed settings file is a drift this case
             //    catches; a raw ENOENT here would kill the case before the row that names
             //    the fix (`rule.require.failloud`)
@@ -309,7 +311,7 @@ describe('getCloneAddress.integration', () => {
                 'the claude hook settings could not be read or parsed',
                 {
                   expected: budget.file,
-                  hint: 'restore `.claude/settings.json` (rhx roles boot re-stamps it). this case binds WHOAMI_TIMEOUT_MS to the `route.drive` hook timeouts declared there, so an absent file leaves the probe cap unbound rather than merely untested',
+                  hint: 'restore the repo settings layer (`rhx init --hooks` re-derives it). this case binds WHOAMI_TIMEOUT_MS to the `route.drive` hook timeouts declared there, so an absent file leaves the probe cap unbound rather than merely untested',
                 },
               );
             expect(budget.timeouts.length).toBeGreaterThan(0);

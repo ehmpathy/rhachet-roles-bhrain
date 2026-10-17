@@ -1,14 +1,15 @@
 import * as fs from 'fs/promises';
-import * as path from 'path';
 import { given, then, useThen, when } from 'test-fns';
+
+import { getRepoClaudeSettingsPath } from '@src/.test/getRepoClaudeSettingsPath';
 
 import { ROLE_LEARNER } from './getLearnerRole';
 
 /**
- * .what = the repo root, where jest runs; the committed .claude/settings.json lives here
+ * .what = the repo root, where jest runs; the committed claude settings live here
  * .why = getLearnerRole.test proves the role DECLARES its hooks in-memory, but Claude Code
- *        fires hooks from the committed .claude/settings.json — a separate file no boot step
- *        writes. a role can declare an onStop/onTool command that is ABSENT from settings.json,
+ *        fires hooks from the committed settings file — a separate file no boot step
+ *        writes. a role can declare an onStop/onTool command that is ABSENT from settings,
  *        and the whole hook silently never fires (exactly the gap that shipped the inert
  *        sweephook). the drift runs both ways: a settings entry can also outlive the role
  *        declaration that authored it, and then fires with no role behind it. this asserts
@@ -16,7 +17,7 @@ import { ROLE_LEARNER } from './getLearnerRole';
  *        so neither direction can drift unnoticed (rule.forbid.failhide)
  */
 const REPO_ROOT = process.cwd();
-const SETTINGS_PATH = path.join(REPO_ROOT, '.claude/settings.json');
+const SETTINGS_PATH = getRepoClaudeSettingsPath({ repoRoot: REPO_ROOT });
 
 /**
  * .what = the shape of a Claude Code settings hook entry we depend on

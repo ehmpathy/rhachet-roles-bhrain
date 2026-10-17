@@ -54,6 +54,11 @@ always:
       # misplacement costs tokens on every boot rather than correctness on any one.
       # the single blocker it names is `rule.require.a-cue-is-not-a-claim`'s, cited.
       - briefs/rule.prefer.rules-that-refout.md
+      # the same say/ref split, for a SET rather than one rule: a subdomain too large to
+      # boot whole boots as its catalog, members under `not`. say-level because it must
+      # fire when a boot spec is written or runs over budget — the moment a librarian
+      # would otherwise trim a cue to save tokens a path list had spent
+      - briefs/rule.always.boot-an-oversized-subdomain-as-its-catalog.md
     ref:
       # the demo the catalog rule ejected — one occurrence, dated and measured.
       # ref because a reader wants it once, never on every boot

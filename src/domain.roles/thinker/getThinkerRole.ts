@@ -47,14 +47,4 @@ export const ROLE_THINKER: Role = Role.build({
   briefs: {
     dirs: [{ uri: __dirname + '/briefs' }],
   },
-  hooks: {
-    onBrain: {
-      onBoot: [
-        {
-          command: './node_modules/.bin/rhachet roles boot --role thinker',
-          timeout: 'PT30S',
-        },
-      ],
-    },
-  },
 });

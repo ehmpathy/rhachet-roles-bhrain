@@ -1,0 +1,146 @@
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
+
+exports[`driver.init.status-line-survives-enroll.acceptance given: [case1] a repo whose repo actor is enrolled with driver when: [t0] rhx init --roles driver --hooks runs then: the framed init block matches the snapshot: rhx init --roles driver --hooks - status line bound 1`] = `
+"
+🔧 init 1 role(s)...
+
+📚 link role repo=bhrain/role=driver
+   ├─ links
+   │  ├─ + .agent/readme.md
+   │  ├─ + .agent/repo=.this/readme.md
+   │  ├─ + .agent/repo=bhrain/readme.md
+   │  ├─ + .agent/repo=bhrain/.gitignore
+   │  ├─ + .agent/repo=bhrain/role=driver/readme.md
+   │  ├─ + .agent/repo=bhrain/role=driver/boot.yml
+   │  ├─ + .agent/repo=bhrain/role=driver/keyrack.yml
+   │  ├─ + .agent/repo=bhrain/role=driver/briefs
+   │  ├─ + .agent/repo=bhrain/role=driver/skills
+   │  └─ + .agent/repo=bhrain/role=driver/inits
+   └─ stats
+      ├─ $N brief(s)
+      ├─ $N skill(s)
+      └─ $N init(s)
+
+💪 init role repo=bhrain/role=driver
+   ├─ $PACKAGE/dist/domain.roles/driver/inits/init.claude.status-line.sh
+      ├─
+      │
+      │ 🦉 the path is clear
+      │
+      │ 🗿 init.claude.status-line
+      │    ├─ status = configured
+      │    ├─ settings = .claude/settings.of.repo.json
+      │    ├─ backup = .claude/settings.of.repo.$STAMP.bak.json
+      │    ├─ takes effect = at each rhx enroll session's next start; a live session keeps its old settings
+      │    └─ peer actors = derived at each one's next rhx enroll, or the next rhx init --hooks
+      │
+      └─
+   │
+   └─ $PACKAGE/dist/domain.roles/driver/inits/init.claude.permissions.route.sh
+      ├─
+      │
+      │ 🦉 the path is clear
+      │
+      │ 🗿 init.claude.permissions.route
+      │    ├─ status = healed
+      │    ├─ what = .route/ is the driver's workspace, no longer denied
+      │    ├─ guard = rhx route.mutate.guard --mode hook still protects passed stones
+      │    ├─ settings = .claude/settings.of.repo.json
+      │    └─ backup = .claude/settings.of.repo.$STAMP.bak.json
+      │
+      └─
+
+✨ 1 role(s) linked
+✨ 1 role(s) initialized
+
+🧠 brain://repo=ambient
+   ├─ linked
+   │  └─ .claude → .agent/.actors/actor.via.repo=ambient/brain/.claude
+   └─ boot.md
+      └─ created — 1 role
+
+🔭 search for linked roles with hooks...
+   └─ bhrain/driver
+
+🪝 apply hooks to brains...
+
+✨ hooks
+   └─ no changes needed
+
+"
+`;
+
+exports[`driver.init.status-line-survives-enroll.acceptance given: [case1] a repo whose repo actor is enrolled with driver when: [t1] the actor is enrolled again — rhx init --hooks re-runs the layout then: the framed re-init block matches the snapshot: rhx init --hooks - layout re-run, hooks need no change 1`] = `
+"🔭 search for linked roles with hooks...
+   └─ bhrain/driver
+
+🪝 apply hooks to brains...
+
+✨ hooks
+   └─ no changes needed
+
+"
+`;
+
+exports[`driver.init.status-line-survives-enroll.acceptance given: [case2] a repo whose human already set a status line in the grove when: [t0] rhx init --roles driver runs then: the framed init block matches the snapshot: rhx init --roles driver - human grove line kept 1`] = `
+"
+🔧 init 1 role(s)...
+
+📚 link role repo=bhrain/role=driver
+   ├─ links
+   │  ├─ + .agent/readme.md
+   │  ├─ + .agent/repo=.this/readme.md
+   │  ├─ + .agent/repo=bhrain/readme.md
+   │  ├─ + .agent/repo=bhrain/.gitignore
+   │  ├─ + .agent/repo=bhrain/role=driver/readme.md
+   │  ├─ + .agent/repo=bhrain/role=driver/boot.yml
+   │  ├─ + .agent/repo=bhrain/role=driver/keyrack.yml
+   │  ├─ + .agent/repo=bhrain/role=driver/briefs
+   │  ├─ + .agent/repo=bhrain/role=driver/skills
+   │  └─ + .agent/repo=bhrain/role=driver/inits
+   └─ stats
+      ├─ $N brief(s)
+      ├─ $N skill(s)
+      └─ $N init(s)
+
+💪 init role repo=bhrain/role=driver
+   ├─ $PACKAGE/dist/domain.roles/driver/inits/init.claude.status-line.sh
+      ├─
+      │
+      │ 🦉 as leaves fall
+      │
+      │ 🗿 init.claude.status-line
+      │    ├─ status = skipped
+      │    ├─ reason = a statusLine you set already exists; left intact to avoid a clobber
+      │    ├─ layer = grove
+      │    ├─ settings = ~/.claude/settings.json
+      │    ├─ yours = my-own-line
+      │    └─ fix: to use the route status line, remove yours from that file, then rerun the init
+      │
+      └─
+   │
+   └─ $PACKAGE/dist/domain.roles/driver/inits/init.claude.permissions.route.sh
+      ├─
+      │
+      │ 🦉 the path is clear
+      │
+      │ 🗿 init.claude.permissions.route
+      │    ├─ status = healed
+      │    ├─ what = .route/ is the driver's workspace, no longer denied
+      │    ├─ guard = rhx route.mutate.guard --mode hook still protects passed stones
+      │    ├─ settings = .claude/settings.of.repo.json
+      │    └─ backup = .claude/settings.of.repo.$STAMP.bak.json
+      │
+      └─
+
+✨ 1 role(s) linked
+✨ 1 role(s) initialized
+
+🧠 brain://repo=ambient
+   ├─ linked
+   │  └─ .claude → .agent/.actors/actor.via.repo=ambient/brain/.claude
+   └─ boot.md
+      └─ created — 1 role
+
+"
+`;

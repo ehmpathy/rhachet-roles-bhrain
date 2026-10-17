@@ -1,0 +1,19 @@
+{
+  "key": "81ff0b37af4d1081",
+  "kind": "create",
+  "repo": {
+    "owner": "ehmpathy",
+    "name": "rhachet"
+  },
+  "exid": null,
+  "title": "fix(init): the role init frame breaks its own tree gutter",
+  "description": "rhachet frames a role init block with a tree gutter that breaks. seen on `rhx init --roles driver` (rhachet 1.49.x).\n\nobserved (the init's own tree is intact; the break is in the frame around it):\n\n```\n💪 init role repo=bhrain/role=driver\n   ├─ $PACKAGE/dist/.../init.claude.status-line.sh\n      ├─\n      │\n      │ 🦉 the path is clear\n      │ ...\n      └─\n   │\n   └─ $PACKAGE/dist/.../init.claude.permissions.route.sh\n      ├─\n      │ ...\n      └─\n```\n\ndefects:\n- the first init path is a `├─` branch, but its children are indented with no `│` rail, so the tree reads as detached from its parent\n- the init stdout is wrapped in an empty `├─` / `└─` pair, which reads as two empty branches around the content\n- a lone `│` joins the two inits, then the second is a `└─` that opens its own empty branch\n- the nest depth differs between the two inits: the same block shapes sit one level apart\n\nask: render each init as one branch, its stdout as indented leaves under it, with a `│` rail on every row until the last branch of the parent closes. no empty `├─` / `└─` rows.\n\nimpact: a downstream init that prints a correct tree still reads as broken once framed. downstream snapshots pin the frame as captured, so a fix here moves those snapshots too.\n\nsee also: rhachet-roles-bhrain route v2026_10_16.fix-status-line-binds-own-actor, fulcrum F18.",
+  "status": null,
+  "via": "gh.issues",
+  "auth": "as-human",
+  "idem": null,
+  "heldSeq": 30,
+  "recordStatus": "DELIVERED",
+  "reason": null,
+  "deliveredExid": "621"
+}

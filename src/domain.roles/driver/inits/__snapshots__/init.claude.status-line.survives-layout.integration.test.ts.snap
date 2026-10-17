@@ -1,0 +1,415 @@
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
+
+exports[`init.claude.status-line.survives-layout.integration given: [case1] a repo that rhachet lays out, then the driver init binds when: [t0] rhachet lays out the brain dir, then the init binds then: the init tree matches the snapshot: init.claude.status-line - bound after a layout 1`] = `
+"🦉 the path is clear
+
+🗿 init.claude.status-line
+   ├─ status = configured
+   ├─ settings = .claude/settings.of.repo.json
+   ├─ backup = .claude/settings.of.repo.$STAMP.bak.json
+   ├─ takes effect = at each rhx enroll session's next start; a live session keeps its old settings
+   └─ peer actors = derived at each one's next rhx enroll, or the next rhx init --hooks
+"
+`;
+
+exports[`init.claude.status-line.survives-layout.integration given: [case1] a repo that rhachet lays out, then the driver init binds when: [t1] rhachet lays out the brain dir again, as an enroll does then: the layout pass output matches the snapshot: rhachet init --hooks - layout again, hooks need no change 1`] = `
+"🔭 search for linked roles with hooks...
+   └─ bhrain/driver
+
+🪝 apply hooks to brains...
+
+✨ hooks
+   └─ no changes needed
+
+"
+`;
+
+exports[`init.claude.status-line.survives-layout.integration given: [case2] a statusLine written where the published init wrote it, a real settings.json when: [t0] rhachet lays out the brain dir again then: the layout pass output matches the snapshot: rhachet init --hooks - layout pass over a stray real settings.json 1`] = `
+"🔭 search for linked roles with hooks...
+   └─ bhrain/driver
+
+🪝 apply hooks to brains...
+
+✨ hooks
+   └─ no changes needed
+
+"
+`;
+
+exports[`init.claude.status-line.survives-layout.integration given: [case3] a driver clone of a peer actor, a hash actor that holds driver when: [t0] rhachet derives every actor, as rhx init --hooks does then: the sweep output matches the snapshot: rhachet init --hooks - sweep with a hash actor listed 1`] = `
+"🔭 search for linked roles with hooks...
+   ├─ bhrain/driver
+   └─ ehmpathy/mechanic
+
+🪝 apply hooks to brains...
+
+✨ hooks
+   └─ no changes needed
+
+🧢 apply hooks to enrolled actors...
+   └─ hash=0a1b2c3d
+
+"
+`;
+
+exports[`init.claude.status-line.survives-layout.integration given: [case4] a repo with driver unlinked, driven through the real rhachet init --roles when: [t0] the human links driver then: the framed init block matches the snapshot: rhachet init --roles driver - status line bound 1`] = `
+"
+🔧 init 1 role(s)...
+
+📚 link role repo=bhrain/role=driver
+   ├─ links
+   │  ├─ + .agent/readme.md
+   │  ├─ + .agent/repo=.this/readme.md
+   │  ├─ + .agent/repo=bhrain/readme.md
+   │  ├─ + .agent/repo=bhrain/.gitignore
+   │  ├─ + .agent/repo=bhrain/role=driver/readme.md
+   │  ├─ + .agent/repo=bhrain/role=driver/boot.yml
+   │  ├─ + .agent/repo=bhrain/role=driver/keyrack.yml
+   │  ├─ + .agent/repo=bhrain/role=driver/briefs
+   │  ├─ + .agent/repo=bhrain/role=driver/skills
+   │  └─ + .agent/repo=bhrain/role=driver/inits
+   └─ stats
+      ├─ $N brief(s)
+      ├─ $N skill(s)
+      └─ $N init(s)
+
+💪 init role repo=bhrain/role=driver
+   ├─ $PACKAGE/dist/domain.roles/driver/inits/init.claude.status-line.sh
+      ├─
+      │
+      │ 🦉 the path is clear
+      │
+      │ 🗿 init.claude.status-line
+      │    ├─ status = configured
+      │    ├─ settings = .claude/settings.of.repo.json
+      │    ├─ backup = .claude/settings.of.repo.$STAMP.bak.json
+      │    ├─ takes effect = at each rhx enroll session's next start; a live session keeps its old settings
+      │    └─ peer actors = derived at each one's next rhx enroll, or the next rhx init --hooks
+      │
+      └─
+   │
+   └─ $PACKAGE/dist/domain.roles/driver/inits/init.claude.permissions.route.sh
+      ├─
+      │
+      │ 🦉 the path is clear
+      │
+      │ 🗿 init.claude.permissions.route
+      │    ├─ status = healed
+      │    ├─ what = .route/ is the driver's workspace, no longer denied
+      │    ├─ guard = rhx route.mutate.guard --mode hook still protects passed stones
+      │    ├─ settings = .claude/settings.of.repo.json
+      │    └─ backup = .claude/settings.of.repo.$STAMP.bak.json
+      │
+      └─
+
+✨ 1 role(s) linked
+✨ 1 role(s) initialized
+
+🧠 brain://repo=ambient
+   ├─ linked
+   │  └─ .claude → .agent/.actors/actor.via.repo=ambient/brain/.claude
+   └─ boot.md
+      └─ created — 1 role
+
+"
+`;
+
+exports[`init.claude.status-line.survives-layout.integration given: [case4] a repo with driver unlinked, driven through the real rhachet init --roles when: [t1] the human runs it again then: the framed init block matches the snapshot: rhachet init --roles driver - rerun, the init reports already configured 1`] = `
+"
+🔧 init 1 role(s)...
+
+📚 link role repo=bhrain/role=driver
+   ├─ links
+   │  ├─ ✓ .agent/readme.md (unchanged)
+   │  ├─ ✓ .agent/repo=.this/readme.md (unchanged)
+   │  ├─ ↻ .agent/repo=bhrain/readme.md (updated)
+   │  ├─ ✓ .agent/repo=bhrain/.gitignore (unchanged)
+   │  ├─ ↻ .agent/repo=bhrain/role=driver/readme.md (updated)
+   │  ├─ ↻ .agent/repo=bhrain/role=driver/boot.yml (updated)
+   │  ├─ ↻ .agent/repo=bhrain/role=driver/keyrack.yml (updated)
+   │  ├─ ↻ .agent/repo=bhrain/role=driver/briefs (updated)
+   │  ├─ ↻ .agent/repo=bhrain/role=driver/skills (updated)
+   │  └─ ↻ .agent/repo=bhrain/role=driver/inits (updated)
+   └─ stats
+      ├─ $N brief(s)
+      ├─ $N skill(s)
+      └─ $N init(s)
+
+💪 init role repo=bhrain/role=driver
+   ├─ $PACKAGE/dist/domain.roles/driver/inits/init.claude.status-line.sh
+      ├─
+      │
+      │ 🦉 so it is
+      │
+      │ 🗿 init.claude.status-line
+      │    ├─ status = already configured
+      │    ├─ settings = .claude/settings.of.repo.json
+      │    └─ peer actors = derived at each one's next rhx enroll, or the next rhx init --hooks
+      │
+      └─
+   │
+   └─ $PACKAGE/dist/domain.roles/driver/inits/init.claude.permissions.route.sh
+      ├─
+      │
+      │ 🦉 so it is
+      │
+      │ 🗿 init.claude.permissions.route
+      │    ├─ status = already healed
+      │    └─ settings = .claude/settings.of.repo.json
+      │
+      └─
+
+✨ 1 role(s) linked
+✨ 1 role(s) initialized
+
+"
+`;
+
+exports[`init.claude.status-line.survives-layout.integration given: [case4] a repo with driver unlinked, driven through the real rhachet init --roles when: [t2] the human unlinks driver then: the framed output matches the snapshot, with no init block: rhachet init --roles -driver - unlink, the init block is absent 1`] = `
+"
+🔧 init roles (incremental)
+   ├─ subtractions
+   │  └─ - bhrain/driver
+   └─ untouched (0)
+
+"
+`;
+
+exports[`init.claude.status-line.survives-layout.integration given: [case5] rhachet init --roles meets a state a human must fix, each time with driver unlinked first when: [t0] the grove holds the statusLine of the human then: the framed init block matches the snapshot: rhachet init --roles driver - grove line kept 1`] = `
+"
+🔧 init 1 role(s)...
+
+📚 link role repo=bhrain/role=driver
+   ├─ links
+   │  ├─ + .agent/readme.md
+   │  ├─ + .agent/repo=.this/readme.md
+   │  ├─ + .agent/repo=bhrain/readme.md
+   │  ├─ + .agent/repo=bhrain/.gitignore
+   │  ├─ + .agent/repo=bhrain/role=driver/readme.md
+   │  ├─ + .agent/repo=bhrain/role=driver/boot.yml
+   │  ├─ + .agent/repo=bhrain/role=driver/keyrack.yml
+   │  ├─ + .agent/repo=bhrain/role=driver/briefs
+   │  ├─ + .agent/repo=bhrain/role=driver/skills
+   │  └─ + .agent/repo=bhrain/role=driver/inits
+   └─ stats
+      ├─ $N brief(s)
+      ├─ $N skill(s)
+      └─ $N init(s)
+
+💪 init role repo=bhrain/role=driver
+   ├─ $PACKAGE/dist/domain.roles/driver/inits/init.claude.status-line.sh
+      ├─
+      │
+      │ 🦉 as leaves fall
+      │
+      │ 🗿 init.claude.status-line
+      │    ├─ status = skipped
+      │    ├─ reason = a statusLine you set already exists; left intact to avoid a clobber
+      │    ├─ layer = grove
+      │    ├─ settings = ~/.claude/settings.json
+      │    ├─ yours = my-own-line
+      │    └─ fix: to use the route status line, remove yours from that file, then rerun the init
+      │
+      └─
+   │
+   └─ $PACKAGE/dist/domain.roles/driver/inits/init.claude.permissions.route.sh
+      ├─
+      │
+      │ 🦉 the path is clear
+      │
+      │ 🗿 init.claude.permissions.route
+      │    ├─ status = healed
+      │    ├─ what = .route/ is the driver's workspace, no longer denied
+      │    ├─ guard = rhx route.mutate.guard --mode hook still protects passed stones
+      │    ├─ settings = .claude/settings.of.repo.json
+      │    └─ backup = .claude/settings.of.repo.$STAMP.bak.json
+      │
+      └─
+
+✨ 1 role(s) linked
+✨ 1 role(s) initialized
+
+🧠 brain://repo=ambient
+   ├─ linked
+   │  └─ .claude → .agent/.actors/actor.via.repo=ambient/brain/.claude
+   └─ boot.md
+      └─ created — 1 role
+
+"
+`;
+
+exports[`init.claude.status-line.survives-layout.integration given: [case5] rhachet init --roles meets a state a human must fix, each time with driver unlinked first when: [t1] the repo layer is malformed json then: the framed init block matches the snapshot: rhachet init --roles driver - malformed layer 1`] = `
+"
+🔧 init 1 role(s)...
+
+📚 link role repo=bhrain/role=driver
+   ├─ links
+   │  ├─ + .agent/readme.md
+   │  ├─ + .agent/repo=.this/readme.md
+   │  ├─ + .agent/repo=bhrain/readme.md
+   │  ├─ + .agent/repo=bhrain/.gitignore
+   │  ├─ + .agent/repo=bhrain/role=driver/readme.md
+   │  ├─ + .agent/repo=bhrain/role=driver/boot.yml
+   │  ├─ + .agent/repo=bhrain/role=driver/keyrack.yml
+   │  ├─ + .agent/repo=bhrain/role=driver/briefs
+   │  ├─ + .agent/repo=bhrain/role=driver/skills
+   │  └─ + .agent/repo=bhrain/role=driver/inits
+   └─ stats
+      ├─ $N brief(s)
+      ├─ $N skill(s)
+      └─ $N init(s)
+
+💪 init role repo=bhrain/role=driver
+   ├─ $PACKAGE/dist/domain.roles/driver/inits/init.claude.status-line.sh
+      ├─
+      │
+      │ 🦉 patience
+      │
+      │ 🗿 init.claude.status-line
+      │    ├─ status = not configured
+      │    ├─ reason = the settings target is not a json object
+      │    ├─ settings = .claude/settings.of.repo.json
+      │    └─ fix: repair the json in that file, then rerun the init
+      │
+      └─
+   │
+   └─ $PACKAGE/dist/domain.roles/driver/inits/init.claude.permissions.route.sh
+      ├─
+      │
+      │ 🦉 patience
+      │
+      │ 🗿 init.claude.permissions.route
+      │    ├─ status = not healed
+      │    ├─ reason = the settings target is not a json object
+      │    ├─ settings = .claude/settings.of.repo.json
+      │    └─ fix: repair the json in that file, then rerun the init
+      │
+      └─
+
+✨ 1 role(s) linked
+✨ 1 role(s) initialized
+
+"
+`;
+
+exports[`init.claude.status-line.survives-layout.integration given: [case5] rhachet init --roles meets a state a human must fix, each time with driver unlinked first when: [t2] the repo carries an old real .claude dir then: the framed init block matches the snapshot: rhachet init --roles driver - old real claude dir 1`] = `
+"
+🔧 init 1 role(s)...
+
+📚 link role repo=bhrain/role=driver
+   ├─ links
+   │  ├─ + .agent/readme.md
+   │  ├─ + .agent/repo=.this/readme.md
+   │  ├─ + .agent/repo=bhrain/readme.md
+   │  ├─ + .agent/repo=bhrain/.gitignore
+   │  ├─ + .agent/repo=bhrain/role=driver/readme.md
+   │  ├─ + .agent/repo=bhrain/role=driver/boot.yml
+   │  ├─ + .agent/repo=bhrain/role=driver/keyrack.yml
+   │  ├─ + .agent/repo=bhrain/role=driver/briefs
+   │  ├─ + .agent/repo=bhrain/role=driver/skills
+   │  └─ + .agent/repo=bhrain/role=driver/inits
+   └─ stats
+      ├─ $N brief(s)
+      ├─ $N skill(s)
+      └─ $N init(s)
+
+💪 init role repo=bhrain/role=driver
+   ├─ $PACKAGE/dist/domain.roles/driver/inits/init.claude.status-line.sh
+      ├─
+      │
+      │ 🦉 the path is clear
+      │
+      │ 🗿 init.claude.status-line
+      │    ├─ status = configured
+      │    ├─ settings = .claude/settings.of.repo.json
+      │    ├─ backup = .claude/settings.of.repo.$STAMP.bak.json
+      │    ├─ takes effect = at each rhx enroll session's next start; a live session keeps its old settings
+      │    └─ peer actors = derived at each one's next rhx enroll, or the next rhx init --hooks
+      │
+      └─
+   │
+   └─ $PACKAGE/dist/domain.roles/driver/inits/init.claude.permissions.route.sh
+      ├─
+      │
+      │ 🦉 the path is clear
+      │
+      │ 🗿 init.claude.permissions.route
+      │    ├─ status = healed
+      │    ├─ what = .route/ is the driver's workspace, no longer denied
+      │    ├─ guard = rhx route.mutate.guard --mode hook still protects passed stones
+      │    ├─ settings = .claude/settings.of.repo.json
+      │    └─ backup = .claude/settings.of.repo.$STAMP.bak.json
+      │
+      └─
+
+✨ 1 role(s) linked
+✨ 1 role(s) initialized
+
+🧠 brain://repo=ambient
+   ├─ moved
+   │  └─ .claude/settings.json → .agent/.actors/actor.via.repo=ambient/brain/.claude/settings.json
+   ├─ linked
+   │  └─ .claude → .agent/.actors/actor.via.repo=ambient/brain/.claude
+   └─ boot.md
+      └─ created — 1 role
+
+"
+`;
+
+exports[`init.claude.status-line.survives-layout.integration given: [case5] rhachet init --roles meets a state a human must fix, each time with driver unlinked first when: [t3] the repo layer is a link then: the framed init block matches the snapshot: rhachet init --roles driver - linked layer 1`] = `
+"
+🔧 init 1 role(s)...
+
+📚 link role repo=bhrain/role=driver
+   ├─ links
+   │  ├─ + .agent/readme.md
+   │  ├─ + .agent/repo=.this/readme.md
+   │  ├─ + .agent/repo=bhrain/readme.md
+   │  ├─ + .agent/repo=bhrain/.gitignore
+   │  ├─ + .agent/repo=bhrain/role=driver/readme.md
+   │  ├─ + .agent/repo=bhrain/role=driver/boot.yml
+   │  ├─ + .agent/repo=bhrain/role=driver/keyrack.yml
+   │  ├─ + .agent/repo=bhrain/role=driver/briefs
+   │  ├─ + .agent/repo=bhrain/role=driver/skills
+   │  └─ + .agent/repo=bhrain/role=driver/inits
+   └─ stats
+      ├─ $N brief(s)
+      ├─ $N skill(s)
+      └─ $N init(s)
+
+💪 init role repo=bhrain/role=driver
+   ├─ $PACKAGE/dist/domain.roles/driver/inits/init.claude.status-line.sh
+      ├─
+      │
+      │ 🦉 patience
+      │
+      │ 🗿 init.claude.status-line
+      │    ├─ status = not configured
+      │    ├─ reason = the settings target is a link to $HOME/elsewhere.json, so the init will not write through it
+      │    ├─ settings = .claude/settings.of.repo.json
+      │    └─ fix: replace the link with a real file, then rerun the init
+      │
+      └─
+   │
+   └─ $PACKAGE/dist/domain.roles/driver/inits/init.claude.permissions.route.sh
+      ├─
+      │
+      │ 🦉 patience
+      │
+      │ 🗿 init.claude.permissions.route
+      │    ├─ status = not healed
+      │    ├─ reason = the settings target is a link to $HOME/elsewhere.json, so the init will not write through it
+      │    ├─ settings = .claude/settings.of.repo.json
+      │    └─ fix: replace the link with a real file, then rerun the init
+      │
+      └─
+
+✨ 1 role(s) linked
+✨ 1 role(s) initialized
+
+✗ brain://repo=ambient/boot.md not written: ✋ ConstraintError: settings.of.repo.json must be a real file
+   ├─ path: $REPO/.agent/.actors/actor.via.repo=ambient/brain/.claude/settings.of.repo.json
+   ├─ found: a symlink to $HOME/elsewhere.json
+   └─ hint: remove $REPO/.agent/.actors/actor.via.repo=ambient/brain/.claude/settings.of.repo.json, then rerun \`rhx init\`; rhachet derives it from the roles
+"
+`;

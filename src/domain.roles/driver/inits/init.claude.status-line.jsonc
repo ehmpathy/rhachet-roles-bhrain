@@ -1,4 +1,5 @@
-// .what = the statusLine block merged into .claude/settings.json by the driver init
+// .what = the statusLine block the driver init merges into the repo's claude settings:
+//         .claude/settings.of.repo.json under rhachet's split layout, else .claude/settings.json
 // .why  = pins the current stone (🗿 <stone>) at the bottom of the session, so
 //         observers glance at the driver's step without a command or a scroll
 {
