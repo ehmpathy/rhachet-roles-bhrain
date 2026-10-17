@@ -1,0 +1,21 @@
+{
+  "key": "f8fa353636fab401",
+  "kind": "create",
+  "repo": {
+    "owner": "ehmpathy",
+    "name": "rhachet-roles-bhuild"
+  },
+  "exid": null,
+  "title": "fix(dispatcher): radio records write timestamps where route artifacts owe dates",
+  "description": "## .what\n\n`radio.task.push` writes route records (`$route/.radio/record.*.json`) whose `heldAt` and\n`settledAt` carry full iso timestamps (`YYYY-MM-DDThh:mm:ss.sssZ`).\n\n## .why it hurts\n\nroute artifacts must carry dates only (rule.forbid.timestamps-in-route-artifacts): time\nprecision is false precision and makes merge conflicts. repos that enforce it with a\npre-commit hook refuse to commit the radio's own record, so a driver must hand-edit each\nrecord to a date before every commit.\n\n## .the shape of the fix\n\n1. write `heldAt` / `settledAt` as `YYYY-MM-DD` (as `pushedAt` already renders on stdout)\n2. where order within a day matters, order by a monotonic counter in the record, never a clock\n3. clamp: a test that pushes one task and asserts each date field of the record matches\n   `^\\d{4}-\\d{2}-\\d{2}$`\n\n## .found\n\nrhachet-roles-bhrain @ beav/feat-review-cost-meter, 2026-10-16; the commit hook refused\n`.radio/record.26e117763d6eba64.json` until both fields were cut to a date by hand.",
+  "status": null,
+  "via": "gh.issues",
+  "auth": "as-human",
+  "idem": null,
+  "heldAt": "2026-10-17",
+  "heldSeq": 31,
+  "recordStatus": "DELIVERED",
+  "reason": null,
+  "settledAt": "2026-10-17",
+  "deliveredExid": "471"
+}

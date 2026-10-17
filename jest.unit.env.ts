@@ -1,3 +1,6 @@
+// every `when.repeatably` attempt checks the attempt-1 snapshot
+import './src/.test/withAttemptAgnosticSnapshots';
+
 /**
  * sanity check that unit tests are only run the 'test' environment
  *
