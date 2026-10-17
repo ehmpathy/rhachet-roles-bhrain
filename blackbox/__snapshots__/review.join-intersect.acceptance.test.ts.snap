@@ -39,7 +39,7 @@ exports[`review.join-intersect.acceptance given: [case3] union mode with empty d
    │  └─ targets: 9
    ├─ tokens
    │  ├─ estimate: 3,523
-   │  └─ context: 0.3%
+   │  └─ context: 0.4%
    └─ cost
       └─ estimate: $0.001760900"
 `;
