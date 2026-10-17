@@ -130,6 +130,7 @@
     "esbuild-register": "3.6.0",
     "husky": "8.0.3",
     "jest": "30.2.0",
+    "jest-snapshot": "30.2.0",
     "rhachet": "1.48.1",
     "rhachet-brains-anthropic": "0.4.3",
     "rhachet-brains-openai": "0.3.1",
@@ -156,6 +157,7 @@
       "@anthropic-ai/claude-code"
     ],
     "patchedDependencies": {
+      "rhachet-brains-openrouter@0.1.3": "patches/rhachet-brains-openrouter@0.1.3.patch",
       "test-fns@1.15.7": "patches/test-fns@1.15.7.patch"
     }
   },
