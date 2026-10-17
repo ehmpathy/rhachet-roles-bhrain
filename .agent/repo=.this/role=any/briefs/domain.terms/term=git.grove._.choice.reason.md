@@ -42,4 +42,16 @@ render that omits that bound invites the reader to take it as organization-wide.
 
 ## .disputes
 
-_(none yet)_
+### dispute: grove, as rhachet's settings layer  —  raised 2026-10-16  —  status: RESOLVED (qualify, no coinage)
+- raised.by  = driver, self-review of `.behavior/v2026_10_16.fix-status-line-binds-own-actor`
+- claim      = rhachet ≥1.49 names a brain dir's user-level layer `settings.of.grove.json` (an
+               arrow to `~/.claude/settings.json`), so a driver init that reads that layer says
+               "the grove" — a second referent for this repo's `git.grove`
+- counter    = the two senses differ by BOUNDARY, never by root: both name "what this machine
+               holds", one as a set of worktrees, one as the claude settings every tree on it
+               inherits. per `rule.require.boundary-qualified-terms` that is a qualify, not a split
+- resolution = in prose, the settings sense is written qualified — "the grove settings layer"
+               or "rhachet's grove layer" — and always beside its path `~/.claude/settings.json`.
+               a bare `grove` stays `git.grove`. the label `layer = grove` in the status-line
+               init's stdout stands: it mirrors rhachet's own filename, and the `settings =` leaf
+               beside it prints the path

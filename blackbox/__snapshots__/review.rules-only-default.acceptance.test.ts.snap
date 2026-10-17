@@ -16,10 +16,10 @@ exports[`review.rules-only-default.acceptance given: [case2] user excludes .beha
 "🔭 metrics.expected
    ├─ files
    │  ├─ rules: 3
-   │  └─ targets: 7
+   │  └─ targets: 8
    ├─ tokens
-   │  ├─ estimate: 3,129
+   │  ├─ estimate: 3,224
    │  └─ context: 0.3%
    └─ cost
-      └─ estimate: $0.001564700"
+      └─ estimate: $0.001611200"
 `;

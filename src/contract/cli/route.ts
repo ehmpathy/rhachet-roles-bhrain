@@ -635,9 +635,10 @@ errors:
 
 note:
   the claude code harness runs this with cwd = project root and renders stdout
-  as the status line. it is invoked via the node -e command written into
-  .claude/settings.json by init.claude.status-line.sh (not via rhx, whose banner
-  would pollute the single-line output)
+  as the status line. it is invoked via the node -e command that
+  init.claude.status-line.sh writes into the repo's claude settings (the file
+  .claude/settings.of.repo.json, or .claude/settings.json in the old layout),
+  not via rhx, whose banner would pollute the single-line output
 
 examples:
   node -e "import('rhachet-roles-bhrain/cli/route').then(m => m.routeStatusLine())"

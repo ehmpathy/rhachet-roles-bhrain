@@ -16,7 +16,7 @@ import { sanitizeBranchName } from '@src/domain.operations/review/sanitizeBranch
  *        public contract boundary, no mocks — across positive, negative/edge, help, and
  *        fault paths, each snapped so a reviewer sees exactly what the user sees.
  *
- * .how = spawns the exact `node -e` command the init writes into settings.json, but
+ * .how = spawns the exact `node -e` command the init writes into the repo settings, but
  *        imports the package by absolute path so the spawn cwd is free to be the
  *        anchor. the *anchor* under test is the spawn cwd (as the harness supplies it),
  *        not a stdin payload — the renderer reads no stdin.
@@ -30,9 +30,42 @@ import { sanitizeBranchName } from '@src/domain.operations/review/sanitizeBranch
 const RENDER_MODULE_URL = pathToFileURL(
   require.resolve('rhachet-roles-bhrain/cli/route'),
 ).href;
-const RENDER_COMMAND = `import(${JSON.stringify(
-  RENDER_MODULE_URL,
-)}).then(m => m.routeStatusLine())`;
+const RENDER_SPECIFIER = 'rhachet-roles-bhrain/cli/route';
+
+/**
+ * .what = derives the `node -e` body from the command the init binds into the settings
+ * .why = the test runs the bound command itself, never a stand-in copy. only the import
+ *        specifier changes: the bare package name is not found from a temp cwd, so it
+ *        is swapped for the absolute file url of the same module
+ * .note = the jsonc holds whole-line `//` comments only, so a line-start strip parses it
+ */
+const asRenderCommandFromBoundConfig = (input: {
+  moduleUrl: string;
+}): string => {
+  const configRaw = fs.readFileSync(
+    path.join(
+      __dirname,
+      '../../domain.roles/driver/inits/init.claude.status-line.jsonc',
+    ),
+    'utf-8',
+  );
+  const config = JSON.parse(
+    configRaw
+      .split('\n')
+      .filter((line) => !line.trim().startsWith('//'))
+      .join('\n'),
+  ) as { statusLine: { command: string } };
+  const boundCommand = config.statusLine.command;
+  const body = /^node -e "(.*)"$/.exec(boundCommand)?.[1];
+  if (!body || !body.includes(`'${RENDER_SPECIFIER}'`))
+    throw new Error(
+      `the bound statusLine command no longer imports ${RENDER_SPECIFIER} via node -e: ${boundCommand}`,
+    );
+  return body.replace(`'${RENDER_SPECIFIER}'`, JSON.stringify(input.moduleUrl));
+};
+const RENDER_COMMAND = asRenderCommandFromBoundConfig({
+  moduleUrl: RENDER_MODULE_URL,
+});
 
 /**
  * .what = runs the renderer via node -e from a given cwd (the harness anchor)
