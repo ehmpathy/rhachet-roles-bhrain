@@ -20,12 +20,6 @@ export const ROLE_TELEPATH: Role = Role.build({
   },
   hooks: {
     onBrain: {
-      onBoot: [
-        {
-          command: './node_modules/.bin/rhachet roles boot --role telepath',
-          timeout: 'PT30S',
-        },
-      ],
       // onStop: remind the brain to elucidate + condense its summary.
       //
       // a review rubric reads FILES, so it cannot reach a live message; a booted

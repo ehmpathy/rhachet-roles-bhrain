@@ -1,0 +1,2 @@
+branch: beav/fix-status-line-binds-own-actor
+bound_by: init.behavior skill

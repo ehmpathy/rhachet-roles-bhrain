@@ -1,16 +1,17 @@
 // Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
 
-exports[`init.claude.status-line.integration given: [case1] a repo with no .claude/settings.json when: [t0] the init runs then: its owl-vibed stdout matches the configured snapshot: init.claude.status-line - configured 1`] = `
+exports[`init.claude.status-line.integration given: [case1] an old-layout repo with no .claude/settings.json when: [t0] the init runs then: its owl-vibed stdout matches the configured snapshot: init.claude.status-line - configured 1`] = `
 "🦉 the path is clear
 
 🗿 init.claude.status-line
    ├─ status = configured
    ├─ settings = .claude/settings.json
-   └─ backup = .claude/settings.<timestamp>.<pid>.bak.json
+   ├─ backup = none
+   └─ takes effect = at each session's next start; a live session keeps its old settings
 "
 `;
 
-exports[`init.claude.status-line.integration given: [case2] a repo with a prior settings.json holding other keys when: [t0] the init runs then: its merged settings.json matches the merge snapshot: init.claude.status-line - merged into prior settings 1`] = `
+exports[`init.claude.status-line.integration given: [case2] an old-layout repo with a settings.json that holds other keys when: [t0] the init runs then: its merged settings.json matches the merge snapshot: init.claude.status-line - merged into prior settings 1`] = `
 {
   "hooks": {
     "SessionStart": [
@@ -35,7 +36,18 @@ exports[`init.claude.status-line.integration given: [case2] a repo with a prior 
 }
 `;
 
-exports[`init.claude.status-line.integration given: [case3] a repo where the init already ran when: [t0] the init runs a second time then: its owl-vibed no-op stdout matches the snapshot: init.claude.status-line - already-configured no-op 1`] = `
+exports[`init.claude.status-line.integration given: [case2] an old-layout repo with a settings.json that holds other keys when: [t0] the init runs then: its stdout, with a backup of the prior file, matches the snapshot: init.claude.status-line - configured (old layout, prior file backed up) 1`] = `
+"🦉 the path is clear
+
+🗿 init.claude.status-line
+   ├─ status = configured
+   ├─ settings = .claude/settings.json
+   ├─ backup = .claude/settings.<timestamp>.<pid>.bak.json
+   └─ takes effect = at each session's next start; a live session keeps its old settings
+"
+`;
+
+exports[`init.claude.status-line.integration given: [case3] an old-layout repo where the init already ran when: [t0] the init runs a second time then: its owl-vibed no-op stdout matches the snapshot: init.claude.status-line - already-configured no-op 1`] = `
 "🦉 so it is
 
 🗿 init.claude.status-line
@@ -44,22 +56,227 @@ exports[`init.claude.status-line.integration given: [case3] a repo where the ini
 "
 `;
 
-exports[`init.claude.status-line.integration given: [case4] a repo where a human set their own statusLine when: [t0] the init runs then: its owl-vibed skip-and-warn stdout matches the snapshot: init.claude.status-line - skip-and-warn 1`] = `
+exports[`init.claude.status-line.integration given: [case4] an old-layout repo where a human set their own statusLine when: [t0] the init runs then: its owl-vibed skip-and-warn stdout matches the snapshot: init.claude.status-line - skip-and-warn 1`] = `
 "🦉 as leaves fall
 
 🗿 init.claude.status-line
    ├─ status = skipped
    ├─ reason = a statusLine you set already exists; left intact to avoid a clobber
+   ├─ layer = repo
    ├─ settings = .claude/settings.json
-   └─ yours = ./my-own-status.sh
+   ├─ yours = ./my-own-status.sh
+   └─ fix: to use the route status line, remove yours from that file, then rerun the init
 "
 `;
 
-exports[`init.claude.status-line.integration given: [case5] a run where the .jsonc config is absent (a genuine fault) when: [t0] the init runs with no config beside it then: its stable fault stderr matches the error-variant snapshot: init.claude.status-line - fault (config absent) 1`] = `
+exports[`init.claude.status-line.integration given: [case5] a run where the .jsonc config is absent when: [t0] the init runs with no config beside it then: its warn stderr matches the snapshot: init.claude.status-line - warn (config absent) 1`] = `
 "🦉 patience
 
 🗿 init.claude.status-line
-   ├─ status = blocked
-   └─ reason = status-line config not found: <path>/init.claude.status-line.jsonc
+   ├─ status = not configured
+   ├─ reason = status-line config not found: <path>/init.claude.status-line.jsonc
+   ├─ settings = .claude/settings.json
+   └─ fix: reinstall rhachet-roles-bhrain, then rerun the init
+"
+`;
+
+exports[`init.claude.status-line.integration given: [case5b] a run whose .jsonc config holds no statusLine when: [t0] the init runs then: its warn stderr matches the snapshot: init.claude.status-line - warn (config holds no statusLine) 1`] = `
+"🦉 patience
+
+🗿 init.claude.status-line
+   ├─ status = not configured
+   ├─ reason = the status-line config holds no statusLine object: <path>/init.claude.status-line.jsonc
+   ├─ settings = .claude/settings.json
+   └─ fix: reinstall rhachet-roles-bhrain, then rerun the init
+"
+`;
+
+exports[`init.claude.status-line.integration given: [case6] a split-layout repo whose actor is enrolled with driver when: [t0] the init runs then: its stdout matches the split-layout snapshot: init.claude.status-line - configured (split layout) 1`] = `
+"🦉 the path is clear
+
+🗿 init.claude.status-line
+   ├─ status = configured
+   ├─ settings = .claude/settings.of.repo.json
+   ├─ backup = .claude/settings.of.repo.<timestamp>.<pid>.bak.json
+   ├─ takes effect = at each rhx enroll session's next start; a live session keeps its old settings
+   └─ peer actors = derived at each one's next rhx enroll, or the next rhx init --hooks
+"
+`;
+
+exports[`init.claude.status-line.integration given: [case6] a split-layout repo whose actor is enrolled with driver when: [t1] the init runs a second time then: its stdout matches the already-configured snapshot: init.claude.status-line - already configured (split layout) 1`] = `
+"🦉 so it is
+
+🗿 init.claude.status-line
+   ├─ status = already configured
+   ├─ settings = .claude/settings.of.repo.json
+   └─ peer actors = derived at each one's next rhx enroll, or the next rhx init --hooks
+"
+`;
+
+exports[`init.claude.status-line.integration given: [case6b] a split-layout repo, run from a session of a peer actor when: [t0] the init runs with CLAUDE_CONFIG_DIR at the peer then: its stdout matches the reach snapshot: init.claude.status-line - configured (from a peer session) 1`] = `
+"🦉 the path is clear
+
+🗿 init.claude.status-line
+   ├─ status = configured
+   ├─ settings = .claude/settings.of.repo.json
+   ├─ backup = .claude/settings.of.repo.<timestamp>.<pid>.bak.json
+   ├─ takes effect = at each rhx enroll session's next start; a live session keeps its old settings
+   ├─ peer actors = derived at each one's next rhx enroll, or the next rhx init --hooks
+   └─ reach
+      ├─ this session = .agent/.actors/actor.via.slug=peer/brain/.claude
+      └─ picks it up at its next rhx enroll, or the next rhx init --hooks
+"
+`;
+
+exports[`init.claude.status-line.integration given: [case6b] a split-layout repo, run from a session of a peer actor when: [t1] the init runs again from the same peer session then: its stdout matches the reach snapshot: init.claude.status-line - already configured (from a peer session) 1`] = `
+"🦉 so it is
+
+🗿 init.claude.status-line
+   ├─ status = already configured
+   ├─ settings = .claude/settings.of.repo.json
+   ├─ peer actors = derived at each one's next rhx enroll, or the next rhx init --hooks
+   └─ reach
+      ├─ this session = .agent/.actors/actor.via.slug=peer/brain/.claude
+      └─ picks it up at its next rhx enroll, or the next rhx init --hooks
+"
+`;
+
+exports[`init.claude.status-line.integration given: [case8] a split-layout repo with no settings.of.repo.json yet when: [t0] the init runs then: its stdout, with a seeded target and no backup, matches the snapshot: init.claude.status-line - configured (split layout, seeded) 1`] = `
+"🦉 the path is clear
+
+🗿 init.claude.status-line
+   ├─ status = configured
+   ├─ settings = .claude/settings.of.repo.json
+   ├─ backup = none
+   ├─ takes effect = at each rhx enroll session's next start; a live session keeps its old settings
+   └─ peer actors = derived at each one's next rhx enroll, or the next rhx init --hooks
+"
+`;
+
+exports[`init.claude.status-line.integration given: [case9] a split-layout repo whose actor is NOT enrolled with driver when: [t0] the init runs then: its skip stdout matches the snapshot: init.claude.status-line - skipped (actor lacks driver) 1`] = `
+"🦉 as leaves fall
+
+🗿 init.claude.status-line
+   ├─ status = skipped
+   ├─ reason = driver is not linked, so the repo actor does not carry it
+   ├─ settings = .claude/settings.of.repo.json
+   └─ fix: to bind the route status line, link driver: rhx init --roles driver
+"
+`;
+
+exports[`init.claude.status-line.integration given: [case10] a split-layout repo whose grove holds a human statusLine when: [t0] the init runs then: its skip stdout matches the snapshot: init.claude.status-line - skipped (human line in the grove) 1`] = `
+"🦉 as leaves fall
+
+🗿 init.claude.status-line
+   ├─ status = skipped
+   ├─ reason = a statusLine you set already exists; left intact to avoid a clobber
+   ├─ layer = grove
+   ├─ settings = ~/.claude/settings.json
+   ├─ yours = ~/bin/my-line
+   └─ fix: to use the route status line, remove yours from that file, then rerun the init
+"
+`;
+
+exports[`init.claude.status-line.integration given: [case11] a split-layout repo whose settings.of.repo.json is malformed when: [t0] the init runs then: its raw warn stderr matches the snapshot: init.claude.status-line - warn (malformed json) 1`] = `
+"🦉 patience
+
+🗿 init.claude.status-line
+   ├─ status = not configured
+   ├─ reason = the settings target is not valid json
+   ├─ settings = .claude/settings.of.repo.json
+   └─ fix: repair the json in that file, then rerun the init
+"
+`;
+
+exports[`init.claude.status-line.integration given: [case11b] a split-layout repo whose settings.of.repo.json is valid json, but an array when: [t0] the init runs then: its raw warn stderr matches the snapshot: init.claude.status-line - warn (not a json object) 1`] = `
+"🦉 patience
+
+🗿 init.claude.status-line
+   ├─ status = not configured
+   ├─ reason = the settings target is valid json, but not an object
+   ├─ settings = .claude/settings.of.repo.json
+   └─ fix: make the file one json object, then rerun the init
+"
+`;
+
+exports[`init.claude.status-line.integration given: [case12] a split-layout repo whose settings.of.repo.json is a link when: [t0] the init runs then: its warn stderr matches the snapshot: init.claude.status-line - warn (linked target) 1`] = `
+"🦉 patience
+
+🗿 init.claude.status-line
+   ├─ status = not configured
+   ├─ reason = the settings target is a link to <path>, so the init will not write through it
+   ├─ settings = .claude/settings.of.repo.json
+   └─ fix: replace the link with a real file, then rerun the init
+"
+`;
+
+exports[`init.claude.status-line.integration given: [case13] a split-layout repo whose settings.json link was replaced with a real file by the published init when: [t0] the init runs then: its stdout matches the snapshot: init.claude.status-line - configured (a stray real settings.json beside) 1`] = `
+"🦉 the path is clear
+
+🗿 init.claude.status-line
+   ├─ status = configured
+   ├─ settings = .claude/settings.of.repo.json
+   ├─ backup = .claude/settings.of.repo.<timestamp>.<pid>.bak.json
+   ├─ takes effect = at each rhx enroll session's next start; a live session keeps its old settings
+   └─ peer actors = derived at each one's next rhx enroll, or the next rhx init --hooks
+"
+`;
+
+exports[`init.claude.status-line.integration given: [case14] a repo that just linked driver, whose actor record predates the link when: [t0] the init runs then: its stdout matches the snapshot: init.claude.status-line - configured (the record lags the link) 1`] = `
+"🦉 the path is clear
+
+🗿 init.claude.status-line
+   ├─ status = configured
+   ├─ settings = .claude/settings.of.repo.json
+   ├─ backup = .claude/settings.of.repo.<timestamp>.<pid>.bak.json
+   ├─ takes effect = at each rhx enroll session's next start; a live session keeps its old settings
+   └─ peer actors = derived at each one's next rhx enroll, or the next rhx init --hooks
+"
+`;
+
+exports[`init.claude.status-line.integration given: [case15] a split-layout repo whose actor dropped driver after the bind when: [t0] the init runs then: its stdout matches the snapshot: init.claude.status-line - removed (actor dropped driver) 1`] = `
+"🦉 as leaves fall
+
+🗿 init.claude.status-line
+   ├─ status = removed
+   ├─ reason = driver is not linked, so the repo actor does not carry it and the route status line goes
+   ├─ settings = .claude/settings.of.repo.json
+   ├─ backup = .claude/settings.of.repo.<timestamp>.<pid>.bak.json
+   ├─ takes effect = at each rhx enroll session's next start; a live session keeps its old settings
+   └─ peer actors = derived at each one's next rhx enroll, or the next rhx init --hooks
+"
+`;
+
+exports[`init.claude.status-line.integration given: [case16] a split-layout repo, actor without driver, whose statusLine belongs to the human when: [t0] the init runs then: its skip stdout matches the snapshot: init.claude.status-line - skipped (human line kept, actor lacks driver) 1`] = `
+"🦉 as leaves fall
+
+🗿 init.claude.status-line
+   ├─ status = skipped
+   ├─ reason = driver is not linked, so the repo actor does not carry it
+   ├─ settings = .claude/settings.of.repo.json
+   └─ fix: to bind the route status line, link driver: rhx init --roles driver
+"
+`;
+
+exports[`init.claude.status-line.integration given: [case17] a split-layout repo with driver linked, whose settings.of.repo.json holds a human statusLine when: [t0] the init runs then: its skip stdout matches the snapshot: init.claude.status-line - skipped (human line in the repo layer, split) 1`] = `
+"🦉 as leaves fall
+
+🗿 init.claude.status-line
+   ├─ status = skipped
+   ├─ reason = a statusLine you set already exists; left intact to avoid a clobber
+   ├─ layer = repo
+   ├─ settings = .claude/settings.of.repo.json
+   ├─ yours = ./my-own-status.sh
+   └─ fix: to use the route status line, remove yours from that file, then rerun the init
+"
+`;
+
+exports[`init.claude.status-line.integration given: [case18] a jq that faults on the compare when: [t0] the init runs then: its stderr matches the snapshot: init.claude.status-line - malfunction (jq faults on the compare) 1`] = `
+"💥 MalfunctionError: jq failed to compare settings (exit 5)
+
+🗿 init.claude.status-line
+   ├─ status = malfunction
+   ├─ settings = .claude/settings.of.repo.json
+   └─ fix: rerun the init; if it faults again, report the jq exit code above
 "
 `;

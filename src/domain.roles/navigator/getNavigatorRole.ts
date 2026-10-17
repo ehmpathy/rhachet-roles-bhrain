@@ -26,14 +26,4 @@ export const ROLE_NAVIGATOR: Role = Role.build({
   briefs: {
     dirs: [{ uri: __dirname + '/briefs' }],
   },
-  hooks: {
-    onBrain: {
-      onBoot: [
-        {
-          command: './node_modules/.bin/rhachet roles boot --role navigator',
-          timeout: 'PT30S',
-        },
-      ],
-    },
-  },
 });

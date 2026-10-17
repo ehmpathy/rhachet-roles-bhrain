@@ -19,14 +19,4 @@ export const ROLE_REVIEWER: Role = Role.build({
     dirs: [{ uri: __dirname + '/briefs' }],
   },
   keyrack: { uri: __dirname + '/keyrack.yml' },
-  hooks: {
-    onBrain: {
-      onBoot: [
-        {
-          command: './node_modules/.bin/rhachet roles boot --role reviewer',
-          timeout: 'PT30S',
-        },
-      ],
-    },
-  },
 });
