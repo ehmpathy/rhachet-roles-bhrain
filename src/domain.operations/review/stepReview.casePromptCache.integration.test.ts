@@ -15,20 +15,13 @@ import { stepReview } from './stepReview';
 
 /**
  * .what = this suite's repeat config: three attempts, graded SOME everywhere (CI and local)
- * .why = 🔴 the one quantity here that varies between attempts is the PROVIDER's replica
- *        choice. our half — the prompt bytes and their order — is deterministic, and is
- *        clamped at EVERY by the byte suites (`reviewPromptCacheAnatomy` and peers). the
- *        default test brain's supply sends no replica-affinity pin (rhachet-brains-openrouter
- *        sets no session header), so a warm round 2 is best-effort at the host: measured
- *        2026-10-05 on coreweave, 8 of 9 attempts warm at 99.7%, one at 0% on an identical
- *        prefix. under EVERY that fails ~27% of correct runs; under SOME, a broken layout
- *        still reads 0 of 3 and goes red
- * .note = a miss is still visible: every attempt logs its billed tokens and served provider
- * .note = 🔴 the brain is DEFAULT_TEST_BRAIN_OF_LIVE_CACHE, never the bare default: the floor
- *         ranks hosts by sticker input rate and, on 2026-10-10, sent all nine rounds of three
- *         attempts to a host that never caches (0/3 warm). SOME cannot rescue a host choice
- *         that is wrong on every attempt; a slug with no `floor` hands the pick to openrouter's
- *         cache-sticky balancer, which can (see DEFAULT_TEST_BRAIN_OF_LIVE_CACHE)
+ * .why = the one quantity that varies between attempts is the host's replica choice; our
+ *        prompt bytes are clamped at EVERY by the byte suites (`reviewPromptCacheAnatomy`).
+ *        a warm round 2 is best-effort at the host (8 of 9 warm, 2026-10-05), so EVERY fails
+ *        correct runs, while a broken layout still reads 0 of 3 under SOME and goes red
+ * .note = every attempt logs its billed tokens and served provider, so a miss stays visible
+ * .note = SOME cannot rescue a host that never caches on every attempt; the brain choice
+ *         does (DEFAULT_TEST_BRAIN_OF_LIVE_CACHE)
  */
 const REPEATABLY_CONFIG_OF_LIVE_CACHE = {
   ...REPEATABLY_CONFIG,

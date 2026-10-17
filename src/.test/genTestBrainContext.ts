@@ -25,41 +25,24 @@ import { BRAIN_DEFAULT_OF_REVIEW } from '@src/domain.operations/brain/BRAIN_DEFA
  * .what = default brain for tests
  * .why = deepseek flash is fast, cheap, and effective for agentic code tasks
  *
- * .note = 🔴 versionless (rule.require.versionless-brain-defaults). a pinned default
- *         goes stale the day its provider renames a version, and fails every suite at
- *         setup with `BrainChoiceNotFoundError` before one assertion runs. an openrouter
- *         tier slug names no version at all — the package picks the newest live model on
- *         the tier's line at ask time
- * .note = the tier's default supply (`floor&speed=min50tps&privacy=full`) routes each ask to
- *         the cheapest-by-input host whose 30-min median clears 50 tps, alone, with no fallback.
- *         a host whose median straddles 50 then serves every ask at its live speed: measured
- *         2026-10-05, morph/fp8 served 19–64 tps (as low as 12 by its own median), and slow
- *         reviews crossed the jest bound. tests assert correctness, never latency, so they
- *         demand 100 tps — measured the same hour, coreweave/fp8 at 132–227 tps.
- *         the PRODUCT default stays the bare tier (BRAIN_DEFAULT_OF_REVIEW); only tests narrow it
- * .note = in-process only: `genTestBrainContext` registers this slug itself. a test that
- *         drives the CLI uses DEFAULT_TEST_BRAIN_VIA_CLI, since the CLI selects only the
- *         slugs the package lists
+ * .note = versionless (rule.require.versionless-brain-defaults): a tier slug picks the newest
+ *         live model at ask time, so a provider rename never fails setup
+ * .note = min100tps, not the tier's min50tps: a host whose median straddles 50 serves slow
+ *         asks that cross the jest bound (morph/fp8 at 12–64 tps, 2026-10-05). the product
+ *         default stays the bare tier (BRAIN_DEFAULT_OF_REVIEW); only tests narrow it
+ * .note = in-process only; a CLI-driven test uses DEFAULT_TEST_BRAIN_VIA_CLI
  */
 export const DEFAULT_TEST_BRAIN: BrainAtomSlugOpenRouterFiltered =
   'openrouter/deepseek/flash/floor&speed=min100tps&privacy=full';
 
 /**
- * .what = the test brain for a LIVE cache measurement — the default test brain's promises,
- *         minus `floor`: openrouter's balancer picks the host among every qualified endpoint
- * .why = a supply chosen for measurement (rule.require.versionless-brain-defaults false
- *        positive). the floor ranks hosts by sticker input rate alone, so it lands on the
- *        cheapest qualified host whether or not that host caches, and a host pin by precision
- *        only moves the trap. measured: 2026-10-10 the floor sent every round to Wafer, and the
- *        `precision=fp8` narrow that fixed it then sent every round to Makora/fp8 by 2026-10-17
- *        (nine of nine rounds, twice, cache read 0 or the 1k static head). each read 0% and says
- *        naught of the prompt layout the suite exists to grade. with no `floor` the package
- *        admits the whole qualified set at once, and openrouter's balancer keeps a repeated
- *        prefix on the host that holds it warm — the steer a cache measurement needs. measured
- *        2026-10-17: all three attempts green on this slug, where the fp8 floor read 0 of 3
- * .note = still versionless: an openrouter tier names no model version
- * .note = the host rank itself is owed upstream — `.dream/v2026_10_08.reseed.openrouter-floor-
- *         ranks-by-sticker-input-and-picks-a-host-that-never-caches.md` (fulcrum F186)
+ * .what = the test brain for a LIVE cache measurement — the default test brain minus `floor`
+ * .why = the floor ranks hosts by sticker input alone, so it lands on the cheapest host whether
+ *        or not it caches, and a precision pin only moves the trap (Wafer 2026-10-10, then
+ *        Makora/fp8 2026-10-17: every round cache read 0). with no `floor`, openrouter's balancer
+ *        picks among the qualified set and keeps a repeated prefix on its warm host
+ * .note = the host rank itself is owed upstream (fulcrum F186,
+ *         `.dream/v2026_10_08.reseed.openrouter-floor-ranks-by-sticker-input-…`)
  */
 export const DEFAULT_TEST_BRAIN_OF_LIVE_CACHE: BrainAtomSlugOpenRouterFiltered =
   'openrouter/deepseek/flash/speed=min100tps&privacy=full';
