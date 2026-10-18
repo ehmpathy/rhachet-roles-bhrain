@@ -5,6 +5,9 @@ import util from 'util';
 
 import { keyrack } from 'rhachet/keyrack';
 
+// every `when.repeatably` attempt checks the attempt-1 snapshot
+import './src/.test/withAttemptAgnosticSnapshots';
+
 // eslint-disable-next-line no-undef
 jest.setTimeout(90000); // since we're calling downstream apis
 
