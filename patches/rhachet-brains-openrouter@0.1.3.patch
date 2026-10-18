@@ -37,3 +37,32 @@ diff --git a/dist/domain.operations/supply/getOneAdmittedSetCompletion.js b/dist
 +        return send(true);
 +    });
 +    // no walk was taken, so no hop is reported
+diff --git a/dist/domain.operations/supply/getAllQualifiedEndpoints.js b/dist/domain.operations/supply/getAllQualifiedEndpoints.js
+--- a/dist/domain.operations/supply/getAllQualifiedEndpoints.js
++++ b/dist/domain.operations/supply/getAllQualifiedEndpoints.js
+@@ -33,4 +33,6 @@ const asSortableCost = (estUsd) => Number.isFinite(estUsd) ? estUsd : Number.POS
+ const getAllPromiseChecks = (input) => {
+     const { filters } = input;
++    // no host measured yet (a fresh release): no speed promise can be judged
++    const isSpeedUnmeasured = (input.endpoints ?? []).every((e) => e.throughputTps === null);
+     const checks = [
+         input.paramsRequired.length
+@@ -45,13 +47,16 @@ const getAllPromiseChecks = (input) => {
+                 keep: (e) => !input.tagsJsonIgnored.includes(e.tag),
+             }
+             : null,
+         filters.speedMinTps !== null
+             ? {
+                 promise: `speed>=${filters.speedMinTps}tps`,
+-                keep: (e) => e.throughputTps !== null &&
+-                    e.throughputTps >= (filters.speedMinTps ?? 0),
++                // the promise waives itself while no host is measured; once any host is
++                // measured, an unmeasured host fails it (deepseek-v4.1-flash-1017, 2026-10-17)
++                keep: (e) => isSpeedUnmeasured ||
++                    (e.throughputTps !== null &&
++                        e.throughputTps >= (filters.speedMinTps ?? 0)),
+             }
+             : null,
+         filters.precision !== null
+             ? {
+                 promise: `precision=${filters.precision}`,
