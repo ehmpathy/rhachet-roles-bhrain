@@ -1,0 +1,19 @@
+{
+  "key": "a1b25450363e95ef",
+  "kind": "create",
+  "repo": {
+    "owner": "ehmpathy",
+    "name": "rhachet-brains-openrouter"
+  },
+  "exid": null,
+  "title": "fix(tier): fall back past a newest model with no qualified host; qualify endpoints by context window",
+  "description": "two defects in how a tier reaches a model, both seen 2026-10-17 on `openrouter/deepseek/flash` (rhachet-brains-openrouter 0.1.3).\n\n## 1. a tier takes the newest model even when no host of it keeps the promises\n\n`getOneTierModel` picks the newest undated id on the tier line, and holds it 7 days per machine. on 2026-10-17 the newest was `deepseek/deepseek-v4.1-flash-1017`. its 5 endpoints held 0 that met `speed>=100tps` and 0 in the zero-retention list (a model with no throughput record yet counts as slow). every ask on a machine with no held pick was refused: `no endpoint of deepseek/deepseek-v4.1-flash-1017 keeps every promise. no call was sent.`\n\na machine that had picked the week before kept the prior model and never met it. every fresh ci machine did, so every live-brain test in the consumer's ci failed on every shard, and a retry cannot help.\n\nask: when the newest model on the line has no endpoint that keeps the slug's promises, the tier falls back to the next newest model that does, and holds that one. report the skip in the supply report.\n\n## 2. endpoint qualification ignores the context window\n\n`getAllQualifiedEndpoints` takes the request's token estimate for cost only. the cheapest host (floor) can serve a smaller window than the prompt. observed: `400 This endpoint's maximum context length is 262144 tokens. However, you requested about 444340 tokens`, while the tier atom's spec says 1M. the refusal arrives after the call, and a floor ask cannot recover.\n\nask: drop an endpoint whose context window is below the request's token estimate (with a margin for the estimate error) before the floor walk.\n\n## impact\n\nconsumer: ehmpathy/rhachet-roles-bhrain, PR 627. the consumer now primes a qualified pick in a jest global setup, which covers 1 for its own suites. 2 stays open, and it reaches every consumer of a floor tier, product paths included.",
+  "status": null,
+  "via": "gh.issues",
+  "auth": "as-human",
+  "idem": null,
+  "heldSeq": 31,
+  "recordStatus": "DELIVERED",
+  "reason": null,
+  "deliveredExid": "23"
+}

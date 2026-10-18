@@ -27,8 +27,14 @@ const PATTERN_OF_ROW_FORBIDDEN =
  * .why = rhachet's keyrack renders `└─ tip: rhx keyrack set …` inside the ConstraintError it
  *        throws for an absent key; a snapshot of that refusal pins the foreign bytes verbatim.
  *        the cure is upstream (a reseed dream to rhachet), so the row is named here, narrowly
+ * .note = rhachet's split-layout check renders `└─ hint: remove <path>/settings.of.repo.json,
+ *         then rerun …` inside the ConstraintError it throws for a linked settings.of.repo.json;
+ *         the real-cli snapshot of that refusal pins the foreign bytes verbatim
  */
-const PATTERNS_OF_ROW_FOREIGN = [/└─ tip: rhx keyrack set /];
+const PATTERNS_OF_ROW_FOREIGN = [
+  /└─ tip: rhx keyrack set /,
+  /└─ hint: remove .*settings\.of\.repo\.json, then rerun /,
+];
 
 /** .what = the trees the ban governs, relative to the repo root */
 const DIRS_OF_SCOPE = ['src', 'blackbox'];
@@ -110,6 +116,17 @@ describe('forbidConnectiveColonRows.integration', () => {
           text: [
             '      └─ tip: rhx keyrack set --owner ehmpath --key X --env prep',
             '      └─ tip: rhx review --help',
+          ].join('\n'),
+        });
+        expect(hits).toEqual(['sample:2']);
+      });
+
+      then('it leaves the rhachet linked-settings hint row alone, and only that row', () => {
+        const hits = getAllRowHitsOfText({
+          relative: 'sample',
+          text: [
+            '   └─ hint: remove $REPO/.claude/settings.of.repo.json, then rerun `rhx init`; rhachet derives it',
+            '   └─ hint: remove the lock file, then rerun',
           ].join('\n'),
         });
         expect(hits).toEqual(['sample:2']);

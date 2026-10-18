@@ -267,7 +267,7 @@ exports[`init.claude.status-line.survives-layout.integration given: [case5] rhac
       │
       │ 🗿 init.claude.status-line
       │    ├─ status = not configured
-      │    ├─ reason = the settings target is not a json object
+      │    ├─ reason = the settings target is not valid json
       │    ├─ settings = .claude/settings.of.repo.json
       │    └─ fix: repair the json in that file, then rerun the init
       │
@@ -280,7 +280,7 @@ exports[`init.claude.status-line.survives-layout.integration given: [case5] rhac
       │
       │ 🗿 init.claude.permissions.route
       │    ├─ status = not healed
-      │    ├─ reason = the settings target is not a json object
+      │    ├─ reason = the settings target is not valid json
       │    ├─ settings = .claude/settings.of.repo.json
       │    └─ fix: repair the json in that file, then rerun the init
       │
