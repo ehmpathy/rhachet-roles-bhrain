@@ -20,12 +20,6 @@ export const ROLE_LEARNER: Role = Role.build({
   },
   hooks: {
     onBrain: {
-      onBoot: [
-        {
-          command: './node_modules/.bin/rhachet roles boot --role learner',
-          timeout: 'PT30S',
-        },
-      ],
       // onTool: halt writes to claude native memory, redirect to durable capture.
       // registered as a skill invoked via `rhx <skill> --mode hook` (same pattern
       // as the driver role's route.bounce) — the memory.guard.sh wrapper captures

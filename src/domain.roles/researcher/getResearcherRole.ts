@@ -19,14 +19,4 @@ export const ROLE_RESEARCHER: Role = Role.build({
   briefs: {
     dirs: [{ uri: __dirname + '/briefs' }],
   },
-  hooks: {
-    onBrain: {
-      onBoot: [
-        {
-          command: './node_modules/.bin/rhachet roles boot --role researcher',
-          timeout: 'PT30S',
-        },
-      ],
-    },
-  },
 });

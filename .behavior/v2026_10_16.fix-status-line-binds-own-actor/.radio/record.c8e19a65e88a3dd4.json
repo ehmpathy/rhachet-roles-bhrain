@@ -1,0 +1,19 @@
+{
+  "key": "c8e19a65e88a3dd4",
+  "kind": "create",
+  "repo": {
+    "owner": "ehmpathy",
+    "name": "rhachet"
+  },
+  "exid": null,
+  "title": "feat(roles): a role declares frame lines (status line) top-level; rendered per actor, per brain cli",
+  "description": "# 🌙 dream: a role declares its status line top-level; rhachet renders it per actor, per brain cli\n\nkind: reseed · owner: ehmpathy/rhachet · caught 2026-10-16\n\n## .the cue that fired\nbhrain's driver role wants `🗿 <stone>` at the foot of each driver session. today the only way is a\nrole init that merges `statusLine` into a claude settings file. rhachet 1.49 derives each actor's\n`settings.of.repo.json` whole from the repo actor's file, on each enroll and each `rhx init\n--hooks`. so the bind either leaks to every actor (write the repo file) or vanishes at the next\nrebuild (write one actor's file). the wisher wants: only actors enrolled with driver get it.\n\n## .the gap, precisely\n- no role-level contract for a status line (or any frame line — header, footer) exists; a role\n  must reach into a brain-specific settings file to get one\n- actor settings derivation (`setBrainDirSettingsLayout`, rhachet 1.49.2) copies the repo file\n  whole, with no per-actor, per-role filter, and keeps no per-actor overlay across a rebuild\n\n## .the shape of the fix\n- a top-level role declaration, e.g. in the role's manifest:\n  `frames: { statusLine: { command: \"<cmd>\" } }` (name open — \"frame lines\" was the wisher's guess)\n- at actor derivation, rhachet composes the frames of the roles THAT actor is enrolled with, and\n  the brain cli adapter renders them in its own dialect (claude: the `statusLine` key in the\n  actor's derived settings; other brains: their own equivalent, or a no-op)\n- precedence: a human's own `statusLine` in the grove wins; a role frame never clobbers it\n- one role per slot: two roles that both declare a status line fail loud, or compose by a declared\n  rule — not last-write-wins in silence\n- then bhrain deletes `init.claude.status-line.sh` and declares the frame on the driver role\n\n## .why it is not done in this round\nit belongs to another repo; a tree adopts only what is scoped to itself. the bhrain interim\n(bind the repo actor's file, accept the leak to non-driver actors) ships on this route.",
+  "status": null,
+  "via": "gh.issues",
+  "auth": "as-human",
+  "idem": null,
+  "heldSeq": 29,
+  "recordStatus": "DELIVERED",
+  "reason": null,
+  "deliveredExid": "622"
+}

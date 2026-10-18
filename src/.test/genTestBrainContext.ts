@@ -19,7 +19,8 @@ import {
   getBrainAtomsByOpenRouter,
 } from 'rhachet-brains-openrouter';
 
-import { BRAIN_DEFAULT_OF_REVIEW } from '@src/domain.operations/brain/BRAIN_DEFAULT_OF_REVIEW';
+// .note = relative, not `@src/`: jest's globalSetup loads this file without the moduleNameMapper
+import { BRAIN_DEFAULT_OF_REVIEW } from '../domain.operations/brain/BRAIN_DEFAULT_OF_REVIEW';
 
 /**
  * .what = default brain for tests

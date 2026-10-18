@@ -1,0 +1,121 @@
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
+
+exports[`init.claude.permissions.route.integration given: [case1] a settings.json that denies the route workspace when: [t0] the init runs then: its stdout matches the snapshot: init.claude.permissions.route - healed 1`] = `
+"🦉 the path is clear
+
+🗿 init.claude.permissions.route
+   ├─ status = healed
+   ├─ what = .route/ is the driver's workspace, no longer denied
+   ├─ guard = rhx route.mutate.guard --mode hook still protects passed stones
+   ├─ settings = .claude/settings.json
+   └─ backup = .claude/settings.<timestamp>.<pid>.bak.json
+"
+`;
+
+exports[`init.claude.permissions.route.integration given: [case1] a settings.json that denies the route workspace when: [t1] the init runs a second time then: its stdout matches the snapshot: init.claude.permissions.route - already healed 1`] = `
+"🦉 so it is
+
+🗿 init.claude.permissions.route
+   ├─ status = already healed
+   └─ settings = .claude/settings.json
+"
+`;
+
+exports[`init.claude.permissions.route.integration given: [case2] a split layout (rhachet 1.49) whose grove is absent, so the arrows dangle when: [t0] the init runs then: its healed tree matches the snapshot: init.claude.permissions.route - healed (split layout) 1`] = `
+"🦉 the path is clear
+
+🗿 init.claude.permissions.route
+   ├─ status = healed
+   ├─ what = .route/ is the driver's workspace, no longer denied
+   ├─ guard = rhx route.mutate.guard --mode hook still protects passed stones
+   ├─ settings = .claude/settings.of.repo.json
+   └─ backup = .claude/settings.of.repo.<timestamp>.<pid>.bak.json
+"
+`;
+
+exports[`init.claude.permissions.route.integration given: [case2] a split layout (rhachet 1.49) whose grove is absent, so the arrows dangle when: [t1] the init runs a second time then: its tree matches the snapshot: init.claude.permissions.route - already healed (split layout) 1`] = `
+"🦉 so it is
+
+🗿 init.claude.permissions.route
+   ├─ status = already healed
+   └─ settings = .claude/settings.of.repo.json
+"
+`;
+
+exports[`init.claude.permissions.route.integration given: [case4] a settings target that is not valid json when: [t0] the init runs then: its raw warn stderr matches the snapshot: init.claude.permissions.route - warn (malformed json) 1`] = `
+"🦉 patience
+
+🗿 init.claude.permissions.route
+   ├─ status = not healed
+   ├─ reason = the settings target is not valid json
+   ├─ settings = .claude/settings.json
+   └─ fix: repair the json in that file, then rerun the init
+"
+`;
+
+exports[`init.claude.permissions.route.integration given: [case4b] a settings target that is valid json, but an array when: [t0] the init runs then: its raw warn stderr matches the snapshot: init.claude.permissions.route - warn (not a json object) 1`] = `
+"🦉 patience
+
+🗿 init.claude.permissions.route
+   ├─ status = not healed
+   ├─ reason = the settings target is valid json, but not an object
+   ├─ settings = .claude/settings.json
+   └─ fix: make the file one json object, then rerun the init
+"
+`;
+
+exports[`init.claude.permissions.route.integration given: [case5] a split layout whose settings.of.repo.json is a link when: [t0] the init runs then: its warn stderr matches the snapshot: init.claude.permissions.route - warn (linked target) 1`] = `
+"🦉 patience
+
+🗿 init.claude.permissions.route
+   ├─ status = not healed
+   ├─ reason = the settings target is a link to <path>, so the init will not write through it
+   ├─ settings = .claude/settings.of.repo.json
+   └─ fix: replace the link with a real file, then rerun the init
+"
+`;
+
+exports[`init.claude.permissions.route.integration given: [case6] a run where the owned-permissions config is absent when: [t0] the init runs with no config beside it then: its warn stderr matches the snapshot: init.claude.permissions.route - warn (owned config absent) 1`] = `
+"🦉 patience
+
+🗿 init.claude.permissions.route
+   ├─ status = not healed
+   ├─ reason = owned-permissions config not found: <path>/init.claude.permissions.route.jsonc
+   ├─ settings = .claude/settings.json
+   └─ fix: reinstall rhachet-roles-bhrain, then rerun the init
+"
+`;
+
+exports[`init.claude.permissions.route.integration given: [case7] a split layout with no settings.of.repo.json yet when: [t0] the init runs then: its tree matches the snapshot: init.claude.permissions.route - healed (split layout, seeded) 1`] = `
+"🦉 the path is clear
+
+🗿 init.claude.permissions.route
+   ├─ status = healed
+   ├─ what = .route/ is the driver's workspace, no longer denied
+   ├─ guard = rhx route.mutate.guard --mode hook still protects passed stones
+   ├─ settings = .claude/settings.of.repo.json
+   └─ backup = none
+"
+`;
+
+exports[`init.claude.permissions.route.integration given: [case8] an old layout with no .claude at all when: [t0] the init runs then: its tree matches the snapshot: init.claude.permissions.route - healed (old layout, seeded) 1`] = `
+"🦉 the path is clear
+
+🗿 init.claude.permissions.route
+   ├─ status = healed
+   ├─ what = .route/ is the driver's workspace, no longer denied
+   ├─ guard = rhx route.mutate.guard --mode hook still protects passed stones
+   ├─ settings = .claude/settings.json
+   └─ backup = none
+"
+`;
+
+exports[`init.claude.permissions.route.integration given: [case9] a jq that faults on the compare when: [t0] the init runs then: its stderr matches the snapshot: init.claude.permissions.route - malfunction (jq faults on the compare) 1`] = `
+"💥 MalfunctionError: jq failed to compare settings (exit 5)
+
+🗿 init.claude.permissions.route
+   ├─ status = malfunction
+   ├─ settings = .claude/settings.json
+   └─ fix: rerun the init; if it faults again, report the jq exit code above
+"
+`;

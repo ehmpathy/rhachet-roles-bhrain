@@ -44,33 +44,38 @@ describe('domain.terms boot reachability (integration)', () => {
           stdout: bootRoleAny(),
         }));
 
-        then('the glossary readme reaches booted context', () => {
+        then('the glossary catalog reaches booted context by content', () => {
           // the vision's central promise: a fresh traveler boots and already
-          // speaks the language — the glossary readme is surfaced
-          expect(result.stdout).toContain('# domain.terms');
-          // the brief is PUBLISHED, so it speaks of "a repo", never "this repo" —
-          // a consumer boots the same words and they must be true there too
-          expect(result.stdout).toContain("a repo's **glossary**");
+          // speaks the language — the glossary rides as ONE catalog, which names
+          // every term and states the formula that computes its path
+          expect(result.stdout).toContain(
+            "# catalog.of=term — this repo's glossary, as an index",
+          );
+          expect(result.stdout).toContain('term=$name._.choice.reason.md');
         });
 
-        then('both governance rules reach booted context by content', () => {
-          // assert phrases from the rule BODIES, not just their names (the names
-          // also appear in the readme). only a symlink that links through to the
-          // real src rule file surfaces this body text — proving the chain holds
+        then('the catalog names both governance rules by path', () => {
+          // the rules stay reachable on demand: the catalog lists them, and the
+          // boot spec keeps their bodies out of the always-booted context
           expect(result.stdout).toContain(
-            'one concept, one word — everywhere a contract can be read',
+            'rule.require.domain-term-itemization.md',
           );
           expect(result.stdout).toContain(
+            'rule.forbid.domain-term-synonyms.md',
+          );
+          expect(result.stdout).not.toContain(
             'whose constituent terms are not itemized',
           );
         });
 
         then(
-          'they are reached under briefs/ (the only dir the loader pools)',
+          'the catalog is reached under briefs/ (the only dir the loader pools)',
           () => {
-            // proves the fix: the glossary lives inside briefs/, the only dir the
-            // loader pools — not an adjacent dir it would ignore
-            expect(result.stdout).toContain(`${paths.glossaryDir}/.readme.md`);
+            // the glossary lives inside briefs/, the only dir the loader pools —
+            // not an adjacent dir it would ignore
+            expect(result.stdout).toContain(
+              `${paths.glossaryDir}/catalog.of=term._.md`,
+            );
             expect(paths.glossaryDir).toContain('/briefs/domain.terms');
           },
         );
@@ -88,16 +93,26 @@ describe('domain.terms boot reachability (integration)', () => {
       }));
 
       then(
-        'boot.yml declares the same glossary paths the scaffold findserts (one source of truth)',
+        'boot.yml boots the catalog and keeps the scaffold paths out of the boot (one source of truth)',
         () => {
           // closes the triple-duplication loop: boot.yml, getDomainTermsPaths,
           // and the readme must agree on which files rule the glossary. boot.yml
-          // uses a role-relative form (strip the role dir prefix)
+          // uses a role-relative form (strip the role dir prefix). the catalog
+          // rides say; the readme and the rule links sit under `not`, the rules
+          // by one glob, so each stays reachable through the catalog and none
+          // adds a path to the boot
           const roleDir = '.agent/repo=.this/role=any/';
           const asRoleRelative = (p: string): string => p.replace(roleDir, '');
+          expect(result.yaml).toContain(
+            'briefs/domain.terms/catalog.of=term._.md',
+          );
           expect(result.yaml).toContain(asRoleRelative(paths.readmePath));
+          expect(result.yaml).toContain('briefs/domain.terms/term=*.md');
+          expect(result.yaml).toContain('briefs/domain.terms/rule.*.md');
           for (const link of paths.ruleSymlinks) {
-            expect(result.yaml).toContain(asRoleRelative(link.at));
+            expect(asRoleRelative(link.at)).toMatch(
+              /^briefs\/domain\.terms\/rule\..*\.md$/,
+            );
           }
         },
       );
@@ -106,13 +121,12 @@ describe('domain.terms boot reachability (integration)', () => {
 
   given('[case3] a term cluster findserted into the live glossary', () => {
     // the vision's central promise is that the glossary GROWS and every role can
-    // then reach the new word. that rests on the per-term boot globs — the only glob
-    // entries in any boot.yml in the repo, all under ref so the boot footprint stays
-    // fixed as the glossary grows without bound:
-    //   ref: term=*._.choice._.md          (each term's choice, surfaced on demand)
-    //   ref: term=*._.choice.reason.md      (surfaced on demand)
-    // case1 only proved the 3 STATIC say files boot; this exercises the WILDCARDS: it
-    // findserts a real sentinel term cluster, boots, then removes it
+    // then reach the new word. that rests on the catalog formula plus one `not` glob,
+    // so the boot footprint stays fixed as the glossary grows without bound:
+    //   say: catalog.of=term._.md           (every term by name, and the path formula)
+    //   not: term=*.md                      (members stay out of the boot)
+    // case1 proved the static catalog boots; this exercises the WILDCARD: it findserts
+    // a real sentinel term cluster, boots, then removes it
     const sentinelSlug = '__boottest__';
     const sayPath = path.join(
       REPO_ROOT,
@@ -188,21 +202,20 @@ describe('domain.terms boot reachability (integration)', () => {
         },
       );
 
-      then(
-        'the say-level choice surfaces on demand via its wildcard ref glob',
-        () => {
-          // proves `term=*._.choice._.md` pools a real, newly-added term as an
-          // on-demand ref pointer — its PATH surfaces (not its full content), so a
-          // glossary that grows never inflates the always-booted say footprint, while
-          // the term stays reachable the moment a traveler needs it
-          expect(result.stdout).toContain(`term=${sentinelSlug}._.choice._.md`);
-        },
-      );
+      then('the say-level choice adds no path to the boot', () => {
+        // proves `not: term=*.md` keeps a real, newly-added term out of the boot:
+        // neither its content nor its path rides, so a glossary that grows never
+        // inflates the boot, while the term stays one computed path away through the
+        // catalog formula
+        expect(result.stdout).not.toContain(
+          `term=${sentinelSlug}._.choice._.md`,
+        );
+      });
 
-      then('the ref-level reason surfaces via its explicit ref glob', () => {
-        // proves `term=*._.choice.reason.md` is booted deliberately (a ref path),
-        // not left to the <also> fallback — the vision's "surfaced on demand"
-        expect(result.stdout).toContain(
+      then('the ref-level reason adds no path to the boot', () => {
+        // the `not` glob also holds the member files back from the <also> fallback,
+        // which would otherwise re-surface one path per term
+        expect(result.stdout).not.toContain(
           `term=${sentinelSlug}._.choice.reason.md`,
         );
       });
