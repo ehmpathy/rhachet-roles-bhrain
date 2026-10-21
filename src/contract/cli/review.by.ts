@@ -12,11 +12,11 @@ import {
 
 /**
  * .what = the review.by default brain when --brain is omitted
- * .why = the vision fixes review.by's default to fireworks/deepseek/v4-flash. we apply it
+ * .why = review.by's default is openrouter/deepseek/flash. we apply it
  *        explicitly here so the contract holds even if the review skill's own default ever
  *        changes — the default is honored by review.by, not by coincidence.
  */
-const DEFAULT_REVIEW_BRAIN = 'fireworks/deepseek/v4-flash';
+const DEFAULT_REVIEW_BRAIN = 'openrouter/deepseek/flash';
 
 /**
  * .what = detects if node was invoked via `node -e "code"` (eval mode)

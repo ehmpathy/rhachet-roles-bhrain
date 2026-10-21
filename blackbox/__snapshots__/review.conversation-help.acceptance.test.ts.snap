@@ -22,7 +22,7 @@ options:
   --output <path>     output file path (default: .review/$branch/$isotime.output.md)
   --focus <mode>      review focus: push or pull (default: push)
   --goal <goal>       review goal: exhaustive or representative (default: exhaustive)
-  --brain <slug>      brain to use for review (default: fireworks/deepseek/v4-flash)
+  --brain <slug>      brain to use for review (default: openrouter/deepseek/flash)
   --open <opener>     open output file with specified program (e.g., nvim, codium, code)
   --help              show this help message
 

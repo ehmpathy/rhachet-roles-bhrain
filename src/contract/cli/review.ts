@@ -18,9 +18,11 @@ import { stepReview } from '@src/domain.operations/review/stepReview';
 
 /**
  * .what = default brain for review skill
- * .why = fireworks/deepseek/v4-flash is better, cheaper, and faster for code review
+ * .why = openrouter/deepseek/flash is cheap and fast for code review, and openrouter routes
+ *        each ask to the cheapest qualified host with failover, so one host's outage or
+ *        connection timeout does not fail the review
  */
-const DEFAULT_BRAIN = 'fireworks/deepseek/v4-flash';
+const DEFAULT_BRAIN = 'openrouter/deepseek/flash';
 
 /**
  * .what = prints help message with available brains
