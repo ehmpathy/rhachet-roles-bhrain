@@ -7,9 +7,9 @@
  * .note = `elbow` and `stem` are the canonical words. a tee (`├─`) keeps a peer bar beneath it
  *         because a peer follows; an elbow (`└─`) is the last child, so its stem is blank.
  *
- * ⚠️ .note = this owns ONE call site today. it owned TWO until the self-review roster was
- *            deleted with the fork it advertised, so the duplication that justified the
- *            extraction no longer exists — and the owner is kept anyway, deliberately.
+ * ⚠️ .note = it lives in infra/cli because two domains render trees through it — the route
+ *            guard (`formatTreeBucket`) and the reflector (`formatTokenSpendTree`). a
+ *            domain-local home would force one of them to reach into the other.
  *            ⇒ the repo holds the same derivation in 19 further prod files;
  *              `contract/cli/goal.ts` alone carries a dozen. those are NOT wired here on
  *              purpose: they sit in subsystems this round never opened, so to convert them

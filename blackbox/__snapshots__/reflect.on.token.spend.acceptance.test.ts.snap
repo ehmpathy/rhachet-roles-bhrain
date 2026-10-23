@@ -1,0 +1,1059 @@
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
+
+exports[`reflect.on.token.spend given: [case1] a transcript named by session uuid when: [t0] the skill runs then: stdout matches snapshot 1`] = `
+"🦉 the pond reflects what it was fed
+
+🌕 reflect.on.token.spend
+   ├─ transcript
+   │  ├─ path = [TEMP_DIR]/.claude-config/projects/-repo-demo/11111111-1111-4111-8111-111111111111.jsonl
+   │  ├─ chosen by = uuid
+   │  ├─ calls = 3
+   │  └─ rebases = 0
+   │
+   ├─ efficiency (measured, from message.usage)
+   │  ├─ input.raw       =            13    0.0%       $0.00
+   │  ├─ cache.read      =        45,100   64.0%       $0.02
+   │  ├─ cache.write.5m  =        25,148   35.7%       $0.16
+   │  ├─ cache.write.1h  =             0    0.0%       $0.00
+   │  ├─ output          =           160    0.2%       $0.00
+   │  ├─ total price = $0.18
+   │  ├─ models = claude-opus-4-5-20251101
+   │  └─ context.per-call
+   │     ├─ median = 25,100
+   │     └─ peak   = 25,161
+   │
+   ├─ inventory (context at the last call, by category)
+   │  ├─ boot.instructions       10,000   39.7%  [apportioned]
+   │  │  └─ holds = boot.md
+   │  ├─ unattributed             9,997   39.7%  [unattributed]
+   │  │  └─ holds = harness (system prompt + tool schemas)
+   │  ├─ tool.result              5,000   19.9%  [exact]
+   │  │  └─ holds = Bash · git.repo.test
+   │  ├─ assistant.own              150    0.6%  [measured]
+   │  └─ human.words                 14    0.1%  [apportioned, exact]
+   │
+   ├─ repaid (what each block cost, every call it stayed in context — priced per cache span)
+   │  ├─ boot.instructions · boot.md                                 $0.07   40.3%     30.0k tok
+   │  │  ├─ read $0.01 (20.0k) · write.5m $0.06 (10.0k) · write.1h $0.00 (0) · input $0.00 (7)
+   │  │  └─ peak = 10,000 tok @ call 1, held 3 calls
+   │  ├─ unattributed · harness (system prompt + tool schemas)       $0.07   40.3%     30.0k tok
+   │  │  ├─ read $0.01 (20.0k) · write.5m $0.06 (10.0k) · write.1h $0.00 (0) · input $0.00 (0)
+   │  │  └─ peak = 9,997 tok @ call 1, held 3 calls
+   │  ├─ tool.result · Bash · git.repo.test                          $0.03   18.8%     10.0k tok
+   │  │  ├─ read $0.00 (5.0k) · write.5m $0.03 (5.0k) · write.1h $0.00 (0) · input $0.00 (2)
+   │  │  └─ peak = 5,000 tok @ call 2, held 2 calls
+   │  ├─ assistant.own · assistant                                   $0.00    0.5%       250 tok
+   │  │  ├─ read $0.00 (100) · write.5m $0.00 (150) · write.1h $0.00 (0) · input $0.00 (0)
+   │  │  └─ peak = 100 tok @ call 2, held 2 calls
+   │  └─ human.words · human                                         $0.00    0.0%        20 tok
+   │     ├─ read $0.00 (6) · write.5m $0.00 (10) · write.1h $0.00 (0) · input $0.00 (4)
+   │     └─ peak = 11 tok @ call 3, held 1 call
+   │
+   └─ proposal (ranked by repaid price — an upper bound, not a promise)
+      ├─ 1. boot.instructions · boot.md  ≤ $0.07  40.3%
+      │  └─ hint: move briefs from say to ref
+      ├─ 2. tool.result · Bash · git.repo.test  ≤ $0.03  18.8%
+      │  └─ hint: a summary on stdout, the log on disk
+      └─ 3. assistant.own · assistant  ≤ $0.00  0.5%
+         └─ hint: terser replies, fewer re-reads
+"
+`;
+
+exports[`reflect.on.token.spend given: [case2] a glob over a project dir when: [t0] the skill runs then: stdout matches snapshot 1`] = `
+"🦉 the pond reflects what it was fed
+
+🌕 reflect.on.token.spend
+   ├─ transcripts (2)
+   │  ├─ matched = 2 · metered = 2 · skipped = 0
+   │  ├─ chosen by = glob
+   │  │  ├─ [TEMP_DIR]/.claude-config/projects/-repo-demo/11111111-1111-4111-8111-111111111111.jsonl
+   │  │  └─ [TEMP_DIR]/.claude-config/projects/-repo-demo/22222222-2222-4222-8222-222222222222.jsonl
+   │  ├─ calls = 6
+   │  └─ rebases = 0
+   │
+   ├─ efficiency (measured, from message.usage)
+   │  ├─ input.raw       =            26    0.0%       $0.00
+   │  ├─ cache.read      =        90,200   64.0%       $0.05
+   │  ├─ cache.write.5m  =        50,296   35.7%       $0.31
+   │  ├─ cache.write.1h  =             0    0.0%       $0.00
+   │  ├─ output          =           320    0.2%       $0.01
+   │  ├─ total price = $0.37
+   │  ├─ models = claude-opus-4-5-20251101
+   │  └─ context.per-call
+   │     ├─ median = 25,100
+   │     └─ peak   = 25,161
+   │
+   ├─ inventory (context at the last call, by category)
+   │  ├─ boot.instructions       20,000   39.7%  [apportioned]  (p10 39.7% · p50 39.7% · p90 39.7%)
+   │  │  └─ holds = boot.md
+   │  ├─ unattributed            19,994   39.7%  [unattributed]  (p10 39.7% · p50 39.7% · p90 39.7%)
+   │  │  └─ holds = harness (system prompt + tool schemas)
+   │  ├─ tool.result             10,000   19.9%  [exact]  (p10 19.9% · p50 19.9% · p90 19.9%)
+   │  │  └─ holds = Bash · git.repo.test
+   │  ├─ assistant.own              300    0.6%  [measured]  (p10 0.6% · p50 0.6% · p90 0.6%)
+   │  └─ human.words                 28    0.1%  [apportioned, exact]  (p10 0.1% · p50 0.1% · p90 0.1%)
+   │
+   ├─ repaid (what each block cost, every call it stayed in context — priced per cache span)
+   │  ├─ boot.instructions · boot.md                                 $0.14   40.3%     60.0k tok
+   │  │  └─ read $0.02 (40.0k) · write.5m $0.12 (20.0k) · write.1h $0.00 (0) · input $0.00 (14)
+   │  ├─ unattributed · harness (system prompt + tool schemas)       $0.14   40.3%     60.0k tok
+   │  │  └─ read $0.02 (40.0k) · write.5m $0.12 (20.0k) · write.1h $0.00 (0) · input $0.00 (0)
+   │  ├─ tool.result · Bash · git.repo.test                          $0.07   18.8%     20.0k tok
+   │  │  └─ read $0.01 (10.0k) · write.5m $0.06 (10.0k) · write.1h $0.00 (0) · input $0.00 (4)
+   │  ├─ assistant.own · assistant                                   $0.00    0.5%       500 tok
+   │  │  └─ read $0.00 (200) · write.5m $0.00 (300) · write.1h $0.00 (0) · input $0.00 (0)
+   │  └─ human.words · human                                         $0.00    0.0%        40 tok
+   │     └─ read $0.00 (12) · write.5m $0.00 (20) · write.1h $0.00 (0) · input $0.00 (8)
+   │
+   └─ proposal (ranked by repaid price — an upper bound, not a promise)
+      ├─ 1. boot.instructions · boot.md  ≤ $0.14  40.3%
+      │  └─ hint: move briefs from say to ref
+      ├─ 2. tool.result · Bash · git.repo.test  ≤ $0.07  18.8%
+      │  └─ hint: a summary on stdout, the log on disk
+      └─ 3. assistant.own · assistant  ≤ $0.00  0.5%
+         └─ hint: terser replies, fewer re-reads
+"
+`;
+
+exports[`reflect.on.token.spend given: [case3] --help when: [t0] the skill runs then: stdout matches snapshot 1`] = `
+"🦉 the pond reflects what it was fed
+
+🌕 reflect.on.token.spend
+   ├─ .what = where a claude transcript spent its tokens, and what each part cost to keep
+   ├─ usage
+   │  └─ rhx reflect.on.token.spend [--from <selector>]...
+   ├─ options
+   │  ├─ --from (repeatable; default = @current)
+   │  │  ├─ @current          this session (CLAUDE_CODE_SESSION_ID), else the newest in this dir
+   │  │  ├─ <path>.jsonl      one transcript file
+   │  │  ├─ <uuid>            a session id, found under the claude projects roots
+   │  │  └─ '<glob>'          many transcripts, summed as a corpus (quote it)
+   │  └─ --help, -h           show this usage
+   ├─ notes
+   │  ├─ the proposal ranks by price when every repaid row is priced, else by tokens
+   │  ├─ a model's spec with no rate for a kind (e.g. the 1h cache write) leaves it unpriced
+   │  ├─ each inventory row names how its count was found
+   │  │  ├─ [measured]       read straight from message.usage
+   │  │  ├─ [exact]          the whole of a context rise in which one category arrived
+   │  │  ├─ [apportioned]    a context rise split across categories by byte share
+   │  │  └─ [unattributed]   a rise no record explains
+   │  └─ a rebase is a call where the context re-based; blocks held before it end there
+   │     ├─ compaction       the first call after a compaction record
+   │     └─ shrink           the context fell with no compaction record to explain it
+   └─ examples
+      ├─ rhx reflect.on.token.spend
+      ├─ rhx reflect.on.token.spend --from ~/.claude/projects/-home-me-repo/8f27….jsonl
+      └─ rhx reflect.on.token.spend --from '~/.claude/projects/-home-me-repo/*.jsonl'
+"
+`;
+
+exports[`reflect.on.token.spend given: [case4] a uuid no root holds when: [t0] the skill runs then: stderr matches snapshot 1`] = `
+"🦉 the pond is still; naught to reflect
+
+🌕 reflect.on.token.spend
+   └─ ✋ ConstraintError: transcript not found
+      ├─ uuid = 44444444-4444-4444-8444-444444444444
+      ├─ roots (2)
+      │  ├─ [TEMP_DIR]/.claude-config/projects (0 matches)
+      │  └─ ~/.claude/projects (0 matches)
+      └─ fix: check the uuid, or pass the transcript path directly
+         └─ rhx reflect.on.token.spend --from <path-to/44444444-4444-4444-8444-444444444444.jsonl>
+"
+`;
+
+exports[`reflect.on.token.spend given: [case5] a torn transcript read alone when: [t0] the skill runs then: stderr matches snapshot 1`] = `
+"🦉 the pond is clouded; the read broke
+
+🌕 reflect.on.token.spend
+   └─ 💥 MalfunctionError: malformed transcript line
+      ├─ path = [TEMP_DIR]/33333333-3333-4333-8333-333333333333.jsonl
+      ├─ line = 2 of 3
+      ├─ head = {"type":"ass
+      └─ fix: a torn line before the end is corruption, not a live tail; re-copy the file from its source
+"
+`;
+
+exports[`reflect.on.token.spend given: [case6] a torn transcript inside a corpus when: [t0] the skill runs then: stdout matches snapshot 1`] = `
+"🦉 the pond reflects what it was fed
+
+🌕 reflect.on.token.spend
+   ├─ transcripts (2)
+   │  ├─ matched = 2 · metered = 1 · skipped = 1
+   │  ├─ chosen by = path
+   │  │  ├─ [TEMP_DIR]/.claude-config/projects/-repo-demo/11111111-1111-4111-8111-111111111111.jsonl
+   │  │  └─ [TEMP_DIR]/33333333-3333-4333-8333-333333333333.jsonl (skipped · malformed)
+   │  ├─ calls = 3
+   │  └─ rebases = 0
+   │
+   ├─ efficiency (measured, from message.usage)
+   │  ├─ input.raw       =            13    0.0%       $0.00
+   │  ├─ cache.read      =        45,100   64.0%       $0.02
+   │  ├─ cache.write.5m  =        25,148   35.7%       $0.16
+   │  ├─ cache.write.1h  =             0    0.0%       $0.00
+   │  ├─ output          =           160    0.2%       $0.00
+   │  ├─ total price = $0.18
+   │  ├─ models = claude-opus-4-5-20251101
+   │  └─ context.per-call
+   │     ├─ median = 25,100
+   │     └─ peak   = 25,161
+   │
+   ├─ inventory (context at the last call, by category)
+   │  ├─ boot.instructions       10,000   39.7%  [apportioned]
+   │  │  └─ holds = boot.md
+   │  ├─ unattributed             9,997   39.7%  [unattributed]
+   │  │  └─ holds = harness (system prompt + tool schemas)
+   │  ├─ tool.result              5,000   19.9%  [exact]
+   │  │  └─ holds = Bash · git.repo.test
+   │  ├─ assistant.own              150    0.6%  [measured]
+   │  └─ human.words                 14    0.1%  [apportioned, exact]
+   │
+   ├─ repaid (what each block cost, every call it stayed in context — priced per cache span)
+   │  ├─ boot.instructions · boot.md                                 $0.07   40.3%     30.0k tok
+   │  │  ├─ read $0.01 (20.0k) · write.5m $0.06 (10.0k) · write.1h $0.00 (0) · input $0.00 (7)
+   │  │  └─ peak = 10,000 tok @ call 1, held 3 calls
+   │  ├─ unattributed · harness (system prompt + tool schemas)       $0.07   40.3%     30.0k tok
+   │  │  ├─ read $0.01 (20.0k) · write.5m $0.06 (10.0k) · write.1h $0.00 (0) · input $0.00 (0)
+   │  │  └─ peak = 9,997 tok @ call 1, held 3 calls
+   │  ├─ tool.result · Bash · git.repo.test                          $0.03   18.8%     10.0k tok
+   │  │  ├─ read $0.00 (5.0k) · write.5m $0.03 (5.0k) · write.1h $0.00 (0) · input $0.00 (2)
+   │  │  └─ peak = 5,000 tok @ call 2, held 2 calls
+   │  ├─ assistant.own · assistant                                   $0.00    0.5%       250 tok
+   │  │  ├─ read $0.00 (100) · write.5m $0.00 (150) · write.1h $0.00 (0) · input $0.00 (0)
+   │  │  └─ peak = 100 tok @ call 2, held 2 calls
+   │  └─ human.words · human                                         $0.00    0.0%        20 tok
+   │     ├─ read $0.00 (6) · write.5m $0.00 (10) · write.1h $0.00 (0) · input $0.00 (4)
+   │     └─ peak = 11 tok @ call 3, held 1 call
+   │
+   ├─ skipped (1)
+   │  └─ malformed (1)
+   │     └─ [TEMP_DIR]/33333333-3333-4333-8333-333333333333.jsonl @ line 2 of 3
+   │
+   └─ proposal (ranked by repaid price — an upper bound, not a promise)
+      ├─ 1. boot.instructions · boot.md  ≤ $0.07  40.3%
+      │  └─ hint: move briefs from say to ref
+      ├─ 2. tool.result · Bash · git.repo.test  ≤ $0.03  18.8%
+      │  └─ hint: a summary on stdout, the log on disk
+      └─ 3. assistant.own · assistant  ≤ $0.00  0.5%
+         └─ hint: terser replies, fewer re-reads
+"
+`;
+
+exports[`reflect.on.token.spend given: [case7] a transcript with no metered call, read alone when: [t0] the skill runs then: stderr matches snapshot 1`] = `
+"🦉 the pond is still; naught to reflect
+
+🌕 reflect.on.token.spend
+   └─ ✋ ConstraintError: transcript holds no metered calls
+      ├─ path = [TEMP_DIR]/unmetered/88888888-8888-4888-8888-888888888888.jsonl
+      ├─ records = 1 (0 assistant records with message.usage)
+      ├─ why: a fixture, or a session that crashed before its first reply, has no usage to read
+      ├─ fix: point at another transcript
+      │  └─ rhx reflect.on.token.spend --from <path-to-another.jsonl>
+      └─ or: read the whole dir as a corpus, which skips such a file
+         └─ rhx reflect.on.token.spend --from '[TEMP_DIR]/unmetered/*.jsonl'
+"
+`;
+
+exports[`reflect.on.token.spend given: [case8] a corpus where every transcript is torn when: [t0] the skill runs then: stderr matches snapshot 1`] = `
+"🦉 the pond is clouded; the read broke
+
+🌕 reflect.on.token.spend
+   └─ 💥 MalfunctionError: no transcript could be read
+      ├─ matched = 2 · metered = 0 · skipped = 2
+      ├─ skipped (2)
+      │  ├─ [TEMP_DIR]/33333333-3333-4333-8333-333333333333.jsonl @ line 2 of 3 (malformed transcript line)
+      │  └─ [TEMP_DIR]/55555555-5555-4555-8555-555555555555.jsonl @ line 3 of 4 (malformed transcript line)
+      └─ fix: re-copy the files from their source; each one is torn mid-file
+"
+`;
+
+exports[`reflect.on.token.spend given: [case9] a mistyped flag when: [t0] the skill runs then: stderr matches snapshot 1`] = `
+"🦉 the pond is still; naught to reflect
+
+🌕 reflect.on.token.spend
+   └─ ✋ ConstraintError: unrecognized flag(s)
+      ├─ flags (1)
+      │  └─ --form
+      └─ fix: the only flag is --from (repeatable); see --help
+         └─ rhx reflect.on.token.spend --help
+"
+`;
+
+exports[`reflect.on.token.spend given: [case10] a uuid looked up with $CLAUDE_CONFIG_DIR unset when: [t0] the skill runs then: stderr matches snapshot 1`] = `
+"🦉 the pond is still; naught to reflect
+
+🌕 reflect.on.token.spend
+   └─ ✋ ConstraintError: transcript not found
+      ├─ uuid = 44444444-4444-4444-8444-444444444444
+      ├─ roots (2)
+      │  ├─ $CLAUDE_CONFIG_DIR/projects (unset)
+      │  └─ [TEMP_DIR]/.claude/projects (0 matches)
+      └─ fix: check the uuid, or pass the transcript path directly
+         └─ rhx reflect.on.token.spend --from <path-to/44444444-4444-4444-8444-444444444444.jsonl>
+"
+`;
+
+exports[`reflect.on.token.spend given: [case11] a path that names no file when: [t0] the skill runs then: stderr matches snapshot 1`] = `
+"🦉 the pond is still; naught to reflect
+
+🌕 reflect.on.token.spend
+   └─ ✋ ConstraintError: transcript not found
+      ├─ selector = [TEMP_DIR]/nope/absent.jsonl
+      ├─ path = [TEMP_DIR]/nope/absent.jsonl
+      └─ fix: pass a path that exists, a session uuid, or a glob
+         └─ rhx reflect.on.token.spend --from <path-to/….jsonl>
+"
+`;
+
+exports[`reflect.on.token.spend given: [case12] a uuid held under both roots when: [t0] the skill runs then: stderr matches snapshot 1`] = `
+"🦉 the pond is still; naught to reflect
+
+🌕 reflect.on.token.spend
+   └─ ✋ ConstraintError: transcript uuid is ambiguous
+      ├─ uuid = 11111111-1111-4111-8111-111111111111
+      ├─ matches (2)
+      │  ├─ [TEMP_DIR]/.claude-config/projects/-repo-demo/11111111-1111-4111-8111-111111111111.jsonl
+      │  └─ [TEMP_DIR]/home/.claude/projects/-repo-demo/11111111-1111-4111-8111-111111111111.jsonl
+      └─ fix: pass the path of the one you mean
+"
+`;
+
+exports[`reflect.on.token.spend given: [case13] @current where this directory has no transcript when: [t0] the skill runs then: stderr matches snapshot 1`] = `
+"🦉 the pond is still; naught to reflect
+
+🌕 reflect.on.token.spend
+   └─ ✋ ConstraintError: no transcript for this directory
+      ├─ cwd = [TEMP_PATH]
+      ├─ slug = [TEMP_SLUG]
+      ├─ roots (2)
+      │  ├─ [TEMP_DIR]/.claude-config/projects (0 matches)
+      │  └─ [TEMP_DIR]/home/.claude/projects (0 matches)
+      └─ fix: pass a path, a session uuid, or a glob
+"
+`;
+
+exports[`reflect.on.token.spend given: [case14] a corpus where no transcript made a metered call when: [t0] the skill runs then: stderr matches snapshot 1`] = `
+"🦉 the pond is still; naught to reflect
+
+🌕 reflect.on.token.spend
+   └─ ✋ ConstraintError: no transcript could be read
+      ├─ matched = 2 · metered = 0 · skipped = 2
+      ├─ skipped (2)
+      │  ├─ [TEMP_DIR]/unmetered/88888888-8888-4888-8888-888888888888.jsonl (transcript holds no metered calls)
+      │  └─ [TEMP_DIR]/unmetered/99999999-9999-4999-8999-999999999999.jsonl (transcript holds no metered calls)
+      └─ fix: point at transcripts with metered calls
+"
+`;
+
+exports[`reflect.on.token.spend given: [case15] --from with no value when: [t0] the skill runs then: stderr matches snapshot 1`] = `
+"🦉 the pond is still; naught to reflect
+
+🌕 reflect.on.token.spend
+   └─ ✋ ConstraintError: --from needs a value
+      └─ fix: pass a path, a session uuid, a quoted glob, or @current
+         └─ rhx reflect.on.token.spend --from @current
+"
+`;
+
+exports[`reflect.on.token.spend given: [case16] a glob that matches no file when: [t0] the skill runs then: stderr matches snapshot 1`] = `
+"🦉 the pond is still; naught to reflect
+
+🌕 reflect.on.token.spend
+   └─ ✋ ConstraintError: transcript glob matched no file
+      ├─ selector = [TEMP_DIR]/none-*.jsonl
+      ├─ cwd = [TEMP_PATH]
+      └─ fix: check the glob, and quote it so the shell passes it whole
+"
+`;
+
+exports[`reflect.on.token.spend given: [case17] a transcript cut by a compaction when: [t0] the skill runs then: stdout matches snapshot 1`] = `
+"🦉 the pond reflects what it was fed
+
+🌕 reflect.on.token.spend
+   ├─ transcript
+   │  ├─ path = [TEMP_DIR]/variants/77777777-7777-4777-8777-777777777777.jsonl
+   │  ├─ chosen by = path
+   │  ├─ calls = 4
+   │  └─ rebases = 1
+   │     └─ call 4 · compaction · 25,161 → 1,005
+   │
+   ├─ efficiency (measured, from message.usage)
+   │  ├─ input.raw       =            18    0.0%       $0.00
+   │  ├─ cache.read      =        45,100   63.1%       $0.02
+   │  ├─ cache.write.5m  =        26,148   36.6%       $0.16
+   │  ├─ cache.write.1h  =             0    0.0%       $0.00
+   │  ├─ output          =           180    0.3%       $0.00
+   │  ├─ total price = $0.19
+   │  ├─ models = claude-opus-4-5-20251101
+   │  └─ context.per-call
+   │     ├─ median = 25,100
+   │     └─ peak   = 25,161
+   │
+   ├─ inventory (context at the last call, by category)
+   │  ├─ system.reminder          1,000   99.5%  [apportioned]
+   │  │  └─ holds = compaction.summary
+   │  ├─ unattributed                 5    0.5%  [unattributed]
+   │  │  └─ holds = harness + compacted context
+   │  └─ note: no boot.instructions block was seen; the boot share sits inside unattributed
+   │
+   ├─ repaid (what each block cost, every call it stayed in context — priced per cache span)
+   │  ├─ boot.instructions · boot.md                                 $0.07   39.0%     30.0k tok
+   │  │  ├─ read $0.01 (20.0k) · write.5m $0.06 (10.0k) · write.1h $0.00 (0) · input $0.00 (7)
+   │  │  └─ peak = 10,000 tok @ call 1, held 3 calls
+   │  ├─ unattributed · harness (system prompt + tool schemas)       $0.07   39.0%     30.0k tok
+   │  │  ├─ read $0.01 (20.0k) · write.5m $0.06 (10.0k) · write.1h $0.00 (0) · input $0.00 (0)
+   │  │  └─ peak = 9,997 tok @ call 1, held 3 calls
+   │  ├─ tool.result · Bash · git.repo.test                          $0.03   18.1%     10.0k tok
+   │  │  ├─ read $0.00 (5.0k) · write.5m $0.03 (5.0k) · write.1h $0.00 (0) · input $0.00 (2)
+   │  │  └─ peak = 5,000 tok @ call 2, held 2 calls
+   │  ├─ system.reminder · compaction.summary                        $0.01    3.4%      1.0k tok
+   │  │  ├─ read $0.00 (0) · write.5m $0.01 (995) · write.1h $0.00 (0) · input $0.00 (5)
+   │  │  └─ peak = 1,000 tok @ call 4, held 1 call
+   │  ├─ assistant.own · assistant                                   $0.00    0.5%       250 tok
+   │  │  ├─ read $0.00 (100) · write.5m $0.00 (150) · write.1h $0.00 (0) · input $0.00 (0)
+   │  │  └─ peak = 100 tok @ call 2, held 2 calls
+   │  ├─ human.words · human                                         $0.00    0.0%        20 tok
+   │  │  ├─ read $0.00 (6) · write.5m $0.00 (10) · write.1h $0.00 (0) · input $0.00 (4)
+   │  │  └─ peak = 11 tok @ call 3, held 1 call
+   │  └─ unattributed · harness + compacted context                  $0.00    0.0%         5 tok
+   │     ├─ read $0.00 (0) · write.5m $0.00 (5) · write.1h $0.00 (0) · input $0.00 (0)
+   │     └─ peak = 5 tok @ call 4, held 1 call
+   │
+   └─ proposal (ranked by repaid price — an upper bound, not a promise)
+      ├─ 1. boot.instructions · boot.md  ≤ $0.07  39.0%
+      │  └─ hint: move briefs from say to ref
+      ├─ 2. tool.result · Bash · git.repo.test  ≤ $0.03  18.1%
+      │  └─ hint: a summary on stdout, the log on disk
+      └─ 3. system.reminder · compaction.summary  ≤ $0.01  3.4%
+"
+`;
+
+exports[`reflect.on.token.spend given: [case18] a subagent transcript passed by its own path when: [t0] the skill runs then: stdout matches snapshot 1`] = `
+"🦉 the pond reflects what it was fed
+
+🌕 reflect.on.token.spend
+   ├─ transcript
+   │  ├─ path = [TEMP_DIR]/variants/aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa/subagents/agent-a1.jsonl
+   │  ├─ chosen by = path
+   │  ├─ subagent of = aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa
+   │  ├─ calls = 3
+   │  └─ rebases = 0
+   │
+   ├─ efficiency (measured, from message.usage)
+   │  ├─ input.raw       =            13    0.0%       $0.00
+   │  ├─ cache.read      =        45,100   64.0%       $0.02
+   │  ├─ cache.write.5m  =        25,148   35.7%       $0.16
+   │  ├─ cache.write.1h  =             0    0.0%       $0.00
+   │  ├─ output          =           160    0.2%       $0.00
+   │  ├─ total price = $0.18
+   │  ├─ models = claude-opus-4-5-20251101
+   │  └─ context.per-call
+   │     ├─ median = 25,100
+   │     └─ peak   = 25,161
+   │
+   ├─ inventory (context at the last call, by category)
+   │  ├─ boot.instructions       10,000   39.7%  [apportioned]
+   │  │  └─ holds = boot.md
+   │  ├─ unattributed             9,997   39.7%  [unattributed]
+   │  │  └─ holds = harness (system prompt + tool schemas)
+   │  ├─ tool.result              5,000   19.9%  [exact]
+   │  │  └─ holds = Bash · git.repo.test
+   │  ├─ assistant.own              150    0.6%  [measured]
+   │  └─ system.reminder             14    0.1%  [apportioned, exact]
+   │     └─ holds = meta
+   │
+   ├─ repaid (what each block cost, every call it stayed in context — priced per cache span)
+   │  ├─ boot.instructions · boot.md                                 $0.07   40.3%     30.0k tok
+   │  │  ├─ read $0.01 (20.0k) · write.5m $0.06 (10.0k) · write.1h $0.00 (0) · input $0.00 (7)
+   │  │  └─ peak = 10,000 tok @ call 1, held 3 calls
+   │  ├─ unattributed · harness (system prompt + tool schemas)       $0.07   40.3%     30.0k tok
+   │  │  ├─ read $0.01 (20.0k) · write.5m $0.06 (10.0k) · write.1h $0.00 (0) · input $0.00 (0)
+   │  │  └─ peak = 9,997 tok @ call 1, held 3 calls
+   │  ├─ tool.result · Bash · git.repo.test                          $0.03   18.8%     10.0k tok
+   │  │  ├─ read $0.00 (5.0k) · write.5m $0.03 (5.0k) · write.1h $0.00 (0) · input $0.00 (2)
+   │  │  └─ peak = 5,000 tok @ call 2, held 2 calls
+   │  ├─ assistant.own · assistant                                   $0.00    0.5%       250 tok
+   │  │  ├─ read $0.00 (100) · write.5m $0.00 (150) · write.1h $0.00 (0) · input $0.00 (0)
+   │  │  └─ peak = 100 tok @ call 2, held 2 calls
+   │  └─ system.reminder · meta                                      $0.00    0.0%        20 tok
+   │     ├─ read $0.00 (6) · write.5m $0.00 (10) · write.1h $0.00 (0) · input $0.00 (4)
+   │     └─ peak = 11 tok @ call 3, held 1 call
+   │
+   └─ proposal (ranked by repaid price — an upper bound, not a promise)
+      ├─ 1. boot.instructions · boot.md  ≤ $0.07  40.3%
+      │  └─ hint: move briefs from say to ref
+      ├─ 2. tool.result · Bash · git.repo.test  ≤ $0.03  18.8%
+      │  └─ hint: a summary on stdout, the log on disk
+      └─ 3. assistant.own · assistant  ≤ $0.00  0.5%
+         └─ hint: terser replies, fewer re-reads
+"
+`;
+
+exports[`reflect.on.token.spend given: [case19] a session that never booted its instructions when: [t0] the skill runs then: stdout matches snapshot 1`] = `
+"🦉 the pond reflects what it was fed
+
+🌕 reflect.on.token.spend
+   ├─ transcript
+   │  ├─ path = [TEMP_DIR]/variants/bbbbbbbb-bbbb-4bbb-8bbb-bbbbbbbbbbbb.jsonl
+   │  ├─ chosen by = path
+   │  ├─ calls = 3
+   │  └─ rebases = 0
+   │
+   ├─ efficiency (measured, from message.usage)
+   │  ├─ input.raw       =            13    0.0%       $0.00
+   │  ├─ cache.read      =        45,100   64.0%       $0.02
+   │  ├─ cache.write.5m  =        25,148   35.7%       $0.16
+   │  ├─ cache.write.1h  =             0    0.0%       $0.00
+   │  ├─ output          =           160    0.2%       $0.00
+   │  ├─ total price = $0.18
+   │  ├─ models = claude-opus-4-5-20251101
+   │  └─ context.per-call
+   │     ├─ median = 25,100
+   │     └─ peak   = 25,161
+   │
+   ├─ inventory (context at the last call, by category)
+   │  ├─ unattributed            19,997   79.5%  [unattributed]
+   │  │  └─ holds = harness (system prompt + tool schemas)
+   │  ├─ tool.result              5,000   19.9%  [exact]
+   │  │  └─ holds = Bash · git.repo.test
+   │  ├─ assistant.own              150    0.6%  [measured]
+   │  ├─ human.words                 14    0.1%  [apportioned, exact]
+   │  └─ note: no boot.instructions block was seen; the boot share sits inside unattributed
+   │
+   ├─ repaid (what each block cost, every call it stayed in context — priced per cache span)
+   │  ├─ unattributed · harness (system prompt + tool schemas)       $0.14   80.6%     60.0k tok
+   │  │  ├─ read $0.02 (40.0k) · write.5m $0.12 (20.0k) · write.1h $0.00 (0) · input $0.00 (7)
+   │  │  └─ peak = 19,997 tok @ call 1, held 3 calls
+   │  ├─ tool.result · Bash · git.repo.test                          $0.03   18.8%     10.0k tok
+   │  │  ├─ read $0.00 (5.0k) · write.5m $0.03 (5.0k) · write.1h $0.00 (0) · input $0.00 (2)
+   │  │  └─ peak = 5,000 tok @ call 2, held 2 calls
+   │  ├─ assistant.own · assistant                                   $0.00    0.5%       250 tok
+   │  │  ├─ read $0.00 (100) · write.5m $0.00 (150) · write.1h $0.00 (0) · input $0.00 (0)
+   │  │  └─ peak = 100 tok @ call 2, held 2 calls
+   │  └─ human.words · human                                         $0.00    0.0%        20 tok
+   │     ├─ read $0.00 (6) · write.5m $0.00 (10) · write.1h $0.00 (0) · input $0.00 (4)
+   │     └─ peak = 11 tok @ call 3, held 1 call
+   │
+   └─ proposal (ranked by repaid price — an upper bound, not a promise)
+      ├─ 1. tool.result · Bash · git.repo.test  ≤ $0.03  18.8%
+      │  └─ hint: a summary on stdout, the log on disk
+      ├─ 2. assistant.own · assistant  ≤ $0.00  0.5%
+      │  └─ hint: terser replies, fewer re-reads
+      └─ 3. human.words · human  ≤ $0.00  0.0%
+"
+`;
+
+exports[`reflect.on.token.spend given: [case20] @current in a live session, its last line half-flushed when: [t0] the skill runs then: stdout matches snapshot 1`] = `
+"🦉 the pond reflects what it was fed
+
+🌕 reflect.on.token.spend
+   ├─ transcript
+   │  ├─ path = [TEMP_DIR]/.claude-config/projects/-repo-live/eeeeeeee-eeee-4eee-8eee-eeeeeeeeeeee.jsonl
+   │  ├─ chosen by = session-id
+   │  ├─ calls = 3
+   │  ├─ rebases = 0
+   │  └─ partial lines skipped = 1 (a live tail)
+   │
+   ├─ efficiency (measured, from message.usage)
+   │  ├─ input.raw       =            13    0.0%       $0.00
+   │  ├─ cache.read      =        45,100   64.0%       $0.02
+   │  ├─ cache.write.5m  =        25,148   35.7%       $0.16
+   │  ├─ cache.write.1h  =             0    0.0%       $0.00
+   │  ├─ output          =           160    0.2%       $0.00
+   │  ├─ total price = $0.18
+   │  ├─ models = claude-opus-4-5-20251101
+   │  └─ context.per-call
+   │     ├─ median = 25,100
+   │     └─ peak   = 25,161
+   │
+   ├─ inventory (context at the last call, by category)
+   │  ├─ boot.instructions       10,000   39.7%  [apportioned]
+   │  │  └─ holds = boot.md
+   │  ├─ unattributed             9,997   39.7%  [unattributed]
+   │  │  └─ holds = harness (system prompt + tool schemas)
+   │  ├─ tool.result              5,000   19.9%  [exact]
+   │  │  └─ holds = Bash · git.repo.test
+   │  ├─ assistant.own              150    0.6%  [measured]
+   │  └─ human.words                 14    0.1%  [apportioned, exact]
+   │
+   ├─ repaid (what each block cost, every call it stayed in context — priced per cache span)
+   │  ├─ boot.instructions · boot.md                                 $0.07   40.3%     30.0k tok
+   │  │  ├─ read $0.01 (20.0k) · write.5m $0.06 (10.0k) · write.1h $0.00 (0) · input $0.00 (7)
+   │  │  └─ peak = 10,000 tok @ call 1, held 3 calls
+   │  ├─ unattributed · harness (system prompt + tool schemas)       $0.07   40.3%     30.0k tok
+   │  │  ├─ read $0.01 (20.0k) · write.5m $0.06 (10.0k) · write.1h $0.00 (0) · input $0.00 (0)
+   │  │  └─ peak = 9,997 tok @ call 1, held 3 calls
+   │  ├─ tool.result · Bash · git.repo.test                          $0.03   18.8%     10.0k tok
+   │  │  ├─ read $0.00 (5.0k) · write.5m $0.03 (5.0k) · write.1h $0.00 (0) · input $0.00 (2)
+   │  │  └─ peak = 5,000 tok @ call 2, held 2 calls
+   │  ├─ assistant.own · assistant                                   $0.00    0.5%       250 tok
+   │  │  ├─ read $0.00 (100) · write.5m $0.00 (150) · write.1h $0.00 (0) · input $0.00 (0)
+   │  │  └─ peak = 100 tok @ call 2, held 2 calls
+   │  └─ human.words · human                                         $0.00    0.0%        20 tok
+   │     ├─ read $0.00 (6) · write.5m $0.00 (10) · write.1h $0.00 (0) · input $0.00 (4)
+   │     └─ peak = 11 tok @ call 3, held 1 call
+   │
+   └─ proposal (ranked by repaid price — an upper bound, not a promise)
+      ├─ 1. boot.instructions · boot.md  ≤ $0.07  40.3%
+      │  └─ hint: move briefs from say to ref
+      ├─ 2. tool.result · Bash · git.repo.test  ≤ $0.03  18.8%
+      │  └─ hint: a summary on stdout, the log on disk
+      └─ 3. assistant.own · assistant  ≤ $0.00  0.5%
+         └─ hint: terser replies, fewer re-reads
+"
+`;
+
+exports[`reflect.on.token.spend given: [case21] a corpus of one metered session and one unmetered when: [t0] the skill runs then: stdout matches snapshot 1`] = `
+"🦉 the pond reflects what it was fed
+
+🌕 reflect.on.token.spend
+   ├─ transcripts (2)
+   │  ├─ matched = 2 · metered = 1 · skipped = 1
+   │  ├─ chosen by = glob
+   │  │  ├─ [TEMP_DIR]/mixed/cccccccc-cccc-4ccc-8ccc-cccccccccccc.jsonl
+   │  │  └─ [TEMP_DIR]/mixed/dddddddd-dddd-4ddd-8ddd-dddddddddddd.jsonl (skipped · unmetered)
+   │  ├─ calls = 3
+   │  └─ rebases = 0
+   │
+   ├─ efficiency (measured, from message.usage)
+   │  ├─ input.raw       =            13    0.0%       $0.00
+   │  ├─ cache.read      =        45,100   64.0%       $0.02
+   │  ├─ cache.write.5m  =        25,148   35.7%       $0.16
+   │  ├─ cache.write.1h  =             0    0.0%       $0.00
+   │  ├─ output          =           160    0.2%       $0.00
+   │  ├─ total price = $0.18
+   │  ├─ models = claude-opus-4-5-20251101
+   │  └─ context.per-call
+   │     ├─ median = 25,100
+   │     └─ peak   = 25,161
+   │
+   ├─ inventory (context at the last call, by category)
+   │  ├─ boot.instructions       10,000   39.7%  [apportioned]
+   │  │  └─ holds = boot.md
+   │  ├─ unattributed             9,997   39.7%  [unattributed]
+   │  │  └─ holds = harness (system prompt + tool schemas)
+   │  ├─ tool.result              5,000   19.9%  [exact]
+   │  │  └─ holds = Bash · git.repo.test
+   │  ├─ assistant.own              150    0.6%  [measured]
+   │  └─ human.words                 14    0.1%  [apportioned, exact]
+   │
+   ├─ repaid (what each block cost, every call it stayed in context — priced per cache span)
+   │  ├─ boot.instructions · boot.md                                 $0.07   40.3%     30.0k tok
+   │  │  ├─ read $0.01 (20.0k) · write.5m $0.06 (10.0k) · write.1h $0.00 (0) · input $0.00 (7)
+   │  │  └─ peak = 10,000 tok @ call 1, held 3 calls
+   │  ├─ unattributed · harness (system prompt + tool schemas)       $0.07   40.3%     30.0k tok
+   │  │  ├─ read $0.01 (20.0k) · write.5m $0.06 (10.0k) · write.1h $0.00 (0) · input $0.00 (0)
+   │  │  └─ peak = 9,997 tok @ call 1, held 3 calls
+   │  ├─ tool.result · Bash · git.repo.test                          $0.03   18.8%     10.0k tok
+   │  │  ├─ read $0.00 (5.0k) · write.5m $0.03 (5.0k) · write.1h $0.00 (0) · input $0.00 (2)
+   │  │  └─ peak = 5,000 tok @ call 2, held 2 calls
+   │  ├─ assistant.own · assistant                                   $0.00    0.5%       250 tok
+   │  │  ├─ read $0.00 (100) · write.5m $0.00 (150) · write.1h $0.00 (0) · input $0.00 (0)
+   │  │  └─ peak = 100 tok @ call 2, held 2 calls
+   │  └─ human.words · human                                         $0.00    0.0%        20 tok
+   │     ├─ read $0.00 (6) · write.5m $0.00 (10) · write.1h $0.00 (0) · input $0.00 (4)
+   │     └─ peak = 11 tok @ call 3, held 1 call
+   │
+   ├─ skipped (1)
+   │  └─ unmetered (1)
+   │     └─ [TEMP_DIR]/mixed/dddddddd-dddd-4ddd-8ddd-dddddddddddd.jsonl
+   │
+   └─ proposal (ranked by repaid price — an upper bound, not a promise)
+      ├─ 1. boot.instructions · boot.md  ≤ $0.07  40.3%
+      │  └─ hint: move briefs from say to ref
+      ├─ 2. tool.result · Bash · git.repo.test  ≤ $0.03  18.8%
+      │  └─ hint: a summary on stdout, the log on disk
+      └─ 3. assistant.own · assistant  ≤ $0.00  0.5%
+         └─ hint: terser replies, fewer re-reads
+"
+`;
+
+exports[`reflect.on.token.spend given: [case22] a parent transcript with a subagent beside it when: [t0] the skill runs then: stdout matches snapshot 1`] = `
+"🦉 the pond reflects what it was fed
+
+🌕 reflect.on.token.spend
+   ├─ transcript
+   │  ├─ path = [TEMP_DIR]/variants/aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa.jsonl
+   │  ├─ chosen by = path
+   │  ├─ calls = 3
+   │  └─ rebases = 0
+   │
+   ├─ efficiency (measured, from message.usage)
+   │  ├─ input.raw       =            13    0.0%       $0.00
+   │  ├─ cache.read      =        45,100   64.0%       $0.02
+   │  ├─ cache.write.5m  =        25,148   35.7%       $0.16
+   │  ├─ cache.write.1h  =             0    0.0%       $0.00
+   │  ├─ output          =           160    0.2%       $0.00
+   │  ├─ total price = $0.18
+   │  ├─ models = claude-opus-4-5-20251101
+   │  └─ context.per-call
+   │     ├─ median = 25,100
+   │     └─ peak   = 25,161
+   │
+   ├─ inventory (context at the last call, by category)
+   │  ├─ boot.instructions       10,000   39.7%  [apportioned]
+   │  │  └─ holds = boot.md
+   │  ├─ unattributed             9,997   39.7%  [unattributed]
+   │  │  └─ holds = harness (system prompt + tool schemas)
+   │  ├─ tool.result              5,000   19.9%  [exact]
+   │  │  └─ holds = Bash · git.repo.test
+   │  ├─ assistant.own              150    0.6%  [measured]
+   │  └─ human.words                 14    0.1%  [apportioned, exact]
+   │
+   ├─ repaid (what each block cost, every call it stayed in context — priced per cache span)
+   │  ├─ boot.instructions · boot.md                                 $0.07   40.3%     30.0k tok
+   │  │  ├─ read $0.01 (20.0k) · write.5m $0.06 (10.0k) · write.1h $0.00 (0) · input $0.00 (7)
+   │  │  └─ peak = 10,000 tok @ call 1, held 3 calls
+   │  ├─ unattributed · harness (system prompt + tool schemas)       $0.07   40.3%     30.0k tok
+   │  │  ├─ read $0.01 (20.0k) · write.5m $0.06 (10.0k) · write.1h $0.00 (0) · input $0.00 (0)
+   │  │  └─ peak = 9,997 tok @ call 1, held 3 calls
+   │  ├─ tool.result · Bash · git.repo.test                          $0.03   18.8%     10.0k tok
+   │  │  ├─ read $0.00 (5.0k) · write.5m $0.03 (5.0k) · write.1h $0.00 (0) · input $0.00 (2)
+   │  │  └─ peak = 5,000 tok @ call 2, held 2 calls
+   │  ├─ assistant.own · assistant                                   $0.00    0.5%       250 tok
+   │  │  ├─ read $0.00 (100) · write.5m $0.00 (150) · write.1h $0.00 (0) · input $0.00 (0)
+   │  │  └─ peak = 100 tok @ call 2, held 2 calls
+   │  └─ human.words · human                                         $0.00    0.0%        20 tok
+   │     ├─ read $0.00 (6) · write.5m $0.00 (10) · write.1h $0.00 (0) · input $0.00 (4)
+   │     └─ peak = 11 tok @ call 3, held 1 call
+   │
+   ├─ subagents (1, their own spend)
+   │  └─ [TEMP_DIR]/variants/aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa/subagents/agent-a1.jsonl
+   │     ├─ calls = 3
+   │     ├─ tokens = 70,421
+   │     └─ price = $0.18
+   │
+   └─ proposal (ranked by repaid price — an upper bound, not a promise)
+      ├─ 1. boot.instructions · boot.md  ≤ $0.07  40.3%
+      │  └─ hint: move briefs from say to ref
+      ├─ 2. tool.result · Bash · git.repo.test  ≤ $0.03  18.8%
+      │  └─ hint: a summary on stdout, the log on disk
+      └─ 3. assistant.own · assistant  ≤ $0.00  0.5%
+         └─ hint: terser replies, fewer re-reads
+"
+`;
+
+exports[`reflect.on.token.spend given: [case23] a corpus where one file is torn and one is unmetered when: [t0] the skill runs then: stderr matches snapshot 1`] = `
+"🦉 the pond is still; naught to reflect
+
+🌕 reflect.on.token.spend
+   └─ ✋ ConstraintError: no transcript could be read
+      ├─ matched = 2 · metered = 0 · skipped = 2
+      ├─ skipped (2)
+      │  ├─ [TEMP_DIR]/mixed-skip/33333333-3333-4333-8333-333333333333.jsonl @ line 2 of 3 (malformed transcript line)
+      │  └─ [TEMP_DIR]/mixed-skip/88888888-8888-4888-8888-888888888888.jsonl (transcript holds no metered calls)
+      └─ fix: re-copy each malformed file from its source, and point past each unmetered one
+"
+`;
+
+exports[`reflect.on.token.spend given: [case24] @current with no session id, in a dir with two sessions when: [t0] the skill runs then: stdout matches snapshot 1`] = `
+"🦉 the pond reflects what it was fed
+
+🌕 reflect.on.token.spend
+   ├─ transcript
+   │  ├─ path = [TEMP_DIR]/.claude-config-mtime/projects/[TEMP_SLUG]/22222222-2222-4222-8222-222222222222.jsonl
+   │  ├─ chosen by = mtime
+   │  ├─ calls = 3
+   │  └─ rebases = 0
+   │
+   ├─ efficiency (measured, from message.usage)
+   │  ├─ input.raw       =            13    0.0%       $0.00
+   │  ├─ cache.read      =        45,100   64.0%       $0.02
+   │  ├─ cache.write.5m  =        25,148   35.7%       $0.16
+   │  ├─ cache.write.1h  =             0    0.0%       $0.00
+   │  ├─ output          =           160    0.2%       $0.00
+   │  ├─ total price = $0.18
+   │  ├─ models = claude-opus-4-5-20251101
+   │  └─ context.per-call
+   │     ├─ median = 25,100
+   │     └─ peak   = 25,161
+   │
+   ├─ inventory (context at the last call, by category)
+   │  ├─ boot.instructions       10,000   39.7%  [apportioned]
+   │  │  └─ holds = boot.md
+   │  ├─ unattributed             9,997   39.7%  [unattributed]
+   │  │  └─ holds = harness (system prompt + tool schemas)
+   │  ├─ tool.result              5,000   19.9%  [exact]
+   │  │  └─ holds = Bash · git.repo.test
+   │  ├─ assistant.own              150    0.6%  [measured]
+   │  └─ human.words                 14    0.1%  [apportioned, exact]
+   │
+   ├─ repaid (what each block cost, every call it stayed in context — priced per cache span)
+   │  ├─ boot.instructions · boot.md                                 $0.07   40.3%     30.0k tok
+   │  │  ├─ read $0.01 (20.0k) · write.5m $0.06 (10.0k) · write.1h $0.00 (0) · input $0.00 (7)
+   │  │  └─ peak = 10,000 tok @ call 1, held 3 calls
+   │  ├─ unattributed · harness (system prompt + tool schemas)       $0.07   40.3%     30.0k tok
+   │  │  ├─ read $0.01 (20.0k) · write.5m $0.06 (10.0k) · write.1h $0.00 (0) · input $0.00 (0)
+   │  │  └─ peak = 9,997 tok @ call 1, held 3 calls
+   │  ├─ tool.result · Bash · git.repo.test                          $0.03   18.8%     10.0k tok
+   │  │  ├─ read $0.00 (5.0k) · write.5m $0.03 (5.0k) · write.1h $0.00 (0) · input $0.00 (2)
+   │  │  └─ peak = 5,000 tok @ call 2, held 2 calls
+   │  ├─ assistant.own · assistant                                   $0.00    0.5%       250 tok
+   │  │  ├─ read $0.00 (100) · write.5m $0.00 (150) · write.1h $0.00 (0) · input $0.00 (0)
+   │  │  └─ peak = 100 tok @ call 2, held 2 calls
+   │  └─ human.words · human                                         $0.00    0.0%        20 tok
+   │     ├─ read $0.00 (6) · write.5m $0.00 (10) · write.1h $0.00 (0) · input $0.00 (4)
+   │     └─ peak = 11 tok @ call 3, held 1 call
+   │
+   └─ proposal (ranked by repaid price — an upper bound, not a promise)
+      ├─ 1. boot.instructions · boot.md  ≤ $0.07  40.3%
+      │  └─ hint: move briefs from say to ref
+      ├─ 2. tool.result · Bash · git.repo.test  ≤ $0.03  18.8%
+      │  └─ hint: a summary on stdout, the log on disk
+      └─ 3. assistant.own · assistant  ≤ $0.00  0.5%
+         └─ hint: terser replies, fewer re-reads
+"
+`;
+
+exports[`reflect.on.token.spend given: [case25] two selectors, one that matches and one that matches none when: [t0] the skill runs then: stderr matches snapshot 1`] = `
+"🦉 the pond is still; naught to reflect
+
+🌕 reflect.on.token.spend
+   └─ ✋ ConstraintError: transcript glob matched no file
+      ├─ selector = [TEMP_DIR]/nope-*.jsonl
+      ├─ cwd = [TEMP_PATH]
+      └─ fix: check the glob, and quote it so the shell passes it whole
+"
+`;
+
+exports[`reflect.on.token.spend given: [case26] a transcript on a model no rate card names when: [t0] the skill runs then: stdout matches snapshot 1`] = `
+"🦉 the pond reflects what it was fed
+
+🌕 reflect.on.token.spend
+   ├─ transcript
+   │  ├─ path = [TEMP_DIR]/ffffffff-ffff-4fff-8fff-ffffffffffff.jsonl
+   │  ├─ chosen by = path
+   │  ├─ calls = 3
+   │  └─ rebases = 0
+   │
+   ├─ efficiency (measured, from message.usage)
+   │  ├─ input.raw       =            13    0.0%    unpriced
+   │  ├─ cache.read      =        45,100   64.0%    unpriced
+   │  ├─ cache.write.5m  =        25,148   35.7%    unpriced
+   │  ├─ cache.write.1h  =             0    0.0%       $0.00
+   │  ├─ output          =           160    0.2%    unpriced
+   │  ├─ total price = unpriced
+   │  │  ├─ why  = no rate spec for these tokens in the installed brain packages; a rate is never guessed
+   │  │  ├─ held = every token count above is measured; only the $ is absent
+   │  │  └─ lift = a brain package version whose spec covers these models
+   │  ├─ models = claude-mystery-1
+   │  └─ context.per-call
+   │     ├─ median = 25,100
+   │     └─ peak   = 25,161
+   │
+   ├─ inventory (context at the last call, by category)
+   │  ├─ boot.instructions       10,000   39.7%  [apportioned]
+   │  │  └─ holds = boot.md
+   │  ├─ unattributed             9,997   39.7%  [unattributed]
+   │  │  └─ holds = harness (system prompt + tool schemas)
+   │  ├─ tool.result              5,000   19.9%  [exact]
+   │  │  └─ holds = Bash · git.repo.test
+   │  ├─ assistant.own              150    0.6%  [measured]
+   │  └─ human.words                 14    0.1%  [apportioned, exact]
+   │
+   ├─ repaid (what each block cost, every call it stayed in context — priced per cache span)
+   │  ├─ boot.instructions · boot.md                              unpriced   42.7%     30.0k tok
+   │  │  ├─ read unpriced (20.0k) · write.5m unpriced (10.0k) · write.1h $0.00 (0) · input unpriced (7)
+   │  │  └─ peak = 10,000 tok @ call 1, held 3 calls
+   │  ├─ unattributed · harness (system prompt + tool schemas)    unpriced   42.7%     30.0k tok
+   │  │  ├─ read unpriced (20.0k) · write.5m unpriced (10.0k) · write.1h $0.00 (0) · input $0.00 (0)
+   │  │  └─ peak = 9,997 tok @ call 1, held 3 calls
+   │  ├─ tool.result · Bash · git.repo.test                       unpriced   14.2%     10.0k tok
+   │  │  ├─ read unpriced (5.0k) · write.5m unpriced (5.0k) · write.1h $0.00 (0) · input unpriced (2)
+   │  │  └─ peak = 5,000 tok @ call 2, held 2 calls
+   │  ├─ assistant.own · assistant                                unpriced    0.4%       250 tok
+   │  │  ├─ read unpriced (100) · write.5m unpriced (150) · write.1h $0.00 (0) · input $0.00 (0)
+   │  │  └─ peak = 100 tok @ call 2, held 2 calls
+   │  └─ human.words · human                                      unpriced    0.0%        20 tok
+   │     ├─ read unpriced (6) · write.5m unpriced (10) · write.1h $0.00 (0) · input unpriced (4)
+   │     └─ peak = 11 tok @ call 3, held 1 call
+   │
+   └─ proposal (ranked by repaid tokens — an upper bound, not a promise)
+      ├─ 1. boot.instructions · boot.md  ≤ 30.0k tok  42.7%
+      │  └─ hint: move briefs from say to ref
+      ├─ 2. tool.result · Bash · git.repo.test  ≤ 10.0k tok  14.2%
+      │  └─ hint: a summary on stdout, the log on disk
+      └─ 3. assistant.own · assistant  ≤ 250 tok  0.4%
+         └─ hint: terser replies, fewer re-reads
+"
+`;
+
+exports[`reflect.on.token.spend given: [case27] a corpus of one metered, one torn, and one unmetered session when: [t0] the skill runs then: stdout matches snapshot 1`] = `
+"🦉 the pond reflects what it was fed
+
+🌕 reflect.on.token.spend
+   ├─ transcripts (3)
+   │  ├─ matched = 3 · metered = 1 · skipped = 2
+   │  ├─ chosen by = glob
+   │  │  ├─ [TEMP_DIR]/mixed-read/cccccccc-cccc-4ccc-8ccc-cccccccccccc.jsonl
+   │  │  ├─ [TEMP_DIR]/mixed-read/33333333-3333-4333-8333-333333333333.jsonl (skipped · malformed)
+   │  │  └─ [TEMP_DIR]/mixed-read/88888888-8888-4888-8888-888888888888.jsonl (skipped · unmetered)
+   │  ├─ calls = 3
+   │  └─ rebases = 0
+   │
+   ├─ efficiency (measured, from message.usage)
+   │  ├─ input.raw       =            13    0.0%       $0.00
+   │  ├─ cache.read      =        45,100   64.0%       $0.02
+   │  ├─ cache.write.5m  =        25,148   35.7%       $0.16
+   │  ├─ cache.write.1h  =             0    0.0%       $0.00
+   │  ├─ output          =           160    0.2%       $0.00
+   │  ├─ total price = $0.18
+   │  ├─ models = claude-opus-4-5-20251101
+   │  └─ context.per-call
+   │     ├─ median = 25,100
+   │     └─ peak   = 25,161
+   │
+   ├─ inventory (context at the last call, by category)
+   │  ├─ boot.instructions       10,000   39.7%  [apportioned]
+   │  │  └─ holds = boot.md
+   │  ├─ unattributed             9,997   39.7%  [unattributed]
+   │  │  └─ holds = harness (system prompt + tool schemas)
+   │  ├─ tool.result              5,000   19.9%  [exact]
+   │  │  └─ holds = Bash · git.repo.test
+   │  ├─ assistant.own              150    0.6%  [measured]
+   │  └─ human.words                 14    0.1%  [apportioned, exact]
+   │
+   ├─ repaid (what each block cost, every call it stayed in context — priced per cache span)
+   │  ├─ boot.instructions · boot.md                                 $0.07   40.3%     30.0k tok
+   │  │  ├─ read $0.01 (20.0k) · write.5m $0.06 (10.0k) · write.1h $0.00 (0) · input $0.00 (7)
+   │  │  └─ peak = 10,000 tok @ call 1, held 3 calls
+   │  ├─ unattributed · harness (system prompt + tool schemas)       $0.07   40.3%     30.0k tok
+   │  │  ├─ read $0.01 (20.0k) · write.5m $0.06 (10.0k) · write.1h $0.00 (0) · input $0.00 (0)
+   │  │  └─ peak = 9,997 tok @ call 1, held 3 calls
+   │  ├─ tool.result · Bash · git.repo.test                          $0.03   18.8%     10.0k tok
+   │  │  ├─ read $0.00 (5.0k) · write.5m $0.03 (5.0k) · write.1h $0.00 (0) · input $0.00 (2)
+   │  │  └─ peak = 5,000 tok @ call 2, held 2 calls
+   │  ├─ assistant.own · assistant                                   $0.00    0.5%       250 tok
+   │  │  ├─ read $0.00 (100) · write.5m $0.00 (150) · write.1h $0.00 (0) · input $0.00 (0)
+   │  │  └─ peak = 100 tok @ call 2, held 2 calls
+   │  └─ human.words · human                                         $0.00    0.0%        20 tok
+   │     ├─ read $0.00 (6) · write.5m $0.00 (10) · write.1h $0.00 (0) · input $0.00 (4)
+   │     └─ peak = 11 tok @ call 3, held 1 call
+   │
+   ├─ skipped (2)
+   │  ├─ malformed (1)
+   │  │  └─ [TEMP_DIR]/mixed-read/33333333-3333-4333-8333-333333333333.jsonl @ line 2 of 3
+   │  └─ unmetered (1)
+   │     └─ [TEMP_DIR]/mixed-read/88888888-8888-4888-8888-888888888888.jsonl
+   │
+   └─ proposal (ranked by repaid price — an upper bound, not a promise)
+      ├─ 1. boot.instructions · boot.md  ≤ $0.07  40.3%
+      │  └─ hint: move briefs from say to ref
+      ├─ 2. tool.result · Bash · git.repo.test  ≤ $0.03  18.8%
+      │  └─ hint: a summary on stdout, the log on disk
+      └─ 3. assistant.own · assistant  ≤ $0.00  0.5%
+         └─ hint: terser replies, fewer re-reads
+"
+`;
+
+exports[`reflect.on.token.spend given: [case28] a reader that closes stdout before the tree is written when: [t0] the skill output is piped into \`head -c 0\` then: stdout and stderr match snapshot 1`] = `
+{
+  "stderr": "",
+  "stdout": "",
+}
+`;
+
+exports[`reflect.on.token.spend given: [case29] @current where the session id names no transcript when: [t0] the skill runs then: stderr matches snapshot 1`] = `
+"🦉 the pond is still; naught to reflect
+
+🌕 reflect.on.token.spend
+   └─ ✋ ConstraintError: transcript not found
+      ├─ uuid = 44444444-4444-4444-8444-444444444444
+      ├─ roots (2)
+      │  ├─ [TEMP_DIR]/.claude-config/projects (0 matches)
+      │  └─ ~/.claude/projects (0 matches)
+      └─ fix: check the uuid, or pass the transcript path directly
+         └─ rhx reflect.on.token.spend --from <path-to/44444444-4444-4444-8444-444444444444.jsonl>
+"
+`;
+
+exports[`reflect.on.token.spend given: [case30] a compacted parent with a subagent beside it when: [t0] the skill runs then: stdout matches snapshot 1`] = `
+"🦉 the pond reflects what it was fed
+
+🌕 reflect.on.token.spend
+   ├─ transcript
+   │  ├─ path = [TEMP_DIR]/variants/12121212-1212-4212-8212-121212121212.jsonl
+   │  ├─ chosen by = path
+   │  ├─ calls = 4
+   │  └─ rebases = 1
+   │     └─ call 4 · compaction · 25,161 → 1,005
+   │
+   ├─ efficiency (measured, from message.usage)
+   │  ├─ input.raw       =            18    0.0%       $0.00
+   │  ├─ cache.read      =        45,100   63.1%       $0.02
+   │  ├─ cache.write.5m  =        26,148   36.6%       $0.16
+   │  ├─ cache.write.1h  =             0    0.0%       $0.00
+   │  ├─ output          =           180    0.3%       $0.00
+   │  ├─ total price = $0.19
+   │  ├─ models = claude-opus-4-5-20251101
+   │  └─ context.per-call
+   │     ├─ median = 25,100
+   │     └─ peak   = 25,161
+   │
+   ├─ inventory (context at the last call, by category)
+   │  ├─ system.reminder          1,000   99.5%  [apportioned]
+   │  │  └─ holds = compaction.summary
+   │  ├─ unattributed                 5    0.5%  [unattributed]
+   │  │  └─ holds = harness + compacted context
+   │  └─ note: no boot.instructions block was seen; the boot share sits inside unattributed
+   │
+   ├─ repaid (what each block cost, every call it stayed in context — priced per cache span)
+   │  ├─ boot.instructions · boot.md                                 $0.07   39.0%     30.0k tok
+   │  │  ├─ read $0.01 (20.0k) · write.5m $0.06 (10.0k) · write.1h $0.00 (0) · input $0.00 (7)
+   │  │  └─ peak = 10,000 tok @ call 1, held 3 calls
+   │  ├─ unattributed · harness (system prompt + tool schemas)       $0.07   39.0%     30.0k tok
+   │  │  ├─ read $0.01 (20.0k) · write.5m $0.06 (10.0k) · write.1h $0.00 (0) · input $0.00 (0)
+   │  │  └─ peak = 9,997 tok @ call 1, held 3 calls
+   │  ├─ tool.result · Bash · git.repo.test                          $0.03   18.1%     10.0k tok
+   │  │  ├─ read $0.00 (5.0k) · write.5m $0.03 (5.0k) · write.1h $0.00 (0) · input $0.00 (2)
+   │  │  └─ peak = 5,000 tok @ call 2, held 2 calls
+   │  ├─ system.reminder · compaction.summary                        $0.01    3.4%      1.0k tok
+   │  │  ├─ read $0.00 (0) · write.5m $0.01 (995) · write.1h $0.00 (0) · input $0.00 (5)
+   │  │  └─ peak = 1,000 tok @ call 4, held 1 call
+   │  ├─ assistant.own · assistant                                   $0.00    0.5%       250 tok
+   │  │  ├─ read $0.00 (100) · write.5m $0.00 (150) · write.1h $0.00 (0) · input $0.00 (0)
+   │  │  └─ peak = 100 tok @ call 2, held 2 calls
+   │  ├─ human.words · human                                         $0.00    0.0%        20 tok
+   │  │  ├─ read $0.00 (6) · write.5m $0.00 (10) · write.1h $0.00 (0) · input $0.00 (4)
+   │  │  └─ peak = 11 tok @ call 3, held 1 call
+   │  └─ unattributed · harness + compacted context                  $0.00    0.0%         5 tok
+   │     ├─ read $0.00 (0) · write.5m $0.00 (5) · write.1h $0.00 (0) · input $0.00 (0)
+   │     └─ peak = 5 tok @ call 4, held 1 call
+   │
+   ├─ subagents (1, their own spend)
+   │  └─ [TEMP_DIR]/variants/12121212-1212-4212-8212-121212121212/subagents/agent-d1.jsonl
+   │     ├─ calls = 3
+   │     ├─ tokens = 70,421
+   │     └─ price = $0.18
+   │
+   └─ proposal (ranked by repaid price — an upper bound, not a promise)
+      ├─ 1. boot.instructions · boot.md  ≤ $0.07  39.0%
+      │  └─ hint: move briefs from say to ref
+      ├─ 2. tool.result · Bash · git.repo.test  ≤ $0.03  18.1%
+      │  └─ hint: a summary on stdout, the log on disk
+      └─ 3. system.reminder · compaction.summary  ≤ $0.01  3.4%
+"
+`;
+
+exports[`reflect.on.token.spend given: [case31] a parent read alone, whose subagent file is torn when: [t0] the skill runs then: stderr matches snapshot 1`] = `
+"🦉 the pond is clouded; the read broke
+
+🌕 reflect.on.token.spend
+   └─ 💥 MalfunctionError: malformed transcript line
+      ├─ path = [TEMP_DIR]/variants/34343434-3434-4434-8434-343434343434/subagents/agent-b1.jsonl
+      ├─ line = 2 of 3
+      ├─ head = {"type":"ass
+      └─ fix: a torn line before the end is corruption, not a live tail; re-copy the file from its source
+"
+`;
+
+exports[`reflect.on.token.spend given: [case32] a path that names a directory when: [t0] the skill runs then: stderr matches snapshot 1`] = `
+"🦉 the pond is still; naught to reflect
+
+🌕 reflect.on.token.spend
+   └─ ✋ ConstraintError: transcript path is a directory
+      ├─ selector = [TEMP_DIR]/unmetered
+      ├─ path = [TEMP_DIR]/unmetered
+      └─ fix: pass one .jsonl file, or a quoted glob over the dir
+         └─ rhx reflect.on.token.spend --from '[TEMP_DIR]/unmetered/*.jsonl'
+"
+`;

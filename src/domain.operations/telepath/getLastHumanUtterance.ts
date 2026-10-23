@@ -2,41 +2,7 @@ import * as fs from 'fs/promises';
 import { HelpfulError } from 'helpful-errors';
 
 import { getFsErrorCode } from '../getFsErrorCode';
-
-/**
- * .what = is this transcript entry a REAL human utterance?
- * .why = a Stop transcript records four things as `type: "user"`, and only one of them is
- *        a human. the predicate must part them, because each of the other three would
- *        reset the warm window and call a cold reader warm
- *
- * 🟡 the `isMeta` exclusion is the load-bearing one. a stop-hook's own output is
- *    replayed into the transcript as a meta user turn — so without it THIS nudge would
- *    mark the reader warm every time it fired, and then never fire again. that is a
- *    self-silenced loop, and it would look exactly like a throttle that works
- */
-const isHumanTurn = (entry: {
-  type?: unknown;
-  isMeta?: unknown;
-  isSidechain?: unknown;
-  isCompactSummary?: unknown;
-  message?: { content?: unknown };
-}): boolean => {
-  if (entry.type !== 'user') return false;
-
-  // a hook's replayed output, a subagent's turn, and the compaction summary each arrive
-  // as a user entry and none is a human who spoke
-  if (entry.isMeta === true) return false;
-  if (entry.isSidechain === true) return false;
-  if (entry.isCompactSummary === true) return false;
-
-  // a tool result is the harness that answers the assistant, never a human
-  const content = entry.message?.content;
-  if (typeof content === 'string') return true;
-  if (!Array.isArray(content)) return false;
-  return !content.some(
-    (block: { type?: unknown }) => block?.type === 'tool_result',
-  );
-};
+import { isHumanTurn } from '../transcript/isHumanTurn';
 
 /**
  * .what = is this entry a message the human TYPED but the harness has not delivered yet?
@@ -94,8 +60,10 @@ export const getLastHumanUtterance = async (input: {
     const entry = ((): Record<string, unknown> | null => {
       try {
         return JSON.parse(line);
-      } catch {
-        return null;
+      } catch (error) {
+        // only a parse fault is the torn tail; aught else is a real defect
+        if (error instanceof SyntaxError) return null;
+        throw error;
       }
     })();
     if (entry === null) continue;

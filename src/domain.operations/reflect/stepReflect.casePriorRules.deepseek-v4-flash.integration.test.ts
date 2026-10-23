@@ -14,7 +14,7 @@ describe('stepReflect.casePriorRules.deepseek-v4-flash', () => {
   jest.setTimeout(300000);
 
   const brainScene = useBeforeAll(async () => ({
-    brain: genTestBrainContext({ brain: 'fireworks/deepseek/v4-flash' }),
+    brain: genTestBrainContext({ brain: 'openrouter/deepseek/flash' }),
   }));
 
   given('[case1] target with prior rule (explicit brain arg)', () => {

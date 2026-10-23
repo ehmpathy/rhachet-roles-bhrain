@@ -23,7 +23,7 @@ describe('stepReview.caseBrain.deepseek-v4-flash.case2', () => {
   jest.setTimeout(180000);
 
   const scene = useBeforeAll(async () => ({
-    brain: genTestBrainContext({ brain: 'fireworks/deepseek/v4-flash' }),
+    brain: genTestBrainContext({ brain: 'openrouter/deepseek/flash' }),
   }));
 
   given('[case1] multiple chapters with fireworks/deepseek/v4-flash', () => {

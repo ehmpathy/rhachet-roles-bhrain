@@ -1,3 +1,6 @@
+import { asTokenCountHuman } from '@src/infra/cli/asTokenCountHuman';
+import { asTreeBranchMarkers } from '@src/infra/cli/asTreeBranchMarkers';
+
 import type { TokenBreakdownEntry } from './genTokenBreakdownReport';
 
 /**
@@ -13,7 +16,7 @@ export const genTokenBreakdownMarkdown = (input: {
 
   lines.push('# token breakdown');
   lines.push('');
-  lines.push(`total: ${formatTokens(input.all.total)} tokens`);
+  lines.push(`total: ${asTokenCountHuman({ tokens: input.all.total })} tokens`);
   lines.push('');
 
   // render blended all section
@@ -27,7 +30,9 @@ export const genTokenBreakdownMarkdown = (input: {
   // render rules section
   lines.push('## rules');
   lines.push('');
-  lines.push(`total: ${formatTokens(input.rules.total)} tokens`);
+  lines.push(
+    `total: ${asTokenCountHuman({ tokens: input.rules.total })} tokens`,
+  );
   lines.push('');
   lines.push('```');
   lines.push(...renderTree(input.rules.entries, input.all.total));
@@ -37,23 +42,15 @@ export const genTokenBreakdownMarkdown = (input: {
   // render targets section
   lines.push('## targets');
   lines.push('');
-  lines.push(`total: ${formatTokens(input.targets.total)} tokens`);
+  lines.push(
+    `total: ${asTokenCountHuman({ tokens: input.targets.total })} tokens`,
+  );
   lines.push('');
   lines.push('```');
   lines.push(...renderTree(input.targets.entries, input.all.total));
   lines.push('```');
 
   return lines.join('\n');
-};
-
-/**
- * .what = formats token count for display
- * .why = human-readable numbers
- */
-const formatTokens = (tokens: number): string => {
-  if (tokens >= 1_000_000) return `${(tokens / 1_000_000).toFixed(1)}M`;
-  if (tokens >= 1_000) return `${(tokens / 1_000).toFixed(1)}k`;
-  return `${tokens}`;
 };
 
 /**
@@ -132,17 +129,16 @@ const renderNode = (
   for (let i = 0; i < children.length; i++) {
     const child = children[i]!;
     const isLast = i === children.length - 1;
-    const branch = isLast ? '└─' : '├─';
-    const childPrefix = isLast ? '   ' : '│  ';
+    const { elbow, stem } = asTreeBranchMarkers({ isLast });
     const pct = ((child.tokens / grandTotal) * 100).toFixed(1);
     const suffix = child.isFile ? '' : '/';
 
     lines.push(
-      `${prefix}${branch} ${child.name}${suffix} (${formatTokens(child.tokens)}, ${pct}%)`,
+      `${prefix}${elbow} ${child.name}${suffix} (${asTokenCountHuman({ tokens: child.tokens })}, ${pct}%)`,
     );
 
     if (!child.isFile && child.children.size > 0) {
-      renderNode(child, prefix + childPrefix, false, grandTotal, lines);
+      renderNode(child, prefix + stem, false, grandTotal, lines);
     }
   }
 };

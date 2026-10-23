@@ -96,8 +96,8 @@ const setupGitRepo = async (): Promise<{ repoDir: string }> => {
  *    genuine `ContextBrain` and mocks naught:
  *
  *      genContextBrain({
- *        brains: { atoms, repls },   // real packages: anthropic, openai, fireworks
- *        choice: input.brain,        // DEFAULT_TEST_BRAIN = fireworks/deepseek/v4-flash
+ *        brains: { atoms, repls },   // real packages: anthropic, openai, fireworks, openrouter
+ *        choice: input.brain,        // DEFAULT_TEST_BRAIN = openrouter/deepseek/flash
  *        creds: { keyrack: { owner: 'ehmpath', env: 'test' } },  // real credentials
  *      })
  *

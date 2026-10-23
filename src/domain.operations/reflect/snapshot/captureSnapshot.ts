@@ -74,8 +74,14 @@ const generateTimestamp = (): string => {
 export const captureSnapshot = async (input: {
   scope: ReflectScope;
 }): Promise<Snapshot> => {
-  // get transcript source
-  const transcriptSource = getTranscriptSource({ cwd: input.scope.cwd });
+  // get transcript source; the env is read here, at the orchestrator, and injected into the leaf
+  const transcriptSource = getTranscriptSource({
+    cwd: input.scope.cwd,
+    env: {
+      CLAUDE_CONFIG_DIR: process.env.CLAUDE_CONFIG_DIR ?? null,
+      HOME: process.env.HOME ?? null,
+    },
+  });
   if (!transcriptSource) {
     throw new Error(
       `no claude code project found for ${input.scope.cwd}. expected at ~/.claude/projects/`,

@@ -123,7 +123,7 @@ exports[`reflect.journey.acceptance given: [journey] full reflect workflow when:
    │  ├─ sessions = 1
    │  └─ files = 1
    │
-   ├─ savepoints = 3 (+1 fresh at [STACK]
+   ├─ savepoints = 3 (+1 fresh at [TIMESTAMP])
    ├─ annotations = 2
    │
    └─ artifacts

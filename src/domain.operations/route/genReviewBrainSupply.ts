@@ -2,12 +2,15 @@ import type { BrainChoice, ContextBrain } from 'rhachet';
 
 /**
  * .what = the fixed sub-brain used to tally a review whose verdict is not numeric
- * .why = the wish names fireworks/deepseek/v4-flash: cheap, fast, and effective on the tiny
- *        extraction task. it is NOT configurable per route/guard — one default, kept simple.
- *        declared once here so the cli builder, the render, and the persisted footer all
- *        reference the same slug (rule.forbid.magic-values).
+ * .why = a cheap, fast deepseek flash is effective on the tiny extraction task. it is NOT
+ *        configurable per route/guard — one default, kept simple. declared once here so the
+ *        cli builder, the render, and the persisted footer all reference the same slug
+ *        (rule.forbid.magic-values).
+ * .note = served via openrouter, the same provider as the `review` default brain. the fireworks
+ *         account answers every call with a 412 suspension, so a fireworks tally brain turns
+ *         every prose verdict into a `review tally fallback failed` malfunction
  */
-export const FIXED_FALLBACK_BRAIN = 'fireworks/deepseek/v4-flash';
+export const FIXED_FALLBACK_BRAIN = 'openrouter/deepseek/flash';
 
 /**
  * .what = a lazy supplier of the review-tally sub-brain, threaded through the guard chain

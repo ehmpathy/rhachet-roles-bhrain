@@ -120,7 +120,8 @@ export const sanitizeReflectOutputForSnapshot = (output: string): string => {
     // sanitize stack traces and absolute paths in errors
     .replace(/\/[^\s]+\.(js|ts):\d+:\d+/g, '[FILE]')
     .replace(/\/[^\s]+\.(js|ts):\d+/g, '[FILE]')
-    .replace(/at [^\n]+\n/g, 'at [STACK]\n')
+    // .note = anchored to an indented frame, so prose that holds " at " stays legible
+    .replace(/^(\s+)at [^\n]+\n/gm, '$1at [STACK]\n')
     .replace(/Node\.js v[\d.]+/g, 'Node.js v[VERSION]');
 };
 
@@ -129,8 +130,8 @@ export const sanitizeReflectOutputForSnapshot = (output: string): string => {
  * .why = enables blackbox acceptance tests against the skill
  */
 export const invokeReflectSkill = async (input: {
-  skill: 'reflect.snapshot' | 'reflect.savepoint';
-  subcommand: 'capture' | 'get' | 'annotate' | 'backup' | 'set';
+  skill: 'reflect.snapshot' | 'reflect.savepoint' | 'reflect.on.token.spend';
+  subcommand: 'capture' | 'get' | 'annotate' | 'backup' | 'set' | null; // null = a skill with no dispatcher
   args?: Record<string, string | boolean | string[] | undefined>;
   cwd: string;
   env?: Record<string, string>;
@@ -157,7 +158,9 @@ export const invokeReflectSkill = async (input: {
     .join(' ');
 
   const argsStr = [flagArgs, positionalArgs].filter(Boolean).join(' ');
-  const cmd = `bash "${skillPath}" ${input.subcommand} ${argsStr}`.trim();
+  const cmd = [`bash "${skillPath}"`, input.subcommand, argsStr]
+    .filter(Boolean)
+    .join(' ');
 
   try {
     const result = await execAsync(cmd, {

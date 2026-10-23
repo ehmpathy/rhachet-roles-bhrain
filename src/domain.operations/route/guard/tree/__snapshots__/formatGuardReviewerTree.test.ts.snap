@@ -108,7 +108,7 @@ exports[`formatGuardReviewerTree given: [case13] probabilistic reviewer shows th
     ├─ approved 9.1s
     ├─ 0 blockers ✓
     ├─ 1 nitpick 🟠
-    ├─ tallied by reviewer@fireworks/deepseek/v4-flash
+    ├─ tallied by reviewer@openrouter/deepseek/flash
     └─ given: .route/5.1.execution.guard.review.i1.abc123.r1.md"
 `;
 

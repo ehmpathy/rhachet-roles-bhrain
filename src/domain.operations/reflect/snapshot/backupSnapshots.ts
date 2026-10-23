@@ -45,7 +45,10 @@ const validateS3Uri = (uri: string): void => {
  */
 const validateAwsCredentials = (): void => {
   try {
-    execSync('aws sts get-caller-identity', { stdio: 'pipe' });
+    execSync('aws sts get-caller-identity', {
+      stdio: 'pipe',
+      env: process.env,
+    });
   } catch {
     throw new BadRequestError(
       'aws credentials not found. run `aws configure` or set AWS_PROFILE',
@@ -93,16 +96,16 @@ export const backupSnapshots = (input: {
   sourceDir: string;
   into: string;
 }): BackupResult => {
-  // validate inputs
+  // validate local inputs first, before the remote credential probe
   validateS3Uri(input.into);
-  validateAwsCredentials();
-
-  // verify source exists
   if (!fs.existsSync(input.sourceDir)) {
     throw new BadRequestError('source directory does not exist', {
       sourceDir: input.sourceDir,
     });
   }
+
+  // validate aws credentials
+  validateAwsCredentials();
 
   // compute target path
   // ~/.rhachet/storage/... -> rhachet/storage/...

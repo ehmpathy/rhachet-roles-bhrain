@@ -36,18 +36,18 @@ options:
    ├── ○ fireworks/kimi/pro
    ├── ○ fireworks/glm/flash
    ├── ○ fireworks/kimi/k2.6
+   ├── ○ openrouter/z-ai/pro
    ├── ○ fireworks/minimax/m3
    ├── ○ anthropic/claude/opus
    ├── ○ fireworks/kimi/pro/k3
    ├── ○ fireworks/glm/pro/5.3
    ├── ○ fireworks/glm/pro/5.2
+   ├── ○ openrouter/z-ai/flash
    ├── ↻ anthropic/claude/code
    ├── ○ anthropic/claude/haiku
    ├── ○ fireworks/deepseek/pro
    ├── ○ fireworks/gpt-oss/120b
    ├── ○ anthropic/claude/sonnet
-   ├── ○ fireworks/kimi/pro/k2.6
-   ├── ○ fireworks/glm/flash/5.3
-   └── (and 28 more)
+   └── (and 34 more)
 "
 `;

@@ -4,6 +4,11 @@ settings:
   autoInstallPeers: true
   excludeLinksFromLockfile: false
 
+patchedDependencies:
+  rhachet-brains-openrouter@0.1.3:
+    hash: 74e89a9779e9b4bb4c2161c9d574a397707856e00fb524ed48c09161170d9edc
+    path: patches/rhachet-brains-openrouter@0.1.3.patch
+
 importers:
 
   .:
@@ -154,8 +159,8 @@ importers:
         specifier: 0.3.1
         version: 0.3.1(@openai/codex-sdk@0.87.0)(rhachet@1.48.1(zod@4.3.4))
       rhachet-brains-openrouter:
-        specifier: 0.1.1
-        version: 0.1.1(rhachet@1.48.1(zod@4.3.4))
+        specifier: 0.1.3
+        version: 0.1.3(patch_hash=74e89a9779e9b4bb4c2161c9d574a397707856e00fb524ed48c09161170d9edc)(rhachet@1.48.1(zod@4.3.4))
       rhachet-roles-bhrain:
         specifier: link:.
         version: 'link:'
@@ -4466,8 +4471,8 @@ packages:
       '@openai/codex-sdk': '>=0.77.0'
       rhachet: '>=1.21.4'
 
-  rhachet-brains-openrouter@0.1.1:
-    resolution: {integrity: sha512-WfeYfM0JhfbfEv/gglr6TnaDNZIo0IFezilWh5ujZUXn3pzC3o7QqbXcMLEjczCAbqzZHe3D1O/Oxw2Mw2RzdQ==}
+  rhachet-brains-openrouter@0.1.3:
+    resolution: {integrity: sha512-DaA0AgnL7z1CBS7SGpxlZbT2T6RL6caW++hoMJ1PNxZl/si9VGVRQN8YWS1l23GtNtimL1mdImolnDsXmm6s2g==}
     engines: {node: '>=8.0.0'}
     peerDependencies:
       rhachet: '>=1.21.4'
@@ -10326,7 +10331,7 @@ snapshots:
     transitivePeerDependencies:
       - ws
 
-  rhachet-brains-openrouter@0.1.1(rhachet@1.48.1(zod@4.3.4)):
+  rhachet-brains-openrouter@0.1.3(patch_hash=74e89a9779e9b4bb4c2161c9d574a397707856e00fb524ed48c09161170d9edc)(rhachet@1.48.1(zod@4.3.4)):
     dependencies:
       domain-objects: 0.31.9
       helpful-errors: 1.7.5
@@ -10657,6 +10662,19 @@ snapshots:
       type-fns: 1.21.0
     transitivePeerDependencies:
       - aws-crt
+
+  simple-on-disk-cache@1.8.1(with-simple-cache@0.15.1):
+    dependencies:
+      domain-objects: 0.31.13
+      hash-fns: 1.1.0
+      helpful-errors: 1.7.3
+      iso-time: 1.11.7
+      serde-fns: 1.2.0
+      simple-in-memory-cache: 0.4.2
+      type-fns: 1.21.2
+      with-bottleneck: 0.1.1
+    optionalDependencies:
+      with-simple-cache: 0.15.1
 
   simple-on-disk-cache@1.8.1(with-simple-cache@0.17.3):
     dependencies:
@@ -11079,7 +11097,7 @@ snapshots:
       procedure-fns: 1.0.1
       serde-fns: 1.3.1
       simple-in-memory-cache: 0.4.0
-      simple-on-disk-cache: 1.7.10
+      simple-on-disk-cache: 1.8.1(with-simple-cache@0.15.1)
       type-fns: 1.21.0
 
   with-simple-cache@0.16.2:

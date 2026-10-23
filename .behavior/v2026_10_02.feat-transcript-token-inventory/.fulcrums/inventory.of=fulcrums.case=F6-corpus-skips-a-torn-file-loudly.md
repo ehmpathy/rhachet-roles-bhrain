@@ -38,3 +38,18 @@ corpus-abort behaviour as undecided.
 ## .verdict
 
 open.
+
+## .retracted — a question for the commander
+
+a vision call (experience cells 22, 23) best-guessed past rather than asked. withdrawn as a guess;
+it now waits on the commander at review. the code holds B until ruled; the branch is one fold.
+
+**question:** in a corpus run, what does one malformed-mid-file transcript do?
+
+| option | what | cost |
+|---|---|---|
+| A | abort the whole corpus, exit 1, as a single-file run does | one torn copy voids a 200-file audit |
+| B | skip that file, name it and its line in the header, report the rest; exit 1 only if all are malformed | a caught error, by design — surfaced, but not fatal |
+| C | B by default, A under a `--strict` flag | one more flag to learn |
+
+**lean:** B — a corpus is read for a distribution, and the skip is counted and named, never silent.

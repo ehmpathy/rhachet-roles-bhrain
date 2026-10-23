@@ -14,12 +14,16 @@ import {
   getBrainAtomsByOpenAI,
   getBrainReplsByOpenAI,
 } from 'rhachet-brains-openai';
+import { getBrainAtomsByOpenRouter } from 'rhachet-brains-openrouter';
 
 /**
  * .what = default brain for tests
- * .why = fireworks/deepseek/v4-flash is fast, cheap, and effective for agentic code tasks
+ * .why = a deepseek flash is fast, cheap, and effective for agentic code tasks
+ * .note = served via openrouter, the provider of the `review` default and the review tally
+ *         brain. the fireworks account answers every call with a 412 suspension, so a fireworks
+ *         default fails every real-brain suite that leans on it
  */
-export const DEFAULT_TEST_BRAIN = 'fireworks/deepseek/v4-flash';
+export const DEFAULT_TEST_BRAIN = 'openrouter/deepseek/flash';
 
 /**
  * .what = loads all available brain atoms from installed packages
@@ -30,6 +34,7 @@ const loadAllAtoms = (): BrainAtom[] => {
     ...getBrainAtomsByAnthropic(),
     ...getBrainAtomsByOpenAI(),
     ...getBrainAtomsByFireworksAI(),
+    ...getBrainAtomsByOpenRouter(),
   ];
 };
 

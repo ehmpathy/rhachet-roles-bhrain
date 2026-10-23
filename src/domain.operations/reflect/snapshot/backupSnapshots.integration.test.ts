@@ -1,23 +1,9 @@
-import { execSync } from 'child_process';
 import * as fs from 'fs';
 import * as os from 'os';
 import * as path from 'path';
 import { getError, given, then, when } from 'test-fns';
 
 import { backupSnapshots } from './backupSnapshots';
-
-/**
- * .what = checks if aws credentials are available
- * .why = skip tests that require aws if not configured
- */
-const hasAwsCredentials = (): boolean => {
-  try {
-    execSync('aws sts get-caller-identity', { stdio: 'pipe' });
-    return true;
-  } catch {
-    return false;
-  }
-};
 
 describe('backupSnapshots', () => {
   given('[case1] invalid s3 uri', () => {
@@ -37,19 +23,16 @@ describe('backupSnapshots', () => {
 
   given('[case2] source directory does not exist', () => {
     when('[t0] backup is attempted', () => {
-      then.skipIf(!hasAwsCredentials())(
-        'should throw BadRequestError about source',
-        async () => {
-          const error = await getError(async () =>
-            backupSnapshots({
-              sourceDir: '/tmp/definitely-does-not-exist-abc123',
-              into: 's3://test-bucket',
-            }),
-          );
-          expect(error).toBeDefined();
-          expect(error.message).toContain('source directory does not exist');
-        },
-      );
+      then('should throw BadRequestError about source', async () => {
+        const error = await getError(async () =>
+          backupSnapshots({
+            sourceDir: '/tmp/definitely-does-not-exist-abc123',
+            into: 's3://test-bucket',
+          }),
+        );
+        expect(error).toBeDefined();
+        expect(error.message).toContain('source directory does not exist');
+      });
     });
   });
 
@@ -68,19 +51,22 @@ describe('backupSnapshots', () => {
     });
 
     when('[t0] backup is attempted without aws credentials', () => {
-      then.skipIf(hasAwsCredentials())(
-        'should throw BadRequestError about credentials',
-        async () => {
-          const error = await getError(async () =>
-            backupSnapshots({
-              sourceDir: tempDir,
-              into: 's3://test-bucket',
-            }),
-          );
-          expect(error).toBeDefined();
-          expect(error.message).toContain('aws credentials not found');
-        },
-      );
+      then('should throw BadRequestError about credentials', async () => {
+        // force the absent-credential state on any host: no aws cli on PATH, so the
+        // credential probe fails and no real s3 sync is ever attempted
+        const pathBefore = process.env.PATH;
+        process.env.PATH = '/nonexistent-backup-snapshots-test-path';
+        const error = await getError(async () =>
+          backupSnapshots({
+            sourceDir: tempDir,
+            into: 's3://test-bucket',
+          }),
+        ).finally(() => {
+          process.env.PATH = pathBefore;
+        });
+        expect(error).toBeDefined();
+        expect(error.message).toContain('aws credentials not found');
+      });
     });
 
     // note: actual s3 sync test requires real bucket access

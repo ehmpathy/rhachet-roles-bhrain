@@ -49,6 +49,11 @@ export const genTempDirForRhachet = (input: {
         at: 'node_modules/rhachet-brains-openai',
         to: 'node_modules/rhachet-brains-openai',
       },
+      // the review skill's default brain is openrouter/deepseek/flash
+      {
+        at: 'node_modules/rhachet-brains-openrouter',
+        to: 'node_modules/rhachet-brains-openrouter',
+      },
     ],
   });
 };
