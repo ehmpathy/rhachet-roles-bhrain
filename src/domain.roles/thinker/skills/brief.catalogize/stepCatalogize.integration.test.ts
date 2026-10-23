@@ -6,6 +6,7 @@ import { given, then, usePrep, when } from 'test-fns';
 import { genContextLogTrail } from '@src/.test/genContextLogTrail';
 import { genContextStitchTrail } from '@src/.test/genContextStitchTrail';
 import { getContextOpenAI } from '@src/.test/getContextOpenAI';
+import { REPEATABLY_CONFIG } from '@src/.test/infra/repeatably';
 import { getThinkerBriefs } from '@src/domain.roles/thinker/getThinkerBrief';
 import { stepCatalogize } from '@src/domain.roles/thinker/skills/brief.catalogize/stepCatalogize';
 
@@ -95,7 +96,7 @@ describe('stepCatalogize', () => {
       });
     });
 
-    when('invoked', () => {
+    when.repeatably(REPEATABLY_CONFIG)('invoked', () => {
       const goalThreads = enthread();
 
       then('outputs an instance', async () => {
@@ -132,7 +133,7 @@ describe('stepCatalogize', () => {
       });
     });
 
-    when('invoked', () => {
+    when.repeatably(REPEATABLY_CONFIG)('invoked', () => {
       const goalThreads = enthread();
 
       then('outputs an instance', async () => {
