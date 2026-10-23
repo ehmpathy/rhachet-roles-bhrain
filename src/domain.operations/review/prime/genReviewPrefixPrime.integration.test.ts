@@ -689,6 +689,13 @@ describe('genReviewPrefixPrime', () => {
   given(
     '[case14] a leader whose poke never settles, with the lanes deadline near',
     () => {
+      // the two deadlines, and the bound that parts them: a pour past the leader's deadline and
+      // before the midpoint proves the leader's release freed both lanes; a hang on the peer's
+      // own deadline lands past the midpoint, so the bound stays red for that regression
+      const MS_OF_STOP_LEADER = 1_500;
+      const MS_OF_STOP_PEER = 4_500;
+      const MS_OF_POUR_BOUND = (MS_OF_STOP_LEADER + MS_OF_STOP_PEER) / 2;
+
       when('[t0] two lanes meet', () => {
         const scene = useThen('both lanes run', async () => {
           const meet = genOneMeet({ slug: 'prime-deadline-leader' });
@@ -709,12 +716,12 @@ describe('genReviewPrefixPrime', () => {
             //         the leader lapsed in its gather and never poked)
             const before = Date.now();
             const leaderAwaited = runOneLane(
-              { meet, name: 'a', msOfStop: before + 1_500 },
+              { meet, name: 'a', msOfStop: before + MS_OF_STOP_LEADER },
               { prime: primeWedged, log },
             );
             await new Promise((done) => setTimeout(done, 50));
             const peer = await runOneLane(
-              { meet, name: 'b', msOfStop: before + 4_500 },
+              { meet, name: 'b', msOfStop: before + MS_OF_STOP_PEER },
               { prime: primeWedged, log },
             );
             const leader = await leaderAwaited;
@@ -746,8 +753,9 @@ describe('genReviewPrefixPrime', () => {
         then(
           '🔴 both lanes pour once the leader deadline passes, never a hang',
           () => {
-            // past a's deadline (1.5s), well short of b's own (4.5s)
-            expect(scene.waited).toBeLessThan(3_000);
+            // past a's deadline, short of the midpoint toward b's own
+            expect(scene.waited).toBeGreaterThanOrEqual(MS_OF_STOP_LEADER);
+            expect(scene.waited).toBeLessThan(MS_OF_POUR_BOUND);
           },
         );
 

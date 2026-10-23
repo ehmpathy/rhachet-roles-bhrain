@@ -23,6 +23,10 @@ the quota reason has lapsed, so the stale notes went with the markers. the stone
 gap to fix, and with the suites green the fix is the deletion of nine markers — it touches no
 role behavior and no credential, so it passes CLEAN.
 
+🔴 corrected: the 15/0 thinker run was not a proof of reliability. on ci one case,
+`stepDiverge`'s statement refusal, failed in all three repeatable attempts. that one case is held
+(F21); every other thinker case runs under `when.repeatably(REPEATABLY_CONFIG)`.
+
 ## .rework — clean
 
 the one live cost is the premium suite: it now runs `anthropic/claude/sonnet` on every ci run. to

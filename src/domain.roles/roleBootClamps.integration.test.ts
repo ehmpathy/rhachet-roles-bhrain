@@ -252,12 +252,14 @@ const asPayloadOfHalt = (input: { output: string }): number => {
 const asMdPathOfMin = (input: { min: string }): string =>
   input.min.replace(/\.min$/, '');
 
-// transformer: the nonblank lines of one text, trimmed, in order
+// transformer: the lines of one text, in order, with space at each line's end trimmed
+// .why = a blank line parts two tables and an indent nests a bullet; a snap that drops either
+//        pins a structure the brief does not have
 const asLinesOfText = (input: { text: string }): string[] =>
   input.text
+    .replace(/\n+$/, '')
     .split('\n')
-    .map((line) => line.trim())
-    .filter((line) => line !== '');
+    .map((line) => line.trimEnd());
 
 // the boot spec of one role, found via the role's own declared boot uri
 const getOneBootSpecOfRole = (input: { slug: string }): BootSpec => {

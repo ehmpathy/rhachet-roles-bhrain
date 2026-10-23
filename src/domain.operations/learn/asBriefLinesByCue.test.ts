@@ -1,3 +1,5 @@
+import { given, then } from 'test-fns';
+
 import { asBriefLinesByCue } from './asBriefLinesByCue';
 
 const TEST_CASES = [
@@ -80,10 +82,12 @@ const TEST_CASES = [
 
 describe('asBriefLinesByCue', () => {
   TEST_CASES.forEach((thisCase) => {
-    test(thisCase.description, () => {
-      expect(asBriefLinesByCue({ text: thisCase.given.text })).toEqual(
-        thisCase.expect,
-      );
+    given(thisCase.description, () => {
+      then('it sorts each line into cue or argument', () => {
+        expect(asBriefLinesByCue({ text: thisCase.given.text })).toEqual(
+          thisCase.expect,
+        );
+      });
     });
   });
 });

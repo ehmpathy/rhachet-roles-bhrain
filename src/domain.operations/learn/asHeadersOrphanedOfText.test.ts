@@ -1,3 +1,5 @@
+import { given, then } from 'test-fns';
+
 import { asHeadersOrphanedOfText } from './asHeadersOrphanedOfText';
 
 const TEST_CASES = [
@@ -46,10 +48,12 @@ const TEST_CASES = [
 
 describe('asHeadersOrphanedOfText', () => {
   TEST_CASES.map((thisCase) =>
-    test(thisCase.description, () => {
-      expect(
-        asHeadersOrphanedOfText({ file: 'f', text: thisCase.given.text }),
-      ).toEqual(thisCase.expect.output);
+    given(thisCase.description, () => {
+      then('it names exactly the orphaned headers', () => {
+        expect(
+          asHeadersOrphanedOfText({ file: 'f', text: thisCase.given.text }),
+        ).toEqual(thisCase.expect.output);
+      });
     }),
   );
 });

@@ -24,5 +24,6 @@ axis: `case` — one entry per best-guessed call, appended at the moment it was 
 | F18 | the repo-local skills paved this round ship with it | clean | best-guessed | 75% |
 | F19 | every extant skip in the selected suites is lifted in this PR, the premium one included | clean | best-guessed | 65% |
 | F20 | a prime meet double lead under host load is caught as a dream, not diagnosed here | dirty | best-guessed | 70% |
+| F21 | the diverge statement refusal is held where main held it, not cured here | dirty | best-guessed | 70% |
 
 gaps: none open.
