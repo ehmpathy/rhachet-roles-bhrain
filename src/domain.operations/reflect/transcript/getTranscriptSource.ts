@@ -1,6 +1,9 @@
 import * as fs from 'fs';
-import * as os from 'os';
 import * as path from 'path';
+
+import { computeProjectSlug } from '@src/domain.operations/transcript/computeProjectSlug';
+import { getAllClaudeProjectsRoots } from '@src/domain.operations/transcript/getAllClaudeProjectsRoots';
+import { getAllSubagentPaths } from '@src/domain.operations/transcript/getAllSubagentPaths';
 
 /**
  * .what = a single transcript session with its subagent files
@@ -40,26 +43,6 @@ export interface TranscriptSource {
 }
 
 /**
- * .what = base directory for claude code projects
- * .why = standard location for claude code transcript storage
- */
-const CLAUDE_PROJECTS_DIR = path.join(os.homedir(), '.claude/projects');
-
-/**
- * .what = computes claude code project slug from directory path
- * .why = matches claude code's path-to-slug conversion
- *
- * claude code transforms paths: / → -, _ → -, . → -
- * e.g., /home/user/_worktrees/repo.branch -> -home-user--worktrees-repo-branch
- */
-export const computeProjectSlug = (input: { cwd: string }): string => {
-  return input.cwd
-    .replace(/\//g, '-') // slashes become dashes
-    .replace(/_/g, '-') // underscores become dashes
-    .replace(/\./g, '-'); // dots become dashes
-};
-
-/**
  * .what = finds all jsonl files in directory sorted by mtime (newest first)
  * .why = captures all peer brain transcripts for complete experience preservation
  */
@@ -83,13 +66,18 @@ const findAllJsonl = (input: { dir: string }): string[] => {
  */
 export const getTranscriptSource = (input: {
   cwd: string;
+  env: { CLAUDE_CONFIG_DIR: string | null; HOME: string | null };
 }): TranscriptSource | null => {
-  // compute project slug
+  // compute project slug; take the first root that holds it
+  // .note = `$CLAUDE_CONFIG_DIR/projects` first, then `~/.claude/projects`
   const slug = computeProjectSlug({ cwd: input.cwd });
-  const projectDir = path.join(CLAUDE_PROJECTS_DIR, slug);
+  const projectDir =
+    getAllClaudeProjectsRoots({ env: input.env, cwd: input.cwd })
+      .map((root) => path.join(root, slug))
+      .find((dir) => fs.existsSync(dir)) ?? null;
 
   // check if project exists
-  if (!fs.existsSync(projectDir)) {
+  if (!projectDir) {
     return null;
   }
 
@@ -100,24 +88,10 @@ export const getTranscriptSource = (input: {
   }
 
   // build sessions array with each main file and its subagents
-  const sessions: TranscriptSession[] = mainFiles.map((mainFile) => {
-    const mainFileName = path.basename(mainFile, '.jsonl');
-    const subagentsDir = path.join(projectDir, mainFileName, 'subagents');
-    const subagentFiles: string[] = [];
-
-    if (fs.existsSync(subagentsDir)) {
-      const files = fs.readdirSync(subagentsDir);
-      for (const file of files) {
-        if (file.endsWith('.jsonl')) {
-          subagentFiles.push(path.join(subagentsDir, file));
-        }
-      }
-      // sort by name (they have timestamps in names)
-      subagentFiles.sort();
-    }
-
-    return { mainFile, subagentFiles };
-  });
+  const sessions: TranscriptSession[] = mainFiles.map((mainFile) => ({
+    mainFile,
+    subagentFiles: getAllSubagentPaths({ path: mainFile }),
+  }));
 
   return {
     projectDir,

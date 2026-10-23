@@ -134,8 +134,8 @@ export const sanitizeReflectOutputForSnapshot = (output: string): string => {
  * .why = enables blackbox acceptance tests against the skill
  */
 export const invokeReflectSkill = async (input: {
-  skill: 'reflect.snapshot' | 'reflect.savepoint';
-  subcommand: 'capture' | 'get' | 'annotate' | 'backup' | 'set';
+  skill: 'reflect.snapshot' | 'reflect.savepoint' | 'reflect.on.token.spend';
+  subcommand: 'capture' | 'get' | 'annotate' | 'backup' | 'set' | null; // null = a skill with no dispatcher
   args?: Record<string, string | boolean | string[] | undefined>;
   cwd: string;
   env?: Record<string, string>;
@@ -162,7 +162,9 @@ export const invokeReflectSkill = async (input: {
     .join(' ');
 
   const argsStr = [flagArgs, positionalArgs].filter(Boolean).join(' ');
-  const cmd = `bash "${skillPath}" ${input.subcommand} ${argsStr}`.trim();
+  const cmd = [`bash "${skillPath}"`, input.subcommand, argsStr]
+    .filter(Boolean)
+    .join(' ');
 
   try {
     const result = await execAsync(cmd, {

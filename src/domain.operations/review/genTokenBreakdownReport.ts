@@ -1,3 +1,5 @@
+import { asTokenCountHuman } from '@src/infra/cli/asTokenCountHuman';
+
 import { estimateTokenCount } from './estimateTokenCount';
 
 /**
@@ -11,16 +13,6 @@ export interface TokenBreakdownEntry {
   tokensHuman: string;
   tokensScale: string;
 }
-
-/**
- * .what = formats token count for human readability
- * .why = makes large numbers easier to scan
- */
-const formatTokens = (tokens: number): string => {
-  if (tokens >= 1_000_000) return `${(tokens / 1_000_000).toFixed(1)}M`;
-  if (tokens >= 1_000) return `${(tokens / 1_000).toFixed(1)}k`;
-  return `${tokens}`;
-};
 
 /**
  * .what = rounds to hundredths for percentage display
@@ -74,7 +66,7 @@ export const genTokenBreakdownReport = (input: {
   // add human-readable fields
   const entries: TokenBreakdownEntry[] = allEntries.map((entry) => ({
     ...entry,
-    tokensHuman: formatTokens(entry.tokens),
+    tokensHuman: asTokenCountHuman({ tokens: entry.tokens }),
     tokensScale: `${roundToHundredths((entry.tokens / total) * 100)}%`,
   }));
 

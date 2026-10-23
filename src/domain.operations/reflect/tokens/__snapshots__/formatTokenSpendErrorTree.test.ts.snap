@@ -1,0 +1,38 @@
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
+
+exports[`formatTokenSpendErrorTree a constraint → the class header, one leaf per fact, lists as children, the fix last 1`] = `
+"🦉 the pond is still; naught to reflect
+
+🌕 reflect.on.token.spend
+   └─ ✋ ConstraintError: transcript not found
+      ├─ uuid = 4444
+      ├─ roots (2)
+      │  ├─ /a/projects
+      │  └─ /b/projects
+      └─ fix: pass the path of the transcript
+"
+`;
+
+exports[`formatTokenSpendErrorTree a halt with why, fix, and or → each last in order, each command beneath 1`] = `
+"🦉 the pond is still; naught to reflect
+
+🌕 reflect.on.token.spend
+   └─ ✋ ConstraintError: transcript holds no metered calls
+      ├─ path = /p/a.jsonl
+      ├─ records = 1 (0 assistant records with message.usage)
+      ├─ why: a fixture has no usage to read
+      └─ fix: point at another transcript
+         └─ rhx reflect.on.token.spend --from <path-to-another.jsonl>
+
+✨ did you know?
+   └─ read the whole dir as a corpus, run \`rhx reflect.on.token.spend --from '/p/*.jsonl'\`
+"
+`;
+
+exports[`formatTokenSpendErrorTree a malfunction with no facts → the header alone 1`] = `
+"🦉 the pond is clouded; the read broke
+
+🌕 reflect.on.token.spend
+   └─ 💥 MalfunctionError: no transcript could be read
+"
+`;
