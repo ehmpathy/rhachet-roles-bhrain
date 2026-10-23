@@ -16,4 +16,11 @@
 set -euo pipefail
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+
+# fail loud, with the fix, on a host with no node (the same preflight in every wrapper here)
+if ! command -v node >/dev/null; then
+  echo "✋ ConstraintError: node is not on PATH; install node, then rerun" >&2
+  exit 2
+fi
+
 exec node "$SCRIPT_DIR/census.tokens.js" "$@"
