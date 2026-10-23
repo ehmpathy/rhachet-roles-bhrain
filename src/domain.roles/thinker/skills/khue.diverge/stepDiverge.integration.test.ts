@@ -6,10 +6,12 @@ import { given, then, usePrep, when } from 'test-fns';
 import { genContextLogTrail } from '@src/.test/genContextLogTrail';
 import { genContextStitchTrail } from '@src/.test/genContextStitchTrail';
 import { getContextOpenAI } from '@src/.test/getContextOpenAI';
+import { REPEATABLY_CONFIG } from '@src/.test/infra/repeatably';
 import { getThinkerBriefs } from '@src/domain.roles/thinker/getThinkerBrief';
 import { stepDiverge } from '@src/domain.roles/thinker/skills/khue.diverge/stepDiverge';
 
-jest.setTimeout(toMilliseconds({ minutes: 5 }));
+// a live brain answers each attempt; the budget covers every attempt the config allows
+jest.setTimeout(toMilliseconds({ minutes: 5 }) * REPEATABLY_CONFIG.attempts);
 
 describe('stepDiverge', () => {
   const context = {
@@ -98,7 +100,7 @@ describe('stepDiverge', () => {
         }),
       }));
 
-    when('goal is a question', () => {
+    when.repeatably(REPEATABLY_CONFIG)('goal is a question', () => {
       beforeEach(async () => {
         await artifacts.caller['foci.goal.concept'].set({
           content: goalQuestion,
@@ -124,7 +126,7 @@ describe('stepDiverge', () => {
       });
     });
 
-    when('goal is a statement', () => {
+    when.repeatably(REPEATABLY_CONFIG)('goal is a statement', () => {
       beforeEach(async () => {
         await artifacts.caller['foci.goal.concept'].set({
           content: goalStatement,
