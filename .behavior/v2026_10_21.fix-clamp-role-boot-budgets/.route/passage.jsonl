@@ -302,3 +302,6 @@
 {"stone":"5.3.verification","status":"arrived","reason":"entered guard reviews"}
 {"stone":"5.3.verification","status":"blocked","blocker":"review.self","reason":"review.self required: has-ergonomics-validated"}
 {"stone":"5.3.verification","status":"promised","reason":"promised review.self: has-ergonomics-validated"}
+{"stone":"5.3.verification","status":"arrived","reason":"entered guard reviews"}
+{"stone":"5.3.verification","status":"blocked","blocker":"review.self","reason":"review.self required: has-fixed-all-gaps"}
+{"stone":"5.3.verification","status":"promised","reason":"promised review.self: has-fixed-all-gaps"}

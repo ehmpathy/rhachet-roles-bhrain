@@ -33,3 +33,10 @@ caller.
 ## where
 
 `package.json` · `pnpm-lock.yaml` · `patches/rhachet-brains-openrouter@0.1.3.patch` · `pr.body.md` (note)
+
+## verdict — the pin half retired
+
+the second doubt above came true. ci built rhachet from the sha in its prepublish step, the build
+failed (TS2742), and no suite ran. the director ruled: pin the published version, exactly.
+rhachet v1.50.1 had shipped with rhachet#636, so the pin is now `"rhachet": "1.50.1"` and no
+feature is sha-only. the openrouter patch half stands, with its retire line unchanged.

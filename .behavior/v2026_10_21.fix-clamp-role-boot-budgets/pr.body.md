@@ -85,7 +85,7 @@ emits no librarian readme.
 
 the rhachet-brains-openrouter patch retires when rhachet-brains-openrouter.beav.fix-429-hop-and-tier-fallback releases.
 
-the rhachet git pin (`github:ehmpathy/rhachet#main`, which carries rhachet#636: `fix(clone): a leaf clone may not spawn; a work clone may spawn at any depth`) retires when rhachet v1.50.1 releases; it is swapped then for `rhx set.package.upgrade --package rhachet --to 1.50.1`.
+rhachet is pinned to the published `1.50.1`, which carries rhachet#636 (`fix(clone): a leaf clone may not spawn; a work clone may spawn at any depth`), the fix the l3 review lanes need.
 
 the 5.1 judge (j1) counts no `better` concession on an exhausted lane, so it needed no patch here.
 
