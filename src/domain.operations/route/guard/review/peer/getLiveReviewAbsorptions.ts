@@ -1,3 +1,4 @@
+import { asReviewGivenKey } from './asReviewGivenKey';
 import type { RouteGuardReviewPeerGiven } from './getAllRouteGuardReviewPeerGivens';
 import { getLatestPeerGivensPerSlug } from './getLatestPeerGivensPerSlug';
 import type { ReviewAbsorption } from './getStoneReviewAbsorptions';
@@ -40,14 +41,20 @@ export const getLiveReviewAbsorptions = (input: {
   //    `input.givens.map` would key on whichever given globbed last — right on one
   //    machine, wrong on another. getLatestPeerGivensPerSlug is the one selector both
   //    the debt and the tally already read through.
-  const pathGivenLatestBySlug = new Map(
+  // 🔴 compared by asReviewGivenKey, never by raw path. the judge runs this in a guard
+  //    subprocess whose route path may differ from the one the driver's process wrote the
+  //    stance under (a symlink, a `$route` given another way), and a raw compare then lapses
+  //    every stance for the judge alone
+  const keyGivenLatestBySlug = new Map(
     getLatestPeerGivensPerSlug({ givens: input.givens }).map((one) => [
       one.slug,
-      one.pathGiven,
+      asReviewGivenKey({ path: one.pathGiven }),
     ]),
   );
 
   return input.absorptions.filter(
-    (stance) => pathGivenLatestBySlug.get(stance.reviewer) === stance.given,
+    (stance) =>
+      keyGivenLatestBySlug.get(stance.reviewer) ===
+      asReviewGivenKey({ path: stance.given }),
   );
 };

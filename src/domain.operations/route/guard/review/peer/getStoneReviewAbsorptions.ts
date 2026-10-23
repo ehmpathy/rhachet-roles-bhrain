@@ -3,6 +3,7 @@ import { UnexpectedCodePathError } from 'helpful-errors';
 import type { PassageReport } from '@src/domain.objects/Driver/PassageReport';
 
 import { getAllPassageReportsRaw } from '../../../passage/getAllPassageReportsRaw';
+import { asReviewGivenKey } from './asReviewGivenKey';
 import { getPassageReportsSinceLastRewind } from './getPassageReportsSinceLastRewind';
 
 /**
@@ -51,8 +52,10 @@ export const getStoneReviewAbsorptions = async (input: {
 }): Promise<ReviewAbsorption[]> => {
   const all = await getAllPassageReportsRaw({ route: input.route });
 
+  // the given part keys by asReviewGivenKey, so a legacy absolute row and a filename row on
+  // the same concern of the same given fold to one stance
   const keyOf = (absorption: ReviewAbsorption): string =>
-    `${absorption.reviewer}::${absorption.about}::${absorption.given}`;
+    `${absorption.reviewer}::${absorption.about}::${asReviewGivenKey({ path: absorption.given })}`;
 
   // a rewind voids the round, so the absorptions declared within it are void too.
   // .why = the given-path key alone does NOT survive a rewind — an unchanged artifact
@@ -113,5 +116,6 @@ export const getAbsorptionOnConcern = (input: {
     (stance) =>
       stance.reviewer === input.reviewer &&
       stance.about === input.about &&
-      stance.given === input.given,
+      asReviewGivenKey({ path: stance.given }) ===
+        asReviewGivenKey({ path: input.given }),
   );

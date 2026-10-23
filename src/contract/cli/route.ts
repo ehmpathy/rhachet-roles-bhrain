@@ -1641,11 +1641,16 @@ const judgeReviewed = async (input: {
       // the ONE canonical top-up builder, at the shared round count — the judge and the concede
       // ack once drifted (`--add 1` here, `2` there), so both read the same const now
       // (r001.n3 / r004.n1 / r006.n2 / r009.n1)
-      const budgetCmd = formatReviewBudgetTopupCommand({
-        add: ROUNDS_OFFERED_ON_TOPUP,
-        peer: null,
-        stone: stoneMatched.name,
-      });
+      // 🔴 one command PER urgent lane, each scoped with `--peer`. a bare `--add` lands on the
+      //    latest level alone, so where the urgent lane sits on a lower level the command this
+      //    halt handed over would extend the wrong reviewer and leave the stone held
+      const budgetCmds = urgentSlugs.map((slug) =>
+        formatReviewBudgetTopupCommand({
+          add: ROUNDS_OFFERED_ON_TOPUP,
+          peer: slug,
+          stone: stoneMatched.name,
+        }),
+      );
       const passCmd = `rhx route.stone.set --stone ${stoneMatched.name} --as passed`;
       // the halt prose is an ERROR surfaced before exit(2), so it goes to stderr — the verdict
       // lines above stay on stdout, which the guard parses on a pass too
@@ -1661,7 +1666,11 @@ const judgeReviewed = async (input: {
         '   ├─ its harm ships if unfixed, so this stone earns more budget',
       );
       console.error('   ├─ please ask your human to');
-      console.error(`   │  └─ ${budgetCmd}`);
+      budgetCmds.forEach((cmd, index) =>
+        console.error(
+          `   │  ${index === budgetCmds.length - 1 ? '└─' : '├─'} ${cmd}`,
+        ),
+      );
       console.error('   │');
       console.error('   └─ after the grant, address the concession, then run');
       console.error(`      └─ ${passCmd}`);

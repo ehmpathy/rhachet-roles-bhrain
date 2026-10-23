@@ -1,4 +1,5 @@
 import { asReviewConcernRefLabel } from './asReviewConcernRef';
+import { asReviewGivenKey } from './asReviewGivenKey';
 import type { ReviewAbsorption } from './getStoneReviewAbsorptions';
 
 /**
@@ -46,7 +47,10 @@ export const computeUndeclaredConcernLabels = (input: {
   const labelsDeclared = new Set([
     ...input.absorptions
       .filter(
-        (one) => one.reviewer === input.slug && one.given === input.pathGiven,
+        (one) =>
+          one.reviewer === input.slug &&
+          asReviewGivenKey({ path: one.given }) ===
+            asReviewGivenKey({ path: input.pathGiven }),
       )
       .map((one) => one.about),
     ...(input.also ?? []),

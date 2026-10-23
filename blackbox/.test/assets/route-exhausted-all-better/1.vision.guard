@@ -1,0 +1,22 @@
+artifacts:
+  - src/**/*.ts
+
+# the measured shape: lanes at l1 approve; two lanes at l2 raise blockers on every run
+# until their budget of 3 runs dry — `intent` raises 1, `friction` raises 2
+reviews:
+  peer:
+    - slug: calm
+      run: bash $route/.test/mock-review-lane.sh 0 1
+      budget: 3
+      level: 1
+    - slug: intent
+      run: bash $route/.test/mock-review-lane.sh 1 0
+      budget: 3
+      level: 2
+    - slug: friction
+      run: bash $route/.test/mock-review-lane.sh 2 0
+      budget: 3
+      level: 2
+
+judges:
+  - rhx route.stone.judge --mechanism reviewed? --stone $stone --route $route --allow-blockers 0 --allow-nitpicks 7

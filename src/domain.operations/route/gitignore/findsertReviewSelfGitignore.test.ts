@@ -24,7 +24,7 @@ const normalizeResult = (
  * | positive: overwrite | result-overwrite | case3 |
  * | positive: overwrite content | gitignore-content-overwrite | case3 |
  * | negative: EISDIR | error-eisdir | case4 |
- * | negative: EACCES | error-eacces | case5 |
+ * | negative: EACCES | asserted by class, not snapped | case5 |
  * | negative: ENOTDIR route | error-enotdir-route | case6 |
  * | negative: ENOTDIR review | error-enotdir-review | case7 |
  * | negative: ENOTDIR self | error-enotdir-self | case8 |
@@ -152,7 +152,7 @@ describe('findsertReviewSelfGitignore', () => {
           findsertReviewSelfGitignore({
             route: '/nonexistent/path/that/cannot/be/created',
           }),
-        ).rejects.toMatchSnapshot('error-eacces');
+        ).rejects.toThrow(/^EACCES: permission denied, mkdir '\/nonexistent/);
       });
     });
   });

@@ -23,7 +23,7 @@ const normalizeResult = (
  * | idempotent: third call | result-third-call | case1 |
  * | coexistence: with files | result-with-files-present | case2 |
  * | negative: ENOTDIR route | error-enotdir-route | case3 |
- * | negative: EACCES | error-eacces | case4 |
+ * | negative: EACCES | asserted by class, not snapped | case4 |
  * | overwrite: incorrect content | result-overwrite | case5 |
  * | negative: EISDIR | error-eisdir | case6 |
  * | negative: ENOTDIR reviews | error-enotdir-reviews | case7 |
@@ -137,7 +137,7 @@ describe('findsertReviewPeerGitignore.integration', () => {
           findsertReviewPeerGitignore({
             route: '/nonexistent/path/that/cannot/be/created',
           }),
-        ).rejects.toMatchSnapshot('error-eacces');
+        ).rejects.toThrow(/^EACCES: permission denied, mkdir '\/nonexistent/);
       });
     });
   });

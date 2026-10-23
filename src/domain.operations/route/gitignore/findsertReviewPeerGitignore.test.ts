@@ -24,7 +24,7 @@ const normalizeResult = (
  * | positive: overwrite | result-overwrite | case3 |
  * | positive: overwrite content | gitignore-content-overwrite | case3 |
  * | negative: EISDIR | error-eisdir | case4 |
- * | negative: EACCES | error-eacces | case5 |
+ * | negative: EACCES | asserted by class, not snapped | case5 |
  * | negative: ENOTDIR route | error-enotdir-route | case6 |
  * | negative: ENOTDIR reviews | error-enotdir-reviews | case7 |
  * | negative: ENOTDIR peer | error-enotdir-peer | case8 |
@@ -154,11 +154,13 @@ describe('findsertReviewPeerGitignore', () => {
   given('[case5] invalid route path', () => {
     when('[t0] findsert is called with non-writable path', () => {
       then('throws mkdir error', async () => {
+        // the deepest dir mkdir is denied at varies by host (some hosts carry a
+        // `/nonexistent`), so assert the class of error, never the exact path
         await expect(
           findsertReviewPeerGitignore({
             route: '/nonexistent/path/that/cannot/be/created',
           }),
-        ).rejects.toMatchSnapshot('error-eacces');
+        ).rejects.toThrow(/^EACCES: permission denied, mkdir '\/nonexistent/);
       });
     });
   });
