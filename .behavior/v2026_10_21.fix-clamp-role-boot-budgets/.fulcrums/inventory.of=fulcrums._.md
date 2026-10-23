@@ -20,7 +20,7 @@ axis: `case` — one entry per best-guessed call, appended at the moment it was 
 | F14 | the clamp test runs the real `roles boot` from the gitroot, not a temp dir | clean | best-guessed | 85% |
 | F15 | a `.why` section that holds a table stays in the min; 13 without one moved out | clean | best-guessed | 75% |
 | F16 | each budget is the least multiple of 250 above what its role reached | clean | best-guessed | 70% |
-| F17 | the rhachet main pin and the openrouter patch ride this tree, each with its retire line | clean | best-guessed | 80% |
+| F17 | the rhachet main pin and the openrouter patch ride this tree, each with its retire line | clean | pin retired (director: 1.50.1, exact); patch stands | 80% |
 | F18 | the repo-local skills paved this round ship with it | clean | best-guessed | 75% |
 | F19 | every extant skip in the selected suites is lifted in this PR, the premium one included | clean | best-guessed | 65% |
 | F20 | a prime meet double lead under host load is caught as a dream, not diagnosed here | dirty | best-guessed | 70% |
