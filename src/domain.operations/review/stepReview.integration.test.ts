@@ -111,8 +111,8 @@ const setupGitRepo = async (): Promise<{ repoDir: string }> => {
  *        `rule.require.external-contract-integration-tests` asks for.
  *
  * .note = `stepReview.caseBrain.claude-sonnet.integration.test.ts` is a SECOND, pricier
- *         suite pinned to one premium model, and it IS `.skip`'d on cost. it is a
- *         model-specific extra, never this contract's only real coverage.
+ *         suite pinned to one premium model. it is a model-specific extra, never this
+ *         contract's only real coverage.
  */
 describe('stepReview', () => {
   // brain context for integration tests - created once for efficiency

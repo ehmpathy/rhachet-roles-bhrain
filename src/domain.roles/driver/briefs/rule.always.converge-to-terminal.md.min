@@ -5,7 +5,7 @@ work every reviewer to a terminal verdict before a human is pulled. a level is t
 | the level did | you must |
 |---|---|
 | approve | continue — the next level is already live |
-| exhaust (earned) | continue — the next level runs. ⚠️ **and answer any blocker it left** |
+| exhaust (earned) | continue — the next level runs. 🟡 **and answer any blocker it left** |
 | reject, budget left | converge: fix, or articulate why it holds, then re-arrive |
 | every level terminal | now, and only now, a human may overrule |
 

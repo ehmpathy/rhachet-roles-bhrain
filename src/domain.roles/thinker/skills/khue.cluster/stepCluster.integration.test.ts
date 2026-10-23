@@ -11,7 +11,7 @@ import { stepCluster } from '@src/domain.roles/thinker/skills/khue.cluster/stepC
 
 jest.setTimeout(toMilliseconds({ minutes: 5 }));
 
-describe.skip('stepCluster', () => {
+describe('stepCluster', () => {
   const context = {
     ...genContextLogTrail(),
     ...genContextStitchTrail(),

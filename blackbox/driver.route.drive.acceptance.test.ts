@@ -15,6 +15,21 @@ import {
 const ASSETS_DIR = path.join(__dirname, '.test/assets/route-drive');
 
 /**
+ * .what = this file's hook budget: the bound per cli subprocess × the subprocesses in its
+ *         heaviest hook
+ * .why = the shared 240s default (jest.acceptance.env.ts) is sized for one blackbox action.
+ *        [case5]'s setup chains eight cli subprocesses in ONE hook (a role link, a bind, two
+ *        drives, two passes, two promises), and each one spawns a fresh node process. measured
+ *        2026-10-23, in an 18-file acceptance chunk: one `rhx route.drive` ran 20–30s, so the
+ *        chain crossed 240s and the hook timed out before any assertion ran. tests assert
+ *        state, never latency, so the budget scales with the chain, not with a guess
+ */
+const CLI_CALL_BOUND_MS = 60_000;
+const CLI_CALLS_IN_HEAVIEST_HOOK = 8;
+// eslint-disable-next-line no-undef
+jest.setTimeout(CLI_CALL_BOUND_MS * CLI_CALLS_IN_HEAVIEST_HOOK);
+
+/**
  * .what = backdates triggered report mtime to bypass time enforcement
  * .why = tests need to verify promise flow without 90 second wait
  *

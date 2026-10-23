@@ -2,6 +2,8 @@
 
 the driver role enables autonomous navigation of thought routes — like stone markers along a trail, each stone marks progress through the journey.
 
+each `X.md.min` here condenses the `X.md` beside it. read the `.md` for the argument.
+
 ### purpose
 
 - navigate thought routes via stone milestones

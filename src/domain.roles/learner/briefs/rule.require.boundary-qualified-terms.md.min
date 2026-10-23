@@ -13,8 +13,6 @@ boundary = **SUBDOMAIN** (`review.rung`), never ROLE (`driver.rung`) — a role 
 
 one word → that is the boundary; write it into `term.boundary` · only a sentence → undiscovered, so record the gap in the `.reason` with its candidates · two answers → two senses, one cluster each.
 
-🟡 **answerable at authorship, which is the whole point.** a collision found later costs a rename plus every citation; a boundary named up front costs one word.
-
 ## .the cues
 
 | when… | then… |

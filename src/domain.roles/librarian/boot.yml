@@ -1,3 +1,11 @@
+budget:
+  # a cap, not a target: the least multiple of 250 strictly above what the role costs as a seat boots it.
+  # that figure, and the halt, come from `rhx git.repo.test --what integration --scope path://roleBootClamps --mode apply`.
+  # each rule min carries only its cue; the `knowledge/` articles boot whole, with no min. never
+  # cut a cue to fit. a halt here means a brief grew: move its argument out, or raise the cap to
+  # the next such multiple. the target is 5_000, reached by a tighten of cue rows and articles
+  # (.dream/v2026_10_21.feat.tighten-the-role-boot-cues-to-the-proposed-budgets.md)
+  tokens: 12_250
 always:
   briefs:
     say:
@@ -74,3 +82,22 @@ always:
       - briefs/knowledge/kno201.documents.lessons.[article].md
       # 301 compression
       - briefs/knowledge/kno301.doc.compression._.[article].md
+    not:
+      # the rest of knowledge/ (the thinker's shelf, shared by symlink). listed so the
+      # <also> fallback does not re-surface each path on every boot; each member stays
+      # one Read away by its kno* name. 🟡 `not` outranks say and ref, so each pattern
+      # names only unlisted files — a `knowledge/*.md` glob would drop the say entries
+      # too. and each avoids the `[kind]` segment, which a glob reads as a char class
+      - briefs/knowledge/kno101.*.docs_as_references.md
+      - briefs/knowledge/kno301.doc.compression.1.*
+      - briefs/knowledge/kno301.doc.compression.2.*
+      - briefs/knowledge/kno301.doc.compression.3.*
+      - briefs/knowledge/kno301.doc.compression._.*.persp.garden.md
+      - briefs/knowledge/kno301.doc.enbrief.1.*
+      - briefs/knowledge/kno301.doc.enbrief.2._.*
+      - briefs/knowledge/kno301.doc.enbrief.2.*lesson*.md
+      - briefs/knowledge/kno301.doc.kernelize.*
+      - briefs/knowledge/kno351.*
+      - briefs/knowledge/kno401.actors.1.role.author.*
+      - briefs/knowledge/kno401.actors.2.*
+      - briefs/knowledge/kno501.*

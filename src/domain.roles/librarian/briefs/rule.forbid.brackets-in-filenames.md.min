@@ -11,8 +11,6 @@ no filename may carry `[` or `]`. a document kind is marked with the **coordinat
 
 ## .why — the marker made the file hard to reference, which is a filename's one job
 
-`[` and `]` are **glob metacharacters**. `[article]` does not read as the literal text; it reads as *"any one character from `a,r,t,i,c,l,e`"*. so the name a reader sees and the name a tool matches are **different strings**:
-
 | the tool | what brackets cost it |
 |---|---|
 | `Glob` / `fast-glob` / `globby` | a bracketed name is **unmatched** — the pattern silently returns fewer files than the disk holds |
@@ -21,19 +19,11 @@ no filename may carry `[` or `]`. a document kind is marked with the **coordinat
 | `mvsafe` / `cpsafe` / `rmsafe` | this repo's own wrappers carry a `--literal` flag **that exists solely for this** |
 | a markdown link | `[text](url)` is link syntax, so `[article]` inside one renders wrong |
 
-⇒ **the worst failure is the SILENT one.** an escape error is loud and gets fixed. a glob that returns 9 files where 10 sit on disk looks like a correct answer, and the tenth is absent for everyone downstream.
-
-**measured here:** a `Glob` for `dist/**/kno601*` returned no match while `kno601.inventories._.[article].md` sat on disk. the brief was correct, wired, built — and invisible to the tool built to find it.
-
 ## .why `kind=` and not a bare suffix
-
-it is the coordinate form this repo already dereferences by everywhere (`repo=`, `role=`, `term=`, `of=`), so `kind=article` inherits all three properties the bracket form destroyed:
 
 - **computable** — know the archetype, know the text to search for
 - **globbable** — `*.kind=article.md` returns the archetype; `*.[article].md` returns none
 - **self-declared** — `kind=` names the axis, where bare `.article.` reads as prose
-
-a **bare** suffix (`kno601.inventories.article.md`) was rejected: filenames here are dot-segmented prose, so a bare `article` segment is indistinguishable from a topic word.
 
 | when… | then… |
 |---|---|

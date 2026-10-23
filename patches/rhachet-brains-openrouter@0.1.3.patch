@@ -1,3 +1,15 @@
+diff --git a/dist/domain.operations/supply/getOneFloorCompletion.js b/dist/domain.operations/supply/getOneFloorCompletion.js
+--- a/dist/domain.operations/supply/getOneFloorCompletion.js
++++ b/dist/domain.operations/supply/getOneFloorCompletion.js
+@@ -21,6 +21,8 @@ const asStepOutcome = (input) => {
+         return 'throttled';
+     if (input.error.status === 404)
+         return 'refused';
++    if (input.error.status === 400 && input.error.error?.metadata?.provider_name)
++        return 'failed';
+     return null;
+ };
+ /**
 diff --git a/dist/domain.operations/supply/getOneAdmittedSetCompletion.js b/dist/domain.operations/supply/getOneAdmittedSetCompletion.js
 --- a/dist/domain.operations/supply/getOneAdmittedSetCompletion.js
 +++ b/dist/domain.operations/supply/getOneAdmittedSetCompletion.js

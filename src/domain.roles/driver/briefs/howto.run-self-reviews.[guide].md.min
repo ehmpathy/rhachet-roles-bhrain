@@ -7,9 +7,7 @@ how to run the self reviews a guard asks for before peer reviews run.
 and the count is the work rather than a budget.
 
 ## take them seriously
-**the review IS the work** — not a gate, not a checkbox. question yourself severely. these
-reviews encode lessons from production. a promise without a true review is a daydream; the
-guard checks the file holds real findings.
+**the review IS the work** — not a gate, not a checkbox. question yourself severely. a promise without a true review is a daydream; the guard checks the file holds real findings.
 - found issue → articulate how fixed
 - non-issue → articulate why it holds
 - can articulate neither → you have not reviewed
@@ -33,10 +31,6 @@ guard checks the file holds real findings.
 | you name a later slug from memory | `challenge:unasked` — that slug has no ask on record |
 | you want to see what is owed | the counter. `2/4` = two more after this |
 
-🟡 **it handed out all M until 2026-09-24, and the fork it invited was never usable** — a forked lane got a slug and a path and **no guide**, the guide renders only for the review in hand, and the route is sealed. its one move was to promise blind to provoke a refusal, which `rule.always.bear-every-self-review` forbids.
-
-⇒ and the withdrawal repaired a defect the fork had concealed: **the ask's timestamp is what the haste cue measures.** all-M minted review 4's ask when review 1 was asked, so its clock read forty minutes by the time you met it and `patience, friend` could never reach you. one mint per ask starts each clock when you are actually asked.
-
 ## the path 🟡
 keyed on `(stone, slug)` — both operands you already hold, so it is **computable by hand**:
 ```
@@ -44,10 +38,7 @@ review/self/for.<stone>._.has-questioned-assumptions.md
                 └ stone    └ slug
 ```
 
-🌙 **it carried an `rN` level until 2026-09-17; the level is RETIRED.** if you meet an older guide or a stale path, there is no `rN` any more. it was a derived ordinal, three call sites derived it three ways, and two emits named two different files for one owed review ⇒ deleted rather than reconciled.
-
 ### `--into` is required
-it is the second operand a **diff** needs. with one operand the guard could only say *"the articulation is absent"* — where it looked, never what it read instead. with two:
 ```
 you named  = …/for.1.vision._.r1.design.md
 it is owed = …/for.1.vision._.design.md

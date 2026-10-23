@@ -11,7 +11,7 @@ import { stepTriage } from '@src/domain.roles/thinker/skills/khue.triage/stepTri
 
 jest.setTimeout(toMilliseconds({ minutes: 5 }));
 
-describe.skip('stepTriage', () => {
+describe('stepTriage', () => {
   const context = {
     ...genContextLogTrail(),
     ...genContextStitchTrail(),

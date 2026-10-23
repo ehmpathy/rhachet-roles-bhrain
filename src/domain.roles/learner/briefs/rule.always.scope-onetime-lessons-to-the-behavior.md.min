@@ -9,13 +9,6 @@ a lesson born inside a behavior has **two homes**, and most real incidents need 
 
 **and the two link to each other.** the durable brief cites the behavior doc as its worked example; the behavior doc points up to the durable brief.
 
-⇒ the extant rules answer **whether** to capture. this answers **where**.
-
-## .why both, and why either alone is an error
-
-- **to park a one-time lesson in the durable dir** permanently dilutes the always-booted context for every traveler who will never touch that behavior. a `say` brief costs tokens on **every boot, forever**; an instance-bound note repays that cost to nobody
-- **to discard the generalizable kernel** inside a one-time incident throws away the expensive half with the route
-
 ## .the discipline
 
 1. **scope the instance** — the exact files, diffs, commands, failures — into `$behavior/`. it lives and dies with the behavior
@@ -35,8 +28,6 @@ a lesson born inside a behavior has **two homes**, and most real incidents need 
 ⇒ **most real incidents are both.** the default is not a choice between homes; it is a pair of writes.
 
 ## .the anti-patterns
-
-**the diluted glossary** — an instance-bound note in the always-booted dir · **the discarded kernel** — a real generalization thrown out with its route dir · **the orphan rule** — a durable brief with no worked example, so a reader cannot tell what it looked like · **the orphan example** — a behavior doc with no pointer up, so its kernel is invisible · **the adopted foreigner** — a lesson whose home is another repo, written here instead of re-seeded there.
 
 blocker: an instance-bound lesson in the durable dir · a durable kernel discarded with its behavior dir · a lesson whose durable home is another repo, adopted here. nitpick: a durable brief with no worked-example citation · a behavior doc with no pointer up.
 

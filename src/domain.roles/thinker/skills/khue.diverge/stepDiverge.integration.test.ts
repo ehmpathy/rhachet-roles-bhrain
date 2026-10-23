@@ -11,7 +11,7 @@ import { stepDiverge } from '@src/domain.roles/thinker/skills/khue.diverge/stepD
 
 jest.setTimeout(toMilliseconds({ minutes: 5 }));
 
-describe.skip('stepDiverge', () => {
+describe('stepDiverge', () => {
   const context = {
     ...genContextLogTrail(),
     ...genContextStitchTrail(),

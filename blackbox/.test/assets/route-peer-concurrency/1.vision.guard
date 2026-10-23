@@ -4,23 +4,26 @@ artifacts:
 reviews:
   peer:
     # level 1 — four reviewers, no group, so no bound binds them
+    # .note = a 2.5s hold, so all four are still held when the last one begins.
+    #         each lane pays a node startup, and a loaded host staggers those past
+    #         the 0.6s default, which depresses the observed peak of 4
     - slug: l1-a
-      run: bash $route/.test/mock-window.sh l1-a
+      run: bash $route/.test/mock-window.sh l1-a 2.5
       budget: 5
       level: 1
 
     - slug: l1-b
-      run: bash $route/.test/mock-window.sh l1-b
+      run: bash $route/.test/mock-window.sh l1-b 2.5
       budget: 5
       level: 1
 
     - slug: l1-c
-      run: bash $route/.test/mock-window.sh l1-c
+      run: bash $route/.test/mock-window.sh l1-c 2.5
       budget: 5
       level: 1
 
     - slug: l1-d
-      run: bash $route/.test/mock-window.sh l1-d
+      run: bash $route/.test/mock-window.sh l1-d 2.5
       budget: 5
       level: 1
 

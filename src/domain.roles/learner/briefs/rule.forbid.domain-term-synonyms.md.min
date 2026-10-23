@@ -6,13 +6,6 @@ a **contract** = a dobj/dop name, an internal contract (input/output shapes, sig
 
 a **comment** may use a synonym to describe the concept from an alternate perspective — that is allowed. the term's `choice._.md` records the forbidden synonyms, so the canonical map stays clear.
 
-## .why
-
-- synonyms are the biggest culprit of ambiguity: one concept needs one canonical word
-- a contract that drifts to a synonym breaks the shared vocabulary the glossary exists to keep
-- **published interfaces are the most expensive place to drift** — every consumer inherits the synonym, and the cost compounds forever
-- a synonym *recorded* rather than merely forbidden turns tribal knowledge into checkable data
-
 ## .how — adhere, or dispute
 
 1. **adhere** — rename the contract to the canonical term, or

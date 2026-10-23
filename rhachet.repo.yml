@@ -29,7 +29,7 @@ roles:
       dirs: dist/domain.roles/learner/skills
     boot: dist/domain.roles/learner/boot.yml
   - slug: librarian
-    readme: dist/domain.roles/librarian/.readme.[seed].md
+    readme: dist/domain.roles/librarian/readme.md
     briefs:
       dirs: dist/domain.roles/librarian/briefs
     skills:

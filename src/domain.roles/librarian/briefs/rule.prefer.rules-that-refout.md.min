@@ -8,8 +8,6 @@ define.$concept.md                      # the ARGUMENT + the demos — ref tier,
 rule.$directive.$topic.example=$id.md   # ONE occurrence — ref (rule.require.rules-are-clusters)
 ```
 
-⇒ a third axis beside `rules-are-clusters`. that splits the **class** from **one occurrence**; this splits the **cue** from the **case for the cue**, and it decides the boot tier.
-
 ## .why — two readers, and they arrive at different moments
 
 | | the cue | the argument |
@@ -55,8 +53,6 @@ before → the rule, say · after → the define, ref · you cannot say → argu
 
 a define whose subject is the shape every passage takes stays resident: you cannot reflexively render a form you must go fetch. the test is whether the reader must PRODUCE the subject or merely UNDERSTAND it — a form is produced, an etymology is understood.
 
-⇒ measured: `define.bulletize` (bhrain/role=telepath), **62% demo pairs**, which are cue-shaped.
-
 ## .the failure modes
 
 | shape | what it costs |
@@ -69,10 +65,6 @@ a define whose subject is the shape every passage takes stays resident: you cann
 ## .the measurement
 
 sort each resident brief's lines: **cue** = a table row · a blockquote · a bullet · a `👎`/`👍` header · an enforcement line. **argument** = each other line.
-
-⇒ walked 2026-09-07, `bhrain/role=telepath`, 26 resident briefs: **108,701 chars, 46% argument.**
-
-🟡 a first pass returned 58% and was wrong — it counted demo pairs as argument. **verify the instrument before its output is a claim.**
 
 **the line that parts every case: would an author mid-sentence use this?** yes → a cue, resident however long · no, it is why they should → it refs out, however short.
 
