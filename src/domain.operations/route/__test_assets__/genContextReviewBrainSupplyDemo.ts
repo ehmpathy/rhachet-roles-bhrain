@@ -1,8 +1,8 @@
+import { UnexpectedCodePathError } from 'helpful-errors';
 import type { BrainChoice, ContextBrain } from 'rhachet';
 
 import type { ContextCliEmit } from '@src/domain.objects/Driver/ContextCliEmit';
-
-import type { ContextReviewBrainSupply } from '../genReviewBrainSupply';
+import type { ContextReviewBrainSupply } from '@src/domain.operations/brain/genReviewBrainSupply'; // brain/ is a declared shared subdomain (its .readme.md)
 
 /**
  * .what = a shared test-context builder for the guard pass path
@@ -26,10 +26,11 @@ export const genContextReviewBrainSupplyDemo = (options?: {
   getReviewBrain:
     options?.getReviewBrain ??
     (async () => {
-      throw new Error(
-        'genContextReviewBrainSupplyDemo: getReviewBrain called but no brain was provided ' +
-          '(a deterministic-path test should never reach the fallback; override getReviewBrain ' +
-          'to test the probabilistic path)',
+      throw new UnexpectedCodePathError(
+        'genContextReviewBrainSupplyDemo: getReviewBrain called but no brain was provided',
+        {
+          hint: 'a deterministic-path test should never reach the fallback; override getReviewBrain to test the probabilistic path',
+        },
       );
     }),
 });

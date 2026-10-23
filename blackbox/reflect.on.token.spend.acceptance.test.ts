@@ -871,10 +871,10 @@ describe('reflect.on.token.spend', () => {
         }),
       );
 
-      then('exit code is 0, and the note says where the boot share sits', () => {
+      then('exit code is 0, and the caveat says where the boot share sits', () => {
         expect(res.code).toEqual(0);
         expect(res.stdout).toContain(
-          'note: no boot.instructions block was seen; the boot share sits inside unattributed',
+          'caveat = no boot.instructions block was seen; the boot share sits inside unattributed',
         );
       });
 

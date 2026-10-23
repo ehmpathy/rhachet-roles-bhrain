@@ -1,0 +1,157 @@
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
+
+exports[`asRouteGuardPartitionCoverageLines given: [case1] a stone whose @all set holds, one partition literally named rest when: [t0] the coverage is rendered then: it matches the snapshot 1`] = `
+"🦉 coverage read — naught written, no review run
+
+🗿 route.guard.partition
+   ├─ route = .behavior/v2026_01_01.demo
+   ├─ stone = 5.1.execution
+   ├─ checked against 5 files changed since main
+   └─ scope @all — read by r1, r2
+      ├─ partitions
+      │  ├─ review: 0 narrow targets + 2 common targets · ~2,000 tokens of file bodies, ~2,000 common
+      │  ├─ route: 0 narrow targets + 3 common targets · ~3,000 tokens of file bodies, ~3,000 common
+      │  └─ rest: 1 narrow target + 4 common targets · ~5,000 tokens of file bodies, ~4,000 common
+      │     └─ src/utils/new/asWidget.ts
+      ├─ common: 4 (route spec: 1)
+      │  ├─ src/review/getReview.ts → review, rest
+      │  ├─ src/route/getRoute.ts → route, rest
+      │  └─ src/shared/types.ts → route, rest
+      ├─ unclaimed: 0
+      └─ verdict: holds — every changed file sits in a partition, each with the route spec"
+`;
+
+exports[`asRouteGuardPartitionCoverageLines given: [case2] a stone whose override leaves a file unclaimed when: [t0] the coverage is rendered then: it matches the snapshot 1`] = `
+"🦉 coverage read — naught written, no review run
+
+🗿 route.guard.partition
+   ├─ route = .behavior/v2026_01_01.demo
+   ├─ stone = 5.1.execution
+   ├─ checked against 2 files changed since main
+   └─ scope r2 on 5.1.execution — read by r2
+      ├─ partitions
+      │  └─ review: 1 narrow target + 0 common targets · ~1,000 tokens of file bodies, ~0 common
+      │     └─ src/review/getReview.ts
+      ├─ common: 0 (route spec: 0)
+      ├─ unclaimed: 1
+      │  └─ src/route/getRoute.ts
+      ├─ verdict: gap — the entrance gate would halt here
+      └─ repair — run this before you arrive
+         └─ rhx route.guard.partition --route .behavior/v2026_01_01.demo --for review --peer r2 --stone 5.1.execution \\
+              --partition 'review=src/review/**,.behavior/v2026_01_01.demo/**' \\
+              --partition 'route=src/route/**,.behavior/v2026_01_01.demo/**' \\
+              --mode apply
+
+✨ did you know?
+   ├─ claim each domain whole, in every layer, and the files you edit next stay covered
+   └─ e.g. src/route/** and blackbox/{,__snapshots__/}driver.route.* in one partition"
+`;
+
+exports[`asRouteGuardPartitionCoverageLines given: [case3] a stone whose reviewers read no partition set when: [t0] the coverage is rendered then: it matches the snapshot 1`] = `
+"🦉 coverage read — naught written, no review run
+
+🗿 route.guard.partition
+   ├─ route = .behavior/v2026_01_01.demo
+   ├─ stone = 5.1.execution
+   └─ declared: none — no reviewer here reads a partition set, so every lane runs whole"
+`;
+
+exports[`asRouteGuardPartitionCoverageLines given: [case4] the route @all set alone, with no stone named when: [t0] the coverage is rendered then: it matches the snapshot 1`] = `
+"🦉 coverage read — naught written, no review run
+
+🗿 route.guard.partition
+   ├─ route = .behavior/v2026_01_01.demo
+   ├─ checked against 5 files changed since main
+   └─ scope @all
+      ├─ partitions
+      │  ├─ review: 0 narrow targets + 2 common targets · ~2,000 tokens of file bodies, ~2,000 common
+      │  ├─ route: 0 narrow targets + 3 common targets · ~3,000 tokens of file bodies, ~3,000 common
+      │  └─ rest: 1 narrow target + 4 common targets · ~5,000 tokens of file bodies, ~4,000 common
+      │     └─ src/utils/new/asWidget.ts
+      ├─ common: 4 (route spec: 1)
+      │  ├─ src/review/getReview.ts → review, rest
+      │  ├─ src/route/getRoute.ts → route, rest
+      │  └─ src/shared/types.ts → route, rest
+      ├─ unclaimed: 0
+      └─ verdict: holds — every changed file sits in a partition, each with the route spec"
+`;
+
+exports[`asRouteGuardPartitionCoverageLines given: [case5] a branch with more files per list than the cap shows when: [t0] the coverage is rendered with the cap then: it matches the snapshot 1`] = `
+"🦉 coverage read — naught written, no review run
+
+🗿 route.guard.partition
+   ├─ route = .behavior/v2026_01_01.demo
+   ├─ stone = 5.1.execution
+   ├─ checked against 39 files changed since main
+   └─ scope @all — read by r1
+      ├─ partitions
+      │  ├─ review: 0 narrow targets + 9 common targets · ~9,000 tokens of file bodies, ~9,000 common
+      │  ├─ route: 0 narrow targets + 1 common target · ~1,000 tokens of file bodies, ~1,000 common
+      │  └─ rest: 7 narrow targets + 9 common targets · ~16,000 tokens of file bodies, ~9,000 common
+      │     ├─ src/new/n0.ts
+      │     ├─ src/new/n1.ts
+      │     ├─ src/new/n2.ts
+      │     ├─ src/new/n3.ts
+      │     ├─ src/new/n4.ts
+      │     └─ … +2 more (--full lists every path)
+      ├─ common: 9 (route spec: 1)
+      │  ├─ src/review/r0.ts → review, rest
+      │  ├─ src/review/r1.ts → review, rest
+      │  ├─ src/review/r2.ts → review, rest
+      │  ├─ src/review/r3.ts → review, rest
+      │  ├─ src/review/r4.ts → review, rest
+      │  └─ … +3 more (--full lists every path)
+      ├─ unclaimed: 23
+      │  ├─ lib/u00.ts
+      │  ├─ lib/u01.ts
+      │  ├─ lib/u02.ts
+      │  ├─ lib/u03.ts
+      │  ├─ lib/u04.ts
+      │  ├─ lib/u05.ts
+      │  ├─ lib/u06.ts
+      │  ├─ lib/u07.ts
+      │  ├─ lib/u08.ts
+      │  ├─ lib/u09.ts
+      │  ├─ lib/u10.ts
+      │  ├─ lib/u11.ts
+      │  ├─ lib/u12.ts
+      │  ├─ lib/u13.ts
+      │  ├─ lib/u14.ts
+      │  ├─ lib/u15.ts
+      │  ├─ lib/u16.ts
+      │  ├─ lib/u17.ts
+      │  ├─ lib/u18.ts
+      │  ├─ lib/u19.ts
+      │  └─ … +3 more (--full lists every path)
+      ├─ verdict: gap — the entrance gate would halt here
+      └─ repair — run this before you arrive
+         └─ rhx route.guard.partition --route .behavior/v2026_01_01.demo --for review --peer @all \\
+              --partition 'review=src/review/**,.behavior/v2026_01_01.demo/**' \\
+              --partition 'route=src/route/**,src/shared/**,.behavior/v2026_01_01.demo/**' \\
+              --partition 'rest=src/**,.behavior/v2026_01_01.demo/**' \\
+              --partition 'lib=lib/**,.behavior/v2026_01_01.demo/**' \\
+              --mode apply
+
+✨ did you know?
+   ├─ claim each domain whole, in every layer, and the files you edit next stay covered
+   └─ e.g. src/route/** and blackbox/{,__snapshots__/}driver.route.* in one partition"
+`;
+
+exports[`asRouteGuardPartitionCoverageLines given: [case6] a held @all set whose diff holds no route spec file when: [t0] the coverage is rendered then: it matches the snapshot 1`] = `
+"🦉 coverage read — naught written, no review run
+
+🗿 route.guard.partition
+   ├─ route = .behavior/v2026_01_01.demo
+   ├─ stone = 5.1.execution
+   ├─ checked against 2 files changed since main
+   └─ scope @all — read by r1
+      ├─ partitions
+      │  ├─ review: 0 narrow targets + 1 common target · ~1,000 tokens of file bodies, ~1,000 common
+      │  ├─ route: 0 narrow targets + 0 common targets · ~0 tokens of file bodies, ~0 common
+      │  └─ rest: 1 narrow target + 1 common target · ~2,000 tokens of file bodies, ~1,000 common
+      │     └─ src/utils/new/asWidget.ts
+      ├─ common: 1 (route spec: 0)
+      │  └─ src/review/getReview.ts → review, rest
+      ├─ unclaimed: 0
+      └─ verdict: holds — every changed file sits in a partition"
+`;

@@ -161,3 +161,45 @@ exports[`genReviewOutputStdout given: [case5] large token counts when: [t0] numb
       ├─ 10 blockers 🔴
       └─ 25 nitpicks 🟠"
 `;
+
+exports[`genReviewOutputStdout given: [case6] a run whose spend is unmeasured when: [t0] the run returns no tokens and no cost then: matches snapshot 1`] = `
+"✨ metrics.realized
+   ├─ spend: unmeasured 🟡 the brain reported no usage — unknown, not $0
+   └─ time
+      └─ total: 1s
+
+🦉 just a few hoots
+
+🔍 review
+   ├─ logs: .log/bhrain/review/2026-01-28T12-00-00-000Z
+   ├─ review: review.md
+   └─ summary
+      ├─ 0 blockers
+      └─ 1 nitpick 🟠"
+`;
+
+exports[`genReviewOutputStdout given: [case7] a run whose spend is PARTLY unmeasured when: [t0] the input-side counts are measured and the rest are not then: matches snapshot 1`] = `
+"✨ metrics.realized
+   ├─ tokens
+   │  ├─ input: 1,200
+   │  ├─ cache.set: 0
+   │  ├─ cache.get: 4,800
+   │  ├─ output: —
+   │  ├─ total: —
+   │  └─ — = unmeasured, not zero
+   ├─ cost
+   │  ├─ total: —
+   │  └─ — = unmeasured, not zero
+   └─ time
+      └─ total: 1s
+
+🦉 not even a vole
+
+🔍 review
+   ├─ logs: .log/bhrain/review/2026-01-28T12-00-00-000Z
+   ├─ review: review.md
+   └─ summary
+      ├─ 0 blockers
+      ├─ 0 nitpicks
+      └─ all good 👍"
+`;

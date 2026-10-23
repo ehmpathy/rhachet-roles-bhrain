@@ -28,13 +28,13 @@ describe('asReviewPeerBrain', () => {
       });
 
       then('a slug that holds slashes survives whole', () => {
-        // .why = `rhx review`'s own default is `fireworks/deepseek/v4-flash`, so a reader
+        // .why = `rhx review`'s own default is `openrouter/deepseek/flash`, so a reader
         //        that stopped at a `/` would truncate the most common value there is
         expect(
           asReviewPeerBrain({
-            run: `rhx review --brain fireworks/deepseek/v4-flash --diffs since-main`,
+            run: `rhx review --brain openrouter/deepseek/flash --diffs since-main`,
           }),
-        ).toEqual({ brain: 'fireworks/deepseek/v4-flash' });
+        ).toEqual({ brain: 'openrouter/deepseek/flash' });
       });
     });
   });
@@ -300,7 +300,7 @@ describe('asReviewPeerBrain', () => {
           'opus',
           'sonnet',
           'anthropic/claude/sonnet',
-          'fireworks/deepseek/v4-flash',
+          'openrouter/deepseek/flash',
           'claude-opus-5[1m]',
           'claude-haiku-4-5-20251001',
           'gpt_4.1',

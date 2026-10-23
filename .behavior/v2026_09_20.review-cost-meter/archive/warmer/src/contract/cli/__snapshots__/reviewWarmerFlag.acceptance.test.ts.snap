@@ -1,0 +1,165 @@
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
+
+exports[`reviewWarmerFlag.acceptance given: [case1] a cadence past the cache ttl when: [t0] the driver runs it then: the refusal renders whole 1`] = `
+"
+🦉 woah there
+
+✋ ConstraintError: --warmer "1x,90m" spaces pokes 90m apart, over the bound of 30m. a poke sent past the cache ttl refreshes naught and costs in full, so a wide cadence buys no coverage at any count. --warmer off | on | <k>x,<m>m   e.g. --warmer 5x,10m
+
+✨ did you know?
+   └─ run with --help for the --warmer plans
+
+"
+`;
+
+exports[`reviewWarmerFlag.acceptance given: [case2] a plan shape this cannot read when: [t0] the driver runs it then: the refusal renders whole 1`] = `
+"
+🦉 woah there
+
+✋ ConstraintError: --warmer "yes-please" is not a plan this can read. --warmer off | on | <k>x,<m>m   e.g. --warmer 5x,10m
+
+✨ did you know?
+   └─ run with --help for the --warmer plans
+
+"
+`;
+
+exports[`reviewWarmerFlag.acceptance given: [case3] a poke count over the bound when: [t0] the driver runs it then: the refusal renders whole 1`] = `
+"
+🦉 woah there
+
+✋ ConstraintError: --warmer "100x,10m" asks for 100 pokes, over the bound of 12. a warmer spends unattended, so its worst case is bounded here rather than left to the caller. --warmer off | on | <k>x,<m>m   e.g. --warmer 5x,10m
+
+✨ did you know?
+   └─ run with --help for the --warmer plans
+
+"
+`;
+
+exports[`reviewWarmerFlag.acceptance given: [case4] \`--warmer off\`, on a tree with no rules when: [t0] the driver runs it then: the refusal renders whole 1`] = `
+"
+🦉 woah there
+
+✋ ConstraintError: must specify at least one of --rules, --diffs, --paths, or --paths-with
+
+✨ did you know?
+   └─ run with --help for usage
+
+"
+`;
+
+exports[`reviewWarmerFlag.acceptance given: [case5] a driver who does not yet know the warmer exists when: [t0] they run \`--help\` then: 🔴 and the whole flag list renders, diffable in the PR 1`] = `
+"review - code review against rules
+
+usage:
+  review.sh [options]
+
+options:
+  --rules <globs>     glob pattern(s) for rule files (required, can repeat)
+  --paths <globs>     glob pattern(s) for target files (deprecated: use --paths-with)
+  --paths-with <glob>   include files that match this glob (can repeat)
+  --paths-wout <glob>   exclude files that match this glob (can repeat)
+                        alias: --paths-without
+  --polluters <mode>  drop or keep the polluters in scope (default: drop)
+                      dropped by default: every route artifact except
+                      .fulcrums/**, .seeds/**, and *.yield.md; every caught
+                      dream; every dependency lockfile
+  --diffs <range>     diff range: since-main, since-commit, since-staged (default: since-main)
+  --join <mode>       how to join --paths-with and --diffs: intersect or union (default: intersect)
+  --refs <globs>      glob pattern(s) for reference files (can repeat)
+  --optional <supply> mark a supply as optional; when its glob matches zero files, skip the
+                      review (emit 0 blockers / 0 nitpicks, exit 0) instead of a fail-loud error.
+                      supported: rules (can repeat)
+  --partition '<slug>=<globs>'
+                      a set of files this review may be judged by on its own, should the
+                      whole prompt overflow its window (can repeat). the partitions run at
+                      once, and their verdicts merge into one --output with one
+                      blockers/nitpicks tally. a fit never splits.
+                      · globs: a prefix (src/review), a glob (src/**/*.ts), or a comma
+                        list of either: 'review=src/review/**,src/domain.objects/**' — no
+                        braces needed ('review={...}' reads the same). repeat a slug to
+                        widen it; its flags merge into one partition. quote each value
+                      · a member with a ! at its head subtracts what it matches — it
+                        carves a flat dir, which has no subdirectory to cut along:
+                        'review=src/review/*,!src/review/compile*'
+                      · a malformed value refuses with the corrected one; a glob that
+                        matched no target is flagged in --mode plan
+                      · sets may overlap, and should: a file in two or more partitions is
+                        common — it leads each prompt, and is graded once, by the first
+                        partition that lists it
+                      · refuses (exit 2), under --mode plan or when an overflow splits: a
+                        target in no partition · a bound route absent from a partition ·
+                        a partition that still overflows alone. a fit run ignores the set
+                      the refusal of an overflowed review names which lever fits it:
+                      a narrower --paths-wout for edited files, or --partition for
+                      added ones, whose bodies no bind can shrink
+  --mode <mode>       plan, hard, or soft (default: none — the review runs)
+                      · plan: preview the declared --partition split — each partition's
+                        globs and cost — and call no brain
+                      · hard, soft: the rhachet dispatcher's own mode, passed through by
+                        every guard call. review reads neither, so each runs the review
+  --conversation <files>  comma-separated prior peer-review dialogue files (.given + .taken) to thread as context (opt-in; guard expands $conversation)
+  --output <path>     output file path (default: .review/$branch/$isotime.output.md)
+  --focus <mode>      review focus: push or pull (default: push)
+  --goal <goal>       review goal: exhaustive or representative (default: exhaustive)
+  --brain <slug>      brain to use for review (default: openrouter/deepseek/flash)
+  --warmer <plan>     poke this lane's prompt cache between rounds.
+                      off | on | <k>x,<m>m   (default: off; on = 12x,15m)
+                      🔴 every poke costs, so it can lose money. guard lanes only.
+                      \`rhx review._.cost --of tree\` shows whether it paid off, and
+                      the kill for each warmer still awake (\`off\` stops only the next)
+  --open <opener>     open output file with specified program (e.g., nvim, codium, code)
+  --help              show this help message
+
+🔭 available brains
+   └── (none)
+"
+`;
+
+exports[`reviewWarmerFlag.acceptance given: [case6] a bare \`--warmer\`, with no value after it when: [t0] the driver runs it then: the refusal renders whole 1`] = `
+"
+🦉 woah there
+
+✋ ConstraintError: --warmer was given no value, so this cannot tell "on" from a value you meant to type. --warmer off | on | <k>x,<m>m   e.g. --warmer 5x,10m
+
+✨ did you know?
+   └─ run with --help for the --warmer plans
+
+"
+`;
+
+exports[`reviewWarmerFlag.acceptance given: [case7] a warmer asked of a \`--mode plan\` preview when: [t0] the driver runs it then: the refusal renders whole 1`] = `
+"
+🦉 woah there
+
+✋ ConstraintError: --warmer 12x,15m cannot run with --mode plan: a preview sends no prompt, so there is no cache to keep warm
+
+✨ did you know?
+   └─ drop --warmer to preview, or drop --mode plan to run the review the warmer would keep warm
+
+"
+`;
+
+exports[`reviewWarmerFlag.acceptance given: [case8] a plan of zero pokes when: [t0] the driver runs it then: the refusal renders whole 1`] = `
+"
+🦉 woah there
+
+✋ ConstraintError: --warmer "0x,15m" asks for 0 pokes, which is --warmer off said the long way. --warmer off | on | <k>x,<m>m   e.g. --warmer 5x,10m
+
+✨ did you know?
+   └─ run with --help for the --warmer plans
+
+"
+`;
+
+exports[`reviewWarmerFlag.acceptance given: [case9] a zero-minute cadence when: [t0] the driver runs it then: the refusal renders whole 1`] = `
+"
+🦉 woah there
+
+✋ ConstraintError: --warmer "3x,0m" asks for a 0m cadence, which would spend the whole plan at once and protect one instant. --warmer off | on | <k>x,<m>m   e.g. --warmer 5x,10m
+
+✨ did you know?
+   └─ run with --help for the --warmer plans
+
+"
+`;

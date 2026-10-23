@@ -11,7 +11,12 @@ const guardWithPeers = (
     path: 'x.guard',
     artifacts: [],
     reviews: {
-      peer: peers.map((p) => ({ slug: p.slug, run: 'echo', budget: p.budget })),
+      peer: peers.map((p) => ({
+        slug: p.slug,
+        run: 'echo',
+        budget: p.budget,
+        level: 1,
+      })),
     },
     judges: [],
     protect: [],

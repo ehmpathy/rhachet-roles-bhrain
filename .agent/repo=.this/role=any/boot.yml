@@ -1,3 +1,8 @@
+budget:
+  # a cap at today's measured size (23,932), not a target. rhachet's init seeded 5_000; the
+  # glossary now boots as one catalog (~0.9k) instead of ~150 paths (~5.3k). the rest of the cut
+  # is owed — see .dream/v2026_10_16.fix.repo-boot-spec-is-6x-the-budget-rhachet-seeded.md
+  tokens: 24_000
 always:
   briefs:
     say:
@@ -18,54 +23,86 @@ always:
       - briefs/rule.require.explicit-stdin-flags.md
       - briefs/rule.require.isolated-cli-subpath-exports.md
       - briefs/rule.require.repeatable-for-llm-tests.md
-      # say-level because it fires at DESIGN time, on any gate that takes a target —
-      # and the target's grain is chosen once, early, in a line that looks innocuous.
-      # measured 2026-09-10 over `PassageReport.status`: 6 of 9 declarations obey it,
-      # and the 3 that do not are the 3 that name a FILE rather than a party. a rule
-      # that arrives after the seam is chosen meets an author who already reused a
-      # human lever's breadth for a robot's move
+      # say-level: fires the moment a default brain constant is typed. a pinned
+      # version strands every lane on the provider's retirement clock
+      - briefs/rule.require.versionless-brain-defaults.md
+      # say-level: fires at design time, on any gate that takes a target — the
+      # target's grain is chosen once, in a line that looks innocuous. a
+      # declaration that names a FILE rather than a party violates it
       - briefs/rule.forbid.suppression-of-undeclared-concerns.md
       - briefs/rule.require.stdout-is-treestruct.md
+      # say-level: fires at design time, on a line that looks innocuous
+      # (`briefs: []`, a conditional block, a section appended at the end) —
+      # a rule fetched later meets a layout already shipped. its third
+      # obligation covers WHERE a request is steered, not what a prompt says.
+      # argument refs out, per rule.prefer.rules-that-refout; only the cue
+      # rides say. occurrence record: ...-as-the-cache-anchor.example=the-review-prompt-with-no-pin.md
+      # full measurement: research.review-cost-and-cache
+      - briefs/rule.require.name-the-shared-prefix-as-the-cache-anchor.md
+      # say-level: fires the moment a cost figure is rendered. the two levers
+      # multiply into the bill, so a report that carries one argues for the
+      # wrong optimization — and the omission is invisible from inside the
+      # breadth that omits it. the peer of the cache-anchor rule above: that
+      # one governs the cache-rate lever's mechanism, this one governs whether
+      # either lever is legible at all
+      - briefs/rule.require.report-both-cost-levers-with-trend-and-locus.md
+      # say-level: the specialization of the rule above for the moment its readers
+      # look past it — a reviewer overflowed and a driver must decide what to cut.
+      # the parent reads as a rule about cost REPORTS, so a driver mid-diagnosis
+      # never recognizes it applies and hand-rolls a census off raw git output,
+      # which ranks files the polluter filter already dropped
+      - briefs/rule.forbid.adhoc-scope-rollups.md
+      # say-level: fires the moment a prompt section order is declared or edited
+      # — a one-line rank table, which is exactly where it looks harmless. the
+      # decision procedure for the cache-anchor rule's first obligation: a small
+      # volatile block ahead of large stable mass voids all of it, so the cost is
+      # set by what sits BEHIND a section, never by its own size. measured here at
+      # 22:1 in the wrong direction
+      - briefs/rule.require.order-prompt-sections-by-volatility-then-size.md
+      # say-level: generalizes the rule above. bytes shared by N requests of one
+      # round lead bytes unique to one; stability is the second key, never the first
+      - briefs/rule.require.order-prompt-bytes-by-reuse-breadth.md
+      # say-level: fires the moment N concurrent requests share a prefix. fired
+      # cold, all N miss; one poke first, then the pour, and N−1 read from cache
+      - briefs/rule.require.prime-the-shared-prefix-before-a-pour.md
+      # say-level: the forbid twins of the two rules above — a forbid names the
+      # exact shape a reviewer can point at in a diff, so it bites first
+      - briefs/rule.forbid.shared-bytes-behind-narrow-bytes.md
+      - briefs/rule.forbid.cold-pour-of-a-shared-prefix.md
+      # say-level: fires the moment a lock is about to be built. three hand-rolled locks
+      # shipped here, each with its own crash rule, beside the org's own mutex package
+      - briefs/rule.require.locks-via-with-simple-mutex.md
+      - briefs/rule.forbid.hand-rolled-locks.md
+      # say-level: fires the moment a loop over independent reviews is written.
+      # a serial loop over partitions shipped with a header that argued for it
+      - briefs/rule.forbid.serial-reviews-that-could-pour.md
+      # say-level: fires the moment one review of a set fails. a throw that
+      # discards the peer verdicts already paid for is the defect
+      - briefs/rule.forbid.dropped-partial-review-progress.md
+      # say-level: fires the moment a conversation read path is written or changed.
+      # a faulted round's stdout rode whole into every later round's prompt
+      - briefs/rule.forbid.verdictless-givens-whole-in-conversation.md
 
-      # domain.terms - the repo's glossary intro + its org-wide governance, nested
-      # under briefs/ so the boot loader pools it (it only pools files under
-      # briefs/); booted for every role so all contracts obey one vocabulary. only
-      # the lean, hand-curated readme + the two rules ride the always-booted say list
-      # — a fixed, small footprint. the per-term files are on demand under ref, so the
-      # glossary can grow without bound while every boot stays a fixed size
+      # domain.terms — the glossary rides as ONE index: every term by name, and the
+      # formula that computes its path. the term files themselves stay out of the boot
+      # (see `not` below) and are read on demand, so the glossary grows without bound
+      # while every boot pays one catalog
+      - briefs/domain.terms/catalog.of=term._.md
+
+    not:
+      # domain.terms — all but the catalog above. listed so the <also> fallback does not
+      # re-surface ~150 paths; each stays reffable through the catalog's path formula
+      - briefs/domain.terms/term=*.md
+      - briefs/domain.terms/gap=*.md
+      - briefs/domain.terms/rule.*.md
       - briefs/domain.terms/.readme.md
-      - briefs/domain.terms/rule.require.domain-term-itemization.md
-      - briefs/domain.terms/rule.forbid.domain-term-synonyms.md
+      - briefs/domain.terms/catalog.of=externalization._.md
+      - briefs/domain.terms/inventory.of=gaps._.md
 
     ref:
-      # domain.terms - every per-term cluster file, surfaced on demand so the boot
-      # footprint stays fixed as the dictionary grows: the say-level choice (the
-      # canonical word + forbidden synonyms) and its ref-level members (deep record:
-      # etymology, disputes, evidence, examples). declared here explicitly — not left
-      # to the <also> fallback — so a term stays discoverable even under a scoped boot,
-      # and so the boot globs are testable. the always-booted readme points here
-      - briefs/domain.terms/term=*._.choice._.md
-      - briefs/domain.terms/term=*._.choice.reason.md
-      - briefs/domain.terms/term=*._.choice.example=*.md
-
-      # the externalization catalog — the index over the en- family (enbrief ·
-      # enskill · entool) plus pave + learn. ref for the same reason the glossary
-      # is: it is read ONCE, at the moment a traveler asks which verb to reach for.
-      # it exists because that index had been parked inside term=enbrief's reason
-      # file, where the SET was reachable only by a reader who knew a MEMBER
-      - briefs/domain.terms/catalog.of=externalization._.md
-
-      # the gap census — the words THIS repo's glossary owes and does not hold.
-      # ref, because it is a backlog read at the moment a word is coined, and it
-      # is bhrain's alone: at say it would charge every role's boot for a list
-      # only a term-author reads. the .readme.md above declares the convention
+      # the glyph catalog — ref, not say: read once, when a glyph is claimed,
+      # and it grows as axes are added. define.bhrain-repo-mascot rides say
       # and points here
-      - briefs/domain.terms/inventory.of=gaps._.md
-      - briefs/domain.terms/gap=*.md
-
-      # the glyph catalog — ref, not say, for the same reason the glossary is: the
-      # index is read ONCE, at the moment a glyph is claimed, and it grows as axes
-      # are added. define.bhrain-repo-mascot rides say-level and points here
       - briefs/domain.glyphs/catalog.of=glyph._.md
       - briefs/domain.glyphs/catalog.of=glyph.axis=*.md
 
@@ -86,25 +123,35 @@ always:
       # symptom shows; it does not need to fire before the mistake, because the
       # hook that catches the mistake already does
       - briefs/hazard.injected-date-disagrees-with-wallclock.md
-      # 🟡 this one differs from the hazard above: no hook catches it, and its
-      # failure is silent and delayed (a build reverts the edit later). it stays
-      # at ref anyway, per the say-tier policy — its cue table is what a reader
-      # reaches for on the symptom "my change did not stick". the mechanism that
-      # would fire BEFORE the edit is a preToolUse hook, caught in .dream/
+      # differs from the hazard above: no hook catches it, and its failure is
+      # silent and delayed (a build reverts the edit later). stays at ref
+      # anyway — its cue table is what a reader reaches for on the symptom
+      # "my change did not stick". a preToolUse hook would fire before the
+      # edit; caught in .dream/
       - briefs/hazard.agent-brief-may-be-a-dist-symlink.md
-      # 🟡 the peer of the one above — same src/ -> dist/ chain, opposite
-      # direction. that one asks "is this .agent/ file safe to edit?"; this one
-      # asks "does this citation ship?". its failure is invisible from inside
-      # this repo, since every term path resolves on our disk and on no
-      # consumer's, so no reviewer here can catch it by a read
+      # peer of the hazard above — same src/ -> dist/ chain, opposite
+      # direction. that one asks "is this .agent/ file safe to edit?"; this
+      # one asks "does this citation ship?". invisible from inside this repo,
+      # since every term path resolves on our disk and on no consumer's
       - briefs/hazard.published-brief-cannot-cite-the-repo-glossary.md
+      # third hazard over the same .agent/ links, and the one whose symptom is
+      # unmistakable: every tool refuses at once. ref rather than say, even so —
+      # the refusal NAMES the cure's own command, so a reader who hits it is
+      # already told where to look. what the brief adds is why the skill name
+      # rotates between tools, which is the part that sends a traveler to wait
+      # out a window that is not there
+      - briefs/hazard.a-build-wipes-role-links-and-fails-every-hook-closed.md
 
       # research - load on demand
       - briefs/research.selfreview-effectiveness.md
+      # what a peer review costs and why — the two answers behind `rhx review._.cost`.
+      # ref: read once, when someone asks why the bill is what it is, or
+      # before a change to the review prompt's section order
+      - briefs/research.review-cost-and-cache.md
 
-      # philosophy - load on demand. the WHY under the severity-tiered concede:
-      # a budget balances perfection with pragmatism, so it is the maintenance
-      # floor rather than a limit. ref, not say, because it is the argument the
-      # two role rules (driver + reviewer) cite; those rules ride say in their
-      # own roles, and the argument is read once, when a severity is chosen
+      # philosophy - load on demand. the why under the severity-tiered concede:
+      # a budget balances perfection with pragmatism, so it is a maintenance
+      # floor rather than a limit. ref, not say: it is the argument the two
+      # role rules (driver + reviewer) cite, and it is read once, when a
+      # severity is chosen
       - briefs/philosophy.a-review-budget-balances-perfection-with-pragmatism.md

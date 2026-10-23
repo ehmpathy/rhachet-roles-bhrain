@@ -11,6 +11,7 @@ const asRun = (input: Partial<ReviewRun>): ReviewRun => ({
   blockers: 0,
   nitpicks: 0,
   tallier: 'deterministic',
+  talliedBy: null,
   detected: true,
   ...input,
 });
@@ -75,4 +76,39 @@ describe('asReviewVerdict', () => {
       });
     });
   });
+
+  given(
+    '[case5] 🔴 an undetected run whose stderr opens with harness chrome and a source frame',
+    () => {
+      // the exact shape a `rhx review` child prints on an uncaught throw: a styled dispatch
+      // banner, its status tree, then node's source frame and code line ahead of the message
+      const run = asRun({
+        detected: false,
+        exitCode: 1,
+        stderr: [
+          '\u001b[2m🪨 run solid skill repo=bhrain/role=reviewer/skill=review\u001b[0m',
+          '   └─ 💥 failed with an error',
+          '',
+          '/x/node_modules/rhachet/dist/genContextBrain.js:108',
+          '    throw new BrainChoiceNotFoundError(`brain not found: ${choice}`);',
+          '    ^',
+          '',
+          // node prints `name: message`, and this error's message carries its name too
+          'BrainChoiceNotFoundError: BrainChoiceNotFoundError: brain not found: nonexistent/broken/brain',
+          '    at genContextBrain (/x/genContextBrain.js:108:11)',
+        ].join('\n'),
+      });
+
+      when('[t0] mapped to a verdict', () => {
+        then(
+          'the reason is the line that names the error, its class named once, never the chrome',
+          () => {
+            expect(asReviewVerdict({ run }).reason).toEqual(
+              'BrainChoiceNotFoundError: brain not found: nonexistent/broken/brain',
+            );
+          },
+        );
+      });
+    },
+  );
 });

@@ -1,7 +1,8 @@
 import * as fs from 'fs/promises';
 import { HelpfulError } from 'helpful-errors';
 
-import { getFsErrorCode } from '../getFsErrorCode';
+import { getFsErrorCode } from '@src/utils/fs/getFsErrorCode';
+
 import { isHumanTurn } from '../transcript/isHumanTurn';
 
 /**

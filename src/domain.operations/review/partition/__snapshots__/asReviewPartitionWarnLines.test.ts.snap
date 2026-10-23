@@ -1,0 +1,7 @@
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
+
+exports[`asReviewPartitionWarnLines given: [case1] two partitions that share no file when: [t0] the warn is checked then: the lines match the snapshot 1`] = `
+"🟡 no file is common to two partitions — is each one truly judged alone?
+   └─ a test needs its subject, a module the types it imports; add the overlap each side leans on
+"
+`;

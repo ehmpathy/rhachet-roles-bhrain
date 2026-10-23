@@ -213,7 +213,8 @@ const asInventorySection = (input: { report: TokenSpendReport }): string[] => {
             of: row.category,
           }),
         })),
-        ...input.report.notes.map((note) => `note: ${note}`),
+        // a caveat is a fact about how to read the inventory, so it is a field of it
+        ...input.report.notes.map((note) => `caveat = ${note}`),
       ],
     }),
   ];
@@ -360,7 +361,8 @@ const asProposalSection = (input: {
     leaves: input.proposal.targets.length
       ? input.proposal.targets.map((target, index) => ({
           line: `${index + 1}. ${target.row.category} · ${target.row.label}  ≤ ${input.proposal.rankedBy === 'price' ? asPriced(target.row.priced) : `${asTokenCountHuman({ tokens: asTokenRepaidTotal({ tokens: target.row.tokens }) })} tok`}  ${asShare({ part: target.share, whole: 1 })}`,
-          children: target.hint ? [`hint: ${target.hint}`] : [],
+          // the cut a target names is part of the proposal, so it is a field, never a hint leaf
+          children: target.hint ? [`cut = ${target.hint}`] : [],
         }))
       : ['(no target)'],
   }),

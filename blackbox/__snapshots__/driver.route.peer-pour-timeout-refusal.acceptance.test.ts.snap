@@ -4,7 +4,7 @@ exports[`driver.route.peer-pour-timeout-refusal.acceptance given: [case1] RHACHE
 "🦉 the way speaks for itself
 🦉 l1 pours 1 lane
    └─ r1:prose-reviewer
-error: BadRequestError: timeout must be a positive integer: env RHACHET_REVIEW_TIMEOUT_MS declares "abc". write a whole number of 1 or more, or drop the key to take its default.
+✋ ConstraintError: timeout must be a positive integer: env RHACHET_REVIEW_TIMEOUT_MS declares "abc". write a whole number of 1 or more, or drop the key to take its default.
 "
 `;
 
@@ -12,6 +12,6 @@ exports[`driver.route.peer-pour-timeout-refusal.acceptance given: [case2] RHACHE
 "🦉 the way speaks for itself
 🦉 l1 pours 1 lane
    └─ r1:prose-reviewer
-error: BadRequestError: timeout must be a positive integer: env RHACHET_REVIEW_TIMEOUT_MS declares "". write a whole number of 1 or more, or drop the key to take its default.
+✋ ConstraintError: timeout must be a positive integer: env RHACHET_REVIEW_TIMEOUT_MS declares "". write a whole number of 1 or more, or drop the key to take its default.
 "
 `;

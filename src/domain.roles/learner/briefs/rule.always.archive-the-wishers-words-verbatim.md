@@ -81,7 +81,7 @@ order, their emphasis, and their mid-thought corrections are unedited. the value
 | repair it | never touch it |
 |---|---|
 | a **typo** — a transposed letter, a dropped one, a doubled word | a word choice, however informal |
-| **profanity** — cut it, or soften it in place | the order the points arrive in |
+| **profanity** — cut it, or swap in a neutral `[placeholder]`. never a softened or masked form of the word | the order the points arrive in |
 | a mangled path, flag, or identifier, where the intent is plain | a mid-thought correction — that IS the record |
 | broken markdown that renders wrong | lowercase, terseness, an absent article |
 
@@ -92,6 +92,11 @@ past that is a rewrite, and a rewrite belongs in `.settled`, where it is yours t
 ⇒ the why is that a seed is a **published artifact of this repo**, read by every future traveler and
 carried into reviews. a typo in it is noise on every read, and profanity is a cost the reader never
 agreed to pay. neither carries a scrap of the concept.
+
+🔴 **profanity is cut or replaced, never softened.** a masked or softened form of the word (`f***`,
+`frick`) still persists the profanity — the reader reconstructs it. a neutral `[placeholder]` does
+not, and it keeps the sentence readable. profanity lands nowhere in a seed: not the `.said`, not
+the header, not the summary row.
 
 ## 🔴 .a seed is the seed of a CONCEPT — never a chronicle of the round
 
@@ -176,6 +181,8 @@ once, applied to every occurrence set a route accumulates.
 - a `.said` block whose **sense** was edited — reworded, reordered, or paraphrased = **blocker**
 - a `.said` block that ships a **typo** or **profanity** = **blocker**; a seed is published, and the
   surface repair costs the record naught
+- profanity persisted in a seed, whole or as a masked or softened form = **blocker**. a neutral
+  `[placeholder]` is not a violation
 - a seed filed outside `$route/.seeds/` = **blocker**
 - seed entries with no `inventory.of=seeds._.md` summary beside them = **blocker** — the census
   claim is what makes this an inventory

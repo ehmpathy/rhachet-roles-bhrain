@@ -1,6 +1,7 @@
 import { given, then, useThen, when } from 'test-fns';
 
 import { genContextReviewBrainSupplyDemo } from '../route/__test_assets__/genContextReviewBrainSupplyDemo';
+import { ENV_OF_REVIEW_PRIME_MEET } from './prime/asReviewPrimeMeetFromEnv';
 import { runOneReview } from './runOneReview';
 
 /**
@@ -23,6 +24,7 @@ describe('runOneReview', () => {
             cmd: 'echo "blockers: 0\\nnitpicks: 2\\nreview output"',
             timeout: 'PT1M',
             cwd,
+            meet: 'skip',
           },
           noopContext,
         ),
@@ -56,6 +58,7 @@ describe('runOneReview', () => {
             cmd: 'sh -c \'echo "blockers: 3\\nnitpicks: 1"; exit 2\'',
             timeout: 'PT1M',
             cwd,
+            meet: 'skip',
           },
           noopContext,
         ),
@@ -85,6 +88,7 @@ describe('runOneReview', () => {
               cmd: 'sh -c \'printf "blockers: 1\\nnitpicks: 0\\n"; sleep 0.2; printf "review output\\n"\'',
               timeout: 'PT1M',
               cwd,
+              meet: 'skip',
             },
             {
               ...noopContext,
@@ -128,6 +132,7 @@ describe('runOneReview', () => {
             cmd: 'sh -c \'echo "boom, no counts here"; exit 2\'',
             timeout: 'PT1M',
             cwd,
+            meet: 'skip',
           },
           noopContext,
         ),
@@ -142,6 +147,68 @@ describe('runOneReview', () => {
         //         a nonzero exit stays a no-verdict, and the counts default to 0 with detected=false.
         expect(run.detected).toEqual(false);
         expect(run.tallier).toEqual(null);
+      });
+    });
+  });
+
+  /**
+   * the prime meet is the pour's grant. a parent that itself joined a pour — a guard lane
+   * that runs a `review.by` wrapper, say — must not hand `join` to a child it did not pour,
+   * on either capture tactic: the streamed one is a human's `--for` lane, with no peers.
+   * so the child's marker is written by `meet`, and never inherited from the parent env.
+   */
+  given('[case5] 🔴 a parent env that carries the prime-meet join', () => {
+    // print the child's view of the marker, then a verdict so the run tallies clean
+    const cmd = `sh -c 'echo "meet=\${${ENV_OF_REVIEW_PRIME_MEET}:-none}"; echo "blockers: 0"; echo "nitpicks: 0"'`;
+
+    /**
+     * runs one child with the parent env set to `join`, restored after
+     * .note = deliberate mutation of process.env, in a scoped zone: the prior value
+     *         is restored in a `finally`, so no other case inherits it
+     */
+    const runUnderJoinedParent = async (input: {
+      meet: 'join' | 'skip';
+      streamed: boolean;
+    }) => {
+      const prior = process.env[ENV_OF_REVIEW_PRIME_MEET];
+      process.env[ENV_OF_REVIEW_PRIME_MEET] = 'join';
+      try {
+        return await runOneReview(
+          { cmd, timeout: 'PT1M', cwd, meet: input.meet },
+          input.streamed
+            ? { ...noopContext, onStdoutChunk: () => {} }
+            : noopContext,
+        );
+      } finally {
+        if (prior === undefined) delete process.env[ENV_OF_REVIEW_PRIME_MEET];
+        if (prior !== undefined) process.env[ENV_OF_REVIEW_PRIME_MEET] = prior;
+      }
+    };
+
+    when('[t0] a streamed child is run with meet skip', () => {
+      const run = useThen('it resolves a run', async () =>
+        runUnderJoinedParent({ meet: 'skip', streamed: true }),
+      );
+      then('the child sees no marker — the parent join does not leak', () => {
+        expect(run.stdout).toContain('meet=none');
+      });
+    });
+
+    when('[t1] a buffered child is run with meet skip', () => {
+      const run = useThen('it resolves a run', async () =>
+        runUnderJoinedParent({ meet: 'skip', streamed: false }),
+      );
+      then('the child sees no marker', () => {
+        expect(run.stdout).toContain('meet=none');
+      });
+    });
+
+    when('[t2] a buffered child is run with meet join', () => {
+      const run = useThen('it resolves a run', async () =>
+        runUnderJoinedParent({ meet: 'join', streamed: false }),
+      );
+      then('the child sees join — the pour granted it', () => {
+        expect(run.stdout).toContain('meet=join');
       });
     });
   });

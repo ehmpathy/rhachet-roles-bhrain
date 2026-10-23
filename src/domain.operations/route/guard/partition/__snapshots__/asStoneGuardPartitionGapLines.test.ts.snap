@@ -1,0 +1,60 @@
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
+
+exports[`asStoneGuardPartitionGapLines given: [case1] one @all gap with an unclaimed file when: [t0] the refusal is rendered then: it matches the snapshot 1`] = `
+"🦉 the partitions would leave changed files unreviewed — no lane runs until they cover them
+
+🗿 route.guard.partition, on stone 5.1.execution
+   └─ scope @all
+      ├─ 1 changed file sits in no partition
+      │  └─ src/route/drive/getBlocker.ts → route (+ src/route/drive/**)
+      └─ repair — run this, then re-arrive
+         └─ rhx route.guard.partition --route .behavior/v2026_01_01.demo --for review --peer @all \\
+              --partition 'route=src/route/*,src/route/drive/**,.behavior/v2026_01_01.demo/**' \\
+              --mode apply
+
+✨ did you know?
+   ├─ claim each domain whole, in every layer, and the files you edit next stay covered
+   └─ e.g. src/route/** and blackbox/{,__snapshots__/}driver.route.* in one partition"
+`;
+
+exports[`asStoneGuardPartitionGapLines given: [case2] a gap with only a partition that lacks the route when: [t0] the refusal is rendered then: it matches the snapshot 1`] = `
+"🦉 the partitions would leave changed files unreviewed — no lane runs until they cover them
+
+🗿 route.guard.partition, on stone 5.1.execution
+   └─ scope @all
+      ├─ 1 partition lacks the route spec
+      │  └─ meter (+ the route spec)
+      └─ repair — run this, then re-arrive
+         └─ rhx route.guard.partition --route .behavior/v2026_01_01.demo --for review --peer @all \\
+              --partition 'route=src/route/*,src/route/drive/**,.behavior/v2026_01_01.demo/**' \\
+              --mode apply
+
+✨ did you know?
+   ├─ claim each domain whole, in every layer, and the files you edit next stay covered
+   └─ e.g. src/route/** and blackbox/{,__snapshots__/}driver.route.* in one partition"
+`;
+
+exports[`asStoneGuardPartitionGapLines given: [case3] two gaps — the @all set and one override when: [t0] the refusal is rendered then: it matches the snapshot 1`] = `
+"🦉 the partitions would leave changed files unreviewed — no lane runs until they cover them
+
+🗿 route.guard.partition, on stone 5.1.execution
+   ├─ scope @all
+   │  ├─ 1 changed file sits in no partition
+   │  │  └─ src/route/drive/getBlocker.ts → route (+ src/route/drive/**)
+   │  └─ repair — run this, then re-arrive
+   │     └─ rhx route.guard.partition --route .behavior/v2026_01_01.demo --for review --peer @all \\
+   │          --partition 'route=src/route/*,src/route/drive/**,.behavior/v2026_01_01.demo/**' \\
+   │          --mode apply
+   └─ scope mech-rules on 5.1.execution
+      ├─ 1 changed file sits in no partition
+      │  └─ docs/x.md → docs (+ docs/**)
+      └─ repair — run this, then re-arrive
+         └─ rhx route.guard.partition --route .behavior/v2026_01_01.demo --for review --peer mech-rules --stone 5.1.execution \\
+              --partition 'solo=src/**,.behavior/v2026_01_01.demo/**' \\
+              --partition 'docs=docs/**,.behavior/v2026_01_01.demo/**' \\
+              --mode apply
+
+✨ did you know?
+   ├─ claim each domain whole, in every layer, and the files you edit next stay covered
+   └─ e.g. src/route/** and blackbox/{,__snapshots__/}driver.route.* in one partition"
+`;

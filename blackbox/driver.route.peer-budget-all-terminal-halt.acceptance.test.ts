@@ -42,6 +42,14 @@ const ASSETS_DIR = path.join(__dirname, '.test/assets/route-peer-budget-all-term
  *   [t2.5]: artifact changes, both SKIPPED (exhausted)
  *         - thorough now 3/2, review SKIPPED → exhausted
  *         - ALL terminal, route halts with exhaustion message
+ *
+ * .mock = the peer reviewer subprocesses (`.test/mock-review-quick-fail.sh`,
+ *         `.test/mock-review-thorough.sh`)
+ * .why = the subject is the guard's budget and halt orchestration. a fixed reviewer verdict
+ *        drives each level through its states deterministically, with no brain call, no
+ *        credentials, and no model variance
+ * .real = the review acceptance suites run the real review skill; this suite stops at the
+ *         guard's read of a reviewer's stdout
  */
 describe('driver.route.peer-budget-all-terminal-halt.acceptance', () => {
   given('[case1] level 1 exhausts but level 2 still has budget', () => {
@@ -111,7 +119,8 @@ describe('driver.route.peer-budget-all-terminal-halt.acceptance', () => {
       then('route is blocked by judge (blockers > 0)', () => {
         const output = result.stdout.toLowerCase();
         expect(output).toContain('blocked');
-        expect(output).toContain('blocker');
+        // a nonzero count — a clean `0 blockers` row must not satisfy this claim
+        expect(output).toMatch(/\b[1-9]\d*\s+blockers?\b/);
       });
 
       then('snapshot [t0]: l1 rejected, l2 awaits, no halt', () => {

@@ -1,4 +1,4 @@
-# F21 — the review tally brain is `openrouter/deepseek/flash`, not `fireworks/deepseek/v4-flash`
+# F21 — the review tally brain is `openrouter/deepseek/flash`; this branch adds only its live clamp
 
 ## .the fork
 
@@ -17,18 +17,30 @@ tidier shape but couples two contracts the code deliberately keeps apart (the ta
 configurable per route). C leaves a guard that cannot read a prose verdict, which is the case the
 fallback exists for.
 
+## .shrunk — main already carries the move
+
+the merge of `origin/main` brought the same move, landed upstream: `FIXED_FALLBACK_BRAIN` is
+`openrouter/deepseek/flash` in its own file under `brain/`, held versionless and registered by
+`reviewDefaultBrains.test.ts`. this branch's constant edit resolved to main's.
+
+what main does not carry is a **live** call on that slug: its registered-slug clamp passes against
+a provider that refuses every call, and its live tally suite rides `DEFAULT_TEST_BRAIN`, never the
+production slug. so the one piece this fulcrum still holds is the clamp, ported onto main's
+choiceless supply.
+
 ## .rework — clean
 
-one constant; three snapshots that render the footer.
+one integration test; delete it and naught else moves.
 
 ## .confidence — 85%, and why it is low
 
-a contract a human did not pick, though it follows F19's ruled provider exactly.
+a live test of a production slug spends a real call per run; a reader may judge the registered-slug
+clamp enough.
 
 ## .where
 
-- `src/domain.operations/route/genReviewBrainSupply.ts`
-- `src/domain.operations/route/genReviewBrainSupply.integration.test.ts` — the clamp, red on the 412
+- `src/domain.operations/brain/genReviewBrainSupply.integration.test.ts` — the clamp, red on a
+  provider that refuses the call
 
 ## .verdict
 

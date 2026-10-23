@@ -1,7 +1,8 @@
 import * as fs from 'fs/promises';
 
+import { isErrorOfAbsence } from '@src/utils/fs/isErrorOfAbsence';
+
 import { isEEXIST } from '../guard/isEEXIST';
-import { isENOENT } from '../guard/isENOENT';
 import { delOneFile } from './delOneFile';
 import { getOneFileText } from './getOneFileText';
 import { isDriveStateLockHolderAlive } from './isDriveStateLockHolderAlive';
@@ -39,7 +40,7 @@ const genReapClaimHandle = async (input: {
   const [ours, theirs] = await Promise.all([
     handle.stat(),
     fs.stat(input.claimPath).catch((error: unknown) => {
-      if (isENOENT(error)) return null;
+      if (isErrorOfAbsence({ error })) return null;
       throw error;
     }),
   ]);

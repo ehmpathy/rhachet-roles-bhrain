@@ -11,6 +11,8 @@ export interface ReviewVerdict {
   nitpicks: number;
   outcome: 'passed' | 'rejected' | 'malfunctioned';
   tallier: 'deterministic' | 'probabilistic' | null;
+  /** the PINNED brain that tallied — null where no sub-brain did */
+  talliedBy: string | null;
   reason?: string;
 }
 
@@ -43,7 +45,7 @@ export interface ReviewRubricResult {
 
 /**
  * .what = a live progress event for one rubric, emitted before + after its review runs
- * .why = review.by runs rubrics serially and each review is a slow LLM call (timeout PT21M);
+ * .why = review.by pours its rubrics and each review is a slow LLM call (timeout PT21M);
  *        with no live signal the human faces a silent terminal for minutes
  *        (rule.require.status-feedback). the orchestrator stays narrative — it emits these
  *        events; the cli boundary renders them to stdout via the SAME formatGuardReviewerTree a

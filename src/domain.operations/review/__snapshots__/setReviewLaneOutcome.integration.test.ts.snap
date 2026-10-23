@@ -1,0 +1,41 @@
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
+
+exports[`setReviewLaneOutcome given: [case1] a lane whose spend was measured when: [t0] the lane ends then: the tally matches its snapshot 1`] = `
+"✨ metrics.realized
+   ├─ tokens
+   │  ├─ input: 1,000
+   │  ├─ cache.set: 200
+   │  ├─ cache.get: 3,000
+   │  ├─ output: 400
+   │  └─ total: 4,600
+   ├─ cost
+   │  └─ total: $0.019
+   └─ time
+      └─ total: 42s
+
+🦉 needs your talons
+
+🔍 review
+   ├─ logs: .log/bhrain/review/2026-10-08T00-00-00-000Z
+   ├─ review: .reviews/peer/report.md
+   └─ summary
+      ├─ 1 blocker 🔴
+      └─ 2 nitpicks 🟠"
+`;
+
+exports[`setReviewLaneOutcome given: [case2] a lane whose spend was unmeasured when: [t0] the lane ends then: the tally matches its snapshot 1`] = `
+"✨ metrics.realized
+   ├─ spend: unmeasured 🟡 the brain reported no usage — unknown, not $0
+   └─ time
+      └─ total: 7s
+
+🦉 not even a vole
+
+🔍 review
+   ├─ logs: .log/bhrain/review/2026-10-08T00-00-01-000Z
+   ├─ review: .reviews/peer/report.md
+   └─ summary
+      ├─ 0 blockers
+      ├─ 0 nitpicks
+      └─ all good 👍"
+`;

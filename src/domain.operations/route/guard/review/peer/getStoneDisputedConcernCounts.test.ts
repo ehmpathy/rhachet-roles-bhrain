@@ -12,6 +12,7 @@ const asGiven = (input: {
   blockers: 1,
   nitpicks: 0,
   unreadable: false,
+  constraint: null,
   iteration: 1,
   pathGiven: input.pathGiven,
 });
@@ -23,7 +24,7 @@ const asAbsorption = (input: {
   given: string;
 }): ReviewAbsorption => ({ ...input });
 
-describe('computeDisputedConcernCounts', () => {
+describe('getStoneDisputedConcernCounts.computeDisputedConcernCounts', () => {
   given('[case1] no absorptions at all', () => {
     when('[t0] the counts are computed', () => {
       then('naught is excluded', () => {

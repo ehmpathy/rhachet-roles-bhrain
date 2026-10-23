@@ -3,6 +3,8 @@ import { BadRequestError } from 'helpful-errors';
 import * as path from 'path';
 import { genTempDir, given, then, useBeforeAll, useThen, when } from 'test-fns';
 
+import { getRepoClaudeSettingsPath } from '@src/.test/getRepoClaudeSettingsPath';
+
 import { WHOAMI_TIMEOUT_MS } from '../brain/getCloneAddress';
 import { getRepoRootWithFallback } from '../guard/getRepoRootWithFallback';
 import { DriveBlockerState } from './DriveBlocker';
@@ -225,7 +227,7 @@ describe('mutateDriveBlockerState.integration', () => {
         () => {
           const budget = useBeforeAll(async () => {
             const repoRoot = await getRepoRootWithFallback({ from: __dirname });
-            const file = path.join(repoRoot, '.claude', 'settings.json');
+            const file = getRepoClaudeSettingsPath({ repoRoot });
             // .why guarded, verdict deferred = an absent or malformed settings file is a
             //    drift this case catches; a raw throw in `useBeforeAll` would kill the case
             //    before the row that names the repair (`rule.require.failloud`)
@@ -258,7 +260,7 @@ describe('mutateDriveBlockerState.integration', () => {
                 'the claude hook settings could not be read or parsed',
                 {
                   expected: budget.file,
-                  hint: 'restore `.claude/settings.json` (rhx roles boot re-stamps it). this case binds the lock acquire deadline to the `route.drive` hook timeouts declared there, so an absent file leaves the deadline unbound rather than merely untested',
+                  hint: 'restore the repo settings layer (`rhx init --hooks` re-derives it). this case binds the lock acquire deadline to the `route.drive` hook timeouts declared there, so an absent file leaves the deadline unbound rather than merely untested',
                 },
               );
             expect(budget.timeouts.length).toBeGreaterThan(0);

@@ -1,8 +1,10 @@
+import { asDidYouKnowLines } from '@src/domain.operations/asDidYouKnowLines';
+
 import { asTreeLeaves } from './asTreeLeaves';
 
 /**
  * .what = renders a halt as the owl vibe line, then one tree: the class, each fact a leaf,
- *         and the fix last
+ *         and the fix last; an alternate move, when one exists, follows as its own block
  * .why = an error is the moment a human most needs the path forward; a raw json dump
  *        buries the fix under its own punctuation
  */
@@ -18,7 +20,6 @@ export const formatTokenSpendErrorTree = (input: {
       .map(([key, value]) => asFactLeaf({ key, value })),
     ...asRemedyLeaf({ label: 'why', text: facts.why, run: undefined }),
     ...asRemedyLeaf({ label: 'fix', text: facts.hint, run: facts.hintRun }),
-    ...asRemedyLeaf({ label: 'or', text: facts.or, run: facts.orRun }),
   ];
   return [
     input.header === '✋ ConstraintError'
@@ -28,22 +29,27 @@ export const formatTokenSpendErrorTree = (input: {
     '🌕 reflect.on.token.spend',
     `   └─ ${input.header}: ${input.message}`,
     ...asTreeLeaves({ leaves }).map((line) => `      ${line}`),
+    ...asDidYouKnowLines({
+      rows: asAlternateRows({ text: facts.or, run: facts.orRun }),
+    }),
     '',
   ].join('\n');
 };
 
 /**
  * .what = the metadata keys that carry the path forward, rendered last and in order
- * .why = a halt reads facts first, then why, then the fix, then the alternative
+ * .why = a halt reads facts first, then why, then the fix; the alternative renders apart, as
+ *        a next move a reader may take, never a leaf of the diagnosis
+ *        (rule.require.coconut-hints)
  */
 const KEYS_OF_REMEDY = new Set(['why', 'hint', 'hintRun', 'or', 'orRun']);
 
 /**
- * .what = one remedy leaf — `why:`, `fix:`, or `or:` — with its runnable command beneath
+ * .what = one remedy leaf — `why:` or `fix:` — with its runnable command beneath
  * .why = a fix a human can paste beats a fix they must compose
  */
 const asRemedyLeaf = (input: {
-  label: 'why' | 'fix' | 'or';
+  label: 'why' | 'fix';
   text: unknown;
   run: unknown;
 }): { line: string; children: string[] }[] => {
@@ -54,6 +60,16 @@ const asRemedyLeaf = (input: {
       children: typeof input.run === 'string' ? [input.run] : [],
     },
   ];
+};
+
+/**
+ * .what = the alternate move as one hint row, its command named last
+ * .why = the row a reader acts on is the command, so it closes the row
+ */
+const asAlternateRows = (input: { text: unknown; run: unknown }): string[] => {
+  if (typeof input.text !== 'string') return [];
+  if (typeof input.run !== 'string') return [input.text];
+  return [`${input.text}, run \`${input.run}\``];
 };
 
 /**

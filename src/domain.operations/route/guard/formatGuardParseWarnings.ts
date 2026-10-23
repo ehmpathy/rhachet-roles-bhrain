@@ -123,10 +123,10 @@ const renderOne = (input: {
           paste: `${warn.key}: ${EXAMPLE_BRAIN}`,
         },
         {
-          says: `note: that value is an EXAMPLE — pasted as-is, the next entry to this stone dispatches \`/model ${EXAMPLE_BRAIN}\``,
+          says: `that value is an EXAMPLE — pasted as-is, the next entry to this stone dispatches \`/model ${EXAMPLE_BRAIN}\``,
         },
         {
-          says: `or: remove the \`${warn.key}:\` line, and inherit the brain deliberately`,
+          says: `or remove the \`${warn.key}:\` line, and inherit the brain deliberately`,
         },
       ],
     };
@@ -155,7 +155,7 @@ const renderOne = (input: {
               paste: `${warn.key}: ${repair.repaired}`,
             },
             {
-              says: `note: check that is the slug you meant before you paste it`,
+              says: `check that is the slug you meant before you paste it`,
             },
           ]
         : [
@@ -193,7 +193,7 @@ const renderOne = (input: {
           paste: `${warn.canonical}: ${warn.value || EXAMPLE_BRAIN}`,
         },
         {
-          says: `note: \`${warn.key}:\` is recognized, but ONLY \`${warn.canonical}:\` is applied — its value did not take`,
+          says: `\`${warn.key}:\` is recognized, but ONLY \`${warn.canonical}:\` is applied — its value did not take`,
         },
       ],
     };
@@ -207,7 +207,7 @@ const renderOne = (input: {
         says: `fix: rename \`${warn.key}:\` to \`${warn.nearest}:\` if that was the intent`,
       },
       {
-        says: `or: if \`${warn.key}:\` is deliberate, this warn is safe to ignore`,
+        says: `or if \`${warn.key}:\` is deliberate, this warn is safe to ignore`,
       },
     ],
   };

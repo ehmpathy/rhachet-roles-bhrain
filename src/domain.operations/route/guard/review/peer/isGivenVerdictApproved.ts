@@ -2,7 +2,7 @@ import { computeReviewPeerVerdict } from './meter/computeReviewPeerVerdict';
 
 /**
  * .what = does this given's verdict clear the allowance, so the lane raises no hold?
- * .why = TWO gates ask it — `assertAbsorptionHasSubject` (R2, to refuse a stance with no subject)
+ * .why = TWO gates ask it — `asAbsorptionWithSubject` (R2, to refuse a stance with no subject)
  *        and `computeUndeclaredConcerns` (to skip a lane that owes no declaration). both must
  *        key on the VERDICT rather than a raw blocker count (F012 / S06), and both were
  *        written inline with the same sentinel pair and the same comment above it, word for

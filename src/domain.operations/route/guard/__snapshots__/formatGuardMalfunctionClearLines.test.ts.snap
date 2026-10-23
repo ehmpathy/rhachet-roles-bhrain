@@ -1,0 +1,53 @@
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
+
+exports[`formatGuardMalfunctionClearLines given: [case1] a judge broke on a transient fault when: [t0] the block renders at an open \`├─\` lead then: the bytes a driver reads are pinned 1`] = `
+"   ├─ still yours to clear
+   │  ├─ 💥 judge j1 broke
+   │  │  └─ cause = request timed out (transient)
+   │  └─ next
+   │     ├─ 1. read each given for its cause, and fix what you can
+   │     ├─ 2. re-arrive
+   │     │  └─ rhx route.stone.set --stone 5.1.execution --as arrived
+   │     └─ ask a human only for a grant you cannot make (an absent credential, a permission, etc)"
+`;
+
+exports[`formatGuardMalfunctionClearLines given: [case2] two review lanes broke — a bad glob and a credential when: [t0] the block renders at a closed \`└─\` lead then: the bytes a driver reads are pinned 1`] = `
+"      └─ still yours to clear
+         ├─ 💥 lane mechanic (r2) broke
+         │  ├─ cause = glob matched no files: src/absent/** (glob)
+         │  └─ fix = narrow that lane's --paths-wout / --paths-with, in $route/5.1.execution.guard
+         ├─ 💥 lane architect (r3) broke
+         │  ├─ cause = api key absent for openrouter (credential)
+         │  └─ fix = ask a human for the grant the cause names
+         └─ next
+            ├─ 1. read each given for its cause, and fix what you can
+            ├─ 2. answer each broken lane, like a rejected one
+            │  ├─ rhx route.stone.set --stone 5.1.execution --as absorbed --that mechanic
+            │  └─ rhx route.stone.set --stone 5.1.execution --as absorbed --that architect
+            ├─ 3. re-arrive
+            │  └─ rhx route.stone.set --stone 5.1.execution --as arrived
+            └─ ask a human only for a grant you cannot make (an absent credential, a permission, etc)"
+`;
+
+exports[`formatGuardMalfunctionClearLines given: [case3] a record that predates the per-part lines when: [t0] the block renders with no reason then: the bytes a driver reads are pinned 1`] = `
+"   ├─ still yours to clear
+   │  └─ next
+   │     ├─ 1. read each given for its cause, and fix what you can
+   │     ├─ 2. answer each broken lane, like a rejected one
+   │     ├─ 3. re-arrive
+   │     │  └─ rhx route.stone.set --stone 5.1.execution --as arrived
+   │     └─ ask a human only for a grant you cannot make (an absent credential, a permission, etc)"
+`;
+
+exports[`formatGuardMalfunctionClearLines given: [case4] a review lane broke on a cause no class names when: [t0] the block renders then: the bytes a driver reads are pinned 1`] = `
+"   └─ still yours to clear
+      ├─ 💥 lane bash (r1) broke
+      │  └─ cause = exit code 1 (unknown)
+      └─ next
+         ├─ 1. read each given for its cause, and fix what you can
+         ├─ 2. answer each broken lane, like a rejected one
+         │  └─ rhx route.stone.set --stone 5.1.execution --as absorbed --that bash
+         ├─ 3. re-arrive
+         │  └─ rhx route.stone.set --stone 5.1.execution --as arrived
+         └─ ask a human only for a grant you cannot make (an absent credential, a permission, etc)"
+`;

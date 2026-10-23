@@ -1,0 +1,19 @@
+{
+  "key": "0e006ee1821fd0ed",
+  "kind": "create",
+  "repo": {
+    "owner": "ehmpathy",
+    "name": "rhachet"
+  },
+  "exid": null,
+  "title": "fix(run): warn on stderr when a self-linked dist is older than its src",
+  "description": "## .what\n\nin a repo that links its own build into .agent (a role package that dogfoods its skills), rhx resolves each skill through dist/**/*.js, never src/. no step warns when dist is older than src, so a live skill call runs the previous build in silence.\n\ncheckable evidence, from ehmpathy/rhachet-roles-bhrain on 2026-09-04:\n- dist/domain.operations/route/guard/review/peer/ still held getAllRouteGuardReviewPeerGivensAtHash.js, which src had deleted\n- dist lacked getLatestPeerGivensPerSlug.js, which src had added\n- four live rhx route.stone.set calls answered from the pre-fix engine, plausibly and with no error, while types/unit/format/lint (all of which read src) were green\n\n## .why\n\nthe stale engine does not fail; it answers in the shape the caller expects. in a repo whose product is a guard, the reviewer, the gate, and the halt are all the previous version, on the very branch meant to change them. no test catches it, since the test suites compile src.\n\n## .shape of the fix\n\n1. at skill resolution (findUniqueSkillExecutable or the rhx entrypoint), when the resolved executable sits under a dist/ whose package root also holds a src/, compare the newest src/**/*.ts mtime against the newest dist/**/*.js mtime\n2. if src is newer, warn on stderr and continue, for example:\n   ⚠️ dist is older than src, so this ran the PREVIOUS build. fix: npm run build\n3. warn, never halt: a stale dist is normal mid-edit, and a hard stop would break every skill call in ordinary work. an mtime compare is a heuristic (a touched file yields a false warn), which is acceptable for a warn and not for a gate\n4. clamp: a fixture package with src newer than dist asserts the warn on stderr; equal mtimes assert silence\n\na build step inside the skill path was considered and rejected: it slows every call and couples the runner to the build.\n\ncaught in ehmpathy/rhachet-roles-bhrain .dream/v2026_09_04.fix.rhx-runs-stale-dist-with-no-warn.md",
+  "status": null,
+  "via": "gh.issues",
+  "auth": "as-human",
+  "idem": null,
+  "heldSeq": 12,
+  "recordStatus": "DELIVERED",
+  "reason": null,
+  "deliveredExid": "608"
+}

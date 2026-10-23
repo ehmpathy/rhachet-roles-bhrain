@@ -21,10 +21,11 @@ exports[`formatTokenSpendErrorTree a halt with why, fix, and or → each last in
       ├─ path = /p/a.jsonl
       ├─ records = 1 (0 assistant records with message.usage)
       ├─ why: a fixture has no usage to read
-      ├─ fix: point at another transcript
-      │  └─ rhx reflect.on.token.spend --from <path-to-another.jsonl>
-      └─ or: read the whole dir as a corpus
-         └─ rhx reflect.on.token.spend --from '/p/*.jsonl'
+      └─ fix: point at another transcript
+         └─ rhx reflect.on.token.spend --from <path-to-another.jsonl>
+
+✨ did you know?
+   └─ read the whole dir as a corpus, run \`rhx reflect.on.token.spend --from '/p/*.jsonl'\`
 "
 `;
 

@@ -33,3 +33,10 @@ a sweep of the real-brain suites could show the move is clean after all.
 ruled — A, by the efficiency director at 5.3: fold it in now. a test brain pinned to a suspended
 provider fails every real-brain suite whatever this pr does, so the pr cannot go green with the
 move deferred; the swap is the same clean, test-pinned move as F21. the dream is struck.
+
+## .shrunk — main already carries the move; naught of it is left on this branch
+
+the merge of `origin/main` brought the same cutover, landed upstream and further along:
+`DEFAULT_TEST_BRAIN` is an openrouter deepseek flash slug with host filters, and the four
+fireworks-pinned suites are renamed or deleted. every file this fulcrum touched resolved to
+main's version, so the branch now carries no F22 change at all.

@@ -1,5 +1,6 @@
 import { given, then, when } from 'test-fns';
 
+import { asGuardBindNarrowLever } from '../asGuardBindNarrowLever';
 import { formatRouteGuardReviewPeerFeedbackAbsorbPrompt } from './formatRouteGuardReviewPeerFeedbackAbsorbPrompt';
 
 /**
@@ -55,6 +56,7 @@ describe('formatRouteGuardReviewPeerFeedbackAbsorbPrompt', () => {
             pathTaken: pathTakenArch,
             retired: false,
             unreadable: false,
+            constraint: null,
           },
           {
             slug: 'mechanic',
@@ -64,6 +66,7 @@ describe('formatRouteGuardReviewPeerFeedbackAbsorbPrompt', () => {
             pathTaken: pathTakenMech,
             retired: false,
             unreadable: false,
+            constraint: null,
           },
         ],
       });
@@ -129,12 +132,13 @@ describe('formatRouteGuardReviewPeerFeedbackAbsorbPrompt', () => {
           pathGiven: pathGivenArch,
           pathTaken: pathTakenArch,
           unreadable: false,
+          constraint: null,
         },
       });
 
       then('names the absent taken path and why it is required', () => {
         expect(out).toContain(
-          'feedbackAbsorption absent for reviewer architect',
+          'feedback absorption absent for reviewer architect',
         );
         expect(out).toContain(displayTakenArch);
         expect(out).toContain('the .taken file IS that engagement');
@@ -169,16 +173,25 @@ describe('formatRouteGuardReviewPeerFeedbackAbsorbPrompt', () => {
           pathGiven: pathGivenArch,
           pathTaken: pathTakenArch,
           unreadable: false,
+          constraint: null,
         },
       });
 
       then('renders distinct re-articulate copy from the absent case', () => {
         expect(out).toContain(
-          'feedbackAbsorption stale for reviewer architect',
+          'feedback absorption stale for reviewer architect',
         );
         expect(out).toContain('absorb the feedback that is live');
         expect(out).not.toContain('the .taken file IS that engagement');
       });
+
+      then(
+        'opens its tree directly under the header, as the absent case does',
+        () => {
+          // clamp: the stale case once held a blank row the absent case lacks
+          expect(out.split('\n')[1]).toContain('   ├─ your response answers');
+        },
+      );
 
       then('blames the REVIEWER, never the artifact change', () => {
         // F7. under the reviewer-keyed debt an edit to the artifact does NOT stale
@@ -223,6 +236,7 @@ describe('formatRouteGuardReviewPeerFeedbackAbsorbPrompt', () => {
             pathTaken: pathTakenArch,
             retired: false,
             unreadable: false,
+            constraint: null,
           },
           {
             slug: 'mechanic',
@@ -232,6 +246,7 @@ describe('formatRouteGuardReviewPeerFeedbackAbsorbPrompt', () => {
             pathTaken: pathTakenMech,
             retired: true,
             unreadable: false,
+            constraint: null,
           },
         ],
       });
@@ -273,6 +288,7 @@ describe('formatRouteGuardReviewPeerFeedbackAbsorbPrompt', () => {
             pathTaken: pathTakenArch,
             retired: false,
             unreadable: false,
+            constraint: null,
           },
         ],
       });
@@ -315,6 +331,7 @@ describe('formatRouteGuardReviewPeerFeedbackAbsorbPrompt', () => {
             pathTaken: pathTakenArch,
             retired: false,
             unreadable: false,
+            constraint: null,
           },
           {
             slug: 'mechanic',
@@ -324,6 +341,7 @@ describe('formatRouteGuardReviewPeerFeedbackAbsorbPrompt', () => {
             pathTaken: pathTakenMech,
             retired: false,
             unreadable: true,
+            constraint: null,
           },
         ],
       });
@@ -383,6 +401,7 @@ describe('formatRouteGuardReviewPeerFeedbackAbsorbPrompt', () => {
             pathTaken: pathTakenArch,
             retired: false,
             unreadable: false,
+            constraint: null,
           },
         ],
       });
@@ -425,6 +444,7 @@ describe('formatRouteGuardReviewPeerFeedbackAbsorbPrompt', () => {
             pathTaken: pathTakenMech,
             retired: true,
             unreadable: true,
+            constraint: null,
           },
         ],
       });
@@ -484,4 +504,162 @@ describe('formatRouteGuardReviewPeerFeedbackAbsorbPrompt', () => {
       );
     });
   });
+
+  given(
+    '[case7] a REFUSED reviewer — a constraint given, never a malfunction',
+    () => {
+      // 🔴 a reviewer that refused (an overflow, exit 2) left no count, so its given reads as
+      //    unreadable. but a refusal names its own cause and lever. to call it "unreadable —
+      //    name the malfunction" sends the driver to diagnose a break that never happened, while
+      //    the lever that clears it sits in the given unread (rule.require.errors-name-the-fix)
+      when('[t0] the refusal proposes partitions', () => {
+        const out = formatRouteGuardReviewPeerFeedbackAbsorbPrompt({
+          case: 'reply-prompt',
+          stone: '1.execute',
+          root: ROOT,
+          reviewers: [
+            {
+              slug: 'mechanic',
+              blockers: 1,
+              nitpicks: 0,
+              pathGiven: pathGivenMech,
+              pathTaken: pathTakenMech,
+              retired: false,
+              unreadable: true,
+              constraint: {
+                cause: 'prompt exceeds 75% of context window',
+                overflowed: true,
+                partitions: [
+                  `beta={src/beta/**,${ROUTE_REL}/**}`,
+                  `alpha={src/alpha/**,${ROUTE_REL}/**}`,
+                ],
+              },
+            },
+          ],
+        });
+
+        then('the verdict names the refusal and its cause', () => {
+          expect(out).toContain(
+            'verdict = refused — ✋ prompt exceeds 75% of context window',
+          );
+        });
+
+        then('🔴 it never calls the refusal a malfunction', () => {
+          expect(out).not.toContain('name the malfunction');
+          expect(out).not.toContain('malfunctioned');
+          expect(out).not.toContain('unreadable');
+        });
+
+        then('it names the lever as the driver own, paste-ready', () => {
+          expect(out).toContain(
+            'what to do — spend the lever its .given names',
+          );
+          expect(out).toContain('yours to make');
+          expect(out).toContain(
+            `rhx route.guard.partition --route ${ROUTE_REL} --for review --peer @all`,
+          );
+          // a legacy brace proposal reprints as a bare comma list (seed S53)
+          expect(out).toContain(
+            `--partition 'beta=src/beta/**,${ROUTE_REL}/**'`,
+          );
+          expect(out).toContain(
+            `--partition 'alpha=src/alpha/**,${ROUTE_REL}/**'`,
+          );
+          expect(out).not.toMatch(/--partition '[^']*[{}]/);
+          expect(out).toContain('--mode apply');
+        });
+
+        then('it names the absorb path that discharges the debt', () => {
+          expect(asFlatProse(out)).toContain('write the .taken above');
+          expect(out).toContain(
+            'rhx route.stone.set --stone 1.execute --as absorbed --that mechanic',
+          );
+        });
+
+        then('matches snapshot', () => {
+          expect(out).toMatchSnapshot();
+        });
+      });
+
+      when('[t1] the refusal proposes no partitions', () => {
+        const out = formatRouteGuardReviewPeerFeedbackAbsorbPrompt({
+          case: 'reply-prompt',
+          stone: '1.execute',
+          root: ROOT,
+          reviewers: [
+            {
+              slug: 'mechanic',
+              blockers: 1,
+              nitpicks: 0,
+              pathGiven: pathGivenMech,
+              pathTaken: pathTakenMech,
+              retired: false,
+              unreadable: true,
+              constraint: {
+                cause: 'prompt exceeds 75% of context window',
+                overflowed: true,
+                partitions: [],
+              },
+            },
+          ],
+        });
+
+        then('it names the bind lever instead', () => {
+          expect(out).toContain('edit $route/1.execute.guard directly');
+          expect(out).not.toContain('rhx route.guard.partition');
+        });
+
+        // the narrow-bind lever has one home, so its flag order cannot drift here (i017 r003 b2)
+        then('the bind lever reads the one narrow-bind composer', () => {
+          const narrow = asGuardBindNarrowLever({ stone: '1.execute' });
+          expect(out).toContain(`${narrow.act}:`);
+          expect(out).toContain(
+            `${narrow.fields}, or its --conversation depth`,
+          );
+        });
+
+        then('matches snapshot', () => {
+          expect(out).toMatchSnapshot();
+        });
+      });
+
+      // 🔴 only an overflow is cured by a partition or a narrower bind. an unknown flag is
+      //    refused too, and to tell that driver to partition sends them down the wrong road
+      when('[t2] the refusal was no overflow', () => {
+        const out = formatRouteGuardReviewPeerFeedbackAbsorbPrompt({
+          case: 'reply-prompt',
+          stone: '1.execute',
+          root: ROOT,
+          reviewers: [
+            {
+              slug: 'mechanic',
+              blockers: 1,
+              nitpicks: 0,
+              pathGiven: pathGivenMech,
+              pathTaken: pathTakenMech,
+              retired: false,
+              unreadable: true,
+              constraint: {
+                cause: 'unknown flag --paths-wtih',
+                overflowed: false,
+                partitions: [],
+              },
+            },
+          ],
+        });
+
+        then('🔴 it offers neither a partition nor a narrower bind', () => {
+          expect(out).not.toContain('rhx route.guard.partition');
+          expect(out).not.toContain('edit $route/1.execute.guard directly');
+        });
+
+        then('it points the driver at the fix its .given names', () => {
+          expect(out).toContain('fix what its .given names — yours to make');
+          expect(out).toContain(
+            'verdict = refused — ✋ unknown flag --paths-wtih',
+          );
+        });
+      });
+    },
+  );
 });

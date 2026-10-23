@@ -1,0 +1,105 @@
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
+
+exports[`getOneReviewPartitionsFault given: [case2] every malformed form when: [t0] each fault is rendered then: each headline and its printed fix match the snapshot 1`] = `
+[
+  {
+    "fault": {
+      "headline": "--partition 'src/domain.operations/review/**' does not parse; it names no slug — the form is '<slug>=<globs>'",
+      "hint": "fix: --partition 'review=src/domain.operations/review/**'",
+    },
+    "given": [
+      "src/domain.operations/review/**",
+    ],
+  },
+  {
+    "fault": {
+      "headline": "--partition 'blackbox/driver.route.*' does not parse; it names no slug — the form is '<slug>=<globs>'",
+      "hint": "fix: --partition 'driver.route=blackbox/driver.route.*'",
+    },
+    "given": [
+      "blackbox/driver.route.*",
+    ],
+  },
+  {
+    "fault": {
+      "headline": "--partition '**/*.ts' does not parse; it names no slug — the form is '<slug>=<globs>'",
+      "hint": "fix: --partition '<slug>=**/*.ts'",
+    },
+    "given": [
+      "**/*.ts",
+    ],
+  },
+  {
+    "fault": {
+      "headline": "--partition 'Review=src/**' does not parse; the slug 'Review' must be lowercase letters, digits, '.', '_' or '-'",
+      "hint": "fix: --partition 'review=src/**'",
+    },
+    "given": [
+      "Review=src/**",
+    ],
+  },
+  {
+    "fault": {
+      "headline": "--partition 'my route=src/route/**' does not parse; the slug 'my route' must be lowercase letters, digits, '.', '_' or '-'",
+      "hint": "fix: --partition 'my-route=src/route/**'",
+    },
+    "given": [
+      "my route=src/route/**",
+    ],
+  },
+  {
+    "fault": {
+      "headline": "--partition '=src/route/**' does not parse; the slug '' must be lowercase letters, digits, '.', '_' or '-'",
+      "hint": "fix: --partition 'route=src/route/**'",
+    },
+    "given": [
+      "=src/route/**",
+    ],
+  },
+  {
+    "fault": {
+      "headline": "--partition 'route+=blackbox/driver.route.*' does not parse; there is no '+=' — repeat the slug instead, and its globs merge",
+      "hint": "fix: --partition 'route=blackbox/driver.route.*'",
+    },
+    "given": [
+      "route+=blackbox/driver.route.*",
+    ],
+  },
+  {
+    "fault": {
+      "headline": "--partition 'review={ , }' does not parse; it names no glob",
+      "hint": "e.g. --partition 'review=src/domain.operations/review/**,src/domain.objects/**' (repeat a slug to add a glob)",
+    },
+    "given": [
+      "review={ , }",
+    ],
+  },
+  {
+    "fault": {
+      "headline": "--partition 'review' has unbalanced braces in '{src/review/**,src/domain.objects/**'",
+      "hint": "fix: --partition 'review=src/review/**,src/domain.objects/**'",
+    },
+    "given": [
+      "review={src/review/**,src/domain.objects/**",
+    ],
+  },
+  {
+    "fault": {
+      "headline": "--partition 'route' has unbalanced braces in '{src/a/**,blackbox/driver.route.{drive,set.*'",
+      "hint": "fix: --partition 'route=src/a/**,blackbox/driver.route.{drive,set.*}'",
+    },
+    "given": [
+      "route={src/a/**,blackbox/driver.route.{drive,set.*",
+    ],
+  },
+  {
+    "fault": {
+      "headline": "--partition 'route' has unbalanced braces in 'src/a/**},blackbox/x.*'",
+      "hint": "fix: --partition 'route=src/a/**,blackbox/x.*'",
+    },
+    "given": [
+      "route=src/a/**},blackbox/x.*",
+    ],
+  },
+]
+`;

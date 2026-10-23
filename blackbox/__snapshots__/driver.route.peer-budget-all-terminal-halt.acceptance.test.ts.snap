@@ -11,7 +11,7 @@ exports[`driver.route.peer-budget-all-terminal-halt.acceptance given: [case1] le
    │   └─ taken: .reviews/peer/1.vision._.review.i001.8739656801d5e77f22.r001._.taken.by_self.quick-fail.md
    │
    ├─ r2: thorough (l2, 0/2)
-   │   └─ awaits arrival
+   │   └─ awaits l1 terminal
    │
    └─ ✗ judge.1 - blocked [TIME]
 

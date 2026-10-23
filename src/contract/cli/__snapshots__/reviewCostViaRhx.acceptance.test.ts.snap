@@ -1,0 +1,546 @@
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
+
+exports[`reviewCostViaRhx.acceptance given: [case1] a human who asks the published command to explain itself when: [t0] \`rhx review._.cost --help\` is typed then: the help renders as the human reads it, banner aside 1`] = `
+"review._.cost — what review cost, at the breadth you ask for
+
+  usage
+    rhx review._.cost --of run       [--at <tree|rundir>] [--json]
+    rhx review._.cost --of tree      [--at <dir>] [--json | --trace]
+    rhx review._.cost --of grove     [--at <dir>] [--json | --limit <n>]
+
+  the axis
+    --of run     ONE review invocation — its cost AND what its prompt was made of
+    --of tree    this worktree's review history, rolled up by reviewer, level, stone, round
+    --of grove   every tree on this machine, rolled up by tree, route, stone, reviewer
+
+  inputs
+    --of <breadth>  required, one of run | tree | grove
+    --at <dir>      where to read — cwd for run and tree, the parent of cwd for grove;
+                    run also takes one run's log dir
+    --limit <n>     rows per axis — grove only, not with --json, default 15
+    --trace         add the round × reviewer cross-tab — tree only, not with --json
+    --json          emit json, not a tree
+    --help, -h      show this and exit
+
+  what it reads
+    .log/bhrain/review/*/
+      ├─ input.args.json        the scope the review was given
+      ├─ metrics.compiled.json  what the prompt was made of, per named input
+      └─ metrics.realized.json  the measured tokens and cost — never an estimate
+
+  each run is graded, at every breadth
+    metered   metrics present; every figure measured
+    refused   died at validation; nil cost is a fact, reads $0
+    unknown   got past validation, metrics absent; reads absent, never $0.00
+
+  a 0.0% cache rate names its cause
+    cold (first round)  no prior prompt to share; no act owed
+    cold (lapsed Nm)    the prefix aged past the 66-minute reach — a real loss;
+                        a shorter pause between rounds holds it
+    warm               a repeat within the reach, yet the cache was not read
+
+  by level
+    read from the guard as it stands now, so a promoted lane re-files its past runs.
+    an unread guard reads "(no level — guard unread)", never L1
+
+  --trace
+    the rollups are marginals and hide a step; --trace shows round × reviewer in
+    key order (<stone> i<NNN> · <slug>), so a lever's effect reads in sequence
+
+  --of run --at
+    a dir whose name leads with an iso stamp is one run; any other dir is a tree,
+    and its latest run is read. --of tree and --of grove refuse a run dir
+
+  cache.set 0
+    measured, not absent — these brains bill no cache write. it stays in every
+    rate's denominator, so a brain that does bill one is not undercounted
+
+  prefix rows — did the cache serve what two rounds shared
+    expected   the longest prefix this round shares with its prior round, in tok est.
+    cache.get  what the cache served; reach = cache.get / expected
+    breaks in  head · tail · whole
+    served       the cache read up to the shared prefix
+    missed       a prefix was shared, the cache served none — the ttl or the pin
+    self-cached  the cache read came from the run's own turns
+    over-reach   the cache read past the shared prefix — the instrument is off
+    unshared     no prefix shared — the prompt layout broke
+    unmeasured   a prompt or a meter is absent
+    --of run shows the pair; tree and grove count verdicts. pairs never cross trees
+
+  which input bought this — answered at all three breadths
+    --of run     per run, exact, plus the directories each target came from
+    --of tree    by input, summed over this tree's runs it could read, unread count beside it
+    --of grove   by input, summed over every tree's runs it could read, unread count beside it
+    the directory rows sum only the runs that recorded where their target mass came from
+
+  examples
+    rhx review._.cost --of run
+    rhx review._.cost --of run --at .log/bhrain/review/2026-09-23T16-00-00-000Z.pid1.abc
+    rhx review._.cost --of tree
+    rhx review._.cost --of tree --trace
+    rhx review._.cost --of grove --limit 25
+    rhx review._.cost --of grove --json
+
+"
+`;
+
+exports[`reviewCostViaRhx.acceptance given: [case2] an empty corpus, priced through the published command when: [t0] the refusal travels through the runner then: the refusal renders as the human reads it 1`] = `
+"🦉 woah there
+
+✋ ConstraintError: no reviews to price
+   ├─ looked in: <temp-root>/.log/bhrain/review
+   ├─ why: review logs are git-ignored ephemera, local to the machine that ran them
+   └─ fix: run a review here first, or point --at at a tree where reviews ran
+"
+`;
+
+exports[`reviewCostViaRhx.acceptance given: [case3] the \`--json\` journey the skill advertises when: [t0] a priceable tree is asked for json then: and the document renders whole 1`] = `
+"{
+  "root": "<temp-root>/.log/bhrain/review",
+  "report": {
+    "corpus": {
+      "key": "corpus",
+      "runs": {
+        "total": 1,
+        "metered": 1,
+        "refused": 0,
+        "unknown": 0,
+        "accounted": 1
+      },
+      "tokens": {
+        "input": 400000,
+        "cacheSet": 0,
+        "cacheGet": 100000,
+        "output": 1000
+      },
+      "cost": "USD 0.250_000",
+      "cacheHitRate": 0.2,
+      "cacheGrade": {
+        "kind": "cold",
+        "cause": "first"
+      }
+    },
+    "byReviewer": [
+      {
+        "key": "(no guard identity — a hand or review.by run)",
+        "runs": {
+          "total": 1,
+          "metered": 1,
+          "refused": 0,
+          "unknown": 0,
+          "accounted": 1
+        },
+        "tokens": {
+          "input": 400000,
+          "cacheSet": 0,
+          "cacheGet": 100000,
+          "output": 1000
+        },
+        "cost": "USD 0.250_000",
+        "cacheHitRate": 0.2,
+        "cacheGrade": {
+          "kind": "cold",
+          "cause": "first"
+        }
+      }
+    ],
+    "byLevel": [
+      {
+        "key": "(no level — guard unread)",
+        "runs": {
+          "total": 1,
+          "metered": 1,
+          "refused": 0,
+          "unknown": 0,
+          "accounted": 1
+        },
+        "tokens": {
+          "input": 400000,
+          "cacheSet": 0,
+          "cacheGet": 100000,
+          "output": 1000
+        },
+        "cost": "USD 0.250_000",
+        "cacheHitRate": 0.2,
+        "cacheGrade": {
+          "kind": "cold",
+          "cause": "first"
+        }
+      }
+    ],
+    "byProvider": [
+      {
+        "key": "(no provider — unreported)",
+        "runs": {
+          "total": 1,
+          "metered": 1,
+          "refused": 0,
+          "unknown": 0,
+          "accounted": 1
+        },
+        "tokens": {
+          "input": 400000,
+          "cacheSet": 0,
+          "cacheGet": 100000,
+          "output": 1000
+        },
+        "cost": "USD 0.250_000",
+        "cacheHitRate": 0.2,
+        "cacheGrade": {
+          "kind": "cold",
+          "cause": "first"
+        }
+      }
+    ],
+    "byStone": [
+      {
+        "key": "(no guard identity — a hand or review.by run)",
+        "runs": {
+          "total": 1,
+          "metered": 1,
+          "refused": 0,
+          "unknown": 0,
+          "accounted": 1
+        },
+        "tokens": {
+          "input": 400000,
+          "cacheSet": 0,
+          "cacheGet": 100000,
+          "output": 1000
+        },
+        "cost": "USD 0.250_000",
+        "cacheHitRate": 0.2,
+        "cacheGrade": {
+          "kind": "cold",
+          "cause": "first"
+        }
+      }
+    ],
+    "byRound": [
+      {
+        "key": "(no guard identity — a hand or review.by run)",
+        "runs": {
+          "total": 1,
+          "metered": 1,
+          "refused": 0,
+          "unknown": 0,
+          "accounted": 1
+        },
+        "tokens": {
+          "input": 400000,
+          "cacheSet": 0,
+          "cacheGet": 100000,
+          "output": 1000
+        },
+        "cost": "USD 0.250_000",
+        "cacheHitRate": 0.2,
+        "cacheGrade": {
+          "kind": "cold",
+          "cause": "first"
+        }
+      }
+    ],
+    "byRoundAndReviewer": [
+      {
+        "key": "(no guard identity — a hand or review.by run)",
+        "runs": {
+          "total": 1,
+          "metered": 1,
+          "refused": 0,
+          "unknown": 0,
+          "accounted": 1
+        },
+        "tokens": {
+          "input": 400000,
+          "cacheSet": 0,
+          "cacheGet": 100000,
+          "output": 1000
+        },
+        "cost": "USD 0.250_000",
+        "cacheHitRate": 0.2,
+        "cacheGrade": {
+          "kind": "cold",
+          "cause": "first"
+        }
+      }
+    ],
+    "inputs": {
+      "read": 0,
+      "compiled": 0,
+      "parsed": 0,
+      "unread": 1,
+      "attributed": 0,
+      "unattributed": 0,
+      "ungraded": 0,
+      "sections": {
+        "instructions": 0,
+        "outputFormat": 0,
+        "rules": 0,
+        "refs": 0,
+        "conversation": 0,
+        "targetFiles": 0,
+        "targetDiffs.additions": 0,
+        "targetDiffs.deletions": 0,
+        "targetDiffs.mutations": 0,
+        "scaffold": 0
+      },
+      "chars": 0,
+      "targets": 0,
+      "locus": {
+        "placed": 0,
+        "targets": []
+      }
+    }
+  },
+  "prefix": {
+    "verdicts": {
+      "pairs": 0,
+      "served": 0,
+      "missed": 0,
+      "selfCached": 0,
+      "overReach": 0,
+      "unshared": 0,
+      "unmeasured": 0
+    },
+    "pairs": []
+  },
+  "seam": {
+    "instructions": true,
+    "outputFormat": true,
+    "rules": true,
+    "refs": true,
+    "scaffold": true,
+    "targetFiles": true,
+    "targetDiffs.additions": true,
+    "targetDiffs.deletions": true,
+    "targetDiffs.mutations": false,
+    "conversation": false
+  }
+}
+"
+`;
+
+exports[`reviewCostViaRhx.acceptance given: [case3] the \`--json\` journey the skill advertises when: [t1] the consumer pipes it to a json reader then: the json document a consumer receives is snapped 1`] = `
+{
+  "prefix": {
+    "pairs": [],
+    "verdicts": {
+      "missed": 0,
+      "overReach": 0,
+      "pairs": 0,
+      "selfCached": 0,
+      "served": 0,
+      "unmeasured": 0,
+      "unshared": 0,
+    },
+  },
+  "report": {
+    "byLevel": [
+      {
+        "cacheGrade": {
+          "cause": "first",
+          "kind": "cold",
+        },
+        "cacheHitRate": 0.2,
+        "cost": "USD 0.250_000",
+        "key": "(no level — guard unread)",
+        "runs": {
+          "accounted": 1,
+          "metered": 1,
+          "refused": 0,
+          "total": 1,
+          "unknown": 0,
+        },
+        "tokens": {
+          "cacheGet": 100000,
+          "cacheSet": 0,
+          "input": 400000,
+          "output": 1000,
+        },
+      },
+    ],
+    "byProvider": [
+      {
+        "cacheGrade": {
+          "cause": "first",
+          "kind": "cold",
+        },
+        "cacheHitRate": 0.2,
+        "cost": "USD 0.250_000",
+        "key": "(no provider — unreported)",
+        "runs": {
+          "accounted": 1,
+          "metered": 1,
+          "refused": 0,
+          "total": 1,
+          "unknown": 0,
+        },
+        "tokens": {
+          "cacheGet": 100000,
+          "cacheSet": 0,
+          "input": 400000,
+          "output": 1000,
+        },
+      },
+    ],
+    "byReviewer": [
+      {
+        "cacheGrade": {
+          "cause": "first",
+          "kind": "cold",
+        },
+        "cacheHitRate": 0.2,
+        "cost": "USD 0.250_000",
+        "key": "(no guard identity — a hand or review.by run)",
+        "runs": {
+          "accounted": 1,
+          "metered": 1,
+          "refused": 0,
+          "total": 1,
+          "unknown": 0,
+        },
+        "tokens": {
+          "cacheGet": 100000,
+          "cacheSet": 0,
+          "input": 400000,
+          "output": 1000,
+        },
+      },
+    ],
+    "byRound": [
+      {
+        "cacheGrade": {
+          "cause": "first",
+          "kind": "cold",
+        },
+        "cacheHitRate": 0.2,
+        "cost": "USD 0.250_000",
+        "key": "(no guard identity — a hand or review.by run)",
+        "runs": {
+          "accounted": 1,
+          "metered": 1,
+          "refused": 0,
+          "total": 1,
+          "unknown": 0,
+        },
+        "tokens": {
+          "cacheGet": 100000,
+          "cacheSet": 0,
+          "input": 400000,
+          "output": 1000,
+        },
+      },
+    ],
+    "byRoundAndReviewer": [
+      {
+        "cacheGrade": {
+          "cause": "first",
+          "kind": "cold",
+        },
+        "cacheHitRate": 0.2,
+        "cost": "USD 0.250_000",
+        "key": "(no guard identity — a hand or review.by run)",
+        "runs": {
+          "accounted": 1,
+          "metered": 1,
+          "refused": 0,
+          "total": 1,
+          "unknown": 0,
+        },
+        "tokens": {
+          "cacheGet": 100000,
+          "cacheSet": 0,
+          "input": 400000,
+          "output": 1000,
+        },
+      },
+    ],
+    "byStone": [
+      {
+        "cacheGrade": {
+          "cause": "first",
+          "kind": "cold",
+        },
+        "cacheHitRate": 0.2,
+        "cost": "USD 0.250_000",
+        "key": "(no guard identity — a hand or review.by run)",
+        "runs": {
+          "accounted": 1,
+          "metered": 1,
+          "refused": 0,
+          "total": 1,
+          "unknown": 0,
+        },
+        "tokens": {
+          "cacheGet": 100000,
+          "cacheSet": 0,
+          "input": 400000,
+          "output": 1000,
+        },
+      },
+    ],
+    "corpus": {
+      "cacheGrade": {
+        "cause": "first",
+        "kind": "cold",
+      },
+      "cacheHitRate": 0.2,
+      "cost": "USD 0.250_000",
+      "key": "corpus",
+      "runs": {
+        "accounted": 1,
+        "metered": 1,
+        "refused": 0,
+        "total": 1,
+        "unknown": 0,
+      },
+      "tokens": {
+        "cacheGet": 100000,
+        "cacheSet": 0,
+        "input": 400000,
+        "output": 1000,
+      },
+    },
+    "inputs": {
+      "attributed": 0,
+      "chars": 0,
+      "compiled": 0,
+      "locus": {
+        "placed": 0,
+        "targets": [],
+      },
+      "parsed": 0,
+      "read": 0,
+      "sections": {
+        "conversation": 0,
+        "instructions": 0,
+        "outputFormat": 0,
+        "refs": 0,
+        "rules": 0,
+        "scaffold": 0,
+        "targetDiffs.additions": 0,
+        "targetDiffs.deletions": 0,
+        "targetDiffs.mutations": 0,
+        "targetFiles": 0,
+      },
+      "targets": 0,
+      "unattributed": 0,
+      "ungraded": 0,
+      "unread": 1,
+    },
+  },
+  "root": "<temp-root>/.log/bhrain/review",
+  "seam": {
+    "conversation": false,
+    "instructions": true,
+    "outputFormat": true,
+    "refs": true,
+    "rules": true,
+    "scaffold": true,
+    "targetDiffs.additions": true,
+    "targetDiffs.deletions": true,
+    "targetDiffs.mutations": false,
+    "targetFiles": true,
+  },
+}
+`;

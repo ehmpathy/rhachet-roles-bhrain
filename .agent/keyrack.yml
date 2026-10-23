@@ -1,5 +1,6 @@
 org: ehmpathy
 extends:
+  - .agent/repo=bhrain/role=driver/keyrack.yml
   - .agent/repo=bhrain/role=reviewer/keyrack.yml
   - .agent/repo=bhuild/role=dispatcher/keyrack.yml
   - .agent/repo=ehmpathy/role=mechanic/keyrack.yml
@@ -9,7 +10,7 @@ env.test:
   - ANTHROPIC_API_KEY
   - TAVILY_API_KEY
   - XAI_API_KEY
-  - FIREWORKS_API_KEY
+  - OPENROUTER_API_KEY
 env.all: null
 env.prep:
-  - FIREWORKS_API_KEY
+  - OPENROUTER_API_KEY

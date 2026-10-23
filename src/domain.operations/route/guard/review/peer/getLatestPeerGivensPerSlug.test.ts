@@ -14,6 +14,7 @@ const asGiven = (input: {
   blockers: input.blockers ?? 1,
   nitpicks: 0,
   unreadable: input.unreadable ?? false,
+  constraint: null,
   // .note = `hash` is an input to the PATH only — the record carries no hash field, by
   //         design (see RouteGuardReviewPeerGiven). so these cases assert on pathGiven,
   //         which is where a hash legitimately lives.

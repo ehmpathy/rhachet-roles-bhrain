@@ -41,7 +41,7 @@ exports[`findsertReviewSelfGitignore.integration given: [case5] .gitignore prese
 
 exports[`findsertReviewSelfGitignore.integration given: [case5] .gitignore present with incorrect content when: [t0] findsert is called then: overwrites with correct content: result-overwrite 1`] = `
 {
-  "action": "created",
+  "action": "rewrote",
   "pathRelative": "$ROUTE/review/self/.gitignore",
 }
 `;

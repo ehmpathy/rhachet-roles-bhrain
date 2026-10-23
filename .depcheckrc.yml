@@ -32,5 +32,5 @@ ignores:
 
 ignorePatterns:
   - "**/.test/assets/**"
-  - ".agent/.actors/**" # a clone's gitignored brain config dir; holds third-party plugin code
-  - ".claude/plugins/**" # the same plugin code, reached through the `.claude` symlink into that dir
+  - ".agent/.actors/**" # per-clone brain home, gitignored; may hold foreign plugin code
+  - ".claude/**" # a link to the repo actor's brain dir — the same home, by a second path

@@ -1,8 +1,11 @@
 import type { IsoTimeStamp } from 'iso-time';
 
 import type { RouteStoneGuardReviewSelf } from '@src/domain.objects/Driver/RouteStoneGuard';
+import { HEADER_OF_DID_YOU_KNOW } from '@src/domain.operations/asDidYouKnowLines';
 
 import { asGuidanceBranches } from './asGuidanceBranches';
+import { asGuardReasonHead } from './guard/asGuardReasonHead';
+import { formatGuardMalfunctionClearLines } from './guard/formatGuardMalfunctionClearLines';
 import { asConcessionReasonDisplay } from './guard/review/peer/asConcessionReasonDisplay';
 import { asRungLabel } from './guard/review/peer/meter/asRungLabel';
 import { getReviewPeerLadderStatus } from './guard/review/peer/meter/getReviewPeerLadderStatus';
@@ -72,6 +75,15 @@ type FormatInput =
       stone: string;
       action: 'forced';
       details: string;
+    }
+  | {
+      operation: 'route.stone.set';
+      stone: string;
+      action: 'inflight';
+      /** the `⏳` line, rendered by `asRouteInflightNote` */
+      note: string;
+      /** the detail rows under the note, in order */
+      details: string[];
     }
   | {
       operation: 'route.stone.set';
@@ -183,6 +195,7 @@ type FormatInput =
           blockers: number;
           nitpicks: number;
           tallier: 'deterministic' | 'probabilistic' | null;
+          talliedBy: string | null;
           path: string;
           exitClass: 'passed' | 'constraint' | 'malfunction';
           peer?: {
@@ -202,6 +215,8 @@ type FormatInput =
           path: string;
         }>;
         peerMeters?: GuardPeerMeterStatus[];
+        /** the lever the refused reviewers' .given named — an overflow, and its partitions */
+        constraintLever?: { overflowed: boolean; partitions: string[] };
       };
     }
   | {
@@ -226,6 +241,16 @@ type FormatInput =
       content: string;
       path: string;
     };
+
+/**
+ * .what = renders detail rows under an ack line, the last closed by `└─`
+ * .why = the `forced` and `inflight` arms share one detail-row shape, so it lives here once
+ */
+const asDetailRowLines = (input: { rows: string[] }): string[] =>
+  input.rows.map(
+    (row, index) =>
+      `${index === input.rows.length - 1 ? '      └─ ' : '      ├─ '}${row}`,
+  );
 
 /**
  * .what = formats operation output as tree structure
@@ -312,6 +337,8 @@ export const formatRouteStoneEmit = (input: FormatInput): string => {
         formatLetsReflect({
           stone: input.stone,
           slug: input.slug ?? input.selfReview.reviewSelf.slug,
+          // .why = the articulation path is route-relative, so the self review carries its
+          //        route as a required field; an absent route would print `/review/self/...`
           route: input.selfReview.route,
           reviewSelf: input.selfReview.reviewSelf,
           index: input.selfReview.index,
@@ -462,11 +489,12 @@ export const formatRouteStoneEmit = (input: FormatInput): string => {
     } else if (input.action === 'forced') {
       lines.push(`   ├─ stone = ${input.stone}`);
       lines.push(`   └─ ✓ forced`);
-      const detailLines = input.details.split('\n');
-      detailLines.forEach((line, i) => {
-        const prefix = i === detailLines.length - 1 ? '      └─ ' : '      ├─ ';
-        lines.push(`${prefix}${line}`);
-      });
+      lines.push(...asDetailRowLines({ rows: input.details.split('\n') }));
+    } else if (input.action === 'inflight') {
+      lines.push(`   ├─ stone = ${input.stone}`);
+      lines.push(`   ├─ as = inflight`);
+      lines.push(`   └─ ${input.note}`);
+      lines.push(...asDetailRowLines({ rows: input.details }));
     } else if (input.action === 'rewound') {
       // format cascade with cleared counts and yield outcomes.
       // 🔴 the label is `cleared`, never `deleted`: the triggers inside these counts are
@@ -522,8 +550,16 @@ export const formatRouteStoneEmit = (input: FormatInput): string => {
         lines.push(`   ├─ stone = ${input.stone}`);
         lines.push(`   ├─ passage = ${passageValue}`);
 
+        // a malfunction reason carries a header and one line per broken part; the `reason =`
+        // row and the remedy groups read the header, the clear block reads the whole
+        const reasonHead =
+          asGuardReasonHead({
+            passage: input.passage,
+            reason: input.reason,
+          }) ?? input.reason;
+
         // detect budget exhaustion to add options hint
-        const isBudgetExhausted = input.reason.includes('budget exhausted');
+        const isBudgetExhausted = reasonHead.includes('budget exhausted');
         const reasonConnector = isBudgetExhausted ? '├─' : '└─';
 
         // 🔴 a CONCESSION exhaustion carries a parseable marker in its reason, meant to be
@@ -533,7 +569,7 @@ export const formatRouteStoneEmit = (input: FormatInput): string => {
         //    not (r011 blocker.1). the decode is ONE shared transformer every surface calls
         //    (rule.require.single-source-of-truth-for-render).
         const { reasonText, warnText } = asConcessionReasonDisplay({
-          reason: input.reason,
+          reason: reasonHead,
         });
         lines.push(`   ${reasonConnector} reason = ${reasonText}`);
         // 🟡 the urgent warn names what the grade earns — more budget, for this stone
@@ -551,10 +587,27 @@ export const formatRouteStoneEmit = (input: FormatInput): string => {
         //    continuation below is the one this nest relies on.
         if (warnText) lines.push(`   │  └─ 🟡 ${warnText}`);
 
+        // a malfunction halts the stone yet stays the DRIVER's to clear, so say so where the
+        // driver first meets it — one row per broken part, with its cause and next step
+        // (rule.always.diagnose-reviewer-malfunctions). the rows come from the ONE shared
+        // operation route.drive also renders (rule.forbid.duplicate-format-tree-operations).
+        // a MIXED halt (a lane broke as another spent) keeps them too: the exhaustion adds
+        // remedies, it never retires these (r014 nitpick.3, i014). there the reason sits on
+        // `├─`, so the block closes the tree as its peer rather than nests as its child
+        if (input.passage === 'malfunction')
+          lines.push(
+            ...formatGuardMalfunctionClearLines({
+              stone: input.stone,
+              reason: input.reason,
+              indent: isBudgetExhausted ? '   ' : '      ',
+              branch: '└─',
+            }),
+          );
+
         if (isBudgetExhausted) {
           // add options as separate block with did you know header
           lines.push('');
-          lines.push('✨ did you know?');
+          lines.push(HEADER_OF_DID_YOU_KNOW);
           // 🔴 the labels, the commands, the `budget exhausted:` parse, and the single-slug
           //    `--peer` rule all come from ONE shared operation, never a duplicated local
           //    copy — `rule.forbid.duplicate-format-tree-operations` forbids exactly that.
@@ -564,7 +617,9 @@ export const formatRouteStoneEmit = (input: FormatInput): string => {
               groups: computeBlockRemedyGroups({
                 stone: input.stone,
                 passage: input.passage,
-                reason: input.reason,
+                reason: reasonHead,
+                // this branch renders with no guard data, so no .given was read
+                lever: null,
               }),
               baseIndent: '   ',
             }),

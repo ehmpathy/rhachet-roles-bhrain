@@ -18,6 +18,9 @@ export const ROLE_DRIVER: Role = Role.build({
   briefs: {
     dirs: [{ uri: __dirname + '/briefs' }],
   },
+  // .why = a driver's guards run peer reviews and the tally fallback on openrouter, so a repo
+  //        that enrolls only the driver still needs that key declared
+  keyrack: { uri: __dirname + '/keyrack.yml' },
   inits: {
     dirs: [{ uri: __dirname + '/inits' }],
     exec: [
@@ -33,10 +36,6 @@ export const ROLE_DRIVER: Role = Role.build({
   hooks: {
     onBrain: {
       onBoot: [
-        {
-          command: './node_modules/.bin/rhachet roles boot --role driver',
-          timeout: 'PT30S',
-        },
         // .why PT25S = this hook may probe `clone whoami` (cap 10s, p50 5.5s) and take the
         //      drive-state lock twice; `getCloneAddress.integration.test.ts [case8]` clamps it
         {

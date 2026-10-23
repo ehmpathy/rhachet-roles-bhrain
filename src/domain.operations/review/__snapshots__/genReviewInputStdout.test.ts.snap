@@ -19,6 +19,48 @@ exports[`genReviewInputStdout given: [case1] no refs provided when: [t0] generat
       └─ targets: src (1.3k, 52%)"
 `;
 
+exports[`genReviewInputStdout given: [case1b] a prior peer-review conversation is carried when: [t0] refs and conversation are both present then: matches snapshot 1`] = `
+"🔭 metrics.expected
+   ├─ files
+   │  ├─ rules: 1
+   │  ├─ refs: 1
+   │  ├─ conversation: 4
+   │  └─ targets: 5
+   ├─ tokens
+   │  ├─ estimate: 1,500
+   │  └─ context: 0.6%
+   └─ cost
+      └─ estimate: $0.0075
+
+🪵 logs
+   ├─ scope: .log/bhrain/review/2026-01-28T12-00-00-000Z/input.scope.json
+   ├─ metrics: .log/bhrain/review/2026-01-28T12-00-00-000Z/metrics.expected.json
+   └─ tokens: .log/bhrain/review/2026-01-28T12-00-00-000Z/tokens.expected.md
+      ├─ rules: rules (800, 53%)
+      └─ targets: src (700, 47%)"
+`;
+
+exports[`genReviewInputStdout given: [case1c] file counts past a thousand when: [t0] generated then: each count groups its digits, like the estimate 1`] = `
+"🔭 metrics.expected
+   ├─ files
+   │  ├─ rules: 1,200
+   │  ├─ refs: 3,400
+   │  ├─ conversation: 1,001
+   │  └─ targets: 5,978
+   ├─ tokens
+   │  ├─ estimate: 700,000
+   │  └─ context: 12.5%
+   └─ cost
+      └─ estimate: $0.35
+
+🪵 logs
+   ├─ scope: .log/bhrain/review/2026-01-28T12-00-00-000Z/input.scope.json
+   ├─ metrics: .log/bhrain/review/2026-01-28T12-00-00-000Z/metrics.expected.json
+   └─ tokens: .log/bhrain/review/2026-01-28T12-00-00-000Z/tokens.expected.md
+      ├─ rules: (none)
+      └─ targets: (none)"
+`;
+
 exports[`genReviewInputStdout given: [case2] refs provided when: [t0] single ref then: matches snapshot 1`] = `
 "🔭 metrics.expected
    ├─ files
@@ -57,4 +99,86 @@ exports[`genReviewInputStdout given: [case2] refs provided when: [t1] multiple r
    └─ tokens: .log/bhrain/review/2026-01-28T12-00-00-000Z/tokens.expected.md
       ├─ rules: rules (2.5k, 50%)
       └─ targets: src (1.5k, 30%), lib (1.0k, 20%)"
+`;
+
+exports[`genReviewInputStdout given: [case3] a prompt whose census could NOT vouch for its rows when: [t0] the live run renders its expected metrics then: the caveat closes the tokens branch 1`] = `
+"🔭 metrics.expected
+   ├─ files
+   │  ├─ rules: 1
+   │  └─ targets: 2
+   ├─ tokens
+   │  ├─ estimate: 1,000
+   │  ├─ context: 0.5%
+   │  ├─ 🟡 UNATTRIBUTED — scaffold may hide an input with no row of its own
+   │  └─ inspect once it settles: rhx review._.cost --of run --at .log/bhrain/review/2026-01-28T12-00-00-000Z
+   └─ cost
+      └─ estimate: $0.005
+
+🪵 logs
+   ├─ scope: .log/bhrain/review/2026-01-28T12-00-00-000Z/input.scope.json
+   ├─ metrics: .log/bhrain/review/2026-01-28T12-00-00-000Z/metrics.expected.json
+   └─ tokens: .log/bhrain/review/2026-01-28T12-00-00-000Z/tokens.expected.md
+      ├─ rules: (none)
+      └─ targets: (none)"
+`;
+
+exports[`genReviewInputStdout given: [case3] a prompt whose census could NOT vouch for its rows when: [t1] the census vouched for its rows then: no caveat renders — an attributed prompt costs no line 1`] = `
+"🔭 metrics.expected
+   ├─ files
+   │  ├─ rules: 1
+   │  └─ targets: 2
+   ├─ tokens
+   │  ├─ estimate: 1,000
+   │  └─ context: 0.5%
+   └─ cost
+      └─ estimate: $0.005
+
+🪵 logs
+   ├─ scope: .log/bhrain/review/2026-01-28T12-00-00-000Z/input.scope.json
+   ├─ metrics: .log/bhrain/review/2026-01-28T12-00-00-000Z/metrics.expected.json
+   └─ tokens: .log/bhrain/review/2026-01-28T12-00-00-000Z/tokens.expected.md
+      ├─ rules: (none)
+      └─ targets: (none)"
+`;
+
+exports[`genReviewInputStdout given: [case4] a prompt the compiler flagged past 60% of the window when: [t0] the live run renders its expected metrics then: 🔴 the caveat renders LIVE — it was once returned and never read 1`] = `
+"🔭 metrics.expected
+   ├─ files
+   │  ├─ rules: 1
+   │  └─ targets: 40
+   ├─ tokens
+   │  ├─ estimate: 700,000
+   │  ├─ context: 68.4%
+   │  └─ 🟡 potential quality degradation: prompt uses 68.4% of context window
+   └─ cost
+      └─ estimate: $0.35
+
+🪵 logs
+   ├─ scope: .log/bhrain/review/2026-01-28T12-00-00-000Z/input.scope.json
+   ├─ metrics: .log/bhrain/review/2026-01-28T12-00-00-000Z/metrics.expected.json
+   └─ tokens: .log/bhrain/review/2026-01-28T12-00-00-000Z/tokens.expected.md
+      ├─ rules: (none)
+      └─ targets: (none)"
+`;
+
+exports[`genReviewInputStdout given: [case4] a prompt the compiler flagged past 60% of the window when: [t1] the census also could not vouch for its rows then: both caveats render, and the tree closes on the last 1`] = `
+"🔭 metrics.expected
+   ├─ files
+   │  ├─ rules: 1
+   │  └─ targets: 40
+   ├─ tokens
+   │  ├─ estimate: 700,000
+   │  ├─ context: 68.4%
+   │  ├─ 🟡 potential quality degradation: prompt uses 68.4% of context window
+   │  ├─ 🟡 UNATTRIBUTED — scaffold may hide an input with no row of its own
+   │  └─ inspect once it settles: rhx review._.cost --of run --at .log/bhrain/review/2026-01-28T12-00-00-000Z
+   └─ cost
+      └─ estimate: $0.35
+
+🪵 logs
+   ├─ scope: .log/bhrain/review/2026-01-28T12-00-00-000Z/input.scope.json
+   ├─ metrics: .log/bhrain/review/2026-01-28T12-00-00-000Z/metrics.expected.json
+   └─ tokens: .log/bhrain/review/2026-01-28T12-00-00-000Z/tokens.expected.md
+      ├─ rules: (none)
+      └─ targets: (none)"
 `;

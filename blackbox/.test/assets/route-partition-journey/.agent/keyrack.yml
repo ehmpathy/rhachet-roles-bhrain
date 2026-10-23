@@ -1,0 +1,4 @@
+org: ehmpath
+
+env.test:
+  - OPENROUTER_API_KEY

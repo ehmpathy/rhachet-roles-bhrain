@@ -4,7 +4,7 @@ term.chosen   = progress
 term.kind     = noun
 term.boundary = sweep        # the learner's record OF a sweep
 term.synonyms.forbidden:
-- status
+- status   # for a sweep's record only; `PassageReport.status` and `GuardPeerMeterStatus` own the word for a lifecycle state
 - log
 - journal
 

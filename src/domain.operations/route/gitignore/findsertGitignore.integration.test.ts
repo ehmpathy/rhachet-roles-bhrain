@@ -50,16 +50,19 @@ describe('findsertGitignore', () => {
 
   given('[case3] a gitignore whose content has drifted', () => {
     when('[t0] findserted', () => {
-      then('it overwrites, and reports `created`', async () => {
-        const dir = genTempDir({ slug: 'gitignore-drift' });
-        await fs.mkdir(dir, { recursive: true });
-        await fs.writeFile(path.join(dir, '.gitignore'), 'stale\n');
+      then(
+        'it overwrites, and reports `rewrote` — never `created`',
+        async () => {
+          const dir = genTempDir({ slug: 'gitignore-drift' });
+          await fs.mkdir(dir, { recursive: true });
+          await fs.writeFile(path.join(dir, '.gitignore'), 'stale\n');
 
-        const result = await findsertGitignore({ dir, content: CONTENT });
+          const result = await findsertGitignore({ dir, content: CONTENT });
 
-        expect(result.action).toEqual('created');
-        expect(await fs.readFile(result.path, 'utf-8')).toEqual(CONTENT);
-      });
+          expect(result.action).toEqual('rewrote');
+          expect(await fs.readFile(result.path, 'utf-8')).toEqual(CONTENT);
+        },
+      );
     });
   });
 

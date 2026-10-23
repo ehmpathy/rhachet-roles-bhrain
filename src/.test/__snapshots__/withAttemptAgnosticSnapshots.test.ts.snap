@@ -1,0 +1,8 @@
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
+
+exports[`withAttemptAgnosticSnapshots given: [case1] a repeatably test that snapshots in each attempt when: [t0] each attempt snapshots the same value, attempt 1 then: the value matches the attempt-1 snapshot 1`] = `
+{
+  "blockers": 0,
+  "verdict": "approved",
+}
+`;

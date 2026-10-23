@@ -91,6 +91,39 @@ describe('getMaxStoneGuardIteration', () => {
     });
   });
 
+  given('[case4] a judge-only guard whose judges stamp `.iNNNp`', () => {
+    const tempDir = path.join(__dirname, '../.test/temp-iteration-judge-only');
+
+    beforeAll(async () => {
+      const routeDir = path.join(tempDir, '.route');
+      await fs.mkdir(routeDir, { recursive: true });
+
+      // the shipped judge grammar: $stone.guard.judge.i$rp$j.$reviewHash.$judgeHash.j$index.md
+      await fs.writeFile(
+        path.join(routeDir, '1.vision.guard.judge.i004p1.abc.def.j1.md'),
+        'judge at round 4',
+      );
+    });
+    afterAll(async () => {
+      await fs.rm(tempDir, { recursive: true, force: true });
+    });
+
+    when('[t0] max iteration is queried', () => {
+      then('returns the judge round (4), not 0', async () => {
+        const stone = new RouteStone({
+          name: '1.vision',
+          path: path.join(tempDir, '1.vision.stone'),
+          guard: null,
+        });
+        const maxIter = await getMaxStoneGuardIteration({
+          stone,
+          route: tempDir,
+        });
+        expect(maxIter).toBe(4);
+      });
+    });
+  });
+
   given('[case3] route with artifacts for different stones', () => {
     const tempDir = path.join(__dirname, '../.test/temp-iteration-multi-stone');
 

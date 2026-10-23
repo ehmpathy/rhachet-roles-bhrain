@@ -35,7 +35,22 @@ use `--push` when:
 ## context window thresholds
 
 - **60% warning**: emits warning but continues
-- **75% failfast**: throws error with recommendation to reduce scope or use pull mode
+- **75% failfast**: refuses, and names the lever that makes it fit
+
+## overflow — partition what the lane must read, cut what it must not
+
+an overflow refusal prints a `lever` branch. two levers, never interchangeable:
+
+- `--paths-wout '<subtree>/**'` **hides** mass — right when the rubric does not grade it
+- `--partition '<slug>=<globs>'` **spreads** mass across partitions that run at once and merge
+  into one tally — right when the mass is work the rubric MUST grade. each partition holds all
+  its files need to be judged alone; overlaps are computed as `common`; a bound route must sit in
+  every partition or the run refuses; it splits only on overflow. on a guard, declare the whole
+  set once with `rhx route.guard.partition --for review --peer @all`
+- partition through vertical domains, never through horizontal layers
+  (`rule.forbid.horizontal-partitions`)
+
+⇒ `howto.partition-an-overflowed-review` for the full behavior.
 
 ## scope combination
 

@@ -113,6 +113,49 @@ exports[`driver.route.drive.acceptance given: [case4] hook mode blocks stop when
 "
 `;
 
+exports[`driver.route.drive.acceptance given: [case4] hook mode blocks stop when stones remain when: [t1] route.drive invoked twice in hook mode then: the escalated stdout matches snapshot 1`] = `
+"🦉 where were we?
+
+🗿 route.drive
+   ├─ where do we go?
+   │  ├─ route = .
+   │  └─ stone = 1
+   │
+   ├─ are you here?
+   │  ├─ when ready for review, run:
+   │  │  └─ rhx route.stone.set --stone 1 --as arrived
+   │  └─ when ready to continue, run:
+   │     └─ rhx route.stone.set --stone 1 --as passed
+   │
+   ├─ here's the stone
+   │  ├─
+   │  │
+   │  │  # stone: implement the feature
+   │  │  
+   │  │  implement the feature described in the wish.
+   │  │  
+   │  │  done when:
+   │  │  - feature is implemented
+   │  │  - tests pass
+   │  │  
+   │  └─
+   │
+   └─ are you here?
+      ├─ when ready for review, run:
+      │  └─ rhx route.stone.set --stone 1 --as arrived
+      └─ when ready to continue, run:
+         └─ rhx route.stone.set --stone 1 --as passed
+"
+`;
+
+exports[`driver.route.drive.acceptance given: [case4] hook mode blocks stop when stones remain when: [t3] the hook fires inside a guard-summoned review (RHACHET_REVIEW_SUBPROCESS=1) then: the silent emit matches snapshot 1`] = `
+{
+  "code": 0,
+  "stderr": "",
+  "stdout": "",
+}
+`;
+
 exports[`driver.route.drive.acceptance given: [case5] passed stone clears blocker state when: [t1] route.stone.set --as passed succeeds then: stderr has good vibes 1`] = `
 "🦉 l1 pours 1 lane
    └─ r1:.test/mock-review.sh
@@ -266,10 +309,10 @@ exports[`driver.route.drive.acceptance given: [case6] hook mode allows stop when
    │  ├─
    │  │
    │  │  🪨 run solid skill repo=bhrain/role=driver/skill=route.stone.judge
-   │  │  
+   │  │
    │  │  passed: false
    │  │  reason: wait for human approval
-   │  │  
+   │  │
    │  │  ✋ halted, human approval required
    │  │     ├─ please ask your human to
    │  │     │  └─ rhx route.stone.set --stone 1.vision --as approved
@@ -442,20 +485,89 @@ output:
   when it has halted, it switches to a halt message that names who owns each remedy:
     ✋ halted, stone marked blocked            a driver wall (--as blocked) — clear it
     👋 halted, peer reviewer budget exhausted  two levers, sorted by owner:
-                                                converge with the reviewer — yours to run
-                                                approve as-is — a human must grant
+                                                · converge with the reviewer — yours to run
+                                                · approve as-is — a human must grant
                                                 the top-up takes the first slot ONLY where
                                                 an urgent concession earned the round: the
                                                 budget is a bound, so a grant needs a
                                                 warrant on record
-    💥 halted, guard malfunction               a reviewer or judge broke — a human must fix
+    💥 halted, guard malfunction               a reviewer or judge broke — still yours to clear:
+                                                · one row per broken part: its cause, its next step
+                                                · then answer a broken lane like a rejected one
   onStop honors the same halt: exit 2 keeps the route in motion, exit 0 allows a
   clean stop, exit 1 escalates a malfunction (per rule.require.exit-code-semantics).
   onBoot always exits 0 (it never blocks session start).
+  onStop is quiet (one ⏳ line, exit 0) while a fresh repairs-in-flight watermark
+  names the stone (route.stone.set --as inflight); past 30m it nudges again.
 
 examples:
   route.drive                        # echo current stone
   route.drive --when hook.onBoot     # show stone, exit 0 (for onBoot hooks)
   route.drive --when hook.onStop     # show stone, exit 2 if unpassed (for onStop hooks)
+"
+`;
+
+exports[`driver.route.drive.acceptance given: [case9] a driver marks repairs in flight, then the stop hook fires when: [t0] route.stone.set --as inflight without --what then: stderr matches snapshot 1`] = `
+"✋ ConstraintError: --what is required for --as inflight
+
+name the work you wait on, e.g.:
+  --as inflight --what 'three delegates repair blockers 1-4'
+"
+`;
+
+exports[`driver.route.drive.acceptance given: [case9] a driver marks repairs in flight, then the stop hook fires when: [t1] route.stone.set --as inflight --what then: stdout matches snapshot 1`] = `
+"🦉 the way speaks for itself
+
+🗿 route.stone.set
+   ├─ stone = 1
+   ├─ as = inflight
+   └─ ⏳ repairs in flight for 1 since [HH:MM] — three delegates repair blockers 1-4
+      ├─ the stop hook stays quiet for this stone for 30m
+      └─ --as arrived, --as passed, or --as blocked clears it
+"
+`;
+
+exports[`driver.route.drive.acceptance given: [case9] a driver marks repairs in flight, then the stop hook fires when: [t2] route.drive --when hook.onStop fires while the wait stands then: stdout matches snapshot 1`] = `
+"⏳ repairs in flight for 1 since [HH:MM] — three delegates repair blockers 1-4
+"
+`;
+
+exports[`driver.route.drive.acceptance given: [case10] a guard round rejected, then route.drive re-read when: [t0] route.drive is read in direct mode then: stdout matches snapshot 1`] = `
+"🦉 where were we?
+
+🗿 route.drive
+   ├─ where do we go?
+   │  ├─ route = .
+   │  └─ stone = 1
+   │
+   ├─ latest round, i001
+   │   ├─ r1: .test/mock-review.sh (l1, 1/∞) — rejected, 1 blocker 🔴, 0 nitpicks ✓
+   │   │   └─ given: .reviews/peer/1._.review.i001.<hash>.r001._.given.by_peer..test-mock-review.sh.md
+   │   └─ j1: blocked ✗ — blockers exceed threshold (1 > 0)
+   │
+   ├─ are you here?
+   │  ├─ when ready for review, run:
+   │  │  └─ rhx route.stone.set --stone 1 --as arrived
+   │  └─ when ready to continue, run:
+   │     └─ rhx route.stone.set --stone 1 --as passed
+   │
+   ├─ here's the stone
+   │  ├─
+   │  │
+   │  │  # stone: implement the feature
+   │  │  
+   │  │  implement the feature described in the wish.
+   │  │  
+   │  │  done when:
+   │  │  - feature is implemented
+   │  │  - tests pass
+   │  │  
+   │  └─
+   │
+   └─ are you here?
+      ├─ when ready for review, run:
+      │  └─ rhx route.stone.set --stone 1 --as arrived
+      └─ when ready to continue, run:
+         └─ rhx route.stone.set --stone 1 --as passed
 "
 `;

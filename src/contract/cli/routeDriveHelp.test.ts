@@ -52,6 +52,7 @@ describe('route.drive --help', () => {
           stone: '1.vision',
           passage: 'blocked',
           reason: 'peer reviewer budget exhausted',
+          lever: null,
         }).map((group) => group.label);
 
         // both remedies of a budget halt are quoted in the help, so both must match

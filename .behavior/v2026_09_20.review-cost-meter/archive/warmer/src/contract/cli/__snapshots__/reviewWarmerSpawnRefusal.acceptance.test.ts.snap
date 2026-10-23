@@ -1,0 +1,113 @@
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
+
+exports[`reviewWarmerSpawnRefusal.acceptance given: [case1] a spawn that hands it NO flags at all when: [t0] the child boots then: the refusal renders whole, diffable in the PR 1`] = `
+"
+🦉 woah there
+
+💥 MalfunctionError: review._.warmer was spawned with 5 flags it cannot use
+   ├─ absent: --reviewer · --log-dir · --pokes · --every · --brain
+   ├─ usage
+   │  └─ review._.warmer --reviewer <slug> --log-dir <path> \\
+   │       --pokes <n> --every <minutes> --brain <choice>
+   └─ fix: no driver types this — \`rhx review\` spawns it. a flag this
+      spawn could not use is a defect in that spawn, so name it in an
+      issue rather than a retry. see \`rhx review --help\` for the
+      \`--warmer\` grammar
+
+"
+`;
+
+exports[`reviewWarmerSpawnRefusal.acceptance given: [case2] a spawn that hands it all but ONE flag when: [t0] the child boots then: the refusal renders whole 1`] = `
+"
+🦉 woah there
+
+💥 MalfunctionError: review._.warmer was spawned with 1 flag it cannot use
+   ├─ absent: --brain
+   ├─ usage
+   │  └─ review._.warmer --reviewer <slug> --log-dir <path> \\
+   │       --pokes <n> --every <minutes> --brain <choice>
+   └─ fix: no driver types this — \`rhx review\` spawns it. a flag this
+      spawn could not use is a defect in that spawn, so name it in an
+      issue rather than a retry. see \`rhx review --help\` for the
+      \`--warmer\` grammar
+
+"
+`;
+
+exports[`reviewWarmerSpawnRefusal.acceptance given: [case3] a spawn whose --pokes is not a number when: [t0] the child boots then: the refusal renders whole 1`] = `
+"
+🦉 woah there
+
+💥 MalfunctionError: review._.warmer was spawned with 1 flag it cannot use
+   ├─ not a positive number: --pokes
+   ├─ usage
+   │  └─ review._.warmer --reviewer <slug> --log-dir <path> \\
+   │       --pokes <n> --every <minutes> --brain <choice>
+   └─ fix: no driver types this — \`rhx review\` spawns it. a flag this
+      spawn could not use is a defect in that spawn, so name it in an
+      issue rather than a retry. see \`rhx review --help\` for the
+      \`--warmer\` grammar
+
+"
+`;
+
+exports[`reviewWarmerSpawnRefusal.acceptance given: [case4] a spawn whose --every is not a number when: [t0] the child boots then: the refusal renders whole 1`] = `
+"
+🦉 woah there
+
+💥 MalfunctionError: review._.warmer was spawned with 1 flag it cannot use
+   ├─ not a positive number: --every
+   ├─ usage
+   │  └─ review._.warmer --reviewer <slug> --log-dir <path> \\
+   │       --pokes <n> --every <minutes> --brain <choice>
+   └─ fix: no driver types this — \`rhx review\` spawns it. a flag this
+      spawn could not use is a defect in that spawn, so name it in an
+      issue rather than a retry. see \`rhx review --help\` for the
+      \`--warmer\` grammar
+
+"
+`;
+
+exports[`reviewWarmerSpawnRefusal.acceptance given: [case5] a lane whose watermark write is refused when: [t0] the child boots and tries to record its lane then: the refusal renders whole, temp path masked 1`] = `
+"
+🦉 woah there
+
+💥 MalfunctionError: review._.warmer could not record its lane, so it cost naught
+   ├─ reviewer: repo-rules
+   ├─ cause: 💥 MalfunctionError: withSimpleMutex: the cache backend faulted while it acquired the lock. check the cache backend health and connectivity, then retry; the lock was not taken, so a retry is safe.
+   └─ fix: the warmer watermark under this cwd could not be written. check
+      that the review cache dir is writable, then re-run the review
+
+"
+`;
+
+exports[`reviewWarmerSpawnRefusal.acceptance given: [case6] a spawn that hands all five flags AND one stray when: [t0] the child boots then: the refusal renders whole 1`] = `
+"
+🦉 woah there
+
+💥 MalfunctionError: review._.warmer was spawned with 1 flag it cannot use
+   ├─ not a warmer flag: --pokez
+   ├─ usage
+   │  └─ review._.warmer --reviewer <slug> --log-dir <path> \\
+   │       --pokes <n> --every <minutes> --brain <choice>
+   └─ fix: no driver types this — \`rhx review\` spawns it. a flag this
+      spawn could not use is a defect in that spawn, so name it in an
+      issue rather than a retry. see \`rhx review --help\` for the
+      \`--warmer\` grammar
+
+"
+`;
+
+exports[`reviewWarmerSpawnRefusal.acceptance given: [case8] a lane whose brain cannot boot when: [t0] the child boots and its brain lookup fails then: the refusal renders whole, temp path masked 1`] = `
+"
+🦉 woah there
+
+💥 MalfunctionError: review._.warmer could not boot its brain, so it cost naught
+   ├─ reviewer: repo-rules
+   ├─ cause: ✋ ConstraintError: brain 'nowhere/glm/flash/v0' is not registered
+   │    hint: a brain registers only when its provider's package is installed and its key is unlocked; unlock the key via \`rhx keyrack unlock --owner ehmpath --env prep\`, or pass \`--brain\` with a provider whose key you hold
+   └─ fix: the boot is recorded in the warmer cost record; re-run the review, and
+      if it persists, check the provider status and its credentials
+
+"
+`;

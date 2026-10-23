@@ -46,8 +46,8 @@ describe('driver.route.optional-skip.acceptance', () => {
           { at: 'node_modules/rhachet', to: 'node_modules/rhachet' },
           { at: 'node_modules/.pnpm', to: 'node_modules/.pnpm' },
           {
-            at: 'node_modules/rhachet-brains-fireworksai',
-            to: 'node_modules/rhachet-brains-fireworksai',
+            at: 'node_modules/rhachet-brains-openrouter',
+            to: 'node_modules/rhachet-brains-openrouter',
           },
           {
             at: 'node_modules/rhachet-brains-anthropic',

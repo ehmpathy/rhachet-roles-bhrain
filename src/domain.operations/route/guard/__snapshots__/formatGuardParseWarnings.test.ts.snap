@@ -6,8 +6,8 @@ exports[`formatGuardParseWarnings given: [case2] a KNOWN key declared with no va
       ├─ at: 5.3.verification.guard:12
       ├─ fix: give it the argument your brain-cli's \`/model\` takes
       │  └─ brain: claude-sonnet-5[1m]
-      ├─ note: that value is an EXAMPLE — pasted as-is, the next entry to this stone dispatches \`/model claude-sonnet-5[1m]\`
-      └─ or: remove the \`brain:\` line, and inherit the brain deliberately
+      ├─ that value is an EXAMPLE — pasted as-is, the next entry to this stone dispatches \`/model claude-sonnet-5[1m]\`
+      └─ or remove the \`brain:\` line, and inherit the brain deliberately
 
 "
 `;
@@ -18,7 +18,7 @@ exports[`formatGuardParseWarnings given: [case3] a KNOWN alias of a key the pars
       ├─ at: 5.3.verification.guard:12
       ├─ fix: rename it to \`brain:\` for the switch to take effect
       │  └─ brain: claude-opus-5[1m]
-      └─ note: \`model:\` is recognized, but ONLY \`brain:\` is applied — its value did not take
+      └─ \`model:\` is recognized, but ONLY \`brain:\` is applied — its value did not take
 
 "
 `;
@@ -29,7 +29,7 @@ exports[`formatGuardParseWarnings given: [case4] an UNKNOWN key, one or two edit
       ├─ at: 5.3.verification.guard:12
       ├─ did you mean: \`brain:\`?
       ├─ fix: rename \`brian:\` to \`brain:\` if that was the intent
-      └─ or: if \`brian:\` is deliberate, this warn is safe to ignore
+      └─ or if \`brian:\` is deliberate, this warn is safe to ignore
 
 "
 `;
@@ -40,14 +40,14 @@ exports[`formatGuardParseWarnings given: [case5] two dropped keys in one guard w
    │  ├─ at: 5.3.verification.guard:12
    │  ├─ fix: give it the argument your brain-cli's \`/model\` takes
    │  │  └─ brain: claude-sonnet-5[1m]
-   │  ├─ note: that value is an EXAMPLE — pasted as-is, the next entry to this stone dispatches \`/model claude-sonnet-5[1m]\`
-   │  └─ or: remove the \`brain:\` line, and inherit the brain deliberately
+   │  ├─ that value is an EXAMPLE — pasted as-is, the next entry to this stone dispatches \`/model claude-sonnet-5[1m]\`
+   │  └─ or remove the \`brain:\` line, and inherit the brain deliberately
    │
    └─ \`brian:\` is not a key i know, and it was IGNORED
       ├─ at: 5.3.verification.guard:14
       ├─ did you mean: \`brain:\`?
       ├─ fix: rename \`brian:\` to \`brain:\` if that was the intent
-      └─ or: if \`brian:\` is deliberate, this warn is safe to ignore
+      └─ or if \`brian:\` is deliberate, this warn is safe to ignore
 
 "
 `;
@@ -60,7 +60,7 @@ exports[`formatGuardParseWarnings given: [case6] a KNOWN key whose value is not 
       ├─ refused: \`@\` — the set is letters, digits, and \`. _ / : # [ ] -\`
       ├─ fix: your value, with the refused character removed
       │  └─ brain: gpt-4olatest
-      ├─ note: check that is the slug you meant before you paste it
+      ├─ check that is the slug you meant before you paste it
       └─ why: an unclosed quote, a substitution, or a space lands here — NO switch was dispatched, so the stone kept its inherited brain
 
 "

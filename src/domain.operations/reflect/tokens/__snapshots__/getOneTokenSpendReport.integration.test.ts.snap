@@ -51,11 +51,11 @@ exports[`getOneTokenSpendReport given: [case1] one transcript named by session u
    │
    └─ proposal (ranked by repaid price — an upper bound, not a promise)
       ├─ 1. boot.instructions · boot.md  ≤ $0.07  40.3%
-      │  └─ hint: move briefs from say to ref
+      │  └─ cut = move briefs from say to ref
       ├─ 2. tool.result · Bash · git.repo.test  ≤ $0.03  18.8%
-      │  └─ hint: a summary on stdout, the log on disk
+      │  └─ cut = a summary on stdout, the log on disk
       └─ 3. assistant.own · assistant  ≤ $0.00  0.5%
-         └─ hint: terser replies, fewer re-reads
+         └─ cut = terser replies, fewer re-reads
 "
 `;
 
@@ -87,7 +87,7 @@ exports[`getOneTokenSpendReport given: [case11] a transcript cut by a compaction
    │  │  └─ holds = compaction.summary
    │  ├─ unattributed                 5    0.5%  [unattributed]
    │  │  └─ holds = harness + compacted context
-   │  └─ note: no boot.instructions block was seen; the boot share sits inside unattributed
+   │  └─ caveat = no boot.instructions block was seen; the boot share sits inside unattributed
    │
    ├─ repaid (what each block cost, every call it stayed in context — priced per cache span)
    │  ├─ boot.instructions · boot.md                                 $0.07   39.0%     30.0k tok
@@ -114,9 +114,9 @@ exports[`getOneTokenSpendReport given: [case11] a transcript cut by a compaction
    │
    └─ proposal (ranked by repaid price — an upper bound, not a promise)
       ├─ 1. boot.instructions · boot.md  ≤ $0.07  39.0%
-      │  └─ hint: move briefs from say to ref
+      │  └─ cut = move briefs from say to ref
       ├─ 2. tool.result · Bash · git.repo.test  ≤ $0.03  18.1%
-      │  └─ hint: a summary on stdout, the log on disk
+      │  └─ cut = a summary on stdout, the log on disk
       └─ 3. system.reminder · compaction.summary  ≤ $0.01  3.4%
 "
 `;
@@ -178,10 +178,10 @@ exports[`getOneTokenSpendReport given: [case18] a main transcript with a subagen
    │
    └─ proposal (ranked by repaid price — an upper bound, not a promise)
       ├─ 1. boot.instructions · boot.md  ≤ $0.07  40.3%
-      │  └─ hint: move briefs from say to ref
+      │  └─ cut = move briefs from say to ref
       ├─ 2. tool.result · Bash · git.repo.test  ≤ $0.03  18.8%
-      │  └─ hint: a summary on stdout, the log on disk
+      │  └─ cut = a summary on stdout, the log on disk
       └─ 3. assistant.own · assistant  ≤ $0.00  0.5%
-         └─ hint: terser replies, fewer re-reads
+         └─ cut = terser replies, fewer re-reads
 "
 `;

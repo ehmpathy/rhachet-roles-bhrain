@@ -1,0 +1,21 @@
+{
+  "key": "3ae9dc4f492c918f",
+  "kind": "create",
+  "repo": {
+    "owner": "ehmpathy",
+    "name": "rhachet-brains-openrouter"
+  },
+  "exid": null,
+  "title": "fix(supply): a speed promise refuses every host of an unmeasured release",
+  "description": "## .what\n\nthe speed promise keeps a host only when `throughputTps !== null`. a release no host has yet been\nmeasured on has every throughput null, so every speed-promised slug refuses before a call is sent.\nthat includes the bare tier `openrouter/deepseek/flash`, whose tier implies min50tps.\n\n## .evidence\n\nmeasured 2026-10-17: the deepseek/flash tier resolved to `deepseek/deepseek-v4.1-flash-1017`\n(released that day). openrouter listed five endpoints, each with `throughput_last_30m: null`. every\nask refused with `no endpoint ... keeps every promise`, funnel `4 ← supports(...)`,\n`0 ← speed>=100tps`. this held across a ci rerun, so a retry cannot cure it until openrouter\nmeasures the hosts.\n\n## .the shape of the fix\n\n1. in `getAllPromiseChecks`, when no endpoint has a measured throughput, the speed promise cannot be\n   judged: waive it (keep every host). once any host is measured, an unmeasured host still fails\n2. surface the waiver in the funnel line, e.g. `speed>=100tps (waived: no host measured)`, so the\n   caller sees why an unproven host may serve\n3. clamp: all-null endpoints qualify; mixed endpoints keep only the measured, fast host; all\n   measured-slow still refuses\n\n## .found\n\nrhachet-roles-bhrain @ beav/feat-review-cost-meter, patched locally via pnpm `patchedDependencies`\nwith a clamp (`src/.test/openrouterUnmeasuredSpeedPromise.test.ts`), 2026-10-17",
+  "status": null,
+  "via": "gh.issues",
+  "auth": "as-human",
+  "idem": "findsert",
+  "heldAt": "2026-10-18",
+  "heldSeq": 33,
+  "recordStatus": "DELIVERED",
+  "reason": null,
+  "settledAt": "2026-10-18",
+  "deliveredExid": "22"
+}

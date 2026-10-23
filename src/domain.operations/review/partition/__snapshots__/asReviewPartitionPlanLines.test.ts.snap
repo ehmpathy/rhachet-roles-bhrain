@@ -1,0 +1,56 @@
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
+
+exports[`asReviewPartitionPlanLines given: [case1] two partitions with several globs each, one too large when: [t0] the plan is rendered then: the plan matches the snapshot 1`] = `
+"🦉 review --mode plan — split into 2 partitions
+   ├─ common
+   │  ├─ globs
+   │  │  ├─ src/domain.objects/**
+   │  │  └─ .behavior/v2026_01_01.demo/**
+   │  └─ cost
+   │     └─ common:   2 files    4.8k tokens
+   ├─ narrow
+   │  ├─ review
+   │  │  ├─ globs
+   │  │  │  ├─ src/review/**
+   │  │  │  ├─ src/domain.objects/**
+   │  │  │  └─ .behavior/v2026_01_01.demo/**
+   │  │  └─ cost
+   │  │     ├─ narrow:   2 files   41.0k tokens
+   │  │     ├─ common:   2 files    4.8k tokens
+   │  │     └─ total:    4 files   48.8k tokens ✓
+   │  └─ route
+   │     ├─ globs
+   │     │  ├─ src/route/**
+   │     │  ├─ src/domain.objects/**
+   │     │  └─ .behavior/v2026_01_01.demo/**
+   │     └─ cost
+   │        ├─ narrow:   1 file   160.0k tokens
+   │        ├─ common:   2 files    4.8k tokens
+   │        └─ total:    3 files  167.8k tokens ✗ exceeds the window
+   └─ unclaimed: 0"
+`;
+
+exports[`asReviewPartitionPlanLines given: [case2] partitions that share no glob verbatim when: [t0] the plan is rendered then: the plan matches the snapshot 1`] = `
+"🦉 review --mode plan — split into 2 partitions
+   ├─ common
+   │  ├─ globs
+   │  │  └─ (no glob shared verbatim)
+   │  └─ cost
+   │     └─ common:   0 files       0 tokens
+   ├─ narrow
+   │  ├─ a
+   │  │  ├─ globs
+   │  │  │  └─ src/a/**
+   │  │  └─ cost
+   │  │     ├─ narrow:   1 file      500 tokens
+   │  │     ├─ common:   0 files       0 tokens
+   │  │     └─ total:    1 file      500 tokens ✓
+   │  └─ b
+   │     ├─ globs
+   │     │  └─ src/b
+   │     └─ cost
+   │        ├─ narrow:   1 file      700 tokens
+   │        ├─ common:   0 files       0 tokens
+   │        └─ total:    1 file      700 tokens ✓
+   └─ unclaimed: 0"
+`;

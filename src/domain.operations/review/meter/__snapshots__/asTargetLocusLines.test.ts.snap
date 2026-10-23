@@ -1,0 +1,20 @@
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
+
+exports[`asTargetLocusLines given: [case1] a locus whose targets carry chars when: [t0] it is rendered then: the lines match the snapshot 1`] = `
+"   ├─ target mass by directory — 1.0k chars over 2 directories
+   │  ├─  80.0%       800 chars  1 file    src/a/b
+   │  └─  20.0%       200 chars  1 file    blackbox"
+`;
+
+exports[`asTargetLocusLines given: [case2] a locus whose every target measured zero chars when: [t0] it is rendered then: the lines match the snapshot 1`] = `
+"   ├─ target mass by directory — 0 chars over 1 directory
+   │  └─      —         0 chars  2 files   src/a/b"
+`;
+
+exports[`asTargetLocusLines given: [case3] the census breadth renders with full separators and its WORD of absence when: [t0] the figures are large and every target measured zero then: the lines match the snapshot 1`] = `
+"   ├─ target mass by directory — 12,000 chars over 1 directory
+   │  └─ 100.0%    12,000 chars  1 file    src/a/b
+
+   ├─ target mass by directory — 0 chars over 1 directory
+   │  └─ absent         0 chars  1 file    src/a/b"
+`;

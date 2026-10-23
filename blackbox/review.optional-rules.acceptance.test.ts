@@ -2,12 +2,16 @@ import * as fs from 'fs';
 import * as path from 'path';
 
 import { given, then, useThen, when } from 'test-fns';
+import { DEFAULT_TEST_BRAIN_VIA_CLI } from '@src/.test/genTestBrainContext';
 
+import { asRedactedOutput } from './.test/asRedactedOutput';
+import { asReviewMetricsExpectedBlock } from './.test/invokeReviewBySkill';
 import {
   execAsync,
   genTempDirForRhachet,
   invokeReviewSkill,
 } from './.test/invokeReviewSkill';
+import { invokeShellCommand } from './.test/invokeShellCommand';
 
 const ASSETS_DIR = path.join(__dirname, '.test/assets/codebase-mechanic');
 
@@ -24,15 +28,12 @@ const REPEATABLE_CONFIG = {
 
 /**
  * .what = masks the volatile parts of review output so a snapshot stays stable
- * .why = the skip/error outputs embed a timestamped log dir and per-run tempDir paths; a
- *        redact of those lets the snapshot clamp emoji, phrase, and indentation for
- *        regression (rule.require.contract-snapshot-exhaustiveness) without a path flake
+ * .why = the shared stabilizer masks the log dir and the tempDir; this suite's skip output
+ *        also prints the review path, so it adds that one mask on top rather than hold a
+ *        second copy of the shared two (rule.require.contract-snapshot-exhaustiveness)
  */
-const asRedactedOutput = (raw: string): string =>
-  raw
-    .replace(/\.log\/bhrain\/review\/[^\s]+/g, '.log/bhrain/review/<TIMESTAMP>')
-    .replace(/(├─ review: ).*/g, '$1<REVIEW_PATH>')
-    .replace(/\/[^\s]*genTempDir\.symlink\/[^\s]+/g, '<TEMP_PATH>');
+const asRedactedOutputWithReviewPath = (raw: string): string =>
+  asRedactedOutput(raw).replace(/(├─ review: ).*/g, '$1<REVIEW_PATH>');
 
 /**
  * .what = acceptance tests for `--optional rules`
@@ -65,11 +66,15 @@ describe('review.optional-rules.acceptance', () => {
           output: outputPath,
           focus: 'push',
           goal: 'representative',
-          brain: 'fireworks/deepseek/v4-flash',
+          brain: DEFAULT_TEST_BRAIN_VIA_CLI,
           cwd: tempDir,
         });
 
-        return { cli, outputPath };
+        return {
+          cli,
+          outputPath,
+          review: fs.readFileSync(outputPath, 'utf-8'),
+        };
       });
 
       then('cli exits 0 (skip is not an error)', () => {
@@ -89,17 +94,21 @@ describe('review.optional-rules.acceptance', () => {
       });
 
       then('the --output review file is written with the skip verdict', () => {
-        const contents = fs.readFileSync(res.outputPath, 'utf-8');
-        expect(contents).toContain('🌙 skipped');
-        expect(contents).toContain('0 blockers');
-        expect(contents).toContain('0 nitpicks');
+        expect(res.review).toContain('🌙 skipped');
+        expect(res.review).toContain('0 blockers');
+        expect(res.review).toContain('0 nitpicks');
       });
 
       then('the skip output matches its snapshot (format regression guard)', () => {
         // the review file holds exactly the skip report (header + body), so it is the
         // cleanest artifact to snap (rule.require.contract-snapshot-exhaustiveness)
-        const contents = fs.readFileSync(res.outputPath, 'utf-8');
-        expect(asRedactedOutput(contents)).toMatchSnapshot();
+        expect(asRedactedOutputWithReviewPath(res.review)).toMatchSnapshot();
+      });
+
+      then('the skip stdout matches its snapshot (the caller-visible tree)', () => {
+        // the file above is the report; stdout is the tree a caller reads. both are
+        // contract surfaces, so both are pinned (rule.require.contract-snapshot-exhaustiveness)
+        expect(asRedactedOutputWithReviewPath(res.cli.stdout)).toMatchSnapshot();
       });
     });
   });
@@ -123,7 +132,7 @@ describe('review.optional-rules.acceptance', () => {
           output: outputPath,
           focus: 'push',
           goal: 'representative',
-          brain: 'fireworks/deepseek/v4-flash',
+          brain: DEFAULT_TEST_BRAIN_VIA_CLI,
           cwd: tempDir,
         });
 
@@ -140,7 +149,7 @@ describe('review.optional-rules.acceptance', () => {
       });
 
       then('the strict-error output matches its snapshot', () => {
-        expect(asRedactedOutput(res.cli.stderr)).toMatchSnapshot();
+        expect(asRedactedOutputWithReviewPath(res.cli.stderr)).toMatchSnapshot();
       });
     });
   });
@@ -165,7 +174,7 @@ describe('review.optional-rules.acceptance', () => {
           output: outputPath,
           focus: 'push',
           goal: 'representative',
-          brain: 'fireworks/deepseek/v4-flash',
+          brain: DEFAULT_TEST_BRAIN_VIA_CLI,
           cwd: tempDir,
         });
 
@@ -183,7 +192,7 @@ describe('review.optional-rules.acceptance', () => {
       });
 
       then('the unsupported-refs error output matches its snapshot', () => {
-        expect(asRedactedOutput(res.cli.stderr)).toMatchSnapshot();
+        expect(asRedactedOutputWithReviewPath(res.cli.stderr)).toMatchSnapshot();
       });
     });
   });
@@ -208,7 +217,7 @@ describe('review.optional-rules.acceptance', () => {
           output: outputPath,
           focus: 'push',
           goal: 'representative',
-          brain: 'fireworks/deepseek/v4-flash',
+          brain: DEFAULT_TEST_BRAIN_VIA_CLI,
           cwd: tempDir,
         });
 
@@ -226,7 +235,7 @@ describe('review.optional-rules.acceptance', () => {
       });
 
       then('the unknown-supply error output matches its snapshot', () => {
-        expect(asRedactedOutput(res.cli.stderr)).toMatchSnapshot();
+        expect(asRedactedOutputWithReviewPath(res.cli.stderr)).toMatchSnapshot();
       });
     });
   });
@@ -261,29 +270,15 @@ describe('review.optional-rules.acceptance', () => {
           `--output "${outputPath}"`,
           '--focus push',
           '--goal representative',
-          '--brain "fireworks/deepseek/v4-flash"',
+          `--brain "${DEFAULT_TEST_BRAIN_VIA_CLI}"`,
         ].join(' ');
 
-        const cli = await execAsync(cmd, {
+        // the shared exec wrapper allowlists non-zero exits and rethrows aught else
+        const cli = await invokeShellCommand({
+          cmd,
           cwd: tempDir,
           env: { ...process.env },
-        })
-          .then((result) => ({ ...result, code: 0 }))
-          .catch((error) => {
-            const execError = error as {
-              stdout?: string;
-              stderr?: string;
-              code?: number;
-            };
-            // allowlist non-zero-exit exec errors (they carry a numeric `code`); rethrow
-            // every other error so a real fault surfaces loud, not hidden (rule.forbid.failhide)
-            if (typeof execError.code !== 'number') throw error;
-            return {
-              stdout: execError.stdout ?? '',
-              stderr: execError.stderr ?? '',
-              code: execError.code,
-            };
-          });
+        });
 
         return { cli };
       });
@@ -298,7 +293,7 @@ describe('review.optional-rules.acceptance', () => {
       });
 
       then('the bare-optional error output matches its snapshot', () => {
-        expect(asRedactedOutput(res.cli.stderr)).toMatchSnapshot();
+        expect(asRedactedOutputWithReviewPath(res.cli.stderr)).toMatchSnapshot();
       });
     });
   });
@@ -331,7 +326,7 @@ describe('review.optional-rules.acceptance', () => {
           output: outputPath,
           focus: 'push',
           goal: 'representative',
-          brain: 'fireworks/deepseek/v4-flash',
+          brain: DEFAULT_TEST_BRAIN_VIA_CLI,
           cwd: tempDir,
         });
 
@@ -355,6 +350,17 @@ describe('review.optional-rules.acceptance', () => {
         expect(contents).toContain('🌙 skipped');
         expect(contents).toContain('0 blockers');
         expect(contents).toContain('0 nitpicks');
+      });
+
+      then('the skip stdout matches its snapshot (the caller-visible tree)', () => {
+        // the absolute path is per-run, so it is masked; the line it sits on, and every
+        // other byte of the tree, are pinned
+        expect(
+          asRedactedOutputWithReviewPath(res.cli.stdout).replace(
+            res.outputPath,
+            '<OUTPUT_PATH>',
+          ),
+        ).toMatchSnapshot();
       });
     });
   });
@@ -384,7 +390,7 @@ describe('review.optional-rules.acceptance', () => {
           output: outputPath,
           focus: 'push',
           goal: 'representative',
-          brain: 'fireworks/deepseek/v4-flash',
+          brain: DEFAULT_TEST_BRAIN_VIA_CLI,
           cwd: tempDir,
         });
 
@@ -407,6 +413,11 @@ describe('review.optional-rules.acceptance', () => {
         // must never emit it. the normal stdout reports the enumerated rules instead.
         expect(res.review).not.toContain('review skipped');
         expect(res.cli.stdout).toContain('rules');
+      });
+
+      then('the metrics.expected block matches its snapshot (computed before the brain)', () => {
+        // the scope tree and estimate are deterministic; the verdict summary is the brain's
+        expect(asReviewMetricsExpectedBlock({ stdout: res.cli.stdout })).toMatchSnapshot();
       });
     });
   });

@@ -1,7 +1,12 @@
+import { asCountedNoun } from '@src/utils/asCountedNoun';
+
 import { asMeterCountDisplay } from '../../asMeterCountDisplay';
 import { ABSORPTION_CONCEDE_STEPS } from './absorptionConcedeSequence';
 import type { ReviewConcernRef } from './asReviewConcernRef';
 import { asReviewConcernRefLabel } from './asReviewConcernRef';
+import { asRouteStoneAbsorbCommand } from './asRouteStoneAbsorbCommand';
+import { asRouteStoneSetCommandHead } from './asRouteStoneSetCommandHead';
+import { asRouteStoneStanceCommand } from './asRouteStoneStanceCommand';
 import {
   formatReviewBudgetTopupCommand,
   ROUNDS_OFFERED_ON_TOPUP,
@@ -50,34 +55,196 @@ const asReviewerMeterLine = (input: {
   const tail = !Number.isFinite(input.meter.budget)
     ? `∞ rounds left`
     : left > 0
-      ? `${left} rounds left`
+      ? `${asCountedNoun({ count: left, one: 'round', many: 'rounds' })} left`
       : `budget spent`;
   const budget = asMeterCountDisplay(input.meter.budget);
-  return `${input.slug} (l${input.meter.level}), ${input.meter.rounds} rounds, ${budget} budget — ${tail}`;
+  const rounds = asCountedNoun({
+    count: input.meter.rounds,
+    one: 'round',
+    many: 'rounds',
+  });
+  return `${input.slug} (l${input.meter.level}), ${rounds}, ${budget} budget — ${tail}`;
+};
+
+/**
+ * .what = the two stance commands for one concern — concede (the default) first, then dispute
+ * .why = each taught command carries its REQUIRED flag (--severity on a concede, --why on a
+ *        dispute), so a driver who copies one is never refused at the boundary (r9 b1)
+ */
+const asStanceCommands = (input: {
+  stone: string;
+  slug: string;
+  about: string;
+}): [string, string] => [
+  asRouteStoneStanceCommand({
+    stone: input.stone,
+    as: 'conceded',
+    with: input.slug,
+    about: input.about,
+  }).command,
+  asRouteStoneStanceCommand({
+    stone: input.stone,
+    as: 'disputed',
+    with: input.slug,
+    about: input.about,
+    why: '<fulcrum-path>',
+  }).command,
+];
+
+/**
+ * .what = one numbered step of the road ahead: a title, and the commands it owes
+ */
+interface AbsorptionAckStep {
+  title: string;
+  commands: string[];
+}
+
+/**
+ * .what = the ordered steps that remain after this stance, for the state the stone is in
+ * .why = a stance ack owes the driver the TRUE next command, and the truth depends on state:
+ *          (a) this lane still owes a stance  → the next concern on this lane
+ *          (b) this lane is clear             → absorb this lane's feedback, then whatever
+ *                                               other lanes still owe
+ *          (c) every stance is in             → re-arrive, which re-runs the guard
+ *        a stance never ends the conversation on its own: the `.taken` is gated on every
+ *        concern's stance (define.invariant.review.peer.absorb), so `--as absorbed` is owed
+ *        AFTER the last stance on a lane, and before the re-arrival.
+ *
+ * 🔴 re-arrival is `--as arrived` — the verb the step names. `arrived` is the alias that runs the
+ *    guard (stepRouteStoneSet maps it onto the passage path), so the word printed and the act
+ *    performed agree. an ack that said "re-arrive" above a `--as passed` read as two acts.
+ */
+const asAbsorptionAckSteps = (input: {
+  absorption: 'disputed' | 'conceded';
+  stone: string;
+  slug: string;
+  concern: ReviewConcernRef;
+  /** the lane spent its budget AND the concede is urgent — only then is a round earned */
+  buysRound: boolean;
+  concernsLeft: number;
+  concernNextOnLane: string | null;
+  concernsElsewhere: number;
+  concernNextElsewhere: { slug: string; about: string } | null;
+}): AbsorptionAckStep[] => {
+  // (a) this lane still owes a stance — the next one on it is the only next act
+  if (input.concernsLeft > 0) {
+    const about = input.concernNextOnLane ?? '<concern>';
+    return [
+      {
+        title: `absorb ${about} — ${input.concernsLeft} still owed on this lane`,
+        commands: asStanceCommands({
+          stone: input.stone,
+          slug: input.slug,
+          about,
+        }),
+      },
+    ];
+  }
+
+  // (b) this lane is clear — its feedback is now absorbable, and is owed before the re-arrival
+  // .note = the title is an instruction (absorb the lane, as a whole) and its reason (each
+  //         concern already carries a stance), so it never reads as a claim the lane is done
+  const stepAbsorbLane: AbsorptionAckStep = {
+    title: `now absorb ${input.slug} as a whole — each of its concerns carries a stance`,
+    commands: [
+      asRouteStoneAbsorbCommand({ stone: input.stone, that: input.slug })
+        .command,
+    ],
+  };
+
+  // other lanes still owe stances — name the next one, so the driver need not hunt for it
+  const nextElsewhere = input.concernNextElsewhere;
+  const stepsElsewhere: AbsorptionAckStep[] =
+    input.concernsElsewhere > 0
+      ? [
+          {
+            title: `absorb the ${input.concernsElsewhere} concern${
+              input.concernsElsewhere === 1 ? '' : 's'
+            } on other lanes${
+              nextElsewhere
+                ? ` — next, ${nextElsewhere.slug} ${nextElsewhere.about}`
+                : ''
+            }`,
+            commands: asStanceCommands({
+              stone: input.stone,
+              slug: nextElsewhere?.slug ?? '<slug>',
+              about: nextElsewhere?.about ?? '<concern>',
+            }),
+          },
+        ]
+      : [];
+
+  // an URGENT concede on a spent lane buys the round that confirms the fix — after the fix (S11),
+  // and always scoped to this one lane (S09). a `better` grade past the meter earns no round
+  const stepsTopup: AbsorptionAckStep[] =
+    input.absorption === 'conceded' && input.buysRound
+      ? [
+          {
+            title: `buy the round, once the ${input.concern.kind} is fixed`,
+            commands: [
+              formatReviewBudgetTopupCommand({
+                add: ROUNDS_OFFERED_ON_TOPUP,
+                peer: input.slug,
+                stone: input.stone,
+              }),
+            ],
+          },
+        ]
+      : [];
+
+  // (c) the re-arrival re-runs the guard; a concede re-arrives only once its fix is in
+  const stepRearrive: AbsorptionAckStep = {
+    title:
+      input.absorption === 'conceded'
+        ? `${STEP_REARRIVE}, once the fix is in`
+        : STEP_REARRIVE,
+    commands: [
+      `${asRouteStoneSetCommandHead({ stone: input.stone })} --as arrived`,
+    ],
+  };
+
+  return [stepAbsorbLane, ...stepsElsewhere, ...stepsTopup, stepRearrive];
+};
+
+/**
+ * .what = the steps, rendered as a tree under the ack's close — numbered only when >1
+ */
+const asAbsorptionAckStepLines = (input: {
+  steps: AbsorptionAckStep[];
+}): string[] => {
+  const isNumbered = input.steps.length > 1;
+  return input.steps.flatMap((step, index) => {
+    const isLastStep = index === input.steps.length - 1;
+    const branchStep = isLastStep ? '└─' : '├─';
+    const trunkStep = isLastStep ? '   ' : '│  ';
+    const prefix = isNumbered ? `${index + 1}. ` : '';
+    return [
+      `      ${branchStep} ${prefix}${step.title}`,
+      ...step.commands.map((command, at) => {
+        const branchCommand = at === step.commands.length - 1 ? '└─' : '├─';
+        return `      ${trunkStep}${branchCommand} ${command}`;
+      }),
+    ];
+  });
 };
 
 /**
  * .what = the acknowledgement a driver reads the instant a stance lands
  * .why = a stance is a declaration, so its ack owes the driver exactly one answer: what to do
- *        NEXT. the two absorptions diverge there completely — a dispute lifts its concern from the
- *        tally and the road may advance; a concede keeps the hold and commits the driver to a
- *        repair (S11).
+ *        NEXT. the two absorptions diverge in what they claim — a dispute lifts its concern from
+ *        the tally; a concede keeps the hold and commits the driver to a repair (S11) — but they
+ *        share the road ahead: the rest of the lane's stances, the lane's `--as absorbed`, the
+ *        other lanes' stances, then the re-arrival (asAbsorptionAckSteps).
  *
- * 🔴 the CONCEDE renders the `ABSORPTION_CONCEDE_SEQUENCE` order — the wisher ruled it: *"concede is
- *    to fix and run again … they want to ask for more budget AFTER hteir fixes"* (S11). a grant
- *    led with is a grant that sits unspent through the repair, and the meter then reads a round
- *    that may never be taken — which is exactly the coast S09's budget argument exists to prevent.
+ * 🔴 the CONCEDE renders the `ABSORPTION_CONCEDE_SEQUENCE` order — fix, then budget, then
+ *    re-arrive (S11). a grant led with is a grant that sits unspent through the repair.
  *
- * 🔴 the top-up is ALWAYS `--peer <slug>`-scoped, never the bare `--add N`. S09: *"unless a
- *    level is explicitly rewound or budgetted, it should stay|become exhausted."* the bare form
- *    re-arms every lane on the stone, l1 included, so it is forbidden here rather than merely
- *    wide. this ack names its one lane by construction, so it cannot widen.
+ * 🔴 the top-up is ALWAYS `--peer <slug>`-scoped, never the bare `--add N` (S09). the bare
+ *    form re-arms every lane on the stone, l1 included.
  *
  * ⚠️ it does NOT reach `computeBlockRemedyGroups`, and that is deliberate: that operation
  *    early-returns `[]` unless the reason holds `budget exhausted` or the passage is a terminal
- *    reviewer failure, and a stance is neither. its `--peer` slug also comes from a regex over
- *    that same reason. ⇒ both gates fail a stance ack, so the shape is rendered here and the
- *    scope is a conformance claim rather than a call.
+ *    reviewer failure, and a stance is neither.
  *
  * .note = no human is named on any branch. after a stance the driver has already declared its
  *         judgment, so `approve as-is — a human must grant` has no subject
@@ -90,19 +257,22 @@ export const formatRouteGuardReviewPeerAbsorptionAck = (input: {
   concern: ReviewConcernRef;
   /** the fulcrum a dispute cites. absent on a concede, which claims no judgment */
   why: string | null;
-  /** the concede's graded harm — 'better' (default) or 'urgent' (S14). absent on a dispute */
+  /** the concede's graded harm — 'better' or 'urgent' (S14). absent on a dispute */
   severity: 'better' | 'urgent' | null;
   meter: AbsorptionAckMeter;
   /** how many concerns this lane still owes a stance on, AFTER this one */
   concernsLeft: number;
+  /** the label of the next concern this lane owes, or null when the lane is clear */
+  concernNextOnLane: string | null;
   /**
    * how many concerns OTHER lanes still owe a stance on.
    * .why = r9 n2 — a lane that clears its last concern reads as an all-clear, and the driver
    *        can take `about = the last concern this lane owed` for "the stance phase is done".
-   *        it is not done while another lane owes one. this makes the all-clear a TRUE
-   *        all-clear: the tail names the road ahead when the lane is clear but the stone is not.
+   *        it is not done while another lane owes one.
    */
   concernsElsewhere: number;
+  /** the next concern another lane owes, or null when none is owed elsewhere */
+  concernNextElsewhere: { slug: string; about: string } | null;
 }): string => {
   const about = asReviewConcernRefLabel({ ref: input.concern });
 
@@ -117,6 +287,10 @@ export const formatRouteGuardReviewPeerAbsorptionAck = (input: {
   // does. a dispute grades naught, so its severity is null and the term elides.
   const severityFlag = input.severity ? ` --severity ${input.severity}` : ``;
 
+  // .note = deliberate local line-builder, scoped to this formatter: the array is born in
+  //         this call, grows by the conditional pushes below in render order, and only
+  //         its joined string escapes
+  //         (rule.require.immutable-vars — the scoped emit-builder exception)
   const lines = [
     `🦉 so it is`,
     ``,
@@ -127,10 +301,11 @@ export const formatRouteGuardReviewPeerAbsorptionAck = (input: {
   ];
 
   // this lane is settled but the stone is not — name the road ahead, so the all-clear on this
-  // lane does not read as an all-clear on the stone (r9 n2)
+  // lane does not read as an all-clear on the stone (r9 n2). the noun AND the verb agree with
+  // the count — `1 concern … awaits`, `3 concerns … await` (r014 nitpick.1, i014)
   if (input.concernsLeft === 0 && input.concernsElsewhere > 0)
     lines.push(
-      `   ├─ also  = ${input.concernsElsewhere} concern${input.concernsElsewhere === 1 ? '' : 's'} on other lanes await absorption`,
+      `   ├─ also  = ${asCountedNoun({ count: input.concernsElsewhere, one: 'concern on other lanes awaits', many: 'concerns on other lanes await' })} absorption`,
     );
 
   // a dispute cites the argument a council will read; a concede cites naught
@@ -160,46 +335,12 @@ export const formatRouteGuardReviewPeerAbsorptionAck = (input: {
 
   lines.push(`   │`);
 
-  // a dispute sheds its concern from the tally, so the next move is the road itself —
-  // but ONLY once every other concern is absorbed too. a `drive on --as passed` printed
-  // while a concern still stands contradicts the `about`/`also` lines two rows above, and
-  // sends the driver into a halt the ack itself predicted (r10 b5)
-  if (input.absorption === 'disputed') {
-    const owedStill = input.concernsLeft + input.concernsElsewhere;
-    lines.push(`   └─ the council will read it`);
-    if (owedStill > 0) {
-      lines.push(
-        `      └─ absorb the ${owedStill} concern${owedStill === 1 ? '' : 's'} still owed, then drive on`,
-      );
-      return lines.join('\n');
-    }
-    lines.push(`      └─ drive on`);
-    lines.push(
-      `         └─ rhx route.stone.set --stone ${input.stone} --as passed`,
-    );
-    return lines.join('\n');
-  }
-
-  // a concede keeps the hold, and the remedy fits the meter (F05)
-  //
   // 🔴 the same !Number.isFinite guard `asReviewerMeterLine`'s tail uses, never a raw compare — a
   //    NaN budget passes the tail's guard as "not finite → ∞ rounds left" while a raw
-  //    `rounds >= budget` reads `NaN >= NaN` as false, so the two branches could disagree
-  //    on whether the budget is spent (r007 blocker.4, i006)
+  //    `rounds >= budget` reads `NaN >= NaN` as false, so the two could disagree (r007 b4)
   const spent = !Number.isFinite(input.meter.budget)
     ? false
     : input.meter.rounds >= input.meter.budget;
-
-  // rounds remain, so the lane can confirm the fix without a grant — the budget term elides.
-  // this tail is `ABSORPTION_CONCEDE_STEPS` with the budget step dropped (a grant is unowed);
-  // the fix/re-arrive VERBS are composed from that array (r004 nitpick.3, r001.n2)
-  if (!spent) {
-    lines.push(`   └─ the hold stands. ${STEP_FIX}, then ${STEP_REARRIVE}`);
-    lines.push(
-      `      └─ rhx route.stone.set --stone ${input.stone} --as passed`,
-    );
-    return lines.join('\n');
-  }
 
   // 🔴 the budget is spent, and the GRADE decides whether a round can still be bought.
   //
@@ -219,38 +360,40 @@ export const formatRouteGuardReviewPeerAbsorptionAck = (input: {
   //    point never confirms its fix once the window closes. budget is cumulative rounds, and an
   //    artifact edit mints a new given rather than a restored round, so the loss is permanent.
   //
-  // 🟡 .the test is `!== 'urgent'` rather than `=== 'better'`, and the difference is the NULL.
-  //    `severity` is `'better' | 'urgent' | null`, so an ungraded stance takes THIS branch and
-  //    is offered no round — the same direction `computeLiveUrgentConcessionSlugs` fails on the
+  // 🟡 .the test is `=== 'urgent'` rather than `!== 'better'`, and the difference is the NULL.
+  //    `severity` is `'better' | 'urgent' | null`, so an ungraded stance buys no round and
+  //    is offered none — the same direction `computeLiveUrgentConcessionSlugs` fails on the
   //    ledger, where an unsevered legacy row is dropped rather than kept. ⇒ the ack cannot
   //    advertise a round the gate would refuse, even on a stance that never graded.
   //
-  // ⚠️ .the `absorption === 'conceded'` guard the urgent GRADE line carries is unneeded here,
-  //    and only because the dispute branch above returns. do not reorder past it: a dispute has
-  //    a null severity, so it would fall in and be told to fix a concern it argued against.
-  if (input.severity !== 'urgent') {
-    lines.push(
-      `   └─ ${STEP_FIX} the ${input.concern.kind}, then ${STEP_REARRIVE}`,
-    );
-    lines.push(
-      `      └─ rhx route.stone.set --stone ${input.stone} --as passed`,
-    );
-    return lines.join('\n');
-  }
+  // ⚠️ .the `absorption === 'conceded'` guard the urgent GRADE line carries is needed here too:
+  //    a dispute has a null severity, so it must never be told to buy a round for a concern it
+  //    argued against.
+  const buysRound =
+    input.absorption === 'conceded' && spent && input.severity === 'urgent';
 
-  // the lane spent its budget to raise this, so it has none left to CONFIRM the repair — and the
-  // grade earned the round. the driver fixes, buys one round, then re-arrives — the full
-  // `ABSORPTION_CONCEDE_STEPS` sequence, with the VERBS composed from that array (r009.n2/r001.n2)
-  lines.push(
-    `   └─ ${STEP_FIX} the ${input.concern.kind}, buy the round, then ${STEP_REARRIVE}`,
-  );
-  lines.push(
-    `      ├─ ${formatReviewBudgetTopupCommand({
-      add: ROUNDS_OFFERED_ON_TOPUP,
-      peer: input.slug,
-      stone: input.stone,
-    })}`,
-  );
-  lines.push(`      └─ rhx route.stone.set --stone ${input.stone} --as passed`);
+  // the close names what the stance did to the hold; the steps name what is owed next
+  const close =
+    input.absorption === 'disputed'
+      ? `the council will read it`
+      : buysRound
+        ? `the hold stands. ${STEP_FIX} the ${input.concern.kind}, buy the round, then ${STEP_REARRIVE}`
+        : spent
+          ? `the hold stands. ${STEP_FIX} the ${input.concern.kind}, then ${STEP_REARRIVE}`
+          : `the hold stands. ${STEP_FIX}, then ${STEP_REARRIVE}`;
+  lines.push(`   └─ ${close}`);
+
+  const steps = asAbsorptionAckSteps({
+    absorption: input.absorption,
+    stone: input.stone,
+    slug: input.slug,
+    concern: input.concern,
+    buysRound,
+    concernsLeft: input.concernsLeft,
+    concernNextOnLane: input.concernNextOnLane,
+    concernsElsewhere: input.concernsElsewhere,
+    concernNextElsewhere: input.concernNextElsewhere,
+  });
+  lines.push(...asAbsorptionAckStepLines({ steps }));
   return lines.join('\n');
 };

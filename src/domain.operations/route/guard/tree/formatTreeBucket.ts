@@ -51,9 +51,10 @@ export const formatTreeBucket = (input: {
     // border: blank line before content
     lines.push(`${cont}│`);
 
-    // content lines
+    // content lines — a blank one is a bare rail, with no pad behind it, so every blank
+    // row of the bucket renders at one width (rule.forbid.snapshot-visual-blemishes)
     for (const line of trimmedContent.split('\n')) {
-      lines.push(`${cont}│  ${line}`);
+      lines.push(line === '' ? `${cont}│` : `${cont}│  ${line}`);
     }
 
     // border: blank line after content

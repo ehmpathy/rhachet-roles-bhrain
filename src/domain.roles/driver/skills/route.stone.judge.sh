@@ -16,7 +16,7 @@
 # options:
 #   --mechanism     judge type: approved? or reviewed? (required)
 #   --stone         stone name (required)
-#   --route         path to route directory (required)
+#   --route         path to route directory (uses bound route if absent)
 #   --allow-blockers  max blockers allowed (for reviewed?, default: 0)
 #   --allow-nitpicks  max nitpicks allowed (for reviewed?, default: 0)
 ######################################################################

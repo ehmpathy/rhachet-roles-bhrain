@@ -1,0 +1,17 @@
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
+
+exports[`asWarmerBoundLines given: [case5] a found warmer whose plan differs from the ask when: [t0] its pid is known then: the lines match the snapshot 1`] = `
+[
+  "   ├─ bound: 3 pokes, 20m apart per review gap",
+  "   ├─ asked: 12 pokes, 15m apart  🟡 NOT applied — a live warmer keeps its own plan",
+  "   ├─ to re-plan: kill 4242, then re-run",
+]
+`;
+
+exports[`asWarmerBoundLines given: [case5] a found warmer whose plan differs from the ask when: [t1] its pid is unknown then: the lines match the snapshot 1`] = `
+[
+  "   ├─ bound: 3 pokes, 20m apart per review gap",
+  "   ├─ asked: 12 pokes, 15m apart  🟡 NOT applied — a live warmer keeps its own plan",
+  "   ├─ to re-plan: stop the live warmer, then re-run — it has not yet recorded its pid",
+]
+`;

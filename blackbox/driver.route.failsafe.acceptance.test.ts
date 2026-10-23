@@ -168,8 +168,11 @@ describe('driver.route.failsafe.acceptance', () => {
         expect(result.stdout).toContain('passage = malfunction');
       });
 
+      // .retired = this case once asserted `reviewer or judge malfunctioned` — a reason that could
+      //            not say which party broke, nor how many. retired on purpose: the reason header
+      //            now comes from asGuardMalfunctionReasonLines, which names the party and the count
       then('output shows reviewer malfunctioned reason', () => {
-        expect(result.stdout).toContain('reviewer or judge malfunctioned');
+        expect(result.stdout).toContain('1 of 1 reviewer malfunctioned');
       });
 
       then('stdout matches snapshot', () => {

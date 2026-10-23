@@ -1,0 +1,19 @@
+{
+  "key": "164b134170e41f24",
+  "kind": "create",
+  "repo": {
+    "owner": "ehmpathy",
+    "name": "rhachet"
+  },
+  "exid": null,
+  "title": "feat(brains): an output token bound on the ask contract",
+  "description": "## .what\n\nthe brain ask contract (context.brain.choice.ask, BrainAtom.ask) accepts no bound on output tokens, so a caller cannot cap a single generation. the provider own limit is the only cap.\n\ncheckable evidence: rhachet@1.48.1 exposes no max-output or max-thought option on ask, and rhachet-brains-openrouter@0.1.3 sends no max_tokens in its request body. in ehmpathy/rhachet-roles-bhrain, four review asks on openrouter/deepseek/flash ended with finish_reason=length at 131,072 output tokens and contentLength 0 (for example generation gen-1791007661-ezKsM4RJYqxHj1TVGfg8). a review verdict is a json object of a few thousand tokens; no honest reply is near 131k.\n\n## .why\n\na runaway is billed in full and returns no verdict, so the caller pays for a malfunction and then pays again for the re-run. a caller that knows its reply size has no way to make the runaway fail early and cheap.\n\n## .shape of the fix\n\n- add an optional output bound to the ask input, for example { limit: { output: { tokens: 32000 } } } (name it to match the contract vocabulary; distinct from the effort / reasoning budget in #595 and #490, which bound the think, not the whole reply)\n- each brain adapter forwards it to its provider (max_tokens on openrouter and openai-shaped apis); an adapter that cannot honor it says so rather than drops it in silence\n- a reply cut at the bound surfaces as the extant output-limit error, with the realized spend at the bound\n- clamp: a stubbed adapter asserts the bound reaches the request body; an absent bound sends naught (behavior unchanged)\n\nthe openrouter half is filed on ehmpathy/rhachet-brains-openrouter.\n\ncaught in ehmpathy/rhachet-roles-bhrain .dream/v2026_10_03.fix.a-review-call-sets-no-output-cap-so-a-runaway-spends-131k-tokens.md",
+  "status": null,
+  "via": "gh.issues",
+  "auth": "as-human",
+  "idem": null,
+  "heldSeq": 19,
+  "recordStatus": "DELIVERED",
+  "reason": null,
+  "deliveredExid": "611"
+}

@@ -24,7 +24,7 @@ axis: `case` (occurrence, ordinal + slug). declared as each fork arose.
 | [F18](./inventory.of=fulcrums.case=F18-route-guard-epipe-deferred-for-dirt.md) | the route guard emitter's `EPIPE` crash on a closed pipe is dreamed, not fixed at 5.3 | clean | open | 75% |
 | [F19](./inventory.of=fulcrums.case=F19-review-default-brain-is-openrouter.md) | the review default brain is `openrouter/deepseek/flash`, not fireworks | clean | ruled — A, stays while fireworks is suspended (S6) | 85% |
 | [F20](./inventory.of=fulcrums.case=F20-claude-sonnet-review-suite-stays-skipped.md) | the `claude-sonnet` review suite stays skipped, on cost | clean | ruled — A, the skip stands (S6) | 70% |
-| [F21](./inventory.of=fulcrums.case=F21-tally-brain-follows-the-review-default.md) | the review tally brain is `openrouter/deepseek/flash`; fireworks answers 412 | clean | open | 85% |
-| [F22](./inventory.of=fulcrums.case=F22-test-brain-pin-deferred-for-dirt.md) | `DEFAULT_TEST_BRAIN` moves to openrouter at 5.3 | clean | ruled — A, folded in at 5.3; the dream is struck | 75% |
+| [F21](./inventory.of=fulcrums.case=F21-tally-brain-follows-the-review-default.md) | the review tally brain is `openrouter/deepseek/flash`; main carries the move, this branch adds its live clamp | clean | open — shrunk to the clamp | 85% |
+| [F22](./inventory.of=fulcrums.case=F22-test-brain-pin-deferred-for-dirt.md) | `DEFAULT_TEST_BRAIN` moves to openrouter at 5.3 | clean | ruled — A; shrunk to naught, main carries the move | 75% |
 
 gaps: none declared.

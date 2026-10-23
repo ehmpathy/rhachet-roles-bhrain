@@ -1,0 +1,69 @@
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
+
+exports[`getOnePromptComposition given: [case6] a corpus of new, edited, and deleted targets when: [t0] the composition is measured then: the census renders as a reviewable table 1`] = `
+{
+  "attribution": "attributed",
+  "cacheable": {
+    "head": 139,
+    "tail": 760,
+  },
+  "chars": 899,
+  "inputs": {
+    "conversation": {
+      "cacheable": false,
+      "chars": 0,
+      "count": 0,
+    },
+    "instructions": {
+      "cacheable": true,
+      "chars": 9,
+      "count": 1,
+    },
+    "markup": {
+      "cacheable": true,
+      "chars": 9,
+      "count": 1,
+    },
+    "outputFormat": {
+      "cacheable": true,
+      "chars": 21,
+      "count": 1,
+    },
+    "refs": {
+      "cacheable": true,
+      "chars": 0,
+      "count": 0,
+    },
+    "rules": {
+      "cacheable": true,
+      "chars": 100,
+      "count": 1,
+    },
+    "targetDiffs.additions": {
+      "cacheable": true,
+      "chars": 400,
+      "count": 1,
+    },
+    "targetDiffs.deletions": {
+      "cacheable": true,
+      "chars": 0,
+      "count": 1,
+    },
+    "targetDiffs.mutations": {
+      "cacheable": false,
+      "chars": 60,
+      "count": 1,
+    },
+    "targetFiles": {
+      "cacheable": true,
+      "chars": 300,
+      "count": 1,
+    },
+    "targetPaths": {
+      "cacheable": true,
+      "chars": 0,
+      "count": 0,
+    },
+  },
+}
+`;

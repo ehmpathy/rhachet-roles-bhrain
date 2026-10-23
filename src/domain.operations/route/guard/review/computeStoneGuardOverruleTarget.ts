@@ -1,14 +1,14 @@
 /**
- * .what = the pure decision at the heart of getStoneGuardOverruleTarget: given a stone's active
+ * .what = the pure decision at the heart of getOneStoneGuardOverruleTarget: given a stone's active
  *         level and the levels that owe an un-forgiven feedbackAbsorption, decide whether an
  *         overrule/force has a target at all, and which level it forgives.
  * .why = the branch matrix (activeLevel null/non-null × owed empty/multi × Math.min selection) is
  *        the part that drifted twice in this behavior's history. kept pure so its whole matrix is
- *        unit-checkable without a route on disk — the fs read lives in getStoneGuardOverruleTarget,
+ *        unit-checkable without a route on disk — the fs read lives in getOneStoneGuardOverruleTarget,
  *        the decision lives here (rule.require.orchestrators-as-narrative).
  *
  * .note = the judge is the top rung (JUDGE_LEVEL), reported as the activeLevel by
- *         getStoneGuardLevelState for a judges-only stone, and for a peer+judge stone once its
+ *         getOneStoneGuardLevelState for a judges-only stone, and for a peer+judge stone once its
  *         peers clear and the judge itself holds. so a judge overrule needs no special branch
  *         here — it is just an activeLevel like any other rung.
  */

@@ -1,15 +1,8 @@
 // Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
 
-exports[`reflect.snapshot capture given: [case1] repo without claude code project when: [t0] capture is attempted then: stderr matches snapshot 1`] = `
-"~[FILE]
-        throw new Error(\`no claude code project found for \${input.scope.cwd}. expected at ~/.claude/projects/\`);
-              ^
-
-Error: no claude code project found for [TEMP_PATH] expected at ~/.claude/projects/
-    at [STACK]
-    at [STACK]
-    at [STACK]
-
-Node.js v[VERSION]
+exports[`reflect.snapshot.capture given: [case1] repo without claude code project when: [t0] capture is attempted then: stderr matches snapshot 1`] = `
+"🌕 reflect.snapshot capture
+   ├─ ✋ ConstraintError: no claude code project found for [TEMP_PATH]. expected at ~/.claude/projects/
+   └─ fix: run claude code in this repo once, then capture again
 "
 `;

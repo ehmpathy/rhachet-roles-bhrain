@@ -1,67 +1,13 @@
 import { spawn } from 'child_process';
 import * as path from 'path';
 
-import { genTempDir } from 'test-fns';
-
+import { asExecResultOrThrow } from './asExecResultOrThrow';
+import { asSkillLaunchFailureOrNull } from './asSkillLaunchFailureOrNull';
 export { execAsync } from './execAsync';
 import { execAsync } from './execAsync';
-
-/**
- * .what = creates a temp directory ready for rhachet roles link
- * .why = enables acceptance tests with git repo and node_modules symlink
- */
-export const genTempDirForRhachet = (input: {
-  slug: string;
-  clone: string;
-}): string => {
-  return genTempDir({
-    slug: input.slug,
-    clone: input.clone,
-    git: true,
-    symlink: [
-      // symlink rhachet-roles-bhrain package for the driver role
-      {
-        at: 'node_modules/rhachet-roles-bhrain/package.json',
-        to: 'package.json',
-      },
-      { at: 'node_modules/rhachet-roles-bhrain/dist', to: 'dist' },
-      {
-        at: 'node_modules/rhachet-roles-bhrain/rhachet.repo.yml',
-        to: 'rhachet.repo.yml',
-      },
-      // symlink .bin for npx to find rhx/rhachet commands
-      { at: 'node_modules/.bin', to: 'node_modules/.bin' },
-      // symlink rhachet so rhx entrypoint can find ../rhachet/bin/rhx
-      { at: 'node_modules/rhachet', to: 'node_modules/rhachet' },
-      // symlink .pnpm for pnpm-generated wrapper scripts that use relative paths
-      // .why = rhx wrapper does $basedir/../.pnpm/... which needs .pnpm to exist
-      { at: 'node_modules/.pnpm', to: 'node_modules/.pnpm' },
-      // symlink brain packages for brain discovery
-      // .why = discoverBrainPackages reads the fixture's package.json, then imports each brain
-      //        package BY NAME resolved from the fixture root. node's lookup walks the fixture's
-      //        own node_modules and its parents under /tmp — it never reaches the repo's — so an
-      //        absent symlink makes every brain unloadable and any review the fixture drives
-      //        malfunctions. mirrors invokeReviewSkill's symlink set.
-      {
-        at: 'node_modules/rhachet-brains-fireworksai',
-        to: 'node_modules/rhachet-brains-fireworksai',
-      },
-      {
-        at: 'node_modules/rhachet-brains-anthropic',
-        to: 'node_modules/rhachet-brains-anthropic',
-      },
-      {
-        at: 'node_modules/rhachet-brains-openai',
-        to: 'node_modules/rhachet-brains-openai',
-      },
-      // the review skill's default brain is openrouter/deepseek/flash
-      {
-        at: 'node_modules/rhachet-brains-openrouter',
-        to: 'node_modules/rhachet-brains-openrouter',
-      },
-    ],
-  });
-};
+export { asRefusalBlock } from './asRefusalBlock';
+export { genTempDirForRhachet } from './genTempDirForRhachet';
+export { invokeShellCommand } from './invokeShellCommand';
 
 /**
  * .what = invokes a route skill via its shell entrypoint
@@ -152,30 +98,22 @@ export const invokeRouteMutateGuard = async (input: {
     const result = await execAsync(cmd, { cwd: input.cwd });
     return { ...result, code: 0 };
   } catch (error) {
-    const execError = error as {
-      stdout?: string;
-      stderr?: string;
-      code?: number;
-    };
-    return {
-      stdout: execError.stdout ?? '',
-      stderr: execError.stderr ?? '',
-      code: execError.code ?? 1,
-    };
+    // a nonzero exit is a skill result; any other fault rethrows (rule.forbid.failhide)
+    return asExecResultOrThrow({ error });
   }
 };
 
 /**
- * .what = the ONE child-env builder every blackbox suite spawns a subprocess through
+ * .what = the one child-env builder every blackbox suite spawns a subprocess through
  *
- * 🔴 .why it is exported rather than inlined = its `undefined` semantics are LOAD-BEARING
- *    and easy to re-implement subtly differently. a value of `undefined` DELETES the key
+ * 🔴 .why it is exported rather than inlined = its `undefined` semantics carry real weight
+ *    and are easy to re-implement subtly differently. a value of `undefined` deletes the key
  *    from the child env, rather than sets it to the string `"undefined"` — the hermetic
- *    unset a suite needs to prove a DEFAULT against a leaked operator override. the
+ *    unset a suite needs to prove a default against a leaked operator override. the
  *    `-default` concurrency suite depends on it to show the default path rather than a
  *    stray `RHACHET_LEVEL_CONCURRENCY`.
  *
- *    ⚠️ it was hand-rolled in THREE files at once (this one, plus the two env-refusal
+ *    ⚠️ it was hand-rolled in three files at once (this one, plus the two env-refusal
  *      suites), all added by one diff — raised as blocker.1 by
  *      `ergo-acceptance-journey-coverage` at i019. a later change to the unset sentinel
  *      would land in one copy and not the others, and the refusal suites would then
@@ -187,14 +125,12 @@ export const invokeRouteMutateGuard = async (input: {
 export const asChildEnv = (input: {
   overrides?: Record<string, string | undefined>;
 }): NodeJS.ProcessEnv => {
-  const childEnv: Record<string, string | undefined> = {
-    ...process.env,
-    ...input.overrides,
-  };
-
-  // a key whose override is `undefined` is DELETED, never stringified
-  for (const [key, value] of Object.entries(input.overrides ?? {}))
-    if (value === undefined) delete childEnv[key];
+  // a key whose override is `undefined` is dropped, never stringified
+  const childEnv = Object.fromEntries(
+    Object.entries({ ...process.env, ...input.overrides }).filter(
+      ([, value]) => value !== undefined,
+    ),
+  );
 
   return childEnv as NodeJS.ProcessEnv;
 };
@@ -207,6 +143,7 @@ export const invokeRouteSkill = async (input: {
     | 'route.bounce'
     | 'route.drive'
     | 'route.guard.budget'
+    | 'route.guard.partition'
     | 'route.guard.upgrade'
     | 'route.mutate'
     | 'route.reminder.gen'
@@ -221,9 +158,9 @@ export const invokeRouteSkill = async (input: {
     | 'route.stone.judge';
   args: Record<string, string | boolean | string[] | undefined>;
   cwd: string;
-  // .why = a value of `undefined` DELETES the key from the child env, rather than
+  // .why = a value of `undefined` deletes the key from the child env, rather than
   //        sets it to the string "undefined". this is the hermetic unset a suite
-  //        needs to prove a DEFAULT against a leaked operator override — e.g.
+  //        needs to prove a default against a leaked operator override — e.g.
   //        `env: { RHACHET_LEVEL_CONCURRENCY: undefined }` guarantees the child
   //        sees no override, so the default path is the one under test
   //        (rule.forbid.failhide — a clamp must not go green for the wrong reason).
@@ -238,7 +175,7 @@ export const invokeRouteSkill = async (input: {
     skillFile,
   );
 
-  // build the child env through the ONE canonical builder (see `asChildEnv`)
+  // build the child env through the one canonical builder (see `asChildEnv`)
   const childEnv = asChildEnv({ overrides: input.env });
 
   // build args array; arrays expand to repeated flags
@@ -252,13 +189,15 @@ export const invokeRouteSkill = async (input: {
 
   // if stdin provided, use spawn to pipe stdin
   if (input.stdin !== undefined) {
-    return new Promise((done) => {
+    return new Promise((done, fail) => {
       const child = spawn('bash', [skillPath, ...argsArray], {
         cwd: input.cwd,
         env: childEnv,
         stdio: ['pipe', 'pipe', 'pipe'], // explicitly set stdin to pipe
       });
 
+      // .note = deliberate mutation, and a scoped zone: both accumulators are born in this
+      //         call and grow only in the child's data callbacks; only the close value escapes
       let stdout = '';
       let stderr = '';
 
@@ -271,6 +210,12 @@ export const invokeRouteSkill = async (input: {
       });
 
       child.on('close', (code) => {
+        // a skill that never launched is a harness fault, never a result
+        const launchFailure = asSkillLaunchFailureOrNull({
+          code: code ?? 0,
+          stderr,
+        });
+        if (launchFailure) return fail(launchFailure);
         done({ stdout, stderr, code: code ?? 0 });
       });
 
@@ -294,12 +239,8 @@ export const invokeRouteSkill = async (input: {
     });
     return { ...result, code: 0 };
   } catch (error) {
-    const execError = error as { stdout?: string; stderr?: string; code?: number };
-    return {
-      stdout: execError.stdout ?? '',
-      stderr: execError.stderr ?? '',
-      code: execError.code ?? 1,
-    };
+    // a nonzero exit is a skill result; any other fault rethrows (rule.forbid.failhide)
+    return asExecResultOrThrow({ error });
   }
 };
 

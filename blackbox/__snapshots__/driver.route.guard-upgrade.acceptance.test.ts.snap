@@ -40,7 +40,7 @@ exports[`driver.route.guard-upgrade.acceptance given: [case1] a route with mixed
    │  └─ decision = absent source
    │
    ├─ summary = 2 available, 1 kept, 1 skipped, 1 absent
-   └─ ⚠ 1 guard blocked — a full apply is refused; scope a clean stone with --stone
+   └─ 🟡 1 guard blocked — a full apply is refused; scope a clean stone with --stone
 "
 `;
 
@@ -60,13 +60,9 @@ exports[`driver.route.guard-upgrade.acceptance given: [case2] a single stone app
 `;
 
 exports[`driver.route.guard-upgrade.acceptance given: [case3] a blocked guard among good ones (apply-all) when: [t0] apply the whole route with 9.broken present then: stderr matches snapshot 1`] = `
-"error: BadRequestError: cannot upgrade: 1 guard blocked — 9.broken.guard (absent-source)
+"✋ ConstraintError: cannot upgrade: 1 guard blocked — 9.broken.guard (absent-source)
 
-{
-  "blocked": [
-    "9.broken.guard"
-  ]
-}
+blocked: ["9.broken.guard"]
 "
 `;
 
@@ -94,7 +90,11 @@ exports[`driver.route.guard-upgrade.acceptance given: [case4] --stone boundary m
 `;
 
 exports[`driver.route.guard-upgrade.acceptance given: [case5] no bound route and no --route when: [t0] upgrade without a route target then: stderr matches snapshot 1`] = `
-"error: no bound route found. use --route to specify.
+"
+🦉 woah there
+
+✋ ConstraintError: no bound route found. use --route to specify.
+
 "
 `;
 
@@ -111,19 +111,15 @@ usage:
 options:
   --stone <name>   stone name (BOUNDARY match: "5.1" hits every "5.1.*" guard but NOT "5.10.x").
                    default: all guards in the route
-  --route <path>   path to route directory (default: auto-detect from branch)
+  --route <path>   path to route directory (uses bound route if absent)
   --mode <mode>    plan | apply (default: plan)
 "
 `;
 
 exports[`driver.route.guard-upgrade.acceptance given: [case7] a guard whose template carries a stray $FOO (apply) when: [t0] apply --stone 4.unknownvar then: stderr matches snapshot 1`] = `
-"error: BadRequestError: cannot upgrade: 1 guard blocked — 4.unknownvar.guard (unknown-var)
+"✋ ConstraintError: cannot upgrade: 1 guard blocked — 4.unknownvar.guard (unknown-var)
 
-{
-  "blocked": [
-    "4.unknownvar.guard"
-  ]
-}
+blocked: ["4.unknownvar.guard"]
 "
 `;
 
@@ -142,17 +138,12 @@ exports[`driver.route.guard-upgrade.acceptance given: [case7] a guard whose temp
 `;
 
 exports[`driver.route.guard-upgrade.acceptance given: [case8] an invalid --mode value when: [t0] --mode is neither plan nor apply then: stderr matches snapshot 1`] = `
-"error: --mode must be "plan" or "apply", got "bogus"
+"✋ ConstraintError: --mode must be "plan" or "apply", got "bogus"
 "
 `;
 
 exports[`driver.route.guard-upgrade.acceptance given: [case9] a --stone that hits no guard when: [t0] plan --stone 9.absent then: stderr matches snapshot 1`] = `
-"error: BadRequestError: no guard matched --stone 9.absent. available stones: 1.vision, 2.kept, 5.1.execution, 5.10.other, 9.broken
-
-{
-  "stone": "9.absent",
-  "route": "route"
-}
+"✋ ConstraintError: no guard matched --stone 9.absent. available stones: 1.vision, 2.kept, 5.1.execution, 5.10.other, 9.broken
 "
 `;
 
@@ -171,23 +162,16 @@ exports[`driver.route.guard-upgrade.acceptance given: [case10] a guard whose tem
 `;
 
 exports[`driver.route.guard-upgrade.acceptance given: [case10] a guard whose template fails to parse (invalid-source) when: [t1] apply --stone 6.invalid (blocked) then: stderr matches snapshot 1`] = `
-"error: BadRequestError: cannot upgrade: 1 guard blocked — 6.invalid.guard (invalid-source)
+"✋ ConstraintError: cannot upgrade: 1 guard blocked — 6.invalid.guard (invalid-source)
 
-{
-  "blocked": [
-    "6.invalid.guard"
-  ]
-}
+blocked: ["6.invalid.guard"]
 "
 `;
 
 exports[`driver.route.guard-upgrade.acceptance given: [case11] an explicit --route that does not exist when: [t0] --route points at a mistyped dir then: stderr matches snapshot 1`] = `
-"error: BadRequestError: route not found: tpyo-does-not-exist. did you mistype --route?
+"✋ ConstraintError: route not found: tpyo-does-not-exist. did you mistype --route?
 
-{
-  "route": "tpyo-does-not-exist",
-  "routeAbs": "[TEMP]/tpyo-does-not-exist"
-}
+routeAbs: [TEMP]/tpyo-does-not-exist
 "
 `;
 
@@ -201,7 +185,7 @@ exports[`driver.route.guard-upgrade.acceptance given: [case12] an upgrade whose 
    ├─ 5.1.execution.guard
    │  ├─ decision = upgrade available
    │  ├─ from = templates/5.1.execution.guard
-   │  ├─ ⚠ stone 5.1.execution already passed under the prior guard — this upgrade re-syncs its rules but does not re-validate the passage
+   │  ├─ 🟡 stone 5.1.execution already passed under the prior guard — this upgrade re-syncs its rules but does not re-validate the passage
    │  └─ diff
    │     ├─
    │     │
@@ -225,7 +209,7 @@ exports[`driver.route.guard-upgrade.acceptance given: [case13] an upgrade that r
    ├─ 8.budgetgrant.guard
    │  ├─ decision = upgrade available
    │  ├─ from = templates/8.budgetgrant.guard
-   │  ├─ ⚠ this upgrade reverts a budget grant on r-arch: 5 → 3
+   │  ├─ 🟡 this upgrade reverts a budget grant on r-arch: 5 → 3
    │  └─ diff
    │     ├─
    │     │
@@ -275,7 +259,7 @@ exports[`driver.route.guard-upgrade.acceptance given: [case15] an upgrade whose 
    ├─ 5.1.execution.guard
    │  ├─ decision = upgrade available
    │  ├─ from = templates/5.1.execution.guard
-   │  ├─ ⚠ stone 5.1.execution is approved but not yet passed — this upgrade changes the rules its pass will be judged against
+   │  ├─ 🟡 stone 5.1.execution is approved but not yet passed — this upgrade changes the rules its pass will be judged against
    │  └─ diff
    │     ├─
    │     │
@@ -335,7 +319,7 @@ exports[`driver.route.guard-upgrade.acceptance given: [case16] one route, all si
    │  └─ decision = absent source
    │
    ├─ summary = 2 available, 1 kept, 1 skipped, 1 absent, 1 invalid, 1 unknown-var
-   └─ ⚠ 3 guards blocked — a full apply is refused; scope a clean stone with --stone
+   └─ 🟡 3 guards blocked — a full apply is refused; scope a clean stone with --stone
 "
 `;
 

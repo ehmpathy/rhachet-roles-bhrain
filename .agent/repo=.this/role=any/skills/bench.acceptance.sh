@@ -17,6 +17,13 @@
 # guarantee:
 #   - run/gate/report exit 0 (they measure, they do not gate)
 #   - compare exits 2 if a case that PASSED before no longer passes
+#
+# .scope = a repo-local instrument, never published (package.json files
+#          holds /dist only). run and gate each spawn the whole acceptance
+#          suite, so no acceptance case pins their output — it would
+#          recurse. the hermetic paths (--help, an unknown command, report
+#          of an absent label, compare clean and compare regressed) are
+#          snapped in blackbox/bench.acceptance.acceptance
 ######################################################################
 set -euo pipefail
 

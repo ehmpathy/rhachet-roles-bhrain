@@ -11,7 +11,7 @@ exports[`driver.route.force.multilevel.acceptance given: [case1] force at a non-
    │   └─ taken: .reviews/peer/1.feature._.review.i001.512808e604bda1dfc3.r001._.taken.by_self.basic-checker.md
    │
    ├─ r2: premium-checker (l3, 0/5)
-   │   └─ awaits arrival
+   │   └─ awaits l1 terminal
    │
    ├─ ✗ judge.1 - blocked [TIME]
    │

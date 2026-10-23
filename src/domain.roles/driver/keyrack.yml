@@ -1,0 +1,4 @@
+org: ehmpathy
+
+env.prep:
+  - OPENROUTER_API_KEY

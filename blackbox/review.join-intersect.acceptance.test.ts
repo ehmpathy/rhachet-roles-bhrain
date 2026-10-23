@@ -2,12 +2,15 @@ import * as fs from 'fs/promises';
 import * as path from 'path';
 
 import { given, then, useThen, when } from 'test-fns';
+import { DEFAULT_TEST_BRAIN_VIA_CLI } from '@src/.test/genTestBrainContext';
 
 import {
   execAsync,
   genTempDirForRhachet,
   invokeReviewSkill,
 } from './.test/invokeReviewSkill';
+import { asRedactedOutput } from './.test/asRedactedOutput';
+import { asReviewMetricsExpectedBlock } from './.test/invokeReviewBySkill';
 
 const ASSETS_DIR = path.join(__dirname, '.test/assets/codebase-mechanic');
 
@@ -22,7 +25,7 @@ const REPEATABLE_CONFIG = {
   criteria: process.env.CI ? 'SOME' : 'EVERY',
 } as const;
 
-describe('review.join.acceptance', () => {
+describe('review.join-intersect.acceptance', () => {
   given('[case1] intersect mode with both diffs and paths', () => {
     when.repeatably(REPEATABLE_CONFIG)('[t0] only dirty.ts is changed, paths matches both files', () => {
       const res = useThen('invoke review with intersect', async () => {
@@ -57,7 +60,7 @@ describe('review.join.acceptance', () => {
           output: outputPath,
           focus: 'push',
           goal: 'representative',
-          brain: 'fireworks/deepseek/v4-flash',
+          brain: DEFAULT_TEST_BRAIN_VIA_CLI,
           cwd: tempDir,
         });
 
@@ -75,6 +78,11 @@ describe('review.join.acceptance', () => {
 
       then('cli completes successfully', () => {
         expect(res.cli.code).toEqual(0);
+      });
+
+      then('the metrics.expected block matches its snapshot (computed before the brain)', () => {
+        // the scope tree and estimate are deterministic; the verdict summary is the brain's
+        expect(asReviewMetricsExpectedBlock({ stdout: res.cli.stdout })).toMatchSnapshot();
       });
 
       then('only dirty.ts is in target files (intersection)', () => {
@@ -108,7 +116,7 @@ describe('review.join.acceptance', () => {
           output: outputPath,
           focus: 'push',
           goal: 'representative',
-          brain: 'fireworks/deepseek/v4-flash',
+          brain: DEFAULT_TEST_BRAIN_VIA_CLI,
           cwd: tempDir,
         });
 
@@ -129,8 +137,15 @@ describe('review.join.acceptance', () => {
       });
 
       then('cli fails with zero files error', () => {
-        expect(res.cli.code).not.toEqual(0);
+        expect(res.cli.code).toEqual(2);
         expect(res.cli.stderr).toContain('combined scope resolves to zero files');
+      });
+
+      then('the refusal reads whole, as a driver meets it', () => {
+        // the whole stderr is pinned; only the temp dir and the log dir vary per run
+        expect(
+          asRedactedOutput(res.cli.stderr.split(res.tempDir).join('$CWD')),
+        ).toMatchSnapshot();
       });
 
       then('error message includes hint about log file', () => {
@@ -177,7 +192,7 @@ describe('review.join.acceptance', () => {
           output: outputPath,
           focus: 'push',
           goal: 'representative',
-          brain: 'fireworks/deepseek/v4-flash',
+          brain: DEFAULT_TEST_BRAIN_VIA_CLI,
           cwd: tempDir,
         });
 
@@ -195,6 +210,11 @@ describe('review.join.acceptance', () => {
 
       then('cli completes successfully', () => {
         expect(res.cli.code).toEqual(0);
+      });
+
+      then('the metrics.expected block matches its snapshot (computed before the brain)', () => {
+        // the scope tree and estimate are deterministic; the verdict summary is the brain's
+        expect(asReviewMetricsExpectedBlock({ stdout: res.cli.stdout })).toMatchSnapshot();
       });
 
       then('both files are in target files (union)', () => {
@@ -237,7 +257,7 @@ describe('review.join.acceptance', () => {
           output: outputPath,
           focus: 'push',
           goal: 'representative',
-          brain: 'fireworks/deepseek/v4-flash',
+          brain: DEFAULT_TEST_BRAIN_VIA_CLI,
           cwd: tempDir,
         });
 
@@ -255,6 +275,11 @@ describe('review.join.acceptance', () => {
 
       then('cli completes successfully', () => {
         expect(res.cli.code).toEqual(0);
+      });
+
+      then('the metrics.expected block matches its snapshot (computed before the brain)', () => {
+        // the scope tree and estimate are deterministic; the verdict summary is the brain's
+        expect(asReviewMetricsExpectedBlock({ stdout: res.cli.stdout })).toMatchSnapshot();
       });
 
       then('only dirty.ts is reviewed (default is intersect)', () => {
@@ -286,7 +311,7 @@ describe('review.join.acceptance', () => {
           output: outputPath,
           focus: 'push',
           goal: 'representative',
-          brain: 'fireworks/deepseek/v4-flash',
+          brain: DEFAULT_TEST_BRAIN_VIA_CLI,
           cwd: tempDir,
         });
 
@@ -304,6 +329,11 @@ describe('review.join.acceptance', () => {
 
       then('cli completes successfully', () => {
         expect(res.cli.code).toEqual(0);
+      });
+
+      then('the metrics.expected block matches its snapshot (computed before the brain)', () => {
+        // the scope tree and estimate are deterministic; the verdict summary is the brain's
+        expect(asReviewMetricsExpectedBlock({ stdout: res.cli.stdout })).toMatchSnapshot();
       });
 
       then('all matched files are reviewed', () => {

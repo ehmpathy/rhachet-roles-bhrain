@@ -1,0 +1,82 @@
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
+
+exports[`asReviewOverflowLeverLines given: [case1] an overflow led by added files when: [t0] the lever is chosen then: the lines match the snapshot 1`] = `
+"   ├─ lever — partition what the rubric grades, cut what it does not
+   │  ├─ --partition 'review=src/domain.operations/review/**,.behavior/v2026_10_04.feat/**'
+   │  ├─ --partition 'cli=src/contract/cli/**,.behavior/v2026_10_04.feat/**'
+   │  ├─ (+ 1 more group — every target must sit in a partition)
+   │  ├─ one domain per partition, with its own tests (rule.forbid.horizontal-partitions)
+   │  ├─ list the shared context in every partition that reads it too — route yields, briefs, shared types
+   │  │  └─ the overlap is graded once, and it leads each prompt, so every partition reads it from cache
+   │  ├─ preview first with --mode plan (under a guard, rhx route.guard.partition --for review --peer @all)
+   │  └─ or cut a subtree the rubric does not grade — --paths-wout '<subtree>/**'"
+`;
+
+exports[`asReviewOverflowLeverLines given: [case2] an overflow led by edited files when: [t0] the lever is chosen then: the lines match the snapshot 1`] = `
+"   ├─ lever — partition what the rubric grades, cut what it does not
+   │  ├─ --partition '<slug>=<globs>' (one per set a reviewer can judge alone)
+   │  ├─ one domain per partition, with its own tests (rule.forbid.horizontal-partitions)
+   │  ├─ list the shared context in every partition that reads it too — route yields, briefs, shared types
+   │  │  └─ the overlap is graded once, and it leads each prompt, so every partition reads it from cache
+   │  ├─ preview first with --mode plan (under a guard, rhx route.guard.partition --for review --peer @all)
+   │  └─ or cut a subtree the rubric does not grade — --paths-wout '<subtree>/**'"
+`;
+
+exports[`asReviewOverflowLeverLines given: [case3] a partition run that still overflows, from a stamped lane when: [t0] the lever is chosen then: the lines match the snapshot 1`] = `
+"   ├─ lever — partition \`src\` still overflows alone; replace it with narrower ones
+   │  ├─ --partition 'a=src/a/**,.behavior/v2026_10_04.feat/**'
+   │  ├─ --partition 'b=src/b/**,.behavior/v2026_10_04.feat/**'
+   │  ├─ one domain per partition, with its own tests (rule.forbid.horizontal-partitions)
+   │  ├─ list the shared context in every partition that reads it too — route yields, briefs, shared types
+   │  │  └─ the overlap is graded once, and it leads each prompt, so every partition reads it from cache
+   │  ├─ preview first with --mode plan (under a guard, rhx route.guard.partition --for review --peer @all)
+   │  └─ or cut a subtree the rubric does not grade — --paths-wout '<subtree>/**'
+   ├─ upstream — stamped from node_modules/rhachet-roles-bhuild/dist/templates/5.3.verification.guard; dispatch the cut so every route it stamps inherits it
+   │  └─ rhx radio.task.push --via gh.issues --into ehmpathy/rhachet-roles-bhuild --title 'review lane repo-rules overflows on large branches' --description @stdin"
+`;
+
+exports[`asReviewOverflowLeverLines given: [case4] an overflow whose targets carry no mass at all when: [t0] the lever is chosen then: the lines match the snapshot 1`] = `
+"   ├─ lever — the targets carry no mass; the rubric, refs, or conversation fill the window
+   │  └─ narrow --rules, --refs, or --conversation"
+`;
+
+exports[`asReviewOverflowLeverLines given: [case5] a partition run that overflows with no child dir over half its mass when: [t0] the lever is chosen then: the lines match the snapshot 1`] = `
+"   ├─ lever — partition \`src/review\` still overflows alone; replace it with narrower ones
+   │  ├─ --partition 'warmer=src/review/warmer/**,.behavior/v2026_10_04.feat/**'
+   │  ├─ --partition 'meter=src/review/meter/**,.behavior/v2026_10_04.feat/**'
+   │  ├─ --partition 'grove=src/review/grove/**,.behavior/v2026_10_04.feat/**'
+   │  ├─ (+ 1 more group — every target must sit in a partition)
+   │  ├─ one domain per partition, with its own tests (rule.forbid.horizontal-partitions)
+   │  ├─ list the shared context in every partition that reads it too — route yields, briefs, shared types
+   │  │  └─ the overlap is graded once, and it leads each prompt, so every partition reads it from cache
+   │  ├─ preview first with --mode plan (under a guard, rhx route.guard.partition --for review --peer @all)
+   │  └─ or cut a subtree the rubric does not grade — --paths-wout '<subtree>/**'"
+`;
+
+exports[`asReviewOverflowLeverLines given: [case6] an added overflow spread over more dirs than a suggestion names when: [t0] six dirs hold the mass, two past the limit then: the lines match the snapshot 1`] = `
+"   ├─ lever — partition what the rubric grades, cut what it does not
+   │  ├─ --partition 'dir1=dir1/**'
+   │  ├─ --partition 'dir2=dir2/**'
+   │  ├─ --partition 'dir3=dir3/**'
+   │  ├─ --partition 'dir4=dir4/**'
+   │  ├─ (+ 2 more groups — every target must sit in a partition)
+   │  ├─ one domain per partition, with its own tests (rule.forbid.horizontal-partitions)
+   │  ├─ list the shared context in every partition that reads it too — route yields, briefs, shared types
+   │  │  └─ the overlap is graded once, and it leads each prompt, so every partition reads it from cache
+   │  ├─ preview first with --mode plan (under a guard, rhx route.guard.partition --for review --peer @all)
+   │  └─ or cut a subtree the rubric does not grade — --paths-wout '<subtree>/**'"
+`;
+
+exports[`asReviewOverflowLeverLines given: [case6] an added overflow spread over more dirs than a suggestion names when: [t1] five dirs hold the mass, one past the limit then: the lines match the snapshot 1`] = `
+"   ├─ lever — partition what the rubric grades, cut what it does not
+   │  ├─ --partition 'dir1=dir1/**'
+   │  ├─ --partition 'dir2=dir2/**'
+   │  ├─ --partition 'dir3=dir3/**'
+   │  ├─ --partition 'dir4=dir4/**'
+   │  ├─ (+ 1 more group — every target must sit in a partition)
+   │  ├─ one domain per partition, with its own tests (rule.forbid.horizontal-partitions)
+   │  ├─ list the shared context in every partition that reads it too — route yields, briefs, shared types
+   │  │  └─ the overlap is graded once, and it leads each prompt, so every partition reads it from cache
+   │  ├─ preview first with --mode plan (under a guard, rhx route.guard.partition --for review --peer @all)
+   │  └─ or cut a subtree the rubric does not grade — --paths-wout '<subtree>/**'"
+`;

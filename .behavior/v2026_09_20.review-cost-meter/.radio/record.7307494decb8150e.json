@@ -1,0 +1,19 @@
+{
+  "key": "7307494decb8150e",
+  "kind": "create",
+  "repo": {
+    "owner": "ehmpathy",
+    "name": "rhachet-roles-ehmpathy"
+  },
+  "exid": null,
+  "title": "enbrief(mechanic): a rejects.toThrow clamp has no teeth when the swallowed path throws downstream anyway",
+  "description": "## .what\n\na regression clamp for a failhide repair that asserts .rejects.toThrow() can have no teeth: when the swallowed fault is followed by a second operation that hits the same bad state, the defect still throws, from a different site.\n\nevidence: a findsert of a fixed-content .gitignore swallowed every read error via .catch(() => null); the repair rethrew non-ENOENT errors. the clamp put a directory at the target path and asserted .rejects.toThrow(). with the repair reverted, the clamp stayed green: readFile(dir) -> EISDIR -> null, then writeFile(dir) -> EISDIR throws anyway. both arms throw, so the assertion could not tell them apart. it was found only via the revert-the-fix dogfood step of rule.require.clamp-edge-cases.\n\nthe same shape recurs wherever a swallowed fault is followed by a downstream op on the same state: rethrow a read error (the write throws), rethrow a parse error (the consumer that dereferences throws), rethrow a lookup error (the caller that asserts presence throws).\n\n## .why\n\na toThrow assertion tests the EXISTENCE of a throw; a failhide repair is a claim about its ORIGIN. the loose form cannot express the second, so the clamp reads as protection and guards naught. a whole-error snapshot can bite, but only by accident of which fields it records.\n\n## .shape of the fix\n\na brief under code.test/pitofsuccess.errors/, beside rule.forbid.failhide and rule.require.failloud (and cross-linked from rule.require.clamp-edge-cases):\n\n- the test: if the defect were present, would this assertion still pass? for a throw: would a DIFFERENT throw, from a different site, satisfy it?\n- the rule: a clamp on a rethrow asserts WHICH fault propagated, never THAT one did. name the field that parts them, e.g. expect(error.code).toEqual(EISDIR) plus expect(error.syscall).toEqual(read), not open\n- blocker: a bare .rejects.toThrow() as the sole clamp on a failhide repair where a downstream op on the same state also throws\n\nrelated, not duplicates: #656, #655, #651 (clamp teeth in other shapes).\n\ncaught in ehmpathy/rhachet-roles-bhrain .dream/v2026_09_13.enbrief.a-rejects-tothrow-clamp-has-no-teeth-when-the-repair-throws-downstream.md",
+  "status": null,
+  "via": "gh.issues",
+  "auth": "as-human",
+  "idem": null,
+  "heldSeq": 10,
+  "recordStatus": "DELIVERED",
+  "reason": null,
+  "deliveredExid": "959"
+}

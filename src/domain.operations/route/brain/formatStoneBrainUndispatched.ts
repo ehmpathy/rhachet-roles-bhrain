@@ -186,7 +186,7 @@ export const formatStoneBrainUndispatched = (input: {
     ...(halt.also
       ? [
           ...asRemedy({
-            label: `and: ${halt.also.says}`,
+            label: `and ${halt.also.says}`,
             cmd: halt.also.cmd,
             isLast: false,
           }),
@@ -195,7 +195,7 @@ export const formatStoneBrainUndispatched = (input: {
       : []),
     ...asRemedy({
       label:
-        "or: remove `brain:` from the stone's guard, and inherit the brain deliberately",
+        "or remove `brain:` from the stone's guard, and inherit the brain deliberately",
       cmd: input.guard,
       isLast: true,
     }),

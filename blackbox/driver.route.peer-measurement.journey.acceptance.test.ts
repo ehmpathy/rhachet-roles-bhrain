@@ -24,10 +24,18 @@ const ASSETS_DIR = path.join(__dirname, '.test/assets/route-peer-measurement');
  *         acceptance journeys are deterministic (no real-brain non-determinism — see
  *         reflect.journey.acceptance.test.ts). the PROBABILISTIC tactic + its `tallied by
  *         reviewer@$brain` marker are exhaustively covered at the integration level
- *         (getReviewCountsViaBrain.caseBrain.deepseek-v4-flash.integration.test.ts,
- *         getReviewCounts.integration.test.ts — real brain, when.repeatably) and the marker's
+ *         (getOneReviewCountsViaBrain.caseBrain.deepseek-flash.integration.test.ts,
+ *         getOneReviewCounts.integration.test.ts — real brain, when.repeatably) and the marker's
  *         pass-path render is locked in formatRouteStoneEmit.test.ts. a deterministic reviewer
  *         correctly shows NO marker; the cache re-run proves that recovery stays deterministic.
+ *
+ * .mock = the peer reviewer subprocesses (`.test/mock-review-numeric.sh`,
+ *         `.test/mock-review-crash.sh`, `.test/mock-review-blockers.sh`)
+ * .why = the subject is the guard's measurement and cache orchestration. a fixed reviewer
+ *        verdict drives each state deterministically, with no brain call, no credentials,
+ *        and no model variance
+ * .real = the review acceptance suites run the real review skill; the probabilistic tally
+ *         runs a real brain at the integration grain, named in `.note` above
  */
 describe('driver.route.peer-measurement.journey.acceptance', () => {
   given('[journey] a stone reviewed by a deterministic peer reviewer', () => {
@@ -209,8 +217,11 @@ describe('driver.route.peer-measurement.journey.acceptance', () => {
         }),
       );
 
-      then('exit code is non-zero (stone blocked)', () => {
-        expect(result.code).not.toEqual(0);
+      then('exit code is 2 (stone blocked)', () => {
+        // a malfunction gates as ONE blocker, never zero: an unread verdict cannot be assumed
+        // clean (`asPeerGivenVerdict`, contract.reviewer-output). so the judge reads
+        // `✗ blocked` here where it once read `✓ allowed`, and the stone halts on exit 2
+        expect(result.code).toEqual(2);
       });
 
       then('stdout reports a malfunction, not a passage', () => {
@@ -274,8 +285,11 @@ describe('driver.route.peer-measurement.journey.acceptance', () => {
         }),
       );
 
-      then('exit code is non-zero (stone blocked)', () => {
-        expect(result.code).not.toEqual(0);
+      then('exit code is 2 (stone blocked)', () => {
+        // a real `1 blocker` over a `0` allowance: the reviewer's verdict is readable, and the
+        // judge reads `✗ blocked` on substance. the cause differs from the crash path above,
+        // where the one blocker is the score an unread verdict earns
+        expect(result.code).toEqual(2);
       });
 
       then('stdout reports the blocker count, not a passage', () => {

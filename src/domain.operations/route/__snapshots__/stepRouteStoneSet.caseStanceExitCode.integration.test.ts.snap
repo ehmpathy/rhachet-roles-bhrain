@@ -1,0 +1,30 @@
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
+
+exports[`stepRouteStoneSet.caseStanceExitCode given: [case1] a rejected lane with one blocker and one nitpick, answered when: [t0] the driver concedes nitpick.1 — blocker.1 still owed then: the ack matches the snapshot 1`] = `
+"🦉 so it is
+
+🗿 route.stone.set --as conceded --severity better
+   ├─ stone = 1.test
+   ├─ with  = limited (l1), 1 round, 5 budget — 4 rounds left
+   ├─ about = nitpick.1 — 1 more on this lane
+   │
+   └─ the hold stands. fix, then re-arrive
+      └─ absorb blocker.1 — 1 still owed on this lane
+         ├─ rhx route.stone.set --stone 1.test --as conceded --with limited --about blocker.1 --severity better|urgent
+         └─ rhx route.stone.set --stone 1.test --as disputed --with limited --about blocker.1 --why <fulcrum-path>"
+`;
+
+exports[`stepRouteStoneSet.caseStanceExitCode given: [case1] a rejected lane with one blocker and one nitpick, answered when: [t1] the driver concedes blocker.1 — the last on the lane then: the close matches the snapshot 1`] = `
+"🦉 so it is
+
+🗿 route.stone.set --as conceded --severity better
+   ├─ stone = 1.test
+   ├─ with  = limited (l1), 1 round, 5 budget — 4 rounds left
+   ├─ about = blocker.1 — the last concern this lane owed
+   │
+   └─ the hold stands. fix, then re-arrive
+      ├─ 1. now absorb limited as a whole — each of its concerns carries a stance
+      │  └─ rhx route.stone.set --stone 1.test --as absorbed --that limited
+      └─ 2. re-arrive, once the fix is in
+         └─ rhx route.stone.set --stone 1.test --as arrived"
+`;

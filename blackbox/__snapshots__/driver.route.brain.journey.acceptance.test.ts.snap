@@ -169,7 +169,7 @@ exports[`driver.route.brain.journey.acceptance given: [case1] a route whose ston
       ├─ fix: re-enroll the driver with a slug, then re-enter the stone
       │  └─ rhx enroll claude --as @:driver --roles driver
       │
-      └─ or: remove \`brain:\` from the stone's guard, and inherit the brain deliberately
+      └─ or remove \`brain:\` from the stone's guard, and inherit the brain deliberately
          └─ 5.ship.guard
 "
 `;
@@ -195,7 +195,7 @@ exports[`driver.route.brain.journey.acceptance given: [case1] a route whose ston
       ├─ fix: re-enroll the driver with a slug, then re-enter the stone
       │  └─ rhx enroll claude --as @:driver --roles driver
       │
-      └─ or: remove \`brain:\` from the stone's guard, and inherit the brain deliberately
+      └─ or remove \`brain:\` from the stone's guard, and inherit the brain deliberately
          └─ 5.ship.guard
 "
 `;
@@ -678,7 +678,7 @@ exports[`driver.route.brain.journey.acceptance given: [case5] every answer the c
       ├─ fix: re-enroll the driver with a slug, then re-enter the stone
       │  └─ rhx enroll claude --as @:driver --roles driver
       │
-      └─ or: remove \`brain:\` from the stone's guard, and inherit the brain deliberately
+      └─ or remove \`brain:\` from the stone's guard, and inherit the brain deliberately
          └─ 1.vision.guard
 "
 `;
@@ -704,7 +704,7 @@ exports[`driver.route.brain.journey.acceptance given: [case5] every answer the c
       ├─ fix: run the probe by hand and read what it reports
       │  └─ rhx clone whoami --output json
       │
-      └─ or: remove \`brain:\` from the stone's guard, and inherit the brain deliberately
+      └─ or remove \`brain:\` from the stone's guard, and inherit the brain deliberately
          └─ 1.vision.guard
 "
 `;
@@ -730,7 +730,7 @@ exports[`driver.route.brain.journey.acceptance given: [case5] every answer the c
       ├─ fix: run the probe by hand and read what it reports
       │  └─ rhx clone whoami --output json
       │
-      └─ or: remove \`brain:\` from the stone's guard, and inherit the brain deliberately
+      └─ or remove \`brain:\` from the stone's guard, and inherit the brain deliberately
          └─ 1.vision.guard
 "
 `;
@@ -756,7 +756,7 @@ exports[`driver.route.brain.journey.acceptance given: [case5] every answer the c
       ├─ fix: read the raw output, and report what it emitted instead of json
       │  └─ rhx clone whoami --output json
       │
-      └─ or: remove \`brain:\` from the stone's guard, and inherit the brain deliberately
+      └─ or remove \`brain:\` from the stone's guard, and inherit the brain deliberately
          └─ 1.vision.guard
 "
 `;
@@ -782,7 +782,7 @@ exports[`driver.route.brain.journey.acceptance given: [case5] every answer the c
       ├─ fix: read the payload, then report the shape it carries
       │  └─ rhx clone whoami --output json
       │
-      └─ or: remove \`brain:\` from the stone's guard, and inherit the brain deliberately
+      └─ or remove \`brain:\` from the stone's guard, and inherit the brain deliberately
          └─ 1.vision.guard
 "
 `;
@@ -809,7 +809,7 @@ exports[`driver.route.brain.journey.acceptance given: [case5] every answer the c
       ├─ fix: run the probe by hand, then read what ended the last one
       │  └─ rhx clone whoami --output json
       │
-      └─ or: remove \`brain:\` from the stone's guard, and inherit the brain deliberately
+      └─ or remove \`brain:\` from the stone's guard, and inherit the brain deliberately
          └─ 1.vision.guard
 "
 `;
@@ -835,10 +835,10 @@ exports[`driver.route.brain.journey.acceptance given: [case5] every answer the c
       ├─ fix: run the probe by hand, unhurried, and read what it reports
       │  └─ rhx clone whoami --output json
       │
-      ├─ and: if it reports an unenrolled driver — the most common cause — re-enroll
+      ├─ and if it reports an unenrolled driver — the most common cause — re-enroll
       │  └─ rhx enroll claude --as @:driver --roles driver
       │
-      └─ or: remove \`brain:\` from the stone's guard, and inherit the brain deliberately
+      └─ or remove \`brain:\` from the stone's guard, and inherit the brain deliberately
          └─ 1.vision.guard
 "
 `;
@@ -864,7 +864,7 @@ exports[`driver.route.brain.journey.acceptance given: [case5] every answer the c
       ├─ fix: restore the local binaries, then re-enter the stone
       │  └─ npm ci
       │
-      └─ or: remove \`brain:\` from the stone's guard, and inherit the brain deliberately
+      └─ or remove \`brain:\` from the stone's guard, and inherit the brain deliberately
          └─ 1.vision.guard
 "
 `;
@@ -1241,7 +1241,7 @@ exports[`driver.route.brain.journey.acceptance given: [case7] an unenrolled driv
       ├─ fix: re-enroll the driver with a slug, then re-enter the stone
       │  └─ rhx enroll claude --as @:driver --roles driver
       │
-      └─ or: remove \`brain:\` from the stone's guard, and inherit the brain deliberately
+      └─ or remove \`brain:\` from the stone's guard, and inherit the brain deliberately
          └─ 1.vision.guard
 "
 `;
@@ -1267,7 +1267,7 @@ exports[`driver.route.brain.journey.acceptance given: [case7] an unenrolled driv
       ├─ fix: re-enroll the driver with a slug, then re-enter the stone
       │  └─ rhx enroll claude --as @:driver --roles driver
       │
-      └─ or: remove \`brain:\` from the stone's guard, and inherit the brain deliberately
+      └─ or remove \`brain:\` from the stone's guard, and inherit the brain deliberately
          └─ 1.vision.guard
 "
 `;
@@ -1293,7 +1293,7 @@ exports[`driver.route.brain.journey.acceptance given: [case7] an unenrolled driv
       ├─ fix: re-enroll the driver with a slug, then re-enter the stone
       │  └─ rhx enroll claude --as @:driver --roles driver
       │
-      └─ or: remove \`brain:\` from the stone's guard, and inherit the brain deliberately
+      └─ or remove \`brain:\` from the stone's guard, and inherit the brain deliberately
          └─ 1.vision.guard
 "
 `;
@@ -1430,10 +1430,10 @@ exports[`driver.route.brain.journey.acceptance given: [case9] a brain halt above
    │  ├─ fix: re-enroll the driver with a slug, then re-enter the stone
    │  │  └─ rhx enroll claude --as @:driver --roles driver
    │  │
-   │  └─ or: remove \`brain:\` from the stone's guard, and inherit the brain deliberately
+   │  └─ or remove \`brain:\` from the stone's guard, and inherit the brain deliberately
    │     └─ 1.vision.guard
    │
    └─ halted, stone marked blocked
-      └─ reason: blocker/1.vision.md
+      └─ reason: no articulation written (no blocker/1.vision.md)
 "
 `;

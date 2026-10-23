@@ -1,4 +1,5 @@
-import type { ExitCodeClass } from '../getExitCodeClass';
+import type { ExitCodeClass } from '@src/domain.objects/Driver/ExitCodeClass';
+
 import { isJudgeRungHeld } from './isJudgeRungHeld';
 
 const CASES: {

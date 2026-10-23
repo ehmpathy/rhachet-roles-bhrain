@@ -1,0 +1,32 @@
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
+
+exports[`stepReview given: [case2c] a --rules glob that matches no file when: [t0] stepReview refuses then: the refusal renders whole 1`] = `
+"
+🦉 woah there
+
+✋ ConstraintError: --rules glob found nada
+   └─ rules: nonexistent/**/*.md
+
+✨ did you know?
+   └─ verify the glob pattern matches files in your repo
+"
+`;
+
+exports[`stepReview given: [case3] combined scope resolves to zero files when: [t1] the scope is given via --paths-with and --paths-wout then: the refusal names the include and exclude globs 1`] = `
+"
+🦉 woah there
+
+✋ ConstraintError: combined scope resolves to zero files
+   └─ targets
+      ├─ diffs: (none)
+      │  └─ files: —
+      ├─ paths.with: nonexistent/**/*.{ts,md}
+      │  └─ files: 0
+      ├─ paths.wout: **/*.test.ts
+      └─ joined via intersect
+         └─ files: 0
+
+✨ did you know?
+   └─ inspect .log/bhrain/review/$STAMP/input.scope.debug.json to see what was matched
+"
+`;

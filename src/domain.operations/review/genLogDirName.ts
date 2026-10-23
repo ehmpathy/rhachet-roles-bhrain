@@ -42,3 +42,21 @@ export const genLogDirName = (): string => {
   const stamp = new Date().toISOString().replace(/[:.]/g, '-');
   return `${stamp}.pid${process.pid}.${getUuid()}`;
 };
+
+/**
+ * .what = the shape `genLogDirName` mints — an iso stamp, then a `.`
+ * .why = declared BESIDE the generator on purpose, and read by `isLogDirName`. a
+ *        reader that re-derived this shape elsewhere could drift from the mint, and
+ *        the drift would be silent in both directions: a stricter reader drops real
+ *        runs, a looser one admits names that do not sort by the clock.
+ */
+export const SHAPE_OF_LOG_DIR_NAME =
+  /^\d{4}-\d{2}-\d{2}T\d{2}-\d{2}-\d{2}-\d{3}Z\./;
+
+/**
+ * .what = the escape `genLogDirName` applies to make an iso stamp path-safe
+ * .why = declared here, beside the mint, so `asLogDirMintedAt`'s un-escape is the
+ *        exact inverse of it. the two are one contract, and its declaration has one
+ *        home even though each operation has its own file.
+ */
+export const ESCAPE_OF_STAMP = /T(\d{2})-(\d{2})-(\d{2})-(\d{3})Z$/;

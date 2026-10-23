@@ -1,0 +1,8 @@
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
+
+exports[`asWarmerStopLine given: [case2] an unknown pid when: [t0] rendered in either form then: both forms read whole, as a driver sees them 1`] = `
+[
+  "   └─ stop: pid not yet recorded — once the warmer boots (≤1m), read \`pid\` from .agent/.cache/repo=bhrain/role=reviewer/skill=review/watermarks/warmer-prefix.2b04b22f2114a4cd58f4de12dfe437d9, then kill it  ·  never spawn: drop --warmer from the guard or command",
+  "  ·  stop: pid not yet recorded — once the warmer boots (≤1m), read \`pid\` from .agent/.cache/repo=bhrain/role=reviewer/skill=review/watermarks/warmer-prefix.2b04b22f2114a4cd58f4de12dfe437d9, then kill it  ·  never spawn: drop --warmer from the guard or command",
+]
+`;

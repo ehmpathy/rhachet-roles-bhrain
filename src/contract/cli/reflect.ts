@@ -1,11 +1,10 @@
 import { BadRequestError } from 'helpful-errors';
 import * as path from 'path';
-import {
-  genContextBrain,
-  getAvailableBrains,
-  getAvailableBrainsInWords,
-} from 'rhachet/brains';
+import { getAvailableBrains, getAvailableBrainsInWords } from 'rhachet/brains';
 
+import { FLAGS_OF_DISPATCHER } from '@src/contract/cli/FLAGS_OF_DISPATCHER';
+import { genReviewBrain } from '@src/domain.operations/brain/genReviewBrain';
+import { getInvocationArgs } from '@src/domain.operations/cli/getInvocationArgs';
 import { getAllAnnotations } from '@src/domain.operations/reflect/annotation/getAllAnnotations';
 import { setAnnotation } from '@src/domain.operations/reflect/annotation/setAnnotation';
 import { getAllSavepoints } from '@src/domain.operations/reflect/savepoint/getAllSavepoints';
@@ -18,15 +17,22 @@ import { getAllSnapshots } from '@src/domain.operations/reflect/snapshot/getAllS
 import { getOneSnapshot } from '@src/domain.operations/reflect/snapshot/getOneSnapshot';
 import { stepReflect } from '@src/domain.operations/reflect/stepReflect';
 
+import { asConstraintErrorHeader } from './asConstraintErrorHeader';
+
 /**
  * .what = default brain for reflect skill
  * .why = anthropic/claude/sonnet-4 is effective for rule extraction and synthesis
+ *
+ * .note = PINNED, deliberately (rule.require.versionless-brain-defaults, its false-positive
+ *         clause). `rhachet-brains-anthropic` registers versioned slugs only, so no
+ *         versionless anthropic slug exists to name. move to a versionless tier slug once
+ *         one is registered for this model line
  */
 const DEFAULT_BRAIN = 'anthropic/claude/sonnet-4';
 
 /**
  * .what = prints help message with available brains
- * .why = enables users to discover available brain options
+ * .why = enables humans to discover available brain options
  */
 const printHelp = async (): Promise<void> => {
   const { atoms, repls } = await getAvailableBrains();
@@ -65,25 +71,25 @@ const hasHelpFlag = (argv: string[]): boolean => {
 };
 
 /**
- * .what = detects if node was invoked via `node -e "code"` (eval mode)
- * .why = in eval mode, argv has no entrypoint path: [node, firstArg, ...]
- *        in normal mode, argv has entrypoint path: [node, file.js, firstArg, ...]
- *        we skip different counts to slice argv correctly
+ * .what = the long flags `reflect` reads, plus the dispatcher's own
+ * .why = the allowlist the parser checks, so an unknown flag refuses by name
  */
-const isNodeEvalMode = (argv: string[]): boolean => {
-  // in eval mode, argv[1] is the first user arg (e.g., --source or 'hello')
-  // in normal mode, argv[1] is an entrypoint file ending with .js, .ts, .mjs, .cjs
-  const secondArg = argv[1];
-  if (!secondArg) return false;
-  const looksLikeEntrypointPath = /\.(js|ts|mjs|cjs)$/.test(secondArg);
-  return !looksLikeEntrypointPath;
-};
+const FLAGS_KNOWN_OF_REFLECT: ReadonlySet<string> = new Set([
+  'source',
+  'target',
+  'mode',
+  'force',
+  'brain',
+  'help',
+  ...FLAGS_OF_DISPATCHER,
+]);
 
 /**
  * .what = parses cli args into options object
- * .why = simple arg parser without external dependencies
+ * .why = simple arg parser without external dependencies; exported so the flag contract
+ *        is testable without a brain round-trip
  */
-const parseArgs = (
+export const parseReflectArgs = (
   argv: string[],
 ): {
   source: string;
@@ -91,11 +97,21 @@ const parseArgs = (
   mode: 'push' | 'pull';
   force: boolean;
   brain: string;
+  /** flags typed with no value — refused by the caller, never run on a default */
+  valuelessFlags: string[];
+  /** flags this parser does not read — refused by the caller, never dropped in silence */
+  unknownFlags: string[];
 } => {
-  // skip node binary (always argv[0]) and entrypoint path (only in normal mode)
-  const skipCount = isNodeEvalMode(argv) ? 1 : 2;
-  const args = argv.slice(skipCount).filter((arg) => arg !== '--');
+  // the caller args, eval-mode offset and `--` handled in one shared place
+  const args = getInvocationArgs(argv);
+
+  // .note = deliberate mutation, and a SCOPED ZONE: `options`, the two flag lists, and the
+  //         cursor `i` are born in this call and none escapes — only the typed record built
+  //         below does. the cursor must advance by two past a flag's value, which a
+  //         map/reduce cannot express without a second index (rule.require.immutable-vars)
   const options: Record<string, string | boolean> = {};
+  const flagsValueless: string[] = [];
+  const flagsUnknown: string[] = [];
 
   for (let i = 0; i < args.length; i++) {
     const arg = args[i];
@@ -104,17 +120,27 @@ const parseArgs = (
     if (arg.startsWith('--')) {
       const key = arg.slice(2);
 
+      // a flag this parser does not read is recorded, so a typo never runs as though heard
+      if (!FLAGS_KNOWN_OF_REFLECT.has(key)) {
+        flagsUnknown.push(arg);
+        continue;
+      }
+
       // handle boolean flags
       if (key === 'force') {
         options[key] = true;
         continue;
       }
 
+      // a flag typed with its value forgotten is recorded, never read as absent — a bare
+      // `--target` must not fall through to a default (rule.forbid.unexpected-defaults)
       const value = args[i + 1];
-      if (value && !value.startsWith('--')) {
-        options[key] = value;
-        i++;
+      if (!value || value.startsWith('--')) {
+        flagsValueless.push(arg);
+        continue;
       }
+      options[key] = value;
+      i++;
     }
   }
 
@@ -124,6 +150,8 @@ const parseArgs = (
     mode: (options.mode as 'push' | 'pull') ?? 'pull',
     force: (options.force as boolean) ?? false,
     brain: (options.brain as string) ?? DEFAULT_BRAIN,
+    valuelessFlags: flagsValueless,
+    unknownFlags: flagsUnknown,
   };
 };
 
@@ -139,19 +167,38 @@ export const reflect = async (): Promise<void> => {
   }
 
   // parse args
-  const options = parseArgs(process.argv);
+  const options = parseReflectArgs(process.argv);
 
-  // create brain context via discovery with credentials
-  // .note = uses env: 'prep' to match review; reviewers always target ehmpath/prep creds
-  // .note = keyrack auto-unlocks locked keys internally when the brain fetches its
-  //         own creds (rhachet >=1.43 get-or-unlock), so no upfront unlock is needed
-  const brain = await genContextBrain({
-    choice: options.brain,
-    creds: { keyrack: { owner: 'ehmpath', env: 'prep' } },
-  });
+  // an unknown flag refuses in the `🌕` frame, before any brain cost is paid
+  if (options.unknownFlags.length > 0) {
+    console.error('🌕 reflect');
+    console.error(
+      `   ├─ ✋ ConstraintError: unknown flag ${options.unknownFlags.join(', ')}`,
+    );
+    console.error('   └─ fix: run with --help for the flags reflect reads');
+    process.exit(2);
+  }
+
+  // a flag typed with no value refuses in the `🌕` frame, before any brain cost is paid
+  if (options.valuelessFlags.length > 0) {
+    console.error('🌕 reflect');
+    console.error(
+      `   ├─ ✋ ConstraintError: ${options.valuelessFlags.join(', ')} given with no value`,
+    );
+    console.error('   └─ fix: run with --help for the value each one expects');
+    process.exit(2);
+  }
 
   // invoke stepReflect with validation error handler
   try {
+    // create brain context via discovery with credentials
+    // uses env: 'prep' to match review; reviewers always target ehmpath/prep creds
+    // keyrack auto-unlocks locked keys internally when the brain fetches its own
+    // creds (rhachet >=1.43 get-or-unlock), so no upfront unlock is needed
+    // inside the try so a bad --brain hits the catch below and prints
+    // ConstraintError instead of a raw BadRequestError rejection
+    const { brain } = await genReviewBrain({ choice: options.brain });
+
     await stepReflect(
       {
         source: options.source,
@@ -162,8 +209,16 @@ export const reflect = async (): Promise<void> => {
       { brain },
     );
   } catch (error) {
+    // the refusal wears the `🌕` frame every other reflect refusal does (i018 r013 nitpick.4)
     if (error instanceof BadRequestError) {
-      console.error(`\n✋ ${error.message}`);
+      // the headline alone, as the capture refusal does — helpful-errors appends its
+      // metadata as raw json, so the hint it carries gets its own `fix:` row instead
+      const headline = asConstraintErrorHeader({ error }).split('\n')[0];
+      const hint =
+        typeof error.metadata?.hint === 'string' ? error.metadata.hint : null;
+      console.error('🌕 reflect');
+      console.error(`   ${hint ? '├─' : '└─'} ${headline}`);
+      if (hint) console.error(`   └─ fix: ${hint}`);
       process.exit(2);
     }
     throw error;
@@ -211,7 +266,20 @@ export const reflectSnapshotCapture = async (): Promise<void> => {
   printOwlHeader();
 
   const scope = getReflectScope({ cwd: process.cwd() });
-  const snapshot = await captureSnapshot({ scope });
+  const snapshot = await captureSnapshot({ scope }).catch((error: unknown) => {
+    // a caller-fix refusal wears the frame every other reflect refusal does, never a
+    // stack (rule.require.qualified-error-headers, rule.forbid.stdout-on-exit-errors)
+    if (!(error instanceof BadRequestError)) throw error;
+    console.error(`🌕 reflect.snapshot capture`);
+    // the headline alone — helpful-errors appends its metadata to the message, and the
+    // fix line below already states the hint it carries
+    const headline = asConstraintErrorHeader({ error }).split('\n')[0];
+    console.error(`   ├─ ${headline}`);
+    console.error(
+      `   └─ fix: run claude code in this repo once, then capture again`,
+    );
+    return process.exit(2);
+  });
 
   console.log(`🌕 reflect.snapshot capture`);
   console.log(`   ├─ repo = ${scope.gitRepoName}`);
@@ -254,66 +322,92 @@ export const reflectSnapshotGet = async (): Promise<void> => {
   const scope = getReflectScope({ cwd: process.cwd() });
   const at = parseAtArg(process.argv);
 
-  if (at) {
-    // get specific snapshot
-    const snapshot = getOneSnapshot({ scope, at });
-    if (!snapshot) {
-      console.log(`🌕 reflect.snapshot get --at ${at}`);
-      console.log(`   └─ 💥 snapshot not found`);
-      process.exit(1);
-    }
-
-    console.log(`🌕 reflect.snapshot get --at ${at}`);
-    console.log(`   ├─ repo = ${scope.gitRepoName}`);
-    console.log(`   ├─ tree = ${scope.worktreeName}`);
-    console.log(`   ├─ branch = ${scope.branch}`);
-    console.log(`   │`);
-    console.log(`   ├─ transcript`);
-    console.log(
-      `   │  ├─ sessions = ${snapshot.metadata.transcript.sessionCount}`,
-    );
-    console.log(`   │  └─ files = ${snapshot.metadata.transcript.fileCount}`);
-    console.log(`   │`);
-    console.log(`   ├─ savepoints = ${snapshot.metadata.savepoints.count}`);
-    console.log(`   ├─ annotations = ${snapshot.metadata.annotations.count}`);
-    console.log(`   ├─ size = ${formatBytes(snapshot.sizeBytes)}`);
-    console.log(`   │`);
-    console.log(`   └─ path = ${asHomePath(snapshot.path)}`);
-  } else {
-    // list all snapshots
-    const summary = getAllSnapshots({ scope });
-    const annotations = getAllAnnotations({ scope });
-
-    console.log(`🌕 reflect.snapshot get`);
-    console.log(`   ├─ repo = ${scope.gitRepoName}`);
-    console.log(`   ├─ tree = ${scope.worktreeName}`);
-    console.log(`   ├─ branch = ${scope.branch}`);
-    console.log(`   │`);
-    console.log(`   ├─ snapshots = ${summary.count}`);
-    console.log(`   ├─ annotations = ${annotations.count}`);
-
-    if (summary.snapshots.length > 0) {
-      console.log(`   ├─ size = ${formatBytes(summary.totalBytes)}`);
-      console.log(`   │`);
-      console.log(`   └─ list`);
-      for (let i = 0; i < summary.snapshots.length; i++) {
-        const snap = summary.snapshots[i];
-        if (!snap) continue;
-        const isLast = i === summary.snapshots.length - 1;
-        const prefix = isLast ? '└─' : '├─';
-        const continuation = isLast ? ' ' : '│';
-        const meta = snap.metadata;
-        const stats = meta
-          ? `(sessions=${meta.transcript.sessionCount}, savepoints=${meta.savepoints.count})`
-          : '';
-        console.log(`      ${prefix} ${snap.timestamp} ${stats}`);
-        console.log(`      ${continuation}  └─ ${asHomePath(snap.path)}`);
-      }
-    } else {
-      console.log(`   └─ size = ${formatBytes(summary.totalBytes)}`);
-    }
-  }
+  // --at names one snapshot; with no --at, every snapshot of the scope is listed
+  if (at) printSnapshotOfAt({ scope, at });
+  if (!at) printSnapshotList({ scope });
   console.log('');
+};
+
+/**
+ * .what = prints the one snapshot `--at` names, or refuses with exit 2 when none matches
+ * .why = one named act per branch of `reflect.snapshot get`, so the entrypoint reads as a
+ *        choice of two acts rather than an if/else a reader must step through (r009 nitpick.5,
+ *        i013). the bytes it prints are unchanged
+ */
+const printSnapshotOfAt = (input: {
+  scope: ReturnType<typeof getReflectScope>;
+  at: string;
+}): void => {
+  const { scope, at } = input;
+  const snapshot = getOneSnapshot({ scope, at });
+  if (!snapshot) {
+    // a bad --at is the caller's to fix, so stderr and exit 2
+    // (rule.require.exit-code-semantics, rule.forbid.stdout-on-exit-errors)
+    console.error(`🌕 reflect.snapshot get --at ${at}`);
+    console.error(`   ├─ ✋ ConstraintError: snapshot not found`);
+    console.error(`   └─ fix: list the snapshots, then pass one of theirs`);
+    console.error(`      └─ rhx reflect.snapshot get`);
+    process.exit(2);
+  }
+
+  console.log(`🌕 reflect.snapshot get --at ${at}`);
+  console.log(`   ├─ repo = ${scope.gitRepoName}`);
+  console.log(`   ├─ tree = ${scope.worktreeName}`);
+  console.log(`   ├─ branch = ${scope.branch}`);
+  console.log(`   │`);
+  console.log(`   ├─ transcript`);
+  console.log(
+    `   │  ├─ sessions = ${snapshot.metadata.transcript.sessionCount}`,
+  );
+  console.log(`   │  └─ files = ${snapshot.metadata.transcript.fileCount}`);
+  console.log(`   │`);
+  console.log(`   ├─ savepoints = ${snapshot.metadata.savepoints.count}`);
+  console.log(`   ├─ annotations = ${snapshot.metadata.annotations.count}`);
+  console.log(`   ├─ size = ${formatBytes(snapshot.sizeBytes)}`);
+  console.log(`   │`);
+  console.log(`   └─ path = ${asHomePath(snapshot.path)}`);
+};
+
+/**
+ * .what = prints every snapshot of the scope, or the bare size line when there are none
+ * .why = the list branch of `reflect.snapshot get`, named; an empty list returns early
+ */
+const printSnapshotList = (input: {
+  scope: ReturnType<typeof getReflectScope>;
+}): void => {
+  const { scope } = input;
+  const summary = getAllSnapshots({ scope });
+  const annotations = getAllAnnotations({ scope });
+
+  console.log(`🌕 reflect.snapshot get`);
+  console.log(`   ├─ repo = ${scope.gitRepoName}`);
+  console.log(`   ├─ tree = ${scope.worktreeName}`);
+  console.log(`   ├─ branch = ${scope.branch}`);
+  console.log(`   │`);
+  console.log(`   ├─ snapshots = ${summary.count}`);
+  console.log(`   ├─ annotations = ${annotations.count}`);
+
+  // no snapshots → the size line closes the tree
+  if (summary.snapshots.length === 0) {
+    console.log(`   └─ size = ${formatBytes(summary.totalBytes)}`);
+    return;
+  }
+
+  // one branch per snapshot, its path beneath it
+  console.log(`   ├─ size = ${formatBytes(summary.totalBytes)}`);
+  console.log(`   │`);
+  console.log(`   └─ list`);
+  summary.snapshots.forEach((snap, index) => {
+    const isLast = index === summary.snapshots.length - 1;
+    const prefix = isLast ? '└─' : '├─';
+    const continuation = isLast ? ' ' : '│';
+    const meta = snap.metadata;
+    const stats = meta
+      ? `(sessions=${meta.transcript.sessionCount}, savepoints=${meta.savepoints.count})`
+      : '';
+    console.log(`      ${prefix} ${snap.timestamp} ${stats}`);
+    console.log(`      ${continuation}  └─ ${asHomePath(snap.path)}`);
+  });
 };
 
 /**
@@ -321,11 +415,13 @@ export const reflectSnapshotGet = async (): Promise<void> => {
  * .why = enables text extraction for annotate command
  */
 const parseTextArg = (argv: string[]): string => {
-  // skip node binary and entrypoint, plus -- separator
-  const skipCount = isNodeEvalMode(argv) ? 1 : 2;
-  const args = argv.slice(skipCount).filter((arg) => arg !== '--');
+  // the caller args, eval-mode offset and `--` handled in one shared place
+  const args = getInvocationArgs(argv);
 
   // find first non-flag arg
+  // .note = deliberate mutation, and a SCOPED ZONE: the cursor `i` is born in this loop and
+  //         never escapes. it advances by two past a flag's value, so a flag's value is never
+  //         read as the positional text (rule.require.immutable-vars, scoped zone)
   for (let i = 0; i < args.length; i++) {
     const arg = args[i];
     if (!arg) continue;
@@ -351,11 +447,13 @@ export const reflectSnapshotAnnotate = async (): Promise<void> => {
   const text = parseTextArg(process.argv);
 
   if (!text) {
-    console.log(`🌕 reflect.snapshot annotate`);
-    console.log(`   └─ 💥 annotation text required`);
-    console.log('');
-    console.log('usage: rhx reflect.snapshot.annotate "your annotation text"');
-    process.exit(1);
+    console.error(`🌕 reflect.snapshot annotate`);
+    console.error(`   └─ ✋ ConstraintError: annotation text required`);
+    console.error('');
+    console.error(
+      'usage: rhx reflect.snapshot.annotate "your annotation text"',
+    );
+    process.exit(2);
   }
 
   const annotation = setAnnotation({ scope, text });
@@ -389,17 +487,32 @@ export const reflectSnapshotBackup = async (): Promise<void> => {
   const into = parseIntoArg(process.argv);
 
   if (!into) {
-    console.log(`🌕 reflect.snapshot backup`);
-    console.log(`   └─ 💥 --into s3://bucket required`);
-    console.log('');
-    console.log('usage: rhx reflect.snapshot.backup --into s3://my-bucket');
-    process.exit(1);
+    console.error(`🌕 reflect.snapshot backup`);
+    console.error(`   └─ ✋ ConstraintError: --into s3://bucket required`);
+    console.error('');
+    console.error('usage: rhx reflect.snapshot.backup --into s3://my-bucket');
+    process.exit(2);
   }
 
   const scope = getReflectScope({ cwd: process.cwd() });
   const sourceDir = `${scope.storagePath}/snapshots`;
 
-  const result = backupSnapshots({ sourceDir, into });
+  // a caller-fix refusal (a bad uri, absent aws credentials) wears the frame every other
+  // reflect refusal does, never a stack (rule.require.qualified-error-headers)
+  const result = (() => {
+    try {
+      return backupSnapshots({ sourceDir, into });
+    } catch (error) {
+      if (!(error instanceof BadRequestError)) throw error;
+      console.error(`🌕 reflect.snapshot backup`);
+      const headline = asConstraintErrorHeader({ error }).split('\n')[0];
+      console.error(`   ├─ ${headline}`);
+      console.error(
+        `   └─ fix: pass --into s3://<bucket>, with aws credentials set`,
+      );
+      return process.exit(2);
+    }
+  })();
 
   console.log(`🌕 reflect.snapshot backup`);
   console.log(`   ├─ source = ${asHomePath(result.sourceDir)}`);
@@ -470,61 +583,84 @@ export const reflectSavepointGet = async (): Promise<void> => {
   const scope = getReflectScope({ cwd: process.cwd() });
   const at = parseAtArg(process.argv);
 
-  if (at) {
-    // get specific savepoint
-    const savepoint = getOneSavepoint({ scope, at });
-    if (!savepoint) {
-      console.log(`🌕 reflect.savepoint get --at ${at}`);
-      console.log(`   └─ 💥 savepoint not found`);
-      process.exit(1);
-    }
-
-    console.log(`🌕 reflect.savepoint get --at ${at}`);
-    console.log(`   ├─ commit = ${savepoint.commit.hash.slice(0, 7)}`);
-    console.log(
-      `   ├─ staged.patch = ${formatBytes(savepoint.patches.stagedBytes)}`,
-    );
-    console.log(`   │  └─ ${asHomePath(savepoint.patches.stagedPath)}`);
-    console.log(`   │`);
-    console.log(
-      `   └─ unstaged.patch = ${formatBytes(savepoint.patches.unstagedBytes)}`,
-    );
-    console.log(`      └─ ${asHomePath(savepoint.patches.unstagedPath)}`);
-  } else {
-    // list all savepoints
-    const summary = getAllSavepoints({ scope });
-
-    console.log(`🌕 reflect.savepoint get`);
-    console.log(`   ├─ repo = ${scope.gitRepoName}`);
-    console.log(`   ├─ tree = ${scope.worktreeName}`);
-    console.log(`   ├─ branch = ${scope.branch}`);
-    console.log(`   │`);
-    console.log(`   ├─ savepoints = ${summary.count}`);
-
-    if (summary.savepoints.length > 0) {
-      console.log(`   ├─ size = ${formatBytes(summary.totalBytes)}`);
-      console.log(`   │`);
-      console.log(`   └─ list`);
-      for (let i = 0; i < summary.savepoints.length; i++) {
-        const sp = summary.savepoints[i];
-        if (!sp) continue;
-        const isLast = i === summary.savepoints.length - 1;
-        const prefix = isLast ? '└─' : '├─';
-        const size = sp.patches.stagedBytes + sp.patches.unstagedBytes;
-        const continuation = isLast ? ' ' : '│';
-        console.log(
-          `      ${prefix} ${sp.timestamp} (commit=${sp.commit.hash.slice(0, 7)}, patches=${sp.patches.hash.slice(0, 7)}, ${formatBytes(size)})`,
-        );
-        console.log(
-          `      ${continuation}  ├─ ${path.basename(sp.patches.stagedPath)}`,
-        );
-        console.log(
-          `      ${continuation}  └─ ${path.basename(sp.patches.unstagedPath)}`,
-        );
-      }
-    } else {
-      console.log(`   └─ size = ${formatBytes(summary.totalBytes)}`);
-    }
-  }
+  // --at names one savepoint; with no --at, every savepoint of the scope is listed
+  if (at) printSavepointOfAt({ scope, at });
+  if (!at) printSavepointList({ scope });
   console.log('');
+};
+
+/**
+ * .what = prints the one savepoint `--at` names, or refuses with exit 2 when none matches
+ * .why = one named act per branch of `reflect.savepoint get` (r009 nitpick.5, i013). the
+ *        bytes it prints are unchanged
+ */
+const printSavepointOfAt = (input: {
+  scope: ReturnType<typeof getReflectScope>;
+  at: string;
+}): void => {
+  const { scope, at } = input;
+  const savepoint = getOneSavepoint({ scope, at });
+  if (!savepoint) {
+    console.error(`🌕 reflect.savepoint get --at ${at}`);
+    console.error(`   ├─ ✋ ConstraintError: savepoint not found`);
+    console.error(`   └─ fix: list the savepoints, then pass one of theirs`);
+    console.error(`      └─ rhx reflect.savepoint get`);
+    process.exit(2);
+  }
+
+  console.log(`🌕 reflect.savepoint get --at ${at}`);
+  console.log(`   ├─ commit = ${savepoint.commit.hash.slice(0, 7)}`);
+  console.log(
+    `   ├─ staged.patch = ${formatBytes(savepoint.patches.stagedBytes)}`,
+  );
+  console.log(`   │  └─ ${asHomePath(savepoint.patches.stagedPath)}`);
+  console.log(`   │`);
+  console.log(
+    `   └─ unstaged.patch = ${formatBytes(savepoint.patches.unstagedBytes)}`,
+  );
+  console.log(`      └─ ${asHomePath(savepoint.patches.unstagedPath)}`);
+};
+
+/**
+ * .what = prints every savepoint of the scope, or the bare size line when there are none
+ * .why = the list branch of `reflect.savepoint get`, named; an empty list returns early
+ */
+const printSavepointList = (input: {
+  scope: ReturnType<typeof getReflectScope>;
+}): void => {
+  const { scope } = input;
+  const summary = getAllSavepoints({ scope });
+
+  console.log(`🌕 reflect.savepoint get`);
+  console.log(`   ├─ repo = ${scope.gitRepoName}`);
+  console.log(`   ├─ tree = ${scope.worktreeName}`);
+  console.log(`   ├─ branch = ${scope.branch}`);
+  console.log(`   │`);
+  console.log(`   ├─ savepoints = ${summary.count}`);
+
+  // no savepoints → the size line closes the tree
+  if (summary.savepoints.length === 0) {
+    console.log(`   └─ size = ${formatBytes(summary.totalBytes)}`);
+    return;
+  }
+
+  // one branch per savepoint, its two patch files beneath it
+  console.log(`   ├─ size = ${formatBytes(summary.totalBytes)}`);
+  console.log(`   │`);
+  console.log(`   └─ list`);
+  summary.savepoints.forEach((sp, index) => {
+    const isLast = index === summary.savepoints.length - 1;
+    const prefix = isLast ? '└─' : '├─';
+    const size = sp.patches.stagedBytes + sp.patches.unstagedBytes;
+    const continuation = isLast ? ' ' : '│';
+    console.log(
+      `      ${prefix} ${sp.timestamp} (commit=${sp.commit.hash.slice(0, 7)}, patches=${sp.patches.hash.slice(0, 7)}, ${formatBytes(size)})`,
+    );
+    console.log(
+      `      ${continuation}  ├─ ${path.basename(sp.patches.stagedPath)}`,
+    );
+    console.log(
+      `      ${continuation}  └─ ${path.basename(sp.patches.unstagedPath)}`,
+    );
+  });
 };

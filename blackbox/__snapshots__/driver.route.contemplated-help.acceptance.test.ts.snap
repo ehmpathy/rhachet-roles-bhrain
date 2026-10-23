@@ -1,14 +1,14 @@
 // Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
 
 exports[`driver.route.absorbed-help.acceptance given: [case1] a linked driver role when: [t0] driver runs route.stone.set --help then: [t0] help output matches snapshot 1`] = `
-"route.stone.set - mark stone as passed, approved, promised, absorbed, disputed, conceded, blocked, rewound, arrived, overruled, or forced
+"route.stone.set - mark stone as passed, approved, promised, absorbed, disputed, conceded, blocked, rewound, arrived, overruled, forced, or inflight
 
 usage:
   route.stone.set [options]
 
 options:
   --stone <name>     stone name or glob pattern (required)
-  --route <path>     path to route directory (required)
+  --route <path>     path to route directory (uses bound route if absent)
   --as <status>      status to set (required):
                        passed   - work complete, proceed
                        arrived  - work complete, get reviews
@@ -21,6 +21,9 @@ options:
                        rewound  - clear validation state
                        overruled - bypass review thresholds (human only)
                        forced   - approve AND overrule (human only)
+                       inflight - repairs in flight (delegated work you wait on);
+                                  quiets the onStop hook for this stone for 30m.
+                                  --as arrived, passed, or blocked clears it
   --that <slug>      reviewer slug (required for --as promised / --as absorbed)
                        for --as absorbed, use the slug exactly as shown in the
                        reviewers-await-reply prompt (path-sanitized: slashes → dashes)
@@ -41,6 +44,7 @@ options:
                        (REQUIRED for --as promised)
                        a diff needs both paths: with one, a mismatch reads "absent";
                        with both, the guard shows the diff and the command that moves it
+  --what <text>      what the repairs in flight are (required for --as inflight)
   --help             show this help message
 
 note:
@@ -64,5 +68,6 @@ examples:
   route.stone.set --stone 3.blueprint --as rewound
   route.stone.set --stone 1.vision --as overruled
   route.stone.set --stone 1.vision --as forced
+  route.stone.set --stone 5.1.execution --as inflight --what 'three delegates repair blockers 1-4'
 "
 `;

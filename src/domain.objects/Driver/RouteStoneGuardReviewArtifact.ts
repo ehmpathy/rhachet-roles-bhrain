@@ -1,6 +1,6 @@
 import { DomainEntity, type RefByUnique } from 'domain-objects';
 
-import type { ExitCodeClass } from '@src/domain.operations/route/guard/getExitCodeClass';
+import type { ExitCodeClass } from '@src/domain.objects/Driver/ExitCodeClass';
 
 import type { RouteStone } from './RouteStone';
 
@@ -51,13 +51,22 @@ export interface RouteStoneGuardReviewPeerArtifact {
    * - null = a pre-fallback record (reconstructed from an artifact written before this field),
    *   or a review with no detected verdict (a malfunction carries no tallier)
    *
-   * .note = internally the orchestrator calls this the `tactic` it chose; on this persisted
-   *         contract the field is named for the ROLE that produced the tally (`tallier`), which
-   *         also matches the render vocabulary (`tallied by reviewer@$brain`).
-   * .note = the brain slug is NOT stored per-artifact — the model is a fixed constant, so the
-   *         render derives the display name from that constant. only this discriminant travels.
+   * .note = the field is named for the ROLE that produced the tally (`tallier`), the same word
+   *         the tally contract (`ReviewCountsResolved`) and the render (`tallied by
+   *         reviewer@$brain`) use.
    */
   tallier: 'deterministic' | 'probabilistic' | null;
+
+  /**
+   * the PINNED brain that tallied the count — read back from the persisted
+   * `tallied by reviewer@<pin>` footer, so a render names the model that actually ran
+   * - null = no sub-brain tallied it (deterministic), or a footer with no slug
+   *
+   * .note = never the versionless default. the default's `latest` moves when the pin
+   *         moves, so a render of it would name a different model than the one that
+   *         tallied, while the given beside it names the truth
+   */
+  talliedBy: string | null;
 
   /**
    * command exit code

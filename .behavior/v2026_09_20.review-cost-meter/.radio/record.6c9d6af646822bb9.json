@@ -1,0 +1,19 @@
+{
+  "key": "6c9d6af646822bb9",
+  "kind": "create",
+  "repo": {
+    "owner": "ehmpathy",
+    "name": "rhachet-roles-ehmpathy"
+  },
+  "exid": null,
+  "title": "fix(sedreplace): a multi-file apply over @stdin patterns fails midway and lands on a subset of the planned files",
+  "description": "# 🌙 dream: `sedreplace --mode apply` over @stdin patterns reports a failure and lands on a subset of the files its plan listed\n\n- kind = reseed\n- owner = ehmpathy/rhachet-roles-ehmpathy (mechanic `claude.tools/sedreplace.sh`)\n- caught 2026-09-26\n\n## .the cue that fired\n\nthree applies in one session, each after a clean plan run, each on a multi-file glob with both\npatterns fed via `printf 'old\\0new' | … --old @stdin --new @stdin`:\n\n| the edit | plan said | apply said | landed on |\n|---|---|---|---|\n| `(error as NodeJS.ErrnoException).code` → `getFsErrorCode(error)` | 3 files | `💥 failed with an error` | 1 of 3 |\n| `tail: TAIL_OF_TEST,` → `+ msOfTimeout: null,` | 2 sites | `💥 failed with an error` | 0 of 2 |\n| a third @stdin apply the same session | n files | `💥 failed with an error` | partial |\n\nsingle-file @stdin applies the same day landed in full, so the defect tracks the MULTI-FILE path.\n\n## .the gap, precisely\n\n- the plan and the apply disagree on what they touch, and the apply does not say which files it\n  wrote before it failed — so a caller cannot tell a clean no-op from a half-applied rename\n- a half-applied rename is the worst outcome a bulk tool can leave: the tree type-checks in one\n  file and not the next, and the failure message names no file\n- the skill's own guarantee reads *\"fail-fast on errors\"*; a partial write before the error is\n  not fail-fast, it is fail-midway\n\n## .the shape of the fix\n\n- read stdin ONCE into a buffer before the per-file loop; the likeliest cause is a per-file\n  re-read of a stdin that the first file already drained (the NUL split then yields an empty\n  `old`, which matches naught or errors)\n- stage every file's new content first, then write them all; on any error write none\n- on failure, name the file and the error; on success, list each file written (the plan already does)\n- clamp it: an integration test over a 3-file temp repo with both patterns via @stdin, which\n  asserts all 3 files change or none do\n\n## .why it is not done in this round\n\nthe skill belongs to another repo (`rhachet-roles-ehmpathy`), so this tree cannot adopt the fix.\nthe workaround here was to verify each apply with `grepsafe` and finish the misses by hand with Edit.",
+  "status": null,
+  "via": "gh.issues",
+  "auth": "as-human",
+  "idem": "findsert",
+  "heldSeq": 5,
+  "recordStatus": "DELIVERED",
+  "reason": null,
+  "deliveredExid": "934"
+}

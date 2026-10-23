@@ -1,0 +1,37 @@
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
+
+exports[`asCostLeverLines given: [case1] both levers, with no trend to report when: [t0] the lines are rendered then: the whole block matches the snapshot 1`] = `
+"   ├─ levers — input DOWN · cache UP
+   │  ├─ input:     228.4k chars
+   │  └─ cache:     44.7%"
+`;
+
+exports[`asCostLeverLines given: [case2] both levers, with a trend on each when: [t0] the lines are rendered then: the whole block matches the snapshot 1`] = `
+"   ├─ levers — input DOWN · cache UP (trend over 6 rounds of 5.1.execution.from_vision)
+   │  ├─ input:     228.4k chars   ↓ 58%
+   │  └─ cache:     44.7%   ↑ 31.0pp"
+`;
+
+exports[`asCostLeverLines given: [case3] a prefix that places the block in a deeper tree when: [t0] the lines are rendered under a nested prefix then: the whole block matches the snapshot 1`] = `
+"   │  ├─ levers — input DOWN · cache UP
+   │  │  ├─ input:     1.0M chars
+   │  │  └─ cache:     2.8%"
+`;
+
+exports[`asCostLeverLines given: [case4] the section layout the grove renders when: [t0] the lines are rendered with a trend then: the whole block matches the snapshot 1`] = `
+"   levers — input DOWN · cache UP (trend over 3 days)
+      ├─ input:     25 prompt tokens/run   ↓ 10.0% 🎉
+      └─ cache:     absent of prompt tokens served from cache   → flat"
+`;
+
+exports[`asCostLeverLines given: [case5] a breadth that holds no trend, and names where one lives when: [t0] the lines are rendered with a pointer then: the whole block matches the snapshot 1`] = `
+"   ├─ levers — input DOWN · cache UP (trend: see --of tree)
+   │  ├─ input:     228.4k chars
+   │  └─ cache:     44.7%"
+`;
+
+exports[`asCostLeverLines given: [case5] a breadth that holds no trend, and names where one lives when: [t1] a real trend is ALSO supplied then: the whole block matches the snapshot 1`] = `
+"   ├─ levers — input DOWN · cache UP (trend over 3 rounds)
+   │  ├─ input:     228.4k chars   ↓ 5%
+   │  └─ cache:     44.7%   ↑ 2.0pp"
+`;

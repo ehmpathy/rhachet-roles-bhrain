@@ -1,0 +1,19 @@
+{
+  "key": "e3d0c7ad90775c1a",
+  "kind": "create",
+  "repo": {
+    "owner": "ehmpathy",
+    "name": "rhachet-roles-bhuild"
+  },
+  "exid": null,
+  "title": "feat(behaver): verify each experience coordinate marker against the step it cites",
+  "description": "## .what\nrule.require.experience-coverage (role=behaver) asks a catalog to cite a demo per cell, as a coordinate marker like case=5 [t2]. it does not ask that the citation be verified against the cited step. a marker is a claim about that step given/when, and no glob, count, or type can falsify it.\n\nevidence (one vision, rhachet-roles-bhrain route v2026_09_08.feat-dispute-or-concede-review-budget): three consecutive peer rounds each found mis-cited markers, a driver hand sweep after both lanes approved found two more (a transposed pair), and a fourth round still found three outside the matrix: in a see-also line, in the yield, and in a narrative aside, one of them a [t5] that does not exist in its case.\n\nfour shapes:\n- over-claim: the step demos no cell; drop the marker (census falls)\n- re-file: the step demos a different cell; re-point (census unchanged)\n- transpose: two markers cite each other demo; swap (census unchanged)\n- dangle: the cited step does not exist; re-point (census unchanged)\nthree of four move no count, so an arithmetic check cannot find them. and a repair can create one: a step retag left a citation 150 lines away that still named the old cell.\n\n## .why\nthe census is a sum over markers, so a wrong marker sums identically to a right one. the catalog grows harder to trust as it grows more complete.\n\n## .shape of the fix\n1. brief rung: add to the rule that a retag is a rename, and a rename owes a grep of every marker that cites the retagged step\n2. half-checker: assert each cited [tn] exists in the cited case file (string match settles the dangle shape)\n3. full checker: for every case=N [tn] in the behavior dir (not only the catalog), read the cell coordinates from its position and assert they agree with the cited step given/when plus the case ambient given\n\ncaught in ehmpathy/rhachet-roles-bhrain .dream/v2026_09_09.reseed.an-experience-coordinate-is-checkable-and-unchecked.md",
+  "status": null,
+  "via": "gh.issues",
+  "auth": "as-human",
+  "idem": null,
+  "heldSeq": 22,
+  "recordStatus": "DELIVERED",
+  "reason": null,
+  "deliveredExid": "467"
+}

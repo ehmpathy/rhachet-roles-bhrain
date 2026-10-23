@@ -267,7 +267,7 @@ exports[`driver.route.overrule-skip.acceptance given: [case6] C4 — pass before
    │   └─ taken: .reviews/peer/1.feature._.review.i001.d6ef1aa3fad755e23c.r001._.taken.by_self.basic-checker.md
    │
    ├─ r2: premium-checker (l3, 0/5)
-   │   └─ awaits arrival
+   │   └─ awaits l1 terminal
    │
    └─ ✗ judge.1 - blocked [TIME]
 

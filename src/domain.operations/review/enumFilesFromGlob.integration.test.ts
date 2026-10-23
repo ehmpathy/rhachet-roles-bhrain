@@ -1,4 +1,7 @@
-import { given, then, when } from 'test-fns';
+import { execSync } from 'child_process';
+import * as fs from 'fs';
+import * as path from 'path';
+import { genTempDir, given, then, useThen, when } from 'test-fns';
 
 import { enumFilesFromGlob } from './enumFilesFromGlob';
 
@@ -235,16 +238,159 @@ describe('enumFilesFromGlob', () => {
       });
     });
 
-    when('[t2] unbounded glob from repo root', () => {
+    when('[t2] unbounded glob, default shape (no gitignore)', () => {
+      // .note = hermetic, never the repo root: the default shape prunes no gitignored
+      //         dir, so from this repo's root it walks every ignored tree (a measured
+      //         95s over ~1M files, per enumFilesFromGlob.ts). what the default DOES
+      //         guarantee is the hardcoded node_modules + .git exclusion, so that is
+      //         what this pins, on a tree small enough to walk in milliseconds
+      const cwd = genTempDir({ slug: 'enum-glob-default-shape', git: true });
+      fs.writeFileSync(path.join(cwd, '.gitignore'), 'ignored/\n');
+      fs.writeFileSync(path.join(cwd, 'keep.json'), '{}\n');
+      ['node_modules/pkg', '.git', 'ignored'].forEach((dir) => {
+        fs.mkdirSync(path.join(cwd, dir), { recursive: true });
+        fs.writeFileSync(path.join(cwd, dir, 'junk.json'), '{}\n');
+      });
+
+      // .note = wrapped in an object, since useThen's proxy does not forward array methods
+      const walk = useThen('the walk returns', async () => ({
+        files: await enumFilesFromGlob({ glob: '**/*.json', cwd }),
+      }));
+
+      then('excludes node_modules and .git from traversal', () => {
+        expect(walk.files).not.toContain('node_modules/pkg/junk.json');
+        expect(walk.files).not.toContain('.git/junk.json');
+        expect(walk.files).toContain('keep.json');
+      });
+
+      then('keeps gitignored files (no gitignore filter by default)', () => {
+        expect(walk.files).toContain('ignored/junk.json');
+      });
+    });
+
+    when('[t3] unbounded root glob, subject shape (gitignore: true)', () => {
       then('excludes node_modules from traversal', async () => {
         // unbounded glob would OOM without node_modules exclusion
+        // .note = gitignore: true, since an unbounded root glob is the SUBJECT shape
+        //         (enumFilesForReviewSubjects); supplies are explicitly pointed
+        //         at their dirs (enumFilesForReviewSupplies) and never unbounded
         const files = await enumFilesFromGlob({
           glob: '**/*.json',
+          gitignore: true,
         });
         // should find package.json at minimum
         expect(files).toContain('package.json');
         // must not contain any node_modules paths
         expect(files.some((f) => f.includes('node_modules'))).toBe(false);
+      });
+    });
+  });
+
+  given('[case7] git-ignored dirs whose walk would never end', () => {
+    // two self-links fan the walk out 2^depth until ELOOP (~40 levels), so any walk
+    // that descends either ignored dir hangs; only a walk that prunes both returns
+    // .note = the second ignored dir carries glob metacharacters in its name, so its
+    //         prune pattern only holds if the name is escaped
+    const cwd = genTempDir({ slug: 'enum-glob-prune-ignored', git: true });
+    // .note = gitignore reads `[y]` as a char class, so the brackets are escaped there too
+    fs.writeFileSync(
+      path.join(cwd, '.gitignore'),
+      'heavy/\nodd (x)\\[y\\]{z}/\n',
+    );
+    fs.writeFileSync(path.join(cwd, 'keep.json'), '{}\n');
+    ['heavy', 'odd (x)[y]{z}'].forEach((dir) => {
+      fs.mkdirSync(path.join(cwd, dir), { recursive: true });
+      fs.writeFileSync(path.join(cwd, dir, 'junk.json'), '{}\n');
+      fs.symlinkSync('.', path.join(cwd, dir, 'loop-a'));
+      fs.symlinkSync('.', path.join(cwd, dir, 'loop-b'));
+    });
+
+    when('[t0] an unbounded subject glob runs from the repo root', () => {
+      then(
+        'it prunes the ignored dir and returns only kept files',
+        async () => {
+          // race the walk against a deadline, so a descent fails fast, not at the suite timeout
+          const deadline = new Promise<'deadline'>((settle) =>
+            setTimeout(() => settle('deadline'), 15_000).unref(),
+          );
+          const outcome = await Promise.race([
+            enumFilesFromGlob({ glob: '**/*.json', cwd, gitignore: true }),
+            deadline,
+          ]);
+          expect(outcome).toEqual(['keep.json']);
+        },
+      );
+    });
+  });
+
+  given('[case8] a mode-000 git-ignored dir inside the scope', () => {
+    // 🔴 the prune pattern `junk/**` must never be stat'd. globby's own directory
+    //    expansion ran dir-glob over every ignore entry, which stats the literal pattern
+    //    text, and a path under a mode-000 dir cannot be stat'd — so the walk crashed
+    //    with EACCES on the very dir it was told to skip
+    // .note = the same shape the review.gitignore-subjects acceptance drives
+    const cwd = genTempDir({ slug: 'enum-glob-restricted-ignored', git: true });
+    fs.writeFileSync(path.join(cwd, '.gitignore'), 'junk/\n');
+    fs.mkdirSync(path.join(cwd, 'src', 'junk'), { recursive: true });
+    fs.writeFileSync(path.join(cwd, 'src', 'keep.ts'), 'export {};\n');
+    fs.writeFileSync(path.join(cwd, 'src', 'junk', 'secret.ts'), 'x\n');
+    fs.chmodSync(path.join(cwd, 'src', 'junk'), 0o000);
+
+    // restore the mode so the temp dir can be cleaned
+    afterAll(() => fs.chmodSync(path.join(cwd, 'src', 'junk'), 0o755));
+
+    when('[t0] a subject glob walks the scope', () => {
+      then(
+        'git names the restricted dir as ignored (the prune list holds it)',
+        () => {
+          // precondition: without this, the clamp below would never reach the stat
+          const ignored = execSync(
+            'git ls-files -z --others --ignored --exclude-standard --directory',
+            { cwd, encoding: 'utf-8' },
+          ).split('\0');
+          expect(ignored).toContain('src/junk/');
+        },
+      );
+
+      then('the restricted dir is in fact unreadable to this process', () => {
+        // precondition: a process that bypasses mode bits never meets EACCES at all
+        expect(() => fs.readdirSync(path.join(cwd, 'src', 'junk'))).toThrow(
+          /EACCES/,
+        );
+      });
+
+      then(
+        'it skips the restricted dir and returns the readable file',
+        async () => {
+          // 🔴 the process cwd must be the scanned repo, as it is for the cli. globby's
+          //    ignore expansion stats each entry against PROCESS cwd, never the glob cwd,
+          //    so from the jest root the stat met ENOENT and the defect hid. the temp dir
+          //    is its own git root; the chdir is restored before the assertion
+          const cwdPrior = process.cwd();
+          process.chdir(cwd);
+          const files = await enumFilesFromGlob({
+            glob: 'src/**/*.ts',
+            cwd,
+            gitignore: true,
+          }).finally(() => process.chdir(cwdPrior));
+          expect(files).toEqual(['src/keep.ts']);
+        },
+      );
+    });
+  });
+
+  given('[case9] a negative pattern that names a bare directory', () => {
+    // the exclude side expands a bare dir itself (globby's expansion is off), so
+    // `!dir` still prunes every file under dir
+    when('[t0] the dir is excluded by name, with no glob chars', () => {
+      then('no file under it is returned', async () => {
+        const files = await enumFilesFromGlob({
+          glob: [`${ASSETS_PATH}/**/*.ts`, `!${ASSETS_PATH}/nested`],
+        });
+        expect(files).toEqual([
+          `${ASSETS_PATH}/bar.ts`,
+          `${ASSETS_PATH}/foo.ts`,
+        ]);
       });
     });
   });

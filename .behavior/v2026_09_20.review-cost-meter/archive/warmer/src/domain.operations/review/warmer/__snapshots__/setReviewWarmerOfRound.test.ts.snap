@@ -1,0 +1,17 @@
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
+
+exports[`setReviewWarmerOfRound given: [case1] a round with no lane identity when: [t0] the warmer was asked for (\`--warmer on\`) then: the aside matches the snapshot 1`] = `
+"
+🦉 heads up, the run goes on
+
+🟡 warn: warmer: none — this run carries no lane identity, so there is no prefix to key a warmer on; the review ran unwarmed and its verdict stands — drop --warmer, since a hand run has no lane to warm
+"
+`;
+
+exports[`setReviewWarmerOfRound given: [case2] a round whose lane recorded no brain when: [t0] the warmer was asked for (\`--warmer on\`) then: the aside matches the snapshot 1`] = `
+"
+🦉 heads up, the run goes on
+
+🟡 warn: warmer: none — this run recorded no brain, so there is no cache to name for a warmer
+"
+`;

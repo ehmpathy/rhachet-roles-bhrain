@@ -53,7 +53,7 @@ sits at `1.vision.experience.case=11` on route `v2026_09_08.feat-dispute-or-conc
 
 - `src/domain.operations/route/guard/review/getReviewCountsViaRegex.ts` — where a concern is
   counted and **not** identified
-- `src/domain.operations/route/guard/review/computeReviewTotalsFromFiles.ts` — the sum over concerns
+- `src/domain.operations/route/guard/review/getOneReviewTotalsFromFiles.ts` — the sum over concerns
 - `.agent/repo=bhrain/role=reviewer/briefs/contract.reviewer-output.md` — the two severities a
   concern may take
 

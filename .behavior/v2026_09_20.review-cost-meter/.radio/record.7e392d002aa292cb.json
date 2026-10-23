@@ -1,0 +1,19 @@
+{
+  "key": "7e392d002aa292cb",
+  "kind": "create",
+  "repo": {
+    "owner": "ehmpathy",
+    "name": "rhachet-roles-ehmpathy"
+  },
+  "exid": null,
+  "title": "fix(git.repo.test): plan mode previews a file set that apply mode does not run",
+  "description": "## .what\ngit.repo.test --mode plan (the default) previews a narrower file set than --mode apply actually runs. plan appears to list only the test files the diff touched; apply also runs the tests related to each changed source file. the did-you-know line then promises that apply will execute the previewed set.\n\nevidence (measured 2026-09-23, one branch):\n| suite | plan | apply | --thorough |\n|---|---|---|---|\n| unit | 20 | 123 | 234 |\n| integration | 17 | 70 | 125 |\n| acceptance | 5 | 132 | 131 |\nthe acceptance row is a 26x understatement: a caller who trusts the preview budgets for 5 files and waits for 132.\n\n## .why\n- the plan/apply contract is that plan is apply minus side effects: same selection, no execution. here the two modes disagree on the selection itself, the one matter plan exists to settle\n- a verification gate that cites plan mode to state what breadth a run covered records a number no run produced\n- invisible from the inside: every printed number is internally honest\n\n## .shape of the fix\n1. plan runs the identical selector apply runs, and prints that set\n2. if the expansion is costly, show it in tiers rather than skip it, e.g. matched: 17 changed, 70 related, 125 total\n3. clamp, seen red first: a temp repo with a changed source file whose dependent tests are unchanged; assert the plan set equals the apply set\n4. repair the did-you-know line\nnot a fix: to narrow apply to the plan set; the related-test expansion is correct\n\ncaught in ehmpathy/rhachet-roles-bhrain .dream/v2026_09_23.reseed.plan-mode-previews-a-file-set-apply-mode-does-not-run.md",
+  "status": null,
+  "via": "gh.issues",
+  "auth": "as-human",
+  "idem": null,
+  "heldSeq": 14,
+  "recordStatus": "DELIVERED",
+  "reason": null,
+  "deliveredExid": "962"
+}

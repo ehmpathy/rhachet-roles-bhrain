@@ -25,6 +25,8 @@ import type { PassageReport } from '@src/domain.objects/Driver/PassageReport';
  *                    applies. both are forward motion, so both keep the nudge
  * - 'poured'       = a review level has begun to run — a latch, never passage; the level is in
  *                    flight, so the drive is mid-motion
+ * - 'inflight'     = a review round's watermark, set while its reviewers run — the drive is
+ *                    mid-motion exactly as under 'poured'
  * - 'overruled'    = a human forgave a level; the drive advances
  *
  * dead (false, daemon exits) — a human, not a nudge, must act (a nudge would be the infiniloop):
@@ -42,6 +44,7 @@ export const REMINDER_LIVENESS_BY_STATUS = {
   disputed: true,
   conceded: true,
   poured: true,
+  inflight: true,
   overruled: true,
   blocked: false,
   rewound: false,

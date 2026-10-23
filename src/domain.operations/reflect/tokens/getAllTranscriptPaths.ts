@@ -5,6 +5,7 @@ import * as path from 'path';
 
 import { computeProjectSlug } from '@src/domain.operations/transcript/computeProjectSlug';
 import { getAllClaudeProjectsRoots } from '@src/domain.operations/transcript/getAllClaudeProjectsRoots';
+import { compareStrings } from '@src/utils/compareStrings';
 import { enumFilesFromGlob } from '@src/utils/enumFilesFromGlob';
 
 import { asGroupsByKey } from './asGroupsByKey';
@@ -202,7 +203,7 @@ const getNewestPathForCwd = (input: {
 
   // newest by mtime; an equal mtime falls to the path, so one input always picks one file
   const newest = [...candidates].sort(
-    (a, b) => b.mtime - a.mtime || a.file.localeCompare(b.file),
+    (a, b) => b.mtime - a.mtime || compareStrings(a.file, b.file),
   )[0];
   if (!newest)
     throw new BadRequestError('no transcript for this directory', {

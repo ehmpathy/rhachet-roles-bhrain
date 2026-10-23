@@ -46,7 +46,6 @@ export const assertFulcrumPathExists = (input: {
         `write it there, then re-run this command:`,
         `  ${input.route}/.fulcrums/inventory.of=fulcrums.case=F00N-<slug>.md`,
       ].join('\n'),
-      { why: input.why, route: input.route },
     );
   }
 
@@ -72,11 +71,5 @@ export const assertFulcrumPathExists = (input: {
       `  --why .fulcrums/inventory.of=fulcrums.case=F00N-<slug>.md`,
       `  --why ${input.route}/.fulcrums/inventory.of=fulcrums.case=F00N-<slug>.md`,
     ].join('\n'),
-    {
-      why: input.why,
-      route: input.route,
-      asRouteRelative,
-      asRepoRootRelative,
-    },
   );
 };

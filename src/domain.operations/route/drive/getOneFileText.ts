@@ -1,6 +1,6 @@
 import * as fs from 'fs/promises';
 
-import { isENOENT } from '../guard/isENOENT';
+import { isErrorOfAbsence } from '@src/utils/fs/isErrorOfAbsence';
 
 /**
  * .what = reads a file's text, and answers `null` where the file is absent
@@ -17,6 +17,6 @@ export const getOneFileText = async (input: {
   path: string;
 }): Promise<string | null> =>
   await fs.readFile(input.path, 'utf-8').catch((error: unknown) => {
-    if (isENOENT(error)) return null;
+    if (isErrorOfAbsence({ error })) return null;
     throw error;
   });

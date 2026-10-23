@@ -5,10 +5,12 @@ a halt is a diagnosis to make, not a message to relay. the guard prints what *wo
 | lever | owner |
 |---|---|
 | `rhx route.stone.set --as absorbed --that <reviewer>` — converge; a spent meter discharges no debt | **driver** |
-| 🔴 `rhx route.mutate.guard` — the stone's own `--paths-with`, `--conversation`, `level`, `budget` | **driver** |
+| 🔴 a direct edit of `$route/<stone>.guard` — that lane's `--paths-wout` / `--paths-with`, its `--conversation` depth, its `level` | **driver**, once the route's mutate grant stands |
 | a diagnosed reviewer malfunction — absent credential, bad glob, stale supply | **driver** |
 | 🔴 `rhx route.guard.budget --for review --add N --stone <stone>` | **driver, ONLY with a warrant** — see below |
-| `--as approved` · `--as overruled` · the commit quota · a **credential** the keyrack reports `absent` · release auth | human |
+| the route's mutate grant (`rhx route.mutate grant allow`) · `--as approved` · `--as overruled` · the commit quota · a **credential** the keyrack reports `absent` · release auth | human |
+
+🟡 **no `rhx` command edits a guard.** `route.mutate.guard` is the PreToolUse hook that seals `*.stone` / `*.guard` / `.route/**` — a gate, never an editor. the act is a plain edit of the `.guard` file, permitted once `$route/.route/.privilege.mutate.flag` exists. `rhx route.mutate grant get` first: granted → edit now · not granted → ask the human for that one grant per route, then the edit is yours.
 
 🔴 **the guard row was absent for a full release, and the omission had a measured price.** a driver filed an overflowed-lane repair as a **fulcrum** — a call reserved for the wisher — and collected six rounds of evidence about it while the remedy sat unused. the wisher closed it in seven words: *"you have the abiltiy to edit the guards."*
 

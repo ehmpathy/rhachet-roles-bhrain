@@ -1,0 +1,19 @@
+{
+  "key": "32ab1fa14d01b1cb",
+  "kind": "create",
+  "repo": {
+    "owner": "ehmpathy",
+    "name": "rhachet-roles-ehmpathy"
+  },
+  "exid": null,
+  "title": "fix(git.repo.test): --resnap with a name:// scope deletes every sibling snapshot in the file",
+  "description": "## .what\ngit.repo.test --resnap combined with a --scope name://X deletes every snapshot in the file whose test the name filter skipped. --scope name:// maps to jest --testNamePattern and --resnap maps to -u; under -u, jest treats each snapshot whose test did not run as obsolete and removes it. the run exits 0 and prints naught about the loss.\n\nevidence: a run scoped to one integration test file with --scope name://case16 --resnap --mode apply passed, and the .snap file lost every key outside case16. it was caught only because a git diff showed a wholesale deletion; a whole-file --resnap restored them.\n\n## .why\n- the skill help recommends the narrow path:// plus name:// stack as the fastest loop, and recommends --resnap to update snapshots. the two recommended moves compose into silent data loss\n- a driver who does not diff the .snap ships a suite that lost coverage, and a reviewer reads the deletion as intentional\n\n## .shape of the fix\n- refuse --resnap beside any name:// scope, exit 2, and print the fix: drop the name scope, keep the path scope (a whole-file resnap)\n- clamp: a temp repo with one test file of two snapshotted cases; run with --scope name://case1 --resnap; assert the refusal, and that the case2 key survives\n\ncaught in ehmpathy/rhachet-roles-bhrain .dream/v2026_10_07.reseed.repo-test-resnap-with-a-name-scope-deletes-sibling-snapshots.md",
+  "status": null,
+  "via": "gh.issues",
+  "auth": "as-human",
+  "idem": null,
+  "heldSeq": 20,
+  "recordStatus": "DELIVERED",
+  "reason": null,
+  "deliveredExid": "965"
+}

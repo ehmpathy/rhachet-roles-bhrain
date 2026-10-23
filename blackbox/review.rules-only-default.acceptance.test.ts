@@ -5,6 +5,7 @@ import * as path from 'path';
 import { given, then, useThen, when } from 'test-fns';
 
 import { logOutputHead } from '@src/.test/logOutputHead';
+import { asReviewMetricsExpectedBlock } from './.test/invokeReviewBySkill';
 import {
   execAsync,
   genTempDirForRhachet,
@@ -12,6 +13,17 @@ import {
 } from './.test/invokeReviewSkill';
 
 const ASSETS_DIR = path.join(__dirname, '.test/assets/codebase-mechanic');
+
+/**
+ * .what = config for probabilistic tests that invoke LLM brains
+ * .why = LLM responses can timeout or vary; retry ensures CI stability
+ *
+ * @see .agent/repo=.this/role=any/briefs/rule.require.repeatable-for-llm-tests.md
+ */
+const REPEATABLE_CONFIG = {
+  attempts: 3,
+  criteria: process.env.CI ? 'SOME' : 'EVERY',
+} as const;
 
 /**
  * .what = git identity env for commits
@@ -25,9 +37,9 @@ const GIT_ENV = {
   GIT_COMMITTER_EMAIL: 'test@test.com',
 };
 
-describe('review.acceptance', () => {
+describe('review.rules-only-default.acceptance', () => {
   given('[case1] user specifies only --rules (default case)', () => {
-    when('[t0] review skill invoked with only --rules dirpath', () => {
+    when.repeatably(REPEATABLE_CONFIG)('[t0] review skill invoked with only --rules dirpath', () => {
       const res = useThen('invoke review skill with rules only', async () => {
         // clone fixture to temp dir with git initialized
         const tempDir = genTempDirForRhachet({
@@ -38,6 +50,16 @@ describe('review.acceptance', () => {
         // link the reviewer role via rhachet
         await execAsync('npx rhachet roles link --role reviewer', {
           cwd: tempDir,
+        });
+
+        // commit what the link wrote, so the scope holds only the change below. the link's
+        // root `.gitignore` negation lands in some runs and not others, and an uncommitted
+        // one gave the same invocation 8 targets on one attempt and 7 on the next
+        // (i019 r013 nitpick.1)
+        execSync('git add . && git commit --no-verify -m "link reviewer"', {
+          cwd: tempDir,
+          stdio: 'pipe',
+          env: GIT_ENV,
         });
 
         // create an uncommitted change for since-main to pick up
@@ -120,6 +142,12 @@ describe('review.acceptance', () => {
         expect(res.cli.stdout).toContain('targets:');
       });
 
+      // i014 r011 blocker.2 — the one review suite whose stdout no snapshot guarded
+      then('the metrics.expected block matches its snapshot (computed before the brain)', () => {
+        // the scope tree and estimate are deterministic; the verdict summary is the brain's
+        expect(asReviewMetricsExpectedBlock({ stdout: res.cli.stdout })).toMatchSnapshot();
+      });
+
       then('stdout shows owl verdict', async () => {
         // should have one of the three owl pun headers
         const hasOwlVerdict =
@@ -132,7 +160,7 @@ describe('review.acceptance', () => {
   });
 
   given('[case2] user excludes .behavior via negation pattern', () => {
-    when('[t0] review with --diffs since-main --paths !.behavior/**', () => {
+    when.repeatably(REPEATABLE_CONFIG)('[t0] review with --diffs since-main --paths !.behavior/**', () => {
       const res = useThen('invoke review with exclusion pattern', async () => {
         // clone fixture to temp dir with git initialized
         const tempDir = genTempDirForRhachet({
@@ -217,9 +245,24 @@ describe('review.acceptance', () => {
         expect(res.reviewContent).not.toContain('behavior file');
       });
 
-      then('review does mention src/newfile.ts', async () => {
-        // the newfile.ts should be in scope since it's in diffs and not excluded
-        expect(res.cli.stdout).toContain('targets:');
+      then('the scope holds src/newfile.ts and no .behavior file', async () => {
+        // the run's own scope log names every target it sent; read it, never a fragment of stdout
+        const scopeLogPath = res.cli.stdout.match(
+          /scope: (\S+input\.scope\.json)/,
+        )?.[1];
+        expect(scopeLogPath).toBeDefined();
+        const scope = JSON.parse(
+          await fs.readFile(path.join(res.tempDir, scopeLogPath!), 'utf-8'),
+        ) as { targetFiles: string[] }; // the scope log's declared shape, read back
+        expect(scope.targetFiles).toContain('src/newfile.ts');
+        expect(
+          scope.targetFiles.filter((file) => file.startsWith('.behavior/')),
+        ).toEqual([]);
+      });
+
+      then('the metrics.expected block matches its snapshot (computed before the brain)', () => {
+        // the exclusion lands in the deterministic scope tree, so the snapshot pins it
+        expect(asReviewMetricsExpectedBlock({ stdout: res.cli.stdout })).toMatchSnapshot();
       });
     });
   });

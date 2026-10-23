@@ -12,11 +12,17 @@ import {
 } from 'test-fns';
 
 import { RouteStone } from '@src/domain.objects/Driver/RouteStone';
+import { ENV_OF_PROGRESS_SILENT } from '@src/domain.operations/isProgressSilenced';
+import { ENV_OF_REVIEW_SUBPROCESS } from '@src/domain.operations/isReviewSubprocess';
 
 import { getDriveBlockerState } from './drive/getDriveBlockerState';
+import { RouteInflight } from './drive/RouteInflight';
+import { setRouteInflight } from './drive/setRouteInflight';
+import { computeStoneReviewInputHash } from './guard/review/computeStoneReviewInputHash';
 import { getRouteReminderLogPath } from './reminder/getRouteReminderLogPath';
 import { RouteReminderOrphanError } from './reminder/RouteReminderOrphanError';
 import { stepRouteDrive } from './stepRouteDrive';
+import { getAllStones } from './stones/getAllStones';
 import { setStoneAsPromised } from './stones/setStoneAsPromised';
 
 /**
@@ -56,6 +62,16 @@ const asStableDriveStdout = (stdout: string | undefined): string | undefined =>
     //        absolute path, which would bake this host into the snapshot
     // .note = split/join, since a checkout path may carry regex metacharacters
     .join('<repo>/');
+
+/**
+ * .what = masks the tempdir and the wall-clock `since HH:MM` of an inflight watermark line
+ * .why = the watermark's since is minted from Date.now(), so its clock time differs per run;
+ *        mask it so the inflight snapshots stay stable while the age and the stone stay visible
+ */
+const asStableInflightStdout = (
+  stdout: string | undefined,
+): string | undefined =>
+  asStableDriveStdout(stdout)?.replace(/since \d\d:\d\d/g, 'since <hh:mm>');
 
 /**
  * .what = integration tests for stepRouteDrive
@@ -273,6 +289,77 @@ describe('stepRouteDrive.integration', () => {
         expect(normalized).toMatchSnapshot();
       });
     });
+
+    when(
+      '[t1b] when=hook.onStop fires inside a guard-summoned review (an enrolled reviewer clone)',
+      () => {
+        // the env `runOneReview` hands a guard-spawned child: both markers set, and the
+        // subprocess marker is the one this hook reads
+        const result = useThen('returns a silent emit', async () => {
+          const priorSubprocess = process.env[ENV_OF_REVIEW_SUBPROCESS];
+          const priorSilent = process.env[ENV_OF_PROGRESS_SILENT];
+          process.env[ENV_OF_REVIEW_SUBPROCESS] = '1';
+          process.env[ENV_OF_PROGRESS_SILENT] = '1';
+          try {
+            return await stepRouteDrive({
+              route: scene.tempDir,
+              when: 'hook.onStop',
+            });
+          } finally {
+            if (priorSubprocess === undefined)
+              delete process.env[ENV_OF_REVIEW_SUBPROCESS];
+            else process.env[ENV_OF_REVIEW_SUBPROCESS] = priorSubprocess;
+            if (priorSilent === undefined)
+              delete process.env[ENV_OF_PROGRESS_SILENT];
+            else process.env[ENV_OF_PROGRESS_SILENT] = priorSilent;
+          }
+        });
+
+        then('the clone turn-end is not blocked: emit is null', () => {
+          expect(result.emit).toBeNull();
+        });
+      },
+    );
+
+    when(
+      '[t1b2] when=hook.onStop fires inside a STREAMED review (a human `review.by --for`)',
+      () => {
+        // the streamed tactic leaves the progress marker unset so the child's spinner can
+        // stream; only the subprocess marker rides it. the hook must stay silent anyway
+        const result = useThen('returns a silent emit', async () => {
+          const priorSubprocess = process.env[ENV_OF_REVIEW_SUBPROCESS];
+          const priorSilent = process.env[ENV_OF_PROGRESS_SILENT];
+          process.env[ENV_OF_REVIEW_SUBPROCESS] = '1';
+          delete process.env[ENV_OF_PROGRESS_SILENT];
+          try {
+            return await stepRouteDrive({
+              route: scene.tempDir,
+              when: 'hook.onStop',
+            });
+          } finally {
+            if (priorSubprocess === undefined)
+              delete process.env[ENV_OF_REVIEW_SUBPROCESS];
+            else process.env[ENV_OF_REVIEW_SUBPROCESS] = priorSubprocess;
+            if (priorSilent !== undefined)
+              process.env[ENV_OF_PROGRESS_SILENT] = priorSilent;
+          }
+        });
+
+        then('the session turn-end is not blocked: emit is null', () => {
+          expect(result.emit).toBeNull();
+        });
+      },
+    );
+
+    when('[t1c] when=hook.onStop fires again, outside a guard', () => {
+      const result = useThen('blocks as before', async () =>
+        stepRouteDrive({ route: scene.tempDir, when: 'hook.onStop' }),
+      );
+
+      then('the driver stop is still blocked with exit code 2', () => {
+        expect(result.emit?.stderr?.code).toEqual(2);
+      });
+    });
   });
 
   given('[case5] route with all stones passed called at onBoot', () => {
@@ -461,10 +548,55 @@ describe('stepRouteDrive.integration', () => {
         expect(result.emit?.stdout).toContain('marked blocked');
       });
 
+      then(
+        'stdout cites no blocker file as the reason, since none was written',
+        () => {
+          expect(result.emit?.stdout).toContain('no articulation written');
+          expect(result.emit?.stdout).not.toMatch(/reason: \S*blocker\/1\.md/);
+        },
+      );
+
       then('t0 stdout matches the blocked-halt snapshot', () => {
         expect(asStableDriveStdout(result.emit?.stdout)).toMatchSnapshot(
           'case8.t0.blocked-halt',
         );
+      });
+    });
+  });
+
+  given('[case36] a driver wall whose blocker articulation is on disk', () => {
+    const scene = useBeforeAll(async () => {
+      const tempDir = genTempDir({ slug: 'drive-int-case36', git: true });
+      await fs.writeFile(
+        path.join(tempDir, '0.wish.md'),
+        '# wish\n\nbuild it.',
+      );
+      await fs.writeFile(
+        path.join(tempDir, '1.stone'),
+        '# stone: implement\n\ndone when:\n- it works',
+      );
+      await fs.writeFile(path.join(tempDir, '1.i1.md'), '# artifact');
+      await fs.mkdir(path.join(tempDir, 'blocker'), { recursive: true });
+      await fs.writeFile(
+        path.join(tempDir, 'blocker', '1.md'),
+        '# blocker\n\na credential only a human holds.',
+      );
+      await fs.mkdir(path.join(tempDir, '.route'), { recursive: true });
+      await fs.writeFile(
+        path.join(tempDir, '.route', 'passage.jsonl'),
+        JSON.stringify({ stone: '1', status: 'blocked' }) + '\n',
+      );
+      return { tempDir };
+    });
+
+    when('[t0] stepRouteDrive is called with when=hook.onStop', () => {
+      const result = useThen('returns the blocked halt', async () =>
+        stepRouteDrive({ route: scene.tempDir, when: 'hook.onStop' }),
+      );
+
+      then('stdout cites the articulation path as the reason', () => {
+        expect(result.emit?.stdout).toMatch(/reason: \S*blocker\/1\.md/);
+        expect(result.emit?.stdout).not.toContain('no articulation written');
       });
     });
   });
@@ -661,6 +793,14 @@ describe('stepRouteDrive.integration', () => {
       then('stdout names the guard malfunction', () => {
         expect(result.emit?.stdout).toContain('malfunction');
       });
+
+      then(
+        'a record with no lanes still reads as the driver own to clear',
+        () => {
+          expect(result.emit?.stdout).toContain('still yours to clear');
+          expect(result.emit?.stdout).not.toContain('please tell a human');
+        },
+      );
 
       then('t0 stdout matches the malfunction-halt snapshot', () => {
         expect(asStableDriveStdout(result.emit?.stdout)).toMatchSnapshot(
@@ -2317,6 +2457,222 @@ describe('stepRouteDrive.integration', () => {
   );
 
   given(
+    '[case33] a partial malfunction, with its broken lanes on record',
+    () => {
+      // a malfunction is often partial — two lanes of twenty-three broke while the rest
+      // returned verdicts. the halt must name the lanes and read as the DRIVER's to clear,
+      // never as a wall for a human (rule.always.diagnose-reviewer-malfunctions)
+      const scene = useBeforeAll(async () => {
+        const tempDir = genTempDir({ slug: 'drive-int-case33', git: true });
+        await fs.writeFile(
+          path.join(tempDir, '0.wish.md'),
+          '# wish\n\nbuild it.',
+        );
+        await fs.writeFile(
+          path.join(tempDir, '1.stone'),
+          '# stone: implement\n\ndone when:\n- it works',
+        );
+        await fs.writeFile(path.join(tempDir, '1.i1.md'), '# artifact');
+        await fs.mkdir(path.join(tempDir, '.route'), { recursive: true });
+        await fs.writeFile(
+          path.join(tempDir, '.route', 'passage.jsonl'),
+          JSON.stringify({
+            stone: '1',
+            status: 'malfunction',
+            reason: [
+              '2 of 23 reviewers malfunctioned; 4 reviewers rejected and await your answer',
+              'r14 repo-rules-briefs: review timed out after 20 minutes',
+              'r22 behavior-intent-coverage-review-ops: the brain call failed — terminated',
+            ].join('\n'),
+          }) + '\n',
+        );
+        return { tempDir };
+      });
+
+      when('[t0] onStop while the partial malfunction stands', () => {
+        const result = useThen('returns the malfunction halt', async () =>
+          stepRouteDrive({ route: scene.tempDir, when: 'hook.onStop' }),
+        );
+
+        then('the stop still holds (exit code 1)', () => {
+          expect(result.emit?.stderr?.code).toEqual(1);
+        });
+
+        then('the halt reads as the driver own to clear', () => {
+          expect(result.emit?.stdout).toContain('still yours to clear');
+          expect(result.emit?.stdout).not.toContain('please tell a human');
+          expect(result.emit?.stderr?.reason).toContain('it is yours to clear');
+        });
+
+        then('the partial count and each broken lane are named', () => {
+          expect(result.emit?.stdout).toContain(
+            '2 of 23 reviewers malfunctioned; 4 reviewers rejected and await your answer',
+          );
+          expect(result.emit?.stdout).toContain(
+            '💥 lane repo-rules-briefs (r14) broke',
+          );
+          expect(result.emit?.stdout).toContain(
+            'cause = review timed out after 20 minutes (transient)',
+          );
+          expect(result.emit?.stdout).toContain(
+            '💥 lane behavior-intent-coverage-review-ops (r22) broke',
+          );
+          expect(result.emit?.stdout).toContain(
+            'cause = the brain call failed — terminated (transient)',
+          );
+        });
+
+        then('the re-arrive lever names the stone', () => {
+          expect(result.emit?.stdout).toContain(
+            'rhx route.stone.set --stone 1 --as arrived',
+          );
+        });
+
+        then('t0 stdout matches the partial-malfunction snapshot', () => {
+          expect(asStableDriveStdout(result.emit?.stdout)).toMatchSnapshot(
+            'case33.t0.partial-malfunction',
+          );
+        });
+      });
+    },
+  );
+
+  given(
+    '[case34] a driver waits on delegated repairs (the inflight watermark)',
+    () => {
+      // the clamp for `.dream/v2026_10_07.fix.route-drive-onstop-blind-to-delegated-work`:
+      // a fresh watermark on the current stone lets the stop through with one quiet line;
+      // a stale one, one for another stone, or none at all keeps the nudge
+      const genRoute = async (input: { slug: string }) => {
+        const tempDir = genTempDir({ slug: input.slug, git: true });
+        await fs.writeFile(
+          path.join(tempDir, '0.wish.md'),
+          '# wish\n\nbuild it.',
+        );
+        await fs.writeFile(
+          path.join(tempDir, '1.stone'),
+          '# stone: implement\n\ndone when:\n- it works',
+        );
+        return { tempDir };
+      };
+      const MINUTE_MS = 60_000;
+
+      when('[t0] the watermark is fresh and names the current stone', () => {
+        const result = useThen('onStop reads the watermark', async () => {
+          const { tempDir } = await genRoute({ slug: 'drive-int-case34-t0' });
+          await setRouteInflight({
+            route: tempDir,
+            inflight: new RouteInflight({
+              stone: '1',
+              since: Date.now() - 5 * MINUTE_MS,
+              what: 'three delegates repair blockers 1-4',
+            }),
+          });
+          return stepRouteDrive({ route: tempDir, when: 'hook.onStop' });
+        });
+
+        then('the stop is allowed (no stderr, so exit 0)', () => {
+          expect(result.emit?.stderr).toBeUndefined();
+        });
+
+        then('stdout is one quiet line that names the wait', () => {
+          expect(result.emit?.stdout).toMatch(
+            /^⏳ repairs in flight for 1 since \d\d:\d\d — three delegates repair blockers 1-4$/,
+          );
+        });
+
+        then('the nudge is absent', () => {
+          expect(result.emit?.stdout).not.toContain('--as arrived');
+        });
+      });
+
+      when('[t1] the watermark is stale (past the 30m bound)', () => {
+        const result = useThen('onStop reads the watermark', async () => {
+          const { tempDir } = await genRoute({ slug: 'drive-int-case34-t1' });
+          await setRouteInflight({
+            route: tempDir,
+            inflight: new RouteInflight({
+              stone: '1',
+              since: Date.now() - 90 * MINUTE_MS,
+              what: 'three delegates repair blockers 1-4',
+            }),
+          });
+          return stepRouteDrive({ route: tempDir, when: 'hook.onStop' });
+        });
+
+        then('the stop is blocked (exit code 2)', () => {
+          expect(result.emit?.stderr?.code).toEqual(2);
+        });
+
+        then('the nudge is present', () => {
+          expect(result.emit?.stdout).toContain('--as arrived');
+        });
+
+        then('the stale watermark is named beside the nudge', () => {
+          expect(result.emit?.stdout).toContain(
+            '⏳ repairs in flight for 1 since',
+          );
+          expect(result.emit?.stdout).toContain('stale: 90m old');
+        });
+
+        then('t1 stdout matches the stale-watermark snapshot', () => {
+          expect(asStableInflightStdout(result.emit?.stdout)).toMatchSnapshot(
+            'case34.t1.stale-watermark',
+          );
+        });
+      });
+
+      when('[t2] no watermark is present', () => {
+        const result = useThen('onStop reads no watermark', async () => {
+          const { tempDir } = await genRoute({ slug: 'drive-int-case34-t2' });
+          return stepRouteDrive({ route: tempDir, when: 'hook.onStop' });
+        });
+
+        then('the stop is blocked (exit code 2)', () => {
+          expect(result.emit?.stderr?.code).toEqual(2);
+        });
+
+        then('the nudge is present, with no inflight line', () => {
+          expect(result.emit?.stdout).toContain('--as arrived');
+          expect(result.emit?.stdout).not.toContain('repairs in flight');
+        });
+
+        then('t2 stdout matches the absent-watermark snapshot', () => {
+          expect(asStableInflightStdout(result.emit?.stdout)).toMatchSnapshot(
+            'case34.t2.absent-watermark',
+          );
+        });
+      });
+
+      when('[t3] a fresh watermark names another stone', () => {
+        const result = useThen('onStop reads the watermark', async () => {
+          const { tempDir } = await genRoute({ slug: 'drive-int-case34-t3' });
+          await setRouteInflight({
+            route: tempDir,
+            inflight: new RouteInflight({
+              stone: '0.other',
+              since: Date.now() - 5 * MINUTE_MS,
+              what: 'a wait for some other stone',
+            }),
+          });
+          return stepRouteDrive({ route: tempDir, when: 'hook.onStop' });
+        });
+
+        then('the stop is blocked (exit code 2), as if absent', () => {
+          expect(result.emit?.stderr?.code).toEqual(2);
+          expect(result.emit?.stdout).not.toContain('repairs in flight');
+        });
+
+        then('t3 stdout matches the other-stone-watermark snapshot', () => {
+          expect(asStableInflightStdout(result.emit?.stdout)).toMatchSnapshot(
+            'case34.t3.other-stone-watermark',
+          );
+        });
+      });
+    },
+  );
+
+  given(
     '[case31] an APPROVAL-blocked stone that DECLARES a brain, at onBoot and direct',
     () => {
       /**
@@ -2430,4 +2786,153 @@ describe('stepRouteDrive.integration', () => {
       });
     },
   );
+
+  given('[case35] a guarded stone with a latest review round on disk', () => {
+    // the clamp for the lost-verdict friction: the guard prints its round tree once, on
+    // the stdout of the arrival. once that stdout is gone, route.drive must still show
+    // the round — each lane's verdict, its counts, the given path of each non-approved
+    // lane, and the judge — read from the artifacts on disk
+    const genRoute = async (input: {
+      slug: string;
+      withRound: boolean;
+    }): Promise<{ tempDir: string }> => {
+      const tempDir = genTempDir({ slug: input.slug, git: true });
+      await fs.writeFile(
+        path.join(tempDir, '0.wish.md'),
+        '# wish\n\nbuild it.',
+      );
+      await fs.writeFile(path.join(tempDir, '1.test.stone'), '# stone');
+      await fs.writeFile(path.join(tempDir, '1.test.i1.md'), '# artifact');
+      await fs.writeFile(
+        path.join(tempDir, '1.test.guard'),
+        [
+          'artifacts:',
+          '  - "$route/1.test*.md"',
+          'reviews:',
+          '  peer:',
+          ...['arch', 'mech', 'ergo', 'rules'].flatMap((slug) => [
+            `    - slug: ${slug}`,
+            '      run: echo test',
+            '      budget: 3',
+            '      level: 1',
+          ]),
+          'judges: []',
+        ].join('\n'),
+      );
+      if (!input.withRound) return { tempDir };
+
+      // each lane ran one round
+      await fs.mkdir(path.join(tempDir, '.route'), { recursive: true });
+      await fs.writeFile(
+        path.join(tempDir, '.route', 'reviewPeerMeters.jsonl'),
+        ['arch', 'mech', 'ergo', 'rules']
+          .map((slug) =>
+            JSON.stringify({ stone: '1.test', reviewer: { slug }, rounds: 1 }),
+          )
+          .join('\n') + '\n',
+      );
+
+      // the givens of round i001, keyed to the hash the stone reads at today
+      const stones = await getAllStones({ route: tempDir });
+      const stone = stones.find((s) => s.name === '1.test')!;
+      const hash = await computeStoneReviewInputHash({
+        stone,
+        route: tempDir,
+      });
+      const reviewsDir = path.join(tempDir, '.reviews', 'peer');
+      await fs.mkdir(reviewsDir, { recursive: true });
+      const givens = [
+        { index: 1, slug: 'arch', content: '2 blockers\n1 nitpicks\n' },
+        { index: 2, slug: 'mech', content: '0 blockers\n0 nitpicks\n' },
+        { index: 3, slug: 'ergo', content: '0 blockers\n0 nitpicks\n' },
+        { index: 4, slug: 'rules', content: 'exit code: 1\nbrain fault\n' },
+      ];
+      for (const given of givens)
+        await fs.writeFile(
+          path.join(
+            reviewsDir,
+            // padded as the guard writes it on disk, so the given path and the header agree
+            `1.test._.review.i001.${hash}.r00${given.index}._.given.by_peer.${given.slug}.md`,
+          ),
+          given.content,
+        );
+
+      // the judge of round i001
+      await fs.writeFile(
+        path.join(
+          tempDir,
+          '.route',
+          `1.test.guard.judge.i1p1.${hash}.abc.j1.md`,
+        ),
+        'passed: false\nreason: blockers exceed threshold (2 > 0)\n',
+      );
+      return { tempDir };
+    };
+
+    when('[t0] route.drive is read in direct mode', () => {
+      const result = useThen('drive renders', async () => {
+        const { tempDir } = await genRoute({
+          slug: 'drive-int-case35-t0',
+          withRound: true,
+        });
+        return stepRouteDrive({ route: tempDir });
+      });
+
+      then('the latest round is named by its iteration', () => {
+        expect(result.emit?.stdout).toContain('latest round, i001');
+      });
+
+      then('the rejected lane shows its verdict, counts, and given', () => {
+        expect(result.emit?.stdout).toContain(
+          'r1: arch (l1, 1/3) — rejected, 2 blockers 🔴, 1 nitpick 🟠',
+        );
+        expect(result.emit?.stdout).toContain('._.given.by_peer.arch.md');
+      });
+
+      then('the malfunctioned lane shows its state and given', () => {
+        expect(result.emit?.stdout).toContain(
+          'r4: rules (l1, 1/3) — malfunction',
+        );
+        expect(result.emit?.stdout).toContain('._.given.by_peer.rules.md');
+      });
+
+      then('the approved-clean lanes fold into one count', () => {
+        expect(result.emit?.stdout).toContain(
+          '2 lanes approved, 0 blockers ✓, 0 nitpicks ✓',
+        );
+        expect(result.emit?.stdout).not.toContain('r2: mech');
+      });
+
+      then('the judge verdict of that round is shown', () => {
+        expect(result.emit?.stdout).toContain(
+          'j1: blocked ✗ — blockers exceed threshold (2 > 0)',
+        );
+      });
+
+      then('stdout matches the latest-round snapshot', () => {
+        // the review hash folds in the temp path, so it is masked like the path
+        expect(
+          asStableDriveStdout(result.emit?.stdout)?.replace(
+            /\.review\.i001\.[a-f0-9]+\./g,
+            '.review.i001.<hash>.',
+          ),
+        ).toMatchSnapshot('case35.t0.latest-round');
+      });
+    });
+
+    when('[t1] the stone has a guard but no round on disk', () => {
+      const result = useThen('drive renders', async () => {
+        const { tempDir } = await genRoute({
+          slug: 'drive-int-case35-t1',
+          withRound: false,
+        });
+        return stepRouteDrive({ route: tempDir });
+      });
+
+      then('no latest-round block is shown', () => {
+        expect(result.emit?.stdout).toContain('are you here?');
+        expect(result.emit?.stdout).not.toContain('latest round');
+      });
+    });
+  });
 });

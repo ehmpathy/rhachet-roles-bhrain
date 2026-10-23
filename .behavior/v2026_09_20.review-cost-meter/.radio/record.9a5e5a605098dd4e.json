@@ -1,0 +1,19 @@
+{
+  "key": "9a5e5a605098dd4e",
+  "kind": "create",
+  "repo": {
+    "owner": "ehmpathy",
+    "name": "test-fns"
+  },
+  "exid": null,
+  "title": "fix(useThen): re-throw the original error when the body threw, not the proxy access error",
+  "description": "## .what\n\nwhen a useThen body throws, every downstream access to its result throws the proxy own error, not the original one, so the cause never reaches the log.\n\ncheckable evidence, ehmpathy/rhachet-roles-bhrain, 2026-08-31, blackbox/review.refs-single.acceptance.test.ts (test-fns 1.15.7). all four failed assertions print:\n\n    UnexpectedCodePathError: useThen: tried to access value before test ran\n        at Object.get (test-fns/src/domain.operations/useThen.ts:31:15)\n        at cli (blackbox/review.refs-single.acceptance.test.ts:75:20)\n\nline 75 is a plain read of res.cli.stderr: the proxy getter, never the throw site. the body threw, the proxy swallowed the error, and each then block reports the proxy complaint.\n\n## .why\n\na genuine defect and a transient flake present identically, so a reader cannot tell why an attempt failed, only that it did. this is a failhide at the harness layer.\n\n## .shape of the fix\n\n- when the useThen body rejects, store the error; on a later access, re-throw the ORIGINAL error (with the proxy message as context, for example via cause), never a replacement\n- keep the current message only for the true case: access before the block ran at all\n- clamp: a useThen whose body throws a named error; a sibling then that reads the result must surface that named error\n\nnote: the retry half of the same report (a SOME criterion that could not rescue a failed attempt) is covered by #71, fixed in v1.17.1.\n\ncaught in ehmpathy/rhachet-roles-bhrain .dream/v2026_08_31.fix.repeatably-some-does-not-protect-a-ci-run.md",
+  "status": null,
+  "via": "gh.issues",
+  "auth": "as-human",
+  "idem": null,
+  "heldSeq": 27,
+  "recordStatus": "DELIVERED",
+  "reason": null,
+  "deliveredExid": "75"
+}

@@ -1,0 +1,108 @@
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
+
+exports[`emitReviewOverflowRefusal given: [case1] a prompt at 82% of its window, scoped by diffs and paths when: [t0] the refusal runs then: the stderr matches the snapshot 1`] = `
+"
+🦉 woah there
+
+✋ ConstraintError: prompt exceeds 75% of context window
+   ├─ 82.4% of 200,000 tokens
+   └─ the lever that makes it fit is named below
+
+🔍 lets see why...
+   ├─ rules: rules/*.md
+   │  ├─ files: 7
+   │  └─ tokens: 12.3k
+   ├─ targets
+   │  ├─ diffs: since-main
+   │  │  └─ files: 41
+   │  ├─ paths.with: src/**/*.ts
+   │  │  └─ files: 88
+   │  ├─ paths.wout: **/*.test.ts
+   │  └─ joined via union
+   │     ├─ files: 96
+   │     └─ tokens: 151.2k
+   ├─ prompt — 1.0M chars · 950.0k targets (95.0%) · 30.0k rules · 10.0k instructions · 5.0k outputFormat · 5.0k scaffold
+   ├─ target mass by directory — 950.0k chars over 4 directories
+   │  ├─  73.2%    695.0k chars  2 files   src/domain.operations/invoice  620.0k bodies · 75.0k edits
+   │  ├─  15.8%    150.0k chars  1 file    src/domain.operations/warmer   150.0k added
+   │  ├─   7.4%     70.0k chars  1 file    blackbox                       70.0k bodies
+   │  └─   3.7%     35.0k chars  1 file    src/contract/cli               10.0k bodies · 25.0k edits
+   ├─ lever — partition what the rubric grades, cut what it does not
+   │  ├─ --partition 'invoice=src/domain.operations/invoice/**'
+   │  ├─ --partition 'warmer=src/domain.operations/warmer/**'
+   │  ├─ --partition 'cli=src/contract/cli/**'
+   │  ├─ (+ 1 more group — every target must sit in a partition)
+   │  ├─ one domain per partition, with its own tests (rule.forbid.horizontal-partitions)
+   │  ├─ list the shared context in every partition that reads it too — route yields, briefs, shared types
+   │  │  └─ the overlap is graded once, and it leads each prompt, so every partition reads it from cache
+   │  ├─ preview first with --mode plan (under a guard, rhx route.guard.partition --for review --peer @all)
+   │  └─ or cut a subtree the rubric does not grade — --paths-wout '<subtree>/**'
+   ├─ upstream — stamped from node_modules/rhachet-roles-bhuild/dist/templates/5.3.verification.guard; dispatch the cut so every route it stamps inherits it
+   │  └─ rhx radio.task.push --via gh.issues --into ehmpathy/rhachet-roles-bhuild --title 'review lane repo-rules overflows on large branches' --description @stdin
+   └─ hint
+      ├─ inspect .log/bhrain/review/2026-09-28/input.scope.debug.json to see what was matched
+      └─ inspect .log/bhrain/review/2026-09-28/tokens.expected.md for token breakdown by file
+"
+`;
+
+exports[`emitReviewOverflowRefusal given: [case2] a prompt with no diffs flag and no path filters when: [t0] the refusal runs then: the stderr matches the snapshot 1`] = `
+"
+🦉 woah there
+
+✋ ConstraintError: prompt exceeds 75% of context window
+   ├─ 90.0% of 128,000 tokens
+   └─ the lever that makes it fit is named below
+
+🔍 lets see why...
+   ├─ rules: (none)
+   │  ├─ files: —
+   │  └─ tokens: —
+   ├─ targets
+   │  ├─ diffs: (none)
+   │  │  └─ files: —
+   │  ├─ paths.with: (none)
+   │  │  └─ files: —
+   │  ├─ paths.wout: (none)
+   │  └─ joined via union
+   │     ├─ files: 0
+   │     └─ tokens: 0
+   ├─ prompt — 45.0k chars · 0 targets (0.0%) · 30.0k rules · 10.0k instructions · 5.0k outputFormat
+   ├─ target mass by directory — none sent
+   ├─ lever — the targets carry no mass; the rubric, refs, or conversation fill the window
+   │  └─ narrow --rules, --refs, or --conversation
+   └─ hint
+      ├─ inspect .log/bhrain/review/2026-09-28/input.scope.debug.json to see what was matched
+      └─ inspect .log/bhrain/review/2026-09-28/tokens.expected.md for token breakdown by file
+"
+`;
+
+exports[`emitReviewOverflowRefusal given: [case3] a rules flag given empty — an unset shell var, or \`[]\` from an sdk caller when: [t0] the refusal runs then: the stderr matches the snapshot 1`] = `
+"
+🦉 woah there
+
+✋ ConstraintError: prompt exceeds 75% of context window
+   ├─ 90.0% of 128,000 tokens
+   └─ the lever that makes it fit is named below
+
+🔍 lets see why...
+   ├─ rules: (none)
+   │  ├─ files: —
+   │  └─ tokens: —
+   ├─ targets
+   │  ├─ diffs: (none)
+   │  │  └─ files: —
+   │  ├─ paths.with: (none)
+   │  │  └─ files: —
+   │  ├─ paths.wout: (none)
+   │  └─ joined via union
+   │     ├─ files: 0
+   │     └─ tokens: 0
+   ├─ prompt — 45.0k chars · 0 targets (0.0%) · 30.0k rules · 10.0k instructions · 5.0k outputFormat
+   ├─ target mass by directory — none sent
+   ├─ lever — the targets carry no mass; the rubric, refs, or conversation fill the window
+   │  └─ narrow --rules, --refs, or --conversation
+   └─ hint
+      ├─ inspect .log/bhrain/review/2026-09-28/input.scope.debug.json to see what was matched
+      └─ inspect .log/bhrain/review/2026-09-28/tokens.expected.md for token breakdown by file
+"
+`;

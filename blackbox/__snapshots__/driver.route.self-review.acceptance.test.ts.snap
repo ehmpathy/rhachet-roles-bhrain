@@ -228,16 +228,7 @@ exports[`driver.route.review.self.acceptance given: [case1] stone with reviews.s
 `;
 
 exports[`driver.route.review.self.acceptance given: [case2] invalid promise slug when: [t0] promise with invalid slug then: the refusal a driver reads is stable (full snapshot): the stderr of an invalid promise slug 1`] = `
-"error: BadRequestError: invalid review.self slug: "invalid-slug". valid options: all-done, tests-pass
-
-{
-  "stone": "1",
-  "slug": "invalid-slug",
-  "validSlugs": [
-    "all-done",
-    "tests-pass"
-  ]
-}
+"✋ ConstraintError: invalid review.self slug: "invalid-slug". valid options: all-done, tests-pass
 "
 `;
 
@@ -1942,7 +1933,11 @@ exports[`driver.route.review.self.acceptance given: [case9] a leftover articulat
 `;
 
 exports[`driver.route.review.self.acceptance given: [case10] a promise that omits the required --into when: [t0] the flag is absent then: stderr has good vibes 1`] = `
-"error: BadRequestError: --into is required on --as promised
+"✋ ConstraintError: --into is required on --as promised
+
+stone: 1
+slug: all-done
+owed: ./review/self/for.1._.all-done.md
 
 name the path you wrote your articulation to, so the guard can show you
 the difference rather than a bare absence.
@@ -1952,42 +1947,30 @@ the guard reads:
 
 add:
   --into ./review/self/for.1._.all-done.md
-
-{
-  "stone": "1",
-  "slug": "all-done",
-  "owed": "./review/self/for.1._.all-done.md"
-}
 "
 `;
 
 exports[`driver.route.review.self.acceptance given: [case10] a promise that omits the required --into when: [t1] the flag is present with no value then: stderr has good vibes 1`] = `
-"error: BadRequestError: --into was passed with no value
+"
+🦉 woah there
 
---into carries a value, so a bare --into says naught.
+✋ ConstraintError: --into given with no value
+   └─ fix: --into <value>, or see --help
 
-pass the value it asks for, or drop the flag:
-  --into <value>
-
-{
-  "flag": "--into"
-}
 "
 `;
 
 exports[`driver.route.review.self.acceptance given: [case10] a promise that omits the required --into when: [t2] the flag is well-formed, on a verb that does not own it then: stderr has good vibes 1`] = `
-"error: BadRequestError: --into is only accepted for --as promised
+"✋ ConstraintError: --into is only accepted for --as promised
+
+stone: 1
+as: absorbed
+flag: --into
 
 you passed --as absorbed, which takes no --into.
 
 to promise a self review:
   --as promised --that <slug> --into <path-you-wrote-to>
-
-{
-  "stone": "1",
-  "as": "absorbed",
-  "flag": "--into"
-}
 "
 `;
 

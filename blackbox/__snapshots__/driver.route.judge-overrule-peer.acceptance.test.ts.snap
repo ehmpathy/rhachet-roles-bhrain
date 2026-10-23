@@ -22,7 +22,15 @@ exports[`driver.route.judge-overrule-peer.acceptance given: [case1] peers pass, 
 🗿 route.stone.set
    ├─ stone = 1.feature
    ├─ passage = malfunction
-   ├─ reason = reviewer or judge malfunctioned
+   ├─ reason = 1 judge malfunctioned
+   ├─ still yours to clear
+   │  ├─ 💥 judge j1 broke
+   │  │  └─ cause = exit code 1 (unknown)
+   │  └─ next
+   │     ├─ 1. read each given for its cause, and fix what you can
+   │     ├─ 2. re-arrive
+   │     │  └─ rhx route.stone.set --stone 1.feature --as arrived
+   │     └─ ask a human only for a grant you cannot make (an absent credential, a permission, etc)
    ├─ options
    │  ├─ converge with the reviewer — yours to run, and the levels above stay unlocked
    │  │  └─ rhx route.stone.set --stone 1.feature --as absorbed --that <reviewer>

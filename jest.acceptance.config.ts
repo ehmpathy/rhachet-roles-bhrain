@@ -31,8 +31,23 @@ const config: Config = {
     '!**/.yalc/**',
     '!**/.scratch/**',
     '!**/.agent/**',
+    '!**/.behavior/**',
   ],
   setupFilesAfterEnv: ['./jest.acceptance.env.ts'],
+
+  // hold a tier pick whose hosts keep the test promises, before any live-brain test asks
+  // .why = a fresh ci machine holds no pick and takes the newest model on the line; a newest
+  //        model with no qualified host reds every live-brain test at once
+  globalSetup: './jest.brain.globalSetup.ts',
+
+  // keep agent caches out of the haste map
+  //
+  // .why = a snapshot that rmsafe moved into `.agent/.cache/.../rmsafe/trash/` reads as an
+  //        obsolete snapshot, which fails the run while every test passes. obsolescence is
+  //        judged over every `.snap` in the haste map, so the cut is here, not in testMatch
+  //        (see jest.unit.config.ts). `.behavior/` is cut so code a route archived
+  //        (`$route/archive/`) is a record, never a suite.
+  modulePathIgnorePatterns: ['<rootDir>/\\.agent/\\.cache/', '<rootDir>/\\.behavior/'],
 
   /**
    * .what = how many test files run at once

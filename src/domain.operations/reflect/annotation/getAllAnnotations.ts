@@ -1,6 +1,8 @@
 import * as fs from 'fs';
 import * as path from 'path';
 
+import { compareStrings } from '@src/utils/compareStrings';
+
 import type { ReflectScope } from '../scope/getReflectScope';
 
 /**
@@ -72,7 +74,7 @@ export const getAllAnnotations = (input: {
     .filter((a): a is NonNullable<typeof a> => a !== null);
 
   // sort by timestamp (oldest first)
-  annotations.sort((a, b) => a.timestamp.localeCompare(b.timestamp));
+  annotations.sort((a, b) => compareStrings(a.timestamp, b.timestamp));
 
   return {
     count: annotations.length,

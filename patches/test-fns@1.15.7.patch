@@ -1,0 +1,94 @@
+diff --git a/dist/domain.operations/givenWhenThen.js b/dist/domain.operations/givenWhenThen.js
+index 13bcadd05d6a6ab6805c97f58e78778696977f77..d7be4ab03f63dd5dbccb7fca27ab2efab8c33967 100644
+--- a/dist/domain.operations/givenWhenThen.js
++++ b/dist/domain.operations/givenWhenThen.js
+@@ -245,10 +245,10 @@ const then = ((...input) => {
+                 console.log('      🫧  [skipped] prior repeatably attempt passed');
+                 return;
+             }
+-            // failure detection via try/catch
++            // failure detection via try/catch; the race turns a timeout into a caught failure
+             if (testFn) {
+                 try {
+-                    await testFn();
++                    await (0, registryDescribeRepeatable_1.runAttemptWithinBudget)(testFn);
+                 }
+                 catch (error) {
+                     repeatableCtx.thisAttemptFailed = true;
+@@ -317,7 +317,7 @@ then.repeatably =
+                             return;
+                         }
+                         try {
+-                            await userFn();
++                            await (0, registryDescribeRepeatable_1.runAttemptWithinBudget)(userFn);
+                             state.anyAttemptPassed = true;
+                         }
+                         catch (error) {
+diff --git a/dist/domain.operations/registryDescribeRepeatable.js b/dist/domain.operations/registryDescribeRepeatable.js
+index 7cd2ff55785219e9c9c3d6a448eae7073e324e9c..54753e3832a8c10db473c5a87b898e007581a3bb 100644
+--- a/dist/domain.operations/registryDescribeRepeatable.js
++++ b/dist/domain.operations/registryDescribeRepeatable.js
+@@ -92,4 +92,29 @@ const wrapDescribeCallback = (input) => {
+     };
+ };
+ exports.wrapDescribeCallback = wrapDescribeCallback;
++/**
++ * .what = runs one repeatably attempt within the runner's timeout budget
++ * .why = a runner timeout fires outside any try/catch, so a slow attempt would fail the test
++ *        and never reach the next attempt. a race just under the budget turns it into a
++ *        caught failure that the repeatably wrapper can retry
++ * .note = the budget is what jest.setTimeout declared; with none declared, the attempt runs as is
++ * .note = patched into test-fns@1.15.7 by rhachet-roles-bhrain; see ehmpathy/test-fns#71
++ */
++const runAttemptWithinBudget = async (fn) => {
++    const budgetMs = globalThis[Symbol.for('TEST_TIMEOUT_SYMBOL')];
++    const marginMs = 1000;
++    if (typeof budgetMs !== 'number' || budgetMs <= marginMs * 2)
++        return await fn();
++    let timer;
++    const expiry = new Promise((_, reject) => {
++        timer = setTimeout(() => reject(new Error(`repeatably: attempt exceeded its budget of ${budgetMs - marginMs}ms`)), budgetMs - marginMs);
++    });
++    try {
++        return await Promise.race([(async () => fn())(), expiry]);
++    }
++    finally {
++        clearTimeout(timer);
++    }
++};
++exports.runAttemptWithinBudget = runAttemptWithinBudget;
+ //# sourceMappingURL=registryDescribeRepeatable.js.map
+\ No newline at end of file
+diff --git a/dist/domain.operations/usePrep.js b/dist/domain.operations/usePrep.js
+index 663aa1cb1f9537343de91a843658bdb2f2d4461c..4d4823440273c3d2a0eabf1a14b70257ecd5e2c2 100644
+--- a/dist/domain.operations/usePrep.js
++++ b/dist/domain.operations/usePrep.js
+@@ -43,7 +43,27 @@ const usePrep = (setup, options = { mode: 'beforeAll' }) => {
+             console.log(`    🫧  [SKIPPED] prior attempt passed (setup)`);
+             return;
+         }
+-        toolbox = await setup();
++        // outside a repeatably SOME context, setup runs as is
++        if (ctx?.criteria !== 'SOME') {
++            toolbox = await setup();
++        }
++        // inside one, a failed setup fails only this attempt, so the next attempt can run.
++        // a hook failure would otherwise fail every test in the attempt, beyond the then wrapper's reach
++        // .note = patched into test-fns@1.15.7 by rhachet-roles-bhrain; see ehmpathy/test-fns#71
++        if (ctx?.criteria === 'SOME') {
++            try {
++                toolbox = await (0, registryDescribeRepeatable_1.runAttemptWithinBudget)(setup);
++            }
++            catch (error) {
++                ctx.thisAttemptFailed = true;
++                if (!ctx.anyError && error instanceof Error)
++                    ctx.anyError = error;
++                if (ctx.thisAttemptIndex === ctx.allAttemptsQuant)
++                    throw ctx.anyError ?? error;
++                console.log(`    🫧  [retry] setup failed on attempt ${ctx.thisAttemptIndex}: ${error instanceof Error ? error.message : String(error)}`);
++                return;
++            }
++        }
+         // assign properties from toolbox to drawer so Object.keys(), for..in, etc work
+         Object.assign(drawer, toolbox);
+         // remove get trap once setup is complete — access becomes direct

@@ -1,0 +1,12 @@
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
+
+exports[`stepReview — partitions declared on a run that fits given: [case3] a --mode plan run with no partition declared when: [t0] the review runs then: the refusal renders whole 1`] = `
+"
+🦉 woah there
+
+✋ ConstraintError: --mode plan previews a partition split, and none is declared
+
+✨ did you know?
+   └─ declare one or more with --partition '<slug>=<globs>' (under a guard, rhx route.guard.partition --for review --peer @all)
+"
+`;

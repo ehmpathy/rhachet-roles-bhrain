@@ -1,0 +1,9 @@
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
+
+exports[`asRouteGuardReviewPeerPathHash given: [case2] a stray file whose name lacks the hash stamp when: [t0] the hash is read then: the refusal matches its snapshot 1`] = `
+"✋ ConstraintError: review file lacks hash in filename. expected format: $stone._.review.i$iter.$hash.r$n._.given.by_peer.$slug.md. fix: delete the malformed file and re-run the guard
+
+{
+  "path": ".reviews/peer/1.vision._.review.given.by_peer.mechanic.md"
+}"
+`;

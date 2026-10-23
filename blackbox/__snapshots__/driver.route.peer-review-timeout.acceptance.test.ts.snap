@@ -9,12 +9,22 @@ exports[`driver.route.peer-review-timeout.acceptance given: [journey] review tim
    │   ├─ given: .reviews/peer/1.execute._.review.i001.8739656801d5e77f22.r001._.given.by_peer.slow-reviewer.md
    │   └─ taken: .reviews/peer/1.execute._.review.i001.8739656801d5e77f22.r001._.taken.by_self.slow-reviewer.md
    │
-   └─ ✓ judge.1 - allowed [TIME]
+   └─ ✗ judge.1 - blocked [TIME]
 
 🗿 route.stone.set
    ├─ stone = 1.execute
    ├─ passage = malfunction
-   ├─ reason = reviewer or judge malfunctioned
+   ├─ reason = 1 of 1 reviewer malfunctioned
+   ├─ still yours to clear
+   │  ├─ 💥 lane slow-reviewer (r1) broke
+   │  │  └─ cause = review timed out after 100ms (transient)
+   │  └─ next
+   │     ├─ 1. read each given for its cause, and fix what you can
+   │     ├─ 2. answer each broken lane, like a rejected one
+   │     │  └─ rhx route.stone.set --stone 1.execute --as absorbed --that slow-reviewer
+   │     ├─ 3. re-arrive
+   │     │  └─ rhx route.stone.set --stone 1.execute --as arrived
+   │     └─ ask a human only for a grant you cannot make (an absent credential, a permission, etc)
    ├─ options
    │  ├─ converge with the reviewer — yours to run, and the levels above stay unlocked
    │  │  └─ rhx route.stone.set --stone 1.execute --as absorbed --that <reviewer>
@@ -33,6 +43,7 @@ exports[`driver.route.peer-review-timeout.acceptance given: [journey] review tim
       │       └─ taken: .reviews/peer/1.execute._.review.i001.8739656801d5e77f22.r001._.taken.by_self.slow-reviewer.md
       └─ judges
           └─ j1: rhx route.stone.judge --mechanism reviewed? --stone $stone --route $route --allow-blockers 0 --allow-nitpicks 1
-              └─ finished [TIME] ✓
+              ├─ finished [TIME] ✗
+              └─ reason: blockers exceed threshold (1 > 0)
 "
 `;

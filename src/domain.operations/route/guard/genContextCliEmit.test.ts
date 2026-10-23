@@ -1,3 +1,4 @@
+import { EventEmitter } from 'events';
 import { given, then, when } from 'test-fns';
 
 import type { ContextGuardProgress } from '@src/domain.objects/Driver/ContextCliEmit';
@@ -12,16 +13,22 @@ import { genContextCliEmit } from './genContextCliEmit';
 const genMockStderr = (input: { isTTY: boolean }) => {
   const chunks: string[] = [];
   return {
-    stream: {
+    stream: Object.assign(new EventEmitter(), {
       isTTY: input.isTTY,
       write: (chunk: string) => {
         chunks.push(chunk);
         return true;
       },
-    } as unknown as NodeJS.WriteStream,
+    }) as unknown as NodeJS.WriteStream,
     chunks,
   };
 };
+
+/**
+ * .what = a stream error with a node error code, as a closed pipe raises one
+ */
+const genStreamError = (input: { code: string }): Error =>
+  Object.assign(new Error(`write ${input.code}`), { code: input.code });
 
 /**
  * .what = creates a minimal guard progress event for tests
@@ -902,7 +909,12 @@ describe('genContextCliEmit', () => {
             },
             outcome: {
               path: '/tmp/.reviews/peer/r001.given.md',
-              review: { malfunction: '💥 malfunction: reviewer exited 127' },
+              // .warrant = fixture header moved from `💥 malfunction:` to `💥 MalfunctionError:`
+              //            per rule.require.qualified-error-headers; this case asserts only the
+              //            round meter, which the text does not touch
+              review: {
+                malfunction: '💥 MalfunctionError: reviewer exited 127',
+              },
               judge: null,
             },
           });
@@ -915,4 +927,99 @@ describe('genContextCliEmit', () => {
       });
     },
   );
+
+  given(
+    '[case11] 🔴 clamp. a lane whose level a lower level holds shut',
+    () => {
+      // the hazard: the live tree said `awaits arrival` where the guard tree below it, in the
+      // same stdout, said `awaits l1 terminal` for the identical lane
+      const genQueued = (input: {
+        awaits: { level: number } | null;
+      }): GuardProgressEvent => ({
+        stone: { name: '1.test', path: '/tmp/1.test.stone', guard: null },
+        step: { phase: 'review', index: 4 },
+        reviewer: { index: 5, slug: 'l3-a', level: 3, budget: 5, rounds: 0 },
+        inflight: null,
+        outcome: {
+          path: null,
+          review: { queued: true, awaits: input.awaits },
+          judge: null,
+        },
+      });
+
+      when('[t0] the queued event names the held level', () => {
+        then(
+          'the live tree reads `awaits l1 terminal`, as the guard tree does',
+          () => {
+            const mock = genMockStderr({ isTTY: false });
+            const { context, done } = genContextCliEmit({
+              stderr: mock.stream,
+            });
+            context.cliEmit.onGuardProgress(
+              genQueued({ awaits: { level: 1 } }),
+            );
+            done();
+
+            const combined = mock.chunks.join('');
+            expect(combined).toContain('awaits l1 terminal');
+            expect(combined).not.toContain('awaits arrival');
+          },
+        );
+      });
+
+      when('[t1] the queued event names no held level', () => {
+        then('the live tree reads `awaits arrival`', () => {
+          const mock = genMockStderr({ isTTY: false });
+          const { context, done } = genContextCliEmit({ stderr: mock.stream });
+          context.cliEmit.onGuardProgress(genQueued({ awaits: null }));
+          done();
+
+          expect(mock.chunks.join('')).toContain('awaits arrival');
+        });
+      });
+    },
+  );
+
+  /**
+   * .why = `| head` or a `q` in `less` closes the pipe, and the next write raises an
+   *        `error` on the stream. with no listener node throws it, so the guard's verdict
+   *        becomes a node fault and its exit code is lost
+   */
+  given('[case12] the reader closes the stream early', () => {
+    when('[t0] the stream raises EPIPE', () => {
+      then('the emit absorbs it, so the verdict survives', () => {
+        const mock = genMockStderr({ isTTY: false });
+        genContextCliEmit({ stderr: mock.stream });
+        expect(() =>
+          mock.stream.emit('error', genStreamError({ code: 'EPIPE' })),
+        ).not.toThrow();
+      });
+    });
+
+    when('[t1] the stream raises ERR_STREAM_DESTROYED after the close', () => {
+      then('the emit absorbs it too', () => {
+        const mock = genMockStderr({ isTTY: false });
+        genContextCliEmit({ stderr: mock.stream });
+        expect(() =>
+          mock.stream.emit(
+            'error',
+            genStreamError({ code: 'ERR_STREAM_DESTROYED' }),
+          ),
+        ).not.toThrow();
+      });
+    });
+
+    when('[t2] the stream raises a real write fault', () => {
+      then(
+        '🔴 the emit throws it — only an early close ends in silence',
+        () => {
+          const mock = genMockStderr({ isTTY: false });
+          genContextCliEmit({ stderr: mock.stream });
+          expect(() =>
+            mock.stream.emit('error', genStreamError({ code: 'ENOSPC' })),
+          ).toThrow('write ENOSPC');
+        },
+      );
+    });
+  });
 });

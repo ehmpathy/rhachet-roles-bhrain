@@ -1,0 +1,19 @@
+{
+  "key": "0666cc1b1401a148",
+  "kind": "create",
+  "repo": {
+    "owner": "ehmpathy",
+    "name": "rhachet"
+  },
+  "exid": null,
+  "title": "fix(brains): genContextBrain resolves a /latest choice via each package's declared latest map",
+  "description": "# 🌙 dream: `genContextBrain` looks up a `latest` slug itself\n\n- **kind** = `reseed`\n- **owner** = `ehmpathy/rhachet` — the brain lookup behind `genContextBrain`\n- **caught** 2026-09-26, at stone `5.1.execution.from_vision` of `v2026_09_20.review-cost-meter`\n\n## .the cue that fired\n\nthe wisher asked for every default brain to be versionless (seed S21). `genContextBrain({ choice:\n'fireworks/deepseek/flash/latest' })` throws `BrainChoiceNotFoundError`, although\n`rhachet-brains-fireworksai` ships `PINNED_BY_LATEST_SLUG` and its own `genBrainAtom` accepts `latest`.\n\n## .the gap, precisely\n\nthe lookup matches a choice by EXACT slug among the registered atoms, and brain packages register\npinned slugs only. so every consumer that wants a versionless default must pin at its own edge —\nthis repo now carries `getOneBrainChoicePinned`, with a provider → package map it should not own.\n\n## .the shape of the fix\n\nin the lookup, before the exact match: when the choice ends in `/latest`, ask each discovered brain\npackage for its latest map (a declared export, e.g. `PINNED_BY_LATEST_SLUG`) and pin the choice.\nlist `latest` aliases in `getAvailableBrainsInWords`, so the error that names the options names them.\n\n## .why it is not done in this round\n\nanother repo. once it lands, `getOneBrainChoicePinned` and its `PACKAGE_BY_PROVIDER` map retire.",
+  "status": null,
+  "via": "gh.issues",
+  "auth": "as-human",
+  "idem": "findsert",
+  "heldSeq": 4,
+  "recordStatus": "DELIVERED",
+  "reason": null,
+  "deliveredExid": "601"
+}

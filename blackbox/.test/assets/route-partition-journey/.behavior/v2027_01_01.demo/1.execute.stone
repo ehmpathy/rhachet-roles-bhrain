@@ -1,0 +1,7 @@
+# 1.execute
+
+add the alpha and beta domains under src/
+
+## acceptance
+
+- [ ] src/**/*.ts exists

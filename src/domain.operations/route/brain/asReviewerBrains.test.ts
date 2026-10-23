@@ -24,6 +24,7 @@ const genGuard = (input: {
         slug: review.slug,
         run: review.run,
         budget: 11,
+        level: 1,
       })),
     },
     judges: [],

@@ -51,11 +51,11 @@ exports[`reflect.on.token.spend given: [case1] a transcript named by session uui
    │
    └─ proposal (ranked by repaid price — an upper bound, not a promise)
       ├─ 1. boot.instructions · boot.md  ≤ $0.07  40.3%
-      │  └─ hint: move briefs from say to ref
+      │  └─ cut = move briefs from say to ref
       ├─ 2. tool.result · Bash · git.repo.test  ≤ $0.03  18.8%
-      │  └─ hint: a summary on stdout, the log on disk
+      │  └─ cut = a summary on stdout, the log on disk
       └─ 3. assistant.own · assistant  ≤ $0.00  0.5%
-         └─ hint: terser replies, fewer re-reads
+         └─ cut = terser replies, fewer re-reads
 "
 `;
 
@@ -107,11 +107,11 @@ exports[`reflect.on.token.spend given: [case2] a glob over a project dir when: [
    │
    └─ proposal (ranked by repaid price — an upper bound, not a promise)
       ├─ 1. boot.instructions · boot.md  ≤ $0.14  40.3%
-      │  └─ hint: move briefs from say to ref
+      │  └─ cut = move briefs from say to ref
       ├─ 2. tool.result · Bash · git.repo.test  ≤ $0.07  18.8%
-      │  └─ hint: a summary on stdout, the log on disk
+      │  └─ cut = a summary on stdout, the log on disk
       └─ 3. assistant.own · assistant  ≤ $0.00  0.5%
-         └─ hint: terser replies, fewer re-reads
+         └─ cut = terser replies, fewer re-reads
 "
 `;
 
@@ -230,11 +230,11 @@ exports[`reflect.on.token.spend given: [case6] a torn transcript inside a corpus
    │
    └─ proposal (ranked by repaid price — an upper bound, not a promise)
       ├─ 1. boot.instructions · boot.md  ≤ $0.07  40.3%
-      │  └─ hint: move briefs from say to ref
+      │  └─ cut = move briefs from say to ref
       ├─ 2. tool.result · Bash · git.repo.test  ≤ $0.03  18.8%
-      │  └─ hint: a summary on stdout, the log on disk
+      │  └─ cut = a summary on stdout, the log on disk
       └─ 3. assistant.own · assistant  ≤ $0.00  0.5%
-         └─ hint: terser replies, fewer re-reads
+         └─ cut = terser replies, fewer re-reads
 "
 `;
 
@@ -246,10 +246,11 @@ exports[`reflect.on.token.spend given: [case7] a transcript with no metered call
       ├─ path = [TEMP_DIR]/unmetered/88888888-8888-4888-8888-888888888888.jsonl
       ├─ records = 1 (0 assistant records with message.usage)
       ├─ why: a fixture, or a session that crashed before its first reply, has no usage to read
-      ├─ fix: point at another transcript
-      │  └─ rhx reflect.on.token.spend --from <path-to-another.jsonl>
-      └─ or: read the whole dir as a corpus, which skips such a file
-         └─ rhx reflect.on.token.spend --from '[TEMP_DIR]/unmetered/*.jsonl'
+      └─ fix: point at another transcript
+         └─ rhx reflect.on.token.spend --from <path-to-another.jsonl>
+
+✨ did you know?
+   └─ read the whole dir as a corpus, which skips such a file, run \`rhx reflect.on.token.spend --from '[TEMP_DIR]/unmetered/*.jsonl'\`
 "
 `;
 
@@ -393,7 +394,7 @@ exports[`reflect.on.token.spend given: [case17] a transcript cut by a compaction
    │  │  └─ holds = compaction.summary
    │  ├─ unattributed                 5    0.5%  [unattributed]
    │  │  └─ holds = harness + compacted context
-   │  └─ note: no boot.instructions block was seen; the boot share sits inside unattributed
+   │  └─ caveat = no boot.instructions block was seen; the boot share sits inside unattributed
    │
    ├─ repaid (what each block cost, every call it stayed in context — priced per cache span)
    │  ├─ boot.instructions · boot.md                                 $0.07   39.0%     30.0k tok
@@ -420,9 +421,9 @@ exports[`reflect.on.token.spend given: [case17] a transcript cut by a compaction
    │
    └─ proposal (ranked by repaid price — an upper bound, not a promise)
       ├─ 1. boot.instructions · boot.md  ≤ $0.07  39.0%
-      │  └─ hint: move briefs from say to ref
+      │  └─ cut = move briefs from say to ref
       ├─ 2. tool.result · Bash · git.repo.test  ≤ $0.03  18.1%
-      │  └─ hint: a summary on stdout, the log on disk
+      │  └─ cut = a summary on stdout, the log on disk
       └─ 3. system.reminder · compaction.summary  ≤ $0.01  3.4%
 "
 `;
@@ -480,11 +481,11 @@ exports[`reflect.on.token.spend given: [case18] a subagent transcript passed by 
    │
    └─ proposal (ranked by repaid price — an upper bound, not a promise)
       ├─ 1. boot.instructions · boot.md  ≤ $0.07  40.3%
-      │  └─ hint: move briefs from say to ref
+      │  └─ cut = move briefs from say to ref
       ├─ 2. tool.result · Bash · git.repo.test  ≤ $0.03  18.8%
-      │  └─ hint: a summary on stdout, the log on disk
+      │  └─ cut = a summary on stdout, the log on disk
       └─ 3. assistant.own · assistant  ≤ $0.00  0.5%
-         └─ hint: terser replies, fewer re-reads
+         └─ cut = terser replies, fewer re-reads
 "
 `;
 
@@ -517,7 +518,7 @@ exports[`reflect.on.token.spend given: [case19] a session that never booted its 
    │  │  └─ holds = Bash · git.repo.test
    │  ├─ assistant.own              150    0.6%  [measured]
    │  ├─ human.words                 14    0.1%  [apportioned, exact]
-   │  └─ note: no boot.instructions block was seen; the boot share sits inside unattributed
+   │  └─ caveat = no boot.instructions block was seen; the boot share sits inside unattributed
    │
    ├─ repaid (what each block cost, every call it stayed in context — priced per cache span)
    │  ├─ unattributed · harness (system prompt + tool schemas)       $0.14   80.6%     60.0k tok
@@ -535,9 +536,9 @@ exports[`reflect.on.token.spend given: [case19] a session that never booted its 
    │
    └─ proposal (ranked by repaid price — an upper bound, not a promise)
       ├─ 1. tool.result · Bash · git.repo.test  ≤ $0.03  18.8%
-      │  └─ hint: a summary on stdout, the log on disk
+      │  └─ cut = a summary on stdout, the log on disk
       ├─ 2. assistant.own · assistant  ≤ $0.00  0.5%
-      │  └─ hint: terser replies, fewer re-reads
+      │  └─ cut = terser replies, fewer re-reads
       └─ 3. human.words · human  ≤ $0.00  0.0%
 "
 `;
@@ -594,11 +595,11 @@ exports[`reflect.on.token.spend given: [case20] @current in a live session, its 
    │
    └─ proposal (ranked by repaid price — an upper bound, not a promise)
       ├─ 1. boot.instructions · boot.md  ≤ $0.07  40.3%
-      │  └─ hint: move briefs from say to ref
+      │  └─ cut = move briefs from say to ref
       ├─ 2. tool.result · Bash · git.repo.test  ≤ $0.03  18.8%
-      │  └─ hint: a summary on stdout, the log on disk
+      │  └─ cut = a summary on stdout, the log on disk
       └─ 3. assistant.own · assistant  ≤ $0.00  0.5%
-         └─ hint: terser replies, fewer re-reads
+         └─ cut = terser replies, fewer re-reads
 "
 `;
 
@@ -659,11 +660,11 @@ exports[`reflect.on.token.spend given: [case21] a corpus of one metered session 
    │
    └─ proposal (ranked by repaid price — an upper bound, not a promise)
       ├─ 1. boot.instructions · boot.md  ≤ $0.07  40.3%
-      │  └─ hint: move briefs from say to ref
+      │  └─ cut = move briefs from say to ref
       ├─ 2. tool.result · Bash · git.repo.test  ≤ $0.03  18.8%
-      │  └─ hint: a summary on stdout, the log on disk
+      │  └─ cut = a summary on stdout, the log on disk
       └─ 3. assistant.own · assistant  ≤ $0.00  0.5%
-         └─ hint: terser replies, fewer re-reads
+         └─ cut = terser replies, fewer re-reads
 "
 `;
 
@@ -724,11 +725,11 @@ exports[`reflect.on.token.spend given: [case22] a parent transcript with a subag
    │
    └─ proposal (ranked by repaid price — an upper bound, not a promise)
       ├─ 1. boot.instructions · boot.md  ≤ $0.07  40.3%
-      │  └─ hint: move briefs from say to ref
+      │  └─ cut = move briefs from say to ref
       ├─ 2. tool.result · Bash · git.repo.test  ≤ $0.03  18.8%
-      │  └─ hint: a summary on stdout, the log on disk
+      │  └─ cut = a summary on stdout, the log on disk
       └─ 3. assistant.own · assistant  ≤ $0.00  0.5%
-         └─ hint: terser replies, fewer re-reads
+         └─ cut = terser replies, fewer re-reads
 "
 `;
 
@@ -796,11 +797,11 @@ exports[`reflect.on.token.spend given: [case24] @current with no session id, in 
    │
    └─ proposal (ranked by repaid price — an upper bound, not a promise)
       ├─ 1. boot.instructions · boot.md  ≤ $0.07  40.3%
-      │  └─ hint: move briefs from say to ref
+      │  └─ cut = move briefs from say to ref
       ├─ 2. tool.result · Bash · git.repo.test  ≤ $0.03  18.8%
-      │  └─ hint: a summary on stdout, the log on disk
+      │  └─ cut = a summary on stdout, the log on disk
       └─ 3. assistant.own · assistant  ≤ $0.00  0.5%
-         └─ hint: terser replies, fewer re-reads
+         └─ cut = terser replies, fewer re-reads
 "
 `;
 
@@ -869,11 +870,11 @@ exports[`reflect.on.token.spend given: [case26] a transcript on a model no rate 
    │
    └─ proposal (ranked by repaid tokens — an upper bound, not a promise)
       ├─ 1. boot.instructions · boot.md  ≤ 30.0k tok  42.7%
-      │  └─ hint: move briefs from say to ref
+      │  └─ cut = move briefs from say to ref
       ├─ 2. tool.result · Bash · git.repo.test  ≤ 10.0k tok  14.2%
-      │  └─ hint: a summary on stdout, the log on disk
+      │  └─ cut = a summary on stdout, the log on disk
       └─ 3. assistant.own · assistant  ≤ 250 tok  0.4%
-         └─ hint: terser replies, fewer re-reads
+         └─ cut = terser replies, fewer re-reads
 "
 `;
 
@@ -937,11 +938,11 @@ exports[`reflect.on.token.spend given: [case27] a corpus of one metered, one tor
    │
    └─ proposal (ranked by repaid price — an upper bound, not a promise)
       ├─ 1. boot.instructions · boot.md  ≤ $0.07  40.3%
-      │  └─ hint: move briefs from say to ref
+      │  └─ cut = move briefs from say to ref
       ├─ 2. tool.result · Bash · git.repo.test  ≤ $0.03  18.8%
-      │  └─ hint: a summary on stdout, the log on disk
+      │  └─ cut = a summary on stdout, the log on disk
       └─ 3. assistant.own · assistant  ≤ $0.00  0.5%
-         └─ hint: terser replies, fewer re-reads
+         └─ cut = terser replies, fewer re-reads
 "
 `;
 
@@ -994,7 +995,7 @@ exports[`reflect.on.token.spend given: [case30] a compacted parent with a subage
    │  │  └─ holds = compaction.summary
    │  ├─ unattributed                 5    0.5%  [unattributed]
    │  │  └─ holds = harness + compacted context
-   │  └─ note: no boot.instructions block was seen; the boot share sits inside unattributed
+   │  └─ caveat = no boot.instructions block was seen; the boot share sits inside unattributed
    │
    ├─ repaid (what each block cost, every call it stayed in context — priced per cache span)
    │  ├─ boot.instructions · boot.md                                 $0.07   39.0%     30.0k tok
@@ -1027,9 +1028,9 @@ exports[`reflect.on.token.spend given: [case30] a compacted parent with a subage
    │
    └─ proposal (ranked by repaid price — an upper bound, not a promise)
       ├─ 1. boot.instructions · boot.md  ≤ $0.07  39.0%
-      │  └─ hint: move briefs from say to ref
+      │  └─ cut = move briefs from say to ref
       ├─ 2. tool.result · Bash · git.repo.test  ≤ $0.03  18.1%
-      │  └─ hint: a summary on stdout, the log on disk
+      │  └─ cut = a summary on stdout, the log on disk
       └─ 3. system.reminder · compaction.summary  ≤ $0.01  3.4%
 "
 `;

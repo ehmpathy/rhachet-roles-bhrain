@@ -1,7 +1,7 @@
-import * as fs from 'fs/promises';
 import { BadRequestError } from 'helpful-errors';
 
 import type { ContextCliEmit } from '@src/domain.objects/Driver/ContextCliEmit';
+import type { ContextStoneGuardRound } from '@src/domain.objects/Driver/ContextStoneGuardRound';
 import type { GuardProgressEvent } from '@src/domain.objects/Driver/GuardProgressEvent';
 import { PassageReport } from '@src/domain.objects/Driver/PassageReport';
 import type { RouteStone } from '@src/domain.objects/Driver/RouteStone';
@@ -12,7 +12,7 @@ import {
 } from '@src/domain.objects/Driver/RouteStoneGuard';
 import type { RouteStoneGuardJudgeArtifact } from '@src/domain.objects/Driver/RouteStoneGuardJudgeArtifact';
 import type { RouteStoneGuardReviewArtifact } from '@src/domain.objects/Driver/RouteStoneGuardReviewArtifact';
-import type { ContextReviewBrainSupply } from '@src/domain.operations/route/genReviewBrainSupply';
+import type { ContextReviewBrainSupply } from '@src/domain.operations/brain/genReviewBrainSupply'; // brain/ is a declared shared subdomain (its .readme.md)
 
 import { computeRouteBouncerCache } from '../bouncer/computeRouteBouncerCache';
 import { setRouteBouncerCache } from '../bouncer/setRouteBouncerCache';
@@ -20,53 +20,73 @@ import { delStoneGuardBlockerReport } from '../drive/delStoneGuardBlockerReport'
 import { formatRouteStoneEmit } from '../formatRouteStoneEmit';
 import { getAllStoneGuardArtifactsByHash } from '../guard/artifact/getAllStoneGuardArtifactsByHash';
 import { getMaxStoneGuardIteration } from '../guard/artifact/getMaxStoneGuardIteration';
+import { asFailedJudgeReasons } from '../guard/asFailedJudgeReasons';
 import { asGuardDisplayPath } from '../guard/asGuardDisplayPath';
+import { asGuardHaltCombinedReason } from '../guard/asGuardHaltCombinedReason';
+import { asGuardMalfunctionReason } from '../guard/asGuardMalfunctionReason';
+import { getAllFailedJudges } from '../guard/getAllFailedJudges';
+import { getAllJudgeMalfunctions } from '../guard/getAllJudgeMalfunctions';
+import { getAllReviewConstraints } from '../guard/getAllReviewConstraints';
+import { getAllReviewMalfunctions } from '../guard/getAllReviewMalfunctions';
+import { getOneRejectedUnforgivenTotal } from '../guard/getOneRejectedUnforgivenTotal';
 import { getRepoRootWithFallback } from '../guard/getRepoRootWithFallback';
+import { asStoneGuardPartitionGapLines } from '../guard/partition/asStoneGuardPartitionGapLines';
+import { asStoneGuardPartitionGapReason } from '../guard/partition/asStoneGuardPartitionGapReason';
+import { asStoneGuardPartitionGapsOfCoverage } from '../guard/partition/asStoneGuardPartitionGapsOfCoverage';
+import { getAllStoneGuardPartitionCoverage } from '../guard/partition/getAllStoneGuardPartitionCoverage';
 import { computeStoneReviewInputHash } from '../guard/review/computeStoneReviewInputHash';
 import { asRouteGuardReviewPeerSlugList } from '../guard/review/peer/asRouteGuardReviewPeerSlugList';
 import { computeTotalUndeclaredConcerns } from '../guard/review/peer/computeTotalUndeclaredConcerns';
 import { genRouteGuardExhaustedReason } from '../guard/review/peer/genRouteGuardExhaustedReason';
+import { getAllStoneGuardReviewPeerFeedbackUnabsorbedUnforgiven } from '../guard/review/peer/getAllStoneGuardReviewPeerFeedbackUnabsorbedUnforgiven';
+import { getAllStoneUndeclaredConcerns } from '../guard/review/peer/getAllStoneUndeclaredConcerns';
+import { getOneRouteGuardReviewPeerConstraintLever } from '../guard/review/peer/getOneRouteGuardReviewPeerConstraintLever';
 import { getStoneConcessionExhaustionKind } from '../guard/review/peer/getStoneConcededLaneSlugs';
-import { getStoneGuardReviewPeerFeedbackUnabsorbedUnforgiven } from '../guard/review/peer/getStoneGuardReviewPeerFeedbackUnabsorbedUnforgiven';
-import { getStoneUndeclaredConcerns } from '../guard/review/peer/getStoneUndeclaredConcerns';
+import { getAllReviewLevelsByIndex } from '../guard/review/peer/meter/getAllReviewLevelsByIndex';
 import { getAllReviewPeerMeterStatuses } from '../guard/review/peer/meter/getAllReviewPeerMeterStatuses';
 import { getExhaustionHaltReviewerSlugs } from '../guard/review/peer/meter/getExhaustionHaltReviewerSlugs';
-import { getReviewLevelByIndex } from '../guard/review/peer/meter/getReviewLevelByIndex';
+import { getOneReviewLevelByIndex } from '../guard/review/peer/meter/getOneReviewLevelByIndex';
 import { isEveryReviewLevelTerminal } from '../guard/review/peer/meter/isEveryReviewLevelTerminal';
 import { isLevelOverruled } from '../guard/review/peer/meter/isLevelOverruled';
 import { JUDGE_LEVEL } from '../guard/review/peer/meter/JUDGE_LEVEL';
 import { runStoneGuardReviews } from '../guard/review/runStoneGuardReviews';
 import { asHashbarDeclaredReviews } from '../guard/review/self/asHashbarDeclaredReviews';
-import { findNextUnpromisedReview } from '../guard/review/self/findNextUnpromisedReview';
+import { getOneNextUnpromisedReview } from '../guard/review/self/getOneNextUnpromisedReview';
 import { getPromisedSlugsSet } from '../guard/review/self/getPromisedSlugsSet';
 import { getStonePromises } from '../guard/review/self/getStonePromises';
 import { isSelfReviewPromised } from '../guard/review/self/isSelfReviewPromised';
 import { setSelfReviewTriggeredReport } from '../guard/review/self/setSelfReviewTriggeredReport';
+import { getOneStoneRewindGeneration } from '../guard/round/getOneStoneRewindGeneration';
+import { setStoneGuardRoundOutput } from '../guard/round/setStoneGuardRoundOutput';
 import { setStoneGuardStamp } from '../guard/stamp/setStoneGuardStamp';
 import type { GuardPeerMeterStatus } from '../guard/tree/formatGuardTree';
 import { formatRouteGuardReviewPeerAbsorptionPrompt } from '../guard/tree/formatRouteGuardReviewPeerAbsorptionPrompt';
 import { formatRouteGuardReviewPeerFeedbackAbsorbPrompt } from '../guard/tree/formatRouteGuardReviewPeerFeedbackAbsorbPrompt';
-import { isExpectedFsReadFault } from '../isExpectedFsReadFault';
 import { getStoneGuardOverruledLevels } from '../judges/getStoneGuardOverruledLevels';
 import { runStoneGuardJudges } from '../judges/runStoneGuardJudges';
 import { getOnePassageReport } from '../passage/getOnePassageReport';
 import { setPassageReport } from '../passage/setPassageReport';
+import { asGlobalStepIndex } from './asGlobalStepIndex';
 import { findOneStoneByPattern } from './asStoneGlob';
+import { asStoneNotFoundError } from './asStoneNotFoundError';
 import { delBlockedTriggeredReport } from './blocked/delBlockedTriggeredReport';
 import { genStoneGuardBlockedEmit } from './genStoneGuardBlockedEmit';
 import { getAllStoneArtifacts } from './getAllStoneArtifacts';
 import { getAllStones } from './getAllStones';
+import { getOneArtifactContentForDisplay } from './getOneArtifactContentForDisplay';
 import { setStonePassage } from './setStonePassage';
 
 /**
  * .what = renders one artifact (review or judge) as a stderr tree bucket
- * .why = the exhaustion, malfunction, constraint, and failed-judge branches each read an
- *        artifact file and indent it under a `<emoji> <label> N` header, with a one-line
- *        fallback when the file cannot be read. five near-verbatim copies had drifted apart;
- *        one shared transformer single-sources the shape
- *        (rule.require.single-source-of-truth-for-render, rule.prefer.wet-over-dry).
- * .note = fallback = null emits no fallback line (the failed-judge branch, where a judge with
- *         no reason contributes only its header).
+ * .why = the exhaustion, malfunction, constraint, and failed-judge branches each need the
+ *        same "read a file, indent under a header" shape; one shared leaf keeps them
+ *        identical (rule.require.single-source-of-truth-for-render, rule.prefer.wet-over-dry).
+ * .note = an orchestrator of two grains: the read is the named communicator
+ *         `getOneArtifactContentForDisplay` (absence + unreadable allowlist, rethrow on all else),
+ *         and the indent is the pure `asArtifactStderrBlock`. each of its five call sites
+ *         stays one call.
+ * .note = fallback = null emits no fallback line (a failed-judge with no reason contributes
+ *         only its header).
  */
 const formatArtifactStderrBlock = async (input: {
   emoji: string;
@@ -75,30 +95,40 @@ const formatArtifactStderrBlock = async (input: {
   path: string;
   fallback: string | null;
 }): Promise<string[]> => {
+  const content = await getOneArtifactContentForDisplay({ path: input.path });
+  return asArtifactStderrBlock({ ...input, content });
+};
+
+/**
+ * .what = renders one artifact's text as a stderr bucket: a header, then each line indented
+ *         under it — or the fallback line when the artifact could not be read
+ * .why = the pure half of `formatArtifactStderrBlock`, apart from its read, so the render
+ *        holds no i/o (rule.prefer.decomposable-architecture)
+ */
+const asArtifactStderrBlock = (input: {
+  emoji: string;
+  label: string;
+  index: number;
+  content: string | null;
+  fallback: string | null;
+}): string[] => {
   const header = `${input.emoji} ${input.label} ${input.index}`;
 
-  // read the artifact and indent each line under the header
-  try {
-    const content = await fs.readFile(input.path, 'utf-8');
-    return [header, ...content.split('\n').map((line) => `   ${line}`)];
-  } catch (error) {
-    // graceful fallback for display: file may not exist or be unreadable.
-    // keyed on error.code (not error.message) so a real error whose message merely quotes a
-    // path that holds the text 'ENOENT' surfaces loud instead of a silent degrade
-    // (rule.forbid.failhide)
-    if (!isExpectedFsReadFault(error)) throw error;
+  // an unread artifact contributes its header, plus the fallback line when one is given
+  if (input.content === null)
     return input.fallback !== null
       ? [header, `   └─ ${input.fallback}`]
       : [header];
-  }
+
+  // indent each line of the artifact under the header
+  return [header, ...input.content.split('\n').map((line) => `   ${line}`)];
 };
 
 /**
  * .what = joins per-artifact stderr blocks into one string, a blank line between each block
- * .why = every blocked-passage branch (exhaustion, malfunction, constraint, failed-judges) renders
- *        the same "one block per artifact, blank-line separated" shape. one builder keeps them
- *        identical and expresses the join functionally, so no branch mutates a local array in place
- *        (rule.require.immutable-vars). returns undefined when empty so the caller omits stderr.
+ * .why = every blocked-passage branch renders the same shape; one builder keeps them
+ *        identical, expressed functionally (rule.require.immutable-vars). returns undefined
+ *        when empty so the caller omits stderr.
  */
 const joinArtifactStderrBlocks = (blocks: string[][]): string | undefined =>
   blocks.length === 0
@@ -110,6 +140,11 @@ const joinArtifactStderrBlocks = (blocks: string[][]): string | undefined =>
 /**
  * .what = attempts to mark a stone as passed after guard validation
  * .why = enables robots to complete milestones with guard verification
+ *
+ * .note = a guarded round reads the stone's rewind generation at its start, and each
+ *         write it makes lands only while that generation holds. a rewind mid-round bumps
+ *         it, so the superseded round discards its output and ends with a ConstraintError
+ *         rather than write over what the rewind cleared (setStoneGuardRoundOutput)
  */
 export const setStoneAsPassed = async (
   input: {
@@ -128,18 +163,17 @@ export const setStoneAsPassed = async (
     stones,
     pattern: input.stone,
   });
-  if (!stoneMatched) {
-    throw new BadRequestError('stone not found', { stone: input.stone });
-  }
+  if (!stoneMatched)
+    throw asStoneNotFoundError({
+      act: 'passed',
+      route: input.route,
+      pattern: input.stone,
+      stones,
+    });
 
-  // lookup git root for path relativization
-  // .why = paths in output should be relative to git root (e.g., .behavior/v.../...), not route
-  //
-  // 🔴 uses the SHARED resolver, never a local try/catch — a bare catch reads a
-  //    permissions error, an absent git binary, or a corrupt .git as "not a repo" and
-  //    silently relativizes against cwd instead (`rule.forbid.failhide`). the shared
-  //    operation catches only "Not inside a Git" and rethrows the rest, so every guard
-  //    call site stays on one path
+  // git root for path relativization; the shared resolver, never a local try/catch,
+  // so a permissions error or a corrupt .git surfaces loud rather than silently
+  // relativized against cwd (rule.forbid.failhide)
   const gitRoot = await getRepoRootWithFallback({ from: input.route });
 
   // check artifact found
@@ -150,7 +184,6 @@ export const setStoneAsPassed = async (
   if (artifactFiles.length === 0) {
     throw new BadRequestError(
       `artifact not found; run route.stone.get --stone ${stoneMatched.name} --say to see instructions`,
-      { stone: stoneMatched.name },
     );
   }
 
@@ -187,20 +220,44 @@ export const setStoneAsPassed = async (
     };
   }
 
-  // on ENTRY to the guard's reviews — BEFORE any review runs — record 'arrived'
-  // .why = rule.require.forward-motion-clears-blocker: a --as arrived/passed is forward
-  //        motion, so a stale escalation halt must clear AT ONCE, not after the (slow)
-  //        peer reviews finish. the latest entry wins, so this in-flight 'arrived'
-  //        (disposition push) supersedes a prior blocked at guard entry — the statusline
-  //        reads the current phase, not a stale halt, for the whole inflight window.
-  await setPassageReport({
-    report: new PassageReport({
-      stone: stoneMatched.name,
-      status: 'arrived',
-      reason: 'entered guard reviews',
-    }),
+  // the guard round begins: read the stone's rewind generation, the watermark every
+  // write of this round checks
+  // .why = a rewind bumps the generation before it deletes the round's outputs; each
+  //        write below lands only while the generation is unchanged, so a round a rewind
+  //        superseded writes naught after the rewind (setStoneGuardRoundOutput)
+  const generation = await getOneStoneRewindGeneration({
     route: input.route,
+    stone: stoneMatched.name,
   });
+  const setRoundOutput = <TOutput>(
+    write: () => Promise<TOutput>,
+  ): Promise<TOutput> =>
+    setStoneGuardRoundOutput({
+      route: input.route,
+      stone: stoneMatched.name,
+      generation,
+      write,
+    });
+  const genRoundBlockedEmit = (
+    blocked: Parameters<typeof genStoneGuardBlockedEmit>[0],
+  ): ReturnType<typeof genStoneGuardBlockedEmit> =>
+    setRoundOutput(() => genStoneGuardBlockedEmit(blocked));
+
+  // on entry to the guard's reviews, before any review runs, record 'arrived'
+  // .why = a --as arrived/passed is forward motion, so a stale escalation halt must
+  //        clear at once, not after the (slow) peer reviews finish. the latest entry
+  //        wins, so this in-flight 'arrived' supersedes a prior blocked at guard entry
+  //        (rule.require.forward-motion-clears-blocker)
+  await setRoundOutput(() =>
+    setPassageReport({
+      report: new PassageReport({
+        stone: stoneMatched.name,
+        status: 'arrived',
+        reason: 'entered guard reviews',
+      }),
+      route: input.route,
+    }),
+  );
 
   // check for review.selfs (must be promised before peer reviews)
   const selfReviews = getGuardSelfReviews(stoneMatched.guard);
@@ -219,7 +276,7 @@ export const setStoneAsPassed = async (
     const promisedSlugs = getPromisedSlugsSet({ promises });
 
     // find every unpromised review.self
-    // .note = the predicate is the shared one — the `findNextUnpromisedReview` call below
+    // .note = the predicate is the shared one — the `getOneNextUnpromisedReview` call below
     //         reads the same source, so its non-null holds by construction rather than by
     //         a comment that asserts two hand-typed scans agree
     const unpromised = selfReviews.filter(
@@ -236,7 +293,7 @@ export const setStoneAsPassed = async (
       //         sets. it rested on a comment that asserted two hand-typed scans agree until
       //         2026-09-20 — an agreement no type held, and the exact trust the neighbour
       //         call on the next line argues against
-      const next = findNextUnpromisedReview({ selfReviews, promisedSlugs })!;
+      const next = getOneNextUnpromisedReview({ selfReviews, promisedSlugs })!;
       const nextReview = next.reviewSelf;
 
       // 🔴 mint a trigger for THIS review alone, never for every unpromised one.
@@ -256,18 +313,21 @@ export const setStoneAsPassed = async (
       // .note = sinceOnly leaves .uptil absent, which would otherwise read as a prior attempt
       // .note = idempotent — a re-ask of a slug already asked is a no-op, so the ask that
       //         re-emits this stone does not restamp a clock the driver is already inside
-      await setSelfReviewTriggeredReport(
-        {
-          stone: stoneMatched.name,
-          slug: nextReview.slug,
-          route: input.route,
-        },
-        { sinceOnly: true },
+      // .note = the write lands only while this round's rewind generation holds
+      await setRoundOutput(() =>
+        setSelfReviewTriggeredReport(
+          {
+            stone: stoneMatched.name,
+            slug: nextReview.slug,
+            route: input.route,
+          },
+          { sinceOnly: true },
+        ),
       );
 
       // blocked on review.self — persist + return via the shared blocked tail
       // .note = raw emit (no stamp): peer reviews have not run at this point
-      return genStoneGuardBlockedEmit({
+      return genRoundBlockedEmit({
         stone: stoneMatched.name,
         route: input.route,
         blocker: 'review.self',
@@ -341,51 +401,30 @@ export const setStoneAsPassed = async (
   // if guard has reviews but no judges, that's an error
   if (peerReviews.length > 0 && stoneMatched.guard.judges.length === 0) {
     throw new BadRequestError('guard has reviews but no judges', {
-      stone: stoneMatched.name,
       guard: stoneMatched.guard.path,
     });
   }
 
-  // 🔴 THE ENTRANCE GATE — a driver may not enter a review round while it owes an
-  // answer to a prior blocker.
-  //
-  // .why = the exit gate below (inside allJudgesPassed) fires at PASSAGE, and a
-  //        re-run is not passage. so a driver blocked by a critique had two exits
-  //        and the cheaper one was silent: edit the artifact, re-roll, and let the
-  //        reviewer either forget the point or not re-raise it.
-  //
-  //        the mechanism is what justifies this gate, and it is checkable right
-  //        here: computeStoneReviewInputHash covers the WHOLE artifact set, so one
-  //        edited line anywhere moves the hash that a hash-keyed debt was filed
-  //        against (0.wish.md defect D1).
-  //
-  // .note = a drive REPORTED as 32 iterations / ~9 days / 300+ givens / zero answers
-  //         is what prompted the work. treat it as motivation, never as premise —
-  //         the branch it was read from is unreachable, so the counts cannot be
-  //         re-checked. the provenance is stated in full at
-  //         src/domain.roles/driver/briefs/
-  //           rule.forbid.unanswered-exits-from-a-blocker.example=the-28-iteration-stall.md
-  //
-  // .note = it sits HERE, between the zero-reviewer auto-pass above and the
-  //         stampGuardReport helper below, and each part of that seam is deliberate:
-  //         - AFTER the auto-pass, so a stone with no peer reviewers is untouched
-  //         - BEFORE stampGuardReport is in scope, so this halt CANNOT stamp a guard
-  //           report for reviews that never ran (the review.self gate above returns a
-  //           raw emit for exactly the same reason)
-  //         - BEFORE computeStoneReviewInputHash + getMaxStoneGuardIteration, so a
-  //           halt costs a directory read rather than a hash + a round of subprocesses
-  //
-  // .note = it needs NO hash. under P2 the debt is keyed to the reviewer, so
-  //         readiness does not depend on the current generation at all.
+  // the entrance gate — a driver may not enter a review round while it owes an answer
+  // to a prior blocker.
+  // .why = the exit gate below (inside allJudgesPassed) fires only at passage, and a
+  //        re-run is not passage — so without this a driver could edit the artifact,
+  //        re-roll, and let the reviewer forget the point instead of answering it.
+  //        `computeStoneReviewInputHash` covers the whole artifact set, so one edited
+  //        line anywhere moves the hash a hash-keyed debt was filed against.
+  // .note = it sits after the zero-reviewer auto-pass, before `stampGuardReport` is in
+  //         scope (so this halt never stamps a report for reviews that never ran), and
+  //         before the hash + subprocess round, so a halt costs only a directory read.
+  // .note = needs no hash — the debt is keyed to the reviewer, so readiness does not
+  //         depend on the current generation.
   const unforgivenAtEntrance =
-    await getStoneGuardReviewPeerFeedbackUnabsorbedUnforgiven({
+    await getAllStoneGuardReviewPeerFeedbackUnabsorbedUnforgiven({
       stone: stoneMatched,
       route: input.route,
     });
   if (unforgivenAtEntrance.length > 0) {
-    // .note = refs are empty by construction — no review and no judge ran this call.
-    //         that is the point: the halt precedes the work it would have cost.
-    return genStoneGuardBlockedEmit({
+    // refs are empty by construction — no review and no judge ran this call
+    return genRoundBlockedEmit({
       stone: stoneMatched.name,
       route: input.route,
       blocker: 'review.peer.unabsorbed',
@@ -404,28 +443,19 @@ export const setStoneAsPassed = async (
     });
   }
 
-  // 🔴 THE STANCE GATE — a driver may not enter a review round while a concern that
-  // holds the road stands with no stance declared on it.
-  //
-  // .why = acceptance #1. a review budget ends a disagreement by exhaustion rather
-  //        than by judgment, so the cheapest exit from a real defect and the cheapest
-  //        exit from a bad critique are the same exit. a stance says WHICH it is, and
-  //        records that judgment where a council can rule on it.
-  //
-  // 🔴 it sits AFTER the feedbackAbsorption gate, and that order is the design (invariant
-  //    2). a stance declared before the driver answered the critique is a verdict on
-  //    an argument they never engaged — so the answer is owed first, and this gate
-  //    never fires while a `.taken` stands unwritten.
-  //
-  // 🔴 it asks per CONCERN, never per lane (S07). a lane at 3 blockers owes 3
-  //    declarations, and a driver may concede one and dispute two — which a
-  //    lane-grain gate cannot express (rule.forbid.suppression-of-undeclared-concerns).
-  //
-  // .note = it inherits the entrance gate's seam above in all three clauses: after
-  //         the zero-reviewer auto-pass, before stampGuardReport is in scope, and
-  //         before the hash — so this halt costs a directory read, never a round of
-  //         subprocesses.
-  const undeclaredAtEntrance = await getStoneUndeclaredConcerns({
+  // the stance gate — a driver may not enter a review round while a concern that holds
+  // the road stands with no stance declared on it.
+  // .why = a review budget ends a disagreement by exhaustion rather than judgment, so
+  //        the cheapest exit from a real defect and the cheapest exit from a bad
+  //        critique are the same exit. a stance says which it is, and records that
+  //        judgment where a council can rule on it.
+  // .why after the feedbackAbsorption gate = a stance declared before the driver
+  //        answered the critique is a verdict on an argument they never engaged; the
+  //        answer is owed first.
+  // .why per concern, never per lane = a lane at 3 blockers owes 3 declarations, and a
+  //        driver may concede one and dispute two — a lane-grain gate cannot express
+  //        that (rule.forbid.suppression-of-undeclared-concerns).
+  const undeclaredAtEntrance = await getAllStoneUndeclaredConcerns({
     stone: stoneMatched,
     route: input.route,
   });
@@ -433,7 +463,7 @@ export const setStoneAsPassed = async (
     const concernsTotal = computeTotalUndeclaredConcerns({
       lanes: undeclaredAtEntrance,
     });
-    return genStoneGuardBlockedEmit({
+    return genRoundBlockedEmit({
       stone: stoneMatched.name,
       route: input.route,
       blocker: 'review.peer.undeclared',
@@ -450,33 +480,65 @@ export const setStoneAsPassed = async (
     });
   }
 
+  // the partition gate — a driver may not enter a review round while the route's partitions
+  // leave a changed file unclaimed, or lack the route spec.
+  // .why = 🔴 the same check `rhx review` runs per lane, run ONCE here. per lane, one stale
+  //        glob refused every lane that split — one cause, many refusals, each after the
+  //        pour began. here it refuses once, before the hash and before any brain, and
+  //        prints the repaired set as one command (rule.forbid.workarounds)
+  // .why after the stance gate = the debts a driver already owes are answered first; this
+  //        gate guards the round that is about to run, not the ones that ran
+  // .note = the gaps are read off the ONE coverage computation a driver's
+  //         `route.guard.partition --peer @all --stone <s>` read renders, so the two agree
+  const partitionCoverage = await getAllStoneGuardPartitionCoverage({
+    stone: stoneMatched,
+    route: input.route,
+    cwd: gitRoot,
+  });
+  const partitionGaps = asStoneGuardPartitionGapsOfCoverage({
+    coverages: partitionCoverage,
+  });
+  if (partitionGaps.length > 0)
+    return genRoundBlockedEmit({
+      stone: stoneMatched.name,
+      route: input.route,
+      blocker: 'review.peer.malpartitioned',
+      reason: asStoneGuardPartitionGapReason({ gaps: partitionGaps }),
+      refs: { reviews: [], judges: [] },
+      emit: {
+        stdout: asStoneGuardPartitionGapLines({
+          stone: stoneMatched.name,
+          gaps: partitionGaps,
+        }).join('\n'),
+      },
+    });
+
   // stamp the guard report next to the stone when peer reviews ran
-  // .why = persists the latest border-gate result so folks can review it without a guard re-run (per wish)
-  // .note = stamps only when peer reviews ran; judges-only guards leave no stamp
-  // .note = passes the emit through unchanged so each branch can `return { ..., emit: await stampGuardReport(...) }`
+  // .why = persists the latest border-gate result so folks can review it without a
+  //        guard re-run
+  // .note = stamps only when peer reviews ran; judges-only guards leave no stamp.
+  //         passes the emit through unchanged so each branch can return
+  //         `{ ..., emit: await stampGuardReport(...) }`
   const stampGuardReport = async (emit: {
     stdout: string;
     stderr?: string;
   }): Promise<{ stdout: string; stderr?: string }> => {
     if (peerReviews.length > 0)
-      await setStoneGuardStamp({
-        stone: stoneMatched,
-        route: input.route,
-        emit,
-      });
+      await setRoundOutput(() =>
+        setStoneGuardStamp({
+          stone: stoneMatched,
+          route: input.route,
+          emit,
+        }),
+      );
     return emit;
   };
 
-  // compute review input hash for cache lookup
-  //
-  // hash principle: each component hashes its inputs
-  // - reviews hash on artifacts (their input) → this review input hash
-  // - judges hash on reviews + approvals (their input) → computed internally by runStoneGuardJudges
-  //
-  // cascade scenarios:
-  // - artifact change → review input hash changes → fresh reviews → judge input hash changes → fresh judge
-  // - approval granted → review input hash unchanged → cached reviews → judge input hash changes → fresh judge
-  // - review re-run after fix → review content changes → judge input hash changes → fresh judge
+  // compute review input hash for cache lookup.
+  // hash principle: each component hashes its inputs — reviews hash on artifacts,
+  // judges hash on reviews + approvals (computed internally by runStoneGuardJudges).
+  // so an artifact change, an approval grant, or a review re-run each cascades a
+  // fresh judge input hash even where the review side stays cached.
   const hash = await computeStoneReviewInputHash({
     stone: stoneMatched,
     route: input.route,
@@ -489,7 +551,7 @@ export const setStoneAsPassed = async (
     route: input.route,
   });
 
-  // determine current iteration across ALL artifacts for this stone (not just per-hash)
+  // determine current iteration across all artifacts for this stone (not just per-hash)
   // .note = iteration increments globally so filenames show progression even when hash changes
   const maxPriorIteration = await getMaxStoneGuardIteration({
     stone: stoneMatched,
@@ -498,6 +560,11 @@ export const setStoneAsPassed = async (
   const iteration = maxPriorIteration + 1;
 
   // collect progress events for guard tree output
+  // .note = deliberate mutation, and a SCOPED ZONE: `events` is born in this call and grows
+  //         only via the onGuardProgress callback below, one event per guard progress step, as
+  //         reviews and judges report in. no caller holds it while it grows; the guard tree
+  //         render reads it only once the steps it records have settled
+  //         (rule.require.immutable-vars, scoped zone)
   const events: GuardProgressEvent[] = [];
   const totalReviews = peerReviews.length;
   const totalJudges = stoneMatched.guard.judges.length;
@@ -505,19 +572,17 @@ export const setStoneAsPassed = async (
 
   // create context that enriches events with position for branch format
   // .note = forwards getReviewBrain so the guard's fallback tactic can build the sub-brain
-  const collectContext: ContextCliEmit & ContextReviewBrainSupply = {
+  const collectContext: ContextCliEmit &
+    ContextReviewBrainSupply &
+    ContextStoneGuardRound = {
+    guardRound: { generation },
     cliEmit: {
       onGuardProgress: (event) => {
         events.push(event);
 
-        // compute global position across reviews + judges
-        const globalIndex =
-          event.step.phase === 'review'
-            ? event.step.index
-            : totalReviews + event.step.index;
-
+        // stamp the event with its position across reviews + judges
         context.cliEmit.onGuardProgress(event, {
-          index: globalIndex,
+          index: asGlobalStepIndex({ step: event.step, totalReviews }),
           total: totalItems,
         });
       },
@@ -542,19 +607,18 @@ export const setStoneAsPassed = async (
       : { artifacts: [], exhaustedReviewerSlugs: [] };
   const reviewArtifacts = reviewResult.artifacts;
 
-  // load human overrules FIRST, so the meter statuses below are overrule-aware
-  // .why = an overruled level is terminal-for-unlock; the meter tree must not paint a false
-  //        `awaits l<overruled> terminal` on the level above it, and each overruled level must
-  //        be stamped so the tree + footer render the forgiveness (not the raw rejection).
+  // load human overrules first, so the meter statuses below are overrule-aware
+  // .why = an overruled level is terminal-for-unlock; the meter tree must not paint a
+  //        false "awaits l<overruled> terminal" on the level above it, and each
+  //        overruled level must be stamped so the tree + footer render the forgiveness
   const overruledLevels = await getStoneGuardOverruledLevels({
     stone: stoneMatched,
     route: input.route,
   });
 
   // the judge is the top rung of the guard ladder; a human overrule of it (JUDGE_LEVEL)
-  // forgives a failed or malfunctioned judge exactly as an overrule forgives a peer level.
-  // this is the passage side of the peer+judge fix — getStoneGuardLevelState surfaces the judge
-  // rung so a human CAN overrule it; this honors that overrule at the judge gate.
+  // forgives a failed or malfunctioned judge exactly as an overrule forgives a peer
+  // level (getOneStoneGuardLevelState surfaces the judge rung so a human can overrule it)
   const judgeRungForgiven = overruledLevels.has(JUDGE_LEVEL);
 
   // compute peer meter statuses for guard tree output
@@ -567,52 +631,52 @@ export const setStoneAsPassed = async (
     overruledLevels,
   });
 
-  // check for peer review exhaustion
-  // halt only if a review was SKIPPED due to exhaustion (not if it ran and depleted budget)
-  // .why = if review ran at 2/2 and got blockers, should proceed to judge (blocked), not halt
-  //        halt only on attempt 3/2 when review can't run because budget already at 2/2
-  // note: if stone is already approved, skip this check (human already signed off)
+  // check for peer review exhaustion. halt only if a review was skipped due to
+  // exhaustion, never if it ran and depleted budget — a review that ran at 2/2 and got
+  // blockers proceeds to judge (blocked), not this halt. skip this check entirely if
+  // the stone is already approved (human already signed off).
   const approvalPrior = await getOnePassageReport({
     stone: stoneMatched.name,
     status: 'approved',
     route: input.route,
   });
-  // .note = overruledLevels is loaded above (before the meter statuses), so an
-  //         exhausted-but-overruled level does not halt and the judge forgives its blockers.
+  // overruledLevels was loaded above (before the meter statuses), so an
+  // exhausted-but-overruled level does not halt and the judge forgives its blockers.
 
-  // map review index -> level, to scope error forgiveness per level
-  // .why = an overrule at level N forgives that level's malfunction/constraint,
-  //        but a higher level's error still surfaces (it was not waved through)
+  // map review index -> level, to scope error forgiveness per level. an overrule at
+  // level N forgives that level's malfunction/constraint, but a higher level's error
+  // still surfaces (it was not waved through)
   const peerReviewsForLevel = stoneMatched.guard
     ? getGuardPeerReviews(stoneMatched.guard)
     : [];
-  const levelByReviewIndex = getReviewLevelByIndex({
+  const levelByReviewIndex = getAllReviewLevelsByIndex({
     peerReviews: peerReviewsForLevel,
   });
-  // per-index wrapper: map the review index to its level, then read the shared overruled check
-  // so "is this level overruled" is decided in one place (rule.require.single-source-of-truth-for-render)
+  // per-index wrapper: map the review index to its level, then read the shared
+  // overruled check, so "is this level overruled" is decided in one place
+  // (rule.require.single-source-of-truth-for-render)
   const isReviewLevelOverruled = (index: number): boolean =>
     isLevelOverruled({
-      level: levelByReviewIndex.get(index) ?? 1,
+      level: getOneReviewLevelByIndex({ levels: levelByReviewIndex, index }),
       overruledLevels,
     });
-  // get slugs of reviews that were SKIPPED (not ran) due to exhaustion
-  // .note = verdict 'exhausted' is only set when wasExhausted = true (see define.invariant.review.peer.exhausted)
-  // .note = exhausted reviewers at overruled levels are excluded — they are forgiven
-  //
-  // 🔴 a DISPUTED lane drives on this generation, so its exhaustion does not halt the road. the
-  //    exhaustion-halt set excludes both dispute-skipped lanes (S15 — the driver's judgment that the
-  //    lane is fine to continue) and overruled levels (a human's forgive), so a fully-disputed,
-  //    exhausted lane does not block passage the dispute was meant to grant.
+  // slugs of reviews that were skipped (not ran) due to exhaustion
+  // .note = verdict 'exhausted' is only set when wasExhausted = true
+  //         (define.invariant.review.peer.exhausted). exhausted reviewers at overruled
+  //         levels are excluded — they are forgiven.
+  // a disputed lane drives on this generation, so its exhaustion does not halt the
+  // road — the exhaustion-halt set excludes both dispute-skipped lanes (S15) and
+  // overruled levels, so a fully-disputed exhausted lane does not block the passage
+  // the dispute was meant to grant.
   const skippedSlugs = getExhaustionHaltReviewerSlugs({
     meters: peerMeters,
     overruledLevels,
   });
-  // every level terminal — overrule-aware, so an overruled lower level (whose raw verdict stays
-  // 'rejected') still counts as terminal. without this, an overruled l1 leaves allTerminal false
-  // and SKIPS this exhaustion halt, so an exhausted higher level passes without the human approval
-  // the invariant requires (define.invariant.review.peer.passage) — the overrule spills upward to
-  // forgive a level the human never waved.
+  // every level terminal, overrule-aware, so an overruled lower level (whose raw
+  // verdict stays 'rejected') still counts as terminal. without this, an overruled l1
+  // leaves allTerminal false and skips this exhaustion halt, so an exhausted higher
+  // level would pass without the human approval the invariant requires
+  // (define.invariant.review.peer.passage).
   const allTerminal = isEveryReviewLevelTerminal({
     reviewers: peerMeters.map((m) => ({ level: m.level, verdict: m.verdict })),
     overruledLevels,
@@ -623,13 +687,13 @@ export const setStoneAsPassed = async (
     skippedSlugs,
   };
 
-  // 🔴 whose halt is this? (S12/S16). the three-way kind is computed HERE, before the halt
-  //    condition, because a `better`-only exhaustion is NOT a halt at all — it falls through to
-  //    the judge, which subtracts the `better` concessions and passes. `better` is hard-capped
-  //    by the budget by design: what remains at exhaustion is tech debt, so it earns NO budget
-  //    increase and NO human (`define.invariant.review.peer.budget.urgent-earns-budget`, S16).
-  //    only `none` (a lane never conceded → human wait) and `urgent` (ships harm → budget + a
-  //    human warn) halt here.
+  // whose halt is this (S12/S16)? computed here, before the halt condition, because a
+  // `better`-only exhaustion is not a halt at all — it falls through to the judge,
+  // which subtracts the `better` concessions and passes. `better` is hard-capped by
+  // budget by design: what remains at exhaustion is tech debt, earning no budget
+  // increase and no human (define.invariant.review.peer.budget.urgent-earns-budget,
+  // S16). only `none` (a lane never conceded → human wait) and `urgent` (ships harm →
+  // budget + a human warn) halt here.
   const concession = await getStoneConcessionExhaustionKind({
     route: input.route,
     stone: stoneMatched.name,
@@ -659,87 +723,75 @@ export const setStoneAsPassed = async (
       reason: 'peer reviewer budget exhausted',
     });
 
-    // exhausted peer budget → its OWN passage status (not a 'blocked' + blocker)
+    // exhausted peer budget → its own passage status (not a 'blocked' + blocker)
     // .why = by phase an exhausted peer review looks like ordinary review.peer (a calm
     //        push), but it is truly a human-wait: a halt(exhausted) where a human must
-    //        approve or extend. as its own status it maps direct to that halt with no
-    //        phase-inference. it is ephemeral — the next --as <status> supersedes it
-    //        (latest-entry-wins), so a stale exhausted never lingers.
+    //        approve or extend. it maps direct to that halt with no phase-inference,
+    //        and is ephemeral — the next --as <status> supersedes it (latest-entry-wins).
     // .note = writes the status directly (like malfunction/constraint), not via
     //         genStoneGuardBlockedEmit, which persists a 'blocked' status + blocker.
-    // 🔴 whose halt is this? (S12). the condition is a CONJUNCTION of three clauses, and
-    //    the first two are already above: every level terminal (`allTerminal`), and a lane
-    //    skipped for exhaustion. the third is asked here — does a live concession stand
-    //    against the current generation?
-    //
-    //    ⚠️ it asks for EVERY skipped lane, never any. one lane the driver never conceded
-    //       still awaits a human, so a concession-worded halt would name the wrong owner
-    //       and a driver who obeyed it would top up a budget and re-arrive into the same
-    //       wall — which is worse than the human wait it replaced.
-    //
-    //    .why = a driver that conceded, exhausted, and reached allTerminal is handed a
-    //           human halt whose remedy is its OWN lever. that is the adjacency
-    //           `rule.always.spend-own-levers-before-escalation` measures: "two remedies
-    //           rendered side by side with no owner column read as two human remedies,
-    //           and the driver's own lever is the one that gets surfaced upward."
-    //    🔴 the verdict is THREE-WAY, never two (F028/S14/S16). a `better` set never reaches
-    //       here (it fell through to the judge above). so at this point `concession` is either
-    //       `none` (an ordinary human wait) or `urgent` (needs a budget increase + a human warn).
+    // whose halt is this (S12)? the condition is a conjunction of three clauses: every
+    // level terminal, a lane skipped for exhaustion, and — asked here — does a live
+    // concession stand against the current generation? it asks about EVERY skipped
+    // lane, never any: one lane the driver never conceded still awaits a human, so a
+    // concession-worded halt would name the wrong owner and send a driver to top up a
+    // budget and re-arrive into the same wall (rule.always.spend-own-levers-before-escalation).
+    // the verdict is three-way (F028/S14/S16): a `better` set never reaches here (it
+    // fell through above), so `concession` here is either `none` or `urgent`.
     const exhaustedReason = genRouteGuardExhaustedReason({
       slugs: exhaustionCheck.skippedSlugs,
       concession,
     });
 
-    // detect a malfunction/constraint that UNLOCKED and broke in this SAME pass — a higher
-    // level that ran the instant the exhausted lower level went terminal.
-    // .why = the guard has three gates (malfunction > constraint > exhaustion) that can concur;
-    //        a halt that named only the exhaustion (with only budget/approve remedies) would
-    //        send a human down a path that hits a SECOND, unwarned block on re-arrive — the
-    //        malfunction still stands. so when a concurrent failure exists, ONE halt names every
-    //        reason + persists the highest-precedence status, and the render/replay surface
-    //        every remedy at once.
-    // .note = only REVIEW failures can concur here: judges never ran (the exhaustion halt returns
-    //         before them), so a concurrent break is always a higher review level that unlocked.
-    //         a review at an overruled level is forgiven (the human waved it through).
-    const concurrentMalfunctions = reviewArtifacts.filter(
-      (r) => r.exitClass === 'malfunction' && !isReviewLevelOverruled(r.index),
-    );
-    const concurrentConstraints = reviewArtifacts.filter(
-      (r) =>
-        r.exitClass === 'constraint' &&
-        r.blockers === 0 &&
-        !isReviewLevelOverruled(r.index),
-    );
+    // detect a malfunction/constraint that unlocked and broke in this same pass — a
+    // higher level that ran the instant the exhausted lower level went terminal.
+    // .why = the guard has three gates (malfunction > constraint > exhaustion) that can
+    //        concur; a halt that named only the exhaustion would send a human down a
+    //        path that hits a second, unwarned block on re-arrive. so when a concurrent
+    //        failure exists, one halt names every reason and persists the
+    //        highest-precedence status.
+    // .note = only review failures can concur here: judges never ran (the exhaustion
+    //         halt returns before them), so a concurrent break is always a higher
+    //         review level that unlocked. a review at an overruled level is forgiven.
+    const concurrentMalfunctions = getAllReviewMalfunctions({
+      reviews: reviewArtifacts,
+      isLevelOverruled: isReviewLevelOverruled,
+    });
+    const concurrentConstraints = getAllReviewConstraints({
+      reviews: reviewArtifacts,
+      isLevelOverruled: isReviewLevelOverruled,
+    });
     const hasConcurrentMalfunction = concurrentMalfunctions.length > 0;
     const hasConcurrentConstraint = concurrentConstraints.length > 0;
 
     if (hasConcurrentMalfunction || hasConcurrentConstraint) {
-      // precedence: malfunction outranks constraint outranks exhaustion — the highest drives
-      // the persisted status + the emit's headline passage kind
+      // precedence: malfunction outranks constraint outranks exhaustion — the highest
+      // drives the persisted status + the emit's headline passage kind
       const passage = hasConcurrentMalfunction ? 'malfunction' : 'blocked';
 
-      // name every concurrent reason in precedence order, exhaustion last — the render
-      // (additive options) + the replay both key off this ONE combined reason string
-      const reasonParts: string[] = [];
-      if (hasConcurrentMalfunction)
-        reasonParts.push('reviewer or judge malfunctioned');
-      if (hasConcurrentConstraint) reasonParts.push('reviewer constraint');
-      reasonParts.push(exhaustedReason);
-      const combinedReason = reasonParts.join('; ');
-
-      // persist the highest-precedence status + the FULL combined reason, so the onBoot/onStop
-      // replay reconstructs every reason + remedy (not the bare malfunction escalation alone)
-      await setPassageReport({
-        report: new PassageReport({
-          stone: stoneMatched.name,
-          status: passage === 'malfunction' ? 'malfunction' : 'blocked',
-          reason: combinedReason,
-        }),
-        route: input.route,
+      // name every concurrent reason in precedence order, exhaustion last — the
+      // render and the replay both key off this one combined reason string
+      const combinedReason = asGuardHaltCombinedReason({
+        hasMalfunction: hasConcurrentMalfunction,
+        hasConstraint: hasConcurrentConstraint,
+        exhaustedReason,
       });
 
-      // collect the broken reviewers' detail into a stderr bucket (same shape the standalone
-      // malfunction/constraint gates emit)
+      // persist the highest-precedence status + the full combined reason, so the
+      // onBoot/onStop replay reconstructs every reason + remedy
+      await setRoundOutput(() =>
+        setPassageReport({
+          report: new PassageReport({
+            stone: stoneMatched.name,
+            status: passage === 'malfunction' ? 'malfunction' : 'blocked',
+            reason: combinedReason,
+          }),
+          route: input.route,
+        }),
+      );
+
+      // collect the broken reviewers' detail into a stderr bucket (same shape the
+      // standalone malfunction/constraint gates emit)
       const stderrBlocks = await Promise.all(
         [...concurrentMalfunctions, ...concurrentConstraints].map((review) =>
           formatArtifactStderrBlock({
@@ -772,22 +824,18 @@ export const setStoneAsPassed = async (
       };
     }
 
-    // pure exhaustion (no concurrent failure) → its OWN passage status (not a 'blocked' + blocker)
-    // .why = by phase an exhausted peer review looks like ordinary review.peer (a calm
-    //        push), but it is truly a human-wait: a halt(exhausted) where a human must
-    //        approve or extend. as its own status it maps direct to that halt with no
-    //        phase-inference. it is ephemeral — the next --as <status> supersedes it
-    //        (latest-entry-wins), so a stale exhausted never lingers.
-    // .note = writes the status directly (like malfunction/constraint), not via
-    //         genStoneGuardBlockedEmit, which persists a 'blocked' status + blocker.
-    await setPassageReport({
-      report: new PassageReport({
-        stone: stoneMatched.name,
-        status: 'exhausted',
-        reason: exhaustedReason,
+    // pure exhaustion (no concurrent failure) → its own passage status
+    // .note = writes the status directly, not via genStoneGuardBlockedEmit
+    await setRoundOutput(() =>
+      setPassageReport({
+        report: new PassageReport({
+          stone: stoneMatched.name,
+          status: 'exhausted',
+          reason: exhaustedReason,
+        }),
+        route: input.route,
       }),
-      route: input.route,
-    });
+    );
 
     return {
       passed: false,
@@ -823,38 +871,52 @@ export const setStoneAsPassed = async (
         )
       : [];
 
-  // a judge is forgiven ONLY when the human overruled the judge rung AND that judge malfunctioned.
-  // .why = the single per-judge forgiveness rule that the malfunction halt, the passage gate
-  //        (allJudgesPassed), the failed-judge tally, and the tree display all read — so none can
-  //        drift apart. a rung overrule forgives a broken judge (a malfunction), never a co-judge
-  //        that legitimately holds (e.g. approved? still awaits sign-off, its own constraint exit).
-  //        that scope is the "one gate, not the corridor" invariant at the judge tier
-  //        (define.review.human-forgiveness.md; rule.require.single-source-of-truth-for-render).
+  // a judge is forgiven only when the human overruled the judge rung and that judge
+  // malfunctioned — the single per-judge forgiveness rule every consumer reads, so a
+  // rung overrule forgives a broken judge but never a co-judge that legitimately holds
+  // (e.g. approved? still awaiting sign-off) — the "one gate, not the corridor"
+  // invariant at the judge tier (define.review.human-forgiveness.md).
   const isJudgeForgivenByRung = (
     judge: RouteStoneGuardJudgeArtifact,
   ): boolean => judgeRungForgiven && judge.exitClass === 'malfunction';
 
   // check for malfunctions (exit code != 0 and != 2)
   // .note = a malfunction at an overruled level is forgiven (human waved it through)
-  const reviewMalfunctions = reviewArtifacts.filter(
-    (r) => r.exitClass === 'malfunction' && !isReviewLevelOverruled(r.index),
-  );
-  const judgeMalfunctions = judgeArtifacts.filter(
-    (judge) =>
-      judge.exitClass === 'malfunction' && !isJudgeForgivenByRung(judge),
-  );
+  const reviewMalfunctions = getAllReviewMalfunctions({
+    reviews: reviewArtifacts,
+    isLevelOverruled: isReviewLevelOverruled,
+  });
+  const judgeMalfunctions = getAllJudgeMalfunctions({
+    judges: judgeArtifacts,
+    isForgiven: isJudgeForgivenByRung,
+  });
   const hasMalfunction =
     reviewMalfunctions.length > 0 || judgeMalfunctions.length > 0;
 
   if (hasMalfunction) {
-    // record malfunction status in passage.jsonl
-    await setPassageReport({
-      report: new PassageReport({
-        stone: stoneMatched.name,
-        status: 'malfunction',
+    // record malfunction status in passage.jsonl, with which lanes broke and why
+    // .why = a malfunction is often partial; every later surface (route.drive on stop and on
+    //        boot) reads only this record, so without the lanes it can say no more than
+    //        "it broke" and misroutes driver work to a human
+    const malfunctionReason = asGuardMalfunctionReason({
+      reviews: reviewMalfunctions,
+      judges: judgeMalfunctions,
+      reviewTotal: reviewArtifacts.length,
+      rejectedTotal: getOneRejectedUnforgivenTotal({
+        reviews: reviewArtifacts,
+        isLevelOverruled: isReviewLevelOverruled,
       }),
-      route: input.route,
     });
+    await setRoundOutput(() =>
+      setPassageReport({
+        report: new PassageReport({
+          stone: stoneMatched.name,
+          status: 'malfunction',
+          reason: malfunctionReason,
+        }),
+        route: input.route,
+      }),
+    );
 
     // build guard data for output
     const guardData = computeGuardData({
@@ -905,7 +967,8 @@ export const setStoneAsPassed = async (
           stone: stoneMatched.name,
           action: 'passed',
           passage: 'malfunction',
-          reason: 'reviewer or judge malfunctioned',
+          // the whole reason — the tree shows its header, and names each broken part beneath
+          reason: malfunctionReason || 'reviewer or judge malfunctioned',
           guard: guardData,
         }),
         stderr: joinArtifactStderrBlocks([
@@ -920,23 +983,28 @@ export const setStoneAsPassed = async (
   // .note = exit 2 with blockers = review completed, found issues (not a constraint)
   // .note = exit 2 without blockers = genuine constraint (e.g., absent API key)
   // .note = a constraint at an overruled level is forgiven (human waved it through)
-  const reviewConstraints = reviewArtifacts.filter(
-    (r) =>
-      r.exitClass === 'constraint' &&
-      r.blockers === 0 &&
-      !isReviewLevelOverruled(r.index),
-  );
+  const reviewConstraints = getAllReviewConstraints({
+    reviews: reviewArtifacts,
+    isLevelOverruled: isReviewLevelOverruled,
+  });
   const hasConstraint = reviewConstraints.length > 0;
 
   if (hasConstraint) {
-    // record blocked status in passage.jsonl
-    await setPassageReport({
-      report: new PassageReport({
-        stone: stoneMatched.name,
-        status: 'blocked',
+    // record blocked status in passage.jsonl, with the guard blocker that names it
+    // .note = never a bare `blocked` row: a row with no blocker is the driver's own wall
+    //         (`--as blocked`), and the drive surfaces would halt it as one and demand an
+    //         articulation the driver never wrote
+    await setRoundOutput(() =>
+      setPassageReport({
+        report: new PassageReport({
+          stone: stoneMatched.name,
+          status: 'blocked',
+          blocker: 'review.peer.constraint',
+          reason: 'reviewer constraint',
+        }),
+        route: input.route,
       }),
-      route: input.route,
-    });
+    );
 
     // build guard data for output
     const guardDataForConstraint = computeGuardData({
@@ -949,6 +1017,11 @@ export const setStoneAsPassed = async (
       gitRoot,
       peerMeters,
       judgeRungForgiven,
+    });
+
+    // the lever each refusal named, so the halt offers a partition only to an overflow
+    const constraintLever = await getOneRouteGuardReviewPeerConstraintLever({
+      paths: reviewConstraints.map((review) => review.path),
     });
 
     // collect constraint details for stderr
@@ -977,7 +1050,7 @@ export const setStoneAsPassed = async (
           action: 'passed',
           passage: 'blocked',
           reason: 'reviewer constraint',
-          guard: guardDataForConstraint,
+          guard: { ...guardDataForConstraint, constraintLever },
         }),
         stderr: joinArtifactStderrBlocks(stderrBlocks),
       }),
@@ -997,10 +1070,11 @@ export const setStoneAsPassed = async (
     judgeRungForgiven,
   });
 
-  // check if all judges pass — each judge either passed on merit OR was forgiven per-judge by a
-  // rung overrule (a malfunction only). a stone-wide `judgeRungForgiven || every(passed)` would
-  // forgive an awaited approval too, the skeleton-key defect this behavior exists to close, one
-  // tier up. scope forgiveness to the malfunction via the shared predicate above.
+  // check if all judges pass — each judge either passed on merit or was forgiven
+  // per-judge by a rung overrule (a malfunction only). a stone-wide
+  // `judgeRungForgiven || every(passed)` would also forgive an awaited approval, the
+  // skeleton-key defect this behavior closes one tier up. scope stays to the malfunction
+  // via the shared predicate above.
   const allJudgesPassed = judgeArtifacts.every(
     (judge) => judge.passed || isJudgeForgivenByRung(judge),
   );
@@ -1008,41 +1082,34 @@ export const setStoneAsPassed = async (
   if (allJudgesPassed) {
     // gate: peer reviews must be absorbed before passage
     // .why = a driver may not progress until it has written a .taken response to
-    //        every live peer critique that carries blockers (the wish)
-    // .note = slots BETWEEN allJudgesPassed and setStonePassage so it runs only
-    //         when judges would pass, and BEFORE the report is cleared below
-    // .note = 🔴 BOTH gates stay. the entrance gate above catches debt carried INTO
-    //         a round; this one catches debt created BY it. remove this and a driver
-    //         passes on the very critique it just received — the entrance gate cannot
-    //         see a given that did not exist when it ran
+    //        every live peer critique that carries blockers
+    // .note = slots between allJudgesPassed and setStonePassage so it runs only when
+    //         judges would pass, and before the report is cleared below.
+    //         both gates stay: the entrance gate above catches debt carried into a
+    //         round; this one catches debt created by it — a given that did not exist
+    //         when the entrance gate ran
 
     // forgive feedbackAbsorption for reviewers at an overruled level
-    // .why = an admin escape (--as overruled / --as forced) must not be re-gated
-    //        by a requirement a driver must satisfy; the human took responsibility
-    //        for the passage, so a waved-through level's critique needs no .taken
-    //        (design-note B6; mirrors the malfunction/constraint per-level forgiveness)
-    // read the ONE source of truth for "feedbackUnabsorbed AND not forgiven by an overrule" — the
-    // same primitive the overrule short-circuits (setStoneAsOverruled / setStoneAsForced via
-    // getStoneGuardOverruleTarget) read — so the passage gate cannot drift from them on which
-    // reviewers a waved level forgives. this is the exact seam the whole behavior exists to close:
-    // the forgiveness rule lives in one place, not hand-rolled here and there.
-    // .note = it carries the FULL record, so the reply-prompt renders straight from it.
-    //         both gates name their reviewers from this ONE read — there is no second
-    //         narrow for them to drift on.
+    // .why = an admin escape (--as overruled / --as forced) must not be re-gated by a
+    //        requirement a driver must satisfy; the human took responsibility for the
+    //        passage, so a waved-through level's critique needs no .taken
+    //        (design-note B6; mirrors the malfunction/constraint per-level forgiveness).
+    //        reads the one source of truth for "unabsorbed and not forgiven by an
+    //        overrule" — the same primitive the overrule short-circuits
+    //        (setStoneAsOverruled / setStoneAsForced via getOneStoneGuardOverruleTarget)
+    //        reads, so this gate cannot drift from them on which reviewers a waved
+    //        level forgives.
     const feedbackUnabsorbedToBlock =
-      await getStoneGuardReviewPeerFeedbackUnabsorbedUnforgiven({
+      await getAllStoneGuardReviewPeerFeedbackUnabsorbedUnforgiven({
         stone: stoneMatched,
         route: input.route,
       });
 
     if (feedbackUnabsorbedToBlock.length > 0) {
-      // .note = no onGuardHalted here — the feedbackAbsorption gate runs only inside
-      //         allJudgesPassed, so the judge event already closed the tree; the
-      //         reply-prompt below states the halt reason. a redundant onGuardHalted
-      //         would append a second └─ terminator after the judge.
-
-      // blocked on absent peer feedbackAbsorption — persist + return via the shared tail
-      return genStoneGuardBlockedEmit({
+      // no onGuardHalted here — the feedbackAbsorption gate runs only inside
+      // allJudgesPassed, so the judge event already closed the tree; the
+      // reply-prompt below states the halt reason
+      return genRoundBlockedEmit({
         stone: stoneMatched.name,
         route: input.route,
         blocker: 'review.peer.unabsorbed',
@@ -1064,7 +1131,9 @@ export const setStoneAsPassed = async (
       });
     }
 
-    await setStonePassage({ stone: stoneMatched, route: input.route });
+    await setRoundOutput(() =>
+      setStonePassage({ stone: stoneMatched, route: input.route }),
+    );
 
     // clear blocked triggers for this stone and all earlier stones
     await clearBlockedTriggersUpTo({
@@ -1109,15 +1178,14 @@ export const setStoneAsPassed = async (
     };
   }
 
-  // collect rejection reasons — a judge forgiven by a rung overrule (a malfunction the human
-  // waved) is no longer a failure, so it drops out; only a judge that genuinely holds (e.g.
-  // approved? that awaits sign-off) stays, so the blocked reason names the real gate, not the crash
-  const failedJudges = judgeArtifacts.filter(
-    (judge) => !judge.passed && !isJudgeForgivenByRung(judge),
-  );
-  const reasons = failedJudges
-    .map((j) => j.reason || `judge ${j.index} failed`)
-    .join('; ');
+  // collect rejection reasons — a judge forgiven by a rung overrule (a malfunction the
+  // human waved) is no longer a failure, so it drops out; only a judge that
+  // genuinely holds stays, so the blocked reason names the real gate, not the crash
+  const failedJudges = getAllFailedJudges({
+    judges: judgeArtifacts,
+    isForgiven: isJudgeForgivenByRung,
+  });
+  const reasons = asFailedJudgeReasons({ judges: failedJudges });
 
   // determine blocker type from failed judges
   const blocker = computeBlockedOn({
@@ -1139,7 +1207,7 @@ export const setStoneAsPassed = async (
   );
 
   // blocked on failed judges — persist + return via the shared blocked tail
-  return genStoneGuardBlockedEmit({
+  return genRoundBlockedEmit({
     stone: stoneMatched.name,
     route: input.route,
     blocker,
@@ -1175,10 +1243,10 @@ const computeGuardData = (input: {
   route: string;
   gitRoot: string;
   peerMeters?: GuardPeerMeterStatus[];
-  // whether the human overruled the judge rung (JUDGE_LEVEL)
-  // .why = a forgiven judge must read "overruled ✓ — forgiven by human" in the tree, not a
-  //        bare "✗ blocked" that contradicts the top-line `passage = overruled` (the judge-tier
-  //        twin of the peer-level overrule display; rule.require.single-source-of-truth-for-render)
+  /** whether the human overruled the judge rung (JUDGE_LEVEL), so a forgiven judge
+   *  reads "overruled ✓ — forgiven by human" rather than a bare "✗ blocked" that
+   *  contradicts the top-line `passage = overruled`
+   *  (rule.require.single-source-of-truth-for-render) */
   judgeRungForgiven?: boolean;
 }) => {
   // find events that completed (have endedAt)
@@ -1194,8 +1262,8 @@ const computeGuardData = (input: {
     ? getGuardPeerReviews(input.stone.guard)
     : [];
 
-  // use original artifact globs for display (not expanded file paths)
-  // this prevents 700+ lines of output when guard declares src/**/*
+  // use original artifact globs for display (not expanded file paths) — otherwise a
+  // guard declaring src/**/* would print hundreds of lines
   const artifactGlobs = input.stone.guard?.artifacts ?? [];
 
   return {
@@ -1206,7 +1274,7 @@ const computeGuardData = (input: {
         (e) => e.step.index === r.index - 1,
       );
       const isCached = !event;
-      // for cached reviews, use duration from artifact (parsed from stdout)
+      // for cached reviews, use duration from artifact (parsed from stdout);
       // for fresh reviews, use duration from event time
       const durationSec = isCached
         ? r.durationMs !== null
@@ -1219,7 +1287,7 @@ const computeGuardData = (input: {
       const peer = peerReview
         ? {
             slug: peerReview.slug,
-            level: peerReview.level ?? 1,
+            level: peerReview.level,
             rounds:
               input.peerMeters?.find((m) => m.slug === peerReview.slug)
                 ?.rounds ?? 0,
@@ -1237,6 +1305,7 @@ const computeGuardData = (input: {
         blockers: r.blockers,
         nitpicks: r.nitpicks,
         tallier: r.tallier,
+        talliedBy: r.talliedBy,
         path: asGuardDisplayPath({ pathAbsolute: r.path, root: input.gitRoot }),
         exitClass: r.exitClass,
         peer,
@@ -1248,9 +1317,9 @@ const computeGuardData = (input: {
       );
       const durationSec = computeDuration(event);
       const isCached = !event;
-      // a judge reads as overruled only when the rung was forgiven AND this judge malfunctioned —
-      // the same per-judge scope the passage gate uses (allJudgesPassed), so a co-judge that
-      // legitimately holds (e.g. approved? awaiting sign-off) never falsely paints as forgiven
+      // a judge reads as overruled only when the rung was forgiven AND this judge
+      // malfunctioned — the same per-judge scope allJudgesPassed uses, so a co-judge
+      // that legitimately holds never falsely paints as forgiven
       const overruled =
         (input.judgeRungForgiven ?? false) && j.exitClass === 'malfunction';
       return {
@@ -1262,24 +1331,17 @@ const computeGuardData = (input: {
         durationSec,
         passed: j.passed,
         reason: j.reason,
-        // 🔴 the SAME root as the review branch above, and as
-        //    `getAllReviewPeerMeterStatuses` — a diverged root here would let one
-        //    `computeGuardData` return carry two path-forms for one kind of artifact,
-        //    keyed on which array a path happened to land in.
-        //
-        //    `rule.require.single-source-of-truth-for-render` governs the DATA, not
-        //    merely today's surface: a later renderer or snapshot that printed both forms
-        //    would show one artifact under two shapes with no signal which is right. the
-        //    shared cast exists so no call site re-derives the root; two roots from one
-        //    function reopens exactly the knob it was extracted to remove.
+        // the same root as the review branch above, and as
+        // getAllReviewPeerMeterStatuses, so one artifact never carries two path forms
+        // keyed on which array it lands in
+        // (rule.require.single-source-of-truth-for-render)
         path: asGuardDisplayPath({ pathAbsolute: j.path, root: input.gitRoot }),
         overruled,
       };
     }),
-    // use peerMeters as-is (source of truth for verdicts)
-    // .note = getAllReviewPeerMeterStatuses already computed verdict
-    //         with full context (exitClass, nitpicks, allowBlockers, allowNitpicks)
-    // @see rule.require.single-source-of-truth-for-render
+    // peerMeters as-is (source of truth — getAllReviewPeerMeterStatuses already
+    // computed verdict with full context: exitClass, nitpicks, allowBlockers,
+    // allowNitpicks)
     peerMeters: input.peerMeters,
   };
 };

@@ -4,6 +4,7 @@ import type { RouteStone } from '@src/domain.objects/Driver/RouteStone';
 
 import { enumRouteGuardJudgeFiles } from '../judge/enumRouteGuardJudgeFiles';
 import { enumRouteGuardReviewPeerFiles } from '../review/peer/enumRouteGuardReviewPeerFiles';
+import { asGuardArtifactIteration } from './asGuardArtifactIteration';
 
 /**
  * .what = gets the max iteration number across all guard artifacts for a stone
@@ -25,20 +26,12 @@ export const getMaxStoneGuardIteration = async (input: {
     enumRouteGuardJudgeFiles({ route: input.route, stone: input.stone.name }),
   ]);
 
-  const allFiles = [...reviewFiles, ...judgeFiles];
+  // read each artifact's iteration marker: `.iNNN.` on a review, `.iNNNp` on a judge
+  const iterations = [...reviewFiles, ...judgeFiles].map(
+    (filePath) =>
+      asGuardArtifactIteration({ filename: path.basename(filePath) }) ?? 0,
+  );
 
-  // parse iteration from filenames: .i$iter.
-  let maxIteration = 0;
-  for (const filePath of allFiles) {
-    const filename = path.basename(filePath);
-    const iterMatch = filename.match(/\.i(\d+)\./);
-    if (iterMatch?.[1]) {
-      const iter = parseInt(iterMatch[1], 10);
-      if (iter > maxIteration) {
-        maxIteration = iter;
-      }
-    }
-  }
-
-  return maxIteration;
+  // the max across all, or 0 when the stone has no artifacts yet
+  return Math.max(0, ...iterations);
 };

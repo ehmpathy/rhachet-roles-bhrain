@@ -212,13 +212,13 @@ describe('setStoneAsRewound', () => {
     });
 
     when('[t0] setStoneAsRewound is called with nonexistent pattern', () => {
-      then('throws BadRequestError', async () => {
+      then('throws a refusal that names the act and the pattern', async () => {
         await expect(
           setStoneAsRewound(
             { stone: 'nonexistent', route: tempDir },
             mockContext,
           ),
-        ).rejects.toThrow('stone not found');
+        ).rejects.toThrow('stone not found for --as rewound: nonexistent');
       });
     });
   });

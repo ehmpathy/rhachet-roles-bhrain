@@ -32,16 +32,16 @@ exports[`driver.route.peer-concurrency.acceptance given: [case10] a leaking leve
    │   └─ taken: .reviews/peer/1.vision._.review.i001.8739656801d5e77f22.r004._.taken.by_self.l1-d.md
    │
    ├─ r5: l3-a (l3, 0/5)
-   │   └─ awaits arrival
+   │   └─ awaits l1 terminal
    │
    ├─ r6: l3-b (l3, 0/5)
-   │   └─ awaits arrival
+   │   └─ awaits l1 terminal
    │
    ├─ r7: l3-c (l3, 0/5)
-   │   └─ awaits arrival
+   │   └─ awaits l1 terminal
    │
    ├─ r8: l3-x (l3, 0/5)
-   │   └─ awaits arrival
+   │   └─ awaits l1 terminal
    │
    └─ ✗ judge.1 - blocked [TIME]
 
@@ -124,13 +124,13 @@ exports[`driver.route.peer-concurrency.acceptance given: [journey] a level of fo
    │   └─ taken: .reviews/peer/1.vision._.review.i001.8739656801d5e77f22.r004._.taken.by_self.l1-d.md
    │
    ├─ r5: l3-a (l3, 0/5)
-   │   └─ awaits arrival
+   │   └─ awaits l1 terminal
    │
    ├─ r6: l3-b (l3, 0/5)
-   │   └─ awaits arrival
+   │   └─ awaits l1 terminal
    │
    ├─ r7: l3-c (l3, 0/5)
-   │   └─ awaits arrival
+   │   └─ awaits l1 terminal
    │
    └─ ✗ judge.1 - blocked [TIME]
 
@@ -375,7 +375,17 @@ exports[`driver.route.peer-concurrency.acceptance given: [journey] a level of fo
 🗿 route.stone.set
    ├─ stone = 1.vision
    ├─ passage = malfunction
-   ├─ reason = reviewer or judge malfunctioned
+   ├─ reason = 1 of 7 reviewers malfunctioned; 3 reviewers rejected and await your answer
+   ├─ still yours to clear
+   │  ├─ 💥 lane l1-d (r4) broke
+   │  │  └─ cause = exit code 1 (unknown)
+   │  └─ next
+   │     ├─ 1. read each given for its cause, and fix what you can
+   │     ├─ 2. answer each broken lane, like a rejected one
+   │     │  └─ rhx route.stone.set --stone 1.vision --as absorbed --that l1-d
+   │     ├─ 3. re-arrive
+   │     │  └─ rhx route.stone.set --stone 1.vision --as arrived
+   │     └─ ask a human only for a grant you cannot make (an absent credential, a permission, etc)
    ├─ options
    │  ├─ converge with the reviewer — yours to run, and the levels above stay unlocked
    │  │  └─ rhx route.stone.set --stone 1.vision --as absorbed --that <reviewer>
@@ -430,7 +440,7 @@ exports[`driver.route.peer-concurrency.acceptance given: [journey] a level of fo
       └─ judges
           └─ j1: rhx route.stone.judge --mechanism reviewed? --stone $stone --route $route --allow-blockers 0 --allow-nitpicks 1
               ├─ finished [TIME] ✗
-              └─ reason: blockers exceed threshold (3 > 0)
+              └─ reason: blockers exceed threshold (4 > 0)
 "
 `;
 
@@ -484,12 +494,22 @@ exports[`driver.route.peer-concurrency.acceptance given: [journey] a level of fo
    │   ├─ given: .reviews/peer/1.vision._.review.i003.457fd5ef46e053a35e.r007._.given.by_peer.l3-c.md
    │   └─ taken: .reviews/peer/1.vision._.review.i003.457fd5ef46e053a35e.r007._.taken.by_self.l3-c.md
    │
-   └─ ✓ judge.1 - allowed [TIME]
+   └─ ✗ judge.1 - blocked [TIME]
 
 🗿 route.stone.set
    ├─ stone = 1.vision
    ├─ passage = malfunction
-   ├─ reason = reviewer or judge malfunctioned
+   ├─ reason = 1 of 7 reviewers malfunctioned; 3 reviewers rejected and await your answer
+   ├─ still yours to clear
+   │  ├─ 💥 lane l1-d (r4) broke
+   │  │  └─ cause = exit code 1 (unknown)
+   │  └─ next
+   │     ├─ 1. read each given for its cause, and fix what you can
+   │     ├─ 2. answer each broken lane, like a rejected one
+   │     │  └─ rhx route.stone.set --stone 1.vision --as absorbed --that l1-d
+   │     ├─ 3. re-arrive
+   │     │  └─ rhx route.stone.set --stone 1.vision --as arrived
+   │     └─ ask a human only for a grant you cannot make (an absent credential, a permission, etc)
    ├─ options
    │  ├─ converge with the reviewer — yours to run, and the levels above stay unlocked
    │  │  └─ rhx route.stone.set --stone 1.vision --as absorbed --that <reviewer>
@@ -543,7 +563,8 @@ exports[`driver.route.peer-concurrency.acceptance given: [journey] a level of fo
       │       └─ taken: .reviews/peer/1.vision._.review.i003.457fd5ef46e053a35e.r007._.taken.by_self.l3-c.md
       └─ judges
           └─ j1: rhx route.stone.judge --mechanism reviewed? --stone $stone --route $route --allow-blockers 0 --allow-nitpicks 1
-              └─ finished [TIME] ✓
+              ├─ finished [TIME] ✗
+              └─ reason: blockers exceed threshold (1 > 0)
 "
 `;
 
@@ -617,7 +638,17 @@ exports[`driver.route.peer-concurrency.acceptance given: [journey] a level of fo
 🗿 route.stone.set
    ├─ stone = 1.vision
    ├─ passage = malfunction
-   ├─ reason = reviewer or judge malfunctioned
+   ├─ reason = 1 of 8 reviewers malfunctioned; 4 reviewers rejected and await your answer
+   ├─ still yours to clear
+   │  ├─ 💥 lane l1-d (r4) broke
+   │  │  └─ cause = exit code 1 (unknown)
+   │  └─ next
+   │     ├─ 1. read each given for its cause, and fix what you can
+   │     ├─ 2. answer each broken lane, like a rejected one
+   │     │  └─ rhx route.stone.set --stone 1.vision --as absorbed --that l1-d
+   │     ├─ 3. re-arrive
+   │     │  └─ rhx route.stone.set --stone 1.vision --as arrived
+   │     └─ ask a human only for a grant you cannot make (an absent credential, a permission, etc)
    ├─ options
    │  ├─ converge with the reviewer — yours to run, and the levels above stay unlocked
    │  │  └─ rhx route.stone.set --stone 1.vision --as absorbed --that <reviewer>
@@ -678,7 +709,7 @@ exports[`driver.route.peer-concurrency.acceptance given: [journey] a level of fo
       └─ judges
           └─ j1: rhx route.stone.judge --mechanism reviewed? --stone $stone --route $route --allow-blockers 0 --allow-nitpicks 1
               ├─ finished [TIME] ✗
-              └─ reason: blockers exceed threshold (1 > 0)
+              └─ reason: blockers exceed threshold (2 > 0)
 "
 `;
 

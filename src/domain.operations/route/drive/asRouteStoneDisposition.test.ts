@@ -102,6 +102,24 @@ const TEST_CASES: {
     expect: { of: 'push' },
   },
   {
+    // 🔴 by decision: a stance (`--as disputed` / `--as conceded`) is the driver's own lever
+    description: 'blocked + review.peer.undeclared → push',
+    given: { status: 'blocked', blocker: 'review.peer.undeclared' },
+    expect: { of: 'push' },
+  },
+  {
+    // 🔴 by decision: the repair is one `rhx route.guard.partition` command, the driver's own
+    description: 'blocked + review.peer.malpartitioned → push',
+    given: { status: 'blocked', blocker: 'review.peer.malpartitioned' },
+    expect: { of: 'push' },
+  },
+  {
+    // 🔴 by decision: a refusal prints its lever — a guard edit or a partition, the driver's own
+    description: 'blocked + review.peer.constraint → push',
+    given: { status: 'blocked', blocker: 'review.peer.constraint' },
+    expect: { of: 'push' },
+  },
+  {
     description: 'blocked + judge (non-approval) → push',
     given: { status: 'blocked', blocker: 'judge' },
     expect: { of: 'push' },
@@ -124,6 +142,11 @@ const TEST_CASES: {
   {
     description: 'absorbed → push (forward motion clears any prior blocker)',
     given: { status: 'absorbed', blocker: null },
+    expect: { of: 'push' },
+  },
+  {
+    description: 'inflight → push (forward motion clears any prior blocker)',
+    given: { status: 'inflight', blocker: null },
     expect: { of: 'push' },
   },
   {

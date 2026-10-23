@@ -1,0 +1,37 @@
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
+
+exports[`asReviewPartitionsMergedBody given: [case1] two partitions that share common targets when: [t0] the merged body is rendered then: the body matches the snapshot 1`] = `
+"## partition: review
+
+- targets: 40 narrow targets + 3 common targets (3 graded here, 0 read as context)
+- review: .behavior/x/.reviews/peer/.partition=1.review/r.md
+
+# blocker.1
+
+an absent guard
+
+## partition: route
+
+- targets: 7 narrow targets + 3 common targets (0 graded here, 3 read as context)
+- review: .behavior/x/.reviews/peer/.partition=2.route/r.md
+
+no concerns
+
+## partition: utils
+
+- targets: 2 narrow targets
+- review: (none — the partition failed; see below)
+
+the partition failed: timeout
+"
+`;
+
+exports[`asReviewPartitionsMergedBody given: [case2] a partition with exactly one narrow target when: [t0] the merged body is rendered then: the body matches the snapshot 1`] = `
+"## partition: solo
+
+- targets: 1 narrow target
+- review: .behavior/x/.reviews/peer/.partition=1.solo/r.md
+
+no concerns
+"
+`;

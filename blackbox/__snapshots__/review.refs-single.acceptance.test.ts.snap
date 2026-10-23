@@ -1,0 +1,14 @@
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
+
+exports[`review.refs-single.acceptance given: [case1] single ref file provided to review when: [t0] review skill invoked with --refs set to single file, attempt 1 then: the metrics.expected block matches its snapshot (computed before the brain) 1`] = `
+"🔭 metrics.expected
+   ├─ files
+   │  ├─ rules: 1
+   │  ├─ refs: 1
+   │  └─ targets: 1
+   ├─ tokens
+   │  ├─ estimate: 1,809
+   │  └─ context: 0.2%
+   └─ cost
+      └─ estimate: $0.000904700"
+`;

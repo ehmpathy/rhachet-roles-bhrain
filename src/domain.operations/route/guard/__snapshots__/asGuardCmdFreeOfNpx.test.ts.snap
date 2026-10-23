@@ -1,0 +1,17 @@
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
+
+exports[`asGuardCmdFreeOfNpx npx rhachet is refused, and the $rhachet alias is named 1`] = `
+"✋ ConstraintError: guard uses npx rhachet which causes latency and cross-platform issues
+
+{
+  "hint": "use $rhachet alias instead (expands to ./node_modules/.bin/rhachet)"
+}"
+`;
+
+exports[`asGuardCmdFreeOfNpx npx rhx is refused, and the $rhx alias is named 1`] = `
+"✋ ConstraintError: guard uses npx rhx which causes latency and cross-platform issues
+
+{
+  "hint": "use $rhx alias instead (expands to ./node_modules/.bin/rhx)"
+}"
+`;

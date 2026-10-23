@@ -1,0 +1,18 @@
+import type { LaneOrdinal } from '@src/domain.operations/review/meter/getAllLaneOrdinals';
+
+/**
+ * .what = whether a warmer ran on the lane of any of these runs, at or before it
+ * .why = the lapsed-cold caveat picks its advice by it, and every axis of the meter
+ *        must pick the same advice for one lane. a warmer's ledger sits on the run
+ *        that spawned it, so a per-bucket count of warmers answered "no" for the
+ *        follower round of a warmed lane — and that round row advised `--warmer`
+ *        while the lane row of the same report said a warmer already ran
+ *
+ * .note = reads the lane flag the ordinal fold already carries
+ *         (`LaneOrdinal.warmed`), so the lane definition lives once
+ */
+export const isLaneWarmedOfRuns = (input: {
+  runs: Array<{ dir: string }>;
+  ordinals: Map<string, LaneOrdinal>;
+}): boolean =>
+  input.runs.some((run) => input.ordinals.get(run.dir)?.warmed === true);

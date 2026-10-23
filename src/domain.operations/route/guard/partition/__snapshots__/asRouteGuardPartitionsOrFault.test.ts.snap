@@ -1,0 +1,13 @@
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
+
+exports[`asRouteGuardPartitionsOrFault refuses a byPeer that is a list, not a record 1`] = `"not the shape the tool writes — expected { all: string[] | null, byPeer: Record<string, string[]> }"`;
+
+exports[`asRouteGuardPartitionsOrFault refuses a declaration with no byPeer record 1`] = `"not the shape the tool writes — expected { all: string[] | null, byPeer: Record<string, string[]> }"`;
+
+exports[`asRouteGuardPartitionsOrFault refuses an @all set that holds a non-string 1`] = `"not the shape the tool writes — expected { all: string[] | null, byPeer: Record<string, string[]> }"`;
+
+exports[`asRouteGuardPartitionsOrFault refuses an override that holds a non-string 1`] = `"not the shape the tool writes — expected { all: string[] | null, byPeer: Record<string, string[]> }"`;
+
+exports[`asRouteGuardPartitionsOrFault refuses content that is not json, and names the parser cause 1`] = `"not json — Expected property name or '}' in JSON at position 2 (line 1 column 3)"`;
+
+exports[`asRouteGuardPartitionsOrFault refuses json that is not an object 1`] = `"not the shape the tool writes — expected { all: string[] | null, byPeer: Record<string, string[]> }"`;

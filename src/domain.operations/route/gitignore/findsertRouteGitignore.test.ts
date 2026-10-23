@@ -82,7 +82,7 @@ describe('findsertRouteGitignore', () => {
     when('[t0] findsert is called', () => {
       then('overwrites with correct content', async () => {
         const result = await findsertRouteGitignore({ route: tempDir });
-        expect(result.action).toEqual('created');
+        expect(result.action).toEqual('rewrote');
         const content = await fs.readFile(result.path, 'utf-8');
         expect(content).toContain('!passage.jsonl');
       });

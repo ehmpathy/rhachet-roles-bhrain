@@ -1,0 +1,19 @@
+{
+  "key": "f49bf120d4bc2deb",
+  "kind": "create",
+  "repo": {
+    "owner": "ehmpathy",
+    "name": "rhachet-roles-ehmpathy"
+  },
+  "exid": null,
+  "title": "feat(mechanic): rule.forbid.unexpected-defaults owes a cue for a default rendered as a runnable command",
+  "description": "## .what\nrule.forbid.unexpected-defaults has no cue for a defaulted value that is RENDERED as something the reader will RUN. its harm model is epistemic (a caller cannot tell absent from failed), and its examples are figures like customer.discount ?? 0.1.\n\nevidence: a review warmer printed a stop hint built from pid ?? 0, which rendered as \"stop: kill 0\". kill 0 signals the caller entire process group, so a driver who copy-pastes the one documented stop command terminates their own shell, editor, and the run that spawned the process. fixed and clamped downstream (negative assertions on kill 0 and kill followed by a digit, proven red by neuter).\n\n## .why\n- a guessed figure misleads a belief, recoverable; a guessed pid, path, url, id, or command is executed, often not recoverable\n- rule.require.errors-name-the-fix asks for a runnable next move, so the better that rule is honored, the more dangerous a bad default on that surface becomes. the two rules pull opposite ways on one line of stdout\n- the extant rule already covers the shape; it lacks the transfer cue for this sharper class\n\n## .shape of the fix\n- add a cue row to the .how list: does the defaulted value get rendered as something the reader will run? a ?? default in a path, url, pid, id, or shell command is worse than one in a figure. canonical case: pid ?? 0 renders kill 0\n- add a third blocker example with that case\n- add to .note: severity is set by what the default reaches. where a value flows to a copy-pasteable surface, an absent value renders absent and no command is offered (rule.require.safe-by-default)\n\ncaught in ehmpathy/rhachet-roles-bhrain .dream/v2026_09_25.reseed.a-nullish-default-that-renders-as-a-command-is-a-sharper-class.md",
+  "status": null,
+  "via": "gh.issues",
+  "auth": "as-human",
+  "idem": null,
+  "heldSeq": 17,
+  "recordStatus": "DELIVERED",
+  "reason": null,
+  "deliveredExid": "963"
+}

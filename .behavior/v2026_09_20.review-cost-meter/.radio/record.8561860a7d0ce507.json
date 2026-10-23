@@ -1,0 +1,21 @@
+{
+  "key": "8561860a7d0ce507",
+  "kind": "create",
+  "repo": {
+    "owner": "ehmpathy",
+    "name": "rhachet-brains-openrouter"
+  },
+  "exid": null,
+  "title": "fix(supply): the admitted-set path has no 429 hop",
+  "description": "## .what\n\na filtered slug with no `floor` takes `getOneAdmittedSetCompletion`, which sends ONE request\nwith `allow_fallbacks: false` and no retry. a 429 from the host openrouter picked fails the ask.\n\nthe floor walk (`getOneFloorCompletion`) hops to the next qualified endpoint on a 429 or a 404,\nso the two supply modes differ in resilience, and the slug gives no hint of that.\n\n## .why it hurts\n\nmeasured 2026-10-17 in rhachet-roles-bhrain CI: a live cache suite on\n`openrouter/deepseek/flash/speed=min100tps&privacy=full` failed every ask of one shard with\n`429 Provider returned error`. the same suite on the floor walk had hopped past throttles.\n\nand the floor is not a substitute for a cache-sensitive caller: it ranks by sticker input\nalone, so it lands on a cheap host that never caches (Makora/fp8, every round, cache read 0).\na caller who needs a warm prefix therefore has no supply mode that is both cache-sticky and\nthrottle-resilient.\n\n## .the shape of the fix\n\n1. in the admitted-set path, on a 429 (or 404), re-send with the throttled endpoint removed\n   from `only`, honor `retry-after`, and report each hop in `attempts` as the floor walk does\n2. refuse loud once the admitted set is empty, with the same funnel render\n3. clamp: a test with a stub openai client that returns 429 for the first admitted endpoint;\n   assert the second send excludes it and the reply is served\n4. related, owed separately: rank the floor by cache-effective input cost (or offer a\n   `cache=implicit` promise), so a cache-sensitive caller can keep the floor\n\n## .found\n\nrhachet-roles-bhrain @ beav/feat-review-cost-meter, release v0.41.0 publish run, 2026-10-17",
+  "status": null,
+  "via": "gh.issues",
+  "auth": "as-human",
+  "idem": null,
+  "heldAt": "2026-10-17",
+  "heldSeq": 32,
+  "recordStatus": "DELIVERED",
+  "reason": null,
+  "settledAt": "2026-10-17",
+  "deliveredExid": "21"
+}

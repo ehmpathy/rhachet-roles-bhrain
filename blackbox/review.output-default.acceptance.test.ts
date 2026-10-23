@@ -1,13 +1,16 @@
 import * as fs from 'fs/promises';
+import { UnexpectedCodePathError } from 'helpful-errors';
 import * as path from 'path';
 
 import { given, then, useThen, when } from 'test-fns';
+import { DEFAULT_TEST_BRAIN_VIA_CLI } from '@src/.test/genTestBrainContext';
 
 import {
   execAsync,
   genTempDirForRhachet,
   invokeReviewSkill,
 } from './.test/invokeReviewSkill';
+import { asReviewMetricsExpectedBlock } from './.test/invokeReviewBySkill';
 
 const ASSETS_DIR = path.join(__dirname, '.test/assets/codebase-mechanic');
 
@@ -43,7 +46,7 @@ describe('review.output-default.acceptance', () => {
           paths: 'src/clean.ts',
           focus: 'push',
           goal: 'representative',
-          brain: 'fireworks/deepseek/v4-flash',
+          brain: DEFAULT_TEST_BRAIN_VIA_CLI,
           cwd: tempDir,
         });
 
@@ -85,6 +88,11 @@ describe('review.output-default.acceptance', () => {
         expect(res.cli.stdout).toContain('.review/');
       });
 
+      then('the metrics.expected block matches its snapshot (computed before the brain)', () => {
+        // the scope tree and estimate are deterministic; the verdict summary is the brain's
+        expect(asReviewMetricsExpectedBlock({ stdout: res.cli.stdout })).toMatchSnapshot();
+      });
+
       then('.review/ directory is created', async () => {
         const reviewDir = path.join(res.tempDir, '.review');
         const stat = await fs.stat(reviewDir);
@@ -96,7 +104,13 @@ describe('review.output-default.acceptance', () => {
       });
 
       then('output file contains review content', async () => {
-        if (!res.outputPath) throw new Error('outputPath is null');
+        if (!res.outputPath)
+          throw new UnexpectedCodePathError(
+            'default output discovery found no review file',
+            {
+              hint: 'no .output.md under .review/<branch>/ — check the review completed and wrote its default artifact',
+            },
+          );
         const content = await fs.readFile(res.outputPath, 'utf-8');
         expect(content.length).toBeGreaterThan(0);
       });

@@ -1,0 +1,8 @@
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
+
+exports[`getAllReviewerLevels given: [case5] one malformed guard beside one healthy guard when: [t0] runs of both stones are joined then: the reason and fix a reader sees are pinned 1`] = `
+{
+  "fix": "repair the guard file as the reason names, then re-run",
+  "reason": "malformed — level must be a positive integer: reviewer "repo-rules" declares "0". write a whole number of 1 or more, or drop the key to take its default.",
+}
+`;

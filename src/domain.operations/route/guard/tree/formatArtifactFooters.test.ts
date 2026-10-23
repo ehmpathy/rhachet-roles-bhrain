@@ -120,7 +120,7 @@ describe('formatArtifactFooters', () => {
         tally: {
           blockers: 3,
           nitpicks: 1,
-          talliedBy: 'fireworks/deepseek/v4-flash',
+          talliedBy: 'openrouter/deepseek/flash',
         },
       });
 
@@ -133,7 +133,7 @@ describe('formatArtifactFooters', () => {
 
       then('the tallier line closes the tally', () => {
         expect(lines[3]).toEqual(
-          '   └─ tallied by reviewer@fireworks/deepseek/v4-flash',
+          '   └─ tallied by reviewer@openrouter/deepseek/flash',
         );
       });
 

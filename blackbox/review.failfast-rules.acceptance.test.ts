@@ -7,6 +7,8 @@ import {
   genTempDirForRhachet,
   invokeReviewSkill,
 } from './.test/invokeReviewSkill';
+import { asRedactedOutput } from './.test/asRedactedOutput';
+import { DEFAULT_TEST_BRAIN_VIA_CLI } from '@src/.test/genTestBrainContext';
 
 const ASSETS_DIR = path.join(__dirname, '.test/assets/codebase-mechanic');
 
@@ -38,7 +40,7 @@ describe('review.failfast-rules.acceptance', () => {
             output: outputPath,
             focus: 'push',
             goal: 'representative',
-            brain: 'fireworks/deepseek/v4-flash',
+            brain: DEFAULT_TEST_BRAIN_VIA_CLI,
             cwd: tempDir,
           });
 
@@ -53,8 +55,12 @@ describe('review.failfast-rules.acceptance', () => {
         },
       );
 
-      then('cli exits with non-zero code', async () => {
-        expect(res.cli.code).not.toEqual(0);
+      then('cli exits 2, a constraint the caller must fix', async () => {
+        expect(res.cli.code).toEqual(2);
+      });
+
+      then('the refusal renders whole', async () => {
+        expect(asRedactedOutput(res.cli.stderr)).toMatchSnapshot();
       });
 
       then('error message indicates rules glob was ineffective', async () => {
@@ -92,7 +98,7 @@ describe('review.failfast-rules.acceptance', () => {
             output: outputPath,
             focus: 'push',
             goal: 'representative',
-            brain: 'fireworks/deepseek/v4-flash',
+            brain: DEFAULT_TEST_BRAIN_VIA_CLI,
             cwd: tempDir,
           });
 
@@ -107,8 +113,12 @@ describe('review.failfast-rules.acceptance', () => {
         },
       );
 
-      then('cli exits with non-zero code', async () => {
-        expect(res.cli.code).not.toEqual(0);
+      then('cli exits 2, a constraint the caller must fix', async () => {
+        expect(res.cli.code).toEqual(2);
+      });
+
+      then('the refusal renders whole', async () => {
+        expect(asRedactedOutput(res.cli.stderr)).toMatchSnapshot();
       });
 
       then('error message indicates rules matched zero files', async () => {

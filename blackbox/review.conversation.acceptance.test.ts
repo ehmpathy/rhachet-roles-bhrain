@@ -1,12 +1,14 @@
 import * as fs from 'fs/promises';
 import * as path from 'path';
 import { given, then, useThen, when } from 'test-fns';
+import { DEFAULT_TEST_BRAIN_VIA_CLI } from '@src/.test/genTestBrainContext';
 
 import {
   execAsync,
   genTempDirForRhachet,
   invokeReviewSkill,
 } from './.test/invokeReviewSkill';
+import { asReviewMetricsExpectedBlock } from './.test/invokeReviewBySkill';
 
 const ASSETS_DIR = path.join(__dirname, '.test/assets/codebase-mechanic');
 
@@ -47,9 +49,20 @@ const seedConversation = async (cwd: string): Promise<string> => {
   return convoDir;
 };
 
+/**
+ * .what = config for probabilistic tests that invoke LLM brains
+ * .why = LLM responses can timeout or vary; retry ensures CI stability
+ *
+ * @see .agent/repo=.this/role=any/briefs/rule.require.repeatable-for-llm-tests.md
+ */
+const REPEATABLE_CONFIG = {
+  attempts: 3,
+  criteria: process.env.CI ? 'SOME' : 'EVERY',
+} as const;
+
 describe('review.conversation.acceptance', () => {
   given('[case1] a prior conversation threaded via --conversation', () => {
-    when('[t0] review runs with --conversation', () => {
+    when.repeatably(REPEATABLE_CONFIG)('[t0] review runs with --conversation', () => {
       const res = useThen('invoke review with a conversation glob', async () => {
         const tempDir = genTempDirForRhachet({
           slug: 'review-conversation-labeled',
@@ -67,7 +80,7 @@ describe('review.conversation.acceptance', () => {
           output: path.join(tempDir, 'review.md'),
           focus: 'push',
           goal: 'representative',
-          brain: 'fireworks/deepseek/v4-flash',
+          brain: DEFAULT_TEST_BRAIN_VIA_CLI,
           cwd: tempDir,
         });
         const prompt = await readLoggedPrompt(tempDir);
@@ -77,6 +90,11 @@ describe('review.conversation.acceptance', () => {
       then('the compiled prompt has its own labeled conversation section', () => {
         expect(res.prompt).toContain('## prior conversation');
         expect(res.prompt).toContain('<conversation>');
+      });
+
+      then('the metrics.expected block matches its snapshot (computed before the brain)', () => {
+        // the scope tree and estimate are deterministic; the verdict summary is the brain's
+        expect(asReviewMetricsExpectedBlock({ stdout: res.cli.stdout })).toMatchSnapshot();
       });
 
       then('the section carries BOTH the given critique and the taken reply', () => {
@@ -93,7 +111,7 @@ describe('review.conversation.acceptance', () => {
   });
 
   given('[case2] --conversation and --refs supplied together', () => {
-    when('[t0] review runs with both flags', () => {
+    when.repeatably(REPEATABLE_CONFIG)('[t0] review runs with both flags', () => {
       const res = useThen('invoke review with conversation + refs', async () => {
         const tempDir = genTempDirForRhachet({
           slug: 'review-conversation-and-refs',
@@ -112,7 +130,7 @@ describe('review.conversation.acceptance', () => {
           output: path.join(tempDir, 'review.md'),
           focus: 'push',
           goal: 'representative',
-          brain: 'fireworks/deepseek/v4-flash',
+          brain: DEFAULT_TEST_BRAIN_VIA_CLI,
           cwd: tempDir,
         });
         const prompt = await readLoggedPrompt(tempDir);
@@ -122,6 +140,11 @@ describe('review.conversation.acceptance', () => {
       then('the conversation section renders', () => {
         expect(res.prompt).toContain('## prior conversation');
         expect(res.prompt).toContain('GIVEN_MARKER');
+      });
+
+      then('the metrics.expected block matches its snapshot (computed before the brain)', () => {
+        // the scope tree and estimate are deterministic; the verdict summary is the brain's
+        expect(asReviewMetricsExpectedBlock({ stdout: res.cli.stdout })).toMatchSnapshot();
       });
 
       then('the refs section renders separately (no merge/collision)', () => {

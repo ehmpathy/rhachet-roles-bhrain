@@ -1,0 +1,19 @@
+{
+  "key": "9a5c3c360228c30d",
+  "kind": "create",
+  "repo": {
+    "owner": "ehmpathy",
+    "name": "rhachet-brains-openrouter"
+  },
+  "exid": null,
+  "title": "feat(ask): bound output and reasoning tokens, offer a throughput sort, keep the think tail on a cutoff",
+  "description": "## .what\n\nan openrouter ask offers the caller no control over output length, reasoning length, or host speed: rhachet-brains-openrouter@0.1.3 sends no max_tokens, no reasoning bound, and no provider.sort. and when a reply ends with finish_reason=length, the partial reply and its think are withheld, so a caller cannot tell a loop from a long think.\n\ncheckable evidence, ehmpathy/rhachet-roles-bhrain on openrouter/deepseek/flash, 2026-10-03 to 2026-10-07:\n- four review asks ended at finish_reason=length, 131,072 output tokens, contentLength 0, all on InferenceNet\n- eleven of 27 review lanes hit a 20-minute deadline; output was mostly hidden reasoning (one verdict billed $0.097 of output against $0.044 of input)\n- a replay experiment (package patched in node_modules, then reverted) over four logged prompts:\n  - a reasoning max_tokens of 16k was not honored on long prompts: realized think 12.7k to 50.6k, seven of eight over the cap. it is advisory and host-dependent\n  - an off-floor, throughput-sorted host set (provider.sort = throughput, no floor) returned a verdict on all four prompts in 41s to 166s, where floor arms took 208s to 1,192s and two never replied within 590s; recall of the logged concern held or improved\n  - cost was a wash when the prefix was cached, 2 to 4 times dearer when cold\n  - provider.sort is a no-op under the floor walk, which admits one endpoint per hop\n  - reasoning effort none was fast, cheap, and wrong (missed the concern, wrong puzzle answer)\n\n## .why\n\na runaway bills the whole output limit for a malfunction. a slow host turns a 40k think into a deadline miss. the caller holds the knowledge to bound both and has no lever to do so.\n\n## .shape of the fix\n\n1. accept an optional output bound on ask and send it as max_tokens, so a runaway fails at the caller cap rather than 131k (pairs with the ask-contract field on ehmpathy/rhachet)\n2. accept an optional reasoning bound (reasoning.max_tokens or effort) as a pass-through; document that hosts treat it as advisory\n3. offer a throughput-sorted host policy (provider.sort = throughput over the admitted set) as an alternative to the floor walk, since a sort inside a one-endpoint hop does naught\n4. on a finish_reason=length defect, keep the tail of the think (for example its last 2k chars) and the served provider in the error metadata\n5. clamps: a request-body case per new option; an absent option sends naught (behavior unchanged)\n\ncaught in ehmpathy/rhachet-roles-bhrain .dream/v2026_10_07.reseed.openrouter-ask-caps-reasoning-and-sorts-by-throughput.md",
+  "status": null,
+  "via": "gh.issues",
+  "auth": "as-human",
+  "idem": null,
+  "heldSeq": 21,
+  "recordStatus": "DELIVERED",
+  "reason": null,
+  "deliveredExid": "17"
+}

@@ -4,6 +4,7 @@ import * as path from 'path';
 
 import { genTempDir } from 'test-fns';
 
+import { asExecResultOrThrow } from './asExecResultOrThrow';
 export { execAsync } from './execAsync';
 import { execAsync } from './execAsync';
 
@@ -87,7 +88,8 @@ export const genTempDirForReflector = (input: {
 export const sanitizeReflectOutputForSnapshot = (output: string): string => {
   return output
     // sanitize temp directory paths (e.g., /tmp/test-fns/.../[timestamp].[slug].[hash])
-    .replace(/\/tmp\/[^\s]+/g, '[TEMP_PATH]')
+    // the mask stops before end punctuation, so a sentence that ends on a path keeps its period
+    .replace(/\/tmp\/[^\s]*[^\s.,;:]/g, '[TEMP_PATH]')
     // sanitize temp directory ISO timestamp prefix (e.g., 2026-03-17T19-06-58.037Z)
     .replace(/\d{4}-\d{2}-\d{2}T\d{2}-\d{2}-\d{2}\.\d{3}Z/g, '[ISO_TEMP]')
     // sanitize temp directory hash suffix (e.g., .eb7d5802)
@@ -105,8 +107,9 @@ export const sanitizeReflectOutputForSnapshot = (output: string): string => {
     .replace(/date=\d{4}-\d{2}-\d{2}/g, 'date=[DATE]')
     // replace $HOME prefix with ~
     .replace(new RegExp(process.env.HOME ?? '/home/user', 'g'), '~')
-    // sanitize byte sizes (e.g., "0 bytes", "12kb", "1.5MB")
-    .replace(/\d+(\.\d+)?\s*bytes/gi, '[SIZE]ytes')
+    // sanitize byte sizes (e.g., "0 bytes", "12kb", "1.5MB") — the whole number+unit run
+    // becomes one `[SIZE]` token, so every byte figure masks the same way
+    .replace(/\d+(\.\d+)?\s*bytes/gi, '[SIZE]')
     .replace(/\d+(\.\d+)?[kmgKMG][bB]/g, '[SIZE]')
     // sanitize hash values (e.g., hash = a1b2c3d, commit = a1b2c3d, commit=a1b2c3d)
     // .note = git commit sha varies per run (fresh temp repo); patches sha is content-derived and stable
@@ -120,8 +123,9 @@ export const sanitizeReflectOutputForSnapshot = (output: string): string => {
     // sanitize stack traces and absolute paths in errors
     .replace(/\/[^\s]+\.(js|ts):\d+:\d+/g, '[FILE]')
     .replace(/\/[^\s]+\.(js|ts):\d+/g, '[FILE]')
-    // .note = anchored to an indented frame, so prose that holds " at " stays legible
-    .replace(/^(\s+)at [^\n]+\n/gm, '$1at [STACK]\n')
+    // a stack frame is a LINE that opens with `at ` — unanchored, this also ate the
+    // caller's own `--at <timestamp>` out of every command header
+    .replace(/^(\s*)at [^\n]+\n/gm, '$1at [STACK]\n')
     .replace(/Node\.js v[\d.]+/g, 'Node.js v[VERSION]');
 };
 
@@ -169,11 +173,7 @@ export const invokeReflectSkill = async (input: {
     });
     return { ...result, code: 0 };
   } catch (error) {
-    const execError = error as { stdout?: string; stderr?: string; code?: number };
-    return {
-      stdout: execError.stdout ?? '',
-      stderr: execError.stderr ?? '',
-      code: execError.code ?? 1,
-    };
+    // a nonzero exit is a skill result; any other fault rethrows (rule.forbid.failhide)
+    return asExecResultOrThrow({ error });
   }
 };

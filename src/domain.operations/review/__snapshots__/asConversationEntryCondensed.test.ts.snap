@@ -1,0 +1,10 @@
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
+
+exports[`asConversationEntryCondensed the condensed lines, as a reviewer reads them 1`] = `
+[
+  "(condensed) this round's review held no verdict: malfunction — no verdict read. its 4060 chars of stdout carry no concern, so they are omitted.
+",
+  "(condensed) this round's review held no verdict: refused — prompt exceeds 75% of context window. its 4068 chars of stdout carry no concern, so they are omitted.
+",
+]
+`;

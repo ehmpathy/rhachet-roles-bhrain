@@ -82,7 +82,7 @@ exports[`formatGuardUpgradeTree given: [case3] a warn annotation on a guard when
    ├─ 7.budgetgrant.guard
    │  ├─ decision = upgrade available
    │  ├─ from = templates/7.budgetgrant.guard
-   │  ├─ ⚠ this upgrade reverts a budget grant on 7.budgetgrant: 5 → 3
+   │  ├─ 🟡 this upgrade reverts a budget grant on 7.budgetgrant: 5 → 3
    │  └─ diff
    │     ├─
    │     │
@@ -116,7 +116,7 @@ exports[`formatGuardUpgradeTree given: [case5] passage-state advisories (already
    ├─ 5.1.execution.guard
    │  ├─ decision = upgrade available
    │  ├─ from = templates/5.1.execution.guard
-   │  ├─ ⚠ stone 5.1.execution already passed under the prior guard — this upgrade re-syncs its rules but does not re-validate the passage
+   │  ├─ 🟡 stone 5.1.execution already passed under the prior guard — this upgrade re-syncs its rules but does not re-validate the passage
    │  └─ diff
    │     ├─
    │     │
@@ -127,7 +127,7 @@ exports[`formatGuardUpgradeTree given: [case5] passage-state advisories (already
    ├─ 5.2.review.guard
    │  ├─ decision = upgrade available
    │  ├─ from = templates/5.2.review.guard
-   │  ├─ ⚠ stone 5.2.review is approved but not yet passed — this upgrade changes the rules its pass will be judged against
+   │  ├─ 🟡 stone 5.2.review is approved but not yet passed — this upgrade changes the rules its pass will be judged against
    │  └─ diff
    │     ├─
    │     │

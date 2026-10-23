@@ -1,0 +1,14 @@
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
+
+exports[`reviewBrainRefusal.acceptance given: [case1] the default brain, with its provider key locked when: [t0] the driver runs it then: the refusal renders whole 1`] = `
+"
+🦉 woah there
+
+✋ ConstraintError: brain 'openrouter/deepseek/flash' is not registered
+   └─ fix: a brain registers only when its provider's package is installed and its key is unlocked; unlock the key via \`rhx keyrack unlock --owner ehmpath --env prep\`, or pass \`--brain\` with a provider whose key you hold
+
+✨ did you know?
+   └─ run with --help for the --brain choices
+
+"
+`;

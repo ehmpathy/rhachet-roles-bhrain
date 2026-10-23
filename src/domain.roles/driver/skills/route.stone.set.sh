@@ -16,7 +16,7 @@
 #
 # options:
 #   --stone   stone name or glob pattern (required)
-#   --route   path to route directory (required)
+#   --route   path to route directory (uses bound route if absent)
 #   --as      status: arrived | passed | approved | blocked (required)
 #             - arrived: "i'm here, review my work"
 #             - passed: "done, continue to next stone"

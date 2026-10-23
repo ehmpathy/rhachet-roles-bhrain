@@ -1,0 +1,96 @@
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
+
+exports[`asRouteGuardPartitionTreeLines given: [case1] a first @all set, previewed when: [t0] the tree is rendered then: the lines match the snapshot 1`] = `
+"🦉 partitions previewed — naught written
+
+🗿 route.guard.partition --mode plan
+   ├─ route = .behavior/v2026_01_01.demo
+   ├─ peer = @all (every reviewer, every stone)
+   ├─ checked against 5 files changed since main
+   ├─ partitions
+   │  ├─ review: 2 narrow targets + 2 common targets · ~165,000 tokens of file bodies, ~105,000 common
+   │  │  └─ src/review/**, src/shared/**, .behavior/v2026_01_01.demo/**
+   │  └─ route: 1 narrow target + 2 common targets · ~135,000 tokens of file bodies, ~105,000 common
+   │     └─ src/route/**, src/shared/**, .behavior/v2026_01_01.demo/**
+   ├─ common: 2
+   ├─ unclaimed: 0
+   ├─ replaces: none
+   └─ to write it: add --mode apply"
+`;
+
+exports[`asRouteGuardPartitionTreeLines given: [case2] a per-peer override, applied over a prior one when: [t0] the tree is rendered then: the lines match the snapshot 1`] = `
+"🦉 partitions declared
+
+🗿 route.guard.partition --mode apply
+   ├─ route = .behavior/v2026_01_01.demo
+   ├─ peer = r2 on 3.blueprint (overrides @all)
+   ├─ checked against 5 files changed since main
+   ├─ partitions
+   │  ├─ review: 2 narrow targets + 2 common targets
+   │  │  └─ src/review/**, src/shared/**, .behavior/v2026_01_01.demo/**
+   │  └─ route: 1 narrow target + 2 common targets
+   │     └─ src/route/**, src/shared/**, .behavior/v2026_01_01.demo/**
+   ├─ common: 2
+   ├─ unclaimed: 0
+   ├─ replaces: 1 partition, whole
+   └─ every peer review in scope reads it on its next run"
+`;
+
+exports[`asRouteGuardPartitionTreeLines given: [case3] a set with a glob that matches no changed file when: [t0] the tree is rendered then: the lines match the snapshot 1`] = `
+"🦉 partitions previewed — naught written
+
+🗿 route.guard.partition --mode plan
+   ├─ route = .behavior/v2026_01_01.demo
+   ├─ peer = @all (every reviewer, every stone)
+   ├─ checked against 5 files changed since main
+   ├─ partitions
+   │  ├─ review: 2 narrow targets + 2 common targets
+   │  │  └─ src/review/**, src/shared/**, .behavior/v2026_01_01.demo/**
+   │  └─ route: 1 narrow target + 2 common targets
+   │     └─ src/route/**, src/shared/**, .behavior/v2026_01_01.demo/**, blackbox/driver.rout.*
+   ├─ common: 2
+   ├─ unclaimed: 0
+   ├─ 🟡 1 glob that matched no changed file — a typo, or no change there yet
+   │  └─ route: blackbox/driver.rout.*
+   ├─ replaces: none
+   └─ to write it: add --mode apply"
+`;
+
+exports[`asRouteGuardPartitionTreeLines given: [case5] a claim into a held set, previewed when: [t0] the tree is rendered then: the lines match the snapshot 1`] = `
+"🦉 partitions previewed — naught written
+
+🗿 route.guard.partition --mode plan
+   ├─ route = .behavior/v2026_01_01.demo
+   ├─ peer = @all (every reviewer, every stone)
+   ├─ checked against 5 files changed since main
+   ├─ partitions
+   │  ├─ review: 2 narrow targets + 2 common targets
+   │  │  └─ src/review/**, src/shared/**, .behavior/v2026_01_01.demo/**
+   │  └─ route: 1 narrow target + 2 common targets
+   │     └─ src/route/**, src/shared/**, .behavior/v2026_01_01.demo/**
+   ├─ common: 2
+   ├─ unclaimed: 0
+   ├─ claims: 1 glob, every other partition kept as held
+   │  └─ src/shared/** → review
+   └─ to write it: add --mode apply"
+`;
+
+exports[`asRouteGuardPartitionTreeLines given: [case6] a prune from a held set, applied when: [t0] the tree is rendered then: the lines match the snapshot 1`] = `
+"🦉 partitions declared
+
+🗿 route.guard.partition --mode apply
+   ├─ route = .behavior/v2026_01_01.demo
+   ├─ peer = @all (every reviewer, every stone)
+   ├─ checked against 5 files changed since main
+   ├─ partitions
+   │  ├─ review: 2 narrow targets + 2 common targets
+   │  │  └─ src/review/**, src/shared/**, .behavior/v2026_01_01.demo/**
+   │  └─ route: 1 narrow target + 2 common targets
+   │     └─ src/route/**, src/shared/**, .behavior/v2026_01_01.demo/**
+   ├─ common: 2
+   ├─ unclaimed: 0
+   ├─ prunes: 2 globs, every other partition kept as held
+   │  ├─ src/gone/** ← wherever held
+   │  └─ src/shared/** ← route
+   └─ every peer review in scope reads it on its next run"
+`;

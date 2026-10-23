@@ -14,9 +14,13 @@ import { asMeterCountDisplay } from '../../../asMeterCountDisplay';
  *        never disagree on the SCOPE — `this stone` would overstate the skip by every generation
  *        after the next edit, which is the exact cost `F004` is graded on. pinned by a test that
  *        reads both constants.
+ *
+ * .note = `this generation` alone is a term of art, so the line also names what lapses it: an
+ *        edit to the artifact. without it a driver who repairs code reads the line as a promise
+ *        that the next arrival skips this lane, and then watches it run.
  */
 export const DISPUTED_UPDATE_SUFFIX =
-  'disputed 🌙 — it does not run this generation; the rounds carry to the next';
+  'disputed 🌙 — it does not run this generation (an artifact edit re-runs it); the rounds carry to the next';
 
 /**
  * the line for a lane a dispute has quieted that this command did NOT touch.
@@ -27,7 +31,7 @@ export const DISPUTED_UPDATE_SUFFIX =
  *        silence" — so the untouched lane is named in the SAME block.
  */
 export const DISPUTED_UNTOUCHED_SUFFIX =
-  'untouched — disputed 🌙, so it does not run this generation';
+  'untouched — disputed 🌙, so it does not run this generation (an artifact edit re-runs it)';
 
 /**
  * .what = formats budget update entries as tree structure lines, with the dispute state of every

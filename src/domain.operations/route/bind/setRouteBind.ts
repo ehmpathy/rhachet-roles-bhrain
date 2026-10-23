@@ -16,12 +16,7 @@ export const setRouteBind = async (input: {
   try {
     await fs.access(routeAbsolute);
   } catch {
-    throw new BadRequestError(
-      `route directory does not exist: ${input.route}`,
-      {
-        route: input.route,
-      },
-    );
+    throw new BadRequestError(`route directory does not exist: ${input.route}`);
   }
 
   // scan for pre-bound flags for this branch
@@ -53,7 +48,6 @@ export const setRouteBind = async (input: {
     // different route → error
     throw new BadRequestError(
       `already bound to ${routeDirFound}. use route.bind --del first`,
-      { routeBound: routeDirFound, routeRequested: input.route },
     );
   }
 

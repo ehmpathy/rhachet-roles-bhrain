@@ -1,6 +1,6 @@
 import * as fs from 'fs/promises';
 
-import { isENOENT } from '../guard/isENOENT';
+import { isErrorOfAbsence } from '@src/utils/fs/isErrorOfAbsence';
 
 /**
  * .what = reads a file's last-write time as epoch millis, and answers `null` where the file
@@ -24,6 +24,6 @@ export const getOneFileMtimeMs = async (input: {
     .stat(input.path)
     .then((stats) => stats.mtimeMs)
     .catch((error: unknown) => {
-      if (isENOENT(error)) return null;
+      if (isErrorOfAbsence({ error })) return null;
       throw error;
     });

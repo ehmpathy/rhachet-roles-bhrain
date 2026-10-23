@@ -1,0 +1,215 @@
+🦉 the way speaks for itself
+
+🗿 route.stone.set
+   ├─ stone = 5.1.execution.from_vision
+   ├─ passage = allowed
+   ├─ guard
+   │  ├─ artifacts
+   │  │   ├─ $route/5.1.execution.from_vision.yield.md
+   │  │   └─ src/**/*
+   │  ├─ reviews
+   │  │   ├─ r1: repo-rules (l1, 13/13)
+   │  │   │   ├─ approved, cached
+   │  │   │   ├─ 0 blockers ✓
+   │  │   │   ├─ 0 nitpicks ✓
+   │  │   │   ├─ given: .behavior/v2026_09_20.review-cost-meter/.reviews/peer/5.1.execution.from_vision._.review.i016.31f2ba409ea651c2e8.r001._.given.by_peer.repo-rules.md
+   │  │   │   └─ taken: .behavior/v2026_09_20.review-cost-meter/.reviews/peer/5.1.execution.from_vision._.review.i016.31f2ba409ea651c2e8.r001._.taken.by_self.repo-rules.md
+   │  │   ├─ r2: repo-rules-contract (l1, 9/9)
+   │  │   │   ├─ exhausted 🌙, cached
+   │  │   │   ├─ terminal — does not block higher levels
+   │  │   │   ├─ 1 blocker 🔴
+   │  │   │   ├─ 0 nitpicks ✓
+   │  │   │   ├─ given: .behavior/v2026_09_20.review-cost-meter/.reviews/peer/5.1.execution.from_vision._.review.i021.e722812b9503526f51.r002._.given.by_peer.repo-rules-contract.md
+   │  │   │   └─ taken: .behavior/v2026_09_20.review-cost-meter/.reviews/peer/5.1.execution.from_vision._.review.i021.e722812b9503526f51.r002._.taken.by_self.repo-rules-contract.md
+   │  │   ├─ r3: repo-rules-route (l1, 11/11)
+   │  │   │   ├─ exhausted 🌙, cached
+   │  │   │   ├─ terminal — does not block higher levels
+   │  │   │   ├─ 1 blocker 🔴
+   │  │   │   ├─ 1 nitpick 🟠
+   │  │   │   ├─ given: .behavior/v2026_09_20.review-cost-meter/.reviews/peer/5.1.execution.from_vision._.review.i019.e337e9603e2ce47b7d.r003._.given.by_peer.repo-rules-route.md
+   │  │   │   └─ taken: .behavior/v2026_09_20.review-cost-meter/.reviews/peer/5.1.execution.from_vision._.review.i019.e337e9603e2ce47b7d.r003._.taken.by_self.repo-rules-route.md
+   │  │   ├─ r4: mech-failhides (l1, 13/13)
+   │  │   │   ├─ approved, cached — set aside by dispute
+   │  │   │   ├─ disputed 🌙 — skipped this generation, no round spent
+   │  │   │   ├─ 0 blockers ✓
+   │  │   │   ├─ 1 nitpick, 1 disputed → 0 tallied ✓
+   │  │   │   ├─ given: .behavior/v2026_09_20.review-cost-meter/.reviews/peer/5.1.execution.from_vision._.review.i035.03f57150e1c4885d75.r004._.given.by_peer.mech-failhides.md
+   │  │   │   └─ taken: .behavior/v2026_09_20.review-cost-meter/.reviews/peer/5.1.execution.from_vision._.review.i035.03f57150e1c4885d75.r004._.taken.by_self.mech-failhides.md
+   │  │   ├─ r5: mech-failhides-tests (l1, 13/13)
+   │  │   │   ├─ approved, cached
+   │  │   │   ├─ 0 blockers ✓
+   │  │   │   ├─ 0 nitpicks ✓
+   │  │   │   ├─ given: .behavior/v2026_09_20.review-cost-meter/.reviews/peer/5.1.execution.from_vision._.review.i036.3ae0e70effe55c727d.r005._.given.by_peer.mech-failhides-tests.md
+   │  │   │   └─ taken: .behavior/v2026_09_20.review-cost-meter/.reviews/peer/5.1.execution.from_vision._.review.i036.3ae0e70effe55c727d.r005._.taken.by_self.mech-failhides-tests.md
+   │  │   ├─ r6: mech-decode-friction (l1, 15/15)
+   │  │   │   ├─ exhausted 🌙, cached
+   │  │   │   ├─ terminal — does not block higher levels
+   │  │   │   ├─ 1 blocker 🔴
+   │  │   │   ├─ 0 nitpicks ✓
+   │  │   │   ├─ given: .behavior/v2026_09_20.review-cost-meter/.reviews/peer/5.1.execution.from_vision._.review.i016.31f2ba409ea651c2e8.r006._.given.by_peer.mech-decode-friction.md
+   │  │   │   └─ taken: .behavior/v2026_09_20.review-cost-meter/.reviews/peer/5.1.execution.from_vision._.review.i016.31f2ba409ea651c2e8.r006._.taken.by_self.mech-decode-friction.md
+   │  │   ├─ r7: arch-opport-decomposition (l1, 15/15)
+   │  │   │   ├─ exhausted 🌙, cached
+   │  │   │   ├─ terminal — does not block higher levels
+   │  │   │   ├─ 1 blocker 🔴
+   │  │   │   ├─ 2 nitpicks, 2 disputed → 0 tallied ✓
+   │  │   │   ├─ given: .behavior/v2026_09_20.review-cost-meter/.reviews/peer/5.1.execution.from_vision._.review.i016.31f2ba409ea651c2e8.r007._.given.by_peer.arch-opport-decomposition.md
+   │  │   │   └─ taken: .behavior/v2026_09_20.review-cost-meter/.reviews/peer/5.1.execution.from_vision._.review.i016.31f2ba409ea651c2e8.r007._.taken.by_self.arch-opport-decomposition.md
+   │  │   ├─ r8: arch-smell-scopeleaks (l1, 13/13)
+   │  │   │   ├─ approved, cached
+   │  │   │   ├─ 0 blockers ✓
+   │  │   │   ├─ 0 nitpicks ✓
+   │  │   │   ├─ given: .behavior/v2026_09_20.review-cost-meter/.reviews/peer/5.1.execution.from_vision._.review.i017.c0dcbd0db9103760c0.r008._.given.by_peer.arch-smell-scopeleaks.md
+   │  │   │   └─ taken: .behavior/v2026_09_20.review-cost-meter/.reviews/peer/5.1.execution.from_vision._.review.i017.c0dcbd0db9103760c0.r008._.taken.by_self.arch-smell-scopeleaks.md
+   │  │   ├─ r9: arch-hazards-maintenance (l1, 21/21)
+   │  │   │   ├─ approved, cached — set aside by dispute
+   │  │   │   ├─ disputed 🌙 — skipped this generation, no round spent
+   │  │   │   ├─ 0 blockers ✓
+   │  │   │   ├─ 1 nitpick, 1 disputed → 0 tallied ✓
+   │  │   │   ├─ given: .behavior/v2026_09_20.review-cost-meter/.reviews/peer/5.1.execution.from_vision._.review.i036.3ae0e70effe55c727d.r009._.given.by_peer.arch-hazards-maintenance.md
+   │  │   │   └─ taken: .behavior/v2026_09_20.review-cost-meter/.reviews/peer/5.1.execution.from_vision._.review.i036.3ae0e70effe55c727d.r009._.taken.by_self.arch-hazards-maintenance.md
+   │  │   ├─ r10: arch-hazards-behavior (l1, 16/16)
+   │  │   │   ├─ approved, cached
+   │  │   │   ├─ 0 blockers ✓
+   │  │   │   ├─ 0 nitpicks ✓
+   │  │   │   ├─ given: .behavior/v2026_09_20.review-cost-meter/.reviews/peer/5.1.execution.from_vision._.review.i019.e337e9603e2ce47b7d.r010._.given.by_peer.arch-hazards-behavior.md
+   │  │   │   └─ taken: .behavior/v2026_09_20.review-cost-meter/.reviews/peer/5.1.execution.from_vision._.review.i019.e337e9603e2ce47b7d.r010._.taken.by_self.arch-hazards-behavior.md
+   │  │   ├─ r11: behavior-intent-coverage (l1, 31/31)
+   │  │   │   ├─ approved, cached
+   │  │   │   ├─ 0 blockers ✓
+   │  │   │   ├─ 0 nitpicks ✓
+   │  │   │   ├─ given: .behavior/v2026_09_20.review-cost-meter/.reviews/peer/5.1.execution.from_vision._.review.i034.a53d8b0de00d007782.r011._.given.by_peer.behavior-intent-coverage.md
+   │  │   │   └─ taken: .behavior/v2026_09_20.review-cost-meter/.reviews/peer/5.1.execution.from_vision._.review.i034.a53d8b0de00d007782.r011._.taken.by_self.behavior-intent-coverage.md
+   │  │   ├─ r12: behavior-intent-coverage-route (l1, 9/9)
+   │  │   │   ├─ approved, cached
+   │  │   │   ├─ 0 blockers ✓
+   │  │   │   ├─ 0 nitpicks ✓
+   │  │   │   ├─ given: .behavior/v2026_09_20.review-cost-meter/.reviews/peer/5.1.execution.from_vision._.review.i021.e722812b9503526f51.r012._.given.by_peer.behavior-intent-coverage-route.md
+   │  │   │   └─ taken: .behavior/v2026_09_20.review-cost-meter/.reviews/peer/5.1.execution.from_vision._.review.i021.e722812b9503526f51.r012._.taken.by_self.behavior-intent-coverage-route.md
+   │  │   ├─ r13: ergo-friction-hazards (l1, 16/16)
+   │  │   │   ├─ approved, cached
+   │  │   │   ├─ 0 blockers ✓
+   │  │   │   ├─ 0 nitpicks ✓
+   │  │   │   ├─ given: .behavior/v2026_09_20.review-cost-meter/.reviews/peer/5.1.execution.from_vision._.review.i036.3ae0e70effe55c727d.r013._.given.by_peer.ergo-friction-hazards.md
+   │  │   │   └─ taken: .behavior/v2026_09_20.review-cost-meter/.reviews/peer/5.1.execution.from_vision._.review.i036.3ae0e70effe55c727d.r013._.taken.by_self.ergo-friction-hazards.md
+   │  │   ├─ r14: ergo-friction-hazards-route (l1, 9/9)
+   │  │   │   ├─ approved, cached
+   │  │   │   ├─ 0 blockers ✓
+   │  │   │   ├─ 0 nitpicks ✓
+   │  │   │   ├─ given: .behavior/v2026_09_20.review-cost-meter/.reviews/peer/5.1.execution.from_vision._.review.i020.569c210168144b7981.r014._.given.by_peer.ergo-friction-hazards-route.md
+   │  │   │   └─ taken: .behavior/v2026_09_20.review-cost-meter/.reviews/peer/5.1.execution.from_vision._.review.i020.569c210168144b7981.r014._.taken.by_self.ergo-friction-hazards-route.md
+   │  │   ├─ r15: repo-rules-review-ops (l1, 19/19)
+   │  │   │   ├─ approved, cached — set aside by dispute
+   │  │   │   ├─ disputed 🌙 — skipped this generation, no round spent
+   │  │   │   ├─ 0 blockers ✓
+   │  │   │   ├─ 4 nitpicks, 4 disputed → 0 tallied ✓
+   │  │   │   ├─ given: .behavior/v2026_09_20.review-cost-meter/.reviews/peer/5.1.execution.from_vision._.review.i036.3ae0e70effe55c727d.r015._.given.by_peer.repo-rules-review-ops.md
+   │  │   │   └─ taken: .behavior/v2026_09_20.review-cost-meter/.reviews/peer/5.1.execution.from_vision._.review.i036.3ae0e70effe55c727d.r015._.taken.by_self.repo-rules-review-ops.md
+   │  │   ├─ r16: repo-rules-review-ops-meter (l1, 9/9)
+   │  │   │   ├─ approved, cached — set aside by dispute
+   │  │   │   ├─ disputed 🌙 — skipped this generation, no round spent
+   │  │   │   ├─ 0 blockers ✓
+   │  │   │   ├─ 1 nitpick, 1 disputed → 0 tallied ✓
+   │  │   │   ├─ given: .behavior/v2026_09_20.review-cost-meter/.reviews/peer/5.1.execution.from_vision._.review.i018.5764b1a81a37b1f369.r016._.given.by_peer.repo-rules-review-ops-meter.md
+   │  │   │   └─ taken: .behavior/v2026_09_20.review-cost-meter/.reviews/peer/5.1.execution.from_vision._.review.i018.5764b1a81a37b1f369.r016._.taken.by_self.repo-rules-review-ops-meter.md
+   │  │   ├─ r17: repo-rules-briefs (l1, 17/17)
+   │  │   │   ├─ exhausted 🌙, cached — set aside by dispute
+   │  │   │   ├─ disputed 🌙 — skipped this generation, no round spent
+   │  │   │   ├─ terminal — does not block higher levels
+   │  │   │   ├─ 1 blocker, 1 disputed → 0 tallied ✓
+   │  │   │   ├─ 0 nitpicks ✓
+   │  │   │   ├─ given: .behavior/v2026_09_20.review-cost-meter/.reviews/peer/5.1.execution.from_vision._.review.i035.03f57150e1c4885d75.r017._.given.by_peer.repo-rules-briefs.md
+   │  │   │   └─ taken: .behavior/v2026_09_20.review-cost-meter/.reviews/peer/5.1.execution.from_vision._.review.i035.03f57150e1c4885d75.r017._.taken.by_self.repo-rules-briefs.md
+   │  │   ├─ r18: mech-failhides-review-ops (l1, 10/10)
+   │  │   │   ├─ approved, cached
+   │  │   │   ├─ 0 blockers ✓
+   │  │   │   ├─ 0 nitpicks ✓
+   │  │   │   ├─ given: .behavior/v2026_09_20.review-cost-meter/.reviews/peer/5.1.execution.from_vision._.review.i016.31f2ba409ea651c2e8.r018._.given.by_peer.mech-failhides-review-ops.md
+   │  │   │   └─ taken: .behavior/v2026_09_20.review-cost-meter/.reviews/peer/5.1.execution.from_vision._.review.i016.31f2ba409ea651c2e8.r018._.taken.by_self.mech-failhides-review-ops.md
+   │  │   ├─ r19: mech-failhides-tests-review-ops (l1, 20/20)
+   │  │   │   ├─ approved, cached
+   │  │   │   ├─ 0 blockers ✓
+   │  │   │   ├─ 0 nitpicks ✓
+   │  │   │   ├─ given: .behavior/v2026_09_20.review-cost-meter/.reviews/peer/5.1.execution.from_vision._.review.i021.e722812b9503526f51.r019._.given.by_peer.mech-failhides-tests-review-ops.md
+   │  │   │   └─ taken: .behavior/v2026_09_20.review-cost-meter/.reviews/peer/5.1.execution.from_vision._.review.i021.e722812b9503526f51.r019._.taken.by_self.mech-failhides-tests-review-ops.md
+   │  │   ├─ r20: mech-decode-friction-review-ops (l1, 11/11)
+   │  │   │   ├─ approved, cached
+   │  │   │   ├─ 0 blockers ✓
+   │  │   │   ├─ 0 nitpicks ✓
+   │  │   │   ├─ given: .behavior/v2026_09_20.review-cost-meter/.reviews/peer/5.1.execution.from_vision._.review.i021.e722812b9503526f51.r020._.given.by_peer.mech-decode-friction-review-ops.md
+   │  │   │   └─ taken: .behavior/v2026_09_20.review-cost-meter/.reviews/peer/5.1.execution.from_vision._.review.i021.e722812b9503526f51.r020._.taken.by_self.mech-decode-friction-review-ops.md
+   │  │   ├─ r21: arch-opport-decomposition-review-ops (l1, 9/9)
+   │  │   │   ├─ approved, cached — set aside by dispute
+   │  │   │   ├─ disputed 🌙 — skipped this generation, no round spent
+   │  │   │   ├─ 0 blockers ✓
+   │  │   │   ├─ 1 nitpick, 1 disputed → 0 tallied ✓
+   │  │   │   ├─ given: .behavior/v2026_09_20.review-cost-meter/.reviews/peer/5.1.execution.from_vision._.review.i018.5764b1a81a37b1f369.r021._.given.by_peer.arch-opport-decomposition-review-ops.md
+   │  │   │   └─ taken: .behavior/v2026_09_20.review-cost-meter/.reviews/peer/5.1.execution.from_vision._.review.i018.5764b1a81a37b1f369.r021._.taken.by_self.arch-opport-decomposition-review-ops.md
+   │  │   ├─ r22: arch-smell-scopeleaks-review-ops (l1, 14/14)
+   │  │   │   ├─ approved, cached
+   │  │   │   ├─ 0 blockers ✓
+   │  │   │   ├─ 0 nitpicks ✓
+   │  │   │   ├─ given: .behavior/v2026_09_20.review-cost-meter/.reviews/peer/5.1.execution.from_vision._.review.i022.7cc0ca49cebc016ac7.r022._.given.by_peer.arch-smell-scopeleaks-review-ops.md
+   │  │   │   └─ taken: .behavior/v2026_09_20.review-cost-meter/.reviews/peer/5.1.execution.from_vision._.review.i022.7cc0ca49cebc016ac7.r022._.taken.by_self.arch-smell-scopeleaks-review-ops.md
+   │  │   ├─ r23: arch-hazards-maintenance-review-ops (l1, 21/21)
+   │  │   │   ├─ approved, cached
+   │  │   │   ├─ 0 blockers ✓
+   │  │   │   ├─ 0 nitpicks ✓
+   │  │   │   ├─ given: .behavior/v2026_09_20.review-cost-meter/.reviews/peer/5.1.execution.from_vision._.review.i032.32c4d82b6b85b29f27.r023._.given.by_peer.arch-hazards-maintenance-review-ops.md
+   │  │   │   └─ taken: .behavior/v2026_09_20.review-cost-meter/.reviews/peer/5.1.execution.from_vision._.review.i032.32c4d82b6b85b29f27.r023._.taken.by_self.arch-hazards-maintenance-review-ops.md
+   │  │   ├─ r24: arch-hazards-behavior-review-ops (l1, 12/12)
+   │  │   │   ├─ approved, cached
+   │  │   │   ├─ 0 blockers ✓
+   │  │   │   ├─ 0 nitpicks ✓
+   │  │   │   ├─ given: .behavior/v2026_09_20.review-cost-meter/.reviews/peer/5.1.execution.from_vision._.review.i036.3ae0e70effe55c727d.r024._.given.by_peer.arch-hazards-behavior-review-ops.md
+   │  │   │   └─ taken: .behavior/v2026_09_20.review-cost-meter/.reviews/peer/5.1.execution.from_vision._.review.i036.3ae0e70effe55c727d.r024._.taken.by_self.arch-hazards-behavior-review-ops.md
+   │  │   ├─ r25: behavior-intent-coverage-review-ops (l1, 25/25)
+   │  │   │   ├─ approved, cached
+   │  │   │   ├─ 0 blockers ✓
+   │  │   │   ├─ 0 nitpicks ✓
+   │  │   │   ├─ given: .behavior/v2026_09_20.review-cost-meter/.reviews/peer/5.1.execution.from_vision._.review.i033.059aa67bca04bc72e0.r025._.given.by_peer.behavior-intent-coverage-review-ops.md
+   │  │   │   └─ taken: .behavior/v2026_09_20.review-cost-meter/.reviews/peer/5.1.execution.from_vision._.review.i033.059aa67bca04bc72e0.r025._.taken.by_self.behavior-intent-coverage-review-ops.md
+   │  │   ├─ r26: ergo-friction-hazards-review-ops (l1, 23/23)
+   │  │   │   ├─ approved, cached
+   │  │   │   ├─ 0 blockers ✓
+   │  │   │   ├─ 0 nitpicks ✓
+   │  │   │   ├─ given: .behavior/v2026_09_20.review-cost-meter/.reviews/peer/5.1.execution.from_vision._.review.i033.059aa67bca04bc72e0.r026._.given.by_peer.ergo-friction-hazards-review-ops.md
+   │  │   │   └─ taken: .behavior/v2026_09_20.review-cost-meter/.reviews/peer/5.1.execution.from_vision._.review.i033.059aa67bca04bc72e0.r026._.taken.by_self.ergo-friction-hazards-review-ops.md
+   │  │   ├─ r27: repo-rules-briefs-terms (l1, 14/14)
+   │  │   │   ├─ approved, cached
+   │  │   │   ├─ 0 blockers ✓
+   │  │   │   ├─ 0 nitpicks ✓
+   │  │   │   ├─ given: .behavior/v2026_09_20.review-cost-meter/.reviews/peer/5.1.execution.from_vision._.review.i022.7cc0ca49cebc016ac7.r027._.given.by_peer.repo-rules-briefs-terms.md
+   │  │   │   └─ taken: .behavior/v2026_09_20.review-cost-meter/.reviews/peer/5.1.execution.from_vision._.review.i022.7cc0ca49cebc016ac7.r027._.taken.by_self.repo-rules-briefs-terms.md
+   │  │   ├─ r28: enroll-impl-behavior-intent (l3, 22/40)
+   │  │   │   ├─ approved, cached
+   │  │   │   ├─ 0 blockers ✓
+   │  │   │   ├─ 1 nitpick 🟠
+   │  │   │   ├─ given: .behavior/v2026_09_20.review-cost-meter/.reviews/peer/5.1.execution.from_vision._.review.i043.09a97e32d05908c5e1.r028._.given.by_peer.enroll-impl-behavior-intent.md
+   │  │   │   └─ taken: .behavior/v2026_09_20.review-cost-meter/.reviews/peer/5.1.execution.from_vision._.review.i043.09a97e32d05908c5e1.r028._.taken.by_self.enroll-impl-behavior-intent.md
+   │  │   ├─ r29: enroll-impl-behavior-intent-review-ops (l3, 22/34)
+   │  │   │   ├─ approved, cached
+   │  │   │   ├─ 0 blockers ✓
+   │  │   │   ├─ 0 nitpicks ✓
+   │  │   │   ├─ given: .behavior/v2026_09_20.review-cost-meter/.reviews/peer/5.1.execution.from_vision._.review.i043.09a97e32d05908c5e1.r029._.given.by_peer.enroll-impl-behavior-intent-review-ops.md
+   │  │   │   └─ taken: .behavior/v2026_09_20.review-cost-meter/.reviews/peer/5.1.execution.from_vision._.review.i043.09a97e32d05908c5e1.r029._.taken.by_self.enroll-impl-behavior-intent-review-ops.md
+   │  │   ├─ r30: enroll-impl-arch-defects (l3, 22/38)
+   │  │   │   ├─ approved, cached
+   │  │   │   ├─ 0 blockers ✓
+   │  │   │   ├─ 2 nitpicks 🟠
+   │  │   │   ├─ given: .behavior/v2026_09_20.review-cost-meter/.reviews/peer/5.1.execution.from_vision._.review.i043.09a97e32d05908c5e1.r030._.given.by_peer.enroll-impl-arch-defects.md
+   │  │   │   └─ taken: .behavior/v2026_09_20.review-cost-meter/.reviews/peer/5.1.execution.from_vision._.review.i043.09a97e32d05908c5e1.r030._.taken.by_self.enroll-impl-arch-defects.md
+   │  │   └─ r31: enroll-impl-arch-defects-review-ops (l3, 22/32)
+   │  │       ├─ approved, cached
+   │  │       ├─ 0 blockers ✓
+   │  │       ├─ 1 nitpick 🟠
+   │  │       ├─ given: .behavior/v2026_09_20.review-cost-meter/.reviews/peer/5.1.execution.from_vision._.review.i043.09a97e32d05908c5e1.r031._.given.by_peer.enroll-impl-arch-defects-review-ops.md
+   │  │       └─ taken: .behavior/v2026_09_20.review-cost-meter/.reviews/peer/5.1.execution.from_vision._.review.i043.09a97e32d05908c5e1.r031._.taken.by_self.enroll-impl-arch-defects-review-ops.md
+   │  └─ judges
+   │      └─ j1: $rhachet run --repo bhrain --skill route.stone.judge --mechanism reviewed? --stone $stone --route $route --allow-blockers 0 --allow-nitpicks 7
+   │          └─ · cached
+   │             ├─ on $route/5.1.execution.from_vision.yield.md
+   │             └─ on src/**/*
+   │
+   └─ the way continues, run
+      └─ rhx route.drive

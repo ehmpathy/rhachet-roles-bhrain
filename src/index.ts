@@ -3,7 +3,7 @@ export { getInvokeHooks } from '@src/domain.operations/hooks/getInvokeHooks';
 // domain operations for consumers who provide their own brain context
 export type { StepReflectResult } from '@src/domain.operations/reflect/stepReflect';
 export { stepReflect } from '@src/domain.operations/reflect/stepReflect';
-export type { StepReviewResult } from '@src/domain.operations/review/stepReview';
+export type { StepReviewResult } from '@src/domain.operations/review/StepReviewResult';
 export { stepReview } from '@src/domain.operations/review/stepReview';
 export { getRoleRegistry } from '@src/domain.roles/getRoleRegistry';
 

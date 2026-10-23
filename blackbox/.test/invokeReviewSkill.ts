@@ -1,62 +1,9 @@
 import * as path from 'path';
 
-import { genTempDir } from 'test-fns';
-
+import { asExecResultOrThrow } from './asExecResultOrThrow';
 export { execAsync } from './execAsync';
 import { execAsync } from './execAsync';
-
-/**
- * .what = creates a temp directory ready for rhachet roles link
- * .why = enables acceptance tests with git repo and node_modules symlink
- */
-export const genTempDirForRhachet = (input: {
-  slug: string;
-  clone: string;
-}): string => {
-  return genTempDir({
-    slug: input.slug,
-    clone: input.clone,
-    git: true,
-    symlink: [
-      // symlink rhachet-roles-bhrain package for the reviewer role
-      {
-        at: 'node_modules/rhachet-roles-bhrain/package.json',
-        to: 'package.json',
-      },
-      { at: 'node_modules/rhachet-roles-bhrain/dist', to: 'dist' },
-      {
-        at: 'node_modules/rhachet-roles-bhrain/rhachet.repo.yml',
-        to: 'rhachet.repo.yml',
-      },
-      // symlink .bin for npx to find rhx/rhachet commands
-      { at: 'node_modules/.bin', to: 'node_modules/.bin' },
-      // symlink rhachet so rhx entrypoint can find ../rhachet/bin/rhx
-      { at: 'node_modules/rhachet', to: 'node_modules/rhachet' },
-      // symlink .pnpm for pnpm-generated wrapper scripts that use relative paths
-      // .why = rhx wrapper does $basedir/../.pnpm/... which needs .pnpm to exist
-      { at: 'node_modules/.pnpm', to: 'node_modules/.pnpm' },
-      // symlink brain packages for brain discovery
-      // .why = discoverBrainPackages reads fixture's package.json, then imports the packages
-      {
-        at: 'node_modules/rhachet-brains-fireworksai',
-        to: 'node_modules/rhachet-brains-fireworksai',
-      },
-      {
-        at: 'node_modules/rhachet-brains-anthropic',
-        to: 'node_modules/rhachet-brains-anthropic',
-      },
-      {
-        at: 'node_modules/rhachet-brains-openai',
-        to: 'node_modules/rhachet-brains-openai',
-      },
-      // the review skill's default brain is openrouter/deepseek/flash
-      {
-        at: 'node_modules/rhachet-brains-openrouter',
-        to: 'node_modules/rhachet-brains-openrouter',
-      },
-    ],
-  });
-};
+export { genTempDirForRhachet } from './genTempDirForRhachet';
 
 /**
  * .what = invokes the review skill via its shell entrypoint
@@ -79,6 +26,13 @@ export const invokeReviewSkill = async (input: {
   focus?: 'push' | 'pull';
   goal?: 'exhaustive' | 'representative';
   brain?: string;
+  /** `--partition '<slug>=<globs>'` declarations, one flag each */
+  partition?: string[];
+  /**
+   * `--mode plan` previews a declared split and calls no brain. typed as a string so a
+   * test can pass a typo (`plna`) and assert the refusal
+   */
+  mode?: string;
   cwd: string;
 }): Promise<{ stdout: string; stderr: string; code: number }> => {
   // invoke the skill shell entrypoint from the cwd's .agent/ directory
@@ -115,6 +69,8 @@ export const invokeReviewSkill = async (input: {
     input.focus ? `--focus ${input.focus}` : '',
     input.goal ? `--goal ${input.goal}` : '',
     input.brain ? `--brain "${input.brain}"` : '',
+    ...(input.partition ?? []).map((value) => `--partition '${value}'`),
+    input.mode ? `--mode ${input.mode}` : '',
   ]
     .filter(Boolean)
     .join(' ');
@@ -126,12 +82,7 @@ export const invokeReviewSkill = async (input: {
     });
     return { ...result, code: 0 };
   } catch (error) {
-    // exec throws on non-zero exit; extract stdout/stderr/code from error
-    const execError = error as { stdout?: string; stderr?: string; code?: number };
-    return {
-      stdout: execError.stdout ?? '',
-      stderr: execError.stderr ?? '',
-      code: execError.code ?? 1,
-    };
+    // a nonzero exit is a skill result; any other fault rethrows (rule.forbid.failhide)
+    return asExecResultOrThrow({ error });
   }
 };

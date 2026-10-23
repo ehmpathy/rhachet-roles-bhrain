@@ -9,7 +9,11 @@ import { asArtifactStreamContent } from '../guard/tree/asArtifactStreamContent';
 import { formatArtifactFooters } from '../guard/tree/formatArtifactFooters';
 import { runStoneGuardJudges } from './runStoneGuardJudges';
 
-const noopContext = { cliEmit: { onGuardProgress: () => {} } };
+// a fresh route was never rewound, so its guard round sits at generation 0
+const noopContext = {
+  cliEmit: { onGuardProgress: () => {} },
+  guardRound: { generation: 0 },
+};
 
 describe('runStoneGuardJudges', () => {
   given('[case1] guard with echo judge command that passes', () => {

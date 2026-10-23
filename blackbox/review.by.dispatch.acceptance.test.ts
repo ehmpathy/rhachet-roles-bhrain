@@ -1,8 +1,10 @@
 import * as path from 'path';
 
 import { given, then, useThen, when } from 'test-fns';
+import { DEFAULT_TEST_BRAIN_VIA_CLI } from '@src/.test/genTestBrainContext';
 
 import {
+  asStderrMessageLine,
   DEMO_ROLE,
   genReviewByFixture,
   invokeReviewByViaRhx,
@@ -18,16 +20,15 @@ const ASSETS_DIR = path.join(__dirname, '.test/assets/codebase-review-by');
  */
 const REPEATABLE_CONFIG = {
   attempts: 3,
-  criteria: 'SOME',
+  criteria: process.env.CI ? 'SOME' : 'EVERY',
 } as const;
 
 /**
- * .what = acceptance coverage for the REAL `rhx review.by --repo bhrain --role reviewer` dispatch
- * .why = the review.by.acceptance suite invokes review.by.sh directly, BELOW rhachet's dispatch —
- *        so it never proves that a `rhx` forward of --repo/--role/--skill into the skill's argv is
- *        tolerated. that forward is what a real user (and a role's own wrapper) hits, and it broke
- *        the base until the parser learned to tolerate the dispatch flags. this suite dispatches
- *        through `rhx` for real, to close that blind spot.
+ * .what = acceptance coverage for the real `rhx review.by --repo bhrain --role reviewer` dispatch
+ * .why = the review.by.acceptance suite invokes review.by.sh directly, below rhachet's dispatch,
+ *        so it never proves a `rhx` forward of --repo/--role/--skill into the skill's argv is
+ *        tolerated — what a real user (and a role's own wrapper) hits. this suite dispatches
+ *        through `rhx` for real.
  */
 describe('review.by.dispatch.acceptance', () => {
   // ─────────────────────────────────────────────────────────────────────────
@@ -49,9 +50,8 @@ describe('review.by.dispatch.acceptance', () => {
       });
 
       then('the forwarded --repo/--skill are tolerated (no unknown-flag error)', () => {
-        // the whole point: rhachet forwarded --skill/--repo/--role into argv, and the base
-        // must NOT reject them. if it did, we would see an unknown-flag error instead of the
-        // real target-role fault below.
+        // rhachet forwards --skill/--repo/--role into argv; the base must not reject them, or
+        // we would see an unknown-flag error instead of the real target-role fault below
         expect(res.stderr).not.toContain('unknown flag');
         expect(res.stderr).not.toContain('--skill');
         expect(res.stderr).not.toContain('--repo');
@@ -59,9 +59,13 @@ describe('review.by.dispatch.acceptance', () => {
 
       then('the error names the absent target role (last-wins reached the parser)', () => {
         // `-- --role ghost` overrode the forwarded dispatch `--role reviewer` (last-wins), so the
-        // base tried to run ghost's rubrics and failed fast — proof the passthrough arg landed.
+        // base tried to run ghost's rubrics and failed fast — proves the passthrough arg landed
         expect(res.stderr).toContain('role not found');
         expect(res.stderr).toContain('role=ghost');
+      });
+
+      then('the refusal message renders whole (snapshot)', () => {
+        expect(asStderrMessageLine({ stderr: res.stderr })).toMatchSnapshot();
       });
     });
   });
@@ -85,10 +89,14 @@ describe('review.by.dispatch.acceptance', () => {
       });
 
       then('the typo is named, not silently dropped', () => {
-        // tolerance is SURGICAL: only the known dispatch flags (--skill/--repo) are ignored; a
-        // real typo still surfaces, so the dispatch layer does not become a hole for mistakes.
+        // tolerance is surgical: only the known dispatch flags (--skill/--repo) are ignored; a
+        // real typo still surfaces
         expect(res.stderr).toContain('unknown flag');
         expect(res.stderr).toContain('--rool');
+      });
+
+      then('the refusal message renders whole (snapshot)', () => {
+        expect(asStderrMessageLine({ stderr: res.stderr })).toMatchSnapshot();
       });
     });
   });
@@ -109,7 +117,7 @@ describe('review.by.dispatch.acceptance', () => {
           const cli = await invokeReviewByViaRhx({
             targetRole: DEMO_ROLE,
             paths: 'src/clean.ts',
-            brain: 'fireworks/deepseek/v4-flash',
+            brain: DEFAULT_TEST_BRAIN_VIA_CLI,
             cwd,
           });
           return { cli };
@@ -124,13 +132,14 @@ describe('review.by.dispatch.acceptance', () => {
         });
 
         then('the demo rubric ran and shows a pass mark', () => {
-          expect(res.cli.stdout).toContain('demo-arrow-only');
-          expect(res.cli.stdout).toContain('✓');
+          // checked on the rubric row: a bare `✓` is satisfied by the `0 nitpicks ✓` a rejected
+          // rubric also prints (rule.forbid.failhide)
+          expect(res.cli.stdout).toContain('r1 demo-arrow-only ✓');
         });
 
         then('the dispatched positive-path stdout is stable (snapshot)', () => {
           // proves the treestruct a real `rhx` user sees is identical to the direct-shell path —
-          // the dispatch layer adds no noise to the contract output (contract exhaustiveness).
+          // the dispatch layer adds no noise to the contract output
           expect(
             sanitizeReviewByOutputForSnapshot(res.cli.stdout),
           ).toMatchSnapshot();

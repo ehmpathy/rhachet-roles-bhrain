@@ -4,7 +4,7 @@ import type { RouteStoneGuardReviewSelf } from '@src/domain.objects/Driver/Route
  * .what = whether a self review has been promised
  * .why = "is this review still owed?" is ONE domain fact, and it had three independent
  *        derivations: a `.filter(!has)` in setStoneAsPassed, a `.find(!has)` in
- *        findNextUnpromisedReview, and a `.filter(has)` in computePromisedReviewCount.
+ *        getOneNextUnpromisedReview, and a `.filter(has)` in computePromisedReviewCount.
  *        each was correct; none was bound to the others, so the definition could grow an
  *        exception (a disputed promise, a stance) in one and not the rest
  *
@@ -12,7 +12,7 @@ import type { RouteStoneGuardReviewSelf } from '@src/domain.objects/Driver/Route
  *         differently. state the POSITIVE and negate at the call site — one boolean, one
  *         sense, no `isNotX` twin for a reader to reconcile
  *
- * ⚠️ .note = this is what makes setStoneAsPassed's `findNextUnpromisedReview(...)!` sound.
+ * ⚠️ .note = this is what makes setStoneAsPassed's `getOneNextUnpromisedReview(...)!` sound.
  *            before it, that non-null rested on a COMMENT that claimed two derivations scan
  *            alike — "an agreement no type holds". now they cannot disagree, because there is
  *            one predicate for both to read

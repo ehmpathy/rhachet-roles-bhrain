@@ -816,7 +816,9 @@ describe('getOneTokenSpendReport', () => {
           report,
           proposal: asTokenProposal({ repaid: report.repaid, limit: 3 }),
         });
-        expect(stdout).toContain('note: no boot.instructions block was seen');
+        expect(stdout).toContain(
+          'caveat = no boot.instructions block was seen',
+        );
       });
     });
   });

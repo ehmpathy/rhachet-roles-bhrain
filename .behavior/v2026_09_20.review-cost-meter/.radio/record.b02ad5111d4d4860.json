@@ -1,0 +1,19 @@
+{
+  "key": "b02ad5111d4d4860",
+  "kind": "create",
+  "repo": {
+    "owner": "ehmpathy",
+    "name": "rhachet-roles-ehmpathy"
+  },
+  "exid": null,
+  "title": "fix(git.repo.test): path:// scope matches the absolute path, so a word from the worktree dir widens it to all",
+  "description": "## .what\ngit.repo.test --scope path://X runs its substring match against the ABSOLUTE file path, never the repo-relative one. so any token that appears in the worktree dir name (branch words, repo name, home dir) matches every file, and the scope widens to the whole suite.\n\nevidence (measured, in a worktree named rhachet-roles-bhrain.beav.feat-review-cost-meter):\n- default integration plan: matched 17 files\n- --scope path://review: matched 125 files (the whole suite)\n- --scope path://cost-meter: matched 125 files, though no repo-relative path contains cost-meter\n- --scope path://getAllFileDiffsFromRange (a token absent from the dir name): matched 1 file, correct\n\n## .why\n- a scope is a narrowing by definition; a filter that widens is not a filter\n- it fails wide (slow, never falsely green), but it makes a proof claim false: a driver who pastes a narrow-looking scope into a verification block has recorded a narrowing that did not happen\n- invisible from the inside: matched N files is honest, and only a side-by-side with the default reveals the lie\n\n## .shape of the fix\n1. derive the repo root once (already done for the cwd guard)\n2. apply path.relative(repoRoot, file) before the substring test, for both path:// and the bare form\n3. clamp, seen red first: a temp repo under a dir whose NAME contains the scope token; assert the match set excludes files whose relative path lacks the token\n4. consider a warn when a scope matches the full set: \"scope matched every file. did you mean to narrow?\"\nnot a fix: an anchor on src/ or blackbox/; the scope is a free substring by design\n\ncaught in ehmpathy/rhachet-roles-bhrain .dream/v2026_09_23.reseed.a-test-scope-matches-the-absolute-path-so-a-branch-word-widens-it-to-all.md",
+  "status": null,
+  "via": "gh.issues",
+  "auth": "as-human",
+  "idem": null,
+  "heldSeq": 13,
+  "recordStatus": "DELIVERED",
+  "reason": null,
+  "deliveredExid": "961"
+}

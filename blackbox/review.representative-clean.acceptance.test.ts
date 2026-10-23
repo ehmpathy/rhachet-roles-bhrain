@@ -4,17 +4,30 @@ import * as path from 'path';
 import { given, then, useThen, when } from 'test-fns';
 
 import { logOutputHead } from '@src/.test/logOutputHead';
+import { DEFAULT_TEST_BRAIN_VIA_CLI } from '@src/.test/genTestBrainContext';
 import {
   execAsync,
   genTempDirForRhachet,
   invokeReviewSkill,
 } from './.test/invokeReviewSkill';
+import { asReviewMetricsExpectedBlock } from './.test/invokeReviewBySkill';
 
 const ASSETS_DIR = path.join(__dirname, '.test/assets/codebase-mechanic');
 
-describe('review.acceptance', () => {
+/**
+ * .what = config for probabilistic tests that invoke LLM brains
+ * .why = LLM responses can timeout or vary; retry ensures CI stability
+ *
+ * @see .agent/repo=.this/role=any/briefs/rule.require.repeatable-for-llm-tests.md
+ */
+const REPEATABLE_CONFIG = {
+  attempts: 3,
+  criteria: process.env.CI ? 'SOME' : 'EVERY',
+} as const;
+
+describe('review.representative-clean.acceptance', () => {
   given('[case1] mechanic codebase with clean code', () => {
-    when('[t0] review skill on clean.ts with goal=representative', () => {
+    when.repeatably(REPEATABLE_CONFIG)('[t0] review skill on clean.ts with goal=representative', () => {
       const res = useThen('invoke review skill on clean code', async () => {
         // clone fixture to temp dir with git initialized
         const tempDir = genTempDirForRhachet({ slug: 'review-rep-clean', clone: ASSETS_DIR });
@@ -30,7 +43,7 @@ describe('review.acceptance', () => {
           output: outputPath,
           focus: 'push',
           goal: 'representative',
-          brain: 'fireworks/deepseek/v4-flash',
+          brain: DEFAULT_TEST_BRAIN_VIA_CLI,
           cwd: tempDir,
         });
 
@@ -52,6 +65,11 @@ describe('review.acceptance', () => {
 
       then('cli completes successfully', async () => {
         expect(res.cli.stderr).not.toContain('Error');
+      });
+
+      then('the metrics.expected block matches its snapshot (computed before the brain)', () => {
+        // the scope tree and estimate are deterministic; the verdict summary is the brain's
+        expect(asReviewMetricsExpectedBlock({ stdout: res.cli.stdout })).toMatchSnapshot();
       });
 
       then('review contains no blockers', async () => {

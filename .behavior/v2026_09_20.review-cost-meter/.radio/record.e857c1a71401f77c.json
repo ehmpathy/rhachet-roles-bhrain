@@ -1,0 +1,19 @@
+{
+  "key": "e857c1a71401f77c",
+  "kind": "create",
+  "repo": {
+    "owner": "ehmpathy",
+    "name": "iso-time"
+  },
+  "exid": null,
+  "title": "fix(cast): asIsoTimeStamp renders local time with a utc Z suffix",
+  "description": "see the held record of the same title, delivered just ahead of this push",
+  "status": null,
+  "via": "gh.issues",
+  "auth": "as-human",
+  "idem": "findsert",
+  "heldSeq": 28,
+  "recordStatus": "DELIVERED",
+  "reason": null,
+  "deliveredExid": "55"
+}

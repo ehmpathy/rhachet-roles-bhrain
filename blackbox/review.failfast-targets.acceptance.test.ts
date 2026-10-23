@@ -7,6 +7,8 @@ import {
   genTempDirForRhachet,
   invokeReviewSkill,
 } from './.test/invokeReviewSkill';
+import { asRedactedOutput } from './.test/asRedactedOutput';
+import { DEFAULT_TEST_BRAIN_VIA_CLI } from '@src/.test/genTestBrainContext';
 
 const ASSETS_DIR = path.join(__dirname, '.test/assets/codebase-mechanic');
 
@@ -38,7 +40,7 @@ describe('review.failfast-targets.acceptance', () => {
             output: outputPath,
             focus: 'push',
             goal: 'representative',
-            brain: 'fireworks/deepseek/v4-flash',
+            brain: DEFAULT_TEST_BRAIN_VIA_CLI,
             cwd: tempDir,
           });
 
@@ -53,14 +55,26 @@ describe('review.failfast-targets.acceptance', () => {
         },
       );
 
-      then('cli exits with non-zero code', async () => {
-        expect(res.cli.code).not.toEqual(0);
+      then('cli exits 2, a constraint the caller must fix', async () => {
+        expect(res.cli.code).toEqual(2);
+      });
+
+      then('the refusal renders whole', async () => {
+        expect(asRedactedOutput(res.cli.stderr)).toMatchSnapshot();
       });
 
       then('error message indicates scope resolves to zero files', async () => {
         const output = res.cli.stdout + res.cli.stderr;
         expect(output.toLowerCase()).toContain('zero');
       });
+
+      then(
+        '🔴 the refusal names its class once, never a second bare header beneath the frame',
+        async () => {
+          const headers = res.cli.stderr.match(/✋ ConstraintError:/g) ?? [];
+          expect(headers).toHaveLength(1);
+        },
+      );
     });
   });
 
@@ -91,7 +105,7 @@ describe('review.failfast-targets.acceptance', () => {
             output: outputPath,
             focus: 'push',
             goal: 'representative',
-            brain: 'fireworks/deepseek/v4-flash',
+            brain: DEFAULT_TEST_BRAIN_VIA_CLI,
             cwd: tempDir,
           });
 
@@ -106,14 +120,26 @@ describe('review.failfast-targets.acceptance', () => {
         },
       );
 
-      then('cli exits with non-zero code', async () => {
-        expect(res.cli.code).not.toEqual(0);
+      then('cli exits 2, a constraint the caller must fix', async () => {
+        expect(res.cli.code).toEqual(2);
+      });
+
+      then('the refusal renders whole', async () => {
+        expect(asRedactedOutput(res.cli.stderr)).toMatchSnapshot();
       });
 
       then('error message indicates scope resolves to zero files', async () => {
         const output = res.cli.stdout + res.cli.stderr;
         expect(output.toLowerCase()).toContain('zero');
       });
+
+      then(
+        '🔴 the refusal names its class once, never a second bare header beneath the frame',
+        async () => {
+          const headers = res.cli.stderr.match(/✋ ConstraintError:/g) ?? [];
+          expect(headers).toHaveLength(1);
+        },
+      );
     });
   });
 });

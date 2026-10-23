@@ -24,11 +24,11 @@ export const stepRouteStoneAdd = async (input: {
   created: boolean;
   emit: { stdout: string } | null;
 }> => {
-  // validate route exists
+  // validate route exists; the headline names the route, so a bag would only repeat it
   try {
     await fs.access(input.route);
   } catch {
-    throw new BadRequestError('route not found', { route: input.route });
+    throw new BadRequestError(`route not found: ${input.route}`);
   }
 
   // validate stone name format
@@ -60,8 +60,8 @@ export const stepRouteStoneAdd = async (input: {
       };
     }
     throw new BadRequestError(
-      'stone already exists with different content; use `route.stone.del` first',
-      { stone: input.stone, path: collision.path },
+      `stone already exists with different content: ${input.stone}; use \`route.stone.del\` first`,
+      { path: collision.path },
     );
   }
 

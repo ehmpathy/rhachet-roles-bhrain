@@ -12,7 +12,7 @@
 #
 # options:
 #   --stone   query: @next-one, @next-all, or glob pattern (required)
-#   --route   path to route directory (required)
+#   --route   path to route directory (uses bound route if absent)
 #   --say     echo stone content to stdout
 ######################################################################
 set -euo pipefail

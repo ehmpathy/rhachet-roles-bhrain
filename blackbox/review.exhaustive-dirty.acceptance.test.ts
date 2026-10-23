@@ -4,11 +4,13 @@ import * as path from 'path';
 import { given, then, useThen, when } from 'test-fns';
 
 import { logOutputHead } from '@src/.test/logOutputHead';
+import { DEFAULT_TEST_BRAIN_VIA_CLI } from '@src/.test/genTestBrainContext';
 import {
   execAsync,
   genTempDirForRhachet,
   invokeReviewSkill,
 } from './.test/invokeReviewSkill';
+import { asReviewMetricsExpectedBlock } from './.test/invokeReviewBySkill';
 
 const ASSETS_DIR = path.join(__dirname, '.test/assets/codebase-mechanic');
 
@@ -33,7 +35,7 @@ const REPEATABLE_CONFIG = {
   criteria: process.env.CI ? 'SOME' : 'EVERY',
 } as const;
 
-describe('review.acceptance', () => {
+describe('review.exhaustive-dirty.acceptance', () => {
   given('[case3] mechanic codebase with dirty code', () => {
     when.repeatably(REPEATABLE_CONFIG)('[t0] review skill on dirty.ts with goal=exhaustive', () => {
       const res = useThen('invoke review skill with exhaustive goal', async () => {
@@ -51,7 +53,7 @@ describe('review.acceptance', () => {
           output: outputPath,
           focus: 'push',
           goal: 'exhaustive',
-          brain: 'fireworks/deepseek/v4-flash',
+          brain: DEFAULT_TEST_BRAIN_VIA_CLI,
           cwd: tempDir,
         });
 
@@ -68,8 +70,14 @@ describe('review.acceptance', () => {
         expect(res.cli.stderr).not.toContain('Error');
       });
 
+      then('the metrics.expected block matches its snapshot (computed before the brain)', () => {
+        // the scope tree and estimate are deterministic; the verdict summary is the brain's
+        expect(asReviewMetricsExpectedBlock({ stdout: res.cli.stdout })).toMatchSnapshot();
+      });
+
       then('review includes blockers', async () => {
-        expect(res.review.toLowerCase()).toContain('blocker');
+        // a nonzero count — a clean `0 blockers` render must not satisfy this claim
+        expect(res.review).toMatch(/# blocker\.\d+:/);
       });
     });
   });

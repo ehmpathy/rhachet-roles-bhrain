@@ -206,6 +206,36 @@ describe('formatRouteStoneEmit', () => {
     });
   });
 
+  // r014 nitpick.3, i014 — a mixed halt (a lane broke as another spent) once gated the
+  // malfunction's own levers away, so the first surface a driver meets taught only remedies
+  given('[case3b] unguarded stone, mixed malfunction + exhaustion', () => {
+    when('[t0] format is called', () => {
+      const output = formatRouteStoneEmit({
+        operation: 'route.stone.set',
+        stone: '1.vision',
+        action: 'passed',
+        passage: 'malfunction',
+        reason:
+          'reviewer or judge malfunctioned; peer reviewer budget exhausted: mech-rules',
+      });
+
+      then('the malfunction levers show beside the exhaustion remedies', () => {
+        expect(output).toContain('still yours to clear');
+        // an exhaustion with no urgent concession earns no top-up — its live lever is the answer
+        expect(output).toContain('converge with the reviewer — yours to run');
+        expect(output).not.toContain('increase budget');
+      });
+
+      then('the levers close the tree under the `├─` reason', () => {
+        expect(output).toContain('   └─ still yours to clear');
+      });
+
+      then('snapshot matches', () => {
+        expect(output).toMatchSnapshot();
+      });
+    });
+  });
+
   given('[case4] guarded stone, passage allowed', () => {
     when('[t0] format is called', () => {
       const output = formatRouteStoneEmit({
@@ -226,6 +256,7 @@ describe('formatRouteStoneEmit', () => {
               path: 'review.md',
               exitClass: 'passed',
               tallier: 'deterministic',
+              talliedBy: null,
             },
           ],
           judges: [
@@ -277,6 +308,7 @@ describe('formatRouteStoneEmit', () => {
               path: 'review.md',
               exitClass: 'passed',
               tallier: 'deterministic',
+              talliedBy: null,
             },
           ],
           judges: [
@@ -326,6 +358,7 @@ describe('formatRouteStoneEmit', () => {
                 path: 'review.md',
                 exitClass: 'passed',
                 tallier: 'probabilistic',
+                talliedBy: 'openrouter/deepseek/flash/v4.1',
               },
             ],
             judges: [
@@ -708,6 +741,39 @@ describe('formatRouteStoneEmit', () => {
 
       then('the promise command names that one slug', () => {
         expect(output).toContain('--as promised --that has-pruned-yagni');
+      });
+    });
+  });
+
+  given('[case-inflight] a stone marked inflight', () => {
+    when('[t0] format is called with a note and two details', () => {
+      const output = formatRouteStoneEmit({
+        operation: 'route.stone.set',
+        stone: '5.3.verification',
+        action: 'inflight',
+        note: '⏳ inflight: three delegates repair blockers 1-4',
+        details: ['the first detail', 'the last detail'],
+      });
+
+      then('the shared set header and op line lead the emit', () => {
+        expect(output.split('\n').slice(0, 3)).toEqual([
+          '🦉 the way speaks for itself',
+          '',
+          '🗿 route.stone.set',
+        ]);
+      });
+
+      then('the note branches into its details, the last one closed', () => {
+        expect(output).toContain('   ├─ as = inflight');
+        expect(output).toContain(
+          '   └─ ⏳ inflight: three delegates repair blockers 1-4',
+        );
+        expect(output).toContain('      ├─ the first detail');
+        expect(output).toContain('      └─ the last detail');
+      });
+
+      then('snapshot matches', () => {
+        expect(output).toMatchSnapshot();
       });
     });
   });

@@ -17,7 +17,7 @@ describe('isGuardValueLiteral', () => {
       'claude-sonnet-5[1m]',
       'claude-haiku-4-5-20251001',
       'anthropic/claude/sonnet',
-      'fireworks/deepseek/v4-flash',
+      'openrouter/deepseek/flash',
       'vendor:model:v2',
       'vendor#v2',
     ];

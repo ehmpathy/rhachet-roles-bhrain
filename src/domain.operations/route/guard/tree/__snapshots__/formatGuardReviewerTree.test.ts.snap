@@ -1,5 +1,17 @@
 // Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
 
+exports[`formatGuardReviewerTree given: [case-compact] the compact density, which a summary surface reads when: [t0] a finished, rejected lane with a dispute on its blockers then: the compact render matches snapshot 1`] = `
+"└─ r3: arch (l1, 2/5) — rejected, cached, 2 blockers, 1 disputed → 1 tallied 🔴, 1 nitpick 🟠, disputed 🌙
+    └─ given: .reviews/peer/x.given.by_peer.arch.md"
+`;
+
+exports[`formatGuardReviewerTree given: [case-compact] the compact density, which a summary surface reads when: [t1] a malfunctioned lane, not last then: the compact render matches snapshot 1`] = `
+"├─ r3: arch (l1, 2/5) — malfunction 💥, overruled ✓
+│   └─ given: .reviews/peer/m.md"
+`;
+
+exports[`formatGuardReviewerTree given: [case-compact] the compact density, which a summary surface reads when: [t2] a lane that awaits a lower level then: the compact render matches snapshot 1`] = `"└─ r3: arch (l1, 2/5) — awaits l1 terminal"`;
+
 exports[`formatGuardReviewerTree given: [case1] approved reviewer with 0 blockers, 0 nitpicks when: [t0] formatted as last item then: output matches snapshot 1`] = `
 "└─ r1: self/reflect (l1, 1/∞)
     ├─ approved 8.2s
@@ -103,15 +115,6 @@ exports[`formatGuardReviewerTree given: [case13] finished PEER reviewer renders 
     └─ taken: .reviews/peer/1.execute._.review.i001.a1b2c3.r001._.taken.by_self.architect.md"
 `;
 
-exports[`formatGuardReviewerTree given: [case13] probabilistic reviewer shows the tallied-by branch when: [t0] formatted then: output shows a tallied-by branch that names the fallback brain 1`] = `
-"└─ r2: peer/architect (l1, 1/∞)
-    ├─ approved 9.1s
-    ├─ 0 blockers ✓
-    ├─ 1 nitpick 🟠
-    ├─ tallied by reviewer@openrouter/deepseek/flash
-    └─ given: .route/5.1.execution.guard.review.i1.abc123.r1.md"
-`;
-
 exports[`formatGuardReviewerTree given: [case16] an OVERRULED reviewer whose raw verdict is still rejected when: [t0] formatted then: matches snapshot 1`] = `
 [
   "└─ r1: peer/basic-checker (l1, 1/3)",
@@ -130,4 +133,13 @@ exports[`formatGuardReviewerTree given: [case17] a lane QUIETED by a dispute whe
     ├─ 1 blocker, 1 disputed → 0 tallied ✓
     ├─ 0 nitpicks ✓
     └─ given: .reviews/peer/given.5.1.execution.r2.architect.md"
+`;
+
+exports[`formatGuardReviewerTree given: [case18] probabilistic reviewer shows the tallied-by branch when: [t0] formatted then: output shows a tallied-by branch that names the fallback brain 1`] = `
+"└─ r2: peer/architect (l1, 1/∞)
+    ├─ approved 9.1s
+    ├─ 0 blockers ✓
+    ├─ 1 nitpick 🟠
+    ├─ tallied by reviewer@openrouter/deepseek/flash/v4.1
+    └─ given: .route/5.1.execution.guard.review.i1.abc123.r1.md"
 `;

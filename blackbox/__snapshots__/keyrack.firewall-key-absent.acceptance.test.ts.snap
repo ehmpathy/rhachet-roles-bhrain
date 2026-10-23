@@ -1,0 +1,9 @@
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
+
+exports[`keyrack.firewall-key-absent.acceptance given: [case1] this repo keyrack manifest, and actions secrets that lack every key when: [t0] the CI credential step runs then: the openrouter row is pinned 1`] = `
+{
+  "fix": "rhx keyrack set --key OPENROUTER_API_KEY --env test",
+  "slug": "ehmpathy.test.OPENROUTER_API_KEY",
+  "status": "absent",
+}
+`;

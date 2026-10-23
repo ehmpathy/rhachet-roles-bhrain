@@ -1,0 +1,497 @@
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
+
+exports[`genReviewMeterStdout given: [case1] a corpus of guard-run reviews, two of them unknown when: [t0] the report is rendered then: the tree reads as a scannable human surface 1`] = `
+"🦉 review cost — this tree
+   ├─ corpus: .log/bhrain/review
+   │  ├─ runs: 5 (3 metered · 1 refused · 1 unknown 🟡)
+   │  ├─ levers — input DOWN · cache UP (trend over 2 rounds of 5.1.execution.from_vision)
+   │  │  ├─ input:     358,333 prompt tokens/run   ↑ 46.8% 🔴
+   │  │  └─ cache:     1.9% of prompt tokens served from cache   ↓ 3.2pp 🔴
+   │  ├─ tokens
+   │  │  ├─ input:     1.1M
+   │  │  ├─ cache.set: 0
+   │  │  ├─ cache.get: 20.0k
+   │  │  └─ output:    7.4k
+   │  └─ cost: $0.527500  🟡 +1 unknown (cost unrecorded, not zero)
+   │
+   ├─ by input — what the prompts were MADE of
+   │  └─ — (no prompt could be read, 5 unread)
+   │
+   ├─ by reviewer — heaviest prompt first
+   │  ├─ repo-rules                  2 runs ·  875.0k prompt ·   0.0% cached ·    $0.437500  🟡 warm and cached NAUGHT — a prefix broke; \`--of run --at <rundir>\` names the input past the seam
+   │  ├─ mech-failhides              1 run  ·  200.0k prompt ·  10.0% cached ·    $0.090000
+   │  ├─ behavior-intent-coverage    1 run  ·       — prompt ·      — cached ·            —  🟡 +1 unknown (cost unrecorded, not zero)
+   │  └─ arch-smell-scopeleaks       1 run  ·       0 prompt ·      — cached ·           $0
+   │
+   ├─ by level — heaviest prompt first
+   │  └─ (no level — guard unread)    5 runs ·    1.1M prompt ·   1.9% cached ·    $0.527500  🟡 +1 unknown (cost unrecorded, not zero)
+   │
+   ├─ by provider — heaviest prompt first
+   │  └─ (no provider — unreported)    5 runs ·    1.1M prompt ·   1.9% cached ·    $0.527500  🟡 +1 unknown (cost unrecorded, not zero)
+   │
+   ├─ by stone — heaviest prompt first
+   │  └─ 5.1.execution.from_vision    5 runs ·    1.1M prompt ·   1.9% cached ·    $0.527500  🟡 +1 unknown (cost unrecorded, not zero)
+   │
+   └─ by round
+      ├─ 5.1.execution.from_vision i001    2 runs ·  620.0k prompt ·   3.2% cached ·    $0.300000
+      └─ 5.1.execution.from_vision i002    3 runs ·  455.0k prompt ·   0.0% cached ·    $0.227500  🟡 +1 unknown (cost unrecorded, not zero)  🟡 warm and cached NAUGHT — a prefix broke; \`--of run --at <rundir>\` names the input past the seam"
+`;
+
+exports[`genReviewMeterStdout given: [case2] a corpus where not one run was metered when: [t0] the report is rendered then: the render matches snapshot 1`] = `
+"🦉 review cost — this tree
+   ├─ corpus: .log/bhrain/review
+   │  ├─ runs: 1 (0 metered · 0 refused · 1 unknown 🟡)
+   │  ├─ levers — input DOWN · cache UP
+   │  │  ├─ input:     —
+   │  │  └─ cache:     — of prompt tokens served from cache
+   │  ├─ tokens
+   │  │  ├─ input:     —
+   │  │  ├─ cache.set: —
+   │  │  ├─ cache.get: —
+   │  │  └─ output:    —
+   │  └─ cost: —  🟡 +1 unknown (cost unrecorded, not zero)
+   │
+   ├─ by input — what the prompts were MADE of
+   │  └─ — (no prompt could be read, 1 unread)
+   │
+   ├─ by reviewer — heaviest prompt first
+   │  └─ (no guard identity — a hand or review.by run)    1 run  ·       — prompt ·      — cached ·            —  🟡 +1 unknown (cost unrecorded, not zero)
+   │
+   ├─ by level — heaviest prompt first
+   │  └─ (no level — guard unread)    1 run  ·       — prompt ·      — cached ·            —  🟡 +1 unknown (cost unrecorded, not zero)
+   │
+   ├─ by provider — heaviest prompt first
+   │  └─ (no provider — unreported)    1 run  ·       — prompt ·      — cached ·            —  🟡 +1 unknown (cost unrecorded, not zero)
+   │
+   ├─ by stone — heaviest prompt first
+   │  └─ (no guard identity — a hand or review.by run)    1 run  ·       — prompt ·      — cached ·            —  🟡 +1 unknown (cost unrecorded, not zero)
+   │
+   └─ by round
+      └─ (no guard identity — a hand or review.by run)    1 run  ·       — prompt ·      — cached ·            —  🟡 +1 unknown (cost unrecorded, not zero)"
+`;
+
+exports[`genReviewMeterStdout given: [case3] two lanes whose input order INVERTS their prompt order when: [t0] the report is rendered then: the render matches snapshot 1`] = `
+"🦉 review cost — this tree
+   ├─ corpus: .log/bhrain/review
+   │  ├─ runs: 2 (2 metered · 0 refused · 0 unknown)
+   │  ├─ levers — input DOWN · cache UP
+   │  │  ├─ input:     375,000 prompt tokens/run
+   │  │  └─ cache:     26.7% of prompt tokens served from cache
+   │  ├─ tokens
+   │  │  ├─ input:     550.0k
+   │  │  ├─ cache.set: 0
+   │  │  ├─ cache.get: 200.0k
+   │  │  └─ output:    2.0k
+   │  └─ cost: $0.230000
+   │
+   ├─ by input — what the prompts were MADE of
+   │  └─ — (no prompt could be read, 2 unread)
+   │
+   ├─ by reviewer — heaviest prompt first
+   │  ├─ lane-warm    1 run  ·  450.0k prompt ·  44.4% cached ·    $0.080000
+   │  └─ lane-cold    1 run  ·  300.0k prompt ·   0.0% cached ·    $0.150000  cold (first round) — no prior prompt of its lane to share a prefix with
+   │
+   ├─ by level — heaviest prompt first
+   │  └─ (no level — guard unread)    2 runs ·  750.0k prompt ·  26.7% cached ·    $0.230000
+   │
+   ├─ by provider — heaviest prompt first
+   │  └─ (no provider — unreported)    2 runs ·  750.0k prompt ·  26.7% cached ·    $0.230000
+   │
+   ├─ by stone — heaviest prompt first
+   │  └─ 5.1.execution.from_vision    2 runs ·  750.0k prompt ·  26.7% cached ·    $0.230000
+   │
+   └─ by round
+      └─ 5.1.execution.from_vision i001    2 runs ·  750.0k prompt ·  26.7% cached ·    $0.230000"
+`;
+
+exports[`genReviewMeterStdout given: [case4] the same stone, re-driven after a repair when: [t0] the report is rendered then: the render matches snapshot 1`] = `
+"🦉 review cost — this tree
+   ├─ corpus: .log/bhrain/review
+   │  ├─ runs: 2 (2 metered · 0 refused · 0 unknown)
+   │  ├─ levers — input DOWN · cache UP (trend over 2 rounds of 5.1.execution.from_vision)
+   │  │  ├─ input:     400,000 prompt tokens/run   → flat
+   │  │  └─ cache:     37.5% of prompt tokens served from cache   ↑ 75.0pp 🎉
+   │  ├─ tokens
+   │  │  ├─ input:     500.0k
+   │  │  ├─ cache.set: 0
+   │  │  ├─ cache.get: 300.0k
+   │  │  └─ output:    4.0k
+   │  └─ cost: $0.274000
+   │
+   ├─ by input — what the prompts were MADE of
+   │  └─ — (no prompt could be read, 2 unread)
+   │
+   ├─ by reviewer — heaviest prompt first
+   │  └─ repo-rules    2 runs ·  800.0k prompt ·  37.5% cached ·    $0.274000
+   │
+   ├─ by level — heaviest prompt first
+   │  └─ (no level — guard unread)    2 runs ·  800.0k prompt ·  37.5% cached ·    $0.274000
+   │
+   ├─ by provider — heaviest prompt first
+   │  └─ (no provider — unreported)    2 runs ·  800.0k prompt ·  37.5% cached ·    $0.274000
+   │
+   ├─ by stone — heaviest prompt first
+   │  └─ 5.1.execution.from_vision    2 runs ·  800.0k prompt ·  37.5% cached ·    $0.274000
+   │
+   └─ by round
+      ├─ 5.1.execution.from_vision i001    1 run  ·  400.0k prompt ·   0.0% cached ·    $0.200000  cold (first round) — no prior prompt of its lane to share a prefix with
+      └─ 5.1.execution.from_vision i002    1 run  ·  400.0k prompt ·  75.0% cached ·    $0.074000"
+`;
+
+exports[`genReviewMeterStdout given: [case5] two lanes at 0.0%, one cold and one warm when: [t0] the report is rendered then: the whole surface reads as a human sees it 1`] = `
+"🦉 review cost — this tree
+   ├─ corpus: .log/bhrain/review
+   │  ├─ runs: 3 (3 metered · 0 refused · 0 unknown)
+   │  ├─ levers — input DOWN · cache UP (trend over 2 rounds of 5.1.execution.from_vision)
+   │  │  ├─ input:     236,667 prompt tokens/run   ↓ 16.0% 🎉
+   │  │  └─ cache:     0.0% of prompt tokens served from cache   → flat  🟡 warm and cached NAUGHT — a prefix broke; \`--of run --at <rundir>\` names the input past the seam
+   │  ├─ tokens
+   │  │  ├─ input:     710.0k
+   │  │  ├─ cache.set: 0
+   │  │  ├─ cache.get: 0
+   │  │  └─ output:    3.0k
+   │  └─ cost: $0.355000
+   │
+   ├─ by input — what the prompts were MADE of
+   │  └─ — (no prompt could be read, 3 unread)
+   │
+   ├─ by reviewer — heaviest prompt first
+   │  ├─ lane-sixth    2 runs ·  410.0k prompt ·   0.0% cached ·    $0.205000  🟡 warm and cached NAUGHT — a prefix broke; \`--of run --at <rundir>\` names the input past the seam
+   │  └─ lane-first    1 run  ·  300.0k prompt ·   0.0% cached ·    $0.150000  cold (first round) — no prior prompt of its lane to share a prefix with
+   │
+   ├─ by level — heaviest prompt first
+   │  └─ (no level — guard unread)    3 runs ·  710.0k prompt ·   0.0% cached ·    $0.355000  🟡 warm and cached NAUGHT — a prefix broke; \`--of run --at <rundir>\` names the input past the seam
+   │
+   ├─ by provider — heaviest prompt first
+   │  └─ (no provider — unreported)    3 runs ·  710.0k prompt ·   0.0% cached ·    $0.355000  🟡 warm and cached NAUGHT — a prefix broke; \`--of run --at <rundir>\` names the input past the seam
+   │
+   ├─ by stone — heaviest prompt first
+   │  └─ 5.1.execution.from_vision    3 runs ·  710.0k prompt ·   0.0% cached ·    $0.355000  🟡 warm and cached NAUGHT — a prefix broke; \`--of run --at <rundir>\` names the input past the seam
+   │
+   └─ by round
+      ├─ 5.1.execution.from_vision i001    2 runs ·  500.0k prompt ·   0.0% cached ·    $0.250000  cold (first round) — no prior prompt of its lane to share a prefix with
+      └─ 5.1.execution.from_vision i002    1 run  ·  210.0k prompt ·   0.0% cached ·    $0.105000  🟡 warm and cached NAUGHT — a prefix broke; \`--of run --at <rundir>\` names the input past the seam"
+`;
+
+exports[`genReviewMeterStdout given: [case6] a corpus whose rounds and reviewers cross when: [t0] the report is rendered with the cross-tab withheld then: the render matches snapshot 1`] = `
+"🦉 review cost — this tree
+   ├─ corpus: .log/bhrain/review
+   │  ├─ runs: 4 (4 metered · 0 refused · 0 unknown)
+   │  ├─ levers — input DOWN · cache UP (trend over 2 rounds of 5.1.execution.from_vision)
+   │  │  ├─ input:     302,500 prompt tokens/run   ↑ 1.7% 🔴
+   │  │  └─ cache:     24.8% of prompt tokens served from cache   ↑ 49.2pp 🎉
+   │  ├─ tokens
+   │  │  ├─ input:     910.0k
+   │  │  ├─ cache.set: 0
+   │  │  ├─ cache.get: 300.0k
+   │  │  └─ output:    4.0k
+   │  └─ cost: $0.479000
+   │
+   ├─ by input — what the prompts were MADE of
+   │  └─ — (no prompt could be read, 4 unread)
+   │
+   ├─ by reviewer — heaviest prompt first
+   │  ├─ repo-rules        2 runs ·  800.0k prompt ·  37.5% cached ·    $0.274000
+   │  └─ mech-failhides    2 runs ·  410.0k prompt ·   0.0% cached ·    $0.205000  🟡 warm and cached NAUGHT — a prefix broke; \`--of run --at <rundir>\` names the input past the seam
+   │
+   ├─ by level — heaviest prompt first
+   │  └─ (no level — guard unread)    4 runs ·    1.2M prompt ·  24.8% cached ·    $0.479000
+   │
+   ├─ by provider — heaviest prompt first
+   │  └─ (no provider — unreported)    4 runs ·    1.2M prompt ·  24.8% cached ·    $0.479000
+   │
+   ├─ by stone — heaviest prompt first
+   │  └─ 5.1.execution.from_vision    4 runs ·    1.2M prompt ·  24.8% cached ·    $0.479000
+   │
+   └─ by round
+      ├─ 5.1.execution.from_vision i001    2 runs ·  600.0k prompt ·   0.0% cached ·    $0.300000  cold (first round) — no prior prompt of its lane to share a prefix with
+      └─ 5.1.execution.from_vision i002    2 runs ·  610.0k prompt ·  49.2% cached ·    $0.179000"
+`;
+
+exports[`genReviewMeterStdout given: [case6] a corpus whose rounds and reviewers cross when: [t1] the report is rendered with the cross-tab traced then: the traced surface reads as a human sees it 1`] = `
+"🦉 review cost — this tree
+   ├─ corpus: .log/bhrain/review
+   │  ├─ runs: 4 (4 metered · 0 refused · 0 unknown)
+   │  ├─ levers — input DOWN · cache UP (trend over 2 rounds of 5.1.execution.from_vision)
+   │  │  ├─ input:     302,500 prompt tokens/run   ↑ 1.7% 🔴
+   │  │  └─ cache:     24.8% of prompt tokens served from cache   ↑ 49.2pp 🎉
+   │  ├─ tokens
+   │  │  ├─ input:     910.0k
+   │  │  ├─ cache.set: 0
+   │  │  ├─ cache.get: 300.0k
+   │  │  └─ output:    4.0k
+   │  └─ cost: $0.479000
+   │
+   ├─ by input — what the prompts were MADE of
+   │  └─ — (no prompt could be read, 4 unread)
+   │
+   ├─ by reviewer — heaviest prompt first
+   │  ├─ repo-rules        2 runs ·  800.0k prompt ·  37.5% cached ·    $0.274000
+   │  └─ mech-failhides    2 runs ·  410.0k prompt ·   0.0% cached ·    $0.205000  🟡 warm and cached NAUGHT — a prefix broke; \`--of run --at <rundir>\` names the input past the seam
+   │
+   ├─ by level — heaviest prompt first
+   │  └─ (no level — guard unread)    4 runs ·    1.2M prompt ·  24.8% cached ·    $0.479000
+   │
+   ├─ by provider — heaviest prompt first
+   │  └─ (no provider — unreported)    4 runs ·    1.2M prompt ·  24.8% cached ·    $0.479000
+   │
+   ├─ by stone — heaviest prompt first
+   │  └─ 5.1.execution.from_vision    4 runs ·    1.2M prompt ·  24.8% cached ·    $0.479000
+   │
+   ├─ by round
+   │  ├─ 5.1.execution.from_vision i001    2 runs ·  600.0k prompt ·   0.0% cached ·    $0.300000  cold (first round) — no prior prompt of its lane to share a prefix with
+   │  └─ 5.1.execution.from_vision i002    2 runs ·  610.0k prompt ·  49.2% cached ·    $0.179000
+   │
+   └─ by round × reviewer
+      ├─ 5.1.execution.from_vision i001 · mech-failhides    1 run  ·  200.0k prompt ·   0.0% cached ·    $0.100000  cold (first round) — no prior prompt of its lane to share a prefix with
+      ├─ 5.1.execution.from_vision i001 · repo-rules        1 run  ·  400.0k prompt ·   0.0% cached ·    $0.200000  cold (first round) — no prior prompt of its lane to share a prefix with
+      ├─ 5.1.execution.from_vision i002 · mech-failhides    1 run  ·  210.0k prompt ·   0.0% cached ·    $0.105000  🟡 warm and cached NAUGHT — a prefix broke; \`--of run --at <rundir>\` names the input past the seam
+      └─ 5.1.execution.from_vision i002 · repo-rules        1 run  ·  400.0k prompt ·  75.0% cached ·    $0.074000"
+`;
+
+exports[`genReviewMeterStdout given: [case7] a corpus whose lanes sit at two guard levels when: [t0] the report is rendered with levels joined then: the level surface reads as a human sees it 1`] = `
+"🦉 review cost — this tree
+   ├─ corpus: .log/bhrain/review
+   │  ├─ runs: 4 (4 metered · 0 refused · 0 unknown)
+   │  ├─ levers — input DOWN · cache UP
+   │  │  ├─ input:     177,500 prompt tokens/run
+   │  │  └─ cache:     7.0% of prompt tokens served from cache
+   │  ├─ tokens
+   │  │  ├─ input:     660.0k
+   │  │  ├─ cache.set: 0
+   │  │  ├─ cache.get: 50.0k
+   │  │  └─ output:    3.1k
+   │  └─ cost: $0.335000
+   │
+   ├─ by input — what the prompts were MADE of
+   │  └─ — (no prompt could be read, 4 unread)
+   │
+   ├─ by reviewer — heaviest prompt first
+   │  ├─ repo-rules               1 run  ·  400.0k prompt ·   0.0% cached ·    $0.200000  cold (first round) — no prior prompt of its lane to share a prefix with
+   │  ├─ mech-failhides           1 run  ·  200.0k prompt ·   0.0% cached ·    $0.100000  cold (first round) — no prior prompt of its lane to share a prefix with
+   │  ├─ arch-smell-scopeleaks    1 run  ·  100.0k prompt ·  50.0% cached ·    $0.030000
+   │  └─ hand-run                 1 run  ·   10.0k prompt ·   0.0% cached ·    $0.005000  cold (first round) — no prior prompt of its lane to share a prefix with
+   │
+   ├─ by level — heaviest prompt first
+   │  ├─ L1                           2 runs ·  600.0k prompt ·   0.0% cached ·    $0.300000  cold (first round) — no prior prompt of its lane to share a prefix with
+   │  ├─ L3                           1 run  ·  100.0k prompt ·  50.0% cached ·    $0.030000
+   │  └─ (no level — guard unread)    1 run  ·   10.0k prompt ·   0.0% cached ·    $0.005000  cold (first round) — no prior prompt of its lane to share a prefix with
+   │
+   ├─ by provider — heaviest prompt first
+   │  └─ (no provider — unreported)    4 runs ·  710.0k prompt ·   7.0% cached ·    $0.335000
+   │
+   ├─ by stone — heaviest prompt first
+   │  └─ 5.1.execution.from_vision    4 runs ·  710.0k prompt ·   7.0% cached ·    $0.335000
+   │
+   └─ by round
+      └─ 5.1.execution.from_vision i001    4 runs ·  710.0k prompt ·   7.0% cached ·    $0.335000"
+`;
+
+exports[`genReviewMeterStdout given: [case7] a corpus whose lanes sit at two guard levels when: [t1] the report is rendered with NO levels joined then: the render matches snapshot 1`] = `
+"🦉 review cost — this tree
+   ├─ corpus: .log/bhrain/review
+   │  ├─ runs: 4 (4 metered · 0 refused · 0 unknown)
+   │  ├─ levers — input DOWN · cache UP
+   │  │  ├─ input:     177,500 prompt tokens/run
+   │  │  └─ cache:     7.0% of prompt tokens served from cache
+   │  ├─ tokens
+   │  │  ├─ input:     660.0k
+   │  │  ├─ cache.set: 0
+   │  │  ├─ cache.get: 50.0k
+   │  │  └─ output:    3.1k
+   │  └─ cost: $0.335000
+   │
+   ├─ by input — what the prompts were MADE of
+   │  └─ — (no prompt could be read, 4 unread)
+   │
+   ├─ by reviewer — heaviest prompt first
+   │  ├─ repo-rules               1 run  ·  400.0k prompt ·   0.0% cached ·    $0.200000  cold (first round) — no prior prompt of its lane to share a prefix with
+   │  ├─ mech-failhides           1 run  ·  200.0k prompt ·   0.0% cached ·    $0.100000  cold (first round) — no prior prompt of its lane to share a prefix with
+   │  ├─ arch-smell-scopeleaks    1 run  ·  100.0k prompt ·  50.0% cached ·    $0.030000
+   │  └─ hand-run                 1 run  ·   10.0k prompt ·   0.0% cached ·    $0.005000  cold (first round) — no prior prompt of its lane to share a prefix with
+   │
+   ├─ by level — heaviest prompt first
+   │  └─ (no level — guard unread)    4 runs ·  710.0k prompt ·   7.0% cached ·    $0.335000
+   │
+   ├─ by provider — heaviest prompt first
+   │  └─ (no provider — unreported)    4 runs ·  710.0k prompt ·   7.0% cached ·    $0.335000
+   │
+   ├─ by stone — heaviest prompt first
+   │  └─ 5.1.execution.from_vision    4 runs ·  710.0k prompt ·   7.0% cached ·    $0.335000
+   │
+   └─ by round
+      └─ 5.1.execution.from_vision i001    4 runs ·  710.0k prompt ·   7.0% cached ·    $0.335000"
+`;
+
+exports[`genReviewMeterStdout given: [case9] a lane past ten dollars beside a sub-cent lane when: [t0] the report is rendered then: the caveats at the row tails start at one column 1`] = `
+"🦉 review cost — this tree
+   ├─ corpus: .log/bhrain/review
+   │  ├─ runs: 4 (4 metered · 0 refused · 0 unknown)
+   │  ├─ levers — input DOWN · cache UP (trend over 2 rounds of 5.1.execution.from_vision)
+   │  │  ├─ input:     100,000 prompt tokens/run   → flat
+   │  │  └─ cache:     0.0% of prompt tokens served from cache   → flat  🟡 warm and cached NAUGHT — a prefix broke; \`--of run --at <rundir>\` names the input past the seam
+   │  ├─ tokens
+   │  │  ├─ input:     400.0k
+   │  │  ├─ cache.set: 0
+   │  │  ├─ cache.get: 0
+   │  │  └─ output:    4.0k
+   │  └─ cost: $15.251420
+   │
+   ├─ by input — what the prompts were MADE of
+   │  └─ — (no prompt could be read, 4 unread)
+   │
+   ├─ by reviewer — heaviest prompt first
+   │  ├─ lane-costly    2 runs ·  200.0k prompt ·   0.0% cached ·   $15.250000  🟡 warm and cached NAUGHT — a prefix broke; \`--of run --at <rundir>\` names the input past the seam
+   │  └─ lane-cheap     2 runs ·  200.0k prompt ·   0.0% cached ·    $0.001420  🟡 warm and cached NAUGHT — a prefix broke; \`--of run --at <rundir>\` names the input past the seam
+   │
+   ├─ by level — heaviest prompt first
+   │  └─ (no level — guard unread)    4 runs ·  400.0k prompt ·   0.0% cached ·   $15.251420  🟡 warm and cached NAUGHT — a prefix broke; \`--of run --at <rundir>\` names the input past the seam
+   │
+   ├─ by provider — heaviest prompt first
+   │  └─ (no provider — unreported)    4 runs ·  400.0k prompt ·   0.0% cached ·   $15.251420  🟡 warm and cached NAUGHT — a prefix broke; \`--of run --at <rundir>\` names the input past the seam
+   │
+   ├─ by stone — heaviest prompt first
+   │  └─ 5.1.execution.from_vision    4 runs ·  400.0k prompt ·   0.0% cached ·   $15.251420  🟡 warm and cached NAUGHT — a prefix broke; \`--of run --at <rundir>\` names the input past the seam
+   │
+   └─ by round
+      ├─ 5.1.execution.from_vision i001    2 runs ·  200.0k prompt ·   0.0% cached ·    $7.625710  cold (first round) — no prior prompt of its lane to share a prefix with
+      └─ 5.1.execution.from_vision i002    2 runs ·  200.0k prompt ·   0.0% cached ·    $7.625710  🟡 warm and cached NAUGHT — a prefix broke; \`--of run --at <rundir>\` names the input past the seam"
+`;
+
+exports[`genReviewMeterStdout given: [case10] a tree whose runs carry their prompt composition — which INPUT bought it when: [t0] the report is rendered then: the render matches snapshot 1`] = `
+"🦉 review cost — this tree
+   ├─ corpus: .log/bhrain/review
+   │  ├─ runs: 3 (3 metered · 0 refused · 0 unknown)
+   │  ├─ levers — input DOWN · cache UP
+   │  │  ├─ input:     30,000 prompt tokens/run
+   │  │  └─ cache:     0.0% of prompt tokens served from cache  cold (first round) — no prior prompt of its lane to share a prefix with
+   │  ├─ tokens
+   │  │  ├─ input:     90.0k
+   │  │  ├─ cache.set: 0
+   │  │  ├─ cache.get: 0
+   │  │  └─ output:    2.7k
+   │  └─ cost: $0.045000
+   │
+   ├─ by input — what the prompts were MADE of
+   │  ├─ corpus        2 read · 1 unread · 18 target files
+   │  ├─ source        1 compiled (exact) · 1 parsed from the rendered prompt (coarse)
+   │  ├─ census        1 attributed · 1 unattributed · 0 ungraded (no grade stated)
+   │  │
+   │  ├─ 🟡 1 of 2 read runs are UNATTRIBUTED — each run's own census
+   │  │  declined to vouch, so scaffold may hide an input with no row. every
+   │  │  share below is summed over them ALL, vouched and unvouched alike.
+   │  │  to tell scaffold from an absent input, read one such run with its
+   │  │  composition rows: rhx review._.cost --of run --at <rundir>
+   │  │
+   │  ├─ instructions          2,500 chars    1.7%  cacheable
+   │  ├─ outputFormat          1,200 chars    0.8%  cacheable
+   │  ├─ scaffold              9,300 chars    6.2%  cacheable
+   │  ├─ rules                30,000 chars   20.0%  cacheable
+   │  ├─ refs                  6,000 chars    4.0%  cacheable
+   │  ├─ targetFiles          86,000 chars   57.3%  cacheable
+   │  ├─ targetDiffs          13,000 chars    8.7%
+   │  │  ├─ additions          5,000 chars    3.3%  cacheable
+   │  │  ├─ deletions              0 chars    0.0%  cacheable
+   │  │  └─ mutations          8,000 chars    5.3%  per round
+   │  ├─ conversation          2,000 chars    1.3%  per round
+   │  │
+   │  ├─ total               150,000 chars
+   │  ├─ cacheable           140,000 chars   93.3%  — the most any cache could ever serve
+   │  ├─ per round            10,000 chars    6.7%  — re-paid at full input rate, every round
+   │  │
+   │  └─ target mass by directory — 60,000 chars over 2 directories, from 1 of 2 read runs
+   │     ├─  75.0%    45,000 chars  1 file    src/domain.operations/review
+   │     └─  25.0%    15,000 chars  1 file    blackbox
+   │
+   ├─ by reviewer — heaviest prompt first
+   │  ├─ lane-0    1 run  ·   30.0k prompt ·   0.0% cached ·    $0.015000  cold (first round) — no prior prompt of its lane to share a prefix with
+   │  ├─ lane-1    1 run  ·   30.0k prompt ·   0.0% cached ·    $0.015000  cold (first round) — no prior prompt of its lane to share a prefix with
+   │  └─ lane-2    1 run  ·   30.0k prompt ·   0.0% cached ·    $0.015000  cold (first round) — no prior prompt of its lane to share a prefix with
+   │
+   ├─ by level — heaviest prompt first
+   │  └─ (no level — guard unread)    3 runs ·   90.0k prompt ·   0.0% cached ·    $0.045000  cold (first round) — no prior prompt of its lane to share a prefix with
+   │
+   ├─ by provider — heaviest prompt first
+   │  └─ (no provider — unreported)    3 runs ·   90.0k prompt ·   0.0% cached ·    $0.045000  cold (first round) — no prior prompt of its lane to share a prefix with
+   │
+   ├─ by stone — heaviest prompt first
+   │  └─ 5.1.execution.from_vision    3 runs ·   90.0k prompt ·   0.0% cached ·    $0.045000  cold (first round) — no prior prompt of its lane to share a prefix with
+   │
+   └─ by round
+      └─ 5.1.execution.from_vision i001    3 runs ·   90.0k prompt ·   0.0% cached ·    $0.045000  cold (first round) — no prior prompt of its lane to share a prefix with"
+`;
+
+exports[`genReviewMeterStdout given: [case10] one lane whose rounds landed on two providers when: [t1] the report renders then: the stdout matches its snapshot 1`] = `
+"🦉 review cost — this tree
+   ├─ corpus: .log/bhrain/review
+   │  ├─ runs: 3 (2 metered · 1 refused · 0 unknown)
+   │  ├─ levers — input DOWN · cache UP (trend over 3 rounds of 5.3.verification)
+   │  │  ├─ input:     400,000 prompt tokens/run   → flat
+   │  │  └─ cache:     47.7% of prompt tokens served from cache   ↓ 94.7pp 🔴
+   │  ├─ tokens
+   │  │  ├─ input:     418.7k
+   │  │  ├─ cache.set: 0
+   │  │  ├─ cache.get: 381.3k
+   │  │  └─ output:    1.8k
+   │  └─ cost: $0.220000
+   │
+   ├─ by input — what the prompts were MADE of
+   │  └─ — (no prompt could be read, 3 unread)
+   │
+   ├─ by reviewer — heaviest prompt first
+   │  └─ repo-rules    3 runs ·  800.0k prompt ·  47.7% cached ·    $0.220000
+   │
+   ├─ by level — heaviest prompt first
+   │  └─ (no level — guard unread)    3 runs ·  800.0k prompt ·  47.7% cached ·    $0.220000
+   │
+   ├─ by provider — heaviest prompt first
+   │  ├─ DeepSeek                      1 run  ·  400.0k prompt ·  95.0% cached ·    $0.020000
+   │  ├─ Wafer                         1 run  ·  400.0k prompt ·   0.3% cached ·    $0.200000
+   │  └─ (no provider — unreported)    1 run  ·       0 prompt ·      — cached ·           $0
+   │
+   ├─ by stone — heaviest prompt first
+   │  └─ 5.3.verification    3 runs ·  800.0k prompt ·  47.7% cached ·    $0.220000
+   │
+   └─ by round
+      ├─ 5.3.verification i001    1 run  ·  400.0k prompt ·  95.0% cached ·    $0.020000
+      ├─ 5.3.verification i002    1 run  ·  400.0k prompt ·   0.3% cached ·    $0.200000
+      └─ 5.3.verification i003    1 run  ·       0 prompt ·      — cached ·           $0"
+`;
+
+exports[`genReviewMeterStdout given: [case11] 🔴 three lanes at 0.0%, graded by what the cache reach saw when: [t0] the report is rendered then: the whole surface reads as a human sees it 1`] = `
+"🦉 review cost — this tree
+   ├─ corpus: .log/bhrain/review
+   │  ├─ runs: 6 (5 metered · 1 refused · 0 unknown)
+   │  ├─ levers — input DOWN · cache UP (trend over 4 rounds of 5.1.execution.from_vision)
+   │  │  ├─ input:     100,000 prompt tokens/run   → flat
+   │  │  └─ cache:     0.0% of prompt tokens served from cache   → flat  🟡 warm and cached NAUGHT — a prefix broke; \`--of run --at <rundir>\` names the input past the seam
+   │  ├─ tokens
+   │  │  ├─ input:     500.0k
+   │  │  ├─ cache.set: 0
+   │  │  ├─ cache.get: 0
+   │  │  └─ output:    5.0k
+   │  └─ cost: $0.250000
+   │
+   ├─ by input — what the prompts were MADE of
+   │  └─ — (no prompt could be read, 6 unread)
+   │
+   ├─ by reviewer — heaviest prompt first
+   │  ├─ lane-lapsed     2 runs ·  200.0k prompt ·   0.0% cached ·    $0.100000  🟡 cold (lapsed 120m) — its prefix aged past the 66-minute cache reach between rounds
+   │  ├─ lane-held       2 runs ·  200.0k prompt ·   0.0% cached ·    $0.100000  🟡 warm and cached NAUGHT — a prefix broke; \`--of run --at <rundir>\` names the input past the seam
+   │  └─ lane-refused    2 runs ·  100.0k prompt ·   0.0% cached ·    $0.050000  cold (first round) — no prior prompt of its lane to share a prefix with
+   │
+   ├─ by level — heaviest prompt first
+   │  └─ (no level — guard unread)    6 runs ·  500.0k prompt ·   0.0% cached ·    $0.250000  🟡 warm and cached NAUGHT — a prefix broke; \`--of run --at <rundir>\` names the input past the seam
+   │
+   ├─ by provider — heaviest prompt first
+   │  └─ (no provider — unreported)    6 runs ·  500.0k prompt ·   0.0% cached ·    $0.250000  🟡 warm and cached NAUGHT — a prefix broke; \`--of run --at <rundir>\` names the input past the seam
+   │
+   ├─ by stone — heaviest prompt first
+   │  └─ 5.1.execution.from_vision    6 runs ·  500.0k prompt ·   0.0% cached ·    $0.250000  🟡 warm and cached NAUGHT — a prefix broke; \`--of run --at <rundir>\` names the input past the seam
+   │
+   └─ by round
+      ├─ 5.1.execution.from_vision i000    3 runs ·  200.0k prompt ·   0.0% cached ·    $0.100000  cold (first round) — no prior prompt of its lane to share a prefix with
+      ├─ 5.1.execution.from_vision i005    1 run  ·  100.0k prompt ·   0.0% cached ·    $0.050000  cold (first round) — no prior prompt of its lane to share a prefix with
+      ├─ 5.1.execution.from_vision i050    1 run  ·  100.0k prompt ·   0.0% cached ·    $0.050000  🟡 warm and cached NAUGHT — a prefix broke; \`--of run --at <rundir>\` names the input past the seam
+      └─ 5.1.execution.from_vision i120    1 run  ·  100.0k prompt ·   0.0% cached ·    $0.050000  🟡 cold (lapsed 120m) — its prefix aged past the 66-minute cache reach between rounds"
+`;

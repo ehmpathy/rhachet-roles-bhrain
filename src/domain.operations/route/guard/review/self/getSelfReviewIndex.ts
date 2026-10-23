@@ -10,12 +10,12 @@ import type { RouteStoneGuardReviewSelf } from '@src/domain.objects/Driver/Route
  *            still said "for file name conventions" would send the next maintainer to a
  *            filename that has no ordinal in it
  *
- * ⚠️ .note = this is a SECOND derivation of a position, beside `findNextUnpromisedReview`,
+ * ⚠️ .note = this is a SECOND derivation of a position, beside `getOneNextUnpromisedReview`,
  *            and the pair is deliberate — they answer different questions:
  *
  *            | operation | the question | the input |
  *            |---|---|---|
- *            | `findNextUnpromisedReview` | which review is owed NEXT? | the promised set |
+ *            | `getOneNextUnpromisedReview` | which review is owed NEXT? | the promised set |
  *            | this one | where does THIS slug sit? | one slug |
  *
  *            so one cannot be expressed as the other: the finder needs the promised set

@@ -9,7 +9,7 @@ reviews:
     - slug: optional-skip
       budget: 3
       level: 1
-      run: rhx review --repo bhrain --rules 'rules/DOES_NOT_EXIST/*.md' --optional rules --paths 'src/**/*.ts' --output $output --brain fireworks/deepseek/v4-flash
+      run: rhx review --repo bhrain --rules 'rules/DOES_NOT_EXIST/*.md' --optional rules --paths 'src/**/*.ts' --output $output --brain openrouter/deepseek/flash
 
 judges:
   - rhx route.stone.judge --mechanism reviewed? --stone $stone --route $route --allow-blockers 0 --allow-nitpicks 1

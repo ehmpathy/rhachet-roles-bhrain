@@ -241,7 +241,11 @@ describe('stepRouteDrive', () => {
           when: 'hook.onStop',
         });
         expect(result.emit?.stdout).toContain('halted, guard malfunction');
-        expect(result.emit?.stdout).toContain('please tell a human');
+        // .retired = the prior intent "the halt defers to a human" ('please tell a human').
+        //   a malfunction is driver-diagnosable (rule.always.diagnose-reviewer-malfunctions),
+        //   so the halt copy now hands it to the driver; the negation clamps the retirement
+        expect(result.emit?.stdout).toContain('still yours to clear');
+        expect(result.emit?.stdout).not.toContain('please tell a human');
         expect(result.emit?.stderr?.code).toBe(1);
       });
 
@@ -252,7 +256,10 @@ describe('stepRouteDrive', () => {
         });
         expect(result.emit?.stderr?.reason).toContain('malfunctioned');
         expect(result.emit?.stderr?.reason).toContain('1.vision');
-        expect(result.emit?.stderr?.reason).toContain('human must fix');
+        // .retired = the prior intent "a human must fix the malfunction" ('human must fix').
+        //   same warrant as [t1] above: the malfunction is the driver's to diagnose and clear
+        expect(result.emit?.stderr?.reason).toContain('it is yours to clear');
+        expect(result.emit?.stderr?.reason).not.toContain('human must fix');
       });
 
       then('output mentions affected stone', async () => {

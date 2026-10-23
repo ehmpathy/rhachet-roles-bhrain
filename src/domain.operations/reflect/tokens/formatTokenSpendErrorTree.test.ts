@@ -38,10 +38,11 @@ describe('formatTokenSpendErrorTree', () => {
     const lines = stderr.split('\n').filter((line) => line.trim() !== '');
     expect(lines.slice(-5)).toEqual([
       '      ├─ why: a fixture has no usage to read',
-      '      ├─ fix: point at another transcript',
-      '      │  └─ rhx reflect.on.token.spend --from <path-to-another.jsonl>',
-      '      └─ or: read the whole dir as a corpus',
-      "         └─ rhx reflect.on.token.spend --from '/p/*.jsonl'",
+      '      └─ fix: point at another transcript',
+      '         └─ rhx reflect.on.token.spend --from <path-to-another.jsonl>',
+      // the alternate move is a hint block after the tree, never an `or:` leaf inside it
+      '✨ did you know?',
+      "   └─ read the whole dir as a corpus, run `rhx reflect.on.token.spend --from '/p/*.jsonl'`",
     ]);
     expect(stderr).not.toContain('hintRun');
     expect(stderr).toMatchSnapshot();

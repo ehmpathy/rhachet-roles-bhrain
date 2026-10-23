@@ -1,25 +1,24 @@
+import { asReviewWaveStatusLine } from '@src/domain.operations/asReviewWaveStatusLine';
+import { genReviewWaveBuffer } from '@src/domain.operations/genReviewWaveBuffer';
+import { genTerminalTailLine } from '@src/infra/terminal/genTerminalTailLine';
+
+// a sanctioned exposure, declared in src/domain.operations/route/guard/tree/.readme.md
 import { formatGuardReviewerTree } from '../route/guard/tree/formatGuardReviewerTree';
 import { asReviewByReviewerTreeState } from './asReviewByReviewerTreeState';
 import type { ReviewRubricProgress } from './ReviewByResult';
 
 /**
- * .what = spinner frames + cadence, matched to genContextCliEmit (the route peer-review streamer)
- * .why = so review.by's live stream spins identically to route.stone.set's peer reviews.
- */
-const FRAMES = ['⠋', '⠙', '⠹', '⠸', '⠼', '⠴', '⠦', '⠧', '⠇', '⠏'];
-const SPIN_MS = 80;
-
-/**
- * .what = a live streamer that renders each review.by rubric as an INCREMENTAL peer-style row —
- *         the exact form route.stone.set streams its peer reviews with (formatGuardReviewerTree)
- * .why = the human asked review.by to look, while it runs, like the incremental peer-review
- *        render — not a bespoke line. so this reuses formatGuardReviewerTree verbatim (via
- *        asReviewByReviewerTreeState) for both the inflight spinner line and the finished detail
- *        rows, so it stays perma-conformed with the guard's streamer. it mirrors
- *        genContextCliEmit's review path: seal a blank `│`, seal the `r{n}: slug` header, spin an
- *        `inflight` line under it (tty), then overwrite with the finished verdict/blocker/nitpick/
- *        given rows.
+ * .what = a live streamer that renders review.by's rubrics as they pour — each rubric's
+ *         whole peer-style row released in declared order, under one tail status line
+ * .why = the rubrics run concurrently (`stepReviewBy`), so a row that sealed its header at
+ *        start would land another rubric's verdict under it. this reuses the guard's own
+ *        wave buffer (`genReviewWaveBuffer`) and status line (`asReviewWaveStatusLine`), so
+ *        review.by streams exactly as route.stone.set streams a concurrent peer level:
+ *        each block whole, in declared order, and one `N inflight · D done · L left` line
+ *        that moves (rule.require.status-feedback)
  *
+ * .note = reentrant by construction. every start and done event is keyed by its rubric's
+ *         slot, never by "the active rubric", so any number may be inflight at once
  * .note = writes to STDOUT (not stderr): rhachet's skill runner streams a skill's stdout live but
  *         discards its stderr on success, so only stdout reaches the human as it runs. the caller
  *         passes process.stdout and suppresses this entirely under a guard (the guard renders its
@@ -31,105 +30,43 @@ export const genReviewByRubricStreamer = (input: {
   onProgress: (event: ReviewRubricProgress) => void;
   done: () => void;
 } => {
-  const isTty = input.out.isTTY ?? false;
+  // the ordered-release state; review.by is one flat wave, so it holds one level
+  const wave = genReviewWaveBuffer();
 
-  // .note = deliberate mutation. a streamer is inherently stateful — the spinner interval, the
-  //         last line width (for \r overwrite), and the active rubric identity all evolve across
-  //         start/tick/done callbacks. an imperative accumulator is the clearest shape for a
-  //         terminal-control loop; see rule.require.immutable-vars (annotated-mutation exception).
-  let activeInterval: ReturnType<typeof setInterval> | null = null;
-  let lastLineLen = 0;
-  let beganMs = 0;
-  let activeIndex = 0;
-  let activeSlug = '';
+  // the tail-line mechanics (overwrite, seal, spin) and the spinner frames + cadence come from
+  // the one driver the guard's peer stream reads too, so the two streams spin identically
+  const tail = genTerminalTailLine({ out: input.out });
+  const clearActive = tail.stop;
+  const seal = tail.seal;
 
-  const clearActive = (): void => {
-    if (activeInterval) {
-      clearInterval(activeInterval);
-      activeInterval = null;
-    }
-  };
-
-  // overwrite the last line via \r (tty) or print a fresh line (non-tty) — mirrors genContextCliEmit
-  const overwrite = (text: string): void => {
-    if (isTty) {
-      input.out.write(`\r${text.padEnd(lastLineLen)}`);
-      lastLineLen = text.length;
-    } else {
-      input.out.write(`${text}\n`);
-      lastLineLen = 0;
-    }
-  };
-
-  // finalize a line: overwrite + newline (tty) or plain print (non-tty)
-  const seal = (text: string): void => {
-    if (isTty) {
-      input.out.write(`\r${text.padEnd(lastLineLen)}\n`);
-      lastLineLen = 0;
-    } else {
-      input.out.write(`${text}\n`);
-    }
-  };
-
-  // render a rubric's inflight lines [header, spinnerLine] via the SHARED formatter, so the
-  // header + indent match a peer reviewer exactly. hideMeter drops the route-only (l,budget).
-  const inflightLines = (
-    index: number,
-    slug: string,
-    durationSec: number,
-  ): string[] =>
-    formatGuardReviewerTree({
-      reviewer: {
-        index,
-        slug,
-        level: 1,
-        rounds: 0,
-        budget: 1,
-        // a review.by row is a flat per-role review, never a route-ladder level, so it is
-        // never overrule-scoped — nor stance-scoped, and this row is inflight besides
-        overruled: false,
-        skippedByDispute: false,
-        state: { type: 'inflight', durationSec },
-      },
-      isLast: false,
-      baseIndent: '   ',
-      hideMeter: true,
+  // spin the one wave status line while any rubric is aloft (tty only, as the guard does)
+  const drawStatus = (): void => {
+    clearActive();
+    if (wave.status().inflight === 0) return;
+    const beganMs = wave.status().beganMs ?? Date.now();
+    tail.spin({
+      render: (frame) =>
+        asReviewWaveStatusLine({
+          frame,
+          status: wave.status(),
+          sec: (Date.now() - beganMs) / 1000,
+        }),
     });
+  };
 
   const onProgress = (event: ReviewRubricProgress): void => {
-    // a rubric is about to run: seal the separator + header, then spin an inflight line under it
+    // every event ensures the one wave is open, sized to the rubric roster
+    wave.begin({ level: 1, total: event.total });
+    const slot = event.index - 1;
+
+    // a rubric went aloft: count it, and let the status line show it
     if (event.phase === 'start') {
-      clearActive();
-      beganMs = Date.now();
-      activeIndex = event.index;
-      activeSlug = event.slug;
-
-      // blank connector line + the reviewer header (both permanent), like peer streaming
-      seal('   │');
-      seal(inflightLines(event.index, event.slug, 0)[0]!);
-
-      // tty: rotate the spinner on the inflight line; non-tty: leave the header (no noisy reprint)
-      if (isTty) {
-        // .note = deliberate mutation. frameIdx advances each tick to spin the glyph.
-        let frameIdx = 0;
-        activeInterval = setInterval(() => {
-          const sec = (Date.now() - beganMs) / 1000;
-          const frame = FRAMES[frameIdx % FRAMES.length]!;
-          frameIdx++;
-          // reuse the shared inflight line, swap the fixed glyph for the current frame
-          const spinnerLine = inflightLines(
-            activeIndex,
-            activeSlug,
-            sec,
-          )[1]!.replace('⠋', frame);
-          overwrite(spinnerLine);
-        }, SPIN_MS);
-      }
+      wave.launch({ slot, beganMs: Date.now() });
+      drawStatus();
       return;
     }
 
-    // a rubric finished: overwrite the spinner with the finished peer row (skip the sealed header)
-    clearActive();
+    // a rubric finished: buffer its whole row, then release every row now in order
     const state = asReviewByReviewerTreeState({
       index: event.index,
       slug: event.slug,
@@ -137,14 +74,27 @@ export const genReviewByRubricStreamer = (input: {
       durationMs: event.durationMs ?? null,
       outputPath: event.outputPath ?? '',
     });
-    const lines = formatGuardReviewerTree({
-      reviewer: state,
-      isLast: false,
-      baseIndent: '   ',
-      hideMeter: true,
-    });
-    for (const line of lines.slice(1)) seal(line);
+    const block = [
+      '   │',
+      ...formatGuardReviewerTree({
+        reviewer: state,
+        isLast: false,
+        baseIndent: '   ',
+        hideMeter: true,
+      }),
+    ];
+    clearActive();
+    for (const released of wave.settle({ slot, block }))
+      for (const line of released) seal(line);
+    drawStatus();
   };
 
-  return { onProgress, done: clearActive };
+  // stop the spinner, and release any row a thrown rubric left behind a gap
+  const done = (): void => {
+    clearActive();
+    for (const released of wave.drain())
+      for (const line of released) seal(line);
+  };
+
+  return { onProgress, done };
 };

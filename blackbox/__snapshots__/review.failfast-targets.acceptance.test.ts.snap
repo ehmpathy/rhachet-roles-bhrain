@@ -1,0 +1,41 @@
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
+
+exports[`review.failfast-targets.acceptance given: [case1] paths glob matches no files when: [t0] review skill invoked with paths glob that resolves to zero then: the refusal renders whole 1`] = `
+"
+🦉 woah there
+
+✋ ConstraintError: combined scope resolves to zero files
+   └─ targets
+      ├─ diffs: (none)
+      │  └─ files: —
+      ├─ paths.with: src/nonexistent/*.ts
+      │  └─ files: 0
+      ├─ paths.wout: (none)
+      └─ joined via intersect
+         └─ files: 0
+
+✨ did you know?
+   └─ inspect .log/bhrain/review/<TIMESTAMP> to see what was matched
+
+"
+`;
+
+exports[`review.failfast-targets.acceptance given: [case2] explicit target path does not exist when: [t0] review skill invoked with non-existent target path then: the refusal renders whole 1`] = `
+"
+🦉 woah there
+
+✋ ConstraintError: combined scope resolves to zero files
+   └─ targets
+      ├─ diffs: (none)
+      │  └─ files: —
+      ├─ paths.with: src/DOES_NOT_EXIST.ts
+      │  └─ files: 0
+      ├─ paths.wout: (none)
+      └─ joined via intersect
+         └─ files: 0
+
+✨ did you know?
+   └─ inspect .log/bhrain/review/<TIMESTAMP> to see what was matched
+
+"
+`;

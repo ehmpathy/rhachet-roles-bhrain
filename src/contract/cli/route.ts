@@ -1,10 +1,16 @@
 import { execSync } from 'child_process';
 import * as fs from 'fs/promises';
-import { BadRequestError } from 'helpful-errors';
+import { BadRequestError, ConstraintError } from 'helpful-errors';
 import * as path from 'path';
 
 import { getGuardPeerReviews } from '@src/domain.objects/Driver/RouteStoneGuard';
+import { genReviewBrainSupply } from '@src/domain.operations/brain/genReviewBrainSupply';
+import { asCliOptionsOfArgs } from '@src/domain.operations/cli/asCliOptionsOfArgs';
 import { getInvocationArgs } from '@src/domain.operations/cli/getInvocationArgs';
+import { emitReviewRefusal } from '@src/domain.operations/emitReviewRefusal';
+import { isPathPresent } from '@src/domain.operations/review/isPathPresent';
+import { getOneReviewPartitionsFault } from '@src/domain.operations/review/partition/getOneReviewPartitionsFault';
+import { asRouteStoneSetExitCode } from '@src/domain.operations/route/asRouteStoneSetExitCode';
 import { asUrgentHarmSet } from '@src/domain.operations/route/asUrgentHarmSet';
 import { delRouteBind } from '@src/domain.operations/route/bind/delRouteBind';
 import { getRouteBind } from '@src/domain.operations/route/bind/getRouteBind';
@@ -12,17 +18,30 @@ import { getRouteBindByBranch } from '@src/domain.operations/route/bind/getRoute
 import { setRouteBind } from '@src/domain.operations/route/bind/setRouteBind';
 import { getDecisionIsArtifactProtected } from '@src/domain.operations/route/bouncer/getDecisionIsArtifactProtected';
 import { getRouteBouncerCache } from '@src/domain.operations/route/bouncer/getRouteBouncerCache';
-import {
-  FIXED_FALLBACK_BRAIN,
-  genReviewBrainSupply,
-} from '@src/domain.operations/route/genReviewBrainSupply';
+import { ROUTE_INFLIGHT_FRESH_BOUND_LABEL } from '@src/domain.operations/route/drive/asRouteInflightFreshness';
 import { genContextCliEmit } from '@src/domain.operations/route/guard/genContextCliEmit';
 import { getRepoRootWithFallback } from '@src/domain.operations/route/guard/getRepoRootWithFallback';
 import { isStoneMatchedByName } from '@src/domain.operations/route/guard/isStoneMatchedByName';
 import { getStoneGuardExhaustedApprovalBypass } from '@src/domain.operations/route/guard/judge/getStoneGuardExhaustedApprovalBypass';
+import { asRouteGuardPartitionAction } from '@src/domain.operations/route/guard/partition/asRouteGuardPartitionAction';
+import { asRouteGuardPartitionClaimsOfFlags } from '@src/domain.operations/route/guard/partition/asRouteGuardPartitionClaimsOfFlags';
+import { asRouteGuardPartitionClearLines } from '@src/domain.operations/route/guard/partition/asRouteGuardPartitionClearLines';
+import { asRouteGuardPartitionCoverageLines } from '@src/domain.operations/route/guard/partition/asRouteGuardPartitionCoverageLines';
+import { asRouteGuardPartitionDeclarationsOfAction } from '@src/domain.operations/route/guard/partition/asRouteGuardPartitionDeclarationsOfAction';
+import { asRouteGuardPartitionDeclaredLines } from '@src/domain.operations/route/guard/partition/asRouteGuardPartitionDeclaredLines';
+import { asRouteGuardPartitionPrunesOfFlags } from '@src/domain.operations/route/guard/partition/asRouteGuardPartitionPrunesOfFlags';
+import { asRouteGuardPartitionTreeLines } from '@src/domain.operations/route/guard/partition/asRouteGuardPartitionTreeLines';
+import { asStoneGuardPartitionGapLines } from '@src/domain.operations/route/guard/partition/asStoneGuardPartitionGapLines';
+import { asStoneGuardPartitionGapsOfCoverage } from '@src/domain.operations/route/guard/partition/asStoneGuardPartitionGapsOfCoverage';
+import { getAllPartitionFlagsOfScope } from '@src/domain.operations/route/guard/partition/getAllPartitionFlagsOfScope';
+import { getAllStoneGuardPartitionCoverage } from '@src/domain.operations/route/guard/partition/getAllStoneGuardPartitionCoverage';
+import { getOneRouteGuardPartitions } from '@src/domain.operations/route/guard/partition/getOneRouteGuardPartitions';
+import { getOneStoneGuardPartitionCoverage } from '@src/domain.operations/route/guard/partition/getOneStoneGuardPartitionCoverage';
+import type { RouteGuardPartitionScope } from '@src/domain.operations/route/guard/partition/RouteGuardPartitionScope';
+import { setRouteGuardPartitionsOfScope } from '@src/domain.operations/route/guard/partition/setRouteGuardPartitionsOfScope';
 import { computeReviewThresholdVerdict } from '@src/domain.operations/route/guard/review/computeReviewThresholdVerdict';
-import { computeReviewTotalsFromFiles } from '@src/domain.operations/route/guard/review/computeReviewTotalsFromFiles';
 import { computeStoneReviewInputHash } from '@src/domain.operations/route/guard/review/computeStoneReviewInputHash';
+import { getOneReviewTotalsFromFiles } from '@src/domain.operations/route/guard/review/getOneReviewTotalsFromFiles';
 import { asConcedeSeverity } from '@src/domain.operations/route/guard/review/peer/asConcedeSeverity';
 import { asJudgeResidualLines } from '@src/domain.operations/route/guard/review/peer/asJudgeResidualLines';
 import { computeResidualConcernCounts } from '@src/domain.operations/route/guard/review/peer/computeResidualConcernCounts';
@@ -31,8 +50,8 @@ import {
   formatReviewBudgetTopupCommand,
   ROUNDS_OFFERED_ON_TOPUP,
 } from '@src/domain.operations/route/guard/review/peer/formatReviewBudgetTopupCommand';
+import { getAllNonOverruledReviewFiles } from '@src/domain.operations/route/guard/review/peer/getAllNonOverruledReviewFiles';
 import { getLatestReviewFilesPerSlug } from '@src/domain.operations/route/guard/review/peer/getLatestReviewFilesPerSlug';
-import { getNonOverruledReviewFiles } from '@src/domain.operations/route/guard/review/peer/getNonOverruledReviewFiles';
 import { getStoneConcededBetterConcernCounts } from '@src/domain.operations/route/guard/review/peer/getStoneConcededBetterConcernCounts';
 import { getStoneDisputedConcernCounts } from '@src/domain.operations/route/guard/review/peer/getStoneDisputedConcernCounts';
 import { getStoneLiveUrgentConcessionSlugs } from '@src/domain.operations/route/guard/review/peer/getStoneLiveUrgentConcessionSlugs';
@@ -66,7 +85,18 @@ import { asYieldModeForRewound } from '@src/domain.operations/route/stones/asYie
 import { findStoneByName } from '@src/domain.operations/route/stones/findStoneByName';
 import { getAllStones } from '@src/domain.operations/route/stones/getAllStones';
 import { isPromisedActionSlugAbsent } from '@src/domain.operations/route/stones/isPromisedActionSlugAbsent';
+import { asPathAbsoluteFromCwd } from '@src/utils/asPathAbsoluteFromCwd';
 import { enumFilesFromGlob } from '@src/utils/enumFilesFromGlob';
+
+import { asConstraintErrorHeader } from './asConstraintErrorHeader';
+import { asConstraintErrorHeadline } from './asConstraintErrorHeadline';
+
+// .note = every caller-fix refusal in this file opens with the qualified
+//         `✋ ConstraintError:` header (rule.require.qualified-error-headers), so one
+//         failure kind reads one way across every route subcommand. `routeGuardBudget`
+//         and `routeGuardPartition` also wrap it in the owl frame (`emitReviewRefusal`);
+//         the frame around the rest is the open half of the dream
+//         `.dream/v2026_10_07.fix.route-cli-refusals-share-one-frame.md` (F128)
 
 /**
  * .what = copies bytes read from a buffer into a new buffer
@@ -88,6 +118,8 @@ const asRelativePathFromAbsolute = (input: {
   cwd: string;
   fsSync: { realpathSync: (p: string) => string };
 }): string | null => {
+  // .note = deliberate mutation, and a SCOPED ZONE: each variable is born here and set in one
+  //         arm of a try/catch; only the relative path derived from both escapes the call
   let cwdCanonical: string;
   let filePathCanonical: string;
 
@@ -169,6 +201,7 @@ const VALID_STONE_PASSAGE_ACTIONS = new Set([
   'forced',
   'disputed',
   'conceded',
+  'inflight',
 ]);
 
 /**
@@ -190,114 +223,60 @@ const getCleanArgsFromArgv = (input: { argv: string[] }): string[] =>
   getInvocationArgs(input.argv);
 
 /**
- * .what = the flags that are meaningless without a value, so a bare form is refused loud
- * .why = `parseArgs` coerces a value-less `--flag` to the string `'true'`, which is TRUTHY. for a
- *        boolean flag that is the whole point; for a flag that carries a path it fabricates a
- *        value, so the downstream required-guard never fires and the driver meets a confusing
- *        downstream verdict instead of the loud one that names what is owed
- *        (`rule.forbid.unexpected-defaults`).
- *
- * 🔴 .why a SET rather than an `if` per flag = the same reason `getStrayFlagRefusal` is a table.
- *    a flag absent from a set is visible beside its peers; a flag absent from an `if` chain is not,
- *    so the default for a new flag would be silence.
- *
- * 🔴 .why an ALLOWLIST rather than the inverse (declare the booleans, require a value for all
- *    else) = the inverse is the better shape and it is NOT CLEAN in this diff. it changes the
- *    default for every flag of every route command at once, and the boolean set must be exactly
- *    right or a command breaks silently. ⇒ caught as the shape of the fix rather than smuggled in
- *    (`rule.always.fix-forward-under-scouts-honor`).
- *
- * ⚠️ .note = THIS SET IS THE THIRD TABLE, and it is meant to be DELETED rather than grown.
- *    `parseArgs`'s lookahead guesses arity, `asFlagOwnership` (`getStrayFlagRefusal.ts`) holds
- *    ownership, and this holds arity for one flag — three tables, and each knows only part of
- *    what a flag is. ⇒ a future flag that takes a value, whose author threads `parseArgs` and
- *    `asFlagOwnership` (both of which they must touch) and omits this set (which they have no
- *    reason to know exists), re-creates the exact defect one flag over.
- *    the unified `FLAG_SCHEMA` that retires all three is worked out in
- *    `.dream/v2026_09_20.fix.two-flag-tables-and-neither-knows-arity.md`.
- *
- * .found = `arch-hazards-behavior` at i015 nitpick.1; the third-table hazard named independently
- *          by `enroll-impl-arch-defects` at i015 nitpick.4
+ * .what = the route flags that take no value — each reads as 'true' when typed bare
+ * .why = every other flag needs a value, so a bare one is a slip the parse refuses
+ * .note = this inverse shape (declare the booleans, require a value for all else) retires the
+ *         per-flag allowlist that once guarded `--into` alone: a new value flag is refused bare
+ *         by default, with no table to remember
  */
-const FLAGS_THAT_REQUIRE_A_VALUE = new Set(['into']);
+const ROUTE_FLAGS_BOOLEAN = ['help', 'full', 'say', 'hard', 'soft'] as const;
 
 /**
- * .what = parses cli args into options object
- * .why = simple arg parser without external dependencies
+ * .what = parses cli args into options object, and refuses a value flag typed bare
+ * .why = 🔴 a bare `--stone` once parsed as the string 'true', so it passed every
+ *        `!options.stone` check and ran on a stone named `true`; each command then had to
+ *        guard by hand (`peer === 'true'`), and most did not. the parse names each bare value
+ *        flag, and every command that parses refuses here, once, before it reads a flag
  */
-const parseArgs = (argv: string[]): Record<string, string | undefined> => {
-  const args = getCleanArgsFromArgv({ argv });
-  const options: Record<string, string | undefined> = {};
+const parseArgsWhole = (
+  argv: string[],
+): ReturnType<typeof asCliOptionsOfArgs> => {
+  const parsed = asCliOptionsOfArgs({
+    args: getCleanArgsFromArgv({ argv }),
+    booleans: ROUTE_FLAGS_BOOLEAN,
+  });
+  if (parsed.valueless.length === 0) return parsed;
 
-  for (let i = 0; i < args.length; i++) {
-    const arg = args[i];
-    if (!arg) continue;
-
-    if (arg.startsWith('--')) {
-      const key = arg.slice(2);
-      const value = args[i + 1];
-
-      if (value && !value.startsWith('--')) {
-        options[key] = value;
-        i++;
-      } else {
-        // refuse a bare form where the flag carries a value — never fabricate one
-        //
-        // .note = the message stays GENERIC on purpose. `parseArgs` is shared by every route
-        //    subcommand and does not know which one was invoked, so a hint that names one
-        //    verb's syntax is decoy guidance for every other caller of the same flag.
-        //
-        // 🔴 it read `to promise a self review: --as promised --that <slug> --into <path>` until
-        //    i016, and `--into` is reachable from `route.stone.get`, `route.guard.budget`,
-        //    `route.bind.*`, and `route.bounce` alike ⇒ a driver on any of those met confident
-        //    instructions for a command they had not run (`rule.forbid.surprises`;
-        //    `enroll-impl-arch-defects` at i016, graded on the harm of a wrong mental model).
-        //
-        // ⇒ the per-verb hint belongs to the verb. `getStrayFlagRefusal`'s `asFlagOwnership`
-        //    table is where a subcommand-specific message is owed, since it knows the verb.
-        if (FLAGS_THAT_REQUIRE_A_VALUE.has(key))
-          throw new BadRequestError(
-            [
-              `--${key} was passed with no value`,
-              ``,
-              `--${key} carries a value, so a bare --${key} says naught.`,
-              ``,
-              `pass the value it asks for, or drop the flag:`,
-              `  --${key} <value>`,
-            ].join('\n'),
-            { flag: `--${key}` },
-          );
-        options[key] = 'true';
-      }
-    }
-  }
-
-  return options;
+  // a value flag typed bare must not run on a default, nor on the word 'true'
+  // .note = the message stays generic on purpose: the parse is shared by every route
+  //         subcommand, so a hint that names one verb's syntax is decoy guidance for the rest.
+  //         the fix names only the shape each typed flag owes, which holds for every verb
+  emitReviewRefusal({
+    kind: 'constraint',
+    headline: `${parsed.valueless.map((key) => `--${key}`).join(', ')} given with no value`,
+    lines: [
+      `   └─ fix: ${parsed.valueless.map((key) => `--${key} <value>`).join(' ')}, or see --help`,
+    ],
+  });
+  return process.exit(2);
 };
+
+/**
+ * .what = the last value per flag, after the valueless refusal
+ * .why = most commands read one value per flag
+ */
+const parseArgs = (argv: string[]): Record<string, string | undefined> =>
+  parseArgsWhole(argv).options;
 
 /**
  * .what = collects all values for a repeated key from argv
  * .why = enables multi-value support for --stone in route.stone.del
+ *
+ * .note = reads the same parse as `parseArgs`, so one transformer decides a flag's value,
+ *         and a bare repeated value flag is refused here too rather than dropped
  */
-const collectArgsMulti = (argv: string[], key: string): string[] => {
-  const args = getCleanArgsFromArgv({ argv });
-  const values: string[] = [];
-
-  for (let i = 0; i < args.length; i++) {
-    const arg = args[i];
-    if (!arg) continue;
-
-    if (arg === `--${key}`) {
-      const value = args[i + 1];
-      if (value && !value.startsWith('--')) {
-        values.push(value);
-        i++;
-      }
-    }
-  }
-
-  return values;
-};
+const collectArgsMulti = (argv: string[], key: string): string[] =>
+  parseArgsWhole(argv).optionsMulti[key] ?? [];
 
 /**
  * .what = collects stdin content synchronously
@@ -308,6 +287,10 @@ const collectStdinContent = (): string | null => {
   if (process.stdin.isTTY) return null;
 
   // read stdin synchronously via fd 0
+  // .note = deliberate mutation, and a SCOPED ZONE: `chunks` and the reuse buffer `buf` are
+  //         born in this call and neither escapes — only their concatenation does. a sync
+  //         read loop over fd 0 has no length known up front, so it grows one chunk per read
+  //         (rule.require.immutable-vars, scoped zone)
   const chunks: Buffer[] = [];
   const BUFSIZE = 256;
   const buf = Buffer.allocUnsafe(BUFSIZE);
@@ -353,7 +336,7 @@ usage:
 
 options:
   --stone <query>    stone query: @next-one, @next-all, or glob pattern (required)
-  --route <path>     path to route directory (required)
+  --route <path>     path to route directory (uses bound route if absent)
   --say              echo stone content to stdout
   --help             show this help message
 `.trim(),
@@ -366,14 +349,14 @@ options:
 const printSetHelp = (): void => {
   console.log(
     `
-route.stone.set - mark stone as passed, approved, promised, absorbed, disputed, conceded, blocked, rewound, arrived, overruled, or forced
+route.stone.set - mark stone as passed, approved, promised, absorbed, disputed, conceded, blocked, rewound, arrived, overruled, forced, or inflight
 
 usage:
   route.stone.set [options]
 
 options:
   --stone <name>     stone name or glob pattern (required)
-  --route <path>     path to route directory (required)
+  --route <path>     path to route directory (uses bound route if absent)
   --as <status>      status to set (required):
                        passed   - work complete, proceed
                        arrived  - work complete, get reviews
@@ -386,6 +369,9 @@ options:
                        rewound  - clear validation state
                        overruled - bypass review thresholds (human only)
                        forced   - approve AND overrule (human only)
+                       inflight - repairs in flight (delegated work you wait on);
+                                  quiets the onStop hook for this stone for ${ROUTE_INFLIGHT_FRESH_BOUND_LABEL}.
+                                  --as arrived, passed, or blocked clears it
   --that <slug>      reviewer slug (required for --as promised / --as absorbed)
                        for --as absorbed, use the slug exactly as shown in the
                        reviewers-await-reply prompt (path-sanitized: slashes → dashes)
@@ -406,6 +392,7 @@ options:
                        (REQUIRED for --as promised)
                        a diff needs both paths: with one, a mismatch reads "absent";
                        with both, the guard shows the diff and the command that moves it
+  --what <text>      what the repairs in flight are (required for --as inflight)
   --help             show this help message
 
 note:
@@ -429,6 +416,7 @@ examples:
   route.stone.set --stone 3.blueprint --as rewound
   route.stone.set --stone 1.vision --as overruled
   route.stone.set --stone 1.vision --as forced
+  route.stone.set --stone 5.1.execution --as inflight --what 'three delegates repair blockers 1-4'
 `.trim(),
   );
 };
@@ -448,7 +436,7 @@ options:
   --stone <pattern>  pattern for stones to delete (required)
                      @all = match all stones
                      auto-wraps with *...* if no glob chars present
-  --route <path>     path to route directory (required)
+  --route <path>     path to route directory (uses bound route if absent)
   --mode <plan|apply> plan = preview (default), apply = execute deletion
   --help             show this help message
 `.trim(),
@@ -472,7 +460,7 @@ options:
                        @stdin = read from stdin
                        template($behavior/refs/...) = read from template file
                        '<text>' = literal content
-  --route <path>     path to route directory (optional, uses bound route)
+  --route <path>     path to route directory (uses bound route if absent)
   --mode <plan|apply> plan = preview (default), apply = create stone
   --help             show this help message
 
@@ -502,7 +490,7 @@ mechanisms:
 options:
   --mechanism <type> judge mechanism: approved? or reviewed? (required)
   --stone <name>     stone name (required)
-  --route <path>     path to route directory (required)
+  --route <path>     path to route directory (uses bound route if absent)
   --allow-blockers   max blockers allowed (for reviewed?, default: 0)
   --allow-nitpicks   max nitpicks allowed (for reviewed?, default: 0)
   --help             show this help message
@@ -524,6 +512,10 @@ usage:
 options:
   --route <path>     path to route directory to bind (required)
   --help             show this help message
+
+note:
+  --route is required here alone: a route about to be bound cannot be read from a bind.
+  every other route command falls back to the bound route when --route is absent.
 `.trim(),
   );
 };
@@ -585,16 +577,20 @@ output:
   when it has halted, it switches to a halt message that names who owns each remedy:
     ✋ halted, stone marked blocked            a driver wall (--as blocked) — clear it
     👋 halted, peer reviewer budget exhausted  two levers, sorted by owner:
-                                                converge with the reviewer — yours to run
-                                                approve as-is — a human must grant
+                                                · converge with the reviewer — yours to run
+                                                · approve as-is — a human must grant
                                                 the top-up takes the first slot ONLY where
                                                 an urgent concession earned the round: the
                                                 budget is a bound, so a grant needs a
                                                 warrant on record
-    💥 halted, guard malfunction               a reviewer or judge broke — a human must fix
+    💥 halted, guard malfunction               a reviewer or judge broke — still yours to clear:
+                                                · one row per broken part: its cause, its next step
+                                                · then answer a broken lane like a rejected one
   onStop honors the same halt: exit 2 keeps the route in motion, exit 0 allows a
   clean stop, exit 1 escalates a malfunction (per rule.require.exit-code-semantics).
   onBoot always exits 0 (it never blocks session start).
+  onStop is quiet (one ⏳ line, exit 0) while a fresh repairs-in-flight watermark
+  names the stone (route.stone.set --as inflight); past ${ROUTE_INFLIGHT_FRESH_BOUND_LABEL} it nudges again.
 
 examples:
   route.drive                        # echo current stone
@@ -639,9 +635,10 @@ errors:
 
 note:
   the claude code harness runs this with cwd = project root and renders stdout
-  as the status line. it is invoked via the node -e command written into
-  .claude/settings.json by init.claude.status-line.sh (not via rhx, whose banner
-  would pollute the single-line output)
+  as the status line. it is invoked via the node -e command that
+  init.claude.status-line.sh writes into the repo's claude settings (the file
+  .claude/settings.of.repo.json, or .claude/settings.json in the old layout),
+  not via rhx, whose banner would pollute the single-line output
 
 examples:
   node -e "import('rhachet-roles-bhrain/cli/route').then(m => m.routeStatusLine())"
@@ -715,7 +712,7 @@ const runCliEntrypoint = async (run: () => Promise<void>): Promise<void> => {
   } catch (error) {
     // allowlist BadRequestError: format nicely and exit 2
     if (error instanceof BadRequestError) {
-      console.error(`error: ${error.message}`);
+      console.error(asConstraintErrorHeader({ error }));
       process.exit(2);
     }
     // rethrow unexpected errors (no failhide)
@@ -761,7 +758,7 @@ export const routeDrive = async (): Promise<void> =>
     } catch (error) {
       // allowlist BadRequestError: format nicely and exit 2
       if (error instanceof BadRequestError) {
-        console.error(`error: ${error.message}`);
+        console.error(asConstraintErrorHeader({ error }));
         process.exit(2);
       }
       // rethrow unexpected errors (no failhide)
@@ -856,16 +853,24 @@ export const routeReview = async (): Promise<void> =>
 
     // validate opener command exists in PATH
     if (options.open) {
+      const repoRoot = await getRepoRootWithFallback({ from: process.cwd() });
       try {
-        execSync(`command -v ${options.open}`, { stdio: 'pipe' });
+        execSync(`command -v ${options.open}`, {
+          stdio: 'pipe',
+          cwd: repoRoot,
+        });
       } catch (error) {
         // allowlist command-not-found (exit code 1 or 127): format nicely and exit 2
         if (error && typeof error === 'object' && 'status' in error) {
+          // a caller-fix refusal opens qualified, as every other one in this file does
           const errorLines = [
+            `✋ ConstraintError: opener '${options.open}' not found in PATH`,
+            '',
             '🦉 look for the light',
             '',
             '🗿 route.review',
-            `   └─ ✗ opener '${options.open}' not found in PATH`,
+            // the header states the cause, so the tree row states the fix (rule.require.errors-name-the-fix)
+            `   └─ fix: install '${options.open}', or pass an opener in PATH via --open (vim, code, nvim)`,
           ];
           console.error(errorLines.join('\n'));
           process.exit(2);
@@ -893,7 +898,7 @@ export const routeReview = async (): Promise<void> =>
     } catch (error) {
       // allowlist BadRequestError: format nicely and exit 2
       if (error instanceof BadRequestError) {
-        console.error(`error: ${error.message}`);
+        console.error(asConstraintErrorHeader({ error }));
         process.exit(2);
       }
       // rethrow unexpected errors (no failhide)
@@ -926,7 +931,7 @@ export const routeBindSet = async (): Promise<void> =>
     } catch (error) {
       // allowlist BadRequestError: format nicely and exit 2
       if (error instanceof BadRequestError) {
-        console.error(`error: ${error.message}`);
+        console.error(asConstraintErrorHeader({ error }));
         process.exit(2);
       }
       // rethrow unexpected errors (no failhide)
@@ -957,7 +962,7 @@ export const routeBindGet = async (): Promise<void> =>
     } catch (error) {
       // allowlist BadRequestError: format nicely and exit 2
       if (error instanceof BadRequestError) {
-        console.error(`error: ${error.message}`);
+        console.error(asConstraintErrorHeader({ error }));
         process.exit(2);
       }
       // rethrow unexpected errors (no failhide)
@@ -988,7 +993,7 @@ export const routeBindDel = async (): Promise<void> =>
     } catch (error) {
       // allowlist BadRequestError: format nicely and exit 2
       if (error instanceof BadRequestError) {
-        console.error(`error: ${error.message}`);
+        console.error(asConstraintErrorHeader({ error }));
         process.exit(2);
       }
       // rethrow unexpected errors (no failhide)
@@ -1056,7 +1061,7 @@ export const routeStoneGet = async (): Promise<void> =>
     } catch (error) {
       // allowlist BadRequestError: format nicely and exit 2
       if (error instanceof BadRequestError) {
-        console.error(`error: ${error.message}`);
+        console.error(asConstraintErrorHeader({ error }));
         process.exit(2);
       }
       // rethrow unexpected errors (no failhide)
@@ -1073,36 +1078,6 @@ const asStdoutWithoutOwlHeader = (input: {
   owlHeader: string;
 }): string => {
   return input.stdout.replace(input.owlHeader, '').replace(/^\n+/, '');
-};
-
-/**
- * .what = determines if guard requires exit with code 2
- * .why = encapsulates exit decision logic for guard block or approval states
- *
- * 🔴 a CONCEDE exits 2, a DISPUTE exits 0 (r2 n2). the two diverge on the HOLD: a concede
- *    keeps it — the driver owes a fix and a re-arrive, so exit 0 would tell a hook the stone
- *    is clear when it is not (rule.forbid.failhide). exit 2 is the constraint code: the driver
- *    must act. a dispute sheds its concern from the tally and the road may advance, so the
- *    command itself succeeded and forces no exit — the driver's next act is `--as passed`.
- */
-const isGuardExitRequired = (input: {
-  passed: boolean | undefined;
-  challenged: boolean | undefined;
-  approved: boolean | undefined;
-  overruled: boolean | undefined;
-  forced: boolean | undefined;
-  absorbed: boolean | undefined;
-  conceded: boolean | undefined;
-}): boolean => {
-  return (
-    input.passed === false ||
-    input.challenged === true ||
-    input.approved === false ||
-    input.overruled === false ||
-    input.forced === false ||
-    input.absorbed === false ||
-    input.conceded === true
-  );
 };
 
 /**
@@ -1127,10 +1102,10 @@ export const routeStoneSet = async (): Promise<void> =>
     // validate --route required (or get from bind)
     const route = await getRouteOrThrow({ route: options.route });
 
-    // validate --as required and valid
+    // validate --as required and valid; a mistyped verb is the caller's to fix (rule.require.failloud)
     if (!isValidStonePassageAction({ action: options.as })) {
-      throw new BadRequestError(
-        '--as must be "passed", "approved", "promised", "absorbed", "conceded", "disputed", "blocked", "rewound", "arrived", "overruled", or "forced"',
+      throw new ConstraintError(
+        '--as must be "passed", "approved", "promised", "absorbed", "conceded", "disputed", "blocked", "rewound", "arrived", "overruled", "forced", or "inflight"',
         { hint: '--help for usage' },
       );
     }
@@ -1159,14 +1134,11 @@ export const routeStoneSet = async (): Promise<void> =>
     const progress = genContextCliEmit({ stderr: process.stdout });
 
     // build a LAZY memoize-on-success supplier of the review-tally sub-brain
-    // .why = the guard's fallback tactic (getReviewCountsViaBrain) needs a brain ONLY when a
+    // .why = the guard's fallback tactic (getOneReviewCountsViaBrain) needs a brain ONLY when a
     //        reviewer phrased its verdict in prose. the supplier defers the build to that first
     //        fallback, so a numeric-only stone-pass never constructs a brain (zero cost).
     // .note = env: 'prep' mirrors review.ts; keyrack auto-unlocks locked keys on first fetch
-    const reviewBrainSupply = genReviewBrainSupply({
-      choice: FIXED_FALLBACK_BRAIN,
-      creds: { keyrack: { owner: 'ehmpath', env: 'prep' } },
-    });
+    const reviewBrainSupply = genReviewBrainSupply();
 
     // print owl header early so progress appears below it
     const owlHeader = `🦉 the way speaks for itself`;
@@ -1188,8 +1160,10 @@ export const routeStoneSet = async (): Promise<void> =>
             | 'overruled'
             | 'forced'
             | 'disputed'
-            | 'conceded',
+            | 'conceded'
+            | 'inflight',
           that: options.that,
+          what: options.what,
           with: options.with,
           about: options.about,
           why: options.why,
@@ -1215,25 +1189,16 @@ export const routeStoneSet = async (): Promise<void> =>
         }
       }
 
-      // exit with code 2 for intentional guard block or approval/overrule/force blocked
-      if (
-        isGuardExitRequired({
-          passed: result.passed,
-          challenged: result.challenged,
-          approved: result.approved,
-          overruled: result.overruled,
-          forced: result.forced,
-          absorbed: result.absorbed,
-          conceded: result.conceded,
-        })
-      ) {
-        process.exit(2);
-      }
+      // exit 2 only where the act was refused; a recorded stance is a success, so it exits 0
+      const exitCode = asRouteStoneSetExitCode({ result });
+      if (exitCode !== 0) process.exit(exitCode);
     } catch (error) {
       progress.done();
-      // allowlist BadRequestError: format nicely and exit 2
+      // a BadRequestError — and its ConstraintError subclass — is a caller fault. render it
+      // under the one qualified header, never behind a bare `error: ` opener that reads
+      // `error: BadRequestError: …` (rule.require.qualified-error-headers), and exit 2
       if (error instanceof BadRequestError) {
-        console.error(`error: ${error.message}`);
+        console.error(asConstraintErrorHeader({ error }));
         process.exit(2);
       }
       // rethrow unexpected errors (no failhide)
@@ -1279,7 +1244,7 @@ export const routeStoneDel = async (): Promise<void> => {
   } catch (error) {
     // allowlist BadRequestError: format nicely and exit 2
     if (error instanceof BadRequestError) {
-      console.error(`error: ${error.message}`);
+      console.error(asConstraintErrorHeader({ error }));
       process.exit(2);
     }
     // rethrow unexpected errors (no failhide)
@@ -1337,7 +1302,7 @@ export const routeStoneAdd = async (): Promise<void> => {
   } catch (error) {
     // allowlist BadRequestError: format nicely and exit 2
     if (error instanceof BadRequestError) {
-      console.error(`error: ${error.message}`);
+      console.error(asConstraintErrorHeader({ error }));
       process.exit(2);
     }
     // rethrow unexpected errors (no failhide)
@@ -1390,7 +1355,7 @@ export const routeStoneJudge = async (): Promise<void> =>
     } catch (error) {
       // allowlist BadRequestError: format nicely and exit 2
       if (error instanceof BadRequestError) {
-        console.error(`error: ${error.message}`);
+        console.error(asConstraintErrorHeader({ error }));
         process.exit(2);
       }
       // rethrow unexpected errors (no failhide)
@@ -1421,10 +1386,8 @@ const judgeApproved = async (input: {
     route: input.route,
   });
 
-  if (approval) {
-    console.log('passed: true');
-    console.log('reason: human approval found');
-  } else {
+  // halt until a human approves
+  if (!approval) {
     const approveCmd = `rhx route.stone.set --stone ${input.stone} --as approved`;
     const passCmd = `rhx route.stone.set --stone ${input.stone} --as passed`;
     console.log('passed: false');
@@ -1438,6 +1401,10 @@ const judgeApproved = async (input: {
     console.log(`      └─ ${passCmd}`);
     process.exit(2);
   }
+
+  // pass on human approval
+  console.log('passed: true');
+  console.log('reason: human approval found');
 };
 
 /**
@@ -1594,14 +1561,14 @@ const judgeReviewed = async (input: {
   const peerReviews = stoneMatched.guard
     ? getGuardPeerReviews(stoneMatched.guard)
     : [];
-  const reviewFilesToCount = getNonOverruledReviewFiles({
+  const reviewFilesToCount = getAllNonOverruledReviewFiles({
     reviewFiles: latestReviewFiles,
     peerReviews,
     overruledLevels,
   });
 
   // compute total blockers and nitpicks from non-overruled reviews
-  const { totalBlockers, totalNitpicks } = await computeReviewTotalsFromFiles({
+  const { totalBlockers, totalNitpicks } = await getOneReviewTotalsFromFiles({
     reviewFiles: reviewFilesToCount,
   });
 
@@ -1765,6 +1732,10 @@ const readToolInputFromStdin = (): {
   if (process.stdin.isTTY) return null;
 
   // read stdin synchronously via fd 0
+  // .note = deliberate mutation, and a SCOPED ZONE: `chunks`, the reuse buffer `buf`, and
+  //         `bytesRead` are born in this call and none escapes — only their concatenation
+  //         does. a sync read loop over fd 0 has no length known up front, so it grows one
+  //         chunk per read (rule.require.immutable-vars, scoped zone)
   const chunks: Buffer[] = [];
   const BUFSIZE = 256;
   const buf = Buffer.allocUnsafe(BUFSIZE);
@@ -1866,9 +1837,10 @@ const routeBounceHook = async (): Promise<void> => {
   if (path.isAbsolute(filePath)) {
     // eslint-disable-next-line @typescript-eslint/no-require-imports, @typescript-eslint/no-var-requires
     const fsSync = require('fs');
+    const repoRoot = await getRepoRootWithFallback({ from: process.cwd() });
     const relativePath = asRelativePathFromAbsolute({
       filePath,
-      cwd: process.cwd(),
+      cwd: repoRoot,
       fsSync,
     });
     if (relativePath === null) {
@@ -1926,6 +1898,8 @@ const routeBounceList = async (): Promise<void> => {
   }
 
   // group protections by stone
+  // .note = deliberate mutation, and a SCOPED ZONE: `byStone` and each `list` are born in this
+  //         call, never handed out; only the rendered lines below escape
   const byStone = new Map<string, typeof cache.protections>();
   for (const p of cache.protections) {
     const list = byStone.get(p.stone) ?? [];
@@ -1937,8 +1911,7 @@ const routeBounceList = async (): Promise<void> => {
   console.log('   └─ protected artifacts');
 
   const stones = Array.from(byStone.keys());
-  for (let i = 0; i < stones.length; i++) {
-    const stone = stones[i]!;
+  stones.forEach((stone, i) => {
     const protections = byStone.get(stone)!;
     const isLast = i === stones.length - 1;
     const prefix = isLast ? '      └─' : '      ├─';
@@ -1947,13 +1920,12 @@ const routeBounceList = async (): Promise<void> => {
     console.log(`${prefix} ${stone} ${stoneStatus}`);
 
     const childPrefix = isLast ? '         ' : '      │  ';
-    for (let j = 0; j < protections.length; j++) {
-      const p = protections[j]!;
+    protections.forEach((p, j) => {
       const isLastGlob = j === protections.length - 1;
       const globPrefix = isLastGlob ? '└─' : '├─';
       console.log(`${childPrefix}${globPrefix} ${p.glob}`);
-    }
-  }
+    });
+  });
 };
 
 /**
@@ -1972,7 +1944,7 @@ usage:
   rhx route.mutate grant get     # check privilege state
 
 options:
-  --route <path>    route path (default: auto-detect from branch)
+  --route <path>    route path (uses bound route if absent)
   --help            show this help message
 
 .note = the flag \`allow\` writes lifts EVERY protected write on the route at once — a guard's
@@ -2015,14 +1987,15 @@ export const routeMutateGrant = async (): Promise<void> =>
 
     try {
       // get route from option or auto-detect
-      let routePath = options.route;
+      const routePath =
+        options.route || (await getRouteBindByBranch({ branch: null }))?.route;
       if (!routePath) {
-        const bind = await getRouteBindByBranch({ branch: null });
-        if (!bind) {
-          console.error('error: no bound route found. use --route to specify.');
-          process.exit(2);
-        }
-        routePath = bind.route;
+        emitReviewRefusal({
+          kind: 'constraint',
+          headline: 'no bound route found. use --route to specify.',
+          lines: [],
+        });
+        process.exit(2);
       }
 
       const privilegeFlagPath = path.join(
@@ -2095,10 +2068,7 @@ export const routeMutateGrant = async (): Promise<void> =>
         console.log('');
       } else if (action === 'get') {
         // check flag existence
-        const hasPrivilege = await fs
-          .access(privilegeFlagPath)
-          .then(() => true)
-          .catch(() => false);
+        const hasPrivilege = await isPathPresent({ at: privilegeFlagPath });
 
         console.log('');
         console.log('🗿 route.mutate grant get');
@@ -2111,7 +2081,7 @@ export const routeMutateGrant = async (): Promise<void> =>
     } catch (error) {
       // allowlist BadRequestError: format nicely and exit 2
       if (error instanceof BadRequestError) {
-        console.error(`error: ${error.message}`);
+        console.error(asConstraintErrorHeader({ error }));
         process.exit(2);
       }
       throw error;
@@ -2247,6 +2217,12 @@ const updateGuardPeerBudgets = (input: {
     budgetAfter: number;
   }>;
 } => {
+  // .note = deliberate mutation, and a SCOPED ZONE: `lines`, `updates`, the two scan flags
+  //         (`modified`, `inPeerSection`), the reassigned `currentPeerSlug`, and the cursor
+  //         are born in this call and none escapes — only the joined content, the flag,
+  //         and `updates` are returned. the scan is a line-by-line state machine
+  //         over the yaml, where each line's sense depends on the section above it
+  //         (rule.require.immutable-vars, scoped zone)
   const lines = input.content.split('\n');
   let modified = false;
   let currentPeerSlug: string | null = null;
@@ -2390,6 +2366,13 @@ const getAllScopedPeerBudgetUpdates = async (input: {
 /**
  * .what = processes guard files and updates peer budgets
  * .why = encapsulates file I/O loop for guard budget updates
+ *
+ * .note = a read-modify-write with no lock, deliberately — the same bound
+ *         `setRouteGuardPartitions` states for its own. one driver tops up a route's budget
+ *         by hand, so two concurrent `route.guard.budget` runs on one guard are out of
+ *         scope. a guard run that parses the file mid-write is out of scope too: the top-up
+ *         is a driver act between rounds, never inside one, and a lost top-up is visible
+ *         (the next halt prints the budget as it stands) and repaired by a rerun
  */
 const processGuardFileBudgets = async (input: {
   guardPaths: string[];
@@ -2404,6 +2387,8 @@ const processGuardFileBudgets = async (input: {
     budgetAfter: number;
   }>
 > => {
+  // .note = deliberate mutation, and a SCOPED ZONE: `updates` is born in this call and never
+  //         handed out until the return, so no reader sees it mid-fold
   const updates: Array<{
     guard: string;
     peer: string;
@@ -2459,7 +2444,7 @@ options:
   --stone   stone name with guard to update (required) — must name exactly ONE stone
   --peer    peer reviewer slug to extend (default: the latest level in play)
   --level   review level to extend — reach a LOWER level only when you name it
-  --route   path to route directory (default: auto-detect from branch)
+  --route   path to route directory (uses bound route if absent)
   --help    show this help message
 
 .note = the grant is REFUSED by default. the budget is the allowance the route author set with the
@@ -2507,8 +2492,11 @@ const asGuardBudgetErrorLines = (input: { diagnosis: string }): string[] => [
   ``,
 ];
 
+// the diagnosis opens qualified, so a driver reads who must act (rule.require.qualified-error-headers)
 const asGuardBudgetRequiredFlagLines = (input: { flag: string }): string[] =>
-  asGuardBudgetErrorLines({ diagnosis: `error: ${input.flag} is required` });
+  asGuardBudgetErrorLines({
+    diagnosis: `✋ ConstraintError: ${input.flag} is required`,
+  });
 
 /**
  * .what = what a driver reads when it gives a required flag of `route.guard.budget` a value the
@@ -2532,7 +2520,7 @@ const asGuardBudgetWrongValueLines = (input: {
   got: string;
 }): string[] =>
   asGuardBudgetErrorLines({
-    diagnosis: `error: ${input.flag} must be "${input.allowed}", got "${input.got}"`,
+    diagnosis: `✋ ConstraintError: ${input.flag} must be "${input.allowed}", got "${input.got}"`,
   });
 
 /**
@@ -2594,7 +2582,11 @@ export const routeGuardBudget = async (): Promise<void> =>
 
     const addAmount = asPositiveIntegerOrNull({ value: addStr });
     if (addAmount === null) {
-      console.error('error: --add must be a positive integer');
+      emitReviewRefusal({
+        kind: 'constraint',
+        headline: '--add must be a positive integer',
+        lines: [],
+      });
       // exit 2 = constraint: the caller passed a malformed value and must fix the
       // invocation (rule.require.exit-code-semantics: 0 ok, 1 malfunction, 2 constraint)
       process.exit(2);
@@ -2612,7 +2604,11 @@ export const routeGuardBudget = async (): Promise<void> =>
         ? null
         : asPositiveIntegerOrNull({ value: levelStr });
     if (levelStr !== undefined && levelFlag === null) {
-      console.error('error: --level must be a positive integer');
+      emitReviewRefusal({
+        kind: 'constraint',
+        headline: '--level must be a positive integer',
+        lines: [],
+      });
       process.exit(2);
     }
 
@@ -2621,12 +2617,15 @@ export const routeGuardBudget = async (): Promise<void> =>
     // the peer silently wins (computeBudgetTargetSlugs returns null on a peer). reject the pair loud
     // rather than drop one (r001.n2, rule.require.errors-name-the-fix).
     if (peerSlug !== undefined && levelFlag !== null) {
-      console.error('error: --peer and --level cannot be combined');
-      console.error('');
-      console.error(
-        '   --peer scopes to ONE lane; --level scopes to EVERY lane at a rung.',
-      );
-      console.error('   name one, never both.');
+      emitReviewRefusal({
+        kind: 'constraint',
+        headline: '--peer and --level cannot be combined',
+        lines: [
+          '',
+          '   --peer scopes to ONE lane; --level scopes to EVERY lane at a rung.',
+          '   name one, never both.',
+        ],
+      });
       process.exit(2);
     }
 
@@ -2648,24 +2647,35 @@ export const routeGuardBudget = async (): Promise<void> =>
 
     try {
       // get route from option or auto-detect
-      let routePath = options.route;
+      const routePath =
+        options.route || (await getRouteBindByBranch({ branch: null }))?.route;
       if (!routePath) {
-        const bind = await getRouteBindByBranch({ branch: null });
-        if (!bind) {
-          console.error('error: no bound route found. use --route to specify.');
-          process.exit(2);
-        }
-        routePath = bind.route;
+        emitReviewRefusal({
+          kind: 'constraint',
+          headline: 'no bound route found. use --route to specify.',
+          lines: [],
+        });
+        process.exit(2);
       }
 
-      // find guard files in the route
+      // find guard files in the route. cwd stays at the git root and the route rides in the
+      // glob (rule.forbid.cwd-outside-gitroot). `path.relative` reads a relative route against
+      // the invocation dir, as getAllStones reads it below
+      const repoRootOfBudget = await getRepoRootWithFallback({
+        from: process.cwd(),
+      });
+      const routeFromRoot = path.relative(repoRootOfBudget, routePath) || '.';
       const guardFiles = await enumFilesFromGlob({
-        glob: '*.guard',
-        cwd: routePath,
+        glob: `${routeFromRoot}/*.guard`,
+        cwd: repoRootOfBudget,
       });
 
       if (guardFiles.length === 0) {
-        console.error(`error: no guard files found in ${routePath}`);
+        emitReviewRefusal({
+          kind: 'constraint',
+          headline: `no guard files found in ${routePath}`,
+          lines: [],
+        });
         process.exit(2);
       }
 
@@ -2676,7 +2686,11 @@ export const routeGuardBudget = async (): Promise<void> =>
       });
 
       if (targetGuards.length === 0) {
-        console.error(`error: no guard file found for stone ${stoneName}`);
+        emitReviewRefusal({
+          kind: 'constraint',
+          headline: `no guard file found for stone ${stoneName}`,
+          lines: [],
+        });
         process.exit(2);
       }
 
@@ -2716,13 +2730,15 @@ export const routeGuardBudget = async (): Promise<void> =>
         targetSlugs.size === 0
       ) {
         const levelsInPlay = computeLevelsInPlay({ meters });
-        console.error(
-          `error: no reviewer at level ${levelFlag}. levels in play: ${
+        emitReviewRefusal({
+          kind: 'constraint',
+          headline: `no reviewer at level ${levelFlag}. levels in play: ${
             levelsInPlay.length > 0
               ? levelsInPlay.join(', ')
               : '(none — no lane has run)'
           }`,
-        );
+          lines: [],
+        });
         process.exit(2);
       }
 
@@ -2746,7 +2762,11 @@ export const routeGuardBudget = async (): Promise<void> =>
         targetSlugs,
       });
       if (peerSlug && probedUpdates.length === 0) {
-        console.error(`error: peer reviewer not found: ${peerSlug}`);
+        emitReviewRefusal({
+          kind: 'constraint',
+          headline: `peer reviewer not found: ${peerSlug}`,
+          lines: [],
+        });
         process.exit(2);
       }
 
@@ -2848,9 +2868,13 @@ export const routeGuardBudget = async (): Promise<void> =>
       updateLines.forEach((line) => console.log(line));
       console.log('');
     } catch (error) {
-      // allowlist BadRequestError: format nicely and exit 2
+      // allowlist BadRequestError: render in the same refusal frame and exit 2 (constraint)
       if (error instanceof BadRequestError) {
-        console.error(`error: ${error.message}`);
+        emitReviewRefusal({
+          kind: 'constraint',
+          headline: asConstraintErrorHeadline({ error }),
+          lines: [],
+        });
         process.exit(2);
       }
       throw error;
@@ -2888,7 +2912,7 @@ usage:
 options:
   --stone <name>   stone name (BOUNDARY match: "5.1" hits every "5.1.*" guard but NOT "5.10.x").
                    default: all guards in the route
-  --route <path>   path to route directory (default: auto-detect from branch)
+  --route <path>   path to route directory (uses bound route if absent)
   --mode <mode>    plan | apply (default: plan)
 `.trim(),
       );
@@ -2898,20 +2922,23 @@ options:
     // validate --mode (default plan; only plan|apply allowed)
     const mode = options.mode ?? 'plan';
     if (mode !== 'plan' && mode !== 'apply') {
-      console.error(`error: --mode must be "plan" or "apply", got "${mode}"`);
+      console.error(
+        `✋ ConstraintError: --mode must be "plan" or "apply", got "${mode}"`,
+      );
       process.exit(2);
     }
 
     try {
       // get route from option or auto-detect from the bound branch
-      let routePath = options.route;
+      const routePath =
+        options.route || (await getRouteBindByBranch({ branch: null }))?.route;
       if (!routePath) {
-        const bind = await getRouteBindByBranch({ branch: null });
-        if (!bind) {
-          console.error('error: no bound route found. use --route to specify.');
-          process.exit(2);
-        }
-        routePath = bind.route;
+        emitReviewRefusal({
+          kind: 'constraint',
+          headline: 'no bound route found. use --route to specify.',
+          lines: [],
+        });
+        process.exit(2);
       }
 
       // the provenance.uri is read relative to the repo root (gitroot)
@@ -2934,9 +2961,355 @@ options:
     } catch (error) {
       // allowlist BadRequestError: format nicely and exit 2 (constraint)
       if (error instanceof BadRequestError) {
-        console.error(`error: ${error.message}`);
+        console.error(asConstraintErrorHeader({ error }));
         process.exit(2);
       }
       throw error;
     }
   });
+
+/**
+ * .what = declares a route's review partitions, whole, for every reviewer or for one
+ * .why = whether code splits cleanly is a fact about the code (seed S45), so a route declares
+ *   its partitions once and every peer review reads them. a declaration always names the
+ *   WHOLE set and replaces what stood (seed S46), so coverage is checked before the write —
+ *   a changed file no partition claims, or a partition without the route spec, refuses and
+ *   writes naught
+ *
+ * .note = plan by default, as `route.guard.upgrade`: the preview IS the coverage check, so a
+ *   driver sees the split against the branch before any lane reads it
+ */
+export const routeGuardPartition = async (): Promise<void> => {
+  const options = parseArgs(process.argv);
+
+  // --help prints usage
+  if (options.help) {
+    console.log(
+      `
+route.guard.partition - declare how a route's peer reviews split when they overflow
+
+usage:
+  rhx route.guard.partition --for review --peer @all --partition '<slug>=<globs>' ...  # plan; add --mode apply to write
+  rhx route.guard.partition --for review --peer @all [--stone <stone> [--full]]         # show the set, its coverage, its gaps
+  rhx route.guard.partition --for review --peer @all --claim '<globs>' --into <slug>   # grow one held partition
+  rhx route.guard.partition --for review --peer @all --prune '<globs>' [--from <slug>] # drop a stale glob from the held set
+
+options:
+  --for review                  the guard surface (only review is supported)
+  --peer @all|<slug>            @all = every reviewer, every stone; a <slug> overrides @all for one reviewer, with --stone
+  --stone <stone>               the stone of a <slug> override; beside @all alone, a coverage read: the entrance gate's check, no review run, naught written
+  --full                        a coverage read lists every path (default: the first 5, unclaimed 20, then "… +N more")
+  --partition '<slug>=<globs>'  repeatable; together the WHOLE set, which replaces what the scope held
+  --claim <globs>               add a path, glob, or comma list to a held partition, then write the whole set back; repeatable
+  --into <slug>                 the held partition each --claim joins: one for all, or one per --claim, in order
+  --prune <globs>               drop a glob, or a comma list, from the held partitions that list it, then write the whole set back; repeatable
+  --from <slug>                 the one partition each --prune leaves: none for every holder, one for all, or one per --prune
+  --route <path>                the route directory (uses bound route if absent)
+  --mode plan|apply             default plan, which writes naught
+
+notes:
+  - globs: a prefix (src/review), a glob (src/**/*.ts), or a comma list, no outer braces; quote each value; a repeated slug merges into one; a member led by ! subtracts: 'review=src/review/*,!src/review/compile*'
+  - cut vertical domains, never horizontal layers (rule.forbid.horizontal-partitions); a flat test dir claims tests with their snapshots — 'blackbox/{,__snapshots__/}driver.route.*' — never '__snapshots__/**'
+  - --partition none clears the scope: an override is removed, so its reviewer reads @all; @all cleared lets every lane run whole
+  - checked before any write, and on a show (exit 2 on a fault): every file changed since main sits in a partition; every partition holds '<route>/**'
+  - a fault prints the smallest paste-ready repair: a --claim per held partition that fits, else a new partition named for the domain, never a catch-all. a malformed value refuses with the corrected one; a glob that matched no changed file is flagged; an unknown --into refuses and names the held slugs; an override with no set of its own grows from @all
+`.trim(),
+    );
+    process.exit(0);
+  }
+
+  // every refusal below speaks through the one frame the coverage refusal uses
+  // (`emitReviewRefusal`), so one command never answers in two visual shapes (r011 nitpick.2)
+
+  // validate --for
+  if (options.for !== 'review') {
+    emitReviewRefusal({
+      kind: 'constraint',
+      headline: '--for review is required (only review is supported)',
+      lines: [],
+    });
+    process.exit(2);
+  }
+
+  // validate --peer and the scope it names
+  const peer = options.peer;
+  if (!peer) {
+    emitReviewRefusal({
+      kind: 'constraint',
+      headline:
+        '--peer is required — @all for every reviewer, or <slug> with --stone for one',
+      lines: [],
+    });
+    process.exit(2);
+  }
+
+  // the scope the flags name. a one-reviewer override needs the stone it overrides on,
+  // so its absence refuses here — the same branch that narrows `stone` for the scope
+  const scope = ((): RouteGuardPartitionScope => {
+    if (peer === '@all') return { kind: 'all' };
+    if (!options.stone) {
+      emitReviewRefusal({
+        kind: 'constraint',
+        headline: `--peer ${peer} overrides one reviewer on one stone, so it needs --stone`,
+        lines: [],
+      });
+      return process.exit(2);
+    }
+    return { kind: 'peer', stone: options.stone, peer };
+  })();
+
+  // a --stone beside @all reads that stone's coverage; to WRITE it, it would scope naught,
+  // so a declaration or a claim refuses it rather than drop it unread
+  const partition = collectArgsMulti(process.argv, 'partition');
+  const claim = collectArgsMulti(process.argv, 'claim');
+  const into = collectArgsMulti(process.argv, 'into');
+  const prune = collectArgsMulti(process.argv, 'prune');
+  const from = collectArgsMulti(process.argv, 'from');
+  if (
+    peer === '@all' &&
+    options.stone &&
+    (partition.length > 0 || claim.length > 0 || prune.length > 0)
+  ) {
+    emitReviewRefusal({
+      kind: 'constraint',
+      headline:
+        '--stone scopes a one-reviewer override, so it needs --peer <slug>, never @all',
+      lines: [
+        "   └─ to read the stone's coverage instead, drop --partition, --claim, and --prune:",
+        `      └─ rhx route.guard.partition --for review --peer @all --stone ${options.stone}`,
+      ],
+    });
+    process.exit(2);
+  }
+
+  // a claim grows the held set, a prune shrinks it, a declaration replaces it — one
+  // command is one of the three
+  const asks = [
+    partition.length > 0 ? '--partition' : null,
+    claim.length > 0 ? '--claim' : null,
+    prune.length > 0 ? '--prune' : null,
+  ].filter((ask): ask is string => ask !== null);
+  if (asks.length > 1) {
+    emitReviewRefusal({
+      kind: 'constraint',
+      headline: `${asks.join(' and ')} are separate edits — --claim grows the held set, --prune shrinks it, --partition replaces it — so give one`,
+      lines: [],
+    });
+    process.exit(2);
+  }
+  if (from.length > 0 && prune.length === 0) {
+    emitReviewRefusal({
+      kind: 'constraint',
+      headline:
+        '--from names the partition a --prune leaves, so it needs a --prune',
+      lines: [],
+    });
+    process.exit(2);
+  }
+  const pruned = asRouteGuardPartitionPrunesOfFlags({ prune, from });
+  if (prune.length > 0 && pruned.fault) {
+    emitReviewRefusal({
+      kind: 'constraint',
+      headline: pruned.fault,
+      lines: [
+        "   └─ e.g. rhx route.guard.partition --for review --peer @all --prune 'src/gone/**' --from review",
+      ],
+    });
+    process.exit(2);
+  }
+  if (into.length > 0 && claim.length === 0) {
+    emitReviewRefusal({
+      kind: 'constraint',
+      headline: '--into names the home of a --claim, so it needs a --claim',
+      lines: [],
+    });
+    process.exit(2);
+  }
+  const claimed = asRouteGuardPartitionClaimsOfFlags({ claim, into });
+  if (claim.length > 0 && claimed.fault) {
+    emitReviewRefusal({
+      kind: 'constraint',
+      headline: claimed.fault,
+      lines: [
+        "   └─ e.g. rhx route.guard.partition --for review --peer @all --claim 'src/new/**' --into review",
+      ],
+    });
+    process.exit(2);
+  }
+  // validate --mode (default plan; only plan|apply allowed)
+  const mode = options.mode ?? 'plan';
+  if (mode !== 'plan' && mode !== 'apply') {
+    emitReviewRefusal({
+      kind: 'constraint',
+      headline: `--mode must be "plan" or "apply", got "${mode}"`,
+      lines: [],
+    });
+    process.exit(2);
+  }
+
+  // the write the flags ask for: declare, claim, prune, clear — or null, to show
+  const action = asRouteGuardPartitionAction({
+    partition,
+    claims: claim.length > 0 ? claimed.claims : [],
+    prunes: prune.length > 0 ? pruned.prunes : [],
+  });
+
+  // each declaration must parse before any read; the fault prints the corrected declaration
+  const partitionFault = getOneReviewPartitionsFault({
+    partition: asRouteGuardPartitionDeclarationsOfAction({ action }),
+  });
+  if (partitionFault) {
+    emitReviewRefusal({
+      kind: 'constraint',
+      headline: partitionFault.headline,
+      lines: [`   └─ ${partitionFault.hint}`],
+    });
+    process.exit(2);
+  }
+
+  try {
+    // get route from option or auto-detect from the bound branch, relative to the repo root
+    const repoRoot = await getRepoRootWithFallback({ from: process.cwd() });
+    const routeGiven =
+      options.route ?? (await getRouteBindByBranch({ branch: null }))?.route;
+    if (!routeGiven) {
+      emitReviewRefusal({
+        kind: 'constraint',
+        headline: 'no bound route found. use --route to specify.',
+        lines: [],
+      });
+      process.exit(2);
+    }
+    // the route, named once in each form: absolute for the stone read, relative to the
+    // repo root for every read that pairs it with `cwd: repoRoot`
+    const routeAbsolute = asPathAbsoluteFromCwd({
+      path: routeGiven,
+      cwd: repoRoot,
+    });
+    const route = path.relative(repoRoot, routeAbsolute);
+
+    // with @all and a --stone, read that stone's coverage: every scope its reviewers read,
+    // through the very computation its entrance gate runs — brain-free, and it writes naught
+    if (peer === '@all' && options.stone) {
+      const stones = await getAllStones({ route: routeAbsolute });
+      const stone = findStoneByName({ stones, name: options.stone });
+      if (!stone) {
+        emitReviewRefusal({
+          kind: 'constraint',
+          headline: `stone ${options.stone} not found on route ${route}`,
+          lines: [
+            '   └─ fix: name a stone of the route, e.g. the one `rhx route.drive` shows',
+          ],
+        });
+        process.exit(2);
+      }
+      const coverages = await getAllStoneGuardPartitionCoverage({
+        stone,
+        route,
+        cwd: repoRoot,
+      });
+      console.log('');
+      asRouteGuardPartitionCoverageLines({
+        route,
+        stone: stone.name,
+        coverages,
+        full: options.full === 'true',
+      }).forEach((line) => console.log(line));
+      console.log('');
+
+      // a gap reads exactly as the entrance gate would print it, and exits as a constraint
+      const gaps = asStoneGuardPartitionGapsOfCoverage({ coverages });
+      if (gaps.length === 0) return;
+      asStoneGuardPartitionGapLines({ stone: stone.name, gaps }).forEach(
+        (line) => console.error(line),
+      );
+      console.error('');
+      process.exit(2);
+    }
+
+    // with no --partition, --claim, or --prune, show what the scope holds
+    if (action === null) {
+      const replaced = getAllPartitionFlagsOfScope({
+        declared: await getOneRouteGuardPartitions({ route, cwd: repoRoot }),
+        scope,
+      });
+      asRouteGuardPartitionDeclaredLines({
+        route,
+        scope,
+        declared: replaced,
+      }).forEach((line) => console.log(line));
+
+      // and how the held set covers the branch — every changed file, and the partition that
+      // claims it. a gap refuses with the smallest repair, paste-ready, so a driver never
+      // re-types the set to learn what it lacks
+      if (!replaced || replaced.length === 0) return;
+      const held = await getOneStoneGuardPartitionCoverage({
+        scope,
+        peers: null,
+        partition: replaced,
+        route,
+        cwd: repoRoot,
+      });
+      asRouteGuardPartitionCoverageLines({
+        route,
+        stone: null,
+        coverages: [held],
+        full: options.full === 'true',
+      }).forEach((line) => console.log(line));
+      console.log('');
+      if (held.refusal) {
+        emitReviewRefusal({ kind: 'constraint', ...held.refusal });
+        process.exit(2);
+      }
+      return;
+    }
+
+    // declare, claim, prune, or clear — checked whole before any write, written only on apply
+    const result = await setRouteGuardPartitionsOfScope({
+      route,
+      cwd: repoRoot,
+      scope,
+      mode,
+      action,
+    });
+    if (result.refusal) {
+      emitReviewRefusal({ kind: 'constraint', ...result.refusal });
+      process.exit(2);
+    }
+
+    // render what was cleared, or the split of the set
+    const { outcome } = result;
+    console.log('');
+    (outcome.kind === 'clear'
+      ? asRouteGuardPartitionClearLines({
+          mode,
+          route,
+          scope,
+          replaced: outcome.replaced,
+        })
+      : asRouteGuardPartitionTreeLines({
+          mode,
+          route,
+          scope,
+          targets: outcome.targets,
+          split: outcome.split,
+          tokensByPath: outcome.tokensByPath,
+          replaced: outcome.replaced,
+          claimed: outcome.claimed,
+          pruned: outcome.pruned,
+        })
+    ).forEach((line) => console.log(line));
+    console.log('');
+  } catch (error) {
+    // allowlist BadRequestError: render in the same refusal frame and exit 2 (constraint)
+    if (error instanceof BadRequestError) {
+      emitReviewRefusal({
+        kind: 'constraint',
+        headline: asConstraintErrorHeadline({ error }),
+        lines: [],
+      });
+      process.exit(2);
+    }
+    throw error;
+  }
+};

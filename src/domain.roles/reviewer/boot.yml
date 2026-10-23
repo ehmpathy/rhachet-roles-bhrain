@@ -15,10 +15,19 @@ always:
       # concern is written, so it must be resident, not fetched
       - briefs/rule.require.label-each-concern-with-severity.md
       - briefs/review.tactics.md
+      # partition through vertical domains, never through horizontal layers. say-level: it
+      # fires AT the moment a partition is declared, and a layer is the cheapest cut to
+      # type, so a fetched rule would arrive after the mistake
+      - briefs/rule.require.vertical-partitions.md
+      # its forbid peer: a ban on the horizontal shape bites where a call for the better one
+      # slides by, so both are resident
+      - briefs/rule.forbid.horizontal-partitions.md
       - briefs/on.rules/rules101.[article].md
       - briefs/on.rules/rules101.structure.[article].md
       - briefs/on.rules/rules101.content.[article].md
     ref:
+      # the full behavior of --partition; review.tactics (say) carries the cue
+      - briefs/howto.partition-an-overflowed-review.md
       - briefs/rule.forbid.overzealous-blockers.example=the-tidiness-blocker-and-the-false-green.md
       - briefs/on.rules/rules101.citations.[article].md
       - briefs/on.rules/rules101.collocated.[article].md

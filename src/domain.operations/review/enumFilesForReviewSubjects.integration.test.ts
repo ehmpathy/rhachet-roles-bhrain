@@ -210,4 +210,32 @@ describe('enumFilesForReviewSubjects — vision edgecases via git', () => {
       });
     });
   });
+
+  given('[case3] a brace in the EXTENSION slot of the glob', () => {
+    // .note = the enumerator honors a brace in the extension slot; this clamp
+    //         proves it, so a scope render that reads the wrong field is not
+    //         mistaken for an enumerator defect
+    when('[t0] subjects scan **/*.{ts,md}', () => {
+      const res = useBeforeAll(async () => {
+        await fs.writeFile(path.join(tmpDir, 'readme.md'), '# readme\n');
+        await fs.writeFile(path.join(tmpDir, 'data.json'), '{}\n');
+        return {
+          files: await enumFilesForReviewSubjects({
+            glob: '**/*.{ts,md}',
+            cwd: tmpDir,
+          }),
+        };
+      });
+
+      then('matches every extension the brace lists', () => {
+        expect(res.files).toContain('tracked.ts');
+        expect(res.files).toContain('nested/code.ts');
+        expect(res.files).toContain('readme.md');
+      });
+
+      then('matches no extension the brace omits', () => {
+        expect(res.files).not.toContain('data.json');
+      });
+    });
+  });
 });

@@ -1,0 +1,25 @@
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
+
+exports[`review.refs-error.acceptance given: [case1] ref path does not exist when: [t0] review skill invoked with non-existent ref path then: the refusal matches its snapshot 1`] = `
+"
+🦉 woah there
+
+✋ ConstraintError: ref not found: behavior/getWeather/criteria.blackbox.DOES_NOT_EXIST.md
+
+✨ did you know?
+   └─ verify the path exists and contains matched files
+
+"
+`;
+
+exports[`review.refs-error.acceptance given: [case2] glob pattern matches no files when: [t0] review skill invoked with glob that resolves to zero matches then: the refusal matches its snapshot 1`] = `
+"
+🦉 woah there
+
+✋ ConstraintError: no refs matched glob: behavior/nonexistent/*.md
+
+✨ did you know?
+   └─ verify the path exists and contains matched files
+
+"
+`;

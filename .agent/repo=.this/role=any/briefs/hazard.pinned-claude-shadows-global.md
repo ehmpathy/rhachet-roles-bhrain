@@ -22,12 +22,10 @@ repo-pinned version — which shadows your global install.
 both are true at once. the only difference is which `claude` binary `PATH` resolved — so the bug
 is invisible to anyone who debugs it with their global `claude`.
 
-## .incident (2026-06)
+## .measured
 
-bhrain pinned `@anthropic-ai/claude-code: 2.0.76`. every l3 enroll guard hung until timeout. it
-looked repo-specific and got mis-blamed on a `link:.` self-link symlink cycle. the true cause:
-the guards launched pinned **2.0.76** while every manual repro used global **2.1.87** and worked.
-a bump of the pin to match global cured it.
+bhrain pinned `@anthropic-ai/claude-code: 2.0.76`; every l3 enroll guard hung until timeout, even
+though every manual repro on global `2.1.87` worked. a pin bump to match global cured it.
 
 ## .how to detect
 
@@ -47,6 +45,15 @@ which -a claude                     # global install path
 - if you must pin, keep it current; treat a stale brain pin as a defect.
 - when an l3 enroll guard misbehaves but a hand-run `rhx enroll claude` does not, suspect a
   version mismatch FIRST — before exotic causes (symlink cycles, `.agent` topology, etc).
+- rhachet now names this failure itself: the enroll lane exits `✋ ConstraintError: brain-cli
+  'claude' is X at …/node_modules/.bin/claude, below the floor Y`, and the given lists the
+  shadowed global. bump the pin with `rhx set.package.upgrade --package @anthropic-ai/claude-code
+  --to <global version>`.
+
+a version bump is not done until `node_modules/.bin/claude --version` answers. 2.1.x ships a
+native binary via its postinstall, and pnpm skips a dependency's postinstall unless it is
+allowlisted — so the pin installs and the binary does not. run
+`node node_modules/@anthropic-ai/claude-code/install.cjs`, then re-check the version.
 
 ## .see also
 

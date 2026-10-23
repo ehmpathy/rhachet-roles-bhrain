@@ -4,11 +4,13 @@ import * as path from 'path';
 import { given, then, useThen, when } from 'test-fns';
 
 import { logOutputHead } from '@src/.test/logOutputHead';
+import { DEFAULT_TEST_BRAIN_VIA_CLI } from '@src/.test/genTestBrainContext';
 import {
   execAsync,
   genTempDirForRhachet,
   invokeReviewSkill,
 } from './.test/invokeReviewSkill';
+import { asReviewMetricsExpectedBlock } from './.test/invokeReviewBySkill';
 
 const ASSETS_DIR = path.join(__dirname, '.test/assets/codebase-mechanic');
 
@@ -23,7 +25,7 @@ const REPEATABLE_CONFIG = {
   criteria: process.env.CI ? 'SOME' : 'EVERY',
 } as const;
 
-describe('review.acceptance', () => {
+describe('review.representative-dirty.acceptance', () => {
   given('[case2] mechanic codebase with dirty code', () => {
     when.repeatably(REPEATABLE_CONFIG)(
       '[t0] review skill on dirty.ts with goal=representative',
@@ -43,7 +45,7 @@ describe('review.acceptance', () => {
           output: outputPath,
           focus: 'push',
           goal: 'representative',
-          brain: 'fireworks/deepseek/v4-flash',
+          brain: DEFAULT_TEST_BRAIN_VIA_CLI,
           cwd: tempDir,
         });
 
@@ -60,6 +62,11 @@ describe('review.acceptance', () => {
         expect(res.cli.stderr).not.toContain('Error');
       });
 
+      then('the metrics.expected block matches its snapshot (computed before the brain)', () => {
+        // the scope tree and estimate are deterministic; the verdict summary is the brain's
+        expect(asReviewMetricsExpectedBlock({ stdout: res.cli.stdout })).toMatchSnapshot();
+      });
+
       then('review is defined and non-empty', async () => {
         expect(res.review).toBeDefined();
         expect(res.review.length).toBeGreaterThan(0);
@@ -67,7 +74,8 @@ describe('review.acceptance', () => {
 
       then('review detects function keyword violation', async () => {
         const reviewLower = res.review.toLowerCase();
-        expect(reviewLower).toContain('blocker');
+        // a nonzero count — a clean `0 blockers` render must not satisfy this claim
+        expect(res.review).toMatch(/# blocker\.\d+:/);
         // should mention function keyword or arrow-only rule
         expect(
           reviewLower.includes('function') ||

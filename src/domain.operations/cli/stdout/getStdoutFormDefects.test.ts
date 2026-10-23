@@ -73,6 +73,30 @@ const TEST_CASES = [
     ],
   },
   {
+    description:
+      'a shell command continued by ` \\` beneath a leaf → clean, the whole command is one paste',
+    given: [
+      '🗿 route.guard.partition, on stone 5.1.execution',
+      '   └─ repair — run this, then re-arrive',
+      '         rhx route.guard.partition --for review --peer @all \\',
+      "           --partition 'route=src/route/**' \\",
+      '           --mode apply',
+    ],
+    expect: [],
+  },
+  {
+    description:
+      'prose after a continued command has ended → flat-leaf, the paste does not rescue it',
+    given: [
+      '🗿 route.guard.partition, on stone 5.1.execution',
+      '   └─ repair — run this, then re-arrive',
+      '         rhx route.guard.partition --for review --peer @all \\',
+      '           --mode apply',
+      '         then re-arrive',
+    ],
+    expect: [{ line: 5, kind: 'flat-leaf', text: '         then re-arrive' }],
+  },
+  {
     description: 'a vibe line with no tree anywhere → not graded',
     given: ['🦉 hold on', '', '   the stone prescribes = opus'],
     expect: [],

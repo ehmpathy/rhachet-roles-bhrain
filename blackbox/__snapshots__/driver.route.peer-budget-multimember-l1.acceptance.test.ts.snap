@@ -18,7 +18,7 @@ exports[`driver.route.peer-budget-multimember-l1.acceptance given: [journey] a t
    │   └─ taken: .reviews/peer/1.vision._.review.i001.8739656801d5e77f22.r002._.taken.by_self.beta-checker.md
    │
    ├─ r3: final-checker (l2, 0/5)
-   │   └─ awaits arrival
+   │   └─ awaits l1 terminal
    │
    └─ ✗ judge.1 - blocked [TIME]
 
@@ -77,7 +77,7 @@ exports[`driver.route.peer-budget-multimember-l1.acceptance given: [journey] a t
    │   └─ taken: .reviews/peer/1.vision._.review.i002.dfc5faff83ea2fcb55.r002._.taken.by_self.beta-checker.md
    │
    ├─ r3: final-checker (l2, 0/5)
-   │   └─ awaits arrival
+   │   └─ awaits l1 terminal
    │
    └─ ✗ judge.1 - blocked [TIME]
 

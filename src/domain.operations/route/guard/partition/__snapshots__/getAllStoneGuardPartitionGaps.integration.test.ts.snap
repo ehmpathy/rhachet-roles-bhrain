@@ -1,0 +1,14 @@
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
+
+exports[`getAllStoneGuardPartitionGaps given: [case3] a changed file in a subdir no glob lists when: [t0] the stone is checked then: the command matches the snapshot 1`] = `
+"rhx route.guard.partition --route .behavior/v2026_01_01.demo --for review --peer @all \\
+  --claim 'src/route/drive/**' --into route \\
+  --mode apply"
+`;
+
+exports[`getAllStoneGuardPartitionGaps given: [case4] an override for one peer, beside a sound @all set when: [t0] the stone is checked then: the peer-scope command matches the snapshot 1`] = `
+"rhx route.guard.partition --route .behavior/v2026_01_01.demo --for review --peer r2 --stone 5.1.test \\
+  --partition 'solo=src/review/**,.behavior/v2026_01_01.demo/**' \\
+  --partition 'route=src/route/**,.behavior/v2026_01_01.demo/**' \\
+  --mode apply"
+`;

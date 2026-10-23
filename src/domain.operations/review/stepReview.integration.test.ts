@@ -17,6 +17,7 @@ import {
   DEFAULT_TEST_BRAIN,
   genTestBrainContext,
 } from '@src/.test/genTestBrainContext';
+import { BRAIN_CALL_TEST_TIMEOUT_MS } from '@src/.test/infra/brainCallTestTimeout';
 import { REPEATABLY_CONFIG } from '@src/.test/infra/repeatably';
 import { logOutputHead } from '@src/.test/logOutputHead';
 
@@ -25,12 +26,11 @@ import { stepReview } from './stepReview';
 /**
  * .what = raises the per-test budget for the LLM-backed cases in this file
  * .why = jest.integration.env sets a 90s default, which fits a deterministic case and NOT a real
- *        review — the brain call alone routinely outlasts it. every peer stepReview.caseBrain.*
- *        file already carries this same 180s budget; this file drives the same subprocess and
- *        lacked it, so its LLM cases failed on the clock rather than on the contract.
+ *        review — the brain call alone routinely outlasts it. the bound is shared with every peer
+ *        stepReview.caseBrain.* file, and BRAIN_CALL_TEST_TIMEOUT_MS records why it is sized as is.
  */
 // eslint-disable-next-line no-undef
-jest.setTimeout(180000);
+jest.setTimeout(BRAIN_CALL_TEST_TIMEOUT_MS);
 
 /**
  * .what = git identity env for commits
@@ -96,8 +96,8 @@ const setupGitRepo = async (): Promise<{ repoDir: string }> => {
  *    genuine `ContextBrain` and mocks naught:
  *
  *      genContextBrain({
- *        brains: { atoms, repls },   // real packages: anthropic, openai, fireworks, openrouter
- *        choice: input.brain,        // DEFAULT_TEST_BRAIN = openrouter/deepseek/flash
+ *        brains: { atoms, repls },   // real packages: anthropic, openai, openrouter
+ *        choice: input.brain,        // DEFAULT_TEST_BRAIN = openrouter/deepseek/flash/floor&speed=min100tps&privacy=full
  *        creds: { keyrack: { owner: 'ehmpath', env: 'test' } },  // real credentials
  *      })
  *
@@ -105,7 +105,7 @@ const setupGitRepo = async (): Promise<{ repoDir: string }> => {
  *      and the 180s budget above exists precisely because *"the brain call alone
  *      routinely outlasts"* the 90s default. a mock would need neither.
  *
- * .why a CHEAP real brain rather than a premium one = `fireworks/deepseek/v4-flash` is
+ * .why a CHEAP real brain rather than a premium one = `openrouter/deepseek/flash` is
  *        fast and low-cost, so the external contract is exercised on EVERY ci run rather
  *        than from behind a cost gate — which is what
  *        `rule.require.external-contract-integration-tests` asks for.
@@ -117,7 +117,7 @@ const setupGitRepo = async (): Promise<{ repoDir: string }> => {
 describe('stepReview', () => {
   // brain context for integration tests - created once for efficiency
   const scene = useBeforeAll(async () => ({
-    brain: genTestBrainContext({ brain: DEFAULT_TEST_BRAIN }),
+    brain: await genTestBrainContext({ brain: DEFAULT_TEST_BRAIN }),
   }));
 
   given('[case1] no inputs specified', () => {
@@ -176,17 +176,25 @@ describe('stepReview', () => {
      *        those lanes SHARED one directory and overwrote each other's scope, metrics,
      *        and output artifacts — and the failure hint then sent a driver to inspect
      *        reviewer A and handed them reviewer B's evidence.
-     * .note = each lane fails at the ineffective-glob check, which sits AFTER the mkdir.
-     *         so every lane creates its directory and no lane calls a brain.
+     * .note = each lane fails at the empty-corpus check: the rule exists, and no
+     *         target matches. that check sits AFTER the mkdir, since it writes the
+     *         scope trace into the dir, so every lane creates its directory and no
+     *         lane calls a brain. the ineffective-glob check cannot serve here — it
+     *         refuses BEFORE the mkdir, so a refusal leaves no orphan dir behind.
      */
     const lanes = useBeforeAll(async () => {
       const cwd = genTempDir({ slug: 'review-logdir-concurrent', git: true });
+      await fs.mkdir(path.join(cwd, 'rules'), { recursive: true });
+      await fs.writeFile(
+        path.join(cwd, 'rules', 'rule.require.tests.md'),
+        '# rule.require.tests\n',
+      );
 
       await Promise.allSettled(
         Array.from({ length: 8 }).map(() =>
           stepReview(
             {
-              rules: 'nonexistent/**/*.md',
+              rules: 'rules/*.md',
               paths: 'src/*.ts',
               output: path.join(cwd, 'review.md'),
               focus: 'push',
@@ -206,6 +214,81 @@ describe('stepReview', () => {
       then('CLAMP: each lane holds its own log directory', () => {
         expect(lanes.dirs).toHaveLength(8);
         expect(new Set(lanes.dirs).size).toEqual(8);
+      });
+    });
+  });
+
+  given('[case2c] a --rules glob that matches no file', () => {
+    /**
+     * .why = a refusal is a gate, and the log dir is a side effect. the refusal
+     *        once fired AFTER the mint, so every mistyped glob left one orphan
+     *        `.log/bhrain/review/<stamp>` dir behind
+     */
+    const scene2c = useBeforeAll(async () => {
+      const cwd = genTempDir({
+        slug: 'review-rules-nada-no-logdir',
+        git: true,
+      });
+
+      // capture the refusal block the human reads on stderr, as [case3][t1] does
+      const spy = jest.spyOn(console, 'error').mockImplementation(() => {});
+      const { error, stderr } = await (async () => {
+        try {
+          const caught = await getError(
+            stepReview(
+              {
+                rules: 'nonexistent/**/*.md',
+                paths: 'src/*.ts',
+                output: path.join(cwd, '.reviews', 'peer', 'review.md'),
+                focus: 'push',
+                goal: 'representative',
+                cwd,
+              },
+              { brain: scene.brain },
+            ),
+          );
+          const lines = spy.mock.calls.map((call) => call.join(' ')).join('\n');
+          return { error: caught, stderr: lines };
+        } finally {
+          spy.mockRestore();
+        }
+      })();
+      const isExtant = (at: string): Promise<boolean> =>
+        fs
+          .stat(at)
+          .then(() => true)
+          .catch((statError: NodeJS.ErrnoException) => {
+            if (statError.code === 'ENOENT') return false;
+            throw statError;
+          });
+      const logRootExtant = await isExtant(
+        path.join(cwd, '.log', 'bhrain', 'review'),
+      );
+      const outputDirExtant = await isExtant(path.join(cwd, '.reviews'));
+      return { error, stderr, cwd, logRootExtant, outputDirExtant };
+    });
+
+    when('[t0] stepReview refuses', () => {
+      then('it refuses with the ineffective-glob message', () => {
+        expect(scene2c.error.message).toContain('--rules glob was ineffective');
+      });
+
+      then('the refusal renders whole', () => {
+        // the temp dir and the log-dir stamp vary per run, so both are masked first
+        const stderrStable = scene2c.stderr
+          .split(scene2c.cwd)
+          .join('$CWD')
+          .replace(/\d{4}-\d{2}-\d{2}T[0-9-]+Z[.\w-]*/g, '$STAMP');
+        expect(stderrStable).toContain('✋ ConstraintError: ');
+        expect(stderrStable).toMatchSnapshot();
+      });
+
+      then('CLAMP: no log dir is minted', () => {
+        expect(scene2c.logRootExtant).toEqual(false);
+      });
+
+      then('🔴 CLAMP: no --output parent dir is minted either', () => {
+        expect(scene2c.outputDirExtant).toEqual(false);
       });
     });
   });
@@ -231,6 +314,50 @@ describe('stepReview', () => {
         expect(error.message).toContain(
           'combined scope resolves to zero files',
         );
+      });
+    });
+
+    when('[t1] the scope is given via --paths-with and --paths-wout', () => {
+      // .note = 🔴 CLAMP. the refusal block once rendered only the deprecated
+      //         `--paths`, so a `--paths-with` scope read `paths: (none)` and a
+      //         driver blamed the parser for a glob it had honored
+      then('the refusal names the include and exclude globs', async () => {
+        const spy = jest.spyOn(console, 'error').mockImplementation(() => {});
+        try {
+          await getError(
+            stepReview(
+              {
+                rules: '.agent/**/briefs/rules/*.md',
+                pathsWith: 'nonexistent/**/*.{ts,md}',
+                pathsWout: '**/*.test.ts',
+                output: '/tmp/review.md',
+                focus: 'push',
+                goal: 'representative',
+                cwd: ASSETS_TYPESCRIPT,
+              },
+              { brain: scene.brain },
+            ),
+          );
+          const stderr = spy.mock.calls
+            .map((call) => call.join(' '))
+            .join('\n');
+          expect(stderr).toContain('paths.with: nonexistent/**/*.{ts,md}');
+          expect(stderr).toContain('paths.wout: **/*.test.ts');
+          expect(stderr).not.toContain('paths.with: (none)');
+
+          // the assembled refusal of THIS variant, pinned whole: the fixture dir and the
+          // log-dir stamp vary per run, so both are masked first (as casePolluters does)
+          const stderrStable = stderr
+            .split(ASSETS_TYPESCRIPT)
+            .join('$CWD')
+            .replace(/\d{4}-\d{2}-\d{2}T[0-9-]+Z[.\w-]*/g, '$STAMP');
+          expect(stderrStable).toContain(
+            '✋ ConstraintError: combined scope resolves to zero files',
+          );
+          expect(stderrStable).toMatchSnapshot();
+        } finally {
+          spy.mockRestore();
+        }
       });
     });
   });
@@ -353,7 +480,7 @@ describe('stepReview', () => {
           '@src/domain.operations/review/enumFilesFromGlob'
         );
         const { getAllFileDiffsFromRange } = await import(
-          '@src/domain.operations/review/getAllFileDiffsFromRange'
+          '@src/domain.operations/git/getAllFileDiffsFromRange'
         );
 
         const pathFiles = await enumFilesFromGlob({
@@ -401,7 +528,7 @@ describe('stepReview', () => {
     when('[t0] negation pattern excludes file from diffs', () => {
       then('excluded file is not in target files', async () => {
         const { getAllFileDiffsFromRange } = await import(
-          '@src/domain.operations/review/getAllFileDiffsFromRange'
+          '@src/domain.operations/git/getAllFileDiffsFromRange'
         );
 
         // get all diff files first
@@ -430,7 +557,7 @@ describe('stepReview', () => {
     when('[t1] glob negation pattern excludes files', () => {
       then('excluded glob pattern filters matching files', async () => {
         const { getAllFileDiffsFromRange } = await import(
-          '@src/domain.operations/review/getAllFileDiffsFromRange'
+          '@src/domain.operations/git/getAllFileDiffsFromRange'
         );
 
         const allDiffFiles = (
@@ -546,9 +673,13 @@ describe('stepReview', () => {
         });
 
         then('metrics.realized contains real values', async () => {
-          expect(result.metrics.realized.tokens.input).toBeDefined();
-          expect(result.metrics.realized.tokens.output).toBeDefined();
-          expect(result.metrics.realized.cost.total).toBeDefined();
+          expect(result.metrics.realized.tokens?.input).toEqual(
+            expect.any(Number),
+          );
+          expect(result.metrics.realized.tokens?.output).toEqual(
+            expect.any(Number),
+          );
+          expect(result.metrics.realized.cost?.total).toBeDefined();
         });
       },
     );
@@ -773,8 +904,8 @@ describe('stepReview', () => {
             expect(result.outcome).toEqual('skipped');
             expect(result.metrics.files.rulesCount).toEqual(0);
             expect(result.metrics.realized.time).toEqual('PT0S');
-            expect(result.metrics.realized.tokens.input).toEqual(0);
-            expect(result.metrics.realized.tokens.output).toEqual(0);
+            expect(result.metrics.realized.tokens?.input).toEqual(0);
+            expect(result.metrics.realized.tokens?.output).toEqual(0);
           });
 
           then('its formatted review carries the skip header + 0/0', () => {

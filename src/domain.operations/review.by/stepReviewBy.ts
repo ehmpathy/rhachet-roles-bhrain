@@ -1,13 +1,15 @@
 import type { IsoDuration } from 'iso-time';
 import * as path from 'path';
 
-import { runOneReview } from '../review/runOneReview';
-import type { ContextReviewBrainSupply } from '../route/genReviewBrainSupply';
+import { getAllSettledResultsInBoundedPool } from '@src/utils/getAllSettledResultsInBoundedPool';
+
+import type { ContextReviewBrainSupply } from '../brain/genReviewBrainSupply'; // brain/ is a declared shared subdomain (its .readme.md)
+import { asReviewRubricOutputPath } from './asReviewRubricOutputPath';
+import { asReviewRubricResultOfOutcome } from './asReviewRubricResultOfOutcome';
 import { asReviewRubricsConfig } from './asReviewRubricsConfig';
-import { asReviewVerdict } from './asReviewVerdict';
 import { computeReviewRubricTotals } from './computeReviewRubricTotals';
-import { genReviewRubricCmd } from './genReviewRubricCmd';
 import { getAllReviewRubricsToRun } from './getAllReviewRubricsToRun';
+import { getOneReviewRubricResult } from './getOneReviewRubricResult';
 import { getOneRoleReviewRubricsYml } from './getOneRoleReviewRubricsYml';
 import type {
   ReviewByResult,
@@ -22,14 +24,24 @@ import type {
 const DEFAULT_REVIEW_TIMEOUT: IsoDuration = 'PT21M';
 
 /**
- * .what = orchestrates a role's review.by run — reads its rubrics, runs each one at a time,
- *         and aggregates the verdicts
- * .why = the composition core. serial `for...of await` (NO Promise.all) mirrors the route
- *        guard's runner. each rubric dispatches the shared runOneReview subprocess (imported
- *        directly, exactly as the guard's runStoneGuardReviews does — a same-repo domain op is
- *        composed, never injected; see rule.forbid.inject-same-repo-domain-ops). so review.by
- *        and the guard share one execution path. narrative only — no console/exit (those live at
- *        the cli boundary). see rule.require.orchestrators-as-narrative.
+ * .what = how many rubrics may review at once
+ * .why = each rubric is its own `rhx review` subprocess and its own brain call, so the pour
+ *        is bounded by what a laptop and a provider rate limit bear, never by the roster. a
+ *        role's rubric list is short (a handful), so four lets most rosters pour whole
+ */
+const BOUND_OF_CONCURRENT_RUBRICS = 4;
+
+/**
+ * .what = orchestrates a role's review.by run — reads its rubrics, pours them under a
+ *         bound, and aggregates the verdicts
+ * .why = the composition core. the rubrics are independent reviews of one corpus — none
+ *        reads another's output — so they pour concurrently, as the guard pours the
+ *        reviewers within a level (rule.forbid.serial-reviews-that-could-pour). each rubric
+ *        dispatches the shared runOneReview subprocess (imported directly, exactly as the
+ *        guard's runStoneGuardReviews does — a same-repo domain op is composed, never
+ *        injected; see rule.forbid.inject-same-repo-domain-ops). so review.by and the guard
+ *        share one execution path. narrative only — no console/exit (those live at the cli
+ *        boundary). see rule.require.orchestrators-as-narrative.
  */
 export const stepReviewBy = async (
   input: {
@@ -43,7 +55,7 @@ export const stepReviewBy = async (
     output: string | null;
   },
   context: ContextReviewBrainSupply & {
-    // .why = optional live-progress emitter. review.by runs slow LLM reviews serially, so the
+    // .why = optional live-progress emitter. review.by pours slow LLM reviews, so the
     //        cli boundary passes a stderr renderer to break the silent wait
     //        (rule.require.status-feedback). absent under a guard, which renders its own tree.
     //        a context callback, not an input field — exempt from rule.forbid.undefined-inputs.
@@ -71,59 +83,45 @@ export const stepReviewBy = async (
   // where each rubric's review output lands
   const outputDir = input.output ?? path.join('.reviews', `by=${input.role}`);
 
-  // run each rubric one at a time — serial, like the guard's runStoneGuardReviews. emit a
-  // start/done progress event around each so the cli can render live feedback as the slow
-  // LLM review runs, instead of a silent wait (rule.require.status-feedback).
-  const results: ReviewRubricResult[] = [];
-  for (const [index, rubric] of rubrics.entries()) {
-    // announce the rubric before its (slow) review begins
-    context.onRubricProgress?.({
-      phase: 'start',
-      index: index + 1,
-      total: rubrics.length,
-      slug: rubric.slug,
-    });
+  // pour the rubrics at once, under a bound — each is an independent review of the same
+  // corpus, so none waits on another (rule.forbid.serial-reviews-that-could-pour). the pour
+  // SETTLES, so a throw from one rubric never drops the verdicts its peers already returned
+  // (rule.forbid.dropped-partial-review-progress). emit a start/done progress event around
+  // each so the cli can render live feedback as the slow LLM reviews run, instead of a
+  // silent wait (rule.require.status-feedback). the outcomes answer in rubric order,
+  // whatever order they settle in
+  const outcomes = await getAllSettledResultsInBoundedPool({
+    items: rubrics.map((rubric, index) => ({ rubric, index })),
+    bound: BOUND_OF_CONCURRENT_RUBRICS,
+    map: ({ rubric, index }): Promise<ReviewRubricResult> =>
+      getOneReviewRubricResult(
+        {
+          rubric,
+          index,
+          total: rubrics.length,
+          outputDir,
+          timeout: DEFAULT_REVIEW_TIMEOUT,
+          cwd: input.cwd,
+          paths: input.paths,
+          diffs: input.diffs,
+          mode: input.mode,
+          brain: input.brain,
+        },
+        context,
+      ),
+  });
 
-    const outputPath = path.join(outputDir, `rubric=${rubric.slug}.md`);
-    const cmd = genReviewRubricCmd({
-      rubric,
-      output: outputPath,
-      paths: input.paths,
-      diffs: input.diffs,
-      mode: input.mode,
-      brain: input.brain,
-    });
-    const run = await runOneReview(
-      { cmd, timeout: DEFAULT_REVIEW_TIMEOUT, cwd: input.cwd },
-      context,
-    );
-    const verdict = asReviewVerdict({ run });
-    results.push({
-      slug: rubric.slug,
-      purpose: rubric.purpose,
-      verdict,
-      outputPath,
-      durationMs: run.durationMs,
-      // keep the base review's raw stdout so the cli can disintermediate a single-scope
-      // (`--for`) run — print this verbatim rather than the review.by tree
-      stdout: run.stdout,
-      // keep its stderr too: a malfunctioned rubric's stdout is often empty, so this is the only
-      // carrier of WHY it faulted (rule.forbid.failhide)
-      stderr: run.stderr,
-    });
-
-    // report the resolved verdict the moment the rubric finishes, with all the cli needs to
-    // render the completed peer-style row (verdict + duration + the given: path)
-    context.onRubricProgress?.({
-      phase: 'done',
-      index: index + 1,
-      total: rubrics.length,
-      slug: rubric.slug,
-      verdict,
-      durationMs: run.durationMs,
-      outputPath,
-    });
-  }
+  // a rubric whose run threw still answers — a named malfunction row, never a dropped wave
+  const results: ReviewRubricResult[] = outcomes.map((outcome, at) =>
+    asReviewRubricResultOfOutcome({
+      outcome,
+      rubric: rubrics[at]!,
+      outputPath: asReviewRubricOutputPath({
+        outputDir,
+        slug: rubrics[at]!.slug,
+      }),
+    }),
+  );
 
   // sum the in-memory verdicts for the cli exit + the stdout summary
   const { blockersTotal, nitpicksTotal } = computeReviewRubricTotals({

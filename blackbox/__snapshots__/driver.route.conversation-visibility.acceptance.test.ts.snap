@@ -9,10 +9,10 @@ exports[`driver.route.conversation-visibility.acceptance given: [case1] a prior 
 │  │  nitpicks: 0
 │  │  ---
 │  │  seer: the design lacks a bounded context
-│  │  
+│  │
 │  │  ## blockers
 │  │  - the design lacks a bounded context
-│  │  
+│  │
 │  │  ## conversation seen (0 files)
 │  │
 │  └─
@@ -33,12 +33,10 @@ exports[`driver.route.conversation-visibility.acceptance given: [case1] a prior 
 │  │  nitpicks: 0
 │  │  ---
 │  │  seer: the driver's .taken claims FIXED — the blocker is dropped
-│  │  
-│  │  ## conversation seen (4 files)
+│  │
+│  │  ## conversation seen (2 files)
 │  │  - 1.execute._.review.i001.00000000.r001._.given.by_peer.seer.md
 │  │  - 1.execute._.review.i001.00000000.r001._.taken.by_self.seer.md
-│  │  - 1.execute._.review.i001.00000000.r002._.given.by_peer.blind.md
-│  │  - 1.execute._.review.i001.00000000.r002._.taken.by_self.blind.md
 │  │
 │  └─
 └─ tallied
@@ -66,7 +64,20 @@ exports[`driver.route.conversation-visibility.acceptance given: [case2] a first 
 🗿 route.stone.set
    ├─ stone = 1.execute
    ├─ passage = malfunction
-   ├─ reason = reviewer or judge malfunctioned
+   ├─ reason = 2 of 2 reviewers malfunctioned
+   ├─ still yours to clear
+   │  ├─ 💥 lane seer (r1) broke
+   │  │  └─ cause = exit code 1 (unknown)
+   │  ├─ 💥 lane blind (r2) broke
+   │  │  └─ cause = exit code 1 (unknown)
+   │  └─ next
+   │     ├─ 1. read each given for its cause, and fix what you can
+   │     ├─ 2. answer each broken lane, like a rejected one
+   │     │  ├─ rhx route.stone.set --stone 1.execute --as absorbed --that seer
+   │     │  └─ rhx route.stone.set --stone 1.execute --as absorbed --that blind
+   │     ├─ 3. re-arrive
+   │     │  └─ rhx route.stone.set --stone 1.execute --as arrived
+   │     └─ ask a human only for a grant you cannot make (an absent credential, a permission, etc)
    ├─ options
    │  ├─ converge with the reviewer — yours to run, and the levels above stay unlocked
    │  │  └─ rhx route.stone.set --stone 1.execute --as absorbed --that <reviewer>

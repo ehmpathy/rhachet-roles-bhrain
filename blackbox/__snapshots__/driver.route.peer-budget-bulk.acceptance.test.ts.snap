@@ -112,7 +112,11 @@ exports[`driver.route.peer-budget-bulk.acceptance given: [case1] a bulk add land
 `;
 
 exports[`driver.route.peer-budget-bulk.acceptance given: [case1] a bulk add lands on the latest level, not every level when: [t1c] an explicit --level names a level no lane sits at then: the full error body is pinned 1`] = `
-"error: no reviewer at level 9. levels in play: 1, 2
+"
+🦉 woah there
+
+✋ ConstraintError: no reviewer at level 9. levels in play: 1, 2
+
 "
 `;
 
@@ -176,6 +180,10 @@ exports[`driver.route.peer-budget-bulk.acceptance given: [case1] a bulk add land
 `;
 
 exports[`driver.route.peer-budget-bulk.acceptance given: [case2] invalid peer slug returns clear error when: [t0] budget extension with invalid peer slug then: stderr has error output 1`] = `
-"error: peer reviewer not found: nonexistent-peer
+"
+🦉 woah there
+
+✋ ConstraintError: peer reviewer not found: nonexistent-peer
+
 "
 `;

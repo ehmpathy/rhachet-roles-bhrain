@@ -15,6 +15,10 @@ import {
   GoalWhat,
   GoalWhy,
 } from '@src/domain.objects/Achiever/Goal';
+import {
+  asDidYouKnowLines,
+  HEADER_OF_DID_YOU_KNOW,
+} from '@src/domain.operations/asDidYouKnowLines';
 import { delGoalBlockerState } from '@src/domain.operations/goal/delGoalBlockerState';
 import { expandAbbreviatedHashes } from '@src/domain.operations/goal/expandAbbreviatedHashes';
 import { getGoalGuardVerdict } from '@src/domain.operations/goal/getGoalGuardVerdict';
@@ -1349,7 +1353,7 @@ export const goalMemoryGet = async (): Promise<void> => {
       });
 
       console.log('');
-      console.log('✨ did you know?');
+      console.log(HEADER_OF_DID_YOU_KNOW);
       console.log('   └─ --with asks to see full asks covered');
     }
   } else {
@@ -1360,7 +1364,7 @@ export const goalMemoryGet = async (): Promise<void> => {
     // hint for single goal details
     if (result.goals.length > 0) {
       console.log('');
-      console.log('✨ did you know?');
+      console.log(HEADER_OF_DID_YOU_KNOW);
       console.log(
         '   └─ run rhx goal.memory.get --slug $goal to see full goal details',
       );
@@ -1611,6 +1615,23 @@ const parseArgsForTriageNext = async (
 };
 
 /**
+ * .what = the next moves a goal.triage.next halt offers, as its own did-you-know block
+ * .why = a next move is optional guidance, so it rides a block after the goal tree, never a
+ *        `tip:` row inside it (rule.require.coconut-hints). one goal names its own slug, so
+ *        each command pastes as is; several share one block under a `$slug` stand-in
+ */
+const asGoalNextMoveLines = (input: { goals: Goal[] }): string[] => {
+  const slug =
+    input.goals.length === 1 ? (input.goals[0] as Goal).slug : '$slug';
+  return asDidYouKnowLines({
+    rows: [
+      `to see the goal, run \`rhx goal.memory.get --slug ${slug}\``,
+      `if blocked, run \`rhx goal.memory.set --slug ${slug} --status.choice blocked --status.reason "..."\``,
+    ],
+  });
+};
+
+/**
  * .what = cli entrypoint for goal.triage.next skill
  * .why = onStop hook that shows unfinished goals to mandate continuation
  *
@@ -1676,14 +1697,11 @@ export const goalTriageNext = async (): Promise<void> => {
       const askText = goal.why?.ask ?? '(no ask)';
       const askShort = asTruncatedText(askText, 60);
       console.error(`      ${cont}├─ why.ask = ${askShort}`);
-      console.error(`      ${cont}├─ status = inflight → ✋ finish this first`);
-      console.error(
-        `      ${cont}├─ tip: run \`rhx goal.memory.get --slug ${goal.slug}\` to see the goal`,
-      );
-      console.error(
-        `      ${cont}└─ tip: if blocked, run \`rhx goal.memory.set --slug ${goal.slug} --status.choice blocked --status.reason "..."\``,
-      );
+      console.error(`      ${cont}└─ status = inflight → ✋ finish this first`);
     }
+    asGoalNextMoveLines({ goals: inflightGoals.goals }).forEach((line) =>
+      console.error(line),
+    );
     process.exit(2);
   }
 
@@ -1700,14 +1718,11 @@ export const goalTriageNext = async (): Promise<void> => {
       const askText = goal.why?.ask ?? '(no ask)';
       const askShort = asTruncatedText(askText, 60);
       console.error(`      ${cont}├─ why.ask = ${askShort}`);
-      console.error(`      ${cont}├─ status = enqueued → ✋ finish this first`);
-      console.error(
-        `      ${cont}├─ tip: run \`rhx goal.memory.get --slug ${goal.slug}\` to see the goal`,
-      );
-      console.error(
-        `      ${cont}└─ tip: if blocked, run \`rhx goal.memory.set --slug ${goal.slug} --status.choice blocked --status.reason "..."\``,
-      );
+      console.error(`      ${cont}└─ status = enqueued → ✋ finish this first`);
     }
+    asGoalNextMoveLines({ goals: enqueuedGoals.goals }).forEach((line) =>
+      console.error(line),
+    );
     process.exit(2);
   }
 };

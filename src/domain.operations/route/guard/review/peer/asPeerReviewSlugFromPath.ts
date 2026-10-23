@@ -27,7 +27,7 @@ import * as path from 'path';
  *
  * 🟡 the slug returned is the SANITIZED form, because that is what the filename holds
  *    (asSanitizedPeerReviewSlug). a caller that compares against a config slug must
- *    sanitize its own side too — getLatestReviewArtifactForSlug does exactly that.
+ *    sanitize its own side too — getOneLatestReviewArtifactForSlug does exactly that.
  *
  * grammar (given OR taken):
  *   $stone._.review.i$iter.$hash.r$index._.given.by_peer.$slug.md

@@ -22,7 +22,7 @@
 #   --peer    peer reviewer slug to extend (default: the latest level in play)
 #   --stone   stone name with guard to update (required) — must name exactly ONE stone
 #   --level   review level to extend — reach a LOWER level only when you name it
-#   --route   path to route directory (default: auto-detect from branch)
+#   --route   path to route directory (uses bound route if absent)
 #   --help    show the full help on stdout, exit 0
 #
 # exit codes:

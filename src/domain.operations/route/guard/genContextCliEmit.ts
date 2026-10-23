@@ -3,9 +3,12 @@ import type {
   ContextGuardProgress,
 } from '@src/domain.objects/Driver/ContextCliEmit';
 import type { GuardProgressEvent } from '@src/domain.objects/Driver/GuardProgressEvent';
+import { asReviewWaveStatusLine } from '@src/domain.operations/asReviewWaveStatusLine';
+import { genReviewWaveBuffer } from '@src/domain.operations/genReviewWaveBuffer';
+import { genTerminalTailLine } from '@src/infra/terminal/genTerminalTailLine';
+import { isErrorOfConsumerClose } from '@src/infra/terminal/isErrorOfConsumerClose';
 
 import { asMeterCountDisplay } from './asMeterCountDisplay';
-import { genReviewWaveBuffer } from './review/genReviewWaveBuffer';
 import { computeReviewPeerVerdict } from './review/peer/meter/computeReviewPeerVerdict';
 import { getReviewedJudgeThresholds } from './review/peer/meter/getReviewedJudgeThresholds';
 import {
@@ -13,17 +16,14 @@ import {
   type ReviewerTreeState,
 } from './tree/formatGuardReviewerTree';
 
-const FRAMES = ['⠋', '⠙', '⠹', '⠸', '⠼', '⠴', '⠦', '⠧', '⠇', '⠏'];
-const SPIN_MS = 80;
-
 /**
- * .what = the tallier a live-progress reviewer row defaults to
+ * .what = the tallier brain a live-progress reviewer row defaults to — none
  * .why = live progress events predate the persisted `tallied` footer, so they cannot know a
  *        reviewer's real tallier — the `tallied by reviewer@…` marker only appears in the FINAL
  *        guard tree (formatGuardTree, from artifacts). one shared default keeps the three
  *        in-flight/legacy build sites in lockstep (rule.forbid.duplicate-format-tree-operations).
  */
-const DEFAULT_TALLIER_FOR_INFLIGHT = 'deterministic' as const;
+const DEFAULT_TALLIED_BY_FOR_INFLIGHT = null;
 
 /**
  * .what = creates a ContextCliEmit that drives stderr progress output as tree
@@ -32,40 +32,21 @@ const DEFAULT_TALLIER_FOR_INFLIGHT = 'deterministic' as const;
 export const genContextCliEmit = (input: {
   stderr: NodeJS.WriteStream;
 }): { context: ContextCliEmit; done: () => void } => {
-  const isTty = input.stderr.isTTY ?? false;
-  let activeInterval: ReturnType<typeof setInterval> | null = null;
-  let lastLineLen = 0;
+  // a reader that closes early (`| head`, a `q` in `less`) ends the output, never the
+  // verdict: with no listener node throws the EPIPE and a computed exit code becomes a
+  // fault. only the early-close codes end in silence; any other write fault still throws
+  input.stderr.on('error', (error) => {
+    if (isErrorOfConsumerClose({ error })) return;
+    throw error;
+  });
 
-  // clear active spinner interval
-  const clearActive = () => {
-    if (activeInterval) {
-      clearInterval(activeInterval);
-      activeInterval = null;
-    }
-  };
-
-  // overwrite the last stderr line via \r (tty) or print a new line (non-tty)
-  const overwrite = (text: string) => {
-    if (isTty) {
-      const padded = text.padEnd(lastLineLen);
-      input.stderr.write(`\r${padded}`);
-      lastLineLen = text.length;
-    } else {
-      input.stderr.write(`${text}\n`);
-      lastLineLen = 0;
-    }
-  };
-
-  // finalize the last line: overwrite + newline (tty) or just print (non-tty)
-  const seal = (text: string) => {
-    if (isTty) {
-      const padded = text.padEnd(lastLineLen);
-      input.stderr.write(`\r${padded}\n`);
-      lastLineLen = 0;
-    } else {
-      input.stderr.write(`${text}\n`);
-    }
-  };
+  // the tail-line mechanics (overwrite, seal, spin) and the spinner frames + cadence come from
+  // the one driver review.by's rubric stream reads too, so the two streams spin identically
+  // (rule.require.single-source-of-truth-for-render)
+  const tail = genTerminalTailLine({ out: input.stderr });
+  const isTty = tail.isTty;
+  const clearActive = tail.stop;
+  const seal = tail.seal;
 
   // emit multiple lines to stderr (for tree output)
   const emitLines = (lines: string[]) => {
@@ -103,9 +84,9 @@ export const genContextCliEmit = (input: {
     clearActive();
     // 🔴 no status line at all under a pipe — a DELIBERATE deviation from the
     //    vision, which predicted one appended line per tick
-    // .why = the vision reasoned from `overwrite`'s non-tty fallback (:52-55)
-    //        without the interval that calls it: every spinner in this file is
-    //        already `if (isTty)` gated, so no interval has ever fired under a
+    // .why = the vision reasoned from `overwrite`'s non-tty fallback
+    //        (`genTerminalTailLine`) without the interval that calls it: every
+    //        spin is tty-gated inside `tail.spin`, so no interval has ever fired under a
     //        pipe. to append per tick here would make the wave status the ONE
     //        spinner that spams a piped log
     // .why = the arithmetic settles it. SPIN_MS is 80ms and the review timeout
@@ -133,16 +114,12 @@ export const genContextCliEmit = (input: {
     if (!isTty) return;
     if (wave.status().inflight === 0) return;
     const beganMs = wave.status().beganMs ?? Date.now();
-    let frameIdx = 0;
-    activeInterval = setInterval(() => {
-      const sec = ((Date.now() - beganMs) / 1000).toFixed(1);
-      const frame = FRAMES[frameIdx % FRAMES.length]!;
-      frameIdx++;
-      const now = wave.status();
-      overwrite(
-        `   └─ ${frame} ${now.inflight} inflight · ${now.done} done · ${now.left} left · ${sec}s`,
-      );
-    }, SPIN_MS);
+    tail.spin({
+      render: (frame) => {
+        const sec = (Date.now() - beganMs) / 1000;
+        return asReviewWaveStatusLine({ frame, status: wave.status(), sec });
+      },
+    });
   };
 
   // release every block still buffered, whatever the cursor is owed
@@ -195,15 +172,12 @@ export const genContextCliEmit = (input: {
     if (event.inflight && !event.inflight.endedAt) {
       clearActive();
       const beganMs = new Date(event.inflight.beganAt).getTime();
-      if (isTty) {
-        let frameIdx = 0;
-        activeInterval = setInterval(() => {
+      tail.spin({
+        render: (frame) => {
           const sec = ((Date.now() - beganMs) / 1000).toFixed(1);
-          const frame = FRAMES[frameIdx % FRAMES.length]!;
-          frameIdx++;
-          overwrite(`   ${branch} ${frame} ${label} - inflight ${sec}s`);
-        }, SPIN_MS);
-      }
+          return `   ${branch} ${frame} ${label} - inflight ${sec}s`;
+        },
+      });
       return;
     }
 
@@ -351,15 +325,12 @@ export const genContextCliEmit = (input: {
       seal(`   ├─ ${header}`);
 
       // tty mode: spinner on status line
-      if (isTty) {
-        let frameIdx = 0;
-        activeInterval = setInterval(() => {
+      tail.spin({
+        render: (frame) => {
           const sec = ((Date.now() - beganMs) / 1000).toFixed(1);
-          const frame = FRAMES[frameIdx % FRAMES.length]!;
-          frameIdx++;
-          overwrite(`   │     └─ ${frame} inflight ${sec}s`);
-        }, SPIN_MS);
-      }
+          return `   │     └─ ${frame} inflight ${sec}s`;
+        },
+      });
       return;
     }
 
@@ -414,15 +385,12 @@ export const genContextCliEmit = (input: {
     if (event.inflight && !event.inflight.endedAt) {
       clearActive();
       const beganMs = new Date(event.inflight.beganAt).getTime();
-      if (isTty) {
-        let frameIdx = 0;
-        activeInterval = setInterval(() => {
+      tail.spin({
+        render: (frame) => {
           const sec = ((Date.now() - beganMs) / 1000).toFixed(1);
-          const frame = FRAMES[frameIdx % FRAMES.length]!;
-          frameIdx++;
-          overwrite(`   ${branch} ${frame} ${label} - inflight ${sec}s`);
-        }, SPIN_MS);
-      }
+          return `   ${branch} ${frame} ${label} - inflight ${sec}s`;
+        },
+      });
       return;
     }
 
@@ -583,17 +551,19 @@ const asReviewerTreeState = (
         nitpicks: { disputed: 0, reported: review.nitpicks },
         path: path ?? '',
         cached: false,
-        tallier: DEFAULT_TALLIER_FOR_INFLIGHT,
+        talliedBy: DEFAULT_TALLIED_BY_FOR_INFLIGHT,
       },
     };
   }
 
-  // queued state
+  // queued state — held by a lower level, it reads as the persisted tree reads it
   if (review && 'queued' in review) {
     return {
       ...asReviewerTreeIdentity(reviewer),
       skippedByDispute,
-      state: { type: 'queued' },
+      state: review.awaits
+        ? { type: 'awaits', level: review.awaits.level }
+        : { type: 'queued' },
     };
   }
 
@@ -631,7 +601,7 @@ const asReviewerTreeState = (
         nitpicks: { disputed: 0, reported: review.nitpicks },
         path: path ?? '',
         cached: false,
-        tallier: DEFAULT_TALLIER_FOR_INFLIGHT,
+        talliedBy: DEFAULT_TALLIED_BY_FOR_INFLIGHT,
       },
     };
   }
@@ -654,7 +624,7 @@ const asReviewerTreeState = (
       nitpicks: { disputed: 0, reported: 0 },
       path: path ?? '',
       cached: false,
-      tallier: DEFAULT_TALLIER_FOR_INFLIGHT,
+      talliedBy: DEFAULT_TALLIED_BY_FOR_INFLIGHT,
     },
   };
 };

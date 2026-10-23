@@ -1,0 +1,13 @@
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
+
+exports[`review.output-mkdir.acceptance given: [case1] mechanic codebase with review skill when: [t0] review skill invoked with --output to absent parent dir, attempt 1 then: the metrics.expected block matches its snapshot (computed before the brain) 1`] = `
+"🔭 metrics.expected
+   ├─ files
+   │  ├─ rules: 3
+   │  └─ targets: 1
+   ├─ tokens
+   │  ├─ estimate: 2,719
+   │  └─ context: 0.3%
+   └─ cost
+      └─ estimate: $0.001359700"
+`;
