@@ -51,7 +51,12 @@ export interface RouteGuardReviewPeerGiven {
   constraint: RouteGuardReviewPeerGivenConstraint | null;
   /** the recency key — the only ordinal the latest-per-slug pick reads */
   iteration: number;
-  /** 🔴 the given's IDENTITY. no subset of it is, and the taken's path derives from it */
+  /**
+   * the given's absolute path, as this process spells it; the taken's path derives from it
+   *
+   * 🔴 its FILENAME is the given's identity (`asReviewGivenKey`), never the whole path — the
+   *    dir prefix differs between the driver's process and a guard subprocess
+   */
   pathGiven: string;
 }
 

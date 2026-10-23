@@ -28,10 +28,15 @@ slug:
 $route/.reviews/peer/$stone._.review.i$NNN.$hash.r$NNN._.given.by_peer.$slug.md
 ```
 
-🔴 **that whole path is the given's IDENTITY — no subset of it is.** in particular
+🔴 **that whole FILENAME is the given's IDENTITY — no subset of it is.** in particular
 `(slug, hash)` is not: a `.taken` write does not move the artifact hash, so one reviewer's
 successive givens routinely share a hash and differ only by iteration. any operation that must say
-*which* given it means says so with the path.
+*which* given it means says so with the filename, via `asReviewGivenKey`.
+
+🔴 **the directory prefix is NOT identity.** every given of a route sits in one dir, so the prefix
+names no given; and two processes spell it two ways — the driver's `process.cwd()` is the realpath,
+a guard subprocess builds from the `$route` it was handed, symlink intact. a compare of two absolute
+paths therefore fails across processes for one given. compare keys, never paths.
 
 ⚠️ **a `.report.md` sits beside a given and is not one.** `enumRouteGuardReviewPeerFiles.ts:50`
 excludes it, so the count of givens is never inflated by the detail file that accompanies each.
@@ -42,6 +47,7 @@ boundary segment `review` is what parts them, and it is why the term is
 
 ## .refs
 
+- `src/domain.operations/route/guard/review/peer/asReviewGivenKey.ts`
 - `src/domain.operations/route/guard/review/peer/getAllRouteGuardReviewPeerGivens.ts`
 - `src/domain.operations/route/guard/review/peer/getLatestPeerGivensPerSlug.ts`
 - `src/domain.operations/route/guard/review/peer/enumRouteGuardReviewPeerFiles.ts`

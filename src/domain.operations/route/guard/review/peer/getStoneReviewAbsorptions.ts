@@ -3,8 +3,9 @@ import { UnexpectedCodePathError } from 'helpful-errors';
 import type { PassageReport } from '@src/domain.objects/Driver/PassageReport';
 
 import { getAllPassageReportsRaw } from '../../../passage/getAllPassageReportsRaw';
-import { asReviewGivenKey } from './asReviewGivenKey';
+import { asReviewAbsorptionKey } from './asReviewAbsorptionKey';
 import { getPassageReportsSinceLastRewind } from './getPassageReportsSinceLastRewind';
+import { isReviewAbsorptionOnGiven } from './isReviewAbsorptionOnGiven';
 
 /**
  * .what = one stance the driver declared, keyed to the concern and given it answered
@@ -52,14 +53,10 @@ export const getStoneReviewAbsorptions = async (input: {
 }): Promise<ReviewAbsorption[]> => {
   const all = await getAllPassageReportsRaw({ route: input.route });
 
-  // the given part keys by asReviewGivenKey, so a legacy absolute row and a filename row on
-  // the same concern of the same given fold to one stance
-  const keyOf = (absorption: ReviewAbsorption): string =>
-    `${absorption.reviewer}::${absorption.about}::${asReviewGivenKey({ path: absorption.given })}`;
-
   // a rewind voids the round, so the absorptions declared within it are void too.
-  // .why = the given-path key alone does NOT survive a rewind — an unchanged artifact
-  //        re-mints the identical path, so a rewound stance would re-attach silently
+  // .why = the given key alone does NOT survive a rewind — an unchanged artifact re-mints
+  //        the identical filename, so a rewound stance would re-attach silently
+  //        (clamped: getStoneReviewAbsorptions.integration.test.ts)
   const reportsUnrewound = getPassageReportsSinceLastRewind({
     reports: all.filter((report) => report.stone === input.stone),
   });
@@ -95,7 +92,12 @@ export const getStoneReviewAbsorptions = async (input: {
   // LAST WINS within one `(reviewer, about, given)` key — a Map built from entries keeps the last
   // duplicate, so a replayed ledger folds deterministically with no in-loop mutation.
   return [
-    ...new Map(absorptions.map((stance) => [keyOf(stance), stance])).values(),
+    ...new Map(
+      absorptions.map((absorption) => [
+        asReviewAbsorptionKey({ absorption }),
+        absorption,
+      ]),
+    ).values(),
   ];
 };
 
@@ -113,9 +115,11 @@ export const getAbsorptionOnConcern = (input: {
   given: string;
 }): ReviewAbsorption | undefined =>
   input.absorptions.find(
-    (stance) =>
-      stance.reviewer === input.reviewer &&
-      stance.about === input.about &&
-      asReviewGivenKey({ path: stance.given }) ===
-        asReviewGivenKey({ path: input.given }),
+    (absorption) =>
+      absorption.about === input.about &&
+      isReviewAbsorptionOnGiven({
+        absorption,
+        reviewer: input.reviewer,
+        given: input.given,
+      }),
   );

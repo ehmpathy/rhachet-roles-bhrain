@@ -4,11 +4,24 @@
 # .why = the exhausted-all-better journey needs lanes that never clear on their own, so
 #        budget exhaustion plus the driver's concession grade is the only road forward
 #
-# usage: mock-review-lane.sh <blockers> <nitpicks>
+# usage: mock-review-lane.sh --blockers <n> --nitpicks <n>
 set -euo pipefail
 
-BLOCKERS="$1"
-NITPICKS="$2"
+BLOCKERS=""
+NITPICKS=""
+while [[ $# -gt 0 ]]; do
+  case "$1" in
+    --blockers) BLOCKERS="$2"; shift 2 ;;
+    --nitpicks) NITPICKS="$2"; shift 2 ;;
+    *) echo "✋ ConstraintError: unknown arg '$1' (usage: --blockers <n> --nitpicks <n>)" >&2; exit 2 ;;
+  esac
+done
+
+# both counts are required; a lane with an absent count would print an unreadable verdict
+if [[ -z "$BLOCKERS" || -z "$NITPICKS" ]]; then
+  echo "✋ ConstraintError: --blockers and --nitpicks are both required" >&2
+  exit 2
+fi
 
 echo "---"
 echo "blockers: ${BLOCKERS}"

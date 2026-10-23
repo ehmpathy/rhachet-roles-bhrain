@@ -10,6 +10,7 @@ import {
   execAsync,
   genTempDirForRhachet,
   invokeRouteSkill,
+  sanitizeTimeForSnapshot,
 } from './.test/invokeRouteSkill';
 
 /**
@@ -38,6 +39,18 @@ type Stance = {
   severity: 'better' | 'urgent' | null; // null = left undeclared
 };
 
+/**
+ * .what = whether a stance is declared (carries a severity)
+ * .why = narrows the type, so the concede call needs no non-null assertion
+ */
+const isStanceDeclared = (
+  stance: Stance,
+): stance is Stance & { severity: 'better' | 'urgent' } =>
+  stance.severity !== null;
+
+// the rounds a lane spends to exhaust its budget, one per entry
+const ROUNDS = Array.from({ length: ROUNDS_TO_EXHAUST }, (_, index) => index + 1);
+
 const STANCES_ALL_BETTER: Stance[] = [
   { slug: 'intent', about: 'blocker.1', severity: 'better' },
   { slug: 'friction', about: 'blocker.1', severity: 'better' },
@@ -60,7 +73,8 @@ const driveToExhaustion = async (input: {
   await execAsync('npx rhachet roles link --role driver', { cwd: tempDir });
   await execAsync(`git checkout -b vlad/test-${input.slug}`, { cwd: tempDir });
 
-  for (let round = 1; round <= ROUNDS_TO_EXHAUST; round++) {
+  // serial by nature: each round's reviews read the artifact the prior round edited
+  for (const round of ROUNDS) {
     // a round of reviews
     await invokeRouteSkill({
       skill: 'route.stone.set',
@@ -74,9 +88,7 @@ const driveToExhaustion = async (input: {
 
     // a `.taken` per given of a lane whose every concern carries a stance
     const slugsFull = ['intent', 'friction'].filter((slug) =>
-      stances
-        .filter((one) => one.slug === slug)
-        .every((one) => one.severity !== null),
+      stances.filter((one) => one.slug === slug).every(isStanceDeclared),
     );
     const peerDir = path.join(tempDir, '.reviews', 'peer');
     const givens = (await fs.readdir(peerDir)).filter((name) =>
@@ -92,7 +104,7 @@ const driveToExhaustion = async (input: {
       );
 
     // the stances
-    for (const stance of stances.filter((one) => one.severity !== null))
+    for (const stance of stances.filter(isStanceDeclared))
       await invokeRouteSkill({
         skill: 'route.stone.set',
         args: {
@@ -101,7 +113,7 @@ const driveToExhaustion = async (input: {
           as: 'conceded',
           with: stance.slug,
           about: stance.about,
-          severity: stance.severity!,
+          severity: stance.severity,
         },
         cwd: tempDir,
       });
@@ -125,6 +137,11 @@ const driveToExhaustion = async (input: {
   return { tempDir, aliasDir };
 };
 
+/**
+ * .what = run the `reviewed?` judge on the stone, at the guard's own thresholds
+ * .why = the judge is the reader under test; `route` and `cwd` vary so a case can read the same
+ *        ledger through the real dir or through its symlinked alias
+ */
 const runJudge = (input: { route: string; cwd: string }) =>
   invokeRouteSkill({
     skill: 'route.stone.judge',
@@ -166,6 +183,42 @@ const setStanceRowsAsAbsolute = async (input: { tempDir: string }) => {
   await fs.writeFile(pathLedger, `${linesAbsolute.join('\n')}\n`);
 };
 
+/**
+ * .what = one cli result as snapshot-safe text: exit code, stdout, stderr
+ * .why = every journey step is snapped (rule.require.snapshot-every-journey-step), and the temp
+ *        route, its symlinked alias, and its realpath vary per run, so each is masked to `[ROUTE]`
+ *        before the time masks apply
+ */
+const asJourneySnap = (input: {
+  result: { code: number; stdout: string; stderr: string };
+  dirs: string[];
+}): string =>
+  sanitizeTimeForSnapshot(
+    input.dirs.reduce(
+      (text, dir) => text.split(dir).join('[ROUTE]'),
+      [
+        `code: ${input.result.code}`,
+        '--- stdout',
+        input.result.stdout.trim(),
+        '--- stderr',
+        input.result.stderr.trim(),
+      ].join('\n'),
+    ),
+  );
+
+/**
+ * .what = the dirs a scene's output may name, longest first
+ * .why = the alias extends the temp path, so it must be masked before the temp path is
+ */
+const getAllSceneDirs = async (input: {
+  tempDir: string;
+  aliasDir: string;
+}): Promise<string[]> => [
+  input.aliasDir,
+  await fs.realpath(input.tempDir),
+  input.tempDir,
+];
+
 describe('driver.route.exhausted-all-better', () => {
   given(
     '[case1] two lanes exhausted at 3/3, every concern conceded `better`',
@@ -186,7 +239,8 @@ describe('driver.route.exhausted-all-better', () => {
           path.join(tempDir, '.route', 'passage.jsonl'),
           'utf-8',
         );
-        return { judgeSame, judgeAlias, passedAlias, ledger };
+        const dirs = await getAllSceneDirs({ tempDir, aliasDir });
+        return { judgeSame, judgeAlias, passedAlias, ledger, dirs };
       });
 
       when('[t0] the judge runs through the path the stances were written under', () => {
@@ -196,6 +250,11 @@ describe('driver.route.exhausted-all-better', () => {
             'reason: reviews pass (blockers: 0/0',
           );
           expect(scene.judgeSame.code).toEqual(0);
+        });
+        then('matches snapshot', () => {
+          expect(
+            asJourneySnap({ result: scene.judgeSame, dirs: scene.dirs }),
+          ).toMatchSnapshot();
         });
       });
 
@@ -207,6 +266,11 @@ describe('driver.route.exhausted-all-better', () => {
           );
           expect(scene.judgeAlias.code).toEqual(0);
         });
+        then('matches snapshot', () => {
+          expect(
+            asJourneySnap({ result: scene.judgeAlias, dirs: scene.dirs }),
+          ).toMatchSnapshot();
+        });
       });
 
       when('[t2] the driver runs `--as passed` through the alias', () => {
@@ -214,6 +278,11 @@ describe('driver.route.exhausted-all-better', () => {
           expect(scene.passedAlias.stdout + scene.passedAlias.stderr).not.toContain(
             'undeclared',
           );
+        });
+        then('matches snapshot', () => {
+          expect(
+            asJourneySnap({ result: scene.passedAlias, dirs: scene.dirs }),
+          ).toMatchSnapshot();
         });
       });
 
@@ -227,6 +296,7 @@ describe('driver.route.exhausted-all-better', () => {
             .map((row) => row.given as string);
           expect(givens.length).toBeGreaterThan(0);
           givens.forEach((one) => expect(one).toEqual(path.basename(one)));
+          expect(givens).toMatchSnapshot();
         });
       });
     },
@@ -243,12 +313,18 @@ describe('driver.route.exhausted-all-better', () => {
         await setStanceRowsAsAbsolute({ tempDir });
         const judgeSame = await runJudge({ route: '.', cwd: tempDir });
         const judgeAlias = await runJudge({ route: aliasDir, cwd: tempDir });
-        return { judgeSame, judgeAlias };
+        const dirs = await getAllSceneDirs({ tempDir, aliasDir });
+        return { judgeSame, judgeAlias, dirs };
       });
 
       when('[t0] the judge runs through the path the rows were written under', () => {
         then('it passes', () => {
           expect(scene.judgeSame.stdout).toContain('passed: true');
+        });
+        then('matches snapshot', () => {
+          expect(
+            asJourneySnap({ result: scene.judgeSame, dirs: scene.dirs }),
+          ).toMatchSnapshot();
         });
       });
 
@@ -259,6 +335,11 @@ describe('driver.route.exhausted-all-better', () => {
             'blockers exceed threshold (3 > 0)',
           );
           expect(scene.judgeAlias.code).toEqual(0);
+        });
+        then('matches snapshot', () => {
+          expect(
+            asJourneySnap({ result: scene.judgeAlias, dirs: scene.dirs }),
+          ).toMatchSnapshot();
         });
       });
     },
@@ -288,7 +369,8 @@ describe('driver.route.exhausted-all-better', () => {
           },
           cwd: tempDir,
         });
-        return { judgeAlias, grantAlias };
+        const dirs = await getAllSceneDirs({ tempDir, aliasDir });
+        return { judgeAlias, grantAlias, dirs };
       });
 
       when('[t0] the judge runs through a symlinked alias of the route', () => {
@@ -307,11 +389,21 @@ describe('driver.route.exhausted-all-better', () => {
             `rhx route.guard.budget --for review --add 2 --peer friction --stone ${STONE}`,
           );
         });
+        then('matches snapshot', () => {
+          expect(
+            asJourneySnap({ result: scene.judgeAlias, dirs: scene.dirs }),
+          ).toMatchSnapshot();
+        });
       });
 
       when('[t1] the named budget command runs through the alias', () => {
         then('the grant is admitted — the urgent warrant is live', () => {
           expect(scene.grantAlias.code).toEqual(0);
+        });
+        then('matches snapshot', () => {
+          expect(
+            asJourneySnap({ result: scene.grantAlias, dirs: scene.dirs }),
+          ).toMatchSnapshot();
         });
       });
     },
@@ -336,7 +428,8 @@ describe('driver.route.exhausted-all-better', () => {
           args: { stone: STONE, route: '.', as: 'passed' },
           cwd: tempDir,
         });
-        return { judgeSame, judgeAlias, passed };
+        const dirs = await getAllSceneDirs({ tempDir, aliasDir });
+        return { judgeSame, judgeAlias, passed, dirs };
       });
 
       when('[t0] the judge runs', () => {
@@ -347,6 +440,11 @@ describe('driver.route.exhausted-all-better', () => {
           );
           expect(scene.judgeSame.code).toEqual(2);
         });
+        then('matches snapshot', () => {
+          expect(
+            asJourneySnap({ result: scene.judgeSame, dirs: scene.dirs }),
+          ).toMatchSnapshot();
+        });
       });
 
       when('[t1] the judge runs through a symlinked alias of the route', () => {
@@ -354,6 +452,11 @@ describe('driver.route.exhausted-all-better', () => {
           expect(scene.judgeAlias.stdout).toContain(
             'reason: blockers exceed threshold (1 > 0)',
           );
+        });
+        then('matches snapshot', () => {
+          expect(
+            asJourneySnap({ result: scene.judgeAlias, dirs: scene.dirs }),
+          ).toMatchSnapshot();
         });
       });
 
@@ -363,6 +466,11 @@ describe('driver.route.exhausted-all-better', () => {
           expect(out).toContain('friction');
           expect(out).toContain('blocker.2');
           expect(scene.passed.code).toEqual(2);
+        });
+        then('matches snapshot', () => {
+          expect(
+            asJourneySnap({ result: scene.passed, dirs: scene.dirs }),
+          ).toMatchSnapshot();
         });
       });
     },

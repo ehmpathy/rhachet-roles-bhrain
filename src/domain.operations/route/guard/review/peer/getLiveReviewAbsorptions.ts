@@ -1,7 +1,7 @@
-import { asReviewGivenKey } from './asReviewGivenKey';
 import type { RouteGuardReviewPeerGiven } from './getAllRouteGuardReviewPeerGivens';
 import { getLatestPeerGivensPerSlug } from './getLatestPeerGivensPerSlug';
 import type { ReviewAbsorption } from './getStoneReviewAbsorptions';
+import { isReviewAbsorptionOnGiven } from './isReviewAbsorptionOnGiven';
 
 /**
  * .what = of the absorptions given, the ones still keyed to their slug's LATEST given
@@ -26,11 +26,10 @@ import type { ReviewAbsorption } from './getStoneReviewAbsorptions';
  * .note = a stance whose given is not its slug's latest has lapsed — the lane spoke again,
  *         so it re-raised (or dropped) the point on its own, and the driver re-declares.
  *
- * 🟡 .note = `computeUndeclaredConcerns` encodes the same rule and does NOT call this. it
- *         iterates GIVENS rather than absorptions, so it holds the pair `(given.slug,
- *         given.pathGiven)` already and matches against it directly. to route it through
- *         here would build a Map to recover what its loop variable carries — the rule is
- *         shared, the shape is not.
+ * 🟡 .note = `computeUndeclaredConcerns` iterates GIVENS rather than absorptions, so it does not
+ *         call this; it holds `(given.slug, given.pathGiven)` already. the MATCH both share is
+ *         one predicate, `isReviewAbsorptionOnGiven`, so the rule lands once while the shapes
+ *         differ.
  */
 export const getLiveReviewAbsorptions = (input: {
   absorptions: ReviewAbsorption[];
@@ -41,20 +40,17 @@ export const getLiveReviewAbsorptions = (input: {
   //    `input.givens.map` would key on whichever given globbed last — right on one
   //    machine, wrong on another. getLatestPeerGivensPerSlug is the one selector both
   //    the debt and the tally already read through.
-  // 🔴 compared by asReviewGivenKey, never by raw path. the judge runs this in a guard
-  //    subprocess whose route path may differ from the one the driver's process wrote the
-  //    stance under (a symlink, a `$route` given another way), and a raw compare then lapses
-  //    every stance for the judge alone
-  const keyGivenLatestBySlug = new Map(
-    getLatestPeerGivensPerSlug({ givens: input.givens }).map((one) => [
-      one.slug,
-      asReviewGivenKey({ path: one.pathGiven }),
-    ]),
-  );
+  const givensLatest = getLatestPeerGivensPerSlug({ givens: input.givens });
 
-  return input.absorptions.filter(
-    (stance) =>
-      keyGivenLatestBySlug.get(stance.reviewer) ===
-      asReviewGivenKey({ path: stance.given }),
+  // a stance is live while it answers some lane's latest given. the match (reviewer + given
+  // key, never raw path) lives in isReviewAbsorptionOnGiven
+  return input.absorptions.filter((absorption) =>
+    givensLatest.some((given) =>
+      isReviewAbsorptionOnGiven({
+        absorption,
+        reviewer: given.slug,
+        given: given.pathGiven,
+      }),
+    ),
   );
 };

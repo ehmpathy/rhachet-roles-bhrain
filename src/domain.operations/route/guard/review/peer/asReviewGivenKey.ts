@@ -10,8 +10,8 @@ import { basename } from 'path';
  *        and an exhausted lane whose concerns were all conceded `better` holds the stone with
  *        no lever left (the defect this key cures).
  *
- * 🔴 the filename is already a full key within one route: it carries the stone, the round's
- *    iteration hash, the review ordinal, and the slug. so naught is lost when the directory
+ * 🔴 the filename is already a full key within one route: it carries the stone, the iteration,
+ *    the artifact hash, the review ordinal, and the slug. so naught is lost when the directory
  *    is dropped, and the directory is the one part that varies by reader.
  *
  * .note = it accepts both row forms. stance rows written before this key carry the absolute

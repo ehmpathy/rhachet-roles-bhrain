@@ -30,6 +30,8 @@ exports[`findsertReviewSelfGitignore.integration given: [case2] self-review file
 
 exports[`findsertReviewSelfGitignore.integration given: [case3] route is a file instead of directory when: [t0] findsert is called then: throws ENOTDIR error: error-enotdir-route 1`] = `"ENOTDIR: not a directory, mkdir '<route>/route-as-file/review/self'"`;
 
+exports[`findsertReviewSelfGitignore.integration given: [case4] invalid route path when: [t0] findsert is called with non-writable path then: throws permission error: error-eacces 1`] = `"EACCES: permission denied, mkdir '<path>'"`;
+
 exports[`findsertReviewSelfGitignore.integration given: [case5] .gitignore present with incorrect content when: [t0] findsert is called then: overwrites with correct content: result-overwrite 1`] = `
 {
   "action": "rewrote",

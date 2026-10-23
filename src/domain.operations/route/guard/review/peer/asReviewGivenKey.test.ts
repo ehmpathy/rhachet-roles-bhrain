@@ -31,7 +31,7 @@ const TEST_CASES = [
 ];
 
 describe('asReviewGivenKey', () => {
-  TEST_CASES.map((thisCase) =>
+  TEST_CASES.forEach((thisCase) =>
     test(thisCase.description, () => {
       expect(asReviewGivenKey(thisCase.given)).toEqual(thisCase.expect.output);
     }),

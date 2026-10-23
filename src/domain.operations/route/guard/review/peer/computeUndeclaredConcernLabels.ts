@@ -1,5 +1,5 @@
 import { asReviewConcernRefLabel } from './asReviewConcernRef';
-import { asReviewGivenKey } from './asReviewGivenKey';
+import { getAllConcernLabelsDeclaredOnGiven } from './getAllConcernLabelsDeclaredOnGiven';
 import type { ReviewAbsorption } from './getStoneReviewAbsorptions';
 
 /**
@@ -45,14 +45,11 @@ export const computeUndeclaredConcernLabels = (input: {
 
   // the labels a stance already covers, scoped to THIS given
   const labelsDeclared = new Set([
-    ...input.absorptions
-      .filter(
-        (one) =>
-          one.reviewer === input.slug &&
-          asReviewGivenKey({ path: one.given }) ===
-            asReviewGivenKey({ path: input.pathGiven }),
-      )
-      .map((one) => one.about),
+    ...getAllConcernLabelsDeclaredOnGiven({
+      absorptions: input.absorptions,
+      reviewer: input.slug,
+      given: input.pathGiven,
+    }),
     ...(input.also ?? []),
   ]);
 

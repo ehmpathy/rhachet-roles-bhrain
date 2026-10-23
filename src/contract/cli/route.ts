@@ -46,10 +46,7 @@ import { asConcedeSeverity } from '@src/domain.operations/route/guard/review/pee
 import { asJudgeResidualLines } from '@src/domain.operations/route/guard/review/peer/asJudgeResidualLines';
 import { computeResidualConcernCounts } from '@src/domain.operations/route/guard/review/peer/computeResidualConcernCounts';
 import { enumRouteGuardReviewPeerFiles } from '@src/domain.operations/route/guard/review/peer/enumRouteGuardReviewPeerFiles';
-import {
-  formatReviewBudgetTopupCommand,
-  ROUNDS_OFFERED_ON_TOPUP,
-} from '@src/domain.operations/route/guard/review/peer/formatReviewBudgetTopupCommand';
+import { asJudgeUrgentHaltLines } from '@src/domain.operations/route/guard/review/peer/asJudgeUrgentHaltLines';
 import { getAllNonOverruledReviewFiles } from '@src/domain.operations/route/guard/review/peer/getAllNonOverruledReviewFiles';
 import { getLatestReviewFilesPerSlug } from '@src/domain.operations/route/guard/review/peer/getLatestReviewFilesPerSlug';
 import { getStoneConcededBetterConcernCounts } from '@src/domain.operations/route/guard/review/peer/getStoneConcededBetterConcernCounts';
@@ -1637,44 +1634,15 @@ const judgeReviewed = async (input: {
       route: input.route,
       stone: stoneMatched.name,
     });
-    if (urgentSlugs.length > 0) {
-      // the ONE canonical top-up builder, at the shared round count — the judge and the concede
-      // ack once drifted (`--add 1` here, `2` there), so both read the same const now
-      // (r001.n3 / r004.n1 / r006.n2 / r009.n1)
-      // 🔴 one command PER urgent lane, each scoped with `--peer`. a bare `--add` lands on the
-      //    latest level alone, so where the urgent lane sits on a lower level the command this
-      //    halt handed over would extend the wrong reviewer and leave the stone held
-      const budgetCmds = urgentSlugs.map((slug) =>
-        formatReviewBudgetTopupCommand({
-          add: ROUNDS_OFFERED_ON_TOPUP,
-          peer: slug,
-          stone: stoneMatched.name,
-        }),
-      );
-      const passCmd = `rhx route.stone.set --stone ${stoneMatched.name} --as passed`;
-      // the halt prose is an ERROR surfaced before exit(2), so it goes to stderr — the verdict
-      // lines above stay on stdout, which the guard parses on a pass too
-      // (rule.forbid.stdout-on-exit-errors)
-      console.error('');
-      console.error(
-        `✋ halted, an urgent concession stands — ${urgentSlugs.join(', ')}`,
-      );
-      // 🔴 this clause matches WARN_TEXT_CONCESSION_URGENT's words exactly (r009 i012
-      //    nitpick.3) — every other concession surface renders that shared constant, and
-      //    a driver who meets this halt then route.drive's must read one fact once
-      console.error(
-        '   ├─ its harm ships if unfixed, so this stone earns more budget',
-      );
-      console.error('   ├─ please ask your human to');
-      budgetCmds.forEach((cmd, index) =>
-        console.error(
-          `   │  ${index === budgetCmds.length - 1 ? '└─' : '├─'} ${cmd}`,
-        ),
-      );
-      console.error('   │');
-      console.error('   └─ after the grant, address the concession, then run');
-      console.error(`      └─ ${passCmd}`);
-    }
+    // the halt prose is an ERROR surfaced before exit(2), so it goes to stderr — the verdict
+    // lines above stay on stdout, which the guard parses on a pass too
+    // (rule.forbid.stdout-on-exit-errors)
+    if (urgentSlugs.length > 0)
+      for (const line of asJudgeUrgentHaltLines({
+        slugs: urgentSlugs,
+        stone: stoneMatched.name,
+      }))
+        console.error(line);
     process.exit(2);
   }
 };

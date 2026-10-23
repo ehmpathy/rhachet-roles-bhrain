@@ -95,6 +95,8 @@ describe('keyrack.firewall-key-absent.acceptance', () => {
 
       then('CLAMP: the report names the command that sets the key', () => {
         const row = asOpenrouterRow({ stdout: result.stdout });
+        // the fix hint is rendered by rhachet's keyrack, which names `--vault <vault>` as of the
+        // rhachet 1.49.2 → 1.50.1 bump (package.json); the vault is a required choice to set a key
         expect(row.fix).toEqual(
           'rhx keyrack set --key OPENROUTER_API_KEY --env test --vault <vault>',
         );

@@ -23,7 +23,7 @@ const normalizeResult = (
  * | idempotent: third call | result-third-call | case1 |
  * | coexistence: with files | result-with-files-present | case2 |
  * | negative: ENOTDIR route | error-enotdir-route | case3 |
- * | negative: EACCES | asserted by class, not snapped | case4 |
+ * | negative: EACCES | error-eacces, path masked | case4 |
  * | overwrite: incorrect content | result-overwrite | case5 |
  * | negative: EISDIR | error-eisdir | case6 |
  * | negative: ENOTDIR review | error-enotdir-review | case7 |
@@ -133,11 +133,17 @@ describe('findsertReviewSelfGitignore.integration', () => {
   given('[case4] invalid route path', () => {
     when('[t0] findsert is called with non-writable path', () => {
       then('throws permission error', async () => {
-        await expect(
+        // the deepest dir mkdir is denied at varies by host (some hosts carry a
+        // `/nonexistent`), so the path is masked, then the error is snapped
+        const error = await getError(
           findsertReviewSelfGitignore({
             route: '/nonexistent/path/that/cannot/be/created',
           }),
-        ).rejects.toThrow(/^EACCES: permission denied, mkdir '\/nonexistent/);
+        );
+        expect(error.message).toMatch(/^EACCES: permission denied, mkdir '/);
+        expect(
+          error.message.replace(/mkdir '[^']*'/, "mkdir '<path>'"),
+        ).toMatchSnapshot('error-eacces');
       });
     });
   });

@@ -123,5 +123,11 @@ export const REASON_TEXT_CONCESSION_URGENT =
  * 🟡 the obligation to tell a human rides the two surfaces that ASK for it — the concede ack, at
  *    the moment of the grade, and the grant warrant, at the moment of the spend. a third ask on a
  *    halt that hands over no budget would dilute both.
+ *
+ * .note = composed of two exported clauses, so the judge's urgent halt (which names the lanes
+ *         between them) reads both from this one source
  */
-export const WARN_TEXT_CONCESSION_URGENT = `an urgent concession stands — its harm ships if unfixed, so this stone earns more budget`;
+export const WARN_TEXT_CONCESSION_URGENT_HEAD = 'an urgent concession stands';
+export const WARN_TEXT_CONCESSION_URGENT_HARM =
+  'its harm ships if unfixed, so this stone earns more budget';
+export const WARN_TEXT_CONCESSION_URGENT = `${WARN_TEXT_CONCESSION_URGENT_HEAD} — ${WARN_TEXT_CONCESSION_URGENT_HARM}`;
