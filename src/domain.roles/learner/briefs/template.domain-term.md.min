@@ -8,9 +8,9 @@ term=<boundary…>.<x>._.choice.reason.md     # REF — REQUIRED: etymology, dis
 term=<boundary…>.<x>._.choice.example=<abc>.md   # REF — optional, one per notable example
 ```
 
-`term=<x>._` is a **cluster root**, so later facets can sit beside `choice` (e.g. `._.usage.*`). the say/ref split keeps the always-booted footprint lean while the full record lives on demand.
-
 ## .the say file — data only, no prose about the forbid
+
+🟡 **the say file carries no `.forbid` prose.** `rule.forbid.domain-term-synonyms` governs the forbid once, for all terms; the file merely lists which words are forbidden.
 
 ```md
 # domain.term: stone
@@ -33,8 +33,6 @@ a single milestone on a route.
 - `term=route.stone._.choice.reason.md`
 - `term=route.stone._.choice.example=<abc>.md`
 ```
-
-🟡 **the say file carries no `.forbid` prose.** `rule.forbid.domain-term-synonyms` governs the forbid once, for all terms; the file merely lists which words are forbidden.
 
 ## .the reason file — required
 

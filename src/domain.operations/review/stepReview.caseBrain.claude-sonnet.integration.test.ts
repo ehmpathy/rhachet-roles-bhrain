@@ -20,11 +20,13 @@ const ASSETS_PROSE = path.join(
 );
 
 /**
- * .skip = anthropic api too pricey for ci
- * .note = to run it by hand, lift the `.skip` locally, then run this one file under a scope:
+ * .what = the review contract, exercised on one premium model
+ * .why = the cheap default brain covers the contract on every run; this suite proves a
+ *        premium model also returns a verdict the guard can read
+ * .note = to run it alone:
  *         rhx git.repo.test --what integration --scope 'path://stepReview.caseBrain.claude-sonnet' --mode apply
  */
-describe.skip('stepReview.caseBrain.claude-sonnet', () => {
+describe('stepReview.caseBrain.claude-sonnet', () => {
   // bound brain invocations at the shared real-brain test bound
   jest.setTimeout(BRAIN_CALL_TEST_TIMEOUT_MS);
 

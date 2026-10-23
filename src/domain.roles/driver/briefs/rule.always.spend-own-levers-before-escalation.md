@@ -96,7 +96,7 @@ rhx route.stone.set --stone <s> --as conceded --with <reviewer> --about <concern
 rhx route.guard.budget --for review --add N --peer <reviewer> --stone <s>
 ```
 
-⚠️ **grade by the harm test, never by what you want the meter to say.** `urgent` is the closed set
+🟡 **grade by the harm test, never by what you want the meter to say.** `urgent` is the closed set
 — security · safety · monetary · reputation · behavioral, with a harm you can name. every other
 concern is `better`, and `better` earns no round past the meter
 (`rule.always.concede-with-a-severity`).
@@ -140,7 +140,7 @@ it does not fold into `rule.always.converge-to-terminal`.
 - `rule.always.diagnose-reviewer-malfunctions` — the same sort-by-owner move, for a broken reviewer
 - `rule.always.drive-autonomously` — relay the route's gates; never invent your own
 
-## ⚠️ .the bar is not a human gate
+## 🟡 .the bar is not a human gate
 
 the refusal did not move the lever to the human. it put a **bar** in front of it, and the bar is a
 sentence the driver writes about its own work — a human may grant regardless.

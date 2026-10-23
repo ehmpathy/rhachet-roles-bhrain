@@ -4,15 +4,9 @@
 
 a **workaround** = any change to an input, a declaration, a config, or your own conduct that makes a failure go quiet while its cause stands. forbidden. a dream, a `.taken`, or a fulcrum that names one documents the defect and leaves it shipped.
 
-## .why
-
-- **it hides the report** — a failure is the one signal a design is wrong; a patch to the input silences it for the one party able to act
-- **it recurs** — the cause stands, so every next edit, driver, and repo trips it and pays the diagnosis the first one skipped
-- **it compounds** — each patch is locally sane; the cost shows only in sum, as hours
-
 ## 🔴 .the dogfooder
 
-when the failed tool is the one under construction, there is no "human error". **every friction the builder hits, the next human hits too — without the context to patch around it.**
+when the failed tool is the one under construction, there is no "human error".
 
 | the dogfooder thinks | what is true |
 |---|---|

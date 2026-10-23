@@ -69,11 +69,11 @@ rhx route.stone.set --stone 1.vision --as disputed --with experience-coverage --
      --why .fulcrums/inventory.of=fulcrums.case=F0NN-<slug>.md
 ```
 
-⚠️ **there is no ungraded concede.** `--severity` is a mandatory invariant, so a concede without
+🟡 **there is no ungraded concede.** `--severity` is a mandatory invariant, so a concede without
 it is refused at the boundary — the harm test is made on every concession
 (`rule.always.concede-with-a-severity`).
 
-⚠️ **the ordinal is scoped to ONE given.** a fresh round renumbers, exactly as a fresh given
+🟡 **the ordinal is scoped to ONE given.** a fresh round renumbers, exactly as a fresh given
 supersedes the prior one whole. never carry an ordinal across rounds.
 
 ## .what each absorption does to the arithmetic

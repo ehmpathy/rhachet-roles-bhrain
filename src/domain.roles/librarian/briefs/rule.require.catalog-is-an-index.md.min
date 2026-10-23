@@ -2,22 +2,7 @@
 
 **a catalog is an index. one row per member, and no narrative about any one of them.**
 
-its whole claim is that a reader walks the **set** at a glance. the moment a `###` section about one member lands in it, the index it advertises becomes a preamble to a logbook.
-
 it takes the itemization form — `catalog.of=$concept._.md` plus one `$dimension=$position.md` per member (`rule.forbid.itemization-without-coordinates`).
-
-## .why — a catalog does not rot by one bad edit; it rots by fifty good ones
-
-1. a review round finds an instance of an extant class
-2. the author amends **the row** — rightly, since a recurrence is a fact about the row
-3. **the row lives in the catalog**, so the occurrence record lands there too
-4. nobody sweeps it
-
-⇒ every author was right, and the artifact still became unusable.
-
-**the cost compounds because a catalog boots into every session.** each line of narrative is a permanent token charge on every reader, to carry a record at most one reader that day needs — and the table a reviewer actually walks ends up buried beneath it.
-
-> 🔴 **the artifact gets harder to use as it gets more complete.** that is the signature of the defect, and the opposite of what a catalog promises.
 
 ## .the three grains — the model every clustered artifact shares
 

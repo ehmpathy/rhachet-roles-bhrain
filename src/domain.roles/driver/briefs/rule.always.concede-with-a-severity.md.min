@@ -8,7 +8,7 @@
 rhx route.stone.set --stone <stone> --as conceded --with <reviewer> --about <concern> --severity better|urgent
 ```
 
-⚠️ a concede with NO `--severity` is refused. `better` is the common grade, but you name it
+🟡 a concede with NO `--severity` is refused. `better` is the common grade, but you name it
 explicitly, so the harm test is made on every concession.
 
 the call-site half of `philosophy.a-review-budget-balances-perfection-with-pragmatism` +

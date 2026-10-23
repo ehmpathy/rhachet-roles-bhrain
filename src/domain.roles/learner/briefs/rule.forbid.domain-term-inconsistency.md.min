@@ -4,12 +4,6 @@ no single concept may be named with more than one word across the codebase. wher
 
 ⇒ this is the **pre-canon twin** of `rule.forbid.domain-term-synonyms`. that rule forbids a drift away from a term already declared canonical; this one forbids the codebase from a disagreement with **itself**, before any canon exists.
 
-## .why
-
-- it is synonym sprawl caught in the wild: `spot` here, `location` there, `place` elsewhere — one concept, three words, no glossary entry to settle them
-- left unsettled, a reader cannot tell whether three words mean three concepts or one
-- 🔴 **the inconsistency is the SIGNAL that a term has earned its coinage** — the concept recurs often enough to deserve one canonical word
-
 test: **"is this concept named the same way everywhere it appears?"** one word → consistent · two or more → coin the canonical term, conform the rest.
 
 ## .how

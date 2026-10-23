@@ -2,8 +2,6 @@
 
 for EVERY `.given.by_peer` point you MUST author the paired `.taken.by_self` before you re-arrive. no exceptions, every round.
 
-the reviewer drops a point that carries a response and **re-raises one that does not** — so a code fix with no `.taken` reads to it as no fix at all.
-
 | shape | the claim | must carry |
 |---|---|---|
 | `[REPAIR]` | *"i fixed it"* | a quote of the **current** file |
@@ -16,27 +14,18 @@ whether you ever told the reviewer, before you diagnose one.
 
 ## the gate counts REVIEWERS. this rule counts POINTS
 
-the entrance gate refuses a round while a reviewer owes a `.taken`. it cannot check that the one
-file you wrote answered all six points behind that slug — one `.taken` discharges the slug
-regardless. the gate enforces the parent rule, never this one. a round that passes the door can
-still violate every line above, and the reviewer — which does count points — re-raises each one
-you skipped. the door is a floor; this rule is the work.
+the door is a floor; this rule is the work.
 
 ## on an APPROVED lane the floor is ZERO — the gate holds naught, and the tool says so
 
-the gate keys on a rejected lane's debt, so a lane that returned `0 blockers` with nitpicks has
-no gate at all. the reviewer still weighs points, and re-raises every nitpick that carries no
-response. `approved` grades the lane, never the points.
+the reviewer still weighs points, and re-raises every nitpick that carries no response.
+`approved` grades the lane, never the points.
 
 `--as absorbed --that <slug>` there, with no `.taken`, absorbs and warns *"its nitpicks carry no
 .taken"*, with the path the answer belongs at. it warns; it does not refuse.
 
 only a `.taken` discharges a point. on an approved lane you are the sole enforcement, so the
 rule binds hardest exactly where the engine binds least.
-
-measured 2026-09-21 (`rhachet-roles-bhrain` @ `beav/feat-review-cost-meter`, stone `1.vision`):
-approved at i001 and i002, five re-raises, zero takens — every report read "no repair present."
-one round with takens: 0 blockers, 0 nitpicks, both lanes.
 
 blocker: an open point with no `.taken` · a `[REPAIR]` with no current-file quote · a `[REFUTE]`
 with no evidence · a malfunction graded for a re-raise you never answered · a re-arrival with an

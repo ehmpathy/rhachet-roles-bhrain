@@ -8,7 +8,7 @@ export const ROLE_LIBRARIAN: Role = Role.build({
   slug: 'librarian',
   name: 'Librarian',
   purpose: 'curate knowledge into structured briefs',
-  readme: { uri: __dirname + '/.readme.[seed].md' },
+  readme: { uri: __dirname + '/readme.md' },
   boot: { uri: __dirname + '/boot.yml' },
   traits: [],
   skills: {

@@ -40,7 +40,7 @@ each concern's disposition carries its own argument:
 | `conceded` — the default | fix it, run again | an optional `--why`, or the fix itself |
 | `disputed` — the escalation | shed it from the tally; the council rules | the fulcrum the `--why` path names — **required** |
 
-⚠️ **concede-and-fix is the default; a dispute is an escalation** (`rule.always.concede-with-a-severity`,
+🟡 **concede-and-fix is the default; a dispute is an escalation** (`rule.always.concede-with-a-severity`,
 `S11`). reach for a dispute only where the concern is severe or recurs — never to skip the fix.
 
 ## .the moves

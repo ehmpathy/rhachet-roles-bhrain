@@ -2,12 +2,6 @@
 
 a **dispute** is how you challenge a term choice — a synonym you believe is right, or a word you believe names a genuinely **distinct** concept. rather than silently drift a contract to your preferred word, you open a dated, resolvable entry in the term's `choice.reason.md`.
 
-⇒ *"adhere or dispute"* — the escape valve is **first-class**, which is what keeps the forbid a guide rather than a scold.
-
-## .why
-
-a synonym is not always wrong — sometimes it names a **distinct concept** the glossary has not yet split out. a dispute turns a private disagreement into a durable, auditable record, so the next traveler sees the argument was had and settled, and does not re-litigate it.
-
 ## .when to open one
 
 you find, or are tempted toward, a synonym in a **contract**, AND you believe:
@@ -34,8 +28,6 @@ you find, or are tempted toward, a synonym in a **contract**, AND you believe:
 > claim: *"foamie"* is what surfers actually say — friendlier than the stiff *"foamboard"*
 > counter: the board-type set is `longboard`, `shortboard`, `foamboard` — **one shape, read at a glance**. *"foamie"* is informal slang that breaks that symmetry and blurs the board with a nickname
 > resolution: keep `foamboard`; record `foamie` as a forbidden synonym
-
-⇒ the outcome lands in `term=foamboard._.choice._.md` under `term.synonyms.forbidden`, and **this entry preserves why**.
 
 ## .the two outcomes
 

@@ -1,0 +1,8 @@
+{
+  "name": "roles-boot-consumer-fixture",
+  "private": true,
+  "description": "fixture for the consumer-seat role boot acceptance test",
+  "dependencies": {
+    "rhachet-roles-bhrain": "link:."
+  }
+}

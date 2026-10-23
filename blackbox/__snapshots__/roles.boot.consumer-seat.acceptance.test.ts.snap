@@ -1,0 +1,108 @@
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
+
+exports[`roles.boot.consumer-seat.acceptance given: [case:driver] a consumer repo that links the driver role when: [t0] the consumer boots the linked role then: its booted say paths and its budget stats match the snapshot 1`] = `
+{
+  "says": [
+    ".agent/repo=bhrain/role=driver/briefs/define.routes-are-gardened.[philosophy].md",
+    ".agent/repo=bhrain/role=driver/briefs/howdoes.the-review-gates-you-drive-within.md.min",
+    ".agent/repo=bhrain/role=driver/briefs/howto.drive-routes.[guide].md.min",
+    ".agent/repo=bhrain/role=driver/briefs/howto.navigate-fulcrum-choices.[guide].md.min",
+    ".agent/repo=bhrain/role=driver/briefs/research.importance-of-focus.[philosophy].md.min",
+    ".agent/repo=bhrain/role=driver/briefs/rule.always.absorb-every-concern.md.min",
+    ".agent/repo=bhrain/role=driver/briefs/rule.always.archive-the-wishers-words-verbatim.md.min",
+    ".agent/repo=bhrain/role=driver/briefs/rule.always.bear-every-self-review.md.min",
+    ".agent/repo=bhrain/role=driver/briefs/rule.always.catch-dreams-for-followups.md.min",
+    ".agent/repo=bhrain/role=driver/briefs/rule.always.concede-with-a-severity.md.min",
+    ".agent/repo=bhrain/role=driver/briefs/rule.always.converge-to-terminal.md.min",
+    ".agent/repo=bhrain/role=driver/briefs/rule.always.converge-with-reviewers._.md.min",
+    ".agent/repo=bhrain/role=driver/briefs/rule.always.converge-with-reviewers.via-a-taken-per-point.md.min",
+    ".agent/repo=bhrain/role=driver/briefs/rule.always.defer-fulcrums-to-last.md.min",
+    ".agent/repo=bhrain/role=driver/briefs/rule.always.diagnose-reviewer-malfunctions.md.min",
+    ".agent/repo=bhrain/role=driver/briefs/rule.always.drive-autonomously.md.min",
+    ".agent/repo=bhrain/role=driver/briefs/rule.always.fix-forward-under-scouts-honor.md.min",
+    ".agent/repo=bhrain/role=driver/briefs/rule.always.get-a-second-opinion-before-foreman.md.min",
+    ".agent/repo=bhrain/role=driver/briefs/rule.always.itemize-the-fulcrums-you-best-guess.md.min",
+    ".agent/repo=bhrain/role=driver/briefs/rule.always.raise-a-blocker-a-taken-cannot-close.md.min",
+    ".agent/repo=bhrain/role=driver/briefs/rule.always.spend-own-levers-before-escalation.md.min",
+    ".agent/repo=bhrain/role=driver/briefs/rule.always.yield-the-output-not-the-archaeology.md.min",
+    ".agent/repo=bhrain/role=driver/briefs/rule.forbid.commits-the-route-did-not-ask-for.md.min",
+    ".agent/repo=bhrain/role=driver/briefs/rule.forbid.hand-run-reviews.md.min",
+    ".agent/repo=bhrain/role=driver/briefs/rule.forbid.unanswered-exits-from-a-blocker.md.min",
+    ".agent/repo=bhrain/role=driver/briefs/rule.forbid.verbatim-quotes-outside-seeds.md.min",
+    ".agent/repo=bhrain/role=driver/briefs/rule.forbid.workarounds.md.min",
+  ],
+  "stats": {
+    "budget": 20250,
+    "payload": 19956,
+  },
+}
+`;
+
+exports[`roles.boot.consumer-seat.acceptance given: [case:learner] a consumer repo that links the learner role when: [t0] the consumer boots the linked role then: its booted say paths and its budget stats match the snapshot 1`] = `
+{
+  "says": [
+    ".agent/repo=bhrain/role=learner/briefs/howto.domain-term-disputes.[guide].md.min",
+    ".agent/repo=bhrain/role=learner/briefs/im_an.obsessive_learner.for.domain.glyphs.md.min",
+    ".agent/repo=bhrain/role=learner/briefs/im_an.obsessive_learner.for.domain.invariants.md.min",
+    ".agent/repo=bhrain/role=learner/briefs/im_an.obsessive_learner.for.domain.terms.md.min",
+    ".agent/repo=bhrain/role=learner/briefs/im_an.obsessive_learner.md.min",
+    ".agent/repo=bhrain/role=learner/briefs/philosophy.entoolment-is-the-pinnacle._.md.min",
+    ".agent/repo=bhrain/role=learner/briefs/philosophy.entoolment-is-the-pinnacle.concepts-vs-capacity.md.min",
+    ".agent/repo=bhrain/role=learner/briefs/philosophy.entoolment-is-the-pinnacle.via-routes.md.min",
+    ".agent/repo=bhrain/role=learner/briefs/philosophy.pavement-saves-nature.md.min",
+    ".agent/repo=bhrain/role=learner/briefs/rule.always.archive-the-wishers-words-verbatim.md.min",
+    ".agent/repo=bhrain/role=learner/briefs/rule.always.catch-dreams-for-followups.md.min",
+    ".agent/repo=bhrain/role=learner/briefs/rule.always.enskill-the-tactics-you-discover.md.min",
+    ".agent/repo=bhrain/role=learner/briefs/rule.always.entool-the-skills-you-touch.md.min",
+    ".agent/repo=bhrain/role=learner/briefs/rule.always.externalize.lessons.into_briefs.md.min",
+    ".agent/repo=bhrain/role=learner/briefs/rule.always.externalize.tactics.into_skills.md.min",
+    ".agent/repo=bhrain/role=learner/briefs/rule.always.reuse-pavement-before-improvise.md.min",
+    ".agent/repo=bhrain/role=learner/briefs/rule.always.scope-onetime-lessons-to-the-behavior.md.min",
+    ".agent/repo=bhrain/role=learner/briefs/rule.forbid.domain-term-ambiguity.md.min",
+    ".agent/repo=bhrain/role=learner/briefs/rule.forbid.domain-term-inconsistency.md.min",
+    ".agent/repo=bhrain/role=learner/briefs/rule.forbid.domain-term-synonyms.md.min",
+    ".agent/repo=bhrain/role=learner/briefs/rule.forbid.verbatim-quotes-outside-seeds.md.min",
+    ".agent/repo=bhrain/role=learner/briefs/rule.require.a-cue-is-not-a-claim.md.min",
+    ".agent/repo=bhrain/role=learner/briefs/rule.require.boundary-qualified-terms.md.min",
+    ".agent/repo=bhrain/role=learner/briefs/rule.require.domain-term-itemization.md.min",
+    ".agent/repo=bhrain/role=learner/briefs/rule.require.enumerate-before-you-name.md.min",
+    ".agent/repo=bhrain/role=learner/briefs/rule.require.specialize-a-rule-its-readers-look-past._.md.min",
+    ".agent/repo=bhrain/role=learner/briefs/rule.require.timeless-lessons.md.min",
+    ".agent/repo=bhrain/role=learner/briefs/template.domain-term.md.min",
+  ],
+  "stats": {
+    "budget": 20750,
+    "payload": 20691,
+  },
+}
+`;
+
+exports[`roles.boot.consumer-seat.acceptance given: [case:librarian] a consumer repo that links the librarian role when: [t0] the consumer boots the linked role then: its booted say paths and its budget stats match the snapshot 1`] = `
+{
+  "says": [
+    ".agent/repo=bhrain/role=librarian/briefs/knowledge/kno101.primitives.1.ontology.[article].frame.docs_as_materializations.md",
+    ".agent/repo=bhrain/role=librarian/briefs/knowledge/kno101.primitives.2.rel.many_to_many.[article].md",
+    ".agent/repo=bhrain/role=librarian/briefs/knowledge/kno101.primitives.3.instances.[article].md",
+    ".agent/repo=bhrain/role=librarian/briefs/knowledge/kno101.primitives.4.documents.[article].md",
+    ".agent/repo=bhrain/role=librarian/briefs/knowledge/kno101.primitives.5.concepts.[article].md",
+    ".agent/repo=bhrain/role=librarian/briefs/knowledge/kno201.documents._.[catalog].md",
+    ".agent/repo=bhrain/role=librarian/briefs/knowledge/kno301.doc.enbrief.2.articulate.[article].md",
+    ".agent/repo=bhrain/role=librarian/briefs/knowledge/kno301.doc.enbrief.2.catalogize.[article].md",
+    ".agent/repo=bhrain/role=librarian/briefs/knowledge/kno301.doc.enbrief.2.demonstrate.[article].md",
+    ".agent/repo=bhrain/role=librarian/briefs/knowledge/kno401.actors.1.role.librarian.[article].md",
+    ".agent/repo=bhrain/role=librarian/briefs/rule.always.boot-an-oversized-subdomain-as-its-catalog.md.min",
+    ".agent/repo=bhrain/role=librarian/briefs/rule.forbid.brackets-in-filenames.md.min",
+    ".agent/repo=bhrain/role=librarian/briefs/rule.forbid.itemization-without-coordinates.md.min",
+    ".agent/repo=bhrain/role=librarian/briefs/rule.prefer.decompose-a-subject-via-suffixes.md.min",
+    ".agent/repo=bhrain/role=librarian/briefs/rule.prefer.rules-that-refout.md.min",
+    ".agent/repo=bhrain/role=librarian/briefs/rule.require.catalog-is-an-index.md.min",
+    ".agent/repo=bhrain/role=librarian/briefs/rule.require.inventory-for-enumerable-concepts.md.min",
+    ".agent/repo=bhrain/role=librarian/briefs/rule.require.rules-are-clusters.md.min",
+    ".agent/repo=bhrain/role=librarian/briefs/rule.require.summary-at-the-cluster-root.md.min",
+  ],
+  "stats": {
+    "budget": 12250,
+    "payload": 12017,
+  },
+}
+`;

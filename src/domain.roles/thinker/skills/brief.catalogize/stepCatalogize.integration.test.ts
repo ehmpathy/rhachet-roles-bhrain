@@ -70,8 +70,7 @@ const enthread = () =>
     }),
   }));
 
-// .note = skipped due to OpenAI quota issues in CI; re-enable when quota restored
-describe.skip('stepCatalogize', () => {
+describe('stepCatalogize', () => {
   const context = {
     ...genContextLogTrail(),
     ...genContextStitchTrail(),

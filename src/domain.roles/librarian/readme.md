@@ -11,11 +11,17 @@ curator of knowledge into structured briefs
 
 ### the seam with the researcher
 
-📚 and 🔭 split on one question, and that seam is declared in
-`src/domain.roles/researcher/readme.md` under `.the seam with the librarian`.
+📚 and 🔭 split on one question, and that seam is declared in the researcher role's own readme,
+under `.the seam with the librarian`.
 
 ⇒ from this side: a librarian **curates** what the repo already holds. the handoff is the research
 route's last phase, `briefs.curate`, where a discovery becomes a brief and these rules take over.
 
-🟡 `init.research` used to live here. it moved to the researcher when that role was declared,
-2026-08-30.
+### the min convention
+
+each `X.md.min` here condenses the `X.md` beside it. read the `.md` for the argument.
+
+### the knowledge shelf, unbooted
+
+the boot reads part of `briefs/knowledge/`; the rest is listed under `not` in `boot.yml`, one
+Read away at `briefs/knowledge/kno$level.$topic…md`.

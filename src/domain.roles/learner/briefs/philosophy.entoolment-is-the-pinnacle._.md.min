@@ -16,8 +16,6 @@
 | 3 | 💪🔩 a **rigid skill** — some branches crystallized, some probabilistic | the probabilistic branches only |
 | 4 | 💪🪨 a **solid skill** — one call, one contract | **none** |
 
-**a brief removes the re-thought. a skill removes the thought.** a brief pays its derivation once and its **application forever**; a skill pays both once.
-
 **rung 1 holds knowledge, not a procedure in prose** — a lesson, a rule, a catalog, a philosophy, a define. the ladder ranks **brain cost per reuse**, never how close an artifact sits to a procedure.
 
 rungs 2–4 are **rhachet's determinism spectrum**, adopted rather than coined: 🪨 solid = deterministic throughout · 🔩 rigid = deterministic entrypoint, mixed operations + orchestration · 💧 fluid = probabilistic throughout. the glyphs are rhachet's and they compose: 💪🔩 = *a skill, and here is how deterministic it is*.
@@ -33,23 +31,17 @@ rungs 2–4 are **rhachet's determinism spectrum**, adopted rather than coined: 
 | **verifiable** | correctness is a property of the code — checked once, true thereafter |
 | **free** | no tokens, no latency, no variance |
 
-a 💧 fluid skill can be *good*. only a 🪨 solid one can be *guaranteed*.
-
 ## .the three costs a brain pays
 
 - **tokens → money → resources → nature.** every token is power drawn, hardware amortized, heat rejected. a deterministic operation does not cost less — it costs **none**
 - **time → latency → people wait.** a brain deliberates in seconds; a solid call returns in milliseconds. the person on the other end is helped **sooner**
 - 🔴 **probability → risk → the answer can be WRONG.** the cost money and time do not carry, and often the largest. a probabilistic step **varies**, so its output must be checked, and a skipped check is a defect that ships
 
-⇒ all three are `philosophy.pavement-saves-nature`'s asymmetry at its most extreme: **paid once, saved without bound.**
-
 🔴 **a count of "brain-turns" was tried as a unit and is forbidden** — turns vary by orders of magnitude, so a count tells you neither the time nor the tokens, which are the two quantities you must know to shorten a call. name the root cost directly.
 
 ## .a brief often UNLOCKS a skill rather than stands in for one
 
 the brief carries **that the skill exists and when to reach for it**, the judgment the skill cannot make, and why the paved path is right. the skill carries the execution.
-
-⇒ **a skill nobody knows to reach for is unreachable pavement.**
 
 ## 🟡 .a higher rung does not retire the rungs below it
 
@@ -69,15 +61,7 @@ the brief carries **that the skill exists and when to reach for it**, the judgme
 
 rung 3 holds many shapes, and **a route is the general form; the others are its specializations.** a route is an ordered set of stones with guards, so a one-stone route is the compute-then-ask skill, and an all-deterministic route is the wrapper that batches. any rung-3 shape can be expressed as a route; the reverse does not hold.
 
-## .why it is hard, and why that is the point
-
-to remove a brain you must see the whole system, find the invariant that holds across every case, and decide what the tool **refuses** to handle and fail loud there.
-
-⇒ **if you cannot entool it, you do not understand it.** a fluid skill is often an honest admission of that, and the right artifact until the comprehension arrives.
-
 ## 🟡 .the limit
-
-**this is not a claim that thought is waste.** judgment and novel synthesis are brain work by nature. the claim is narrower: **thought already done once should not be paid for again.** entoolment retires the *repeat*, never the *first*.
 
 the failure mode: **a tool that pretends determinism over a genuinely fluid process.** it will be confidently wrong, silently, at scale — worse than the brain it replaced, because a brain hesitates and a bad tool does not.
 

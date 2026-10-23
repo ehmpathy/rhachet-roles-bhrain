@@ -1,3 +1,4 @@
+import { MalfunctionError } from 'helpful-errors';
 import { genTempDir, given, then, useThen, when } from 'test-fns';
 
 import { asReviewWatermarkKey } from '@src/domain.operations/review/watermark/asReviewWatermarkKey';
@@ -5,6 +6,7 @@ import { getOneReviewWatermarkRaw } from '@src/domain.operations/review/watermar
 import { setOneReviewWatermarkRaw } from '@src/domain.operations/review/watermark/setOneReviewWatermarkRaw';
 
 import { genReviewPrefixPrime } from './genReviewPrefixPrime';
+import { getOnePrimeWatermark } from './meet/getOnePrimeWatermark';
 
 /**
  * .what = short windows, so a meet settles in milliseconds under test
@@ -201,18 +203,35 @@ describe('genReviewPrefixPrime', () => {
           runOneLane({ meet, name: 'a' }, { prime: fake.prime, log }),
           runOneLane({ meet, name: 'b' }, { prime: fake.prime, log }),
         ]);
-        const before = Date.now();
+        // .why = "no gather" is read off the watermark, never the wall clock. a gather writes
+        //        a fresh claim under the late lane's own nonce; a warm read writes naught. a
+        //        wall-clock bound flakes whenever a loaded host slows the hold itself
+        const watermarkKey = {
+          cwd: meet.cwd,
+          key: asReviewWatermarkKey({ kind: 'prime', of: [meet.key] }),
+        };
+        const watermarkBefore = await getOnePrimeWatermark({
+          meet: watermarkKey,
+        });
         const lane = await runOneLane(
           { meet, name: 'c' },
           { prime: fake.prime, log },
         );
-        return { lane, calls: fake.calls, waited: Date.now() - before };
+        const watermarkAfter = await getOnePrimeWatermark({
+          meet: watermarkKey,
+        });
+        return { lane, calls: fake.calls, watermarkBefore, watermarkAfter };
       });
 
       then('it pours at once, with no second poke and no gather', () => {
         expect(scene.calls).toHaveLength(1);
         expect(scene.lane.outcome).toEqual('awaited');
-        expect(scene.waited).toBeLessThan(OPTIONS.msOfGather);
+
+        // the release it found was warm, so its part is `warm` — it pours at once
+        expect(scene.watermarkBefore?.warm).toEqual(true);
+
+        // no claim was taken: the watermark the late lane found is the one it left
+        expect(scene.watermarkAfter).toEqual(scene.watermarkBefore);
       });
     });
   });
@@ -227,12 +246,29 @@ describe('genReviewPrefixPrime', () => {
           { meet, name: 'a' },
           { prime: fake.prime, log },
         );
-        const before = Date.now();
         const lane = await runOneLane(
           { meet, name: 'b' },
           { prime: fake.prime, log },
         );
-        return { first, lane, waited: Date.now() - before, calls: fake.calls };
+
+        // .why = the reach counts from the solo lane's release stamp. a clock read taken after
+        //        the first lane returns trails that stamp by however long the event loop lags,
+        //        so it would understate the wait under load
+        const watermark = await getOnePrimeWatermark({
+          meet: {
+            cwd: meet.cwd,
+            key: asReviewWatermarkKey({ kind: 'prime', of: [meet.key] }),
+          },
+        });
+        const reviewOfLate = log.find(
+          (row) => row.name === 'b' && row.event === 'review',
+        )!.at;
+        return {
+          first,
+          lane,
+          waited: reviewOfLate - watermark!.primedAt!,
+          calls: fake.calls,
+        };
       });
 
       then('the first lane went solo', () => {
@@ -268,16 +304,38 @@ describe('genReviewPrefixPrime', () => {
             { prime: fake.prime, log },
           );
 
-          // the second lane finishes its own compile seconds later — past the first's gather
-          await new Promise((done) => setTimeout(done, OPTIONS.msOfGather * 2));
+          // the second lane finishes its own compile later — past the first's gather
+          // .why = await the first lane's release itself, never a fixed delay. a loaded host
+          //        can hold the first lane's claim back past any delay, which lands the second
+          //        lane inside the gather, so the first primes rather than goes solo
+          const watermarkKey = {
+            cwd: meet.cwd,
+            key: asReviewWatermarkKey({ kind: 'prime', of: [meet.key] }),
+          };
+          // .note = the release stamp is captured HERE, the instant the first lane's review
+          //         departs. a solo close releases once, in its gather hold; the read after both
+          //         lanes return must find this same stamp, or a second release moved the anchor
+          //         a late lane may already have read
+          const msOfGiveUp = Date.now() + 10_000;
+          const releaseOfFirst = await (async () => {
+            while (Date.now() <= msOfGiveUp) {
+              const found = await getOnePrimeWatermark({ meet: watermarkKey });
+              if (found?.primedAt) return found.primedAt;
+              await new Promise((done) => setTimeout(done, OPTIONS.msOfPoll));
+            }
+            throw new MalfunctionError('the first lane never released', {
+              waited: '10s',
+              meet: watermarkKey,
+            });
+          })();
           const second = await runOneLane(
             { meet, name: 'b' },
             { prime: fake.prime, log },
           );
           const first = await firstAwaited;
-          const reviewOfFirst = log.find(
-            (row) => row.name === 'a' && row.event === 'review',
-          )!.at;
+          const releaseAfterBoth = await getOnePrimeWatermark({
+            meet: watermarkKey,
+          });
           const reviewOfSecond = log.find(
             (row) => row.name === 'b' && row.event === 'review',
           )!.at;
@@ -285,9 +343,20 @@ describe('genReviewPrefixPrime', () => {
             first,
             second,
             calls: fake.calls,
-            gap: reviewOfSecond - reviewOfFirst,
+            releaseOfFirst,
+            releaseAfterBoth,
+            gap: reviewOfSecond - releaseOfFirst,
           };
         });
+
+        then(
+          '🔴 the solo lane releases once — its stamp never moves after a late lane can read it',
+          () => {
+            expect(scene.releaseAfterBoth?.primedAt).toEqual(
+              scene.releaseOfFirst,
+            );
+          },
+        );
 
         then('the first lane went solo', () => {
           expect(scene.first.outcome).toEqual('solo');
@@ -307,7 +376,8 @@ describe('genReviewPrefixPrime', () => {
         then(
           'the second review departs no sooner than the reach after the first',
           () => {
-            // the first lane logs its review a few ms after its release stamp, so allow slack
+            // measured from the solo release, the instant the first review departs; the slack
+            // covers the clock read between the stamp and the second lane's read of it
             expect(scene.gap).toBeGreaterThanOrEqual(OPTIONS.msOfReach - 50);
           },
         );
@@ -634,14 +704,17 @@ describe('genReviewPrefixPrime', () => {
           try {
             // lane a arrives first, so it leads; lane b's own deadline sits past a's, so the
             // case reads a's release rather than b's own give-up
+            // .note = a's deadline leaves ~1.2s past the 300ms gather, so the watermark holds
+            //         of a loaded box cannot spend it before the poke is sent (seen at 800ms:
+            //         the leader lapsed in its gather and never poked)
             const before = Date.now();
             const leaderAwaited = runOneLane(
-              { meet, name: 'a', msOfStop: before + 800 },
+              { meet, name: 'a', msOfStop: before + 1_500 },
               { prime: primeWedged, log },
             );
             await new Promise((done) => setTimeout(done, 50));
             const peer = await runOneLane(
-              { meet, name: 'b', msOfStop: before + 2_500 },
+              { meet, name: 'b', msOfStop: before + 4_500 },
               { prime: primeWedged, log },
             );
             const leader = await leaderAwaited;
@@ -673,7 +746,8 @@ describe('genReviewPrefixPrime', () => {
         then(
           '🔴 both lanes pour once the leader deadline passes, never a hang',
           () => {
-            expect(scene.waited).toBeLessThan(2_000);
+            // past a's deadline (1.5s), well short of b's own (4.5s)
+            expect(scene.waited).toBeLessThan(3_000);
           },
         );
 

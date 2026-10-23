@@ -9,12 +9,6 @@ reviewer is right — commit to fix). absorb the feedback = absorb every concern
 
 ⇒ the law: `define.invariant.review.peer.absorb` — `feedbackAbsorbed(given) ⟺ ∀ concern : absorbed(concern)`.
 
-## .why — a per-reviewer acknowledgement hides an un-absorbed concern
-
-engage the lane, argue three concerns, never touch the fourth, and a *"did you respond?"* gate passes
-you — the response exists, the fourth concern was ignored under cover of it. **the feedback IS its
-concerns**; the atom of the answer is the concern, never the reviewer.
-
 ## 🔴 .two grains, one verb — the coarse gated on the fine
 
 | act | grain | what it is |
@@ -30,15 +24,14 @@ is COMPOSED of absorb-each-concern — the `.taken` is not retired, it gains a p
 | `conceded` — the default | fix it, run again | an optional `--why`, or the fix |
 | `disputed` — the escalation | shed from the tally; council rules | the fulcrum `--why` names — **required** |
 
-⚠️ concede-and-fix is the default; dispute is an escalation (severe or recurs) — never to skip the fix.
+🟡 concede-and-fix is the default; dispute is an escalation (severe or recurs) — never to skip the fix.
 
 ```
 rhx route.stone.set --stone <s> --as conceded --with <reviewer> --about <concern> --severity better|urgent
 rhx route.stone.set --stone <s> --as disputed  --with <reviewer> --about <concern> --why <fulcrum-path>
 ```
 
-`--about` names ONE concern by ordinal (`blocker.3`); no `--about all` — *a driver who types all has
-not read all* (`S08`). ordinals renumber each generation; re-absorb what the given now says.
+`--about` names ONE concern by ordinal (`blocker.3`); no `--about all`. ordinals renumber each generation; re-absorb what the given now says.
 
 | when… | then… |
 |---|---|

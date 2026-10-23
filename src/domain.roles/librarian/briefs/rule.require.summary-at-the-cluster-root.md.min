@@ -6,19 +6,13 @@
 
 ## .why — the root must sort first, and it must be addressable
 
-it answers *"what is this, and what are its pieces?"* — and that file has a hard requirement most names cannot meet: **it must be findable without a read of every peer.**
-
 | property | how `._.` gives it |
 |---|---|
 | **it sorts first** | `_` precedes every letter, so the root heads its cluster in any directory read |
 | **it is computable** | know the subject, know the path — `$subject._.md`, no search |
 | **it is globbable** | `*._.md` returns every cluster root; `$subject.*` returns the whole cluster |
 
-⇒ the alternatives each fail one. `$subject.readme.md` and `$subject.overview.md` sort into the middle of their own parts and read as one more part. a `.readme.md` in a directory works only when the cluster **has** a directory — most do not.
-
 ## 🟡 .the summary is a PEER of its parts, never a parent
-
-this is what makes it work in a **flat** tree, and the property most often lost:
 
 ```
 👍  term=route.stone._.choice._.md          # the root, a peer
@@ -28,11 +22,7 @@ this is what makes it work in a **flat** tree, and the property most often lost:
 👎  term=stone/_.md                         # a directory, when none was needed
 ```
 
-a directory is a real cost: it hides the cluster from a flat glob of its neighbors, and forces a `mkdir` before the second file can exist. **reach for one only when the cluster's parts crowd their neighbors out of a directory read.**
-
 ## .where it is already the convention
-
-`term=route.stone._.choice._.md` · `kno601.inventories._.kind=article.md` · `inventory.of=fulcrums._.md` · `review/self/for.1.vision._.$slug.md` — and the guard computes that last path exactly.
 
 | when… | then… |
 |---|---|
@@ -54,8 +44,6 @@ the **whole**, plus an index of the parts. it does **not** narrate any one of th
 - the axes along which it splits, when it splits along axes
 - one line per part, with the fact that sets that part apart
 - **the gaps** — the parts that are owed and absent
-
-⇒ that last line is why a summary earns its own file. **a set of parts cannot report its own absences.** only a root that declares the axes can say which cells are empty.
 
 blocker: a subject split into parts with no `._.md` root (the whole has no address) · a root named `$subject.readme.md`, `.overview.md`, or bare `$subject.md` beside its own parts · a `._.md` root that narrates one part (eject it).
 nitpick: a directory created for a cluster of two or three files.

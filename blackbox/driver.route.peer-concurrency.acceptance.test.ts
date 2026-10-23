@@ -826,6 +826,8 @@ describe('driver.route.peer-concurrency.acceptance', () => {
           // 🔴 THE author mistake: a level-3 reviewer with NO `group:` key, beside
           //    three that declare `group: serial`. it is appended at the END, so
           //    every extant index holds (the `[t4]` argument, unchanged)
+          // .note = a 2.5s hold, so `l3-x` overlaps a lane of the serial chain
+          //         even where a loaded host staggers its node startup late
           const guardPath = path.join(scene.tempDir, '1.vision.guard');
           const guard = await fs.readFile(guardPath, 'utf-8');
           await fs.writeFile(
@@ -833,7 +835,7 @@ describe('driver.route.peer-concurrency.acceptance', () => {
             guard.replace(
               '  groups:',
               `    - slug: l3-x
-      run: bash $route/.test/mock-window.sh l3-x
+      run: bash $route/.test/mock-window.sh l3-x 2.5
       budget: 5
       level: 3
 
