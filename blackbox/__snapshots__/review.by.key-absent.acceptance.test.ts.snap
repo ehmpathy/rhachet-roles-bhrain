@@ -9,14 +9,14 @@ exports[`review.by.key-absent.acceptance given: [case1] OPENROUTER_API_KEY is ab
 
 ✋ ConstraintError: 
 
-attempts: [{"key":"OPENROUTER_API_KEY","status":"absent","fix":"rhx keyrack set --owner ehmpath --key OPENROUTER_API_KEY --env prep"}]
+attempts: [{"key":"OPENROUTER_API_KEY","status":"absent","fix":"rhx keyrack set --owner ehmpath --key OPENROUTER_API_KEY --env prep --vault <vault>"}]
 env: prep
 owner: ehmpath
 
 🔐 keyrack
    └─ ehmpath.prep.OPENROUTER_API_KEY
       ├─ status: absent 🫧
-      └─ tip: rhx keyrack set --owner ehmpath --key OPENROUTER_API_KEY --env prep
+      └─ tip: rhx keyrack set --owner ehmpath --key OPENROUTER_API_KEY --env prep --vault <vault>
 "
 `;
 
@@ -35,13 +35,13 @@ exports[`review.by.key-absent.acceptance given: [case1] OPENROUTER_API_KEY is ab
 
 ✋ ConstraintError: 
 
-attempts: [{"key":"OPENROUTER_API_KEY","status":"absent","fix":"rhx keyrack set --owner ehmpath --key OPENROUTER_API_KEY --env prep"}]
+attempts: [{"key":"OPENROUTER_API_KEY","status":"absent","fix":"rhx keyrack set --owner ehmpath --key OPENROUTER_API_KEY --env prep --vault <vault>"}]
 env: prep
 owner: ehmpath
 
 🔐 keyrack
    └─ ehmpath.prep.OPENROUTER_API_KEY
       ├─ status: absent 🫧
-      └─ tip: rhx keyrack set --owner ehmpath --key OPENROUTER_API_KEY --env prep
+      └─ tip: rhx keyrack set --owner ehmpath --key OPENROUTER_API_KEY --env prep --vault <vault>
 "
 `;
