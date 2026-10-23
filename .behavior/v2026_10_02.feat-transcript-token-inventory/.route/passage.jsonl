@@ -405,3 +405,5 @@
 {"stone":"5.3.verification","status":"absorbed","reason":"absorbed review.peer: enroll-verif-snapshot-coverage"}
 {"stone":"5.3.verification","status":"absorbed","reason":"absorbed review.peer: enroll-verif-snapshot-blemishes"}
 {"stone":"5.3.verification","status":"absorbed","reason":"absorbed review.peer: enroll-verif-test-intent"}
+{"stone":"5.3.verification","status":"arrived","reason":"entered guard reviews"}
+{"stone":"5.3.verification","status":"passed"}
