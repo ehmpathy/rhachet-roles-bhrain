@@ -16,10 +16,10 @@ exports[`routeStoneJudge.tally.acceptance given: [case3] a \`better\` concession
 "
 ✋ halted, an urgent concession stands — finicky
    ├─ its harm ships if unfixed, so this stone earns more budget
-   ├─ increase budget — yours to spend
+   ├─ please ask your human to
    │  └─ rhx route.guard.budget --for review --add 2 --peer finicky --stone 1.test
    │
-   └─ then tell your human why this stone bought budget, address the concession, and run
+   └─ after the grant, address the concession, then run
       └─ rhx route.stone.set --stone 1.test --as passed
 "
 `;
