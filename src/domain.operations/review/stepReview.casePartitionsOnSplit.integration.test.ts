@@ -229,6 +229,10 @@ describe('stepReview — a lane that splits into partitions', () => {
         });
         const output = path.join(cwd, 'review.md');
         const asks: { role: string; prompt: string }[] = [];
+        // .note = deliberate mutation: the fake brain stamps when the prime began
+        const stamps: { msOfPrimeStart: number | null } = {
+          msOfPrimeStart: null,
+        };
         const atom = genBrainAtom({ slug: DEFAULT_TEST_BRAIN });
         const choice = {
           slug: atom.slug,
@@ -251,6 +255,7 @@ describe('stepReview — a lane that splits into partitions', () => {
             asks.push({ role: JSON.stringify(ask.role), prompt: ask.prompt });
 
             // the prime spends part of the lane's bound
+            if (isPrime) stamps.msOfPrimeStart = Date.now();
             if (isPrime)
               await new Promise((settle) => setTimeout(settle, PRIME_MS));
 
@@ -272,7 +277,6 @@ describe('stepReview — a lane that splits into partitions', () => {
           .spyOn(console, 'error')
           .mockImplementation(() => {});
         const spyLog = jest.spyOn(console, 'log').mockImplementation(() => {});
-        const msOfStart = Date.now();
         try {
           const result: StepReviewResult = await stepReview(
             {
@@ -290,7 +294,10 @@ describe('stepReview — a lane that splits into partitions', () => {
           return {
             result,
             asks,
-            msElapsed: Date.now() - msOfStart,
+            msSincePrimeStart:
+              stamps.msOfPrimeStart === null
+                ? null
+                : Date.now() - stamps.msOfPrimeStart,
             report: fs.existsSync(output)
               ? fs.readFileSync(output, 'utf-8')
               : null,
@@ -309,8 +316,14 @@ describe('stepReview — a lane that splits into partitions', () => {
         then(
           '🔴 the lane settles inside its own bound, never a fresh bound per partition',
           () => {
-            // a fresh clock for b would run PRIME_MS + BOUND_MS ≈ 6.5s
-            expect(scene.msElapsed).toBeLessThan(BOUND_MS + 1_500);
+            // a fresh clock for b starts after the prime ends, so the lane could settle no
+            // sooner than PRIME_MS + BOUND_MS after the prime began. the lane's one clock
+            // started before the prime, so it settles sooner than that floor
+            // .why from the prime = the setup before it scales with host load and grades
+            //      naught here; a stamp from before `stepReview` counted it, and a loaded
+            //      host read 5960ms against a 5500ms bound while the lane clock held
+            expect(scene.msSincePrimeStart).not.toBeNull();
+            expect(scene.msSincePrimeStart!).toBeLessThan(PRIME_MS + BOUND_MS);
           },
         );
 

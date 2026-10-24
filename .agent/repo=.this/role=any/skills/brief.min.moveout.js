@@ -27,8 +27,11 @@
 const fs = require('fs');
 const path = require('path');
 const { getAllFilesFromGlobs } = require('./glob.files.lib.js');
-const { asBriefLinesByCue, isFenceMark } = require(
+const { asBriefLinesByCue } = require(
   path.join(__dirname, '../../../../src/domain.operations/learn/asBriefLinesByCue.ts'),
+);
+const { asLinesWithFenceState } = require(
+  path.join(__dirname, '../../../../src/domain.operations/learn/asLinesWithFenceState.ts'),
 );
 
 const argv = process.argv.slice(2);
@@ -50,17 +53,11 @@ const isWhyHeader = (line) => /^## .*(\.why\b|\.the two arguments)/.test(line);
 const isSectionEnd = (line) => /^#{1,2} /.test(line);
 
 // mark each line with whether it sits inside a fence (a fence mark counts as inside)
-const asLinesWithFence = (lines) =>
-  lines.reduce(
-    (acc, line) => {
-      const isFence = isFenceMark({ line });
-      return {
-        inFence: isFence ? !acc.inFence : acc.inFence,
-        out: [...acc.out, { line, fenced: acc.inFence || isFence }],
-      };
-    },
-    { inFence: false, out: [] },
-  ).out;
+const asLinesWithFence = (text) =>
+  asLinesWithFenceState({ text }).map((entry) => ({
+    line: entry.line,
+    fenced: entry.inFence || entry.isFence,
+  }));
 
 // split one min into its why-sections, each as the index range it spans
 const asWhySections = (marked) =>
@@ -84,8 +81,9 @@ const tally = files.reduce(
     if (!fs.existsSync(mdPath)) return acc;
     const mdText = fs.readFileSync(mdPath, 'utf8');
 
-    const lines = fs.readFileSync(file, 'utf8').split('\n');
-    const marked = asLinesWithFence(lines);
+    const text = fs.readFileSync(file, 'utf8');
+    const lines = text.split('\n');
+    const marked = asLinesWithFence(text);
     const split = asWhySections(marked);
     const sections = [
       ...split.sections,

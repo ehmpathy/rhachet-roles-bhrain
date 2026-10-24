@@ -1,3 +1,5 @@
+import { asLinesWithFenceState } from './asLinesWithFenceState';
+
 /**
  * .what = sort the nonblank lines of a brief into CUE and ARGUMENT, in order
  * .why  = one source of truth for what a cue is, for the reports that rank briefs by it
@@ -11,31 +13,20 @@
 export const asBriefLinesByCue = (input: {
   text: string;
 }): { cueLines: string[]; argLines: string[] } => {
-  const sorted = input.text
-    .split('\n')
-    .filter((line) => line.trim() !== '')
-    .reduce<{ inFence: boolean; cueLines: string[]; argLines: string[] }>(
-      (acc, line) => {
-        // a fence mark is itself a cue, and flips the fence state for the lines after it
-        const isFence = isFenceMark({ line });
-        const isCue = isFence || isCueLine({ line, inFence: acc.inFence });
-        return {
-          inFence: isFence ? !acc.inFence : acc.inFence,
-          cueLines: isCue ? [...acc.cueLines, line] : acc.cueLines,
-          argLines: isCue ? acc.argLines : [...acc.argLines, line],
-        };
-      },
-      { inFence: false, cueLines: [], argLines: [] },
-    );
-  return { cueLines: sorted.cueLines, argLines: sorted.argLines };
+  // a fence mark is itself a cue, and so is each line inside a fence
+  const entries = asLinesWithFenceState({ text: input.text })
+    .filter((entry) => entry.line.trim() !== '')
+    .map((entry) => ({
+      line: entry.line,
+      isCue: entry.isFence || isCueLine(entry),
+    }));
+  return {
+    cueLines: entries.filter((entry) => entry.isCue).map((entry) => entry.line),
+    argLines: entries
+      .filter((entry) => !entry.isCue)
+      .map((entry) => entry.line),
+  };
 };
-
-/**
- * .what = whether one line opens or closes a fence
- * .why  = a fence holds a shape or a demo, and every line inside it is a cue
- */
-export const isFenceMark = (input: { line: string }): boolean =>
-  /^\s*```/.test(input.line);
 
 /**
  * .what = whether one line is a cue, given whether it sits inside a fence

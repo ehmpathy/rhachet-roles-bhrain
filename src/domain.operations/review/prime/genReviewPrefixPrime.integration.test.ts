@@ -19,6 +19,12 @@ const OPTIONS = {
 };
 
 /**
+ * .what = the gather and reach windows of a late lane whose "at once" is bounded by time
+ * .why = long enough that any wait for a window is far past the bound a loaded host can reach
+ */
+const MS_OF_WINDOW_LATE = 3_000;
+
+/**
  * .what = the head key every lane of one test shares
  */
 const KEY_OF_HEAD = 'head-under-test';
@@ -42,6 +48,8 @@ const runOneLane = async (
     name: string;
     /** the instant the lane's deadline stops the meet; a minute out where the case does not say */
     msOfStop?: number;
+    /** the windows this lane meets with; the shared short ones where the case does not say */
+    windows?: Partial<typeof OPTIONS>;
   },
   context: {
     prime: () => Promise<unknown>;
@@ -53,7 +61,7 @@ const runOneLane = async (
       ...input.meet,
       deadline: { msOfStop: input.msOfStop ?? Date.now() + 60_000 },
     },
-    { prime: context.prime, ...OPTIONS },
+    { prime: context.prime, ...OPTIONS, ...input.windows },
   );
   context.log.push({ name: input.name, event: 'review', at: Date.now() });
   return { name: input.name, outcome };
@@ -213,14 +221,33 @@ describe('genReviewPrefixPrime', () => {
         const watermarkBefore = await getOnePrimeWatermark({
           meet: watermarkKey,
         });
+
+        // .why = "at once" is also bounded by time, with a margin load cannot eat: the late lane
+        //        meets with long windows, so a gather or a reach wait costs it MS_OF_WINDOW_LATE,
+        //        while a warm pour under a loaded host still lands far short of half that
+        const before = Date.now();
         const lane = await runOneLane(
-          { meet, name: 'c' },
+          {
+            meet,
+            name: 'c',
+            windows: {
+              msOfGather: MS_OF_WINDOW_LATE,
+              msOfReach: MS_OF_WINDOW_LATE,
+            },
+          },
           { prime: fake.prime, log },
         );
+        const waited = Date.now() - before;
         const watermarkAfter = await getOnePrimeWatermark({
           meet: watermarkKey,
         });
-        return { lane, calls: fake.calls, watermarkBefore, watermarkAfter };
+        return {
+          lane,
+          calls: fake.calls,
+          watermarkBefore,
+          watermarkAfter,
+          waited,
+        };
       });
 
       then('it pours at once, with no second poke and no gather', () => {
@@ -232,6 +259,9 @@ describe('genReviewPrefixPrime', () => {
 
         // no claim was taken: the watermark the late lane found is the one it left
         expect(scene.watermarkAfter).toEqual(scene.watermarkBefore);
+
+        // and no wait of any kind: a gather or a reach wait would cost a whole window
+        expect(scene.waited).toBeLessThan(MS_OF_WINDOW_LATE / 2);
       });
     });
   });

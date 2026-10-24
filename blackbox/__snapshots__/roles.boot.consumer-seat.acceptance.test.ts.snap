@@ -1,46 +1,8 @@
 // Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
 
-exports[`roles.boot.consumer-seat.acceptance given: [case:driver] a consumer repo that links the driver role when: [t0] the consumer boots the linked role then: its booted say paths and its budget stats match the snapshot 1`] = `
+exports[`roles.boot.consumer-seat.acceptance given: [case1] a consumer repo that links the learner role when: [t0] the consumer boots the linked role then: its booted say paths, briefs and skills, match the snapshot 1`] = `
 {
-  "says": [
-    ".agent/repo=bhrain/role=driver/briefs/define.routes-are-gardened.[philosophy].md",
-    ".agent/repo=bhrain/role=driver/briefs/howdoes.the-review-gates-you-drive-within.md.min",
-    ".agent/repo=bhrain/role=driver/briefs/howto.drive-routes.[guide].md.min",
-    ".agent/repo=bhrain/role=driver/briefs/howto.navigate-fulcrum-choices.[guide].md.min",
-    ".agent/repo=bhrain/role=driver/briefs/research.importance-of-focus.[philosophy].md.min",
-    ".agent/repo=bhrain/role=driver/briefs/rule.always.absorb-every-concern.md.min",
-    ".agent/repo=bhrain/role=driver/briefs/rule.always.archive-the-wishers-words-verbatim.md.min",
-    ".agent/repo=bhrain/role=driver/briefs/rule.always.bear-every-self-review.md.min",
-    ".agent/repo=bhrain/role=driver/briefs/rule.always.catch-dreams-for-followups.md.min",
-    ".agent/repo=bhrain/role=driver/briefs/rule.always.concede-with-a-severity.md.min",
-    ".agent/repo=bhrain/role=driver/briefs/rule.always.converge-to-terminal.md.min",
-    ".agent/repo=bhrain/role=driver/briefs/rule.always.converge-with-reviewers._.md.min",
-    ".agent/repo=bhrain/role=driver/briefs/rule.always.converge-with-reviewers.via-a-taken-per-point.md.min",
-    ".agent/repo=bhrain/role=driver/briefs/rule.always.defer-fulcrums-to-last.md.min",
-    ".agent/repo=bhrain/role=driver/briefs/rule.always.diagnose-reviewer-malfunctions.md.min",
-    ".agent/repo=bhrain/role=driver/briefs/rule.always.drive-autonomously.md.min",
-    ".agent/repo=bhrain/role=driver/briefs/rule.always.fix-forward-under-scouts-honor.md.min",
-    ".agent/repo=bhrain/role=driver/briefs/rule.always.get-a-second-opinion-before-foreman.md.min",
-    ".agent/repo=bhrain/role=driver/briefs/rule.always.itemize-the-fulcrums-you-best-guess.md.min",
-    ".agent/repo=bhrain/role=driver/briefs/rule.always.raise-a-blocker-a-taken-cannot-close.md.min",
-    ".agent/repo=bhrain/role=driver/briefs/rule.always.spend-own-levers-before-escalation.md.min",
-    ".agent/repo=bhrain/role=driver/briefs/rule.always.yield-the-output-not-the-archaeology.md.min",
-    ".agent/repo=bhrain/role=driver/briefs/rule.forbid.commits-the-route-did-not-ask-for.md.min",
-    ".agent/repo=bhrain/role=driver/briefs/rule.forbid.hand-run-reviews.md.min",
-    ".agent/repo=bhrain/role=driver/briefs/rule.forbid.unanswered-exits-from-a-blocker.md.min",
-    ".agent/repo=bhrain/role=driver/briefs/rule.forbid.verbatim-quotes-outside-seeds.md.min",
-    ".agent/repo=bhrain/role=driver/briefs/rule.forbid.workarounds.md.min",
-  ],
-  "stats": {
-    "budget": 20250,
-    "payload": 19956,
-  },
-}
-`;
-
-exports[`roles.boot.consumer-seat.acceptance given: [case:learner] a consumer repo that links the learner role when: [t0] the consumer boots the linked role then: its booted say paths and its budget stats match the snapshot 1`] = `
-{
-  "says": [
+  "briefs": [
     ".agent/repo=bhrain/role=learner/briefs/howto.domain-term-disputes.[guide].md.min",
     ".agent/repo=bhrain/role=learner/briefs/im_an.obsessive_learner.for.domain.glyphs.md.min",
     ".agent/repo=bhrain/role=learner/briefs/im_an.obsessive_learner.for.domain.invariants.md.min",
@@ -70,16 +32,80 @@ exports[`roles.boot.consumer-seat.acceptance given: [case:learner] a consumer re
     ".agent/repo=bhrain/role=learner/briefs/rule.require.timeless-lessons.md.min",
     ".agent/repo=bhrain/role=learner/briefs/template.domain-term.md.min",
   ],
-  "stats": {
-    "budget": 20750,
-    "payload": 20691,
-  },
+  "skills": [],
 }
 `;
 
-exports[`roles.boot.consumer-seat.acceptance given: [case:librarian] a consumer repo that links the librarian role when: [t0] the consumer boots the linked role then: its booted say paths and its budget stats match the snapshot 1`] = `
+exports[`roles.boot.consumer-seat.acceptance given: [case1] a consumer repo that links the learner role when: [t0] the consumer boots the linked role then: its stats block, as the consumer reads it, matches the snapshot 1`] = `
+"quant
+  ├── files = 38
+  │   ├── briefs = 34
+  │   │   ├── say = 28
+  │   │   └── ref = 6
+  │   └── skills = 0
+  │       ├── say = 0
+  │       └── ref = 0
+  ├── tokens = 20,691 (full emitted payload, o200k_base)
+  └── budget = 20,691 / 20,750 tokens (100% used)"
+`;
+
+exports[`roles.boot.consumer-seat.acceptance given: [case1] a consumer repo that links the learner role when: [t1] the consumer costs its boot specs then: the linked spec reads as linked, under its budget 1`] = `"20,691 / 20,750 tokens (100%)  .agent/repo=bhrain/role=learner/boot.yml (linked)"`;
+
+exports[`roles.boot.consumer-seat.acceptance given: [case2] a consumer repo that links the driver role when: [t0] the consumer boots the linked role then: its booted say paths, briefs and skills, match the snapshot 1`] = `
 {
-  "says": [
+  "briefs": [
+    ".agent/repo=bhrain/role=driver/briefs/define.routes-are-gardened.[philosophy].md",
+    ".agent/repo=bhrain/role=driver/briefs/howdoes.the-review-gates-you-drive-within.md.min",
+    ".agent/repo=bhrain/role=driver/briefs/howto.drive-routes.[guide].md.min",
+    ".agent/repo=bhrain/role=driver/briefs/howto.navigate-fulcrum-choices.[guide].md.min",
+    ".agent/repo=bhrain/role=driver/briefs/research.importance-of-focus.[philosophy].md.min",
+    ".agent/repo=bhrain/role=driver/briefs/rule.always.absorb-every-concern.md.min",
+    ".agent/repo=bhrain/role=driver/briefs/rule.always.archive-the-wishers-words-verbatim.md.min",
+    ".agent/repo=bhrain/role=driver/briefs/rule.always.bear-every-self-review.md.min",
+    ".agent/repo=bhrain/role=driver/briefs/rule.always.catch-dreams-for-followups.md.min",
+    ".agent/repo=bhrain/role=driver/briefs/rule.always.concede-with-a-severity.md.min",
+    ".agent/repo=bhrain/role=driver/briefs/rule.always.converge-to-terminal.md.min",
+    ".agent/repo=bhrain/role=driver/briefs/rule.always.converge-with-reviewers._.md.min",
+    ".agent/repo=bhrain/role=driver/briefs/rule.always.converge-with-reviewers.via-a-taken-per-point.md.min",
+    ".agent/repo=bhrain/role=driver/briefs/rule.always.defer-fulcrums-to-last.md.min",
+    ".agent/repo=bhrain/role=driver/briefs/rule.always.diagnose-reviewer-malfunctions.md.min",
+    ".agent/repo=bhrain/role=driver/briefs/rule.always.drive-autonomously.md.min",
+    ".agent/repo=bhrain/role=driver/briefs/rule.always.fix-forward-under-scouts-honor.md.min",
+    ".agent/repo=bhrain/role=driver/briefs/rule.always.get-a-second-opinion-before-foreman.md.min",
+    ".agent/repo=bhrain/role=driver/briefs/rule.always.itemize-the-fulcrums-you-best-guess.md.min",
+    ".agent/repo=bhrain/role=driver/briefs/rule.always.raise-a-blocker-a-taken-cannot-close.md.min",
+    ".agent/repo=bhrain/role=driver/briefs/rule.always.spend-own-levers-before-escalation.md.min",
+    ".agent/repo=bhrain/role=driver/briefs/rule.always.yield-the-output-not-the-archaeology.md.min",
+    ".agent/repo=bhrain/role=driver/briefs/rule.forbid.commits-the-route-did-not-ask-for.md.min",
+    ".agent/repo=bhrain/role=driver/briefs/rule.forbid.hand-run-reviews.md.min",
+    ".agent/repo=bhrain/role=driver/briefs/rule.forbid.unanswered-exits-from-a-blocker.md.min",
+    ".agent/repo=bhrain/role=driver/briefs/rule.forbid.verbatim-quotes-outside-seeds.md.min",
+    ".agent/repo=bhrain/role=driver/briefs/rule.forbid.workarounds.md.min",
+  ],
+  "skills": [
+    ".agent/repo=bhrain/role=driver/skills/route.stone.set.sh",
+  ],
+}
+`;
+
+exports[`roles.boot.consumer-seat.acceptance given: [case2] a consumer repo that links the driver role when: [t0] the consumer boots the linked role then: its stats block, as the consumer reads it, matches the snapshot 1`] = `
+"quant
+  ├── files = 66
+  │   ├── briefs = 42
+  │   │   ├── say = 27
+  │   │   └── ref = 15
+  │   └── skills = 1
+  │       ├── say = 1
+  │       └── ref = 0
+  ├── tokens = 19,956 (full emitted payload, o200k_base)
+  └── budget = 19,956 / 20,250 tokens (99% used)"
+`;
+
+exports[`roles.boot.consumer-seat.acceptance given: [case2] a consumer repo that links the driver role when: [t1] the consumer costs its boot specs then: the linked spec reads as linked, under its budget 1`] = `"19,956 / 20,250 tokens (99%)  .agent/repo=bhrain/role=driver/boot.yml (linked)"`;
+
+exports[`roles.boot.consumer-seat.acceptance given: [case3] a consumer repo that links the librarian role when: [t0] the consumer boots the linked role then: its booted say paths, briefs and skills, match the snapshot 1`] = `
+{
+  "briefs": [
     ".agent/repo=bhrain/role=librarian/briefs/knowledge/kno101.primitives.1.ontology.[article].frame.docs_as_materializations.md",
     ".agent/repo=bhrain/role=librarian/briefs/knowledge/kno101.primitives.2.rel.many_to_many.[article].md",
     ".agent/repo=bhrain/role=librarian/briefs/knowledge/kno101.primitives.3.instances.[article].md",
@@ -100,9 +126,21 @@ exports[`roles.boot.consumer-seat.acceptance given: [case:librarian] a consumer 
     ".agent/repo=bhrain/role=librarian/briefs/rule.require.rules-are-clusters.md.min",
     ".agent/repo=bhrain/role=librarian/briefs/rule.require.summary-at-the-cluster-root.md.min",
   ],
-  "stats": {
-    "budget": 12250,
-    "payload": 12017,
-  },
+  "skills": [],
 }
 `;
+
+exports[`roles.boot.consumer-seat.acceptance given: [case3] a consumer repo that links the librarian role when: [t0] the consumer boots the linked role then: its stats block, as the consumer reads it, matches the snapshot 1`] = `
+"quant
+  ├── files = 29
+  │   ├── briefs = 28
+  │   │   ├── say = 19
+  │   │   └── ref = 9
+  │   └── skills = 0
+  │       ├── say = 0
+  │       └── ref = 0
+  ├── tokens = 12,017 (full emitted payload, o200k_base)
+  └── budget = 12,017 / 12,250 tokens (98% used)"
+`;
+
+exports[`roles.boot.consumer-seat.acceptance given: [case3] a consumer repo that links the librarian role when: [t1] the consumer costs its boot specs then: the linked spec reads as linked, under its budget 1`] = `"12,017 / 12,250 tokens (98%)  .agent/repo=bhrain/role=librarian/boot.yml (linked)"`;

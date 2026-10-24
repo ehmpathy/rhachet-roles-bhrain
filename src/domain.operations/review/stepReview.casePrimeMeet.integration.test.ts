@@ -268,13 +268,19 @@ describe('stepReview — the prime meet', () => {
           });
 
           // the lane joins the meet, under a bound short enough to grade
+          // .why scaled to the first run = the meet stops at half the bound, counted from the
+          //      review's start, so the setup ahead of the meet spends that half. a loaded
+          //      host once spent all of a fixed 3s on setup, the meet lapsed before it ever
+          //      met the wedged claim, and the case graded naught. the first run's whole cost
+          //      measures that setup on this host now, so the half keeps 2x headroom past it
+          const msOfBound = Math.max(6_000, first.ms * 4);
           const run = await runOneReview({
             cwd,
             output: 'review.second.md',
             meet: 'join',
-            env: { [ENV_OF_REVIEW_BRAIN_CALL_TIMEOUT_MS]: '6000' },
+            env: { [ENV_OF_REVIEW_BRAIN_CALL_TIMEOUT_MS]: String(msOfBound) },
           });
-          return { run, cwd };
+          return { run, cwd, msOfBound };
         });
 
         then(
@@ -282,7 +288,7 @@ describe('stepReview — the prime meet', () => {
           () => {
             expect(scene.run.error).toEqual(null);
             expect(scene.run.result?.outcome).toEqual('reviewed');
-            expect(scene.run.ms).toBeLessThan(6_000);
+            expect(scene.run.ms).toBeLessThan(scene.msOfBound);
           },
         );
 

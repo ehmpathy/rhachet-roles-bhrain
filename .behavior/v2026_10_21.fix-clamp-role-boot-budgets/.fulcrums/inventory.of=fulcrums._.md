@@ -25,5 +25,9 @@ axis: `case` — one entry per best-guessed call, appended at the moment it was 
 | F19 | every extant skip in the selected suites is lifted in this PR, the premium one included | clean | best-guessed | 65% |
 | F20 | a prime meet double lead under host load is caught as a dream, not diagnosed here | dirty | best-guessed | 70% |
 | F21 | the diverge statement refusal is held where main held it, not cured here | dirty | best-guessed | 70% |
+| F22 | surfaces this branch did not author stay out of its scope | clean | ruled: overruled for a red test | 75% |
+| F23 | two boot seats pin two payloads | clean | best-guessed | 85% |
+| F24 | the trail gap is measured from the release stamp | clean | best-guessed | 85% |
+| F25 | the drive-state lock is repaired in place, not replaced | dirty | best-guessed | 80% |
 
 gaps: none open.
