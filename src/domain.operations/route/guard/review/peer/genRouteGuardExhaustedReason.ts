@@ -47,13 +47,62 @@ export const REASON_MARK_CONCESSION_URGENT =
 export const genRouteGuardExhaustedReason = (input: {
   slugs: string[];
   concession: 'none' | 'better' | 'urgent';
+  /**
+   * the exhausted lanes that carry a live `urgent` concession — read only when `concession` is
+   * `urgent`. they ride inside the urgent mark, ahead of the colon, so the remedy can scope one
+   * `--peer` per urgent lane (a bare `--add` lands on the latest level alone, and misses an
+   * urgent lane below it). empty → the mark carries no lanes, the form a legacy reason holds
+   */
+  slugsUrgent: string[];
 }): string => {
   const tail = `peer reviewer budget exhausted: ${input.slugs.join(', ')}`;
   if (input.concession === 'none') return tail;
   if (input.concession === 'urgent')
-    return `${REASON_MARK_CONCESSION_URGENT}; ${tail}`;
+    return `${asUrgentMarkWithSlugs({ slugsUrgent: input.slugsUrgent })}; ${tail}`;
   return `${REASON_MARK_CONCESSION}; ${tail}`;
 };
+
+/**
+ * .what = the urgent mark, with the urgent lanes in parentheses when any are named
+ * .why = one composer for the write, so the read below (`asUrgentConcessionSlugs`) and the write
+ *        agree on the one shape
+ */
+const asUrgentMarkWithSlugs = (input: { slugsUrgent: string[] }): string =>
+  input.slugsUrgent.length === 0
+    ? REASON_MARK_CONCESSION_URGENT
+    : `${REASON_MARK_CONCESSION_URGENT} (${input.slugsUrgent.join(', ')})`;
+
+/**
+ * .what = the urgent lanes an exhaustion reason names in its urgent mark, in order
+ * .why = the remedy names one `--peer` budget command per urgent lane, the same shape the judge's
+ *        urgent halt renders (`asJudgeUrgentHaltLines`)
+ * .note = a reason with no urgent mark, or a legacy urgent mark with no lanes, yields an EMPTY
+ *         list — the caller falls back to its exhausted-lane read
+ */
+export const asUrgentConcessionSlugs = (input: {
+  reason: string | null;
+}): string[] => {
+  const matched = (input.reason ?? '').match(
+    new RegExp(`${REASON_MARK_CONCESSION_URGENT} \\(([^)]+)\\)`),
+  );
+  if (!matched?.[1]) return [];
+  return matched[1].split(',').map((slug) => slug.trim());
+};
+
+/**
+ * .what = the reason with the urgent mark's lane list removed, for a surface that prints it raw
+ * .why = the `(intent, friction)` list rides the mark so `asUrgentConcessionSlugs` can read it
+ *        back — a decode channel, not prose. a surface that prints the raw reason would show each
+ *        lane twice on one line (the mark, then the `budget exhausted:` tail), and a third time in
+ *        the command below. the remedy commands already name each urgent lane
+ */
+export const asExhaustedReasonForDisplay = (input: {
+  reason: string;
+}): string =>
+  input.reason.replace(
+    new RegExp(`(${REASON_MARK_CONCESSION_URGENT}) \\([^)]+\\)`),
+    '$1',
+  );
 
 /**
  * .what = whether an exhaustion halt is a BETTER concession halt — the driver's own (push)

@@ -1,5 +1,5 @@
-import type { ReviewAbsorption } from './getStoneReviewAbsorptions';
 import { isReviewAbsorptionOnGiven } from './isReviewAbsorptionOnGiven';
+import type { ReviewAbsorption } from './ReviewAbsorption';
 
 /**
  * .what = the concern labels a stance already covers, on one reviewer's one given

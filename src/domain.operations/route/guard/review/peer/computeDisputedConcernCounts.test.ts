@@ -1,8 +1,8 @@
 import { given, then, when } from 'test-fns';
 
+import { computeDisputedConcernCounts } from './computeDisputedConcernCounts';
 import type { RouteGuardReviewPeerGiven } from './getAllRouteGuardReviewPeerGivens';
-import { computeDisputedConcernCounts } from './getStoneDisputedConcernCounts';
-import type { ReviewAbsorption } from './getStoneReviewAbsorptions';
+import type { ReviewAbsorption } from './ReviewAbsorption';
 
 const asGiven = (input: {
   slug: string;
@@ -24,7 +24,7 @@ const asAbsorption = (input: {
   given: string;
 }): ReviewAbsorption => ({ ...input });
 
-describe('getStoneDisputedConcernCounts.computeDisputedConcernCounts', () => {
+describe('computeDisputedConcernCounts', () => {
   given('[case1] no absorptions at all', () => {
     when('[t0] the counts are computed', () => {
       then('naught is excluded', () => {

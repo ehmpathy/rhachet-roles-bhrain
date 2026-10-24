@@ -1,4 +1,5 @@
 import { spawnSync } from 'child_process';
+import { ConstraintError } from 'helpful-errors';
 import * as path from 'path';
 import { genTempDir, given, then, useBeforeAll, useThen, when } from 'test-fns';
 
@@ -8,7 +9,7 @@ const RHACHET_BIN = path.join(REPO_ROOT, 'node_modules/.bin/rhachet');
 /**
  * .what = one row of the firewall's json report
  * .why = an absent row carries `slug` + `fix`; a granted row nests its slug under `grant`
- *        and carries the secret, so a granted row is never printed
+ *        and carries the secret, so a granted row is masked before it is printed or snapped
  */
 type FirewallRow = {
   status: string;
@@ -18,13 +19,15 @@ type FirewallRow = {
 };
 
 /**
- * .what = runs the CI credential step — `keyrack firewall --env test` — with no secrets supplied
- * .why = the workflow pipes the actions secrets into this command; `{}` is the state of a repo
- *        whose actions secrets lack every key. the child env holds only PATH and an empty HOME,
- *        as a CI runner does, so no host env var or host keyrack can supply a key
+ * .what = runs the CI credential step — `keyrack firewall --env test` — with the given secrets
+ * .why = the workflow pipes the actions secrets into this command as json on stdin; `{}` is the
+ *        state of a repo whose actions secrets lack every key. the child env holds only PATH and
+ *        an empty HOME, as a CI runner does, so no host env var or host keyrack can supply a key
+ *        beyond what the json carries
  */
-const invokeFirewallWithNoSecrets = (input: {
+const invokeFirewall = (input: {
   home: string;
+  secrets: Record<string, string>;
 }): { stdout: string; code: number | null } => {
   const result = spawnSync(
     RHACHET_BIN,
@@ -40,7 +43,7 @@ const invokeFirewallWithNoSecrets = (input: {
     ],
     {
       cwd: REPO_ROOT,
-      input: '{}',
+      input: JSON.stringify(input.secrets),
       encoding: 'utf-8',
       env: { PATH: process.env.PATH, HOME: input.home },
     },
@@ -63,12 +66,15 @@ const asOpenrouterRow = (input: { stdout: string }): FirewallRow => {
   if (row) return row;
 
   // name each row by status + slug alone, so the error carries no secret
-  const summary = rows
-    .map((thisRow) => `${thisRow.status} ${thisRow.slug ?? thisRow.grant?.slug}`)
-    .join('\n');
-  throw new Error(
-    `no OPENROUTER_API_KEY row in firewall report:\n${summary}\nhint: .agent/keyrack.yml must declare OPENROUTER_API_KEY under env.test — check the manifest and its extends`,
+  // .why ConstraintError = the row is absent because the repo's keyrack manifest does not declare
+  //      the key — the caller fixes the manifest, never the firewall
+  const rowsSeen = rows.map(
+    (thisRow) => `${thisRow.status} ${thisRow.slug ?? thisRow.grant?.slug}`,
   );
+  throw new ConstraintError('no OPENROUTER_API_KEY row in firewall report', {
+    rowsSeen,
+    hint: '.agent/keyrack.yml must declare OPENROUTER_API_KEY under env.test — check the manifest and its extends',
+  });
 };
 
 /**
@@ -85,7 +91,7 @@ describe('keyrack.firewall-key-absent.acceptance', () => {
   given('[case1] this repo keyrack manifest, and actions secrets that lack every key', () => {
     when('[t0] the CI credential step runs', () => {
       const result = useThen('the firewall reports', async () =>
-        invokeFirewallWithNoSecrets({ home: scene.home }),
+        invokeFirewall({ home: scene.home, secrets: {} }),
       );
 
       then('CLAMP: the report names OPENROUTER_API_KEY as absent', () => {
@@ -111,13 +117,63 @@ describe('keyrack.firewall-key-absent.acceptance', () => {
       });
 
       then('the openrouter row is pinned', () => {
-        // .why = only status, slug, and fix are pinned — a granted row would carry its secret
+        // .why = status, slug, and fix are the absent row's whole contract (case2 snaps the
+        //        granted row, its secret masked)
         const row = asOpenrouterRow({ stdout: result.stdout });
         expect({
           status: row.status,
           slug: row.slug,
           fix: row.fix,
         }).toMatchSnapshot();
+      });
+    });
+  });
+
+  given('[case2] this repo keyrack manifest, and actions secrets that carry the real key', () => {
+    // .why = the positive twin of case1 (rule.require.external-contract-integration-tests): the
+    //        real OPENROUTER_API_KEY, as the test run's keyrack unlock supplies it, goes through
+    //        the same CI step. an absent key fails loud, never skips.
+    // .note = the firewall grants on presence; it never calls openrouter, so this case proves
+    //        the keyrack contract (key present → granted row), not that the key is live. the live
+    //        provider call is proven by the brain-backed review acceptance suites, which send
+    //        this same granted key to openrouter and parse its reply
+    const secrets = useBeforeAll(async () => {
+      const key = process.env.OPENROUTER_API_KEY;
+      if (!key)
+        throw new ConstraintError('OPENROUTER_API_KEY is required for this case', {
+          hint: 'run: rhx keyrack unlock --owner ehmpath --env test',
+        });
+      return { OPENROUTER_API_KEY: key };
+    });
+
+    when('[t0] the CI credential step runs', () => {
+      const result = useThen('the firewall reports', async () =>
+        invokeFirewall({
+          home: scene.home,
+          secrets: { OPENROUTER_API_KEY: secrets.OPENROUTER_API_KEY },
+        }),
+      );
+
+      then('CLAMP: the report grants OPENROUTER_API_KEY', () => {
+        const row = asOpenrouterRow({ stdout: result.stdout });
+        expect(row.status).toEqual('granted');
+        expect(row.grant?.slug).toEqual('ehmpathy.test.OPENROUTER_API_KEY');
+      });
+
+      then('the firewall exits 0', () => {
+        expect(result.code).toEqual(0);
+      });
+
+      then('the granted row is pinned, its secret masked', () => {
+        // .why = the granted variant is snapped whole, never carved out
+        //        (rule.require.contract-snapshot-exhaustiveness): the secret's bytes are replaced
+        //        with `<secret>` before the parse, wherever the row carries them
+        const stdoutParts = result.stdout.split(secrets.OPENROUTER_API_KEY);
+        // the raw row carries the secret exactly once — the mask replaced a real value, in one place
+        expect(stdoutParts.length - 1).toEqual(1);
+        const stdoutMasked = stdoutParts.join('<secret>');
+        const row = asOpenrouterRow({ stdout: stdoutMasked });
+        expect(row).toMatchSnapshot();
       });
     });
   });

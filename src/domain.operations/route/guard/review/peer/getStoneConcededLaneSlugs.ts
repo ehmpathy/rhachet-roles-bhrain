@@ -1,7 +1,7 @@
 import type { RouteGuardReviewPeerGiven } from './getAllRouteGuardReviewPeerGivens';
 import { getLiveReviewAbsorptions } from './getLiveReviewAbsorptions';
-import type { ReviewAbsorption } from './getStoneReviewAbsorptions';
 import { getStoneReviewCorpus } from './getStoneReviewCorpus';
+import type { ReviewAbsorption } from './ReviewAbsorption';
 
 /**
  * .what = the live absorptions that are CONCESSIONS — the filtered fold both concession reads share
@@ -121,26 +121,63 @@ export const computeConcessionExhaustionKind = (input: {
 };
 
 /**
- * .what = the concession-exhaustion kind for a stone's skipped lanes, right now
- * .why = the single read the write gate and both drive surfaces call to classify a budget
- *        hit — one route read, one rule (`getLiveReviewAbsorptions`), no drift.
+ * .what = of the slugs given, the ones that carry a live URGENT concession, in the caller's order
+ * .why = an urgent exhaustion halt names one `--peer` budget command per urgent lane, so the halt
+ *        needs the lanes, not merely the kind. a bare `--add` lands on the latest level alone and
+ *        misses an urgent lane below it
+ * .note = an absent severity reads as `better` (F028/S14), so a legacy concede is never here
  */
-export const getStoneConcessionExhaustionKind = async (input: {
+export const computeUrgentConcessionLaneSlugs = (input: {
+  absorptions: ReviewAbsorption[];
+  givens: RouteGuardReviewPeerGiven[];
+  slugs: string[];
+}): string[] => {
+  const urgent = new Set(
+    getLiveConcededAbsorptions({
+      absorptions: input.absorptions,
+      givens: input.givens,
+    })
+      .filter((stance) => stance.severity === 'urgent')
+      .map((stance) => stance.reviewer),
+  );
+  return input.slugs.filter((slug) => urgent.has(slug));
+};
+
+/**
+ * .what = the concession-exhaustion kind for a stone's skipped lanes, right now, and the skipped
+ *         lanes that carry a live urgent concession
+ * .why = the single read the write gate and both drive surfaces call to classify a budget
+ *        hit — one route read, one rule (`getLiveReviewAbsorptions`), no drift. the urgent lanes
+ *        ride with the kind so the reason can scope its remedy per lane
+ * .note = `slugsUrgent` is empty unless the kind is `urgent`
+ */
+export const getStoneConcessionExhaustion = async (input: {
   route: string;
   stone: string;
   slugs: string[];
-}): Promise<ConcessionExhaustionKind> => {
+}): Promise<{ kind: ConcessionExhaustionKind; slugsUrgent: string[] }> => {
   // naught to ask about — a budget hit with no skipped lane is the ordinary wait
-  if (input.slugs.length === 0) return 'none';
+  if (input.slugs.length === 0) return { kind: 'none', slugsUrgent: [] };
 
   const { absorptions, givens } = await getStoneReviewCorpus({
     route: input.route,
     stone: input.stone,
   });
 
-  return computeConcessionExhaustionKind({
+  const kind = computeConcessionExhaustionKind({
     absorptions,
     givens,
     slugs: input.slugs,
   });
+  return {
+    kind,
+    slugsUrgent:
+      kind === 'urgent'
+        ? computeUrgentConcessionLaneSlugs({
+            absorptions,
+            givens,
+            slugs: input.slugs,
+          })
+        : [],
+  };
 };

@@ -1,5 +1,5 @@
 import { asReviewConcernRef } from './asReviewConcernRef';
-import type { ReviewAbsorption } from './getStoneReviewAbsorptions';
+import type { ReviewAbsorption } from './ReviewAbsorption';
 
 /**
  * .what = folds a list of absorptions into per-severity concern counts (blockers, nitpicks)

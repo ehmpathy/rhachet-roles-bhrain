@@ -1,5 +1,5 @@
 import { asReviewGivenKey } from './asReviewGivenKey';
-import type { ReviewAbsorption } from './getStoneReviewAbsorptions';
+import type { ReviewAbsorption } from './ReviewAbsorption';
 
 /**
  * .what = the identity of a stance — `(reviewer, about, given key)` — as one string

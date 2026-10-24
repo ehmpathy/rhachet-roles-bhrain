@@ -2,6 +2,8 @@ import { given, then, when } from 'test-fns';
 
 import { asJudgeResidualLines } from './asJudgeResidualLines';
 
+const NONE_SHED = { blockers: 0, nitpicks: 0 };
+
 /**
  * .what = unit cases for the judge's dispute arithmetic render
  * .why = this is the ONE line that answers *"did my dispute move the stone?"*, and it lived
@@ -15,6 +17,7 @@ describe('asJudgeResidualLines', () => {
         expect(
           asJudgeResidualLines({
             disputed: { blockers: 0, nitpicks: 0 },
+            concededBetter: NONE_SHED,
             residual: { blockers: 3, nitpicks: 5 },
             allowBlockers: 0,
             allowNitpicks: 7,
@@ -27,6 +30,7 @@ describe('asJudgeResidualLines', () => {
   given('[case2] a dispute shed a blocker, and the stone now clears', () => {
     const lines = asJudgeResidualLines({
       disputed: { blockers: 1, nitpicks: 0 },
+      concededBetter: NONE_SHED,
       residual: { blockers: 0, nitpicks: 5 },
       allowBlockers: 0,
       allowNitpicks: 7,
@@ -35,7 +39,7 @@ describe('asJudgeResidualLines', () => {
     when('[t0] rendered', () => {
       then('it names what left the tally', () => {
         expect(lines[0]).toEqual(
-          'disputed: 1 blockers, 0 nitpicks excluded from the tally',
+          'disputed: 1 blocker, 0 nitpicks excluded from the tally',
         );
       });
 
@@ -52,6 +56,7 @@ describe('asJudgeResidualLines', () => {
       // residual line a driver reads the hold as "my dispute failed" and re-disputes
       const lines = asJudgeResidualLines({
         disputed: { blockers: 0, nitpicks: 1 },
+        concededBetter: NONE_SHED,
         residual: { blockers: 0, nitpicks: 9 },
         allowBlockers: 0,
         allowNitpicks: 7,
@@ -59,7 +64,7 @@ describe('asJudgeResidualLines', () => {
 
       when('[t0] rendered', () => {
         then('the dispute IS reported as effective', () => {
-          expect(lines[0]).toContain('1 nitpicks excluded from the tally');
+          expect(lines[0]).toContain('1 nitpick excluded from the tally');
         });
 
         then('and the residual shows WHY the stone is still held', () => {
@@ -75,6 +80,7 @@ describe('asJudgeResidualLines', () => {
         expect(
           asJudgeResidualLines({
             disputed: { blockers: 2, nitpicks: 3 },
+            concededBetter: NONE_SHED,
             residual: { blockers: 1, nitpicks: 4 },
             allowBlockers: 0,
             allowNitpicks: 7,
@@ -89,6 +95,7 @@ describe('asJudgeResidualLines', () => {
       then('the allowance renders as given — no Infinity arithmetic', () => {
         const lines = asJudgeResidualLines({
           disputed: { blockers: 1, nitpicks: 0 },
+          concededBetter: NONE_SHED,
           residual: { blockers: 0, nitpicks: 0 },
           allowBlockers: Infinity,
           allowNitpicks: Infinity,
@@ -99,4 +106,48 @@ describe('asJudgeResidualLines', () => {
       });
     });
   });
+
+  given(
+    '[case6] exhausted lanes whose concerns were all conceded `better` — the shed the judge once hid',
+    () => {
+      const lines = asJudgeResidualLines({
+        disputed: NONE_SHED,
+        concededBetter: { blockers: 3, nitpicks: 0 },
+        residual: { blockers: 0, nitpicks: 1 },
+        allowBlockers: 0,
+        allowNitpicks: 7,
+      });
+
+      when('[t0] rendered', () => {
+        then(
+          'it names the better shed, so a lapsed stance would show as absent here',
+          () => {
+            expect(lines).toEqual([
+              'conceded better: 3 blockers, 0 nitpicks excluded from the tally',
+              'residual: 0/0 blockers, 1/7 nitpicks',
+            ]);
+          },
+        );
+      });
+    },
+  );
+
+  given(
+    '[case7] both a dispute and a `better` concession moved the sum',
+    () => {
+      when('[t0] rendered', () => {
+        then('one line per shed kind, then the residual', () => {
+          expect(
+            asJudgeResidualLines({
+              disputed: { blockers: 1, nitpicks: 0 },
+              concededBetter: { blockers: 2, nitpicks: 1 },
+              residual: { blockers: 0, nitpicks: 2 },
+              allowBlockers: 0,
+              allowNitpicks: 7,
+            }),
+          ).toMatchSnapshot();
+        });
+      });
+    },
+  );
 });

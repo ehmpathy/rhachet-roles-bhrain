@@ -1,5 +1,6 @@
-import { UnexpectedCodePathError } from 'helpful-errors';
+import { MalfunctionError } from 'helpful-errors';
 
+import { asRouteStoneSetCommandHead } from './asRouteStoneSetCommandHead';
 import {
   formatReviewBudgetTopupCommand,
   ROUNDS_OFFERED_ON_TOPUP,
@@ -8,6 +9,7 @@ import {
   WARN_TEXT_CONCESSION_URGENT_HARM,
   WARN_TEXT_CONCESSION_URGENT_HEAD,
 } from './genRouteGuardExhaustedReason';
+import { JUDGE_HALT_ASK_HUMAN_LABEL } from './JUDGE_HALT_ASK_HUMAN_LABEL';
 
 /**
  * .what = the lines the `reviewed?` judge prints when a live urgent concession holds the stone
@@ -18,10 +20,11 @@ import {
  *    level alone, so where an urgent lane sits on a lower level an unscoped command would extend
  *    the wrong reviewer and leave the stone held
  *
- * 🔴 the top-up is named the DRIVER's lever: a live urgent concession is the warrant that makes it
- *    driver-owned (rule.always.spend-own-levers-before-escalation), and route.drive's budget halt
- *    labels the same lever `increase budget — yours to spend`. one lever, one owner, on every
- *    surface. the human is told why the stone bought budget — a sentence, never an ask
+ * 🔴 the owner line ("please ask your human to") is held by
+ *    `define.invariant.review.peer.judge.urgent-guides-the-budget-ask`, which mirrors the
+ *    `approved?` judge's ask. `rule.always.spend-own-levers-before-escalation` names the same
+ *    top-up driver-owned under an urgent warrant. the two shipped briefs disagree; the invariant
+ *    holds here until a council reconciles them
  *
  * .note = the round count is the shared `ROUNDS_OFFERED_ON_TOPUP` — the judge and the concede ack
  *         once drifted (`--add 1` here, `2` there), so both read the one const
@@ -32,9 +35,10 @@ export const asJudgeUrgentHaltLines = (input: {
   slugs: string[];
   stone: string;
 }): string[] => {
-  // a halt with no urgent lane would name no lane and offer no command — a caller defect
+  // a halt with no urgent lane would name no lane and offer no command. the one caller is this
+  // repo's own judge, so an empty list is a broken internal invariant — a malfunction, exit 1
   if (input.slugs.length === 0)
-    UnexpectedCodePathError.throw('urgent halt rendered with no urgent lane', {
+    MalfunctionError.throw('urgent halt rendered with no urgent lane', {
       stone: input.stone,
     });
 
@@ -54,10 +58,10 @@ export const asJudgeUrgentHaltLines = (input: {
     '',
     `✋ halted, ${WARN_TEXT_CONCESSION_URGENT_HEAD} — ${input.slugs.join(', ')}`,
     `   ├─ ${WARN_TEXT_CONCESSION_URGENT_HARM}`,
-    '   ├─ increase budget — yours to spend',
+    `   ├─ ${JUDGE_HALT_ASK_HUMAN_LABEL}`,
     ...budgetRows,
     '   │',
-    '   └─ then tell your human why this stone bought budget, address the concession, and run',
-    `      └─ rhx route.stone.set --stone ${input.stone} --as passed`,
+    '   └─ after the grant, address the concession, then run',
+    `      └─ ${asRouteStoneSetCommandHead({ stone: input.stone })} --as passed`,
   ];
 };

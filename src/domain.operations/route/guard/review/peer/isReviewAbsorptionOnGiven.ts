@@ -1,5 +1,5 @@
 import { asReviewGivenKey } from './asReviewGivenKey';
-import type { ReviewAbsorption } from './getStoneReviewAbsorptions';
+import type { ReviewAbsorption } from './ReviewAbsorption';
 
 /**
  * .what = whether a stance answers one reviewer's one given

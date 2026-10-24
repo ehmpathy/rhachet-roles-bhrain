@@ -1,5 +1,5 @@
-import type { ReviewAbsorption } from './getStoneReviewAbsorptions';
 import { isReviewAbsorptionOnGiven } from './isReviewAbsorptionOnGiven';
+import type { ReviewAbsorption } from './ReviewAbsorption';
 
 const FILENAME = '1.test._.review.i001.abc123.r001._.given.by_peer.mech.md';
 

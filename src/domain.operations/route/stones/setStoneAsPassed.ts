@@ -41,7 +41,7 @@ import { genRouteGuardExhaustedReason } from '../guard/review/peer/genRouteGuard
 import { getAllStoneGuardReviewPeerFeedbackUnabsorbedUnforgiven } from '../guard/review/peer/getAllStoneGuardReviewPeerFeedbackUnabsorbedUnforgiven';
 import { getAllStoneUndeclaredConcerns } from '../guard/review/peer/getAllStoneUndeclaredConcerns';
 import { getOneRouteGuardReviewPeerConstraintLever } from '../guard/review/peer/getOneRouteGuardReviewPeerConstraintLever';
-import { getStoneConcessionExhaustionKind } from '../guard/review/peer/getStoneConcededLaneSlugs';
+import { getStoneConcessionExhaustion } from '../guard/review/peer/getStoneConcededLaneSlugs';
 import { getAllReviewLevelsByIndex } from '../guard/review/peer/meter/getAllReviewLevelsByIndex';
 import { getAllReviewPeerMeterStatuses } from '../guard/review/peer/meter/getAllReviewPeerMeterStatuses';
 import { getExhaustionHaltReviewerSlugs } from '../guard/review/peer/meter/getExhaustionHaltReviewerSlugs';
@@ -694,7 +694,7 @@ export const setStoneAsPassed = async (
   // increase and no human (define.invariant.review.peer.budget.urgent-earns-budget,
   // S16). only `none` (a lane never conceded → human wait) and `urgent` (ships harm →
   // budget + a human warn) halt here.
-  const concession = await getStoneConcessionExhaustionKind({
+  const { kind: concession, slugsUrgent } = await getStoneConcessionExhaustion({
     route: input.route,
     stone: stoneMatched.name,
     slugs: exhaustionCheck.skippedSlugs,
@@ -741,6 +741,7 @@ export const setStoneAsPassed = async (
     const exhaustedReason = genRouteGuardExhaustedReason({
       slugs: exhaustionCheck.skippedSlugs,
       concession,
+      slugsUrgent,
     });
 
     // detect a malfunction/constraint that unlocked and broke in this same pass — a

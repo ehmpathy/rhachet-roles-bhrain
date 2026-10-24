@@ -1,32 +1,13 @@
-import { UnexpectedCodePathError } from 'helpful-errors';
+import { MalfunctionError } from 'helpful-errors';
 
 import type { PassageReport } from '@src/domain.objects/Driver/PassageReport';
 
 import { getAllPassageReportsRaw } from '../../../passage/getAllPassageReportsRaw';
 import { asReviewAbsorptionKey } from './asReviewAbsorptionKey';
+import { asReviewGivenKey } from './asReviewGivenKey';
 import { getPassageReportsSinceLastRewind } from './getPassageReportsSinceLastRewind';
 import { isReviewAbsorptionOnGiven } from './isReviewAbsorptionOnGiven';
-
-/**
- * .what = one stance the driver declared, keyed to the concern and given it answered
- */
-export interface ReviewAbsorption {
-  status: 'disputed' | 'conceded';
-  reviewer: string;
-  about: string;
-  given: string;
-  fulcrum?: string;
-  /**
-   * the harm grade a CONCESSION carries — `urgent` or `better` (F028/S14)
-   *
-   * .why = the exhaustion verdict reads it: a budget hit with ≥1 live `urgent` concession
-   *        warns the human, where an all-`better` hit is good enough and proceeds with no
-   *        human (`define.invariant.review.peer.budget.urgent-earns-budget`).
-   * .note = absent on a legacy/ungraded concede, read as `better` (the maintenance floor).
-   *         absent on a DISPUTE always — a dispute concedes naught, so it grades naught.
-   */
-  severity?: 'better' | 'urgent';
-}
+import type { ReviewAbsorption } from './ReviewAbsorption';
 
 /**
  * .what = the absorptions that stand on one stone, keyed `(reviewer, concern, given)`
@@ -74,7 +55,7 @@ export const getStoneReviewAbsorptions = async (input: {
       //    silent skip would exclude no concern from the tally, so the stone could pass with a
       //    stance the engine could not read — a failhide (rule.forbid.failhide). fail loud instead.
       if (!report.reviewer || !report.about || !report.given)
-        throw new UnexpectedCodePathError(
+        throw new MalfunctionError(
           'stance row lacks a keyed field (reviewer/about/given)',
           { report },
         );
@@ -83,7 +64,9 @@ export const getStoneReviewAbsorptions = async (input: {
         status: report.status,
         reviewer: report.reviewer,
         about: report.about,
-        given: report.given,
+        // keyed at the one producer, so every reader downstream sees a key and a legacy absolute
+        // row (≤ 0.42.1) heals at read, with no migration
+        given: asReviewGivenKey({ path: report.given }),
         fulcrum: report.fulcrum,
         severity: report.severity,
       };

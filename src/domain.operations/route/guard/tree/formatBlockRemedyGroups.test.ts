@@ -176,6 +176,62 @@ describe('computeBlockRemedyGroups', () => {
         expect(groups[0]!.cmd).not.toContain('--peer');
       });
     });
+
+    when(
+      '[t3] the urgent mark names its lanes, and one of them sits below the latest level',
+      () => {
+        const groups = computeBlockRemedyGroups({
+          stone: '1.vision',
+          passage: 'blocked',
+          reason:
+            'an urgent concession earned a round (intent); peer reviewer budget exhausted: intent, friction',
+          lever: null,
+        });
+
+        // 🔴 a bare `--add` lands on the latest level alone, so with intent at l1 it would pad
+        //    friction and leave the urgent lane spent. the urgent lane is named, never the set
+        then(
+          'the top-up names the urgent lane with --peer, and only it',
+          () => {
+            expect(groups[0]!.cmd).toEqual([
+              'rhx route.guard.budget --for review --add N --peer intent --stone 1.vision',
+            ]);
+          },
+        );
+      },
+    );
+
+    when('[t4] the urgent mark names two lanes', () => {
+      const groups = computeBlockRemedyGroups({
+        stone: '1.vision',
+        passage: 'blocked',
+        reason:
+          'an urgent concession earned a round (intent, friction); peer reviewer budget exhausted: intent, friction',
+        lever: null,
+      });
+
+      then('one --peer command per urgent lane, in the mark order', () => {
+        expect(groups[0]!.cmd).toEqual([
+          'rhx route.guard.budget --for review --add N --peer intent --stone 1.vision',
+          'rhx route.guard.budget --for review --add N --peer friction --stone 1.vision',
+        ]);
+      });
+
+      then(
+        'each command renders as its own leaf, never a bare continuation',
+        () => {
+          const lines = formatBlockRemedyGroups({
+            groups: [groups[0]!],
+            baseIndent: '   ',
+          });
+          expect(lines).toEqual([
+            '   └─ increase budget — yours to spend',
+            '      ├─ rhx route.guard.budget --for review --add N --peer intent --stone 1.vision',
+            '      └─ rhx route.guard.budget --for review --add N --peer friction --stone 1.vision',
+          ]);
+        },
+      );
+    });
   });
 
   /**

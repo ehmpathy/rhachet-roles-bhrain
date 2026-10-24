@@ -282,6 +282,7 @@ describe('formatRouteDriveBudgetExhausted', () => {
           reason: genRouteGuardExhaustedReason({
             slugs: ['mech-rules'],
             concession: 'urgent',
+            slugsUrgent: [],
           }),
           meters: [meterExhausted],
         });
@@ -313,6 +314,7 @@ describe('formatRouteDriveBudgetExhausted', () => {
           reason: genRouteGuardExhaustedReason({
             slugs: ['mech-rules'],
             concession: 'better',
+            slugsUrgent: [],
           }),
           meters: [meterExhausted],
         });
@@ -338,6 +340,7 @@ describe('formatRouteDriveBudgetExhausted', () => {
           reason: genRouteGuardExhaustedReason({
             slugs: ['mech-rules'],
             concession: 'none',
+            slugsUrgent: [],
           }),
           meters: [meterExhausted],
         });

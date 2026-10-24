@@ -3,7 +3,8 @@ import * as os from 'os';
 import * as path from 'path';
 import { getError, given, then, when } from 'test-fns';
 
-import { findsertReviewPeerGitignore } from './findsertReviewPeerGitignore';
+import { getOneFirstAbsentDir } from './.test/getOneFirstAbsentDir';
+import { findsertReviewSelfGitignore } from './findsertReviewSelfGitignore';
 
 const normalizeResult = (
   result: { action: string; path: string },
@@ -26,14 +27,14 @@ const normalizeResult = (
  * | negative: EISDIR | error-eisdir | case4 |
  * | negative: EACCES | error-eacces, path masked | case5 |
  * | negative: ENOTDIR route | error-enotdir-route | case6 |
- * | negative: ENOTDIR reviews | error-enotdir-reviews | case7 |
- * | negative: ENOTDIR peer | error-enotdir-peer | case8 |
+ * | negative: ENOTDIR review | error-enotdir-review | case7 |
+ * | negative: EEXIST self | error-eexist-self | case8 |
  */
-describe('findsertReviewPeerGitignore', () => {
-  given('[case1] no .reviews/peer directory', () => {
+describe('findsertReviewSelfGitignore', () => {
+  given('[case1] no review/self directory', () => {
     const tempDir = path.join(
       os.tmpdir(),
-      `test-reviewpeer-gitignore-${Date.now()}`,
+      `test-selfreview-gitignore-${Date.now()}`,
     );
 
     afterEach(async () => {
@@ -41,14 +42,14 @@ describe('findsertReviewPeerGitignore', () => {
     });
 
     when('[t0] findsert is called', () => {
-      then('creates .reviews/peer directory', async () => {
-        await findsertReviewPeerGitignore({ route: tempDir });
-        const stat = await fs.stat(path.join(tempDir, '.reviews', 'peer'));
+      then('creates review/self directory', async () => {
+        await findsertReviewSelfGitignore({ route: tempDir });
+        const stat = await fs.stat(path.join(tempDir, 'review', 'self'));
         expect(stat.isDirectory()).toBe(true);
       });
 
       then('creates .gitignore with correct content', async () => {
-        const result = await findsertReviewPeerGitignore({ route: tempDir });
+        const result = await findsertReviewSelfGitignore({ route: tempDir });
         expect(normalizeResult(result, tempDir)).toMatchSnapshot(
           'result-created',
         );
@@ -61,19 +62,17 @@ describe('findsertReviewPeerGitignore', () => {
   given('[case2] .gitignore already present with correct content', () => {
     const tempDir = path.join(
       os.tmpdir(),
-      `test-reviewpeer-gitignore-correct-${Date.now()}`,
+      `test-selfreview-gitignore-correct-${Date.now()}`,
     );
 
     beforeEach(async () => {
-      await fs.mkdir(path.join(tempDir, '.reviews', 'peer'), {
-        recursive: true,
-      });
-      const content = `# ignore all peer-review files
+      await fs.mkdir(path.join(tempDir, 'review', 'self'), { recursive: true });
+      const content = `# ignore all self-review files
 *
 !.gitignore
 `;
       await fs.writeFile(
-        path.join(tempDir, '.reviews', 'peer', '.gitignore'),
+        path.join(tempDir, 'review', 'self', '.gitignore'),
         content,
       );
     });
@@ -84,7 +83,7 @@ describe('findsertReviewPeerGitignore', () => {
 
     when('[t0] findsert is called', () => {
       then('returns unchanged', async () => {
-        const result = await findsertReviewPeerGitignore({ route: tempDir });
+        const result = await findsertReviewSelfGitignore({ route: tempDir });
         expect(normalizeResult(result, tempDir)).toMatchSnapshot(
           'result-unchanged',
         );
@@ -95,15 +94,13 @@ describe('findsertReviewPeerGitignore', () => {
   given('[case3] .gitignore present with incorrect content', () => {
     const tempDir = path.join(
       os.tmpdir(),
-      `test-reviewpeer-gitignore-wrong-${Date.now()}`,
+      `test-selfreview-gitignore-wrong-${Date.now()}`,
     );
 
     beforeEach(async () => {
-      await fs.mkdir(path.join(tempDir, '.reviews', 'peer'), {
-        recursive: true,
-      });
+      await fs.mkdir(path.join(tempDir, 'review', 'self'), { recursive: true });
       await fs.writeFile(
-        path.join(tempDir, '.reviews', 'peer', '.gitignore'),
+        path.join(tempDir, 'review', 'self', '.gitignore'),
         '# old content\n*.log\n',
       );
     });
@@ -114,7 +111,7 @@ describe('findsertReviewPeerGitignore', () => {
 
     when('[t0] findsert is called', () => {
       then('overwrites with correct content', async () => {
-        const result = await findsertReviewPeerGitignore({ route: tempDir });
+        const result = await findsertReviewSelfGitignore({ route: tempDir });
         expect(normalizeResult(result, tempDir)).toMatchSnapshot(
           'result-overwrite',
         );
@@ -127,15 +124,13 @@ describe('findsertReviewPeerGitignore', () => {
   given('[case4] read error other than ENOENT', () => {
     const tempDir = path.join(
       os.tmpdir(),
-      `test-reviewpeer-gitignore-read-error-${Date.now()}`,
+      `test-selfreview-gitignore-read-error-${Date.now()}`,
     );
 
     beforeEach(async () => {
-      await fs.mkdir(path.join(tempDir, '.reviews', 'peer'), {
-        recursive: true,
-      });
+      await fs.mkdir(path.join(tempDir, 'review', 'self'), { recursive: true });
       // create .gitignore as a directory to cause EISDIR on read
-      await fs.mkdir(path.join(tempDir, '.reviews', 'peer', '.gitignore'));
+      await fs.mkdir(path.join(tempDir, 'review', 'self', '.gitignore'));
     });
 
     afterEach(async () => {
@@ -144,9 +139,11 @@ describe('findsertReviewPeerGitignore', () => {
 
     when('[t0] findsert is called', () => {
       then('throws the error', async () => {
-        await expect(
-          findsertReviewPeerGitignore({ route: tempDir }),
-        ).rejects.toMatchSnapshot('error-eisdir');
+        // the message alone, the shape every error case in this file snaps
+        const error = await getError(
+          findsertReviewSelfGitignore({ route: tempDir }),
+        );
+        expect(error.message).toMatchSnapshot('error-eisdir');
       });
     });
   });
@@ -157,11 +154,18 @@ describe('findsertReviewPeerGitignore', () => {
         // the deepest dir mkdir is denied at varies by host (some hosts carry a
         // `/nonexistent`), so the path is masked, then the error is snapped
         const error = await getError(
-          findsertReviewPeerGitignore({
+          findsertReviewSelfGitignore({
             route: '/nonexistent/path/that/cannot/be/created',
           }),
         );
         expect(error.message).toMatch(/^EACCES: permission denied, mkdir '/);
+        // mkdir is denied at the first dir absent from disk; derive it, so the pin is exact on any host
+        const deniedPath = error.message.match(/mkdir '([^']*)'/)?.[1];
+        expect(deniedPath).toEqual(
+          await getOneFirstAbsentDir({
+            path: '/nonexistent/path/that/cannot/be/created',
+          }),
+        );
         expect(
           error.message.replace(/mkdir '[^']*'/, "mkdir '<path>'"),
         ).toMatchSnapshot('error-eacces');
@@ -172,7 +176,7 @@ describe('findsertReviewPeerGitignore', () => {
   given('[case6] route is a file instead of directory', () => {
     const tempDir = path.join(
       os.tmpdir(),
-      `test-reviewpeer-gitignore-route-file-${Date.now()}`,
+      `test-selfreview-gitignore-route-file-${Date.now()}`,
     );
     const routeFile = path.join(tempDir, 'route-as-file');
 
@@ -188,7 +192,7 @@ describe('findsertReviewPeerGitignore', () => {
     when('[t0] findsert is called', () => {
       then('throws ENOTDIR error', async () => {
         const error = await getError(
-          findsertReviewPeerGitignore({ route: routeFile }),
+          findsertReviewSelfGitignore({ route: routeFile }),
         );
         expect(error.message.replace(tempDir, '<route>')).toMatchSnapshot(
           'error-enotdir-route',
@@ -197,15 +201,15 @@ describe('findsertReviewPeerGitignore', () => {
     });
   });
 
-  given('[case7] .reviews path is a file instead of directory', () => {
+  given('[case7] review path is a file instead of directory', () => {
     const tempDir = path.join(
       os.tmpdir(),
-      `test-reviewpeer-gitignore-reviews-file-${Date.now()}`,
+      `test-selfreview-gitignore-review-file-${Date.now()}`,
     );
 
     beforeEach(async () => {
       await fs.mkdir(tempDir, { recursive: true });
-      await fs.writeFile(path.join(tempDir, '.reviews'), 'not a directory');
+      await fs.writeFile(path.join(tempDir, 'review'), 'not a directory');
     });
 
     afterEach(async () => {
@@ -215,25 +219,25 @@ describe('findsertReviewPeerGitignore', () => {
     when('[t0] findsert is called', () => {
       then('throws ENOTDIR error', async () => {
         const error = await getError(
-          findsertReviewPeerGitignore({ route: tempDir }),
+          findsertReviewSelfGitignore({ route: tempDir }),
         );
         expect(error.message.replace(tempDir, '<route>')).toMatchSnapshot(
-          'error-enotdir-reviews',
+          'error-enotdir-review',
         );
       });
     });
   });
 
-  given('[case8] peer path is a file instead of directory', () => {
+  given('[case8] self path is a file instead of directory', () => {
     const tempDir = path.join(
       os.tmpdir(),
-      `test-reviewpeer-gitignore-peer-file-${Date.now()}`,
+      `test-selfreview-gitignore-self-file-${Date.now()}`,
     );
 
     beforeEach(async () => {
-      await fs.mkdir(path.join(tempDir, '.reviews'), { recursive: true });
+      await fs.mkdir(path.join(tempDir, 'review'), { recursive: true });
       await fs.writeFile(
-        path.join(tempDir, '.reviews', 'peer'),
+        path.join(tempDir, 'review', 'self'),
         'not a directory',
       );
     });
@@ -243,12 +247,13 @@ describe('findsertReviewPeerGitignore', () => {
     });
 
     when('[t0] findsert is called', () => {
-      then('throws ENOTDIR error', async () => {
+      then('throws EEXIST error', async () => {
+        // the leaf itself is a file, so mkdir meets a path that exists — EEXIST, not ENOTDIR
         const error = await getError(
-          findsertReviewPeerGitignore({ route: tempDir }),
+          findsertReviewSelfGitignore({ route: tempDir }),
         );
         expect(error.message.replace(tempDir, '<route>')).toMatchSnapshot(
-          'error-enotdir-peer',
+          'error-eexist-self',
         );
       });
     });

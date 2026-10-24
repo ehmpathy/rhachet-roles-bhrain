@@ -1,7 +1,6 @@
 import * as fs from 'fs/promises';
-import * as os from 'os';
 import * as path from 'path';
-import { given, then, useBeforeAll, useThen, when } from 'test-fns';
+import { genTempDir, given, then, useBeforeAll, useThen, when } from 'test-fns';
 
 import { getLiveReviewAbsorptions } from './getLiveReviewAbsorptions';
 import { getStoneReviewCorpus } from './getStoneReviewCorpus';
@@ -23,7 +22,8 @@ const GIVEN_FILENAME =
 const genRouteScene = async (input: {
   rows: Record<string, unknown>[];
 }): Promise<{ route: string }> => {
-  const route = await fs.mkdtemp(path.join(os.tmpdir(), 'route-rewind-key-'));
+  // genTempDir owns the scene's lifecycle — no stray dir left in the ambient tmp
+  const route = genTempDir({ slug: 'route-rewind-key' });
 
   // the lane's one given — the same file before and after the rewind, as a re-mint leaves it
   const reviewsDir = path.join(route, '.reviews', 'peer');

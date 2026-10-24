@@ -1,6 +1,6 @@
 import { asReviewConcernRefLabel } from './asReviewConcernRef';
 import { getAllConcernLabelsDeclaredOnGiven } from './getAllConcernLabelsDeclaredOnGiven';
-import type { ReviewAbsorption } from './getStoneReviewAbsorptions';
+import type { ReviewAbsorption } from './ReviewAbsorption';
 
 /**
  * .what = of the concerns one given raised, the ones no stance yet covers

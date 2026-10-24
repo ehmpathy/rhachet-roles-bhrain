@@ -1,7 +1,7 @@
 import type { RouteGuardReviewPeerGiven } from './getAllRouteGuardReviewPeerGivens';
 import { getLatestPeerGivensPerSlug } from './getLatestPeerGivensPerSlug';
-import type { ReviewAbsorption } from './getStoneReviewAbsorptions';
 import { isReviewAbsorptionOnGiven } from './isReviewAbsorptionOnGiven';
+import type { ReviewAbsorption } from './ReviewAbsorption';
 
 /**
  * .what = of the absorptions given, the ones still keyed to their slug's LATEST given
@@ -36,10 +36,9 @@ export const getLiveReviewAbsorptions = (input: {
   givens: RouteGuardReviewPeerGiven[];
 }): ReviewAbsorption[] => {
   // 🔴 the latest given per slug by a TOTAL order, never the last of the input array.
-  //    input.givens is raw glob output (rule.forbid.order-dependence), so a plain
-  //    `input.givens.map` would key on whichever given globbed last — right on one
-  //    machine, wrong on another. getLatestPeerGivensPerSlug is the one selector both
-  //    the debt and the tally already read through.
+  //    this pure fold trusts no caller's order or pre-pick (rule.forbid.order-dependence):
+  //    a caller that hands every generation would otherwise key on whichever given came
+  //    last. getLatestPeerGivensPerSlug is the one selector the debt and the tally share.
   const givensLatest = getLatestPeerGivensPerSlug({ givens: input.givens });
 
   // a stance is live while it answers some lane's latest given. the match (reviewer + given

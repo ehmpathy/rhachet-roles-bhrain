@@ -1,10 +1,8 @@
 import { ConstraintError } from 'helpful-errors';
 
 import { asRouteStoneSetCommandHead } from './asRouteStoneSetCommandHead';
-import {
-  getAbsorptionOnConcern,
-  type ReviewAbsorption,
-} from './getStoneReviewAbsorptions';
+import { getAbsorptionOnConcern } from './getStoneReviewAbsorptions';
+import type { ReviewAbsorption } from './ReviewAbsorption';
 
 /**
  * .what = R3 — refuses a CONTRARY second stance on the same concern of the same given

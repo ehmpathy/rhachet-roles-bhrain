@@ -2,7 +2,7 @@ import { given, then, when } from 'test-fns';
 
 import type { RouteGuardReviewPeerGiven } from './getAllRouteGuardReviewPeerGivens';
 import { computeLiveUrgentConcessionSlugs } from './getStoneLiveUrgentConcessionSlugs';
-import type { ReviewAbsorption } from './getStoneReviewAbsorptions';
+import type { ReviewAbsorption } from './ReviewAbsorption';
 
 /**
  * .what = unit cases for the WARRANT the budget gate reads
