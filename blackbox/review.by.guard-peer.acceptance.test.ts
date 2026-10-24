@@ -11,6 +11,8 @@ import {
   invokeRouteSkill,
   sanitizeTimeForSnapshot,
 } from './.test/invokeRouteSkill';
+import { maskApprovedOutcome } from './.test/maskApprovedOutcome';
+import { maskConcernMagnitudes } from './.test/maskConcernMagnitudes';
 import { maskVerdictCounts } from './.test/maskVerdictCounts';
 
 const ASSETS_DIR = path.join(__dirname, '.test/assets/route-guard-review-by');
@@ -43,54 +45,6 @@ const VERDICT_ATTEMPTS = 3;
  *        deterministic in that dimension (the verdict itself is what varies, handled by SOME).
  */
 const BRAIN = DEFAULT_TEST_BRAIN_VIA_CLI;
-
-/**
- * .what = masks the concern counts a probabilistic reviewer chooses
- * .why = a concern count is the BRAIN's verdict, never the guard's render; one rubric on one
- *        fixture varies run to run. the seam under test is the guard, so only what the guard
- *        decides stays pinned:
- *
- *          - blockers: a NONZERO count masks to `[N]`; a ZERO survives, since `0 blockers` is
- *            what makes a verdict APPROVED — a pass case whose brain raises a blocker still fails
- *          - nitpicks: EVERY count masks, zero included, with its ✓ / 🟠 glyph. the judge allows
- *            nitpicks up to its threshold, so no verdict here turns on their count
- *          - the verdict word, the 🔴 glyph, the judge outcome, and its threshold survive, so the
- *            verdict CLASS stays pinned
- *
- *        ⇒ a direct `toMatch(/\d+\s*blockers?/i)` assertion per case clamps that a parseable
- *          count reached the guard; this snapshot pins the seam's shape, not the brain's tally.
- */
-const maskConcernMagnitudes = (text: string): string =>
-  text
-    .replace(/\b(?!0\b)\d+ blockers?\b/g, '[N] blockers')
-    .replace(/\b\d+ nitpicks?\b(?: ✓| 🟠)?/g, '[N] nitpicks')
-    .replace(
-      /\b(blockers|nitpicks) exceed threshold \((?!0\b)\d+ > (\d+)\)/g,
-      '$1 exceed threshold ([N] > $2)',
-    );
-
-/**
- * .what = merges the two APPROVED outcomes of a base review into one stable render
- * .why = a base review that approves renders one of two ways, by how many nitpicks the brain chose:
- *
- *          - none:      `🦉 not even a vole`, then `all good 👍` closes the summary
- *          - some:      `🦉 just a few hoots`, and the nitpick row closes the summary
- *
- *        both are approved, and the judge allows nitpicks up to its threshold, so no verdict here
- *        turns on which one the brain drew. a snapshot that pins one of them reds the file on the
- *        other. measured 2026-10-05: `[case-seam-pass-application]` red on `just a few hoots` against
- *        a baseline of `not even a vole`, with `0 blockers` and `passage = allowed` both intact.
- *
- *        the approved CLASS stays pinned by `0 blockers` and the case's own `passage = allowed`
- *        assertion. a blocker outcome (`🦉 needs your talons`) is left verbatim, since that is the
- *        verdict class a dirty case declares.
- *
- * .note = runs AFTER maskConcernMagnitudes, which turns `0 nitpicks` into `[N] nitpicks`.
- */
-const maskApprovedOutcome = (text: string): string =>
-  text
-    .replace(/🦉 (?:not even a vole|just a few hoots)/g, '🦉 [APPROVED]')
-    .replace(/^(.*)├─ \[N\] nitpicks\n\1└─ all good 👍$/gm, '$1└─ [N] nitpicks');
 
 /**
  * .what = sanitizes a route.stone.set guard-tree stdout so it snapshots stably
