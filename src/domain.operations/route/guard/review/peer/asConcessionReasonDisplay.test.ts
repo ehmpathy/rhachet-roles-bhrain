@@ -13,6 +13,7 @@ describe('asConcessionReasonDisplay', () => {
     const reason = genRouteGuardExhaustedReason({
       slugs: { exhausted: ['limited'], urgent: [] },
       concession: 'none',
+      slugsUrgent: [],
     });
 
     when('[t0] decoded', () => {
@@ -32,6 +33,7 @@ describe('asConcessionReasonDisplay', () => {
     const reason = genRouteGuardExhaustedReason({
       slugs: { exhausted: ['limited'], urgent: [] },
       concession: 'better',
+      slugsUrgent: [],
     });
 
     when('[t0] decoded', () => {
@@ -61,6 +63,7 @@ describe('asConcessionReasonDisplay', () => {
     const reason = genRouteGuardExhaustedReason({
       slugs: { exhausted: ['limited'], urgent: [] },
       concession: 'urgent',
+      slugsUrgent: [],
     });
 
     when('[t0] decoded', () => {
@@ -113,6 +116,7 @@ describe('asConcessionReasonDisplay', () => {
             reason: genRouteGuardExhaustedReason({
               slugs: { exhausted: ['limited'], urgent: [] },
               concession: 'none',
+              slugsUrgent: [],
             }),
           }).isConcession,
         ).toBe(false);
@@ -126,6 +130,7 @@ describe('asConcessionReasonDisplay', () => {
             reason: genRouteGuardExhaustedReason({
               slugs: { exhausted: ['limited'], urgent: [] },
               concession: 'better',
+              slugsUrgent: [],
             }),
           }).isConcession,
         ).toBe(true);
@@ -139,6 +144,7 @@ describe('asConcessionReasonDisplay', () => {
             reason: genRouteGuardExhaustedReason({
               slugs: { exhausted: ['limited'], urgent: [] },
               concession: 'urgent',
+              slugsUrgent: [],
             }),
           }).isConcession,
         ).toBe(true);
