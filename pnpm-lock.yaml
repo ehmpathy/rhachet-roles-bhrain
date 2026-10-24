@@ -5,9 +5,9 @@ settings:
   excludeLinksFromLockfile: false
 
 patchedDependencies:
-  rhachet-brains-openrouter@0.1.3:
-    hash: 74e89a9779e9b4bb4c2161c9d574a397707856e00fb524ed48c09161170d9edc
-    path: patches/rhachet-brains-openrouter@0.1.3.patch
+  rhachet-brains-openrouter@0.1.4:
+    hash: a4d0d889197b25b1368fbf9e97845e4962d0b5b189e9adc2795c7bdd75c52f5e
+    path: patches/rhachet-brains-openrouter@0.1.4.patch
   test-fns@1.15.7:
     hash: 091799259f3d50b2f490685757d70addf36a9041c459cc0c7a67fabf637e40d9
     path: patches/test-fns@1.15.7.patch
@@ -159,32 +159,32 @@ importers:
         specifier: 30.2.0
         version: 30.2.0
       rhachet:
-        specifier: 1.49.2
-        version: 1.49.2(zod@4.3.4)
+        specifier: 1.50.1
+        version: 1.50.1(zod@4.3.4)
       rhachet-brains-anthropic:
         specifier: 0.4.3
-        version: 0.4.3(rhachet@1.49.2(zod@4.3.4))
+        version: 0.4.3(rhachet@1.50.1(zod@4.3.4))
       rhachet-brains-openai:
         specifier: 0.3.1
-        version: 0.3.1(@openai/codex-sdk@0.87.0)(rhachet@1.49.2(zod@4.3.4))
+        version: 0.3.1(@openai/codex-sdk@0.87.0)(rhachet@1.50.1(zod@4.3.4))
       rhachet-brains-openrouter:
-        specifier: 0.1.3
-        version: 0.1.3(patch_hash=74e89a9779e9b4bb4c2161c9d574a397707856e00fb524ed48c09161170d9edc)(rhachet@1.49.2(zod@4.3.4))
+        specifier: 0.1.4
+        version: 0.1.4(patch_hash=a4d0d889197b25b1368fbf9e97845e4962d0b5b189e9adc2795c7bdd75c52f5e)(rhachet@1.50.1(zod@4.3.4))
       rhachet-roles-bhrain:
         specifier: link:.
         version: 'link:'
       rhachet-roles-bhrowser:
         specifier: 0.1.0
-        version: 0.1.0(rhachet@1.49.2(zod@4.3.4))
+        version: 0.1.0(rhachet@1.50.1(zod@4.3.4))
       rhachet-roles-bhuild:
-        specifier: 0.23.2
-        version: 0.23.2(rhachet-brains-openrouter@0.1.3(patch_hash=74e89a9779e9b4bb4c2161c9d574a397707856e00fb524ed48c09161170d9edc)(rhachet@1.49.2(zod@4.3.4)))(rhachet-brains-xai@0.3.3(rhachet@1.49.2(zod@4.3.4)))(rhachet-roles-bhrain@)(rhachet@1.49.2(zod@4.3.4))(with-simple-cache@0.15.1)
+        specifier: 0.23.3
+        version: 0.23.3(rhachet-brains-openrouter@0.1.4(patch_hash=a4d0d889197b25b1368fbf9e97845e4962d0b5b189e9adc2795c7bdd75c52f5e)(rhachet@1.50.1(zod@4.3.4)))(rhachet-brains-xai@0.3.3(rhachet@1.50.1(zod@4.3.4)))(rhachet-roles-bhrain@)(rhachet@1.50.1(zod@4.3.4))(with-simple-cache@0.15.1)
       rhachet-roles-ehmpathy:
-        specifier: 1.39.5
-        version: 1.39.5(@huggingface/transformers@3.8.1)(@tensorflow/tfjs@4.22.0(seedrandom@3.0.5))
+        specifier: 1.39.9
+        version: 1.39.9(@huggingface/transformers@3.8.1)(@tensorflow/tfjs@4.22.0(seedrandom@3.0.5))
       rhachet-roles-rhachet:
         specifier: 0.1.7
-        version: 0.1.7(rhachet@1.49.2(zod@4.3.4))
+        version: 0.1.7(rhachet@1.50.1(zod@4.3.4))
       test-fns:
         specifier: 1.15.7
         version: 1.15.7(patch_hash=091799259f3d50b2f490685757d70addf36a9041c459cc0c7a67fabf637e40d9)
@@ -4276,8 +4276,8 @@ packages:
       '@openai/codex-sdk': '>=0.77.0'
       rhachet: '>=1.21.4'
 
-  rhachet-brains-openrouter@0.1.3:
-    resolution: {integrity: sha512-DaA0AgnL7z1CBS7SGpxlZbT2T6RL6caW++hoMJ1PNxZl/si9VGVRQN8YWS1l23GtNtimL1mdImolnDsXmm6s2g==}
+  rhachet-brains-openrouter@0.1.4:
+    resolution: {integrity: sha512-53zCiwDPYBbFzMn4gqix9QYBnPTx1ertNU4UGZGpRTWVF8KJ8qLazKlMcrQggw+YqiAp5amDBNvmzFFKLIt/IQ==}
     engines: {node: '>=8.0.0'}
     peerDependencies:
       rhachet: '>=1.21.4'
@@ -4292,8 +4292,8 @@ packages:
     resolution: {integrity: sha512-nIMR3dQZhYw0/mHdZ6V5Rb6HVinyy/WcggeLZU1g0p/eckLY8n8vxMRVzjxcuzafu9mZmuBBErT5jIZDMZYNbg==}
     engines: {node: '>=8.0.0'}
 
-  rhachet-roles-bhuild@0.23.2:
-    resolution: {integrity: sha512-1+Dm4wriX4NyoRNivvAW90xbOBklSE09C6WFrkGtJLwzz/517jeUm/mtuYzpOwI30JYa093Je+vUGhGCYwgRog==}
+  rhachet-roles-bhuild@0.23.3:
+    resolution: {integrity: sha512-lZ0a5f7UxRv2X8OR1aXhoVTCnHzYqooFORcgA60r6fvBWwcNXPyyN4jPhfji/LaQF3JIrMjdImOdBZyz/f2HOw==}
     engines: {node: '>=18.0.0'}
     peerDependencies:
       rhachet: '>=1.43.1'
@@ -4301,8 +4301,8 @@ packages:
       rhachet-brains-xai: '>=0.3.3'
       rhachet-roles-bhrain: '>=0.39.0'
 
-  rhachet-roles-ehmpathy@1.39.5:
-    resolution: {integrity: sha512-9Utv11Z8Ela5diWvO0d61y+K/c8FToMdinyDCGGfE4xwg/Q+GsouW1kn1+cSFCbn79Nxw5V+R4uN8QAxNt1cNw==}
+  rhachet-roles-ehmpathy@1.39.9:
+    resolution: {integrity: sha512-GWr5pik+2yl9Alj9SYLi1DVDozGr69U6rmLjjR3bg4JKFJAOVi13O01Xild0wOmYjPRvZX1pNX14TiuiieBMFA==}
     engines: {node: '>=8.0.0'}
 
   rhachet-roles-rhachet@0.1.7:
@@ -4311,8 +4311,8 @@ packages:
     peerDependencies:
       rhachet: '>=1.0.0'
 
-  rhachet@1.49.2:
-    resolution: {integrity: sha512-JXlaTnca2ax84j8zKj0ZcIxbekRLaHNEApbE9X2ifpOU68/5h4C9JhQNiVkn06DhYva2f5TWeq+EsY/+Y5nf6Q==}
+  rhachet@1.50.1:
+    resolution: {integrity: sha512-wqdOdo7oUPl1u9nXBhJIN4dGgqNVEXhOoLn4dIEtq6JTj2cb2iOOwtMWOTsgiwDuSNZsDBxuc0WKIU/TnLArTA==}
     engines: {node: '>=22.0.0'}
     hasBin: true
     peerDependencies:
@@ -9545,7 +9545,7 @@ snapshots:
       domain-objects: 0.31.9
       helpful-errors: 1.5.3
 
-  rhachet-brains-anthropic@0.4.3(rhachet@1.49.2(zod@4.3.4)):
+  rhachet-brains-anthropic@0.4.3(rhachet@1.50.1(zod@4.3.4)):
     dependencies:
       '@anthropic-ai/claude-agent-sdk': 0.1.76(zod@4.3.4)
       '@anthropic-ai/sdk': 0.71.2(zod@4.3.4)
@@ -9553,20 +9553,20 @@ snapshots:
       helpful-errors: 1.5.3
       iso-price: 1.1.1(domain-objects@0.31.9)
       iso-time: 1.11.1
-      rhachet: 1.49.2(zod@4.3.4)
+      rhachet: 1.50.1(zod@4.3.4)
       rhachet-artifact: 1.0.1
       rhachet-artifact-git: 1.1.5
       type-fns: 1.21.0
       zod: 4.3.4
 
-  rhachet-brains-openai@0.3.1(@openai/codex-sdk@0.87.0)(rhachet@1.49.2(zod@4.3.4)):
+  rhachet-brains-openai@0.3.1(@openai/codex-sdk@0.87.0)(rhachet@1.50.1(zod@4.3.4)):
     dependencies:
       '@openai/codex-sdk': 0.87.0
       domain-objects: 0.31.9
       helpful-errors: 1.5.3
       iso-price: 1.1.1(domain-objects@0.31.9)
       openai: 5.8.2(zod@4.3.4)
-      rhachet: 1.49.2(zod@4.3.4)
+      rhachet: 1.50.1(zod@4.3.4)
       rhachet-artifact: 1.0.1
       rhachet-artifact-git: 1.1.5
       type-fns: 1.21.0
@@ -9575,14 +9575,14 @@ snapshots:
     transitivePeerDependencies:
       - ws
 
-  rhachet-brains-openrouter@0.1.3(patch_hash=74e89a9779e9b4bb4c2161c9d574a397707856e00fb524ed48c09161170d9edc)(rhachet@1.49.2(zod@4.3.4)):
+  rhachet-brains-openrouter@0.1.4(patch_hash=a4d0d889197b25b1368fbf9e97845e4962d0b5b189e9adc2795c7bdd75c52f5e)(rhachet@1.50.1(zod@4.3.4)):
     dependencies:
       domain-objects: 0.31.9
       helpful-errors: 1.7.5
       iso-price: 1.2.0(domain-objects@0.31.9)
       iso-time: 1.11.7
       openai: 5.8.2(zod@4.3.4)
-      rhachet: 1.49.2(zod@4.3.4)
+      rhachet: 1.50.1(zod@4.3.4)
       rhachet-artifact: 1.0.1
       rhachet-artifact-git: 1.1.5
       simple-on-disk-cache: 1.8.1(with-simple-cache@0.17.3)
@@ -9591,13 +9591,13 @@ snapshots:
     transitivePeerDependencies:
       - ws
 
-  rhachet-brains-xai@0.3.3(rhachet@1.49.2(zod@4.3.4)):
+  rhachet-brains-xai@0.3.3(rhachet@1.50.1(zod@4.3.4)):
     dependencies:
       domain-objects: 0.31.9
       helpful-errors: 1.5.3
       iso-price: 1.1.1(domain-objects@0.31.9)
       openai: 5.8.2(zod@4.3.4)
-      rhachet: 1.49.2(zod@4.3.4)
+      rhachet: 1.50.1(zod@4.3.4)
       rhachet-artifact: 1.0.1
       rhachet-artifact-git: 1.1.5
       type-fns: 1.21.0
@@ -9605,28 +9605,28 @@ snapshots:
     transitivePeerDependencies:
       - ws
 
-  rhachet-roles-bhrowser@0.1.0(rhachet@1.49.2(zod@4.3.4)):
+  rhachet-roles-bhrowser@0.1.0(rhachet@1.50.1(zod@4.3.4)):
     dependencies:
       as-procedure: 1.1.7
       domain-objects: 0.31.9
       helpful-errors: 1.7.3
       playwright: 1.60.0
-      rhachet-brains-xai: 0.3.3(rhachet@1.49.2(zod@4.3.4))
+      rhachet-brains-xai: 0.3.3(rhachet@1.50.1(zod@4.3.4))
       type-fns: 1.21.0
       zod: 4.3.4
     transitivePeerDependencies:
       - rhachet
       - ws
 
-  rhachet-roles-bhuild@0.23.2(rhachet-brains-openrouter@0.1.3(patch_hash=74e89a9779e9b4bb4c2161c9d574a397707856e00fb524ed48c09161170d9edc)(rhachet@1.49.2(zod@4.3.4)))(rhachet-brains-xai@0.3.3(rhachet@1.49.2(zod@4.3.4)))(rhachet-roles-bhrain@)(rhachet@1.49.2(zod@4.3.4))(with-simple-cache@0.15.1):
+  rhachet-roles-bhuild@0.23.3(rhachet-brains-openrouter@0.1.4(patch_hash=a4d0d889197b25b1368fbf9e97845e4962d0b5b189e9adc2795c7bdd75c52f5e)(rhachet@1.50.1(zod@4.3.4)))(rhachet-brains-xai@0.3.3(rhachet@1.50.1(zod@4.3.4)))(rhachet-roles-bhrain@)(rhachet@1.50.1(zod@4.3.4))(with-simple-cache@0.15.1):
     dependencies:
       domain-objects: 0.31.9
       emoji-space-shim: 0.0.0
       helpful-errors: 1.7.3
       iso-time: 1.11.3
-      rhachet: 1.49.2(zod@4.3.4)
-      rhachet-brains-openrouter: 0.1.3(patch_hash=74e89a9779e9b4bb4c2161c9d574a397707856e00fb524ed48c09161170d9edc)(rhachet@1.49.2(zod@4.3.4))
-      rhachet-brains-xai: 0.3.3(rhachet@1.49.2(zod@4.3.4))
+      rhachet: 1.50.1(zod@4.3.4)
+      rhachet-brains-openrouter: 0.1.4(patch_hash=a4d0d889197b25b1368fbf9e97845e4962d0b5b189e9adc2795c7bdd75c52f5e)(rhachet@1.50.1(zod@4.3.4))
+      rhachet-brains-xai: 0.3.3(rhachet@1.50.1(zod@4.3.4))
       rhachet-roles-bhrain: 'link:'
       simple-on-disk-cache: 1.8.1(with-simple-cache@0.15.1)
       test-fns: 1.15.7(patch_hash=091799259f3d50b2f490685757d70addf36a9041c459cc0c7a67fabf637e40d9)
@@ -9635,7 +9635,7 @@ snapshots:
     transitivePeerDependencies:
       - with-simple-cache
 
-  rhachet-roles-ehmpathy@1.39.5(@huggingface/transformers@3.8.1)(@tensorflow/tfjs@4.22.0(seedrandom@3.0.5)):
+  rhachet-roles-ehmpathy@1.39.9(@huggingface/transformers@3.8.1)(@tensorflow/tfjs@4.22.0(seedrandom@3.0.5)):
     dependencies:
       '@atjsh/llmlingua-2': 2.0.3(@huggingface/transformers@3.8.1)(@tensorflow/tfjs@4.22.0(seedrandom@3.0.5))(js-tiktoken@1.0.21)
       '@ehmpathy/as-command': 1.0.5
@@ -9655,11 +9655,11 @@ snapshots:
       - '@huggingface/transformers'
       - '@tensorflow/tfjs'
 
-  rhachet-roles-rhachet@0.1.7(rhachet@1.49.2(zod@4.3.4)):
+  rhachet-roles-rhachet@0.1.7(rhachet@1.50.1(zod@4.3.4)):
     dependencies:
-      rhachet: 1.49.2(zod@4.3.4)
+      rhachet: 1.50.1(zod@4.3.4)
 
-  rhachet@1.49.2(zod@4.3.4):
+  rhachet@1.50.1(zod@4.3.4):
     dependencies:
       '@aws-sdk/client-sso': 3.1041.0
       '@aws-sdk/credential-provider-sso': 3.972.54
