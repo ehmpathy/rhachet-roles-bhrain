@@ -2,15 +2,15 @@
 
 > **when you see a small, safe, clean fix — do it now. never defer it.**
 
-and when it is genuinely too large to ride along, the deferral is not free: it costs a caught dream, or a named fulcrum, or both. what it may never be is a mention that evaporates with the round.
-
 ```
 see a fix
    ├─ small + clean  →  🔴 DO IT NOW
    └─ too big        →  catch a dream  (+ a fulcrum, if the deferral was a JUDGMENT)
 ```
 
-⇒ its PAIR is `rule.always.catch-dreams-for-followups`, booted beside it. a role that holds one half alone inverts the default and reads the dream as the primary move.
+and when it is genuinely too large to ride along, the deferral is not free: it costs a caught dream, or a named fulcrum, or both. what it may never be is a mention that evaporates with the round.
+
+⇒ its PAIR is `rule.always.catch-dreams-for-followups`.
 
 ## .why — a deferral costs more than the fix did, and the gap widens
 
@@ -19,10 +19,7 @@ see a fix
   - ⇒ to defer is to throw it away and buy it again later, at full price
 - the mention evaporates — *"we should also fix X"* said mid-round is gone the moment the round is
   - it feels like a record and is not one, which is the exact failure `rule.always.archive-the-wishers-words-verbatim` prevents one level down
-- deferrals compound, and a queue is the proof
-  - measured 2026-08-30: this repo's radio queue held 41 open, 0 claimed — each item small when it was seen, each deferred by someone who could have done it
-
-⇒ the asymmetry is the whole argument: a small fix costs seconds now and a re-derivation later.
+- deferrals compound: a queue fills with items each small when seen, each deferred by someone who could have done it
 
 | when… | then… |
 |---|---|
@@ -51,7 +48,7 @@ the test is not *"is this in scope?"* — scope is the excuse a deferral hides b
 | ✅ | 🔴 | defer — and raise a fulcrum. the dirt is the reason, and the reason is what the council reads |
 | 🔴 | — | defer — and raise a fulcrum. unsafe is a harder stop than unclean |
 
-🟡 **"i wasn't asked to" is not one of the two questions.** scouts honor is exactly the practice of the fix nobody asked for. a change that leaves a file worse than it found it satisfied its ask and failed the round.
+🟡 **"i wasn't asked to" is not one of the two questions.**
 
 ## 🟡 .a deferral owes a DREAM, and a judged deferral owes a FULCRUM too
 
@@ -60,9 +57,9 @@ the test is not *"is this in scope?"* — scope is the excuse a deferral hides b
 | a caught dream | the *work* — what is still owed, and where | the next traveler finds it without you |
 | a fulcrum | the *decision* — that you saw it, judged it dirty, and chose to defer | the council can overrule the judgment |
 
-⇒ a fix deferred for size gets a dream. a fix deferred for DIRT gets both — a dirt call is a judgment about ripple cost, and a judgment made alone is what a fulcrum list exists to surface (`rule.always.itemize-the-fulcrums-you-best-guess`).
+⇒ a fix deferred for size gets a dream. a fix deferred for DIRT gets both (`rule.always.itemize-the-fulcrums-you-best-guess`).
 
-anti-patterns: the batch — five small fixes gathered for "all at once" at the end, where the end does not come and the context that made each cheap is gone · the smuggled refactor — the mirror failure, a large change that ripples ridden along under scouts honor, which is what the CLEAN question refuses.
+anti-patterns: the batch — five small fixes gathered for "all at once" at the end · the smuggled refactor — a large change that ripples ridden along under scouts honor, which is what the CLEAN question refuses.
 
 blocker: a small, safe, clean fix seen and deferred · a deferral with no caught dream (the record is the price of the defer) · a deferral for dirt with no fulcrum raised (the judgment is unreviewable) · a large change that ripples, smuggled in under scouts honor (it fails CLEAN).
 

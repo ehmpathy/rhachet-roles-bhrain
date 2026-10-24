@@ -96,7 +96,7 @@ describe('keyrack.firewall-key-absent.acceptance', () => {
       then('CLAMP: the report names the command that sets the key', () => {
         const row = asOpenrouterRow({ stdout: result.stdout });
         expect(row.fix).toEqual(
-          'rhx keyrack set --key OPENROUTER_API_KEY --env test',
+          'rhx keyrack set --key OPENROUTER_API_KEY --env test --vault <vault>',
         );
       });
 

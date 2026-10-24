@@ -10,15 +10,6 @@ not:
   - briefs/domain.terms/term=*.md                # members: read on demand, never booted
 ```
 
-## .why
-
-a `ref` entry boots its **path** — so a subdomain at `ref` charges one line per member to every
-session, forever, and the charge grows with each member. `ref` caps a body's cost, never a count's.
-a catalog names every member at a fraction of that, since the path is computed, not printed.
-
-**the `not` is load-critical**: an unlisted member falls back into `<also>` and costs its path
-anyway. a catalog with no `not` beside it pays twice.
-
 ## .the test
 
 > **would a reader rather see every member's path, or one index that names them all?**
@@ -34,10 +25,6 @@ anyway. a catalog with no `not` beside it pays twice.
 the catalog owes: every member by name, grouped by boundary root · the path formula, once, with an
 example · a census note (hand-kept; a member on disk absent here is drift) · its rules by path.
 it obeys `rule.require.catalog-is-an-index`.
-
-measured 2026-10-16, this repo's `role=any` boot: 148 glossary terms at `ref` cost ~5.3k tokens of
-paths per boot; one catalog at `say` (934) plus a `not` brought 29.8k → 23.9k, every term one
-computed path away.
 
 blocker: a catalog at `say` whose members are left out of `not`.
 nitpick: a catalogable subdomain of ~20+ members booted as paths · a catalog that prints every path

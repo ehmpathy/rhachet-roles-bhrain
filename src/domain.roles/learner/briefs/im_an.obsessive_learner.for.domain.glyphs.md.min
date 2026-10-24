@@ -6,15 +6,7 @@ a glyph is a term on a surface with no room for a word. it obeys the term law �
 
 the failures, verbatim from the term rules: two glyphs for one concept · one glyph for two concepts · a glyph claimed with no record.
 
-## 🟡 .the repair cost is worse than a term's
-
-a term appears in the contracts that use it. a glyph prefixes **every surface it marks** — a readme header, a stdout line, a status line, a declared config field, and every snapshot of all four.
-
-⇒ a claimed glyph spreads at once, and **each surface makes the repair dearer**. catalog it in the round that claims it, or the next claimant greps, finds no match, and takes it.
-
 ## 🔴 .a grep proves a glyph UNUSED — never UNCLAIMED
-
-a glyph may be **reserved** for a role that does not exist yet. it greps clean the whole time and is never free. **only the catalog settles it.**
 
 | when… | then… |
 |---|---|

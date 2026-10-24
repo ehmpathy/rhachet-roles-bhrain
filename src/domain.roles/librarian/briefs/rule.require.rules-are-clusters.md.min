@@ -9,14 +9,6 @@ rule.forbid.$topic.example=$id.md     # ONE file per occurrence — opt-in, on d
 
 the rule keeps **exactly one** worked case — the sharpest — so a reader grasps the mechanism without a second fetch. every **other** occurrence, and the full record of the worked one (the sweep, the injections, the residual), lives in an example file beside it.
 
-## .why
-
-a rule that absorbs every occurrence **stops to be a rule and becomes a logbook.** the reader who opened it wanted the mechanism and the fix; they now scroll past four dated incidents to reach them.
-
-each occurrence is a **true** fact about the class, so each addition is locally correct — the artifact degrades through a sequence of good edits. and it degrades **fastest for the rules that fire most**, which are the ones a reader most needs lean.
-
-⇒ the three grains are stated once in `rule.require.catalog-is-an-index`. here: **the class stays; the occurrences eject.**
-
 ## .one file per occurrence, never one file per rule
 
 ```
@@ -24,8 +16,6 @@ each occurrence is a **true** fact about the class, so each addition is locally 
 👍  rule.forbid.$topic.example=R10-U1.md
 👎  rule.forbid.$topic.example=occurrences.md
 ```
-
-**the id in the filename is what makes a record citable.** a reviewer who wants to point at one incident hands over a path; a reader who wants one incident opens one file. an `example=occurrences.md` collapses both and is the accretion pattern in a new coat.
 
 ## .the `.see also` convention — the opt-in must be discoverable
 

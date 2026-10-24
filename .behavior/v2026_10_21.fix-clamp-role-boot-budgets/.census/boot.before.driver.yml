@@ -1,0 +1,189 @@
+always:
+  briefs:
+    ref:
+      - briefs/im_a.bhrain_owl.md
+      - briefs/howto.create-routes.[ref].md
+      # offroad-first, template-later — `rule.prefer.wet-over-dry` at the route grain.
+      # ref beside the mechanics it governs: it fires only when a route is BORN, which
+      # is rare, and howto.create-routes is where a driver already looks at that moment
+      - briefs/rule.prefer.walk-a-route-before-you-template-it.md
+      # DEREFERENCED from a say-level rule that names it by path, so the `say` tier
+      # stays a fixed, small footprint while the depth grows beside it
+      # (role=any/boot.yml's stated policy; rule.prefer.decompose-a-subject-via-suffixes)
+      #
+      # how much a re-arrival actually costs. ref because it answers a question a driver
+      # ASKS ("is re-arrival expensive?"), which is the dereference case exactly
+      - briefs/howdoes.the-guard-caches-a-clean-reviewer-by-artifact-hash.md
+      # the worked case behind rule.forbid.unanswered-exits-from-a-blocker: a reported
+      # 32 iterations, ~9 days, 300+ givens, zero takens. ref because the rule carries the
+      # counts it needs; the full walk is what a reader fetches when they doubt it — and
+      # this file is where the provenance lives, since the source branch is unreachable
+      - briefs/rule.forbid.unanswered-exits-from-a-blocker.example=the-28-iteration-stall.md
+      # the worked case behind …via-a-taken-per-point's approved-lane clause: two approved
+      # rounds, five re-raises, zero takens — and the tool's own reply, which said the taken
+      # was unowed. ref because the rule carries the counts; the round-by-round walk and the
+      # verbatim tool reply are what a reader fetches when they doubt the approved-lane hole
+      - briefs/rule.always.converge-with-reviewers.via-a-taken-per-point.example=the-approved-lane-that-re-raised.md
+      # the five words of the review conversation — reviewer · given · concern · stance · taken —
+      # and the cardinalities between them. ref because it answers a question a driver ASKS
+      # ("what is the difference between a stance and a taken?"), which is the dereference case
+      # exactly; the rules that FIRE at each moment already boot at say. it is the map a driver
+      # fetches once, early, and rarely re-opens
+      - briefs/howdoes.a-concern-travels-from-reviewer-to-absorption.md
+      # the INVARIANTS of the review system the driver drives within — the laws the
+      # engine holds true by construction, that the gates-map (say-level, below) and
+      # the always-rules both cite. they live UNDER the driver role (not role=any) so
+      # a driver boot actually holds them: a driver that cannot dereference its own
+      # system laws reads every cite as a phantom path. ref because a driver fetches
+      # one law ON DEMAND when a halt turns on it; the say-level gates-map is the
+      # entry point that names each and points down here
+      - briefs/define.invariant.review.peer.absorb.md
+      - briefs/define.invariant.review.peer.passage.md
+      - briefs/define.invariant.review.peer.exhausted.md
+      - briefs/define.invariant.review.peer.absorption.disputable-regardless-of-verdict.md
+      - briefs/define.invariant.review.peer.budget.urgent-earns-budget.md
+      - briefs/define.invariant.review.peer.judge.urgent-guides-the-budget-ask.md
+      # the RouteReminder runbook — the auto-wire path, the manual inspect/override skills,
+      # and what the nudge does NOT cover. ref because a driver never turns the reminder on:
+      # route.drive findserts it and reaps it, so an enrolled drive is covered with no action.
+      # howto.drive-routes (say, below) names this path for the rare case a driver must
+      # inspect or override by hand — the dereference case exactly
+      - briefs/howto.route-reminder.[guide].md
+    say:
+      # the map of the SYSTEM a driver operates within — the review gates in order,
+      # the invariant behind each, and what is required of the driver to clear it.
+      # say-level because a driver must HOLD the shape of the system it drives within,
+      # not fetch it: a driver that does not know the gates exist cannot read a halt,
+      # and the halt arrives unannounced. it names the six define.invariant.review.peer.*
+      # laws (ref, above) and points down into each for the depth
+      - briefs/howdoes.the-review-gates-you-drive-within.md
+      # the WHY under every rule below.
+      # a rule tells a driver WHAT to do, and cannot tell them what to do in a case
+      # it does not enumerate — no rule enumerates every case. so a why held one
+      # dereference away is a why they do not have at the edge, and the edge arrives
+      # unannounced. each ships a `.md.min`, which is what makes the tier affordable
+      #
+      # why a route is walked one stone at a time rather than raced — the ground under
+      # drive-autonomously and converge-to-terminal alike
+      - briefs/research.importance-of-focus.[philosophy].md
+      # why a route is grown rather than specified up front — the ground under
+      # defer-fulcrums-to-last and the walk-before-you-template rule
+      - briefs/define.routes-are-gardened.[philosophy].md
+      - briefs/rule.always.drive-autonomously.md
+      # no workarounds — fix every failure at its root cause, and treat any friction in a
+      # tool you build as a critical defect fixed in the round it surfaced. say-level
+      # because it must fire AT the moment a patch to the input looks cheaper than a fix to
+      # the tool; that moment recurs every round, and each patch is locally sane, so a rule
+      # fetched on demand is never fetched — the cost shows only in sum, as hours
+      - briefs/rule.forbid.workarounds.md
+      - briefs/rule.always.converge-with-reviewers._.md
+      # the zoom-in: the mechanical obligation the loop above imposes. say-level
+      # because it fires at each re-arrival, and its absence reads to the reviewer
+      # as no fix at all — which a driver then mis-diagnoses as a reviewer defect
+      - briefs/rule.always.converge-with-reviewers.via-a-taken-per-point.md
+      # the ABSORB law — you have not absorbed a reviewer's feedback until you absorb
+      # each concern within it (one disposition per concern, disputed or conceded).
+      # say-level because it fires AT the halt: a driver who reads the response they
+      # already wrote as coverage of a concern they skipped seeks a passage the gate
+      # holds. it grounds define.invariant.review.peer.absorb — feedbackAbsorbed ⟺
+      # every concern absorbed — and merges the old per-reviewer .taken into the
+      # per-concern act, so the argument lives once (a fulcrum for a dispute)
+      - briefs/rule.always.absorb-every-concern.md
+      # the FORBID twin of the two rules above — they say what to write and that every
+      # point owes one; this says a blocker may not be left by any other door. say-level
+      # because every forbidden exit is CHEAPER than the answer, so the cheap door is
+      # taken by default and no driver who takes it feels dishonest. a rule that arrives
+      # after the re-roll meets a driver who already believes the critique was withdrawn
+      - briefs/rule.forbid.unanswered-exits-from-a-blocker.md
+      # the COMPLEMENT of the rule above, and it must boot beside it or the pair
+      # misleads. that rule forbids `--as blocked` for a critique you have NOT
+      # answered; this one requires it for a critique you HAVE answered and cannot
+      # close. read alone, the forbid leaves a driver no word for the second state,
+      # so they re-arrive — measured at five rounds with budget at 45/107. say-level
+      # because the recognition test must fire AT the decision to re-arrive; a rule
+      # that arrives after the fifth round meets a driver who already spent them
+      - briefs/rule.always.raise-a-blocker-a-taken-cannot-close.md
+      # the severity a concede carries. say-level because it fires AT the concede:
+      # `better` (the default) never earns budget and evolves after the floor is
+      # spent; `urgent` is the closed harm set (security · safety · monetary ·
+      # reputation · behavioral) and the ONE concession that earns more. a rule
+      # that arrives after the grade meets a driver who already reached for
+      # `urgent` to buy a round with no nameable harm — the mis-grade
+      # rule.forbid.overzealous-blockers forbids, from the driver's seat
+      - briefs/rule.always.concede-with-a-severity.md
+      - briefs/rule.always.converge-to-terminal.md
+      - briefs/rule.always.defer-fulcrums-to-last.md
+      # the RECORD half of the rule above. say-level because it fires at each decision:
+      # a record swept together at the end has already lost the rejected fork and the
+      # reason as it stood at the time, which is the half a reviewer needs
+      - briefs/rule.always.itemize-the-fulcrums-you-best-guess.md
+      # say-level because it must fire WHILE the yield is written. a rule that arrives
+      # after the yield is done meets a driver who must cut two thirds of a finished
+      # document — a teardown, where the same rule read early is free
+      - briefs/rule.always.yield-the-output-not-the-archaeology.md
+      # it carries the overflowed-reviewer recipe as one of its driver-fixable causes:
+      # an overflowed reviewer exits 2 and so grades `constraint` where the taxonomy
+      # says `malfunction` — one cause row here rather than a separate brief
+      - briefs/rule.always.diagnose-reviewer-malfunctions.md
+      # the repair/defer pair, and the driver OWNS both. the act is a route act: a
+      # defect found mid-drive, priced against the diff already open. the achiever
+      # and the learner keep it by symlink, so neither loses it
+      #
+      # the REPAIR half. say-level because it fires at the moment a fix is SEEN: a
+      # deferral is cheap to make and expensive to reverse, since the comprehension
+      # that made the fix small is spent in that turn and gone by the next
+      - briefs/rule.always.fix-forward-under-scouts-honor.md
+      # the CATCH half — what a followup owes when the two questions send it to a
+      # deferral. say-level beside its pair because a followup merely spoken is gone
+      # with the round, and by then the context that made the fix cheap is gone too
+      - briefs/rule.always.catch-dreams-for-followups.md
+      # the escalation family. it names the driver role in its own text, so it
+      # boots here rather than under role=any
+      - briefs/rule.always.spend-own-levers-before-escalation.md
+      # the last rung of that same ladder — the step immediately before the foreman.
+      # a driver rule, not a reviewer one: the reviewer is the peer PHONED, never the
+      # one who phones. say-level because it must fire AT the moment an escalation is
+      # reached for; a discipline that arrives after the human was pulled has already
+      # spent the one resource it exists to conserve
+      - briefs/rule.always.get-a-second-opinion-before-foreman.md
+      # the counterweight to that ladder's FIRST rung. spend-own-levers sorts remedies by
+      # owner and says spend yours first; this names the one remedy a driver must not spend
+      # even once the human has granted it. say-level because the moment it must fire is
+      # exactly the moment a commit looks like the fix — `--diffs since-main` unions the
+      # whole uncommitted branch, so an overflowed lane makes the commit both effective and
+      # attractive. a rule that arrives after it meets a driver who already changed what the
+      # reviewers can see, and no reviewer consented to that cut
+      - briefs/rule.forbid.commits-the-route-did-not-ask-for.md
+      # the SECOND remedy a driver must not spend, and it sits beside the commit for a
+      # reason: both are a review-scope change made by the party under review. a commit
+      # changes what the reviewers can SEE; a hand-run `rhx review` changes WHO reviews
+      # and under what terms — and it draws no budget, so it voids the scarcity the whole
+      # ladder runs on. say-level because the moment it must fire is the moment a lane
+      # overflows, when a hand-run read is both effective and free. a rule that arrives
+      # after it meets a driver who already holds verdicts the engine never read
+      - briefs/rule.forbid.hand-run-reviews.md
+      # the ladder that has NO lever. say-level because it fires exactly when a driver
+      # is tempted to reach for one — and by the time an override is asked for, the
+      # human's attention is already spent on what they cannot grant
+      - briefs/rule.always.bear-every-self-review.md
+      # BORROWED — the file here is a symlink into the learner, which owns it. the act
+      # is capture-before-context-fades, which is the learner's whole subject; the
+      # driver is merely the role most often in the room when the wisher speaks. the
+      # symlink is what lets a driver-only enrollment keep it
+      # (same shape as achiever/briefs/im_a.bhrain_owl.md).
+      # say-level because it must fire AT the moment the wisher speaks — a rule that
+      # arrives after the round has ended meets a driver who must reconstruct the
+      # quote from memory, which is the exact failure it exists to prevent
+      - briefs/rule.always.archive-the-wishers-words-verbatim.md
+      # BORROWED, same shape and same owner — the clamp on the rule above. a driver
+      # cites the wisher more than any other role (a yield, a fulcrum, an invariant),
+      # so it is the role most apt to paste the words rather than the path. to boot the
+      # archive half alone is to teach that the quote is precious and leave unsaid that
+      # it belongs in exactly one file
+      - briefs/rule.forbid.verbatim-quotes-outside-seeds.md
+      - briefs/howto.drive-routes.[guide].md
+      - briefs/howto.run-self-reviews.[guide].md
+      - briefs/howto.navigate-fulcrum-choices.[guide].md
+  skills:
+    say:
+      - skills/route.stone.set.sh

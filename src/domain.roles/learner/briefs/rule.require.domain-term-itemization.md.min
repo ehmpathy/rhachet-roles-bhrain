@@ -10,13 +10,6 @@ every **domain term** — a noun, verb, or adj that composes this repo's declare
 | a `domain.operation` name → its verb + nouns/adjs (`getStone` → `get` + `stone`) | vocab **imported** from a dependency (`DomainEntity`, `Role` are the tool's terms) |
 | | a plain local variable that names no domain concept |
 
-## .why
-
-- code that speaks one canonical vocabulary is legible to every traveler, human or robot
-- a term discovered and not itemized is a lesson lost — the next traveler re-derives it, or **invents a synonym**
-- the glossary compounds: each itemized word makes the next dobj/dop easier to name
-- itemized early, the vocabulary composes; invented at the keyboard under deadline, it drifts
-
 ## .how — a `choice._.` cluster per term
 
 - `term=<boundary…>.<x>._.choice._.md` — **say**: chosen word, kind, forbidden synonyms, refs, `.what`

@@ -4,15 +4,6 @@ before you improvise an approach, look for the paved one — and when it exists,
 
 pavement = any artifact a past traveler left so the next need not re-derive: a brief, a howto, a template, a skill, a route, a term cluster, a resolved dispute, a rule.
 
-this is the withdrawal half of externalization. the learner had four deposit rules and none for withdrawal — and every deposit rule is justified by a read that no rule required.
-
-a lesson externalized and never consulted is lost at higher cost than one never written.
-
-## .the two arguments, and they are peers
-
-1. it is faster, and it avoids re-derived mistakes — the paved path carries the incidents that bought it
-2. only a reader can improve the pavement — so a skipped read freezes it. an unread brief cannot be corrected, so it does not merely fail to help; it stops to improve, and drifts. the improviser fixes their own run and leaves the hole open for all who follow
-
 ## .where to look — cheapest first, stop at the first hit
 
 1. this repo's briefs — `rhx grepsafe --pattern '<concept>' --path src --glob '*.md'`
@@ -20,16 +11,12 @@ a lesson externalized and never consulted is lost at higher cost than one never 
 3. skills, templates, routes — `rhx globsafe --pattern '.agent/**/skills/*'`
 4. the org — `rhx git.repo.get lines --repos 'ehmpathy/*' --words '<concept>'`
 
-`grepsafe` reports a lower bound, never a census — its silence has three causes, and the third is yours.
-
 - `--glob` matches the basename. a `/` in it matches no file, and reports that as a clean `0 matches`, exit 0 — indistinguishable from a genuine absence. scope with `--path`
-- it does not read a dot-prefixed file, at any scope. measured 2026-09-06: 91 `.md` files in this repo are invisible to it, `domain.terms/.readme.md` and `.dream/.readme.md` among them
+- a dot-prefixed file may be skipped, so a `.readme.md` can be invisible to it
 - the pattern, which survives both repairs above. prose is the worst corpus for a literal match: markdown puts `**` and backticks between the letters (`FAIL` misses `**FAIL**`), a writer inflects freely (`withdrawn` misses `WITHDREW`), and a settled rename leaves the old word live only in memory (`cast*` misses `as*`)
-- and one miss is structural, never unlucky: the layer. a blackbox test asserts on rendered output, so it carries the human's word and cannot carry the identifier. measured: `byRound` returned zero across every test file in `src/domain.operations/review` — the axis has a dedicated case, and the suite says `by round`. an identifier search finds every white-box test and misses every black-box one, which is the coverage you went to look for
+- and one miss is structural, never unlucky: the layer. a blackbox test asserts on rendered output, so it carries the human's word and cannot carry the identifier. an identifier search finds every white-box test and misses every black-box one, which is the coverage you went to look for
 
 read an empty result as evidence about the pattern first, the corpus second. a false positive is dismissed in seconds; a false negative returns silence, so it is believed — which makes real the braided trail the check was meant to prevent.
-
-and it cuts both ways: a match of two words in one file is co-occurrence, never a relation. a grep that found `markup` + `scaffold` read as a synonym collision; one read showed a hierarchy (`scaffold ⊃ markup`) and retired a half-drafted blocker. a search proposes; only a read disposes.
 
 where the answer must be complete, settle it with a `Glob` or a `Read`. `globsafe` shares neither tool defect; its `--pattern` takes a full path, so the `globsafe` line above is right as written.
 
@@ -66,15 +53,11 @@ blocker: a conclusion re-derived that the repo had settled, with no look · a se
 
 ## a phantom path is not merely an unresolvable name — mark the foreign one
 
-the phantom has a twin that greps identically and is no defect: a name that belongs to another repo.
-
 | the citation | what it is | the repair |
 |---|---|---|
 | a parent claim with no file | a phantom. the argument rests on a premise nobody wrote | write it, or drop the claim |
 | a prescribed artifact — a path the rule tells you to create | not a citation. it names a future file | state the full path |
 | a foreign artifact — in a peer repo | legitimate, and only if marked | say it is foreign, in the same breath |
-
-the unmarked foreign one costs the reader, not the author — it carries a local pointer's full authority, so they glob, find naught, and cannot tell a lost file from a distant one.
 
 test, of every backticked name: "does my argument rest on this, or merely report it?" rests → it must exist here · reports → say where it lives, in the same sentence.
 

@@ -162,6 +162,11 @@ export const genReviewPrefixPrime = async (
     (error: unknown) => ({ ok: false as const, error }),
   );
 
+  // a solo close already released the claim, in the same hold that read the empty peer list
+  // (`getOneGatherOfLeader`). a second release would re-stamp `primedAt` after a late lane
+  // may have read the first, and hold this lane's own review back by one more hold
+  if (settled.ok && settled.outcome === 'solo') return { outcome: 'solo' };
+
   // release — warm only where the poke settled, so no peer reads a cache no request filled
   const release = await setReleaseOfClaim({
     meet,

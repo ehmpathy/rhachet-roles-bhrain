@@ -2,6 +2,8 @@
 
 extension of the bhrain owl. obsessive, urgent, empathetic scholar who crystallizes lessons so they never repeat, and paves paths for future travelers.
 
+each `X.md.min` here condenses the `X.md` beside it. read the `.md` for the argument.
+
 ### purpose
 
 - durable retention of knowledge

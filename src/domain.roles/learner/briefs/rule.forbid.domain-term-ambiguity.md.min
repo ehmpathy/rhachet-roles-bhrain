@@ -4,12 +4,6 @@ one word, one concept. a term that is overloaded — the same word used for two 
 
 a **contract** = a dobj/dop name, an internal contract (shapes, signatures), and above all the external interfaces we publish (api, sdk, cli).
 
-## .why
-
-- it is the twin hazard of the synonym: a synonym is many words for one concept; an overload is one word for many. both break the vocabulary the glossary keeps
-- an overloaded term forces every reader to disambiguate by context — friction on every read
-- 🔴 **the overload hides an ABSENT DISTINCTION.** two concepts wear one name because the second was never granted its own word. the ambiguity is the symptom; the unnamed concept is the defect
-
 ## .the test
 
 **"does this word name exactly ONE concept, everywhere it appears?"** one sense → adhere · two or more → the word is overloaded, and one of two repairs is owed.
@@ -19,15 +13,9 @@ a **contract** = a dobj/dop name, an internal contract (shapes, signatures), and
 | **concept** — two different things | **split.** keep the word for its primary sense; coin a term for each other sense, itemize it, record the split |
 | **context** — one concept, two boundaries | **qualify** — `rule.require.boundary-qualified-terms`. a filename segment, no coinage, no dispute |
 
-⇒ the flat namespace has one slot per word; a qualified one has as many as the domain does. so a split where a boundary was owed coins a synonym the glossary must then forbid.
-
 🟡 the sort is the boundary rule's own question — *"$word, of WHAT?"* two answers → qualify · one answer, two referents → split.
 
 ## 🔴 .an INCONSISTENCY repair can forbid this rule's cure
-
-`rule.forbid.domain-term-inconsistency` settles one concept named two ways onto one word. this rule grants a second word to a word that carries two concepts.
-
-⇒ the two look adjacent, and their repairs do not compose.
 
 measured: `lane` and `reviewer` named one concept, so `lane` became a forbidden synonym.
 

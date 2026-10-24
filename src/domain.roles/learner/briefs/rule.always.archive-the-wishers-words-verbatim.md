@@ -142,6 +142,12 @@ kernel is owed a durable brief, and the two cite each other.**
 
 ⇒ a seed with a `.the lesson kept` section and no brief behind it is a kernel already lost.
 
+## 🔴 .the ENVIRONMENT is not a seed
+
+a channel's switch state, a credential's health, a tool broken that day — these are real, and a
+directive for the session, never a concept a future traveler inherits. **strip the machinery; if
+naught is left, drop it.**
+
 ## .the form — an inventory over the `case` axis
 
 **this rule coins none of the form.** a seed set is an **occurrence set**, exactly as a route's

@@ -4,14 +4,6 @@
 
 this is the WATCH half. `rule.always.externalize.tactics.into_skills` says *write the skill*; this says *the written skill is 💧 fluid — rung 2 of 4*, and it is the learner's permanent job to notice which rung each skill it touches actually sits on.
 
-0 🧠 tribal → 1 📚 brief → 2 💪💧 fluid → 3 💪🔩 rigid → 4 💪🪨 solid. **all five are tools**; they differ only in brain cost per use.
-
-## .why
-
-a **brief** amortizes the derivation; a brain still applies it every time. a **tool** amortizes the execution too — **one call, no brain.** imagine cost is time + tokens, and **a probabilistic step can be wrong** — the third cost, often the largest.
-
-⇒ every rung climbed is paid once and saved without bound. and the leftover glue is the cheapest place to find the next rung, because **you already hold the evidence** — you just did the work by hand.
-
 | when… | then… |
 |---|---|
 | you call a skill, **then** run a command to finish what it started | the follow-up belongs **inside** the skill |
@@ -34,8 +26,6 @@ naught → rung 4 🪨, leave it. one or more steps → each is an unclimbed run
 
 - a **judgment** — weighs an ambiguous case, reads intent, decides a tradeoff → **leave it with the brain.** never fake determinism over judgment
 - a **step** — the same every time, and you could write down exactly what you did → **it is owed a tool**
-
-🟡 the first test alone drives toward a tool that lies; the second alone never notices the gap.
 
 ## .what to do with what you found
 
