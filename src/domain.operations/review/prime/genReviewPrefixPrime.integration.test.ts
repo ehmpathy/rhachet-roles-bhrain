@@ -562,12 +562,20 @@ describe('genReviewPrefixPrime', () => {
         const errorOriginal = console.error;
         console.error = (line: string) => stderr.push(line);
         try {
-          // the lane takes the claim, then the store tears inside its gather window
+          // the lane takes the claim, then the store tears inside its gather window.
+          // .why = the tear waits on the claim itself, never a timer: a timer of a third of
+          //        the window fired late under host load, after the leader's re-read, so the
+          //        leader read a clean claim and went `solo` (integration run 2026-10-24T04-43-44Z)
           const laneAwaited = runOneLane(
             { meet, name: 'a' },
             { prime: fake.prime, log },
           );
-          await new Promise((done) => setTimeout(done, OPTIONS.msOfGather / 3));
+          const msOfStop = Date.now() + OPTIONS.msOfGather;
+          while (
+            (await getOneReviewWatermarkRaw(watermark)) === null &&
+            Date.now() < msOfStop
+          )
+            await new Promise((done) => setTimeout(done, 2));
           await setOneReviewWatermarkRaw({
             ...watermark,
             raw: '{"claimedBy":"pid1.torn","claimedAt":',
