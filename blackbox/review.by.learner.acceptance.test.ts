@@ -13,7 +13,21 @@ import {
   sanitizeRawReviewForSnapshot,
   sanitizeReviewByOutputForSnapshot,
 } from './.test/invokeReviewBySkill';
+import { maskApprovedOutcome } from './.test/maskApprovedOutcome';
+import { maskConcernMagnitudes } from './.test/maskConcernMagnitudes';
 import { maskVerdictCounts } from './.test/maskVerdictCounts';
+
+/**
+ * .what = the raw review chrome of a PASS case, with the brain's free choices masked
+ * .why = on clean code the contract is `0 blockers` and exit 0. how many nitpicks the brain
+ *        raises is its own choice, and it flips the vibe line and the summary's last row. a
+ *        snapshot that pinned `not even a vole` went red in ci run 40052613926 when the brain
+ *        drew one nitpick, with `0 blockers` and exit 0 both intact
+ */
+const asPassChrome = (input: { stdout: string }): string =>
+  maskApprovedOutcome(
+    maskConcernMagnitudes(sanitizeRawReviewForSnapshot(input.stdout)),
+  );
 
 const ASSETS_DIR = path.join(
   __dirname,
@@ -312,7 +326,7 @@ describe('review.by.learner.acceptance', () => {
           // a clean exit asserts FIRST: a timed-out or rejected run fails here, loud, before it
           // reaches toMatchSnapshot — else a `--resnap` pins a truncated tree as truth
           assureCliExitedClean({ cli: res.cli, cwd: res.cwd });
-          expect(sanitizeRawReviewForSnapshot(res.cli.stdout)).toMatchSnapshot();
+          expect(asPassChrome({ stdout: res.cli.stdout })).toMatchSnapshot();
         });
       },
     );
@@ -358,7 +372,7 @@ describe('review.by.learner.acceptance', () => {
           // a clean exit asserts FIRST: a timed-out or rejected run fails here, loud, before it
           // reaches toMatchSnapshot — else a `--resnap` pins a truncated tree as truth
           assureCliExitedClean({ cli: res.cli, cwd: res.cwd });
-          expect(sanitizeRawReviewForSnapshot(res.cli.stdout)).toMatchSnapshot();
+          expect(asPassChrome({ stdout: res.cli.stdout })).toMatchSnapshot();
         });
       },
     );
