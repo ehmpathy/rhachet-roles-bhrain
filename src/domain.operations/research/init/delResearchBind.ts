@@ -1,8 +1,8 @@
 import { execSync } from 'child_process';
 import * as fs from 'fs/promises';
 
-import { sanitizeBranchName } from '@src/domain.operations/review/sanitizeBranchName';
 import { enumFilesFromGlob } from '@src/utils/enumFilesFromGlob';
+import { sanitizeBranchName } from '@src/utils/git/sanitizeBranchName';
 
 /**
  * .what = removes the bind flag for the current branch

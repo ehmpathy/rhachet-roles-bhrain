@@ -583,6 +583,13 @@ describe('stepRouteStatusLine.integration', () => {
             expect(result.line).toEqual('🗿 1.test');
           },
         );
+
+        then('the degrade row is returned as data, with its cause', () => {
+          expect(result.degradeRow).toContain(
+            'phase derivation faulted for stone "1.test"',
+          );
+          expect(result.degradeRow).toContain('SyntaxError');
+        });
       });
     },
   );

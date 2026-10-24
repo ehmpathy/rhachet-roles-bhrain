@@ -141,6 +141,28 @@ exports[`init.claude.status-line.integration given: [case6b] a split-layout repo
 "
 `;
 
+exports[`init.claude.status-line.integration given: [case6e] a split-layout repo that holds the cli/route barrel command of ours when: [t0] the init runs then: its stdout matches the barrel-migration snapshot: init.claude.status-line - configured (barrel migrated) 1`] = `
+"🦉 the path is clear
+
+🗿 init.claude.status-line
+   ├─ status = configured
+   ├─ settings = .claude/settings.of.repo.json
+   ├─ backup = .claude/settings.of.repo.<timestamp>.<pid>.bak.json
+   ├─ takes effect = at each rhx enroll session's next start; a live session keeps its old settings
+   └─ peer actors = derived at each one's next rhx enroll, or the next rhx init --hooks
+"
+`;
+
+exports[`init.claude.status-line.integration given: [case6e] a split-layout repo that holds the cli/route barrel command of ours when: [t1] the init runs a second time then: its stdout matches the barrel-migration rerun snapshot: init.claude.status-line - already configured (barrel migrated) 1`] = `
+"🦉 so it is
+
+🗿 init.claude.status-line
+   ├─ status = already configured
+   ├─ settings = .claude/settings.of.repo.json
+   └─ peer actors = derived at each one's next rhx enroll, or the next rhx init --hooks
+"
+`;
+
 exports[`init.claude.status-line.integration given: [case8] a split-layout repo with no settings.of.repo.json yet when: [t0] the init runs then: its stdout, with a seeded target and no backup, matches the snapshot: init.claude.status-line - configured (split layout, seeded) 1`] = `
 "🦉 the path is clear
 

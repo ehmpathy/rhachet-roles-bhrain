@@ -80,7 +80,6 @@ import { getStoneGuardOverruledLevels } from '@src/domain.operations/route/judge
 import { setRoutePrivilegeAsGranted } from '@src/domain.operations/route/setRoutePrivilegeAsGranted';
 import { stepRouteDrive } from '@src/domain.operations/route/stepRouteDrive';
 import { stepRouteReview } from '@src/domain.operations/route/stepRouteReview';
-import { stepRouteStatusLine } from '@src/domain.operations/route/stepRouteStatusLine';
 import { stepRouteStoneAdd } from '@src/domain.operations/route/stepRouteStoneAdd';
 import { stepRouteStoneDel } from '@src/domain.operations/route/stepRouteStoneDel';
 import { stepRouteStoneGet } from '@src/domain.operations/route/stepRouteStoneGet';
@@ -605,52 +604,6 @@ examples:
 };
 
 /**
- * .what = prints help for route.status.line
- */
-const printStatusLineHelp = (): void => {
-  console.log(
-    `
-route.status.line - emit the current stone as a claude code status line
-
-usage:
-  route.status.line [options]
-
-options:
-  --help             show this help message
-
-output:
-  bound, stone + phase      🗿 <stone>, <phase> <emoji>
-  bound, all stones passed  🗿 route complete 🌴🤙
-  unbound / no stones       (empty line)
-
-  the phase suffix names where inside the stone the driver is, tipped with an
-  attention-color emoji at the end of the line (read the color, then the words):
-    yield 🌾                 the stone yields its artifact — calm, no attention
-    review.self, r7/r10 🔍   self-reviews, r{done}/r{total} — machine's turn
-    review.peer, l3@i002 🔍  peer review, l{level}@i{rounds} — machine's turn
-    judge, approved? 👋      a human must approve — attention needed
-    ..., exhausted 👋        peer budget spent, a human must approve or extend
-    ..., blocked ✋          blocked, act now — attention needed
-    ..., malfunction 💥      a reviewer or judge broke, a human must fix
-
-errors:
-  a genuine fault is logged to stderr and exits non-zero; the harness then renders
-  a blank line (the fault is surfaced on stderr, never silently hidden)
-
-note:
-  the claude code harness runs this with cwd = project root and renders stdout
-  as the status line. it is invoked via the node -e command that
-  init.claude.status-line.sh writes into the repo's claude settings (the file
-  .claude/settings.of.repo.json, or .claude/settings.json in the old layout),
-  not via rhx, whose banner would pollute the single-line output
-
-examples:
-  node -e "import('rhachet-roles-bhrain/cli/route').then(m => m.routeStatusLine())"
-`.trim(),
-  );
-};
-
-/**
  * .what = prints help for route.review
  */
 const printReviewHelp = (): void => {
@@ -696,10 +649,11 @@ examples:
  *    (`repo-rules` blocker.2 at i018; the lane found it at `parseArgs`, and the hole is wider).
  *
  * ⚠️ .note = the inner allowlists are LEFT in place. most are now redundant with this
- *            boundary, and two are not — `routeStatusLine` reframes its guidance, and
- *            `routeStoneSet` tears down its progress spinner first. ⇒ the retirement is a read
- *            of thirteen call sites rather than a delete, and it is caught rather than bundled
- *            into a diff this wide.
+ *            boundary, and one is not — `routeStoneSet` tears down its progress spinner first.
+ *            ⇒ the retirement is a read of twelve call sites rather than a delete, and it is
+ *            caught rather than bundled into a diff this wide. `routeStatusLine` takes no
+ *            boundary here: it forwards to the `cli/route.status.line` entry, which owns its
+ *            fault frame.
  *
  * 🔴 .note = THREE entrypoints deliberately do NOT take this boundary, and each for its own
  *            reason. stated, because a later hand that "finishes the job" would break them:
@@ -771,76 +725,23 @@ export const routeDrive = async (): Promise<void> =>
   });
 
 /**
- * .what = maps a renderer fault to operator-facing guidance for stderr
- * .why = the shared branch-bind lookup advises `--route` to disambiguate a
- *        multi-bind, which is correct for the `--route`-taking subcommands
- *        (route.drive, route.stone.*) but a dead end for this entrypoint — the
- *        status line takes no `--route` flag (it derives the branch-bound route
- *        from cwd). echoing that advice sends an operator down a path that is
- *        silently ignored here, so for the multi-bind case we emit status-line-
- *        scoped guidance (unbind the extras). every other fault passes through
- *        its own message. this only reframes the logged summary; the original
- *        error is still rethrown by the caller (fail-loud, never hidden).
- */
-const asStatusLineFaultGuidance = (input: { error: unknown }): string => {
-  const message =
-    input.error instanceof Error ? input.error.message : String(input.error);
-
-  // the multi-bind ambiguity: drop the `--route` advice (unsupported here)
-  if (
-    input.error instanceof BadRequestError &&
-    message.includes('multiple routes bound to this branch')
-  )
-    return 'multiple routes bound to this branch — unbind the extra route(s) so the status line can pick one';
-
-  // any other fault: surface its own message
-  return message;
-};
-
-/**
  * .what = cli entrypoint for route.status.line skill
  * .why = emits the current stone as a claude code status line (🗿 <stone>)
  *
  * .note = the harness runs this with cwd = project root, so the bound-route
  *         lookup scans from cwd directly (no chdir, no stdin payload needed).
  *
- * .note = fail-open by contract, but via the harness — not a swallowed error.
- *         an unbound or complete route yields an empty line; a genuine fault is
- *         logged loudly to stderr and rethrown, so the process exits non-zero and
- *         the harness renders a blank line. a broken status line never breaks the
- *         session, yet the fault is surfaced (rule.forbid.failhide +
- *         rule.require.failloud) rather than silently hidden.
+ * .note = it forwards to the `cli/route.status.line` subpath entry, so a seat whose
+ *         settings still name this barrel gets the cached line too: one flow, one fault
+ *         frame. the barrel's own module load is the one cost a seat keeps until its repo
+ *         re-runs the driver init, which rewrites the command to the subpath
  */
-export const routeStatusLine = async (): Promise<void> =>
-  runCliEntrypoint(async () => {
-    const options = parseArgs(process.argv);
-
-    if (options.help) {
-      printStatusLineHelp();
-      return;
-    }
-
-    try {
-      // compute and emit the status line (empty when unbound or complete)
-      const result = await stepRouteStatusLine({ route: null });
-      console.log(result.line);
-    } catch (error) {
-      // fail loud, not hidden: log the fault to stderr (never stdout, which the
-      // harness renders as the line) and rethrow so the process exits non-zero.
-      // the harness blanks the line on non-zero exit, so the session is safe while
-      // the fault stays observable (not a failhide — the error is rethrown).
-      // reframe the guidance to this entrypoint (see asStatusLineFaultGuidance) so
-      // an operator is not pointed at an unsupported `--route` flag.
-      console.error(
-        `[route.status.line] fault: ${asStatusLineFaultGuidance({ error })}`,
-      );
-      // a multi-bind is a caller-must-fix constraint (unbind the extra route), so
-      // exit 2 per rule.require.exit-code-semantics, as the peer routeDrive does.
-      // any other fault is a genuine server-fix path: rethrow for a non-zero exit.
-      if (error instanceof BadRequestError) process.exit(2);
-      throw error;
-    }
-  });
+export const routeStatusLine = async (): Promise<void> => {
+  const { routeStatusLine: routeStatusLineViaSubpath } = await import(
+    '@src/contract/cli/route.status.line'
+  );
+  return routeStatusLineViaSubpath();
+};
 
 /**
  * .what = cli entrypoint for route.review skill

@@ -2,8 +2,8 @@ import { execSync } from 'child_process';
 import { BadRequestError } from 'helpful-errors';
 import * as path from 'path';
 
-import { sanitizeBranchName } from '@src/domain.operations/review/sanitizeBranchName';
 import { enumFilesFromGlob } from '@src/utils/enumFilesFromGlob';
+import { sanitizeBranchName } from '@src/utils/git/sanitizeBranchName';
 
 /**
  * .what = resolves the bound research directory for the current branch

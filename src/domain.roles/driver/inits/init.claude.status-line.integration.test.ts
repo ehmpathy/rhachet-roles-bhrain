@@ -18,6 +18,13 @@ import { genTempDir, given, then, useBeforeAll, when } from 'test-fns';
 const INIT_PATH = path.join(__dirname, 'init.claude.status-line.sh');
 
 const RENDERER_COMMAND =
+  'node -e "import(\'rhachet-roles-bhrain/cli/route.status.line\').then(m => m.routeStatusLine())"';
+
+/**
+ * .what = the command a release before the isolated subpath wrote
+ * .why = it loads the whole `cli/route` barrel on every repaint; the init must rewrite it
+ */
+const RENDERER_COMMAND_VIA_BARREL =
   'node -e "import(\'rhachet-roles-bhrain/cli/route\').then(m => m.routeStatusLine())"';
 
 /**
@@ -778,6 +785,75 @@ describe('init.claude.status-line.integration', () => {
             );
           },
         );
+      });
+    },
+  );
+
+  given(
+    '[case6e] a split-layout repo that holds the cli/route barrel command of ours',
+    () => {
+      // the command every repo held before the isolated subpath: it loads the whole
+      // `cli/route` barrel per repaint. ownership names it ours, so `rhx upgrade` moves it
+      const scene = useBeforeAll(async () =>
+        genSplitLayout({
+          slug: 'statusline-init-case6e',
+          roles: ['driver'],
+          grove: 'present',
+          repoSettings: JSON.stringify({
+            statusLine: {
+              type: 'command',
+              command: RENDERER_COMMAND_VIA_BARREL,
+              padding: 0,
+            },
+          }),
+        }),
+      );
+
+      when('[t0] the init runs', () => {
+        const out = useBeforeAll(async () => {
+          const result = runInit({ cwd: scene.repo, home: scene.home });
+          const repoSettings = await readJson(
+            path.join(scene.brain, 'settings.of.repo.json'),
+          );
+          return { ...result, repoSettings };
+        });
+
+        then('it rewrites our line to the isolated subpath', () => {
+          expect(out.exitCode).toEqual(0);
+          expect(out.stdout).toContain('status = configured');
+          expect(out.repoSettings.statusLine?.command).toEqual(
+            RENDERER_COMMAND,
+          );
+        });
+
+        then('its stdout matches the barrel-migration snapshot', () => {
+          expect(
+            asStableInstallerStdout({ stdout: out.stdout }),
+          ).toMatchSnapshot(
+            'init.claude.status-line - configured (barrel migrated)',
+          );
+        });
+      });
+
+      when('[t1] the init runs a second time', () => {
+        const rerun = useBeforeAll(async () =>
+          runInit({ cwd: scene.repo, home: scene.home }),
+        );
+
+        then(
+          'it reports already configured: the migration is idempotent',
+          () => {
+            expect(rerun.stdout).toContain('status = already configured');
+          },
+        );
+
+        then('its stdout matches the barrel-migration rerun snapshot', () => {
+          expect(
+            asStableInstallerStdout({ stdout: rerun.stdout }),
+          ).toMatchSnapshot(
+            'init.claude.status-line - already configured (barrel migrated)',
+          );
+        });
       });
     },
   );

@@ -1,7 +1,8 @@
 import { execSync } from 'child_process';
 
-import { sanitizeBranchName } from '@src/domain.operations/review/sanitizeBranchName';
 import { enumFilesFromGlob } from '@src/utils/enumFilesFromGlob';
+
+import { asRouteBindFlagName } from './asRouteBindFlagName';
 
 /**
  * .what = finds all bind flag files for a branch
@@ -9,28 +10,30 @@ import { enumFilesFromGlob } from '@src/utils/enumFilesFromGlob';
  */
 export const getAllBindFlagsByBranch = async (input: {
   branch: string | null;
-}): Promise<{ branch: string; branchFlat: string; flagFiles: string[] }> => {
+}): Promise<{ branch: string; flagFiles: string[] }> => {
   // get branch name (from input or git)
   const branch =
     input.branch ??
     execSync('git rev-parse --abbrev-ref HEAD').toString().trim();
 
-  // flatten branch name for flag file lookup
-  const branchFlat = sanitizeBranchName({ branch });
-
   // scan for bind flag files (dot: true to traverse .behavior/ etc)
-  const flagGlob = `**/.route/.bind.${branchFlat}.flag`;
+  const flagGlob = `**/.route/${asRouteBindFlagName({ branch })}`;
   const flagFiles = await enumFilesFromGlob({
     glob: flagGlob,
     cwd: process.cwd(),
     dot: true,
     ignore: [
       '**/node_modules/**',
+      '**/.git/**', // git's own store holds no route; dot: true would walk it whole
+      '**/.agent/.actors/**', // per-seat brain state (transcripts, caches); holds no route
+      '**/.agent/.cache/**', // tool caches; holds no route
+
       '**/{dist,.dist}/**',
       '**/{temp,.temp}/**',
       '**/{artifact,.artifact}/**',
     ],
   });
 
-  return { branch, branchFlat, flagFiles };
+  // sort, so a multi-bind fault names its flags in one order on every run
+  return { branch, flagFiles: [...flagFiles].sort() };
 };

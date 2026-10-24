@@ -1,0 +1,203 @@
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
+
+exports[`route.status.line.show.acceptance given: [case1] a human who asks the skill to explain itself when: [t0] --help is passed then: the usage renders whole 1`] = `
+"######################################################################
+# .what = run one real status line repaint, and show what it did
+#
+# .why  = a claim that a repaint was a hit, or that a change showed on
+#         the next repaint, is owed the repaint itself: its line, its
+#         stderr, its cpu, and whether the cache file was rewritten.
+#         the bench reports cost only; this reports the experience.
+#
+# usage:
+#   rhx route.status.line.show                 # one repaint via the subpath
+#   rhx route.status.line.show --drop          # drop the cache first (a cold repaint)
+#   rhx route.status.line.show --via legacy    # the cli/route export, as an unmigrated seat
+#   rhx route.status.line.show --unbound       # repaint as a seat in a repo with no route bound
+#   rhx route.status.line.show --line-arg --help   # pass an arg to the status line itself
+#
+# guarantee:
+#   - runs the exact command the driver init writes into a seat's settings
+#   - never writes route state; only --drop removes the gitignored cache dir
+#   - reports \`hit\` when the cache file was not rewritten, \`miss\` when it was,
+#     \`untouched\` for a --line-arg run that wrote no cache, and \`(not reached)\`
+#     for a repaint that faulted before any cache write
+#   - a faulted repaint ends with a \`💥 MalfunctionError:\` row on stderr
+#   - exit 0 = shown, exit 1 = the repaint itself failed, exit 2 = bad input
+######################################################################
+"
+`;
+
+exports[`route.status.line.show.acceptance given: [case2] a call refused for unknown-arg when: [t0] the skill runs with --bogus then: the refusal matches its snapshot 1`] = `
+"✋ ConstraintError: unknown arg '--bogus'
+"
+`;
+
+exports[`route.status.line.show.acceptance given: [case3] a call refused for via-without-value when: [t0] the skill runs with --via then: the refusal matches its snapshot 1`] = `
+"✋ ConstraintError: --via must be subpath or legacy
+"
+`;
+
+exports[`route.status.line.show.acceptance given: [case4] a call refused for via-unknown when: [t0] the skill runs with --via barrel then: the refusal matches its snapshot 1`] = `
+"✋ ConstraintError: --via must be subpath or legacy
+"
+`;
+
+exports[`route.status.line.show.acceptance given: [case5] a call refused for line-arg-without-value when: [t0] the skill runs with --line-arg then: the refusal matches its snapshot 1`] = `
+"✋ ConstraintError: --line-arg needs a value
+"
+`;
+
+exports[`route.status.line.show.acceptance given: [case6] an unbound seat, repainted cold and then warm when: [t0] the cold repaint runs with the cache dropped then: the repaint renders as its snapshot, volatile bytes masked 1`] = `
+"🦉 one repaint, as a seat sees it
+
+🔍 route.status.line.show
+   ├─ via = rhachet-roles-bhrain/cli/route.status.line
+   ├─ cwd = <seat>
+   ├─ cold = true
+   ├─ cache = miss
+   ├─ cpu = <cpu>s
+   ├─ exit = 0
+   ├─ stdout = (blank line)
+   └─ stderr = (none)
+"
+`;
+
+exports[`route.status.line.show.acceptance given: [case6] an unbound seat, repainted cold and then warm when: [t1] the warm repaint runs over the cache the cold one wrote then: the warm repaint renders as its snapshot, volatile bytes masked 1`] = `
+"🦉 one repaint, as a seat sees it
+
+🔍 route.status.line.show
+   ├─ via = rhachet-roles-bhrain/cli/route.status.line
+   ├─ cwd = <seat>
+   ├─ cold = false
+   ├─ cache = hit
+   ├─ cpu = <cpu>s
+   ├─ exit = 0
+   ├─ stdout = (blank line)
+   └─ stderr = (none)
+"
+`;
+
+exports[`route.status.line.show.acceptance given: [case7] a repaint where node cannot find the package when: [t0] the repaint runs then: the fault renders as its snapshot, host bytes masked 1`] = `
+"🦉 one repaint, as a seat sees it
+
+🔍 route.status.line.show
+   ├─ via = rhachet-roles-bhrain/cli/route.status.line
+   ├─ cwd = <seat>
+   ├─ cold = false
+   ├─ cache = (not reached)
+   ├─ cpu = <cpu>s
+   ├─ exit = 1
+   ├─ stdout = (none)
+   └─ stderr
+      ├─
+      │
+      │  Error [ERR_MODULE_NOT_FOUND]: Cannot find package '<path>' imported from <seat>
+      │
+      └─"
+`;
+
+exports[`route.status.line.show.acceptance given: [case7] a repaint where node cannot find the package when: [t0] the repaint runs then: the malfunction row renders as its snapshot 1`] = `
+"💥 MalfunctionError: the repaint exited 1
+   └─ fix: read the stderr branch of the tree; a module not found asks for npm run build, or pnpm install
+"
+`;
+
+exports[`route.status.line.show.acceptance given: [case8] an arg passed through to the status line itself when: [t0] the repaint runs with --line-arg --help then: the pass-through run renders as its snapshot, volatile bytes masked 1`] = `
+"🦉 one repaint, as a seat sees it
+
+🔍 route.status.line.show
+   ├─ via = rhachet-roles-bhrain/cli/route.status.line
+   ├─ cwd = <seat>
+   ├─ line args = --help
+   ├─ cold = false
+   ├─ cache = untouched
+   ├─ cpu = <cpu>s
+   ├─ exit = 0
+   ├─ stdout
+   │  ├─
+   │  │
+   │  │  route.status.line - emit the current stone as a claude code status line
+   │  │
+   │  │  usage:
+   │  │    route.status.line [options]
+   │  │
+   │  │  options:
+   │  │    --help             show this help message
+   │  │
+   │  │  output:
+   │  │    bound, stone + phase      🗿 <stone>, <phase> <emoji>
+   │  │    bound, all stones passed  🗿 route complete 🌴🤙
+   │  │    unbound / no stones       (empty line)
+   │  │
+   │  │    the phase suffix names where inside the stone the driver is, tipped with an
+   │  │    attention-color emoji at the end of the line (read the color, then the words):
+   │  │      yield 🌾                 the stone yields its artifact — calm, no attention
+   │  │      review.self, r7/r10 🔍   self-reviews, r{done}/r{total} — machine's turn
+   │  │      review.peer, l3@i002 🔍  peer review, l{level}@i{rounds} — machine's turn
+   │  │      judge, approved? 👋      a human must approve — attention needed
+   │  │      ..., exhausted 👋        peer budget spent, a human must approve or extend
+   │  │      ..., blocked ✋          blocked, act now — attention needed
+   │  │      ..., malfunction 💥      a reviewer or judge broke, a human must fix
+   │  │
+   │  │  errors:
+   │  │    a genuine fault is logged to stderr and exits non-zero; the harness then renders
+   │  │    a blank line (the fault is surfaced on stderr, never silently hidden)
+   │  │
+   │  │  cache:
+   │  │    a repaint whose render inputs did not change prints the line already computed,
+   │  │    from .agent/.cache/repo=bhrain/role=driver/skill=route.status.line/ (per branch).
+   │  │    the legacy cli/route export forwards here, so it is cached too, yet still loads
+   │  │    the whole barrel first; re-run the driver init to move a seat to the subpath.
+   │  │    a fault that prints no line is never cached; a degraded line is cached with its
+   │  │    stderr row, and each repaint prints that row again. an unreadable or unwritable
+   │  │    cache is reported on stderr, and the line still prints. a cached line is at most
+   │  │    30s old; a passage, a meter row, a promise, or a route.bind.set shows on
+   │  │    the next repaint. a bind flag that arrives any other way (a pull, a hand edit)
+   │  │    shows within 30s. to force a fresh line, delete that dir
+   │  │
+   │  │  note:
+   │  │    the claude code harness runs this with cwd = project root and renders stdout
+   │  │    as the status line. it is invoked via the node -e command that
+   │  │    init.claude.status-line.sh writes into the repo's claude settings (the file
+   │  │    .claude/settings.of.repo.json, or .claude/settings.json in the old layout),
+   │  │    not via rhx, whose banner would pollute the single-line output
+   │  │
+   │  │  examples:
+   │  │    node -e "import('rhachet-roles-bhrain/cli/route.status.line').then(m => m.routeStatusLine())"
+   │  │
+   │  └─
+   │
+   └─ stderr = (none)
+"
+`;
+
+exports[`route.status.line.show.acceptance given: [case9] an unmigrated seat, repainted through the legacy export when: [t0] the cold legacy repaint runs with the cache dropped then: the legacy repaint renders as its snapshot 1`] = `
+"🦉 one repaint, as a seat sees it
+
+🔍 route.status.line.show
+   ├─ via = rhachet-roles-bhrain/cli/route
+   ├─ cwd = <seat>
+   ├─ cold = true
+   ├─ cache = miss
+   ├─ cpu = <cpu>s
+   ├─ exit = 0
+   ├─ stdout = (blank line)
+   └─ stderr = (none)
+"
+`;
+
+exports[`route.status.line.show.acceptance given: [case9] an unmigrated seat, repainted through the legacy export when: [t1] the warm legacy repaint runs over the cache it wrote then: the warm legacy repaint renders as its snapshot 1`] = `
+"🦉 one repaint, as a seat sees it
+
+🔍 route.status.line.show
+   ├─ via = rhachet-roles-bhrain/cli/route
+   ├─ cwd = <seat>
+   ├─ cold = false
+   ├─ cache = hit
+   ├─ cpu = <cpu>s
+   ├─ exit = 0
+   ├─ stdout = (blank line)
+   └─ stderr = (none)
+"
+`;

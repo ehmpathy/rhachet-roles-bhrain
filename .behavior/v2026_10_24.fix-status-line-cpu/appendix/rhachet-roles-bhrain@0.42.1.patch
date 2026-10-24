@@ -1,0 +1,2114 @@
+diff --git a/dist/contract/cli/emitStatusLineFault.js b/dist/contract/cli/emitStatusLineFault.js
+new file mode 100644
+index 00000000..b5dc13b7
+--- /dev/null
++++ b/dist/contract/cli/emitStatusLineFault.js
+@@ -0,0 +1,24 @@
++"use strict";
++Object.defineProperty(exports, "__esModule", { value: true });
++exports.emitStatusLineFault = void 0;
++const asStatusLineFaultRow_1 = require("../../domain.operations/route/statusLine/asStatusLineFaultRow");
++const isCallerConstraintError_1 = require("../../utils/isCallerConstraintError");
++/**
++ * .what = the status line's fault frame: log the row, then exit
++ * .why = the row and the exit policy are one fact, held in one place. its one caller is
++ *        `route.status.line`, which the legacy `cli/route` export forwards to
++ *
++ * .note = it lives at the contract boundary since it owns the i/o and the exit; the row
++ *         itself stays a pure transformer in the domain
++ * .note = fail loud, never hidden: the row goes to stderr (never stdout, which the harness
++ *         renders as the line). a caller constraint exits 2 (rule.require.exit-code-semantics);
++ *         every other fault is rethrown, so the process exits non-zero with its stack
++ */
++const emitStatusLineFault = (input) => {
++    console.error((0, asStatusLineFaultRow_1.asStatusLineFaultRow)({ error: input.error }));
++    if ((0, isCallerConstraintError_1.isCallerConstraintError)(input.error))
++        process.exit(2);
++    throw input.error;
++};
++exports.emitStatusLineFault = emitStatusLineFault;
++//# sourceMappingURL=emitStatusLineFault.js.map
+\ No newline at end of file
+diff --git a/dist/contract/cli/route.js b/dist/contract/cli/route.js
+index 60279af4..612c939c 100644
+--- a/dist/contract/cli/route.js
++++ b/dist/contract/cli/route.js
+@@ -96,7 +96,6 @@ const getStoneGuardOverruledLevels_1 = require("../../domain.operations/route/ju
+ const setRoutePrivilegeAsGranted_1 = require("../../domain.operations/route/setRoutePrivilegeAsGranted");
+ const stepRouteDrive_1 = require("../../domain.operations/route/stepRouteDrive");
+ const stepRouteReview_1 = require("../../domain.operations/route/stepRouteReview");
+-const stepRouteStatusLine_1 = require("../../domain.operations/route/stepRouteStatusLine");
+ const stepRouteStoneAdd_1 = require("../../domain.operations/route/stepRouteStoneAdd");
+ const stepRouteStoneDel_1 = require("../../domain.operations/route/stepRouteStoneDel");
+ const stepRouteStoneGet_1 = require("../../domain.operations/route/stepRouteStoneGet");
+@@ -551,49 +550,6 @@ examples:
+   route.drive --when hook.onStop     # show stone, exit 2 if unpassed (for onStop hooks)
+ `.trim());
+ };
+-/**
+- * .what = prints help for route.status.line
+- */
+-const printStatusLineHelp = () => {
+-    console.log(`
+-route.status.line - emit the current stone as a claude code status line
+-
+-usage:
+-  route.status.line [options]
+-
+-options:
+-  --help             show this help message
+-
+-output:
+-  bound, stone + phase      🗿 <stone>, <phase> <emoji>
+-  bound, all stones passed  🗿 route complete 🌴🤙
+-  unbound / no stones       (empty line)
+-
+-  the phase suffix names where inside the stone the driver is, tipped with an
+-  attention-color emoji at the end of the line (read the color, then the words):
+-    yield 🌾                 the stone yields its artifact — calm, no attention
+-    review.self, r7/r10 🔍   self-reviews, r{done}/r{total} — machine's turn
+-    review.peer, l3@i002 🔍  peer review, l{level}@i{rounds} — machine's turn
+-    judge, approved? 👋      a human must approve — attention needed
+-    ..., exhausted 👋        peer budget spent, a human must approve or extend
+-    ..., blocked ✋          blocked, act now — attention needed
+-    ..., malfunction 💥      a reviewer or judge broke, a human must fix
+-
+-errors:
+-  a genuine fault is logged to stderr and exits non-zero; the harness then renders
+-  a blank line (the fault is surfaced on stderr, never silently hidden)
+-
+-note:
+-  the claude code harness runs this with cwd = project root and renders stdout
+-  as the status line. it is invoked via the node -e command that
+-  init.claude.status-line.sh writes into the repo's claude settings (the file
+-  .claude/settings.of.repo.json, or .claude/settings.json in the old layout),
+-  not via rhx, whose banner would pollute the single-line output
+-
+-examples:
+-  node -e "import('rhachet-roles-bhrain/cli/route').then(m => m.routeStatusLine())"
+-`.trim());
+-};
+ /**
+  * .what = prints help for route.review
+  */
+@@ -637,10 +593,11 @@ examples:
+  *    (`repo-rules` blocker.2 at i018; the lane found it at `parseArgs`, and the hole is wider).
+  *
+  * ⚠️ .note = the inner allowlists are LEFT in place. most are now redundant with this
+- *            boundary, and two are not — `routeStatusLine` reframes its guidance, and
+- *            `routeStoneSet` tears down its progress spinner first. ⇒ the retirement is a read
+- *            of thirteen call sites rather than a delete, and it is caught rather than bundled
+- *            into a diff this wide.
++ *            boundary, and one is not — `routeStoneSet` tears down its progress spinner first.
++ *            ⇒ the retirement is a read of twelve call sites rather than a delete, and it is
++ *            caught rather than bundled into a diff this wide. `routeStatusLine` takes no
++ *            boundary here: it forwards to the `cli/route.status.line` entry, which owns its
++ *            fault frame.
+  *
+  * 🔴 .note = THREE entrypoints deliberately do NOT take this boundary, and each for its own
+  *            reason. stated, because a later hand that "finishes the job" would break them:
+@@ -705,27 +662,6 @@ const routeDrive = async () => runCliEntrypoint(async () => {
+     }
+ });
+ exports.routeDrive = routeDrive;
+-/**
+- * .what = maps a renderer fault to operator-facing guidance for stderr
+- * .why = the shared branch-bind lookup advises `--route` to disambiguate a
+- *        multi-bind, which is correct for the `--route`-taking subcommands
+- *        (route.drive, route.stone.*) but a dead end for this entrypoint — the
+- *        status line takes no `--route` flag (it derives the branch-bound route
+- *        from cwd). echoing that advice sends an operator down a path that is
+- *        silently ignored here, so for the multi-bind case we emit status-line-
+- *        scoped guidance (unbind the extras). every other fault passes through
+- *        its own message. this only reframes the logged summary; the original
+- *        error is still rethrown by the caller (fail-loud, never hidden).
+- */
+-const asStatusLineFaultGuidance = (input) => {
+-    const message = input.error instanceof Error ? input.error.message : String(input.error);
+-    // the multi-bind ambiguity: drop the `--route` advice (unsupported here)
+-    if (input.error instanceof helpful_errors_1.BadRequestError &&
+-        message.includes('multiple routes bound to this branch'))
+-        return 'multiple routes bound to this branch — unbind the extra route(s) so the status line can pick one';
+-    // any other fault: surface its own message
+-    return message;
+-};
+ /**
+  * .what = cli entrypoint for route.status.line skill
+  * .why = emits the current stone as a claude code status line (🗿 <stone>)
+@@ -733,40 +669,15 @@ const asStatusLineFaultGuidance = (input) => {
+  * .note = the harness runs this with cwd = project root, so the bound-route
+  *         lookup scans from cwd directly (no chdir, no stdin payload needed).
+  *
+- * .note = fail-open by contract, but via the harness — not a swallowed error.
+- *         an unbound or complete route yields an empty line; a genuine fault is
+- *         logged loudly to stderr and rethrown, so the process exits non-zero and
+- *         the harness renders a blank line. a broken status line never breaks the
+- *         session, yet the fault is surfaced (rule.forbid.failhide +
+- *         rule.require.failloud) rather than silently hidden.
++ * .note = it forwards to the `cli/route.status.line` subpath entry, so a seat whose
++ *         settings still name this barrel gets the cached line too: one flow, one fault
++ *         frame. the barrel's own module load is the one cost a seat keeps until its repo
++ *         re-runs the driver init, which rewrites the command to the subpath
+  */
+-const routeStatusLine = async () => runCliEntrypoint(async () => {
+-    const options = parseArgs(process.argv);
+-    if (options.help) {
+-        printStatusLineHelp();
+-        return;
+-    }
+-    try {
+-        // compute and emit the status line (empty when unbound or complete)
+-        const result = await (0, stepRouteStatusLine_1.stepRouteStatusLine)({ route: null });
+-        console.log(result.line);
+-    }
+-    catch (error) {
+-        // fail loud, not hidden: log the fault to stderr (never stdout, which the
+-        // harness renders as the line) and rethrow so the process exits non-zero.
+-        // the harness blanks the line on non-zero exit, so the session is safe while
+-        // the fault stays observable (not a failhide — the error is rethrown).
+-        // reframe the guidance to this entrypoint (see asStatusLineFaultGuidance) so
+-        // an operator is not pointed at an unsupported `--route` flag.
+-        console.error(`[route.status.line] fault: ${asStatusLineFaultGuidance({ error })}`);
+-        // a multi-bind is a caller-must-fix constraint (unbind the extra route), so
+-        // exit 2 per rule.require.exit-code-semantics, as the peer routeDrive does.
+-        // any other fault is a genuine server-fix path: rethrow for a non-zero exit.
+-        if (error instanceof helpful_errors_1.BadRequestError)
+-            process.exit(2);
+-        throw error;
+-    }
+-});
++const routeStatusLine = async () => {
++    const { routeStatusLine: routeStatusLineViaSubpath } = await Promise.resolve().then(() => __importStar(require('../../contract/cli/route.status.line')));
++    return routeStatusLineViaSubpath();
++};
+ exports.routeStatusLine = routeStatusLine;
+ /**
+  * .what = cli entrypoint for route.review skill
+diff --git a/dist/contract/cli/route.status.line.js b/dist/contract/cli/route.status.line.js
+new file mode 100644
+index 00000000..375bcc13
+--- /dev/null
++++ b/dist/contract/cli/route.status.line.js
+@@ -0,0 +1,108 @@
++"use strict";
++var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
++    if (k2 === undefined) k2 = k;
++    var desc = Object.getOwnPropertyDescriptor(m, k);
++    if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) {
++      desc = { enumerable: true, get: function() { return m[k]; } };
++    }
++    Object.defineProperty(o, k2, desc);
++}) : (function(o, m, k, k2) {
++    if (k2 === undefined) k2 = k;
++    o[k2] = m[k];
++}));
++var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (function(o, v) {
++    Object.defineProperty(o, "default", { enumerable: true, value: v });
++}) : function(o, v) {
++    o["default"] = v;
++});
++var __importStar = (this && this.__importStar) || function (mod) {
++    if (mod && mod.__esModule) return mod;
++    var result = {};
++    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
++    __setModuleDefault(result, mod);
++    return result;
++};
++Object.defineProperty(exports, "__esModule", { value: true });
++exports.routeStatusLine = void 0;
++const getInvocationArgs_1 = require("../../domain.operations/cli/getInvocationArgs");
++const stepRouteStatusLineCached_1 = require("../../domain.operations/route/statusLine/stepRouteStatusLineCached");
++/**
++ * .what = cli entrypoint for the route status line, as an isolated subpath
++ * .why = the harness repaints the status line up to ~3 times a second per seat. the
++ *        `cli/route` barrel loads ~90 modules before it can render, which cost each repaint
++ *        ~0.85s of cpu before any work began. this entry imports only node builtins and the
++ *        cache ops, so a repaint whose inputs did not move costs node boot and naught else
++ *        (rule.require.isolated-cli-subpath-exports)
++ *
++ * .note = the render, the fault guidance, and the help text are each imported lazily, only
++ *         on the path that needs them — a cache miss, a fault, or `--help`
++ *
++ * .note = the harness runs this with cwd = project root, so the cache and the bound-route
++ *         lookup both anchor at cwd (no chdir, no stdin payload needed)
++ *
++ * .note = fail-open by contract, but via the harness — not a swallowed error. an unbound or
++ *         complete route yields an empty line; a genuine fault is logged loudly to stderr and
++ *         rethrown, so the process exits non-zero and the harness renders a blank line. a
++ *         multi-bind is a caller-must-fix constraint, so it exits 2
++ *         (rule.require.exit-code-semantics). the legacy `cli/route` export forwards here, so
++ *         both entries share this one contract
++ *
++ * .note = an unreadable or unwritable cache never fails the line: one stderr row names the
++ *         code and the path, the line still prints, and the exit stays 0. silence there would
++ *         restore the full per-repaint cost with no signal
++ * .note = this entry is the one writer of stderr for the status line: the step returns each
++ *         row (a degrade, a cache read fault, a cache write fault) as data
++ */
++const routeStatusLine = async () => {
++    // --help: print usage, no render
++    if ((0, getInvocationArgs_1.getInvocationArgs)(process.argv).includes('--help')) {
++        const { asStatusLineHelp } = await Promise.resolve().then(() => __importStar(require('../../domain.operations/route/statusLine/asStatusLineHelp')));
++        console.log(asStatusLineHelp());
++        return;
++    }
++    // a cancel mid-miss must not discard a render whose cache write is moments away
++    process.once('SIGTERM', onCancelLetTheCacheWriteLand);
++    try {
++        // compute the line (from the cache when current), then emit its rows and the line
++        const result = await (0, stepRouteStatusLineCached_1.stepRouteStatusLineCached)();
++        if (result.degradeRow)
++            console.error(result.degradeRow);
++        if (result.cacheReadFault) {
++            const { asStatusLineCacheReadFaultRow } = await Promise.resolve().then(() => __importStar(require('../../domain.operations/route/statusLine/asStatusLineCacheReadFaultRow')));
++            console.error(asStatusLineCacheReadFaultRow(result.cacheReadFault));
++        }
++        if (result.cacheWriteFault) {
++            const { asStatusLineCacheWriteFaultRow } = await Promise.resolve().then(() => __importStar(require('../../domain.operations/route/statusLine/asStatusLineCacheWriteFaultRow')));
++            console.error(asStatusLineCacheWriteFaultRow(result.cacheWriteFault));
++        }
++        console.log(result.line);
++    }
++    catch (error) {
++        // fail loud, not hidden: the shared fault frame logs, then exits 2 or rethrows
++        const { emitStatusLineFault } = await Promise.resolve().then(() => __importStar(require('../../contract/cli/emitStatusLineFault')));
++        emitStatusLineFault({ error });
++    }
++    finally {
++        // the repaint is done, so a programmatic caller keeps no grace handler
++        process.removeListener('SIGTERM', onCancelLetTheCacheWriteLand);
++    }
++};
++exports.routeStatusLine = routeStatusLine;
++/**
++ * .what = the most a cancelled repaint may run on, to let its cache write land
++ */
++const CANCEL_GRACE_MS = 5000;
++/**
++ * .what = on a cancel, run on for at most the grace, then exit as SIGTERM would
++ * .why = the harness cancels an in-flight repaint when a new update lands. a miss renders
++ *        for about a second, so on a busy seat a cancel would kill each miss before its cache
++ *        write, and every repaint would miss again. the grace lets the write land
++ *
++ * .note = bounded: the timer is unref'd, so a repaint that finishes exits at once, and one
++ *         that hangs is killed at the grace (exit 143). a second SIGTERM kills at once, since
++ *         the handler is registered with `once`
++ */
++const onCancelLetTheCacheWriteLand = () => {
++    setTimeout(() => process.exit(143), CANCEL_GRACE_MS).unref();
++};
++//# sourceMappingURL=route.status.line.js.map
+\ No newline at end of file
+diff --git a/dist/domain.operations/research/init/delResearchBind.js b/dist/domain.operations/research/init/delResearchBind.js
+index 1bdf86f1..d3b19994 100644
+--- a/dist/domain.operations/research/init/delResearchBind.js
++++ b/dist/domain.operations/research/init/delResearchBind.js
+@@ -26,8 +26,8 @@ Object.defineProperty(exports, "__esModule", { value: true });
+ exports.delResearchBind = void 0;
+ const child_process_1 = require("child_process");
+ const fs = __importStar(require("fs/promises"));
+-const sanitizeBranchName_1 = require("../../../domain.operations/review/sanitizeBranchName");
+ const enumFilesFromGlob_1 = require("../../../utils/enumFilesFromGlob");
++const sanitizeBranchName_1 = require("../../../utils/git/sanitizeBranchName");
+ /**
+  * .what = removes the bind flag for the current branch
+  * .why = enables clean unbind with idempotent semantics
+diff --git a/dist/domain.operations/research/init/getResearchBind.js b/dist/domain.operations/research/init/getResearchBind.js
+index da88ef60..c9b904d3 100644
+--- a/dist/domain.operations/research/init/getResearchBind.js
++++ b/dist/domain.operations/research/init/getResearchBind.js
+@@ -27,8 +27,8 @@ exports.getResearchBind = void 0;
+ const child_process_1 = require("child_process");
+ const helpful_errors_1 = require("helpful-errors");
+ const path = __importStar(require("path"));
+-const sanitizeBranchName_1 = require("../../../domain.operations/review/sanitizeBranchName");
+ const enumFilesFromGlob_1 = require("../../../utils/enumFilesFromGlob");
++const sanitizeBranchName_1 = require("../../../utils/git/sanitizeBranchName");
+ /**
+  * .what = resolves the bound research directory for the current branch
+  * .why = enables auto-resolve of research dir from bind flag files
+diff --git a/dist/domain.operations/research/init/setResearchBind.js b/dist/domain.operations/research/init/setResearchBind.js
+index 8599472b..49e1eb38 100644
+--- a/dist/domain.operations/research/init/setResearchBind.js
++++ b/dist/domain.operations/research/init/setResearchBind.js
+@@ -28,8 +28,8 @@ const child_process_1 = require("child_process");
+ const fs = __importStar(require("fs/promises"));
+ const helpful_errors_1 = require("helpful-errors");
+ const path = __importStar(require("path"));
+-const sanitizeBranchName_1 = require("../../../domain.operations/review/sanitizeBranchName");
+ const enumFilesFromGlob_1 = require("../../../utils/enumFilesFromGlob");
++const sanitizeBranchName_1 = require("../../../utils/git/sanitizeBranchName");
+ /**
+  * .what = binds a research directory to the current branch via flag file
+  * .why = enables subsequent research commands to auto-resolve the research dir
+diff --git a/dist/domain.operations/review/genDefaultReviewOutputPath.js b/dist/domain.operations/review/genDefaultReviewOutputPath.js
+index 5b081908..8a980d12 100644
+--- a/dist/domain.operations/review/genDefaultReviewOutputPath.js
++++ b/dist/domain.operations/review/genDefaultReviewOutputPath.js
+@@ -2,7 +2,7 @@
+ Object.defineProperty(exports, "__esModule", { value: true });
+ exports.genDefaultReviewOutputPath = void 0;
+ const child_process_1 = require("child_process");
+-const sanitizeBranchName_1 = require("./sanitizeBranchName");
++const sanitizeBranchName_1 = require("../../utils/git/sanitizeBranchName");
+ /**
+  * .what = gets the current git branch name
+  * .why = needed to organize review outputs by branch
+diff --git a/dist/domain.operations/route/asErrorCauseClause.js b/dist/domain.operations/route/asErrorCauseClause.js
+new file mode 100644
+index 00000000..1a821b71
+--- /dev/null
++++ b/dist/domain.operations/route/asErrorCauseClause.js
+@@ -0,0 +1,42 @@
++"use strict";
++Object.defineProperty(exports, "__esModule", { value: true });
++exports.asErrorCauseClause = void 0;
++/**
++ * .what = reads the human-legible summary out of a caught, unknown-typed throw
++ *
++ * .why  = a `catch (error)` binds `unknown`, so every call site that wants the
++ *         root fault in its message must re-derive the same narrow. done inline
++ *         it is decode-friction at exactly the moment a reader is mid-debug
++ *         (`rule.forbid.inline-decode-friction`), and done inconsistently it
++ *         yields `[object Object]` for a non-Error throw
++ *
++ * 🔴 .why the cause belongs in the MESSAGE and not only in `cause:` metadata =
++ *     the cli renders an error's message as the line a human reads, and appends
++ *     its metadata as a raw json blob below. a fault named only in metadata is
++ *     technically present and practically unread — so `ENOENT` and `EACCES`
++ *     arrive as the same sentence, which is the defect raised i032/r6 + r10
++ *
++ * .note = both are owed, never one. the message carries the cause so a human
++ *         reads it; `cause:` carries the original so the stack trace survives
++ *
++ * .note = `statusLine/asStatusLineFaultRow` reads its message through this leaf too
++ */
++const asErrorCauseClause = (input) => {
++    // the overwhelmingly common case, and the only one that carries an fs code
++    if (input.error instanceof Error)
++        return input.error.message;
++    // ⚠️ a plain object stringifies to `[object Object]`, which names no fault at
++    //    all. json is lossy for a cyclic value, so it falls back rather than throws
++    //    — a cause clause must never itself become the failure
++    if (typeof input.error === 'object' && input.error !== null) {
++        try {
++            return JSON.stringify(input.error);
++        }
++        catch {
++            return String(input.error);
++        }
++    }
++    return String(input.error);
++};
++exports.asErrorCauseClause = asErrorCauseClause;
++//# sourceMappingURL=asErrorCauseClause.js.map
+\ No newline at end of file
+diff --git a/dist/domain.operations/route/bind/MESSAGE_OF_MULTI_BIND.js b/dist/domain.operations/route/bind/MESSAGE_OF_MULTI_BIND.js
+new file mode 100644
+index 00000000..3a048de0
+--- /dev/null
++++ b/dist/domain.operations/route/bind/MESSAGE_OF_MULTI_BIND.js
+@@ -0,0 +1,11 @@
++"use strict";
++Object.defineProperty(exports, "__esModule", { value: true });
++exports.MESSAGE_OF_MULTI_BIND = void 0;
++/**
++ * .what = the head of the fault a bind lookup throws when several routes bind one branch
++ * .why = one owner for the text: the lookup throws it, and the status line detects it to
++ *        swap the `--route` advice it cannot take for its own, so a reword in one place
++ *        reaches both
++ */
++exports.MESSAGE_OF_MULTI_BIND = 'multiple routes bound to this branch';
++//# sourceMappingURL=MESSAGE_OF_MULTI_BIND.js.map
+\ No newline at end of file
+diff --git a/dist/domain.operations/route/bind/asRouteBindFlagName.js b/dist/domain.operations/route/bind/asRouteBindFlagName.js
+new file mode 100644
+index 00000000..bcea7e52
+--- /dev/null
++++ b/dist/domain.operations/route/bind/asRouteBindFlagName.js
+@@ -0,0 +1,15 @@
++"use strict";
++Object.defineProperty(exports, "__esModule", { value: true });
++exports.asRouteBindFlagName = void 0;
++const sanitizeBranchName_1 = require("../../../utils/git/sanitizeBranchName");
++/**
++ * .what = the filename of a branch's bind flag, `.bind.<flat>.flag`
++ * .why = the bind write, the bind lookup glob, and the status line's flag check and
++ *        fingerprint must all name the same file; one transformer keeps them from drift
++ *
++ * .note = imports only `sanitizeBranchName`, which imports naught, so the status line's
++ *         cache hit path may load it at no module cost
++ */
++const asRouteBindFlagName = (input) => `.bind.${(0, sanitizeBranchName_1.sanitizeBranchName)({ branch: input.branch })}.flag`;
++exports.asRouteBindFlagName = asRouteBindFlagName;
++//# sourceMappingURL=asRouteBindFlagName.js.map
+\ No newline at end of file
+diff --git a/dist/domain.operations/route/bind/delRouteBind.js b/dist/domain.operations/route/bind/delRouteBind.js
+index 35a8aa7c..ebcc5f00 100644
+--- a/dist/domain.operations/route/bind/delRouteBind.js
++++ b/dist/domain.operations/route/bind/delRouteBind.js
+@@ -40,6 +40,8 @@ const delRouteBind = async () => {
+     for (const flagPath of flagFiles) {
+         await fs.rm(flagPath, { force: true });
+     }
++    // the status line needs no drop: a bound seat's fingerprint stats this flag, so its next
++    // repaint misses on its own
+     return { deleted: true };
+ };
+ exports.delRouteBind = delRouteBind;
+diff --git a/dist/domain.operations/route/bind/getAllBindFlagsByBranch.js b/dist/domain.operations/route/bind/getAllBindFlagsByBranch.js
+index 510211a6..c60569a3 100644
+--- a/dist/domain.operations/route/bind/getAllBindFlagsByBranch.js
++++ b/dist/domain.operations/route/bind/getAllBindFlagsByBranch.js
+@@ -2,8 +2,8 @@
+ Object.defineProperty(exports, "__esModule", { value: true });
+ exports.getAllBindFlagsByBranch = void 0;
+ const child_process_1 = require("child_process");
+-const sanitizeBranchName_1 = require("../../../domain.operations/review/sanitizeBranchName");
+ const enumFilesFromGlob_1 = require("../../../utils/enumFilesFromGlob");
++const asRouteBindFlagName_1 = require("./asRouteBindFlagName");
+ /**
+  * .what = finds all bind flag files for a branch
+  * .why = shared lookup used by get/set/del bind operations
+@@ -12,22 +12,24 @@ const getAllBindFlagsByBranch = async (input) => {
+     // get branch name (from input or git)
+     const branch = input.branch ??
+         (0, child_process_1.execSync)('git rev-parse --abbrev-ref HEAD').toString().trim();
+-    // flatten branch name for flag file lookup
+-    const branchFlat = (0, sanitizeBranchName_1.sanitizeBranchName)({ branch });
+     // scan for bind flag files (dot: true to traverse .behavior/ etc)
+-    const flagGlob = `**/.route/.bind.${branchFlat}.flag`;
++    const flagGlob = `**/.route/${(0, asRouteBindFlagName_1.asRouteBindFlagName)({ branch })}`;
+     const flagFiles = await (0, enumFilesFromGlob_1.enumFilesFromGlob)({
+         glob: flagGlob,
+         cwd: process.cwd(),
+         dot: true,
+         ignore: [
+             '**/node_modules/**',
++            '**/.git/**', // git's own store holds no route; dot: true would walk it whole
++            '**/.agent/.actors/**', // per-seat brain state (transcripts, caches); holds no route
++            '**/.agent/.cache/**', // tool caches; holds no route
+             '**/{dist,.dist}/**',
+             '**/{temp,.temp}/**',
+             '**/{artifact,.artifact}/**',
+         ],
+     });
+-    return { branch, branchFlat, flagFiles };
++    // sort, so a multi-bind fault names its flags in one order on every run
++    return { branch, flagFiles: [...flagFiles].sort() };
+ };
+ exports.getAllBindFlagsByBranch = getAllBindFlagsByBranch;
+ //# sourceMappingURL=getAllBindFlagsByBranch.js.map
+\ No newline at end of file
+diff --git a/dist/domain.operations/route/bind/getRouteBindByBranch.js b/dist/domain.operations/route/bind/getRouteBindByBranch.js
+index 1821ddf5..c27ba89f 100644
+--- a/dist/domain.operations/route/bind/getRouteBindByBranch.js
++++ b/dist/domain.operations/route/bind/getRouteBindByBranch.js
+@@ -27,6 +27,7 @@ exports.getRouteBindByBranch = void 0;
+ const helpful_errors_1 = require("helpful-errors");
+ const path = __importStar(require("path"));
+ const getAllBindFlagsByBranch_1 = require("./getAllBindFlagsByBranch");
++const MESSAGE_OF_MULTI_BIND_1 = require("./MESSAGE_OF_MULTI_BIND");
+ /**
+  * .what = looks up the bound route for the current (or given) branch
+  * .why = enables auto-lookup of --route from bind flag files
+@@ -41,7 +42,7 @@ const getRouteBindByBranch = async (input) => {
+         return null;
+     // multiple flags found → ambiguity error
+     if (flagFiles.length > 1)
+-        throw new helpful_errors_1.BadRequestError('multiple routes bound to this branch. use --route to disambiguate', { branch, flagFiles });
++        throw new helpful_errors_1.BadRequestError(`${MESSAGE_OF_MULTI_BIND_1.MESSAGE_OF_MULTI_BIND}. use --route to disambiguate`, { branch, flagFiles });
+     // derive route path: flag is at <route>/.route/.bind.*.flag
+     const flagPath = flagFiles[0];
+     const routeDir = path.relative(process.cwd(), path.dirname(path.dirname(flagPath))) || '.';
+diff --git a/dist/domain.operations/route/bind/setRouteBind.js b/dist/domain.operations/route/bind/setRouteBind.js
+index ab0d5bf3..5e63046f 100644
+--- a/dist/domain.operations/route/bind/setRouteBind.js
++++ b/dist/domain.operations/route/bind/setRouteBind.js
+@@ -27,12 +27,29 @@ exports.setRouteBind = void 0;
+ const fs = __importStar(require("fs/promises"));
+ const helpful_errors_1 = require("helpful-errors");
+ const path = __importStar(require("path"));
++const delRouteStatusLineCacheOrWarn_1 = require("../../../domain.operations/route/statusLine/cache/delRouteStatusLineCacheOrWarn");
++const asRouteBindFlagName_1 = require("./asRouteBindFlagName");
+ const getAllBindFlagsByBranch_1 = require("./getAllBindFlagsByBranch");
+ /**
+  * .what = binds a route to the current branch via flag file
+  * .why = enables subsequent route commands to auto-lookup --route
++ *
++ * .note = every bind drops the status line cache, a re-bind of the same route included, so
++ *         the next repaint names the bound route at once. the drop is idempotent, so it runs
++ *         from one exit, after the flag is settled
+  */
+ const setRouteBind = async (input) => {
++    const bound = await setRouteBindFlag({ route: input.route });
++    await (0, delRouteStatusLineCacheOrWarn_1.delRouteStatusLineCacheOrWarn)({ cwd: process.cwd() });
++    return bound;
++};
++exports.setRouteBind = setRouteBind;
++/**
++ * .what = writes the bind flag for the current branch, or finds the one that stands
++ * .why = the flag is the bind; a second bind of the same route is idempotent, and a bind of
++ *        another route while one stands is refused
++ */
++const setRouteBindFlag = async (input) => {
+     // validate route directory found
+     const routeAbsolute = path.resolve(input.route);
+     try {
+@@ -42,7 +59,9 @@ const setRouteBind = async (input) => {
+         throw new helpful_errors_1.BadRequestError(`route directory does not exist: ${input.route}`);
+     }
+     // scan for pre-bound flags for this branch
+-    const { branch, branchFlat, flagFiles: flagFilesFound, } = await (0, getAllBindFlagsByBranch_1.getAllBindFlagsByBranch)({ branch: null });
++    const { branch, flagFiles: flagFilesFound } = await (0, getAllBindFlagsByBranch_1.getAllBindFlagsByBranch)({
++        branch: null,
++    });
+     // reject protected branches
+     const protectedBranches = ['main', 'master'];
+     if (protectedBranches.includes(branch))
+@@ -50,12 +69,12 @@ const setRouteBind = async (input) => {
+             branch,
+         });
+     // if found, check if same route or different
++    const routeRelative = path.relative(process.cwd(), routeAbsolute) || '.';
+     if (flagFilesFound.length > 0) {
+         const flagPathFound = flagFilesFound[0];
+         const routeDirFound = path.relative(process.cwd(), path.dirname(path.dirname(flagPathFound))) ||
+             '.';
+         // same route → idempotent return
+-        const routeRelative = path.relative(process.cwd(), routeAbsolute) || '.';
+         if (routeDirFound === routeRelative)
+             return { route: routeRelative, flagPath: flagPathFound };
+         // different route → error
+@@ -65,12 +84,9 @@ const setRouteBind = async (input) => {
+     const routeStateDir = path.join(routeAbsolute, '.route');
+     await fs.mkdir(routeStateDir, { recursive: true });
+     // write flag file
+-    const flagFileName = `.bind.${branchFlat}.flag`;
+-    const flagPath = path.join(routeStateDir, flagFileName);
++    const flagPath = path.join(routeStateDir, (0, asRouteBindFlagName_1.asRouteBindFlagName)({ branch }));
+     const flagContent = `branch: ${branch}\nbound_by: route.bind skill\n`;
+     await fs.writeFile(flagPath, flagContent);
+-    const routeRelative = path.relative(process.cwd(), routeAbsolute) || '.';
+     return { route: routeRelative, flagPath };
+ };
+-exports.setRouteBind = setRouteBind;
+ //# sourceMappingURL=setRouteBind.js.map
+\ No newline at end of file
+diff --git a/dist/domain.operations/route/guard/parseStoneGuard.js b/dist/domain.operations/route/guard/parseStoneGuard.js
+index 3a1ad4a2..3d1a3cf1 100644
+--- a/dist/domain.operations/route/guard/parseStoneGuard.js
++++ b/dist/domain.operations/route/guard/parseStoneGuard.js
+@@ -29,11 +29,11 @@ const helpful_errors_1 = require("helpful-errors");
+ const iso_time_1 = require("iso-time");
+ const path = __importStar(require("path"));
+ const RouteStoneGuard_1 = require("../../../domain.objects/Driver/RouteStoneGuard");
++const asErrorCauseClause_1 = require("../../../domain.operations/route/asErrorCauseClause");
+ const asGuardPositiveInt_1 = require("../../asGuardPositiveInt");
+ const asBrainSubKey_1 = require("./asBrainSubKey");
+ const asDeclaredGuardKey_1 = require("./asDeclaredGuardKey");
+ const asErrorCause_1 = require("./asErrorCause");
+-const asErrorCauseClause_1 = require("./asErrorCauseClause");
+ const asGuardKeyValue_1 = require("./asGuardKeyValue");
+ const GUARD_KEYS_1 = require("./GUARD_KEYS");
+ const isGuardValueLiteral_1 = require("./isGuardValueLiteral");
+diff --git a/dist/domain.operations/route/statusLine/asStatusLineCacheDropFaultRow.js b/dist/domain.operations/route/statusLine/asStatusLineCacheDropFaultRow.js
+new file mode 100644
+index 00000000..be043a4c
+--- /dev/null
++++ b/dist/domain.operations/route/statusLine/asStatusLineCacheDropFaultRow.js
+@@ -0,0 +1,13 @@
++"use strict";
++Object.defineProperty(exports, "__esModule", { value: true });
++exports.asStatusLineCacheDropFaultRow = void 0;
++const asRouteStatusLineCachePath_1 = require("./cache/asRouteStatusLineCachePath");
++const ROUTE_STATUS_LINE_CACHE_MAX_AGE_MS_1 = require("./cache/ROUTE_STATUS_LINE_CACHE_MAX_AGE_MS");
++/**
++ * .what = the stderr row for a status line cache drop that failed at bind time
++ * .why = the bind landed; the line may lag it for up to the max age. the row names the
++ *        code, the bound on the lag, and the fix, beside its peers (the read and write rows)
++ */
++const asStatusLineCacheDropFaultRow = (input) => `[route.bind.set] warn: status line cache drop failed (${input.code}); the line may lag the bind for up to ${ROUTE_STATUS_LINE_CACHE_MAX_AGE_MS_1.ROUTE_STATUS_LINE_CACHE_MAX_AGE_MS / 1000}s. fix: remove ${asRouteStatusLineCachePath_1.DIR_OF_ROUTE_STATUS_LINE_CACHE}/, or repair its permissions`;
++exports.asStatusLineCacheDropFaultRow = asStatusLineCacheDropFaultRow;
++//# sourceMappingURL=asStatusLineCacheDropFaultRow.js.map
+\ No newline at end of file
+diff --git a/dist/domain.operations/route/statusLine/asStatusLineCacheReadFaultRow.js b/dist/domain.operations/route/statusLine/asStatusLineCacheReadFaultRow.js
+new file mode 100644
+index 00000000..e91fdc2a
+--- /dev/null
++++ b/dist/domain.operations/route/statusLine/asStatusLineCacheReadFaultRow.js
+@@ -0,0 +1,16 @@
++"use strict";
++Object.defineProperty(exports, "__esModule", { value: true });
++exports.asStatusLineCacheReadFaultRow = void 0;
++/**
++ * .what = the one stderr row the status line prints when its cache file cannot be read
++ * .why = an unreadable cache is a miss, never a fault: the line renders afresh and the write
++ *        that follows replaces the file. the row names the fault, the path, and the fix, so a
++ *        cache that cannot heal (its dir unwritable too) is never silent
++ *
++ * .note = loaded lazily, only when a read faulted, so the hit path never pays for it
++ * .note = no class header, as for the write fault row: no error is thrown, the line prints
++ *         correct, and the exit is 0 (route fulcrum F9)
++ */
++const asStatusLineCacheReadFaultRow = (input) => `[route.status.line] fault: cache read failed (${input.code}) at ${input.cachePath}, the line renders afresh. fix: remove ${input.cachePath}, or repair its permissions`;
++exports.asStatusLineCacheReadFaultRow = asStatusLineCacheReadFaultRow;
++//# sourceMappingURL=asStatusLineCacheReadFaultRow.js.map
+\ No newline at end of file
+diff --git a/dist/domain.operations/route/statusLine/asStatusLineCacheWriteFaultRow.js b/dist/domain.operations/route/statusLine/asStatusLineCacheWriteFaultRow.js
+new file mode 100644
+index 00000000..0f000dac
+--- /dev/null
++++ b/dist/domain.operations/route/statusLine/asStatusLineCacheWriteFaultRow.js
+@@ -0,0 +1,41 @@
++"use strict";
++var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
++    if (k2 === undefined) k2 = k;
++    var desc = Object.getOwnPropertyDescriptor(m, k);
++    if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) {
++      desc = { enumerable: true, get: function() { return m[k]; } };
++    }
++    Object.defineProperty(o, k2, desc);
++}) : (function(o, m, k, k2) {
++    if (k2 === undefined) k2 = k;
++    o[k2] = m[k];
++}));
++var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (function(o, v) {
++    Object.defineProperty(o, "default", { enumerable: true, value: v });
++}) : function(o, v) {
++    o["default"] = v;
++});
++var __importStar = (this && this.__importStar) || function (mod) {
++    if (mod && mod.__esModule) return mod;
++    var result = {};
++    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
++    __setModuleDefault(result, mod);
++    return result;
++};
++Object.defineProperty(exports, "__esModule", { value: true });
++exports.asStatusLineCacheWriteFaultRow = void 0;
++const path = __importStar(require("path"));
++/**
++ * .what = the one stderr row the status line prints when its cache cannot be written
++ * .why = an unwritable cache never blanks the line, yet it silently restores the full
++ *        per-repaint cost; the row names the fault, the path, and the fix
++ *
++ * .note = loaded lazily, only when a write faulted, so the hit path never pays for it
++ * .note = no `ConstraintError:` / `MalfunctionError:` header, by design: no error is thrown,
++ *         the line prints correct, and the exit is 0. a class header would claim a failure
++ *         that did not happen. it keeps the extant degrade prefix `[route.status.line] fault:`
++ *         (route fulcrum F9)
++ */
++const asStatusLineCacheWriteFaultRow = (input) => `[route.status.line] fault: cache write failed (${input.code}) at ${input.cachePath}, the line renders uncached. fix: make ${path.dirname(input.cachePath)} a writable dir (remove a file in its place, or repair its permissions)`;
++exports.asStatusLineCacheWriteFaultRow = asStatusLineCacheWriteFaultRow;
++//# sourceMappingURL=asStatusLineCacheWriteFaultRow.js.map
+\ No newline at end of file
+diff --git a/dist/domain.operations/route/statusLine/asStatusLineDegradeRow.js b/dist/domain.operations/route/statusLine/asStatusLineDegradeRow.js
+new file mode 100644
+index 00000000..9630897a
+--- /dev/null
++++ b/dist/domain.operations/route/statusLine/asStatusLineDegradeRow.js
+@@ -0,0 +1,20 @@
++"use strict";
++Object.defineProperty(exports, "__esModule", { value: true });
++exports.asStatusLineDegradeRow = void 0;
++const asErrorCauseClause_1 = require("../../../domain.operations/route/asErrorCauseClause");
++/**
++ * .what = the stderr row for a phase derivation that faulted and degraded the line
++ * .why = the row is data: the render returns it, the cache stores it, and the cli entry
++ *        prints it on the miss and on every hit after, so a hit replays what the miss said
++ *
++ * .note = it keeps the extant degrade prefix `[route.status.line] fault:` (route fulcrum F9);
++ *         the cause reads `<ErrorName>: <message>`, as the stderr dump of an Error opens
++ */
++const asStatusLineDegradeRow = (input) => {
++    const cause = input.error instanceof Error
++        ? `${input.error.name}: ${input.error.message}`
++        : (0, asErrorCauseClause_1.asErrorCauseClause)({ error: input.error });
++    return `[route.status.line] fault: phase derivation faulted for stone "${input.stone}", degraded to plain stone line: ${cause}`;
++};
++exports.asStatusLineDegradeRow = asStatusLineDegradeRow;
++//# sourceMappingURL=asStatusLineDegradeRow.js.map
+\ No newline at end of file
+diff --git a/dist/domain.operations/route/statusLine/asStatusLineFaultRow.js b/dist/domain.operations/route/statusLine/asStatusLineFaultRow.js
+new file mode 100644
+index 00000000..b3fcb114
+--- /dev/null
++++ b/dist/domain.operations/route/statusLine/asStatusLineFaultRow.js
+@@ -0,0 +1,49 @@
++"use strict";
++Object.defineProperty(exports, "__esModule", { value: true });
++exports.asStatusLineFaultRow = void 0;
++const asErrorCauseClause_1 = require("../../../domain.operations/route/asErrorCauseClause");
++const MESSAGE_OF_MULTI_BIND_1 = require("../../../domain.operations/route/bind/MESSAGE_OF_MULTI_BIND");
++const isCallerConstraintError_1 = require("../../../utils/isCallerConstraintError");
++/**
++ * .what = the one stderr row a status line entry prints for a renderer fault
++ * .why = the shared branch-bind lookup advises `--route` to disambiguate a
++ *        multi-bind, which is correct for the subcommands that accept `--route`
++ *        (route.drive, route.stone.*) but a dead end for the status line — it
++ *        accepts no `--route` flag (it derives the branch-bound route from cwd).
++ *        to echo that advice sends an operator down a path that is silently
++ *        ignored, so for the multi-bind case the row carries status-line-scoped
++ *        guidance (unbind the extras). every other fault passes through its own
++ *        message. this only reframes the logged row; the caller still rethrows the
++ *        original error (fail-loud, never hidden).
++ *
++ * .note = the row opens with its class behind its glyph (rule.require.qualified-error-headers):
++ *         a caller constraint (exit 2) is `✋ ConstraintError:`, all else `💥 MalfunctionError:`.
++ *         the row owns that header, so both status line entries print one source
++ */
++const asStatusLineFaultRow = (input) => {
++    const message = asMessageWithoutClassHeader({
++        message: (0, asErrorCauseClause_1.asErrorCauseClause)({ error: input.error }),
++    });
++    const header = asStatusLineFaultHeader({ error: input.error });
++    // the multi-bind ambiguity: drop the `--route` advice (unsupported here)
++    if ((0, isCallerConstraintError_1.isCallerConstraintError)(input.error) &&
++        message.includes(MESSAGE_OF_MULTI_BIND_1.MESSAGE_OF_MULTI_BIND))
++        return `${header} ${MESSAGE_OF_MULTI_BIND_1.MESSAGE_OF_MULTI_BIND} — unbind the extra route(s) so the status line can pick one`;
++    // any other fault: surface its own message
++    return `${header} ${message}`;
++};
++exports.asStatusLineFaultRow = asStatusLineFaultRow;
++/**
++ * .what = a message with the class header a helpful error carries at its head removed
++ * .why = a helpful error's message opens with its own class (`BadRequestError: …`,
++ *        `💥 MalfunctionError: …`); the row already opens with the qualified header, so the
++ *        class would print twice
++ */
++const asMessageWithoutClassHeader = (input) => input.message.replace(/^(?:[^\s\w]+\s)?[A-Z]\w*Error: /u, '');
++/**
++ * .what = the qualified header of a status line fault row, by who must fix it
++ */
++const asStatusLineFaultHeader = (input) => (0, isCallerConstraintError_1.isCallerConstraintError)(input.error)
++    ? '✋ ConstraintError: [route.status.line]'
++    : '💥 MalfunctionError: [route.status.line]';
++//# sourceMappingURL=asStatusLineFaultRow.js.map
+\ No newline at end of file
+diff --git a/dist/domain.operations/route/statusLine/asStatusLineHelp.js b/dist/domain.operations/route/statusLine/asStatusLineHelp.js
+new file mode 100644
+index 00000000..2d7a96c2
+--- /dev/null
++++ b/dist/domain.operations/route/statusLine/asStatusLineHelp.js
+@@ -0,0 +1,65 @@
++"use strict";
++Object.defineProperty(exports, "__esModule", { value: true });
++exports.asStatusLineHelp = void 0;
++const asRouteStatusLineCachePath_1 = require("./cache/asRouteStatusLineCachePath");
++const ROUTE_STATUS_LINE_CACHE_MAX_AGE_MS_1 = require("./cache/ROUTE_STATUS_LINE_CACHE_MAX_AGE_MS");
++/**
++ * .what = the help text for route.status.line
++ * .why = one source for the `--help` of the subpath entry, which the legacy `cli/route`
++ *        export forwards to (rule.require.single-source-of-truth-for-render)
++ *
++ * .note = the cache dir and the max age come from their owners; the help loads lazily, so
++ *         the imports cost a hit naught
++ */
++const asStatusLineHelp = () => `
++route.status.line - emit the current stone as a claude code status line
++
++usage:
++  route.status.line [options]
++
++options:
++  --help             show this help message
++
++output:
++  bound, stone + phase      🗿 <stone>, <phase> <emoji>
++  bound, all stones passed  🗿 route complete 🌴🤙
++  unbound / no stones       (empty line)
++
++  the phase suffix names where inside the stone the driver is, tipped with an
++  attention-color emoji at the end of the line (read the color, then the words):
++    yield 🌾                 the stone yields its artifact — calm, no attention
++    review.self, r7/r10 🔍   self-reviews, r{done}/r{total} — machine's turn
++    review.peer, l3@i002 🔍  peer review, l{level}@i{rounds} — machine's turn
++    judge, approved? 👋      a human must approve — attention needed
++    ..., exhausted 👋        peer budget spent, a human must approve or extend
++    ..., blocked ✋          blocked, act now — attention needed
++    ..., malfunction 💥      a reviewer or judge broke, a human must fix
++
++errors:
++  a genuine fault is logged to stderr and exits non-zero; the harness then renders
++  a blank line (the fault is surfaced on stderr, never silently hidden)
++
++cache:
++  a repaint whose render inputs did not change prints the line already computed,
++  from ${asRouteStatusLineCachePath_1.DIR_OF_ROUTE_STATUS_LINE_CACHE}/ (per branch).
++  the legacy cli/route export forwards here, so it is cached too, yet still loads
++  the whole barrel first; re-run the driver init to move a seat to the subpath.
++  a fault that prints no line is never cached; a degraded line is cached with its
++  stderr row, and each repaint prints that row again. an unreadable or unwritable
++  cache is reported on stderr, and the line still prints. a cached line is at most
++  ${ROUTE_STATUS_LINE_CACHE_MAX_AGE_MS_1.ROUTE_STATUS_LINE_CACHE_MAX_AGE_MS / 1000}s old; a passage, a meter row, a promise, or a route.bind.set shows on
++  the next repaint. a bind flag that arrives any other way (a pull, a hand edit)
++  shows within ${ROUTE_STATUS_LINE_CACHE_MAX_AGE_MS_1.ROUTE_STATUS_LINE_CACHE_MAX_AGE_MS / 1000}s. to force a fresh line, delete that dir
++
++note:
++  the claude code harness runs this with cwd = project root and renders stdout
++  as the status line. it is invoked via the node -e command that
++  init.claude.status-line.sh writes into the repo's claude settings (the file
++  .claude/settings.of.repo.json, or .claude/settings.json in the old layout),
++  not via rhx, whose banner would pollute the single-line output
++
++examples:
++  node -e "import('rhachet-roles-bhrain/cli/route.status.line').then(m => m.routeStatusLine())"
++`.trim();
++exports.asStatusLineHelp = asStatusLineHelp;
++//# sourceMappingURL=asStatusLineHelp.js.map
+\ No newline at end of file
+diff --git a/dist/domain.operations/route/statusLine/cache/ROUTE_STATUS_LINE_CACHE_MAX_AGE_MS.js b/dist/domain.operations/route/statusLine/cache/ROUTE_STATUS_LINE_CACHE_MAX_AGE_MS.js
+new file mode 100644
+index 00000000..e67e9658
+--- /dev/null
++++ b/dist/domain.operations/route/statusLine/cache/ROUTE_STATUS_LINE_CACHE_MAX_AGE_MS.js
+@@ -0,0 +1,12 @@
++"use strict";
++Object.defineProperty(exports, "__esModule", { value: true });
++exports.ROUTE_STATUS_LINE_CACHE_MAX_AGE_MS = void 0;
++/**
++ * .what = the most a cached status line may age before a repaint recomputes it: 30s
++ * .why = a backstop for a render input the fingerprint does not name — it bounds staleness,
++ *        it is never the freshness path (the fingerprint is). 30s keeps a hit the norm at ~3
++ *        repaints a second (≤ 1 recompute per ~90 repaints), and heals a missed input inside
++ *        one glance-gap
++ */
++exports.ROUTE_STATUS_LINE_CACHE_MAX_AGE_MS = 30000;
++//# sourceMappingURL=ROUTE_STATUS_LINE_CACHE_MAX_AGE_MS.js.map
+\ No newline at end of file
+diff --git a/dist/domain.operations/route/statusLine/cache/asRouteStatusLineCachePath.js b/dist/domain.operations/route/statusLine/cache/asRouteStatusLineCachePath.js
+new file mode 100644
+index 00000000..e2226e42
+--- /dev/null
++++ b/dist/domain.operations/route/statusLine/cache/asRouteStatusLineCachePath.js
+@@ -0,0 +1,46 @@
++"use strict";
++var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
++    if (k2 === undefined) k2 = k;
++    var desc = Object.getOwnPropertyDescriptor(m, k);
++    if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) {
++      desc = { enumerable: true, get: function() { return m[k]; } };
++    }
++    Object.defineProperty(o, k2, desc);
++}) : (function(o, m, k, k2) {
++    if (k2 === undefined) k2 = k;
++    o[k2] = m[k];
++}));
++var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (function(o, v) {
++    Object.defineProperty(o, "default", { enumerable: true, value: v });
++}) : function(o, v) {
++    o["default"] = v;
++});
++var __importStar = (this && this.__importStar) || function (mod) {
++    if (mod && mod.__esModule) return mod;
++    var result = {};
++    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
++    __setModuleDefault(result, mod);
++    return result;
++};
++Object.defineProperty(exports, "__esModule", { value: true });
++exports.asRouteStatusLineCachePath = exports.DIR_OF_ROUTE_STATUS_LINE_CACHE = void 0;
++const path = __importStar(require("path"));
++const sanitizeBranchName_1 = require("../../../../utils/git/sanitizeBranchName");
++/**
++ * .what = the dir that holds the status line's per-branch cache files
++ * .why = one home for the join, so the reader, the writer, and the bind ops that drop it
++ *        cannot type it two ways
++ *
++ * .note = it sits under `.agent/.cache/` (gitignored), beside the review watermarks
++ */
++exports.DIR_OF_ROUTE_STATUS_LINE_CACHE = path.join('.agent', '.cache', 'repo=bhrain', 'role=driver', 'skill=route.status.line');
++/**
++ * .what = the cache file path for one branch under one cwd
++ * .why = the cache is keyed by branch, so a branch switch reads another file (or none)
++ *
++ * .note = this module, and each one the cache hit path imports, may import only node
++ *         builtins and import-free transformers: a hit must cost node boot and naught else
++ */
++const asRouteStatusLineCachePath = (input) => path.join(input.cwd, exports.DIR_OF_ROUTE_STATUS_LINE_CACHE, `branch=${(0, sanitizeBranchName_1.sanitizeBranchName)({ branch: input.branch })}.json`);
++exports.asRouteStatusLineCachePath = asRouteStatusLineCachePath;
++//# sourceMappingURL=asRouteStatusLineCachePath.js.map
+\ No newline at end of file
+diff --git a/dist/domain.operations/route/statusLine/cache/asRouteStatusLineRouteDir.js b/dist/domain.operations/route/statusLine/cache/asRouteStatusLineRouteDir.js
+new file mode 100644
+index 00000000..830fbf99
+--- /dev/null
++++ b/dist/domain.operations/route/statusLine/cache/asRouteStatusLineRouteDir.js
+@@ -0,0 +1,38 @@
++"use strict";
++var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
++    if (k2 === undefined) k2 = k;
++    var desc = Object.getOwnPropertyDescriptor(m, k);
++    if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) {
++      desc = { enumerable: true, get: function() { return m[k]; } };
++    }
++    Object.defineProperty(o, k2, desc);
++}) : (function(o, m, k, k2) {
++    if (k2 === undefined) k2 = k;
++    o[k2] = m[k];
++}));
++var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (function(o, v) {
++    Object.defineProperty(o, "default", { enumerable: true, value: v });
++}) : function(o, v) {
++    o["default"] = v;
++});
++var __importStar = (this && this.__importStar) || function (mod) {
++    if (mod && mod.__esModule) return mod;
++    var result = {};
++    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
++    __setModuleDefault(result, mod);
++    return result;
++};
++Object.defineProperty(exports, "__esModule", { value: true });
++exports.asRouteStatusLineRouteDir = void 0;
++const path = __importStar(require("path"));
++/**
++ * .what = the route's dir on disk, from a route that is either absolute or cwd-relative
++ * .why = the bind lookup names a route relative to cwd; a caller may also name it absolute.
++ *        one transformer keeps the fingerprint and the bind-flag check from two joins that
++ *        could disagree
++ */
++const asRouteStatusLineRouteDir = (input) => path.isAbsolute(input.route)
++    ? input.route
++    : path.join(input.cwd, input.route);
++exports.asRouteStatusLineRouteDir = asRouteStatusLineRouteDir;
++//# sourceMappingURL=asRouteStatusLineRouteDir.js.map
+\ No newline at end of file
+diff --git a/dist/domain.operations/route/statusLine/cache/delRouteStatusLineCache.js b/dist/domain.operations/route/statusLine/cache/delRouteStatusLineCache.js
+new file mode 100644
+index 00000000..563275ff
+--- /dev/null
++++ b/dist/domain.operations/route/statusLine/cache/delRouteStatusLineCache.js
+@@ -0,0 +1,60 @@
++"use strict";
++var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
++    if (k2 === undefined) k2 = k;
++    var desc = Object.getOwnPropertyDescriptor(m, k);
++    if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) {
++      desc = { enumerable: true, get: function() { return m[k]; } };
++    }
++    Object.defineProperty(o, k2, desc);
++}) : (function(o, m, k, k2) {
++    if (k2 === undefined) k2 = k;
++    o[k2] = m[k];
++}));
++var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (function(o, v) {
++    Object.defineProperty(o, "default", { enumerable: true, value: v });
++}) : function(o, v) {
++    o["default"] = v;
++});
++var __importStar = (this && this.__importStar) || function (mod) {
++    if (mod && mod.__esModule) return mod;
++    var result = {};
++    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
++    __setModuleDefault(result, mod);
++    return result;
++};
++Object.defineProperty(exports, "__esModule", { value: true });
++exports.delRouteStatusLineCache = void 0;
++const child_process_1 = require("child_process");
++const fs = __importStar(require("fs/promises"));
++const asRouteStatusLineCachePath_1 = require("./asRouteStatusLineCachePath");
++const getOneRouteStatusLineBranch_1 = require("./getOneRouteStatusLineBranch");
++/**
++ * .what = drops the branch's status line cache file; a no-op when absent
++ * .why = a bind changes which route the line names. an unbound seat caches the blank line
++ *        under a fingerprint of the branch alone, so no stat can see a new bind flag. a
++ *        `route.bind.set` calls this so the next repaint shows the route at once
++ *
++ * .note = an unbind needs no drop: a bound seat's fingerprint stats its own bind flag, so the
++ *         next repaint after the flag goes misses on its own
++ * .note = it drops the cache at the cwd AND at the git root. a seat's line runs at the project
++ *         root, while a bind may run from any subdir; a drop at the subdir alone would leave the
++ *         root seat's line stale for up to the max age
++ * .note = the branch comes from `getOneRouteStatusLineBranch`, the very read that keys the
++ *         cache, so the drop can never target another file than the one a repaint reads
++ */
++const delRouteStatusLineCache = async (input) => {
++    const cwds = [...new Set([input.cwd, getOneGitRepoRoot({ cwd: input.cwd })])];
++    await Promise.all(cwds.map((cwd) => fs.rm((0, asRouteStatusLineCachePath_1.asRouteStatusLineCachePath)({
++        cwd,
++        branch: (0, getOneRouteStatusLineBranch_1.getOneRouteStatusLineBranch)({ cwd }),
++    }), { force: true })));
++};
++exports.delRouteStatusLineCache = delRouteStatusLineCache;
++/**
++ * .what = the git root of a cwd, via `git rev-parse --show-toplevel`
++ * .why = the anchor a seat's line runs at; a bind op already requires a git repo
++ */
++const getOneGitRepoRoot = (input) => (0, child_process_1.execSync)('git rev-parse --show-toplevel', { cwd: input.cwd })
++    .toString()
++    .trim();
++//# sourceMappingURL=delRouteStatusLineCache.js.map
+\ No newline at end of file
+diff --git a/dist/domain.operations/route/statusLine/cache/delRouteStatusLineCacheOrWarn.js b/dist/domain.operations/route/statusLine/cache/delRouteStatusLineCacheOrWarn.js
+new file mode 100644
+index 00000000..0f028ac3
+--- /dev/null
++++ b/dist/domain.operations/route/statusLine/cache/delRouteStatusLineCacheOrWarn.js
+@@ -0,0 +1,27 @@
++"use strict";
++Object.defineProperty(exports, "__esModule", { value: true });
++exports.delRouteStatusLineCacheOrWarn = void 0;
++const getFsErrorCode_1 = require("../../../../utils/fs/getFsErrorCode");
++const asStatusLineCacheDropFaultRow_1 = require("../asStatusLineCacheDropFaultRow");
++const delRouteStatusLineCache_1 = require("./delRouteStatusLineCache");
++/**
++ * .what = drops the status line cache; an fs fault of the drop warns on stderr, never fails
++ * .why = the bind is the act the caller asked for, and it already landed. the cache is an
++ *        optimization: a drop that fails leaves the line stale for at most the cache max
++ *        age, so the fault is reported loud with its fix and the bind still succeeds
++ *
++ * .note = only fs faults (a string `code`) warn; any other error rethrows
++ */
++const delRouteStatusLineCacheOrWarn = async (input) => {
++    try {
++        await (0, delRouteStatusLineCache_1.delRouteStatusLineCache)({ cwd: input.cwd });
++    }
++    catch (error) {
++        const code = (0, getFsErrorCode_1.getFsErrorCode)(error);
++        if (code === null)
++            throw error;
++        console.error((0, asStatusLineCacheDropFaultRow_1.asStatusLineCacheDropFaultRow)({ code }));
++    }
++};
++exports.delRouteStatusLineCacheOrWarn = delRouteStatusLineCacheOrWarn;
++//# sourceMappingURL=delRouteStatusLineCacheOrWarn.js.map
+\ No newline at end of file
+diff --git a/dist/domain.operations/route/statusLine/cache/getOneRouteStatusLineBranch.js b/dist/domain.operations/route/statusLine/cache/getOneRouteStatusLineBranch.js
+new file mode 100644
+index 00000000..0958bedb
+--- /dev/null
++++ b/dist/domain.operations/route/statusLine/cache/getOneRouteStatusLineBranch.js
+@@ -0,0 +1,132 @@
++"use strict";
++var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
++    if (k2 === undefined) k2 = k;
++    var desc = Object.getOwnPropertyDescriptor(m, k);
++    if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) {
++      desc = { enumerable: true, get: function() { return m[k]; } };
++    }
++    Object.defineProperty(o, k2, desc);
++}) : (function(o, m, k, k2) {
++    if (k2 === undefined) k2 = k;
++    o[k2] = m[k];
++}));
++var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (function(o, v) {
++    Object.defineProperty(o, "default", { enumerable: true, value: v });
++}) : function(o, v) {
++    o["default"] = v;
++});
++var __importStar = (this && this.__importStar) || function (mod) {
++    if (mod && mod.__esModule) return mod;
++    var result = {};
++    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
++    __setModuleDefault(result, mod);
++    return result;
++};
++Object.defineProperty(exports, "__esModule", { value: true });
++exports.getOneRouteStatusLineBranch = void 0;
++const child_process_1 = require("child_process");
++const fs = __importStar(require("fs"));
++const path = __importStar(require("path"));
++const isErrorOfAbsence_1 = require("../../../../utils/fs/isErrorOfAbsence");
++/**
++ * .what = the current branch name, read from the git dir's HEAD file
++ * .why = the cache is keyed by branch, and a `git` spawn costs more cpu than the whole cache
++ *        hit. a HEAD file read gives the same answer as `git rev-parse --abbrev-ref HEAD` for
++ *        every checkout on a branch, at the cost of two small file reads
++ *
++ * .note = a detached HEAD, an absent `.git`, or any shape this read does not know falls back
++ *         to the `git` spawn, which is the authority and fails loud on its own
++ */
++const getOneRouteStatusLineBranch = (input) => {
++    // read the branch from the HEAD file, the cheap path
++    const branchFromHead = getBranchFromHeadFile({ cwd: input.cwd });
++    if (branchFromHead)
++        return branchFromHead;
++    // fall back to git itself, the authority
++    return getBranchFromGit({ cwd: input.cwd });
++};
++exports.getOneRouteStatusLineBranch = getOneRouteStatusLineBranch;
++/**
++ * .what = the branch `git rev-parse --abbrev-ref HEAD` names, for a cwd
++ * .why = the authority the HEAD file read defers to; it fails loud on its own
++ */
++const getBranchFromGit = (input) => (0, child_process_1.execSync)('git rev-parse --abbrev-ref HEAD', { cwd: input.cwd })
++    .toString()
++    .trim();
++/**
++ * .what = the branch named by `<gitdir>/HEAD`, or null when the read cannot answer
++ * .why = isolates the file shapes so the caller reads as narrative
++ *
++ * .note = a worktree's `.git` is a file that holds `gitdir: <path>`; a plain checkout's
++ *         `.git` is the dir itself. both hold a HEAD file of the form `ref: refs/heads/<b>`
++ */
++const getBranchFromHeadFile = (input) => {
++    const gitDir = getGitDir({ cwd: input.cwd });
++    if (!gitDir)
++        return null;
++    const head = getOneFileContentOrNull({ filePath: path.join(gitDir, 'HEAD') });
++    if (head === null)
++        return null;
++    return asBranchFromHeadContent({ head });
++};
++/**
++ * .what = the git dir for a cwd, or null when `.git` is absent or of an unknown shape
++ * .why = a worktree points to its git dir via a `gitdir:` file; a plain checkout holds it
++ */
++const getGitDir = (input) => {
++    const dotGit = path.join(input.cwd, '.git');
++    const stat = getOneStatOrNull({ filePath: dotGit });
++    if (!stat)
++        return null;
++    if (stat.isDirectory())
++        return dotGit;
++    const pointer = getOneFileContentOrNull({ filePath: dotGit });
++    if (pointer === null)
++        return null;
++    return asGitDirFromPointer({ pointer, cwd: input.cwd });
++};
++/**
++ * .what = the branch in a HEAD file's content, or null for a detached or unknown HEAD
++ */
++const asBranchFromHeadContent = (input) => /^ref: refs\/heads\/(.+)$/.exec(input.head.trim())?.[1] ?? null;
++/**
++ * .what = the git dir a worktree's `.git` pointer names, as an absolute path, or null
++ */
++const asGitDirFromPointer = (input) => {
++    const gitDirRaw = /^gitdir: (.+)$/m.exec(input.pointer)?.[1]?.trim() ?? null;
++    if (!gitDirRaw)
++        return null;
++    return path.isAbsolute(gitDirRaw)
++        ? gitDirRaw
++        : path.join(input.cwd, gitDirRaw);
++};
++/**
++ * .what = a file's utf-8 content, or null when the file is absent
++ * .why = an absent file only means "this cheap read cannot answer"; the caller falls back
++ *        to the `git` spawn. any other fs fault rethrows (rule.forbid.failhide)
++ */
++const getOneFileContentOrNull = (input) => {
++    try {
++        return fs.readFileSync(input.filePath, 'utf-8');
++    }
++    catch (error) {
++        if ((0, isErrorOfAbsence_1.isErrorOfAbsence)({ error }))
++            return null;
++        throw error;
++    }
++};
++/**
++ * .what = a path's stat, or null when the path is absent
++ * .why = same contract as getOneFileContentOrNull, for the `.git` shape probe
++ */
++const getOneStatOrNull = (input) => {
++    try {
++        return fs.statSync(input.filePath);
++    }
++    catch (error) {
++        if ((0, isErrorOfAbsence_1.isErrorOfAbsence)({ error }))
++            return null;
++        throw error;
++    }
++};
++//# sourceMappingURL=getOneRouteStatusLineBranch.js.map
+\ No newline at end of file
+diff --git a/dist/domain.operations/route/statusLine/cache/getOneRouteStatusLineCache.js b/dist/domain.operations/route/statusLine/cache/getOneRouteStatusLineCache.js
+new file mode 100644
+index 00000000..ca48ba4c
+--- /dev/null
++++ b/dist/domain.operations/route/statusLine/cache/getOneRouteStatusLineCache.js
+@@ -0,0 +1,123 @@
++"use strict";
++var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
++    if (k2 === undefined) k2 = k;
++    var desc = Object.getOwnPropertyDescriptor(m, k);
++    if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) {
++      desc = { enumerable: true, get: function() { return m[k]; } };
++    }
++    Object.defineProperty(o, k2, desc);
++}) : (function(o, m, k, k2) {
++    if (k2 === undefined) k2 = k;
++    o[k2] = m[k];
++}));
++var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (function(o, v) {
++    Object.defineProperty(o, "default", { enumerable: true, value: v });
++}) : function(o, v) {
++    o["default"] = v;
++});
++var __importStar = (this && this.__importStar) || function (mod) {
++    if (mod && mod.__esModule) return mod;
++    var result = {};
++    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
++    __setModuleDefault(result, mod);
++    return result;
++};
++Object.defineProperty(exports, "__esModule", { value: true });
++exports.getOneRouteStatusLineCache = void 0;
++const fs = __importStar(require("fs"));
++const isErrorOfAbsence_1 = require("../../../../utils/fs/isErrorOfAbsence");
++/**
++ * .what = reads the branch's status line cache record and its write time, or null when
++ *         there is none to use
++ * .why = an absent or corrupt cache is a MISS, never a fault: the line is computed fresh and
++ *        the cache rewritten, so a broken cache costs one recompute and never correctness
++ *
++ * .note = only absence (ENOENT, ENOTDIR) and a json SyntaxError read as a miss here; any other
++ *         fault — a permission denial, an io error — rethrows (rule.forbid.failhide), and the
++ *         caller turns an fs code into a loud miss
++ */
++const getOneRouteStatusLineCache = (input) => {
++    const found = getOneCacheFileContent({ filePath: input.cachePath });
++    if (found === null)
++        return null;
++    const record = asRouteStatusLineCacheRecordOrNull({ raw: found.raw });
++    if (record === null)
++        return null;
++    return { record, writtenAtMs: found.mtimeMs };
++};
++exports.getOneRouteStatusLineCache = getOneRouteStatusLineCache;
++/**
++ * .what = the cache file's utf-8 content and mtime, or null when the file is absent
++ * .why = the cache is disposable; an absent one is a miss
++ *
++ * .note = content and mtime come from ONE open file: a rename between two path lookups
++ *         would pair old content with a new file's mtime and stretch the max age
++ */
++const getOneCacheFileContent = (input) => {
++    const fd = getOneOpenFdOrNull({ filePath: input.filePath });
++    if (fd === null)
++        return null;
++    try {
++        const { mtimeMs } = fs.fstatSync(fd);
++        return { raw: fs.readFileSync(fd, 'utf-8'), mtimeMs };
++    }
++    finally {
++        fs.closeSync(fd);
++    }
++};
++/**
++ * .what = a read-only fd for a file, or null when the file is absent
++ */
++const getOneOpenFdOrNull = (input) => {
++    try {
++        return fs.openSync(input.filePath, 'r');
++    }
++    catch (error) {
++        if ((0, isErrorOfAbsence_1.isErrorOfAbsence)({ error }))
++            return null;
++        throw error;
++    }
++};
++/**
++ * .what = parses the raw cache json into a record, or null when it is not one
++ * .why = a torn, hand-edited, or older-shaped file must read as a miss, never as a line
++ */
++const asRouteStatusLineCacheRecordOrNull = (input) => {
++    const parsed = asJsonOrNull({ raw: input.raw });
++    if (typeof parsed !== 'object' || parsed === null)
++        return null;
++    // narrow each field via `in` + typeof, so no cast asserts the shape
++    if (!('line' in parsed) || typeof parsed.line !== 'string')
++        return null;
++    if (!('route' in parsed))
++        return null;
++    if (typeof parsed.route !== 'string' && parsed.route !== null)
++        return null;
++    if (!('fingerprint' in parsed) || typeof parsed.fingerprint !== 'string')
++        return null;
++    if (!('degradeRow' in parsed))
++        return null;
++    if (typeof parsed.degradeRow !== 'string' && parsed.degradeRow !== null)
++        return null;
++    return {
++        line: parsed.line,
++        route: parsed.route,
++        fingerprint: parsed.fingerprint,
++        degradeRow: parsed.degradeRow,
++    };
++};
++/**
++ * .what = JSON.parse, or null on a SyntaxError
++ * .why = corrupt json is a miss; any other throw is a defect and rethrows
++ */
++const asJsonOrNull = (input) => {
++    try {
++        return JSON.parse(input.raw);
++    }
++    catch (error) {
++        if (error instanceof SyntaxError)
++            return null;
++        throw error;
++    }
++};
++//# sourceMappingURL=getOneRouteStatusLineCache.js.map
+\ No newline at end of file
+diff --git a/dist/domain.operations/route/statusLine/cache/getOneRouteStatusLineFingerprint.js b/dist/domain.operations/route/statusLine/cache/getOneRouteStatusLineFingerprint.js
+new file mode 100644
+index 00000000..b7e55ff2
+--- /dev/null
++++ b/dist/domain.operations/route/statusLine/cache/getOneRouteStatusLineFingerprint.js
+@@ -0,0 +1,159 @@
++"use strict";
++var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
++    if (k2 === undefined) k2 = k;
++    var desc = Object.getOwnPropertyDescriptor(m, k);
++    if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) {
++      desc = { enumerable: true, get: function() { return m[k]; } };
++    }
++    Object.defineProperty(o, k2, desc);
++}) : (function(o, m, k, k2) {
++    if (k2 === undefined) k2 = k;
++    o[k2] = m[k];
++}));
++var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (function(o, v) {
++    Object.defineProperty(o, "default", { enumerable: true, value: v });
++}) : function(o, v) {
++    o["default"] = v;
++});
++var __importStar = (this && this.__importStar) || function (mod) {
++    if (mod && mod.__esModule) return mod;
++    var result = {};
++    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
++    __setModuleDefault(result, mod);
++    return result;
++};
++Object.defineProperty(exports, "__esModule", { value: true });
++exports.getOneRouteStatusLineFingerprint = void 0;
++const fs = __importStar(require("fs"));
++const path = __importStar(require("path"));
++const asRouteBindFlagName_1 = require("../../../../domain.operations/route/bind/asRouteBindFlagName");
++const getStonePromisePaths_1 = require("../../../../domain.operations/route/guard/review/self/getStonePromisePaths");
++const isErrorOfAbsence_1 = require("../../../../utils/fs/isErrorOfAbsence");
++const asRouteStatusLineRouteDir_1 = require("./asRouteStatusLineRouteDir");
++/**
++ * .what = the fingerprint of every input the status line render reads
++ * .why = a repaint whose fingerprint matches the cached one has naught new to show, so it
++ *        prints the cached line and does no fresh work
++ *
++ * .note = the fingerprint is the branch, plus the mtime + size of:
++ *         - `$route/` itself — stones and artifacts appear and vanish here
++ *         - the render's own files in `$route/.route/`, kept by name: `passage.jsonl`,
++ *           `reviewPeerMeters.jsonl`, each `*.guard.promise.*.md`, and the bind flag
++ *
++ * 🔴 .note = an ALLOWLIST, never every file in `.route/`: hooks write files there the render
++ *            never reads (`.drive.blockers.latest.json`, `.bouncer.cache.json`, the
++ *            `*.triggered.*` stamps). a fingerprint over those would miss on nearly every
++ *            repaint of a seat at work. a render input added later must join this list
++ *
++ * .note = the bind flag name and the promise name come from their owners
++ *         (`asRouteBindFlagName`, `asStonePromiseSlug`), so the writer and this read share one
++ *         template each
++ * .note = an unbound seat (route null) fingerprints on the branch alone; `route.bind.set`
++ *         drops the cache, and the max age bounds any other change
++ */
++const getOneRouteStatusLineFingerprint = (input) => {
++    // an unbound seat: the branch alone
++    if (input.route === null)
++        return asFingerprint({ branch: input.branch, stats: [] });
++    // a bound seat: the route dir, then each render input in its state dir
++    const routeDir = (0, asRouteStatusLineRouteDir_1.asRouteStatusLineRouteDir)({
++        cwd: input.cwd,
++        route: input.route,
++    });
++    const stateDir = asRouteStateDir({ routeDir });
++    const namesOfInputs = asRenderInputNames({
++        names: getAllDirEntryNames({ dirPath: stateDir }),
++        branch: input.branch,
++    });
++    const stats = getAllNamedStats({
++        paths: [
++            { name: '$route', filePath: routeDir },
++            ...asNamedPathsInDir({ dirPath: stateDir, names: namesOfInputs }),
++        ],
++    });
++    return asFingerprint({ branch: input.branch, stats });
++};
++exports.getOneRouteStatusLineFingerprint = getOneRouteStatusLineFingerprint;
++/**
++ * .what = the fingerprint text: `branch=<branch>`, then one row per stat, newline-joined
++ * .why = mtime catches a rewrite; size catches an append on a coarse-mtime filesystem
++ */
++const asFingerprint = (input) => [`branch=${input.branch}`, ...input.stats.map(asStatRow)].join('\n');
++/**
++ * .what = one fingerprint row: `<name>:<mtimeMs>:<size>`, or `<name>:absent`
++ */
++const asStatRow = (input) => input.stat
++    ? `${input.name}:${input.stat.mtimeMs}:${input.stat.size}`
++    : `${input.name}:absent`;
++/**
++ * .what = the route's state dir, `$route/.route`
++ */
++const asRouteStateDir = (input) => path.join(input.routeDir, '.route');
++/**
++ * .what = of a state dir's entry names, the ones the render reads, sorted
++ * .why = the allowlist that keeps hook writes out; sorted so the rows hold a stable order
++ */
++const asRenderInputNames = (input) => {
++    const nameOfBindFlag = (0, asRouteBindFlagName_1.asRouteBindFlagName)({ branch: input.branch });
++    return input.names
++        .filter((name) => isRenderInputName({ name, nameOfBindFlag }))
++        .sort();
++};
++/**
++ * .what = the ledgers the render reads from the route's state dir
++ */
++const NAMES_OF_RENDER_LEDGERS = ['passage.jsonl', 'reviewPeerMeters.jsonl'];
++/**
++ * .what = whether a state dir entry is one the render reads
++ * .why = the allowlist, named: the two ledgers, this branch's bind flag, and each promise
++ */
++const isRenderInputName = (input) => NAMES_OF_RENDER_LEDGERS.includes(input.name) ||
++    input.name === input.nameOfBindFlag ||
++    (0, getStonePromisePaths_1.asStonePromiseSlug)({ filename: input.name }) !== null;
++/**
++ * .what = each entry name in a dir, paired with its full path
++ */
++const asNamedPathsInDir = (input) => input.names.map((name) => ({
++    name,
++    filePath: path.join(input.dirPath, name),
++}));
++/**
++ * .what = the stat of each named path, in order
++ * .why = one stat per render input, each under its own name
++ */
++const getAllNamedStats = (input) => input.paths.map(getOneNamedStat);
++/**
++ * .what = one file's stat under a name, or a null stat when the file is absent
++ *
++ * .note = only absence reads as null; any other fs fault rethrows, so the line faults loud
++ *         rather than caches a render over a file nobody could read (rule.forbid.failhide)
++ */
++const getOneNamedStat = (input) => {
++    try {
++        const stat = fs.statSync(input.filePath);
++        return {
++            name: input.name,
++            stat: { mtimeMs: stat.mtimeMs, size: stat.size },
++        };
++    }
++    catch (error) {
++        if ((0, isErrorOfAbsence_1.isErrorOfAbsence)({ error }))
++            return { name: input.name, stat: null };
++        throw error;
++    }
++};
++/**
++ * .what = the entry names of a dir, or [] when the dir is absent
++ * .why = a route not yet driven has no state dir, which is a fact, never a fault
++ */
++const getAllDirEntryNames = (input) => {
++    try {
++        return fs.readdirSync(input.dirPath);
++    }
++    catch (error) {
++        if ((0, isErrorOfAbsence_1.isErrorOfAbsence)({ error }))
++            return [];
++        throw error;
++    }
++};
++//# sourceMappingURL=getOneRouteStatusLineFingerprint.js.map
+\ No newline at end of file
+diff --git a/dist/domain.operations/route/statusLine/cache/isRouteStatusLineBindFlagPresent.js b/dist/domain.operations/route/statusLine/cache/isRouteStatusLineBindFlagPresent.js
+new file mode 100644
+index 00000000..9c9c1085
+--- /dev/null
++++ b/dist/domain.operations/route/statusLine/cache/isRouteStatusLineBindFlagPresent.js
+@@ -0,0 +1,54 @@
++"use strict";
++var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
++    if (k2 === undefined) k2 = k;
++    var desc = Object.getOwnPropertyDescriptor(m, k);
++    if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) {
++      desc = { enumerable: true, get: function() { return m[k]; } };
++    }
++    Object.defineProperty(o, k2, desc);
++}) : (function(o, m, k, k2) {
++    if (k2 === undefined) k2 = k;
++    o[k2] = m[k];
++}));
++var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (function(o, v) {
++    Object.defineProperty(o, "default", { enumerable: true, value: v });
++}) : function(o, v) {
++    o["default"] = v;
++});
++var __importStar = (this && this.__importStar) || function (mod) {
++    if (mod && mod.__esModule) return mod;
++    var result = {};
++    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
++    __setModuleDefault(result, mod);
++    return result;
++};
++Object.defineProperty(exports, "__esModule", { value: true });
++exports.isRouteStatusLineBindFlagPresent = void 0;
++const fs = __importStar(require("fs"));
++const path = __importStar(require("path"));
++const asRouteBindFlagName_1 = require("../../../../domain.operations/route/bind/asRouteBindFlagName");
++const isErrorOfAbsence_1 = require("../../../../utils/fs/isErrorOfAbsence");
++const asRouteStatusLineRouteDir_1 = require("./asRouteStatusLineRouteDir");
++/**
++ * .what = whether a route's own bind flag for a branch still stands on disk
++ * .why = a miss whose cached route still holds its flag can render that route with no
++ *        repo-wide bind glob; one stat replaces a walk of the whole repo
++ *
++ * .note = the flag name comes from its owner (`asRouteBindFlagName`), the template the bind
++ *         write and the fingerprint share
++ * .note = only absence reads as false; any other fs fault rethrows (rule.forbid.failhide)
++ */
++const isRouteStatusLineBindFlagPresent = (input) => {
++    const flagPath = path.join((0, asRouteStatusLineRouteDir_1.asRouteStatusLineRouteDir)({ cwd: input.cwd, route: input.route }), '.route', (0, asRouteBindFlagName_1.asRouteBindFlagName)({ branch: input.branch }));
++    try {
++        fs.statSync(flagPath);
++        return true;
++    }
++    catch (error) {
++        if ((0, isErrorOfAbsence_1.isErrorOfAbsence)({ error }))
++            return false;
++        throw error;
++    }
++};
++exports.isRouteStatusLineBindFlagPresent = isRouteStatusLineBindFlagPresent;
++//# sourceMappingURL=isRouteStatusLineBindFlagPresent.js.map
+\ No newline at end of file
+diff --git a/dist/domain.operations/route/statusLine/cache/isRouteStatusLineCacheAgeWithinMax.js b/dist/domain.operations/route/statusLine/cache/isRouteStatusLineCacheAgeWithinMax.js
+new file mode 100644
+index 00000000..084500b0
+--- /dev/null
++++ b/dist/domain.operations/route/statusLine/cache/isRouteStatusLineCacheAgeWithinMax.js
+@@ -0,0 +1,21 @@
++"use strict";
++Object.defineProperty(exports, "__esModule", { value: true });
++exports.isRouteStatusLineCacheAgeWithinMax = void 0;
++const ROUTE_STATUS_LINE_CACHE_MAX_AGE_MS_1 = require("./ROUTE_STATUS_LINE_CACHE_MAX_AGE_MS");
++/**
++ * .what = whether a cache written at `writtenAtMs` is younger than the max age, at `nowMs`
++ * .why = the backstop for a render input the fingerprint does not name; a write time ahead
++ *        of now (a clock step back) reads as stale, never as fresh
++ *
++ * .note = raw ms, not `iso-time`, by design: this runs on every hit, and the hit path loads
++ *         no node_modules module (the module-graph clamp, acceptance `[case16]`)
++ * .note = the write time is floored to whole ms: a file mtime carries sub-ms precision while
++ *         `Date.now()` does not, so a read in the same ms as the write would else read as a
++ *         write ahead of now, and a fresh cache would miss
++ */
++const isRouteStatusLineCacheAgeWithinMax = (input) => {
++    const ageMs = input.nowMs - Math.floor(input.writtenAtMs);
++    return ageMs >= 0 && ageMs < ROUTE_STATUS_LINE_CACHE_MAX_AGE_MS_1.ROUTE_STATUS_LINE_CACHE_MAX_AGE_MS;
++};
++exports.isRouteStatusLineCacheAgeWithinMax = isRouteStatusLineCacheAgeWithinMax;
++//# sourceMappingURL=isRouteStatusLineCacheAgeWithinMax.js.map
+\ No newline at end of file
+diff --git a/dist/domain.operations/route/statusLine/cache/setRouteStatusLineCache.js b/dist/domain.operations/route/statusLine/cache/setRouteStatusLineCache.js
+new file mode 100644
+index 00000000..8dee13ea
+--- /dev/null
++++ b/dist/domain.operations/route/statusLine/cache/setRouteStatusLineCache.js
+@@ -0,0 +1,82 @@
++"use strict";
++var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
++    if (k2 === undefined) k2 = k;
++    var desc = Object.getOwnPropertyDescriptor(m, k);
++    if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) {
++      desc = { enumerable: true, get: function() { return m[k]; } };
++    }
++    Object.defineProperty(o, k2, desc);
++}) : (function(o, m, k, k2) {
++    if (k2 === undefined) k2 = k;
++    o[k2] = m[k];
++}));
++var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (function(o, v) {
++    Object.defineProperty(o, "default", { enumerable: true, value: v });
++}) : function(o, v) {
++    o["default"] = v;
++});
++var __importStar = (this && this.__importStar) || function (mod) {
++    if (mod && mod.__esModule) return mod;
++    var result = {};
++    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
++    __setModuleDefault(result, mod);
++    return result;
++};
++Object.defineProperty(exports, "__esModule", { value: true });
++exports.setRouteStatusLineCache = void 0;
++const fs = __importStar(require("fs"));
++const path = __importStar(require("path"));
++/**
++ * .what = writes the branch's status line cache record, atomically
++ * .why = many seats of one worktree repaint at once; each writes the identical render of
++ *        identical inputs, so a last-write-wins race loses naught — as long as no reader can
++ *        open a half-written file. a temp file + rename gives that: rename is atomic on one
++ *        filesystem, so a reader opens the old file or the new one, never a torn one
++ *
++ * .note = no lock: a last-write-wins cache of a pure render needs no hold
++ *         (rule.require.locks-via-with-simple-mutex governs a key one actor holds; none here)
++ * .note = an fs fault drops the temp file, then throws to the caller, which reports it loud
++ *         and still prints the line. a process killed between write and rename can leave one
++ *         `.tmp` beside the cache, in the gitignored cache dir; the read never opens it
++ */
++const setRouteStatusLineCache = (input) => {
++    // ensure the cache dir, and that it ignores itself
++    fs.mkdirSync(path.dirname(input.cachePath), { recursive: true });
++    findsertCacheDirGitignore({ dirPath: path.dirname(input.cachePath) });
++    // write a temp file unique to this process, then rename it over the cache file
++    const tempPath = asRouteStatusLineCacheTempPath({
++        cachePath: input.cachePath,
++    });
++    try {
++        fs.writeFileSync(tempPath, JSON.stringify(input.record));
++        fs.renameSync(tempPath, input.cachePath);
++    }
++    catch (error) {
++        // drop the orphan temp file, then surface the fault
++        fs.rmSync(tempPath, { force: true });
++        throw error;
++    }
++};
++exports.setRouteStatusLineCache = setRouteStatusLineCache;
++/**
++ * .what = writes a `*` `.gitignore` into the cache dir, unless one stands
++ * .why = the cache must never show as untracked, even where no `roles link` planted the
++ *        `.agent/.cache` ignore (a never-linked repo, an older rhachet). rhachet's own cache
++ *        writers self-ignore the same way
++ *
++ * .note = it runs on a miss alone; a hit writes naught. a race of two writers lands the
++ *         same bytes, so last-write-wins loses naught
++ */
++const findsertCacheDirGitignore = (input) => {
++    const gitignorePath = path.join(input.dirPath, '.gitignore');
++    if (fs.existsSync(gitignorePath))
++        return;
++    fs.writeFileSync(gitignorePath, '*\n');
++};
++/**
++ * .what = a temp path beside the cache file, unique to this process and this write
++ * .why = two seats that write at once must never share a temp file, or a rename could
++ *        publish the other's half-written bytes
++ */
++const asRouteStatusLineCacheTempPath = (input) => `${input.cachePath}.${process.pid}.${Math.random().toString(36).slice(2)}.tmp`;
++//# sourceMappingURL=setRouteStatusLineCache.js.map
+\ No newline at end of file
+diff --git a/dist/domain.operations/route/statusLine/stepRouteStatusLineCached.js b/dist/domain.operations/route/statusLine/stepRouteStatusLineCached.js
+new file mode 100644
+index 00000000..58c28977
+--- /dev/null
++++ b/dist/domain.operations/route/statusLine/stepRouteStatusLineCached.js
+@@ -0,0 +1,245 @@
++"use strict";
++var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
++    if (k2 === undefined) k2 = k;
++    var desc = Object.getOwnPropertyDescriptor(m, k);
++    if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) {
++      desc = { enumerable: true, get: function() { return m[k]; } };
++    }
++    Object.defineProperty(o, k2, desc);
++}) : (function(o, m, k, k2) {
++    if (k2 === undefined) k2 = k;
++    o[k2] = m[k];
++}));
++var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (function(o, v) {
++    Object.defineProperty(o, "default", { enumerable: true, value: v });
++}) : function(o, v) {
++    o["default"] = v;
++});
++var __importStar = (this && this.__importStar) || function (mod) {
++    if (mod && mod.__esModule) return mod;
++    var result = {};
++    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
++    __setModuleDefault(result, mod);
++    return result;
++};
++Object.defineProperty(exports, "__esModule", { value: true });
++exports.stepRouteStatusLineCached = void 0;
++const getFsErrorCode_1 = require("../../../utils/fs/getFsErrorCode");
++const asRouteStatusLineCachePath_1 = require("./cache/asRouteStatusLineCachePath");
++const getOneRouteStatusLineBranch_1 = require("./cache/getOneRouteStatusLineBranch");
++const getOneRouteStatusLineCache_1 = require("./cache/getOneRouteStatusLineCache");
++const getOneRouteStatusLineFingerprint_1 = require("./cache/getOneRouteStatusLineFingerprint");
++const isRouteStatusLineBindFlagPresent_1 = require("./cache/isRouteStatusLineBindFlagPresent");
++const isRouteStatusLineCacheAgeWithinMax_1 = require("./cache/isRouteStatusLineCacheAgeWithinMax");
++const setRouteStatusLineCache_1 = require("./cache/setRouteStatusLineCache");
++/**
++ * .what = computes the claude code status line, served from a per-branch cache when current
++ * .why = the harness repaints the line up to ~3 times a second per seat, and the line is a
++ *        display of state that rarely changes. a repaint whose render inputs did not move
++ *        prints the line already computed and does no fresh work
++ *
++ * .note = a hit = the cached fingerprint equals a fresh one AND the cache file is younger
++ *         than the max age. it reads one cache file and stats the render inputs, no more
++ * .note = a miss renders the cached route while its own bind flag stands and the record is
++ *         younger than the max age; else it runs the bind lookup (the repo-wide glob, which
++ *         faults loud on a multi-bind). it renders via the extant `stepRouteStatusLine`, then
++ *         writes the cache atomically under the fingerprint taken BEFORE the render. an input
++ *         that moves mid-render then differs from the cached fingerprint, so the next repaint
++ *         misses and heals
++ * .note = a hit, and a miss that reuses the cached route, both trust that route's own flag, so
++ *         a second bind flag planted by hand beside it surfaces within the max age at most.
++ *         `route.bind.set` drops the cache, so a multi-bind made through it faults at once
++ * .note = a fault (multi-bind, unreadable route) throws and is never cached: it prints no line.
++ *         a degraded phase prints a line, so it IS cached, with its row: each hit returns the
++ *         row the miss returned, and the ledgers sit in the fingerprint, so a repair misses
++ * .note = it writes no stderr. the rows (a degrade, a cache read fault, a cache write fault)
++ *         are returned as data, and the cli entry is the one writer of stderr
++ * .note = an unreadable cache file is a miss, never a fault: the line renders afresh, the
++ *         write replaces the file, and the read fault is returned for a loud row
++ * .note = the render ops load by dynamic import, only on a miss: their module graph is the
++ *         cost a hit must not pay (the module-graph clamp, acceptance `[case16]`)
++ * .note = it takes no cwd, by design: the bind lookup reads `process.cwd()`, so the cache,
++ *         the fingerprint, and the lookup all anchor at the one cwd read here. a cwd input
++ *         would advertise an anchor the lookup does not hold
++ * .note = `context.renderRoute` defaults to the real render, loaded lazily. a caller that
++ *         must act between the fingerprint and the cache write (the mid-render clamp) passes
++ *         its own, which calls through to the real one
++ */
++const stepRouteStatusLineCached = async (_input = {}, context = {}) => {
++    // locate this branch's cache, anchored at the process cwd as the bind lookup is
++    const cwd = process.cwd();
++    const branch = (0, getOneRouteStatusLineBranch_1.getOneRouteStatusLineBranch)({ cwd });
++    const cachePath = (0, asRouteStatusLineCachePath_1.asRouteStatusLineCachePath)({ cwd, branch });
++    // read the cache record; an unreadable file is a miss, its fault kept for a loud row
++    const { cached, cacheReadFault } = getOneCachedRecordOrFault({ cachePath });
++    const nowMs = Date.now();
++    // a hit: the cached line is still current
++    if (cached && isCacheRecordCurrent({ cwd, branch, cached, nowMs }))
++        return {
++            line: cached.record.line,
++            degradeRow: cached.record.degradeRow,
++            cacheReadFault: null,
++            cacheWriteFault: null,
++        };
++    // a miss: find the route, fingerprint its inputs, then render it
++    const route = await getOneRouteForMiss({ cwd, branch, cached, nowMs });
++    const fingerprint = (0, getOneRouteStatusLineFingerprint_1.getOneRouteStatusLineFingerprint)({ cwd, branch, route });
++    const rendered = await getOneRenderedLine({ route }, context);
++    // cache the line and its degrade row; a write fault is reported, never fatal
++    const cacheWriteFault = setCacheOrFault({
++        cachePath,
++        record: {
++            line: rendered.line,
++            route,
++            fingerprint,
++            degradeRow: rendered.degradeRow,
++        },
++    });
++    return {
++        line: rendered.line,
++        degradeRow: rendered.degradeRow,
++        cacheReadFault,
++        cacheWriteFault,
++    };
++};
++exports.stepRouteStatusLineCached = stepRouteStatusLineCached;
++/**
++ * .what = reads the cache file, or returns the fs fault that refused the read
++ * .why = an unreadable cache is a miss, never a fault: the miss's write replaces the file
++ *
++ * .note = only fs faults (a string `code`) are returned; any other error rethrows
++ */
++const getOneCachedRecordOrFault = (input) => {
++    try {
++        return {
++            cached: (0, getOneRouteStatusLineCache_1.getOneRouteStatusLineCache)({ cachePath: input.cachePath }),
++            cacheReadFault: null,
++        };
++    }
++    catch (error) {
++        const code = (0, getFsErrorCode_1.getFsErrorCode)(error);
++        if (code === null)
++            throw error;
++        return {
++            cached: null,
++            cacheReadFault: { code, cachePath: input.cachePath },
++        };
++    }
++};
++/**
++ * .what = the route a miss renders: the cached route while its own bind flag stands, else
++ *         the route the repo-wide bind lookup finds
++ * .why = a change to a bound route costs the render alone, never a walk of the whole repo
++ *
++ * .note = the cached route is reused only when the record is younger than the max age, so
++ *         the full lookup — and its loud multi-bind fault — runs at least once per max age.
++ *         a hit already trusts the cached route for that long, so a hand-planted second flag
++ *         surfaces no later than it would on a hit
++ * .note = an unbound record (route null) always runs the lookup: a new flag is what it seeks
++ */
++const getOneRouteForMiss = async (input) => {
++    const routeReusable = getOneCachedRouteReusable(input);
++    if (routeReusable !== null)
++        return routeReusable;
++    return getOneBoundRoute({ branch: input.branch });
++};
++/**
++ * .what = the cached route, when a miss may render it without the repo-wide lookup; else null
++ * .why = names the four terms of reuse: a record, a bound route in it, a young file, and
++ *        that route's own bind flag still on disk
++ */
++const getOneCachedRouteReusable = (input) => {
++    // no record, or an unbound one: no route to reuse
++    const routeCached = input.cached?.record.route ?? null;
++    if (!input.cached || routeCached === null)
++        return null;
++    // an old record: the full lookup is owed once per max age
++    if (!isCacheRecordYoung({ cached: input.cached, nowMs: input.nowMs }))
++        return null;
++    // the route's own bind flag must still stand
++    const isFlagPresent = (0, isRouteStatusLineBindFlagPresent_1.isRouteStatusLineBindFlagPresent)({
++        cwd: input.cwd,
++        route: routeCached,
++        branch: input.branch,
++    });
++    return isFlagPresent ? routeCached : null;
++};
++/**
++ * .what = the route bound to this branch, or null, via the repo-wide bind lookup
++ * .why = the glob faults loud on a multi-bind. it loads lazily: its module graph is the
++ *        cost a hit must not pay
++ *
++ * .note = the branch is passed in, the one the cache is keyed by, so the lookup spawns no
++ *         second `git rev-parse` and cannot read another branch than the cache names
++ */
++const getOneBoundRoute = async (input) => {
++    const { getRouteBindByBranch } = await Promise.resolve().then(() => __importStar(require('../../../domain.operations/route/bind/getRouteBindByBranch')));
++    return (await getRouteBindByBranch({ branch: input.branch }))?.route ?? null;
++};
++/**
++ * .what = the real render of a bound route, loaded lazily
++ * .why = the render ops' module graph is the cost a hit must not pay
++ */
++const renderRouteReal = async (input) => {
++    const { stepRouteStatusLine } = await Promise.resolve().then(() => __importStar(require('../../../domain.operations/route/stepRouteStatusLine')));
++    return stepRouteStatusLine(input);
++};
++/**
++ * .what = the line for a route: its render, or the blank line when no route is bound
++ * .why = the render ops load lazily, so a hit never pays their module graph
++ */
++const getOneRenderedLine = async (input, context) => {
++    // an unbound seat: the blank line
++    if (input.route === null) {
++        const { asStatusLine } = await Promise.resolve().then(() => __importStar(require('./asStatusLine')));
++        return { line: asStatusLine({ kind: 'blank' }), degradeRow: null };
++    }
++    // a bound seat: the full render
++    const renderRoute = context.renderRoute ?? renderRouteReal;
++    return renderRoute({ route: input.route });
++};
++/**
++ * .what = whether a cached record still names the current line
++ * .why = its file must be younger than the max age (the backstop for a render input the
++ *        fingerprint does not name), and its fingerprint must match a fresh one
++ *
++ * .note = the age is checked first: it costs no stat. a fault on a render input's stat
++ *         throws, so the line faults loud rather than shows a render over a file nobody
++ *         could read
++ */
++const isCacheRecordCurrent = (input) => isCacheRecordYoung({ cached: input.cached, nowMs: input.nowMs }) &&
++    (0, getOneRouteStatusLineFingerprint_1.getOneRouteStatusLineFingerprint)({
++        cwd: input.cwd,
++        branch: input.branch,
++        route: input.cached.record.route,
++    }) === input.cached.record.fingerprint;
++/**
++ * .what = whether a cached record's file is younger than the max age
++ */
++const isCacheRecordYoung = (input) => (0, isRouteStatusLineCacheAgeWithinMax_1.isRouteStatusLineCacheAgeWithinMax)({
++    writtenAtMs: input.cached.writtenAtMs,
++    nowMs: input.nowMs,
++});
++/**
++ * .what = writes the cache, or returns the fs fault that refused the write
++ * .why = an unwritable cache must not blank the line, yet must not hide either
++ *
++ * .note = only fs faults (a string `code`) are returned; any other error rethrows
++ * .note = every fs code is returned, not a short list, by design: the cache is an
++ *         optimization, so no fault of its write (EACCES, ENOSPC, EROFS, EIO, …) may blank
++ *         a correct line. none is hidden either: the caller prints each to stderr with its
++ *         code, its path, and the fix (`asStatusLineCacheWriteFaultRow`)
++ */
++const setCacheOrFault = (input) => {
++    try {
++        (0, setRouteStatusLineCache_1.setRouteStatusLineCache)(input);
++        return null;
++    }
++    catch (error) {
++        const code = (0, getFsErrorCode_1.getFsErrorCode)(error);
++        if (code === null)
++            throw error;
++        return { code, cachePath: input.cachePath };
++    }
++};
++//# sourceMappingURL=stepRouteStatusLineCached.js.map
+\ No newline at end of file
+diff --git a/dist/domain.operations/route/stepRouteStatusLine.js b/dist/domain.operations/route/stepRouteStatusLine.js
+index 6ae74992..cb1fd92a 100644
+--- a/dist/domain.operations/route/stepRouteStatusLine.js
++++ b/dist/domain.operations/route/stepRouteStatusLine.js
+@@ -2,7 +2,6 @@
+ Object.defineProperty(exports, "__esModule", { value: true });
+ exports.stepRouteStatusLine = void 0;
+ const RouteStoneGuard_1 = require("../../domain.objects/Driver/RouteStoneGuard");
+-const getRouteBind_1 = require("./bind/getRouteBind");
+ const asRouteStoneDisposition_1 = require("./drive/asRouteStoneDisposition");
+ const getAllRouteStoneGuardReviewPeerMeters_1 = require("./guard/review/peer/meter/getAllRouteStoneGuardReviewPeerMeters");
+ const getOneReviewLevelByIndex_1 = require("./guard/review/peer/meter/getOneReviewLevelByIndex");
+@@ -11,6 +10,7 @@ const getStonePromises_1 = require("./guard/review/self/getStonePromises");
+ const isExpectedFsReadFault_1 = require("./isExpectedFsReadFault");
+ const getLatestPassageForStone_1 = require("./passage/getLatestPassageForStone");
+ const asStatusLine_1 = require("./statusLine/asStatusLine");
++const asStatusLineDegradeRow_1 = require("./statusLine/asStatusLineDegradeRow");
+ const computeNextStones_1 = require("./stones/computeNextStones");
+ const getAllStoneDriveArtifacts_1 = require("./stones/getAllStoneDriveArtifacts");
+ const getAllStones_1 = require("./stones/getAllStones");
+@@ -24,38 +24,41 @@ const getAllStones_1 = require("./stones/getAllStones");
+  *         route with no stones yields an empty line; a bound route whose stones all passed
+  *         yields '🗿 route complete 🌴🤙'.
+  *
+- * .note = `route` is nullable: null → look up the branch-bound route. tests pass a route
+- *         directly to avoid bind conflicts (all tests share a git repo).
++ * .note = `route` is the route to render; the bind lookup lives in the one caller that needs
++ *         it, `stepRouteStatusLineCached`, which renders the blank line for an unbound seat
++ *
++ * .note = `degradeRow` is the stderr row when the phase derivation faulted and the line fell
++ *         back to the plain stone, else null. it is data, never printed here: the cli entry is
++ *         the one writer of stderr, and the cache stores the row so a hit replays it whole
+  */
+ const stepRouteStatusLine = async (input) => {
+     // derive the route's status-line state, then render it
+-    const state = await getRouteStatusLineState({ route: input.route });
+-    return { line: (0, asStatusLine_1.asStatusLine)(state) };
++    const { state, degradeRow } = await getRouteStatusLineState({
++        route: input.route,
++    });
++    return { line: (0, asStatusLine_1.asStatusLine)(state), degradeRow };
+ };
+ exports.stepRouteStatusLine = stepRouteStatusLine;
+ /**
+- * .what = derives the status-line render state for a route (given or branch-bound)
++ * .what = derives the status-line render state for a route, plus the degrade row if any
+  * .why = isolates the lookup so the orchestrator reads as narrative
+  *
+  * .note = the fault contract is split by concern (see the vision's edge-case table):
+- *         - the STONE lookup (bind, stones, next-stone) is STRICT: a fault propagates, the
++ *         - the STONE lookup (stones, next-stone) is STRICT: a fault propagates, the
+  *           cli exits non-zero, the harness blanks the line. this is the base line; if we
+  *           cannot even name the stone, an empty line is correct.
+- *         - the PHASE derivation is BEST-EFFORT: a fault there is logged to stderr and
+- *           degrades to a null phase (the plain '🗿 <stone>' line), so a failure in the
+- *           enhancement never regresses the base feature to a blank line.
++ *         - the PHASE derivation is BEST-EFFORT: a fault there yields a degrade row and a
++ *           null phase (the plain '🗿 <stone>' line), so a failure in the enhancement never
++ *           regresses the base feature to a blank line.
+  *         - the DISPOSITION is a cheap passage read (never the fault source); it is always
+  *           derived, even when the phase degrades.
+  */
+ const getRouteStatusLineState = async (input) => {
+-    // derive the route: the one given, else the branch-bound one
+-    const route = input.route ?? (await (0, getRouteBind_1.getRouteBind)())?.route ?? null;
+-    if (!route)
+-        return { kind: 'blank' };
++    const route = input.route;
+     // a route with no stones has no step to show (not complete — no stone was passed)
+     const stones = await (0, getAllStones_1.getAllStones)({ route });
+     if (stones.length === 0)
+-        return { kind: 'blank' };
++        return { state: { kind: 'blank' }, degradeRow: null };
+     // compute the current (first incomplete) stone
+     const artifacts = await (0, getAllStoneDriveArtifacts_1.getAllStoneDriveArtifacts)({ route });
+     const nextStones = (0, computeNextStones_1.computeNextStones)({
+@@ -66,7 +69,7 @@ const getRouteStatusLineState = async (input) => {
+     // no incomplete stone remains → the route's stones all passed → complete
+     const stoneFirst = asFirstStoneOrNull({ stones: nextStones });
+     if (!stoneFirst)
+-        return { kind: 'complete' };
++        return { state: { kind: 'complete' }, degradeRow: null };
+     // read the latest passage for this stone (cheap) — it drives BOTH the disposition and,
+     // when a guard blocker is present, the phase location
+     // .note = getLatestPassageForStone reads raw file order (true chronological latest); it
+@@ -90,18 +93,21 @@ const getRouteStatusLineState = async (input) => {
+         reason: latest?.reason ?? null,
+     });
+     // phase (where the work is): best-effort — a benign read fault degrades to the plain stone
+-    const phase = await getStonePhaseBestEffort({
++    const { phase, degradeRow } = await getStonePhaseBestEffort({
+         stone: stoneFirst,
+         route,
+         latest,
+     });
+-    return { kind: 'stone', stone: stoneFirst.name, phase, disposition };
++    return {
++        state: { kind: 'stone', stone: stoneFirst.name, phase, disposition },
++        degradeRow,
++    };
+ };
+ /**
+  * .what = derives the current stone's phase, degraded to null on a benign route-state fault
+  * .why = the phase is an enhancement on top of the stone name; a benign read fault (corrupt
+- *        jsonl, unreadable file) must surface (stderr) but must NOT blank the base line — so
+- *        we log and degrade to null (the plain '🗿 <stone>' line).
++ *        jsonl, unreadable file) must surface (a degrade row for stderr) but must NOT blank
++ *        the base line — so it degrades to null (the plain '🗿 <stone>' line).
+  *
+  * .note = this is NOT failhide: the catch ALLOWLISTS only expected route-state read faults
+  *         (`isExpectedRouteStateFault`) and RETHROWS any other error (a genuine bug), so an
+@@ -109,18 +115,17 @@ const getRouteStatusLineState = async (input) => {
+  */
+ const getStonePhaseBestEffort = async (input) => {
+     try {
+-        return await getStonePhase(input);
++        return { phase: await getStonePhase(input), degradeRow: null };
+     }
+     catch (error) {
+         // a genuine (unexpected) fault must surface, not degrade — rethrow it (failfast)
+         if (!isExpectedRouteStateFault(error))
+             throw error;
+-        // a benign route-state read fault → surface on stderr, then degrade to the plain stone line
+-        // note: mirrors the `[route.status.line] fault:` convention (route.ts) so both stderr
+-        //       fault outputs read alike; the final `:` separates the crafted sentence from the
+-        //       raw error dump that console.error appends after it
+-        console.error(`[route.status.line] fault: phase derivation faulted for stone "${input.stone.name}", degraded to plain stone line:`, error);
+-        return null;
++        // a benign route-state read fault → a degrade row, and the plain stone line
++        return {
++            phase: null,
++            degradeRow: (0, asStatusLineDegradeRow_1.asStatusLineDegradeRow)({ stone: input.stone.name, error }),
++        };
+     }
+ };
+ /**
+diff --git a/dist/utils/git/sanitizeBranchName.js b/dist/utils/git/sanitizeBranchName.js
+new file mode 100644
+index 00000000..a9f025b4
+--- /dev/null
++++ b/dist/utils/git/sanitizeBranchName.js
+@@ -0,0 +1,16 @@
++"use strict";
++Object.defineProperty(exports, "__esModule", { value: true });
++exports.sanitizeBranchName = void 0;
++/**
++ * .what = converts branch name to filesystem-safe string
++ * .why = branches with slashes like "feat/my-feature" would create subdirs
++ */
++const sanitizeBranchName = (input) => {
++    return input.branch
++        .replace(/\//g, '.') // slashes to dots (preserves hierarchy readability)
++        .replace(/[^a-zA-Z0-9-_.]/g, '-') // other unsafe chars to dashes
++        .replace(/[-_.]{2,}/g, (m) => m[0]) // collapse consecutive special chars
++        .replace(/^[-_.]|[-_.]$/g, ''); // trim start/end special chars
++};
++exports.sanitizeBranchName = sanitizeBranchName;
++//# sourceMappingURL=sanitizeBranchName.js.map
+\ No newline at end of file
+diff --git a/package.json b/package.json
+index a813d1f1..80e255f1 100644
+--- a/package.json
++++ b/package.json
+@@ -19,6 +19,7 @@
+     "./cli": "./dist/contract/cli/index.js",
+     "./cli/route": "./dist/contract/cli/route.js",
+     "./cli/route.reminder": "./dist/contract/cli/route.reminder.js",
++    "./cli/route.status.line": "./dist/contract/cli/route.status.line.js",
+     "./cli/review": "./dist/contract/cli/review.js",
+     "./cli/review.by": "./dist/contract/cli/review.by.js",
+     "./cli/review._.cost": "./dist/contract/cli/review._.cost.js",

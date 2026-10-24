@@ -1,0 +1,163 @@
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
+
+exports[`settings.permissions.diff.acceptance given: [case1] the help is asked for when: [t0] --help runs then: the help matches its snapshot 1`] = `
+"######################################################################
+# .what = compare the permission sets of a claude settings file across two revs
+#
+# .why  = \`rhx upgrade\` and \`roles link\` regenerate settings files, and a
+#         regen often reorders hundreds of lines. a line diff cannot say
+#         whether the allowlist widened or merely moved; a set diff can.
+#         a reviewer who asks "did this permission change?" gets the answer
+#         in one call, not by hand
+#
+# usage:
+#   rhx settings.permissions.diff --of <path> --from <rev>               # <rev> vs the work tree
+#   rhx settings.permissions.diff --of <path> --from <rev> --into <rev>
+#
+# guarantee:
+#   - reads both versions via git show (or the work tree); writes naught
+#   - reports, per list (allow, deny, ask): entries added and removed,
+#     order ignored; and whether every key outside \`permissions\` is equal,
+#     with each top-level key that moved named beneath (\`~ hooks\`)
+#   - a version that is not one json object (a conflict marker, say)
+#     refuses as bad input, with jq's cause beneath the header
+#   - exit 0 = compared, exit 2 = bad input, exit 1 = a read failed
+######################################################################
+"
+`;
+
+exports[`settings.permissions.diff.acceptance given: [case2] a required input is absent or unknown when: [t0] it runs with no --of then: the refusal matches its snapshot 1`] = `
+"✋ ConstraintError: --of <path> is required
+"
+`;
+
+exports[`settings.permissions.diff.acceptance given: [case2] a required input is absent or unknown when: [t1] it runs with no --from then: the refusal matches its snapshot 1`] = `
+"✋ ConstraintError: --from <rev> is required
+"
+`;
+
+exports[`settings.permissions.diff.acceptance given: [case2] a required input is absent or unknown when: [t2] it runs with an unknown arg then: the refusal matches its snapshot 1`] = `
+"✋ ConstraintError: unknown arg '--bogus'
+"
+`;
+
+exports[`settings.permissions.diff.acceptance given: [case2] a required input is absent or unknown when: [t3] it runs with --of with no value then: the refusal matches its snapshot 1`] = `
+"✋ ConstraintError: --of needs a value
+"
+`;
+
+exports[`settings.permissions.diff.acceptance given: [case2] a required input is absent or unknown when: [t4] it runs with --from with no value then: the refusal matches its snapshot 1`] = `
+"✋ ConstraintError: --from needs a value
+"
+`;
+
+exports[`settings.permissions.diff.acceptance given: [case2] a required input is absent or unknown when: [t5] it runs with --into with no value then: the refusal matches its snapshot 1`] = `
+"✋ ConstraintError: --into needs a value
+"
+`;
+
+exports[`settings.permissions.diff.acceptance given: [case3] a regen that reorders every list and narrows one entry when: [t0] the committed rev is compared with the work tree then: the report matches its snapshot 1`] = `
+"🦉 the pond reflects what moved, not how it was stirred
+
+🔍 settings.permissions.diff
+   ├─ of = settings.json
+   ├─ from = HEAD
+   ├─ into = (work tree)
+   ├─ allow
+   │  ├─ added = 0
+   │  └─ removed = 1
+   │     └─ - Write(.route/**)
+   ├─ deny
+   │  ├─ added = 1
+   │  │  └─ + Edit(.route/**)
+   │  └─ removed = 0
+   ├─ ask
+   │  ├─ added = 0
+   │  └─ removed = 0
+   └─ all else equal = true
+"
+`;
+
+exports[`settings.permissions.diff.acceptance given: [case3] a regen that reorders every list and narrows one entry when: [t1] a rev that lacks the file is named then: the fault matches its snapshot 1`] = `
+"💥 MalfunctionError: cannot read absent.json at HEAD
+   └─ cause: path 'absent.json' does not exist in 'HEAD'
+"
+`;
+
+exports[`settings.permissions.diff.acceptance given: [case4] a regen that widens one entry and changes a hook when: [t0] the committed rev is compared with the work tree then: the report matches its snapshot 1`] = `
+"🦉 the pond reflects what moved, not how it was stirred
+
+🔍 settings.permissions.diff
+   ├─ of = settings.json
+   ├─ from = HEAD
+   ├─ into = (work tree)
+   ├─ allow
+   │  ├─ added = 2
+   │  │  ├─ + Bash(rm:*)
+   │  │  └─ + Bash(curl:*)
+   │  └─ removed = 0
+   ├─ deny
+   │  ├─ added = 0
+   │  └─ removed = 1
+   │     └─ - Bash(rm:*)
+   ├─ ask
+   │  ├─ added = 0
+   │  └─ removed = 0
+   └─ all else equal = false
+      └─ ~ hooks
+"
+`;
+
+exports[`settings.permissions.diff.acceptance given: [case5] a regen that only reorders when: [t0] the committed rev is compared with the work tree then: the report matches its snapshot 1`] = `
+"🦉 the pond reflects what moved, not how it was stirred
+
+🔍 settings.permissions.diff
+   ├─ of = settings.json
+   ├─ from = HEAD
+   ├─ into = (work tree)
+   ├─ allow
+   │  ├─ added = 0
+   │  └─ removed = 0
+   ├─ deny
+   │  ├─ added = 0
+   │  └─ removed = 0
+   ├─ ask
+   │  ├─ added = 0
+   │  └─ removed = 0
+   └─ all else equal = true
+"
+`;
+
+exports[`settings.permissions.diff.acceptance given: [case6] a regen already committed, so two revs are compared when: [t0] --into names the later rev then: the report matches its snapshot 1`] = `
+"🦉 the pond reflects what moved, not how it was stirred
+
+🔍 settings.permissions.diff
+   ├─ of = settings.json
+   ├─ from = HEAD~1
+   ├─ into = HEAD
+   ├─ allow
+   │  ├─ added = 0
+   │  └─ removed = 1
+   │     └─ - Write(.route/**)
+   ├─ deny
+   │  ├─ added = 1
+   │  │  └─ + Edit(.route/**)
+   │  └─ removed = 0
+   ├─ ask
+   │  ├─ added = 0
+   │  └─ removed = 0
+   └─ all else equal = true
+"
+`;
+
+exports[`settings.permissions.diff.acceptance given: [case7] a work tree file left with a merge-conflict marker when: [t0] the committed rev is compared with the work tree then: the refusal matches its snapshot 1`] = `
+"✋ ConstraintError: settings.json in the work tree is not a json object
+   └─ cause: parse error: Invalid numeric literal at line 1, column 8
+"
+`;
+
+exports[`settings.permissions.diff.acceptance given: [case8] a work tree that no longer holds the file when: [t0] the committed rev is compared with the work tree then: the fault matches its snapshot 1`] = `
+"💥 MalfunctionError: cannot read settings.json in the work tree
+   └─ cause: no such file
+"
+`;

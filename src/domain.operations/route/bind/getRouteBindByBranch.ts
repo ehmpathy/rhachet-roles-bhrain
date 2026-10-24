@@ -2,6 +2,7 @@ import { BadRequestError } from 'helpful-errors';
 import * as path from 'path';
 
 import { getAllBindFlagsByBranch } from './getAllBindFlagsByBranch';
+import { MESSAGE_OF_MULTI_BIND } from './MESSAGE_OF_MULTI_BIND';
 
 /**
  * .what = looks up the bound route for the current (or given) branch
@@ -21,7 +22,7 @@ export const getRouteBindByBranch = async (input: {
   // multiple flags found → ambiguity error
   if (flagFiles.length > 1)
     throw new BadRequestError(
-      'multiple routes bound to this branch. use --route to disambiguate',
+      `${MESSAGE_OF_MULTI_BIND}. use --route to disambiguate`,
       { branch, flagFiles },
     );
 
