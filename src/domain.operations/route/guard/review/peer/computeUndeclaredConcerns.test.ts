@@ -2,7 +2,7 @@ import { given, then, when } from 'test-fns';
 
 import { computeUndeclaredConcerns } from './computeUndeclaredConcerns';
 import type { RouteGuardReviewPeerGiven } from './getAllRouteGuardReviewPeerGivens';
-import type { ReviewAbsorption } from './getStoneReviewAbsorptions';
+import type { ReviewAbsorption } from './ReviewAbsorption';
 
 const asGiven = (input: {
   slug: string;

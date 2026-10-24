@@ -1,0 +1,980 @@
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
+
+exports[`driver.route.exhausted-all-better given: [case1] two lanes exhausted at 3/3, every concern conceded \`better\` when: [t0] the judge runs through the path the stances were written under then: matches snapshot 1`] = `
+"code: 0
+--- stdout
+passed: true
+reason: reviews pass (blockers: 0/0, nitpicks: 1/7), after 3 blockers shed (0 disputed + 3 conceded better)
+--- stderr
+conceded better: 3 blockers, 0 nitpicks excluded from the tally
+residual: 0/0 blockers, 1/7 nitpicks"
+`;
+
+exports[`driver.route.exhausted-all-better given: [case1] two lanes exhausted at 3/3, every concern conceded \`better\` when: [t1] the judge runs through a symlinked alias of the route then: matches snapshot 1`] = `
+"code: 0
+--- stdout
+passed: true
+reason: reviews pass (blockers: 0/0, nitpicks: 1/7), after 3 blockers shed (0 disputed + 3 conceded better)
+--- stderr
+conceded better: 3 blockers, 0 nitpicks excluded from the tally
+residual: 0/0 blockers, 1/7 nitpicks"
+`;
+
+exports[`driver.route.exhausted-all-better given: [case1] two lanes exhausted at 3/3, every concern conceded \`better\` when: [t2] the driver runs \`--as passed\` through the alias then: matches snapshot 1`] = `
+"code: 0
+--- stdout
+🦉 the way speaks for itself
+   │
+   ├─ r1: calm (l1, 3/3)
+   │   ├─ exhausted 🌙, cached
+   │   ├─ terminal — does not block higher levels
+   │   ├─ 0 blockers ✓
+   │   ├─ 1 nitpick 🟠
+   │   ├─ given: .reviews/peer/1.vision._.review.i003.aae49dff22797063a1.r001._.given.by_peer.calm.md
+   │   └─ taken: .reviews/peer/1.vision._.review.i003.aae49dff22797063a1.r001._.taken.by_self.calm.md
+   │
+   ├─ r2: intent (l2, 3/3)
+   │   ├─ exhausted 🌙, cached
+   │   ├─ terminal — does not block higher levels
+   │   ├─ 1 blocker 🔴
+   │   ├─ 0 nitpicks ✓
+   │   ├─ given: .reviews/peer/1.vision._.review.i003.aae49dff22797063a1.r002._.given.by_peer.intent.md
+   │   └─ taken: .reviews/peer/1.vision._.review.i003.aae49dff22797063a1.r002._.taken.by_self.intent.md
+   │
+   ├─ r3: friction (l2, 3/3)
+   │   ├─ exhausted 🌙, cached
+   │   ├─ terminal — does not block higher levels
+   │   ├─ 2 blockers 🔴
+   │   ├─ 0 nitpicks ✓
+   │   ├─ given: .reviews/peer/1.vision._.review.i003.aae49dff22797063a1.r003._.given.by_peer.friction.md
+   │   └─ taken: .reviews/peer/1.vision._.review.i003.aae49dff22797063a1.r003._.taken.by_self.friction.md
+   │
+   └─ ✓ judge.1 - allowed [TIME]
+
+🗿 route.stone.set
+   ├─ stone = 1.vision
+   ├─ passage = allowed
+   ├─ guard
+   │  ├─ artifacts
+   │  │   └─ src/**/*.ts
+   │  ├─ reviews
+   │  │   ├─ r1: calm (l1, 3/3)
+   │  │   │   ├─ approved, cached
+   │  │   │   ├─ 0 blockers ✓
+   │  │   │   ├─ 1 nitpick 🟠
+   │  │   │   ├─ given: .reviews/peer/1.vision._.review.i003.aae49dff22797063a1.r001._.given.by_peer.calm.md
+   │  │   │   └─ taken: .reviews/peer/1.vision._.review.i003.aae49dff22797063a1.r001._.taken.by_self.calm.md
+   │  │   ├─ r2: intent (l2, 3/3)
+   │  │   │   ├─ exhausted 🌙, cached
+   │  │   │   ├─ terminal — does not block higher levels
+   │  │   │   ├─ 1 blocker 🔴
+   │  │   │   ├─ 0 nitpicks ✓
+   │  │   │   ├─ given: .reviews/peer/1.vision._.review.i003.aae49dff22797063a1.r002._.given.by_peer.intent.md
+   │  │   │   └─ taken: .reviews/peer/1.vision._.review.i003.aae49dff22797063a1.r002._.taken.by_self.intent.md
+   │  │   └─ r3: friction (l2, 3/3)
+   │  │       ├─ exhausted 🌙, cached
+   │  │       ├─ terminal — does not block higher levels
+   │  │       ├─ 2 blockers 🔴
+   │  │       ├─ 0 nitpicks ✓
+   │  │       ├─ given: .reviews/peer/1.vision._.review.i003.aae49dff22797063a1.r003._.given.by_peer.friction.md
+   │  │       └─ taken: .reviews/peer/1.vision._.review.i003.aae49dff22797063a1.r003._.taken.by_self.friction.md
+   │  └─ judges
+   │      └─ j1: rhx route.stone.judge --mechanism reviewed? --stone $stone --route $route --allow-blockers 0 --allow-nitpicks 7
+   │          └─ finished [TIME] ✓
+   │
+   └─ the way continues, run
+      └─ rhx route.drive
+--- stderr
+"
+`;
+
+exports[`driver.route.exhausted-all-better given: [case1] two lanes exhausted at 3/3, every concern conceded \`better\` when: [t3] the ledger is read then: each stance row names its given by filename, never by an absolute path 1`] = `
+[
+  {
+    "about": "blocker.1",
+    "given": "1.vision._.review.i001.df9362d1419a2a469a.r002._.given.by_peer.intent.md",
+    "reviewer": "intent",
+  },
+  {
+    "about": "blocker.1",
+    "given": "1.vision._.review.i001.df9362d1419a2a469a.r003._.given.by_peer.friction.md",
+    "reviewer": "friction",
+  },
+  {
+    "about": "blocker.2",
+    "given": "1.vision._.review.i001.df9362d1419a2a469a.r003._.given.by_peer.friction.md",
+    "reviewer": "friction",
+  },
+  {
+    "about": "blocker.1",
+    "given": "1.vision._.review.i002.9cadffca2066d7b9e3.r002._.given.by_peer.intent.md",
+    "reviewer": "intent",
+  },
+  {
+    "about": "blocker.1",
+    "given": "1.vision._.review.i002.9cadffca2066d7b9e3.r003._.given.by_peer.friction.md",
+    "reviewer": "friction",
+  },
+  {
+    "about": "blocker.2",
+    "given": "1.vision._.review.i002.9cadffca2066d7b9e3.r003._.given.by_peer.friction.md",
+    "reviewer": "friction",
+  },
+  {
+    "about": "blocker.1",
+    "given": "1.vision._.review.i003.aae49dff22797063a1.r002._.given.by_peer.intent.md",
+    "reviewer": "intent",
+  },
+  {
+    "about": "blocker.1",
+    "given": "1.vision._.review.i003.aae49dff22797063a1.r003._.given.by_peer.friction.md",
+    "reviewer": "friction",
+  },
+  {
+    "about": "blocker.2",
+    "given": "1.vision._.review.i003.aae49dff22797063a1.r003._.given.by_peer.friction.md",
+    "reviewer": "friction",
+  },
+]
+`;
+
+exports[`driver.route.exhausted-all-better given: [case2] two lanes exhausted, friction blocker.1 conceded \`urgent\`, the rest \`better\` when: [t0] the judge runs through a symlinked alias of the route then: matches snapshot 1`] = `
+"code: 2
+--- stdout
+passed: false
+reason: blockers exceed threshold (1 > 0), after 2 blockers shed (0 disputed + 2 conceded better)
+--- stderr
+conceded better: 2 blockers, 0 nitpicks excluded from the tally
+residual: 1/0 blockers, 1/7 nitpicks
+
+✋ halted, an urgent concession stands — friction
+   ├─ its harm ships if unfixed, so this stone earns more budget
+   ├─ please ask your human to
+   │  └─ rhx route.guard.budget --for review --add 2 --peer friction --stone 1.vision
+   │
+   └─ after the grant, address the concession, then run
+      └─ rhx route.stone.set --stone 1.vision --as passed"
+`;
+
+exports[`driver.route.exhausted-all-better given: [case2] two lanes exhausted, friction blocker.1 conceded \`urgent\`, the rest \`better\` when: [t0b] the driver runs \`--as passed\` through the alias then: matches snapshot 1`] = `
+"code: 2
+--- stdout
+🦉 the way speaks for itself
+   │
+   ├─ r1: calm (l1, 3/3)
+   │   ├─ exhausted 🌙, cached
+   │   ├─ terminal — does not block higher levels
+   │   ├─ 0 blockers ✓
+   │   ├─ 1 nitpick 🟠
+   │   ├─ given: .reviews/peer/1.vision._.review.i003.aae49dff22797063a1.r001._.given.by_peer.calm.md
+   │   └─ taken: .reviews/peer/1.vision._.review.i003.aae49dff22797063a1.r001._.taken.by_self.calm.md
+   │
+   ├─ r2: intent (l2, 3/3)
+   │   ├─ exhausted 🌙, cached
+   │   ├─ terminal — does not block higher levels
+   │   ├─ 1 blocker 🔴
+   │   ├─ 0 nitpicks ✓
+   │   ├─ given: .reviews/peer/1.vision._.review.i003.aae49dff22797063a1.r002._.given.by_peer.intent.md
+   │   └─ taken: .reviews/peer/1.vision._.review.i003.aae49dff22797063a1.r002._.taken.by_self.intent.md
+   │
+   ├─ r3: friction (l2, 3/3)
+   │   ├─ exhausted 🌙, cached
+   │   ├─ terminal — does not block higher levels
+   │   ├─ 2 blockers 🔴
+   │   ├─ 0 nitpicks ✓
+   │   ├─ given: .reviews/peer/1.vision._.review.i003.aae49dff22797063a1.r003._.given.by_peer.friction.md
+   │   └─ taken: .reviews/peer/1.vision._.review.i003.aae49dff22797063a1.r003._.taken.by_self.friction.md
+   │
+   └─ halted: peer reviewer budget exhausted
+
+🗿 route.stone.set
+   ├─ stone = 1.vision
+   ├─ passage = blocked
+   ├─ reason = you conceded — the round to confirm your fix needs more budget
+   │  └─ 🟡 an urgent concession stands — its harm ships if unfixed, so this stone earns more budget
+   ├─ options
+   │  ├─ increase budget — yours to spend
+   │  │  └─ rhx route.guard.budget --for review --add N --peer friction --stone 1.vision
+   │  └─ approve as-is — a human must grant
+   │     └─ rhx route.stone.set --stone 1.vision --as approved
+   └─ guard
+      ├─ artifacts
+      │   └─ src/**/*.ts
+      └─ reviews
+          ├─ r1: calm (l1, 3/3)
+          │   ├─ approved, cached
+          │   ├─ 0 blockers ✓
+          │   ├─ 1 nitpick 🟠
+          │   ├─ given: .reviews/peer/1.vision._.review.i003.aae49dff22797063a1.r001._.given.by_peer.calm.md
+          │   └─ taken: .reviews/peer/1.vision._.review.i003.aae49dff22797063a1.r001._.taken.by_self.calm.md
+          ├─ r2: intent (l2, 3/3)
+          │   ├─ exhausted 🌙, cached
+          │   ├─ terminal — does not block higher levels
+          │   ├─ 1 blocker 🔴
+          │   ├─ 0 nitpicks ✓
+          │   ├─ given: .reviews/peer/1.vision._.review.i003.aae49dff22797063a1.r002._.given.by_peer.intent.md
+          │   └─ taken: .reviews/peer/1.vision._.review.i003.aae49dff22797063a1.r002._.taken.by_self.intent.md
+          └─ r3: friction (l2, 3/3)
+              ├─ exhausted 🌙, cached
+              ├─ terminal — does not block higher levels
+              ├─ 2 blockers 🔴
+              ├─ 0 nitpicks ✓
+              ├─ given: .reviews/peer/1.vision._.review.i003.aae49dff22797063a1.r003._.given.by_peer.friction.md
+              └─ taken: .reviews/peer/1.vision._.review.i003.aae49dff22797063a1.r003._.taken.by_self.friction.md
+--- stderr
+"
+`;
+
+exports[`driver.route.exhausted-all-better given: [case2] two lanes exhausted, friction blocker.1 conceded \`urgent\`, the rest \`better\` when: [t1] the named budget command runs through the alias then: matches snapshot 1`] = `
+"code: 0
+--- stdout
+🦉 budget extended
+
+🗿 route.guard.budget
+   ├─ route = [ROUTE]
+   ├─ add = 2
+   ├─ peer = friction
+   │
+   ├─ granted — earned by a live urgent concession
+   │  └─ friction · conceded urgent
+   │
+   ├─ 🟡 tell your human why this stone bought budget
+   │
+   └─ updates
+      └─ friction: 3 → 5
+--- stderr
+"
+`;
+
+exports[`driver.route.exhausted-all-better given: [case2] two lanes exhausted, friction blocker.1 conceded \`urgent\`, the rest \`better\` when: [t2] the fix lands and the driver re-arrives through the alias then: matches snapshot 1`] = `
+"code: 2
+--- stdout
+🦉 the way speaks for itself
+   │
+   ├─ r1: calm (l1, 3/3)
+   │   ├─ exhausted 🌙, cached
+   │   ├─ terminal — does not block higher levels
+   │   ├─ 0 blockers ✓
+   │   ├─ 1 nitpick 🟠
+   │   ├─ given: .reviews/peer/1.vision._.review.i003.aae49dff22797063a1.r001._.given.by_peer.calm.md
+   │   └─ taken: .reviews/peer/1.vision._.review.i003.aae49dff22797063a1.r001._.taken.by_self.calm.md
+   │
+   ├─ r2: intent (l2, 3/3)
+   │   ├─ exhausted 🌙, cached
+   │   ├─ terminal — does not block higher levels
+   │   ├─ 1 blocker 🔴
+   │   ├─ 0 nitpicks ✓
+   │   ├─ given: .reviews/peer/1.vision._.review.i003.aae49dff22797063a1.r002._.given.by_peer.intent.md
+   │   └─ taken: .reviews/peer/1.vision._.review.i003.aae49dff22797063a1.r002._.taken.by_self.intent.md
+   │
+   ├─ r3: friction (l2, 4/5)
+   │   ├─ rejected [TIME]
+   │   ├─ 2 blockers 🔴
+   │   ├─ 0 nitpicks ✓
+   │   ├─ given: .reviews/peer/1.vision._.review.i004.783595f79833cc5cef.r003._.given.by_peer.friction.md
+   │   └─ taken: .reviews/peer/1.vision._.review.i004.783595f79833cc5cef.r003._.taken.by_self.friction.md
+   │
+   └─ ✗ judge.1 - blocked [TIME]
+
+🗿 route.stone.set
+   ├─ stone = 1.vision
+   ├─ passage = blocked
+   ├─ reason = blockers exceed threshold (2 > 0), after 1 blocker shed (0 disputed + 1 conceded better)
+   └─ guard
+      ├─ artifacts
+      │   └─ src/**/*.ts
+      ├─ reviews
+      │   ├─ r1: calm (l1, 3/3)
+      │   │   ├─ approved, cached
+      │   │   ├─ 0 blockers ✓
+      │   │   ├─ 1 nitpick 🟠
+      │   │   ├─ given: .reviews/peer/1.vision._.review.i003.aae49dff22797063a1.r001._.given.by_peer.calm.md
+      │   │   └─ taken: .reviews/peer/1.vision._.review.i003.aae49dff22797063a1.r001._.taken.by_self.calm.md
+      │   ├─ r2: intent (l2, 3/3)
+      │   │   ├─ exhausted 🌙, cached
+      │   │   ├─ terminal — does not block higher levels
+      │   │   ├─ 1 blocker 🔴
+      │   │   ├─ 0 nitpicks ✓
+      │   │   ├─ given: .reviews/peer/1.vision._.review.i003.aae49dff22797063a1.r002._.given.by_peer.intent.md
+      │   │   └─ taken: .reviews/peer/1.vision._.review.i003.aae49dff22797063a1.r002._.taken.by_self.intent.md
+      │   └─ r3: friction (l2, 4/5)
+      │       ├─ rejected [TIME]
+      │       ├─ 2 blockers 🔴
+      │       ├─ 0 nitpicks ✓
+      │       ├─ given: .reviews/peer/1.vision._.review.i004.783595f79833cc5cef.r003._.given.by_peer.friction.md
+      │       └─ taken: .reviews/peer/1.vision._.review.i004.783595f79833cc5cef.r003._.taken.by_self.friction.md
+      └─ judges
+          └─ j1: rhx route.stone.judge --mechanism reviewed? --stone $stone --route $route --allow-blockers 0 --allow-nitpicks 7
+              ├─ finished [TIME] ✗
+              └─ reason: blockers exceed threshold (2 > 0), after 1 blocker shed (0 disputed + 1 conceded better)
+
+🪷 the path continues
+   ├─ l1 is terminal (approved) — it no longer blocks you
+   ├─ l2 has engaged — address its blockers, then:
+   │  └─ rhx route.stone.set --stone 1.vision --as arrived
+   └─ a human is only needed once every level is terminal
+--- stderr
+🦉 l2 pours 1 lane
+   └─ r3:friction
+
+🪶 judge 1
+   ├─ stdout
+   │  ├─
+   │  │
+   │  │  🪨 run solid skill repo=bhrain/role=driver/skill=route.stone.judge
+   │  │
+   │  │  passed: false
+   │  │  reason: blockers exceed threshold (2 > 0), after 1 blocker shed (0 disputed + 1 conceded better)
+   │  │
+   │  └─
+   ├─ stderr
+   │  ├─
+   │  │
+   │  │  
+   │  │  🪨 run solid skill repo=bhrain/role=driver/skill=route.stone.judge
+   │  │     └─ ✋ blocked by constraints
+   │  │  
+   │  │  conceded better: 1 blocker, 0 nitpicks excluded from the tally
+   │  │  residual: 2/0 blockers, 1/7 nitpicks
+   │  │
+   │  └─
+   └─ passage blocked
+      ├─ blocked by constraints
+      └─ exit code: 2 ✋"
+`;
+
+exports[`driver.route.exhausted-all-better given: [case3] two lanes exhausted, friction blocker.2 never declared when: [t0] the judge runs then: matches snapshot 1`] = `
+"code: 2
+--- stdout
+passed: false
+reason: blockers exceed threshold (1 > 0), after 2 blockers shed (0 disputed + 2 conceded better)
+--- stderr
+conceded better: 2 blockers, 0 nitpicks excluded from the tally
+residual: 1/0 blockers, 1/7 nitpicks"
+`;
+
+exports[`driver.route.exhausted-all-better given: [case3] two lanes exhausted, friction blocker.2 never declared when: [t1] the judge runs through a symlinked alias of the route then: matches snapshot 1`] = `
+"code: 2
+--- stdout
+passed: false
+reason: blockers exceed threshold (1 > 0), after 2 blockers shed (0 disputed + 2 conceded better)
+--- stderr
+conceded better: 2 blockers, 0 nitpicks excluded from the tally
+residual: 1/0 blockers, 1/7 nitpicks"
+`;
+
+exports[`driver.route.exhausted-all-better given: [case3] two lanes exhausted, friction blocker.2 never declared when: [t2] the driver runs \`--as passed\` then: matches snapshot 1`] = `
+"code: 2
+--- stdout
+🦉 the way speaks for itself
+
+🦉 each concern awaits your absorption
+
+🌕 lets declare
+   │
+   ├─ review.peer 1/1
+   │  ├─ slug = friction
+   │  └─ undeclared
+   │     └─ blocker.2
+   │
+   ├─ why
+   │  └─ a budget ends a disagreement when it runs out, not by a verdict on
+   │     who is right. a stance is that verdict: you own each concern — fix
+   │     it, or hold that it is fine to continue — and it goes on record
+   │     where a council can rule on it.
+   │
+   ├─ what to do — concede, by default
+   │  └─ the reviewer is right and you will fix it. that is the ordinary
+   │     answer, and the sequence is: concede → fix → budget → re-arrive.
+   │
+   │     rhx route.stone.set --stone 1.vision \\
+   │       --as conceded --with <slug> --about <concern> \\
+   │       --severity better|urgent
+   │
+   └─ what to do — dispute, to escalate
+      └─ this ONE concern is fine to continue, and you want a human council
+         to rule on it at the close. it costs a fulcrum entry you author and
+         a human's attention, so reach for it where the concern is severe or
+         recurs — never as the default.
+
+         rhx route.stone.set --stone 1.vision \\
+           --as disputed --with <slug> --about <concern> \\
+           --why .fulcrums/inventory.of=fulcrums.case=F00N-<slug>.md
+
+         1 concern stands undeclared — one command each.
+--- stderr
+"
+`;
+
+exports[`driver.route.exhausted-all-better given: [case3] two lanes exhausted, friction blocker.2 never declared when: [t3] the driver concedes blocker.2 \`better\`, absorbs, and passes through the alias then: matches snapshot 1`] = `
+"code: 0
+--- stdout
+🦉 the way speaks for itself
+   │
+   ├─ r1: calm (l1, 3/3)
+   │   ├─ exhausted 🌙, cached
+   │   ├─ terminal — does not block higher levels
+   │   ├─ 0 blockers ✓
+   │   ├─ 1 nitpick 🟠
+   │   ├─ given: .reviews/peer/1.vision._.review.i003.aae49dff22797063a1.r001._.given.by_peer.calm.md
+   │   └─ taken: .reviews/peer/1.vision._.review.i003.aae49dff22797063a1.r001._.taken.by_self.calm.md
+   │
+   ├─ r2: intent (l2, 3/3)
+   │   ├─ exhausted 🌙, cached
+   │   ├─ terminal — does not block higher levels
+   │   ├─ 1 blocker 🔴
+   │   ├─ 0 nitpicks ✓
+   │   ├─ given: .reviews/peer/1.vision._.review.i003.aae49dff22797063a1.r002._.given.by_peer.intent.md
+   │   └─ taken: .reviews/peer/1.vision._.review.i003.aae49dff22797063a1.r002._.taken.by_self.intent.md
+   │
+   ├─ r3: friction (l2, 3/3)
+   │   ├─ exhausted 🌙, cached
+   │   ├─ terminal — does not block higher levels
+   │   ├─ 2 blockers 🔴
+   │   ├─ 0 nitpicks ✓
+   │   ├─ given: .reviews/peer/1.vision._.review.i003.aae49dff22797063a1.r003._.given.by_peer.friction.md
+   │   └─ taken: .reviews/peer/1.vision._.review.i003.aae49dff22797063a1.r003._.taken.by_self.friction.md
+   │
+   └─ ✓ judge.1 - allowed [TIME]
+
+🗿 route.stone.set
+   ├─ stone = 1.vision
+   ├─ passage = allowed
+   ├─ guard
+   │  ├─ artifacts
+   │  │   └─ src/**/*.ts
+   │  ├─ reviews
+   │  │   ├─ r1: calm (l1, 3/3)
+   │  │   │   ├─ approved, cached
+   │  │   │   ├─ 0 blockers ✓
+   │  │   │   ├─ 1 nitpick 🟠
+   │  │   │   ├─ given: .reviews/peer/1.vision._.review.i003.aae49dff22797063a1.r001._.given.by_peer.calm.md
+   │  │   │   └─ taken: .reviews/peer/1.vision._.review.i003.aae49dff22797063a1.r001._.taken.by_self.calm.md
+   │  │   ├─ r2: intent (l2, 3/3)
+   │  │   │   ├─ exhausted 🌙, cached
+   │  │   │   ├─ terminal — does not block higher levels
+   │  │   │   ├─ 1 blocker 🔴
+   │  │   │   ├─ 0 nitpicks ✓
+   │  │   │   ├─ given: .reviews/peer/1.vision._.review.i003.aae49dff22797063a1.r002._.given.by_peer.intent.md
+   │  │   │   └─ taken: .reviews/peer/1.vision._.review.i003.aae49dff22797063a1.r002._.taken.by_self.intent.md
+   │  │   └─ r3: friction (l2, 3/3)
+   │  │       ├─ exhausted 🌙, cached
+   │  │       ├─ terminal — does not block higher levels
+   │  │       ├─ 2 blockers 🔴
+   │  │       ├─ 0 nitpicks ✓
+   │  │       ├─ given: .reviews/peer/1.vision._.review.i003.aae49dff22797063a1.r003._.given.by_peer.friction.md
+   │  │       └─ taken: .reviews/peer/1.vision._.review.i003.aae49dff22797063a1.r003._.taken.by_self.friction.md
+   │  └─ judges
+   │      └─ j1: rhx route.stone.judge --mechanism reviewed? --stone $stone --route $route --allow-blockers 0 --allow-nitpicks 7
+   │          └─ finished [TIME] ✓
+   │
+   └─ the way continues, run
+      └─ rhx route.drive
+--- stderr
+"
+`;
+
+exports[`driver.route.exhausted-all-better given: [case5] the same walk, with stance rows in the absolute form bhrain ≤ 0.42.1 wrote when: [t0] the judge runs through the path the rows were written under then: matches snapshot 1`] = `
+"code: 0
+--- stdout
+passed: true
+reason: reviews pass (blockers: 0/0, nitpicks: 1/7), after 3 blockers shed (0 disputed + 3 conceded better)
+--- stderr
+conceded better: 3 blockers, 0 nitpicks excluded from the tally
+residual: 0/0 blockers, 1/7 nitpicks"
+`;
+
+exports[`driver.route.exhausted-all-better given: [case5] the same walk, with stance rows in the absolute form bhrain ≤ 0.42.1 wrote when: [t1] the judge runs through a symlinked alias — the measured tree then: matches snapshot 1`] = `
+"code: 0
+--- stdout
+passed: true
+reason: reviews pass (blockers: 0/0, nitpicks: 1/7), after 3 blockers shed (0 disputed + 3 conceded better)
+--- stderr
+conceded better: 3 blockers, 0 nitpicks excluded from the tally
+residual: 0/0 blockers, 1/7 nitpicks"
+`;
+
+exports[`driver.route.exhausted-all-better given: [case5] the same walk, with stance rows in the absolute form bhrain ≤ 0.42.1 wrote when: [t2] the driver runs \`--as passed\` through the alias (vision case=5 [t1]) then: matches snapshot 1`] = `
+"code: 0
+--- stdout
+🦉 the way speaks for itself
+   │
+   ├─ r1: calm (l1, 3/3)
+   │   ├─ exhausted 🌙, cached
+   │   ├─ terminal — does not block higher levels
+   │   ├─ 0 blockers ✓
+   │   ├─ 1 nitpick 🟠
+   │   ├─ given: .reviews/peer/1.vision._.review.i003.aae49dff22797063a1.r001._.given.by_peer.calm.md
+   │   └─ taken: .reviews/peer/1.vision._.review.i003.aae49dff22797063a1.r001._.taken.by_self.calm.md
+   │
+   ├─ r2: intent (l2, 3/3)
+   │   ├─ exhausted 🌙, cached
+   │   ├─ terminal — does not block higher levels
+   │   ├─ 1 blocker 🔴
+   │   ├─ 0 nitpicks ✓
+   │   ├─ given: .reviews/peer/1.vision._.review.i003.aae49dff22797063a1.r002._.given.by_peer.intent.md
+   │   └─ taken: .reviews/peer/1.vision._.review.i003.aae49dff22797063a1.r002._.taken.by_self.intent.md
+   │
+   ├─ r3: friction (l2, 3/3)
+   │   ├─ exhausted 🌙, cached
+   │   ├─ terminal — does not block higher levels
+   │   ├─ 2 blockers 🔴
+   │   ├─ 0 nitpicks ✓
+   │   ├─ given: .reviews/peer/1.vision._.review.i003.aae49dff22797063a1.r003._.given.by_peer.friction.md
+   │   └─ taken: .reviews/peer/1.vision._.review.i003.aae49dff22797063a1.r003._.taken.by_self.friction.md
+   │
+   └─ ✓ judge.1 - allowed [TIME]
+
+🗿 route.stone.set
+   ├─ stone = 1.vision
+   ├─ passage = allowed
+   ├─ guard
+   │  ├─ artifacts
+   │  │   └─ src/**/*.ts
+   │  ├─ reviews
+   │  │   ├─ r1: calm (l1, 3/3)
+   │  │   │   ├─ approved, cached
+   │  │   │   ├─ 0 blockers ✓
+   │  │   │   ├─ 1 nitpick 🟠
+   │  │   │   ├─ given: .reviews/peer/1.vision._.review.i003.aae49dff22797063a1.r001._.given.by_peer.calm.md
+   │  │   │   └─ taken: .reviews/peer/1.vision._.review.i003.aae49dff22797063a1.r001._.taken.by_self.calm.md
+   │  │   ├─ r2: intent (l2, 3/3)
+   │  │   │   ├─ exhausted 🌙, cached
+   │  │   │   ├─ terminal — does not block higher levels
+   │  │   │   ├─ 1 blocker 🔴
+   │  │   │   ├─ 0 nitpicks ✓
+   │  │   │   ├─ given: .reviews/peer/1.vision._.review.i003.aae49dff22797063a1.r002._.given.by_peer.intent.md
+   │  │   │   └─ taken: .reviews/peer/1.vision._.review.i003.aae49dff22797063a1.r002._.taken.by_self.intent.md
+   │  │   └─ r3: friction (l2, 3/3)
+   │  │       ├─ exhausted 🌙, cached
+   │  │       ├─ terminal — does not block higher levels
+   │  │       ├─ 2 blockers 🔴
+   │  │       ├─ 0 nitpicks ✓
+   │  │       ├─ given: .reviews/peer/1.vision._.review.i003.aae49dff22797063a1.r003._.given.by_peer.friction.md
+   │  │       └─ taken: .reviews/peer/1.vision._.review.i003.aae49dff22797063a1.r003._.taken.by_self.friction.md
+   │  └─ judges
+   │      └─ j1: rhx route.stone.judge --mechanism reviewed? --stone $stone --route $route --allow-blockers 0 --allow-nitpicks 7
+   │          └─ finished [TIME] ✓
+   │
+   └─ the way continues, run
+      └─ rhx route.drive
+--- stderr
+"
+`;
+
+exports[`driver.route.exhausted-all-better given: [case6] two lanes exhausted, intent blocker.1 disputed, the rest conceded \`better\` when: [t0] the judge runs through a symlinked alias of the route then: matches snapshot 1`] = `
+"code: 0
+--- stdout
+passed: true
+reason: reviews pass (blockers: 0/0, nitpicks: 1/7), after 3 blockers shed (1 disputed + 2 conceded better)
+--- stderr
+disputed: 1 blocker, 0 nitpicks excluded from the tally
+conceded better: 2 blockers, 0 nitpicks excluded from the tally
+residual: 0/0 blockers, 1/7 nitpicks"
+`;
+
+exports[`driver.route.exhausted-all-better given: [case8] two lanes exhausted, every concern conceded \`better\`, then a human overrules when: [t0] the human overrules then: matches snapshot 1`] = `
+"code: 0
+--- stdout
+🦉 the way speaks for itself
+
+🗿 route.stone.set
+   ├─ stone = 1.vision
+   └─ ✓ overruled
+      ├─ level 2, overruled
+      └─ judge, ready
+--- stderr
+"
+`;
+
+exports[`driver.route.exhausted-all-better given: [case8] two lanes exhausted, every concern conceded \`better\`, then a human overrules when: [t1] the judge runs through a symlinked alias of the route then: matches snapshot 1`] = `
+"code: 0
+--- stdout
+passed: true
+reason: reviews pass (blockers: 0/0, nitpicks: 1/7)
+--- stderr
+"
+`;
+
+exports[`driver.route.exhausted-all-better given: [case9] two urgent lanes — intent blocker.1 and friction blocker.1 conceded \`urgent\` when: [t0] the judge runs through a symlinked alias of the route then: matches snapshot 1`] = `
+"code: 2
+--- stdout
+passed: false
+reason: blockers exceed threshold (2 > 0), after 1 blocker shed (0 disputed + 1 conceded better)
+--- stderr
+conceded better: 1 blocker, 0 nitpicks excluded from the tally
+residual: 2/0 blockers, 1/7 nitpicks
+
+✋ halted, an urgent concession stands — intent, friction
+   ├─ its harm ships if unfixed, so this stone earns more budget
+   ├─ please ask your human to
+   │  ├─ rhx route.guard.budget --for review --add 2 --peer intent --stone 1.vision
+   │  └─ rhx route.guard.budget --for review --add 2 --peer friction --stone 1.vision
+   │
+   └─ after the grant, address the concession, then run
+      └─ rhx route.stone.set --stone 1.vision --as passed"
+`;
+
+exports[`driver.route.exhausted-all-better given: [case10] every concern conceded \`better\`, and the approved lane calm nitpick.1 disputed when: [t0] the judge runs through a symlinked alias of the route then: matches snapshot 1`] = `
+"code: 0
+--- stdout
+passed: true
+reason: reviews pass (blockers: 0/0, nitpicks: 0/7), after 3 blockers shed (0 disputed + 3 conceded better), 1 nitpick shed (1 disputed + 0 conceded better)
+--- stderr
+disputed: 0 blockers, 1 nitpick excluded from the tally
+conceded better: 3 blockers, 0 nitpicks excluded from the tally
+residual: 0/0 blockers, 0/7 nitpicks"
+`;
+
+exports[`driver.route.exhausted-all-better given: [case11] intent at l1 conceded \`urgent\` — the urgent lane sits below the latest level when: [t0] the judge runs through a symlinked alias of the route then: matches snapshot 1`] = `
+"code: 2
+--- stdout
+passed: false
+reason: blockers exceed threshold (1 > 0), after 2 blockers shed (0 disputed + 2 conceded better)
+--- stderr
+conceded better: 2 blockers, 0 nitpicks excluded from the tally
+residual: 1/0 blockers, 1/7 nitpicks
+
+✋ halted, an urgent concession stands — intent
+   ├─ its harm ships if unfixed, so this stone earns more budget
+   ├─ please ask your human to
+   │  └─ rhx route.guard.budget --for review --add 2 --peer intent --stone 1.vision
+   │
+   └─ after the grant, address the concession, then run
+      └─ rhx route.stone.set --stone 1.vision --as passed"
+`;
+
+exports[`driver.route.exhausted-all-better given: [case11] intent at l1 conceded \`urgent\` — the urgent lane sits below the latest level when: [t1] the driver runs \`--as passed\` through the alias then: matches snapshot 1`] = `
+"code: 2
+--- stdout
+🦉 the way speaks for itself
+   │
+   ├─ r1: calm (l1, 3/3)
+   │   ├─ exhausted 🌙, cached
+   │   ├─ terminal — does not block higher levels
+   │   ├─ 0 blockers ✓
+   │   ├─ 1 nitpick 🟠
+   │   ├─ given: .reviews/peer/1.vision._.review.i003.aae49dff22797063a1.r001._.given.by_peer.calm.md
+   │   └─ taken: .reviews/peer/1.vision._.review.i003.aae49dff22797063a1.r001._.taken.by_self.calm.md
+   │
+   ├─ r2: intent (l1, 3/3)
+   │   ├─ exhausted 🌙, cached
+   │   ├─ terminal — does not block higher levels
+   │   ├─ 1 blocker 🔴
+   │   ├─ 0 nitpicks ✓
+   │   ├─ given: .reviews/peer/1.vision._.review.i003.aae49dff22797063a1.r002._.given.by_peer.intent.md
+   │   └─ taken: .reviews/peer/1.vision._.review.i003.aae49dff22797063a1.r002._.taken.by_self.intent.md
+   │
+   ├─ r3: friction (l2, 1/1)
+   │   ├─ exhausted 🌙, cached
+   │   ├─ terminal — does not block higher levels
+   │   ├─ 2 blockers 🔴
+   │   ├─ 0 nitpicks ✓
+   │   ├─ given: .reviews/peer/1.vision._.review.i004.62edd857820fcfb258.r003._.given.by_peer.friction.md
+   │   └─ taken: .reviews/peer/1.vision._.review.i004.62edd857820fcfb258.r003._.taken.by_self.friction.md
+   │
+   └─ halted: peer reviewer budget exhausted
+
+🗿 route.stone.set
+   ├─ stone = 1.vision
+   ├─ passage = blocked
+   ├─ reason = you conceded — the round to confirm your fix needs more budget
+   │  └─ 🟡 an urgent concession stands — its harm ships if unfixed, so this stone earns more budget
+   ├─ options
+   │  ├─ increase budget — yours to spend
+   │  │  └─ rhx route.guard.budget --for review --add N --peer intent --stone 1.vision
+   │  └─ approve as-is — a human must grant
+   │     └─ rhx route.stone.set --stone 1.vision --as approved
+   └─ guard
+      ├─ artifacts
+      │   └─ src/**/*.ts
+      └─ reviews
+          ├─ r1: calm (l1, 3/3)
+          │   ├─ approved, cached
+          │   ├─ 0 blockers ✓
+          │   ├─ 1 nitpick 🟠
+          │   ├─ given: .reviews/peer/1.vision._.review.i003.aae49dff22797063a1.r001._.given.by_peer.calm.md
+          │   └─ taken: .reviews/peer/1.vision._.review.i003.aae49dff22797063a1.r001._.taken.by_self.calm.md
+          ├─ r2: intent (l1, 3/3)
+          │   ├─ exhausted 🌙, cached
+          │   ├─ terminal — does not block higher levels
+          │   ├─ 1 blocker 🔴
+          │   ├─ 0 nitpicks ✓
+          │   ├─ given: .reviews/peer/1.vision._.review.i003.aae49dff22797063a1.r002._.given.by_peer.intent.md
+          │   └─ taken: .reviews/peer/1.vision._.review.i003.aae49dff22797063a1.r002._.taken.by_self.intent.md
+          └─ r3: friction (l2, 1/1)
+              ├─ exhausted 🌙, cached
+              ├─ terminal — does not block higher levels
+              ├─ 2 blockers 🔴
+              ├─ 0 nitpicks ✓
+              ├─ given: .reviews/peer/1.vision._.review.i004.62edd857820fcfb258.r003._.given.by_peer.friction.md
+              └─ taken: .reviews/peer/1.vision._.review.i004.62edd857820fcfb258.r003._.taken.by_self.friction.md
+--- stderr
+"
+`;
+
+exports[`driver.route.exhausted-all-better given: [case11] intent at l1 conceded \`urgent\` — the urgent lane sits below the latest level when: [t2] the named budget command runs through the alias then: matches snapshot 1`] = `
+"code: 0
+--- stdout
+🦉 budget extended
+
+🗿 route.guard.budget
+   ├─ route = [ROUTE]
+   ├─ add = 2
+   ├─ peer = intent
+   │
+   ├─ granted — earned by a live urgent concession
+   │  └─ intent · conceded urgent
+   │
+   ├─ 🟡 tell your human why this stone bought budget
+   │
+   └─ updates
+      └─ intent: 3 → 5
+--- stderr
+"
+`;
+
+exports[`driver.route.exhausted-all-better given: [case11] intent at l1 conceded \`urgent\` — the urgent lane sits below the latest level when: [t3] the fix lands and the driver re-arrives through the alias then: matches snapshot 1`] = `
+"code: 2
+--- stdout
+🦉 the way speaks for itself
+   │
+   ├─ r1: calm (l1, 3/3)
+   │   ├─ exhausted 🌙, cached
+   │   ├─ terminal — does not block higher levels
+   │   ├─ 0 blockers ✓
+   │   ├─ 1 nitpick 🟠
+   │   ├─ given: .reviews/peer/1.vision._.review.i003.aae49dff22797063a1.r001._.given.by_peer.calm.md
+   │   └─ taken: .reviews/peer/1.vision._.review.i003.aae49dff22797063a1.r001._.taken.by_self.calm.md
+   │
+   ├─ r2: intent (l1, 4/5)
+   │   ├─ rejected [TIME]
+   │   ├─ 1 blocker 🔴
+   │   ├─ 0 nitpicks ✓
+   │   ├─ given: .reviews/peer/1.vision._.review.i005.783595f79833cc5cef.r002._.given.by_peer.intent.md
+   │   └─ taken: .reviews/peer/1.vision._.review.i005.783595f79833cc5cef.r002._.taken.by_self.intent.md
+   │
+   ├─ r3: friction (l2, 1/1)
+   │   ├─ exhausted 🌙, cached
+   │   ├─ terminal — does not block higher levels
+   │   ├─ 2 blockers 🔴
+   │   ├─ 0 nitpicks ✓
+   │   ├─ given: .reviews/peer/1.vision._.review.i004.62edd857820fcfb258.r003._.given.by_peer.friction.md
+   │   └─ taken: .reviews/peer/1.vision._.review.i004.62edd857820fcfb258.r003._.taken.by_self.friction.md
+   │
+   └─ ✗ judge.1 - blocked [TIME]
+
+🗿 route.stone.set
+   ├─ stone = 1.vision
+   ├─ passage = blocked
+   ├─ reason = blockers exceed threshold (1 > 0), after 2 blockers shed (0 disputed + 2 conceded better)
+   └─ guard
+      ├─ artifacts
+      │   └─ src/**/*.ts
+      ├─ reviews
+      │   ├─ r1: calm (l1, 3/3)
+      │   │   ├─ approved, cached
+      │   │   ├─ 0 blockers ✓
+      │   │   ├─ 1 nitpick 🟠
+      │   │   ├─ given: .reviews/peer/1.vision._.review.i003.aae49dff22797063a1.r001._.given.by_peer.calm.md
+      │   │   └─ taken: .reviews/peer/1.vision._.review.i003.aae49dff22797063a1.r001._.taken.by_self.calm.md
+      │   ├─ r2: intent (l1, 4/5)
+      │   │   ├─ rejected [TIME]
+      │   │   ├─ 1 blocker 🔴
+      │   │   ├─ 0 nitpicks ✓
+      │   │   ├─ given: .reviews/peer/1.vision._.review.i005.783595f79833cc5cef.r002._.given.by_peer.intent.md
+      │   │   └─ taken: .reviews/peer/1.vision._.review.i005.783595f79833cc5cef.r002._.taken.by_self.intent.md
+      │   └─ r3: friction (l2, 1/1)
+      │       ├─ exhausted 🌙, cached
+      │       ├─ terminal — does not block higher levels
+      │       ├─ 2 blockers 🔴
+      │       ├─ 0 nitpicks ✓
+      │       ├─ given: .reviews/peer/1.vision._.review.i004.62edd857820fcfb258.r003._.given.by_peer.friction.md
+      │       └─ taken: .reviews/peer/1.vision._.review.i004.62edd857820fcfb258.r003._.taken.by_self.friction.md
+      └─ judges
+          └─ j1: rhx route.stone.judge --mechanism reviewed? --stone $stone --route $route --allow-blockers 0 --allow-nitpicks 7
+              ├─ finished [TIME] ✗
+              └─ reason: blockers exceed threshold (1 > 0), after 2 blockers shed (0 disputed + 2 conceded better)
+--- stderr
+🦉 l1 pours 1 lane
+   └─ r2:intent
+
+🪶 judge 1
+   ├─ stdout
+   │  ├─
+   │  │
+   │  │  🪨 run solid skill repo=bhrain/role=driver/skill=route.stone.judge
+   │  │
+   │  │  passed: false
+   │  │  reason: blockers exceed threshold (1 > 0), after 2 blockers shed (0 disputed + 2 conceded better)
+   │  │
+   │  └─
+   ├─ stderr
+   │  ├─
+   │  │
+   │  │  
+   │  │  🪨 run solid skill repo=bhrain/role=driver/skill=route.stone.judge
+   │  │     └─ ✋ blocked by constraints
+   │  │  
+   │  │  conceded better: 2 blockers, 0 nitpicks excluded from the tally
+   │  │  residual: 1/0 blockers, 1/7 nitpicks
+   │  │
+   │  └─
+   └─ passage blocked
+      ├─ blocked by constraints
+      └─ exit code: 2 ✋"
+`;
+
+exports[`driver.route.exhausted-all-better given: [case12] intent at l1 and friction at l2 conceded \`better\`, then a human overrules — the overrule lands on l1 when: [t0] the human overrules then: matches snapshot 1`] = `
+"code: 0
+--- stdout
+🦉 the way speaks for itself
+
+🗿 route.stone.set
+   ├─ stone = 1.vision
+   └─ ✓ overruled
+      ├─ level 1, overruled
+      └─ level 2, ready
+--- stderr
+"
+`;
+
+exports[`driver.route.exhausted-all-better given: [case12] intent at l1 and friction at l2 conceded \`better\`, then a human overrules — the overrule lands on l1 when: [t1] the judge runs through a symlinked alias of the route then: matches snapshot 1`] = `
+"code: 0
+--- stdout
+passed: true
+reason: reviews pass (blockers: 0/0, nitpicks: 0/7), after 2 blockers shed (0 disputed + 2 conceded better)
+--- stderr
+conceded better: 2 blockers, 0 nitpicks excluded from the tally
+residual: 0/0 blockers, 0/7 nitpicks"
+`;
+
+exports[`driver.route.exhausted-all-better given: [case13] every concern conceded \`better\`, then the stone is rewound and re-arrived when: [t0] the stone is rewound then: matches snapshot 1`] = `
+"code: 0
+--- stdout
+🦉 the way speaks for itself
+
+🗿 route.stone.set
+   ├─ stone = 1.vision
+   ├─ cascade
+   │  └─ 1.vision
+   │     ├─ cleared: 9 reviews, 3 judges, 0 promises, 0 triggers
+   │     └─ passage: rewound
+   └─ done
+--- stderr
+"
+`;
+
+exports[`driver.route.exhausted-all-better given: [case13] every concern conceded \`better\`, then the stone is rewound and re-arrived when: [t1] the driver re-arrives through the alias then: matches snapshot 1`] = `
+"code: 2
+--- stdout
+🦉 the way speaks for itself
+   │
+   ├─ r1: calm (l1, 1/3)
+   │   ├─ approved [TIME]
+   │   ├─ 0 blockers ✓
+   │   ├─ 1 nitpick 🟠
+   │   ├─ given: .reviews/peer/1.vision._.review.i001.df9362d1419a2a469a.r001._.given.by_peer.calm.md
+   │   └─ taken: .reviews/peer/1.vision._.review.i001.df9362d1419a2a469a.r001._.taken.by_self.calm.md
+   │
+   ├─ r2: intent (l2, 1/3)
+   │   ├─ rejected [TIME]
+   │   ├─ 1 blocker 🔴
+   │   ├─ 0 nitpicks ✓
+   │   ├─ given: .reviews/peer/1.vision._.review.i001.df9362d1419a2a469a.r002._.given.by_peer.intent.md
+   │   └─ taken: .reviews/peer/1.vision._.review.i001.df9362d1419a2a469a.r002._.taken.by_self.intent.md
+   │
+   ├─ r3: friction (l2, 1/3)
+   │   ├─ rejected [TIME]
+   │   ├─ 2 blockers 🔴
+   │   ├─ 0 nitpicks ✓
+   │   ├─ given: .reviews/peer/1.vision._.review.i001.df9362d1419a2a469a.r003._.given.by_peer.friction.md
+   │   └─ taken: .reviews/peer/1.vision._.review.i001.df9362d1419a2a469a.r003._.taken.by_self.friction.md
+   │
+   └─ ✗ judge.1 - blocked [TIME]
+
+🗿 route.stone.set
+   ├─ stone = 1.vision
+   ├─ passage = blocked
+   ├─ reason = blockers exceed threshold (3 > 0)
+   └─ guard
+      ├─ artifacts
+      │   └─ src/**/*.ts
+      ├─ reviews
+      │   ├─ r1: calm (l1, 1/3)
+      │   │   ├─ approved [TIME]
+      │   │   ├─ 0 blockers ✓
+      │   │   ├─ 1 nitpick 🟠
+      │   │   ├─ given: .reviews/peer/1.vision._.review.i001.df9362d1419a2a469a.r001._.given.by_peer.calm.md
+      │   │   └─ taken: .reviews/peer/1.vision._.review.i001.df9362d1419a2a469a.r001._.taken.by_self.calm.md
+      │   ├─ r2: intent (l2, 1/3)
+      │   │   ├─ rejected [TIME]
+      │   │   ├─ 1 blocker 🔴
+      │   │   ├─ 0 nitpicks ✓
+      │   │   ├─ given: .reviews/peer/1.vision._.review.i001.df9362d1419a2a469a.r002._.given.by_peer.intent.md
+      │   │   └─ taken: .reviews/peer/1.vision._.review.i001.df9362d1419a2a469a.r002._.taken.by_self.intent.md
+      │   └─ r3: friction (l2, 1/3)
+      │       ├─ rejected [TIME]
+      │       ├─ 2 blockers 🔴
+      │       ├─ 0 nitpicks ✓
+      │       ├─ given: .reviews/peer/1.vision._.review.i001.df9362d1419a2a469a.r003._.given.by_peer.friction.md
+      │       └─ taken: .reviews/peer/1.vision._.review.i001.df9362d1419a2a469a.r003._.taken.by_self.friction.md
+      └─ judges
+          └─ j1: rhx route.stone.judge --mechanism reviewed? --stone $stone --route $route --allow-blockers 0 --allow-nitpicks 7
+              ├─ finished [TIME] ✗
+              └─ reason: blockers exceed threshold (3 > 0)
+
+🪷 the path continues
+   ├─ l1 is terminal (approved) — it no longer blocks you
+   ├─ l2 has engaged — address its blockers, then:
+   │  └─ rhx route.stone.set --stone 1.vision --as arrived
+   └─ a human is only needed once every level is terminal
+--- stderr
+🦉 l1 pours 1 lane
+   └─ r1:calm
+🦉 l2 pours 2 lanes
+   ├─ r2:intent
+   └─ r3:friction
+
+🪶 judge 1
+   ├─ stdout
+   │  ├─
+   │  │
+   │  │  🪨 run solid skill repo=bhrain/role=driver/skill=route.stone.judge
+   │  │
+   │  │  passed: false
+   │  │  reason: blockers exceed threshold (3 > 0)
+   │  │
+   │  └─
+   ├─ stderr
+   │  ├─
+   │  │
+   │  │  
+   │  │  🪨 run solid skill repo=bhrain/role=driver/skill=route.stone.judge
+   │  │     └─ ✋ blocked by constraints
+   │  │  
+   │  │
+   │  └─
+   └─ passage blocked
+      ├─ blocked by constraints
+      └─ exit code: 2 ✋"
+`;
+
+exports[`driver.route.exhausted-all-better given: [case13] every concern conceded \`better\`, then the stone is rewound and re-arrived when: [t2] the judge runs through a symlinked alias of the route then: matches snapshot 1`] = `
+"code: 2
+--- stdout
+passed: false
+reason: blockers exceed threshold (3 > 0)
+--- stderr
+"
+`;
+
+exports[`driver.route.exhausted-all-better given: [case14] every concern conceded \`better\`, one stance row absolute and the rest by filename when: [t0] the judge runs through a symlinked alias of the route then: matches snapshot 1`] = `
+"code: 0
+--- stdout
+passed: true
+reason: reviews pass (blockers: 0/0, nitpicks: 1/7), after 3 blockers shed (0 disputed + 3 conceded better)
+--- stderr
+conceded better: 3 blockers, 0 nitpicks excluded from the tally
+residual: 0/0 blockers, 1/7 nitpicks"
+`;

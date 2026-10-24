@@ -1,30 +1,13 @@
-import { UnexpectedCodePathError } from 'helpful-errors';
+import { MalfunctionError } from 'helpful-errors';
 
 import type { PassageReport } from '@src/domain.objects/Driver/PassageReport';
 
 import { getAllPassageReportsRaw } from '../../../passage/getAllPassageReportsRaw';
+import { asReviewAbsorptionKey } from './asReviewAbsorptionKey';
+import { asReviewGivenKey } from './asReviewGivenKey';
 import { getPassageReportsSinceLastRewind } from './getPassageReportsSinceLastRewind';
-
-/**
- * .what = one stance the driver declared, keyed to the concern and given it answered
- */
-export interface ReviewAbsorption {
-  status: 'disputed' | 'conceded';
-  reviewer: string;
-  about: string;
-  given: string;
-  fulcrum?: string;
-  /**
-   * the harm grade a CONCESSION carries — `urgent` or `better` (F028/S14)
-   *
-   * .why = the exhaustion verdict reads it: a budget hit with ≥1 live `urgent` concession
-   *        warns the human, where an all-`better` hit is good enough and proceeds with no
-   *        human (`define.invariant.review.peer.budget.urgent-earns-budget`).
-   * .note = absent on a legacy/ungraded concede, read as `better` (the maintenance floor).
-   *         absent on a DISPUTE always — a dispute concedes naught, so it grades naught.
-   */
-  severity?: 'better' | 'urgent';
-}
+import { isReviewAbsorptionOnGiven } from './isReviewAbsorptionOnGiven';
+import type { ReviewAbsorption } from './ReviewAbsorption';
 
 /**
  * .what = the absorptions that stand on one stone, keyed `(reviewer, concern, given)`
@@ -51,12 +34,10 @@ export const getStoneReviewAbsorptions = async (input: {
 }): Promise<ReviewAbsorption[]> => {
   const all = await getAllPassageReportsRaw({ route: input.route });
 
-  const keyOf = (absorption: ReviewAbsorption): string =>
-    `${absorption.reviewer}::${absorption.about}::${absorption.given}`;
-
   // a rewind voids the round, so the absorptions declared within it are void too.
-  // .why = the given-path key alone does NOT survive a rewind — an unchanged artifact
-  //        re-mints the identical path, so a rewound stance would re-attach silently
+  // .why = the given key alone does NOT survive a rewind — an unchanged artifact re-mints
+  //        the identical filename, so a rewound stance would re-attach silently
+  //        (clamped: getStoneReviewAbsorptions.integration.test.ts)
   const reportsUnrewound = getPassageReportsSinceLastRewind({
     reports: all.filter((report) => report.stone === input.stone),
   });
@@ -74,7 +55,7 @@ export const getStoneReviewAbsorptions = async (input: {
       //    silent skip would exclude no concern from the tally, so the stone could pass with a
       //    stance the engine could not read — a failhide (rule.forbid.failhide). fail loud instead.
       if (!report.reviewer || !report.about || !report.given)
-        throw new UnexpectedCodePathError(
+        throw new MalfunctionError(
           'stance row lacks a keyed field (reviewer/about/given)',
           { report },
         );
@@ -83,7 +64,9 @@ export const getStoneReviewAbsorptions = async (input: {
         status: report.status,
         reviewer: report.reviewer,
         about: report.about,
-        given: report.given,
+        // keyed at the one producer, so every reader downstream sees a key and a legacy absolute
+        // row (≤ 0.42.1) heals at read, with no migration
+        given: asReviewGivenKey({ path: report.given }),
         fulcrum: report.fulcrum,
         severity: report.severity,
       };
@@ -92,7 +75,12 @@ export const getStoneReviewAbsorptions = async (input: {
   // LAST WINS within one `(reviewer, about, given)` key — a Map built from entries keeps the last
   // duplicate, so a replayed ledger folds deterministically with no in-loop mutation.
   return [
-    ...new Map(absorptions.map((stance) => [keyOf(stance), stance])).values(),
+    ...new Map(
+      absorptions.map((absorption) => [
+        asReviewAbsorptionKey({ absorption }),
+        absorption,
+      ]),
+    ).values(),
   ];
 };
 
@@ -110,8 +98,11 @@ export const getAbsorptionOnConcern = (input: {
   given: string;
 }): ReviewAbsorption | undefined =>
   input.absorptions.find(
-    (stance) =>
-      stance.reviewer === input.reviewer &&
-      stance.about === input.about &&
-      stance.given === input.given,
+    (absorption) =>
+      absorption.about === input.about &&
+      isReviewAbsorptionOnGiven({
+        absorption,
+        reviewer: input.reviewer,
+        given: input.given,
+      }),
   );

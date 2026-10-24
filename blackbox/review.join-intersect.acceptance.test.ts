@@ -5,10 +5,10 @@ import { given, then, useThen, when } from 'test-fns';
 import { DEFAULT_TEST_BRAIN_VIA_CLI } from '@src/.test/genTestBrainContext';
 
 import {
-  execAsync,
   genTempDirForRhachet,
   invokeReviewSkill,
 } from './.test/invokeReviewSkill';
+import { setReviewerRoleLinked } from './.test/setReviewerRoleLinked';
 import { asRedactedOutput } from './.test/asRedactedOutput';
 import { asReviewMetricsExpectedBlock } from './.test/invokeReviewBySkill';
 
@@ -36,10 +36,8 @@ describe('review.join-intersect.acceptance', () => {
         });
         const outputPath = path.join(tempDir, 'review-join-intersect.md');
 
-        // link the reviewer role
-        await execAsync('npx rhachet roles link --role reviewer', {
-          cwd: tempDir,
-        });
+        // link the reviewer role, committed into the base so no diff range counts the host
+        await setReviewerRoleLinked({ cwd: tempDir });
 
         // modify dirty.ts to create a diff from main
         const dirtyPath = path.join(tempDir, 'src/dirty.ts');
@@ -101,10 +99,8 @@ describe('review.join-intersect.acceptance', () => {
         });
         const outputPath = path.join(tempDir, 'review-join-empty-diffs.md');
 
-        // link the reviewer role
-        await execAsync('npx rhachet roles link --role reviewer', {
-          cwd: tempDir,
-        });
+        // link the reviewer role, committed into the base so no diff range counts the host
+        await setReviewerRoleLinked({ cwd: tempDir });
 
         // no modifications - diffs will be empty
         // intersect of [] and [clean.ts, dirty.ts] should be []
@@ -177,10 +173,8 @@ describe('review.join-intersect.acceptance', () => {
         });
         const outputPath = path.join(tempDir, 'review-join-union-empty.md');
 
-        // link the reviewer role
-        await execAsync('npx rhachet roles link --role reviewer', {
-          cwd: tempDir,
-        });
+        // link the reviewer role, committed into the base so no diff range counts the host
+        await setReviewerRoleLinked({ cwd: tempDir });
 
         // no modifications - diffs will be empty
         // union of [] and [clean.ts, dirty.ts] should be [clean.ts, dirty.ts]
@@ -234,10 +228,8 @@ describe('review.join-intersect.acceptance', () => {
         });
         const outputPath = path.join(tempDir, 'review-join-default.md');
 
-        // link the reviewer role
-        await execAsync('npx rhachet roles link --role reviewer', {
-          cwd: tempDir,
-        });
+        // link the reviewer role, committed into the base so no diff range counts the host
+        await setReviewerRoleLinked({ cwd: tempDir });
 
         // modify dirty.ts to create a diff
         const dirtyPath = path.join(tempDir, 'src/dirty.ts');
@@ -298,10 +290,8 @@ describe('review.join-intersect.acceptance', () => {
         });
         const outputPath = path.join(tempDir, 'review-paths-only.md');
 
-        // link the reviewer role
-        await execAsync('npx rhachet roles link --role reviewer', {
-          cwd: tempDir,
-        });
+        // link the reviewer role, committed into the base so no diff range counts the host
+        await setReviewerRoleLinked({ cwd: tempDir });
 
         // invoke with only --paths (no --diffs)
         const cli = await invokeReviewSkill({

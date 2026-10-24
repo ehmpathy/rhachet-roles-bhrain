@@ -2,7 +2,7 @@ import type { RouteStoneGuardReviewArtifact } from '@src/domain.objects/Driver/R
 
 import { asGuardDisplayPath } from '../../../asGuardDisplayPath';
 import type { GuardPeerMeterStatus } from '../../../tree/formatGuardTree';
-import { computeDisputedConcernCounts } from '../getStoneDisputedConcernCounts';
+import { computeDisputedConcernCounts } from '../computeDisputedConcernCounts';
 import { isLaneSkippedByDispute } from '../isLaneSkippedByDispute';
 import type { ReviewPeerVerdict } from './computeReviewPeerVerdict';
 import { getOneReviewerAwaits } from './getOneReviewerAwaits';

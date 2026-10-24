@@ -3,6 +3,7 @@ import { BadRequestError } from 'helpful-errors';
 import { getAllStoneUndeclaredConcerns } from '../../src/domain.operations/route/guard/review/peer/getAllStoneUndeclaredConcerns';
 import { findOneStoneByPattern } from '../../src/domain.operations/route/stones/asStoneGlob';
 import { getAllStones } from '../../src/domain.operations/route/stones/getAllStones';
+import { asRouteSkillResultOkOrThrow } from './asRouteSkillResultOkOrThrow';
 import { invokeRouteSkill } from './invokeRouteSkill';
 
 /**
@@ -63,18 +64,22 @@ export const concedeEveryPeerConcern = async (input: {
   // --severity is a MANDATORY invariant on a concede (no ungraded concede), so the helper ALWAYS
   // sends one — the caller's grade, or `better` (the maintenance-floor common case) by default.
   const severity = input.severity ?? 'better';
+  // each concede must land; a refusal dropped here reads, one step later, as an undeclared concern
   for (const lane of lanes)
     for (const about of lane.concerns)
-      await invokeRouteSkill({
-        skill: 'route.stone.set',
-        args: {
-          stone: input.stone,
-          route: input.route ?? '.',
-          as: 'conceded',
-          with: lane.slug,
-          about,
-          severity,
-        },
-        cwd: input.cwd,
+      asRouteSkillResultOkOrThrow({
+        step: `concede ${lane.slug} ${about} (${severity}) on ${input.stone}`,
+        result: await invokeRouteSkill({
+          skill: 'route.stone.set',
+          args: {
+            stone: input.stone,
+            route: input.route ?? '.',
+            as: 'conceded',
+            with: lane.slug,
+            about,
+            severity,
+          },
+          cwd: input.cwd,
+        }),
       });
 };

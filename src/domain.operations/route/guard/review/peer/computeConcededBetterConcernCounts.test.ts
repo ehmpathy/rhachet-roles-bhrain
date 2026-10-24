@@ -1,8 +1,8 @@
 import { given, then, when } from 'test-fns';
 
+import { computeConcededBetterConcernCounts } from './computeConcededBetterConcernCounts';
 import type { RouteGuardReviewPeerGiven } from './getAllRouteGuardReviewPeerGivens';
-import { computeConcededBetterConcernCounts } from './getStoneConcededBetterConcernCounts';
-import type { ReviewAbsorption } from './getStoneReviewAbsorptions';
+import type { ReviewAbsorption } from './ReviewAbsorption';
 
 const asGiven = (input: {
   slug: string;
@@ -33,7 +33,7 @@ const asAbsorption = (input: {
  *        `better`-only exhaustion halted for budget — the exact mis-grade this shed corrects. this
  *        suite goes RED without the subtraction.
  */
-describe('getStoneConcededBetterConcernCounts.computeConcededBetterConcernCounts', () => {
+describe('computeConcededBetterConcernCounts', () => {
   given('[case1] no absorptions at all', () => {
     when('[t0] the counts are computed', () => {
       then('naught is shed', () => {

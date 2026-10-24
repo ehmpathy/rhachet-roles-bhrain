@@ -4,8 +4,9 @@ import type { RouteGuardReviewPeerGiven } from './getAllRouteGuardReviewPeerGive
 import {
   computeConcededLaneSlugs,
   computeConcessionExhaustionKind,
+  computeUrgentConcessionLaneSlugs,
 } from './getStoneConcededLaneSlugs';
-import type { ReviewAbsorption } from './getStoneReviewAbsorptions';
+import type { ReviewAbsorption } from './ReviewAbsorption';
 
 /**
  * .what = unit cases for the concession predicate the exhaustion halt reads
@@ -463,5 +464,66 @@ describe('computeConcessionExhaustionKind', () => {
         ).toEqual('none');
       });
     });
+  });
+});
+
+describe('computeUrgentConcessionLaneSlugs', () => {
+  // intent at l1 conceded urgent; friction at l2 conceded better; calm conceded urgent on a PRIOR
+  // given (lapsed); a fourth lane conceded urgent but is not among the exhausted
+  const givens = [
+    asGiven({ slug: 'intent', pathGiven: 'r2.intent.md' }),
+    asGiven({ slug: 'friction', pathGiven: 'r3.friction.md' }),
+    asGiven({ slug: 'calm', pathGiven: 'r1.calm.i2.md' }),
+    asGiven({ slug: 'other', pathGiven: 'r4.other.md' }),
+  ];
+  const absorptions = [
+    asAbsorption({
+      status: 'conceded',
+      reviewer: 'intent',
+      about: 'blocker.1',
+      given: 'r2.intent.md',
+      severity: 'urgent',
+    }),
+    asAbsorption({
+      status: 'conceded',
+      reviewer: 'friction',
+      about: 'blocker.1',
+      given: 'r3.friction.md',
+      severity: 'better',
+    }),
+    asAbsorption({
+      status: 'conceded',
+      reviewer: 'calm',
+      about: 'nitpick.1',
+      given: 'r1.calm.i1.md',
+      severity: 'urgent',
+    }),
+    asAbsorption({
+      status: 'conceded',
+      reviewer: 'other',
+      about: 'blocker.1',
+      given: 'r4.other.md',
+      severity: 'urgent',
+    }),
+  ];
+
+  given('[case1] a mixed ledger over four lanes', () => {
+    when(
+      '[t0] the halt asks which exhausted lanes carry a live urgent concession',
+      () => {
+        then(
+          'only intent — better, lapsed, and non-exhausted lanes are left out',
+          () => {
+            expect(
+              computeUrgentConcessionLaneSlugs({
+                absorptions,
+                givens,
+                slugs: ['calm', 'intent', 'friction'],
+              }),
+            ).toEqual(['intent']);
+          },
+        );
+      },
+    );
   });
 });

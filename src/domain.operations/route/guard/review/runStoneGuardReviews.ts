@@ -41,9 +41,9 @@ import { getAllStoneGuardReviewTargetPaths } from './getAllStoneGuardReviewTarge
 import { getOneReviewLevelPourBound } from './getOneReviewLevelPourBound';
 import { getOneReviewLevelPrimeMeet } from './getOneReviewLevelPrimeMeet';
 import { isReviewRoundCompleted } from './isReviewRoundCompleted';
+import { computeDisputedConcernCounts } from './peer/computeDisputedConcernCounts';
 import { getOneCacheSafePeerReviewArtifact } from './peer/getOneCacheSafePeerReviewArtifact';
 import { getOneLatestReviewArtifactForSlug } from './peer/getOneLatestReviewArtifactForSlug';
-import { computeDisputedConcernCounts } from './peer/getStoneDisputedConcernCounts';
 import { getStoneReviewCorpus } from './peer/getStoneReviewCorpus';
 import { isLaneSkippedByDispute } from './peer/isLaneSkippedByDispute';
 import { isPeerTakenNewerThanGiven } from './peer/isPeerTakenNewerThanGiven';
