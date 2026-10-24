@@ -1,4 +1,4 @@
-import { given, then } from 'test-fns';
+import { given, then, when } from 'test-fns';
 
 import { asHeadersOrphanedOfText } from './asHeadersOrphanedOfText';
 
@@ -47,12 +47,14 @@ const TEST_CASES = [
 ];
 
 describe('asHeadersOrphanedOfText', () => {
-  TEST_CASES.map((thisCase) =>
-    given(thisCase.description, () => {
-      then('it names exactly the orphaned headers', () => {
-        expect(
-          asHeadersOrphanedOfText({ file: 'f', text: thisCase.given.text }),
-        ).toEqual(thisCase.expect.output);
+  TEST_CASES.map((thisCase, index) =>
+    given(`[case${index + 1}] ${thisCase.description}`, () => {
+      when('[t0] the text is scanned for orphans', () => {
+        then('it names exactly the orphaned headers', () => {
+          expect(
+            asHeadersOrphanedOfText({ file: 'f', text: thisCase.given.text }),
+          ).toEqual(thisCase.expect.output);
+        });
       });
     }),
   );

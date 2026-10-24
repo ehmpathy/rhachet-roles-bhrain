@@ -1,4 +1,4 @@
-import { isFenceMark } from './asBriefLinesByCue';
+import { asLinesWithFenceState } from './asLinesWithFenceState';
 
 /**
  * .what = the headers of one text whose section holds no line, as `<file> :: <header>`
@@ -13,23 +13,15 @@ export const asHeadersOrphanedOfText = (input: {
   text: string;
 }): string[] => {
   // mark each nonblank line with its header depth; null for prose and for any line in a fence
-  const entries = input.text
-    .split('\n')
-    .filter((line) => line.trim() !== '')
-    .reduce<{
-      inFence: boolean;
-      out: { line: string; depth: number | null }[];
-    }>(
-      (acc, line) => {
-        const isFence = isFenceMark({ line });
-        const depth = acc.inFence || isFence ? null : asDepthOfHeader({ line });
-        return {
-          inFence: isFence ? !acc.inFence : acc.inFence,
-          out: [...acc.out, { line, depth }],
-        };
-      },
-      { inFence: false, out: [] },
-    ).out;
+  const entries = asLinesWithFenceState({ text: input.text })
+    .filter((entry) => entry.line.trim() !== '')
+    .map((entry) => ({
+      line: entry.line,
+      depth:
+        entry.inFence || entry.isFence
+          ? null
+          : asDepthOfHeader({ line: entry.line }),
+    }));
 
   // an orphan is a header whose next line is a header at its own depth or shallower, or the end
   return entries

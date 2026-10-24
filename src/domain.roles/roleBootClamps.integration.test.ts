@@ -28,6 +28,14 @@ const yaml = require('js-yaml');
 // any of them, or a budget added to another, fails here rather than slips past the suite
 const ROLES_BUDGETED = ['learner', 'driver', 'librarian'] as const;
 
+// the cues each role must boot at say by name — a snapshot line dropped and resnapped would pass,
+// so the briefs a journey step names are asserted here, one by one
+const SAYS_REQUIRED: Record<(typeof ROLES_BUDGETED)[number], string[]> = {
+  learner: ['learner/briefs/rule.always.entool-the-skills-you-touch.md.min'],
+  driver: [],
+  librarian: [],
+};
+
 const REPO_ROOT: string = path.join(__dirname, '..', '..');
 const RHACHET_BIN: string = path.join(
   REPO_ROOT,
@@ -385,8 +393,13 @@ describe('roleBootClamps', () => {
     });
   });
 
-  ROLES_BUDGETED.forEach((slug) => {
-    given(`[case:${slug}] the ${slug} role boot`, () => {
+  // the roster is one read for the whole repo; each role's [t5] looks up its own row in it
+  const roster = useBeforeAll(async () =>
+    runRhachet({ args: ['roles', 'cost', '--all'] }),
+  );
+
+  ROLES_BUDGETED.forEach((slug, index) => {
+    given(`[case${index + 1}] the ${slug} role boot`, () => {
       const scene = useBeforeAll(async () => {
         const spec = getOneBootSpecOfRole({ slug });
         const emitted = getOneBootEmitted({ bootUri: spec.bootUri });
@@ -414,6 +427,13 @@ describe('roleBootClamps', () => {
           );
           expect(entries.length).toBeGreaterThan(0);
           expect(entries).toMatchSnapshot();
+        });
+
+        then('every cue a journey step names is booted, by name', () => {
+          const absent = SAYS_REQUIRED[slug].filter(
+            (file) => !scene.emitted.says.includes(file),
+          );
+          expect(absent).toEqual([]);
         });
       });
 
@@ -539,6 +559,30 @@ describe('roleBootClamps', () => {
           },
         );
       });
+
+      when('[t5] the real `rhachet roles cost --all` costs it', () => {
+        then('its row reads owned, under its declared budget', () => {
+          // the wish's first done-criterion is this render; an owned spec carries no `(linked)`
+          const row = stripVTControlCharacters(roster.stdout)
+            .split('\n')
+            .find((line) =>
+              line.endsWith(` ${path.relative(REPO_ROOT, scene.spec.bootUri)}`),
+            )
+            ?.replace(/^[\s├└│─]+/, '');
+          expect(row).toBeDefined();
+          const match = row!.match(/^([\d,]+) \/ ([\d,]+) tokens \(\d+%\)/);
+          expect(match).not.toBeNull();
+          expect(Number(match![2]!.replace(/,/g, ''))).toEqual(
+            scene.spec.budgetTokens,
+          );
+          expect(Number(match![1]!.replace(/,/g, ''))).toBeLessThanOrEqual(
+            scene.spec.budgetTokens!,
+          );
+          expect(
+            row!.replace(/(?<![\w])\d[\d,]*(?![\w])/g, '<n>'),
+          ).toMatchSnapshot();
+        });
+      });
     });
   });
 
@@ -593,23 +637,65 @@ describe('roleBootClamps', () => {
         expect(output).toContain('eliminate');
       });
 
-      then('the halt matches the snapshot', () => {
+      then(
+        'the machine record after the tree names the hint, the counts, and the argv',
+        () => {
+          // .note = the snap below pins the tree a human reads; this pins the record rhachet
+          //         prints after it, by value, so no fact in it goes unpinned
+          const stderr = stripVTControlCharacters(result.stderr);
+          expect(stderr).toContain(
+            '✋ ConstraintError: boot payload exceeds its declared budget',
+          );
+          expect(stderr).toContain(
+            '"hint": "trim a resource — catalogize a set, condense or ref a say entry, list one under `not` — or raise budget.tokens deliberately"',
+          );
+          expect(stderr).toContain('"budget": 10');
+          expect(stderr).toMatch(/"payload": \d+/);
+          expect(stderr).toMatch(/"over": \d+/);
+          expect(stderr).toContain(`[args] roles,boot,--what,${scene.bootUri}`);
+
+          // the record follows the tree: the tree's last fix, then the record's header, then argv
+          const indexOfTreeEnd = stderr.indexOf('eliminate');
+          const indexOfRecord = stderr.lastIndexOf(
+            '✋ ConstraintError: boot payload exceeds its declared budget',
+          );
+          const indexOfArgs = stderr.indexOf('[args] roles,boot,--what,');
+          expect(indexOfTreeEnd).toBeGreaterThan(-1);
+          expect(indexOfRecord).toBeGreaterThan(indexOfTreeEnd);
+          expect(indexOfArgs).toBeGreaterThan(indexOfRecord);
+
+          // the bag's key set, in order: a key added to or dropped from the record turns red
+          const bag = stderr.match(/\{\s*"hint"[\s\S]*?\n\}/)?.[0];
+          expect(bag).toBeDefined();
+          expect(Object.keys(JSON.parse(bag!))).toEqual([
+            'hint',
+            'budget',
+            'payload',
+            'over',
+          ]);
+        },
+      );
+
+      then('the halt tree matches the snapshot', () => {
         // .note = color codes vary by terminal and ci, and the temp dir varies by run, in both
         //         its absolute and its `.temp/genTempDir.symlink/` form. the dir path rides in the
         //         payload, so the token counts vary with it; the exit code and the four fixes are
         //         asserted above, so the counts are masked here
+        // .note = the snap pins the tree a human reads. rhachet then restates the same halt as a
+        //         machine record (the error again, a json bag, an argv row); that tail repeats
+        //         each fact the tree already holds, so it is cut before the snap
         const asStable = (text: string): string =>
           stripVTControlCharacters(text)
+            .split(/\n\s*\n✋ ConstraintError:/)[0]!
             .split(scene.dir)
             .join('<fixture>')
             .replace(/\.temp\/genTempDir\.symlink\/[^/\s]+/g, '<fixture>')
             .replace(/(payload\s+=\s+)\d+/g, '$1<n>')
             .replace(/(over by\s+=\s+)\d+( tokens\s+\()\d+%/g, '$1<n>$2<p>%')
-            .replace(/("(?:payload|over)": )\d+/g, '$1<n>');
-        expect({
-          stdout: asStable(result.stdout),
-          stderr: asStable(result.stderr),
-        }).toMatchSnapshot();
+            .trimEnd();
+        // the halt writes naught to stdout; the tree is stderr, pinned in the shape [case6] pins
+        expect(result.stdout).toEqual('');
+        expect(asStable(result.stderr)).toMatchSnapshot();
       });
     });
   });
@@ -664,6 +750,33 @@ describe('roleBootClamps', () => {
         expect(asBudgetOfBootStats({ stdout: result.stdout })).toEqual(
           scene.payload,
         );
+      });
+
+      then('the stats block shape matches the snapshot', () => {
+        // .note = the temp dir rides in the payload, so every count varies by run and each one
+        //         is masked as `<n>`. this pins the block's shape, root to leaf; the at-limit fact
+        //         (budget equals payload) is asserted by number in the `then` above
+        const lines = stripVTControlCharacters(result.stdout).split('\n');
+        const indexOfBudget = lines.findIndex((line) =>
+          line.includes('budget = '),
+        );
+        const indexOfRoot =
+          lines
+            .slice(0, indexOfBudget)
+            .map((line, index) => ({ line, index }))
+            .filter((entry) => !/^\s*[├└│]/.test(entry.line))
+            .pop()?.index ?? indexOfBudget;
+        expect(
+          lines
+            .slice(indexOfRoot, indexOfBudget + 1)
+            .map((line) =>
+              // a count stands alone; a digit inside a name (`o200k_base`) is kept
+              line
+                .trimEnd()
+                .replace(/(?<![\w])\d[\d,]*(?![\w])/g, '<n>'),
+            )
+            .join('\n'),
+        ).toMatchSnapshot();
       });
     });
   });
@@ -742,7 +855,8 @@ describe('roleBootClamps', () => {
             .replace(/(payload\s+=\s+)[\d,]+/g, '$1<n>')
             .replace(/(over by\s+=\s+)[\d,]+( tokens\s+\()\d+%/g, '$1<n>$2<p>%')
             .replace(/(budget = )[\d,]+( \/ )/g, '$1<n>$2')
-            .replace(/("(?:payload|over)": )\d+/g, '$1<n>');
+            .replace(/("(?:payload|over)": )\d+/g, '$1<n>')
+            .trimEnd();
         expect(asStable(result.stderr)).toMatchSnapshot();
       });
     });

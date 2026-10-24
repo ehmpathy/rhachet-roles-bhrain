@@ -2,11 +2,74 @@ import * as fs from 'fs/promises';
 import * as path from 'path';
 import { genTempDir, given, then, useBeforeAll, when } from 'test-fns';
 
+import { DriveBlockerState } from './drive/DriveBlocker';
+import { mutateDriveBlockerState } from './drive/mutateDriveBlockerState';
+import { getRouteDriverCloneAddr } from './reminder/getRouteDriverCloneAddr';
 import { stepRouteDrive } from './stepRouteDrive';
 
 const ASSETS_DIR = path.join(__dirname, '.test/assets');
 
+/**
+ * .what = a fresh `route.simple` clone whose drive state reads as if `hooks` onStop calls
+ *         already landed on its first stone
+ * .why = a threshold case once reached its count by a chain of real drive calls, each one a
+ *        full drive under load, and each `then` leaned on the calls of the one before it. a
+ *        seed through the state's own writer puts the count in one write, so each `then` makes
+ *        one drive call and stands alone. the counts match the old chains call for call
+ */
+const genRouteAfterHooks = async (input: {
+  slug: string;
+  hooks: number;
+}): Promise<{ tempDir: string }> => {
+  const tempDir = genTempDir({
+    slug: input.slug,
+    clone: path.join(ASSETS_DIR, 'route.simple'),
+  });
+  await mutateDriveBlockerState({
+    route: tempDir,
+    project: () =>
+      new DriveBlockerState({
+        count: input.hooks,
+        stone: '1.vision',
+        brain: null,
+      }),
+  });
+  return { tempDir };
+};
+
 describe('stepRouteDrive', () => {
+  // run as a plain session, whatever the host: the drive's reminder sync keys on this serial
+  // .note = deliberate mutation, scoped to this suite and restored after it
+  const priorSerial = process.env.RHACHET_CLONE_SERIAL;
+  beforeAll(() => {
+    delete process.env.RHACHET_CLONE_SERIAL;
+  });
+  afterAll(() => {
+    if (priorSerial !== undefined)
+      process.env.RHACHET_CLONE_SERIAL = priorSerial;
+  });
+
+  given(
+    '[case0] the suite runs on a host that may itself be a driver clone',
+    () => {
+      when('[t0] the suite reads which clone it drives', () => {
+        /**
+         * 🔴 .why = the drive's reminder sync keys on `RHACHET_CLONE_SERIAL`. a suite run from
+         *          inside a driver clone inherited that serial, so every hook call here took the
+         *          live reminder path against the host's own clone — real side effects, and ~1s
+         *          per call that pushed the many-hook cases past their 30s cap under load. CI
+         *          sets no serial, so only an enrolled host saw it
+         */
+        then(
+          'it drives no clone — the host serial never reaches the suite',
+          () => {
+            expect(getRouteDriverCloneAddr()).toEqual(null);
+          },
+        );
+      });
+    },
+  );
+
   given('[case1] route with incomplete stones', () => {
     const scene = useBeforeAll(async () => {
       const tempDir = genTempDir({
@@ -288,20 +351,13 @@ describe('stepRouteDrive', () => {
   });
 
   given('[case6] drum nudge after 7+ hooks', () => {
-    const scene = useBeforeAll(async () => {
-      const tempDir = genTempDir({
-        slug: 'drive-nudge',
-        clone: path.join(ASSETS_DIR, 'route.simple'),
-      });
-      return { tempDir };
-    });
-
     when('[t0] fewer than 7 hooks triggered', () => {
+      // 3 prior hooks, so this call is the 4th
+      const scene = useBeforeAll(async () =>
+        genRouteAfterHooks({ slug: 'drive-nudge', hooks: 3 }),
+      );
+
       then('output does NOT contain drum nudge', async () => {
-        // call with when=hook.onStop 3 times (count 1, 2, 3)
-        for (let i = 0; i < 3; i++) {
-          await stepRouteDrive({ route: scene.tempDir, when: 'hook.onStop' });
-        }
         const result = await stepRouteDrive({
           route: scene.tempDir,
           when: 'hook.onStop',
@@ -314,13 +370,12 @@ describe('stepRouteDrive', () => {
     });
 
     when('[t1] 7 or more hooks triggered', () => {
+      // 7 prior hooks, so this call is the 8th
+      const scene = useBeforeAll(async () =>
+        genRouteAfterHooks({ slug: 'drive-nudge', hooks: 7 }),
+      );
+
       then('output contains drum nudge with tao te ching quote', async () => {
-        // continue to call with when=hook.onStop to reach count >= 7
-        // (we already have 4 from [t0], need 3 more)
-        for (let i = 0; i < 3; i++) {
-          await stepRouteDrive({ route: scene.tempDir, when: 'hook.onStop' });
-        }
-        // now count should be 7 or higher
         const result = await stepRouteDrive({
           route: scene.tempDir,
           when: 'hook.onStop',
@@ -336,11 +391,12 @@ describe('stepRouteDrive', () => {
     });
 
     when('[t2] nudge output snapshot', () => {
+      // 10 prior hooks, so this call is the 11th
+      const scene = useBeforeAll(async () =>
+        genRouteAfterHooks({ slug: 'drive-nudge', hooks: 10 }),
+      );
+
       then('output matches snapshot', async () => {
-        // ensure we're at count >= 7 by a few more calls
-        for (let i = 0; i < 2; i++) {
-          await stepRouteDrive({ route: scene.tempDir, when: 'hook.onStop' });
-        }
         const result = await stepRouteDrive({
           route: scene.tempDir,
           when: 'hook.onStop',
@@ -356,20 +412,13 @@ describe('stepRouteDrive', () => {
   });
 
   given('[case7] tea pause after 5+ hooks', () => {
-    const scene = useBeforeAll(async () => {
-      const tempDir = genTempDir({
-        slug: 'drive-tea-pause',
-        clone: path.join(ASSETS_DIR, 'route.simple'),
-      });
-      return { tempDir };
-    });
-
     when('[t0] fewer than 6 hooks triggered', () => {
+      // 3 prior hooks, so this call is the 4th
+      const scene = useBeforeAll(async () =>
+        genRouteAfterHooks({ slug: 'drive-tea-pause', hooks: 3 }),
+      );
+
       then('output does NOT contain tea pause', async () => {
-        // call with when=hook.onStop 3 times (count 1, 2, 3)
-        for (let i = 0; i < 3; i++) {
-          await stepRouteDrive({ route: scene.tempDir, when: 'hook.onStop' });
-        }
         const result = await stepRouteDrive({
           route: scene.tempDir,
           when: 'hook.onStop',
@@ -382,13 +431,12 @@ describe('stepRouteDrive', () => {
     });
 
     when('[t1] 6 or more hooks triggered', () => {
+      // 6 prior hooks, so this call is the 7th (suggestBlocked = count > 5)
+      const scene = useBeforeAll(async () =>
+        genRouteAfterHooks({ slug: 'drive-tea-pause', hooks: 6 }),
+      );
+
       then('output contains tea pause with all three options', async () => {
-        // continue to call with when=hook.onStop to reach count > 5
-        // (we already have 4 from [t0], need 2 more)
-        for (let i = 0; i < 2; i++) {
-          await stepRouteDrive({ route: scene.tempDir, when: 'hook.onStop' });
-        }
-        // now count should be 6 or higher (suggestBlocked = count > 5)
         const result = await stepRouteDrive({
           route: scene.tempDir,
           when: 'hook.onStop',
@@ -407,11 +455,12 @@ describe('stepRouteDrive', () => {
     });
 
     when('[t2] tea pause snapshot', () => {
+      // 9 prior hooks, so this call is the 10th
+      const scene = useBeforeAll(async () =>
+        genRouteAfterHooks({ slug: 'drive-tea-pause', hooks: 9 }),
+      );
+
       then('output matches snapshot', async () => {
-        // ensure we're at count > 5 by a few more calls
-        for (let i = 0; i < 2; i++) {
-          await stepRouteDrive({ route: scene.tempDir, when: 'hook.onStop' });
-        }
         const result = await stepRouteDrive({
           route: scene.tempDir,
           when: 'hook.onStop',

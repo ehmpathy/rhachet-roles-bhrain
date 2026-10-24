@@ -1,4 +1,4 @@
-import { given, then } from 'test-fns';
+import { given, then, when } from 'test-fns';
 
 import { asBriefLinesByCue } from './asBriefLinesByCue';
 
@@ -81,12 +81,14 @@ const TEST_CASES = [
 ];
 
 describe('asBriefLinesByCue', () => {
-  TEST_CASES.forEach((thisCase) => {
-    given(thisCase.description, () => {
-      then('it sorts each line into cue or argument', () => {
-        expect(asBriefLinesByCue({ text: thisCase.given.text })).toEqual(
-          thisCase.expect,
-        );
+  TEST_CASES.forEach((thisCase, index) => {
+    given(`[case${index + 1}] ${thisCase.description}`, () => {
+      when('[t0] the brief is sorted', () => {
+        then('it sorts each line into cue or argument', () => {
+          expect(asBriefLinesByCue({ text: thisCase.given.text })).toEqual(
+            thisCase.expect,
+          );
+        });
       });
     });
   });

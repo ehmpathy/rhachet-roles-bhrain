@@ -8,7 +8,7 @@ import { genTempDirForRhachet } from './.test/genTempDirForRhachet';
 // .note = js-yaml ships no types; required as the rest of src does (asReviewRubricsConfig.ts)
 const yaml = require('js-yaml');
 
-const ASSETS_DIR =path.join(__dirname, '.test/assets/roles-boot-consumer');
+const ASSETS_DIR = path.join(__dirname, '.test/assets/roles-boot-consumer');
 
 // the roles whose boot is clamped to a budget (src/domain.roles/roleBootClamps.integration.test.ts)
 const ROLES_BUDGETED = ['learner', 'driver', 'librarian'] as const;
@@ -20,6 +20,12 @@ const LINE_OF_MIN_CONVENTION =
 // transformer: the briefs a boot emitted at say, one `<brief.say path>` tag each
 const asPathsOfBriefSay = (input: { stdout: string }): string[] =>
   [...input.stdout.matchAll(/<brief\.say path="([^"]+)"/g)].map(
+    (match) => match[1]!,
+  );
+
+// transformer: the skills a boot emitted at say, one `<skill.say path>` tag each
+const asPathsOfSkillSay = (input: { stdout: string }): string[] =>
+  [...input.stdout.matchAll(/<skill\.say path="([^"]+)"/g)].map(
     (match) => match[1]!,
   );
 
@@ -35,6 +41,32 @@ const asBudgetStatsOfBoot = (input: {
   };
 };
 
+// transformer: the stats tree a boot renders, from its root line through its `budget = ` leaf
+const asStatsBlockOfBoot = (input: { stdout: string }): string | null => {
+  const lines = input.stdout.split('\n');
+  const indexOfBudget = lines.findIndex((line) => /budget = /.test(line));
+  if (indexOfBudget < 0) return null;
+  const indicesOfRoot = lines
+    .slice(0, indexOfBudget)
+    .map((line, index) => ({ line, index }))
+    .filter(({ line }) => line.trim() && !/^\s*[├└│]/.test(line))
+    .map(({ index }) => index);
+  const indexOfRoot = indicesOfRoot.pop();
+  if (indexOfRoot === undefined) return null;
+  return lines.slice(indexOfRoot, indexOfBudget + 1).join('\n');
+};
+
+// transformer: the one roster row `roles cost --all` renders for a spec
+const asRowOfCostRoster = (input: {
+  stdout: string;
+  spec: string;
+}): string | null =>
+  input.stdout
+    .split('\n')
+    .find((line) => line.includes(input.spec))
+    ?.replace(/^[\s├└│─]+/, '')
+    .trimEnd() ?? null;
+
 /**
  * .what = each budgeted role, linked from the built package into a consumer repo, boots dense
  * .why  = the clamp test boots `src`; a consumer boots `dist` through `roles link`. this proves
@@ -42,8 +74,8 @@ const asBudgetStatsOfBoot = (input: {
  *         boot, and the linked boot stays under the budget it declares
  */
 describe('roles.boot.consumer-seat.acceptance', () => {
-  ROLES_BUDGETED.forEach((slug) => {
-    given(`[case:${slug}] a consumer repo that links the ${slug} role`, () => {
+  ROLES_BUDGETED.forEach((slug, index) => {
+    given(`[case${index + 1}] a consumer repo that links the ${slug} role`, () => {
       const scene = useBeforeAll(async () => {
         const tempDir = genTempDirForRhachet({
           slug: `roles-boot-consumer-${slug}`,
@@ -111,11 +143,37 @@ describe('roles.boot.consumer-seat.acceptance', () => {
           expect(absent).toEqual([]);
         });
 
-        then('its booted say paths and its budget stats match the snapshot', () => {
+        then('its booted say paths, briefs and skills, match the snapshot', () => {
           expect({
-            says: asPathsOfBriefSay({ stdout: result.stdout }),
-            stats: asBudgetStatsOfBoot({ stdout: result.stdout }),
+            briefs: asPathsOfBriefSay({ stdout: result.stdout }),
+            skills: asPathsOfSkillSay({ stdout: result.stdout }),
           }).toMatchSnapshot();
+        });
+
+        then('its stats block, as the consumer reads it, matches the snapshot', () => {
+          const block = asStatsBlockOfBoot({ stdout: result.stdout });
+          expect(block).toContain('% used)');
+          expect(block).toMatchSnapshot();
+        });
+      });
+
+      when('[t1] the consumer costs its boot specs', () => {
+        const result = useBeforeAll(async () =>
+          execAsync('npx rhachet roles cost --all', { cwd: scene.tempDir }),
+        );
+
+        then('the linked spec reads as linked, under its budget', () => {
+          const row = asRowOfCostRoster({
+            stdout: result.stdout,
+            spec: `.agent/repo=bhrain/role=${slug}/boot.yml`,
+          });
+          expect(row).toMatch(/ \(linked\)$/);
+          const match = row!.match(/^([\d,]+) \/ ([\d,]+) tokens \(\d+%\)/);
+          expect(match).not.toBeNull();
+          expect(Number(match![1]!.replace(/,/g, ''))).toBeLessThanOrEqual(
+            Number(match![2]!.replace(/,/g, '')),
+          );
+          expect(row).toMatchSnapshot();
         });
       });
     });
