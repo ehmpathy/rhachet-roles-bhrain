@@ -1,0 +1,47 @@
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
+
+exports[`pr.body.set.acceptance given: [case1] a human who asks the skill to explain itself when: [t0] --help is passed then: the usage renders whole 1`] = `
+"######################################################################
+# .what = set a pull request's body from a file on disk
+#
+# .why  = a route's done gate writes its pr body as a route artifact
+#         (\`appendix/pr.body.md\`), reviewed with the route; this sets
+#         the pr to exactly those bytes, so the pr and the artifact
+#         never drift
+#
+# usage:
+#   rhx pr.body.set --pr 700 --from .behavior/<route>/appendix/pr.body.md
+#
+# guarantee:
+#   - sets the body via the gh cli login (\`gh pr edit --body-file\`)
+#   - edits the body only: title, labels, reviewers are untouched
+#   - idempotent: a rerun with the same file sets the same body
+#   - exit 0 = set · 1 = gh failed · 2 = bad input
+######################################################################
+"
+`;
+
+exports[`pr.body.set.acceptance given: [case2] a call refused for unknown-arg when: [t0] the skill parses its args then: the refusal matches its snapshot 1`] = `
+"✋ ConstraintError: unknown arg '--bogus'
+"
+`;
+
+exports[`pr.body.set.acceptance given: [case3] a call refused for pr-without-value when: [t0] the skill parses its args then: the refusal matches its snapshot 1`] = `
+"✋ ConstraintError: --pr needs a value
+"
+`;
+
+exports[`pr.body.set.acceptance given: [case4] a call refused for from-without-value when: [t0] the skill parses its args then: the refusal matches its snapshot 1`] = `
+"✋ ConstraintError: --from needs a value
+"
+`;
+
+exports[`pr.body.set.acceptance given: [case5] a call refused for pr-not-a-number when: [t0] the skill parses its args then: the refusal matches its snapshot 1`] = `
+"✋ ConstraintError: --pr must be a pull request number, e.g. 700
+"
+`;
+
+exports[`pr.body.set.acceptance given: [case6] a call refused for from-absent when: [t0] the skill parses its args then: the refusal matches its snapshot 1`] = `
+"✋ ConstraintError: --from must name a non-empty body file on disk
+"
+`;

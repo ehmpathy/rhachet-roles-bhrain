@@ -15,6 +15,8 @@ always:
       # a done-gate aid, reached by name from gen.consumer-patch's header; it installs a patch
       # as a consumer would, so it runs once per patch, never per session
       - skills/prove.consumer-patch.sh
+      # a done-gate aid, reached by name at the one step that sets a pr body from its route artifact
+      - skills/pr.body.set.sh
   briefs:
     say:
       # identity

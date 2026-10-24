@@ -65,6 +65,9 @@ AFTER="$(read_version "$INTO")"
 require_object() {
   local where="$1" body="$2" cause
   cause="$(jq -e 'type == "object"' <<<"$body" 2>&1 1>/dev/null)" && return
+  # jq 1.7+ prefixes its errors with `jq: ` and 1.6 does not; drop it so the cause reads the
+  # same on every host (as the git cause above drops `fatal: `)
+  cause="${cause#jq: }"
   echo "✋ ConstraintError: $OF $where is not a json object" >&2
   echo "   └─ cause: ${cause:-the content holds no json object}" >&2
   exit 2
