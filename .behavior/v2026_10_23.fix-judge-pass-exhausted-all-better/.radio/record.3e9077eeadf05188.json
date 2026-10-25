@@ -10,10 +10,10 @@
   "description": "## .what\n\ntwo mechanic rules, raised in review of ehmpathy/rhachet-roles-bhrain#693 (comments 4371942303, 4371945313):\n\n1. **rule.forbid.mixed-nest-and-flat-variants** — when one noun has several variants, never nest some and flatten others, and never let one variant take the bare namespace.\n   - 👎 `{ slugs: exhaustedSlugs, slugsUrgent }` — `slugs` silently means \"exhausted\"; `slugsUrgent` sits flattened beside it\n   - 👍 `{ slugs: { exhausted, urgent } }`\n2. **rule.require.qualified-names-when-variants** — where a name has more than one variant in scope, every use is qualified. a bare `slugs` is ambiguous the moment a second set of slugs exists.\n   - 👎 `asJudgeUrgentHaltLines({ slugs })` beside `getStoneConcessionExhaustion({ slugs })`, where one means urgent lanes and the other exhausted lanes\n   - 👍 `asJudgeUrgentHaltLines({ slugs: { urgent } })` · `getStoneConcessionExhaustion({ slugs: { exhausted } })`\n\n## .why\n\n- a bare name that takes the namespace hides which variant it is, so a reader must trace the caller to know\n- a half-nested, half-flattened shape is two conventions in one signature, and it drifts\n\n## .the worked case\n\nehmpathy/rhachet-roles-bhrain#693 — `genRouteGuardExhaustedReason`, `getStoneConcessionExhaustion`, `computeConcessionExhaustionKind`, `computeUrgentConcessionLaneSlugs`, `asJudgeUrgentHaltLines`, and `asBudgetHaltRemedyGroup` reshaped to `slugs: { exhausted, urgent }`.\n\n## .enforcement (proposed)\n\n- a variant that takes the bare namespace beside a flattened peer = blocker\n- an unqualified name where two or more variants are in scope = blocker",
   "status": null,
   "via": "gh.issues",
-  "auth": null,
-  "idem": null,
+  "auth": "as-human",
+  "idem": "findsert",
   "heldSeq": 34,
-  "recordStatus": "QUEUED",
-  "reason": "upstream:auth",
-  "deliveredExid": null
+  "recordStatus": "DELIVERED",
+  "reason": null,
+  "deliveredExid": "1170"
 }
