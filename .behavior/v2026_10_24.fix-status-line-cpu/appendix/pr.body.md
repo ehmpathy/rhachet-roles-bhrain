@@ -13,7 +13,9 @@ the route status line costs no measurable cpu per repaint when naught changed (#
   gains the hit (and still pays the barrel load)
 - what the line shows is unchanged, save the error row's qualified `ConstraintError` header (F13)
 
-## .the measure — `rhx bench.status-line --runs 5` on the final build, cpu seconds per repaint
+## .the measure — `rhx bench.status-line --runs 5`, cpu seconds per repaint
+
+measured on the build of `97762ea5`; `src/` is unchanged at the head, so the figures hold there.
 
 | arm | s |
 |---|---|
@@ -68,6 +70,9 @@ from the final build): copy it to `patches/`, add
   `prove.consumer-patch.sh`, and the new pnpm-patch hazard brief from the boot to hold the
   24,000-token cap; each stays reachable by name
 - the bind glob skips `.agent/.actors/**` and `.agent/.cache/**`
+- `settings.permissions.diff` drops jq 1.7's `jq: ` prefix from a json cause, so its refusal
+  reads the same on every host (ci's jq failed acceptance shard 1/3 at `97762ea5`)
+- `rhx pr.body.set` sets a pr's body from the route's `appendix/pr.body.md`; this body was set with it
 
 ## .fulcrums
 
