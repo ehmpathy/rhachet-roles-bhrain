@@ -4,13 +4,23 @@ import * as path from 'path';
 import { given, then, useThen, when } from 'test-fns';
 
 import type { ContextCliEmit } from '@src/domain.objects/Driver/ContextCliEmit';
-import { getStoneDisputedConcernCounts } from '@src/domain.operations/route/guard/review/peer/getStoneDisputedConcernCounts';
+import { computeDisputedConcernCounts } from '@src/domain.operations/route/guard/review/peer/computeDisputedConcernCounts';
+import { getStoneReviewCorpus } from '@src/domain.operations/route/guard/review/peer/getStoneReviewCorpus';
 
 import { answerEveryPeerGiven } from '../__test_assets__/answerEveryPeerGiven';
 import { genContextReviewBrainSupplyDemo } from '../__test_assets__/genContextReviewBrainSupplyDemo';
 import { setStoneAsConcernAbsorbed } from './setStoneAsConcernAbsorbed';
 import { setStoneAsPassed } from './setStoneAsPassed';
 import { setStoneAsRewound } from './setStoneAsRewound';
+
+/**
+ * .what = the disputed counts on one stone, read the way the judge reads them
+ * .why = corpus → count is the composition the judge runs; no async wrapper ships for it
+ */
+const getAllDisputedCountsOnStone = async (input: {
+  route: string;
+  stone: string;
+}) => computeDisputedConcernCounts(await getStoneReviewCorpus(input));
 
 const noopContext = genContextReviewBrainSupplyDemo();
 const emitContext: ContextCliEmit = {
@@ -116,7 +126,7 @@ describe('setStoneAsRewound.absorption.integration', () => {
         then(
           'the dispute is LIVE — it sheds one blocker from the tally',
           async () => {
-            const counts = await getStoneDisputedConcernCounts({
+            const counts = await getAllDisputedCountsOnStone({
               route: tempDir,
               stone: '1.test',
             });
@@ -140,7 +150,7 @@ describe('setStoneAsRewound.absorption.integration', () => {
         async () => {
           // the row is still in the ledger; what changed is that the given it keyed
           // to is gone, so `getLiveReviewAbsorptions` no longer counts it
-          const counts = await getStoneDisputedConcernCounts({
+          const counts = await getAllDisputedCountsOnStone({
             route: tempDir,
             stone: '1.test',
           });
@@ -190,7 +200,7 @@ describe('setStoneAsRewound.absorption.integration', () => {
       then(
         'and the dispute is still void — a fresh given owes a fresh stance',
         async () => {
-          const counts = await getStoneDisputedConcernCounts({
+          const counts = await getAllDisputedCountsOnStone({
             route: tempDir,
             stone: '1.test',
           });

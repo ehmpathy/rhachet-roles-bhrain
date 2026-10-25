@@ -3,6 +3,7 @@ import * as os from 'os';
 import * as path from 'path';
 import { getError, given, then, when } from 'test-fns';
 
+import { getOneFirstAbsentDir } from './.test/getOneFirstAbsentDir';
 import { findsertReviewPeerGitignore } from './findsertReviewPeerGitignore';
 
 const normalizeResult = (
@@ -23,11 +24,11 @@ const normalizeResult = (
  * | idempotent: third call | result-third-call | case1 |
  * | coexistence: with files | result-with-files-present | case2 |
  * | negative: ENOTDIR route | error-enotdir-route | case3 |
- * | negative: EACCES | error-eacces | case4 |
+ * | negative: EACCES | error-eacces, path masked | case4 |
  * | overwrite: incorrect content | result-overwrite | case5 |
  * | negative: EISDIR | error-eisdir | case6 |
  * | negative: ENOTDIR reviews | error-enotdir-reviews | case7 |
- * | negative: ENOTDIR peer | error-enotdir-peer | case8 |
+ * | negative: EEXIST peer | error-eexist-peer | case8 |
  */
 describe('findsertReviewPeerGitignore.integration', () => {
   given('[case1] called multiple times', () => {
@@ -133,11 +134,24 @@ describe('findsertReviewPeerGitignore.integration', () => {
   given('[case4] invalid route path', () => {
     when('[t0] findsert is called with non-writable path', () => {
       then('throws permission error', async () => {
-        await expect(
+        // the deepest dir mkdir is denied at varies by host (some hosts carry a
+        // `/nonexistent`), so the path is masked, then the error is snapped
+        const error = await getError(
           findsertReviewPeerGitignore({
             route: '/nonexistent/path/that/cannot/be/created',
           }),
-        ).rejects.toMatchSnapshot('error-eacces');
+        );
+        expect(error.message).toMatch(/^EACCES: permission denied, mkdir '/);
+        // mkdir is denied at the first dir absent from disk; derive it, so the pin is exact on any host
+        const deniedPath = error.message.match(/mkdir '([^']*)'/)?.[1];
+        expect(deniedPath).toEqual(
+          await getOneFirstAbsentDir({
+            path: '/nonexistent/path/that/cannot/be/created',
+          }),
+        );
+        expect(
+          error.message.replace(/mkdir '[^']*'/, "mkdir '<path>'"),
+        ).toMatchSnapshot('error-eacces');
       });
     });
   });
@@ -191,9 +205,11 @@ describe('findsertReviewPeerGitignore.integration', () => {
 
     when('[t0] findsert is called', () => {
       then('throws EISDIR error', async () => {
-        await expect(
+        // the message alone, the shape every error case in this file snaps
+        const error = await getError(
           findsertReviewPeerGitignore({ route: tempDir }),
-        ).rejects.toMatchSnapshot('error-eisdir');
+        );
+        expect(error.message).toMatchSnapshot('error-eisdir');
       });
     });
   });
@@ -244,12 +260,13 @@ describe('findsertReviewPeerGitignore.integration', () => {
     });
 
     when('[t0] findsert is called', () => {
-      then('throws ENOTDIR error', async () => {
+      then('throws EEXIST error', async () => {
+        // the leaf itself is a file, so mkdir meets a path that exists — EEXIST, not ENOTDIR
         const error = await getError(
           findsertReviewPeerGitignore({ route: tempDir }),
         );
         expect(error.message.replace(tempDir, '<route>')).toMatchSnapshot(
-          'error-enotdir-peer',
+          'error-eexist-peer',
         );
       });
     });

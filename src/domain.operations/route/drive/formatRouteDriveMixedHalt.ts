@@ -1,5 +1,6 @@
 import { asGuardReasonHead } from '../guard/asGuardReasonHead';
 import { formatGuardMalfunctionClearLines } from '../guard/formatGuardMalfunctionClearLines';
+import { asExhaustedReasonForDisplay } from '../guard/review/peer/genRouteGuardExhaustedReason';
 import {
   computeBlockRemedyGroups,
   formatBlockRemedyGroups,
@@ -51,9 +52,13 @@ export const formatRouteDriveMixedHalt = (input: {
   // .note = deliberate local line-builder, scoped to this formatter — the escape hatch in
   //         rule.require.immutable-vars permits a scoped emit builder; no array crosses a boundary.
   const lines: string[] = [...formatRouteDriveHeader(input)];
-  // the header line shows the reason's head; the clear block below names each broken part
+  // the header line shows the reason's head, its urgent lane list dropped (the remedy commands
+  // name each lane); the clear block below names each broken part
+  const reasonHead =
+    asGuardReasonHead({ passage: remedyPassage, reason: input.reason }) ??
+    input.reason;
   lines.push(
-    `   └─ halted, ${asGuardReasonHead({ passage: remedyPassage, reason: input.reason }) ?? input.reason}`,
+    `   └─ halted, ${asExhaustedReasonForDisplay({ reason: reasonHead })}`,
   );
   // ⛔ no spacer under the `halted,` header. every OTHER halt renderer in the repo flushes
   //    its header straight to its first child — `formatRouteDriveBudgetExhausted:88-90`

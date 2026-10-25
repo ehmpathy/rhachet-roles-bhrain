@@ -3,7 +3,7 @@ import { getError, given, then, when } from 'test-fns';
 
 import { asAbsorptionIsNotContrary } from './asAbsorptionIsNotContrary';
 import { asRouteStoneSetCommandHead } from './asRouteStoneSetCommandHead';
-import type { ReviewAbsorption } from './getStoneReviewAbsorptions';
+import type { ReviewAbsorption } from './ReviewAbsorption';
 
 /**
  * .what = unit cases for R3 — a CONTRARY second stance on the same concern of the same given

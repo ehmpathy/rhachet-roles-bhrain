@@ -77,6 +77,18 @@ const getLastCountForDimension = (input: {
 };
 
 /**
+ * .what = the review content with every code fence and inline code span removed
+ * .why = code is quotation, never a declaration. a reviewer quotes a judge reason, a snapshot
+ *        line, or a prior tally in backticks — (`after 3 blockers shed…`) — and since the count
+ *        pass takes the LAST match, a quote after the verdict was read as the verdict. the
+ *        left-edge guard catches a digit glued to its backtick, never one a space parts from it.
+ *        a review whose only counts sit in code reads undetected, so the cascade asks the brain
+ *        (rule.forbid.failhide) — never a silent zero
+ */
+const asReviewContentWithoutCode = (input: { content: string }): string =>
+  input.content.replace(/```[\s\S]*?```/g, '').replace(/`[^`\n]*`/g, '');
+
+/**
  * .what = deterministic tactic — extracts blocker/nitpick counts from review content via regex
  * .why = when a reviewer states its verdict as numbers (`0 blockers`, `2 nitpicks`), this reads
  *        them verbatim, free and exact. it is the first tactic in the getOneReviewCounts cascade;
@@ -90,14 +102,9 @@ const getLastCountForDimension = (input: {
 export const getOneReviewCountsViaRegex = (input: {
   content: string;
 }): ReviewCounts => {
-  const blockerCount = getLastCountForDimension({
-    content: input.content,
-    stem: 'blocker',
-  });
-  const nitpickCount = getLastCountForDimension({
-    content: input.content,
-    stem: 'nitpick',
-  });
+  const content = asReviewContentWithoutCode({ content: input.content });
+  const blockerCount = getLastCountForDimension({ content, stem: 'blocker' });
+  const nitpickCount = getLastCountForDimension({ content, stem: 'nitpick' });
 
   // absent verdict when either dimension lacks a number — carry no counts to fake
   if (blockerCount === undefined || nitpickCount === undefined)

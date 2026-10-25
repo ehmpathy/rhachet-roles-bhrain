@@ -6,6 +6,7 @@ import {
   getRouteGuardReviewPeerPathTaken,
   isRouteGuardReviewPeerGivenPath,
 } from '../../src/domain.operations/route/guard/review/peer/getRouteGuardReviewPeerPathTaken';
+import { asRouteSkillResultOkOrThrow } from './asRouteSkillResultOkOrThrow';
 import { concedeEveryPeerConcern } from './concedeEveryPeerConcern';
 import { invokeRouteSkill } from './invokeRouteSkill';
 
@@ -111,18 +112,21 @@ export const answerEveryPeerGiven = async (input: {
 
   // THEN absorb the feedback — one `--as absorbed` per reviewer, as a driver does. every
   // concern is now absorbed, so the composition gate opens.
-  for (const slug of slugs) {
-    await invokeRouteSkill({
-      skill: 'route.stone.set',
-      args: {
-        stone: input.stone,
-        route: input.route ?? '.',
-        as: 'absorbed',
-        that: slug,
-      },
-      cwd: input.cwd,
+  // each absorb must land; a refusal dropped here leaves the next round's entrance gate shut
+  for (const slug of slugs)
+    asRouteSkillResultOkOrThrow({
+      step: `absorb ${slug} on ${input.stone}`,
+      result: await invokeRouteSkill({
+        skill: 'route.stone.set',
+        args: {
+          stone: input.stone,
+          route: input.route ?? '.',
+          as: 'absorbed',
+          that: slug,
+        },
+        cwd: input.cwd,
+      }),
     });
-  }
 
   return slugs;
 };

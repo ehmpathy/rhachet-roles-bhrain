@@ -4,6 +4,7 @@ import { asRouteGuardPartitionCommand } from '../partition/asRouteGuardPartition
 import { asRouteStoneSetCommandHead } from '../review/peer/asRouteStoneSetCommandHead';
 import { formatReviewBudgetTopupCommand } from '../review/peer/formatReviewBudgetTopupCommand';
 import {
+  asUrgentConcessionSlugs,
   isRouteGuardConcessionExhaustion,
   isRouteGuardUrgentConcessionExhaustion,
 } from '../review/peer/genRouteGuardExhaustedReason';
@@ -13,10 +14,14 @@ import {
  * .why = label and command travel together on every surface, so they are one shape rather than
  *        two parallel lists a caller must keep aligned. `cmd: null` is the prose tail
  *        ("or fix the reviewer, then retry"), which names a remedy that has no one command.
+ *
+ * .note = `cmd: string[]` is a remedy of SEVERAL commands, one per target (a top-up per urgent
+ *         lane). each renders as its own leaf. a `string` with newlines is ONE command wrapped
+ *         across lines (`--partition`), and its continuations hang under its first line.
  */
 export interface BlockRemedyGroup {
   label: string;
-  cmd: string | null;
+  cmd: string | string[] | null;
 }
 
 /**
@@ -75,21 +80,41 @@ const asTerminalFailureNoun = (input: {
  *    level terminal, the just-conceded lanes at the top. a lane BELOW the latest level stays
  *    exhausted unless the driver names it (`--peer <slug>` or `--level N`), which is the intended
  *    state rather than a defect the emit should auto-heal.
+ *
+ * 🔴 .an URGENT halt names its urgent lanes, one `--peer` each — the targeted act fork E asks for.
+ *    the urgent concession IS the warrant, and it sits on named lanes; the reason carries them in
+ *    its urgent mark. a bare `--add` would land on the latest level and miss an urgent lane below
+ *    it, so the driver would top up the wrong lanes and halt again. the judge's urgent halt names
+ *    the same commands (`asJudgeUrgentHaltLines`). a legacy reason with no lanes in its mark falls
+ *    back to the exhausted-lane rule above.
  */
 const asBudgetHaltRemedyGroup = (input: {
   stone: string;
-  exhaustedSlugs: string[];
+  /** every slug list is qualified by the lane set it names */
+  slugs: { exhausted: string[]; urgent: string[] };
   hasUrgentConcession: boolean;
   hasBetterConcession: boolean;
 }): BlockRemedyGroup => {
-  // an URGENT concession earned the round, so the top-up is the driver's own lever to spend.
+  // an URGENT concession earned the round, so the top-up is the driver's own lever to spend —
+  // one command per urgent lane where the reason names them
+  if (input.hasUrgentConcession && input.slugs.urgent.length > 0)
+    return {
+      label: `increase budget — yours to spend`,
+      cmd: input.slugs.urgent.map((slug) =>
+        formatReviewBudgetTopupCommand({
+          add: 'N',
+          peer: slug,
+          stone: input.stone,
+        }),
+      ),
+    };
   if (input.hasUrgentConcession)
     return {
       label: `increase budget — yours to spend`,
       cmd: formatReviewBudgetTopupCommand({
         add: 'N',
         peer:
-          input.exhaustedSlugs.length === 1 ? input.exhaustedSlugs[0]! : null,
+          input.slugs.exhausted.length === 1 ? input.slugs.exhausted[0]! : null,
         stone: input.stone,
       }),
     };
@@ -110,8 +135,8 @@ const asBudgetHaltRemedyGroup = (input: {
   return {
     label: `converge with the reviewer — yours to run`,
     cmd: `rhx route.stone.set --stone ${input.stone} --as absorbed --that ${
-      input.exhaustedSlugs.length === 1
-        ? input.exhaustedSlugs[0]!
+      input.slugs.exhausted.length === 1
+        ? input.slugs.exhausted[0]!
         : '<reviewer>'
     }`,
   };
@@ -405,7 +430,10 @@ export const computeBlockRemedyGroups = (input: {
       ? [
           asBudgetHaltRemedyGroup({
             stone: input.stone,
-            exhaustedSlugs: asExhaustedSlugs({ reason: input.reason }),
+            slugs: {
+              exhausted: asExhaustedSlugs({ reason: input.reason }),
+              urgent: asUrgentConcessionSlugs({ reason: input.reason }),
+            },
             hasUrgentConcession,
             hasBetterConcession,
           }),
@@ -449,6 +477,30 @@ export const computeBlockRemedyGroups = (input: {
 };
 
 /**
+ * .what = renders a remedy's command(s) as leaves beneath its label
+ * .why = several commands are several facts, so each takes its own `├─` / `└─` leaf
+ *        (rule.require.stdout-is-treestruct). one command wrapped across lines hangs its
+ *        continuations under its first line, since those lines are one fact.
+ */
+const asRemedyCommandLines = (input: {
+  cmd: string | string[] | null;
+  continuation: string;
+}): string[] => {
+  if (input.cmd === null) return [];
+  const cmds = Array.isArray(input.cmd) ? input.cmd : [input.cmd];
+  return cmds.flatMap((cmd, index) => {
+    const isLast = index === cmds.length - 1;
+    return cmd
+      .split('\n')
+      .map((line, at) =>
+        at === 0
+          ? `${input.continuation}${isLast ? '└─' : '├─'} ${line}`
+          : `${input.continuation}${isLast ? '   ' : '│  '}${line}`,
+      );
+  });
+};
+
+/**
  * .what = renders remedy groups as box-draw tree lines beneath a caller's own branch
  * .why = the four surfaces that offer remedies differ ONLY in how deep they sit and whether they
  *        breathe between groups. that is the "parameters for context differences" clause of
@@ -476,16 +528,7 @@ export const formatBlockRemedyGroups = (input: {
     const lineLabel = `${input.baseIndent}${isLast ? '└─' : '├─'} ${group.label}`;
     // a multiline command (one `--partition` per line) hangs its continuations under its first
     const continuation = `${input.baseIndent}${isLast ? '   ' : '│  '}`;
-    const linesCmd =
-      group.cmd === null
-        ? []
-        : group.cmd
-            .split('\n')
-            .map((line, at) =>
-              at === 0
-                ? `${continuation}└─ ${line}`
-                : `${continuation}   ${line}`,
-            );
+    const linesCmd = asRemedyCommandLines({ cmd: group.cmd, continuation });
     const linesSpacer =
       input.spacers && !isLast ? [`${input.baseIndent}│`] : [];
     return [lineLabel, ...linesCmd, ...linesSpacer];

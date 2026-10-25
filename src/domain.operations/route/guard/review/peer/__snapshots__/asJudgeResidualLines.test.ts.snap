@@ -6,3 +6,11 @@ exports[`asJudgeResidualLines given: [case4] a dispute on BOTH axes when: [t0] r
   "residual: 1/0 blockers, 4/7 nitpicks",
 ]
 `;
+
+exports[`asJudgeResidualLines given: [case7] both a dispute and a \`better\` concession moved the sum when: [t0] rendered then: one line per shed kind, then the residual 1`] = `
+[
+  "disputed: 1 blocker, 0 nitpicks excluded from the tally",
+  "conceded better: 2 blockers, 1 nitpick excluded from the tally",
+  "residual: 0/0 blockers, 2/7 nitpicks",
+]
+`;

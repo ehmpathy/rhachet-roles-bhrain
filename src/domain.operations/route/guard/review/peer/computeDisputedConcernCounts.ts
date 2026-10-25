@@ -1,8 +1,7 @@
 import { asConcernCountsFromAbsorptions } from './asConcernCountsFromAbsorptions';
 import type { RouteGuardReviewPeerGiven } from './getAllRouteGuardReviewPeerGivens';
 import { getLiveReviewAbsorptions } from './getLiveReviewAbsorptions';
-import type { ReviewAbsorption } from './getStoneReviewAbsorptions';
-import { getStoneReviewCorpus } from './getStoneReviewCorpus';
+import type { ReviewAbsorption } from './ReviewAbsorption';
 
 /**
  * .what = counts the disputed concerns that stand against the CURRENT generation
@@ -37,27 +36,4 @@ export const computeDisputedConcernCounts = (input: {
         (!input.scope || stance.reviewer === input.scope.slug),
     ),
   );
-};
-
-/**
- * .what = the disputed-concern counts that stand on one stone, right now
- * .why = the judge subtracts these from its tally, so a disputed concern stops to hold the
- *        road while every concern the driver did NOT name still holds it
- *        (rule.forbid.suppression-of-undeclared-concerns)
- */
-export const getStoneDisputedConcernCounts = async (input: {
-  route: string;
-  stone: string;
-  scope?: { slug: string };
-}): Promise<{ blockers: number; nitpicks: number }> => {
-  const { absorptions, givens } = await getStoneReviewCorpus({
-    route: input.route,
-    stone: input.stone,
-  });
-
-  return computeDisputedConcernCounts({
-    absorptions,
-    givens,
-    scope: input.scope,
-  });
 };

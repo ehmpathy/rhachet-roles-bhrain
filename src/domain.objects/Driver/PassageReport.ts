@@ -115,6 +115,9 @@ export interface PassageReport {
    * ⚠️ a HASH key would look equivalent and is not. the hash moves on any edit the stone's
    *    glob sees; the given moves only when THAT LANE speaks again. so a hash key would void
    *    a stance the reviewer never re-raised.
+   *
+   * .note = holds the given's filename (`asReviewGivenKey`). older rows hold its absolute
+   *         path; every read compares via `asReviewGivenKey`, so both forms match one given.
    */
   given?: string;
 

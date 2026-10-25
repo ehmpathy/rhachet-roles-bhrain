@@ -1,8 +1,7 @@
 import { asConcernCountsFromAbsorptions } from './asConcernCountsFromAbsorptions';
 import type { RouteGuardReviewPeerGiven } from './getAllRouteGuardReviewPeerGivens';
 import { getLiveReviewAbsorptions } from './getLiveReviewAbsorptions';
-import type { ReviewAbsorption } from './getStoneReviewAbsorptions';
-import { getStoneReviewCorpus } from './getStoneReviewCorpus';
+import type { ReviewAbsorption } from './ReviewAbsorption';
 
 /**
  * .what = counts the `better`-conceded concerns that stand against the CURRENT generation
@@ -40,21 +39,4 @@ export const computeConcededBetterConcernCounts = (input: {
         (stance.severity === 'better' || stance.severity === undefined),
     ),
   );
-};
-
-/**
- * .what = the `better`-conceded concern counts that stand on one stone, right now
- * .why = the `reviewed?` judge subtracts these from its tally, so an all-`better` residual
- *        passes untouched while an `urgent` concession still holds the road (S16)
- */
-export const getStoneConcededBetterConcernCounts = async (input: {
-  route: string;
-  stone: string;
-}): Promise<{ blockers: number; nitpicks: number }> => {
-  const { absorptions, givens } = await getStoneReviewCorpus({
-    route: input.route,
-    stone: input.stone,
-  });
-
-  return computeConcededBetterConcernCounts({ absorptions, givens });
 };

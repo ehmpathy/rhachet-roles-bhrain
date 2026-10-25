@@ -1,7 +1,7 @@
 import type { RouteGuardReviewPeerGiven } from './getAllRouteGuardReviewPeerGivens';
 import { getAllRouteGuardReviewPeerGivens } from './getAllRouteGuardReviewPeerGivens';
-import type { ReviewAbsorption } from './getStoneReviewAbsorptions';
 import { getStoneReviewAbsorptions } from './getStoneReviewAbsorptions';
+import type { ReviewAbsorption } from './ReviewAbsorption';
 
 /**
  * .what = the two reads every stance-grade gate folds over — every declared absorption on

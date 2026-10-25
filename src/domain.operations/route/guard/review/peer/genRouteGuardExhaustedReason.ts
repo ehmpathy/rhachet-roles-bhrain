@@ -45,15 +45,69 @@ export const REASON_MARK_CONCESSION_URGENT =
  *          (`define.invariant.review.peer.budget.urgent-earns-budget`).
  */
 export const genRouteGuardExhaustedReason = (input: {
-  slugs: string[];
+  /**
+   * every slug list is qualified by the lane set it names — never a bare `slugs` beside a
+   * flattened `slugsX`, since two lane sets meet here
+   * - `exhausted` — the lanes whose budget is spent; they fill the `budget exhausted:` tail
+   * - `urgent` — the exhausted lanes that carry a live `urgent` concession, read only when
+   *   `concession` is `urgent`. they ride inside the urgent mark, ahead of the colon, so the
+   *   remedy can scope one `--peer` per urgent lane (a bare `--add` lands on the latest level
+   *   alone, and misses an urgent lane below it). empty → the mark carries no lanes, the form a
+   *   legacy reason holds
+   */
+  slugs: { exhausted: string[]; urgent: string[] };
   concession: 'none' | 'better' | 'urgent';
 }): string => {
-  const tail = `peer reviewer budget exhausted: ${input.slugs.join(', ')}`;
+  const tail = `peer reviewer budget exhausted: ${input.slugs.exhausted.join(', ')}`;
   if (input.concession === 'none') return tail;
   if (input.concession === 'urgent')
-    return `${REASON_MARK_CONCESSION_URGENT}; ${tail}`;
+    return `${asUrgentMarkWithSlugs({ slugs: { urgent: input.slugs.urgent } })}; ${tail}`;
   return `${REASON_MARK_CONCESSION}; ${tail}`;
 };
+
+/**
+ * .what = the urgent mark, with the urgent lanes in parentheses when any are named
+ * .why = one composer for the write, so the read below (`asUrgentConcessionSlugs`) and the write
+ *        agree on the one shape
+ */
+const asUrgentMarkWithSlugs = (input: {
+  slugs: { urgent: string[] };
+}): string =>
+  input.slugs.urgent.length === 0
+    ? REASON_MARK_CONCESSION_URGENT
+    : `${REASON_MARK_CONCESSION_URGENT} (${input.slugs.urgent.join(', ')})`;
+
+/**
+ * .what = the urgent lanes an exhaustion reason names in its urgent mark, in order
+ * .why = the remedy names one `--peer` budget command per urgent lane, the same shape the judge's
+ *        urgent halt renders (`asJudgeUrgentHaltLines`)
+ * .note = a reason with no urgent mark, or a legacy urgent mark with no lanes, yields an EMPTY
+ *         list — the caller falls back to its exhausted-lane read
+ */
+export const asUrgentConcessionSlugs = (input: {
+  reason: string | null;
+}): string[] => {
+  const matched = (input.reason ?? '').match(
+    new RegExp(`${REASON_MARK_CONCESSION_URGENT} \\(([^)]+)\\)`),
+  );
+  if (!matched?.[1]) return [];
+  return matched[1].split(',').map((slug) => slug.trim());
+};
+
+/**
+ * .what = the reason with the urgent mark's lane list removed, for a surface that prints it raw
+ * .why = the `(intent, friction)` list rides the mark so `asUrgentConcessionSlugs` can read it
+ *        back — a decode channel, not prose. a surface that prints the raw reason would show each
+ *        lane twice on one line (the mark, then the `budget exhausted:` tail), and a third time in
+ *        the command below. the remedy commands already name each urgent lane
+ */
+export const asExhaustedReasonForDisplay = (input: {
+  reason: string;
+}): string =>
+  input.reason.replace(
+    new RegExp(`(${REASON_MARK_CONCESSION_URGENT}) \\([^)]+\\)`),
+    '$1',
+  );
 
 /**
  * .what = whether an exhaustion halt is a BETTER concession halt — the driver's own (push)
@@ -123,5 +177,11 @@ export const REASON_TEXT_CONCESSION_URGENT =
  * 🟡 the obligation to tell a human rides the two surfaces that ASK for it — the concede ack, at
  *    the moment of the grade, and the grant warrant, at the moment of the spend. a third ask on a
  *    halt that hands over no budget would dilute both.
+ *
+ * .note = composed of two exported clauses, so the judge's urgent halt (which names the lanes
+ *         between them) reads both from this one source
  */
-export const WARN_TEXT_CONCESSION_URGENT = `an urgent concession stands — its harm ships if unfixed, so this stone earns more budget`;
+export const WARN_TEXT_CONCESSION_URGENT_HEAD = 'an urgent concession stands';
+export const WARN_TEXT_CONCESSION_URGENT_HARM =
+  'its harm ships if unfixed, so this stone earns more budget';
+export const WARN_TEXT_CONCESSION_URGENT = `${WARN_TEXT_CONCESSION_URGENT_HEAD} — ${WARN_TEXT_CONCESSION_URGENT_HARM}`;
