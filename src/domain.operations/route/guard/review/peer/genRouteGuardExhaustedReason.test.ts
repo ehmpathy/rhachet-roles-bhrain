@@ -9,69 +9,67 @@ const TEST_CASES = [
   {
     description: 'an ordinary exhaustion carries no mark and no urgent lanes',
     given: {
-      slugs: ['intent', 'friction'],
+      slugs: { exhausted: ['intent', 'friction'], urgent: [] },
       concession: 'none' as const,
-      slugsUrgent: [],
     },
     expect: {
       reason: 'peer reviewer budget exhausted: intent, friction',
-      slugsUrgent: [],
+      slugs: { urgent: [] },
     },
   },
   {
     description:
       'a better exhaustion carries the better mark and no urgent lanes',
     given: {
-      slugs: ['intent'],
+      slugs: { exhausted: ['intent'], urgent: [] },
       concession: 'better' as const,
-      slugsUrgent: [],
     },
     expect: {
       reason:
         'concessions await the round that confirms them; peer reviewer budget exhausted: intent',
-      slugsUrgent: [],
+      slugs: { urgent: [] },
     },
   },
   {
     description:
       'an urgent exhaustion names its urgent lanes inside the mark, ahead of the colon',
     given: {
-      slugs: ['intent', 'friction'],
+      slugs: { exhausted: ['intent', 'friction'], urgent: ['intent'] },
       concession: 'urgent' as const,
-      slugsUrgent: ['intent'],
     },
     expect: {
       reason:
         'an urgent concession earned a round (intent); peer reviewer budget exhausted: intent, friction',
-      slugsUrgent: ['intent'],
+      slugs: { urgent: ['intent'] },
     },
   },
   {
     description:
       'an urgent exhaustion with two urgent lanes names both, in order',
     given: {
-      slugs: ['intent', 'friction'],
+      slugs: {
+        exhausted: ['intent', 'friction'],
+        urgent: ['intent', 'friction'],
+      },
       concession: 'urgent' as const,
-      slugsUrgent: ['intent', 'friction'],
     },
     expect: {
       reason:
         'an urgent concession earned a round (intent, friction); peer reviewer budget exhausted: intent, friction',
-      slugsUrgent: ['intent', 'friction'],
+      slugs: { urgent: ['intent', 'friction'] },
     },
   },
   {
     description:
       'an urgent exhaustion with no lanes named keeps the legacy mark',
     given: {
-      slugs: ['intent'],
+      slugs: { exhausted: ['intent'], urgent: [] },
       concession: 'urgent' as const,
-      slugsUrgent: [],
     },
     expect: {
       reason:
         'an urgent concession earned a round; peer reviewer budget exhausted: intent',
-      slugsUrgent: [],
+      slugs: { urgent: [] },
     },
   },
 ];
@@ -84,7 +82,7 @@ describe('genRouteGuardExhaustedReason', () => {
 
       // the read recovers what the write named — one shape on both ends
       expect(asUrgentConcessionSlugs({ reason })).toEqual(
-        thisCase.expect.slugsUrgent,
+        thisCase.expect.slugs.urgent,
       );
 
       // the urgent predicate still reads the mark with lanes in it

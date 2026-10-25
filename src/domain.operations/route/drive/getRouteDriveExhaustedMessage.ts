@@ -76,11 +76,12 @@ export const getRouteDriveExhaustedMessage = async (input: {
       blocksStop: false,
     };
 
-  const { kind: concession, slugsUrgent } = await getStoneConcessionExhaustion({
-    route: input.route,
-    stone: input.stone.name,
-    slugs: exhaustedSlugs,
-  });
+  const { kind: concession, slugs: concessionSlugs } =
+    await getStoneConcessionExhaustion({
+      route: input.route,
+      stone: input.stone.name,
+      slugs: { exhausted: exhaustedSlugs },
+    });
 
   return {
     stdout: formatRouteDriveBudgetExhausted({
@@ -89,9 +90,8 @@ export const getRouteDriveExhaustedMessage = async (input: {
       brain: input.brain,
       effort: input.effort,
       reason: genRouteGuardExhaustedReason({
-        slugs: exhaustedSlugs,
+        slugs: { exhausted: exhaustedSlugs, urgent: concessionSlugs.urgent },
         concession,
-        slugsUrgent,
       }),
       meters,
     }),

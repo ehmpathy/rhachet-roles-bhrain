@@ -246,7 +246,7 @@ describe('computeConcessionExhaustionKind', () => {
           computeConcessionExhaustionKind({
             absorptions,
             givens,
-            slugs: ['mech'],
+            slugs: { exhausted: ['mech'] },
           }),
         ).toEqual('better');
       });
@@ -272,7 +272,7 @@ describe('computeConcessionExhaustionKind', () => {
             computeConcessionExhaustionKind({
               absorptions,
               givens,
-              slugs: ['mech'],
+              slugs: { exhausted: ['mech'] },
             }),
           ).toEqual('better');
         },
@@ -310,7 +310,7 @@ describe('computeConcessionExhaustionKind', () => {
             computeConcessionExhaustionKind({
               absorptions,
               givens,
-              slugs: ['mech', 'arch'],
+              slugs: { exhausted: ['mech', 'arch'] },
             }),
           ).toEqual('urgent');
         },
@@ -343,7 +343,7 @@ describe('computeConcessionExhaustionKind', () => {
             computeConcessionExhaustionKind({
               absorptions,
               givens,
-              slugs: ['mech', 'arch'],
+              slugs: { exhausted: ['mech', 'arch'] },
             }),
           ).toEqual('none');
         },
@@ -383,7 +383,7 @@ describe('computeConcessionExhaustionKind', () => {
               computeConcessionExhaustionKind({
                 absorptions,
                 givens,
-                slugs: ['mech'],
+                slugs: { exhausted: ['mech'] },
               }),
             ).toEqual('better');
           },
@@ -414,7 +414,7 @@ describe('computeConcessionExhaustionKind', () => {
               computeConcessionExhaustionKind({
                 absorptions,
                 givens,
-                slugs: ['mech'],
+                slugs: { exhausted: ['mech'] },
               }),
             ).toEqual('none');
           },
@@ -444,7 +444,7 @@ describe('computeConcessionExhaustionKind', () => {
             computeConcessionExhaustionKind({
               absorptions,
               givens,
-              slugs: ['mech'],
+              slugs: { exhausted: ['mech'] },
             }),
           ).toEqual('none');
         },
@@ -459,7 +459,7 @@ describe('computeConcessionExhaustionKind', () => {
           computeConcessionExhaustionKind({
             absorptions: [],
             givens: [],
-            slugs: [],
+            slugs: { exhausted: [] },
           }),
         ).toEqual('none');
       });
@@ -518,7 +518,7 @@ describe('computeUrgentConcessionLaneSlugs', () => {
               computeUrgentConcessionLaneSlugs({
                 absorptions,
                 givens,
-                slugs: ['calm', 'intent', 'friction'],
+                slugs: { exhausted: ['calm', 'intent', 'friction'] },
               }),
             ).toEqual(['intent']);
           },

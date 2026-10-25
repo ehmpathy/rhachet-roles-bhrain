@@ -1,6 +1,14 @@
 import { asConcernCountPhrase } from './asConcernCountPhrase';
 
 /**
+ * .what = the joiner between a verdict reason and what a stance shed
+ * .why = the judge's `reason:` stdout is one parsed line, so the shed rides inline there; a tree
+ *        render splits on this one literal to nest the shed under the verdict
+ *        (`asJudgeReasonBranches`), so the write and the split cannot drift
+ */
+export const JUDGE_REASON_SHED_JOINER = ', after ';
+
+/**
  * .what = appends what the judge shed, per axis, to a verdict's reason — on a pass or a hold
  * .why = the `reason:` line is the one line of the judge a driver meets — route.drive and the
  *        `--as passed` halt render it, and never the judge's stderr. a pass over red blockers, or a
@@ -30,5 +38,5 @@ export const asJudgeReasonWithShed = (input: {
 
   // naught shed → the reason stands as the verdict phrased it
   if (segments.length === 0) return input.reason;
-  return `${input.reason}, after ${segments.join(', ')}`;
+  return `${input.reason}${JUDGE_REASON_SHED_JOINER}${segments.join(', ')}`;
 };

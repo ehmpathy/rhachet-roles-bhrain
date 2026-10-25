@@ -279,7 +279,8 @@ exports[`driver.route.exhausted-all-better given: [case2] two lanes exhausted, f
 🗿 route.stone.set
    ├─ stone = 1.vision
    ├─ passage = blocked
-   ├─ reason = blockers exceed threshold (2 > 0), after 1 blocker shed (0 disputed + 1 conceded better)
+   ├─ reason = blockers exceed threshold (2 > 0)
+   │  └─ after 1 blocker shed (0 disputed + 1 conceded better)
    └─ guard
       ├─ artifacts
       │   └─ src/**/*.ts
@@ -306,7 +307,8 @@ exports[`driver.route.exhausted-all-better given: [case2] two lanes exhausted, f
       └─ judges
           └─ j1: rhx route.stone.judge --mechanism reviewed? --stone $stone --route $route --allow-blockers 0 --allow-nitpicks 7
               ├─ finished [TIME] ✗
-              └─ reason: blockers exceed threshold (2 > 0), after 1 blocker shed (0 disputed + 1 conceded better)
+              └─ reason: blockers exceed threshold (2 > 0)
+                 └─ after 1 blocker shed (0 disputed + 1 conceded better)
 
 🪷 the path continues
    ├─ l1 is terminal (approved) — it no longer blocks you
@@ -767,7 +769,8 @@ exports[`driver.route.exhausted-all-better given: [case11] intent at l1 conceded
 🗿 route.stone.set
    ├─ stone = 1.vision
    ├─ passage = blocked
-   ├─ reason = blockers exceed threshold (1 > 0), after 2 blockers shed (0 disputed + 2 conceded better)
+   ├─ reason = blockers exceed threshold (1 > 0)
+   │  └─ after 2 blockers shed (0 disputed + 2 conceded better)
    └─ guard
       ├─ artifacts
       │   └─ src/**/*.ts
@@ -794,7 +797,8 @@ exports[`driver.route.exhausted-all-better given: [case11] intent at l1 conceded
       └─ judges
           └─ j1: rhx route.stone.judge --mechanism reviewed? --stone $stone --route $route --allow-blockers 0 --allow-nitpicks 7
               ├─ finished [TIME] ✗
-              └─ reason: blockers exceed threshold (1 > 0), after 2 blockers shed (0 disputed + 2 conceded better)
+              └─ reason: blockers exceed threshold (1 > 0)
+                 └─ after 2 blockers shed (0 disputed + 2 conceded better)
 --- stderr
 🦉 l1 pours 1 lane
    └─ r2:intent

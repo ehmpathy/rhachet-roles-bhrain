@@ -32,17 +32,20 @@ import { JUDGE_HALT_ASK_HUMAN_LABEL } from './JUDGE_HALT_ASK_HUMAN_LABEL';
  *         who meets this halt, then route.drive's, reads one fact once
  */
 export const asJudgeUrgentHaltLines = (input: {
-  slugs: string[];
+  /**
+   * qualified by the lane set it names: `urgent` = the lanes that carry a live urgent concession
+   */
+  slugs: { urgent: string[] };
   stone: string;
 }): string[] => {
   // a halt with no urgent lane would name no lane and offer no command. the one caller is this
   // repo's own judge, so an empty list is a broken internal invariant — a malfunction, exit 1
-  if (input.slugs.length === 0)
+  if (input.slugs.urgent.length === 0)
     MalfunctionError.throw('urgent halt rendered with no urgent lane', {
       stone: input.stone,
     });
 
-  const budgetCmds = input.slugs.map((slug) =>
+  const budgetCmds = input.slugs.urgent.map((slug) =>
     formatReviewBudgetTopupCommand({
       add: ROUNDS_OFFERED_ON_TOPUP,
       peer: slug,
@@ -56,7 +59,7 @@ export const asJudgeUrgentHaltLines = (input: {
 
   return [
     '',
-    `✋ halted, ${WARN_TEXT_CONCESSION_URGENT_HEAD} — ${input.slugs.join(', ')}`,
+    `✋ halted, ${WARN_TEXT_CONCESSION_URGENT_HEAD} — ${input.slugs.urgent.join(', ')}`,
     `   ├─ ${WARN_TEXT_CONCESSION_URGENT_HARM}`,
     `   ├─ ${JUDGE_HALT_ASK_HUMAN_LABEL}`,
     ...budgetRows,

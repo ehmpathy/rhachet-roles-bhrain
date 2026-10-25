@@ -45,20 +45,23 @@ export const REASON_MARK_CONCESSION_URGENT =
  *          (`define.invariant.review.peer.budget.urgent-earns-budget`).
  */
 export const genRouteGuardExhaustedReason = (input: {
-  slugs: string[];
-  concession: 'none' | 'better' | 'urgent';
   /**
-   * the exhausted lanes that carry a live `urgent` concession — read only when `concession` is
-   * `urgent`. they ride inside the urgent mark, ahead of the colon, so the remedy can scope one
-   * `--peer` per urgent lane (a bare `--add` lands on the latest level alone, and misses an
-   * urgent lane below it). empty → the mark carries no lanes, the form a legacy reason holds
+   * every slug list is qualified by the lane set it names — never a bare `slugs` beside a
+   * flattened `slugsX`, since two lane sets meet here
+   * - `exhausted` — the lanes whose budget is spent; they fill the `budget exhausted:` tail
+   * - `urgent` — the exhausted lanes that carry a live `urgent` concession, read only when
+   *   `concession` is `urgent`. they ride inside the urgent mark, ahead of the colon, so the
+   *   remedy can scope one `--peer` per urgent lane (a bare `--add` lands on the latest level
+   *   alone, and misses an urgent lane below it). empty → the mark carries no lanes, the form a
+   *   legacy reason holds
    */
-  slugsUrgent: string[];
+  slugs: { exhausted: string[]; urgent: string[] };
+  concession: 'none' | 'better' | 'urgent';
 }): string => {
-  const tail = `peer reviewer budget exhausted: ${input.slugs.join(', ')}`;
+  const tail = `peer reviewer budget exhausted: ${input.slugs.exhausted.join(', ')}`;
   if (input.concession === 'none') return tail;
   if (input.concession === 'urgent')
-    return `${asUrgentMarkWithSlugs({ slugsUrgent: input.slugsUrgent })}; ${tail}`;
+    return `${asUrgentMarkWithSlugs({ slugs: { urgent: input.slugs.urgent } })}; ${tail}`;
   return `${REASON_MARK_CONCESSION}; ${tail}`;
 };
 
@@ -67,10 +70,12 @@ export const genRouteGuardExhaustedReason = (input: {
  * .why = one composer for the write, so the read below (`asUrgentConcessionSlugs`) and the write
  *        agree on the one shape
  */
-const asUrgentMarkWithSlugs = (input: { slugsUrgent: string[] }): string =>
-  input.slugsUrgent.length === 0
+const asUrgentMarkWithSlugs = (input: {
+  slugs: { urgent: string[] };
+}): string =>
+  input.slugs.urgent.length === 0
     ? REASON_MARK_CONCESSION_URGENT
-    : `${REASON_MARK_CONCESSION_URGENT} (${input.slugsUrgent.join(', ')})`;
+    : `${REASON_MARK_CONCESSION_URGENT} (${input.slugs.urgent.join(', ')})`;
 
 /**
  * .what = the urgent lanes an exhaustion reason names in its urgent mark, in order

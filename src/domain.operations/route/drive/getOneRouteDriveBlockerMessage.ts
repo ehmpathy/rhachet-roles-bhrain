@@ -101,11 +101,11 @@ export const getOneRouteDriveBlockerMessage = async (input: {
     //    awaits a human), `better` (all conceded, floor met — the driver's own), or `urgent`
     //    (all conceded, ≥1 urgent — a warned human wait). the concession words fire only for
     //    a `better`/`urgent` set, and the urgent warn only for `urgent`.
-    const { kind: concession, slugsUrgent } =
+    const { kind: concession, slugs: concessionSlugs } =
       await getStoneConcessionExhaustion({
         route,
         stone: stone.name,
-        slugs: exhaustedSlugs,
+        slugs: { exhausted: exhaustedSlugs },
       });
 
     return {
@@ -116,9 +116,8 @@ export const getOneRouteDriveBlockerMessage = async (input: {
         effort,
         // 🔴 the ONE builder owns this contract string (rule.require.single-source-of-truth-for-render).
         reason: genRouteGuardExhaustedReason({
-          slugs: exhaustedSlugs,
+          slugs: { exhausted: exhaustedSlugs, urgent: concessionSlugs.urgent },
           concession,
-          slugsUrgent,
         }),
         meters,
       }),

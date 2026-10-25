@@ -90,17 +90,17 @@ const asTerminalFailureNoun = (input: {
  */
 const asBudgetHaltRemedyGroup = (input: {
   stone: string;
-  exhaustedSlugs: string[];
-  urgentSlugs: string[];
+  /** every slug list is qualified by the lane set it names */
+  slugs: { exhausted: string[]; urgent: string[] };
   hasUrgentConcession: boolean;
   hasBetterConcession: boolean;
 }): BlockRemedyGroup => {
   // an URGENT concession earned the round, so the top-up is the driver's own lever to spend —
   // one command per urgent lane where the reason names them
-  if (input.hasUrgentConcession && input.urgentSlugs.length > 0)
+  if (input.hasUrgentConcession && input.slugs.urgent.length > 0)
     return {
       label: `increase budget — yours to spend`,
-      cmd: input.urgentSlugs.map((slug) =>
+      cmd: input.slugs.urgent.map((slug) =>
         formatReviewBudgetTopupCommand({
           add: 'N',
           peer: slug,
@@ -114,7 +114,7 @@ const asBudgetHaltRemedyGroup = (input: {
       cmd: formatReviewBudgetTopupCommand({
         add: 'N',
         peer:
-          input.exhaustedSlugs.length === 1 ? input.exhaustedSlugs[0]! : null,
+          input.slugs.exhausted.length === 1 ? input.slugs.exhausted[0]! : null,
         stone: input.stone,
       }),
     };
@@ -135,8 +135,8 @@ const asBudgetHaltRemedyGroup = (input: {
   return {
     label: `converge with the reviewer — yours to run`,
     cmd: `rhx route.stone.set --stone ${input.stone} --as absorbed --that ${
-      input.exhaustedSlugs.length === 1
-        ? input.exhaustedSlugs[0]!
+      input.slugs.exhausted.length === 1
+        ? input.slugs.exhausted[0]!
         : '<reviewer>'
     }`,
   };
@@ -430,8 +430,10 @@ export const computeBlockRemedyGroups = (input: {
       ? [
           asBudgetHaltRemedyGroup({
             stone: input.stone,
-            exhaustedSlugs: asExhaustedSlugs({ reason: input.reason }),
-            urgentSlugs: asUrgentConcessionSlugs({ reason: input.reason }),
+            slugs: {
+              exhausted: asExhaustedSlugs({ reason: input.reason }),
+              urgent: asUrgentConcessionSlugs({ reason: input.reason }),
+            },
             hasUrgentConcession,
             hasBetterConcession,
           }),

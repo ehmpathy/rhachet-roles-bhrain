@@ -1647,13 +1647,13 @@ const judgeReviewed = async (input: {
     //    grant is the remedy — the same shape the `approved?` judge uses for absent approval
     //    (define.invariant.review.peer.judge.urgent-guides-the-budget-ask). a `better`/none hold
     //    names no human: its remedy is the driver's own top-up.
-    const urgentSlugs = computeLiveUrgentConcessionSlugs(corpusCounted);
+    const slugsUrgentLive = computeLiveUrgentConcessionSlugs(corpusCounted);
     // the halt prose is an ERROR surfaced before exit(2), so it goes to stderr — the verdict
     // lines above stay on stdout, which the guard parses on a pass too
     // (rule.forbid.stdout-on-exit-errors)
-    if (urgentSlugs.length > 0)
+    if (slugsUrgentLive.length > 0)
       for (const line of asJudgeUrgentHaltLines({
-        slugs: urgentSlugs,
+        slugs: { urgent: slugsUrgentLive },
         stone: stoneMatched.name,
       }))
         console.error(line);

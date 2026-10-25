@@ -694,11 +694,12 @@ export const setStoneAsPassed = async (
   // increase and no human (define.invariant.review.peer.budget.urgent-earns-budget,
   // S16). only `none` (a lane never conceded → human wait) and `urgent` (ships harm →
   // budget + a human warn) halt here.
-  const { kind: concession, slugsUrgent } = await getStoneConcessionExhaustion({
-    route: input.route,
-    stone: stoneMatched.name,
-    slugs: exhaustionCheck.skippedSlugs,
-  });
+  const { kind: concession, slugs: concessionSlugs } =
+    await getStoneConcessionExhaustion({
+      route: input.route,
+      stone: stoneMatched.name,
+      slugs: { exhausted: exhaustionCheck.skippedSlugs },
+    });
   if (
     exhaustionCheck.anySkippedDueToExhaustion &&
     exhaustionCheck.allTerminal &&
@@ -739,9 +740,11 @@ export const setStoneAsPassed = async (
     // the verdict is three-way (F028/S14/S16): a `better` set never reaches here (it
     // fell through above), so `concession` here is either `none` or `urgent`.
     const exhaustedReason = genRouteGuardExhaustedReason({
-      slugs: exhaustionCheck.skippedSlugs,
+      slugs: {
+        exhausted: exhaustionCheck.skippedSlugs,
+        urgent: concessionSlugs.urgent,
+      },
       concession,
-      slugsUrgent,
     });
 
     // detect a malfunction/constraint that unlocked and broke in this same pass — a

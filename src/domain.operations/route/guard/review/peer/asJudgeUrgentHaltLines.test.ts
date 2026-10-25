@@ -12,7 +12,7 @@ describe('asJudgeUrgentHaltLines', () => {
   given('[case1] one urgent lane', () => {
     when('[t0] rendered', () => {
       const lines = asJudgeUrgentHaltLines({
-        slugs: ['friction'],
+        slugs: { urgent: ['friction'] },
         stone: '1.vision',
       });
 
@@ -37,7 +37,7 @@ describe('asJudgeUrgentHaltLines', () => {
   given('[case2] two urgent lanes', () => {
     when('[t0] rendered', () => {
       const lines = asJudgeUrgentHaltLines({
-        slugs: ['intent', 'friction'],
+        slugs: { urgent: ['intent', 'friction'] },
         stone: '1.vision',
       });
 
@@ -66,7 +66,10 @@ describe('asJudgeUrgentHaltLines', () => {
         'it fails fast — a halt that names no lane is a caller defect',
         async () => {
           const error = await getError(async () =>
-            asJudgeUrgentHaltLines({ slugs: [], stone: '1.vision' }),
+            asJudgeUrgentHaltLines({
+              slugs: { urgent: [] },
+              stone: '1.vision',
+            }),
           );
           expect(error.message).toContain(
             'urgent halt rendered with no urgent lane',

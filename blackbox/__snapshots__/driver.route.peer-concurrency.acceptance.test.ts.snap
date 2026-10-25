@@ -564,7 +564,8 @@ exports[`driver.route.peer-concurrency.acceptance given: [journey] a level of fo
       └─ judges
           └─ j1: rhx route.stone.judge --mechanism reviewed? --stone $stone --route $route --allow-blockers 0 --allow-nitpicks 1
               ├─ finished [TIME] ✗
-              └─ reason: blockers exceed threshold (1 > 0), after 3 blockers shed (0 disputed + 3 conceded better)
+              └─ reason: blockers exceed threshold (1 > 0)
+                 └─ after 3 blockers shed (0 disputed + 3 conceded better)
 "
 `;
 
@@ -709,7 +710,8 @@ exports[`driver.route.peer-concurrency.acceptance given: [journey] a level of fo
       └─ judges
           └─ j1: rhx route.stone.judge --mechanism reviewed? --stone $stone --route $route --allow-blockers 0 --allow-nitpicks 1
               ├─ finished [TIME] ✗
-              └─ reason: blockers exceed threshold (2 > 0), after 3 blockers shed (0 disputed + 3 conceded better)
+              └─ reason: blockers exceed threshold (2 > 0)
+                 └─ after 3 blockers shed (0 disputed + 3 conceded better)
 "
 `;
 

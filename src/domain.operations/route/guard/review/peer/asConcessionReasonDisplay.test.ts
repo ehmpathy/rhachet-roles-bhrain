@@ -11,9 +11,8 @@ import {
 describe('asConcessionReasonDisplay', () => {
   given('[case1] a plain (non-concession) budget-exhaustion reason', () => {
     const reason = genRouteGuardExhaustedReason({
-      slugs: ['limited'],
+      slugs: { exhausted: ['limited'], urgent: [] },
       concession: 'none',
-      slugsUrgent: [],
     });
 
     when('[t0] decoded', () => {
@@ -31,9 +30,8 @@ describe('asConcessionReasonDisplay', () => {
 
   given('[case2] a BETTER concession exhaustion reason', () => {
     const reason = genRouteGuardExhaustedReason({
-      slugs: ['limited'],
+      slugs: { exhausted: ['limited'], urgent: [] },
       concession: 'better',
-      slugsUrgent: [],
     });
 
     when('[t0] decoded', () => {
@@ -61,9 +59,8 @@ describe('asConcessionReasonDisplay', () => {
 
   given('[case3] an URGENT concession exhaustion reason', () => {
     const reason = genRouteGuardExhaustedReason({
-      slugs: ['limited'],
+      slugs: { exhausted: ['limited'], urgent: [] },
       concession: 'urgent',
-      slugsUrgent: [],
     });
 
     when('[t0] decoded', () => {
@@ -114,9 +111,8 @@ describe('asConcessionReasonDisplay', () => {
         expect(
           asConcessionReasonDisplay({
             reason: genRouteGuardExhaustedReason({
-              slugs: ['limited'],
+              slugs: { exhausted: ['limited'], urgent: [] },
               concession: 'none',
-              slugsUrgent: [],
             }),
           }).isConcession,
         ).toBe(false);
@@ -128,9 +124,8 @@ describe('asConcessionReasonDisplay', () => {
         expect(
           asConcessionReasonDisplay({
             reason: genRouteGuardExhaustedReason({
-              slugs: ['limited'],
+              slugs: { exhausted: ['limited'], urgent: [] },
               concession: 'better',
-              slugsUrgent: [],
             }),
           }).isConcession,
         ).toBe(true);
@@ -142,9 +137,8 @@ describe('asConcessionReasonDisplay', () => {
         expect(
           asConcessionReasonDisplay({
             reason: genRouteGuardExhaustedReason({
-              slugs: ['limited'],
+              slugs: { exhausted: ['limited'], urgent: [] },
               concession: 'urgent',
-              slugsUrgent: [],
             }),
           }).isConcession,
         ).toBe(true);

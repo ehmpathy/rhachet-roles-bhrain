@@ -3,6 +3,7 @@ import type { RouteStoneGuardReviewPeerArtifact } from '@src/domain.objects/Driv
 import { asGuardReasonHead } from '../asGuardReasonHead';
 import { formatGuardMalfunctionClearLines } from '../formatGuardMalfunctionClearLines';
 import { asConcessionReasonDisplay } from '../review/peer/asConcessionReasonDisplay';
+import { asJudgeReasonBranches } from '../review/peer/asJudgeReasonBranches';
 import {
   computeReviewPeerVerdict,
   type ReviewPeerVerdict,
@@ -531,8 +532,21 @@ export const formatGuardTree = (input: {
     const { reasonText, warnText } = asConcessionReasonDisplay({
       reason: reasonHead,
     });
-    lines.push(`   ├─ reason = ${reasonText}`);
-    if (warnText) lines.push(`   │  └─ 🟡 ${warnText}`);
+    // a judge reason's shed axes nest under it too, one branch each, beside the warn
+    // .note = reasonText is null only for a null input, and reasonHead is set here
+    const { head: reasonTextHead, shed: reasonShed } = asJudgeReasonBranches({
+      reason: reasonText ?? reasonHead,
+    });
+    const reasonChildren = [
+      ...reasonShed,
+      ...(warnText ? [`🟡 ${warnText}`] : []),
+    ];
+    lines.push(`   ├─ reason = ${reasonTextHead}`);
+    reasonChildren.forEach((child, index) =>
+      lines.push(
+        `   │  ${index === reasonChildren.length - 1 ? '└─' : '├─'} ${child}`,
+      ),
+    );
 
     // add the remedy options block — one additive list across every gate that fired this
     // pass (overrule for a malfunction/constraint, budget + approve for an exhaustion), so a
@@ -672,29 +686,42 @@ export const formatGuardTree = (input: {
             );
           }
         } else {
-          const detailLines: string[] = [];
+          // each detail is one leaf; a reason's shed axes nest beneath it as branches of their own
+          const detailLines: { text: string; children: string[] }[] = [];
           const dur =
             judge.durationSec !== null
               ? `${judge.durationSec.toFixed(1)}s`
               : '0.0s';
           const mark = judge.passed ? '✓' : '✗';
-          detailLines.push(`finished ${dur} ${mark}`);
+          detailLines.push({ text: `finished ${dur} ${mark}`, children: [] });
           // a human overrule of the judge rung forgives a malfunctioned judge — read it as
           // forgiven, not a bare "✗ blocked" that would contradict the top-line `passage =
           // overruled` (the judge-tier twin of the peer-level overrule display; the exact
           // self-contradiction the earlier peer-level fix removed)
           if (judge.overruled) {
-            detailLines.push(OVERRULED_NARRATIVE);
+            detailLines.push({ text: OVERRULED_NARRATIVE, children: [] });
           } else if (!judge.passed && judge.reason) {
-            detailLines.push(`reason: ${judge.reason}`);
+            const { head, shed } = asJudgeReasonBranches({
+              reason: judge.reason,
+            });
+            detailLines.push({ text: `reason: ${head}`, children: shed });
           }
 
           for (let d = 0; d < detailLines.length; d++) {
             const isDetailLast = d === detailLines.length - 1;
             const detailPrefix = isDetailLast ? '└─' : '├─';
+            const detailIndent = isDetailLast ? '   ' : '│  ';
+            const detail = detailLines[d]!;
             lines.push(
-              `${guardIndent}${sectionIndent} ${judgeIndent} ${detailPrefix} ${detailLines[d]}`,
+              `${guardIndent}${sectionIndent} ${judgeIndent} ${detailPrefix} ${detail.text}`,
             );
+            for (let k = 0; k < detail.children.length; k++) {
+              const childPrefix =
+                k === detail.children.length - 1 ? '└─' : '├─';
+              lines.push(
+                `${guardIndent}${sectionIndent} ${judgeIndent} ${detailIndent}${childPrefix} ${detail.children[k]}`,
+              );
+            }
           }
         }
       }
