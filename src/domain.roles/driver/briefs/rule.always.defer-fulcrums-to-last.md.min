@@ -1,19 +1,15 @@
 # rule.always.defer-fulcrums-to-last
 
-a design fulcrum surfaces mid-drive: best-guess it, flag it, drive on. fulcrum review is one council at the very end.
+a design fulcrum surfaces mid-drive: best-guess it, flag it, drive on. fulcrum review is one council at the end.
 
 | the fulcrum is | you |
 |---|---|
-| impliedly answered by the wish or a reviewer | take that answer — it was never a fulcrum |
+| impliedly answered by the wish or a reviewer | take that answer |
 | open, rework **clean** | best-guess, note why, flag for the end |
-| open, rework **dirty** | `--as blocked` — last, and named |
+| open, rework **dirty** | `--as blocked`, last and named |
 
-**clean** = a rename, a swapped default, a re-scoped boundary that does not ripple.
-**dirty** = callers hardened against it, or later work built upon it, so reversal is a teardown.
-🟡 the pair is `clean`/`dirty`, never `clean`/`not clean`.
+clean = rename, swapped default, re-scoped boundary, no ripple. dirty = callers hardened against it or later work built on it (reversal is a teardown).
 
-unsure → treat it as clean and flag it. a flagged clean rework costs a glance; a premature block costs the road its momentum.
+unsure → treat as clean and flag. a block needs all three: no defensible guess · dirty rework · every other question addressed.
 
-a block needs all three: no defensible guess · a dirty rework · every other question already addressed.
-
-⇒ the RECORD half is `rule.always.itemize-the-fulcrums-you-best-guess`.
+record: `rule.always.itemize-the-fulcrums-you-best-guess`.

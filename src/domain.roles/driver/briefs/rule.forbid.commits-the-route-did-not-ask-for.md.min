@@ -1,37 +1,15 @@
 # rule.forbid.commits-the-route-did-not-ask-for
 
-> **a driver commits when the route ASKS for a commit, or when the route is FINISHED. every other commit is forbidden — even the ones that look like hygiene.**
+> **a driver commits when the route ASKS for a commit, or when the route is FINISHED. every other commit is forbidden, even hygiene.**
 
-## 🔴 .an overflowed lane is the commit's real pull — answer it with the guard
+an overflowed lane is the commit's real pull. answer with a **guard edit** (narrow that lane's `--paths-with`, let the GUARD run it), never a commit (changes what reviewers see) or a hand-run `rhx review` (`rule.forbid.hand-run-reviews`).
 
-| the sanctioned answer to an overflowed lane | the unsanctioned ones |
-|---|---|
-| a **guard edit** — narrow that lane's `--paths-with` so it fits, then let the GUARD run it | a **commit** — narrow the diff itself · a **hand-run `rhx review`** — narrow the whole invocation (`rule.forbid.hand-run-reviews`) |
-| the lane still runs on the guard's terms, costs its budget round, and mints a `.given` that gates | the engine never sees it: no budget drawn, no artifact read, no verdict that gates |
+sanctioned: (1) a stone or guard names a commit as deliverable: name the stone · (2) route finished, `rhx route.drive` reports no next stone. quota is not a warrant: even with quota, the route must ask.
 
-## .the two sanctioned commits
+reasons that feel like warrants, none are: "the diff overflows; a commit collapses it" (sharpest: a review-scope change by the reviewed party) · "the work is done" (done is the guard's word) · "a checkpoint" (the worktree is the checkpoint) · "CI needs a push" (a release act, after approval) · "the tree is noisy" (tidiness is no deliverable).
 
-| # | the warrant | the check |
-|---|---|---|
-| **1** | the route **asks** — a stone or guard names a commit as a deliverable | read the `.stone` / `.guard`. **name the stone**, or you have no warrant |
-| **2** | the route is **finished** — every stone passed, last one approved | `rhx route.drive` reports no next stone |
+test: **"which stone asked me to commit?"** name it → commit, cite it · route finished → commit · you reach for a reason above → do not commit.
 
-🟡 **quota is not a warrant.** `rule.always.spend-own-levers-before-escalation` files the commit quota under **human**; this adds the half it does not carry — **even with quota in hand, the route must ask.** *"they allowed one once"* is not a permanent permission.
+bound: governs the driver on a route; a mechanic asked by a human to land a change is under another contract.
 
-🟡 **the check is not *"who owns this lever?"* but *"and once they hand it over, may I use it here?"***
-
-## .the reasons that FEEL like warrants — each true, none a warrant
-
-| the reason | why not |
-|---|---|
-| 🔴 *"the diff overflows; a commit collapses it"* | sharpest, because **correct**. a review-scope change by the reviewed party |
-| *"the work is done, I merely record it"* | **done** is the guard's word, not yours |
-| *"a checkpoint, so it is not lost"* | the worktree **is** the checkpoint |
-| *"CI needs a push"* | a release act — after approval, never before |
-| *"the tree is noisy"* | tidiness is not a stone's deliverable |
-
-test: **"which stone asked me to commit?"** — name it → commit, and cite it in the message · route finished → commit · 🔴 you reach for a row above → **that is this rule at work.** do not commit.
-
-🟡 **the bound:** this governs the **driver on a route**. a mechanic asked by a human to land a change works under a different contract (`rule.require.git-release-confidence`, ehmpathy/mechanic).
-
-blocker: a commit no stone asked for and no approval finished · a commit reached for to collapse an overflowed `since-main` · a commit on a prior quota with no stone that asks.
+blocker: a commit no stone asked for and no approval finished · a commit to collapse an overflowed `since-main` · a commit on a prior quota with no stone that asks.

@@ -2,10 +2,9 @@ budget:
   # a cap, not a target: the least multiple of 250 strictly above what the role costs as a seat boots it.
   # that figure, and the halt, come from `rhx git.repo.test --what integration --scope path://roleBootClamps --mode apply`.
   # each min carries only its cue; its argument sits in the `.md` beside it. never cut a cue to
-  # fit. a halt here means a min grew: move its argument out, or raise the cap to the next such
-  # multiple. the target is 12_000, reached by a tighten of cue rows
-  # (.dream/v2026_10_21.feat.tighten-the-role-boot-cues-to-the-proposed-budgets.md)
-  tokens: 20_250
+  # fit. a halt here means a min grew: tighten its cue rows or move its argument out. the cap
+  # must stay under 11_000, the max the director set; never raise it past that.
+  tokens: 10_500
 always:
   briefs:
     ref:
@@ -64,6 +63,11 @@ always:
       # MANDATE that no self review is waived stays at say (bear-every-self-review, below),
       # since no halt carries it (F6)
       - briefs/howto.run-self-reviews.[guide].md
+      # why a route is grown rather than specified up front — the ground under
+      # defer-fulcrums-to-last and the walk-before-you-template rule. ref because a
+      # philosophy is understood, never produced (rule.prefer.rules-that-refout), and its
+      # bracketed name forbids a min beside it (rule.forbid.brackets-in-filenames)
+      - briefs/define.routes-are-gardened.[philosophy].md
     say:
       # the map of the SYSTEM a driver operates within — the review gates in order,
       # the invariant behind each, and what is required of the driver to clear it.
@@ -81,9 +85,6 @@ always:
       # why a route is walked one stone at a time rather than raced — the ground under
       # drive-autonomously and converge-to-terminal alike
       - briefs/research.importance-of-focus.[philosophy].md
-      # why a route is grown rather than specified up front — the ground under
-      # defer-fulcrums-to-last and the walk-before-you-template rule
-      - briefs/define.routes-are-gardened.[philosophy].md
       - briefs/rule.always.drive-autonomously.md
       # no workarounds — fix every failure at its root cause, and treat any friction in a
       # tool you build as a critical defect fixed in the round it surfaced. say-level

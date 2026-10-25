@@ -28,6 +28,7 @@
     "./cli/goal": "./dist/contract/cli/goal.js",
     "./cli/memory": "./dist/contract/cli/memory.js",
     "./cli/learn": "./dist/contract/cli/learn.js",
+    "./cli/librarian": "./dist/contract/cli/librarian.js",
     "./cli/telepath": "./dist/contract/cli/telepath.js",
     "./package.json": "./package.json"
   },

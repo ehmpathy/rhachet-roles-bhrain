@@ -1,54 +1,38 @@
 # rule.prefer.decompose-a-subject-via-suffixes
 
-> **when a subject grows a distinct sub-claim, EJECT it into a suffixed peer. do not accrete it inline.**
+when a subject grows a distinct sub-claim, eject it into a suffixed peer. do not accrete it inline.
 
 ```
-$subject._.md            # the root — the whole subject, and an index of its zoom-ins
-$subject.$zoom.md        # one zoom-in per sub-claim, a PEER of the root
+$subject._.md            # root — the whole, plus an index of zoom-ins
+$subject.$zoom.md        # one zoom-in per sub-claim, a peer of the root
 ```
 
-the root then carries a **pointer**, never the zoom's body. `rule.require.summary-at-the-cluster-root` governs the **name** once a split has happened; this governs **whether** to split, and its answer is: prefer the split.
+the root carries a pointer, never the zoom's body. (`rule.require.summary-at-the-cluster-root` names the root; this says whether to split.)
 
-## .why — a zoom-in that lives inline is COSTED UPFRONT, forever
-
-| the zoom-in is | what a reader pays |
-|---|---|
-| **inline in the root** | its full body, **every boot** |
-| **a suffixed peer at `ref`** | one path — its body **only when dereferenced** |
-
-## .the second why — accretion is what a root does when it cannot eject
+why: an inline zoom costs its full body every boot; a peer at ref costs one path.
 
 | when… | then… |
 |---|---|
-| you would add a **`##` section** to a booted brief for a claim that stands on its own | 🔴 eject it and leave a pointer |
-| a section has grown its **own** subsections, examples, enforcement | it is a brief. give it a filename |
-| a reader would want it **once**, not on every boot | the dereference case exactly |
-| a section explains **WHY** where the root states **WHAT** | the why is a zoom-in; the what is the root |
-| you reach for a **new top-level name** for a sub-claim | 🔴 a peer name hides the parent. a suffix declares it |
-| a subject genuinely has one claim | leave it. the rule fires on the **split**, never before |
+| you would add a `##` section for a claim that stands alone | eject, leave a pointer |
+| a section has its own subsections, examples, enforcement | it is a brief; give it a file |
+| a reader wants it once, not every boot | dereference case |
+| a section explains why where the root states what | the why is the zoom |
+| you reach for a new top-level name for a sub-claim | a suffix declares the parent; a peer name hides it |
+| a subject has one claim | leave it; fires on the split only |
 
-## .the suffix names the ZOOM, not the ordinal
+## .the suffix names the zoom, not an ordinal
 
 ```
-👎  philosophy.entoolment-is-the-pinnacle.2.md          # 2 of WHAT?
-👎  philosophy.entoolment-is-the-pinnacle.more.md       # names no zoom
-👍  philosophy.entoolment-is-the-pinnacle.via-routes.md # legible from a directory read
+👎  philosophy.entoolment-is-the-pinnacle.2.md
+👍  philosophy.entoolment-is-the-pinnacle.via-routes.md
 ```
 
-⇒ **a suffix is an address; an ordinal is a counter.**
+## .a zoom is not a fork
 
-## 🟡 .a zoom-in is not a fork — it must not restate its root
+pointer owed both ways: root names zoom by path and when to reach for it; zoom names its root. the zoom holds one facet in depth and never restates the root.
 
-⇒ **the pointer is owed in BOTH directions.** the root names the zoom by path and says when to reach for it; the zoom names its root and says it is a zoom of it.
+blocker: sub-claim under a new top-level name · zoom with no pointer from root or no back-pointer · zoom that restates its root · suffix that is an ordinal or non-name.
+nitpick: self-contained sub-claim accreted inline.
+false positive: single-claim brief left whole.
 
-| the root holds | the zoom-in holds |
-|---|---|
-| the claim, shortest form that stands alone | one facet, in depth |
-| an index line per zoom-in | the worked cases, the counter-argument, that facet's enforcement |
-| the WHAT | the WHY, or the HOW, for one part |
-
-blocker: a sub-claim given a **new top-level name** rather than a suffix (the relation is unrecoverable from the filename) · a zoom-in with **no pointer** from its root or no back-pointer to it · a zoom-in that **restates** its root · a suffix that is an ordinal or a non-name.
-nitpick: a self-contained sub-claim accreted inline where a suffixed peer would serve.
-false positive: a single-claim brief left whole.
-
-⇒ see also: `rule.require.summary-at-the-cluster-root` (the NAME to this WHETHER) · `rule.require.rules-are-clusters` · `rule.require.catalog-is-an-index` · `rule.forbid.itemization-without-coordinates` · `rule.always.yield-the-output-not-the-archaeology` (driver).
+⇒ `rule.require.summary-at-the-cluster-root` · `rule.require.rules-are-clusters`

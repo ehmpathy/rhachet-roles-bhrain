@@ -1,20 +1,15 @@
 # rule.always.externalize.tactics.into_skills
 
-## 🔴 this is the PARENT — go to a specialization
+the PARENT; go to a specialization:
 
 | you are about to | reach for |
 |---|---|
-| write a repeated **sequence** down as a runnable artifact | `rule.always.enskill-the-tactics-you-discover` — DISCOVER |
-| notice a skill you called and **still finished by hand** | `rule.always.entool-the-skills-you-touch` — UPGRADE |
-| lay a sequence of **judgments** rather than commands | 🗿 a **route**, per the enskill rule |
+| write a repeated sequence as a runnable artifact | `rule.always.enskill-the-tactics-you-discover` |
+| finish by hand after a skill call | `rule.always.entool-the-skills-you-touch` |
+| lay a sequence of judgments | 🗿 a route (see enskill) |
 
-⇒ **a loop, never alternatives:** discover a repeat → ENSKILL → notice the leftover brain work → ENTOOL.
+a loop: discover a repeat → ENSKILL → notice leftover brain work → ENTOOL.
 
-## the general claim it still carries
-
-when an action takes multiple steps, encode it as a skill — **idempotent**, safe to run twice, in `.agent/repo=.this/role=*/skills/`. do NOT wait.
-
-cues: multiple steps · hard to discover · you chained commands · you will do it again.
-test: **"would i want a button for this?"**
+claim: a multi-step action becomes an idempotent skill in `.agent/repo=.this/role=*/skills/`. cues: multiple steps · hard to discover · chained commands · you will do it again. test: *would i want a button for this?*
 
 blocker: a tactic repeated and not externalized.

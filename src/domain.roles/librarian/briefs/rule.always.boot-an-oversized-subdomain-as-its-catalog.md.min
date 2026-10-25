@@ -1,35 +1,26 @@
 # rule.always.boot-an-oversized-subdomain-as-its-catalog
 
-> **when an enbriefed subdomain is too large to boot whole, boot its CATALOG at `say` and list every
-> member under `not`. each member stays reffable via a path the catalog lets a reader compute.**
+when an enbriefed subdomain is too large to boot whole, boot its catalog at `say` and list every member under `not`. each member stays reffable via a path the catalog lets a reader compute.
 
 ```yaml
 say:
   - briefs/domain.terms/catalog.of=term._.md     # every name + the path formula
 not:
-  - briefs/domain.terms/term=*.md                # members: read on demand, never booted
+  - briefs/domain.terms/term=*.md                # members: read on demand
 ```
-
-## .the test
-
-> **would a reader rather see every member's path, or one index that names them all?**
 
 | when… | then… |
 |---|---|
-| a boot spec globs ~20+ files of one subdomain | the strongest cue. catalog it |
-| `rhx cost` ranks `<briefs.ref>` or `<also>` near the top | the path list is the cost |
-| a boot spec runs over budget | cut paths before cues — they are the cheapest tokens |
-| a subdomain begins to fill a directory | write its catalog at the second member, not the fiftieth |
-| members are named by coordinate (`term=$name`) | state the path formula once |
+| a boot spec globs ~20+ files of one subdomain | catalog it |
+| `rhx cost` ranks `<briefs.ref>` / `<also>` near the top | the path list is the cost |
+| a boot spec runs over budget | cut paths before cues |
+| a subdomain begins to fill a directory | write its catalog at the second member |
+| members are named by coordinate | state the path formula once |
 
-the catalog owes: every member by name, grouped by boundary root · the path formula, once, with an
-example · a census note (hand-kept; a member on disk absent here is drift) · its rules by path.
-it obeys `rule.require.catalog-is-an-index`.
+the catalog owes: every member by name grouped by boundary root · the path formula with an example · a census note · its rules by path. it obeys `rule.require.catalog-is-an-index`.
 
-blocker: a catalog at `say` whose members are left out of `not`.
-nitpick: a catalogable subdomain of ~20+ members booted as paths · a catalog that prints every path
-where one formula would compute it.
-false positive: a handful of files at `ref` · a subdomain every boot needs whole.
+blocker: catalog at `say` whose members are left out of `not`.
+nitpick: catalogable subdomain of ~20+ members booted as paths · catalog that prints every path where one formula computes it.
+false positive: a handful of files at ref · subdomain every boot needs whole.
 
-⇒ see also: `rule.require.catalog-is-an-index` · `rule.prefer.rules-that-refout` ·
-`rule.forbid.itemization-without-coordinates` · `rule.require.summary-at-the-cluster-root`.
+⇒ `rule.require.catalog-is-an-index` · `rule.prefer.rules-that-refout`

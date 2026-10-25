@@ -33,6 +33,21 @@ a test per skill is additive. no extant file changes shape.
 - the bar *"no peer has a test, so none is owed"* is precedent, and precedent is a reason to look,
   never to conform
 
+## verdict: ruled by the director, 2026-10-25 — overruled
+
+B is overruled. the skills that serve the boot budgets are not dev tools to leave bare; they
+are promoted into the shipped librarian role, each with tests that clamp its behavior:
+
+| skill | verdict | why |
+|---|---|---|
+| `brief.min.moveout` | promote | moves the argument out of a min with a cue check; the move every boot cut repeats |
+| `census.minpeer` | promote | proves each min line has a home in its `.md`; F8 turned on its figure |
+| `census.cues` | promote | splits cue from argument, so a budget is set from a measure, never a guess |
+| `glob.files.lib` | moves with them | their internal module, not a skill |
+
+the logic ships as unit-tested transformers in `src/domain.operations/librarian/`, behind the
+cli subpath `./cli/librarian`, with skill wrappers in `src/domain.roles/librarian/skills/`.
+
 ## where
 
 `.agent/repo=.this/role=any/skills/census.*` · peer `behavior-intent-coverage` i001 nitpick.3 ·

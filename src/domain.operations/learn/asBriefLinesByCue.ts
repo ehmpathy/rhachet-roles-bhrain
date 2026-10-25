@@ -3,7 +3,8 @@ import { asLinesWithFenceState } from './asLinesWithFenceState';
 /**
  * .what = sort the nonblank lines of a brief into CUE and ARGUMENT, in order
  * .why  = one source of truth for what a cue is, for the reports that rank briefs by it
- *         (`rhx census.cues`, `rhx brief.min.moveout`). the clamp snapshot pins every line, never
+ *         (the librarian's `asBriefCueCensus` and `asMinWithWhySectionsMoved`, behind
+ *         `rhx census.cues` and `rhx brief.min.moveout`). the clamp snapshot pins every line, never
  *         this cut, since a markup heuristic cannot see a cue written as prose
  * .note = per `rule.prefer.rules-that-refout`: cue = a table row · a blockquote · a bullet · a
  *         header · an enforcement line · a line inside a fence. argument = each other line. it is

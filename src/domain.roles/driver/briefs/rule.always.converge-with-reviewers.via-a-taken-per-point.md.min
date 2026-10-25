@@ -1,35 +1,15 @@
 # rule.always.converge-with-reviewers.via-a-taken-per-point
 
-for EVERY `.given.by_peer` point you MUST author the paired `.taken.by_self` before you re-arrive. no exceptions, every round.
+for EVERY `.given.by_peer` point author the paired `.taken.by_self` before you re-arrive. every round.
 
-| shape | the claim | must carry |
-|---|---|---|
-| `[REPAIR]` | *"i fixed it"* | a quote of the **current** file |
-| `[REFUTE]` | *"it does not hold"* | cited evidence — out of scope, a false positive, a deliberate tradeoff |
+- `[REPAIR]` ("i fixed it"): quote the **current** file
+- `[REFUTE]` ("it does not hold"): cited evidence (out of scope, false positive, deliberate tradeoff)
 
-then, per point: `rhx route.stone.set --stone <stone> --as absorbed --that <slug>` — and only then re-arrive.
+then per point: `rhx route.stone.set --stone <stone> --as absorbed --that <slug>`, and only then re-arrive.
 
-a blocker that returns after you fixed it is a driver error, never a reviewer defect. check
-whether you ever told the reviewer, before you diagnose one.
+a blocker that returns after your fix is a driver error: check whether you ever told the reviewer.
 
-## the gate counts REVIEWERS. this rule counts POINTS
+the gate counts REVIEWERS; this rule counts POINTS. on an APPROVED lane the gate holds zero, yet the reviewer re-raises every nitpick with no response. `--as absorbed` there with no `.taken` warns and does not refuse. only a `.taken` discharges a point.
 
-the door is a floor; this rule is the work.
-
-## on an APPROVED lane the floor is ZERO — the gate holds naught, and the tool says so
-
-the reviewer still weighs points, and re-raises every nitpick that carries no response.
-`approved` grades the lane, never the points.
-
-`--as absorbed --that <slug>` there, with no `.taken`, absorbs and warns *"its nitpicks carry no
-.taken"*, with the path the answer belongs at. it warns; it does not refuse.
-
-only a `.taken` discharges a point. on an approved lane you are the sole enforcement, so the
-rule binds hardest exactly where the engine binds least.
-
-blocker: an open point with no `.taken` · a `[REPAIR]` with no current-file quote · a `[REFUTE]`
-with no evidence · a malfunction graded for a re-raise you never answered · a re-arrival with an
-open point from an approved lane that has no `.taken`.
-
-the forbid twin is `rule.forbid.unanswered-exits-from-a-blocker`: this rule says every point
-owes a `.taken`; that one shuts the other doors out of a blocker.
+blocker: an open point with no `.taken` · a `[REPAIR]` with no current-file quote · a `[REFUTE]` with no evidence · a malfunction graded for a re-raise you never answered · a re-arrival with an open approved-lane point and no `.taken`.
+twin: `rule.forbid.unanswered-exits-from-a-blocker`.

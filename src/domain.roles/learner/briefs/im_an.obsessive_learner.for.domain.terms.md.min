@@ -1,43 +1,24 @@
 # im an obsessive learner — for domain terms 🦉📜
 
-a **zoom-in** of `im_an.obsessive_learner` onto one lesson kind: *what this domain calls a concept*.
+zoom-in of `im_an.obsessive_learner`: *what this domain calls a concept*. a term is a **word** (noun/verb/adj) that composes this repo's declared dobjs/dops; one entry per word, reused (`stone` serves `Stone`, `getStone`; `gen` serves every `gen*`). home: `.agent/repo=.this/role=any/briefs/domain.terms/`.
 
-a term is a **word** — a noun/verb/adj — that composes this repo's declared domain objects and operations. one entry per word, reused across every dobj/dop that uses it: the noun `stone` serves `Stone`, `getStone`, `genStone`; the verb `gen` serves every `gen*`.
+whenever a term is discovered or debated (dobj/dop named, synonym argued, canonical word settled), crystallize it into the glossary. no gate carries this itch: run `rhx learn.domain.terms`.
 
-home: `.agent/repo=.this/role=any/briefs/domain.terms/`
+## the moves
 
-## .the obsession
+1. recall dobjs/dops you declared or engaged
+2. split names into terms (`getStone` → verb `get` + noun `stone`)
+3. itemize each NEW word as a `choice._.` cluster; for extant terms, extend `.refs`
+4. record any synonym you judged; log a resolved dispute in `.reason`
+5. articulate `progress.md`: what you distilled and why, or why none
 
-whenever a term is **discovered or debated** — a dobj/dop named, a synonym argued, a canonical word settled — crystallize it into the glossary, for durable retention org-wide.
-
-🟡 **no gate carries this itch.** run `rhx learn.domain.terms` when the cues fire.
-
-## .the moves
-
-1. recall the dobjs/dops you declared or engaged
-2. split their names into constituent terms (`getStone` → verb `get` + noun `stone`)
-3. itemize each **new** word as a `choice._.` cluster (say + required `.reason`); **reuse** extant terms — just extend their `.refs`
-4. record any synonym you judged; log a resolved dispute in `.reason` if it was arguable
-5. **articulate `progress.md`** — what you distilled and why, or if none, why none
-
-the one hard requirement is the articulation. every other judgment is yours.
-
-## 🔴 .a settled term is NOT deferrable
-
-the articulation is a **floor, not a loophole**:
+## a settled term is NOT deferrable
 
 | the round… | then |
 |---|---|
-| **declared** a repo-born dobj/dop | its constituent terms get clusters **this round** |
-| **settled** a synonym — word A canonical, word B forbidden | that judgment lands in the term file **this round** |
+| declared a repo-born dobj/dop | its terms get clusters this round |
+| settled a synonym (A canonical, B forbidden) | the judgment lands in the term file this round |
 
-deferral is valid **only** for a term you genuinely cannot finish now: a word that needs deeper discovery, or a dispute still open. **never** for a term the round already settled — to defer that and merely articulate why is to daydream the work.
+defer only a word that wants deeper discovery or a dispute still open. never a settled term.
 
-## .see also
-
-- `domain.terms/.readme.md` — names the rules that rule the dir
-- `template.domain-term` — the cluster shape
-- `howto.domain-term-disputes` — the dispute pattern
-- `im_an.obsessive_learner.for.domain.invariants` · `.for.domain.glyphs` — the peer kinds
-
-> the words we build with deserve a glossary. tend it, and raise the floor for all who come after. 🦉📜💎
+see: `template.domain-term` · `howto.domain-term-disputes` · `.for.domain.invariants` · `.for.domain.glyphs`

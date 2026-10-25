@@ -1,47 +1,28 @@
 # rule.always.spend-own-levers-before-escalation
 
-a halt is a diagnosis to make, not a message to relay. the guard prints what *would* unblock the stone; it never says **who owns each lever**. sort by owner and spend yours first.
+a halt is a diagnosis to make, not a message to relay. the guard never says who owns each lever: sort by owner, spend yours first.
 
 | lever | owner |
 |---|---|
-| `rhx route.stone.set --as absorbed --that <reviewer>` — converge; a spent meter discharges no debt | **driver** |
-| 🔴 a direct edit of `$route/<stone>.guard` — that lane's `--paths-wout` / `--paths-with`, its `--conversation` depth, its `level` | **driver**, once the route's mutate grant stands |
-| a diagnosed reviewer malfunction — absent credential, bad glob, stale supply | **driver** |
-| 🔴 `rhx route.guard.budget --for review --add N --stone <stone>` | **driver, ONLY with a warrant** — see below |
-| the route's mutate grant (`rhx route.mutate grant allow`) · `--as approved` · `--as overruled` · the commit quota · a **credential** the keyrack reports `absent` · release auth | human |
+| `rhx route.stone.set --as absorbed --that <reviewer>` | driver |
+| edit `$route/<stone>.guard` (`--paths-wout`/`--paths-with`, `--conversation`, `level`) | driver, once the mutate grant stands |
+| diagnosed reviewer malfunction | driver |
+| `rhx route.guard.budget --for review --add N --stone <stone>` | driver, ONLY with a warrant |
+| `rhx route.mutate grant allow` · `--as approved` · `--as overruled` · commit quota · `absent` credential · release auth | human |
 
-🟡 **no `rhx` command edits a guard.** `route.mutate.guard` is the PreToolUse hook that seals `*.stone` / `*.guard` / `.route/**` — a gate, never an editor. the act is a plain edit of the `.guard` file, permitted once `$route/.route/.privilege.mutate.flag` exists. `rhx route.mutate grant get` first: granted → edit now · not granted → ask the human for that one grant per route, then the edit is yours.
+no `rhx` command edits a guard; a hook seals it. `rhx route.mutate grant get` first: granted → edit; not → ask the human once per route. a hand-run `rhx review` is no lever (`rule.forbid.hand-run-reviews`). malfunction, self-review, and judge halts print remedies with no owner column: you sort.
 
-⛔ **a hand-run `rhx review` is NOT on this table, deliberately.** it draws no budget, so it is no lever at all (`rule.forbid.hand-run-reviews`). ⇒ the guard row above is what a driver who reaches for it actually wants.
+## budget: refused by default
 
-🟡 **adjacency is the trap** — two remedies side by side with no owner column read as two human remedies. the budget halt names its owners and sorts the driver's first, but **which** lever that is turns on what the last round conceded: `increase budget — yours to spend` on an urgent concession, `fix what you conceded — yours to run` on a better one, `converge with the reviewer — yours to run` where naught was conceded. 🔴 a malfunction, a self-review gate, and a judge threshold each print a remedy list with no owner column, so the sort stays yours to perform.
+> inside the meter, taste counts. past the meter, only harm does.
 
-## 🔴 budget is the ALLOWANCE, and it is scarce past its bound
-
-**the grant is refused by default**, so a top-up is yours **only with a warrant**.
-
-> **inside the meter, taste counts. past the meter, only harm does.**
-
-all three conjuncts are owed:
-
-| the conjunct | what it refuses |
-|---|---|
-| a **live urgent concession** on the stone | a round bought on a wish to continue |
-| a **target reviewer that has run dry** | a pad taken before the bound bites |
-| a `--stone` that named **one** stone | one warrant spent across a prefix's worth of stones |
+all three owed: a **live urgent concession** · a **target reviewer run dry** · a `--stone` for **one** stone.
 
 ```sh
 rhx route.stone.set --stone <s> --as conceded --with <reviewer> --about <concern> --severity urgent
 rhx route.guard.budget --for review --add N --peer <reviewer> --stone <s>
 ```
 
-🟡 **grade by the harm test, never by what you want the meter to say.** `urgent` is the closed set — security · safety · monetary · reputation · behavioral, with a harm you can name. all else is `better`, and `better` earns no round past the meter (`rule.always.concede-with-a-severity`).
+`urgent` = security · safety · monetary · reputation · behavioral, harm nameable; else `better` earns no round (`rule.always.concede-with-a-severity`). a bare `--add N` lands on the latest level only; pass `--level` or `--peer` for a lower one. `exhausted` with closed blockers: real harm → grade `urgent`; taste → the fix is the remedy.
 
-🔴 **and `--add N` does NOT extend every reviewer on the stone.** a bare add lands on the **latest level alone**; a lower level stays exhausted unless `--level` or `--peer` names it (F022 fork E).
-
-🟡 **exhaustion is still often not what it looks like** — a reviewer that spent its round to RAISE a blocker has none left to CONFIRM your fix, so it shows `exhausted 🌙` with blockers listed that are already closed. **where that blocker named a real harm, grade it `urgent` and the round is yours.** where it named taste, the fix IS the whole remedy.
-
-🟡 a human may grant regardless — to reach for that before you have tried to converge is the very escalation this rule forbids.
-
-the test: **"is there a command i could run right now that would move this stone?"**
-yes → run it. no → surface it, with the exact command the human must run.
+test: **"is there a command i could run right now that would move this stone?"** yes → run it · no → surface the exact command the human must run.

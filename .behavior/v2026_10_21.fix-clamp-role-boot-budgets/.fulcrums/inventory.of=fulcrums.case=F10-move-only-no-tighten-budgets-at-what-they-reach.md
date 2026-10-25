@@ -25,6 +25,13 @@ then drops to what that pass reaches. no work here builds on the higher figure.
 the director asked for 12k. B lands above it for learner and driver, and the tighten pass that
 closes the gap is deferred rather than skipped.
 
+## verdict: ruled by the director, 2026-10-25 — overruled
+
+B is overruled, and no separate follow-up is allowed. the caps are learner < 11k, driver
+< 11k, librarian < 7k, reached in this pr: every min was tightened to its cue rows, and the
+librarian's concept articles moved to ref behind their catalog. the roleBootClamps snapshot
+is the guard on every cue line that changed.
+
 ## where
 
 `src/domain.roles/{learner,driver,librarian}/boot.yml` (the budget comments).

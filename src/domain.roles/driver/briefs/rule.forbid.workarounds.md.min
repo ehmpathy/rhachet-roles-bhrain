@@ -1,40 +1,20 @@
 # rule.forbid.workarounds
 
-> **never work around a failure. diagnose it to its root cause and fix it there — and when the tool that failed is one you build, the failure IS the defect report.**
+> **never work around a failure. diagnose to root cause and fix there; when the failed tool is one you build, the failure IS the defect report.**
 
-a **workaround** = any change to an input, a declaration, a config, or your own conduct that makes a failure go quiet while its cause stands. forbidden. a dream, a `.taken`, or a fulcrum that names one documents the defect and leaves it shipped.
+workaround = a change to an input, declaration, config, or your conduct that quiets a failure while its cause stands. a dream, `.taken`, or fulcrum that records one leaves the defect shipped. dogfooder: no "human error" in a tool under construction ("my declaration was stale" → the tool let it exist; "the refusal did its job" → it fired at the costliest moment; "i'll note a follow-up" → it is this round's work).
 
-## 🔴 .the dogfooder
+bar, a pit of success: correct use meets no friction; any friction is a critical defect, fixed now. wrong state unreachable, or caught once at the cheapest moment with the exact fix printed · soundness by construction, not a list a human syncs · the cure ships with a clamp (red without, green with).
 
-when the failed tool is the one under construction, there is no "human error".
-
-| the dogfooder thinks | what is true |
-|---|---|
-| *"my declaration was stale; I fixed it"* | the tool let a stale declaration exist. that is the defect |
-| *"the refusal did its job"* | it fired at the costliest moment — a design defect |
-| *"I'll note it as a follow-up"* | the follow-up is this round's work |
-
-## .the bar — a pit of success
-
-correct use asks **no questions and meets no friction**: the tool guides its caller, and the right move is the easy move. 🔴 **any friction is a critical defect, fixed immediately** — never a nitpick, follow-up, or dream.
-
-- the wrong state is unreachable, or caught **once, at the cheapest moment**, with the **exact fix printed**
-- soundness holds **by construction**, never by a list a human keeps in sync
-- the cure ships with a clamp — red without it, green with it
-
-## .the test
-
-> **"did the cause of this failure change, or only my input to it?"** cause → a fix · input only → a workaround. stop; fix the cause.
+test: **"did the cause of this failure change, or only my input to it?"** input only → workaround; fix the cause.
 
 | when… | then… |
 |---|---|
-| you edit a declaration, glob, or config so a tool stops its refusal | why did the tool let that state exist, and refuse when it did? |
-| one cause refuses many times — per lane, per file, per run | the check sits at the wrong moment. move it to the cheapest |
-| a contract stays sound only while a human keeps a list in sync | the contract is the defect |
-| you must read a doc or ask to use your own tool right | the tool does not guide. that friction is the defect |
-| you write *"the tool did its job"* about a failure you just hit | 🔴 the sharpest cue |
-| the same kind of failure shows up twice | 🔴 the first fix was a workaround |
+| you edit a declaration/glob/config so a refusal stops | why did the tool let that state exist? |
+| one cause refuses many times | check sits at the wrong moment; move it |
+| contract sound only while a human syncs a list | the contract is the defect |
+| you must read a doc to use your own tool right | friction is the defect |
+| you write "the tool did its job" about a failure you hit | sharpest cue |
+| same failure kind twice | the first fix was a workaround |
 
-blocker: an input, declaration, or config patched while the cause stands · a workaround recorded in place of a fix · a dogfooder's friction with their own tool left unfixed in the round it surfaced · one cause that refuses repeatedly, left in place · a contract that needs hand upkeep, left in place.
-
-⇒ see also: `rule.always.entool-the-skills-you-touch` (learner, this repo — this closes its record-the-workaround door) · foreign, in peer repos: `rule.require.solve-at-cause` (ehmpathy/architect) · `rule.require.clamp-edge-cases` (ehmpathy/mechanic) · `rule.require.safe-by-default` (ehmpathy/ergonomist).
+blocker: input/declaration/config patched while the cause stands · a workaround recorded instead of a fix · dogfooder friction left unfixed in its round · repeated refusal from one cause left in place · a contract that needs hand upkeep.

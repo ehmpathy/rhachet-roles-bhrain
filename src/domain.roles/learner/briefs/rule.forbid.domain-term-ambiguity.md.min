@@ -1,30 +1,17 @@
 # rule.forbid.domain-term-ambiguity
 
-one word, one concept. a term that is overloaded — the same word used for two or more distinct senses — is ambiguous, and an ambiguous term in a contract is forbidden.
+one word, one concept. a term overloaded across two or more senses is forbidden in a contract (dobj/dop name, internal shape, published api/sdk/cli).
 
-a **contract** = a dobj/dop name, an internal contract (shapes, signatures), and above all the external interfaces we publish (api, sdk, cli).
+test: *does this word name exactly ONE concept, everywhere it appears?* no → one repair is owed:
 
-## .the test
-
-**"does this word name exactly ONE concept, everywhere it appears?"** one sense → adhere · two or more → the word is overloaded, and one of two repairs is owed.
-
-| the senses differ by… | the repair |
+| the senses differ by… | repair |
 |---|---|
-| **concept** — two different things | **split.** keep the word for its primary sense; coin a term for each other sense, itemize it, record the split |
-| **context** — one concept, two boundaries | **qualify** — `rule.require.boundary-qualified-terms`. a filename segment, no coinage, no dispute |
+| concept (two things) | **split**: keep the word for its primary sense; coin and itemize a term for each other |
+| context (one concept, two boundaries) | **qualify** (`rule.require.boundary-qualified-terms`); no coinage |
 
-🟡 the sort is the boundary rule's own question — *"$word, of WHAT?"* two answers → qualify · one answer, two referents → split.
+sort by *"$word, of WHAT?"*: two answers → qualify · one answer, two referents → split.
 
-## 🔴 .an INCONSISTENCY repair can forbid this rule's cure
+an inconsistency repair can forbid this rule's cure: `lane` became a forbidden synonym of `reviewer`, yet `reviewer` was itself overloaded and `lane` was its one candidate word. enumerate the senses of the word you keep BEFORE the inconsistency settles.
 
-measured: `lane` and `reviewer` named one concept, so `lane` became a forbidden synonym.
-
-- but `reviewer` was *also* overloaded — the role · one run of one rubric on one guard — and `lane` was its one candidate word
-- ⇒ the settlement closed the inconsistency and removed the ambiguity's only cure in the same edit
-
-🟡 **so enumerate the senses of the word you keep BEFORE the inconsistency settles.** afterward, the word you would have reached for is forbidden.
-
-> one word, one sense — no term does double duty 📜
-
-blocker: a domain term overloaded across two or more distinct concepts in a contract · an inconsistency settled with no check of whether the word kept was also overloaded.
-false positive: a boundary-qualified pair — `route.guard.rung` and `tool.skill.rung` are two terms, not one overloaded · generic english that composes no domain concept · a synonym, which is `rule.forbid.domain-term-synonyms`' subject.
+blocker: a term overloaded across distinct concepts in a contract · an inconsistency settled with no check that the kept word was also overloaded.
+false positive: a boundary-qualified pair (`route.guard.rung` vs `tool.skill.rung`) · generic english · a synonym (that is `rule.forbid.domain-term-synonyms`).
