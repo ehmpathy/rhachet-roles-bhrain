@@ -1,0 +1,19 @@
+{
+  "key": "e2b54278cb968b6f",
+  "kind": "create",
+  "repo": {
+    "owner": "ehmpathy",
+    "name": "rhachet"
+  },
+  "exid": null,
+  "title": "fix(keyrack): the firewall fix hint names its vaults, or defaults --vault",
+  "description": "# 🌙 dream: the keyrack firewall's fix hint names its vaults, or a default\n\n- kind: reseed\n- owner: ehmpathy/rhachet\n- caught 2026-10-23\n\n## .the cue that fired\n\nr11 (`enroll-verif-snapshot-blemishes`) nitpick.5 at 5.3 i004, route\n`v2026_10_23.fix-judge-pass-exhausted-all-better`.\n\n## .the gap, precisely\n\nas of rhachet 1.50.1, an absent key's fix hint reads\n`rhx keyrack set --key OPENROUTER_API_KEY --env test --vault <vault>`. the literal `<vault>` is not\ncopy-paste runnable, and the hint names no valid vault. pinned in this repo by\n`keyrack.firewall-key-absent`, `review.by.key-absent` and `review.key-absent` snaps.\n\n## .the shape of the fix\n\nin rhachet's keyrack firewall render: list the valid vaults beneath the command (one leaf each), or\ndefault `--vault` to the manifest's declared vault so the bare command runs\n(`rule.require.errors-name-the-fix`).\n\n## .why it is not done in this round\n\nthe render lives in another repo; a tree adopts only what is scoped to itself.",
+  "status": null,
+  "via": "gh.issues",
+  "auth": "as-human",
+  "idem": "findsert",
+  "heldSeq": 36,
+  "recordStatus": "DELIVERED",
+  "reason": null,
+  "deliveredExid": "662"
+}
