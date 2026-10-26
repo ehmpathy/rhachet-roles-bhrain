@@ -4,8 +4,6 @@
 
 claim = asserts a fact a reader may act on. cue = a detector (when-row, smell, symptom, a rule aimed at one defect from one angle).
 
-failure modes invert: two claims drift and disagree; two cues can only both miss, or one catch. a redundant cue carries no drift risk.
-
 test: *could these two passages DISAGREE?* yes → claims: declare one, cite it · no → cues: keep both, look for a third.
 
 | when… | then… |

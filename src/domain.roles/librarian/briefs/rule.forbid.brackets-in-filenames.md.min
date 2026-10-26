@@ -9,10 +9,6 @@ no filename may carry `[` or `]`. mark a document kind in coordinate form:
 
 binds new and renamed files. an extant bracketed name in a dependency's briefs stays until disturbed; re-seed it to its owner.
 
-## .why
-
-brackets break glob, `boot.yml` entries, and shell; `mvsafe`/`cpsafe`/`rmsafe` need `--literal`. `kind=` is computable and globbable: `*.kind=article.md` returns the archetype.
-
 | when… | then… |
 |---|---|
 | you name a new document with an archetype | `kind=$archetype` |
@@ -30,7 +26,7 @@ brackets break glob, `boot.yml` entries, and shell; `mvsafe`/`cpsafe`/`rmsafe` n
 
 repair for `howto.$topic.[guide].md` is to drop the marker, not convert it. the `._.` cluster root stays (a different axis).
 
-repair is file-first and by hand; a bulk rename cannot part a citation of a bad name from an instance.
+a blind find-and-replace cannot part a citation of a bad name from an instance: a bulk rename names the on-purpose citers and leaves them be.
 
 governs filenames only. brackets in prose, links, tables, code blocks are untouched.
 

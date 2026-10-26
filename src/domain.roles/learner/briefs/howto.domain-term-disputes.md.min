@@ -18,5 +18,3 @@ OPEN: contracts keep the canonical term meanwhile. RESOLVED: outcome names the w
 |---|---|
 | canonical holds | disputed word becomes a forbidden synonym; RESOLVED |
 | disputed word wins | it replaces the canonical term, or becomes a new term (distinct concept) with its own cluster |
-
-example: `foamie` vs `foamboard`: board-type set is `longboard`/`shortboard`/`foamboard` (one shape); slang breaks symmetry → keep `foamboard`, forbid `foamie`.

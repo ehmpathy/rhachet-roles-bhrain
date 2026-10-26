@@ -120,7 +120,7 @@ the human's — so the base reads it straight; the wrapper injects no second `--
 
 1. declare the role's review set in its `rubrics.yml` (one entry per rubric: slug + rules glob;
    plus an optional `vibe:` block to brand the output with the role's own mascot/artifact — see
-   `howto.add-review-by-to-a-role.[guide].md`)
+   `howto.add-review-by-to-a-role.md`)
 2. add a `review.by` skill to the role — the one-line node delegation above, verbatim (it is
    role-agnostic; the target role rides in via `"$@"`, so no role is baked in)
 3. that is it. `rhx review.by --role <role>` now runs the role's full review set through the base
@@ -135,4 +135,4 @@ the acceptance suite proves this end to end:
 
 - `contract.reviewer-output.md` — the stdout contract the base emits (the guard reads it)
 - `review.tactics.md` — push vs pull, scope, brain selection for the base `review`
-- `on.rules/rules101.[article].md` — what a rubric's rules are and how they are declared
+- `on.rules/rules101.kind=article.md` — what a rubric's rules are and how they are declared

@@ -24,13 +24,42 @@ const yaml = require('js-yaml');
  *         real cli emits, never re-derived here
  */
 
-// the roles this repo clamps to a declared budget — the expectation, so a budget removed from
-// any of them, or a budget added to another, fails here rather than slips past the suite
-const ROLES_BUDGETED = ['learner', 'driver', 'librarian'] as const;
+// the roles whose briefs boot as condensed mins: beyond the budget, their cue lines, refs, and
+// min peers are clamped too
+const ROLES_CONDENSED = ['learner', 'driver', 'librarian'] as const;
+
+// the roles whose briefs boot whole: only the budget is clamped
+const ROLES_BUDGET_ONLY = [
+  'achiever',
+  'navigator',
+  'researcher',
+  'reviewer',
+  'telepath',
+  'thinker',
+  'reflector',
+] as const;
+
+// the role dirs the registry does not hold: no seat links them, so their boot is read from the
+// dir alone. each is still budgeted (#692, no exceptions); the list names them so a role that
+// drops out of the registry, or joins it, is a diff here
+const ROLES_UNREGISTERED = ['architect'] as const;
+
+// the registered roles this repo clamps to a declared budget, every one, no exceptions (#692) —
+// the expectation, so a budget removed from any of them, or a budget added to another, fails here
+// rather than slips past the suite
+const ROLES_BUDGETED = [...ROLES_CONDENSED, ...ROLES_BUDGET_ONLY] as const;
+
+// the budget the owner set per role (#692): each boot.yml declares exactly this figure, so a
+// raise past it, or a role booted over it, fails here for every role, never for one alone
+const BUDGET_SET_BY_OWNER: Record<(typeof ROLES_CONDENSED)[number], number> = {
+  learner: 10_000,
+  driver: 10_000,
+  librarian: 5_000,
+};
 
 // the cues each role must boot at say by name — a snapshot line dropped and resnapped would pass,
 // so the briefs a journey step names are asserted here, one by one
-const SAYS_REQUIRED: Record<(typeof ROLES_BUDGETED)[number], string[]> = {
+const SAYS_REQUIRED: Record<(typeof ROLES_CONDENSED)[number], string[]> = {
   learner: ['learner/briefs/rule.always.entool-the-skills-you-touch.md.min'],
   driver: [],
   librarian: [],
@@ -144,19 +173,29 @@ const isCountOfTokens = (value: unknown): value is number =>
   typeof value === 'number' && Number.isInteger(value) && value > 0;
 
 // transformer: the boot spec held in one boot.yml text, shape-checked before any field is read
+// .note = a spec curates its briefs under `always.briefs` (subject mode) or `briefs` (simple
+//         mode). a section with no `say` key says every brief, as a role with no spec does
 const asBootSpec = (input: { text: string; bootUri: string }): BootSpec => {
   const spec = yaml.load(input.text);
+  const briefs = spec?.always?.briefs ?? spec?.briefs;
 
-  // reject a spec with no say list — a boot with no say has naught to clamp
-  const say = spec?.always?.briefs?.say;
-  if (!isListOfStrings(say))
-    throw new ConstraintError('boot.yml has no `always.briefs.say` list', {
+  // reject a spec with no briefs section — a boot with no briefs curation has naught to clamp
+  if (briefs === undefined || briefs === null || typeof briefs !== 'object')
+    throw new ConstraintError('boot.yml has no briefs section', {
       bootUri: input.bootUri,
-      hint: 'add `always.briefs.say` with at least one brief path',
+      hint: 'add `always.briefs.say` with the brief paths to say, or `briefs: {}` to say all',
+    });
+
+  // reject a `say` that is present but not a list — an absent `say` says all
+  const say = briefs.say;
+  if (say !== undefined && !isListOfStrings(say))
+    throw new ConstraintError('boot.yml briefs `say` is not a list', {
+      bootUri: input.bootUri,
+      hint: 'set `say` to a list of brief paths, or remove it to say all',
     });
 
   // reject a `ref` that is present but not a list — an absent `ref` is an empty one
-  const ref = spec?.always?.briefs?.ref;
+  const ref = briefs.ref;
   if (ref !== undefined && !isListOfStrings(ref))
     throw new ConstraintError('boot.yml `always.briefs.ref` is not a list', {
       bootUri: input.bootUri,
@@ -164,7 +203,7 @@ const asBootSpec = (input: { text: string; bootUri: string }): BootSpec => {
     });
 
   // reject a `not` that is present but not a list — an absent `not` is an empty one
-  const not = spec?.always?.briefs?.not;
+  const not = briefs.not;
   if (not !== undefined && !isListOfStrings(not))
     throw new ConstraintError('boot.yml `always.briefs.not` is not a list', {
       bootUri: input.bootUri,
@@ -183,7 +222,7 @@ const asBootSpec = (input: { text: string; bootUri: string }): BootSpec => {
   return {
     bootUri: input.bootUri,
     budgetTokens: tokens ?? null,
-    say,
+    say: say ?? [],
     ref: ref ?? [],
     not: not ?? [],
   };
@@ -269,11 +308,60 @@ const asLinesOfText = (input: { text: string }): string[] =>
     .split('\n')
     .map((line) => line.trimEnd());
 
+// transformer: the budget a seat payload owes — the least multiple of 250 strictly above it
+const asBudgetOfSeatPayload = (input: { payload: number }): number =>
+  (Math.floor(input.payload / 250) + 1) * 250;
+
+// fail loud where a declared budget is not the one its seat payload owes, and name the fix
+const assertBudgetFitsSeatPayload = (input: {
+  slug: string;
+  payload: number;
+  budget: number;
+}): void => {
+  const budgetExpected = asBudgetOfSeatPayload({ payload: input.payload });
+
+  // a shrink or a growth past the step both land here; name the number to set
+  if (input.budget !== budgetExpected)
+    throw new ConstraintError(
+      'boot.yml budget is not the least multiple of 250 above the seat payload',
+      {
+        slug: input.slug,
+        payload: input.payload,
+        budget: input.budget,
+        budgetExpected,
+        hint: `set budget.tokens to ${budgetExpected} in src/domain.roles/${input.slug}/boot.yml; the seat payload is the [t4] snapshot`,
+      },
+    );
+};
+
+// the boot uri of one role: the registry's declared uri, or, for a role the registry does not
+// hold, the boot.yml in its own dir — the one place the loader can boot it from
+const getOneBootUriOfRole = (input: { slug: string }): string | undefined => {
+  const role = getRoleRegistry().roles.find((one) => one.slug === input.slug);
+  if (role) return role.boot?.uri;
+  const isUnregistered = (ROLES_UNREGISTERED as readonly string[]).includes(
+    input.slug,
+  );
+  return isUnregistered
+    ? path.join(__dirname, input.slug, 'boot.yml')
+    : undefined;
+};
+
+// the slugs of every role dir under src/domain.roles: a dir that carries a readme
+const getAllSlugsOfRoleDirs = (): string[] =>
+  fs
+    .readdirSync(__dirname, { withFileTypes: true })
+    .filter((entry) => entry.isDirectory())
+    .filter((entry) =>
+      isFileFound({ file: path.join(__dirname, entry.name, 'readme.md') }),
+    )
+    .map((entry) => entry.name)
+    .sort();
+
 // the boot spec of one role, found via the role's own declared boot uri
 const getOneBootSpecOfRole = (input: { slug: string }): BootSpec => {
-  // find the role in the registry, never by a path into its dir
-  const role = getRoleRegistry().roles.find((one) => one.slug === input.slug);
-  const bootUri = role?.boot?.uri;
+  // find the role in the registry, never by a path into its dir, save for a role it lacks
+  const bootUri = getOneBootUriOfRole({ slug: input.slug });
 
   // reject a role with no boot uri — there is no spec to clamp
   if (!bootUri)
@@ -391,6 +479,30 @@ describe('roleBootClamps', () => {
         },
       );
     });
+
+    when('[t1] each role dir under src/domain.roles is read', () => {
+      then(
+        'the dirs the registry lacks are exactly the unregistered set',
+        () => {
+          // the one role a seat cannot boot, named so it never hides
+          const slugsRegistered = getRoleRegistry().roles.map(
+            (one) => one.slug,
+          );
+          expect(
+            getAllSlugsOfRoleDirs().filter(
+              (slug) => !slugsRegistered.includes(slug),
+            ),
+          ).toEqual([...ROLES_UNREGISTERED].sort());
+        },
+      );
+
+      then('every role dir declares a budget, no exceptions', () => {
+        const slugsUnbudgeted = getAllSlugsOfRoleDirs().filter(
+          (slug) => getOneBootSpecOfRole({ slug }).budgetTokens === null,
+        );
+        expect(slugsUnbudgeted).toEqual([]);
+      });
+    });
   });
 
   // the roster is one read for the whole repo; each role's [t5] looks up its own row in it
@@ -398,7 +510,7 @@ describe('roleBootClamps', () => {
     runRhachet({ args: ['roles', 'cost', '--all'] }),
   );
 
-  ROLES_BUDGETED.forEach((slug, index) => {
+  ROLES_CONDENSED.forEach((slug, index) => {
     given(`[case${index + 1}] the ${slug} role boot`, () => {
       const scene = useBeforeAll(async () => {
         const spec = getOneBootSpecOfRole({ slug });
@@ -409,6 +521,10 @@ describe('roleBootClamps', () => {
       when('[t0] its boot.yml is read', () => {
         then('it declares a token budget', () => {
           expect(scene.spec.budgetTokens).toBeGreaterThan(0);
+        });
+
+        then('its budget is the figure the owner set', () => {
+          expect(scene.spec.budgetTokens).toEqual(BUDGET_SET_BY_OWNER[slug]);
         });
 
         then('its budget and `not` list match the snapshot', () => {
@@ -533,22 +649,11 @@ describe('roleBootClamps', () => {
           'its budget is the least multiple of 250 strictly above its seat payload',
           () => {
             // the rule each boot.yml comment states, held here so a loose budget fails too
-            const payload = asPayloadOfBootStats({ stdout: seat.stdout })!;
-            const budget = scene.spec.budgetTokens!;
-            const budgetExpected = (Math.floor(payload / 250) + 1) * 250;
-
-            // a shrink or a growth past the step both land here; name the number to set
-            if (budget !== budgetExpected)
-              throw new ConstraintError(
-                'boot.yml budget is not the least multiple of 250 above the seat payload',
-                {
-                  slug,
-                  payload,
-                  budget,
-                  budgetExpected,
-                  hint: `set budget.tokens to ${budgetExpected} in src/domain.roles/${slug}/boot.yml; the seat payload is the [t4] snapshot`,
-                },
-              );
+            assertBudgetFitsSeatPayload({
+              slug,
+              payload: asPayloadOfBootStats({ stdout: seat.stdout })!,
+              budget: scene.spec.budgetTokens!,
+            });
           },
         );
 
@@ -858,6 +963,63 @@ describe('roleBootClamps', () => {
             .replace(/("(?:payload|over)": )\d+/g, '$1<n>')
             .trimEnd();
         expect(asStable(result.stderr)).toMatchSnapshot();
+      });
+    });
+  });
+
+  // every other budgeted role boots its briefs whole, so only its budget is held: red when the
+  // role boots over it, green when under, and the budget is the step its seat payload owes. an
+  // unregistered role is held the same way, booted from its own dir
+  [...ROLES_BUDGET_ONLY, ...ROLES_UNREGISTERED].forEach((slug, index) => {
+    given(`[case${index + 7}] the ${slug} role boot`, () => {
+      const scene = useBeforeAll(async () => {
+        const spec = getOneBootSpecOfRole({ slug });
+        const emitted = getOneBootEmitted({ bootUri: spec.bootUri });
+        return { spec, emitted };
+      });
+
+      when('[t0] the real `rhachet roles boot` boots it', () => {
+        then('it boots under its declared budget, at exit 0', () => {
+          expect(scene.spec.budgetTokens).toBeGreaterThan(0);
+          expect(scene.emitted.stderr).not.toContain('over budget');
+          expect(scene.emitted.exitCode).toEqual(0);
+          expect(scene.emitted.budgetRendered).toEqual(scene.spec.budgetTokens);
+        });
+      });
+
+      when('[t1] it boots in the form a seat boots it', () => {
+        const seat = useBeforeAll(async () =>
+          getOneBootEmittedAsSeat({ slug }),
+        );
+
+        then('it boots under its budget, at exit 0', () => {
+          expect(seat.stderr).not.toContain('over budget');
+          expect(seat.exitCode).toEqual(0);
+          expect(seat.budgetRendered).toEqual(scene.spec.budgetTokens);
+          expect(
+            asPayloadOfBootStats({ stdout: seat.stdout }),
+          ).toBeLessThanOrEqual(scene.spec.budgetTokens!);
+        });
+
+        then('its seat payload is pinned, so growth is a snapshot diff', () => {
+          const payload = asPayloadOfBootStats({ stdout: seat.stdout });
+          expect(payload).not.toBeNull();
+          expect({
+            budget: scene.spec.budgetTokens,
+            payload,
+          }).toMatchSnapshot();
+        });
+
+        then(
+          'its budget is the least multiple of 250 strictly above its seat payload',
+          () => {
+            assertBudgetFitsSeatPayload({
+              slug,
+              payload: asPayloadOfBootStats({ stdout: seat.stdout })!,
+              budget: scene.spec.budgetTokens!,
+            });
+          },
+        );
       });
     });
   });

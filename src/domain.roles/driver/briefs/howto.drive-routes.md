@@ -66,7 +66,7 @@ drive while the route is live, and reaps it when the route is dead. an enrolled 
 with no action from you.
 
 the full runbook — the auto path, the manual inspect/override skills, and what it does NOT cover —
-is in `howto.route-reminder.[guide].md`.
+is in `howto.route-reminder.md`.
 
 ---
 

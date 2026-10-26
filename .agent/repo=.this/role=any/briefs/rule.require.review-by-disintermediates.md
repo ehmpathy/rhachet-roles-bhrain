@@ -75,7 +75,7 @@ if either answer is wrong, review.by is intermediating where it must disintermed
 
 - `rule.require.review-by-wrapper-pattern` — the per-role wrapper that ships review.by
 - `contract.reviewer-output.md` — the stdout contract the base review emits (the guard parses it)
-- `howto.review-by.[guide].md` — the base-engine + per-role-wrapper architecture
+- `howto.review-by.md` — the base-engine + per-role-wrapper architecture
 
 ## .enforcement
 

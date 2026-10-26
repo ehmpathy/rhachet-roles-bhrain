@@ -4,6 +4,10 @@
 #         feels like overhead right then. the philosophy is what answers that, so it boots.
 #         the two mandates are lookups: once you have decided to pave, their exact shape is
 #         one fetch away, and a fetch at that moment costs no lost round.
+budget:
+  # a cap, not a target: the least multiple of 250 strictly above what the role costs as a seat
+  # boots it. the clamp is roleBootClamps.integration.test.ts. never cut a cue to fit
+  tokens: 2_750
 always:
   briefs:
     say:

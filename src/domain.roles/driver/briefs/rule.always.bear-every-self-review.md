@@ -127,7 +127,7 @@ peer, and never reaches a human.
 
 ## .see also
 
-- `howto.run-self-reviews.[guide]` — the HOW: the flow, the computable path, `--into`, the
+- `howto.run-self-reviews` — the HOW: the flow, the computable path, `--into`, the
   freshness bar. this rule is the MANDATE that guide serves
 - `rule.always.converge-to-terminal` — the peer ladder, which **does** have a budget and an
   honorable exhaustion. the contrast is the point

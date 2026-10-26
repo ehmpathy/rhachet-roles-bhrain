@@ -150,5 +150,5 @@ charges imagine cost at every stone. reach for a route only where the judgment i
 - `rule.always.externalize.tactics.into_skills` — the parent rule these two sharpen
 - `philosophy.entoolment-is-the-pinnacle` — the ladder this steps onto, and where a route sits
 - `rule.prefer.wet-over-dry` (ehmpathy) — why the **second** run is the trigger, not the first
-- `howto.create-routes.[ref]` / `define.routes-are-gardened.[philosophy]` (driver) — how to lay
+- `howto.create-routes.kind=ref` / `define.routes-are-gardened.kind=philosophy` (driver) — how to lay
   the pavement once you know a route is what the work wants

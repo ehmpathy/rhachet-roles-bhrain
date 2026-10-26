@@ -51,7 +51,7 @@ where the term composes declared artifacts:
 - src/domain.roles/telepath/briefs/trait.bulletize-reflexively.md
 - src/domain.roles/thinker/briefs/trait.ocd.md
 - src/domain.roles/thinker/briefs/trait.chillnature.md
-- src/domain.roles/thinker/briefs/tactician/trait.vs_skill.[article].md
+- src/domain.roles/thinker/briefs/tactician/trait.vs_skill.kind=article.md
 - src/domain.roles/driver/briefs/im_a.bhrain_owl.md
 - src/domain.roles/learner/briefs/im_an.obsessive_learner.md
 

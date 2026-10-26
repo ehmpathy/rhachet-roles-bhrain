@@ -1,0 +1,9 @@
+# .what = what the thinker loads at session start: every brief and every skill, said whole
+# .why  = this spec declares the boot the thinker had before it held one (no `say` key says all),
+#         so its cost is a line a reader sees and a growth is a clamp diff. a say/ref split of its
+#         briefs is its own change
+budget:
+  # a cap, not a target: the least multiple of 250 strictly above what the role costs as a seat
+  # boots it. the clamp is roleBootClamps.integration.test.ts. never cut a cue to fit
+  tokens: 215_250
+briefs: {}

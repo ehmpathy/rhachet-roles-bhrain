@@ -71,8 +71,8 @@ not move the root is a charm in someone else's bowl.
 
 ## .see also
 
-- `define.goals-are-promises.[philosophy]` — why an unclaimed charm is a broken promise, not a
+- `define.goals-are-promises.kind=philosophy` — why an unclaimed charm is a broken promise, not a
   pending one
-- `howto.triage-goals.[guide]` — how the root goal is chosen, which is what the charms attach to
+- `howto.triage-goals` — how the root goal is chosen, which is what the charms attach to
 - `rule.always.itemize-a-peers-asks-into-tasks._.md` — the same discipline for **asks**: make the
   state visible to the peer who set it, before they have to ask twice

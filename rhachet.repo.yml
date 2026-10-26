@@ -48,6 +48,7 @@ roles:
       dirs: []
     skills:
       dirs: dist/domain.roles/reflector/skills
+    boot: dist/domain.roles/reflector/boot.yml
   - slug: researcher
     readme: dist/domain.roles/researcher/readme.md
     briefs:
@@ -76,3 +77,4 @@ roles:
       dirs: dist/domain.roles/thinker/briefs
     skills:
       dirs: []
+    boot: dist/domain.roles/thinker/boot.yml

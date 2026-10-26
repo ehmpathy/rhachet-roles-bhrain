@@ -23,5 +23,5 @@ avoid `xai/grok/4-fast`, `xai/grok/4.1-fast`, and `openai/gpt/4o`.
 ## .detailed findings
 
 see:
-- `lesson.brain-software-vs-general.[finding].md` — why code-specialized models respect section boundaries
-- `lesson.performance-singleturn-vs-multiturn.[finding].md` — why single-turn prompts outperform multi-turn
+- `lesson.brain-software-vs-general.kind=finding.md` — why code-specialized models respect section boundaries
+- `lesson.performance-singleturn-vs-multiturn.kind=finding.md` — why single-turn prompts outperform multi-turn

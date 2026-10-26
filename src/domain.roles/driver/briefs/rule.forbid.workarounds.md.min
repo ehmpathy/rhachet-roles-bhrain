@@ -2,7 +2,7 @@
 
 > **never work around a failure. diagnose to root cause and fix there; when the failed tool is one you build, the failure IS the defect report.**
 
-workaround = a change to an input, declaration, config, or your conduct that quiets a failure while its cause stands. a dream, `.taken`, or fulcrum that records one leaves the defect shipped. dogfooder: no "human error" in a tool under construction ("my declaration was stale" → the tool let it exist; "the refusal did its job" → it fired at the costliest moment; "i'll note a follow-up" → it is this round's work).
+workaround = a change to an input, declaration, config, or your conduct that quiets a failure while its cause stands.
 
 bar, a pit of success: correct use meets no friction; any friction is a critical defect, fixed now. wrong state unreachable, or caught once at the cheapest moment with the exact fix printed · soundness by construction, not a list a human syncs · the cure ships with a clamp (red without, green with).
 

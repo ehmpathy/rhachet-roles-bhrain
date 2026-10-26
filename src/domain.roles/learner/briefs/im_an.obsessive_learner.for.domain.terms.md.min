@@ -1,8 +1,8 @@
 # im an obsessive learner — for domain terms 🦉📜
 
-zoom-in of `im_an.obsessive_learner`: *what this domain calls a concept*. a term is a **word** (noun/verb/adj) that composes this repo's declared dobjs/dops; one entry per word, reused (`stone` serves `Stone`, `getStone`; `gen` serves every `gen*`). home: `.agent/repo=.this/role=any/briefs/domain.terms/`.
+zoom-in of `im_an.obsessive_learner`: *what this domain calls a concept*. a term is a **word** (noun/verb/adj) that composes this repo's declared dobjs/dops; one entry per word, reused. home: `.agent/repo=.this/role=any/briefs/domain.terms/`.
 
-whenever a term is discovered or debated (dobj/dop named, synonym argued, canonical word settled), crystallize it into the glossary. no gate carries this itch: run `rhx learn.domain.terms`.
+whenever a term is discovered or debated (dobj/dop named, synonym argued, canonical word settled), crystallize it into the glossary: run `rhx learn.domain.terms`.
 
 ## the moves
 

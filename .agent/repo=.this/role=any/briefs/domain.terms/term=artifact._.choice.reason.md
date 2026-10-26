@@ -67,7 +67,7 @@ adjacent concepts the librarian's ontology already declares:
 | word | why not |
 |---|---|
 | `file` | names the **storage unit**, not the deliverable. a term cluster is three files and one artifact; the counts do not line up, which is the tell |
-| `document` | 🔴 **the librarian already declares it** (`kno201.documents._.[catalog]`) as a materialization of a concept — an article, a catalog, a demo, a lesson. to borrow it here would overload a declared word onto a second concept (`rule.forbid.domain-term-ambiguity`), and a skill is an artifact that is no document |
+| `document` | 🔴 **the librarian already declares it** (`kno201.documents._.kind=catalog`) as a materialization of a concept — an article, a catalog, a demo, a lesson. to borrow it here would overload a declared word onto a second concept (`rule.forbid.domain-term-ambiguity`), and a skill is an artifact that is no document |
 | `output` | names the **relation to a producer**. an artifact outlives its producer, which is the property that earns the word |
 | `deliverable` | implies a recipient who asked for it. most artifacts here are volunteered — a dream no one requested, a fulcrum no one asked to be told |
 | `record` | narrower. a record **attests**; an artifact may also **do work**. a skill and a guard are no records |

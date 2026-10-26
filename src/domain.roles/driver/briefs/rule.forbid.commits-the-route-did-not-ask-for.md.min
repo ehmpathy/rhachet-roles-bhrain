@@ -2,7 +2,7 @@
 
 > **a driver commits when the route ASKS for a commit, or when the route is FINISHED. every other commit is forbidden, even hygiene.**
 
-an overflowed lane is the commit's real pull. answer with a **guard edit** (narrow that lane's `--paths-with`, let the GUARD run it), never a commit (changes what reviewers see) or a hand-run `rhx review` (`rule.forbid.hand-run-reviews`).
+an overflowed lane: answer with a **guard edit** (narrow that lane's `--paths-with`, let the GUARD run it), never a commit (changes what reviewers see) or a hand-run `rhx review` (`rule.forbid.hand-run-reviews`).
 
 sanctioned: (1) a stone or guard names a commit as deliverable: name the stone · (2) route finished, `rhx route.drive` reports no next stone. quota is not a warrant: even with quota, the route must ask.
 

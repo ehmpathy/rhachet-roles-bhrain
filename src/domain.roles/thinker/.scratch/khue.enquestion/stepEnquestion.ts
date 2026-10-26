@@ -100,7 +100,7 @@ const template = genTemplate<StitcherDesired['threads']>({
             'cognition/cog401.questions.2.1.primitives.rough._.md',
             'cognition/cog501.cortal.assemblylang.4.structure._.ponder.md',
             'cognition/cog501.cortal.assemblylang.4.structure.ponder.[article].usage.md',
-            'thinker.tactics/<enquestion>._.[article].md',
+            'thinker.tactics/<enquestion>._.kind=article.md',
           ]),
         ],
       }),

@@ -2,7 +2,7 @@
 
 > **when you see a small, safe, clean fix — do it now. never defer it.**
 
-too big → catch a dream (+ a fulcrum if the deferral was a JUDGMENT). a deferral is never a mention that evaporates. pair: `rule.always.catch-dreams-for-followups`.
+too big → catch a dream (+ a fulcrum if the deferral was a JUDGMENT). pair: `rule.always.catch-dreams-for-followups`.
 
 two questions, which grade the FIX, never the scope:
 1. SAFE? no behavior beyond what you came for, no risk to work you cannot see
@@ -17,7 +17,4 @@ safe + clean → pull it in now. safe, not clean → dream + fulcrum. unsafe →
 | real work (rename across files, contract change, migration) | dream + fulcrum |
 | unsure it is small | try it; a revert is cheap |
 | round ends with more dreams than repairs | default was inverted; audit |
-
-dream = the work; fulcrum = the decision to defer (`rule.always.itemize-the-fulcrums-you-best-guess`).
-
 blocker: a small safe clean fix seen and deferred · a deferral with no caught dream · a dirt deferral with no fulcrum · a rippled change smuggled in (fails CLEAN) · the batch (small fixes saved for the end).

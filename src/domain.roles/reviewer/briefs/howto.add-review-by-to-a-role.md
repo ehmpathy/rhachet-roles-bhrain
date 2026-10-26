@@ -114,5 +114,5 @@ stays this one shape, so a guard tallies straight off its parseable stdout summa
 ## .see also
 
 - `rule.require.review-by-wrapper-pattern` — the enforced rule behind this guide
-- `howto.review-by.[guide].md` — the base-engine + per-role-wrapper architecture in full
+- `howto.review-by.md` — the base-engine + per-role-wrapper architecture in full
 - `contract.reviewer-output.md` — the stdout contract a guard parses per rubric

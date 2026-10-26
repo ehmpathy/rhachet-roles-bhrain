@@ -110,7 +110,7 @@ const template = genTemplate<StitcherDesired['threads']>({
             'cognition/cog401.questions.2.1.primitives.rough._.md',
             'cognition/cog501.cortal.assemblylang.4.structure._.ponder.md',
             'cognition/cog501.cortal.assemblylang.4.structure.ponder.[article].usage.md',
-            'librarian.tactics/[brief].verbiage.outline.over.narrative.md',
+            'librarian.tactics/kind=brief.verbiage.outline.over.narrative.md',
           ]),
 
           // applied briefs; enables composition in domain specific workflows

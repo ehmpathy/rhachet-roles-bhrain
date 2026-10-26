@@ -114,4 +114,4 @@ git diff HEAD~1 -- package.json
 ## .see also
 
 - `howto.bisect.[lesson]` — binary search for harder-to-find regressions
-- `howto.acceptance-test-setup.[lesson]` — why `link:.` matters for this repo
+- `howto.acceptance-test-setup` — why `link:.` matters for this repo

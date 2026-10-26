@@ -30,7 +30,7 @@ ask: "is this concept named the same way everywhere it appears?"
 when you find the same concept under two or more words:
 
 1. confirm they are truly one concept (not a distinction concealed under a shared shape)
-2. choose the canonical word (`howto.domain-term-disputes.[guide].md` when arguable)
+2. choose the canonical word (`howto.domain-term-disputes.md` when arguable)
 3. itemize it (`rule.require.domain-term-itemization`); conform the other uses, or leave them
    until disturbed (no forced mass-rewrite)
 

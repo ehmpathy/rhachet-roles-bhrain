@@ -8,8 +8,6 @@ test, before the word: 1. *what are ALL the instances it must cover?* 2. *does t
 
 row uncovered → too narrow: widen or split · covers every row and every adjacent concept → too wide: it is the genus, find the differentia · covers all, excludes neighbours → holds.
 
-cases: `degenerate` (excludes a complete all-deterministic route) · `knowledge` vs a brief (genus: skills carry it too) · `tool` vs a brief (covers all four rungs) · `rung` unqualified (two senses, one slot).
-
 | when… | then… |
 |---|---|
 | you name a relation between two concepts | list every pair it must hold over |
@@ -17,8 +15,6 @@ cases: `degenerate` (excludes a complete all-deterministic route) · `knowledge`
 | you reach for a term of art for precision | precision makes it narrow; check excluded rows |
 | a candidate covers every instance | check adjacent concepts too |
 | you cannot list a second instance | the concept may not earn a word yet |
-
-precedes the glossary rules: cheapest at authorship, before any citation exists.
 
 blocker: a term proposed with one instance cited · an enumeration with an uncovered row · a term that covers every row and its neighbours.
 false positive: a concept with genuinely one instance (say why).

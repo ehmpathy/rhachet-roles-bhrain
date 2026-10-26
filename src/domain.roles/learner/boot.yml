@@ -3,8 +3,8 @@ budget:
   # that figure, and the halt, come from `rhx git.repo.test --what integration --scope path://roleBootClamps --mode apply`.
   # each min carries only its cue; its argument sits in the `.md` beside it. never cut a cue to
   # fit. a halt here means a min grew: tighten its cue rows or move its argument out. the cap
-  # must stay under 11_000, the max the director set; never raise it past that.
-  tokens: 10_500
+  # is 10_000, the figure the owner set on #692; never raise it past that.
+  tokens: 10_000
 always:
   briefs:
     say:
@@ -93,7 +93,7 @@ always:
 
       # domain-term templates + guides (learner tools for HOW to distill)
       - briefs/template.domain-term.md
-      - briefs/howto.domain-term-disputes.[guide].md
+      - briefs/howto.domain-term-disputes.md
 
       # 🔴 the WHY under every rule above. say-level, and it is not a hedge on the
       # fixed-footprint policy — it is what that policy is FOR.

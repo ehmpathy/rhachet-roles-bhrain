@@ -1,0 +1,8 @@
+# .what = what the architect loads at session start: its one brief, said whole
+# .why  = the registry does not hold this role, so no seat links it; this spec is what the loader
+#         boots from its dir, and the budget holds it like every other role here
+budget:
+  # a cap, not a target: the least multiple of 250 strictly above what the role costs as a seat
+  # boots it. the clamp is roleBootClamps.integration.test.ts. never cut a cue to fit
+  tokens: 1_500
+briefs: {}

@@ -1,0 +1,12 @@
+# .what = what the reflector loads at session start: its readme alone
+# .why  = the reflector holds no briefs, and its skills are reached by name when a reflection
+#         runs, so each boots at ref: addressable, at the cost of its path
+budget:
+  # a cap, not a target: the least multiple of 250 strictly above what the role costs as a seat
+  # boots it. the clamp is roleBootClamps.integration.test.ts. never cut a cue to fit
+  tokens: 500
+always:
+  briefs:
+    say: []
+  skills:
+    say: []

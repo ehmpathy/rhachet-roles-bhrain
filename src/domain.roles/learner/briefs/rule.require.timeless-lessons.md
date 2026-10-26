@@ -16,10 +16,10 @@ history" — it is "do not mix the two in one file."**
 ## .why — the mix is what makes a brief rot, not the history itself
 
 the librarian's ontology already draws this line
-(`kno101.primitives.1.ontology.[article].frame.docs_as_materializations`): **concepts** are
+(`kno101.primitives.1.ontology.kind=article.frame.docs_as_materializations`): **concepts** are
 patterns in reality, **instances** are the atoms of experience, and a **document** materializes a
 concept by an arrangement of instances. a demo is the archetype whose job is *"how this instance
-exemplifies the concept"* (`kno201.documents._.[catalog]`).
+exemplifies the concept"* (`kno201.documents._.kind=catalog`).
 
 so a brief that carries its own episode inline is **two archetypes in one file**, and each one
 degrades the other:
@@ -171,7 +171,7 @@ this one says *where it goes instead* — which is what makes it obeyable rather
 
 - `rule.require.rules-are-clusters` (librarian) — the `example=$id` ejection this applies to a
   brief's episodes
-- `kno201.documents._.[catalog]` (librarian) — the archetype a chronicle actually is: a **demo**
+- `kno201.documents._.kind=catalog` (librarian) — the archetype a chronicle actually is: a **demo**
 - `rule.forbid.chronological-accretion` (ehmpathy/mechanic, `lang.prose/`) — the doc-level twin,
   and the home for the one case that has no ejection
 - `rule.require.timeless-comments` (ehmpathy/mechanic) — the precedent this adapts

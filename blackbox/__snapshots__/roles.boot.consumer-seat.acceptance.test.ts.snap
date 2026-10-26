@@ -3,7 +3,7 @@
 exports[`roles.boot.consumer-seat.acceptance given: [case1] a consumer repo that links the learner role when: [t0] the consumer boots the linked role then: its booted say paths, briefs and skills, match the snapshot 1`] = `
 {
   "briefs": [
-    ".agent/repo=bhrain/role=learner/briefs/howto.domain-term-disputes.[guide].md.min",
+    ".agent/repo=bhrain/role=learner/briefs/howto.domain-term-disputes.md.min",
     ".agent/repo=bhrain/role=learner/briefs/im_an.obsessive_learner.for.domain.glyphs.md.min",
     ".agent/repo=bhrain/role=learner/briefs/im_an.obsessive_learner.for.domain.invariants.md.min",
     ".agent/repo=bhrain/role=learner/briefs/im_an.obsessive_learner.for.domain.terms.md.min",
@@ -55,9 +55,9 @@ exports[`roles.boot.consumer-seat.acceptance given: [case2] a consumer repo that
 {
   "briefs": [
     ".agent/repo=bhrain/role=driver/briefs/howdoes.the-review-gates-you-drive-within.md.min",
-    ".agent/repo=bhrain/role=driver/briefs/howto.drive-routes.[guide].md.min",
-    ".agent/repo=bhrain/role=driver/briefs/howto.navigate-fulcrum-choices.[guide].md.min",
-    ".agent/repo=bhrain/role=driver/briefs/research.importance-of-focus.[philosophy].md.min",
+    ".agent/repo=bhrain/role=driver/briefs/howto.drive-routes.md.min",
+    ".agent/repo=bhrain/role=driver/briefs/howto.navigate-fulcrum-choices.md.min",
+    ".agent/repo=bhrain/role=driver/briefs/research.importance-of-focus.kind=philosophy.md.min",
     ".agent/repo=bhrain/role=driver/briefs/rule.always.absorb-every-concern.md.min",
     ".agent/repo=bhrain/role=driver/briefs/rule.always.archive-the-wishers-words-verbatim.md.min",
     ".agent/repo=bhrain/role=driver/briefs/rule.always.bear-every-self-review.md.min",
@@ -105,7 +105,7 @@ exports[`roles.boot.consumer-seat.acceptance given: [case2] a consumer repo that
 exports[`roles.boot.consumer-seat.acceptance given: [case3] a consumer repo that links the librarian role when: [t0] the consumer boots the linked role then: its booted say paths, briefs and skills, match the snapshot 1`] = `
 {
   "briefs": [
-    ".agent/repo=bhrain/role=librarian/briefs/knowledge/kno201.documents._.[catalog].md",
+    ".agent/repo=bhrain/role=librarian/briefs/knowledge/kno201.documents._.kind=catalog.md",
     ".agent/repo=bhrain/role=librarian/briefs/rule.always.boot-an-oversized-subdomain-as-its-catalog.md.min",
     ".agent/repo=bhrain/role=librarian/briefs/rule.forbid.brackets-in-filenames.md.min",
     ".agent/repo=bhrain/role=librarian/briefs/rule.forbid.itemization-without-coordinates.md.min",

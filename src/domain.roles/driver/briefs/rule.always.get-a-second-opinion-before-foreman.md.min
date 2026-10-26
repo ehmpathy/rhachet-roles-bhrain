@@ -1,7 +1,5 @@
 # rule.always.get-a-second-opinion-before-foreman
 
-> do not knock on the foreman's door until you have phoned a friend.
-
 one peer opinion is owed before any escalation: before `--as blocked` (is it truly a wall?) · before "which do you prefer?" · before you report an undiagnosable defect (ask the role that owns it) · before you label two reviewers irreconcilable (ask a third).
 
 phone the RIGHT friend: implementation/failure modes → **mechanic** · boundaries/decomposition/word choice → **architect** · cli/api/errors/output → **ergonomist** · where a lesson or term belongs → **learner**/**librarian** · testable behavior/criterion/scope → **behaver**.

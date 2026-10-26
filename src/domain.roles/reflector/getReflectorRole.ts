@@ -9,6 +9,7 @@ export const ROLE_REFLECTOR: Role = Role.build({
   name: 'Reflector',
   purpose: 'preserve experiences, reflect to extract lessons',
   readme: { uri: __dirname + '/readme.md' },
+  boot: { uri: __dirname + '/boot.yml' },
   traits: [],
   skills: {
     dirs: [{ uri: __dirname + '/skills' }],

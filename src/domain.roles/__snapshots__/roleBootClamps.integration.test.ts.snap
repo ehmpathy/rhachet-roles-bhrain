@@ -2,7 +2,7 @@
 
 exports[`roleBootClamps given: [case1] the learner role boot when: [t0] its boot.yml is read then: its budget and \`not\` list match the snapshot 1`] = `
 {
-  "budgetTokens": 10500,
+  "budgetTokens": 10000,
   "not": [],
 }
 `;
@@ -10,7 +10,7 @@ exports[`roleBootClamps given: [case1] the learner role boot when: [t0] its boot
 exports[`roleBootClamps given: [case1] the learner role boot when: [t1] the briefs it boots at say are read whole then: every booted line matches the snapshot 1`] = `
 [
   {
-    "file": "learner/briefs/howto.domain-term-disputes.[guide].md.min",
+    "file": "learner/briefs/howto.domain-term-disputes.md.min",
     "lines": [
       "# howto.domain-term-disputes",
       "",
@@ -32,8 +32,6 @@ exports[`roleBootClamps given: [case1] the learner role boot when: [t1] the brie
       "|---|---|",
       "| canonical holds | disputed word becomes a forbidden synonym; RESOLVED |",
       "| disputed word wins | it replaces the canonical term, or becomes a new term (distinct concept) with its own cluster |",
-      "",
-      "example: \`foamie\` vs \`foamboard\`: board-type set is \`longboard\`/\`shortboard\`/\`foamboard\` (one shape); slang breaks symmetry → keep \`foamboard\`, forbid \`foamie\`.",
     ],
   },
   {
@@ -75,9 +73,6 @@ exports[`roleBootClamps given: [case1] the learner role boot when: [t1] the brie
       "|---|---|---|",
       "| nature | of what the domain is | the domain was misread (not *"inconvenient"*) |",
       "| nurture | we chose it, paid in incidents | incidents no longer apply or cost changed (not *"i'd choose differently"*) |",
-      "",
-      "nature: *a machine is never blank*, so \`upgrade\` is accurate, \`install\` misleads. nurture: *one entrypoint*.",
-      "",
       "## the shape",
       "",
       "1. **.what** — rule, one line, imperative",
@@ -98,9 +93,9 @@ exports[`roleBootClamps given: [case1] the learner role boot when: [t1] the brie
     "lines": [
       "# im an obsessive learner — for domain terms 🦉📜",
       "",
-      "zoom-in of \`im_an.obsessive_learner\`: *what this domain calls a concept*. a term is a **word** (noun/verb/adj) that composes this repo's declared dobjs/dops; one entry per word, reused (\`stone\` serves \`Stone\`, \`getStone\`; \`gen\` serves every \`gen*\`). home: \`.agent/repo=.this/role=any/briefs/domain.terms/\`.",
+      "zoom-in of \`im_an.obsessive_learner\`: *what this domain calls a concept*. a term is a **word** (noun/verb/adj) that composes this repo's declared dobjs/dops; one entry per word, reused. home: \`.agent/repo=.this/role=any/briefs/domain.terms/\`.",
       "",
-      "whenever a term is discovered or debated (dobj/dop named, synonym argued, canonical word settled), crystallize it into the glossary. no gate carries this itch: run \`rhx learn.domain.terms\`.",
+      "whenever a term is discovered or debated (dobj/dop named, synonym argued, canonical word settled), crystallize it into the glossary: run \`rhx learn.domain.terms\`.",
       "",
       "## the moves",
       "",
@@ -165,10 +160,6 @@ exports[`roleBootClamps given: [case1] the learner role boot when: [t1] the brie
       "",
       "rungs 2-4 are rhachet's determinism spectrum (\`harden\`); **entool spans all five**.",
       "",
-      "only 🪨 is deterministic, testable, free. a brain pays tokens, time, and 🔴 probability (the answer can be WRONG). name root costs, never "brain-turns".",
-      "",
-      "a brief often UNLOCKS a skill: that it exists, when to reach for it, the judgment it cannot make.",
-      "",
       "## a higher rung never retires a lower one",
       "",
       "*"we entooled it, delete the brief"* is a defect: the skill mechanized capacity, never the concept; a solid skill with no brief is a black box. move an artifact one rung; rung 3 is often the honest limit. 🗿 the most general rigid skill is a route.",
@@ -182,8 +173,6 @@ exports[`roleBootClamps given: [case1] the learner role boot when: [t1] the brie
       "# philosophy.entoolment-is-the-pinnacle.concepts-vs-capacity",
       "",
       "> 📚 a **brief** confers prethought **concepts** — what a brain thinks *with*. 💪 a **skill** confers prethought **capacity** — what a brain no longer has to *do*.",
-      "",
-      "\`knowledge\` is the genus, not the differentia; it names neither.",
       "",
       "test: *does the reader end with a thought to REASON WITH, or a step they no longer DO?* concept → brief · step → skill · both (common) → write both, paired.",
       "",
@@ -204,15 +193,13 @@ exports[`roleBootClamps given: [case1] the learner role boot when: [t1] the brie
       "",
       "> a route IS a 🔩 rigid skill: deterministic entrypoint, mixed operations + orchestration.",
       "",
-      "deterministic: stones, order, guards, passage ledger, review judge (they refuse, order, and tally identically). probabilistic: the work at each stone. the deterministic half drives the brain — it cannot pass by decision, never recalls what is next, and is pulled back to the road.",
-      "",
       "| the leftover work is… | pave as… |",
       "|---|---|",
       "| a step, same every time | 🪨 solid skill |",
       "| a sequence of commands | 💧 or 🔩 skill |",
       "| judgment at several points, order matters | 🔩 a route |",
       "",
-      "do not route what could be entooled: a route around deterministic work charges imagine cost at every stone.",
+      "do not route what could be entooled.",
       "",
       "🗿 offroad work earns its keep by what it paves: end it with a route left behind.",
     ],
@@ -224,7 +211,7 @@ exports[`roleBootClamps given: [case1] the learner role boot when: [t1] the brie
       "",
       "> **pavement saves nature.** pavement is reusable prethought (brief, howto, term cluster, resolved dispute, route): somebody spent the energy, and the next traveler pays a read.",
       "",
-      "pave once (first traveler); improvise every time (every traveler, forever). write the briefs that will be walked, then walk them.",
+      "write the briefs that will be walked, then walk them.",
       "",
       "| failure | shape | fix |",
       "|---|---|---|",
@@ -267,7 +254,7 @@ exports[`roleBootClamps given: [case1] the learner role boot when: [t1] the brie
       "",
       "> **every followup you do not do becomes a caught dream, and the route that found it keeps a symlink to it.**",
       "",
-      "first run SAFE/CLEAN (\`rule.always.fix-forward-under-scouts-honor\`): safe and clean → fix now, no dream. a spoken followup is a deletion; a dream keeps the cue, the reason deferred, the shape of the fix. shape: \`term=artifact.dream._.choice._.md\`.",
+      "first run SAFE/CLEAN (\`rule.always.fix-forward-under-scouts-honor\`): safe and clean → fix now, no dream. shape: \`term=artifact.dream._.choice._.md\`.",
       "",
       "\`\`\`sh",
       "rhx symlink --at "$route/dreams/v$date.$kind.$slug.md" \\",
@@ -312,7 +299,7 @@ exports[`roleBootClamps given: [case1] the learner role boot when: [t1] the brie
       "",
       "test: *could the next traveler run this without me in the room?* yes but they'd ask me one question → that question is the undiscoverable step · judgment at one point → leave with the brain, say so · at several → route. write at the highest rung you can defend.",
       "",
-      "a skill paves commands; a route paves judgments. do not route what could be entooled. a skill owes: idempotent · named for motive · fails loud and names the fix · \`--help\` · right tree.",
+      "do not route what could be entooled. a skill owes: idempotent · named for motive · fails loud and names the fix · \`--help\` · right tree.",
       "",
       "blocker: a procedure explained with no durable artifact · an offroad run that left no route.",
       "nitpick: written at 💧 where 🔩 was in reach · a route over deterministic work · a premature skill (run once).",
@@ -460,7 +447,7 @@ exports[`roleBootClamps given: [case1] the learner role boot when: [t1] the brie
       "",
       "sort by *"$word, of WHAT?"*: two answers → qualify · one answer, two referents → split.",
       "",
-      "an inconsistency repair can forbid this rule's cure: \`lane\` became a forbidden synonym of \`reviewer\`, yet \`reviewer\` was itself overloaded and \`lane\` was its one candidate word. enumerate the senses of the word you keep BEFORE the inconsistency settles.",
+      "enumerate the senses of the word you keep BEFORE the inconsistency settles.",
       "",
       "blocker: a term overloaded across distinct concepts in a contract · an inconsistency settled with no check that the kept word was also overloaded.",
       "false positive: a boundary-qualified pair (\`route.guard.rung\` vs \`tool.skill.rung\`) · generic english · a synonym (that is \`rule.forbid.domain-term-synonyms\`).",
@@ -501,7 +488,7 @@ exports[`roleBootClamps given: [case1] the learner role boot when: [t1] the brie
       "",
       "> a wisher's verbatim words live in ONE artifact: their seed. every other artifact (brief, rule, invariant, yield, fulcrum, \`.reason\`, commit body, PR) states the claim in its own words: no quote, no seed-path citation.",
       "",
-      "the ban covers the CITATION: a seed path is phantom once published, rots, and frames a law as a report of an utterance. a law carries why it holds, never who spoke it.",
+      "the ban covers the CITATION. a law carries why it holds, never who spoke it.",
       "",
       "\`\`\`md",
       "👎  > *"only urgent concessions…"* — the wisher (seed S14)",
@@ -532,8 +519,6 @@ exports[`roleBootClamps given: [case1] the learner role boot when: [t1] the brie
       "> \`declare-once\` binds a CLAIM, not a CUE. a costly defect earns as many cues as it takes, from as many angles as you can find.",
       "",
       "claim = asserts a fact a reader may act on. cue = a detector (when-row, smell, symptom, a rule aimed at one defect from one angle).",
-      "",
-      "failure modes invert: two claims drift and disagree; two cues can only both miss, or one catch. a redundant cue carries no drift risk.",
       "",
       "test: *could these two passages DISAGREE?* yes → claims: declare one, cite it · no → cues: keep both, look for a third.",
       "",
@@ -582,7 +567,7 @@ exports[`roleBootClamps given: [case1] the learner role boot when: [t1] the brie
     "lines": [
       "# rule.require.domain-term-itemization",
       "",
-      "every **domain term** (noun, verb, adj that composes this repo's declared dobjs and dops) is itemized into \`.agent/repo=.this/role=any/briefs/domain.terms/\`. one entry per word, REUSED: \`stone\` serves \`Stone\`, \`getStone\`; \`gen\` serves every \`gen*\`.",
+      "every **domain term** (noun, verb, adj that composes this repo's declared dobjs and dops) is itemized into \`.agent/repo=.this/role=any/briefs/domain.terms/\`. one entry per word, REUSED.",
       "",
       "| counts | does NOT count |",
       "|---|---|",
@@ -610,8 +595,6 @@ exports[`roleBootClamps given: [case1] the learner role boot when: [t1] the brie
       "",
       "row uncovered → too narrow: widen or split · covers every row and every adjacent concept → too wide: it is the genus, find the differentia · covers all, excludes neighbours → holds.",
       "",
-      "cases: \`degenerate\` (excludes a complete all-deterministic route) · \`knowledge\` vs a brief (genus: skills carry it too) · \`tool\` vs a brief (covers all four rungs) · \`rung\` unqualified (two senses, one slot).",
-      "",
       "| when… | then… |",
       "|---|---|",
       "| you name a relation between two concepts | list every pair it must hold over |",
@@ -619,8 +602,6 @@ exports[`roleBootClamps given: [case1] the learner role boot when: [t1] the brie
       "| you reach for a term of art for precision | precision makes it narrow; check excluded rows |",
       "| a candidate covers every instance | check adjacent concepts too |",
       "| you cannot list a second instance | the concept may not earn a word yet |",
-      "",
-      "precedes the glossary rules: cheapest at authorship, before any citation exists.",
       "",
       "blocker: a term proposed with one instance cited · an enumeration with an uncovered row · a term that covers every row and its neighbours.",
       "false positive: a concept with genuinely one instance (say why).",
@@ -732,8 +713,8 @@ exports[`roleBootClamps given: [case1] the learner role boot when: [t3] the real
 
 exports[`roleBootClamps given: [case1] the learner role boot when: [t4] it boots in the form a seat boots it then: its seat payload is pinned, so growth is a snapshot diff 1`] = `
 {
-  "budget": 10500,
-  "payload": 10418,
+  "budget": 10000,
+  "payload": 9915,
 }
 `;
 
@@ -741,7 +722,7 @@ exports[`roleBootClamps given: [case1] the learner role boot when: [t5] the real
 
 exports[`roleBootClamps given: [case2] the driver role boot when: [t0] its boot.yml is read then: its budget and \`not\` list match the snapshot 1`] = `
 {
-  "budgetTokens": 10500,
+  "budgetTokens": 10000,
   "not": [],
 }
 `;
@@ -769,7 +750,7 @@ exports[`roleBootClamps given: [case2] the driver role boot when: [t1] the brief
     ],
   },
   {
-    "file": "driver/briefs/howto.drive-routes.[guide].md.min",
+    "file": "driver/briefs/howto.drive-routes.md.min",
     "lines": [
       "# howto: drive routes",
       "",
@@ -786,15 +767,15 @@ exports[`roleBootClamps given: [case2] the driver role boot when: [t1] the brief
       "",
       "self-reviews: the review IS the work. peer reviews: address all blockers, maximize nitpick fixes.",
       "",
-      "disagree? that is a \`[REFUTE]\` in your \`.taken\`, never a halt: argue with cited evidence, \`--as absorbed --that <slug>\`, re-arrive. a code fix is not a reply either; the debt is keyed to the reviewer (\`rule.forbid.unanswered-exits-from-a-blocker\`).",
+      "disagree? that is a \`[REFUTE]\` in your \`.taken\`, never a halt: argue with cited evidence, \`--as absorbed --that <slug>\`, re-arrive. a code fix is not a reply either (\`rule.forbid.unanswered-exits-from-a-blocker\`).",
     ],
   },
   {
-    "file": "driver/briefs/howto.navigate-fulcrum-choices.[guide].md.min",
+    "file": "driver/briefs/howto.navigate-fulcrum-choices.md.min",
     "lines": [
       "# howto: navigate fulcrum choices",
       "",
-      "a **fulcrum** = a point where a small choice tips a large outcome (a name that spreads, a shape callers lean on, a boundary later work respects). it must not halt the road.",
+      "a **fulcrum** = a point where a small choice tips a large outcome. it must not halt the road.",
       "",
       "1. retain it in the fulcrum inventory; do not stop the drive",
       "2. best-guess it, offer rework: "i chose X; if you prefer Y, it is a clean rework"",
@@ -805,13 +786,13 @@ exports[`roleBootClamps given: [case2] the driver role boot when: [t1] the brief
     ],
   },
   {
-    "file": "driver/briefs/research.importance-of-focus.[philosophy].md.min",
+    "file": "driver/briefs/research.importance-of-focus.kind=philosophy.md.min",
     "lines": [
       "# research.importance-of-focus",
       "",
       "> to chase many paths, is to reach none. focus.",
       "",
-      "focus enables depth and mastery; attention is limited and switches cost. one stone at a time. 🦉",
+      "one stone at a time. 🦉",
     ],
   },
   {
@@ -901,7 +882,7 @@ exports[`roleBootClamps given: [case2] the driver role boot when: [t1] the brief
       "",
       "> **every followup you do not do becomes a caught dream, and the route that found it keeps a symlink to it.**",
       "",
-      "first run SAFE/CLEAN (\`rule.always.fix-forward-under-scouts-honor\`): safe and clean → fix now, no dream. a spoken followup is a deletion; a dream keeps the cue, the reason deferred, the shape of the fix. shape: \`term=artifact.dream._.choice._.md\`.",
+      "first run SAFE/CLEAN (\`rule.always.fix-forward-under-scouts-honor\`): safe and clean → fix now, no dream. shape: \`term=artifact.dream._.choice._.md\`.",
       "",
       "\`\`\`sh",
       "rhx symlink --at "$route/dreams/v$date.$kind.$slug.md" \\",
@@ -969,8 +950,6 @@ exports[`roleBootClamps given: [case2] the driver role boot when: [t1] the brief
       "exhaustion unlocks the LEVEL, not the DEBT. the debt is keyed to the reviewer: an exhausted reviewer whose blocker you never answered still holds the stone, and the entrance gate refuses the next round. levers: answer it · budget top-up (if it must re-read) · human overrule.",
       "",
       "exhaustion is earned: budget burned without engagement is a coast. an exhausted level owes a \`.taken.by_self\` record (what you tried each round; what would fix that reviewer).",
-      "",
-      "re-arrival is cheap: the guard reuses any reviewer that returned 0 blockers, keyed on artifact hash (\`howdoes.the-guard-caches-a-clean-reviewer-by-artifact-hash\`).",
     ],
   },
   {
@@ -989,7 +968,7 @@ exports[`roleBootClamps given: [case2] the driver role boot when: [t1] the brief
       "",
       "loop: read each \`.given.by_peer\` → fix or marshal evidence → write \`.taken.by_self\` → \`--as absorbed --that <slug>\` → re-submit. the entrance gate refuses re-submit while a reviewer owes a \`.taken\`; a code fix does not stand in for the articulation.",
       "",
-      "persuade with a cited rule, path, or line; a bare "i disagree" converges no one.",
+      "persuade with a cited rule, path, or line.",
       "",
       "escalate only for: a foreman-only key · a wisher scope decision · two reviewers that demand opposites.",
       "",
@@ -1010,7 +989,7 @@ exports[`roleBootClamps given: [case2] the driver role boot when: [t1] the brief
       "",
       "a blocker that returns after your fix is a driver error: check whether you ever told the reviewer.",
       "",
-      "the gate counts REVIEWERS; this rule counts POINTS. on an APPROVED lane the gate holds zero, yet the reviewer re-raises every nitpick with no response. \`--as absorbed\` there with no \`.taken\` warns and does not refuse. only a \`.taken\` discharges a point.",
+      "on an APPROVED lane, \`--as absorbed\` with no \`.taken\` warns and does not refuse. only a \`.taken\` discharges a point.",
       "",
       "blocker: an open point with no \`.taken\` · a \`[REPAIR]\` with no current-file quote · a \`[REFUTE]\` with no evidence · a malfunction graded for a re-raise you never answered · a re-arrival with an open approved-lane point and no \`.taken\`.",
       "twin: \`rule.forbid.unanswered-exits-from-a-blocker\`.",
@@ -1082,7 +1061,7 @@ exports[`roleBootClamps given: [case2] the driver role boot when: [t1] the brief
     "lines": [
       "# rule.always.drive-autonomously",
       "",
-      "you drive the route. never ask "should i continue?": the human's enrollment IS the authorization. next stone shown → do the work, \`--as passed\`. self-reviews gate → do them until it clears.",
+      "you drive the route. never ask "should i continue?". next stone shown → do the work, \`--as passed\`. self-reviews gate → do them until it clears.",
       "",
       "stop only for: a genuine wall (\`--as blocked\`) · a guard that demands \`--as approved\` · a wish so contradictory intent cannot be inferred (state an assumption instead).",
       "",
@@ -1096,7 +1075,7 @@ exports[`roleBootClamps given: [case2] the driver role boot when: [t1] the brief
       "",
       "> **when you see a small, safe, clean fix — do it now. never defer it.**",
       "",
-      "too big → catch a dream (+ a fulcrum if the deferral was a JUDGMENT). a deferral is never a mention that evaporates. pair: \`rule.always.catch-dreams-for-followups\`.",
+      "too big → catch a dream (+ a fulcrum if the deferral was a JUDGMENT). pair: \`rule.always.catch-dreams-for-followups\`.",
       "",
       "two questions, which grade the FIX, never the scope:",
       "1. SAFE? no behavior beyond what you came for, no risk to work you cannot see",
@@ -1111,9 +1090,6 @@ exports[`roleBootClamps given: [case2] the driver role boot when: [t1] the brief
       "| real work (rename across files, contract change, migration) | dream + fulcrum |",
       "| unsure it is small | try it; a revert is cheap |",
       "| round ends with more dreams than repairs | default was inverted; audit |",
-      "",
-      "dream = the work; fulcrum = the decision to defer (\`rule.always.itemize-the-fulcrums-you-best-guess\`).",
-      "",
       "blocker: a small safe clean fix seen and deferred · a deferral with no caught dream · a dirt deferral with no fulcrum · a rippled change smuggled in (fails CLEAN) · the batch (small fixes saved for the end).",
     ],
   },
@@ -1121,8 +1097,6 @@ exports[`roleBootClamps given: [case2] the driver role boot when: [t1] the brief
     "file": "driver/briefs/rule.always.get-a-second-opinion-before-foreman.md.min",
     "lines": [
       "# rule.always.get-a-second-opinion-before-foreman",
-      "",
-      "> do not knock on the foreman's door until you have phoned a friend.",
       "",
       "one peer opinion is owed before any escalation: before \`--as blocked\` (is it truly a wall?) · before "which do you prefer?" · before you report an undiagnosable defect (ask the role that owns it) · before you label two reviewers irreconcilable (ask a third).",
       "",
@@ -1182,7 +1156,7 @@ exports[`roleBootClamps given: [case2] the driver role boot when: [t1] the brief
       "| its own gate has cleared | now re-arrive |",
       "| structural objection, an itemized fulcrum reserves the call | no \`.taken\`: halt, hand up objection + fulcrum row |",
       "",
-      "dark lanes: answers enlarge the diff and overflow lanes. remedy is a guard edit (\`--paths-with\`, \`--conversation\`), never a hand-run \`rhx review\`. a commit quota alone is no legit \`--as blocked\`: the stone must ASK for a commit (\`rule.forbid.commits-the-route-did-not-ask-for\`).",
+      "dark lanes: remedy is a guard edit (\`--paths-with\`, \`--conversation\`), never a hand-run \`rhx review\`. a commit quota alone is no legit \`--as blocked\`: the stone must ASK for a commit (\`rule.forbid.commits-the-route-did-not-ask-for\`).",
       "",
       "blocker artifact owes: runnable ask · levers spent · reviewer's point verbatim + your answer · fulcrum row if any.",
       "",
@@ -1205,11 +1179,9 @@ exports[`roleBootClamps given: [case2] the driver role boot when: [t1] the brief
       "| \`rhx route.guard.budget --for review --add N --stone <stone>\` | driver, ONLY with a warrant |",
       "| \`rhx route.mutate grant allow\` · \`--as approved\` · \`--as overruled\` · commit quota · \`absent\` credential · release auth | human |",
       "",
-      "no \`rhx\` command edits a guard; a hook seals it. \`rhx route.mutate grant get\` first: granted → edit; not → ask the human once per route. a hand-run \`rhx review\` is no lever (\`rule.forbid.hand-run-reviews\`). malfunction, self-review, and judge halts print remedies with no owner column: you sort.",
+      "\`rhx route.mutate grant get\` first: granted → edit; not → ask the human once per route. a hand-run \`rhx review\` is no lever (\`rule.forbid.hand-run-reviews\`). malfunction, self-review, and judge halts print remedies with no owner column: you sort.",
       "",
       "## budget: refused by default",
-      "",
-      "> inside the meter, taste counts. past the meter, only harm does.",
       "",
       "all three owed: a **live urgent concession** · a **target reviewer run dry** · a \`--stone\` for **one** stone.",
       "",
@@ -1248,7 +1220,7 @@ exports[`roleBootClamps given: [case2] the driver role boot when: [t1] the brief
       "",
       "> **a driver commits when the route ASKS for a commit, or when the route is FINISHED. every other commit is forbidden, even hygiene.**",
       "",
-      "an overflowed lane is the commit's real pull. answer with a **guard edit** (narrow that lane's \`--paths-with\`, let the GUARD run it), never a commit (changes what reviewers see) or a hand-run \`rhx review\` (\`rule.forbid.hand-run-reviews\`).",
+      "an overflowed lane: answer with a **guard edit** (narrow that lane's \`--paths-with\`, let the GUARD run it), never a commit (changes what reviewers see) or a hand-run \`rhx review\` (\`rule.forbid.hand-run-reviews\`).",
       "",
       "sanctioned: (1) a stone or guard names a commit as deliverable: name the stone · (2) route finished, \`rhx route.drive\` reports no next stone. quota is not a warrant: even with quota, the route must ask.",
       "",
@@ -1268,7 +1240,7 @@ exports[`roleBootClamps given: [case2] the driver role boot when: [t1] the brief
       "",
       "> **a driver never runs \`rhx review\` by hand. a review is summoned by the guard, or it does not happen.**",
       "",
-      "the invocation is the violation. harm: the party under review picks its own reviewer; the verdict costs no budget and gates naught.",
+      "the invocation is the violation.",
       "",
       "| situation | move |",
       "|---|---|",
@@ -1316,7 +1288,7 @@ exports[`roleBootClamps given: [case2] the driver role boot when: [t1] the brief
       "",
       "> a wisher's verbatim words live in ONE artifact: their seed. every other artifact (brief, rule, invariant, yield, fulcrum, \`.reason\`, commit body, PR) states the claim in its own words: no quote, no seed-path citation.",
       "",
-      "the ban covers the CITATION: a seed path is phantom once published, rots, and frames a law as a report of an utterance. a law carries why it holds, never who spoke it.",
+      "the ban covers the CITATION. a law carries why it holds, never who spoke it.",
       "",
       "\`\`\`md",
       "👎  > *"only urgent concessions…"* — the wisher (seed S14)",
@@ -1346,7 +1318,7 @@ exports[`roleBootClamps given: [case2] the driver role boot when: [t1] the brief
       "",
       "> **never work around a failure. diagnose to root cause and fix there; when the failed tool is one you build, the failure IS the defect report.**",
       "",
-      "workaround = a change to an input, declaration, config, or your conduct that quiets a failure while its cause stands. a dream, \`.taken\`, or fulcrum that records one leaves the defect shipped. dogfooder: no "human error" in a tool under construction ("my declaration was stale" → the tool let it exist; "the refusal did its job" → it fired at the costliest moment; "i'll note a follow-up" → it is this round's work).",
+      "workaround = a change to an input, declaration, config, or your conduct that quiets a failure while its cause stands.",
       "",
       "bar, a pit of success: correct use meets no friction; any friction is a critical defect, fixed now. wrong state unreachable, or caught once at the cheapest moment with the exact fix printed · soundness by construction, not a list a human syncs · the cure ships with a clamp (red without, green with).",
       "",
@@ -1375,12 +1347,12 @@ exports[`roleBootClamps given: [case2] the driver role boot when: [t3] the real 
   "driver/briefs/define.invariant.review.peer.exhausted.md",
   "driver/briefs/define.invariant.review.peer.judge.urgent-guides-the-budget-ask.md",
   "driver/briefs/define.invariant.review.peer.passage.md",
-  "driver/briefs/define.routes-are-gardened.[philosophy].md",
+  "driver/briefs/define.routes-are-gardened.kind=philosophy.md",
   "driver/briefs/howdoes.a-concern-travels-from-reviewer-to-absorption.md",
   "driver/briefs/howdoes.the-guard-caches-a-clean-reviewer-by-artifact-hash.md",
-  "driver/briefs/howto.create-routes.[ref].md",
-  "driver/briefs/howto.route-reminder.[guide].md",
-  "driver/briefs/howto.run-self-reviews.[guide].md",
+  "driver/briefs/howto.create-routes.kind=ref.md",
+  "driver/briefs/howto.route-reminder.md",
+  "driver/briefs/howto.run-self-reviews.md",
   "driver/briefs/im_a.bhrain_owl.md",
   "driver/briefs/rule.always.converge-with-reviewers.via-a-taken-per-point.example=the-approved-lane-that-re-raised.md",
   "driver/briefs/rule.forbid.unanswered-exits-from-a-blocker.example=the-28-iteration-stall.md",
@@ -1390,8 +1362,8 @@ exports[`roleBootClamps given: [case2] the driver role boot when: [t3] the real 
 
 exports[`roleBootClamps given: [case2] the driver role boot when: [t4] it boots in the form a seat boots it then: its seat payload is pinned, so growth is a snapshot diff 1`] = `
 {
-  "budget": 10500,
-  "payload": 10325,
+  "budget": 10000,
+  "payload": 9936,
 }
 `;
 
@@ -1399,7 +1371,7 @@ exports[`roleBootClamps given: [case2] the driver role boot when: [t5] the real 
 
 exports[`roleBootClamps given: [case3] the librarian role boot when: [t0] its boot.yml is read then: its budget and \`not\` list match the snapshot 1`] = `
 {
-  "budgetTokens": 5500,
+  "budgetTokens": 5000,
   "not": [
     "briefs/knowledge/kno101.*.docs_as_references.md",
     "briefs/knowledge/kno301.doc.compression.1.*",
@@ -1421,52 +1393,16 @@ exports[`roleBootClamps given: [case3] the librarian role boot when: [t0] its bo
 exports[`roleBootClamps given: [case3] the librarian role boot when: [t1] the briefs it boots at say are read whole then: every booted line matches the snapshot 1`] = `
 [
   {
-    "file": "librarian/briefs/knowledge/kno201.documents._.[catalog].md",
+    "file": "librarian/briefs/knowledge/kno201.documents._.kind=catalog.md",
     "lines": [
       "# 🧩 comparative catalog of document archetypes",
       "",
-      "## 📊 compressed overview",
-      "",
-      "| **archetype** | **what** |",
-      "|---------------|----------|",
-      "| 📖 **article**   | defines *what a concept is* |",
-      "| 🗂️ **catalog**   | organizes *how concepts/instances relate* |",
-      "| 🎬 **demo**      | exemplifies *how an instance shows a concept* |",
-      "| 🎓 **lesson**    | teaches *how a concept is learned/practiced* |",
-      "",
-      "---",
-      "",
-      "## 📖 1. article — definitional",
-      "**what:** clarifies *what a concept is* through explanation and boundary-setting",
-      "**forms:** encyclopedia entries, research papers, essays, reference guides",
-      "**examples:** Newton’s *Principia* (gravity), Wikipedia (photosynthesis), journal article (cognitive bias)",
-      "**role:** define, anchor, transmit shared meaning",
-      "",
-      "---",
-      "",
-      "## 🗂️ 2. catalog — organizational",
-      "**what:** maps *how instances or sub-concepts relate* within a system",
-      "**forms:** taxonomies, dictionaries, encyclopedias, databases, ontologies",
-      "**examples:** Linnaeus’ *Systema Naturae* (species), periodic table (elements), Roget’s Thesaurus (language)",
-      "**role:** organize, map, stabilize reference",
-      "",
-      "---",
-      "",
-      "## 🎬 3. demo — relational",
-      "**what:** shows *how a specific instance exemplifies a concept*",
-      "**forms:** case studies, simulations, narratives, worked examples, performances",
-      "**examples:** Portland (walkability), Ferrari F1-75 (racecar), clinical case (disease), role-play (conflict resolution)",
-      "**role:** reveal, bridge instance → concept, transmit intuitively",
-      "",
-      "---",
-      "",
-      "## 🎓 4. lesson — pedagogical",
-      "**what:** guides *how a concept is learned and practiced* via structured sequences",
-      "**forms:** textbooks, curricula, tutorials, workshops, training manuals",
-      "**examples:** Euclid’s *Elements* (geometry), coding tutorial (loops), biology chapter (cell division), first-aid manual",
-      "**role:** teach, scaffold, transmit across generations",
-      "",
-      "---",
+      "| **archetype** | **what** | **forms, examples, role** |",
+      "|---------------|----------|---------------------------|",
+      "| 📖 **article**   | defines *what a concept is* | \`kno201.documents.articles.kind=article.md\` |",
+      "| 🗂️ **catalog**   | organizes *how concepts/instances relate* | \`kno201.documents.catalogs.kind=article.md\` |",
+      "| 🎬 **demo**      | exemplifies *how an instance shows a concept* | \`kno201.documents.demos.kind=article.md\` |",
+      "| 🎓 **lesson**    | teaches *how a concept is learned/practiced* | \`kno201.documents.lessons.kind=article.md\` |",
       "",
       "## ✨ insight",
       "- 📖 **articles define**",
@@ -1474,7 +1410,7 @@ exports[`roleBootClamps given: [case3] the librarian role boot when: [t1] the br
       "- 🎬 **demos exemplify**",
       "- 🎓 **lessons teach**",
       "",
-      "each archetype materializes concepts from instances with a distinct treatment style, together forming a complementary system of knowledge.",
+      "each archetype materializes concepts from instances with a distinct treatment style; together they form a complementary system of knowledge.",
     ],
   },
   {
@@ -1522,10 +1458,6 @@ exports[`roleBootClamps given: [case3] the librarian role boot when: [t1] the br
       "",
       "binds new and renamed files. an extant bracketed name in a dependency's briefs stays until disturbed; re-seed it to its owner.",
       "",
-      "## .why",
-      "",
-      "brackets break glob, \`boot.yml\` entries, and shell; \`mvsafe\`/\`cpsafe\`/\`rmsafe\` need \`--literal\`. \`kind=\` is computable and globbable: \`*.kind=article.md\` returns the archetype.",
-      "",
       "| when… | then… |",
       "|---|---|",
       "| you name a new document with an archetype | \`kind=$archetype\` |",
@@ -1543,7 +1475,7 @@ exports[`roleBootClamps given: [case3] the librarian role boot when: [t1] the br
       "",
       "repair for \`howto.$topic.[guide].md\` is to drop the marker, not convert it. the \`._.\` cluster root stays (a different axis).",
       "",
-      "repair is file-first and by hand; a bulk rename cannot part a citation of a bad name from an instance.",
+      "a blind find-and-replace cannot part a citation of a bad name from an instance: a bulk rename names the on-purpose citers and leaves them be.",
       "",
       "governs filenames only. brackets in prose, links, tables, code blocks are untouched.",
       "",
@@ -1616,8 +1548,6 @@ exports[`roleBootClamps given: [case3] the librarian role boot when: [t1] the br
       "\`\`\`",
       "",
       "the root carries a pointer, never the zoom's body. (\`rule.require.summary-at-the-cluster-root\` names the root; this says whether to split.)",
-      "",
-      "why: an inline zoom costs its full body every boot; a peer at ref costs one path.",
       "",
       "| when… | then… |",
       "|---|---|",
@@ -1722,12 +1652,6 @@ exports[`roleBootClamps given: [case3] the librarian role boot when: [t1] the br
       "# rule.require.inventory-for-enumerable-concepts",
       "",
       "when a concept's entries are enumerable — dimensions nameable, positions closed — curate an inventory: one file per cell, addressed by coordinates, every cell accounted for. a prose list, grouped section, or partial catalog over it is a defect.",
-      "",
-      "## .why",
-      "",
-      "- an inventory generates cells from the axes before entries are collected, so an empty cell is a visible gap. a list cannot report absence",
-      "- lookup is an address, not a grep",
-      "- ref-only (one address per entry), so it scales at fixed cost",
       "",
       "| when… | then… |",
       "|---|---|",
@@ -1840,21 +1764,21 @@ exports[`roleBootClamps given: [case3] the librarian role boot when: [t1] the br
 exports[`roleBootClamps given: [case3] the librarian role boot when: [t3] the real \`rhachet roles boot\` boots it then: the briefs it boots at ref match the snapshot 1`] = `
 [
   "librarian/briefs/howto.curate-an-inventory.md",
-  "librarian/briefs/knowledge/kno101.primitives.1.ontology.[article].frame.docs_as_materializations.md",
-  "librarian/briefs/knowledge/kno101.primitives.2.rel.many_to_many.[article].md",
-  "librarian/briefs/knowledge/kno101.primitives.3.instances.[article].md",
-  "librarian/briefs/knowledge/kno101.primitives.4.documents.[article].md",
-  "librarian/briefs/knowledge/kno101.primitives.5.concepts.[article].md",
-  "librarian/briefs/knowledge/kno201.documents._.[article].md",
-  "librarian/briefs/knowledge/kno201.documents.articles.[article].md",
-  "librarian/briefs/knowledge/kno201.documents.catalogs.[article].md",
-  "librarian/briefs/knowledge/kno201.documents.demos.[article].md",
-  "librarian/briefs/knowledge/kno201.documents.lessons.[article].md",
-  "librarian/briefs/knowledge/kno301.doc.compression._.[article].md",
-  "librarian/briefs/knowledge/kno301.doc.enbrief.2.articulate.[article].md",
-  "librarian/briefs/knowledge/kno301.doc.enbrief.2.catalogize.[article].md",
-  "librarian/briefs/knowledge/kno301.doc.enbrief.2.demonstrate.[article].md",
-  "librarian/briefs/knowledge/kno401.actors.1.role.librarian.[article].md",
+  "librarian/briefs/knowledge/kno101.primitives.1.ontology.kind=article.frame.docs_as_materializations.md",
+  "librarian/briefs/knowledge/kno101.primitives.2.rel.many_to_many.kind=article.md",
+  "librarian/briefs/knowledge/kno101.primitives.3.instances.kind=article.md",
+  "librarian/briefs/knowledge/kno101.primitives.4.documents.kind=article.md",
+  "librarian/briefs/knowledge/kno101.primitives.5.concepts.kind=article.md",
+  "librarian/briefs/knowledge/kno201.documents._.kind=article.md",
+  "librarian/briefs/knowledge/kno201.documents.articles.kind=article.md",
+  "librarian/briefs/knowledge/kno201.documents.catalogs.kind=article.md",
+  "librarian/briefs/knowledge/kno201.documents.demos.kind=article.md",
+  "librarian/briefs/knowledge/kno201.documents.lessons.kind=article.md",
+  "librarian/briefs/knowledge/kno301.doc.compression._.kind=article.md",
+  "librarian/briefs/knowledge/kno301.doc.enbrief.2.articulate.kind=article.md",
+  "librarian/briefs/knowledge/kno301.doc.enbrief.2.catalogize.kind=article.md",
+  "librarian/briefs/knowledge/kno301.doc.enbrief.2.demonstrate.kind=article.md",
+  "librarian/briefs/knowledge/kno401.actors.1.role.librarian.kind=article.md",
   "librarian/briefs/knowledge/kno601.inventories._.kind=article.md",
   "librarian/briefs/rule.require.catalog-is-an-index.example=declastruct-aws-security-catalog.md",
 ]
@@ -1862,8 +1786,8 @@ exports[`roleBootClamps given: [case3] the librarian role boot when: [t3] the re
 
 exports[`roleBootClamps given: [case3] the librarian role boot when: [t4] it boots in the form a seat boots it then: its seat payload is pinned, so growth is a snapshot diff 1`] = `
 {
-  "budget": 5500,
-  "payload": 5367,
+  "budget": 5000,
+  "payload": 4964,
 }
 `;
 
@@ -1904,4 +1828,60 @@ exports[`roleBootClamps given: [case6] a linked seat whose role is over its budg
    │
    └─ not refused — the spec is a symlink into a version-pinned store,
       so every remedy would name a file this repo cannot write"
+`;
+
+exports[`roleBootClamps given: [case7] the achiever role boot when: [t1] it boots in the form a seat boots it then: its seat payload is pinned, so growth is a snapshot diff 1`] = `
+{
+  "budget": 7500,
+  "payload": 7264,
+}
+`;
+
+exports[`roleBootClamps given: [case8] the navigator role boot when: [t1] it boots in the form a seat boots it then: its seat payload is pinned, so growth is a snapshot diff 1`] = `
+{
+  "budget": 2750,
+  "payload": 2549,
+}
+`;
+
+exports[`roleBootClamps given: [case9] the researcher role boot when: [t1] it boots in the form a seat boots it then: its seat payload is pinned, so growth is a snapshot diff 1`] = `
+{
+  "budget": 4500,
+  "payload": 4452,
+}
+`;
+
+exports[`roleBootClamps given: [case10] the reviewer role boot when: [t1] it boots in the form a seat boots it then: its seat payload is pinned, so growth is a snapshot diff 1`] = `
+{
+  "budget": 9750,
+  "payload": 9560,
+}
+`;
+
+exports[`roleBootClamps given: [case11] the telepath role boot when: [t1] it boots in the form a seat boots it then: its seat payload is pinned, so growth is a snapshot diff 1`] = `
+{
+  "budget": 30000,
+  "payload": 29805,
+}
+`;
+
+exports[`roleBootClamps given: [case12] the thinker role boot when: [t1] it boots in the form a seat boots it then: its seat payload is pinned, so growth is a snapshot diff 1`] = `
+{
+  "budget": 215250,
+  "payload": 215224,
+}
+`;
+
+exports[`roleBootClamps given: [case13] the reflector role boot when: [t1] it boots in the form a seat boots it then: its seat payload is pinned, so growth is a snapshot diff 1`] = `
+{
+  "budget": 500,
+  "payload": 376,
+}
+`;
+
+exports[`roleBootClamps given: [case14] the architect role boot when: [t1] it boots in the form a seat boots it then: its seat payload is pinned, so growth is a snapshot diff 1`] = `
+{
+  "budget": 1500,
+  "payload": 1278,
+}
 `;

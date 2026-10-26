@@ -9,8 +9,6 @@ $subject.$zoom.md        # one zoom-in per sub-claim, a peer of the root
 
 the root carries a pointer, never the zoom's body. (`rule.require.summary-at-the-cluster-root` names the root; this says whether to split.)
 
-why: an inline zoom costs its full body every boot; a peer at ref costs one path.
-
 | when… | then… |
 |---|---|
 | you would add a `##` section for a claim that stands alone | eject, leave a pointer |

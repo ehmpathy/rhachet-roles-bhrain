@@ -41,7 +41,7 @@ so the discipline the metaphor prescribes is: pave early, while the concrete is 
 
 - the metaphor must not be read as *"settled forever"* — that would be `crystallize`, which is
   precisely why `crystallize` was rejected
-- a dispute reopens any term (`howto.domain-term-disputes.[guide]`)
+- a dispute reopens any term (`howto.domain-term-disputes`)
 - ⇒ what changes with traffic is the cost, never the possibility
 
 ## .disputes

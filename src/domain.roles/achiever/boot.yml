@@ -1,3 +1,7 @@
+budget:
+  # a cap, not a target: the least multiple of 250 strictly above what the role costs as a seat
+  # boots it. the clamp is roleBootClamps.integration.test.ts. never cut a cue to fit
+  tokens: 7_500
 always:
   briefs:
     ref:
@@ -6,8 +10,8 @@ always:
       # demo is read once, to check the claim — never on every boot
       - briefs/rule.always.itemize-a-peers-asks-into-tasks.example=the-seventh-ask.md
     say:
-      - briefs/define.goals-are-promises.[philosophy].md
-      - briefs/howto.triage-goals.[guide].md
+      - briefs/define.goals-are-promises.kind=philosophy.md
+      - briefs/howto.triage-goals.md
       # say-level because it is vocabulary — a human may use the alias in their first
       # sentence, and an achiever that must look it up has already lost the turn
       - briefs/define.lucky-charms.md

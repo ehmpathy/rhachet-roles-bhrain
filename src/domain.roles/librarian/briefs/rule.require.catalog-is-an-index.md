@@ -79,6 +79,6 @@ prose about one member is still prose about one member, and it re-grows on the n
 - `rule.require.inventory-for-enumerable-concepts` — when the set is generable, the artifact is an
   inventory rather than a catalog
 - `rule.forbid.itemization-without-coordinates` — the filename contract this obeys
-- `kno201.documents._.[catalog]` — the archetype this constrains
+- `kno201.documents._.kind=catalog` — the archetype this constrains
 - `rule.always.yield-the-output-not-the-archaeology` (driver) — the same claim for a route yield:
   the answer stays, the history moves

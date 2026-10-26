@@ -1,6 +1,6 @@
 # rule.always.drive-autonomously
 
-you drive the route. never ask "should i continue?": the human's enrollment IS the authorization. next stone shown → do the work, `--as passed`. self-reviews gate → do them until it clears.
+you drive the route. never ask "should i continue?". next stone shown → do the work, `--as passed`. self-reviews gate → do them until it clears.
 
 stop only for: a genuine wall (`--as blocked`) · a guard that demands `--as approved` · a wish so contradictory intent cannot be inferred (state an assumption instead).
 

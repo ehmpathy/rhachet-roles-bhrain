@@ -3,14 +3,14 @@ budget:
   # that figure, and the halt, come from `rhx git.repo.test --what integration --scope path://roleBootClamps --mode apply`.
   # each rule min carries only its cue; the `knowledge/` concept articles sit at ref, and only
   # their catalog (kno201) boots. never cut a cue to fit. a halt here means a brief grew: tighten
-  # its cue rows or move its argument out. the cap must stay under 7_000, the max the
-  # director set; never raise it past that.
-  tokens: 5_500
+  # its cue rows or move its argument out. the cap is 5_000, the figure the
+  # owner set on #692; never raise it past that.
+  tokens: 5_000
 always:
   briefs:
     say:
       # overview
-      - briefs/knowledge/kno201.documents._.[catalog].md
+      - briefs/knowledge/kno201.documents._.kind=catalog.md
       # 601 inventories — the census discipline for concepts whose entries are
       # enumerable. say-level for the two rules: they must fire BEFORE a doc lands,
       # since the repair for a prose list over an enumerable concept is a rewrite,
@@ -57,15 +57,15 @@ always:
       - briefs/rule.always.boot-an-oversized-subdomain-as-its-catalog.md
     ref:
       # the concept articles — understood, never produced, so one Read away rather than booted
-      - briefs/knowledge/kno401.actors.1.role.librarian.[article].md
-      - briefs/knowledge/kno101.primitives.1.ontology.[article].frame.docs_as_materializations.md
-      - briefs/knowledge/kno101.primitives.2.rel.many_to_many.[article].md
-      - briefs/knowledge/kno101.primitives.3.instances.[article].md
-      - briefs/knowledge/kno101.primitives.4.documents.[article].md
-      - briefs/knowledge/kno101.primitives.5.concepts.[article].md
-      - briefs/knowledge/kno301.doc.enbrief.2.articulate.[article].md
-      - briefs/knowledge/kno301.doc.enbrief.2.catalogize.[article].md
-      - briefs/knowledge/kno301.doc.enbrief.2.demonstrate.[article].md
+      - briefs/knowledge/kno401.actors.1.role.librarian.kind=article.md
+      - briefs/knowledge/kno101.primitives.1.ontology.kind=article.frame.docs_as_materializations.md
+      - briefs/knowledge/kno101.primitives.2.rel.many_to_many.kind=article.md
+      - briefs/knowledge/kno101.primitives.3.instances.kind=article.md
+      - briefs/knowledge/kno101.primitives.4.documents.kind=article.md
+      - briefs/knowledge/kno101.primitives.5.concepts.kind=article.md
+      - briefs/knowledge/kno301.doc.enbrief.2.articulate.kind=article.md
+      - briefs/knowledge/kno301.doc.enbrief.2.catalogize.kind=article.md
+      - briefs/knowledge/kno301.doc.enbrief.2.demonstrate.kind=article.md
       # the demo the catalog rule ejected — one occurrence, dated and measured.
       # ref because a reader wants it once, never on every boot
       - briefs/rule.require.catalog-is-an-index.example=declastruct-aws-security-catalog.md
@@ -73,13 +73,13 @@ always:
       - briefs/knowledge/kno601.inventories._.kind=article.md
       - briefs/howto.curate-an-inventory.md
       # 201 document types
-      - briefs/knowledge/kno201.documents._.[article].md
-      - briefs/knowledge/kno201.documents.articles.[article].md
-      - briefs/knowledge/kno201.documents.catalogs.[article].md
-      - briefs/knowledge/kno201.documents.demos.[article].md
-      - briefs/knowledge/kno201.documents.lessons.[article].md
+      - briefs/knowledge/kno201.documents._.kind=article.md
+      - briefs/knowledge/kno201.documents.articles.kind=article.md
+      - briefs/knowledge/kno201.documents.catalogs.kind=article.md
+      - briefs/knowledge/kno201.documents.demos.kind=article.md
+      - briefs/knowledge/kno201.documents.lessons.kind=article.md
       # 301 compression
-      - briefs/knowledge/kno301.doc.compression._.[article].md
+      - briefs/knowledge/kno301.doc.compression._.kind=article.md
     not:
       # the rest of knowledge/ (the thinker's shelf, shared by symlink). listed so the
       # <also> fallback does not re-surface each path on every boot; each member stays

@@ -9,7 +9,7 @@ then per point: `rhx route.stone.set --stone <stone> --as absorbed --that <slug>
 
 a blocker that returns after your fix is a driver error: check whether you ever told the reviewer.
 
-the gate counts REVIEWERS; this rule counts POINTS. on an APPROVED lane the gate holds zero, yet the reviewer re-raises every nitpick with no response. `--as absorbed` there with no `.taken` warns and does not refuse. only a `.taken` discharges a point.
+on an APPROVED lane, `--as absorbed` with no `.taken` warns and does not refuse. only a `.taken` discharges a point.
 
 blocker: an open point with no `.taken` · a `[REPAIR]` with no current-file quote · a `[REFUTE]` with no evidence · a malfunction graded for a re-raise you never answered · a re-arrival with an open approved-lane point and no `.taken`.
 twin: `rule.forbid.unanswered-exits-from-a-blocker`.

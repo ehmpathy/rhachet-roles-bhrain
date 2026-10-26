@@ -2,12 +2,6 @@
 
 when a concept's entries are enumerable — dimensions nameable, positions closed — curate an inventory: one file per cell, addressed by coordinates, every cell accounted for. a prose list, grouped section, or partial catalog over it is a defect.
 
-## .why
-
-- an inventory generates cells from the axes before entries are collected, so an empty cell is a visible gap. a list cannot report absence
-- lookup is an address, not a grep
-- ref-only (one address per entry), so it scales at fixed cost
-
 | when… | then… |
 |---|---|
 | a doc enumerates members of one concept | are the dimensions closed? |

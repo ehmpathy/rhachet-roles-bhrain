@@ -133,17 +133,17 @@ always:
       - briefs/domain.glyphs/catalog.of=glyph.axis=*.md
 
       # lessons - load on demand
-      - briefs/howto.acceptance-test-flow.[lesson].md
-      - briefs/howto.acceptance-test-setup.[lesson].md
-      - briefs/howto.acceptance.test.bdd.[lesson].md
-      - briefs/howto.debug-tempdir-symlink-failures.[lesson].md
-      - briefs/howto.detect-bound-route.[lesson].md
-      - briefs/howto.diagnose-branch-failures.[lesson].md
-      - briefs/howto.fast-cli-subpath.[lesson].md
-      - briefs/howto.fast-skill-invocation.[lesson].md
-      - briefs/howto.journey-tests-reveal-cache-bugs.[lesson].md
-      - briefs/howto.rhachet.integration.[lesson].md
-      - briefs/howto.test-skills-yourself.[lesson].md
+      - briefs/howto.acceptance-test-flow.md
+      - briefs/howto.acceptance-test-setup.md
+      - briefs/howto.acceptance.test.bdd.md
+      - briefs/howto.debug-tempdir-symlink-failures.md
+      - briefs/howto.detect-bound-route.md
+      - briefs/howto.diagnose-branch-failures.md
+      - briefs/howto.fast-cli-subpath.md
+      - briefs/howto.fast-skill-invocation.md
+      - briefs/howto.journey-tests-reveal-cache-bugs.md
+      - briefs/howto.rhachet.integration.md
+      - briefs/howto.test-skills-yourself.md
 
       # hazards - load on demand. a hazard is a diagnosis, reached for when its
       # symptom shows; it does not need to fire before the mistake, because the

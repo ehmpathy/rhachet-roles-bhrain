@@ -2,7 +2,7 @@
 
 > **every followup you do not do becomes a caught dream, and the route that found it keeps a symlink to it.**
 
-first run SAFE/CLEAN (`rule.always.fix-forward-under-scouts-honor`): safe and clean → fix now, no dream. a spoken followup is a deletion; a dream keeps the cue, the reason deferred, the shape of the fix. shape: `term=artifact.dream._.choice._.md`.
+first run SAFE/CLEAN (`rule.always.fix-forward-under-scouts-honor`): safe and clean → fix now, no dream. shape: `term=artifact.dream._.choice._.md`.
 
 ```sh
 rhx symlink --at "$route/dreams/v$date.$kind.$slug.md" \

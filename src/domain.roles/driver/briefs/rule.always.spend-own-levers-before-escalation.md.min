@@ -10,11 +10,9 @@ a halt is a diagnosis to make, not a message to relay. the guard never says who 
 | `rhx route.guard.budget --for review --add N --stone <stone>` | driver, ONLY with a warrant |
 | `rhx route.mutate grant allow` · `--as approved` · `--as overruled` · commit quota · `absent` credential · release auth | human |
 
-no `rhx` command edits a guard; a hook seals it. `rhx route.mutate grant get` first: granted → edit; not → ask the human once per route. a hand-run `rhx review` is no lever (`rule.forbid.hand-run-reviews`). malfunction, self-review, and judge halts print remedies with no owner column: you sort.
+`rhx route.mutate grant get` first: granted → edit; not → ask the human once per route. a hand-run `rhx review` is no lever (`rule.forbid.hand-run-reviews`). malfunction, self-review, and judge halts print remedies with no owner column: you sort.
 
 ## budget: refused by default
-
-> inside the meter, taste counts. past the meter, only harm does.
 
 all three owed: a **live urgent concession** · a **target reviewer run dry** · a `--stone` for **one** stone.
 

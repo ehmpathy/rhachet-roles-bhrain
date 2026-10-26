@@ -11,7 +11,7 @@ a peer review is a conversation, not a verdict. settle it through the absorb loo
 
 loop: read each `.given.by_peer` → fix or marshal evidence → write `.taken.by_self` → `--as absorbed --that <slug>` → re-submit. the entrance gate refuses re-submit while a reviewer owes a `.taken`; a code fix does not stand in for the articulation.
 
-persuade with a cited rule, path, or line; a bare "i disagree" converges no one.
+persuade with a cited rule, path, or line.
 
 escalate only for: a foreman-only key · a wisher scope decision · two reviewers that demand opposites.
 

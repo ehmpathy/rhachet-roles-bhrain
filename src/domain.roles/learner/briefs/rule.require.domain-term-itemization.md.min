@@ -1,6 +1,6 @@
 # rule.require.domain-term-itemization
 
-every **domain term** (noun, verb, adj that composes this repo's declared dobjs and dops) is itemized into `.agent/repo=.this/role=any/briefs/domain.terms/`. one entry per word, REUSED: `stone` serves `Stone`, `getStone`; `gen` serves every `gen*`.
+every **domain term** (noun, verb, adj that composes this repo's declared dobjs and dops) is itemized into `.agent/repo=.this/role=any/briefs/domain.terms/`. one entry per word, REUSED.
 
 | counts | does NOT count |
 |---|---|

@@ -31,15 +31,15 @@ export const BRIEFS_FOR_TRIAGE = getThinkerBriefs([
   'cognition/cog301.traversal.1.motion.primitives._.md',
   'cognition/cog401.questions.._.md',
   'cognition/cog401.questions.2.1.primitives.rough._.md',
-  'librarian.tactics/<articulate>._.[article].frame.cognitive.md', // todo: keep or remove
-  'librarian.tactics/<articulate>._.[article].frame.tactical.md',
+  'librarian.tactics/<articulate>._.kind=article.frame.cognitive.md', // todo: keep or remove
+  'librarian.tactics/<articulate>._.kind=article.frame.tactical.md',
   'cognition/cog201.cortal.focus.p2.breadth.md',
   'cognition/cog301.traversal.1.motion.primitives.breadth.md',
   'cognition/cog301.traversal.1.motion.primitives.breadth.vary.md',
-  'thinker.tactics/<triage>._.[article].frame.tactical.md',
-  'thinker.tactics/<triage>.persp.implicit_question.[article].md',
-  'thinker.tactics/<triage>.persp.grades_from_context.[article].md',
-  'librarian.tactics/[brief].verbiage.outline.over.narrative.md',
+  'thinker.tactics/<triage>._.kind=article.frame.tactical.md',
+  'thinker.tactics/<triage>.persp.implicit_question.kind=article.md',
+  'thinker.tactics/<triage>.persp.grades_from_context.kind=article.md',
+  'librarian.tactics/kind=brief.verbiage.outline.over.narrative.md',
 ]);
 
 type StitcherDesired = GStitcher<

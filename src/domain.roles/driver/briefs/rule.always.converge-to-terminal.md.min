@@ -12,5 +12,3 @@ work every reviewer to a terminal verdict before a human is pulled. level termin
 exhaustion unlocks the LEVEL, not the DEBT. the debt is keyed to the reviewer: an exhausted reviewer whose blocker you never answered still holds the stone, and the entrance gate refuses the next round. levers: answer it · budget top-up (if it must re-read) · human overrule.
 
 exhaustion is earned: budget burned without engagement is a coast. an exhausted level owes a `.taken.by_self` record (what you tried each round; what would fix that reviewer).
-
-re-arrival is cheap: the guard reuses any reviewer that returned 0 blockers, keyed on artifact hash (`howdoes.the-guard-caches-a-clean-reviewer-by-artifact-hash`).

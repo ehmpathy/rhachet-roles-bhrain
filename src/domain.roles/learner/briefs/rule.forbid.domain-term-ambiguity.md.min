@@ -11,7 +11,7 @@ test: *does this word name exactly ONE concept, everywhere it appears?* no → o
 
 sort by *"$word, of WHAT?"*: two answers → qualify · one answer, two referents → split.
 
-an inconsistency repair can forbid this rule's cure: `lane` became a forbidden synonym of `reviewer`, yet `reviewer` was itself overloaded and `lane` was its one candidate word. enumerate the senses of the word you keep BEFORE the inconsistency settles.
+enumerate the senses of the word you keep BEFORE the inconsistency settles.
 
 blocker: a term overloaded across distinct concepts in a contract · an inconsistency settled with no check that the kept word was also overloaded.
 false positive: a boundary-qualified pair (`route.guard.rung` vs `tool.skill.rung`) · generic english · a synonym (that is `rule.forbid.domain-term-synonyms`).
