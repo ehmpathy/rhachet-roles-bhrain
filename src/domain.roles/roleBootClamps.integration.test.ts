@@ -51,11 +51,16 @@ const ROLES_BUDGETED = [...ROLES_CONDENSED, ...ROLES_BUDGET_ONLY] as const;
 
 // the budget the owner set per role (#692): each boot.yml declares exactly this figure, so a
 // raise past it, or a role booted over it, fails here for every role, never for one alone
-const BUDGET_SET_BY_OWNER: Record<(typeof ROLES_CONDENSED)[number], number> = {
+const BUDGET_SET_BY_OWNER: Partial<Record<string, number>> = {
   learner: 10_000,
   driver: 10_000,
   librarian: 5_000,
+  telepath: 7_000,
 };
+
+// the cap no role may cross, in budget or in payload (#692): a role that needs more boots as its
+// catalog (rule.always.boot-an-oversized-subdomain-as-its-catalog), never as a raised budget
+const BUDGET_CAP_OF_ANY_ROLE = 10_000;
 
 // the cues each role must boot at say by name — a snapshot line dropped and resnapped would pass,
 // so the briefs a journey step names are asserted here, one by one
@@ -334,6 +339,31 @@ const assertBudgetFitsSeatPayload = (input: {
     );
 };
 
+// fail loud where a role's declared budget or measured payload crosses the cap, and name the fix
+const assertRoleUnderCap = (input: {
+  slug: string;
+  budget: number | null;
+  payload: number | null;
+}): void => {
+  // a budget over the cap is a raise past the ceiling, whatever the role boots today
+  if (input.budget !== null && input.budget > BUDGET_CAP_OF_ANY_ROLE)
+    throw new ConstraintError('role budget exceeds the cap of any role', {
+      slug: input.slug,
+      budget: input.budget,
+      cap: BUDGET_CAP_OF_ANY_ROLE,
+      hint: `boot src/domain.roles/${input.slug} as its catalog: the catalog at say, its members under \`not\` or at ref`,
+    });
+
+  // a payload over the cap is a boot past the ceiling, whatever its budget declares
+  if (input.payload !== null && input.payload > BUDGET_CAP_OF_ANY_ROLE)
+    throw new ConstraintError('role payload exceeds the cap of any role', {
+      slug: input.slug,
+      payload: input.payload,
+      cap: BUDGET_CAP_OF_ANY_ROLE,
+      hint: `boot src/domain.roles/${input.slug} as its catalog: the catalog at say, its members under \`not\` or at ref`,
+    });
+};
+
 // the boot uri of one role: the registry's declared uri, or, for a role the registry does not
 // hold, the boot.yml in its own dir — the one place the loader can boot it from
 const getOneBootUriOfRole = (input: { slug: string }): string | undefined => {
@@ -543,6 +573,49 @@ describe('roleBootClamps', () => {
         );
         expect(slugsUnbudgeted).toEqual([]);
       });
+
+      then('no role dir declares a budget over the cap of any role', () => {
+        getAllSlugsOfRoleDirs().forEach((slug) =>
+          assertRoleUnderCap({
+            slug,
+            budget: getOneBootSpecOfRole({ slug }).budgetTokens,
+            payload: null,
+          }),
+        );
+      });
+    });
+
+    when('[t2] the cap is asked of a role over it', () => {
+      // the probe: the cap must bite on a budget over it and on a payload over it, each alone
+      then('a budget over the cap is refused, and names the fix', () => {
+        expect(() =>
+          assertRoleUnderCap({
+            slug: 'probe',
+            budget: BUDGET_CAP_OF_ANY_ROLE + 250,
+            payload: null,
+          }),
+        ).toThrow('role budget exceeds the cap of any role');
+      });
+
+      then('a payload over the cap is refused, and names the fix', () => {
+        expect(() =>
+          assertRoleUnderCap({
+            slug: 'probe',
+            budget: BUDGET_CAP_OF_ANY_ROLE,
+            payload: BUDGET_CAP_OF_ANY_ROLE + 1,
+          }),
+        ).toThrow('role payload exceeds the cap of any role');
+      });
+
+      then('a budget and a payload at the cap pass', () => {
+        expect(() =>
+          assertRoleUnderCap({
+            slug: 'probe',
+            budget: BUDGET_CAP_OF_ANY_ROLE,
+            payload: BUDGET_CAP_OF_ANY_ROLE,
+          }),
+        ).not.toThrow();
+      });
     });
   });
 
@@ -704,6 +777,14 @@ describe('roleBootClamps', () => {
             expect(seat.stdout).toContain(LINE_OF_MIN_CONVENTION);
           },
         );
+
+        then('its seat payload is under the cap of any role', () => {
+          assertRoleUnderCap({
+            slug,
+            budget: scene.spec.budgetTokens,
+            payload: asPayloadOfBootStats({ stdout: seat.stdout }),
+          });
+        });
       });
 
       when('[t5] the real `rhachet roles cost --all` costs it', () => {
@@ -1061,6 +1142,21 @@ describe('roleBootClamps', () => {
             });
           },
         );
+
+        then('its seat payload is under the cap of any role', () => {
+          assertRoleUnderCap({
+            slug,
+            budget: scene.spec.budgetTokens,
+            payload: asPayloadOfBootStats({ stdout: seat.stdout }),
+          });
+        });
+
+        then('its budget is the figure the owner set, where one is set', () => {
+          // a role the owner set no figure for is held by the step and the cap alone
+          const budgetOfOwner = BUDGET_SET_BY_OWNER[slug];
+          if (budgetOfOwner === undefined) return;
+          expect(scene.spec.budgetTokens).toEqual(budgetOfOwner);
+        });
       });
     });
   });
