@@ -16,11 +16,7 @@
  * .note = both are owed, never one. the message carries the cause so a human
  *         reads it; `cause:` carries the original so the stack trace survives
  *
- * .note = the narrow is the one `src/contract/cli/route.ts` already performs in
- *         `asStatusLineFaultGuidance`. it is not lifted from there because that
- *         one is a private const inside a contract file with a different job —
- *         this is the leaf both shapes want, and the other is a fair candidate
- *         to route through it on contact
+ * .note = `statusLine/asStatusLineFaultRow` reads its message through this leaf too
  */
 export const asErrorCauseClause = (input: {
   /** the value a `catch` bound — an Error, or whatever else a throw can carry */

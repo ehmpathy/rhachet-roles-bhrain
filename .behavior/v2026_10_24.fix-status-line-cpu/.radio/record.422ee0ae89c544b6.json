@@ -1,0 +1,19 @@
+{
+  "key": "422ee0ae89c544b6",
+  "kind": "create",
+  "repo": {
+    "owner": "ehmpathy",
+    "name": "rhachet-roles-ehmpathy"
+  },
+  "exid": null,
+  "title": "feat(mechanic): a git.package.patch suite that cuts a consumer pnpm patch from a local build",
+  "description": "## .the need\n\na fix that waits on a release still has to reach its consumers.\n\n## .the pavement it lifts\n\nbhrain's `gen.consumer-patch.sh` (ehmpathy/rhachet-roles-bhrain#700) already does this for one package:\n\n1. fetch the published base\n2. check its integrity\n3. overlay the local `dist/` and the lifted `exports`\n4. `git diff` it into a `pnpm.patchedDependencies` patch\n5. refuse when the patch would be empty or unpublished\n\n## .the ask\n\nlift it into a `git.package.patch` suite of three skills:\n\n- `gen` — cut the patch\n- `prove` — apply it to a scratch install and run a smoke command (bhrain's `prove.consumer-patch.sh`)\n- `drop` — remove the patch entry once the release ships\n\n## .clamp\n\nthe 4 shim-driven malfunction cases and the refusals in bhrain's suite.\n\n## .hazard to carry\n\na consumer's host holds role assets read-only (store hardlinks), and pnpm refuses a patch that edits one; bhrain's `hazard.git-apply-check-is-not-a-pnpm-install` brief records it.\n\ncite: ehmpathy/rhachet-roles-bhrain#700",
+  "status": null,
+  "via": "gh.issues",
+  "auth": "as-human",
+  "idem": null,
+  "heldSeq": 36,
+  "recordStatus": "DELIVERED",
+  "reason": null,
+  "deliveredExid": "1174"
+}

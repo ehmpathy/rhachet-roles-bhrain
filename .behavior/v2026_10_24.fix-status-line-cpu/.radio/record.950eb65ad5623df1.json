@@ -1,0 +1,19 @@
+{
+  "key": "950eb65ad5623df1",
+  "kind": "create",
+  "repo": {
+    "owner": "ehmpathy",
+    "name": "rhachet"
+  },
+  "exid": null,
+  "title": "fix(clone): a labeled input-box rule reads focus-unrecognized, so say is withheld forever",
+  "description": "## symptom\n\n`rhx clone say` to a live claude clone whose agent name is set (here `mechanic`) is withheld every time with `focus-unrecognized`. a healthy peer goes deaf. measured 2026-10-24 on rhachet@1.50.1, clone @:b7b35743, rhachet-roles-bhrain worktree `beav.fix-status-line-cpu`.\n\n## cause, at the line\n\n`dist/domain.operations/clone/screen/computeCloneInputState.js`, `isRuleRow`: `/^─+$/.test(line.trim())`.\n\nclaude code draws the agent name INTO the input box's top rule: `────────── mechanic ─`. that row fails the regex. `getInputBand` then lacks the top rule of the last pair: it returns null, or pairs the wrong rows. the classifier answers `unrecognized`, which has no force path.\n\nthe withheld hint then blames a permanent pty geometry fault and prescribes a teardown. that is false here.\n\n## evidence\n\n`.agent/.cache/repo=rhachet/skill=clone-say/debug.2026-10-24.log` in that worktree. the captured foot rows read:\n\n```\n────────────────────────────── mechanic ─\n❯\n─────────────────────────────────────────\n```\n\n## fix\n\nlet a rule row carry one trailed label, e.g. on the trimmed row: `/^─{20,}(\\s+[^─\\s][^─]*\\s+─+)?$/`. a long run of rule glyphs, then one optional word group and a short tail. the half-width guard stays on the lead run.\n\n## clamp\n\n- a screen whose top rule reads `──…── mechanic ─`, above `❯` and a bare bottom rule → focus `input`, region `clear`. red today, green with the fix\n- a short labeled divider (`── note ──`, under 20 glyphs) is still no rule\n- a prose row that merely contains `─` is still no rule\n\n## also\n\nthe `focus-unrecognized` hint names only the 0x0-geometry and detached-host causes, and calls the cause permanent. add the unmatched-rule cause, or drop the claim of permanence.",
+  "status": null,
+  "via": "gh.issues",
+  "auth": "as-human",
+  "idem": null,
+  "heldSeq": 34,
+  "recordStatus": "DELIVERED",
+  "reason": null,
+  "deliveredExid": "655"
+}

@@ -9,7 +9,6 @@ import {
 import type { RouteStoneGuardBlockerType } from '@src/domain.objects/Driver/RouteStoneGuardBlockerReport';
 import type { RouteStoneGuardReviewPeerMeter } from '@src/domain.objects/Driver/RouteStoneGuardReviewPeerMeter';
 
-import { getRouteBind } from './bind/getRouteBind';
 import { asRouteStoneDisposition } from './drive/asRouteStoneDisposition';
 import { getAllRouteStoneGuardReviewPeerMeters } from './guard/review/peer/meter/getAllRouteStoneGuardReviewPeerMeters';
 import { LEVEL_OF_UNMAPPED_REVIEW } from './guard/review/peer/meter/getOneReviewLevelByIndex';
@@ -18,6 +17,7 @@ import { getStonePromises } from './guard/review/self/getStonePromises';
 import { isExpectedFsReadFault } from './isExpectedFsReadFault';
 import { getLatestPassageForStone } from './passage/getLatestPassageForStone';
 import { asStatusLine, type StatusLinePhase } from './statusLine/asStatusLine';
+import { asStatusLineDegradeRow } from './statusLine/asStatusLineDegradeRow';
 import { computeNextStones } from './stones/computeNextStones';
 import { getAllStoneDriveArtifacts } from './stones/getAllStoneDriveArtifacts';
 import { getAllStones } from './stones/getAllStones';
@@ -32,34 +32,27 @@ import { getAllStones } from './stones/getAllStones';
  *         route with no stones yields an empty line; a bound route whose stones all passed
  *         yields '🗿 route complete 🌴🤙'.
  *
- * .note = `route` is nullable: null → look up the branch-bound route. tests pass a route
- *         directly to avoid bind conflicts (all tests share a git repo).
+ * .note = `route` is the route to render; the bind lookup lives in the one caller that needs
+ *         it, `stepRouteStatusLineCached`, which renders the blank line for an unbound seat
+ *
+ * .note = `degradeRow` is the stderr row when the phase derivation faulted and the line fell
+ *         back to the plain stone, else null. it is data, never printed here: the cli entry is
+ *         the one writer of stderr, and the cache stores the row so a hit replays it whole
  */
 export const stepRouteStatusLine = async (input: {
-  route: string | null;
-}): Promise<{ line: string }> => {
+  route: string;
+}): Promise<{ line: string; degradeRow: string | null }> => {
   // derive the route's status-line state, then render it
-  const state = await getRouteStatusLineState({ route: input.route });
-  return { line: asStatusLine(state) };
+  const { state, degradeRow } = await getRouteStatusLineState({
+    route: input.route,
+  });
+  return { line: asStatusLine(state), degradeRow };
 };
 
 /**
- * .what = derives the status-line render state for a route (given or branch-bound)
- * .why = isolates the lookup so the orchestrator reads as narrative
- *
- * .note = the fault contract is split by concern (see the vision's edge-case table):
- *         - the STONE lookup (bind, stones, next-stone) is STRICT: a fault propagates, the
- *           cli exits non-zero, the harness blanks the line. this is the base line; if we
- *           cannot even name the stone, an empty line is correct.
- *         - the PHASE derivation is BEST-EFFORT: a fault there is logged to stderr and
- *           degrades to a null phase (the plain '🗿 <stone>' line), so a failure in the
- *           enhancement never regresses the base feature to a blank line.
- *         - the DISPOSITION is a cheap passage read (never the fault source); it is always
- *           derived, even when the phase degrades.
+ * .what = the status-line render state for a route
  */
-const getRouteStatusLineState = async (input: {
-  route: string | null;
-}): Promise<
+type RouteStatusLineState =
   | { kind: 'blank' }
   | {
       kind: 'stone';
@@ -67,15 +60,31 @@ const getRouteStatusLineState = async (input: {
       phase: StatusLinePhase | null;
       disposition: RouteStoneDisposition;
     }
-  | { kind: 'complete' }
-> => {
-  // derive the route: the one given, else the branch-bound one
-  const route = input.route ?? (await getRouteBind())?.route ?? null;
-  if (!route) return { kind: 'blank' };
+  | { kind: 'complete' };
+
+/**
+ * .what = derives the status-line render state for a route, plus the degrade row if any
+ * .why = isolates the lookup so the orchestrator reads as narrative
+ *
+ * .note = the fault contract is split by concern (see the vision's edge-case table):
+ *         - the STONE lookup (stones, next-stone) is STRICT: a fault propagates, the
+ *           cli exits non-zero, the harness blanks the line. this is the base line; if we
+ *           cannot even name the stone, an empty line is correct.
+ *         - the PHASE derivation is BEST-EFFORT: a fault there yields a degrade row and a
+ *           null phase (the plain '🗿 <stone>' line), so a failure in the enhancement never
+ *           regresses the base feature to a blank line.
+ *         - the DISPOSITION is a cheap passage read (never the fault source); it is always
+ *           derived, even when the phase degrades.
+ */
+const getRouteStatusLineState = async (input: {
+  route: string;
+}): Promise<{ state: RouteStatusLineState; degradeRow: string | null }> => {
+  const route = input.route;
 
   // a route with no stones has no step to show (not complete — no stone was passed)
   const stones = await getAllStones({ route });
-  if (stones.length === 0) return { kind: 'blank' };
+  if (stones.length === 0)
+    return { state: { kind: 'blank' }, degradeRow: null };
 
   // compute the current (first incomplete) stone
   const artifacts = await getAllStoneDriveArtifacts({ route });
@@ -87,7 +96,7 @@ const getRouteStatusLineState = async (input: {
 
   // no incomplete stone remains → the route's stones all passed → complete
   const stoneFirst = asFirstStoneOrNull({ stones: nextStones });
-  if (!stoneFirst) return { kind: 'complete' };
+  if (!stoneFirst) return { state: { kind: 'complete' }, degradeRow: null };
 
   // read the latest passage for this stone (cheap) — it drives BOTH the disposition and,
   // when a guard blocker is present, the phase location
@@ -114,20 +123,23 @@ const getRouteStatusLineState = async (input: {
   });
 
   // phase (where the work is): best-effort — a benign read fault degrades to the plain stone
-  const phase = await getStonePhaseBestEffort({
+  const { phase, degradeRow } = await getStonePhaseBestEffort({
     stone: stoneFirst,
     route,
     latest,
   });
 
-  return { kind: 'stone', stone: stoneFirst.name, phase, disposition };
+  return {
+    state: { kind: 'stone', stone: stoneFirst.name, phase, disposition },
+    degradeRow,
+  };
 };
 
 /**
  * .what = derives the current stone's phase, degraded to null on a benign route-state fault
  * .why = the phase is an enhancement on top of the stone name; a benign read fault (corrupt
- *        jsonl, unreadable file) must surface (stderr) but must NOT blank the base line — so
- *        we log and degrade to null (the plain '🗿 <stone>' line).
+ *        jsonl, unreadable file) must surface (a degrade row for stderr) but must NOT blank
+ *        the base line — so it degrades to null (the plain '🗿 <stone>' line).
  *
  * .note = this is NOT failhide: the catch ALLOWLISTS only expected route-state read faults
  *         (`isExpectedRouteStateFault`) and RETHROWS any other error (a genuine bug), so an
@@ -137,22 +149,18 @@ const getStonePhaseBestEffort = async (input: {
   stone: RouteStone;
   route: string;
   latest: PassageReport | null;
-}): Promise<StatusLinePhase | null> => {
+}): Promise<{ phase: StatusLinePhase | null; degradeRow: string | null }> => {
   try {
-    return await getStonePhase(input);
+    return { phase: await getStonePhase(input), degradeRow: null };
   } catch (error) {
     // a genuine (unexpected) fault must surface, not degrade — rethrow it (failfast)
     if (!isExpectedRouteStateFault(error)) throw error;
 
-    // a benign route-state read fault → surface on stderr, then degrade to the plain stone line
-    // note: mirrors the `[route.status.line] fault:` convention (route.ts) so both stderr
-    //       fault outputs read alike; the final `:` separates the crafted sentence from the
-    //       raw error dump that console.error appends after it
-    console.error(
-      `[route.status.line] fault: phase derivation faulted for stone "${input.stone.name}", degraded to plain stone line:`,
-      error,
-    );
-    return null;
+    // a benign route-state read fault → a degrade row, and the plain stone line
+    return {
+      phase: null,
+      degradeRow: asStatusLineDegradeRow({ stone: input.stone.name, error }),
+    };
   }
 };
 

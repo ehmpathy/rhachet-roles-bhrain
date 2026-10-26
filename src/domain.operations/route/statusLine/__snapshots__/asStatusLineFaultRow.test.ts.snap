@@ -1,0 +1,9 @@
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
+
+exports[`asStatusLineFaultRow given: [case1] a multi-bind constraint opens with ConstraintError and drops the --route advice when: [t0] the fault row is rendered then: it reads the expected row 1`] = `"✋ ConstraintError: [route.status.line] multiple routes bound to this branch — unbind the extra route(s) so the status line can pick one"`;
+
+exports[`asStatusLineFaultRow given: [case2] any other constraint opens with ConstraintError and keeps its own message when: [t0] the fault row is rendered then: it reads the expected row 1`] = `"✋ ConstraintError: [route.status.line] the bind flag is malformed"`;
+
+exports[`asStatusLineFaultRow given: [case3] a malfunction opens with MalfunctionError and keeps its own message when: [t0] the fault row is rendered then: it reads the expected row 1`] = `"💥 MalfunctionError: [route.status.line] the passage ledger is unreadable"`;
+
+exports[`asStatusLineFaultRow given: [case4] a non-Error throw is a malfunction, its value as the message when: [t0] the fault row is rendered then: it reads the expected row 1`] = `"💥 MalfunctionError: [route.status.line] a bare string throw"`;

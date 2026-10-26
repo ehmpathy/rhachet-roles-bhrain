@@ -1,0 +1,74 @@
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
+
+exports[`bench.status-line.integration given: [case1] a human who asks the bench to explain itself when: [t0] --help is passed then: the usage renders whole 1`] = `
+"######################################################################
+# .what = measure the cpu one status-line repaint costs, per seat
+#
+# .why  = the status line runs on every repaint of every claude seat.
+#         a cpu claim about it with no measured before-and-after is a
+#         guess. this names the instrument so the figure is reproducible
+#         and the split (node boot, module load, the render) is visible.
+#
+# usage:
+#   rhx bench.status-line                 # 10 repaints per arm, cwd = repo
+#   rhx bench.status-line --runs 30
+#
+# guarantee:
+#   - reports user+sys cpu seconds per repaint, for ten arms:
+#     bare node · bare node + one git spawn (the branch read a hit avoids)
+#     · the import() floor (a builtin via dynamic import — the command shape's
+#     own cost) · import of cli/route only · a legacy miss (the cache dropped,
+#     then the cli/route command: the old per-repaint cost) · a legacy warm
+#     repaint (the cli/route command over a warm cache: a seat patched, its
+#     init not yet re-run) · import of the cli/route.status.line subpath only
+#     · a warm repaint via that subpath · a miss via that subpath (the cache
+#     dropped first: the bind lookup + the render, the cost of each change)
+#     · the unbound glob (the repo-wide bind flag walk an unbound seat's
+#     miss pays once per max age, over this repo's real tree)
+#   - never writes route state; the subpath arm fills its own gitignored
+#     cache under .agent/.cache/, as every seat does
+#   - exit 0 = measured, exit 1 = an arm failed, exit 2 = bad input
+######################################################################
+"
+`;
+
+exports[`bench.status-line.integration given: [case2] a call refused for unknown-arg when: [t0] the bench runs with --bogus then: the refusal matches its snapshot 1`] = `
+"✋ ConstraintError: unknown arg '--bogus'
+"
+`;
+
+exports[`bench.status-line.integration given: [case3] a call refused for runs-without-value when: [t0] the bench runs with --runs then: the refusal matches its snapshot 1`] = `
+"✋ ConstraintError: --runs needs a value
+"
+`;
+
+exports[`bench.status-line.integration given: [case4] a call refused for runs-not-an-integer when: [t0] the bench runs with --runs many then: the refusal matches its snapshot 1`] = `
+"✋ ConstraintError: --runs must be a positive integer
+"
+`;
+
+exports[`bench.status-line.integration given: [case5] a call refused for runs-zero when: [t0] the bench runs with --runs 0 then: the refusal matches its snapshot 1`] = `
+"✋ ConstraintError: --runs must be a positive integer
+"
+`;
+
+exports[`bench.status-line.integration given: [case6] a bench run from the gitroot, where the package resolves when: [t0] the bench measures one repaint per arm then: the measure renders as its snapshot, figures masked 1`] = `
+"🦉 measure twice, cut once
+
+🔍 bench.status-line
+   ├─ runs per arm = 1
+   ├─ bare node       <cpu>s cpu per repaint
+   ├─ git spawn       <cpu>s cpu per repaint
+   ├─ import() floor  <cpu>s cpu per repaint
+   ├─ import only     <cpu>s cpu per repaint
+   ├─ legacy miss     <cpu>s cpu per repaint
+   ├─ legacy warm     <cpu>s cpu per repaint
+   ├─ subpath import  <cpu>s cpu per repaint
+   ├─ subpath warm    <cpu>s cpu per repaint
+   ├─ subpath miss    <cpu>s cpu per repaint
+   ├─ unbound glob    <cpu>s cpu per repaint
+   └─ cwd = <gitroot>
+"
+`;
+
+exports[`bench.status-line.integration given: [case7] a bench run where an arm cannot run when: [t0] the bench reaches the git spawn arm then: the fault row matches its snapshot 1`] = `"💥 MalfunctionError: the 'git spawn' arm failed; its stderr is above"`;

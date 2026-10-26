@@ -10,12 +10,12 @@ import type {
   RouteStoneGuardReviewsStructured,
 } from '@src/domain.objects/Driver/RouteStoneGuard';
 import { RouteStoneGuard } from '@src/domain.objects/Driver/RouteStoneGuard';
+import { asErrorCauseClause } from '@src/domain.operations/route/asErrorCauseClause';
 
 import { asGuardPositiveInt } from '../../asGuardPositiveInt';
 import { asBrainSubKey } from './asBrainSubKey';
 import { asDeclaredGuardKey } from './asDeclaredGuardKey';
 import { asErrorCause } from './asErrorCause';
-import { asErrorCauseClause } from './asErrorCauseClause';
 import { asGuardKeyValue } from './asGuardKeyValue';
 import { KEY_ALIASED, PATTERN_INLINE } from './GUARD_KEYS';
 import { isGuardValueLiteral } from './isGuardValueLiteral';

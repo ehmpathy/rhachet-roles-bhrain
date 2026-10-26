@@ -38,6 +38,18 @@ errors:
   a genuine fault is logged to stderr and exits non-zero; the harness then renders
   a blank line (the fault is surfaced on stderr, never silently hidden)
 
+cache:
+  a repaint whose render inputs did not change prints the line already computed,
+  from .agent/.cache/repo=bhrain/role=driver/skill=route.status.line/ (per branch).
+  the legacy cli/route export forwards here, so it is cached too, yet still loads
+  the whole barrel first; re-run the driver init to move a seat to the subpath.
+  a fault that prints no line is never cached; a degraded line is cached with its
+  stderr row, and each repaint prints that row again. an unreadable or unwritable
+  cache is reported on stderr, and the line still prints. a cached line is at most
+  30s old; a passage, a meter row, a promise, or a route.bind.set shows on
+  the next repaint. a bind flag that arrives any other way (a pull, a hand edit)
+  shows within 30s. to force a fresh line, delete that dir
+
 note:
   the claude code harness runs this with cwd = project root and renders stdout
   as the status line. it is invoked via the node -e command that
@@ -46,11 +58,11 @@ note:
   not via rhx, whose banner would pollute the single-line output
 
 examples:
-  node -e "import('rhachet-roles-bhrain/cli/route').then(m => m.routeStatusLine())"
+  node -e "import('rhachet-roles-bhrain/cli/route.status.line').then(m => m.routeStatusLine())"
 "
 `;
 
-exports[`routeStatusLine.acceptance given: [case4] an ambiguous multi-bind (a genuine lookup fault) when: [t0] the renderer runs with that cwd then: its stable fault output matches the error-variant snapshot: route.status.line - fault (multi-bind) 1`] = `"[route.status.line] fault: multiple routes bound to this branch — unbind the extra route(s) so the status line can pick one"`;
+exports[`routeStatusLine.acceptance given: [case4] an ambiguous multi-bind (a genuine lookup fault) when: [t0] the renderer runs with that cwd then: its stable fault output matches the error-variant snapshot: route.status.line - fault (multi-bind) 1`] = `"✋ ConstraintError: [route.status.line] multiple routes bound to this branch — unbind the extra route(s) so the status line can pick one"`;
 
 exports[`routeStatusLine.acceptance given: [case5] a bound route whose stones have all passed (complete) when: [t0] the renderer runs with that cwd then: its output matches the complete snapshot: route.status.line - route complete 1`] = `
 "🗿 route complete 🌴🤙
@@ -99,6 +111,8 @@ exports[`routeStatusLine.acceptance given: [case13] a bound route whose phase de
 
 exports[`routeStatusLine.acceptance given: [case13] a bound route whose phase derivation faults (degrade) when: [t0] the renderer runs with that cwd then: its stderr matches the phase-fault snapshot: route.status.line - phase.degrade.stderr 1`] = `"[route.status.line] fault: phase derivation faulted for stone "1.vision", degraded to plain stone line: SyntaxError: Expected property name or '}' in JSON at position 2 (line 1 column 3)"`;
 
+exports[`routeStatusLine.acceptance given: [case13] a bound route whose phase derivation faults (degrade) when: [t1] a second repaint runs, served from the cache then: the replayed row matches its snapshot: route.status.line - phase.degrade.stderr.replay 1`] = `"[route.status.line] fault: phase derivation faulted for stone "1.vision", degraded to plain stone line: SyntaxError: Expected property name or '}' in JSON at position 2 (line 1 column 3)"`;
+
 exports[`routeStatusLine.acceptance given: [case14] a bound route with a driver-blocked guardless stone (yield phase) when: [t0] the renderer runs with that cwd then: its output matches the blocked-yield snapshot: route.status.line - blocked.yield 1`] = `
 "🗿 1.vision, yield, blocked ✋
 "
@@ -108,3 +122,76 @@ exports[`routeStatusLine.acceptance given: [case15] a bound route with a malfunc
 "🗿 1.vision, review.peer, l1@i002, malfunction 💥
 "
 `;
+
+exports[`routeStatusLine.acceptance given: [case16] a bound route whose inputs do not change (a warm repaint) when: [t0] the renderer runs cold, then again warm then: the warm repaint module graph matches the snapshot: route.status.line - warm repaint module graph 1`] = `
+[
+  "ROUTE_STATUS_LINE_CACHE_MAX_AGE_MS.js",
+  "asRouteBindFlagName.js",
+  "asRouteStatusLineCachePath.js",
+  "asRouteStatusLineRouteDir.js",
+  "getFsErrorCode.js",
+  "getInvocationArgs.js",
+  "getOneRouteStatusLineBranch.js",
+  "getOneRouteStatusLineCache.js",
+  "getOneRouteStatusLineFingerprint.js",
+  "getStonePromisePaths.js",
+  "isErrorOfAbsence.js",
+  "isNodeEvalMode.js",
+  "isRouteStatusLineBindFlagPresent.js",
+  "isRouteStatusLineCacheAgeWithinMax.js",
+  "route.status.line.js",
+  "sanitizeBranchName.js",
+  "setRouteStatusLineCache.js",
+  "stepRouteStatusLineCached.js",
+]
+`;
+
+exports[`routeStatusLine.acceptance given: [case17] a cache dir that cannot be written when: [t0] the renderer runs with that cwd then: its stderr matches the snapshot: route.status.line - cache write fault 1`] = `"[route.status.line] fault: cache write failed (EEXIST) at $TEMP/.agent/.cache/…/skill=route.status.line/branch=$BRANCH.json, the line renders uncached. fix: make $TEMP/.agent/.cache/…/skill=route.status.line a writable dir (remove a file in its place, or repair its permissions)"`;
+
+exports[`routeStatusLine.acceptance given: [case17b] a cache file that cannot be read when: [t0] the renderer runs, then runs again then: its stderr matches the snapshot: route.status.line - cache read fault 1`] = `"[route.status.line] fault: cache read failed (ELOOP) at $TEMP/.agent/.cache/…/skill=route.status.line/branch=$BRANCH.json, the line renders afresh. fix: remove $TEMP/.agent/.cache/…/skill=route.status.line/branch=$BRANCH.json, or repair its permissions"`;
+
+exports[`routeStatusLine.acceptance given: [case17c] a passage ledger no stat can read (a malfunction) when: [t0] the renderer runs with that cwd then: the row matches the snapshot, host path masked: route.status.line - malfunction row 1`] = `"💥 MalfunctionError: [route.status.line] ELOOP: too many symbolic links encountered, stat '$TEMP/my-route/.route/passage.jsonl'"`;
+
+exports[`routeStatusLine.acceptance given: [case18] a box of seats on one bound route repaint at once (a herd) when: [t0] the caches are warm, and every seat repaints at once then: the herd lines and exit codes match their snapshot 1`] = `
+{
+  "exitCodes": [
+    0,
+  ],
+  "lines": [
+    "🗿 1.vision, yield 🌾",
+  ],
+  "seats": 12,
+}
+`;
+
+exports[`routeStatusLine.acceptance given: [case18] a box of seats on one bound route repaint at once (a herd) when: [t1] a passage lands, then every seat repaints at once then: the herd lines and exit codes match their snapshot 1`] = `
+{
+  "exitCodes": [
+    0,
+  ],
+  "lines": [
+    "🗿 1.vision, yield, blocked ✋",
+  ],
+  "seats": 12,
+}
+`;
+
+exports[`routeStatusLine.acceptance given: [case19] a host whose timezone sits west of utc when: [t0] the renderer runs twice under TZ=America/Chicago then: the lines of the step match their snapshot 1`] = `
+{
+  "first": [
+    "🗿 1.vision, yield 🌾",
+    "",
+  ],
+  "second": [
+    "🗿 1.vision, yield 🌾",
+    "",
+  ],
+}
+`;
+
+exports[`routeStatusLine.acceptance given: [case20] a repo whose settings still name the legacy cli/route barrel command when: [t0] the legacy command repaints a bound route then: the line matches its snapshot 1`] = `
+"🗿 1.vision, yield 🌾
+"
+`;
+
+exports[`routeStatusLine.acceptance given: [case20] a repo whose settings still name the legacy cli/route barrel command when: [t1] a second route is bound to the branch, then it repaints then: the fault matches its snapshot 1`] = `"✋ ConstraintError: [route.status.line] multiple routes bound to this branch — unbind the extra route(s) so the status line can pick one"`;
