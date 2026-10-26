@@ -1,0 +1,19 @@
+{
+  "key": "75d7a204503609f1",
+  "kind": "create",
+  "repo": {
+    "owner": "ehmpathy",
+    "name": "rhachet-roles-ehmpathy"
+  },
+  "exid": null,
+  "title": "fix(git.release): --watch reads green before the test workflow registers its checks",
+  "description": "# 🌙 dream: git.release --watch reads green before the test workflow registers\n\n- kind: reseed\n- owner: ehmpathy/rhachet-roles-ehmpathy\n- caught 2026-10-26\n\n## .the cue that fired\n\non ehmpathy/rhachet-roles-bhrain#721 at head `287dc90e`, `rhx git.release --watch` exited 0 with\n`✨ done!`. `gh pr checks 721` then held 4 checks (3 success, 1 skipped). the `test` workflow, 42\nmore checks, sat queued behind a run for a superseded head, so it had not yet posted a check.\nonce it ran, it failed one shard.\n\n## .the gap, precisely\n\n- the watch decides done when every check it can see has settled\n- a workflow that has not started yet posts no check, so the watch cannot see it\n- so a push that lands while an older run holds the concurrency group reads green with the test\n  suite never run. a driver who quotes that green ships an unverified claim\n\n## .the shape of the fix\n\n1. before done, list the workflow runs for the head sha (`gh run list --commit <sha>`), and wait\n   while any run is not yet `completed`\n2. or require the repo's required checks (branch protection) to be present before done\n3. clamp: a stub gh where one run is queued with no checks posted; assert the watch keeps on\n\n## .why it is not done in this round\n\nthe skill lives in ehmpathy/rhachet-roles-ehmpathy; a tree adopts only what is scoped to itself.",
+  "status": null,
+  "via": "gh.issues",
+  "auth": "as-human",
+  "idem": "findsert",
+  "heldSeq": 41,
+  "recordStatus": "DELIVERED",
+  "reason": null,
+  "deliveredExid": "1177"
+}
