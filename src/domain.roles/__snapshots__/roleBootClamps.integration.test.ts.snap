@@ -1867,8 +1867,8 @@ exports[`roleBootClamps given: [case11] the telepath role boot when: [t1] it boo
 
 exports[`roleBootClamps given: [case12] the thinker role boot when: [t1] it boots in the form a seat boots it then: its seat payload is pinned, so growth is a snapshot diff 1`] = `
 {
-  "budget": 215250,
-  "payload": 215224,
+  "budget": 127250,
+  "payload": 127233,
 }
 `;
 

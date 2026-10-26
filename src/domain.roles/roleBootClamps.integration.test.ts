@@ -400,6 +400,37 @@ const getOneBootEmitted = (input: { bootUri: string }): BootEmitted => {
   };
 };
 
+// communicator: the absolute paths git ignores under one dir, each ignored dir named once
+const getAllPathsIgnoredUnder = (input: { dir: string }): string[] => {
+  const result = spawnSync(
+    'git',
+    [
+      'ls-files',
+      '--others',
+      '--ignored',
+      '--exclude-standard',
+      '--directory',
+      '-z',
+      '--',
+      input.dir,
+    ],
+    { cwd: REPO_ROOT },
+  );
+
+  // fail loud where git could not list, so a copy never silently keeps ignored files
+  if (result.status !== 0)
+    throw new MalfunctionError('git could not list the ignored paths', {
+      dir: input.dir,
+      stderr: result.stderr?.toString(),
+    });
+
+  return result.stdout
+    .toString()
+    .split('\0')
+    .filter((entry) => entry.length > 0)
+    .map((entry) => path.join(REPO_ROOT, entry).replace(/\/$/, ''));
+};
+
 // what the real `roles boot` emits for one role in the form a seat boots it: a plain copy of the
 // role dir, symlinks dereferenced, at `.agent/repo=bhrain/role=<slug>/`, booted from the copy's
 // root. a booted path rides in the payload, so the src form under-counts what a seat pays; and a
@@ -407,9 +438,19 @@ const getOneBootEmitted = (input: { bootUri: string }): BootEmitted => {
 const getOneBootEmittedAsSeat = (input: { slug: string }): BootEmitted => {
   const seatRoot = genTempDir({ slug: `role-boot-seat-${input.slug}` });
   const roleDirRel = path.join('.agent', 'repo=bhrain', `role=${input.slug}`);
-  fs.cpSync(path.join(__dirname, input.slug), path.join(seatRoot, roleDirRel), {
+  const roleDirSrc = path.join(__dirname, input.slug);
+
+  // copy what ships, never what a local run left behind: a git-ignored path (a skill's `.temp/`
+  // output) is absent from every clean checkout, so a copy that kept it would pin a payload ci
+  // never sees
+  const pathsIgnored = getAllPathsIgnoredUnder({ dir: roleDirSrc });
+  fs.cpSync(roleDirSrc, path.join(seatRoot, roleDirRel), {
     recursive: true,
     dereference: true,
+    filter: (source) =>
+      !pathsIgnored.some(
+        (ignored) => source === ignored || source.startsWith(`${ignored}/`),
+      ),
   });
   const result = runRhachet({
     args: ['roles', 'boot', '--what', path.join(roleDirRel, 'boot.yml')],

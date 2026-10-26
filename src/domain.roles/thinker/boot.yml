@@ -5,5 +5,12 @@
 budget:
   # a cap, not a target: the least multiple of 250 strictly above what the role costs as a seat
   # boots it. the clamp is roleBootClamps.integration.test.ts. never cut a cue to fit
-  tokens: 215_250
+  tokens: 127_250
 briefs: {}
+skills:
+  # a skill's run output, git-ignored: absent from every clean checkout and every package, so it
+  # never boots. the second glob reaches the `.rhachet/` dot dir a `**` does not enter. no `say`
+  # key: every other skill file says, as before
+  not:
+    - skills/*/.temp/**/*
+    - skills/*/.temp/**/.rhachet/**/*
