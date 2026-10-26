@@ -128,4 +128,4 @@ detected before any repair begins.
 - `rule.always.enskill-the-tactics-you-discover` — the cue that sends you here: judgment at several
   points, in an order that matters
 - `term=route` (`domain.terms/`) — the word, and its `pave` etymology
-- `howto.create-routes.[ref]` / `define.routes-are-gardened.[philosophy]` (driver) — how to lay one
+- `howto.create-routes.kind=ref` / `define.routes-are-gardened.kind=philosophy` (driver) — how to lay one

@@ -1,0 +1,27 @@
+# .what = what the thinker loads at session start: its catalog and its root briefs, all else one read away
+# .why  = no role boots over 10k (#692). the thinker's shelves run ~125k, so it boots as its catalog
+#         (rule.always.boot-an-oversized-subdomain-as-its-catalog, librarian): every brief and skill by
+#         name and shelf, at say, each member at ref. the six root briefs, its persona and terms, boot whole
+budget:
+  # a cap, not a target: the least multiple of 250 strictly above what the role costs as a seat
+  # boots it. the clamp is roleBootClamps.integration.test.ts
+  tokens: 7_000
+always:
+  briefs:
+    say:
+      - briefs/catalog.of=brief._.md
+      - briefs/distilisys.grammar.compressed.md
+      - briefs/style.words.lowercase.md
+      - briefs/term=brain.atomic_vs_replic.md
+      - briefs/terms.motive.intent.goal.md
+      - briefs/trait.chillnature.md
+      - briefs/trait.ocd.md
+    # the shelf members: read on demand, each path computable from the catalog's formula
+    not:
+      - briefs/*/**/*
+  skills:
+    say: []
+    # a skill's run output, git-ignored: it never boots. the second glob reaches the `.rhachet/` dot dir
+    not:
+      - skills/*/.temp/**/*
+      - skills/*/.temp/**/.rhachet/**/*

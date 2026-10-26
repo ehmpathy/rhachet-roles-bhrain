@@ -1,0 +1,16 @@
+# howto: drive routes
+
+lost? run `rhx route.drive`: shows the current stone and next step.
+
+| signal | when |
+|---|---|
+| `--as passed` | work complete, proceed |
+| `--as arrived` | work complete, request review |
+| `--as absorbed --that <slug>` | you replied to a peer reviewer; required before re-arrive |
+| `--as blocked` | genuine wall, only after you replied to what you could |
+
+you cannot grant `--as approved`; only humans. if a guard demands it, signal `--as arrived` and wait.
+
+self-reviews: the review IS the work. peer reviews: address all blockers, maximize nitpick fixes.
+
+disagree? that is a `[REFUTE]` in your `.taken`, never a halt: argue with cited evidence, `--as absorbed --that <slug>`, re-arrive. a code fix is not a reply either (`rule.forbid.unanswered-exits-from-a-blocker`).

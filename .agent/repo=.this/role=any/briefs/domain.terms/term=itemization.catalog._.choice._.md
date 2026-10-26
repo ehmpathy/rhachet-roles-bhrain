@@ -52,7 +52,7 @@ where the term composes declared contracts:
 - src/domain.roles/librarian/briefs/rule.require.inventory-for-enumerable-concepts.md  # the choice
 - src/domain.roles/learner/briefs/catalog.of=externalization._.md                # the en- family
 - .agent/repo=.this/role=any/briefs/domain.glyphs/catalog.of=glyph._.md          # the glyph register
-- src/domain.roles/librarian/briefs/knowledge/kno201.documents._.[catalog].md    # the archetype
+- src/domain.roles/librarian/briefs/knowledge/kno201.documents._.kind=catalog.md    # the archetype
 
 ## .reason
 

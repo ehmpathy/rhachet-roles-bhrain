@@ -32,7 +32,7 @@ half has:
 
 ## .`concepts` is adopted, never coined
 
-the librarian already declares it. `kno101.primitives.1.ontology.[article].frame.docs_as_materializations`
+the librarian already declares it. `kno101.primitives.1.ontology.kind=article.frame.docs_as_materializations`
 sets out three layers:
 
 > **concepts** (patterns in reality) → materialized via → **documents** (organized arrangements of
@@ -105,7 +105,7 @@ bought. the rung tells you **what a use costs**, never **what may now be thrown 
 - `philosophy.entoolment-is-the-pinnacle._.md` — the parent: the five-rung ladder, and why a
   higher rung retires none below it
 - `philosophy.entoolment-is-the-pinnacle.via-routes.md` — the peer zoom-in, on rung 3
-- `kno101.primitives.1.ontology.[article].frame.docs_as_materializations` (librarian) — where
+- `kno101.primitives.1.ontology.kind=article.frame.docs_as_materializations` (librarian) — where
   `concepts` was already settled, and the instance/document/concept layers this reads at one rung
 - `rule.always.enskill-the-tactics-you-discover` — the capacity half, in practice
 - `rule.always.externalize.lessons.into_briefs` — the concepts half, in practice

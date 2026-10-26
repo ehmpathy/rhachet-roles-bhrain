@@ -104,6 +104,6 @@ it answers, and add it here.
 - `rule.forbid.websearch-and-webfetch` — the third peer: its **fidelity**. depth, fidelity, shape —
   and each is settled while the research is open, never after the draft
 - `readme.md` — the five-phase route; this fires at `3.3.probes.absorb.gaps`
-- `kno201.documents._.[catalog]` (librarian) — the archetype set a curated brief lands in
+- `kno201.documents._.kind=catalog` (librarian) — the archetype set a curated brief lands in
 - `rule.require.enumerate-before-you-name` (learner) — the same move for a term: list the
   instances before you pick the word

@@ -138,8 +138,8 @@ from it.
 
 - `rule.prefer.wet-over-dry` (ehmpathy/architect) — **the parent claim.** this file is that rule
   at the route grain; the stakes table above is what it adds
-- `howto.create-routes.[ref]` — the route/stone/guard/bind mechanics a walk uses
-- `define.routes-are-gardened.[philosophy]` — why a route is grown rather than designed
+- `howto.create-routes.kind=ref` — the route/stone/guard/bind mechanics a walk uses
+- `define.routes-are-gardened.kind=philosophy` — why a route is grown rather than designed
 - `rule.always.enskill-the-tactics-you-discover` (learner) — the same claim one rung down: an
   offroad walk owes a route behind it
 - `rule.require.specialize-a-rule-its-readers-look-past` (learner) — why the parent needed this

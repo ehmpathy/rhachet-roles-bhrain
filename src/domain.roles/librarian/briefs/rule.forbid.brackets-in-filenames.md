@@ -90,10 +90,10 @@ define.routes-are-gardened.[philosophy].md
 
 `rhx globsafe --pattern '**/*.[article].md'` returns no match. so does `Glob`.
 
-🟡 **and a bulk rename cannot fix them safely.** a find-and-replace cannot tell a **citation** of
-a bad name from an **instance** of one — the three lines above are citations, and any sweep that
-repaired real filenames would rewrite them too. so the repair is **file-first and by hand**: that
-is one more cost the bracket form imposes, and it lands on the cleanup.
+🟡 **and a blind find-and-replace cannot fix them safely.** it cannot tell a **citation** of a bad
+name from an **instance** of one — the three lines above are citations, and a sweep that repaired
+real filenames would rewrite them too. so a bulk rename must name the files that cite a bad name
+on purpose, and leave them be: that is one more cost the bracket form imposes.
 
 ### 👍 good — the archetype is a coordinate
 
@@ -139,8 +139,6 @@ the defect is a bracket a **tool must parse as a path**, never a bracket a human
 ## .see also
 
 - `rule.forbid.itemization-without-coordinates` — the `$dimension=$position` contract this reuses
-- `kno201.documents._.[catalog]` — the archetypes this marks. 🟡 **cited under its extant
-  bracketed name on purpose** — it is an undisturbed file, and a citation of a name that does not
-  exist yet resolves to no match, which is the very defect this rule is about
+- `kno201.documents._.kind=catalog` — the archetypes this marks
 - `rule.always.enskill-the-tactics-you-discover` (learner) — check the pavement before you lay
   more, **and check that the pavement is not a rut**

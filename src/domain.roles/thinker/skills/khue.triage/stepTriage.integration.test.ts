@@ -6,12 +6,13 @@ import { given, then, usePrep, when } from 'test-fns';
 import { genContextLogTrail } from '@src/.test/genContextLogTrail';
 import { genContextStitchTrail } from '@src/.test/genContextStitchTrail';
 import { getContextOpenAI } from '@src/.test/getContextOpenAI';
+import { REPEATABLY_CONFIG } from '@src/.test/infra/repeatably';
 import { getThinkerBriefs } from '@src/domain.roles/thinker/getThinkerBrief';
 import { stepTriage } from '@src/domain.roles/thinker/skills/khue.triage/stepTriage';
 
 jest.setTimeout(toMilliseconds({ minutes: 5 }));
 
-describe.skip('stepTriage', () => {
+describe('stepTriage', () => {
   const context = {
     ...genContextLogTrail(),
     ...genContextStitchTrail(),
@@ -129,7 +130,7 @@ describe.skip('stepTriage', () => {
         }),
       }));
 
-    when('multiple elements', () => {
+    when.repeatably(REPEATABLY_CONFIG)('multiple elements', () => {
       beforeEach(async () => {
         await artifacts.caller['foci.input.concept'].set({
           content: inputConceptFewJokes,
@@ -155,7 +156,7 @@ describe.skip('stepTriage', () => {
       });
     });
 
-    when('only 1 element', () => {
+    when.repeatably(REPEATABLY_CONFIG)('only 1 element', () => {
       beforeEach(async () => {
         await artifacts.caller['foci.input.concept'].set({
           content: inputConceptOneJoke,

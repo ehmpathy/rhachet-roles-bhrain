@@ -52,7 +52,7 @@ entry (*"the fork"* — option A vs option B, stated fairly), never a second wor
 where the term composes declared contracts:
 - src/domain.roles/driver/briefs/rule.always.itemize-the-fulcrums-you-best-guess.md   # the rule
 - src/domain.roles/driver/briefs/rule.always.defer-fulcrums-to-last.md                # the WHEN
-- src/domain.roles/driver/briefs/howto.navigate-fulcrum-choices.[guide].md             # the ladder
+- src/domain.roles/driver/briefs/howto.navigate-fulcrum-choices.md             # the ladder
 - .behavior/*/.fulcrums/inventory.of=fulcrums.case=*.md                               # the artifacts
 - src/domain.objects/Driver/PassageReport.ts                                          # the `fulcrum?` field a dispute stores
 - src/domain.operations/route/stones/setStoneAsConcernAbsorbed.ts                             # `--why` names a fulcrum a dispute cites

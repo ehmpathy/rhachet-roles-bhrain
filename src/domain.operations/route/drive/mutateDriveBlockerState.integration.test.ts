@@ -70,11 +70,8 @@ describe('mutateDriveBlockerState.integration', () => {
   );
 
   /**
-   * .note = eight, not twenty. each contender's deadline starts with the race, so the last in
-   *         line waits out every section ahead of it inside one `LOCK_ACQUIRE_TIMEOUT_MS`.
-   *         twenty queued sections under full-suite disk load ran past 500ms and threw — a
-   *         queue depth the hook never builds (it takes this lock at most twice per tick).
-   *         eight still reads a lost update as a short count, and fits the deadline under load
+   * .note = eight contenders queue behind each other. the deadline bounds one hold and
+   *         restarts at each handoff (`[case8]`), so the queue's length never trips it
    */
   const CONTENDERS = 8;
 
@@ -95,6 +92,70 @@ describe('mutateDriveBlockerState.integration', () => {
         // 🔴 the arithmetic IS the assert: N serialized increments read N, and any lost
         //    update reads fewer. with no lock this read 1 — every other write discarded
         expect(state.count).toEqual(CONTENDERS);
+      });
+    });
+  });
+
+  given('[case8] a queue that moves, whose waits sum past the cap', () => {
+    const tempDir = genTempDir({ slug: 'test-mutateDriveBlockerState-queue' });
+
+    when('[t0] a writer waits behind two short holds in a row', () => {
+      /**
+       * 🔴 .why = the cap bounds ONE hold, never the queue. each hold here is 60% of the cap,
+       *          and the two sum to 120% of it. a deadline that starts with the wait and never
+       *          moves throws at the second hold, though no holder ever ran long. that is the
+       *          red the full suite hit under load, when eight writers queued behind each other
+       */
+      const outcome = useThen(
+        'the write settles rather than throws',
+        async () => {
+          const statePath = path.join(
+            tempDir,
+            '.route',
+            '.drive.blockers.latest.json',
+          );
+          await fs.mkdir(path.join(tempDir, '.route'), { recursive: true });
+          const lockPath = `${statePath}.lock`;
+          const msOfHold = Math.round(LOCK_ACQUIRE_TIMEOUT_MS * 0.6);
+
+          // hold the lock by hand, as this live process, then hand it to a second holder by
+          // an atomic rename: a new lock file, with no gap a contender could slip through
+          const pause = () =>
+            new Promise((settle) => setTimeout(settle, msOfHold));
+          const holds = (async () => {
+            await fs.writeFile(lockPath, `${process.pid}\n`, { flag: 'wx' });
+            await pause();
+            await fs.writeFile(`${lockPath}.next`, `${process.pid}\n`);
+            await fs.rename(`${lockPath}.next`, lockPath);
+            await pause();
+            await fs.unlink(lockPath);
+          })();
+
+          // the contender starts once the first hold is on disk
+          await new Promise((settle) => setTimeout(settle, 20));
+          const caught = await mutateDriveBlockerState({
+            route: tempDir,
+            project: () =>
+              new DriveBlockerState({ count: 2, stone: 'kappa', brain: null }),
+          }).catch((error: unknown) => error);
+          await holds;
+
+          return {
+            threw: caught instanceof Error,
+            message: caught instanceof Error ? caught.message : '',
+          };
+        },
+      );
+
+      then('it did not throw', () => {
+        expect(outcome.message).toEqual('');
+        expect(outcome.threw).toEqual(false);
+      });
+
+      then('the write landed', async () => {
+        const state = await getDriveBlockerState({ route: tempDir });
+        expect(state.count).toEqual(2);
+        expect(state.stone).toEqual('kappa');
       });
     });
   });

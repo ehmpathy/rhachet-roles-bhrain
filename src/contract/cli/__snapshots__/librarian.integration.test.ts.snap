@@ -1,0 +1,121 @@
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
+
+exports[`librarian.integration given: [case1] census.minpeer over a set of mins when: [t0] a report runs with --files then: the report matches snapshot (aesthetic review) 1`] = `
+"🦉 census.minpeer — min lines absent from the .md beside them
+
+📚 census.minpeer (5 mins)
+   ├─   0 /   6 absent  rule.a.md.min
+   ├─   2 /   6 absent  rule.b.md.min
+   ├─ no .md peer     rule.c.md.min
+   ├─   0 /   4 absent  rule.h.md.min
+   ├─   0 /   3 absent  rule.s.md.min
+   └─ total: 2 of 19 min lines absent from their .md
+"
+`;
+
+exports[`librarian.integration given: [case1] census.minpeer over a set of mins when: [t1] a report runs without --files then: it prints the total alone 1`] = `
+"🦉 census.minpeer — min lines absent from the .md beside them
+
+📚 census.minpeer (5 mins)
+   └─ total: 2 of 19 min lines absent from their .md
+"
+`;
+
+exports[`librarian.integration given: [case2] census.cues over a set of briefs when: [t0] a report runs with --files then: the report matches snapshot (aesthetic review) 1`] = `
+"🦉 census.cues — cue vs argument, per rule.prefer.rules-that-refout
+
+📚 census.cues (2 files, ~tokens = chars/4, an estimate)
+   ├─ cue  74% · ~12 cue / ~16 all  rule.a.md.min
+   ├─ cue  82% · ~7 cue / ~9 all  rule.h.md.min
+   └─ total: cue 77% · ~19 cue + ~6 argument = ~25
+"
+`;
+
+exports[`librarian.integration given: [case3] brief.min.moveout over a set of mins when: [t0] a plan runs (the default mode) then: the plan matches snapshot (aesthetic review) 1`] = `
+"🦉 brief.min.moveout — the argument goes to the .md, the cue stays
+
+📚 brief.min.moveout (plan, 5 mins)
+   ├─ would move  briefs/rule.a.md.min  ## .why  (2 lines)
+   ├─ held (1 body line(s) absent from the .md)  briefs/rule.b.md.min  ## .why
+   ├─ held (a cue line)  briefs/rule.h.md.min  ## .why
+   └─ would move 1 sections · held 2
+"
+`;
+
+exports[`librarian.integration given: [case3] brief.min.moveout over a set of mins when: [t1] an apply runs then: the apply matches snapshot (aesthetic review) 1`] = `
+"🦉 brief.min.moveout — the argument goes to the .md, the cue stays
+
+📚 brief.min.moveout (apply, 5 mins)
+   ├─ moved  briefs/rule.a.md.min  ## .why  (2 lines)
+   ├─ held (1 body line(s) absent from the .md)  briefs/rule.b.md.min  ## .why
+   ├─ held (a cue line)  briefs/rule.h.md.min  ## .why
+   └─ moved 1 sections · held 2
+"
+`;
+
+exports[`librarian.integration given: [case4] bad input when: [t0] brief.min.moveout runs with no --glob then: the error matches snapshot (aesthetic review) 1`] = `
+"✋ ConstraintError: no --glob given
+
+hint: run \`rhx brief.min.moveout --help\`; this command reads: --glob --mode
+"
+`;
+
+exports[`librarian.integration given: [case4] bad input when: [t0] census.cues runs with no --glob then: the error matches snapshot (aesthetic review) 1`] = `
+"✋ ConstraintError: no --glob given
+
+hint: run \`rhx census.cues --help\`; this command reads: --glob --files --emit
+"
+`;
+
+exports[`librarian.integration given: [case4] bad input when: [t0] census.minpeer runs with no --glob then: the error matches snapshot (aesthetic review) 1`] = `
+"✋ ConstraintError: no --glob given
+
+hint: run \`rhx census.minpeer --help\`; this command reads: --glob --files --emit
+"
+`;
+
+exports[`librarian.integration given: [case4] bad input when: [t1] brief.min.moveout runs with a glob that names no file then: the error matches snapshot (aesthetic review) 1`] = `
+"✋ ConstraintError: no file matched the --glob set
+
+globs: ["absent/*.md.min"]
+
+hint: check the pattern; quote it so the shell does not expand it
+"
+`;
+
+exports[`librarian.integration given: [case4] bad input when: [t1] census.cues runs with a glob that names no file then: the error matches snapshot (aesthetic review) 1`] = `
+"✋ ConstraintError: no file matched the --glob set
+
+globs: ["absent/*.md.min"]
+
+hint: check the pattern; quote it so the shell does not expand it
+"
+`;
+
+exports[`librarian.integration given: [case4] bad input when: [t1] census.minpeer runs with a glob that names no file then: the error matches snapshot (aesthetic review) 1`] = `
+"✋ ConstraintError: no file matched the --glob set
+
+globs: ["absent/*.md.min"]
+
+hint: check the pattern; quote it so the shell does not expand it
+"
+`;
+
+exports[`librarian.integration given: [case4] bad input when: [t3] census.minpeer runs with a typo flag then: the error matches snapshot (aesthetic review) 1`] = `
+"✋ ConstraintError: unknown flag(s): --emti
+
+hint: run \`rhx census.minpeer --help\`; this command reads: --glob --files --emit
+"
+`;
+
+exports[`librarian.integration given: [case5] --help when: [t0] brief.min.moveout runs with --help then: the help matches snapshot (aesthetic review) 1`] = `
+"🦉 brief.min.moveout — move the .why sections of a set of mins out to the .md beside each
+
+📚 brief.min.moveout --help
+   ├─ usage: rhx brief.min.moveout --glob <glob> [--mode <mode>]
+   ├─ flags
+   │  ├─ --glob  a set of \`.md.min\` files; repeat it to union several sets
+   │  └─ --mode  plan (default) lists each section; apply rewrites each min
+   └─ exit: 0 on success · 2 on bad input (no --glob, an unknown flag, or a glob that names no file)
+"
+`;

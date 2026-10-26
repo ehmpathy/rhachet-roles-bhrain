@@ -3,41 +3,19 @@
 when the wisher says a word that **changes the work**, catch it verbatim before you distill it.
 
 ```
-$route/.seeds/inventory.of=seeds._.md                # the SUMMARY — the axis, the counts, the gaps
-$route/.seeds/inventory.of=seeds.case=S$n-$slug.md   # one ENTRY per utterance
+$route/.seeds/inventory.of=seeds._.md                # the SUMMARY
+$route/.seeds/inventory.of=seeds.case=S$n-$slug.md   # one ENTRY per utterance (.said · .settled · .landed)
 ```
 
-both are owed, every time. the distillate is what the next traveler reads; **the seed is what they check it against.**
+both owed, every time.
 
 | when the wisher… | then |
 |---|---|
-| settles a question | archive it — future rounds inherit the settlement |
-| 🔴 **corrects you** | the highest-value quote there is: it records the wrong path AND the right one |
-| coins a word or a convention | the coinage's source is its etymology |
-| specifies a contract verbatim — a path, a flag, a format | a specification paraphrased is a specification changed |
-| 🔴 **asks a question** whose answer changes the work | the cheapest kind to lose — in hindsight it reads as though YOU found the gap |
-| — or you are about to write *"the wisher asked for…"* | that citation needs a source. archive first |
+| settles a question, coins a word, specifies a contract (path, flag, format) | archive it |
+| corrects you, or asks a question whose answer changes the work | archive it |
+| — or you are about to write *"the wisher asked for…"* | that needs a source: archive first |
 
-a seed holds `.said` · `.settled` · `.landed`.
+- `.said` is verbatim in SUBSTANCE: repair typos, profanity (cut or `[placeholder]`), mangled paths; never word choice, order, or mid-thought corrections. test: would the speaker say *"that is what I typed, spelled right"*? else it is a rewrite, and belongs in `.settled`
+- a seed is the seed of a CONCEPT: strip route, tools, errors; what stands is the seed. the environment (switch state, a broken tool) is not a seed
 
-🟡 **`.said` is verbatim in SUBSTANCE — repair the surface.** the words, their order, their emphasis, and their mid-thought corrections stay unedited; **typos and profanity are repaired**, since a seed is a published artifact of this repo and neither carries a scrap of the concept.
-
-| repair it | never touch it |
-|---|---|
-| a **typo** — a transposed letter, a dropped one, a doubled word | a word choice, however informal |
-| **profanity** — cut it, or swap in a neutral `[placeholder]`. never a softened or masked form of the word | the order the points arrive in |
-| a mangled path, flag, or identifier, where the intent is plain | a mid-thought correction — that IS the record |
-
-🔴 the test: would the speaker, shown both, say *"that is what I typed, spelled right"*? yes → a repair. a change past that is a rewrite, and a rewrite belongs in `.settled`.
-
-## 🔴 a seed is the seed of a CONCEPT, never a chronicle of the round
-
-`.settled` states what now HOLDS. strip every reference to this route, its tools, its fulcrums, and its errors — **does the concept still stand?** what survives is the seed; the rest is archaeology, and git already holds it.
-
-🟡 the tell: a `.landed` list longer than the concept, whose rows carry a REASON rather than a path.
-
-## 🔴 the ENVIRONMENT is not a seed
-
-a channel's switch state, a credential's health, a tool broken that day — real, and a directive for the session, never a concept a future traveler inherits. **strip the machinery; if naught is left, drop it.**
-
-blocker: an utterance that changed the work with no seed · a `"the wisher asked for X"` with no source · a `.said` whose SENSE was edited · a `.said` that ships a typo or profanity · profanity persisted whole or as a masked or softened form (a neutral `[placeholder]` is fine) · entries with no summary · a bare-ordinal `case=` · a body that narrates the round · a `.landed` row that carries a reason · a durable concept with no brief behind it.
+blocker: an utterance that changed the work with no seed · `"the wisher asked for X"` with no source · a `.said` whose sense was edited, or that ships a typo or profanity · entries with no summary · a bare-ordinal `case=` · a body that narrates the round · a `.landed` row that carries a reason.

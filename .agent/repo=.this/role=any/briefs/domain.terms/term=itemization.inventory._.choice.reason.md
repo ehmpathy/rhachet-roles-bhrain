@@ -12,7 +12,7 @@ restraint is the term's whole character.
 ## 🟡 .inventory vs catalog — the line
 
 `catalog` is a **declared archetype** in the librarian's taxonomy
-(`kno201.documents._.[catalog]`), so a new near-neighbor must earn its separation. it does, on one
+(`kno201.documents._.kind=catalog`), so a new near-neighbor must earn its separation. it does, on one
 axis: **what each entry carries.**
 
 | | enumerates | each entry carries | a reader gets |

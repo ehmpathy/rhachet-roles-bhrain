@@ -78,6 +78,6 @@ blocker: a blocker with no stated harm · a third raise of one point with no re-
 re-statement · a blocker the driver is not **permitted** to close, held past one round.
 nitpick: a correct-but-cosmetic point graded blocker.
 
-⇒ see also: `contract.reviewer-output` (the two severities) · `on.rules/rules101.content.[article]` ·
+⇒ see also: `contract.reviewer-output` (the two severities) · `on.rules/rules101.content.kind=article` ·
 `rule.always.raise-a-blocker-a-taken-cannot-close` (driver — the mirror: what a driver does when a
 correct blocker is unclosable) · `philosophy.verification-strictness` (behaver — the bound above).

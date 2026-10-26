@@ -60,7 +60,7 @@ where the term composes declared objects & operations:
 - src/domain.objects/Driver/RouteStone.ts, RouteStoneGuard.ts, RouteBouncerCache.ts
 - src/domain.operations/route/                                  # the operation namespace
 - src/domain.roles/driver/skills/route.stone.set.sh             # and every route.* skill
-- src/domain.roles/driver/briefs/howto.create-routes.[ref].md
+- src/domain.roles/driver/briefs/howto.create-routes.kind=ref.md
 - src/domain.roles/learner/briefs/rule.always.enskill-the-tactics-you-discover.md
 - .agent/repo=.this/role=any/briefs/domain.terms/term=externalize.pave._.choice._.md   # the verb this noun instantiates
 

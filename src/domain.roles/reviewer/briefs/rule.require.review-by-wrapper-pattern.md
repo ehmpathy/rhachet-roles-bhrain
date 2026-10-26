@@ -103,8 +103,8 @@ straight off the parseable stdout summary.
 
 ## .see also
 
-- `howto.add-review-by-to-a-role.[guide].md` — the step-by-step guide this rule enforces
-- `howto.review-by.[guide].md` — the base-engine + per-role-wrapper architecture in full
+- `howto.add-review-by-to-a-role.md` — the step-by-step guide this rule enforces
+- `howto.review-by.md` — the base-engine + per-role-wrapper architecture in full
 - `contract.reviewer-output.md` — the stdout contract the base emits
 
 ## .enforcement

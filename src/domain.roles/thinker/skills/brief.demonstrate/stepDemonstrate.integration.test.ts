@@ -12,8 +12,7 @@ import { stepDemonstrate } from '@src/domain.roles/thinker/skills/brief.demonstr
 
 jest.setTimeout(toMilliseconds({ minutes: 5 }));
 
-// .note = skipped due to OpenAI quota issues in CI; re-enable when quota restored
-describe.skip('stepDemonstrate', () => {
+describe('stepDemonstrate', () => {
   const context = {
     ...genContextLogTrail(),
     ...genContextStitchTrail(),
@@ -107,7 +106,7 @@ the structure of a joke
         }),
       }));
 
-    when('coherent foci.input.concept', () => {
+    when.repeatably(REPEATABLY_CONFIG)('coherent foci.input.concept', () => {
       beforeEach(async () => {
         await artifacts.caller['foci.input.concept'].set({
           content: inputConcept,
@@ -116,8 +115,7 @@ the structure of a joke
 
       const goalThreads = enthread();
 
-      // note: use repeatably since LLM output is non-deterministic
-      then.repeatably(REPEATABLY_CONFIG)('outputs answers', async () => {
+      then('outputs answers', async () => {
         const result = await enweaveOneStitcher(
           { stitcher: route, threads: goalThreads },
           context,
@@ -134,7 +132,7 @@ the structure of a joke
       });
     });
 
-    when.skip('empty foci.input.concept', () => {
+    when.repeatably(REPEATABLY_CONFIG)('empty foci.input.concept', () => {
       beforeEach(async () => {
         await artifacts.caller['foci.input.concept'].set({
           content: ' ',

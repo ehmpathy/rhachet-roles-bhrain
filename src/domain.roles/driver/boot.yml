@@ -1,8 +1,15 @@
+budget:
+  # a cap, not a target: the least multiple of 250 strictly above what the role costs as a seat boots it.
+  # that figure, and the halt, come from `rhx git.repo.test --what integration --scope path://roleBootClamps --mode apply`.
+  # each min carries only its cue; its argument sits in the `.md` beside it. never cut a cue to
+  # fit. a halt here means a min grew: tighten its cue rows or move its argument out. the cap
+  # is 10_000, the figure the owner set on #692; never raise it past that.
+  tokens: 10_000
 always:
   briefs:
     ref:
       - briefs/im_a.bhrain_owl.md
-      - briefs/howto.create-routes.[ref].md
+      - briefs/howto.create-routes.kind=ref.md
       # offroad-first, template-later — `rule.prefer.wet-over-dry` at the route grain.
       # ref beside the mechanics it governs: it fires only when a route is BORN, which
       # is rare, and howto.create-routes is where a driver already looks at that moment
@@ -48,7 +55,19 @@ always:
       # route.drive findserts it and reaps it, so an enrolled drive is covered with no action.
       # howto.drive-routes (say, below) names this path for the rare case a driver must
       # inspect or override by hand — the dereference case exactly
-      - briefs/howto.route-reminder.[guide].md
+      - briefs/howto.route-reminder.md
+      # HOW to run a self review. ref, not say, because a tool carries its cue to the act:
+      # the self-review guard (`route.stone.set`) prints, at each ask, the review's guide,
+      # its exact `--into` path, and the promise command; on a refusal it prints the fix
+      # (no ask on record → ask first; a stale file → re-save; a wrong path → mvsafe). the
+      # MANDATE that no self review is waived stays at say (bear-every-self-review, below),
+      # since no halt carries it (F6)
+      - briefs/howto.run-self-reviews.md
+      # why a route is grown rather than specified up front — the ground under
+      # defer-fulcrums-to-last and the walk-before-you-template rule. ref because a
+      # philosophy is understood, never produced (rule.prefer.rules-that-refout), and its
+      # bracketed name forbids a min beside it (rule.forbid.brackets-in-filenames)
+      - briefs/define.routes-are-gardened.kind=philosophy.md
     say:
       # the map of the SYSTEM a driver operates within — the review gates in order,
       # the invariant behind each, and what is required of the driver to clear it.
@@ -65,10 +84,7 @@ always:
       #
       # why a route is walked one stone at a time rather than raced — the ground under
       # drive-autonomously and converge-to-terminal alike
-      - briefs/research.importance-of-focus.[philosophy].md
-      # why a route is grown rather than specified up front — the ground under
-      # defer-fulcrums-to-last and the walk-before-you-template rule
-      - briefs/define.routes-are-gardened.[philosophy].md
+      - briefs/research.importance-of-focus.kind=philosophy.md
       - briefs/rule.always.drive-autonomously.md
       # no workarounds — fix every failure at its root cause, and treat any friction in a
       # tool you build as a critical defect fixed in the round it surfaced. say-level
@@ -181,9 +197,8 @@ always:
       # archive half alone is to teach that the quote is precious and leave unsaid that
       # it belongs in exactly one file
       - briefs/rule.forbid.verbatim-quotes-outside-seeds.md
-      - briefs/howto.drive-routes.[guide].md
-      - briefs/howto.run-self-reviews.[guide].md
-      - briefs/howto.navigate-fulcrum-choices.[guide].md
+      - briefs/howto.drive-routes.md
+      - briefs/howto.navigate-fulcrum-choices.md
   skills:
     say:
       - skills/route.stone.set.sh

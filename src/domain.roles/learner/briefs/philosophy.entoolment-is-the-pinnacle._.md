@@ -263,7 +263,7 @@ a brain hesitates and a bad tool does not. so:
 - `rule.always.entool-the-skills-you-touch` — the UPGRADE rule this is the why for
 - `philosophy.pavement-saves-nature` — the parent claim: reusable prethought is conserved energy
 - `rule.always.externalize.tactics.into_skills` — the deposit rule this raises the bar on
-- `howto.create-routes.[ref]` / `define.routes-are-gardened.[philosophy]` (driver) — how to lay a
+- `howto.create-routes.kind=ref` / `define.routes-are-gardened.kind=philosophy` (driver) — how to lay a
   route once the work proves irreducibly judgment
 - `rule.require.pitofsuccess` / `rule.require.idempotent-operations` (ehmpathy) — what a tool owes
   once it exists

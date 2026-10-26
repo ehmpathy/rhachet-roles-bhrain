@@ -37,7 +37,7 @@ terminal verdicts for level composition:
 - `approved` — passed thresholds, terminal
 - `exhausted` — skipped, terminal (unlocks higher levels)
 
-⚠️ **terminal for the LEVEL is not clear for the STONE.** an exhausted reviewer whose last given
+🟡 **terminal for the LEVEL is not clear for the STONE.** an exhausted reviewer whose last given
 carried a blocker still holds the stone until that blocker is answered — the `.taken` debt is keyed
 to the reviewer, never to its budget. the level unlocks; the stone does not pass
 (`rule.always.converge-to-terminal`).

@@ -99,7 +99,7 @@ taken a few minutes."* the few minutes are the point.
 ## .see also
 
 - `contract.reviewer-output` (reviewer) — the verdict shape a peer's answer must satisfy
-- `howto.review-by.[guide]` (reviewer) — the extant enroll-review-parse flow this reuses
+- `howto.review-by` (reviewer) — the extant enroll-review-parse flow this reuses
 - `rule.always.converge-to-terminal` — work every reviewer before the human is pulled
 - `rule.always.spend-own-levers-before-escalation` — the same sort-by-owner move, one rung lower
 - `rule.always.defer-fulcrums-to-last` — what to do with the fork once a peer has named it

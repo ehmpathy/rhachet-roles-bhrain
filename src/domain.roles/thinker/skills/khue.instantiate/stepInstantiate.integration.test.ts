@@ -6,6 +6,7 @@ import { given, then, usePrep, when } from 'test-fns';
 import { genContextLogTrail } from '@src/.test/genContextLogTrail';
 import { genContextStitchTrail } from '@src/.test/genContextStitchTrail';
 import { getContextOpenAI } from '@src/.test/getContextOpenAI';
+import { REPEATABLY_CONFIG } from '@src/.test/infra/repeatably';
 import { getThinkerBriefs } from '@src/domain.roles/thinker/getThinkerBrief';
 import { stepInstantiate } from '@src/domain.roles/thinker/skills/khue.instantiate/stepInstantiate';
 
@@ -70,7 +71,7 @@ const enthread = () =>
     }),
   }));
 
-describe.skip('stepInstantiate', () => {
+describe('stepInstantiate', () => {
   const context = {
     ...genContextLogTrail(),
     ...genContextStitchTrail(),
@@ -94,7 +95,7 @@ describe.skip('stepInstantiate', () => {
       });
     });
 
-    when('invoked', () => {
+    when.repeatably(REPEATABLY_CONFIG)('invoked', () => {
       const goalThreads = enthread();
 
       then('outputs an instance', async () => {
@@ -135,7 +136,7 @@ describe.skip('stepInstantiate', () => {
       });
     });
 
-    when('invoked', () => {
+    when.repeatably(REPEATABLY_CONFIG)('invoked', () => {
       const goalThreads = enthread();
 
       then('outputs an instance', async () => {

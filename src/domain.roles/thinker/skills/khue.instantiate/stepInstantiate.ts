@@ -22,12 +22,12 @@ import { genStepArtSet } from '@src/domain.operations/artifact/genStepArtSet';
 import { getThinkerBriefs } from '@src/domain.roles/thinker/getThinkerBrief';
 
 export const BRIEFS_FOR_INSTANTIATE = getThinkerBriefs([
-  'knowledge/kno101.primitives.1.ontology.[article].frame.docs_as_materializations.md',
-  'knowledge/kno101.primitives.1.ontology.[article].frame.docs_as_references.md',
-  'knowledge/kno101.primitives.2.rel.many_to_many.[article].md',
-  'knowledge/kno101.primitives.3.instances.[article].md',
-  'knowledge/kno301.doc.enbrief.1.from_instances.[article].md',
-  'knowledge/kno351.docs.are_instances.[article].md',
+  'knowledge/kno101.primitives.1.ontology.kind=article.frame.docs_as_materializations.md',
+  'knowledge/kno101.primitives.1.ontology.kind=article.frame.docs_as_references.md',
+  'knowledge/kno101.primitives.2.rel.many_to_many.kind=article.md',
+  'knowledge/kno101.primitives.3.instances.kind=article.md',
+  'knowledge/kno301.doc.enbrief.1.from_instances.kind=article.md',
+  'knowledge/kno351.docs.are_instances.kind=article.md',
 ]);
 
 type StitcherDesired = GStitcher<

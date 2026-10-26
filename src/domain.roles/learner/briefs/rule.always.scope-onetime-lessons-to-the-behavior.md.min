@@ -1,43 +1,19 @@
 # rule.always.scope-onetime-lessons-to-the-behavior
 
-a lesson born inside a behavior has **two homes**, and most real incidents need both.
+a lesson born inside a behavior has **two homes**; most incidents need both, linked.
 
 | tier | home | holds |
 |---|---|---|
-| **one-time** | `$behavior/` | the concrete, instance-bound result, with its evidence |
-| **durable** | `.agent/repo=.this/role=any/briefs/`, or another repo via radio | the repo-agnostic kernel |
+| one-time | `$behavior/` | instance-bound result, with evidence |
+| durable | `.agent/repo=.this/role=any/briefs/`, or another repo via radio | repo-agnostic kernel |
 
-**and the two link to each other.** the durable brief cites the behavior doc as its worked example; the behavior doc points up to the durable brief.
+1. scope the instance (files, diffs, commands, failures) into `$behavior/`
+2. always ask *"what is the durable kernel?"*; distill it
+3. link both ways: durable brief says *"first seen in `<repo>/$behavior/<slug>`"*; behavior doc points up
 
-⇒ the extant rules answer **whether** to capture. this answers **where**.
+a lesson whose home is another repo is re-seeded there, never adopted here.
 
-## .why both, and why either alone is an error
+test: useful only to someone who ran this behavior → behavior dir · to a traveler in any repo → durable brief, linked back · both (common) → two writes.
 
-- **to park a one-time lesson in the durable dir** permanently dilutes the always-booted context for every traveler who will never touch that behavior. a `say` brief costs tokens on **every boot, forever**; an instance-bound note repays that cost to nobody
-- **to discard the generalizable kernel** inside a one-time incident throws away the expensive half with the route
-
-## .the discipline
-
-1. **scope the instance** — the exact files, diffs, commands, failures — into `$behavior/`. it lives and dies with the behavior
-2. **always attempt to generalize** — *"what is the durable, repo-agnostic kernel here?"* if there is one, distill it. the durable home may be **this** repo's briefs, or **another** repo's, via a radio task
-3. **link back — both directions.** the durable brief: *"first seen in `<repo>/$behavior/<slug>`"*. the behavior doc: a pointer up
-
-🟡 **a lesson whose home is another repo is re-seeded there, never adopted here.** a tree adopts only what is scoped to itself.
-
-## .the test
-
-| useful to… | then… |
-|---|---|
-| only someone who ran **this exact behavior** | behavior dir, full stop |
-| a traveler in **any** repo | generalize into a durable brief, **and** link it back |
-| **both** — the common case | capture both, linked |
-
-⇒ **most real incidents are both.** the default is not a choice between homes; it is a pair of writes.
-
-## .the anti-patterns
-
-**the diluted glossary** — an instance-bound note in the always-booted dir · **the discarded kernel** — a real generalization thrown out with its route dir · **the orphan rule** — a durable brief with no worked example, so a reader cannot tell what it looked like · **the orphan example** — a behavior doc with no pointer up, so its kernel is invisible · **the adopted foreigner** — a lesson whose home is another repo, written here instead of re-seeded there.
-
-blocker: an instance-bound lesson in the durable dir · a durable kernel discarded with its behavior dir · a lesson whose durable home is another repo, adopted here. nitpick: a durable brief with no worked-example citation · a behavior doc with no pointer up.
-
-⇒ `rule.always.externalize.lessons.into_briefs` is the WHETHER; this is the WHERE. `rule.require.timeless-lessons` binds the durable half too.
+blocker: an instance-bound lesson in the durable dir · a durable kernel discarded with its behavior dir · another repo's lesson adopted here.
+nitpick: a durable brief with no worked-example citation · a behavior doc with no pointer up.

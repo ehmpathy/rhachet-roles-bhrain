@@ -1,6 +1,8 @@
+import { execFile } from 'child_process';
 import * as fs from 'fs/promises';
 import * as path from 'path';
 import { genTempDir, given, then, useThen, when } from 'test-fns';
+import { promisify } from 'util';
 
 import { getRepoRootWithFallback } from '../guard/getRepoRootWithFallback';
 import { dispatchBrainSwitch } from './dispatchBrainSwitch';
@@ -13,9 +15,22 @@ import type { StoneBrainOutcome } from './setStoneBrain';
  *        the bit the caller reads — `submitted` — against a REAL spawn. it proves launch,
  *        never delivery (F5); the shims are inert, so no `/model` reaches a live session
  *
- * .note = the real-binary row pays node-boot latency, so its timeout is raised
+ * .note = the real-binary row pays node-boot latency, which scales with host load. it waits a
+ *         multiple of a boot it measures, so the cap is the integration default, not lower
  */
-jest.setTimeout(30_000);
+jest.setTimeout(90_000);
+
+/**
+ * .what = how long one cold boot of the shipped `rhx` takes on this host, right now
+ * .why = the real-binary row waits for a detached child it cannot join, so the wait must scale
+ *        with what a boot costs here. a fixed 20s once read an empty log under full-suite load
+ */
+const getMsOfRhxBoot = async (input: { rhx: string }): Promise<number> => {
+  const before = Date.now();
+  // the exit code is not the measure; a refusal still pays the whole boot
+  await promisify(execFile)(input.rhx, ['--help']).catch(() => null);
+  return Date.now() - before;
+};
 
 describe('dispatchBrainSwitch', () => {
   given('the rhx binary is ABSENT (a spawn that cannot launch)', () => {
@@ -264,6 +279,11 @@ describe('dispatchBrainSwitch', () => {
               );
 
             const dir = genTempDir({ slug: 'dispatch-real-binary' });
+            // 4x a measured boot, at least the old 20s, and inside the 90s cap with room left
+            const msOfWait = Math.min(
+              75_000,
+              Math.max(20_000, (await getMsOfRhxBoot({ rhx })) * 4),
+            );
             const result = dispatchBrainSwitch({
               rhx,
               repoRoot: dir,
@@ -281,8 +301,9 @@ describe('dispatchBrainSwitch', () => {
               'brain',
               'apply.log',
             );
+            const msOfStop = Date.now() + msOfWait;
             const log = await (async () => {
-              for (let attempt = 0; attempt < 500; attempt += 1) {
+              while (Date.now() < msOfStop) {
                 const text = await fs
                   .readFile(logPath, 'utf-8')
                   .catch(() => '');

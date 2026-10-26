@@ -28,6 +28,7 @@
     "./cli/goal": "./dist/contract/cli/goal.js",
     "./cli/memory": "./dist/contract/cli/memory.js",
     "./cli/learn": "./dist/contract/cli/learn.js",
+    "./cli/librarian": "./dist/contract/cli/librarian.js",
     "./cli/telepath": "./dist/contract/cli/telepath.js",
     "./package.json": "./package.json"
   },
@@ -50,7 +51,7 @@
     "build:clean": "npm run build:clean:tsc && npm run build:clean:bun",
     "build:compile:tsc": "tsc -p ./tsconfig.build.json --outDir dist.next && tsc-alias -p ./tsconfig.build.json --outDir dist.next",
     "build:compile": "npm run build:compile:tsc && npm run build:compile:bun --if-present",
-    "build:complete:dist": "rsync -a --prune-empty-dirs --exclude='.test' --exclude='.route' --exclude='.scratch' --exclude='.behavior' --exclude='*.test.*' --include='*/' --include='briefs/**' --include='skills/**' --include='inits/**' --include='templates/**' --include='**/readme.md' --include='**/boot.yml' --include='**/keyrack.yml' --exclude='*' src/ dist.next/",
+    "build:complete:dist": "rsync -a --copy-links --prune-empty-dirs --exclude='.test' --exclude='.route' --exclude='.scratch' --exclude='.behavior' --exclude='*.test.*' --include='*/' --include='briefs/**' --include='skills/**' --include='inits/**' --include='templates/**' --include='**/readme.md' --include='**/boot.yml' --include='**/keyrack.yml' --exclude='*' src/ dist.next/",
     "build:complete:swap": "(chmod -R u+w dist.prev 2>/dev/null || true) && rm -rf dist.prev/ && ([ ! -d dist ] || mv dist dist.prev) && mv dist.next dist && (chmod -R u+w dist.prev 2>/dev/null || true) && rm -rf dist.prev/",
     "build:complete:repo": "npx rhachet repo introspect",
     "build:complete": "npm run build:complete:dist && npm run build:complete:swap && npm run build:complete:repo",

@@ -240,7 +240,7 @@ const emitDistillMoves = (
     '   │  ├─ rule · rule.forbid.domain-term-synonyms (canonical term, or dispute)',
   );
   emit(
-    '   │  ├─ how  · template.domain-term.md + howto.domain-term-disputes.[guide].md',
+    '   │  ├─ how  · template.domain-term.md + howto.domain-term-disputes.md',
   );
   emit(`   │  └─ glos · ${input.glossaryReadmePath}`);
 };

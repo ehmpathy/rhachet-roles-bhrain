@@ -25,7 +25,7 @@ be configurable per role … same with catch phrases"), taken directly; no rival
   `src/domain.operations/review.by/asReviewRubricsConfig.ts`, with `DEFAULT_VIBE = { mascot: '🦉',
   artifact: '🔍' }` and `asVibe` that fills each absent field from the default.
 - contract surface: the optional top-level `vibe:` block in a role's `rubrics.yml`, documented in
-  `howto.add-review-by-to-a-role.[guide].md`. this is a PUBLISHED interface (a role author writes
+  `howto.add-review-by-to-a-role.md`. this is a PUBLISHED interface (a role author writes
   it), so the term's canonical form matters most here (rule.forbid.domain-term-synonyms).
 - invariant: `vibe` is optional; an absent or partial `vibe` falls back to the owl default
   field-by-field — never a hard error. a role declares a vibe to override, not to satisfy a
