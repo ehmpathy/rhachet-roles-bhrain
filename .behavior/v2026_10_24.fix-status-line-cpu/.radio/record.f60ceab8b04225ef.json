@@ -1,0 +1,19 @@
+{
+  "key": "f60ceab8b04225ef",
+  "kind": "update",
+  "repo": {
+    "owner": "ehmpathy",
+    "name": "iso-time"
+  },
+  "exid": "55",
+  "title": null,
+  "description": "# 🌙 dream: iso-time's asIsoTimeStamp must stamp the utc instant, not local wall time\n\nkind = reseed · owner = ehmpathy/iso-time · caught 2026-10-24\n\n## .the cue that fired\n\nthe status line cache adopted `asIsoTimeStamp(new Date())` for its `at` field, per\n`rule.forbid.any-time`. the acceptance clamp `routeStatusLine` [case19] runs the renderer under\n`TZ=America/Chicago`: the stamp read the local wall clock with a `Z` suffix, five hours behind the true utc instant (a skew of 18,001s),\nso every repaint read its own cache as 5h old and missed.\n\n## .the gap, precisely\n\n`iso-time@1.11.1` `dist/domain.operations/checks/isIsoTimeStamp.js`:\n\n```js\nconst asIsoTimeStamp = (input) =>\n  format(castInputToDate(input), \"yyyy-MM-dd'T'HH:mm:ss'Z'\");\n```\n\ndate-fns `format` renders in the host's LOCAL zone, then a literal `'Z'` is appended. on any host\noff utc the stamp claims utc and names another instant. `isIsoTimeStamp` round-trips through the\nsame `format`, so it accepts the wrong stamp as valid. it also drops millis.\n\nit hides on a utc host — this repo's jest config pins `TZ = 'UTC'`, and the sandbox cannot move\nnode's zone, so no unit test here could see it.\n\n## .the shape of the fix\n\n- `asIsoTimeStamp`: `formatInTimeZone(date, 'UTC', \"yyyy-MM-dd'T'HH:mm:ss'Z'\")`\n  (date-fns-tz), or `date.toISOString().replace(/\\.\\d{3}Z$/, 'Z')`\n- a clamp that spawns a child node under `TZ=America/Chicago` and asserts\n  `Date.parse(asIsoTimeStamp(d)) === Math.floor(d.getTime() / 1000) * 1000`\n- audit every caller that stamped with it on a non-utc host: each stored stamp is skewed by the\n  host offset\n\n## .why it is not done in this round\n\nthe fix belongs to another repo (a `reseed`). here the cache stamps via its own\n`asRouteStatusLineCacheStamp` (`toISOString`, narrowed by a guard, no cast), so this route ships\ncorrect without it. once iso-time is fixed, the cache may adopt it — on the miss path only, since\nthe hit path loads no node_modules module.",
+  "status": null,
+  "via": "gh.issues",
+  "auth": "as-human",
+  "idem": "upsert",
+  "heldSeq": 40,
+  "recordStatus": "DELIVERED",
+  "reason": null,
+  "deliveredExid": "55"
+}

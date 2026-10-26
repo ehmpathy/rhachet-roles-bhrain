@@ -1,6 +1,6 @@
 // Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
 
-exports[`route.status.line.show.acceptance given: [case1] a human who asks the skill to explain itself when: [t0] --help is passed then: the usage renders whole 1`] = `
+exports[`route.status.line.show.integration given: [case1] a human who asks the skill to explain itself when: [t0] --help is passed then: the usage renders whole 1`] = `
 "######################################################################
 # .what = run one real status line repaint, and show what it did
 #
@@ -28,27 +28,27 @@ exports[`route.status.line.show.acceptance given: [case1] a human who asks the s
 "
 `;
 
-exports[`route.status.line.show.acceptance given: [case2] a call refused for unknown-arg when: [t0] the skill runs with --bogus then: the refusal matches its snapshot 1`] = `
+exports[`route.status.line.show.integration given: [case2] a call refused for unknown-arg when: [t0] the skill runs with --bogus then: the refusal matches its snapshot 1`] = `
 "✋ ConstraintError: unknown arg '--bogus'
 "
 `;
 
-exports[`route.status.line.show.acceptance given: [case3] a call refused for via-without-value when: [t0] the skill runs with --via then: the refusal matches its snapshot 1`] = `
+exports[`route.status.line.show.integration given: [case3] a call refused for via-without-value when: [t0] the skill runs with --via then: the refusal matches its snapshot 1`] = `
 "✋ ConstraintError: --via must be subpath or legacy
 "
 `;
 
-exports[`route.status.line.show.acceptance given: [case4] a call refused for via-unknown when: [t0] the skill runs with --via barrel then: the refusal matches its snapshot 1`] = `
+exports[`route.status.line.show.integration given: [case4] a call refused for via-unknown when: [t0] the skill runs with --via barrel then: the refusal matches its snapshot 1`] = `
 "✋ ConstraintError: --via must be subpath or legacy
 "
 `;
 
-exports[`route.status.line.show.acceptance given: [case5] a call refused for line-arg-without-value when: [t0] the skill runs with --line-arg then: the refusal matches its snapshot 1`] = `
+exports[`route.status.line.show.integration given: [case5] a call refused for line-arg-without-value when: [t0] the skill runs with --line-arg then: the refusal matches its snapshot 1`] = `
 "✋ ConstraintError: --line-arg needs a value
 "
 `;
 
-exports[`route.status.line.show.acceptance given: [case6] an unbound seat, repainted cold and then warm when: [t0] the cold repaint runs with the cache dropped then: the repaint renders as its snapshot, volatile bytes masked 1`] = `
+exports[`route.status.line.show.integration given: [case6] an unbound seat, repainted cold and then warm when: [t0] the cold repaint runs with the cache dropped then: the repaint renders as its snapshot, volatile bytes masked 1`] = `
 "🦉 one repaint, as a seat sees it
 
 🔍 route.status.line.show
@@ -63,7 +63,7 @@ exports[`route.status.line.show.acceptance given: [case6] an unbound seat, repai
 "
 `;
 
-exports[`route.status.line.show.acceptance given: [case6] an unbound seat, repainted cold and then warm when: [t1] the warm repaint runs over the cache the cold one wrote then: the warm repaint renders as its snapshot, volatile bytes masked 1`] = `
+exports[`route.status.line.show.integration given: [case6] an unbound seat, repainted cold and then warm when: [t1] the warm repaint runs over the cache the cold one wrote then: the warm repaint renders as its snapshot, volatile bytes masked 1`] = `
 "🦉 one repaint, as a seat sees it
 
 🔍 route.status.line.show
@@ -78,7 +78,7 @@ exports[`route.status.line.show.acceptance given: [case6] an unbound seat, repai
 "
 `;
 
-exports[`route.status.line.show.acceptance given: [case7] a repaint where node cannot find the package when: [t0] the repaint runs then: the fault renders as its snapshot, host bytes masked 1`] = `
+exports[`route.status.line.show.integration given: [case7] a repaint where node cannot find the package when: [t0] the repaint runs then: the fault renders as its snapshot, host bytes masked 1`] = `
 "🦉 one repaint, as a seat sees it
 
 🔍 route.status.line.show
@@ -97,13 +97,13 @@ exports[`route.status.line.show.acceptance given: [case7] a repaint where node c
       └─"
 `;
 
-exports[`route.status.line.show.acceptance given: [case7] a repaint where node cannot find the package when: [t0] the repaint runs then: the malfunction row renders as its snapshot 1`] = `
+exports[`route.status.line.show.integration given: [case7] a repaint where node cannot find the package when: [t0] the repaint runs then: the malfunction row renders as its snapshot 1`] = `
 "💥 MalfunctionError: the repaint exited 1
    └─ fix: read the stderr branch of the tree; a module not found asks for npm run build, or pnpm install
 "
 `;
 
-exports[`route.status.line.show.acceptance given: [case8] an arg passed through to the status line itself when: [t0] the repaint runs with --line-arg --help then: the pass-through run renders as its snapshot, volatile bytes masked 1`] = `
+exports[`route.status.line.show.integration given: [case8] an arg passed through to the status line itself when: [t0] the repaint runs with --line-arg --help then: the pass-through run renders as its snapshot, volatile bytes masked 1`] = `
 "🦉 one repaint, as a seat sees it
 
 🔍 route.status.line.show
@@ -172,7 +172,7 @@ exports[`route.status.line.show.acceptance given: [case8] an arg passed through 
 "
 `;
 
-exports[`route.status.line.show.acceptance given: [case9] an unmigrated seat, repainted through the legacy export when: [t0] the cold legacy repaint runs with the cache dropped then: the legacy repaint renders as its snapshot 1`] = `
+exports[`route.status.line.show.integration given: [case9] an unmigrated seat, repainted through the legacy export when: [t0] the cold legacy repaint runs with the cache dropped then: the legacy repaint renders as its snapshot 1`] = `
 "🦉 one repaint, as a seat sees it
 
 🔍 route.status.line.show
@@ -187,7 +187,7 @@ exports[`route.status.line.show.acceptance given: [case9] an unmigrated seat, re
 "
 `;
 
-exports[`route.status.line.show.acceptance given: [case9] an unmigrated seat, repainted through the legacy export when: [t1] the warm legacy repaint runs over the cache it wrote then: the warm legacy repaint renders as its snapshot 1`] = `
+exports[`route.status.line.show.integration given: [case9] an unmigrated seat, repainted through the legacy export when: [t1] the warm legacy repaint runs over the cache it wrote then: the warm legacy repaint renders as its snapshot 1`] = `
 "🦉 one repaint, as a seat sees it
 
 🔍 route.status.line.show

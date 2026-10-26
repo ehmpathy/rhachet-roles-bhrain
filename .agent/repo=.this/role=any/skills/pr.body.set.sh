@@ -7,6 +7,8 @@
 #         the pr to exactly those bytes, so the pr and the artifact
 #         never drift
 #
+# todo: replace with rhx git.pull.comment once the git.comment.* suite lands (ehmpathy/rhachet-roles-ehmpathy#1035)
+#
 # usage:
 #   rhx pr.body.set --pr 700 --from .behavior/<route>/appendix/pr.body.md
 #

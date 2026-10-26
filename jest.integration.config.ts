@@ -30,9 +30,16 @@ const config: Config = {
     '**/*.integration.test.ts',
     '!**/.yalc/**',
     '!**/.scratch/**',
-    '!**/.agent/**',
     '!**/.behavior/**',
   ],
+
+  // run the tests of this repo's own skills, collocated in `.agent/repo=.this/`, and no other
+  // `.agent/` path: not `.cache`, not `.actors`, not a linked `repo=<other>` role
+  //
+  // .why = a `!**/.agent/**` in testMatch would beat any positive glob, so a collocated suite
+  //        would be skipped by construction with no check red. a lookahead regex here cuts all
+  //        of `.agent/` save the one dir (rule.require.agent-skill-tests-collocated)
+  testPathIgnorePatterns: ['/node_modules/', '/\\.agent/(?!repo=\\.this/)'],
   setupFilesAfterEnv: ['./jest.integration.env.ts'],
 
   // hold a tier pick whose hosts keep the test promises, before any live-brain test asks

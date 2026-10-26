@@ -89,11 +89,29 @@ is conceded `better`: F13, the error row's `ConstraintError` header departs from
 ## .dreams
 
 - `route-ledger-names-have-one-owner` — an fs-spy clamp for the fingerprint's ledger list
-- `iso-time-stamp-is-local-wall-time-with-a-z` — a reseed to iso-time
 - `eleven-skip-and-only-sites-where-the-repo-forbids-both` — extant, on main, out of this scope
 - `peer-concurrency-journey-drops-middle-lanes-under-load` — a journey that loses lanes on a busy box
-- `gitignore-unit-suites-do-fs-io` — main-era unit suites that touch the disk (F29)
-- `keyrack-absent-refusal-renders-a-json-row` — a reseed to rhachet for the `--vault <vault>` render (F28)
+
+three dreams left the queue at review: the iso-time reseed is ehmpathy/iso-time#55 (its body
+upserted), the keyrack reseed is ehmpathy/rhachet#663, and main's `.disk-states` rename cured
+`gitignore-unit-suites-do-fs-io`.
+
+## .answers to review
+
+- c1 the consumer-patch lift → ehmpathy/rhachet-roles-ehmpathy#1174
+- c2 `pr.body.set.sh` carries a todo for `git.pull.comment` (ehmpathy/rhachet-roles-ehmpathy#1035)
+- c3 a static-file debounce, no node boot → ehmpathy/rhachet-roles-bhrain#722
+- c5 the seven tests of `repo=.this` skills moved from `blackbox/` into
+  `.agent/repo=.this/role=any/skills/` at the integration grain, 146 tests before and after;
+  jest's integration config admits `.agent/repo=.this/` alone; boot.yml keeps the tests and
+  snapshots out of the boot; rule `rule.require.agent-skill-tests-collocated`, sent upstream as
+  ehmpathy/rhachet-roles-ehmpathy#1175
+- c6 the rules-only-default snap diff was one-time, and main absorbed it (#693 commits the link
+  output); after the rebase this pr no longer touches that snap
+- c7 the openrouter patch is ehmpathy/rhachet-brains-openrouter#22
+- 🟡 a LOCAL PATCH, `patches/rhachet-roles-ehmpathy@1.39.9.patch`, carries the `git.pull.comment`
+  verb of ehmpathy/rhachet-roles-ehmpathy#1143 until it releases; cut by the new
+  `rhx gen.patch.from.pr`
 
 ## .verification
 

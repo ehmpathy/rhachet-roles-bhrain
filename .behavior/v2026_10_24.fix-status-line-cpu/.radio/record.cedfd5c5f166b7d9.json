@@ -1,0 +1,19 @@
+{
+  "key": "cedfd5c5f166b7d9",
+  "kind": "create",
+  "repo": {
+    "owner": "ehmpathy",
+    "name": "rhachet"
+  },
+  "exid": null,
+  "title": "fix(keyrack): the key-absent refusal renders an empty header and a raw json row",
+  "description": "# 🌙 dream: the keyrack key-absent refusal renders an empty header and a raw json row\n\n**kind**: reseed · **owner**: `ehmpathy/rhachet` (the keyrack fault render) · **caught** 2026-10-24\n\n## .the cue that fired\n\na peer review of `fix-status-line-cpu` at `5.3.verification` (`ergo-snapshot-visual-blemishes`)\nflagged the pinned refusal in `blackbox/__snapshots__/review.key-absent.acceptance.test.ts.snap`\nand `review.by.key-absent.acceptance.test.ts.snap`.\n\n## .the gap, precisely\n\n```\n✋ ConstraintError: \n\nattempts: [{\"key\":\"OPENROUTER_API_KEY\",\"status\":\"absent\",\"fix\":\"rhx keyrack set --owner ehmpath --key OPENROUTER_API_KEY --env prep --vault <vault>\"}]\nenv: prep\nowner: ehmpath\n\n🔐 keyrack\n   └─ ehmpath.prep.OPENROUTER_API_KEY\n```\n\n- the header names no cause, then a blank line, then the error's metadata as a raw json row and two\n  bare `key: value` lines, then the tree\n- the shape sits on `origin/main`; rhachet 1.50.1 changed only the fix text\n\n## .the shape of the fix\n\nin rhachet's keyrack fault: put the cause in the header (`✋ ConstraintError: a key is absent`),\nrender `attempts` as tree leaves (`key` / `status` / `fix`) under the `🔐 keyrack` tree it already\nprints, and drop the metadata dump. then re-pin here and resnap both suites.\n\n## .why it is not done in this round\n\nthe render is rhachet's; this repo only pins it. a re-render here would fork a contract a peer\npackage owns (F28 of `fix-status-line-cpu`).",
+  "status": null,
+  "via": "gh.issues",
+  "auth": "as-human",
+  "idem": null,
+  "heldSeq": 39,
+  "recordStatus": "DELIVERED",
+  "reason": null,
+  "deliveredExid": "663"
+}

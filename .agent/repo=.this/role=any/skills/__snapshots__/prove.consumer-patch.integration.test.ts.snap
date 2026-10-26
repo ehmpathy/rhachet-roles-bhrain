@@ -1,6 +1,6 @@
 // Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
 
-exports[`prove.consumer-patch.acceptance given: [case1] a human who asks the skill to explain itself when: [t0] --help is passed then: the usage renders whole 1`] = `
+exports[`prove.consumer-patch.integration given: [case1] a human who asks the skill to explain itself when: [t0] --help is passed then: the usage renders whole 1`] = `
 "######################################################################
 # .what = install a consumer patch the way a consumer would, then run
 #         two real status line repaints through that install
@@ -29,27 +29,27 @@ exports[`prove.consumer-patch.acceptance given: [case1] a human who asks the ski
 "
 `;
 
-exports[`prove.consumer-patch.acceptance given: [case2] a call refused for unknown-arg when: [t0] the skill parses its args then: the refusal matches its snapshot 1`] = `
+exports[`prove.consumer-patch.integration given: [case2] a call refused for unknown-arg when: [t0] the skill parses its args then: the refusal matches its snapshot 1`] = `
 "✋ ConstraintError: unknown arg '--bogus'
 "
 `;
 
-exports[`prove.consumer-patch.acceptance given: [case3] a call refused for from-without-value when: [t0] the skill parses its args then: the refusal matches its snapshot 1`] = `
+exports[`prove.consumer-patch.integration given: [case3] a call refused for from-without-value when: [t0] the skill parses its args then: the refusal matches its snapshot 1`] = `
 "✋ ConstraintError: --from needs a value
 "
 `;
 
-exports[`prove.consumer-patch.acceptance given: [case4] a call refused for patch-without-value when: [t0] the skill parses its args then: the refusal matches its snapshot 1`] = `
+exports[`prove.consumer-patch.integration given: [case4] a call refused for patch-without-value when: [t0] the skill parses its args then: the refusal matches its snapshot 1`] = `
 "✋ ConstraintError: --patch needs a value
 "
 `;
 
-exports[`prove.consumer-patch.acceptance given: [case5] a call refused for from-not-semver when: [t0] the skill parses its args then: the refusal matches its snapshot 1`] = `
+exports[`prove.consumer-patch.integration given: [case5] a call refused for from-not-semver when: [t0] the skill parses its args then: the refusal matches its snapshot 1`] = `
 "✋ ConstraintError: --from must be a semver version, e.g. 0.42.1
 "
 `;
 
-exports[`prove.consumer-patch.acceptance given: [case6] a call refused for patch-absent when: [t0] the skill parses its args then: the refusal matches its snapshot 1`] = `
+exports[`prove.consumer-patch.integration given: [case6] a call refused for patch-absent when: [t0] the skill parses its args then: the refusal matches its snapshot 1`] = `
 "✋ ConstraintError: --patch must name a patch file on disk
 "
 `;

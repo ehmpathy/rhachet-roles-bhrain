@@ -1,0 +1,19 @@
+{
+  "key": "4ca46face4275365",
+  "kind": "create",
+  "repo": {
+    "owner": "ehmpathy",
+    "name": "rhachet-roles-ehmpathy"
+  },
+  "exid": null,
+  "title": "feat(mechanic): enrule that tests of .agent/repo=.this skills live collocated in the agent dir",
+  "description": "## .the rule\n\na test of a `.agent/repo=.this` skill lives collocated beside the skill, in the agent dir, at integration grain. never under `blackbox/`: blackbox acceptance tests the published contract, and a repo-local skill is no part of it.\n\n## .the two hazards a move must cure\n\n1. **a moved test drops out of every run, and no check turns red.** jest `testMatch` lists `'!**/.agent/**'`, so a moved suite is skipped by construction. narrow the exclusion so `.agent/repo=.this/**` is in, while `.agent/.cache`, `.agent/.actors`, and linked `repo=<other>` dirs stay out (a negation beats a positive glob, so a positive pattern alone does not work)\n2. **a test file in `skills/` boots as a skill ref in every session.** a file in a skills dir that no glob matches boots as a ref; list `skills/*.test.ts` and `skills/__snapshots__/**` under `always.skills.not`\n\n## .blocker\n\na test of a `.agent/repo=.this` skill under `blackbox/`.\n\ncite: the commander's comment on ehmpathy/rhachet-roles-bhrain#700",
+  "status": null,
+  "via": "gh.issues",
+  "auth": "as-human",
+  "idem": null,
+  "heldSeq": 38,
+  "recordStatus": "DELIVERED",
+  "reason": null,
+  "deliveredExid": "1175"
+}

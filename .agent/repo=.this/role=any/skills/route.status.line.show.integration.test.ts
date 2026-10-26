@@ -17,7 +17,7 @@ import { genTempDir, given, then, useBeforeAll, when } from 'test-fns';
  *         absolute path, so no lookup rides the cwd. the refusals and the repaint fault run in a
  *         temp dir, which holds no package
  */
-const ROOT = path.join(__dirname, '..');
+const ROOT = path.join(__dirname, '../../../..');
 const SKILL = path.join(
   ROOT,
   '.agent/repo=.this/role=any/skills/route.status.line.show.sh',
@@ -106,7 +106,7 @@ const REFUSALS: { slug: string; args: string[]; stderr: string }[] = [
   },
 ];
 
-describe('route.status.line.show.acceptance', () => {
+describe('route.status.line.show.integration', () => {
   given('[case1] a human who asks the skill to explain itself', () => {
     const ran = useBeforeAll(async () =>
       runSkill({ args: ['--help'], cwd: null }),

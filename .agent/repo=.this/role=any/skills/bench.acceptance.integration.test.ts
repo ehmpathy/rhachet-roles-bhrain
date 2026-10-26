@@ -23,7 +23,7 @@ import { genTempDir, given, then, useBeforeAll, when } from 'test-fns';
  */
 const SKILL = path.join(
   __dirname,
-  '..',
+  '../../../..',
   '.agent/repo=.this/role=any/skills/bench.acceptance.sh',
 );
 
@@ -60,7 +60,7 @@ const runBench = (input: {
   };
 };
 
-describe('bench.acceptance.acceptance', () => {
+describe('bench.acceptance.integration', () => {
   given('[case1] a human who asks the bench to explain itself', () => {
     const ran = useBeforeAll(async () =>
       runBench({

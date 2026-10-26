@@ -159,7 +159,8 @@
     ],
     "patchedDependencies": {
       "rhachet-brains-openrouter@0.1.4": "patches/rhachet-brains-openrouter@0.1.4.patch",
-      "test-fns@1.15.7": "patches/test-fns@1.15.7.patch"
+      "test-fns@1.15.7": "patches/test-fns@1.15.7.patch",
+      "rhachet-roles-ehmpathy@1.39.9": "patches/rhachet-roles-ehmpathy@1.39.9.patch"
     }
   },
   "packageManager": "pnpm@10.24.0"

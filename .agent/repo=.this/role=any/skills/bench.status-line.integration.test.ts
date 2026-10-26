@@ -17,7 +17,7 @@ import { genTempDir, given, then, useBeforeAll, when } from 'test-fns';
  *         absolute path, so no resolution rides the cwd. the refusals and the arm fault run
  *         in a temp dir, which holds no git repo and no package
  */
-const ROOT = path.join(__dirname, '..');
+const ROOT = path.join(__dirname, '../../../..');
 const SKILL = path.join(
   ROOT,
   '.agent/repo=.this/role=any/skills/bench.status-line.sh',
@@ -75,7 +75,7 @@ const REFUSALS: { slug: string; args: string[]; stderr: string }[] = [
   },
 ];
 
-describe('bench.status-line.acceptance', () => {
+describe('bench.status-line.integration', () => {
   given('[case1] a human who asks the bench to explain itself', () => {
     const ran = useBeforeAll(async () => runSkill({ args: ['--help'], cwd: null }));
 

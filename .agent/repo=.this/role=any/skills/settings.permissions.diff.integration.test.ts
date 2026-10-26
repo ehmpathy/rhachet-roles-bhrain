@@ -13,7 +13,7 @@ import { genTempDir, given, then, useBeforeAll, when } from 'test-fns';
  *         absolute path, so no resolution rides the cwd. each case runs in its own temp git
  *         repo, so the revs it reads are hermetic
  */
-const ROOT = path.join(__dirname, '..');
+const ROOT = path.join(__dirname, '../../../..');
 const SKILL = path.join(
   ROOT,
   '.agent/repo=.this/role=any/skills/settings.permissions.diff.sh',
@@ -70,7 +70,7 @@ const genRepoWithRegen = (): { tempDir: string } => {
   return { tempDir };
 };
 
-describe('settings.permissions.diff.acceptance', () => {
+describe('settings.permissions.diff.integration', () => {
   given('[case1] the help is asked for', () => {
     const scene = useBeforeAll(async () => genRepoWithRegen());
 

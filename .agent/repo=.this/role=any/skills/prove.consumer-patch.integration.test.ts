@@ -19,7 +19,7 @@ import { genTempDir, given, then, useBeforeAll, when } from 'test-fns';
  */
 const SKILL = path.join(
   __dirname,
-  '..',
+  '../../../..',
   '.agent/repo=.this/role=any/skills/prove.consumer-patch.sh',
 );
 
@@ -70,7 +70,7 @@ const REFUSALS: { slug: string; args: string[]; stderr: string }[] = [
   },
 ];
 
-describe('prove.consumer-patch.acceptance', () => {
+describe('prove.consumer-patch.integration', () => {
   given('[case1] a human who asks the skill to explain itself', () => {
     const ran = useBeforeAll(async () =>
       runSkill({

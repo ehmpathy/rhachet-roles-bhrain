@@ -17,6 +17,13 @@ always:
       - skills/prove.consumer-patch.sh
       # a done-gate aid, reached by name at the one step that sets a pr body from its route artifact
       - skills/pr.body.set.sh
+      # a done-gate aid, reached by name where a dependency needs an upstream pr's fix early
+      - skills/gen.patch.from.pr.sh
+      # the skills' own collocated tests: a file in skills/ that no glob names boots as a skill
+      # ref, so a test and its snapshot would charge every session a path
+      # (rule.require.agent-skill-tests-collocated)
+      - skills/*.test.ts
+      - skills/__snapshots__/**
   briefs:
     say:
       # identity
@@ -114,6 +121,9 @@ always:
       # reached by name from `gen.consumer-patch` and `prove.consumer-patch`, the only two places
       # its symptom (`ERR_PNPM_PATCH_FAILED`) is met; its boot path line is not worth a share of the cap
       - briefs/hazard.git-apply-check-is-not-a-pnpm-install.md
+      # cited by name where its cues fire: the jest integration config's lookahead and the
+      # skills `not` list above; its boot path line is not worth a share of the cap
+      - briefs/rule.require.agent-skill-tests-collocated.md
 
     ref:
       # the glyph catalog — ref, not say: read once, when a glyph is claimed,

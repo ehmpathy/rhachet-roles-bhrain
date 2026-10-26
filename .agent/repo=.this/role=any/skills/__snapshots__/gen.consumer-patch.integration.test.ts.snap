@@ -1,6 +1,6 @@
 // Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
 
-exports[`gen.consumer-patch.acceptance given: [case1] a human who asks the skill to explain itself when: [t0] --help is passed then: the usage renders whole 1`] = `
+exports[`gen.consumer-patch.integration given: [case1] a human who asks the skill to explain itself when: [t0] --help is passed then: the usage renders whole 1`] = `
 "######################################################################
 # .what = write a pnpm patch that lifts a published release of this
 #         package to the local build, for consumers while a release lags
@@ -38,48 +38,48 @@ exports[`gen.consumer-patch.acceptance given: [case1] a human who asks the skill
 "
 `;
 
-exports[`gen.consumer-patch.acceptance given: [case2] a call refused for unknown-arg when: [t0] the skill runs with --bogus then: the refusal matches its snapshot 1`] = `
+exports[`gen.consumer-patch.integration given: [case2] a call refused for unknown-arg when: [t0] the skill runs with --bogus then: the refusal matches its snapshot 1`] = `
 "✋ ConstraintError: unknown arg '--bogus'
 "
 `;
 
-exports[`gen.consumer-patch.acceptance given: [case3] a call refused for from-without-value when: [t0] the skill runs with --from then: the refusal matches its snapshot 1`] = `
+exports[`gen.consumer-patch.integration given: [case3] a call refused for from-without-value when: [t0] the skill runs with --from then: the refusal matches its snapshot 1`] = `
 "✋ ConstraintError: --from needs a value
 "
 `;
 
-exports[`gen.consumer-patch.acceptance given: [case4] a call refused for into-without-value when: [t0] the skill runs with --from 0.42.1 --into then: the refusal matches its snapshot 1`] = `
+exports[`gen.consumer-patch.integration given: [case4] a call refused for into-without-value when: [t0] the skill runs with --from 0.42.1 --into then: the refusal matches its snapshot 1`] = `
 "✋ ConstraintError: --into needs a value
 "
 `;
 
-exports[`gen.consumer-patch.acceptance given: [case5] a call refused for from-absent when: [t0] the skill runs with --into out.patch then: the refusal matches its snapshot 1`] = `
+exports[`gen.consumer-patch.integration given: [case5] a call refused for from-absent when: [t0] the skill runs with --into out.patch then: the refusal matches its snapshot 1`] = `
 "✋ ConstraintError: --from <published version> is required
 "
 `;
 
-exports[`gen.consumer-patch.acceptance given: [case6] a call refused for from-not-semver when: [t0] the skill runs with --from ../../escape --into out.patch then: the refusal matches its snapshot 1`] = `
+exports[`gen.consumer-patch.integration given: [case6] a call refused for from-not-semver when: [t0] the skill runs with --from ../../escape --into out.patch then: the refusal matches its snapshot 1`] = `
 "✋ ConstraintError: --from must be a semver version, e.g. 0.42.1
 "
 `;
 
-exports[`gen.consumer-patch.acceptance given: [case7] a call refused for into-absent when: [t0] the skill runs with --from 0.42.1 then: the refusal matches its snapshot 1`] = `
+exports[`gen.consumer-patch.integration given: [case7] a call refused for into-absent when: [t0] the skill runs with --from 0.42.1 then: the refusal matches its snapshot 1`] = `
 "✋ ConstraintError: --into <path>.patch is required
 "
 `;
 
-exports[`gen.consumer-patch.acceptance given: [case8] a call refused for dist-absent when: [t0] the skill runs with --from 0.42.1 --into out.patch then: the refusal matches its snapshot 1`] = `
+exports[`gen.consumer-patch.integration given: [case8] a call refused for dist-absent when: [t0] the skill runs with --from 0.42.1 --into out.patch then: the refusal matches its snapshot 1`] = `
 "✋ ConstraintError: no dist/ here; run npm run build first
 "
 `;
 
-exports[`gen.consumer-patch.acceptance given: [case9] a version the registry never published when: [t0] the skill asks the registry for the base then: the refusal matches its snapshot 1`] = `
+exports[`gen.consumer-patch.integration given: [case9] a version the registry never published when: [t0] the skill asks the registry for the base then: the refusal matches its snapshot 1`] = `
 "✋ ConstraintError: rhachet-roles-bhrain@0.0.0-never-published is not published
    └─ cause: npm view returned E404
 "
 `;
 
-exports[`gen.consumer-patch.acceptance given: [case10] a local build that differs from the published base when: [t0] the skill writes the patch then: the patch itself, the deliverable, matches its snapshot 1`] = `
+exports[`gen.consumer-patch.integration given: [case10] a local build that differs from the published base when: [t0] the skill writes the patch then: the patch itself, the deliverable, matches its snapshot 1`] = `
 "diff --git a/dist/index.js b/dist/index.js
 index 0ce9317..99909ba 100644
 --- a/dist/index.js
@@ -168,7 +168,7 @@ index a813d1f..6db3d75 100644
 "
 `;
 
-exports[`gen.consumer-patch.acceptance given: [case10] a local build that differs from the published base when: [t0] the skill writes the patch then: the success tree matches its snapshot 1`] = `
+exports[`gen.consumer-patch.integration given: [case10] a local build that differs from the published base when: [t0] the skill writes the patch then: the success tree matches its snapshot 1`] = `
 "🦉 a path for those who cannot wait
 
 🔍 gen.consumer-patch
@@ -187,7 +187,7 @@ exports[`gen.consumer-patch.acceptance given: [case10] a local build that differ
 "
 `;
 
-exports[`gen.consumer-patch.acceptance given: [case10b] a local build that changed a role asset when: [t0] the skill writes the patch then: the success tree matches its snapshot 1`] = `
+exports[`gen.consumer-patch.integration given: [case10b] a local build that changed a role asset when: [t0] the skill writes the patch then: the success tree matches its snapshot 1`] = `
 "🦉 a path for those who cannot wait
 
 🔍 gen.consumer-patch
@@ -209,27 +209,27 @@ exports[`gen.consumer-patch.acceptance given: [case10b] a local build that chang
 "
 `;
 
-exports[`gen.consumer-patch.acceptance given: [case11] a local build equal to the published base when: [t0] the skill diffs the build against the base then: the refusal matches its snapshot 1`] = `
+exports[`gen.consumer-patch.integration given: [case11] a local build equal to the published base when: [t0] the skill diffs the build against the base then: the refusal matches its snapshot 1`] = `
 "✋ ConstraintError: the local build equals rhachet-roles-bhrain@0.42.1; no patch owed
 "
 `;
 
-exports[`gen.consumer-patch.acceptance given: [case12] a malfunction: integrity-mismatch when: [t0] the shimmed openssl faults one call then: the malfunction row matches its snapshot 1`] = `
+exports[`gen.consumer-patch.integration given: [case12] a malfunction: integrity-mismatch when: [t0] the shimmed openssl faults one call then: the malfunction row matches its snapshot 1`] = `
 "💥 MalfunctionError: the fetched tarball is not rhachet-roles-bhrain@0.42.1 (integrity mismatch)
 "
 `;
 
-exports[`gen.consumer-patch.acceptance given: [case13] a malfunction: git-diff-fault when: [t0] the shimmed git faults one call then: the malfunction row matches its snapshot 1`] = `
+exports[`gen.consumer-patch.integration given: [case13] a malfunction: git-diff-fault when: [t0] the shimmed git faults one call then: the malfunction row matches its snapshot 1`] = `
 "💥 MalfunctionError: git diff failed (exit 128)
 "
 `;
 
-exports[`gen.consumer-patch.acceptance given: [case14] a malfunction: patch-not-applicable when: [t0] the shimmed git faults one call then: the malfunction row matches its snapshot 1`] = `
+exports[`gen.consumer-patch.integration given: [case14] a malfunction: patch-not-applicable when: [t0] the shimmed git faults one call then: the malfunction row matches its snapshot 1`] = `
 "💥 MalfunctionError: the patch does not apply to rhachet-roles-bhrain@0.42.1
 "
 `;
 
-exports[`gen.consumer-patch.acceptance given: [case15] a malfunction: base-fetch-fault when: [t0] the shimmed node faults one call then: the malfunction row matches its snapshot 1`] = `
+exports[`gen.consumer-patch.integration given: [case15] a malfunction: base-fetch-fault when: [t0] the shimmed node faults one call then: the malfunction row matches its snapshot 1`] = `
 "💥 MalfunctionError: fetch http://127.0.0.1:9/base.tgz failed: fetch failed
 "
 `;

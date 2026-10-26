@@ -1,6 +1,6 @@
 // Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
 
-exports[`bench.acceptance.acceptance given: [case1] a human who asks the bench to explain itself when: [t0] --help is passed then: the usage renders whole 1`] = `
+exports[`bench.acceptance.integration given: [case1] a human who asks the bench to explain itself when: [t0] --help is passed then: the usage renders whole 1`] = `
 "
 🦉 bench.acceptance — measure the acceptance suite honestly
 
@@ -28,18 +28,18 @@ exports[`bench.acceptance.acceptance given: [case1] a human who asks the bench t
 "
 `;
 
-exports[`bench.acceptance.acceptance given: [case2] a command the bench does not know when: [t0] the bench is run then: the refusal renders whole 1`] = `
+exports[`bench.acceptance.integration given: [case2] a command the bench does not know when: [t0] the bench is run then: the refusal renders whole 1`] = `
 "🦉 unknown command "bogus"
 "
 `;
 
-exports[`bench.acceptance.acceptance given: [case3] a report of a label never recorded when: [t0] the bench is run then: the refusal renders whole 1`] = `
+exports[`bench.acceptance.integration given: [case3] a report of a label never recorded when: [t0] the bench is run then: the refusal renders whole 1`] = `
 "🦉 no run recorded at $CWD/.log/bench.acceptance/never.json
    fix: bench.acceptance.js run --label never
 "
 `;
 
-exports[`bench.acceptance.acceptance given: [case4] two recorded runs where every case still passes when: [t0] the runs are compared then: the verdict renders whole 1`] = `
+exports[`bench.acceptance.integration given: [case4] two recorded runs where every case still passes when: [t0] the runs are compared then: the verdict renders whole 1`] = `
 "
 🦉 bench.acceptance compare
    ├─ before  before  5m00s
@@ -51,7 +51,7 @@ exports[`bench.acceptance.acceptance given: [case4] two recorded runs where ever
 "
 `;
 
-exports[`bench.acceptance.acceptance given: [case5] two recorded runs where a case that passed no longer does when: [t0] the runs are compared then: the regression renders whole, lost and weaker cases named 1`] = `
+exports[`bench.acceptance.integration given: [case5] two recorded runs where a case that passed no longer does when: [t0] the runs are compared then: the regression renders whole, lost and weaker cases named 1`] = `
 "
 🦉 bench.acceptance compare
    ├─ before  before  5m00s

@@ -1,6 +1,6 @@
 // Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
 
-exports[`settings.permissions.diff.acceptance given: [case1] the help is asked for when: [t0] --help runs then: the help matches its snapshot 1`] = `
+exports[`settings.permissions.diff.integration given: [case1] the help is asked for when: [t0] --help runs then: the help matches its snapshot 1`] = `
 "######################################################################
 # .what = compare the permission sets of a claude settings file across two revs
 #
@@ -26,37 +26,37 @@ exports[`settings.permissions.diff.acceptance given: [case1] the help is asked f
 "
 `;
 
-exports[`settings.permissions.diff.acceptance given: [case2] a required input is absent or unknown when: [t0] it runs with no --of then: the refusal matches its snapshot 1`] = `
+exports[`settings.permissions.diff.integration given: [case2] a required input is absent or unknown when: [t0] it runs with no --of then: the refusal matches its snapshot 1`] = `
 "✋ ConstraintError: --of <path> is required
 "
 `;
 
-exports[`settings.permissions.diff.acceptance given: [case2] a required input is absent or unknown when: [t1] it runs with no --from then: the refusal matches its snapshot 1`] = `
+exports[`settings.permissions.diff.integration given: [case2] a required input is absent or unknown when: [t1] it runs with no --from then: the refusal matches its snapshot 1`] = `
 "✋ ConstraintError: --from <rev> is required
 "
 `;
 
-exports[`settings.permissions.diff.acceptance given: [case2] a required input is absent or unknown when: [t2] it runs with an unknown arg then: the refusal matches its snapshot 1`] = `
+exports[`settings.permissions.diff.integration given: [case2] a required input is absent or unknown when: [t2] it runs with an unknown arg then: the refusal matches its snapshot 1`] = `
 "✋ ConstraintError: unknown arg '--bogus'
 "
 `;
 
-exports[`settings.permissions.diff.acceptance given: [case2] a required input is absent or unknown when: [t3] it runs with --of with no value then: the refusal matches its snapshot 1`] = `
+exports[`settings.permissions.diff.integration given: [case2] a required input is absent or unknown when: [t3] it runs with --of with no value then: the refusal matches its snapshot 1`] = `
 "✋ ConstraintError: --of needs a value
 "
 `;
 
-exports[`settings.permissions.diff.acceptance given: [case2] a required input is absent or unknown when: [t4] it runs with --from with no value then: the refusal matches its snapshot 1`] = `
+exports[`settings.permissions.diff.integration given: [case2] a required input is absent or unknown when: [t4] it runs with --from with no value then: the refusal matches its snapshot 1`] = `
 "✋ ConstraintError: --from needs a value
 "
 `;
 
-exports[`settings.permissions.diff.acceptance given: [case2] a required input is absent or unknown when: [t5] it runs with --into with no value then: the refusal matches its snapshot 1`] = `
+exports[`settings.permissions.diff.integration given: [case2] a required input is absent or unknown when: [t5] it runs with --into with no value then: the refusal matches its snapshot 1`] = `
 "✋ ConstraintError: --into needs a value
 "
 `;
 
-exports[`settings.permissions.diff.acceptance given: [case3] a regen that reorders every list and narrows one entry when: [t0] the committed rev is compared with the work tree then: the report matches its snapshot 1`] = `
+exports[`settings.permissions.diff.integration given: [case3] a regen that reorders every list and narrows one entry when: [t0] the committed rev is compared with the work tree then: the report matches its snapshot 1`] = `
 "🦉 the pond reflects what moved, not how it was stirred
 
 🔍 settings.permissions.diff
@@ -78,13 +78,13 @@ exports[`settings.permissions.diff.acceptance given: [case3] a regen that reorde
 "
 `;
 
-exports[`settings.permissions.diff.acceptance given: [case3] a regen that reorders every list and narrows one entry when: [t1] a rev that lacks the file is named then: the fault matches its snapshot 1`] = `
+exports[`settings.permissions.diff.integration given: [case3] a regen that reorders every list and narrows one entry when: [t1] a rev that lacks the file is named then: the fault matches its snapshot 1`] = `
 "💥 MalfunctionError: cannot read absent.json at HEAD
    └─ cause: path 'absent.json' does not exist in 'HEAD'
 "
 `;
 
-exports[`settings.permissions.diff.acceptance given: [case4] a regen that widens one entry and changes a hook when: [t0] the committed rev is compared with the work tree then: the report matches its snapshot 1`] = `
+exports[`settings.permissions.diff.integration given: [case4] a regen that widens one entry and changes a hook when: [t0] the committed rev is compared with the work tree then: the report matches its snapshot 1`] = `
 "🦉 the pond reflects what moved, not how it was stirred
 
 🔍 settings.permissions.diff
@@ -108,7 +108,7 @@ exports[`settings.permissions.diff.acceptance given: [case4] a regen that widens
 "
 `;
 
-exports[`settings.permissions.diff.acceptance given: [case5] a regen that only reorders when: [t0] the committed rev is compared with the work tree then: the report matches its snapshot 1`] = `
+exports[`settings.permissions.diff.integration given: [case5] a regen that only reorders when: [t0] the committed rev is compared with the work tree then: the report matches its snapshot 1`] = `
 "🦉 the pond reflects what moved, not how it was stirred
 
 🔍 settings.permissions.diff
@@ -128,7 +128,7 @@ exports[`settings.permissions.diff.acceptance given: [case5] a regen that only r
 "
 `;
 
-exports[`settings.permissions.diff.acceptance given: [case6] a regen already committed, so two revs are compared when: [t0] --into names the later rev then: the report matches its snapshot 1`] = `
+exports[`settings.permissions.diff.integration given: [case6] a regen already committed, so two revs are compared when: [t0] --into names the later rev then: the report matches its snapshot 1`] = `
 "🦉 the pond reflects what moved, not how it was stirred
 
 🔍 settings.permissions.diff
@@ -150,13 +150,13 @@ exports[`settings.permissions.diff.acceptance given: [case6] a regen already com
 "
 `;
 
-exports[`settings.permissions.diff.acceptance given: [case7] a work tree file left with a merge-conflict marker when: [t0] the committed rev is compared with the work tree then: the refusal matches its snapshot 1`] = `
+exports[`settings.permissions.diff.integration given: [case7] a work tree file left with a merge-conflict marker when: [t0] the committed rev is compared with the work tree then: the refusal matches its snapshot 1`] = `
 "✋ ConstraintError: settings.json in the work tree is not a json object
    └─ cause: parse error: Invalid numeric literal at line 1, column 8
 "
 `;
 
-exports[`settings.permissions.diff.acceptance given: [case8] a work tree that no longer holds the file when: [t0] the committed rev is compared with the work tree then: the fault matches its snapshot 1`] = `
+exports[`settings.permissions.diff.integration given: [case8] a work tree that no longer holds the file when: [t0] the committed rev is compared with the work tree then: the fault matches its snapshot 1`] = `
 "💥 MalfunctionError: cannot read settings.json in the work tree
    └─ cause: no such file
 "
