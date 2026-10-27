@@ -1,0 +1,5 @@
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
+
+exports[`asStatusLinePointerDropFaultRow given: [case1] a permission fault names its code and the path to remove when: [t0] the pointer drop fault row is rendered then: it names the code and the fix 1`] = `"[route.bind.del] warn: status line pointer drop failed (EACCES). fix: remove .agent/.cache/repo=bhrain/role=driver/skill=route.status.line/branch=feat.x.route"`;
+
+exports[`asStatusLinePointerDropFaultRow given: [case2] a busy-file fault names its code and the path to remove when: [t0] the pointer drop fault row is rendered then: it names the code and the fix 1`] = `"[route.bind.del] warn: status line pointer drop failed (EBUSY). fix: remove .agent/.cache/repo=bhrain/role=driver/skill=route.status.line/branch=feat.x.route"`;

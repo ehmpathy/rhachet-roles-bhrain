@@ -1,0 +1,17 @@
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
+
+exports[`stepRouteStoneDel given: [case5] route not found when: [t0] route path does not exist then: throws route not found error 1`] = `
+"BadRequestError: route not found: /nonexistent/path; check --route, or run rhx route.bind.get
+
+{
+  "route": "/nonexistent/path"
+}"
+`;
+
+exports[`stepRouteStoneDel given: [case14] empty stones array when: [t0] stones array is empty then: throws error 1`] = `
+"BadRequestError: at least one --stone required
+
+{
+  "route": "<tempDir>"
+}"
+`;
