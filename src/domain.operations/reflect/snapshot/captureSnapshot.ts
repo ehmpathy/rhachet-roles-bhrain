@@ -75,8 +75,14 @@ const generateTimestamp = (): string => {
 export const captureSnapshot = async (input: {
   scope: ReflectScope;
 }): Promise<Snapshot> => {
-  // get transcript source
-  const transcriptSource = getTranscriptSource({ cwd: input.scope.cwd });
+  // get transcript source; the env is read here, at the orchestrator, and injected into the leaf
+  const transcriptSource = getTranscriptSource({
+    cwd: input.scope.cwd,
+    env: {
+      CLAUDE_CONFIG_DIR: process.env.CLAUDE_CONFIG_DIR ?? null,
+      HOME: process.env.HOME ?? null,
+    },
+  });
   // no transcript to bundle is the caller's to fix, so it refuses as a constraint
   if (!transcriptSource)
     throw new ConstraintError(

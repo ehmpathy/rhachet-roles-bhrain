@@ -1,53 +1,101 @@
+import * as fs from 'fs';
+import { UnexpectedCodePathError } from 'helpful-errors';
 import * as os from 'os';
 import * as path from 'path';
-import { given, then, when } from 'test-fns';
+import { genTempDir, given, then, useBeforeAll, useThen, when } from 'test-fns';
 
-import { computeProjectSlug, getTranscriptSource } from './getTranscriptSource';
+import { computeProjectSlug } from '@src/domain.operations/transcript/computeProjectSlug';
+
+import { getTranscriptSource } from './getTranscriptSource';
 
 describe('getTranscriptSource', () => {
-  given('[case1] current repo (this repo with claude code project)', () => {
+  given('[case1] a cwd whose claude code project holds two sessions', () => {
+    // a hermetic project under a temp `$CLAUDE_CONFIG_DIR`, injected as env, so the case never
+    // depends on whether this machine ever ran claude code in this repo
+    const scene = useBeforeAll(async () => {
+      const root = genTempDir({ slug: 'get-transcript-source' });
+      const cwd = path.join(root, 'repo');
+      const configDir = path.join(root, 'claude-config');
+      const projectDir = path.join(
+        configDir,
+        'projects',
+        computeProjectSlug({ cwd }),
+      );
+      fs.mkdirSync(path.join(projectDir, 'session-one', 'subagents'), {
+        recursive: true,
+      });
+      fs.writeFileSync(path.join(projectDir, 'session-one.jsonl'), '{}\n');
+      fs.writeFileSync(path.join(projectDir, 'session-two.jsonl'), '{}\n');
+      fs.writeFileSync(
+        path.join(projectDir, 'session-one', 'subagents', 'agent-a.jsonl'),
+        '{}\n',
+      );
+      return {
+        cwd,
+        projectDir,
+        env: { CLAUDE_CONFIG_DIR: configDir, HOME: path.join(root, 'home') },
+      };
+    });
+
     when('[t0] transcript source is discovered', () => {
-      const source = getTranscriptSource({ cwd: process.cwd() });
-
-      then('should find project directory', () => {
-        // this test runs in a repo where claude code has been used
-        // if not, source will be null and test should handle that
-        if (!source) {
-          console.log('no claude code project found for this repo - skip');
-          return;
-        }
-        expect(source.projectDir).toBeDefined();
-        expect(source.projectDir.startsWith(os.homedir())).toBe(true);
+      const source = useThen('it finds the project', () => {
+        const found = getTranscriptSource({ cwd: scene.cwd, env: scene.env });
+        if (!found)
+          throw new UnexpectedCodePathError(
+            'the fixture project was not found',
+            {
+              cwd: scene.cwd,
+              projectDir: scene.projectDir,
+            },
+          );
+        return found;
       });
 
-      then('should have at least 1 session', () => {
-        if (!source) return;
-        expect(source.sessionCount).toBeGreaterThanOrEqual(1);
-        expect(source.sessions.length).toBeGreaterThanOrEqual(1);
+      then('it names the project dir under the config root', () => {
+        expect(source.projectDir).toEqual(scene.projectDir);
       });
 
-      then('each session should have main file with .jsonl extension', () => {
-        if (!source) return;
-        for (const session of source.sessions) {
-          expect(session.mainFile).toBeDefined();
+      then('it holds one session per main transcript', () => {
+        expect(source.sessionCount).toEqual(2);
+        expect(source.sessions.length).toEqual(2);
+      });
+
+      then('each session main file is a .jsonl', () => {
+        for (const session of source.sessions)
           expect(session.mainFile.endsWith('.jsonl')).toBe(true);
-        }
       });
 
-      then('each session subagentFiles should be array', () => {
-        if (!source) return;
-        for (const session of source.sessions) {
-          expect(Array.isArray(session.subagentFiles)).toBe(true);
-        }
+      then('a session with a subagents dir lists its subagent files', () => {
+        const sessionOne = source.sessions.find((session) =>
+          session.mainFile.endsWith('session-one.jsonl'),
+        );
+        expect(sessionOne?.subagentFiles).toEqual([
+          path.join(
+            scene.projectDir,
+            'session-one',
+            'subagents',
+            'agent-a.jsonl',
+          ),
+        ]);
       });
     });
   });
 
   given('[case2] directory with no claude code project', () => {
-    when('[t0] transcript source is discovered', () => {
-      const source = getTranscriptSource({ cwd: os.tmpdir() });
+    // an empty temp `$HOME` and no `$CLAUDE_CONFIG_DIR`, so no root on this machine is read
+    const scene = useBeforeAll(async () => ({
+      env: {
+        CLAUDE_CONFIG_DIR: null,
+        HOME: genTempDir({ slug: 'get-transcript-source-empty-home' }),
+      },
+    }));
 
+    when('[t0] transcript source is discovered', () => {
       then('should return null', () => {
+        const source = getTranscriptSource({
+          cwd: os.tmpdir(),
+          env: scene.env,
+        });
         expect(source).toBeNull();
       });
     });
@@ -72,4 +120,41 @@ describe('getTranscriptSource', () => {
       });
     });
   });
+
+  given(
+    '[case4] $CLAUDE_CONFIG_DIR unset, project under ~/.claude/projects',
+    () => {
+      // a temp `$HOME`, injected as env, so the home-root fallback is proven without this
+      // machine's history
+      const scene = useBeforeAll(async () => {
+        const root = genTempDir({ slug: 'get-transcript-source-home' });
+        const cwd = path.join(root, 'repo');
+        const home = path.join(root, 'home');
+        const projectDir = path.join(
+          home,
+          '.claude',
+          'projects',
+          computeProjectSlug({ cwd }),
+        );
+        fs.mkdirSync(projectDir, { recursive: true });
+        fs.writeFileSync(path.join(projectDir, 'session-home.jsonl'), '{}\n');
+        return {
+          cwd,
+          projectDir,
+          env: { CLAUDE_CONFIG_DIR: null, HOME: home },
+        };
+      });
+
+      when('[t0] transcript source is discovered', () => {
+        then('it finds the project under the home root', () => {
+          const source = getTranscriptSource({
+            cwd: scene.cwd,
+            env: scene.env,
+          });
+          expect(source?.projectDir).toEqual(scene.projectDir);
+          expect(source?.sessionCount).toEqual(1);
+        });
+      });
+    },
+  );
 });
