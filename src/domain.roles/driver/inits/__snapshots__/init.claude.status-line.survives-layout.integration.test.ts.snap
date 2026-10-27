@@ -52,6 +52,15 @@ exports[`init.claude.status-line.survives-layout.integration given: [case3] a dr
 "
 `;
 
+exports[`init.claude.status-line.survives-layout.integration given: [case4] a repo with driver unlinked, driven through the real rhachet init --roles when: [t0] the human links driver then: the bound command prints the line via the linked reader: status line repaint after link - the bound command prints the line 1`] = `
+{
+  "exitCode": 0,
+  "stderr": "",
+  "stdout": "🗿 1.vision, yield 🌾
+",
+}
+`;
+
 exports[`init.claude.status-line.survives-layout.integration given: [case4] a repo with driver unlinked, driven through the real rhachet init --roles when: [t0] the human links driver then: the framed init block matches the snapshot: rhachet init --roles driver - status line bound 1`] = `
 "
 🔧 init 1 role(s)...
@@ -114,6 +123,16 @@ exports[`init.claude.status-line.survives-layout.integration given: [case4] a re
 "
 `;
 
+exports[`init.claude.status-line.survives-layout.integration given: [case4] a repo with driver unlinked, driven through the real rhachet init --roles when: [t0] the human links driver then: what the subdir repaint shows matches the snapshot: status line repaint after link, from a subdir - the reader path misses 1`] = `
+{
+  "exitCode": 0,
+  "stderr": "<bash>: .agent/repo=bhrain/role=driver/skills/route.status.line.sh: <not found>
+",
+  "stdout": "🗿 status line reader not found, rhx init --roles driver
+",
+}
+`;
+
 exports[`init.claude.status-line.survives-layout.integration given: [case4] a repo with driver unlinked, driven through the real rhachet init --roles when: [t1] the human runs it again then: the framed init block matches the snapshot: rhachet init --roles driver - rerun, the init reports already configured 1`] = `
 "
 🔧 init 1 role(s)...
@@ -173,6 +192,16 @@ exports[`init.claude.status-line.survives-layout.integration given: [case4] a re
    └─ untouched (0)
 
 "
+`;
+
+exports[`init.claude.status-line.survives-layout.integration given: [case4] a repo with driver unlinked, driven through the real rhachet init --roles when: [t2] the human unlinks driver then: what the repaint shows matches the snapshot: status line repaint after unlink - the reader is gone 1`] = `
+{
+  "exitCode": 0,
+  "stderr": "<bash>: .agent/repo=bhrain/role=driver/skills/route.status.line.sh: <not found>
+",
+  "stdout": "🗿 status line reader not found, rhx init --roles driver
+",
+}
 `;
 
 exports[`init.claude.status-line.survives-layout.integration given: [case5] rhachet init --roles meets a state a human must fix, each time with driver unlinked first when: [t0] the grove holds the statusLine of the human then: the framed init block matches the snapshot: rhachet init --roles driver - grove line kept 1`] = `

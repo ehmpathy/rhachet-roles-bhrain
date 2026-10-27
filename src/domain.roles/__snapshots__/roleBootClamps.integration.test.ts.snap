@@ -1363,7 +1363,7 @@ exports[`roleBootClamps given: [case2] the driver role boot when: [t3] the real 
 exports[`roleBootClamps given: [case2] the driver role boot when: [t4] it boots in the form a seat boots it then: its seat payload is pinned, so growth is a snapshot diff 1`] = `
 {
   "budget": 10000,
-  "payload": 9936,
+  "payload": 9890,
 }
 `;
 

@@ -1,0 +1,7 @@
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
+
+exports[`delRouteBind given: [case3] a bound branch whose status line pointer cannot be dropped when: [t0] delRouteBind is called then: the unbind lands, and one stderr row names the drop fault 1`] = `
+[
+  "[route.bind.del] warn: status line pointer drop failed (ERR_FS_EISDIR). fix: remove $REPO/.agent/.cache/repo=bhrain/role=driver/skill=route.status.line/branch=human.test-del-fault.route",
+]
+`;

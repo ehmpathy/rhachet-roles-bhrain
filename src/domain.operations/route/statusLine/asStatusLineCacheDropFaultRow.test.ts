@@ -32,9 +32,11 @@ describe('asStatusLineCacheDropFaultRow', () => {
             ),
           ).toBe(true);
           expect(row).toContain(thisCase.expect.codeShown);
-          expect(row).toContain('the line may lag the bind for up to 30s');
           expect(row).toContain(
-            'fix: remove .agent/.cache/repo=bhrain/role=driver/skill=route.status.line/',
+            'a seat on the node entry may lag the bind for up to 30s',
+          );
+          expect(row).toContain(
+            'fix: rm -f .agent/.cache/repo=bhrain/role=driver/skill=route.status.line/branch=*.json (keep the branch=*.route pointers)',
           );
           expect(row).toMatchSnapshot();
         });

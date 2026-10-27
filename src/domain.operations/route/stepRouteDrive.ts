@@ -5,6 +5,7 @@ import type { RouteStoneGuard } from '@src/domain.objects/Driver/RouteStoneGuard
 import { isReviewSubprocess } from '@src/domain.operations/isReviewSubprocess';
 
 import { getRouteBindByBranch } from './bind/getRouteBindByBranch';
+import { isRouteBindMultiBindFault } from './bind/isRouteBindMultiBindFault';
 import { computeRouteBouncerCache } from './bouncer/computeRouteBouncerCache';
 import { setRouteBouncerCache } from './bouncer/setRouteBouncerCache';
 import { applyStoneBrainOnEntry } from './brain/applyStoneBrainOnEntry';
@@ -41,6 +42,8 @@ import { RouteReminderOrphanError } from './reminder/RouteReminderOrphanError';
 import { spawnRouteReminderDaemon } from './reminder/spawnRouteReminderDaemon';
 import { surfaceRouteReminderFault } from './reminder/surfaceRouteReminderFault';
 import { syncRouteReminderForDrive } from './reminder/syncRouteReminderForDrive';
+import { setRouteStatusLineFileOrWarn } from './statusLine/file/setRouteStatusLineFileOrWarn';
+import { setRouteStatusLinePointerAsMultiBindOrWarn } from './statusLine/file/setRouteStatusLinePointerAsMultiBindOrWarn';
 import { getOneStoneContent } from './stones/getOneStoneContent';
 import { getRouteDriveFrontier } from './stones/getRouteDriveFrontier';
 
@@ -86,14 +89,20 @@ export const stepRouteDrive = async (
     return { emit: null };
 
   // derive route from input or bound branch
-  const route =
-    input.route || (await getRouteBindByBranch({ branch: null }))?.route;
+  const route = input.route || (await getRouteBoundOrMarkMultiBind())?.route;
 
   // no route bound = not our concern, don't block
   if (!route)
     return {
       emit: { stdout: formatRouteDriveUnbound() },
     };
+
+  // refresh the status file the status line reads: a drive is the heal a stale line names.
+  // a route found by the bind lookup is the branch's one answer, so it names the pointer whole
+  await setRouteStatusLineFileOrWarn({
+    route,
+    pointerAuthority: input.route ? 'flag' : 'lookup',
+  });
 
   // precompute bouncer cache for artifact gate enforcement
   const bouncerCache = await computeRouteBouncerCache({
@@ -996,4 +1005,25 @@ const formatRouteDrive = (input: {
   }
 
   return lines.join('\n');
+};
+
+/**
+ * .what = the route bound to this branch, via the repo-wide bind lookup
+ * .why = on a multi-bind the lookup faults loud; before the fault propagates, the branch's
+ *        status line pointer is marked, so the bash reader prints the fault line rather
+ *        than one of the two routes
+ *
+ * .note = the catch allowlists only the multi-bind fault, and rethrows it after the mark;
+ *         every other error rethrows untouched (rule.forbid.failhide)
+ */
+const getRouteBoundOrMarkMultiBind = async (): Promise<{
+  route: string;
+} | null> => {
+  try {
+    return await getRouteBindByBranch({ branch: null });
+  } catch (error) {
+    if (isRouteBindMultiBindFault({ error }))
+      await setRouteStatusLinePointerAsMultiBindOrWarn({ cwd: process.cwd() });
+    throw error;
+  }
 };

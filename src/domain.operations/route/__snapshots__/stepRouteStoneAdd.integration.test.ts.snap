@@ -1,0 +1,34 @@
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
+
+exports[`stepRouteStoneAdd.integration given: [case4] collision detection when: [t2] the stone path holds a dir, which the stone scan does not list then: the exclusive write refuses with the path and the fix 1`] = `
+"BadRequestError: stone path already taken: $ROUTE/2.criteria.stone; it appeared after the stone scan (a concurrent add) or holds no stone file (a dir); rerun route.stone.add, or remove that path first
+
+{
+  "stone": "2.criteria",
+  "path": "$ROUTE/2.criteria.stone"
+}"
+`;
+
+exports[`stepRouteStoneAdd.integration given: [case5] invalid stone name when: [t0] stone name lacks numeric prefix then: throws BadRequestError 1`] = `
+"BadRequestError: stone name must have numeric prefix followed by at least one alpha segment (e.g., 3.1.6.research.custom)
+
+{
+  "stone": "research.custom"
+}"
+`;
+
+exports[`stepRouteStoneAdd.integration given: [case5] invalid stone name when: [t1] stone name lacks alpha segment then: throws BadRequestError 1`] = `
+"BadRequestError: stone name must have numeric prefix followed by at least one alpha segment (e.g., 3.1.6.research.custom)
+
+{
+  "stone": "3.1.6"
+}"
+`;
+
+exports[`stepRouteStoneAdd.integration given: [case6] route not found when: [t0] route does not exist then: throws BadRequestError 1`] = `
+"BadRequestError: route not found: /nonexistent/route; check --route, or run rhx route.bind.get
+
+{
+  "route": "/nonexistent/route"
+}"
+`;

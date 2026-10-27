@@ -42,20 +42,26 @@ cache:
   a repaint whose render inputs did not change prints the line already computed,
   from ${DIR_OF_ROUTE_STATUS_LINE_CACHE}/ (per branch).
   the legacy cli/route export forwards here, so it is cached too, yet still loads
-  the whole barrel first; re-run the driver init to move a seat to the subpath.
+  the whole barrel first; re-run the driver init to move a seat to the bash reader.
   a fault that prints no line is never cached; a degraded line is cached with its
   stderr row, and each repaint prints that row again. an unreadable or unwritable
   cache is reported on stderr, and the line still prints. a cached line is at most
   ${ROUTE_STATUS_LINE_CACHE_MAX_AGE_MS / 1000}s old; a passage, a meter row, a promise, or a route.bind.set shows on
   the next repaint. a bind flag that arrives any other way (a pull, a hand edit)
-  shows within ${ROUTE_STATUS_LINE_CACHE_MAX_AGE_MS / 1000}s. to force a fresh line, delete that dir
+  shows within ${ROUTE_STATUS_LINE_CACHE_MAX_AGE_MS / 1000}s. to force a fresh line, drop the node records:
+    rm -f ${DIR_OF_ROUTE_STATUS_LINE_CACHE}/branch=*.json
+  keep the branch=*.route files in that dir: they are the bash reader's pointers.
+  without them, a route under .behavior/ is found by a glob, and a route bound
+  elsewhere reads a blank line until its next drive or bind
 
 note:
-  the claude code harness runs this with cwd = project root and renders stdout
-  as the status line. it is invoked via the node -e command that
-  init.claude.status-line.sh writes into the repo's claude settings (the file
-  .claude/settings.of.repo.json, or .claude/settings.json in the old layout),
-  not via rhx, whose banner would pollute the single-line output
+  the claude code harness runs the status line with cwd = project root and
+  renders stdout as the line. the driver init binds the bash reader,
+  which spawns no node per repaint and reads the status file the route writers
+  keep beside the route:
+    BASH_ENV= bash .agent/repo=bhrain/role=driver/skills/route.status.line.sh || printf '%s\\n' '🗿 status line reader not found, rhx init --roles driver'
+  this node entry serves a seat whose settings predate the bash reader; re-run
+  the driver init to move that seat to the bash reader
 
 examples:
   node -e "import('rhachet-roles-bhrain/cli/route.status.line').then(m => m.routeStatusLine())"
