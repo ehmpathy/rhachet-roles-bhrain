@@ -114,7 +114,8 @@ describe('setRouteBind', () => {
       // create a temp git repo on main branch (ci-safe)
       tempDir = genTempDir({ slug: 'test-bind-set-protected', git: true });
       await fs.mkdir(path.join(tempDir, 'my-route'), { recursive: true });
-      // genTempDir initializes on main branch by default, no checkout needed
+      // the initial branch is a host default (main here, master on ci); pin it to main
+      execSync('git checkout -q -B main', { cwd: tempDir });
     });
 
     when('[t0] branch is main', () => {
