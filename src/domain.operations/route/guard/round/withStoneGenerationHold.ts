@@ -3,6 +3,8 @@ import * as path from 'path';
 import { createCache } from 'simple-on-disk-cache';
 import { withSimpleMutex } from 'with-simple-mutex';
 
+import { withStatusLineRefreshDeferred } from '../../statusLine/file/withStatusLineRefreshDeferred';
+
 /**
  * .what = the one machine-wide cache every stone generation hold claims its key in
  * .why = a mutex's isolation scope is its cache INSTANCE, so it is built once, here, at
@@ -45,8 +47,20 @@ const asStoneGenerationMutexKey = (input: {
  * .note = acquire waits at most 5s: a hold is milliseconds, so a 5s wait means the key
  *         is stuck, and that surfaces loud as a SimpleMutexAcquireTimeoutError
  * .note = not reentrant: the logic must never take the same stone's hold again
+ * .note = a status file refresh a write inside asks for waits until the hold releases
+ *         (withStatusLineRefreshDeferred), so the hold never spans a render
  */
 export const withStoneGenerationHold = async <TOutput>(input: {
+  route: string;
+  stone: string;
+  logic: () => Promise<TOutput>;
+}): Promise<TOutput> =>
+  withStatusLineRefreshDeferred(() => withStoneGenerationHeld(input));
+
+/**
+ * .what = the hold itself: the logic, while the stone's key is held
+ */
+const withStoneGenerationHeld = async <TOutput>(input: {
   route: string;
   stone: string;
   logic: () => Promise<TOutput>;

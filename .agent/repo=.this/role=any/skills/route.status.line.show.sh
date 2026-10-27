@@ -9,14 +9,16 @@
 #
 # usage:
 #   rhx route.status.line.show                 # one repaint via the subpath
-#   rhx route.status.line.show --drop          # drop the cache first (a cold repaint)
+#   rhx route.status.line.show --drop          # drop the node records first (a cold repaint)
 #   rhx route.status.line.show --via legacy    # the cli/route export, as an unmigrated seat
 #   rhx route.status.line.show --unbound       # repaint as a seat in a repo with no route bound
 #   rhx route.status.line.show --line-arg --help   # pass an arg to the status line itself
 #
 # guarantee:
-#   - runs the exact command the driver init writes into a seat's settings
-#   - never writes route state; only --drop removes the gitignored cache dir
+#   - runs the node entry still used by a seat whose settings predate the
+#     bash reader (the driver init now binds the bash reader instead)
+#   - never writes route state; --drop removes only the node branch=*.json
+#     records, and keeps the bash reader's branch=*.route pointers in that dir
 #   - reports `hit` when the cache file was not rewritten, `miss` when it was,
 #     `untouched` for a --line-arg run that wrote no cache, and `(not reached)`
 #     for a repaint that faulted before any cache write
@@ -70,8 +72,9 @@ cache_marks() {
   find "$CACHE_DIR" -maxdepth 1 -name 'branch=*.json' -printf '%f %T@\n' 2>/dev/null | sort || true
 }
 
-# optional cold start
-[[ "$DROP" == "true" ]] && rm -rf "$CACHE_DIR"
+# optional cold start: drop the node records alone. the dir also holds the bash reader's
+# branch pointers (`branch=*.route`), and to drop those would blank a live seat's line
+[[ "$DROP" == "true" ]] && rm -f "$CACHE_DIR"/branch=*.json
 
 # one repaint, timed, its streams kept apart
 MARKS_BEFORE="$(cache_marks)"

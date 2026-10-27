@@ -1,7 +1,59 @@
 // Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
 
+exports[`setRouteBind given: [case2] route directory does not exist when: [t0] route path is absent then: throws error with path in message 1`] = `
+"BadRequestError: route directory does not exist: nonexistent-route; check the path, or run rhx route.bind.get
+
+{
+  "route": "nonexistent-route"
+}"
+`;
+
+exports[`setRouteBind given: [case3] protected branch (main) when: [t0] branch is main then: throws protected branch error 1`] = `
+"BadRequestError: cannot bind route on protected branch; switch to a feature branch first
+
+{
+  "branch": "main"
+}"
+`;
+
+exports[`setRouteBind given: [case4] different route already bound when: [t0] bind to route-a then attempt route-b then: throws already-bound error 1`] = `
+"BadRequestError: already bound to route-a. use route.bind --del first
+
+{
+  "routeFound": "route-a",
+  "routeAsked": "route-b",
+  "branch": "human/test-conflict"
+}"
+`;
+
 exports[`setRouteBind given: [case5] the status line cache cannot be dropped when: [t0] the route is bound then: the bind lands and the drop fault warns on stderr 1`] = `
 [
-  "[route.bind.set] warn: status line cache drop failed (ERR_FS_EISDIR); the line may lag the bind for up to 30s. fix: remove .agent/.cache/repo=bhrain/role=driver/skill=route.status.line/, or repair its permissions",
+  "[route.bind.set] warn: status line cache drop failed (ERR_FS_EISDIR); a seat on the node entry may lag the bind for up to 30s. fix: rm -f .agent/.cache/repo=bhrain/role=driver/skill=route.status.line/branch=*.json (keep the branch=*.route pointers), or repair its permissions",
 ]
+`;
+
+exports[`setRouteBind given: [case6] two routes already hold the branch flag when: [t0] route-a is bound again then: the bind refuses with the multi-bind fault and marks the pointer 1`] = `
+"BadRequestError: multiple routes bound to this branch. run rhx route.bind.del, then bind the one route
+
+{
+  "branch": "human/test-multibind",
+  "flagFiles": [
+    "$REPO/route-a/.route/.bind.human.test-multibind.flag",
+    "$REPO/route-b/.route/.bind.human.test-multibind.flag"
+  ]
+}"
+`;
+
+exports[`setRouteBind given: [case6] two routes already hold the branch flag when: [t1] route-a is bound again, and the pointer cannot be marked then: the bind still refuses with the multi-bind fault, and one stderr row names the mark fault 1`] = `
+[
+  "[route.status.line] fault: pointer write failed (EISDIR) at $REPO/.agent/.cache/repo=bhrain/role=driver/skill=route.status.line/branch=human.test-multibind.route. fix: repair the cause, then rhx route.drive",
+]
+`;
+
+exports[`setRouteBind given: [case7] the route path is a file when: [t0] the file is bound then: the bind refuses and names the fix 1`] = `
+"BadRequestError: route is not a directory: my-route.md; bind the route dir, not a file in it
+
+{
+  "route": "my-route.md"
+}"
 `;

@@ -1,0 +1,22 @@
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
+
+exports[`setRouteStatusLineFile given: [case6] a render input moves while the first render runs when: [t0] a concurrent passage lands between the render and the rename then: the two lines match the snapshot 1`] = `
+[
+  "🗿 1.vision, yield 🌾",
+  "🗿 route complete 🌴🤙",
+]
+`;
+
+exports[`setRouteStatusLineFile given: [case10] a stone rewound with a promise and no meters when: [t0] the stone is rewound then: the file holds the render taken after the deletes landed 1`] = `
+{
+  "lineAfter": "🗿 1.vision, yield 🌾",
+  "lineBefore": "🗿 1.vision, review.self, r1/r2 🔍",
+}
+`;
+
+exports[`setRouteStatusLineFile given: [case11] a route whose passage ledger holds a corrupt row when: [t0] a passage and a stone add land on it then: each move warns once on stderr, with the fix 1`] = `
+[
+  "[route.status.line] fault: status file write failed (corrupt ledger) for r-a, the line reads stale, or unknown if never written, until the next write. fix: repair the cause, then rhx route.drive",
+  "[route.status.line] fault: status file write failed (corrupt ledger) for r-a, the line reads stale, or unknown if never written, until the next write. fix: repair the cause, then rhx route.drive",
+]
+`;

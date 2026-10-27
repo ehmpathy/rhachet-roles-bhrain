@@ -19,7 +19,7 @@ describe('getRouteBindByBranch', () => {
         process.chdir(tempDir);
         try {
           const result = await getRouteBindByBranch({
-            branch: 'vlad/some-branch',
+            branch: 'human/some-branch',
           });
           expect(result).toBeNull();
         } finally {
@@ -38,8 +38,8 @@ describe('getRouteBindByBranch', () => {
       const routeDir = path.join(tempDir, '.behavior', 'my-feature', '.route');
       await fs.mkdir(routeDir, { recursive: true });
       await fs.writeFile(
-        path.join(routeDir, '.bind.vlad.test-branch.flag'),
-        'branch: vlad/test-branch\nbound_by: route.bind skill\n',
+        path.join(routeDir, '.bind.human.test-branch.flag'),
+        'branch: human/test-branch\nbound_by: route.bind skill\n',
       );
     });
 
@@ -49,7 +49,7 @@ describe('getRouteBindByBranch', () => {
         process.chdir(tempDir);
         try {
           const result = await getRouteBindByBranch({
-            branch: 'vlad/test-branch',
+            branch: 'human/test-branch',
           });
           expect(result).not.toBeNull();
           expect(result!.route).toEqual('.behavior/my-feature');
@@ -71,12 +71,12 @@ describe('getRouteBindByBranch', () => {
       await fs.mkdir(routeDir1, { recursive: true });
       await fs.mkdir(routeDir2, { recursive: true });
       await fs.writeFile(
-        path.join(routeDir1, '.bind.vlad.ambiguous.flag'),
-        'branch: vlad/ambiguous\nbound_by: route.bind skill\n',
+        path.join(routeDir1, '.bind.human.ambiguous.flag'),
+        'branch: human/ambiguous\nbound_by: route.bind skill\n',
       );
       await fs.writeFile(
-        path.join(routeDir2, '.bind.vlad.ambiguous.flag'),
-        'branch: vlad/ambiguous\nbound_by: route.bind skill\n',
+        path.join(routeDir2, '.bind.human.ambiguous.flag'),
+        'branch: human/ambiguous\nbound_by: route.bind skill\n',
       );
     });
 
@@ -86,7 +86,7 @@ describe('getRouteBindByBranch', () => {
         process.chdir(tempDir);
         try {
           const error = await getError(
-            getRouteBindByBranch({ branch: 'vlad/ambiguous' }),
+            getRouteBindByBranch({ branch: 'human/ambiguous' }),
           );
           expect(error).toBeInstanceOf(Error);
           expect(error.message).toContain('multiple routes bound');

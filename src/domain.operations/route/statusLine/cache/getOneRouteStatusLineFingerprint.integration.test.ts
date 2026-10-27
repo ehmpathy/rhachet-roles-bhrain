@@ -13,7 +13,7 @@ import { asRouteBindFlagName } from '@src/domain.operations/route/bind/asRouteBi
 
 import { getOneRouteStatusLineFingerprint } from './getOneRouteStatusLineFingerprint';
 
-const BRANCH = 'vlad/fingerprint';
+const BRANCH = 'human/fingerprint';
 
 /**
  * .what = the fingerprint at its own grain: which writes move it, which do not, and a fault
