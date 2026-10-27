@@ -1,9 +1,32 @@
 import { execSync } from 'child_process';
 import * as fs from 'fs/promises';
+import { UnexpectedCodePathError } from 'helpful-errors';
 import * as path from 'path';
 import { given, then, when } from 'test-fns';
 
 import { getGitBlobHashes } from './getGitBlobHashes';
+
+/**
+ * .what = the median cost of a ONE-file getGitBlobHashes call, over three samples
+ * .why = every call spends the same fixed set of git calls whatever its file count, so a
+ *        batch is bounded by a multiple of this. a fixed wall budget graded host load
+ *        instead, and went red at 5417ms under a loaded unit suite
+ */
+const getMsOfOneCall = (input: { file: string; cwd: string }): number =>
+  [0, 1, 2]
+    .map(() => {
+      const startOfOne = Date.now();
+      getGitBlobHashes({ files: [input.file], cwd: input.cwd });
+      return Date.now() - startOfOne;
+    })
+    .sort((a, b) => a - b)[1] ??
+  UnexpectedCodePathError.throw('three samples yield no median');
+
+/**
+ * .what = how many one-file costs a batch may spend
+ * .why = load room; a per-file pass of 200 files measured ×330 (464s against 1.4s per call)
+ */
+const ONE_CALL_MULTIPLE_OF_BATCH = 20;
 
 describe('getGitBlobHashes', () => {
   given('[case1] committed file in repo', () => {
@@ -110,13 +133,21 @@ describe('getGitBlobHashes', () => {
       .filter(Boolean);
 
     when('[t0] hashes are computed', () => {
+      // "efficiently" means a fixed set of git calls, never one per file (getMsOfOneCall)
       then('returns hashes for all files efficiently', () => {
+        const msOfOne = getMsOfOneCall({
+          file: files[0] ?? 'tsconfig.json',
+          cwd,
+        });
+
         const startTime = Date.now();
         const result = getGitBlobHashes({ files, cwd });
         const elapsed = Date.now() - startTime;
 
         expect(Object.keys(result).length).toBeGreaterThanOrEqual(100);
-        expect(elapsed).toBeLessThan(5000); // should complete in < 5s
+        expect(elapsed).toBeLessThan(
+          Math.max(500, msOfOne * ONE_CALL_MULTIPLE_OF_BATCH),
+        );
       });
     });
   });
@@ -142,6 +173,10 @@ describe('getGitBlobHashes', () => {
 
     when('[t0] hashes are computed for entire src tree', () => {
       then('completes without OOM and returns all hashes', () => {
+        const msOfOne = getMsOfOneCall({
+          file: files[0] ?? 'tsconfig.json',
+          cwd,
+        });
         const startMem = process.memoryUsage().heapUsed;
         const startTime = Date.now();
 
@@ -155,7 +190,9 @@ describe('getGitBlobHashes', () => {
         // - before: loaded 1110 file contents = OOM
         // - after: only 40-char hashes per file = ~50KB max
         expect(Object.keys(result).length).toBeGreaterThanOrEqual(1000);
-        expect(elapsed).toBeLessThan(10000); // < 10s for 1110 files
+        expect(elapsed).toBeLessThan(
+          Math.max(500, msOfOne * ONE_CALL_MULTIPLE_OF_BATCH),
+        );
         expect(memDeltaMB).toBeLessThan(100); // < 100MB heap growth
       });
     });

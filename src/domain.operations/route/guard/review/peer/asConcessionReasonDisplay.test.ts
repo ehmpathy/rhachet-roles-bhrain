@@ -11,7 +11,7 @@ import {
 describe('asConcessionReasonDisplay', () => {
   given('[case1] a plain (non-concession) budget-exhaustion reason', () => {
     const reason = genRouteGuardExhaustedReason({
-      slugs: ['limited'],
+      slugs: { exhausted: ['limited'], urgent: [] },
       concession: 'none',
     });
 
@@ -30,7 +30,7 @@ describe('asConcessionReasonDisplay', () => {
 
   given('[case2] a BETTER concession exhaustion reason', () => {
     const reason = genRouteGuardExhaustedReason({
-      slugs: ['limited'],
+      slugs: { exhausted: ['limited'], urgent: [] },
       concession: 'better',
     });
 
@@ -59,7 +59,7 @@ describe('asConcessionReasonDisplay', () => {
 
   given('[case3] an URGENT concession exhaustion reason', () => {
     const reason = genRouteGuardExhaustedReason({
-      slugs: ['limited'],
+      slugs: { exhausted: ['limited'], urgent: [] },
       concession: 'urgent',
     });
 
@@ -111,7 +111,7 @@ describe('asConcessionReasonDisplay', () => {
         expect(
           asConcessionReasonDisplay({
             reason: genRouteGuardExhaustedReason({
-              slugs: ['limited'],
+              slugs: { exhausted: ['limited'], urgent: [] },
               concession: 'none',
             }),
           }).isConcession,
@@ -124,7 +124,7 @@ describe('asConcessionReasonDisplay', () => {
         expect(
           asConcessionReasonDisplay({
             reason: genRouteGuardExhaustedReason({
-              slugs: ['limited'],
+              slugs: { exhausted: ['limited'], urgent: [] },
               concession: 'better',
             }),
           }).isConcession,
@@ -137,7 +137,7 @@ describe('asConcessionReasonDisplay', () => {
         expect(
           asConcessionReasonDisplay({
             reason: genRouteGuardExhaustedReason({
-              slugs: ['limited'],
+              slugs: { exhausted: ['limited'], urgent: [] },
               concession: 'urgent',
             }),
           }).isConcession,

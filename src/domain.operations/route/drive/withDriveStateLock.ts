@@ -13,6 +13,8 @@ import { delOneFile } from './delOneFile';
  * .why = the critical section is one read, one write, one rename — sub-millisecond — so this
  *        is ~500x headroom for a loaded host
  *
+ * .note = it bounds ONE hold: each observed handoff restarts it, so a queue that moves never
+ *         throws, and a holder that never lets go throws at this cap
  * .note = one hook tick can take this lock twice (entry mark + block count), so its worst
  *         cost is 2 × itself inside the hook budget beside `WHOAMI_TIMEOUT_MS`. `[case4]`
  *         clamps that arithmetic against the settings on disk
@@ -32,6 +34,26 @@ const LOCK_POLL_INTERVAL_MS = 5;
  */
 export const asDriveStateLockPath = (input: { statePath: string }): string =>
   `${input.statePath}.lock`;
+
+/**
+ * .what = the identity of the lock file now — its inode and birth time — or null if it was
+ *         released since the last look
+ * .why = each acquire creates a fresh file, so a changed identity is a handoff — the proof
+ *        the queue moves, which a pid alone cannot give (one process can hold twice in a row)
+ * .note = birth time beside the inode, since ext4 may hand a freed inode straight to the
+ *         next file, and a bare inode would then miss the handoff
+ */
+const getIdentityOfLock = async (input: {
+  lockPath: string;
+}): Promise<string | null> =>
+  fs
+    .stat(input.lockPath)
+    .then((stats) => `${stats.ino}:${stats.birthtimeMs}`)
+    .catch((error: NodeJS.ErrnoException) => {
+      // ENOENT = released between the open and this look. every other code is a real fault
+      if (error.code === 'ENOENT') return null;
+      throw error;
+    });
 
 /**
  * .what = runs `critical` under an EXCLUSIVE, cross-process lock on a state file
@@ -59,6 +81,7 @@ export const withDriveStateLock = async <T>(input: {
   const handle = await (async (): Promise<fs.FileHandle> => {
     let deadline = Date.now() + LOCK_ACQUIRE_TIMEOUT_MS;
     let reapAttempted = false;
+    let identityOfHold: string | null = null;
 
     for (;;) {
       try {
@@ -66,6 +89,15 @@ export const withDriveStateLock = async <T>(input: {
       } catch (error) {
         // EEXIST = another writer holds it. every other code is a real fault
         if (!isEEXIST(error)) throw error;
+
+        // the cap bounds ONE hold, never the queue: a new lock file is a handoff, so the
+        // queue moved, and the deadline restarts. a holder that never lets go still throws
+        const identityNow = await getIdentityOfLock({ lockPath });
+        if (identityNow !== null && identityNow !== identityOfHold) {
+          if (identityOfHold !== null)
+            deadline = Date.now() + LOCK_ACQUIRE_TIMEOUT_MS;
+          identityOfHold = identityNow;
+        }
 
         if (Date.now() >= deadline) {
           // at the deadline a live holder should have released, so try the reap — it parts a

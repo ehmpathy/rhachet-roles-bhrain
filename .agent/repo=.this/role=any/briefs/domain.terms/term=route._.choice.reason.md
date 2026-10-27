@@ -58,8 +58,8 @@ none. the noun predates this capture by the whole of the driver role.
   `RouteStoneDisposition.ts` and a dozen more declare it as a domain object prefix; the
   `src/domain.operations/route/` namespace and every `route.*` skill declare it as an operation
   prefix. it is arguably the central noun of this repo
-- **briefs**: the driver treats it as settled vocabulary — `howto.create-routes.[ref]`,
-  `define.routes-are-gardened.[philosophy]`, `howto.drive-routes.[guide]`
+- **briefs**: the driver treats it as settled vocabulary — `howto.create-routes.kind=ref`,
+  `define.routes-are-gardened.kind=philosophy`, `howto.drive-routes`
 - **the wisher**, 2026-08-13, who named the concept's role in externalization: *"a common way to
   enskill, if brains are required along the way, is to pave a route … offroad brains are best when
   they pave reuseable routes that can later be driven"* — which prompted this capture, and tied

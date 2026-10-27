@@ -1,0 +1,55 @@
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
+
+exports[`prove.consumer-patch.integration given: [case1] a human who asks the skill to explain itself when: [t0] --help is passed then: the usage renders whole 1`] = `
+"######################################################################
+# .what = install a consumer patch the way a consumer would, then run
+#         two real status line repaints through that install
+#
+# .why  = \`gen.consumer-patch\` proves the patch APPLIES. a consumer is
+#         owed more: that pnpm accepts it, that the patched package
+#         loads the subpath, that a repaint prints a line, and that the
+#         second repaint is a hit. this runs exactly those steps, so the
+#         claim in a pr body rests on a real install, never on a diff
+#
+# usage:
+#   rhx prove.consumer-patch --from 0.42.1 --patch <path>.patch
+#
+# guarantee:
+#   - a scratch consumer under .temp/consumer-patch/proof/ (gitignored),
+#     rebuilt fresh each run: a package.json that pins --from and names
+#     the patch in pnpm.patchedDependencies, then \`pnpm install\`
+#   - the repaints run from the repo root, so the seat is this repo and
+#     its bound route; the package loads from the scratch install
+#   - the first repaint drops the cache (a miss), the second must hit
+#   - an install refusal names each read-only file the patch edits
+#     (why: briefs/hazard.git-apply-check-is-not-a-pnpm-install.md)
+#   - exit 0 = a line, then a hit · 1 = install or repaint failed, or no
+#     hit · 2 = bad input
+######################################################################
+"
+`;
+
+exports[`prove.consumer-patch.integration given: [case2] a call refused for unknown-arg when: [t0] the skill parses its args then: the refusal matches its snapshot 1`] = `
+"✋ ConstraintError: unknown arg '--bogus'
+"
+`;
+
+exports[`prove.consumer-patch.integration given: [case3] a call refused for from-without-value when: [t0] the skill parses its args then: the refusal matches its snapshot 1`] = `
+"✋ ConstraintError: --from needs a value
+"
+`;
+
+exports[`prove.consumer-patch.integration given: [case4] a call refused for patch-without-value when: [t0] the skill parses its args then: the refusal matches its snapshot 1`] = `
+"✋ ConstraintError: --patch needs a value
+"
+`;
+
+exports[`prove.consumer-patch.integration given: [case5] a call refused for from-not-semver when: [t0] the skill parses its args then: the refusal matches its snapshot 1`] = `
+"✋ ConstraintError: --from must be a semver version, e.g. 0.42.1
+"
+`;
+
+exports[`prove.consumer-patch.integration given: [case6] a call refused for patch-absent when: [t0] the skill parses its args then: the refusal matches its snapshot 1`] = `
+"✋ ConstraintError: --patch must name a patch file on disk
+"
+`;

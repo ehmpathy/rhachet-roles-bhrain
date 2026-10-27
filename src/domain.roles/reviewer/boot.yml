@@ -1,3 +1,7 @@
+budget:
+  # a cap, not a target: the least multiple of 250 strictly above what the role costs as a seat
+  # boots it. the clamp is roleBootClamps.integration.test.ts. never cut a cue to fit
+  tokens: 9_750
 always:
   briefs:
     say:
@@ -22,21 +26,21 @@ always:
       # its forbid peer: a ban on the horizontal shape bites where a call for the better one
       # slides by, so both are resident
       - briefs/rule.forbid.horizontal-partitions.md
-      - briefs/on.rules/rules101.[article].md
-      - briefs/on.rules/rules101.structure.[article].md
-      - briefs/on.rules/rules101.content.[article].md
+      - briefs/on.rules/rules101.kind=article.md
+      - briefs/on.rules/rules101.structure.kind=article.md
+      - briefs/on.rules/rules101.content.kind=article.md
     ref:
       # the full behavior of --partition; review.tactics (say) carries the cue
       - briefs/howto.partition-an-overflowed-review.md
       - briefs/rule.forbid.overzealous-blockers.example=the-tidiness-blocker-and-the-false-green.md
-      - briefs/on.rules/rules101.citations.[article].md
-      - briefs/on.rules/rules101.collocated.[article].md
-      - briefs/on.rules/rules101.content.[demo].forbid.failhide.md
-      - briefs/on.rules/rules101.content.[demo].forbid.gerunds.md
-      - briefs/on.rules/rules101.content.[demo].require.failfast.md
-      - briefs/lessons/lesson.brain-selection-for-review.[finding].md
-      - briefs/lessons/lesson.brain-software-vs-general.[finding].md
-      - briefs/lessons/lesson.performance-singleturn-vs-multiturn.[finding].md
+      - briefs/on.rules/rules101.citations.kind=article.md
+      - briefs/on.rules/rules101.collocated.kind=article.md
+      - briefs/on.rules/rules101.content.kind=demo.forbid.failhide.md
+      - briefs/on.rules/rules101.content.kind=demo.forbid.gerunds.md
+      - briefs/on.rules/rules101.content.kind=demo.require.failfast.md
+      - briefs/lessons/lesson.brain-selection-for-review.kind=finding.md
+      - briefs/lessons/lesson.brain-software-vs-general.kind=finding.md
+      - briefs/lessons/lesson.performance-singleturn-vs-multiturn.kind=finding.md
   skills:
     say:
       - skills/review.sh

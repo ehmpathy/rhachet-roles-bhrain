@@ -28,7 +28,7 @@ when you find, or are tempted toward, a synonym in a contract:
 
 1. adhere — rename the contract to the canonical term, or
 2. dispute — if you believe the synonym is right (or names a genuinely distinct concept), open
-   a dispute in the term's `choice.reason.md` (see `howto.domain-term-disputes.[guide].md`)
+   a dispute in the term's `choice.reason.md` (see `howto.domain-term-disputes.md`)
 
 if you touch a contract that already uses a forbidden synonym, clean it up — but it may be
 **left in place until disturbed** (no forced mass-rewrite).

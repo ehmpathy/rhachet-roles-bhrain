@@ -28,16 +28,9 @@ exports[`findsertReviewSelfGitignore.integration given: [case2] self-review file
 }
 `;
 
-exports[`findsertReviewSelfGitignore.integration given: [case3] route is a file instead of directory when: [t0] findsert is called then: throws ENOTDIR error: error-enotdir-route 1`] = `[Error: ENOTDIR: not a directory, mkdir '<route>/route-as-file/review/self']`;
+exports[`findsertReviewSelfGitignore.integration given: [case3] route is a file instead of directory when: [t0] findsert is called then: throws ENOTDIR error: error-enotdir-route 1`] = `"ENOTDIR: not a directory, mkdir '<route>/route-as-file/review/self'"`;
 
-exports[`findsertReviewSelfGitignore.integration given: [case4] invalid route path when: [t0] findsert is called with non-writable path then: throws permission error: error-eacces 1`] = `[Error: EACCES: permission denied, mkdir '<path>']`;
-
-exports[`findsertReviewSelfGitignore.integration given: [case5] .gitignore present with incorrect content when: [t0] findsert is called then: overwrites with correct content: gitignore-content-overwrite 1`] = `
-"# ignore all self-review files
-*
-!.gitignore
-"
-`;
+exports[`findsertReviewSelfGitignore.integration given: [case4] invalid route path when: [t0] findsert is called with non-writable path then: throws permission error: error-eacces 1`] = `"EACCES: permission denied, mkdir '<path>'"`;
 
 exports[`findsertReviewSelfGitignore.integration given: [case5] .gitignore present with incorrect content when: [t0] findsert is called then: overwrites with correct content: result-overwrite 1`] = `
 {
@@ -46,29 +39,8 @@ exports[`findsertReviewSelfGitignore.integration given: [case5] .gitignore prese
 }
 `;
 
-exports[`findsertReviewSelfGitignore.integration given: [case6] .gitignore is a directory when: [t0] findsert is called then: throws EISDIR error: error-eisdir 1`] = `[Error: EISDIR: illegal operation on a directory, read]`;
+exports[`findsertReviewSelfGitignore.integration given: [case6] .gitignore is a directory when: [t0] findsert is called then: throws EISDIR error: error-eisdir 1`] = `"EISDIR: illegal operation on a directory, read"`;
 
-exports[`findsertReviewSelfGitignore.integration given: [case7] review path is a file instead of directory when: [t0] findsert is called then: throws ENOTDIR error: error-enotdir-review 1`] = `[Error: ENOTDIR: not a directory, mkdir '<route>/review/self']`;
+exports[`findsertReviewSelfGitignore.integration given: [case7] review path is a file instead of directory when: [t0] findsert is called then: throws ENOTDIR error: error-enotdir-review 1`] = `"ENOTDIR: not a directory, mkdir '<route>/review/self'"`;
 
-exports[`findsertReviewSelfGitignore.integration given: [case8] self path is a file instead of directory when: [t0] findsert is called then: throws EEXIST error: error-enotdir-self 1`] = `[Error: EEXIST: file already exists, mkdir '<route>/review/self']`;
-
-exports[`findsertReviewSelfGitignore.integration given: [case9] no review/self directory when: [t0] findsert is called then: creates .gitignore with correct content: gitignore-content 1`] = `
-"# ignore all self-review files
-*
-!.gitignore
-"
-`;
-
-exports[`findsertReviewSelfGitignore.integration given: [case9] no review/self directory when: [t0] findsert is called then: creates .gitignore with correct content: result-created 1`] = `
-{
-  "action": "created",
-  "pathRelative": "$ROUTE/review/self/.gitignore",
-}
-`;
-
-exports[`findsertReviewSelfGitignore.integration given: [case10] .gitignore already present with correct content when: [t0] findsert is called then: returns unchanged: result-unchanged 1`] = `
-{
-  "action": "unchanged",
-  "pathRelative": "$ROUTE/review/self/.gitignore",
-}
-`;
+exports[`findsertReviewSelfGitignore.integration given: [case8] self path is a file instead of directory when: [t0] findsert is called then: throws EEXIST error: error-eexist-self 1`] = `"EEXIST: file already exists, mkdir '<route>/review/self'"`;

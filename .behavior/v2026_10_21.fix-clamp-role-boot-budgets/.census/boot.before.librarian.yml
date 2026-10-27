@@ -1,0 +1,76 @@
+always:
+  briefs:
+    say:
+      # overview
+      - briefs/knowledge/kno201.documents._.[catalog].md
+      # role
+      - briefs/knowledge/kno401.actors.1.role.librarian.[article].md
+      # 101 primitives
+      - briefs/knowledge/kno101.primitives.1.ontology.[article].frame.docs_as_materializations.md
+      - briefs/knowledge/kno101.primitives.2.rel.many_to_many.[article].md
+      - briefs/knowledge/kno101.primitives.3.instances.[article].md
+      - briefs/knowledge/kno101.primitives.4.documents.[article].md
+      - briefs/knowledge/kno101.primitives.5.concepts.[article].md
+      # 301 enbrief tactics
+      - briefs/knowledge/kno301.doc.enbrief.2.articulate.[article].md
+      - briefs/knowledge/kno301.doc.enbrief.2.catalogize.[article].md
+      - briefs/knowledge/kno301.doc.enbrief.2.demonstrate.[article].md
+      # 601 inventories — the census discipline for concepts whose entries are
+      # enumerable. say-level for the two rules: they must fire BEFORE a doc lands,
+      # since the repair for a prose list over an enumerable concept is a rewrite,
+      # never an edit. the article + guide sit at ref, per the say/ref policy
+      - briefs/rule.require.inventory-for-enumerable-concepts.md
+      # the coordinate contract binds EVERY itemization — inventory, catalog, and the
+      # ejected example alike — so it is named for the act, never for one artifact kind
+      - briefs/rule.forbid.itemization-without-coordinates.md
+      # the `._.md` half of that name, on its own: whenever a subject splits into
+      # subscopes, the summary is the cluster root. say-level for the same reason the
+      # bracket rule is — it must fire AT the moment a second file is named, since the
+      # repair after the split is a rename plus every reference to the old name
+      - briefs/rule.require.summary-at-the-cluster-root.md
+      # the WHETHER to that rule's NAME: prefer to eject a sub-claim into a suffixed
+      # peer rather than accrete it inline. say-level because it fires WHILE a brief is
+      # written — a zoom-in caught at authorship is a new file, where the same zoom-in
+      # caught later is an ejection plus every pointer that has to be rewritten
+      - briefs/rule.prefer.decompose-a-subject-via-suffixes.md
+      # say-level because it must fire AT the moment a file is named. a rule that
+      # arrives after the name is chosen meets a librarian who must rename rather
+      # than name — and every ref to the old name has already spread
+      - briefs/rule.forbid.brackets-in-filenames.md
+      # the cluster discipline — one grain per artifact. say-level for the same reason
+      # the inventory rules are: the repair for an accreted catalog is an ejection, and
+      # a rule that arrives after fifty good edits meets an artifact nobody can use
+      - briefs/rule.require.catalog-is-an-index.md
+      - briefs/rule.require.rules-are-clusters.md
+      # the THIRD axis of that cluster discipline, and the one that decides the boot
+      # tier: `rules-are-clusters` splits the class from one occurrence; this splits
+      # the CUE from the case for the cue.
+      #
+      # say-level for the reason it itself states — a cue that must be fetched has
+      # already lost the round. it fires WHILE a rule is written, and the repair
+      # afterward is an ejection plus a tier change plus every pointer between.
+      #
+      # 🟡 nitpick severity, and the grade is honest: it is a PLACEMENT call, so a
+      # misplacement costs tokens on every boot rather than correctness on any one.
+      # the single blocker it names is `rule.require.a-cue-is-not-a-claim`'s, cited.
+      - briefs/rule.prefer.rules-that-refout.md
+      # the same say/ref split, for a SET rather than one rule: a subdomain too large to
+      # boot whole boots as its catalog, members under `not`. say-level because it must
+      # fire when a boot spec is written or runs over budget — the moment a librarian
+      # would otherwise trim a cue to save tokens a path list had spent
+      - briefs/rule.always.boot-an-oversized-subdomain-as-its-catalog.md
+    ref:
+      # the demo the catalog rule ejected — one occurrence, dated and measured.
+      # ref because a reader wants it once, never on every boot
+      - briefs/rule.require.catalog-is-an-index.example=declastruct-aws-security-catalog.md
+      # 601 inventories — the why + the moves, on demand
+      - briefs/knowledge/kno601.inventories._.kind=article.md
+      - briefs/howto.curate-an-inventory.md
+      # 201 document types
+      - briefs/knowledge/kno201.documents._.[article].md
+      - briefs/knowledge/kno201.documents.articles.[article].md
+      - briefs/knowledge/kno201.documents.catalogs.[article].md
+      - briefs/knowledge/kno201.documents.demos.[article].md
+      - briefs/knowledge/kno201.documents.lessons.[article].md
+      # 301 compression
+      - briefs/knowledge/kno301.doc.compression._.[article].md

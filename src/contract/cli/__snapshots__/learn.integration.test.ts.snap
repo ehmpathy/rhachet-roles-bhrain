@@ -35,7 +35,7 @@ exports[`learn.integration given: [case1] the clone face — reflect-and-distill
    │  ├─ why  · im_an.obsessive_learner.for.domain.terms.md (the trait)
    │  ├─ rule · rule.require.domain-term-itemization (itemize each declared term)
    │  ├─ rule · rule.forbid.domain-term-synonyms (canonical term, or dispute)
-   │  ├─ how  · template.domain-term.md + howto.domain-term-disputes.[guide].md
+   │  ├─ how  · template.domain-term.md + howto.domain-term-disputes.md
    │  └─ glos · .agent/repo=.this/role=any/briefs/domain.terms/.readme.md
    │
    └─ 🪷 distill, then rest — the glossary grows, the floor rises for all who follow
@@ -72,7 +72,7 @@ exports[`learn.integration given: [case1] the clone face — reflect-and-distill
    │  ├─ why  · im_an.obsessive_learner.for.domain.terms.md (the trait)
    │  ├─ rule · rule.require.domain-term-itemization (itemize each declared term)
    │  ├─ rule · rule.forbid.domain-term-synonyms (canonical term, or dispute)
-   │  ├─ how  · template.domain-term.md + howto.domain-term-disputes.[guide].md
+   │  ├─ how  · template.domain-term.md + howto.domain-term-disputes.md
    │  └─ glos · .agent/repo=.this/role=any/briefs/domain.terms/.readme.md
    │
    └─ 🪷 distill, then rest — the glossary grows, the floor rises for all who follow
@@ -117,7 +117,7 @@ exports[`learn.integration given: [case2] the onStop hook face — a stale disti
    │  ├─ why  · im_an.obsessive_learner.for.domain.terms.md (the trait)
    │  ├─ rule · rule.require.domain-term-itemization (itemize each declared term)
    │  ├─ rule · rule.forbid.domain-term-synonyms (canonical term, or dispute)
-   │  ├─ how  · template.domain-term.md + howto.domain-term-disputes.[guide].md
+   │  ├─ how  · template.domain-term.md + howto.domain-term-disputes.md
    │  └─ glos · .agent/repo=.this/role=any/briefs/domain.terms/.readme.md
    │
    ├─ the time to capture is now
@@ -219,7 +219,7 @@ exports[`learn.integration given: [case8] the combined --when=value form when: [
    │  ├─ why  · im_an.obsessive_learner.for.domain.terms.md (the trait)
    │  ├─ rule · rule.require.domain-term-itemization (itemize each declared term)
    │  ├─ rule · rule.forbid.domain-term-synonyms (canonical term, or dispute)
-   │  ├─ how  · template.domain-term.md + howto.domain-term-disputes.[guide].md
+   │  ├─ how  · template.domain-term.md + howto.domain-term-disputes.md
    │  └─ glos · .agent/repo=.this/role=any/briefs/domain.terms/.readme.md
    │
    ├─ the time to capture is now
@@ -264,7 +264,7 @@ exports[`learn.integration given: [case9] the posix -- end-of-options marker whe
    │  ├─ why  · im_an.obsessive_learner.for.domain.terms.md (the trait)
    │  ├─ rule · rule.require.domain-term-itemization (itemize each declared term)
    │  ├─ rule · rule.forbid.domain-term-synonyms (canonical term, or dispute)
-   │  ├─ how  · template.domain-term.md + howto.domain-term-disputes.[guide].md
+   │  ├─ how  · template.domain-term.md + howto.domain-term-disputes.md
    │  └─ glos · .agent/repo=.this/role=any/briefs/domain.terms/.readme.md
    │
    └─ 🪷 distill, then rest — the glossary grows, the floor rises for all who follow
@@ -369,7 +369,7 @@ exports[`learn.integration given: [case15] the rhachet-injected identity flags (
    │  ├─ why  · im_an.obsessive_learner.for.domain.terms.md (the trait)
    │  ├─ rule · rule.require.domain-term-itemization (itemize each declared term)
    │  ├─ rule · rule.forbid.domain-term-synonyms (canonical term, or dispute)
-   │  ├─ how  · template.domain-term.md + howto.domain-term-disputes.[guide].md
+   │  ├─ how  · template.domain-term.md + howto.domain-term-disputes.md
    │  └─ glos · .agent/repo=.this/role=any/briefs/domain.terms/.readme.md
    │
    ├─ the time to capture is now
@@ -414,7 +414,7 @@ exports[`learn.integration given: [case16] the injected identity flags on the cl
    │  ├─ why  · im_an.obsessive_learner.for.domain.terms.md (the trait)
    │  ├─ rule · rule.require.domain-term-itemization (itemize each declared term)
    │  ├─ rule · rule.forbid.domain-term-synonyms (canonical term, or dispute)
-   │  ├─ how  · template.domain-term.md + howto.domain-term-disputes.[guide].md
+   │  ├─ how  · template.domain-term.md + howto.domain-term-disputes.md
    │  └─ glos · .agent/repo=.this/role=any/briefs/domain.terms/.readme.md
    │
    └─ 🪷 distill, then rest — the glossary grows, the floor rises for all who follow
@@ -459,7 +459,7 @@ exports[`learn.integration given: [case17] the hook face — a fresh mtime but N
    │  ├─ why  · im_an.obsessive_learner.for.domain.terms.md (the trait)
    │  ├─ rule · rule.require.domain-term-itemization (itemize each declared term)
    │  ├─ rule · rule.forbid.domain-term-synonyms (canonical term, or dispute)
-   │  ├─ how  · template.domain-term.md + howto.domain-term-disputes.[guide].md
+   │  ├─ how  · template.domain-term.md + howto.domain-term-disputes.md
    │  └─ glos · .agent/repo=.this/role=any/briefs/domain.terms/.readme.md
    │
    ├─ the time to capture is now

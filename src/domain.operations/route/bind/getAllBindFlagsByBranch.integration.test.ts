@@ -151,6 +151,26 @@ describe('getAllBindFlagsByBranch', () => {
         path.join(distRouteDir, '.bind.vlad.mixed-branch.flag'),
         'branch: vlad/mixed-branch\n',
       );
+
+      // ignored flags under per-seat brain state and tool caches
+      const actorsRouteDir = path.join(
+        tempDir,
+        '.agent',
+        '.actors',
+        'actor.x',
+        '.route',
+      );
+      const cacheRouteDir = path.join(tempDir, '.agent', '.cache', '.route');
+      await fs.mkdir(actorsRouteDir, { recursive: true });
+      await fs.mkdir(cacheRouteDir, { recursive: true });
+      await fs.writeFile(
+        path.join(actorsRouteDir, '.bind.vlad.mixed-branch.flag'),
+        'branch: vlad/mixed-branch\n',
+      );
+      await fs.writeFile(
+        path.join(cacheRouteDir, '.bind.vlad.mixed-branch.flag'),
+        'branch: vlad/mixed-branch\n',
+      );
     });
 
     when('[t0] lookup executed', () => {

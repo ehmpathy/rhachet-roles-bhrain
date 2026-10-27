@@ -1,0 +1,38 @@
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
+
+exports[`stepRouteStatusLineCached.integration given: [case9] a seat whose route is bound, then unbound, via the real bind ops when: [t0] the seat repaints unbound, a route is bound, the seat repaints, then it is unbound then: the lines of the step match their snapshot 1`] = `
+{
+  "bound": "🗿 1.vision, yield 🌾",
+  "unbound": [
+    "",
+    "",
+  ],
+  "unboundAgain": "",
+}
+`;
+
+exports[`stepRouteStatusLineCached.integration given: [case9] a seat whose route is bound, then unbound, via the real bind ops when: [t1] the bind flag is removed by hand, with no bind op then: the lines of the step match their snapshot 1`] = `
+{
+  "bound": "🗿 1.vision, yield 🌾",
+  "unbound": "",
+}
+`;
+
+exports[`stepRouteStatusLineCached.integration given: [case9] a seat whose route is bound, then unbound, via the real bind ops when: [t2] route.bind.set races a repaint then: the settled lines of the step match their snapshot 1`] = `
+{
+  "after": "🗿 1.vision, yield 🌾",
+  "before": "",
+}
+`;
+
+exports[`stepRouteStatusLineCached.integration given: [case9] a seat whose route is bound, then unbound, via the real bind ops when: [t3] a second bind flag is planted by hand, then a passage lands then: the fault matches its snapshot 1`] = `
+"BadRequestError: multiple routes bound to this branch. use --route to disambiguate
+
+{
+  "branch": "vlad/test-statusline-bind",
+  "flagFiles": [
+    "$TEMP/my-route-other/.route/.bind.vlad.test-statusline-bind.flag",
+    "$TEMP/my-route/.route/.bind.vlad.test-statusline-bind.flag"
+  ]
+}"
+`;

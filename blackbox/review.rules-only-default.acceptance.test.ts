@@ -7,10 +7,10 @@ import { given, then, useThen, when } from 'test-fns';
 import { logOutputHead } from '@src/.test/logOutputHead';
 import { asReviewMetricsExpectedBlock } from './.test/invokeReviewBySkill';
 import {
-  execAsync,
   genTempDirForRhachet,
   invokeReviewSkill,
 } from './.test/invokeReviewSkill';
+import { setReviewerRoleLinked } from './.test/setReviewerRoleLinked';
 
 const ASSETS_DIR = path.join(__dirname, '.test/assets/codebase-mechanic');
 
@@ -47,20 +47,9 @@ describe('review.rules-only-default.acceptance', () => {
           clone: ASSETS_DIR,
         });
 
-        // link the reviewer role via rhachet
-        await execAsync('npx rhachet roles link --role reviewer', {
-          cwd: tempDir,
-        });
-
-        // commit what the link wrote, so the scope holds only the change below. the link's
-        // root `.gitignore` negation lands in some runs and not others, and an uncommitted
-        // one gave the same invocation 8 targets on one attempt and 7 on the next
-        // (i019 r013 nitpick.1)
-        execSync('git add . && git commit --no-verify -m "link reviewer"', {
-          cwd: tempDir,
-          stdio: 'pipe',
-          env: GIT_ENV,
-        });
+        // link the reviewer role via rhachet, committed into the base so the scope holds only
+        // the change below — see setReviewerRoleLinked for why an uncommitted link varies
+        await setReviewerRoleLinked({ cwd: tempDir });
 
         // create an uncommitted change for since-main to pick up
         // (when --paths is omitted, diffs defaults to since-main)
@@ -169,9 +158,7 @@ describe('review.rules-only-default.acceptance', () => {
         });
 
         // link the reviewer role via rhachet
-        await execAsync('npx rhachet roles link --role reviewer', {
-          cwd: tempDir,
-        });
+        await setReviewerRoleLinked({ cwd: tempDir });
 
         // create a .behavior file and a src file as uncommitted changes
         await fs.mkdir(path.join(tempDir, '.behavior'), { recursive: true });

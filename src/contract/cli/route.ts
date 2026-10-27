@@ -43,18 +43,22 @@ import { computeReviewThresholdVerdict } from '@src/domain.operations/route/guar
 import { computeStoneReviewInputHash } from '@src/domain.operations/route/guard/review/computeStoneReviewInputHash';
 import { getOneReviewTotalsFromFiles } from '@src/domain.operations/route/guard/review/getOneReviewTotalsFromFiles';
 import { asConcedeSeverity } from '@src/domain.operations/route/guard/review/peer/asConcedeSeverity';
+import { asJudgeReasonWithShed } from '@src/domain.operations/route/guard/review/peer/asJudgeReasonWithShed';
 import { asJudgeResidualLines } from '@src/domain.operations/route/guard/review/peer/asJudgeResidualLines';
+import { asJudgeUrgentHaltLines } from '@src/domain.operations/route/guard/review/peer/asJudgeUrgentHaltLines';
+import { computeConcededBetterConcernCounts } from '@src/domain.operations/route/guard/review/peer/computeConcededBetterConcernCounts';
+import { computeDisputedConcernCounts } from '@src/domain.operations/route/guard/review/peer/computeDisputedConcernCounts';
 import { computeResidualConcernCounts } from '@src/domain.operations/route/guard/review/peer/computeResidualConcernCounts';
 import { enumRouteGuardReviewPeerFiles } from '@src/domain.operations/route/guard/review/peer/enumRouteGuardReviewPeerFiles';
-import {
-  formatReviewBudgetTopupCommand,
-  ROUNDS_OFFERED_ON_TOPUP,
-} from '@src/domain.operations/route/guard/review/peer/formatReviewBudgetTopupCommand';
+import { getAllGivensOnReviewFiles } from '@src/domain.operations/route/guard/review/peer/getAllGivensOnReviewFiles';
 import { getAllNonOverruledReviewFiles } from '@src/domain.operations/route/guard/review/peer/getAllNonOverruledReviewFiles';
 import { getLatestReviewFilesPerSlug } from '@src/domain.operations/route/guard/review/peer/getLatestReviewFilesPerSlug';
-import { getStoneConcededBetterConcernCounts } from '@src/domain.operations/route/guard/review/peer/getStoneConcededBetterConcernCounts';
-import { getStoneDisputedConcernCounts } from '@src/domain.operations/route/guard/review/peer/getStoneDisputedConcernCounts';
-import { getStoneLiveUrgentConcessionSlugs } from '@src/domain.operations/route/guard/review/peer/getStoneLiveUrgentConcessionSlugs';
+import {
+  computeLiveUrgentConcessionSlugs,
+  getStoneLiveUrgentConcessionSlugs,
+} from '@src/domain.operations/route/guard/review/peer/getStoneLiveUrgentConcessionSlugs';
+import { getStoneReviewCorpus } from '@src/domain.operations/route/guard/review/peer/getStoneReviewCorpus';
+import { JUDGE_HALT_ASK_HUMAN_LABEL } from '@src/domain.operations/route/guard/review/peer/JUDGE_HALT_ASK_HUMAN_LABEL';
 import { asBudgetGrantWarrantLines } from '@src/domain.operations/route/guard/review/peer/meter/asBudgetGrantWarrantLines';
 import { asGuardBudgetHeadLines } from '@src/domain.operations/route/guard/review/peer/meter/asGuardBudgetHeadLines';
 import { asGuardBudgetUpdateLines } from '@src/domain.operations/route/guard/review/peer/meter/asGuardBudgetUpdateLines';
@@ -76,7 +80,6 @@ import { getStoneGuardOverruledLevels } from '@src/domain.operations/route/judge
 import { setRoutePrivilegeAsGranted } from '@src/domain.operations/route/setRoutePrivilegeAsGranted';
 import { stepRouteDrive } from '@src/domain.operations/route/stepRouteDrive';
 import { stepRouteReview } from '@src/domain.operations/route/stepRouteReview';
-import { stepRouteStatusLine } from '@src/domain.operations/route/stepRouteStatusLine';
 import { stepRouteStoneAdd } from '@src/domain.operations/route/stepRouteStoneAdd';
 import { stepRouteStoneDel } from '@src/domain.operations/route/stepRouteStoneDel';
 import { stepRouteStoneGet } from '@src/domain.operations/route/stepRouteStoneGet';
@@ -601,52 +604,6 @@ examples:
 };
 
 /**
- * .what = prints help for route.status.line
- */
-const printStatusLineHelp = (): void => {
-  console.log(
-    `
-route.status.line - emit the current stone as a claude code status line
-
-usage:
-  route.status.line [options]
-
-options:
-  --help             show this help message
-
-output:
-  bound, stone + phase      🗿 <stone>, <phase> <emoji>
-  bound, all stones passed  🗿 route complete 🌴🤙
-  unbound / no stones       (empty line)
-
-  the phase suffix names where inside the stone the driver is, tipped with an
-  attention-color emoji at the end of the line (read the color, then the words):
-    yield 🌾                 the stone yields its artifact — calm, no attention
-    review.self, r7/r10 🔍   self-reviews, r{done}/r{total} — machine's turn
-    review.peer, l3@i002 🔍  peer review, l{level}@i{rounds} — machine's turn
-    judge, approved? 👋      a human must approve — attention needed
-    ..., exhausted 👋        peer budget spent, a human must approve or extend
-    ..., blocked ✋          blocked, act now — attention needed
-    ..., malfunction 💥      a reviewer or judge broke, a human must fix
-
-errors:
-  a genuine fault is logged to stderr and exits non-zero; the harness then renders
-  a blank line (the fault is surfaced on stderr, never silently hidden)
-
-note:
-  the claude code harness runs this with cwd = project root and renders stdout
-  as the status line. it is invoked via the node -e command that
-  init.claude.status-line.sh writes into the repo's claude settings (the file
-  .claude/settings.of.repo.json, or .claude/settings.json in the old layout),
-  not via rhx, whose banner would pollute the single-line output
-
-examples:
-  node -e "import('rhachet-roles-bhrain/cli/route').then(m => m.routeStatusLine())"
-`.trim(),
-  );
-};
-
-/**
  * .what = prints help for route.review
  */
 const printReviewHelp = (): void => {
@@ -692,10 +649,11 @@ examples:
  *    (`repo-rules` blocker.2 at i018; the lane found it at `parseArgs`, and the hole is wider).
  *
  * ⚠️ .note = the inner allowlists are LEFT in place. most are now redundant with this
- *            boundary, and two are not — `routeStatusLine` reframes its guidance, and
- *            `routeStoneSet` tears down its progress spinner first. ⇒ the retirement is a read
- *            of thirteen call sites rather than a delete, and it is caught rather than bundled
- *            into a diff this wide.
+ *            boundary, and one is not — `routeStoneSet` tears down its progress spinner first.
+ *            ⇒ the retirement is a read of twelve call sites rather than a delete, and it is
+ *            caught rather than bundled into a diff this wide. `routeStatusLine` takes no
+ *            boundary here: it forwards to the `cli/route.status.line` entry, which owns its
+ *            fault frame.
  *
  * 🔴 .note = THREE entrypoints deliberately do NOT take this boundary, and each for its own
  *            reason. stated, because a later hand that "finishes the job" would break them:
@@ -767,76 +725,23 @@ export const routeDrive = async (): Promise<void> =>
   });
 
 /**
- * .what = maps a renderer fault to operator-facing guidance for stderr
- * .why = the shared branch-bind lookup advises `--route` to disambiguate a
- *        multi-bind, which is correct for the `--route`-taking subcommands
- *        (route.drive, route.stone.*) but a dead end for this entrypoint — the
- *        status line takes no `--route` flag (it derives the branch-bound route
- *        from cwd). echoing that advice sends an operator down a path that is
- *        silently ignored here, so for the multi-bind case we emit status-line-
- *        scoped guidance (unbind the extras). every other fault passes through
- *        its own message. this only reframes the logged summary; the original
- *        error is still rethrown by the caller (fail-loud, never hidden).
- */
-const asStatusLineFaultGuidance = (input: { error: unknown }): string => {
-  const message =
-    input.error instanceof Error ? input.error.message : String(input.error);
-
-  // the multi-bind ambiguity: drop the `--route` advice (unsupported here)
-  if (
-    input.error instanceof BadRequestError &&
-    message.includes('multiple routes bound to this branch')
-  )
-    return 'multiple routes bound to this branch — unbind the extra route(s) so the status line can pick one';
-
-  // any other fault: surface its own message
-  return message;
-};
-
-/**
  * .what = cli entrypoint for route.status.line skill
  * .why = emits the current stone as a claude code status line (🗿 <stone>)
  *
  * .note = the harness runs this with cwd = project root, so the bound-route
  *         lookup scans from cwd directly (no chdir, no stdin payload needed).
  *
- * .note = fail-open by contract, but via the harness — not a swallowed error.
- *         an unbound or complete route yields an empty line; a genuine fault is
- *         logged loudly to stderr and rethrown, so the process exits non-zero and
- *         the harness renders a blank line. a broken status line never breaks the
- *         session, yet the fault is surfaced (rule.forbid.failhide +
- *         rule.require.failloud) rather than silently hidden.
+ * .note = it forwards to the `cli/route.status.line` subpath entry, so a seat whose
+ *         settings still name this barrel gets the cached line too: one flow, one fault
+ *         frame. the barrel's own module load is the one cost a seat keeps until its repo
+ *         re-runs the driver init, which rewrites the command to the subpath
  */
-export const routeStatusLine = async (): Promise<void> =>
-  runCliEntrypoint(async () => {
-    const options = parseArgs(process.argv);
-
-    if (options.help) {
-      printStatusLineHelp();
-      return;
-    }
-
-    try {
-      // compute and emit the status line (empty when unbound or complete)
-      const result = await stepRouteStatusLine({ route: null });
-      console.log(result.line);
-    } catch (error) {
-      // fail loud, not hidden: log the fault to stderr (never stdout, which the
-      // harness renders as the line) and rethrow so the process exits non-zero.
-      // the harness blanks the line on non-zero exit, so the session is safe while
-      // the fault stays observable (not a failhide — the error is rethrown).
-      // reframe the guidance to this entrypoint (see asStatusLineFaultGuidance) so
-      // an operator is not pointed at an unsupported `--route` flag.
-      console.error(
-        `[route.status.line] fault: ${asStatusLineFaultGuidance({ error })}`,
-      );
-      // a multi-bind is a caller-must-fix constraint (unbind the extra route), so
-      // exit 2 per rule.require.exit-code-semantics, as the peer routeDrive does.
-      // any other fault is a genuine server-fix path: rethrow for a non-zero exit.
-      if (error instanceof BadRequestError) process.exit(2);
-      throw error;
-    }
-  });
+export const routeStatusLine = async (): Promise<void> => {
+  const { routeStatusLine: routeStatusLineViaSubpath } = await import(
+    '@src/contract/cli/route.status.line'
+  );
+  return routeStatusLineViaSubpath();
+};
 
 /**
  * .what = cli entrypoint for route.review skill
@@ -1394,7 +1299,7 @@ const judgeApproved = async (input: {
     console.log('reason: wait for human approval');
     console.log('');
     console.log('✋ halted, human approval required');
-    console.log('   ├─ please ask your human to');
+    console.log(`   ├─ ${JUDGE_HALT_ASK_HUMAN_LABEL}`);
     console.log(`   │  └─ ${approveCmd}`);
     console.log('   │');
     console.log('   └─ after human approves, run');
@@ -1584,16 +1489,22 @@ const judgeReviewed = async (input: {
   //    earns a human's glance and a round.
   // 🔴 .why per-concern = a lane-grain exclusion would shed every concern that lane raised, the
   //    driver's OWN concessions among them (rule.forbid.suppression-of-undeclared-concerns)
-  const [disputed, concededBetter] = await Promise.all([
-    getStoneDisputedConcernCounts({
-      route: input.route,
-      stone: stoneMatched.name,
+  // 🔴 the corpus is read ONCE, and its givens narrowed to the files the total counts. a stance on
+  //    an overruled lane would otherwise shed from a sum its lane never entered, and offset a
+  //    live lane's blockers — a pass on concerns no one answered
+  const corpus = await getStoneReviewCorpus({
+    route: input.route,
+    stone: stoneMatched.name,
+  });
+  const corpusCounted = {
+    absorptions: corpus.absorptions,
+    givens: getAllGivensOnReviewFiles({
+      givens: corpus.givens,
+      reviewFiles: reviewFilesToCount,
     }),
-    getStoneConcededBetterConcernCounts({
-      route: input.route,
-      stone: stoneMatched.name,
-    }),
-  ]);
+  };
+  const disputed = computeDisputedConcernCounts(corpusCounted);
+  const concededBetter = computeConcededBetterConcernCounts(corpusCounted);
 
   // clamped at zero: a stale absorption must never manufacture headroom the tally did not have
   const residual = computeResidualConcernCounts({
@@ -1611,17 +1522,21 @@ const judgeReviewed = async (input: {
     allowNitpicks: input.allowNitpicks,
   });
 
-  // output verdict
+  // output verdict. the reason names what a stance shed, pass or hold, since the reason is the one
+  // judge line route.drive and the `--as passed` halt render — never this stderr
   console.log(`passed: ${verdict.passed}`);
-  console.log(`reason: ${verdict.reason}`);
+  console.log(
+    `reason: ${asJudgeReasonWithShed({ reason: verdict.reason, disputed, concededBetter })}`,
+  );
 
-  // 🔴 the arithmetic lines, rendered ONLY where a dispute moved the sum
+  // 🔴 the arithmetic lines, rendered ONLY where a dispute or a `better` concession moved the sum
   // .note = these are human diagnostics, never the guard-parsed verdict — the guard
   //         reads `passed:`/`reason:` on stdout above. on a fail this block reaches
   //         exit(2), so the diagnostics route to stderr with the urgent prose below, never
   //         to stdout before a non-zero exit (rule.forbid.stdout-on-exit-errors)
   for (const line of asJudgeResidualLines({
     disputed,
+    concededBetter,
     residual,
     allowBlockers: input.allowBlockers,
     allowNitpicks: input.allowNitpicks,
@@ -1633,39 +1548,16 @@ const judgeReviewed = async (input: {
     //    grant is the remedy — the same shape the `approved?` judge uses for absent approval
     //    (define.invariant.review.peer.judge.urgent-guides-the-budget-ask). a `better`/none hold
     //    names no human: its remedy is the driver's own top-up.
-    const urgentSlugs = await getStoneLiveUrgentConcessionSlugs({
-      route: input.route,
-      stone: stoneMatched.name,
-    });
-    if (urgentSlugs.length > 0) {
-      // the ONE canonical top-up builder, at the shared round count — the judge and the concede
-      // ack once drifted (`--add 1` here, `2` there), so both read the same const now
-      // (r001.n3 / r004.n1 / r006.n2 / r009.n1)
-      const budgetCmd = formatReviewBudgetTopupCommand({
-        add: ROUNDS_OFFERED_ON_TOPUP,
-        peer: null,
+    const slugsUrgentLive = computeLiveUrgentConcessionSlugs(corpusCounted);
+    // the halt prose is an ERROR surfaced before exit(2), so it goes to stderr — the verdict
+    // lines above stay on stdout, which the guard parses on a pass too
+    // (rule.forbid.stdout-on-exit-errors)
+    if (slugsUrgentLive.length > 0)
+      for (const line of asJudgeUrgentHaltLines({
+        slugs: { urgent: slugsUrgentLive },
         stone: stoneMatched.name,
-      });
-      const passCmd = `rhx route.stone.set --stone ${stoneMatched.name} --as passed`;
-      // the halt prose is an ERROR surfaced before exit(2), so it goes to stderr — the verdict
-      // lines above stay on stdout, which the guard parses on a pass too
-      // (rule.forbid.stdout-on-exit-errors)
-      console.error('');
-      console.error(
-        `✋ halted, an urgent concession stands — ${urgentSlugs.join(', ')}`,
-      );
-      // 🔴 this clause matches WARN_TEXT_CONCESSION_URGENT's words exactly (r009 i012
-      //    nitpick.3) — every other concession surface renders that shared constant, and
-      //    a driver who meets this halt then route.drive's must read one fact once
-      console.error(
-        '   ├─ its harm ships if unfixed, so this stone earns more budget',
-      );
-      console.error('   ├─ please ask your human to');
-      console.error(`   │  └─ ${budgetCmd}`);
-      console.error('   │');
-      console.error('   └─ after the grant, address the concession, then run');
-      console.error(`      └─ ${passCmd}`);
-    }
+      }))
+        console.error(line);
     process.exit(2);
   }
 };

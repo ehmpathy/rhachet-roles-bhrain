@@ -17,16 +17,16 @@ import { stepInstantiate } from '@src/domain.roles/thinker/skills/khue.instantia
 
 const BRIEFS_FOR_CATALOGIZE = getThinkerBriefs([
   'cognition/cog021.structs.catalog.md',
-  'knowledge/kno201.documents.catalogs.[article].md',
-  'knowledge/kno201.documents._.[catalog].md',
-  'knowledge/kno301.doc.enbrief.2._.[catalog].md',
-  'knowledge/kno301.doc.enbrief.2.catalogize.[article].md',
-  'knowledge/kno301.doc.enbrief.2.catalogize.[lesson].md',
-  'knowledge/kno301.doc.enbrief.1.from_instances.[demo].color.md',
-  'knowledge/kno301.doc.enbrief.1.from_instances.[demo].gravity.md',
-  'knowledge/kno301.doc.enbrief.1.from_instances.[demo].entropy.md',
-  'knowledge/kno501.doc.enbrief.catalog.structure1.[article].md',
-  'knowledge/kno501.doc.enbrief.catalog.structure1.[lesson].template.md',
+  'knowledge/kno201.documents.catalogs.kind=article.md',
+  'knowledge/kno201.documents._.kind=catalog.md',
+  'knowledge/kno301.doc.enbrief.2._.kind=catalog.md',
+  'knowledge/kno301.doc.enbrief.2.catalogize.kind=article.md',
+  'knowledge/kno301.doc.enbrief.2.catalogize.kind=lesson.md',
+  'knowledge/kno301.doc.enbrief.1.from_instances.kind=demo.color.md',
+  'knowledge/kno301.doc.enbrief.1.from_instances.kind=demo.gravity.md',
+  'knowledge/kno301.doc.enbrief.1.from_instances.kind=demo.entropy.md',
+  'knowledge/kno501.doc.enbrief.catalog.structure1.kind=article.md',
+  'knowledge/kno501.doc.enbrief.catalog.structure1.kind=lesson.template.md',
 ]);
 
 type StitcherDesired = GStitcher<

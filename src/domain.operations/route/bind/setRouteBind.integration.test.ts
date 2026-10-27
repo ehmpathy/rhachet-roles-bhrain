@@ -3,6 +3,8 @@ import * as fs from 'fs/promises';
 import * as path from 'path';
 import { genTempDir, getError, given, then, when } from 'test-fns';
 
+import { asRouteStatusLineCachePath } from '@src/domain.operations/route/statusLine/cache/asRouteStatusLineCachePath';
+
 import { setRouteBind } from './setRouteBind';
 
 describe('setRouteBind', () => {
@@ -132,6 +134,46 @@ describe('setRouteBind', () => {
           expect(error.message).toContain('route.bind --del');
         } finally {
           process.chdir(originalCwd);
+        }
+      });
+    });
+  });
+
+  given('[case5] the status line cache cannot be dropped', () => {
+    let tempDir: string;
+
+    beforeEach(async () => {
+      // the cache path is a non-empty dir, so a forced rm of it as a file still faults
+      tempDir = genTempDir({ slug: 'test-bind-set-dropfault', git: true });
+      await fs.mkdir(path.join(tempDir, 'my-route'), { recursive: true });
+      execSync('git checkout -b vlad/test-dropfault', { cwd: tempDir });
+      const cachePath = asRouteStatusLineCachePath({
+        cwd: tempDir,
+        branch: 'vlad/test-dropfault',
+      });
+      await fs.mkdir(path.join(cachePath, 'blocker'), { recursive: true });
+    });
+
+    when('[t0] the route is bound', () => {
+      then('the bind lands and the drop fault warns on stderr', async () => {
+        const originalCwd = process.cwd();
+        const errorSpy = jest.spyOn(console, 'error').mockImplementation();
+        process.chdir(tempDir);
+        try {
+          const result = await setRouteBind({ route: 'my-route' });
+          expect(result.route).toEqual('my-route');
+          const flagContent = await fs.readFile(result.flagPath, 'utf-8');
+          expect(flagContent).toContain('branch: vlad/test-dropfault');
+          const rows = errorSpy.mock.calls.map((call) => String(call[0]));
+          const rowsOfDrop = rows.filter((row) =>
+            row.includes('status line cache drop failed'),
+          );
+          expect(rowsOfDrop).toHaveLength(1);
+          // the full row a caller reads, pinned so drift in its text shows in review
+          expect(rowsOfDrop).toMatchSnapshot();
+        } finally {
+          process.chdir(originalCwd);
+          errorSpy.mockRestore();
         }
       });
     });

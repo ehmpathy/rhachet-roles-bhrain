@@ -18,5 +18,7 @@ export const delRouteBind = async (): Promise<{ deleted: boolean }> => {
     await fs.rm(flagPath, { force: true });
   }
 
+  // the status line needs no drop: a bound seat's fingerprint stats this flag, so its next
+  // repaint misses on its own
   return { deleted: true };
 };

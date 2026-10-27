@@ -43,7 +43,7 @@ the axis that parts the pair arrived in the wisher's own words, and the two clus
 to it. the seed is `.behavior/*/.seeds/inventory.of=seeds.case=S03-inventory-vs-catalog.md`.
 
 🟡 **`catalog` was the ELDER of the pair and stayed undeclared for eighteen days.** it is a declared
-archetype in the librarian's taxonomy (`kno201.documents._.[catalog]`), it named six live artifacts
+archetype in the librarian's taxonomy (`kno201.documents._.kind=catalog`), it named six live artifacts
 in this repo, and its contrast partner got a cluster while it did not. that is what a **census over
 the glossary itself** catches and a read of any one term does not
 (`rule.require.domain-term-itemization`).
@@ -85,7 +85,7 @@ none raised against `catalog` itself.
 
 - **the coinage is on record verbatim**, in the wisher's own words, in the seed cited above — the
   strongest evidence a term choice can carry (`rule.require.persist-domain-term-evidence`)
-- **the archetype predates the term cluster.** `kno201.documents._.[catalog]` declares catalog as
+- **the archetype predates the term cluster.** `kno201.documents._.kind=catalog` declares catalog as
   one of four document archetypes — *"organizational: maps how instances or sub-concepts relate"* —
   beside article, demo, and lesson. this cluster does not coin the word; it settles the word's
   **boundary** and the axis that parts it from a near-neighbour the taxonomy did not have

@@ -187,7 +187,7 @@ the record, and the human reads both.
 
 - `rule.always.get-a-second-opinion-before-foreman` — what catches the calls a self-grade rates 100%
 - `rule.always.defer-fulcrums-to-last` — the WHEN; this is the RECORD
-- `howto.navigate-fulcrum-choices.[guide]` — the ladder the `rework` column encodes
+- `howto.navigate-fulcrum-choices` — the ladder the `rework` column encodes
 - `rule.always.yield-the-output-not-the-archaeology` — why the fulcrum row belongs beside the
   yield rather than narrated inside it
 - `rule.forbid.itemization-without-coordinates` (librarian) — the coordinate contract this obeys

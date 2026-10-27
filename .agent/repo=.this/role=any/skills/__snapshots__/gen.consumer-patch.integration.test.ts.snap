@@ -1,0 +1,235 @@
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
+
+exports[`gen.consumer-patch.integration given: [case1] a human who asks the skill to explain itself when: [t0] --help is passed then: the usage renders whole 1`] = `
+"######################################################################
+# .what = write a pnpm patch that lifts a published release of this
+#         package to the local build, for consumers while a release lags
+#
+# .why  = a fix that waits on review still owes consumers relief. a pnpm
+#         patch against the version they hold delivers the local build's
+#         dist (and its package.json exports) with no release. each step
+#         is mechanical, and two of them have traps:
+#         - \`npm pack <spec>\` cannot fetch the base: on a pnpm host \`npm\` is
+#           pnpm, whose \`pack\` always packs the LOCAL project and runs its
+#           \`prepare\` (a build, then \`rhachet init\`), whatever spec it was
+#           handed. so the base tarball is downloaded by url, and its sha512
+#           checked against the registry's integrity
+#         - a diff over the whole package.json would carry this repo's
+#           devDep bumps into every consumer. only \`exports\` is lifted
+#
+# usage:
+#   rhx gen.consumer-patch --from 0.42.1 --into <path>.patch
+#
+# guarantee:
+#   - reads \`dist/\` as built; run \`npm run build\` first
+#   - the patch covers dist \`.js\` + package.json \`exports\` only
+#     (no \`.map\`, no \`.d.ts\` — a consumer runs, never compiles, the patch)
+#   - a changed role asset (\`.jsonc\`) is left out and named: a consumer's
+#     host holds it read-only, so pnpm would refuse the whole patch
+#     (why: briefs/hazard.git-apply-check-is-not-a-pnpm-install.md)
+#   - prove it installs with \`rhx prove.consumer-patch\`
+#   - git-style diff (\`git diff --no-index\`), the format pnpm patch writes
+#   - checks the patch applies cleanly to a fresh copy of the base
+#   - prints the consumer's steps; the last re-runs the inits, since a patch
+#     changes the installed code and never the settings that call it
+#   - scratch lives under .temp/consumer-patch/ (gitignored)
+#   - exit 0 = written + verified, 1 = malfunction, 2 = bad input
+######################################################################
+"
+`;
+
+exports[`gen.consumer-patch.integration given: [case2] a call refused for unknown-arg when: [t0] the skill runs with --bogus then: the refusal matches its snapshot 1`] = `
+"✋ ConstraintError: unknown arg '--bogus'
+"
+`;
+
+exports[`gen.consumer-patch.integration given: [case3] a call refused for from-without-value when: [t0] the skill runs with --from then: the refusal matches its snapshot 1`] = `
+"✋ ConstraintError: --from needs a value
+"
+`;
+
+exports[`gen.consumer-patch.integration given: [case4] a call refused for into-without-value when: [t0] the skill runs with --from 0.42.1 --into then: the refusal matches its snapshot 1`] = `
+"✋ ConstraintError: --into needs a value
+"
+`;
+
+exports[`gen.consumer-patch.integration given: [case5] a call refused for from-absent when: [t0] the skill runs with --into out.patch then: the refusal matches its snapshot 1`] = `
+"✋ ConstraintError: --from <published version> is required
+"
+`;
+
+exports[`gen.consumer-patch.integration given: [case6] a call refused for from-not-semver when: [t0] the skill runs with --from ../../escape --into out.patch then: the refusal matches its snapshot 1`] = `
+"✋ ConstraintError: --from must be a semver version, e.g. 0.42.1
+"
+`;
+
+exports[`gen.consumer-patch.integration given: [case7] a call refused for into-absent when: [t0] the skill runs with --from 0.42.1 then: the refusal matches its snapshot 1`] = `
+"✋ ConstraintError: --into <path>.patch is required
+"
+`;
+
+exports[`gen.consumer-patch.integration given: [case8] a call refused for dist-absent when: [t0] the skill runs with --from 0.42.1 --into out.patch then: the refusal matches its snapshot 1`] = `
+"✋ ConstraintError: no dist/ here; run npm run build first
+"
+`;
+
+exports[`gen.consumer-patch.integration given: [case9] a version the registry never published when: [t0] the skill asks the registry for the base then: the refusal matches its snapshot 1`] = `
+"✋ ConstraintError: rhachet-roles-bhrain@0.0.0-never-published is not published
+   └─ cause: npm view returned E404
+"
+`;
+
+exports[`gen.consumer-patch.integration given: [case10] a local build that differs from the published base when: [t0] the skill writes the patch then: the patch itself, the deliverable, matches its snapshot 1`] = `
+"diff --git a/dist/index.js b/dist/index.js
+index 0ce9317..99909ba 100644
+--- a/dist/index.js
++++ b/dist/index.js
+@@ -1,49 +1,2 @@
+-"use strict";
+-Object.defineProperty(exports, "__esModule", { value: true });
+-exports.cli = exports.getRoleRegistry = exports.stepReview = exports.stepReflect = exports.getInvokeHooks = void 0;
+-// sdk exports for rhachet introspection
+-var getInvokeHooks_1 = require("./domain.operations/hooks/getInvokeHooks");
+-Object.defineProperty(exports, "getInvokeHooks", { enumerable: true, get: function () { return getInvokeHooks_1.getInvokeHooks; } });
+-var stepReflect_1 = require("./domain.operations/reflect/stepReflect");
+-Object.defineProperty(exports, "stepReflect", { enumerable: true, get: function () { return stepReflect_1.stepReflect; } });
+-var stepReview_1 = require("./domain.operations/review/stepReview");
+-Object.defineProperty(exports, "stepReview", { enumerable: true, get: function () { return stepReview_1.stepReview; } });
+-var getRoleRegistry_1 = require("./domain.roles/getRoleRegistry");
+-Object.defineProperty(exports, "getRoleRegistry", { enumerable: true, get: function () { return getRoleRegistry_1.getRoleRegistry; } });
+-// cli entry points - also available via fast 'rhachet-roles-bhrain/cli' subpath
+-const reflect_1 = require("./contract/cli/reflect");
+-const review_1 = require("./contract/cli/review");
+-const review_by_1 = require("./contract/cli/review.by");
+-const route_1 = require("./contract/cli/route");
+-exports.cli = {
+-    review: review_1.review,
+-    reviewBy: review_by_1.reviewBy,
+-    reflect: {
+-        legacy: reflect_1.reflect,
+-        snapshot: {
+-            capture: reflect_1.reflectSnapshotCapture,
+-            get: reflect_1.reflectSnapshotGet,
+-            annotate: reflect_1.reflectSnapshotAnnotate,
+-            backup: reflect_1.reflectSnapshotBackup,
+-        },
+-        savepoint: {
+-            set: reflect_1.reflectSavepointSet,
+-            get: reflect_1.reflectSavepointGet,
+-        },
+-    },
+-    route: {
+-        bind: {
+-            set: route_1.routeBindSet,
+-            get: route_1.routeBindGet,
+-            del: route_1.routeBindDel,
+-        },
+-        drive: route_1.routeDrive,
+-        stone: {
+-            get: route_1.routeStoneGet,
+-            set: route_1.routeStoneSet,
+-            del: route_1.routeStoneDel,
+-            judge: route_1.routeStoneJudge,
+-        },
+-    },
+-};
+-//# sourceMappingURL=index.js.map
+\\ No newline at end of file
++// the local build
++module.exports = {};
+diff --git a/package.json b/package.json
+index a813d1f..6db3d75 100644
+--- a/package.json
++++ b/package.json
+@@ -13,22 +13,7 @@
+   "license": "MIT",
+   "main": "dist/index.js",
+   "exports": {
+-    ".": "./dist/index.js",
+-    "./registry": "./dist/contract/registry/index.js",
+-    "./sdk/route": "./dist/contract/sdk/route.js",
+-    "./cli": "./dist/contract/cli/index.js",
+-    "./cli/route": "./dist/contract/cli/route.js",
+-    "./cli/route.reminder": "./dist/contract/cli/route.reminder.js",
+-    "./cli/review": "./dist/contract/cli/review.js",
+-    "./cli/review.by": "./dist/contract/cli/review.by.js",
+-    "./cli/review._.cost": "./dist/contract/cli/review._.cost.js",
+-    "./cli/reflect": "./dist/contract/cli/reflect.js",
+-    "./cli/research": "./dist/contract/cli/research.js",
+-    "./cli/goal": "./dist/contract/cli/goal.js",
+-    "./cli/memory": "./dist/contract/cli/memory.js",
+-    "./cli/learn": "./dist/contract/cli/learn.js",
+-    "./cli/telepath": "./dist/contract/cli/telepath.js",
+-    "./package.json": "./package.json"
++    "./cli/route.status.line": "./dist/index.js"
+   },
+   "engines": {
+     "node": ">=8.0.0"
+"
+`;
+
+exports[`gen.consumer-patch.integration given: [case10] a local build that differs from the published base when: [t0] the skill writes the patch then: the success tree matches its snapshot 1`] = `
+"🦉 a path for those who cannot wait
+
+🔍 gen.consumer-patch
+   ├─ base = rhachet-roles-bhrain@0.42.1
+   ├─ files = 2
+   ├─ verified = applies cleanly to the base
+   ├─ patch = out.patch
+   └─ for the consumer, in order
+      ├─ 1. copy it to patches/rhachet-roles-bhrain@0.42.1.patch
+      ├─ 2. name it in package.json pnpm.patchedDependencies
+      │  └─ "rhachet-roles-bhrain@0.42.1": "patches/rhachet-roles-bhrain@0.42.1.patch"
+      ├─ 3. pnpm install
+      └─ 4. re-run the inits, so each seat's settings name the new code
+         ├─ npx rhachet roles init --repo bhrain --role driver
+         └─ every changed asset rides in the patch
+"
+`;
+
+exports[`gen.consumer-patch.integration given: [case10b] a local build that changed a role asset when: [t0] the skill writes the patch then: the success tree matches its snapshot 1`] = `
+"🦉 a path for those who cannot wait
+
+🔍 gen.consumer-patch
+   ├─ base = rhachet-roles-bhrain@0.42.1
+   ├─ files = 2
+   ├─ verified = applies cleanly to the base
+   ├─ patch = out.patch
+   ├─ left out, role assets a consumer's host holds read-only, which pnpm cannot patch
+   │  └─ dist/domain.roles/driver/inits/init.claude.status-line.jsonc
+   │
+   └─ for the consumer, in order
+      ├─ 1. copy it to patches/rhachet-roles-bhrain@0.42.1.patch
+      ├─ 2. name it in package.json pnpm.patchedDependencies
+      │  └─ "rhachet-roles-bhrain@0.42.1": "patches/rhachet-roles-bhrain@0.42.1.patch"
+      ├─ 3. pnpm install
+      └─ 4. re-run the inits, so each seat's settings name the new code
+         ├─ npx rhachet roles init --repo bhrain --role driver
+         └─ an init reads the assets left out above in their old form, until the release
+"
+`;
+
+exports[`gen.consumer-patch.integration given: [case11] a local build equal to the published base when: [t0] the skill diffs the build against the base then: the refusal matches its snapshot 1`] = `
+"✋ ConstraintError: the local build equals rhachet-roles-bhrain@0.42.1; no patch owed
+"
+`;
+
+exports[`gen.consumer-patch.integration given: [case12] a malfunction: integrity-mismatch when: [t0] the shimmed openssl faults one call then: the malfunction row matches its snapshot 1`] = `
+"💥 MalfunctionError: the fetched tarball is not rhachet-roles-bhrain@0.42.1 (integrity mismatch)
+"
+`;
+
+exports[`gen.consumer-patch.integration given: [case13] a malfunction: git-diff-fault when: [t0] the shimmed git faults one call then: the malfunction row matches its snapshot 1`] = `
+"💥 MalfunctionError: git diff failed (exit 128)
+"
+`;
+
+exports[`gen.consumer-patch.integration given: [case14] a malfunction: patch-not-applicable when: [t0] the shimmed git faults one call then: the malfunction row matches its snapshot 1`] = `
+"💥 MalfunctionError: the patch does not apply to rhachet-roles-bhrain@0.42.1
+"
+`;
+
+exports[`gen.consumer-patch.integration given: [case15] a malfunction: base-fetch-fault when: [t0] the shimmed node faults one call then: the malfunction row matches its snapshot 1`] = `
+"💥 MalfunctionError: fetch http://127.0.0.1:9/base.tgz failed: fetch failed
+"
+`;

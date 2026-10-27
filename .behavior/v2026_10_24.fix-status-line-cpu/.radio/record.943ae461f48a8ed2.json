@@ -1,0 +1,19 @@
+{
+  "key": "943ae461f48a8ed2",
+  "kind": "create",
+  "repo": {
+    "owner": "ehmpathy",
+    "name": "rhachet-roles-bhrain"
+  },
+  "exid": null,
+  "title": "feat(driver): the status line skips the node boot when the passage is unchanged",
+  "description": "## .what #700 achieved\n\na warm repaint costs 0.059s of cpu, near the cost of `import()` alone (ehmpathy/rhachet-roles-bhrain#700).\n\n## .what is left\n\neach repaint still boots node.\n\n## .the fix\n\nthe seat's status line command becomes a shell shim. on each repaint it:\n\n1. stats the fingerprint inputs: the route's `passage.jsonl`, the meters, the promises, and the bind flag\n2. compares them to the cached record\n3. prints the cached line on a match; node runs only on a miss\n\n## .bound\n\nwhat the line shows is unchanged; a passage change shows on the next repaint.\n\n## .clamp\n\na bench arm `shim warm` that sits below `bare node`.\n\ncite: the commander's comment on `1.vision.yield.md:18` of #700",
+  "status": null,
+  "via": "gh.issues",
+  "auth": "as-human",
+  "idem": null,
+  "heldSeq": 37,
+  "recordStatus": "DELIVERED",
+  "reason": null,
+  "deliveredExid": "722"
+}

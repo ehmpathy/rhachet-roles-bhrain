@@ -61,6 +61,7 @@ measured with a throwaway suite, then removed:
 | a live-brain test reds once and passes on rerun | find which shape it is. a rerun is the symptom, never the repair |
 | a snapshot diff shows a phrase, not a count | mask the phrase in the sanitizer |
 | a `clean` fixture draws a blocker | read the fixture. a `clean` case must be clean on its face |
+| the dirty fixture is shared by many suites whose snapshots pin token estimates | repair it at equal length — `estimateTokenCount` is `ceil(chars / 4)`, so a same-length line moves no figure. measured: `codebase-mechanic/src/clean.ts`, 23 suites, three restated comments swapped for intent comments, 1178 bytes before and after |
 | you raise `attempts` to beat a flake | it absorbs only with the patch in place, and only within a `jest.setTimeout` budget |
 | you upgrade test-fns | check `ehmpathy/test-fns#71`; a version bump orphans the patch and pnpm install fails loud |
 

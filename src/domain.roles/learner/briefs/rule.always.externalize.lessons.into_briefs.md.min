@@ -1,26 +1,18 @@
 # rule.always.externalize.lessons.into_briefs
 
-## this is the PARENT — three zoom-ins sharpen it by lesson KIND
+the PARENT (the act is `enbrief`); zoom-ins by lesson kind:
 
-- 🟡 named for the genus — the act here is `enbrief`, one member of `externalize`
-- each zoom-in carries what this rule cannot: the shape that kind of lesson owes
-
-| the lesson is about | reach for | it owes |
+| the lesson is about | reach for | owes |
 |---|---|---|
-| a word — a dobj/dop named, a synonym argued | `im_an.obsessive_learner.for.domain.terms` | a `.reason` cluster |
-| an invariant — a must-hold rule litigated | `.for.domain.invariants` | a nature/nurture label + the counter-argument |
-| a glyph — a marker claimed or unregistered | `.for.domain.glyphs` | a catalog row |
-| any other concept that surprised you | this rule, as it stands | — |
+| a word (dobj/dop named, synonym argued) | `.for.domain.terms` | a `.reason` cluster |
+| an invariant litigated | `.for.domain.invariants` | nature/nurture label + counter-argument |
+| a glyph claimed or unregistered | `.for.domain.glyphs` | a catalog row |
+| any other concept | this rule | — |
 
-🟡 **capture the ARGUMENT, never merely the conclusion.** a conclusion with no argument gets re-litigated, or quietly reversed by a reader who only saw the conclusion.
+capture the ARGUMENT, never only the conclusion.
 
-## the general claim it still carries
-
-when you learn, write it down — before context fades, into `.agent/repo=.this/role=*/briefs/`, short. do NOT wait.
-
-cues: a concept surprised you · was hard to discover · you had to ask or research · you wish someone had told you sooner.
-test: **"would i want to know this if i were new here?"**
+when you learn, write it down before context fades, into `.agent/repo=.this/role=*/briefs/`, short. cues: a concept surprised you · was hard to discover · you had to ask or research · you wish someone had told you sooner. test: *"would i want to know this if i were new here?"*
 
 blocker: a lesson learned and not externalized.
 
-⇒ the standard it must meet is `rule.require.timeless-lessons`; WHERE it lands is `rule.always.scope-onetime-lessons-to-the-behavior`.
+see: `rule.require.timeless-lessons` (standard) · `rule.always.scope-onetime-lessons-to-the-behavior` (where).

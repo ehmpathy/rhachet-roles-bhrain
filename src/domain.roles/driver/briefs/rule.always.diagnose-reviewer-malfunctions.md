@@ -166,7 +166,7 @@ runs whole while it fits, splits only on overflow, runs its partitions at once, 
 ONE merged tally under the lane's own slug — so the budget, the `.given`, and the `.taken` debt are
 unchanged. ⇒ `howto.partition-an-overflowed-review` (reviewer) for both forms.
 
-⚠️ never cut `.behavior/**` to make a lane fit. the route spec is what every partition is graded
+🟡 never cut `.behavior/**` to make a lane fit. the route spec is what every partition is graded
 against; a lane that cannot see it grades against naught.
 
 ### when the guard came from a template — dispatch the cure upstream

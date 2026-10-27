@@ -14,6 +14,7 @@ import {
   asReviewConcernRef,
   asReviewConcernRefLabel,
 } from '../guard/review/peer/asReviewConcernRef';
+import { asReviewGivenKey } from '../guard/review/peer/asReviewGivenKey';
 import { asSanitizedPeerReviewSlug } from '../guard/review/peer/asSanitizedPeerReviewSlug';
 import { assertFulcrumPathExists } from '../guard/review/peer/assertFulcrumPathExists';
 import { assertValidPeerReviewSlug } from '../guard/review/peer/assertValidPeerReviewSlug';
@@ -271,7 +272,9 @@ export const setStoneAsConcernAbsorbed = async (input: {
         status: input.as,
         reviewer: slug,
         about,
-        given: given.pathGiven,
+        // the filename, never the absolute path: the key every reader derives the same, in
+        // whatever process and from whatever route path it reads (asReviewGivenKey)
+        given: asReviewGivenKey({ path: given.pathGiven }),
         fulcrum: input.why,
         severity,
         reason: `${input.as} review.peer: ${slug} ${about}${

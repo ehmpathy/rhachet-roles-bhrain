@@ -1,20 +1,16 @@
+budget:
+  # a cap, not a target: the least multiple of 250 strictly above what the role costs as a seat boots it.
+  # that figure, and the halt, come from `rhx git.repo.test --what integration --scope path://roleBootClamps --mode apply`.
+  # each rule min carries only its cue; the `knowledge/` concept articles sit at ref, and only
+  # their catalog (kno201) boots. never cut a cue to fit. a halt here means a brief grew: tighten
+  # its cue rows or move its argument out. the cap is 5_000, the figure the
+  # owner set on #692; never raise it past that.
+  tokens: 5_000
 always:
   briefs:
     say:
       # overview
-      - briefs/knowledge/kno201.documents._.[catalog].md
-      # role
-      - briefs/knowledge/kno401.actors.1.role.librarian.[article].md
-      # 101 primitives
-      - briefs/knowledge/kno101.primitives.1.ontology.[article].frame.docs_as_materializations.md
-      - briefs/knowledge/kno101.primitives.2.rel.many_to_many.[article].md
-      - briefs/knowledge/kno101.primitives.3.instances.[article].md
-      - briefs/knowledge/kno101.primitives.4.documents.[article].md
-      - briefs/knowledge/kno101.primitives.5.concepts.[article].md
-      # 301 enbrief tactics
-      - briefs/knowledge/kno301.doc.enbrief.2.articulate.[article].md
-      - briefs/knowledge/kno301.doc.enbrief.2.catalogize.[article].md
-      - briefs/knowledge/kno301.doc.enbrief.2.demonstrate.[article].md
+      - briefs/knowledge/kno201.documents._.kind=catalog.md
       # 601 inventories — the census discipline for concepts whose entries are
       # enumerable. say-level for the two rules: they must fire BEFORE a doc lands,
       # since the repair for a prose list over an enumerable concept is a rewrite,
@@ -60,6 +56,16 @@ always:
       # would otherwise trim a cue to save tokens a path list had spent
       - briefs/rule.always.boot-an-oversized-subdomain-as-its-catalog.md
     ref:
+      # the concept articles — understood, never produced, so one Read away rather than booted
+      - briefs/knowledge/kno401.actors.1.role.librarian.kind=article.md
+      - briefs/knowledge/kno101.primitives.1.ontology.kind=article.frame.docs_as_materializations.md
+      - briefs/knowledge/kno101.primitives.2.rel.many_to_many.kind=article.md
+      - briefs/knowledge/kno101.primitives.3.instances.kind=article.md
+      - briefs/knowledge/kno101.primitives.4.documents.kind=article.md
+      - briefs/knowledge/kno101.primitives.5.concepts.kind=article.md
+      - briefs/knowledge/kno301.doc.enbrief.2.articulate.kind=article.md
+      - briefs/knowledge/kno301.doc.enbrief.2.catalogize.kind=article.md
+      - briefs/knowledge/kno301.doc.enbrief.2.demonstrate.kind=article.md
       # the demo the catalog rule ejected — one occurrence, dated and measured.
       # ref because a reader wants it once, never on every boot
       - briefs/rule.require.catalog-is-an-index.example=declastruct-aws-security-catalog.md
@@ -67,10 +73,29 @@ always:
       - briefs/knowledge/kno601.inventories._.kind=article.md
       - briefs/howto.curate-an-inventory.md
       # 201 document types
-      - briefs/knowledge/kno201.documents._.[article].md
-      - briefs/knowledge/kno201.documents.articles.[article].md
-      - briefs/knowledge/kno201.documents.catalogs.[article].md
-      - briefs/knowledge/kno201.documents.demos.[article].md
-      - briefs/knowledge/kno201.documents.lessons.[article].md
+      - briefs/knowledge/kno201.documents._.kind=article.md
+      - briefs/knowledge/kno201.documents.articles.kind=article.md
+      - briefs/knowledge/kno201.documents.catalogs.kind=article.md
+      - briefs/knowledge/kno201.documents.demos.kind=article.md
+      - briefs/knowledge/kno201.documents.lessons.kind=article.md
       # 301 compression
-      - briefs/knowledge/kno301.doc.compression._.[article].md
+      - briefs/knowledge/kno301.doc.compression._.kind=article.md
+    not:
+      # the rest of knowledge/ (the thinker's shelf, shared by symlink). listed so the
+      # <also> fallback does not re-surface each path on every boot; each member stays
+      # one Read away by its kno* name. 🟡 `not` outranks say and ref, so each pattern
+      # names only unlisted files — a `knowledge/*.md` glob would drop the say entries
+      # too. and each avoids the `[kind]` segment, which a glob reads as a char class
+      - briefs/knowledge/kno101.*.docs_as_references.md
+      - briefs/knowledge/kno301.doc.compression.1.*
+      - briefs/knowledge/kno301.doc.compression.2.*
+      - briefs/knowledge/kno301.doc.compression.3.*
+      - briefs/knowledge/kno301.doc.compression._.*.persp.garden.md
+      - briefs/knowledge/kno301.doc.enbrief.1.*
+      - briefs/knowledge/kno301.doc.enbrief.2._.*
+      - briefs/knowledge/kno301.doc.enbrief.2.*lesson*.md
+      - briefs/knowledge/kno301.doc.kernelize.*
+      - briefs/knowledge/kno351.*
+      - briefs/knowledge/kno401.actors.1.role.author.*
+      - briefs/knowledge/kno401.actors.2.*
+      - briefs/knowledge/kno501.*

@@ -19,7 +19,7 @@ exports[`review.join-intersect.acceptance given: [case2] intersect mode with emp
 ✋ ConstraintError: combined scope resolves to zero files
    └─ targets
       ├─ diffs: since-main
-      │  └─ files: 7
+      │  └─ files: 0
       ├─ paths.with: src/*.ts
       │  └─ files: 2
       ├─ paths.wout: (none)
@@ -36,12 +36,12 @@ exports[`review.join-intersect.acceptance given: [case3] union mode with empty d
 "🔭 metrics.expected
    ├─ files
    │  ├─ rules: 3
-   │  └─ targets: 9
+   │  └─ targets: 2
    ├─ tokens
-   │  ├─ estimate: 3,523
-   │  └─ context: 0.4%
+   │  ├─ estimate: 2,956
+   │  └─ context: 0.3%
    └─ cost
-      └─ estimate: $0.001760900"
+      └─ estimate: $0.001478800"
 `;
 
 exports[`review.join-intersect.acceptance given: [case4] default mode is intersect when: [t0] no --join specified, only dirty.ts changed, attempt 1 then: the metrics.expected block matches its snapshot (computed before the brain) 1`] = `

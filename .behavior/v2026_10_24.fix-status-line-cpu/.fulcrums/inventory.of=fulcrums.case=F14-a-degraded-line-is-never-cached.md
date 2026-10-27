@@ -1,0 +1,1 @@
+inventory.of=fulcrums.case=F14-a-degraded-line-is-cached-with-its-row.md

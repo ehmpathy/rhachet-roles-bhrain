@@ -3,8 +3,8 @@ import * as fs from 'fs/promises';
 import { BadRequestError } from 'helpful-errors';
 import * as path from 'path';
 
-import { sanitizeBranchName } from '@src/domain.operations/review/sanitizeBranchName';
 import { enumFilesFromGlob } from '@src/utils/enumFilesFromGlob';
+import { sanitizeBranchName } from '@src/utils/git/sanitizeBranchName';
 
 /**
  * .what = binds a research directory to the current branch via flag file

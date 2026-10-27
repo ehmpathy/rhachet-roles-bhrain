@@ -100,7 +100,7 @@ the glossary dir's own `.readme.md` names the rules by name — read it there so
 never drifts from the canon:
 
 - `.agent/repo=.this/role=any/briefs/domain.terms/.readme.md` — names the rules that rule the dir
-- `howto.domain-term-disputes.[guide].md` — the dispute pattern the `.reason` file records
+- `howto.domain-term-disputes.md` — the dispute pattern the `.reason` file records
 
 ## .mantra
 

@@ -264,4 +264,46 @@ r009's tallied "11 blockers" was a parse-trap on the text \`r11 blocker\`, not a
       });
     },
   );
+
+  given(
+    '[case14] a clean verdict, then a count cited inside a code span after it',
+    () => {
+      // .why = the real-world regression: a 0/0 review quoted a judge reason in backticks AFTER
+      //        its verdict — (`after 3 blockers shed…`). a space parts the backtick from the digit,
+      //        so the left-edge guard let it through, and the last-match rule read it as the
+      //        verdict: 3 phantom blockers on an approved lane. code is quotation, never a
+      //        declaration, so a count inside a code span or a fence is not read
+      const content = `0 blockers
+5 nitpicks
+
+**1. [nitpick][better] a shed is not marked on its lane row.**
+- A dispute pass renders \`1 blocker, 1 disputed → 0 tallied ✓\`.
+- The explanation (\`after 3 blockers shed…\`) appears only in the judge's own stdout.
+
+\`\`\`
+reason: blockers exceed threshold (2 > 0), after 1 blockers shed
+conceded better: 4 nitpicks excluded from the tally
+\`\`\``;
+
+      when('[t0] parsed', () => {
+        then('reads the declared 0/5, not a count quoted in code', () => {
+          const counts = getOneReviewCountsViaRegex({ content });
+          expect(counts).toEqual({ detected: true, blockers: 0, nitpicks: 5 });
+        });
+      });
+    },
+  );
+
+  given('[case15] a review whose ONLY counts sit inside code', () => {
+    // with every count inside code there is no declaration, so the tally is undetected and the
+    // cascade asks the brain — never a silent zero (rule.forbid.failhide)
+    const content = 'the prior report read `3 blockers` and `2 nitpicks`';
+
+    when('[t0] parsed', () => {
+      then('is undetected (code is quotation, not a count)', () => {
+        const counts = getOneReviewCountsViaRegex({ content });
+        expect(counts.detected).toBe(false);
+      });
+    });
+  });
 });

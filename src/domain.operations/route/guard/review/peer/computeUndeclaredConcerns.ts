@@ -1,9 +1,9 @@
 import { computeUndeclaredConcernLabels } from './computeUndeclaredConcernLabels';
 import type { RouteGuardReviewPeerGiven } from './getAllRouteGuardReviewPeerGivens';
-import type { ReviewAbsorption } from './getStoneReviewAbsorptions';
 import { isGivenVerdictApproved } from './isGivenVerdictApproved';
 import { LEVEL_OF_UNMAPPED_REVIEW } from './meter/getOneReviewLevelByIndex';
 import { isLevelOverruled } from './meter/isLevelOverruled';
+import type { ReviewAbsorption } from './ReviewAbsorption';
 
 /**
  * .what = one lane that holds the road, and the concerns on it with no stance declared

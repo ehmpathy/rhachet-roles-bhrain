@@ -34,20 +34,20 @@ export const BRIEFS_FOR_ARTICULATE = getThinkerBriefs([
   'cognition/cog201.cortal.focus.p2.acuity.md',
   'cognition/cog301.traversal.1.motion.primitives.acuity.md',
   //
-  'knowledge/kno201.documents.articles.[article].md',
-  'knowledge/kno301.doc.enbrief.2.articulate.[article].md',
-  'knowledge/kno301.doc.enbrief.2.articulate.[lesson].md',
+  'knowledge/kno201.documents.articles.kind=article.md',
+  'knowledge/kno301.doc.enbrief.2.articulate.kind=article.md',
+  'knowledge/kno301.doc.enbrief.2.articulate.kind=lesson.md',
   //
-  'librarian.tactics/[brief].verbiage.outline.over.narrative.md',
-  'librarian.tactics/<articulate>._.[article].frame.cognitive.md',
-  'librarian.tactics/<articulate>._.[article].frame.tactical.md',
-  'librarian.tactics/<articulate>.tactic.[catalog].md',
-  'librarian.tactics/<articulate>.tactic.concept_dimension.examples.[article][seed].md',
-  'librarian.tactics/<articulate>.tactic.concept_dimension.invariants.[article].md',
+  'librarian.tactics/kind=brief.verbiage.outline.over.narrative.md',
+  'librarian.tactics/<articulate>._.kind=article.frame.cognitive.md',
+  'librarian.tactics/<articulate>._.kind=article.frame.tactical.md',
+  'librarian.tactics/<articulate>.tactic.kind=catalog.md',
+  'librarian.tactics/<articulate>.tactic.concept_dimension.examples.kind=article.kind=seed.md',
+  'librarian.tactics/<articulate>.tactic.concept_dimension.invariants.kind=article.md',
   'librarian.tactics/<articulate>.tactic.from.examples.md',
   'librarian.tactics/<articulate>.tactic.from.seed.md',
-  'librarian.tactics/<articulate>.tactic.with.templates.[article].md',
-  'librarian.tactics/<articulate>.tone.bluecollar.[article][seed].md', // todo: review this
+  'librarian.tactics/<articulate>.tactic.with.templates.kind=article.md',
+  'librarian.tactics/<articulate>.tone.bluecollar.kind=article.kind=seed.md', // todo: review this
 ]);
 
 type StitcherDesired = GStitcher<

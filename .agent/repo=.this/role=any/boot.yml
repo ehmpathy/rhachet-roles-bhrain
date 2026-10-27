@@ -1,9 +1,29 @@
 budget:
-  # a cap at today's measured size (23,932), not a target. rhachet's init seeded 5_000; the
+  # a cap at today's measured size (24,000), not a target. rhachet's init seeded 5_000; the
   # glossary now boots as one catalog (~0.9k) instead of ~150 paths (~5.3k). the rest of the cut
   # is owed — see .dream/v2026_10_16.fix.repo-boot-spec-is-6x-the-budget-rhachet-seeded.md
   tokens: 24_000
 always:
+  skills:
+    not:
+      # a review aid, reached by name where a settings regen is argued (`rhx settings.permissions.diff
+      # --help`); `rhx list` still names it. its boot path line is not worth a share of the cap
+      - skills/settings.permissions.diff.sh
+      # a verification aid, reached by name where a repaint must be shown (`rhx
+      # route.status.line.show --help`); the bench is its cost-only peer
+      - skills/route.status.line.show.sh
+      # a done-gate aid, reached by name from gen.consumer-patch's header; it installs a patch
+      # as a consumer would, so it runs once per patch, never per session
+      - skills/prove.consumer-patch.sh
+      # a done-gate aid, reached by name at the one step that sets a pr body from its route artifact
+      - skills/pr.body.set.sh
+      # a done-gate aid, reached by name where a dependency needs an upstream pr's fix early
+      - skills/gen.patch.from.pr.sh
+      # the skills' own collocated tests: a file in skills/ that no glob names boots as a skill
+      # ref, so a test and its snapshot would charge every session a path
+      # (rule.require.agent-skill-tests-collocated)
+      - skills/*.test.ts
+      - skills/__snapshots__/**
   briefs:
     say:
       # identity
@@ -98,6 +118,12 @@ always:
       - briefs/domain.terms/.readme.md
       - briefs/domain.terms/catalog.of=externalization._.md
       - briefs/domain.terms/inventory.of=gaps._.md
+      # reached by name from `gen.consumer-patch` and `prove.consumer-patch`, the only two places
+      # its symptom (`ERR_PNPM_PATCH_FAILED`) is met; its boot path line is not worth a share of the cap
+      - briefs/hazard.git-apply-check-is-not-a-pnpm-install.md
+      # cited by name where its cues fire: the jest integration config's lookahead and the
+      # skills `not` list above; its boot path line is not worth a share of the cap
+      - briefs/rule.require.agent-skill-tests-collocated.md
 
     ref:
       # the glyph catalog — ref, not say: read once, when a glyph is claimed,
@@ -107,17 +133,17 @@ always:
       - briefs/domain.glyphs/catalog.of=glyph.axis=*.md
 
       # lessons - load on demand
-      - briefs/howto.acceptance-test-flow.[lesson].md
-      - briefs/howto.acceptance-test-setup.[lesson].md
-      - briefs/howto.acceptance.test.bdd.[lesson].md
-      - briefs/howto.debug-tempdir-symlink-failures.[lesson].md
-      - briefs/howto.detect-bound-route.[lesson].md
-      - briefs/howto.diagnose-branch-failures.[lesson].md
-      - briefs/howto.fast-cli-subpath.[lesson].md
-      - briefs/howto.fast-skill-invocation.[lesson].md
-      - briefs/howto.journey-tests-reveal-cache-bugs.[lesson].md
-      - briefs/howto.rhachet.integration.[lesson].md
-      - briefs/howto.test-skills-yourself.[lesson].md
+      - briefs/howto.acceptance-test-flow.md
+      - briefs/howto.acceptance-test-setup.md
+      - briefs/howto.acceptance.test.bdd.md
+      - briefs/howto.debug-tempdir-symlink-failures.md
+      - briefs/howto.detect-bound-route.md
+      - briefs/howto.diagnose-branch-failures.md
+      - briefs/howto.fast-cli-subpath.md
+      - briefs/howto.fast-skill-invocation.md
+      - briefs/howto.journey-tests-reveal-cache-bugs.md
+      - briefs/howto.rhachet.integration.md
+      - briefs/howto.test-skills-yourself.md
 
       # hazards - load on demand. a hazard is a diagnosis, reached for when its
       # symptom shows; it does not need to fire before the mistake, because the

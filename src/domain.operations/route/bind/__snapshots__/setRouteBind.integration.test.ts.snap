@@ -1,0 +1,7 @@
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
+
+exports[`setRouteBind given: [case5] the status line cache cannot be dropped when: [t0] the route is bound then: the bind lands and the drop fault warns on stderr 1`] = `
+[
+  "[route.bind.set] warn: status line cache drop failed (ERR_FS_EISDIR); the line may lag the bind for up to 30s. fix: remove .agent/.cache/repo=bhrain/role=driver/skill=route.status.line/, or repair its permissions",
+]
+`;

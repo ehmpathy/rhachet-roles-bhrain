@@ -14,6 +14,7 @@ export const ROLE_THINKER: Role = Role.build({
   name: 'Thinker',
   purpose: 'think',
   readme: { uri: __dirname + '/readme.md' },
+  boot: { uri: __dirname + '/boot.yml' },
   traits: [
     RoleTrait.build({
       slug: 'ocd',

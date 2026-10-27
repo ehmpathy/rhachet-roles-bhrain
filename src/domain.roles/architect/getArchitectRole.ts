@@ -9,6 +9,7 @@ export const ROLE_ARCHITECT: Role = Role.build({
   name: 'Architect',
   purpose: 'brain architecture patterns',
   readme: { uri: __dirname + '/readme.md' },
+  boot: { uri: __dirname + '/boot.yml' },
   traits: [],
   skills: {
     dirs: [],

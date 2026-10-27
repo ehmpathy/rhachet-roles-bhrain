@@ -27,7 +27,7 @@ where the term composes declared objects & operations:
 - src/domain.operations/review.by/asReviewRubricsConfig.ts       # the ReviewVibe interface + DEFAULT_VIBE + asVibe parse
 - src/domain.operations/review.by/ReviewByResult.ts              # ReviewByResult.vibe
 - src/domain.operations/review.by/genReviewByStdout.ts           # render: mascot opens the phrase, artifact prefixes the cmd echo
-- src/domain.roles/reviewer/briefs/howto.add-review-by-to-a-role.[guide].md  # the published rubrics.yml `vibe:` block
+- src/domain.roles/reviewer/briefs/howto.add-review-by-to-a-role.md  # the published rubrics.yml `vibe:` block
 
 ## .reason
 see the ref-level cluster beside this choice:

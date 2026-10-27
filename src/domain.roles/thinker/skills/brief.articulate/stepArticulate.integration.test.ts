@@ -6,13 +6,13 @@ import { given, then, usePrep, when } from 'test-fns';
 import { genContextLogTrail } from '@src/.test/genContextLogTrail';
 import { genContextStitchTrail } from '@src/.test/genContextStitchTrail';
 import { getContextOpenAI } from '@src/.test/getContextOpenAI';
+import { REPEATABLY_CONFIG } from '@src/.test/infra/repeatably';
 import { getThinkerBriefs } from '@src/domain.roles/thinker/getThinkerBrief';
 import { stepArticulate } from '@src/domain.roles/thinker/skills/brief.articulate/stepArticulate';
 
-jest.setTimeout(toMilliseconds({ minutes: 5 }));
+jest.setTimeout(toMilliseconds({ minutes: 5 }) * REPEATABLY_CONFIG.attempts);
 
-// .note = skipped due to OpenAI quota issues in CI; re-enable when quota restored
-describe.skip('stepArticulate', () => {
+describe('stepArticulate', () => {
   const context = {
     ...genContextLogTrail(),
     ...genContextStitchTrail(),
@@ -69,7 +69,7 @@ articulate the term "joke"; declare both the etymology and definition; include e
       });
     });
 
-    when('executed', () => {
+    when.repeatably(REPEATABLY_CONFIG)('executed', () => {
       const threads = usePrep(async () => ({
         caller: await enrollThread({
           role: 'caller',

@@ -7,14 +7,13 @@ exports[`review.by.learner.acceptance given: [case-agg] --for term-aggregation o
    └─ scope
       └─ paths: {src/clean.terms.ts,.agent/repo=.this/role=any/briefs/domain.terms/*.md}
 
-🦉 not even a vole
+🦉 [APPROVED]
 
 🔍 review
    ├─ review: .reviews/by=learner/rubric=term-aggregation.md
    └─ summary
       ├─ 0 blockers
-      ├─ 0 nitpicks
-      └─ all good 👍"
+      └─ [N] nitpicks"
 `;
 
 exports[`review.by.learner.acceptance given: [case-all] the learner review set on clean code when: [t0] review.by --role learner (no --for) runs both rubrics, attempt 1 then: the settled tree matches snapshot 1`] = `
@@ -34,14 +33,13 @@ exports[`review.by.learner.acceptance given: [case-app] --for term-application o
    └─ scope
       └─ paths: {src/clean.terms.ts,.agent/repo=.this/role=any/briefs/domain.terms/*.md}
 
-🦉 not even a vole
+🦉 [APPROVED]
 
 🔍 review
    ├─ review: .reviews/by=learner/rubric=term-application.md
    └─ summary
       ├─ 0 blockers
-      ├─ 0 nitpicks
-      └─ all good 👍"
+      └─ [N] nitpicks"
 `;
 
 exports[`review.by.learner.acceptance given: [case-detect] --for term-application on a term-dirty file when: [t0] the application rubric detects a term violation, attempt 1 then: the blocker-tier raw review is stable (full snapshot) 1`] = `

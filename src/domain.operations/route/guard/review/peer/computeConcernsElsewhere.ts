@@ -1,6 +1,6 @@
 import { computeUndeclaredConcerns } from './computeUndeclaredConcerns';
 import type { RouteGuardReviewPeerGiven } from './getAllRouteGuardReviewPeerGivens';
-import type { ReviewAbsorption } from './getStoneReviewAbsorptions';
+import type { ReviewAbsorption } from './ReviewAbsorption';
 
 /**
  * .what = what the stone still owes a stance on, across every lane EXCEPT the one just

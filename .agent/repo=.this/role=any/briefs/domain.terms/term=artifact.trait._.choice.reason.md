@@ -9,7 +9,7 @@ parts it from a rule, which fires on one case.
 
 ⇒ **it is adopted, never coined.** the word already names this in ordinary english and in this
 repo's own prior art — `trait.ocd`, `trait.chillnature`, and the thinker's
-`trait.vs_skill.[article]`. what the cluster settles is that it names an artifact kind, and
+`trait.vs_skill.kind=article`. what the cluster settles is that it names an artifact kind, and
 therefore an `en-` verb.
 
 ## .why not each forbidden synonym
@@ -28,7 +28,7 @@ an artifact kind must name the artifact.
 
 ## .the boundary against `skill` — already settled, in another register
 
-`trait.vs_skill.[article]` (thinker) draws it in the human-psychology register, and every row
+`trait.vs_skill.kind=article` (thinker) draws it in the human-psychology register, and every row
 carries over to artifacts unchanged:
 
 | axis | a trait | a skill |
@@ -79,7 +79,7 @@ gap is named so the next author does not coin a third shape.
 ⇒ archived at `.behavior/v2026_09_04.feat-telepath-role/.seeds/inventory.of=seeds.case=S29-*.md`
 
 ### the prior art it rests on
-- `trait.vs_skill.[article]` (thinker) — the boundary, drawn before this cluster existed
+- `trait.vs_skill.kind=article` (thinker) — the boundary, drawn before this cluster existed
 - 8 extant `trait.*` files and 6 `im_a*` files on disk, verified by `Glob` rather than recalled
 
 ## .invariants

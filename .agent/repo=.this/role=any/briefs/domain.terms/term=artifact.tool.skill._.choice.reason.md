@@ -41,7 +41,7 @@ them without one word that carries two concepts.
 - resolution = `concepts` / `capacity`. `knowledge` is the **genus, not the differentia** — a skill
                carries knowledge too (of the sequence, of the path), so the word names what both
                halves share and parts them not at all. and `concepts` is not coined: the
-               librarian's `kno101.primitives.1.ontology.[article].frame.docs_as_materializations`
+               librarian's `kno101.primitives.1.ontology.kind=article.frame.docs_as_materializations`
                already declares that a **document** is what makes a **concept** visible, and a
                brief is a document — so `knowledge` was drift off a word this repo had settled
 

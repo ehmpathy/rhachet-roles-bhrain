@@ -1,6 +1,6 @@
 import { execSync } from 'child_process';
 
-import { sanitizeBranchName } from './sanitizeBranchName';
+import { sanitizeBranchName } from '@src/utils/git/sanitizeBranchName';
 
 /**
  * .what = gets the current git branch name

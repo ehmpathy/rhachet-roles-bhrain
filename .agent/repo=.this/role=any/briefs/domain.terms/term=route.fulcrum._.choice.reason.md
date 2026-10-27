@@ -7,7 +7,7 @@ the driver's own guide states the metaphor directly:
 
 > *a fulcrum is a point where a small choice tips a large outcome. a name that will spread. a shape
 > that many callers will lean on. a boundary that later work must respect.*
-> — `howto.navigate-fulcrum-choices.[guide].md`
+> — `howto.navigate-fulcrum-choices.md`
 
 ⇒ the word carries the **asymmetry**, which is the whole reason the record exists: one row costs
 the driver seconds, and its absence costs the human a hunt.

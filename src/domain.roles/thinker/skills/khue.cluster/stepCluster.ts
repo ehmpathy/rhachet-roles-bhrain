@@ -30,13 +30,13 @@ export const BRIEFS_FOR_CLUSTER = getThinkerBriefs([
   'cognition/cog301.traversal.1.motion.primitives._.md',
   'cognition/cog401.questions.._.md',
   'cognition/cog401.questions.2.1.primitives.rough._.md',
-  'librarian.tactics/<articulate>._.[article].frame.cognitive.md', // todo: keep or remove
-  'librarian.tactics/<articulate>._.[article].frame.tactical.md',
+  'librarian.tactics/<articulate>._.kind=article.frame.cognitive.md', // todo: keep or remove
+  'librarian.tactics/<articulate>._.kind=article.frame.tactical.md',
   'cognition/cog201.cortal.focus.p2.breadth.md',
   'cognition/cog301.traversal.1.motion.primitives.breadth.md',
   'cognition/cog301.traversal.1.motion.primitives.breadth.vary.md',
-  'thinker.tactics/<cluster>._.[article].frame.tactical._.md',
-  'librarian.tactics/[brief].verbiage.outline.over.narrative.md',
+  'thinker.tactics/<cluster>._.kind=article.frame.tactical._.md',
+  'librarian.tactics/kind=brief.verbiage.outline.over.narrative.md',
 ]);
 
 type StitcherDesired = GStitcher<

@@ -81,7 +81,7 @@ there so this brief never drifts from the canon:
 
 - `.agent/repo=.this/role=any/briefs/domain.terms/.readme.md` — names the rules that rule the dir
 - `template.domain-term.md` — the `choice._.` cluster shape
-- `howto.domain-term-disputes.[guide].md` — the dispute pattern
+- `howto.domain-term-disputes.md` — the dispute pattern
 
 ## .mantra
 

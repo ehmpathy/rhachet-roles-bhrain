@@ -1,7 +1,7 @@
 import type { RouteStone } from '@src/domain.objects/Driver/RouteStone';
 
 import { genRouteGuardExhaustedReason } from '../guard/review/peer/genRouteGuardExhaustedReason';
-import { getStoneConcessionExhaustionKind } from '../guard/review/peer/getStoneConcededLaneSlugs';
+import { getStoneConcessionExhaustion } from '../guard/review/peer/getStoneConcededLaneSlugs';
 import { formatRouteDriveBudgetExhausted } from './formatRouteDriveBudgetExhausted';
 import { getCurrentExhaustedSlugs } from './getCurrentExhaustedSlugs';
 
@@ -76,11 +76,12 @@ export const getRouteDriveExhaustedMessage = async (input: {
       blocksStop: false,
     };
 
-  const concession = await getStoneConcessionExhaustionKind({
-    route: input.route,
-    stone: input.stone.name,
-    slugs: exhaustedSlugs,
-  });
+  const { kind: concession, slugs: concessionSlugs } =
+    await getStoneConcessionExhaustion({
+      route: input.route,
+      stone: input.stone.name,
+      slugs: { exhausted: exhaustedSlugs },
+    });
 
   return {
     stdout: formatRouteDriveBudgetExhausted({
@@ -89,7 +90,7 @@ export const getRouteDriveExhaustedMessage = async (input: {
       brain: input.brain,
       effort: input.effort,
       reason: genRouteGuardExhaustedReason({
-        slugs: exhaustedSlugs,
+        slugs: { exhausted: exhaustedSlugs, urgent: concessionSlugs.urgent },
         concession,
       }),
       meters,

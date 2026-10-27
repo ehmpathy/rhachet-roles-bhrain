@@ -98,7 +98,7 @@ const asSingleQuoteSafe = (raw: string): string => raw.replace(/'/g, `'\\''`);
  *     red for anyone on the other version, and for CI if its image differs
  *     (`rule.forbid.bare-host-deps`).
  *
- * ⚠️ .why MASK rather than carve out = `rule.require.contract-snapshot-exhaustiveness`
+ * 🟡 .why MASK rather than carve out = `rule.require.contract-snapshot-exhaustiveness`
  *     is explicit that a non-deterministic field is MASKED and snapped, never
  *     dropped. so only the BORROWED half is normalized — the hook's own line
  *     (`🗿 route.foreground guard: failed to parse tool_name …`) is this repo's

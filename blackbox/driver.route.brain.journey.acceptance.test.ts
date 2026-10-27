@@ -183,6 +183,50 @@ describe('driver.route.brain.journey.acceptance', () => {
   };
 
   /**
+   * .what = stamps the dispatch claim as made just now, so its 15s window is open
+   * .why = the mirror of `setClaimExpired`. a step that asserts behavior INSIDE the window
+   *        must not depend on the wall time its prior drives took: on a loaded box four
+   *        `rhx route.drive` subprocesses outlast 15s, and the window lapses under the step
+   *        that claims it is open
+   */
+  const setClaimFresh = async (input: { scene: Scene }) => {
+    const claimPath = path.join(
+      input.scene.tempDir,
+      '.route',
+      '.brain.dispatch.latest.json',
+    );
+    const now = new Date();
+    await fs.utimes(claimPath, now, now);
+  };
+
+  /**
+   * .what = runs `logic` with the dispatch claim held inside its 15s window throughout
+   * .why = one stamp before the drive is not enough: the window is read INSIDE the drive
+   *        subprocess, and on a loaded box that read lands 20–30s after spawn (measured
+   *        2026-10-23, an 18-file acceptance chunk), so a claim stamped before the spawn has
+   *        lapsed by the time it is read. a re-stamp each second keeps the claim's age under
+   *        the window at whatever moment the reader looks, which is the state the step names
+   * .note = a failed re-stamp is kept and rethrown after `logic` settles, never swallowed
+   */
+  const withClaimHeldFresh = async <T>(
+    input: { scene: Scene },
+    logic: () => Promise<T>,
+  ): Promise<T> => {
+    await setClaimFresh(input);
+    const faults: unknown[] = [];
+    const timer = setInterval(() => {
+      setClaimFresh(input).catch((error) => faults.push(error));
+    }, 1_000);
+    try {
+      const result = await logic();
+      if (faults.length) throw faults[0];
+      return result;
+    } finally {
+      clearInterval(timer);
+    }
+  };
+
+  /**
    * .what = the says the shim received, once at least `count` have landed and the log settled
    * .why = the dispatch is DETACHED and returns before the child runs (`case=5`), so the log
    *        is polled — bounded, and red on a miss rather than a hang. the settle catches a say
@@ -859,11 +903,18 @@ describe('driver.route.brain.journey.acceptance', () => {
       { label: '[t6] onStop, past the window', when: 'hook.onStop', expire: true, says: 6 },
     ];
 
-    STEPS.forEach((step) => {
+    STEPS.forEach((step, index) => {
       when(step.label, () => {
         const res = useThen('the drive answers', async () => {
+          // the entry tick (t0) writes the claim; each later step sets its window explicitly,
+          // and an open window is held open for the whole drive, not just at its spawn
           if (step.expire) await setClaimExpired({ scene });
-          const cli = await drive({ scene, when: step.when });
+          const holdWindow = !step.expire && index > 0;
+          const cli = holdWindow
+            ? await withClaimHeldFresh({ scene }, () =>
+                drive({ scene, when: step.when }),
+              )
+            : await drive({ scene, when: step.when });
           return { cli, says: await getSays({ scene, count: step.says }) };
         });
 

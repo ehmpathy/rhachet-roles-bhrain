@@ -30,7 +30,7 @@ the key is the **artifact**, never your diff, so the cost of a re-arrival invert
 three l3 reviewers and **not one** l1 — ~815s rather than a full ladder. the l1 lanes were clean and
 the artifact untouched; the l3 lanes carried blockers, so no cache applied at any hash.
 
-## ⚠️ .this hash is the CACHE key, and it is NOT the debt key
+## 🟡 .this hash is the CACHE key, and it is NOT the debt key
 
 | keyed to the artifact hash? | |
 |---|---|
@@ -50,7 +50,7 @@ hasty one through. the promise it gates was already hashless, and that asymmetry
 
 | the situation | the move |
 |---|---|
-| you fixed a blocker in `src/` and hesitate to re-arrive | **re-arrive** — clean reviewers cost naught. ⚠️ **write the `.taken` first**; the entrance gate refuses a round while you owe one, and the fix alone does not discharge it |
+| you fixed a blocker in `src/` and hesitate to re-arrive | **re-arrive** — clean reviewers cost naught. 🟡 **write the `.taken` first**; the entrance gate refuses a round while you owe one, and the fix alone does not discharge it |
 | the yield is **wrong** and you hesitate to touch it | 🔴 **fix it** — see below |
 | you hold several **cosmetic** yield edits | batch them. one ladder, not four |
 | a reviewer is exhausted but clean | it still passes; the cache precedes the exhaustion check |

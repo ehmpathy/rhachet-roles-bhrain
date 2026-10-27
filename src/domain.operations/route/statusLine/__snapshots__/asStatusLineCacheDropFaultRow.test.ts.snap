@@ -1,0 +1,5 @@
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
+
+exports[`asStatusLineCacheDropFaultRow given: [case1] a permission fault names its code, the lag bound, and the fix when: [t0] the drop fault row is rendered then: it names the code, the lag bound, and the fix 1`] = `"[route.bind.set] warn: status line cache drop failed (EACCES); the line may lag the bind for up to 30s. fix: remove .agent/.cache/repo=bhrain/role=driver/skill=route.status.line/, or repair its permissions"`;
+
+exports[`asStatusLineCacheDropFaultRow given: [case2] a busy-file fault names its code, the lag bound, and the fix when: [t0] the drop fault row is rendered then: it names the code, the lag bound, and the fix 1`] = `"[route.bind.set] warn: status line cache drop failed (EBUSY); the line may lag the bind for up to 30s. fix: remove .agent/.cache/repo=bhrain/role=driver/skill=route.status.line/, or repair its permissions"`;

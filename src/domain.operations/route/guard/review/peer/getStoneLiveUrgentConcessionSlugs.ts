@@ -1,7 +1,7 @@
 import type { RouteGuardReviewPeerGiven } from './getAllRouteGuardReviewPeerGivens';
 import { getLiveConcededAbsorptions } from './getStoneConcededLaneSlugs';
-import type { ReviewAbsorption } from './getStoneReviewAbsorptions';
 import { getStoneReviewCorpus } from './getStoneReviewCorpus';
+import type { ReviewAbsorption } from './ReviewAbsorption';
 
 /**
  * .what = of a stone's live concessions, the reviewer slugs graded URGENT

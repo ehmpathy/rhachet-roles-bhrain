@@ -1,0 +1,10 @@
+# howto: navigate fulcrum choices
+
+a **fulcrum** = a point where a small choice tips a large outcome. it must not halt the road.
+
+1. retain it in the fulcrum inventory; do not stop the drive
+2. best-guess it, offer rework: "i chose X; if you prefer Y, it is a clean rework"
+3. halt only when the rework is dirty, and LAST
+4. budget comes after approval; never halt for lack of review rounds
+
+mandate: `rule.always.defer-fulcrums-to-last`; record: `rule.always.itemize-the-fulcrums-you-best-guess`.

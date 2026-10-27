@@ -1,67 +1,36 @@
 # rule.always.diagnose-reviewer-malfunctions
 
-a `malfunction` is a broken process, not a verdict — the review could not run, or could not be read. diagnose the cause and name the fix; never hand a human a bare "it broke."
-
-terminal-for-unlock, and it still blocks passage. a broken reviewer at l1 does not hold l3 from a run, and the stone cannot pass while it is broken.
+a `malfunction` = broken process, not a verdict. diagnose the cause, name the fix; never hand a human a bare "it broke." terminal-for-unlock, still blocks passage.
 
 | the cause | you |
 |---|---|
-| driver-fixable — a bad glob, an absent supply file, a malformed rubric path, an artifact it could not parse | fix it, answer its given, re-arrive |
-| a context overflow — the reviewer's prompt blew the window, so it reviewed naught | narrow the reviewer, in the guard — see below |
-| human-fixable — an absent credential, a permission gate, a foreman-only grant | surface the exact command, never the symptom |
-| unclear | read its stderr and logs, classify, then route |
+| driver-fixable: bad glob, absent supply file, bad rubric path, unparseable artifact | fix it, answer its given, re-arrive |
+| context overflow | narrow the reviewer in the guard |
+| human-fixable: absent credential, permission gate, foreman-only grant | surface the exact command |
+| unclear | read stderr + logs, classify, route |
 
-the halt prints one row per broken part (a lane or a judge) — its cause and a class, plus a fix only where the class carries one: `glob` → narrow it in `$route/<stone>.guard` (mutate grant) · `credential` → a human grant. then ONE shared `next`, in the order the gates accept: read each given and fix what you can → answer each broken lane (`--as absorbed --that <slug>`) → re-arrive once. a judge writes no given and owes no answer.
+halt `next`: read each given, fix → answer each broken lane (`--as absorbed --that <slug>`) → re-arrive once. a repair alone does not reopen the door: a malfunctioned reviewer still owes a `.taken`. a judge owes none.
 
-## a malfunctioned reviewer still owes you a `.taken`
-
-an unreadable verdict is not a clean one — `asPeerGivenVerdict` scores an undetected count as one blocker ("if it finds no numeric count it can NOT assume zero", `contract.reviewer-output`). so its given gates, exactly as a readable rejection does.
-
-a repair alone does not re-open the door. the fix changes the code; the debt is keyed to the reviewer, so it stands until you answer it. the halt prompt names the `.taken` path — a malfunction is dischargeable, never a deadlock. the reviewer malfunctioned; you are still the party that must say so.
-
-## the overflowed reviewer — narrow it in the guard
+## overflow: edit the guard
 
 ```sh
-rhx route.mutate grant get     # the guard edit needs the route's mutate grant — a human grants it once
-# then edit $route/<stone>.guard directly: narrow that reviewer's `--paths-with`, add a
-# `--paths-wout`, and/or trim its `--conversation` depth. then re-arrive and let the GUARD run it.
+rhx route.mutate grant get     # a human grants once: rhx route.mutate grant allow
+# then edit $route/<stone>.guard directly: narrow --paths-with, add --paths-wout, trim --conversation. re-arrive; the GUARD runs it.
 ```
 
-🟡 no `rhx` command edits a guard: `route.mutate.guard` is the PreToolUse hook that seals `*.guard` until `$route/.route/.privilege.mutate.flag` exists — a gate, never an editor. blocked → the one ask of the human is `rhx route.mutate grant allow`; the edit after it is yours.
-
-its temptation is unique: every other malfunction announces itself as broken; an overflowed reviewer returns terminal and unlocks the next level, so it reads much like a reviewer that ran. a driver who merely records the overflow removes a lens from the drive.
-
-a hand-run `rhx review` is not the remedy — `rule.forbid.hand-run-reviews` forbids it outright. it draws no budget, mints no `.given`, and gates naught, so the lens is not restored, only simulated. a guard edit makes the reviewer fit so the guard can run it, and that one property is the whole difference.
-
-## the bind arithmetic — what a guard bind needs
-
-the inherited scope is correct — do not re-derive it. `getAllFileChangesFromRange.ts` prefers `origin/main` (`getOneMainBranch`) and takes `git merge-base` (`getOneBaseArgs`), so a commit main is ahead on cannot enter the diff. an item a correctly-bound reviewer raises is yours.
-
-`--paths-with <glob>` includes, `--paths-wout <glob>` excludes (alias `--paths-without`); both repeat, so a wide lane narrows by exclusion — the commonest cut is the test corpus a production rubric does not grade:
+no `rhx` command edits a guard; the hook seals `*.guard` until the grant exists. scope inherited (merge-base `origin/main`) is correct; do not re-derive. `--paths-with` includes, `--paths-wout` excludes; both repeat, take braces:
 
 ```
 --paths-with 'src/**/*' --paths-wout '**/*.test.ts' --paths-wout '**/__snapshots__/**'
 ```
 
-a brace in either slot works — `'**/*.{ts,md}'` and `'{src,blackbox}/**'` alike. read what a bind matched from the scope block's `paths.with` / `paths.wout` lines and the `joined via` count. a given older than 2026-09-26 printed `paths: (none)` for any `--paths-with` bind — it reported only the deprecated `--paths`, and twice sent a driver to blame the parser for a bind it had applied.
-
-an unknown flag refuses as a constraint and names itself, so a misspelled bind fails loud. a narrowed lane that overflows at the same file count as before means the glob matched what it did before — read the scope block.
-
-## which lever — read it off the refusal's `lever` branch, never a hand census
-
-| the refusal says | the lever |
+| refusal `lever` branch | lever |
 |---|---|
-| targets mostly **edited** | narrow the bind — `--paths-wout '<heavy>/**'` |
-| targets mostly **additions** | declare the whole set once — `rhx route.guard.partition --for review --peer @all --partition '<slug>=<globs>' ...`, through vertical domains (`rule.forbid.horizontal-partitions`). new work the lane must read; to cut it hides it |
-| targets hold **no** mass | narrow `--rules`, `--refs`, or `--conversation` |
-| a **partition** still overflows alone | narrow that partition, or split it in two — the tool never splits twice |
+| targets mostly edited | `--paths-wout '<heavy>/**'` |
+| targets mostly additions | `rhx route.guard.partition --for review --peer @all --partition '<slug>=<globs>' ...` by vertical domain (`rule.forbid.horizontal-partitions`); never cut `.behavior/**` |
+| no target mass | narrow `--rules`, `--refs`, `--conversation` |
+| a partition overflows alone | narrow or split it |
 
-each partition holds all its files need to be judged alone; the bound route sits in every one or the run refuses. overlaps are computed as `common`, graded once. a partitioned lane runs whole while it fits, splits only on overflow, runs its partitions at once, and the guard reads ONE merged tally under the lane's slug — budget, `.given`, `.taken` debt unchanged. ⚠️ never cut `.behavior/**` to fit. ⇒ `howto.partition-an-overflowed-review` (reviewer).
+a `rhx radio.task.push --into <repo>` line in the refusal: edit your guard and dispatch it. one honest diagnosis pass; if it resists, escalate with symptom, logs read, best read of cause.
 
-where the guard came from another repo's template, the refusal prints a `rhx radio.task.push --into <repo>` line: edit your guard **and** dispatch it, so later routes inherit the cure.
-
-one honest diagnosis pass, never a debug spiral: read the logs, classify, act.
-
-if it resists one pass, escalate with what you found — the symptom, the logs read, your best read of the cause. a named unknown beats a bare break.
-
-blocker: a malfunction escalated with a bare symptom · a driver-fixable cause handed to a human · an overflowed reviewer reported upward with no guard edit attempted · an overflowed reviewer answered with a hand-run `rhx review` (`rule.forbid.hand-run-reviews`) · a malfunction repaired in code and re-arrived with no `.taken` (the given still gates; the round halts at the door).
+blocker: malfunction escalated as a bare symptom · driver-fixable cause handed to a human · overflow reported upward with no guard edit · overflow answered by a hand-run `rhx review` · malfunction repaired and re-arrived with no `.taken`.
