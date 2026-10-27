@@ -6,6 +6,7 @@ import { asStonePromiseSlug } from '@src/domain.operations/route/guard/review/se
 import { isErrorOfAbsence } from '@src/utils/fs/isErrorOfAbsence';
 
 import { asRouteStatusLineRouteDir } from './asRouteStatusLineRouteDir';
+import { NAMES_OF_RENDER_LEDGERS } from './NAMES_OF_RENDER_LEDGERS';
 
 /**
  * .what = the fingerprint of every input the status line render reads
@@ -98,11 +99,6 @@ const asRenderInputNames = (input: {
     .filter((name) => isRenderInputName({ name, nameOfBindFlag }))
     .sort();
 };
-
-/**
- * .what = the ledgers the render reads from the route's state dir
- */
-const NAMES_OF_RENDER_LEDGERS = ['passage.jsonl', 'reviewPeerMeters.jsonl'];
 
 /**
  * .what = whether a state dir entry is one the render reads

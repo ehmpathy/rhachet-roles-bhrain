@@ -17,8 +17,8 @@ const TEST_CASES: { description: string; branch: string; expected: string }[] =
     {
       description:
         'a slash in the branch is flattened, as the bind ops always have',
-      branch: 'vlad/fix-status-line',
-      expected: '.bind.vlad.fix-status-line.flag',
+      branch: 'human/fix-status-line',
+      expected: '.bind.human.fix-status-line.flag',
     },
   ];
 

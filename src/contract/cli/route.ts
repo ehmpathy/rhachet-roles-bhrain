@@ -734,7 +734,8 @@ export const routeDrive = async (): Promise<void> =>
  * .note = it forwards to the `cli/route.status.line` subpath entry, so a seat whose
  *         settings still name this barrel gets the cached line too: one flow, one fault
  *         frame. the barrel's own module load is the one cost a seat keeps until its repo
- *         re-runs the driver init, which rewrites the command to the subpath
+ *         re-runs the driver init, which rewrites the command to the bash reader
+ *         (`route.status.line.sh`), which spawns no node at all
  */
 export const routeStatusLine = async (): Promise<void> => {
   const { routeStatusLine: routeStatusLineViaSubpath } = await import(

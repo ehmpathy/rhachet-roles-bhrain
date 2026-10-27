@@ -1,0 +1,182 @@
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
+
+exports[`route.status.line.sh given: [case1] a branch bound to a route, after the bind wrote the file when: [t0] the reader runs with PATH emptied then: the line is byte-equal to the node render 1`] = `
+{
+  "status": 0,
+  "stderr": "",
+  "stdout": "🗿 1.vision, yield 🌾
+",
+}
+`;
+
+exports[`route.status.line.sh given: [case1] a branch bound to a route, after the bind wrote the file when: [t1] the node entry runs with PATH emptied then: its exit, stdout, and masked stderr match the snapshot 1`] = `
+{
+  "status": 127,
+  "stderr": "<bash>: node: <not found>
+",
+  "stdout": "",
+}
+`;
+
+exports[`route.status.line.sh given: [case1] a branch bound to a route, after the bind wrote the file when: [t2] a passage moves the route, via the real writer then: it prints the next stone, fresh 1`] = `
+{
+  "status": 0,
+  "stderr": "",
+  "stdout": "🗿 2.plan, yield 🌾
+",
+}
+`;
+
+exports[`route.status.line.sh given: [case2] a render input newer than the status file when: [t0] the reader runs then: it prints the line it holds, marked stale, with the fix 1`] = `
+{
+  "status": 0,
+  "stderr": "",
+  "stdout": "🗿 1.vision, yield 🌾 · stale, rhx route.drive
+",
+}
+`;
+
+exports[`route.status.line.sh given: [case2b] a fresh line, then a yield, a real passage, and a drive when: [t2] route.drive runs, via the real drive then: the stale mark is gone and the line shows the moved route 1`] = `
+{
+  "status": 0,
+  "stderr": "",
+  "stdout": "🗿 2.plan, yield 🌾
+",
+}
+`;
+
+exports[`route.status.line.sh given: [case4] a bound branch whose status file is absent when: [t0] the reader runs then: it reads unknown, never a silent blank, and names the fix 1`] = `
+{
+  "status": 0,
+  "stderr": "",
+  "stdout": "🗿 status unknown, rhx route.drive
+",
+}
+`;
+
+exports[`route.status.line.sh given: [case4b] a branch bound before the pointer existed (upgrade, fresh worktree) when: [t0] the reader runs then: it reads unknown, never a silent blank, and names the fix 1`] = `
+{
+  "status": 0,
+  "stderr": "",
+  "stdout": "🗿 status unknown, rhx route.drive
+",
+}
+`;
+
+exports[`route.status.line.sh given: [case5] a bound branch whose status file does not parse when: [t0] the reader runs then: it reads unknown 1`] = `
+{
+  "status": 0,
+  "stderr": "",
+  "stdout": "🗿 status unknown, rhx route.drive
+",
+}
+`;
+
+exports[`route.status.line.sh given: [case6] a branch pointer marked as a multi-bind when: [t0] the reader runs then: it prints the fault line, with the fix 1`] = `
+{
+  "status": 0,
+  "stderr": "",
+  "stdout": "🗿 two routes bound to this branch, rhx route.bind.get
+",
+}
+`;
+
+exports[`route.status.line.sh given: [case8] an unbound repo when: [t0] the reader runs then: it prints the blank line 1`] = `
+{
+  "status": 0,
+  "stderr": "",
+  "stdout": "",
+}
+`;
+
+exports[`route.status.line.sh given: [case8b] the --help flag when: [t0] the reader runs with --help then: it prints usage, output states, and an example, exit 0: route.status.line --help 1`] = `
+"route.status.line - print the claude code status line from the bound route's status file
+
+usage:
+  BASH_ENV= bash .agent/repo=bhrain/role=driver/skills/route.status.line.sh
+  (run from the repo root, as the harness does; init.claude.status-line binds it)
+
+options:
+  --help, -h   show this help message
+
+output:
+  unbound branch            (empty line)
+  bound, fresh              the line the route writers rendered
+  bound, stale              <line> · stale, rhx route.drive
+  bound, absent status file 🗿 status unknown, rhx route.drive
+  bound, no pointer yet     🗿 status unknown, rhx route.drive (route under .behavior/)
+  bound, no pointer yet     (empty line, route outside .behavior/, until its next drive or bind)
+  two routes bound          🗿 two routes bound to this branch, rhx route.bind.get
+
+note:
+  a repaint spawns no process: the writers (route.drive, stone set, bind, meter)
+  rewrite $route/.route/.status.line.json when the route moves, and this reads it.
+  stale = a passage, meter, promise, or bind flag newer than the file.
+
+examples:
+  BASH_ENV= bash .agent/repo=bhrain/role=driver/skills/route.status.line.sh
+  rhx route.drive   # refresh a stale or absent status file
+"
+`;
+
+exports[`route.status.line.sh given: [case12] a line that holds a quote and a backslash when: [t0] the reader runs then: it unescapes the json back to the line 1`] = `
+{
+  "status": 0,
+  "stderr": "",
+  "stdout": "🗿 a "q" \\b \\\\c
+",
+}
+`;
+
+exports[`route.status.line.sh given: [case14] a guardless route that halts, then completes when: [t0] the guard halts for human approval then: the line waves for a human, byte-equal to the node render 1`] = `
+{
+  "status": 0,
+  "stderr": "",
+  "stdout": "🗿 1.vision, judge, approved? 👋
+",
+}
+`;
+
+exports[`route.status.line.sh given: [case14] a guardless route that halts, then completes when: [t1] the driver marks a wall then: the line shows the stop hand, byte-equal to the node render 1`] = `
+{
+  "status": 0,
+  "stderr": "",
+  "stdout": "🗿 1.vision, yield, blocked ✋
+",
+}
+`;
+
+exports[`route.status.line.sh given: [case14] a guardless route that halts, then completes when: [t2] the last stone passes then: the line reads complete, byte-equal to the node render 1`] = `
+{
+  "status": 0,
+  "stderr": "",
+  "stdout": "🗿 route complete 🌴🤙
+",
+}
+`;
+
+exports[`route.status.line.sh given: [case15] a peer-guarded route whose reviewer malfunctions when: [t0] the guard records the malfunction then: the line shows the collision, byte-equal to the node render 1`] = `
+{
+  "status": 0,
+  "stderr": "",
+  "stdout": "🗿 1.vision, review.peer, l1@i002, malfunction 💥
+",
+}
+`;
+
+exports[`route.status.line.sh given: [case16] a second route bound by hand, then a drive, then an unbind when: [t0] a route.drive runs the bind lookup, via the real drive then: the reader prints the multi-bind line, with its fix 1`] = `
+{
+  "status": 0,
+  "stderr": "",
+  "stdout": "🗿 two routes bound to this branch, rhx route.bind.get
+",
+}
+`;
+
+exports[`route.status.line.sh given: [case16] a second route bound by hand, then a drive, then an unbind when: [t1] the branch is unbound, via the real unbind then: the reader prints the blank line at once, as unbound 1`] = `
+{
+  "status": 0,
+  "stderr": "",
+  "stdout": "",
+}
+`;

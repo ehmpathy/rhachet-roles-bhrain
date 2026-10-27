@@ -202,3 +202,10 @@ always:
   skills:
     say:
       - skills/route.stone.set.sh
+    # the status line reader: the harness runs it per repaint, a driver never does, so a
+    # boot ref would cost every seat tokens for a tool no seat calls
+    not:
+      - skills/route.status.line.sh
+      # the colocated skill tests and their snapshots: no seat runs them, and dist never ships them
+      - skills/*.test.ts
+      - skills/__snapshots__/**

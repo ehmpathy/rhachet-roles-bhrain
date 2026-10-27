@@ -29,8 +29,9 @@ exports[`init.claude.status-line.integration given: [case2] an old-layout repo w
     "deny": [],
   },
   "statusLine": {
-    "command": "<renderer node -e command>",
+    "command": "<renderer command>",
     "padding": 0,
+    "refreshInterval": 60,
     "type": "command",
   },
 }
@@ -154,6 +155,28 @@ exports[`init.claude.status-line.integration given: [case6e] a split-layout repo
 `;
 
 exports[`init.claude.status-line.integration given: [case6e] a split-layout repo that holds the cli/route barrel command of ours when: [t1] the init runs a second time then: its stdout matches the barrel-migration rerun snapshot: init.claude.status-line - already configured (barrel migrated) 1`] = `
+"🦉 so it is
+
+🗿 init.claude.status-line
+   ├─ status = already configured
+   ├─ settings = .claude/settings.of.repo.json
+   └─ peer actors = derived at each one's next rhx enroll, or the next rhx init --hooks
+"
+`;
+
+exports[`init.claude.status-line.integration given: [case6f] a split-layout repo that holds the node subpath command of ours when: [t0] the init runs then: its stdout matches the node-migration snapshot: init.claude.status-line - configured (node subpath migrated) 1`] = `
+"🦉 the path is clear
+
+🗿 init.claude.status-line
+   ├─ status = configured
+   ├─ settings = .claude/settings.of.repo.json
+   ├─ backup = .claude/settings.of.repo.<timestamp>.<pid>.bak.json
+   ├─ takes effect = at each rhx enroll session's next start; a live session keeps its old settings
+   └─ peer actors = derived at each one's next rhx enroll, or the next rhx init --hooks
+"
+`;
+
+exports[`init.claude.status-line.integration given: [case6f] a split-layout repo that holds the node subpath command of ours when: [t1] the init runs a second time then: its stdout matches the node-migration rerun snapshot: init.claude.status-line - already configured (node subpath migrated) 1`] = `
 "🦉 so it is
 
 🗿 init.claude.status-line

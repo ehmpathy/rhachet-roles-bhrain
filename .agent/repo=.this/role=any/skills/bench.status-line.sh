@@ -12,7 +12,7 @@
 #   rhx bench.status-line --runs 30
 #
 # guarantee:
-#   - reports user+sys cpu seconds per repaint, for ten arms:
+#   - reports user+sys cpu seconds per repaint, for twelve arms:
 #     bare node · bare node + one git spawn (the branch read a hit avoids)
 #     · the import() floor (a builtin via dynamic import — the command shape's
 #     own cost) · import of cli/route only · a legacy miss (the cache dropped,
@@ -23,8 +23,15 @@
 #     dropped first: the bind lookup + the render, the cost of each change)
 #     · the unbound glob (the repo-wide bind flag walk an unbound seat's
 #     miss pays once per max age, over this repo's real tree)
+#     · bare bash (the floor of a bash command) · the bash reader (the
+#     statusLine command since the status file: zero node, zero spawns),
+#     both with BASH_ENV cleared as the command clears it, so a host rc
+#     never enters the figure
 #   - never writes route state; the subpath arm fills its own gitignored
 #     cache under .agent/.cache/, as every seat does
+#   - a miss arm drops only the node branch=*.json records, and keeps the
+#     bash reader's branch=*.route pointers, so a bench never blanks the line
+#   - refuses up front, before any arm, where the bash reader is not installed
 #   - exit 0 = measured, exit 1 = an arm failed, exit 2 = bad input
 ######################################################################
 set -euo pipefail
@@ -42,6 +49,11 @@ while [[ $# -gt 0 ]]; do
 done
 [[ "$RUNS" =~ ^[1-9][0-9]*$ ]] || { echo "✋ ConstraintError: --runs must be a positive integer" >&2; exit 2; }
 
+# the bash reader must be installed, checked before any arm so a refusal costs no node spawn
+READER_PATH="node_modules/rhachet-roles-bhrain/dist/domain.roles/driver/skills/route.status.line.sh"
+[[ -f "$READER_PATH" ]] ||
+  { echo "✋ ConstraintError: no bash reader at $READER_PATH; run bench.status-line from a repo whose installed rhachet-roles-bhrain ships route.status.line.sh" >&2; exit 2; }
+
 # measure one arm: total user+sys cpu over RUNS invocations, then per repaint
 measure_arm() {
   local label="$1" code="$2" cpu
@@ -50,6 +62,20 @@ measure_arm() {
     { echo "💥 MalfunctionError: the '$label' arm failed; its stderr is above" >&2; exit 1; }
   TIMEFORMAT='%U %S'
   cpu=$( { time (for _ in $(seq "$RUNS"); do node -e "$code" >/dev/null 2>&1 || exit 1; done) ; } 2>&1 ) ||
+    { echo "💥 MalfunctionError: the '$label' arm failed mid-run" >&2; exit 1; }
+  awk -v l="$label" -v n="$RUNS" -v c="$cpu" 'BEGIN { split(c, a, " "); t = a[1] + a[2]; printf "   ├─ %-14s %6.3fs cpu per repaint\n", l, t / n }'
+}
+
+# measure one bash arm: the same tally, for a bash command with no node in it
+# .note = the second arg is the BASH_ENV the arm runs under; '' as the statusLine command
+#         clears it, so the figure holds no host rc
+measure_bash_arm() {
+  local label="$1" bash_env="$2" cpu
+  shift 2
+  BASH_ENV="$bash_env" bash "$@" >/dev/null ||
+    { echo "💥 MalfunctionError: the '$label' arm failed; its stderr is above" >&2; exit 1; }
+  TIMEFORMAT='%U %S'
+  cpu=$( { time (for _ in $(seq "$RUNS"); do BASH_ENV="$bash_env" bash "$@" >/dev/null 2>&1 || exit 1; done) ; } 2>&1 ) ||
     { echo "💥 MalfunctionError: the '$label' arm failed mid-run" >&2; exit 1; }
   awk -v l="$label" -v n="$RUNS" -v c="$cpu" 'BEGIN { split(c, a, " "); t = a[1] + a[2]; printf "   ├─ %-14s %6.3fs cpu per repaint\n", l, t / n }'
 }
@@ -67,7 +93,9 @@ measure_arm "import only" "import('rhachet-roles-bhrain/cli/route').then(() => 0
 # the commands, and a cache drop that forces a miss before each repaint
 SUBPATH_CODE="import('rhachet-roles-bhrain/cli/route.status.line').then(m => m.routeStatusLine())"
 LEGACY_CODE="import('rhachet-roles-bhrain/cli/route').then(m => m.routeStatusLine())"
-DROP_CODE="require('fs').rmSync('.agent/.cache/repo=bhrain/role=driver/skill=route.status.line', { recursive: true, force: true });"
+# the drop removes the node records (`branch=*.json`) alone: the bash reader's branch pointers
+# (`branch=*.route`) share the dir, and to drop them would blank this seat's live line
+DROP_CODE="{ const fs = require('fs'); const dir = '.agent/.cache/repo=bhrain/role=driver/skill=route.status.line'; for (const name of fs.existsSync(dir) ? fs.readdirSync(dir) : []) if (name.startsWith('branch=') && name.endsWith('.json')) fs.rmSync(dir + '/' + name, { force: true }); }"
 # the old cost: a seat on the legacy barrel with no cache to read — the barrel, the glob, the render
 measure_arm "legacy miss" "$DROP_CODE $LEGACY_CODE"
 # one cold repaint fills the cache, then the warm repaints are measured
@@ -83,4 +111,8 @@ measure_arm "subpath miss" "$DROP_CODE $SUBPATH_CODE"
 # what is measured). the op is internal, so it loads from the package's dist via node_modules
 GLOB_MODULE="process.cwd() + '/node_modules/rhachet-roles-bhrain/dist/domain.operations/route/bind/getAllBindFlagsByBranch.js'"
 measure_arm "unbound glob" "require($GLOB_MODULE).getAllBindFlagsByBranch({ branch: 'bench/unbound-seat' }).then(() => 0)"
+# the zero-node arms: a bare bash start (the floor), then the bash reader the statusLine runs,
+# which reads the status file the route's writers keep and spawns no child process
+measure_bash_arm "bare bash" "" "-c" ":"
+measure_bash_arm "bash reader" "" "$READER_PATH"
 echo "   └─ cwd = $(pwd)"

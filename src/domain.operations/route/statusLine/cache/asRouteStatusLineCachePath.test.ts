@@ -20,9 +20,9 @@ const TEST_CASES: {
   },
   {
     description: 'a slash branch is flattened, so it never makes a subdir',
-    given: { cwd: '/repo', branch: 'vlad/fix-status-line' },
+    given: { cwd: '/repo', branch: 'human/fix-status-line' },
     expected:
-      '/repo/.agent/.cache/repo=bhrain/role=driver/skill=route.status.line/branch=vlad.fix-status-line.json',
+      '/repo/.agent/.cache/repo=bhrain/role=driver/skill=route.status.line/branch=human.fix-status-line.json',
   },
 ];
 
