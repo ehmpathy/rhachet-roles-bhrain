@@ -3,16 +3,29 @@
 // .why  = pins the current stone (🗿 <stone>) at the bottom of the session, so
 //         observers glance at the driver's step without a command or a scroll
 {
-  // .note = invokes the renderer directly via `node -e` (not `rhx`) on purpose:
-  //         the rhx wrapper prints a "🪨 run solid skill" banner to stdout, which
-  //         the harness would render as extra status-line rows. node -e emits only
-  //         the bare line.
-  // .note = imports the isolated `cli/route.status.line` subpath, never the
-  //         `cli/route` barrel: a repaint with no render-input change then reads one
-  //         cache file and costs node boot alone
+  // .note = runs the bash reader, never node: a repaint reads the status file the
+  //         route's writers keep beside it ($route/.route/.status.line.json), and
+  //         spawns no child process. the render runs once per route move, inside
+  //         the node process that made the move
+  // .note = the path is relative to the repo root, where the harness runs the
+  //         command; it names `route.status.line`, the literal the init reads to
+  //         know the line as its own
+  // .note = `BASH_ENV=` clears the env var a non-interactive bash sources first: a
+  //         human who points it at an rc file would else pay that rc on every
+  //         repaint (measured: ~50ms of cpu, most of a repaint). an assignment
+  //         prefix costs no process
+  // .note = refreshInterval 60 adds one repaint a minute on an idle seat, so a move
+  //         made by another seat or a background guard shows with no new message.
+  //         it caps naught: the harness still repaints on each message, which is
+  //         why each repaint must cost one bash and no spawn
+  // .note = the `|| printf` fallback fires only where bash cannot reach the reader
+  //         (driver unlinked, a clone never linked, a cwd off the repo root), since
+  //         the reader itself always exits 0. so that seat reads a line that names
+  //         its fix, never a silent blank. `printf` is a builtin: no process
   "statusLine": {
     "type": "command",
-    "command": "node -e \"import('rhachet-roles-bhrain/cli/route.status.line').then(m => m.routeStatusLine())\"",
-    "padding": 0
+    "command": "BASH_ENV= bash .agent/repo=bhrain/role=driver/skills/route.status.line.sh || printf '%s\\n' '🗿 status line reader not found, rhx init --roles driver'",
+    "padding": 0,
+    "refreshInterval": 60
   }
 }

@@ -12,8 +12,8 @@ describe('getAllBindFlagsByBranch', () => {
       const routeDir = path.join(tempDir, '.behavior', 'my-feature', '.route');
       await fs.mkdir(routeDir, { recursive: true });
       await fs.writeFile(
-        path.join(routeDir, '.bind.vlad.test-branch.flag'),
-        'branch: vlad/test-branch\n',
+        path.join(routeDir, '.bind.human.test-branch.flag'),
+        'branch: human/test-branch\n',
       );
     });
 
@@ -23,10 +23,10 @@ describe('getAllBindFlagsByBranch', () => {
         process.chdir(tempDir);
         try {
           const result = await getAllBindFlagsByBranch({
-            branch: 'vlad/test-branch',
+            branch: 'human/test-branch',
           });
           expect(result.flagFiles).toHaveLength(1);
-          expect(result.flagFiles[0]).toContain('.bind.vlad.test-branch.flag');
+          expect(result.flagFiles[0]).toContain('.bind.human.test-branch.flag');
         } finally {
           process.chdir(originalCwd);
         }
@@ -42,8 +42,8 @@ describe('getAllBindFlagsByBranch', () => {
       const routeDir = path.join(tempDir, '.temp', 'some-test', '.route');
       await fs.mkdir(routeDir, { recursive: true });
       await fs.writeFile(
-        path.join(routeDir, '.bind.vlad.ignored-branch.flag'),
-        'branch: vlad/ignored-branch\n',
+        path.join(routeDir, '.bind.human.ignored-branch.flag'),
+        'branch: human/ignored-branch\n',
       );
     });
 
@@ -53,7 +53,7 @@ describe('getAllBindFlagsByBranch', () => {
         process.chdir(tempDir);
         try {
           const result = await getAllBindFlagsByBranch({
-            branch: 'vlad/ignored-branch',
+            branch: 'human/ignored-branch',
           });
           expect(result.flagFiles).toHaveLength(0);
         } finally {
@@ -71,8 +71,8 @@ describe('getAllBindFlagsByBranch', () => {
       const routeDir = path.join(tempDir, 'dist', 'some-build', '.route');
       await fs.mkdir(routeDir, { recursive: true });
       await fs.writeFile(
-        path.join(routeDir, '.bind.vlad.ignored-branch.flag'),
-        'branch: vlad/ignored-branch\n',
+        path.join(routeDir, '.bind.human.ignored-branch.flag'),
+        'branch: human/ignored-branch\n',
       );
     });
 
@@ -82,7 +82,7 @@ describe('getAllBindFlagsByBranch', () => {
         process.chdir(tempDir);
         try {
           const result = await getAllBindFlagsByBranch({
-            branch: 'vlad/ignored-branch',
+            branch: 'human/ignored-branch',
           });
           expect(result.flagFiles).toHaveLength(0);
         } finally {
@@ -100,8 +100,8 @@ describe('getAllBindFlagsByBranch', () => {
       const routeDir = path.join(tempDir, 'node_modules', 'some-pkg', '.route');
       await fs.mkdir(routeDir, { recursive: true });
       await fs.writeFile(
-        path.join(routeDir, '.bind.vlad.ignored-branch.flag'),
-        'branch: vlad/ignored-branch\n',
+        path.join(routeDir, '.bind.human.ignored-branch.flag'),
+        'branch: human/ignored-branch\n',
       );
     });
 
@@ -111,7 +111,7 @@ describe('getAllBindFlagsByBranch', () => {
         process.chdir(tempDir);
         try {
           const result = await getAllBindFlagsByBranch({
-            branch: 'vlad/ignored-branch',
+            branch: 'human/ignored-branch',
           });
           expect(result.flagFiles).toHaveLength(0);
         } finally {
@@ -134,8 +134,8 @@ describe('getAllBindFlagsByBranch', () => {
       );
       await fs.mkdir(validRouteDir, { recursive: true });
       await fs.writeFile(
-        path.join(validRouteDir, '.bind.vlad.mixed-branch.flag'),
-        'branch: vlad/mixed-branch\n',
+        path.join(validRouteDir, '.bind.human.mixed-branch.flag'),
+        'branch: human/mixed-branch\n',
       );
 
       // ignored flags
@@ -144,12 +144,12 @@ describe('getAllBindFlagsByBranch', () => {
       await fs.mkdir(tempRouteDir, { recursive: true });
       await fs.mkdir(distRouteDir, { recursive: true });
       await fs.writeFile(
-        path.join(tempRouteDir, '.bind.vlad.mixed-branch.flag'),
-        'branch: vlad/mixed-branch\n',
+        path.join(tempRouteDir, '.bind.human.mixed-branch.flag'),
+        'branch: human/mixed-branch\n',
       );
       await fs.writeFile(
-        path.join(distRouteDir, '.bind.vlad.mixed-branch.flag'),
-        'branch: vlad/mixed-branch\n',
+        path.join(distRouteDir, '.bind.human.mixed-branch.flag'),
+        'branch: human/mixed-branch\n',
       );
 
       // ignored flags under per-seat brain state and tool caches
@@ -164,12 +164,12 @@ describe('getAllBindFlagsByBranch', () => {
       await fs.mkdir(actorsRouteDir, { recursive: true });
       await fs.mkdir(cacheRouteDir, { recursive: true });
       await fs.writeFile(
-        path.join(actorsRouteDir, '.bind.vlad.mixed-branch.flag'),
-        'branch: vlad/mixed-branch\n',
+        path.join(actorsRouteDir, '.bind.human.mixed-branch.flag'),
+        'branch: human/mixed-branch\n',
       );
       await fs.writeFile(
-        path.join(cacheRouteDir, '.bind.vlad.mixed-branch.flag'),
-        'branch: vlad/mixed-branch\n',
+        path.join(cacheRouteDir, '.bind.human.mixed-branch.flag'),
+        'branch: human/mixed-branch\n',
       );
     });
 
@@ -179,7 +179,7 @@ describe('getAllBindFlagsByBranch', () => {
         process.chdir(tempDir);
         try {
           const result = await getAllBindFlagsByBranch({
-            branch: 'vlad/mixed-branch',
+            branch: 'human/mixed-branch',
           });
           expect(result.flagFiles).toHaveLength(1);
           // check path contains valid location, not ignored dirs relative to cwd

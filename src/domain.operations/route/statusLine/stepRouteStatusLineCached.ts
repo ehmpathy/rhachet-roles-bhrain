@@ -85,7 +85,7 @@ export const stepRouteStatusLineCached = async (
   const rendered = await getOneRenderedLine({ route }, context);
 
   // cache the line and its degrade row; a write fault is reported, never fatal
-  const cacheWriteFault = setCacheOrFault({
+  const cacheWriteFault = await setCacheOrFault({
     cachePath,
     record: {
       line: rendered.line,
@@ -285,12 +285,12 @@ const isCacheRecordYoung = (input: {
  *         a correct line. none is hidden either: the caller prints each to stderr with its
  *         code, its path, and the fix (`asStatusLineCacheWriteFaultRow`)
  */
-const setCacheOrFault = (input: {
+const setCacheOrFault = async (input: {
   cachePath: string;
   record: RouteStatusLineCacheRecord;
-}): RouteStatusLineCacheFault | null => {
+}): Promise<RouteStatusLineCacheFault | null> => {
   try {
-    setRouteStatusLineCache(input);
+    await setRouteStatusLineCache(input);
     return null;
   } catch (error) {
     const code = getFsErrorCode(error);

@@ -8,16 +8,25 @@ import { fileURLToPath, pathToFileURL } from 'url';
 import { sanitizeBranchName } from '@src/utils/git/sanitizeBranchName';
 
 /**
- * .what = acceptance tests for the route.status.line cli contract
- * .why = the vision specifies the harness contract: the harness runs the renderer
- *        with cwd = project root and renders stdout as the status line. the renderer
- *        emits `🗿 <stone>` for the branch-bound route, or an empty line when unbound
- *        or complete. this is a contract-grain test (per rule.require.test-coverage-by-grain):
- *        it spawns the real built cli (the `node -e` harness command) via the package's
- *        public contract boundary, no mocks — across positive, negative/edge, help, and
- *        fault paths, each snapped so a reviewer sees exactly what the user sees.
+ * .what = acceptance tests for the node entry of the route.status.line cli contract —
+ *         the command a seat runs while its settings predate the bash reader
+ * .why = the harness runs the bound command with cwd = project root and renders stdout
+ *        as the status line: `🗿 <stone>` for the branch-bound route, or an empty line
+ *        when unbound or complete. a seat bound before the bash reader keeps this node
+ *        entry until its next `rhx init`, so its contract still holds. this is a
+ *        contract-grain test (per rule.require.test-coverage-by-grain): it spawns the real
+ *        built cli via the package's public contract boundary, no mocks — across positive,
+ *        negative/edge, help, and fault paths, each snapped so a reviewer sees exactly
+ *        what such a seat sees.
  *
- * .how = spawns the exact `node -e` command the init writes into the repo settings, but
+ * .note = the command `rhx init` binds today is the bash reader, and its own contract is
+ *         proven where it runs under bash: `route.status.line.integration.test.ts` (every
+ *         line state, each snapped) and `init.claude.status-line.survives-layout.integration.test.ts`
+ *         (the bound command, run as the harness runs it). the node command below is
+ *         frozen text in older seats' settings, not a value any current file declares, so
+ *         there is no bound config to derive it from
+ *
+ * .how = spawns the `node -e` command a seat holds from before the bash reader, but
  *        imports the package by absolute path so the spawn cwd is free to be the
  *        anchor. the *anchor* under test is the spawn cwd (as the harness supplies it),
  *        not a stdin payload — the renderer reads no stdin.
@@ -31,42 +40,16 @@ import { sanitizeBranchName } from '@src/utils/git/sanitizeBranchName';
 const RENDER_MODULE_URL = pathToFileURL(
   require.resolve('rhachet-roles-bhrain/cli/route.status.line'),
 ).href;
-const RENDER_SPECIFIER = 'rhachet-roles-bhrain/cli/route.status.line';
 
 /**
- * .what = derives the `node -e` body from the command the init binds into the settings
- * .why = the test runs the bound command itself, never a stand-in copy. only the import
- *        specifier changes: the bare package name is not found from a temp cwd, so it
- *        is swapped for the absolute file url of the same module
- * .note = the jsonc holds whole-line `//` comments only, so a line-start strip parses it
+ * .what = the `node -e` body a seat runs while its settings predate the bash reader
+ * .why = the init now binds the bash reader (`route.status.line.sh`); a seat whose
+ *        settings were written before then still runs this node entry until its next
+ *        `rhx init`, so its contract holds and is tested here. only the import specifier
+ *        differs from the command such a seat holds: the bare package name is not found
+ *        from a temp cwd, so it is swapped for the absolute file url of the same module
  */
-const asRenderCommandFromBoundConfig = (input: {
-  moduleUrl: string;
-}): string => {
-  const configRaw = fs.readFileSync(
-    path.join(
-      __dirname,
-      '../../domain.roles/driver/inits/init.claude.status-line.jsonc',
-    ),
-    'utf-8',
-  );
-  const config = JSON.parse(
-    configRaw
-      .split('\n')
-      .filter((line) => !line.trim().startsWith('//'))
-      .join('\n'),
-  ) as { statusLine: { command: string } };
-  const boundCommand = config.statusLine.command;
-  const body = /^node -e "(.*)"$/.exec(boundCommand)?.[1];
-  if (!body || !body.includes(`'${RENDER_SPECIFIER}'`))
-    throw new Error(
-      `the bound statusLine command no longer imports ${RENDER_SPECIFIER} via node -e: ${boundCommand}`,
-    );
-  return body.replace(`'${RENDER_SPECIFIER}'`, JSON.stringify(input.moduleUrl));
-};
-const RENDER_COMMAND = asRenderCommandFromBoundConfig({
-  moduleUrl: RENDER_MODULE_URL,
-});
+const RENDER_COMMAND = `import(${JSON.stringify(RENDER_MODULE_URL)}).then(m => m.routeStatusLine())`;
 
 /**
  * .what = runs the renderer via node -e from a given cwd (the harness anchor)
@@ -234,8 +217,9 @@ describe('routeStatusLine.acceptance', () => {
           );
         });
 
-        then('it exits 0', () => {
+        then('it exits 0, with no stderr', () => {
           expect(out.exitCode).toEqual(0);
+          expect(out.stderr).toEqual('');
         });
       });
     },
@@ -297,17 +281,24 @@ describe('routeStatusLine.acceptance', () => {
           expect(out.stdout).toMatchSnapshot('route.status.line - bound route');
         });
 
-        then('it exits 0', () => {
+        then('it exits 0, with no stderr', () => {
           expect(out.exitCode).toEqual(0);
+          expect(out.stderr).toEqual('');
         });
       });
     },
   );
 
   given('[case3] the --help flag', () => {
+    // --help is the first branch of `routeStatusLine`: it prints and returns before any read
+    // of cwd, git, or the route, so the cwd cannot change its output. a temp repo keeps it
+    // hermetic like its peers, and off this worktree's live branch and bound stone
     when('[t0] the renderer runs with --help', () => {
       const out = useBeforeAll(async () =>
-        runRenderer({ cwd: process.cwd(), args: ['--help'] }),
+        runRenderer({
+          cwd: genTempDir({ slug: 'statusline-cli-help', git: true }),
+          args: ['--help'],
+        }),
       );
 
       then('it prints usage', () => {
@@ -318,8 +309,9 @@ describe('routeStatusLine.acceptance', () => {
         expect(out.stdout).toMatchSnapshot('route.status.line - help');
       });
 
-      then('it exits 0', () => {
+      then('it exits 0, with no stderr', () => {
         expect(out.exitCode).toEqual(0);
+        expect(out.stderr).toEqual('');
       });
     });
   });
@@ -431,8 +423,9 @@ describe('routeStatusLine.acceptance', () => {
         );
       });
 
-      then('it exits 0', () => {
+      then('it exits 0, with no stderr', () => {
         expect(out.exitCode).toEqual(0);
+        expect(out.stderr).toEqual('');
       });
     });
   });
@@ -461,8 +454,9 @@ describe('routeStatusLine.acceptance', () => {
         expect(out.stdout).toMatchSnapshot('route.status.line - review.self');
       });
 
-      then('it exits 0', () => {
+      then('it exits 0, with no stderr', () => {
         expect(out.exitCode).toEqual(0);
+        expect(out.stderr).toEqual('');
       });
     });
   });
@@ -493,8 +487,9 @@ describe('routeStatusLine.acceptance', () => {
         expect(out.stdout).toMatchSnapshot('route.status.line - review.peer');
       });
 
-      then('it exits 0', () => {
+      then('it exits 0, with no stderr', () => {
         expect(out.exitCode).toEqual(0);
+        expect(out.stderr).toEqual('');
       });
     });
   });
@@ -523,8 +518,9 @@ describe('routeStatusLine.acceptance', () => {
         );
       });
 
-      then('it exits 0', () => {
+      then('it exits 0, with no stderr', () => {
         expect(out.exitCode).toEqual(0);
+        expect(out.stderr).toEqual('');
       });
     });
   });
@@ -549,8 +545,9 @@ describe('routeStatusLine.acceptance', () => {
         expect(out.stdout).toMatchSnapshot('route.status.line - judge.machine');
       });
 
-      then('it exits 0', () => {
+      then('it exits 0, with no stderr', () => {
         expect(out.exitCode).toEqual(0);
+        expect(out.stderr).toEqual('');
       });
     });
   });
@@ -583,8 +580,9 @@ describe('routeStatusLine.acceptance', () => {
         );
       });
 
-      then('it exits 0', () => {
+      then('it exits 0, with no stderr', () => {
         expect(out.exitCode).toEqual(0);
+        expect(out.stderr).toEqual('');
       });
     });
   });
@@ -619,8 +617,9 @@ describe('routeStatusLine.acceptance', () => {
         );
       });
 
-      then('it exits 0', () => {
+      then('it exits 0, with no stderr', () => {
         expect(out.exitCode).toEqual(0);
+        expect(out.stderr).toEqual('');
       });
     });
   });
@@ -661,8 +660,9 @@ describe('routeStatusLine.acceptance', () => {
           );
         });
 
-        then('it exits 0', () => {
+        then('it exits 0, with no stderr', () => {
           expect(out.exitCode).toEqual(0);
+          expect(out.stderr).toEqual('');
         });
       });
     },
@@ -778,8 +778,9 @@ describe('routeStatusLine.acceptance', () => {
           );
         });
 
-        then('it exits 0', () => {
+        then('it exits 0, with no stderr', () => {
           expect(out.exitCode).toEqual(0);
+          expect(out.stderr).toEqual('');
         });
       });
     },
@@ -815,8 +816,9 @@ describe('routeStatusLine.acceptance', () => {
         );
       });
 
-      then('it exits 0', () => {
+      then('it exits 0, with no stderr', () => {
         expect(out.exitCode).toEqual(0);
+        expect(out.stderr).toEqual('');
       });
     });
   });

@@ -525,7 +525,8 @@
   ],
   "statusLine": {
     "type": "command",
-    "command": "node -e \"import('rhachet-roles-bhrain/cli/route.status.line').then(m => m.routeStatusLine())\"",
-    "padding": 0
+    "command": "BASH_ENV= bash .agent/repo=bhrain/role=driver/skills/route.status.line.sh || printf '%s\\n' '🗿 status line reader not found, rhx init --roles driver'",
+    "padding": 0,
+    "refreshInterval": 60
   }
 }
