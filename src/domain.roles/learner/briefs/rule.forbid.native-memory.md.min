@@ -33,9 +33,9 @@ for a **true secret** (a credential value, token, key), do not even generalize t
 
 ## .what is allowed
 
-`~/.claude/settings.json` and other **config** (not memory) · `CLAUDE.md` (already durable + git-visible) · **reads** of native memory — only *writes* are halted.
+`~/.claude/settings.json` and other **config** (not memory) · `CLAUDE.md` (already durable + git-visible) · **reads** of native memory — only *writes* are halted. `cp` or `mv` anywhere in a command that names a memory path (or a `$var` redirect) blocks either way, unless the command is a known reader; `tee` is graded by its operands, so `cat M | tee /tmp/x.md` passes. read with `cat`, or redirect to an absolute path outside memory.
 
-🟡 **the guard is a safety net, not a seal.** it cannot catch every path, so do not read its silence as approval. the discipline is yours.
+🟡 **the guard is a safety net, not a seal.** it cannot catch every path, so do not read its silence as approval. a guard that cannot run lets the call through and says so (`📜 memory.guard: could not run …`); the discipline is still yours.
 
 blocker: a write to `~/.claude/**/memory/**` or `~/.claude/**/MEMORY.md`.
 

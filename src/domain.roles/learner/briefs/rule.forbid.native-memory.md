@@ -68,13 +68,29 @@ the guard is precise — it targets only the native-memory store, so these remai
 
 - `~/.claude/settings.json` and other config (not memory)
 - `CLAUDE.md` (already durable + git-visible)
-- reads of native memory (only *writes* are halted)
+- reads of native memory (only *writes* are halted) — a read with `2>&1`, `>&2`, `=>`, or `->`
+  in it is still a read; a redirect writes only when its target is memory
+
+🟡 `tee`, `teesafe`, `cp`, and `mv` are graded blunt: one of them anywhere in a command that
+names a memory path blocks, so a copy OUT of memory blocks too, and so does a verb behind any
+wrapper (`do cp`, `bash -c "cp …"`, `xargs cp`). a memory path named anywhere in a command
+reaches every part of it — a loop, a `read`, a pipe, or a `D=` can carry it — so `cat M && mv a
+b` blocks too. `tee` is graded by its operands: `cat M | tee .agent/…/b.md` lands outside
+memory and passes. a redirect to a `$var` path beside memory blocks, since the guard cannot
+know where it lands; a relative one is graded at each cwd the shell may hold. the guard errs
+toward its one job: only a known reader (`cat`, `grep`, `head`, `ls`, …) is exempt, so
+`grep cp …` stays a read. read memory with `cat`, or redirect to an absolute path outside it.
 
 ## .the boundary — the guard is a safety net, not a seal
 
 a guard halts the common ways knowledge lands in native memory, but it cannot catch every path.
 so do not read the guard's silence as "this was fine": the discipline is yours. when you mean to
 persist a lesson, redirect it to `.agent/` by hand, whether or not a guard stops you.
+
+a guard that cannot run — skill not linked, cli absent, node absent, a load fault, a timeout —
+never halts the call. it lets the call through and prints one line that names the fault and its
+fix (`📜 memory.guard: could not run (…); call allowed. fix: …`). while that line shows, no guard
+stands between you and native memory, so the discipline above is the only one in force.
 
 ## .enforcement
 
