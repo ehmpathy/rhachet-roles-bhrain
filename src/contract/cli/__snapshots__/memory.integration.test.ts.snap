@@ -1,7 +1,9 @@
 // Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
 
-exports[`memoryGuard (integration) given: [case1] a Write to claude native memory when: [t0] the guard runs then: the full nudge stderr matches snapshot 1`] = `
-"🦉 hold on, friend — that memory would fade.
+exports[`memoryGuard (integration) given: [case1] a Write to claude native memory when: [t0] the guard runs then: the full nudge result matches snapshot 1`] = `
+{
+  "exitCode": 2,
+  "stderr": "🦉 hold on, friend — that memory would fade.
 
 📜 memory.guard
    ├─ ✋ blocked: write to claude native memory
@@ -19,7 +21,8 @@ exports[`memoryGuard (integration) given: [case1] a Write to claude native memor
    │  └─ generalize them — keep the raw secret or path out of durable memory
    │
    └─ 🪷 the instinct is right — pave the path for whoever comes next
-"
+",
+}
 `;
 
 exports[`memoryGuard (integration) given: [case2] a Write to a normal repo file when: [t0] the guard runs then: the allow variant matches snapshot (silent, no stderr) 1`] = `
@@ -37,7 +40,9 @@ exports[`memoryGuard (integration) given: [case3] a Write to ~/.claude/settings.
 `;
 
 exports[`memoryGuard (integration) given: [case4] a Bash write into a memory path when: [t0] the guard runs then: the nudge renders the bash-extracted path 1`] = `
-"🦉 hold on, friend — that memory would fade.
+{
+  "exitCode": 2,
+  "stderr": "🦉 hold on, friend — that memory would fade.
 
 📜 memory.guard
    ├─ ✋ blocked: write to claude native memory
@@ -55,11 +60,14 @@ exports[`memoryGuard (integration) given: [case4] a Bash write into a memory pat
    │  └─ generalize them — keep the raw secret or path out of durable memory
    │
    └─ 🪷 the instinct is right — pave the path for whoever comes next
-"
+",
+}
 `;
 
 exports[`memoryGuard (integration) given: [case4b] an Edit to claude native memory when: [t0] the guard runs then: the full Edit-path nudge matches snapshot 1`] = `
-"🦉 hold on, friend — that memory would fade.
+{
+  "exitCode": 2,
+  "stderr": "🦉 hold on, friend — that memory would fade.
 
 📜 memory.guard
    ├─ ✋ blocked: write to claude native memory
@@ -77,7 +85,8 @@ exports[`memoryGuard (integration) given: [case4b] an Edit to claude native memo
    │  └─ generalize them — keep the raw secret or path out of durable memory
    │
    └─ 🪷 the instinct is right — pave the path for whoever comes next
-"
+",
+}
 `;
 
 exports[`memoryGuard (integration) given: [case4c] a Bash read (cat) of a memory path when: [t0] the guard runs then: the allow variant matches snapshot (silent, no stderr) 1`] = `
@@ -98,6 +107,73 @@ exports[`memoryGuard (integration) given: [case6] malformed json stdin when: [t0
 {
   "exitCode": 1,
   "stderr": "📜 memory.guard: could not run (tool payload is not json); call allowed. fix: none needed for this call; if it recurs, report it at https://github.com/ehmpathy/rhachet-roles-bhrain/issues
+",
+}
+`;
+
+exports[`memoryGuard (integration) given: [case7] valid json with no tool_name when: [t0] the guard runs then: one line names the blind spot (snapshot) 1`] = `
+{
+  "exitCode": 1,
+  "stderr": "📜 memory.guard: could not run (tool payload has no tool_name); call allowed. fix: none needed for this call; if it recurs, report it at https://github.com/ehmpathy/rhachet-roles-bhrain/issues
+",
+}
+`;
+
+exports[`memoryGuard (integration) given: [case8] a Bash copy out of a memory path when: [t0] the guard runs then: the nudge names the copy and the read hint (snapshot) 1`] = `
+{
+  "exitCode": 2,
+  "stderr": "🦉 hold on, friend — that memory would fade.
+
+📜 memory.guard
+   ├─ ✋ blocked: a copy beside claude native memory
+   │  └─ /home/agent/.claude/projects/x/memory/note.md
+   │
+   ├─ only a read?
+   │  ├─ a cp or mv beside memory blocks, either direction
+   │  └─ read it with cat, or redirect to an absolute path outside memory
+   │
+   ├─ why
+   │  └─ ~/.claude memory is machine-local + invisible in git
+   │     it will not survive for the next traveler
+   │
+   ├─ capture it durably instead
+   │  ├─ lesson → .agent/repo=.this/role=any/briefs/<name>.md
+   │  └─ tactic → .agent/repo=.this/role=any/skills/<name>.sh
+   │
+   ├─ 🟡 machine-local secrets or paths?
+   │  └─ generalize them — keep the raw secret or path out of durable memory
+   │
+   └─ 🪷 the instinct is right — pave the path for whoever comes next
+",
+}
+`;
+
+exports[`memoryGuard (integration) given: [case9] a Bash redirect through a var beside a memory dir when: [t0] the guard runs then: the nudge names the unplaced write (snapshot) 1`] = `
+{
+  "exitCode": 2,
+  "stderr": "🦉 hold on, friend — that memory would fade.
+
+📜 memory.guard
+   ├─ ✋ blocked: an unplaced write beside claude native memory
+   │  └─ /home/agent/.claude/projects/x/memory
+   │
+   ├─ only a read?
+   │  ├─ a $var redirect may land in memory
+   │  ├─ so may a relative one, with no cwd known
+   │  └─ redirect to an absolute path outside memory
+   │
+   ├─ why
+   │  └─ ~/.claude memory is machine-local + invisible in git
+   │     it will not survive for the next traveler
+   │
+   ├─ capture it durably instead
+   │  ├─ lesson → .agent/repo=.this/role=any/briefs/<name>.md
+   │  └─ tactic → .agent/repo=.this/role=any/skills/<name>.sh
+   │
+   ├─ 🟡 machine-local secrets or paths?
+   │  └─ generalize them — keep the raw secret or path out of durable memory
+   │
+   └─ 🪷 the instinct is right — pave the path for whoever comes next
 ",
 }
 `;

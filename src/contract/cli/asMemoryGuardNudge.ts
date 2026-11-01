@@ -13,8 +13,7 @@ const OWL_WISDOM_GUARD = '🦉 hold on, friend — that memory would fade.';
 const HEADER_OF_ACT: Record<MemoryGuardAct, string> = {
   write: '   ├─ ✋ blocked: write to claude native memory',
   copy: '   ├─ ✋ blocked: a copy beside claude native memory',
-  unplaced:
-    '   ├─ ✋ blocked: a write the guard cannot place, beside claude native memory',
+  unplaced: '   ├─ ✋ blocked: an unplaced write beside claude native memory',
 };
 
 /**
@@ -31,7 +30,8 @@ const READ_ROUTE_OF_ACT: Record<'copy' | 'unplaced', string[]> = {
   ],
   unplaced: [
     '   ├─ only a read?',
-    '   │  ├─ a redirect to a $var path beside memory may land in it, so it blocks',
+    '   │  ├─ a $var redirect may land in memory',
+    '   │  ├─ so may a relative one, with no cwd known',
     '   │  └─ redirect to an absolute path outside memory',
     '   │',
   ],

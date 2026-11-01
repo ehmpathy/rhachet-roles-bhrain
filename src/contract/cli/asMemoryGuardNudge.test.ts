@@ -21,7 +21,7 @@ describe('asMemoryGuardNudge', () => {
   test('an unplaced redirect names what the guard could not place', () => {
     const nudge = asMemoryGuardNudge({ path: MEMORY_PATH, act: 'unplaced' });
     expect(nudge).toContain(
-      '✋ blocked: a write the guard cannot place, beside claude native memory',
+      '✋ blocked: an unplaced write beside claude native memory',
     );
     expect(nudge).toContain('$var');
     expect(nudge).toMatchSnapshot();

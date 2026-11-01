@@ -98,6 +98,7 @@ const asStderrSnap = async (input: {
     .split(input.tree)
     .join('<tree>')
     .replace(/at line \d+\)/g, 'at line <n>)')
+    .replace(/: line \d+:/g, ': line <n>:')
     .replace(/(\n\s+at [^\n]*)+/g, '\n    at <frames>');
 };
 
@@ -222,28 +223,35 @@ describe('learner memory guard hook command (integration)', () => {
             projectDir: null,
           });
           expect(result).toEqual({ exitCode: 0, stderr: '' });
+          expect(result).toMatchSnapshot();
         });
 
         then('a Bash write elsewhere is allowed, exit 0, silent', () => {
-          for (const command of ['echo x > out.txt', 'cp a.md b.md']) {
-            const result = runHook({
+          const results = ['echo x > out.txt', 'cp a.md b.md'].map((command) =>
+            runHook({
               cwd: scene.tree,
               payload: asBash({ command }),
               projectDir: null,
-            });
-            expect(result).toEqual({ exitCode: 0, stderr: '' });
-          }
+            }),
+          );
+          results.forEach((result) =>
+            expect(result).toEqual({ exitCode: 0, stderr: '' }),
+          );
+          expect(results).toMatchSnapshot();
         });
 
         then('a Write and an Edit of src/a.ts are allowed, exit 0', () => {
-          for (const tool_name of ['Write', 'Edit']) {
-            const result = runHook({
+          const results = ['Write', 'Edit'].map((tool_name) =>
+            runHook({
               cwd: scene.tree,
               payload: { tool_name, tool_input: { file_path: 'src/a.ts' } },
               projectDir: null,
-            });
-            expect(result).toEqual({ exitCode: 0, stderr: '' });
-          }
+            }),
+          );
+          results.forEach((result) =>
+            expect(result).toEqual({ exitCode: 0, stderr: '' }),
+          );
+          expect(results).toMatchSnapshot();
         });
       });
 
@@ -272,6 +280,7 @@ describe('learner memory guard hook command (integration)', () => {
             expect(result.exitCode).toEqual(2);
             expect(result.stderr).toContain('memory would fade');
             expect(result.stderr).toContain(MEMORY_PATH);
+            expect(result).toMatchSnapshot();
           });
         }
 
@@ -282,7 +291,7 @@ describe('learner memory guard hook command (integration)', () => {
             projectDir: null,
           });
           expect(result.exitCode).toEqual(2);
-          expect(result.stderr).toMatchSnapshot();
+          expect(result).toMatchSnapshot();
         });
 
         then(
@@ -298,7 +307,7 @@ describe('learner memory guard hook command (integration)', () => {
               '✋ blocked: a copy beside claude native memory',
             );
             expect(result.stderr).toContain('read it with cat');
-            expect(result.stderr).toMatchSnapshot();
+            expect(result).toMatchSnapshot();
           },
         );
 
@@ -321,7 +330,7 @@ describe('learner memory guard hook command (integration)', () => {
               '✋ blocked: write to claude native memory',
             );
             expect(result.stderr).not.toContain('only a read?');
-            expect(result.stderr).toMatchSnapshot();
+            expect(result).toMatchSnapshot();
           });
         }
 
@@ -337,10 +346,10 @@ describe('learner memory guard hook command (integration)', () => {
           });
           expect(result.exitCode).toEqual(2);
           expect(result.stderr).toContain(
-            '✋ blocked: a write the guard cannot place, beside claude native memory',
+            '✋ blocked: an unplaced write beside claude native memory',
           );
           expect(result.stderr).toContain('$var');
-          expect(result.stderr).toMatchSnapshot();
+          expect(result).toMatchSnapshot();
         });
 
         then('a Write and an Edit into memory are blocked, exit 2', () => {
@@ -352,7 +361,7 @@ describe('learner memory guard hook command (integration)', () => {
             });
             expect(result.exitCode).toEqual(2);
             expect(result.stderr).toContain('memory would fade');
-            expect(result.stderr).toMatchSnapshot();
+            expect(result).toMatchSnapshot();
           }
         });
       });
@@ -380,6 +389,7 @@ describe('learner memory guard hook command (integration)', () => {
                 projectDir: null,
               });
               expect(result).toEqual({ exitCode: 0, stderr: '' });
+              expect(result).toMatchSnapshot();
             });
           }
         },
@@ -393,6 +403,7 @@ describe('learner memory guard hook command (integration)', () => {
             projectDir: null,
           });
           expect(result).toEqual({ exitCode: 0, stderr: '' });
+          expect(result).toMatchSnapshot();
         });
       });
 
@@ -422,7 +433,7 @@ describe('learner memory guard hook command (integration)', () => {
                   fix: 'none needed for this call; if it recurs, report it at https://github.com/ehmpathy/rhachet-roles-bhrain/issues',
                 }),
               });
-              expect(result.stderr).toMatchSnapshot();
+              expect(result).toMatchSnapshot();
             },
           );
         }
@@ -458,6 +469,7 @@ describe('learner memory guard hook command (integration)', () => {
               projectDir: null,
             });
             expect(result.exitCode).toEqual(1);
+            expect(result).toMatchSnapshot();
           });
 
           then(
@@ -469,7 +481,7 @@ describe('learner memory guard hook command (integration)', () => {
                 projectDir: null,
               });
               expect(result.stderr).toEqual(`${NOT_LINKED_LINE}\n`);
-              expect(result.stderr).toMatchSnapshot();
+              expect(result).toMatchSnapshot();
             },
           );
         }
@@ -485,6 +497,7 @@ describe('learner memory guard hook command (integration)', () => {
               projectDir: null,
             });
             expect(result.exitCode).toEqual(1);
+            expect(result).toMatchSnapshot();
           },
         );
       });
@@ -520,9 +533,13 @@ describe('learner memory guard hook command (integration)', () => {
                 fix: 'reinstall rhachet-roles-bhrain, then ./node_modules/.bin/rhachet roles link --repo bhrain --role learner',
               }),
             );
-            expect(
-              await asStderrSnap({ stderr: result.stderr, tree: scene.tree }),
-            ).toMatchSnapshot();
+            expect({
+              exitCode: result.exitCode,
+              stderr: await asStderrSnap({
+                stderr: result.stderr,
+                tree: scene.tree,
+              }),
+            }).toMatchSnapshot();
           },
         );
       });
@@ -542,6 +559,13 @@ describe('learner memory guard hook command (integration)', () => {
               fix: './node_modules/.bin/rhachet roles link --repo bhrain --role learner',
             }),
           });
+          expect({
+            exitCode: result.exitCode,
+            stderr: await asStderrSnap({
+              stderr: result.stderr,
+              tree: elsewhere,
+            }),
+          }).toMatchSnapshot();
         });
       });
 
@@ -568,6 +592,10 @@ describe('learner memory guard hook command (integration)', () => {
                 fix: 'reinstall rhachet-roles-bhrain, then ./node_modules/.bin/rhachet roles link --repo bhrain --role learner',
               }),
             });
+            expect({
+              exitCode: result.exitCode,
+              stderr: await asStderrSnap({ stderr: result.stderr, tree }),
+            }).toMatchSnapshot();
           });
         },
       );
@@ -608,21 +636,32 @@ describe('learner memory guard hook command (integration)', () => {
             'Error: dependency at the wrong version',
           );
           expect(linesStack.join('\n')).toMatch(/\n\s+at /);
-          expect(
-            await asStderrSnap({ stderr: result.stderr, tree: scene.tree }),
-          ).toMatchSnapshot();
+          expect({
+            exitCode: result.exitCode,
+            stderr: await asStderrSnap({
+              stderr: result.stderr,
+              tree: scene.tree,
+            }),
+          }).toMatchSnapshot();
         },
       );
     });
 
     when('[t1] a write into native memory fires the hook', () => {
-      then('it proceeds too; never exit 2', () => {
+      then('it proceeds too; never exit 2', async () => {
         const result = runHook({
           cwd: scene.tree,
           payload: asBash({ command: `echo x > ${MEMORY_PATH}` }),
           projectDir: null,
         });
         expect(result.exitCode).toEqual(1);
+        expect({
+          exitCode: result.exitCode,
+          stderr: await asStderrSnap({
+            stderr: result.stderr,
+            tree: scene.tree,
+          }),
+        }).toMatchSnapshot();
       });
     });
   });
@@ -653,9 +692,13 @@ describe('learner memory guard hook command (integration)', () => {
               fix: FIX_REINSTALL,
             }),
           );
-          expect(
-            await asStderrSnap({ stderr: result.stderr, tree: scene.tree }),
-          ).toMatchSnapshot();
+          expect({
+            exitCode: result.exitCode,
+            stderr: await asStderrSnap({
+              stderr: result.stderr,
+              tree: scene.tree,
+            }),
+          }).toMatchSnapshot();
         },
       );
     });
@@ -691,9 +734,13 @@ describe('learner memory guard hook command (integration)', () => {
               "load failed, Error: Cannot find module './absent-module'",
             );
             expect(result.stderr).toContain(`fix: ${FIX_REINSTALL}`);
-            expect(
-              await asStderrSnap({ stderr: result.stderr, tree: scene.tree }),
-            ).toMatchSnapshot();
+            expect({
+              exitCode: result.exitCode,
+              stderr: await asStderrSnap({
+                stderr: result.stderr,
+                tree: scene.tree,
+              }),
+            }).toMatchSnapshot();
           },
         );
       });
@@ -735,9 +782,13 @@ describe('learner memory guard hook command (integration)', () => {
           // the full stack follows, so a report carries what a debug needs
           expect(linesStack[0]).toEqual('TypeError: guard defect');
           expect(linesStack[1]).toMatch(/^\s+at .*memory\.js/);
-          expect(
-            await asStderrSnap({ stderr: result.stderr, tree: scene.tree }),
-          ).toMatchSnapshot();
+          expect({
+            exitCode: result.exitCode,
+            stderr: await asStderrSnap({
+              stderr: result.stderr,
+              tree: scene.tree,
+            }),
+          }).toMatchSnapshot();
         },
       );
     });
@@ -767,7 +818,7 @@ describe('learner memory guard hook command (integration)', () => {
           expect(result.stderr).toEqual(
             asFaultLine({ cause: 'guard exited 7', fix: FIX_REINSTALL }),
           );
-          expect(result.stderr).toMatchSnapshot();
+          expect(result).toMatchSnapshot();
         });
       });
     },
@@ -801,6 +852,7 @@ describe('learner memory guard hook command (integration)', () => {
               fix: FIX_REINSTALL,
             }),
           });
+          expect(result).toMatchSnapshot();
         },
       );
     });
@@ -872,7 +924,14 @@ describe('learner memory guard hook command (integration)', () => {
                 /^📜 memory\.guard: could not run \(skill ended with exit \d+, short of a sealed code, at \.\/\.agent\/repo=bhrain\/role=learner\/skills\/memory\.guard\.sh\); call allowed\. fix: reinstall rhachet-roles-bhrain$/,
               );
             });
-            expect(outcomes).toMatchSnapshot();
+            expect(
+              Object.fromEntries(
+                outcomes.map(({ slug, exitCode, stderr }) => [
+                  slug,
+                  { exitCode, stderr },
+                ]),
+              ),
+            ).toMatchSnapshot();
           },
         );
       });
@@ -899,6 +958,7 @@ describe('learner memory guard hook command (integration)', () => {
         });
         expect(result.exitCode).toEqual(2);
         expect(result.stderr).not.toContain('could not run');
+        expect(result).toMatchSnapshot();
       });
     });
 
@@ -910,6 +970,7 @@ describe('learner memory guard hook command (integration)', () => {
           projectDir: null,
         });
         expect(result).toEqual({ exitCode: 0, stderr: '' });
+        expect(result).toMatchSnapshot();
       });
     });
   });
@@ -946,7 +1007,7 @@ describe('learner memory guard hook command (integration)', () => {
             projectDir: null,
           });
           expect(result).toEqual({ exitCode: 1, stderr: TIMED_OUT_LINE });
-          expect(result.stderr).toMatchSnapshot();
+          expect(result).toMatchSnapshot();
         },
       );
     });
@@ -964,7 +1025,7 @@ describe('learner memory guard hook command (integration)', () => {
             { envPath: scene.binDir },
           );
           expect(result).toEqual({ exitCode: 1, stderr: TIMED_OUT_LINE });
-          expect(result.stderr).toMatchSnapshot();
+          expect(result).toMatchSnapshot();
         });
       },
     );
@@ -1002,7 +1063,7 @@ describe('learner memory guard hook command (integration)', () => {
               fix: 'install node, or put it on the PATH claude code gives its hooks',
             }),
           );
-          expect(result.stderr).toMatchSnapshot();
+          expect(result).toMatchSnapshot();
         });
       });
     },
@@ -1046,9 +1107,13 @@ describe('learner memory guard hook command (integration)', () => {
                 fix: FIX_REINSTALL,
               }),
             );
-            expect(
-              await asStderrSnap({ stderr: result.stderr, tree: scene.tree }),
-            ).toMatchSnapshot();
+            expect({
+              exitCode: result.exitCode,
+              stderr: await asStderrSnap({
+                stderr: result.stderr,
+                tree: scene.tree,
+              }),
+            }).toMatchSnapshot();
           },
         );
       });
@@ -1091,7 +1156,7 @@ describe('learner memory guard hook command (integration)', () => {
                 fix: 'none needed for this call; if it recurs, report it at https://github.com/ehmpathy/rhachet-roles-bhrain/issues',
               }),
             });
-            expect(result.stderr).toMatchSnapshot();
+            expect(result).toMatchSnapshot();
           },
         );
       });
@@ -1145,7 +1210,7 @@ describe('learner memory guard hook command (integration)', () => {
           );
           expect(result.exitCode).toEqual(2);
           expect(result.stderr).toContain('memory would fade');
-          expect(result.stderr).toMatchSnapshot();
+          expect(result).toMatchSnapshot();
         });
       });
 
@@ -1160,6 +1225,7 @@ describe('learner memory guard hook command (integration)', () => {
             { envPath: scene.binDir },
           );
           expect(result).toEqual({ exitCode: 0, stderr: '' });
+          expect(result).toMatchSnapshot();
         });
       });
     },
@@ -1183,6 +1249,7 @@ describe('learner memory guard hook command (integration)', () => {
         });
         expect(result.exitCode).toEqual(2);
         expect(result.stderr).toContain('memory would fade');
+        expect(result).toMatchSnapshot();
       });
 
       then('a Bash `ls` from the subdir is allowed, silent', () => {
@@ -1192,6 +1259,7 @@ describe('learner memory guard hook command (integration)', () => {
           projectDir: scene.tree,
         });
         expect(result).toEqual({ exitCode: 0, stderr: '' });
+        expect(result).toMatchSnapshot();
       });
     });
   });

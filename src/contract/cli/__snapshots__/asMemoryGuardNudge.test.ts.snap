@@ -50,11 +50,12 @@ exports[`asMemoryGuardNudge an unplaced redirect names what the guard could not 
 "🦉 hold on, friend — that memory would fade.
 
 📜 memory.guard
-   ├─ ✋ blocked: a write the guard cannot place, beside claude native memory
+   ├─ ✋ blocked: an unplaced write beside claude native memory
    │  └─ /home/agent/.claude/projects/p/memory/x.md
    │
    ├─ only a read?
-   │  ├─ a redirect to a $var path beside memory may land in it, so it blocks
+   │  ├─ a $var redirect may land in memory
+   │  ├─ so may a relative one, with no cwd known
    │  └─ redirect to an absolute path outside memory
    │
    ├─ why
