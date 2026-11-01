@@ -89,10 +89,10 @@ describe('memoryGuard (integration)', () => {
         expect(result.stderr).toContain('the instinct is right');
       });
 
-      then('the full nudge stderr matches snapshot', () => {
-        // snapshot locks the entire user-faced output so any drift (reword,
-        // reorder, dropped safety line) surfaces in review
-        expect(result.stderr).toMatchSnapshot();
+      then('the full nudge result matches snapshot', () => {
+        // snapshot locks the entire caller-faced result (exit code + stderr) so any
+        // drift (reword, reorder, dropped safety line) surfaces in review
+        expect(result).toMatchSnapshot();
       });
     });
   });
@@ -157,7 +157,7 @@ describe('memoryGuard (integration)', () => {
         expect(result.stderr).toContain(
           '/home/agent/.claude/projects/x/memory/note.md',
         );
-        expect(result.stderr).toMatchSnapshot();
+        expect(result).toMatchSnapshot();
       });
     });
   });
@@ -185,7 +185,7 @@ describe('memoryGuard (integration)', () => {
         // case4b is a block path — lock its full user-faced nudge too, so the
         // Edit branch cannot regress its output undetected (exhaustiveness:
         // every block path snapped, not just Write + Bash)
-        expect(result.stderr).toMatchSnapshot();
+        expect(result).toMatchSnapshot();
       });
     });
   });
@@ -237,6 +237,70 @@ describe('memoryGuard (integration)', () => {
         expect(result.stderr).toEqual(
           '📜 memory.guard: could not run (tool payload is not json); call allowed. fix: none needed for this call; if it recurs, report it at https://github.com/ehmpathy/rhachet-roles-bhrain/issues\n',
         );
+        expect(result).toMatchSnapshot();
+      });
+    });
+  });
+
+  given('[case7] valid json with no tool_name', () => {
+    when('[t0] the guard runs', () => {
+      const result = runGuard({});
+
+      then('it proceeds with exit code 1, never 2 (does not halt)', () => {
+        expect(result.exitCode).toEqual(1);
+      });
+
+      then('one line names the blind spot (snapshot)', () => {
+        expect(result.stderr).toEqual(
+          '📜 memory.guard: could not run (tool payload has no tool_name); call allowed. fix: none needed for this call; if it recurs, report it at https://github.com/ehmpathy/rhachet-roles-bhrain/issues\n',
+        );
+        expect(result).toMatchSnapshot();
+      });
+    });
+  });
+
+  given('[case8] a Bash copy out of a memory path', () => {
+    when('[t0] the guard runs', () => {
+      const result = runGuard({
+        tool_name: 'Bash',
+        tool_input: {
+          command:
+            'cp /home/agent/.claude/projects/x/memory/note.md /tmp/note.md',
+        },
+      });
+
+      then('it blocks with exit code 2', () => {
+        expect(result.exitCode).toEqual(2);
+      });
+
+      then('the nudge names the copy and the read hint (snapshot)', () => {
+        expect(result.stderr).toContain(
+          '✋ blocked: a copy beside claude native memory',
+        );
+        expect(result.stderr).toContain('read it with cat');
+        expect(result).toMatchSnapshot();
+      });
+    });
+  });
+
+  given('[case9] a Bash redirect through a var beside a memory dir', () => {
+    when('[t0] the guard runs', () => {
+      const result = runGuard({
+        tool_name: 'Bash',
+        tool_input: {
+          command: 'D=/home/agent/.claude/projects/x/memory; echo x > $D/a.md',
+        },
+      });
+
+      then('it blocks with exit code 2', () => {
+        expect(result.exitCode).toEqual(2);
+      });
+
+      then('the nudge names the unplaced write (snapshot)', () => {
+        expect(result.stderr).toContain(
+          '✋ blocked: an unplaced write beside claude native memory',
+        );
+        expect(result.stderr).toContain('$var');
         expect(result).toMatchSnapshot();
       });
     });

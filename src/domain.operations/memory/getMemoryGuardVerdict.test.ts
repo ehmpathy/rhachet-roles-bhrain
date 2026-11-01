@@ -785,6 +785,7 @@ describe('getMemoryGuardVerdict', () => {
       path: '/home/agent/.claude/projects/x/memory/note.md',
       act: 'copy',
     });
+    expect(result).toMatchSnapshot();
   });
 
   test('blocked verdict of a tee or teesafe names a write, never a copy', () => {
@@ -862,6 +863,7 @@ describe('getMemoryGuardVerdict', () => {
       'write',
       'unplaced',
     ]);
+    expect(results).toMatchSnapshot();
   });
 
   test('a large command is graded well inside the hook budget', () => {
@@ -912,6 +914,7 @@ describe('getMemoryGuardVerdict', () => {
       path: '~/.claude/projects/p/memory/a.md',
       act: 'unplaced',
     });
+    expect(result).toMatchSnapshot();
   });
 
   test('allowed verdict shape (with snapshot)', () => {

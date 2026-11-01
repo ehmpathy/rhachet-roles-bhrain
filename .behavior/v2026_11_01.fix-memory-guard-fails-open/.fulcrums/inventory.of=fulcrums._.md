@@ -14,3 +14,9 @@
 | F10 | a memory path anywhere arms every writer | clean | open | 85% |
 | F11 | the runner stays a heredoc this round | clean | open | 85% |
 | F12 | the cwd fold keeps its union across `&&` | clean | open | 85% |
+| F13 | the thinker refusal skip stays with its dream | clean | open | 80% |
+| F14 | the fault line has two speakers | clean | open | 85% |
+| F15 | stdin is declared by `--mode hook` at the skill | clean | open | 90% |
+| F16 | the full unit run is the done proof | clean | open | 90% |
+| F17 | transformer units stay caselists | clean | open | 90% |
+| F18 | five locked criteria the fix flips | clean | open | 90% |

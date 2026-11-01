@@ -1,7 +1,42 @@
 // Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
 
-exports[`learner memory guard hook command (integration) given: [caseA] a tree with the learner linked and no node_modules/.bin/rhx when: [t1] [caseB] a write into native memory fires the hook then: a Write and an Edit into memory are blocked, exit 2 1`] = `
-"🦉 hold on, friend — that memory would fade.
+exports[`learner memory guard hook command (integration) given: [caseA] a tree with the learner linked and no node_modules/.bin/rhx when: [t0] calls that touch no memory path fire the hook then: a Bash \`ls\` is allowed, exit 0, silent 1`] = `
+{
+  "exitCode": 0,
+  "stderr": "",
+}
+`;
+
+exports[`learner memory guard hook command (integration) given: [caseA] a tree with the learner linked and no node_modules/.bin/rhx when: [t0] calls that touch no memory path fire the hook then: a Bash write elsewhere is allowed, exit 0, silent 1`] = `
+[
+  {
+    "exitCode": 0,
+    "stderr": "",
+  },
+  {
+    "exitCode": 0,
+    "stderr": "",
+  },
+]
+`;
+
+exports[`learner memory guard hook command (integration) given: [caseA] a tree with the learner linked and no node_modules/.bin/rhx when: [t0] calls that touch no memory path fire the hook then: a Write and an Edit of src/a.ts are allowed, exit 0 1`] = `
+[
+  {
+    "exitCode": 0,
+    "stderr": "",
+  },
+  {
+    "exitCode": 0,
+    "stderr": "",
+  },
+]
+`;
+
+exports[`learner memory guard hook command (integration) given: [caseA] a tree with the learner linked and no node_modules/.bin/rhx when: [t1] [caseB] a write into native memory fires the hook then: \`/bin/cp note.md /home/agent/.claude/projects/p/memory/x.md\` is blocked, exit 2, with the nudge 1`] = `
+{
+  "exitCode": 2,
+  "stderr": "🦉 hold on, friend — that memory would fade.
 
 📜 memory.guard
    ├─ ✋ blocked: write to claude native memory
@@ -19,11 +54,314 @@ exports[`learner memory guard hook command (integration) given: [caseA] a tree w
    │  └─ generalize them — keep the raw secret or path out of durable memory
    │
    └─ 🪷 the instinct is right — pave the path for whoever comes next
-"
+",
+}
+`;
+
+exports[`learner memory guard hook command (integration) given: [caseA] a tree with the learner linked and no node_modules/.bin/rhx when: [t1] [caseB] a write into native memory fires the hook then: \`\\cp note.md /home/agent/.claude/projects/p/memory/x.md\` is blocked, exit 2, with the nudge 1`] = `
+{
+  "exitCode": 2,
+  "stderr": "🦉 hold on, friend — that memory would fade.
+
+📜 memory.guard
+   ├─ ✋ blocked: write to claude native memory
+   │  └─ /home/agent/.claude/projects/p/memory/x.md
+   │
+   ├─ why
+   │  └─ ~/.claude memory is machine-local + invisible in git
+   │     it will not survive for the next traveler
+   │
+   ├─ capture it durably instead
+   │  ├─ lesson → .agent/repo=.this/role=any/briefs/<name>.md
+   │  └─ tactic → .agent/repo=.this/role=any/skills/<name>.sh
+   │
+   ├─ 🟡 machine-local secrets or paths?
+   │  └─ generalize them — keep the raw secret or path out of durable memory
+   │
+   └─ 🪷 the instinct is right — pave the path for whoever comes next
+",
+}
+`;
+
+exports[`learner memory guard hook command (integration) given: [caseA] a tree with the learner linked and no node_modules/.bin/rhx when: [t1] [caseB] a write into native memory fires the hook then: \`cp note.md /home/agent/.claude/projects/p/memory/x.md\` is blocked, exit 2, with the nudge 1`] = `
+{
+  "exitCode": 2,
+  "stderr": "🦉 hold on, friend — that memory would fade.
+
+📜 memory.guard
+   ├─ ✋ blocked: write to claude native memory
+   │  └─ /home/agent/.claude/projects/p/memory/x.md
+   │
+   ├─ why
+   │  └─ ~/.claude memory is machine-local + invisible in git
+   │     it will not survive for the next traveler
+   │
+   ├─ capture it durably instead
+   │  ├─ lesson → .agent/repo=.this/role=any/briefs/<name>.md
+   │  └─ tactic → .agent/repo=.this/role=any/skills/<name>.sh
+   │
+   ├─ 🟡 machine-local secrets or paths?
+   │  └─ generalize them — keep the raw secret or path out of durable memory
+   │
+   └─ 🪷 the instinct is right — pave the path for whoever comes next
+",
+}
+`;
+
+exports[`learner memory guard hook command (integration) given: [caseA] a tree with the learner linked and no node_modules/.bin/rhx when: [t1] [caseB] a write into native memory fires the hook then: \`echo '=>' > /home/agent/.claude/projects/p/memory/x.md\` is blocked, exit 2, with the nudge 1`] = `
+{
+  "exitCode": 2,
+  "stderr": "🦉 hold on, friend — that memory would fade.
+
+📜 memory.guard
+   ├─ ✋ blocked: write to claude native memory
+   │  └─ /home/agent/.claude/projects/p/memory/x.md
+   │
+   ├─ why
+   │  └─ ~/.claude memory is machine-local + invisible in git
+   │     it will not survive for the next traveler
+   │
+   ├─ capture it durably instead
+   │  ├─ lesson → .agent/repo=.this/role=any/briefs/<name>.md
+   │  └─ tactic → .agent/repo=.this/role=any/skills/<name>.sh
+   │
+   ├─ 🟡 machine-local secrets or paths?
+   │  └─ generalize them — keep the raw secret or path out of durable memory
+   │
+   └─ 🪷 the instinct is right — pave the path for whoever comes next
+",
+}
+`;
+
+exports[`learner memory guard hook command (integration) given: [caseA] a tree with the learner linked and no node_modules/.bin/rhx when: [t1] [caseB] a write into native memory fires the hook then: \`echo x > /home/agent/.claude/projects/p/memory/x.md 2>&1\` is blocked, exit 2, with the nudge 1`] = `
+{
+  "exitCode": 2,
+  "stderr": "🦉 hold on, friend — that memory would fade.
+
+📜 memory.guard
+   ├─ ✋ blocked: write to claude native memory
+   │  └─ /home/agent/.claude/projects/p/memory/x.md
+   │
+   ├─ why
+   │  └─ ~/.claude memory is machine-local + invisible in git
+   │     it will not survive for the next traveler
+   │
+   ├─ capture it durably instead
+   │  ├─ lesson → .agent/repo=.this/role=any/briefs/<name>.md
+   │  └─ tactic → .agent/repo=.this/role=any/skills/<name>.sh
+   │
+   ├─ 🟡 machine-local secrets or paths?
+   │  └─ generalize them — keep the raw secret or path out of durable memory
+   │
+   └─ 🪷 the instinct is right — pave the path for whoever comes next
+",
+}
+`;
+
+exports[`learner memory guard hook command (integration) given: [caseA] a tree with the learner linked and no node_modules/.bin/rhx when: [t1] [caseB] a write into native memory fires the hook then: \`echo x > /home/agent/.claude/projects/p/memory/x.md\` is blocked, exit 2, with the nudge 1`] = `
+{
+  "exitCode": 2,
+  "stderr": "🦉 hold on, friend — that memory would fade.
+
+📜 memory.guard
+   ├─ ✋ blocked: write to claude native memory
+   │  └─ /home/agent/.claude/projects/p/memory/x.md
+   │
+   ├─ why
+   │  └─ ~/.claude memory is machine-local + invisible in git
+   │     it will not survive for the next traveler
+   │
+   ├─ capture it durably instead
+   │  ├─ lesson → .agent/repo=.this/role=any/briefs/<name>.md
+   │  └─ tactic → .agent/repo=.this/role=any/skills/<name>.sh
+   │
+   ├─ 🟡 machine-local secrets or paths?
+   │  └─ generalize them — keep the raw secret or path out of durable memory
+   │
+   └─ 🪷 the instinct is right — pave the path for whoever comes next
+",
+}
+`;
+
+exports[`learner memory guard hook command (integration) given: [caseA] a tree with the learner linked and no node_modules/.bin/rhx when: [t1] [caseB] a write into native memory fires the hook then: \`echo x >& /home/agent/.claude/projects/p/memory/x.md\` is blocked, exit 2, with the nudge 1`] = `
+{
+  "exitCode": 2,
+  "stderr": "🦉 hold on, friend — that memory would fade.
+
+📜 memory.guard
+   ├─ ✋ blocked: write to claude native memory
+   │  └─ /home/agent/.claude/projects/p/memory/x.md
+   │
+   ├─ why
+   │  └─ ~/.claude memory is machine-local + invisible in git
+   │     it will not survive for the next traveler
+   │
+   ├─ capture it durably instead
+   │  ├─ lesson → .agent/repo=.this/role=any/briefs/<name>.md
+   │  └─ tactic → .agent/repo=.this/role=any/skills/<name>.sh
+   │
+   ├─ 🟡 machine-local secrets or paths?
+   │  └─ generalize them — keep the raw secret or path out of durable memory
+   │
+   └─ 🪷 the instinct is right — pave the path for whoever comes next
+",
+}
+`;
+
+exports[`learner memory guard hook command (integration) given: [caseA] a tree with the learner linked and no node_modules/.bin/rhx when: [t1] [caseB] a write into native memory fires the hook then: \`echo x >> /home/agent/.claude/projects/p/memory/x.md\` is blocked, exit 2, with the nudge 1`] = `
+{
+  "exitCode": 2,
+  "stderr": "🦉 hold on, friend — that memory would fade.
+
+📜 memory.guard
+   ├─ ✋ blocked: write to claude native memory
+   │  └─ /home/agent/.claude/projects/p/memory/x.md
+   │
+   ├─ why
+   │  └─ ~/.claude memory is machine-local + invisible in git
+   │     it will not survive for the next traveler
+   │
+   ├─ capture it durably instead
+   │  ├─ lesson → .agent/repo=.this/role=any/briefs/<name>.md
+   │  └─ tactic → .agent/repo=.this/role=any/skills/<name>.sh
+   │
+   ├─ 🟡 machine-local secrets or paths?
+   │  └─ generalize them — keep the raw secret or path out of durable memory
+   │
+   └─ 🪷 the instinct is right — pave the path for whoever comes next
+",
+}
+`;
+
+exports[`learner memory guard hook command (integration) given: [caseA] a tree with the learner linked and no node_modules/.bin/rhx when: [t1] [caseB] a write into native memory fires the hook then: \`echo x >| /home/agent/.claude/projects/p/memory/x.md\` is blocked, exit 2, with the nudge 1`] = `
+{
+  "exitCode": 2,
+  "stderr": "🦉 hold on, friend — that memory would fade.
+
+📜 memory.guard
+   ├─ ✋ blocked: write to claude native memory
+   │  └─ /home/agent/.claude/projects/p/memory/x.md
+   │
+   ├─ why
+   │  └─ ~/.claude memory is machine-local + invisible in git
+   │     it will not survive for the next traveler
+   │
+   ├─ capture it durably instead
+   │  ├─ lesson → .agent/repo=.this/role=any/briefs/<name>.md
+   │  └─ tactic → .agent/repo=.this/role=any/skills/<name>.sh
+   │
+   ├─ 🟡 machine-local secrets or paths?
+   │  └─ generalize them — keep the raw secret or path out of durable memory
+   │
+   └─ 🪷 the instinct is right — pave the path for whoever comes next
+",
+}
+`;
+
+exports[`learner memory guard hook command (integration) given: [caseA] a tree with the learner linked and no node_modules/.bin/rhx when: [t1] [caseB] a write into native memory fires the hook then: \`echo x | rhx teesafe /home/agent/.claude/projects/p/memory/x.md\` is blocked, exit 2, with the nudge 1`] = `
+{
+  "exitCode": 2,
+  "stderr": "🦉 hold on, friend — that memory would fade.
+
+📜 memory.guard
+   ├─ ✋ blocked: write to claude native memory
+   │  └─ /home/agent/.claude/projects/p/memory/x.md
+   │
+   ├─ why
+   │  └─ ~/.claude memory is machine-local + invisible in git
+   │     it will not survive for the next traveler
+   │
+   ├─ capture it durably instead
+   │  ├─ lesson → .agent/repo=.this/role=any/briefs/<name>.md
+   │  └─ tactic → .agent/repo=.this/role=any/skills/<name>.sh
+   │
+   ├─ 🟡 machine-local secrets or paths?
+   │  └─ generalize them — keep the raw secret or path out of durable memory
+   │
+   └─ 🪷 the instinct is right — pave the path for whoever comes next
+",
+}
+`;
+
+exports[`learner memory guard hook command (integration) given: [caseA] a tree with the learner linked and no node_modules/.bin/rhx when: [t1] [caseB] a write into native memory fires the hook then: \`echo x | tee /home/agent/.claude/projects/p/memory/x.md\` is blocked, exit 2, with the nudge 1`] = `
+{
+  "exitCode": 2,
+  "stderr": "🦉 hold on, friend — that memory would fade.
+
+📜 memory.guard
+   ├─ ✋ blocked: write to claude native memory
+   │  └─ /home/agent/.claude/projects/p/memory/x.md
+   │
+   ├─ why
+   │  └─ ~/.claude memory is machine-local + invisible in git
+   │     it will not survive for the next traveler
+   │
+   ├─ capture it durably instead
+   │  ├─ lesson → .agent/repo=.this/role=any/briefs/<name>.md
+   │  └─ tactic → .agent/repo=.this/role=any/skills/<name>.sh
+   │
+   ├─ 🟡 machine-local secrets or paths?
+   │  └─ generalize them — keep the raw secret or path out of durable memory
+   │
+   └─ 🪷 the instinct is right — pave the path for whoever comes next
+",
+}
+`;
+
+exports[`learner memory guard hook command (integration) given: [caseA] a tree with the learner linked and no node_modules/.bin/rhx when: [t1] [caseB] a write into native memory fires the hook then: \`mv note.md /home/agent/.claude/projects/p/memory/x.md\` is blocked, exit 2, with the nudge 1`] = `
+{
+  "exitCode": 2,
+  "stderr": "🦉 hold on, friend — that memory would fade.
+
+📜 memory.guard
+   ├─ ✋ blocked: write to claude native memory
+   │  └─ /home/agent/.claude/projects/p/memory/x.md
+   │
+   ├─ why
+   │  └─ ~/.claude memory is machine-local + invisible in git
+   │     it will not survive for the next traveler
+   │
+   ├─ capture it durably instead
+   │  ├─ lesson → .agent/repo=.this/role=any/briefs/<name>.md
+   │  └─ tactic → .agent/repo=.this/role=any/skills/<name>.sh
+   │
+   ├─ 🟡 machine-local secrets or paths?
+   │  └─ generalize them — keep the raw secret or path out of durable memory
+   │
+   └─ 🪷 the instinct is right — pave the path for whoever comes next
+",
+}
+`;
+
+exports[`learner memory guard hook command (integration) given: [caseA] a tree with the learner linked and no node_modules/.bin/rhx when: [t1] [caseB] a write into native memory fires the hook then: a Write and an Edit into memory are blocked, exit 2 1`] = `
+{
+  "exitCode": 2,
+  "stderr": "🦉 hold on, friend — that memory would fade.
+
+📜 memory.guard
+   ├─ ✋ blocked: write to claude native memory
+   │  └─ /home/agent/.claude/projects/p/memory/x.md
+   │
+   ├─ why
+   │  └─ ~/.claude memory is machine-local + invisible in git
+   │     it will not survive for the next traveler
+   │
+   ├─ capture it durably instead
+   │  ├─ lesson → .agent/repo=.this/role=any/briefs/<name>.md
+   │  └─ tactic → .agent/repo=.this/role=any/skills/<name>.sh
+   │
+   ├─ 🟡 machine-local secrets or paths?
+   │  └─ generalize them — keep the raw secret or path out of durable memory
+   │
+   └─ 🪷 the instinct is right — pave the path for whoever comes next
+",
+}
 `;
 
 exports[`learner memory guard hook command (integration) given: [caseA] a tree with the learner linked and no node_modules/.bin/rhx when: [t1] [caseB] a write into native memory fires the hook then: a Write and an Edit into memory are blocked, exit 2 2`] = `
-"🦉 hold on, friend — that memory would fade.
+{
+  "exitCode": 2,
+  "stderr": "🦉 hold on, friend — that memory would fade.
 
 📜 memory.guard
    ├─ ✋ blocked: write to claude native memory
@@ -41,11 +379,14 @@ exports[`learner memory guard hook command (integration) given: [caseA] a tree w
    │  └─ generalize them — keep the raw secret or path out of durable memory
    │
    └─ 🪷 the instinct is right — pave the path for whoever comes next
-"
+",
+}
 `;
 
 exports[`learner memory guard hook command (integration) given: [caseA] a tree with the learner linked and no node_modules/.bin/rhx when: [t1] [caseB] a write into native memory fires the hook then: a copy OUT of memory blocks, and its nudge names the copy and \`cat\` 1`] = `
-"🦉 hold on, friend — that memory would fade.
+{
+  "exitCode": 2,
+  "stderr": "🦉 hold on, friend — that memory would fade.
 
 📜 memory.guard
    ├─ ✋ blocked: a copy beside claude native memory
@@ -67,11 +408,14 @@ exports[`learner memory guard hook command (integration) given: [caseA] a tree w
    │  └─ generalize them — keep the raw secret or path out of durable memory
    │
    └─ 🪷 the instinct is right — pave the path for whoever comes next
-"
+",
+}
 `;
 
 exports[`learner memory guard hook command (integration) given: [caseA] a tree with the learner linked and no node_modules/.bin/rhx when: [t1] [caseB] a write into native memory fires the hook then: the nudge a human reads at the halt renders whole 1`] = `
-"🦉 hold on, friend — that memory would fade.
+{
+  "exitCode": 2,
+  "stderr": "🦉 hold on, friend — that memory would fade.
 
 📜 memory.guard
    ├─ ✋ blocked: write to claude native memory
@@ -89,11 +433,14 @@ exports[`learner memory guard hook command (integration) given: [caseA] a tree w
    │  └─ generalize them — keep the raw secret or path out of durable memory
    │
    └─ 🪷 the instinct is right — pave the path for whoever comes next
-"
+",
+}
 `;
 
 exports[`learner memory guard hook command (integration) given: [caseA] a tree with the learner linked and no node_modules/.bin/rhx when: [t1] [caseB] a write into native memory fires the hook then: the nudge for \`echo x | rhx teesafe /home/agent/.claude/projects/p/memory/x.md\` renders whole 1`] = `
-"🦉 hold on, friend — that memory would fade.
+{
+  "exitCode": 2,
+  "stderr": "🦉 hold on, friend — that memory would fade.
 
 📜 memory.guard
    ├─ ✋ blocked: write to claude native memory
@@ -111,11 +458,14 @@ exports[`learner memory guard hook command (integration) given: [caseA] a tree w
    │  └─ generalize them — keep the raw secret or path out of durable memory
    │
    └─ 🪷 the instinct is right — pave the path for whoever comes next
-"
+",
+}
 `;
 
 exports[`learner memory guard hook command (integration) given: [caseA] a tree with the learner linked and no node_modules/.bin/rhx when: [t1] [caseB] a write into native memory fires the hook then: the nudge for \`echo x | tee /home/agent/.claude/projects/p/memory/x.md\` renders whole 1`] = `
-"🦉 hold on, friend — that memory would fade.
+{
+  "exitCode": 2,
+  "stderr": "🦉 hold on, friend — that memory would fade.
 
 📜 memory.guard
    ├─ ✋ blocked: write to claude native memory
@@ -133,11 +483,14 @@ exports[`learner memory guard hook command (integration) given: [caseA] a tree w
    │  └─ generalize them — keep the raw secret or path out of durable memory
    │
    └─ 🪷 the instinct is right — pave the path for whoever comes next
-"
+",
+}
 `;
 
 exports[`learner memory guard hook command (integration) given: [caseA] a tree with the learner linked and no node_modules/.bin/rhx when: [t1] [caseB] a write into native memory fires the hook then: the nudge for \`mv note.md /home/agent/.claude/projects/p/memory/x.md\` renders whole 1`] = `
-"🦉 hold on, friend — that memory would fade.
+{
+  "exitCode": 2,
+  "stderr": "🦉 hold on, friend — that memory would fade.
 
 📜 memory.guard
    ├─ ✋ blocked: write to claude native memory
@@ -155,18 +508,22 @@ exports[`learner memory guard hook command (integration) given: [caseA] a tree w
    │  └─ generalize them — keep the raw secret or path out of durable memory
    │
    └─ 🪷 the instinct is right — pave the path for whoever comes next
-"
+",
+}
 `;
 
 exports[`learner memory guard hook command (integration) given: [caseA] a tree with the learner linked and no node_modules/.bin/rhx when: [t1] [caseB] a write into native memory fires the hook then: the nudge for a redirect through a var renders whole 1`] = `
-"🦉 hold on, friend — that memory would fade.
+{
+  "exitCode": 2,
+  "stderr": "🦉 hold on, friend — that memory would fade.
 
 📜 memory.guard
-   ├─ ✋ blocked: a write the guard cannot place, beside claude native memory
+   ├─ ✋ blocked: an unplaced write beside claude native memory
    │  └─ /home/agent/.claude/projects/p/memory
    │
    ├─ only a read?
-   │  ├─ a redirect to a $var path beside memory may land in it, so it blocks
+   │  ├─ a $var redirect may land in memory
+   │  ├─ so may a relative one, with no cwd known
    │  └─ redirect to an absolute path outside memory
    │
    ├─ why
@@ -181,130 +538,334 @@ exports[`learner memory guard hook command (integration) given: [caseA] a tree w
    │  └─ generalize them — keep the raw secret or path out of durable memory
    │
    └─ 🪷 the instinct is right — pave the path for whoever comes next
-"
+",
+}
+`;
+
+exports[`learner memory guard hook command (integration) given: [caseA] a tree with the learner linked and no node_modules/.bin/rhx when: [t2] [caseC] [caseE] a read of a memory path fires the hook then: \`cat /home/agent/.claude/projects/p/memory/x.md > /tmp/out.txt\` is allowed, exit 0, silent 1`] = `
+{
+  "exitCode": 0,
+  "stderr": "",
+}
+`;
+
+exports[`learner memory guard hook command (integration) given: [caseA] a tree with the learner linked and no node_modules/.bin/rhx when: [t2] [caseC] [caseE] a read of a memory path fires the hook then: \`cat /home/agent/.claude/projects/p/memory/x.md >&2\` is allowed, exit 0, silent 1`] = `
+{
+  "exitCode": 0,
+  "stderr": "",
+}
+`;
+
+exports[`learner memory guard hook command (integration) given: [caseA] a tree with the learner linked and no node_modules/.bin/rhx when: [t2] [caseC] [caseE] a read of a memory path fires the hook then: \`cat /home/agent/.claude/projects/p/memory/x.md | grep x > /tmp/out.md\` is allowed, exit 0, silent 1`] = `
+{
+  "exitCode": 0,
+  "stderr": "",
+}
+`;
+
+exports[`learner memory guard hook command (integration) given: [caseA] a tree with the learner linked and no node_modules/.bin/rhx when: [t2] [caseC] [caseE] a read of a memory path fires the hook then: \`cat /home/agent/.claude/projects/p/memory/x.md\` is allowed, exit 0, silent 1`] = `
+{
+  "exitCode": 0,
+  "stderr": "",
+}
+`;
+
+exports[`learner memory guard hook command (integration) given: [caseA] a tree with the learner linked and no node_modules/.bin/rhx when: [t2] [caseC] [caseE] a read of a memory path fires the hook then: \`grep '=>' /home/agent/.claude/projects/p/memory/x.md\` is allowed, exit 0, silent 1`] = `
+{
+  "exitCode": 0,
+  "stderr": "",
+}
+`;
+
+exports[`learner memory guard hook command (integration) given: [caseA] a tree with the learner linked and no node_modules/.bin/rhx when: [t2] [caseC] [caseE] a read of a memory path fires the hook then: \`grep -- '->' /home/agent/.claude/projects/p/memory/x.md\` is allowed, exit 0, silent 1`] = `
+{
+  "exitCode": 0,
+  "stderr": "",
+}
+`;
+
+exports[`learner memory guard hook command (integration) given: [caseA] a tree with the learner linked and no node_modules/.bin/rhx when: [t2] [caseC] [caseE] a read of a memory path fires the hook then: \`grep -c tee /home/agent/.claude/projects/p/memory/x.md\` is allowed, exit 0, silent 1`] = `
+{
+  "exitCode": 0,
+  "stderr": "",
+}
+`;
+
+exports[`learner memory guard hook command (integration) given: [caseA] a tree with the learner linked and no node_modules/.bin/rhx when: [t2] [caseC] [caseE] a read of a memory path fires the hook then: \`grep x /home/agent/.claude/projects/p/memory/x.md 2>&1\` is allowed, exit 0, silent 1`] = `
+{
+  "exitCode": 0,
+  "stderr": "",
+}
+`;
+
+exports[`learner memory guard hook command (integration) given: [caseA] a tree with the learner linked and no node_modules/.bin/rhx when: [t2] [caseC] [caseE] a read of a memory path fires the hook then: \`ls && cat /home/agent/.claude/projects/p/memory/x.md\` is allowed, exit 0, silent 1`] = `
+{
+  "exitCode": 0,
+  "stderr": "",
+}
+`;
+
+exports[`learner memory guard hook command (integration) given: [caseA] a tree with the learner linked and no node_modules/.bin/rhx when: [t2] [caseC] [caseE] a read of a memory path fires the hook then: \`npm test 2>&1\` is allowed, exit 0, silent 1`] = `
+{
+  "exitCode": 0,
+  "stderr": "",
+}
+`;
+
+exports[`learner memory guard hook command (integration) given: [caseA] a tree with the learner linked and no node_modules/.bin/rhx when: [t3] an empty payload fires the hook then: stdin \`\` is allowed, exit 0, silent 1`] = `
+{
+  "exitCode": 0,
+  "stderr": "",
+}
 `;
 
 exports[`learner memory guard hook command (integration) given: [caseA] a tree with the learner linked and no node_modules/.bin/rhx when: [t4] a payload the guard cannot judge fires the hook then: stdin \`{"tool_name":\` proceeds: exit 1, one line that names the blind spot 1`] = `
-"📜 memory.guard: could not run (tool payload is not json); call allowed. fix: none needed for this call; if it recurs, report it at https://github.com/ehmpathy/rhachet-roles-bhrain/issues
-"
+{
+  "exitCode": 1,
+  "stderr": "📜 memory.guard: could not run (tool payload is not json); call allowed. fix: none needed for this call; if it recurs, report it at https://github.com/ehmpathy/rhachet-roles-bhrain/issues
+",
+}
 `;
 
 exports[`learner memory guard hook command (integration) given: [caseA] a tree with the learner linked and no node_modules/.bin/rhx when: [t4] a payload the guard cannot judge fires the hook then: stdin \`{"toolName":"Bash","tool_input":{"command":"ls"}}\` proceeds: exit 1, one line that names the blind spot 1`] = `
-"📜 memory.guard: could not run (tool payload has no tool_name); call allowed. fix: none needed for this call; if it recurs, report it at https://github.com/ehmpathy/rhachet-roles-bhrain/issues
-"
+{
+  "exitCode": 1,
+  "stderr": "📜 memory.guard: could not run (tool payload has no tool_name); call allowed. fix: none needed for this call; if it recurs, report it at https://github.com/ehmpathy/rhachet-roles-bhrain/issues
+",
+}
 `;
 
 exports[`learner memory guard hook command (integration) given: [caseA] a tree with the learner linked and no node_modules/.bin/rhx when: [t4] a payload the guard cannot judge fires the hook then: stdin \`{}\` proceeds: exit 1, one line that names the blind spot 1`] = `
-"📜 memory.guard: could not run (tool payload has no tool_name); call allowed. fix: none needed for this call; if it recurs, report it at https://github.com/ehmpathy/rhachet-roles-bhrain/issues
-"
+{
+  "exitCode": 1,
+  "stderr": "📜 memory.guard: could not run (tool payload has no tool_name); call allowed. fix: none needed for this call; if it recurs, report it at https://github.com/ehmpathy/rhachet-roles-bhrain/issues
+",
+}
 `;
 
 exports[`learner memory guard hook command (integration) given: [caseA] a tree with the learner linked and no node_modules/.bin/rhx when: [t4] a payload the guard cannot judge fires the hook then: stdin \`not json\` proceeds: exit 1, one line that names the blind spot 1`] = `
-"📜 memory.guard: could not run (tool payload is not json); call allowed. fix: none needed for this call; if it recurs, report it at https://github.com/ehmpathy/rhachet-roles-bhrain/issues
-"
+{
+  "exitCode": 1,
+  "stderr": "📜 memory.guard: could not run (tool payload is not json); call allowed. fix: none needed for this call; if it recurs, report it at https://github.com/ehmpathy/rhachet-roles-bhrain/issues
+",
+}
 `;
 
 exports[`learner memory guard hook command (integration) given: [caseA2] a tree with the hook but no learner link, where rhx is installed when: [t0] a Bash, a Write, and an Edit fire the hook then: Bash leaves one line that names the fix 1`] = `
-"📜 memory.guard: could not run (skill not linked under .); call allowed. fix: ./node_modules/.bin/rhachet roles link --repo bhrain --role learner
-"
+{
+  "exitCode": 1,
+  "stderr": "📜 memory.guard: could not run (skill not linked under .); call allowed. fix: ./node_modules/.bin/rhachet roles link --repo bhrain --role learner
+",
+}
+`;
+
+exports[`learner memory guard hook command (integration) given: [caseA2] a tree with the hook but no learner link, where rhx is installed when: [t0] a Bash, a Write, and an Edit fire the hook then: Bash proceeds: exit 1, never 2 1`] = `
+{
+  "exitCode": 1,
+  "stderr": "📜 memory.guard: could not run (skill not linked under .); call allowed. fix: ./node_modules/.bin/rhachet roles link --repo bhrain --role learner
+",
+}
 `;
 
 exports[`learner memory guard hook command (integration) given: [caseA2] a tree with the hook but no learner link, where rhx is installed when: [t0] a Bash, a Write, and an Edit fire the hook then: Edit leaves one line that names the fix 1`] = `
-"📜 memory.guard: could not run (skill not linked under .); call allowed. fix: ./node_modules/.bin/rhachet roles link --repo bhrain --role learner
-"
+{
+  "exitCode": 1,
+  "stderr": "📜 memory.guard: could not run (skill not linked under .); call allowed. fix: ./node_modules/.bin/rhachet roles link --repo bhrain --role learner
+",
+}
+`;
+
+exports[`learner memory guard hook command (integration) given: [caseA2] a tree with the hook but no learner link, where rhx is installed when: [t0] a Bash, a Write, and an Edit fire the hook then: Edit proceeds: exit 1, never 2 1`] = `
+{
+  "exitCode": 1,
+  "stderr": "📜 memory.guard: could not run (skill not linked under .); call allowed. fix: ./node_modules/.bin/rhachet roles link --repo bhrain --role learner
+",
+}
 `;
 
 exports[`learner memory guard hook command (integration) given: [caseA2] a tree with the hook but no learner link, where rhx is installed when: [t0] a Bash, a Write, and an Edit fire the hook then: Write leaves one line that names the fix 1`] = `
-"📜 memory.guard: could not run (skill not linked under .); call allowed. fix: ./node_modules/.bin/rhachet roles link --repo bhrain --role learner
-"
+{
+  "exitCode": 1,
+  "stderr": "📜 memory.guard: could not run (skill not linked under .); call allowed. fix: ./node_modules/.bin/rhachet roles link --repo bhrain --role learner
+",
+}
+`;
+
+exports[`learner memory guard hook command (integration) given: [caseA2] a tree with the hook but no learner link, where rhx is installed when: [t0] a Bash, a Write, and an Edit fire the hook then: Write proceeds: exit 1, never 2 1`] = `
+{
+  "exitCode": 1,
+  "stderr": "📜 memory.guard: could not run (skill not linked under .); call allowed. fix: ./node_modules/.bin/rhachet roles link --repo bhrain --role learner
+",
+}
+`;
+
+exports[`learner memory guard hook command (integration) given: [caseA2] a tree with the hook but no learner link, where rhx is installed when: [t1] a write into native memory fires the hook then: it proceeds too: an unlinked guard has no authority to halt 1`] = `
+{
+  "exitCode": 1,
+  "stderr": "📜 memory.guard: could not run (skill not linked under .); call allowed. fix: ./node_modules/.bin/rhachet roles link --repo bhrain --role learner
+",
+}
 `;
 
 exports[`learner memory guard hook command (integration) given: [caseA3] a learner link whose package is gone (the link dangles) when: [t0] a Bash \`ls\` fires the hook then: it proceeds: exit 1, one line that names the dangle and the reinstall 1`] = `
-"📜 memory.guard: could not run (skill link dangles at <tree>/.agent/repo=bhrain/role=learner/skills/memory.guard.sh); call allowed. fix: reinstall rhachet-roles-bhrain, then ./node_modules/.bin/rhachet roles link --repo bhrain --role learner
-"
+{
+  "exitCode": 1,
+  "stderr": "📜 memory.guard: could not run (skill link dangles at <tree>/.agent/repo=bhrain/role=learner/skills/memory.guard.sh); call allowed. fix: reinstall rhachet-roles-bhrain, then ./node_modules/.bin/rhachet roles link --repo bhrain --role learner
+",
+}
+`;
+
+exports[`learner memory guard hook command (integration) given: [caseA3] a learner link whose package is gone (the link dangles) when: [t1] the project dir points at a tree with no link then: the line names the dir it looked in 1`] = `
+{
+  "exitCode": 1,
+  "stderr": "📜 memory.guard: could not run (skill not linked under <tree>); call allowed. fix: ./node_modules/.bin/rhachet roles link --repo bhrain --role learner
+",
+}
+`;
+
+exports[`learner memory guard hook command (integration) given: [caseA3] a learner link whose package is gone (the link dangles) when: [t2] the dangle sits on an ancestor dir, not the skills dir then: it still names the dangle and the reinstall 1`] = `
+{
+  "exitCode": 1,
+  "stderr": "📜 memory.guard: could not run (skill link dangles at <tree>/.agent/repo=bhrain/role=learner/skills/memory.guard.sh); call allowed. fix: reinstall rhachet-roles-bhrain, then ./node_modules/.bin/rhachet roles link --repo bhrain --role learner
+",
+}
 `;
 
 exports[`learner memory guard hook command (integration) given: [caseD] a linked learner whose cli throws as it loads when: [t0] a Bash \`ls\` fires the hook then: it proceeds: exit 1, the line names a shipped load defect, the stack follows 1`] = `
-"📜 memory.guard: could not run (load defect, Error: dependency at the wrong version); call allowed. fix: report it at https://github.com/ehmpathy/rhachet-roles-bhrain/issues, with the stack below
+{
+  "exitCode": 1,
+  "stderr": "📜 memory.guard: could not run (load defect, Error: dependency at the wrong version); call allowed. fix: report it at https://github.com/ehmpathy/rhachet-roles-bhrain/issues, with the stack below
 Error: dependency at the wrong version
     at <frames>
-"
+",
+}
+`;
+
+exports[`learner memory guard hook command (integration) given: [caseD] a linked learner whose cli throws as it loads when: [t1] a write into native memory fires the hook then: it proceeds too; never exit 2 1`] = `
+{
+  "exitCode": 1,
+  "stderr": "📜 memory.guard: could not run (load defect, Error: dependency at the wrong version); call allowed. fix: report it at https://github.com/ehmpathy/rhachet-roles-bhrain/issues, with the stack below
+Error: dependency at the wrong version
+    at <frames>
+",
+}
 `;
 
 exports[`learner memory guard hook command (integration) given: [caseD-absent] a linked learner whose cli module is absent when: [t0] a Bash \`ls\` fires the hook then: it proceeds: exit 1, with one line that names the absent cli 1`] = `
-"📜 memory.guard: could not run (cli absent at <tree>/node_modules/rhachet-roles-bhrain/dist/contract/cli/memory.js); call allowed. fix: reinstall rhachet-roles-bhrain
-"
+{
+  "exitCode": 1,
+  "stderr": "📜 memory.guard: could not run (cli absent at <tree>/node_modules/rhachet-roles-bhrain/dist/contract/cli/memory.js); call allowed. fix: reinstall rhachet-roles-bhrain
+",
+}
 `;
 
 exports[`learner memory guard hook command (integration) given: [caseD-exit] a linked learner whose guard exits an unknown code when: [t0] a Bash \`ls\` fires the hook then: it proceeds: exit 1, with one line that names the code 1`] = `
-"📜 memory.guard: could not run (guard exited 7); call allowed. fix: reinstall rhachet-roles-bhrain
-"
+{
+  "exitCode": 1,
+  "stderr": "📜 memory.guard: could not run (guard exited 7); call allowed. fix: reinstall rhachet-roles-bhrain
+",
+}
+`;
+
+exports[`learner memory guard hook command (integration) given: [caseD-exit2] a linked learner whose guard exits a stray 2 when: [t0] a Bash \`ls\` fires the hook then: it proceeds: exit 1, never 2, with one line that names the code 1`] = `
+{
+  "exitCode": 1,
+  "stderr": "📜 memory.guard: could not run (guard exited 2); call allowed. fix: reinstall rhachet-roles-bhrain
+",
+}
 `;
 
 exports[`learner memory guard hook command (integration) given: [caseD-file] a linked learner whose skill file cannot run as written when: [t0] a memory write fires the hook over each broken file then: each proceeds: exit 1, never 2 and never a silent 0, with the fault line first 1`] = `
-[
-  {
+{
+  "cut": {
     "exitCode": 1,
-    "slug": "syntax",
-    "stderr": "📜 memory.guard: could not run (skill ended with exit 2, short of a sealed code, at ./.agent/repo=bhrain/role=learner/skills/memory.guard.sh); call allowed. fix: reinstall rhachet-roles-bhrain
-./.agent/repo=bhrain/role=learner/skills/memory.guard.sh: line 20: syntax error near unexpected token \`fi'
-",
-  },
-  {
-    "exitCode": 1,
-    "slug": "empty",
-    "stderr": "📜 memory.guard: could not run (skill ended with exit 0, short of a sealed code, at ./.agent/repo=bhrain/role=learner/skills/memory.guard.sh); call allowed. fix: reinstall rhachet-roles-bhrain
-",
-  },
-  {
-    "exitCode": 1,
-    "slug": "cut",
     "stderr": "📜 memory.guard: could not run (skill ended with exit 0, short of a sealed code, at ./.agent/repo=bhrain/role=learner/skills/memory.guard.sh); call allowed. fix: reinstall rhachet-roles-bhrain
 blocked
 ",
   },
-]
+  "empty": {
+    "exitCode": 1,
+    "stderr": "📜 memory.guard: could not run (skill ended with exit 0, short of a sealed code, at ./.agent/repo=bhrain/role=learner/skills/memory.guard.sh); call allowed. fix: reinstall rhachet-roles-bhrain
+",
+  },
+  "syntax": {
+    "exitCode": 1,
+    "stderr": "📜 memory.guard: could not run (skill ended with exit 2, short of a sealed code, at ./.agent/repo=bhrain/role=learner/skills/memory.guard.sh); call allowed. fix: reinstall rhachet-roles-bhrain
+./.agent/repo=bhrain/role=learner/skills/memory.guard.sh: line <n>: syntax error near unexpected token \`fi'
+",
+  },
+}
 `;
 
 exports[`learner memory guard hook command (integration) given: [caseD-modabsent] a linked learner whose cli requires an absent module when: [t0] a Bash \`ls\` fires the hook then: it proceeds: exit 1, one line that names the absent module and the reinstall 1`] = `
-"📜 memory.guard: could not run (load failed, Error: Cannot find module './absent-module'); call allowed. fix: reinstall rhachet-roles-bhrain
-"
+{
+  "exitCode": 1,
+  "stderr": "📜 memory.guard: could not run (load failed, Error: Cannot find module './absent-module'); call allowed. fix: reinstall rhachet-roles-bhrain
+",
+}
 `;
 
 exports[`learner memory guard hook command (integration) given: [caseD-no-node] a linked learner on a host whose PATH lacks node when: [t0] a Bash \`ls\` fires the hook then: it proceeds: exit 1, with one line that names node 1`] = `
-"📜 memory.guard: could not run (node not found on the PATH); call allowed. fix: install node, or put it on the PATH claude code gives its hooks
-"
+{
+  "exitCode": 1,
+  "stderr": "📜 memory.guard: could not run (node not found on the PATH); call allowed. fix: install node, or put it on the PATH claude code gives its hooks
+",
+}
 `;
 
 exports[`learner memory guard hook command (integration) given: [caseD-stdin] a linked learner on a host whose stdin read faults when: [t0] a memory write fires the hook then: it proceeds: exit 1, with a line that names the stdin read 1`] = `
-"📜 memory.guard: could not run (tool payload unreadable on stdin); call allowed. fix: none needed for this call; if it recurs, report it at https://github.com/ehmpathy/rhachet-roles-bhrain/issues
-"
+{
+  "exitCode": 1,
+  "stderr": "📜 memory.guard: could not run (tool payload unreadable on stdin); call allowed. fix: none needed for this call; if it recurs, report it at https://github.com/ehmpathy/rhachet-roles-bhrain/issues
+",
+}
 `;
 
 exports[`learner memory guard hook command (integration) given: [caseD-step] a linked learner whose own setup step exits 2 before node runs when: [t0] a memory write fires the hook then: it proceeds: exit 1, never 2, with a line that names the fault 1`] = `
-"📜 memory.guard: could not run (setup step exited 2 at line <n>); call allowed. fix: reinstall rhachet-roles-bhrain
-"
+{
+  "exitCode": 1,
+  "stderr": "📜 memory.guard: could not run (setup step exited 2 at line <n>); call allowed. fix: reinstall rhachet-roles-bhrain
+",
+}
 `;
 
 exports[`learner memory guard hook command (integration) given: [caseD-throw] a linked learner whose guard throws as it runs when: [t0] a Bash \`ls\` fires the hook then: it proceeds: exit 1, with a line that names the defect and asks for a report 1`] = `
-"📜 memory.guard: could not run (guard defect, TypeError: guard defect); call allowed. fix: report it at https://github.com/ehmpathy/rhachet-roles-bhrain/issues, with the stack below
+{
+  "exitCode": 1,
+  "stderr": "📜 memory.guard: could not run (guard defect, TypeError: guard defect); call allowed. fix: report it at https://github.com/ehmpathy/rhachet-roles-bhrain/issues, with the stack below
 TypeError: guard defect
     at <frames>
-"
+",
+}
 `;
 
 exports[`learner memory guard hook command (integration) given: [caseD-timeout] a linked learner whose guard never settles when: [t0] a Bash \`ls\` fires the hook on the host as is then: it ends itself: exit 1, with one line that names the deadline 1`] = `
-"📜 memory.guard: could not run (timed out under the hook's 5s budget); call allowed. fix: none needed for this call; if it recurs, the host is overloaded
-"
+{
+  "exitCode": 1,
+  "stderr": "📜 memory.guard: could not run (timed out under the hook's 5s budget); call allowed. fix: none needed for this call; if it recurs, the host is overloaded
+",
+}
 `;
 
 exports[`learner memory guard hook command (integration) given: [caseD-timeout] a linked learner whose guard never settles when: [t1] a Bash \`ls\` fires the hook on a host that lacks \`timeout\` then: the guard still ends itself: exit 1, the same line 1`] = `
-"📜 memory.guard: could not run (timed out under the hook's 5s budget); call allowed. fix: none needed for this call; if it recurs, the host is overloaded
-"
+{
+  "exitCode": 1,
+  "stderr": "📜 memory.guard: could not run (timed out under the hook's 5s budget); call allowed. fix: none needed for this call; if it recurs, the host is overloaded
+",
+}
 `;
 
-exports[`learner memory guard hook command (integration) given: [caseG] a learner skill linked as a file, on a host whose readlink lacks -f when: [t0] a memory write fires the hook then: it is blocked, exit 2, with the nudge 1`] = `
-"🦉 hold on, friend — that memory would fade.
+exports[`learner memory guard hook command (integration) given: [caseF] a linked learner, with the cwd drifted into a subdir when: [t0] a memory write fires the hook from the subdir then: a Bash \`ls\` from the subdir is allowed, silent 1`] = `
+{
+  "exitCode": 0,
+  "stderr": "",
+}
+`;
+
+exports[`learner memory guard hook command (integration) given: [caseF] a linked learner, with the cwd drifted into a subdir when: [t0] a memory write fires the hook from the subdir then: the project dir anchor still finds the guard: exit 2 1`] = `
+{
+  "exitCode": 2,
+  "stderr": "🦉 hold on, friend — that memory would fade.
 
 📜 memory.guard
    ├─ ✋ blocked: write to claude native memory
@@ -322,5 +883,70 @@ exports[`learner memory guard hook command (integration) given: [caseG] a learne
    │  └─ generalize them — keep the raw secret or path out of durable memory
    │
    └─ 🪷 the instinct is right — pave the path for whoever comes next
-"
+",
+}
+`;
+
+exports[`learner memory guard hook command (integration) given: [caseG] a learner skill linked as a file, on a host whose readlink lacks -f when: [t0] a memory write fires the hook then: it is blocked, exit 2, with the nudge 1`] = `
+{
+  "exitCode": 2,
+  "stderr": "🦉 hold on, friend — that memory would fade.
+
+📜 memory.guard
+   ├─ ✋ blocked: write to claude native memory
+   │  └─ /home/agent/.claude/projects/p/memory/x.md
+   │
+   ├─ why
+   │  └─ ~/.claude memory is machine-local + invisible in git
+   │     it will not survive for the next traveler
+   │
+   ├─ capture it durably instead
+   │  ├─ lesson → .agent/repo=.this/role=any/briefs/<name>.md
+   │  └─ tactic → .agent/repo=.this/role=any/skills/<name>.sh
+   │
+   ├─ 🟡 machine-local secrets or paths?
+   │  └─ generalize them — keep the raw secret or path out of durable memory
+   │
+   └─ 🪷 the instinct is right — pave the path for whoever comes next
+",
+}
+`;
+
+exports[`learner memory guard hook command (integration) given: [caseG] a learner skill linked as a file, on a host whose readlink lacks -f when: [t1] a Bash \`ls\` fires the hook then: it is allowed, exit 0, silent 1`] = `
+{
+  "exitCode": 0,
+  "stderr": "",
+}
+`;
+
+exports[`learner memory guard hook command (integration) given: [caseH] a linked learner, fed a payload past the env cap when: [t0] a 160KB memory write fires the hook then: it is judged and blocked: exit 2, the nudge 1`] = `
+{
+  "exitCode": 2,
+  "stderr": "🦉 hold on, friend — that memory would fade.
+
+📜 memory.guard
+   ├─ ✋ blocked: write to claude native memory
+   │  └─ /home/agent/.claude/projects/p/memory/x.md
+   │
+   ├─ why
+   │  └─ ~/.claude memory is machine-local + invisible in git
+   │     it will not survive for the next traveler
+   │
+   ├─ capture it durably instead
+   │  ├─ lesson → .agent/repo=.this/role=any/briefs/<name>.md
+   │  └─ tactic → .agent/repo=.this/role=any/skills/<name>.sh
+   │
+   ├─ 🟡 machine-local secrets or paths?
+   │  └─ generalize them — keep the raw secret or path out of durable memory
+   │
+   └─ 🪷 the instinct is right — pave the path for whoever comes next
+",
+}
+`;
+
+exports[`learner memory guard hook command (integration) given: [caseH] a linked learner, fed a payload past the env cap when: [t1] a 160KB read fires the hook then: it is judged and allowed: exit 0, silent 1`] = `
+{
+  "exitCode": 0,
+  "stderr": "",
+}
 `;
