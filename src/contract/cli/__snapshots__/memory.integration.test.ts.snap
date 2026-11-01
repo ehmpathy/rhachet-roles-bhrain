@@ -94,9 +94,10 @@ exports[`memoryGuard (integration) given: [case5] empty stdin (harness hiccup) w
 }
 `;
 
-exports[`memoryGuard (integration) given: [case6] malformed json stdin when: [t0] the guard runs then: the fail-open variant matches snapshot (silent, no stderr) 1`] = `
+exports[`memoryGuard (integration) given: [case6] malformed json stdin when: [t0] the guard runs then: one line names the blind spot (snapshot) 1`] = `
 {
-  "exitCode": 0,
-  "stderr": "",
+  "exitCode": 1,
+  "stderr": "📜 memory.guard: could not run (tool payload is not json); call allowed. fix: none needed for this call; if it recurs, report it at https://github.com/ehmpathy/rhachet-roles-bhrain/issues
+",
 }
 `;

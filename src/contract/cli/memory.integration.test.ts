@@ -4,8 +4,8 @@ import { given, then, when } from 'test-fns';
 /**
  * .what = the exact production invocation the learner onTool hook uses
  * .why = runs the real skill wrapper (memory.guard.sh --mode hook), which captures
- *        stdin into RHACHET_STDIN and execs the cli entrypoint — this exercises the
- *        whole conformant path end-to-end (wrapper + env-var handoff + ts guard),
+ *        stdin and hands it to the cli on node's own stdin — this exercises the
+ *        whole conformant path end-to-end (wrapper + stdin handoff + ts guard),
  *        not a synthetic node -e that would mask the harness stdin-inheritance gap
  */
 const GUARD_CMD =
@@ -229,11 +229,14 @@ describe('memoryGuard (integration)', () => {
     when('[t0] the guard runs', () => {
       const result = runGuardRaw('{ not json');
 
-      then('it fails open with exit code 0 (does not crash)', () => {
-        expect(result.exitCode).toEqual(0);
+      then('it proceeds with exit code 1, never 2 (does not halt)', () => {
+        expect(result.exitCode).toEqual(1);
       });
 
-      then('the fail-open variant matches snapshot (silent, no stderr)', () => {
+      then('one line names the blind spot (snapshot)', () => {
+        expect(result.stderr).toEqual(
+          '📜 memory.guard: could not run (tool payload is not json); call allowed. fix: none needed for this call; if it recurs, report it at https://github.com/ehmpathy/rhachet-roles-bhrain/issues\n',
+        );
         expect(result).toMatchSnapshot();
       });
     });
