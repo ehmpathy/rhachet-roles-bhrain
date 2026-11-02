@@ -33,11 +33,21 @@ const buildViaOpenRouter = async (input: {
 // a real brain call; the bound and its measured tail live on BRAIN_CALL_TEST_TIMEOUT_MS
 jest.setTimeout(BRAIN_CALL_TEST_TIMEOUT_MS);
 
-describe('genReviewBrainSupply (the fixed tally brain, live)', () => {
-  given('[case1] an l3 lane that wrote its clean verdict in prose', () => {
-    // a verdict heading with a blocker count, a table, and no nitpick count line — so the regex
-    // tactic cannot read it and the tally falls back to the brain
-    const content = `## Verdict: 0 blockers
+// a live brain call runs only where a named flag targets it, so the default run makes none:
+// BHRAIN_TEST_LIVE_BRAIN_TALLY=1 rhx git.repo.test --what integration --scope 'path://genReviewBrainSupply' --mode apply
+const isLiveBrainTallyTargeted =
+  process.env.BHRAIN_TEST_LIVE_BRAIN_TALLY === '1';
+const describeIfLiveBrainTallyTargeted = isLiveBrainTallyTargeted
+  ? describe
+  : describe.skip;
+
+describeIfLiveBrainTallyTargeted(
+  'genReviewBrainSupply (the fixed tally brain, live)',
+  () => {
+    given('[case1] an l3 lane that wrote its clean verdict in prose', () => {
+      // a verdict heading with a blocker count, a table, and no nitpick count line — so the regex
+      // tactic cannot read it and the tally falls back to the brain
+      const content = `## Verdict: 0 blockers
 
 No diff loosens an assertion or weakens a previously-locked criterion.
 
@@ -45,24 +55,25 @@ No diff loosens an assertion or weakens a previously-locked criterion.
 |---|---|---|
 | \`getTranscriptSource.integration.test.ts\` | removed skip patterns | **strengthened** |`;
 
-    when.repeatably(REPEATABLY_CONFIG)(
-      '[t0] the fixed tally brain tallies it',
-      () => {
-        const counts = useThen('the tally succeeds', async () =>
-          getOneReviewCountsViaBrain(
-            { content },
-            genReviewBrainSupply({ build: buildViaOpenRouter }),
-          ),
-        );
+      when.repeatably(REPEATABLY_CONFIG)(
+        '[t0] the fixed tally brain tallies it',
+        () => {
+          const counts = useThen('the tally succeeds', async () =>
+            getOneReviewCountsViaBrain(
+              { content },
+              genReviewBrainSupply({ build: buildViaOpenRouter }),
+            ),
+          );
 
-        then('it reads a clean pass', () => {
-          expect(counts).toMatchObject({
-            detected: true,
-            blockers: 0,
-            nitpicks: 0,
+          then('it reads a clean pass', () => {
+            expect(counts).toMatchObject({
+              detected: true,
+              blockers: 0,
+              nitpicks: 0,
+            });
           });
-        });
-      },
-    );
-  });
-});
+        },
+      );
+    });
+  },
+);

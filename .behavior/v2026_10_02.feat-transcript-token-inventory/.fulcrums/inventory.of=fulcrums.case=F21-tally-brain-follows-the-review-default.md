@@ -45,3 +45,8 @@ clamp enough.
 ## .verdict
 
 open.
+
+## .gated — the clamp runs only behind `BHRAIN_TEST_LIVE_BRAIN_TALLY`
+
+a live brain call runs only where a named flag targets it, so the clamp skips by default and the
+default suite makes no call from it. set `BHRAIN_TEST_LIVE_BRAIN_TALLY=1` to run it.
