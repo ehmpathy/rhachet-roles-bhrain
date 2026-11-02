@@ -71,10 +71,17 @@ const asShapeOfValue = (input: { value: unknown }): unknown => {
  * .what = the review contract, exercised on one premium model
  * .why = the cheap default brain covers the contract on every run; this suite proves a
  *        premium model also returns a verdict the guard can read
- * .note = to run it alone:
- *         rhx git.repo.test --what integration --scope 'path://stepReview.caseBrain.claude-sonnet' --mode apply
+ * .note = a live call to a premium brain, so it runs only where a named flag targets it;
+ *         unset, the suite skips and the default run makes no live call. to run it:
+ *         BHRAIN_TEST_LIVE_BRAIN_SONNET=1 rhx git.repo.test --what integration --scope 'path://stepReview.caseBrain.claude-sonnet' --mode apply
  */
-describe('stepReview.caseBrain.claude-sonnet', () => {
+const isLiveBrainSonnetTargeted =
+  process.env.BHRAIN_TEST_LIVE_BRAIN_SONNET === '1';
+const describeIfLiveBrainSonnetTargeted = isLiveBrainSonnetTargeted
+  ? describe
+  : describe.skip;
+
+describeIfLiveBrainSonnetTargeted('stepReview.caseBrain.claude-sonnet', () => {
   // bound brain invocations at the shared real-brain test bound
   jest.setTimeout(BRAIN_CALL_TEST_TIMEOUT_MS);
 
