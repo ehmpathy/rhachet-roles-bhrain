@@ -39,4 +39,6 @@ the handoff names that ask either way.
 
 ## .verdict
 
-open — for the council.
+ruled — by the efficiency director: the real-S3 case lands, behind a named flag that skips by
+default, so the default suite needs no bucket or key. the flag is `BHRAIN_TEST_S3_BACKUP_URI`,
+which names a writable `s3://<bucket>/<prefix>`; set it, plus aws credentials, to run `[case4]`.

@@ -1,8 +1,11 @@
+import { execSync } from 'child_process';
 import * as fs from 'fs';
 import { ConstraintError } from 'helpful-errors';
 import * as os from 'os';
 import * as path from 'path';
 import { getError, given, then, useThen, when } from 'test-fns';
+
+import { asShellSingleQuoted } from '@src/utils/asShellSingleQuoted';
 
 import { backupSnapshots } from './backupSnapshots';
 
@@ -150,9 +153,9 @@ describe('backupSnapshots', () => {
         /**
          * .mock = the aws cli, as an executable on PATH that records the argv it was handed
          * .why = this case grades the argv OUR code builds — the shell word of each path —
-         *        which is the boundary this module owns. a real sync needs a bucket grant only a
-         *        human can make (the gap below), and would not show the argv at all
-         * .real = the real sync path is the gap named below
+         *        which is the boundary this module owns. a real sync needs a bucket, and would
+         *        not show the argv at all
+         * .real = [case4], opted in via BHRAIN_TEST_S3_BACKUP_URI
          */
         const fakeDir = path.join(os.tmpdir(), `backup-fake-aws-${Date.now()}`);
         const argvAt = path.join(fakeDir, 'argv.txt');
@@ -205,10 +208,62 @@ describe('backupSnapshots', () => {
         });
       },
     );
-
-    // 🔴 gap, not a carve-out: the real `aws s3 sync` success path is untested. it owes one
-    //    `then` that syncs this temp dir to a test bucket and lists the prefix — and that
-    //    `then` waits on an AWS test credential plus a bucket in the keyrack's env.test,
-    //    which only a human can grant (`rhx keyrack fill --owner ehmpath`)
   });
+
+  /**
+   * .what = the real `aws s3 sync` success path, against a real bucket
+   * .why = the cases above grade every refusal and the argv; only a real sync proves the
+   *        upload lands. it needs a bucket and a credential, which the default suite must
+   *        not, so it runs only where BHRAIN_TEST_S3_BACKUP_URI names a writable prefix
+   * .note = opt in with BHRAIN_TEST_S3_BACKUP_URI='s3://<bucket>/<prefix>' plus aws
+   *         credentials on the env; unset, this case skips and the suite needs neither
+   */
+  const s3BackupUriOfTest = process.env.BHRAIN_TEST_S3_BACKUP_URI ?? '';
+  given.runIf(s3BackupUriOfTest.length > 0)(
+    '[case4] a real bucket, opted in via BHRAIN_TEST_S3_BACKUP_URI',
+    () => {
+      const runId = `bhrain-test-${Date.now()}`;
+      const into = `${s3BackupUriOfTest.replace(/\/$/, '')}/${runId}`;
+      const tempDir = path.join(os.tmpdir(), `backup-real-${runId}`);
+
+      beforeAll(() => {
+        fs.mkdirSync(tempDir, { recursive: true });
+        fs.writeFileSync(path.join(tempDir, 'file1.txt'), 'content1');
+        fs.writeFileSync(path.join(tempDir, 'file2.txt'), 'content2!');
+      });
+
+      afterAll(() => {
+        // remove the run's prefix, so the bucket holds naught of the test once it ends
+        execSync(
+          `aws s3 rm ${asShellSingleQuoted({ value: into })} --recursive`,
+          {
+            stdio: 'pipe',
+          },
+        );
+        fs.rmSync(tempDir, { recursive: true, force: true });
+      });
+
+      when('[t0] the backup syncs the source into the bucket', () => {
+        const result = useThen('the backup completes', () =>
+          backupSnapshots({ sourceDir: tempDir, into }),
+        );
+
+        then('it reports both files and their bytes', () => {
+          expect(result.fileCount).toEqual(2);
+          expect(result.totalBytes).toEqual(
+            'content1'.length + 'content2!'.length,
+          );
+        });
+
+        then('both files are listed under the run prefix', () => {
+          const listed = execSync(
+            `aws s3 ls ${asShellSingleQuoted({ value: `${into}/` })} --recursive`,
+            { stdio: 'pipe' },
+          ).toString();
+          expect(listed).toContain('file1.txt');
+          expect(listed).toContain('file2.txt');
+        });
+      });
+    },
+  );
 });
