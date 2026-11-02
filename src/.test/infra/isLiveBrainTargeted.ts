@@ -1,9 +1,11 @@
 /**
  * .what = the env flag a dev sets to target a live-brain suite by name
- * .why = a live brain that needs an oauth token never runs by default. ci holds no such token,
- *        so these suites skip there; a dev runs one on purpose, by name
- * .note = a comma list of names, or `all`. e.g.
+ * .why = a live brain runs by default only for a safety guard. every other live-brain suite
+ *        (a premium model, a billed cache measure) skips by default and in ci; a dev runs one
+ *        on purpose, by name
+ * .note = a comma list of names, or `all`. the names: `claude`, `cache`. e.g.
  *         RHACHET_LIVE_BRAIN=claude rhx git.repo.test --what integration --scope 'path://stepReview.caseBrain.claude-sonnet' --mode apply
+ *         RHACHET_LIVE_BRAIN=cache rhx git.repo.test --what integration --scope 'path://stepReview.casePromptCache' --mode apply
  */
 export const LIVE_BRAIN_FLAG = 'RHACHET_LIVE_BRAIN';
 
