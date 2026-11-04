@@ -407,9 +407,10 @@ exports[`init.claude.status-line.survives-layout.integration given: [case5] rhac
 ✨ 1 role(s) linked
 ✨ 1 role(s) initialized
 
-✗ brain://repo=ambient/boot.md not written: ✋ ConstraintError: settings.of.repo.json must be a real file
-   ├─ path: $REPO/.agent/.actors/actor.via.repo=ambient/brain/.claude/settings.of.repo.json
-   ├─ found: a symlink to $HOME/elsewhere.json
-   └─ hint: remove $REPO/.agent/.actors/actor.via.repo=ambient/brain/.claude/settings.of.repo.json, then rerun \`rhx init\`; rhachet derives it from the roles
+✗ brain://repo=ambient/boot.md not written
+   ├─ ✋ ConstraintError: settings.of.repo.json must be a real file
+   ├─ path = $REPO/.agent/.actors/actor.via.repo=ambient/brain/.claude/settings.of.repo.json
+   ├─ found = a symlink to $HOME/elsewhere.json
+   └─ hint = remove $REPO/.agent/.actors/actor.via.repo=ambient/brain/.claude/settings.of.repo.json, then rerun \`rhx init\`; rhachet derives it from the roles
 "
 `;
