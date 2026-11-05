@@ -6,10 +6,10 @@ exports[`review.join-intersect.acceptance given: [case1] intersect mode with bot
    │  ├─ rules: 3
    │  └─ targets: 1
    ├─ tokens
-   │  ├─ estimate: 2,747
+   │  ├─ estimate: 2,786
    │  └─ context: 0.3%
    └─ cost
-      └─ estimate: $0.001374100"
+      └─ estimate: $0.001393800"
 `;
 
 exports[`review.join-intersect.acceptance given: [case2] intersect mode with empty diffs when: [t0] no files changed, paths matches files then: the refusal reads whole, as a driver meets it 1`] = `
@@ -38,10 +38,10 @@ exports[`review.join-intersect.acceptance given: [case3] union mode with empty d
    │  ├─ rules: 3
    │  └─ targets: 2
    ├─ tokens
-   │  ├─ estimate: 2,956
+   │  ├─ estimate: 2,994
    │  └─ context: 0.3%
    └─ cost
-      └─ estimate: $0.001478800"
+      └─ estimate: $0.001496200"
 `;
 
 exports[`review.join-intersect.acceptance given: [case4] default mode is intersect when: [t0] no --join specified, only dirty.ts changed, attempt 1 then: the metrics.expected block matches its snapshot (computed before the brain) 1`] = `
@@ -50,10 +50,10 @@ exports[`review.join-intersect.acceptance given: [case4] default mode is interse
    │  ├─ rules: 3
    │  └─ targets: 1
    ├─ tokens
-   │  ├─ estimate: 2,747
+   │  ├─ estimate: 2,786
    │  └─ context: 0.3%
    └─ cost
-      └─ estimate: $0.001374100"
+      └─ estimate: $0.001393800"
 `;
 
 exports[`review.join-intersect.acceptance given: [case5] only --paths specified (no --diffs) when: [t0] single source, join mode does not apply, attempt 1 then: the metrics.expected block matches its snapshot (computed before the brain) 1`] = `
@@ -62,8 +62,8 @@ exports[`review.join-intersect.acceptance given: [case5] only --paths specified 
    │  ├─ rules: 3
    │  └─ targets: 2
    ├─ tokens
-   │  ├─ estimate: 2,956
+   │  ├─ estimate: 2,994
    │  └─ context: 0.3%
    └─ cost
-      └─ estimate: $0.001478800"
+      └─ estimate: $0.001496200"
 `;

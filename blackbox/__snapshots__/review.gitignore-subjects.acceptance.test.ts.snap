@@ -6,8 +6,8 @@ exports[`review.gitignore-subjects.acceptance given: [case1] a gitignored restri
    │  ├─ rules: 1
    │  └─ targets: 3
    ├─ tokens
-   │  ├─ estimate: 2,171
+   │  ├─ estimate: 2,209
    │  └─ context: 0.2%
    └─ cost
-      └─ estimate: $0.001085300"
+      └─ estimate: $0.001104700"
 `;

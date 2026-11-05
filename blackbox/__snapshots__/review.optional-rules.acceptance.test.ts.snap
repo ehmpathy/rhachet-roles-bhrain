@@ -93,8 +93,8 @@ exports[`review.optional-rules.acceptance given: [case7] --optional rules set, b
    │  ├─ rules: 1
    │  └─ targets: 1
    ├─ tokens
-   │  ├─ estimate: 1,903
+   │  ├─ estimate: 1,941
    │  └─ context: 0.2%
    └─ cost
-      └─ estimate: $0.000950900"
+      └─ estimate: $0.000970300"
 `;

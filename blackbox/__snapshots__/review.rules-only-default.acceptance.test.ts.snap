@@ -6,10 +6,10 @@ exports[`review.rules-only-default.acceptance given: [case1] user specifies only
    │  ├─ rules: 3
    │  └─ targets: 1
    ├─ tokens
-   │  ├─ estimate: 2,654
+   │  ├─ estimate: 2,692
    │  └─ context: 0.3%
    └─ cost
-      └─ estimate: $0.001326200"
+      └─ estimate: $0.001345600"
 `;
 
 exports[`review.rules-only-default.acceptance given: [case2] user excludes .behavior via negation pattern when: [t0] review with --diffs since-main --paths !.behavior/**, attempt 1 then: the metrics.expected block matches its snapshot (computed before the brain) 1`] = `
@@ -18,8 +18,8 @@ exports[`review.rules-only-default.acceptance given: [case2] user excludes .beha
    │  ├─ rules: 3
    │  └─ targets: 1
    ├─ tokens
-   │  ├─ estimate: 2,656
+   │  ├─ estimate: 2,694
    │  └─ context: 0.3%
    └─ cost
-      └─ estimate: $0.001328800"
+      └─ estimate: $0.001346200"
 `;

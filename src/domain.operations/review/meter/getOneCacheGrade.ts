@@ -3,6 +3,7 @@ import * as path from 'path';
 import type { ReviewRunMeter } from '@src/domain.objects/Reviewer/ReviewRunMeter';
 import type { LaneOrdinal } from '@src/domain.operations/review/meter/getAllLaneOrdinals';
 import { getAllRunsMetered } from '@src/domain.operations/review/meter/getAllRunsMetered';
+import { compareStrings } from '@src/utils/compareStrings';
 
 /**
  * .what = whether a bucket's measured runs ever had a cache to hit — and, where
@@ -105,7 +106,8 @@ const getOneRunLatest = (input: {
   runs: ReviewRunMeter[];
 }): ReviewRunMeter | null =>
   [...input.runs].sort((a, b) =>
-    path.basename(b.dir).localeCompare(path.basename(a.dir)),
+    // a locale-free order, so the latest run is the same one on every host
+    compareStrings(path.basename(b.dir), path.basename(a.dir)),
   )[0] ?? null;
 
 /**
